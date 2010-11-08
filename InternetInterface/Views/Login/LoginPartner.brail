@@ -1,0 +1,75 @@
+﻿<head>
+
+<script type="text/javascript" src="../Scripts/jquery-1.4.1.js"></script> 
+<!-- <link href="../Styles/Login.css" type="text/css" rel="stylesheet" /> -->
+<link href="../Styles/style.css" type="text/css" rel="stylesheet" />
+
+	<script type="text/javascript">
+
+	    $(document).ready(function () {
+	        $(".LoginButton").click(function () {
+	           // document.getElementById("#Text1").Value = "hhh";
+	            $("#Login").text("123456");
+	        });
+	    });
+
+	    function disp(divs) {
+	        var a = [];
+	        for (var i = 0; i < divs.length; i++) {
+	            a.push(divs[i].innerHTML);
+	        }
+	        $("span").text(a.join(" "));
+	    }
+
+
+</script>
+
+</head>
+
+<body>
+                <form id="LoginForm" name="LoginForm" method="post" class="form" action="${siteroot}/Login/Sub" >
+
+<table width="100%" height="100%">
+  <tr>
+    <td align="center">
+<table border="0" bgcolor="#000000" cellspacing="1" cellpadding="0">
+<tr>
+    <td width="100%">
+                <table class="table" bgcolor="#FFFFFF">
+                    <tr>
+                        <th colspan="2">
+
+                <span><strong>Введите учетные данные</strong></span></th>
+                    </tr>
+                    <tr>
+                        <td >
+                            Логин</td>
+                        <td>
+                            <input id="Login" type="text" name="Login" /></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Пароль</td>
+                        <td >
+                            <input id="Password" type="password" name="Password" /></td>
+                    </tr>
+                    <tr>
+                        <td >
+                            <input id="LoginButton" type="submit" value="Войти" /></td>
+                        <td >
+                         <div id="testdiv" value="dfg">
+                      	        <a class="icon icon-add" name="2" id="testR" 
+						        onclick="addPhone('client')">${TextAccess}</a>
+					    </div>
+                      </td>
+                    </tr>
+                </table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+
+    </form>
+</body>

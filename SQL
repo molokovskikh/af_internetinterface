@@ -1,0 +1,36 @@
+CREATE TABLE `internet`.`PhysicalClients` (
+  `Id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+  `Name` VARCHAR(45) NOT NULL,
+  `Surname` VARCHAR(45) NOT NULL,
+  `Patronymic` VARCHAR(45) NOT NULL,
+  `City` VARCHAR(45) NOT NULL,
+  `AdressConnect` VARCHAR(45) NOT NULL,
+  `PassportSeries` VARCHAR(45) NOT NULL,
+  `PassportNumber` VARCHAR(45) NOT NULL,
+  `WhoGivePassport` VARCHAR(45) NOT NULL,
+  `RegistrationAdress` VARCHAR(45) NOT NULL,
+  `RegDate` DATETIME NOT NULL,
+  `Tariff` INTEGER UNSIGNED NOT NULL,
+  `Balance` DECIMAL(10,2) NOT NULL,
+  `Login` VARCHAR(45) NOT NULL,
+  `Password` VARCHAR(45) NOT NULL,
+  `HasRegistered` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`Id`)
+)
+ENGINE = InnoDB;
+
+ALTER TABLE internet.PhysicalClients ADD UNIQUE (Login)
+
+ALTER TABLE internet.PhysicalClients ADD  FOREIGN KEY (Tariff)
+REFERENCES internet.Tariffs(Id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+
+CREATE TABLE `internet`.`PaymentsPhisicalClient` (
+  `Id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+  `PaymentDate` DATETIME NOT NULL,
+  `ClientID` INTEGER UNSIGNED NOT NULL,
+  `Summ` DECIMAL NOT NULL,
+  PRIMARY KEY (`Id`)
+)
+ENGINE = InnoDB;

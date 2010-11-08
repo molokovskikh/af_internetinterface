@@ -1,0 +1,20 @@
+﻿<link href="../Styles/style.css" type="text/css" rel="stylesheet" />
+
+<head>
+</head>
+
+<table class="table" >
+<thead>
+   <th > Интерфейс для партнера: ${PARTNERNAME}</th>
+   </thead>
+    <tr>
+        <td>
+        <a href = "../RegisterClient/Register.rails" >Регистрация нового абонента</a>
+            </td>
+    </tr>
+    <tr>
+        <td>
+        <a href = "../Search/SearchUsers.rails" >Найти абонента</a>
+        </td>
+    </tr>
+</table>

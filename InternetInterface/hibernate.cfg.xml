@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-configuration  >
+	<session-factory xmlns="urn:nhibernate-configuration-2.2">
+		<!-- properties -->
+		<property name="connection.provider">NHibernate.Connection.DriverConnectionProvider</property>
+		<property name="connection.connection_string">Data Source=testsql.analit.net;Database=accessright;User ID=system;Password=newpass;Connect Timeout=300;pooling=true;convert zero datetime=yes;Default command timeout=300;Allow User Variables=true;</property>
+		<property name="dialect">NHibernate.Dialect.MySQL5Dialect</property>
+		<!-- 
+			these are different than the values in app.config so I can verify these 
+			are being picked up
+		-->
+		<!--mapping file="User.hbm.xml" /-->
+		<mapping resource="InternetInterface.User.hbm.xml" assembly="InternetInterface" />
+		<!-- mapping files -->
+		<!-- are now optional
+			<mapping file="ABC.hbm.xml" />
+			<mapping resource="NHibernate.DomainModel.Simple.hbm.xml" assembly="NHibernate.DomainModel" />
+		-->
+	</session-factory>
+	
+</hibernate-configuration>

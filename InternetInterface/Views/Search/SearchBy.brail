@@ -1,0 +1,40 @@
+﻿<% OutputSubView("SearchUsers") %>l
+<% if (SClients.Count == 0): %>
+<div class="div">По вашему запросу ничего не найдено</div>
+<% else: %>
+<table class="table"  style="width: 100%; font-size: small;">
+    <thead>
+        <tr valign="top">
+            <th>ФИО</th>
+            <th>Город</th>            
+            <th>Адрес подключения</th>            
+            <th>Паспортные данные</th>
+            <th>Дата регистрации</th>
+            <th>Тариф</th>
+            <th>Баланс</th>
+            <th>Логин</th>
+            <th>Кем зарегистрирован</th>
+        </tr>
+    </thead>
+    
+    <tbody id="SearchResults">
+    <% for i,item in enumerate(SClients): %>
+        <tr class="${item.Name}">
+            <td><a href="../UserInfo/SearchUserInfo.rails?ClientCode=${item.Id}">${item.Name} ${item.Surname} ${item.Patronymic}</a></td>
+            <td>${item.City}</td>
+            <td>${item.AdressConnect}</td>            
+            <td>${item.PassportSeries} ${item.PassportNumber}
+            ${item.WhoGivePassport}
+            ${item.RegistrationAdress}
+            </td>            
+            <td>${item.RegDate}</td>
+            <td>${tariffText[i].Name}</td>
+            <td>${item.Balance}</td>
+            <td>${item.Login}</td>
+            <td>${partnerText[i].Name}</td>
+        </tr>
+    <% end %>        
+    </tbody>
+</table>
+</form>
+<% end %>

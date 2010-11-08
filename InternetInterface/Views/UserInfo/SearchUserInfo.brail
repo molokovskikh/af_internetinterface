@@ -1,0 +1,102 @@
+﻿<head>
+<link href="../Styles/style.css" type="text/css" rel="stylesheet" />
+<!-- <link href="../Styles/base.css" type="text/css" rel="stylesheet" /> --->
+    <form class="form" id="ChangeB" name="ChangeB" method=post action="${siteroot}/UserInfo/ChangeBalance">
+    <input type="hidden" name="ClientID" value="${SClients.Id}" />
+<div style="clear:both;">
+<h3><a href="../Map/SiteMap.rails">Домой</a></h3>
+<table class="table" style="width: 50%;" align="left">
+    <thead>
+        <th >Информация по клиенту ${ClientName[0]}</th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Город: ${SClients.City}</td>
+        </tr>
+        <tr>
+            <td>Адрес подключения: ${SClients.AdressConnect}</td>
+        </tr>
+        <tr>
+            <td>Паспортные данные: <br />
+                                                 Серия\Номер  ${SClients.PassportSeries}\${SClients.PassportNumber}<br />
+                                                 Кем выдан: ${SClients.WhoGivePassport}<br />
+                                                 Адрес регистрации: ${SClients.RegistrationAdress}</td>
+        </tr>
+        <tr>
+            <td>Дата регистрации: ${SClients.RegDate}</td>
+        </tr>
+        <tr>
+             <td>Тариф: ${ClientTariffName}</td>
+        </tr>
+        <tr>
+            <td>Баланс: ${SClients.Balance}</td>
+        </tr>
+        <tr>
+            <td>Логин: ${SClients.Login}</td>
+        </tr>
+        <tr>
+            <td>Зарегистрировал: ${WhoRegister}</td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<br />
+<div style="clear:both;">
+<table class="table"  style="width: 50%; font-size: small;" align="left">
+    <thead>
+        <tr valign="top">
+            <th>Клиент</th>
+            <th>Дата оплаты</th>                      
+            <th>Сумма</th>
+        </tr>
+    </thead>
+    
+    <tbody id="SearchResults" class="HighLightCurrentRow">
+    <% for i,item in enumerate(Payments): %>
+        <tr id="Row${ClientName[i]}">
+            <td>${ClientName[i]}</td>      
+            <td>${item.PaymentDate}</td>
+            <td>${item.Summ}</td>
+        </tr>
+    <% end %>        
+    </tbody>
+
+</table>
+</div>
+<br />
+<div style="clear:both;">
+    <table class="table">
+        <thead>
+            <th>Пополнить баланс клиента</th>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                <input type="radio" id="Autosearch" name="ChangedBy.ChangeType" value="ForTariff" ${"checked" if ChangeBy.IsForTariff()} />
+                <label for="Autosearch">Внести сумму по тарифному плану</label><br />
+
+                <input type="radio" id="Radio1" name="ChangedBy.ChangeType" value="OtherSumm" ${"checked" if ChangeBy.IsOtherSumm()} />
+                <label for="Other_Balance">Внести сумму:</label>
+                <input type="text" id="BalanceText"  name="BalanceText"  value="${BalanceText}" style="width: 50%; " />
+            </td>
+            <%if IsDefined("Applying"): %>
+           <% if Applying: %>
+            <td>
+                <strong> <span class="letter">Баланс пополнен</span> </strong>
+            </td>
+            <%else: %>
+            <td>
+                <strong> <span class="letter">Ошибка валидации поля</span> </strong>
+            </td>
+        <%end%>
+       <% end %>
+        </tr>
+        <tr>
+            <td>
+                <input id="SearchButton" type="submit" value="Пополнить баланс"  align="right" />
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</form>
