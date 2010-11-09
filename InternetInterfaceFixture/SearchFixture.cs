@@ -47,7 +47,7 @@ namespace InternetInterfaceFixtute.RegisterTest
 		[Test]
 		public void SearchTets()
 		{
-			GetClients(new UserSearchProperties { SearchBy = SearchUserBy.Auto }, 4, 1, "p");
+			GetClients(new UserSearchProperties { SearchBy = SearchUserBy.Auto }, 4, 1, "");
 			//var browser = Open()
 		}
 	}

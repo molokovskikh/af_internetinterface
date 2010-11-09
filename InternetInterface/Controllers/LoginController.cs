@@ -22,7 +22,7 @@ namespace InternetInterface.Controllers
 			else
 			{
 				Flash["AccessDenied"] = true;
-				RedirectToUrl(@"LoginPartner.rails?TextAccess=NO");
+				RedirectToUrl(@"LoginPartner.rails");
 			}
 		}
 

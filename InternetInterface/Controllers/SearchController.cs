@@ -4,6 +4,7 @@ using System.Linq;
 using Castle.ActiveRecord;
 using Castle.MonoRail.Framework;
 using InternetInterface.Models;
+using NHibernate;
 
 namespace InternetInterface.Controllers
 {
@@ -18,19 +19,17 @@ namespace InternetInterface.Controllers
 			{
 				var sessionHolder = ActiveRecordMediator.GetSessionFactoryHolder();
 				var session = sessionHolder.CreateSession(typeof (Client));
-				if (_SearchText == null)
-				{
-					_SearchText = "*";
-				}
 				_searchProperties.SearchText = _SearchText;
 				try
 				{
 					var sqlStr = String.Format(@"SELECT * FROM internet.PhysicalClients P {0} GROUP BY P.Id",
-					                           GetWhere(_searchProperties, _whoregister, _tariff));
-					var result = session.CreateSQLQuery(sqlStr).AddEntity(typeof (Client))
+					                           GetWhere(_searchProperties, _whoregister, _tariff, _SearchText));
+					var query = session.CreateSQLQuery(sqlStr).AddEntity(typeof (Client))
 						.SetParameter("whoregister", _whoregister)
-						.SetParameter("tariff", _tariff)
-						.SetParameter("SearchText", "%" + _SearchText.ToLower() + "%").List<Client>();
+						.SetParameter("tariff", _tariff);
+					if (_SearchText != null)
+						query.SetParameter("SearchText", "%" + _SearchText.ToLower() + "%");
+					var result = query.List<Client>();
 					foreach (var item in result)
 						session.Evict(item);
 					return result;
@@ -81,7 +80,7 @@ namespace InternetInterface.Controllers
 		}
 
 
-		private string GetWhere(UserSearchProperties Sp, uint whoregister, uint tariff)
+		private string GetWhere(UserSearchProperties Sp, uint whoregister, uint tariff, string SearchText)
 		{
 			string _return = "";
 			if (whoregister != 0)
@@ -107,32 +106,46 @@ namespace InternetInterface.Controllers
 			{
 				_return += " and :tariff = :tariff and :whoregister = :whoregister";
 			}
-
-			if (Sp.IsSearchAuto())
+			if (SearchText != null)
 			{
-				return String.Format(@"
+				if (Sp.IsSearchAuto())
+				{
+					return
+						String.Format(
+							@"
 WHERE LOWER(P.Name) like {0} or LOWER(P.Surname) like {0}
 or LOWER(P.Patronymic) like {0} or LOWER(P.City) like {0} 
 or LOWER(P.AdressConnect) like {0} or LOWER(P.PassportSeries) like {0}
 or LOWER(P.PassportNumber) like {0} or LOWER(P.WhoGivePassport) like {0}
-or LOWER(P.RegistrationAdress) like {0} or LOWER(P.Login) like {0}", ":SearchText") + _return;
-			}
-			if (Sp.IsSearchByFio())
-			{
-				return String.Format(@"
+or LOWER(P.RegistrationAdress) like {0} or LOWER(P.Login) like {0}",
+							":SearchText") + _return;
+				}
+				if (Sp.IsSearchByFio())
+				{
+					return
+						String.Format(@"
 WHERE LOWER(P.Name) like {0} or LOWER(P.Surname) like {0}
-or LOWER(P.Patronymic) like {0}", ":SearchText") + _return;
-			}
-			if (Sp.IsSearchByLogin())
-			{
-				return String.Format(@"WHERE LOWER(P.Login) like {0}", ":SearchText") + _return;
-			}
-			if (Sp.IsSearchByPassportSet())
-			{
-				return String.Format(@"
+or LOWER(P.Patronymic) like {0}",
+						              ":SearchText") + _return;
+				}
+				if (Sp.IsSearchByLogin())
+				{
+					return String.Format(@"WHERE LOWER(P.Login) like {0}", ":SearchText") + _return;
+				}
+				if (Sp.IsSearchByPassportSet())
+				{
+					return
+						String.Format(
+							@"
 WHERE LOWER(P.PassportSeries) like {0}
 or LOWER(P.PassportNumber) like {0} or LOWER(P.WhoGivePassport) like {0}
-or LOWER(P.RegistrationAdress) like {0}", ":SearchText") + _return;
+or LOWER(P.RegistrationAdress) like {0}",
+							":SearchText") + _return;
+				}
+			}
+			else
+			{
+				return "WHERE" + _return.Remove(0, 4);
 			}
 			return "";
 		}

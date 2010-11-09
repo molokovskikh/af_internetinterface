@@ -34,3 +34,5 @@ C:\Web_Project\InternetInterface\InternetInterfaceFixture\bin\Debug\Castle.Compo
 C:\Web_Project\InternetInterface\InternetInterfaceFixture\bin\Debug\Castle.Components.Binder.xml
 C:\Web_Project\InternetInterface\InternetInterfaceFixture\obj\Debug\InternetInterfaceFixture.dll
 C:\Web_Project\InternetInterface\InternetInterfaceFixture\obj\Debug\InternetInterfaceFixture.pdb
+C:\Web_Project\InternetInterface\InternetInterfaceFixture\bin\Debug\InternetInterface.dll
+C:\Web_Project\InternetInterface\InternetInterfaceFixture\bin\Debug\InternetInterface.pdb

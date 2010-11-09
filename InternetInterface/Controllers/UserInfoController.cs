@@ -20,7 +20,7 @@ namespace InternetInterface.Controllers
 			}
 			else
 			{
-				
+				RedirectToUrl(@"..\\Errors\AccessDin.aspx");
 			}
 		}
 
@@ -44,15 +44,18 @@ namespace InternetInterface.Controllers
 					{
 						ForChangeSumm = Convert.ToDecimal(BalanceText);
 					}
-					ClientTOCH.Balance += ForChangeSumm;
+					if (ForChangeSumm != 0)
+					{
+						ClientTOCH.Balance += ForChangeSumm;
 
-					thisPay.ClientID = ClientID;
-					thisPay.PaymentDate = DateTime.Now;
-					thisPay.Summ = ForChangeSumm;
-					thisPay.ManagerID = MapPartner[0];
-					thisPay.SaveAndFlush();
-					ClientTOCH.UpdateAndFlush();
-					Flash["Applying"] = true;
+						thisPay.ClientID = ClientID;
+						thisPay.PaymentDate = DateTime.Now;
+						thisPay.Summ = ForChangeSumm;
+						thisPay.ManagerID = MapPartner[0];
+						thisPay.SaveAndFlush();
+						ClientTOCH.UpdateAndFlush();
+						Flash["Applying"] = true;
+					}
 				}
 				catch (Exception)
 				{

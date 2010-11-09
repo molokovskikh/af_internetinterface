@@ -1,7 +1,7 @@
 ﻿<head>
 
 <script type="text/javascript" src="../Scripts/jquery-1.4.1.js"></script> 
-<!-- <link href="../Styles/Login.css" type="text/css" rel="stylesheet" /> -->
+
 <link href="../Styles/style.css" type="text/css" rel="stylesheet" />
 <link rel="stylesheet" href="../Styles/base.css" type="text/css" media="screen" />
 
