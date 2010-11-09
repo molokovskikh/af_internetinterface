@@ -5,20 +5,20 @@
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head id="Head1" runat="server">
     <title>Ошибка авторизации</title>
-    <style type="text/css">
-        .style1
-        {
-            background-color: #FF9999;
-        }
-    </style>
+<link href="../Styles/style.css" type="text/css" rel="stylesheet" />
+<link rel="stylesheet" href="../Styles/base.css" type="text/css" media="screen" />
 </head>
 <body>
-    <form id="form1" runat="server">
-    <div class="Error">
-		<p class="style1">
-			У вас нет прав для просмотра запрошенной страницы
-		</p>
+<div id="main" style="width: 100%;">
+    <div id="container">
+        <div id="block-tables" class="block" style="margin: 150px auto;">
+           <div class="flash">
+               <div class="message error">
+                   <p>У вас нет прав для просмотра запрошенной страницы</p>
+               </div>
+           </div>
+        </div>
     </div>
-    </form>
+</div>
 </body>
 </html>

@@ -9,11 +9,19 @@ namespace InternetInterface.Controllers
 		[AccessibleThrough(Verb.Get)]
 		public void SearchUserInfo(uint ClientCode)
 		{
-			PropertyBag["Payments"] = Payment.FindAllByProperty("ClientID", ClientCode);
-			PropertyBag["ClientName"] = Client.Find(ClientCode);
-			PropertyBag["BalanceText"] = string.Empty;
-			PropertyBag["ClientCode"] = ClientCode;
-			PropertyBag["ChangeBy"] = new ChangeBalaceProperties { ChangeType = TypeChangeBalance.OtherSumm };
+			var MapPartner = Partner.FindAllByProperty("Pass", Session["HashPass"]);
+			if (MapPartner.Length != 0)
+			{
+				PropertyBag["Payments"] = Payment.FindAllByProperty("ClientID", ClientCode);
+				PropertyBag["ClientName"] = Client.Find(ClientCode);
+				PropertyBag["BalanceText"] = string.Empty;
+				PropertyBag["ClientCode"] = ClientCode;
+				PropertyBag["ChangeBy"] = new ChangeBalaceProperties {ChangeType = TypeChangeBalance.OtherSumm};
+			}
+			else
+			{
+				
+			}
 		}
 
 
@@ -50,8 +58,13 @@ namespace InternetInterface.Controllers
 				{
 					Flash["Applying"] = false;
 				}
+				RedirectToUrl(@"../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientID);
 			}
-			RedirectToUrl(@"../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientID);
+			else
+			{
+				RedirectToUrl(@"..\\Errors\AccessDin.aspx");
+			}
+			
 		}
 		public void Test()
 		{

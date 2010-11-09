@@ -13,53 +13,70 @@ namespace InternetInterface.Controllers
 
 		public IList<Client> GetClients(UserSearchProperties _searchProperties, uint _tariff, uint _whoregister, string _SearchText)
 		{
-			var sessionHolder = ActiveRecordMediator.GetSessionFactoryHolder();
-			var session = sessionHolder.CreateSession(typeof (Client));
-			if (_SearchText == null)
+			var MapPartner = Partner.FindAllByProperty("Pass", Session["HashPass"]);
+			if (MapPartner.Length != 0)
 			{
-				_SearchText = "*";
+				var sessionHolder = ActiveRecordMediator.GetSessionFactoryHolder();
+				var session = sessionHolder.CreateSession(typeof (Client));
+				if (_SearchText == null)
+				{
+					_SearchText = "*";
+				}
+				_searchProperties.SearchText = _SearchText;
+				try
+				{
+					var sqlStr = String.Format(@"SELECT * FROM internet.PhysicalClients P {0} GROUP BY P.Id",
+					                           GetWhere(_searchProperties, _whoregister, _tariff));
+					var result = session.CreateSQLQuery(sqlStr).AddEntity(typeof (Client))
+						.SetParameter("whoregister", _whoregister)
+						.SetParameter("tariff", _tariff)
+						.SetParameter("SearchText", "%" + _SearchText.ToLower() + "%").List<Client>();
+					foreach (var item in result)
+						session.Evict(item);
+					return result;
+				}
+				catch (Exception e)
+				{
+					return new List<Client>();
+				}
 			}
-			_searchProperties.SearchText = _SearchText;
-			try
+			else
 			{
-				var sqlStr = String.Format(@"SELECT * FROM internet.PhysicalClients P {0} GROUP BY P.Id",
-										   GetWhere(_searchProperties, _whoregister, _tariff));
-				var result = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Client))
-					.SetParameter("whoregister", _whoregister)
-					.SetParameter("tariff", _tariff)
-					.SetParameter("SearchText", "%" + _SearchText.ToLower() + "%").List<Client>();
-				foreach (var item in result)
-					session.Evict(item);
-				return result;
+				RedirectToUrl(@"..\\Errors\AccessDin.aspx");
 			}
-			catch (Exception e)
-			{
-				return new List<Client>();
-			}
+			return new List<Client>();
 		}
 
 		[AccessibleThrough(Verb.Get)]
 		public void SearchBy([DataBind("SearchBy")]UserSearchProperties searchProperties, uint tariff, uint whoregister, string SearchText)
 		{
-			var Clients = GetClients(searchProperties, tariff, whoregister, SearchText);
-				Flash["SClients"] = Clients;
-				var TariffText = new List<Tariff>();
-				var PartnerText = new List<Partner>();
-				for (int i = 0; i < Clients.Count; i++)
+				var MapPartner = Partner.FindAllByProperty("Pass", Session["HashPass"]);
+				if (MapPartner.Length != 0)
 				{
-					TariffText.Add(Clients[i].Tariff);
-					PartnerText.Add(Clients[i].HasRegistered);
+					var Clients = GetClients(searchProperties, tariff, whoregister, SearchText);
+					Flash["SClients"] = Clients;
+					var TariffText = new List<Tariff>();
+					var PartnerText = new List<Partner>();
+					for (int i = 0; i < Clients.Count; i++)
+					{
+						TariffText.Add(Clients[i].Tariff);
+						PartnerText.Add(Clients[i].HasRegistered);
+					}
+					Flash["tariffText"] = TariffText;
+					Flash["partnerText"] = PartnerText;
+					var mapPartner = Partner.FindAllByProperty("Pass", Session["HashPass"]);
+					PropertyBag["PARTNERNAME"] = mapPartner[0].Name;
+					PropertyBag["Tariffs"] = Tariff.FindAll();
+					PropertyBag["ChTariff"] = tariff;
+					PropertyBag["ChRegistr"] = whoregister;
+					PropertyBag["WhoRegistered"] = Partner.FindAll();
+					PropertyBag["FindBy"] = searchProperties;
 				}
-				Flash["tariffText"] = TariffText;
-				Flash["partnerText"] = PartnerText;
-				var mapPartner = Partner.FindAllByProperty("Pass", Session["HashPass"]);
-				PropertyBag["PARTNERNAME"] = mapPartner[0].Name;
-				PropertyBag["Tariffs"] = Tariff.FindAll();
-				PropertyBag["ChTariff"] = tariff;
-				PropertyBag["ChRegistr"] = whoregister;
-				PropertyBag["WhoRegistered"] = Partner.FindAll();
-				PropertyBag["FindBy"] = searchProperties;
-				//RedirectToUrl(@"SearchUsers?Query=YES");
+				else
+				{
+					RedirectToUrl(@"..\\Errors\AccessDin.aspx");
+				}
+			//RedirectToUrl(@"SearchUsers?Query=YES");
 
 		}
 

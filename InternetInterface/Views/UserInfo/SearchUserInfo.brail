@@ -2,7 +2,6 @@
 <link href="../Styles/style.css" type="text/css" rel="stylesheet" />
 <link rel="stylesheet" href="../Styles/base.css" type="text/css" media="screen" />
 <!-- <link href="../Styles/base.css" type="text/css" rel="stylesheet" /> --->
-    <input type="hidden" name="ClientID" value="${ClientCode}" />
 <div id="main" style="width: 50%;">
 <div id="container">
 <div id="block-tables" class="block">
@@ -30,34 +29,34 @@
     <tbody>
 
 		<tr>
-            <td>Город: ${ClientName.City}</td>
+            <td><span class="description">Город: </span> ${ClientName.City}</td>
         </tr>
         <tr>
-            <td>Адрес подключения: ${ClientName.AdressConnect}</td>
+            <td><span class="description">Адрес подключения: </span>   ${ClientName.AdressConnect}</td>
         </tr>
         <tr>
             <td>Паспортные данные: <br />
-                                                 Серия\Номер  ${ClientName.PassportSeries}\${ClientName.PassportNumber}<br />
-                                                 Кем выдан: ${ClientName.WhoGivePassport}<br />
-                                                 Адрес регистрации: ${ClientName.RegistrationAdress}</td>
+                                                 <span class="description">Серия\Номер</span> ${ClientName.PassportSeries} \ ${ClientName.PassportNumber}<br />
+                                                 <span class="description">Кем выдан: </span> ${ClientName.WhoGivePassport}<br />
+                                                 <span class="description">Адрес регистрации:</span> ${ClientName.RegistrationAdress}</td>
         </tr>
         <tr>
-            <td>Дата регистрации: ${ClientName.RegDate}</td>
+            <td><span class="description">Дата регистрации:</span> ${ClientName.RegDate}</td>
         </tr>
 				
 		<tr>
-            <td>Зарегистрировал: ${ClientName.HasRegistered.Name}</td>
+            <td><span class="description">Зарегистрировал:</span> ${ClientName.HasRegistered.Name}</td>
         </tr>
 		
 		<tr>
-             <td>Тариф: ${ClientName.Tariff.Name}</td>
+             <td><span class="description">Тариф:</span> ${ClientName.Tariff.Name}</td>
         </tr>
 
         <tr>
-            <td>Баланс: ${ClientName.Balance}</td>
+            <td><span class="description">Баланс:</span> ${ClientName.Balance}</td>
         </tr>
         <tr>
-            <td>Логин: ${ClientName.Login}</td>
+            <td><span class="description">Логин:</span> ${ClientName.Login}</td>
         </tr>
 
     </tbody>
@@ -90,6 +89,7 @@
 <br />
 <div style="clear:both;">
 <form class="form login" method="post" action="${siteroot}/UserInfo/ChangeBalance">
+    <input type="hidden" name="ClientID" value="${ClientCode}" />
     <table class="table">
         <thead>
             <th>Пополнить баланс клиента</th>

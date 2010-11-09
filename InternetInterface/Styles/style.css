@@ -336,6 +336,11 @@ input.checkbox {
   font-family:Georgia, serif;
 }
 
+.balance_text {
+  color:#aaa;
+  font-family:Georgia, serif;
+}
+
 /* flash-messages */
 .flash .message {
   -moz-border-radius: 3px;

@@ -2,15 +2,12 @@
 using System.Reflection;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework.Config;
+using Castle.ActiveRecord.Framework.Internal;
 using Castle.Components.Validator;
-using Castle.MonoRail.Framework;
 using InternetInterface.Controllers;
 using InternetInterface.Models;
 using log4net.Config;
-//using InternetInterface.Validation;
 using NUnit.Framework;
-
-using Castle.MonoRail.Framework;
 
 
 namespace NHibernateFixtute.RegisterTest
@@ -65,16 +62,11 @@ namespace NHibernateFixtute.RegisterTest
 				Patronymic = "",
 				Surname = "",
 			};
-			Validator = new ValidatorRunner(new CachedValidationRegistry());
+			Validator = new ValidatorRunner(ActiveRecordModelBuilder.ValidatorRegistry);
 
-			//IValidator validatorPas = new NumberValidationAttribute.NumberValidator();
-			
-
-			//IValidator validator = new ContactTextValidator();
-
-			//ConfigureValidatorMessage(validator);
-			Register(c, false, 4);
+			var b = RegistrLogic(c, false, 4);
 			var err = c.GetErrorText("Name");
+			Console.WriteLine(err);
 			//var browser = Open()
 		}
 	}

@@ -12,43 +12,57 @@ namespace InternetInterface.Controllers
 		[AccessibleThrough(Verb.Post)]
 		public void Register([DataBind("client")]Client _user, bool Popolnenie, uint tariff)
 		{
-			var newClient = new Client();
-			//string Applying = string.Empty;
-			if (Validator.IsValid(_user))
+			var MapPartner = Partner.FindAllByProperty("Pass", Session["HashPass"]);
+			if (MapPartner.Length != 0)
 			{
+				if (RegistrLogic(_user, Popolnenie, tariff))
 				{
-					newClient.Name = _user.Name;
-					newClient.Surname = _user.Surname;
-					newClient.Patronymic = _user.Patronymic;
-					newClient.City = _user.City;
-					newClient.AdressConnect = _user.AdressConnect;
-					newClient.PassportSeries = _user.PassportSeries;
-					newClient.PassportNumber = _user.PassportNumber;
-					newClient.WhoGivePassport = _user.WhoGivePassport;
-					newClient.RegistrationAdress = _user.RegistrationAdress;
-					newClient.RegDate = DateTime.Now;
-					newClient.Tariff = Tariff.FindAllByProperty("Id", tariff)[0];
-					newClient.Balance = Popolnenie ? newClient.Tariff.Price : 0;
-					newClient.Login = _user.Login;
-					newClient.Password = CryptoPass.GetHashString(_user.Password);
-					newClient.HasRegistered = Partner.FindAllByProperty("Pass", Session["HashPass"].ToString())[0];
-					newClient.SaveAndFlush();
 					PropertyBag["Applying"] = "true";
 					PropertyBag["Client"] = new Client();
 					PropertyBag["Tariffs"] = Tariff.FindAll();
 					PropertyBag["Popolnen"] = Popolnenie;
 				}
+				else
+				{
+					_user.SetValidationErrors(Validator.GetErrorSummary(_user));
+					PropertyBag["Client"] = _user;
+					PropertyBag["Tariffs"] = Tariff.FindAll();
+					PropertyBag["Applying"] = "false";
+					PropertyBag["Popolnen"] = Popolnenie;
+				}
 			}
 			else
 			{
-				_user.SetValidationErrors(Validator.GetErrorSummary(_user));
-				PropertyBag["Client"] = _user;
-				PropertyBag["Tariffs"] = Tariff.FindAll();
-				PropertyBag["Applying"] = "false";
-				PropertyBag["Popolnen"] = Popolnenie;
+				RedirectToUrl(@"..\\Errors\AccessDin.aspx");
 			}
 		}
 
+
+		public bool RegistrLogic(Client _client, bool _Popolnenie, uint _tariff)
+		{
+			var newClient = new Client();
+			if (Validator.IsValid(_client))
+			{
+				newClient.Name = _client.Name;
+				newClient.Surname = _client.Surname;
+				newClient.Patronymic = _client.Patronymic;
+				newClient.City = _client.City;
+				newClient.AdressConnect = _client.AdressConnect;
+				newClient.PassportSeries = _client.PassportSeries;
+				newClient.PassportNumber = _client.PassportNumber;
+				newClient.WhoGivePassport = _client.WhoGivePassport;
+				newClient.RegistrationAdress = _client.RegistrationAdress;
+				newClient.RegDate = DateTime.Now;
+				newClient.Tariff = Tariff.FindAllByProperty("Id", _tariff)[0];
+				newClient.Balance = _Popolnenie ? newClient.Tariff.Price : 0;
+				newClient.Login = _client.Login;
+				newClient.Password = CryptoPass.GetHashString(_client.Password);
+				newClient.HasRegistered = Partner.FindAllByProperty("Pass", Session["HashPass"].ToString())[0];
+				newClient.SaveAndFlush();
+				return true;
+			}
+			return false;
+		}
 
 		//[AccessibleThrough(Verb.Get)]
 		public void Register()
