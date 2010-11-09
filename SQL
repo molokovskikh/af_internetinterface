@@ -34,3 +34,11 @@ CREATE TABLE `internet`.`PaymentsPhisicalClient` (
   PRIMARY KEY (`Id`)
 )
 ENGINE = InnoDB;
+
+ALTER TABLE `internet`.`PaymentsPhisicalClient` ADD COLUMN `ManagerID` INT(10) UNSIGNED NOT NULL AFTER `Summ`;
+
+ALTER TABLE internet.PaymentsPhisicalClient ADD  FOREIGN KEY (ManagerID)
+REFERENCES accessright.Partners(Id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+

@@ -1,21 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
 using Castle.Components.Validator;
-using InternetInterface.Controllers.Validate;
 
 //using InternetInterface.Validation;
 
 namespace InternetInterface.Models
 {
 
-	public class ClientErrors
+	/*public class ClientErrors
 	{
 		public Dictionary<string, string> Errors = new Dictionary<string, string>();
 
-		/*public ClientErrors()
+		public ClientErrors()
 		{
 			Errors.Add("ErrorName","");
 			Errors.Add("ErrorSurname", "");
@@ -23,8 +20,8 @@ namespace InternetInterface.Models
 			Errors.Add("ErrorAdressConnect", "");
 			Errors.Add("ErrorWhoGivePassport", "");
 			Errors.Add("ErrorRegistrationAdress", "");
-		}		*/
-	}
+		}		
+	}*/
 
 	[ActiveRecord("PhysicalClients", Schema = "internet", Lazy = true)]
 	public class Client : ActiveRecordLinqBase<Client>
@@ -33,11 +30,6 @@ namespace InternetInterface.Models
 		{
 			ValidationErrors = null;
 		}
-
-		/*public static Client GetById(uint id)
-		{
-			return ActiveRecordMediator<Client>.FindByPrimaryKey(id);
-		}*/
 
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
@@ -57,12 +49,10 @@ namespace InternetInterface.Models
 		[Property, ValidateNonEmpty("Введите адрес подключения")]
 		public virtual string AdressConnect { get; set; }
 
-		[Property, ValidateRegExp(@"^(\d{4})?$", "Неправильный формат серии паспорта"), ValidateNonEmpty("Поле не должно быть пустым")]
-		//[Property]
+		[Property, ValidateRegExp(@"^(\d{4})?$", "Неправильный формат серии паспорта (4 цифры)"), ValidateNonEmpty("Поле не должно быть пустым")]
 		public virtual string PassportSeries { get; set; }
 
-		[Property, ValidateRegExp(@"^(\d{6})?$", "Неправильный формат номера паспорта"), ValidateNonEmpty("Поле не должно быть пустым")]
-		//[Property]
+		[Property, ValidateRegExp(@"^(\d{6})?$", "Неправильный формат номера паспорта (6 цифр)"), ValidateNonEmpty("Поле не должно быть пустым")]
 		public virtual string PassportNumber { get; set; }
 
 		[Property, ValidateNonEmpty("Заполните поле 'Кем выдан паспорт'")]
@@ -83,7 +73,7 @@ namespace InternetInterface.Models
 		[Property, ValidateNonEmpty("Введите логин")]
 		public virtual string Login { get; set; }
 
-		[Property]
+		[Property, ValidateNonEmpty("Введите пароль")]
 		public virtual string Password { get; set; }
 
 		[BelongsTo("HasRegistered")]

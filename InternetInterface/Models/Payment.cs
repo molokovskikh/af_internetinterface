@@ -22,5 +22,8 @@ namespace InternetInterface.Models
 		[Property, ValidateDecimal("Непрвильно введено значение суммы")]
 		public virtual decimal Summ { get; set; }
 
+		[BelongsTo("ManagerID")]
+		public virtual Partner ManagerID { get; set; }
+
 	}
 }

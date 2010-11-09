@@ -18,14 +18,13 @@
     </style>
 </head>
 
-<h3><a href="../Map/SiteMap.rails">Домой</a></h3>
-<h4 class="style2"><b>Вы вошли как ${PARTNERNAME}</b></h4> 
 
 <form id="SearchForm" name="SearchForm" action="${siteroot}/Search/SearchBy" 
     style="width: 100%; ">
 <center>
 <table border="0" bgcolor="#000000" cellspacing="1" cellpadding="0">
 <tr>
+<h4><a href="../Map/SiteMap.rails">Домой</a>  Вы вошли как ${PARTNERNAME}</h4>
     <td width="100%">
     <table class="table" bgcolor="#FFFFFF">
     <tr>

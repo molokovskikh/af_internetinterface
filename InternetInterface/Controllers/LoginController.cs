@@ -21,7 +21,7 @@ namespace InternetInterface.Controllers
 			}
 			else
 			{
-				Flash["TextAccess"] = "Вы ввели неправильные учетные данные";
+				Flash["AccessDenied"] = true;
 				RedirectToUrl(@"LoginPartner.rails?TextAccess=NO");
 			}
 		}
@@ -29,8 +29,8 @@ namespace InternetInterface.Controllers
 		[AccessibleThrough(Verb.Get)]
 		public void LoginPartner(string TextAccess)
 		{
-			if (TextAccess != "NO")
-			PropertyBag["TextAccess"] = "";
+			/*if (TextAccess != "NO")
+			PropertyBag["TextAccess"] = "";*/
 		}
 
 	}

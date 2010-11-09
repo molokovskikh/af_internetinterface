@@ -49,7 +49,7 @@ namespace NHibernateFixtute.RegisterTest
 					TelNum = "TestTel"
 				},
 				Login = "",
-				Name = "",
+				Name = "dfg",
 				PassportNumber = "",
 				PassportSeries = "ASDAD",
 				Password = "qw",
@@ -74,6 +74,7 @@ namespace NHibernateFixtute.RegisterTest
 
 			//ConfigureValidatorMessage(validator);
 			Register(c, false, 4);
+			var err = c.GetErrorText("Name");
 			//var browser = Open()
 		}
 	}

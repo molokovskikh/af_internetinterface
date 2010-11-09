@@ -1,16 +1,17 @@
 ﻿<link href="../Styles/style.css" type="text/css" rel="stylesheet" />
+<link rel="stylesheet" href="../Styles/base.css" type="text/css" media="screen" />
 
-<head>
-</head>
-
-<table class="table" >
+<div id="main" style="width: 50%;">
+<div id="container">
+<div class="content">
+<table class="table"  >
 <thead>
    <th > Интерфейс для партнера: ${PARTNERNAME}</th>
    </thead>
     <tr>
         <td>
         <a href = "../RegisterClient/Register.rails" >Регистрация нового абонента</a>
-            </td>
+         </td>
     </tr>
     <tr>
         <td>
@@ -18,3 +19,6 @@
         </td>
     </tr>
 </table>
+</div>
+</div>
+</div>

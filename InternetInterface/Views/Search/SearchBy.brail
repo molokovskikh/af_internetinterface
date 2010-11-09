@@ -1,7 +1,14 @@
-﻿<% OutputSubView("SearchUsers") %>l
+﻿<% OutputSubView("SearchUsers") %>
+<div id="main" style="width: 100%;">
 <% if (SClients.Count == 0): %>
-<div class="div">По вашему запросу ничего не найдено</div>
+<div class="flash">
+    <div class="message error">
+        <p>По вашему запросу ничего не найдено, либо вы не ввели информацию для поиска</p>
+    </div>
+</div>
 <% else: %>
+<div id="block-tables" class="block">
+<div class="content">
 <table class="table"  style="width: 100%; font-size: small;">
     <thead>
         <tr valign="top">
@@ -36,5 +43,8 @@
     <% end %>        
     </tbody>
 </table>
-</form>
 <% end %>
+</div>
+</div>
+
+</div>
