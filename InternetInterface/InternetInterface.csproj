@@ -44,6 +44,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\AR 2.1.2\Castle.ActiveRecord.Linq.dll</HintPath>
     </Reference>
+    <Reference Include="Castle.Components.Binder">
+      <HintPath>..\Lib\Castle.Components.Binder.dll</HintPath>
+    </Reference>
     <Reference Include="Castle.Components.Validator, Version=1.1.1.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\AR 2.1.2\Castle.Components.Validator.dll</HintPath>

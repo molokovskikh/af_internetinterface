@@ -19,7 +19,7 @@ namespace InternetInterface.Models
 	{
 		[Description("Согласно тарифу")]
 		ForTariff,
-		[Description("Другая сумма")]
+		[Description("Другая сумма")]   
 		OtherSumm,
 	}
 
@@ -46,7 +46,7 @@ namespace InternetInterface.Models
 
 		public bool IsSearchAuto()
 		{
-			return SearchBy == SearchUserBy.Auto;
+			return SearchBy == SearchUserBy.Auto;  
 		}
 
 		public bool IsSearchByFio()
