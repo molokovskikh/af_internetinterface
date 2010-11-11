@@ -46,13 +46,110 @@ namespace InternetInterface.Controllers
 			return new List<Client>();
 		}
 
+		public IList<Client> GetClientsForCloseDemand()
+		{
+			var MapPartner = Partner.FindAllByProperty("Pass", Session["HashPass"]);
+			if (MapPartner.Length != 0)
+			{
+				var sessionHolder = ActiveRecordMediator.GetSessionFactoryHolder();
+				var session = sessionHolder.CreateSession(typeof(Client));
+				try
+				{
+					var sqlStr = String.Format(String.Format(@"Select PC.Id, PC.name, PC.Surname, PC.Patronymic, PC.City, PC.AdressConnect,
+PC.PassportSeries, PC.PassportNumber, PC.WhoGivePassport, PC.RegistrationAdress,
+PC.RegDate, PC.Tariff, PC.Balance, PC.Login, PC.Password, PC.HasRegistered, PC.HasConnected, PC.Connected
+FROM internet.RequestsConnection R
+join internet.ConnectBrigads CB on R.BrigadNumber = CB.ID
+Join internet.PhysicalClients PC on R.ClientID = PC.Id
+join accessright.Partners PA on CB.PartnerID = PA.Id
+WHERE PA.ID = {0} and PC.Connected = false", MapPartner[0].Id));
+					var query = session.CreateSQLQuery(sqlStr).AddEntity(typeof (Client));
+					var result = query.List<Client>();
+					foreach (var item in result)
+						session.Evict(item);
+					return result;
+				}
+				catch (Exception e)
+				{
+					throw;
+					return new List<Client>();
+				}
+			}
+			else
+			{
+				RedirectToUrl(@"..\\Errors\AccessDin.aspx");
+			}
+			return new List<Client>();
+
+		}
+
+		[AccessibleThrough(Verb.Post)]
+		public void CreateDemandConnect([DataBind("ForConnect")]List<int> ForConnect, uint BrigadID,
+			[DataBind("ForClose")]List<int> ForClose, string ConnectBut, string CloseDemandBut)
+		{
+			var MapPartner = Partner.FindAllByProperty("Pass", Session["HashPass"]);
+			if ((ConnectBut != null) && (CloseDemandBut != null))
+			{
+				RedirectToUrl(@"..\\Errors\AccessDin.aspx");
+			}
+			else
+			{
+				if ((MapPartner.Length != 0) && (AccessCategories.AccesPartner(MapPartner[0], 4)) && (ConnectBut == "Connecting"))
+				{
+					var MID = Partner.FindAllByProperty("Pass", Session["HashPass"])[0];
+					foreach (uint ClientToConnect in ForConnect)
+					{
+						var newRequest = new RequestsConnection
+						                 	{
+						                 		BrigadNumber = Brigad.Find(BrigadID),
+						                 		ManagerID = MID,
+						                 		ClientID = Client.Find(ClientToConnect),
+						                 		RegDate = DateTime.Now
+											};
+						newRequest.ClientID.HasConnected = newRequest.BrigadNumber;
+						newRequest.SaveAndFlush();
+					}
+					Flash["CreateDemandConnect"] = true;
+					RedirectToUrl(@"../Search/SearchUsers.rails");
+				}
+				else
+				{
+					if ((MapPartner.Length != 0) && (AccessCategories.AccesPartner(MapPartner[0], 8)) &&
+					    (CloseDemandBut == "CloseDemand"))
+					{
+						foreach (uint i in ForClose)
+						{
+							var forUpdate = Client.Find(i);
+							forUpdate.Connected = true;
+							forUpdate.UpdateAndFlush();
+						}
+						Flash["DemandAccept"] = true;
+						RedirectToUrl(@"../Search/SearchBy.rails?CloseDemand=true");
+					}
+					else
+					{
+						RedirectToUrl(@"..\\Errors\AccessDin.aspx");
+					}
+				}
+			}
+			//var g = Connecting[0];
+		}
+
 		[AccessibleThrough(Verb.Get)]
-		public void SearchBy([DataBind("SearchBy")]UserSearchProperties searchProperties, uint tariff, uint whoregister, string SearchText)
+		public void SearchBy([DataBind("SearchBy")]UserSearchProperties searchProperties, uint tariff, uint whoregister, string SearchText, Boolean CloseDemand)
 		{
 				var MapPartner = Partner.FindAllByProperty("Pass", Session["HashPass"]);
 				if (MapPartner.Length != 0)
 				{
-					var Clients = GetClients(searchProperties, tariff, whoregister, SearchText);
+					IList<Client> Clients = new List<Client>();
+					if ((CloseDemand) && (AccessCategories.AccesPartner(MapPartner[0], 8)))
+					{
+						Clients = GetClientsForCloseDemand();
+					}
+					if ((!CloseDemand) && (AccessCategories.AccesPartner(MapPartner[0], 1)))
+					{
+						Clients = GetClients(searchProperties, tariff, whoregister, SearchText);
+					}
 					Flash["SClients"] = Clients;
 					var TariffText = new List<Tariff>();
 					var PartnerText = new List<Partner>();
@@ -70,13 +167,38 @@ namespace InternetInterface.Controllers
 					PropertyBag["ChRegistr"] = whoregister;
 					PropertyBag["WhoRegistered"] = Partner.FindAll();
 					PropertyBag["FindBy"] = searchProperties;
+					if ((AccessCategories.AccesPartner(mapPartner[0], 4)) && (!CloseDemand))
+					{
+						Flash["Brigads"] = Brigad.FindAll();
+						PropertyBag["ConnectAccess"] = true;
+						PropertyBag["FindAccess"] = true;
+					}
+					else
+					{
+						if ((AccessCategories.AccesPartner(mapPartner[0], 1)) && (!CloseDemand))
+						{
+							PropertyBag["ConnectAccess"] = false;
+							PropertyBag["FindAccess"] = true;
+						}
+						else
+						{
+							PropertyBag["ConnectAccess"] = false;
+							PropertyBag["FindAccess"] = false;
+						}
+					}
+					if ((AccessCategories.AccesPartner(mapPartner[0], 8)) && (CloseDemand))
+					{
+						PropertyBag["CloseDemand"] = true;
+					}
+					else
+					{
+						PropertyBag["CloseDemand"] = false;
+					}
 				}
 				else
 				{
 					RedirectToUrl(@"..\\Errors\AccessDin.aspx");
 				}
-			//RedirectToUrl(@"SearchUsers?Query=YES");
-
 		}
 
 
@@ -85,13 +207,11 @@ namespace InternetInterface.Controllers
 			string _return = "";
 			if (whoregister != 0)
 			{
-				//string _register = Partner.FindAllByProperty("Name", whoregister)[0].Id.ToString();
 				_return += " and P.HasRegistered = :whoregister";
 			}
 
 			if (tariff != 0)
 			{
-				//string _tariff = Tariff.FindAllByProperty("Name", tariff)[0].Id.ToString();
 				_return += " and P.Tariff = :tariff";
 			}
 			if ((whoregister != 0) && (tariff == 0))
@@ -152,24 +272,29 @@ or LOWER(P.RegistrationAdress) like {0}",
 
 		public void SearchUsers(string Query, Client SClients)
 		{
-			/*if (Session["HashPass"] == null)
-			{
-				
-			}*/
 			var searchProperties = new UserSearchProperties { SearchBy = SearchUserBy.Auto };
 			var MapPartner = Partner.FindAllByProperty("Pass", Session["HashPass"]);
 			if (MapPartner.Length != 0)
 			{
-				PropertyBag["PARTNERNAME"] = MapPartner[0].Name;
-				PropertyBag["Tariffs"] = Tariff.FindAll();
-				PropertyBag["WhoRegistered"] = Partner.FindAll();
-				PropertyBag["SearchText"] = "";
-				PropertyBag["ChTariff"] = 0;
-				PropertyBag["ChRegistr"] = 0;
-				PropertyBag["FindBy"] = searchProperties;
-				if (SClients != null)
+				if (AccessCategories.AccesPartner(MapPartner[0], 1))
 				{
-					Flash["SClients"] = SClients;
+					PropertyBag["PARTNERNAME"] = MapPartner[0].Name;
+					PropertyBag["Tariffs"] = Tariff.FindAll();
+					PropertyBag["WhoRegistered"] = Partner.FindAll();
+					PropertyBag["SearchText"] = "";
+					PropertyBag["ChTariff"] = 0;
+					PropertyBag["ChRegistr"] = 0;
+					PropertyBag["FindBy"] = searchProperties;
+					PropertyBag["ConnectAccess"] = true;
+					PropertyBag["findAccess"] = true;
+					if (SClients != null)
+					{
+						Flash["SClients"] = SClients;
+					}
+				} else
+				{
+					PropertyBag["ConnectAccess"] = false;
+					RedirectToUrl(@"../Search/SearchBy.rails?CloseDemand=true");
 				}
 			}
 			else

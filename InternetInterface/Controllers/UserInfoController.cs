@@ -12,6 +12,7 @@ namespace InternetInterface.Controllers
 			var MapPartner = Partner.FindAllByProperty("Pass", Session["HashPass"]);
 			if (MapPartner.Length != 0)
 			{
+				var fdg = Payment.FindAllByProperty("ClientID", ClientCode);
 				PropertyBag["Payments"] = Payment.FindAllByProperty("ClientID", ClientCode);
 				PropertyBag["ClientName"] = Client.Find(ClientCode);
 				PropertyBag["BalanceText"] = string.Empty;

@@ -142,8 +142,11 @@
     <Compile Include="Errors\AccessDin.aspx.designer.cs">
       <DependentUpon>AccessDin.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Models\AccessCategories.cs" />
+    <Compile Include="Models\Brigad.cs" />
     <Compile Include="Models\ClientSearchProperties.cs" />
     <Compile Include="Models\Payment.cs" />
+    <Compile Include="Models\RequestsConnection.cs" />
     <Compile Include="Models\Tariff.cs" />
     <Compile Include="Other\CryptoPass.cs" />
     <Compile Include="Global.asax.cs">

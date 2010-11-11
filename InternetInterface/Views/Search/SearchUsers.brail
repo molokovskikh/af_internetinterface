@@ -18,13 +18,22 @@
     </style>
 </head>
 
-
+<%if FindAccess: %>
 <form id="SearchForm" name="SearchForm" action="${siteroot}/Search/SearchBy" 
     style="width: 100%; ">
 <center>
 <table border="0" bgcolor="#000000" cellspacing="1" cellpadding="0">
 <tr>
 <h4><a href="../Map/SiteMap.rails">Домой</a>  Вы вошли как ${PARTNERNAME}</h4>
+<%if IsDefined("CreateDemandConnect"): %>
+<% if CreateDemandConnect: %>
+       <div class="flash">
+                     <div class="message notice">
+                       <p>Заявки оформлены</p>
+                     </div>
+        </div>
+<%end %>
+<%end %>
     <td width="100%">
     <table class="table" bgcolor="#FFFFFF">
     <tr>
@@ -69,7 +78,8 @@
 			<thead>
 			    <tr align="left">
 			        <td style="padding: 5px;">Тариф<br />
-                   <select name="tariff" id="ChTariff" style="width: 100%" ">
+                    <div>
+                   <select name="tariff" id="ChTariff" style="width: 100%" >
                    <option id="Option1" value="0"> Все </option>
                    <%
                     for i, Tariff in enumerate(Tariffs): 
@@ -77,17 +87,20 @@
                         <option id="Tarif${Tariff.Id}" value="${Tariff.Id}" ${"selected" if (Tariff.Id == ChTariff)}> ${Tariff.Name} </option>
                         <% end %>
                     </select>
+                    </div>
                     </td>
 
 			        <td style="padding: 5px;">Кем загистрирован<br />
-                          <select name="whoregister" id="ChRegister" style="width: 90%" ">
-                          <option id="Option2" value="0" "> Все </option>
+                    <div>
+                          <select name="whoregister" id="ChRegister" style="width: 100%" >
+                          <option id="Option2" value="0" > Все </option>
                           <%
                           for i, RigistrName in enumerate(WhoRegistered): 
                           %>
                           <option id="RgistrName${RigistrName.Id}" value="${RigistrName.Id}" ${"selected" if (RigistrName.Id == ChRegistr)}> ${RigistrName.Name} </option>
                           <% end %>
                           </select>
+                    </div>
 			        </td>
 			    </tr>
 			</thead>
@@ -103,6 +116,7 @@
 </center>
     </p>
 </form>
+<%end %>
 </div>
 
 

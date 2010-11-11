@@ -9,9 +9,22 @@
 <% else: %>
 <div id="block-tables" class="block">
 <div class="content">
+<%if CloseDemand: %>
+<h4><a href="../Map/SiteMap.rails">Домой</a></h4>
+<%end %>
+<%if IsDefined("DemandAccept"): %>
+<% if DemandAccept: %>
+       <div class="flash">
+                     <div class="message notice">
+                       <p>Заявки закрыты</p>
+                     </div>
+        </div>
+<%end %>
+<%end %>
 <table class="table"  style="width: 100%; font-size: small;">
     <thead>
         <tr valign="top">
+            <th>Подключен</th>
             <th>ФИО</th>
             <th>Город</th>            
             <th>Адрес подключения</th>            
@@ -23,11 +36,28 @@
             <th>Кем зарегистрирован</th>
         </tr>
     </thead>
-    
+    <form class="form login" method="post" action="${siteroot}/Search/CreateDemandConnect ">
     <tbody id="SearchResults">
     <% for i,item in enumerate(SClients): %>
         <tr class="${item.Name}">
-            <td><a href="../UserInfo/SearchUserInfo.rails?ClientCode=${item.Id}">${item.Name} ${item.Surname} ${item.Patronymic}</a></td>
+            <%if not item.IsConnected() : %>
+                 <%if ConnectAccess: %>
+                     <%if item.HasConnected != null: %>
+                     <td align="center"> ${item.HasConnected.Name} </td>
+                     <%else: %>
+                     <td align="center"><input type="checkbox" name="ForConnect[${i}]" value=${item.Id} /> </td>
+                     <%end %>
+                 <%else: %>
+                    <%if CloseDemand: %>
+                    <td align="center"><input type="checkbox" name="ForClose[${i}]" value=${item.Id} /> </td>
+                    <%else: %>
+                 <td align="center">Нет</td>
+                 <%end %>
+                 <%end %>
+            <%else: %>
+            <td align="center"> Да </td>
+            <%end %>
+            <td><a href="../UserInfo/SearchUserInfo.rails?ClientCode=${item.Id}"> ${item.Surname} ${item.Name} ${item.Patronymic}</a></td>
             <td>${item.City}</td>
             <td>${item.AdressConnect}</td>            
             <td>${item.PassportSeries} ${item.PassportNumber}
@@ -35,13 +65,51 @@
             ${item.RegistrationAdress}
             </td>            
             <td>${item.RegDate}</td>
+            <%if tariffText[i] != null:  %>
             <td>${tariffText[i].Name}</td>
+            <%else: %>
+            <td>Тариф не определен </td>
+            <%end %>
             <td>${item.Balance}</td>
             <td>${item.Login}</td>
+            <%if partnerText[i] != null: %>
             <td>${partnerText[i].Name}</td>
+            <%else: %>
+            <td> Регистратор не определен </td>
+            <%end %>
         </tr>
     <% end %>        
-    </tbody>
+
+      <%if ConnectAccess: %>
+      <tr>
+            <td>
+               <button type="submit" class="button" name="ConnectBut" value="Connecting">
+                  <img alt="Save" src="../Images/tick.png"> Подключить клиентов
+                </button>
+            </td>
+            <td style="padding: 5px;">Назначить подлючение бригаде: <br />
+            <td>
+            <select name="BrigadID" id="ChBrigad" style="width: 100%" >
+                   <%
+                    for i, Brigad in enumerate(Brigads): 
+                    %>
+                    <option id="Brigad${Brigad.Id}" value="${Brigad.Id}" > ${Brigad.Name} </option>
+                   <% end %>
+            </select>
+            </td>
+        </tr>
+        <%end %>
+        <%if CloseDemand: %>
+         <tr>
+            <td>
+               <button type="submit" class="button" name="CloseDemandBut" value="CloseDemand">
+                  <img alt="Save" src="../Images/tick.png"> Закрыть заявки
+                </button>
+            </td>
+        </tr>
+        <%end %>
+      </tbody>
+    </form>
 </table>
 <% end %>
 </div>

@@ -6,19 +6,39 @@
 <div class="content">
 <table class="table"  >
 <thead>
+<tr valign="top">
    <th > Интерфейс для партнера: ${PARTNERNAME}</th>
-   </thead>
+</tr>
+ </thead>   
+ <tbody>
+    <%if RegClient: %>
     <tr>
         <td>
         <a href = "../RegisterClient/Register.rails" >Регистрация нового абонента</a>
          </td>
     </tr>
+    <%end %>
+    <%if GetInfo: %>
     <tr>
         <td>
         <a href = "../Search/SearchUsers.rails" >Найти абонента</a>
         </td>
     </tr>
+    <%end %>
+    <%if CloseDem: %>
+    <tr>
+        <td>
+        <a href = "../Search/SearchBy.rails?CloseDemand=true" > Закрыть заявки</a>
+        </td>
+    </tr>
+    <%end %>
+    <%for i, item in enumerate(AccessList):  %>
+        <tr>              
+    Доступ к опции ${item} разрешен <br />
+   </tr>
+   <% end %>
+    </tbody>
 </table>
 </div>
 </div>
-</div>
+</div>  

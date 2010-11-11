@@ -40,26 +40,30 @@ namespace InternetInterface.Controllers
 
 		public bool RegistrLogic(Client _client, bool _Popolnenie, uint _tariff)
 		{
-			var newClient = new Client();
-			if (Validator.IsValid(_client))
+			var MapPartner = Partner.FindAllByProperty("Pass", Session["HashPass"]);
+			if ((MapPartner.Length != 0) && (AccessCategories.AccesPartner(MapPartner[0], 2)))
 			{
-				newClient.Name = _client.Name;
-				newClient.Surname = _client.Surname;
-				newClient.Patronymic = _client.Patronymic;
-				newClient.City = _client.City;
-				newClient.AdressConnect = _client.AdressConnect;
-				newClient.PassportSeries = _client.PassportSeries;
-				newClient.PassportNumber = _client.PassportNumber;
-				newClient.WhoGivePassport = _client.WhoGivePassport;
-				newClient.RegistrationAdress = _client.RegistrationAdress;
-				newClient.RegDate = DateTime.Now;
-				newClient.Tariff = Tariff.FindAllByProperty("Id", _tariff)[0];
-				newClient.Balance = _Popolnenie ? newClient.Tariff.Price : 0;
-				newClient.Login = _client.Login;
-				newClient.Password = CryptoPass.GetHashString(_client.Password);
-				newClient.HasRegistered = Partner.FindAllByProperty("Pass", Session["HashPass"].ToString())[0];
-				newClient.SaveAndFlush();
-				return true;
+				var newClient = new Client();
+				if (Validator.IsValid(_client))
+				{
+					newClient.Name = _client.Name;
+					newClient.Surname = _client.Surname;
+					newClient.Patronymic = _client.Patronymic;
+					newClient.City = _client.City;
+					newClient.AdressConnect = _client.AdressConnect;
+					newClient.PassportSeries = _client.PassportSeries;
+					newClient.PassportNumber = _client.PassportNumber;
+					newClient.WhoGivePassport = _client.WhoGivePassport;
+					newClient.RegistrationAdress = _client.RegistrationAdress;
+					newClient.RegDate = DateTime.Now;
+					newClient.Tariff = Tariff.FindAllByProperty("Id", _tariff)[0];
+					newClient.Balance = _Popolnenie ? newClient.Tariff.Price : 0;
+					newClient.Login = _client.Login;
+					newClient.Password = CryptoPass.GetHashString(_client.Password);
+					newClient.HasRegistered = Partner.FindAllByProperty("Pass", Session["HashPass"].ToString())[0];
+					newClient.SaveAndFlush();
+					return true;
+				}
 			}
 			return false;
 		}
@@ -67,16 +71,17 @@ namespace InternetInterface.Controllers
 		//[AccessibleThrough(Verb.Get)]
 		public void Register()
 		{
-			if (Partner.FindAllByProperty("Pass", Session["HashPass"]).Length == 0)
-			{
-				RedirectToUrl(@"..\\Errors\AccessDin.aspx");
-			}
-			else
+			var MapPartner = Partner.FindAllByProperty("Pass", Session["HashPass"]);
+			if ((MapPartner.Length != 0) && (AccessCategories.AccesPartner(MapPartner[0], 2)))
 			{
 				PropertyBag["Tariffs"] = Tariff.FindAll();
 				PropertyBag["Client"] = new Client();
 				PropertyBag["Applying"] = "false";
 				PropertyBag["Popolnen"] = false;
+			}
+			else
+			{
+				RedirectToUrl(@"..\\Errors\AccessDin.aspx");
 			}
 		}
 	}

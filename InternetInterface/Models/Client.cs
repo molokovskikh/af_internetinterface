@@ -3,25 +3,8 @@ using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
 using Castle.Components.Validator;
 
-//using InternetInterface.Validation;
-
 namespace InternetInterface.Models
 {
-
-	/*public class ClientErrors
-	{
-		public Dictionary<string, string> Errors = new Dictionary<string, string>();
-
-		public ClientErrors()
-		{
-			Errors.Add("ErrorName","");
-			Errors.Add("ErrorSurname", "");
-			Errors.Add("ErrorPatronymic", "");
-			Errors.Add("ErrorAdressConnect", "");
-			Errors.Add("ErrorWhoGivePassport", "");
-			Errors.Add("ErrorRegistrationAdress", "");
-		}		
-	}*/
 
 	[ActiveRecord("PhysicalClients", Schema = "internet", Lazy = true)]
 	public class Client : ActiveRecordLinqBase<Client>
@@ -79,6 +62,12 @@ namespace InternetInterface.Models
 		[BelongsTo("HasRegistered")]
 		public virtual Partner HasRegistered { get; set; }
 
+		[BelongsTo("HasConnected")]
+		public virtual Brigad HasConnected { get; set; }
+
+		[Property]
+		public virtual bool Connected { get; set; }
+
 		private static ErrorSummary ValidationErrors;
 
 		public virtual void SetValidationErrors(ErrorSummary _ValidationErrors)
@@ -89,6 +78,11 @@ namespace InternetInterface.Models
 		public virtual ErrorSummary GetValidationErrors()
 		{
 			return ValidationErrors;
+		}
+
+		public virtual bool IsConnected()
+		{
+			return this.Connected;
 		}
 
 		public virtual string GetErrorText(string field)

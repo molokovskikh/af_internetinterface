@@ -31,6 +31,9 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual string Login { get; set; }
+
+		[Property]
+		public virtual uint AcessSet  { get; set; }
 	}
 
 }

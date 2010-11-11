@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Text;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework.Config;
 using System.Configuration;
@@ -49,6 +50,48 @@ namespace InternetInterfaceFixtute.RegisterTest
 		{
 			GetClients(new UserSearchProperties { SearchBy = SearchUserBy.Auto }, 4, 1, "");
 			//var browser = Open()
+		}
+
+
+		public static string ToBinaryNumberString(ulong value)
+		{
+			int i = 8 >> 2;
+            int bit_count = sizeof(ulong) ;
+            StringBuilder sb = new StringBuilder(bit_count);
+            for (int bit = bit_count - 1; bit >= 0; --bit)
+            {
+                switch ((value >> bit) & 1UL)
+                {
+                    case 0:
+                        sb.Append('0');
+                        break;
+                    case 1:
+                        sb.Append('1');
+                        break;
+                }
+               
+            }
+            return sb.ToString();
+        }
+ 
+
+		[Test]
+		public void BinaryTest()
+		{
+			string value = "123";
+			string binary = ToBinaryNumberString(Convert.ToUInt64(value));
+			char[] strValue = binary.ToCharArray();
+			for (int i = 1; i < strValue.Length - 1; i++)
+			{
+				if (strValue[i - 1] == '0' && strValue[i + 1] == '0')
+				{
+					strValue[i] = '0';
+				}
+				if (strValue[i - 1] == '1' && strValue[i + 1] == '1')
+				{
+					strValue[i] = '1';
+				}
+			}
 		}
 	}
 }

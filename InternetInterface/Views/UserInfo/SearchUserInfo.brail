@@ -44,13 +44,21 @@
             <td><span class="description">Дата регистрации:</span> ${ClientName.RegDate}</td>
         </tr>
 				
-		<tr>
-            <td><span class="description">Зарегистрировал:</span> ${ClientName.HasRegistered.Name}</td>
-        </tr>
 		
-		<tr>
+        <%if ClientName.HasRegistered != null: %>
+            <tr>
+                <td><span class="description">Зарегистрировал:</span> ${ClientName.HasRegistered.Name}</td>
+            </tr>
+        <%end %>
+        
+		
+		
+        <%if ClientName.Tariff != null: %>
+        <tr>
              <td><span class="description">Тариф:</span> ${ClientName.Tariff.Name}</td>
         </tr>
+         <%end %>
+
 
         <tr>
             <td><span class="description">Баланс:</span> ${ClientName.Balance}</td>
@@ -58,11 +66,8 @@
         <tr>
             <td><span class="description">Логин:</span> ${ClientName.Login}</td>
         </tr>
-
     </tbody>
 </table>
-
-
 <br />
 <div style="clear:both;">
 <table class="table"  style="width: 100%; font-size: small;" align="left">
@@ -77,14 +82,19 @@
     <tbody id="SearchResults" class="HighLightCurrentRow">
     <% for i,item in enumerate(Payments): %>
         <tr id="Row${i}">
-            <td>${item.ManagerID.Name}</td>      
+        <%if item.ManagerID != null: %>
+            <td>${item.ManagerID.Name}</td>   
+            <%else: %>
+            <td></td>
+            <%end %>
             <td>${item.PaymentDate}</td>
             <td>${item.Summ}</td>
         </tr>
     <% end %>        
-    </tbody>
+    </tbody> 
 
 </table>
+
 </div>
 <br />
 <div style="clear:both;">
