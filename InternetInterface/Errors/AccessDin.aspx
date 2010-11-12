@@ -15,6 +15,7 @@
            <div class="flash">
                <div class="message error">
                    <p>У вас нет прав для просмотра запрошенной страницы</p>
+                   <a href="../Login/LoginPartner.rails">Перейти на страницу авторизации</a>
                </div>
            </div>
         </div>

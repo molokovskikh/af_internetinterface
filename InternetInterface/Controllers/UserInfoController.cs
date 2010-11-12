@@ -9,10 +9,9 @@ namespace InternetInterface.Controllers
 		[AccessibleThrough(Verb.Get)]
 		public void SearchUserInfo(uint ClientCode)
 		{
-			var MapPartner = Partner.FindAllByProperty("Pass", Session["HashPass"]);
+			var MapPartner = Partner.FindAllByProperty("Login", Session["Login"]);
 			if (MapPartner.Length != 0)
 			{
-				var fdg = Payment.FindAllByProperty("ClientID", ClientCode);
 				PropertyBag["Payments"] = Payment.FindAllByProperty("ClientID", ClientCode);
 				PropertyBag["ClientName"] = Client.Find(ClientCode);
 				PropertyBag["BalanceText"] = string.Empty;
@@ -29,7 +28,7 @@ namespace InternetInterface.Controllers
 		[AccessibleThrough(Verb.Post)]
 		public void ChangeBalance([DataBind("ChangedBy")]ChangeBalaceProperties ChangeProperties, uint ClientID, string BalanceText)
 		{
-			var MapPartner = Partner.FindAllByProperty("Pass", Session["HashPass"]);
+			var MapPartner = Partner.FindAllByProperty("Login", Session["Login"]);
 			if (MapPartner.Length != 0)
 			{
 				var ClientTOCH = Client.Find(ClientID);

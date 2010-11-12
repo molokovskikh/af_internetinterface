@@ -129,9 +129,10 @@
     <EmbeddedResource Include="User.hbm.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\ExitPartner.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\MapController.cs" />
-    <Compile Include="Controllers\RegisterClientController.cs" />
+    <Compile Include="Controllers\RegisterController.cs" />
     <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Controllers\UserInfoController.cs" />
     <Compile Include="Controllers\Validate\BaseValid.cs" />
@@ -162,6 +163,7 @@
     <Compile Include="Site.Master.designer.cs">
       <DependentUpon>Site.Master</DependentUpon>
     </Compile>
+    <None Include="Views\Register\RegisterPartner.brail" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -172,7 +174,7 @@
   <ItemGroup>
     <None Include="Views\Login\LoginPartner.brail" />
     <None Include="Views\Map\SiteMap.brail" />
-    <None Include="Views\RegisterClient\Register.brail" />
+    <None Include="Views\Register\RegisterClient.brail" />
     <None Include="Views\Search\SearchBy.brail" />
     <None Include="Views\UserInfo\SearchUserInfo.brail" />
     <None Include="Views\Search\SearchUsers.brail" />

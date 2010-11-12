@@ -8,21 +8,29 @@ namespace InternetInterface.Controllers
 		[AccessibleThrough(Verb.Post)]
 		public void Sub(string Login, string Password)
 		{
-			string BasePass = string.Empty;
-			var BaseUser = Partner.FindAllByProperty("Login", Login);
-			if ((BaseUser.Length != 0) && (Password != null))
+			var MapPartner = Partner.FindAllByProperty("Login", Session["Login"]);
+			if (MapPartner.Length == 0)
 			{
-				 BasePass = BaseUser[0].Pass;
-				 if (CryptoPass.GetHashString(Password) == BasePass)
-				 {
-					 Session.Add("HashPass", BasePass);
-					 RedirectToUrl(@"..//Map/SiteMap.rails");
-				 }
+				string BasePass = string.Empty;
+				var BaseUser = Partner.FindAllByProperty("Login", Login);
+				if ((BaseUser.Length != 0) && (Password != null))
+				{
+					BasePass = BaseUser[0].Pass;
+					if (CryptoPass.GetHashString(Password) == BasePass)
+					{
+						Session.Add("Login", Login);
+						RedirectToUrl(@"..//Map/SiteMap.rails");
+					}
+				}
+				else
+				{
+					Flash["AccessDenied"] = true;
+					RedirectToUrl(@"LoginPartner.rails");
+				}
 			}
 			else
 			{
-				Flash["AccessDenied"] = true;
-				RedirectToUrl(@"LoginPartner.rails");
+				RedirectToUrl(@"../Map/SiteMap.rails");
 			}
 		}
 

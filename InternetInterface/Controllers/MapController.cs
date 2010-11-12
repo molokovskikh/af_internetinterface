@@ -8,7 +8,7 @@ namespace InternetInterface.Controllers
 	{
 		public void SiteMap()
 		{
-			var MapPartner = Partner.FindAllByProperty("Pass", Session["HashPass"]);
+			var MapPartner = Partner.FindAllByProperty("Login", Session["Login"]);
 			if (MapPartner.Length != 0)
 			{
 				PropertyBag["PARTNERNAME"] = MapPartner[0].Name;
@@ -24,12 +24,18 @@ namespace InternetInterface.Controllers
 				PropertyBag["GetInfo"] = ((MapPartner[0].AcessSet & 1) == 1) ? true : false;
 				PropertyBag["RegClient"] = ((MapPartner[0].AcessSet & 2) == 2) ? true : false;
 				PropertyBag["CloseDem"] = ((MapPartner[0].AcessSet & 8) == 8) ? true : false;
+				PropertyBag["RegPartner"] = ((MapPartner[0].AcessSet & 16) == 16) ? true : false;
 				PropertyBag["AccessList"] = CatList;
 			}
 			else
 			{
 				RedirectToUrl(@"..\\Errors\AccessDin.aspx");
 			}
+		}
+
+		public void Exit()
+		{
+
 		}
 	}
 }

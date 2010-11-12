@@ -5,6 +5,15 @@ using Castle.Components.Validator;
 
 namespace InternetInterface.Models
 {
+	public enum AccessCategoriesType : uint 
+	{
+		GetClientInfo = 1,
+		RegisterClient = 2,
+		SendDemand = 4,
+		CloseDemand = 8,
+		RegisterPartner = 16
+	};
+
 	[ActiveRecord("AccessCategories", Schema = "accessright", Lazy = true)]
 	public class AccessCategories : ActiveRecordLinqBase<AccessCategories>
 	{

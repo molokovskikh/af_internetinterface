@@ -11,10 +11,17 @@
 </tr>
  </thead>   
  <tbody>
+     <%if RegPartner: %>
+    <tr>
+        <td>
+        <a href = "../Register/RegisterPartner.rails" >Регистрация партнера</a>
+         </td>
+    </tr>
+    <%end %>
     <%if RegClient: %>
     <tr>
         <td>
-        <a href = "../RegisterClient/Register.rails" >Регистрация нового абонента</a>
+        <a href = "../Register/RegisterClient.rails" >Регистрация нового абонента</a>
          </td>
     </tr>
     <%end %>
@@ -37,6 +44,15 @@
     Доступ к опции ${item} разрешен <br />
    </tr>
    <% end %>
+   <tr>
+   <td>
+      <form class="form" id="Exit" name="Exit" method="post" action="${siteroot}/ExitPartner/Yes" >
+      <button type="submit" class="button">
+      <img alt="Save" src="../Images/application_edit.png"> Выход
+      </button>
+      </form>
+    </td>
+  </tr>
     </tbody>
 </table>
 </div>
