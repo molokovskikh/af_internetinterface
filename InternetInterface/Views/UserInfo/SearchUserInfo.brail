@@ -97,6 +97,7 @@
 
 </div>
 <br />
+<%if ChangeBalance: %>
 <div style="clear:both;">
 <form class="form login" method="post" action="${siteroot}/UserInfo/ChangeBalance">
     <input type="hidden" name="ClientID" value="${ClientCode}" />
@@ -127,6 +128,7 @@
     </table>
     </form>
 </div>
+<%end %>
 </div>
 </div>
 </div>

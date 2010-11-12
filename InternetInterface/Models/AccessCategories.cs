@@ -11,7 +11,8 @@ namespace InternetInterface.Models
 		RegisterClient = 2,
 		SendDemand = 4,
 		CloseDemand = 8,
-		RegisterPartner = 16
+		RegisterPartner = 16,
+		ChangeBalance = 32
 	};
 
 	[ActiveRecord("AccessCategories", Schema = "accessright", Lazy = true)]

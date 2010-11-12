@@ -14,9 +14,17 @@ namespace InternetInterface.Controllers
 			{
 				PropertyBag["Payments"] = Payment.FindAllByProperty("ClientID", ClientCode);
 				PropertyBag["ClientName"] = Client.Find(ClientCode);
-				PropertyBag["BalanceText"] = string.Empty;
 				PropertyBag["ClientCode"] = ClientCode;
-				PropertyBag["ChangeBy"] = new ChangeBalaceProperties {ChangeType = TypeChangeBalance.OtherSumm};
+				PropertyBag["BalanceText"] = string.Empty;
+				if (AccessCategories.AccesPartner(MapPartner[0], (uint)AccessCategoriesType.ChangeBalance))
+				{
+					PropertyBag["ChangeBalance"] = true;
+					PropertyBag["ChangeBy"] = new ChangeBalaceProperties {ChangeType = TypeChangeBalance.OtherSumm};
+				}
+				else
+				{
+					PropertyBag["ChangeBalance"] = false;
+				}
 			}
 			else
 			{
@@ -29,11 +37,12 @@ namespace InternetInterface.Controllers
 		public void ChangeBalance([DataBind("ChangedBy")]ChangeBalaceProperties ChangeProperties, uint ClientID, string BalanceText)
 		{
 			var MapPartner = Partner.FindAllByProperty("Login", Session["Login"]);
-			if (MapPartner.Length != 0)
+			if ((MapPartner.Length != 0) && (AccessCategories.AccesPartner(MapPartner[0], (uint)AccessCategoriesType.ChangeBalance)))
 			{
 				var ClientTOCH = Client.Find(ClientID);
 				decimal ForChangeSumm = 0;
 				var thisPay = new Payment();
+				PropertyBag["ChangeBalance"] = true;
 				try
 				{
 					if (ChangeProperties.IsForTariff())
