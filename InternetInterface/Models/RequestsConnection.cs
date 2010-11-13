@@ -1,7 +1,6 @@
 ﻿using System;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
-using Castle.Components.Validator;
 
 namespace InternetInterface.Models
 {

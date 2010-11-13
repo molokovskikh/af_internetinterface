@@ -1,13 +1,15 @@
 ﻿using System;
+using System.Collections;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
 using Castle.Components.Validator;
+using Castle.MonoRail.Framework;
 
 namespace InternetInterface.Models
 {
 
 	[ActiveRecord("PhysicalClients", Schema = "internet", Lazy = true)]
-	public class Client : ActiveRecordLinqBase<Client>
+	public class Client : ChildActiveRecordLinqBase<Client>
 	{
 		public Client()
 		{
@@ -101,6 +103,35 @@ namespace InternetInterface.Models
 				}
 			}
 			return "";
+		}
+
+		public static bool RegistrLogicClient(Client _client, bool _Popolnenie, uint _tariff, ValidatorRunner validator, Partner hasRegistered)
+		{
+			if (PartnerAccessSet.AccesPartner(AccessCategoriesType.RegisterClient))
+			{
+				var newClient = new Client();
+				if (validator.IsValid(_client))
+				{
+					newClient.Name = _client.Name;
+					newClient.Surname = _client.Surname;
+					newClient.Patronymic = _client.Patronymic;
+					newClient.City = _client.City;
+					newClient.AdressConnect = _client.AdressConnect;
+					newClient.PassportSeries = _client.PassportSeries;
+					newClient.PassportNumber = _client.PassportNumber;
+					newClient.WhoGivePassport = _client.WhoGivePassport;
+					newClient.RegistrationAdress = _client.RegistrationAdress;
+					newClient.RegDate = DateTime.Now;
+					newClient.Tariff = Tariff.FindAllByProperty("Id", _tariff)[0];
+					newClient.Balance = _Popolnenie ? newClient.Tariff.Price : 0;
+					newClient.Login = _client.Login;
+					newClient.Password = CryptoPass.GetHashString(_client.Password);
+					newClient.HasRegistered = hasRegistered;
+					newClient.SaveAndFlush();
+					return true;
+				}
+			}
+			return false;
 		}
 	}
 

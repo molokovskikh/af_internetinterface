@@ -130,6 +130,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\ExitPartner.cs" />
+    <Compile Include="Controllers\Filter\AuthenticationFilter.cs" />
+    <Compile Include="Controllers\Filter\InithializeContent.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\MapController.cs" />
     <Compile Include="Controllers\RegisterController.cs" />
@@ -143,9 +145,12 @@
     <Compile Include="Errors\AccessDin.aspx.designer.cs">
       <DependentUpon>AccessDin.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Models\AccessCategories.cs" />
+    <Compile Include="Models\Access\AccessCategories.cs" />
+    <Compile Include="Models\Access\AccessRules.cs" />
     <Compile Include="Models\Brigad.cs" />
-    <Compile Include="Models\ClientSearchProperties.cs" />
+    <Compile Include="Models\Universal\ChildActiveRecordLinqBase.cs" />
+    <Compile Include="Models\Universal\ClientSearchProperties.cs" />
+    <Compile Include="Models\Access\PartnerAccessSet.cs" />
     <Compile Include="Models\Payment.cs" />
     <Compile Include="Models\RequestsConnection.cs" />
     <Compile Include="Models\Tariff.cs" />

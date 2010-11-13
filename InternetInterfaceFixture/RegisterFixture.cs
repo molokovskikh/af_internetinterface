@@ -64,7 +64,7 @@ namespace NHibernateFixtute.RegisterTest
 			};
 			Validator = new ValidatorRunner(ActiveRecordModelBuilder.ValidatorRegistry);
 
-			var b = RegistrLogicClient(c, false, 4);
+			//var b = RegistrLogicClient(c, false, 4);
 			var err = c.GetErrorText("Name");
 			Console.WriteLine(err);
 			//var browser = Open()

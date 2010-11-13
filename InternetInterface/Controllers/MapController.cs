@@ -1,41 +1,32 @@
 ﻿using System.Collections.Generic;
 using Castle.MonoRail.Framework;
+using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 
 namespace InternetInterface.Controllers
 {
+	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class MapController : SmartDispatcherController
 	{
 		public void SiteMap()
 		{
-			var MapPartner = Partner.FindAllByProperty("Login", Session["Login"]);
-			if (MapPartner.Length != 0)
+			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
+			var CatList = new List<string>();
+			var accessList = AccessCategories.FindAllSort();
+			var partnerAccessList = PartnerAccessSet.GetAccessPartner();
+			foreach (var accessCategorie in accessList)
 			{
-				PropertyBag["PARTNERNAME"] = MapPartner[0].Name;
-				var CatList = new List<string>();
-				var access = AccessCategories.FindAll();
-				foreach (var accessCategoriese in access)
+				foreach (var partnerAccessSet in partnerAccessList)
 				{
-					if ((MapPartner[0].AcessSet & accessCategoriese.Code) == accessCategoriese.Code)
-					{
-						CatList.Add(accessCategoriese.Name);
-					}
+					if (accessCategorie.Id == partnerAccessSet.AccessCat.Id)
+						CatList.Add(accessCategorie.Name);
 				}
-				PropertyBag["GetInfo"] = ((MapPartner[0].AcessSet & 1) == 1) ? true : false;
-				PropertyBag["RegClient"] = ((MapPartner[0].AcessSet & 2) == 2) ? true : false;
-				PropertyBag["CloseDem"] = ((MapPartner[0].AcessSet & 8) == 8) ? true : false;
-				PropertyBag["RegPartner"] = ((MapPartner[0].AcessSet & 16) == 16) ? true : false;
-				PropertyBag["AccessList"] = CatList;
 			}
-			else
-			{
-				RedirectToUrl(@"..\\Errors\AccessDin.aspx");
-			}
-		}
-
-		public void Exit()
-		{
-
+			PropertyBag["GetInfo"] = true;
+			PropertyBag["RegClient"] = true;
+			PropertyBag["CloseDem"] = true;
+			PropertyBag["RegPartner"] = true;
+			PropertyBag["AccessList"] = CatList;
 		}
 	}
 }

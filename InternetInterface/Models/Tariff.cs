@@ -5,7 +5,7 @@ using Castle.ActiveRecord.Linq;
 namespace InternetInterface.Models
 {
 	[ActiveRecord("Tariffs", Schema = "internet", Lazy = true)]
-	public class Tariff : ActiveRecordLinqBase<Tariff>
+	public class Tariff : ChildActiveRecordLinqBase<Tariff>
 	{
 		[PrimaryKey]
 		public virtual uint Id { get; set; }

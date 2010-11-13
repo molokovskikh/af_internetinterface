@@ -131,4 +131,29 @@ ALTER TABLE `internet`.`RequestsConnection` ADD CONSTRAINT `FK_RequestsConnectio
     ON DELETE SET NULL
     ON UPDATE CASCADE;
 
+	CREATE TABLE `internet`.`AccessCategories` (
+  `Id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+  `Name` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`Id`)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE `internet`.`PartnerAccessSet` (
+  `Id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+  `Partner` INTEGER UNSIGNED,
+  `AccessCategories` INTEGER UNSIGNED,
+  PRIMARY KEY (`Id`),
+)
+ENGINE = InnoDB;
+
+ALTER TABLE `internet`.`PartnerAccessSet` ADD CONSTRAINT `FK_PartnerAccessSet_1` FOREIGN KEY `FK_PartnerAccessSet_1` (`AccessCat`)
+    REFERENCES `AccessCategories` (`Id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE;
+	
+ALTER TABLE `internet`.`PartnerAccessSet` ADD CONSTRAINT `FK_PartnerAccessSet_2` FOREIGN KEY `FK_PartnerAccessSet_2` (`Partner`)
+    REFERENCES `Partners` (`Id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE;
+
 

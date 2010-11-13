@@ -6,7 +6,7 @@ using Castle.Components.Validator;
 namespace InternetInterface.Models
 {
 	[ActiveRecord("ConnectBrigads", Schema = "Internet", Lazy = true)]
-	public class Brigad : ActiveRecordLinqBase<Brigad>
+	public class Brigad : ChildActiveRecordLinqBase<Brigad>
 	{
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
