@@ -156,4 +156,5 @@ ALTER TABLE `internet`.`PartnerAccessSet` ADD CONSTRAINT `FK_PartnerAccessSet_2`
     ON DELETE SET NULL
     ON UPDATE CASCADE;
 
+ALTER TABLE `internet`.`AccessCategories` ADD COLUMN `ReduceName` VARCHAR(5) NOT NULL AFTER `Name`;
 

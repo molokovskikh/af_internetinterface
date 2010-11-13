@@ -1,5 +1,6 @@
 ﻿using Castle.MonoRail.Framework;
 using InternetInterface.Models;
+using InternetInterface.Models.Access;
 
 namespace InternetInterface.Controllers.Filter
 {
@@ -16,6 +17,20 @@ namespace InternetInterface.Controllers.Filter
 			else
 			{
 				InithializeContent.partner = Partner.GetPartnerForLogin(context.Session["login"].ToString());
+				var AcclessList = AccessRules.GetAccessName(controllerContext.Action);
+				int count = 0;
+				foreach (var list in AcclessList)
+				{
+					if (PartnerAccessSet.AccesPartner(list))
+					{
+						count++;
+					}
+				}
+				if (/*AcclessList.Count !=*/ count == 0)
+				{
+					context.Response.RedirectToUrl(@"..\\Errors\AccessDin.aspx");
+					return false;
+				}
 				return true;
 			}
 			

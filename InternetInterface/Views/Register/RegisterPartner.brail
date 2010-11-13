@@ -164,7 +164,7 @@
                                 <tr>
                                 <% for i,item in enumerate(Rights): %>
                                 <tr>
-                                    <td ><input type="checkbox" name="ForRight[${i}]" value=${item.Code} /> ${item.Name} </td>
+                                    <td ><input type="checkbox" name="ForRight[${i}]" value=${item.Id} /> ${item.Name} </td>
                                  </tr>
                                 <%end %>
                                 </tr>

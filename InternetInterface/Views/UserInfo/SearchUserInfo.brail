@@ -97,7 +97,7 @@
 
 </div>
 <br />
-<%if ChangeBalance: %>
+<%if PartnerAccessSet.AccesPartner("CB"): %>
 <div style="clear:both;">
 <form class="form login" method="post" action="${siteroot}/UserInfo/ChangeBalance">
     <input type="hidden" name="ClientID" value="${ClientCode}" />

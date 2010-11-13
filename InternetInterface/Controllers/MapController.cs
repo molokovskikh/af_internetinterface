@@ -22,10 +22,7 @@ namespace InternetInterface.Controllers
 						CatList.Add(accessCategorie.Name);
 				}
 			}
-			PropertyBag["GetInfo"] = true;
-			PropertyBag["RegClient"] = true;
-			PropertyBag["CloseDem"] = true;
-			PropertyBag["RegPartner"] = true;
+			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
 			PropertyBag["AccessList"] = CatList;
 		}
 	}

@@ -9,68 +9,52 @@ namespace InternetInterface.Controllers
 	public class UserInfoController : SmartDispatcherController
 	{
 		[AccessibleThrough(Verb.Get)]
-		public void SearchUserInfo(uint ClientCode)
+		public void SearchUserInfo(uint clientCode)
 		{
-
-			PropertyBag["Payments"] = Payment.FindAllByProperty("ClientID", ClientCode);
-			PropertyBag["ClientName"] = Client.Find(ClientCode);
-			PropertyBag["ClientCode"] = ClientCode;
+			PropertyBag["Payments"] = Payment.FindAllByProperty("ClientID", clientCode);
+			PropertyBag["ClientName"] = Client.Find(clientCode);
+			PropertyBag["ClientCode"] = clientCode;
 			PropertyBag["BalanceText"] = string.Empty;
-			if (PartnerAccessSet.AccesPartner(AccessCategoriesType.ChangeBalance))
-			{
-				PropertyBag["ChangeBalance"] = true;
-				PropertyBag["ChangeBy"] = new ChangeBalaceProperties {ChangeType = TypeChangeBalance.OtherSumm};
-			}
-			else
-			{
-				PropertyBag["ChangeBalance"] = false;
-			}
-
+			PropertyBag["ChangeBy"] = new ChangeBalaceProperties {ChangeType = TypeChangeBalance.OtherSumm};
+			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
 		}
 
 
 		[AccessibleThrough(Verb.Post)]
-		public void ChangeBalance([DataBind("ChangedBy")]ChangeBalaceProperties ChangeProperties, uint ClientID, string BalanceText)
+		public void ChangeBalance([DataBind("ChangedBy")]ChangeBalaceProperties changeProperties, uint clientId, string balanceText)
 		{
-			if (PartnerAccessSet.AccesPartner(AccessCategoriesType.ChangeBalance))
+			var clientToch = Client.Find(clientId);
+			decimal forChangeSumm = 0;
+			var thisPay = new Payment();
+			PropertyBag["ChangeBalance"] = true;
+			try
 			{
-				var ClientTOCH = Client.Find(ClientID);
-				decimal ForChangeSumm = 0;
-				var thisPay = new Payment();
-				PropertyBag["ChangeBalance"] = true;
-				try
+				if (changeProperties.IsForTariff())
 				{
-					if (ChangeProperties.IsForTariff())
-					{
-						ForChangeSumm = ClientTOCH.Tariff.Price;
-					}
-					if (ChangeProperties.IsOtherSumm())
-					{
-						ForChangeSumm = Convert.ToDecimal(BalanceText);
-					}
-					if (ForChangeSumm != 0)
-					{
-						ClientTOCH.Balance += ForChangeSumm;
+					forChangeSumm = clientToch.Tariff.Price;
+				}
+				if (changeProperties.IsOtherSumm())
+				{
+					forChangeSumm = Convert.ToDecimal(balanceText);
+				}
+				if (forChangeSumm != 0)
+				{
+					clientToch.Balance += forChangeSumm;
 
-						thisPay.ClientID = ClientID;
-						thisPay.PaymentDate = DateTime.Now;
-						thisPay.Summ = ForChangeSumm;
-						thisPay.ManagerID = InithializeContent.partner;
-						thisPay.SaveAndFlush();
-						ClientTOCH.UpdateAndFlush();
-						Flash["Applying"] = true;
-					}
+					thisPay.ClientID = clientId;
+					thisPay.PaymentDate = DateTime.Now;
+					thisPay.Summ = forChangeSumm;
+					thisPay.ManagerID = InithializeContent.partner;
+					thisPay.SaveAndFlush();
+					clientToch.UpdateAndFlush();
+					Flash["Applying"] = true;
 				}
-				catch (Exception)
-				{
-					Flash["Applying"] = false;
-				}
-				RedirectToUrl(@"../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientID);
 			}
-			else
+			catch (Exception)
 			{
-				RedirectToUrl(@"..\\Errors\AccessDin.aspx");
+				Flash["Applying"] = false;
 			}
+			RedirectToUrl(@"../UserInfo/SearchUserInfo.rails?ClientCode=" + clientId);
 		}
 
 		public void Test()

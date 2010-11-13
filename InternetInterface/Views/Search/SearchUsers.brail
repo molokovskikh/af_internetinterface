@@ -18,7 +18,7 @@
     </style>
 </head>
 
-<%if FindAccess: %>
+<%if PartnerAccessSet.AccesPartner("GCI") or PartnerAccessSet.AccesPartner("SD"): %>
 <form id="SearchForm" name="SearchForm" action="${siteroot}/Search/SearchBy" 
     style="width: 100%; ">
 <center>

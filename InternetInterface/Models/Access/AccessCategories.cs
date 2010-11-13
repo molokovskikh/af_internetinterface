@@ -24,6 +24,9 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string Name { get; set; }
 
+		[Property]
+		public virtual string ReduceName { get; set; }
+
 		/*public static IList<T> FindAllSort<T>()
 		{
 			return T.FindAll(DetachedCriteria.For(typeof (T)).AddOrder(Order.Asc("Name")))

@@ -4,6 +4,9 @@ using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
 using Castle.Components.Validator;
 using Castle.MonoRail.Framework;
+using InternetInterface.Controllers.Filter;
+using NHibernate.Criterion;
+using NHibernate.SqlCommand;
 
 namespace InternetInterface.Models
 {
@@ -75,10 +78,17 @@ namespace InternetInterface.Models
 			return "";
 		}
 
-		public static bool RegistrLogicPartner(Partner _Partner, List<uint> _Rights, ValidatorRunner validator)
+		private static bool IsBrigadir(Partner partner)
 		{
-			if (PartnerAccessSet.AccesPartner(AccessCategoriesType.RegisterPartner))
-			{
+			var result = FindAll(DetachedCriteria.For(typeof(PartnerAccessSet))
+						.CreateAlias("AccessCat", "AC", JoinType.InnerJoin)
+						.Add(Restrictions.Eq("PartnerId", partner))
+						.Add(Restrictions.Eq("AC.ReduceName", "CD")));
+			return result.Length != 0 ? true : false;
+		}
+
+		public static bool RegistrLogicPartner(Partner _Partner, List<int> _Rights, ValidatorRunner validator)
+		{
 				var newPartner = new Partner();
 				if (validator.IsValid(_Partner))
 				{
@@ -89,10 +99,24 @@ namespace InternetInterface.Models
 					newPartner.RegDate = DateTime.Now;
 					newPartner.Login = _Partner.Login;
 					newPartner.Pass = CryptoPass.GetHashString(_Partner.Pass);
-					//newPartner.AcessSet = CombineAccess(_Rights);
 					newPartner.SaveAndFlush();
+					//newPartner.AcessSet = CombineAccess(_Rights);)
+					foreach (var right in _Rights)
+					{
+						if ((right == 4) && (!_Rights.Contains(1)))
+						{
+							_Rights.Add(1);
+						}
+						var newAccess = new PartnerAccessSet
+						                	{
+						                		AccessCat = AccessCategories.Find(right),
+						                		PartnerId = newPartner
+						                	};
+						newAccess.SaveAndFlush();
+					}
+
 					var newPartnerID = Partner.FindAllByProperty("Login", _Partner.Login);
-					if (PartnerAccessSet.AccesPartner(AccessCategoriesType.CloseDemand))
+					if (IsBrigadir(newPartner))
 					{
 						var newBrigad = new Brigad();
 						newBrigad.Name = newPartner.Name;
@@ -103,8 +127,10 @@ namespace InternetInterface.Models
 					}
 					return true;
 				}
-			}
-			return false;
+				else
+				{
+					return false;
+				}
 		}
 	}
 

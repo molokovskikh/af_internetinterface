@@ -1,4 +1,10 @@
 ﻿<% OutputSubView("SearchUsers") %>
+    <%if (PartnerAccessSet.AccesPartner("SD") and (not CloseDemand)): %>
+        <form class="form login" method="post" name="CreateDem" action="${siteroot}/Search/CreateDemandConnect">
+    <%end %>
+    <%if PartnerAccessSet.AccesPartner("CD") and CloseDemand: %>
+    <form class="form login" method="post" name="CloseDem" action="${siteroot}/Search/CloseDemand">
+    <%end %>
 <div id="main" style="width: 100%;">
 <% if (SClients.Count == 0): %>
 <div class="flash">
@@ -36,23 +42,22 @@
             <th>Кем зарегистрирован</th>
         </tr>
     </thead>
-    <form class="form login" method="post" action="${siteroot}/Search/CreateDemandConnect ">
     <tbody id="SearchResults">
     <% for i,item in enumerate(SClients): %>
         <tr class="${item.Name}">
             <%if not item.IsConnected() : %>
-                 <%if ConnectAccess: %>
+                 <%if (PartnerAccessSet.AccesPartner("SD") and (not CloseDemand)): %>
                      <%if item.HasConnected != null: %>
-                     <td align="center"> ${item.HasConnected.Name} </td>
+                        <td align="center"> ${item.HasConnected.Name} </td>
                      <%else: %>
-                     <td align="center"><input type="checkbox" name="ForConnect[${i}]" value=${item.Id} /> </td>
+                         <td align="center"><input type="checkbox" name="ForConnect[${i}]" value=${item.Id} /> </td>
                      <%end %>
                  <%else: %>
-                    <%if CloseDemand: %>
-                    <td align="center"><input type="checkbox" name="ForClose[${i}]" value=${item.Id} /> </td>
+                    <%if (PartnerAccessSet.AccesPartner("CD") and CloseDemand): %>
+                        <td align="center"><input type="checkbox" name="ForClose[${i}]" value=${item.Id} /> </td>
                     <%else: %>
-                 <td align="center">Нет</td>
-                 <%end %>
+                        <td align="center">Нет</td>
+                    <%end %>
                  <%end %>
             <%else: %>
             <td align="center"> Да </td>
@@ -80,7 +85,7 @@
         </tr>
     <% end %>        
 
-      <%if ConnectAccess: %>
+      <%if (PartnerAccessSet.AccesPartner("SD") and (not CloseDemand)): %>
       <tr>
             <td>
                <button type="submit" class="button" name="ConnectBut" value="Connecting">
@@ -99,7 +104,7 @@
             </td>
         </tr>
         <%end %>
-        <%if CloseDemand: %>
+        <%if (PartnerAccessSet.AccesPartner("CD") and CloseDemand): %>
          <tr>
             <td>
                <button type="submit" class="button" name="CloseDemandBut" value="CloseDemand">

@@ -29,7 +29,7 @@ namespace InternetInterfaceFixture
 		public void AccessSearchTest()
 		{
 			//InithializeContent.partner = Castle.MonoRail
-			Console.WriteLine(AccesPartner(AccessCategoriesType.GetClientInfo));
+			//Console.WriteLine(AccesPartner(AccessCategoriesType.GetClientInfo));
 		}
 	}
 }

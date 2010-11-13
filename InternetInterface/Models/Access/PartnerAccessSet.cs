@@ -4,6 +4,7 @@ using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
 using InternetInterface.Controllers.Filter;
 using NHibernate.Criterion;
+using NHibernate.SqlCommand;
 
 namespace InternetInterface.Models
 {
@@ -19,11 +20,12 @@ namespace InternetInterface.Models
 		[BelongsTo("AccessCat")]
 		public virtual AccessCategories AccessCat { get; set; }
 
-		public static Boolean AccesPartner(AccessCategoriesType accessOption)
+		public static Boolean AccesPartner(string reduseRulesName)
 		{
 			var result = FindAll(DetachedCriteria.For(typeof (PartnerAccessSet))
+									.CreateAlias("AccessCat", "AC", JoinType.InnerJoin)
 									.Add(Restrictions.Eq("PartnerId", InithializeContent.partner))
-									.Add(Restrictions.Eq("AccessCat.Id", (Int32)accessOption)));
+									.Add(Restrictions.Eq("AC.ReduceName", reduseRulesName)));
 			return result.Length != 0 ? true : false;
 		}
 

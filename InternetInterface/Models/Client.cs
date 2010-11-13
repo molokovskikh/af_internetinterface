@@ -107,8 +107,6 @@ namespace InternetInterface.Models
 
 		public static bool RegistrLogicClient(Client _client, bool _Popolnenie, uint _tariff, ValidatorRunner validator, Partner hasRegistered)
 		{
-			if (PartnerAccessSet.AccesPartner(AccessCategoriesType.RegisterClient))
-			{
 				var newClient = new Client();
 				if (validator.IsValid(_client))
 				{
@@ -130,8 +128,7 @@ namespace InternetInterface.Models
 					newClient.SaveAndFlush();
 					return true;
 				}
-			}
-			return false;
+				return false;
 		}
 	}
 

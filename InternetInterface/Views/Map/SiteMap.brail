@@ -11,28 +11,28 @@
 </tr>
  </thead>   
  <tbody>
-     <%if RegPartner: %>
+     <%if PartnerAccessSet.AccesPartner("RP"): %>
     <tr>
         <td>
         <a href = "../Register/RegisterPartner.rails" >Регистрация партнера</a>
          </td>
     </tr>
     <%end %>
-    <%if RegClient: %>
+    <%if PartnerAccessSet.AccesPartner("RC"): %>
     <tr>
         <td>
         <a href = "../Register/RegisterClient.rails" >Регистрация нового абонента</a>
          </td>
     </tr>
     <%end %>
-    <%if GetInfo: %>
+    <%if PartnerAccessSet.AccesPartner("GCI"): %>
     <tr>
         <td>
         <a href = "../Search/SearchUsers.rails" >Найти абонента</a>
         </td>
     </tr>
     <%end %>
-    <%if CloseDem: %>
+    <%if PartnerAccessSet.AccesPartner("CD"): %>
     <tr>
         <td>
         <a href = "../Search/SearchBy.rails?CloseDemand=true" > Закрыть заявки</a>
