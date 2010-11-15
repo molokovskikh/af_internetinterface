@@ -1,0 +1,17 @@
+﻿import file from WebSiteSupport.bake
+import file from Deploy.bake
+import file from Lib.bake
+import file from Migration.bake
+import file from Tools.bake
+
+Global(
+	Project : "InternetInterface",
+	DeployTo : """\\acdcserv.adc.analit.net\Test\InforoomInternet""",
+	HumanReadableName : "Интернет "
+)
+
+task @default, [@Build]
+
+task @Build, [@BuildWebSite]
+
+task @deploy, [@Build, @Production, @DeployWebSite]

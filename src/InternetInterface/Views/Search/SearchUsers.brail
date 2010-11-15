@@ -1,0 +1,143 @@
+﻿<head>
+    <link href="../Styles/Style.css" type="text/css" rel="stylesheet" />
+
+<script type="text/javascript">
+    jQuery(document).ready(
+        function() {
+            jQuery("#SearchText").focus();
+        }
+    );
+
+</script>
+
+    <style type="text/css">
+        #TableSize
+        {
+            width: 500px;
+        }
+    </style>
+</head>
+
+<%if PartnerAccessSet.AccesPartner("GCI") or PartnerAccessSet.AccesPartner("SD"): %>
+<form id="SearchForm" name="SearchForm" action="${siteroot}/Search/SearchBy" 
+    style="width: 100%; ">
+<center>
+<table border="0" bgcolor="#000000" cellspacing="1" cellpadding="0">
+<tr>
+<h4><a href="../Map/SiteMap.rails">Домой</a>  Вы вошли как ${PARTNERNAME}</h4>
+<%if IsDefined("CreateDemandConnect"): %>
+<% if CreateDemandConnect: %>
+       <div class="flash">
+                     <div class="message notice">
+                       <p>Заявки оформлены</p>
+                     </div>
+        </div>
+<%end %>
+<%end %>
+    <td width="100%">
+    <table class="table" bgcolor="#FFFFFF">
+    <tr>
+    <td id="TableSize">
+        <table  class="table" width="100%">
+            <th align="center">Поиск пользователей</th>
+            <tr>
+            <td>
+            <p style="text-align: left; margin-left: 32px;" >Введите текст для поиска:<br />
+            <input type="text" id="SearchText"  name="SearchText"  value="${SearchText}" style="width: 80%; " />
+            <input id="SearchButton" type="submit" value="Поиск"  align="right" /> <br /> </p>
+            </td>
+            </tr>
+        </table>
+
+    <table style="width: 100%;"  class="table">
+        <tr><td style="text-align: left;">Искать по:</td><td></td><td></td></tr>
+        <tr>
+            <td>
+            </td>
+            <td>
+                <input type="radio" id="Autosearch" name="SearchBy.SearchBy" value=Auto ${"checked" if FindBy.IsSearchAuto()} />
+                <label for="Autosearch">Автоматически</label><br />
+                <input type="radio" id="SearchByClientId" name="SearchBy.SearchBy" value=ByFio ${"checked" if FindBy.IsSearchByFio()} />
+                <label for="SearchByClientId">ФИО</label><br />
+                <input type="radio" id="SearchByUserId" name="SearchBy.SearchBy" value=ByPassportSet ${"checked" if FindBy.IsSearchByPassportSet()} />
+                <label for="SearchByUserId">Паспортные данные</label><br />
+                <input type="radio" id="SearchByLogin" name="SearchBy.SearchBy" value=ByLogin ${"checked" if FindBy.IsSearchByLogin()} />
+                <label for="SearchByLogin">Логин клиента</label><br />
+            </td>
+            <td>
+                
+            </td>
+        </tr>
+    </table>
+    
+    <fieldset style="padding: 0; margin: 0; text-align: left; width: 99%;">
+        <legend>Фильтры:</legend>
+        <table style="width:100%; height: 80px;" border="0" class="table">
+			<col style="width:50%" />
+			<col style="width:50%" />
+			<thead>
+			    <tr align="left">
+			        <td style="padding: 5px;">Тариф<br />
+                    <div>
+                   <select name="tariff" id="ChTariff" style="width: 100%" >
+                   <option id="Option1" value="0"> Все </option>
+                   <%
+                    for i, Tariff in enumerate(Tariffs): 
+                    %>
+                        <option id="Tarif${Tariff.Id}" value="${Tariff.Id}" ${"selected" if (Tariff.Id == ChTariff)}> ${Tariff.Name} </option>
+                        <% end %>
+                    </select>
+                    </div>
+                    </td>
+
+
+			        <td style="padding: 5px;">Кем загистрирован<br />
+                    <div>
+                          <select name="whoregister" id="ChRegister" style="width: 100%" >
+                          <option id="Option2" value="0" > Все </option>
+                          <%
+                          for i, RigistrName in enumerate(WhoRegistered): 
+                          %>
+                          <option id="RgistrName${RigistrName.Id}" value="${RigistrName.Id}" ${"selected" if (RigistrName.Id == ChRegistr)}> ${RigistrName.Name} </option>
+                          <% end %>
+                          </select>
+                    </div>
+			        </td>
+			    </tr>
+                <tr>
+                 <%if PartnerAccessSet.AccesPartner("SD"): %>
+                <td style="padding: 5px;">Назначено на бригаду<br />
+                    <div>
+                   <select name="brigad" id="Select1" style="width: 100%" >
+                   <option id="Option3" value="0"> Все </option>
+                   <%
+                    for i, Brigad in enumerate(Brigads): 
+                    %>
+                        <option id="Option4" value="${Brigad.Id}" ${"selected" if (Brigad.Id == ChBrigad)}> ${Brigad.Name} </option>
+                        <% end %>
+                    </select>
+                    </div>
+                    </td>
+                    <%end %>
+
+                 <td align="center"><input type="checkbox" name="Connected" value=Connected ${"checked" if (Connected)} />Клиент подключен ? </td>
+                </tr>
+			</thead>
+        </table>
+    </fieldset>
+
+    </td>
+    </tr>
+</table>
+    </td>
+</tr>
+</table>
+</center>
+    </p>
+</form>
+<%end %>
+</div>
+
+
+    
+         

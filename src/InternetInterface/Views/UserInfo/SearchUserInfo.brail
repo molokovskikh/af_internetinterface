@@ -1,0 +1,135 @@
+﻿<head>
+<link href="../Styles/style.css" type="text/css" rel="stylesheet" />
+<link rel="stylesheet" href="../Styles/base.css" type="text/css" media="screen" />
+<!-- <link href="../Styles/base.css" type="text/css" rel="stylesheet" /> --->
+<div id="main" style="width: 50%;">
+<div id="container">
+<div id="block-tables" class="block">
+<div class="content">
+<h3><a href = "../Search/SearchUsers.rails" >Назад</a></h3>
+            <%if IsDefined("Applying"): %>
+           <% if Applying: %>
+                 <div class="flash">
+                     <div class="message warning">
+                       <p>Баланс пополнен</p>
+                     </div>
+                  </div>
+            <%else: %>
+                  <div class="flash">
+                     <div class="message error">
+                       <p>Некорректно введена сумма</p>
+                     </div>
+                  </div>
+        <%end%>
+       <% end %>
+	<table class="table" style="width: 100%;" align="left">
+    <thead>
+        <th>Информация по клиенту ${ClientName.Surname}  ${ClientName.Name}  ${ClientName.Patronymic}</th>  
+    </thead>
+    <tbody>
+
+		<tr>
+            <td><span class="description">Город: </span> ${ClientName.City}</td>
+        </tr>
+        <tr>
+            <td><span class="description">Адрес подключения: </span>   ${ClientName.AdressConnect}</td>
+        </tr>
+        <tr>
+            <td>Паспортные данные: <br />
+                                                 <span class="description">Серия\Номер</span> ${ClientName.PassportSeries} \ ${ClientName.PassportNumber}<br />
+                                                 <span class="description">Кем выдан: </span> ${ClientName.WhoGivePassport}<br />
+                                                 <span class="description">Адрес регистрации:</span> ${ClientName.RegistrationAdress}</td>
+        </tr>
+        <tr>
+            <td><span class="description">Дата регистрации:</span> ${ClientName.RegDate}</td>
+        </tr>
+				
+		
+        <%if ClientName.HasRegistered != null: %>
+            <tr>
+                <td><span class="description">Зарегистрировал:</span> ${ClientName.HasRegistered.Name}</td>
+            </tr>
+        <%end %>
+        
+		
+		
+        <%if ClientName.Tariff != null: %>
+        <tr>
+             <td><span class="description">Тариф:</span> ${ClientName.Tariff.Name}</td>
+        </tr>
+         <%end %>
+
+
+        <tr>
+            <td><span class="description">Баланс:</span> ${ClientName.Balance}</td>
+        </tr>
+        <tr>
+            <td><span class="description">Логин:</span> ${ClientName.Login}</td>
+        </tr>
+    </tbody>
+</table>
+<br />
+<div style="clear:both;">
+<table class="table"  style="width: 100%; font-size: small;" align="left">
+    <thead>
+        <tr valign="top">
+            <th>Платеж зарегистрировал</th>
+            <th>Дата оплаты</th>                      
+            <th>Сумма</th>
+        </tr>
+    </thead>
+    
+    <tbody id="SearchResults" class="HighLightCurrentRow">
+    <% for i,item in enumerate(Payments): %>
+        <tr id="Row${i}">
+        <%if item.ManagerID != null: %>
+            <td>${item.ManagerID.Name}</td>   
+            <%else: %>
+            <td></td>
+            <%end %>
+            <td>${item.PaymentDate}</td>
+            <td>${item.Summ}</td>
+        </tr>
+    <% end %>        
+    </tbody> 
+
+</table>
+
+</div>
+<br />
+<%if PartnerAccessSet.AccesPartner("CB"): %>
+<div style="clear:both;">
+<form class="form login" method="post" action="${siteroot}/UserInfo/ChangeBalance">
+    <input type="hidden" name="ClientID" value="${ClientCode}" />
+    <table class="table">
+        <thead>
+            <th>Пополнить баланс клиента</th>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                <input type="radio" id="Autosearch" name="ChangedBy.ChangeType" value="ForTariff" ${"checked" if ChangeBy.IsForTariff()} />
+                <label for="Autosearch">Внести сумму по тарифному плану</label><br />
+
+                <input type="radio" id="Radio1" name="ChangedBy.ChangeType" value="OtherSumm" ${"checked" if ChangeBy.IsOtherSumm()} />
+                <label for="Other_Balance">Внести сумму:</label>
+                <input type="text" id="BalanceText"  name="BalanceText"  value="${BalanceText}" style="width: 50%; " />
+            </td>
+
+        </tr>
+        <tr>
+            <td>
+               <button type="submit" class="button">
+                  <img alt="Save" src="../Images/tick.png"> Пополнить баланс
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    </form>
+</div>
+<%end %>
+</div>
+</div>
+</div>
+</form>
