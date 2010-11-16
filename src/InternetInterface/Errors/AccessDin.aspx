@@ -14,7 +14,8 @@
         <div id="block-tables" class="block" style="margin: 150px auto;">
            <div class="flash">
                <div class="message error">
-                   <p>У вас нет прав для просмотра запрошенной страницы</p>
+                   <p>У вас недостаточно прав для просмотра запрошенной страницы</p></br>
+                   <p>обратитесь к администратору системы, если Вам требуется доступ к закрытой функции</p>
                    <a href="../Login/LoginPartner.rails">Перейти на страницу авторизации</a>
                </div>
            </div>

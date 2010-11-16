@@ -46,7 +46,7 @@ namespace InternetInterface.Controllers
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void RegisterPartner([DataBind("Partner")]Partner partner, [DataBind("ForRight")]List<int> rights)
+		public void RegisterPartner([DataBind("Partner")]Partner partner, [DataBind("ForRight")]List<int> rights, [DataBind("ForRight")]List<int> ForRight)
 		{
 			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
 			PropertyBag["Rights"] =
@@ -56,12 +56,14 @@ namespace InternetInterface.Controllers
 			{
 				PropertyBag["Applying"] = "true";
 				PropertyBag["Partner"] = new Partner();
+				PropertyBag["ChRights"] = new List<int>();
 			}
 			else
 			{
 				partner.SetValidationErrors(Validator.GetErrorSummary(partner));
 				PropertyBag["Partner"] = partner;
 				PropertyBag["Applying"] = "false";
+				PropertyBag["ChRights"] = ForRight;
 			}
 		}
 
@@ -83,6 +85,7 @@ namespace InternetInterface.Controllers
 				ActiveRecordBase<AccessCategories>.FindAll(DetachedCriteria.For<AccessCategories>().Add(Expression.Sql("ReduceName <> 'RP'")));
 			PropertyBag["Partner"] = new Partner();
 			PropertyBag["Applying"] = "false";
+			PropertyBag["ChRights"] = new List<int>();
 		}
 	}
 

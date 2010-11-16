@@ -11,7 +11,7 @@ namespace InternetInterface.Controllers.Filter
 			var MapPartner = Partner.FindAllByProperty("Login", context.Session["Login"]);
 			if (MapPartner.Length == 0)
 			{
-				context.Response.RedirectToUrl(@"..\\Errors\AccessDin.aspx");
+				context.Response.RedirectToUrl(@"..\\Login\LoginPartner.brail");
 				return false;
 			}
 			else
