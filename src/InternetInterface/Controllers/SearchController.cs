@@ -59,7 +59,7 @@ PC.RegDate, PC.Tariff, PC.Balance, PC.Login, PC.Password, PC.HasRegistered, PC.H
 FROM internet.RequestsConnection R
 join internet.ConnectBrigads CB on R.BrigadNumber = CB.ID
 Join internet.PhysicalClients PC on R.ClientID = PC.Id
-join accessright.Partners PA on CB.PartnerID = PA.Id
+join internet.Partners PA on CB.PartnerID = PA.Id
 WHERE PA.ID = {0} and PC.Connected = false", InithializeContent.partner.Id));
 					var query = session.CreateSQLQuery(sqlStr).AddEntity(typeof (Client));
 					var result = query.List<Client>();

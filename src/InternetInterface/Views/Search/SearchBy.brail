@@ -87,12 +87,12 @@
 
       <%if (PartnerAccessSet.AccesPartner("SD") and (not CloseDemand)): %>
       <tr>
-            <td>
+            <td colspan="2">
                <button type="submit" class="button" name="ConnectBut" value="Connecting">
                   <img alt="Save" src="../Images/tick.png"> Подключить клиентов
                 </button>
             </td>
-            <td style="padding: 5px;">Назначить подлючение бригаде: <br />
+            <td style="padding: 5px;">Назначить подлючение бригаде: </td>
             <td>
             <select name="BrigadID" id="ChBrigad" style="width: 100%" >
                    <%
@@ -108,7 +108,7 @@
          <tr>
             <td>
                <button type="submit" class="button" name="CloseDemandBut" value="CloseDemand">
-                  <img alt="Save" src="../Images/tick.png"> Закрыть заявки
+                  Закрыть заявки
                 </button>
             </td>
         </tr>

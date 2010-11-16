@@ -65,7 +65,9 @@ namespace InternetInterface.Models.Access
 			_registerClient = new HashSet<string>
 			                 	{
 									"RegisterClient",
-									"SiteMap"
+									"SiteMap",
+									"LoadEditMudule",
+									"EditInformation"
 			                 	};
 			return _registerClient.Contains(methodName) ? "RC" : string.Empty;
 		}

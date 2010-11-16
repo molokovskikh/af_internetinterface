@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,6 +12,7 @@ using Castle.ActiveRecord.Framework.Config;
 using Castle.MonoRail.Framework;
 using Castle.MonoRail.Framework.Configuration;
 using Castle.MonoRail.Framework.Internal;
+using Castle.MonoRail.Framework.Routing;
 using Castle.MonoRail.Framework.Views.Aspx;
 using Castle.MonoRail.Views.Brail;
 
@@ -26,6 +28,10 @@ namespace InternetInterface
 					Assembly.Load("InternetInterface")
 	,
 	ActiveRecordSectionHandler.Instance);
+
+			RoutingModuleEx.Engine.Add(new PatternRoute("/")
+	.DefaultForController().Is("Login")
+	.DefaultForAction().Is("LoginPartner"));
 
 		}
 

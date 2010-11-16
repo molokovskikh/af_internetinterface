@@ -5,17 +5,18 @@ using Castle.ActiveRecord.Linq;
 using Castle.Components.Validator;
 using Castle.MonoRail.Framework;
 using InternetInterface.Controllers.Filter;
+using InternetInterface.Models.Universal;
 using NHibernate.Criterion;
 using NHibernate.SqlCommand;
 
 namespace InternetInterface.Models
 {
 	[ActiveRecord("Partners", Schema = "internet", Lazy = true)]
-	public class Partner : ChildActiveRecordLinqBase<Partner>
+	public class Partner : ValidActiveRecordLinqBase<Partner>
 	{
-		public Partner()
+		public Partner():base()
 		{
-			ValidationErrors = null;
+			//ValidationErrors = null;
 		}
 
 		[PrimaryKey]
@@ -31,36 +32,36 @@ namespace InternetInterface.Models
 		, ValidateNonEmpty("Введите номер телефона")]
 		public virtual string TelNum { get; set; }
 
-		[Property, ValidateNonEmpty("Введите имя")]
+		[Property, ValidateNonEmpty("Введите адрес")]
 		public virtual string Adress { get; set; }
 
 		[Property]
 		public virtual DateTime RegDate { get; set; }
 
-		[Property, ValidateNonEmpty("Введите имя")]
+		[Property, ValidateNonEmpty("Введите пароль")]
 		public virtual string Pass { get; set; }
 
-		[Property, ValidateNonEmpty("Введите имя")]
+		[Property, ValidateNonEmpty("Введите логин")]
 		public virtual string Login { get; set; }
 
-		private static ErrorSummary ValidationErrors;
+		//private static ErrorSummary ValidationErrors;
 
-		public virtual void SetValidationErrors(ErrorSummary _ValidationErrors)
+		/*public virtual void SetValidationErrors(ErrorSummary _ValidationErrors)
 		{
 			ValidationErrors = _ValidationErrors;
-		}
+		}*/
 
-		public virtual ErrorSummary GetValidationErrors()
+		/*public virtual ErrorSummary GetValidationErrors()
 		{
 			return ValidationErrors;
-		}
+		}*/
 
 		public static Partner GetPartnerForLogin(string login)
 		{
 			return FindAllByProperty("Login", login)[0];
 		}
 
-		public virtual string GetErrorText(string field)
+		/*public virtual string GetErrorText(string field)
 		{
 			if (ValidationErrors != null)
 			{
@@ -76,7 +77,7 @@ namespace InternetInterface.Models
 				}
 			}
 			return "";
-		}
+		}*/
 
 		private static bool IsBrigadir(Partner partner)
 		{

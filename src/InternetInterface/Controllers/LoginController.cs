@@ -21,6 +21,11 @@ namespace InternetInterface.Controllers
 						Session.Add("Login", Login);
 						RedirectToUrl(@"..//Map/SiteMap.rails");
 					}
+					else
+					{
+						Flash["AccessDenied"] = true;
+						RedirectToUrl(@"LoginPartner.rails");
+					}
 				}
 				else
 				{
@@ -34,8 +39,7 @@ namespace InternetInterface.Controllers
 			}
 		}
 
-		[AccessibleThrough(Verb.Get)]
-		public void LoginPartner(string TextAccess)
+		public void LoginPartner()
 		{
 			/*if (TextAccess != "NO")
 			PropertyBag["TextAccess"] = "";*/

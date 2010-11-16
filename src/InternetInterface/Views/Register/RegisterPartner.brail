@@ -55,14 +55,13 @@
     </style>
 
 </head> 
-
+<% OutputSubView("""\Subview\MapHead""") %>
 <body class="style1"> 
     <input type="hidden" name="hiddenClient" value="${Partner}" />
 <div id="main">
 <div id="container">
     <div id="block-tables" class="block">
         <div class="content">
-        <h2 class="title"><a href="../Map/SiteMap.rails">Домой</a></h2>
                             <% if Applying == "true": %>
                                     <div class="flash">
                                         <div class="message notice">
@@ -124,7 +123,15 @@
                                     Адрес</td>
                                 <td >
                                     <input id="City" type="text" value="${Partner.Adress}" name="Partner.Adress"/></td>
-                                <td></td>
+                                <td>
+                                 <% if (Partner.GetErrorText("Adress") != ""): %>
+                                    <div class="flash">
+                                        <div class="message error">
+                                        <p>${Partner.GetErrorText("Adress")}</p>
+                                        </div>
+                                    </div>
+                                <%end %>
+                                </td>
                             </tr>
                             <tr>
                                 <td >
@@ -171,7 +178,7 @@
                             <tr>
                                 <td >
                                 <div class="actions">
-                                                 <button type="submit" class="button">
+                                                 <button type="submit" class="button" >
                                                 <img alt="Save" src="../Images/application_edit.png"> Зарегистрировать
                                                  </button>
                                 <!--    <input class="button" id="RegisterButton" type="submit" value="Зарегистрировать" /></td> -->

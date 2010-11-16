@@ -12,44 +12,54 @@ namespace InternetInterface.Controllers
 	public class RegisterController : SmartDispatcherController
 	{
 		[AccessibleThrough(Verb.Post)]
-		public void RegisterClient([DataBind("client")]Client user, bool popolnenie, uint tariff)
+		public void RegisterClient([DataBind("ChangedBy")]ChangeBalaceProperties changeProperties,
+			[DataBind("client")]Client user, string balanceText, uint tariff)
 		{
-			Session["df"] = "sdf";
-			if (Client.RegistrLogicClient(user, popolnenie, tariff, Validator,
+			//PropertyBag["Popolnen"] = popolnenie;
+			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
+			PropertyBag["Tariffs"] = Tariff.FindAllSort();
+			//string semdBalanceText = string.Empty;
+			if (changeProperties.IsForTariff())
+			{
+				user.Balance = Tariff.Find(tariff).Price.ToString();
+			}
+			if (changeProperties.IsOtherSumm())
+			{
+				user.Balance = balanceText;
+			}
+			if (Client.RegistrLogicClient(user, tariff, Validator,
 										  Partner.FindAllByProperty("Login", Session["Login"].ToString())[0]))
 			{
 				PropertyBag["Applying"] = "true";
 				PropertyBag["Client"] = new Client();
-				PropertyBag["Tariffs"] = Tariff.FindAllSort();
-				PropertyBag["Popolnen"] = popolnenie;
+				PropertyBag["BalanceText"] = string.Empty;
+				PropertyBag["ChangeBy"] = new ChangeBalaceProperties { ChangeType = TypeChangeBalance.ForTariff };
 			}
 			else
 			{
 				user.SetValidationErrors(Validator.GetErrorSummary(user));
 				PropertyBag["Client"] = user;
-				PropertyBag["Tariffs"] = Tariff.FindAllSort();
+				PropertyBag["BalanceText"] = balanceText;
 				PropertyBag["Applying"] = "false";
-				PropertyBag["Popolnen"] = popolnenie;
+				PropertyBag["ChangeBy"] = changeProperties;
 			}
 		}
 
 		[AccessibleThrough(Verb.Post)]
 		public void RegisterPartner([DataBind("Partner")]Partner partner, [DataBind("ForRight")]List<int> rights)
 		{
+			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
+			PropertyBag["Rights"] =
+	ActiveRecordBase<AccessCategories>.FindAll(
+		DetachedCriteria.For<AccessCategories>().Add(Expression.Sql("ReduceName <> 'RP'")));
 			if (Partner.RegistrLogicPartner(partner, rights, Validator))
 			{
 				PropertyBag["Applying"] = "true";
-				PropertyBag["Rights"] =
-					ActiveRecordBase<AccessCategories>.FindAll(
-						DetachedCriteria.For<AccessCategories>().Add(Expression.Sql("ReduceName <> 'RP'")));
 				PropertyBag["Partner"] = new Partner();
 			}
 			else
 			{
 				partner.SetValidationErrors(Validator.GetErrorSummary(partner));
-				PropertyBag["Rights"] =
-					ActiveRecordBase<AccessCategories>.FindAll(
-						DetachedCriteria.For<AccessCategories>().Add(Expression.Sql("ReduceName <> 'RP'")));
 				PropertyBag["Partner"] = partner;
 				PropertyBag["Applying"] = "false";
 			}
@@ -57,15 +67,18 @@ namespace InternetInterface.Controllers
 
 		public void RegisterClient()
 		{
+			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
+			PropertyBag["BalanceText"] = string.Empty;
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["Client"] = new Client();
 			PropertyBag["Applying"] = "false";
-			PropertyBag["Popolnen"] = false;
+			//PropertyBag["Popolnen"] = false;
+			PropertyBag["ChangeBy"] = new ChangeBalaceProperties { ChangeType = TypeChangeBalance.ForTariff };
 		}
 
 		public void RegisterPartner()
 		{
-
+			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
 			PropertyBag["Rights"] =
 				ActiveRecordBase<AccessCategories>.FindAll(DetachedCriteria.For<AccessCategories>().Add(Expression.Sql("ReduceName <> 'RP'")));
 			PropertyBag["Partner"] = new Partner();

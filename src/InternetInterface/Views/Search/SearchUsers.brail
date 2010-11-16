@@ -1,5 +1,6 @@
 ﻿<head>
     <link href="../Styles/Style.css" type="text/css" rel="stylesheet" />
+    <link href="../Styles/base.css" type="text/css" rel="stylesheet" />
 
 <script type="text/javascript">
     jQuery(document).ready(
@@ -13,18 +14,18 @@
     <style type="text/css">
         #TableSize
         {
-            width: 500px;
+            width: 600px;
         }
     </style>
 </head>
-
+<% OutputSubView("""\Subview\MapHead""") %>
 <%if PartnerAccessSet.AccesPartner("GCI") or PartnerAccessSet.AccesPartner("SD"): %>
 <form id="SearchForm" name="SearchForm" action="${siteroot}/Search/SearchBy" 
     style="width: 100%; ">
 <center>
-<table border="0" bgcolor="#000000" cellspacing="1" cellpadding="0">
+<table border="0" bgcolor="#FFFFFF" cellspacing="1" cellpadding="0">
 <tr>
-<h4><a href="../Map/SiteMap.rails">Домой</a>  Вы вошли как ${PARTNERNAME}</h4>
+<h4>Вы вошли как ${PARTNERNAME}</h4>
 <%if IsDefined("CreateDemandConnect"): %>
 <% if CreateDemandConnect: %>
        <div class="flash">

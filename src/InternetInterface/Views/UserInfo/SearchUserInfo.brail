@@ -2,74 +2,122 @@
 <link href="../Styles/style.css" type="text/css" rel="stylesheet" />
 <link rel="stylesheet" href="../Styles/base.css" type="text/css" media="screen" />
 <!-- <link href="../Styles/base.css" type="text/css" rel="stylesheet" /> --->
+<% OutputSubView("""\Subview\MapHead""") %>
 <div id="main" style="width: 50%;">
 <div id="container">
 <div id="block-tables" class="block">
 <div class="content">
 <h3><a href = "../Search/SearchUsers.rails" >Назад</a></h3>
-            <%if IsDefined("Applying"): %>
-           <% if Applying: %>
-                 <div class="flash">
-                     <div class="message warning">
-                       <p>Баланс пополнен</p>
-                     </div>
-                  </div>
-            <%else: %>
+             <%if IsDefined("EditFlag"): %>
+             <% if EditFlag: %>
                   <div class="flash">
-                     <div class="message error">
-                       <p>Некорректно введена сумма</p>
-                     </div>
+                         <div class="message notice">
+                            <p><strong>Данные изменены</strong></p>
+                         </div>
                   </div>
-        <%end%>
-       <% end %>
+            <% end %>
+            <% end %>
+            <%if IsDefined("Applying"): %>
+             <% if Applying: %>
+                  <div class="flash">
+                         <div class="message notice">
+                            <p><strong>Баланс пополнен</strong></p>
+                         </div>
+                  </div>
+            <% end %>
+            <% end %>
+
+    <%if not Editing: %>
+        <form class="form login" method="post" action="${siteroot}/UserInfo/LoadEditMudule">
+    <input type="hidden" name="ClientID" value="${ClientCode}" />
+    <input type="hidden" name="EditFlag" value="${Editing}" />
 	<table class="table" style="width: 100%;" align="left">
     <thead>
-        <th>Информация по клиенту ${ClientName.Surname}  ${ClientName.Name}  ${ClientName.Patronymic}</th>  
+        <th>Информация по клиенту ${Client.Surname}  ${Client.Name}  ${Client.Patronymic}  <input id="EditButton" type="submit" value="Редактировать"  align="right" />
+        </th>  
     </thead>
     <tbody>
-
+    </form>
 		<tr>
-            <td><span class="description">Город: </span> ${ClientName.City}</td>
+            <td><span class="description">Город: </span> ${Client.City}</td>
         </tr>
         <tr>
-            <td><span class="description">Адрес подключения: </span>   ${ClientName.AdressConnect}</td>
+            <td><span class="description">Адрес подключения: </span>   ${Client.AdressConnect}</td>
         </tr>
         <tr>
             <td>Паспортные данные: <br />
-                                                 <span class="description">Серия\Номер</span> ${ClientName.PassportSeries} \ ${ClientName.PassportNumber}<br />
-                                                 <span class="description">Кем выдан: </span> ${ClientName.WhoGivePassport}<br />
-                                                 <span class="description">Адрес регистрации:</span> ${ClientName.RegistrationAdress}</td>
+                                                 <span class="description">Серия\Номер</span> ${Client.PassportSeries} \ ${Client.PassportNumber}<br />
+                                                 <span class="description">Кем выдан: </span> ${Client.WhoGivePassport}<br />
+                                                 <span class="description">Адрес регистрации:</span> ${Client.RegistrationAdress}</td>
         </tr>
         <tr>
-            <td><span class="description">Дата регистрации:</span> ${ClientName.RegDate}</td>
+            <td><span class="description">Дата регистрации:</span> ${Client.RegDate}</td>
         </tr>
 				
 		
-        <%if ClientName.HasRegistered != null: %>
+        <%if Client.HasRegistered != null: %>
             <tr>
-                <td><span class="description">Зарегистрировал:</span> ${ClientName.HasRegistered.Name}</td>
+                <td><span class="description">Зарегистрировал:</span> ${Client.HasRegistered.Name}</td>
             </tr>
         <%end %>
         
 		
 		
-        <%if ClientName.Tariff != null: %>
+        <%if Client.Tariff != null: %>
         <tr>
-             <td><span class="description">Тариф:</span> ${ClientName.Tariff.Name}</td>
+             <td><span class="description">Тариф:</span> ${Client.Tariff.Name}</td>
         </tr>
          <%end %>
 
 
         <tr>
-            <td><span class="description">Баланс:</span> ${ClientName.Balance}</td>
+            <td><span class="description">Баланс:</span> ${Client.Balance}</td>
         </tr>
         <tr>
-            <td><span class="description">Логин:</span> ${ClientName.Login}</td>
+            <td><span class="description">Логин:</span> ${Client.Login}</td>
+        </tr>
+        <tr>
+        <%if (Client.HasConnected != null): %>
+            <td><span class="description">Назначен бригаде:</span> ${Client.HasConnected.Name}</td>
+            <%else: %>
+            <td><span class="description"></span> Подключение клиента не назначено</td>
+            <%end %>
+        </tr>
+                <tr>
+        <%if (Client.Connected): %>
+            <td><span class="description">Статус:</span> Подключен</td>
+            <%else: %>
+            <td><span class="description">Статус:</span>Не подключен</td>
+            <%end %>
         </tr>
     </tbody>
 </table>
+    <%else:%>
+    <form class="form edit" method="post" action="${siteroot}/UserInfo/EditInformation">
+    <input type="hidden" name="ClientID" value="${ClientCode}" />
+    <table class="table" style="width:100%; " border="0" id="EditTable"> 
+   <% OutputSubView("""\Subview\Client""") %>
+               <tr>
+               <td >
+                  <div class="actions">
+                       <button type="submit" class="button">
+                       <img alt="Save" src="../Images/application_edit.png"> Сохранить
+                       </button>
+                                <!--    <input class="button" id="RegisterButton" type="submit" value="Зарегистрировать" /></td> -->
+                  </div>
+               </tr>
+    </table>
+    </form>
+    <%end %>
 <br />
 <div style="clear:both;">
+<%if (Payments.Length == 0): %>
+                  <div class="flash">
+                     <div class="message error">
+                       <p>Платежи отсутствуют</p>
+                     </div>
+                  </div>
+<%else: %>
 <table class="table"  style="width: 100%; font-size: small;" align="left">
     <thead>
         <tr valign="top">
@@ -78,7 +126,7 @@
             <th>Сумма</th>
         </tr>
     </thead>
-    
+
     <tbody id="SearchResults" class="HighLightCurrentRow">
     <% for i,item in enumerate(Payments): %>
         <tr id="Row${i}">
@@ -94,7 +142,7 @@
     </tbody> 
 
 </table>
-
+<%end %>
 </div>
 <br />
 <%if PartnerAccessSet.AccesPartner("CB"): %>
@@ -103,21 +151,24 @@
     <input type="hidden" name="ClientID" value="${ClientCode}" />
     <table class="table">
         <thead>
-            <th>Пополнить баланс клиента</th>
+            <th colspan="3">Пополнить баланс клиента</th>
+            
         </thead>
         <tbody>
-        <tr>
-            <td>
-                <input type="radio" id="Autosearch" name="ChangedBy.ChangeType" value="ForTariff" ${"checked" if ChangeBy.IsForTariff()} />
-                <label for="Autosearch">Внести сумму по тарифному плану</label><br />
-
-                <input type="radio" id="Radio1" name="ChangedBy.ChangeType" value="OtherSumm" ${"checked" if ChangeBy.IsOtherSumm()} />
-                <label for="Other_Balance">Внести сумму:</label>
-                <input type="text" id="BalanceText"  name="BalanceText"  value="${BalanceText}" style="width: 50%; " />
-            </td>
-
-        </tr>
-        <tr>
+                <% OutputSubView("""\Subview\Payment""") %>
+                <td >
+                       <%if IsDefined("thisPay"): %>
+                       <% if (thisPay.GetErrorText("Summ") != ""): %>
+                                                <div class="flash">
+                                                    <div class="message error">
+                                                    <p>${thisPay.GetErrorText("Summ")}</p>
+                                                    </div>
+                                                </div>
+                      <%end %>
+                      <%end %>
+                </td>
+             </tr>
+        <tr colspan="3">
             <td>
                <button type="submit" class="button">
                   <img alt="Save" src="../Images/tick.png"> Пополнить баланс

@@ -158,3 +158,9 @@ ALTER TABLE `internet`.`PartnerAccessSet` ADD CONSTRAINT `FK_PartnerAccessSet_2`
 
 ALTER TABLE `internet`.`AccessCategories` ADD COLUMN `ReduceName` VARCHAR(5) NOT NULL AFTER `Name`;
 
+
+ALTER TABLE `internet`.`PaymentsPhisicalClient` ADD CONSTRAINT `FK_PaymentsPhisicalClient_2` FOREIGN KEY `FK_PaymentsPhisicalClient_2` (`ClientID`)
+    REFERENCES `PhysicalClients` (`Id`)
+    ON DELETE RESTRICT
+    ON UPDATE RESTRICT;
+

@@ -1,13 +1,13 @@
 ﻿using System;
 using Castle.ActiveRecord;
-using Castle.ActiveRecord.Linq;
 using Castle.Components.Validator;
+using InternetInterface.Models.Universal;
 
 namespace InternetInterface.Models
 {
 
 	[ActiveRecord("PaymentsPhisicalClient", Schema = "internet", Lazy = true)]
-	public class Payment : ActiveRecordLinqBase<Payment>
+	public class Payment : ValidActiveRecordLinqBase<Payment>
 	{
 
 		[PrimaryKey]
@@ -16,11 +16,11 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual DateTime PaymentDate { get; set; }
 
-		[Property]
-		public virtual uint ClientID { get; set; }
+		[BelongsTo("ClientId")]
+		public virtual Client ClientId { get; set; }
 
-		[Property, ValidateDecimal("Непрвильно введено значение суммы")]
-		public virtual decimal Summ { get; set; }
+		[Property, ValidateNonEmpty("Введите сумму") , ValidateDecimal("Непрвильно введено значение суммы")]
+		public virtual string Summ { get; set; }
 
 		[BelongsTo("ManagerID")]
 		public virtual Partner ManagerID { get; set; }

@@ -117,6 +117,7 @@
     <Content Include="Scripts\jquery-1.4.1.min.js" />
     <Content Include="Styles\base.css" />
     <Content Include="Styles\style.css" />
+    <None Include="Views\Subview\Client.brail" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -154,6 +155,7 @@
     <Compile Include="Models\Payment.cs" />
     <Compile Include="Models\RequestsConnection.cs" />
     <Compile Include="Models\Tariff.cs" />
+    <Compile Include="Models\Universal\ValidActiveRecordLinqBase.cs" />
     <Compile Include="Other\CryptoPass.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -181,6 +183,8 @@
     <None Include="Views\Map\SiteMap.brail" />
     <None Include="Views\Register\RegisterClient.brail" />
     <None Include="Views\Search\SearchBy.brail" />
+    <None Include="Views\Subview\MapHead.brail" />
+    <None Include="Views\Subview\Payment.brail" />
     <None Include="Views\UserInfo\SearchUserInfo.brail" />
     <None Include="Views\Search\SearchUsers.brail" />
     <None Include="Views\UserInfo\TEST.brail" />

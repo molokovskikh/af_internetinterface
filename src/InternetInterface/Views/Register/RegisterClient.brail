@@ -55,14 +55,13 @@
     </style>
 
 </head> 
-
+<% OutputSubView("""\Subview\MapHead""") %>
 <body class="style1"> 
     <input type="hidden" name="hiddenClient" value="${Client}" />
 <div id="main">
 <div id="container">
     <div id="block-tables" class="block">
         <div class="content">
-        <h2 class="title"><a href="../Map/SiteMap.rails">Домой</a></h2>
                             <% if Applying == "true": %>
                                     <div class="flash">
                                         <div class="message notice">
@@ -72,173 +71,13 @@
                             <% end %>
             <div class="inner">
                   <form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Register/RegisterClient" >
-	                    <table class="table" style="width:100%; " border="0" id="RegTable"> 
+                   <table class="table" style="width:100%; " border="0" id="RegTable"> 
                             <tr>
                                 <th colspan="3">
                                     <strong>Форма регистрации</strong></th>
                             </tr>
-                            <tr>
-                                <th colspan="3">
-                                    Личная информация</th>
-                            </tr>
-                            <tr>
-                                <td >Фамилия</td>
-                                <td > <input id="Surname" type="text" value="${Client.Surname}" name="client.Surname" /> </td>
-                                <td>
-                                <% if (Client.GetErrorText("Surname") != ""): %>
-                                    <div class="flash">
-                                        <div class="message error">
-                                        <p>${Client.GetErrorText("Surname")}</p>
-                                        </div>
-                                    </div>
-                                    <%end %>
-                                 </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    Имя</td>
-                                <td ><input id="Name" type="text" value="${Client.Name}" name="client.Name" /></td>
-                                 <td>
-                                 <% if (Client.GetErrorText("Name") != ""): %>
-                                    <div class="flash">
-                                        <div class="message error">
-                                        <p>${Client.GetErrorText("Name")}</p>
-                                        </div>
-                                    </div>
-                                 <%end %>
-                                 </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    Отчество</td>
-                                <td >
-                                    <input id="Patronymic" type="text" value="${client.Patronymic}" name="client.Patronymic"/></td>
-                                <td>
-                                <% if (Client.GetErrorText("Patronymic") != ""): %>
-                                    <div class="flash">
-                                        <div class="message error">
-                                        <p>${Client.GetErrorText("Patronymic")}</p>
-                                        </div>
-                                    </div>
-                                <%end %>
-                                </td>
-                            </tr>
-                            <tr >
-                                <td>
-                                    Город</td>
-                                <td >
-                                    <input id="City" type="text" value="${client.City}" name="client.City"/></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td >
-                                    Адрес подключения</td>
-                                <td>
-                                    <input id="AdressConnect" type="text" value="${client.AdressConnect}" name="client.AdressConnect"/></td>
-                                 <td>
-                                 <% if (Client.GetErrorText("AdressConnect") != ""): %>
-                                    <div class="flash">
-                                        <div class="message error">
-                                        <p>${Client.GetErrorText("AdressConnect")}</p>
-                                        </div>
-                                    </div>
-                                <%end %>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th colspan="3">
-                                    Паспортные данные</th>
-                            </tr>
-                            <tr>
-                                <td >
-                                    Серия паспорта</td>
-                                <td >
-                                    <input id="PassportSeries" type="text" value="${client.PassportSeries}" name="client.PassportSeries"/></td>
-                                <td>
-                                <% if (Client.GetErrorText("PassportSeries") != ""): %>
-                                    <div class="flash">
-                                        <div class="message error">
-                                        <p>${Client.GetErrorText("PassportSeries")}</p>
-                                        </div>
-                                    </div>
-                                <%end %>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td >
-                                    Номер паспорта</td>
-                                <td >
-                                    <input id="PassportNumber" type="text" value="${client.PassportNumber}" name="client.PassportNumber"/></td>
-                                <td>
-                                <% if (Client.GetErrorText("PassportNumber") != ""): %>
-                                    <div class="flash">
-                                        <div class="message error">
-                                        <p>${Client.GetErrorText("PassportNumber")}</p>
-                                        </div>
-                                    </div>
-                                <%end %>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td >
-                                    Кем выдан</td>
-                                <td >
-                                    <input id="WhoGivePassport" type="text" value="${client.WhoGivePassport}" name="client.WhoGivePassport"/></td>
-                                <td>
-                                <% if (Client.GetErrorText("WhoGivePassport") != ""): %>
-                                    <div class="flash">
-                                        <div class="message error">
-                                        <p>${Client.GetErrorText("WhoGivePassport")}</p>
-                                        </div>
-                                    </div>
-                                <% end %>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td >
-                                    Адрес регистрации</td>
-                                <td >
-                                    <input id="RegistrationAdress" type="text" value="${client.RegistrationAdress}" name="client.RegistrationAdress"/></td>
-                                <td>
-                                <% if (Client.GetErrorText("RegistrationAdress") != ""): %>
-                                    <div class="flash">
-                                        <div class="message error">
-                                        <p>${Client.GetErrorText("RegistrationAdress")}</p>
-                                        </div>
-                                    </div>
-                                <%end %>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th colspan="3">
-                                    Регистрационные данные</th>
-                            </tr>
-                            <tr>
-                                <td >
-                                    Тариф</td>
-                                <td >
-
-                                       <select name="tariff" id="ChTariff" style="width: 95%" ">
-                                       <%
-                                        for i, Tariff in enumerate(Tariffs): 
-                                        %>
-                                            <option id="Tarif${Tariff.Id}" value="${Tariff.Id}" selected="selected"> ${Tariff.Name} </option>
-                                            <% end %>
-                                        </select>
-
-
-                                </td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td >
-                                    Баланс</td>
-                                <td >
-                                    <input type="checkbox" id="ignoreNewPrices" name="Popolnenie" value=Popolnen ${"checked" if (Popolnen)}>  Пополнить баланс согласно тарифному плану</input>
-                                    </td>
-                                    <td></td>
-                            </tr>
-                            <tr>
+	                        <% OutputSubView("""\Subview\Client""") %>
+                                                   <tr>
                                 <td >
                                     Логин</td>
                                 <td >
@@ -268,6 +107,17 @@
                                 <%end %>
                                 </td>
                             </tr>
+                            <% OutputSubView("""\Subview\Payment""") %>
+                                <td  colspan="3">
+                                <% if (Client.GetErrorText("Balance") != ""): %>
+                                    <div class="flash">
+                                        <div class="message error">
+                                        <p>${Client.GetErrorText("Balance")}</p>
+                                        </div>
+                                    </div>
+                                <%end %>
+                                </td>
+                             </tr>
                             <tr>
                                 <td >
                                 <div class="actions">
@@ -277,7 +127,7 @@
                                 <!--    <input class="button" id="RegisterButton" type="submit" value="Зарегистрировать" /></td> -->
                                 </div>
                             </tr>
-                        </table>
+                       </table>
                   </form>
             </div>
         </div>

@@ -4,17 +4,18 @@ using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
 using Castle.Components.Validator;
 using Castle.MonoRail.Framework;
+using InternetInterface.Models.Universal;
 
 namespace InternetInterface.Models
 {
 
 	[ActiveRecord("PhysicalClients", Schema = "internet", Lazy = true)]
-	public class Client : ChildActiveRecordLinqBase<Client>
+	public class Client : ValidActiveRecordLinqBase<Client>
 	{
-		public Client()
+		/*public Client()
 		{
 			ValidationErrors = null;
-		}
+		}*/
 
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
@@ -52,8 +53,8 @@ namespace InternetInterface.Models
 		[BelongsTo("Tariff")]
 		public virtual Tariff Tariff { get; set; }
 
-		[Property, ValidateDecimal("Неверно введено число")]
-		public virtual decimal Balance { get; set; }
+		[Property, ValidateNonEmpty("Введите сумму"), ValidateDecimal("Неверно введено число")]
+		public virtual string Balance { get; set; }
 
 		[Property, ValidateNonEmpty("Введите логин")]
 		public virtual string Login { get; set; }
@@ -70,24 +71,24 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool Connected { get; set; }
 
-		private static ErrorSummary ValidationErrors;
+		//private ErrorSummary ValidationErrors;
 
-		public virtual void SetValidationErrors(ErrorSummary _ValidationErrors)
+		/*public virtual void SetValidationErrors(ErrorSummary _ValidationErrors)
 		{
 			ValidationErrors = _ValidationErrors;
-		}
+		}*/
 
-		public virtual ErrorSummary GetValidationErrors()
+		/*public virtual ErrorSummary GetValidationErrors()
 		{
 			return ValidationErrors;
-		}
+		}*/
 
 		public virtual bool IsConnected()
 		{
 			return this.Connected;
 		}
 
-		public virtual string GetErrorText(string field)
+		/*public virtual string GetErrorText(string field)
 		{
 			if (ValidationErrors != null)
 			{
@@ -103,9 +104,10 @@ namespace InternetInterface.Models
 				}
 			}
 			return "";
-		}
+		}*/
 
-		public static bool RegistrLogicClient(Client _client, bool _Popolnenie, uint _tariff, ValidatorRunner validator, Partner hasRegistered)
+		public static bool RegistrLogicClient(Client _client, uint _tariff,
+			ValidatorRunner validator, Partner hasRegistered)
 		{
 				var newClient = new Client();
 				if (validator.IsValid(_client))
@@ -121,7 +123,20 @@ namespace InternetInterface.Models
 					newClient.RegistrationAdress = _client.RegistrationAdress;
 					newClient.RegDate = DateTime.Now;
 					newClient.Tariff = Tariff.FindAllByProperty("Id", _tariff)[0];
-					newClient.Balance = _Popolnenie ? newClient.Tariff.Price : 0;
+					/*decimal forChangeSumm = 0;
+					try
+					{
+						if (changeProperties.IsForTariff())
+						{
+							forChangeSumm = newClient.Tariff.Price;
+						}
+						if (changeProperties.IsOtherSumm())
+						{
+							forChangeSumm = Convert.ToDecimal(balanceText);
+						}
+					} catch (Exception){}*/
+					//newClient.Balance = _Popolnenie ? newClient.Tariff.Price : 0;
+					newClient.Balance = _client.Balance;
 					newClient.Login = _client.Login;
 					newClient.Password = CryptoPass.GetHashString(_client.Password);
 					newClient.HasRegistered = hasRegistered;
