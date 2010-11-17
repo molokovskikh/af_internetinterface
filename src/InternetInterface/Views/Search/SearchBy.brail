@@ -34,9 +34,12 @@
 <table class="table"  style="width: 100%; font-size: small;">
     <thead>
         <tr valign="top">
-            <th>Подключен</th>
+        <%if (PartnerAccessSet.AccesPartner("CD") and CloseDemand): %>
             <th>Свич</th>
             <th>Порт</th>
+        <%else: %>
+            <th>Подключен</th>
+        <%end %>
             <th>ФИО</th>
             <th>Город</th>            
             <th>Адрес подключения</th>            
@@ -53,7 +56,7 @@
         <tr class="${item.Name}">
             <%if not item.IsConnected() : %>
                  <%if (PartnerAccessSet.AccesPartner("SD") and (not CloseDemand)): %>
-                     <%if item.HasConnected != null: %>
+                     <%if (item.HasConnected != null): %>
                         <td align="center"> ${item.HasConnected.Name} </td>
                      <%else: %>
                          <td align="center"><input type="checkbox" name="ForConnect[${i}]" value=${item.Id} /> </td>
