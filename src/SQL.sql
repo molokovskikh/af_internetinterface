@@ -158,9 +158,16 @@ ALTER TABLE `internet`.`PartnerAccessSet` ADD CONSTRAINT `FK_PartnerAccessSet_2`
 
 ALTER TABLE `internet`.`AccessCategories` ADD COLUMN `ReduceName` VARCHAR(5) NOT NULL AFTER `Name`;
 
+ALTER TABLE `internet`.`PaymentsPhisicalClient` ADD CONSTRAINT `FK_PaymentsPhisicalClient_2` FOREIGN KEY `FK_PaymentsPhisicalClient_2` (`ManagerID`)
+    REFERENCES `Partners` (`Id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE;
+	
+ALTER TABLE `internet`.`Clients` ADD COLUMN `Type` ENUM('Phisical','Legal') NOT NULL AFTER `Name`,
+ ADD COLUMN `PhisicalClient` INT(10) UNSIGNED NOT NULL AFTER `Type`;
 
-ALTER TABLE `internet`.`PaymentsPhisicalClient` ADD CONSTRAINT `FK_PaymentsPhisicalClient_2` FOREIGN KEY `FK_PaymentsPhisicalClient_2` (`ClientID`)
-    REFERENCES `PhysicalClients` (`Id`)
-    ON DELETE RESTRICT
-    ON UPDATE RESTRICT;
+ ALTER TABLE `internet`.`RequestsConnection` ADD COLUMN `CloseDemandDate` DATETIME NOT NULL AFTER `RegDate`;
+
+ 
+ ALTER TABLE `internet`.`Clients` CHANGE COLUMN `Client` `PhisicalClient` INT(10) UNSIGNED NOT NULL;
 

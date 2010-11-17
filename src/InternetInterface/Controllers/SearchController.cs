@@ -4,22 +4,46 @@ using Castle.ActiveRecord;
 using Castle.MonoRail.Framework;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
+using NHibernate.Criterion;
+using NHibernate.SqlCommand;
 
 namespace InternetInterface.Controllers
 {
+	public class Connect
+	{
+		private int _clientId;
+		private int _switch;
+		private int _port;
+		public int ClientId
+		{
+			get { return _clientId; }
+			set { _clientId = value; }
+		}
+		public int SwitchId
+		{
+			get { return _switch; }
+			set { _switch = value; }
+		}
+		public int PortNumber
+		{
+			get { return _port; }
+			set { _port = value; }
+		}
+	}
+
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class SearchController : SmartDispatcherController
 	{
-		private IList<Client> GetClients(UserSearchProperties searchProperties, uint tariff, uint whoregister, string searchText, uint brigad, bool connected)
+		private IList<PhisicalClients> GetClients(UserSearchProperties searchProperties, uint tariff, uint whoregister, string searchText, uint brigad, bool connected)
 		{
 			var sessionHolder = ActiveRecordMediator.GetSessionFactoryHolder();
-				var session = sessionHolder.CreateSession(typeof (Client));
+				var session = sessionHolder.CreateSession(typeof (PhisicalClients));
 				searchProperties.SearchText = searchText;
 				try
 				{
 					var sqlStr = String.Format(@"SELECT * FROM internet.PhysicalClients P {0} ORDER BY P.Login",
 					                           GetWhere(searchProperties, whoregister, tariff, searchText, brigad, connected));
-					var query = session.CreateSQLQuery(sqlStr).AddEntity(typeof (Client));
+					var query = session.CreateSQLQuery(sqlStr).AddEntity(typeof (PhisicalClients));
 					if (whoregister != 0)
 						query.SetParameter("whoregister", whoregister);
 					if (tariff != 0)
@@ -30,7 +54,7 @@ namespace InternetInterface.Controllers
 						query.SetParameter("Connected", connected);
 					if (searchText != null)
 						query.SetParameter("SearchText", "%" + searchText.ToLower() + "%");
-					var result = query.List<Client>();
+					var result = query.List<PhisicalClients>();
 					foreach (var item in result)
 						session.Evict(item);
 					return result;
@@ -38,19 +62,19 @@ namespace InternetInterface.Controllers
 				catch (Exception e)
 				{
 					throw;
-					return new List<Client>();
+					return new List<PhisicalClients>();
 				}
 				finally
 				{
 					sessionHolder.ReleaseSession(session);
 				}
-				return new List<Client>();
+				return new List<PhisicalClients>();
 		}
 
-		private IList<Client> GetClientsForCloseDemand()
+		private IList<PhisicalClients> GetClientsForCloseDemand()
 		{
 				var sessionHolder = ActiveRecordMediator.GetSessionFactoryHolder();
-				var session = sessionHolder.CreateSession(typeof(Client));
+				var session = sessionHolder.CreateSession(typeof(PhisicalClients));
 				try
 				{
 					var sqlStr = String.Format(String.Format(@"Select PC.Id, PC.name, PC.Surname, PC.Patronymic, PC.City, PC.AdressConnect,
@@ -61,8 +85,8 @@ join internet.ConnectBrigads CB on R.BrigadNumber = CB.ID
 Join internet.PhysicalClients PC on R.ClientID = PC.Id
 join internet.Partners PA on CB.PartnerID = PA.Id
 WHERE PA.ID = {0} and PC.Connected = false", InithializeContent.partner.Id));
-					var query = session.CreateSQLQuery(sqlStr).AddEntity(typeof (Client));
-					var result = query.List<Client>();
+					var query = session.CreateSQLQuery(sqlStr).AddEntity(typeof (PhisicalClients));
+					var result = query.List<PhisicalClients>();
 					foreach (var item in result)
 						session.Evict(item);
 					return result;
@@ -70,24 +94,55 @@ WHERE PA.ID = {0} and PC.Connected = false", InithializeContent.partner.Id));
 				catch (Exception e)
 				{
 					throw;
-					return new List<Client>();
+					return new List<PhisicalClients>();
 				}
 				finally
 				{
 					sessionHolder.ReleaseSession(session);
 				}
-			return new List<Client>();
+			return new List<PhisicalClients>();
 
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void CloseDemand([DataBind("ForClose")]List<int> forClose)
+		public void CloseDemand([DataBind("ConnectList")]List<Connect> forConnect)
 		{
-			foreach (uint i in forClose)
+			foreach (var client in forConnect)
 			{
-				var forUpdate = Client.Find(i);
-				forUpdate.Connected = true;
-				forUpdate.UpdateAndFlush();
+				if ((client.ClientId != 0) && (client.PortNumber != 0) && (client.SwitchId != 0))
+				{
+					var forUpdate = PhisicalClients.Find((uint)client.ClientId);
+					var inetClient = new Clients();
+					inetClient.Name = forUpdate.Surname + " " + forUpdate.Name + " " + forUpdate.Patronymic;
+					if ((client.PortNumber >= 1) && (client.PortNumber <= 48))
+					{
+						var cdDate = RequestsConnection.FindAll(DetachedCriteria.For(typeof (RequestsConnection))
+						                                        	.CreateAlias("ClientID", "PS", JoinType.InnerJoin)
+						                                        	.CreateAlias("BrigadNumber", "CB", JoinType.InnerJoin)
+						                                        	.Add(Expression.Eq("ClientID", forUpdate))
+						                                        	.Add(Expression.Eq("ManagerID", InithializeContent.partner))
+						                                        	.Add(Expression.EqProperty("BrigadNumber", "CB.Id"))
+						                                        	.Add(Expression.Eq("PS.Connected", false)));
+						forUpdate.Connected = true;
+						forUpdate.UpdateAndFlush();
+						var endPoint = new ClientEndpoints();
+						inetClient.PhisicalClient = (int) forUpdate.Id;
+						inetClient.Type = ClientType.Phisical;
+						inetClient.SaveAndFlush();
+						endPoint.Port = client.PortNumber;
+						endPoint.Switch = NetworkSwitches.Find((uint) client.SwitchId);
+						endPoint.Client = inetClient;
+						endPoint.SaveAndFlush();
+						cdDate[0].CloseDemandDate = DateTime.Now;
+						cdDate[0].UpdateAndFlush();
+					}
+					else
+					{
+						Flash["PornNumError"] = "Номер порта принимает значение от 1 до 48, вы ввели " + client.PortNumber.ToString() +
+							@" операция 'Подключения' прервана на клиенте " + inetClient.Name;
+						break;
+					}
+				}
 			}
 			Flash["DemandAccept"] = true;
 			RedirectToUrl(@"../Search/SearchBy.rails?CloseDemand=true");
@@ -103,7 +158,7 @@ WHERE PA.ID = {0} and PC.Connected = false", InithializeContent.partner.Id));
 				                 	{
 				                 		BrigadNumber = Brigad.Find(brigadId),
 				                 		ManagerID = InithializeContent.partner,
-				                 		ClientID = Client.Find(clientToConnect),
+				                 		ClientID = PhisicalClients.Find(clientToConnect),
 				                 		RegDate = DateTime.Now
 				                 	};
 				newRequest.ClientID.HasConnected = newRequest.BrigadNumber;
@@ -117,9 +172,12 @@ WHERE PA.ID = {0} and PC.Connected = false", InithializeContent.partner.Id));
 		public void SearchBy([DataBind("SearchBy")]UserSearchProperties searchProperties, uint tariff, uint whoregister, uint brigad, bool connected,string searchText, Boolean closeDemand)
 		{
 			//var partner = Partner.GetPartnerForLogin(Session["Login"].ToString());
-			IList<Client> clients = new List<Client>();
+			IList<PhisicalClients> clients = new List<PhisicalClients>();
 			if (closeDemand)
 			{
+				Flash["ConnectAdd"] = new Connect();
+				Flash["ConnectList"] = new List<Connect>();
+				Flash["Switches"] = NetworkSwitches.FindAllSort();
 				clients = GetClientsForCloseDemand();
 			}
 			if (!closeDemand)
@@ -129,7 +187,7 @@ WHERE PA.ID = {0} and PC.Connected = false", InithializeContent.partner.Id));
 			Flash["SClients"] = clients;
 			var tariffText = new List<Tariff>();
 			var partnerText = new List<Partner>();
-			foreach (Client t in clients)
+			foreach (PhisicalClients t in clients)
 			{
 				tariffText.Add(t.Tariff);
 				partnerText.Add(t.HasRegistered);
@@ -164,26 +222,10 @@ WHERE PA.ID = {0} and PC.Connected = false", InithializeContent.partner.Id));
 			{
 				_return += " and P.Tariff = :tariff";
 			}
-			/*if ((whoregister != 0) && (tariff == 0))
-			{
-				_return += " and :tariff = :tariff";
-			}
-			if ((whoregister == 0) && (tariff != 0))
-			{
-				_return += " and :whoregister = :whoregister";
-			}
-			if ((whoregister == 0) && (tariff == 0))
-			{
-				_return += " and :tariff = :tariff and :whoregister = :whoregister";
-			}*/
 			if (brigad != 0)
 			{
 				_return += " and P.HasConnected = :Brigad";
 			}
-			/*else
-			{
-				_return += " and :Brigad = :Brigad";
-			}*/
 			if (connected)
 			{
 				_return += " and P.Connected = :Connected";
@@ -232,7 +274,7 @@ or LOWER(P.RegistrationAdress) like {0}", ":SearchText") + _return;
 			return string.Empty;
 		}
 
-		public void SearchUsers(string query, Client sClients)
+		public void SearchUsers(string query, PhisicalClients sClients)
 		{
 			var searchProperties = new UserSearchProperties {SearchBy = SearchUserBy.Auto};
 			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;

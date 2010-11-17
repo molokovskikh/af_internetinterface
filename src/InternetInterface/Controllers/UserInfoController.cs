@@ -13,7 +13,7 @@ namespace InternetInterface.Controllers
 		//[AccessibleThrough(Verb.Get)]
 		public void SearchUserInfo(uint clientCode, bool Editing)
 		{
-			PropertyBag["Client"] = Client.Find(clientCode);
+			PropertyBag["Client"] = PhisicalClients.Find(clientCode);
 			SendParam(clientCode);
 			Flash["Editing"] = Editing;
 			/*PropertyBag["EditFlag"] = _editFlag;
@@ -30,9 +30,9 @@ namespace InternetInterface.Controllers
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void EditInformation([DataBind("Client")]Client client, uint ClientID, uint tariff)
+		public void EditInformation([DataBind("Client")]PhisicalClients client, uint ClientID, uint tariff)
 		{
-			var updateClient = Client.Find(ClientID);
+			var updateClient = PhisicalClients.Find(ClientID);
 			updateClient.Name = client.Name;
 			updateClient.Surname = client.Surname;
 			updateClient.Patronymic = client.Patronymic;
@@ -56,7 +56,7 @@ namespace InternetInterface.Controllers
 				updateClient.SetValidationErrors(Validator.GetErrorSummary(updateClient));
 				Flash["Client"] = updateClient;
 				var sessionHolder = ActiveRecordMediator.GetSessionFactoryHolder();
-				var session = sessionHolder.CreateSession(typeof (Client));
+				var session = sessionHolder.CreateSession(typeof (PhisicalClients));
 				session.Evict(updateClient);
 				//Flash["Validate"] = true;
 				RenderView("SearchUserInfo");	
@@ -75,19 +75,19 @@ namespace InternetInterface.Controllers
 			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties {ChangeType = TypeChangeBalance.OtherSumm};
 			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
-			PropertyBag["Payments"] = Payment.FindAllByProperty("ClientId", Client.Find(ClientCode));
+			PropertyBag["Payments"] = Payment.FindAllByProperty("ClientId", PhisicalClients.Find(ClientCode));
 		}
 
 		[AccessibleThrough(Verb.Post)]
 		public void ChangeBalance([DataBind("ChangedBy")]ChangeBalaceProperties changeProperties, uint clientId, string balanceText)
 		{
-			var clientToch = Client.Find(clientId);
+			var clientToch = PhisicalClients.Find(clientId);
 			string forChangeSumm = string.Empty;
 			var thisPay = new Payment();
 			PropertyBag["ChangeBalance"] = true;
 			if (changeProperties.IsForTariff())
 			{
-				forChangeSumm = Client.Find(clientId).Tariff.Price.ToString();
+				forChangeSumm = PhisicalClients.Find(clientId).Tariff.Price.ToString();
 			}
 			if (changeProperties.IsOtherSumm())
 			{
@@ -95,7 +95,7 @@ namespace InternetInterface.Controllers
 			}
 			thisPay.Summ = forChangeSumm;
 			thisPay.ManagerID = InithializeContent.partner;
-			thisPay.ClientId = Client.Find(clientId);
+			thisPay.ClientId = PhisicalClients.Find(clientId);
 			thisPay.PaymentDate = DateTime.Now;
 			if (Validator.IsValid(thisPay))
 			{

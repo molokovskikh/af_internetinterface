@@ -17,10 +17,13 @@ namespace InternetInterface.Models
 		public virtual Partner ManagerID { get; set; }
 
 		[BelongsTo("ClientID")]
-		public virtual Client ClientID { get; set; }
+		public virtual PhisicalClients ClientID { get; set; }
 
 		[Property]
 		public virtual DateTime RegDate { get; set; }
+
+		[Property]
+		public virtual DateTime CloseDemandDate { get; set; }
 	}
 
 }

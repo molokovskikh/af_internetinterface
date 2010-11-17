@@ -13,11 +13,15 @@
     </div>
 </div>
 <% else: %>
+<%if IsDefined("PornNumError"): %>
+       <div class="flash">
+                     <div class="message error">
+                       <p>${PornNumError}</p>
+                     </div>
+        </div>
+<%end %>
 <div id="block-tables" class="block">
 <div class="content">
-<%if CloseDemand: %>
-<h4><a href="../Map/SiteMap.rails">Домой</a></h4>
-<%end %>
 <%if IsDefined("DemandAccept"): %>
 <% if DemandAccept: %>
        <div class="flash">
@@ -31,6 +35,8 @@
     <thead>
         <tr valign="top">
             <th>Подключен</th>
+            <th>Свич</th>
+            <th>Порт</th>
             <th>ФИО</th>
             <th>Город</th>            
             <th>Адрес подключения</th>            
@@ -54,7 +60,19 @@
                      <%end %>
                  <%else: %>
                     <%if (PartnerAccessSet.AccesPartner("CD") and CloseDemand): %>
-                        <td align="center"><input type="checkbox" name="ForClose[${i}]" value=${item.Id} /> </td>
+                        <td align="center"><input type="checkbox" name="ConnectList[${i}].ClientId" value=${item.Id} /> </td>
+                        <%if IsDefined("Switches"): %>
+                            <td>
+                            <select name="ConnectList[${i}].SwitchId" id="SelectSwitches{i}" style="width: 100%" >
+                                   <%
+                                    for j, Switch in enumerate(Switches): 
+                                    %>
+                                    <option id="Option${j}" value="${Switch.Id}" ${"checked" if (Switch.Id != 0)} > ${Switch.Name} </option>
+                                   <% end %>
+                            </select>
+                            </td>
+                        <%end %>
+                        <td align="center"><input type="text" id="Port${i}"  name="ConnectList[${i}].PortNumber"  style="width: 80%; " /></td>
                     <%else: %>
                         <td align="center">Нет</td>
                     <%end %>
@@ -106,7 +124,7 @@
         <%end %>
         <%if (PartnerAccessSet.AccesPartner("CD") and CloseDemand): %>
          <tr>
-            <td>
+            <td colspan="2">
                <button type="submit" class="button" name="CloseDemandBut" value="CloseDemand">
                   Закрыть заявки
                 </button>

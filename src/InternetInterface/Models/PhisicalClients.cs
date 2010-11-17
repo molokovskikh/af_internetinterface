@@ -10,7 +10,7 @@ namespace InternetInterface.Models
 {
 
 	[ActiveRecord("PhysicalClients", Schema = "internet", Lazy = true)]
-	public class Client : ValidActiveRecordLinqBase<Client>
+	public class PhisicalClients : ValidActiveRecordLinqBase<PhisicalClients>
 	{
 		/*public Client()
 		{
@@ -106,10 +106,10 @@ namespace InternetInterface.Models
 			return "";
 		}*/
 
-		public static bool RegistrLogicClient(Client _client, uint _tariff,
+		public static bool RegistrLogicClient(PhisicalClients _client, uint _tariff,
 			ValidatorRunner validator, Partner hasRegistered)
 		{
-				var newClient = new Client();
+				var newClient = new PhisicalClients();
 				if (validator.IsValid(_client))
 				{
 					newClient.Name = _client.Name;

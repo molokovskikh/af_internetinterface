@@ -13,7 +13,7 @@ namespace InternetInterface.Controllers
 	{
 		[AccessibleThrough(Verb.Post)]
 		public void RegisterClient([DataBind("ChangedBy")]ChangeBalaceProperties changeProperties,
-			[DataBind("client")]Client user, string balanceText, uint tariff)
+			[DataBind("client")]PhisicalClients user, string balanceText, uint tariff)
 		{
 			//PropertyBag["Popolnen"] = popolnenie;
 			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
@@ -27,11 +27,11 @@ namespace InternetInterface.Controllers
 			{
 				user.Balance = balanceText;
 			}
-			if (Client.RegistrLogicClient(user, tariff, Validator,
+			if (PhisicalClients.RegistrLogicClient(user, tariff, Validator,
 										  Partner.FindAllByProperty("Login", Session["Login"].ToString())[0]))
 			{
 				PropertyBag["Applying"] = "true";
-				PropertyBag["Client"] = new Client();
+				PropertyBag["Client"] = new PhisicalClients();
 				PropertyBag["BalanceText"] = string.Empty;
 				PropertyBag["ChangeBy"] = new ChangeBalaceProperties { ChangeType = TypeChangeBalance.ForTariff };
 			}
@@ -72,7 +72,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
 			PropertyBag["BalanceText"] = string.Empty;
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
-			PropertyBag["Client"] = new Client();
+			PropertyBag["Client"] = new PhisicalClients();
 			PropertyBag["Applying"] = "false";
 			//PropertyBag["Popolnen"] = false;
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties { ChangeType = TypeChangeBalance.ForTariff };
