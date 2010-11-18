@@ -277,7 +277,7 @@ or LOWER(P.RegistrationAdress) like {0}", ":SearchText") + _return;
 			return string.Empty;
 		}
 
-		public void SearchUsers(string query, PhisicalClients sClients)
+		public void SearchUsers(string query, PhisicalClients sClients, Boolean closeDemand)
 		{
 			var searchProperties = new UserSearchProperties {SearchBy = SearchUserBy.Auto};
 			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
@@ -290,6 +290,7 @@ or LOWER(P.RegistrationAdress) like {0}", ":SearchText") + _return;
 			PropertyBag["FindBy"] = searchProperties;
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
 			PropertyBag["Connected"] = false;
+			PropertyBag["CloseDemand"] = closeDemand;
 			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
 			if (sClients != null)
 			{

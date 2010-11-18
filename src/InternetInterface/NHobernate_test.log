@@ -10467,3 +10467,26 @@ Name asc
 15:55:51.826 [8] DEBUG NHibernate.Cfg.XmlHbmBinding.Binder - Mapped property: Login -> Login, type: String
 15:56:03.729 [8] WARN  InternetInterface.Helpers.ActiveDirectoryHelper - Пароль или логин был введен неправильно
 16:02:32.326 [10] ERROR InternetInterface.Helpers.ActiveDirectoryHelper - Пароль или логин был введен неправильно
+17:17:08.723 [45] ERROR InternetInterface.Global - ----UrlReferer-------
+
+----Url-------
+http://localhost:59059/favicon.ico
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Url smaller than 2 tokens
+Stack Trace:
+   at Castle.MonoRail.Framework.Services.DefaultUrlTokenizer.ExtractAreaControllerAction(String rawUrl, String& area, String& controller, String& action)
+   at Castle.MonoRail.Framework.Services.DefaultUrlTokenizer.TokenizeUrl(String rawUrl, String pathInfo, Uri uri, Boolean isLocal, String appVirtualDir)
+   at Castle.MonoRail.Framework.MonoRailHttpHandlerFactory.GetHandler(HttpContext context, String requestType, String url, String pathTranslated)
+   at System.Web.HttpApplication.MapHttpHandler(HttpContext context, String requestType, VirtualPath path, String pathTranslated, Boolean useAppConfig)
+   at System.Web.HttpApplication.MapHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+--------------
+----Session---
+--------------
+
+17:17:09.875 [49] ERROR InternetInterface.Helpers.ActiveDirectoryHelper - Пароль или логин был введен неправильно

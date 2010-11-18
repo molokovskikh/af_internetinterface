@@ -59,7 +59,7 @@ namespace InternetInterface.Controllers
 				var session = sessionHolder.CreateSession(typeof (PhisicalClients));
 				session.Evict(updateClient);
 				//Flash["Validate"] = true;
-				RenderView("SearchUserInfo");	
+				RenderView("SearchUserInfo");
 				SendParam(ClientID);
 				//RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientID + "&Editing=true");
 			}
