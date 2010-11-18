@@ -7,13 +7,7 @@
                                 <td >Фамилия</td>
                                 <td > <input id="Surname" type="text" value="${Client.Surname}" name="client.Surname" /> </td>
                                 <td>
-                                <% if (Client.GetErrorText("Surname") != ""): %>
-                                    <div class="flash">
-                                        <div class="message error">
-                                        <p>${Client.GetErrorText("Surname")}</p>
-                                        </div>
-                                    </div>
-                                    <%end %>
+                                    ${VB.GetBlock("Surname")}
                                  </td>
                             </tr>
                             <tr>
@@ -21,13 +15,7 @@
                                     Имя</td>
                                 <td ><input id="Name" type="text" value="${Client.Name}" name="client.Name" /></td>
                                  <td>
-                                 <% if (Client.GetErrorText("Name") != ""): %>
-                                    <div class="flash">
-                                        <div class="message error">
-                                        <p>${Client.GetErrorText("Name")}</p>
-                                        </div>
-                                    </div>
-                                 <%end %>
+                                    ${VB.GetBlock("Name")}
                                  </td>
                             </tr>
                             <tr>
@@ -36,13 +24,7 @@
                                 <td >
                                     <input id="Patronymic" type="text" value="${client.Patronymic}" name="client.Patronymic"/></td>
                                 <td>
-                                <% if (Client.GetErrorText("Patronymic") != ""): %>
-                                    <div class="flash">
-                                        <div class="message error">
-                                        <p>${Client.GetErrorText("Patronymic")}</p>
-                                        </div>
-                                    </div>
-                                <%end %>
+                                    ${VB.GetBlock("Patronymic")}
                                 </td>
                             </tr>
                             <tr >
@@ -58,13 +40,7 @@
                                 <td>
                                     <input id="AdressConnect" type="text" value="${client.AdressConnect}" name="client.AdressConnect"/></td>
                                  <td>
-                                 <% if (Client.GetErrorText("AdressConnect") != ""): %>
-                                    <div class="flash">
-                                        <div class="message error">
-                                        <p>${Client.GetErrorText("AdressConnect")}</p>
-                                        </div>
-                                    </div>
-                                <%end %>
+                                    ${VB.GetBlock("AdressConnect")}
                                 </td>
                             </tr>
                             <tr>
@@ -77,13 +53,7 @@
                                 <td >
                                     <input id="PassportSeries" type="text" value="${client.PassportSeries}" name="client.PassportSeries"/></td>
                                 <td>
-                                <% if (Client.GetErrorText("PassportSeries") != ""): %>
-                                    <div class="flash">
-                                        <div class="message error">
-                                        <p>${Client.GetErrorText("PassportSeries")}</p>
-                                        </div>
-                                    </div>
-                                <%end %>
+                                    ${VB.GetBlock("PassportSeries")}
                                 </td>
                             </tr>
                             <tr>
@@ -92,13 +62,7 @@
                                 <td >
                                     <input id="PassportNumber" type="text" value="${client.PassportNumber}" name="client.PassportNumber"/></td>
                                 <td>
-                                <% if (Client.GetErrorText("PassportNumber") != ""): %>
-                                    <div class="flash">
-                                        <div class="message error">
-                                        <p>${Client.GetErrorText("PassportNumber")}</p>
-                                        </div>
-                                    </div>
-                                <%end %>
+                                    ${VB.GetBlock("PassportNumber")}
                                 </td>
                             </tr>
                             <tr>
@@ -107,13 +71,7 @@
                                 <td >
                                     <input id="WhoGivePassport" type="text" value="${client.WhoGivePassport}" name="client.WhoGivePassport"/></td>
                                 <td>
-                                <% if (Client.GetErrorText("WhoGivePassport") != ""): %>
-                                    <div class="flash">
-                                        <div class="message error">
-                                        <p>${Client.GetErrorText("WhoGivePassport")}</p>
-                                        </div>
-                                    </div>
-                                <% end %>
+                                    ${VB.GetBlock("WhoGivePassport")}
                                 </td>
                             </tr>
                             <tr>
@@ -122,13 +80,7 @@
                                 <td >
                                     <input id="RegistrationAdress" type="text" value="${client.RegistrationAdress}" name="client.RegistrationAdress"/></td>
                                 <td>
-                                <% if (Client.GetErrorText("RegistrationAdress") != ""): %>
-                                    <div class="flash">
-                                        <div class="message error">
-                                        <p>${Client.GetErrorText("RegistrationAdress")}</p>
-                                        </div>
-                                    </div>
-                                <%end %>
+                                    ${VB.GetBlock("RegistrationAdress")}
                                 </td>
                             </tr>
                             <tr>

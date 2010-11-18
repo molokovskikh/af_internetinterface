@@ -2,6 +2,7 @@
 using Castle.ActiveRecord;
 using Castle.MonoRail.Framework;
 using InternetInterface.Controllers.Filter;
+using InternetInterface.Helpers;
 using InternetInterface.Models;
 using NHibernate.Criterion;
 
@@ -33,6 +34,7 @@ namespace InternetInterface.Controllers
 				PropertyBag["Applying"] = "true";
 				PropertyBag["Client"] = new PhisicalClients();
 				PropertyBag["BalanceText"] = string.Empty;
+				PropertyBag["VB"] = new ValidBuilderHelper<PhisicalClients>(new PhisicalClients());
 				PropertyBag["ChangeBy"] = new ChangeBalaceProperties { ChangeType = TypeChangeBalance.ForTariff };
 			}
 			else
@@ -41,6 +43,7 @@ namespace InternetInterface.Controllers
 				PropertyBag["Client"] = user;
 				PropertyBag["BalanceText"] = balanceText;
 				PropertyBag["Applying"] = "false";
+				PropertyBag["VB"] = new ValidBuilderHelper<PhisicalClients>(user);
 				PropertyBag["ChangeBy"] = changeProperties;
 			}
 		}
@@ -57,6 +60,7 @@ namespace InternetInterface.Controllers
 				PropertyBag["Applying"] = "true";
 				PropertyBag["Partner"] = new Partner();
 				PropertyBag["ChRights"] = new List<int>();
+				PropertyBag["VB"] = new ValidBuilderHelper<Partner>(new Partner());
 			}
 			else
 			{
@@ -64,6 +68,7 @@ namespace InternetInterface.Controllers
 				PropertyBag["Partner"] = partner;
 				PropertyBag["Applying"] = "false";
 				PropertyBag["ChRights"] = ForRight;
+				PropertyBag["VB"] = new ValidBuilderHelper<Partner>(partner);
 			}
 		}
 
@@ -73,6 +78,9 @@ namespace InternetInterface.Controllers
 			PropertyBag["BalanceText"] = string.Empty;
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["Client"] = new PhisicalClients();
+
+			PropertyBag["VB"] = new ValidBuilderHelper<PhisicalClients>(new PhisicalClients());
+
 			PropertyBag["Applying"] = "false";
 			//PropertyBag["Popolnen"] = false;
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties { ChangeType = TypeChangeBalance.ForTariff };
@@ -86,6 +94,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Partner"] = new Partner();
 			PropertyBag["Applying"] = "false";
 			PropertyBag["ChRights"] = new List<int>();
+			PropertyBag["VB"] = new ValidBuilderHelper<Partner>(new Partner());
 		}
 	}
 

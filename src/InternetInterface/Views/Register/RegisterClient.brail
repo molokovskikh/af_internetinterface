@@ -2,57 +2,10 @@
 
 <link href="../Styles/style.css" type="text/css" rel="stylesheet" />
 <link rel="stylesheet" href="../Styles/base.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../Styles/RegStyle.css" type="text/css" media="screen" />
 
  <title>Регистрация клиента</title>   
 
-    <style type="text/css">
-        #Name
-        {
-            width: 300px;
-        }
-        #Surname
-        {
-            width: 300px;
-        }
-        #Patronymic
-        {
-            width: 300px;
-        }
-        #City
-        {
-            width: 300px;
-        }
-        #AdressConnect
-        {
-            width: 300px;
-        }
-        #WhoGivePassport
-        {
-            width: 300px;
-        }
-         #RegistrationAdress
-        {
-            width: 300px;
-        }
-         #Login
-        {
-            width: 300px;
-        }
-         #Password
-        {
-            width: 300px;
-        }
-        #testid
-        {
-            width: 300px;
-        }
-        .letter
-        { 
-             color: red; /* Красный цвет символов */ 
-             font-family: serif; /* Шрифт с засечками */ 
-             width: 150px;
-            }
-    </style>
 
 </head> 
 <% OutputSubView("""\Subview\MapHead""") %>
@@ -83,13 +36,7 @@
                                 <td >
                                     <input id="Login" type="text" value="${client.Login}" name="client.Login"/></td>
                                 <td>
-                                <% if (Client.GetErrorText("Login") != ""): %>
-                                    <div class="flash">
-                                        <div class="message error">
-                                        <p>${Client.GetErrorText("Login")}</p>
-                                        </div>
-                                    </div>
-                                <%end %>
+                                    ${VB.GetBlock("Login")}
                                 </td>
                             </tr>
                             <tr>
@@ -98,24 +45,12 @@
                                 <td >
                                     <input id="Password" type="password" name="client.Password"/></td>
                                 <td>
-                                 <% if (Client.GetErrorText("Password") != ""): %>
-                                    <div class="flash">
-                                        <div class="message error">
-                                        <p>${Client.GetErrorText("Password")}</p>
-                                        </div>
-                                    </div>
-                                <%end %>
+                                    ${VB.GetBlock("Password")}
                                 </td>
                             </tr>
                             <% OutputSubView("""\Subview\Payment""") %>
                                 <td  colspan="3">
-                                <% if (Client.GetErrorText("Balance") != ""): %>
-                                    <div class="flash">
-                                        <div class="message error">
-                                        <p>${Client.GetErrorText("Balance")}</p>
-                                        </div>
-                                    </div>
-                                <%end %>
+                                    ${VB.GetBlock("Balance")}
                                 </td>
                              </tr>
                             <tr>

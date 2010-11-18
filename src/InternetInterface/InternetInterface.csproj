@@ -146,6 +146,7 @@
     <Compile Include="Errors\AccessDin.aspx.designer.cs">
       <DependentUpon>AccessDin.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\ValidBuilderHelper.cs" />
     <Compile Include="Models\Access\AccessCategories.cs" />
     <Compile Include="Models\Access\AccessRules.cs" />
     <Compile Include="Models\Brigad.cs" />
@@ -173,6 +174,7 @@
     <Compile Include="Site.Master.designer.cs">
       <DependentUpon>Site.Master</DependentUpon>
     </Compile>
+    <Content Include="Styles\RegStyle.css" />
     <None Include="Views\Register\RegisterPartner.brail" />
   </ItemGroup>
   <ItemGroup>

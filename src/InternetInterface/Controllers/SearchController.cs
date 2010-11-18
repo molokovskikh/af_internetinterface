@@ -112,8 +112,10 @@ WHERE PA.ID = {0} and PC.Connected = false", InithializeContent.partner.Id));
 				if ((client.ClientId != 0) && (client.PortNumber != 0) && (client.SwitchId != 0))
 				{
 					var forUpdate = PhisicalClients.Find((uint)client.ClientId);
-					var inetClient = new Clients();
-					inetClient.Name = forUpdate.Surname + " " + forUpdate.Name + " " + forUpdate.Patronymic;
+					var inetClient = new Clients
+					                 	{
+					                 		Name = forUpdate.Surname + " " + forUpdate.Name + " " + forUpdate.Patronymic
+					                 	};
 					if ((client.PortNumber >= 1) && (client.PortNumber <= 48))
 					{
 						var cdDate = RequestsConnection.FindAll(DetachedCriteria.For(typeof (RequestsConnection))

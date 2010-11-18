@@ -36,7 +36,7 @@ namespace InternetInterface.Models.Universal
 					}
 				}
 			}
-			return "";
+			return string.Empty;
 		}
 	}
 }

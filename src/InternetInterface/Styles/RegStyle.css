@@ -1,0 +1,46 @@
+﻿        #Name
+        {
+            width: 300px;
+        }
+        #Surname
+        {
+            width: 300px;
+        }
+        #Patronymic
+        {
+            width: 300px;
+        }
+        #City
+        {
+            width: 300px;
+        }
+        #AdressConnect
+        {
+            width: 300px;
+        }
+        #WhoGivePassport
+        {
+            width: 300px;
+        }
+         #RegistrationAdress
+        {
+            width: 300px;
+        }
+         #Login
+        {
+            width: 300px;
+        }
+         #Password
+        {
+            width: 300px;
+        }
+        #testid
+        {
+            width: 300px;
+        }
+        .letter
+        { 
+             color: red; /* Красный цвет символов */ 
+             font-family: serif; /* Шрифт с засечками */ 
+             width: 150px;
+            }

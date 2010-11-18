@@ -2,57 +2,8 @@
 
 <link href="../Styles/style.css" type="text/css" rel="stylesheet" />
 <link rel="stylesheet" href="../Styles/base.css" type="text/css" media="screen" />
-
+<link rel="stylesheet" href="../Styles/RegStyle.css" type="text/css" media="screen" />
  <title>Регистрация партнера</title>   
-
-    <style type="text/css">
-        #Name
-        {
-            width: 300px;
-        }
-        #Surname
-        {
-            width: 300px;
-        }
-        #Patronymic
-        {
-            width: 300px;
-        }
-        #City
-        {
-            width: 300px;
-        }
-        #AdressConnect
-        {
-            width: 300px;
-        }
-        #WhoGivePassport
-        {
-            width: 300px;
-        }
-         #RegistrationAdress
-        {
-            width: 300px;
-        }
-         #Login
-        {
-            width: 300px;
-        }
-         #Password
-        {
-            width: 300px;
-        }
-        #testid
-        {
-            width: 300px;
-        }
-        .letter
-        { 
-             color: red; /* Красный цвет символов */ 
-             font-family: serif; /* Шрифт с засечками */ 
-             width: 150px;
-            }
-    </style>
 
 </head> 
 <% OutputSubView("""\Subview\MapHead""") %>
@@ -81,26 +32,14 @@
                                 <td >Фамилия Имя Отчество</td>
                                 <td > <input id="Surname" type="text" value="${Partner.Name}" name="Partner.Name" /> </td>
                                 <td>
-                                <% if (Partner.GetErrorText("Name") != ""): %>
-                                    <div class="flash">
-                                        <div class="message error">
-                                        <p>${Partner.GetErrorText("Name")}</p>
-                                        </div>
-                                    </div>
-                                    <%end %>
+                                    ${VB.GetBlock("Name")}
                                  </td>
                             </tr>
                             <tr>
                                 <td>EMail</td>
                                 <td><input id="Name" type="text" value="${Partner.Email}" name="Partner.Email" /></td>
                                  <td>
-                                 <% if (Partner.GetErrorText("Email") != ""): %>
-                                    <div class="flash">
-                                        <div class="message error">
-                                        <p>${Partner.GetErrorText("Email")}</p>
-                                        </div>
-                                    </div>
-                                 <%end %>
+                                    ${VB.GetBlock("Email")}
                                  </td>
                             </tr>
                             <tr>
@@ -109,13 +48,7 @@
                                 <td >
                                     <input id="Patronymic" type="text" value="${Partner.TelNum}" name="Partner.TelNum"/></td>
                                 <td>
-                                <% if (Partner.GetErrorText("TelNum") != ""): %>
-                                    <div class="flash">
-                                        <div class="message error">
-                                        <p>${Partner.GetErrorText("TelNum")}</p>
-                                        </div>
-                                    </div>
-                                <%end %>
+                                    ${VB.GetBlock("TelNum")}
                                 </td>
                             </tr>
                             <tr >
@@ -124,13 +57,7 @@
                                 <td >
                                     <input id="City" type="text" value="${Partner.Adress}" name="Partner.Adress"/></td>
                                 <td>
-                                 <% if (Partner.GetErrorText("Adress") != ""): %>
-                                    <div class="flash">
-                                        <div class="message error">
-                                        <p>${Partner.GetErrorText("Adress")}</p>
-                                        </div>
-                                    </div>
-                                <%end %>
+                                    ${VB.GetBlock("Adress")}
                                 </td>
                             </tr>
                             <tr>
@@ -139,13 +66,7 @@
                                 <td>
                                     <input id="AdressConnect" type="text" value="${Partner.Login}" name="Partner.Login"/></td>
                                  <td>
-                                 <% if (Partner.GetErrorText("Login") != ""): %>
-                                    <div class="flash">
-                                        <div class="message error">
-                                        <p>${Partner.GetErrorText("Login")}</p>
-                                        </div>
-                                    </div>
-                                <%end %>
+                                    ${VB.GetBlock("Login")}
                                 </td>
                             </tr>
                             <tr>
@@ -154,13 +75,7 @@
                                 <td >
                                     <input id="PassportSeries" type="text" value="${Partner.Pass}" name="Partner.Pass"/></td>
                                 <td>
-                                <% if (Partner.GetErrorText("Pass") != ""): %>
-                                    <div class="flash">
-                                        <div class="message error">
-                                        <p>${Partner.GetErrorText("Pass")}</p>
-                                        </div>
-                                    </div>
-                                <%end %>
+                                    ${VB.GetBlock("Pass")}
                                 </td>
                             </tr>
 

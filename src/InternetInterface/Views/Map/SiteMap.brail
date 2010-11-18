@@ -1,5 +1,4 @@
-﻿
-    <link href="../Styles/style.css" type="text/css" rel="stylesheet" />
+﻿<link href="../Styles/style.css" type="text/css" rel="stylesheet" />
 <link rel="stylesheet" href="../Styles/base.css" type="text/css" media="screen" />
 
 <div id="main" style="width: 70%;">
@@ -18,11 +17,6 @@
         </td>
    </tr>
    <% end %>
-   <tr>
-   <td colspan="5">
-
-    </td>
-  </tr>
     </tbody>
 </table>
 </div>

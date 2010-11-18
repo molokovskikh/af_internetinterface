@@ -12,10 +12,6 @@ namespace InternetInterface.Models
 	[ActiveRecord("PhysicalClients", Schema = "internet", Lazy = true)]
 	public class PhisicalClients : ValidActiveRecordLinqBase<PhisicalClients>
 	{
-		/*public Client()
-		{
-			ValidationErrors = null;
-		}*/
 
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
@@ -71,40 +67,10 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool Connected { get; set; }
 
-		//private ErrorSummary ValidationErrors;
-
-		/*public virtual void SetValidationErrors(ErrorSummary _ValidationErrors)
-		{
-			ValidationErrors = _ValidationErrors;
-		}*/
-
-		/*public virtual ErrorSummary GetValidationErrors()
-		{
-			return ValidationErrors;
-		}*/
-
 		public virtual bool IsConnected()
 		{
 			return this.Connected;
 		}
-
-		/*public virtual string GetErrorText(string field)
-		{
-			if (ValidationErrors != null)
-			{
-				for (int i = 0; i < ValidationErrors.ErrorsCount; i++)
-				{
-					if (ValidationErrors.ErrorMessages != null)
-					{
-						if (ValidationErrors.InvalidProperties[i] == field)
-						{
-							return ValidationErrors.ErrorMessages[i];
-						}
-					}
-				}
-			}
-			return "";
-		}*/
 
 		public static bool RegistrLogicClient(PhisicalClients _client, uint _tariff,
 			ValidatorRunner validator, Partner hasRegistered)
@@ -123,19 +89,6 @@ namespace InternetInterface.Models
 					newClient.RegistrationAdress = _client.RegistrationAdress;
 					newClient.RegDate = DateTime.Now;
 					newClient.Tariff = Tariff.FindAllByProperty("Id", _tariff)[0];
-					/*decimal forChangeSumm = 0;
-					try
-					{
-						if (changeProperties.IsForTariff())
-						{
-							forChangeSumm = newClient.Tariff.Price;
-						}
-						if (changeProperties.IsOtherSumm())
-						{
-							forChangeSumm = Convert.ToDecimal(balanceText);
-						}
-					} catch (Exception){}*/
-					//newClient.Balance = _Popolnenie ? newClient.Tariff.Price : 0;
 					newClient.Balance = _client.Balance;
 					newClient.Login = _client.Login;
 					newClient.Password = CryptoPass.GetHashString(_client.Password);
