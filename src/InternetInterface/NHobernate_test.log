@@ -10466,3 +10466,4 @@ Name asc
 15:55:51.821 [8] DEBUG NHibernate.Cfg.XmlHbmBinding.Binder - Mapped property: RegDate -> RegDate, type: DateTime
 15:55:51.826 [8] DEBUG NHibernate.Cfg.XmlHbmBinding.Binder - Mapped property: Login -> Login, type: String
 15:56:03.729 [8] WARN  InternetInterface.Helpers.ActiveDirectoryHelper - Пароль или логин был введен неправильно
+16:02:32.326 [10] ERROR InternetInterface.Helpers.ActiveDirectoryHelper - Пароль или логин был введен неправильно

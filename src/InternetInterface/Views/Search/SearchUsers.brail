@@ -24,6 +24,7 @@
     style="width: 100%; ">
 <center>
 <table border="0" bgcolor="#FFFFFF" cellspacing="1" cellpadding="0">
+<input type="hidden" name="closeDemand" value="${closeDemand}" />
 <tr>
 <h4>Вы вошли как ${PARTNERNAME}</h4>
 <%if IsDefined("CreateDemandConnect"): %>
