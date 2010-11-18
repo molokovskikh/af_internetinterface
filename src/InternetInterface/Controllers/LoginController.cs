@@ -1,5 +1,9 @@
-﻿using Castle.MonoRail.Framework;
+﻿using System;
+using Castle.MonoRail.Framework;
+using InternetInterface.Helpers;
 using InternetInterface.Models;
+using System.DirectoryServices;
+
 
 namespace InternetInterface.Controllers
 {
@@ -8,7 +12,17 @@ namespace InternetInterface.Controllers
 		[AccessibleThrough(Verb.Post)]
 		public void Sub(string Login, string Password)
 		{
-			var MapPartner = Partner.FindAllByProperty("Login", Session["Login"]);
+			if (ActiveDirectoryHelper.IsAuthenticated(Login, Password))
+			{
+				Session.Add("Login", Login);
+				RedirectToUrl(@"..//Map/SiteMap.rails");
+			}
+			else
+			{
+				Flash["AccessDenied"] = ActiveDirectoryHelper.ErrorMessage;
+				RedirectToUrl(@"LoginPartner.rails");
+			}
+			/*var MapPartner = Partner.FindAllByProperty("Login", Session["Login"]);
 			if (MapPartner.Length == 0)
 			{
 				string BasePass = string.Empty;
@@ -36,8 +50,9 @@ namespace InternetInterface.Controllers
 			else
 			{
 				RedirectToUrl(@"../Map/SiteMap.rails");
-			}
+			}*/
 		}
+
 
 		public void LoginPartner()
 		{

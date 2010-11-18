@@ -73,9 +73,16 @@
                                 <td >
                                     Пароль</td>
                                 <td >
-                                    <input id="PassportSeries" type="text" value="${Partner.Pass}" name="Partner.Pass"/></td>
+                                    <input id="PassportSeries" type="text" name="Pass"/></td>
                                 <td>
-                                    ${VB.GetBlock("Pass")}
+                                    <%if IsDefined("PassError"): %>
+                                    <div class="flash">
+			            	       <div class="message error">
+			            	       <p>  ${PassError} </p>
+			                	       </div>
+		                		       </div>
+                                   
+                                    <%end %>
                                 </td>
                             </tr>
 
@@ -86,12 +93,12 @@
                                 <tr>
                                 <% for i,item in enumerate(Rights): %>
                                 <tr>
-                                    <td ><input type="checkbox" name="ForRight[${i}]" value=${item.Id} ${"checked" if (ChRights.Contains(item.Id))}/> ${item.Name} </td>
+                                    <td colspan="3"><input type="checkbox" name="ForRight[${i}]" value=${item.Id} ${"checked" if (ChRights.Contains(item.Id))}/> ${item.Name} </td>
                                  </tr>
                                 <%end %>
                                 </tr>
                             <tr>
-                                <td >
+                                <td colspan="3">
                                 <div class="actions">
                                                  <button type="submit" class="button" >
                                                 <img alt="Save" src="../Images/application_edit.png"> Зарегистрировать

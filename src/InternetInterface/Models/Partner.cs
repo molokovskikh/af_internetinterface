@@ -14,10 +14,6 @@ namespace InternetInterface.Models
 	[ActiveRecord("Partners", Schema = "internet", Lazy = true)]
 	public class Partner : ValidActiveRecordLinqBase<Partner>
 	{
-		public Partner():base()
-		{
-			//ValidationErrors = null;
-		}
 
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
@@ -38,46 +34,16 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual DateTime RegDate { get; set; }
 
-		[Property, ValidateNonEmpty("Введите пароль")]
-		public virtual string Pass { get; set; }
+		/*[Property, ValidateNonEmpty("Введите пароль")]
+		public virtual string Pass { get; set; }*/
 
 		[Property, ValidateNonEmpty("Введите логин")]
 		public virtual string Login { get; set; }
-
-		//private static ErrorSummary ValidationErrors;
-
-		/*public virtual void SetValidationErrors(ErrorSummary _ValidationErrors)
-		{
-			ValidationErrors = _ValidationErrors;
-		}*/
-
-		/*public virtual ErrorSummary GetValidationErrors()
-		{
-			return ValidationErrors;
-		}*/
 
 		public static Partner GetPartnerForLogin(string login)
 		{
 			return FindAllByProperty("Login", login)[0];
 		}
-
-		/*public virtual string GetErrorText(string field)
-		{
-			if (ValidationErrors != null)
-			{
-				for (int i = 0; i < ValidationErrors.ErrorsCount; i++)
-				{
-					if (ValidationErrors.ErrorMessages != null)
-					{
-						if (ValidationErrors.InvalidProperties[i] == field)
-						{
-							return ValidationErrors.ErrorMessages[i];
-						}
-					}
-				}
-			}
-			return "";
-		}*/
 
 		private static bool IsBrigadir(Partner partner)
 		{
@@ -99,7 +65,7 @@ namespace InternetInterface.Models
 					newPartner.Adress = _Partner.Adress;
 					newPartner.RegDate = DateTime.Now;
 					newPartner.Login = _Partner.Login;
-					newPartner.Pass = CryptoPass.GetHashString(_Partner.Pass);
+					//newPartner.Pass = CryptoPass.GetHashString(_Partner.Pass);
 					newPartner.SaveAndFlush();
 					//newPartner.AcessSet = CombineAccess(_Rights);)
 					foreach (var right in _Rights)

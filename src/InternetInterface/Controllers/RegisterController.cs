@@ -49,27 +49,42 @@ namespace InternetInterface.Controllers
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void RegisterPartner([DataBind("Partner")]Partner partner, [DataBind("ForRight")]List<int> rights, [DataBind("ForRight")]List<int> ForRight)
+		public void RegisterPartner(string Pass, [DataBind("Partner")]Partner partner, [DataBind("ForRight")]List<int> rights, [DataBind("ForRight")]List<int> ForRight)
 		{
 			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
 			PropertyBag["Rights"] =
 	ActiveRecordBase<AccessCategories>.FindAll(
 		DetachedCriteria.For<AccessCategories>().Add(Expression.Sql("ReduceName <> 'RP'")));
-			if (Partner.RegistrLogicPartner(partner, rights, Validator))
+			if ((Pass != null) && (Pass.Length > 4))
 			{
-				PropertyBag["Applying"] = "true";
-				PropertyBag["Partner"] = new Partner();
-				PropertyBag["ChRights"] = new List<int>();
-				PropertyBag["VB"] = new ValidBuilderHelper<Partner>(new Partner());
+				if (Partner.RegistrLogicPartner(partner, rights, Validator))
+				{
+					ActiveDirectoryHelper.CreateUserInAD(partner.Login, Pass);
+					PropertyBag["Applying"] = "true";
+					PropertyBag["Partner"] = new Partner();
+					PropertyBag["ChRights"] = new List<int>();
+					PropertyBag["VB"] = new ValidBuilderHelper<Partner>(new Partner());
+				}
+				else
+				{
+					NoValidPartner(partner, ForRight);
+				}
 			}
 			else
 			{
-				partner.SetValidationErrors(Validator.GetErrorSummary(partner));
-				PropertyBag["Partner"] = partner;
-				PropertyBag["Applying"] = "false";
-				PropertyBag["ChRights"] = ForRight;
-				PropertyBag["VB"] = new ValidBuilderHelper<Partner>(partner);
+				Validator.IsValid(partner);
+				NoValidPartner(partner, ForRight);
+				PropertyBag["PassError"] = "Пароль не может быть пустым, введите пароль (мин 5 знаков)";
 			}
+		}
+
+		private void NoValidPartner(Partner partner, List<int> forRight)
+		{
+			partner.SetValidationErrors(Validator.GetErrorSummary(partner));
+			PropertyBag["Partner"] = partner;
+			PropertyBag["Applying"] = "false";
+			PropertyBag["ChRights"] = forRight;
+			PropertyBag["VB"] = new ValidBuilderHelper<Partner>(partner);
 		}
 
 		public void RegisterClient()

@@ -42,7 +42,7 @@ namespace NHibernateFixtute.RegisterTest
 					Email = "TestEmail",
 					Login = "TestLogin",
 					Name = "TestName",
-					Pass = "TestPass",
+					//Pass = "TestPass",
 					TelNum = "TestTel"
 				},
 				Login = "",

@@ -14,13 +14,11 @@
         <h2>Введите учетные данные</h2>
         <div class="content login">
         <%if IsDefined("AccessDenied"): %>
-           <% if AccessDenied: %>
             <div class="flash">
             <div class="message error">
-              <p>Доступ запрещен</p>
+              <p>${AccessDenied}</p>
             </div>
           </div>
-        <%end%>
        <% end %>
           <form class="form login" method="post" action="${siteroot}/Login/Sub">
             <div class="group wat-cf">
