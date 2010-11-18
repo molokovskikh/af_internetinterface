@@ -4,6 +4,7 @@ using Castle.ActiveRecord;
 using Castle.MonoRail.Framework;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
+using log4net;
 using NHibernate.Criterion;
 using NHibernate.SqlCommand;
 
@@ -34,6 +35,8 @@ namespace InternetInterface.Controllers
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class SearchController : SmartDispatcherController
 	{
+		private static readonly ILog _log = LogManager.GetLogger(typeof(SearchController));
+
 		private IList<PhisicalClients> GetClients(UserSearchProperties searchProperties, uint tariff, uint whoregister, string searchText, uint brigad, bool connected)
 		{
 			var sessionHolder = ActiveRecordMediator.GetSessionFactoryHolder();
@@ -61,8 +64,7 @@ namespace InternetInterface.Controllers
 				}
 				catch (Exception e)
 				{
-					throw;
-					return new List<PhisicalClients>();
+					_log.Error("Не выбирается клиенты при поиске с фильтром");
 				}
 				finally
 				{
@@ -93,8 +95,7 @@ WHERE PA.ID = {0} and PC.Connected = false", InithializeContent.partner.Id));
 				}
 				catch (Exception e)
 				{
-					throw;
-					return new List<PhisicalClients>();
+					_log.Error("Ошибка при выборке книетов для закрытия заявок");
 				}
 				finally
 				{
