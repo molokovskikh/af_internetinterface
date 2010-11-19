@@ -1,4 +1,5 @@
-﻿using Castle.Components.Validator;
+﻿using System;
+using Castle.Components.Validator;
 
 namespace InternetInterface.Models.Universal
 {
@@ -37,6 +38,17 @@ namespace InternetInterface.Models.Universal
 				}
 			}
 			return string.Empty;
+		}
+
+
+		public static string GeneratePassword()
+		{
+			var availableChars = "23456789qwertyupasdfghjkzxcvbnmQWERTYUPASDFGHJKLZXCVBNM";
+			var password = String.Empty;
+			var random = new Random();
+			while (password.Length < 8)
+				password += availableChars[random.Next(0, availableChars.Length - 1)];
+			return password;
 		}
 	}
 }

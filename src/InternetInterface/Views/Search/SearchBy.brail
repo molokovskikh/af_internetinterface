@@ -35,6 +35,7 @@
     <thead>
         <tr valign="top">
         <%if (PartnerAccessSet.AccesPartner("CD") and CloseDemand): %>
+            <th>Подключить</th>
             <th>Свич</th>
             <th>Порт</th>
         <%else: %>

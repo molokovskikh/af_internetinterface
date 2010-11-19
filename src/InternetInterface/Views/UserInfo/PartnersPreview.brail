@@ -1,0 +1,43 @@
+﻿<link href="../Styles/style.css" type="text/css" rel="stylesheet" />
+<link rel="stylesheet" href="../Styles/base.css" type="text/css" media="screen" />
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Информация и партнерах</title>
+</head>
+<body>
+<div id="non-printable"> 
+    <% OutputSubView("""\Subview\MapHead""") %>
+</div> 
+<div id="main">
+<div id="container">
+    <div id="block-tables" class="block">
+        <table class="table" style="width:100%; " border="0" id="PartnerInfoTable">
+            <thead>
+                <th>ФИО партнера</th>
+                <th>EMail</th>
+                <th>Номер телефона</th>
+                <th>Адрес</th>
+                <th>Дата регистрации</th>
+                <th>Логин</th>
+            </thead>
+            <tbody>
+             <% for i,Partner in enumerate(Partners): %>
+                <tr>
+                    <td><a href="../Register/RegisterPartner?Partner=${Partner.Id}">${Partner.Name}</a></td>
+                    <td>${Partner.Email}</td>
+                    <td>${Partner.TelNum}</td>
+                    <td>${Partner.Adress}</td>
+                    <td>${Partner.RegDate}</td>
+                    <td>${Partner.Login}</td>
+                </tr>
+             <%end %>
+            </tbody>
+        </table>
+        
+    </div>
+</div>
+</div>
+</body>
+</html>

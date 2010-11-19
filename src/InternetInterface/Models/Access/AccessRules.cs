@@ -100,7 +100,10 @@ namespace InternetInterface.Models.Access
 			_registerPartner = new HashSet<string>
 			                 	{
 									"RegisterPartner",
-									"SiteMap"
+									"SiteMap",
+									"PartnerRegisteredInfo",
+									"PartnersPreview",
+									"EditPartner"
 			                 	};
 			return _registerPartner.Contains(methodName) ? "RP" : string.Empty;
 		}

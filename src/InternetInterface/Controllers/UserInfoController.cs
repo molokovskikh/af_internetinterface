@@ -2,6 +2,7 @@
 using Castle.ActiveRecord;
 using Castle.MonoRail.Framework;
 using InternetInterface.Controllers.Filter;
+using InternetInterface.Helpers;
 using InternetInterface.Models;
 
 namespace InternetInterface.Controllers
@@ -16,6 +17,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Client"] = PhisicalClients.Find(clientCode);
 			SendParam(clientCode);
 			Flash["Editing"] = Editing;
+			PropertyBag["VB"] = new ValidBuilderHelper<PhisicalClients>(new PhisicalClients());
 			/*PropertyBag["EditFlag"] = _editFlag;
 			_editFlag = false;*/
 			//if (EditFlag) {EditInformation(); }
@@ -27,6 +29,24 @@ namespace InternetInterface.Controllers
 			//SearchUserInfo(ClientID, true);
 			Flash["Editing"] = true;
 			RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientID + "&Editing=true");
+		}
+
+		public void PartnerRegisteredInfo(int hiddenPartnerId, string hiddenPass)
+		{
+			if (Flash["Partner"] == null)
+			{
+				RedirectToUrl("../Register/RegisterPartner.rails");
+			}
+			else
+			{
+				PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
+			}
+		}
+
+		public void PartnersPreview()
+		{
+			PropertyBag["Partners"] = Partner.FindAllSort();
+			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
 		}
 
 		[AccessibleThrough(Verb.Post)]
@@ -55,11 +75,13 @@ namespace InternetInterface.Controllers
 			{
 				updateClient.SetValidationErrors(Validator.GetErrorSummary(updateClient));
 				Flash["Client"] = updateClient;
+				PropertyBag["VB"] = new ValidBuilderHelper<PhisicalClients>(updateClient);
 				var sessionHolder = ActiveRecordMediator.GetSessionFactoryHolder();
 				var session = sessionHolder.CreateSession(typeof (PhisicalClients));
 				session.Evict(updateClient);
 				//Flash["Validate"] = true;
 				RenderView("SearchUserInfo");
+				Flash["Editing"] = true;
 				SendParam(ClientID);
 				//RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientID + "&Editing=true");
 			}
@@ -70,7 +92,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["ClientCode"] = ClientCode;
 			PropertyBag["BalanceText"] = string.Empty;
 			Flash["Tariffs"] = Tariff.FindAllSort();
-			Flash["Popolnen"] = false;
+			//Flash["Popolnen"] = false;
 			//Flash["thisPay"] = new Payment();
 			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties {ChangeType = TypeChangeBalance.OtherSumm};
@@ -113,33 +135,6 @@ namespace InternetInterface.Controllers
 				var session = sessionHolder.CreateSession(typeof(Payment));
 				session.Evict(thisPay);
 			}
-			/*try
-			{
-				if (changeProperties.IsForTariff())
-				{
-					forChangeSumm = clientToch.Tariff.Price;
-				}
-				if (changeProperties.IsOtherSumm())
-				{
-					forChangeSumm = Convert.ToDecimal(balanceText);
-				}
-				if (forChangeSumm != 0)
-				{
-					clientToch.Balance += forChangeSumm;
-
-					thisPay.ClientId = clientId;
-					thisPay.PaymentDate = DateTime.Now;
-					thisPay.Summ = forChangeSumm;
-					thisPay.ManagerID = InithializeContent.partner;
-					thisPay.SaveAndFlush();
-					clientToch.UpdateAndFlush();
-					Flash["Applying"] = true;
-				}
-			}
-			catch (Exception)
-			{
-				Flash["Applying"] = false;
-			}*/
 			RedirectToUrl(@"../UserInfo/SearchUserInfo.rails?ClientCode=" + clientId);
 		}
 

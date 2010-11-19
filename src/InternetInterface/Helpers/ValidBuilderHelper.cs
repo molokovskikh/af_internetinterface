@@ -4,7 +4,6 @@ namespace InternetInterface.Helpers
 {
 	public class ValidBuilderHelper<T> where T : ValidActiveRecordLinqBase<T>
 	{
-
 		public ValidBuilderHelper(T cl)
 		{
 			_validClient = cl;

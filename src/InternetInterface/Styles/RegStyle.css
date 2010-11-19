@@ -34,13 +34,20 @@
         {
             width: 300px;
         }
-        #testid
+        #FIO
         {
             width: 300px;
         }
-        .letter
-        { 
-             color: red; /* Красный цвет символов */ 
-             font-family: serif; /* Шрифт с засечками */ 
-             width: 150px;
-            }
+        #EMail
+        {
+            width: 300px;
+        }
+        #TelNum
+        {
+            width: 300px;
+        }
+         #Adress
+        {
+            width: 300px;
+        }
+        

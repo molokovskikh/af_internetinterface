@@ -119,6 +119,7 @@
     <Content Include="Styles\base.css" />
     <Content Include="Styles\style.css" />
     <None Include="Views\Subview\Client.brail" />
+    <None Include="Views\UserInfo\PartnersPreview.brail" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -139,7 +140,6 @@
     <Compile Include="Controllers\RegisterController.cs" />
     <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Controllers\UserInfoController.cs" />
-    <Compile Include="Controllers\Validate\BaseValid.cs" />
     <Compile Include="Errors\AccessDin.aspx.cs">
       <DependentUpon>AccessDin.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -191,10 +191,11 @@
     <None Include="Views\Register\RegisterClient.brail" />
     <None Include="Views\Search\SearchBy.brail" />
     <None Include="Views\Subview\MapHead.brail" />
+    <None Include="Views\Subview\Partner.brail" />
     <None Include="Views\Subview\Payment.brail" />
+    <None Include="Views\UserInfo\PartnerRegisteredInfo.brail" />
     <None Include="Views\UserInfo\SearchUserInfo.brail" />
     <None Include="Views\Search\SearchUsers.brail" />
-    <None Include="Views\UserInfo\TEST.brail" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

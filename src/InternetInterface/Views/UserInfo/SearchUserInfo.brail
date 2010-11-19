@@ -34,10 +34,10 @@
 	<table class="table" style="width: 100%;" align="left">
     <thead>
         <th>Информация по клиенту ${Client.Surname}  ${Client.Name}  ${Client.Patronymic}
-        <%if PartnerAccessSet.AccesPartner("RС"): %>
+        <%if PartnerAccessSet.AccesPartner("RC"): %>
          <input id="EditButton" type="submit" value="Редактировать"  align="right" />
          <%end %>
-        </th>  
+        </th>
     </thead>
     <tbody>
     </form>

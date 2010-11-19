@@ -13,6 +13,8 @@
 <div id="container">
     <div id="block-tables" class="block">
         <div class="content">
+                            <%if IsDefined("Editing"): %>
+                            <%if (not Editing): %>
                             <% if Applying == "true": %>
                                     <div class="flash">
                                         <div class="message notice">
@@ -20,72 +22,27 @@
                                         </div>
                                     </div>
                             <% end %>
+                            <%end %>
+                            <%end %>
             <div class="inner">
+                            <%if IsDefined("Editing"): %>
+                            <%if (not Editing): %>
                   <form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Register/RegisterPartner" >
+                            <%else: %>
+                  <form class="form" id="RegistrationFormEdit" name="RegistrationForm" method="post" action="${siteroot}/Register/EditPartner" >
+                              <%end %>
+                               <%end %>
 	                    <table class="table" style="width:100%; " border="0" id="RegTable"> 
                             <tr>
                                 <th colspan="3">
+                            <%if IsDefined("Editing"): %>
+                            <%if (not Editing): %>
                                     <strong>Форма регистрации</strong></th>
-                            </tr>
-
-                            <tr>
-                                <td >Фамилия Имя Отчество</td>
-                                <td > <input id="Surname" type="text" value="${Partner.Name}" name="Partner.Name" /> </td>
-                                <td>
-                                    ${VB.GetBlock("Name")}
-                                 </td>
-                            </tr>
-                            <tr>
-                                <td>EMail</td>
-                                <td><input id="Name" type="text" value="${Partner.Email}" name="Partner.Email" /></td>
-                                 <td>
-                                    ${VB.GetBlock("Email")}
-                                 </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    Номер телефона</td>
-                                <td >
-                                    <input id="Patronymic" type="text" value="${Partner.TelNum}" name="Partner.TelNum"/></td>
-                                <td>
-                                    ${VB.GetBlock("TelNum")}
-                                </td>
-                            </tr>
-                            <tr >
-                                <td>
-                                    Адрес</td>
-                                <td >
-                                    <input id="City" type="text" value="${Partner.Adress}" name="Partner.Adress"/></td>
-                                <td>
-                                    ${VB.GetBlock("Adress")}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td >
-                                    Логин</td>
-                                <td>
-                                    <input id="AdressConnect" type="text" value="${Partner.Login}" name="Partner.Login"/></td>
-                                 <td>
-                                    ${VB.GetBlock("Login")}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td >
-                                    Пароль</td>
-                                <td >
-                                    <input id="PassportSeries" type="text" name="Pass"/></td>
-                                <td>
-                                    <%if IsDefined("PassError"): %>
-                                    <div class="flash">
-			            	       <div class="message error">
-			            	       <p>  ${PassError} </p>
-			                	       </div>
-		                		       </div>
-                                   
                                     <%end %>
-                                </td>
+                                    <%end %>
                             </tr>
 
+                             <% OutputSubView("""\Subview\Partner""") %>
                             <tr>
                                 <th colspan="3">
                                     Опции доступа</th>
@@ -93,15 +50,22 @@
                                 <tr>
                                 <% for i,item in enumerate(Rights): %>
                                 <tr>
-                                    <td colspan="3"><input type="checkbox" name="ForRight[${i}]" value=${item.Id} ${"checked" if (ChRights.Contains(item.Id))}/> ${item.Name} </td>
+                                    <td colspan="3"><input type="checkbox" id="${item.ReduceName}" name="ForRight[${i}]" value=${item.Id} ${"checked" if (ChRights.Contains(item.Id))}/> ${item.Name} </td>
                                  </tr>
                                 <%end %>
                                 </tr>
                             <tr>
                                 <td colspan="3">
                                 <div class="actions">
-                                                 <button type="submit" class="button" >
-                                                <img alt="Save" src="../Images/application_edit.png"> Зарегистрировать
+                                                 <button type="submit" id="RegisterPartnerButton" class="button" >
+                                                <img alt="Save" src="../Images/application_edit.png">
+                            <%if IsDefined("Editing"): %>
+                            <%if (not Editing): %>
+                                                 Зарегистрировать
+                                                 <%else: %>
+                                                 Изменить
+                                                 <%end %>
+                                                 <%end %>
                                                  </button>
                                 <!--    <input class="button" id="RegisterButton" type="submit" value="Зарегистрировать" /></td> -->
                                 </div>

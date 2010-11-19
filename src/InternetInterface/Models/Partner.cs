@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Castle.ActiveRecord;
-using Castle.ActiveRecord.Linq;
 using Castle.Components.Validator;
-using Castle.MonoRail.Framework;
-using InternetInterface.Controllers.Filter;
 using InternetInterface.Models.Universal;
 using NHibernate.Criterion;
 using NHibernate.SqlCommand;
@@ -47,7 +44,7 @@ namespace InternetInterface.Models
 
 		private static bool IsBrigadir(Partner partner)
 		{
-			var result = FindAll(DetachedCriteria.For(typeof(PartnerAccessSet))
+			var result = PartnerAccessSet.FindAll(DetachedCriteria.For(typeof(PartnerAccessSet))
 						.CreateAlias("AccessCat", "AC", JoinType.InnerJoin)
 						.Add(Restrictions.Eq("PartnerId", partner))
 						.Add(Restrictions.Eq("AC.ReduceName", "CD")));
@@ -56,18 +53,11 @@ namespace InternetInterface.Models
 
 		public static bool RegistrLogicPartner(Partner _Partner, List<int> _Rights, ValidatorRunner validator)
 		{
-				var newPartner = new Partner();
+				//var newPartner = new Partner();
 				if (validator.IsValid(_Partner))
 				{
-					newPartner.Name = _Partner.Name;
-					newPartner.Email = _Partner.Email;
-					newPartner.TelNum = _Partner.TelNum;
-					newPartner.Adress = _Partner.Adress;
-					newPartner.RegDate = DateTime.Now;
-					newPartner.Login = _Partner.Login;
-					//newPartner.Pass = CryptoPass.GetHashString(_Partner.Pass);
-					newPartner.SaveAndFlush();
-					//newPartner.AcessSet = CombineAccess(_Rights);)
+					_Partner.RegDate = DateTime.Now;
+					_Partner.SaveAndFlush();
 					foreach (var right in _Rights)
 					{
 						if ((right == 4) && (!_Rights.Contains(1)))
@@ -77,19 +67,21 @@ namespace InternetInterface.Models
 						var newAccess = new PartnerAccessSet
 						                	{
 						                		AccessCat = AccessCategories.Find(right),
-						                		PartnerId = newPartner
+												PartnerId = _Partner
 						                	};
 						newAccess.SaveAndFlush();
 					}
 
 					var newPartnerID = Partner.FindAllByProperty("Login", _Partner.Login);
-					if (IsBrigadir(newPartner))
+					if (IsBrigadir(_Partner))
 					{
-						var newBrigad = new Brigad();
-						newBrigad.Name = newPartner.Name;
-						newBrigad.PartnerID = newPartnerID[0];
-						newBrigad.Adress = newPartner.Adress;
-						newBrigad.BrigadCount = 1;
+						var newBrigad = new Brigad
+						                	{
+												Name = _Partner.Name,
+						                		PartnerID = newPartnerID[0],
+												Adress = _Partner.Adress,
+						                		BrigadCount = 1
+						                	};
 						newBrigad.SaveAndFlush();
 					}
 					return true;

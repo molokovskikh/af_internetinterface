@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Cassini, Version=1.0.40305.0, Culture=neutral, PublicKeyToken=132a282791bfaeb7">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\Cassini.dll</HintPath>
+    </Reference>
     <Reference Include="Castle.ActiveRecord">
       <HintPath>..\Lib\AR 2.1.2\Castle.ActiveRecord.dll</HintPath>
     </Reference>
@@ -84,11 +88,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Functional\RegisterPartnerFixrure.cs" />
+    <Compile Include="Functional\Setup.cs" />
+    <Compile Include="Helpers\PartnerHelper.cs" />
+    <Compile Include="Helpers\WatinFixture.cs" />
     <Compile Include="PartnerAccessSetFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegisterFixture.cs" />
     <Compile Include="SearchFixture.cs" />
-    <Compile Include="Setup.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

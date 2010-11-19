@@ -13,6 +13,9 @@
    <%if PartnerAccessSet.AccesPartner("RP"): %>
    <th><a href = "../Register/RegisterPartner.rails" ><span class="MH">Регистрация партнера</span></a></th>
     <%end %>
+    <%if PartnerAccessSet.AccesPartner("RP"): %>
+   <th><a href = "../UserInfo/PartnersPreview.rails" ><span class="MH">Посмотреть партнеров</span></a></th>
+    <%end %>
     <%if PartnerAccessSet.AccesPartner("RC"): %>
    <th><a href = "../Register/RegisterClient.rails" ><span class="MH">Регистрация нового абонента</span></a></th>
    <%end %>

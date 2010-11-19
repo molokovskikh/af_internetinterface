@@ -8,6 +8,9 @@ namespace InternetInterface.Controllers.Filter
 	{
 		public bool Perform(ExecuteWhen exec, IEngineContext context, IController controller, IControllerContext controllerContext)
 		{
+#if DEBUG
+			context.Session["Login"] = "zolotarev";
+#endif
 			var MapPartner = Partner.FindAllByProperty("Login", context.Session["Login"]);
 			if (MapPartner.Length == 0)
 			{
