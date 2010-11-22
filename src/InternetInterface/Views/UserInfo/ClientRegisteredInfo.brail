@@ -1,0 +1,60 @@
+﻿<link href="../Styles/style.css" type="text/css" rel="stylesheet" />
+<link rel="stylesheet" href="../Styles/base.css" type="text/css" media="screen" />
+
+<style type="text/css"> 
+#printable { display: none; } 
+@media print 
+{ 
+#non-printable { display: none; } 
+#printable { display: block; } 
+} 
+</style> 
+<%
+def WriteCell(fieldName as string, fieldVal as string): %>
+<tr>
+    <td>${fieldName}</td>
+    <td>${fieldVal}</td>
+</tr>
+<%
+    return ""
+end
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Информация о клиенте</title>
+</head>
+<body>
+<div id="non-printable"> 
+    <% OutputSubView("""\Subview\MapHead""") %>
+</div> 
+<div id="main">
+<div id="container">
+    <div id="block-tables" class="block">
+       
+
+        <table class="table" style="width:100%; " border="0" id="PartnerInfoTable">
+            <thead>
+                <th colspan="2">Информация для клиента: ${Client.Surname} ${Client.Name} ${Client.Name}</th>
+            </thead>
+            <tbody>
+                ${WriteCell("Город", Client.City)}
+                ${WriteCell("Адрес подключения", Client.AdressConnect)}
+                ${WriteCell("Серия паспорта", Client.PassportNumber)}
+                ${WriteCell("Номер паспорта", Client.PassportSeries)}
+                ${WriteCell("Кем выдан паспорт", Client.WhoGivePassport)}
+                ${WriteCell("Адрес регистрации", Client.RegistrationAdress)}
+                ${WriteCell("Баланс по счету", Client.Balance)}
+                ${WriteCell("Логин", Client.Login)}
+                ${WriteCell("Пароль", Client.Password)}
+                ${WriteCell("Тариф", Client.Tariff.Name)}
+                ${WriteCell("Кем зарегистрирован", Client.HasRegistered.Name)}
+            </tbody>
+        </table>
+        
+    </div>
+</div>
+</div>
+</body>
+</html>

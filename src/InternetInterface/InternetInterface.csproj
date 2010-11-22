@@ -120,6 +120,7 @@
     <Content Include="Styles\style.css" />
     <None Include="Views\Subview\Client.brail" />
     <None Include="Views\UserInfo\PartnersPreview.brail" />
+    <None Include="Views\UserInfo\ClientRegisteredInfo.brail" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -148,6 +149,7 @@
       <DependentUpon>AccessDin.aspx</DependentUpon>
     </Compile>
     <Compile Include="Helpers\ActiveDirectoryHelper.cs" />
+    <Compile Include="Helpers\HiberSession.cs" />
     <Compile Include="Helpers\ValidBuilderHelper.cs" />
     <Compile Include="Models\Access\AccessCategories.cs" />
     <Compile Include="Models\Access\AccessRules.cs" />

@@ -13,7 +13,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Информация и партнере</title>
+    <title>Информация о партнере</title>
 </head>
 <body>
 <div id="non-printable"> 
@@ -47,7 +47,7 @@
                     <td>Дата регистрации</td>
                     <td>${Partner.RegDate}</td>
                 </tr>
-                                <tr>
+                <tr>
                     <td>Логин</td>
                     <td>${Partner.Login}</td>
                 </tr>

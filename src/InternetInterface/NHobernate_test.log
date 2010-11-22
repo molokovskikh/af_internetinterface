@@ -12980,3 +12980,1340 @@ Stack Trace:
 Login - zolotarev
 --------------
 
+09:40:20.018 [4] ERROR InternetInterface.Global - ----UrlReferer-------
+
+----Url-------
+http://localhost:59059/favicon.ico
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Url smaller than 2 tokens
+Stack Trace:
+   at Castle.MonoRail.Framework.Services.DefaultUrlTokenizer.ExtractAreaControllerAction(String rawUrl, String& area, String& controller, String& action)
+   at Castle.MonoRail.Framework.Services.DefaultUrlTokenizer.TokenizeUrl(String rawUrl, String pathInfo, Uri uri, Boolean isLocal, String appVirtualDir)
+   at Castle.MonoRail.Framework.MonoRailHttpHandlerFactory.GetHandler(HttpContext context, String requestType, String url, String pathTranslated)
+   at System.Web.HttpApplication.MapHttpHandler(HttpContext context, String requestType, VirtualPath path, String pathTranslated, Boolean useAppConfig)
+   at System.Web.HttpApplication.MapHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+--------------
+----Session---
+--------------
+
+09:40:23.436 [4] ERROR InternetInterface.Helpers.ActiveDirectoryHelper - Пароль или логин был введен неправильно
+09:55:59.725 [9] ERROR InternetInterface.Global - ----UrlReferer-------
+http://localhost:59059/Register/RegisterPartner?Partner=6
+----Url-------
+http://localhost:59059/Register/EditPartner
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action EditPartner on controller Register
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+Exception has been thrown by the target of an invocation.
+Stack Trace:
+   at System.RuntimeMethodHandle._InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, SignatureStruct& sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.RuntimeMethodHandle.InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, Signature sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture, Boolean skipVisibilityChecks)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
+   at Castle.MonoRail.Framework.SmartDispatcherController.InvokeMethod(MethodInfo method, IRequest request, IDictionary`2 extraArgs)
+   at Castle.MonoRail.Framework.ActionMethodExecutorCompatible.Execute(IEngineContext engineContext, IController controller, IControllerContext context)
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+Message:
+Index was outside the bounds of the array.
+Stack Trace:
+   at InternetInterface.Controllers.RegisterController.EditPartner(Partner partner, List`1 rights) in C:\Web_Project\InternetInterface\src\InternetInterface\Controllers\RegisterController.cs:line 124
+--------------
+--------------
+----Session---
+Login - zolotarev
+--------------
+
+09:57:19.800 [8] ERROR InternetInterface.Helpers.ActiveDirectoryHelper - Пароль или логин был введен неправильно
+10:14:56.376 [12] ERROR InternetInterface.Helpers.ActiveDirectoryHelper - Пароль или логин был введен неправильно
+10:17:11.928 [4] ERROR InternetInterface.Global - ----UrlReferer-------
+http://localhost:59059/Register/RegisterPartner?Partner=6
+----Url-------
+http://localhost:59059/Register/EditPartner
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action EditPartner on controller Register
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+MonoRail could not resolve a view engine instance for the template 'Register\EditPartner'
+There are two possible reasons: either the template does not exist, or the view engine that handles an specific file extension has not been configured correctly web.config (section monorail, node viewEngines).
+Stack Trace:
+   at Castle.MonoRail.Framework.Services.DefaultViewEngineManager.ResolveEngine(String templateName, Boolean throwIfNotFound)
+   at Castle.MonoRail.Framework.Services.DefaultViewEngineManager.ResolveEngine(String templateName)
+   at Castle.MonoRail.Framework.Services.DefaultViewEngineManager.Process(String templateName, TextWriter output, IEngineContext context, IController controller, IControllerContext controllerContext)
+   at Castle.MonoRail.Framework.Controller.ProcessView()
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+--------------
+----Session---
+Login - zolotarev
+--------------
+
+10:39:51.515 [12] ERROR NHibernate.AdoNet.AbstractBatcher - Could not execute command: INSERT INTO internet.Partners (Name, Email, TelNum, Adress, RegDate, Login) VALUES (?p0, ?p1, ?p2, ?p3, ?p4, ?p5)
+MySql.Data.MySqlClient.MySqlException (0x80004005): Duplicate entry 'Barak' for key 'Index_2'
+   at MySql.Data.MySqlClient.MySqlStream.ReadPacket()
+   at MySql.Data.MySqlClient.NativeDriver.GetResult(Int32& affectedRow, Int32& insertedId)
+   at MySql.Data.MySqlClient.Driver.GetResult(Int32 statementId, Int32& affectedRows, Int32& insertedId)
+   at MySql.Data.MySqlClient.Driver.NextResult(Int32 statementId)
+   at MySql.Data.MySqlClient.MySqlDataReader.NextResult()
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteReader(CommandBehavior behavior)
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteReader()
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteNonQuery()
+   at NHibernate.AdoNet.AbstractBatcher.ExecuteNonQuery(IDbCommand cmd)
+10:39:51.566 [12] ERROR NHibernate.Util.ADOExceptionReporter - Duplicate entry 'Barak' for key 'Index_2'
+10:39:52.338 [12] ERROR InternetInterface.Global - ----UrlReferer-------
+http://localhost:59059/Register/RegisterPartner?Partner=6
+----Url-------
+http://localhost:59059/Register/EditPartner
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action EditPartner on controller Register
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+Exception has been thrown by the target of an invocation.
+Stack Trace:
+   at System.RuntimeMethodHandle._InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, SignatureStruct& sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.RuntimeMethodHandle.InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, Signature sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture, Boolean skipVisibilityChecks)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
+   at Castle.MonoRail.Framework.SmartDispatcherController.InvokeMethod(MethodInfo method, IRequest request, IDictionary`2 extraArgs)
+   at Castle.MonoRail.Framework.ActionMethodExecutorCompatible.Execute(IEngineContext engineContext, IController controller, IControllerContext context)
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+Message:
+could not insert: [InternetInterface.Models.Partner][SQL: INSERT INTO internet.Partners (Name, Email, TelNum, Adress, RegDate, Login) VALUES (?, ?, ?, ?, ?, ?)]
+Stack Trace:
+   at NHibernate.Id.Insert.AbstractSelectingDelegate.PerformInsert(SqlCommandInfo insertSQL, ISessionImplementor session, IBinder binder)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.Insert(Object[] fields, Boolean[] notNull, SqlCommandInfo sql, Object obj, ISessionImplementor session)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.Insert(Object[] fields, Object obj, ISessionImplementor session)
+   at NHibernate.Action.EntityIdentityInsertAction.Execute()
+   at NHibernate.Engine.ActionQueue.Execute(IExecutable executable)
+   at NHibernate.Event.Default.AbstractSaveEventListener.PerformSaveOrReplicate(Object entity, EntityKey key, IEntityPersister persister, Boolean useIdentityColumn, Object anything, IEventSource source, Boolean requiresImmediateIdAccess)
+   at NHibernate.Event.Default.AbstractSaveEventListener.PerformSave(Object entity, Object id, IEntityPersister persister, Boolean useIdentityColumn, Object anything, IEventSource source, Boolean requiresImmediateIdAccess)
+   at NHibernate.Event.Default.AbstractSaveEventListener.SaveWithGeneratedId(Object entity, String entityName, Object anything, IEventSource source, Boolean requiresImmediateIdAccess)
+   at NHibernate.Event.Default.DefaultPersistEventListener.EntityIsTransient(PersistEvent event, IDictionary createCache)
+   at NHibernate.Event.Default.DefaultPersistEventListener.OnPersist(PersistEvent event, IDictionary createdAlready)
+   at NHibernate.Event.Default.DefaultPersistEventListener.OnPersist(PersistEvent event)
+   at NHibernate.Impl.SessionImpl.FirePersist(PersistEvent event)
+   at NHibernate.Impl.SessionImpl.Persist(String entityName, Object obj)
+   at NHibernate.Impl.SessionImpl.Persist(Object obj)
+   at InternetInterface.Controllers.RegisterController.EditPartner(Partner partner, List`1 rights) in C:\Web_Project\InternetInterface\src\InternetInterface\Controllers\RegisterController.cs:line 128
+--------------
+Message:
+Duplicate entry 'Barak' for key 'Index_2'
+Stack Trace:
+   at MySql.Data.MySqlClient.MySqlStream.ReadPacket()
+   at MySql.Data.MySqlClient.NativeDriver.GetResult(Int32& affectedRow, Int32& insertedId)
+   at MySql.Data.MySqlClient.Driver.GetResult(Int32 statementId, Int32& affectedRows, Int32& insertedId)
+   at MySql.Data.MySqlClient.Driver.NextResult(Int32 statementId)
+   at MySql.Data.MySqlClient.MySqlDataReader.NextResult()
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteReader(CommandBehavior behavior)
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteReader()
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteNonQuery()
+   at NHibernate.AdoNet.AbstractBatcher.ExecuteNonQuery(IDbCommand cmd)
+   at NHibernate.Id.Insert.AbstractSelectingDelegate.PerformInsert(SqlCommandInfo insertSQL, ISessionImplementor session, IBinder binder)
+--------------
+--------------
+----Session---
+Login - zolotarev
+--------------
+
+10:39:52.343 [12] ERROR NHibernate.AssertionFailure - An AssertionFailure occurred - this may indicate a bug in NHibernate or in your custom types.
+NHibernate.AssertionFailure: null id in InternetInterface.Models.Partner entry (don't flush the Session after an exception occurs)
+10:42:03.645 [12] ERROR NHibernate.AdoNet.AbstractBatcher - Could not execute command: INSERT INTO internet.Partners (Name, Email, TelNum, Adress, RegDate, Login) VALUES (?p0, ?p1, ?p2, ?p3, ?p4, ?p5)
+MySql.Data.MySqlClient.MySqlException (0x80004005): Duplicate entry 'Barak' for key 'Index_2'
+   at MySql.Data.MySqlClient.MySqlStream.ReadPacket()
+   at MySql.Data.MySqlClient.NativeDriver.GetResult(Int32& affectedRow, Int32& insertedId)
+   at MySql.Data.MySqlClient.Driver.GetResult(Int32 statementId, Int32& affectedRows, Int32& insertedId)
+   at MySql.Data.MySqlClient.Driver.NextResult(Int32 statementId)
+   at MySql.Data.MySqlClient.MySqlDataReader.NextResult()
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteReader(CommandBehavior behavior)
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteReader()
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteNonQuery()
+   at NHibernate.AdoNet.AbstractBatcher.ExecuteNonQuery(IDbCommand cmd)
+10:42:03.692 [12] ERROR NHibernate.Util.ADOExceptionReporter - Duplicate entry 'Barak' for key 'Index_2'
+10:42:14.490 [12] ERROR InternetInterface.Global - ----UrlReferer-------
+http://localhost:59059/Register/RegisterPartner?Partner=6
+----Url-------
+http://localhost:59059/Register/EditPartner
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action EditPartner on controller Register
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+Exception has been thrown by the target of an invocation.
+Stack Trace:
+   at System.RuntimeMethodHandle._InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, SignatureStruct& sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.RuntimeMethodHandle.InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, Signature sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture, Boolean skipVisibilityChecks)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
+   at Castle.MonoRail.Framework.SmartDispatcherController.InvokeMethod(MethodInfo method, IRequest request, IDictionary`2 extraArgs)
+   at Castle.MonoRail.Framework.ActionMethodExecutorCompatible.Execute(IEngineContext engineContext, IController controller, IControllerContext context)
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+Message:
+could not insert: [InternetInterface.Models.Partner][SQL: INSERT INTO internet.Partners (Name, Email, TelNum, Adress, RegDate, Login) VALUES (?, ?, ?, ?, ?, ?)]
+Stack Trace:
+   at NHibernate.Id.Insert.AbstractSelectingDelegate.PerformInsert(SqlCommandInfo insertSQL, ISessionImplementor session, IBinder binder)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.Insert(Object[] fields, Boolean[] notNull, SqlCommandInfo sql, Object obj, ISessionImplementor session)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.Insert(Object[] fields, Object obj, ISessionImplementor session)
+   at NHibernate.Action.EntityIdentityInsertAction.Execute()
+   at NHibernate.Engine.ActionQueue.Execute(IExecutable executable)
+   at NHibernate.Event.Default.AbstractSaveEventListener.PerformSaveOrReplicate(Object entity, EntityKey key, IEntityPersister persister, Boolean useIdentityColumn, Object anything, IEventSource source, Boolean requiresImmediateIdAccess)
+   at NHibernate.Event.Default.DefaultReplicateEventListener.OnReplicate(ReplicateEvent event)
+   at NHibernate.Impl.SessionImpl.FireReplicate(ReplicateEvent event)
+   at NHibernate.Impl.SessionImpl.Replicate(Object obj, ReplicationMode replicationMode)
+   at InternetInterface.Controllers.RegisterController.EditPartner(Partner partner, List`1 rights) in C:\Web_Project\InternetInterface\src\InternetInterface\Controllers\RegisterController.cs:line 128
+--------------
+Message:
+Duplicate entry 'Barak' for key 'Index_2'
+Stack Trace:
+   at MySql.Data.MySqlClient.MySqlStream.ReadPacket()
+   at MySql.Data.MySqlClient.NativeDriver.GetResult(Int32& affectedRow, Int32& insertedId)
+   at MySql.Data.MySqlClient.Driver.GetResult(Int32 statementId, Int32& affectedRows, Int32& insertedId)
+   at MySql.Data.MySqlClient.Driver.NextResult(Int32 statementId)
+   at MySql.Data.MySqlClient.MySqlDataReader.NextResult()
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteReader(CommandBehavior behavior)
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteReader()
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteNonQuery()
+   at NHibernate.AdoNet.AbstractBatcher.ExecuteNonQuery(IDbCommand cmd)
+   at NHibernate.Id.Insert.AbstractSelectingDelegate.PerformInsert(SqlCommandInfo insertSQL, ISessionImplementor session, IBinder binder)
+--------------
+--------------
+----Session---
+Login - zolotarev
+--------------
+
+10:42:14.507 [12] ERROR NHibernate.AssertionFailure - An AssertionFailure occurred - this may indicate a bug in NHibernate or in your custom types.
+NHibernate.AssertionFailure: null id in InternetInterface.Models.Partner entry (don't flush the Session after an exception occurs)
+10:54:40.781 [4] ERROR NHibernate.Cfg.Configuration - Problem parsing configuration
+NHibernate.Cfg.HibernateConfigException: An exception occurred during configuration of persistence layer. ---> System.IO.FileNotFoundException: Could not find file 'C:\Web_Project\InternetInterface\src\InternetInterface\bin\hibernate.cfg.xml'.
+   at System.IO.__Error.WinIOError(Int32 errorCode, String maybeFullPath)
+   at System.IO.FileStream.Init(String path, FileMode mode, FileAccess access, Int32 rights, Boolean useRights, FileShare share, Int32 bufferSize, FileOptions options, SECURITY_ATTRIBUTES secAttrs, String msgPath, Boolean bFromProxy, Boolean useLongPath)
+   at System.IO.FileStream..ctor(String path, FileMode mode, FileAccess access, FileShare share, Int32 bufferSize)
+   at System.Xml.XmlDownloadManager.GetStream(Uri uri, ICredentials credentials, IWebProxy proxy, RequestCachePolicy cachePolicy)
+   at System.Xml.XmlUrlResolver.GetEntity(Uri absoluteUri, String role, Type ofObjectToReturn)
+   at System.Xml.XmlTextReaderImpl.OpenUrlDelegate(Object xmlResolver)
+   at System.Threading.CompressedStack.runTryCode(Object userData)
+   at System.Runtime.CompilerServices.RuntimeHelpers.ExecuteCodeWithGuaranteedCleanup(TryCode code, CleanupCode backoutCode, Object userData)
+   at System.Threading.CompressedStack.Run(CompressedStack compressedStack, ContextCallback callback, Object state)
+   at System.Xml.XmlTextReaderImpl.OpenUrl()
+   at System.Xml.XmlTextReaderImpl.Read()
+   at System.Xml.XmlTextReader.Read()
+   at System.Xml.XmlCharCheckingReader.Read()
+   at System.Xml.XsdValidatingReader.Read()
+   at System.Xml.XPath.XPathDocument.LoadFromReader(XmlReader reader, XmlSpace space)
+   at System.Xml.XPath.XPathDocument..ctor(XmlReader reader, XmlSpace space)
+   at System.Xml.XPath.XPathDocument..ctor(XmlReader reader)
+   at NHibernate.Cfg.ConfigurationSchema.HibernateConfiguration..ctor(XmlReader hbConfigurationReader, Boolean fromAppSetting)
+   --- End of inner exception stack trace ---
+   at NHibernate.Cfg.ConfigurationSchema.HibernateConfiguration..ctor(XmlReader hbConfigurationReader, Boolean fromAppSetting)
+   at NHibernate.Cfg.ConfigurationSchema.HibernateConfiguration..ctor(XmlReader hbConfigurationReader)
+   at NHibernate.Cfg.Configuration.Configure(XmlReader textReader)
+10:54:44.427 [4] ERROR InternetInterface.Global - ----UrlReferer-------
+http://localhost:59059/Register/RegisterPartner?Partner=6
+----Url-------
+http://localhost:59059/Register/EditPartner
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action EditPartner on controller Register
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+Exception has been thrown by the target of an invocation.
+Stack Trace:
+   at System.RuntimeMethodHandle._InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, SignatureStruct& sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.RuntimeMethodHandle.InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, Signature sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture, Boolean skipVisibilityChecks)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
+   at Castle.MonoRail.Framework.SmartDispatcherController.InvokeMethod(MethodInfo method, IRequest request, IDictionary`2 extraArgs)
+   at Castle.MonoRail.Framework.ActionMethodExecutorCompatible.Execute(IEngineContext engineContext, IController controller, IControllerContext context)
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+Message:
+An exception occurred during configuration of persistence layer.
+Stack Trace:
+   at NHibernate.Cfg.ConfigurationSchema.HibernateConfiguration..ctor(XmlReader hbConfigurationReader, Boolean fromAppSetting)
+   at NHibernate.Cfg.ConfigurationSchema.HibernateConfiguration..ctor(XmlReader hbConfigurationReader)
+   at NHibernate.Cfg.Configuration.Configure(XmlReader textReader)
+   at NHibernate.Cfg.Configuration.Configure(String fileName, Boolean ignoreSessionFactoryConfig)
+   at NHibernate.Cfg.Configuration.Configure(String fileName)
+   at NHibernate.Cfg.Configuration.Configure()
+   at InternetInterface.Controllers.RegisterController.EditPartner(Partner partner, List`1 rights) in C:\Web_Project\InternetInterface\src\InternetInterface\Controllers\RegisterController.cs:line 129
+--------------
+Message:
+Could not find file 'C:\Web_Project\InternetInterface\src\InternetInterface\bin\hibernate.cfg.xml'.
+Stack Trace:
+   at System.IO.__Error.WinIOError(Int32 errorCode, String maybeFullPath)
+   at System.IO.FileStream.Init(String path, FileMode mode, FileAccess access, Int32 rights, Boolean useRights, FileShare share, Int32 bufferSize, FileOptions options, SECURITY_ATTRIBUTES secAttrs, String msgPath, Boolean bFromProxy, Boolean useLongPath)
+   at System.IO.FileStream..ctor(String path, FileMode mode, FileAccess access, FileShare share, Int32 bufferSize)
+   at System.Xml.XmlDownloadManager.GetStream(Uri uri, ICredentials credentials, IWebProxy proxy, RequestCachePolicy cachePolicy)
+   at System.Xml.XmlUrlResolver.GetEntity(Uri absoluteUri, String role, Type ofObjectToReturn)
+   at System.Xml.XmlTextReaderImpl.OpenUrlDelegate(Object xmlResolver)
+   at System.Threading.CompressedStack.runTryCode(Object userData)
+   at System.Runtime.CompilerServices.RuntimeHelpers.ExecuteCodeWithGuaranteedCleanup(TryCode code, CleanupCode backoutCode, Object userData)
+   at System.Threading.CompressedStack.Run(CompressedStack compressedStack, ContextCallback callback, Object state)
+   at System.Xml.XmlTextReaderImpl.OpenUrl()
+   at System.Xml.XmlTextReaderImpl.Read()
+   at System.Xml.XmlTextReader.Read()
+   at System.Xml.XmlCharCheckingReader.Read()
+   at System.Xml.XsdValidatingReader.Read()
+   at System.Xml.XPath.XPathDocument.LoadFromReader(XmlReader reader, XmlSpace space)
+   at System.Xml.XPath.XPathDocument..ctor(XmlReader reader, XmlSpace space)
+   at System.Xml.XPath.XPathDocument..ctor(XmlReader reader)
+   at NHibernate.Cfg.ConfigurationSchema.HibernateConfiguration..ctor(XmlReader hbConfigurationReader, Boolean fromAppSetting)
+--------------
+--------------
+----Session---
+Login - zolotarev
+--------------
+
+11:00:10.009 [13] ERROR NHibernate.Cfg.Configuration - Resource not found: InternetInterface.Models.Partner.hbm.xml
+NHibernate.MappingException: Resource not found: InternetInterface.Models.Partner.hbm.xml
+11:06:40.932 [13] ERROR InternetInterface.Global - ----UrlReferer-------
+http://localhost:59059/Register/RegisterPartner?Partner=6
+----Url-------
+http://localhost:59059/Register/EditPartner
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action EditPartner on controller Register
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+Exception has been thrown by the target of an invocation.
+Stack Trace:
+   at System.RuntimeMethodHandle._InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, SignatureStruct& sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.RuntimeMethodHandle.InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, Signature sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture, Boolean skipVisibilityChecks)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
+   at Castle.MonoRail.Framework.SmartDispatcherController.InvokeMethod(MethodInfo method, IRequest request, IDictionary`2 extraArgs)
+   at Castle.MonoRail.Framework.ActionMethodExecutorCompatible.Execute(IEngineContext engineContext, IController controller, IControllerContext context)
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+Message:
+Resource not found: InternetInterface.Models.Partner.hbm.xml
+Stack Trace:
+   at NHibernate.Cfg.Configuration.LogAndThrow(Exception exception)
+   at NHibernate.Cfg.Configuration.AddResource(String path, Assembly assembly)
+   at NHibernate.Cfg.Configuration.AddClass(Type persistentClass)
+   at InternetInterface.Controllers.RegisterController.EditPartner(Partner partner, List`1 rights) in C:\Web_Project\InternetInterface\src\InternetInterface\Controllers\RegisterController.cs:line 128
+--------------
+--------------
+----Session---
+Login - zolotarev
+--------------
+
+12:32:51.833 [8] ERROR InternetInterface.Global - ----UrlReferer-------
+
+----Url-------
+http://localhost:59059/favicon.ico
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Url smaller than 2 tokens
+Stack Trace:
+   at Castle.MonoRail.Framework.Services.DefaultUrlTokenizer.ExtractAreaControllerAction(String rawUrl, String& area, String& controller, String& action)
+   at Castle.MonoRail.Framework.Services.DefaultUrlTokenizer.TokenizeUrl(String rawUrl, String pathInfo, Uri uri, Boolean isLocal, String appVirtualDir)
+   at Castle.MonoRail.Framework.MonoRailHttpHandlerFactory.GetHandler(HttpContext context, String requestType, String url, String pathTranslated)
+   at System.Web.HttpApplication.MapHttpHandler(HttpContext context, String requestType, VirtualPath path, String pathTranslated, Boolean useAppConfig)
+   at System.Web.HttpApplication.MapHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+--------------
+----Session---
+--------------
+
+12:32:54.126 [8] ERROR InternetInterface.Global - ----UrlReferer-------
+
+----Url-------
+http://localhost:59059/favicon.ico
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Url smaller than 2 tokens
+Stack Trace:
+   at Castle.MonoRail.Framework.Services.DefaultUrlTokenizer.ExtractAreaControllerAction(String rawUrl, String& area, String& controller, String& action)
+   at Castle.MonoRail.Framework.Services.DefaultUrlTokenizer.TokenizeUrl(String rawUrl, String pathInfo, Uri uri, Boolean isLocal, String appVirtualDir)
+   at Castle.MonoRail.Framework.MonoRailHttpHandlerFactory.GetHandler(HttpContext context, String requestType, String url, String pathTranslated)
+   at System.Web.HttpApplication.MapHttpHandler(HttpContext context, String requestType, VirtualPath path, String pathTranslated, Boolean useAppConfig)
+   at System.Web.HttpApplication.MapHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+--------------
+----Session---
+--------------
+
+12:32:55.709 [10] ERROR InternetInterface.Global - ----UrlReferer-------
+
+----Url-------
+http://localhost:59059/favicon.ico
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Url smaller than 2 tokens
+Stack Trace:
+   at Castle.MonoRail.Framework.Services.DefaultUrlTokenizer.ExtractAreaControllerAction(String rawUrl, String& area, String& controller, String& action)
+   at Castle.MonoRail.Framework.Services.DefaultUrlTokenizer.TokenizeUrl(String rawUrl, String pathInfo, Uri uri, Boolean isLocal, String appVirtualDir)
+   at Castle.MonoRail.Framework.MonoRailHttpHandlerFactory.GetHandler(HttpContext context, String requestType, String url, String pathTranslated)
+   at System.Web.HttpApplication.MapHttpHandler(HttpContext context, String requestType, VirtualPath path, String pathTranslated, Boolean useAppConfig)
+   at System.Web.HttpApplication.MapHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+--------------
+----Session---
+--------------
+
+12:32:57.815 [8] ERROR InternetInterface.Global - ----UrlReferer-------
+
+----Url-------
+http://localhost:59059/favicon.ico
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Url smaller than 2 tokens
+Stack Trace:
+   at Castle.MonoRail.Framework.Services.DefaultUrlTokenizer.ExtractAreaControllerAction(String rawUrl, String& area, String& controller, String& action)
+   at Castle.MonoRail.Framework.Services.DefaultUrlTokenizer.TokenizeUrl(String rawUrl, String pathInfo, Uri uri, Boolean isLocal, String appVirtualDir)
+   at Castle.MonoRail.Framework.MonoRailHttpHandlerFactory.GetHandler(HttpContext context, String requestType, String url, String pathTranslated)
+   at System.Web.HttpApplication.MapHttpHandler(HttpContext context, String requestType, VirtualPath path, String pathTranslated, Boolean useAppConfig)
+   at System.Web.HttpApplication.MapHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+--------------
+----Session---
+--------------
+
+12:33:00.677 [10] ERROR InternetInterface.Global - ----UrlReferer-------
+
+----Url-------
+http://localhost:59059/favicon.ico
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Url smaller than 2 tokens
+Stack Trace:
+   at Castle.MonoRail.Framework.Services.DefaultUrlTokenizer.ExtractAreaControllerAction(String rawUrl, String& area, String& controller, String& action)
+   at Castle.MonoRail.Framework.Services.DefaultUrlTokenizer.TokenizeUrl(String rawUrl, String pathInfo, Uri uri, Boolean isLocal, String appVirtualDir)
+   at Castle.MonoRail.Framework.MonoRailHttpHandlerFactory.GetHandler(HttpContext context, String requestType, String url, String pathTranslated)
+   at System.Web.HttpApplication.MapHttpHandler(HttpContext context, String requestType, VirtualPath path, String pathTranslated, Boolean useAppConfig)
+   at System.Web.HttpApplication.MapHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+--------------
+----Session---
+--------------
+
+12:33:01.806 [10] ERROR InternetInterface.Global - ----UrlReferer-------
+
+----Url-------
+http://localhost:59059/favicon.ico
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Url smaller than 2 tokens
+Stack Trace:
+   at Castle.MonoRail.Framework.Services.DefaultUrlTokenizer.ExtractAreaControllerAction(String rawUrl, String& area, String& controller, String& action)
+   at Castle.MonoRail.Framework.Services.DefaultUrlTokenizer.TokenizeUrl(String rawUrl, String pathInfo, Uri uri, Boolean isLocal, String appVirtualDir)
+   at Castle.MonoRail.Framework.MonoRailHttpHandlerFactory.GetHandler(HttpContext context, String requestType, String url, String pathTranslated)
+   at System.Web.HttpApplication.MapHttpHandler(HttpContext context, String requestType, VirtualPath path, String pathTranslated, Boolean useAppConfig)
+   at System.Web.HttpApplication.MapHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+--------------
+----Session---
+--------------
+
+12:58:32.237 [10] ERROR InternetInterface.Helpers.ActiveDirectoryHelper - Пароль или логин был введен неправильно
+13:06:58.837 [8] ERROR NHibernate.AdoNet.AbstractBatcher - Could not execute command: INSERT INTO internet.Partners (Name, Email, TelNum, Adress, RegDate, Login) VALUES (?p0, ?p1, ?p2, ?p3, ?p4, ?p5)
+MySql.Data.MySqlClient.MySqlException (0x80004005): Duplicate entry 'Barak' for key 'Index_2'
+   at MySql.Data.MySqlClient.MySqlStream.ReadPacket()
+   at MySql.Data.MySqlClient.NativeDriver.GetResult(Int32& affectedRow, Int32& insertedId)
+   at MySql.Data.MySqlClient.Driver.GetResult(Int32 statementId, Int32& affectedRows, Int32& insertedId)
+   at MySql.Data.MySqlClient.Driver.NextResult(Int32 statementId)
+   at MySql.Data.MySqlClient.MySqlDataReader.NextResult()
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteReader(CommandBehavior behavior)
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteReader()
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteNonQuery()
+   at NHibernate.AdoNet.AbstractBatcher.ExecuteNonQuery(IDbCommand cmd)
+13:06:58.889 [8] ERROR NHibernate.Util.ADOExceptionReporter - Duplicate entry 'Barak' for key 'Index_2'
+13:07:11.858 [8] ERROR InternetInterface.Global - ----UrlReferer-------
+http://localhost:59059/Register/RegisterPartner?Partner=6
+----Url-------
+http://localhost:59059/Register/EditPartner
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action EditPartner on controller Register
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+Exception has been thrown by the target of an invocation.
+Stack Trace:
+   at System.RuntimeMethodHandle._InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, SignatureStruct& sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.RuntimeMethodHandle.InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, Signature sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture, Boolean skipVisibilityChecks)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
+   at Castle.MonoRail.Framework.SmartDispatcherController.InvokeMethod(MethodInfo method, IRequest request, IDictionary`2 extraArgs)
+   at Castle.MonoRail.Framework.ActionMethodExecutorCompatible.Execute(IEngineContext engineContext, IController controller, IControllerContext context)
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+Message:
+could not insert: [InternetInterface.Models.Partner][SQL: INSERT INTO internet.Partners (Name, Email, TelNum, Adress, RegDate, Login) VALUES (?, ?, ?, ?, ?, ?)]
+Stack Trace:
+   at NHibernate.Id.Insert.AbstractSelectingDelegate.PerformInsert(SqlCommandInfo insertSQL, ISessionImplementor session, IBinder binder)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.Insert(Object[] fields, Boolean[] notNull, SqlCommandInfo sql, Object obj, ISessionImplementor session)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.Insert(Object[] fields, Object obj, ISessionImplementor session)
+   at NHibernate.Action.EntityIdentityInsertAction.Execute()
+   at NHibernate.Engine.ActionQueue.Execute(IExecutable executable)
+   at NHibernate.Event.Default.AbstractSaveEventListener.PerformSaveOrReplicate(Object entity, EntityKey key, IEntityPersister persister, Boolean useIdentityColumn, Object anything, IEventSource source, Boolean requiresImmediateIdAccess)
+   at NHibernate.Event.Default.DefaultReplicateEventListener.OnReplicate(ReplicateEvent event)
+   at NHibernate.Impl.SessionImpl.FireReplicate(ReplicateEvent event)
+   at NHibernate.Impl.SessionImpl.Replicate(Object obj, ReplicationMode replicationMode)
+   at InternetInterface.Controllers.RegisterController.EditPartner(Partner partner, List`1 rights) in C:\Web_Project\InternetInterface\src\InternetInterface\Controllers\RegisterController.cs:line 132
+--------------
+Message:
+Duplicate entry 'Barak' for key 'Index_2'
+Stack Trace:
+   at MySql.Data.MySqlClient.MySqlStream.ReadPacket()
+   at MySql.Data.MySqlClient.NativeDriver.GetResult(Int32& affectedRow, Int32& insertedId)
+   at MySql.Data.MySqlClient.Driver.GetResult(Int32 statementId, Int32& affectedRows, Int32& insertedId)
+   at MySql.Data.MySqlClient.Driver.NextResult(Int32 statementId)
+   at MySql.Data.MySqlClient.MySqlDataReader.NextResult()
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteReader(CommandBehavior behavior)
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteReader()
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteNonQuery()
+   at NHibernate.AdoNet.AbstractBatcher.ExecuteNonQuery(IDbCommand cmd)
+   at NHibernate.Id.Insert.AbstractSelectingDelegate.PerformInsert(SqlCommandInfo insertSQL, ISessionImplementor session, IBinder binder)
+--------------
+--------------
+----Session---
+Login - zolotarev
+--------------
+
+13:07:11.870 [8] ERROR NHibernate.AssertionFailure - An AssertionFailure occurred - this may indicate a bug in NHibernate or in your custom types.
+NHibernate.AssertionFailure: null id in InternetInterface.Models.Partner entry (don't flush the Session after an exception occurs)
+13:10:24.927 [8] ERROR NHibernate.Event.Default.AbstractFlushingEventListener - Could not synchronize database state with session
+NHibernate.StaleStateException: Unexpected row count: 0; expected: 1
+   at NHibernate.AdoNet.Expectations.BasicExpectation.VerifyOutcomeNonBatched(Int32 rowCount, IDbCommand statement)
+   at NHibernate.AdoNet.NonBatchingBatcher.AddToBatch(IExpectation expectation)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.Update(Object id, Object[] fields, Object[] oldFields, Object rowId, Boolean[] includeProperty, Int32 j, Object oldVersion, Object obj, SqlCommandInfo sql, ISessionImplementor session)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.UpdateOrInsert(Object id, Object[] fields, Object[] oldFields, Object rowId, Boolean[] includeProperty, Int32 j, Object oldVersion, Object obj, SqlCommandInfo sql, ISessionImplementor session)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.Update(Object id, Object[] fields, Int32[] dirtyFields, Boolean hasDirtyCollection, Object[] oldFields, Object oldVersion, Object obj, Object rowId, ISessionImplementor session)
+   at NHibernate.Action.EntityUpdateAction.Execute()
+   at NHibernate.Engine.ActionQueue.Execute(IExecutable executable)
+   at NHibernate.Engine.ActionQueue.ExecuteActions(IList list)
+   at NHibernate.Engine.ActionQueue.ExecuteActions()
+   at NHibernate.Event.Default.AbstractFlushingEventListener.PerformExecutions(IEventSource session)
+13:10:28.713 [8] ERROR InternetInterface.Global - ----UrlReferer-------
+http://localhost:59059/Register/RegisterPartner?Partner=6
+----Url-------
+http://localhost:59059/Register/EditPartner
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action EditPartner on controller Register
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+Exception has been thrown by the target of an invocation.
+Stack Trace:
+   at System.RuntimeMethodHandle._InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, SignatureStruct& sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.RuntimeMethodHandle.InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, Signature sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture, Boolean skipVisibilityChecks)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
+   at Castle.MonoRail.Framework.SmartDispatcherController.InvokeMethod(MethodInfo method, IRequest request, IDictionary`2 extraArgs)
+   at Castle.MonoRail.Framework.ActionMethodExecutorCompatible.Execute(IEngineContext engineContext, IController controller, IControllerContext context)
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+Message:
+Could not perform Update for Partner
+Stack Trace:
+   at Castle.ActiveRecord.ActiveRecordBase.InternalUpdate(Object instance, Boolean flush)
+   at Castle.ActiveRecord.ActiveRecordBase.UpdateAndFlush(Object instance)
+   at Castle.ActiveRecord.ActiveRecordBase.UpdateAndFlush()
+   at InternetInterface.Controllers.RegisterController.EditPartner(Partner partner, List`1 rights) in C:\Web_Project\InternetInterface\src\InternetInterface\Controllers\RegisterController.cs:line 133
+--------------
+Message:
+Unexpected row count: 0; expected: 1
+Stack Trace:
+   at NHibernate.AdoNet.Expectations.BasicExpectation.VerifyOutcomeNonBatched(Int32 rowCount, IDbCommand statement)
+   at NHibernate.AdoNet.NonBatchingBatcher.AddToBatch(IExpectation expectation)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.Update(Object id, Object[] fields, Object[] oldFields, Object rowId, Boolean[] includeProperty, Int32 j, Object oldVersion, Object obj, SqlCommandInfo sql, ISessionImplementor session)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.UpdateOrInsert(Object id, Object[] fields, Object[] oldFields, Object rowId, Boolean[] includeProperty, Int32 j, Object oldVersion, Object obj, SqlCommandInfo sql, ISessionImplementor session)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.Update(Object id, Object[] fields, Int32[] dirtyFields, Boolean hasDirtyCollection, Object[] oldFields, Object oldVersion, Object obj, Object rowId, ISessionImplementor session)
+   at NHibernate.Action.EntityUpdateAction.Execute()
+   at NHibernate.Engine.ActionQueue.Execute(IExecutable executable)
+   at NHibernate.Engine.ActionQueue.ExecuteActions(IList list)
+   at NHibernate.Engine.ActionQueue.ExecuteActions()
+   at NHibernate.Event.Default.AbstractFlushingEventListener.PerformExecutions(IEventSource session)
+   at NHibernate.Event.Default.DefaultFlushEventListener.OnFlush(FlushEvent event)
+   at NHibernate.Impl.SessionImpl.Flush()
+   at Castle.ActiveRecord.ActiveRecordBase.InternalUpdate(Object instance, Boolean flush)
+--------------
+--------------
+----Session---
+Login - zolotarev
+--------------
+
+13:11:39.514 [8] ERROR NHibernate.Event.Default.AbstractFlushingEventListener - Could not synchronize database state with session
+NHibernate.StaleStateException: Unexpected row count: 0; expected: 1
+   at NHibernate.AdoNet.Expectations.BasicExpectation.VerifyOutcomeNonBatched(Int32 rowCount, IDbCommand statement)
+   at NHibernate.AdoNet.NonBatchingBatcher.AddToBatch(IExpectation expectation)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.Update(Object id, Object[] fields, Object[] oldFields, Object rowId, Boolean[] includeProperty, Int32 j, Object oldVersion, Object obj, SqlCommandInfo sql, ISessionImplementor session)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.UpdateOrInsert(Object id, Object[] fields, Object[] oldFields, Object rowId, Boolean[] includeProperty, Int32 j, Object oldVersion, Object obj, SqlCommandInfo sql, ISessionImplementor session)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.Update(Object id, Object[] fields, Int32[] dirtyFields, Boolean hasDirtyCollection, Object[] oldFields, Object oldVersion, Object obj, Object rowId, ISessionImplementor session)
+   at NHibernate.Action.EntityUpdateAction.Execute()
+   at NHibernate.Engine.ActionQueue.Execute(IExecutable executable)
+   at NHibernate.Engine.ActionQueue.ExecuteActions(IList list)
+   at NHibernate.Engine.ActionQueue.ExecuteActions()
+   at NHibernate.Event.Default.AbstractFlushingEventListener.PerformExecutions(IEventSource session)
+13:12:03.892 [8] ERROR InternetInterface.Global - ----UrlReferer-------
+http://localhost:59059/Register/RegisterPartner?Partner=6
+----Url-------
+http://localhost:59059/Register/EditPartner
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action EditPartner on controller Register
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+Exception has been thrown by the target of an invocation.
+Stack Trace:
+   at System.RuntimeMethodHandle._InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, SignatureStruct& sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.RuntimeMethodHandle.InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, Signature sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture, Boolean skipVisibilityChecks)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
+   at Castle.MonoRail.Framework.SmartDispatcherController.InvokeMethod(MethodInfo method, IRequest request, IDictionary`2 extraArgs)
+   at Castle.MonoRail.Framework.ActionMethodExecutorCompatible.Execute(IEngineContext engineContext, IController controller, IControllerContext context)
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+Message:
+Could not perform FindAll for PartnerAccessSet
+Stack Trace:
+   at Castle.ActiveRecord.ActiveRecordBase.FindAll(Type targetType, DetachedCriteria detachedCriteria, Order[] orders)
+   at Castle.ActiveRecord.ActiveRecordBase`1.FindAll(DetachedCriteria criteria, Order[] orders)
+   at InternetInterface.Controllers.RegisterController.GetPartnerAccess(Int32 Partner) in C:\Web_Project\InternetInterface\src\InternetInterface\Controllers\RegisterController.cs:line 201
+   at InternetInterface.Controllers.RegisterController.EditPartner(Partner partner, List`1 rights) in C:\Web_Project\InternetInterface\src\InternetInterface\Controllers\RegisterController.cs:line 134
+--------------
+Message:
+Unexpected row count: 0; expected: 1
+Stack Trace:
+   at NHibernate.AdoNet.Expectations.BasicExpectation.VerifyOutcomeNonBatched(Int32 rowCount, IDbCommand statement)
+   at NHibernate.AdoNet.NonBatchingBatcher.AddToBatch(IExpectation expectation)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.Update(Object id, Object[] fields, Object[] oldFields, Object rowId, Boolean[] includeProperty, Int32 j, Object oldVersion, Object obj, SqlCommandInfo sql, ISessionImplementor session)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.UpdateOrInsert(Object id, Object[] fields, Object[] oldFields, Object rowId, Boolean[] includeProperty, Int32 j, Object oldVersion, Object obj, SqlCommandInfo sql, ISessionImplementor session)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.Update(Object id, Object[] fields, Int32[] dirtyFields, Boolean hasDirtyCollection, Object[] oldFields, Object oldVersion, Object obj, Object rowId, ISessionImplementor session)
+   at NHibernate.Action.EntityUpdateAction.Execute()
+   at NHibernate.Engine.ActionQueue.Execute(IExecutable executable)
+   at NHibernate.Engine.ActionQueue.ExecuteActions(IList list)
+   at NHibernate.Engine.ActionQueue.ExecuteActions()
+   at NHibernate.Event.Default.AbstractFlushingEventListener.PerformExecutions(IEventSource session)
+   at NHibernate.Event.Default.DefaultAutoFlushEventListener.OnAutoFlush(AutoFlushEvent event)
+   at NHibernate.Impl.SessionImpl.AutoFlushIfRequired(ISet`1 querySpaces)
+   at NHibernate.Impl.SessionImpl.List(CriteriaImpl criteria, IList results)
+   at NHibernate.Impl.CriteriaImpl.List(IList results)
+   at NHibernate.Impl.CriteriaImpl.List()
+   at Castle.ActiveRecord.ActiveRecordBase.FindAll(Type targetType, DetachedCriteria detachedCriteria, Order[] orders)
+--------------
+--------------
+----Session---
+Login - zolotarev
+--------------
+
+13:13:41.972 [8] ERROR NHibernate.Event.Default.AbstractFlushingEventListener - Could not synchronize database state with session
+NHibernate.StaleStateException: Unexpected row count: 0; expected: 1
+   at NHibernate.AdoNet.Expectations.BasicExpectation.VerifyOutcomeNonBatched(Int32 rowCount, IDbCommand statement)
+   at NHibernate.AdoNet.NonBatchingBatcher.AddToBatch(IExpectation expectation)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.Update(Object id, Object[] fields, Object[] oldFields, Object rowId, Boolean[] includeProperty, Int32 j, Object oldVersion, Object obj, SqlCommandInfo sql, ISessionImplementor session)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.UpdateOrInsert(Object id, Object[] fields, Object[] oldFields, Object rowId, Boolean[] includeProperty, Int32 j, Object oldVersion, Object obj, SqlCommandInfo sql, ISessionImplementor session)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.Update(Object id, Object[] fields, Int32[] dirtyFields, Boolean hasDirtyCollection, Object[] oldFields, Object oldVersion, Object obj, Object rowId, ISessionImplementor session)
+   at NHibernate.Action.EntityUpdateAction.Execute()
+   at NHibernate.Engine.ActionQueue.Execute(IExecutable executable)
+   at NHibernate.Engine.ActionQueue.ExecuteActions(IList list)
+   at NHibernate.Engine.ActionQueue.ExecuteActions()
+   at NHibernate.Event.Default.AbstractFlushingEventListener.PerformExecutions(IEventSource session)
+13:15:05.824 [8] ERROR InternetInterface.Global - ----UrlReferer-------
+http://localhost:59059/Register/RegisterPartner?Partner=6
+----Url-------
+http://localhost:59059/Register/EditPartner
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action EditPartner on controller Register
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+Exception has been thrown by the target of an invocation.
+Stack Trace:
+   at System.RuntimeMethodHandle._InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, SignatureStruct& sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.RuntimeMethodHandle.InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, Signature sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture, Boolean skipVisibilityChecks)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
+   at Castle.MonoRail.Framework.SmartDispatcherController.InvokeMethod(MethodInfo method, IRequest request, IDictionary`2 extraArgs)
+   at Castle.MonoRail.Framework.ActionMethodExecutorCompatible.Execute(IEngineContext engineContext, IController controller, IControllerContext context)
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+Message:
+Could not perform FindAll for PartnerAccessSet
+Stack Trace:
+   at Castle.ActiveRecord.ActiveRecordBase.FindAll(Type targetType, DetachedCriteria detachedCriteria, Order[] orders)
+   at Castle.ActiveRecord.ActiveRecordBase`1.FindAll(DetachedCriteria criteria, Order[] orders)
+   at InternetInterface.Controllers.RegisterController.GetPartnerAccess(Int32 Partner) in C:\Web_Project\InternetInterface\src\InternetInterface\Controllers\RegisterController.cs:line 205
+   at InternetInterface.Controllers.RegisterController.EditPartner(Partner partner, List`1 rights) in C:\Web_Project\InternetInterface\src\InternetInterface\Controllers\RegisterController.cs:line 138
+--------------
+Message:
+Unexpected row count: 0; expected: 1
+Stack Trace:
+   at NHibernate.AdoNet.Expectations.BasicExpectation.VerifyOutcomeNonBatched(Int32 rowCount, IDbCommand statement)
+   at NHibernate.AdoNet.NonBatchingBatcher.AddToBatch(IExpectation expectation)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.Update(Object id, Object[] fields, Object[] oldFields, Object rowId, Boolean[] includeProperty, Int32 j, Object oldVersion, Object obj, SqlCommandInfo sql, ISessionImplementor session)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.UpdateOrInsert(Object id, Object[] fields, Object[] oldFields, Object rowId, Boolean[] includeProperty, Int32 j, Object oldVersion, Object obj, SqlCommandInfo sql, ISessionImplementor session)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.Update(Object id, Object[] fields, Int32[] dirtyFields, Boolean hasDirtyCollection, Object[] oldFields, Object oldVersion, Object obj, Object rowId, ISessionImplementor session)
+   at NHibernate.Action.EntityUpdateAction.Execute()
+   at NHibernate.Engine.ActionQueue.Execute(IExecutable executable)
+   at NHibernate.Engine.ActionQueue.ExecuteActions(IList list)
+   at NHibernate.Engine.ActionQueue.ExecuteActions()
+   at NHibernate.Event.Default.AbstractFlushingEventListener.PerformExecutions(IEventSource session)
+   at NHibernate.Event.Default.DefaultAutoFlushEventListener.OnAutoFlush(AutoFlushEvent event)
+   at NHibernate.Impl.SessionImpl.AutoFlushIfRequired(ISet`1 querySpaces)
+   at NHibernate.Impl.SessionImpl.List(CriteriaImpl criteria, IList results)
+   at NHibernate.Impl.CriteriaImpl.List(IList results)
+   at NHibernate.Impl.CriteriaImpl.List()
+   at Castle.ActiveRecord.ActiveRecordBase.FindAll(Type targetType, DetachedCriteria detachedCriteria, Order[] orders)
+--------------
+--------------
+----Session---
+Login - zolotarev
+--------------
+
+13:16:03.140 [10] ERROR InternetInterface.Global - ----UrlReferer-------
+http://localhost:59059/Register/RegisterPartner?Partner=6
+----Url-------
+http://localhost:59059/Register/EditPartner
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action EditPartner on controller Register
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+Exception has been thrown by the target of an invocation.
+Stack Trace:
+   at System.RuntimeMethodHandle._InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, SignatureStruct& sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.RuntimeMethodHandle.InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, Signature sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture, Boolean skipVisibilityChecks)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
+   at Castle.MonoRail.Framework.SmartDispatcherController.InvokeMethod(MethodInfo method, IRequest request, IDictionary`2 extraArgs)
+   at Castle.MonoRail.Framework.ActionMethodExecutorCompatible.Execute(IEngineContext engineContext, IController controller, IControllerContext context)
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+Message:
+a different object with the same identifier value was already associated with the session: 6, of entity: InternetInterface.Models.Partner
+Stack Trace:
+   at NHibernate.Engine.StatefulPersistenceContext.CheckUniqueness(EntityKey key, Object obj)
+   at NHibernate.Event.Default.DefaultSaveOrUpdateEventListener.PerformUpdate(SaveOrUpdateEvent event, Object entity, IEntityPersister persister)
+   at NHibernate.Event.Default.DefaultSaveOrUpdateEventListener.EntityIsDetached(SaveOrUpdateEvent event)
+   at NHibernate.Event.Default.DefaultUpdateEventListener.PerformSaveOrUpdate(SaveOrUpdateEvent event)
+   at NHibernate.Event.Default.DefaultSaveOrUpdateEventListener.OnSaveOrUpdate(SaveOrUpdateEvent event)
+   at NHibernate.Impl.SessionImpl.FireUpdate(SaveOrUpdateEvent event)
+   at NHibernate.Impl.SessionImpl.Update(Object obj)
+   at InternetInterface.Controllers.RegisterController.EditPartner(Partner partner, List`1 rights) in C:\Web_Project\InternetInterface\src\InternetInterface\Controllers\RegisterController.cs:line 134
+--------------
+--------------
+----Session---
+Login - zolotarev
+--------------
+
+13:17:08.674 [10] ERROR NHibernate.Event.Default.AbstractFlushingEventListener - Could not synchronize database state with session
+NHibernate.StaleStateException: Unexpected row count: 0; expected: 1
+   at NHibernate.AdoNet.Expectations.BasicExpectation.VerifyOutcomeNonBatched(Int32 rowCount, IDbCommand statement)
+   at NHibernate.AdoNet.NonBatchingBatcher.AddToBatch(IExpectation expectation)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.Update(Object id, Object[] fields, Object[] oldFields, Object rowId, Boolean[] includeProperty, Int32 j, Object oldVersion, Object obj, SqlCommandInfo sql, ISessionImplementor session)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.UpdateOrInsert(Object id, Object[] fields, Object[] oldFields, Object rowId, Boolean[] includeProperty, Int32 j, Object oldVersion, Object obj, SqlCommandInfo sql, ISessionImplementor session)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.Update(Object id, Object[] fields, Int32[] dirtyFields, Boolean hasDirtyCollection, Object[] oldFields, Object oldVersion, Object obj, Object rowId, ISessionImplementor session)
+   at NHibernate.Action.EntityUpdateAction.Execute()
+   at NHibernate.Engine.ActionQueue.Execute(IExecutable executable)
+   at NHibernate.Engine.ActionQueue.ExecuteActions(IList list)
+   at NHibernate.Engine.ActionQueue.ExecuteActions()
+   at NHibernate.Event.Default.AbstractFlushingEventListener.PerformExecutions(IEventSource session)
+13:17:36.915 [10] ERROR InternetInterface.Global - ----UrlReferer-------
+http://localhost:59059/Register/RegisterPartner?Partner=6
+----Url-------
+http://localhost:59059/Register/EditPartner
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action EditPartner on controller Register
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+Exception has been thrown by the target of an invocation.
+Stack Trace:
+   at System.RuntimeMethodHandle._InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, SignatureStruct& sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.RuntimeMethodHandle.InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, Signature sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture, Boolean skipVisibilityChecks)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
+   at Castle.MonoRail.Framework.SmartDispatcherController.InvokeMethod(MethodInfo method, IRequest request, IDictionary`2 extraArgs)
+   at Castle.MonoRail.Framework.ActionMethodExecutorCompatible.Execute(IEngineContext engineContext, IController controller, IControllerContext context)
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+Message:
+Could not perform FindAll for PartnerAccessSet
+Stack Trace:
+   at Castle.ActiveRecord.ActiveRecordBase.FindAll(Type targetType, DetachedCriteria detachedCriteria, Order[] orders)
+   at Castle.ActiveRecord.ActiveRecordBase`1.FindAll(DetachedCriteria criteria, Order[] orders)
+   at InternetInterface.Controllers.RegisterController.GetPartnerAccess(Int32 Partner) in C:\Web_Project\InternetInterface\src\InternetInterface\Controllers\RegisterController.cs:line 205
+   at InternetInterface.Controllers.RegisterController.EditPartner(Partner partner, List`1 rights) in C:\Web_Project\InternetInterface\src\InternetInterface\Controllers\RegisterController.cs:line 138
+--------------
+Message:
+Unexpected row count: 0; expected: 1
+Stack Trace:
+   at NHibernate.AdoNet.Expectations.BasicExpectation.VerifyOutcomeNonBatched(Int32 rowCount, IDbCommand statement)
+   at NHibernate.AdoNet.NonBatchingBatcher.AddToBatch(IExpectation expectation)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.Update(Object id, Object[] fields, Object[] oldFields, Object rowId, Boolean[] includeProperty, Int32 j, Object oldVersion, Object obj, SqlCommandInfo sql, ISessionImplementor session)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.UpdateOrInsert(Object id, Object[] fields, Object[] oldFields, Object rowId, Boolean[] includeProperty, Int32 j, Object oldVersion, Object obj, SqlCommandInfo sql, ISessionImplementor session)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.Update(Object id, Object[] fields, Int32[] dirtyFields, Boolean hasDirtyCollection, Object[] oldFields, Object oldVersion, Object obj, Object rowId, ISessionImplementor session)
+   at NHibernate.Action.EntityUpdateAction.Execute()
+   at NHibernate.Engine.ActionQueue.Execute(IExecutable executable)
+   at NHibernate.Engine.ActionQueue.ExecuteActions(IList list)
+   at NHibernate.Engine.ActionQueue.ExecuteActions()
+   at NHibernate.Event.Default.AbstractFlushingEventListener.PerformExecutions(IEventSource session)
+   at NHibernate.Event.Default.DefaultAutoFlushEventListener.OnAutoFlush(AutoFlushEvent event)
+   at NHibernate.Impl.SessionImpl.AutoFlushIfRequired(ISet`1 querySpaces)
+   at NHibernate.Impl.SessionImpl.List(CriteriaImpl criteria, IList results)
+   at NHibernate.Impl.CriteriaImpl.List(IList results)
+   at NHibernate.Impl.CriteriaImpl.List()
+   at Castle.ActiveRecord.ActiveRecordBase.FindAll(Type targetType, DetachedCriteria detachedCriteria, Order[] orders)
+--------------
+--------------
+----Session---
+Login - zolotarev
+--------------
+
+13:27:59.097 [8] ERROR InternetInterface.Global - ----UrlReferer-------
+http://localhost:59059/Register/RegisterPartner?Partner=6
+----Url-------
+http://localhost:59059/Register/EditPartner
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action EditPartner on controller Register
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+Exception has been thrown by the target of an invocation.
+Stack Trace:
+   at System.RuntimeMethodHandle._InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, SignatureStruct& sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.RuntimeMethodHandle.InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, Signature sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture, Boolean skipVisibilityChecks)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
+   at Castle.MonoRail.Framework.SmartDispatcherController.InvokeMethod(MethodInfo method, IRequest request, IDictionary`2 extraArgs)
+   at Castle.MonoRail.Framework.ActionMethodExecutorCompatible.Execute(IEngineContext engineContext, IController controller, IControllerContext context)
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+Message:
+Could not perform Save for PartnerAccessSet
+Stack Trace:
+   at Castle.ActiveRecord.ActiveRecordBase.InternalSave(Object instance, Boolean flush)
+   at Castle.ActiveRecord.ActiveRecordBase.SaveAndFlush(Object instance)
+   at Castle.ActiveRecord.ActiveRecordBase.SaveAndFlush()
+   at InternetInterface.Controllers.RegisterController.EditPartner(Partner partner, List`1 rights) in C:\Web_Project\InternetInterface\src\InternetInterface\Controllers\RegisterController.cs:line 154
+--------------
+Message:
+object references an unsaved transient instance - save the transient instance before flushing. Type: InternetInterface.Models.Partner, Entity: InternetInterface.Models.Partner#0
+Stack Trace:
+   at NHibernate.Engine.ForeignKeys.GetEntityIdentifierIfNotUnsaved(String entityName, Object entity, ISessionImplementor session)
+   at NHibernate.Type.EntityType.GetIdentifier(Object value, ISessionImplementor session)
+   at NHibernate.Type.ManyToOneType.IsDirty(Object old, Object current, Boolean[] checkable, ISessionImplementor session)
+   at NHibernate.Type.TypeFactory.FindDirty(StandardProperty[] properties, Object[] x, Object[] y, Boolean[][] includeColumns, Boolean anyUninitializedProperties, ISessionImplementor session)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.FindDirty(Object[] currentState, Object[] previousState, Object entity, ISessionImplementor session)
+   at NHibernate.Event.Default.DefaultFlushEntityEventListener.DirtyCheck(FlushEntityEvent event)
+   at NHibernate.Event.Default.DefaultFlushEntityEventListener.IsUpdateNecessary(FlushEntityEvent event, Boolean mightBeDirty)
+   at NHibernate.Event.Default.DefaultFlushEntityEventListener.OnFlushEntity(FlushEntityEvent event)
+   at NHibernate.Event.Default.AbstractFlushingEventListener.FlushEntities(FlushEvent event)
+   at NHibernate.Event.Default.AbstractFlushingEventListener.FlushEverythingToExecutions(FlushEvent event)
+   at NHibernate.Event.Default.DefaultFlushEventListener.OnFlush(FlushEvent event)
+   at NHibernate.Impl.SessionImpl.Flush()
+   at Castle.ActiveRecord.ActiveRecordBase.InternalSave(Object instance, Boolean flush)
+--------------
+--------------
+----Session---
+Login - zolotarev
+--------------
+
+13:28:43.183 [8] ERROR InternetInterface.Global - ----UrlReferer-------
+http://localhost:59059/Register/RegisterPartner?Partner=6
+----Url-------
+http://localhost:59059/Register/EditPartner
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action EditPartner on controller Register
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+Exception has been thrown by the target of an invocation.
+Stack Trace:
+   at System.RuntimeMethodHandle._InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, SignatureStruct& sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.RuntimeMethodHandle.InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, Signature sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture, Boolean skipVisibilityChecks)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
+   at Castle.MonoRail.Framework.SmartDispatcherController.InvokeMethod(MethodInfo method, IRequest request, IDictionary`2 extraArgs)
+   at Castle.MonoRail.Framework.ActionMethodExecutorCompatible.Execute(IEngineContext engineContext, IController controller, IControllerContext context)
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+Message:
+Could not perform Save for PartnerAccessSet
+Stack Trace:
+   at Castle.ActiveRecord.ActiveRecordBase.InternalSave(Object instance, Boolean flush)
+   at Castle.ActiveRecord.ActiveRecordBase.SaveAndFlush(Object instance)
+   at Castle.ActiveRecord.ActiveRecordBase.SaveAndFlush()
+   at InternetInterface.Controllers.RegisterController.EditPartner(Partner partner, List`1 rights) in C:\Web_Project\InternetInterface\src\InternetInterface\Controllers\RegisterController.cs:line 157
+--------------
+Message:
+object references an unsaved transient instance - save the transient instance before flushing. Type: InternetInterface.Models.Partner, Entity: InternetInterface.Models.Partner#0
+Stack Trace:
+   at NHibernate.Engine.ForeignKeys.GetEntityIdentifierIfNotUnsaved(String entityName, Object entity, ISessionImplementor session)
+   at NHibernate.Type.EntityType.GetIdentifier(Object value, ISessionImplementor session)
+   at NHibernate.Type.ManyToOneType.IsDirty(Object old, Object current, Boolean[] checkable, ISessionImplementor session)
+   at NHibernate.Type.TypeFactory.FindDirty(StandardProperty[] properties, Object[] x, Object[] y, Boolean[][] includeColumns, Boolean anyUninitializedProperties, ISessionImplementor session)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.FindDirty(Object[] currentState, Object[] previousState, Object entity, ISessionImplementor session)
+   at NHibernate.Event.Default.DefaultFlushEntityEventListener.DirtyCheck(FlushEntityEvent event)
+   at NHibernate.Event.Default.DefaultFlushEntityEventListener.IsUpdateNecessary(FlushEntityEvent event, Boolean mightBeDirty)
+   at NHibernate.Event.Default.DefaultFlushEntityEventListener.OnFlushEntity(FlushEntityEvent event)
+   at NHibernate.Event.Default.AbstractFlushingEventListener.FlushEntities(FlushEvent event)
+   at NHibernate.Event.Default.AbstractFlushingEventListener.FlushEverythingToExecutions(FlushEvent event)
+   at NHibernate.Event.Default.DefaultFlushEventListener.OnFlush(FlushEvent event)
+   at NHibernate.Impl.SessionImpl.Flush()
+   at Castle.ActiveRecord.ActiveRecordBase.InternalSave(Object instance, Boolean flush)
+--------------
+--------------
+----Session---
+Login - zolotarev
+--------------
+
+14:55:54.719 [8] ERROR InternetInterface.Global - ----UrlReferer-------
+http://localhost:59059/Register/RegisterPartner?Partner=6
+----Url-------
+http://localhost:59059/Register/EditPartner
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action EditPartner on controller Register
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+Exception has been thrown by the target of an invocation.
+Stack Trace:
+   at System.RuntimeMethodHandle._InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, SignatureStruct& sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.RuntimeMethodHandle.InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, Signature sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture, Boolean skipVisibilityChecks)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
+   at Castle.MonoRail.Framework.SmartDispatcherController.InvokeMethod(MethodInfo method, IRequest request, IDictionary`2 extraArgs)
+   at Castle.MonoRail.Framework.ActionMethodExecutorCompatible.Execute(IEngineContext engineContext, IController controller, IControllerContext context)
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+Message:
+Could not perform FindAll for PartnerAccessSet
+Stack Trace:
+   at Castle.ActiveRecord.ActiveRecordBase.FindAll(Type targetType, DetachedCriteria detachedCriteria, Order[] orders)
+   at Castle.ActiveRecord.ActiveRecordBase`1.FindAll(DetachedCriteria criteria, Order[] orders)
+   at InternetInterface.Controllers.RegisterController.EditPartner(Partner partner, List`1 rights) in C:\Web_Project\InternetInterface\src\InternetInterface\Controllers\RegisterController.cs:line 188
+--------------
+Message:
+could not resolve property: PartnerID of: InternetInterface.Models.PartnerAccessSet
+Stack Trace:
+   at NHibernate.Persister.Entity.AbstractPropertyMapping.ToType(String propertyName)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.GetSubclassPropertyTableNumber(String propertyPath)
+   at NHibernate.Persister.Entity.BasicEntityPropertyMapping.ToColumns(String alias, String propertyName)
+   at NHibernate.Persister.Entity.AbstractEntityPersister.ToColumns(String alias, String propertyName)
+   at NHibernate.Loader.Criteria.CriteriaQueryTranslator.GetColumns(String propertyName, ICriteria subcriteria)
+   at NHibernate.Loader.Criteria.CriteriaQueryTranslator.GetColumnsUsingProjection(ICriteria subcriteria, String propertyName)
+   at NHibernate.Criterion.CriterionUtil.GetColumnNamesUsingPropertyName(ICriteriaQuery criteriaQuery, ICriteria criteria, String propertyName, Object value, ICriterion critertion)
+   at NHibernate.Criterion.CriterionUtil.GetColumnNamesForSimpleExpression(String propertyName, IProjection projection, ICriteriaQuery criteriaQuery, ICriteria criteria, IDictionary`2 enabledFilters, ICriterion criterion, Object value)
+   at NHibernate.Criterion.SimpleExpression.ToSqlString(ICriteria criteria, ICriteriaQuery criteriaQuery, IDictionary`2 enabledFilters)
+   at NHibernate.Loader.Criteria.CriteriaQueryTranslator.GetWhereCondition(IDictionary`2 enabledFilters)
+   at NHibernate.Loader.Criteria.CriteriaJoinWalker..ctor(IOuterJoinLoadable persister, CriteriaQueryTranslator translator, ISessionFactoryImplementor factory, ICriteria criteria, String rootEntityName, IDictionary`2 enabledFilters)
+   at NHibernate.Loader.Criteria.CriteriaLoader..ctor(IOuterJoinLoadable persister, ISessionFactoryImplementor factory, CriteriaImpl rootCriteria, String rootEntityName, IDictionary`2 enabledFilters)
+   at NHibernate.Impl.SessionImpl.List(CriteriaImpl criteria, IList results)
+   at NHibernate.Impl.CriteriaImpl.List(IList results)
+   at NHibernate.Impl.CriteriaImpl.List()
+   at Castle.ActiveRecord.ActiveRecordBase.FindAll(Type targetType, DetachedCriteria detachedCriteria, Order[] orders)
+--------------
+--------------
+----Session---
+Login - zolotarev
+--------------
+
+16:17:44.412 [10] ERROR InternetInterface.Global - ----UrlReferer-------
+http://localhost:59059/Register/RegisterClient.rails
+----Url-------
+http://localhost:59059/UserInfo/ClientRegisteredInfo.rails
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action ClientRegisteredInfo on controller UserInfo
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+Exception on process view: UserInfo\ClientRegisteredInfo
+Last accessed variable: PartnerAccessSet
+Stack Trace:
+   at Castle.MonoRail.Views.Brail.BooViewEngine.HandleException(String templateName, BrailBase view, Exception e)
+   at Castle.MonoRail.Views.Brail.BooViewEngine.RenderView(String templateName, BrailBase view)
+   at Castle.MonoRail.Views.Brail.BooViewEngine.Process(String templateName, TextWriter output, IEngineContext context, IController controller, IControllerContext controllerContext)
+   at Castle.MonoRail.Framework.Services.DefaultViewEngineManager.Process(String templateName, TextWriter output, IEngineContext context, IController controller, IControllerContext controllerContext)
+   at Castle.MonoRail.Framework.Controller.ProcessView()
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+Message:
+Parameter 'PartnerAccessSet' was not found!
+Stack Trace:
+   at Castle.MonoRail.Views.Brail.BrailBase.GetParameter(String name)
+   at BrailView_MapHead.Run()
+   at Castle.MonoRail.Views.Brail.BrailBase.OutputSubView(String subviewName, TextWriter writer, IDictionary parameters)
+   at Castle.MonoRail.Views.Brail.BrailBase.OutputSubView(String subviewName, IDictionary parameters)
+   at Castle.MonoRail.Views.Brail.BrailBase.OutputSubView(String subviewName)
+   at BrailView_ClientRegisteredInfo.Run()
+   at Castle.MonoRail.Views.Brail.BooViewEngine.RenderView(String templateName, BrailBase view)
+--------------
+--------------
+----Session---
+Login - zolotarev
+--------------
+
+16:24:43.392 [12] ERROR InternetInterface.Global - ----UrlReferer-------
+http://localhost:59059/Register/RegisterClient.rails
+----Url-------
+http://localhost:59059/UserInfo/ClientRegisteredInfo.rails
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action ClientRegisteredInfo on controller UserInfo
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+Exception on process view: UserInfo\ClientRegisteredInfo
+Last accessed variable: Client
+Stack Trace:
+   at Castle.MonoRail.Views.Brail.BooViewEngine.HandleException(String templateName, BrailBase view, Exception e)
+   at Castle.MonoRail.Views.Brail.BooViewEngine.RenderView(String templateName, BrailBase view)
+   at Castle.MonoRail.Views.Brail.BooViewEngine.Process(String templateName, TextWriter output, IEngineContext context, IController controller, IControllerContext controllerContext)
+   at Castle.MonoRail.Framework.Services.DefaultViewEngineManager.Process(String templateName, TextWriter output, IEngineContext context, IController controller, IControllerContext controllerContext)
+   at Castle.MonoRail.Framework.Controller.ProcessView()
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+Message:
+Unable to cast object of type 'System.DateTime' to type 'System.String'.
+Stack Trace:
+   at BrailView_ClientRegisteredInfo.Run()
+   at Castle.MonoRail.Views.Brail.BooViewEngine.RenderView(String templateName, BrailBase view)
+--------------
+--------------
+----Session---
+Login - zolotarev
+--------------
+
+16:25:46.866 [12] ERROR InternetInterface.Global - ----UrlReferer-------
+http://localhost:59059/Register/RegisterClient.rails
+----Url-------
+http://localhost:59059/UserInfo/ClientRegisteredInfo.rails
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action ClientRegisteredInfo on controller UserInfo
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+Exception on process view: UserInfo\ClientRegisteredInfo
+Last accessed variable: Client
+Stack Trace:
+   at Castle.MonoRail.Views.Brail.BooViewEngine.HandleException(String templateName, BrailBase view, Exception e)
+   at Castle.MonoRail.Views.Brail.BooViewEngine.RenderView(String templateName, BrailBase view)
+   at Castle.MonoRail.Views.Brail.BooViewEngine.Process(String templateName, TextWriter output, IEngineContext context, IController controller, IControllerContext controllerContext)
+   at Castle.MonoRail.Framework.Services.DefaultViewEngineManager.Process(String templateName, TextWriter output, IEngineContext context, IController controller, IControllerContext controllerContext)
+   at Castle.MonoRail.Framework.Controller.ProcessView()
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+Message:
+Unable to cast object of type 'System.DateTime' to type 'System.String'.
+Stack Trace:
+   at BrailView_ClientRegisteredInfo.Run()
+   at Castle.MonoRail.Views.Brail.BooViewEngine.RenderView(String templateName, BrailBase view)
+--------------
+--------------
+----Session---
+Login - zolotarev
+--------------
+
+16:26:26.706 [12] ERROR InternetInterface.Global - ----UrlReferer-------
+http://localhost:59059/Register/RegisterClient.rails
+----Url-------
+http://localhost:59059/UserInfo/ClientRegisteredInfo.rails
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action ClientRegisteredInfo on controller UserInfo
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+Exception on process view: UserInfo\ClientRegisteredInfo
+Last accessed variable: Client
+Stack Trace:
+   at Castle.MonoRail.Views.Brail.BooViewEngine.HandleException(String templateName, BrailBase view, Exception e)
+   at Castle.MonoRail.Views.Brail.BooViewEngine.RenderView(String templateName, BrailBase view)
+   at Castle.MonoRail.Views.Brail.BooViewEngine.Process(String templateName, TextWriter output, IEngineContext context, IController controller, IControllerContext controllerContext)
+   at Castle.MonoRail.Framework.Services.DefaultViewEngineManager.Process(String templateName, TextWriter output, IEngineContext context, IController controller, IControllerContext controllerContext)
+   at Castle.MonoRail.Framework.Controller.ProcessView()
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+Message:
+Object reference not set to an instance of an object.
+Stack Trace:
+   at Castle.MonoRail.Views.Brail.ExpandDuckTypedExpressions_WorkaroundForDuplicateVirtualMethods.GetProperty(Object target, String name)
+   at BrailView_ClientRegisteredInfo.Run()
+   at Castle.MonoRail.Views.Brail.BooViewEngine.RenderView(String templateName, BrailBase view)
+--------------
+--------------
+----Session---
+Login - zolotarev
+--------------
+
+19:54:48.440 [10] ERROR InternetInterface.Global - ----UrlReferer-------
+http://localhost:59059/Register/RegisterPartner?Partner=6
+----Url-------
+http://localhost:59059/Register/EditPartner
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action EditPartner on controller Register
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+Exception has been thrown by the target of an invocation.
+Stack Trace:
+   at System.RuntimeMethodHandle._InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, SignatureStruct& sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.RuntimeMethodHandle.InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, Signature sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture, Boolean skipVisibilityChecks)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
+   at Castle.MonoRail.Framework.SmartDispatcherController.InvokeMethod(MethodInfo method, IRequest request, IDictionary`2 extraArgs)
+   at Castle.MonoRail.Framework.ActionMethodExecutorCompatible.Execute(IEngineContext engineContext, IController controller, IControllerContext context)
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+Message:
+Object reference not set to an instance of an object.
+Stack Trace:
+   at InternetInterface.Models.AccessDependence.SetCrossAccess(List`1 oldAccessSet, List`1 newAccessSet, Partner partner) in C:\Web_Project\InternetInterface\src\InternetInterface\Models\Access\AccessCategories.cs:line 74
+   at InternetInterface.Controllers.RegisterController.EditPartner(Partner partner, List`1 rights) in C:\Web_Project\InternetInterface\src\InternetInterface\Controllers\RegisterController.cs:line 187
+--------------
+--------------
+----Session---
+Login - zolotarev
+--------------
+

@@ -5,8 +5,11 @@ using Castle.MonoRail.Framework;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using NHibernate;
+using NHibernate.Cfg;
 using NHibernate.Criterion;
 using NHibernate.SqlCommand;
+using NHibernate.Tool.hbm2ddl;
 
 
 namespace InternetInterface.Controllers
@@ -31,15 +34,18 @@ namespace InternetInterface.Controllers
 				user.Balance = balanceText;
 			}
 			user.Password = PhisicalClients.GeneratePassword();
-			if (PhisicalClients.RegistrLogicClient(user, tariff, Validator,
-										  Partner.FindAllByProperty("Login", Session["Login"].ToString())[0]))
+			if (PhisicalClients.RegistrLogicClient(user, tariff, Validator, InithializeContent.partner))
 			{
-				PropertyBag["Applying"] = "true";
+				/*PropertyBag["Applying"] = "true";
 				PropertyBag["Client"] = new PhisicalClients();
 				PropertyBag["BalanceText"] = string.Empty;
 				PropertyBag["NewPass"] = user.Password;
 				PropertyBag["VB"] = new ValidBuilderHelper<PhisicalClients>(new PhisicalClients());
-				PropertyBag["ChangeBy"] = new ChangeBalaceProperties { ChangeType = TypeChangeBalance.ForTariff };
+				PropertyBag["ChangeBy"] = new ChangeBalaceProperties { ChangeType = TypeChangeBalance.ForTariff };*/
+				user.Tariff = Tariff.Find(tariff);
+				user.HasRegistered = InithializeContent.partner;
+				Flash["Client"] = user;
+				RedirectToUrl("..//UserInfo/ClientRegisteredInfo.rails");
 			}
 			else
 			{
@@ -121,44 +127,108 @@ namespace InternetInterface.Controllers
 			if (Validator.IsValid(partner))
 			{
 				var PID = Partner.FindAllByProperty("Login", partner.Login)[0].Id;
-				partner.Id = PID;
-				//partner.UpdateAndFlush();
-				var ChRights = GetPartnerAccess((int) partner.Id);
-				/*if (rights.Count >= ChRights.Count)
-				{*/
-				for (int i = 0; i < rights.Count; i++)
+				//partner.Id = PID;
+				var basePartner = Partner.FindAllByProperty("Login", partner.Login);
+				//schema.Create(true, true);
+				if (basePartner.Length != 0)
 				{
-					if (!ChRights.Contains(rights[i]))
+					/*var sessionHolder = ActiveRecordMediator.GetSessionFactoryHolder();
+					var session = sessionHolder.CreateSession(typeof(PhisicalClients));
+					session.Update(partner);
+					sessionHolder.ReleaseSession(session);*/
+
+					//Далее написана несистемная фигня, проблема в привязке объекта вне хиберовской сесии к сесии
+					//как реализовать пока не придумал, поработает пока что так, потом займусь.
+					partner.Id = basePartner[0].Id;
+					basePartner[0].Name = partner.Name;
+					basePartner[0].TelNum = partner.TelNum;
+					basePartner[0].Adress = partner.Adress;
+					basePartner[0].Email = partner.Email;
+					basePartner[0].UpdateAndFlush();
+					//конец несистемной фигни
+					//partner.UpdateAndFlush();
+					var ChRights = GetPartnerAccess((int) PID);
+					/*if (rights.Count >= ChRights.Count)
+					{*/
+					for (int i = 0; i < rights.Count; i++)
 					{
-						var newRight = new PartnerAccessSet
-						               	{
-						               		AccessCat = AccessCategories.Find(rights[i]),
-						               		PartnerId = partner
-						               	};
-						newRight.SaveAndFlush();
-					}
-				}
-				for (int i = 0; i < ChRights.Count; i++)
-				{
-					if (!rights.Contains(ChRights[i]))
-					{
-						if (ChRights[i] != 5)
+						if (!ChRights.Contains(rights[i]))
 						{
-							var forDel = PartnerAccessSet.FindAll(DetachedCriteria.For(typeof (PartnerAccessSet))
-							                                      	.Add(Expression.Eq("PartnerId", partner))
-							                                      	.Add(Expression.Eq("AccessCat", AccessCategories.Find(ChRights[i]))));
-							forDel[0].DeleteAndFlush();
+							var newRight = new PartnerAccessSet
+							               	{
+							               		AccessCat = AccessCategories.Find(rights[i]),
+							               		PartnerId = partner
+							               	};
+							newRight.SaveAndFlush();
 						}
 					}
-				}
+					for (int i = 0; i < ChRights.Count; i++)
+					{
+						if (!rights.Contains(ChRights[i]))
+						{
+							if (ChRights[i] != 5)
+							{
+								var forDel = PartnerAccessSet.FindAll(DetachedCriteria.For(typeof (PartnerAccessSet))
+								                                      	.Add(Expression.Eq("PartnerId", partner))
+								                                      	.Add(Expression.Eq("AccessCat", AccessCategories.Find(ChRights[i]))));
+								forDel[0].DeleteAndFlush();
+							}
+						}
+					}
 
-				if ((!rights.Contains(4)) && (ChRights.Contains(4)))
-				{
-					var delBrig = Brigad.FindAll(DetachedCriteria.For(typeof (Brigad))
-					                             	.Add(Expression.Eq("PartnerID", partner)));
-					delBrig[0].DeleteAndFlush();
+					if ((!rights.Contains((int)AccessCategoriesType.CloseDemand))
+						&& (ChRights.Contains((int)AccessCategoriesType.CloseDemand)))
+					{
+						var delBrig = Brigad.FindAll(DetachedCriteria.For(typeof (Brigad))
+						                             	.Add(Expression.Eq("PartnerId", partner)));
+						delBrig[0].DeleteAndFlush();
+					}
+
+					AccessDependence.SetCrossAccess(ChRights, rights, partner);
+					//Если у клиента было право отправлять заявки, осталось это право
+					//и в новых правах отсутствуют права просмотра информации, то отменяем право 
+					//отправлять заявки
+					/*if ((!rights.Contains((int)AccessCategoriesType.GetClientInfo)) &&
+						(ChRights.Contains((int)AccessCategoriesType.SendDemand))
+						&& (rights.Contains((int)AccessCategoriesType.SendDemand)))
+					{
+						var delSendDemWithoutGCI = PartnerAccessSet.FindAll(DetachedCriteria.For(typeof (PartnerAccessSet))
+																				.Add(Expression.Eq("AccessCat", AccessCategories.Find(
+																				(int)AccessCategoriesType.SendDemand)))
+						                                                    	.Add(Expression.Eq("PartnerId", partner)));
+						foreach (var partnerAccessSet in delSendDemWithoutGCI)
+						{
+							partnerAccessSet.DeleteAndFlush();
+						}
+					}*/
+
+					//Если у клиента небыло прав просмотра инфы, а ему назначили право отправлять заявки,
+					//назначаем право просмотра информации
+					/*if (((!rights.Contains((int)AccessCategoriesType.GetClientInfo))
+						&& (!ChRights.Contains((int)AccessCategoriesType.GetClientInfo))
+						&& (rights.Contains((int)AccessCategoriesType.SendDemand)))
+						||
+					//или у старого было право просмотра инфы, у нового есть право отправлять заявки и нет права просмотра
+						((ChRights.Contains((int)AccessCategoriesType.GetClientInfo))
+						&& (rights.Contains((int)AccessCategoriesType.SendDemand))
+						&& (!ChRights.Contains((int)AccessCategoriesType.SendDemand))
+						))
+					{
+						var newRight = new PartnerAccessSet
+						{
+							AccessCat = AccessCategories.Find(1),
+							PartnerId = partner
+						};
+						newRight.SaveAndFlush();
+					}*/
+					Flash["EditiongMessage"] = "Изменения внесены успешно";
 				}
-				RedirectToUrl("../Register/RegisterPartner?Partner="+partner.Id);
+				else
+				{
+					Flash["EditiongMessage"] = "Был зарегистрирован новый партнер";
+					Partner.RegistrLogicPartner(partner, rights, Validator);
+				}
+				RedirectToUrl("../Register/RegisterPartner?Partner=" + PID);
 				/*}
 				else
 				{
@@ -217,6 +287,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Applying"] = "false";
 			PropertyBag["ChRights"] = new List<int>();
 			PropertyBag["VB"] = new ValidBuilderHelper<Partner>(new Partner());
+			PropertyBag["Editing"] = false;
 		}
 	}
 

@@ -23,12 +23,24 @@ namespace InternetInterface.Controllers
 			//if (EditFlag) {EditInformation(); }
 		}
 
-		[AccessibleThrough(Verb.Post)]
+		/*[AccessibleThrough(Verb.Post)]
 		public void LoadEditMudule(uint ClientID)
 		{
 			//SearchUserInfo(ClientID, true);
 			Flash["Editing"] = true;
 			RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientID + "&Editing=true");
+		}*/
+
+		public void ClientRegisteredInfo()
+		{
+			if (Flash["Client"] == null)
+			{
+				RedirectToUrl("../Register/RegisterClient.rails");
+			}
+			else
+			{
+				PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
+			}
 		}
 
 		public void PartnerRegisteredInfo(int hiddenPartnerId, string hiddenPass)

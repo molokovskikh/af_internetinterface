@@ -24,6 +24,13 @@
                             <% end %>
                             <%end %>
                             <%end %>
+                            <%if IsDefined("EditiongMessage"): %>
+                                    <div class="flash">
+                                        <div class="message notice">
+                                        <p><strong>${EditiongMessage}</strong></p>
+                                        </div>
+                                    </div>
+                            <%end %>
             <div class="inner">
                             <%if IsDefined("Editing"): %>
                             <%if (not Editing): %>
@@ -31,7 +38,7 @@
                             <%else: %>
                   <form class="form" id="RegistrationFormEdit" name="RegistrationForm" method="post" action="${siteroot}/Register/EditPartner" >
                               <%end %>
-                               <%end %>
+                              <%end %>
 	                    <table class="table" style="width:100%; " border="0" id="RegTable"> 
                             <tr>
                                 <th colspan="3">

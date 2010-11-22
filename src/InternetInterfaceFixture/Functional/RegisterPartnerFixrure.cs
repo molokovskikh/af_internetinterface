@@ -6,8 +6,11 @@ using System.Text;
 using System.Threading;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework.Config;
+using InternetInterface.Models;
 using InternetInterfaceFixture.Helpers;
 using log4net.Config;
+using NHibernate.Cfg;
+using NHibernate.Tool.hbm2ddl;
 using NUnit.Framework;
 using WatiN.Core;
 
@@ -26,6 +29,30 @@ namespace InternetInterfaceFixture.Functional
 					Assembly.Load("InternetInterfaceFixture"),
 				}, ActiveRecordSectionHandler.Instance);
 		}*/
+		[Test]
+		public void MigrationTets()
+		{
+			ActiveRecordStarter.GenerateCreationScripts(@"..\\..\\..\\SQL_Migrate_ActiveRecordGenerator.sql");
+		}
+
+		[Test]
+		public void TestAccessDependence()
+		{
+			Console.WriteLine(AccessCategoriesType.SendDemand.ToString());
+			AccessCategoriesType res;
+			Console.WriteLine(AccessCategoriesType.TryParse("SendDemand", out res));
+			Console.WriteLine(res);
+		}
+
+		[Test]
+		public void TAccessDependence()
+		{
+			AccessDependence.SetAccessDependence();
+			AccessDependence.GenerateAddList(AccessDependence.accessDependence, "2");
+			AccessDependence.GenerateDeleteList(AccessDependence.accessDependence, "7");
+			Console.WriteLine(AccessDependence.toAdd);
+			Console.WriteLine(AccessDependence.toDelete);
+		}
 
 		[Test]
 		public void TestRegistr()
