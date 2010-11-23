@@ -7,7 +7,6 @@
 <div id="container">
 <div id="block-tables" class="block">
 <div class="content">
-<h3><a href = "../Search/SearchUsers.rails" >Назад</a></h3>
              <%if IsDefined("EditFlag"): %>
              <% if EditFlag: %>
                   <div class="flash">

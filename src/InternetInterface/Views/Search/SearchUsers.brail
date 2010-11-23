@@ -26,7 +26,6 @@
 <table border="0" bgcolor="#FFFFFF" cellspacing="1" cellpadding="0">
 <input type="hidden" name="closeDemand" value="${closeDemand}" />
 <tr>
-<h4>Вы вошли как ${PARTNERNAME}</h4>
 <%if IsDefined("CreateDemandConnect"): %>
 <% if CreateDemandConnect: %>
        <div class="flash">
@@ -121,9 +120,15 @@
                     </div>
                     </td>
                     <%end %>
-
-                 <td align="center"><input type="checkbox" name="Connected" value=Connected ${"checked" if (Connected)} />Клиент подключен ? </td>
-                </tr>
+                <td>
+                           <input type="radio" id="Radio1" name="ConnectedType.Type" value=AllConnected ${"checked" if ConnectBy.IsAllConnected()} />
+                           <label for="Autosearch">Все</label><br />
+                           <input type="radio" id="Radio2" name="ConnectedType.Type" value=NoConnected ${"checked" if ConnectBy.IsNoConnected()} />
+                           <label for="SearchByClientId">Не подключены</label><br />
+                           <input type="radio" id="Radio3" name="ConnectedType.Type" value=Connected ${"checked" if ConnectBy.IsConnected()} />
+                           <label for="SearchByUserId">Подключены</label><br />
+                </td>
+                                </tr>
 			</thead>
         </table>
     </fieldset>

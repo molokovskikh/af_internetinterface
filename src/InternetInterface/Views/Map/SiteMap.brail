@@ -3,9 +3,7 @@
 
 <div id="container">
 <div class="content">
-<table class="table">
-<thead><th > Интерфейс для партнера: ${PARTNERNAME}</th></thead>
-</table>
+
 <% OutputSubView("""\Subview\MapHead""") %>
 <table class="table">
  <tbody>

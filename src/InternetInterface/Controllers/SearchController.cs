@@ -37,7 +37,7 @@ namespace InternetInterface.Controllers
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof(SearchController));
 
-		private IList<PhisicalClients> GetClients(UserSearchProperties searchProperties, uint tariff, uint whoregister, string searchText, uint brigad, bool connected)
+		private IList<PhisicalClients> GetClients(UserSearchProperties searchProperties, ConnectedTypeProperties connectedType, uint tariff, uint whoregister, string searchText, uint brigad)
 		{
 			var sessionHolder = ActiveRecordMediator.GetSessionFactoryHolder();
 				var session = sessionHolder.CreateSession(typeof (PhisicalClients));
@@ -45,7 +45,7 @@ namespace InternetInterface.Controllers
 				try
 				{
 					var sqlStr = String.Format(@"SELECT * FROM internet.PhysicalClients P {0} ORDER BY P.Login",
-					                           GetWhere(searchProperties, whoregister, tariff, searchText, brigad, connected));
+					                           GetWhere(searchProperties, connectedType, whoregister, tariff, searchText, brigad));
 					var query = session.CreateSQLQuery(sqlStr).AddEntity(typeof (PhisicalClients));
 					if (whoregister != 0)
 						query.SetParameter("whoregister", whoregister);
@@ -53,8 +53,10 @@ namespace InternetInterface.Controllers
 						query.SetParameter("tariff", tariff);
 					if (brigad != 0)
 						query.SetParameter("Brigad", brigad);
-					if (connected)
-						query.SetParameter("Connected", connected);
+					if (connectedType.IsConnected())
+						query.SetParameter("Connected", true);
+					if (connectedType.IsNoConnected())
+						query.SetParameter("Connected", false);
 					if (searchText != null)
 						query.SetParameter("SearchText", "%" + searchText.ToLower() + "%");
 					var result = query.List<PhisicalClients>();
@@ -208,7 +210,9 @@ WHERE PA.ID = {0} and PC.Connected = false", InithializeContent.partner.Id));
 		}
 
 		[AccessibleThrough(Verb.Get)]
-		public void SearchBy([DataBind("SearchBy")]UserSearchProperties searchProperties, uint tariff, uint whoregister, uint brigad, bool connected,string searchText, Boolean closeDemand)
+		public void SearchBy([DataBind("SearchBy")]UserSearchProperties searchProperties, 
+							[DataBind("ConnectedType")]ConnectedTypeProperties connectedType,
+			uint tariff, uint whoregister, uint brigad ,string searchText, Boolean closeDemand)
 		{
 			//var partner = Partner.GetPartnerForLogin(Session["Login"].ToString());
 			IList<PhisicalClients> clients = new List<PhisicalClients>();
@@ -221,7 +225,7 @@ WHERE PA.ID = {0} and PC.Connected = false", InithializeContent.partner.Id));
 			}
 			if (!closeDemand)
 			{
-				clients = GetClients(searchProperties, tariff, whoregister, searchText, brigad, connected);
+				clients = GetClients(searchProperties, connectedType, tariff, whoregister, searchText, brigad);
 			}
 			Flash["SClients"] = clients;
 			PropertyBag["ConnectBlockDisplay"] = ((List<PhisicalClients>) clients).Find(p => p.HasConnected == null);
@@ -234,23 +238,24 @@ WHERE PA.ID = {0} and PC.Connected = false", InithializeContent.partner.Id));
 			}
 			Flash["tariffText"] = tariffText;
 			Flash["partnerText"] = partnerText;
-			var mapPartner = Partner.FindAllByProperty("Login", Session["Login"]);
-			PropertyBag["PARTNERNAME"] = mapPartner[0].Name;
+			//var mapPartner = Partner.FindAllByProperty("Login", Session["Login"]);
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["ChTariff"] = tariff;
 			PropertyBag["ChRegistr"] = whoregister;
 			PropertyBag["ChBrigad"] = brigad;
 			PropertyBag["WhoRegistered"] = Partner.FindAllSort();
 			PropertyBag["FindBy"] = searchProperties;
+			PropertyBag["ConnectBy"] = connectedType;
 			PropertyBag["CloseDemand"] = closeDemand;
 			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
+			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
 			PropertyBag["SearchText"] = searchText;
 			Flash["Brigads"] = Brigad.FindAllSort();
-			PropertyBag["Connected"] = connected;
+			//PropertyBag["Connected"] = connected;
 		}
 
 
-		private string GetWhere(UserSearchProperties sp, uint whoregister, uint tariff, string searchText, uint brigad, bool connected)
+		private string GetWhere(UserSearchProperties sp, ConnectedTypeProperties ct, uint whoregister, uint tariff, string searchText, uint brigad)
 		{
 			string _return = string.Empty;
 			if (whoregister != 0)
@@ -266,7 +271,7 @@ WHERE PA.ID = {0} and PC.Connected = false", InithializeContent.partner.Id));
 			{
 				_return += " and P.HasConnected = :Brigad";
 			}
-			if (connected)
+			if ((ct.IsConnected())||(ct.IsNoConnected()))
 			{
 				_return += " and P.Connected = :Connected";
 			}
@@ -317,6 +322,7 @@ or LOWER(P.RegistrationAdress) like {0}", ":SearchText") + _return;
 		public void SearchUsers(string query, PhisicalClients sClients, Boolean closeDemand)
 		{
 			var searchProperties = new UserSearchProperties {SearchBy = SearchUserBy.Auto};
+			var connectProperties = new ConnectedTypeProperties {Type = ConnectedType.AllConnected};
 			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["WhoRegistered"] = Partner.FindAllSort();
@@ -325,6 +331,7 @@ or LOWER(P.RegistrationAdress) like {0}", ":SearchText") + _return;
 			PropertyBag["ChRegistr"] = 0;
 			PropertyBag["ChBrigad"] = 0;
 			PropertyBag["FindBy"] = searchProperties;
+			PropertyBag["ConnectBy"] = connectProperties;
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
 			PropertyBag["Connected"] = false;
 			PropertyBag["CloseDemand"] = closeDemand;

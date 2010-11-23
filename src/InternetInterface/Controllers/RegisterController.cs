@@ -23,6 +23,7 @@ namespace InternetInterface.Controllers
 		{
 			//PropertyBag["Popolnen"] = popolnenie;
 			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
+			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			//string semdBalanceText = string.Empty;
 			if (changeProperties.IsForTariff())
@@ -63,6 +64,7 @@ namespace InternetInterface.Controllers
 		{
 			string Pass = Partner.GeneratePassword();
 			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
+			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
 			PropertyBag["Rights"] =
 	ActiveRecordBase<AccessCategories>.FindAll(
 		DetachedCriteria.For<AccessCategories>().Add(Expression.Sql("ReduceName <> 'RP'")));
@@ -113,7 +115,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["BalanceText"] = string.Empty;
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["Client"] = new PhisicalClients();
-
+			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
 			PropertyBag["VB"] = new ValidBuilderHelper<PhisicalClients>(new PhisicalClients());
 
 			PropertyBag["Applying"] = "false";
@@ -292,6 +294,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Partner"] = Models.Partner.Find((uint)Partner);
 			var ChRights = GetPartnerAccess(Partner);
 			PropertyBag["ChRights"] = ChRights;
+			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
 			PropertyBag["VB"] = new ValidBuilderHelper<Partner>(new Partner());
 			PropertyBag["Applying"] = "false";
 			PropertyBag["Editing"] = true;
@@ -307,6 +310,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["ChRights"] = new List<int>();
 			PropertyBag["VB"] = new ValidBuilderHelper<Partner>(new Partner());
 			PropertyBag["Editing"] = false;
+			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
 		}
 	}
 

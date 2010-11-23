@@ -39,15 +39,6 @@
                                     ${VB.GetBlock("Login")}
                                 </td>
                             </tr>
-                            <tr>
-                                <td >
-                                    Пароль</td>
-                                <td >
-                                    <input id="Password" type="password" name="client.Password"/></td>
-                                <td>
-                                    ${VB.GetBlock("Password")}
-                                </td>
-                            </tr>
                             <% OutputSubView("""\Subview\Payment""") %>
                                 <td  colspan="3">
                                     ${VB.GetBlock("Balance")}

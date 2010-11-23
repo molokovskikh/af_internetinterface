@@ -23,6 +23,36 @@ namespace InternetInterface.Models
 		OtherSumm,
 	}
 
+	public enum ConnectedType
+	{
+		[Description("Подключенных")]
+		Connected,
+		[Description("Не подключенных")]
+		NoConnected,
+		[Description("Всех")]
+		AllConnected
+	}
+
+	public class ConnectedTypeProperties
+	{
+		public ConnectedType Type { get; set; }
+
+		public bool IsConnected()
+		{
+			return Type == ConnectedType.Connected;
+		}
+
+		public bool IsNoConnected()
+		{
+			return Type == ConnectedType.NoConnected;
+		}
+
+		public bool IsAllConnected()
+		{
+			return Type == ConnectedType.AllConnected;
+		}
+	}
+
 	public class ChangeBalaceProperties
 	{
 		public TypeChangeBalance ChangeType { get; set; }

@@ -58,6 +58,7 @@ namespace InternetInterface.Controllers
 			else
 			{
 				PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
+				PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
 			}
 		}
 
@@ -70,6 +71,7 @@ namespace InternetInterface.Controllers
 			else
 			{
 				PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
+				PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
 			}
 		}
 
@@ -77,6 +79,7 @@ namespace InternetInterface.Controllers
 		{
 			PropertyBag["Partners"] = Partner.FindAllSort();
 			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
+			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
 		}
 
 		[AccessibleThrough(Verb.Post)]
@@ -125,6 +128,7 @@ namespace InternetInterface.Controllers
 			//Flash["Popolnen"] = false;
 			//Flash["thisPay"] = new Payment();
 			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
+			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties {ChangeType = TypeChangeBalance.OtherSumm};
 			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
 			PropertyBag["Payments"] = Payment.FindAllByProperty("ClientId", PhisicalClients.Find(ClientCode));
