@@ -10,7 +10,6 @@ namespace InternetInterface.Controllers
 	{
 		public void SiteMap()
 		{
-			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
 			var CatList = new List<string>();
 			var accessList = AccessCategories.FindAllSort();
 			var partnerAccessList = PartnerAccessSet.GetAccessPartner();
@@ -22,7 +21,8 @@ namespace InternetInterface.Controllers
 						CatList.Add(accessCategorie.Name);
 				}
 			}
-			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
+			/*PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
+			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();*/
 			PropertyBag["AccessList"] = CatList;
 		}
 	}

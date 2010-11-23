@@ -60,10 +60,10 @@ namespace InternetInterface.Models
 					_Partner.SaveAndFlush();
 					foreach (var right in _Rights)
 					{
-						if ((right == 4) && (!_Rights.Contains(1)))
+						/*if ((right == 4) && (!_Rights.Contains(1)))
 						{
 							_Rights.Add(1);
-						}
+						}*/
 						var newAccess = new PartnerAccessSet
 						                	{
 						                		AccessCat = AccessCategories.Find(right),
@@ -71,6 +71,8 @@ namespace InternetInterface.Models
 						                	};
 						newAccess.SaveAndFlush();
 					}
+					AccessDependence.SetCrossAccessForRegister(_Rights,_Partner);
+					//AccessDependence.SetCrossAccess(ChRights, rights, partner)
 
 					var newPartnerID = Partner.FindAllByProperty("Login", _Partner.Login);
 					if (IsBrigadir(_Partner))

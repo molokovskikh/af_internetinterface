@@ -7,7 +7,6 @@ using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 using NHibernate.Criterion;
-using NHibernate.SqlCommand;
 
 namespace InternetInterface.Controllers
 {
@@ -55,11 +54,11 @@ namespace InternetInterface.Controllers
 			{
 				RedirectToUrl("../Register/RegisterClient.rails");
 			}
-			else
+			/*else
 			{
 				PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
 				PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
-			}
+			}*/
 		}
 
 		public void PartnerRegisteredInfo(int hiddenPartnerId, string hiddenPass)
@@ -68,18 +67,18 @@ namespace InternetInterface.Controllers
 			{
 				RedirectToUrl("../Register/RegisterPartner.rails");
 			}
-			else
+			/*else
 			{
 				PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
 				PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
-			}
+			}*/
 		}
 
 		public void PartnersPreview()
 		{
 			PropertyBag["Partners"] = Partner.FindAllSort();
-			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
-			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
+			/*PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
+			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;*/
 		}
 
 		[AccessibleThrough(Verb.Post)]
@@ -127,8 +126,8 @@ namespace InternetInterface.Controllers
 			Flash["Tariffs"] = Tariff.FindAllSort();
 			//Flash["Popolnen"] = false;
 			//Flash["thisPay"] = new Payment();
-			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
-			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
+			/*PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
+			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;*/
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties {ChangeType = TypeChangeBalance.OtherSumm};
 			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
 			PropertyBag["Payments"] = Payment.FindAllByProperty("ClientId", PhisicalClients.Find(ClientCode));
@@ -171,10 +170,5 @@ namespace InternetInterface.Controllers
 			}
 			RedirectToUrl(@"../UserInfo/SearchUserInfo.rails?ClientCode=" + clientId);
 		}
-
-		public void Test()
-		{
-		}
-
 	}
 }

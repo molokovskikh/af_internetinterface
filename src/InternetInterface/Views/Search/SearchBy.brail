@@ -92,15 +92,15 @@
             ${item.RegistrationAdress}
             </td>            
             <td>${item.RegDate}</td>
-            <%if tariffText[i] != null:  %>
-            <td>${tariffText[i].Name}</td>
+            <%if item.tariff != null:  %>
+            <td>${item.tariff.Name}</td>
             <%else: %>
             <td>Тариф не определен </td>
             <%end %>
             <td>${item.Balance}</td>
             <td>${item.Login}</td>
-            <%if partnerText[i] != null: %>
-            <td>${partnerText[i].Name}</td>
+            <%if item.HasRegistered != null: %>
+            <td>${item.HasRegistered.Name}</td>
             <%else: %>
             <td> Регистратор не определен </td>
             <%end %>

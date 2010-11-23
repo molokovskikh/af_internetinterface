@@ -18,32 +18,32 @@ namespace InternetInterface.Models
 
 	public class TwoRule
 	{
-		public TwoRule(string head, string child)
+		public TwoRule(AccessCategoriesType head, AccessCategoriesType child)
 		{
 			Head = head;
 			Child = child;
 		}
 
-		public string Head;
-		public string Child;
+		public AccessCategoriesType Head;
+		public AccessCategoriesType Child;
 	}
 
 	public class AccessDependence
 	{
 		private static List<TwoRule> accessDependence;
-		private static List<string> toAdd;
-		private static List<string> toDelete;
+		private static List<AccessCategoriesType> toAdd;
+		private static List<AccessCategoriesType> toDelete;
 		private static List<int> hasDelete;
 
 		private static void SetAccessDependence()
 		{
-			toAdd = new List<string>();
-			toDelete = new List<string>();
+			toAdd = new List<AccessCategoriesType>();
+			toDelete = new List<AccessCategoriesType>();
 			hasDelete = new List<int>();
 			accessDependence = new List<TwoRule>
 			                   	{
-									new TwoRule("GetClientInfo","SendDemand"),
-									new TwoRule("ChangeBalance","CloseDemand")
+									new TwoRule(AccessCategoriesType.GetClientInfo,AccessCategoriesType.SendDemand),
+									new TwoRule(AccessCategoriesType.ChangeBalance,AccessCategoriesType.CloseDemand)
 			                   		/*new TwoRule("GetClientInfo","SendDemand"),
 									new TwoRule("SendDemand","CloseDemand"),
 									new TwoRule("CloseDemand","RegisterPartner"),
@@ -53,7 +53,7 @@ namespace InternetInterface.Models
 			//return accessDependence;
 		}
 
-		private static void GenerateAddList(List<TwoRule> dictionary, string field)
+		private static void GenerateAddList(List<TwoRule> dictionary, AccessCategoriesType field)
 		{
 			foreach (var dic in dictionary.Where(dic => dic.Child == field))
 			{
@@ -62,7 +62,7 @@ namespace InternetInterface.Models
 			}
 		}
 
-		private static void GenerateDeleteList(List<TwoRule> dictionary, string field)
+		private static void GenerateDeleteList(List<TwoRule> dictionary, AccessCategoriesType field)
 		{
 			foreach (var dic in dictionary.Where(dic => dic.Head == field))
 			{
@@ -76,24 +76,16 @@ namespace InternetInterface.Models
 			SetAccessDependence();
 			foreach (var twoRule in accessDependence)
 			{
-				AccessCategoriesType accessDel;
-				AccessCategoriesType.TryParse(twoRule.Head, false, out accessDel);
-				if (!(newAccessSet.Contains((int)accessDel)) &&
-					(oldAccessSet.Contains((int)accessDel)))
+				if (!(newAccessSet.Contains((int)twoRule.Head)) &&
+					(oldAccessSet.Contains((int)twoRule.Head)))
 				{
 					GenerateDeleteList(accessDependence, twoRule.Head);
 					foreach (var todel in toDelete)
 					{
-						AccessCategoriesType accessTodel;
-						AccessCategoriesType.TryParse(todel, false, out accessTodel);
 						var delSendDemWithoutGCI = PartnerAccessSet.FindAll(DetachedCriteria.For(typeof(PartnerAccessSet))
 																				.Add(Expression.Eq("PartnerId", partner))
 																				.Add(Expression.Eq("AccessCat",
-																								   AccessCategories.Find((int)accessTodel))));
-						/*if (hasDelete.Contains((int)accessDel))
-						{
-							toDelete.Add(accessDel.ToString());
-						}*/
+																								   AccessCategories.Find((int)todel))));
 						foreach (var partnerAccessSet in delSendDemWithoutGCI)
 						{
 							hasDelete.Add(partnerAccessSet.AccessCat.Id);
@@ -103,40 +95,59 @@ namespace InternetInterface.Models
 				}
 				toAdd.Clear();
 				toDelete.Clear();
-				//hasDelete.Clear();
 			}
 			foreach (var twoRule in accessDependence)
 			{
-				AccessCategoriesType accessAdd;
-				AccessCategoriesType.TryParse(twoRule.Child, false, out accessAdd);
-				if ((newAccessSet.Contains((int) accessAdd)) &&
-				    (!oldAccessSet.Contains((int) accessAdd)))
+				if ((newAccessSet.Contains((int)twoRule.Child)) &&
+					(!oldAccessSet.Contains((int)twoRule.Child)))
 				{
 					GenerateAddList(accessDependence, twoRule.Child);
-					if (hasDelete.Contains((int)accessAdd))
+					if (hasDelete.Contains((int)twoRule.Child))
 					{
-						toAdd.Add(accessAdd.ToString());
+						toAdd.Add(twoRule.Child);
 					}
 					foreach (var toadd in toAdd)
 					{
-						AccessCategoriesType accessToadd;
-						AccessCategoriesType.TryParse(toadd, false, out accessToadd);
 						if (PartnerAccessSet.FindAll(DetachedCriteria.For(typeof (PartnerAccessSet))
 						                             	.Add(Expression.Eq("PartnerId", partner))
-						                             	.Add(Expression.Eq("AccessCat", AccessCategories.Find((int) accessToadd)))).Length == 0)
+														.Add(Expression.Eq("AccessCat", AccessCategories.Find((int)toadd)))).Length == 0)
 						{
 							var newRight = new PartnerAccessSet
 							               	{
-							               		AccessCat = AccessCategories.Find((int) accessToadd),
+												AccessCat = AccessCategories.Find((int)toadd),
 							               		PartnerId = partner
 							               	};
 							newRight.SaveAndFlush();
-							//hasDelete.Add(newRight.AccessCat.Id);
 						}
 					}
 				}
 				toAdd.Clear();
 				toDelete.Clear();
+			}
+		}
+
+		public static void SetCrossAccessForRegister(List<int> newRights, Partner partner)
+		{
+			SetAccessDependence();
+			foreach (var twoRule in accessDependence)
+			{
+				if (newRights.Contains((int) twoRule.Child))
+				{
+					GenerateAddList(accessDependence, twoRule.Child);
+					foreach (var toadd in toAdd)
+					{
+						if (!newRights.Contains((int)toadd))
+						{
+							var newRight = new PartnerAccessSet
+							{
+								AccessCat = AccessCategories.Find((int)toadd),
+								PartnerId = partner
+							};
+							newRight.SaveAndFlush();
+						}
+					}
+				}
+				toAdd.Clear();
 			}
 		}
 	}
@@ -154,9 +165,5 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string ReduceName { get; set; }
 
-		/*public static IList<T> FindAllSort<T>()
-		{
-			return T.FindAll(DetachedCriteria.For(typeof (T)).AddOrder(Order.Asc("Name")))
-		}*/
 	}
 }

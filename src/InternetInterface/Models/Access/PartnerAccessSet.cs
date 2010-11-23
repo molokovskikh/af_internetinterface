@@ -5,7 +5,6 @@ using Castle.ActiveRecord.Linq;
 using InternetInterface.Controllers.Filter;
 using NHibernate.Criterion;
 using NHibernate.SqlCommand;
-
 namespace InternetInterface.Models
 {
 	[ActiveRecord("PartnerAccessSet", Schema = "Internet", Lazy = true)]

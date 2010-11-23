@@ -12,8 +12,7 @@ namespace InternetInterface.Controllers.Filter
 #if DEBUG
 			context.Session["Login"] = "zolotarev";
 #endif
-			var MapPartner = Partner.FindAllByProperty("Login", context.Session["Login"]);
-			if (MapPartner.Length == 0)
+			if (Partner.FindAllByProperty("Login", context.Session["Login"]).Length == 0)
 			{
 				context.Response.RedirectToUrl(@"..\\Login\LoginPartner.brail");
 				return false;
@@ -21,17 +20,9 @@ namespace InternetInterface.Controllers.Filter
 			else
 			{
 				InithializeContent.partner = Partner.GetPartnerForLogin(context.Session["login"].ToString());
-				var acclessList = AccessRules.GetAccessName(controllerContext.Action);
-				var count = acclessList.Count(PartnerAccessSet.AccesPartner);
-				/*var count = 0;
-				foreach (var list in AcclessList)
-				{
-					if (PartnerAccessSet.AccesPartner(list))
-					{
-						count++;
-					}
-				}*/
-				if (/*AcclessList.Count !=*/ count == 0)
+				controllerContext.PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
+				controllerContext.PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
+				if (AccessRules.GetAccessName(controllerContext.Action).Count(PartnerAccessSet.AccesPartner) == 0)
 				{
 					context.Response.RedirectToUrl(@"..\\Errors\AccessDin.aspx");
 					return false;

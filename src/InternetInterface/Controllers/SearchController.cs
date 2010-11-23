@@ -192,7 +192,7 @@ WHERE PA.ID = {0} and PC.Connected = false", InithializeContent.partner.Id));
 			string connectBut, string closeDemandBut)
 		{
 			var brigad = Brigad.Find(brigadId);
-			var Connected = new List<bool>();
+			//var Connected = new List<bool>();
 			foreach (uint clientToConnect in forConnect)
 			{
 				var newRequest = new RequestsConnection
@@ -229,27 +229,31 @@ WHERE PA.ID = {0} and PC.Connected = false", InithializeContent.partner.Id));
 			}
 			Flash["SClients"] = clients;
 			PropertyBag["ConnectBlockDisplay"] = ((List<PhisicalClients>) clients).Find(p => p.HasConnected == null);
-			var tariffText = new List<Tariff>();
+			/*var tariffText = new List<Tariff>();
 			var partnerText = new List<Partner>();
 			foreach (var t in clients)
 			{
 				tariffText.Add(t.Tariff);
 				partnerText.Add(t.HasRegistered);
-			}
-			Flash["tariffText"] = tariffText;
-			Flash["partnerText"] = partnerText;
+			}*/
+			//Flash["tariffText"] = tariffText;
+			//Flash["partnerText"] = partnerText;
 			//var mapPartner = Partner.FindAllByProperty("Login", Session["Login"]);
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
+			PropertyBag["WhoRegistered"] = Partner.FindAllSort();
 			PropertyBag["ChTariff"] = tariff;
 			PropertyBag["ChRegistr"] = whoregister;
 			PropertyBag["ChBrigad"] = brigad;
-			PropertyBag["WhoRegistered"] = Partner.FindAllSort();
+			PropertyBag["SearchText"] = searchText;
+
 			PropertyBag["FindBy"] = searchProperties;
 			PropertyBag["ConnectBy"] = connectedType;
+
 			PropertyBag["CloseDemand"] = closeDemand;
-			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
-			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
-			PropertyBag["SearchText"] = searchText;
+
+			/*PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
+			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;*/
+			
 			Flash["Brigads"] = Brigad.FindAllSort();
 			//PropertyBag["Connected"] = connected;
 		}
@@ -323,7 +327,8 @@ or LOWER(P.RegistrationAdress) like {0}", ":SearchText") + _return;
 		{
 			var searchProperties = new UserSearchProperties {SearchBy = SearchUserBy.Auto};
 			var connectProperties = new ConnectedTypeProperties {Type = ConnectedType.AllConnected};
-			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
+			//PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
+			//PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["WhoRegistered"] = Partner.FindAllSort();
 			PropertyBag["SearchText"] = "";
@@ -335,7 +340,6 @@ or LOWER(P.RegistrationAdress) like {0}", ":SearchText") + _return;
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
 			PropertyBag["Connected"] = false;
 			PropertyBag["CloseDemand"] = closeDemand;
-			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
 			if (sClients != null)
 			{
 				Flash["SClients"] = sClients;

@@ -22,8 +22,8 @@ namespace InternetInterface.Controllers
 			[DataBind("client")]PhisicalClients user, string balanceText, uint tariff)
 		{
 			//PropertyBag["Popolnen"] = popolnenie;
-			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
-			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
+			/*PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
+			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;*/
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			//string semdBalanceText = string.Empty;
 			if (changeProperties.IsForTariff())
@@ -63,8 +63,8 @@ namespace InternetInterface.Controllers
 		public void RegisterPartner([DataBind("Partner")]Partner partner, [DataBind("ForRight")]List<int> rights)
 		{
 			string Pass = Partner.GeneratePassword();
-			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
-			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
+			/*PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
+			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;*/
 			PropertyBag["Rights"] =
 	ActiveRecordBase<AccessCategories>.FindAll(
 		DetachedCriteria.For<AccessCategories>().Add(Expression.Sql("ReduceName <> 'RP'")));
@@ -111,11 +111,11 @@ namespace InternetInterface.Controllers
 
 		public void RegisterClient()
 		{
-			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
+			/*PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
+			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;*/
 			PropertyBag["BalanceText"] = string.Empty;
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["Client"] = new PhisicalClients();
-			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
 			PropertyBag["VB"] = new ValidBuilderHelper<PhisicalClients>(new PhisicalClients());
 
 			PropertyBag["Applying"] = "false";
@@ -206,42 +206,6 @@ namespace InternetInterface.Controllers
 						brigad.SaveAndFlush();
 					}
 
-					//Если у клиента было право отправлять заявки, осталось это право
-					//и в новых правах отсутствуют права просмотра информации, то отменяем право 
-					//отправлять заявки
-					/*if ((!rights.Contains((int)AccessCategoriesType.GetClientInfo)) &&
-						(ChRights.Contains((int)AccessCategoriesType.SendDemand))
-						&& (rights.Contains((int)AccessCategoriesType.SendDemand)))
-					{
-						var delSendDemWithoutGCI = PartnerAccessSet.FindAll(DetachedCriteria.For(typeof (PartnerAccessSet))
-																				.Add(Expression.Eq("AccessCat", AccessCategories.Find(
-																				(int)AccessCategoriesType.SendDemand)))
-						                                                    	.Add(Expression.Eq("PartnerId", partner)));
-						foreach (var partnerAccessSet in delSendDemWithoutGCI)
-						{
-							partnerAccessSet.DeleteAndFlush();
-						}
-					}*/
-
-					//Если у клиента небыло прав просмотра инфы, а ему назначили право отправлять заявки,
-					//назначаем право просмотра информации
-					/*if (((!rights.Contains((int)AccessCategoriesType.GetClientInfo))
-						&& (!ChRights.Contains((int)AccessCategoriesType.GetClientInfo))
-						&& (rights.Contains((int)AccessCategoriesType.SendDemand)))
-						||
-					//или у старого было право просмотра инфы, у нового есть право отправлять заявки и нет права просмотра
-						((ChRights.Contains((int)AccessCategoriesType.GetClientInfo))
-						&& (rights.Contains((int)AccessCategoriesType.SendDemand))
-						&& (!ChRights.Contains((int)AccessCategoriesType.SendDemand))
-						))
-					{
-						var newRight = new PartnerAccessSet
-						{
-							AccessCat = AccessCategories.Find(1),
-							PartnerId = partner
-						};
-						newRight.SaveAndFlush();
-					}*/
 					Flash["EditiongMessage"] = "Изменения внесены успешно";
 				}
 				else
@@ -250,26 +214,7 @@ namespace InternetInterface.Controllers
 					Partner.RegistrLogicPartner(partner, rights, Validator);
 				}
 				RedirectToUrl("../Register/RegisterPartner?Partner=" + PID);
-				/*}
-				else
-				{
-					for (int i = 0; i < ChRights.Count; i++)
-					{
-						if (!rights.Contains(ChRights[i]))
-						{
-							var forDel = PartnerAccessSet.FindAll(DetachedCriteria.For(typeof(PartnerAccessSet))
-																	.Add(Expression.Eq("PartnerId", partner))
-																	.Add(Expression.Eq("AccessCat", AccessCategories.Find(ChRights[i]))));
-							forDel[0].DeleteAndFlush();
-						}
-					}
-				}*/
 			}
-		}
-
-		private void CreateRight(Partner partner, int right)
-		{
-
 		}
 
 		private List<int> GetPartnerAccess(int Partner)
@@ -287,14 +232,14 @@ namespace InternetInterface.Controllers
 
 		public void RegisterPartner(int Partner)
 		{
-			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
+			/*PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
+			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;*/
 			PropertyBag["Rights"] =
 				ActiveRecordBase<AccessCategories>.FindAll(
 					DetachedCriteria.For<AccessCategories>().Add(Expression.Sql("ReduceName <> 'RP'")));
 			PropertyBag["Partner"] = Models.Partner.Find((uint)Partner);
 			var ChRights = GetPartnerAccess(Partner);
 			PropertyBag["ChRights"] = ChRights;
-			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
 			PropertyBag["VB"] = new ValidBuilderHelper<Partner>(new Partner());
 			PropertyBag["Applying"] = "false";
 			PropertyBag["Editing"] = true;
@@ -302,7 +247,8 @@ namespace InternetInterface.Controllers
 
 		public void RegisterPartner()
 		{
-			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
+			/*PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
+			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;*/
 			PropertyBag["Rights"] =
 				ActiveRecordBase<AccessCategories>.FindAll(DetachedCriteria.For<AccessCategories>().Add(Expression.Sql("ReduceName <> 'RP'")));
 			PropertyBag["Partner"] = new Partner();
@@ -310,7 +256,6 @@ namespace InternetInterface.Controllers
 			PropertyBag["ChRights"] = new List<int>();
 			PropertyBag["VB"] = new ValidBuilderHelper<Partner>(new Partner());
 			PropertyBag["Editing"] = false;
-			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
 		}
 	}
 
