@@ -132,7 +132,7 @@
         <%end %>
         <%if (PartnerAccessSet.AccesPartner("CD") and CloseDemand): %>
          <tr>
-            <td colspan="2">
+            <td colspan="12">
                <button type="submit" class="button" name="CloseDemandBut" value="CloseDemand">
                   Закрыть заявки
                 </button>
