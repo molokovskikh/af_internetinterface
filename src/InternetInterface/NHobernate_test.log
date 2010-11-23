@@ -15256,3 +15256,354 @@ Stack Trace:
 Login - zolotarev
 --------------
 
+12:31:41.848 [16] ERROR InternetInterface.Global - ----UrlReferer-------
+http://localhost:59059/Search/SearchBy?closeDemand=False&SearchText=&SearchBy.SearchBy=Auto&tariff=0&whoregister=0&brigad=0
+----Url-------
+http://localhost:59059/UserInfo/SearchUserInfo.rails?ClientCode=2
+--------------
+----Params----
+ClientCode: 2
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action SearchUserInfo on controller UserInfo
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+Exception has been thrown by the target of an invocation.
+Stack Trace:
+   at System.RuntimeMethodHandle._InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, SignatureStruct& sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.RuntimeMethodHandle.InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, Signature sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture, Boolean skipVisibilityChecks)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
+   at Castle.MonoRail.Framework.SmartDispatcherController.InvokeMethod(MethodInfo method, IRequest request, IDictionary`2 extraArgs)
+   at Castle.MonoRail.Framework.ActionMethodExecutorCompatible.Execute(IEngineContext engineContext, IController controller, IControllerContext context)
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+Message:
+Could not perform FindAll for RequestsConnection
+Stack Trace:
+   at Castle.ActiveRecord.ActiveRecordBase.FindAll(Type targetType, DetachedCriteria detachedCriteria, Order[] orders)
+   at Castle.ActiveRecord.ActiveRecordBase`1.FindAll(DetachedCriteria criteria, Order[] orders)
+   at InternetInterface.Controllers.UserInfoController.SearchUserInfo(UInt32 clientCode, Boolean Editing) in C:\Web_Project\InternetInterface\src\InternetInterface\Controllers\UserInfoController.cs:line 20
+--------------
+Message:
+Type mismatch in NHibernate.Criterion.SimpleExpression: ClientID expected type InternetInterface.Models.PhisicalClients, actual type System.UInt32
+Stack Trace:
+   at NHibernate.Criterion.CriterionUtil.GetColumnNamesUsingPropertyName(ICriteriaQuery criteriaQuery, ICriteria criteria, String propertyName, Object value, ICriterion critertion)
+   at NHibernate.Criterion.CriterionUtil.GetColumnNamesForSimpleExpression(String propertyName, IProjection projection, ICriteriaQuery criteriaQuery, ICriteria criteria, IDictionary`2 enabledFilters, ICriterion criterion, Object value)
+   at NHibernate.Criterion.SimpleExpression.ToSqlString(ICriteria criteria, ICriteriaQuery criteriaQuery, IDictionary`2 enabledFilters)
+   at NHibernate.Loader.Criteria.CriteriaQueryTranslator.GetWhereCondition(IDictionary`2 enabledFilters)
+   at NHibernate.Loader.Criteria.CriteriaJoinWalker..ctor(IOuterJoinLoadable persister, CriteriaQueryTranslator translator, ISessionFactoryImplementor factory, ICriteria criteria, String rootEntityName, IDictionary`2 enabledFilters)
+   at NHibernate.Loader.Criteria.CriteriaLoader..ctor(IOuterJoinLoadable persister, ISessionFactoryImplementor factory, CriteriaImpl rootCriteria, String rootEntityName, IDictionary`2 enabledFilters)
+   at NHibernate.Impl.SessionImpl.List(CriteriaImpl criteria, IList results)
+   at NHibernate.Impl.CriteriaImpl.List(IList results)
+   at NHibernate.Impl.CriteriaImpl.List()
+   at Castle.ActiveRecord.ActiveRecordBase.FindAll(Type targetType, DetachedCriteria detachedCriteria, Order[] orders)
+--------------
+--------------
+----Session---
+Login - zolotarev
+--------------
+
+12:32:54.170 [17] ERROR InternetInterface.Global - ----UrlReferer-------
+http://localhost:59059/Search/SearchBy?closeDemand=False&SearchText=&SearchBy.SearchBy=Auto&tariff=0&whoregister=0&brigad=0
+----Url-------
+http://localhost:59059/UserInfo/SearchUserInfo.rails?ClientCode=2
+--------------
+----Params----
+ClientCode: 2
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action SearchUserInfo on controller UserInfo
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+Exception on process view: UserInfo\SearchUserInfo
+Last accessed variable: Client
+Stack Trace:
+   at Castle.MonoRail.Views.Brail.BooViewEngine.HandleException(String templateName, BrailBase view, Exception e)
+   at Castle.MonoRail.Views.Brail.BooViewEngine.RenderView(String templateName, BrailBase view)
+   at Castle.MonoRail.Views.Brail.BooViewEngine.Process(String templateName, TextWriter output, IEngineContext context, IController controller, IControllerContext controllerContext)
+   at Castle.MonoRail.Framework.Services.DefaultViewEngineManager.Process(String templateName, TextWriter output, IEngineContext context, IController controller, IControllerContext controllerContext)
+   at Castle.MonoRail.Framework.Controller.ProcessView()
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+Message:
+Object reference not set to an instance of an object.
+Stack Trace:
+   at Castle.MonoRail.Views.Brail.ExpandDuckTypedExpressions_WorkaroundForDuplicateVirtualMethods.GetProperty(Object target, String name)
+   at BrailView_SearchUserInfo.Run()
+   at Castle.MonoRail.Views.Brail.BooViewEngine.RenderView(String templateName, BrailBase view)
+--------------
+--------------
+----Session---
+Login - zolotarev
+flash - Castle.MonoRail.Framework.Flash
+--------------
+
+13:00:22.587 [4] ERROR InternetInterface.Global - ----UrlReferer-------
+http://localhost:59059/Search/SearchUsers.rails
+----Url-------
+http://localhost:59059/Search/SearchBy?closeDemand=False&SearchText= васов&SearchBy.SearchBy=Auto&tariff=0&whoregister=0&brigad=0
+--------------
+----Params----
+closeDemand: False
+SearchText:  васов
+SearchBy.SearchBy: Auto
+tariff: 0
+whoregister: 0
+brigad: 0
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action SearchBy on controller Search
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+Error compiling Brail code
+Stack Trace:
+   at Castle.MonoRail.Views.Brail.BooViewEngine.RaiseCompilationException(String filename, IDictionary`2 inputs2FileName, CompilationResult result)
+   at Castle.MonoRail.Views.Brail.BooViewEngine.CompileScript(String filename, Boolean batch)
+   at Castle.MonoRail.Views.Brail.BooViewEngine.GetCompiledScriptInstance(String file, TextWriter output, IEngineContext context, IController controller, IControllerContext controllerContext)
+   at Castle.MonoRail.Views.Brail.BooViewEngine.Process(String templateName, TextWriter output, IEngineContext context, IController controller, IControllerContext controllerContext)
+   at Castle.MonoRail.Framework.Services.DefaultViewEngineManager.Process(String templateName, TextWriter output, IEngineContext context, IController controller, IControllerContext controllerContext)
+   at Castle.MonoRail.Framework.Controller.ProcessView()
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+Message:
+expecting "COLON", found '
+'.
+Stack Trace:
+
+--------------
+Message:
+expecting "COLON", found '
+'
+Stack Trace:
+   at antlr.Parser.match(Int32 t)
+   at Boo.Lang.Parser.WSABooParserBase.begin()
+--------------
+--------------
+----Session---
+Login - zolotarev
+flash - Castle.MonoRail.Framework.Flash
+--------------
+
+13:00:36.033 [10] ERROR InternetInterface.Global - ----UrlReferer-------
+http://localhost:59059/Search/SearchUsers.rails
+----Url-------
+http://localhost:59059/Search/SearchBy?closeDemand=False&SearchText= васов&SearchBy.SearchBy=Auto&tariff=0&whoregister=0&brigad=0
+--------------
+----Params----
+closeDemand: False
+SearchText:  васов
+SearchBy.SearchBy: Auto
+tariff: 0
+whoregister: 0
+brigad: 0
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action SearchBy on controller Search
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+Error compiling Brail code
+Stack Trace:
+   at Castle.MonoRail.Views.Brail.BooViewEngine.RaiseCompilationException(String filename, IDictionary`2 inputs2FileName, CompilationResult result)
+   at Castle.MonoRail.Views.Brail.BooViewEngine.CompileScript(String filename, Boolean batch)
+   at Castle.MonoRail.Views.Brail.BooViewEngine.GetCompiledScriptInstance(String file, TextWriter output, IEngineContext context, IController controller, IControllerContext controllerContext)
+   at Castle.MonoRail.Views.Brail.BooViewEngine.Process(String templateName, TextWriter output, IEngineContext context, IController controller, IControllerContext controllerContext)
+   at Castle.MonoRail.Framework.Services.DefaultViewEngineManager.Process(String templateName, TextWriter output, IEngineContext context, IController controller, IControllerContext controllerContext)
+   at Castle.MonoRail.Framework.Controller.ProcessView()
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+Message:
+expecting "RPAREN", found ':'.
+Stack Trace:
+
+--------------
+Message:
+expecting "RPAREN", found ':'
+Stack Trace:
+   at antlr.Parser.match(Int32 t)
+   at Boo.Lang.Parser.WSABooParserBase.slicing_expression()
+--------------
+--------------
+----Session---
+Login - zolotarev
+flash - Castle.MonoRail.Framework.Flash
+--------------
+
+13:00:46.832 [4] ERROR InternetInterface.Global - ----UrlReferer-------
+http://localhost:59059/Search/SearchUsers.rails
+----Url-------
+http://localhost:59059/Search/SearchBy?closeDemand=False&SearchText= васов&SearchBy.SearchBy=Auto&tariff=0&whoregister=0&brigad=0
+--------------
+----Params----
+closeDemand: False
+SearchText:  васов
+SearchBy.SearchBy: Auto
+tariff: 0
+whoregister: 0
+brigad: 0
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action SearchBy on controller Search
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+Error compiling Brail code
+Stack Trace:
+   at Castle.MonoRail.Views.Brail.BooViewEngine.RaiseCompilationException(String filename, IDictionary`2 inputs2FileName, CompilationResult result)
+   at Castle.MonoRail.Views.Brail.BooViewEngine.CompileScript(String filename, Boolean batch)
+   at Castle.MonoRail.Views.Brail.BooViewEngine.GetCompiledScriptInstance(String file, TextWriter output, IEngineContext context, IController controller, IControllerContext controllerContext)
+   at Castle.MonoRail.Views.Brail.BooViewEngine.Process(String templateName, TextWriter output, IEngineContext context, IController controller, IControllerContext controllerContext)
+   at Castle.MonoRail.Framework.Services.DefaultViewEngineManager.Process(String templateName, TextWriter output, IEngineContext context, IController controller, IControllerContext controllerContext)
+   at Castle.MonoRail.Framework.Controller.ProcessView()
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+Message:
+Unexpected token: ).
+Stack Trace:
+
+--------------
+Message:
+unexpected token: [")",<77>,line=255,col=37]
+Stack Trace:
+   at Boo.Lang.Parser.WSABooParserBase.block(StatementCollection container)
+--------------
+--------------
+----Session---
+Login - zolotarev
+flash - Castle.MonoRail.Framework.Flash
+--------------
+
+13:13:51.569 [15] ERROR InternetInterface.Global - ----UrlReferer-------
+http://localhost:59059/Search/SearchUsers.rails
+----Url-------
+http://localhost:59059/Search/SearchBy?closeDemand=False&SearchText= васов&SearchBy.SearchBy=Auto&tariff=0&whoregister=0&brigad=0
+--------------
+----Params----
+closeDemand: False
+SearchText:  васов
+SearchBy.SearchBy: Auto
+tariff: 0
+whoregister: 0
+brigad: 0
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action SearchBy on controller Search
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+Exception has been thrown by the target of an invocation.
+Stack Trace:
+   at System.RuntimeMethodHandle._InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, SignatureStruct& sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.RuntimeMethodHandle.InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, Signature sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture, Boolean skipVisibilityChecks)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
+   at Castle.MonoRail.Framework.SmartDispatcherController.InvokeMethod(MethodInfo method, IRequest request, IDictionary`2 extraArgs)
+   at Castle.MonoRail.Framework.ActionMethodExecutorCompatible.Execute(IEngineContext engineContext, IController controller, IControllerContext context)
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+Message:
+Object reference not set to an instance of an object.
+Stack Trace:
+   at InternetInterface.Controllers.SearchController.SearchBy(UserSearchProperties searchProperties, UInt32 tariff, UInt32 whoregister, UInt32 brigad, Boolean connected, String searchText, Boolean closeDemand) in C:\Web_Project\InternetInterface\src\InternetInterface\Controllers\SearchController.cs:line 227
+--------------
+--------------
+----Session---
+Login - zolotarev
+flash - Castle.MonoRail.Framework.Flash
+--------------
+
+13:14:48.117 [13] ERROR InternetInterface.Global - ----UrlReferer-------
+http://localhost:59059/Search/SearchUsers.rails
+----Url-------
+http://localhost:59059/Search/SearchBy?closeDemand=False&SearchText= васов&SearchBy.SearchBy=Auto&tariff=0&whoregister=0&brigad=0
+--------------
+----Params----
+closeDemand: False
+SearchText:  васов
+SearchBy.SearchBy: Auto
+tariff: 0
+whoregister: 0
+brigad: 0
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action SearchBy on controller Search
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+Exception has been thrown by the target of an invocation.
+Stack Trace:
+   at System.RuntimeMethodHandle._InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, SignatureStruct& sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.RuntimeMethodHandle.InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, Signature sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture, Boolean skipVisibilityChecks)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
+   at Castle.MonoRail.Framework.SmartDispatcherController.InvokeMethod(MethodInfo method, IRequest request, IDictionary`2 extraArgs)
+   at Castle.MonoRail.Framework.ActionMethodExecutorCompatible.Execute(IEngineContext engineContext, IController controller, IControllerContext context)
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+Message:
+Object reference not set to an instance of an object.
+Stack Trace:
+   at InternetInterface.Controllers.SearchController.SearchBy(UserSearchProperties searchProperties, UInt32 tariff, UInt32 whoregister, UInt32 brigad, Boolean connected, String searchText, Boolean closeDemand) in C:\Web_Project\InternetInterface\src\InternetInterface\Controllers\SearchController.cs:line 227
+--------------
+--------------
+----Session---
+Login - zolotarev
+flash - Castle.MonoRail.Framework.Flash
+--------------
+

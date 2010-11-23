@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 using Castle.ActiveRecord;
 using Castle.MonoRail.Framework;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using NHibernate.Criterion;
+using NHibernate.SqlCommand;
 
 namespace InternetInterface.Controllers
 {
@@ -14,7 +18,14 @@ namespace InternetInterface.Controllers
 		//[AccessibleThrough(Verb.Get)]
 		public void SearchUserInfo(uint clientCode, bool Editing)
 		{
-			PropertyBag["Client"] = PhisicalClients.Find(clientCode);
+			var phisCl = PhisicalClients.Find(clientCode);
+			PropertyBag["Client"] = phisCl;
+			PropertyBag["RegisntationDate"] = RequestsConnection.FindAll(DetachedCriteria.For(typeof (RequestsConnection))
+																			.Add(Expression.Eq("ClientID", phisCl)))[0].RegDate.ToString();
+			PropertyBag["CloseDate"] = RequestsConnection.FindAll(DetachedCriteria.For(typeof (RequestsConnection))
+			                                                      	.Add(Expression.Eq("ClientID", phisCl))).ToList().Find(
+																		t => t.CloseDemandDate.ToString() != "01.01.0001 0:00:00").CloseDemandDate.ToString();
+
 			SendParam(clientCode);
 			Flash["Editing"] = Editing;
 			PropertyBag["VB"] = new ValidBuilderHelper<PhisicalClients>(new PhisicalClients());

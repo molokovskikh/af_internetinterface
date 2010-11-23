@@ -189,11 +189,13 @@ WHERE PA.ID = {0} and PC.Connected = false", InithializeContent.partner.Id));
 		public void CreateDemandConnect([DataBind("ForConnect")]List<int> forConnect, uint brigadId,
 			string connectBut, string closeDemandBut)
 		{
+			var brigad = Brigad.Find(brigadId);
+			var Connected = new List<bool>();
 			foreach (uint clientToConnect in forConnect)
 			{
 				var newRequest = new RequestsConnection
 				                 	{
-				                 		BrigadNumber = Brigad.Find(brigadId),
+										BrigadNumber = brigad,
 				                 		ManagerID = InithializeContent.partner,
 				                 		ClientID = PhisicalClients.Find(clientToConnect),
 				                 		RegDate = DateTime.Now
@@ -222,9 +224,10 @@ WHERE PA.ID = {0} and PC.Connected = false", InithializeContent.partner.Id));
 				clients = GetClients(searchProperties, tariff, whoregister, searchText, brigad, connected);
 			}
 			Flash["SClients"] = clients;
+			PropertyBag["ConnectBlockDisplay"] = ((List<PhisicalClients>) clients).Find(p => p.HasConnected == null);
 			var tariffText = new List<Tariff>();
 			var partnerText = new List<Partner>();
-			foreach (PhisicalClients t in clients)
+			foreach (var t in clients)
 			{
 				tariffText.Add(t.Tariff);
 				partnerText.Add(t.HasRegistered);

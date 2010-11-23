@@ -63,9 +63,6 @@
                 <td><span class="description">Зарегистрировал:</span> ${Client.HasRegistered.Name}</td>
             </tr>
         <%end %>
-        
-		
-		
         <%if Client.Tariff != null: %>
         <tr>
              <td><span class="description">Тариф:</span> ${Client.Tariff.Name}</td>
@@ -93,6 +90,16 @@
             <td><span class="description">Статус:</span>Не подключен</td>
             <%end %>
         </tr>
+                <%if IsDefined("RegisntationDate"): %>
+		    <tr>
+                <td><span class="description">Дата регистрации заявки:</span> ${RegisntationDate}</td>
+            </tr>
+        <%end %>
+		<%if IsDefined("CloseDate"): %>
+		<tr>
+                <td><span class="description">Дата подключения:</span> ${CloseDate}</td>
+        </tr>
+        <%end %>
     </tbody>
 </table>
     <%else:%>

@@ -108,6 +108,8 @@
     <% end %>        
 
       <%if (PartnerAccessSet.AccesPartner("SD") and (not CloseDemand)): %>
+      <%if IsDefined("ConnectBlockDisplay"): %>
+      <%if (ConnectBlockDisplay != null): %>
       <tr>
             <td colspan="2">
                <button type="submit" class="button" name="ConnectBut" value="Connecting">
@@ -125,6 +127,8 @@
             </select>
             </td>
         </tr>
+        <%end %>
+        <%end %>
         <%end %>
         <%if (PartnerAccessSet.AccesPartner("CD") and CloseDemand): %>
          <tr>
