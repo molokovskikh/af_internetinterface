@@ -150,41 +150,60 @@ namespace InternetInterface.Controllers
 					var ChRights = GetPartnerAccess((int) PID);
 					/*if (rights.Count >= ChRights.Count)
 					{*/
-					for (int i = 0; i < rights.Count; i++)
+					foreach (var t in rights)
 					{
-						if (!ChRights.Contains(rights[i]))
+						if (ChRights.Contains(t)) continue;
+						var newRight = new PartnerAccessSet
+						               	{
+						               		AccessCat = AccessCategories.Find(t),
+						               		PartnerId = partner
+						               	};
+						newRight.SaveAndFlush();
+					}
+					foreach (var t in ChRights)
+					{
+						if (rights.Contains(t)) continue;
+						if (t == (int)AccessCategoriesType.RegisterPartner) continue;
+						var forDel = PartnerAccessSet.FindAll(DetachedCriteria.For(typeof (PartnerAccessSet))
+						                                      	.Add(Expression.Eq("PartnerId", partner))
+						                                      	.Add(Expression.Eq("AccessCat", AccessCategories.Find(t))));
+						foreach (var partnerAccessSet in forDel)
 						{
-							var newRight = new PartnerAccessSet
-							               	{
-							               		AccessCat = AccessCategories.Find(rights[i]),
-							               		PartnerId = partner
-							               	};
-							newRight.SaveAndFlush();
+							partnerAccessSet.DeleteAndFlush();
 						}
 					}
-					for (int i = 0; i < ChRights.Count; i++)
+					if ((!rights.Contains((int)AccessCategoriesType.RegisterPartner))
+						&& (ChRights.Contains((int)AccessCategoriesType.RegisterPartner)))
 					{
-						if (!rights.Contains(ChRights[i]))
-						{
-							if (ChRights[i] != 5)
-							{
-								var forDel = PartnerAccessSet.FindAll(DetachedCriteria.For(typeof (PartnerAccessSet))
-								                                      	.Add(Expression.Eq("PartnerId", partner))
-								                                      	.Add(Expression.Eq("AccessCat", AccessCategories.Find(ChRights[i]))));
-								forDel[0].DeleteAndFlush();
-							}
-						}
+						rights.Add((int)AccessCategoriesType.RegisterPartner);
 					}
+
+					AccessDependence.SetCrossAccess(ChRights, rights, partner);
 
 					if ((!rights.Contains((int)AccessCategoriesType.CloseDemand))
 						&& (ChRights.Contains((int)AccessCategoriesType.CloseDemand)))
 					{
 						var delBrig = Brigad.FindAll(DetachedCriteria.For(typeof (Brigad))
-						                             	.Add(Expression.Eq("PartnerId", partner)));
-						delBrig[0].DeleteAndFlush();
+														.Add(Expression.Eq("PartnerID", partner)));
+						foreach (var brigad in delBrig)
+						{
+							brigad.DeleteAndFlush();
+						}
 					}
 
-					AccessDependence.SetCrossAccess(ChRights, rights, partner);
+					if ((rights.Contains((int)AccessCategoriesType.CloseDemand))
+						&& (!ChRights.Contains((int)AccessCategoriesType.CloseDemand)))
+					{
+						var brigad = new Brigad
+						             	{
+						             		Adress = partner.Adress,
+											BrigadCount = 1,
+											Name = partner.Name,
+											PartnerID = partner
+						             	};
+						brigad.SaveAndFlush();
+					}
+
 					//Если у клиента было право отправлять заявки, осталось это право
 					//и в новых правах отсутствуют права просмотра информации, то отменяем право 
 					//отправлять заявки

@@ -50,8 +50,8 @@ namespace InternetInterfaceFixture.Functional
 			AccessDependence.SetAccessDependence();
 			AccessDependence.GenerateAddList(AccessDependence.accessDependence, "2");
 			AccessDependence.GenerateDeleteList(AccessDependence.accessDependence, "7");
-			Console.WriteLine(AccessDependence.toAdd);
-			Console.WriteLine(AccessDependence.toDelete);
+			/*Console.WriteLine(AccessDependence.toAdd);
+			Console.WriteLine(AccessDependence.toDelete);*/
 		}
 
 		[Test]

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Castle.ActiveRecord;
 using NHibernate.Criterion;
 
@@ -32,13 +33,16 @@ namespace InternetInterface.Models
 		public static List<TwoRule> accessDependence;
 		public static List<string> toAdd;
 		public static List<string> toDelete;
+		public static List<int> hasDelete;
 
 		public static void SetAccessDependence()
 		{
 			toAdd = new List<string>();
 			toDelete = new List<string>();
+			hasDelete = new List<int>();
 			accessDependence = new List<TwoRule>
 			                   	{
+									//new TwoRule("GetClientInfo","SendDemand")
 			                   		new TwoRule("GetClientInfo","SendDemand"),
 									new TwoRule("SendDemand","CloseDemand"),
 									new TwoRule("CloseDemand","RegisterPartner"),
@@ -50,9 +54,8 @@ namespace InternetInterface.Models
 
 		public static void GenerateAddList(List<TwoRule> dictionary, string field)
 		{
-			foreach (var dic in dictionary)
+			foreach (var dic in dictionary.Where(dic => dic.Child == field))
 			{
-				if (dic.Child != field) continue;
 				toAdd.Add(dic.Head);
 				GenerateAddList(dictionary, dic.Head);
 			}
@@ -60,33 +63,67 @@ namespace InternetInterface.Models
 
 		public static void GenerateDeleteList(List<TwoRule> dictionary, string field)
 		{
-			foreach (var dic in dictionary)
+			foreach (var dic in dictionary.Where(dic => dic.Head == field))
 			{
-				if (dic.Head != field) continue;
 				toDelete.Add(dic.Child);
 				GenerateDeleteList(dictionary, dic.Child);
 			}
 		}
-
 
 		public static void SetCrossAccess(List<int> oldAccessSet, List<int> newAccessSet, Partner partner)
 		{
 			SetAccessDependence();
 			foreach (var twoRule in accessDependence)
 			{
+				AccessCategoriesType accessDel;
+				AccessCategoriesType.TryParse(twoRule.Head, false, out accessDel);
+				if (!(newAccessSet.Contains((int)accessDel)) &&
+					(oldAccessSet.Contains((int)accessDel)))
+				{
+					GenerateDeleteList(accessDependence, twoRule.Head);
+					foreach (var todel in toDelete)
+					{
+						AccessCategoriesType accessTodel;
+						AccessCategoriesType.TryParse(todel, false, out accessTodel);
+						var delSendDemWithoutGCI = PartnerAccessSet.FindAll(DetachedCriteria.For(typeof(PartnerAccessSet))
+																				.Add(Expression.Eq("PartnerId", partner))
+																				.Add(Expression.Eq("AccessCat",
+																								   AccessCategories.Find((int)accessTodel))));
+						/*if (hasDelete.Contains((int)accessDel))
+						{
+							toDelete.Add(accessDel.ToString());
+						}*/
+						foreach (var partnerAccessSet in delSendDemWithoutGCI)
+						{
+							hasDelete.Add(partnerAccessSet.AccessCat.Id);
+							partnerAccessSet.DeleteAndFlush();
+						}
+					}
+				}
+				toAdd.Clear();
+				toDelete.Clear();
+				//hasDelete.Clear();
+			}
+			foreach (var twoRule in accessDependence)
+			{
 				AccessCategoriesType accessAdd;
 				AccessCategoriesType.TryParse(twoRule.Child, false, out accessAdd);
-				if ((newAccessSet.Contains((int)accessAdd)) &&
-				(!oldAccessSet.Contains((int)accessAdd)))
+				if ((newAccessSet.Contains((int) accessAdd)) &&
+				    (!oldAccessSet.Contains((int) accessAdd)))
 				{
 					GenerateAddList(accessDependence, twoRule.Child);
+					if (hasDelete.Contains((int)accessAdd))
+					{
+						toAdd.Add(accessAdd.ToString());
+					}
 					foreach (var toadd in toAdd)
 					{
 						AccessCategoriesType accessToadd;
 						AccessCategoriesType.TryParse(toadd, false, out accessToadd);
-						if (PartnerAccessSet.FindAll(DetachedCriteria.For(typeof(PartnerAccessSet))
-							.Add(Expression.Eq("PartnerId", partner))
-							.Add(Expression.Eq("AccessCat", AccessCategories.Find((int)accessToadd)))).Length == 0)
+						if (PartnerAccessSet.FindAll(DetachedCriteria.For(typeof (PartnerAccessSet))
+						                             	.Add(Expression.Eq("PartnerId", partner))
+						                             	.Add(Expression.Eq("AccessCat", AccessCategories.Find((int) accessToadd)))).Length ==
+						    0)
 						{
 							var newRight = new PartnerAccessSet
 							               	{
@@ -94,32 +131,13 @@ namespace InternetInterface.Models
 							               		PartnerId = partner
 							               	};
 							newRight.SaveAndFlush();
+							//hasDelete.Add(newRight.AccessCat.Id);
 						}
 					}
 				}
-				AccessCategoriesType accessDel;
-				AccessCategoriesType.TryParse(twoRule.Head, false, out accessDel);
-				if (!(newAccessSet.Contains((int)accessDel)) &&
-				(oldAccessSet.Contains((int)accessDel)))
-				{
-					GenerateDeleteList(accessDependence, twoRule.Head);
-					foreach (var todel in toDelete)
-					{
-						AccessCategoriesType accessTodel;
-						AccessCategoriesType.TryParse(todel, false, out accessTodel);
-						var delSendDemWithoutGCI = PartnerAccessSet.FindAll(DetachedCriteria.For(typeof (PartnerAccessSet))
-						                                                     	.Add(Expression.Eq("PartnerId", partner))
-						                                                     	.Add(Expression.Eq("AccessCat",
-						                                                     	                   AccessCategories.Find((int) accessTodel))));
-						foreach (var partnerAccessSet in delSendDemWithoutGCI)
-						{
-							partnerAccessSet.DeleteAndFlush();
-						}
-					}
-				}
+				toAdd.Clear();
+				toDelete.Clear();
 			}
-			toAdd.Clear();
-			toDelete.Clear();
 		}
 	}
 
