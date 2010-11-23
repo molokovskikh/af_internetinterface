@@ -14,7 +14,7 @@ namespace InternetInterface.Controllers
 	{
 		private int _clientId;
 		private int _switch;
-		private int _port;
+		private string _port;
 		public int ClientId
 		{
 			get { return _clientId; }
@@ -25,7 +25,7 @@ namespace InternetInterface.Controllers
 			get { return _switch; }
 			set { _switch = value; }
 		}
-		public int PortNumber
+		public string PortNumber
 		{
 			get { return _port; }
 			set { _port = value; }
@@ -108,46 +108,80 @@ WHERE PA.ID = {0} and PC.Connected = false", InithializeContent.partner.Id));
 		[AccessibleThrough(Verb.Post)]
 		public void CloseDemand([DataBind("ConnectList")]List<Connect> forConnect)
 		{
-			foreach (var client in forConnect)
+			if (forConnect.Find(t => t.SwitchId != 6) != null)
 			{
-				if ((client.ClientId != 0) && (client.PortNumber != 0) && (client.SwitchId != 0))
+				foreach (var client in forConnect)
 				{
-					var forUpdate = PhisicalClients.Find((uint)client.ClientId);
-					var inetClient = new Clients
-					                 	{
-					                 		Name = forUpdate.Surname + " " + forUpdate.Name + " " + forUpdate.Patronymic
-					                 	};
-					if ((client.PortNumber >= 1) && (client.PortNumber <= 48))
+					var inetClient = new Clients();
+					var portNum = 0;
+					try
 					{
-						var cdDate = RequestsConnection.FindAll(DetachedCriteria.For(typeof (RequestsConnection))
-						                                        	.CreateAlias("ClientID", "PS", JoinType.InnerJoin)
-						                                        	.CreateAlias("BrigadNumber", "CB", JoinType.InnerJoin)
-						                                        	.Add(Expression.Eq("ClientID", forUpdate))
-						                                        	.Add(Expression.Eq("ManagerID", InithializeContent.partner))
-						                                        	.Add(Expression.EqProperty("BrigadNumber", "CB.Id"))
-						                                        	.Add(Expression.Eq("PS.Connected", false)));
-						forUpdate.Connected = true;
-						forUpdate.UpdateAndFlush();
-						var endPoint = new ClientEndpoints();
-						inetClient.PhisicalClient = (int) forUpdate.Id;
-						inetClient.Type = ClientType.Phisical;
-						inetClient.SaveAndFlush();
-						endPoint.Port = client.PortNumber;
-						endPoint.Switch = NetworkSwitches.Find((uint) client.SwitchId);
-						endPoint.Client = inetClient;
-						endPoint.SaveAndFlush();
-						cdDate[0].CloseDemandDate = DateTime.Now;
-						cdDate[0].UpdateAndFlush();
+						portNum = Convert.ToInt32(client.PortNumber);
 					}
-					else
+					catch (Exception)
 					{
 						Flash["PornNumError"] = "Номер порта принимает значение от 1 до 48, вы ввели " + client.PortNumber.ToString() +
-							@" операция 'Подключения' прервана на клиенте " + inetClient.Name;
+						                        @" операция 'Подключения' прервана на клиенте " + inetClient.Name;
 						break;
 					}
+					if ((client.ClientId != 0) && (portNum != 0) && (client.SwitchId != 0))
+					{
+						var forUpdate = PhisicalClients.Find((uint) client.ClientId);
+						inetClient = new Clients
+						             	{
+						             		Name = forUpdate.Surname + " " + forUpdate.Name + " " + forUpdate.Patronymic
+						             	};
+						if ((portNum >= 1) && (portNum <= 48))
+						{
+							using (var scope = new TransactionScope(OnDispose.Rollback))
+							{
+								var Switch = NetworkSwitches.Find((uint) client.SwitchId);
+								if (ClientEndpoints.FindAll(DetachedCriteria.For(typeof (ClientEndpoints))
+								                            	.Add(Expression.Eq("Switch", Switch))
+								                            	.Add(Expression.Eq("Port", portNum))).Length == 0)
+								{
+									var cdDate = RequestsConnection.FindAll(DetachedCriteria.For(typeof (RequestsConnection))
+									                                        	.CreateAlias("ClientID", "PS", JoinType.InnerJoin)
+									                                        	.CreateAlias("BrigadNumber", "CB", JoinType.InnerJoin)
+									                                        	.Add(Expression.Eq("ClientID", forUpdate))
+									                                        	.Add(Expression.Eq("ManagerID", InithializeContent.partner))
+									                                        	.Add(Expression.EqProperty("BrigadNumber", "CB.Id"))
+									                                        	.Add(Expression.Eq("PS.Connected", false)));
+									forUpdate.Connected = true;
+									forUpdate.UpdateAndFlush();
+									var endPoint = new ClientEndpoints();
+									inetClient.PhisicalClient = (int) forUpdate.Id;
+									inetClient.Type = ClientType.Phisical;
+									inetClient.SaveAndFlush();
+									endPoint.Port = portNum;
+									endPoint.Switch = NetworkSwitches.Find((uint) client.SwitchId);
+									endPoint.Client = inetClient;
+									endPoint.SaveAndFlush();
+									cdDate[0].CloseDemandDate = DateTime.Now;
+									cdDate[0].UpdateAndFlush();
+									scope.VoteCommit();
+								}
+								else
+								{
+									Flash["PornNumError"] = "Такая пара порт/свич уже существует";
+									break;
+								}
+							}
+						}
+						else
+						{
+							Flash["PornNumError"] = "Номер порта принимает значение от 1 до 48, вы ввели " + client.PortNumber.ToString() +
+							                        @" операция 'Подключения' прервана на клиенте " + inetClient.Name;
+							break;
+						}
+					}
+					PropertyBag["DemandAccept"] = true;
 				}
 			}
-			Flash["DemandAccept"] = true;
+			else
+			{
+				Flash["PornNumError"] = "Выберите заявки для закрытия";
+			}
 			RedirectToUrl(@"../Search/SearchBy.rails?CloseDemand=true");
 		}
 

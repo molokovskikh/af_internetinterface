@@ -30,29 +30,30 @@ namespace InternetInterface.Models
 
 	public class AccessDependence
 	{
-		public static List<TwoRule> accessDependence;
-		public static List<string> toAdd;
-		public static List<string> toDelete;
-		public static List<int> hasDelete;
+		private static List<TwoRule> accessDependence;
+		private static List<string> toAdd;
+		private static List<string> toDelete;
+		private static List<int> hasDelete;
 
-		public static void SetAccessDependence()
+		private static void SetAccessDependence()
 		{
 			toAdd = new List<string>();
 			toDelete = new List<string>();
 			hasDelete = new List<int>();
 			accessDependence = new List<TwoRule>
 			                   	{
-									//new TwoRule("GetClientInfo","SendDemand")
-			                   		new TwoRule("GetClientInfo","SendDemand"),
+									new TwoRule("GetClientInfo","SendDemand"),
+									new TwoRule("ChangeBalance","CloseDemand")
+			                   		/*new TwoRule("GetClientInfo","SendDemand"),
 									new TwoRule("SendDemand","CloseDemand"),
 									new TwoRule("CloseDemand","RegisterPartner"),
-									new TwoRule("RegisterPartner","ChangeBalance")
+									new TwoRule("RegisterPartner","ChangeBalance")*/
 			                   	};
 			//accessDependence.Add("GetClientInfo", "SendDemand");
 			//return accessDependence;
 		}
 
-		public static void GenerateAddList(List<TwoRule> dictionary, string field)
+		private static void GenerateAddList(List<TwoRule> dictionary, string field)
 		{
 			foreach (var dic in dictionary.Where(dic => dic.Child == field))
 			{
@@ -61,7 +62,7 @@ namespace InternetInterface.Models
 			}
 		}
 
-		public static void GenerateDeleteList(List<TwoRule> dictionary, string field)
+		private static void GenerateDeleteList(List<TwoRule> dictionary, string field)
 		{
 			foreach (var dic in dictionary.Where(dic => dic.Head == field))
 			{
@@ -122,8 +123,7 @@ namespace InternetInterface.Models
 						AccessCategoriesType.TryParse(toadd, false, out accessToadd);
 						if (PartnerAccessSet.FindAll(DetachedCriteria.For(typeof (PartnerAccessSet))
 						                             	.Add(Expression.Eq("PartnerId", partner))
-						                             	.Add(Expression.Eq("AccessCat", AccessCategories.Find((int) accessToadd)))).Length ==
-						    0)
+						                             	.Add(Expression.Eq("AccessCat", AccessCategories.Find((int) accessToadd)))).Length == 0)
 						{
 							var newRight = new PartnerAccessSet
 							               	{
