@@ -20,11 +20,18 @@ namespace InternetInterface.Controllers
 		{
 			var phisCl = PhisicalClients.Find(clientCode);
 			PropertyBag["Client"] = phisCl;
-			PropertyBag["RegisntationDate"] = RequestsConnection.FindAll(DetachedCriteria.For(typeof (RequestsConnection))
-																			.Add(Expression.Eq("ClientID", phisCl)))[0].RegDate.ToString();
-			PropertyBag["CloseDate"] = RequestsConnection.FindAll(DetachedCriteria.For(typeof (RequestsConnection))
-			                                                      	.Add(Expression.Eq("ClientID", phisCl))).ToList().Find(
-																		t => t.CloseDemandDate.ToString() != "01.01.0001 0:00:00").CloseDemandDate.ToString();
+			var clDate = RequestsConnection.FindAll(DetachedCriteria.For(typeof (RequestsConnection))
+			                                           	.Add(Expression.Eq("ClientID", phisCl)));
+			if (clDate.Length != 0)
+			{
+				PropertyBag["RegisntationDate"] = clDate[0].RegDate.ToString();
+				var FindCloseDate = clDate.ToList().Find(t => t.CloseDemandDate.ToString() != "01.01.0001 0:00:00");
+				if (FindCloseDate != null)
+				{
+					PropertyBag["CloseDate"] = FindCloseDate.CloseDemandDate.ToString();
+				}
+			}
+			
 
 			SendParam(clientCode);
 			Flash["Editing"] = Editing;

@@ -15607,3 +15607,126 @@ Login - zolotarev
 flash - Castle.MonoRail.Framework.Flash
 --------------
 
+13:18:42.921 [12] ERROR InternetInterface.Global - ----UrlReferer-------
+http://localhost:59059/Search/SearchBy?closeDemand=False&SearchText=&SearchBy.SearchBy=Auto&tariff=0&whoregister=0&brigad=0
+----Url-------
+http://localhost:59059/UserInfo/SearchUserInfo.rails?ClientCode=22
+--------------
+----Params----
+ClientCode: 22
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action SearchUserInfo on controller UserInfo
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+Exception has been thrown by the target of an invocation.
+Stack Trace:
+   at System.RuntimeMethodHandle._InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, SignatureStruct& sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.RuntimeMethodHandle.InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, Signature sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture, Boolean skipVisibilityChecks)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
+   at Castle.MonoRail.Framework.SmartDispatcherController.InvokeMethod(MethodInfo method, IRequest request, IDictionary`2 extraArgs)
+   at Castle.MonoRail.Framework.ActionMethodExecutorCompatible.Execute(IEngineContext engineContext, IController controller, IControllerContext context)
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+Message:
+Index was outside the bounds of the array.
+Stack Trace:
+   at InternetInterface.Controllers.UserInfoController.SearchUserInfo(UInt32 clientCode, Boolean Editing) in C:\Web_Project\InternetInterface\src\InternetInterface\Controllers\UserInfoController.cs:line 23
+--------------
+--------------
+----Session---
+Login - zolotarev
+--------------
+
+13:22:37.419 [10] ERROR InternetInterface.Global - ----UrlReferer-------
+http://localhost:59059/Search/SearchBy?closeDemand=False&SearchText=&SearchBy.SearchBy=Auto&tariff=0&whoregister=0&brigad=0
+----Url-------
+http://localhost:59059/UserInfo/SearchUserInfo.rails?ClientCode=30
+--------------
+----Params----
+ClientCode: 30
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action SearchUserInfo on controller UserInfo
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+Exception has been thrown by the target of an invocation.
+Stack Trace:
+   at System.RuntimeMethodHandle._InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, SignatureStruct& sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.RuntimeMethodHandle.InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, Signature sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture, Boolean skipVisibilityChecks)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
+   at Castle.MonoRail.Framework.SmartDispatcherController.InvokeMethod(MethodInfo method, IRequest request, IDictionary`2 extraArgs)
+   at Castle.MonoRail.Framework.ActionMethodExecutorCompatible.Execute(IEngineContext engineContext, IController controller, IControllerContext context)
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+Message:
+Object reference not set to an instance of an object.
+Stack Trace:
+   at InternetInterface.Controllers.UserInfoController.SearchUserInfo(UInt32 clientCode, Boolean Editing) in C:\Web_Project\InternetInterface\src\InternetInterface\Controllers\UserInfoController.cs:line 29
+--------------
+--------------
+----Session---
+Login - zolotarev
+--------------
+
+13:27:18.143 [4] ERROR InternetInterface.Global - ----UrlReferer-------
+http://localhost:59059/Search/SearchBy?closeDemand=False&SearchText=&SearchBy.SearchBy=Auto&tariff=0&whoregister=0&brigad=0
+----Url-------
+http://localhost:59059/UserInfo/SearchUserInfo.rails?ClientCode=2
+--------------
+----Params----
+ClientCode: 2
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action SearchUserInfo on controller UserInfo
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+Exception has been thrown by the target of an invocation.
+Stack Trace:
+   at System.RuntimeMethodHandle._InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, SignatureStruct& sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.RuntimeMethodHandle.InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, Signature sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture, Boolean skipVisibilityChecks)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
+   at Castle.MonoRail.Framework.SmartDispatcherController.InvokeMethod(MethodInfo method, IRequest request, IDictionary`2 extraArgs)
+   at Castle.MonoRail.Framework.ActionMethodExecutorCompatible.Execute(IEngineContext engineContext, IController controller, IControllerContext context)
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+Message:
+Object reference not set to an instance of an object.
+Stack Trace:
+   at InternetInterface.Controllers.UserInfoController.SearchUserInfo(UInt32 clientCode, Boolean Editing) in C:\Web_Project\InternetInterface\src\InternetInterface\Controllers\UserInfoController.cs:line 28
+--------------
+--------------
+----Session---
+Login - zolotarev
+--------------
+
