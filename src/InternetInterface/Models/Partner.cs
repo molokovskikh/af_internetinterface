@@ -53,39 +53,21 @@ namespace InternetInterface.Models
 
 		public static bool RegistrLogicPartner(Partner _Partner, List<int> _Rights, ValidatorRunner validator)
 		{
-				//var newPartner = new Partner();
 				if (validator.IsValid(_Partner))
 				{
 					_Partner.RegDate = DateTime.Now;
 					_Partner.SaveAndFlush();
 					foreach (var right in _Rights)
 					{
-						/*if ((right == 4) && (!_Rights.Contains(1)))
-						{
-							_Rights.Add(1);
-						}*/
 						var newAccess = new PartnerAccessSet
 						                	{
 						                		AccessCat = AccessCategories.Find(right),
 												PartnerId = _Partner
 						                	};
 						newAccess.SaveAndFlush();
+						//newAccess.AccessCat.AcceptTo(_Partner);
 					}
 					AccessDependence.SetCrossAccessForRegister(_Rights,_Partner);
-					//AccessDependence.SetCrossAccess(ChRights, rights, partner)
-
-					var newPartnerID = Partner.FindAllByProperty("Login", _Partner.Login);
-					if (IsBrigadir(_Partner))
-					{
-						var newBrigad = new Brigad
-						                	{
-												Name = _Partner.Name,
-						                		PartnerID = newPartnerID[0],
-												Adress = _Partner.Adress,
-						                		BrigadCount = 1
-						                	};
-						newBrigad.SaveAndFlush();
-					}
 					return true;
 				}
 				else

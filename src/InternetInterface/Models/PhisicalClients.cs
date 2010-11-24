@@ -75,25 +75,13 @@ namespace InternetInterface.Models
 		public static bool RegistrLogicClient(PhisicalClients _client, uint _tariff,
 			ValidatorRunner validator, Partner hasRegistered)
 		{
-				var newClient = new PhisicalClients();
 				if (validator.IsValid(_client))
 				{
-					newClient.Name = _client.Name;
-					newClient.Surname = _client.Surname;
-					newClient.Patronymic = _client.Patronymic;
-					newClient.City = _client.City;
-					newClient.AdressConnect = _client.AdressConnect;
-					newClient.PassportSeries = _client.PassportSeries;
-					newClient.PassportNumber = _client.PassportNumber;
-					newClient.WhoGivePassport = _client.WhoGivePassport;
-					newClient.RegistrationAdress = _client.RegistrationAdress;
-					newClient.RegDate = DateTime.Now;
-					newClient.Tariff = Tariff.FindAllByProperty("Id", _tariff)[0];
-					newClient.Balance = _client.Balance;
-					newClient.Login = _client.Login;
-					newClient.Password = CryptoPass.GetHashString(_client.Password);
-					newClient.HasRegistered = hasRegistered;
-					newClient.SaveAndFlush();
+					_client.RegDate = DateTime.Now;
+					_client.Tariff = Tariff.Find(_tariff);
+					_client.Password = CryptoPass.GetHashString(_client.Password);
+					_client.HasRegistered = hasRegistered;
+					_client.SaveAndFlush();
 					return true;
 				}
 				return false;

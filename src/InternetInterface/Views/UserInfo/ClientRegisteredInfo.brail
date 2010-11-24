@@ -47,7 +47,7 @@ end
                 ${WriteCell("Адрес регистрации", Client.RegistrationAdress)}
                 ${WriteCell("Баланс по счету", Client.Balance)}
                 ${WriteCell("Логин", Client.Login)}
-                ${WriteCell("Пароль", Client.Password)}
+                ${WriteCell("Пароль", Password)}
                 ${WriteCell("Тариф", Client.Tariff.Name)}
                 ${WriteCell("Кем зарегистрирован", Client.HasRegistered.Name)}
             </tbody>

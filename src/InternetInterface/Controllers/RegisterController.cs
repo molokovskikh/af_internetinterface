@@ -34,17 +34,13 @@ namespace InternetInterface.Controllers
 			{
 				user.Balance = balanceText;
 			}
-			user.Password = PhisicalClients.GeneratePassword();
+			var Password = PhisicalClients.GeneratePassword();
+			user.Password = Password;
 			if (PhisicalClients.RegistrLogicClient(user, tariff, Validator, InithializeContent.partner))
 			{
-				/*PropertyBag["Applying"] = "true";
-				PropertyBag["Client"] = new PhisicalClients();
-				PropertyBag["BalanceText"] = string.Empty;
-				PropertyBag["NewPass"] = user.Password;
-				PropertyBag["VB"] = new ValidBuilderHelper<PhisicalClients>(new PhisicalClients());
-				PropertyBag["ChangeBy"] = new ChangeBalaceProperties { ChangeType = TypeChangeBalance.ForTariff };*/
 				user.Tariff = Tariff.Find(tariff);
 				user.HasRegistered = InithializeContent.partner;
+				Flash["Password"] = Password;
 				Flash["Client"] = user;
 				RedirectToUrl("..//UserInfo/ClientRegisteredInfo.rails");
 			}
@@ -161,6 +157,7 @@ namespace InternetInterface.Controllers
 						               		PartnerId = partner
 						               	};
 						newRight.SaveAndFlush();
+						//newRight.AccessCat.AcceptTo(partner);
 					}
 					foreach (var t in ChRights)
 					{
@@ -172,8 +169,10 @@ namespace InternetInterface.Controllers
 						foreach (var partnerAccessSet in forDel)
 						{
 							partnerAccessSet.DeleteAndFlush();
+							//partnerAccessSet.AccessCat.DeleteTo(partner);
 						}
 					}
+
 					if ((!rights.Contains((int)AccessCategoriesType.RegisterPartner))
 						&& (ChRights.Contains((int)AccessCategoriesType.RegisterPartner)))
 					{
@@ -182,7 +181,7 @@ namespace InternetInterface.Controllers
 
 					AccessDependence.SetCrossAccess(ChRights, rights, partner);
 
-					if ((!rights.Contains((int)AccessCategoriesType.CloseDemand))
+					/*if ((!rights.Contains((int)AccessCategoriesType.CloseDemand))
 						&& (ChRights.Contains((int)AccessCategoriesType.CloseDemand)))
 					{
 						var delBrig = Brigad.FindAll(DetachedCriteria.For(typeof (Brigad))
@@ -204,7 +203,7 @@ namespace InternetInterface.Controllers
 											PartnerID = partner
 						             	};
 						brigad.SaveAndFlush();
-					}
+					}*/
 
 					Flash["EditiongMessage"] = "Изменения внесены успешно";
 				}

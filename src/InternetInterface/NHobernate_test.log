@@ -15858,3 +15858,135 @@ Stack Trace:
 Login - zolotarev
 --------------
 
+11:38:26.972 [76] ERROR InternetInterface.Global - ----UrlReferer-------
+
+----Url-------
+http://localhost:59059/Map/SiteMap.rails
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action SiteMap on controller Map
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+The following types may not be used as proxies:
+InternetInterface.Models.AccessCategories: method AcceptTo should be 'public/protected virtual' or 'protected internal virtual'
+InternetInterface.Models.AccessCategories: method DeleteTo should be 'public/protected virtual' or 'protected internal virtual'
+Stack Trace:
+   at NHibernate.Cfg.Configuration.ValidateEntities()
+   at NHibernate.Cfg.Configuration.Validate()
+   at NHibernate.Cfg.Configuration.BuildSessionFactory()
+   at Castle.ActiveRecord.Framework.SessionFactoryHolder.GetSessionFactory(Type type)
+   at Castle.ActiveRecord.Framework.SessionFactoryHolder.CreateScopeSession(Type type)
+   at Castle.ActiveRecord.Framework.SessionFactoryHolder.CreateSession(Type type)
+   at Castle.ActiveRecord.ActiveRecordBase.FindAll(Type targetType, Order[] orders, ICriterion[] criteria)
+   at Castle.ActiveRecord.ActiveRecordBase.FindAll(Type targetType, ICriterion[] criteria)
+   at Castle.ActiveRecord.ActiveRecordBase.FindAllByProperty(Type targetType, String property, Object value)
+   at Castle.ActiveRecord.ActiveRecordBase`1.FindAllByProperty(String property, Object value)
+   at InternetInterface.Controllers.Filter.AuthenticationFilter.Perform(ExecuteWhen exec, IEngineContext context, IController controller, IControllerContext controllerContext) in C:\Web_Project\InternetInterface\src\InternetInterface\Controllers\Filter\AuthenticationFilter.cs:line 15
+   at Castle.MonoRail.Framework.Controller.ProcessFilter(ExecuteWhen when, FilterDescriptor desc)
+   at Castle.MonoRail.Framework.Controller.ProcessFilters(IExecutableAction action, ExecuteWhen when)
+   at Castle.MonoRail.Framework.Controller.RunBeforeActionFilters(IExecutableAction action, Boolean& cancel)
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+--------------
+----Session---
+Login - zolotarev
+--------------
+
+11:45:17.455 [11] ERROR InternetInterface.Global - ----UrlReferer-------
+
+----Url-------
+http://localhost:59059/Map/SiteMap.rails
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action SiteMap on controller Map
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+The following types may not be used as proxies:
+InternetInterface.Models.AccessCategories: method AcceptTo should be 'public/protected virtual' or 'protected internal virtual'
+InternetInterface.Models.AccessCategories: method DeleteTo should be 'public/protected virtual' or 'protected internal virtual'
+Stack Trace:
+   at NHibernate.Cfg.Configuration.ValidateEntities()
+   at NHibernate.Cfg.Configuration.Validate()
+   at NHibernate.Cfg.Configuration.BuildSessionFactory()
+   at Castle.ActiveRecord.Framework.SessionFactoryHolder.GetSessionFactory(Type type)
+   at Castle.ActiveRecord.Framework.SessionFactoryHolder.CreateScopeSession(Type type)
+   at Castle.ActiveRecord.Framework.SessionFactoryHolder.CreateSession(Type type)
+   at Castle.ActiveRecord.ActiveRecordBase.FindAll(Type targetType, Order[] orders, ICriterion[] criteria)
+   at Castle.ActiveRecord.ActiveRecordBase.FindAll(Type targetType, ICriterion[] criteria)
+   at Castle.ActiveRecord.ActiveRecordBase.FindAllByProperty(Type targetType, String property, Object value)
+   at Castle.ActiveRecord.ActiveRecordBase`1.FindAllByProperty(String property, Object value)
+   at InternetInterface.Controllers.Filter.AuthenticationFilter.Perform(ExecuteWhen exec, IEngineContext context, IController controller, IControllerContext controllerContext) in C:\Web_Project\InternetInterface\src\InternetInterface\Controllers\Filter\AuthenticationFilter.cs:line 15
+   at Castle.MonoRail.Framework.Controller.ProcessFilter(ExecuteWhen when, FilterDescriptor desc)
+   at Castle.MonoRail.Framework.Controller.ProcessFilters(IExecutableAction action, ExecuteWhen when)
+   at Castle.MonoRail.Framework.Controller.RunBeforeActionFilters(IExecutableAction action, Boolean& cancel)
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+--------------
+----Session---
+Login - zolotarev
+--------------
+
+11:45:37.738 [4] ERROR InternetInterface.Global - ----UrlReferer-------
+
+----Url-------
+http://localhost:59059/Map/SiteMap.rails
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action SiteMap on controller Map
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+The following types may not be used as proxies:
+InternetInterface.Models.AccessCategories: method AcceptTo should be 'public/protected virtual' or 'protected internal virtual'
+InternetInterface.Models.AccessCategories: method DeleteTo should be 'public/protected virtual' or 'protected internal virtual'
+Stack Trace:
+   at NHibernate.Cfg.Configuration.ValidateEntities()
+   at NHibernate.Cfg.Configuration.Validate()
+   at NHibernate.Cfg.Configuration.BuildSessionFactory()
+   at Castle.ActiveRecord.Framework.SessionFactoryHolder.GetSessionFactory(Type type)
+   at Castle.ActiveRecord.Framework.SessionFactoryHolder.CreateScopeSession(Type type)
+   at Castle.ActiveRecord.Framework.SessionFactoryHolder.CreateSession(Type type)
+   at Castle.ActiveRecord.ActiveRecordBase.FindAll(Type targetType, Order[] orders, ICriterion[] criteria)
+   at Castle.ActiveRecord.ActiveRecordBase.FindAll(Type targetType, ICriterion[] criteria)
+   at Castle.ActiveRecord.ActiveRecordBase.FindAllByProperty(Type targetType, String property, Object value)
+   at Castle.ActiveRecord.ActiveRecordBase`1.FindAllByProperty(String property, Object value)
+   at InternetInterface.Controllers.Filter.AuthenticationFilter.Perform(ExecuteWhen exec, IEngineContext context, IController controller, IControllerContext controllerContext) in C:\Web_Project\InternetInterface\src\InternetInterface\Controllers\Filter\AuthenticationFilter.cs:line 15
+   at Castle.MonoRail.Framework.Controller.ProcessFilter(ExecuteWhen when, FilterDescriptor desc)
+   at Castle.MonoRail.Framework.Controller.ProcessFilters(IExecutableAction action, ExecuteWhen when)
+   at Castle.MonoRail.Framework.Controller.RunBeforeActionFilters(IExecutableAction action, Boolean& cancel)
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+--------------
+----Session---
+Login - zolotarev
+--------------
+

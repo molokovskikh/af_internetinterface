@@ -33,6 +33,18 @@ namespace InternetInterface.Models
 			return FindAll(DetachedCriteria.For(typeof(PartnerAccessSet))
 									.Add(Restrictions.Eq("PartnerId", InithializeContent.partner)));
 		}
+
+		public override void SaveAndFlush()
+		{
+			base.SaveAndFlush();
+			AccessCat.AcceptTo(PartnerId);
+		}
+
+		public override void DeleteAndFlush()
+		{
+			base.DeleteAndFlush();
+			AccessCat.DeleteTo(PartnerId);
+		}
 	}
 
 }
