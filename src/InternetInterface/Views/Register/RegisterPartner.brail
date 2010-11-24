@@ -13,24 +13,9 @@
 <div id="container">
     <div id="block-tables" class="block">
         <div class="content">
-                            <%if IsDefined("Editing"): %>
-                            <%if (not Editing): %>
-                            <% if Applying == "true": %>
-                                    <div class="flash">
-                                        <div class="message notice">
-                                        <p><strong>Регистрация пользователя прошла успешно</strong></p>
-                                        </div>
-                                    </div>
-                            <% end %>
-                            <%end %>
-                            <%end %>
-                            <%if IsDefined("EditiongMessage"): %>
-                                    <div class="flash">
-                                        <div class="message notice">
-                                        <p><strong>${EditiongMessage}</strong></p>
-                                        </div>
-                                    </div>
-                            <%end %>
+                            <%if IsDefined("EditiongMessage"):
+                            output WriteMessageNotice(EditiongMessage)
+                            end%>
             <div class="inner">
                             <%if IsDefined("Editing"): %>
                             <%if (not Editing): %>

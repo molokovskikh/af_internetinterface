@@ -13,7 +13,7 @@ namespace InternetInterface.Controllers
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class UserInfoController : SmartDispatcherController
 	{
-		private static bool _editFlag;
+		//private static bool _editFlag;
 		//[AccessibleThrough(Verb.Get)]
 		public void SearchUserInfo(uint clientCode, bool Editing)
 		{
@@ -40,13 +40,13 @@ namespace InternetInterface.Controllers
 			//if (EditFlag) {EditInformation(); }
 		}
 
-		/*[AccessibleThrough(Verb.Post)]
+		[AccessibleThrough(Verb.Post)]
 		public void LoadEditMudule(uint ClientID)
 		{
 			//SearchUserInfo(ClientID, true);
 			Flash["Editing"] = true;
 			RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientID + "&Editing=true");
-		}*/
+		}
 
 		public void ClientRegisteredInfo()
 		{
@@ -99,7 +99,7 @@ namespace InternetInterface.Controllers
 			{
 				updateClient.UpdateAndFlush();
 				PropertyBag["Editing"] = false;
-				Flash["EditFlag"] = true;
+				Flash["EditFlag"] = "Данные изменены";
 				//_editFlag = true;
 				RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientID );
 			}
@@ -156,7 +156,7 @@ namespace InternetInterface.Controllers
 			{
 				thisPay.SaveAndFlush();
 				Flash["thisPay"] = new Payment();
-				Flash["Applying"] = true;
+				Flash["Applying"] = "Баланс пополнен";
 				clientToch.Balance = Convert.ToString(Convert.ToDecimal(clientToch.Balance) + Convert.ToDecimal(forChangeSumm));
 				clientToch.UpdateAndFlush();
 			}

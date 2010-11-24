@@ -14,6 +14,7 @@ using NHibernate.Tool.hbm2ddl;
 
 namespace InternetInterface.Controllers
 {
+	//[Layout("Massage")]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class RegisterController : SmartDispatcherController
 	{

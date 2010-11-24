@@ -13,24 +13,14 @@
     </div>
 </div>
 <% else: %>
-<%if IsDefined("PornNumError"): %>
-       <div class="flash">
-                     <div class="message error">
-                       <p>${PornNumError}</p>
-                     </div>
-        </div>
-<%end %>
+        <%if IsDefined("PornNumError"):
+               output WriteMessageError(PornNumError)
+        end %>
 <div id="block-tables" class="block">
 <div class="content">
-<%if IsDefined("DemandAccept"): %>
-<% if DemandAccept: %>
-       <div class="flash">
-                     <div class="message notice">
-                       <p>Заявки закрыты</p>
-                     </div>
-        </div>
-<%end %>
-<%end %>
+        <%if IsDefined("DemandAccept"):
+              output  WriteMessageError(DemandAccept)
+        end %>
 <table class="table"  style="width: 100%; font-size: small;">
     <thead>
         <tr valign="top">
@@ -92,8 +82,8 @@
             ${item.RegistrationAdress}
             </td>            
             <td>${item.RegDate}</td>
-            <%if item.tariff != null:  %>
-            <td>${item.tariff.Name}</td>
+            <%if item.Tariff != null:  %>
+            <td>${item.Tariff.Name}</td>
             <%else: %>
             <td>Тариф не определен </td>
             <%end %>

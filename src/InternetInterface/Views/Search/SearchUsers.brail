@@ -26,15 +26,9 @@
 <table border="0" bgcolor="#FFFFFF" cellspacing="1" cellpadding="0">
 <input type="hidden" name="closeDemand" value="${closeDemand}" />
 <tr>
-<%if IsDefined("CreateDemandConnect"): %>
-<% if CreateDemandConnect: %>
-       <div class="flash">
-                     <div class="message notice">
-                       <p>Заявки оформлены</p>
-                     </div>
-        </div>
-<%end %>
-<%end %>
+        <%if IsDefined("CreateDemandConnect"):
+              output  WriteMessageNotice(CreateDemandConnect)
+        end %>
     <td width="100%">
     <table class="table" bgcolor="#FFFFFF">
     <tr>

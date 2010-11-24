@@ -177,7 +177,7 @@ WHERE PA.ID = {0} and PC.Connected = false", InithializeContent.partner.Id));
 							break;
 						}
 					}
-					PropertyBag["DemandAccept"] = true;
+					PropertyBag["DemandAccept"] = "Заявки закрыты";
 				}
 			}
 			else
@@ -205,7 +205,7 @@ WHERE PA.ID = {0} and PC.Connected = false", InithializeContent.partner.Id));
 				newRequest.ClientID.HasConnected = newRequest.BrigadNumber;
 				newRequest.SaveAndFlush();
 			}
-			Flash["CreateDemandConnect"] = true;
+			Flash["CreateDemandConnect"] = "Заявки оформлены";
 			RedirectToUrl(@"../Search/SearchUsers.rails");
 		}
 

@@ -13,13 +13,9 @@
 <div id="block-login" class="block">
         <h2>Введите учетные данные</h2>
         <div class="content login">
-        <%if IsDefined("AccessDenied"): %>
-            <div class="flash">
-            <div class="message error">
-              <p>${AccessDenied}</p>
-            </div>
-          </div>
-       <% end %>
+        <%if IsDefined("AccessDenied"):
+               output WriteMessageError(AccessDenied)
+        end %>
           <form class="form login" method="post" action="${siteroot}/Login/Sub">
             <div class="group wat-cf">
               <div class="left">

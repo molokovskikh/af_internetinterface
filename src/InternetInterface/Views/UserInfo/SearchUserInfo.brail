@@ -7,31 +7,18 @@
 <div id="container">
 <div id="block-tables" class="block">
 <div class="content">
-             <%if IsDefined("EditFlag"): %>
-             <% if EditFlag: %>
-                  <div class="flash">
-                         <div class="message notice">
-                            <p><strong>Данные изменены</strong></p>
-                         </div>
-                  </div>
-            <% end %>
-            <% end %>
-            <%if IsDefined("Applying"): %>
-             <% if Applying: %>
-                  <div class="flash">
-                         <div class="message notice">
-                            <p><strong>Баланс пополнен</strong></p>
-                         </div>
-                  </div>
-            <% end %>
-            <% end %>
-
     <%if not Editing: %>
         <form class="form login" method="post" action="${siteroot}/UserInfo/LoadEditMudule">
     <input type="hidden" name="ClientID" value="${ClientCode}" />
     <input type="hidden" name="EditFlag" value="${Editing}" />
 	<table class="table" style="width: 100%;" align="left">
     <thead>
+            <%if IsDefined("EditFlag"):
+              output  WriteMessageNotice(EditFlag)
+        end %>
+                <%if IsDefined("Applying"):
+               output WriteMessageNotice(Applying)
+        end %>
         <th>Информация по клиенту ${Client.Surname}  ${Client.Name}  ${Client.Patronymic}
         <%if PartnerAccessSet.AccesPartner("RC"): %>
          <input id="EditButton" type="submit" value="Редактировать"  align="right" />

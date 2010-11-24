@@ -1,0 +1,15 @@
+﻿def WriteMessageNotice(MessageText as string):
+             return """<div class='flash'> 
+               <div class='message notice'> 
+                  <p><strong>${MessageText}</strong></p> 
+               </div> 
+           </div>"""
+end
+
+def WriteMessageError(MessageText as string):
+             return """<div class='flash'> 
+               <div class='message error'> 
+                  <p><strong>${MessageText}</strong></p> 
+               </div> 
+           </div>"""
+end
