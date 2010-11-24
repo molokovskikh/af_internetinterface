@@ -7,6 +7,14 @@ namespace InternetInterface.Controllers.Filter
 {
 	public class AuthenticationFilter : IFilter
 	{
+		/// <summary>
+		/// Фильтр разграничения доступа к методам контроллеров
+		/// </summary>
+		/// <param name="exec"></param>
+		/// <param name="context"></param>
+		/// <param name="controller"></param>
+		/// <param name="controllerContext"></param>
+		/// <returns></returns>
 		public bool Perform(ExecuteWhen exec, IEngineContext context, IController controller, IControllerContext controllerContext)
 		{
 #if DEBUG

@@ -6,6 +6,11 @@ namespace InternetInterface.Controllers
 {
 	public class LoginController : SmartDispatcherController
 	{
+		/// <summary>
+		/// Метод выполняется по нажати. на кнопку "Войти"
+		/// </summary>
+		/// <param name="Login"></param>
+		/// <param name="Password"></param>
 		[AccessibleThrough(Verb.Post)]
 		public void Sub(string Login, string Password)
 		{
