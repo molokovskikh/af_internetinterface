@@ -15817,3 +15817,44 @@ Stack Trace:
 Login - zolotarev
 --------------
 
+09:47:27.789 [10] ERROR InternetInterface.Global - ----UrlReferer-------
+http://localhost:59059/Register/RegisterPartner?Partner=23
+----Url-------
+http://localhost:59059/Register/EditPartner
+--------------
+----Params----
+--------------
+----Error-----
+Message:
+Error processing MonoRail request. Action EditPartner on controller Register
+Stack Trace:
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--------------
+Message:
+Exception has been thrown by the target of an invocation.
+Stack Trace:
+   at System.RuntimeMethodHandle._InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, SignatureStruct& sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.RuntimeMethodHandle.InvokeMethodFast(IRuntimeMethodInfo method, Object target, Object[] arguments, Signature sig, MethodAttributes methodAttributes, RuntimeType typeOwner)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture, Boolean skipVisibilityChecks)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
+   at Castle.MonoRail.Framework.SmartDispatcherController.InvokeMethod(MethodInfo method, IRequest request, IDictionary`2 extraArgs)
+   at Castle.MonoRail.Framework.ActionMethodExecutorCompatible.Execute(IEngineContext engineContext, IController controller, IControllerContext context)
+   at Castle.MonoRail.Framework.Controller.RunActionAndRenderView()
+   at Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context)
+   at Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context)
+--------------
+Message:
+Object reference not set to an instance of an object.
+Stack Trace:
+   at InternetInterface.Models.AccessDependence.SetCrossAccess(List`1 oldAccessSet, List`1 newAccessSet, Partner partner) in C:\Web_Project\InternetInterface\src\InternetInterface\Models\Access\AccessCategories.cs:line 122
+   at InternetInterface.Controllers.RegisterController.EditPartner(Partner partner, List`1 rights) in C:\Web_Project\InternetInterface\src\InternetInterface\Controllers\RegisterController.cs:line 183
+--------------
+--------------
+----Session---
+Login - zolotarev
+--------------
+

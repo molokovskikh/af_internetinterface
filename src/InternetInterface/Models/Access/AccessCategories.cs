@@ -22,10 +22,33 @@ namespace InternetInterface.Models
 		{
 			Head = head;
 			Child = child;
+			AddEvent = AddFreeMethod;
+			DeleteEvent = DeleteFreeMethod;
+		}
+
+		public TwoRule()
+		{
+			// TODO: Complete member initialization
 		}
 
 		public AccessCategoriesType Head;
 		public AccessCategoriesType Child;
+
+		public delegate void AddEventHandler(Partner partner);
+		public delegate void DeleteleEventHandler(Partner partner);
+
+		public AddEventHandler AddEvent;
+		public DeleteleEventHandler DeleteEvent;
+
+		private static void AddFreeMethod(Partner partner)
+		{
+		}
+
+		private static void DeleteFreeMethod(Partner partner)
+		{
+		}
+
+
 	}
 
 	public class AccessDependence
@@ -42,8 +65,14 @@ namespace InternetInterface.Models
 			hasDelete = new List<int>();
 			accessDependence = new List<TwoRule>
 			                   	{
-									new TwoRule(AccessCategoriesType.GetClientInfo,AccessCategoriesType.SendDemand),
-									new TwoRule(AccessCategoriesType.ChangeBalance,AccessCategoriesType.CloseDemand)
+			                   		//new TwoRule(AccessCategoriesType.GetClientInfo,AccessCategoriesType.SendDemand),
+			                   		/*new TwoRule
+			                   			{
+			                   				Head = AccessCategoriesType.GetClientInfo,
+			                   				Child = AccessCategoriesType.SendDemand
+			                   			},*/
+			                   		new TwoRule(AccessCategoriesType.GetClientInfo, AccessCategoriesType.SendDemand),
+			                   		new TwoRule(AccessCategoriesType.ChangeBalance, AccessCategoriesType.CloseDemand)
 			                   		/*new TwoRule("GetClientInfo","SendDemand"),
 									new TwoRule("SendDemand","CloseDemand"),
 									new TwoRule("CloseDemand","RegisterPartner"),
@@ -91,6 +120,7 @@ namespace InternetInterface.Models
 							hasDelete.Add(partnerAccessSet.AccessCat.Id);
 							partnerAccessSet.DeleteAndFlush();
 						}
+						//twoRule.DeleteEvent(partner);
 					}
 				}
 				toAdd.Clear();
@@ -106,11 +136,14 @@ namespace InternetInterface.Models
 					{
 						toAdd.Add(twoRule.Child);
 					}
+					var partnerAccessSet = PartnerAccessSet.FindAll(DetachedCriteria.For(typeof (PartnerAccessSet))
+					                                                	.Add(Expression.Eq("PartnerId", partner)));
 					foreach (var toadd in toAdd)
 					{
-						if (PartnerAccessSet.FindAll(DetachedCriteria.For(typeof (PartnerAccessSet))
+						/*if (PartnerAccessSet.FindAll(DetachedCriteria.For(typeof (PartnerAccessSet))
 						                             	.Add(Expression.Eq("PartnerId", partner))
-														.Add(Expression.Eq("AccessCat", AccessCategories.Find((int)toadd)))).Length == 0)
+														.Add(Expression.Eq("AccessCat", AccessCategories.Find((int)toadd)))).Length == 0)*/
+						if (partnerAccessSet.Where(c => c.AccessCat.Id == (int)toadd).ToList().Count == 0)
 						{
 							var newRight = new PartnerAccessSet
 							               	{
