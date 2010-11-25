@@ -96,7 +96,7 @@
                <tr>
                <td >
                   <div class="actions">
-                       <button type="submit" class="button">
+                       <button type="submit" id="SaveButton" class="button">
                        <img alt="Save" src="../Images/application_edit.png"> Сохранить
                        </button>
                                 <!--    <input class="button" id="RegisterButton" type="submit" value="Зарегистрировать" /></td> -->
@@ -166,7 +166,7 @@
              </tr>
         <tr colspan="3">
             <td>
-               <button type="submit" class="button">
+               <button type="submit" id="ChangeBalanceButton" class="button">
                   <img alt="Save" src="../Images/tick.png"> Пополнить баланс
                 </button>
             </td>

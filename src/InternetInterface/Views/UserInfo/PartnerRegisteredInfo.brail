@@ -40,7 +40,7 @@
                     <td>${Partner.TelNum}</td>
                 </tr>
                 <tr>
-                    <td>Адрес</td>
+                    <td>Адрес </td>
                     <td>${Partner.Adress}</td>
                 </tr>
                 <tr>

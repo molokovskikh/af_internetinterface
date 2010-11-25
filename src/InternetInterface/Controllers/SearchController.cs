@@ -159,8 +159,11 @@ WHERE PA.ID = {0} and PC.Connected = false", InithializeContent.partner.Id));
 									endPoint.Switch = NetworkSwitches.Find((uint) client.SwitchId);
 									endPoint.Client = inetClient;
 									endPoint.SaveAndFlush();
-									cdDate[0].CloseDemandDate = DateTime.Now;
-									cdDate[0].UpdateAndFlush();
+									foreach (var requestsConnection in cdDate)
+									{
+										requestsConnection.CloseDemandDate = DateTime.Now;
+										cdDate[0].UpdateAndFlush();
+									}
 									scope.VoteCommit();
 								}
 								else
@@ -229,16 +232,7 @@ WHERE PA.ID = {0} and PC.Connected = false", InithializeContent.partner.Id));
 			}
 			Flash["SClients"] = clients;
 			PropertyBag["ConnectBlockDisplay"] = ((List<PhisicalClients>) clients).Find(p => p.HasConnected == null);
-			/*var tariffText = new List<Tariff>();
-			var partnerText = new List<Partner>();
-			foreach (var t in clients)
-			{
-				tariffText.Add(t.Tariff);
-				partnerText.Add(t.HasRegistered);
-			}*/
-			//Flash["tariffText"] = tariffText;
-			//Flash["partnerText"] = partnerText;
-			//var mapPartner = Partner.FindAllByProperty("Login", Session["Login"]);
+
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["WhoRegistered"] = Partner.FindAllSort();
 			PropertyBag["ChTariff"] = tariff;
@@ -251,11 +245,7 @@ WHERE PA.ID = {0} and PC.Connected = false", InithializeContent.partner.Id));
 
 			PropertyBag["CloseDemand"] = closeDemand;
 
-			/*PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
-			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;*/
-			
 			Flash["Brigads"] = Brigad.FindAllSort();
-			//PropertyBag["Connected"] = connected;
 		}
 
 

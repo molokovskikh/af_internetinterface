@@ -4,33 +4,40 @@
             color: #aaa;
         }
     </style>
-<table class="table">
-<thead>
-<th colspan = "7" align="center"> Интерфейс для партнера: ${PARTNERNAME}</th>
-<tr valign="top">
-    <th><a href="../Map/SiteMap.rails"><span class="MH">Домой</span></a></th>
-   <%if PartnerAccessSet.AccesPartner("RP"): %>
-   <th><a href = "../Register/RegisterPartner.rails" ><span class="MH">Регистрация партнера</span></a></th>
-    <%end %>
-    <%if PartnerAccessSet.AccesPartner("RP"): %>
-   <th><a href = "../UserInfo/PartnersPreview.rails" ><span class="MH">Посмотреть партнеров</span></a></th>
-    <%end %>
-    <%if PartnerAccessSet.AccesPartner("RC"): %>
-   <th><a href = "../Register/RegisterClient.rails" ><span class="MH">Регистрация нового абонента</span></a></th>
-   <%end %>
-   <%if PartnerAccessSet.AccesPartner("GCI"): %>
-   <th><a href = "../Search/SearchUsers.rails" ><span class="MH">Найти абонента</span></a></th>
-   <%end %>
-   <%if PartnerAccessSet.AccesPartner("CD"): %>
-   <th><a href = "../Search/SearchBy.rails?CloseDemand=true" ><span class="MH"> Закрыть заявки</span></a></th>
-   <%end %>
-   <th>
-      <form class="form" id="Exit" name="Exit" method="post" action="${siteroot}/ExitPartner/Yes" >
-      <button type="submit" class="button">
-      <img alt="Save" src="../Images/application_edit.png"> Выход
-      </button>
-      </form>
-      </th>
-</tr>
-</thead>
+<table class="table" >
+    <thead>
+        <th style="padding:0px">
+            <table class="table" style = "width:auto" >
+            <thead>
+            <th colspan = "7" align="center"> Интерфейс для партнера: ${PARTNERNAME}</th>
+            <tr valign="top">
+                <th><a href="../Map/SiteMap.rails"><span class="MH">Домой</span></a></th>
+               <%if PartnerAccessSet.AccesPartner("RP"): %>
+               <th><a href = "../Register/RegisterPartner.rails" ><span class="MH">Регистрация партнера</span></a>
+               </th>
+                <%end %>
+                <%if PartnerAccessSet.AccesPartner("RP"): %>
+               <th><a href = "../UserInfo/PartnersPreview.rails" ><span class="MH">Посмотреть партнеров</span></a></th>
+                <%end %>
+                <%if PartnerAccessSet.AccesPartner("RC"): %>
+               <th><a href = "../Register/RegisterClient.rails" ><span class="MH">Регистрация нового абонента</span></a></th>
+               <%end %>
+               <%if PartnerAccessSet.AccesPartner("GCI"): %>
+               <th><a href = "../Search/SearchUsers.rails" ><span class="MH">Найти абонента</span></a></th>
+               <%end %>
+               <%if PartnerAccessSet.AccesPartner("CD"): %>
+               <th><a href = "../Search/SearchBy.rails?CloseDemand=true" ><span class="MH"> Закрыть заявки</span></a></th>
+               <%end %>
+               <th>
+                  <form class="form" id="Exit" name="Exit" method="post" action="${siteroot}/ExitPartner/Yes" >
+                  <button type="submit" class="button">
+                  <img alt="Save" src="../Images/application_edit.png"> Выход
+                  </button>
+                  </form>
+               </th>
+            </tr>
+            </thead>
+            </table>
+        </th>
+    </thead>
 </table>

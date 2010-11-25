@@ -70,8 +70,9 @@ namespace InternetInterface.Controllers
 			{
 				partner.SetValidationErrors(Validator.GetErrorSummary(partner));
 				PropertyBag["Partner"] = partner;
-				PropertyBag["Applying"] = "false";
+				//PropertyBag["Applying"] = "false";
 				PropertyBag["ChRights"] = rights;
+				PropertyBag["Editing"] = false;
 				PropertyBag["VB"] = new ValidBuilderHelper<Partner>(partner);
 			}
 		}
@@ -90,61 +91,74 @@ namespace InternetInterface.Controllers
 		[AccessibleThrough(Verb.Post)]
 		public void EditPartner([DataBind("Partner")]Partner partner, [DataBind("ForRight")]List<int> rights)
 		{
-			if (Validator.IsValid(partner))
+			var PID = Partner.FindAllByProperty("Login", partner.Login)[0].Id;
+			if (rights.Count != 0)
 			{
-				var PID = Partner.FindAllByProperty("Login", partner.Login)[0].Id;
-				var basePartner = Partner.FindAllByProperty("Login", partner.Login);
-				if (basePartner.Length != 0)
+				if (Validator.IsValid(partner))
 				{
-					//Далее написана несистемная фигня, проблема в привязке объекта вне хиберовской сесии к сесии
-					//как реализовать пока не придумал, поработает пока что так, потом займусь.
-					partner.Id = basePartner[0].Id;
-					basePartner[0].Name = partner.Name;
-					basePartner[0].TelNum = partner.TelNum;
-					basePartner[0].Adress = partner.Adress;
-					basePartner[0].Email = partner.Email;
-					basePartner[0].UpdateAndFlush();
-					//конец несистемной фигни
-					var ChRights = GetPartnerAccess((int) PID);
-					foreach (var t in rights)
+					var basePartner = Partner.FindAllByProperty("Login", partner.Login);
+					if (basePartner.Length != 0)
 					{
-						if (ChRights.Contains(t)) continue;
-						var newRight = new PartnerAccessSet
-						               	{
-						               		AccessCat = AccessCategories.Find(t),
-						               		PartnerId = partner
-						               	};
-						newRight.SaveAndFlush();
-					}
-					foreach (var t in ChRights)
-					{
-						if (rights.Contains(t)) continue;
-						if (t == (int)AccessCategoriesType.RegisterPartner) continue;
-						var forDel = PartnerAccessSet.FindAll(DetachedCriteria.For(typeof (PartnerAccessSet))
-						                                      	.Add(Expression.Eq("PartnerId", partner))
-						                                      	.Add(Expression.Eq("AccessCat", AccessCategories.Find(t))));
-						foreach (var partnerAccessSet in forDel)
+						//Далее написана несистемная фигня, проблема в привязке объекта вне хиберовской сесии к сесии
+						//как реализовать пока не придумал, поработает пока что так, потом займусь.
+						partner.Id = basePartner[0].Id;
+						if (Validator.IsValid(partner))
+							basePartner[0].Name = partner.Name;
+						basePartner[0].TelNum = partner.TelNum;
+						basePartner[0].Adress = partner.Adress;
+						basePartner[0].Email = partner.Email;
+						basePartner[0].UpdateAndFlush();
+						//конец несистемной фигни
+						var ChRights = GetPartnerAccess((int) PID);
+						foreach (var t in rights)
 						{
-							partnerAccessSet.DeleteAndFlush();
+							if (ChRights.Contains(t)) continue;
+							var newRight = new PartnerAccessSet
+							               	{
+							               		AccessCat = AccessCategories.Find(t),
+							               		PartnerId = partner
+							               	};
+							newRight.SaveAndFlush();
 						}
-					}
+						foreach (var t in ChRights)
+						{
+							if (rights.Contains(t)) continue;
+							if (t == (int) AccessCategoriesType.RegisterPartner) continue;
+							var forDel = PartnerAccessSet.FindAll(DetachedCriteria.For(typeof (PartnerAccessSet))
+							                                      	.Add(Expression.Eq("PartnerId", partner))
+							                                      	.Add(Expression.Eq("AccessCat", AccessCategories.Find(t))));
+							foreach (var partnerAccessSet in forDel)
+							{
+								partnerAccessSet.DeleteAndFlush();
+							}
+						}
 
-					if ((!rights.Contains((int)AccessCategoriesType.RegisterPartner))
-						&& (ChRights.Contains((int)AccessCategoriesType.RegisterPartner)))
+						if ((!rights.Contains((int) AccessCategoriesType.RegisterPartner))
+						    && (ChRights.Contains((int) AccessCategoriesType.RegisterPartner)))
+						{
+							rights.Add((int) AccessCategoriesType.RegisterPartner);
+						}
+
+						AccessDependence.SetCrossAccess(ChRights, rights, partner);
+
+						Flash["EditiongMessage"] = "Изменения внесены успешно";
+					}
+					else
 					{
-						rights.Add((int)AccessCategoriesType.RegisterPartner);
+						Flash["EditiongMessage"] = "Был зарегистрирован новый партнер";
+						Partner.RegistrLogicPartner(partner, rights, Validator);
 					}
 
-					AccessDependence.SetCrossAccess(ChRights, rights, partner);
-
-					Flash["EditiongMessage"] = "Изменения внесены успешно";
+					RedirectToUrl("../Register/RegisterPartner?PartnerKey=" + PID);
 				}
 				else
 				{
-					Flash["EditiongMessage"] = "Был зарегистрирован новый партнер";
-					Partner.RegistrLogicPartner(partner, rights, Validator);
+					partner.SetValidationErrors(Validator.GetErrorSummary(partner));
 				}
-				RedirectToUrl("../Register/RegisterPartner?Partner=" + PID);
+			}
+			else
+			{
+				RedirectToUrl("../Register/RegisterPartner?PartnerKey=" + PID);
 			}
 		}
 
@@ -161,17 +175,23 @@ namespace InternetInterface.Controllers
 			return RightArray.Select(partnerAccessSet => partnerAccessSet.AccessCat.Id).ToList();
 		}
 
-		public void RegisterPartner(int Partner)
+		public void RegisterPartner(int PartnerKey)
 		{
-			PropertyBag["Rights"] =
-				ActiveRecordBase<AccessCategories>.FindAll(
-					DetachedCriteria.For<AccessCategories>().Add(Expression.Sql("ReduceName <> 'RP'")));
-			PropertyBag["Partner"] = Models.Partner.Find((uint)Partner);
-			var ChRights = GetPartnerAccess(Partner);
-			PropertyBag["ChRights"] = ChRights;
-			PropertyBag["VB"] = new ValidBuilderHelper<Partner>(new Partner());
-			PropertyBag["Applying"] = "false";
-			PropertyBag["Editing"] = true;
+			if (Partner.FindAll().Count(p => p.Id == PartnerKey) != 0)
+			{
+				PropertyBag["Rights"] =
+					ActiveRecordBase<AccessCategories>.FindAll(
+						DetachedCriteria.For<AccessCategories>().Add(Expression.Sql("ReduceName <> 'RP'")));
+				PropertyBag["Partner"] = Partner.Find((uint)PartnerKey);
+				PropertyBag["ChRights"] = GetPartnerAccess(PartnerKey);
+				PropertyBag["VB"] = new ValidBuilderHelper<Partner>(new Partner());
+				PropertyBag["Applying"] = "false";
+				PropertyBag["Editing"] = true;
+			}
+			else
+			{
+				RedirectToUrl("../Register/RegisterPartner");
+			}
 		}
 
 		public void RegisterPartner()
@@ -179,7 +199,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Rights"] =
 				ActiveRecordBase<AccessCategories>.FindAll(DetachedCriteria.For<AccessCategories>().Add(Expression.Sql("ReduceName <> 'RP'")));
 			PropertyBag["Partner"] = new Partner();
-			PropertyBag["Applying"] = "false";
+			//PropertyBag["Applying"] = "false";
 			PropertyBag["ChRights"] = new List<int>();
 			PropertyBag["VB"] = new ValidBuilderHelper<Partner>(new Partner());
 			PropertyBag["Editing"] = false;

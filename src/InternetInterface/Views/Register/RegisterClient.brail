@@ -40,7 +40,7 @@
                             <tr>
                                 <td >
                                 <div class="actions">
-                                                 <button type="submit" class="button">
+                                                 <button type="submit" class="button" id="RegisterClientButton">
                                                 <img alt="Save" src="../Images/application_edit.png"> Зарегистрировать
                                                  </button>
                                 <!--    <input class="button" id="RegisterButton" type="submit" value="Зарегистрировать" /></td> -->

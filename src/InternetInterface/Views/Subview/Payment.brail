@@ -1,9 +1,9 @@
 ﻿ <tr>
     <td>
-          <input type="radio" id="Autosearch" name="ChangedBy.ChangeType" value="ForTariff" ${"checked" if ChangeBy.IsForTariff()} />
+          <input type="radio" id="ForTariffChange" name="ChangedBy.ChangeType" value="ForTariff" ${"checked" if ChangeBy.IsForTariff()} />
           <label for="Autosearch">Внести сумму по тарифному плану</label><br />
 
-          <input type="radio" id="Radio1" name="ChangedBy.ChangeType" value="OtherSumm" ${"checked" if ChangeBy.IsOtherSumm()} />
+          <input type="radio" id="OtherSummChange" name="ChangedBy.ChangeType" value="OtherSumm" ${"checked" if ChangeBy.IsOtherSumm()} />
           <label for="Other_Balance">Внести сумму:</label>
           <input type="text" id="BalanceText"  name="BalanceText"  value="${BalanceText}" style="width: 50%; " />
     </td>

@@ -56,7 +56,7 @@ namespace InternetInterfaceFixture.Helpers
 			return new IE(BuildTestUrl(String.Format(uri, args)));
 		}
 
-
+		[TestFixtureSetUp]
 		public static void ConfigTest()
 		{
 			XmlConfigurator.Configure();

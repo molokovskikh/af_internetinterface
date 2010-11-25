@@ -36,7 +36,7 @@ end
 
         <table class="table" style="width:100%; " border="0" id="PartnerInfoTable">
             <thead>
-                <th colspan="2">Информация для клиента: ${Client.Surname} ${Client.Name} ${Client.Name}</th>
+                <th colspan="2">Информация для клиента: ${Client.Surname} ${Client.Name} ${Client.Patronymic}</th>
             </thead>
             <tbody>
                 ${WriteCell("Город", Client.City)}

@@ -1,7 +1,7 @@
 ﻿using System.Configuration;
 using System.IO;
+using CassiniDev;
 using InternetInterfaceFixture.Helpers;
-using Cassini;
 using NUnit.Framework;
 using WatiN.Core;
 
@@ -29,7 +29,7 @@ namespace InternetInterfaceFixture.Functional
 		[TearDown]
 		public void TeardownFixture()
 		{
-			_webServer.Stop();
+			_webServer.ShutDown();
 		}
 	}
 }

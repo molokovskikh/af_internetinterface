@@ -19,16 +19,6 @@ namespace InternetInterfaceFixture.Functional
 	[TestFixture]
 	class RegisterPartnerFixrure : WatinFixture
 	{
-		/*[TestFixtureSetUp]
-		public void Setup()
-		{
-			XmlConfigurator.Configure();
-			if (!ActiveRecordStarter.IsInitialized)
-				ActiveRecordStarter.Initialize(new[] {
-					Assembly.Load("InternetInterface"),
-					Assembly.Load("InternetInterfaceFixture"),
-				}, ActiveRecordSectionHandler.Instance);
-		}*/
 		[Test]
 		public void MigrationTets()
 		{
@@ -40,8 +30,8 @@ namespace InternetInterfaceFixture.Functional
 		{
 			Console.WriteLine(AccessCategoriesType.SendDemand.ToString());
 			AccessCategoriesType res;
-			Console.WriteLine(AccessCategoriesType.TryParse("SendDemand", out res));
-			Console.WriteLine(res);
+			//Console.WriteLine(AccessCategoriesType.TryParse("SendDemand", out res));
+			//Console.WriteLine(res);
 		}
 
 		[Test]
@@ -55,22 +45,39 @@ namespace InternetInterfaceFixture.Functional
 		}
 
 		[Test]
-		public void TestRegistr()
+		public void TestRegistrPartner()
 		{
-			using (var browser = Open("Register/RegisterPartner"))
+			using (var browser = Open("Register/RegisterPartner.rails"))
 			{
+				Assert.That(browser.Text, Is.StringContaining("Форма регистрации"));
+				Assert.That(browser.Text, Is.StringContaining("Фамилия Имя Отчество"));
+				Assert.That(browser.Text, Is.StringContaining("EMail"));
+				Assert.That(browser.Text, Is.StringContaining("Номер телефона"));
+				Assert.That(browser.Text, Is.StringContaining("Адрес"));
+				Assert.That(browser.Text, Is.StringContaining("Логин"));
+				Assert.That(browser.Text, Is.StringContaining("Опции доступа"));
+				var AccessCats = AccessCategories.FindAll().Where(p => p.Id != 5);
+				foreach (var cat in AccessCats)
+				{
+					Assert.That(browser.Text, Is.StringContaining(cat.Name));
+				}
 				browser.TextField(Find.ById("FIO")).AppendText("TestFIO");
 				browser.TextField(Find.ById("EMail")).AppendText("Test@Mail.ru");
 				browser.TextField(Find.ById("TelNum")).AppendText("8-111-111-11-11");
 				browser.TextField(Find.ById("Adress")).AppendText("earch");
 				var rnd = new Random();
-				browser.TextField(Find.ById("Login")).AppendText("Login"+rnd.Next(100));
+				var loginPrefix = rnd.Next(100);
+				browser.TextField(Find.ById("Login")).AppendText("Login" + loginPrefix);
 				browser.CheckBox(Find.ById("GCI")).Checked = true;
 				browser.CheckBox(Find.ById("RC")).Checked = true;
 				browser.CheckBox(Find.ById("CD")).Checked = true;
 				browser.Button(Find.ById("RegisterPartnerButton")).Click();
-				Assert.That(browser.Text, Is.StringContaining("Регистрация пользователя прошла успешно"));
-				//browser.Text(Find.ById("")).
+				Assert.That(browser.Text, Is.StringContaining("Информация для партнера: TestFIO"));
+				Assert.That(browser.Text, Is.StringContaining("EMailTest@Mail.ru"));
+				Assert.That(browser.Text, Is.StringContaining("Номер телефона8-111-111-11-11"));
+				Assert.That(browser.Text, Is.StringContaining("Адрес earch"));
+				Assert.That(browser.Text, Is.StringContaining("ЛогинLogin" + loginPrefix));
+				//browser.Text(Find.ById("")).  
 				/*browser.Link(Find.ByText("Мониторинг работы клиентов")).Click();
 				Assert.That(browser.Text, Is.StringContaining("Мониторинг работы клиентов"));
 				Assert.That(browser.SelectList(Find.ByName("filter")).SelectedOption.Text, Is.EqualTo("Список необновляющихся копий"));*/

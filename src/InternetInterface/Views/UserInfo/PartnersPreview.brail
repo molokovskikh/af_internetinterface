@@ -25,7 +25,7 @@
             <tbody>
              <% for i,Partner in enumerate(Partners): %>
                 <tr>
-                    <td><a href="../Register/RegisterPartner?Partner=${Partner.Id}">${Partner.Name}</a></td>
+                    <td><a href="../Register/RegisterPartner?PartnerKey=${Partner.Id}">${Partner.Name}</a></td>
                     <td>${Partner.Email}</td>
                     <td>${Partner.TelNum}</td>
                     <td>${Partner.Adress}</td>

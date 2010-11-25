@@ -54,10 +54,10 @@
                      <%end %>
                  <%else: %>
                     <%if (PartnerAccessSet.AccesPartner("CD") and CloseDemand): %>
-                        <td align="center"><input type="checkbox" name="ConnectList[${i}].ClientId" value=${item.Id} /> </td>
+                        <td align="center"><input type="checkbox" id="CliseDemandCheck${item.Id}" name="ConnectList[${i}].ClientId" value=${item.Id} /> </td>
                         <%if IsDefined("Switches"): %>
                             <td>
-                            <select name="ConnectList[${i}].SwitchId" id="SelectSwitches{i}" style="width: 100%" >
+                            <select name="ConnectList[${i}].SwitchId" id="SelectSwitches${item.Id}" style="width: 100%" >
                                    <%
                                     for j, Switch in enumerate(Switches): 
                                     %>
@@ -66,7 +66,7 @@
                             </select>
                             </td>
                         <%end %>
-                        <td align="center"><input type="text" id="Port${i}"  name="ConnectList[${i}].PortNumber"  style="width: 80%; " /></td>
+                        <td align="center"><input type="text" id="Port${item.Id}"  name="ConnectList[${i}].PortNumber"  style="width: 80%; " /></td>
                     <%else: %>
                         <td align="center">Нет</td>
                     <%end %>
@@ -123,7 +123,7 @@
         <%if (PartnerAccessSet.AccesPartner("CD") and CloseDemand): %>
          <tr>
             <td colspan="12">
-               <button type="submit" class="button" name="CloseDemandBut" value="CloseDemand">
+               <button type="submit" id="CliseDemandButton" class="button" name="CloseDemandBut" value="CloseDemand">
                   Закрыть заявки
                 </button>
             </td>

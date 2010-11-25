@@ -12,18 +12,6 @@ alter table Internet.RequestsConnection  drop foreign key FK6A05CD54C7F2DBAC
 
 
     
-alter table Internet.ConnectBrigads  drop foreign key FK14B0BE5EF29DAF50
-
-
-    
-alter table Internet.PartnerAccessSet  drop foreign key FKFB2A341A486245DF
-
-
-    
-alter table Internet.PartnerAccessSet  drop foreign key FKFB2A341A4370E58F
-
-
-    
 alter table internet.PaymentsPhisicalClient  drop foreign key FK82F42559C7F2DBAC
 
 
@@ -51,27 +39,46 @@ alter table internet.PhysicalClients  drop foreign key FKDE111BCF10E504C1
 alter table internet.PhysicalClients  drop foreign key FKDE111BCF1DF06EC1
 
 
-    drop table if exists Internet.RequestsConnection
+    
+alter table Internet.ConnectBrigads  drop foreign key FK14B0BE5EF29DAF50
 
-    drop table if exists Internet.ConnectBrigads
 
-    drop table if exists internet.Partners
+    
+alter table Internet.PartnerAccessSet  drop foreign key FKFB2A341A486245DF
 
-    drop table if exists Internet.Clients
 
-    drop table if exists internet.Tariffs
+    
+alter table Internet.PartnerAccessSet  drop foreign key FKFB2A341A4370E58F
 
-    drop table if exists Internet.PartnerAccessSet
 
     drop table if exists internet.AccessCategories
 
+    drop table if exists Internet.RequestsConnection
+
     drop table if exists internet.PaymentsPhisicalClient
 
-    drop table if exists Internet.NetworkSwitches
+    drop table if exists Internet.Clients
 
     drop table if exists Internet.ClientEndpoints
 
     drop table if exists internet.PhysicalClients
+
+    drop table if exists Internet.ConnectBrigads
+
+    drop table if exists Internet.NetworkSwitches
+
+    drop table if exists internet.Tariffs
+
+    drop table if exists internet.Partners
+
+    drop table if exists Internet.PartnerAccessSet
+
+    create table internet.AccessCategories (
+        Id INTEGER NOT NULL AUTO_INCREMENT,
+       Name VARCHAR(255),
+       ReduceName VARCHAR(255),
+       primary key (Id)
+    )
 
     create table Internet.RequestsConnection (
         Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -80,57 +87,6 @@ alter table internet.PhysicalClients  drop foreign key FKDE111BCF1DF06EC1
        BrigadNumber INTEGER UNSIGNED,
        ManagerID INTEGER UNSIGNED,
        ClientID INTEGER UNSIGNED,
-       primary key (Id)
-    )
-
-    create table Internet.ConnectBrigads (
-        Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-       Adress VARCHAR(255),
-       BrigadCount INTEGER,
-       Name VARCHAR(255),
-       PartnerID INTEGER UNSIGNED,
-       primary key (Id)
-    )
-
-    create table internet.Partners (
-        Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-       Name VARCHAR(255),
-       Email VARCHAR(255),
-       TelNum VARCHAR(255),
-       Adress VARCHAR(255),
-       RegDate DATETIME,
-       Login VARCHAR(255),
-       primary key (Id)
-    )
-
-    create table Internet.Clients (
-        Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-       Disabled TINYINT(1),
-       Name VARCHAR(255),
-       Type INTEGER,
-       PhisicalClient INTEGER,
-       primary key (Id)
-    )
-
-    create table internet.Tariffs (
-        Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-       Name VARCHAR(255),
-       Description VARCHAR(255),
-       Price INTEGER,
-       primary key (Id)
-    )
-
-    create table Internet.PartnerAccessSet (
-        Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-       Partner INTEGER UNSIGNED,
-       AccessCat INTEGER,
-       primary key (Id)
-    )
-
-    create table internet.AccessCategories (
-        Id INTEGER NOT NULL AUTO_INCREMENT,
-       Name VARCHAR(255),
-       ReduceName VARCHAR(255),
        primary key (Id)
     )
 
@@ -143,10 +99,12 @@ alter table internet.PhysicalClients  drop foreign key FKDE111BCF1DF06EC1
        primary key (Id)
     )
 
-    create table Internet.NetworkSwitches (
+    create table Internet.Clients (
         Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-       Mac VARCHAR(255),
+       Disabled TINYINT(1),
        Name VARCHAR(255),
+       Type INTEGER,
+       PhisicalClient INTEGER,
        primary key (Id)
     )
 
@@ -185,6 +143,48 @@ alter table internet.PhysicalClients  drop foreign key FKDE111BCF1DF06EC1
        primary key (Id)
     )
 
+    create table Internet.ConnectBrigads (
+        Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+       Adress VARCHAR(255),
+       BrigadCount INTEGER,
+       Name VARCHAR(255),
+       PartnerID INTEGER UNSIGNED,
+       primary key (Id)
+    )
+
+    create table Internet.NetworkSwitches (
+        Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+       Mac VARCHAR(255),
+       Name VARCHAR(255),
+       primary key (Id)
+    )
+
+    create table internet.Tariffs (
+        Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+       Name VARCHAR(255),
+       Description VARCHAR(255),
+       Price INTEGER,
+       primary key (Id)
+    )
+
+    create table internet.Partners (
+        Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+       Name VARCHAR(255),
+       Email VARCHAR(255),
+       TelNum VARCHAR(255),
+       Adress VARCHAR(255),
+       RegDate DATETIME,
+       Login VARCHAR(255),
+       primary key (Id)
+    )
+
+    create table Internet.PartnerAccessSet (
+        Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+       Partner INTEGER UNSIGNED,
+       AccessCat INTEGER,
+       primary key (Id)
+    )
+
     alter table Internet.RequestsConnection 
         add index (BrigadNumber), 
         add constraint FK6A05CD54B5EBDA3A 
@@ -202,24 +202,6 @@ alter table internet.PhysicalClients  drop foreign key FKDE111BCF1DF06EC1
         add constraint FK6A05CD54C7F2DBAC 
         foreign key (ClientID) 
         references internet.PhysicalClients (Id)
-
-    alter table Internet.ConnectBrigads 
-        add index (PartnerID), 
-        add constraint FK14B0BE5EF29DAF50 
-        foreign key (PartnerID) 
-        references internet.Partners (Id)
-
-    alter table Internet.PartnerAccessSet 
-        add index (Partner), 
-        add constraint FKFB2A341A486245DF 
-        foreign key (Partner) 
-        references internet.Partners (Id)
-
-    alter table Internet.PartnerAccessSet 
-        add index (AccessCat), 
-        add constraint FKFB2A341A4370E58F 
-        foreign key (AccessCat) 
-        references internet.AccessCategories (Id)
 
     alter table internet.PaymentsPhisicalClient 
         add index (ClientId), 
@@ -262,3 +244,21 @@ alter table internet.PhysicalClients  drop foreign key FKDE111BCF1DF06EC1
         add constraint FKDE111BCF1DF06EC1 
         foreign key (HasConnected) 
         references Internet.ConnectBrigads (Id)
+
+    alter table Internet.ConnectBrigads 
+        add index (PartnerID), 
+        add constraint FK14B0BE5EF29DAF50 
+        foreign key (PartnerID) 
+        references internet.Partners (Id)
+
+    alter table Internet.PartnerAccessSet 
+        add index (Partner), 
+        add constraint FKFB2A341A486245DF 
+        foreign key (Partner) 
+        references internet.Partners (Id)
+
+    alter table Internet.PartnerAccessSet 
+        add index (AccessCat), 
+        add constraint FKFB2A341A4370E58F 
+        foreign key (AccessCat) 
+        references internet.AccessCategories (Id)

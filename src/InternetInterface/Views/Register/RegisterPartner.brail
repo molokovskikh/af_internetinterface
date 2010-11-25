@@ -8,7 +8,7 @@
 </head> 
 <% OutputSubView("""\Subview\MapHead""") %>
 <body class="style1"> 
-    <input type="hidden" name="hiddenClient" value="${Partner}" />
+<input type="hidden" name="hiddenClient" value="${Partner}" />
 <div id="main">
 <div id="container">
     <div id="block-tables" class="block">
@@ -59,7 +59,6 @@
                                                  <%end %>
                                                  <%end %>
                                                  </button>
-                                <!--    <input class="button" id="RegisterButton" type="submit" value="Зарегистрировать" /></td> -->
                                 </div>
                             </tr>
                         </table>

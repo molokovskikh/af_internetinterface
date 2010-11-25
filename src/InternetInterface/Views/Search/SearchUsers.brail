@@ -23,7 +23,7 @@
 <form id="SearchForm" name="SearchForm" action="${siteroot}/Search/SearchBy" 
     style="width: 100%; ">
 <center>
-<table border="0" bgcolor="#FFFFFF" cellspacing="1" cellpadding="0">
+<table border="1" bgcolor="#FFFFFF" cellspacing="1" cellpadding="0">
 <input type="hidden" name="closeDemand" value="${closeDemand}" />
 <tr>
         <%if IsDefined("CreateDemandConnect"):
