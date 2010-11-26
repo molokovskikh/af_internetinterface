@@ -142,7 +142,7 @@ div.WordSection1
    </tr>
   </table>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'>Стоимость выполненных работ - ${ConnectSumm.Summ}
+  justify;line-height:normal'>Стоимость выполненных работ - __________________
   руб.</p>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
   justify;line-height:normal'>Я <b><i><u><span style='background:silver'></span></u></i></b><b><i><u><span
