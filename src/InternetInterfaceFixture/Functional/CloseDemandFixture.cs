@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
@@ -33,6 +36,7 @@ namespace InternetInterfaceFixture.Functional
 			using (var browser = Open("Search/SearchBy.rails?CloseDemand=true"))
 			{
 				/*Assert.That(browser.Text, Is.StringContaining("Подключить"));
+				Assert.That(browser.Text, Is.StringContaining("Свич"));
 				Assert.That(browser.Text, Is.StringContaining("Свич"));
 				Assert.That(browser.Text, Is.StringContaining("Порт"));*/
 				browser.CheckBox(Find.ById("CliseDemandCheck" + client.Id)).Checked = true;

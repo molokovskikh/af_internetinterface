@@ -111,6 +111,10 @@
     <Content Include="Errors\AccessDin.aspx" />
     <Content Include="Global.asax" />
     <Content Include="Images\application_edit.png" />
+    <Content Include="Images\image001.jpg" />
+    <Content Include="Images\image002.jpg" />
+    <Content Include="Images\image003.gif" />
+    <Content Include="Images\image0031.jpg" />
     <Content Include="Images\key.png" />
     <Content Include="Images\tick.png" />
     <Content Include="Scripts\jquery-1.4.1-vsdoc.js" />
@@ -157,6 +161,7 @@
     <Compile Include="Models\ClientEndpoints.cs" />
     <Compile Include="Models\Clients.cs" />
     <Compile Include="Models\NetworkSwitches.cs" />
+    <Compile Include="Models\PaymentForConnect.cs" />
     <Compile Include="Models\Universal\ChildActiveRecordLinqBase.cs" />
     <Compile Include="Models\Universal\ClientSearchProperties.cs" />
     <Compile Include="Models\Access\PartnerAccessSet.cs" />

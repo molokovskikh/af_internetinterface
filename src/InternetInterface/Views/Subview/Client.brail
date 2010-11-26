@@ -34,15 +34,90 @@
                                     <input id="City" type="text" value="${client.City}" name="client.City"/></td>
                                 <td></td>
                             </tr>
-                            <tr>
+                                                        <tr>
                                 <td >
-                                    Адрес подключения</td>
+                                    Номер телефона (мобильный)</td>
                                 <td>
-                                    <input id="AdressConnect" type="text" value="${client.AdressConnect}" name="client.AdressConnect"/></td>
+                                    <input id="PhoneNumber" type="text" value="${client.PhoneNumber}" name="client.PhoneNumber"/></td>
                                  <td>
-                                    ${VB.GetBlock("AdressConnect")}
+                                    ${VB.GetBlock("PhoneNumber")}
                                 </td>
                             </tr>
+                            <tr>
+                                <td >
+                                    Номер телефона (домашний, необязательно)</td>
+                                <td>
+                                    <input id="HomePhoneNumber" type="text" value="${client.HomePhoneNumber}" name="client.HomePhoneNumber"/></td>
+                                 <td>
+                                    ${VB.GetBlock("HomePhoneNumber")}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td >
+                                    Откуда о нас узнали</td>
+                                <td>
+                                    <input id="WhenceAbout" type="text" value="${client.WhenceAbout}" name="client.WhenceAbout"/></td>
+                            </tr>
+                            <th colspan="3">Адрес</th>
+                            <tr>
+                            <td></td>
+                            <td>
+                           <table class="table" border="0" id="AdressTable" style="margin-bottom: 15px;"> 
+                           <tbody>
+                           <tr>
+                            <tr>
+                                <td >
+                                    Улица </td> <td>  <input id="Street" type="text" value="${client.Street}" name="client.Street"/></td>
+                                 <td style="width: 200px">
+                                    ${VB.GetBlock("Street")}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td >
+                                    Дом </td> <td>  <input id="House" type="text" value="${client.House}" name="client.House"/></td>
+                                 <td>
+                                    ${VB.GetBlock("House")}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td >
+                                    Корпус </td> <td>  <input id="CaseHouse" type="text" value="${client.CaseHouse}" name="client.CaseHouse"/></td>
+                                 <td>
+                                    ${VB.GetBlock("CaseHouse")}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td >
+                                    Квартира  </td> <td> <input id="Apartment" type="text" value="${client.Apartment}" name="client.Apartment"/></td>
+                                 <td>
+                                    ${VB.GetBlock("Apartment")}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td >
+                                    Подъезд </td> <td>  <input id="Entrance" type="text" value="${client.Entrance}" name="client.Entrance"/></td>
+                                 <td>
+                                    ${VB.GetBlock("Entrance")}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td >
+                                    Этаж </td> <td>  <input id="Floor" type="text" value="${client.Floor}" name="client.Floor"/></td>
+                                 <td>
+                                    ${VB.GetBlock("Floor")}
+                                </td>
+                            </tr>
+                            </tr>
+                            </tbody>
+                            </table>
+                            </td>
+                            </tr>
+
+
+
+
+                             <table class="table" border="0" id="Table1"> 
+                             
                             <tr>
                                 <th colspan="3">
                                     Паспортные данные</th>
@@ -63,6 +138,15 @@
                                     <input id="PassportNumber" type="text" value="${client.PassportNumber}" name="client.PassportNumber"/></td>
                                 <td>
                                     ${VB.GetBlock("PassportNumber")}
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td >
+                                    Дата выдачи паспорта</td>
+                                <td >
+                                    <input id="OutputDate" type="text" value="${client.OutputDate}" name="client.OutputDate"/></td>
+                                <td>
+                                    ${VB.GetBlock("OutputDate")}
                                 </td>
                             </tr>
                             <tr>

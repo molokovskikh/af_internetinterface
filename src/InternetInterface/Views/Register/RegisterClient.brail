@@ -37,8 +37,15 @@
                                     ${VB.GetBlock("Balance")}
                                 </td>
                              </tr>
+                             <tr>
+                             <td>
+                                    Сумма за подключение:
+                                </td>
+                                 <td  colspan="3">
+                                    <input id="ConnectSumm" type="text" value="${ConnectSumm.Summ}" name="ConnectSumm.Summ"/></td>
+                             </tr>
                             <tr>
-                                <td >
+                                <td  colspan="3">
                                 <div class="actions">
                                                  <button type="submit" class="button" id="RegisterClientButton">
                                                 <img alt="Save" src="../Images/application_edit.png"> Зарегистрировать

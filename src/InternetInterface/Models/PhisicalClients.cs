@@ -4,6 +4,7 @@ using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
 using Castle.Components.Validator;
 using Castle.MonoRail.Framework;
+using InternetInterface.Controllers.Filter;
 using InternetInterface.Models.Universal;
 
 namespace InternetInterface.Models
@@ -28,14 +29,44 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string City { get; set; }
 
-		[Property, ValidateNonEmpty("Введите адрес подключения")]
-		public virtual string AdressConnect { get; set; }
+		/*[Property, ValidateNonEmpty("Введите адрес подключения")]
+		public virtual string AdressConnect { get; set; }*/
+		[Property, ValidateNonEmpty("Введите улицу")]
+		public virtual string Street { get; set; }
+
+		[Property, ValidateNonEmpty("Введите номер дома"), ValidateInteger("Должно быть введено число")]
+		public virtual string House { get; set; }
+
+		[Property]
+		public virtual string CaseHouse { get; set; }
+
+		[Property, ValidateNonEmpty("Введите номер квартиры"), ValidateInteger("Должно быть введено число")]
+		public virtual string Apartment { get; set; }
+
+		[Property, ValidateNonEmpty("Введите номер подъезда"), ValidateInteger("Должно быть введено число")]
+		public virtual string Entrance { get; set; }
+
+		[Property, ValidateNonEmpty("Введите номер этажа"), ValidateInteger("Должно быть введено число")]
+		public virtual string Floor { get; set; }
+
+		[Property, ValidateRegExp(@"^((\d{1})-(\d{3})-(\d{3})-(\d{2})-(\d{2}))", "Ошибка фотмата телефонного номера: мобильный телефн (8-***-***-**-**))")
+		, ValidateNonEmpty("Введите номер телефона")]
+		public virtual string PhoneNumber { get; set; }
+
+		[Property, ValidateRegExp(@"^((\d{4,5})-(\d{5,6}))", "Ошибка фотмата телефонного номера (Код города (4-5 цифр) + местный номер (5-6 цифр)")]
+		public virtual string HomePhoneNumber { get; set; }
+
+		[Property]
+		public virtual string WhenceAbout { get; set; }
 
 		[Property, ValidateRegExp(@"^(\d{4})?$", "Неправильный формат серии паспорта (4 цифры)"), ValidateNonEmpty("Поле не должно быть пустым")]
 		public virtual string PassportSeries { get; set; }
 
 		[Property, ValidateRegExp(@"^(\d{6})?$", "Неправильный формат номера паспорта (6 цифр)"), ValidateNonEmpty("Поле не должно быть пустым")]
 		public virtual string PassportNumber { get; set; }
+
+		[Property, ValidateNonEmpty("Введите дату выдачи паспорта"), ValidateDate("Ошибка формата даты **-**-****")]
+		public virtual string OutputDate { get; set; }
 
 		[Property, ValidateNonEmpty("Заполните поле 'Кем выдан паспорт'")]
 		public virtual string WhoGivePassport { get; set; }
@@ -52,7 +83,7 @@ namespace InternetInterface.Models
 		[Property, ValidateNonEmpty("Введите сумму"), ValidateDecimal("Неверно введено число")]
 		public virtual string Balance { get; set; }
 
-		[Property, ValidateNonEmpty("Введите логин")]
+		[Property, ValidateNonEmpty("Введите логин"), ValidateIsUnique("Логин должен быть уникальный")]
 		public virtual string Login { get; set; }
 
 		[Property, ValidateNonEmpty("Введите пароль")]
@@ -73,7 +104,7 @@ namespace InternetInterface.Models
 		}
 
 		public static bool RegistrLogicClient(PhisicalClients _client, uint _tariff,
-			ValidatorRunner validator, Partner hasRegistered)
+			ValidatorRunner validator, Partner hasRegistered, PaymentForConnect connectSumm)
 		{
 				if (validator.IsValid(_client))
 				{
@@ -82,6 +113,10 @@ namespace InternetInterface.Models
 					_client.Password = CryptoPass.GetHashString(_client.Password);
 					_client.HasRegistered = hasRegistered;
 					_client.SaveAndFlush();
+					connectSumm.ClientId = _client;
+					connectSumm.ManagerID = InithializeContent.partner;
+					connectSumm.PaymentDate = DateTime.Now;
+					connectSumm.SaveAndFlush();
 					return true;
 				}
 				return false;

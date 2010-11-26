@@ -33,7 +33,7 @@ namespace NHibernateFixtute.RegisterTest
 
 			var c = new PhisicalClients
 			{
-				AdressConnect = "",
+				//AdressConnect = "",
 				//Balance = 0,
 				City = "",
 				HasRegistered = new Partner

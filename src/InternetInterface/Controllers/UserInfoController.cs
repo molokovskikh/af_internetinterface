@@ -52,7 +52,7 @@ namespace InternetInterface.Controllers
 		{
 			if (Flash["Client"] == null)
 			{
-				RedirectToUrl("../Register/RegisterClient.rails");
+				//RedirectToUrl("../Register/RegisterClient.rails");
 			}
 			/*else
 			{
@@ -85,16 +85,26 @@ namespace InternetInterface.Controllers
 		public void EditInformation([DataBind("Client")]PhisicalClients client, uint ClientID, uint tariff)
 		{
 			var updateClient = PhisicalClients.Find(ClientID);
-			updateClient.Name = client.Name;
+			BindObjectInstance(updateClient, ParamStore.Form, "Client");
+			/*updateClient.Name = client.Name;
 			updateClient.Surname = client.Surname;
 			updateClient.Patronymic = client.Patronymic;
 			updateClient.City = client.City;
-			updateClient.AdressConnect = client.AdressConnect;
+			updateClient.Street = client.Street;
+			updateClient.House = client.House;
+			updateClient.CaseHouse = client.CaseHouse;
+			updateClient.Apartment = client.Apartment;
+			updateClient.Entrance = client.Entrance;
+			updateClient.Floor = client.Floor;
+			updateClient.PhoneNumber = client.PhoneNumber;
+			updateClient.WhenceAbout = client.WhenceAbout;
+			updateClient.OutputDate = client.OutputDate;
+			//updateClient.AdressConnect = client.AdressConnect;
 			updateClient.PassportSeries = client.PassportSeries;
 			updateClient.PassportNumber = client.PassportNumber;
 			updateClient.WhoGivePassport = client.WhoGivePassport;
 			updateClient.RegistrationAdress = client.RegistrationAdress;
-			updateClient.Tariff = Tariff.Find(tariff);
+			updateClient.Tariff = Tariff.Find(tariff);*/
 			if (Validator.IsValid(updateClient))
 			{
 				updateClient.UpdateAndFlush();

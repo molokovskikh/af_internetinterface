@@ -1,60 +1,296 @@
-﻿<link href="../Styles/style.css" type="text/css" rel="stylesheet" />
-<link rel="stylesheet" href="../Styles/base.css" type="text/css" media="screen" />
+﻿<html>
 
-<style type="text/css"> 
-#printable { display: none; } 
-@media print 
-{ 
-#non-printable { display: none; } 
-#printable { display: block; } 
-} 
-</style> 
-<%
-def WriteCell(fieldName as string, fieldVal as string): %>
-<tr>
-    <td>${fieldName}</td>
-    <td>${fieldVal}</td>
-</tr>
-<%
-    return ""
-end
-%>
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Информация о клиенте</title>
-</head>
-<body>
-<div id="non-printable"> 
-    <% OutputSubView("""\Subview\MapHead""") %>
-</div> 
-<div id="main">
-<div id="container">
-    <div id="block-tables" class="block">
-       
+<meta http-equiv=Content-Type content="text/html; charset=utf-8">
+<meta name=Generator content="Microsoft Word 12 (filtered)">
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:"Cambria Math";
+	panose-1:0 0 0 0 0 0 0 0 0 0;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;}
+@font-face
+	{font-family:Tahoma;
+	panose-1:0 0 0 0 0 0 0 0 0 0;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:10.0pt;
+	margin-left:0cm;
+	line-height:115%;
+	font-size:11.0pt;
+	font-family:"Calibri","sans-serif";}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;}
+p.MsoAcetate, li.MsoAcetate, div.MsoAcetate
+	{mso-style-link:"Текст выноски Знак";
+	margin:0cm;
+	margin-bottom:.0001pt;
+	font-size:8.0pt;
+	font-family:"Tahoma","sans-serif";}
+span.a
+	{mso-style-name:"Текст выноски Знак";
+	mso-style-link:"Текст выноски";
+	font-family:"Tahoma","sans-serif";}
+.MsoPapDefault
+	{margin-bottom:10.0pt;
+	line-height:115%;}
+@page WordSection1
+	{size:595.3pt 841.9pt;
+	margin:21.3pt 28.3pt 7.1pt 1.0cm;}
+div.WordSection1
+	{page:WordSection1;}
+-->
+</style>
 
-        <table class="table" style="width:100%; " border="0" id="PartnerInfoTable">
-            <thead>
-                <th colspan="2">Информация для клиента: ${Client.Surname} ${Client.Name} ${Client.Patronymic}</th>
-            </thead>
-            <tbody>
-                ${WriteCell("Город", Client.City)}
-                ${WriteCell("Адрес подключения", Client.AdressConnect)}
-                ${WriteCell("Серия паспорта", Client.PassportNumber)}
-                ${WriteCell("Номер паспорта", Client.PassportSeries)}
-                ${WriteCell("Кем выдан паспорт", Client.WhoGivePassport)}
-                ${WriteCell("Адрес регистрации", Client.RegistrationAdress)}
-                ${WriteCell("Баланс по счету", Client.Balance)}
-                ${WriteCell("Логин", Client.Login)}
-                ${WriteCell("Пароль", Password)}
-                ${WriteCell("Тариф", Client.Tariff.Name)}
-                ${WriteCell("Кем зарегистрирован", Client.HasRegistered.Name)}
-            </tbody>
-        </table>
-        
-    </div>
+</head>
+
+<body lang=RU link=blue vlink=purple>
+
+<div class=WordSection1>
+
+<table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0
+ style='border-collapse:collapse;border:none'>
+ <tr>
+  <td width=733 valign=top style='width:549.45pt;border:solid black 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
+  normal'><span style='position:relative;z-index:2;left:-1px;top:2px;
+  width:152px;height:53px'><img width=152 height=51
+  src="../Images/image001.jpg"></span><b><i>&nbsp;</i></b></p>
+  <br clear=ALL>
+  <p class=MsoNormal style='margin-top:-1.5cm;margin-right:0cm;margin-bottom:0cm;
+  margin-left:14.0cm;margin-bottom:.0001pt;line-height:normal; height: 23px;'><b><i>НАРЯД НА
+  ПОДКЛЮЧЕНИЕ</i></b></p>
+  <p class=MsoNormal align=center style='margin-bottom:0cm;margin-bottom:.0001pt;
+  text-align:center;line-height:normal'><b><i>&nbsp;</i></b></p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>Абонент <b><i><u><span style='background:silver'></span></u></i></b><b><i><u><span
+  lang=EN-US style='background:silver'>${Client.Surname}</span><span style='background:
+  silver'></span></u></i></b><b><i><u><span lang=EN-US style='background:
+  silver'> ${Client.Name}</span><span style='background:silver'></span></u></i></b><b><i><u><span
+  lang=EN-US style='background:silver'> ${Client.Patronymic}</span><span style='background:
+  silver'></span></u></i></b>,<a name=Фамилия></a> </p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>паспорт серия <b><i><u><span style='background:
+  silver'></span></u></i></b><b><i><u><span lang=EN-US style='background:silver'></span><span
+  style='background:silver'></span></u></i></b><b><i><u><span lang=EN-US
+  style='background:silver'>${Client.PassportSeries}</span><span style='background:silver'></span></u></i></b>
+  № <b><i><u><span style='background:silver'></span></u></i></b><span
+  lang=EN-US style='background:silver'></span><b><i><u>
+      <span
+  lang=EN-US style='background:silver'>${Client.PassportNumber}</span><span style='background:
+  silver'></span></u></i></b> выдан <b><i><u><span style='background:silver'></span></u></i></b><b><i><u><span
+  lang=EN-US style='background:silver'></span><span style='background:silver'></span></u></i></b><b><i><u><span
+  lang=EN-US style='background:silver'>${Client.OutputDate}</span><span style='background:silver'></span></u></i></b>
+  г., <b><i><u><span style='background:silver'></span></u></i></b><b><i><u><span
+  lang=EN-US style='background:silver'></span><span style='background:silver'>_</span></u></i></b><b><i><u><span
+  lang=EN-US style='background:silver'>${Client.WhoGivePassport}</span><span style='background:
+  silver'></span></u></i></b>, </p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>прописанный по адресу: <b><i><u><span
+  style='background:silver'></span></u></i></b><b><i><u><span lang=EN-US
+  style='background:silver'>${Client.RegistrationAdress}</span><span style='background:silver'></span></u></i></b>,</p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>домашний телефон: <b><i><u><span
+  style='background:silver'></span></u></i></b><b><i><u><span lang=EN-US
+  style='background:silver'></span><span style='background:silver'></span></u></i></b><b><i><u><span
+  lang=EN-US style='background:silver'>${Client.HomePhoneNumber}</span><span style='background:
+  silver'></span></u></i></b></p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>мобильный телефон: <b><i><u><span
+  style='background:silver'></span></u></i></b><span lang=EN-US
+  style='background:silver'></span><b><i><u>
+      <span
+  lang=EN-US style='background:silver'>${Client.PhoneNumber}</span><span style='background:
+  silver'></span></u></i></b></p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>принял подключение услуги доступа к сети интернет
+  со следующими параметрами:</p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>адрес подключения: <b><i><u><span
+  style='background:silver'></span></u></i></b><b><i><u><span lang=EN-US
+  style='background:silver'></span><span style='background:silver'>_</span></u></i></b><b><i><u><span
+  lang=EN-US style='background:silver'>${Client.Street} ${Client.House}${Client.CaseHouse} кв. ${Client.Apartment} Подъезд ${Client.Entrance} Этаж ${Client.Floor}</span><span
+  style='background:silver'></span></u></i></b></p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>тарифный план: <b><i><u><span style='background:
+  silver'></span></u></i></b><b><i><u><span lang=EN-US style='background:silver'>${Client.Tariff.Name}</span><span
+  style='background:silver'></span></u></i></b></p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>Дополнительные услуги: </p>
+  <table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0
+   style='border-collapse:collapse;border:none'>
+   <tr>
+    <td width=717 valign=top style='width:537.9pt;border:solid black 1.0pt;
+    padding:0cm 5.4pt 0cm 5.4pt'>
+    <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;
+    text-align:justify;line-height:normal'>&nbsp;</p>
+    <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;
+    text-align:justify;line-height:normal'>&nbsp;</p>
+    <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;
+    text-align:justify;line-height:normal'>&nbsp;</p>
+    </td>
+   </tr>
+  </table>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>Стоимость выполненных работ - ${ConnectSumm.Summ}
+  руб.</p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>Я <b><i><u><span style='background:silver'></span></u></i></b><b><i><u><span
+  lang=EN-US style='background:silver'>${Client.Surname} </span><span style='background:
+  silver'></span></u></i></b><b><i><u><span lang=EN-US style='background:
+  silver'>${Client.Name} </span><span style='background:silver'></span></u></i></b><b><i><u><span
+  lang=EN-US style='background:silver'>${Client.Patronymic}</span><span style='background:
+  silver'></span></u></i></b> принимаю подключение к услугам доступа к сети
+  Интернет.</p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>Претензий по объёму и качеству оказанных услуг не
+  имею.</p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>&nbsp;</p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>__________________________________________              
+  ________________________________</p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'><span style='font-size:8.0pt'>                                        
+  (подпись Абонента)                                                                                
+                (дата)</span></p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'><span style='font-size:8.0pt'>&nbsp;</span></p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>Ставя свою подпись, я <b>даю</b> / <b>не даю</b> (<span
+  style='font-size:8.0pt'>не нужное зачеркнуть</span>) согласие на то, что ООО
+  «Инфорум» вправе использовать мои персональные данные, чтобы информировать
+  меня, в том числе, высылая мне соответствующие сообщения на электронный адрес
+  или SMS на мой мобильный телефон, о новостях, дополнительных и/или актуальных
+  услугах, которые предлагает ООО «Инфорум».</p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'><span style='font-size:8.0pt'>&nbsp;</span></p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
+  normal'><span style='position:relative;z-index:1'><span style='position:absolute;
+  left:550px;top:-10px;width:119px;height:73px'><img width=119 height=73
+  src="../Images/image0031.jpg"></span></span><i><b>Уважаемый Абонент!
+  Благодарим Вас за выбор нашей Компании</b></i></p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
+  normal'><i>Наша Компания ставит своей задачей постоянное повышение качества </i></p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
+  normal'><i>предоставляемых услуг и обслуживания наших Абонентов. </i></p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
+  normal'><i>Просим Вас оценить качество подключения по 10-ти бальной шкале </i></p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
+  normal'>&nbsp;</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=733 valign=top style='width:549.45pt;border:none;border-bottom:
+  solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='margin-bottom:0cm;margin-bottom:.0001pt;
+  text-align:center;line-height:normal'><i>линия отрыва   ---  линия отрыва  
+  ---  линия отрыва  ---   линия отрыва   ---  линия отрыва   ---  линия
+  отрыва   </i></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=733 valign=top style='width:549.45pt;border:solid black 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'><span style='position:absolute;z-index:3;
+  margin-left:1px;margin-top:7px;width:152px;height:51px'><img
+  width=152 height=51 src="../Images/image001.jpg"></span></p>
+  <p class=MsoNormal style='margin-top:0cm;margin-right:0cm;margin-bottom:0cm;
+  margin-left:361.5pt;margin-bottom:.0001pt;line-height:normal'><b><i>ЗАКАЗ НА
+  ПРЕДОСТАВЛЕНИЕ УСЛУГ</i></b></p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
+  normal'><b><i>&nbsp;</i></b></p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>&nbsp;</p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>Параметры услуги:                                                                               </p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>Адрес подключения: <b><i><u><span
+  style='background:silver'></span></u></i></b><span lang=EN-US
+  style='background:silver'></span><b><i><u>
+      <span
+  lang=EN-US style='background:silver'>${Client.Street} ${Client.House}${Client.CaseHouse} ${Client.Apartment} Подъезд ${Client.Entrance} Этаж ${Client.Floor}</span><span
+  style='background:silver'></span></u></i></b></p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>Тарифный план: <b><i><u><span style='background:
+  silver'></span></u></i></b><b><i><u><span lang=EN-US style='background:silver'></span><span
+  style='background:silver'></span></u></i></b><b><i><u><span lang=EN-US
+  style='background:silver'>${Client.Tariff.Name}</span><span style='background:silver'></span></u></i></b></p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>Лицевой счет № <b><i><u><span style='background:
+  silver'></span></u></i></b><b><i><u><span lang=EN-US style='background:silver'></span><span
+  style='background:silver'></span></u></i></b><b><i><u><span lang=EN-US
+  style='background:silver'>${Client.Id}</span><span style='background:silver'></span></u></i></b></p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>Для оплаты услуг связи через платежные терминалы <b><i>QiWi</i></b>
+  и <b><i>ComePay</i></b> используйте номер Вашего лицевого счета</p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>Дополнительные услуги:
+  _______________________________________________________________</p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>____________________________________________________________________________________</p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>____________________________________________________________________________________</p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>Параметры доступа к личному кабинету на <span
+  lang=EN-US>web</span>-сервере <a href="http://www.ivrn.net"><span lang=EN-US>www</span>.<span
+  lang=EN-US>ivrn</span>.<span lang=EN-US>net</span></a>: </p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>Логин: <b><i><u><span style='background:silver'>${Client.Login}</span></u></i></b></p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>Пароль: <b><i><u><span style='background:silver'>${Password}</span></u></i></b></p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>Работы по подключению к сети интернет
+  представителем ООО &quot;Инфорум&quot; выполнены в полном объёме.</p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>Абонент к качеству и объему выполненных работ
+  претензий не имеет.</p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>&nbsp;</p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>Стоимость услуг по подключению -
+  ${ConnectSumm.Summ} руб.</p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>&nbsp;</p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>__________________________________________              
+  ________________________________</p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'><span style='font-size:8.0pt'>                                        
+  (подпись Абонента)                                                                                              
+  (дата)</span></p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>&nbsp;</p>
+  <p class=MsoNormal align=center style='margin-bottom:0cm;margin-bottom:.0001pt;
+  text-align:center;line-height:normal'><i>Уважаемый Абонент, пожалуйста,
+  ознакомьтесь  с Договором-офертой и правилами оказания услуг на </i><i><span
+  lang=EN-US>web</span>-сервере ООО «Инфорум» по адресу </i><a
+  href="http://www.ivrn.net"><i><span lang=EN-US>www</span>.</i><i><span
+  lang=EN-US>ivrn</span>.</i><i><span lang=EN-US>net</span></i></a></p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'>Контакты службы технической поддержки: тел. – <b><i><u>(4732)
+  606-000</u></i></b> <span lang=EN-US>e</span>-<span lang=EN-US>mail</span>: <b><i><u>help@ivrn.net</u></i></b></p>
+  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+  justify;line-height:normal'><span style='font-size:2.0pt'>&nbsp;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p class=MsoNormal>&nbsp;</p>
+
 </div>
-</div>
+
 </body>
+
 </html>

@@ -18,7 +18,7 @@ namespace InternetInterface.Controllers
 	{
 		[AccessibleThrough(Verb.Post)]
 		public void RegisterClient([DataBind("ChangedBy")]ChangeBalaceProperties changeProperties,
-			[DataBind("client")]PhisicalClients user, string balanceText, uint tariff)
+			[DataBind("client")]PhisicalClients user, string balanceText, uint tariff, [DataBind("ConnectSumm")]PaymentForConnect connectSumm)
 		{
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			if (changeProperties.IsForTariff())
@@ -31,12 +31,13 @@ namespace InternetInterface.Controllers
 			}
 			var Password = PhisicalClients.GeneratePassword();
 			user.Password = Password;
-			if (PhisicalClients.RegistrLogicClient(user, tariff, Validator, InithializeContent.partner))
+			if (PhisicalClients.RegistrLogicClient(user, tariff, Validator, InithializeContent.partner, connectSumm))
 			{
 				user.Tariff = Tariff.Find(tariff);
 				user.HasRegistered = InithializeContent.partner;
 				Flash["Password"] = Password;
 				Flash["Client"] = user;
+				Flash["ConnectSumm"] = connectSumm;
 				RedirectToUrl("..//UserInfo/ClientRegisteredInfo.rails");
 			}
 			else
@@ -44,6 +45,7 @@ namespace InternetInterface.Controllers
 				user.SetValidationErrors(Validator.GetErrorSummary(user));
 				PropertyBag["Client"] = user;
 				PropertyBag["BalanceText"] = balanceText;
+				Flash["ConnectSumm"] = connectSumm;
 				PropertyBag["Applying"] = "false";
 				PropertyBag["VB"] = new ValidBuilderHelper<PhisicalClients>(user);
 				PropertyBag["ChangeBy"] = changeProperties;
@@ -83,7 +85,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["Client"] = new PhisicalClients();
 			PropertyBag["VB"] = new ValidBuilderHelper<PhisicalClients>(new PhisicalClients());
-
+			Flash["ConnectSumm"] = new PaymentForConnect();
 			PropertyBag["Applying"] = "false";
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties { ChangeType = TypeChangeBalance.ForTariff };
 		}

@@ -21,7 +21,7 @@ namespace InternetInterfaceFixture.Functional
 				Assert.That(browser.Text, Is.StringContaining("Имя"));
 				Assert.That(browser.Text, Is.StringContaining("Отчество"));
 				Assert.That(browser.Text, Is.StringContaining("Город"));
-				Assert.That(browser.Text, Is.StringContaining("Адрес подключения"));
+				Assert.That(browser.Text, Is.StringContaining("Адрес"));
 				Assert.That(browser.Text, Is.StringContaining("Паспортные данные"));
 				Assert.That(browser.Text, Is.StringContaining("Серия паспорта"));
 				Assert.That(browser.Text, Is.StringContaining("Номер паспорта"));

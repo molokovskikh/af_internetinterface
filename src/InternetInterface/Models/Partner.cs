@@ -34,7 +34,7 @@ namespace InternetInterface.Models
 		/*[Property, ValidateNonEmpty("Введите пароль")]
 		public virtual string Pass { get; set; }*/
 
-		[Property, ValidateNonEmpty("Введите логин")]
+		[Property, ValidateNonEmpty("Введите логин"), ValidateIsUnique("Логин должен быть уникальный")]
 		public virtual string Login { get; set; }
 
 		public static Partner GetPartnerForLogin(string login)
