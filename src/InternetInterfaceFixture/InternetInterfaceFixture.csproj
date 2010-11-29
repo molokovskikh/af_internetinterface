@@ -113,6 +113,7 @@
     <Compile Include="Functional\RegisterPartnerFixrure.cs" />
     <Compile Include="Functional\SearchFixture.cs" />
     <Compile Include="Functional\Setup.cs" />
+    <Compile Include="Helpers\ClientHelperFixture.cs" />
     <Compile Include="Helpers\PartnerHelper.cs" />
     <Compile Include="Helpers\WatinFixture.cs" />
     <Compile Include="PartnerAccessSetFixture.cs" />

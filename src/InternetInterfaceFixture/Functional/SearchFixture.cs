@@ -38,26 +38,35 @@ namespace InternetInterfaceFixture.Functional
 		[Test]
 		public void ClientInfoTest()
 		{
-			using (var browser = Open("UserInfo/SearchUserInfo.rails?ClientCode=2"))
-			{
-				Assert.That(browser.Text, Is.StringContaining("Город"));
-				Assert.That(browser.Text, Is.StringContaining("Паспортные данные:"));
-				Assert.That(browser.Text, Is.StringContaining("Адрес регистрации:"));
-				Assert.That(browser.Text, Is.StringContaining("Дата регистрации:"));
-				Assert.That(browser.Text, Is.StringContaining("Тариф"));
-				Assert.That(browser.Text, Is.StringContaining("Платеж зарегистрировал"));
-				Assert.That(browser.Text, Is.StringContaining("Дата оплаты"));
-				Assert.That(browser.Text, Is.StringContaining("Сумма"));
-				browser.Button(Find.ById("EditButton")).Click();
-				Assert.That(browser.Text, Is.StringContaining("Регистрационные данные"));
-				Assert.That(browser.Text, Is.StringContaining("Паспортные данные"));
-				Assert.That(browser.Text, Is.StringContaining("Личная информация"));
-				browser.Button(Find.ById("SaveButton")).Click();
-				Assert.That(browser.Text, Is.StringContaining("Данные изменены"));
-				browser.RadioButton(Find.ById("ForTariffChange")).Checked = true;
-				browser.Button(Find.ById("ChangeBalanceButton")).Click();
-				Assert.That(browser.Text, Is.StringContaining("Баланс пополнен"));
-			}
+			//var client = ClientHelperFixture.CreateClient();
+			//if (client == null) return;
+			ClientHelperFixture.CreateClient(l =>
+			                                 	{
+			                                 		using (var browser = Open("UserInfo/SearchUserInfo.rails?ClientCode=" + l.Id))
+			                                 		{
+			                                 			Assert.That(browser.Text, Is.StringContaining("Город"));
+			                                 			Assert.That(browser.Text, Is.StringContaining("Паспортные данные:"));
+			                                 			Assert.That(browser.Text, Is.StringContaining("Адрес регистрации:"));
+			                                 			Assert.That(browser.Text, Is.StringContaining("Дата регистрации:"));
+			                                 			Assert.That(browser.Text, Is.StringContaining("Тариф"));
+			                                 			Assert.That(browser.Text, Is.StringContaining("Платеж зарегистрировал"));
+			                                 			Assert.That(browser.Text, Is.StringContaining("Дата оплаты"));
+			                                 			Assert.That(browser.Text, Is.StringContaining("Сумма"));
+			                                 			browser.Button(Find.ById("EditButton")).Click();
+			                                 			Assert.That(browser.Text, Is.StringContaining("Регистрационные данные"));
+			                                 			Assert.That(browser.Text, Is.StringContaining("Паспортные данные"));
+			                                 			Assert.That(browser.Text, Is.StringContaining("Личная информация"));
+			                                 			browser.Button(Find.ById("SaveButton")).Click();
+			                                 			Thread.Sleep(400);
+			                                 			Assert.That(browser.Text, Is.StringContaining("Данные изменены"));
+			                                 			browser.RadioButton(Find.ById("ForTariffChange")).Checked = true;
+			                                 			browser.Button(Find.ById("ChangeBalanceButton")).Click();
+			                                 			Thread.Sleep(400);
+			                                 			Assert.That(browser.Text, Is.StringContaining("Баланс пополнен"));
+			                                 		}
+			                                 		return true;
+			                                 	});
+			//client.DeleteAndFlush();
 		}
 	}
 	}
