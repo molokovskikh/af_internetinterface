@@ -30,7 +30,6 @@ namespace InternetInterfaceFixture.Functional
 				Assert.That(browser.Text, Is.StringContaining("Адрес регистрации"));
 				Assert.That(browser.Text, Is.StringContaining("Регистрационные данные"));
 				Assert.That(browser.Text, Is.StringContaining("Тариф"));
-				Assert.That(browser.Text, Is.StringContaining("Логин"));
 				Assert.That(browser.Text, Is.StringContaining("Средний"));
 				Assert.That(browser.Text, Is.StringContaining("Внести сумму по тарифному плану"));
 				Assert.That(browser.Text, Is.StringContaining("Внести сумму:"));
@@ -52,9 +51,9 @@ namespace InternetInterfaceFixture.Functional
 				browser.TextField(Find.ById("RegistrationAdress")).AppendText("TestRegistrationAdress");
 				browser.TextField(Find.ById("OutputDate")).AppendText("10.01.2002");
 				browser.TextField(Find.ById("ConnectSumm")).AppendText("100");
-				var rnd = new Random();
+				/*var rnd = new Random();
 				var loginPrefix = rnd.Next(100);
-				browser.TextField(Find.ById("Login")).AppendText("Login" + loginPrefix);
+				browser.TextField(Find.ById("Login")).AppendText("Login" + loginPrefix);*/
 				browser.Button(Find.ById("RegisterClientButton")).Click();
 				Thread.Sleep(2000);
 				//Assert.That(browser.Text, Is.StringContaining("TestCity"));
@@ -62,7 +61,7 @@ namespace InternetInterfaceFixture.Functional
 				Assert.That(browser.Text, Is.StringContaining("прописанный по адресу:"));
 				Assert.That(browser.Text, Is.StringContaining("адрес подключения:"));
 				Assert.That(browser.Text, Is.StringContaining("принимаю подключение к услугам доступа"));
-				var pc = PhisicalClients.FindAllByProperty("Login", "Login" + loginPrefix).ToList();
+				var pc = PhisicalClients.FindAllByProperty("Login", browser.Span(Find.ById("LoginSpan")).Text).ToList();
 				foreach (var phisicalClientse in pc)
 				{
 					phisicalClientse.DeleteAndFlush();

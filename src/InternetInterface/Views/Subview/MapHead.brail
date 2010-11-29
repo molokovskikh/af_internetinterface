@@ -22,6 +22,9 @@
                 <%if PartnerAccessSet.AccesPartner("RC"): %>
                <th><a href = "../Register/RegisterClient.rails" ><span class="MH">Регистрация нового абонента</span></a></th>
                <%end %>
+               <%if PartnerAccessSet.AccesPartner("RC"): %>
+               <th><a href = "../UserInfo/RequestView.brail" ><span class="MH">Заявки на подключение</span></a></th>
+               <%end %>
                <%if PartnerAccessSet.AccesPartner("GCI"): %>
                <th><a href = "../Search/SearchUsers.rails" ><span class="MH">Найти абонента</span></a></th>
                <%end %>

@@ -31,6 +31,7 @@ namespace InternetInterface.Controllers
 			}
 			var Password = PhisicalClients.GeneratePassword();
 			user.Password = Password;
+			user.Login = LoginCreatorHelper.GetUniqueEnLogin(user.Surname);
 			if (PhisicalClients.RegistrLogicClient(user, tariff, Validator, InithializeContent.partner, connectSumm))
 			{
 				user.Tariff = Tariff.Find(tariff);

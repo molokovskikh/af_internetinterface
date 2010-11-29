@@ -23,15 +23,7 @@
                                     <strong>Форма регистрации</strong></th>
                             </tr>
 	                        <% OutputSubView("""\Subview\Client""") %>
-                                                   <tr>
-                                <td >
-                                    Логин</td>
-                                <td >
-                                    <input id="Login" type="text" value="${client.Login}" name="client.Login"/></td>
-                                <td>
-                                    ${VB.GetBlock("Login")}
-                                </td>
-                            </tr>
+
                             <% OutputSubView("""\Subview\Payment""") %>
                                 <td  colspan="3">
                                     ${VB.GetBlock("Balance")}

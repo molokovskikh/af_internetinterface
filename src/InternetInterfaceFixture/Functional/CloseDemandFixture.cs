@@ -46,6 +46,11 @@ namespace InternetInterfaceFixture.Functional
 				browser.Button(Find.ById("CliseDemandButton")).Click();
 				//Assert.That(browser.Text, Is.StringContaining("Заявки закрыты"));
 			}
+			foreach (var requestsConnection in RequestsConnection.FindAll(DetachedCriteria.For(typeof(RequestsConnection))
+	.Add(Expression.Eq("ClientID", client))).ToList())
+			{
+				requestsConnection.DeleteAndFlush();
+			}
 			//RC.DeleteAndFlush();
 			var clientAndPoint = ClientEndpoints.FindAll(DetachedCriteria.For(typeof (ClientEndpoints))
 			                                             	.Add(Expression.Eq("Port", 20))

@@ -247,7 +247,7 @@ div.WordSection1
   lang=EN-US>web</span>-сервере <a href="http://www.ivrn.net"><span lang=EN-US>www</span>.<span
   lang=EN-US>ivrn</span>.<span lang=EN-US>net</span></a>: </p>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'>Логин: <b><i><u><span style='background:silver'>${Client.Login}</span></u></i></b></p>
+  justify;line-height:normal'>Логин: <b><i><u><span id="LoginSpan" style='background:silver'>${Client.Login}</span></u></i></b></p>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
   justify;line-height:normal'>Пароль: <b><i><u><span style='background:silver'>${Password}</span></u></i></b></p>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:

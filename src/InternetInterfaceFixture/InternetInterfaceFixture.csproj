@@ -111,6 +111,7 @@
     <Compile Include="Functional\CloseDemandFixture.cs" />
     <Compile Include="Functional\RegisterClientFixture.cs" />
     <Compile Include="Functional\RegisterPartnerFixrure.cs" />
+    <Compile Include="Functional\RequestViewFixture.cs" />
     <Compile Include="Functional\SearchFixture.cs" />
     <Compile Include="Functional\Setup.cs" />
     <Compile Include="Helpers\ClientHelperFixture.cs" />

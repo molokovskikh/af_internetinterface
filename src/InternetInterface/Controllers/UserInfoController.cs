@@ -40,6 +40,11 @@ namespace InternetInterface.Controllers
 			//if (EditFlag) {EditInformation(); }
 		}
 
+		public void RequestView()
+		{
+			PropertyBag["Clients"] = Requests.FindAll();
+		}
+
 		[AccessibleThrough(Verb.Post)]
 		public void LoadEditMudule(uint ClientID)
 		{

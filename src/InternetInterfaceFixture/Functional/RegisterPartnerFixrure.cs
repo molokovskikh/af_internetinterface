@@ -77,6 +77,10 @@ namespace InternetInterfaceFixture.Functional
 				Assert.That(browser.Text, Is.StringContaining("Номер телефона8-111-111-11-11"));
 				Assert.That(browser.Text, Is.StringContaining("Адрес earch"));
 				Assert.That(browser.Text, Is.StringContaining("ЛогинLogin" + loginPrefix));
+				foreach (var partner in Partner.FindAllByProperty("Login", "Login"+loginPrefix).ToList())
+				{
+					partner.DeleteAndFlush();
+				}
 				//browser.Text(Find.ById("")).  
 				/*browser.Link(Find.ByText("Мониторинг работы клиентов")).Click();
 				Assert.That(browser.Text, Is.StringContaining("Мониторинг работы клиентов"));

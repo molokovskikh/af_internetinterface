@@ -68,7 +68,8 @@ namespace InternetInterface.Models.Access
 									"SiteMap",
 									"LoadEditMudule",
 									"EditInformation",
-									"ClientRegisteredInfo"
+									"ClientRegisteredInfo",
+									"RequestView"
 			                 	};
 			return _registerClient.Contains(methodName) ? "RC" : string.Empty;
 		}
