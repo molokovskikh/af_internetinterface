@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Castle.ActiveRecord;
 using Castle.MonoRail.Framework;
 using InternetInterface.Controllers.Filter;
@@ -81,7 +82,7 @@ namespace InternetInterface.Controllers
 				var session = sessionHolder.CreateSession(typeof(PhisicalClients));
 				try
 				{
-					var sqlStr = String.Format(String.Format(@"Select PC.Id, PC.name, PC.Surname, PC.Patronymic, PC.City, PC.AdressConnect,
+					/*var sqlStr = String.Format(String.Format(@"Select PC.Id, PC.name, PC.Surname, PC.Patronymic, PC.City, PC.AdressConnect,
 PC.PassportSeries, PC.PassportNumber, PC.WhoGivePassport, PC.RegistrationAdress,
 PC.RegDate, PC.Tariff, PC.Balance, PC.Login, PC.Password, PC.HasRegistered, PC.HasConnected, PC.Connected
 FROM internet.RequestsConnection R
@@ -90,10 +91,17 @@ Join internet.PhysicalClients PC on R.ClientID = PC.Id
 join internet.Partners PA on CB.PartnerID = PA.Id
 WHERE PA.ID = {0} and PC.Connected = false", InithializeContent.partner.Id));
 					var query = session.CreateSQLQuery(sqlStr).AddEntity(typeof (PhisicalClients));
-					var result = query.List<PhisicalClients>();
+					var result = query.List<PhisicalClients>();*/
+					var result = RequestsConnection.FindAll(DetachedCriteria.For(typeof (RequestsConnection))
+					                                        	.CreateAlias("BrigadNumber", "BR", JoinType.InnerJoin)
+					                                        	.CreateAlias("ClientID", "PC", JoinType.InnerJoin)
+					                                        	.CreateAlias("ManagerID", "PA", JoinType.InnerJoin)
+					                                        	.Add(Expression.Eq("PA.Id", InithializeContent.partner.Id))
+					                                        	.Add(Expression.Eq("PC.Connected", false))).ToList();
+					var PcList = result.Select(requestsConnection => requestsConnection.ClientID).ToList();
 					foreach (var item in result)
 						session.Evict(item);
-					return result;
+					return PcList;
 				}
 				catch (Exception e)
 				{

@@ -113,11 +113,14 @@ namespace InternetInterface.Models
 					_client.Password = CryptoPass.GetHashString(_client.Password);
 					_client.HasRegistered = hasRegistered;
 					_client.SaveAndFlush();
-					connectSumm.ClientId = _client;
-					connectSumm.ManagerID = InithializeContent.partner;
-					connectSumm.PaymentDate = DateTime.Now;
-					connectSumm.SaveAndFlush();
-					return true;
+					if (validator.IsValid(connectSumm))
+					{
+						connectSumm.ClientId = _client;
+						connectSumm.ManagerID = InithializeContent.partner;
+						connectSumm.PaymentDate = DateTime.Now;
+						connectSumm.SaveAndFlush();
+						return true;
+					}
 				}
 				return false;
 		}

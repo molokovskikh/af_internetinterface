@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using InternetInterface.Models;
 using InternetInterfaceFixture.Helpers;
 using NUnit.Framework;
@@ -38,24 +39,34 @@ namespace InternetInterfaceFixture.Functional
 				browser.TextField(Find.ById("Name")).AppendText("TestName");
 				browser.TextField(Find.ById("Patronymic")).AppendText("TestPatronymic");
 				browser.TextField(Find.ById("City")).AppendText("TestCity");
-				browser.TextField(Find.ById("AdressConnect")).AppendText("TestAdressConnect");
+				browser.TextField(Find.ById("Street")).AppendText("TestStreet");
+				browser.TextField(Find.ById("House")).AppendText("5");
+				browser.TextField(Find.ById("Apartment")).AppendText("5");
+				browser.TextField(Find.ById("Entrance")).AppendText("5");
+				browser.TextField(Find.ById("Floor")).AppendText("1");
+				browser.TextField(Find.ById("PhoneNumber")).AppendText("8-111-222-33-44");
+				browser.TextField(Find.ById("HomePhoneNumber")).AppendText("1111-22222");
 				browser.TextField(Find.ById("PassportSeries")).AppendText("1234");
 				browser.TextField(Find.ById("PassportNumber")).AppendText("123456");
 				browser.TextField(Find.ById("WhoGivePassport")).AppendText("TestWhoGivePassport");
 				browser.TextField(Find.ById("RegistrationAdress")).AppendText("TestRegistrationAdress");
+				browser.TextField(Find.ById("OutputDate")).AppendText("10.01.2002");
+				browser.TextField(Find.ById("ConnectSumm")).AppendText("100");
 				var rnd = new Random();
 				var loginPrefix = rnd.Next(100);
 				browser.TextField(Find.ById("Login")).AppendText("Login" + loginPrefix);
 				browser.Button(Find.ById("RegisterClientButton")).Click();
-				Assert.That(browser.Text, Is.StringContaining("Информация для клиента: TestSurname TestName TestPatronymic"));
-				Assert.That(browser.Text, Is.StringContaining("TestCity"));
-				Assert.That(browser.Text, Is.StringContaining("TestAdressConnect"));
-				Assert.That(browser.Text, Is.StringContaining("1234"));
-				Assert.That(browser.Text, Is.StringContaining("123456"));
-				Assert.That(browser.Text, Is.StringContaining("TestWhoGivePassport"));
-				Assert.That(browser.Text, Is.StringContaining("TestRegistrationAdress"));
-				Assert.That(browser.Text, Is.StringContaining("Баланс по счету"));
-				Assert.That(browser.Text, Is.StringContaining("ЛогинLogin" + loginPrefix));
+				Thread.Sleep(2000);
+				//Assert.That(browser.Text, Is.StringContaining("TestCity"));
+				//Assert.That(browser.Text, Is.StringContaining("TestAdressConnect"));
+				Assert.That(browser.Text, Is.StringContaining("прописанный по адресу:"));
+				Assert.That(browser.Text, Is.StringContaining("адрес подключения:"));
+				Assert.That(browser.Text, Is.StringContaining("принимаю подключение к услугам доступа"));
+				var pc = PhisicalClients.FindAllByProperty("Login", "Login" + loginPrefix).ToList();
+				foreach (var phisicalClientse in pc)
+				{
+					phisicalClientse.DeleteAndFlush();
+				}
 				//browser.Text(Find.ById("")).  
 				/*browser.Link(Find.ByText("Мониторинг работы клиентов")).Click();
 				Assert.That(browser.Text, Is.StringContaining("Мониторинг работы клиентов"));

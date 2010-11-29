@@ -33,6 +33,7 @@ namespace InternetInterfaceFixture.Functional
 				RegDate = DateTime.Now
 			};
 			RC.SaveAndFlush();
+			Thread.Sleep(2000);
 			using (var browser = Open("Search/SearchBy.rails?CloseDemand=true"))
 			{
 				/*Assert.That(browser.Text, Is.StringContaining("Подключить"));

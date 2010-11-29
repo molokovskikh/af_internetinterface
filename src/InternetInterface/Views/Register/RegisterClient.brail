@@ -41,8 +41,9 @@
                              <td>
                                     Сумма за подключение:
                                 </td>
-                                 <td  colspan="3">
+                                 <td >
                                     <input id="ConnectSumm" type="text" value="${ConnectSumm.Summ}" name="ConnectSumm.Summ"/></td>
+                                    <td>${NS.GetBlock("Summ")}</td>
                              </tr>
                             <tr>
                                 <td  colspan="3">

@@ -38,8 +38,6 @@ namespace InternetInterfaceFixture.Functional
 		[Test]
 		public void ClientInfoTest()
 		{
-			//var client = ClientHelperFixture.CreateClient();
-			//if (client == null) return;
 			ClientHelperFixture.CreateClient(l =>
 			                                 	{
 			                                 		using (var browser = Open("UserInfo/SearchUserInfo.rails?ClientCode=" + l.Id))

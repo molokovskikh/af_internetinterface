@@ -42,12 +42,16 @@ namespace InternetInterface.Controllers
 			}
 			else
 			{
-				user.SetValidationErrors(Validator.GetErrorSummary(user));
 				PropertyBag["Client"] = user;
 				PropertyBag["BalanceText"] = balanceText;
 				Flash["ConnectSumm"] = connectSumm;
 				PropertyBag["Applying"] = "false";
+				Validator.IsValid(connectSumm);
+				connectSumm.SetValidationErrors(Validator.GetErrorSummary(connectSumm));
+				user.SetValidationErrors(Validator.GetErrorSummary(user));
+				
 				PropertyBag["VB"] = new ValidBuilderHelper<PhisicalClients>(user);
+				PropertyBag["NS"] = new ValidBuilderHelper<PaymentForConnect>(connectSumm);
 				PropertyBag["ChangeBy"] = changeProperties;
 			}
 		}
@@ -85,6 +89,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["Client"] = new PhisicalClients();
 			PropertyBag["VB"] = new ValidBuilderHelper<PhisicalClients>(new PhisicalClients());
+			PropertyBag["NS"] = new ValidBuilderHelper<PaymentForConnect>(new PaymentForConnect());
 			Flash["ConnectSumm"] = new PaymentForConnect();
 			PropertyBag["Applying"] = "false";
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties { ChangeType = TypeChangeBalance.ForTariff };
