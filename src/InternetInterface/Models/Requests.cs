@@ -27,6 +27,9 @@ namespace InternetInterface.Models
 
 		[BelongsTo("Tariff")]
 		public virtual Tariff Tariff { get; set; }
+
+		[BelongsTo("Label")]
+		public virtual Label Label { get; set; }
 	}
 
 }

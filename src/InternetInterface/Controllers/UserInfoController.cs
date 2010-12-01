@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Collections.Generic;
 using Castle.ActiveRecord;
@@ -40,9 +42,101 @@ namespace InternetInterface.Controllers
 			//if (EditFlag) {EditInformation(); }
 		}
 
+		private List<string> GetColorSet()
+		{
+			var colors = new List<string>();
+			for (int i = 0; i < 256; i = i + 51)
+			{
+				var ival = i.ToString("X");
+				if (ival.Length < 2)
+				{
+					ival = "0" + ival;
+				}
+				for (int j = 0; j < 256; j = j + 51)
+				{
+					var jval = j.ToString("X");
+					if (jval.Length < 2)
+					{
+						jval = "0" + jval;
+					}
+					for (int k = 0; k < 256; k = k + 51)
+					{
+						var kval = k.ToString("X");
+						if (kval.Length < 2)
+						{
+							kval = "0" + kval;
+						}
+						colors.Add('#' + ival + jval + kval);
+					}
+				}
+			}
+			return colors;
+		}
+
+		public void CreateImage(Color color, int width, int height, string labelId)
+		{
+			using (var bitmap = new Bitmap(width, height))
+			{
+				using (var graphics = Graphics.FromImage(bitmap))
+				using (var brush = new SolidBrush(color))
+				using (var pen = new Pen(Brushes.Gray))
+				{
+					graphics.FillRectangle(brush, 2, 2, width - 4, height - 4);
+					graphics.DrawRectangle(pen, 2, 2, width - 4, height - 4);
+				}
+				//bitmap.Save(AppDomain.CurrentDomain.BaseDirectory + "\\images\\Label" + labelId + ".jpg", ImageFormat.Jpeg);
+				var myImageCodecInfo = ImageCodecInfo.GetImageEncoders().Where(r => r.MimeType == "image/jpeg").First();
+				var encoder = Encoder.Quality;
+				var en = new EncoderParameters(1);
+				var we = new EncoderParameter(encoder, 100L);
+				en.Param[0] = we;
+				bitmap.Save(AppDomain.CurrentDomain.BaseDirectory + "\\images\\Label" + labelId + ".jpg", myImageCodecInfo, en);
+			}
+		}
+
 		public void RequestView()
 		{
 			PropertyBag["Clients"] = Requests.FindAll();
+			PropertyBag["Labels"] = Label.FindAll();
+
+			PropertyBag["labelColors"] = GetColorSet();
+			PropertyBag["LabelName"] = string.Empty;
+		}
+
+		public void RequestView(string LabelName, string labelcolor)
+		{
+			var newlab = new Label
+			             	{
+								Color = labelcolor,
+								Name = LabelName
+			             	};
+			newlab.SaveAndFlush();
+			CreateImage(ColorTranslator.FromHtml(labelcolor.Insert(1, "FF")), 30, 30, newlab.Id.ToString());
+			RedirectToUrl("../UserInfo/RequestView.rails");
+		}
+
+		public void RequestView(uint labelId)
+		{
+			PropertyBag["Clients"] = Requests.FindAll(DetachedCriteria.For(typeof(Requests))
+				.Add(Expression.Eq("Label", Label.Find(labelId))));
+			PropertyBag["Labels"] = Label.FindAll();
+			PropertyBag["labelColors"] = GetColorSet();
+			PropertyBag["LabelName"] = string.Empty;
+		}
+
+		[AccessibleThrough(Verb.Post)]
+		public void RequestView([DataBind("LabelList")]List<uint> labelList, uint labelch)
+		{
+			foreach (var label in labelList)
+			{
+				var request = Requests.Find(label);
+				request.Label = Label.Find(labelch);	
+				request.UpdateAndFlush();
+			}
+			PropertyBag["Clients"] = Requests.FindAll();
+			PropertyBag["Labels"] = Label.FindAll();
+			PropertyBag["labelColors"] = GetColorSet();
+			PropertyBag["LabelName"] = string.Empty;
 		}
 
 		[AccessibleThrough(Verb.Post)]

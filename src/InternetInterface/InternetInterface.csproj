@@ -161,6 +161,7 @@
     <Compile Include="Models\Brigad.cs" />
     <Compile Include="Models\ClientEndpoints.cs" />
     <Compile Include="Models\Clients.cs" />
+    <Compile Include="Models\Label.cs" />
     <Compile Include="Models\NetworkSwitches.cs" />
     <Compile Include="Models\PaymentForConnect.cs" />
     <Compile Include="Models\Requests.cs" />

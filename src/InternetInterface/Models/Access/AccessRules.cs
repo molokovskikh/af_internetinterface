@@ -69,7 +69,8 @@ namespace InternetInterface.Models.Access
 									"LoadEditMudule",
 									"EditInformation",
 									"ClientRegisteredInfo",
-									"RequestView"
+									"RequestView",
+									"ChangeLabel"
 			                 	};
 			return _registerClient.Contains(methodName) ? "RC" : string.Empty;
 		}

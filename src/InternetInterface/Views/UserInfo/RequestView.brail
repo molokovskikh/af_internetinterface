@@ -5,12 +5,34 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Клиенты оставили заявки</title>
+    <style type="text/css">
+#content {
+float:left;
+width:80%;
+}
+#sidebar {
+float:left;
+width:250px;
+}
+#main_t {
+overflow:hidden;
+}
+
+    </style>
 </head>
 <body>
 <% OutputSubView("""\Subview\MapHead""") %>
-<div id="main">
+<div id="main" style="width:100%">
     <div id="container">
         <div id="block-tables" class="block">
+        <div id="main_t">
+        
+        <div id="content">
+        <div id="cont"> 
+        <form id="SearchForm" name="SearchForm" method=post action="${siteroot}/UserInfo/RequestView">
+            <% if (Clients.Length == 0):
+            output WriteMessageError("Нет заявок на подключение")
+            else: %>
             <table class="table">
             <thead>
                 <th>Имя</th>
@@ -19,6 +41,7 @@
                 <th>Адрес</th>
                 <th>Самостоятельность</th>
                 <th>Тариф</th>
+                <th colspan=2>Метка</th>
             </thead>
             <% for i,Client in enumerate(Clients): %>
             <tr>
@@ -32,11 +55,80 @@
                     Нет <%end %>
                 </td>
                 <td>${Client.Tariff.Name}</td>
+                <%if (Client.Label.Id !=0): %>
+                <td align=left style="width:30px;"><IMG SRC="${siteroot}/Images/Label${Client.Label.Id}.jpg" /></td>
+                <td style="width:200px">
+                <input type="checkbox" id="LabelDemandCheck${Client.Id}" name="LabelList[${i}]" value=${Client.Id} />
+                ${Client.Label.Name}
+                <%else: %>
+                    <td></td>
+                    <td align=left><input type="checkbox" id="Checkbox1" name="LabelList[${i}]" value=${Client.Id} />
+                <%end %>
+                </td>
             <%end %>
             </tr>
             </table>
-        </div>
-    </div>
-</div>
+            <%end %>
+                    
+            </div>
+            </div>
+<div id="sidebar" align="right">
+             <table class="table" style="width:170px;">
+             <thead>
+             <th colspan=2>Метки</th>
+             </thead>
+             <tbody>
+             <tr><td><a href="../UserInfo/RequestView.rails">Все</a></td></tr>
+                    <% for i, Label in enumerate(Labels): %>
+                    <tr>
+                    <td style="width:100px;"><IMG align=left SRC="${siteroot}/Images/Label${Label.Id}.jpg" />
+                    <div align=center>
+                      <a href="../UserInfo/RequestView.rails?labelId=${Label.Id}">${Label.Name}</a>
+                    </div>
+                      </td>
+                    </tr>
+                    <% end %>
+                <tr>
+                    <td>
+                             <select name="labelch" id="labelch" style="width: 100%" >
+                             <option id="Option2" value=0 style="background-color: White"> Нет </option>
+                             <% for i, Label in enumerate(Labels): %>
+                             <option id="Option1" value=${Label.Id} style="background-color: ${Label.Color}"> ${Label.Name} </option>
+                              <% end %>
+                             
+                    </td>
+                </tr>
+                <tr><td><input id="SearchButton" type="submit" value="Установить метки"  align="right" /></td></tr>
+             </tbody>
+             </table>
+             </form>
+              <form id="Form1" name="RequestViewForm" method=post action="${siteroot}/UserInfo/RequestView">
+              <table class="table" style="width:170px;" >
+                <thead>
+                    <th>Создать метку</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" id="LabelName"  name="LabelName"  value="${LabelName}" style="width: 80%; " /></td>
+                    </tr>
+                    <tr>
+                        <td>
+                             <select name="labelcolor" id="labelcolor" style="width: 100%" >
+                             <% for i, color in enumerate(labelColors): %>
+                             <option id="color${i}" value=${color} style="background-color: ${color}"> ${color} </option>
+                              <% end %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input id="Submit1" type="submit" value="Создать метку"  align="right" /></td>
+                    </tr>
+                </tbody>
+             </table>
+             </form>
+             </div>
+             </div>
+             </div>
+            </div>
+            </div>
 </body>
 </html>
