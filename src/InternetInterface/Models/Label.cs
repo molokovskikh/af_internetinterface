@@ -10,7 +10,7 @@ namespace InternetInterface.Models
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
-		[Property]
+		[Property, ValidateIsUnique("Имя должно быть уникальным")]
 		public virtual string Name { get; set; }
 
 		[Property]

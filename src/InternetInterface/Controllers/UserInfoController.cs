@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using Castle.ActiveRecord;
@@ -94,15 +95,64 @@ namespace InternetInterface.Controllers
 			}
 		}
 
+		private void SendRequestEditParameter()
+		{
+			PropertyBag["labelColors"] = GetColorSet();
+			PropertyBag["LabelName"] = string.Empty;
+			PropertyBag["Labels"] = Label.FindAll();
+		}
+
+		public void EditLabel()
+		{
+			SendRequestEditParameter();
+		}
+
+		public void EditLabel(uint labelch, string LabelName, string labelcolor)
+		{
+			var labelForEdit = Label.Find(labelch);
+			if (labelForEdit != null)
+			{
+				if (LabelName != null)
+					labelForEdit.Name = LabelName;
+				if (labelcolor != "#000000")
+				{
+					labelForEdit.Color = labelcolor;
+					File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\images\\Label" + labelch + ".jpg");
+					CreateImage(ColorTranslator.FromHtml(labelcolor.Insert(1, "FF")), 30, 30, labelch.ToString());
+				}
+				labelForEdit.UpdateAndFlush();
+			}
+			RedirectToUrl("../UserInfo/RequestView.rails");
+		}
+
+		public void DeleteLabel(uint deletelabelch)
+		{
+			var labelForDel = Label.Find(deletelabelch);
+			if (labelForDel != null)
+			{
+				labelForDel.DeleteAndFlush();
+				File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\images\\Label" + deletelabelch + ".jpg");
+				var session = HiberSession<Label>.GetHiberSission();
+				var query =
+					session.CreateSQLQuery("update internet.Requests R set r.`Label`=0 where r.`Label`= :LabelIndex ;").AddEntity(
+						typeof (Label));
+				query.SetParameter("LabelIndex", deletelabelch);
+				query.ExecuteUpdate();
+			}
+			RedirectToUrl("../UserInfo/RequestView.rails");
+		}
+
 		public void RequestView()
 		{
 			PropertyBag["Clients"] = Requests.FindAll();
-			PropertyBag["Labels"] = Label.FindAll();
-
-			PropertyBag["labelColors"] = GetColorSet();
-			PropertyBag["LabelName"] = string.Empty;
+			SendRequestEditParameter();
 		}
 
+		/// <summary>
+		/// Создать новую метку
+		/// </summary>
+		/// <param name="LabelName"></param>
+		/// <param name="labelcolor"></param>
 		public void RequestView(string LabelName, string labelcolor)
 		{
 			var newlab = new Label
@@ -112,18 +162,25 @@ namespace InternetInterface.Controllers
 			             	};
 			newlab.SaveAndFlush();
 			CreateImage(ColorTranslator.FromHtml(labelcolor.Insert(1, "FF")), 30, 30, newlab.Id.ToString());
-			RedirectToUrl("../UserInfo/RequestView.rails");
+			RequestView();
 		}
 
+		/// <summary>
+		/// Фильтр по меткам
+		/// </summary>
+		/// <param name="labelId"></param>
 		public void RequestView(uint labelId)
 		{
 			PropertyBag["Clients"] = Requests.FindAll(DetachedCriteria.For(typeof(Requests))
 				.Add(Expression.Eq("Label", Label.Find(labelId))));
-			PropertyBag["Labels"] = Label.FindAll();
-			PropertyBag["labelColors"] = GetColorSet();
-			PropertyBag["LabelName"] = string.Empty;
+			SendRequestEditParameter();
 		}
 
+		/// <summary>
+		/// Устанавливает метки на клиентов
+		/// </summary>
+		/// <param name="labelList"></param>
+		/// <param name="labelch"></param>
 		[AccessibleThrough(Verb.Post)]
 		public void RequestView([DataBind("LabelList")]List<uint> labelList, uint labelch)
 		{
@@ -134,9 +191,7 @@ namespace InternetInterface.Controllers
 				request.UpdateAndFlush();
 			}
 			PropertyBag["Clients"] = Requests.FindAll();
-			PropertyBag["Labels"] = Label.FindAll();
-			PropertyBag["labelColors"] = GetColorSet();
-			PropertyBag["LabelName"] = string.Empty;
+			SendRequestEditParameter();
 		}
 
 		[AccessibleThrough(Verb.Post)]

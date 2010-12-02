@@ -124,8 +124,11 @@
     <Content Include="Styles\style.css" />
     <None Include="Views\CommonScripts\WriteMessage.brail" />
     <None Include="Views\Subview\Client.brail" />
+    <None Include="Views\Subview\CreateEditLabel.brail" />
+    <None Include="Views\UserInfo\EditLabel.brail" />
     <None Include="Views\UserInfo\PartnersPreview.brail" />
     <None Include="Views\UserInfo\ClientRegisteredInfo.brail" />
+    <None Include="Views\Subview\DeleteLabel.brail" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

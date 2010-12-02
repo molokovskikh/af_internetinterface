@@ -33,7 +33,7 @@ overflow:hidden;
             <% if (Clients.Length == 0):
             output WriteMessageError("Нет заявок на подключение")
             else: %>
-            <table class="table">
+            <table class="table" id="clientTable">
             <thead>
                 <th>Имя</th>
                 <th>Номер телефона</th>
@@ -58,13 +58,14 @@ overflow:hidden;
                 <%if (Client.Label.Id !=0): %>
                 <td align=left style="width:30px;"><IMG SRC="${siteroot}/Images/Label${Client.Label.Id}.jpg" /></td>
                 <td style="width:200px">
-                <input type="checkbox" id="LabelDemandCheck${Client.Id}" name="LabelList[${i}]" value=${Client.Id} />
+                <input type="checkbox" id="LabelDemandCheck${i}" name="LabelList[${i}]" value=${Client.Id} />
                 ${Client.Label.Name}
                 <%else: %>
                     <td></td>
                     <td align=left><input type="checkbox" id="Checkbox1" name="LabelList[${i}]" value=${Client.Id} />
                 <%end %>
                 </td>
+                <%i++ %>
             <%end %>
             </tr>
             </table>
@@ -72,10 +73,10 @@ overflow:hidden;
                     
             </div>
             </div>
-<div id="sidebar" align="right">
+            <div id="sidebar" align="right">
              <table class="table" style="width:170px;">
              <thead>
-             <th colspan=2>Метки</th>
+             <th colspan=2>Метки <a href="../UserInfo/EditLabel.rails"><span style=" color:#aaa;">(Редактировать)</a></th>
              </thead>
              <tbody>
              <tr><td><a href="../UserInfo/RequestView.rails">Все</a></td></tr>
@@ -98,32 +99,45 @@ overflow:hidden;
                              
                     </td>
                 </tr>
-                <tr><td><input id="SearchButton" type="submit" value="Установить метки"  align="right" /></td></tr>
-             </tbody>
-             </table>
-             </form>
-              <form id="Form1" name="RequestViewForm" method=post action="${siteroot}/UserInfo/RequestView">
+                <tr><td><input id="SetlabelButton" type="submit" value="Установить метки"  align="right" /></td></tr>
+                </tbody>
+                </table>
+              </form>
+               <form id="Form1" name="RequestViewForm" method=post action="${siteroot}/UserInfo/RequestView">
               <table class="table" style="width:170px;" >
                 <thead>
                     <th>Создать метку</th>
                 </thead>
                 <tbody>
+                <% OutputSubView("""\Subview\CreateEditLabel""") %>
                     <tr>
-                        <td><input type="text" id="LabelName"  name="LabelName"  value="${LabelName}" style="width: 80%; " /></td>
-                    </tr>
-                    <tr>
-                        <td>
-                             <select name="labelcolor" id="labelcolor" style="width: 100%" >
-                             <% for i, color in enumerate(labelColors): %>
-                             <option id="color${i}" value=${color} style="background-color: ${color}"> ${color} </option>
-                              <% end %>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><input id="Submit1" type="submit" value="Создать метку"  align="right" /></td>
+                        <td><input id="CreateLabelButton" type="submit" value="Создать метку"  align="right" /></td>
                     </tr>
                 </tbody>
              </table>
+             </form>
+             <form id="Form2" name="RequestViewForm" method=post action="${siteroot}/UserInfo/DeleteLabel">
+              <table class="table" style="width:170px;" >
+                <thead>
+                    <th>Удалить метку</th>
+                </thead>
+                <tbody>
+                <% OutputSubView("""\Subview\DeleteLabel""") %>
+                <tr><td><input id="DeleteLabelButton" type="submit" value="Удалить метку"  align="right" /></td></tr>
+                </tbody>
+               </table>
+             </form>
+             <form id="Form3" name="RequestViewForm" method=post action="${siteroot}/UserInfo/EditLabel">
+              <table class="table" style="width:170px;" >
+                <thead>
+                    <th>Редактировать метку</th>
+                </thead>
+                <tbody>
+                <% OutputSubView("""\Subview\DeleteLabel""") %>
+                <% OutputSubView("""\Subview\CreateEditLabel""") %>
+                <tr><td><input id="Submit2" type="submit" value="Редактировать метку"  align="right" /></td></tr>
+                </tbody>
+               </table>
              </form>
              </div>
              </div>

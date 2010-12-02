@@ -55,7 +55,9 @@ namespace InternetInterface.Models.Access
 									"SearchUsers",
 									"SearchBy",
 									"SiteMap",
-									"SearchUserInfo"
+									"SearchUserInfo",
+									"DeleteLabel",
+									"EditLabel"
 			                 	};
 			return _getClientInfo.Contains(methodName) ? "GCI" : string.Empty;
 		}
@@ -70,7 +72,8 @@ namespace InternetInterface.Models.Access
 									"EditInformation",
 									"ClientRegisteredInfo",
 									"RequestView",
-									"ChangeLabel"
+									"ChangeLabel",
+									"EditLabel"
 			                 	};
 			return _registerClient.Contains(methodName) ? "RC" : string.Empty;
 		}
