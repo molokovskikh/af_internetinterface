@@ -95,8 +95,7 @@ WHERE PA.ID = {0} and PC.Connected = false", InithializeContent.partner.Id));
 					var result = RequestsConnection.FindAll(DetachedCriteria.For(typeof (RequestsConnection))
 					                                        	.CreateAlias("BrigadNumber", "BR", JoinType.InnerJoin)
 					                                        	.CreateAlias("ClientID", "PC", JoinType.InnerJoin)
-					                                        	.CreateAlias("ManagerID", "PA", JoinType.InnerJoin)
-					                                        	.Add(Expression.Eq("PA.Id", InithializeContent.partner.Id))
+																.Add(Expression.Eq("BR.PartnerID", InithializeContent.partner))
 					                                        	.Add(Expression.Eq("PC.Connected", false))).ToList();
 					var PcList = result.Select(requestsConnection => requestsConnection.ClientID).ToList();
 					foreach (var item in result)

@@ -102,11 +102,6 @@ namespace InternetInterface.Controllers
 			PropertyBag["Labels"] = Label.FindAll();
 		}
 
-		public void EditLabel()
-		{
-			SendRequestEditParameter();
-		}
-
 		public void EditLabel(uint labelch, string LabelName, string labelcolor)
 		{
 			var labelForEdit = Label.Find(labelch);
