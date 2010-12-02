@@ -102,9 +102,9 @@ namespace InternetInterface.Controllers
 			PropertyBag["Labels"] = Label.FindAll();
 		}
 
-		public void EditLabel(uint labelch, string LabelName, string labelcolor)
+		public void EditLabel(uint deletelabelch, string LabelName, string labelcolor)
 		{
-			var labelForEdit = Label.Find(labelch);
+			var labelForEdit = Label.Find(deletelabelch);
 			if (labelForEdit != null)
 			{
 				if (LabelName != null)
@@ -112,8 +112,8 @@ namespace InternetInterface.Controllers
 				if (labelcolor != "#000000")
 				{
 					labelForEdit.Color = labelcolor;
-					File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\images\\Label" + labelch + ".jpg");
-					CreateImage(ColorTranslator.FromHtml(labelcolor.Insert(1, "FF")), 30, 30, labelch.ToString());
+					File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\images\\Label" + deletelabelch + ".jpg");
+					CreateImage(ColorTranslator.FromHtml(labelcolor.Insert(1, "FF")), 30, 30, deletelabelch.ToString());
 				}
 				labelForEdit.UpdateAndFlush();
 			}
