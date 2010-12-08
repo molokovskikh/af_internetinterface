@@ -1,7 +1,5 @@
 ﻿<head>
 
-<script type="text/javascript" src="${siteroot}/Scripts/jquery-1.4.1.js"></script> 
-
 <link href="${siteroot}/Styles/style.css" type="text/css" rel="stylesheet" />
 <link rel="stylesheet" href="${siteroot}/Styles/base.css" type="text/css" media="screen" />
 

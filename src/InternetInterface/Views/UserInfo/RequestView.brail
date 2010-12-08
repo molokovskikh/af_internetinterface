@@ -56,7 +56,7 @@ overflow:hidden;
                 </td>
                 <td>${Client.Tariff.Name}</td>
                 <%if (Client.Label.Id !=0): %>
-                <td align=left style="width:30px;"><IMG SRC="${siteroot}/Images/Label${Client.Label.Id}.jpg" /></td>
+                <td align=left style="width:30px;"><a href="../UserInfo/RequestView.rails?labelId=${Client.Label.Id}"><IMG SRC="${siteroot}/Images/Label${Client.Label.Id}.jpg" /></a></td>
                 <td style="width:200px">
                 <input type="checkbox" id="LabelDemandCheck${i}" name="LabelList[${i}]" value=${Client.Id} />
                 ${Client.Label.Name}
@@ -76,7 +76,7 @@ overflow:hidden;
             <div id="sidebar" align="right">
              <table class="table" style="width:170px;">
              <thead>
-             <th colspan=2>Метки <a href="../UserInfo/EditLabel.rails"><span style=" color:#aaa;">(Редактировать)</a></th>
+             <th colspan=2>Метки</th>
              </thead>
              <tbody>
              <tr><td><a href="../UserInfo/RequestView.rails">Все</a></td></tr>

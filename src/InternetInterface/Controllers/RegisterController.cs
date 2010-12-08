@@ -16,6 +16,8 @@ namespace InternetInterface.Controllers
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class RegisterController : SmartDispatcherController
 	{
+		private static bool EditValidFlag;
+
 		[AccessibleThrough(Verb.Post)]
 		public void RegisterClient([DataBind("ChangedBy")]ChangeBalaceProperties changeProperties,
 			[DataBind("client")]PhisicalClients user, string balanceText, uint tariff, [DataBind("ConnectSumm")]PaymentForConnect connectSumm)
@@ -102,7 +104,7 @@ namespace InternetInterface.Controllers
 			var PID = Partner.FindAllByProperty("Login", partner.Login)[0].Id;
 			if (rights.Count != 0)
 			{
-				if (Validator.IsValid(partner))
+				if (Validator.IsValid(partner) || EditValidFlag)
 				{
 					var basePartner = Partner.FindAllByProperty("Login", partner.Login);
 					if (basePartner.Length != 0)
@@ -148,7 +150,7 @@ namespace InternetInterface.Controllers
 						}
 
 						AccessDependence.SetCrossAccess(ChRights, rights, partner);
-
+						EditValidFlag = false;
 						Flash["EditiongMessage"] = "Изменения внесены успешно";
 					}
 					else
@@ -162,6 +164,13 @@ namespace InternetInterface.Controllers
 				else
 				{
 					partner.SetValidationErrors(Validator.GetErrorSummary(partner));
+					var ve =  partner.GetValidationErrors();
+					if (ve.ErrorsCount == 1)
+						if (ve.ErrorMessages[0] == "Логин должен быть уникальный")
+						{
+							EditValidFlag = true;
+							EditPartner(partner, rights);
+						}
 				}
 			}
 			else

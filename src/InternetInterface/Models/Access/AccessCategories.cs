@@ -9,11 +9,17 @@ namespace InternetInterface.Models
 	public enum AccessCategoriesType
 	{
 		GetClientInfo = 1,
+		RegisterClient = 3,
+		SendDemand = 5,
+		CloseDemand = 7,
+		RegisterPartner = 9,
+		ChangeBalance = 11
+		/*GetClientInfo = 1,
 		RegisterClient = 2,
 		SendDemand = 3,
 		CloseDemand = 4,
 		RegisterPartner = 5,
-		ChangeBalance = 6
+		ChangeBalance = 6*/
 	};
 
 	public class TwoRule
@@ -59,12 +65,7 @@ namespace InternetInterface.Models
 			                   			{
 			                   				HEADAccess = AccessCategoriesType.GetClientInfo,
 			                   				CHIDLAccess = AccessCategoriesType.SendDemand,
-			                   			},
-			                   		new TwoRule
-			                   			{
-			                   				HEADAccess = AccessCategoriesType.CloseDemand,
-			                   				CHIDLAccess = AccessCategoriesType.ChangeBalance
-										}
+			                   			}
 			                   		/*new TwoRule(AccessCategoriesType.GetClientInfo, AccessCategoriesType.SendDemand),
 			                   		new TwoRule(AccessCategoriesType.ChangeBalance, AccessCategoriesType.CloseDemand)*/
 			                   		/*new TwoRule("GetClientInfo","SendDemand"),
