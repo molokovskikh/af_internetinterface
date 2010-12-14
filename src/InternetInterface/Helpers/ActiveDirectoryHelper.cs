@@ -7,43 +7,53 @@ using log4net;
 
 namespace InternetInterface.Helpers
 {
+	[Serializable]
 	public class ActiveDirectoryHelper
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof(ActiveDirectoryHelper));
 
+		static DirectoryEntry entryAu;
 		static string _path;
 		static string _filterAttribute;
 		public static string ErrorMessage;
 
+		//"LDAP://OU=Клиенты,DC=adc,DC=analit,DC=net"
+
 		public static bool IsAuthenticated(string username, string pwd)
 		{
+			if (Authenticated("LDAP://OU=Офис,DC=adc,DC=analit,DC=net", username, pwd))
+				return true;
+			if (Authenticated("LDAP://OU=Клиенты,DC=adc,DC=analit,DC=net", username, pwd))
+				return true;
+			return false;
+		}
+
+		public static bool Authenticated(string LDAP, string username, string pwd)
+		{ 
 			string domainAndUsername = @"analit\" + username;
-			DirectoryEntry entry = new DirectoryEntry("LDAP://OU=Офис,DC=adc,DC=analit,DC=net",
-													   domainAndUsername,
-														 pwd, AuthenticationTypes.ServerBind);
+			entryAu = new DirectoryEntry(LDAP, domainAndUsername, pwd, AuthenticationTypes.None);
+#if DEBUG
+			//Console.WriteLine(entryAu.Guid);
+#endif
 			try
 			{
 				// Bind to the native AdsObject to force authentication.
-				Object obj = entry.NativeObject;
-				DirectorySearcher search = new DirectorySearcher(entry);
+				var obj = entryAu.NativeObject;
+				var search = new DirectorySearcher(entryAu);
 				search.Filter = "(SAMAccountName=" + username + ")";
 				search.PropertiesToLoad.Add("cn");
 				SearchResult result = search.FindOne();
-				if (null == result)
-				{
-					return false;
-				}
 				// Update the new path to the user in the directory
 				_path = result.Path;
 				_filterAttribute = (String)result.Properties["cn"][0];
 			}
 			catch (Exception ex)
 			{
-				_log.Error("Пароль или логин был введен неправильно");
+				_log.Info("Пароль или логин был введен неправильно");
 				ErrorMessage = ex.Message;
 				return false;
 			}
-			entry.RefreshCache();
+			entryAu.RefreshCache();
 			return true;
 		}
 
@@ -87,9 +97,10 @@ namespace InternetInterface.Helpers
 
 		public static void ChangePassword(string login, string password)
 		{
-#if !DEBUG
+#if DEBUG
 			var entry = GetDirectoryEntry(login);
-			GetDirectoryEntry(login).Invoke("SetPassword", password);
+			entry.Invoke("ChangePassword", "TqKvdG46", password);
+			//GetDirectoryEntry(login).Invoke("SetPassword", password);
 			entry.CommitChanges();
 #endif
 		}

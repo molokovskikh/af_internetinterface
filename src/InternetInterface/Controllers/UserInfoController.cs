@@ -112,8 +112,8 @@ namespace InternetInterface.Controllers
 				if (labelcolor != "#000000")
 				{
 					labelForEdit.Color = labelcolor;
-					File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\images\\Label" + deletelabelch + ".jpg");
-					CreateImage(ColorTranslator.FromHtml(labelcolor.Insert(1, "FF")), 30, 30, deletelabelch.ToString());
+					/*File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\images\\Label" + deletelabelch + ".jpg");
+					CreateImage(ColorTranslator.FromHtml(labelcolor.Insert(1, "FF")), 30, 30, deletelabelch.ToString());*/
 				}
 				labelForEdit.UpdateAndFlush();
 			}
@@ -126,7 +126,7 @@ namespace InternetInterface.Controllers
 			if (labelForDel != null)
 			{
 				labelForDel.DeleteAndFlush();
-				File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\images\\Label" + deletelabelch + ".jpg");
+				//File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\images\\Label" + deletelabelch + ".jpg");
 				var session = HiberSession<Label>.GetHiberSission();
 				var query =
 					session.CreateSQLQuery("update internet.Requests R set r.`Label`=0 where r.`Label`= :LabelIndex ;").AddEntity(
@@ -156,7 +156,7 @@ namespace InternetInterface.Controllers
 								Name = LabelName
 			             	};
 			newlab.SaveAndFlush();
-			CreateImage(ColorTranslator.FromHtml(labelcolor.Insert(1, "FF")), 30, 30, newlab.Id.ToString());
+			//CreateImage(ColorTranslator.FromHtml(labelcolor.Insert(1, "FF")), 30, 30, newlab.Id.ToString());
 			RequestView();
 		}
 

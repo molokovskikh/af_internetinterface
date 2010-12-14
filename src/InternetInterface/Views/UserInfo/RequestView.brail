@@ -17,6 +17,12 @@ width:250px;
 #main_t {
 overflow:hidden;
 }
+.fontgit
+{
+    font-family: Verdana;
+    font-size: 13.34px;
+    font-weight: normal;
+}
 
     </style>
 </head>
@@ -33,7 +39,7 @@ overflow:hidden;
             <% if (Clients.Length == 0):
             output WriteMessageError("Нет заявок на подключение")
             else: %>
-            <table class="table" id="clientTable">
+            <table class="table" id="clientTable" >
             <thead>
                 <th>Имя</th>
                 <th>Номер телефона</th>
@@ -41,7 +47,7 @@ overflow:hidden;
                 <th>Адрес</th>
                 <th>Самостоятельность</th>
                 <th>Тариф</th>
-                <th colspan=2>Метка</th>
+                <th colspan=2 ><center>Метка</center> </th>
             </thead>
             <% for i,Client in enumerate(Clients): %>
             <tr>
@@ -56,13 +62,22 @@ overflow:hidden;
                 </td>
                 <td>${Client.Tariff.Name}</td>
                 <%if (Client.Label.Id !=0): %>
-                <td align=left style="width:30px;"><a href="../UserInfo/RequestView.rails?labelId=${Client.Label.Id}"><IMG SRC="${siteroot}/Images/Label${Client.Label.Id}.jpg" /></a></td>
-                <td style="width:200px">
-                <input type="checkbox" id="LabelDemandCheck${i}" name="LabelList[${i}]" value=${Client.Id} />
-                ${Client.Label.Name}
+                <td style="width:230px;">
+                    
+                    <div class='flash' style="float:left; height:25px; width:180px;"> 
+                        <div class="fontgit">
+                            <div class='message error' style="border-color:${Client.Label.GetBorderColor()}; background-color:${Client.Label.Color}" align="center" >
+                             ${Client.Label.Name}
+                             </div>
+                        </div>
+                    </div>
+                    
+                    <div style=" height:25px; float:right;">
+                        <input type="checkbox" id="LabelDemandCheck${i}" name="LabelList[${i}]" value=${Client.Id} />
+                    </div>
+                
                 <%else: %>
-                    <td></td>
-                    <td align=left><input type="checkbox" id="Checkbox1" name="LabelList[${i}]" value=${Client.Id} />
+                    <td align=right><input type="checkbox" id="Checkbox1" name="LabelList[${i}]" value=${Client.Id} />
                 <%end %>
                 </td>
                 <%i++ %>
@@ -80,12 +95,17 @@ overflow:hidden;
              </thead>
              <tbody>
              <tr><td><a href="../UserInfo/RequestView.rails">Все</a></td></tr>
+             <tr><td><a href="../UserInfo/RequestView.rails?labelId=0">Нет</a></td></tr>
                     <% for i, Label in enumerate(Labels): %>
                     <tr>
-                    <td style="width:100px;"><IMG align=left SRC="${siteroot}/Images/Label${Label.Id}.jpg" />
-                    <div align=center>
-                      <a href="../UserInfo/RequestView.rails?labelId=${Label.Id}">${Label.Name}</a>
+                    <td style="width:100px;">
+                    <div class='flash' style="width:30px;  float:left;"> 
+                        <div class='message error' style=" width:30px; height:30px; background-color:${Label.Color}; border-color: ${Label.GetBorderColor()}" align="left">
+                        </div>
                     </div>
+                    <div style="padding-left:35px;">
+                      <a href="../UserInfo/RequestView.rails?labelId=${Label.Id}">${Label.Name}</a>
+                      </div>
                       </td>
                     </tr>
                     <% end %>
