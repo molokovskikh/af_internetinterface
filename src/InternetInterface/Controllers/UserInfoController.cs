@@ -74,7 +74,7 @@ namespace InternetInterface.Controllers
 			return colors;
 		}
 
-		public void CreateImage(Color color, int width, int height, string labelId)
+		/*public void CreateImage(Color color, int width, int height, string labelId)
 		{
 			using (var bitmap = new Bitmap(width, height))
 			{
@@ -93,7 +93,7 @@ namespace InternetInterface.Controllers
 				en.Param[0] = we;
 				bitmap.Save(AppDomain.CurrentDomain.BaseDirectory + "\\images\\Label" + labelId + ".jpg", myImageCodecInfo, en);
 			}
-		}
+		}*/
 
 		private void SendRequestEditParameter()
 		{
