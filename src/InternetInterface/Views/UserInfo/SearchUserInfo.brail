@@ -121,7 +121,8 @@
     <thead>
         <tr valign="top">
             <th>Платеж зарегистрировал</th>
-            <th>Дата оплаты</th>
+            <th>Дата оплаты клиентом</th>
+            <th>Дата регистрации платежа</th>
             <th>Сумма</th>
         </tr>
     </thead>
@@ -129,13 +130,14 @@
     <tbody id="SearchResults" class="HighLightCurrentRow">
     <% for i,item in enumerate(Payments): %>
         <tr id="Row${i}">
-        <%if item.ManagerID != null: %>
-            <td>${item.ManagerID.Name}</td>   
+        <%if item.Agent != null: %>
+            <td>${item.Agent.Name}</td>   
             <%else: %>
             <td></td>
             <%end %>
-            <td>${item.PaymentDate}</td>
-            <td>${item.Summ}</td>
+            <td>${item.PaidOn}</td>
+            <td>${item.RecievedOn}</td>
+            <td>${item.Sum}</td>
         </tr>
     <% end %>
     </tbody> 
@@ -157,10 +159,10 @@
                 <% OutputSubView("""\Subview\Payment""") %>
                 <td >
                        <%if IsDefined("thisPay"): %>
-                       <% if (thisPay.GetErrorText("Summ") != ""): %>
+                       <% if (thisPay.GetErrorText("Sum") != ""): %>
                                                 <div class="flash">
                                                     <div class="message error">
-                                                    <p>${thisPay.GetErrorText("Summ")}</p>
+                                                    <p>${thisPay.GetErrorText("Sum")}</p>
                                                     </div>
                                                 </div>
                       <%end %>

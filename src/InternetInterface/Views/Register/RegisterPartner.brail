@@ -42,7 +42,7 @@
                                 <tr>
                                 <% for i,item in enumerate(Rights): %>
                                 <tr>
-                                    <td colspan="3"><input type="checkbox" id="${item.ReduceName}" name="ForRight[${i}]" value=${item.Id} ${"checked" if (ChRights.Contains(item.Id))}/> ${item.Name} </td>
+                                    <td colspan="3"><input type="checkbox" id="${item.ReduceName}" name="ForRight[${i}]" value=${item.Code} ${"checked" if (ChRights.Contains(item.Code))}/> ${item.Name} </td>
                                  </tr>
                                 <%end %>
                                 </tr>

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Castle.ActiveRecord;
+using Castle.Components.Validator;
 using Castle.MonoRail.Framework;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
@@ -102,6 +103,7 @@ namespace InternetInterface.Controllers
 		public void EditPartner([DataBind("Partner")]Partner partner, [DataBind("ForRight")]List<int> rights)
 		{
 			var PID = Partner.FindAllByProperty("Login", partner.Login)[0].Id;
+			partner.Id = PID;
 			if (rights.Count != 0)
 			{
 				if (Validator.IsValid(partner) || EditValidFlag)
@@ -111,9 +113,10 @@ namespace InternetInterface.Controllers
 					{
 						//Далее написана несистемная фигня, проблема в привязке объекта вне хиберовской сесии к сесии
 						//как реализовать пока не придумал, поработает пока что так, потом займусь.
-						partner.Id = basePartner[0].Id;
+						/*partner.Id = basePartner[0].Id;
 						if (Validator.IsValid(partner))
-							basePartner[0].Name = partner.Name;
+							basePartner[0].Name = partner.Name;*/
+						basePartner[0].Name = partner.Name;
 						basePartner[0].TelNum = partner.TelNum;
 						basePartner[0].Adress = partner.Adress;
 						basePartner[0].Email = partner.Email;
@@ -171,6 +174,25 @@ namespace InternetInterface.Controllers
 							EditValidFlag = true;
 							EditPartner(partner, rights);
 						}
+					RegisterPartnerSendParam((int) PID);
+					RenderView("RegisterPartner");
+					Flash["Partner"] = partner;
+					/*if (ve.ErrorMessages.ToList().Contains("Логин должен быть уникальный"))
+					{
+						var veList = ve.ErrorMessages.ToList();
+						veList.RemoveAt(veList.IndexOf("Логин должен быть уникальный"));
+						var test = new ErrorSummary();
+						
+						partner.SetValidationErrors(veList.ToArray());
+						/*var newErrors = new ErrorSummary[ve.ErrorMessages.Count()-1];
+						foreach (var errorSummary in ve.ErrorMessages)
+						{
+							newErrors
+						}*/
+					//}
+					PropertyBag["VB"] = new ValidBuilderHelper<Partner>(partner);
+					/*Flash["Partner"] = partner;
+					RedirectToUrl(string.Format("../Register/RegisterPartner?PartnerKey={0}&Errors=true", PID));*/
 				}
 			}
 			else
@@ -189,21 +211,27 @@ namespace InternetInterface.Controllers
 			var RightArray = PartnerAccessSet.FindAll(DetachedCriteria.For(typeof(PartnerAccessSet))
 																.CreateAlias("PartnerId", "P", JoinType.InnerJoin)
 																.Add(Expression.Eq("P.Id", (uint)Partner)));
-			return RightArray.Select(partnerAccessSet => partnerAccessSet.AccessCat.Id).ToList();
+			return RightArray.Select(partnerAccessSet => partnerAccessSet.AccessCat.Code).ToList();
+		}
+
+		public void RegisterPartnerSendParam(int PartnerKey)
+		{
+			PropertyBag["Rights"] =
+	ActiveRecordBase<AccessCategories>.FindAll(
+		DetachedCriteria.For<AccessCategories>().Add(Expression.Sql("ReduceName <> 'RP'")));
+			//PropertyBag["Partner"] = partner;
+			PropertyBag["ChRights"] = GetPartnerAccess(PartnerKey);
+			PropertyBag["VB"] = new ValidBuilderHelper<Partner>(new Partner());
+			PropertyBag["Applying"] = "false";
+			PropertyBag["Editing"] = true;
 		}
 
 		public void RegisterPartner(int PartnerKey)
 		{
 			if (Partner.FindAll().Count(p => p.Id == PartnerKey) != 0)
 			{
-				PropertyBag["Rights"] =
-					ActiveRecordBase<AccessCategories>.FindAll(
-						DetachedCriteria.For<AccessCategories>().Add(Expression.Sql("ReduceName <> 'RP'")));
+				RegisterPartnerSendParam(PartnerKey);
 				PropertyBag["Partner"] = Partner.Find((uint)PartnerKey);
-				PropertyBag["ChRights"] = GetPartnerAccess(PartnerKey);
-				PropertyBag["VB"] = new ValidBuilderHelper<Partner>(new Partner());
-				PropertyBag["Applying"] = "false";
-				PropertyBag["Editing"] = true;
 			}
 			else
 			{

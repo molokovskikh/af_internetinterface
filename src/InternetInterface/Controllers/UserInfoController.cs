@@ -289,7 +289,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;*/
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties {ChangeType = TypeChangeBalance.OtherSumm};
 			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
-			PropertyBag["Payments"] = Payment.FindAllByProperty("ClientId", PhisicalClients.Find(ClientCode));
+			PropertyBag["Payments"] = Payment.FindAllByProperty("Client", PhisicalClients.Find(ClientCode));
 		}
 
 		[AccessibleThrough(Verb.Post)]
@@ -307,10 +307,11 @@ namespace InternetInterface.Controllers
 			{
 				forChangeSumm = balanceText;
 			}
-			thisPay.Summ = forChangeSumm;
-			thisPay.ManagerID = InithializeContent.partner;
-			thisPay.ClientId = PhisicalClients.Find(clientId);
-			thisPay.PaymentDate = DateTime.Now;
+			thisPay.Sum = forChangeSumm;
+			thisPay.Agent = InithializeContent.partner;
+			thisPay.Client = PhisicalClients.Find(clientId);
+			thisPay.RecievedOn = DateTime.Now;
+			thisPay.PaidOn = DateTime.Now;
 			if (Validator.IsValid(thisPay))
 			{
 				thisPay.SaveAndFlush();

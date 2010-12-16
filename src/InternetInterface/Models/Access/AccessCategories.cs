@@ -8,18 +8,19 @@ namespace InternetInterface.Models
 {
 	public enum AccessCategoriesType
 	{
-		GetClientInfo = 1,
+		/*GetClientInfo = 1,
 		RegisterClient = 3,
 		SendDemand = 5,
 		CloseDemand = 7,
 		RegisterPartner = 9,
-		ChangeBalance = 11
-		/*GetClientInfo = 1,
+		ChangeBalance = 11*/
+		GetClientInfo = 1,
 		RegisterClient = 2,
 		SendDemand = 3,
 		CloseDemand = 4,
 		RegisterPartner = 5,
-		ChangeBalance = 6*/
+		ChangeBalance = 6,
+		VisiblePassport = 7
 	};
 
 	public class TwoRule
@@ -114,8 +115,8 @@ namespace InternetInterface.Models
 			SetAccessDependence();
 			foreach (var twoRule in accessDependence)
 			{
-				if (!(newAccessSet.Contains(twoRule.Head.Id)) &&
-					(oldAccessSet.Contains(twoRule.Head.Id)))
+				if (!(newAccessSet.Contains(twoRule.Head.Code)) &&
+					(oldAccessSet.Contains(twoRule.Head.Code)))
 				{
 					GenerateDeleteList(accessDependence, twoRule.Head);
 					foreach (var todel in toDelete)
@@ -125,7 +126,7 @@ namespace InternetInterface.Models
 																				.Add(Expression.Eq("AccessCat",todel)));
 						foreach (var partnerAccessSet in delSendDemWithoutGCI)
 						{
-							hasDelete.Add(partnerAccessSet.AccessCat.Id);
+							hasDelete.Add(partnerAccessSet.AccessCat.Code);
 							partnerAccessSet.DeleteAndFlush();
 							//todel.DeleteTo(partner);
 						}
@@ -137,11 +138,11 @@ namespace InternetInterface.Models
 
 			foreach (var twoRule in accessDependence)
 			{
-				if ((newAccessSet.Contains(twoRule.Child.Id)) &&
-					(!oldAccessSet.Contains(twoRule.Child.Id)))
+				if ((newAccessSet.Contains(twoRule.Child.Code)) &&
+					(!oldAccessSet.Contains(twoRule.Child.Code)))
 				{
 					GenerateAddList(accessDependence, twoRule.Child);
-					if (hasDelete.Contains(twoRule.Child.Id))
+					if (hasDelete.Contains(twoRule.Child.Code))
 					{
 						toAdd.Add(twoRule.Child);
 					}
@@ -180,12 +181,12 @@ namespace InternetInterface.Models
 			SetAccessDependence();
 			foreach (var twoRule in accessDependence)
 			{
-				if (newRights.Contains(twoRule.Child.Id))
+				if (newRights.Contains(twoRule.Child.Code))
 				{
 					GenerateAddList(accessDependence, twoRule.Child);
 					foreach (var toadd in toAdd)
 					{
-						if (!newRights.Contains(toadd.Id))
+						if (!newRights.Contains(toadd.Code))
 						{
 							var newRight = new PartnerAccessSet
 							{
@@ -215,9 +216,12 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string ReduceName { get; set; }
 
+		[Property]
+		public virtual int Code { get; set; }
+
 		public virtual void AcceptTo(Partner partner)
 		{
-			if ((int)AccessCategoriesType.CloseDemand == Id)
+			if ((int)AccessCategoriesType.CloseDemand == Code)
 			{
 				if (FindBrigadsByPartner(partner).Count == 0)
 				{
@@ -231,11 +235,32 @@ namespace InternetInterface.Models
 					newBrigad.SaveAndFlush();
 				}
 			}
+			if ((int)AccessCategoriesType.ChangeBalance == Code)
+			{
+				var findedAgents = FindAgentByPartner(partner);
+				if (findedAgents.Count == 0)
+				{
+					var newAgent = new Agent
+					               	{
+					               		Name = partner.Name,
+					               		Partner = partner
+					               	};
+					newAgent.SaveAndFlush();
+				}
+				else
+				{
+					foreach (var findedAgent in findedAgents)
+					{
+						findedAgent.Partner = partner;
+						findedAgent.UpdateAndFlush();
+					}
+				}
+			}
 		}
 
 		public virtual void DeleteTo(Partner partner)
 		{
-			if ((int)AccessCategoriesType.CloseDemand == Id)
+			if ((int)AccessCategoriesType.CloseDemand == Code)
 			{
 				var delBrigad = FindBrigadsByPartner(partner);
 				foreach (var brigad in delBrigad)
@@ -249,6 +274,12 @@ namespace InternetInterface.Models
 		{
 			return Brigad.FindAll(DetachedCriteria.For(typeof (Brigad))
 			                      	.Add(Expression.Eq("PartnerID", partner))).ToList();
+		}
+
+		private static List<Agent> FindAgentByPartner(Partner partner)
+		{
+			return Agent.FindAll(DetachedCriteria.For(typeof(Agent))
+									.Add(Expression.Eq("Partner", partner))).ToList();
 		}
 	}
 }

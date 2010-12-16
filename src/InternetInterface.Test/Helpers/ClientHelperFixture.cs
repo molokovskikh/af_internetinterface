@@ -49,10 +49,11 @@ namespace InternetInterfaceFixture.Helpers
 			{
 				var pay = new Payment
 				          	{
-				          		ClientId = client,
-				          		ManagerID = InithializeContent.partner,
-				          		PaymentDate = DateTime.Now,
-				          		Summ = "500"
+				          		Client = client,
+				          		Agent = InithializeContent.partner,
+				          		PaidOn = DateTime.Now,
+								RecievedOn = DateTime.Now,
+				          		Sum = "500"
 				          	};
 				client.SaveAndFlush();
 				pay.SaveAndFlush();

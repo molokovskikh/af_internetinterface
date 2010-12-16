@@ -35,7 +35,9 @@
             <th>Город</th>            
             <th>Адрес подключения</th>
             <th>Номер телефона</th>
+            <%if (PartnerAccessSet.AccesPartner("VP")):%>
             <th>Паспортные данные</th>
+            <%end %>
             <th>Дата регистрации</th>
             <th>Тариф</th>
             <th>Баланс</th>
@@ -79,11 +81,13 @@
             <td>${item.City}</td>
             <td>${item.Street} ${item.House}${item.CaseHouse} ${item.Apartment} Подъезд ${item.Entrance} Этаж ${item.Floor}</td>
             <td>${item.PhoneNumber}</td>
+            <%if (PartnerAccessSet.AccesPartner("VP")):%>
             <td>${item.PassportSeries} ${item.PassportNumber}
             ${item.WhoGivePassport}
             ${item.RegistrationAdress}
             ${item.OutputDate}
-            </td>            
+            </td>  
+            <%end %>
             <td>${item.RegDate}</td>
             <%if item.Tariff != null:  %>
             <td>${item.Tariff.Name}</td>

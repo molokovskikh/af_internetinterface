@@ -165,6 +165,7 @@ WHERE PA.ID = {0} and PC.Connected = false", InithializeContent.partner.Id));
 									endPoint.Port = portNum;
 									endPoint.Switch = NetworkSwitches.Find((uint) client.SwitchId);
 									endPoint.Client = inetClient;
+									endPoint.PackageId = forUpdate.Tariff.PackageId;
 									endPoint.SaveAndFlush();
 									foreach (var requestsConnection in cdDate)
 									{

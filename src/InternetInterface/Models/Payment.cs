@@ -6,7 +6,7 @@ using InternetInterface.Models.Universal;
 namespace InternetInterface.Models
 {
 
-	[ActiveRecord("PaymentsPhisicalClient", Schema = "internet", Lazy = true)]
+	[ActiveRecord("Payments", Schema = "internet", Lazy = true)]
 	public class Payment : ValidActiveRecordLinqBase<Payment>
 	{
 
@@ -14,16 +14,19 @@ namespace InternetInterface.Models
 		public virtual uint Id { get; set; }
 
 		[Property]
-		public virtual DateTime PaymentDate { get; set; }
+		public virtual DateTime RecievedOn { get; set; }
 
-		[BelongsTo("ClientId")]
-		public virtual PhisicalClients ClientId { get; set; }
+		[Property]
+		public virtual DateTime PaidOn { get; set; }
+
+		[BelongsTo("Client")]
+		public virtual PhisicalClients Client { get; set; }
 
 		[Property, ValidateNonEmpty("Введите сумму") , ValidateDecimal("Непрвильно введено значение суммы")]
-		public virtual string Summ { get; set; }
+		public virtual string Sum { get; set; }
 
-		[BelongsTo("ManagerID")]
-		public virtual Partner ManagerID { get; set; }
+		[BelongsTo("Agent")]
+		public virtual Partner Agent { get; set; }
 
 	}
 }

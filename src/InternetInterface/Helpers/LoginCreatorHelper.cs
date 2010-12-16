@@ -52,23 +52,27 @@ namespace InternetInterface.Helpers
 
 		public static string GetUniqueEnLogin(string RULogin)
 		{
-			Init();
-			RULogin = RULogin.ToLower();
-			foreach (var word in words)
+			if (RULogin != null)
 			{
-				RULogin = RULogin.Replace(word.Key, word.Value);
-			}
-			bool unique = false;
-			var rnd = new Random();
-			while (!unique)
-			{
-				RULogin += rnd.Next(10);
-				if (PhisicalClients.FindAllByProperty("Login", RULogin).Length == 0)
+				Init();
+				RULogin = RULogin.ToLower();
+				foreach (var word in words)
 				{
-					unique = true;
+					RULogin = RULogin.Replace(word.Key, word.Value);
 				}
+				bool unique = false;
+				var rnd = new Random();
+				while (!unique)
+				{
+					RULogin += rnd.Next(10);
+					if (PhisicalClients.FindAllByProperty("Login", RULogin).Length == 0)
+					{
+						unique = true;
+					}
+				}
+				return RULogin;
 			}
-			return RULogin;
+			return string.Empty;
 		}
 	}
 }

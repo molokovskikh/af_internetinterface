@@ -18,6 +18,9 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual int Price { get; set; }
+
+		[Property]
+		public virtual int PackageId { get; set; }
 	}
 
 }

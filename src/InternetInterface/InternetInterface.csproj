@@ -161,6 +161,7 @@
     <Compile Include="Helpers\ValidBuilderHelper.cs" />
     <Compile Include="Models\Access\AccessCategories.cs" />
     <Compile Include="Models\Access\AccessRules.cs" />
+    <Compile Include="Models\Agents.cs" />
     <Compile Include="Models\Brigad.cs" />
     <Compile Include="Models\ClientEndpoints.cs" />
     <Compile Include="Models\Clients.cs" />

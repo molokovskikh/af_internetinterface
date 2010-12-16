@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternetInterface", "InternetInterface\InternetInterface.csproj", "{E2B03BC7-AACB-4A72-BBC7-DF4325912504}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternetInterfaceFixture", "InternetInterfaceFixture\InternetInterfaceFixture.csproj", "{559B7BA4-1758-4D03-ABF9-856D21C0D0D7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternetInterface.Test", "InternetInterface.Test\InternetInterface.Test.csproj", "{559B7BA4-1758-4D03-ABF9-856D21C0D0D7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
