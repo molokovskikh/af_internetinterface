@@ -1,4 +1,4 @@
-CREATE TABLE `internet`.`Status` (
+п»їCREATE TABLE `internet`.`Status` (
   `Id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
   `Name` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`Id`)
@@ -12,11 +12,11 @@ ALTER TABLE `internet`.`PhysicalClients` ADD COLUMN `Status` INT(10) UNSIGNED AF
     ON DELETE SET NULL
     ON UPDATE CASCADE;
 
-INSERT INTO `internet`.`Status` (`Name`) VALUES ('Активен');
+INSERT INTO `internet`.`Status` (`Name`) VALUES ('РђРєС‚РёРІРµРЅ');
 
-INSERT INTO `internet`.`Status` (`Name`) VALUES ('Блокировка абонентом');
+INSERT INTO `internet`.`Status` (`Name`) VALUES ('Р‘Р»РѕРєРёСЂРѕРІРєР° Р°Р±РѕРЅРµРЅС‚РѕРј');
 
-INSERT INTO `internet`.`Status` (`Name`) VALUES ('Принудительная блокировка');
+INSERT INTO `internet`.`Status` (`Name`) VALUES ('РџСЂРёРЅСѓРґРёС‚РµР»СЊРЅР°СЏ Р±Р»РѕРєРёСЂРѕРІРєР°');
 
 ALTER TABLE `internet`.`Payments` MODIFY COLUMN `Agent` INT(10) UNSIGNED DEFAULT NULL;
 
@@ -27,4 +27,3 @@ ALTER TABLE `internet`.`Payments` ADD CONSTRAINT `FK_Payments_1` FOREIGN KEY `FK
     REFERENCES `Agents` (`Id`)
     ON DELETE SET NULL
     ON UPDATE CASCADE;
-
