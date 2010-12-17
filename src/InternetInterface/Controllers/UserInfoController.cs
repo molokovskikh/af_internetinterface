@@ -73,27 +73,6 @@ namespace InternetInterface.Controllers
 			return colors;
 		}
 
-		/*public void CreateImage(Color color, int width, int height, string labelId)
-		{
-			using (var bitmap = new Bitmap(width, height))
-			{
-				using (var graphics = Graphics.FromImage(bitmap))
-				using (var brush = new SolidBrush(color))
-				using (var pen = new Pen(Brushes.Gray))
-				{
-					graphics.FillRectangle(brush, 2, 2, width - 4, height - 4);
-					graphics.DrawRectangle(pen, 2, 2, width - 4, height - 4);
-				}
-				//bitmap.Save(AppDomain.CurrentDomain.BaseDirectory + "\\images\\Label" + labelId + ".jpg", ImageFormat.Jpeg);
-				var myImageCodecInfo = ImageCodecInfo.GetImageEncoders().Where(r => r.MimeType == "image/jpeg").First();
-				var encoder = Encoder.Quality;
-				var en = new EncoderParameters(1);
-				var we = new EncoderParameter(encoder, 100L);
-				en.Param[0] = we;
-				bitmap.Save(AppDomain.CurrentDomain.BaseDirectory + "\\images\\Label" + labelId + ".jpg", myImageCodecInfo, en);
-			}
-		}*/
-
 		private void SendRequestEditParameter()
 		{
 			PropertyBag["labelColors"] = GetColorSet();
@@ -111,8 +90,6 @@ namespace InternetInterface.Controllers
 				if (labelcolor != "#000000")
 				{
 					labelForEdit.Color = labelcolor;
-					/*File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\images\\Label" + deletelabelch + ".jpg");
-					CreateImage(ColorTranslator.FromHtml(labelcolor.Insert(1, "FF")), 30, 30, deletelabelch.ToString());*/
 				}
 				labelForEdit.UpdateAndFlush();
 			}
@@ -155,7 +132,6 @@ namespace InternetInterface.Controllers
 								Name = LabelName
 			             	};
 			newlab.SaveAndFlush();
-			//CreateImage(ColorTranslator.FromHtml(labelcolor.Insert(1, "FF")), 30, 30, newlab.Id.ToString());
 			RequestView();
 		}
 
@@ -202,11 +178,6 @@ namespace InternetInterface.Controllers
 			{
 				//RedirectToUrl("../Register/RegisterClient.rails");
 			}
-			/*else
-			{
-				PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
-				PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
-			}*/
 		}
 
 		public void PartnerRegisteredInfo(int hiddenPartnerId, string hiddenPass)
@@ -215,18 +186,11 @@ namespace InternetInterface.Controllers
 			{
 				RedirectToUrl("../Register/RegisterPartner.rails");
 			}
-			/*else
-			{
-				PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
-				PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
-			}*/
 		}
 
 		public void PartnersPreview()
 		{
 			PropertyBag["Partners"] = Partner.FindAllSort();
-			/*PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
-			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;*/
 		}
 
 		[AccessibleThrough(Verb.Post)]
@@ -242,24 +206,21 @@ namespace InternetInterface.Controllers
 				updateClient.UpdateAndFlush();
 				PropertyBag["Editing"] = false;
 				Flash["EditFlag"] = "Данные изменены";
-				//_editFlag = true;
 				RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientID );
 			}
 			else
 			{
 				updateClient.SetValidationErrors(Validator.GetErrorSummary(updateClient));
-				Flash["Client"] = updateClient;
-				Flash["ChTariff"] = Tariff.Find(tariff).Id;
-				Flash["ChStatus"] = Tariff.Find(status).Id;
 				PropertyBag["VB"] = new ValidBuilderHelper<PhisicalClients>(updateClient);
 				var sessionHolder = ActiveRecordMediator.GetSessionFactoryHolder();
 				var session = sessionHolder.CreateSession(typeof (PhisicalClients));
 				session.Evict(updateClient);
-				//Flash["Validate"] = true;
 				RenderView("SearchUserInfo");
 				Flash["Editing"] = true;
+				Flash["Client"] = updateClient;
+				Flash["ChTariff"] = Tariff.Find(tariff).Id;
+				Flash["ChStatus"] = Tariff.Find(status).Id;
 				SendParam(ClientID);
-				//RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientID + "&Editing=true");
 			}
 		}
 
@@ -271,10 +232,6 @@ namespace InternetInterface.Controllers
 			PropertyBag["ChTariff"] = Tariff.FindFirst().Id;
 			PropertyBag["ChStatus"] = Status.FindFirst().Id;
 			PropertyBag["Statuss"] = Status.FindAllSort();
-			//Flash["Popolnen"] = false;
-			//Flash["thisPay"] = new Payment();
-			/*PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
-			PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;*/
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties {ChangeType = TypeChangeBalance.OtherSumm};
 			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
 			PropertyBag["Payments"] = Payment.FindAllByProperty("Client", PhisicalClients.Find(ClientCode));

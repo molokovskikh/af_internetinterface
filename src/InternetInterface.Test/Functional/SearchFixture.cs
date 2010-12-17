@@ -25,7 +25,7 @@ namespace InternetInterfaceFixture.Functional
 				Assert.That(browser.Text, Is.StringContaining("Назначено на бригаду"));
 				browser.Button(Find.ById("SearchButton")).Click();
 				Thread.Sleep(400);
-				Assert.That(browser.Text, Is.StringContaining("Город"));
+				Assert.That(browser.Text, Is.StringContaining("Номер счета"));
 				Assert.That(browser.Text, Is.StringContaining("Тариф"));
 				Assert.That(browser.Text, Is.StringContaining("Баланс"));
 				Assert.That(browser.Text, Is.StringContaining("Логин"));
