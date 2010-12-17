@@ -37,7 +37,6 @@ namespace InternetInterface
 			RoutingModuleEx.Engine.Add(new PatternRoute("/")
 	.DefaultForController().Is("Login")
 	.DefaultForAction().Is("LoginPartner"));
-
 		}
 
 		void Application_End(object sender, EventArgs e)
@@ -113,7 +112,7 @@ namespace InternetInterface
 			configuration.ViewEngineConfig.VirtualPathRoot = configuration.ViewEngineConfig.ViewPathRoot;
 			configuration.ViewEngineConfig.ViewPathRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configuration.ViewEngineConfig.ViewPathRoot);
 
-
+			MonoRail.Debugger.Toolbar.Toolbar.Init(configuration);
 			/*			configuration.SmtpConfig.Host = "mail.adc.analit.net";
 			configuration.ExtensionEntries.Add(new ExtensionEntry(typeof(ExceptionChainingExtension),
 				new MutableConfiguration("mailTo")));*/

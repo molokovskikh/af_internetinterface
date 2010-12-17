@@ -26,7 +26,7 @@ namespace InternetInterface.Models
 		public virtual string Sum { get; set; }
 
 		[BelongsTo("Agent")]
-		public virtual Partner Agent { get; set; }
+		public virtual Agent Agent { get; set; }
 
 	}
 }

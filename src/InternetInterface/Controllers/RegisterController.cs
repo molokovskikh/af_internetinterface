@@ -21,9 +21,10 @@ namespace InternetInterface.Controllers
 
 		[AccessibleThrough(Verb.Post)]
 		public void RegisterClient([DataBind("ChangedBy")]ChangeBalaceProperties changeProperties,
-			[DataBind("client")]PhisicalClients user, string balanceText, uint tariff, [DataBind("ConnectSumm")]PaymentForConnect connectSumm)
+			[DataBind("client")]PhisicalClients user, string balanceText, uint tariff,uint status, [DataBind("ConnectSumm")]PaymentForConnect connectSumm)
 		{
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
+			PropertyBag["Statuss"] = Status.FindAllSort();
 			if (changeProperties.IsForTariff())
 			{
 				user.Balance = Tariff.Find(tariff).Price.ToString();
@@ -35,7 +36,7 @@ namespace InternetInterface.Controllers
 			var Password = PhisicalClients.GeneratePassword();
 			user.Password = Password;
 			user.Login = LoginCreatorHelper.GetUniqueEnLogin(user.Surname);
-			if (PhisicalClients.RegistrLogicClient(user, tariff, Validator, InithializeContent.partner, connectSumm))
+			if (PhisicalClients.RegistrLogicClient(user, tariff,status, Validator, InithializeContent.partner, connectSumm))
 			{
 				user.Tariff = Tariff.Find(tariff);
 				user.HasRegistered = InithializeContent.partner;
@@ -50,6 +51,8 @@ namespace InternetInterface.Controllers
 				PropertyBag["BalanceText"] = balanceText;
 				Flash["ConnectSumm"] = connectSumm;
 				PropertyBag["Applying"] = "false";
+				PropertyBag["ChStatus"] = status;
+				PropertyBag["ChTariff"] = tariff;
 				Validator.IsValid(connectSumm);
 				connectSumm.SetValidationErrors(Validator.GetErrorSummary(connectSumm));
 				user.SetValidationErrors(Validator.GetErrorSummary(user));
@@ -91,6 +94,9 @@ namespace InternetInterface.Controllers
 		{
 			PropertyBag["BalanceText"] = string.Empty;
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
+			PropertyBag["ChTariff"] = Tariff.FindFirst().Id;
+			PropertyBag["ChStatus"] = Status.FindFirst().Id;
+			PropertyBag["Statuss"] = Status.FindAllSort();
 			PropertyBag["Client"] = new PhisicalClients();
 			PropertyBag["VB"] = new ValidBuilderHelper<PhisicalClients>(new PhisicalClients());
 			PropertyBag["NS"] = new ValidBuilderHelper<PaymentForConnect>(new PaymentForConnect());
@@ -211,7 +217,7 @@ namespace InternetInterface.Controllers
 			var RightArray = PartnerAccessSet.FindAll(DetachedCriteria.For(typeof(PartnerAccessSet))
 																.CreateAlias("PartnerId", "P", JoinType.InnerJoin)
 																.Add(Expression.Eq("P.Id", (uint)Partner)));
-			return RightArray.Select(partnerAccessSet => partnerAccessSet.AccessCat.Code).ToList();
+			return RightArray.Select(partnerAccessSet => partnerAccessSet.AccessCat.Id).ToList();
 		}
 
 		public void RegisterPartnerSendParam(int PartnerKey)

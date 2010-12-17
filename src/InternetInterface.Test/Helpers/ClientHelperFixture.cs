@@ -50,7 +50,7 @@ namespace InternetInterfaceFixture.Helpers
 				var pay = new Payment
 				          	{
 				          		Client = client,
-				          		Agent = InithializeContent.partner,
+				          		//Agent = InithializeContent.partner,
 				          		PaidOn = DateTime.Now,
 								RecievedOn = DateTime.Now,
 				          		Sum = "500"

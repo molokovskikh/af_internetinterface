@@ -6,6 +6,7 @@ using Castle.MonoRail.Framework;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using log4net;
+using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.SqlCommand;
 
@@ -45,21 +46,34 @@ namespace InternetInterface.Controllers
 				searchProperties.SearchText = searchText;
 				try
 				{
-					var sqlStr = String.Format(@"SELECT * FROM internet.PhysicalClients P {0} ORDER BY P.Login",
-					                           GetWhere(searchProperties, connectedType, whoregister, tariff, searchText, brigad));
-					var query = session.CreateSQLQuery(sqlStr).AddEntity(typeof (PhisicalClients));
-					if (whoregister != 0)
-						query.SetParameter("whoregister", whoregister);
-					if (tariff != 0)
-						query.SetParameter("tariff", tariff);
-					if (brigad != 0)
-						query.SetParameter("Brigad", brigad);
-					if (connectedType.IsConnected())
-						query.SetParameter("Connected", true);
-					if (connectedType.IsNoConnected())
-						query.SetParameter("Connected", false);
-					if (searchText != null)
-						query.SetParameter("SearchText", "%" + searchText.ToLower() + "%");
+					var sqlStr = string.Empty;
+					ISQLQuery query = null;
+					if (!searchProperties.IsSearchAccount())
+					{
+						sqlStr = String.Format(@"SELECT * FROM internet.PhysicalClients P {0} ORDER BY P.Login",
+						                       GetWhere(searchProperties, connectedType, whoregister, tariff, searchText, brigad));
+						query = session.CreateSQLQuery(sqlStr).AddEntity(typeof (PhisicalClients));
+						if (whoregister != 0)
+							query.SetParameter("whoregister", whoregister);
+						if (tariff != 0)
+							query.SetParameter("tariff", tariff);
+						if (brigad != 0)
+							query.SetParameter("Brigad", brigad);
+						if (connectedType.IsConnected())
+							query.SetParameter("Connected", true);
+						if (connectedType.IsNoConnected())
+							query.SetParameter("Connected", false);
+						if (searchText != null)
+							query.SetParameter("SearchText", "%" + searchText.ToLower() + "%");
+					}
+					else
+					{
+						sqlStr = @"SELECT * FROM internet.PhysicalClients P where P.id = :SearchText ORDER BY P.Login";
+						query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(PhisicalClients));
+						if (searchText != null)
+							query.SetParameter("SearchText",  searchText.ToLower());
+					}
+
 					var result = query.List<PhisicalClients>();
 					foreach (var item in result)
 						session.Evict(item);

@@ -1,18 +1,18 @@
 ﻿        #Name
         {
-            width: 300px;
+            width: 250px;
         }
         #Surname
         {
-            width: 300px;
+            width: 250px;
         }
         #Patronymic
         {
-            width: 300px;
+            width: 250px;
         }
         #City
         {
-            width: 300px;
+            width: 250px;
         }
         #AdressConnect
         {
@@ -52,5 +52,5 @@
         }
         #WhenceAbout
         {
-            width:300px;
+            width:250px;
         }

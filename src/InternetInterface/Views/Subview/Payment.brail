@@ -4,6 +4,6 @@
           <label for="Autosearch">Внести сумму по тарифному плану</label><br />
 
           <input type="radio" id="OtherSummChange" name="ChangedBy.ChangeType" value="OtherSumm" ${"checked" if ChangeBy.IsOtherSumm()} />
-          <label for="Other_Balance">Внести сумму:</label>
+          <label for="Other_Balance">Внести сумму: ${Client.HowManyToPay(true)}</label>
           <input type="text" id="BalanceText"  name="BalanceText"  value="${BalanceText}" style="width: 50%; " />
     </td>

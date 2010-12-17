@@ -52,6 +52,8 @@
             <td>
                 <input type="radio" id="Autosearch" name="SearchBy.SearchBy" value=Auto ${"checked" if FindBy.IsSearchAuto()} />
                 <label for="Autosearch">Автоматически</label><br />
+                <input type="radio" id="SearchAccount" name="SearchBy.SearchBy" value=SearchAccount ${"checked" if FindBy.IsSearchAccount()} />
+                <label for="Autosearch">По номеру счета</label><br />
                 <input type="radio" id="SearchByClientId" name="SearchBy.SearchBy" value=ByFio ${"checked" if FindBy.IsSearchByFio()} />
                 <label for="SearchByClientId">ФИО</label><br />
                 <input type="radio" id="SearchByUserId" name="SearchBy.SearchBy" value=ByPassportSet ${"checked" if FindBy.IsSearchByPassportSet()} />

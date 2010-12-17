@@ -33,7 +33,6 @@ namespace InternetInterface.Controllers
 					PropertyBag["CloseDate"] = FindCloseDate.CloseDemandDate.ToString();
 				}
 			}
-			
 
 			SendParam(clientCode);
 			Flash["Editing"] = Editing;
@@ -231,29 +230,13 @@ namespace InternetInterface.Controllers
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void EditInformation([DataBind("Client")]PhisicalClients client, uint ClientID, uint tariff)
+		public void EditInformation([DataBind("Client")]PhisicalClients client, uint ClientID, uint tariff, uint status)
 		{
 			var updateClient = PhisicalClients.Find(ClientID);
 			BindObjectInstance(updateClient, ParamStore.Form, "Client");
-			/*updateClient.Name = client.Name;
-			updateClient.Surname = client.Surname;
-			updateClient.Patronymic = client.Patronymic;
-			updateClient.City = client.City;
-			updateClient.Street = client.Street;
-			updateClient.House = client.House;
-			updateClient.CaseHouse = client.CaseHouse;
-			updateClient.Apartment = client.Apartment;
-			updateClient.Entrance = client.Entrance;
-			updateClient.Floor = client.Floor;
-			updateClient.PhoneNumber = client.PhoneNumber;
-			updateClient.WhenceAbout = client.WhenceAbout;
-			updateClient.OutputDate = client.OutputDate;
-			//updateClient.AdressConnect = client.AdressConnect;
-			updateClient.PassportSeries = client.PassportSeries;
-			updateClient.PassportNumber = client.PassportNumber;
-			updateClient.WhoGivePassport = client.WhoGivePassport;
-			updateClient.RegistrationAdress = client.RegistrationAdress;
-			updateClient.Tariff = Tariff.Find(tariff);*/
+			updateClient.Tariff = Tariff.Find(tariff);
+			updateClient.Status = Status.Find(status);
+
 			if (Validator.IsValid(updateClient))
 			{
 				updateClient.UpdateAndFlush();
@@ -266,6 +249,8 @@ namespace InternetInterface.Controllers
 			{
 				updateClient.SetValidationErrors(Validator.GetErrorSummary(updateClient));
 				Flash["Client"] = updateClient;
+				Flash["ChTariff"] = Tariff.Find(tariff).Id;
+				Flash["ChStatus"] = Tariff.Find(status).Id;
 				PropertyBag["VB"] = new ValidBuilderHelper<PhisicalClients>(updateClient);
 				var sessionHolder = ActiveRecordMediator.GetSessionFactoryHolder();
 				var session = sessionHolder.CreateSession(typeof (PhisicalClients));
@@ -283,6 +268,9 @@ namespace InternetInterface.Controllers
 			PropertyBag["ClientCode"] = ClientCode;
 			PropertyBag["BalanceText"] = string.Empty;
 			Flash["Tariffs"] = Tariff.FindAllSort();
+			PropertyBag["ChTariff"] = Tariff.FindFirst().Id;
+			PropertyBag["ChStatus"] = Status.FindFirst().Id;
+			PropertyBag["Statuss"] = Status.FindAllSort();
 			//Flash["Popolnen"] = false;
 			//Flash["thisPay"] = new Payment();
 			/*PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
@@ -308,7 +296,7 @@ namespace InternetInterface.Controllers
 				forChangeSumm = balanceText;
 			}
 			thisPay.Sum = forChangeSumm;
-			thisPay.Agent = InithializeContent.partner;
+			thisPay.Agent = Agent.FindAll(DetachedCriteria.For(typeof(Agent)).Add(Expression.Eq("Partner", InithializeContent.partner)))[0];
 			thisPay.Client = PhisicalClients.Find(clientId);
 			thisPay.RecievedOn = DateTime.Now;
 			thisPay.PaidOn = DateTime.Now;

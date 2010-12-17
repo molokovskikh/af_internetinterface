@@ -95,6 +95,9 @@ namespace InternetInterface.Models
 		[BelongsTo("HasConnected")]
 		public virtual Brigad HasConnected { get; set; }
 
+		[BelongsTo("Status")]
+		public virtual Status Status { get; set; }
+
 		[Property]
 		public virtual bool Connected { get; set; }
 
@@ -103,26 +106,38 @@ namespace InternetInterface.Models
 			return this.Connected;
 		}
 
-		public static bool RegistrLogicClient(PhisicalClients _client, uint _tariff,
+		public virtual string HowManyToPay(bool change)
+		{
+			var format = change ? "({0})" : "{0}";
+			if (Tariff == null)
+			{
+				return string.Empty;
+			}
+			else
+			{
+				var pay = Tariff.Price - Convert.ToDecimal(Balance);
+				return string.Format(format, Convert.ToString(pay <= 0 ? 0 : pay));
+			}
+		}
+
+		public static bool RegistrLogicClient(PhisicalClients _client, uint _tariff, uint _status,
 			ValidatorRunner validator, Partner hasRegistered, PaymentForConnect connectSumm)
 		{
-				if (validator.IsValid(_client))
-				{
-					_client.RegDate = DateTime.Now;
-					_client.Tariff = Tariff.Find(_tariff);
-					_client.Password = CryptoPass.GetHashString(_client.Password);
-					_client.HasRegistered = hasRegistered;
-					_client.SaveAndFlush();
-					if (validator.IsValid(connectSumm))
-					{
-						connectSumm.ClientId = _client;
-						connectSumm.ManagerID = InithializeContent.partner;
-						connectSumm.PaymentDate = DateTime.Now;
-						connectSumm.SaveAndFlush();
-						return true;
-					}
-				}
-				return false;
+			if (validator.IsValid(_client) && validator.IsValid(connectSumm))
+			{
+				_client.RegDate = DateTime.Now;
+				_client.Tariff = Tariff.Find(_tariff);
+				_client.Status = Status.Find(_status);
+				_client.Password = CryptoPass.GetHashString(_client.Password);
+				_client.HasRegistered = hasRegistered;
+				_client.SaveAndFlush();
+				connectSumm.ClientId = _client;
+				connectSumm.ManagerID = InithializeContent.partner;
+				connectSumm.PaymentDate = DateTime.Now;
+				connectSumm.SaveAndFlush();
+				return true;
+			}
+			return false;
 		}
 	}
 

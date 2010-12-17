@@ -32,7 +32,7 @@
             <th>Подключен</th>
         <%end %>
             <th>ФИО</th>
-            <th>Город</th>            
+            <th>Номер счета:</th>            
             <th>Адрес подключения</th>
             <th>Номер телефона</th>
             <%if (PartnerAccessSet.AccesPartner("VP")):%>
@@ -41,8 +41,8 @@
             <th>Дата регистрации</th>
             <th>Тариф</th>
             <th>Баланс</th>
-            <th>Логин</th>
-            <th>Кем зарегистрирован</th>
+            <th>Сумма к внесению</th>
+            <th>Статус</th>
         </tr>
     </thead>
     <tbody id="SearchResults">
@@ -78,7 +78,7 @@
             <td align="center"> Да </td>
             <%end %>
             <td><a href="../UserInfo/SearchUserInfo.rails?ClientCode=${item.Id}"> ${item.Surname} ${item.Name} ${item.Patronymic}</a></td>
-            <td>${item.City}</td>
+            <td>${item.Id.ToString("00000")}</td>
             <td>${item.Street} ${item.House}${item.CaseHouse} ${item.Apartment} Подъезд ${item.Entrance} Этаж ${item.Floor}</td>
             <td>${item.PhoneNumber}</td>
             <%if (PartnerAccessSet.AccesPartner("VP")):%>
@@ -95,11 +95,11 @@
             <td>Тариф не определен </td>
             <%end %>
             <td>${item.Balance}</td>
-            <td>${item.Login}</td>
-            <%if item.HasRegistered != null: %>
-            <td>${item.HasRegistered.Name}</td>
+            <td>${item.HowManyToPay(false)}</td>
+            <%if item.Status != null: %>
+            <td>${item.Status.Name}</td>
             <%else: %>
-            <td> Регистратор не определен </td>
+            <td>Статус не задан</td>
             <%end %>
         </tr>
     <% end %>        

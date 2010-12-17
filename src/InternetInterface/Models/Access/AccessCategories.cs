@@ -20,7 +20,7 @@ namespace InternetInterface.Models
 		CloseDemand = 4,
 		RegisterPartner = 5,
 		ChangeBalance = 6,
-		VisiblePassport = 7
+		VisiblePassport = 9
 	};
 
 	public class TwoRule
@@ -62,17 +62,16 @@ namespace InternetInterface.Models
 			hasDelete = new List<int>();
 			accessDependence = new List<TwoRule>
 			                   	{
-			                   		new TwoRule
+			                   		/*new TwoRule
 			                   			{
 			                   				HEADAccess = AccessCategoriesType.GetClientInfo,
 			                   				CHIDLAccess = AccessCategoriesType.SendDemand,
+			                   			},*/
+									new TwoRule
+			                   			{
+			                   				HEADAccess = AccessCategoriesType.GetClientInfo,
+			                   				CHIDLAccess = AccessCategoriesType.VisiblePassport
 			                   			}
-			                   		/*new TwoRule(AccessCategoriesType.GetClientInfo, AccessCategoriesType.SendDemand),
-			                   		new TwoRule(AccessCategoriesType.ChangeBalance, AccessCategoriesType.CloseDemand)*/
-			                   		/*new TwoRule("GetClientInfo","SendDemand"),
-									new TwoRule("SendDemand","CloseDemand"),
-									new TwoRule("CloseDemand","RegisterPartner"),
-									new TwoRule("RegisterPartner","ChangeBalance")*/
 			                   	};
 		}
 
@@ -115,8 +114,8 @@ namespace InternetInterface.Models
 			SetAccessDependence();
 			foreach (var twoRule in accessDependence)
 			{
-				if (!(newAccessSet.Contains(twoRule.Head.Code)) &&
-					(oldAccessSet.Contains(twoRule.Head.Code)))
+				if (!(newAccessSet.Contains(twoRule.Head.Id)) &&
+					(oldAccessSet.Contains(twoRule.Head.Id)))
 				{
 					GenerateDeleteList(accessDependence, twoRule.Head);
 					foreach (var todel in toDelete)
@@ -126,7 +125,7 @@ namespace InternetInterface.Models
 																				.Add(Expression.Eq("AccessCat",todel)));
 						foreach (var partnerAccessSet in delSendDemWithoutGCI)
 						{
-							hasDelete.Add(partnerAccessSet.AccessCat.Code);
+							hasDelete.Add(partnerAccessSet.AccessCat.Id);
 							partnerAccessSet.DeleteAndFlush();
 							//todel.DeleteTo(partner);
 						}
@@ -138,11 +137,11 @@ namespace InternetInterface.Models
 
 			foreach (var twoRule in accessDependence)
 			{
-				if ((newAccessSet.Contains(twoRule.Child.Code)) &&
-					(!oldAccessSet.Contains(twoRule.Child.Code)))
+				if ((newAccessSet.Contains(twoRule.Child.Id)) &&
+					(!oldAccessSet.Contains(twoRule.Child.Id)))
 				{
 					GenerateAddList(accessDependence, twoRule.Child);
-					if (hasDelete.Contains(twoRule.Child.Code))
+					if (hasDelete.Contains(twoRule.Child.Id))
 					{
 						toAdd.Add(twoRule.Child);
 					}
@@ -181,12 +180,12 @@ namespace InternetInterface.Models
 			SetAccessDependence();
 			foreach (var twoRule in accessDependence)
 			{
-				if (newRights.Contains(twoRule.Child.Code))
+				if (newRights.Contains(twoRule.Child.Id))
 				{
 					GenerateAddList(accessDependence, twoRule.Child);
 					foreach (var toadd in toAdd)
 					{
-						if (!newRights.Contains(toadd.Code))
+						if (!newRights.Contains(toadd.Id))
 						{
 							var newRight = new PartnerAccessSet
 							{
@@ -216,12 +215,12 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string ReduceName { get; set; }
 
-		[Property]
-		public virtual int Code { get; set; }
+		/*[Property]
+		public virtual int Code { get; set; }*/
 
 		public virtual void AcceptTo(Partner partner)
 		{
-			if ((int)AccessCategoriesType.CloseDemand == Code)
+			if ((int)AccessCategoriesType.CloseDemand == Id)
 			{
 				if (FindBrigadsByPartner(partner).Count == 0)
 				{
@@ -235,7 +234,7 @@ namespace InternetInterface.Models
 					newBrigad.SaveAndFlush();
 				}
 			}
-			if ((int)AccessCategoriesType.ChangeBalance == Code)
+			if ((int)AccessCategoriesType.ChangeBalance == Id)
 			{
 				var findedAgents = FindAgentByPartner(partner);
 				if (findedAgents.Count == 0)
@@ -260,7 +259,7 @@ namespace InternetInterface.Models
 
 		public virtual void DeleteTo(Partner partner)
 		{
-			if ((int)AccessCategoriesType.CloseDemand == Code)
+			if ((int)AccessCategoriesType.CloseDemand == Id)
 			{
 				var delBrigad = FindBrigadsByPartner(partner);
 				foreach (var brigad in delBrigad)

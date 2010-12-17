@@ -169,6 +169,7 @@
     <Compile Include="Models\NetworkSwitches.cs" />
     <Compile Include="Models\PaymentForConnect.cs" />
     <Compile Include="Models\Requests.cs" />
+    <Compile Include="Models\Status.cs" />
     <Compile Include="Models\Universal\ChildActiveRecordLinqBase.cs" />
     <Compile Include="Models\Universal\ClientSearchProperties.cs" />
     <Compile Include="Models\Access\PartnerAccessSet.cs" />
@@ -201,6 +202,12 @@
     <None Include="Views\UserInfo\RequestView.brail" />
     <None Include="Views\UserInfo\SearchUserInfo.brail" />
     <None Include="Views\Search\SearchUsers.brail" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Lib\MonoRail.Debugger.Toolbar\src\MonoRail.Debugger.Toolbar\MonoRail.Debugger.Toolbar.csproj">
+      <Project>{BF858A13-1FE7-42F0-AF78-D9909FA193D1}</Project>
+      <Name>MonoRail.Debugger.Toolbar</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

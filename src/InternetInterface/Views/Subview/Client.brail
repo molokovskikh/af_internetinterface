@@ -34,7 +34,7 @@
                                     <input id="City" type="text" value="${client.City}" name="client.City"/></td>
                                 <td></td>
                             </tr>
-                                                        <tr>
+                            <tr>
                                 <td >
                                     Номер телефона (мобильный)</td>
                                 <td>
@@ -60,8 +60,8 @@
                             </tr>
                             <th colspan="3">Адрес</th>
                             <tr>
-                            <td></td>
                             <td>
+                            <div>
                            <table class="table" border="0" id="AdressTable" style="margin-bottom: 15px;"> 
                            <tbody>
                            <tr>
@@ -71,24 +71,18 @@
                                  <td style="width: 200px">
                                     ${VB.GetBlock("Street")}
                                 </td>
-                            </tr>
-                            <tr>
                                 <td >
-                                    Дом </td> <td>  <input id="House" type="text" value="${client.House}" name="client.House"/></td>
+                                    Дом </td> <td>  <input id="House" type="text" style="width:50px" value="${client.House}" name="client.House"/></td>
                                  <td>
                                     ${VB.GetBlock("House")}
                                 </td>
-                            </tr>
-                            <tr>
                                 <td >
-                                    Корпус </td> <td>  <input id="CaseHouse" type="text" value="${client.CaseHouse}" name="client.CaseHouse"/></td>
+                                    Корпус </td> <td>  <input id="CaseHouse" type="text" style="width:50px" value="${client.CaseHouse}" name="client.CaseHouse"/></td>
                                  <td>
                                     ${VB.GetBlock("CaseHouse")}
                                 </td>
-                            </tr>
-                            <tr>
                                 <td >
-                                    Квартира  </td> <td> <input id="Apartment" type="text" value="${client.Apartment}" name="client.Apartment"/></td>
+                                    Квартира  </td> <td> <input id="Apartment" type="text" style="width:50px" value="${client.Apartment}" name="client.Apartment"/></td>
                                  <td>
                                     ${VB.GetBlock("Apartment")}
                                 </td>
@@ -110,6 +104,7 @@
                             </tr>
                             </tbody>
                             </table>
+                            </div>
                             </td>
                             </tr>
 
@@ -180,7 +175,24 @@
                                        <%
                                         for i, Tariff in enumerate(Tariffs): 
                                         %>
-                                            <option id="Tarif${Tariff.Id}" value="${Tariff.Id}" selected="selected"> ${Tariff.Name} </option>
+                                            <option id="Tarif${Tariff.Id}" value="${Tariff.Id}" ${"selected" if (Tariff.Id == ChTariff)}> ${Tariff.Name} </option>
+                                            <% end %>
+                                        </select>
+
+
+                                </td>
+                                <td></td>
+                            </tr>
+                                                        <tr>
+                                <td >
+                                    Статус</td>
+                                <td >
+
+                                       <select name="status" id="Select1" style="width: 95%" ">
+                                       <%
+                                        for i, Status in enumerate(Statuss): 
+                                        %>
+                                            <option id="Status${Status.Id}" value="${Status.Id}" ${"selected" if (Status.Id == ChStatus)}> ${Status.Name} </option>
                                             <% end %>
                                         </select>
 

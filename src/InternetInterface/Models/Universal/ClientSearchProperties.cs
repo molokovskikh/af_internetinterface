@@ -13,6 +13,8 @@ namespace InternetInterface.Models
 		ByPassportSet,
 		[Description("Логин клиента")]
 		ByLogin,
+		[Description("Номер счета")]
+		SearchAccount
 	}
 
 	public enum TypeChangeBalance
@@ -94,5 +96,9 @@ namespace InternetInterface.Models
 			return SearchBy == SearchUserBy.ByLogin;
 		}
 
+		public bool IsSearchAccount()
+		{
+			return SearchBy == SearchUserBy.SearchAccount;
+		}
 	}
 }
