@@ -1,0 +1,1 @@
+drop table `internet`.`PaymentsPhisicalClient`
