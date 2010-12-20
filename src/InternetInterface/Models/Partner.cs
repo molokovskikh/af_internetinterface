@@ -31,9 +31,6 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual DateTime RegDate { get; set; }
 
-		/*[Property, ValidateNonEmpty("Введите пароль")]
-		public virtual string Pass { get; set; }*/
-
 		[Property, ValidateNonEmpty("Введите логин"), ValidateIsUnique("Логин должен быть уникальный")]
 		public virtual string Login { get; set; }
 
@@ -42,14 +39,14 @@ namespace InternetInterface.Models
 			return FindAllByProperty("Login", login)[0];
 		}
 
-		private static bool IsBrigadir(Partner partner)
+		/*private static bool IsBrigadir(Partner partner)
 		{
 			var result = PartnerAccessSet.FindAll(DetachedCriteria.For(typeof(PartnerAccessSet))
 						.CreateAlias("AccessCat", "AC", JoinType.InnerJoin)
 						.Add(Restrictions.Eq("PartnerId", partner))
 						.Add(Restrictions.Eq("AC.ReduceName", "CD")));
 			return result.Length != 0 ? true : false;
-		}
+		}*/
 
 		public static bool RegistrLogicPartner(Partner _Partner, List<int> _Rights, ValidatorRunner validator)
 		{
@@ -65,7 +62,6 @@ namespace InternetInterface.Models
 												PartnerId = _Partner
 						                	};
 						newAccess.SaveAndFlush();
-						//newAccess.AccessCat.AcceptTo(_Partner);
 					}
 					AccessDependence.SetCrossAccessForRegister(_Rights,_Partner);
 					return true;

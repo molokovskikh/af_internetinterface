@@ -29,8 +29,6 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string City { get; set; }
 
-		/*[Property, ValidateNonEmpty("Введите адрес подключения")]
-		public virtual string AdressConnect { get; set; }*/
 		[Property, ValidateNonEmpty("Введите улицу")]
 		public virtual string Street { get; set; }
 

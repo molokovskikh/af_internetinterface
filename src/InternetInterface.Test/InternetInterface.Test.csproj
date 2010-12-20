@@ -117,6 +117,7 @@
     <Compile Include="Functional\Setup.cs" />
     <Compile Include="Helpers\ClientHelperFixture.cs" />
     <Compile Include="Helpers\PartnerHelper.cs" />
+    <Compile Include="Helpers\PropertiesHelper.cs" />
     <Compile Include="Helpers\WatinFixture.cs" />
     <Compile Include="PartnerAccessSetFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -124,6 +125,7 @@
     <Compile Include="SearchFixture.cs" />
     <Compile Include="Unit\Image.cs" />
     <Compile Include="Unit\LoginFixture.cs" />
+    <Compile Include="Unit\GetClientsLogicFixture.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

@@ -21,8 +21,6 @@ namespace InternetInterface.Controllers
 						CatList.Add(accessCategorie.Name);
 				}
 			}
-			/*PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
-			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();*/
 			PropertyBag["AccessList"] = CatList;
 		}
 	}

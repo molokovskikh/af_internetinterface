@@ -30,8 +30,6 @@ namespace InternetInterfaceFixture.Functional
 		{
 			Console.WriteLine(AccessCategoriesType.SendDemand.ToString());
 			AccessCategoriesType res;
-			//Console.WriteLine(AccessCategoriesType.TryParse("SendDemand", out res));
-			//Console.WriteLine(res);
 		}
 
 		[Test]
@@ -81,10 +79,6 @@ namespace InternetInterfaceFixture.Functional
 				{
 					partner.DeleteAndFlush();
 				}
-				//browser.Text(Find.ById("")).  
-				/*browser.Link(Find.ByText("Мониторинг работы клиентов")).Click();
-				Assert.That(browser.Text, Is.StringContaining("Мониторинг работы клиентов"));
-				Assert.That(browser.SelectList(Find.ByName("filter")).SelectedOption.Text, Is.EqualTo("Список необновляющихся копий"));*/
 			}
 		}
 	}

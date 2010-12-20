@@ -6,6 +6,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Castle.ActiveRecord;
 using Castle.MonoRail.Framework;
+using InternetInterface.AllLogic;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
@@ -16,8 +17,6 @@ namespace InternetInterface.Controllers
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class UserInfoController : SmartDispatcherController
 	{
-		//private static bool _editFlag;
-		//[AccessibleThrough(Verb.Get)]
 		public void SearchUserInfo(uint clientCode, bool Editing)
 		{
 			var phisCl = PhisicalClients.Find(clientCode);
@@ -37,45 +36,12 @@ namespace InternetInterface.Controllers
 			SendParam(clientCode);
 			Flash["Editing"] = Editing;
 			PropertyBag["VB"] = new ValidBuilderHelper<PhisicalClients>(new PhisicalClients());
-			/*PropertyBag["EditFlag"] = _editFlag;
-			_editFlag = false;*/
-			//if (EditFlag) {EditInformation(); }
 		}
 
-		private List<string> GetColorSet()
-		{
-			var colors = new List<string>();
-			for (int i = 0; i < 256; i = i + 51)
-			{
-				var ival = i.ToString("X");
-				if (ival.Length < 2)
-				{
-					ival = "0" + ival;
-				}
-				for (int j = 0; j < 256; j = j + 51)
-				{
-					var jval = j.ToString("X");
-					if (jval.Length < 2)
-					{
-						jval = "0" + jval;
-					}
-					for (int k = 0; k < 256; k = k + 51)
-					{
-						var kval = k.ToString("X");
-						if (kval.Length < 2)
-						{
-							kval = "0" + kval;
-						}
-						colors.Add('#' + ival + jval + kval);
-					}
-				}
-			}
-			return colors;
-		}
 
 		private void SendRequestEditParameter()
 		{
-			PropertyBag["labelColors"] = GetColorSet();
+			PropertyBag["labelColors"] = ColorWork.GetColorSet();
 			PropertyBag["LabelName"] = string.Empty;
 			PropertyBag["Labels"] = Label.FindAll();
 		}
@@ -103,12 +69,17 @@ namespace InternetInterface.Controllers
 			{
 				labelForDel.DeleteAndFlush();
 				//File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\images\\Label" + deletelabelch + ".jpg");
-				var session = HiberSession<Label>.GetHiberSission();
-				var query =
-					session.CreateSQLQuery("update internet.Requests R set r.`Label`=0 where r.`Label`= :LabelIndex ;").AddEntity(
-						typeof (Label));
-				query.SetParameter("LabelIndex", deletelabelch);
-				query.ExecuteUpdate();
+				ARSesssionHelper<Label>.QueryWithSession(session =>
+				                                         	{
+				                                         		var query =
+				                                         			session.CreateSQLQuery(
+				                                         				"update internet.Requests R set r.`Label` = 0 where r.`Label`= :LabelIndex ;")
+				                                         				.AddEntity(
+				                                         					typeof (Label));
+				                                         		query.SetParameter("LabelIndex", deletelabelch);
+				                                         		query.ExecuteUpdate();
+				                                         		return new List<Label>();
+				                                         	});
 			}
 			RedirectToUrl("../UserInfo/RequestView.rails");
 		}
@@ -167,18 +138,15 @@ namespace InternetInterface.Controllers
 		[AccessibleThrough(Verb.Post)]
 		public void LoadEditMudule(uint ClientID)
 		{
-			//SearchUserInfo(ClientID, true);
 			Flash["Editing"] = true;
 			RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientID + "&Editing=true");
 		}
 
-		public void ClientRegisteredInfo()
+		/*public void ClientRegisteredInfo()
 		{
 			if (Flash["Client"] == null)
-			{
-				//RedirectToUrl("../Register/RegisterClient.rails");
-			}
-		}
+			{}
+		}*/
 
 		public void PartnerRegisteredInfo(int hiddenPartnerId, string hiddenPass)
 		{
@@ -212,9 +180,11 @@ namespace InternetInterface.Controllers
 			{
 				updateClient.SetValidationErrors(Validator.GetErrorSummary(updateClient));
 				PropertyBag["VB"] = new ValidBuilderHelper<PhisicalClients>(updateClient);
-				var sessionHolder = ActiveRecordMediator.GetSessionFactoryHolder();
-				var session = sessionHolder.CreateSession(typeof (PhisicalClients));
-				session.Evict(updateClient);
+				ARSesssionHelper<PhisicalClients>.QueryWithSession(session =>
+				{
+					session.Evict(updateClient);
+					return new List<PhisicalClients>();
+				});
 				RenderView("SearchUserInfo");
 				Flash["Editing"] = true;
 				Flash["Client"] = updateClient;
@@ -269,9 +239,9 @@ namespace InternetInterface.Controllers
 			{
 				thisPay.SetValidationErrors(Validator.GetErrorSummary(thisPay));
 				Flash["thisPay"] = thisPay;
-				var sessionHolder = ActiveRecordMediator.GetSessionFactoryHolder();
-				var session = sessionHolder.CreateSession(typeof(Payment));
-				session.Evict(thisPay);
+				ARSesssionHelper<Payment>.QueryWithSession(session => { session.Evict(thisPay);
+				                                                      	return new List<Payment>();
+				});
 			}
 			RedirectToUrl(@"../UserInfo/SearchUserInfo.rails?ClientCode=" + clientId);
 		}

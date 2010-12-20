@@ -160,7 +160,6 @@ namespace InternetInterface.Models
 							               		PartnerId = partner
 							               	};
 							newRight.SaveAndFlush();
-							//toadd.AcceptTo(partner);
 						}
 					}
 				}
@@ -214,9 +213,6 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual string ReduceName { get; set; }
-
-		/*[Property]
-		public virtual int Code { get; set; }*/
 
 		public virtual void AcceptTo(Partner partner)
 		{

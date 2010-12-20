@@ -3,6 +3,8 @@ using System.Configuration;
 using System.Reflection;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework.Config;
+using InternetInterface.Controllers.Filter;
+using InternetInterface.Models;
 using log4net.Config;
 using NUnit.Framework;
 using WatiN.Core;
@@ -66,6 +68,7 @@ namespace InternetInterfaceFixture.Helpers
 				                               		Assembly.Load("InternetInterface"),
 				                               		Assembly.Load("InternetInterfaceFixture"),
 				                               	}, ActiveRecordSectionHandler.Instance);
+			InithializeContent.partner = Partner.FindAllByProperty("Login", "zolotarev")[0];
 		}
 	}
 }

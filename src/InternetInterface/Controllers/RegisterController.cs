@@ -1,13 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Castle.ActiveRecord;
-using Castle.Components.Validator;
 using Castle.MonoRail.Framework;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
-using NHibernate;
-using NHibernate.Cfg;
 using NHibernate.Criterion;
 using NHibernate.SqlCommand;
 
@@ -33,7 +30,7 @@ namespace InternetInterface.Controllers
 			{
 				user.Balance = balanceText;
 			}
-			var Password = PhisicalClients.GeneratePassword();
+			var Password = CryptoPass.GeneratePassword();
 			user.Password = Password;
 			user.Login = LoginCreatorHelper.GetUniqueEnLogin(user.Surname);
 			if (PhisicalClients.RegistrLogicClient(user, tariff,status, Validator, InithializeContent.partner, connectSumm))
@@ -66,7 +63,7 @@ namespace InternetInterface.Controllers
 		[AccessibleThrough(Verb.Post)]
 		public void RegisterPartner([DataBind("Partner")]Partner partner, [DataBind("ForRight")]List<int> rights)
 		{
-			string Pass = Partner.GeneratePassword();
+			string Pass = CryptoPass.GeneratePassword();
 			PropertyBag["Rights"] =
 	ActiveRecordBase<AccessCategories>.FindAll(
 		DetachedCriteria.For<AccessCategories>().Add(Expression.Sql("ReduceName <> 'RP'")));
@@ -83,7 +80,6 @@ namespace InternetInterface.Controllers
 			{
 				partner.SetValidationErrors(Validator.GetErrorSummary(partner));
 				PropertyBag["Partner"] = partner;
-				//PropertyBag["Applying"] = "false";
 				PropertyBag["ChRights"] = rights;
 				PropertyBag["Editing"] = false;
 				PropertyBag["VB"] = new ValidBuilderHelper<Partner>(partner);
@@ -183,22 +179,7 @@ namespace InternetInterface.Controllers
 					RegisterPartnerSendParam((int) PID);
 					RenderView("RegisterPartner");
 					Flash["Partner"] = partner;
-					/*if (ve.ErrorMessages.ToList().Contains("Логин должен быть уникальный"))
-					{
-						var veList = ve.ErrorMessages.ToList();
-						veList.RemoveAt(veList.IndexOf("Логин должен быть уникальный"));
-						var test = new ErrorSummary();
-						
-						partner.SetValidationErrors(veList.ToArray());
-						/*var newErrors = new ErrorSummary[ve.ErrorMessages.Count()-1];
-						foreach (var errorSummary in ve.ErrorMessages)
-						{
-							newErrors
-						}*/
-					//}
 					PropertyBag["VB"] = new ValidBuilderHelper<Partner>(partner);
-					/*Flash["Partner"] = partner;
-					RedirectToUrl(string.Format("../Register/RegisterPartner?PartnerKey={0}&Errors=true", PID));*/
 				}
 			}
 			else
@@ -225,7 +206,6 @@ namespace InternetInterface.Controllers
 			PropertyBag["Rights"] =
 	ActiveRecordBase<AccessCategories>.FindAll(
 		DetachedCriteria.For<AccessCategories>().Add(Expression.Sql("ReduceName <> 'RP'")));
-			//PropertyBag["Partner"] = partner;
 			PropertyBag["ChRights"] = GetPartnerAccess(PartnerKey);
 			PropertyBag["VB"] = new ValidBuilderHelper<Partner>(new Partner());
 			PropertyBag["Applying"] = "false";
@@ -250,7 +230,6 @@ namespace InternetInterface.Controllers
 			PropertyBag["Rights"] =
 				ActiveRecordBase<AccessCategories>.FindAll(DetachedCriteria.For<AccessCategories>().Add(Expression.Sql("ReduceName <> 'RP'")));
 			PropertyBag["Partner"] = new Partner();
-			//PropertyBag["Applying"] = "false";
 			PropertyBag["ChRights"] = new List<int>();
 			PropertyBag["VB"] = new ValidBuilderHelper<Partner>(new Partner());
 			PropertyBag["Editing"] = false;

@@ -60,7 +60,7 @@ namespace InternetInterface.Helpers
 				{
 					RULogin = RULogin.Replace(word.Key, word.Value);
 				}
-				bool unique = false;
+				var unique = false;
 				var rnd = new Random();
 				while (!unique)
 				{

@@ -19,20 +19,14 @@ namespace InternetInterface.Models
 
 		public virtual string GetBorderColor()
 		{
-			//var ucolor = ColorToUInt(ColorTranslator.FromHtml(Color));
 			var oColor = ColorTranslator.FromHtml(Color);
 			
-			float fNewHue = oColor.GetHue() + 10;
-			float fNewSaturation = oColor.GetSaturation() + 2F;
-			float fNewBrightness = oColor.GetBrightness() + 2F;
+			var fNewHue = oColor.GetHue() + 10;
+			var fNewSaturation = oColor.GetSaturation() + 2F;
+			var fNewBrightness = oColor.GetBrightness() + 2F;
 
 			var newC = HLStoRGB(fNewHue, fNewBrightness, fNewSaturation);
-			Color oNewColor = System.Drawing.Color.FromArgb(Convert.ToInt32(newC.R), Convert.ToInt32(newC.G), Convert.ToInt32(newC.B));
-
-			/*byte r = (byte)(ucolor >> 8);
-			byte g = (byte)(ucolor >> 8);
-			byte b = (byte)(ucolor >> 4);*/
-			//var borderColor = System.Drawing.Color.FromArgb(r, g, b);
+			var oNewColor = System.Drawing.Color.FromArgb(Convert.ToInt32(newC.R), Convert.ToInt32(newC.G), Convert.ToInt32(newC.B));
 			return RGBInterpritator(oNewColor);
 		}
 

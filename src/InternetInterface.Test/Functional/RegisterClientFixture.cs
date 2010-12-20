@@ -51,13 +51,8 @@ namespace InternetInterfaceFixture.Functional
 				browser.TextField(Find.ById("RegistrationAdress")).AppendText("TestRegistrationAdress");
 				browser.TextField(Find.ById("OutputDate")).AppendText("10.01.2002");
 				browser.TextField(Find.ById("ConnectSumm")).AppendText("100");
-				/*var rnd = new Random();
-				var loginPrefix = rnd.Next(100);
-				browser.TextField(Find.ById("Login")).AppendText("Login" + loginPrefix);*/
 				browser.Button(Find.ById("RegisterClientButton")).Click();
 				Thread.Sleep(2000);
-				//Assert.That(browser.Text, Is.StringContaining("TestCity"));
-				//Assert.That(browser.Text, Is.StringContaining("TestAdressConnect"));
 				Assert.That(browser.Text, Is.StringContaining("прописанный по адресу:"));
 				Assert.That(browser.Text, Is.StringContaining("адрес подключения:"));
 				Assert.That(browser.Text, Is.StringContaining("принимаю подключение к услугам доступа"));
@@ -66,10 +61,6 @@ namespace InternetInterfaceFixture.Functional
 				{
 					phisicalClientse.DeleteAndFlush();
 				}
-				//browser.Text(Find.ById("")).  
-				/*browser.Link(Find.ByText("Мониторинг работы клиентов")).Click();
-				Assert.That(browser.Text, Is.StringContaining("Мониторинг работы клиентов"));
-				Assert.That(browser.SelectList(Find.ByName("filter")).SelectedOption.Text, Is.EqualTo("Список необновляющихся копий"));*/
 			}
 		}
 	}
