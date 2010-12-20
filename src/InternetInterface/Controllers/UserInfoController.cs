@@ -142,11 +142,8 @@ namespace InternetInterface.Controllers
 			RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientID + "&Editing=true");
 		}
 
-		/*public void ClientRegisteredInfo()
-		{
-			if (Flash["Client"] == null)
-			{}
-		}*/
+		public void ClientRegisteredInfo()
+		{}
 
 		public void PartnerRegisteredInfo(int hiddenPartnerId, string hiddenPass)
 		{

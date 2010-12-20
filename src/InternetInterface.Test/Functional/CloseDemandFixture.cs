@@ -17,7 +17,7 @@ namespace InternetInterfaceFixture.Functional
 	class CloseDemandFixture : WatinFixture
 	{
 		[Test]
-		public void SearchTest()
+		public void CloseDemandTest()
 		{
 			var client = PhisicalClients.FindFirst();
 			client.Connected = false;

@@ -33,7 +33,7 @@ namespace InternetInterfaceFixture.Helpers
 			       		OutputDate = DateTime.Now.ToShortDateString(),
 						PassportNumber = "123456",
 						PassportSeries = "1234",
-						Password = CryptoPass.GetHashString(PhisicalClients.GeneratePassword()),
+						Password = CryptoPass.GetHashString(CryptoPass.GeneratePassword()),
 						Patronymic = "testOtch",
 						PhoneNumber = "8-111-222-33-44",
 						RegDate = DateTime.Now,
