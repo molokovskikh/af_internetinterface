@@ -15,8 +15,8 @@ namespace InternetInterface.Models
 		[BelongsTo("Client")]
 		public virtual Clients Client { get; set; }
 
-		[Property]
-		public virtual int VLan { get; set; }
+		/*[Property]
+		public virtual int VLan { get; set; }*/
 
 		[Property]
 		public virtual int Module { get; set; }

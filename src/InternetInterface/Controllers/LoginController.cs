@@ -29,7 +29,7 @@ namespace InternetInterface.Controllers
 		public void LoginPartner()
 		{
 #if DEBUG
-			RedirectToUrl(@"..//Map/SiteMap.rails");
+			//RedirectToUrl(@"..//Map/SiteMap.rails");
 #endif
 		}
 	}
