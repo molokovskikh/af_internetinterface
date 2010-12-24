@@ -8,19 +8,20 @@ namespace InternetInterface.Models
 {
 	public enum AccessCategoriesType
 	{
-		/*GetClientInfo = 1,
+		GetClientInfo = 1,
 		RegisterClient = 3,
 		SendDemand = 5,
 		CloseDemand = 7,
 		RegisterPartner = 9,
-		ChangeBalance = 11*/
-		GetClientInfo = 1,
+		ChangeBalance = 11,
+		VisiblePassport = 13
+		/*GetClientInfo = 1,
 		RegisterClient = 2,
 		SendDemand = 3,
 		CloseDemand = 4,
 		RegisterPartner = 5,
 		ChangeBalance = 6,
-		VisiblePassport = 9
+		VisiblePassport = 9*/
 	};
 
 	public class TwoRule
