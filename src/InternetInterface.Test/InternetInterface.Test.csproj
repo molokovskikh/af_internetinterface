@@ -123,9 +123,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegisterFixture.cs" />
     <Compile Include="SearchFixture.cs" />
+    <Compile Include="Unit\ByteFixture.cs" />
     <Compile Include="Unit\Image.cs" />
     <Compile Include="Unit\LoginFixture.cs" />
     <Compile Include="Unit\GetClientsLogicFixture.cs" />
+    <Compile Include="Unit\OnLineClientFixture.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

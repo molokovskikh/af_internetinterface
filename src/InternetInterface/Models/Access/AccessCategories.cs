@@ -14,7 +14,9 @@ namespace InternetInterface.Models
 		CloseDemand = 7,
 		RegisterPartner = 9,
 		ChangeBalance = 11,
-		VisiblePassport = 13
+		VisiblePassport = 13,
+		VisibleDemand = 15,
+		AccessDHCP = 17
 		/*GetClientInfo = 1,
 		RegisterClient = 2,
 		SendDemand = 3,

@@ -1,0 +1,53 @@
+﻿<link href="../Styles/style.css" type="text/css" rel="stylesheet" />
+<link rel="stylesheet" href="../Styles/base.css" type="text/css" media="screen" />
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Информация и коммутаторах</title>
+</head>
+<body>
+<div id="non-printable"> 
+    <% OutputSubView("""\Subview\MapHead""") %>
+</div> 
+<div id="main">
+<div id="container">
+    <div id="block-tables" class="block">
+        <table class="table" style="width:100%; " border="0" id="PartnerInfoTable">
+            <thead>
+                <th>Название</th>
+                <th>IP адрес</th>
+                <th>MAC адрес</th>
+                <th>Зона</th>
+            </thead>
+            <tbody>
+             <% for i,Switch in enumerate(Switches): %>
+                <tr>
+                <%if (Switch.Name != null): %>
+                    <td><a href="../Switches/MakeSwitch?Switch=${Switch.Id}"> ${Switch.Name}</a></td>
+                    <%else:%>
+                    <td><a href="../Switches/MakeSwitch?Switch=${Switch.Id}"> (Редактировать)</a></td>
+                    <%end %>
+                    <td>${Switch.IP}</td>
+                    <td>${Switch.Mac}</td>
+                    <td>${Switch.Zone.Name}</td>
+                </tr>
+             <%end %>
+             <tr>
+                <td colspan=4>
+                       <form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Switches/MakeSwitch" >
+                       <button type="submit" id="RegisterPartnerButton" class="button" >
+                       <img alt="Save" src="../Images/application_edit.png">
+                           Создать новый коммутатор
+                       </button>
+                       </form>
+                </td>
+             </tr>
+            </tbody>
+        </table>
+        
+    </div>
+</div>
+</div>
+</body>
+</html>

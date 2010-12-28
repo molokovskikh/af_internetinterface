@@ -1,0 +1,55 @@
+﻿<link href="../Styles/style.css" type="text/css" rel="stylesheet" />
+<link rel="stylesheet" href="../Styles/base.css" type="text/css" media="screen" />
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Информация и коммутаторах</title>
+</head>
+<body>
+<div id="non-printable"> 
+    <% OutputSubView("""\Subview\MapHead""") %>
+</div> 
+<div id="main" style="width:100%;">
+<div id="container">
+    <div id="block-tables" class="block">
+        <table class="table" style="width:100%; " border="0" id="PartnerInfoTable">
+            <thead>
+                <th>Статический IP</th>
+                <th>Арендованный IP</th>
+                <th>Клиент</th>
+                <th>Endpoint ID</th>
+                <th>Имя</th>
+                <th>Свитч</th>
+                <th>Название свича</th>
+                <th>IP свича</th>
+                <th>Модуль</th>
+                <th>Порт</th>
+                <th>PackageId</th>
+                <th>Скорость</th>
+            </thead>
+            <tbody>
+             <% for i,Client in enumerate(OnLineClients): %>
+                <tr>
+                    <td>${Client[0]}</td>
+                    <td>${Client[1]}</td>
+                    <td>${Client[2]}</td>
+                    <td>${Client[3]}</td>
+                    <td>${Client[4]}</td>
+                    <td>${Client[5]}</td>
+                    <td>${Client[6]}</td>
+                    <td>${Client[7]}</td>
+                    <td>${Client[8]}</td>
+                    <td>${Client[9]}</td>
+                    <td>${Client[10]}</td>
+                    <td>${Client[11]}</td>
+                </tr>
+             <%end %>
+            </tbody>
+        </table>
+        
+    </div>
+</div>
+</div>
+</body>
+</html>

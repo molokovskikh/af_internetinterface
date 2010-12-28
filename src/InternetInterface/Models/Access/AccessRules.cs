@@ -14,6 +14,8 @@ namespace InternetInterface.Models.Access
 		private static HashSet<string> _closeDemand;
 		private static HashSet<string> _registerPartner;
 		private static HashSet<string> _changeBalance;
+		private static HashSet<string> _accessDHCP;
+		private static HashSet<string> _visibleDemand;
 
 		public static List<string> GetAccessName(string _methodName)
 		{
@@ -44,6 +46,14 @@ namespace InternetInterface.Models.Access
 			{
 				result.Add(GetRulesName_changeBalance());
 			}
+			if (GetRulesName_accessDHCP() != string.Empty)
+			{
+				result.Add(GetRulesName_accessDHCP());
+			}
+			if (GetRulesName_visibleDemand() != string.Empty)
+			{
+				result.Add(GetRulesName_visibleDemand());
+			}
 			return result;
 		}
 
@@ -56,8 +66,6 @@ namespace InternetInterface.Models.Access
 									"SearchBy",
 									"SiteMap",
 									"SearchUserInfo",
-									"DeleteLabel",
-									"EditLabel"
 			                 	};
 			return _getClientInfo.Contains(methodName) ? "GCI" : string.Empty;
 		}
@@ -70,10 +78,7 @@ namespace InternetInterface.Models.Access
 									"SiteMap",
 									"LoadEditMudule",
 									"EditInformation",
-									"ClientRegisteredInfo",
-									"RequestView",
-									"ChangeLabel",
-									"EditLabel"
+									"ClientRegisteredInfo"
 			                 	};
 			return _registerClient.Contains(methodName) ? "RC" : string.Empty;
 		}
@@ -123,6 +128,31 @@ namespace InternetInterface.Models.Access
 									"SearchUserInfo"
 			                 	};
 			return _changeBalance.Contains(methodName) ? "CB" : string.Empty;
+		}
+
+		private static string GetRulesName_accessDHCP()
+		{
+			_accessDHCP = new HashSet<string>
+			                 	{
+									"ShowSwitches",
+									"MakeSwitch",
+									"EditSwitch",
+									"RegisterSwitch",
+									"OnLineClient"
+			                 	};
+			return _accessDHCP.Contains(methodName) ? "DHCP" : string.Empty;
+		}
+
+		private static string GetRulesName_visibleDemand()
+		{
+			_visibleDemand = new HashSet<string>
+			                 	{
+									"RequestView",
+									"ChangeLabel",
+									"EditLabel",
+									"DeleteLabel"
+			                 	};
+			return _visibleDemand.Contains(methodName) ? "VD" : string.Empty;
 		}
 	}
 }

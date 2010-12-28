@@ -22,7 +22,7 @@
                 <%if PartnerAccessSet.AccesPartner("RC"): %>
                <th><a href = "../Register/RegisterClient.rails" ><span class="MH">Регистрация нового абонента</span></a></th>
                <%end %>
-               <%if PartnerAccessSet.AccesPartner("RC"): %>
+               <%if PartnerAccessSet.AccesPartner("VD"): %>
                <th><a href = "../UserInfo/RequestView.brail" ><span class="MH">Заявки на подключение</span></a></th>
                <%end %>
                <%if PartnerAccessSet.AccesPartner("GCI"): %>
@@ -30,6 +30,12 @@
                <%end %>
                <%if PartnerAccessSet.AccesPartner("CD"): %>
                <th><a href = "../Search/SearchBy.rails?CloseDemand=true" ><span class="MH"> Закрыть заявки</span></a></th>
+               <%end %>
+               <%if PartnerAccessSet.AccesPartner("DHCP"): %>
+               <th><a href = "../Switches/ShowSwitches.rails" ><span class="MH"> Коммутаторы</span></a></th>
+               <%end %>
+               <%if PartnerAccessSet.AccesPartner("DHCP"): %>
+               <th><a href = "../Switches/OnLineClient.rails?Zone=4" ><span class="MH"> OnLine клиенты</span></a></th>
                <%end %>
                <th>
                   <form class="form" id="Exit" name="Exit" method="post" action="${siteroot}/ExitPartner/Yes" >
