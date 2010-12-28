@@ -1,0 +1,3 @@
+[submodule "lib/MonoRail.Debugger.Toolbar"]
+	path = lib/MonoRail.Debugger.Toolbar
+	url = ssh://kvasov@git.analit.net/var/www/git/MonoRail.Debugger.Toolbar
