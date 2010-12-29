@@ -98,7 +98,8 @@ namespace InternetInterface.Controllers
 			PropertyBag["NS"] = new ValidBuilderHelper<PaymentForConnect>(new PaymentForConnect());
 			Flash["ConnectSumm"] = new PaymentForConnect();
 			PropertyBag["Applying"] = "false";
-			PropertyBag["ChangeBy"] = new ChangeBalaceProperties { ChangeType = TypeChangeBalance.ForTariff };
+			PropertyBag["ChangeBy"] = new ChangeBalaceProperties { ChangeType = TypeChangeBalance.OtherSumm };
+			PropertyBag["BalanceText"] = 0;
 		}
 
 		[AccessibleThrough(Verb.Post)]
