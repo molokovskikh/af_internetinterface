@@ -8,11 +8,11 @@ import file from Test.bake
 Global(
 	Project : "InternetInterface",
 	deployTo : """\\acdcserv.adc.analit.net\WebApps\InforoomInternet""",
-	HumanReadableName : "Интернет "
+	HumanReadableName : "Интернет интерфейс"
 )
 
 task @default, [@Build]
 
 task @Build, [@BuildWebSite]
 
-task @deploy, [@Build, @Production, @DeployWebSite]
+Task @deploy, [@Production, @Build, @Migrate, @SendDeployNotification]

@@ -15,6 +15,7 @@
     <div id="block-tables" class="block">
         <table class="table" style="width:100%; " border="0" id="PartnerInfoTable">
             <thead>
+                <th>ID</th>
                 <th>Название</th>
                 <th>IP адрес</th>
                 <th>MAC адрес</th>
@@ -23,6 +24,7 @@
             <tbody>
              <% for i,Switch in enumerate(Switches): %>
                 <tr>
+                    <td>${Switch.Id}</td>
                 <%if (Switch.Name != null): %>
                     <td><a href="../Switches/MakeSwitch?Switch=${Switch.Id}"> ${Switch.Name}</a></td>
                     <%else:%>
