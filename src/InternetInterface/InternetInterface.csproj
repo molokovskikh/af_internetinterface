@@ -109,6 +109,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Errors\AccessDin.aspx" />
+    <Content Include="Errors\NotFound.aspx" />
     <Content Include="Global.asax" />
     <Content Include="Images\application_edit.png" />
     <Content Include="Images\image001.jpg" />
@@ -160,6 +161,13 @@
     </Compile>
     <Compile Include="Errors\AccessDin.aspx.designer.cs">
       <DependentUpon>AccessDin.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Errors\NotFound.aspx.cs">
+      <DependentUpon>NotFound.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Errors\NotFound.aspx.designer.cs">
+      <DependentUpon>NotFound.aspx</DependentUpon>
     </Compile>
     <Compile Include="Helpers\ActiveDirectoryHelper.cs" />
     <Compile Include="Helpers\ARSesssionHelper.cs" />
