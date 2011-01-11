@@ -112,7 +112,9 @@ namespace InternetInterface
 			configuration.ViewEngineConfig.VirtualPathRoot = configuration.ViewEngineConfig.ViewPathRoot;
 			configuration.ViewEngineConfig.ViewPathRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configuration.ViewEngineConfig.ViewPathRoot);
 
+#if DEBUG
 			MonoRail.Debugger.Toolbar.Toolbar.Init(configuration);
+#endif
 			/*			configuration.SmtpConfig.Host = "mail.adc.analit.net";
 			configuration.ExtensionEntries.Add(new ExtensionEntry(typeof(ExceptionChainingExtension),
 				new MutableConfiguration("mailTo")));*/
