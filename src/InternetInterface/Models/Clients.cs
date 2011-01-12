@@ -25,7 +25,7 @@ namespace InternetInterface.Models
 		public virtual ClientType Type { get; set; }
 
 		[Property]
-		public virtual int PhisicalClient { get; set; }
+		public virtual uint PhisicalClient { get; set; }
 
 	}
 }

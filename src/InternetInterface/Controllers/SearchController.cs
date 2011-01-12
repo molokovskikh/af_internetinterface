@@ -89,7 +89,7 @@ namespace InternetInterface.Controllers
 									forUpdate.Connected = true;
 									forUpdate.UpdateAndFlush();
 									var endPoint = new ClientEndpoints();
-									inetClient.PhisicalClient = (int) forUpdate.Id;
+									inetClient.PhisicalClient = (uint) forUpdate.Id;
 									inetClient.Type = ClientType.Phisical;
 									inetClient.SaveAndFlush();
 									endPoint.Port = portNum;

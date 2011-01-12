@@ -117,6 +117,53 @@
     </form>
     <%end %>
 <br />
+<%if PartnerAccessSet.AccesPartner("DHCP"): %>
+  <%if Client.Connected: %>
+    <%if not EditingConnect: %>
+        <form class="formConnect" method="post" action="${siteroot}/UserInfo/LoadEditConnectMudule">
+    <input type="hidden" name="ClientID" value="${ClientCode}" />
+    <input type="hidden" name="EditConnectFlag" value="${EditingConnect}" />
+	<table class="table" style="width: 100%;" align="left">
+    <thead>
+            <%if IsDefined("EditFlag"):
+              output  WriteMessageNotice(EditFlag)
+        end %>
+                <%if IsDefined("Applying"):
+               output WriteMessageNotice(Applying)
+        end %>
+        <th>Информация по подключению ${Client.Surname}  ${Client.Name}  ${Client.Patronymic}
+        <%if PartnerAccessSet.AccesPartner("DHCP"): %>
+         <input id="Submit1" type="submit" value="Редактировать"  align="right" />
+         <%end %>
+        </th>
+    </thead>
+    <tbody>
+        <tr>
+          <td>Фиксированный IP</td>
+          <td>${ConnectInfo.static_IP}</td>
+        </tr>
+        <tr>
+          <td>Арендованный IP</td>
+          <td>${ConnectInfo.Leased_IP}</td>
+        </tr>
+        <tr>
+          <td>Свич</td>
+          <td>${ConnectInfo.Swith_adr} (${ConnectInfo.swith_IP})</td>
+        </tr>
+        <tr>
+          <td>Порт</td>
+          <td>${ConnectInfo.Port}</td>
+        </tr>
+                <tr>
+          <td>Скорость</td>
+          <td>${ConnectInfo.Speed}</td>
+        </tr>
+    </tbody>
+    </table>
+    </form>
+    <%end %>
+  <%end %>
+<%end %>
 <div style="clear:both;">
 <%if (Payments.Length == 0): %>
                   <div class="flash">

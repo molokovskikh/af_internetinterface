@@ -18,14 +18,13 @@ namespace InternetInterface.Models
 		[Property, ValidateNonEmpty("Введите имя")]
 		public virtual string Name { get; set; }
 
-		[Property, ValidateEmail("Ошибка формата Email"), ValidateNonEmpty("Введите EMail")]
+		[Property, ValidateEmail("Ошибка формата Email")]
 		public virtual string Email { get; set; }
 
-		[Property, ValidateRegExp(@"^((\d{4,5})-(\d{5,6}))|((\d{1})-(\d{3})-(\d{3})-(\d{2})-(\d{2}))", "Ошибка фотмата телефонного номера (Код города (4-5 цифр) + местный номер (5-6 цифр) или мобильный телефн (8-***-***-**-**))")
-		, ValidateNonEmpty("Введите номер телефона")]
+		[Property, ValidateRegExp(@"^((\d{4,5})-(\d{5,6}))|((\d{1})-(\d{3})-(\d{3})-(\d{2})-(\d{2}))", "Ошибка фотмата телефонного номера (Код города (4-5 цифр) + местный номер (5-6 цифр) или мобильный телефн (8-***-***-**-**))")]
 		public virtual string TelNum { get; set; }
 
-		[Property, ValidateNonEmpty("Введите адрес")]
+		[Property]
 		public virtual string Adress { get; set; }
 
 		[Property]

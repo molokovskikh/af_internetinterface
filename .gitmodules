@@ -1,3 +1,15 @@
 [submodule "Lib/MonoRail.Debugger.Toolbar"]
 	path = Lib/MonoRail.Debugger.Toolbar
 	url = ssh://kvasov@git.analit.net/var/www/git/MonoRail.Debugger.Toolbar
+[submodule "src/Common.Tools"]
+	path = src/Common.Tools
+	url = ssh://kvasov@git.analit.net/var/www/git/Common.Tools
+[submodule "src/Common.MySql"]
+	path = src/Common.MySql
+	url = ssh://kvasov@git.analit.net/var/www/git/Common.MySql
+[submodule "src/Test.Support"]
+	path = src/Test.Support
+	url = ssh://kvasov@git.analit.net/var/www/git/Test.Support
+[submodule "src/Common.Models"]
+	path = src/Common.Models
+	url = ssh://kvasov@git.analit.net/var/www/git/Common.Models

@@ -33,60 +33,62 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Boo.Lang.Extensions, Version=2.0.9.4, Culture=neutral, PublicKeyToken=32c39770e9a21a67, processorArchitecture=MSIL">
+    <Reference Include="Boo.Lang.Extensions, Version=2.0.9.3, Culture=neutral, PublicKeyToken=32c39770e9a21a67, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\Boo.Lang.Extensions.dll</HintPath>
+      <HintPath>..\..\lib\Castle\Boo.Lang.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="Castle.ActiveRecord, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\AR 2.1.2\Castle.ActiveRecord.dll</HintPath>
+      <HintPath>..\..\lib\Castle.ActiveRecord.dll</HintPath>
     </Reference>
     <Reference Include="Castle.ActiveRecord.Linq, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\AR 2.1.2\Castle.ActiveRecord.Linq.dll</HintPath>
+      <HintPath>..\..\lib\Castle.ActiveRecord.Linq.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.Components.Binder">
-      <HintPath>..\Lib\Castle.Components.Binder.dll</HintPath>
+    <Reference Include="Castle.Components.Binder, Version=1.1.1.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Castle.Components.Binder.dll</HintPath>
     </Reference>
     <Reference Include="Castle.Components.Validator, Version=1.1.1.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\AR 2.1.2\Castle.Components.Validator.dll</HintPath>
+      <HintPath>..\..\lib\Castle.Components.Validator.dll</HintPath>
     </Reference>
     <Reference Include="Castle.Core, Version=1.2.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\AR 2.1.2\Castle.Core.dll</HintPath>
+      <HintPath>..\..\lib\Castle.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.MonoRail.Framework, Version=1.0.3.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+    <Reference Include="Castle.MonoRail.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\Castle.MonoRail.Framework.dll</HintPath>
+      <HintPath>..\..\lib\Castle.MonoRail.Framework.dll</HintPath>
     </Reference>
     <Reference Include="Castle.MonoRail.Framework.Views.NVelocity, Version=2.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\Castle.MonoRail.Framework.Views.NVelocity.dll</HintPath>
+      <HintPath>..\..\lib\Castle.MonoRail.Framework.Views.NVelocity.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.MonoRail.Views.Brail, Version=1.0.3.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+    <Reference Include="Castle.MonoRail.Views.Brail, Version=2.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\Castle.MonoRail.Views.Brail.dll</HintPath>
+      <HintPath>..\..\lib\Castle.MonoRail.Views.Brail.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\log4net.dll</HintPath>
+      <HintPath>..\..\lib\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="MySql.Data">
-      <HintPath>..\Lib\MySql.Data.dll</HintPath>
+    <Reference Include="MySql.Data, Version=6.3.5.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="NHibernate, Version=2.1.2.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\AR 2.1.2\NHibernate.dll</HintPath>
+      <HintPath>..\..\lib\NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="NHibernate.ByteCode.Castle, Version=2.1.2.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\AR 2.1.2\NHibernate.ByteCode.Castle.dll</HintPath>
+      <HintPath>..\..\lib\NHibernate.ByteCode.Castle.dll</HintPath>
     </Reference>
     <Reference Include="NHibernate.Linq, Version=1.1.0.1001, Culture=neutral, PublicKeyToken=444cf6a87fdab271, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\AR 2.1.2\NHibernate.Linq.dll</HintPath>
+      <HintPath>..\..\lib\NHibernate.Linq.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\Lib\nunit.framework.dll</HintPath>
@@ -223,6 +225,10 @@
     <ProjectReference Include="..\..\Lib\MonoRail.Debugger.Toolbar\src\MonoRail.Debugger.Toolbar\MonoRail.Debugger.Toolbar.csproj">
       <Project>{BF858A13-1FE7-42F0-AF78-D9909FA193D1}</Project>
       <Name>MonoRail.Debugger.Toolbar</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common.Models\Common.Models\Common.Models.csproj">
+      <Project>{80C9F352-5EED-41B2-989A-6628BCAF4D36}</Project>
+      <Name>Common.Models</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

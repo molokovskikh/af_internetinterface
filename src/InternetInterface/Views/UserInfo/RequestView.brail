@@ -39,45 +39,46 @@ overflow:hidden;
             <% if (Clients.Length == 0):
             output WriteMessageError("Нет заявок на подключение")
             else: %>
-            <table class="table" id="clientTable" >
+            <table class="table" id="clientTable">
             <thead>
                 <th>Имя</th>
                 <th>Номер телефона</th>
                 <th>Email</th>
                 <th>Адрес</th>
-                <th>Самостоятельность</th>
                 <th>Тариф</th>
-                <th colspan=2 ><center>Метка</center> </th>
+                <th><center>Метка</center></th>
+                <th>Выделение</th>
+                
             </thead>
             <% for i,Client in enumerate(Clients): %>
             <tr>
                 <td>${Client.ApplicantName}</td>
                 <td>${Client.ApplicantPhoneNumber}</td>
                 <td>${Client.ApplicantEmail}</td>
-                <td>${Client.ApplicantResidence}</td>
-                <td align=center>
-                    <%if Client.SelfConnect: %> 
-                    Да <%else: %>
-                    Нет <%end %>
-                </td>
+                <td>${Client.City} ${Client.Street} ${Client.House} ${Client.CaseHouse} ${Client.Apartment} ${Client.Entrance} ${Client.Floor}</td>
                 <td>${Client.Tariff.Name}</td>
                 <%if (Client.Label.Id !=0): %>
-                <td style="width:230px;">
+                <td style="width:180px;">
                     
-                    <div class='flash' style="float:left; height:25px; width:180px;"> 
+                    <div class='flash' style="float:left; height:25px; width:150px; float: left;"> 
                         <div class="fontgit">
-                            <div class='message error' style="border-color:${Client.Label.GetBorderColor()}; background-color:${Client.Label.Color}" align="center" >
+                            <div class='message error'style="border-color:${Client.Label.GetBorderColor()}; background-color:${Client.Label.Color}" align="center" >
                              ${Client.Label.Name}
                              </div>
                         </div>
                     </div>
-                    
-                    <div style=" height:25px; float:right;">
+                    </td>
+                    <center>
+                    <td>
+                    <div style=" height:25px;">
                         <input type="checkbox" id="LabelDemandCheck${i}" name="LabelList[${i}]" value=${Client.Id} />
                     </div>
-                
+                    </td>
+                    </center>
                 <%else: %>
-                    <td align=right><input type="checkbox" id="Checkbox1" name="LabelList[${i}]" value=${Client.Id} />
+                <td style="width:180px;">
+                </td>
+                    <td><input type="checkbox" id="Checkbox1" name="LabelList[${i}]" value=${Client.Id} />
                 <%end %>
                 </td>
                 <%i++ %>
@@ -89,6 +90,16 @@ overflow:hidden;
             </div>
             </div>
             <div id="sidebar" align="right">
+
+             <table class="table" style="width:170px;">
+                 <thead>
+                    <th colspan=2>Трансформация</th>
+                 </thead>
+                 <tbody>
+                    <tr><td><td><input name="toClient" id="toClient" type="submit" value="В клиенты"  align="right" /></td></td></tr>
+                 </tbody>
+             </table>
+
              <table class="table" style="width:170px;">
              <thead>
              <th colspan=2>Метки</th>
@@ -112,14 +123,14 @@ overflow:hidden;
                 <tr>
                     <td>
                              <select name="labelch" id="labelch" style="width: 100%" >
-                             <option id="Option2" value=0 style="background-color: White"> Нет </option>
+                             <option id="Option2" value = 0 style="background-color: White"> Нет </option>
                              <% for i, Label in enumerate(Labels): %>
                              <option id="Option1" value=${Label.Id} style="background-color: ${Label.Color}"> ${Label.Name} </option>
-                              <% end %>
+                             <% end %>
                              
                     </td>
                 </tr>
-                <tr><td><input id="SetlabelButton" type="submit" value="Установить метки"  align="right" /></td></tr>
+                <tr><td><input  name="SetlabelButton"  id="SetlabelButton" type="submit" value="Установить метки"  align="right" /></td></tr>
                 </tbody>
                 </table>
               </form>

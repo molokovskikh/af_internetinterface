@@ -17,7 +17,7 @@ namespace InternetInterface.Controllers
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class UserInfoController : SmartDispatcherController
 	{
-		public void SearchUserInfo(uint clientCode, bool Editing)
+		public void SearchUserInfo(uint clientCode, bool Editing, bool EditingConnect)
 		{
 			var phisCl = PhisicalClients.Find(clientCode);
 			PropertyBag["Client"] = phisCl;
@@ -35,7 +35,9 @@ namespace InternetInterface.Controllers
 
 			SendParam(clientCode);
 			Flash["Editing"] = Editing;
+			Flash["EditingConnect"] = EditingConnect;
 			PropertyBag["VB"] = new ValidBuilderHelper<PhisicalClients>(new PhisicalClients());
+			PropertyBag["ConnectInfo"] = phisCl.GetConnectInfo();
 		}
 
 
@@ -123,16 +125,57 @@ namespace InternetInterface.Controllers
 		/// <param name="labelList"></param>
 		/// <param name="labelch"></param>
 		[AccessibleThrough(Verb.Post)]
-		public void RequestView([DataBind("LabelList")]List<uint> labelList, uint labelch)
+		public void RequestView([DataBind("LabelList")]List<uint> labelList, uint labelch,
+			[DataBind("toClient")]List<object> toClient, [DataBind("SetlabelButton")]List<object> SetlabelButton)
 		{
-			foreach (var label in labelList)
+			if (SetlabelButton.Count != 0)
 			{
-				var request = Requests.Find(label);
-				request.Label = Label.Find(labelch);	
-				request.UpdateAndFlush();
+				foreach (var label in labelList)
+				{
+					var request = Requests.Find(label);
+					request.Label = Label.Find(labelch);
+					request.UpdateAndFlush();
+				}
+				PropertyBag["Clients"] = Requests.FindAll();
 			}
-			PropertyBag["Clients"] = Requests.FindAll();
+			if (toClient.Count != 0)
+			{
+				foreach (var label in labelList)
+				{
+					var request = Requests.Find(label);
+					var fio = new string[3];
+					request.ApplicantName.Split(' ').CopyTo(fio , 0);
+					var newClient = new PhisicalClients
+					                	{
+					                		Surname = fio[0],
+					                		Name = fio[1],
+					                		Patronymic = fio[2],
+											PhoneNumber = TelephoneParcer(request.ApplicantPhoneNumber),
+					                		Tariff = request.Tariff,
+					                		City = request.City,
+											CaseHouse = request.CaseHouse,
+											Floor = request.Floor,
+											House = request.House,
+											Street = request.Street,
+											Apartment = request.Apartment,
+											Entrance = request.Entrance
+					                	};
+					newClient.SaveAndFlush();
+					request.DeleteAndFlush();
+				}
+				PropertyBag["Clients"] = Requests.FindAll();
+			}
 			SendRequestEditParameter();
+		}
+
+		private string TelephoneParcer(string number)
+		{
+			if (number.Length == 10)
+			{
+				return "8-" + number.Substring(0, 3) + "-" + number.Substring(3, 3) + "-" + number.Substring(6, 2) + "-" +
+				       number.Substring(8, 2);
+			}
+			return number;
 		}
 
 		[AccessibleThrough(Verb.Post)]

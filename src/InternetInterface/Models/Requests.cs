@@ -1,6 +1,7 @@
 ﻿using System;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
+using Castle.Components.Validator;
 
 namespace InternetInterface.Models
 {
@@ -20,7 +21,27 @@ namespace InternetInterface.Models
 		public virtual string ApplicantEmail { get; set; }
 
 		[Property]
-		public virtual string ApplicantResidence { get; set; }
+		public virtual string City { get; set; }
+
+		[Property]
+		public virtual string Street { get; set; }
+
+		[Property]
+		public virtual string House { get; set; }
+
+		[Property]
+		public virtual string CaseHouse { get; set; }
+
+		[Property]
+		public virtual string Apartment { get; set; }
+
+		[Property]
+		public virtual string Entrance { get; set; }
+
+		[Property]
+		public virtual string Floor { get; set; }
+		/*[Property]
+		public virtual string ApplicantResidence { get; set; }*/
 
 		[Property]
 		public virtual bool SelfConnect { get; set; }

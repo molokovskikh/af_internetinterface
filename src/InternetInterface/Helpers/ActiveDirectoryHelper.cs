@@ -30,7 +30,8 @@ namespace InternetInterface.Helpers
 
 		public static bool Authenticated(string LDAP, string username, string pwd)
 		{ 
-			string domainAndUsername = @"analit\" + username;
+
+			var domainAndUsername = @"analit\" + username;
 			entryAu = new DirectoryEntry(LDAP, domainAndUsername, pwd, AuthenticationTypes.None);
 #if DEBUG
 			//Console.WriteLine(entryAu.Guid);

@@ -1,14 +1,30 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
 using Castle.Components.Validator;
 using Castle.MonoRail.Framework;
+using Common.Models.Helpers;
 using InternetInterface.Controllers.Filter;
+using InternetInterface.Helpers;
 using InternetInterface.Models.Universal;
+//using NHibernate.Transform;
 
 namespace InternetInterface.Models
 {
+	public class PhisicalClientConnectInfo
+	{
+		public string static_IP;
+		public string Leased_IP;
+		public string Client;
+		public string Switch;
+		public string Swith_adr;
+		public string swith_IP;
+		public string Port;
+		public string Speed;
+	}
+
 
 	[ActiveRecord("PhysicalClients", Schema = "internet", Lazy = true)]
 	public class PhisicalClients : ValidActiveRecordLinqBase<PhisicalClients>
@@ -136,6 +152,48 @@ namespace InternetInterface.Models
 				return true;
 			}
 			return false;
+		}
+
+		public virtual PhisicalClientConnectInfo GetConnectInfo()
+		{
+			if (Connected)
+			{
+				var client = Clients.FindAllByProperty("PhisicalClient", (uint)Id);
+				IList<PhisicalClientConnectInfo> ConnectInfo = new List<PhisicalClientConnectInfo>();
+				ARSesssionHelper<PhisicalClientConnectInfo>.QueryWithSession(session =>
+				                                                             	{
+				                                                             		var query =
+				                                                             			session.CreateSQLQuery(string.Format(
+				                                                             				@"
+select
+inet_ntoa(CE.Ip) as static_IP,
+inet_ntoa(L.Ip) as Leased_IP,
+CE.Client,
+Ce.Switch,
+NS.Name as Swith_adr,
+inet_ntoa(NS.ip) as swith_IP,
+CE.Port,
+PS.Speed
+from internet.ClientEndpoints CE
+join internet.NetworkSwitches NS on NS.Id = CE.Switch
+join internet.Clients C on CE.Client = C.Id
+join internet.Leases L on L.Endpoint = CE.Id
+left join internet.PackageSpeed PS on PS.PackageId = CE.PackageId
+where CE.Client = {0}",
+				                                                             				client[0].Id)).SetResultTransformer(
+				                                                             					//new AliasToBeanResultTransformer(
+																								new AliasToPropertyTransformer(
+				                                                             						typeof (PhisicalClientConnectInfo)))
+				                                                             				.List<PhisicalClientConnectInfo>();
+					 
+				                                          		ConnectInfo = query;
+				                                          		return query;
+				                                          		
+				                                          	});
+
+				//return ConnectInfo[0];
+			}
+			return new PhisicalClientConnectInfo();
 		}
 	}
 
