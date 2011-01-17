@@ -122,10 +122,10 @@ CE.Module,
 CE.Port,
 CE.PackageId,
 PS.Speed
-from internet.ClientEndpoints CE
+from internet.Leases L
+left join internet.ClientEndpoints CE on L.Endpoint = CE.Id
 join internet.NetworkSwitches NS on NS.Id = CE.Switch
-join internet.Clients C on CE.Client = C.Id
-join internet.Leases L on L.Endpoint = CE.Id
+left join internet.Clients C on CE.Client = C.Id
 left join internet.PackageSpeed PS on PS.PackageId = CE.PackageId
 where NS.Zone = {0}", Zone)).List<object>();
 				clients = query;
