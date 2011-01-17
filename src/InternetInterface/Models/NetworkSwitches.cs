@@ -47,19 +47,20 @@ namespace InternetInterface.Models
 			return string.Empty;
 		}
 
-		public virtual void SetProgramIp()
+		public static string SetProgramIp(string ip)
 		{
 			var valid = new Regex(IPRegExp);
-			if (valid.IsMatch(IP))
+			if (valid.IsMatch(ip))
 			{
-				var splited = IP.Split('.');
+				var splited = ip.Split('.');
 				var fg = new byte[8];
 				fg[0] = Convert.ToByte(splited[3]);
 				fg[1] = Convert.ToByte(splited[2]);
 				fg[2] = Convert.ToByte(splited[1]);
 				fg[3] = Convert.ToByte(splited[0]);
-				IP = BitConverter.ToInt64(fg, 0).ToString();
+				return BitConverter.ToInt64(fg, 0).ToString();
 			}
+			return string.Empty;
 		}
 	}
 }

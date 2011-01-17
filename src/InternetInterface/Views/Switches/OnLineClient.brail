@@ -45,9 +45,23 @@
                     <td>${Client[11]}</td>
                 </tr>
              <%end %>
+
             </tbody>
         </table>
-        
+                     <form class="formConnect" method="post" action="${siteroot}/Switches/GoZone">
+                     <div style="width:200px; float:left;">
+                     <select name="Zone" id="Zones" style="width: 100%" >
+                                   <%
+                                    for j, Zone in enumerate(Zones): 
+                                    %>
+                                    <option id="Option${j}" value="${Zone.Id}" ${"selected" if (Zone.Id == thisZone)} > ${Zone.Name} </option>
+                                   <% end %>
+                   </select>
+                   </div>
+                   <div>
+                   <input id="Submit2" type="submit" value="Показать"  align="right" />
+                   </div>
+             </form>
     </div>
 </div>
 </div>

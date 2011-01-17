@@ -75,9 +75,10 @@ namespace InternetInterface.Controllers
 							using (var scope = new TransactionScope(OnDispose.Rollback))
 							{
 								var Switch = NetworkSwitches.Find((uint) client.SwitchId);
-								if (ClientEndpoints.FindAll(DetachedCriteria.For(typeof (ClientEndpoints))
+								/*if (ClientEndpoints.FindAll(DetachedCriteria.For(typeof (ClientEndpoints))
 								                            	.Add(Expression.Eq("Switch", Switch))
-								                            	.Add(Expression.Eq("Port", portNum))).Length == 0)
+								                            	.Add(Expression.Eq("Port", portNum))).Length == 0)*/
+								if (Point.isUnique(Switch, portNum))
 								{
 									var cdDate = RequestsConnection.FindAll(DetachedCriteria.For(typeof (RequestsConnection))
 									                                        	.CreateAlias("ClientID", "PS", JoinType.InnerJoin)

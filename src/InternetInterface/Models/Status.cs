@@ -16,5 +16,8 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string Name { get; set; }
 
+		[Property]
+		public virtual bool Blocked { get; set; }
+
 	}
 }

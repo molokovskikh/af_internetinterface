@@ -15,14 +15,15 @@ namespace InternetInterface.Models
 {
 	public class PhisicalClientConnectInfo
 	{
-		public string static_IP;
-		public string Leased_IP;
-		public string Client;
-		public string Switch;
-		public string Swith_adr;
-		public string swith_IP;
-		public string Port;
-		public string Speed;
+		public string static_IP { get; set; }
+		public string Leased_IP { get; set; }
+		public string Client { get; set; }
+		public string Switch { get; set; }
+		public string Swith_adr { get; set; }
+		public string swith_IP { get; set; }
+		public string Port { get; set; }
+		public string Speed { get; set; }
+		public bool Monitoring { get; set; }
 	}
 
 
@@ -159,12 +160,14 @@ namespace InternetInterface.Models
 			if (Connected)
 			{
 				var client = Clients.FindAllByProperty("PhisicalClient", (uint)Id);
-				IList<PhisicalClientConnectInfo> ConnectInfo = new List<PhisicalClientConnectInfo>();
-				ARSesssionHelper<PhisicalClientConnectInfo>.QueryWithSession(session =>
-				                                                             	{
-				                                                             		var query =
-				                                                             			session.CreateSQLQuery(string.Format(
-				                                                             				@"
+				if (client.Length != 0)
+				{
+					IList<PhisicalClientConnectInfo> ConnectInfo = new List<PhisicalClientConnectInfo>();
+					ARSesssionHelper<PhisicalClientConnectInfo>.QueryWithSession(session =>
+					                                                             	{
+					                                                             		var query =
+					                                                             			session.CreateSQLQuery(string.Format(
+																								@"
 select
 inet_ntoa(CE.Ip) as static_IP,
 inet_ntoa(L.Ip) as Leased_IP,
@@ -173,27 +176,26 @@ Ce.Switch,
 NS.Name as Swith_adr,
 inet_ntoa(NS.ip) as swith_IP,
 CE.Port,
-PS.Speed
+PS.Speed,
+CE.Monitoring
 from internet.ClientEndpoints CE
 join internet.NetworkSwitches NS on NS.Id = CE.Switch
 join internet.Clients C on CE.Client = C.Id
-join internet.Leases L on L.Endpoint = CE.Id
+left join internet.Leases L on L.Endpoint = CE.Id
 left join internet.PackageSpeed PS on PS.PackageId = CE.PackageId
 where CE.Client = {0}",
-				                                                             				client[0].Id)).SetResultTransformer(
-				                                                             					//new AliasToBeanResultTransformer(
-																								new AliasToPropertyTransformer(
-				                                                             						typeof (PhisicalClientConnectInfo)))
-				                                                             				.List<PhisicalClientConnectInfo>();
-					 
-				                                          		ConnectInfo = query;
-				                                          		return query;
-				                                          		
-				                                          	});
+					 				client[0].Id)).SetResultTransformer(
+					 				new AliasToPropertyTransformer(
+					 					typeof (PhisicalClientConnectInfo)))
+					 				.List<PhisicalClientConnectInfo>();
+					 		ConnectInfo = query;
+							return query;
+																					});
 
-				//return ConnectInfo[0];
+					return ConnectInfo[0];
+				}
 			}
-			return new PhisicalClientConnectInfo();
+			return null;
 		}
 	}
 

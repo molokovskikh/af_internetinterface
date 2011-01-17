@@ -138,7 +138,10 @@ namespace InternetInterface.Models.Access
 									"MakeSwitch",
 									"EditSwitch",
 									"RegisterSwitch",
-									"OnLineClient"
+									"OnLineClient",
+									"SaveSwitchForClient",
+									"LoadEditConnectMudule",
+									"GoZone"
 			                 	};
 			return _accessDHCP.Contains(methodName) ? "DHCP" : string.Empty;
 		}

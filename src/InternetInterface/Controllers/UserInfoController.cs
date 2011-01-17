@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
 using System.Linq;
 using System.Collections.Generic;
-using Castle.ActiveRecord;
 using Castle.MonoRail.Framework;
 using InternetInterface.AllLogic;
 using InternetInterface.Controllers.Filter;
@@ -38,8 +34,88 @@ namespace InternetInterface.Controllers
 			Flash["EditingConnect"] = EditingConnect;
 			PropertyBag["VB"] = new ValidBuilderHelper<PhisicalClients>(new PhisicalClients());
 			PropertyBag["ConnectInfo"] = phisCl.GetConnectInfo();
+			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(t => t.Name != null);
 		}
 
+		public void SaveSwitchForClient(uint ClientID, [DataBind("ConnectInfo")]PhisicalClientConnectInfo ConnectInfo)
+		{
+			var clientEntPoint = new ClientEndpoints();
+			var clients = Clients.FindAllByProperty("PhisicalClient", ClientID);
+			if (clients.Length != 0)
+			{
+				var clientsEndPoint = ClientEndpoints.FindAllByProperty("Client", clients[0]);
+				if (clientsEndPoint.Length != 0)
+				{
+					clientEntPoint = clientsEndPoint[0];
+				}
+			}
+			var olpPort = clientEntPoint.Port;
+			var oldSwitch = clientEntPoint.Switch;
+			var nullFlag = false;
+			if (ConnectInfo.static_IP == null)
+			{
+				clientEntPoint.Ip = null;
+				nullFlag = true;
+			}
+			else
+			{
+				ConnectInfo.static_IP = NetworkSwitches.SetProgramIp(ConnectInfo.static_IP);
+			}
+			var errorMessage = string.Empty;
+			if ((ConnectInfo.static_IP != string.Empty) || (nullFlag))
+			{
+				try
+				{
+					var Port = Convert.ToInt32(ConnectInfo.Port);
+					if ((Port > 48) && (Port < 1))
+					{
+						errorMessage += "Неправильно введен порт, введите число от 1 до 48";
+					}
+					if (Point.isUnique(NetworkSwitches.Find(Convert.ToUInt32(ConnectInfo.Switch)), Port) ||
+					((NetworkSwitches.Find(Convert.ToUInt32(ConnectInfo.Switch)) == oldSwitch) && (Port == olpPort)))
+					{
+						if (errorMessage == string.Empty)
+						{
+							clientEntPoint.Ip = ConnectInfo.static_IP;
+							clientEntPoint.Port = Port;
+							clientEntPoint.Switch = NetworkSwitches.Find(Convert.ToUInt32(ConnectInfo.Switch));
+							clientEntPoint.Monitoring = ConnectInfo.Monitoring;
+							clientEntPoint.UpdateAndFlush();
+							PropertyBag["Editing"] = false;
+							Flash["EditFlag"] = "Данные изменены";
+							RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientID);
+							return;
+						}
+					}
+					else
+					{
+						errorMessage = "Такая пара порт/свич уже существует";
+					}
+				}
+				catch (Exception)
+				{
+					errorMessage += "Неправильно введен порт, введите число от 1 до 48";
+				}
+			}
+			else
+			{
+				errorMessage += "Ошибка ввода IP адреса";
+			}
+			var phisCl = PhisicalClients.Find(ClientID);
+			PropertyBag["ConnectInfo"] = phisCl.GetConnectInfo();
+			PropertyBag["Editing"] = true;
+			Flash["errorMessage"] = errorMessage;
+			RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientID + "&EditingConnect=true");
+
+		}
+
+		public void LoadEditConnectMudule(uint ClientID)
+		{
+			Flash["EditingConnect"] = true;
+			var phisCl = PhisicalClients.Find(ClientID);
+			PropertyBag["ConnectInfo"] = phisCl.GetConnectInfo();
+			RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientID + "&EditingConnect=true");
+		}
 
 		private void SendRequestEditParameter()
 		{
@@ -212,6 +288,27 @@ namespace InternetInterface.Controllers
 			if (Validator.IsValid(updateClient))
 			{
 				updateClient.UpdateAndFlush();
+				var clients = Clients.FindAllByProperty("PhisicalClient", ClientID);
+				if (clients.Length != 0)
+				{
+					if (updateClient.Status.Blocked)
+					{
+
+						foreach (var clientse in clients)
+						{
+							clientse.Disabled = true;
+							clientse.UpdateAndFlush();
+						}
+					}
+					else
+					{
+						foreach (var clientse in clients)
+						{
+							clientse.Disabled = false;
+							clientse.UpdateAndFlush();
+						}
+					}
+				}
 				PropertyBag["Editing"] = false;
 				Flash["EditFlag"] = "Данные изменены";
 				RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientID );
@@ -227,6 +324,7 @@ namespace InternetInterface.Controllers
 				});
 				RenderView("SearchUserInfo");
 				Flash["Editing"] = true;
+				Flash["EditingConnect"] = false;
 				Flash["Client"] = updateClient;
 				Flash["ChTariff"] = Tariff.Find(tariff).Id;
 				Flash["ChStatus"] = Tariff.Find(status).Id;
@@ -236,6 +334,8 @@ namespace InternetInterface.Controllers
 
 		private void SendParam(uint ClientCode)
 		{
+			var phisCl = PhisicalClients.Find(ClientCode);
+			PropertyBag["ConnectInfo"] = phisCl.GetConnectInfo();
 			PropertyBag["ClientCode"] = ClientCode;
 			PropertyBag["BalanceText"] = string.Empty;
 			Flash["Tariffs"] = Tariff.FindAllSort();
@@ -244,7 +344,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Statuss"] = Status.FindAllSort();
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties {ChangeType = TypeChangeBalance.OtherSumm};
 			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
-			PropertyBag["Payments"] = Payment.FindAllByProperty("Client", PhisicalClients.Find(ClientCode));
+			PropertyBag["Payments"] = Payment.FindAllByProperty("Client", phisCl);
 		}
 
 		[AccessibleThrough(Verb.Post)]

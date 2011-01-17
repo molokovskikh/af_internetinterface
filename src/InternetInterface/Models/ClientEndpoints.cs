@@ -1,5 +1,6 @@
 ﻿using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
+using NHibernate.Criterion;
 
 namespace InternetInterface.Models
 {
@@ -11,6 +12,9 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual bool Disabled { get; set; }
+
+		[Property]
+		public virtual string Ip { get; set; }
 
 		[BelongsTo("Client")]
 		public virtual Clients Client { get; set; }
@@ -28,9 +32,21 @@ namespace InternetInterface.Models
 		public virtual NetworkSwitches Switch { get; set; }
 
 		[Property]
-		public virtual int Monitoring { get; set; }
+		public virtual bool Monitoring { get; set; }
 
 		[Property]
 		public virtual int PackageId { get; set; }
+	}
+
+	public class Point
+	{
+		public static bool isUnique(NetworkSwitches _Switch, int _Port)
+		{
+			if (ClientEndpoints.FindAll(DetachedCriteria.For(typeof(ClientEndpoints))
+								.Add(Expression.Eq("Switch", _Switch))
+								.Add(Expression.Eq("Port", _Port))).Length == 0)
+				return true;
+			return false;
+		}
 	}
 }

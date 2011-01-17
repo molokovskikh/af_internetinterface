@@ -19,6 +19,9 @@
                 <%if IsDefined("Applying"):
                output WriteMessageNotice(Applying)
         end %>
+        <%if IsDefined("errorMessage"):
+              output  WriteMessageError(errorMessage)
+           end%>
         <th>Информация по клиенту ${Client.Surname}  ${Client.Name}  ${Client.Patronymic}
         <%if PartnerAccessSet.AccesPartner("RC"): %>
          <input id="EditButton" type="submit" value="Редактировать"  align="right" />
@@ -118,6 +121,7 @@
     <%end %>
 <br />
 <%if PartnerAccessSet.AccesPartner("DHCP"): %>
+ <%if IsDefined("Client"): %>
   <%if Client.Connected: %>
     <%if not EditingConnect: %>
         <form class="formConnect" method="post" action="${siteroot}/UserInfo/LoadEditConnectMudule">
@@ -125,13 +129,7 @@
     <input type="hidden" name="EditConnectFlag" value="${EditingConnect}" />
 	<table class="table" style="width: 100%;" align="left">
     <thead>
-            <%if IsDefined("EditFlag"):
-              output  WriteMessageNotice(EditFlag)
-        end %>
-                <%if IsDefined("Applying"):
-               output WriteMessageNotice(Applying)
-        end %>
-        <th>Информация по подключению ${Client.Surname}  ${Client.Name}  ${Client.Patronymic}
+        <th colspan=2>Информация по подключению ${Client.Surname}  ${Client.Name}  ${Client.Patronymic}
         <%if PartnerAccessSet.AccesPartner("DHCP"): %>
          <input id="Submit1" type="submit" value="Редактировать"  align="right" />
          <%end %>
@@ -139,8 +137,52 @@
     </thead>
     <tbody>
         <tr>
-          <td>Фиксированный IP</td>
+          <td><span class="description">Фиксированный </span></td>
           <td>${ConnectInfo.static_IP}</td>
+        </tr>
+        <tr>
+          <td><span class="description">Арендованный IP </span></td>
+          <td>${ConnectInfo.Leased_IP}</td>
+        </tr>
+        <tr>
+          <td><span class="description">Свич </span></td>
+          <td>${ConnectInfo.Swith_adr} (${ConnectInfo.swith_IP})</td>
+        </tr>
+        <tr>
+          <td><span class="description">Порт </span></td>
+          <td>${ConnectInfo.Port}</td>
+        </tr>
+                <tr>
+          <td><span class="description">Скорость </span></td>
+          <td>${ConnectInfo.Speed}</td>
+        </tr>
+         <tr>
+          <td><span class="description">Мониторинг </span></td>
+          <td><%if (ConnectInfo.Monitoring): %>
+                Да
+                <%else: %>
+                Нет
+                <%end %></td>
+        </tr>
+    </tbody>
+    </table>
+    </form>
+    <%else: %>
+    <form class="formConnect" method="post" action="${siteroot}/UserInfo/SaveSwitchForClient">
+    <input type="hidden" name="ClientID" value="${ClientCode}" />
+    <input type="hidden" name="EditConnectFlag" value="${EditingConnect}" />
+	<table class="table" style="width: 100%;" align="left">
+    <thead>
+        <th colspan = 2 > Информация по подключению ${Client.Surname}  ${Client.Name}  ${Client.Patronymic}
+        <%if PartnerAccessSet.AccesPartner("DHCP"): %>
+         <input id="Submit2" type="submit" value="Сохранить"  align="right" />
+         <%end %>
+        </th>
+    </thead>
+    <tbody>
+        <tr>
+          <td>Фиксированный IP</td>
+          <td><input type="text" id="static_IP"  name="ConnectInfo.static_IP"  value="${ConnectInfo.static_IP}" style="width: 50%; " /></td>
         </tr>
         <tr>
           <td>Арендованный IP</td>
@@ -148,21 +190,32 @@
         </tr>
         <tr>
           <td>Свич</td>
-          <td>${ConnectInfo.Swith_adr} (${ConnectInfo.swith_IP})</td>
+          <td><select name="ConnectInfo.Switch" id="SelectSwitches${ConnectInfo.Switch}" style="width: 100%" >
+                                   <%
+                                    for j, Switch in enumerate(Switches): 
+                                    %>
+                                    <option id="Option${j}" value="${Switch.Id}" ${"selected" if (Switch.Id.ToString() == ConnectInfo.Switch)} > ${Switch.Name} </option>
+                                   <% end %>
+                            </select></td>
         </tr>
         <tr>
           <td>Порт</td>
-          <td>${ConnectInfo.Port}</td>
+          <td><input type="text" id="Port"  name="ConnectInfo.Port"  value="${ConnectInfo.Port}" style="width: 50%; " /></td>
         </tr>
                 <tr>
           <td>Скорость</td>
           <td>${ConnectInfo.Speed}</td>
+        </tr>
+        <tr>
+          <td>Мониторинг</td>
+          <td ><input type="checkbox" id="Monitoring" name="ConnectInfo.Monitoring" value=true  ${"checked" if (ConnectInfo.Monitoring)}/> </td>
         </tr>
     </tbody>
     </table>
     </form>
     <%end %>
   <%end %>
+ <%end %>
 <%end %>
 <div style="clear:both;">
 <%if (Payments.Length == 0): %>
