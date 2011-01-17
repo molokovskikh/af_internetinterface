@@ -21,7 +21,7 @@ namespace InternetInterfaceFixture.Unit
 				{
 					if (!_result.First().Connected)
 						return true;
-					if (result.Method.Name == "GetClientsTest")
+					if (result.Method.Name == "<GetClientsTest>b__0")
 						return true;
 				}
 			}

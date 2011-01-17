@@ -222,7 +222,7 @@
     <None Include="Views\Search\SearchUsers.brail" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Lib\MonoRail.Debugger.Toolbar\src\MonoRail.Debugger.Toolbar\MonoRail.Debugger.Toolbar.csproj">
+    <ProjectReference Include="..\..\lib\MonoRail.Debugger.Toolbar\src\MonoRail.Debugger.Toolbar\MonoRail.Debugger.Toolbar.csproj">
       <Project>{BF858A13-1FE7-42F0-AF78-D9909FA193D1}</Project>
       <Name>MonoRail.Debugger.Toolbar</Name>
     </ProjectReference>

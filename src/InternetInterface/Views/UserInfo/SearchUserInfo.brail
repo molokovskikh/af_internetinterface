@@ -288,6 +288,15 @@
     </table>
     </form>
 </div>
+<div>
+<form class="form login" method="post" action="${siteroot}/UserInfo/PassAndShowCard">
+    <input type="hidden" name="ClientID" value="${ClientCode}" />
+      <button type="submit" id="Button1" class="button">
+                  <img alt="Save" src="../Images/tick.png"> Поменять пароль и сформировать карту
+      </button>
+</form>
+</div>
+</div>
 <%end %>
 </div>
 </div>

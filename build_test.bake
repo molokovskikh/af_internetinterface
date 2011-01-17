@@ -3,16 +3,15 @@ import file from Deploy.bake
 import file from Lib.bake
 import file from Migration.bake
 import file from Tools.bake
-import file from Test.bake
 
 Global(
 	Project : "InternetInterface",
-	deployTo : """\\acdcserv.adc.analit.net\WebApps\InforoomInternet""",
-	HumanReadableName : "Интернет интерфейс"
+	deployTo : """\\acdcserv.adc.analit.net\Test\InforoomInternet""",
+	HumanReadableName : "Интернет "
 )
 
 task @default, [@Build]
 
 task @Build, [@BuildWebSite]
 
-Task @deploy, [@Production, @Build, @Migrate, @deployWebSite, @SendDeployNotification]
+task @deploy, [@Build, @DeployWebSite]

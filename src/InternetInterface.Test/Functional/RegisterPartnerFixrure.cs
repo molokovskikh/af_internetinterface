@@ -54,7 +54,7 @@ namespace InternetInterfaceFixture.Functional
 				Assert.That(browser.Text, Is.StringContaining("Адрес"));
 				Assert.That(browser.Text, Is.StringContaining("Логин"));
 				Assert.That(browser.Text, Is.StringContaining("Опции доступа"));
-				var AccessCats = AccessCategories.FindAll().Where(p => p.Id != 5);
+				var AccessCats = AccessCategories.FindAll().Where(p => p.Id != 9);
 				foreach (var cat in AccessCats)
 				{
 					Assert.That(browser.Text, Is.StringContaining(cat.Name));

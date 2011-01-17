@@ -254,6 +254,21 @@ namespace InternetInterface.Controllers
 			return number;
 		}
 
+		public void PassAndShowCard(uint ClientCode)
+		{
+			/*var user = PhisicalClients.Find(ClientCode);
+			var Password = CryptoPass.GeneratePassword();
+			user.Password = Password;
+			user.Login = LoginCreatorHelper.GetUniqueEnLogin(user.Surname);
+			if (Validator.IsValid(user))
+			{
+				Flash["Password"] = Password;
+				Flash["Client"] = user;
+				Flash["ConnectSumm"] = connectSumm;
+				RedirectToUrl("..//UserInfo/ClientRegisteredInfo.rails");
+			}*/
+		}
+
 		[AccessibleThrough(Verb.Post)]
 		public void LoadEditMudule(uint ClientID)
 		{

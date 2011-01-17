@@ -30,7 +30,6 @@ namespace InternetInterfaceFixture.Functional
 				Assert.That(browser.Text, Is.StringContaining("Адрес регистрации"));
 				Assert.That(browser.Text, Is.StringContaining("Регистрационные данные"));
 				Assert.That(browser.Text, Is.StringContaining("Тариф"));
-				Assert.That(browser.Text, Is.StringContaining("Средний"));
 				Assert.That(browser.Text, Is.StringContaining("Внести сумму по тарифному плану"));
 				Assert.That(browser.Text, Is.StringContaining("Внести сумму:"));
 				Assert.That(browser.Text, Is.StringContaining("Зарегистрировать"));

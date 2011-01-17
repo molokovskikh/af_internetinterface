@@ -30,7 +30,8 @@ namespace InternetInterfaceFixture.Functional
 				Assert.That(browser.Text, Is.StringContaining("Баланс"));
 				Assert.That(browser.Text, Is.StringContaining("Логин"));
 				Assert.That(browser.Text, Is.StringContaining("ФИО"));
-				browser.Link(Find.ByText("Путин Владимир Владимирович")).Click();
+				var phisCl = PhisicalClients.FindFirst();
+				browser.Link(Find.ByText(phisCl.Surname + " " + phisCl.Name + " " + phisCl.Patronymic)).Click();
 				Thread.Sleep(400);
 				Assert.That(browser.Text, Is.StringContaining("Информация по клиенту"));
 			}

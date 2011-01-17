@@ -54,23 +54,29 @@
     <Reference Include="CassiniDev-lib">
       <HintPath>..\Lib\Cassini\CassiniDev-lib.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.ActiveRecord">
-      <HintPath>..\Lib\AR 2.1.2\Castle.ActiveRecord.dll</HintPath>
+    <Reference Include="Castle.ActiveRecord, Version=2.1.2.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Castle.ActiveRecord.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.ActiveRecord.Linq">
-      <HintPath>..\Lib\AR 2.1.2\Castle.ActiveRecord.Linq.dll</HintPath>
+    <Reference Include="Castle.ActiveRecord.Linq, Version=2.1.2.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Castle.ActiveRecord.Linq.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.Components.Validator">
-      <HintPath>..\Lib\AR 2.1.2\Castle.Components.Validator.dll</HintPath>
+    <Reference Include="Castle.Components.Validator, Version=1.1.1.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Castle.Components.Validator.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.Core">
-      <HintPath>..\Lib\AR 2.1.2\Castle.Core.dll</HintPath>
+    <Reference Include="Castle.Core, Version=1.2.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Castle.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.MonoRail.Framework">
-      <HintPath>..\Lib\Castle.MonoRail.Framework.dll</HintPath>
+    <Reference Include="Castle.MonoRail.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Castle.MonoRail.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.MonoRail.Views.Brail">
-      <HintPath>..\Lib\Castle.MonoRail.Views.Brail.dll</HintPath>
+    <Reference Include="Castle.MonoRail.Views.Brail, Version=2.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Castle.MonoRail.Views.Brail.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\Lib\log4net.dll</HintPath>
@@ -79,14 +85,17 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\Debug\MySql.Data.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate">
-      <HintPath>..\Lib\AR 2.1.2\NHibernate.dll</HintPath>
+    <Reference Include="NHibernate, Version=2.1.2.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\NHibernate.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate.ByteCode.Castle">
-      <HintPath>..\Lib\AR 2.1.2\NHibernate.ByteCode.Castle.dll</HintPath>
+    <Reference Include="NHibernate.ByteCode.Castle, Version=2.1.2.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\NHibernate.ByteCode.Castle.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate.Linq">
-      <HintPath>..\Lib\AR 2.1.2\NHibernate.Linq.dll</HintPath>
+    <Reference Include="NHibernate.Linq, Version=1.1.0.1001, Culture=neutral, PublicKeyToken=444cf6a87fdab271, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\NHibernate.Linq.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\Lib\nunit.framework.dll</HintPath>

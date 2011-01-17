@@ -19,7 +19,7 @@ namespace InternetInterfaceFixture.Unit
 			fg[2] = 16;
 			fg[3] = 172;
 			string dfg = BitConverter.ToInt64(fg, 0).ToString();
-			var qw = Convert.ToByte(Convert.ToInt64("2886730166"));
+			Assert.That(dfg, Is.StringContaining("2886730166"));
 		}
 	}
 }
