@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using InternetInterfaceFixture.Helpers;
+using InternetInterface.Test.Helpers;
 using InternetInterface.Models;
 using NUnit.Framework;
 using WatiN.Core;
 
-namespace InternetInterfaceFixture.Functional
+namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
 	class RequestViewFixture : WatinFixture

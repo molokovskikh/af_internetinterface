@@ -9,7 +9,7 @@ using log4net.Config;
 using NUnit.Framework;
 using WatiN.Core;
 
-namespace InternetInterfaceFixture.Helpers
+namespace InternetInterface.Test.Helpers
 {
 	[TestFixture]
 	public class WatinFixture
@@ -66,7 +66,7 @@ namespace InternetInterfaceFixture.Helpers
 				ActiveRecordStarter.Initialize(new[]
 				                               	{
 				                               		Assembly.Load("InternetInterface"),
-				                               		Assembly.Load("InternetInterfaceFixture"),
+				                               		Assembly.Load("InternetInterface.Test"),
 				                               	}, ActiveRecordSectionHandler.Instance);
 			InithializeContent.partner = Partner.FindAllByProperty("Login", "zolotarev")[0];
 		}

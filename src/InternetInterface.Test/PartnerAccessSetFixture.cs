@@ -7,7 +7,7 @@ using InternetInterface.Models;
 using log4net.Config;
 using NUnit.Framework;
 
-namespace InternetInterfaceFixture
+namespace InternetInterface.Test
 {
 
 	[TestFixture]
@@ -21,7 +21,7 @@ namespace InternetInterfaceFixture
 			if (!ActiveRecordStarter.IsInitialized)
 				ActiveRecordStarter.Initialize(new[] {
 					Assembly.Load("InternetInterface"),
-					Assembly.Load("InternetInterfaceFixture"),
+					Assembly.Load("InternetInterface.Test"),
 				}, ActiveRecordSectionHandler.Instance);
 		}
 

@@ -1,11 +1,11 @@
 ﻿using System.Configuration;
 using System.IO;
 using CassiniDev;
-using InternetInterfaceFixture.Helpers;
+using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 using WatiN.Core;
 
-namespace InternetInterfaceFixture.Functional
+namespace InternetInterface.Test.Functional
 {
 	[SetUpFixture]
 	public class Setup

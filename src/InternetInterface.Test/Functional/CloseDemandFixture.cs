@@ -6,12 +6,12 @@ using System.Text;
 using System.Threading;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
-using InternetInterfaceFixture.Helpers;
+using InternetInterface.Test.Helpers;
 using NHibernate.Criterion;
 using NUnit.Framework;
 using WatiN.Core;
 
-namespace InternetInterfaceFixture.Functional
+namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
 	class CloseDemandFixture : WatinFixture

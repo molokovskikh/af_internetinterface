@@ -6,7 +6,7 @@ using InternetInterface.Helpers;
 using NUnit.Framework;
 using InternetInterface.Controllers;
 
-namespace InternetInterfaceFixture.Unit_
+namespace InternetInterface.Test.Unit_
 {
 	[TestFixture]
 	class LoginFixture : ActiveDirectoryHelper

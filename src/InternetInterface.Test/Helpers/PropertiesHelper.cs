@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using InternetInterface.Models;
 
-namespace InternetInterfaceFixture.Helpers
+namespace InternetInterface.Test.Helpers
 {
 	class UserSearchPropertiesHelper : UserSearchProperties
 	{

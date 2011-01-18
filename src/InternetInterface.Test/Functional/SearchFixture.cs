@@ -2,11 +2,11 @@
 using System.Linq;
 using System.Threading;
 using InternetInterface.Models;
-using InternetInterfaceFixture.Helpers;
+using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 using WatiN.Core;
 
-namespace InternetInterfaceFixture.Functional
+namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
 	class SearchFixture : WatinFixture

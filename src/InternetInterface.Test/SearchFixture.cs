@@ -29,7 +29,7 @@ namespace InternetInterfaceFixtute.RegisterTest
 			if (!ActiveRecordStarter.IsInitialized)
 				ActiveRecordStarter.Initialize(new[] {
 					Assembly.Load("InternetInterface"),
-					Assembly.Load("InternetInterfaceFixture"),
+					Assembly.Load("InternetInterface.Test"),
 				}, ActiveRecordSectionHandler.Instance);
 		}
 

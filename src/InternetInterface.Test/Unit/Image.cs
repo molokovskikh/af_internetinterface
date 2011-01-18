@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using InternetInterface.Controllers;
 using System.Drawing;
-using InternetInterfaceFixture.Helpers;
+using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 
-namespace InternetInterfaceFixture.Unit
+namespace InternetInterface.Test.Unit
 {
 	[TestFixture]
 	class Image : UserInfoController

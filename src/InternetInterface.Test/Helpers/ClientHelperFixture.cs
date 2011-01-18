@@ -8,7 +8,7 @@ using InternetInterface;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 
-namespace InternetInterfaceFixture.Helpers
+namespace InternetInterface.Test.Helpers
 {
 	class ClientHelperFixture
 	{

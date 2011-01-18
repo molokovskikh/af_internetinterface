@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using InternetInterface.AllLogic;
 using InternetInterface.Models;
-using InternetInterfaceFixture.Helpers;
+using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 
 
-namespace InternetInterfaceFixture.Unit
+namespace InternetInterface.Test.Unit
 {
 	[TestFixture]
 	class GetClientsLogicFixture : WatinFixture
