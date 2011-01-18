@@ -51,8 +51,9 @@
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CassiniDev-lib">
-      <HintPath>..\Lib\Cassini\CassiniDev-lib.dll</HintPath>
+    <Reference Include="CassiniDev-lib, Version=3.5.1.7, Culture=neutral, PublicKeyToken=f7f6e0b4240c7c27, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\CassiniDev-lib.dll</HintPath>
     </Reference>
     <Reference Include="Castle.ActiveRecord, Version=2.1.2.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -78,12 +79,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Castle.MonoRail.Views.Brail.dll</HintPath>
     </Reference>
-    <Reference Include="log4net">
-      <HintPath>..\Lib\log4net.dll</HintPath>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\log4net.dll</HintPath>
     </Reference>
     <Reference Include="MySql.Data, Version=6.2.3.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\MySql.Data.dll</HintPath>
+      <HintPath>..\..\lib\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="NHibernate, Version=2.1.2.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -97,8 +99,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\NHibernate.Linq.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.framework">
-      <HintPath>..\Lib\nunit.framework.dll</HintPath>
+    <Reference Include="nunit.framework, Version=2.5.1.9189, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -110,11 +113,13 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WatiN.Core">
-      <HintPath>..\Lib\Watin\WatiN.Core.dll</HintPath>
+    <Reference Include="WatiN.Core, Version=2.0.20.0, Culture=neutral, PublicKeyToken=db7cfd3acb5ad44e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\WatiN.Core.dll</HintPath>
     </Reference>
-    <Reference Include="WatiNCssSelectorExtensions">
-      <HintPath>..\Lib\WatiNCssSelectorExtensions\WatiNCssSelectorExtensions.dll</HintPath>
+    <Reference Include="WatiNCssSelectorExtensions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\WatiNCssSelectorExtensions.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

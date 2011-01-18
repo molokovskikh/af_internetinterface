@@ -32,13 +32,17 @@
             <th>Подключен</th>
         <%end %>
             <th>ФИО</th>
-            <th>Номер счета:</th>            
+            <th>Номер счета:</th>
+            <%if PartnerAccessSet.AccesPartner("SSI"): %>
             <th>Адрес подключения</th>
             <th>Номер телефона</th>
+            <%end %>
             <%if (PartnerAccessSet.AccesPartner("VP")):%>
             <th>Паспортные данные</th>
             <%end %>
+            <%if PartnerAccessSet.AccesPartner("SSI"): %>
             <th>Дата регистрации</th>
+            <%end %>
             <th>Тариф</th>
             <th>Баланс</th>
             <th>Сумма к внесению</th>
@@ -79,8 +83,10 @@
             <%end %>
             <td><a href="../UserInfo/SearchUserInfo.rails?ClientCode=${item.Id}"> ${item.Surname} ${item.Name} ${item.Patronymic}</a></td>
             <td>${item.Id.ToString("00000")}</td>
+            <%if PartnerAccessSet.AccesPartner("SSI"): %>
             <td>${item.Street} ${item.House}${item.CaseHouse} ${item.Apartment} Подъезд ${item.Entrance} Этаж ${item.Floor}</td>
             <td>${item.PhoneNumber}</td>
+            <%end %>
             <%if (PartnerAccessSet.AccesPartner("VP")):%>
             <td>${item.PassportSeries} ${item.PassportNumber}
             ${item.WhoGivePassport}
@@ -88,7 +94,9 @@
             ${item.OutputDate}
             </td>  
             <%end %>
+            <%if PartnerAccessSet.AccesPartner("SSI"): %>
             <td>${item.RegDate}</td>
+            <%end %>
             <%if item.Tariff != null:  %>
             <td>${item.Tariff.Name}</td>
             <%else: %>

@@ -43,6 +43,10 @@ namespace InternetInterface.Models
 					return string.Format("{0}.{1}.{2}.{3}", normalip[3], normalip[2], normalip[1],
 					                     normalip[0]);
 				}
+				else
+				{
+					return IP;
+				}
 			}
 			return string.Empty;
 		}

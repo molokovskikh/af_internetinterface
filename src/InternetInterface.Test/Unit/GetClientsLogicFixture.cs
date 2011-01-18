@@ -25,7 +25,8 @@ namespace InternetInterfaceFixture.Unit
 						return true;
 				}
 			}
-			throw new ArgumentException("Не найден клиент");
+			Console.WriteLine("Не найден клиент");
+			return true;
 		}
 
 

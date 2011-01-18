@@ -293,12 +293,19 @@ namespace InternetInterface.Controllers
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void EditInformation([DataBind("Client")]PhisicalClients client, uint ClientID, uint tariff, uint status)
+		public void EditInformation([DataBind("Client")]PhisicalClients client, uint ClientID, uint tariff, uint status,
+			[DataBind("ChangePass")]List<object> changePass)
 		{
 			var updateClient = PhisicalClients.Find(ClientID);
 			BindObjectInstance(updateClient, ParamStore.Form, "Client");
 			updateClient.Tariff = Tariff.Find(tariff);
 			updateClient.Status = Status.Find(status);
+			var Password = CryptoPass.GeneratePassword();
+			if (changePass.Count != 0)
+			{
+				updateClient.Password = Password;
+				updateClient.Login = LoginCreatorHelper.GetUniqueEnLogin(updateClient.Surname);
+			}
 
 			if (Validator.IsValid(updateClient))
 			{
@@ -326,7 +333,15 @@ namespace InternetInterface.Controllers
 				}
 				PropertyBag["Editing"] = false;
 				Flash["EditFlag"] = "Данные изменены";
+				if (changePass.Count == 0)
 				RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientID );
+				else
+				{
+					Flash["Password"] = Password;
+					Flash["Client"] = updateClient;
+					Flash["ConnectSumm"] = PaymentForConnect.FindAllByProperty("ClientId", updateClient).First();
+					RedirectToUrl("..//UserInfo/ClientRegisteredInfo.rails");
+				}
 			}
 			else
 			{

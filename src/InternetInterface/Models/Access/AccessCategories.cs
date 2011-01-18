@@ -16,7 +16,9 @@ namespace InternetInterface.Models
 		ChangeBalance = 11,
 		VisiblePassport = 13,
 		VisibleDemand = 15,
-		AccessDHCP = 17
+		AccessDHCP = 17,
+		EditClientInfo = 19,
+		ShowSecretData = 21
 		/*GetClientInfo = 1,
 		RegisterClient = 2,
 		SendDemand = 3,
@@ -65,11 +67,21 @@ namespace InternetInterface.Models
 			hasDelete = new List<int>();
 			accessDependence = new List<TwoRule>
 			                   	{
-			                   		/*new TwoRule
+			                   		new TwoRule
+			                   			{
+			                   				HEADAccess = AccessCategoriesType.GetClientInfo,
+			                   				CHIDLAccess = AccessCategoriesType.ShowSecretData,
+			                   			},
+									new TwoRule
+			                   			{
+			                   				HEADAccess = AccessCategoriesType.GetClientInfo,
+			                   				CHIDLAccess = AccessCategoriesType.EditClientInfo
+			                   			},
+									new TwoRule
 			                   			{
 			                   				HEADAccess = AccessCategoriesType.GetClientInfo,
 			                   				CHIDLAccess = AccessCategoriesType.SendDemand,
-			                   			},*/
+			                   			},
 									new TwoRule
 			                   			{
 			                   				HEADAccess = AccessCategoriesType.GetClientInfo,

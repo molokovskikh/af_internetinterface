@@ -54,6 +54,14 @@ namespace InternetInterface.Models.Access
 			{
 				result.Add(GetRulesName_visibleDemand());
 			}
+			if (GetRulesName_showSecretInfo() != string.Empty)
+			{
+				result.Add(GetRulesName_showSecretInfo());
+			}
+			if (GetRulesName_editClientInfo() != string.Empty)
+			{
+				result.Add(GetRulesName_editClientInfo());
+			}
 			return result;
 		}
 
@@ -76,8 +84,6 @@ namespace InternetInterface.Models.Access
 			                 	{
 									"RegisterClient",
 									"SiteMap",
-									"LoadEditMudule",
-									"EditInformation",
 									"ClientRegisteredInfo"
 			                 	};
 			return _registerClient.Contains(methodName) ? "RC" : string.Empty;
@@ -141,7 +147,8 @@ namespace InternetInterface.Models.Access
 									"OnLineClient",
 									"SaveSwitchForClient",
 									"LoadEditConnectMudule",
-									"GoZone"
+									"GoZone",
+									"SiteMap"
 			                 	};
 			return _accessDHCP.Contains(methodName) ? "DHCP" : string.Empty;
 		}
@@ -153,9 +160,29 @@ namespace InternetInterface.Models.Access
 									"RequestView",
 									"ChangeLabel",
 									"EditLabel",
-									"DeleteLabel"
+									"DeleteLabel",
+									"SiteMap"
 			                 	};
 			return _visibleDemand.Contains(methodName) ? "VD" : string.Empty;
+		}
+
+		private static string GetRulesName_showSecretInfo()
+		{
+			_visibleDemand = new HashSet<string>
+			                 	{
+			                 	};
+			return _visibleDemand.Contains(methodName) ? "SSI" : string.Empty;
+		}
+
+		private static string GetRulesName_editClientInfo()
+		{
+			_visibleDemand = new HashSet<string>
+			                 	{
+									"EditInformation",
+									"LoadEditMudule",
+									"SiteMap",
+			                 	};
+			return _visibleDemand.Contains(methodName) ? "ECI" : string.Empty;
 		}
 	}
 }

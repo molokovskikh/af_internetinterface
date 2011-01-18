@@ -1,7 +1,9 @@
 ﻿ <tr>
     <td>
+    <%if PartnerAccessSet.AccesPartner("SSI"): %>
           <input type="radio" id="ForTariffChange" name="ChangedBy.ChangeType" value="ForTariff" ${"checked" if ChangeBy.IsForTariff()} />
           <label for="Autosearch">Внести сумму по тарифному плану</label><br />
+    <%end %>
 
           <input type="radio" id="OtherSummChange" name="ChangedBy.ChangeType" value="OtherSumm" ${"checked" if ChangeBy.IsOtherSumm()} />
           <label for="Other_Balance">Внести сумму: ${Client.HowManyToPay(true)}</label>

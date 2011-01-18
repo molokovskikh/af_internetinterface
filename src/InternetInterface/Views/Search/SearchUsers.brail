@@ -56,8 +56,10 @@
                 <label for="Autosearch">По номеру счета</label><br />
                 <input type="radio" id="SearchByClientId" name="SearchBy.SearchBy" value=ByFio ${"checked" if FindBy.IsSearchByFio()} />
                 <label for="SearchByClientId">ФИО</label><br />
+                <%if (PartnerAccessSet.AccesPartner("VP")):%>
                 <input type="radio" id="SearchByUserId" name="SearchBy.SearchBy" value=ByPassportSet ${"checked" if FindBy.IsSearchByPassportSet()} />
                 <label for="SearchByUserId">Паспортные данные</label><br />
+                <%end %>
                 <input type="radio" id="SearchByLogin" name="SearchBy.SearchBy" value=ByLogin ${"checked" if FindBy.IsSearchByLogin()} />
                 <label for="SearchByLogin">Логин клиента</label><br />
             </td>

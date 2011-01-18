@@ -23,13 +23,17 @@
               output  WriteMessageError(errorMessage)
            end%>
         <th>Информация по клиенту ${Client.Surname}  ${Client.Name}  ${Client.Patronymic}
-        <%if PartnerAccessSet.AccesPartner("RC"): %>
+        <%if PartnerAccessSet.AccesPartner("ECI"): %>
          <input id="EditButton" type="submit" value="Редактировать"  align="right" />
          <%end %>
         </th>
     </thead>
     <tbody>
     </form>
+    	<tr>
+            <td><span class="description">Номер лицевого счета: </span> ${Client.Id.ToString("00000")}</td>
+        </tr>
+    <%if PartnerAccessSet.AccesPartner("SSI"): %>
 		<tr>
             <td><span class="description">Город: </span> ${Client.City}</td>
         </tr>
@@ -39,6 +43,7 @@
         <tr>
             <td><span class="description">Номер телефона: </span> ${Client.PhoneNumber}</td>
         </tr>
+        <%end %>
         <%if PartnerAccessSet.AccesPartner("VP"): %>
         <tr>
             <td>Паспортные данные: <br />
@@ -48,6 +53,7 @@
                                                  <span class="description">Дата выдачи :</span> ${Client.OutputDate}</td>
         </tr>
         <%end %>
+        <%if PartnerAccessSet.AccesPartner("SSI"): %>
         <tr>
             <td><span class="description">Дата регистрации:</span> ${Client.RegDate}</td>
         </tr>
@@ -57,6 +63,7 @@
             <tr>
                 <td><span class="description">Зарегистрировал:</span> ${Client.HasRegistered.Name}</td>
             </tr>
+        <%end %>
         <%end %>
         <%if Client.Tariff != null: %>
         <tr>
@@ -71,6 +78,7 @@
         <tr>
             <td><span class="description">Логин:</span> ${Client.Login}</td>
         </tr>
+        <%if PartnerAccessSet.AccesPartner("SSI"): %>
         <tr>
         <%if (Client.HasConnected != null): %>
             <td><span class="description">Назначен бригаде:</span> ${Client.HasConnected.Name}</td>
@@ -78,6 +86,7 @@
             <td><span class="description"></span> Подключение клиента не назначено</td>
             <%end %>
         </tr>
+        <%end %>
                 <tr>
         <%if Client.Status != null: %>
             <tr>
@@ -90,6 +99,7 @@
             <td><span class="description">Статус подключения:</span>Не подключен</td>
             <%end %>
         </tr>
+        <%if PartnerAccessSet.AccesPartner("SSI"): %>
                 <%if IsDefined("RegisntationDate"): %>
 		    <tr>
                 <td><span class="description">Дата регистрации заявки:</span> ${RegisntationDate}</td>
@@ -99,6 +109,7 @@
 		<tr>
                 <td><span class="description">Дата подключения:</span> ${CloseDate}</td>
         </tr>
+        <%end %>
         <%end %>
     </tbody>
 </table>
@@ -115,6 +126,12 @@
                        </button>
                                 <!--    <input class="button" id="RegisterButton" type="submit" value="Зарегистрировать" /></td> -->
                   </div>
+               </td>
+               <td>
+               <div class="actions">
+                     <input type="submit" name="ChangePass" value="Сохранить, поменять пароль и сформировать карту" id="ChangePass" class="button"/>
+                </div>
+               </td>
                </tr>
     </table>
     </form>
@@ -291,9 +308,7 @@
 <div>
 <form class="form login" method="post" action="${siteroot}/UserInfo/PassAndShowCard">
     <input type="hidden" name="ClientID" value="${ClientCode}" />
-      <button type="submit" id="Button1" class="button">
-                  <img alt="Save" src="../Images/tick.png"> Поменять пароль и сформировать карту
-      </button>
+
 </form>
 </div>
 </div>
