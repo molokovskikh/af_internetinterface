@@ -8,8 +8,8 @@
     <ProjectGuid>{559B7BA4-1758-4D03-ABF9-856D21C0D0D7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>InternetInterfaceFixture</RootNamespace>
-    <AssemblyName>InternetInterfaceFixture</AssemblyName>
+    <RootNamespace>InternetInterface.Test</RootNamespace>
+    <AssemblyName>InternetInterface.Test</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
