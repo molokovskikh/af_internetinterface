@@ -54,6 +54,15 @@
                             </tr>
                             <tr>
                                 <td >
+                                    Email</td>
+                                <td>
+                                    <input id="Email" type="text" value="${client.Email}" name="client.Email"/></td>
+                                 <td>
+                                    ${VB.GetBlock("Email")}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td >
                                     Откуда о нас узнали</td>
                                 <td>
                                     <input id="WhenceAbout" type="text" value="${client.WhenceAbout}" name="client.WhenceAbout"/></td>
@@ -171,7 +180,7 @@
                                     Тариф</td>
                                 <td >
 
-                                       <select name="tariff" id="ChTariff" style="width: 95%" ">
+                                       <select name="tariff" id="ChTariff" style="width: 95%;">
                                        <%
                                         for i, Tariff in enumerate(Tariffs): 
                                         %>
@@ -183,12 +192,13 @@
                                 </td>
                                 <td></td>
                             </tr>
+                            <%if PartnerAccessSet.AccesPartner("SSI"): %>
                             <tr>
                                 <td >
                                     Статус</td>
                                 <td >
 
-                                       <select name="status" id="Select1" style="width: 95%" ">
+                                       <select name="status" id="Select1" style="width: 95%;">
                                        <%
                                         for i, Status in enumerate(Statuss): 
                                         %>
@@ -198,5 +208,10 @@
 
 
                                 </td>
-                                <td></td>
+                                <td>
+                                <%if IsDefined("statusCanChanged"): 
+                                 output  WriteMessageError(statusCanChanged)
+                                 end %>
+                                </td>
                             </tr>
+                            <%end %>

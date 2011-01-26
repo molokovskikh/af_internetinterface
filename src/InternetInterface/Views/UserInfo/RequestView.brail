@@ -52,7 +52,7 @@ overflow:hidden;
             </thead>
             <% for i,Client in enumerate(Clients): %>
             <tr>
-                <td>${Client.ApplicantName}</td>
+                <td><a href="../Register/RegisterClient.rails?requestID=${Client.Id}"> ${Client.ApplicantName}</a></td>
                 <td>${Client.ApplicantPhoneNumber}</td>
                 <td>${Client.ApplicantEmail}</td>
                 <td>${Client.City} ${Client.Street} ${Client.House} ${Client.CaseHouse} ${Client.Apartment} ${Client.Entrance} ${Client.Floor}</td>
@@ -90,15 +90,6 @@ overflow:hidden;
             </div>
             </div>
             <div id="sidebar" align="right">
-
-             <table class="table" style="width:170px;">
-                 <thead>
-                    <th colspan=2>Трансформация</th>
-                 </thead>
-                 <tbody>
-                    <tr><td><td><input name="toClient" id="toClient" type="submit" value="В клиенты"  align="right" /></td></td></tr>
-                 </tbody>
-             </table>
 
              <table class="table" style="width:170px;">
              <thead>
@@ -159,8 +150,8 @@ overflow:hidden;
                </table>
              </form>
              <form id="Form3" name="RequestViewForm" method=post action="${siteroot}/UserInfo/EditLabel">
-              <table class="table" style="width:170px;" >
-                <thead>
+              <table class="table" style="width:150px;" >
+                <thead style="font-size:small;">
                     <th>Редактировать метку</th>
                 </thead>
                 <tbody>

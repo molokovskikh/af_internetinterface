@@ -45,7 +45,7 @@ namespace NHibernateFixtute.RegisterTest
 					//Pass = "TestPass",
 					TelNum = "TestTel"
 				},
-				Login = "",
+				//Login = "",
 				Name = "dfg",
 				PassportNumber = "",
 				PassportSeries = "ASDAD",

@@ -7,13 +7,7 @@
 <% OutputSubView("""\Subview\MapHead""") %>
 <table class="table">
  <tbody>
-    <%for i, item in enumerate(AccessList):  %>
-    <tr>
-        <td colspan="5">
-        Доступ к опции ${item} разрешен
-        </td>
-   </tr>
-   <% end %>
+
     </tbody>
 </table>
 </div>

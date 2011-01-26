@@ -20,19 +20,19 @@ namespace InternetInterface.Test.Helpers
 			       	};
 		}
 
-		public static List<PartnerAccessSet> CreatePartnerAccessSet(List<int> rights, Partner partner)
+		public static List<CategorieAccessSet> CreatePartnerAccessSet(List<int> rights, Partner partner)
 		{
-			var resulr = new List<PartnerAccessSet>();
+			var resulr = new List<CategorieAccessSet>();
 			foreach (var right in rights)
 			{
 				if ((right == 4) && (!rights.Contains(1)))
 				{
 					rights.Add(1);
 				}
-				var newAccess = new PartnerAccessSet
+				var newAccess = new CategorieAccessSet
 				{
 					AccessCat = AccessCategories.Find(right),
-					PartnerId = partner
+					Categorie = partner.Categorie
 				};
 				resulr.Add(newAccess);
 				//newAccess.SaveAndFlush();

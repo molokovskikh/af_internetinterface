@@ -2,26 +2,18 @@
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
 using Castle.Components.Validator;
+using InternetInterface.Models.Universal;
 
 namespace InternetInterface.Models
 {
 	[ActiveRecord("ConnectBrigads", Schema = "Internet", Lazy = true)]
-	public class Brigad : ChildActiveRecordLinqBase<Brigad>
+	public class Brigad : ValidActiveRecordLinqBase<Brigad>
 	{
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
-		[Property]
-		public virtual string Adress { get; set; }
-
-		[Property]
-		public virtual int BrigadCount { get; set; }
-
-		[Property]
+		[Property, ValidateNonEmpty("Введите имя бригады")]
 		public virtual string Name { get; set; }
-
-		[BelongsTo("PartnerID")]
-		public virtual Partner PartnerID { get; set; }
 	}
 
 }

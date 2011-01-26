@@ -42,7 +42,7 @@ namespace InternetInterface.Controllers
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof(SearchController));
 
-		[AccessibleThrough(Verb.Post)]
+		/*[AccessibleThrough(Verb.Post)]
 		public void CloseDemand([DataBind("ConnectList")]List<Connect> forConnect)
 		{
 			var validSwiches = NetworkSwitches.FindAll().Where(r => ((r.Mac != null) && (r.Name != null)));
@@ -78,7 +78,7 @@ namespace InternetInterface.Controllers
 								/*if (ClientEndpoints.FindAll(DetachedCriteria.For(typeof (ClientEndpoints))
 								                            	.Add(Expression.Eq("Switch", Switch))
 								                            	.Add(Expression.Eq("Port", portNum))).Length == 0)*/
-								if (Point.isUnique(Switch, portNum))
+								/*if (Point.isUnique(Switch, portNum))
 								{
 									var cdDate = RequestsConnection.FindAll(DetachedCriteria.For(typeof (RequestsConnection))
 									                                        	.CreateAlias("ClientID", "PS", JoinType.InnerJoin)
@@ -127,9 +127,9 @@ namespace InternetInterface.Controllers
 				Flash["PornNumError"] = "Выберите заявки для закрытия";
 			}
 			RedirectToUrl(@"../Search/SearchBy.rails?CloseDemand=true");
-		}
+		}*/
 
-		[AccessibleThrough(Verb.Post)]
+		/*[AccessibleThrough(Verb.Post)]
 		public void CreateDemandConnect([DataBind("ForConnect")]List<int> forConnect, uint brigadId,
 			string connectBut, string closeDemandBut)
 		{
@@ -149,25 +149,15 @@ namespace InternetInterface.Controllers
 			}
 			Flash["CreateDemandConnect"] = "Заявки оформлены";
 			RedirectToUrl(@"../Search/SearchUsers.rails");
-		}
+		}*/
 
 		[AccessibleThrough(Verb.Get)]
 		public void SearchBy([DataBind("SearchBy")]UserSearchProperties searchProperties, 
 							[DataBind("ConnectedType")]ConnectedTypeProperties connectedType,
-			uint tariff, uint whoregister, uint brigad ,string searchText, Boolean closeDemand)
+			uint tariff, uint whoregister, uint brigad ,string searchText)
 		{
 			IList<PhisicalClients> clients = new List<PhisicalClients>();
-			if (closeDemand)
-			{
-				Flash["ConnectAdd"] = new Connect();
-				Flash["ConnectList"] = new List<Connect>();
-				Flash["Switches"] = NetworkSwitches.FindAllSort().Where(r => ((r.Mac != null) && (r.Name != null)));
-				clients = GetClientsLogic.GetClientsForCloseDemand();
-			}
-			if (!closeDemand)
-			{
-				clients = GetClientsLogic.GetClients(searchProperties, connectedType, tariff, whoregister, searchText, brigad);
-			}
+			clients = GetClientsLogic.GetClients(searchProperties, connectedType, tariff, whoregister, searchText, brigad);
 			Flash["SClients"] = clients;
 			PropertyBag["ConnectBlockDisplay"] = ((List<PhisicalClients>) clients).Find(p => p.HasConnected == null);
 
@@ -181,13 +171,13 @@ namespace InternetInterface.Controllers
 			PropertyBag["FindBy"] = searchProperties;
 			PropertyBag["ConnectBy"] = connectedType;
 
-			PropertyBag["CloseDemand"] = closeDemand;
+			//PropertyBag["CloseDemand"] = closeDemand;
 
 			Flash["Brigads"] = Brigad.FindAllSort();
 		}
 
 
-		public void SearchUsers(string query, PhisicalClients sClients, Boolean closeDemand)
+		public void SearchUsers(string query, PhisicalClients sClients)
 		{
 			var searchProperties = new UserSearchProperties {SearchBy = SearchUserBy.Auto};
 			var connectProperties = new ConnectedTypeProperties {Type = ConnectedType.AllConnected};
@@ -201,7 +191,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["ConnectBy"] = connectProperties;
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
 			PropertyBag["Connected"] = false;
-			PropertyBag["CloseDemand"] = closeDemand;
+			//PropertyBag["CloseDemand"] = closeDemand;
 			if (sClients != null)
 			{
 				Flash["SClients"] = sClients;

@@ -11,7 +11,7 @@ namespace InternetInterface.Models
 		GetClientInfo = 1,
 		RegisterClient = 3,
 		SendDemand = 5,
-		CloseDemand = 7,
+		//CloseDemand = 7,
 		RegisterPartner = 9,
 		ChangeBalance = 11,
 		VisiblePassport = 13,
@@ -19,13 +19,6 @@ namespace InternetInterface.Models
 		AccessDHCP = 17,
 		EditClientInfo = 19,
 		ShowSecretData = 21
-		/*GetClientInfo = 1,
-		RegisterClient = 2,
-		SendDemand = 3,
-		CloseDemand = 4,
-		RegisterPartner = 5,
-		ChangeBalance = 6,
-		VisiblePassport = 9*/
 	};
 
 	public class TwoRule
@@ -124,7 +117,7 @@ namespace InternetInterface.Models
 		/// <param name="oldAccessSet"></param>
 		/// <param name="newAccessSet"></param>
 		/// <param name="partner"></param>
-		public static void SetCrossAccess(List<int> oldAccessSet, List<int> newAccessSet, Partner partner)
+		public static void SetCrossAccess(List<int> oldAccessSet, List<int> newAccessSet, UserCategorie userCategorie)
 		{
 			SetAccessDependence();
 			foreach (var twoRule in accessDependence)
@@ -135,13 +128,13 @@ namespace InternetInterface.Models
 					GenerateDeleteList(accessDependence, twoRule.Head);
 					foreach (var todel in toDelete)
 					{
-						var delSendDemWithoutGCI = PartnerAccessSet.FindAll(DetachedCriteria.For(typeof(PartnerAccessSet))
-																				.Add(Expression.Eq("PartnerId", partner))
+						var delSendDemWithoutGCI = CategorieAccessSet.FindAll(DetachedCriteria.For(typeof(CategorieAccessSet))
+																				.Add(Expression.Eq("Categorie", userCategorie))
 																				.Add(Expression.Eq("AccessCat",todel)));
-						foreach (var partnerAccessSet in delSendDemWithoutGCI)
+						foreach (var categorieAccessSet in delSendDemWithoutGCI)
 						{
-							hasDelete.Add(partnerAccessSet.AccessCat.Id);
-							partnerAccessSet.DeleteAndFlush();
+							hasDelete.Add(categorieAccessSet.AccessCat.Id);
+							categorieAccessSet.DeleteAndFlush();
 							//todel.DeleteTo(partner);
 						}
 					}
@@ -160,8 +153,8 @@ namespace InternetInterface.Models
 					{
 						toAdd.Add(twoRule.Child);
 					}
-					var partnerAccessSet = PartnerAccessSet.FindAll(DetachedCriteria.For(typeof (PartnerAccessSet))
-					                                                	.Add(Expression.Eq("PartnerId", partner)));
+					var partnerAccessSet = CategorieAccessSet.FindAll(DetachedCriteria.For(typeof(CategorieAccessSet))
+																		.Add(Expression.Eq("Categorie", userCategorie)));
 					foreach (var toadd in toAdd)
 					{
 						/*if (PartnerAccessSet.FindAll(DetachedCriteria.For(typeof (PartnerAccessSet))
@@ -169,10 +162,10 @@ namespace InternetInterface.Models
 														.Add(Expression.Eq("AccessCat", AccessCategories.Find((int)toadd)))).Length == 0)*/
 						if (partnerAccessSet.Where(c => c.AccessCat == toadd).ToList().Count == 0)
 						{
-							var newRight = new PartnerAccessSet
+							var newRight = new CategorieAccessSet
 							               	{
 												AccessCat = toadd,
-							               		PartnerId = partner
+												Categorie = userCategorie
 							               	};
 							newRight.SaveAndFlush();
 						}
@@ -188,8 +181,8 @@ namespace InternetInterface.Models
 		/// (если пользователь забыл поставить нужных галочек).
 		/// </summary>
 		/// <param name="newRights"></param>
-		/// <param name="partner"></param>
-		public static void SetCrossAccessForRegister(List<int> newRights, Partner partner)
+		/// <param name="userCategorie"></param>
+		public static void SetCrossAccessForRegister(List<int> newRights, UserCategorie userCategorie)
 		{
 			SetAccessDependence();
 			foreach (var twoRule in accessDependence)
@@ -201,10 +194,10 @@ namespace InternetInterface.Models
 					{
 						if (!newRights.Contains(toadd.Id))
 						{
-							var newRight = new PartnerAccessSet
+							var newRight = new CategorieAccessSet
 							{
 								AccessCat = toadd,
-								PartnerId = partner
+								Categorie = userCategorie
 							};
 							newRight.SaveAndFlush();
 							//toadd.AcceptTo(partner);
@@ -229,22 +222,17 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string ReduceName { get; set; }
 
-		public virtual void AcceptTo(Partner partner)
+		public virtual void AcceptTo(UserCategorie userCategorie)
 		{
-			if ((int)AccessCategoriesType.CloseDemand == Id)
+			var partners = Partner.FindAllByProperty("Categorie", userCategorie);
+			foreach (var partner in partners)
 			{
-				if (FindBrigadsByPartner(partner).Count == 0)
-				{
-					var newBrigad = new Brigad
-					                	{
-					                		Name = partner.Name,
-					                		PartnerID = partner,
-					                		Adress = partner.Adress,
-					                		BrigadCount = 1
-					                	};
-					newBrigad.SaveAndFlush();
-				}
+				AcceptToOne(partner);
 			}
+		}
+
+		public virtual void AcceptToOne(Partner partner)
+		{
 			if ((int)AccessCategoriesType.ChangeBalance == Id)
 			{
 				var findedAgents = FindAgentByPartner(partner);
@@ -268,16 +256,8 @@ namespace InternetInterface.Models
 			}
 		}
 
-		public virtual void DeleteTo(Partner partner)
+		public virtual void DeleteTo(UserCategorie userCategorie)
 		{
-			if ((int)AccessCategoriesType.CloseDemand == Id)
-			{
-				var delBrigad = FindBrigadsByPartner(partner);
-				foreach (var brigad in delBrigad)
-				{
-					brigad.DeleteAndFlush();
-				}
-			}
 		}
 
 		private static List<Brigad> FindBrigadsByPartner(Partner partner)

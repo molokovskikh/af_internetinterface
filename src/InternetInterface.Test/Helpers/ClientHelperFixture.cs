@@ -28,7 +28,7 @@ namespace InternetInterface.Test.Helpers
 			       		HasRegistered = Partner.Find((uint)1),
 			       		HomePhoneNumber = "1111-22222",
 			       		House = "1",
-			       		Login = "Login" + new Random().Next(100),
+			       		//Login = "Login" + new Random().Next(100),
 			       		Name = "testName",
 			       		OutputDate = DateTime.Now.ToShortDateString(),
 						PassportNumber = "123456",

@@ -22,8 +22,11 @@
                   <form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Register/RegisterPartner" >
                             <%else: %>
                   <form class="form" id="RegistrationFormEdit" name="RegistrationForm" method="post" action="${siteroot}/Register/EditPartner" >
+                  <input type="hidden" name="PartnerKey" value=${PartnerKey} />
                               <%end %>
                               <%end %>
+                        <input type="hidden" name="Partner.Categorie.Id" value=${catType} />
+
 	                    <table class="table" style="width:100%; " border="0" id="RegTable"> 
                             <tr>
                                 <th colspan="3">
@@ -35,17 +38,6 @@
                             </tr>
 
                              <% OutputSubView("""\Subview\Partner""") %>
-                            <tr>
-                                <th colspan="3">
-                                    Опции доступа</th>
-                            </tr>
-                                <tr>
-                                <% for i,item in enumerate(Rights): %>
-                                <tr>
-                                    <td colspan="3"><input type="checkbox" id="${item.ReduceName}" name="ForRight[${i}]" value=${item.Id} ${"checked" if (ChRights.Contains(item.Id))}/> ${item.Name} </td>
-                                 </tr>
-                                <%end %>
-                                </tr>
                             <tr>
                                 <td colspan="3">
                                 <div class="actions">
@@ -60,6 +52,7 @@
                                                  <%end %>
                                                  </button>
                                 </div>
+                                </td>
                             </tr>
                         </table>
                   </form>

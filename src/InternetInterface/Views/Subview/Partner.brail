@@ -5,6 +5,7 @@
                                     ${VB.GetBlock("Name")}
                                  </td>
                             </tr>
+                            <%if (catType != 2): %>
                             <tr>
                                 <td>EMail</td>
                                 <td><input id="EMail" type="text" value="${Partner.Email}" name="Partner.Email" /></td>
@@ -21,7 +22,7 @@
                                     ${VB.GetBlock("TelNum")}
                                 </td>
                             </tr>
-                            <tr >
+                            <tr>
                                 <td>
                                     Адрес</td>
                                 <td >
@@ -30,6 +31,7 @@
                                     ${VB.GetBlock("Adress")}
                                 </td>
                             </tr>
+                            <%end %>
                             <tr>
                                 <td >
                                     Логин</td>

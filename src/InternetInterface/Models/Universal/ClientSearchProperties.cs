@@ -11,8 +11,6 @@ namespace InternetInterface.Models
 		ByFio,
 		[Description("Паспортные данные")]
 		ByPassportSet,
-		[Description("Логин клиента")]
-		ByLogin,
 		[Description("Номер счета")]
 		SearchAccount
 	}
@@ -89,11 +87,6 @@ namespace InternetInterface.Models
 		public bool IsSearchByPassportSet()
 		{
 			return SearchBy == SearchUserBy.ByPassportSet;
-		}
-
-		public bool IsSearchByLogin()
-		{
-			return SearchBy == SearchUserBy.ByLogin;
 		}
 
 		public bool IsSearchAccount()

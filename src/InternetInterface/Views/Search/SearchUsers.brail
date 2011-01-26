@@ -24,11 +24,7 @@
     style="width: 100%; ">
 <center>
 <table border="1" bgcolor="#FFFFFF" cellspacing="1" cellpadding="0">
-<input type="hidden" name="closeDemand" value="${closeDemand}" />
 <tr>
-        <%if IsDefined("CreateDemandConnect"):
-              output  WriteMessageNotice(CreateDemandConnect)
-        end %>
     <td width="100%">
     <table class="table" bgcolor="#FFFFFF">
     <tr>
@@ -60,8 +56,6 @@
                 <input type="radio" id="SearchByUserId" name="SearchBy.SearchBy" value=ByPassportSet ${"checked" if FindBy.IsSearchByPassportSet()} />
                 <label for="SearchByUserId">Паспортные данные</label><br />
                 <%end %>
-                <input type="radio" id="SearchByLogin" name="SearchBy.SearchBy" value=ByLogin ${"checked" if FindBy.IsSearchByLogin()} />
-                <label for="SearchByLogin">Логин клиента</label><br />
             </td>
             <td>
                 
@@ -104,7 +98,7 @@
 			        </td>
 			    </tr>
                 <tr>
-                 <%if PartnerAccessSet.AccesPartner("SD"): %>
+                 <%if PartnerAccessSet.AccesPartner("SSI"): %>
                 <td style="padding: 5px;">Назначено на бригаду<br />
                     <div>
                    <select name="brigad" id="Select1" style="width: 100%" >

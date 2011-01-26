@@ -123,6 +123,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Functional\BrigadFixture.cs" />
     <Compile Include="Functional\CloseDemandFixture.cs" />
     <Compile Include="Functional\RegisterClientFixture.cs" />
     <Compile Include="Functional\RegisterPartnerFixrure.cs" />

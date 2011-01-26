@@ -12,7 +12,7 @@ namespace InternetInterface.Controllers
 		{
 			var CatList = new List<string>();
 			var accessList = AccessCategories.FindAllSort();
-			var partnerAccessList = PartnerAccessSet.GetAccessPartner();
+			/*var partnerAccessList = PartnerAccessSet.GetAccessPartner();
 			foreach (var accessCategorie in accessList)
 			{
 				foreach (var partnerAccessSet in partnerAccessList)
@@ -21,7 +21,7 @@ namespace InternetInterface.Controllers
 						CatList.Add(accessCategorie.Name);
 				}
 			}
-			PropertyBag["AccessList"] = CatList;
+			PropertyBag["AccessList"] = CatList;*/
 		}
 	}
 }

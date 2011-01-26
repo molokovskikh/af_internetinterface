@@ -30,11 +30,11 @@ namespace InternetInterface.Test.Unit
 		}
 
 
-		[Test]
+		/*[Test]
 		public void GetClientsForCloseDemandTest()
 		{
 			ResultAssert(GetClientsLogic.GetClientsForCloseDemand);
-		}
+		}*/
 
 		[Test]
 		public void GetClientsTest()
@@ -55,7 +55,7 @@ namespace InternetInterface.Test.Unit
 or LOWER(P.Patronymic) like :SearchText or LOWER(P.City) like :SearchText 
 or LOWER(P.PassportSeries) like :SearchText
 or LOWER(P.PassportNumber) like :SearchText or LOWER(P.WhoGivePassport) like :SearchText
-or LOWER(P.RegistrationAdress) like :SearchText or LOWER(P.Login) like :SearchText"));
+or LOWER(P.RegistrationAdress) like :SearchText"));
 		}
 	}
 }

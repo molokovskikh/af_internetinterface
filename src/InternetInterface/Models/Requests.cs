@@ -51,6 +51,12 @@ namespace InternetInterface.Models
 
 		[BelongsTo("Label")]
 		public virtual Label Label { get; set; }
+
+		[Property]
+		public virtual DateTime ActionDate { get; set; }
+
+		[BelongsTo("Operator")]
+		public virtual Partner Operator { get; set; }
 	}
 
 }

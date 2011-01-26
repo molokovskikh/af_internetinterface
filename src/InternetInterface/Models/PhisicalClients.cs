@@ -74,19 +74,19 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string WhenceAbout { get; set; }
 
-		[Property, ValidateRegExp(@"^(\d{4})?$", "Неправильный формат серии паспорта (4 цифры)"), ValidateNonEmpty("Поле не должно быть пустым")]
+		[Property, ValidateRegExp(@"^(\d{4})?$", "Неправильный формат серии паспорта (4 цифры)"), UserValidateNonEmpty("Поле не должно быть пустым")]
 		public virtual string PassportSeries { get; set; }
 
-		[Property, ValidateRegExp(@"^(\d{6})?$", "Неправильный формат номера паспорта (6 цифр)"), ValidateNonEmpty("Поле не должно быть пустым")]
+		[Property, ValidateRegExp(@"^(\d{6})?$", "Неправильный формат номера паспорта (6 цифр)"), UserValidateNonEmpty("Поле не должно быть пустым")]
 		public virtual string PassportNumber { get; set; }
 
-		[Property, ValidateNonEmpty("Введите дату выдачи паспорта"), ValidateDate("Ошибка формата даты **-**-****")]
+		[Property, UserValidateNonEmpty("Введите дату выдачи паспорта"), ValidateDate("Ошибка формата даты **-**-****")]
 		public virtual string OutputDate { get; set; }
 
-		[Property, ValidateNonEmpty("Заполните поле 'Кем выдан паспорт'")]
+		[Property, UserValidateNonEmpty("Заполните поле 'Кем выдан паспорт'")]
 		public virtual string WhoGivePassport { get; set; }
 
-		[Property, ValidateNonEmpty("Введите адрес регистрации")]
+		[Property, UserValidateNonEmpty("Введите адрес регистрации")]
 		public virtual string RegistrationAdress { get; set; }
 
 		[Property]
@@ -98,10 +98,10 @@ namespace InternetInterface.Models
 		[Property, ValidateNonEmpty("Введите сумму"), ValidateDecimal("Неверно введено число")]
 		public virtual string Balance { get; set; }
 
-		[Property, ValidateNonEmpty("Введите логин"), ValidateIsUnique("Логин должен быть уникальный")]
-		public virtual string Login { get; set; }
+		[Property, ValidateIsUnique("Email должен быть уникальный"), ValidateEmail("Ошибка ввода (требуется adr@serv.dom)")]
+		public virtual string Email { get; set; }
 
-		[Property, ValidateNonEmpty("Введите пароль")]
+		[Property]
 		public virtual string Password { get; set; }
 
 		[BelongsTo("HasRegistered")]
@@ -115,6 +115,9 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual bool Connected { get; set; }
+
+		[Property]
+		public virtual DateTime ConnectedDate { get; set; }
 
 		public virtual bool IsConnected()
 		{
@@ -195,7 +198,7 @@ where CE.Client = {0}",
 					return ConnectInfo[0];
 				}
 			}
-			return null;
+			return new PhisicalClientConnectInfo();
 		}
 	}
 

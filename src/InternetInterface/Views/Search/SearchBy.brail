@@ -1,10 +1,4 @@
 ﻿<% OutputSubView("SearchUsers") %>
-    <%if (PartnerAccessSet.AccesPartner("SD") and (not CloseDemand)): %>
-        <form class="form login" method="post" name="CreateDem" action="${siteroot}/Search/CreateDemandConnect">
-    <%end %>
-    <%if PartnerAccessSet.AccesPartner("CD") and CloseDemand: %>
-    <form class="form login" method="post" name="CloseDem" action="${siteroot}/Search/CloseDemand">
-    <%end %>
 <div id="main" style="width: 100%;">
 <% if (SClients.Count == 0): %>
 <div class="flash">
@@ -24,13 +18,7 @@
 <table class="table"  style="width: 100%; font-size: small;">
     <thead>
         <tr valign="top">
-        <%if (PartnerAccessSet.AccesPartner("CD") and CloseDemand): %>
-            <th>Подключить</th>
-            <th>Свич</th>
-            <th>Порт</th>
-        <%else: %>
             <th>Подключен</th>
-        <%end %>
             <th>ФИО</th>
             <th>Номер счета:</th>
             <%if PartnerAccessSet.AccesPartner("SSI"): %>
@@ -53,31 +41,11 @@
     <% for i,item in enumerate(SClients): %>
         <tr class="${item.Name}">
             <%if not item.IsConnected() : %>
-                 <%if (PartnerAccessSet.AccesPartner("SD") and (not CloseDemand)): %>
                      <%if (item.HasConnected != null): %>
                         <td align="center"> ${item.HasConnected.Name} </td>
                      <%else: %>
-                         <td align="center"><input type="checkbox" name="ForConnect[${i}]" value=${item.Id} /> </td>
-                     <%end %>
-                 <%else: %>
-                    <%if (PartnerAccessSet.AccesPartner("CD") and CloseDemand): %>
-                        <td align="center"><input type="checkbox" id="CliseDemandCheck${item.Id}" name="ConnectList[${i}].ClientId" value=${item.Id} /> </td>
-                        <%if IsDefined("Switches"): %>
-                            <td>
-                            <select name="ConnectList[${i}].SwitchId" id="SelectSwitches${item.Id}" style="width: 100%" >
-                                   <%
-                                    for j, Switch in enumerate(Switches): 
-                                    %>
-                                    <option id="Option${j}" value="${Switch.Id}" ${"checked" if (Switch.Id != 0)} > ${Switch.Name} </option>
-                                   <% end %>
-                            </select>
-                            </td>
-                        <%end %>
-                        <td align="center"><input type="text" id="Port${item.Id}"  name="ConnectList[${i}].PortNumber"  style="width: 80%; " /></td>
-                    <%else: %>
-                        <td align="center">Нет</td>
+                       <td align="center">Нет</td>
                     <%end %>
-                 <%end %>
             <%else: %>
             <td align="center"> Да </td>
             <%end %>
@@ -111,39 +79,6 @@
             <%end %>
         </tr>
     <% end %>        
-
-      <%if (PartnerAccessSet.AccesPartner("SD") and (not CloseDemand)): %>
-      <%if IsDefined("ConnectBlockDisplay"): %>
-      <%if (ConnectBlockDisplay != null): %>
-      <tr>
-            <td colspan="2">
-               <button type="submit" class="button" name="ConnectBut" value="Connecting">
-                  <img alt="Save" src="../Images/tick.png"> Подключить клиентов
-                </button>
-            </td>
-            <td style="padding: 5px;">Назначить подлючение бригаде: </td>
-            <td>
-            <select name="BrigadID" id="ChBrigad" style="width: 100%" >
-                   <%
-                    for i, Brigad in enumerate(Brigads): 
-                    %>
-                    <option id="Brigad${Brigad.Id}" value="${Brigad.Id}" > ${Brigad.Name} </option>
-                   <% end %>
-            </select>
-            </td>
-        </tr>
-        <%end %>
-        <%end %>
-        <%end %>
-        <%if (PartnerAccessSet.AccesPartner("CD") and CloseDemand): %>
-         <tr>
-            <td colspan="12">
-               <button type="submit" id="CliseDemandButton" class="button" name="CloseDemandBut" value="CloseDemand">
-                  Закрыть заявки
-                </button>
-            </td>
-        </tr>
-        <%end %>
       </tbody>
     </form>
 </table>

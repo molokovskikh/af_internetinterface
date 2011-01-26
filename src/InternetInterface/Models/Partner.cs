@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Castle.ActiveRecord;
 using Castle.Components.Validator;
 using InternetInterface.Models.Universal;
@@ -8,6 +9,7 @@ using NHibernate.SqlCommand;
 
 namespace InternetInterface.Models
 {
+
 	[ActiveRecord("Partners", Schema = "internet", Lazy = true)]
 	public class Partner : ValidActiveRecordLinqBase<Partner>
 	{
@@ -33,27 +35,33 @@ namespace InternetInterface.Models
 		[Property, ValidateNonEmpty("Введите логин"), ValidateIsUnique("Логин должен быть уникальный")]
 		public virtual string Login { get; set; }
 
+		[BelongsTo("Categorie")]
+		public virtual UserCategorie Categorie { get; set; }
+
 		public static Partner GetPartnerForLogin(string login)
 		{
 			return FindAllByProperty("Login", login)[0];
 		}
 
-		/*private static bool IsBrigadir(Partner partner)
-		{
-			var result = PartnerAccessSet.FindAll(DetachedCriteria.For(typeof(PartnerAccessSet))
-						.CreateAlias("AccessCat", "AC", JoinType.InnerJoin)
-						.Add(Restrictions.Eq("PartnerId", partner))
-						.Add(Restrictions.Eq("AC.ReduceName", "CD")));
-			return result.Length != 0 ? true : false;
-		}*/
 
-		public static bool RegistrLogicPartner(Partner _Partner, List<int> _Rights, ValidatorRunner validator)
+		public override void SaveAndFlush()
+		{
+			base.SaveAndFlush();
+			var catAS = CategorieAccessSet.FindAllByProperty("Categorie", Categorie);
+			foreach (var categorieAccessSet in catAS)
+			{
+				categorieAccessSet.AccessCat.AcceptToOne(this);
+			}
+			
+		}
+
+		public static bool RegistrLogicPartner(Partner _Partner/*, List<int> _Rights*/, ValidatorRunner validator)
 		{
 				if (validator.IsValid(_Partner))
 				{
 					_Partner.RegDate = DateTime.Now;
 					_Partner.SaveAndFlush();
-					foreach (var right in _Rights)
+					/*foreach (var right in _Rights)
 					{
 						var newAccess = new PartnerAccessSet
 						                	{
@@ -61,8 +69,8 @@ namespace InternetInterface.Models
 												PartnerId = _Partner
 						                	};
 						newAccess.SaveAndFlush();
-					}
-					AccessDependence.SetCrossAccessForRegister(_Rights,_Partner);
+					}*/
+					//AccessDependence.SetCrossAccessForRegister(_Rights,_Partner);
 					return true;
 				}
 				else

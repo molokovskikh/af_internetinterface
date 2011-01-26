@@ -29,9 +29,9 @@ namespace InternetInterface.Controllers.Filter
 			else
 			{
 				InithializeContent.partner = Partner.GetPartnerForLogin(context.Session["login"].ToString());
-				controllerContext.PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
-				controllerContext.PropertyBag["PARTNERNAME"] = InithializeContent.partner.Name;
-				if (AccessRules.GetAccessName(controllerContext.Action).Count(PartnerAccessSet.AccesPartner) == 0)
+				controllerContext.PropertyBag["PartnerAccessSet"] = new CategorieAccessSet();
+				controllerContext.PropertyBag["Partner"] = InithializeContent.partner;
+				if (AccessRules.GetAccessName(controllerContext.Action).Count(CategorieAccessSet.AccesPartner) == 0)
 				{
 					context.Response.RedirectToUrl(@"..\\Errors\AccessDin.aspx");
 					return false;

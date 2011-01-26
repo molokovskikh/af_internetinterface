@@ -4,7 +4,7 @@ using Castle.ActiveRecord.Linq;
 
 namespace InternetInterface.Models
 {
-	[ActiveRecord("RequestsConnection", Schema = "Internet", Lazy = true)]
+	/*[ActiveRecord("RequestsConnection", Schema = "Internet", Lazy = true)]
 	public class RequestsConnection : ActiveRecordLinqBase<RequestsConnection>
 	{
 		[PrimaryKey]
@@ -24,6 +24,6 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual DateTime CloseDemandDate { get; set; }
-	}
+	}*/
 
 }

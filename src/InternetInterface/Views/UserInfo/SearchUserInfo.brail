@@ -43,6 +43,9 @@
         <tr>
             <td><span class="description">Номер телефона: </span> ${Client.PhoneNumber}</td>
         </tr>
+        <tr>
+            <td><span class="description">Email:</span> ${Client.Email}</td>
+        </tr>
         <%end %>
         <%if PartnerAccessSet.AccesPartner("VP"): %>
         <tr>
@@ -74,9 +77,6 @@
 
         <tr>
             <td><span class="description">Баланс:</span> ${Client.Balance}</td>
-        </tr>
-        <tr>
-            <td><span class="description">Логин:</span> ${Client.Login}</td>
         </tr>
         <%if PartnerAccessSet.AccesPartner("SSI"): %>
         <tr>
@@ -127,19 +127,14 @@
                                 <!--    <input class="button" id="RegisterButton" type="submit" value="Зарегистрировать" /></td> -->
                   </div>
                </td>
-               <td>
-               <div class="actions">
-                     <input type="submit" name="ChangePass" value="Сохранить, поменять пароль и сформировать карту" id="ChangePass" class="button"/>
-                </div>
-               </td>
                </tr>
     </table>
     </form>
     <%end %>
 <br />
+<div style="clear:both;">
 <%if PartnerAccessSet.AccesPartner("DHCP"): %>
  <%if IsDefined("Client"): %>
-  <%if Client.Connected: %>
     <%if not EditingConnect: %>
         <form class="formConnect" method="post" action="${siteroot}/UserInfo/LoadEditConnectMudule">
     <input type="hidden" name="ClientID" value="${ClientCode}" />
@@ -181,6 +176,14 @@
                 Нет
                 <%end %></td>
         </tr>
+        <tr>
+          <td><span class="description">Бригада </span></td>
+          <%if Client.HasConnected != null : %>
+          <td>${Client.HasConnected.Name}</td>
+          <%else: %>
+          <td></td>
+          <%end %>
+        </tr>
     </tbody>
     </table>
     </form>
@@ -211,7 +214,7 @@
                                    <%
                                     for j, Switch in enumerate(Switches): 
                                     %>
-                                    <option id="Option${j}" value="${Switch.Id}" ${"selected" if (Switch.Id.ToString() == ConnectInfo.Switch)} > ${Switch.Name} </option>
+                                    <option id="Option${j}" value="${Switch.Id}" ${"selected" if (Switch.Id == ConnectInfo.Switch)} > ${Switch.Name} </option>
                                    <% end %>
                             </select></td>
         </tr>
@@ -227,13 +230,22 @@
           <td>Мониторинг</td>
           <td ><input type="checkbox" id="Monitoring" name="ConnectInfo.Monitoring" value=true  ${"checked" if (ConnectInfo.Monitoring)}/> </td>
         </tr>
+        <tr>
+         <td>Бригада по подключению</td>
+          <td><select name="BrigadForConnect" id="BrigadForConnect" style="width: 100%" >
+          <% for j, Brigad in enumerate(Brigads): %>
+                                    <option id="OptionBrigad${j}" value="${Brigad.Id}" ${"selected" if (Brigad.Id == ChBrigad)} > ${Brigad.Name} </option>
+                                   <% end %>
+           </select></td>
+         </tr>
     </tbody>
     </table>
     </form>
     <%end %>
   <%end %>
- <%end %>
 <%end %>
+</div>
+<%if PartnerAccessSet.AccesPartner("SSI"): %>
 <div style="clear:both;">
 <%if (Payments.Length == 0): %>
                   <div class="flash">
@@ -270,6 +282,7 @@
 </table>
 <%end %>
 </div>
+<%end %>
 <br />
 <%if PartnerAccessSet.AccesPartner("CB"): %>
 <div style="clear:both;">

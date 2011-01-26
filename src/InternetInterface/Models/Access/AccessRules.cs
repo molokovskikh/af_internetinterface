@@ -10,8 +10,8 @@ namespace InternetInterface.Models.Access
 		private static string methodName;
 		private static HashSet<string> _getClientInfo;
 		private static HashSet<string> _registerClient;
-		private static HashSet<string> _sendDemand;
-		private static HashSet<string> _closeDemand;
+		private static HashSet<string> _manageBrigads;
+		//private static HashSet<string> _closeDemand;
 		private static HashSet<string> _registerPartner;
 		private static HashSet<string> _changeBalance;
 		private static HashSet<string> _accessDHCP;
@@ -30,14 +30,14 @@ namespace InternetInterface.Models.Access
 			{
 				result.Add(GetRulesName_registerClient());
 			}
-			if (GetRulesName_sendDemand() != string.Empty)
+			if (GetRulesName_manageBrigads() != string.Empty)
 			{
-				result.Add(GetRulesName_sendDemand());
+				result.Add(GetRulesName_manageBrigads());
 			}
-			if (GetRulesName_closeDemand() != string.Empty)
+			/*if (GetRulesName_closeDemand() != string.Empty)
 			{
 				result.Add(GetRulesName_closeDemand());
-			}
+			}*/
 			if (GetRulesName_registerPartner() != string.Empty)
 			{
 				result.Add(GetRulesName_registerPartner());
@@ -84,22 +84,23 @@ namespace InternetInterface.Models.Access
 			                 	{
 									"RegisterClient",
 									"SiteMap",
-									"ClientRegisteredInfo"
+									"ClientRegisteredInfoFromDiller"
 			                 	};
 			return _registerClient.Contains(methodName) ? "RC" : string.Empty;
 		}
 
-		private static string GetRulesName_sendDemand()
+		private static string GetRulesName_manageBrigads()
 		{
-			_sendDemand = new HashSet<string>
+			_manageBrigads = new HashSet<string>
 			                 	{
-									"CreateDemandConnect",
-									"SiteMap"
+									"MakeBrigad",
+									"RegisterBrigad",
+									"EditBrigad"
 			                 	};
-			return _sendDemand.Contains(methodName) ? "SD" : string.Empty;
+			return _manageBrigads.Contains(methodName) ? "MB" : string.Empty;
 		}
 
-		private static string GetRulesName_closeDemand()
+		/*private static string GetRulesName_closeDemand()
 		{
 			_closeDemand = new HashSet<string>
 			                 	{
@@ -110,7 +111,7 @@ namespace InternetInterface.Models.Access
 									"SearchUserInfo"
 			                 	};
 			return _closeDemand.Contains(methodName) ? "CD" : string.Empty;
-		}
+		}*/
 
 		private static string GetRulesName_registerPartner()
 		{
@@ -120,7 +121,8 @@ namespace InternetInterface.Models.Access
 									"SiteMap",
 									"PartnerRegisteredInfo",
 									"PartnersPreview",
-									"EditPartner"
+									"EditPartner",
+									"RegisterPartnerI"
 			                 	};
 			return _registerPartner.Contains(methodName) ? "RP" : string.Empty;
 		}
@@ -170,6 +172,8 @@ namespace InternetInterface.Models.Access
 		{
 			_visibleDemand = new HashSet<string>
 			                 	{
+									"ClientRegisteredInfo",
+									"ShowBrigad"
 			                 	};
 			return _visibleDemand.Contains(methodName) ? "SSI" : string.Empty;
 		}

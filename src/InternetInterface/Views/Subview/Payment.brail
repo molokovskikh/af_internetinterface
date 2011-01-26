@@ -1,11 +1,17 @@
 ﻿ <tr>
     <td>
+    <div>
     <%if PartnerAccessSet.AccesPartner("SSI"): %>
           <input type="radio" id="ForTariffChange" name="ChangedBy.ChangeType" value="ForTariff" ${"checked" if ChangeBy.IsForTariff()} />
           <label for="Autosearch">Внести сумму по тарифному плану</label><br />
     <%end %>
-
           <input type="radio" id="OtherSummChange" name="ChangedBy.ChangeType" value="OtherSumm" ${"checked" if ChangeBy.IsOtherSumm()} />
-          <label for="Other_Balance">Внести сумму: ${Client.HowManyToPay(true)}</label>
-          <input type="text" id="BalanceText"  name="BalanceText"  value="${BalanceText}" style="width: 50%; " />
+          <label for="Other_Balance">Внести сумму на счет: ${Client.HowManyToPay(true)}</label>
+          <input type="text" class="BalanceText" id="BalanceText"  name="BalanceText"  value="${BalanceText}" style="width: 50%; " />
+          <br />
+         <div class="errorjava">
+		</div>
+
+     </div>
+          <div style="float:left;" id="my-div"></div>
     </td>

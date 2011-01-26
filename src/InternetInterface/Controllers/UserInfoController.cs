@@ -17,7 +17,7 @@ namespace InternetInterface.Controllers
 		{
 			var phisCl = PhisicalClients.Find(clientCode);
 			PropertyBag["Client"] = phisCl;
-			var clDate = RequestsConnection.FindAll(DetachedCriteria.For(typeof (RequestsConnection))
+			/*var clDate = RequestsConnection.FindAll(DetachedCriteria.For(typeof (RequestsConnection))
 			                                           	.Add(Expression.Eq("ClientID", phisCl)));
 			if (clDate.Length != 0)
 			{
@@ -27,18 +27,25 @@ namespace InternetInterface.Controllers
 				{
 					PropertyBag["CloseDate"] = FindCloseDate.CloseDemandDate.ToString();
 				}
-			}
+			}*/
 
 			SendParam(clientCode);
 			Flash["Editing"] = Editing;
+			if (phisCl.Connected)
 			Flash["EditingConnect"] = EditingConnect;
+			else
+			{
+				Flash["EditingConnect"] = true;
+			}
 			PropertyBag["VB"] = new ValidBuilderHelper<PhisicalClients>(new PhisicalClients());
 			PropertyBag["ConnectInfo"] = phisCl.GetConnectInfo();
 			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(t => t.Name != null);
 		}
 
-		public void SaveSwitchForClient(uint ClientID, [DataBind("ConnectInfo")]PhisicalClientConnectInfo ConnectInfo)
+		public void SaveSwitchForClient(uint ClientID, [DataBind("ConnectInfo")]PhisicalClientConnectInfo ConnectInfo,
+			uint BrigadForConnect)
 		{
+			var phisCl = PhisicalClients.Find(ClientID);
 			var clientEntPoint = new ClientEndpoints();
 			var clients = Clients.FindAllByProperty("PhisicalClient", ClientID);
 			if (clients.Length != 0)
@@ -76,11 +83,31 @@ namespace InternetInterface.Controllers
 					{
 						if (errorMessage == string.Empty)
 						{
+							var newFlag = false;
+							if (clients.Length == 0)
+							{
+								var client = new Clients
+								             	{
+								             		Name = string.Format("{0} {1} {2}", phisCl.Surname, phisCl.Name, phisCl.Patronymic),
+								             		PhisicalClient = phisCl.Id,
+								             		Type = ClientType.Phisical
+								             	};
+								client.SaveAndFlush();
+								clientEntPoint.Client = client;
+								newFlag = true;
+							}
 							clientEntPoint.Ip = ConnectInfo.static_IP;
 							clientEntPoint.Port = Port;
 							clientEntPoint.Switch = NetworkSwitches.Find(Convert.ToUInt32(ConnectInfo.Switch));
 							clientEntPoint.Monitoring = ConnectInfo.Monitoring;
-							clientEntPoint.UpdateAndFlush();
+							if (!newFlag)
+								clientEntPoint.UpdateAndFlush();
+							else
+								clientEntPoint.SaveAndFlush();
+							phisCl.HasConnected = Brigad.Find(BrigadForConnect);
+							phisCl.Connected = true;
+							phisCl.ConnectedDate = DateTime.Now;
+							phisCl.UpdateAndFlush();
 							PropertyBag["Editing"] = false;
 							Flash["EditFlag"] = "Данные изменены";
 							RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientID);
@@ -94,6 +121,7 @@ namespace InternetInterface.Controllers
 				}
 				catch (Exception)
 				{
+					throw;
 					errorMessage += "Неправильно введен порт, введите число от 1 до 48";
 				}
 			}
@@ -101,10 +129,11 @@ namespace InternetInterface.Controllers
 			{
 				errorMessage += "Ошибка ввода IP адреса";
 			}
-			var phisCl = PhisicalClients.Find(ClientID);
 			PropertyBag["ConnectInfo"] = phisCl.GetConnectInfo();
 			PropertyBag["Editing"] = true;
+			PropertyBag["ChBrigad"] = BrigadForConnect;
 			Flash["errorMessage"] = errorMessage;
+
 			RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientID + "&EditingConnect=true");
 
 		}
@@ -151,10 +180,13 @@ namespace InternetInterface.Controllers
 				                                         	{
 				                                         		var query =
 				                                         			session.CreateSQLQuery(
-				                                         				"update internet.Requests R set r.`Label` = 0 where r.`Label`= :LabelIndex ;")
+																		@"update internet.Requests R set r.`Label` = 0, r.`ActionDate` = :ActDate, r.`Operator` = :Oper
+																where r.`Label`= :LabelIndex ;")
 				                                         				.AddEntity(
 				                                         					typeof (Label));
 				                                         		query.SetParameter("LabelIndex", deletelabelch);
+																query.SetParameter("ActDate", DateTime.Now);
+																query.SetParameter("Oper", InithializeContent.partner.Id);
 				                                         		query.ExecuteUpdate();
 				                                         		return new List<Label>();
 				                                         	});
@@ -201,72 +233,23 @@ namespace InternetInterface.Controllers
 		/// <param name="labelList"></param>
 		/// <param name="labelch"></param>
 		[AccessibleThrough(Verb.Post)]
-		public void RequestView([DataBind("LabelList")]List<uint> labelList, uint labelch,
-			[DataBind("toClient")]List<object> toClient, [DataBind("SetlabelButton")]List<object> SetlabelButton)
+		public void RequestView([DataBind("LabelList")]List<uint> labelList, uint labelch)
 		{
-			if (SetlabelButton.Count != 0)
+			foreach (var label in labelList)
 			{
-				foreach (var label in labelList)
-				{
-					var request = Requests.Find(label);
-					request.Label = Label.Find(labelch);
-					request.UpdateAndFlush();
-				}
-				PropertyBag["Clients"] = Requests.FindAll();
+				var request = Requests.Find(label);
+				request.Label = Label.Find(labelch);
+				request.ActionDate = DateTime.Now;
+				request.Operator = InithializeContent.partner;
+				request.UpdateAndFlush();
 			}
-			if (toClient.Count != 0)
-			{
-				foreach (var label in labelList)
-				{
-					var request = Requests.Find(label);
-					var fio = new string[3];
-					request.ApplicantName.Split(' ').CopyTo(fio , 0);
-					var newClient = new PhisicalClients
-					                	{
-					                		Surname = fio[0],
-					                		Name = fio[1],
-					                		Patronymic = fio[2],
-											PhoneNumber = TelephoneParcer(request.ApplicantPhoneNumber),
-					                		Tariff = request.Tariff,
-					                		City = request.City,
-											CaseHouse = request.CaseHouse,
-											Floor = request.Floor,
-											House = request.House,
-											Street = request.Street,
-											Apartment = request.Apartment,
-											Entrance = request.Entrance
-					                	};
-					newClient.SaveAndFlush();
-					request.DeleteAndFlush();
-				}
-				PropertyBag["Clients"] = Requests.FindAll();
-			}
+			PropertyBag["Clients"] = Requests.FindAll();
 			SendRequestEditParameter();
 		}
 
-		private string TelephoneParcer(string number)
+		public void InforoomUsersPreview()
 		{
-			if (number.Length == 10)
-			{
-				return "8-" + number.Substring(0, 3) + "-" + number.Substring(3, 3) + "-" + number.Substring(6, 2) + "-" +
-				       number.Substring(8, 2);
-			}
-			return number;
-		}
-
-		public void PassAndShowCard(uint ClientCode)
-		{
-			/*var user = PhisicalClients.Find(ClientCode);
-			var Password = CryptoPass.GeneratePassword();
-			user.Password = Password;
-			user.Login = LoginCreatorHelper.GetUniqueEnLogin(user.Surname);
-			if (Validator.IsValid(user))
-			{
-				Flash["Password"] = Password;
-				Flash["Client"] = user;
-				Flash["ConnectSumm"] = connectSumm;
-				RedirectToUrl("..//UserInfo/ClientRegisteredInfo.rails");
-			}*/
+			//PropertyBag["Inforooms"] = InforoomUser.FindAllSort();
 		}
 
 		[AccessibleThrough(Verb.Post)]
@@ -279,6 +262,9 @@ namespace InternetInterface.Controllers
 		public void ClientRegisteredInfo()
 		{}
 
+		public void ClientRegisteredInfoFromDiller()
+		{ }
+
 		public void PartnerRegisteredInfo(int hiddenPartnerId, string hiddenPass)
 		{
 			if (Flash["Partner"] == null)
@@ -287,27 +273,22 @@ namespace InternetInterface.Controllers
 			}
 		}
 
-		public void PartnersPreview()
+		public void PartnersPreview(uint catType)
 		{
-			PropertyBag["Partners"] = Partner.FindAllSort();
+			PropertyBag["Partners"] = Partner.FindAllSort().Where(p => p.Categorie.Id == catType);
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void EditInformation([DataBind("Client")]PhisicalClients client, uint ClientID, uint tariff, uint status,
-			[DataBind("ChangePass")]List<object> changePass)
+		public void EditInformation([DataBind("Client")]PhisicalClients client, uint ClientID, uint tariff, uint status)
 		{
 			var updateClient = PhisicalClients.Find(ClientID);
 			BindObjectInstance(updateClient, ParamStore.Form, "Client");
 			updateClient.Tariff = Tariff.Find(tariff);
+			var statusCanChanged = true;
+			if ((updateClient.Status.Id == (uint)StatusType.BlockedAndNoConnected) && (status == (uint)StatusType.NoWorked))
+				statusCanChanged = false;
 			updateClient.Status = Status.Find(status);
-			var Password = CryptoPass.GeneratePassword();
-			if (changePass.Count != 0)
-			{
-				updateClient.Password = Password;
-				updateClient.Login = LoginCreatorHelper.GetUniqueEnLogin(updateClient.Surname);
-			}
-
-			if (Validator.IsValid(updateClient))
+			if (Validator.IsValid(updateClient) && statusCanChanged)
 			{
 				updateClient.UpdateAndFlush();
 				var clients = Clients.FindAllByProperty("PhisicalClient", ClientID);
@@ -333,15 +314,7 @@ namespace InternetInterface.Controllers
 				}
 				PropertyBag["Editing"] = false;
 				Flash["EditFlag"] = "Данные изменены";
-				if (changePass.Count == 0)
-				RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientID );
-				else
-				{
-					Flash["Password"] = Password;
-					Flash["Client"] = updateClient;
-					Flash["ConnectSumm"] = PaymentForConnect.FindAllByProperty("ClientId", updateClient).First();
-					RedirectToUrl("..//UserInfo/ClientRegisteredInfo.rails");
-				}
+				RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientID);
 			}
 			else
 			{
@@ -352,6 +325,8 @@ namespace InternetInterface.Controllers
 					session.Evict(updateClient);
 					return new List<PhisicalClients>();
 				});
+				if (!statusCanChanged)
+					Flash["statusCanChanged"] = "Если установлет статус Зарегистрирован, но нет информации о подключении, нельзя поставить статус НеРаботает";
 				RenderView("SearchUserInfo");
 				Flash["Editing"] = true;
 				Flash["EditingConnect"] = false;
@@ -368,12 +343,17 @@ namespace InternetInterface.Controllers
 			PropertyBag["ConnectInfo"] = phisCl.GetConnectInfo();
 			PropertyBag["ClientCode"] = ClientCode;
 			PropertyBag["BalanceText"] = string.Empty;
-			Flash["Tariffs"] = Tariff.FindAllSort();
-			PropertyBag["ChTariff"] = Tariff.FindFirst().Id;
-			PropertyBag["ChStatus"] = Status.FindFirst().Id;
+			PropertyBag["Tariffs"] = Tariff.FindAllSort();
+			PropertyBag["Brigads"] = Brigad.FindAllSort();
+			PropertyBag["ChTariff"] = phisCl.Tariff.Id;//Tariff.FindFirst().Id;
+			PropertyBag["ChStatus"] = phisCl.Status.Id;
+			if (phisCl.HasConnected != null)
+				PropertyBag["ChBrigad"] = phisCl.HasConnected.Id;
+			else
+				PropertyBag["ChBrigad"] = Brigad.FindFirst().Id;
 			PropertyBag["Statuss"] = Status.FindAllSort();
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties {ChangeType = TypeChangeBalance.OtherSumm};
-			PropertyBag["PartnerAccessSet"] = new PartnerAccessSet();
+			PropertyBag["PartnerAccessSet"] = new CategorieAccessSet();
 			PropertyBag["Payments"] = Payment.FindAllByProperty("Client", phisCl);
 		}
 

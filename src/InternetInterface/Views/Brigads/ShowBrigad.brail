@@ -4,7 +4,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Информация о коммутаторах</title>
+    <title>Информация о бригадах</title>
 </head>
 <body>
 <div id="non-printable"> 
@@ -16,31 +16,25 @@
         <table class="table" style="width:100%; " border="0" id="PartnerInfoTable">
             <thead>
                 <th>ID</th>
-                <th>Название</th>
-                <th>IP адрес</th>
-                <th>MAC адрес</th>
-                <th>Зона</th>
+                <th>Имя</th>
             </thead>
             <tbody>
-             <% for i,Switch in enumerate(Switches): %>
+             <% for i,Brigad in enumerate(Brigads): %>
                 <tr>
-                    <td>${Switch.Id}</td>
-                <%if (Switch.Name != null): %>
-                    <td><a href="../Switches/MakeSwitch?Switch=${Switch.Id}"> ${Switch.Name}</a></td>
+                    <td>${Brigad.Id}</td>
+                <%if (Brigad.Name != null): %>
+                    <td><a href="../Brigads/MakeBrigad?brigad=${Brigad.Id}"> ${Brigad.Name}</a></td>
                     <%else:%>
-                    <td><a href="../Switches/MakeSwitch?Switch=${Switch.Id}"> (Редактировать)</a></td>
+                    <td><a href="../Brigads/MakeBrigad?brigad=${Brigad.Id}"> (Редактировать)</a></td>
                     <%end %>
-                    <td>${Switch.IP}</td>
-                    <td>${Switch.Mac}</td>
-                    <td>${Switch.Zone.Name}</td>
                 </tr>
              <%end %>
              <tr>
                 <td colspan=4>
-                       <form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Switches/MakeSwitch" >
-                       <button type="submit" id="RegisterPartnerButton" class="button" >
+                       <form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Brigads/MakeBrigad" >
+                       <button type="submit" id="RegisterBrigad" class="button" >
                        <img alt="Save" src="../Images/application_edit.png">
-                           Создать новый коммутатор
+                           Создать новую бригаду
                        </button>
                        </form>
                 </td>

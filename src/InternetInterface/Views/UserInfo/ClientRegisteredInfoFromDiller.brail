@@ -1,0 +1,115 @@
+﻿<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns:m="http://schemas.microsoft.com/office/2004/12/omml"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=utf-8">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 12">
+<meta name=Originator content="Microsoft Word 12">
+
+<style>
+
+</style>
+
+</head>
+
+<body  link=blue vlink=purple style='tab-interval:35.4pt'>
+
+<div class=WordSection1>
+
+<p class=MsoNormal align=left style='text-align:left'>
+<![if !vml]><span style='mso-ignore:vglayout;position:
+relative;z-index:1'><span style='left:0px;position:absolute;left:-3px;
+top:-18px;width:151px;height:51px'><img width=151 height=51
+src="../Images/image001.jpg" v:shapes="Рисунок_x0020_1"></span></span><![endif]>
+</p>
+<p class=MsoNormal align=right>
+<b style='mso-bidi-font-weight:normal'><i style='mso-bidi-font-style:normal'>РЕГИСТРАЦИОННАЯ
+КАРТА АБОНЕНТА<o:p></o:p></i></b>
+</p>
+
+<p class=MsoNormal align=right style='text-align:right'><b style='mso-bidi-font-weight:
+normal'><i style='mso-bidi-font-style:normal'><o:p>&nbsp;</o:p></i></b></p>
+
+<p class=MsoNormal>Абонент: <i style='mso-bidi-font-style:normal'><u>${Client.Surname} ${Client.Name} ${Client.Patronymic}</u></i></p>
+
+<p class=MsoNormal>Номер лицевого счета: <i style='mso-bidi-font-style:normal'><u> ${Client.Id.ToString("00000")} </u></i></p>
+
+<p class=MsoNormal>Дата регистрации: <i style='mso-bidi-font-style:normal'><u>${Client.RegDate}</u></i></p>
+
+<p class=MsoNormal>Услуга: Доступ к сети интернет по тарифному плану «<i
+style='mso-bidi-font-style:normal'><u>${Client.Tariff.Name}</u></i>»</p>
+
+<p class=MsoNormal>Адрес подключения: <i style='mso-bidi-font-style:normal'><u>${Client.House} ул. ${Client.Street} ${Client.House}${Client.CaseHouse} ${Client.Apartment}</u></i></p>
+
+<p class=MsoNormal>Дополнительные услуги:</p>
+
+<p class=MsoNormal><i style='mso-bidi-font-style:normal'><u>{дополнительные
+услуги}<o:p></o:p></u></i></p>
+
+<p class=MsoNormal>Информация <span class=GramE>о</span> Услуге:</p>
+
+<p class=MsoNormal>Стоимость подключения – <i style='mso-bidi-font-style:normal'><u>${ConnectSumm.Summ} руб.</u></i></p>
+
+<p class=MsoNormal>Абонентская плата – <i style='mso-bidi-font-style:normal'><u>${Client.Tariff.Price} руб.</u></i></p>
+
+<p class=MsoNormal>Скорость доступа – <i style='mso-bidi-font-style:normal'><u>${Client.Tariff.Description}</u></i></p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal><b style='mso-bidi-font-weight:normal'>Для оплаты услуг доступа
+к сети интернет используйте номер Вашего лицевого счета.<o:p></o:p></b></p>
+
+<p class=MsoNormal style='text-align:justify'>Параметры доступа к личному
+кабинету на <span lang=EN-US style='mso-ansi-language:EN-US'>web</span>-сервере
+<a href="http://www.ivrn.net"><b style='mso-bidi-font-weight:normal'><i
+style='mso-bidi-font-style:normal'><span lang=EN-US style='mso-ansi-language:
+EN-US'>www</span>.</i></b><b style='mso-bidi-font-weight:normal'><i
+style='mso-bidi-font-style:normal'><span lang=EN-US style='mso-ansi-language:
+EN-US'>ivrn</span>.</i></b><b style='mso-bidi-font-weight:normal'><i
+style='mso-bidi-font-style:normal'><span lang=EN-US style='mso-ansi-language:
+EN-US'>net</span></i></b></a>: </p>
+
+<p class=MsoNormal style='text-align:justify'>Логин: <b style='mso-bidi-font-weight:
+normal'><i style='mso-bidi-font-style:normal'><u>${Client.Id.ToString("00000")}</u></i></b></p>
+
+<p class=MsoNormal style='text-align:justify'>Пароль: <b style='mso-bidi-font-weight:
+normal'><i style='mso-bidi-font-style:normal'><u>${Password}</u></i></b></p>
+
+<p class=MsoNormal style='text-align:justify'>Контакты службы технической
+поддержки: тел. <b style='mso-bidi-font-weight:normal'><i style='mso-bidi-font-style:
+normal'><u>(4732) 606-000</u></i></b> <span lang=EN-US style='mso-ansi-language:
+EN-US'>e</span>-<span lang=EN-US style='mso-ansi-language:EN-US'>mail</span>: <a
+href="mailto:help@ivrn.net"><b style='mso-bidi-font-weight:normal'><i
+style='mso-bidi-font-style:normal'><span lang=EN-US style='mso-ansi-language:
+EN-US'>help</span>@</i></b><b style='mso-bidi-font-weight:normal'><i
+style='mso-bidi-font-style:normal'><span lang=EN-US style='mso-ansi-language:
+EN-US'>ivrn</span>.</i></b><b style='mso-bidi-font-weight:normal'><i
+style='mso-bidi-font-style:normal'><span lang=EN-US style='mso-ansi-language:
+EN-US'>net</span></i></b></a><b style='mso-bidi-font-weight:normal'><i
+style='mso-bidi-font-style:normal'><u><o:p></o:p></u></i></b></p>
+
+<p class=MsoNormal>С условиями Договора-оферты, условиями предоставления Услуги
+и порядком оплаты ознакомлен и согласен.</p>
+
+<p class=MsoNormal style='text-align:justify'>__________________________________________<span
+style='mso-spacerun:yes'>                                </span><i
+style='mso-bidi-font-style:normal'><u>_______________________</u></i></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:8.0pt;
+line-height:115%'><span
+style='mso-spacerun:yes'>                                         </span>(подпись
+Абонента)<span
+style='mso-spacerun:yes'>                                                                                                                         
+</span>(дата)<o:p></o:p></span></p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+</div>
+
+</body>
+
+</html>

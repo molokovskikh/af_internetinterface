@@ -1,13 +1,71 @@
-﻿<head> 
+﻿<head>
 
 <link href="../Styles/style.css" type="text/css" rel="stylesheet" />
 <link rel="stylesheet" href="../Styles/base.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../Styles/RegStyle.css" type="text/css" media="screen" />
-
+<script type="text/javascript" src="../Scripts/jquery-1.4.1.min.js"></script>
+<script type="text/javascript" src="../Scripts/jquery.validate.js"></script>
  <title>Регистрация клиента</title>   
 
 
 </head> 
+
+<script type="text/javascript">
+
+var cost = [];
+
+function ShowMinPrice()
+{
+            $("#deldiv").remove();
+            
+            <%for i, Tariff in enumerate(Tariffs):%>
+             cost[${Tariff.Id}] = ${Tariff.Price};
+             <%end %>
+            $("#my-div").append('<div id="deldiv" style="color:green;"> Минимальная сумма к зачислению: '
+             + cost[$('#ChTariff').val()] + ' + ' + $('#ConnectSumm').val() + ' = '
+            + (Number(cost[$('#ChTariff').val()]) + Number($('#ConnectSumm').val())) + '</div>');
+}
+    $(function () { 
+    $('#ChTariff').change(function () {
+    ShowMinPrice();
+        });
+    });
+
+        $(function () { 
+    $('#ConnectSumm').keyup(function () {
+    ShowMinPrice();
+        });
+    });
+
+    $(document).ready(function() {
+    ShowMinPrice();
+    });
+
+$().ready(function() {
+	$("#RegistrationForm").validate(
+    {
+    errorLabelContainer: $("#RegistrationForm div.errorjava")
+    });
+});
+
+$(function() {
+    	$.validator.addMethod("BalanceText", function(value, element) {
+            if (value.toString().length > 0) {
+                res = (value >= (Number(cost[$('#ChTariff').val()]) + Number($('#ConnectSumm').val())));
+                return res;
+            }
+            return true;
+        }, function() { return "Должна быть введена сумма большая или равная "+ (Number(cost[$('#ChTariff').val()]) + Number($('#ConnectSumm').val())) + " рублей"});
+        });
+
+
+</script>
+
+<style type="text/css">
+#RegistrationForm label.error {  color: Red; }
+</style>
+
+
 <% OutputSubView("""\Subview\MapHead""") %>
 <body class="style1"> 
     <input type="hidden" name="hiddenClient" value="${Client}" />
@@ -16,15 +74,21 @@
     <div id="block-tables" class="block">
         <div class="content">
             <div class="inner">
+            <h2 id="warning"></h2>
+            <h2 id="summary"></h2>
                   <form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Register/RegisterClient" >
+                  <%if IsDefined("requestID"): %>
+                  <input type=hidden value=${requestID} name=requestID />
+                  <%end %>
                    <table class="table" style="width:100%; " border="0" id="RegTable"> 
                             <tr>
                                 <th colspan="3">
                                     <strong>Форма регистрации</strong></th>
                             </tr>
 	                        <% OutputSubView("""\Subview\Client""") %>
-
+                            
                             <% OutputSubView("""\Subview\Payment""") %>
+                            <div id="summary"></div>
                                 <td  colspan="3">
                                     ${VB.GetBlock("Balance")}
                                 </td>
@@ -34,9 +98,48 @@
                                     Сумма за подключение:
                                 </td>
                                  <td >
-                                    <input id="ConnectSumm" type="text" value="${ConnectSumm.Summ}" name="ConnectSumm.Summ"/></td>
+                                 <%if PartnerAccessSet.AccesPartner("SSI"): %>
+                                    <input id="ConnectSumm" type="text" value="${ConnectSumm.Summ}" name="ConnectSumm.Summ"/>
+                                    <%else: %>
+                                 <input id="ConnectSumm" type="hidden" name="ConnectSumm.Summ" value=700 />
+                                 700руб
+                                 <%end %>
+                                 </td>
                                     <td>${NS.GetBlock("Summ")}</td>
                              </tr>
+                             <%if PartnerAccessSet.AccesPartner("DHCP"): %>
+                             <tr>
+                             <th colspan="3">Данные подключения</th> </tr>
+                             <tr>
+                              <td>Свич</td>
+                              <td><select name="ConnectInfo.Switch" id="SelectSwitches${ConnectInfo.Switch}" style="width: 100%" >
+                                   <%
+                                    for j, Switch in enumerate(Switches): 
+                                    %>
+                                    <option id="Option${j}" value="${Switch.Id}" ${"selected" if (Switch.Id.ToString() == ConnectInfo.Switch)} > ${Switch.Name} </option>
+                                   <% end %>
+                            </select></td>
+                            <td></td>
+                            </tr>
+                            <tr>
+                              <td>Порт</td>
+                              <td><input type="text" id="Port"  name="ConnectInfo.Port"  value="${ConnectInfo.Port}" style="width: 50%; " /></td>
+                              <td>            <%if IsDefined("PortError"):
+                                  output  WriteMessageError(PortError)
+                                   end%> </td>
+                            </tr>
+                            <tr>
+                              <td>Бригада по подключению</td>
+                              <td><select name="BrigadForConnect" id="BrigadForConnect" style="width: 100%" >
+                                   <%
+                                    for j, Brigad in enumerate(Brigads): 
+                                    %>
+                                    <option id="OptionBrigad${j}" value="${Brigad.Id}" ${"selected" if (Brigad.Id == ChBrigad)} > ${Brigad.Name} </option>
+                                   <% end %>
+                            </select></td>
+                            <td></td>
+                            </tr>
+                            <%end %>
                             <tr>
                                 <td  colspan="3">
                                 <div class="actions">

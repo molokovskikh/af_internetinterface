@@ -16,7 +16,7 @@ namespace InternetInterface.Test.Functional
 	[TestFixture]
 	class CloseDemandFixture : WatinFixture
 	{
-		[Test]
+		/*[Test]
 		public void CloseDemandTest()
 		{
 			var client = PhisicalClients.FindFirst();
@@ -40,7 +40,7 @@ namespace InternetInterface.Test.Functional
 				Assert.That(browser.Text, Is.StringContaining("Свич"));
 				Assert.That(browser.Text, Is.StringContaining("Свич"));
 				Assert.That(browser.Text, Is.StringContaining("Порт"));*/
-				browser.CheckBox(Find.ById("CliseDemandCheck" + client.Id)).Checked = true;
+				/*browser.CheckBox(Find.ById("CliseDemandCheck" + client.Id)).Checked = true;
 				browser.TextField(Find.ById("Port" + client.Id)).AppendText("20");
 				browser.SelectList(Find.ById("SelectSwitches" + client.Id)).SelectByValue("2");
 				browser.Button(Find.ById("CliseDemandButton")).Click();
@@ -56,6 +56,6 @@ namespace InternetInterface.Test.Functional
 			                                             	.Add(Expression.Eq("Port", 20))
 			                                             	.Add(Expression.Eq("Switch", NetworkSwitches.Find((uint)2))))[0];
 			clientAndPoint.DeleteAndFlush();
-		}
+		}*/
 	}
 }

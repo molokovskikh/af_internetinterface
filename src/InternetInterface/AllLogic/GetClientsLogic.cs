@@ -13,7 +13,7 @@ namespace InternetInterface.AllLogic
 {
 	public class GetClientsLogic
 	{
-		public static IList<PhisicalClients> GetClientsForCloseDemand()
+		/*public static IList<PhisicalClients> GetClientsForCloseDemand()
 		{
 			IList<PhisicalClients> _result = new List<PhisicalClients>();
 			ARSesssionHelper<PhisicalClients>.QueryWithSession(session =>
@@ -29,7 +29,7 @@ namespace InternetInterface.AllLogic
 			});
 			return _result;
 		}
-
+		*/
 
 
 		public static IList<PhisicalClients> GetClients(UserSearchProperties searchProperties,
@@ -43,7 +43,7 @@ namespace InternetInterface.AllLogic
 				ISQLQuery query = null;
 				if (!searchProperties.IsSearchAccount())
 				{
-					sqlStr = String.Format(@"SELECT * FROM internet.PhysicalClients P {0} ORDER BY P.Login",
+					sqlStr = String.Format(@"SELECT * FROM internet.PhysicalClients P {0} ORDER BY P.Surname",
 										   GetWhere(searchProperties, connectedType, whoregister, tariff, searchText, brigad));
 					query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(PhisicalClients));
 					if (whoregister != 0)
@@ -61,7 +61,7 @@ namespace InternetInterface.AllLogic
 				}
 				else
 				{
-					sqlStr = @"SELECT * FROM internet.PhysicalClients P where P.id = :SearchText ORDER BY P.Login";
+					sqlStr = @"SELECT * FROM internet.PhysicalClients P where P.id = :SearchText ORDER BY P.Surname";
 					query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(PhisicalClients));
 					if (searchText != null)
 						query.SetParameter("SearchText", searchText.ToLower());
@@ -104,7 +104,7 @@ WHERE LOWER(P.Name) like {0} or LOWER(P.Surname) like {0}
 or LOWER(P.Patronymic) like {0} or LOWER(P.City) like {0} 
 or LOWER(P.PassportSeries) like {0}
 or LOWER(P.PassportNumber) like {0} or LOWER(P.WhoGivePassport) like {0}
-or LOWER(P.RegistrationAdress) like {0} or LOWER(P.Login) like {0}",
+or LOWER(P.RegistrationAdress) like {0}",
 							":SearchText") + _return;
 				}
 				if (sp.IsSearchByFio())
@@ -113,10 +113,6 @@ or LOWER(P.RegistrationAdress) like {0} or LOWER(P.Login) like {0}",
 						String.Format(@"
 WHERE LOWER(P.Name) like {0} or LOWER(P.Surname) like {0}
 or LOWER(P.Patronymic) like {0}", ":SearchText") + _return;
-				}
-				if (sp.IsSearchByLogin())
-				{
-					return String.Format(@"WHERE LOWER(P.Login) like {0}", ":SearchText") + _return;
 				}
 				if (sp.IsSearchByPassportSet())
 				{

@@ -115,20 +115,27 @@
     <Content Include="Global.asax" />
     <Content Include="Images\application_edit.png" />
     <Content Include="Images\image001.jpg" />
+    <Content Include="Images\image002.jpg" />
     <Content Include="Images\image003.gif" />
+    <Content Include="Images\image004.gif" />
+    <Content Include="Images\image005.gif" />
     <Content Include="Images\key.png" />
     <Content Include="Images\tick.png" />
     <Content Include="Scripts\jquery-1.4.1-vsdoc.js" />
     <Content Include="Scripts\jquery-1.4.1.js" />
     <Content Include="Scripts\jquery-1.4.1.min.js" />
+    <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Styles\base.css" />
     <Content Include="Styles\style.css" />
+    <None Include="Views\Brigads\MakeBrigad.brail" />
+    <None Include="Views\Brigads\ShowBrigad.brail" />
     <None Include="Views\CommonScripts\WriteMessage.brail" />
     <None Include="Views\Subview\Client.brail" />
     <None Include="Views\Subview\CreateEditLabel.brail" />
     <None Include="Views\Switches\MakeSwitch.brail" />
     <None Include="Views\Switches\OnLineClient.brail" />
     <None Include="Views\Switches\ShowSwitches.brail" />
+    <None Include="Views\UserInfo\ClientRegisteredInfoFromDiller.brail" />
     <None Include="Views\UserInfo\PartnersPreview.brail" />
     <None Include="Views\UserInfo\ClientRegisteredInfo.brail" />
     <None Include="Views\Subview\DeleteLabel.brail" />
@@ -146,6 +153,7 @@
   <ItemGroup>
     <Compile Include="AllLogic\ColorWork.cs" />
     <Compile Include="AllLogic\GetClientsLogic.cs" />
+    <Compile Include="Controllers\BrigadsController.cs" />
     <Compile Include="Controllers\ExitPartner.cs" />
     <Compile Include="Controllers\Filter\AuthenticationFilter.cs" />
     <Compile Include="Controllers\Filter\InithializeContent.cs" />
@@ -172,6 +180,8 @@
     <Compile Include="Helpers\ActiveDirectoryHelper.cs" />
     <Compile Include="Helpers\ARSesssionHelper.cs" />
     <Compile Include="Helpers\LoginCreatorHelper.cs" />
+    <Compile Include="Helpers\UsersParsers.cs" />
+    <Compile Include="Helpers\ValidationHelper.cs" />
     <Compile Include="Helpers\ValidBuilderHelper.cs" />
     <Compile Include="Models\Access\AccessCategories.cs" />
     <Compile Include="Models\Access\AccessRules.cs" />
@@ -187,7 +197,7 @@
     <Compile Include="Models\Status.cs" />
     <Compile Include="Models\Universal\ChildActiveRecordLinqBase.cs" />
     <Compile Include="Models\Universal\ClientSearchProperties.cs" />
-    <Compile Include="Models\Access\PartnerAccessSet.cs" />
+    <Compile Include="Models\Access\CategorieAccessSet.cs" />
     <Compile Include="Models\Payment.cs" />
     <Compile Include="Models\RequestsConnection.cs" />
     <Compile Include="Models\Tariff.cs" />
@@ -198,6 +208,7 @@
     </Compile>
     <Compile Include="Models\Partner.cs" />
     <Compile Include="Models\PhisicalClients.cs" />
+    <Compile Include="Models\UserCategorie.cs" />
     <Compile Include="Models\Zone.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="Styles\RegStyle.css" />

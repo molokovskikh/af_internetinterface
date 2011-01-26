@@ -4,7 +4,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Информация и партнерах</title>
+    <title>Информация о партнерах</title>
 </head>
 <body>
 <div id="non-printable"> 
@@ -25,7 +25,7 @@
             <tbody>
              <% for i,Partner in enumerate(Partners): %>
                 <tr>
-                    <td><a href="../Register/RegisterPartner?PartnerKey=${Partner.Id}">${Partner.Name}</a></td>
+                    <td><a href="../Register/RegisterPartner?PartnerKey=${Partner.Id}&catType=${catType}">${Partner.Name}</a></td>
                     <td>${Partner.Email}</td>
                     <td>${Partner.TelNum}</td>
                     <td>${Partner.Adress}</td>
@@ -36,6 +36,7 @@
              <tr>
                 <td colspan = 6>
                        <form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Register/RegisterPartner" >
+                       <input type="hidden" name="catType" value=${catType} />
                        <button type="submit" id="RegisterPartnerButton" class="button" >
                        <img alt="Save" src="../Images/application_edit.png">
                            Зарегистрировать партнера

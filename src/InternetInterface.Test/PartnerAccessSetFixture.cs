@@ -11,7 +11,7 @@ namespace InternetInterface.Test
 {
 
 	[TestFixture]
-	public class PartnerAccessSetFixture : PartnerAccessSet
+	public class PartnerAccessSetFixture : CategorieAccessSet
 	{
 
 		[TestFixtureSetUp]
