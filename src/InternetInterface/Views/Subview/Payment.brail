@@ -2,8 +2,12 @@
     <td>
     <div>
     <%if PartnerAccessSet.AccesPartner("SSI"): %>
+      <%if IsDefined("UserInfo"): %>
+       <%if UserInfo: %>
           <input type="radio" id="ForTariffChange" name="ChangedBy.ChangeType" value="ForTariff" ${"checked" if ChangeBy.IsForTariff()} />
-          <label for="Autosearch">Внести сумму по тарифному плану</label><br />
+          <label for="Autosearch">Внести сумму по тарифному плану (${Client.Tariff.Price} рублей) </label><br />
+       <%end %>
+       <%end %>
     <%end %>
           <input type="radio" id="OtherSummChange" name="ChangedBy.ChangeType" value="OtherSumm" ${"checked" if ChangeBy.IsOtherSumm()} />
           <label for="Other_Balance">Внести сумму на счет: ${Client.HowManyToPay(true)}</label>

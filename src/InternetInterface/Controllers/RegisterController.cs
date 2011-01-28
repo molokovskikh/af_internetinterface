@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
+using System.IO;
 using System.Linq;
 using Castle.ActiveRecord;
 using Castle.MonoRail.Framework;
@@ -55,13 +57,17 @@ namespace InternetInterface.Controllers
 				unPort = Point.isUnique(NetworkSwitches.Find(Convert.ToUInt32(ConnectInfo.Switch)),
 			                            Convert.ToInt32(ConnectInfo.Port));
 				if ((Convert.ToInt32(ConnectInfo.Port) > 48) || (Convert.ToInt32(ConnectInfo.Port) < 1))
-					throw new Exception();
+					throw new BaseUsersException("Невалидное значения порта (1-48)");
+				if (BrigadForConnect == 0)
+					throw new BaseUsersException("Не выбрана бригада");
+				if (ConnectInfo.Switch == 0.ToString())
+					throw new BaseUsersException("Не выбран свич");
 			}
-			catch (Exception)
+			catch (BaseUsersException ex)
 			{
 				if (!string.IsNullOrEmpty(ConnectInfo.Port))
 				{
-					PropertyBag["PortError"] = "Невалидное значения порта (1-48)";
+					PropertyBag["PortError"] = ex.Message;
 					validPortSwitch = false;
 				}
 			}
@@ -92,6 +98,7 @@ namespace InternetInterface.Controllers
 					user.HasConnected = Brigad.Find(BrigadForConnect);
 					user.Connected = true;
 					user.ConnectedDate = DateTime.Now;
+					user.Status = Status.Find((uint)StatusType.BlockedAndConnected);
 					user.UpdateAndFlush();
 				}
 				Flash["Password"] = Password;
@@ -130,7 +137,7 @@ namespace InternetInterface.Controllers
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void RegisterPartner([DataBind("Partner")]Partner partner/*, [DataBind("ForRight")]List<int> rights*/)
+		public void RegisterPartner([DataBind("Partner")]Partner partner)
 		{
 			string Pass = CryptoPass.GeneratePassword();
 			/*var rights =
@@ -155,6 +162,7 @@ namespace InternetInterface.Controllers
 				partner.SetValidationErrors(Validator.GetErrorSummary(partner));
 				PropertyBag["Partner"] = partner;
 				//PropertyBag["ChRights"] = rights;
+				PropertyBag["catType"] = partner.Categorie.Id;
 				PropertyBag["Editing"] = false;
 				PropertyBag["VB"] = new ValidBuilderHelper<Partner>(partner);
 			}
@@ -204,7 +212,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
 			PropertyBag["ChStatus"] = Status.FindFirst().Id;
-			PropertyBag["ChBrigad"] = Brigad.FindFirst().Id;
+			PropertyBag["ChBrigad"] = 0;
 			PropertyBag["Statuss"] = Status.FindAllSort();
 			PropertyBag["VB"] = new ValidBuilderHelper<PhisicalClients>(new PhisicalClients());
 			PropertyBag["NS"] = new ValidBuilderHelper<PaymentForConnect>(new PaymentForConnect());

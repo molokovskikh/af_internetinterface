@@ -30,7 +30,7 @@ namespace InternetInterface.Controllers.Filter
 			{
 				InithializeContent.partner = Partner.GetPartnerForLogin(context.Session["login"].ToString());
 				controllerContext.PropertyBag["PartnerAccessSet"] = new CategorieAccessSet();
-				controllerContext.PropertyBag["Partner"] = InithializeContent.partner;
+				controllerContext.PropertyBag["MapPartner"] = InithializeContent.partner;
 				if (AccessRules.GetAccessName(controllerContext.Action).Count(CategorieAccessSet.AccesPartner) == 0)
 				{
 					context.Response.RedirectToUrl(@"..\\Errors\AccessDin.aspx");

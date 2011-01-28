@@ -16,9 +16,13 @@
         <table class="table" style="width:100%; " border="0" id="PartnerInfoTable">
             <thead>
                 <th>ФИО партнера</th>
+                <%if Partners.Count != 0: %>
+                <%if Partners[0].Categorie.ReductionName != "Office": %>
                 <th>EMail</th>
                 <th>Номер телефона</th>
                 <th>Адрес</th>
+                <%end %>
+                <%end %>
                 <th>Дата регистрации</th>
                 <th>Логин</th>
             </thead>
@@ -26,9 +30,13 @@
              <% for i,Partner in enumerate(Partners): %>
                 <tr>
                     <td><a href="../Register/RegisterPartner?PartnerKey=${Partner.Id}&catType=${catType}">${Partner.Name}</a></td>
+                <%if Partners.Count != null: %>
+                <%if Partners[0].Categorie.ReductionName != "Office": %>
                     <td>${Partner.Email}</td>
                     <td>${Partner.TelNum}</td>
                     <td>${Partner.Adress}</td>
+                <%end %>
+                <%end %>
                     <td>${Partner.RegDate}</td>
                     <td>${Partner.Login}</td>
                 </tr>

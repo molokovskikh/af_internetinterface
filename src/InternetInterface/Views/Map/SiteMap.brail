@@ -6,9 +6,8 @@
 
 <% OutputSubView("""\Subview\MapHead""") %>
 <table class="table">
- <tbody>
-
-    </tbody>
+<tbody>
+</tbody>
 </table>
 </div>
 </div>

@@ -37,11 +37,11 @@
                                     <%end %>
                             </tr>
 
-                             <% OutputSubView("""\Subview\Partner""") %>
+                            <% OutputSubView("""\Subview\Partner""") %>
                             <tr>
                                 <td colspan="3">
                                 <div class="actions">
-                                                 <button type="submit" id="RegisterPartnerButton" class="button" >
+                                                <button type="submit" id="RegisterPartnerButton" class="button" >
                                                 <img alt="Save" src="../Images/application_edit.png">
                             <%if IsDefined("Editing"): %>
                             <%if (not Editing): %>

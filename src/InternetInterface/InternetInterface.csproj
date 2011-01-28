@@ -179,6 +179,7 @@
     </Compile>
     <Compile Include="Helpers\ActiveDirectoryHelper.cs" />
     <Compile Include="Helpers\ARSesssionHelper.cs" />
+    <Compile Include="Helpers\ExceptionHelper.cs" />
     <Compile Include="Helpers\LoginCreatorHelper.cs" />
     <Compile Include="Helpers\UsersParsers.cs" />
     <Compile Include="Helpers\ValidationHelper.cs" />

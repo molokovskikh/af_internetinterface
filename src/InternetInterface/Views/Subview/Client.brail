@@ -184,7 +184,7 @@
                                        <%
                                         for i, Tariff in enumerate(Tariffs): 
                                         %>
-                                            <option id="Tarif${Tariff.Id}" value="${Tariff.Id}" ${"selected" if (Tariff.Id == ChTariff)}> ${Tariff.Name} </option>
+                                            <option id="Tarif${Tariff.Id}" value="${Tariff.Id}" ${"selected" if (Tariff.Id == ChTariff)}> ${Tariff.GetFullName()} </option>
                                             <% end %>
                                         </select>
 
@@ -193,6 +193,8 @@
                                 <td></td>
                             </tr>
                             <%if PartnerAccessSet.AccesPartner("SSI"): %>
+                            <%if IsDefined("Editing"): %>
+                            <%if Editing: %>
                             <tr>
                                 <td >
                                     Статус</td>
@@ -202,8 +204,10 @@
                                        <%
                                         for i, Status in enumerate(Statuss): 
                                         %>
+                                        <%if Status.Visualisible(): %>
                                             <option id="Status${Status.Id}" value="${Status.Id}" ${"selected" if (Status.Id == ChStatus)}> ${Status.Name} </option>
                                             <% end %>
+                                            <%end %>
                                         </select>
 
 
@@ -214,4 +218,6 @@
                                  end %>
                                 </td>
                             </tr>
+                            <%end %>
+                            <%end %>
                             <%end %>

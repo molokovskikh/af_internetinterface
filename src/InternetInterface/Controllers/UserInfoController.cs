@@ -46,6 +46,9 @@ namespace InternetInterface.Controllers
 			uint BrigadForConnect)
 		{
 			var phisCl = PhisicalClients.Find(ClientID);
+			var brigadChangeFlag = true;
+			if (phisCl.HasConnected != null)
+				brigadChangeFlag = false;
 			var clientEntPoint = new ClientEndpoints();
 			var clients = Clients.FindAllByProperty("PhisicalClient", ClientID);
 			if (clients.Length != 0)
@@ -104,6 +107,7 @@ namespace InternetInterface.Controllers
 								clientEntPoint.UpdateAndFlush();
 							else
 								clientEntPoint.SaveAndFlush();
+							if (brigadChangeFlag)
 							phisCl.HasConnected = Brigad.Find(BrigadForConnect);
 							phisCl.Connected = true;
 							phisCl.ConnectedDate = DateTime.Now;
@@ -275,7 +279,7 @@ namespace InternetInterface.Controllers
 
 		public void PartnersPreview(uint catType)
 		{
-			PropertyBag["Partners"] = Partner.FindAllSort().Where(p => p.Categorie.Id == catType);
+			PropertyBag["Partners"] = Partner.FindAllSort().Where(p => p.Categorie.Id == catType).ToList();
 		}
 
 		[AccessibleThrough(Verb.Post)]
@@ -342,6 +346,7 @@ namespace InternetInterface.Controllers
 			var phisCl = PhisicalClients.Find(ClientCode);
 			PropertyBag["ConnectInfo"] = phisCl.GetConnectInfo();
 			PropertyBag["ClientCode"] = ClientCode;
+			PropertyBag["UserInfo"] = true;
 			PropertyBag["BalanceText"] = string.Empty;
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["Brigads"] = Brigad.FindAllSort();

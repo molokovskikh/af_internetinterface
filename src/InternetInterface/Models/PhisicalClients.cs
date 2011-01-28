@@ -24,6 +24,11 @@ namespace InternetInterface.Models
 		public string Port { get; set; }
 		public string Speed { get; set; }
 		public bool Monitoring { get; set; }
+
+		public Int32 GetNormalSpeed()
+		{
+			return Convert.ToInt32(Speed)/1000000;
+		}
 	}
 
 
@@ -145,7 +150,7 @@ namespace InternetInterface.Models
 			{
 				_client.RegDate = DateTime.Now;
 				_client.Tariff = Tariff.Find(_tariff);
-				_client.Status = Status.Find(_status);
+				_client.Status = Status.Find((uint)StatusType.BlockedAndNoConnected);
 				_client.Password = CryptoPass.GetHashString(_client.Password);
 				_client.HasRegistered = hasRegistered;
 				_client.SaveAndFlush();

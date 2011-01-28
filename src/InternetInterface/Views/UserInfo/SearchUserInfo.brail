@@ -70,15 +70,14 @@
         <%end %>
         <%if Client.Tariff != null: %>
         <tr>
-             <td><span class="description">Тариф:</span> ${Client.Tariff.Name}</td>
+             <td><span class="description">Тариф:</span> ${Client.Tariff.GetFullName()}</td>
         </tr>
          <%end %>
 
-
+         <%if PartnerAccessSet.AccesPartner("SSI"): %>
         <tr>
             <td><span class="description">Баланс:</span> ${Client.Balance}</td>
         </tr>
-        <%if PartnerAccessSet.AccesPartner("SSI"): %>
         <tr>
         <%if (Client.HasConnected != null): %>
             <td><span class="description">Назначен бригаде:</span> ${Client.HasConnected.Name}</td>
@@ -86,7 +85,6 @@
             <td><span class="description"></span> Подключение клиента не назначено</td>
             <%end %>
         </tr>
-        <%end %>
                 <tr>
         <%if Client.Status != null: %>
             <tr>
@@ -99,6 +97,7 @@
             <td><span class="description">Статус подключения:</span>Не подключен</td>
             <%end %>
         </tr>
+        <%end %>
         <%if PartnerAccessSet.AccesPartner("SSI"): %>
                 <%if IsDefined("RegisntationDate"): %>
 		    <tr>
@@ -224,7 +223,7 @@
         </tr>
                 <tr>
           <td>Скорость</td>
-          <td>${ConnectInfo.Speed}</td>
+          <td>${ConnectInfo.GetNormalSpeed()} мб/с</td>
         </tr>
         <tr>
           <td>Мониторинг</td>
@@ -232,11 +231,18 @@
         </tr>
         <tr>
          <td>Бригада по подключению</td>
+         <%if Client.HasConnected == null: %>
           <td><select name="BrigadForConnect" id="BrigadForConnect" style="width: 100%" >
           <% for j, Brigad in enumerate(Brigads): %>
                                     <option id="OptionBrigad${j}" value="${Brigad.Id}" ${"selected" if (Brigad.Id == ChBrigad)} > ${Brigad.Name} </option>
                                    <% end %>
-           </select></td>
+           </select>
+          </td>
+         <%else: %>
+         <td>
+             ${Client.HasConnected.Name}
+         </td>
+         <%end %>
          </tr>
     </tbody>
     </table>

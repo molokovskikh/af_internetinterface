@@ -10,18 +10,6 @@ namespace InternetInterface.Controllers
 	{
 		public void SiteMap()
 		{
-			var CatList = new List<string>();
-			var accessList = AccessCategories.FindAllSort();
-			/*var partnerAccessList = PartnerAccessSet.GetAccessPartner();
-			foreach (var accessCategorie in accessList)
-			{
-				foreach (var partnerAccessSet in partnerAccessList)
-				{
-					if (accessCategorie.Id == partnerAccessSet.AccessCat.Id)
-						CatList.Add(accessCategorie.Name);
-				}
-			}
-			PropertyBag["AccessList"] = CatList;*/
 		}
 	}
 }

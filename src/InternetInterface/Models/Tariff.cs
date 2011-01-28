@@ -21,6 +21,11 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual int PackageId { get; set; }
+
+		public virtual string GetFullName()
+		{
+			return string.Format("{0} ({1} рублей)", Name, Price);
+		}
 	}
 
 }

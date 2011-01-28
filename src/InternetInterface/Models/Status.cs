@@ -27,5 +27,13 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool Blocked { get; set; }
 
+		public virtual bool Visualisible()
+		{
+			if (Id == (uint)StatusType.BlockedAndConnected)
+				return false;
+			if (Id == (uint)StatusType.BlockedAndNoConnected)
+				return false;
+			return true;
+		}
 	}
 }

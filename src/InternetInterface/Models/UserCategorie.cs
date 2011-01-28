@@ -13,7 +13,7 @@ namespace InternetInterface.Models
 		public virtual uint Id { get; set; }
 
 		[Property]
-		public virtual string Commect { get; set; }
+		public virtual string Comment { get; set; }
 
 		[Property]
 		public virtual string ReductionName { get; set; }

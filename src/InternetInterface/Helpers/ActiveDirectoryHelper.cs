@@ -21,9 +21,9 @@ namespace InternetInterface.Helpers
 
 		public static bool IsAuthenticated(string username, string pwd)
 		{
-			if (Authenticated("LDAP://OU=Офис,DC=adc,DC=analit,DC=net", username, pwd))
+			if (Authenticated(@"LDAP://OU=Офис,DC=adc,DC=analit,DC=net", username, pwd))
 				return true;
-			if (Authenticated("LDAP://OU=Клиенты,DC=adc,DC=analit,DC=net", username, pwd))
+			if (Authenticated(@"LDAP://OU=Клиенты,DC=adc,DC=analit,DC=net", username, pwd))
 				return true;
 			return false;
 		}

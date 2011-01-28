@@ -8,11 +8,11 @@
     <style type="text/css">
 #content {
 float:left;
-width:80%;
+width:85%;
 }
 #sidebar {
 float:left;
-width:250px;
+width:200px;
 }
 #main_t {
 overflow:hidden;
@@ -47,20 +47,21 @@ overflow:hidden;
                 <th>Адрес</th>
                 <th>Тариф</th>
                 <th><center>Метка</center></th>
-                <th>Выделение</th>
-                
+                <th><center>Дата действия</center></th>
+                <th></th>
             </thead>
             <% for i,Client in enumerate(Clients): %>
             <tr>
                 <td><a href="../Register/RegisterClient.rails?requestID=${Client.Id}"> ${Client.ApplicantName}</a></td>
                 <td>${Client.ApplicantPhoneNumber}</td>
                 <td>${Client.ApplicantEmail}</td>
-                <td>${Client.City} ${Client.Street} ${Client.House} ${Client.CaseHouse} ${Client.Apartment} ${Client.Entrance} ${Client.Floor}</td>
+                <td style="width:200px;">
+                    ${Client.City} ул. ${Client.Street} д. ${Client.House} корп. ${Client.CaseHouse} кв. ${Client.Apartment} подъезд ${Client.Entrance} этаж ${Client.Floor}
+                </td>
                 <td>${Client.Tariff.Name}</td>
                 <%if (Client.Label.Id !=0): %>
                 <td style="width:180px;">
-                    
-                    <div class='flash' style="float:left; height:25px; width:150px; float: left;"> 
+                    <div class='flash' style="float:left; height:25px; width:120px; float: left;"> 
                         <div class="fontgit">
                             <div class='message error'style="border-color:${Client.Label.GetBorderColor()}; background-color:${Client.Label.Color}" align="center" >
                              ${Client.Label.Name}
@@ -68,13 +69,21 @@ overflow:hidden;
                         </div>
                     </div>
                     </td>
-                    <center>
+                    <%if Client.ActionDate != null: %>
+                    <td>
+                        ${Client.ActionDate.ToShortDateString()}
+                    </td>
+                    <%else: %>
+                    <td>---------</td>
+                    <%end %>
+
                     <td>
                     <div style=" height:25px;">
                         <input type="checkbox" id="LabelDemandCheck${i}" name="LabelList[${i}]" value=${Client.Id} />
                     </div>
                     </td>
-                    </center>
+
+
                 <%else: %>
                 <td style="width:180px;">
                 </td>

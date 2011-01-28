@@ -39,7 +39,6 @@
             </td>
             </tr>
         </table>
-
     <table style="width: 100%;"  class="table">
         <tr><td style="text-align: left;">Искать по:</td><td></td><td></td></tr>
         <tr>
@@ -62,9 +61,9 @@
             </td>
         </tr>
     </table>
-    
+    <%if MapPartner.Categorie.ReductionName != "Diller": %>
     <fieldset style="padding: 0; margin: 0; text-align: left; width: 99%;">
-        <legend>Фильтры:</legend>
+        <legend>Фильтры: ${MapPartner.Categorie.ReductionName}</legend>
         <table style="width:100%; height: 80px;" border="0" class="table">
 			<col style="width:50%" />
 			<col style="width:50%" />
@@ -124,7 +123,7 @@
 			</thead>
         </table>
     </fieldset>
-
+    <%end %>
     </td>
     </tr>
 </table>

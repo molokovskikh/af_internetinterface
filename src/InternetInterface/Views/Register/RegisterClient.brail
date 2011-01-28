@@ -113,6 +113,7 @@ $(function() {
                              <tr>
                               <td>Свич</td>
                               <td><select name="ConnectInfo.Switch" id="SelectSwitches${ConnectInfo.Switch}" style="width: 100%" >
+                              <option id="Option2" value="0" > </option>
                                    <%
                                     for j, Switch in enumerate(Switches): 
                                     %>
@@ -131,6 +132,7 @@ $(function() {
                             <tr>
                               <td>Бригада по подключению</td>
                               <td><select name="BrigadForConnect" id="BrigadForConnect" style="width: 100%" >
+                              <option id="Option1" value="0" > </option>
                                    <%
                                     for j, Brigad in enumerate(Brigads): 
                                     %>
