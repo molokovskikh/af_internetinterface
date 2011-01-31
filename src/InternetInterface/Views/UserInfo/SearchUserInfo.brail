@@ -153,7 +153,7 @@
         </tr>
                 <tr>
           <td><span class="description">Скорость </span></td>
-          <td>${ConnectInfo.GetNormalSpeed()}</td>
+          <td>${ConnectInfo.GetNormalSpeed()} мб/с</td>
         </tr>
          <tr>
           <td><span class="description">Мониторинг </span></td>

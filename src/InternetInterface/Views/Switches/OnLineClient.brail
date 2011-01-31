@@ -42,7 +42,7 @@
                     <td>${Client.Module}</td>
                     <td>${Client.Port}</td>
                     <td>${Client.PackageId}</td>
-                    <td>${Client.GetNormalSpeed()}</td>
+                    <td>${Client.GetNormalSpeed()} мб/с</td>
                 </tr>
              <%end %>
 
