@@ -41,7 +41,7 @@
                 <%end %>
                 <%if PartnerAccessSet.AccesPartner("RP"): %>
                <th>
-               <a href = "../UserInfo/PartnersPreview.rails?catType=2" ><span class="MH"><div class=menudiv>Сотрудники </div></span></a></th>
+               <a href = "../UserInfo/PartnersPreview.rails?catType=3" ><span class="MH"><div class=menudiv>Сотрудники </div></span></a></th>
                 <%end %>
                 <%if PartnerAccessSet.AccesPartner("RC"): %>
                <th><a href = "../Register/RegisterClient.rails" ><span class="MH"><div class=menudiv>Регистрация абонента</div></span></a></th>

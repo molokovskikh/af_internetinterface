@@ -5,7 +5,7 @@
                                     ${VB.GetBlock("Name")}
                                  </td>
                             </tr>
-                            <%if (catType != 2): %>
+                            <%if (catType != 3): %>
                             <tr>
                                 <td>EMail</td>
                                 <td><input id="EMail" type="text" value="${Partner.Email}" name="Partner.Email" /></td>

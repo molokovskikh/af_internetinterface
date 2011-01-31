@@ -227,7 +227,7 @@ namespace InternetInterface.Controllers
 		public void RequestView(uint labelId)
 		{
 			PropertyBag["Clients"] = Requests.FindAll(DetachedCriteria.For(typeof(Requests))
-				.Add(Expression.Eq("Label", Label.Find(labelId))));
+				.Add(Expression.Eq("Label.Id", labelId)));
 			SendRequestEditParameter();
 		}
 

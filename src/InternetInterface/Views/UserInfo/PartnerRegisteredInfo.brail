@@ -34,7 +34,7 @@
                 <%if Partner.Categorie.ReductionName = "Diller": %>
                 <tr>
                     <td>EMail</td>
-                    <td>${Partner.Email} ${Partner.Categorie.ReductionName}</td>
+                    <td>${Partner.Email} </td>
                 </tr>
                 <tr>
                     <td>Номер телефона</td>

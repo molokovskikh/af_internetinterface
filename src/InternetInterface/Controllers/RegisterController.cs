@@ -8,6 +8,7 @@ using Castle.MonoRail.Framework;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.SqlCommand;
 
@@ -54,12 +55,16 @@ namespace InternetInterface.Controllers
 			var validPortSwitch = true;
 			try
 			{
-				unPort = Point.isUnique(NetworkSwitches.Find(Convert.ToUInt32(ConnectInfo.Switch)),
+				var Switch = NetworkSwitches.FindAll(DetachedCriteria.For(typeof(NetworkSwitches)).Add(Expression.Eq("Id", Convert.ToUInt32(ConnectInfo.Switch))));
+				if ((Switch.Length != 0) && (ConnectInfo.Port != null))
+				unPort = Point.isUnique(Switch.First(),
 			                            Convert.ToInt32(ConnectInfo.Port));
+				else
+				{ validPortSwitch = false; }
 				if ((Convert.ToInt32(ConnectInfo.Port) > 48) || (Convert.ToInt32(ConnectInfo.Port) < 1))
 					throw new BaseUsersException("Невалидное значения порта (1-48)");
-				if (BrigadForConnect == 0)
-					throw new BaseUsersException("Не выбрана бригада");
+				/*if (BrigadForConnect == 0)
+					throw new BaseUsersException("Не выбрана бригада");*/
 				if (ConnectInfo.Switch == 0.ToString())
 					throw new BaseUsersException("Не выбран свич");
 			}
@@ -95,6 +100,7 @@ namespace InternetInterface.Controllers
 					             		PackageId = user.Tariff.PackageId
 					             	};
 					newCEP.SaveAndFlush();
+					if (BrigadForConnect != 0)
 					user.HasConnected = Brigad.Find(BrigadForConnect);
 					user.Connected = true;
 					user.ConnectedDate = DateTime.Now;
