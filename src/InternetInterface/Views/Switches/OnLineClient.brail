@@ -31,18 +31,18 @@
             <tbody>
              <% for i,Client in enumerate(OnLineClients): %>
                 <tr>
-                    <td>${Client[0]}</td>
-                    <td>${Client[1]}</td>
-                    <td>${Client[2]}</td>
-                    <td>${Client[3]}</td>
-                    <td>${Client[4]}</td>
-                    <td>${Client[5]}</td>
-                    <td>${Client[6]}</td>
-                    <td>${Client[7]}</td>
-                    <td>${Client[8]}</td>
-                    <td>${Client[9]}</td>
-                    <td>${Client[10]}</td>
-                    <td>${Client[11]}</td>
+                    <td>${Client.static_IP}</td>
+                    <td>${Client.Leased_IP}</td>
+                    <td>${Client.Client}</td>
+                    <td>${Client.endpointId}</td>
+                    <td>${Client.Name}</td>
+                    <td>${Client.Switch}</td>
+                    <td>${Client.Swith_adr}</td>
+                    <td>${Client.swith_IP}</td>
+                    <td>${Client.Module}</td>
+                    <td>${Client.Port}</td>
+                    <td>${Client.PackageId}</td>
+                    <td>${Client.GetNormalSpeed()}</td>
                 </tr>
              <%end %>
 

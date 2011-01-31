@@ -18,16 +18,24 @@ namespace InternetInterface.Models
 		public string static_IP { get; set; }
 		public string Leased_IP { get; set; }
 		public string Client { get; set; }
+
+		public int? endpointId { get; set; }
+		public string Name { get; set; }
+
 		public string Switch { get; set; }
 		public string Swith_adr { get; set; }
 		public string swith_IP { get; set; }
+
+		public int? Module { get; set; }
+		public int? PackageId { get; set; }
+
 		public string Port { get; set; }
 		public string Speed { get; set; }
 		public bool Monitoring { get; set; }
 
 		public Int32 GetNormalSpeed()
 		{
-			return Convert.ToInt32(Speed)/1000000;
+			return Convert.ToInt32(Speed) / 1000000;
 		}
 	}
 

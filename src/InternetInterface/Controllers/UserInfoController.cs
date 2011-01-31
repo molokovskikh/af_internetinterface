@@ -351,7 +351,10 @@ namespace InternetInterface.Controllers
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
 			PropertyBag["ChTariff"] = phisCl.Tariff.Id;//Tariff.FindFirst().Id;
-			PropertyBag["ChStatus"] = phisCl.Status.Id;
+			if (phisCl.Status != null)
+				PropertyBag["ChStatus"] = phisCl.Status.Id;
+			else
+				PropertyBag["ChStatus"] = Status.FindFirst().Id;
 			if (phisCl.HasConnected != null)
 				PropertyBag["ChBrigad"] = phisCl.HasConnected.Id;
 			else

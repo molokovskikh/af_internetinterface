@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Web;
 using Castle.MonoRail.Framework;
+using Common.Models.Helpers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
@@ -106,7 +107,7 @@ FROM internet.NetworkSwitches NS").AddEntity(typeof(NetworkSwitches)).List<Netwo
 
 		public void OnLineClient(int Zone)
 		{
-			IList<object> clients = new List<object>();
+			IList<PhisicalClientConnectInfo> clients = new List<PhisicalClientConnectInfo>();
 			ARSesssionHelper<object>.QueryWithSession(session =>
 			{
 				var query =
@@ -130,7 +131,10 @@ left join internet.ClientEndpoints CE on L.Endpoint = CE.Id
 join internet.NetworkSwitches NS on NS.Id = CE.Switch
 left join internet.Clients C on CE.Client = C.Id
 left join internet.PackageSpeed PS on PS.PackageId = CE.PackageId
-where NS.Zone = {0}", Zone)).List<object>();
+where NS.Zone = {0}", Zone)).SetResultTransformer(
+									new AliasToPropertyTransformer(
+										typeof(PhisicalClientConnectInfo)))
+									.List<PhisicalClientConnectInfo>();
 				clients = query;
 				return query;
 				//return new List<Clients>();

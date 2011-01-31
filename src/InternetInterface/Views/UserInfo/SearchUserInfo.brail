@@ -78,24 +78,12 @@
         <tr>
             <td><span class="description">Баланс:</span> ${Client.Balance}</td>
         </tr>
-        <tr>
-        <%if (Client.HasConnected != null): %>
-            <td><span class="description">Назначен бригаде:</span> ${Client.HasConnected.Name}</td>
-            <%else: %>
-            <td><span class="description"></span> Подключение клиента не назначено</td>
-            <%end %>
-        </tr>
                 <tr>
         <%if Client.Status != null: %>
             <tr>
                 <td><span class="description">Статус клиента:</span> ${Client.Status.Name}</td>
             </tr>
         <%end %>
-        <%if (Client.Connected): %>
-            <td><span class="description">Статус подключения:</span> Подключен</td>
-            <%else: %>
-            <td><span class="description">Статус подключения:</span>Не подключен</td>
-            <%end %>
         </tr>
         <%end %>
         <%if PartnerAccessSet.AccesPartner("SSI"): %>
@@ -165,7 +153,7 @@
         </tr>
                 <tr>
           <td><span class="description">Скорость </span></td>
-          <td>${ConnectInfo.Speed}</td>
+          <td>${ConnectInfo.GetNormalSpeed()}</td>
         </tr>
          <tr>
           <td><span class="description">Мониторинг </span></td>
