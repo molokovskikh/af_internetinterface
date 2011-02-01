@@ -41,6 +41,7 @@ namespace InternetInterface.AllLogic
 				searchProperties.SearchText = searchText;
 				var sqlStr = string.Empty;
 				ISQLQuery query = null;
+				if (CategorieAccessSet.AccesPartner("SSI"))
 				if (!searchProperties.IsSearchAccount())
 				{
 					sqlStr = String.Format(@"SELECT * FROM internet.PhysicalClients P {0} ORDER BY P.Surname",
@@ -65,6 +66,20 @@ namespace InternetInterface.AllLogic
 					query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(PhisicalClients));
 					if (searchText != null)
 						query.SetParameter("SearchText", searchText.ToLower());
+				}
+				else
+				{
+					if (searchText != null)
+					sqlStr = string.Format(@"SELECT * FROM internet.PhysicalClients P 
+WHERE LOWER(P.Name) like {0} or LOWER(P.Surname) like {0} or LOWER(P.Patronymic) like {0} or LOWER(P.Id) like {0}
+ORDER BY P.Surname", ":SearchText");
+					else
+					{
+						sqlStr = @"SELECT * FROM internet.PhysicalClients P ORDER BY P.Surname";
+					}
+					query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(PhisicalClients));
+					if (searchText != null)
+						query.SetParameter("SearchText", "%" + searchText.ToLower() + "%");
 				}
 				result = query.List<PhisicalClients>();
 				return result;

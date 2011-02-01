@@ -10,7 +10,7 @@
        <%end %>
     <%end %>
           <input type="radio" id="OtherSummChange" name="ChangedBy.ChangeType" value="OtherSumm" ${"checked" if ChangeBy.IsOtherSumm()} />
-          <label for="Other_Balance">Внести сумму на счет: ${Client.HowManyToPay(true)}</label>
+          <label for="Other_Balance">Внести сумму на счет: </label>
           <input type="text" class="BalanceText" id="BalanceText"  name="BalanceText"  value="${BalanceText}" style="width: 50%; " />
           <br />
          <div class="errorjava">

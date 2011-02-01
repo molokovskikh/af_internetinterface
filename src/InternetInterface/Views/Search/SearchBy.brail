@@ -33,8 +33,8 @@
             <th>Тариф</th>
             <%if MapPartner.Categorie.ReductionName == "Office": %>
             <th>Баланс</th>
-            <%end %>
             <th>Статус</th>
+            <%end %>
         </tr>
     </thead>
     <tbody id="SearchResults">
@@ -63,11 +63,11 @@
             <%end %>
             <%if MapPartner.Categorie.ReductionName == "Office": %>
             <td>${item.Balance}</td>
-            <%end %>
             <%if item.Status != null: %>
             <td>${item.Status.Name}</td>
             <%else: %>
             <td>Статус не задан</td>
+            <%end %>
             <%end %>
         </tr>
     <% end %>        

@@ -23,11 +23,17 @@ overflow:hidden;
     font-size: 13.34px;
     font-weight: normal;
 }
+div.scroller 
+{
+    width:1390px;
+	overflow :scroll;
+}
 
     </style>
 </head>
 <body>
 <% OutputSubView("""\Subview\MapHead""") %>
+<div class="scroller"> 
 <div id="main" style="width:100%">
     <div id="container">
         <div id="block-tables" class="block">
@@ -56,7 +62,22 @@ overflow:hidden;
                 <td>${Client.ApplicantPhoneNumber}</td>
                 <td>${Client.ApplicantEmail}</td>
                 <td style="width:200px;">
-                    ${Client.City} ул. ${Client.Street} д. ${Client.House} корп. ${Client.CaseHouse} кв. ${Client.Apartment} подъезд ${Client.Entrance} этаж ${Client.Floor}
+                    ${Client.City} ул. ${Client.Street}
+                    <%if Client.House != null: %>
+                     д. ${Client.House} 
+                     <%end %>
+                     <%if Client.CaseHouse != null: %>
+                     корп. ${Client.CaseHouse} 
+                     <%end %>
+                     <%if Client.Apartment != null: %>
+                     кв. ${Client.Apartment} 
+                     <%end %>
+                     <%if Client.Entrance != null: %>
+                     подъезд ${Client.Entrance}
+                     <%end %>
+                     <%if Client.Floor != null: %>
+                     этаж ${Client.Floor}
+                     <%end %>
                 </td>
                 <td>${Client.Tariff.Name}</td>
                 <%if (Client.Label.Id !=0): %>
@@ -173,6 +194,7 @@ overflow:hidden;
              </div>
              </div>
              </div>
+            </div>
             </div>
             </div>
 </body>

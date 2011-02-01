@@ -25,20 +25,29 @@ function ShowMinPrice()
              + cost[$('#ChTariff').val()] + ' + ' + $('#ConnectSumm').val() + ' = '
             + (Number(cost[$('#ChTariff').val()]) + Number($('#ConnectSumm').val())) + '</div>');
 }
+
+function ChBalace()
+{
+    $('#BalanceText').val(Number(cost[$('#ChTariff').val()]) + Number($('#ConnectSumm').val()));
+}
+
     $(function () { 
     $('#ChTariff').change(function () {
     ShowMinPrice();
+    ChBalace();
         });
     });
 
         $(function () { 
     $('#ConnectSumm').keyup(function () {
     ShowMinPrice();
+    ChBalace();
         });
     });
 
     $(document).ready(function() {
     ShowMinPrice();
+    ChBalace();
     });
 
 $().ready(function() {

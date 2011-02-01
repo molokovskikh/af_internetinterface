@@ -14,7 +14,12 @@
             border : 2px solid;
             padding: 4px 4px 4px 4px;
         }
+        .wid
+        {
+            width:1390px;
+        }
     </style>
+<div class=wid>
 <table class="table" >
     <thead>
         <th style="padding:0px">
@@ -30,10 +35,6 @@
             </div>
             </th>
             <tr valign="top">
-                <th><a href="../Map/SiteMap.rails"><span class="MH">
-                <div class=menudiv>
-                Домой
-                </div></span></a></th>
                 <%if PartnerAccessSet.AccesPartner("RP"): %>
                <th>
                <a href = "../UserInfo/PartnersPreview.rails?catType=1" ><span class="MH"><div class=menudiv>Диллеры</div></span></a></th>
@@ -73,3 +74,4 @@
         </th>
     </thead>
 </table>
+</div>

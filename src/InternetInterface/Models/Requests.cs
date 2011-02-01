@@ -29,19 +29,29 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string House { get; set; }
 
+		/// <summary>
+		/// Корпус
+		/// </summary>
 		[Property]
 		public virtual string CaseHouse { get; set; }
 
+		/// <summary>
+		/// Квартира
+		/// </summary>
 		[Property]
 		public virtual string Apartment { get; set; }
 
+		/// <summary>
+		/// Подъезд
+		/// </summary>
 		[Property]
 		public virtual string Entrance { get; set; }
 
+		/// <summary>
+		/// Этаж
+		/// </summary>
 		[Property]
 		public virtual string Floor { get; set; }
-		/*[Property]
-		public virtual string ApplicantResidence { get; set; }*/
 
 		[Property]
 		public virtual bool SelfConnect { get; set; }
