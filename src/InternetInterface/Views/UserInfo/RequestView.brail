@@ -6,58 +6,98 @@
 <head>
     <title>Клиенты оставили заявки</title>
     <style type="text/css">
-#content {
-float:left;
-width:85%;
+        
+        
+#content 
+{
+width:75%;
+z-index:10;
+border-right:#ddd 1px solid;
+position:absolute;
 }
+
 #sidebar {
-float:left;
-width:200px;
+float:right;
+width:14%;
+z-index:9;
+position:relative;
+display:block;
 }
-#main_t {
-overflow:hidden;
+
+.body_cl
+{
+    font-family: Verdana, sans-serif;
+    color:#484848;
+    font-size:12px;
+    overflow:scroll;
 }
+
 .fontgit
 {
     font-family: Verdana;
-    font-size: 13.34px;
+    font-size: x-small;
     font-weight: normal;
 }
 div.scroller 
 {
-    width:1390px;
-	overflow :scroll;
+    width:1250;
 }
 
-    </style>
+.table_us
+{
+    margin-bottom : 15px;
+    border-collapse :collapse;
+    background-color:#fff;
+}
+
+.table_us TD
+{
+    padding-right:10px;
+    padding-top:10px;
+    padding-left:5px;
+    padding-bottom:0px;
+    font-size:x-small;
+    border-bottom:#aaa 1px solid;
+    border-top:#aaa 1px solid;
+}
+
+.table_us TH
+{
+    padding-right:2px;
+    padding-top:2px;
+    padding-left:2px;
+    padding-bottom:2px;
+    text-align:inherit;
+    font-weight:normal;
+    background:#576c82;
+    color:#fff;
+    font-weight:bold;
+}
+</style>
 </head>
-<body>
+<body class="body_cl">
+<div class=scroller>
+
 <% OutputSubView("""\Subview\MapHead""") %>
-<div class="scroller"> 
-<div id="main" style="width:100%">
-    <div id="container">
-        <div id="block-tables" class="block">
-        <div id="main_t">
-        
-        <div id="content">
-        <div id="cont"> 
+<div id="main" style="width:100%; float:none;">
+         <div id="content">
         <form id="SearchForm" name="SearchForm" method=post action="${siteroot}/UserInfo/RequestView">
             <% if (Clients.Length == 0):
             output WriteMessageError("Нет заявок на подключение")
             else: %>
-            <table class="table" id="clientTable">
+            <table class="table_us">
             <thead>
+                <th></th>
                 <th>Имя</th>
-                <th>Номер телефона</th>
+                <th>Телефон</th>
                 <th>Email</th>
                 <th>Адрес</th>
                 <th>Тариф</th>
                 <th><center>Метка</center></th>
                 <th><center>Дата действия</center></th>
-                <th></th>
             </thead>
             <% for i,Client in enumerate(Clients): %>
-            <tr>
+            <tr>  <td><input type="checkbox" id="Checkbox1" name="LabelList[${i}]" value=${Client.Id} /></td>
                 <td><a href="../Register/RegisterClient.rails?requestID=${Client.Id}"> ${Client.ApplicantName}</a></td>
                 <td>${Client.ApplicantPhoneNumber}</td>
                 <td>${Client.ApplicantEmail}</td>
@@ -90,7 +130,7 @@ div.scroller
                         </div>
                     </div>
                     </td>
-                    <%if Client.ActionDate != null: %>
+                    <%if Client.ActionDate.ToShortDateString() != "01.01.0001": %>
                     <td>
                         ${Client.ActionDate.ToShortDateString()}
                     </td>
@@ -98,17 +138,10 @@ div.scroller
                     <td>---------</td>
                     <%end %>
 
-                    <td>
-                    <div style=" height:25px;">
-                        <input type="checkbox" id="LabelDemandCheck${i}" name="LabelList[${i}]" value=${Client.Id} />
-                    </div>
-                    </td>
-
-
                 <%else: %>
                 <td style="width:180px;">
                 </td>
-                    <td><input type="checkbox" id="Checkbox1" name="LabelList[${i}]" value=${Client.Id} />
+                    <td>
                 <%end %>
                 </td>
                 <%i++ %>
@@ -116,12 +149,10 @@ div.scroller
             </tr>
             </table>
             <%end %>
-                    
-            </div>
-            </div>
-            <div id="sidebar" align="right">
+             </div>
 
-             <table class="table" style="width:170px;">
+             <div id="sidebar">
+             <table class="table_us" style="width:170px; font-size:10px;">
              <thead>
              <th colspan=2>Метки</th>
              </thead>
@@ -131,14 +162,14 @@ div.scroller
                     <% for i, Label in enumerate(Labels): %>
                     <tr>
                     <td style="width:100px;">
-                    <div class='flash' style="width:30px;  float:left;"> 
-                        <div class='message error' style=" width:30px; height:30px; background-color:${Label.Color}; border-color: ${Label.GetBorderColor()}" align="left">
+                     <div class='flash' style="width:20px;  float:left;"> 
+                        <div class='message error' style=" width:20px; height:20px; background-color:${Label.Color}; border-color: ${Label.GetBorderColor()}" align="left">
                         </div>
-                    </div>
+                     </div>
                     <div style="padding-left:35px;">
                       <a href="../UserInfo/RequestView.rails?labelId=${Label.Id}">${Label.Name}</a>
-                      </div>
-                      </td>
+                     </div>
+                     </td>
                     </tr>
                     <% end %>
                 <tr>
@@ -156,7 +187,7 @@ div.scroller
                 </table>
               </form>
                <form id="Form1" name="RequestViewForm" method=post action="${siteroot}/UserInfo/RequestView">
-              <table class="table" style="width:170px;" >
+              <table class="table_us" style="width:170px;" >
                 <thead>
                     <th>Создать метку</th>
                 </thead>
@@ -169,7 +200,7 @@ div.scroller
              </table>
              </form>
              <form id="Form2" name="RequestViewForm" method=post action="${siteroot}/UserInfo/DeleteLabel">
-              <table class="table" style="width:170px;" >
+              <table class="table_us" style="width:170px;" >
                 <thead>
                     <th>Удалить метку</th>
                 </thead>
@@ -180,22 +211,21 @@ div.scroller
                </table>
              </form>
              <form id="Form3" name="RequestViewForm" method=post action="${siteroot}/UserInfo/EditLabel">
-              <table class="table" style="width:150px;" >
+              <table class="table_us" style="width:170px;" >
                 <thead style="font-size:small;">
-                    <th>Редактировать метку</th>
+                    <th style="font-size:x-small;">Редактировать</th>
                 </thead>
                 <tbody>
                 <% OutputSubView("""\Subview\DeleteLabel""") %>
                 <% OutputSubView("""\Subview\CreateEditLabel""") %>
-                <tr><td><input id="Submit2" type="submit" value="Редактировать метку"  align="right" /></td></tr>
+                <tr><td><input id="Submit2" type="submit" value="Редактировать"  align="right" /></td></tr>
                 </tbody>
                </table>
              </form>
              </div>
+
+
              </div>
              </div>
-            </div>
-            </div>
-            </div>
 </body>
 </html>

@@ -16,7 +16,7 @@
         }
         .wid
         {
-            width:1390px;
+            width:100%;
         }
     </style>
 <div class=wid>

@@ -9,6 +9,7 @@ using System.Web.Security;
 using System.Web.SessionState;
 using Castle.ActiveRecord;
 using System.Reflection;
+using Castle.ActiveRecord.Framework;
 using Castle.ActiveRecord.Framework.Config;
 using Castle.MonoRail.Framework;
 using Castle.MonoRail.Framework.Configuration;
@@ -27,7 +28,7 @@ namespace InternetInterface
 
 		void Application_Start(object sender, EventArgs e)
 		{
-			XmlConfigurator.Configure();
+			//XmlConfigurator.Configure();
 			// Code that runs on application startup
 			ActiveRecordStarter.Initialize(
 					Assembly.Load("InternetInterface")
