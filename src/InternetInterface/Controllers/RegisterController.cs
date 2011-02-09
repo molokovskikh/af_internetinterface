@@ -18,8 +18,6 @@ namespace InternetInterface.Controllers
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class RegisterController : SmartDispatcherController
 	{
-		//private static bool EditValidFlag;
-
 		[AccessibleThrough(Verb.Post)]
 		public void RegisterClient([DataBind("ChangedBy")]ChangeBalaceProperties changeProperties,
 			[DataBind("client")]PhisicalClients user, string balanceText, uint tariff, uint status, uint BrigadForConnect,
@@ -40,17 +38,15 @@ namespace InternetInterface.Controllers
 			}
 			var Password = CryptoPass.GeneratePassword();
 			user.Password = Password;
-			//user.Login = LoginCreatorHelper.GetUniqueEnLogin(user.Surname);
 			if (!CategorieAccessSet.AccesPartner("SSI"))
 			{
 				connectSumm.Summ = 700.ToString();
-				//user.Status = Status.Find((uint) 1);
 				status = 1;
 			}
-			/*if (!CategorieAccessSet.AccesPartner("DHCP"))
+			if (!CategorieAccessSet.AccesPartner("DHCP"))
 			{
 				ConnectInfo.Port = null;
-			}*/
+			}
 			var unPort = false;
 			var validPortSwitch = true;
 			try
@@ -63,8 +59,6 @@ namespace InternetInterface.Controllers
 				{ validPortSwitch = false; }
 				if ((Convert.ToInt32(ConnectInfo.Port) > 48) || (Convert.ToInt32(ConnectInfo.Port) < 1))
 					throw new BaseUsersException("Невалидное значения порта (1-48)");
-				/*if (BrigadForConnect == 0)
-					throw new BaseUsersException("Не выбрана бригада");*/
 				if (ConnectInfo.Switch == 0.ToString())
 					throw new BaseUsersException("Не выбран свич");
 			}
@@ -81,8 +75,6 @@ namespace InternetInterface.Controllers
 					 (unPort))
 					|| string.IsNullOrEmpty(ConnectInfo.Port)))
 			{
-				/*user.Tariff = Tariff.Find(tariff);
-				user.HasRegistered = InithializeContent.partner;*/
 				if (!string.IsNullOrEmpty(ConnectInfo.Port) && CategorieAccessSet.AccesPartner("DHCP"))
 				{
 					var client = new Clients
@@ -114,7 +106,6 @@ namespace InternetInterface.Controllers
 				{
 					requestse.DeleteAndFlush();
 				}
-				//Requests.Find(requestID).DeleteAndFlush();
 				if (InithializeContent.partner.Categorie.ReductionName == "Office")
 					RedirectToUrl("..//UserInfo/ClientRegisteredInfo.rails");
 				if (InithializeContent.partner.Categorie.ReductionName == "Diller")
@@ -146,15 +137,7 @@ namespace InternetInterface.Controllers
 		public void RegisterPartner([DataBind("Partner")]Partner partner)
 		{
 			string Pass = CryptoPass.GeneratePassword();
-			/*var rights =
-				ActiveRecordBase<AccessCategories>.FindAll().Select(r => r.Id).ToList();*/
-			/*var rights = new List<int>
-			             	{
-			             		(int)AccessCategoriesType.GetClientInfo,
-								(int)AccessCategoriesType.ChangeBalance,
-								(int)AccessCategoriesType.RegisterClient
-			             	};*/
-			if (Partner.RegistrLogicPartner(partner,/* rights,*/ Validator))
+			if (Partner.RegistrLogicPartner(partner, Validator))
 			{
 #if !DEBUG
 				ActiveDirectoryHelper.CreateUserInAD(partner.Login, Pass);
@@ -167,7 +150,6 @@ namespace InternetInterface.Controllers
 			{
 				partner.SetValidationErrors(Validator.GetErrorSummary(partner));
 				PropertyBag["Partner"] = partner;
-				//PropertyBag["ChRights"] = rights;
 				PropertyBag["catType"] = partner.Categorie.Id;
 				PropertyBag["Editing"] = false;
 				PropertyBag["VB"] = new ValidBuilderHelper<Partner>(partner);
@@ -249,11 +231,9 @@ namespace InternetInterface.Controllers
 					edit = true;
 				}
 			}
-			//var PID = Partner.FindAllByProperty("Login", partner.Login)[0].Id;)
 			if (Validator.IsValid(partner) || edit)
 			{
 				BindObjectInstance(part, ParamStore.Form, "Partner");
-				//partner.Categorie = UserCategorie.Find((uint) catType);
 				part.UpdateAndFlush();
 				Flash["EditiongMessage"] = "Изменения внесены успешно";
 				RedirectToUrl("../Register/RegisterPartner?PartnerKey=" + part.Id + "&catType=" + part.Categorie.Id);
@@ -284,10 +264,6 @@ namespace InternetInterface.Controllers
 
 		public void RegisterPartnerSendParam(int PartnerKey)
 		{
-			/*PropertyBag["Rights"] =
-	ActiveRecordBase<AccessCategories>.FindAll(
-		DetachedCriteria.For<AccessCategories>().Add(Expression.Sql("ReduceName <> 'RP'")));
-			//PropertyBag["ChRights"] = GetPartnerAccess(PartnerKey);*/
 			PropertyBag["VB"] = new ValidBuilderHelper<Partner>(new Partner());
 			PropertyBag["Applying"] = "false";
 			PropertyBag["Editing"] = true;
@@ -310,18 +286,14 @@ namespace InternetInterface.Controllers
 
 		public void RegisterPartner(int catType)
 		{
-			/*PropertyBag["Rights"] =
-				ActiveRecordBase<AccessCategories>.FindAll(DetachedCriteria.For<AccessCategories>().Add(Expression.Sql("ReduceName <> 'RP'")));*/
 			PropertyBag["Partner"] = new Partner
 			                         	{
 			                         		Categorie =  new UserCategorie()
 			                         	};
 			PropertyBag["catType"] = catType;
-			//PropertyBag["ChRights"] = new List<int>();
 			PropertyBag["VB"] = new ValidBuilderHelper<Partner>(new Partner());
 			PropertyBag["Editing"] = false;
 			PropertyBag["catType"] = catType;
-			//RedirectToUrl("../Register/RegisterPartner.rails");
 		}
 	}
 

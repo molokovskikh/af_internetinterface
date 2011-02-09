@@ -13,25 +13,6 @@ namespace InternetInterface.AllLogic
 {
 	public class GetClientsLogic
 	{
-		/*public static IList<PhisicalClients> GetClientsForCloseDemand()
-		{
-			IList<PhisicalClients> _result = new List<PhisicalClients>();
-			ARSesssionHelper<PhisicalClients>.QueryWithSession(session =>
-			{
-				var result = RequestsConnection.FindAll(DetachedCriteria.For(typeof(RequestsConnection))
-															.CreateAlias("BrigadNumber", "BR", JoinType.InnerJoin)
-															.CreateAlias("ClientID", "PC", JoinType.InnerJoin)
-															.Add(Expression.Eq("BR.PartnerID", InithializeContent.partner))
-															.Add(Expression.Eq("PC.Connected", false))).ToList();
-				var PcList = result.Select(requestsConnection => requestsConnection.ClientID).ToList();
-				_result = PcList;
-				return PcList;
-			});
-			return _result;
-		}
-		*/
-
-
 		public static IList<PhisicalClients> GetClients(UserSearchProperties searchProperties,
 			ConnectedTypeProperties connectedType, uint tariff, uint whoregister, string searchText, uint brigad)
 		{

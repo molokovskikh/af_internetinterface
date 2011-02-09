@@ -168,7 +168,6 @@ namespace InternetInterface.Controllers
 			if (labelForDel != null)
 			{
 				labelForDel.DeleteAndFlush();
-				//File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\images\\Label" + deletelabelch + ".jpg");
 				ARSesssionHelper<Label>.QueryWithSession(session =>
 				                                         	{
 				                                         		var query =
@@ -189,7 +188,7 @@ namespace InternetInterface.Controllers
 
 		public void RequestView()
 		{
-			PropertyBag["Clients"] = Requests.FindAll();
+			PropertyBag["Clients"] = Requests.FindAll().OrderByDescending(f => f.ActionDate).ToArray();
 			SendRequestEditParameter();
 		}
 
@@ -216,7 +215,7 @@ namespace InternetInterface.Controllers
 		public void RequestView(uint labelId)
 		{
 			PropertyBag["Clients"] = Requests.FindAll(DetachedCriteria.For(typeof(Requests))
-				.Add(Expression.Eq("Label.Id", labelId)));
+				.Add(Expression.Eq("Label.Id", labelId))).OrderByDescending(f => f.ActionDate).ToArray();
 			SendRequestEditParameter();
 		}
 
@@ -236,13 +235,12 @@ namespace InternetInterface.Controllers
 				request.Operator = InithializeContent.partner;
 				request.UpdateAndFlush();
 			}
-			PropertyBag["Clients"] = Requests.FindAll();
+			PropertyBag["Clients"] = Requests.FindAll().OrderByDescending(f => f.ActionDate).ToArray();;
 			SendRequestEditParameter();
 		}
 
 		public void InforoomUsersPreview()
 		{
-			//PropertyBag["Inforooms"] = InforoomUser.FindAllSort();
 		}
 
 		[AccessibleThrough(Verb.Post)]
@@ -339,7 +337,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["BalanceText"] = string.Empty;
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
-			PropertyBag["ChTariff"] = phisCl.Tariff.Id;//Tariff.FindFirst().Id;
+			PropertyBag["ChTariff"] = phisCl.Tariff.Id;
 			if (phisCl.Status != null)
 				PropertyBag["ChStatus"] = phisCl.Status.Id;
 			else

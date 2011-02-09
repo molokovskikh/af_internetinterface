@@ -62,8 +62,6 @@ namespace InternetInterface.Controllers
 			PropertyBag["FindBy"] = searchProperties;
 			PropertyBag["ConnectBy"] = connectedType;
 
-			//PropertyBag["CloseDemand"] = closeDemand;
-
 			Flash["Brigads"] = Brigad.FindAllSort();
 		}
 
@@ -82,7 +80,6 @@ namespace InternetInterface.Controllers
 			PropertyBag["ConnectBy"] = connectProperties;
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
 			PropertyBag["Connected"] = false;
-			//PropertyBag["CloseDemand"] = closeDemand;
 			if (sClients != null)
 			{
 				Flash["SClients"] = sClients;

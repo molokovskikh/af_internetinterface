@@ -75,8 +75,6 @@ FROM internet.NetworkSwitches NS").AddEntity(typeof(NetworkSwitches)).List<Netwo
 				BindObjectInstance(edSwitch, ParamStore.Form, "Switch");
 				edSwitch.Zone = Zone.Find(Zoned);
 				edSwitch.IP = NetworkSwitches.SetProgramIp(Switch.IP);
-				//edSwitch.Name = Switch.Name;
-				//edSwitch.Mac = Switch.Mac;
 				edSwitch.UpdateAndFlush();
 				RedirectToUrl("../Switches/ShowSwitches.rails");
 			}
@@ -92,12 +90,10 @@ FROM internet.NetworkSwitches NS").AddEntity(typeof(NetworkSwitches)).List<Netwo
 		{
 			Switch.SetValidationErrors(Validator.GetErrorSummary(Switch));
 			Switch.Zone = Zone.Find(Zoned);
-			//Switch.IP = NetworkSwitches.SetProgramIp(Switch.IP);
 			Switch.Id = switchid;
 			Flash["VB"] = new ValidBuilderHelper<NetworkSwitches>(Switch);
 			Flash["Switch"] = Switch;
 			Flash["Zones"] = Zone.FindAllSort();
-			//Flash["switchid"] = switchid;
 		}
 
 		public void GoZone(int Zone)
@@ -137,7 +133,6 @@ where NS.Zone = {0}", Zone)).SetResultTransformer(
 									.List<PhisicalClientConnectInfo>();
 				clients = query;
 				return query;
-				//return new List<Clients>();
 			});
 			PropertyBag["OnLineClients"] = clients;
 			PropertyBag["Zones"] = Models.Zone.FindAllSort();

@@ -145,9 +145,9 @@ div.scroller
              </div>
 
              <div id="sidebar">
-             <table class="table_us" style="width:170px; font-size:10px;">
+             <table class="table_us" style="width:170px; font-size:16px;">
              <thead>
-             <th colspan=2>Метки</th>
+             <th colspan=2 style="font-size=16px;">Метки</th>
              </thead>
              <tbody>
              <tr><td colspan=2><a href="../UserInfo/RequestView.rails">Все</a></td></tr>

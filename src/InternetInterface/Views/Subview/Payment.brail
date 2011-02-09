@@ -6,10 +6,10 @@
        <%if UserInfo: %>
           <input type="radio" id="ForTariffChange" name="ChangedBy.ChangeType" value="ForTariff" ${"checked" if ChangeBy.IsForTariff()} />
           <label for="Autosearch">Внести сумму по тарифному плану (${Client.Tariff.Price} рублей) </label><br />
-       <%end %>
+          <input type="radio" id="OtherSummChange" name="ChangedBy.ChangeType" value="OtherSumm" ${"checked" if ChangeBy.IsOtherSumm()} />
+                 <%end %>
        <%end %>
     <%end %>
-          <input type="radio" id="OtherSummChange" name="ChangedBy.ChangeType" value="OtherSumm" ${"checked" if ChangeBy.IsOtherSumm()} />
           <label for="Other_Balance">Внести сумму на счет: </label>
           <input type="text" class="BalanceText" id="BalanceText"  name="BalanceText"  value="${BalanceText}" style="width: 50%; " />
           <br />
