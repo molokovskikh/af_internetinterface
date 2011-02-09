@@ -28,7 +28,7 @@ namespace InternetInterface
 
 		void Application_Start(object sender, EventArgs e)
 		{
-			//XmlConfigurator.Configure();
+			XmlConfigurator.Configure();
 			// Code that runs on application startup
 			ActiveRecordStarter.Initialize(
 					Assembly.Load("InternetInterface")
