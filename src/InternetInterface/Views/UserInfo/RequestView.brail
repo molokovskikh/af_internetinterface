@@ -24,14 +24,6 @@ position:relative;
 display:block;
 }
 
-.body_cl
-{
-    font-family: Verdana, sans-serif;
-    color:#484848;
-    font-size:12px;
-    overflow:scroll;
-}
-
 .fontgit
 {
     font-family: Verdana;
@@ -76,9 +68,10 @@ div.scroller
 </style>
 </head>
 <body class="body_cl">
+<% OutputSubView("""\Subview\MapHead""") %>
 <div class=scroller>
 
-<% OutputSubView("""\Subview\MapHead""") %>
+
 <div id="main" style="width:100%; float:none;">
          <div id="content">
         <form id="SearchForm" name="SearchForm" method=post action="${siteroot}/UserInfo/RequestView">
@@ -157,23 +150,21 @@ div.scroller
              <th colspan=2>Метки</th>
              </thead>
              <tbody>
-             <tr><td><a href="../UserInfo/RequestView.rails">Все</a></td></tr>
-             <tr><td><a href="../UserInfo/RequestView.rails?labelId=0">Нет</a></td></tr>
+             <tr><td colspan=2><a href="../UserInfo/RequestView.rails">Все</a></td></tr>
+             <tr><td colspan=2><a href="../UserInfo/RequestView.rails?labelId=0">Нет</a></td></tr>
                     <% for i, Label in enumerate(Labels): %>
                     <tr>
-                    <td style="width:100px;">
-                     <div class='flash' style="width:20px;  float:left;"> 
-                        <div class='message error' style=" width:20px; height:20px; background-color:${Label.Color}; border-color: ${Label.GetBorderColor()}" align="left">
-                        </div>
+                    <td style="width:20px;">
+                        <div class='message error' style=" width:20px; height:20px; background-color:${Label.Color}; border: 1px solid; border-color: ${Label.GetBorderColor()}; " align="left">
                      </div>
-                    <div style="padding-left:35px;">
+                     </td>
+                     <td>
                       <a href="../UserInfo/RequestView.rails?labelId=${Label.Id}">${Label.Name}</a>
-                     </div>
                      </td>
                     </tr>
                     <% end %>
                 <tr>
-                    <td>
+                    <td colspan=2>
                              <select name="labelch" id="labelch" style="width: 100%" >
                              <option id="Option2" value = 0 style="background-color: White"> Нет </option>
                              <% for i, Label in enumerate(Labels): %>
@@ -182,7 +173,11 @@ div.scroller
                              
                     </td>
                 </tr>
-                <tr><td><input  name="SetlabelButton"  id="SetlabelButton" type="submit" value="Установить метки"  align="right" /></td></tr>
+                <tr>
+                    <td colspan=2>
+                    <input  name="SetlabelButton"  id="SetlabelButton" type="submit" value="Установить метки"  align="right" />
+                    </td>
+                 </tr>
                 </tbody>
                 </table>
               </form>
