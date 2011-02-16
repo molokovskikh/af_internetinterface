@@ -62,13 +62,15 @@ namespace InternetInterface.Helpers
 				}
 				var unique = false;
 				var rnd = new Random();
+				var indexing = 2;
 				while (!unique)
 				{
-					RULogin += rnd.Next(10);
+					RULogin += rnd.Next(indexing);
 					if (PhisicalClients.FindAllByProperty("Login", RULogin).Length == 0)
 					{
 						unique = true;
 					}
+					indexing++;
 				}
 				return RULogin;
 			}

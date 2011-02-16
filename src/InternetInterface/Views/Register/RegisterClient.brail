@@ -28,6 +28,7 @@ function ShowMinPrice()
 
 function ChBalace()
 {
+    if (!("${PartnerAccessSet.AccesPartner("SSI")}" == "True"))
     $('#BalanceText').val(Number(cost[$('#ChTariff').val()]) + Number($('#ConnectSumm').val()));
 }
 
@@ -59,6 +60,8 @@ $().ready(function() {
 
 $(function() {
     	$.validator.addMethod("BalanceText", function(value, element) {
+            if ("${PartnerAccessSet.AccesPartner("SSI")}" == "True")
+            { return true; }
             if (value.toString().length > 0) {
                 res = (value >= (Number(cost[$('#ChTariff').val()]) + Number($('#ConnectSumm').val())));
                 return res;
@@ -149,6 +152,14 @@ $(function() {
                                    <% end %>
                             </select></td>
                             <td></td>
+                            </tr>
+                            <%end %>
+                             <%if  PartnerAccessSet.AccesPartner("SSI"):%>
+                            <tr>
+                                <td colspan=2>
+                                <label for="VisibleRegisteredInfo">Показывать наряд на подключение  </label>
+                                                                    <input type="checkbox" id="VisibleRegisteredInfo" name="VisibleRegisteredInfo" value=true />
+                                </td>
                             </tr>
                             <%end %>
                             <tr>

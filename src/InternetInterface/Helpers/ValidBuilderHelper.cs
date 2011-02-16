@@ -12,7 +12,7 @@ namespace InternetInterface.Helpers
 
 		public string GetBlock(string blockName)
 		{
-			if (_validClient.GetErrorText(blockName)!="")
+			if (!string.IsNullOrEmpty(_validClient.GetErrorText(blockName)))
 			{
 				return "<div class=\"flash\"> \r\n" +
 				       "<div class=\"message error\"> \r\n" +

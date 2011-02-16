@@ -22,7 +22,7 @@ namespace InternetInterface.Controllers
 		public void RegisterClient([DataBind("ChangedBy")]ChangeBalaceProperties changeProperties,
 			[DataBind("client")]PhisicalClients user, string balanceText, uint tariff, uint status, uint BrigadForConnect,
 			[DataBind("ConnectSumm")]PaymentForConnect connectSumm
-			 , [DataBind("ConnectInfo")]PhisicalClientConnectInfo ConnectInfo,
+			 , [DataBind("ConnectInfo")]PhisicalClientConnectInfo ConnectInfo, bool VisibleRegisteredInfo,
 			uint requestID)
 		{
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
@@ -56,7 +56,9 @@ namespace InternetInterface.Controllers
 				unPort = Point.isUnique(Switch.First(),
 			                            Convert.ToInt32(ConnectInfo.Port));
 				else
-				{ validPortSwitch = false; }
+				{
+					validPortSwitch = false;
+				}
 				if ((Convert.ToInt32(ConnectInfo.Port) > 48) || (Convert.ToInt32(ConnectInfo.Port) < 1))
 					throw new BaseUsersException("Невалидное значения порта (1-48)");
 				if (ConnectInfo.Switch == 0.ToString())
@@ -70,10 +72,17 @@ namespace InternetInterface.Controllers
 					validPortSwitch = false;
 				}
 			}
-			if ((PhisicalClients.RegistrLogicClient(user, tariff, status, Validator, InithializeContent.partner, connectSumm) && validPortSwitch) &&
+			catch( Exception ex)
+			{
+				PropertyBag["PortError"] = "Ошибка ввода номера порта";
+				validPortSwitch = false;
+			}
+			var registerClient = PhisicalClients.RegistrLogicClient(user, tariff, status, Validator, InithializeContent.partner, connectSumm);
+			/*if (registerClient && validPortSwitch) &&
 				((!string.IsNullOrEmpty(ConnectInfo.Port) &&
 					 (unPort))
-					|| string.IsNullOrEmpty(ConnectInfo.Port)))
+					|| string.IsNullOrEmpty(ConnectInfo.Port)))*/
+			if ((registerClient && validPortSwitch && unPort) || (registerClient && string.IsNullOrEmpty(ConnectInfo.Port)))
 			{
 				if (!string.IsNullOrEmpty(ConnectInfo.Port) && CategorieAccessSet.AccesPartner("DHCP"))
 				{
@@ -107,7 +116,12 @@ namespace InternetInterface.Controllers
 					requestse.DeleteAndFlush();
 				}
 				if (InithializeContent.partner.Categorie.ReductionName == "Office")
+					if (VisibleRegisteredInfo)
 					RedirectToUrl("..//UserInfo/ClientRegisteredInfo.rails");
+					else
+					{
+						RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + user.Id);
+					}
 				if (InithializeContent.partner.Categorie.ReductionName == "Diller")
 					RedirectToUrl("..//UserInfo/ClientRegisteredInfoFromDiller.rails");
 			}
@@ -115,7 +129,8 @@ namespace InternetInterface.Controllers
 			{
 				PropertyBag["Client"] = user;
 				PropertyBag["BalanceText"] = balanceText;
-				Flash["ConnectSumm"] = connectSumm;
+				connectSumm.ManagerID = InithializeContent.partner;
+				PropertyBag["ConnectSumm"] = connectSumm;
 				PropertyBag["Applying"] = "false";
 				if (!unPort && validPortSwitch)
 					PropertyBag["PortError"] = @"Такая пара порт\свич уже существует";
@@ -206,7 +221,8 @@ namespace InternetInterface.Controllers
 			PropertyBag["NS"] = new ValidBuilderHelper<PaymentForConnect>(new PaymentForConnect());
 			PropertyBag["ConnectSumm"] = new PaymentForConnect
 			                             	{
-			                             		Summ = 700.ToString()
+			                             		Summ = 700.ToString(),
+												ManagerID = InithializeContent.partner
 			                             	};
 			PropertyBag["Applying"] = "false";
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties { ChangeType = TypeChangeBalance.OtherSumm };

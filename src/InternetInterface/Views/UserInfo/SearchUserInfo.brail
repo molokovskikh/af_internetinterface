@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="../Styles/base.css" type="text/css" media="screen" />
 <!-- <link href="../Styles/base.css" type="text/css" rel="stylesheet" /> --->
 <% OutputSubView("""\Subview\MapHead""") %>
-<div id="main" style="width: 50%;">
+<div id="main" style="width: 65%;">
 <div id="container">
 <div id="block-tables" class="block">
 <div class="content">
@@ -307,16 +307,23 @@
                   <img alt="Save" src="../Images/tick.png"> Пополнить баланс
                 </button>
             </td>
+                </form>
+            <%if PartnerAccessSet.AccesPartner("SSI"): %>
+            <td style="font-size:small;">
+            <form class="form login" method="post" action="${siteroot}/UserInfo/PassAndShowCard">
+                <input type="hidden" name="ClientID" value="${ClientCode}" />
+                   <button type="submit" id="Button1" class="button">
+                  <img alt="Save" src="../Images/tick.png">Изменить пароль и показать карту</button>
+                </form>
+            </td>
+            <%end %>
         </tr>
         </tbody>
     </table>
-    </form>
+
 </div>
 <div>
-<form class="form login" method="post" action="${siteroot}/UserInfo/PassAndShowCard">
-    <input type="hidden" name="ClientID" value="${ClientCode}" />
 
-</form>
 </div>
 </div>
 <%end %>

@@ -131,6 +131,22 @@ namespace InternetInterface.Controllers
 
 		}
 
+		public void PassAndShowCard(uint ClientID)
+		{
+			if (CategorieAccessSet.AccesPartner("SSI"))
+			{
+				var client = PhisicalClients.Find(ClientID);
+				var Password = CryptoPass.GeneratePassword();
+				client.Password = CryptoPass.GetHashString(Password);
+				client.UpdateAndFlush();
+				var connectSumm = PaymentForConnect.FindAllByProperty("ClientId", client).First();
+				Flash["Password"] = Password;
+				Flash["Client"] = client;
+				Flash["ConnectSumm"] = connectSumm;
+				RedirectToUrl("..//UserInfo/ClientRegisteredInfo.rails");
+			}
+		}
+
 		public void LoadEditConnectMudule(uint ClientID)
 		{
 			Flash["EditingConnect"] = true;

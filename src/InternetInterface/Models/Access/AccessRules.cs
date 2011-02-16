@@ -173,7 +173,8 @@ namespace InternetInterface.Models.Access
 			_visibleDemand = new HashSet<string>
 			                 	{
 									"ClientRegisteredInfo",
-									"ShowBrigad"
+									"ShowBrigad",
+									"PassAndShowCard"
 			                 	};
 			return _visibleDemand.Contains(methodName) ? "SSI" : string.Empty;
 		}
