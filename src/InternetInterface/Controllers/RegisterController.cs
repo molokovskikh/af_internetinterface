@@ -89,7 +89,7 @@ namespace InternetInterface.Controllers
 					var client = new Clients
 					             	{
 					             		Name = string.Format("{0} {1} {2}", user.Surname, user.Name, user.Patronymic),
-					             		PhisicalClient = user.Id,
+					             		PhisicalClient = user,
 					             		Type = ClientType.Phisical
 					             	};
 					client.SaveAndFlush();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Castle.ActiveRecord;
+using Castle.ActiveRecord.Framework;
 using Castle.ActiveRecord.Linq;
 using InternetInterface.Controllers.Filter;
 using NHibernate.Criterion;

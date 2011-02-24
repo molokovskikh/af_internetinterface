@@ -585,6 +585,18 @@
             
             </summary>
         </member>
+        <member name="T:Castle.MicroKernel.Facilities.OnCreate.OnCreateFacility">
+            <summary>
+            This facility allows modification on objects after they are created
+            </summary>
+        </member>
+        <member name="M:Castle.MicroKernel.Facilities.OnCreate.OnCreateFacility.HandleComponentCreated(Castle.Core.ComponentModel,System.Object)">
+            <summary>
+            Handles the ComponentCreated event and invoke the delegate stored in ExtendedProperties of <see cref="T:Castle.Core.ComponentModel"/>
+            </summary>
+            <param name="model"></param>
+            <param name="instance"></param>
+        </member>
         <member name="T:Castle.Facilities.Remoting.RemoteActivator">
             <summary>
             Activates a object connecting to the remote server.
@@ -1784,6 +1796,12 @@
             <param name="createOnDemand">true if the options should be created if not present.</param>
             <returns>The associated proxy options for the component model.</returns>
         </member>
+        <member name="T:Castle.MicroKernel.Registration.Facilities.OnCreateComponentDescriptor`1">
+            <summary>
+            Adds the actions to ExtendedProperties.
+            </summary>
+            <typeparam name="S"></typeparam>
+        </member>
         <member name="M:Castle.MicroKernel.Registration.Lifestyle.LifestyleGroup`1.Is(Castle.Core.LifestyleType)">
             <summary>
             Sets the lifestyle to the specified <paramref name="type"/>.
@@ -2605,6 +2623,15 @@
             <param name="stopMethod">The stop method.</param>
             <returns></returns>
             <remarks>Be sure that you first added the <see cref="T:Castle.Facilities.Startable.StartableFacility"/> 
+            to the kernel, before registering this component.</remarks>
+        </member>
+        <member name="M:Castle.MicroKernel.Registration.ComponentRegistration`1.OnCreate(Castle.MicroKernel.Facilities.OnCreate.OnCreateActionDelegate{`0}[])">
+            <summary>
+            Stores a set of <see cref="T:Castle.MicroKernel.Facilities.OnCreate.OnCreateActionDelegate`1"/> which will be invoked when the component
+            is created
+            </summary>
+            <param name="actions">A setof actions</param>
+            <remarks>Be sure that you first added the <see cref="T:Castle.MicroKernel.Facilities.OnCreate.OnCreateFacility"/> 
             to the kernel, before registering this component.</remarks>
         </member>
         <member name="M:Castle.MicroKernel.Registration.ComponentRegistration`1.ActAs(System.Object[])">

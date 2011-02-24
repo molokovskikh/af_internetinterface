@@ -39,7 +39,7 @@ namespace InternetInterface.Controllers
 			if (phisCl.HasConnected != null)
 				brigadChangeFlag = false;
 			var clientEntPoint = new ClientEndpoints();
-			var clients = Clients.FindAllByProperty("PhisicalClient", ClientID);
+			var clients = Clients.FindAllByProperty("PhisicalClient", phisCl);
 			if (clients.Length != 0)
 			{
 				var clientsEndPoint = ClientEndpoints.FindAllByProperty("Client", clients[0]);
@@ -81,7 +81,7 @@ namespace InternetInterface.Controllers
 								var client = new Clients
 								             	{
 								             		Name = string.Format("{0} {1} {2}", phisCl.Surname, phisCl.Name, phisCl.Patronymic),
-								             		PhisicalClient = phisCl.Id,
+								             		PhisicalClient = phisCl,
 								             		Type = ClientType.Phisical
 								             	};
 								client.SaveAndFlush();
@@ -298,7 +298,7 @@ namespace InternetInterface.Controllers
 			if (Validator.IsValid(updateClient) && statusCanChanged)
 			{
 				updateClient.UpdateAndFlush();
-				var clients = Clients.FindAllByProperty("PhisicalClient", ClientID);
+				var clients = Clients.FindAllByProperty("PhisicalClient", updateClient);
 				if (clients.Length != 0)
 				{
 					if (updateClient.Status.Blocked)
@@ -344,7 +344,7 @@ namespace InternetInterface.Controllers
 			}
 		}
 
-		private void SendParam(uint ClientCode)
+		private void SendParam(UInt32 ClientCode)
 		{
 			var phisCl = PhisicalClients.Find(ClientCode);
 			PropertyBag["ConnectInfo"] = phisCl.GetConnectInfo();

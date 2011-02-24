@@ -1,4 +1,5 @@
-﻿using Castle.ActiveRecord;
+﻿using System;
+using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
 
 namespace InternetInterface.Models
@@ -24,8 +25,26 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual ClientType Type { get; set; }
 
+		[BelongsTo("PhisicalClient", Lazy = FetchWhen.OnInvoke)]
+		public virtual PhisicalClients PhisicalClient { get; set; }
+
 		[Property]
-		public virtual uint PhisicalClient { get; set; }
+		public virtual DateTime RatedPeriodDate { get; set; }
+
+		/*[Property]
+		public virtual DateTime PreRatedPeriodDate { get; set; }*/
+
+		[Property]
+		public virtual int DebtDays { get; set; }
+
+		[Property]
+		public virtual bool FirstLease { get; set; }
+
+
+		public virtual decimal GetInterval()
+		{
+			return (RatedPeriodDate.AddMonths(1) - RatedPeriodDate).Days + DebtDays;
+		}
 
 	}
 }

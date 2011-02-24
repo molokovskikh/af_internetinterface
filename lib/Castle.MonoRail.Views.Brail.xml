@@ -4,11 +4,6 @@
         <name>Castle.MonoRail.Views.Brail</name>
     </assembly>
     <members>
-        <member name="T:Castle.MonoRail.Views.Brail.Macros.ComponentNaming">
-            <summary>
-            we need to have a unique name, because of MR 371, nested components should not use the same name.
-            </summary>
-        </member>
         <member name="F:Castle.MonoRail.Views.Brail.BooViewEngine.compilations">
             <summary>
             This field holds all the cache of all the 
@@ -426,6 +421,11 @@
             </summary>
             <param name="dict"></param>
             <returns>The original hashtable, with all the IgnoreNull values stripped to their targets</returns>
+        </member>
+        <member name="T:Castle.MonoRail.Views.Brail.Macros.ComponentNaming">
+            <summary>
+            we need to have a unique name, because of MR 371, nested components should not use the same name.
+            </summary>
         </member>
         <member name="T:Castle.MonoRail.Views.Brail.ReplaceUknownWithParameters">
             <summary>

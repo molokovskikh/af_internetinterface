@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using Castle.ActiveRecord;
+using Castle.ActiveRecord.Framework;
 using Castle.ActiveRecord.Linq;
 
 namespace InternetInterface.Models

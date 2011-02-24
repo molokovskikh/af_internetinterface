@@ -31,9 +31,8 @@ namespace InternetInterface
 			XmlConfigurator.Configure();
 			// Code that runs on application startup
 			ActiveRecordStarter.Initialize(
-					Assembly.Load("InternetInterface")
-	,
-	ActiveRecordSectionHandler.Instance);
+					Assembly.Load("InternetInterface"),
+					ActiveRecordSectionHandler.Instance);
 
 			RoutingModuleEx.Engine.Add(new PatternRoute("/")
 	.DefaultForController().Is("Login")

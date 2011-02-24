@@ -132,6 +132,9 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual DateTime ConnectedDate { get; set; }
 
+		[Property]
+		public virtual bool AutoUnblocked { get; set; }
+
 		public virtual bool IsConnected()
 		{
 			return this.Connected;
@@ -175,7 +178,7 @@ namespace InternetInterface.Models
 		{
 			if (Connected)
 			{
-				var client = Clients.FindAllByProperty("PhisicalClient", (uint)Id);
+				var client = Clients.FindAllByProperty("PhisicalClient", this);
 				if (client.Length != 0)
 				{
 					IList<PhisicalClientConnectInfo> ConnectInfo = new List<PhisicalClientConnectInfo>();

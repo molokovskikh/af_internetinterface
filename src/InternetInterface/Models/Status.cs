@@ -5,7 +5,7 @@ using InternetInterface.Models.Universal;
 
 namespace InternetInterface.Models
 {
-	public enum StatusType 
+	public enum StatusType
 	{
 		BlockedAndNoConnected = 1,
 		BlockedAndConnected = 3,
