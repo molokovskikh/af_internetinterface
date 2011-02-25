@@ -19,8 +19,21 @@ namespace Billing
 {
 	public class MainBilling
 	{
-		public static DateTime DtNow;
-		private static readonly ILog _log = LogManager.GetLogger(typeof(MainBilling));
+		public DateTime DtNow;
+		private readonly ILog _log = LogManager.GetLogger(typeof(MainBilling));
+
+		public MainBilling()
+		{
+			try
+			{
+				XmlConfigurator.Configure();
+				InitActiveRecord();
+			}
+			catch (Exception ex)
+			{
+				_log.Error(ex.Message + "\n \r" + ex.StackTrace + "\n \r" + ex.InnerException + "\n \r" + ex.Source);
+			}
+		}
 
 		public static void InitActiveRecord()
 		{
@@ -45,7 +58,7 @@ namespace Billing
 			}
 		}
 
-		public static void UseSession(Func<object> func)
+		public void UseSession(Func<object> func)
 		{
 			using (new SessionScope())
 			{
@@ -53,12 +66,43 @@ namespace Billing
 			}
 		}
 
-		public static void Run()
+
+		public void On()
 		{
-			XmlConfigurator.Configure();
 			try
 			{
-				InitActiveRecord();
+				UseSession(() =>
+				           	{
+				           		var clients = Clients.FindAll(DetachedCriteria.For(typeof (Clients))
+				           		                              	.Add(Restrictions.IsNotNull("PhisicalClient"))
+																.Add(Restrictions.IsNotNull("Balance")));
+				           		foreach (var client in clients)
+				           		{
+				           			var phisicalClient = client.PhisicalClient;
+				           			var balance = Convert.ToDecimal(phisicalClient.Balance);
+				           			if ((balance >= 0) &&
+				           			    (phisicalClient.Status.Blocked) &&
+				           			    (phisicalClient.AutoUnblocked))
+				           			{
+				           				phisicalClient.Status = Status.Find((uint) StatusType.Worked);
+				           				client.FirstLease = true;
+				           				client.UpdateAndFlush();
+				           				phisicalClient.UpdateAndFlush();
+				           			}
+				           		}
+				           		return new object();
+				           	});
+			}
+			catch (Exception ex)
+			{
+				_log.Error(ex.Message + "\n \r" + ex.StackTrace + "\n \r" + ex.InnerException + "\n \r" + ex.Source);
+			}
+		}
+
+		public void Run()
+		{
+			try
+			{
 				UseSession(() =>
 				           	{
 				           		Compute();
@@ -67,11 +111,11 @@ namespace Billing
 			}
 			catch (Exception ex)
 			{
-				_log.Error(ex.Message);
+				_log.Error(ex.Message + "\n \r" + ex.StackTrace + "\n \r" + ex.InnerException + "\n \r" + ex.Source);
 			}
 		}
 
-		public static void Compute()
+		public void Compute()
 		{
 			//InitActiveRecord();
 			/*var clients = Clients.FindAll(DetachedCriteria.For(typeof (Clients))
@@ -133,7 +177,6 @@ namespace Billing
 					client.UpdateAndFlush();
 					phisicalClient.UpdateAndFlush();
 				}
-
 			}
 		}
 	}

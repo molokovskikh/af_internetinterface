@@ -14,6 +14,12 @@ namespace Billing.Test.Unit
 	class MainBillingFixture
 	{
 		//private static Clients client;
+		private MainBilling billing;
+
+		public MainBillingFixture()
+		{
+			billing = new MainBilling();
+		}
 
 		public Clients CreateClient()
 		{
@@ -27,8 +33,14 @@ namespace Billing.Test.Unit
 			client = Clients.FindFirst();
 			client.RatedPeriodDate = rd.dtFrom;
 			client.UpdateAndFlush();
-			MainBilling.DtNow = rd.dtTo;
-			MainBilling.Compute();
+			billing.DtNow = rd.dtTo;
+			billing.Compute();
+		}
+
+		[Test]
+		public void OnTest()
+		{
+			billing.On();
 		}
 
 		[Test]
@@ -52,6 +64,11 @@ namespace Billing.Test.Unit
 				SetClientDate(client, interval);
 			}
 			Assert.That(Math.Round(Convert.ToDecimal(client.PhisicalClient.Balance), 2), Is.EqualTo(0.00));
+		}
+
+		public void Test()
+		{
+			
 		}
 
 		/// <summary>

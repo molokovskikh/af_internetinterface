@@ -19,7 +19,7 @@ namespace InternetInterface.Controllers.Filter
 		public bool Perform(ExecuteWhen exec, IEngineContext context, IController controller, IControllerContext controllerContext)
 		{
 #if DEBUG
-			context.Session["Login"] = "zolotarev";
+			//context.Session["Login"] = "zolotarev";
 #endif
 			if (Partner.FindAllByProperty("Login", context.Session["Login"]).Length == 0)
 			{

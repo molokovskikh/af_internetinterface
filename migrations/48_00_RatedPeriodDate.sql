@@ -8,18 +8,19 @@ ALTER TABLE `internet`.`Clients` MODIFY COLUMN `Type` INT(10) UNSIGNED DEFAULT N
     ON UPDATE CASCADE;
 
 	
-ALTER TABLE `internet`.`PhysicalClients` MODIFY COLUMN `Id` INT(10) UNSIGNED NOT NULL,
- ADD COLUMN `AutoUnblocked` TINYINT(1) AFTER `ConnectedDate`;
+ALTER TABLE `internet`.`PhysicalClients` MODIFY COLUMN `Id` INT(10) UNSIGNED NOT NULL;
 
-
+ ALTER TABLE `internet`.`Clients` ADD COLUMN `AutoUnblocked` TINYINT(1);
  
- ALTER TABLE `internet`.`Clients` ADD COLUMN `PreRatedPeriodDate` DATETIME AFTER `RatedPeriodDate`;
-
- ALTER TABLE `internet`.`Clients` ADD COLUMN `DebtDays` INT(3) AFTER `PreRatedPeriodDate`;
+ ALTER TABLE `internet`.`Clients` ADD COLUMN `DebtDays` INT(3);
  
  ALTER TABLE `internet`.`Clients` MODIFY COLUMN `DebtDays` INT(3) UNSIGNED DEFAULT NULL;
  
  ALTER TABLE `internet`.`Clients` MODIFY COLUMN `DebtDays` INT(3) UNSIGNED NOT NULL;
  
  ALTER TABLE `internet`.`Clients` MODIFY COLUMN `Disabled` TINYINT(1) UNSIGNED DEFAULT NULL,
- ADD COLUMN `FirstLease` TINYINT(1) UNSIGNED AFTER `DebtDays`;
+ ADD COLUMN `FirstLease` TINYINT(1) UNSIGNED NOT NULL;
+
+ update `internet`.`Clients` set AutoUnblocked = true;
+ 
+ 
