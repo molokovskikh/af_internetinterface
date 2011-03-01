@@ -164,6 +164,7 @@ namespace InternetInterface.Models
 				_client.Status = Status.Find((uint)StatusType.BlockedAndNoConnected);
 				_client.Password = CryptoPass.GetHashString(_client.Password);
 				_client.HasRegistered = hasRegistered;
+				_client.AutoUnblocked = true;
 				_client.SaveAndFlush();
 				connectSumm.ClientId = _client;
 				connectSumm.ManagerID = InithializeContent.partner;
