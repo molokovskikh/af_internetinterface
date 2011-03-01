@@ -21,6 +21,9 @@ namespace Billing.Test.Unit
 
 		public MainBillingFixture()
 		{
+			var i = 0;
+			Console.WriteLine(i++ + i++ + ++i + ++i);
+
 			billing = new MainBilling();
 
 			new Status
