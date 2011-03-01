@@ -4,23 +4,23 @@
                                     Личная информация</th>
                             </tr>
                             <tr>
-                                <td ><b>Фамилия</b></td>
+                                <td >Фамилия</td>
                                 <td > <input id="Surname" type="text" value="${Client.Surname}" name="client.Surname" /> </td>
                                 <td>
                                     ${VB.GetBlock("Surname")}
                                  </td>
                             </tr>
                             <tr>
-                                <td><b>
-                                    Имя</b></td>
+                                <td>
+                                    Имя</td>
                                 <td ><input id="Name" type="text" value="${Client.Name}" name="client.Name" /></td>
                                  <td>
                                     ${VB.GetBlock("Name")}
                                  </td>
                             </tr>
                             <tr>
-                                <td><b>
-                                    Отчество</b></td>
+                                <td>
+                                    Отчество</td>
                                 <td >
                                     <input id="Patronymic" type="text" value="${client.Patronymic}" name="client.Patronymic"/></td>
                                 <td>
@@ -35,8 +35,8 @@
                                 <td></td>
                             </tr>
                             <tr>
-                                <td ><b>
-                                   Мобильный Номер телефона</b></td>
+                                <td >
+                                    Номер телефона (мобильный)</td>
                                 <td>
                                     <input id="PhoneNumber" type="text" value="${client.PhoneNumber}" name="client.PhoneNumber"/></td>
                                  <td>
@@ -45,7 +45,7 @@
                             </tr>
                             <tr>
                                 <td >
-                                   Домашний номер телефона</td>
+                                    Номер телефона (домашний, необязательно)</td>
                                 <td>
                                     <input id="HomePhoneNumber" type="text" value="${client.HomePhoneNumber}" name="client.HomePhoneNumber"/></td>
                                  <td>
@@ -53,7 +53,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td > 
+                                <td >
                                     Email</td>
                                 <td>
                                     <input id="Email" type="text" value="${client.Email}" name="client.Email"/></td>
@@ -78,12 +78,12 @@
                            <tr>
                             <tr>
                                 <td>
-                                   <b> Улица </b></td> <td>  <input id="Street" type="text" value="${client.Street}" name="client.Street"/></td>
+                                    Улица </td> <td>  <input id="Street" type="text" value="${client.Street}" name="client.Street"/></td>
                                  <td style="width: 200px">
                                     ${VB.GetBlock("Street")}
                                 </td>
                                 <td >
-                                   <b> Дом </b></td> <td>  <input id="House" type="text" style="width:50px" value="${client.House}" name="client.House"/></td>
+                                    Дом </td> <td>  <input id="House" type="text" style="width:50px" value="${client.House}" name="client.House"/></td>
                                  <td>
                                     ${VB.GetBlock("House")}
                                 </td>
@@ -93,21 +93,21 @@
                                     ${VB.GetBlock("CaseHouse")}
                                 </td>
                                 <td >
-                                   <b> Квартира </b> </td> <td> <input id="Apartment" type="text" style="width:50px" value="${client.Apartment}" name="client.Apartment"/></td>
+                                    Квартира  </td> <td> <input id="Apartment" type="text" style="width:50px" value="${client.Apartment}" name="client.Apartment"/></td>
                                  <td colspan=3>
                                     ${VB.GetBlock("Apartment")}
                                 </td>
                             </tr>
                             <tr>
                                 <td >
-                                   <b> Подъезд </b> </td> <td>  <input id="Entrance" type="text" value="${client.Entrance}" name="client.Entrance"/></td>
+                                    Подъезд </td> <td>  <input id="Entrance" type="text" value="${client.Entrance}" name="client.Entrance"/></td>
                                  <td colspan = 3>
                                     ${VB.GetBlock("Entrance")}
                                 </td>
                             </tr>
                             <tr>
                                 <td >
-                                   <b> Этаж </b></td> <td>  <input id="Floor" type="text" value="${client.Floor}" name="client.Floor"/></td>
+                                    Этаж </td> <td>  <input id="Floor" type="text" value="${client.Floor}" name="client.Floor"/></td>
                                  <td colspan = 3>
                                     ${VB.GetBlock("Floor")}
                                 </td>
@@ -116,6 +116,10 @@
                             </tbody>
                             </table>
 
+
+
+
+
                              <table class="table" border="0" id="Table1"> 
                              
                             <tr>
@@ -123,11 +127,8 @@
                                     Паспортные данные</th>
                             </tr>
                             <tr>
-                                <%if PartnerAccessSet.AccesPartner("SSI"): %>
-                                <td >Серия паспорта</td>
-                                <%else: %>
-                                <td ><b>Серия паспорта</b></td>
-                                <%end %>
+                                <td >
+                                    Серия паспорта</td>
                                 <td >
                                     <input id="PassportSeries" type="text" value="${client.PassportSeries}" name="client.PassportSeries"/></td>
                                 <td>
@@ -135,11 +136,8 @@
                                 </td>
                             </tr>
                             <tr>
-                                <%if PartnerAccessSet.AccesPartner("SSI"): %>
-                                <td >Номер паспорта</td>
-                                <%else: %>
-                                <td ><b>Номер паспорта</b></td>
-                                <%end %>
+                                <td >
+                                    Номер паспорта</td>
                                 <td >
                                     <input id="PassportNumber" type="text" value="${client.PassportNumber}" name="client.PassportNumber"/></td>
                                 <td>
@@ -147,11 +145,8 @@
                                 </td>
                             </tr>
                                                         <tr>
-                                <%if PartnerAccessSet.AccesPartner("SSI"): %>
-                                <td >Дата выдачи паспорта</td>
-                                <%else: %>
-                                <td ><b>Дата выдачи паспорта</b></td>
-                                <%end %>
+                                <td >
+                                    Дата выдачи паспорта</td>
                                 <td >
                                     <input id="OutputDate" type="text" value="${client.OutputDate}" name="client.OutputDate"/></td>
                                 <td>
@@ -159,11 +154,8 @@
                                 </td>
                             </tr>
                             <tr>
-                                <%if PartnerAccessSet.AccesPartner("SSI"): %>
-                                <td >Кем выдан</td>
-                                <%else: %>
-                                <td ><b>Кем выдан</b></td>
-                                <%end %>
+                                <td >
+                                    Кем выдан</td>
                                 <td >
                                     <input id="WhoGivePassport" type="text" value="${client.WhoGivePassport}" name="client.WhoGivePassport"/></td>
                                 <td>
@@ -171,11 +163,8 @@
                                 </td>
                             </tr>
                             <tr>
-                                <%if PartnerAccessSet.AccesPartner("SSI"): %>
-                                <td >Адрес регистрации</td>
-                                <%else: %>
-                                <td ><b>Адрес регистрации</b></td>
-                                <%end %>
+                                <td >
+                                    Адрес регистрации</td>
                                 <td >
                                     <input id="RegistrationAdress" type="text" value="${client.RegistrationAdress}" name="client.RegistrationAdress"/></td>
                                 <td>
@@ -188,7 +177,7 @@
                             </tr>
                             <tr>
                                 <td >
-                                   <b> Тариф</b></td>
+                                    Тариф</td>
                                 <td >
 
                                        <select name="tariff" id="ChTariff" style="width: 95%;">

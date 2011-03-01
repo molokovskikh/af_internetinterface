@@ -156,6 +156,12 @@ namespace Billing
 					if (client.RatedPeriodDate != DateTime.MinValue)
 					{
 						decimal toDt = client.GetInterval();
+#if DEBUG
+						Console.WriteLine(string.Format("{0} - {2} расчетный интервал {1} дней ID - {3}",
+						                                client.RatedPeriodDate.ToShortDateString(), toDt,
+						                                client.RatedPeriodDate.AddMonths(1).ToShortDateString(),
+						                                client.Id));
+#endif
 						var dec = phisicalClient.Tariff.Price / toDt;
 						phisicalClient.Balance = (balance - dec);
 						phisicalClient.UpdateAndFlush();

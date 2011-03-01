@@ -95,12 +95,19 @@ $(function() {
                    <table class="table" style="width:100%; " border="0" id="RegTable"> 
                             <tr>
                                 <th colspan="3">
-                                    <strong>Форма регистрации (обязательные для заполнения поля выделены жирным шрифтом)</strong></th>
+                                    <strong>Форма регистрации</strong></th>
                             </tr>
 	                        <% OutputSubView("""\Subview\Client""") %>
-                                                         <tr>
+                            
+                            <% OutputSubView("""\Subview\Payment""") %>
+                            <div id="summary"></div>
+                                <td  colspan="3">
+                                    ${VB.GetBlock("Balance")}
+                                </td>
+                             </tr>
+                             <tr>
                              <td>
-                                   <b> Сумма за подключение:</b>
+                                    Сумма за подключение:
                                 </td>
                                  <td >
                                  <%if PartnerAccessSet.AccesPartner("SSI"): %>
@@ -111,36 +118,7 @@ $(function() {
                                  <%end %>
                                  </td>
                                     <td>${NS.GetBlock("Summ")}</td>
-                             </tr> 
-                             <tr>
-                            <td>
-                            <div>
-                            <%if PartnerAccessSet.AccesPartner("SSI"): %>
-                              <%if IsDefined("UserInfo"): %>
-                               <%if UserInfo: %>
-                                  <input type="radio" id="ForTariffChange" name="ChangedBy.ChangeType" value="ForTariff" ${"checked" if ChangeBy.IsForTariff()} />
-                                  <label for="Autosearch"><b>Внести сумму по тарифному плану (${Client.Tariff.Price} рублей)</b> </label><br />
-                                  <input type="radio" id="OtherSummChange" name="ChangedBy.ChangeType" value="OtherSumm" ${"checked" if ChangeBy.IsOtherSumm()} />
-                                <%end %>
-                                <%else: %>
-                                    <input type="hidden" name="ChangedBy.ChangeType" value="OtherSumm" />
-                               <%end %>
-                             <%end %>
-                                  <label for="Other_Balance"><b>Внести сумму на счет:</b> </label>
-                                  <input type="text" class="BalanceText" id="BalanceText"  name="BalanceText"  value="${BalanceText}" style="width: 50%; " />
-                                  <br />
-                                 <div class="errorjava">
-		                        </div>
-
-                             </div>
-                                  <div style="float:left;" id="my-div"></div>
-                            </td>
-                            <div id="summary"></div>
-                                <td  colspan="3">
-                                    ${VB.GetBlock("Balance")}
-                                </td>
                              </tr>
- 
                              <%if PartnerAccessSet.AccesPartner("DHCP"): %>
                              <tr>
                              <th colspan="3">Данные подключения</th> </tr>

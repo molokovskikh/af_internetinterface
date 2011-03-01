@@ -4,11 +4,9 @@ import file from Lib.bake
 import file from Migration.bake
 import file from Tools.bake
 import file from Test.bake
-import file from WindowsServiceSupport.bake
 
 Global(
 	Project : "BillingService",
-	project : "BillingService",
 	deployTo : """\\acdcserv.adc.analit.net\Apps\BillingService""",
 	HumanReadableName : "Сервис биллинга"
 )
