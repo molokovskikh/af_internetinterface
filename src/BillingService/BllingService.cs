@@ -46,7 +46,7 @@ namespace BillingService
 			OnCommand = new RunCommand(billing.On , 600000);
 			OnCommand.Start();
 
-			computeCommand = new RunCommand(billing.Run, 86400000);
+			computeCommand = new RunCommand(billing.Run, 180000);
 			computeCommand.Start();
 		}
 

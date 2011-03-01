@@ -30,11 +30,11 @@ namespace InternetInterface.Controllers
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
 			if (changeProperties.IsForTariff())
 			{
-				user.Balance = Tariff.Find(tariff).Price.ToString();
+				user.Balance = Tariff.Find(tariff).Price;//.ToString();
 			}
 			if (changeProperties.IsOtherSumm())
 			{
-				user.Balance = balanceText;
+				user.Balance = Convert.ToDecimal(balanceText);
 			}
 			var Password = CryptoPass.GeneratePassword();
 			user.Password = Password;

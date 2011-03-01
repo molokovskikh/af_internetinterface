@@ -109,7 +109,7 @@ namespace InternetInterface.Models
 		public virtual Tariff Tariff { get; set; }
 
 		[Property, ValidateNonEmpty("Введите сумму"), ValidateDecimal("Неверно введено число")]
-		public virtual string Balance { get; set; }
+		public virtual decimal Balance { get; set; }
 
 		[Property, ValidateIsUnique("Email должен быть уникальный"), ValidateEmail("Ошибка ввода (требуется adr@serv.dom)")]
 		public virtual string Email { get; set; }

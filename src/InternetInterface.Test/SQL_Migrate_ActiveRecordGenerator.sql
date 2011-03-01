@@ -1,14 +1,18 @@
 
     
-alter table internet.Partners  drop foreign key FK831741802B993AA9
+alter table internet.PaymentForConnect  drop foreign key FK32DE3CAABE8ECE31
 
 
     
-alter table internet.Agents  drop foreign key FKA0997E7290411CBB
+alter table internet.PaymentForConnect  drop foreign key FK32DE3CAAE588D46A
 
 
     
 alter table Internet.NetworkSwitches  drop foreign key FKB0EB3E3D9168F203
+
+
+    
+alter table internet.Agents  drop foreign key FKA0997E7290411CBB
 
 
     
@@ -32,11 +36,11 @@ alter table Internet.CategoriesAccessSet  drop foreign key FKA6B0AC90F8536E73
 
 
     
-alter table internet.Payments  drop foreign key FKA34F020838F0897E
+alter table Internet.ClientEndpoints  drop foreign key FKFCFB5F883F7618E4
 
 
     
-alter table internet.Payments  drop foreign key FKA34F0208ED787E5A
+alter table Internet.ClientEndpoints  drop foreign key FKFCFB5F88C6A748B7
 
 
     
@@ -56,64 +60,70 @@ alter table internet.PhysicalClients  drop foreign key FK7ACB2D07A9D024E1
 
 
     
-alter table Internet.ClientEndpoints  drop foreign key FKFCFB5F883F7618E4
+alter table internet.Payments  drop foreign key FKA34F020838F0897E
 
 
     
-alter table Internet.ClientEndpoints  drop foreign key FKFCFB5F88C6A748B7
+alter table internet.Payments  drop foreign key FKA34F0208ED787E5A
 
 
     
-alter table internet.PaymentForConnect  drop foreign key FK32DE3CAABE8ECE31
+alter table Internet.Clients  drop foreign key FKE6F2BBA7224E056
 
 
     
-alter table internet.PaymentForConnect  drop foreign key FK32DE3CAAE588D46A
+alter table internet.Partners  drop foreign key FK831741802B993AA9
 
 
-    drop table if exists internet.Partners
+    drop table if exists internet.PaymentForConnect
+
+    drop table if exists Internet.NetworkSwitches
 
     drop table if exists Internet.ConnectBrigads
 
     drop table if exists internet.Agents
 
-    drop table if exists Internet.NetworkSwitches
-
-    drop table if exists internet.Status
+    drop table if exists Internet.Requests
 
     drop table if exists internet.Tariffs
 
-    drop table if exists Internet.Requests
-
     drop table if exists Internet.CategoriesAccessSet
 
-    drop table if exists internet.Payments
+    drop table if exists Internet.ClientEndpoints
+
+    drop table if exists internet.NetworkZones
 
     drop table if exists internet.AccessCategories
 
     drop table if exists Internet.Labels
 
-    drop table if exists Internet.Clients
-
     drop table if exists internet.PhysicalClients
 
-    drop table if exists Internet.ClientEndpoints
+    drop table if exists internet.Payments
+
+    drop table if exists Internet.Clients
 
     drop table if exists Internet.UserCategories
 
-    drop table if exists internet.NetworkZones
+    drop table if exists internet.Status
 
-    drop table if exists internet.PaymentForConnect
+    drop table if exists internet.Partners
 
-    create table internet.Partners (
+    create table internet.PaymentForConnect (
         Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+       PaymentDate DATETIME,
+       Summ VARCHAR(255),
+       ClientId INTEGER UNSIGNED,
+       ManagerID INTEGER UNSIGNED,
+       primary key (Id)
+    )
+
+    create table Internet.NetworkSwitches (
+        Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+       Mac VARCHAR(255),
+       IP VARCHAR(255),
        Name VARCHAR(255),
-       Email VARCHAR(255),
-       TelNum VARCHAR(255),
-       Adress VARCHAR(255),
-       RegDate DATETIME,
-       Login VARCHAR(255),
-       Categorie INTEGER UNSIGNED,
+       Zone INTEGER UNSIGNED,
        primary key (Id)
     )
 
@@ -127,31 +137,6 @@ alter table internet.PaymentForConnect  drop foreign key FK32DE3CAAE588D46A
         Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
        Name VARCHAR(255),
        Partner INTEGER UNSIGNED,
-       primary key (Id)
-    )
-
-    create table Internet.NetworkSwitches (
-        Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-       Mac VARCHAR(255),
-       IP VARCHAR(255),
-       Name VARCHAR(255),
-       Zone INTEGER UNSIGNED,
-       primary key (Id)
-    )
-
-    create table internet.Status (
-        Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-       Name VARCHAR(255),
-       Blocked TINYINT(1),
-       primary key (Id)
-    )
-
-    create table internet.Tariffs (
-        Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-       Name VARCHAR(255),
-       Description VARCHAR(255),
-       Price INTEGER,
-       PackageId INTEGER,
        primary key (Id)
     )
 
@@ -175,6 +160,15 @@ alter table internet.PaymentForConnect  drop foreign key FK32DE3CAAE588D46A
        primary key (Id)
     )
 
+    create table internet.Tariffs (
+        Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+       Name VARCHAR(255),
+       Description VARCHAR(255),
+       Price INTEGER,
+       PackageId INTEGER,
+       primary key (Id)
+    )
+
     create table Internet.CategoriesAccessSet (
         Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
        Categorie INTEGER UNSIGNED,
@@ -182,13 +176,22 @@ alter table internet.PaymentForConnect  drop foreign key FK32DE3CAAE588D46A
        primary key (Id)
     )
 
-    create table internet.Payments (
+    create table Internet.ClientEndpoints (
         Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-       RecievedOn DATETIME,
-       PaidOn DATETIME,
-       Sum VARCHAR(255),
+       Disabled TINYINT(1),
+       Ip VARCHAR(255),
+       Module INTEGER,
+       Port INTEGER,
+       Monitoring TINYINT(1),
+       PackageId INTEGER,
        Client INTEGER UNSIGNED,
-       Agent INTEGER UNSIGNED,
+       Switch INTEGER UNSIGNED,
+       primary key (Id)
+    )
+
+    create table internet.NetworkZones (
+        Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+       Name VARCHAR(255),
        primary key (Id)
     )
 
@@ -203,15 +206,6 @@ alter table internet.PaymentForConnect  drop foreign key FK32DE3CAAE588D46A
         Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
        Name VARCHAR(255),
        Color VARCHAR(255),
-       primary key (Id)
-    )
-
-    create table Internet.Clients (
-        Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-       Disabled TINYINT(1),
-       Name VARCHAR(255),
-       Type INTEGER,
-       PhisicalClient INTEGER UNSIGNED,
        primary key (Id)
     )
 
@@ -236,11 +230,12 @@ alter table internet.PaymentForConnect  drop foreign key FK32DE3CAAE588D46A
        WhoGivePassport VARCHAR(255),
        RegistrationAdress VARCHAR(255),
        RegDate DATETIME,
-       Balance VARCHAR(255),
+       Balance NUMERIC(19,5),
        Email VARCHAR(255),
        Password VARCHAR(255),
        Connected TINYINT(1),
        ConnectedDate DATETIME,
+       AutoUnblocked TINYINT(1),
        Tariff INTEGER UNSIGNED,
        HasRegistered INTEGER UNSIGNED,
        HasConnected INTEGER UNSIGNED,
@@ -248,51 +243,64 @@ alter table internet.PaymentForConnect  drop foreign key FK32DE3CAAE588D46A
        primary key (Id)
     )
 
-    create table Internet.ClientEndpoints (
+    create table internet.Payments (
+        Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+       RecievedOn DATETIME,
+       PaidOn DATETIME,
+       Sum VARCHAR(255),
+       Client INTEGER UNSIGNED,
+       Agent INTEGER UNSIGNED,
+       primary key (Id)
+    )
+
+    create table Internet.Clients (
         Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
        Disabled TINYINT(1),
-       Ip VARCHAR(255),
-       Module INTEGER,
-       Port INTEGER,
-       Monitoring TINYINT(1),
-       PackageId INTEGER,
-       Client INTEGER UNSIGNED,
-       Switch INTEGER UNSIGNED,
+       Name VARCHAR(255),
+       Type INTEGER,
+       RatedPeriodDate DATETIME,
+       DebtDays INTEGER,
+       FirstLease TINYINT(1),
+       PhisicalClient INTEGER UNSIGNED,
        primary key (Id)
     )
 
     create table Internet.UserCategories (
         Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-       Commect VARCHAR(255),
+       Comment VARCHAR(255),
        ReductionName VARCHAR(255),
        primary key (Id)
     )
 
-    create table internet.NetworkZones (
+    create table internet.Status (
         Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
        Name VARCHAR(255),
+       Blocked TINYINT(1),
        primary key (Id)
     )
 
-    create table internet.PaymentForConnect (
+    create table internet.Partners (
         Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-       PaymentDate DATETIME,
-       Summ VARCHAR(255),
-       ClientId INTEGER UNSIGNED,
-       ManagerID INTEGER UNSIGNED,
+       Name VARCHAR(255),
+       Email VARCHAR(255),
+       TelNum VARCHAR(255),
+       Adress VARCHAR(255),
+       RegDate DATETIME,
+       Login VARCHAR(255),
+       Categorie INTEGER UNSIGNED,
        primary key (Id)
     )
 
-    alter table internet.Partners 
-        add index (Categorie), 
-        add constraint FK831741802B993AA9 
-        foreign key (Categorie) 
-        references Internet.UserCategories (Id)
+    alter table internet.PaymentForConnect 
+        add index (ClientId), 
+        add constraint FK32DE3CAABE8ECE31 
+        foreign key (ClientId) 
+        references internet.PhysicalClients (Id)
 
-    alter table internet.Agents 
-        add index (Partner), 
-        add constraint FKA0997E7290411CBB 
-        foreign key (Partner) 
+    alter table internet.PaymentForConnect 
+        add index (ManagerID), 
+        add constraint FK32DE3CAAE588D46A 
+        foreign key (ManagerID) 
         references internet.Partners (Id)
 
     alter table Internet.NetworkSwitches 
@@ -300,6 +308,12 @@ alter table internet.PaymentForConnect  drop foreign key FK32DE3CAAE588D46A
         add constraint FKB0EB3E3D9168F203 
         foreign key (Zone) 
         references internet.NetworkZones (Id)
+
+    alter table internet.Agents 
+        add index (Partner), 
+        add constraint FKA0997E7290411CBB 
+        foreign key (Partner) 
+        references internet.Partners (Id)
 
     alter table Internet.Requests 
         add index (Tariff), 
@@ -331,17 +345,17 @@ alter table internet.PaymentForConnect  drop foreign key FK32DE3CAAE588D46A
         foreign key (AccessCat) 
         references internet.AccessCategories (Id)
 
-    alter table internet.Payments 
+    alter table Internet.ClientEndpoints 
         add index (Client), 
-        add constraint FKA34F020838F0897E 
+        add constraint FKFCFB5F883F7618E4 
         foreign key (Client) 
-        references internet.PhysicalClients (Id)
+        references Internet.Clients (Id)
 
-    alter table internet.Payments 
-        add index (Agent), 
-        add constraint FKA34F0208ED787E5A 
-        foreign key (Agent) 
-        references internet.Agents (Id)
+    alter table Internet.ClientEndpoints 
+        add index (Switch), 
+        add constraint FKFCFB5F88C6A748B7 
+        foreign key (Switch) 
+        references Internet.NetworkSwitches (Id)
 
     alter table internet.PhysicalClients 
         add index (Tariff), 
@@ -367,26 +381,26 @@ alter table internet.PaymentForConnect  drop foreign key FK32DE3CAAE588D46A
         foreign key (Status) 
         references internet.Status (Id)
 
-    alter table Internet.ClientEndpoints 
+    alter table internet.Payments 
         add index (Client), 
-        add constraint FKFCFB5F883F7618E4 
+        add constraint FKA34F020838F0897E 
         foreign key (Client) 
-        references Internet.Clients (Id)
-
-    alter table Internet.ClientEndpoints 
-        add index (Switch), 
-        add constraint FKFCFB5F88C6A748B7 
-        foreign key (Switch) 
-        references Internet.NetworkSwitches (Id)
-
-    alter table internet.PaymentForConnect 
-        add index (ClientId), 
-        add constraint FK32DE3CAABE8ECE31 
-        foreign key (ClientId) 
         references internet.PhysicalClients (Id)
 
-    alter table internet.PaymentForConnect 
-        add index (ManagerID), 
-        add constraint FK32DE3CAAE588D46A 
-        foreign key (ManagerID) 
-        references internet.Partners (Id)
+    alter table internet.Payments 
+        add index (Agent), 
+        add constraint FKA34F0208ED787E5A 
+        foreign key (Agent) 
+        references internet.Agents (Id)
+
+    alter table Internet.Clients 
+        add index (PhisicalClient), 
+        add constraint FKE6F2BBA7224E056 
+        foreign key (PhisicalClient) 
+        references internet.PhysicalClients (Id)
+
+    alter table internet.Partners 
+        add index (Categorie), 
+        add constraint FK831741802B993AA9 
+        foreign key (Categorie) 
+        references Internet.UserCategories (Id)

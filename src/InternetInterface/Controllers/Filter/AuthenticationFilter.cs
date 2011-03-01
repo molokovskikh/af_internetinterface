@@ -21,6 +21,10 @@ namespace InternetInterface.Controllers.Filter
 #if DEBUG
 			//context.Session["Login"] = "zolotarev";
 #endif
+			if (context.Session["Login"] == null)
+			{
+				context.Session["Login"] = context.CurrentUser.Identity.Name;
+			}
 			if (Partner.FindAllByProperty("Login", context.Session["Login"]).Length == 0)
 			{
 				context.Response.RedirectToUrl(@"..\\Login\LoginPartner.brail");

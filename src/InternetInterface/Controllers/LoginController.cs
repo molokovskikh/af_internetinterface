@@ -1,4 +1,5 @@
-﻿using System.Web.Security;
+﻿using System;
+using System.Web.Security;
 using Castle.MonoRail.Framework;
 using InternetInterface.Helpers;
 
@@ -15,10 +16,9 @@ namespace InternetInterface.Controllers
 		[AccessibleThrough(Verb.Post)]
 		public void Sub(string Login, string Password)
 		{
-			if (FormsAuthentication.Authenticate(Login, Password))
-			FormsAuthentication.RedirectFromLoginPage(Login, true, Context.ApplicationPath);
 			if (ActiveDirectoryHelper.IsAuthenticated(Login, Password))
 			{
+				FormsAuthentication.RedirectFromLoginPage(Login, true);
 				Session.Add("Login", Login);
 				RedirectToUrl(@"..//Map/SiteMap.rails");
 			}
@@ -31,6 +31,10 @@ namespace InternetInterface.Controllers
 
 		public void LoginPartner()
 		{
+			if (Context.Session["Login"] == null)
+			Context.Session["Login"] = Context.CurrentUser.Identity.Name;
+			if (Context.Session["Login"] != null && !String.IsNullOrEmpty(Context.Session["Login"].ToString()))
+				RedirectToUrl(@"..//Map/SiteMap.rails");
 #if DEBUG
 			//RedirectToUrl(@"..//Map/SiteMap.rails");
 #endif

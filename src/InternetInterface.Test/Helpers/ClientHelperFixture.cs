@@ -18,7 +18,7 @@ namespace InternetInterface.Test.Helpers
 			var client =  new PhisicalClients
 			       	{
 			       		Apartment = "1",
-			       		Balance = "100",
+			       		Balance = 100,
 			       		CaseHouse = "A",
 			       		City = "VRN",
 			       		Connected = false,

@@ -56,16 +56,16 @@ namespace Billing.Test.Unit
 		{
 			var tariff = CreateTariff((int)balance);
 			tariff.SaveAndFlush();
-			var status = CreateStatus(statusBlocked);
-			status.SaveAndFlush();
+			//var status = CreateStatus(statusBlocked);
+			//status.SaveAndFlush();
 			return new PhisicalClients
 			       	{
 			       		Name = "TestPhisicalClient",
 						AutoUnblocked = true,
-						Balance = balance.ToString(),
+						Balance = balance,
 						Connected = true,
 						Tariff = tariff,
-						Status = status 
+						Status = Status.Find((uint)StatusType.Worked)
 			       	};
 		}
 
@@ -78,13 +78,22 @@ namespace Billing.Test.Unit
 			       	};
 		}
 
-		public static Status CreateStatus(bool blocked)
+		/*public static Status CreateStatus(bool blocked)
 		{
 			return new Status
 			       	{
 			       		Blocked = blocked,
-						Name = "testStatus"
+						Name = "testStatus",
+						Id = 7
 			       	};
+		}*/
+
+		public static void CreateAndSaveInternetSettings()
+		{
+			new InternetSettings
+				{
+					NextBillingDate = DateTime.Now.AddHours(-1)
+				}.SaveAndFlush();
 		}
 	}
 }

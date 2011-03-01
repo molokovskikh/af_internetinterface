@@ -1,0 +1,18 @@
+﻿import file from WebSiteSupport.bake
+import file from Deploy.bake
+import file from Lib.bake
+import file from Migration.bake
+import file from Tools.bake
+import file from Test.bake
+
+Global(
+	Project : "BillingService",
+	deployTo : """\\acdcserv.adc.analit.net\Apps\BillingService""",
+	HumanReadableName : "Сервис биллинга"
+)
+
+Task @default, [@BuildService]
+
+task @Build, [@BuildService]
+
+Task @deploy, [@BuildService, @Production, @Migrate, @DeployService, @SendDeployNotification]

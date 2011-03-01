@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework.Config;
+using Common.Tools;
 using MySql.Data.MySqlClient;
 using NUnit.Framework;
 
@@ -68,6 +69,7 @@ namespace Billing.Test
 				return;
 			scope.Dispose();
 			scope = null;
+			SystemTime.Reset();
 		}
 	}
 }

@@ -26,7 +26,6 @@ join internet.tariffs t on t.id = pc.Tariff
 #where i.LeaseBegin >= STR_TO_DATE('2011-02-01', '%Y-%m-%d')
 group by i.EndpointId;
 
-
 update internet.PhysicalClients pc, internet.newbalance nb set
 pc.Balance = nb.Balance
 where pc.id = nb.PClientId;

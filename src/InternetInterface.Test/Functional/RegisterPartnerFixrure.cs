@@ -25,6 +25,7 @@ namespace InternetInterface.Test.Functional
 			ActiveRecordStarter.GenerateCreationScripts(@"..\\..\\..\\SQL_Migrate_ActiveRecordGenerator.sql");
 		}
 
+
 		[Test]
 		public void TestAccessDependence()
 		{

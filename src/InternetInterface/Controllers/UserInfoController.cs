@@ -393,7 +393,7 @@ namespace InternetInterface.Controllers
 				thisPay.SaveAndFlush();
 				Flash["thisPay"] = new Payment();
 				Flash["Applying"] = "Баланс пополнен";
-				clientToch.Balance = Convert.ToString(Convert.ToDecimal(clientToch.Balance) + Convert.ToDecimal(forChangeSumm));
+				clientToch.Balance = Convert.ToDecimal(clientToch.Balance) + Convert.ToDecimal(forChangeSumm);
 				clientToch.UpdateAndFlush();
 			}
 			else

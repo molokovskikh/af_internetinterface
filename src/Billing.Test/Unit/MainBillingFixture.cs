@@ -1,8 +1,11 @@
-﻿using System;
+﻿#define TEST
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Castle.ActiveRecord;
+using Common.Tools;
 using NUnit.Framework;
 using InternetInterface.Models;
 using Billing;
@@ -19,6 +22,20 @@ namespace Billing.Test.Unit
 		public MainBillingFixture()
 		{
 			billing = new MainBilling();
+
+			new Status
+			{
+				Blocked = false,
+				Id = (uint)StatusType.Worked,
+				Name = "unblocked"
+			}.SaveAndFlush();
+
+			new Status
+			{
+				Blocked = true,
+				Id = (uint)StatusType.NoWorked,
+				Name = "testBlockedStatus"
+			}.SaveAndFlush();
 		}
 
 		public Clients CreateClient()
@@ -33,28 +50,30 @@ namespace Billing.Test.Unit
 			client = Clients.FindFirst();
 			client.RatedPeriodDate = rd.dtFrom;
 			client.UpdateAndFlush();
-			billing.DtNow = rd.dtTo;
+			SystemTime.Now = () => rd.dtTo;
+			//billing.DtNow = rd.dtTo;
 			billing.Compute();
 		}
 
 		[Test]
 		public void OnTest()
 		{
+			var client = BaseBillingFixture.CreateAndSaveClient("testblockedClient", true, 1000);
+			client.SaveAndFlush();
+
 			billing.On();
+			var unblockedClient = Clients.FindAllByProperty("Name", "testblockedClient").First();
+			Assert.That(unblockedClient.PhisicalClient.Status.Blocked , Is.EqualTo(false));
 		}
 
 		[Test]
 		public void Write_off()
 		{
+			BaseBillingFixture.CreateAndSaveInternetSettings();
 			var client = Clients.FindFirst();
 			//var client = CreateClient();
-			client.PhisicalClient.Balance = Tariff.FindFirst().Price.ToString();
+			client.PhisicalClient.Balance = Tariff.FindFirst().Price;
 			client.UpdateAndFlush();
-			new Status
-				{
-					Blocked = true,
-					Name = "testBlockedStatus"
-				}.SaveAndFlush();
 			var interval = new Interval("15.01.2011", "15.02.2011");
 			var dayCount = interval.GetInterval();
 			interval.dtTo = DateTime.Parse("15.01.2011");
@@ -63,12 +82,17 @@ namespace Billing.Test.Unit
 				interval.dtTo = interval.dtTo.AddDays(1);
 				SetClientDate(client, interval);
 			}
-			Assert.That(Math.Round(Convert.ToDecimal(client.PhisicalClient.Balance), 2), Is.EqualTo(0.00));
+			Assert.That(Math.Round(Convert.ToDecimal(client.PhisicalClient.Balance), 2), Is.LessThan(0.00));
 		}
 
-		public void Test()
+		[Test]
+		public void RealTest()
 		{
-			
+			BaseBillingFixture.CreateAndSaveInternetSettings();
+			var b = new MainBilling();
+			b.Run();
+			var thisSettings = InternetSettings.FindFirst().NextBillingDate;
+			Assert.That(thisSettings.ToShortDateString(), Is.EqualTo(DateTime.Now.AddDays(1).ToShortDateString()));
 		}
 
 		/// <summary>
@@ -77,8 +101,8 @@ namespace Billing.Test.Unit
 		[Test]
 		public void IntervalTest()
 		{
+			BaseBillingFixture.CreateAndSaveInternetSettings();
 			var client = CreateClient();
-
 
 			var dates = new List<List<Interval>>
 			            	{

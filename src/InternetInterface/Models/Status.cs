@@ -18,7 +18,7 @@ namespace InternetInterface.Models
 	public class Status : ValidActiveRecordLinqBase<Status>
 	{
 
-		[PrimaryKey]
+		[PrimaryKey(PrimaryKeyType.Assigned)]
 		public virtual uint Id { get; set; }
 
 		[Property]
