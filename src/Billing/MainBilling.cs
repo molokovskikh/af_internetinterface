@@ -131,8 +131,8 @@ namespace Billing
 				var phisicalClient = client.PhisicalClient;
 				var balance = Convert.ToDecimal(phisicalClient.Balance);
 				if ((balance >= 0) &&
-	(!phisicalClient.Status.Blocked) &&
-	(client.RatedPeriodDate != DateTime.MinValue))
+					(!client.Disabled) &&
+					(client.RatedPeriodDate != DateTime.MinValue))
 				{
 					DtNow = SystemTime.Now();
 
@@ -151,7 +151,8 @@ namespace Billing
 					}
 				}
 
-				if (phisicalClient.Status.Blocked == false)
+				//if (phisicalClient.Status.Blocked == false)
+				if (!client.Disabled)
 				{
 					if (client.RatedPeriodDate != DateTime.MinValue)
 					{
@@ -161,7 +162,8 @@ namespace Billing
 						phisicalClient.UpdateAndFlush();
 					}
 				}
-				if ((balance < 0) &&
+				// Тут со временем должно устанавливаться дисейбл
+				if ((phisicalClient.Balance < 0) &&
 				    (phisicalClient.Status.Blocked == false))
 				{
 					phisicalClient.Status = Status.Find((uint) StatusType.NoWorked);

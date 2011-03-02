@@ -82,7 +82,8 @@ namespace InternetInterface.Controllers
 								             	{
 								             		Name = string.Format("{0} {1} {2}", phisCl.Surname, phisCl.Name, phisCl.Patronymic),
 								             		PhisicalClient = phisCl,
-								             		Type = ClientType.Phisical
+								             		Type = ClientType.Phisical,
+													FirstLease = true
 								             	};
 								client.SaveAndFlush();
 								clientEntPoint.Client = client;
@@ -270,7 +271,7 @@ namespace InternetInterface.Controllers
 		{}
 
 		public void ClientRegisteredInfoFromDiller()
-		{ }
+		{}
 
 		public void PartnerRegisteredInfo(int hiddenPartnerId, string hiddenPass)
 		{
