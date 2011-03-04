@@ -154,6 +154,7 @@ namespace InternetInterface.Models
 			}
 		}
 
+
 		public static bool RegistrLogicClient(PhisicalClients _client, uint _tariff, uint _status,
 			ValidatorRunner validator, Partner hasRegistered, PaymentForConnect connectSumm)
 		{

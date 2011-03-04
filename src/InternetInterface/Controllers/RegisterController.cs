@@ -20,7 +20,7 @@ namespace InternetInterface.Controllers
 	{
 		[AccessibleThrough(Verb.Post)]
 		public void RegisterClient([DataBind("ChangedBy")]ChangeBalaceProperties changeProperties,
-			[DataBind("client")]PhisicalClients user, string balanceText, uint tariff, uint status, uint BrigadForConnect,
+			[DataBind("client")]PhisicalClients phisClient, string balanceText, uint tariff, uint status, uint BrigadForConnect,
 			[DataBind("ConnectSumm")]PaymentForConnect connectSumm
 			 , [DataBind("ConnectInfo")]PhisicalClientConnectInfo ConnectInfo, bool VisibleRegisteredInfo,
 			uint requestID)
@@ -30,14 +30,14 @@ namespace InternetInterface.Controllers
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
 			if (changeProperties.IsForTariff())
 			{
-				user.Balance = Tariff.Find(tariff).Price;//.ToString();
+				phisClient.Balance = Tariff.Find(tariff).Price;//.ToString();
 			}
 			if (changeProperties.IsOtherSumm())
 			{
-				user.Balance = Convert.ToDecimal(balanceText);
+				phisClient.Balance = Convert.ToDecimal(balanceText);
 			}
 			var Password = CryptoPass.GeneratePassword();
-			user.Password = Password;
+			phisClient.Password = Password;
 			if (!CategorieAccessSet.AccesPartner("SSI"))
 			{
 				connectSumm.Summ = 700.ToString();
@@ -72,12 +72,12 @@ namespace InternetInterface.Controllers
 					validPortSwitch = false;
 				}
 			}
-			catch( Exception ex)
+			catch(Exception ex)
 			{
 				PropertyBag["PortError"] = "Ошибка ввода номера порта";
 				validPortSwitch = false;
 			}
-			var registerClient = PhisicalClients.RegistrLogicClient(user, tariff, status, Validator, InithializeContent.partner, connectSumm);
+			var registerClient = PhisicalClients.RegistrLogicClient(phisClient, tariff, status, Validator, InithializeContent.partner, connectSumm);
 			/*if (registerClient && validPortSwitch) &&
 				((!string.IsNullOrEmpty(ConnectInfo.Port) &&
 					 (unPort))
@@ -88,8 +88,8 @@ namespace InternetInterface.Controllers
 				{
 					var client = new Clients
 					             	{
-					             		Name = string.Format("{0} {1} {2}", user.Surname, user.Name, user.Patronymic),
-					             		PhisicalClient = user,
+										Name = string.Format("{0} {1} {2}", phisClient.Surname, phisClient.Name, phisClient.Patronymic),
+										PhisicalClient = phisClient,
 					             		Type = ClientType.Phisical,
 										FirstLease = true
 					             	};
@@ -99,18 +99,18 @@ namespace InternetInterface.Controllers
 					             		Client = client,
 					             		Port = Convert.ToInt32(ConnectInfo.Port),
 					             		Switch = NetworkSwitches.Find(Convert.ToUInt32(ConnectInfo.Switch)),
-					             		PackageId = user.Tariff.PackageId
+										PackageId = phisClient.Tariff.PackageId
 					             	};
 					newCEP.SaveAndFlush();
 					if (BrigadForConnect != 0)
-					user.HasConnected = Brigad.Find(BrigadForConnect);
-					user.Connected = true;
-					user.ConnectedDate = DateTime.Now;
-					user.Status = Status.Find((uint)StatusType.BlockedAndConnected);
-					user.UpdateAndFlush();
+					phisClient.HasConnected = Brigad.Find(BrigadForConnect);
+					phisClient.Connected = true;
+					phisClient.ConnectedDate = DateTime.Now;
+					phisClient.Status = Status.Find((uint)StatusType.BlockedAndConnected);
+					phisClient.UpdateAndFlush();
 				}
 				Flash["Password"] = Password;
-				Flash["Client"] = user;
+				Flash["Client"] = phisClient;
 				Flash["ConnectSumm"] = connectSumm;
 				foreach (var requestse in Requests.FindAllByProperty("Id", requestID))
 				{
@@ -121,14 +121,14 @@ namespace InternetInterface.Controllers
 					RedirectToUrl("..//UserInfo/ClientRegisteredInfo.rails");
 					else
 					{
-						RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + user.Id);
+						RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + phisClient.Id);
 					}
 				if (InithializeContent.partner.Categorie.ReductionName == "Diller")
 					RedirectToUrl("..//UserInfo/ClientRegisteredInfoFromDiller.rails");
 			}
 			else
 			{
-				PropertyBag["Client"] = user;
+				PropertyBag["Client"] = phisClient;
 				PropertyBag["BalanceText"] = balanceText;
 				connectSumm.ManagerID = InithializeContent.partner;
 				PropertyBag["ConnectSumm"] = connectSumm;
@@ -140,10 +140,10 @@ namespace InternetInterface.Controllers
 				PropertyBag["ChBrigad"] = BrigadForConnect;
 				Validator.IsValid(connectSumm);
 				connectSumm.SetValidationErrors(Validator.GetErrorSummary(connectSumm));
-				user.SetValidationErrors(Validator.GetErrorSummary(user));
+				phisClient.SetValidationErrors(Validator.GetErrorSummary(phisClient));
 				PropertyBag["ConnectInfo"] = ConnectInfo;
 				PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(s => !string.IsNullOrEmpty(s.Name));
-				PropertyBag["VB"] = new ValidBuilderHelper<PhisicalClients>(user);
+				PropertyBag["VB"] = new ValidBuilderHelper<PhisicalClients>(phisClient);
 				PropertyBag["NS"] = new ValidBuilderHelper<PaymentForConnect>(connectSumm);
 				PropertyBag["ChangeBy"] = changeProperties;
 			}
@@ -275,7 +275,7 @@ namespace InternetInterface.Controllers
 		{
 			var RightArray = CategorieAccessSet.FindAll(DetachedCriteria.For(typeof (CategorieAccessSet))
 			                                            	.Add(Expression.Eq("Categorie",
-			                                            	                   Models.Partner.Find((uint) Partner).Categorie)));
+			                                            	Models.Partner.Find((uint) Partner).Categorie)));
 			return RightArray.Select(partnerAccessSet => partnerAccessSet.AccessCat.Id).ToList();
 		}
 

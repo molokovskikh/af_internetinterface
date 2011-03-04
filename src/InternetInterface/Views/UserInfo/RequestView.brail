@@ -1,5 +1,8 @@
 ﻿<link href="../Styles/style.css" type="text/css" rel="stylesheet" />
 <link rel="stylesheet" href="../Styles/base.css" type="text/css" media="screen" />
+<script type="text/javascript" src="../Scripts/jquery-1.4.1.min.js"></script>
+<script type="text/javascript" src="../Scripts/jquery.tablesorter.js"></script>
+<script type="text/javascript" src="../Scripts/jquery.tablesorter.pager.js"></script>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -67,6 +70,14 @@ div.scroller
 }
 </style>
 </head>
+
+<script type="text/javascript" id="js">    $(document).ready(function () {
+        $("#for_sort").tablesorter({
+        });
+    }); </script>
+
+
+
 <body class="body_cl">
 
 <div class=scroller>
@@ -78,8 +89,9 @@ div.scroller
             <% if (Clients.Length == 0):
             output WriteMessageError("Нет заявок на подключение")
             else: %>
-            <table class="table_us">
+            <table class="table_us" id="for_sort">
             <thead>
+            <tr>
                 <th></th>
                 <th>Имя</th>
                 <th>Телефон</th>
@@ -88,9 +100,12 @@ div.scroller
                 <th>Тариф</th>
                 <th><center>Метка</center></th>
                 <th><center>Дата действия</center></th>
+            </tr>
             </thead>
+            <tbody>
             <% for i,Client in enumerate(Clients): %>
-            <tr>  <td><input type="checkbox" id="Checkbox1" name="LabelList[${i}]" value=${Client.Id} /></td>
+            <tr> 
+             <td><input type="checkbox" id="Checkbox1" name="LabelList[${i}]" value=${Client.Id} /></td>
                 <td><a href="../Register/RegisterClient.rails?requestID=${Client.Id}"> ${Client.ApplicantName}</a></td>
                 <td>${Client.ApplicantPhoneNumber}</td>
                 <td>${Client.ApplicantEmail}</td>
@@ -134,13 +149,12 @@ div.scroller
                     <%else: %>
                     <td>---------</td>
                     <%end %>
-
-
                 <%i++ %>
+                </tr>
             <%end %>
-            </tr>
+            <%end %>
+            </tbody>
             </table>
-            <%end %>
              </div>
 
              <div id="sidebar">

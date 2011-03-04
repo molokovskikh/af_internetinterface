@@ -63,7 +63,7 @@
         </tr>
     </table>
     <fieldset style="padding: 0; margin: 0; text-align: left; width: 99%;">
-        <legend>Фильтры: ${MapPartner.Categorie.ReductionName}</legend>
+        <legend>Фильтры: </legend>
         <table style="width:100%; height: 80px;" border="0" class="table">
 			<col style="width:50%" />
 			<col style="width:50%" />

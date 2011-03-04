@@ -141,10 +141,10 @@ namespace InternetInterface.Controllers
 				client.Password = CryptoPass.GetHashString(Password);
 				client.UpdateAndFlush();
 				var connectSumm = PaymentForConnect.FindAllByProperty("ClientId", client).First();
-				Flash["Password"] = Password;
-				Flash["Client"] = client;
-				Flash["ConnectSumm"] = connectSumm;
-				RedirectToUrl("..//UserInfo/ClientRegisteredInfo.rails");
+				PropertyBag["Client"] = client;
+				PropertyBag["Password"] = Password;
+				PropertyBag["ConnectSumm"] = connectSumm;
+				RenderView("ClientRegisteredInfo");
 			}
 		}
 
@@ -231,8 +231,10 @@ namespace InternetInterface.Controllers
 		/// <param name="labelId"></param>
 		public void RequestView(uint labelId)
 		{
-			PropertyBag["Clients"] = Requests.FindAll(DetachedCriteria.For(typeof(Requests))
-				.Add(Expression.Eq("Label.Id", labelId))).OrderByDescending(f => f.ActionDate).ToArray();
+			PropertyBag["Clients"] = Requests.FindAll(DetachedCriteria.For(typeof (Requests))
+			                                          	.Add(Expression.Eq("Label.Id", labelId)))
+														.OrderByDescending(
+															f => f.ActionDate).ToArray();
 			SendRequestEditParameter();
 		}
 
@@ -252,7 +254,7 @@ namespace InternetInterface.Controllers
 				request.Operator = InithializeContent.partner;
 				request.UpdateAndFlush();
 			}
-			PropertyBag["Clients"] = Requests.FindAll().OrderByDescending(f => f.ActionDate).ToArray();;
+			PropertyBag["Clients"] = Requests.FindAll().OrderByDescending(f => f.ActionDate).ToArray(); ;
 			SendRequestEditParameter();
 		}
 
@@ -267,8 +269,13 @@ namespace InternetInterface.Controllers
 			RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientID + "&Editing=true");
 		}
 
+		//public void ClientRegisteredInfo(PhisicalClients client, string Password, PaymentForConnect connectSumm)
 		public void ClientRegisteredInfo()
-		{}
+		{
+			/*PropertyBag["Client"] = client;
+			PropertyBag["Password"] = Password;
+			PropertyBag["ConnectSumm"] = connectSumm;*/
+		}
 
 		public void ClientRegisteredInfoFromDiller()
 		{}
@@ -304,7 +311,6 @@ namespace InternetInterface.Controllers
 				{
 					if (updateClient.Status.Blocked)
 					{
-
 						foreach (var clientse in clients)
 						{
 							clientse.Disabled = true;

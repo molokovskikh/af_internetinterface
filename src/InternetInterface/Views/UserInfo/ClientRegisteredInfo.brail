@@ -352,12 +352,13 @@ div.WordSection1
   style='mso-spacerun:yes'>  </span>шт.</p>
   <p class=MsoNormal align=right style='margin-bottom:0cm;margin-bottom:.0001pt;
   text-align:right;line-height:normal'>Работы выполнил 
+   <%if Client.HasConnected == null: %>
   <b style='mso-bidi-font-weight:normal'>
   <![if !vml]><img width=166 height=24
   src="../Images/image005.gif" v:shapes="_x0000_s1029"><![endif]></b>
 <span
   style='mso-spacerun:yes'> </span><i style='mso-bidi-font-style:normal'>
-  <%if Client.HasConnected != null: %>
+  <%else: %>
   ${Client.HasConnected.Name}
     <%end %></i></p>
   </td>
@@ -510,11 +511,12 @@ div.WordSection1
   style='mso-bidi-font-style:normal'><u><o:p></o:p></u></i></b></p>
   <p class=MsoNormal align=right style='margin-bottom:0cm;margin-bottom:.0001pt;
   text-align:right;line-height:normal'>Работы выполнил 
+     <%if Client.HasConnected == null: %>
   <![if !vml]><img width=166 height=24
   src="../Images/image005.gif" v:shapes="_x0000_s1028"><![endif]>
   <span
   style='mso-spacerun:yes'> </span><span style='mso-spacerun:yes'> </span><i
-  style='mso-bidi-font-style:normal'>  <%if Client.HasConnected != null: %>
+  style='mso-bidi-font-style:normal'>  <%else: %>
   ${Client.HasConnected.Name}
   <%end %></i></p>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
