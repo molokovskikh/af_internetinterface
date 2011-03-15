@@ -40,6 +40,9 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool FirstLease { get; set; }
 
+		[Property]
+		public virtual bool ShowBalanceWarningPage { get; set; }
+
 
 		public virtual decimal GetInterval()
 		{

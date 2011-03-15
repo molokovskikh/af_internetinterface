@@ -1,5 +1,13 @@
 
     
+alter table Internet.CategoriesAccessSet  drop foreign key FKA6B0AC902B993AA9
+
+
+    
+alter table Internet.CategoriesAccessSet  drop foreign key FKA6B0AC90F8536E73
+
+
+    
 alter table internet.PaymentForConnect  drop foreign key FK32DE3CAABE8ECE31
 
 
@@ -25,14 +33,6 @@ alter table Internet.Requests  drop foreign key FKCAAFAEC63F74038D
 
     
 alter table Internet.Requests  drop foreign key FKCAAFAEC6E5098969
-
-
-    
-alter table Internet.CategoriesAccessSet  drop foreign key FKA6B0AC902B993AA9
-
-
-    
-alter table Internet.CategoriesAccessSet  drop foreign key FKA6B0AC90F8536E73
 
 
     
@@ -75,27 +75,29 @@ alter table Internet.Clients  drop foreign key FKE6F2BBA7224E056
 alter table internet.Partners  drop foreign key FK831741802B993AA9
 
 
+    drop table if exists Internet.CategoriesAccessSet
+
     drop table if exists internet.PaymentForConnect
 
     drop table if exists Internet.NetworkSwitches
 
-    drop table if exists Internet.ConnectBrigads
-
     drop table if exists internet.Agents
+
+    drop table if exists Internet.UserCategories
 
     drop table if exists Internet.Requests
 
     drop table if exists internet.Tariffs
 
-    drop table if exists Internet.CategoriesAccessSet
+    drop table if exists Internet.Labels
 
     drop table if exists Internet.ClientEndpoints
 
-    drop table if exists internet.NetworkZones
+    drop table if exists Internet.InternetSettings
 
     drop table if exists internet.AccessCategories
 
-    drop table if exists Internet.Labels
+    drop table if exists Internet.ConnectBrigads
 
     drop table if exists internet.PhysicalClients
 
@@ -103,11 +105,18 @@ alter table internet.Partners  drop foreign key FK831741802B993AA9
 
     drop table if exists Internet.Clients
 
-    drop table if exists Internet.UserCategories
+    drop table if exists internet.NetworkZones
 
     drop table if exists internet.Status
 
     drop table if exists internet.Partners
+
+    create table Internet.CategoriesAccessSet (
+        Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+       Categorie INTEGER UNSIGNED,
+       AccessCat INTEGER,
+       primary key (Id)
+    )
 
     create table internet.PaymentForConnect (
         Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -127,16 +136,17 @@ alter table internet.Partners  drop foreign key FK831741802B993AA9
        primary key (Id)
     )
 
-    create table Internet.ConnectBrigads (
-        Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-       Name VARCHAR(255),
-       primary key (Id)
-    )
-
     create table internet.Agents (
         Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
        Name VARCHAR(255),
        Partner INTEGER UNSIGNED,
+       primary key (Id)
+    )
+
+    create table Internet.UserCategories (
+        Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+       Comment VARCHAR(255),
+       ReductionName VARCHAR(255),
        primary key (Id)
     )
 
@@ -169,10 +179,10 @@ alter table internet.Partners  drop foreign key FK831741802B993AA9
        primary key (Id)
     )
 
-    create table Internet.CategoriesAccessSet (
+    create table Internet.Labels (
         Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-       Categorie INTEGER UNSIGNED,
-       AccessCat INTEGER,
+       Name VARCHAR(255),
+       Color VARCHAR(255),
        primary key (Id)
     )
 
@@ -189,9 +199,9 @@ alter table internet.Partners  drop foreign key FK831741802B993AA9
        primary key (Id)
     )
 
-    create table internet.NetworkZones (
+    create table Internet.InternetSettings (
         Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-       Name VARCHAR(255),
+       NextBillingDate DATETIME,
        primary key (Id)
     )
 
@@ -202,10 +212,9 @@ alter table internet.Partners  drop foreign key FK831741802B993AA9
        primary key (Id)
     )
 
-    create table Internet.Labels (
+    create table Internet.ConnectBrigads (
         Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
        Name VARCHAR(255),
-       Color VARCHAR(255),
        primary key (Id)
     )
 
@@ -265,15 +274,14 @@ alter table internet.Partners  drop foreign key FK831741802B993AA9
        primary key (Id)
     )
 
-    create table Internet.UserCategories (
+    create table internet.NetworkZones (
         Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-       Comment VARCHAR(255),
-       ReductionName VARCHAR(255),
+       Name VARCHAR(255),
        primary key (Id)
     )
 
     create table internet.Status (
-        Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+        Id INTEGER UNSIGNED not null,
        Name VARCHAR(255),
        Blocked TINYINT(1),
        primary key (Id)
@@ -290,6 +298,18 @@ alter table internet.Partners  drop foreign key FK831741802B993AA9
        Categorie INTEGER UNSIGNED,
        primary key (Id)
     )
+
+    alter table Internet.CategoriesAccessSet 
+        add index (Categorie), 
+        add constraint FKA6B0AC902B993AA9 
+        foreign key (Categorie) 
+        references Internet.UserCategories (Id)
+
+    alter table Internet.CategoriesAccessSet 
+        add index (AccessCat), 
+        add constraint FKA6B0AC90F8536E73 
+        foreign key (AccessCat) 
+        references internet.AccessCategories (Id)
 
     alter table internet.PaymentForConnect 
         add index (ClientId), 
@@ -332,18 +352,6 @@ alter table internet.Partners  drop foreign key FK831741802B993AA9
         add constraint FKCAAFAEC6E5098969 
         foreign key (Operator) 
         references internet.Partners (Id)
-
-    alter table Internet.CategoriesAccessSet 
-        add index (Categorie), 
-        add constraint FKA6B0AC902B993AA9 
-        foreign key (Categorie) 
-        references Internet.UserCategories (Id)
-
-    alter table Internet.CategoriesAccessSet 
-        add index (AccessCat), 
-        add constraint FKA6B0AC90F8536E73 
-        foreign key (AccessCat) 
-        references internet.AccessCategories (Id)
 
     alter table Internet.ClientEndpoints 
         add index (Client), 

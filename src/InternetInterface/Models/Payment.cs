@@ -30,5 +30,8 @@ namespace InternetInterface.Models
 		[BelongsTo("Agent")]
 		public virtual Agent Agent { get; set; }
 
+		[Property]
+		public virtual bool BillingAccount { get; set; }
+
 	}
 }

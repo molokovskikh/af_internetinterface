@@ -64,9 +64,12 @@ namespace Billing.Test.Unit
 			var client = BaseBillingFixture.CreateAndSaveClient("testblockedClient", true, 1000);
 			client.SaveAndFlush();
 
+			BaseBillingFixture.CreatePayment();
+
 			billing.On();
 			var unblockedClient = Clients.FindAllByProperty("Name", "testblockedClient").First();
 			Assert.That(unblockedClient.PhisicalClient.Status.Blocked , Is.EqualTo(false));
+			Assert.That(unblockedClient.PhisicalClient.Balance, Is.EqualTo(1500));
 		}
 
 		[Test]
@@ -142,6 +145,10 @@ namespace Billing.Test.Unit
 			            				new Interval("15.12.2010", "15.01.2011"),
 			            				new Interval("15.01.2011", "15.02.2011"),
 			            				new Interval("15.02.2011", "15.03.2011"),
+										new Interval("15.03.2011", "15.04.2011"),
+										new Interval("15.04.2011", "15.05.2011"),
+										new Interval("15.05.2011", "15.06.2011"),
+										new Interval("15.06.2011", "15.07.2011"),
 			            			}
 			            	};
 
@@ -149,10 +156,10 @@ namespace Billing.Test.Unit
 			{
 				client.DebtDays = 0;
 				client.UpdateAndFlush();
-				for (int i = 0; i < date.Count - 1; i++)
+				for (int i = 0; i < date.Count-1; i++)
 				{
 					SetClientDate(client, date[i]);
-					Assert.That(date[i + 1].GetInterval(), Is.EqualTo(client.GetInterval()));
+					Assert.That(date[i+1].GetInterval(), Is.EqualTo(client.GetInterval()));
 					Console.WriteLine(string.Format("Между датами {0} прошло {1} дней", date[i], date[i].GetInterval()));
 				}
 			}

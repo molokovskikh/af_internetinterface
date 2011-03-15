@@ -84,16 +84,26 @@ namespace InternetInterface.Controllers
 					|| string.IsNullOrEmpty(ConnectInfo.Port)))*/
 			if ((registerClient && validPortSwitch && unPort) || (registerClient && string.IsNullOrEmpty(ConnectInfo.Port)))
 			{
+				var client = new Clients
+				{
+					Name = string.Format("{0} {1} {2}", phisClient.Surname, phisClient.Name, phisClient.Patronymic),
+					PhisicalClient = phisClient,
+					Type = ClientType.Phisical,
+					FirstLease = true
+				};
+				client.SaveAndFlush();
+				var payment = new Payment
+				              	{
+									Agent = Agent.FindAllByProperty("Partner", InithializeContent.partner).First(),
+									BillingAccount = true,
+									Client = phisClient,
+									PaidOn = DateTime.Now,
+									RecievedOn = DateTime.Now,
+									Sum = phisClient.Balance.ToString()
+				              	};
+				payment.SaveAndFlush();
 				if (!string.IsNullOrEmpty(ConnectInfo.Port) && CategorieAccessSet.AccesPartner("DHCP"))
 				{
-					var client = new Clients
-					             	{
-										Name = string.Format("{0} {1} {2}", phisClient.Surname, phisClient.Name, phisClient.Patronymic),
-										PhisicalClient = phisClient,
-					             		Type = ClientType.Phisical,
-										FirstLease = true
-					             	};
-					client.SaveAndFlush();
 					var newCEP = new ClientEndpoints
 					             	{
 					             		Client = client,
@@ -156,6 +166,7 @@ namespace InternetInterface.Controllers
 			if (Partner.RegistrLogicPartner(partner, Validator))
 			{
 #if !DEBUG
+				if (ActiveDirectoryHelper.FindDirectoryEntry(partner.Login) == null)
 				ActiveDirectoryHelper.CreateUserInAD(partner.Login, Pass);
 #endif
 				Flash["Partner"] = partner;

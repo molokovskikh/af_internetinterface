@@ -6,8 +6,8 @@ import file from Tools.bake
 
 Global(
 	Project : "InternetInterface",
-	deployTo : """\\acdcserv.adc.analit.net\Test\InforoomInternet""",
-	HumanReadableName : "Интернет "
+	deployTo : """\\acdcserv.adc.analit.net\Test\InternetInterface""",
+	HumanReadableName : "Интернет интерфейс"
 )
 
 task @default, [@Build]

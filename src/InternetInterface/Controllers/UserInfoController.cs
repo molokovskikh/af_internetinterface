@@ -372,7 +372,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Statuss"] = Status.FindAllSort();
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties {ChangeType = TypeChangeBalance.OtherSumm};
 			PropertyBag["PartnerAccessSet"] = new CategorieAccessSet();
-			PropertyBag["Payments"] = Payment.FindAllByProperty("Client", phisCl);
+			PropertyBag["Payments"] = Payment.FindAllByProperty("Client", phisCl).OrderBy(t => t.PaidOn).ToArray();
 		}
 
 		[AccessibleThrough(Verb.Post)]
@@ -395,6 +395,7 @@ namespace InternetInterface.Controllers
 			thisPay.Client = PhisicalClients.Find(clientId);
 			thisPay.RecievedOn = DateTime.Now;
 			thisPay.PaidOn = DateTime.Now;
+			thisPay.BillingAccount = true;
 			if (Validator.IsValid(thisPay))
 			{
 				thisPay.SaveAndFlush();

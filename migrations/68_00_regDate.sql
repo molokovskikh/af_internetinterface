@@ -1,0 +1,1 @@
+UPDATE `internet`.`PhysicalClients` SET `RegDate`='2011-01-17 16:43:00' WHERE `Id`='23';UPDATE `internet`.`PhysicalClients` SET `RegDate`='2011-01-17 18:43:00' WHERE `Id`='25';

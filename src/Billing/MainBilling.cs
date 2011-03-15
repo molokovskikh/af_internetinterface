@@ -85,6 +85,16 @@ namespace Billing
 			{
 				UseSession(() =>
 				           	{
+				           		var newPayments = Payment.FindAll(DetachedCriteria.For(typeof (Payment))
+				           		                                  	.Add(Restrictions.Eq("BillingAccount", false)));
+								foreach (var newPayment in newPayments)
+								{
+									var updateClient = PhisicalClients.Find(newPayment.Client.Id);
+									updateClient.Balance += Convert.ToDecimal(newPayment.Sum);
+									updateClient.UpdateAndFlush();
+									newPayment.BillingAccount = true;
+									newPayment.UpdateAndFlush();
+								}
 				           		var clients = Clients.FindAll(DetachedCriteria.For(typeof (Clients))
 									.CreateAlias("PhisicalClient", "PC", JoinType.InnerJoin)
 									.CreateAlias("PC.Status","S", JoinType.InnerJoin)
@@ -97,6 +107,7 @@ namespace Billing
 									var phisicalClient = client.PhisicalClient;
 									phisicalClient.Status = Status.Find((uint) StatusType.Worked);
 									client.FirstLease = true;
+									client.ShowBalanceWarningPage = false;
 									client.UpdateAndFlush();
 									phisicalClient.UpdateAndFlush();
 								}
@@ -160,8 +171,12 @@ namespace Billing
 						var dec = phisicalClient.Tariff.Price / toDt;
 						phisicalClient.Balance = (balance - dec);
 						phisicalClient.UpdateAndFlush();
+						var bufBal = phisicalClient.Balance;
+						client.ShowBalanceWarningPage = bufBal - dec < 0;
+						client.UpdateAndFlush();
 					}
 				}
+
 				// Тут со временем должно устанавливаться дисейбл
 				if ((phisicalClient.Balance < 0) &&
 				    (phisicalClient.Status.Blocked == false))

@@ -88,6 +88,18 @@ namespace Billing.Test.Unit
 			       	};
 		}*/
 
+		public static void CreatePayment()
+		{
+			new Payment
+				{
+					BillingAccount = false,
+					Client = PhisicalClients.FindAll().First(),
+					PaidOn = DateTime.Now,
+					RecievedOn = DateTime.Now,
+					Sum = 500.ToString()
+				}.SaveAndFlush();
+		}
+
 		public static void CreateAndSaveInternetSettings()
 		{
 			new InternetSettings
