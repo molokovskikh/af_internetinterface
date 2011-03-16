@@ -89,7 +89,8 @@ namespace InternetInterface.Controllers
 					Name = string.Format("{0} {1} {2}", phisClient.Surname, phisClient.Name, phisClient.Patronymic),
 					PhisicalClient = phisClient,
 					Type = ClientType.Phisical,
-					FirstLease = true
+					FirstLease = true,
+					SayDhcpIsNewClient = true
 				};
 				client.SaveAndFlush();
 				var payment = new Payment

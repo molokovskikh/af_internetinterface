@@ -64,18 +64,19 @@ namespace Billing.Test.Unit
 			var client = BaseBillingFixture.CreateAndSaveClient("testblockedClient", true, 1000);
 			client.SaveAndFlush();
 
-			BaseBillingFixture.CreatePayment();
+			BaseBillingFixture.CreatePayment(500m);
 
 			billing.On();
 			var unblockedClient = Clients.FindAllByProperty("Name", "testblockedClient").First();
 			Assert.That(unblockedClient.PhisicalClient.Status.Blocked , Is.EqualTo(false));
-			Assert.That(unblockedClient.PhisicalClient.Balance, Is.EqualTo(1500));
+			Assert.That(unblockedClient.PhisicalClient.Balance, Is.EqualTo(1300));
 		}
 
 		[Test]
 		public void Write_off()
 		{
 			BaseBillingFixture.CreateAndSaveInternetSettings();
+			CreateClient();
 			var client = Clients.FindFirst();
 			//var client = CreateClient();
 			client.PhisicalClient.Balance = Tariff.FindFirst().Price;
@@ -89,6 +90,13 @@ namespace Billing.Test.Unit
 				SetClientDate(client, interval);
 			}
 			Assert.That(Math.Round(Convert.ToDecimal(client.PhisicalClient.Balance), 2), Is.LessThan(0.00));
+			Console.WriteLine("End balance = " + Math.Round(Convert.ToDecimal(client.PhisicalClient.Balance), 2));
+			var writeOffs = WriteOff.FindAll();
+			Assert.That(writeOffs.Length, Is.EqualTo(31));
+			foreach (var writeOff in writeOffs)
+			{
+				Console.WriteLine(string.Format("id = {0} date = {1} sum = {2}", writeOff.Id, writeOff.WriteOffDate.ToShortDateString(), Math.Round(writeOff.WriteOffSum,2)));
+			}
 		}
 
 		[Test]

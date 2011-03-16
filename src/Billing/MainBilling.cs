@@ -85,6 +85,25 @@ namespace Billing
 			{
 				UseSession(() =>
 				           	{
+								var newClients = Clients.FindAll(DetachedCriteria.For(typeof(Clients))
+									.Add(Restrictions.Eq("SayBillingIsNewClient", true))
+									.Add(Restrictions.IsNotNull("PhisicalClient")));
+				           		foreach (var newClient in newClients)
+				           		{
+				           			var phisCl = newClient.PhisicalClient;
+				           			var connectSum = PaymentForConnect.FindAllByProperty("ClientId", phisCl).First().Summ;
+				           			phisCl.Balance -= Convert.ToDecimal(connectSum);
+									phisCl.UpdateAndFlush();
+				           			newClient.SayBillingIsNewClient = false;
+									newClient.UpdateAndFlush();
+									new WriteOff
+									{
+										Client = newClient,
+										WriteOffDate = SystemTime.Now(),
+										WriteOffSum = Convert.ToDecimal(connectSum)
+									}.SaveAndFlush();
+
+				           		}
 				           		var newPayments = Payment.FindAll(DetachedCriteria.For(typeof (Payment))
 				           		                                  	.Add(Restrictions.Eq("BillingAccount", false)));
 								foreach (var newPayment in newPayments)
@@ -106,7 +125,7 @@ namespace Billing
 								{
 									var phisicalClient = client.PhisicalClient;
 									phisicalClient.Status = Status.Find((uint) StatusType.Worked);
-									client.FirstLease = true;
+									//client.FirstLease = true;
 									client.ShowBalanceWarningPage = false;
 									client.UpdateAndFlush();
 									phisicalClient.UpdateAndFlush();
@@ -174,6 +193,12 @@ namespace Billing
 						var bufBal = phisicalClient.Balance;
 						client.ShowBalanceWarningPage = bufBal - dec < 0;
 						client.UpdateAndFlush();
+						new WriteOff
+							{
+								Client = client,
+								WriteOffDate = SystemTime.Now(),
+								WriteOffSum = dec
+							}.SaveAndFlush();
 					}
 				}
 

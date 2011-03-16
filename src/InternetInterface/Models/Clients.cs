@@ -43,6 +43,12 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool ShowBalanceWarningPage { get; set; }
 
+		[Property]
+		public virtual bool SayDhcpIsNewClient  { get; set; }
+
+		[Property]
+		public virtual bool SayBillingIsNewClient  { get; set; }
+
 
 		public virtual decimal GetInterval()
 		{
