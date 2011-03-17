@@ -8,6 +8,10 @@ alter table Internet.CategoriesAccessSet  drop foreign key FKA6B0AC90F8536E73
 
 
     
+alter table internet.NetworkZones  drop foreign key FKC47687443F7618E4
+
+
+    
 alter table internet.PaymentForConnect  drop foreign key FK32DE3CAABE8ECE31
 
 
@@ -77,6 +81,8 @@ alter table internet.Partners  drop foreign key FK831741802B993AA9
 
     drop table if exists Internet.CategoriesAccessSet
 
+    drop table if exists internet.NetworkZones
+
     drop table if exists internet.PaymentForConnect
 
     drop table if exists Internet.NetworkSwitches
@@ -105,8 +111,6 @@ alter table internet.Partners  drop foreign key FK831741802B993AA9
 
     drop table if exists Internet.Clients
 
-    drop table if exists internet.NetworkZones
-
     drop table if exists internet.Status
 
     drop table if exists internet.Partners
@@ -115,6 +119,15 @@ alter table internet.Partners  drop foreign key FK831741802B993AA9
         Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
        Categorie INTEGER UNSIGNED,
        AccessCat INTEGER,
+       primary key (Id)
+    )
+
+    create table internet.NetworkZones (
+        Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+       WriteOffSum NUMERIC(19,5),
+       WriteOffDate DATETIME,
+       Client INTEGER UNSIGNED,
+       Name VARCHAR(255),
        primary key (Id)
     )
 
@@ -257,6 +270,7 @@ alter table internet.Partners  drop foreign key FK831741802B993AA9
        RecievedOn DATETIME,
        PaidOn DATETIME,
        Sum VARCHAR(255),
+       BillingAccount TINYINT(1),
        Client INTEGER UNSIGNED,
        Agent INTEGER UNSIGNED,
        primary key (Id)
@@ -270,13 +284,10 @@ alter table internet.Partners  drop foreign key FK831741802B993AA9
        RatedPeriodDate DATETIME,
        DebtDays INTEGER,
        FirstLease TINYINT(1),
+       ShowBalanceWarningPage TINYINT(1),
+       SayDhcpIsNewClient TINYINT(1),
+       SayBillingIsNewClient TINYINT(1),
        PhisicalClient INTEGER UNSIGNED,
-       primary key (Id)
-    )
-
-    create table internet.NetworkZones (
-        Id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-       Name VARCHAR(255),
        primary key (Id)
     )
 
@@ -310,6 +321,12 @@ alter table internet.Partners  drop foreign key FK831741802B993AA9
         add constraint FKA6B0AC90F8536E73 
         foreign key (AccessCat) 
         references internet.AccessCategories (Id)
+
+    alter table internet.NetworkZones 
+        add index (Client), 
+        add constraint FKC47687443F7618E4 
+        foreign key (Client) 
+        references Internet.Clients (Id)
 
     alter table internet.PaymentForConnect 
         add index (ClientId), 

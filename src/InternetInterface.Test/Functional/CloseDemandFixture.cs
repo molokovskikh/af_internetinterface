@@ -13,10 +13,10 @@ using WatiN.Core;
 
 namespace InternetInterface.Test.Functional
 {
-	[TestFixture]
+	/*[TestFixture]
 	class CloseDemandFixture : WatinFixture
 	{
-		/*[Test]
+		[Test]
 		public void CloseDemandTest()
 		{
 			var client = PhisicalClients.FindFirst();
@@ -56,6 +56,6 @@ namespace InternetInterface.Test.Functional
 			                                             	.Add(Expression.Eq("Port", 20))
 			                                             	.Add(Expression.Eq("Switch", NetworkSwitches.Find((uint)2))))[0];
 			clientAndPoint.DeleteAndFlush();
-		}*/
-	}
+		}
+	}*/
 }

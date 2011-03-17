@@ -7,7 +7,7 @@ using Castle.ActiveRecord.Framework;
 
 namespace InternetInterface.Models
 {
-	[ActiveRecord("NetworkZones", Schema = "internet", Lazy = true)]
+	[ActiveRecord("WriteOff", Schema = "internet", Lazy = true)]
 	public class WriteOff : ActiveRecordLinqBase<WriteOff>
 	{
 		[PrimaryKey]
