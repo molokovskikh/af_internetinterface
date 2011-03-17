@@ -373,6 +373,8 @@ namespace InternetInterface.Controllers
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties {ChangeType = TypeChangeBalance.OtherSumm};
 			PropertyBag["PartnerAccessSet"] = new CategorieAccessSet();
 			PropertyBag["Payments"] = Payment.FindAllByProperty("Client", phisCl).OrderBy(t => t.PaidOn).ToArray();
+			var client = Clients.FindAllByProperty("PhisicalClient", phisCl).First();
+			PropertyBag["WriteOffs"] = WriteOff.FindAllByProperty("Client", client).OrderBy(t => t.WriteOffDate);
 		}
 
 		[AccessibleThrough(Verb.Post)]

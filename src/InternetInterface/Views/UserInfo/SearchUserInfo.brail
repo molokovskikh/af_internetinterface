@@ -1,7 +1,9 @@
 ﻿<head>
+<script type="text/javascript" src="../Scripts/jquery-1.4.1.min.js"></script>
 <link href="../Styles/style.css" type="text/css" rel="stylesheet" />
 <link rel="stylesheet" href="../Styles/base.css" type="text/css" media="screen" />
 <!-- <link href="../Styles/base.css" type="text/css" rel="stylesheet" /> --->
+
 <% OutputSubView("""\Subview\MapHead""") %>
 <div id="main" style="width: 65%;">
 <div id="container">
@@ -278,6 +280,27 @@
 </div>
 <%end %>
 <br />
+<input type="button" value="Показать списания по клиенту" onclick="$('#WriteOffTable').slideToggle('slow');"> 
+
+<div id="WriteOffTable" style="display:none">
+<table class="table"  style="width: 100%; font-size: small;" align="left">
+    <thead>
+        <tr valign="top">
+            <th>Дата списания</th>
+            <th>Сумма</th>
+        </tr>
+    </thead>
+        <tbody id="Tbody1" class="HighLightCurrentRow">
+    <% for i,item in enumerate(WriteOffs): %>
+        <tr id="Tr1">
+            <td>${item.WriteOffDate}</td>
+            <td>${item.WriteOffSum}</td>
+        </tr>
+    <% end %>
+    </tbody>
+    </table>
+</div>
+
 <%if PartnerAccessSet.AccesPartner("CB"): %>
 <div style="clear:both;">
 <form class="form login" method="post" action="${siteroot}/UserInfo/ChangeBalance">
