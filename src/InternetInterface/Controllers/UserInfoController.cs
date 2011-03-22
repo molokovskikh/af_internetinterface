@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web;
 using System.Linq;
 using System.Collections.Generic;
 using Castle.MonoRail.Framework;
@@ -367,7 +368,13 @@ namespace InternetInterface.Controllers
 		{
 			var phisCl = PhisicalClients.Find(ClientCode);
 			PropertyBag["ConnectInfo"] = phisCl.GetConnectInfo();
-			PropertyBag["Appeals"] = Appeals.FindAllByProperty("PhysicalClient", phisCl);
+			var appeals = Appeals.FindAllByProperty("PhysicalClient", phisCl);
+			for (int i = 0; i < appeals.Length; i++ )
+			{
+				var buf = HttpUtility.HtmlEncode(appeals[i].Appeal);
+				appeals[i].Appeal = buf.Replace("\r\n", "<br/>");
+			}
+			PropertyBag["Appeals"] = appeals;
 			PropertyBag["ClientCode"] = ClientCode;
 			PropertyBag["UserInfo"] = true;
 			PropertyBag["BalanceText"] = string.Empty;
