@@ -1,0 +1,120 @@
+﻿	<link href="${siteroot}/CSS/main.css" type="text/css" rel="stylesheet" />
+	<script type="text/javascript" src="${siteroot}/JavaScript/jquery-1.4.2.min.js"></script>
+	<script type="text/javascript" src="${siteroot}/JavaScript/jquery.autocomplete.js"></script>
+<div id="wrapper_in">
+	<div id="wrapper_inner">
+		<form method="post" action="send" id="zakazform">
+		<p id="connect_message">
+			Стоимость подключения 700р.
+		</p>
+		<p>
+			<label for="fio">Ф.И.О.</label>
+			<input type="text" id="fio" name="application.ApplicantName" value="${application.ApplicantName if IsDefined( "application" )}" size="45" />
+			<% if IsDefined ( "application" ) and application.InDictionaryError ( "ApplicantName" ) : %>
+				<span class="error">${application.GetValidationError("ApplicantName")}</span>
+			<% end %>
+		</p>
+		<p><label for="phone_">Номер телефона:</label><input type="text" id="phone_" name="application.ApplicantPhoneNumber" value="${application.ApplicantPhoneNumber if IsDefined( "application" )}" size="25" />
+		<% if IsDefined ( "application" ) and application.InDictionaryError ( "ApplicantPhoneNumber" ) : %><br/><span class="error">${application.GetValidationError("ApplicantPhoneNumber")}</span><% end %>
+        <br />
+		<span class="example">Например: номер "12345" или 10-значный "9991234567" без +7 или 8</span>
+		</p>
+		<p><label for="email">Электронная почта:</label>
+			<input type="text" id="email" name="application.ApplicantEmail" value="${application.ApplicantEmail if IsDefined( "application" )}" size="25" />
+			<% if IsDefined ( "application" ) and application.InDictionaryError ( "ApplicantEmail" ) : %>
+				<span class="error">${application.GetValidationError("ApplicantEmail")}</span>
+			<% end %>
+            <br />
+			<span class="example">Необязательный параметр</span>
+		</p>
+        <p>
+			    <label>Адрес проживания:</label>
+        </p>
+        <p>
+                <label for="City">Город:</label>
+			    <input type="text" id="City" name="application.City" value="${application.City if IsDefined( "application" )}" size="30" />
+        </p>
+        <p>
+            <label for="residence">Улица:</label>
+			<input type="text" id="residence" name="application.Street" value="${application.Street if IsDefined( "application" )}" size="30" />
+			<% if IsDefined ( "application" ) and application.InDictionaryError ( "Street" ) : %>
+            <br />
+				<span class="error">${application.GetValidationError("Street")}</span>
+                <% else: %>
+
+                <%end %>
+          </p>
+          <div style="position:absolute">
+            <div style="float:left">
+                <label class="adress_Label" for="House" style="padding-left:0px">Дом:</label>
+			    <input type="text" id="House" name="application.House" value="${application.House if IsDefined( "application" )}" size="10" />
+			    <% if IsDefined ( "application" ) and application.InDictionaryError ( "House" ) : %>
+                <br />
+				    <span class="error">${application.GetValidationError("House")}</span>
+				    <% else: %>
+
+                    <%end %>
+            </div>
+            <div style="float:left">
+                <label class="adress_Label" for="CaseHouse">Корпус:</label>
+			    <input type="text" id="CaseHouse" name="application.CaseHouse" value="${application.CaseHouse if IsDefined( "application" )}" size="10" />
+            </div>
+            <div style="float:left">
+                <label class="adress_Label" for="Apartment">Квартира:</label>
+			    <input type="text" id="Apartment" name="application.Apartment" value="${application.Apartment if IsDefined( "application" )}" size="10" />
+			    <% if IsDefined ( "application" ) and application.InDictionaryError ( "Apartment" ) : %>
+                <br />
+				    <span class="error">${application.GetValidationError("Apartment")}</span>
+				    <% else: %>
+
+                    <%end %>
+            </div>
+        </div> 
+        <br />
+        <br />
+        <p>
+            <label for="Entrance">Подъезд:</label>
+			<input type="text" id="Entrance" name="application.Entrance" value="${application.Entrance if IsDefined( "application" )}" size="10" />
+			<% if IsDefined ( "application" ) and application.InDictionaryError ( "Entrance" ) : %>
+                <br />
+				<span class="error">${application.GetValidationError("Entrance")}</span>
+				<% end %>
+       </p>
+        <p>
+            <label for="Floor">Этаж:</label>
+			<input type="text" id="Floor" name="application.Floor" value="${application.Floor if IsDefined( "application" )}" size="10" />
+			<% if IsDefined ( "application" ) and application.InDictionaryError ( "Floor" ) : %>
+                <br />
+				<span class="error">${application.GetValidationError("Floor")}</span>
+				<% end %>
+         </p>
+          <span class="example">Фактический адрес для подключения к интернету</span>
+		<p><label for="tariff">Тарифный план:</label>
+			<select id="tariff" name="application.Tariff.Id">
+			<% for tariff in tariffs : %>
+				<option value="${tariff.Id}"<% if IsDefined ( "application" ) and tariff == application.Tariff : %> selected<% end %>>${tariff.Name}</option>
+			<% end %>
+			</select>
+			<% if IsDefined ( "application" ) and application.InDictionaryError ( "Tariff" ) : %><span class="error">${application.GetValidationError("Tariff")}</span><% end %>
+		</p>
+		<p>
+			<label for="autocon">Возможность самостоятельного подключения:</label><input type="checkbox" id="autocon" name="application.SelfConnect" value="true" /> <br /><br /><br />
+			<span class="example">Возможность самостоятельной прокладки кабеля до оборудования провайдера,<br />как правило, расположенного на чердаке или техническом этаже. <br> При самостоятельном подключении плата за подключение не взимается.</span>
+		</p>
+		<p id="last"><input type="submit" value="Отправить" /></p>
+<script type="text/javascript">
+    $(function () {
+        $("#residence").autocomplete("/assist", {
+            delay: 100,
+            minChars: 2,
+            selectFirst: true,
+            matchSubset: 1,
+            cacheLength: 10,
+            selectOnly: true,
+            maxItemsToShow: 6
+        });
+    });
+</script>
+		</form>
+	</div>
+</div>

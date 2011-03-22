@@ -132,6 +132,18 @@ namespace InternetInterface.Controllers
 
 		}
 
+		public void CreateAppeal(string Appeal, uint ClientID)
+		{
+			new Appeals
+				{
+					Appeal = Appeal,
+					Date = DateTime.Now,
+					Partner = InithializeContent.partner,
+					PhysicalClient = PhisicalClients.Find(ClientID)
+				}.SaveAndFlush();
+			RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientID);
+		}
+
 		public void PassAndShowCard(uint ClientID)
 		{
 			if (CategorieAccessSet.AccesPartner("SSI"))
@@ -355,6 +367,7 @@ namespace InternetInterface.Controllers
 		{
 			var phisCl = PhisicalClients.Find(ClientCode);
 			PropertyBag["ConnectInfo"] = phisCl.GetConnectInfo();
+			PropertyBag["Appeals"] = Appeals.FindAllByProperty("PhysicalClient", phisCl);
 			PropertyBag["ClientCode"] = ClientCode;
 			PropertyBag["UserInfo"] = true;
 			PropertyBag["BalanceText"] = string.Empty;

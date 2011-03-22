@@ -1,0 +1,30 @@
+﻿<h1 style="color:Red">Внимание!</h1>
+<p>
+<%if Client.Disabled: %>
+Доступ в интернет заблокирован.<br>
+<% end %>
+
+<% if PClient.Balance < 0: %>
+Ваша задолженность за оказанные услуги по доступу в интернет составляет ${System.Math.Abs(PClient.Balance)} руб.<br>
+Вам необходимо внести не менее ${PClient.ToPay()} руб. на ваш счет.<br>
+<% else: %>
+Ваш баланс составляет ${PClient.Balance} руб. Напоминаем о необходимости своевременного пополнения баланса.<br>
+<% end %>
+
+
+<%if not Client.Disabled: %>
+При непоступлении оплаты доступ в сеть будет заблокирован в течение суток. <br>
+<% end %>
+Номер лицевого счета для оплаты через терминалы: ${PClient.Id.ToString("00000")}
+</p>
+<% if not Client.Disabled: %>
+<p>
+Сейчас вы можете продолжить работу в интернет, нажав кнопу "Продолжить".
+</p>
+<p>
+	<form method=post>
+		<input name=referer type=hidden value="!{referer}" >
+		<input type=submit value="Продолжить">
+	</form>
+</p>
+<% end %>

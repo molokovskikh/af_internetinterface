@@ -1,0 +1,128 @@
+﻿using System;
+using System.IO;
+using System.Net;
+using Castle.MonoRail.Framework;
+using InforoomInternet.Models;
+
+namespace InforoomInternet.Controllers
+{
+	[Filter(ExecuteWhen.BeforeAction, typeof(BeforeFilter))]
+	public class MainController : SmartDispatcherController
+	{
+		public void Index()
+		{
+			var all = Tariff.FindAll();
+			PropertyBag["tariffs"] = all;
+		}
+
+		public void Zayavka()
+		{
+			var all = Tariff.FindAll();
+			PropertyBag["tariffs"] = all;
+		}
+
+		public void Main()
+		{}
+
+		public void HowPay()
+		{}
+
+		public void Ok()
+		{}
+
+		public void OfferContract()
+		{}
+
+		public void requisite()
+		{}
+		
+		public void PrivateOffice()
+		{}
+
+		public void Assist()
+		{
+			if (Request != null)
+			if (Request.Headers["X-Requested-With"] != null)
+			if (Request.Headers["X-Requested-With"].Equals("XMLHttpRequest"))
+			{
+				var queryString = Request.QueryString.Get("q");
+				if ( !String.IsNullOrEmpty(queryString) )
+				{
+					Street.GetStreetList(queryString, Response.Output);
+				}
+				else
+				{
+					return;
+				}
+			}
+			else
+			{
+				return;
+			}
+		}
+
+		[AccessibleThrough(Verb.Post)]
+		public void Send([DataBind("application")] Request application )
+		{
+			if (application.IsValid())
+			{
+				application.ActionDate = DateTime.Now;
+				application.Save();
+				Flash["application"] = application;
+				RedirectToAction("Ok");
+			}
+			else
+			{
+				var all = Tariff.FindAll();
+				PropertyBag["tariffs"] = all;
+				PropertyBag["application"] = application;
+				RenderView("Zayavka");
+			}
+		}
+
+		public void Warning()
+		{
+			var hostAdress = Request.UserHostAddress;
+/*#if DEBUG
+			hostAdress = "91.219.6.6";
+#endif*/
+			var lease = PhysicalClient.FindByIP(hostAdress);
+#if DEBUG
+			lease = new Lease {
+				Endpoint = new ClientEndpoint {
+					Client = new Client {
+						Disabled = false,
+						PhisicalClient = new PhysicalClient {
+							Balance = 100,
+							Tariff = new Tariff {
+								Price = 500
+							}
+						}
+					}
+				}
+			};
+#endif
+			if (lease == null)
+			{
+				RedirectToSiteRoot();
+				return;
+			}
+
+			var pclient = lease.Endpoint.Client.PhisicalClient;
+			var client = lease.Endpoint.Client;
+
+			if (IsPost)
+			{
+				SceHelper.Login(lease, lease.Endpoint, Request.UserHostAddress);
+				var url = Request["referer"];
+				if (String.IsNullOrEmpty(url))
+					RedirectToSiteRoot();
+				else
+					RedirectToUrl(url);
+			}
+			PropertyBag["referer"] = Request.UrlReferrer;
+			PropertyBag["PClient"] = pclient;
+			PropertyBag["Client"] = client;
+		}
+	}
+}

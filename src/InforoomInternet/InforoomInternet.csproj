@@ -1,0 +1,265 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{78BE8691-9A92-409B-89CE-D5172D5F16CD}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>InforoomInternet</RootNamespace>
+    <AssemblyName>InforoomInternet</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Boo.Lang.Extensions, Version=2.0.9.3, Culture=neutral, PublicKeyToken=32c39770e9a21a67, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Boo.Lang.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.ActiveRecord, Version=3.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\Castle.ActiveRecord.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.ActiveRecord.Linq, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Castle.ActiveRecord.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.ActiveRecord.Web">
+      <HintPath>..\..\lib\Castle.ActiveRecord.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Components.Validator, Version=2.5.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\Castle.Components.Validator.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Core, Version=2.5.1.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.MonoRail.Framework, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Castle.MonoRail.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.MonoRail.Framework.Views.NVelocity">
+      <HintPath>..\..\lib\Castle.MonoRail.Framework.Views.NVelocity.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.MonoRail.Views.Brail, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Castle.MonoRail.Views.Brail.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="mysql.data, Version=6.3.5.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\mysql.data.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate, Version=3.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate.ByteCode.Castle, Version=3.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\NHibernate.ByteCode.Castle.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate.Linq, Version=1.1.0.1001, Culture=neutral, PublicKeyToken=444cf6a87fdab271, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\NHibernate.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data.SQLite">
+      <HintPath>..\..\lib\System.Data.SQLite.DLL</HintPath>
+    </Reference>
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\error_button_small.png" />
+    <Content Include="Content\error_small.png" />
+    <Content Include="Content\autocomplete_indicator.png" />
+    <Content Include="Content\key.png" />
+    <Content Include="Content\Layouts\active.png" />
+    <Content Include="Content\Layouts\ask.png" />
+    <Content Include="Content\Layouts\banner-left.jpg" />
+    <Content Include="Content\Layouts\banner-right.jpg" />
+    <Content Include="Content\Layouts\big-banner.jpg" />
+    <Content Include="Content\Layouts\bottom-banner1.jpg" />
+    <Content Include="Content\Layouts\bottom-banner2.jpg" />
+    <Content Include="Content\Layouts\button-blue.png" />
+    <Content Include="Content\Layouts\button-orange.png" />
+    <Content Include="Content\Layouts\cable.png" />
+    <Content Include="Content\Layouts\calc.png" />
+    <Content Include="Content\Layouts\comepay-emblem.png" />
+    <Content Include="Content\Layouts\container-bottom.png" />
+    <Content Include="Content\Layouts\container-top.png" />
+    <Content Include="Content\Layouts\footer-menu.png" />
+    <Content Include="Content\Layouts\footer.png" />
+    <Content Include="Content\Layouts\forum.png" />
+    <Content Include="Content\Layouts\header-banner.jpg" />
+    <Content Include="Content\Layouts\icon-home.png" />
+    <Content Include="Content\Layouts\icon-mail.png" />
+    <Content Include="Content\Layouts\icon-search.png" />
+    <Content Include="Content\Layouts\logo.png" />
+    <Content Include="Content\Layouts\menu-bg.png" />
+    <Content Include="Content\Layouts\menu-bottom.png" />
+    <Content Include="Content\Layouts\menu-line.png" />
+    <Content Include="Content\Layouts\menu-top.png" />
+    <Content Include="Content\Layouts\menu.png" />
+    <Content Include="Content\Layouts\mini-banner.jpg" />
+    <Content Include="Content\Layouts\news-content.png" />
+    <Content Include="Content\Layouts\news-date.png" />
+    <Content Include="Content\Layouts\news-rss.png" />
+    <Content Include="Content\Layouts\news.png" />
+    <Content Include="Content\Layouts\p-list.png" />
+    <Content Include="Content\Layouts\phone.png" />
+    <Content Include="Content\Layouts\poll-button.png" />
+    <Content Include="Content\Layouts\poll-header.png" />
+    <Content Include="Content\Layouts\poll.png" />
+    <Content Include="Content\Layouts\qivi-emblem.png" />
+    <Content Include="Content\Layouts\sample.jpg" />
+    <Content Include="Content\Layouts\search.png" />
+    <Content Include="Content\Layouts\td-left.png" />
+    <Content Include="Content\Layouts\td-right.png" />
+    <Content Include="Content\Layouts\test-link.png" />
+    <Content Include="Content\Layouts\test.png" />
+    <Content Include="Content\Layouts\video.png" />
+    <Content Include="Content\Layouts\wrapper.png" />
+    <Content Include="Content\OfferMini\d1.jpg" />
+    <Content Include="Content\OfferMini\d2.jpg" />
+    <Content Include="Content\OfferMini\d3.jpg" />
+    <Content Include="Content\OfferMini\d4.jpg" />
+    <Content Include="Content\OfferMini\d5.jpg" />
+    <Content Include="Content\OfferMini\ou1.jpg" />
+    <Content Include="Content\OfferMini\ou2.jpg" />
+    <Content Include="Content\OfferMini\ou3.jpg" />
+    <Content Include="Content\OfferMini\pou.jpg" />
+    <Content Include="Content\OfferMini\pou2.jpg" />
+    <Content Include="Content\OfferMini\pou3.jpg" />
+    <Content Include="Content\OfferMini\pr1.jpg" />
+    <Content Include="Content\OfferMini\pr2.jpg" />
+    <Content Include="Content\OfferMini\t.jpg" />
+    <Content Include="Content\Offer\ДоговорОферта.jpg" />
+    <Content Include="Content\Offer\ДоговорОферта2.jpg" />
+    <Content Include="Content\Offer\ДоговорОферта3.jpg" />
+    <Content Include="Content\Offer\ДоговорОферта4.jpg" />
+    <Content Include="Content\Offer\ДоговорОферта5.jpg" />
+    <Content Include="Content\Offer\ОписаниеУслуг.jpg" />
+    <Content Include="Content\Offer\ОписаниеУслуг2.jpg" />
+    <Content Include="Content\Offer\ОписаниеУслуг3.jpg" />
+    <Content Include="Content\Offer\ПорядокРасчетов.jpg" />
+    <Content Include="Content\Offer\ПорядокРасчетов2.jpg" />
+    <Content Include="Content\Offer\ПравилаОказанияУслуг.jpg" />
+    <Content Include="Content\Offer\ПравилаОказанияУслуг2.jpg" />
+    <Content Include="Content\Offer\ПравилаОказанияУслуг3.jpg" />
+    <Content Include="Content\Offer\Тарифы.jpg" />
+    <Content Include="CSS\main.css" />
+    <Content Include="CSS\styles.css" />
+    <Content Include="Global.asax" />
+    <Content Include="JavaScript\jquery-1.4.2.min.js" />
+    <Content Include="JavaScript\jquery.autocomplete.js" />
+    <Content Include="JavaScript\lightbox\builder.js" />
+    <Content Include="JavaScript\lightbox\bullet.gif" />
+    <Content Include="JavaScript\lightbox\close.gif" />
+    <Content Include="JavaScript\lightbox\closelabel.gif" />
+    <Content Include="JavaScript\lightbox\download-icon.gif" />
+    <Content Include="JavaScript\lightbox\effects.js" />
+    <Content Include="JavaScript\lightbox\lightbox.css" />
+    <Content Include="JavaScript\lightbox\lightbox.js" />
+    <Content Include="JavaScript\lightbox\loading.gif" />
+    <Content Include="JavaScript\lightbox\nextlabel.gif" />
+    <Content Include="JavaScript\lightbox\prevlabel.gif" />
+    <Content Include="JavaScript\lightbox\prototype.js" />
+    <Content Include="JavaScript\lightbox\scriptaculous.js" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controllers\BeforeFilter.cs" />
+    <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\MainController.cs" />
+    <Compile Include="Controllers\PrivateOffice.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Logic\LoginLogic.cs" />
+    <Compile Include="Models\CryptoPass.cs" />
+    <Compile Include="Models\Lease.cs" />
+    <Compile Include="Models\Main.cs" />
+    <Compile Include="Models\SceHelper.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="Views\Layouts\Main.brail" />
+    <None Include="Views\Main\Assist.brail" />
+    <None Include="Views\Main\HowPay.brail" />
+    <None Include="Views\Login\LoginClient.brail" />
+    <None Include="Views\Main\OfferContract.brail" />
+    <None Include="Views\Main\Ok.brail" />
+    <None Include="Views\Main\PrivateOffice.brail" />
+    <None Include="Views\Main\requisite.brail" />
+    <None Include="Views\Main\Warning.brail" />
+    <None Include="Views\Main\Zayavka.brail" />
+    <None Include="Views\Main\Index.brail" />
+    <Content Include="Web.release.config">
+      <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
+    </Content>
+    <None Include="Views\PrivateOffice\Index.brail" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>53759</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>
+          </IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,11 +1,11 @@
-﻿<head>
-<script type="text/javascript" src="../Scripts/jquery-1.4.1.min.js"></script>
+﻿<script type="text/javascript" src="../Scripts/jquery-1.4.1.min.js"></script>
 <link href="../Styles/style.css" type="text/css" rel="stylesheet" />
 <link rel="stylesheet" href="../Styles/base.css" type="text/css" media="screen" />
 <!-- <link href="../Styles/base.css" type="text/css" rel="stylesheet" /> --->
 
 <% OutputSubView("""\Subview\MapHead""") %>
-<div id="main" style="width: 65%;">
+<div style="width:50%; float:left;">
+<div id="main" style="width: 100%;">
 <div id="container">
 <div id="block-tables" class="block">
 <div class="content">
@@ -280,6 +280,7 @@
 </div>
 <%end %>
 <br />
+<div style="clear:both;">
 <input type="button" value="Показать списания по клиенту" onclick="$('#WriteOffTable').slideToggle('slow');"> 
 
 <div id="WriteOffTable" style="display:none">
@@ -299,6 +300,7 @@
     <% end %>
     </tbody>
     </table>
+</div>
 </div>
 
 <%if PartnerAccessSet.AccesPartner("CB"): %>
@@ -354,3 +356,43 @@
 </div>
 </div>
 </form>
+</div>
+<div style="width:49%; float:right; padding-top:5px;">
+        <table class="table">
+        <thead>
+            <th colspan="3">Обращения клиента</th>
+        </thead>
+        <tbody>
+            <form class="form appeal" method="post" action="${siteroot}/UserInfo/CreateAppeal">
+            <tr>
+                <td>
+                <input type="hidden" name="ClientID" value="${ClientCode}" />
+                <textarea name="Appeal" rows="8" cols="100%"> Введите текст обращения </textarea>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                   <button type="submit" id="Button2" class="button">
+                  <img alt="Save" src="../Images/tick.png">Зарегистрировать</button>
+                </td>
+            </tr>
+            </form>
+           </tbody>
+        </table>
+       <table class="table">
+        <thead>
+            <th>Текст обращения</th>
+            <th>Дата</th>
+            <th>Зарегистрировал</th>
+        </thead>
+        <tbody>
+            <% for i,item in enumerate(Appeals): %>
+                <tr>
+                    <td>${item.Appeal}</td>
+                    <td>${item.Date}</td>
+                    <td>${item.Partner.Name}</td>
+                </tr>
+            <%end %>
+          </tbody>
+        </table>
+ </div>
