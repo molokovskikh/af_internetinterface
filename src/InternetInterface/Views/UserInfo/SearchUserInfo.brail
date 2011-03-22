@@ -367,7 +367,8 @@
             <tr>
                 <td>
                 <input type="hidden" name="ClientID" value="${ClientCode}" />
-                <textarea name="Appeal" rows="8" cols="100%"> Введите текст обращения </textarea>
+                <label for="textField"><b>Введите текст обращения :</b></label>
+                <textarea id="textField" name="Appeal" rows="8" cols="100%"></textarea>
                 </td>
             </tr>
             <tr>

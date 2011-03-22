@@ -374,6 +374,14 @@ namespace InternetInterface.Controllers
 				var buf = HttpUtility.HtmlEncode(appeals[i].Appeal);
 				appeals[i].Appeal = buf.Replace("\r\n", "<br/>");
 			}
+			ARSesssionHelper<Appeals>.QueryWithSession(s=>
+			                                           	{
+			                                           		foreach (var appeal in appeals)
+			                                           		{
+			                                           			s.Evict(appeal);
+			                                           		}
+			                                           		return new List<Appeals>();
+			                                           	});
 			PropertyBag["Appeals"] = appeals;
 			PropertyBag["ClientCode"] = ClientCode;
 			PropertyBag["UserInfo"] = true;
