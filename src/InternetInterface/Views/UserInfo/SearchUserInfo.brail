@@ -380,7 +380,7 @@
             </form>
            </tbody>
         </table>
-       <table class="table">
+       <table class="table" style="background-color:#FFFFFF">
         <thead>
             <th>Текст обращения</th>
             <th>Дата</th>
@@ -389,7 +389,7 @@
         <tbody>
             <% for i,item in enumerate(Appeals): %>
                 <tr>
-                    <td>${item.Appeal}</td>
+                    <td>${item.GetTransformedAppeal()}</td>
                     <td>${item.Date}</td>
                     <td>${item.Partner.Name}</td>
                 </tr>

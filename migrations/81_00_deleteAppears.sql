@@ -1,0 +1,1 @@
+delete from internet.Appeals;

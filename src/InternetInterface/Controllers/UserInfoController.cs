@@ -367,22 +367,8 @@ namespace InternetInterface.Controllers
 		private void SendParam(UInt32 ClientCode)
 		{
 			var phisCl = PhisicalClients.Find(ClientCode);
-			PropertyBag["ConnectInfo"] = phisCl.GetConnectInfo();
-			var appeals = Appeals.FindAllByProperty("PhysicalClient", phisCl);
-			for (int i = 0; i < appeals.Length; i++ )
-			{
-				var buf = HttpUtility.HtmlEncode(appeals[i].Appeal);
-				appeals[i].Appeal = buf.Replace("\r\n", "<br/>");
-			}
-			ARSesssionHelper<Appeals>.QueryWithSession(s=>
-			                                           	{
-			                                           		foreach (var appeal in appeals)
-			                                           		{
-			                                           			s.Evict(appeal);
-			                                           		}
-			                                           		return new List<Appeals>();
-			                                           	});
-			PropertyBag["Appeals"] = appeals;
+			PropertyBag["ConnectInfo"] = phisCl.GetConnectInfo();;
+			PropertyBag["Appeals"] = Appeals.FindAllByProperty("PhysicalClient", phisCl);
 			PropertyBag["ClientCode"] = ClientCode;
 			PropertyBag["UserInfo"] = true;
 			PropertyBag["BalanceText"] = string.Empty;

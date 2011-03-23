@@ -26,5 +26,9 @@ namespace InternetInterface.Models
 		[BelongsTo("PhysicalClient")]
 		public virtual PhisicalClients PhysicalClient { get; set; }
 
+		public virtual string GetTransformedAppeal()
+		{
+			return HttpUtility.HtmlEncode(Appeal).Replace("\r\n", "<br/>");
+		}
 	}
 }
