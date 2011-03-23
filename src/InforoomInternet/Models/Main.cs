@@ -5,11 +5,12 @@ using System.Linq;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Castle.Components.Validator;
+using InternetInterface.Models;
 
 
 namespace InforoomInternet.Models
 {
-	[ActiveRecord(Schema = "Internet")]
+	/*[ActiveRecord(Schema = "Internet")]
 	public class Tariff : ActiveRecordValidationBase<Tariff>
 	{
 		[PrimaryKey]
@@ -24,7 +25,7 @@ namespace InforoomInternet.Models
 		[Property(NotNull = true)]
 		public virtual uint Price { get; set; }
 	}
-
+	*/
 	[ActiveRecord(Schema = "Internet")]
 	public class Request : ActiveRecordValidationBase<Request>
 	{

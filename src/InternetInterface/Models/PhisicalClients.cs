@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
 using Castle.Components.Validator;
@@ -13,6 +15,34 @@ using InternetInterface.Models.Universal;
 
 namespace InternetInterface.Models
 {
+	public class BigEndianConverter
+	{
+		public static byte[] GetBytes(int value)
+		{
+			return new[] {
+				(byte)(value >> 24),
+				(byte)(value >> 16),
+				(byte)(value >> 8),
+				(byte)value,
+			};
+		}
+
+		public static byte[] GetBytes(uint value)
+		{
+			return GetBytes((int)value);
+		}
+
+		public static uint ToInt32(byte[] bytes)
+		{
+			return (uint)(bytes[0] << 24) + (uint)(bytes[1] << 16) + (uint)(bytes[2] << 8) + (uint)bytes[3];
+		}
+
+		public static ushort ToUInt16(byte[] bytes, int i)
+		{
+			return (ushort)((ushort)(bytes[i] << 8) + (ushort)bytes[i + 1]);
+		}
+	}
+
 	public class PhisicalClientConnectInfo
 	{
 		public string static_IP { get; set; }
@@ -174,6 +204,17 @@ namespace InternetInterface.Models
 				return true;
 			}
 			return false;
+		}
+
+		public virtual decimal ToPay()
+		{
+			return Math.Abs(Balance) + Tariff.Price;
+		}
+
+		public  static Lease FindByIP(string ip)
+		{
+			var addressValue = BigEndianConverter.ToInt32(IPAddress.Parse(ip).GetAddressBytes());
+			return Lease.Queryable.FirstOrDefault(l => l.Ip == addressValue);
 		}
 
 		public virtual PhisicalClientConnectInfo GetConnectInfo()

@@ -31,7 +31,7 @@ namespace InforoomInternet.Test
 				                  			},
 				                  		{Environment.Hbm2ddlKeyWords, "none"},
 				                  	});
-				ActiveRecordStarter.Initialize(new[] { Assembly.Load("InforoomInternet"), Assembly.Load("InforoomInternet.Test"), },
+				ActiveRecordStarter.Initialize(new[] { Assembly.Load("InforoomInternet"), Assembly.Load("InforoomInternet.Test"), Assembly.Load("InternetInterface") },
 											   configuration);
 			}
 		}

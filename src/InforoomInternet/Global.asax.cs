@@ -25,7 +25,7 @@ namespace InforoomInternet
 				XmlConfigurator.Configure();
 				GlobalContext.Properties["Version"] = Assembly.GetExecutingAssembly().GetName().Version;
 				ActiveRecordStarter.Initialize(
-					new[] {Assembly.Load("InforoomInternet")},
+					new[] { Assembly.Load("InforoomInternet"), Assembly.Load("InternetInterface") },
 					ActiveRecordSectionHandler.Instance
 				);
 				RoutingModuleEx.Engine.Add(new PatternRoute("/")

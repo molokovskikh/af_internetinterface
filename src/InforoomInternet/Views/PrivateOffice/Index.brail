@@ -1,9 +1,38 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <title></title>
-</head>
-<body>
-
-</body>
-</html>
+﻿<h2>Ваш личный кабинет, ${PhysClientName}</h2>
+     <div class="text">
+        <h3>Баланс составляет <b> ${PhysicalClient.Balance} </b></h3>
+        <h3>Номер лицевого счета для оплаты через терминалы <b> ${PhysicalClient.Id.ToString("00000")} </b></h3>
+         <h3><b>Зачисления</b></h3>
+             <table cellpadding="3" cellspacing="3" width="100%">
+                 <tr class="caption">
+                     <td >Сумма</td>
+                     <td >Дата</td>
+                 </tr>
+                 <% for item in Payments :  %>
+                <tr>
+                    <td>${item.Sum}</td>
+                    <td>${item.PaidOn.ToShortDateString()}</td>
+                </tr>
+                <%end %>
+            </table>
+            <h3><b>Списания</b></h3>
+         <p>
+         <a href="Index.brail?grouped=day">Сгруппировать по дням</a>
+         <a href="Index.brail?grouped=month">Сгруппировать по месяцам</a>
+         <a href="Index.brail?grouped=year">Сгруппировать по годам</a>
+         </p>
+             <table cellpadding="3" cellspacing="3" width="100%">
+                 <tr class="caption">
+                     <td >Сумма</td>
+                     <td >Дата</td>
+                 </tr>
+                <% for item in WriteOffs :  %>
+                <tr>
+                    <td>${item.WriteOffSum}</td>
+                    <td>${item.GetDate(grouped)}</td>
+                </tr>
+                <%end %>
+             </table>
+      </div>
+      <div class="text">
+      </div>

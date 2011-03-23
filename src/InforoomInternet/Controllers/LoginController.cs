@@ -35,7 +35,14 @@ namespace InforoomInternet.Controllers
 			{
 				var id = Convert.ToUInt32(Login);
 				if (LoginLogic.IsAccessibleClient(id, Password))
+				{
 					Session["Login"] = Login;
+					RedirectToUrl(@"..\\PrivateOffice\Index");
+				}
+				else
+				{
+					RedirectToUrl(@"..\\Login\LoginClient.brail");
+				}
 			}
 			catch (Exception ex)
 			{}

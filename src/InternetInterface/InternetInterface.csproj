@@ -193,6 +193,7 @@
     <Compile Include="Models\Clients.cs" />
     <Compile Include="Models\InternetSettings.cs" />
     <Compile Include="Models\Label.cs" />
+    <Compile Include="Models\Lease.cs" />
     <Compile Include="Models\NetworkSwitches.cs" />
     <Compile Include="Models\OnLineClient.cs" />
     <Compile Include="Models\PaymentForConnect.cs" />

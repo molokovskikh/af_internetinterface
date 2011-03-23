@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using InternetInterface.Models;
 using log4net;
 
 namespace InforoomInternet.Models
@@ -12,7 +13,7 @@ namespace InforoomInternet.Models
 		public static string SceHelperPath = @"U:\Apps\dhcp\SceHelper\com.sce.helper.jar";
 		public static string JavaPath = @"C:\Program Files (x86)\Java\j2re1.4.2_19\bin\java";
 
-		public static void Login(Lease lease, ClientEndpoint endpoint, string ip)
+		public static void Login(Lease lease, ClientEndpoints endpoint, string ip)
 		{
 			try
 			{

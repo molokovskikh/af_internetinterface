@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using InforoomInternet.Models;
+using InternetInterface.Models;
 using NHibernate.Criterion;
 
 namespace InforoomInternet.Logic
@@ -11,7 +12,7 @@ namespace InforoomInternet.Logic
 	{
 		public static bool IsAccessibleClient(uint id, string password)
 		{
-			return PhysicalClient.FindAll(DetachedCriteria.For(typeof (PhysicalClient))
+			return PhisicalClients.FindAll(DetachedCriteria.For(typeof (PhisicalClients))
 			                              	.Add(Restrictions.Eq("Id", id))
 			                              	.Add(Restrictions.Eq("Password", CryptoPass.GetHashString(password)))).Length != 0;
 		}

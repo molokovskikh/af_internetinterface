@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using Castle.MonoRail.Framework;
 using InforoomInternet.Models;
+using InternetInterface.Models;
 
 namespace InforoomInternet.Controllers
 {
@@ -27,13 +28,17 @@ namespace InforoomInternet.Controllers
 			}*/
 			var ip = string.Empty;
 #if DEBUG
-			ip = "91.219.4.4";
+			ip = "91.219.7.3";
 #else
 			ip = context.Request.UserHostAddress;
 #endif
-			if (Lease.FindAllByProperty("Ip", Convert.ToUInt32(Lease.SetProgramIp(ip))).Length != 0)
+			var lease = Lease.FindAllByProperty("Ip", Convert.ToUInt32(NetworkSwitches.SetProgramIp(ip)));
+			if (lease.Length != 0)
+			{
+				context.Session["Login"] = lease.First().Endpoint.Client.PhisicalClient.Id;
 				return true;
-			if ((context.Session["Login"] == null) || (PhysicalClient.Find(context.Session["Login"]) == null))
+			}
+			if ((context.Session["Login"] == null) || (PhisicalClients.Find(Convert.ToUInt32(context.Session["Login"])) == null))
 			{
 				context.Response.RedirectToUrl(@"..\\Login\LoginClient.brail");
 				return false;

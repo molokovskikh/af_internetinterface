@@ -37,13 +37,13 @@
                 <a href="${siteroot}/" class="menu-item one-line">О компании</a><br />
               </li>
               <li li class="main">
-                 <a href="${siteroot}/requisite" class="menu-item one-line">Реквизиты</a>
+                 <a href="${siteroot}/Main/requisite" class="menu-item one-line">Реквизиты</a>
               </li>
             <li class="main">
-                <a href="${siteroot}/zayavka" class="menu-item one-line">Заявка на подключение</a>
+                <a href="${siteroot}/Main/zayavka" class="menu-item one-line">Заявка на подключение</a>
             </li>
             <li class="main">
-                <a href="${siteroot}/OfferContract" class="menu-item one-line">Договор оферта</a>
+                <a href="${siteroot}/Main/OfferContract" class="menu-item one-line">Договор оферта</a>
             </li>
             <li class="main">
                 <a href="${siteroot}/PrivateOffice/Index" class="menu-item one-line">Личный кабинет</a>
@@ -56,7 +56,7 @@
         <!-- Левая колонка// -->
         <div class="left">
             <!-- Кнопка // -->
-            <a href="${siteroot}/HowPay" class="button-blue">Как оплатить?</a>
+            <a href="${siteroot}/Main/HowPay" class="button-blue">Как оплатить?</a>
             <!-- // Кнопка -->
 
             <!-- Телефон // -->
@@ -149,7 +149,7 @@
 
         <!-- Правая колонка // -->
         <div class="right">
-            <a href="${siteroot}/HowPay" class="button-orange">Как оплатить?</a>
+            <a href="${siteroot}/Main/HowPay" class="button-orange">Как оплатить?</a>
              <div style="display:none" id="poll">
                 <h3>А что вы думаете?</h3>
                 <p>Проснувшись утром, я, первым делом:</p>
@@ -214,9 +214,10 @@
         <div class="center">
             <ul>
                 <li class="bottom-line"><a href="${siteroot}/">Тарифы</a></li>
-                <li class="bottom-line"><a href="${siteroot}/requisite">Реквизиты</a></li>
-                <li class="bottom-line"><a href="${siteroot}/Zayavka">Заявка на подключение</a></li>
-                <li><a href="${siteroot}/OfferContract">Договор оферта</a></li>
+                <li class="bottom-line"><a href="${siteroot}/Main/requisite">Реквизиты</a></li>
+                <li class="bottom-line"><a href="${siteroot}/Main/Zayavka">Заявка на подключение</a></li>
+                <li class="bottom-line"><a href="${siteroot}/Main/OfferContract">Договор оферта</a></li>
+                <li><a href="${siteroot}/PrivateOffice/Index">Личный кабинет</a></li>
             </ul>
         </div>
         <br clear="all" />

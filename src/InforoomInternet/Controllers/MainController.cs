@@ -3,6 +3,8 @@ using System.IO;
 using System.Net;
 using Castle.MonoRail.Framework;
 using InforoomInternet.Models;
+using InternetInterface.Models;
+//using Tariff = InforoomInternet.Models.Tariff;
 
 namespace InforoomInternet.Controllers
 {
@@ -86,13 +88,13 @@ namespace InforoomInternet.Controllers
 /*#if DEBUG
 			hostAdress = "91.219.6.6";
 #endif*/
-			var lease = PhysicalClient.FindByIP(hostAdress);
+			var lease = PhisicalClients.FindByIP(hostAdress);
 #if DEBUG
 			lease = new Lease {
-				Endpoint = new ClientEndpoint {
-					Client = new Client {
+				Endpoint = new ClientEndpoints {
+					Client = new Clients {
 						Disabled = false,
-						PhisicalClient = new PhysicalClient {
+						PhisicalClient = new PhisicalClients {
 							Balance = 100,
 							Tariff = new Tariff {
 								Price = 500

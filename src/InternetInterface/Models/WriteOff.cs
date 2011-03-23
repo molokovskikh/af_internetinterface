@@ -22,5 +22,13 @@ namespace InternetInterface.Models
 		[BelongsTo("Client")]
 		public virtual Clients Client { get; set; }
 
+		public virtual string GetDate(string grouped)
+		{
+			if (grouped == "month")
+				return string.Format("{0}.{1}", WriteOffDate.Month.ToString("00"), WriteOffDate.Year);
+			if (grouped == "year")
+				return string.Format("{0}", WriteOffDate.Year);
+			return string.Format("{0}.{1}.{2}", WriteOffDate.Day.ToString("00"), WriteOffDate.Month.ToString("00"), WriteOffDate.Year);
+		}
 	}
 }
