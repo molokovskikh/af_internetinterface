@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--This file represents the results of running a test suite-->
+<test-results name="C:\Web_Project\InternetInterface\src\internetinterface.test\bin\debug\internetinterface.test.dll" total="19" errors="1" failures="5" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2011-03-24" time="18:35:24">
+  <environment nunit-version="2.5.9.10348" clr-version="2.0.50727.4952" os-version="Microsoft Windows NT 6.1.7600.0" platform="Win32NT" cwd="C:\Web_Project\InternetInterface" machine-name="PRG5" user="zolotarev" user-domain="ANALIT" />
+  <culture-info current-culture="ru-RU" current-uiculture="ru-RU" />
+  <test-suite type="Assembly" name="C:\Web_Project\InternetInterface\src\internetinterface.test\bin\debug\internetinterface.test.dll" executed="True" result="Failure" success="False" time="18.588" asserts="0">
+    <results>
+      <test-suite type="Namespace" name="InternetInterface" executed="True" result="Failure" success="False" time="17.138" asserts="0">
+        <results>
+          <test-suite type="Namespace" name="Test" executed="True" result="Failure" success="False" time="17.136" asserts="0">
+            <results>
+              <test-suite type="SetUpFixture" name="Functional" executed="True" result="Failure" success="False" time="16.436" asserts="0">
+                <results>
+                  <test-suite type="TestFixture" name="RegisterClientFixture" executed="True" result="Failure" success="False" time="8.549" asserts="0">
+                    <results>
+                      <test-case name="InternetInterface.Test.Functional.RegisterClientFixture.RegisterClientTest" executed="True" result="Failure" success="False" time="8.540" asserts="1">
+                        <failure>
+                          <message><![CDATA[  Expected: String containing "Форма регистрации"
+  But was:  "Введите учетные данные
+Логин
+  Пароль
+   Войти "
+]]></message>
+                          <stack-trace><![CDATA[at InternetInterface.Test.Functional.RegisterClientFixture.RegisterClientTest() in c:\Web_Project\InternetInterface\src\InternetInterface.Test\Functional\RegisterClientFixture.cs:line 19
+]]></stack-trace>
+                        </failure>
+                      </test-case>
+                    </results>
+                  </test-suite>
+                  <test-suite type="TestFixture" name="RegisterPartnerFixrure" executed="True" result="Failure" success="False" time="1.595" asserts="0">
+                    <results>
+                      <test-case name="InternetInterface.Test.Functional.RegisterPartnerFixrure.MigrationTets" executed="True" result="Success" success="True" time="0.024" asserts="0" />
+                      <test-case name="InternetInterface.Test.Functional.RegisterPartnerFixrure.TAccessDependence" executed="True" result="Success" success="True" time="0.000" asserts="0" />
+                      <test-case name="InternetInterface.Test.Functional.RegisterPartnerFixrure.TestAccessDependence" executed="True" result="Success" success="True" time="0.000" asserts="0" />
+                      <test-case name="InternetInterface.Test.Functional.RegisterPartnerFixrure.TestRegistrPartner" executed="True" result="Failure" success="False" time="1.566" asserts="1">
+                        <failure>
+                          <message><![CDATA[  Expected: String containing "Форма регистрации"
+  But was:  "Server Error in '/' Application.
+
+
+Access to the action [RegisterPartner] on controller [Register] is not allowed to the http verb [GET]. 
+Description: An unhandled exception occurred during the execution of the current web request. Please review the stack trace for more information about the error and where it originated in the code. 
+
+Exception Details: Castle.MonoRail.Framework.MonoRailException: Access to the action [RegisterPartner] on controller [Register] is not allowed to the http verb [GET].
+
+Source Error: 
+
+An unhandled exception was generated during the execution of the current web request. Information regarding the origin and location of the exception can be identified using the exception stack trace below. 
+
+Stack Trace: 
+
+
+[MonoRailException: Access to the action [RegisterPartner] on controller [Register] is not allowed to the http verb [GET].]
+   Castle.MonoRail.Framework.Controller.EnsureActionIsAccessibleWithCurrentHttpVerb(IExecutableAction action) in c:\Tools\oss\Castle.MonoRail\src\Castle.MonoRail.Framework\Controller.cs:1818
+   Castle.MonoRail.Framework.Controller.RunActionAndRenderView() in c:\Tools\oss\Castle.MonoRail\src\Castle.MonoRail.Framework\Controller.cs:1664
+   Castle.MonoRail.Framework.Controller.Process(IEngineContext engineContext, IControllerContext context) in c:\Tools\oss\Castle.MonoRail\src\Castle.MonoRail.Framework\Controller.cs:109
+   Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context) in c:\Tools\oss\Castle.MonoRail\src\Castle.MonoRail.Framework\BaseHttpHandler.cs:94
+
+[MonoRailException: Error processing MonoRail request. Action RegisterPartner on controller Register]
+   Castle.MonoRail.Framework.BaseHttpHandler.Process(HttpContext context) in c:\Tools\oss\Castle.MonoRail\src\Castle.MonoRail.Framework\BaseHttpHandler.cs:111
+   Castle.MonoRail.Framework.BaseHttpHandler.ProcessRequest(HttpContext context) in c:\Tools\oss\Castle.MonoRail\src\Castle.MonoRail.Framework\BaseHttpHandler.cs:66
+   System.Web.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute() +100
+   System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously) +75
+
+
+
+
+
+Version Information: Microsoft .NET Framework Version:4.0.30319; ASP.NET Version:4.0.30319.1 "
+]]></message>
+                          <stack-trace><![CDATA[at InternetInterface.Test.Functional.RegisterPartnerFixrure.TestRegistrPartner() in c:\Web_Project\InternetInterface\src\InternetInterface.Test\Functional\RegisterPartnerFixrure.cs:line 51
+]]></stack-trace>
+                        </failure>
+                      </test-case>
+                    </results>
+                  </test-suite>
+                  <test-suite type="TestFixture" name="RequestViewFixture" executed="True" result="Failure" success="False" time="1.360" asserts="0">
+                    <results>
+                      <test-case name="InternetInterface.Test.Functional.RequestViewFixture.ViewTest" executed="True" result="Failure" success="False" time="1.356" asserts="1">
+                        <failure>
+                          <message><![CDATA[  Expected: String containing "Email"
+  But was:  "Введите учетные данные
+Логин
+  Пароль
+   Войти "
+]]></message>
+                          <stack-trace><![CDATA[at InternetInterface.Test.Functional.RequestViewFixture.ViewTest() in c:\Web_Project\InternetInterface\src\InternetInterface.Test\Functional\RequestViewFixture.cs:line 22
+]]></stack-trace>
+                        </failure>
+                      </test-case>
+                    </results>
+                  </test-suite>
+                  <test-suite type="TestFixture" name="SearchFixture" executed="True" result="Failure" success="False" time="1.693" asserts="0">
+                    <results>
+                      <test-case name="InternetInterface.Test.Functional.SearchFixture.ClientInfoTest" executed="True" result="Error" success="False" time="0.324" asserts="0">
+                        <failure>
+                          <message><![CDATA[NHibernate.LazyInitializationException : Initializing[InternetInterface.Models.UserCategorie#3]-Could not initialize proxy - no Session.]]></message>
+                          <stack-trace><![CDATA[at NHibernate.Proxy.AbstractLazyInitializer.Initialize() in d:\CSharp\NH\nhibernate\src\NHibernate\Proxy\AbstractLazyInitializer.cs:line 58
+at NHibernate.Proxy.AbstractLazyInitializer.GetImplementation() in d:\CSharp\NH\nhibernate\src\NHibernate\Proxy\AbstractLazyInitializer.cs:line 154
+at NHibernate.ByteCode.Castle.LazyInitializer.Intercept(IInvocation invocation) in d:\CSharp\NH\nhibernate\src\NHibernate.ByteCode.Castle\LazyInitializer.cs:line 61
+at Castle.DynamicProxy.AbstractInvocation.Proceed() in e:\OSS.Code\Castle.Core\src\Castle.Core\DynamicProxy\AbstractInvocation.cs:line 166
+at Castle.Proxies.UserCategorieProxy.get_ReductionName()
+at InternetInterface.Helpers.NonEmptyValidator.IsValid(Object instance, Object fieldValue) in c:\Web_Project\InternetInterface\src\InternetInterface\Helpers\ValidationHelper.cs:line 26
+at Castle.Components.Validator.AbstractValidator.IsValid(Object instance) in c:\TeamCity\buildAgent\work\481d20ef1197a3b2\src\Castle.Components.Validator\Validators\AbstractValidator.cs:line 144
+at Castle.Components.Validator.DefaultValidationPerformer.Castle.Components.Validator.IValidationPerformer.PerformValidation(Object objectInstance, IEnumerable`1 validators, IEnumerable`1 contributors, RunWhen runWhen, ErrorSummary summaryToPopulate) in c:\TeamCity\buildAgent\work\481d20ef1197a3b2\src\Castle.Components.Validator\DefaultValidationPerformer.cs:line 26
+at Castle.Components.Validator.ValidatorRunner.IsValid(Object objectInstance, RunWhen runWhen) in c:\TeamCity\buildAgent\work\481d20ef1197a3b2\src\Castle.Components.Validator\ValidatorRunner.cs:line 194
+at Castle.Components.Validator.ValidatorRunner.IsValid(Object objectInstance) in c:\TeamCity\buildAgent\work\481d20ef1197a3b2\src\Castle.Components.Validator\ValidatorRunner.cs:line 168
+at InternetInterface.Test.Helpers.ClientHelperFixture.CreateClient(Func`2 Ok) in c:\Web_Project\InternetInterface\src\InternetInterface.Test\Helpers\ClientHelperFixture.cs:line 48
+at InternetInterface.Test.Functional.SearchFixture.ClientInfoTest() in c:\Web_Project\InternetInterface\src\InternetInterface.Test\Functional\SearchFixture.cs:line 42
+]]></stack-trace>
+                        </failure>
+                      </test-case>
+                      <test-case name="InternetInterface.Test.Functional.SearchFixture.SearchTest" executed="True" result="Failure" success="False" time="1.364" asserts="1">
+                        <failure>
+                          <message><![CDATA[  Expected: String containing "Поиск пользователей"
+  But was:  "Введите учетные данные
+Логин
+  Пароль
+   Войти "
+]]></message>
+                          <stack-trace><![CDATA[at InternetInterface.Test.Functional.SearchFixture.SearchTest() in c:\Web_Project\InternetInterface\src\InternetInterface.Test\Functional\SearchFixture.cs:line 19
+]]></stack-trace>
+                        </failure>
+                      </test-case>
+                    </results>
+                  </test-suite>
+                </results>
+              </test-suite>
+              <test-suite type="Namespace" name="Helpers" executed="True" result="Inconclusive" success="False" time="0.003" asserts="0">
+                <results>
+                  <test-suite type="TestFixture" name="WatinFixture" executed="True" result="Inconclusive" success="False" time="0.003" asserts="0" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="PartnerAccessSetFixture" executed="True" result="Success" success="True" time="0.001" asserts="0">
+                <results>
+                  <test-case name="InternetInterface.Test.PartnerAccessSetFixture.AccessSearchTest" executed="True" result="Success" success="True" time="0.000" asserts="0" />
+                </results>
+              </test-suite>
+              <test-suite type="Namespace" name="Unit" executed="True" result="Failure" success="False" time="0.235" asserts="0">
+                <results>
+                  <test-suite type="TestFixture" name="ByteFixture" executed="True" result="Success" success="True" time="0.001" asserts="0">
+                    <results>
+                      <test-case name="InternetInterface.Test.Unit.ByteFixture.ByteTest" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                    </results>
+                  </test-suite>
+                  <test-suite type="TestFixture" name="GetClientsLogicFixture" executed="True" result="Success" success="True" time="0.137" asserts="0">
+                    <results>
+                      <test-case name="InternetInterface.Test.Unit.GetClientsLogicFixture.GetClientsTest" executed="True" result="Success" success="True" time="0.134" asserts="0" />
+                      <test-case name="InternetInterface.Test.Unit.GetClientsLogicFixture.GetWhereTest" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                    </results>
+                  </test-suite>
+                  <test-suite type="TestFixture" name="Image" executed="True" result="Failure" success="False" time="0.091" asserts="0">
+                    <results>
+                      <test-case name="InternetInterface.Test.Unit.Image.ImageTest" executed="True" result="Success" success="True" time="0.031" asserts="0" />
+                    </results>
+                  </test-suite>
+                  <test-suite type="TestFixture" name="OnLineClientFixture" executed="True" result="Success" success="True" time="0.004" asserts="0">
+                    <results>
+                      <test-case name="InternetInterface.Test.Unit.OnLineClientFixture.OnLineTets" executed="True" result="Success" success="True" time="0.000" asserts="0" />
+                    </results>
+                  </test-suite>
+                </results>
+              </test-suite>
+              <test-suite type="Namespace" name="Unit_" executed="True" result="Success" success="True" time="0.456" asserts="0">
+                <results>
+                  <test-suite type="TestFixture" name="LoginFixture" executed="True" result="Success" success="True" time="0.454" asserts="0">
+                    <results>
+                      <test-case name="InternetInterface.Test.Unit_.LoginFixture.ImageTest" executed="True" result="Success" success="True" time="0.454" asserts="0" />
+                    </results>
+                  </test-suite>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="Namespace" name="InternetInterfaceFixture" executed="True" result="Failure" success="False" time="1.415" asserts="0">
+        <results>
+          <test-suite type="Namespace" name="Functional" executed="True" result="Failure" success="False" time="1.415" asserts="0">
+            <results>
+              <test-suite type="TestFixture" name="BrigadFixture" executed="True" result="Failure" success="False" time="1.413" asserts="0">
+                <results>
+                  <test-case name="InternetInterfaceFixture.Functional.BrigadFixture.BrigadTest" executed="True" result="Failure" success="False" time="1.410" asserts="1">
+                    <failure>
+                      <message><![CDATA[  Expected: String containing "ID"
+  But was:  "Введите учетные данные
+Логин
+  Пароль
+   Войти "
+]]></message>
+                      <stack-trace><![CDATA[at InternetInterfaceFixture.Functional.BrigadFixture.BrigadTest() in c:\Web_Project\InternetInterface\src\InternetInterface.Test\Functional\BrigadFixture.cs:line 17
+]]></stack-trace>
+                    </failure>
+                  </test-case>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="Namespace" name="InternetInterfaceFixtute" executed="True" result="Failure" success="False" time="0.007" asserts="0">
+        <results>
+          <test-suite type="Namespace" name="RegisterTest" executed="True" result="Failure" success="False" time="0.005" asserts="0">
+            <results>
+              <test-suite type="TestFixture" name="SearchFixture" executed="True" result="Failure" success="False" time="0.005" asserts="0">
+                <results>
+                  <test-case name="InternetInterfaceFixtute.RegisterTest.SearchFixture.BinaryTest" executed="True" result="Success" success="True" time="0.001" asserts="0" />
+                  <test-case name="InternetInterfaceFixtute.RegisterTest.SearchFixture.SearchTets" executed="True" result="Success" success="True" time="0.000" asserts="0" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="Namespace" name="NHibernateFixtute" executed="True" result="Failure" success="False" time="0.005" asserts="0">
+        <results>
+          <test-suite type="Namespace" name="RegisterTest" executed="True" result="Failure" success="False" time="0.004" asserts="0">
+            <results>
+              <test-suite type="TestFixture" name="RegisterFixture" executed="True" result="Failure" success="False" time="0.003" asserts="0">
+                <results>
+                  <test-case name="NHibernateFixtute.RegisterTest.RegisterFixture.SearchTets" executed="True" result="Success" success="True" time="0.001" asserts="0" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>

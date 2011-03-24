@@ -50,9 +50,8 @@ namespace InforoomInternet
 		void Application_Error(object sender, EventArgs e) {
 			var exception = Server.GetLastError();
 
-			if (exception is MonoRailException
-				&& exception.InnerException is MonoRailException
-				&& exception.InnerException.Message.Contains("favicon"))
+			if (exception is ControllerNotFoundException
+				&& !Request.UrlReferrer.AbsolutePath.Contains("ivrn.net"))
 			{
 				return;
 			}

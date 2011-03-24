@@ -40,7 +40,7 @@ namespace InforoomInternet.Controllers
 			}
 			if ((context.Session["Login"] == null) || (PhisicalClients.Find(Convert.ToUInt32(context.Session["Login"])) == null))
 			{
-				context.Response.RedirectToUrl(@"..\\Login\LoginClient.brail");
+				context.Response.RedirectToUrl(@"..\\Login\LoginClient");
 				return false;
 			}
 			else

@@ -6,6 +6,7 @@ import file from Tools.bake
 import file from Test.bake
 
 Global(
+	Platform : "x86",
 	Project : "InternetInterface",
 	deployTo : """\\acdcserv.adc.analit.net\WebApps\InforoomInternet""",
 	HumanReadableName : "Интернет интерфейс"

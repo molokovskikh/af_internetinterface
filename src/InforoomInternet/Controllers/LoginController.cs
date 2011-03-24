@@ -41,12 +41,12 @@ namespace InforoomInternet.Controllers
 				}
 				else
 				{
-					RedirectToUrl(@"..\\Login\LoginClient.brail");
+					RedirectToUrl(@"..\\Login\LoginClient");
 				}
 			}
 			catch (Exception ex)
 			{
-				RedirectToUrl(@"..\\Login\LoginClient.brail");
+				RedirectToUrl(@"..\\Login\LoginClient");
 			}
 		}
 	}
