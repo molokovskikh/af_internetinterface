@@ -45,7 +45,9 @@ namespace InforoomInternet.Controllers
 				}
 			}
 			catch (Exception ex)
-			{}
+			{
+				RedirectToUrl(@"..\\Login\LoginClient.brail");
+			}
 		}
 	}
 }

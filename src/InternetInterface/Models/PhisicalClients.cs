@@ -253,8 +253,8 @@ where CE.Client = {0}",
 					 		ConnectInfo = query;
 							return query;
 																					});
-
-					return ConnectInfo[0];
+					if (ConnectInfo.Count != 0)
+					return ConnectInfo.First();
 				}
 			}
 			return new PhisicalClientConnectInfo();

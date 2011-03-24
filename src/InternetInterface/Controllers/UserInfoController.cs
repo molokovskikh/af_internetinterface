@@ -39,6 +39,7 @@ namespace InternetInterface.Controllers
 			var brigadChangeFlag = true;
 			if (phisCl.HasConnected != null)
 				brigadChangeFlag = false;
+			var newFlag = false;
 			var clientEntPoint = new ClientEndpoints();
 			var clients = Clients.FindAllByProperty("PhisicalClient", phisCl);
 			if (clients.Length != 0)
@@ -47,6 +48,10 @@ namespace InternetInterface.Controllers
 				if (clientsEndPoint.Length != 0)
 				{
 					clientEntPoint = clientsEndPoint[0];
+				}
+				else
+				{
+					newFlag = true;
 				}
 			}
 			var olpPort = clientEntPoint.Port;
@@ -76,7 +81,6 @@ namespace InternetInterface.Controllers
 					{
 						if (errorMessage == string.Empty)
 						{
-							var newFlag = false;
 							if (clients.Length == 0)
 							{
 								var client = new Clients
@@ -90,6 +94,7 @@ namespace InternetInterface.Controllers
 								clientEntPoint.Client = client;
 								newFlag = true;
 							}
+							clientEntPoint.Client = clients.First();
 							clientEntPoint.Ip = ConnectInfo.static_IP;
 							clientEntPoint.Port = Port;
 							clientEntPoint.Switch = NetworkSwitches.Find(Convert.ToUInt32(ConnectInfo.Switch));
