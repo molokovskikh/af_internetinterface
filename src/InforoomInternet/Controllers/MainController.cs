@@ -85,9 +85,9 @@ namespace InforoomInternet.Controllers
 		public void Warning()
 		{
 			var hostAdress = Request.UserHostAddress;
-#if DEBUG
+/*#if DEBUG
 			hostAdress = "91.219.6.6";
-#endif
+#endif*/
 			var lease = PhisicalClients.FindByIP(hostAdress);
 #if DEBUG
 			lease = new Lease {
@@ -122,7 +122,11 @@ namespace InforoomInternet.Controllers
 				else
 					RedirectToUrl(url);
 			}
-			PropertyBag["referer"] = Request.UrlReferrer;
+			var host = Request["host"];
+			var rUrl = Request["url"];
+			if (!string.IsNullOrEmpty(host))
+				PropertyBag["referer"] = host + rUrl;
+			else PropertyBag["referer"] = string.Empty;
 			PropertyBag["PClient"] = pclient;
 			PropertyBag["Client"] = client;
 		}

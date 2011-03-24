@@ -19,12 +19,12 @@
 </p>
 <% if not Client.Disabled: %>
 <p>
-Сейчас вы можете продолжить работу в интернет, нажав кнопу "Продолжить".
+Сейчас вы можете продолжить работу в интернет, нажав кнопку "Продолжить".
 </p>
 <p>
 	<form method=post>
 		<input name=referer type=hidden value="!{referer}" >
-		<input type=submit value="Продолжить">
+		<input type=submit id="ConButton" value="Продолжить">
 	</form>
 </p>
 <% end %>

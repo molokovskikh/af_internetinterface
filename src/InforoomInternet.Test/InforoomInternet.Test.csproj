@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,6 +30,23 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Boo.Lang.Extensions, Version=2.0.9.3, Culture=neutral, PublicKeyToken=32c39770e9a21a67, processorArchitecture=MSIL">
@@ -89,6 +107,7 @@
       <HintPath>..\..\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.SQLite">
       <HintPath>..\..\lib\System.Data.SQLite.DLL</HintPath>
@@ -105,9 +124,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Functional\Setup.cs" />
     <Compile Include="Setup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Unit\LoginTest.cs" />
+    <Compile Include="Functional\WarningTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -116,6 +137,10 @@
     <ProjectReference Include="..\InforoomInternet\InforoomInternet.csproj">
       <Project>{78BE8691-9A92-409B-89CE-D5172D5F16CD}</Project>
       <Name>InforoomInternet</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\InternetInterface.Test\InternetInterface.Test.csproj">
+      <Project>{559B7BA4-1758-4D03-ABF9-856D21C0D0D7}</Project>
+      <Name>InternetInterface.Test</Name>
     </ProjectReference>
     <ProjectReference Include="..\InternetInterface\InternetInterface.csproj">
       <Project>{E2B03BC7-AACB-4A72-BBC7-DF4325912504}</Project>
