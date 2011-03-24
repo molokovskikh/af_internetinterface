@@ -31,6 +31,9 @@ namespace InforoomInternet
 				RoutingModuleEx.Engine.Add(new PatternRoute("/")
 					.DefaultForController().Is("Main")
 					.DefaultForAction().Is("Index"));
+				RoutingModuleEx.Engine.Add(new PatternRoute("/Warning")
+						.DefaultForController().Is("Main")
+						.DefaultForAction().Is("Warning"));
 			}
 			catch (Exception ex)
 			{

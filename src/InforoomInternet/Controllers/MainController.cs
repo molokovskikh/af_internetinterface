@@ -85,9 +85,9 @@ namespace InforoomInternet.Controllers
 		public void Warning()
 		{
 			var hostAdress = Request.UserHostAddress;
-/*#if DEBUG
+#if DEBUG
 			hostAdress = "91.219.6.6";
-#endif*/
+#endif
 			var lease = PhisicalClients.FindByIP(hostAdress);
 #if DEBUG
 			lease = new Lease {
