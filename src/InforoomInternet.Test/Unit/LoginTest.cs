@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using InforoomInternet.Controllers;
 using InforoomInternet.Models;
+using InternetInterface;
 using InternetInterface.Models;
 using NHibernate;
 using NHibernate.Criterion;

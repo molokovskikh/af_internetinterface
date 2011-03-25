@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using InforoomInternet.Models;
+using InternetInterface;
 using InternetInterface.Models;
 using NHibernate.Criterion;
 

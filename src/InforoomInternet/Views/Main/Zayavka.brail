@@ -101,7 +101,7 @@
 			<label for="autocon">Возможность самостоятельного подключения:</label><input type="checkbox" id="autocon" name="application.SelfConnect" value="true" /> <br /><br /><br />
 			<span class="example">Возможность самостоятельной прокладки кабеля до оборудования провайдера,<br />как правило, расположенного на чердаке или техническом этаже. <br> При самостоятельном подключении плата за подключение не взимается.</span>
 		</p>
-		<p id="last"><input type="submit" value="Отправить" /></p>
+		<p id="last"><input id="appbut" type="submit" value="Отправить" /></p>
 <script type="text/javascript">
     $(function () {
         $("#residence").autocomplete("/assist", {

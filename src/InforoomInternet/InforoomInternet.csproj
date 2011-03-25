@@ -198,7 +198,6 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Logic\LoginLogic.cs" />
-    <Compile Include="Models\CryptoPass.cs" />
     <Compile Include="Models\Lease.cs" />
     <Compile Include="Models\Main.cs" />
     <Compile Include="Models\SceHelper.cs" />

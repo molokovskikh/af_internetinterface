@@ -15,73 +15,73 @@
 <div>
 <center>
 <div class="imagePart">
-    <a id="dog" href="${siteroot}/Content/Offer/ДоговорОферта.jpg" rel="lightbox[roadtrip]"><img src="${siteroot}/Content/OfferMini/d1.jpg" width="150" height="200" alt="" /></a>
+    <a id="dog" href="${siteroot}/Content/Offer/ДоговорОферта.jpg" rel="lightbox[roadtrip]"><img id="imd1" src="${siteroot}/Content/OfferMini/d1.jpg" width="150" height="200" alt="" /></a>
         <br />
     Договор оферта стр1.
 </div>
 <div class="imagePart">
-<a href="${siteroot}/Content/Offer/ДоговорОферта2.jpg" rel="lightbox[roadtrip]"><img src="${siteroot}/Content/OfferMini/d2.jpg" width="150" height="200" alt="" /></a>
+<a href="${siteroot}/Content/Offer/ДоговорОферта2.jpg" rel="lightbox[roadtrip]"><img id="imd2" src="${siteroot}/Content/OfferMini/d2.jpg" width="150" height="200" alt="" /></a>
         <br />
     Договор оферта стр2.
 </div>
 <div class="imagePart">
-<a href="${siteroot}/Content/Offer/ДоговорОферта3.jpg" rel="lightbox[roadtrip]"><img src="${siteroot}/Content/OfferMini/d3.jpg" width="150" height="200" alt="" /></a>
+<a href="${siteroot}/Content/Offer/ДоговорОферта3.jpg" rel="lightbox[roadtrip]"><img id="imd3" src="${siteroot}/Content/OfferMini/d3.jpg" width="150" height="200" alt="" /></a>
         <br />
     Договор оферта стр3.
 </div>
 <div class="imagePart">
-<a href="${siteroot}/Content/Offer/ДоговорОферта4.jpg" rel="lightbox[roadtrip]"><img src="${siteroot}/Content/OfferMini/d4.jpg" width="150" height="200" alt="" /></a>
+<a href="${siteroot}/Content/Offer/ДоговорОферта4.jpg" rel="lightbox[roadtrip]"><img id="imd4" src="${siteroot}/Content/OfferMini/d4.jpg" width="150" height="200" alt="" /></a>
         <br />
     Договор оферта стр4.
 </div>
 <div class="imagePart">
-<a href="${siteroot}/Content/Offer/ДоговорОферта5.jpg" rel="lightbox[roadtrip]"><img src="${siteroot}/Content/OfferMini/d5.jpg" width="150" height="200" alt="" /></a>
+<a href="${siteroot}/Content/Offer/ДоговорОферта5.jpg" rel="lightbox[roadtrip]"><img id="imd5" src="${siteroot}/Content/OfferMini/d5.jpg" width="150" height="200" alt="" /></a>
         <br />
     Договор оферта стр5.
 </div>
 <div class="imagePart">
-<a href="${siteroot}/Content/Offer/Тарифы.jpg" rel="lightbox[roadtrip]"><img src="${siteroot}/Content/OfferMini/t.jpg" width="150" height="200" alt="" /></a>
+<a href="${siteroot}/Content/Offer/Тарифы.jpg" rel="lightbox[roadtrip]"><img id="imt" src="${siteroot}/Content/OfferMini/t.jpg" width="150" height="200" alt="" /></a>
         <br />
     Тарифы
 </div>
 <div class="imagePart">
-<a href="${siteroot}/Content/Offer/ОписаниеУслуг.jpg" rel="lightbox[roadtrip]"><img src="${siteroot}/Content/OfferMini/ou1.jpg" width="150" height="200" alt="" /></a>
+<a href="${siteroot}/Content/Offer/ОписаниеУслуг.jpg" rel="lightbox[roadtrip]"><img id="imo1" src="${siteroot}/Content/OfferMini/ou1.jpg" width="150" height="200" alt="" /></a>
         <br />
     Описание услуг стр1.
 </div>
 <div class="imagePart">
-<a href="${siteroot}/Content/Offer/ОписаниеУслуг2.jpg" rel="lightbox[roadtrip]"><img src="${siteroot}/Content/OfferMini/ou2.jpg" width="150" height="200" alt="" /></a>
+<a href="${siteroot}/Content/Offer/ОписаниеУслуг2.jpg" rel="lightbox[roadtrip]"><img id="imo2" src="${siteroot}/Content/OfferMini/ou2.jpg" width="150" height="200" alt="" /></a>
         <br />
     Описание услуг стр2.
 </div>
 <div class="imagePart">
-<a href="${siteroot}/Content/Offer/ОписаниеУслуг3.jpg" rel="lightbox[roadtrip]"><img src="${siteroot}/Content/OfferMini/ou3.jpg" width="150" height="200" alt="" /></a>
+<a href="${siteroot}/Content/Offer/ОписаниеУслуг3.jpg" rel="lightbox[roadtrip]"><img id="imo3" src="${siteroot}/Content/OfferMini/ou3.jpg" width="150" height="200" alt="" /></a>
         <br />
     Описание услуг стр3.
 </div>
 <div class="imagePart">
-<a href="${siteroot}/Content/Offer/ПорядокРасчетов.jpg" rel="lightbox[roadtrip]"><img src="${siteroot}/Content/OfferMini/pr1.jpg" width="150" height="200" alt="" /></a>
+<a href="${siteroot}/Content/Offer/ПорядокРасчетов.jpg" rel="lightbox[roadtrip]"><img id="imp1" src="${siteroot}/Content/OfferMini/pr1.jpg" width="150" height="200" alt="" /></a>
         <br />
     Порядок расчетов стр1.
 </div>
 <div class="imagePart">
-<a href="${siteroot}/Content/Offer/ПорядокРасчетов2.jpg" rel="lightbox[roadtrip]"><img src="${siteroot}/Content/OfferMini/pr2.jpg" width="150" height="200" alt="" /></a>
+<a href="${siteroot}/Content/Offer/ПорядокРасчетов2.jpg" rel="lightbox[roadtrip]"><img id="imp2" src="${siteroot}/Content/OfferMini/pr2.jpg" width="150" height="200" alt="" /></a>
         <br />
     Порядок расчетов стр2.
 </div>
 <div class="imagePart">
-<a href="${siteroot}/Content/Offer/ПравилаОказанияУслуг.jpg" rel="lightbox[roadtrip]"><img src="${siteroot}/Content/OfferMini/pou.jpg" width="150" height="200" alt="" /></a>
+<a href="${siteroot}/Content/Offer/ПравилаОказанияУслуг.jpg" rel="lightbox[roadtrip]"><img id="impo1" src="${siteroot}/Content/OfferMini/pou.jpg" width="150" height="200" alt="" /></a>
         <br />
     Правила оказания услуг
 </div>
 <br />
 <div class="imagePart">
-<a href="${siteroot}/Content/Offer/ПравилаОказанияУслуг2.jpg" rel="lightbox[roadtrip]"><img src="${siteroot}/Content/OfferMini/pou2.jpg" width="150" height="200" alt="" /></a>
+<a href="${siteroot}/Content/Offer/ПравилаОказанияУслуг2.jpg" rel="lightbox[roadtrip]"><img id="impo2" src="${siteroot}/Content/OfferMini/pou2.jpg" width="150" height="200" alt="" /></a>
         <br />
     Правила оказания услуг стр2.
 </div>
 <div class="imagePart">
-<a href="${siteroot}/Content/Offer/ПравилаОказанияУслуг3.jpg" rel="lightbox[roadtrip]"><img src="${siteroot}/Content/OfferMini/pou3.jpg" width="150" height="200" alt="" /></a>
+<a href="${siteroot}/Content/Offer/ПравилаОказанияУслуг3.jpg" rel="lightbox[roadtrip]"><img id="impo3" src="${siteroot}/Content/OfferMini/pou3.jpg" width="150" height="200" alt="" /></a>
        <br />
     Правила оказания услуг стр3.
 </div>

@@ -27,7 +27,7 @@ namespace InforoomInternet.Controllers
 				context.Session["Login"] = context.CurrentUser.Identity.Name;
 			}*/
 			var ip = string.Empty;
-#if DEBUG
+#if !DEBUG
 			ip = "91.219.7.3";
 #else
 			ip = context.Request.UserHostAddress;
