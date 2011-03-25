@@ -244,12 +244,14 @@ color: #f00; /* ÷вет активной ссылки */
 
 #content tr.caption td.left {
   background: #4d7da2 url(../Content/Layouts/td-left.png) no-repeat top left;
-  width: 90%;
+  /*width: 90%;*/
+  float:none;
 }
 
 #content tr.caption td.right {
   background: #4d7da2 url(../Content/Layouts/td-right.png) no-repeat top right;
-  width: 90%;
+  /*width: 90%;*/   
+  float:none;
 }
 
 #content td {

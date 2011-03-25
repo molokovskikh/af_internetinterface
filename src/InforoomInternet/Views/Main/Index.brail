@@ -2,7 +2,7 @@
      <div class="text">
         <h3>На всех тарифах доступ к крупнейшему торрент-треккеру г. Воронежа и локальной сети ИНФОРУМ на скорости до 100 Мбит/с - БЕСПЛАТНО!!!</h3>
          <p>
-             <table cellpadding="3" cellspacing="3" width="100%">
+             <table cellpadding="3" cellspacing="0" width="100%">
                  <tr class="caption">
                      <td class="left">Название тарифа</td>
                      <td >Скорость доступа</td>

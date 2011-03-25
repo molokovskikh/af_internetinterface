@@ -3,7 +3,7 @@
         <h3>Баланс составляет <b> ${PhysicalClient.Balance} </b></h3>
         <h3>Номер лицевого счета для оплаты через терминалы <b> ${PhysicalClient.Id.ToString("00000")} </b></h3>
          <h3><b>Зачисления</b></h3>
-             <table cellpadding="3" cellspacing="3" width="100%">
+             <table cellpadding="3" cellspacing="0" width="100%">
                  <tr class="caption">
                      <td >Сумма</td>
                      <td >Дата</td>
@@ -21,7 +21,7 @@
          <a href="Index.brail?grouped=month">Сгруппировать по месяцам</a>
          <a href="Index.brail?grouped=year">Сгруппировать по годам</a>
          </p>
-             <table cellpadding="3" cellspacing="3" width="100%">
+             <table cellpadding="3" cellspacing="0" width="100%">
                  <tr class="caption">
                      <td >Сумма</td>
                      <td >Дата</td>

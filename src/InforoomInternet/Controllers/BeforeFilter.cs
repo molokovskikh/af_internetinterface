@@ -26,12 +26,7 @@ namespace InforoomInternet.Controllers
 			{
 				context.Session["Login"] = context.CurrentUser.Identity.Name;
 			}*/
-			var ip = string.Empty;
-#if !DEBUG
-			ip = "91.219.7.3";
-#else
-			ip = context.Request.UserHostAddress;
-#endif
+			var ip = context.Request.UserHostAddress;
 			var lease = Lease.FindAllByProperty("Ip", Convert.ToUInt32(NetworkSwitches.SetProgramIp(ip)));
 			if (lease.Length != 0)
 			{
