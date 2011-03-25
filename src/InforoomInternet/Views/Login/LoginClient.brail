@@ -59,18 +59,18 @@
                     <div class="labelLogin"> 
                     Логин</div> 
                     <div class="labelRight">
-                    <input type="text" class="search" name="Login">
+                    <input type="text" id="Login" class="search" name="Login">
                     </div>
                 </div>
                 <div class="blockDiv">
                 <div class="labelLogin">
                     Пароль</div>
                     <div class="labelRight">
-                    <input type="password" class="search" name="Password">
+                    <input type="password" id="Password" class="search" name="Password">
                     </div>
                 </div>
                 <div class="blockBut">
-                    <button type="submit" class="button">
+                    <button type="submit" id="LogBut" class="button">
                       <img alt="Save" src="${siteroot}/Content/key.png"> Войти
                     </button>
                 </div>

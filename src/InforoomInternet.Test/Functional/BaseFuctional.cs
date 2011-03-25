@@ -165,19 +165,78 @@ namespace InforoomInternet.Test.Unit
 		}
 
 		[Test]
-		public void PrivateOffice()
+		public void PrivateOfficeTest()
 		{
 			var phisClient = new PhisicalClients
 			{
 				Name = "Петр",
 				Patronymic = "Иванович",
+				Balance = 500,
 				Password = CryptoPass.GetHashString("123")
 			};
 			phisClient.SaveAndFlush();
-			new Clients
+			var client = new Clients
 			{
 				PhisicalClient = phisClient
-			}.SaveAndFlush();
+			};
+			client.SaveAndFlush();
+			new Payment
+				{
+					Client = phisClient,
+					Agent = Agent.FindFirst(),
+					Sum = 500.ToString()
+				}.SaveAndFlush();
+			new WriteOff
+				{
+					Client = client,
+					WriteOffDate = DateTime.Now,
+					WriteOffSum = 400
+				}.SaveAndFlush();
+			using (var browser = Open("PrivateOffice/Index"))
+			{
+				browser.TextField("Login").AppendText(phisClient.Id.ToString());
+				browser.TextField("Password").AppendText("123");
+				browser.Button("LogBut").Click();
+				Thread.Sleep(500);
+				Assert.That(browser.Text, Is.StringContaining("Ваш личный кабинет, Петр Иванович"));
+				Assert.That(browser.Text, Is.StringContaining("Номер лицевого счета для оплаты через терминалы " + phisClient.Id.ToString("00000")));
+				Assert.That(browser.Text, Is.StringContaining("500"));
+				Assert.That(browser.Text, Is.StringContaining("400"));
+			}
+			Console.WriteLine("PrivateOfficeTest Complite");
+		}
+
+		[Test]
+		public void LinkTest()
+		{
+			using (var browser = Open(""))
+			{
+				browser.Link("maina").Click();
+				Assert.That(browser.Text, Is.StringContaining("Тарифы"));
+				browser.Link("requisite").Click();
+				Assert.That(browser.Text, Is.StringContaining("ИНН"));
+				browser.Link("zayavka").Click();
+				Assert.That(browser.Text, Is.StringContaining("Электронная почта:"));
+				browser.Link("OfferContract").Click();
+				Assert.That(browser.Text, Is.StringContaining("Договор оферта стр2. "));
+				browser.Link("PrivateOffice").Click();
+				Assert.That(browser.Text, Is.StringContaining("Логин"));
+				browser.Link("HowPay2").Click();
+				Assert.That(browser.Text, Is.StringContaining("QIWI"));
+				browser.Link("HowPay1").Click();
+				Assert.That(browser.Text, Is.StringContaining("QIWI"));
+
+				browser.Link("Main1").Click();
+				Assert.That(browser.Text, Is.StringContaining("Тарифы"));
+				browser.Link("requisite1").Click();
+				Assert.That(browser.Text, Is.StringContaining("ИНН"));
+				browser.Link("Zayavka1").Click();
+				Assert.That(browser.Text, Is.StringContaining("Электронная почта:"));
+				browser.Link("OfferContract1").Click();
+				Assert.That(browser.Text, Is.StringContaining("Договор оферта стр2. "));
+				browser.Link("PrivateOffice1").Click();
+			}
+			Console.WriteLine("LinkTest Complite");
 		}
 	}
 }

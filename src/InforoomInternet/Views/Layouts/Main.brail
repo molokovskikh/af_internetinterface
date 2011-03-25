@@ -34,19 +34,19 @@
             <div class="middle">
             <ul class="main">
               <li class="main">
-                <a href="${siteroot}/" class="menu-item one-line">О компании</a><br />
+                <a href="${siteroot}/" id="maina" class="menu-item one-line">О компании</a><br />
               </li>
               <li li class="main">
-                 <a href="${siteroot}/Main/requisite" class="menu-item one-line">Реквизиты</a>
+                 <a href="${siteroot}/Main/requisite" id="requisite" class="menu-item one-line">Реквизиты</a>
               </li>
             <li class="main">
-                <a href="${siteroot}/Main/zayavka" class="menu-item one-line">Заявка на подключение</a>
+                <a href="${siteroot}/Main/zayavka" id="zayavka" class="menu-item one-line">Заявка на подключение</a>
             </li>
             <li class="main">
-                <a href="${siteroot}/Main/OfferContract" class="menu-item one-line">Договор оферта</a>
+                <a href="${siteroot}/Main/OfferContract" id="OfferContract" class="menu-item one-line">Договор оферта</a>
             </li>
             <li class="main">
-                <a href="${siteroot}/PrivateOffice/Index" class="menu-item one-line">Личный кабинет</a>
+                <a href="${siteroot}/PrivateOffice/Index" id="PrivateOffice" class="menu-item one-line">Личный кабинет</a>
             </li>
             </ul>
             </div>
@@ -56,7 +56,7 @@
         <!-- Левая колонка// -->
         <div class="left">
             <!-- Кнопка // -->
-            <a href="${siteroot}/Main/HowPay" class="button-blue">Как оплатить?</a>
+            <a href="${siteroot}/Main/HowPay" id="HowPay1" class="button-blue">Как оплатить?</a>
             <!-- // Кнопка -->
 
             <!-- Телефон // -->
@@ -149,7 +149,7 @@
 
         <!-- Правая колонка // -->
         <div class="right">
-            <a href="${siteroot}/Main/HowPay" class="button-orange">Как оплатить?</a>
+            <a href="${siteroot}/Main/HowPay" id="HowPay2" class="button-orange">Как оплатить?</a>
              <div style="display:none" id="poll">
                 <h3>А что вы думаете?</h3>
                 <p>Проснувшись утром, я, первым делом:</p>
@@ -213,11 +213,11 @@
         </div>
         <div class="center">
             <ul>
-                <li class="bottom-line"><a href="${siteroot}/">Тарифы</a></li>
-                <li class="bottom-line"><a href="${siteroot}/Main/requisite">Реквизиты</a></li>
-                <li class="bottom-line"><a href="${siteroot}/Main/Zayavka">Заявка на подключение</a></li>
-                <li class="bottom-line"><a href="${siteroot}/Main/OfferContract">Договор оферта</a></li>
-                <li><a href="${siteroot}/PrivateOffice/Index">Личный кабинет</a></li>
+                <li class="bottom-line"><a href="${siteroot}/" id="Main1">Тарифы</a></li>
+                <li class="bottom-line"><a href="${siteroot}/Main/requisite" id="requisite1">Реквизиты</a></li>
+                <li class="bottom-line"><a href="${siteroot}/Main/Zayavka" id="Zayavka1">Заявка на подключение</a></li>
+                <li class="bottom-line"><a href="${siteroot}/Main/OfferContract" id="OfferContract1">Договор оферта</a></li>
+                <li><a href="${siteroot}/PrivateOffice/Index" id="PrivateOffice1">Личный кабинет</a></li>
             </ul>
         </div>
         <br clear="all" />
