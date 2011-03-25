@@ -109,7 +109,11 @@ namespace InforoomInternet.Controllers
 				RedirectToSiteRoot();
 				return;
 			}
-
+			if (lease.Endpoint.Client.PhisicalClient == null)
+			{
+				RedirectToSiteRoot();
+				return;
+			}
 			var pclient = lease.Endpoint.Client.PhisicalClient;
 			var client = lease.Endpoint.Client;
 
