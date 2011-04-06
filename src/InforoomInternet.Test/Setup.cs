@@ -22,7 +22,7 @@ namespace InforoomInternet.Test
 				configuration.Add(typeof(ActiveRecordBase),
 								  new Dictionary<string, string>
 				                  	{
-				                  		{Environment.Dialect, "InforoomInternet.Controllers.MyDialect, InforoomInternet"},
+				                  		{Environment.Dialect, "NHibernate.Dialect.MySQLDialect"},
 				                  		{Environment.ConnectionDriver, "NHibernate.Driver.MySqlDataDriver"},
 				                  		{Environment.ConnectionProvider, "NHibernate.Connection.DriverConnectionProvider"},
 				                  		{Environment.ConnectionStringName, "DB"},
@@ -30,6 +30,7 @@ namespace InforoomInternet.Test
 				                  			"NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle"
 				                  			},
 				                  		{Environment.Hbm2ddlKeyWords, "none"},
+										{Environment.ShowSql, "true"}
 				                  	});
 				ActiveRecordStarter.Initialize(new[] { Assembly.Load("InforoomInternet"), Assembly.Load("InforoomInternet.Test"), Assembly.Load("InternetInterface") },
 											   configuration);

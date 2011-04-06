@@ -17,5 +17,10 @@ namespace InforoomInternet.Logic
 			                              	.Add(Restrictions.Eq("Id", id))
 			                              	.Add(Restrictions.Eq("Password", CryptoPass.GetHashString(password)))).Length != 0;
 		}
+
+		public static bool IsAccessiblePartner(object name)
+		{
+			return (name != null) && (Partner.FindAllByProperty("Login", name).Length != 0);
+		}
 	}
 }

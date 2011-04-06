@@ -1,0 +1,151 @@
+﻿<script type="text/javascript" src="../JavaScript/jquery-1.4.2.min.js"></script>
+<style type="text/css">
+    .mitem
+    {
+        margin:10px;
+        }
+     .subitem
+    {
+        margin:10px;
+        margin-left:40px;
+        }
+     .addSubMenuItem
+     {
+         width:20px;
+         height:20px;
+         background: url(../Content/plus__orange.png) no-repeat center top;
+         /*background-color:Green;*/
+         float:right;
+         }
+          .delSubMenuItem
+     {
+         width:20px;
+         height:20px;
+         /*background-color:Red;*/
+         float:right;
+         margin-right:100px;
+         background: url(../Content/onebit_32.png) no-repeat center top;
+         }
+      .delMenuItem
+     {
+         width:20px;
+         height:20px;
+         /*background-color:Red;*/
+         float:right;
+         margin-right:150px;
+         background: url(../Content/onebit_32.png) no-repeat center top;
+         }
+</style>
+
+<script type="text/javascript">
+
+    function addSubMenu(clickDiv) {
+        var idBlockName = $(clickDiv).parent().children('.mitem:first').attr('id');
+        var idBlock = idBlockName.split('_')[idBlockName.split('_').length - 1];
+        var nextIndex = $('#menus').children('#menuBlock_' + idBlock).children('.subDiv').children('.subitem').length / 2 + 1;
+        $(clickDiv).parent().children('.subDiv').append('<div class="delSubMenu"> </div>');
+        var toDiv = $(clickDiv).parent().children('.subDiv').children('.delSubMenu:last');
+        $(toDiv).append($('.subitem:last').clone().attr({
+            value: '',
+            id: 'sn_' + nextIndex
+        }));
+        $(toDiv).append($('.subitem:last').clone().attr({
+            value: '',
+            id: 'sl_' + nextIndex
+        }));
+        $(toDiv).append('<div class="delSubMenuItem"> </div>');
+        $(toDiv).append('<br/>');
+        $(toDiv).children('.delSubMenuItem').click(function () {
+            delSubMenu($(toDiv).children('.delSubMenuItem'));
+        });
+    }
+
+    function delSubMenu(clickDiv) {
+        $(clickDiv).parent().remove();
+    }
+
+
+
+    $(document).ready(function () {
+
+        $('#addMenuBut').click(function () {
+            var blocks = $(this).parent().children('#menus').children('div:last');
+            var mainBlockCount = blocks.attr('id').split('_')[blocks.attr('id').split('_').length - 1];
+            var menu = $(this).parent().children('#menus');
+            menu.append($('#menuBlock_' + mainBlockCount).clone().attr({
+                value: '',
+                id: 'menuBlock_' + (mainBlockCount + 1)
+            }));
+            menuBlock = menu.children('#menuBlock_' + (mainBlockCount + 1));
+            menuBlock.children('.mitem:first').attr({
+                value: '',
+                id: 'sn_' + (mainBlockCount + 1)
+            });
+            menuBlock.children('.mitem:last').attr({
+                value: '',
+                id: 'sl_' + (mainBlockCount + 1)
+            });
+            menuBlock.children('.subDiv').children('.delSubMenu').remove();
+            menuBlock.children('.subDiv').children('br').remove();
+            menuBlock.children('.addSubMenuItem').click(function () {
+                addSubMenu(this);
+            });
+            menuBlock.children('.delMenuItem').click(function () {
+                delSubMenu(this);
+            });
+        });
+
+
+        $('.addSubMenuItem').click(function () {
+            addSubMenu(this);
+        });
+
+        $('.delSubMenuItem').click(function () {
+            delSubMenu(this);
+        });
+
+        $('.delMenuItem').click(function () {
+            delSubMenu(this);
+        });
+    });
+
+
+    function Save() {
+        var req = {};
+        var id = new Array();
+        var fieldType = new Array();
+        var name = new Array();
+        var link = new Array();
+        $('.menuBlock').each(function () {
+            var mainBlock = $(this);
+            //var inData = { fieldType: "main", name: fieldName, link: fieldlink, id: $(this).attr('id') };
+            id.push($(this).attr('id'));
+            fieldType.push("main");
+            name.push($(this).children('.mitem:first').val());
+            link.push($(this).children('.mitem:last').val());
+            //aElems.push(inData);
+            $(this).children('.subDiv').children('.delSubMenu').each(function () {
+                id.push(mainBlock.attr('id').split('_')[mainBlock.attr('id').split('_').length - 1]);
+                fieldType.push("sub");
+                name.push($(this).children('.subitem:first').val());
+                link.push($(this).children('.subitem:last').val());
+            });
+        });
+        req.id = id;
+        req.name = name;
+        req.link = link;
+        req.fieldType = fieldType;
+        $.post("Save", req, function (data) { alert(data); window.location.href = '../Editor/Menu'; });
+        /*$.post("Save", aElems, function() {
+            alert("Data Loaded: " + aElems.length);
+    });*/
+    }
+</script>
+
+<button id="addMenuBut" >Добавить новый пункт меню</button>
+<div id="menus">
+				<% 
+	component EditMenuList, {}
+%>
+</div>
+<button id="Save" onclick="Save()">Сохранить</button>

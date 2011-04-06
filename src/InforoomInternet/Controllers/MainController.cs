@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using Castle.MonoRail.Framework;
+using InforoomInternet.Logic;
 using InforoomInternet.Models;
 using InternetInterface.Models;
 //using Tariff = InforoomInternet.Models.Tariff;
@@ -13,31 +15,36 @@ namespace InforoomInternet.Controllers
 	{
 		public void Index()
 		{
-			var all = Tariff.FindAll();
-			PropertyBag["tariffs"] = all;
+			PropertyBag["tariffs"] = Tariff.FindAll();
 		}
 
 		public void Zayavka()
 		{
-			var all = Tariff.FindAll();
-			PropertyBag["tariffs"] = all;
+			PropertyBag["tariffs"] = Tariff.FindAll();
 		}
 
 		public void Main()
 		{}
 
-		public void HowPay()
-		{}
+		public void HowPay(bool edit)
+		{
+			SetEdatableAttribute(edit, "HowPay");
+		}
 
 		public void Ok()
 		{}
 
-		public void OfferContract()
+		public void OfferContract(bool edit)
 		{}
 
-		public void requisite()
-		{}
-		
+		public void requisite(bool edit)
+		{
+			//PropertyBag["Content"] = IVRNContent.FindAllByProperty("ViewName", "requisite").First().Content;
+			SetEdatableAttribute(edit, "requisite");
+			/*if (edit)
+				LayoutName = "TinyMCE";*/
+		}
+
 		public void PrivateOffice()
 		{}
 
@@ -133,6 +140,45 @@ namespace InforoomInternet.Controllers
 			else PropertyBag["referer"] = string.Empty;
 			PropertyBag["PClient"] = pclient;
 			PropertyBag["Client"] = client;
+		}
+
+
+		public void Save()
+		{
+			var localPath = Request.Form["LocalPath"];
+			if (LoginLogic.IsAccessiblePartner(Session["LoginPartner"]))
+			{
+				var htmlcode = Request.Form["htmlcode"];
+				var views = IVRNContent.FindAllByProperty("ViewName", localPath);
+				if (views.Length == 0)
+					new IVRNContent
+						{
+							Content = htmlcode,
+							ViewName = localPath
+						}.SaveAndFlush();
+				else
+				{
+					var forEdit = views.First();
+					forEdit.Content = htmlcode;
+					forEdit.ViewName = localPath;
+					forEdit.UpdateAndFlush();
+				}
+			}
+			RedirectToUrl(localPath);
+		}
+
+		private void SetEdatableAttribute(bool edit, string viewName)
+		{
+			PropertyBag["Content"] = IVRNContent.FindAllByProperty("ViewName", viewName).First().Content;
+			if (edit)
+			{
+				LayoutName = "TinyMCE";
+				PropertyBag["ShowEditLink"] = false;
+			}
+			else
+			{
+				PropertyBag["ShowEditLink"] = true;
+			}
 		}
 	}
 }

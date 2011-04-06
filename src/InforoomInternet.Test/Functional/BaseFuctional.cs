@@ -192,7 +192,7 @@ namespace InforoomInternet.Test.Unit
 					WriteOffDate = DateTime.Now,
 					WriteOffSum = 400
 				}.SaveAndFlush();
-			using (var browser = Open("PrivateOffice/Index"))
+			using (var browser = Open("PrivateOffice/IndexOffice"))
 			{
 				browser.TextField("Login").AppendText(phisClient.Id.ToString());
 				browser.TextField("Password").AppendText("123");

@@ -316,6 +316,7 @@ namespace InternetInterface.Controllers
 		{
 			var updateClient = PhisicalClients.Find(ClientID);
 			BindObjectInstance(updateClient, ParamStore.Form, "Client");
+			updateClient.OutputDate = DateTime.Parse(updateClient.OutputDate).ToShortDateString();
 			updateClient.Tariff = Tariff.Find(tariff);
 			var statusCanChanged = true;
 			if ((updateClient.Status.Id == (uint)StatusType.BlockedAndNoConnected) && (status == (uint)StatusType.NoWorked))

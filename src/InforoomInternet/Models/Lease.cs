@@ -8,9 +8,6 @@ using Castle.ActiveRecord.Framework;
 
 namespace InforoomInternet.Models
 {
-
-
-
 	/*[ActiveRecord(Schema = "Internet")]
 	public class Lease : ActiveRecordLinqBase<Lease>
 	{

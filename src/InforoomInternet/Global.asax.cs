@@ -7,15 +7,19 @@ using Castle.ActiveRecord.Framework.Config;
 using System.Reflection;
 using Castle.MonoRail.Framework;
 using Castle.MonoRail.Framework.Configuration;
+using Castle.MonoRail.Framework.Container;
 using Castle.MonoRail.Framework.Internal;
+using Castle.MonoRail.Framework.JSGeneration;
+using Castle.MonoRail.Framework.JSGeneration.jQuery;
 using Castle.MonoRail.Framework.Routing;
+using Castle.MonoRail.Framework.Services;
 using Castle.MonoRail.Views.Brail;
 using log4net;
 using log4net.Config;
 
 namespace InforoomInternet
 {
-	public class Global : HttpApplication, IMonoRailConfigurationEvents
+	public class Global : HttpApplication, IMonoRailConfigurationEvents, IMonoRailContainerEvents
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof(Global));
 
@@ -111,11 +115,27 @@ namespace InforoomInternet
 			configuration.ViewEngineConfig.VirtualPathRoot = configuration.ViewEngineConfig.ViewPathRoot;
 			configuration.ViewEngineConfig.ViewPathRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configuration.ViewEngineConfig.ViewPathRoot);
 
+			/*configuration.JSGeneratorConfiguration.AddLibrary("jquery-1.2.1", typeof(JQueryGenerator))
+	.AddExtension(typeof(CommonJSExtension))
+	.AddExtension(typeof(InterfaceLibEffects))
+	.ElementGenerator
+		.AddExtension(typeof(SomeElementLevelExtension))
+		.Done
+	.BrowserValidatorIs(typeof(VinterValidatorProvider))
+	.SetAsDefault();*/
 			/*	
 			configuration.SmtpConfig.Host = "mail.adc.analit.net";
 			configuration.ExtensionEntries.Add(new ExtensionEntry(typeof(ExceptionChainingExtension),
 			new MutableConfiguration("mailTo")));
 			*/
+		}
+
+		public void Created(IMonoRailContainer container)
+		{ }
+
+		public void Initialized(IMonoRailContainer container)
+		{
+			((DefaultViewComponentFactory)container.GetService<IViewComponentFactory>()).Inspect(Assembly.Load("InforoomInternet"));
 		}
 	}
 }

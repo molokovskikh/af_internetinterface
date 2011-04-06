@@ -76,7 +76,6 @@ color: #f00; /* ÷вет активной ссылки */
 
 #icons a.home {
   background: url(../Content/Layouts/icon-home.png) no-repeat center;
-  margin-left: 30px;
 }
 
 #icons a.mail {
@@ -85,6 +84,10 @@ color: #f00; /* ÷вет активной ссылки */
 
 #icons a.search {
   background: url(../Content/Layouts/icon-search.png) no-repeat center;
+}
+
+#icons a.login {
+  background: url(../Content/Layouts/login.png) no-repeat center;
 }
 
 /* √лавное меню */

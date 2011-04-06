@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Security;
 using Castle.MonoRail.Framework;
 using InforoomInternet.Logic;
 using InforoomInternet.Models;
+using InternetInterface.Helpers;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Dialect;
@@ -13,40 +15,56 @@ using NHibernate.Type;
 
 namespace InforoomInternet.Controllers
 {
-	public class MyDialect: MySQL5Dialect
-	{
-		public MyDialect():base()
-		{
-			RegisterFunction("inet_ntoa", new StandardSQLFunction("inet_ntoa", NHibernateUtil.UInt32));
-		}
-	}
-
-    [Layout("Main")]
+	[Layout("Main")]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(BeforeFilter))]
 	public class LoginController : SmartDispatcherController
 	{
-		public void LoginClient()
-		{ }
+		public void LoginPage(bool partner)
+		{
+			if (!partner)
+				PropertyBag["AcceptName"] = "AcceptClient";
+			else
+			{
+				if (LoginLogic.IsAccessiblePartner(Session["LoginPartner"]))
+					RedirectToSiteRoot();
+				PropertyBag["AcceptName"] = "AcceptPartner";
+			}
+		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void Accept(string Login, string Password)
+		public void AcceptPartner(string Login, string Password)
+		{
+			if (ActiveDirectoryHelper.IsAuthenticated(Login, Password))
+			{
+				FormsAuthentication.RedirectFromLoginPage(Login, true);
+				Session["LoginPartner"] = Login;
+				RedirectToSiteRoot();
+			}
+			else
+			{
+				RedirectToUrl(@"..\\Login\LoginPage?partner=true");
+			}
+		}
+
+		[AccessibleThrough(Verb.Post)]
+		public void AcceptClient(string Login, string Password)
 		{
 			try
 			{
 				var id = Convert.ToUInt32(Login);
 				if (LoginLogic.IsAccessibleClient(id, Password))
 				{
-					Session["Login"] = Login;
-					RedirectToUrl(@"..\\PrivateOffice\Index");
+					Session["LoginClient"] = Login;
+					RedirectToUrl(@"..\\PrivateOffice\IndexOffice");
 				}
 				else
 				{
-					RedirectToUrl(@"..\\Login\LoginClient");
+					RedirectToUrl(@"..\\Login\LoginPage");
 				}
 			}
 			catch (Exception ex)
 			{
-				RedirectToUrl(@"..\\Login\LoginClient");
+				RedirectToUrl(@"..\\Login\LoginPage");
 			}
 		}
 	}

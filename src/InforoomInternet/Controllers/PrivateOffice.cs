@@ -13,10 +13,9 @@ namespace InforoomInternet.Controllers
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AccessFilter))]
 	public class PrivateOffice:SmartDispatcherController
 	{
-
-		public void Index(string grouped)
+		public void IndexOffice(string grouped)
 		{
-			var physClientId = Convert.ToUInt32(Session["Login"]);
+			var physClientId = Convert.ToUInt32(Session["LoginClient"]);
 			var physClient = PhisicalClients.Find(physClientId);
 			PropertyBag["PhysClientName"] = string.Format("{0} {1}",physClient.Name, physClient.Patronymic);
 			PropertyBag["PhysicalClient"] = physClient;

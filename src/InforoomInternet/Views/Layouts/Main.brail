@@ -1,229 +1,225 @@
 ﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
 <head>
   <title>Инфорум</title>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+
   <link rel="stylesheet" href="${siteroot}/CSS/styles.css" type="text/css" />
 </head>
 
 <body>
 <div id="wrapper">
-    <div class="left">
-        <a href="#" id="logo">&nbsp;</a>
-    </div>
-    <div class="right">
-        <div id="icons">
-            <a href="#" class="home">&nbsp;</a>
-            <a href="#" class="mail">&nbsp;</a>
-            <a href="#" class="search">&nbsp;</a>
-        </div>
-    </div>
-    <div class="center">
-        <div id="header">
-            <!-- Шапка -->
-        </div>
-    </div>
-    <br clear="all" />
-     <div id="container">
-        <!-- Меню// -->
-        <div id="menu">
-            <div class="top">&nbsp;</div>
-            <div class="middle">
-            <ul class="main">
-              <li class="main">
-                <a href="${siteroot}/" id="maina" class="menu-item one-line">О компании</a><br />
-              </li>
-              <li li class="main">
-                 <a href="${siteroot}/Main/requisite" id="requisite" class="menu-item one-line">Реквизиты</a>
-              </li>
-            <li class="main">
-                <a href="${siteroot}/Main/zayavka" id="zayavka" class="menu-item one-line">Заявка на подключение</a>
-            </li>
-            <li class="main">
-                <a href="${siteroot}/Main/OfferContract" id="OfferContract" class="menu-item one-line">Договор оферта</a>
-            </li>
-            <li class="main">
-                <a href="${siteroot}/PrivateOffice/Index" id="PrivateOffice" class="menu-item one-line">Личный кабинет</a>
-            </li>
-            </ul>
-            </div>
-        </div>
-        <!-- //Меню -->
+	<div class="left">
+		<a href="#" id="logo">&nbsp;</a>
+	</div>
+	<div class="right">
+		<div id="icons">
+			<a href="#" class="home">&nbsp;</a>
+			<a href="#" class="mail">&nbsp;</a>
+			<a href="#" class="search">&nbsp;</a>
+			<%if not AccessEditLink: %>
+			<a href="${siteroot}\Login\LoginPage?partner=true" class="login">&nbsp;</a>
+			<%end %>
+		</div>
+	</div>
+	<div class="center">
+		<div id="header">
+			<!-- Шапка -->
+		</div>
+	</div>
+	<br clear="all" />
+	 <div id="container">
+		<!-- Меню// -->
+		<div id="menu">
+			<div class="top">&nbsp;</div>
+			<div class="middle">
+			<ul class="main">
+				<% 
+	component MenuList, {}
+%>	
+			</ul>
+			</div>
+		</div>
+		<!-- //Меню -->
 
-        <!-- Левая колонка// -->
-        <div class="left">
-            <!-- Кнопка // -->
-            <a href="${siteroot}/Main/HowPay" id="HowPay1" class="button-blue">Как оплатить?</a>
-            <!-- // Кнопка -->
+		<!-- Левая колонка// -->
+		<div class="left">
+			<!-- Кнопка // -->
+			<a href="${siteroot}/Main/HowPay" id="HowPay1" class="button-blue">Как оплатить?</a>
+			<!-- // Кнопка -->
 
-            <!-- Телефон // -->
-            <div id="phone">
-                <small>473</small><br />
-                <span>260-60-00</span>
-            </div>
-            <!-- // Телефон -->
+			<!-- Телефон // -->
+			<div id="phone">
+				<small>473</small><br />
+				<span>260-60-00</span>
+			</div>
+			<!-- // Телефон -->
 
-            <!-- Новости // -->
-            <div id="news">
-                <a href="#" title="RSS" class="news-rss">&nbsp;</a>
-                <div class="news-border">
-                <div class="news-block">
-                    <div class="news-date">
-                        <small>01.11.2010</small>
-                    </div>
-                    <div class="news-content">
-                        <div class="news-header">
-                            <h4>Новый тариф "Супер"</h4>
-                        </div>
-                        <div class="news-text">
-                            <p>Слово "тариф" происходит от названия небольшого города Тарифа близ...</p>
-                        </div>
-                        <div class="news-readmore">
-                            <a href="#">Подробнее</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="news-block">
-                    <div class="news-date">
-                        <small>01.11.2010</small>
-                    </div>
-                    <div class="news-content">
-                        <div class="news-header">
-                            <h4>Новый тариф "Супер"</h4>
-                        </div>
-                        <div class="news-text">
-                            <p>Слово "тариф" происходит от названия небольшого города Тарифа близ...</p>
-                        </div>
-                        <div class="news-readmore">
-                            <a href="#">Подробнее</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="news-block">
-                    <div class="news-date">
-                        <small>01.11.2010</small>
-                    </div>
-                    <div class="news-content">
-                        <div class="news-header">
-                            <h4>Новый тариф "Супер"</h4>
-                        </div>
-                        <div class="news-text">
-                            <p>Слово "тариф" происходит от названия небольшого города Тарифа близ...</p>
-                        </div>
-                        <div class="news-readmore">
-                            <a href="#">Подробнее</a>
-                        </div>
-                    </div>
-                </div>
-                <a href="#" class="news-all">Все новости</a>
-            </div>
-            </div>
-            <!-- // Новости -->
+			<!-- Новости // -->
+			<div id="news">
+				<a href="#" title="RSS" class="news-rss">&nbsp;</a>
+				<div class="news-border">
+				<div class="news-block">
+					<div class="news-date">
+						<small>01.11.2010</small>
+					</div>
+					<div class="news-content">
+						<div class="news-header">
+							<h4>Новый тариф "Супер"</h4>
+						</div>
+						<div class="news-text">
+							<p>Слово "тариф" происходит от названия небольшого города Тарифа близ...</p>
+						</div>
+						<div class="news-readmore">
+							<a href="#">Подробнее</a>
+						</div>
+					</div>
+				</div>
+				<div class="news-block">
+					<div class="news-date">
+						<small>01.11.2010</small>
+					</div>
+					<div class="news-content">
+						<div class="news-header">
+							<h4>Новый тариф "Супер"</h4>
+						</div>
+						<div class="news-text">
+							<p>Слово "тариф" происходит от названия небольшого города Тарифа близ...</p>
+						</div>
+						<div class="news-readmore">
+							<a href="#">Подробнее</a>
+						</div>
+					</div>
+				</div>
+				<div class="news-block">
+					<div class="news-date">
+						<small>01.11.2010</small>
+					</div>
+					<div class="news-content">
+						<div class="news-header">
+							<h4>Новый тариф "Супер"</h4>
+						</div>
+						<div class="news-text">
+							<p>Слово "тариф" происходит от названия небольшого города Тарифа близ...</p>
+						</div>
+						<div class="news-readmore">
+							<a href="#">Подробнее</a>
+						</div>
+					</div>
+				</div>
+				<a href="#" class="news-all">Все новости</a>
+			</div>
+			</div>
+			<!-- // Новости -->
 
-            <!-- Поиск // -->
-            <div id="search">
-                <form action="#">
-                    <input name="" value="Поиск" class="search" />
-                    <input type="button" name="" class="submit" />
-                </form>
-            </div>
-            <!-- // Поиск -->
+			<!-- Поиск // -->
+			<div id="search">
+				<form action="#">
+					<input name="" value="Поиск" class="search" />
+					<input type="button" name="" class="submit" />
+				</form>
+			</div>
+			<!-- // Поиск -->
 
-            <!-- Контакты // -->
-            <div id="contacts">
-                <h3>Контакты</h3>
-                <p>Воронеж,<br />ул.Студенческая, 12а<br />Тел.: 260-60-00<br />
-                Почта: <a id="mail_link" title="адрес службы поддержки пользователей" href="mailto:internet@ivrn.net">internet@ivrn.net</a>
-                </p>
-            </div>
-            <!-- // Контакты -->
+			<!-- Контакты // -->
+			<div id="contacts">
+				<h3>Контакты</h3>
+				<p>Воронеж,<br />ул.Студенческая, 12а<br />Тел.: 260-60-00<br />
+				Почта: <a id="mail_link" title="адрес службы поддержки пользователей" href="mailto:internet@ivrn.net">internet@ivrn.net</a>
+				</p>
+			</div>
+			<!-- // Контакты -->
 
-            <!-- Линия // -->
-            <hr noshade="noshade" width="163" color="#7197b5" class="line-home-left" />
-            <!-- // Линия -->
-        </div>
-        <!-- // Левая колонка -->
+			<!-- Линия // -->
+			<hr noshade="noshade" width="163" color="#7197b5" class="line-home-left" />
+			<!-- // Линия -->
+		</div>
+		<!-- // Левая колонка -->
 
-        <!-- Правая колонка // -->
-        <div class="right">
-            <a href="${siteroot}/Main/HowPay" id="HowPay2" class="button-orange">Как оплатить?</a>
-             <div style="display:none" id="poll">
-                <h3>А что вы думаете?</h3>
-                <p>Проснувшись утром, я, первым делом:</p>
-                <form action="#">
-                    <input type="radio" name="v1" class="radio" id="v1" />
-                    <label for="v1">иду в ванную</label><br />
-                    <input type="radio" name="v2" class="radio" id="v2" />
-                    <label for="v2">готовлю завтрак</label><br />
-                    <input type="radio" name="v3" class="radio" id="v3" />
-                    <label for="v3">включаю телевизор</label><br />
-                    <input type="radio" name="v4" class="radio" id="v4" />
-                    <label for="v4">включаю радио</label><br />
-                    <input type="radio" name="v5" class="radio" id="v5" />
-                    <label for="v5">застилаю постель</label><br />
-                    <input type="radio" name="v6" class="radio" id="v6" />
-                    <label for="v6">отдёргиваю занавески</label><br />
-                    <input type="radio" name="v7" class="radio" id="v7" />
-                    <label for="v7">делаю зарядку</label><br />
-                    <input type="radio" name="v8" class="radio" id="v8" />
-                    <label for="v8">пью кофе (чай)</label><br />
-                    <input type="radio" name="v9" class="radio" id="v9" />
-                    <label for="v9">бужу домашних</label><br />
-                    <input type="button" name="" value="ПРОГОЛОСОВАТЬ" class="button" />
-                </form>
-                <span>Всего голосов: 372</span>
-            </div>
-            <div style="display:none" id="test">
-                <p>Вы хороший человек?</p>
-                <a href="#" class="test">Пройти тест</a>
-                <small><a href="#">Все тесты</a></small>
-            </div>
-            <div style="display:none" id="mini-banner">
-                <a href="#">&nbsp;</a>
-            </div>
-            <!-- Линия // -->
-            <hr style="display:none" noshade="noshade" width="165" color="#7197b5" class="line-home-right" />
-            <!-- // Линия -->
-        </div>
-        <!-- //Правая колонка -->
+		<!-- Правая колонка // -->
+		<div class="right">
+			<a href="${siteroot}/Main/HowPay" id="HowPay2" class="button-orange">Как оплатить?</a>
+            <%if AccessEditLink: %>
+			<a href="${siteroot}/Editor/Menu" style="color:White">Редактировать меню</a>
+            <%end %>
+			 <div style="display:none" id="poll">
+				<h3>А что вы думаете?</h3>
+				<p>Проснувшись утром, я, первым делом:</p>
+				<form action="#">
+					<input type="radio" name="v1" class="radio" id="v1" />
+					<label for="v1">иду в ванную</label><br />
+					<input type="radio" name="v2" class="radio" id="v2" />
+					<label for="v2">готовлю завтрак</label><br />
+					<input type="radio" name="v3" class="radio" id="v3" />
+					<label for="v3">включаю телевизор</label><br />
+					<input type="radio" name="v4" class="radio" id="v4" />
+					<label for="v4">включаю радио</label><br />
+					<input type="radio" name="v5" class="radio" id="v5" />
+					<label for="v5">застилаю постель</label><br />
+					<input type="radio" name="v6" class="radio" id="v6" />
+					<label for="v6">отдёргиваю занавески</label><br />
+					<input type="radio" name="v7" class="radio" id="v7" />
+					<label for="v7">делаю зарядку</label><br />
+					<input type="radio" name="v8" class="radio" id="v8" />
+					<label for="v8">пью кофе (чай)</label><br />
+					<input type="radio" name="v9" class="radio" id="v9" />
+					<label for="v9">бужу домашних</label><br />
+					<input type="button" name="" value="ПРОГОЛОСОВАТЬ" class="button" />
+				</form>
+				<span>Всего голосов: 372</span>
+			</div>
+			<div style="display:none" id="test">
+				<p>Вы хороший человек?</p>
+				<a href="#" class="test">Пройти тест</a>
+				<small><a href="#">Все тесты</a></small>
+			</div>
+			<div style="display:none" id="mini-banner">
+				<a href="#">&nbsp;</a>
+			</div>
+			<!-- Линия // -->
+			<hr style="display:none" noshade="noshade" width="165" color="#7197b5" class="line-home-right" />
+			<!-- // Линия -->
+		</div>
+		<!-- //Правая колонка -->
 
-        <!-- Основная часть// -->
-        <div class="center" id="content">
-         ${ChildOutput}
-        </div>
-        <!-- //Основная часть -->
-        <br clear="all" />
-    </div>
-    <div id="container-bottom">&nbsp;</div>
-    <!-- Подвал // -->
-    <div id="footer">
-         <div id="bottom-menu">
-        <!-- Нижнее меню -->
-        </div>
-        <div class="left">
-        <!-- Левая колонка -->
-        ИНФОРУМ, 2011
-        </div>
-        <div class="right">
-        <!-- Правая колонка -->
-        Все права защищены
-        </div>
-        <div class="center">
-            <ul>
-                <li class="bottom-line"><a href="${siteroot}/" id="Main1">Тарифы</a></li>
-                <li class="bottom-line"><a href="${siteroot}/Main/requisite" id="requisite1">Реквизиты</a></li>
-                <li class="bottom-line"><a href="${siteroot}/Main/Zayavka" id="Zayavka1">Заявка на подключение</a></li>
-                <li class="bottom-line"><a href="${siteroot}/Main/OfferContract" id="OfferContract1">Договор оферта</a></li>
-                <li><a href="${siteroot}/PrivateOffice/Index" id="PrivateOffice1">Личный кабинет</a></li>
-            </ul>
-        </div>
-        <br clear="all" />
-        <div class="cable">&nbsp;</div>
-    </div>
-    <!-- // Подвал -->
+		<!-- Основная часть// -->
+		<div class="center" id="content">
+			${ChildOutput}
+		</div>
+		<!-- //Основная часть -->
+		<br clear="all" />
+	</div>
+	<div id="container-bottom">&nbsp;</div>
+	<!-- Подвал // -->
+	<div id="footer">
+		 <div id="bottom-menu">
+		<!-- Нижнее меню -->
+		</div>
+		<div class="left">
+		<!-- Левая колонка -->
+		ИНФОРУМ, 2011
+		</div>
+		<div class="right">
+		<!-- Правая колонка -->
+		Все права защищены
+		</div>
+		<div class="center">
+			<ul>
+				<li class="bottom-line"><a href="${siteroot}/" id="Main1">Тарифы</a></li>
+				<li class="bottom-line"><a href="${siteroot}/Main/requisite" id="requisite1">Реквизиты</a></li>
+				<li class="bottom-line"><a href="${siteroot}/Main/Zayavka" id="Zayavka1">Заявка на подключение</a></li>
+				<li class="bottom-line"><a href="${siteroot}/Main/OfferContract" id="OfferContract1">Договор оферта</a></li>
+				<li><a href="${siteroot}/PrivateOffice/IndexOffice" id="PrivateOffice1">Личный кабинет</a></li>
+			</ul>
+		</div>
+		<br clear="all" />
+		<div class="cable">&nbsp;</div>
+	</div>
+	<!-- // Подвал -->
 </div>
 </body>
 
