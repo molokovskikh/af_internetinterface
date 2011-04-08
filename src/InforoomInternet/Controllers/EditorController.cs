@@ -19,14 +19,13 @@ namespace InforoomInternet.Controllers
 		{
 			get
 			{
-				return new List<string>
-			                	{
-			                		"",
-									"Main/zayavka",
-									"Main/OfferContract",
-									"PrivateOffice/Index",
-									//"Main/requisite"
-			                	};
+				return new List<string>{
+					"",
+					"Main/zayavka",
+					"Main/OfferContract",
+					"PrivateOffice/IndexOffice",
+					//"Main/requisite"
+				};
 			}
 		}
 
