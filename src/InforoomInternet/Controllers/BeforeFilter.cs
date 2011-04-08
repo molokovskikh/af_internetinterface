@@ -10,6 +10,15 @@ using InternetInterface.Models;
 
 namespace InforoomInternet.Controllers
 {
+	public class Redirecter
+	{
+		public static void RedirectRoot(IEngineContext context, Controller controller)
+		{
+			controller.RedirectToUrl(context.ApplicationPath + "/");
+		}
+	}
+
+
 	public class BeforeFilter : IFilter
 	{
 		public bool Perform(ExecuteWhen exec, IEngineContext context, IController controller, IControllerContext controllerContext)

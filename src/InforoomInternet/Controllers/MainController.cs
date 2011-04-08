@@ -37,16 +37,17 @@ namespace InforoomInternet.Controllers
 		public void OfferContract(bool edit)
 		{}
 
-		public void requisite(bool edit)
+		/*public void requisite(bool edit)
 		{
 			//PropertyBag["Content"] = IVRNContent.FindAllByProperty("ViewName", "requisite").First().Content;
 			SetEdatableAttribute(edit, "requisite");
 			/*if (edit)
 				LayoutName = "TinyMCE";*/
-		}
+		//}
 
 		public void PrivateOffice()
 		{}
+
 
 		public void Assist()
 		{
@@ -113,12 +114,14 @@ namespace InforoomInternet.Controllers
 #endif
 			if (lease == null)
 			{
-				RedirectToSiteRoot();
+				Redirecter.RedirectRoot(Context, this);
+				//RedirectToSiteRoot();
 				return;
 			}
 			if (lease.Endpoint.Client.PhisicalClient == null)
 			{
-				RedirectToSiteRoot();
+				Redirecter.RedirectRoot(Context, this);
+				//RedirectToSiteRoot();
 				return;
 			}
 			var pclient = lease.Endpoint.Client.PhisicalClient;
@@ -129,7 +132,8 @@ namespace InforoomInternet.Controllers
 				SceHelper.Login(lease, lease.Endpoint, Request.UserHostAddress);
 				var url = Request["referer"];
 				if (String.IsNullOrEmpty(url))
-					RedirectToSiteRoot();
+					Redirecter.RedirectRoot(Context, this);
+					//RedirectToSiteRoot();
 				else
 					RedirectToUrl(url);
 			}
@@ -164,7 +168,8 @@ namespace InforoomInternet.Controllers
 					forEdit.UpdateAndFlush();
 				}
 			}
-			RedirectToUrl(localPath);
+			var url = localPath == "HowPay" ? string.Empty :  Context.ApplicationPath + "/Content/";
+			RedirectToUrl(url + localPath);
 		}
 
 		private void SetEdatableAttribute(bool edit, string viewName)

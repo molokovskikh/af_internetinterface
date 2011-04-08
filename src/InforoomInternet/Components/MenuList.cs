@@ -23,14 +23,14 @@ namespace InforoomInternet.Components
 				var active = mitemFirst ? "active" : string.Empty;
 				var id = Path.GetFileNameWithoutExtension(menuField.Link.Split(new[] { '\\' }).Last());
 				blockMenu += string.Format("<li class=\"main {2}\">" +
-						   "<a href=\"{0}\" id=\"{3}\" class=\"menu-item one-line {2}\">{1}</a><br />", EngineContext.UrlInfo.AppVirtualDir + "/" + menuField.Link,
+						   "<a href=\"{0}\" id=\"{3}\" class=\"menu-item one-line {2}\">{1}</a><br />", EngineContext.ApplicationPath + "/" + menuField.Link,
 						   menuField.Name, active, id);
 				if (menuField.subMenu.Count != 0 || mitemFirst)
 				{
 					blockMenu += mitemFirst ? "<ul class=\"sub\">" : "<ul style=\"background:none\" class=\"sub\">";
 					foreach (var subField in menuField.subMenu)
 					{
-						blockMenu += string.Format("<li><a href=\"{0}\" class=\"submenu-item\">{1}</a></li>", subField.Link, subField.Name);
+						blockMenu += string.Format("<li><a href=\"{0}\" class=\"submenu-item\">{1}</a></li>", EngineContext.ApplicationPath + "/" + subField.Link, subField.Name);
 					}
 					for (int i = 0; i < 2 - menuField.subMenu.Count; i++)
 					{
@@ -52,6 +52,7 @@ namespace InforoomInternet.Components
 		{
 			var htmlCode = string.Empty;
 			var menu = MenuField.FindAll();
+			htmlCode += "<input type=text style=\"display:none\" class=\"subitem\"/>";
 			foreach (var menuField in menu)
 			{
 				htmlCode += string.Format("<Div class=\"menuBlock\" id=\"{0}\">", "menuBlock_" + menuField.Id);

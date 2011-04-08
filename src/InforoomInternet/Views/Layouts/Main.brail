@@ -143,9 +143,9 @@
 		<!-- Правая колонка // -->
 		<div class="right">
 			<a href="${siteroot}/Main/HowPay" id="HowPay2" class="button-orange">Как оплатить?</a>
-            <%if AccessEditLink: %>
+			<%if AccessEditLink: %>
 			<a href="${siteroot}/Editor/Menu" style="color:White">Редактировать меню</a>
-            <%end %>
+			<%end %>
 			 <div style="display:none" id="poll">
 				<h3>А что вы думаете?</h3>
 				<p>Проснувшись утром, я, первым делом:</p>

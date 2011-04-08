@@ -60,10 +60,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Castle.MonoRail.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.MonoRail.Framework.Views.NVelocity, Version=2.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Castle.MonoRail.Framework.Views.NVelocity.dll</HintPath>
-    </Reference>
     <Reference Include="Castle.MonoRail.Views.Brail, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Castle.MonoRail.Views.Brail.dll</HintPath>

@@ -26,7 +26,8 @@ namespace InforoomInternet.Controllers
 			else
 			{
 				if (LoginLogic.IsAccessiblePartner(Session["LoginPartner"]))
-					RedirectToSiteRoot();
+					Redirecter.RedirectRoot(Context, this);
+					//RedirectToSiteRoot();
 				PropertyBag["AcceptName"] = "AcceptPartner";
 			}
 		}
@@ -38,7 +39,8 @@ namespace InforoomInternet.Controllers
 			{
 				FormsAuthentication.RedirectFromLoginPage(Login, true);
 				Session["LoginPartner"] = Login;
-				RedirectToSiteRoot();
+				//RedirectToSiteRoot();
+				Redirecter.RedirectRoot(Context, this);
 			}
 			else
 			{

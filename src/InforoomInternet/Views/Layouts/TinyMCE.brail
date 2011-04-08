@@ -55,6 +55,5 @@
 				</textarea>
 				<input type="hidden" name="LocalPath" value="${LocalPath}" />
 				<button type="submit">Сохранить</button>
-				<input type="submit" value="save" />
 			</form>
 </center>

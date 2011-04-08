@@ -28,7 +28,7 @@ namespace InforoomInternet.Test.Unit
 			var port = int.Parse(ConfigurationManager.AppSettings["webPort"]);
 			var webDir = ConfigurationManager.AppSettings["webDirectory"];
 
-			_webServer = new Server(port, "/", Path.GetFullPath(webDir));
+			_webServer = new Server(port, "/ivrn", Path.GetFullPath(webDir), false, true);
 			_webServer.Start();
 			Settings.Instance.AutoMoveMousePointerToTopLeft = false;
 			Settings.Instance.MakeNewIeInstanceVisible = false;
@@ -39,6 +39,8 @@ namespace InforoomInternet.Test.Unit
 		{
 			_webServer.ShutDown();
 		}
+
+
 
 		[Test]
 		public void WarningTest()

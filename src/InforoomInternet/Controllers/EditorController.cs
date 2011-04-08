@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using Castle.MonoRail.Framework;
@@ -14,10 +15,21 @@ namespace InforoomInternet.Controllers
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(BeforeFilter))]
 	public class EditorController : SmartDispatcherController
 	{
+		private static List<string> _specialLinks;
+
 		public void Menu()
 		{
 			if (!LoginLogic.IsAccessiblePartner(Session["LoginPartner"]))
-				RedirectToSiteRoot();
+				//RedirectToSiteRoot();
+				Redirecter.RedirectRoot(Context, this);
+			_specialLinks = new List<string>
+			                	{
+			                		"",
+									"Main/zayavka",
+									"Main/OfferContract",
+									"PrivateOffice/Index",
+									"Main/requisite"
+			                	};
 		}
 
 		[return: JSONReturnBinder]
@@ -43,12 +55,21 @@ namespace InforoomInternet.Controllers
 				var mainMenu = new MenuField();
 				for (int i = 0; i < elCount; i++)
 				{
+					//var subLink = IVRNContent.Queryable.Where(p => p.ViewName == Path.GetFileNameWithoutExtension(link[i])).Count() > 0  
+					var subLink =  _specialLinks.Where(t => t == link[i]).Count() > 0 || link[i].Contains("Content/") ? string.Empty : "Content/";
+					if (!string.IsNullOrEmpty(subLink))
+						new IVRNContent
+							{
+								Content = string.Empty,
+								ViewName = link[i]
+							}.SaveAndFlush();
 					if (type[i] == "main")
 					{
 						mainMenu = new MenuField
 						           	{
-						           		Name = name[i],
-						           		Link = link[i]
+										Name = name[i],
+										//Link = link[i]
+						           		Link = string.Format("{0}" + link[i], subLink)
 						           	};
 						mainMenu.SaveAndFlush();
 					}
@@ -56,7 +77,8 @@ namespace InforoomInternet.Controllers
 					{
 						new SubMenuField
 							{
-								Link = link[i],
+								//Link = link[i],
+								Link = string.Format("{0}" + link[i], subLink),
 								Name = name[i],
 								MenuField = mainMenu //MenuField.Find(Convert.ToUInt32(id[i]))
 							}.SaveAndFlush();

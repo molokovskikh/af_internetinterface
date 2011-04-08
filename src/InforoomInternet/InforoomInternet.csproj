@@ -48,11 +48,11 @@
     <Reference Include="Castle.Core, Version=2.5.1.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\..\lib\Castle.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Castle.DynamicProxy2">
+      <HintPath>..\..\lib\Castle.DynamicProxy2.dll</HintPath>
+    </Reference>
     <Reference Include="Castle.MonoRail.Framework, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\..\lib\Castle.MonoRail.Framework.dll</HintPath>
-    </Reference>
-    <Reference Include="Castle.MonoRail.Framework.Views.NVelocity, Version=2.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\Castle.MonoRail.Framework.Views.NVelocity.dll</HintPath>
     </Reference>
     <Reference Include="Castle.MonoRail.Views.Brail, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\..\lib\Castle.MonoRail.Views.Brail.dll</HintPath>
@@ -448,6 +448,7 @@
   <ItemGroup>
     <Compile Include="Components\MenuList.cs" />
     <Compile Include="Controllers\BeforeFilter.cs" />
+    <Compile Include="Controllers\DynamicController.cs" />
     <Compile Include="Controllers\EditorController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\MainController.cs" />
@@ -472,12 +473,12 @@
     <None Include="Views\Layouts\TinyMCE.brail" />
     <None Include="Views\Main\Assist.brail" />
     <None Include="Views\Main\HowPay.brail" />
+    <None Include="Views\Main\Dynamic.brail" />
     <None Include="Views\Login\LoginPage.brail" />
     <None Include="Views\Main\OfferContract.brail" />
     <None Include="Views\Main\Ok.brail">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Views\Main\requisite.brail" />
     <None Include="Views\Main\Warning.brail" />
     <None Include="Views\Main\Zayavka.brail" />
     <None Include="Views\Main\Index.brail" />
@@ -503,7 +504,7 @@
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>53759</DevelopmentServerPort>
-          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <DevelopmentServerVPath>/IVRN</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>

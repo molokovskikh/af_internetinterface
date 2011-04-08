@@ -47,12 +47,12 @@
         var toDiv = $(clickDiv).parent().children('.subDiv').children('.delSubMenu:last');
         $(toDiv).append($('.subitem:last').clone().attr({
             value: '',
-            id: 'sn_' + nextIndex
-        }));
+            id: 'sn_' + nextIndex,
+        }).css("display", 'inline-block'));
         $(toDiv).append($('.subitem:last').clone().attr({
             value: '',
-            id: 'sl_' + nextIndex
-        }));
+            id: 'sl_' + nextIndex, 
+        }).css("display", 'inline-block'));
         $(toDiv).append('<div class="delSubMenuItem"> </div>');
         $(toDiv).append('<br/>');
         $(toDiv).children('.delSubMenuItem').click(function () {

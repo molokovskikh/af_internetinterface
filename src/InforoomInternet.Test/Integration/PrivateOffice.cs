@@ -26,6 +26,7 @@ namespace InforoomInternet.Test.Integration
 			PrepareController(controller);
 		}
 
+
 		[Test]
 		public void EditMenu()
 		{
