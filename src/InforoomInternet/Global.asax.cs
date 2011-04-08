@@ -14,6 +14,7 @@ using Castle.MonoRail.Framework.JSGeneration.jQuery;
 using Castle.MonoRail.Framework.Routing;
 using Castle.MonoRail.Framework.Services;
 using Castle.MonoRail.Views.Brail;
+using InforoomInternet.Initializers;
 using log4net;
 using log4net.Config;
 
@@ -28,10 +29,9 @@ namespace InforoomInternet
 			try {
 				XmlConfigurator.Configure();
 				GlobalContext.Properties["Version"] = Assembly.GetExecutingAssembly().GetName().Version;
-				ActiveRecordStarter.Initialize(
-					new[] { Assembly.Load("InforoomInternet"), Assembly.Load("InternetInterface") },
-					ActiveRecordSectionHandler.Instance
-				);
+
+				new ActiveRecord().Initialize(ActiveRecordSectionHandler.Instance);
+
 				RoutingModuleEx.Engine.Add(new PatternRoute("/")
 					.DefaultForController().Is("Main")
 					.DefaultForAction().Is("Index"));

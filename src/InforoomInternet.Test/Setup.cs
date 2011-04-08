@@ -20,20 +20,24 @@ namespace InforoomInternet.Test
 				var configuration = new InPlaceConfigurationSource();
 				configuration.PluralizeTableNames = true;
 				configuration.Add(typeof(ActiveRecordBase),
-								  new Dictionary<string, string>
-				                  	{
-				                  		{Environment.Dialect, "NHibernate.Dialect.MySQLDialect"},
-				                  		{Environment.ConnectionDriver, "NHibernate.Driver.MySqlDataDriver"},
-				                  		{Environment.ConnectionProvider, "NHibernate.Connection.DriverConnectionProvider"},
-				                  		{Environment.ConnectionStringName, "DB"},
-										{Environment.ProxyFactoryFactoryClass,
-				                  			"NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle"
-				                  			},
-				                  		{Environment.Hbm2ddlKeyWords, "none"},
-										{Environment.ShowSql, "true"}
-				                  	});
-				ActiveRecordStarter.Initialize(new[] { Assembly.Load("InforoomInternet"), Assembly.Load("InforoomInternet.Test"), Assembly.Load("InternetInterface") },
-											   configuration);
+					new Dictionary<string, string> {
+						{Environment.Dialect, "NHibernate.Dialect.MySQLDialect"},
+						{Environment.ConnectionDriver, "NHibernate.Driver.MySqlDataDriver"},
+						{Environment.ConnectionProvider, "NHibernate.Connection.DriverConnectionProvider"},
+						{Environment.ConnectionStringName, "DB"},
+						{Environment.ProxyFactoryFactoryClass, "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle" },
+						{Environment.Hbm2ddlKeyWords, "none"},
+						{Environment.ShowSql, "true"}
+					});
+				ActiveRecordStarter.Initialize(
+					new[] {
+						Assembly.Load("InforoomInternet"),
+						Assembly.Load("InforoomInternet.Test"),
+						Assembly.Load("InternetInterface")
+					},
+					configuration);
+
+				ActiveRecordStarter.UpdateSchema();
 			}
 		}
 	}

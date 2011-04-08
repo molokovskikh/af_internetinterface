@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 using Castle.MonoRail.Framework;
-using InforoomInternet.Components;
 using InforoomInternet.Logic;
 using InforoomInternet.Models;
 using InternetInterface.Helpers;
@@ -13,6 +8,7 @@ namespace InforoomInternet.Controllers
 {
 	[Layout("Main")]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(BeforeFilter))]
+	[Filter(ExecuteWhen.BeforeAction, typeof(NHibernateFilter))]
 	public class EditorController : SmartDispatcherController
 	{
 		public static IEnumerable<string> SpecialLinks

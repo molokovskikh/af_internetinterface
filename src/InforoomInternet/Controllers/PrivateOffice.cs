@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using Castle.MonoRail.Framework;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
-using NHibernate.Criterion;
 
 namespace InforoomInternet.Controllers
 {
 	[Layout("Main")]
+	[Filter(ExecuteWhen.BeforeAction, typeof(NHibernateFilter))]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AccessFilter))]
 	public class PrivateOffice:SmartDispatcherController
 	{

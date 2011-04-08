@@ -126,6 +126,7 @@
   <ItemGroup>
     <Compile Include="Functional\Setup.cs" />
     <Compile Include="Integration\PrivateOffice.cs" />
+    <Compile Include="Integration\TariffFixture.cs" />
     <Compile Include="Setup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Unit\LoginTest.cs" />
@@ -137,6 +138,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common.Tools\Common.Tools\Common.Tools.csproj">
+      <Project>{72AFCFE8-C9E9-45FA-9698-BEE896A517A3}</Project>
+      <Name>Common.Tools</Name>
+    </ProjectReference>
     <ProjectReference Include="..\InforoomInternet\InforoomInternet.csproj">
       <Project>{78BE8691-9A92-409B-89CE-D5172D5F16CD}</Project>
       <Name>InforoomInternet</Name>
