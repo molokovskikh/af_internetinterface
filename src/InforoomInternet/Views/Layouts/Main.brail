@@ -7,8 +7,15 @@
   <title>Инфорум</title>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 
+  <script type="text/javascript" src="../JavaScript/jquery-1.4.2.min.js"></script>
 
   <link rel="stylesheet" href="${siteroot}/CSS/styles.css" type="text/css" />
+
+  <script type="text/javascript">
+      $(document).ready(function () { 
+        $('a[href=]')
+      });
+  </script>
 </head>
 
 <body>
@@ -142,9 +149,9 @@
 
 		<!-- Правая колонка // -->
 		<div class="right">
-			<a href="${siteroot}/Main/HowPay" id="HowPay2" class="button-orange">Как оплатить?</a>
+			<a href="${siteroot}/Main/HowPay" id="HowPay2" style="display:none" class="button-orange">Как оплатить?</a>
 			<%if AccessEditLink: %>
-			<a href="${siteroot}/Editor/Menu" style="color:White">Редактировать меню</a>
+			<a href="${siteroot}/Editor/Menu" style="color:White; margin-left:10px;">Редактировать меню</a>
 			<%end %>
 			 <div style="display:none" id="poll">
 				<h3>А что вы думаете?</h3>

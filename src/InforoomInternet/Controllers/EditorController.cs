@@ -15,21 +15,26 @@ namespace InforoomInternet.Controllers
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(BeforeFilter))]
 	public class EditorController : SmartDispatcherController
 	{
-		private static List<string> _specialLinks;
+		public static IEnumerable<string> SpecialLinks
+		{
+			get
+			{
+				return new List<string>
+			                	{
+			                		"",
+									"Main/zayavka",
+									"Main/OfferContract",
+									"PrivateOffice/Index",
+									//"Main/requisite"
+			                	};
+			}
+		}
 
 		public void Menu()
 		{
 			if (!LoginLogic.IsAccessiblePartner(Session["LoginPartner"]))
 				//RedirectToSiteRoot();
 				Redirecter.RedirectRoot(Context, this);
-			_specialLinks = new List<string>
-			                	{
-			                		"",
-									"Main/zayavka",
-									"Main/OfferContract",
-									"PrivateOffice/Index",
-									"Main/requisite"
-			                	};
 		}
 
 		[return: JSONReturnBinder]
@@ -56,12 +61,13 @@ namespace InforoomInternet.Controllers
 				for (int i = 0; i < elCount; i++)
 				{
 					//var subLink = IVRNContent.Queryable.Where(p => p.ViewName == Path.GetFileNameWithoutExtension(link[i])).Count() > 0  
-					var subLink =  _specialLinks.Where(t => t == link[i]).Count() > 0 || link[i].Contains("Content/") ? string.Empty : "Content/";
-					if (!string.IsNullOrEmpty(subLink))
+					//var subLink =  SpecialLinks.Where(t => t == link[i]).Count() > 0 || link[i].Contains("Content/") ? string.Empty : "Content/";
+					var subLink = link[i] == "Content" ? "/" + name[i] : string.Empty;
+					if (link[i] == "Content")
 						new IVRNContent
 							{
 								Content = string.Empty,
-								ViewName = link[i]
+								ViewName = name[i]
 							}.SaveAndFlush();
 					if (type[i] == "main")
 					{
@@ -69,7 +75,8 @@ namespace InforoomInternet.Controllers
 						           	{
 										Name = name[i],
 										//Link = link[i]
-						           		Link = string.Format("{0}" + link[i], subLink)
+						           		//Link = string.Format("{0}" + link[i], subLink)
+										Link = string.Format(link[i] + "{0}", subLink)
 						           	};
 						mainMenu.SaveAndFlush();
 					}
@@ -78,7 +85,7 @@ namespace InforoomInternet.Controllers
 						new SubMenuField
 							{
 								//Link = link[i],
-								Link = string.Format("{0}" + link[i], subLink),
+								Link = string.Format(link[i] + "{0}", subLink),
 								Name = name[i],
 								MenuField = mainMenu //MenuField.Find(Convert.ToUInt32(id[i]))
 							}.SaveAndFlush();
