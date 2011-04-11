@@ -14,4 +14,4 @@ task @default, [@Build]
 
 task @Build, [@BuildWebSite]
 
-task @deploy, [@BuildWebSite, @Backup, @WebDeploy]
+task @deploy, [@BuildWebSite, @WebDeploy]

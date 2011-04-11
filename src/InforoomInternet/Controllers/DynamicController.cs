@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Web;
 using Castle.MonoRail.Framework;
 using InforoomInternet.Models;
 
@@ -32,6 +30,7 @@ namespace InforoomInternet.Controllers
 
 
 	[Filter(ExecuteWhen.BeforeAction, typeof(BeforeFilter))]
+	[Filter(ExecuteWhen.BeforeAction, typeof(NHibernateFilter))]
 	public class ContentController : SmartDispatcherController
 	{
 		public override void Contextualize(IEngineContext engineContext, IControllerContext context)

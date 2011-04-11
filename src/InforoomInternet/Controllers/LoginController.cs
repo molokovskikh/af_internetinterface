@@ -1,22 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Security;
 using Castle.MonoRail.Framework;
 using InforoomInternet.Logic;
-using InforoomInternet.Models;
 using InternetInterface.Helpers;
-using NHibernate;
-using NHibernate.Criterion;
-using NHibernate.Dialect;
-using NHibernate.Dialect.Function;
-using NHibernate.Type;
 
 namespace InforoomInternet.Controllers
 {
 	[Layout("Main")]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(BeforeFilter))]
+	[Filter(ExecuteWhen.BeforeAction, typeof(NHibernateFilter))]
 	public class LoginController : SmartDispatcherController
 	{
 		public void LoginPage(bool partner)
