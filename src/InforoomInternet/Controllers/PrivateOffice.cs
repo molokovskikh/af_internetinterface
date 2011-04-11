@@ -11,6 +11,7 @@ namespace InforoomInternet.Controllers
 {
 	[Layout("Main")]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AccessFilter))]
+	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(BeforeFilter))]
 	public class PrivateOffice:SmartDispatcherController
 	{
 		public void IndexOffice(string grouped)

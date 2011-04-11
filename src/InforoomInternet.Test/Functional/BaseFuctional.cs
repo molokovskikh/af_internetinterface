@@ -28,7 +28,7 @@ namespace InforoomInternet.Test.Unit
 			var port = int.Parse(ConfigurationManager.AppSettings["webPort"]);
 			var webDir = ConfigurationManager.AppSettings["webDirectory"];
 
-			_webServer = new Server(port, "/ivrn", Path.GetFullPath(webDir), false, true);
+			_webServer = new Server(port, "/", Path.GetFullPath(webDir), false, true);
 			_webServer.Start();
 			Settings.Instance.AutoMoveMousePointerToTopLeft = false;
 			Settings.Instance.MakeNewIeInstanceVisible = false;
@@ -213,6 +213,7 @@ namespace InforoomInternet.Test.Unit
 		{
 			using (var browser = Open(""))
 			{
+				Console.WriteLine(browser.Text);
 				browser.Link("maina").Click();
 				Assert.That(browser.Text, Is.StringContaining("Тарифы"));
 				browser.Link("requisite").Click();
