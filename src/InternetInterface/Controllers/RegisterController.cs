@@ -77,13 +77,15 @@ namespace InternetInterface.Controllers
 				PropertyBag["PortError"] = "Ошибка ввода номера порта";
 				validPortSwitch = false;
 			}
-			var registerClient = PhisicalClients.RegistrLogicClient(phisClient, tariff, status, Validator, InithializeContent.partner, connectSumm);
+			//var registerClient = PhisicalClients.RegistrLogicClient(phisClient, tariff, status, Validator, InithializeContent.partner, connectSumm);
+			var registerClient = Validator.IsValid(phisClient) && Validator.IsValid(connectSumm);
 			/*if (registerClient && validPortSwitch) &&
 				((!string.IsNullOrEmpty(ConnectInfo.Port) &&
 					 (unPort))
 					|| string.IsNullOrEmpty(ConnectInfo.Port)))*/
 			if ((registerClient && validPortSwitch && unPort) || (registerClient && string.IsNullOrEmpty(ConnectInfo.Port)))
 			{
+				PhisicalClients.RegistrLogicClient(phisClient, tariff, status, Validator, InithializeContent.partner, connectSumm);
 				var client = new Clients
 				{
 					Name = string.Format("{0} {1} {2}", phisClient.Surname, phisClient.Name, phisClient.Patronymic),

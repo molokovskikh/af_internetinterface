@@ -1,0 +1,17 @@
+import file from WebSiteSupport.bake
+import file from Deploy.bake
+import file from Lib.bake
+import file from Migration.bake
+import file from Tools.bake
+
+Global(
+	Project : "InforoomInternet",
+	deployTo : """C:\Local_ivrn""",
+	HumanReadableName : "IVRN"
+)
+
+task @default, [@Build]
+
+task @Build, [@BuildWebSite]
+
+task @deploy, [@BuildWebSite, @WebDeploy]

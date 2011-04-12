@@ -12,9 +12,9 @@
   <link rel="stylesheet" href="${siteroot}/CSS/styles.css" type="text/css" />
 
   <script type="text/javascript">
-      $(document).ready(function () { 
-        $('a[href=]')
-      });
+	  $(document).ready(function () { 
+		$('a[href=]')
+	  });
   </script>
 </head>
 

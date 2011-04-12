@@ -17,9 +17,9 @@
             </table>
             <h3><b>Списания</b></h3>
          <p>
-         <a href="Index.brail?grouped=day">Сгруппировать по дням</a>
-         <a href="Index.brail?grouped=month">Сгруппировать по месяцам</a>
-         <a href="Index.brail?grouped=year">Сгруппировать по годам</a>
+         <a href="IndexOffice.brail?grouped=day">Сгруппировать по дням</a>
+         <a href="IndexOffice.brail?grouped=month">Сгруппировать по месяцам</a>
+         <a href="IndexOffice.brail?grouped=year">Сгруппировать по годам</a>
          </p>
              <table cellpadding="3" cellspacing="0" width="100%">
                  <tr class="caption">
