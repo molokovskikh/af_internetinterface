@@ -7,7 +7,7 @@ using Castle.ActiveRecord.Framework;
 
 namespace InternetInterface.Models
 {
-	[ActiveRecord(Schema = "Internet")]
+	[ActiveRecord(Schema = "Internet", Table = "LawyerPerson")]
 	public class LawyerPerson : ActiveRecordLinqBase<LawyerPerson>
 	{
 		[PrimaryKey]

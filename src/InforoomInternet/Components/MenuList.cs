@@ -6,6 +6,7 @@ using System.Web;
 using Castle.MonoRail.Framework;
 using InforoomInternet.Controllers;
 using InforoomInternet.Models;
+using InternetInterface.Helpers;
 
 namespace InforoomInternet.Components
 {
@@ -141,20 +142,56 @@ namespace InforoomInternet.Components
 				//htmlCode += string.Format(mainInput, menuField.Link, "l_" + menuField.Id);
 				htmlCode += GenerateSelectList("l_" + menuField.Id, menuField.Link);
 				htmlCode += "<br />";
+				/*if (menuField.subMenu.Count == 0)
+					menuField.subMenu.Add(new SubMenuField{Name = string.Empty, Link = string.Empty});*/
+				var subStyle = menuField.subMenu.Count > 0 ? "block" : "none";
+				var subName = menuField.subMenu.Count > 0 ? "New" : menuField.Id + "_0";
+				htmlCode += string.Format("<div class=\"subDiv\" style=\"display:{0};\">", subStyle);
+				var beforSubContent = string.Format("<div class=\"delSubMenu\" id=\"{0}\">" +
+				                      "<Div class=\"leftDivSub\">" +
+				                      "<Div class=\"upArrowSub\"></Div>" +
+				                      "<Div class=\"downArrowSub\"></Div>" +
+				                      "</Div>" +
+									  "<Div class=\"rightDiv\">", subName);
+				var afterSubContent = "<div class=\"delSubMenuItem\"> </div>" +
+				                      " <br />" +
+				                      "</div>" +
+				                      "</div>";
+				if (menuField.subMenu.Count == 0)
+				{
+					htmlCode += beforSubContent;
+					htmlCode += "<input type=text name=\"fieldName\" id=\"{1}\" value=\"{0}\" class=\"subitem\"/>";
+					htmlCode += GenerateSelectList("sl_0", string.Empty);
+					htmlCode += afterSubContent;
 
-				htmlCode += "<div class=\"subDiv\">";
+				}
 				foreach (var field in menuField.subMenu)
 				{
-					htmlCode += "<div class=\"delSubMenu\">";
+					/*htmlCode += "<div class=\"delSubMenu\">";
+					htmlCode += "<Div class=\"leftDivSub\">";
+					htmlCode += "<Div class=\"upArrowSub\"></Div>";
+					htmlCode += "<Div class=\"downArrowSub\"></Div>";
+					htmlCode += "</Div>";
+					htmlCode += "<Div class=\"rightDiv\">";*/
+					htmlCode += beforSubContent;
 					var subIntem =
 						"<input type=text name=\"fieldName\" id=\"{1}\" value=\"{0}\" class=\"subitem\"/>";
 					htmlCode += string.Format(subIntem, field.Name, "sn_" + field.Id);
 					htmlCode += GenerateSelectList("sl_" + field.Id, field.Link);
 					//htmlCode += string.Format(subIntem, field.Link, "sl_" + field.Id);
-					htmlCode += "<div class=\"delSubMenuItem\"> </div>";
+					htmlCode += afterSubContent;
+					/*htmlCode += "<div class=\"delSubMenuItem\"> </div>";
 					htmlCode += " <br />";
 					htmlCode += "</div>";
+					htmlCode += "</div>";*/
 				}
+				/*ARSesssionHelper<SubMenuField>.QueryWithSession(session => {
+					foreach (var subMenuField in menuField.subMenu)
+				                                                           	{
+																				session.Evict(subMenuField);
+				                                                           	}
+				                                                           	return new List<SubMenuField>();
+				});*/
 				/*htmlCode += menuField.subMenu.Count > 0
 								? string.Format(
 								"<div class=\"{0}\"></div>", "appendDiv" + menuField.Id) : string.Empty;*/

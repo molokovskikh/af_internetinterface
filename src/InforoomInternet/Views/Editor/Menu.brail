@@ -7,7 +7,7 @@
 	 .subitem
 	{
 		margin:10px;
-		margin-left:40px;
+		/*margin-left:40px;*/
 		}
 	 .addSubMenuItem
 	 {
@@ -42,7 +42,23 @@
 		background: url(../Content/up_arrow.png) no-repeat center top;
 		}
 		
+		.upArrowSub
+	{
+		 width:12px;
+		 height:14px;
+		background: url(../Content/up_arrow.png) no-repeat center top;
+		}
+		
+		
 	   .downArrow
+	{
+		float:left;
+		width:12px;
+		height:14px;
+		margin-top : 2px;
+		background: url(../Content/down_arrow.png) no-repeat center top;
+		}
+		.downArrowSub
 	{
 		float:left;
 		width:12px;
@@ -56,9 +72,15 @@
 			}
 		.leftDiv
 		{
-		    margin-top:8px;
-		    float:left;
-		    }
+			margin-top:8px;
+			float:left;
+			}
+		.leftDivSub
+		{
+			margin-left:20px;
+			margin-top:8px;
+			float:left;
+			}
 </style>
 
 <script type="text/javascript">
@@ -66,83 +88,110 @@
 	function addSubMenu(clickDiv) {
 		var idBlockName = $(clickDiv).parent().children('.mitem:first').attr('id');
 		var idBlock = idBlockName.split('_')[idBlockName.split('_').length - 1];
-		var nextIndex = $('#menus').children('#menuBlock_' + idBlock).children('.subDiv').children('.subitem').length / 2 + 1;
-		$(clickDiv).parent().children('.subDiv').append('<div class="delSubMenu"> </div>');
+		var nextIndex = $('#menus').children('#menuBlock_' + idBlock).children('.subDiv').children('.rightDiv:first').children('.subitem').length / 2 + 1;
+		//$(clickDiv).parent().children('.subDiv').append('<div class="delSubMenu"> </div>');
 		var toDiv = $(clickDiv).parent().children('.subDiv').children('.delSubMenu:last');
-		$(toDiv).append($('.subitem:last').clone().attr({
+        $(clickDiv).parent().children('.subDiv').css("display", 'block');
+		/*(toDiv).append($('.subitem:last').clone().attr({
 			value: '',
 			id: 'sn_' + nextIndex,
 		}).css("display", 'inline-block'));
-		var SelectItem = $('.linkSelector:last').clone();
+		var SelectItem = $('.rightDiv:last').clone();
 		$(toDiv).append(SelectItem);
 		SelectItem.children("option[name='1']").attr('selected', 'selected')
 		SelectItem.children("option[value='Content']").attr('selected', 'selected')
 		$(toDiv).append('<div class="delSubMenuItem"> </div>');
-		$(toDiv).append('<br/>');
-		$(toDiv).children('.delSubMenuItem').click(function () {
-			delSubMenu($(toDiv).children('.delSubMenuItem'));
+		$(toDiv).append('<br/>');*/
+		var addedSub = toDiv.clone().attr({
+			id: 'New' + nextIndex,
 		});
+        $(clickDiv).parent().children('.subDiv').children('#' + (idBlock) + '_0').remove();
+		addedSub.children('.rightDiv').children('.subitem').attr({
+			value: '',
+			id: 'sn_' + nextIndex,
+		}).css("display", 'inline-block');
+        addedSub.children('.rightDiv').children('.linkSelector').children("option[name='1']").attr('selected', 'selected');
+        addedSub.children('.rightDiv').children('.linkSelector').children("option[value='Content']").attr('selected', 'selected');
+		$(clickDiv).parent().children('.subDiv').append(addedSub);
+		$(toDiv).children('.delSubMenuItem').click(function () {
+		    delSubMenu($(toDiv).children('.delSubMenuItem'));
+		});
+		AddEventArrow(addedSub.children('.leftDivSub').children('.upArrowSub'));
+		AddEventArrowDown(addedSub.children('.leftDivSub').children('.downArrowSub'));
 	}
 
 	function delSubMenu(clickDiv) {
 		$(clickDiv).parent().remove();
 	}
 
+	function AddEventArrow(upObj) {
+	    $(upObj).click(function () {
+	        var pdiv = $(this).parent().parent('div');
+	        pdiv.insertBefore(pdiv.prev());
+	        return false
+	    });
+
+	}
+
+	function AddEventArrowDown(downObj) {
+	    $(downObj).click(function () {
+	        var pdiv = $(this).parent().parent('div');
+	        pdiv.insertAfter(pdiv.next());
+	        return false
+	    });
+    }
 
 
-	$(document).ready(function () {
+    $(document).ready(function () {
 
-	$(".upArrow").click(function(){
-		var pdiv = $(this).parent().parent('div');
-		pdiv.insertBefore(pdiv.prev());
-		return false
-	});
-	$(".downArrow").click(function(){
-		var pdiv = $(this).parent().parent('div');
-		pdiv.insertAfter(pdiv.next());
-		return false
-	});
-
-		$('#addMenuBut').click(function () {
-			var blocks = $(this).parent().children('#menus').children('div:last');
-			var mainBlockCount = blocks.attr('id').split('_')[blocks.attr('id').split('_').length - 1];
-			var menu = $(this).parent().children('#menus');
-			menu.append($('#menuBlock_' + mainBlockCount).clone().attr({
-				value: '',
-				id: 'menuBlock_' + (mainBlockCount + 1)
-			}));
-			menuBlock = menu.children('#menuBlock_' + (mainBlockCount + 1));
-			menuBlock.children('.rightDiv').children('.mitem:first').attr({
-				value: '',
-				id: 'sn_' + (mainBlockCount + 1)
-			});
-			/*menuBlock.children('.linkSelector').attr({
-				value: '',
-				id: 'sl_' + (mainBlockCount + 1)
-			});*/
-			menuBlock.children('.rightDiv').children('.subDiv').children('.delSubMenu').remove();
-			menuBlock.children('.rightDiv').children('.subDiv').children('br').remove();
-			menuBlock.children('.addSubMenuItem').click(function () {
-				addSubMenu(this);
-			});
-			menuBlock.children('.delMenuItem').click(function () {
-				delSubMenu(this);
-			});
-		});
+        AddEventArrow($('.upArrow'));
+        AddEventArrowDown($('.downArrow'));
 
 
-		$('.addSubMenuItem').click(function () {
-			addSubMenu(this);
-		});
+        $('#addMenuBut').click(function () {
+            var blocks = $(this).parent().children('#menus').children('div:last');
+            var mainBlockCount = blocks.attr('id').split('_')[blocks.attr('id').split('_').length - 1];
+            var menu = $(this).parent().children('#menus');
+            menu.append($('#menuBlock_' + mainBlockCount).clone().attr({
+                value: '',
+                id: 'menuBlock_' + (mainBlockCount + 1)
+            }));
+            menuBlock = menu.children('#menuBlock_' + (mainBlockCount + 1));
+            menuBlock.children('.rightDiv').children('.mitem:first').attr({
+                value: '',
+                id: 'sn_' + (mainBlockCount + 1)
+            });
+            /*menuBlock.children('.linkSelector').attr({
+            value: '',
+            id: 'sl_' + (mainBlockCount + 1)
+            });*/
+            menuBlock.children('.rightDiv').children('.subDiv').children('.delSubMenu').remove();
+            menuBlock.children('.rightDiv').children('.subDiv').children('br').remove();
+            menuBlock.children('.addSubMenuItem').click(function () {
+                addSubMenu(this);
+            });
+            menuBlock.children('.delMenuItem').click(function () {
+                delSubMenu(this);
+            });
+            AddEventArrow(menuBlock.children('.leftDiv').children('.upArrow'));
+            AddEventArrowDown(menuBlock.children('.leftDiv').children('.downArrow'));
+        });
 
-		$('.delSubMenuItem').click(function () {
-			delSubMenu(this);
-		});
 
-		$('.delMenuItem').click(function () {
-			delSubMenu(this);
-		});
-	});
+        $('.addSubMenuItem').click(function () {
+            addSubMenu(this);
+        });
+
+        $('.delSubMenuItem').click(function () {
+            delSubMenu(this);
+        });
+
+        $('.delMenuItem').click(function () {
+            delSubMenu(this);
+        });
+
+        AddEventArrow();
+    });
 
 
 	function Save() {
