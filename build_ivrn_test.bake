@@ -6,7 +6,7 @@ import file from Tools.bake
 
 Global(
 	Project : "InforoomInternet",
-	deployTo : """\\acdcserv.adc.analit.net\Test\IVrn""",
+	deployTo : """\\acdcserv\WWWRoot\TEST\IVrn""",
 	HumanReadableName : "IVRN"
 )
 

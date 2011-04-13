@@ -39,7 +39,7 @@ namespace Billing.Test
 						{
 							connection.Open();
 							ActiveRecordStarter.DropSchema();
-							new MySqlCommand("drop database if exists logs;create database logs;", connection).ExecuteNonQuery();
+							//new MySqlCommand("drop database if exists logs;create database logs;", connection).ExecuteNonQuery();
 							new MySqlCommand("drop database if exists Internet;create database Internet;", connection).ExecuteNonQuery();
 							done = true;
 						}

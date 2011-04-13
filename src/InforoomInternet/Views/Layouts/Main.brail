@@ -215,13 +215,16 @@
 		Все права защищены
 		</div>
 		<div class="center">
-			<ul>
+        				<% 
+	component FooterMenu, {}
+%>
+			<!--<ul>
 				<li class="bottom-line"><a href="${siteroot}/" id="Main1">Тарифы</a></li>
 				<li class="bottom-line"><a href="${siteroot}/Main/requisite" id="requisite1">Реквизиты</a></li>
 				<li class="bottom-line"><a href="${siteroot}/Main/Zayavka" id="Zayavka1">Заявка на подключение</a></li>
 				<li class="bottom-line"><a href="${siteroot}/Main/OfferContract" id="OfferContract1">Договор оферта</a></li>
 				<li><a href="${siteroot}/PrivateOffice/IndexOffice" id="PrivateOffice1">Личный кабинет</a></li>
-			</ul>
+			</ul>-->
 		</div>
 		<br clear="all" />
 		<div class="cable">&nbsp;</div>

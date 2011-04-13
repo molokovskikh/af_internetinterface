@@ -9,6 +9,21 @@ using InforoomInternet.Models;
 
 namespace InforoomInternet.Components
 {
+	public class FooterMenu :ViewComponent
+	{
+		public override void Render()
+		{
+			var htmlText = "<ul>";
+			foreach (var menuField in MenuField.FindAll())
+			{
+				htmlText += string.Format("<li class=\"bottom-line\"><a href=\"{0}\" id=\"{2}\">{1}</a></li>", EngineContext.ApplicationPath + "/" + menuField.Link,
+					menuField.Name, Path.GetFileNameWithoutExtension(menuField.Link) + "1");
+			}
+			htmlText += "</ul>";
+			RenderText(htmlText);
+		}
+	}
+
 	public class MenuList : ViewComponent
 	{
 		public override void Render()
@@ -16,6 +31,8 @@ namespace InforoomInternet.Components
 			var thisPath = EngineContext.UrlInfo.Controller + "/" + EngineContext.UrlInfo.Action;
 			if (thisPath == @"Main/Index")
 				thisPath = string.Empty;
+			if (thisPath == "Login/LoginPage")
+				thisPath = "PrivateOffice/IndexOffice";
 			MenuField currentMenu = null;
 			foreach (var menuField in MenuField.FindAll())
 			{
@@ -47,6 +64,7 @@ namespace InforoomInternet.Components
 				if (!string.IsNullOrEmpty(active))
 					subMenDis = "block";
 				var id = Path.GetFileNameWithoutExtension(menuField.Link.Split(new[] { '\\' }).Last());
+
 				blockMenu += string.Format("<li class=\"main {2}\">" +
 						   "<a href=\"{0}\" id=\"{3}\" class=\"menu-item one-line {2}\">{1}</a><br />", EngineContext.ApplicationPath + "/" + menuField.Link,
 						   menuField.Name, active, id);
@@ -111,6 +129,11 @@ namespace InforoomInternet.Components
 			foreach (var menuField in menu)
 			{
 				htmlCode += string.Format("<Div class=\"menuBlock\" id=\"{0}\">", "menuBlock_" + menuField.Id);
+				htmlCode += "<Div class=\"leftDiv\">";
+				htmlCode += "<Div class=\"upArrow\"></Div>";
+				htmlCode += "<Div class=\"downArrow\"></Div>";
+				htmlCode += "</Div>";
+				htmlCode += "<Div class=\"rightDiv\">";
 				var mainInput = "<input type=text name=\"fieldName\" id=\"{1}\" value=\"{0}\" class=\"mitem\"/>";
 				htmlCode += string.Format(mainInput, menuField.Name, "n_" + menuField.Id);
 				htmlCode += "<div class=\"addSubMenuItem\"> </div>";
@@ -132,10 +155,11 @@ namespace InforoomInternet.Components
 					htmlCode += " <br />";
 					htmlCode += "</div>";
 				}
-				htmlCode += menuField.subMenu.Count > 0
+				/*htmlCode += menuField.subMenu.Count > 0
 								? string.Format(
-								"<div class=\"{0}\"></div>", "appendDiv" + menuField.Id) : string.Empty;
+								"<div class=\"{0}\"></div>", "appendDiv" + menuField.Id) : string.Empty;*/
 				//htmlCode += menuField.subMenu.Count > 0 ? "</div>" : string.Empty;
+				htmlCode += "</div>";
 				htmlCode += "</div>";
 				htmlCode += "</div>";
 			}

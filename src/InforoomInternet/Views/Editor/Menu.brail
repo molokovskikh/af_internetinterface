@@ -35,6 +35,30 @@
 		 margin-right:150px;
 		 background: url(../Content/onebit_32.png) no-repeat center top;
 		 }
+	.upArrow
+	{
+		 width:12px;
+		 height:14px;
+		background: url(../Content/up_arrow.png) no-repeat center top;
+		}
+		
+	   .downArrow
+	{
+		float:left;
+		width:12px;
+		height:14px;
+		margin-top : 2px;
+		background: url(../Content/down_arrow.png) no-repeat center top;
+		}
+		.menuBlock
+		{
+			/*min-height:70px;*/
+			}
+		.leftDiv
+		{
+		    margin-top:8px;
+		    float:left;
+		    }
 </style>
 
 <script type="text/javascript">
@@ -68,6 +92,17 @@
 
 	$(document).ready(function () {
 
+	$(".upArrow").click(function(){
+		var pdiv = $(this).parent().parent('div');
+		pdiv.insertBefore(pdiv.prev());
+		return false
+	});
+	$(".downArrow").click(function(){
+		var pdiv = $(this).parent().parent('div');
+		pdiv.insertAfter(pdiv.next());
+		return false
+	});
+
 		$('#addMenuBut').click(function () {
 			var blocks = $(this).parent().children('#menus').children('div:last');
 			var mainBlockCount = blocks.attr('id').split('_')[blocks.attr('id').split('_').length - 1];
@@ -77,7 +112,7 @@
 				id: 'menuBlock_' + (mainBlockCount + 1)
 			}));
 			menuBlock = menu.children('#menuBlock_' + (mainBlockCount + 1));
-			menuBlock.children('.mitem:first').attr({
+			menuBlock.children('.rightDiv').children('.mitem:first').attr({
 				value: '',
 				id: 'sn_' + (mainBlockCount + 1)
 			});
@@ -85,8 +120,8 @@
 				value: '',
 				id: 'sl_' + (mainBlockCount + 1)
 			});*/
-			menuBlock.children('.subDiv').children('.delSubMenu').remove();
-			menuBlock.children('.subDiv').children('br').remove();
+			menuBlock.children('.rightDiv').children('.subDiv').children('.delSubMenu').remove();
+			menuBlock.children('.rightDiv').children('.subDiv').children('br').remove();
 			menuBlock.children('.addSubMenuItem').click(function () {
 				addSubMenu(this);
 			});
@@ -121,10 +156,10 @@
 			//var inData = { fieldType: "main", name: fieldName, link: fieldlink, id: $(this).attr('id') };
 			id.push($(this).attr('id'));
 			fieldType.push("main");
-			name.push($(this).children('.mitem:first').val());
-			link.push($(this).children('.linkSelector:last').val());
+			name.push($(this).children('.rightDiv').children('.mitem:first').val());
+			link.push($(this).children('.rightDiv').children('.linkSelector:last').val());
 			//aElems.push(inData);
-			$(this).children('.subDiv').children('.delSubMenu').each(function () {
+			$(this).children('.rightDiv').children('.subDiv').children('.delSubMenu').each(function () {
 				id.push(mainBlock.attr('id').split('_')[mainBlock.attr('id').split('_').length - 1]);
 				fieldType.push("sub");
 				name.push($(this).children('.subitem:first').val());

@@ -3,6 +3,7 @@ using System.Web.Security;
 using Castle.MonoRail.Framework;
 using InforoomInternet.Logic;
 using InternetInterface.Helpers;
+using log4net;
 
 namespace InforoomInternet.Controllers
 {
@@ -11,6 +12,8 @@ namespace InforoomInternet.Controllers
 	[Filter(ExecuteWhen.BeforeAction, typeof(NHibernateFilter))]
 	public class LoginController : SmartDispatcherController
 	{
+		private static readonly ILog _log = LogManager.GetLogger(typeof(LoginController));
+
 		public void LoginPage(bool partner)
 		{
 			if (!partner)
@@ -29,6 +32,7 @@ namespace InforoomInternet.Controllers
 		{
 			if (ActiveDirectoryHelper.IsAuthenticated(Login, Password))
 			{
+				_log.Info("Авторизация выполнена");
 				FormsAuthentication.RedirectFromLoginPage(Login, true);
 				Session["LoginPartner"] = Login;
 				//RedirectToSiteRoot();
@@ -36,6 +40,7 @@ namespace InforoomInternet.Controllers
 			}
 			else
 			{
+				_log.Info("Авторизация отклонена");
 				RedirectToUrl(@"..\\Login\LoginPage?partner=true");
 			}
 		}

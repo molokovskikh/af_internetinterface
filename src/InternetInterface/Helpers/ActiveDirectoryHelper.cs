@@ -51,6 +51,7 @@ namespace InternetInterface.Helpers
 			catch (Exception ex)
 			{
 				_log.Info("Пароль или логин был введен неправильно");
+				_log.Info(ErrorMessage);
 				ErrorMessage = ex.Message;
 				return false;
 			}

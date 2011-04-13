@@ -3,6 +3,7 @@
 <script type="text/javascript" src="${siteroot}/JavaScript/jquery-1.4.2.min.js"></script>
 <script type="text/javascript">
 	tinyMCE_GZ.init({
+		
 		plugins: "autolink,lists,pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,advlist",
 		themes: 'simple,advanced',
 		languages: 'en',
@@ -50,7 +51,7 @@
 </script>
 <center>
 			<form method="post" action="${siteroot}/Main/Save">
-				<textarea id="htmlcode" name="htmlcode" rows="15" cols="80" style="width: 80%" class="tinymce">
+				<textarea id="htmlcode" name="htmlcode" rows="40" cols="80" style="width: 80%" class="tinymce">
 				${ChildOutput}
 				</textarea>
 				<input type="hidden" name="LocalPath" value="${LocalPath}" />

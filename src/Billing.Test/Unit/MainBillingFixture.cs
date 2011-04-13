@@ -39,6 +39,8 @@ namespace Billing.Test.Unit
 				Id = (uint)StatusType.NoWorked,
 				Name = "testBlockedStatus"
 			}.SaveAndFlush();
+
+			new InternetSettings{NextBillingDate = DateTime.Now}.SaveAndFlush();
 		}
 
 		public Clients CreateClient()
@@ -70,6 +72,39 @@ namespace Billing.Test.Unit
 			var unblockedClient = Clients.FindAllByProperty("Name", "testblockedClient").First();
 			Assert.That(unblockedClient.PhisicalClient.Status.Blocked , Is.EqualTo(false));
 			Assert.That(unblockedClient.PhisicalClient.Balance, Is.EqualTo(1300));
+		}
+
+		[Test]
+		public void LawyerPersonTest()
+		{
+			var client = new Clients
+			             	{
+								Disabled = false,
+			             		Name = "TestLawyer",
+			             		ShowBalanceWarningPage = false
+			             	};
+			client.SaveAndFlush();
+			var lPerson = new LawyerPerson
+			              	{
+			              		Balance = 0,
+								Tariff = 10000m,
+								Client = client
+			              	};
+			lPerson.SaveAndFlush();
+			for (int i = 0; i < 60; i++)
+			{
+				billing.Compute();
+			}
+			Assert.That( -19999m, Is.GreaterThan(lPerson.Balance));
+			Console.WriteLine(lPerson.Balance);
+			Assert.That(-20000m, Is.LessThan(lPerson.Balance));
+			billing.On();
+			Assert.IsTrue(lPerson.Client.ShowBalanceWarningPage);
+			Console.WriteLine(lPerson.Client.ShowBalanceWarningPage);
+			lPerson.Balance += 1000;
+			billing.On();
+			Assert.IsTrue(!lPerson.Client.ShowBalanceWarningPage);
+			Console.WriteLine(lPerson.Client.ShowBalanceWarningPage);
 		}
 
 		[Test]

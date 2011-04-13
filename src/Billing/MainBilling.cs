@@ -130,6 +130,21 @@ namespace Billing
 									client.UpdateAndFlush();
 									phisicalClient.UpdateAndFlush();
 								}
+								var lawyerPerson = LawyerPerson.FindAll();
+				           		foreach (var person in lawyerPerson)
+				           		{
+				           			var client = person.Client;
+									if (person.Balance < -(person.Tariff * 1.9m))
+									{
+										client.ShowBalanceWarningPage = true;
+									}
+									else
+									{
+										if (client.ShowBalanceWarningPage)
+											client.ShowBalanceWarningPage = false;
+									}
+									client.UpdateAndFlush();
+				           		}
 				           	});
 			}
 			catch (Exception ex)
@@ -204,10 +219,23 @@ namespace Billing
 
 				// Тут со временем должно устанавливаться дисейбл
 				if ((phisicalClient.Balance < 0) &&
-				    (phisicalClient.Status.Blocked == false))
+				    (!client.Disabled))
 				{
+					client.Disabled = true;
 					phisicalClient.Status = Status.Find((uint) StatusType.NoWorked);
 					phisicalClient.UpdateAndFlush();
+					client.UpdateAndFlush();
+				}
+			}
+			var lawyerPerson = LawyerPerson.FindAll();
+			foreach (var person in lawyerPerson)
+			{
+				if (!person.Client.Disabled)
+				{
+					var thisDate = SystemTime.Now();
+					decimal spis = person.Tariff/DateTime.DaysInMonth(thisDate.Year, thisDate.Month);
+					person.Balance -= spis;
+					person.UpdateAndFlush();
 				}
 			}
 			var thisDateMax = InternetSettings.FindFirst();
