@@ -165,6 +165,9 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool AutoUnblocked { get; set; }
 
+		[HasMany(ColumnKey = "Client")]
+		public virtual IList<Payment> Payments { get; set; }
+
 		public virtual bool IsConnected()
 		{
 			return this.Connected;

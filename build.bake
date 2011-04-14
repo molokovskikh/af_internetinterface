@@ -8,7 +8,7 @@ import file from Test.bake
 Global(
 	Platform : "x86",
 	Project : "InternetInterface",
-	deployTo : """\\acdcserv.adc.analit.net\WebApps\InforoomInternet""",
+	deployTo : """\\adc.analit.net\Inforoom\WebApps\InforoomInternet""",
 	HumanReadableName : "Интернет интерфейс"
 )
 

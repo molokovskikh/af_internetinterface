@@ -1,0 +1,33 @@
+﻿    <link href="../Styles/Style.css" type="text/css" rel="stylesheet" />
+    <link href="../Styles/base.css" type="text/css" rel="stylesheet" />
+        <style type="text/css">
+        .filterDiv
+        {
+            width:600px;
+            background-color:White;
+            text-align:left;
+            border: 1px solid black;
+             padding: 10px;
+             margin:10px;
+        }
+        .table .whiteBr
+        {
+            background-color:White;
+            color:Black;
+            border: 1px solid black;
+            }
+    </style>
+<% OutputSubView("""\Subview\MapHead""") %>
+<center>
+    <div class="filterDiv">
+        <form method="get" action="${siteroot}/Payers/Show">
+            <p>Выберете регистратора по которому будет применен фильтр</p>
+            <select name="registrator" id="registrator" style="width: 70%" >
+            <%for i, registrator in enumerate(Registrators):%>
+            <option id="Tarif${registrator.Id}" value="${registrator.Id}" ${"selected" if (registrator.Id == registrId)}> ${registrator.Name} </option>
+            <% end %>
+            </select>
+            <input id="SearchButton" type="submit" value="Показать"  align="right" />
+        </form>
+    </div>
+</center>

@@ -1,0 +1,46 @@
+﻿<% OutputSubView("Filter") %>
+<table class="table"  style="width: 100%; font-style:oblique">
+        <thead>
+            <tr valign="top">
+                <th>Номер счета</th>
+                <th>ФИО</th>
+                <th>Тариф</th>
+                <th>Баланс</th>
+                <th>Статус</th>
+            </tr>
+        </thead>
+        <tbody>
+            <%for i,item in enumerate(Payers): %>
+                <tr>
+                    <td>${item.Id.ToString("00000")}</td>
+                    <td>${item.Surname} ${item.Name} ${item.Patronymic}</td>
+                    <td>${item.Tariff.Name}</td>
+                    <td>${item.Balance}</td>
+                    <td>${item.Status.Name}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                    <table class="table" style="margin-left:150px; font-size: small;">
+                    <thead>
+                        <tr>
+                            <th class="whiteBr">Сумма</th>
+                            <th class="whiteBr">Дата регистрации</th>
+                            <th class="whiteBr">Зарегистрировал</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <%for i,pay in enumerate(item.Payments): %>
+                            <tr>
+                                <td>${pay.Sum}</td>
+                                <td>${pay.PaidOn}</td>
+                                <td>${pay.Agent.Name}</td>
+                            </tr>
+                        <%end %>
+                    </tbody>
+                    </table>
+                    </td>
+                </tr>
+            <%end %>
+        </tbody>
+</table>

@@ -175,7 +175,9 @@ namespace InternetInterface.Models.Access
 									"ClientRegisteredInfo",
 									"ShowBrigad",
 									"PassAndShowCard",
-									"CreateAppeal"
+									"CreateAppeal",
+									"Filter",
+									"Show"
 			                 	};
 			return _visibleDemand.Contains(methodName) ? "SSI" : string.Empty;
 		}

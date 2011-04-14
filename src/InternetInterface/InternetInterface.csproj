@@ -126,6 +126,8 @@
     <None Include="Views\Brigads\MakeBrigad.brail" />
     <None Include="Views\Brigads\ShowBrigad.brail" />
     <None Include="Views\CommonScripts\WriteMessage.brail" />
+    <None Include="Views\Payers\Filter.brail" />
+    <None Include="Views\Payers\Show.brail" />
     <None Include="Views\Rescue\404.brail" />
     <None Include="Views\Subview\Client.brail" />
     <None Include="Views\Subview\CreateEditLabel.brail" />
@@ -156,6 +158,7 @@
     <Compile Include="Controllers\Filter\InithializeContent.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\MapController.cs" />
+    <Compile Include="Controllers\PayersController.cs" />
     <Compile Include="Controllers\RegisterController.cs" />
     <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Controllers\SwitchesController.cs" />
