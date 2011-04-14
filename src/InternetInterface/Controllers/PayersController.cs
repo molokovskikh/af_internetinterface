@@ -14,6 +14,7 @@ namespace InternetInterface.Controllers
 		public void Filter()
 		{
 			PropertyBag["Registrators"] = Partner.FindAll();
+			PropertyBag["registrId"] = Partner.FindFirst().Id;
 		}
 
 		public void Show(uint registrator)
