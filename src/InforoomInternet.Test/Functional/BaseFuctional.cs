@@ -169,7 +169,7 @@ namespace InforoomInternet.Test.Unit
 		[Test]
 		public void PrivateOfficeTest()
 		{
-			var phisClient = new PhisicalClients
+			var phisClient = new PhysicalClients
 			{
 				Name = "Петр",
 				Patronymic = "Иванович",

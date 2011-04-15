@@ -47,10 +47,10 @@ namespace InternetInterface.Controllers
 							[DataBind("ConnectedType")]ConnectedTypeProperties connectedType,
 			uint tariff, uint whoregister, uint brigad ,string searchText)
 		{
-			IList<PhisicalClients> clients = new List<PhisicalClients>();
+			IList<PhysicalClients> clients = new List<PhysicalClients>();
 			clients = GetClientsLogic.GetClients(searchProperties, connectedType, tariff, whoregister, searchText, brigad);
 			Flash["SClients"] = clients;
-			PropertyBag["ConnectBlockDisplay"] = ((List<PhisicalClients>) clients).Find(p => p.HasConnected == null);
+			PropertyBag["ConnectBlockDisplay"] = ((List<PhysicalClients>) clients).Find(p => p.HasConnected == null);
 
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["WhoRegistered"] = Partner.FindAllSort();
@@ -66,7 +66,7 @@ namespace InternetInterface.Controllers
 		}
 
 
-		public void SearchUsers(string query, PhisicalClients sClients)
+		public void SearchUsers(string query, PhysicalClients sClients)
 		{
 			var searchProperties = new UserSearchProperties {SearchBy = SearchUserBy.Auto};
 			var connectProperties = new ConnectedTypeProperties {Type = ConnectedType.AllConnected};

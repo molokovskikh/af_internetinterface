@@ -212,7 +212,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Partner.cs" />
-    <Compile Include="Models\PhisicalClients.cs" />
+    <Compile Include="Models\PhysicalClients.cs" />
     <Compile Include="Models\UserCategorie.cs" />
     <Compile Include="Models\WriteOff.cs" />
     <Compile Include="Models\Zone.cs" />

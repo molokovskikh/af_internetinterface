@@ -108,7 +108,7 @@ namespace Billing
 				           		                                  	.Add(Restrictions.Eq("BillingAccount", false)));
 								foreach (var newPayment in newPayments)
 								{
-									var updateClient = PhisicalClients.Find(newPayment.Client.Id);
+									var updateClient = PhysicalClients.Find(newPayment.Client.Id);
 									updateClient.Balance += Convert.ToDecimal(newPayment.Sum);
 									updateClient.UpdateAndFlush();
 									newPayment.BillingAccount = true;

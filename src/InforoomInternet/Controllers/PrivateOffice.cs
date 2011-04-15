@@ -16,7 +16,7 @@ namespace InforoomInternet.Controllers
 		public void IndexOffice(string grouped)
 		{
 			var physClientId = Convert.ToUInt32(Session["LoginClient"]);
-			var physClient = PhisicalClients.Find(physClientId);
+			var physClient = PhysicalClients.Find(physClientId);
 			PropertyBag["PhysClientName"] = string.Format("{0} {1}",physClient.Name, physClient.Patronymic);
 			PropertyBag["PhysicalClient"] = physClient;
 			var client = Clients.FindAllByProperty("PhisicalClient", physClient).First();

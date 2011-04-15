@@ -13,9 +13,9 @@ namespace InternetInterface.Test.Helpers
 	class ClientHelperFixture
 	{
 		//public static PhisicalClients CreateClient(Func<bool> Ok)
-		public static void CreateClient(Func<PhisicalClients, bool > Ok)
+		public static void CreateClient(Func<PhysicalClients, bool > Ok)
 		{
-			var client =  new PhisicalClients
+			var client =  new PhysicalClients
 			       	{
 			       		Apartment = "1",
 			       		Balance = 100,

@@ -54,7 +54,7 @@ namespace Billing.Test.Unit
 			       	};
 		}
 
-		public static void CreateAndSavePaymentForConnect(PhisicalClients pclient)
+		public static void CreateAndSavePaymentForConnect(PhysicalClients pclient)
 		{
 			new PaymentForConnect
 				{
@@ -63,13 +63,13 @@ namespace Billing.Test.Unit
 				}.SaveAndFlush();
 		}
 
-		public static PhisicalClients CreatePhisicalClient(bool statusBlocked, decimal balance)
+		public static PhysicalClients CreatePhisicalClient(bool statusBlocked, decimal balance)
 		{
 			var tariff = CreateTariff((int)balance);
 			tariff.SaveAndFlush();
 			//var status = CreateStatus(statusBlocked);
 			//status.SaveAndFlush();
-			return  new PhisicalClients
+			return  new PhysicalClients
 			       	{
 			       		Name = "TestPhisicalClient",
 						AutoUnblocked = true,
@@ -104,7 +104,7 @@ namespace Billing.Test.Unit
 			new Payment
 				{
 					BillingAccount = false,
-					Client = PhisicalClients.FindAll().First(),
+					Client = PhysicalClients.FindAll().First(),
 					PaidOn = DateTime.Now,
 					RecievedOn = DateTime.Now,
 					Sum = sum.ToString()

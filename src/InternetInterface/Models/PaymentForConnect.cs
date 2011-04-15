@@ -17,7 +17,7 @@ namespace InternetInterface.Models
 		public virtual DateTime PaymentDate { get; set; }
 
 		[BelongsTo("ClientId")]
-		public virtual PhisicalClients ClientId { get; set; }
+		public virtual PhysicalClients ClientId { get; set; }
 
 		[Property, ValidateNonEmpty("Введите сумму"), ValidateDecimal("Непрвильно введено значение суммы")]
 		public virtual string Summ { get; set; }

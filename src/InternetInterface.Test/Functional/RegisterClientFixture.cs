@@ -55,7 +55,7 @@ namespace InternetInterface.Test.Functional
 				Assert.That(browser.Text, Is.StringContaining("прописанный по адресу:"));
 				Assert.That(browser.Text, Is.StringContaining("адрес подключения:"));
 				Assert.That(browser.Text, Is.StringContaining("принимаю подключение к услугам доступа"));
-				var pc = PhisicalClients.FindAllByProperty("Login", browser.Span(Find.ById("LoginSpan")).Text).ToList();
+				var pc = PhysicalClients.FindAllByProperty("Login", browser.Span(Find.ById("LoginSpan")).Text).ToList();
 				foreach (var phisicalClientse in pc)
 				{
 					phisicalClientse.DeleteAndFlush();

@@ -13,7 +13,7 @@ namespace InforoomInternet.Logic
 	{
 		public static bool IsAccessibleClient(uint id, string password)
 		{
-			return PhisicalClients.FindAll(DetachedCriteria.For(typeof (PhisicalClients))
+			return PhysicalClients.FindAll(DetachedCriteria.For(typeof (PhysicalClients))
 			                              	.Add(Restrictions.Eq("Id", id))
 			                              	.Add(Restrictions.Eq("Password", CryptoPass.GetHashString(password)))).Length != 0;
 		}

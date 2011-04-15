@@ -20,7 +20,7 @@ namespace InternetInterface.Controllers
 	{
 		[AccessibleThrough(Verb.Post)]
 		public void RegisterClient([DataBind("ChangedBy")]ChangeBalaceProperties changeProperties,
-			[DataBind("client")]PhisicalClients phisClient, string balanceText, uint tariff, uint status, uint BrigadForConnect,
+			[DataBind("client")]PhysicalClients phisClient, string balanceText, uint tariff, uint status, uint BrigadForConnect,
 			[DataBind("ConnectSumm")]PaymentForConnect connectSumm
 			 , [DataBind("ConnectInfo")]PhisicalClientConnectInfo ConnectInfo, bool VisibleRegisteredInfo,
 			uint requestID)
@@ -85,7 +85,7 @@ namespace InternetInterface.Controllers
 					|| string.IsNullOrEmpty(ConnectInfo.Port)))*/
 			if ((registerClient && validPortSwitch && unPort) || (registerClient && string.IsNullOrEmpty(ConnectInfo.Port)))
 			{
-				PhisicalClients.RegistrLogicClient(phisClient, tariff, status, Validator, InithializeContent.partner, connectSumm);
+				PhysicalClients.RegistrLogicClient(phisClient, tariff, status, Validator, InithializeContent.partner, connectSumm);
 				var client = new Clients
 				{
 					Name = string.Format("{0} {1} {2}", phisClient.Surname, phisClient.Name, phisClient.Patronymic),
@@ -156,7 +156,7 @@ namespace InternetInterface.Controllers
 				phisClient.SetValidationErrors(Validator.GetErrorSummary(phisClient));
 				PropertyBag["ConnectInfo"] = ConnectInfo;
 				PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(s => !string.IsNullOrEmpty(s.Name));
-				PropertyBag["VB"] = new ValidBuilderHelper<PhisicalClients>(phisClient);
+				PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClients>(phisClient);
 				PropertyBag["NS"] = new ValidBuilderHelper<PaymentForConnect>(connectSumm);
 				PropertyBag["ChangeBy"] = changeProperties;
 			}
@@ -189,7 +189,7 @@ namespace InternetInterface.Controllers
 		public void RegisterClient()
 		{
 			SendRegisterParam();
-			PropertyBag["Client"] = new PhisicalClients();
+			PropertyBag["Client"] = new PhysicalClients();
 			PropertyBag["ChTariff"] = Tariff.FindFirst().Id;
 		}
 
@@ -198,7 +198,7 @@ namespace InternetInterface.Controllers
 			var request = Requests.Find(requestID);
 			var fio = new string[3];
 			request.ApplicantName.Split(' ').CopyTo(fio, 0);
-			var newPhisClient = new PhisicalClients
+			var newPhisClient = new PhysicalClients
 			{
 				Surname = fio[0],
 				Name = fio[1],
@@ -232,7 +232,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["ChStatus"] = Status.FindFirst().Id;
 			PropertyBag["ChBrigad"] = 0;
 			PropertyBag["Statuss"] = Status.FindAllSort();
-			PropertyBag["VB"] = new ValidBuilderHelper<PhisicalClients>(new PhisicalClients());
+			PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClients>(new PhysicalClients());
 			PropertyBag["NS"] = new ValidBuilderHelper<PaymentForConnect>(new PaymentForConnect());
 			PropertyBag["ConnectSumm"] = new PaymentForConnect
 			                             	{
@@ -242,7 +242,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Applying"] = "false";
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties { ChangeType = TypeChangeBalance.OtherSumm };
 			PropertyBag["BalanceText"] = 0;
-			PropertyBag["ConnectInfo"] = new PhisicalClients().GetConnectInfo();
+			PropertyBag["ConnectInfo"] = new PhysicalClients().GetConnectInfo();
 			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(s => !string.IsNullOrEmpty(s.Name));
 		}
 

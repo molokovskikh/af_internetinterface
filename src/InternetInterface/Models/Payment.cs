@@ -20,7 +20,7 @@ namespace InternetInterface.Models
 		public virtual DateTime PaidOn { get; set; }
 
 		[BelongsTo("Client")]
-		public virtual PhisicalClients Client { get; set; }
+		public virtual PhysicalClients Client { get; set; }
 
 		[Property, ValidateNonEmpty("Введите сумму"),
 				   ValidateRange(1, 100000, "Сумма должна быть больше 0 и меньше 100 000 рублей"),

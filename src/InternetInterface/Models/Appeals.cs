@@ -24,7 +24,7 @@ namespace InternetInterface.Models
 		public virtual Partner Partner { get; set; }
 
 		[BelongsTo("PhysicalClient")]
-		public virtual PhisicalClients PhysicalClient { get; set; }
+		public virtual PhysicalClients PhysicalClient { get; set; }
 
 		public virtual string GetTransformedAppeal()
 		{

@@ -13,11 +13,11 @@ namespace InternetInterface.AllLogic
 {
 	public class GetClientsLogic
 	{
-		public static IList<PhisicalClients> GetClients(UserSearchProperties searchProperties,
+		public static IList<PhysicalClients> GetClients(UserSearchProperties searchProperties,
 			ConnectedTypeProperties connectedType, uint tariff, uint whoregister, string searchText, uint brigad)
 		{
-			IList<PhisicalClients> result = new List<PhisicalClients>();
-			ARSesssionHelper<PhisicalClients>.QueryWithSession(session =>
+			IList<PhysicalClients> result = new List<PhysicalClients>();
+			ARSesssionHelper<PhysicalClients>.QueryWithSession(session =>
 			{
 				searchProperties.SearchText = searchText;
 				var sqlStr = string.Empty;
@@ -27,7 +27,7 @@ namespace InternetInterface.AllLogic
 				{
 					sqlStr = String.Format(@"SELECT * FROM internet.PhysicalClients P {0} ORDER BY P.Surname",
 										   GetWhere(searchProperties, connectedType, whoregister, tariff, searchText, brigad));
-					query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(PhisicalClients));
+					query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(PhysicalClients));
 					if (whoregister != 0)
 						query.SetParameter("whoregister", whoregister);
 					if (tariff != 0)
@@ -44,7 +44,7 @@ namespace InternetInterface.AllLogic
 				else
 				{
 					sqlStr = @"SELECT * FROM internet.PhysicalClients P where P.id = :SearchText ORDER BY P.Surname";
-					query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(PhisicalClients));
+					query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(PhysicalClients));
 					if (searchText != null)
 						query.SetParameter("SearchText", searchText.ToLower());
 				}
@@ -58,11 +58,11 @@ ORDER BY P.Surname", ":SearchText");
 					{
 						sqlStr = @"SELECT * FROM internet.PhysicalClients P ORDER BY P.Surname";
 					}
-					query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(PhisicalClients));
+					query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(PhysicalClients));
 					if (searchText != null)
 						query.SetParameter("SearchText", "%" + searchText.ToLower() + "%");
 				}
-				result = query.List<PhisicalClients>();
+				result = query.List<PhysicalClients>();
 				return result;
 			});
 			return result;

@@ -71,7 +71,7 @@ namespace InternetInterface.Models
 
 
 	[ActiveRecord("PhysicalClients", Schema = "internet", Lazy = true)]
-	public class PhisicalClients : ValidActiveRecordLinqBase<PhisicalClients>
+	public class PhysicalClients : ValidActiveRecordLinqBase<PhysicalClients>
 	{
 
 		[PrimaryKey]
@@ -188,7 +188,7 @@ namespace InternetInterface.Models
 		}
 
 
-		public static bool RegistrLogicClient(PhisicalClients _client, uint _tariff, uint _status,
+		public static bool RegistrLogicClient(PhysicalClients _client, uint _tariff, uint _status,
 			ValidatorRunner validator, Partner hasRegistered, PaymentForConnect connectSumm)
 		{
 			if (validator.IsValid(_client) && validator.IsValid(connectSumm))

@@ -66,7 +66,7 @@ namespace InforoomInternet.Controllers
 						Select(l => l.Endpoint.Client.PhisicalClient.Id).First();
 				return true;
 			}
-			if ((context.Session["LoginClient"] == null) || (PhisicalClients.Find(Convert.ToUInt32(context.Session["Login"])) == null))
+			if ((context.Session["LoginClient"] == null) || (PhysicalClients.Find(Convert.ToUInt32(context.Session["Login"])) == null))
 			{
 				context.Response.RedirectToUrl(@"..\\Login\LoginPage");
 				return false;

@@ -61,7 +61,7 @@ namespace InforoomInternet.Test.Integration
 		{
 			using (new SessionScope())
 			{
-				var phisClient = new PhisicalClients
+				var phisClient = new PhysicalClients
 				                 	{
 				                 		Name = "Test",
 										Password = CryptoPass.GetHashString("123")

@@ -26,7 +26,7 @@ namespace InternetInterface.Models
 		public virtual ClientType Type { get; set; }
 
 		[BelongsTo("PhisicalClient", Lazy = FetchWhen.OnInvoke)]
-		public virtual PhisicalClients PhisicalClient { get; set; }
+		public virtual PhysicalClients PhisicalClient { get; set; }
 
 		[Property]
 		public virtual DateTime RatedPeriodDate { get; set; }

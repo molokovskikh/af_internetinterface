@@ -97,13 +97,13 @@ namespace InforoomInternet.Controllers
 /*#if DEBUG
 			hostAdress = "91.219.6.6";
 #endif*/
-			var lease = PhisicalClients.FindByIP(hostAdress);
+			var lease = PhysicalClients.FindByIP(hostAdress);
 #if DEBUG
 			lease = new Lease {
 				Endpoint = new ClientEndpoints {
 					Client = new Clients {
 						Disabled = false,
-						PhisicalClient = new PhisicalClients {
+						PhisicalClient = new PhysicalClients {
 							Balance = 100,
 							Tariff = new Tariff {
 								Price = 500

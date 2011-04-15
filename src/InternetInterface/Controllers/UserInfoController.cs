@@ -16,7 +16,7 @@ namespace InternetInterface.Controllers
 	{
 		public void SearchUserInfo(uint clientCode, bool Editing, bool EditingConnect)
 		{
-			var phisCl = PhisicalClients.Find(clientCode);
+			var phisCl = PhysicalClients.Find(clientCode);
 			PropertyBag["Client"] = phisCl;
 
 			SendParam(clientCode);
@@ -27,7 +27,7 @@ namespace InternetInterface.Controllers
 			{
 				Flash["EditingConnect"] = true;
 			}
-			PropertyBag["VB"] = new ValidBuilderHelper<PhisicalClients>(new PhisicalClients());
+			PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClients>(new PhysicalClients());
 			PropertyBag["ConnectInfo"] = phisCl.GetConnectInfo();
 			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(t => t.Name != null);
 		}
@@ -35,7 +35,7 @@ namespace InternetInterface.Controllers
 		public void SaveSwitchForClient(uint ClientID, [DataBind("ConnectInfo")]PhisicalClientConnectInfo ConnectInfo,
 			uint BrigadForConnect)
 		{
-			var phisCl = PhisicalClients.Find(ClientID);
+			var phisCl = PhysicalClients.Find(ClientID);
 			var brigadChangeFlag = true;
 			if (phisCl.HasConnected != null)
 				brigadChangeFlag = false;
@@ -145,7 +145,7 @@ namespace InternetInterface.Controllers
 					Appeal = Appeal,
 					Date = DateTime.Now,
 					Partner = InithializeContent.partner,
-					PhysicalClient = PhisicalClients.Find(ClientID)
+					PhysicalClient = PhysicalClients.Find(ClientID)
 				}.SaveAndFlush();
 			RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientID);
 		}
@@ -154,7 +154,7 @@ namespace InternetInterface.Controllers
 		{
 			if (CategorieAccessSet.AccesPartner("SSI"))
 			{
-				var client = PhisicalClients.Find(ClientID);
+				var client = PhysicalClients.Find(ClientID);
 				var Password = CryptoPass.GeneratePassword();
 				client.Password = CryptoPass.GetHashString(Password);
 				client.UpdateAndFlush();
@@ -169,7 +169,7 @@ namespace InternetInterface.Controllers
 		public void LoadEditConnectMudule(uint ClientID)
 		{
 			Flash["EditingConnect"] = true;
-			var phisCl = PhisicalClients.Find(ClientID);
+			var phisCl = PhysicalClients.Find(ClientID);
 			PropertyBag["ConnectInfo"] = phisCl.GetConnectInfo();
 			RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientID + "&EditingConnect=true");
 		}
@@ -312,9 +312,9 @@ namespace InternetInterface.Controllers
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void EditInformation([DataBind("Client")]PhisicalClients client, uint ClientID, uint tariff, uint status)
+		public void EditInformation([DataBind("Client")]PhysicalClients client, uint ClientID, uint tariff, uint status)
 		{
-			var updateClient = PhisicalClients.Find(ClientID);
+			var updateClient = PhysicalClients.Find(ClientID);
 			BindObjectInstance(updateClient, ParamStore.Form, "Client");
 			var statusCanChanged = true;
 			if ((updateClient.Status.Id == (uint)StatusType.BlockedAndNoConnected) && (status == (uint)StatusType.NoWorked))
@@ -353,11 +353,11 @@ namespace InternetInterface.Controllers
 			else
 			{
 				updateClient.SetValidationErrors(Validator.GetErrorSummary(updateClient));
-				PropertyBag["VB"] = new ValidBuilderHelper<PhisicalClients>(updateClient);
-				ARSesssionHelper<PhisicalClients>.QueryWithSession(session =>
+				PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClients>(updateClient);
+				ARSesssionHelper<PhysicalClients>.QueryWithSession(session =>
 				{
 					session.Evict(updateClient);
-					return new List<PhisicalClients>();
+					return new List<PhysicalClients>();
 				});
 				if (!statusCanChanged)
 					Flash["statusCanChanged"] = "Если установлет статус Зарегистрирован, но нет информации о подключении, нельзя поставить статус НеРаботает";
@@ -373,7 +373,7 @@ namespace InternetInterface.Controllers
 
 		private void SendParam(UInt32 ClientCode)
 		{
-			var phisCl = PhisicalClients.Find(ClientCode);
+			var phisCl = PhysicalClients.Find(ClientCode);
 			PropertyBag["ConnectInfo"] = phisCl.GetConnectInfo();;
 			PropertyBag["Appeals"] = Appeals.FindAllByProperty("PhysicalClient", phisCl);
 			PropertyBag["ClientCode"] = ClientCode;
@@ -403,13 +403,13 @@ namespace InternetInterface.Controllers
 		[AccessibleThrough(Verb.Post)]
 		public void ChangeBalance([DataBind("ChangedBy")]ChangeBalaceProperties changeProperties, uint clientId, string balanceText)
 		{
-			var clientToch = PhisicalClients.Find(clientId);
+			var clientToch = PhysicalClients.Find(clientId);
 			string forChangeSumm = string.Empty;
 			var thisPay = new Payment();
 			PropertyBag["ChangeBalance"] = true;
 			if (changeProperties.IsForTariff())
 			{
-				forChangeSumm = PhisicalClients.Find(clientId).Tariff.Price.ToString();
+				forChangeSumm = PhysicalClients.Find(clientId).Tariff.Price.ToString();
 			}
 			if (changeProperties.IsOtherSumm())
 			{
@@ -417,7 +417,7 @@ namespace InternetInterface.Controllers
 			}
 			thisPay.Sum = forChangeSumm;
 			thisPay.Agent = Agent.FindAll(DetachedCriteria.For(typeof(Agent)).Add(Expression.Eq("Partner", InithializeContent.partner)))[0];
-			thisPay.Client = PhisicalClients.Find(clientId);
+			thisPay.Client = PhysicalClients.Find(clientId);
 			thisPay.RecievedOn = DateTime.Now;
 			thisPay.PaidOn = DateTime.Now;
 			thisPay.BillingAccount = true;

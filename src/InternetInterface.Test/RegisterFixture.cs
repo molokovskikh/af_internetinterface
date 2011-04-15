@@ -31,7 +31,7 @@ namespace NHibernateFixtute.RegisterTest
 		public void SearchTets()
 		{
 
-			var c = new PhisicalClients
+			var c = new PhysicalClients
 			{
 				//AdressConnect = "",
 				//Balance = 0,
