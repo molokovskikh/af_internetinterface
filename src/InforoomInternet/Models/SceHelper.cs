@@ -32,7 +32,7 @@ namespace InforoomInternet.Models
 					ip,
 					packageId,
 					endpoint.Monitoring ? 1 : 0);
-				var startInfo = new ProcessStartInfo(JavaPath, command) {
+				var startInfo = new ProcessStartInfo(/*JavaPath*/"java", command) {
 					WorkingDirectory = Path.GetDirectoryName(SceHelperPath),
 					UseShellExecute = false,
 					CreateNoWindow = true,
