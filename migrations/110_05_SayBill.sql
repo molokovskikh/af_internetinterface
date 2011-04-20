@@ -1,0 +1,1 @@
+update internet.Clients c set c.SayBillingIsNewClient = false;

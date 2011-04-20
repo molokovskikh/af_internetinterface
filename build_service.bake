@@ -9,9 +9,9 @@ import file from WindowsServiceSupport.bake
 Global(
 	Project : "BillingService",
 	project : "BillingService",
-	server : "acdcserv.adc.analit.net",
-	DeployTo : """\\acdcserv.adc.analit.net\Apps\BillingService""",
-	serviceName : "BillingService",
+	server : "fms",
+	DeployTo : """\\fms\BillingService""",
+	serviceName : "BillingInternetService",
 	HumanReadableName : "Сервис биллинга"
 )
 

@@ -41,7 +41,7 @@ namespace InternetInterface.Controllers
 				brigadChangeFlag = false;
 			var newFlag = false;
 			var clientEntPoint = new ClientEndpoints();
-			var clients = Clients.FindAllByProperty("PhisicalClient", phisCl);
+			var clients = Clients.FindAllByProperty("PhysicalClient", phisCl);
 			if (clients.Length != 0)
 			{
 				var clientsEndPoint = ClientEndpoints.FindAllByProperty("Client", clients[0]);
