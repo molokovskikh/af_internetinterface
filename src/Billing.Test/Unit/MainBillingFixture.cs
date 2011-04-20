@@ -70,8 +70,8 @@ namespace Billing.Test.Unit
 
 			billing.On();
 			var unblockedClient = Clients.FindAllByProperty("Name", "testblockedClient").First();
-			Assert.That(unblockedClient.PhisicalClient.Status.Blocked , Is.EqualTo(false));
-			Assert.That(unblockedClient.PhisicalClient.Balance, Is.EqualTo(1300));
+			Assert.That(unblockedClient.PhysicalClient.Status.Blocked , Is.EqualTo(false));
+			Assert.That(unblockedClient.PhysicalClient.Balance, Is.EqualTo(1300));
 		}
 
 		[Test]
@@ -114,7 +114,7 @@ namespace Billing.Test.Unit
 			CreateClient();
 			var client = Clients.FindFirst();
 			//var client = CreateClient();
-			client.PhisicalClient.Balance = Tariff.FindFirst().Price;
+			client.PhysicalClient.Balance = Tariff.FindFirst().Price;
 			client.UpdateAndFlush();
 			var interval = new Interval("15.01.2011", "15.02.2011");
 			var dayCount = interval.GetInterval();
@@ -124,8 +124,8 @@ namespace Billing.Test.Unit
 				interval.dtTo = interval.dtTo.AddDays(1);
 				SetClientDate(client, interval);
 			}
-			Assert.That(Math.Round(Convert.ToDecimal(client.PhisicalClient.Balance), 2), Is.LessThan(0.00));
-			Console.WriteLine("End balance = " + Math.Round(Convert.ToDecimal(client.PhisicalClient.Balance), 2));
+			Assert.That(Math.Round(Convert.ToDecimal(client.PhysicalClient.Balance), 2), Is.LessThan(0.00));
+			Console.WriteLine("End balance = " + Math.Round(Convert.ToDecimal(client.PhysicalClient.Balance), 2));
 			var writeOffs = WriteOff.FindAll();
 			Assert.That(writeOffs.Length, Is.EqualTo(31));
 			foreach (var writeOff in writeOffs)

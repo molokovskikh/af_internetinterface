@@ -74,7 +74,8 @@ div.scroller
 <script type="text/javascript" id="js">    $(document).ready(function () {
         $("#for_sort").tablesorter({
         });
-    }); </script>
+});
+</script>
 
 
 
@@ -93,6 +94,7 @@ div.scroller
             <thead>
             <tr>
                 <th></th>
+                <th>Номер</th>
                 <th>Имя</th>
                 <th>Телефон</th>
                 <th>Email</th>
@@ -106,6 +108,7 @@ div.scroller
             <% for i,Client in enumerate(Clients): %>
             <tr> 
              <td><input type="checkbox" id="Checkbox1" name="LabelList[${i}]" value=${Client.Id} /></td>
+             <td>${Client.Id}</td>
                 <td><a href="../Register/RegisterClient.rails?requestID=${Client.Id}"> ${Client.ApplicantName}</a></td>
                 <td>${Client.ApplicantPhoneNumber}</td>
                 <td>${Client.ApplicantEmail}</td>

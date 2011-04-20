@@ -87,10 +87,10 @@ namespace Billing
 				           	{
 								var newClients = Clients.FindAll(DetachedCriteria.For(typeof(Clients))
 									.Add(Restrictions.Eq("SayBillingIsNewClient", true))
-									.Add(Restrictions.IsNotNull("PhisicalClient")));
+									.Add(Restrictions.IsNotNull("PhysicalClient")));
 				           		foreach (var newClient in newClients)
 				           		{
-				           			var phisCl = newClient.PhisicalClient;
+				           			var phisCl = newClient.PhysicalClient;
 				           			var connectSum = PaymentForConnect.FindAllByProperty("ClientId", phisCl).First().Summ;
 				           			phisCl.Balance -= Convert.ToDecimal(connectSum);
 									phisCl.UpdateAndFlush();
@@ -115,15 +115,15 @@ namespace Billing
 									newPayment.UpdateAndFlush();
 								}
 				           		var clients = Clients.FindAll(DetachedCriteria.For(typeof (Clients))
-									.CreateAlias("PhisicalClient", "PC", JoinType.InnerJoin)
+									.CreateAlias("PhysicalClient", "PC", JoinType.InnerJoin)
 									.CreateAlias("PC.Status","S", JoinType.InnerJoin)
-				           		                              	.Add(Restrictions.IsNotNull("PhisicalClient"))
+				           		                              	.Add(Restrictions.IsNotNull("PhysicalClient"))
 																.Add(Restrictions.Eq("S.Blocked", true))
 																.Add(Restrictions.Eq("PC.AutoUnblocked", true))
 																.Add(Restrictions.Ge("PC.Balance" , 0m)));
 								foreach (var client in clients)
 								{
-									var phisicalClient = client.PhisicalClient;
+									var phisicalClient = client.PhysicalClient;
 									phisicalClient.Status = Status.Find((uint) StatusType.Worked);
 									//client.FirstLease = true;
 									client.ShowBalanceWarningPage = false;
@@ -170,10 +170,10 @@ namespace Billing
 		public void Compute()
 		{
 			var clients = Clients.FindAll(DetachedCriteria.For(typeof (Clients))
-			                              	.Add(Restrictions.IsNotNull("PhisicalClient")));
+			                              	.Add(Restrictions.IsNotNull("PhysicalClient")));
 			foreach (var client in clients)
 			{
-				var phisicalClient = client.PhisicalClient;
+				var phisicalClient = client.PhysicalClient;
 				var balance = Convert.ToDecimal(phisicalClient.Balance);
 				if ((balance >= 0) &&
 					(!client.Disabled) &&

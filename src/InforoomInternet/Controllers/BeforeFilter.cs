@@ -62,13 +62,13 @@ namespace InforoomInternet.Controllers
 			if (lease.Length != 0)
 			{
 				context.Session["LoginClient"] =
-					lease.Where(l => l.Endpoint != null && l.Endpoint.Client != null && l.Endpoint.Client.PhisicalClient != null).
-						Select(l => l.Endpoint.Client.PhisicalClient.Id).First();
+					lease.Where(l => l.Endpoint != null && l.Endpoint.Client != null && l.Endpoint.Client.PhysicalClient != null).
+						Select(l => l.Endpoint.Client.PhysicalClient.Id).First();
 				return true;
 			}
 			if ((context.Session["LoginClient"] == null) || (PhysicalClients.Find(Convert.ToUInt32(context.Session["Login"])) == null))
 			{
-				context.Response.RedirectToUrl(@"..\\Login\LoginPage");
+				context.Response.RedirectToUrl(@"..//Login/LoginPage");
 				return false;
 			}
 			return true;

@@ -19,7 +19,7 @@ namespace InforoomInternet.Controllers
 			var physClient = PhysicalClients.Find(physClientId);
 			PropertyBag["PhysClientName"] = string.Format("{0} {1}",physClient.Name, physClient.Patronymic);
 			PropertyBag["PhysicalClient"] = physClient;
-			var client = Clients.FindAllByProperty("PhisicalClient", physClient).First();
+			var client = Clients.FindAllByProperty("PhysicalClient", physClient).First();
 			/*var writeOffs = WriteOff.FindAll(DetachedCriteria.For(typeof (WriteOff))
 			                                 	.Add(Restrictions.Eq("Client", client))).GroupBy(y => new { y.WriteOffDate.Year, y.WriteOffDate.Month });
 			PropertyBag["WriteOffs"] = writeOffs.Select(t => t.Sum(y => y.WriteOffSum));*/

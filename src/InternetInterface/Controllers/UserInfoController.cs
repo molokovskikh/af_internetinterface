@@ -86,7 +86,7 @@ namespace InternetInterface.Controllers
 								var client = new Clients
 								             	{
 								             		Name = string.Format("{0} {1} {2}", phisCl.Surname, phisCl.Name, phisCl.Patronymic),
-								             		PhisicalClient = phisCl,
+								             		PhysicalClient = phisCl,
 								             		Type = ClientType.Phisical,
 													FirstLease = true
 								             	};
@@ -287,7 +287,7 @@ namespace InternetInterface.Controllers
 			RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientID + "&Editing=true");
 		}
 
-		//public void ClientRegisteredInfo(PhisicalClients client, string Password, PaymentForConnect connectSumm)
+		//public void ClientRegisteredInfo(PhysicalClients client, string Password, PaymentForConnect connectSumm)
 		public void ClientRegisteredInfo()
 		{
 			/*PropertyBag["Client"] = client;
@@ -326,7 +326,7 @@ namespace InternetInterface.Controllers
 				updateClient.OutputDate = DateTime.Parse(updateClient.OutputDate).ToShortDateString();
 				updateClient.Tariff = Tariff.Find(tariff);
 				updateClient.UpdateAndFlush();
-				var clients = Clients.FindAllByProperty("PhisicalClient", updateClient);
+				var clients = Clients.FindAllByProperty("PhysicalClient", updateClient);
 				if (clients.Length != 0)
 				{
 					if (updateClient.Status.Blocked)
@@ -394,7 +394,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties {ChangeType = TypeChangeBalance.OtherSumm};
 			PropertyBag["PartnerAccessSet"] = new CategorieAccessSet();
 			PropertyBag["Payments"] = Payment.FindAllByProperty("Client", phisCl).OrderBy(t => t.PaidOn).ToArray();
-			var client = Clients.FindAllByProperty("PhisicalClient", phisCl);
+			var client = Clients.FindAllByProperty("PhysicalClient", phisCl);
 			if (client.Length != 0)
 				PropertyBag["WriteOffs"] = WriteOff.FindAllByProperty("Client", client.First()).OrderBy(t => t.WriteOffDate);
 			else PropertyBag["WriteOffs"] = new List<WriteOff>();

@@ -25,8 +25,8 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual ClientType Type { get; set; }
 
-		[BelongsTo("PhisicalClient", Lazy = FetchWhen.OnInvoke)]
-		public virtual PhysicalClients PhisicalClient { get; set; }
+		[BelongsTo("PhysicalClient", Lazy = FetchWhen.OnInvoke)]
+		public virtual PhysicalClients PhysicalClient { get; set; }
 
 		[Property]
 		public virtual DateTime RatedPeriodDate { get; set; }
@@ -43,8 +43,11 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool ShowBalanceWarningPage { get; set; }
 
+		/*[Property]
+		public virtual bool SayDhcpIsNewClient  { get; set; }*/
+
 		[Property]
-		public virtual bool SayDhcpIsNewClient  { get; set; }
+		public virtual DateTime? BeginWork { get; set; }
 
 		[Property]
 		public virtual bool SayBillingIsNewClient  { get; set; }

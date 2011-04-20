@@ -41,7 +41,7 @@ namespace InforoomInternet.Controllers
 			else
 			{
 				_log.Info("Авторизация отклонена");
-				RedirectToUrl(@"..\\Login\LoginPage?partner=true");
+				RedirectToUrl(@"..//Login/LoginPage?partner=true");
 			}
 		}
 
@@ -54,16 +54,16 @@ namespace InforoomInternet.Controllers
 				if (LoginLogic.IsAccessibleClient(id, Password))
 				{
 					Session["LoginClient"] = Login;
-					RedirectToUrl(@"..\\PrivateOffice\IndexOffice");
+					RedirectToUrl(@"..//PrivateOffice/IndexOffice");
 				}
 				else
 				{
-					RedirectToUrl(@"..\\Login\LoginPage");
+					RedirectToUrl(@"..//Login/LoginPage");
 				}
 			}
 			catch (Exception ex)
 			{
-				RedirectToUrl(@"..\\Login\LoginPage");
+				RedirectToUrl(@"..//Login/LoginPage");
 			}
 		}
 	}

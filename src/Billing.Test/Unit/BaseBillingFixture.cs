@@ -49,7 +49,7 @@ namespace Billing.Test.Unit
 			       		FirstLease = true,
 			       		DebtDays = 0,
 			       		Name = name,
-			       		PhisicalClient = phisicalClient,
+			       		PhysicalClient = phisicalClient,
 			       		SayBillingIsNewClient = true
 			       	};
 		}

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Castle.MonoRail.Framework;
 using InforoomInternet.Logic;
 using InforoomInternet.Models;
@@ -69,8 +70,6 @@ namespace InforoomInternet.Controllers
 						mainMenu = new MenuField
 						           	{
 										Name = name[i],
-										//Link = link[i]
-						           		//Link = string.Format("{0}" + link[i], subLink)
 										Link = string.Format(link[i] + "{0}", subLink)
 						           	};
 						mainMenu.SaveAndFlush();
@@ -82,7 +81,7 @@ namespace InforoomInternet.Controllers
 								//Link = link[i],
 								Link = string.Format(link[i] + "{0}", subLink),
 								Name = name[i],
-								MenuField = mainMenu //MenuField.Find(Convert.ToUInt32(id[i]))
+								MenuField = mainMenu
 							}.SaveAndFlush();
 					}
 				}

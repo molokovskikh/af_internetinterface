@@ -89,10 +89,11 @@ namespace InternetInterface.Controllers
 				var client = new Clients
 				{
 					Name = string.Format("{0} {1} {2}", phisClient.Surname, phisClient.Name, phisClient.Patronymic),
-					PhisicalClient = phisClient,
+					PhysicalClient = phisClient,
 					Type = ClientType.Phisical,
 					FirstLease = true,
-					SayDhcpIsNewClient = true
+					BeginWork = null
+					//SayDhcpIsNewClient = true
 				};
 				client.SaveAndFlush();
 				var payment = new Payment

@@ -61,12 +61,15 @@ namespace InforoomInternet.Test.Integration
 		{
 			using (new SessionScope())
 			{
-				var phisClient = new PhysicalClients
+				/*var phisClient = new PhysicalClients
 				                 	{
 				                 		Name = "Test",
 										Password = CryptoPass.GetHashString("123")
-				                 	};
-				var client = new Clients
+				                 	};*/
+				var phisClient = PhysicalClients.Find((uint) 13);
+				phisClient.Password = CryptoPass.GetHashString("123");
+				phisClient.UpdateAndFlush();
+				/*var client = new Clients
 				             	{
 				             		PhisicalClient = phisClient,
 									Name = "test",
@@ -82,17 +85,16 @@ namespace InforoomInternet.Test.Integration
 									Endpoint = endPoint,
 				               		Ip = Convert.ToUInt32(NetworkSwitches.SetProgramIp("91.219.7.3"))
 				               	};
-				phisClient.SaveAndFlush();
-				client.SaveAndFlush();
+				phisClient.SaveAndFlush();*/
+				/*client.SaveAndFlush();
 				endPoint.SaveAndFlush();
-				newLease.SaveAndFlush();
-				var filter = new AccessFilter();
+				newLease.SaveAndFlush();*/
+				/*var filter = new AccessFilter();
 				Request.UserHostAddress = "91.219.7.3";
 				Assert.IsTrue(filter.Perform(ExecuteWhen.BeforeAction, controller.Context, controller, controller.ControllerContext));
-				phisClient.DeleteAndFlush();
 				client.DeleteAndFlush();
 				endPoint.DeleteAndFlush();
-				newLease.DeleteAndFlush();
+				newLease.DeleteAndFlush();*/
 			}
 		}
 	}

@@ -224,7 +224,7 @@ namespace InternetInterface.Models
 		{
 			if (Connected)
 			{
-				var client = Clients.FindAllByProperty("PhisicalClient", this);
+				var client = Clients.FindAllByProperty("PhysicalClient", this);
 				if (client.Length != 0)
 				{
 					IList<PhisicalClientConnectInfo> ConnectInfo = new List<PhisicalClientConnectInfo>();

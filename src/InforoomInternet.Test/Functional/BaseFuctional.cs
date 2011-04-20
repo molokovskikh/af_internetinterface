@@ -179,7 +179,7 @@ namespace InforoomInternet.Test.Unit
 			phisClient.SaveAndFlush();
 			var client = new Clients
 			{
-				PhisicalClient = phisClient
+				PhysicalClient = phisClient
 			};
 			client.SaveAndFlush();
 			new Payment
@@ -214,7 +214,7 @@ namespace InforoomInternet.Test.Unit
 			using (var browser = Open(""))
 			{
 				Console.WriteLine(browser.Text);
-				browser.Link("maina").Click();
+				browser.Link("").Click();
 				Assert.That(browser.Text, Is.StringContaining("Тарифы"));
 				browser.Link("requisite").Click();
 				Assert.That(browser.Text, Is.StringContaining("ИНН"));

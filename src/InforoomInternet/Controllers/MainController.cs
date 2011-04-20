@@ -103,7 +103,7 @@ namespace InforoomInternet.Controllers
 				Endpoint = new ClientEndpoints {
 					Client = new Clients {
 						Disabled = false,
-						PhisicalClient = new PhysicalClients {
+						PhysicalClient = new PhysicalClients {
 							Balance = 100,
 							Tariff = new Tariff {
 								Price = 500
@@ -119,13 +119,13 @@ namespace InforoomInternet.Controllers
 				//RedirectToSiteRoot();
 				return;
 			}
-			if (lease.Endpoint.Client.PhisicalClient == null)
+			if (lease.Endpoint.Client.PhysicalClient == null)
 			{
 				Redirecter.RedirectRoot(Context, this);
 				//RedirectToSiteRoot();
 				return;
 			}
-			var pclient = lease.Endpoint.Client.PhisicalClient;
+			var pclient = lease.Endpoint.Client.PhysicalClient;
 			var client = lease.Endpoint.Client;
 
 			if (IsPost)
