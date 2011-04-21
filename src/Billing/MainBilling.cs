@@ -85,22 +85,25 @@ namespace Billing
 			{
 				UseSession(() =>
 				           	{
-								var newClients = Clients.FindAll(DetachedCriteria.For(typeof(Clients))
-									.Add(Restrictions.Eq("SayBillingIsNewClient", true))
-									.Add(Restrictions.IsNotNull("PhysicalClient")));
+				           		var newClients = Clients.FindAll(DetachedCriteria.For(typeof (Clients))
+				           		                                 	.CreateAlias("PhysicalClient", "PC", JoinType.InnerJoin)
+																	.Add(Restrictions.Eq("ConnectionPaid", false))
+				           		                                 	.Add(Restrictions.IsNotNull("BeginWork"))
+				           		                                 	.Add(Restrictions.IsNotNull("PhysicalClient")));
 				           		foreach (var newClient in newClients)
 				           		{
 				           			var phisCl = newClient.PhysicalClient;
-				           			var connectSum = PaymentForConnect.FindAllByProperty("ClientId", phisCl).First().Summ;
-				           			phisCl.Balance -= Convert.ToDecimal(connectSum);
+				           			//var connectSum = PaymentForConnect.FindAllByProperty("ClientId", phisCl).First().Summ;
+				           			phisCl.Balance -= phisCl.ConnectSum;
+				           			phisCl.ConnectionPaid = true;
 									phisCl.UpdateAndFlush();
-				           			newClient.SayBillingIsNewClient = false;
+				           			//newClient = false;
 									newClient.UpdateAndFlush();
 									new WriteOff
 									{
 										Client = newClient,
 										WriteOffDate = SystemTime.Now(),
-										WriteOffSum = Convert.ToDecimal(connectSum)
+										WriteOffSum = phisCl.ConnectSum
 									}.SaveAndFlush();
 
 				           		}
@@ -124,7 +127,8 @@ namespace Billing
 								{
 									var phisicalClient = client.PhysicalClient;
 									phisicalClient.Status = Status.Find((uint) StatusType.Worked);
-									client.FirstLease = true;
+									//client.FirstLease = true;
+									client.RatedPeriodDate = null;
 									client.ShowBalanceWarningPage = false;
 									client.Disabled = false;
 									client.UpdateAndFlush();
@@ -181,16 +185,16 @@ namespace Billing
 				{
 					DtNow = SystemTime.Now();
 
-					if ((client.RatedPeriodDate.AddMonths(1) - DtNow).Days == -client.DebtDays)
+					if ((((DateTime)client.RatedPeriodDate).AddMonths(1) - DtNow).Days == -client.DebtDays)
 					{
-						var dtFrom = client.RatedPeriodDate;
+						var dtFrom = (DateTime)client.RatedPeriodDate;
 						var dtTo = DtNow;
 						client.DebtDays += dtFrom.Day - dtTo.Day;
 						var thisMonth = DtNow.Month;
 						client.RatedPeriodDate = DtNow.AddDays(client.DebtDays);
-						while (client.RatedPeriodDate.Month != thisMonth)
+						while (((DateTime)client.RatedPeriodDate).Month != thisMonth)
 						{
-							client.RatedPeriodDate = client.RatedPeriodDate.AddDays(-1);
+							client.RatedPeriodDate = ((DateTime)client.RatedPeriodDate).AddDays(-1);
 						}
 						client.UpdateAndFlush();
 					}

@@ -21,7 +21,7 @@ namespace InternetInterface.Controllers
 
 			SendParam(clientCode);
 			Flash["Editing"] = Editing;
-			if (phisCl.Connected)
+			if (phisCl.Status.Connected)
 			Flash["EditingConnect"] = EditingConnect;
 			else
 			{
@@ -88,7 +88,7 @@ namespace InternetInterface.Controllers
 								             		Name = string.Format("{0} {1} {2}", phisCl.Surname, phisCl.Name, phisCl.Patronymic),
 								             		PhysicalClient = phisCl,
 								             		Type = ClientType.Phisical,
-													FirstLease = true
+													//FirstLease = true
 								             	};
 								client.SaveAndFlush();
 								clientEntPoint.Client = client;
@@ -104,8 +104,12 @@ namespace InternetInterface.Controllers
 							else
 								clientEntPoint.SaveAndFlush();
 							if (brigadChangeFlag)
-							phisCl.WhoConnected = Brigad.Find(BrigadForConnect);
-							phisCl.Connected = true;
+							{
+								var brigad = Brigad.Find(BrigadForConnect);
+								phisCl.WhoConnected = brigad;
+								phisCl.WhoConnectedName = brigad.Name;
+							}
+							//phisCl.Connected = true;
 							phisCl.ConnectedDate = DateTime.Now;
 							phisCl.UpdateAndFlush();
 							PropertyBag["Editing"] = false;
@@ -158,10 +162,10 @@ namespace InternetInterface.Controllers
 				var Password = CryptoPass.GeneratePassword();
 				client.Password = CryptoPass.GetHashString(Password);
 				client.UpdateAndFlush();
-				var connectSumm = PaymentForConnect.FindAllByProperty("ClientId", client).First();
+				//var connectSumm = PaymentForConnect.FindAllByProperty("ClientId", client).First();
 				PropertyBag["Client"] = client;
 				PropertyBag["Password"] = Password;
-				PropertyBag["ConnectSumm"] = connectSumm;
+				//PropertyBag["ConnectSumm"] = connectSumm;
 				RenderView("ClientRegisteredInfo");
 			}
 		}
@@ -322,8 +326,8 @@ namespace InternetInterface.Controllers
 			updateClient.Status = Status.Find(status);
 			if (Validator.IsValid(updateClient) && statusCanChanged)
 			{
-				if (updateClient.PassportOutputDate != null)
-				updateClient.PassportOutputDate = DateTime.Parse(updateClient.PassportOutputDate).ToShortDateString();
+				if (updateClient.PassportDate != null)
+				updateClient.PassportDate = DateTime.Parse(updateClient.PassportDate).ToShortDateString();
 				updateClient.Tariff = Tariff.Find(tariff);
 				updateClient.UpdateAndFlush();
 				var clients = Clients.FindAllByProperty("PhysicalClient", updateClient);
@@ -415,7 +419,7 @@ namespace InternetInterface.Controllers
 			{
 				forChangeSumm = balanceText;
 			}
-			thisPay.Sum = forChangeSumm;
+			thisPay.Sum = Convert.ToDecimal(forChangeSumm);
 			thisPay.Agent = Agent.FindAll(DetachedCriteria.For(typeof(Agent)).Add(Expression.Eq("Partner", InithializeContent.partner)))[0];
 			thisPay.Client = PhysicalClients.Find(clientId);
 			thisPay.RecievedOn = DateTime.Now;

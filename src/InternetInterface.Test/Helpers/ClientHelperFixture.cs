@@ -21,7 +21,7 @@ namespace InternetInterface.Test.Helpers
 			       		Balance = 100,
 			       		CaseHouse = "A",
 			       		City = "VRN",
-			       		Connected = false,
+			       		//Connected = false,
 			       		Entrance = "1",
 			       		Floor = "1",
 			       		WhoConnected = null,
@@ -30,7 +30,7 @@ namespace InternetInterface.Test.Helpers
 			       		House = "1",
 			       		//Login = "Login" + new Random().Next(100),
 			       		Name = "testName",
-			       		PassportOutputDate = DateTime.Now.ToShortDateString(),
+			       		PassportDate = DateTime.Now.ToShortDateString(),
 						PassportNumber = "123456",
 						PassportSeries = "1234",
 						Password = CryptoPass.GetHashString(CryptoPass.GeneratePassword()),
@@ -53,7 +53,7 @@ namespace InternetInterface.Test.Helpers
 				          		//Agent = InithializeContent.partner,
 				          		PaidOn = DateTime.Now,
 								RecievedOn = DateTime.Now,
-				          		Sum = "500"
+				          		Sum = 500
 				          	};
 				client.SaveAndFlush();
 				pay.SaveAndFlush();

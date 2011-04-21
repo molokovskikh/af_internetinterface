@@ -197,7 +197,7 @@ div.WordSection1
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
   justify;line-height:normal'>паспорт серия <i style='mso-bidi-font-style:normal'><u>${Client.PassportSeries}</u></i>
   № <i style='mso-bidi-font-style:normal'><u>${Client.PassportNumber}</u></i> выдан <i
-  style='mso-bidi-font-style:normal'><u>${Client.PassportOutputDate} <span class=GramE>г</span>.</u></i>,
+  style='mso-bidi-font-style:normal'><u>${Client.PassportDate} <span class=GramE>г</span>.</u></i>,
   </p>  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
   justify;line-height:normal'><i style='mso-bidi-font-style:normal'><u>${Client.WhoGivePassport}</u></i>, </p>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
@@ -240,7 +240,7 @@ div.WordSection1
   </table>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
   justify;line-height:normal'>Стоимость выполненных работ <b style='mso-bidi-font-weight:
-  normal'><i style='mso-bidi-font-style:normal'><u>${ConnectSumm.Summ}</u></i></b>
+  normal'><i style='mso-bidi-font-style:normal'><u>${Client.ConnectSum}</u></i></b>
   руб.</p>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
   justify;line-height:normal'>Я <b style='mso-bidi-font-weight:normal'><i
@@ -462,7 +462,7 @@ div.WordSection1
   justify;line-height:normal'><o:p>&nbsp;</o:p></p>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
   justify;line-height:normal'>Стоимость услуг по подключению <b
-  style='mso-bidi-font-weight:normal'><i style='mso-bidi-font-style:normal'><u>${ConnectSumm.Summ} </u></i></b> руб.</p>
+  style='mso-bidi-font-weight:normal'><i style='mso-bidi-font-style:normal'><u>${Client.ConnectSum} </u></i></b> руб.</p>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
   justify;line-height:normal'>&nbsp;</p>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:

@@ -104,13 +104,13 @@ $(function() {
                                 </td>
                                  <td >
                                  <%if PartnerAccessSet.AccesPartner("SSI"): %>
-                                    <input id="ConnectSumm" type="text" value="${ConnectSumm.Summ}" name="ConnectSumm.Summ"/>
+                                    <input id="ConnectSumm" type="text" value="${Client.ConnectSum}" name="client.ConnectSum"/>
                                     <%else: %>
-                                 <input id="ConnectSumm" type="hidden" name="ConnectSumm.Summ" value=700 />
+                                 <input id="ConnectSumm" type="hidden" name="client.ConnectSum" value=700 />
                                  700руб
                                  <%end %>
                                  </td>
-                                    <td>${NS.GetBlock("Summ")}</td>
+                                    <td>${VB.GetBlock("ConnectSum")}</td>
                              </tr> 
                              <tr>
                             <td>

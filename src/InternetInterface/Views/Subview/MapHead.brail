@@ -64,6 +64,9 @@
                <%if PartnerAccessSet.AccesPartner("SSI"): %>
                <th><a href = "../Payers/Filter.rails" ><span class="MH"><div class=menudiv>Платежи</div></span></a></th>
                <%end %>
+                              <%if PartnerAccessSet.AccesPartner("SSI"): %>
+               <th><a href = "../Payers/AgentFilter.rails" ><span class="MH"><div class=menudiv>Платежи по агентам</div></span></a></th>
+               <%end %>
                <th>
                   <form class="form" id="Exit" name="Exit" method="post" action="${siteroot}/ExitPartner/Yes" >
                   <button type="submit" class="button">

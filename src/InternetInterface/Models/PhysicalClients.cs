@@ -124,7 +124,7 @@ namespace InternetInterface.Models
 		public virtual string PassportNumber { get; set; }
 
 		[Property, UserValidateNonEmpty("Введите дату выдачи паспорта"), ValidateDate("Ошибка формата даты **-**-****")]
-		public virtual string PassportOutputDate { get; set; }
+		public virtual string PassportDate { get; set; }
 
 		[Property, UserValidateNonEmpty("Заполните поле 'Кем выдан паспорт'")]
 		public virtual string WhoGivePassport { get; set; }
@@ -150,17 +150,29 @@ namespace InternetInterface.Models
 		[BelongsTo("WhoRegistered")]
 		public virtual Partner WhoRegistered { get; set; }
 
+		[Property]
+		public virtual string WhoRegisteredName { get; set; }
+
 		[BelongsTo("WhoConnected")]
 		public virtual Brigad WhoConnected { get; set; }
+
+		[Property]
+		public virtual string WhoConnectedName { get; set; }
 
 		[BelongsTo("Status")]
 		public virtual Status Status { get; set; }
 
-		[Property]
-		public virtual bool Connected { get; set; }
+		/*[Property]
+		public virtual bool Connected { get; set; }*/
+
+		[Property, ValidateNonEmpty("Введите сумму"), ValidateDecimal("Непрвильно введено значение суммы")]
+		public virtual decimal ConnectSum { get; set; }
 
 		[Property]
 		public virtual DateTime ConnectedDate { get; set; }
+
+		[Property]
+		public virtual bool ConnectionPaid { get; set; }
 
 		[Property]
 		public virtual bool AutoUnblocked { get; set; }
@@ -170,7 +182,7 @@ namespace InternetInterface.Models
 
 		public virtual bool IsConnected()
 		{
-			return this.Connected;
+			return Status.Connected;
 		}
 
 		public virtual string HowManyToPay(bool change)
@@ -189,21 +201,22 @@ namespace InternetInterface.Models
 
 
 		public static bool RegistrLogicClient(PhysicalClients _client, uint _tariff, uint _status,
-			ValidatorRunner validator, Partner hasRegistered, PaymentForConnect connectSumm)
+			ValidatorRunner validator, Partner hasRegistered/*, PaymentForConnect connectSumm*/)
 		{
-			if (validator.IsValid(_client) && validator.IsValid(connectSumm))
+			if (validator.IsValid(_client)/* && validator.IsValid(connectSumm)*/)
 			{
 				_client.RegDate = DateTime.Now;
 				_client.Tariff = Tariff.Find(_tariff);
 				_client.Status = Status.Find((uint)StatusType.BlockedAndNoConnected);
 				_client.Password = CryptoPass.GetHashString(_client.Password);
 				_client.WhoRegistered = hasRegistered;
+				_client.WhoRegisteredName = hasRegistered.Name;
 				_client.AutoUnblocked = true;
 				_client.SaveAndFlush();
-				connectSumm.ClientId = _client;
+				/*connectSumm.ClientId = _client;
 				connectSumm.ManagerID = InithializeContent.partner;
 				connectSumm.PaymentDate = DateTime.Now;
-				connectSumm.SaveAndFlush();
+				connectSumm.SaveAndFlush();*/
 				return true;
 			}
 			return false;
@@ -222,7 +235,7 @@ namespace InternetInterface.Models
 
 		public virtual PhisicalClientConnectInfo GetConnectInfo()
 		{
-			if (Connected)
+			if (Status != null && Status.Connected)
 			{
 				var client = Clients.FindAllByProperty("PhysicalClient", this);
 				if (client.Length != 0)

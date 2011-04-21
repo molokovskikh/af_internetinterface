@@ -153,9 +153,9 @@
                                 <td ><b>Дата выдачи паспорта</b></td>
                                 <%end %>
                                 <td >
-                                    <input id="PassportOutputDate" type="text" value="${client.PassportOutputDate}" name="client.PassportOutputDate"/></td>
+                                    <input id="PassportDate" type="text" value="${client.PassportDate}" name="client.PassportDate"/></td>
                                 <td>
-                                    ${VB.GetBlock("PassportOutputDate")}
+                                    ${VB.GetBlock("PassportDate")}
                                 </td>
                             </tr>
                             <tr>

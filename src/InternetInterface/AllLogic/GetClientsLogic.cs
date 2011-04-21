@@ -25,7 +25,7 @@ namespace InternetInterface.AllLogic
 				if (CategorieAccessSet.AccesPartner("SSI"))
 				if (!searchProperties.IsSearchAccount())
 				{
-					sqlStr = String.Format(@"SELECT * FROM internet.PhysicalClients P {0} ORDER BY P.Surname",
+					sqlStr = String.Format(@"SELECT * FROM internet.PhysicalClients P join internet.Status S on s.id = p.Status {0} ORDER BY P.Surname",
 										   GetWhere(searchProperties, connectedType, whoregister, tariff, searchText, brigad));
 					query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(PhysicalClients));
 					if (whoregister != 0)
@@ -43,7 +43,7 @@ namespace InternetInterface.AllLogic
 				}
 				else
 				{
-					sqlStr = @"SELECT * FROM internet.PhysicalClients P where P.id = :SearchText ORDER BY P.Surname";
+					sqlStr = @"SELECT * FROM internet.PhysicalClients P join internet.Status S on s.id = p.Status where P.id = :SearchText ORDER BY P.Surname";
 					query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(PhysicalClients));
 					if (searchText != null)
 						query.SetParameter("SearchText", searchText.ToLower());
@@ -51,7 +51,7 @@ namespace InternetInterface.AllLogic
 				else
 				{
 					if (searchText != null)
-					sqlStr = string.Format(@"SELECT * FROM internet.PhysicalClients P 
+						sqlStr = string.Format(@"SELECT * FROM internet.PhysicalClients P join internet.Status S on s.id = p.Status
 WHERE LOWER(P.Name) like {0} or LOWER(P.Surname) like {0} or LOWER(P.Patronymic) like {0} or LOWER(P.Id) like {0}
 ORDER BY P.Surname", ":SearchText");
 					else
@@ -87,7 +87,7 @@ ORDER BY P.Surname", ":SearchText");
 			}
 			if ((ct.IsConnected()) || (ct.IsNoConnected()))
 			{
-				_return += " and P.Connected = :Connected";
+				_return += " and S.Connected = :Connected";
 			}
 			if (searchText != null)
 			{

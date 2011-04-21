@@ -186,7 +186,7 @@ namespace InforoomInternet.Test.Unit
 				{
 					Client = phisClient,
 					Agent = Agent.FindFirst(),
-					Sum = 500.ToString()
+					Sum = 500
 				}.SaveAndFlush();
 			new WriteOff
 				{

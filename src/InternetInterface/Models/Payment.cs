@@ -25,7 +25,7 @@ namespace InternetInterface.Models
 		[Property, ValidateNonEmpty("Введите сумму"),
 				   ValidateRange(1, 100000, "Сумма должна быть больше 0 и меньше 100 000 рублей"),
 				   ValidateDecimal("Некорректно введено значение суммы")]
-		public virtual string Sum { get; set; }
+		public virtual decimal Sum { get; set; }
 
 		[BelongsTo("Agent")]
 		public virtual Agent Agent { get; set; }

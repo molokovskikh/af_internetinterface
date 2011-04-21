@@ -52,7 +52,7 @@ style='mso-bidi-font-style:normal'><u>${Client.Tariff.Name}</u></i>»</p>
 
 <p class=MsoNormal>Информация <span class=GramE>о</span> Услуге:</p>
 
-<p class=MsoNormal>Стоимость подключения – <i style='mso-bidi-font-style:normal'><u>${ConnectSumm.Summ} руб.</u></i></p>
+<p class=MsoNormal>Стоимость подключения – <i style='mso-bidi-font-style:normal'><u>${Client.ConnectSum} руб.</u></i></p>
 
 <p class=MsoNormal>Абонентская плата – <i style='mso-bidi-font-style:normal'><u>${Client.Tariff.Price} руб.</u></i></p>
 

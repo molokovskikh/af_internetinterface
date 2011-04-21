@@ -46,21 +46,21 @@ namespace Billing.Test.Unit
 			return new Clients
 			       	{
 			       		Disabled = false,
-			       		FirstLease = true,
+			       		//FirstLease = true,
 			       		DebtDays = 0,
 			       		Name = name,
 			       		PhysicalClient = phisicalClient,
-			       		SayBillingIsNewClient = true
+			       		//SayBillingIsNewClient = true
 			       	};
 		}
 
 		public static void CreateAndSavePaymentForConnect(PhysicalClients pclient)
 		{
-			new PaymentForConnect
+			/*new PaymentForConnect
 				{
 					ClientId = pclient,
 					Summ = 200.ToString()
-				}.SaveAndFlush();
+				}.SaveAndFlush();*/
 		}
 
 		public static PhysicalClients CreatePhisicalClient(bool statusBlocked, decimal balance)
@@ -74,7 +74,7 @@ namespace Billing.Test.Unit
 			       		Name = "TestPhisicalClient",
 						AutoUnblocked = true,
 						Balance = balance,
-						Connected = true,
+						//Connected = true,
 						Tariff = tariff,
 						Status = Status.Find((uint)StatusType.Worked)
 			       	};
@@ -107,7 +107,7 @@ namespace Billing.Test.Unit
 					Client = Clients.Queryable.Where(c => c.Name== "testblockedClient").Count() != 0 ? Clients.Queryable.Where(c => c.Name== "testblockedClient").First().PhysicalClient : PhysicalClients.FindFirst(),
 					PaidOn = DateTime.Now,
 					RecievedOn = DateTime.Now,
-					Sum = sum.ToString()
+					Sum = sum
 				}.SaveAndFlush();
 		}
 

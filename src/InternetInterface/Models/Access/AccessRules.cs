@@ -177,7 +177,9 @@ namespace InternetInterface.Models.Access
 									"PassAndShowCard",
 									"CreateAppeal",
 									"Filter",
-									"Show"
+									"Show",
+									"AgentFilter",
+									"ShowAgent"
 			                 	};
 			return _visibleDemand.Contains(methodName) ? "SSI" : string.Empty;
 		}

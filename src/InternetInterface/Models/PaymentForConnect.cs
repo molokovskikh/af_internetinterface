@@ -6,7 +6,7 @@ using InternetInterface.Models.Universal;
 namespace InternetInterface.Models
 {
 
-	[ActiveRecord("PaymentForConnect", Schema = "internet", Lazy = true)]
+	/*[ActiveRecord("PaymentForConnect", Schema = "internet", Lazy = true)]
 	public class PaymentForConnect : ValidActiveRecordLinqBase<PaymentForConnect>
 	{
 
@@ -25,5 +25,5 @@ namespace InternetInterface.Models
 		[BelongsTo("ManagerID")]
 		public virtual Partner ManagerID { get; set; }
 
-	}
+	}*/
 }

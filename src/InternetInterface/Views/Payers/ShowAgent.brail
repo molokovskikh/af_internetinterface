@@ -1,0 +1,23 @@
+﻿<% OutputSubView("AgentFilter") %>
+<span>Всего платежей ${Payment.Count()}</span>
+<span>Всего платежей ${TotalSumm}</span>
+<table class="table"  style="width: 100%; font-style:oblique">
+        <thead>
+            <tr valign="top">
+                <th>Номер счета</th>
+                <th>ФИО</th>
+                <th>Сумма</th>
+                <th>Дата</th>
+            </tr>
+        </thead>
+        <tbody>
+            <%for i,item in enumerate(Payment): %>
+                <tr>
+                    <td><a href="../UserInfo/SearchUserInfo.rails?ClientCode=${item.Client.Id}"> ${item.Client.Id.ToString("00000")}</a></td>
+                    <td>${item.Client.Surname} ${item.Client.Name} ${item.Client.Patronymic}</td>
+                    <td>${item.Sum}</td>
+                    <td>${item.PaidOn}</td>
+                </tr>
+            <%end %>
+        </tbody>
+</table>

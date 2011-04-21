@@ -1,0 +1,54 @@
+﻿    <link href="../Styles/Style.css" type="text/css" rel="stylesheet" />
+    <link href="../Styles/base.css" type="text/css" rel="stylesheet" />
+    <link href="../Styles/datePicker.css" type="text/css" rel="stylesheet" />
+        <script type="text/javascript" src="../Scripts/jquery-1.4.1.js"></script>
+    <script type="text/javascript" src="../Scripts/jquery.datePicker.js"></script>
+    <script type="text/javascript" src="../Scripts/date.js"></script>
+    <script type="text/javascript" src="../Scripts/jquery.bgiframe.js"></script>
+
+        <style type="text/css">
+        .filterDiv
+        {
+            width:600px;
+            background-color:White;
+            text-align:left;
+            border: 1px solid black;
+             padding: 10px;
+             margin:10px;
+        }
+        .table .whiteBr
+        {
+            background-color:White;
+            color:Black;
+            border: 1px solid black;
+            }
+    </style>
+<% OutputSubView("""\Subview\MapHead""") %>
+<body>
+    <script type="text/javascript">
+        Date.firstDayOfWeek = 0;
+        Date.format = 'dd.mm.yyyy';
+        $(function () {
+            $('.hasDatepicker').datePicker({ startDate: '01/01/1996' });
+        });
+    </script>
+
+<center>
+    <div class="filterDiv">
+        <form method="get" action="${siteroot}/Payers/ShowAgent">
+            <p>Выберете регистратора по которому будет применен фильтр</p>
+            <select name="agent" id="agent" style="width: 70%" >
+            <%for i, agent in enumerate(agents):%>
+            <option id="agent${agent.Id}" value="${agent.Id}" ${"selected" if (agent.Id == agentId)}> ${agent.Name} </option>
+            <% end %>
+            </select>
+            <br />
+            <input type="text" name="startDate" id="datepicker" class="hasDatepicker">
+            <br />
+            <input type="text" name="endDate" id="Text1" class="hasDatepicker">
+            <br />
+            <input id="SearchButton" type="submit" value="Показать"  align="right" />
+        </form>
+    </div>
+</center>
+</body>

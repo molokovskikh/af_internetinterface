@@ -17,6 +17,12 @@ namespace InternetInterface.Controllers
 			PropertyBag["registrId"] = Partner.FindFirst().Id;
 		}
 
+		public void AgentFilter()
+		{
+			PropertyBag["agents"] = Agent.FindAll();
+			PropertyBag["agentId"] = Agent.FindFirst().Id;
+		}
+
 		public void Show(uint registrator)
 		{
 			PropertyBag["Registrators"] = Partner.FindAll();
@@ -24,6 +30,19 @@ namespace InternetInterface.Controllers
 			//var payers = Payment.Queryable.Where(p => p.Client.Id == registrator).GroupBy(g => g.Client);
 			//PropertyBag["Payers"] = payers;
 			PropertyBag["Payers"] = PhysicalClients.Queryable.Where(p => p.WhoRegistered.Id == registrator);
+		}
+
+		public void ShowAgent(string startDate, string endDate, uint agent)
+		{
+			PropertyBag["agents"] = Agent.FindAll();
+			PropertyBag["agentId"] = agent;
+			var _startDate = DateTime.Parse(startDate);
+			var _endDate = DateTime.Parse(endDate);
+			var payments = Payment.Queryable.Where(t => t.Agent.Id == agent && t.PaidOn >= _startDate && t.PaidOn <= _endDate);
+			PropertyBag["Payments"] = payments;
+			PropertyBag["TotalSumm"] = payments.Select(t => t.Sum).Sum();
+
+
 		}
 	}
 }

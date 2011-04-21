@@ -29,7 +29,7 @@ namespace InternetInterface.Models
 		public virtual PhysicalClients PhysicalClient { get; set; }
 
 		[Property]
-		public virtual DateTime RatedPeriodDate { get; set; }
+		public virtual DateTime? RatedPeriodDate { get; set; }
 
 		/*[Property]
 		public virtual DateTime PreRatedPeriodDate { get; set; }*/
@@ -37,8 +37,8 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual int DebtDays { get; set; }
 
-		[Property]
-		public virtual bool FirstLease { get; set; }
+		/*[Property]
+		public virtual bool FirstLease { get; set; }*/
 
 		[Property]
 		public virtual bool ShowBalanceWarningPage { get; set; }
@@ -49,13 +49,13 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual DateTime? BeginWork { get; set; }
 
-		[Property]
-		public virtual bool SayBillingIsNewClient  { get; set; }
+		/*[Property]
+		public virtual bool SayBillingIsNewClient  { get; set; }*/
 
 
 		public virtual decimal GetInterval()
 		{
-			return (RatedPeriodDate.AddMonths(1) - RatedPeriodDate).Days + DebtDays;
+			return (((DateTime)RatedPeriodDate).AddMonths(1) - (DateTime)RatedPeriodDate).Days + DebtDays;
 		}
 
 	}
