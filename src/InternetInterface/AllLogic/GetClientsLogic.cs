@@ -74,7 +74,7 @@ ORDER BY P.Surname", ":SearchText");
 			var _return = string.Empty;
 			if (whoregister != 0)
 			{
-				_return += " and P.HasRegistered = :whoregister";
+				_return += " and P.WhoRegistered = :whoregister";
 			}
 
 			if (tariff != 0)
@@ -83,7 +83,7 @@ ORDER BY P.Surname", ":SearchText");
 			}
 			if (brigad != 0)
 			{
-				_return += " and P.HasConnected = :Brigad";
+				_return += " and P.WhoConnected = :Brigad";
 			}
 			if ((ct.IsConnected()) || (ct.IsNoConnected()))
 			{

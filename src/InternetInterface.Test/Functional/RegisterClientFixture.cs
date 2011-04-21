@@ -11,6 +11,7 @@ namespace InternetInterface.Test.Functional
 	[TestFixture]
 	class RegisterClientFixture : WatinFixture
 	{
+
 		[Test]
 		public void RegisterClientTest()
 		{
@@ -48,7 +49,7 @@ namespace InternetInterface.Test.Functional
 				browser.TextField(Find.ById("PassportNumber")).AppendText("123456");
 				browser.TextField(Find.ById("WhoGivePassport")).AppendText("TestWhoGivePassport");
 				browser.TextField(Find.ById("RegistrationAdress")).AppendText("TestRegistrationAdress");
-				browser.TextField(Find.ById("OutputDate")).AppendText("10.01.2002");
+				browser.TextField(Find.ById("PassportOutputDate")).AppendText("10.01.2002");
 				browser.TextField(Find.ById("ConnectSumm")).AppendText("100");
 				browser.Button(Find.ById("RegisterClientButton")).Click();
 				Thread.Sleep(2000);

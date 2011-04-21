@@ -37,7 +37,7 @@ namespace InternetInterface.Controllers
 		{
 			var phisCl = PhysicalClients.Find(ClientID);
 			var brigadChangeFlag = true;
-			if (phisCl.HasConnected != null)
+			if (phisCl.WhoConnected != null)
 				brigadChangeFlag = false;
 			var newFlag = false;
 			var clientEntPoint = new ClientEndpoints();
@@ -104,7 +104,7 @@ namespace InternetInterface.Controllers
 							else
 								clientEntPoint.SaveAndFlush();
 							if (brigadChangeFlag)
-							phisCl.HasConnected = Brigad.Find(BrigadForConnect);
+							phisCl.WhoConnected = Brigad.Find(BrigadForConnect);
 							phisCl.Connected = true;
 							phisCl.ConnectedDate = DateTime.Now;
 							phisCl.UpdateAndFlush();
@@ -322,8 +322,8 @@ namespace InternetInterface.Controllers
 			updateClient.Status = Status.Find(status);
 			if (Validator.IsValid(updateClient) && statusCanChanged)
 			{
-				if (updateClient.OutputDate != null)
-				updateClient.OutputDate = DateTime.Parse(updateClient.OutputDate).ToShortDateString();
+				if (updateClient.PassportOutputDate != null)
+				updateClient.PassportOutputDate = DateTime.Parse(updateClient.PassportOutputDate).ToShortDateString();
 				updateClient.Tariff = Tariff.Find(tariff);
 				updateClient.UpdateAndFlush();
 				var clients = Clients.FindAllByProperty("PhysicalClient", updateClient);
@@ -386,8 +386,8 @@ namespace InternetInterface.Controllers
 				PropertyBag["ChStatus"] = phisCl.Status.Id;
 			else
 				PropertyBag["ChStatus"] = Status.FindFirst().Id;
-			if (phisCl.HasConnected != null)
-				PropertyBag["ChBrigad"] = phisCl.HasConnected.Id;
+			if (phisCl.WhoConnected != null)
+				PropertyBag["ChBrigad"] = phisCl.WhoConnected.Id;
 			else
 				PropertyBag["ChBrigad"] = Brigad.FindFirst().Id;
 			PropertyBag["Statuss"] = Status.FindAllSort();

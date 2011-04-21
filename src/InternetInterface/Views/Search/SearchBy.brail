@@ -50,7 +50,7 @@
             <td>${item.PassportSeries} ${item.PassportNumber}
             ${item.WhoGivePassport}
             ${item.RegistrationAdress}
-            ${item.OutputDate}
+            ${item.PassportOutputDate}
             </td>  
             <%end %>
             <%if PartnerAccessSet.AccesPartner("SSI"): %>

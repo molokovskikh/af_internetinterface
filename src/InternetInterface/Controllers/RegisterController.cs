@@ -117,7 +117,7 @@ namespace InternetInterface.Controllers
 					             	};
 					newCEP.SaveAndFlush();
 					if (BrigadForConnect != 0)
-					phisClient.HasConnected = Brigad.Find(BrigadForConnect);
+					phisClient.WhoConnected = Brigad.Find(BrigadForConnect);
 					phisClient.Connected = true;
 					phisClient.ConnectedDate = DateTime.Now;
 					phisClient.Status = Status.Find((uint)StatusType.BlockedAndConnected);

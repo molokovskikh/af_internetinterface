@@ -104,7 +104,7 @@ namespace Billing.Test.Unit
 			new Payment
 				{
 					BillingAccount = false,
-					Client = PhysicalClients.FindAll().First(),
+					Client = Clients.Queryable.Where(c => c.Name== "testblockedClient").Count() != 0 ? Clients.Queryable.Where(c => c.Name== "testblockedClient").First().PhysicalClient : PhysicalClients.FindFirst(),
 					PaidOn = DateTime.Now,
 					RecievedOn = DateTime.Now,
 					Sum = sum.ToString()

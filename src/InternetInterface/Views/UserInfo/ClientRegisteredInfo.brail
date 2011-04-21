@@ -197,7 +197,7 @@ div.WordSection1
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
   justify;line-height:normal'>паспорт серия <i style='mso-bidi-font-style:normal'><u>${Client.PassportSeries}</u></i>
   № <i style='mso-bidi-font-style:normal'><u>${Client.PassportNumber}</u></i> выдан <i
-  style='mso-bidi-font-style:normal'><u>${Client.OutputDate} <span class=GramE>г</span>.</u></i>,
+  style='mso-bidi-font-style:normal'><u>${Client.PassportOutputDate} <span class=GramE>г</span>.</u></i>,
   </p>  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
   justify;line-height:normal'><i style='mso-bidi-font-style:normal'><u>${Client.WhoGivePassport}</u></i>, </p>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
@@ -352,14 +352,14 @@ div.WordSection1
   style='mso-spacerun:yes'>  </span>шт.</p>
   <p class=MsoNormal align=right style='margin-bottom:0cm;margin-bottom:.0001pt;
   text-align:right;line-height:normal'>Работы выполнил 
-   <%if Client.HasConnected == null: %>
+   <%if Client.WhoConnected == null: %>
   <b style='mso-bidi-font-weight:normal'>
   <![if !vml]><img width=166 height=24
   src="../Images/image005.gif" v:shapes="_x0000_s1029"><![endif]></b>
 <span
   style='mso-spacerun:yes'> </span><i style='mso-bidi-font-style:normal'>
   <%else: %>
-  ${Client.HasConnected.Name}
+  ${Client.WhoConnected.Name}
     <%end %></i></p>
   </td>
  </tr>
@@ -511,13 +511,13 @@ div.WordSection1
   style='mso-bidi-font-style:normal'><u><o:p></o:p></u></i></b></p>
   <p class=MsoNormal align=right style='margin-bottom:0cm;margin-bottom:.0001pt;
   text-align:right;line-height:normal'>Работы выполнил 
-     <%if Client.HasConnected == null: %>
+     <%if Client.WhoConnected == null: %>
   <![if !vml]><img width=166 height=24
   src="../Images/image005.gif" v:shapes="_x0000_s1028"><![endif]>
   <span
   style='mso-spacerun:yes'> </span><span style='mso-spacerun:yes'> </span><i
   style='mso-bidi-font-style:normal'>  <%else: %>
-  ${Client.HasConnected.Name}
+  ${Client.WhoConnected.Name}
   <%end %></i></p>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
   justify;line-height:normal'><span style='font-size:2.0pt'><o:p>&nbsp;</o:p></span></p>

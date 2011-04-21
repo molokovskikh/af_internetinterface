@@ -9,271 +9,271 @@
 <div id="container">
 <div id="block-tables" class="block">
 <div class="content">
-    <%if not Editing: %>
-        <form class="form login" method="post" action="${siteroot}/UserInfo/LoadEditMudule">
-    <input type="hidden" name="ClientID" value="${ClientCode}" />
-    <input type="hidden" name="EditFlag" value="${Editing}" />
+	<%if not Editing: %>
+		<form class="form login" method="post" action="${siteroot}/UserInfo/LoadEditMudule">
+	<input type="hidden" name="ClientID" value="${ClientCode}" />
+	<input type="hidden" name="EditFlag" value="${Editing}" />
 	<table class="table" style="width: 100%;" align="left">
-    <thead>
-            <%if IsDefined("EditFlag"):
-              output  WriteMessageNotice(EditFlag)
-        end %>
-                <%if IsDefined("Applying"):
-               output WriteMessageNotice(Applying)
-        end %>
-        <%if IsDefined("errorMessage"):
-              output  WriteMessageError(errorMessage)
-           end%>
-        <th>Информация по клиенту ${Client.Surname}  ${Client.Name}  ${Client.Patronymic}
-        <%if PartnerAccessSet.AccesPartner("ECI"): %>
-         <input id="EditButton" type="submit" value="Редактировать"  align="right" />
-         <%end %>
-        </th>
-    </thead>
-    <tbody>
-    </form>
-    	<tr>
-            <td><span class="description">Номер лицевого счета: </span> ${Client.Id.ToString("00000")}</td>
-        </tr>
-    <%if PartnerAccessSet.AccesPartner("SSI"): %>
+	<thead>
+			<%if IsDefined("EditFlag"):
+			  output  WriteMessageNotice(EditFlag)
+		end %>
+				<%if IsDefined("Applying"):
+			   output WriteMessageNotice(Applying)
+		end %>
+		<%if IsDefined("errorMessage"):
+			  output  WriteMessageError(errorMessage)
+		   end%>
+		<th>Информация по клиенту ${Client.Surname}  ${Client.Name}  ${Client.Patronymic}
+		<%if PartnerAccessSet.AccesPartner("ECI"): %>
+		 <input id="EditButton" type="submit" value="Редактировать"  align="right" />
+		 <%end %>
+		</th>
+	</thead>
+	<tbody>
+	</form>
 		<tr>
-            <td><span class="description">Город: </span> ${Client.City}</td>
-        </tr>
-        <tr>
-            <td><span class="description">Адрес подключения: </span>   ${Client.Street} ${Client.House}${Client.CaseHouse} ${Client.Apartment} Подъезд ${Client.Entrance} Этаж ${Client.Floor}</td>
-        </tr>
-        <tr>
-            <td><span class="description">Номер телефона: </span> ${Client.PhoneNumber}</td>
-        </tr>
-        <tr>
-            <td><span class="description">Email:</span> ${Client.Email}</td>
-        </tr>
-        <%end %>
-        <%if PartnerAccessSet.AccesPartner("VP"): %>
-        <tr>
-            <td>Паспортные данные: <br />
-                                                 <span class="description">Серия\Номер</span> ${Client.PassportSeries} \ ${Client.PassportNumber}<br />
-                                                 <span class="description">Кем выдан: </span> ${Client.WhoGivePassport}<br />
-                                                 <span class="description">Адрес регистрации:</span> ${Client.RegistrationAdress}<br />
-                                                 <span class="description">Дата выдачи :</span> ${Client.OutputDate}</td>
-        </tr>
-        <%end %>
-        <%if PartnerAccessSet.AccesPartner("SSI"): %>
-        <tr>
-            <td><span class="description">Дата регистрации:</span> ${Client.RegDate}</td>
-        </tr>
+			<td><span class="description">Номер лицевого счета: </span> ${Client.Id.ToString("00000")}</td>
+		</tr>
+	<%if PartnerAccessSet.AccesPartner("SSI"): %>
+		<tr>
+			<td><span class="description">Город: </span> ${Client.City}</td>
+		</tr>
+		<tr>
+			<td><span class="description">Адрес подключения: </span>   ${Client.Street} ${Client.House}${Client.CaseHouse} ${Client.Apartment} Подъезд ${Client.Entrance} Этаж ${Client.Floor}</td>
+		</tr>
+		<tr>
+			<td><span class="description">Номер телефона: </span> ${Client.PhoneNumber}</td>
+		</tr>
+		<tr>
+			<td><span class="description">Email:</span> ${Client.Email}</td>
+		</tr>
+		<%end %>
+		<%if PartnerAccessSet.AccesPartner("VP"): %>
+		<tr>
+			<td>Паспортные данные: <br />
+												 <span class="description">Серия\Номер</span> ${Client.PassportSeries} \ ${Client.PassportNumber}<br />
+												 <span class="description">Кем выдан: </span> ${Client.WhoGivePassport}<br />
+												 <span class="description">Адрес регистрации:</span> ${Client.RegistrationAdress}<br />
+												 <span class="description">Дата выдачи :</span> ${Client.PassportOutputDate}</td>
+		</tr>
+		<%end %>
+		<%if PartnerAccessSet.AccesPartner("SSI"): %>
+		<tr>
+			<td><span class="description">Дата регистрации:</span> ${Client.RegDate}</td>
+		</tr>
 				
 		
-        <%if Client.HasRegistered != null: %>
-            <tr>
-                <td><span class="description">Зарегистрировал:</span> ${Client.HasRegistered.Name}</td>
-            </tr>
-        <%end %>
-        <%end %>
-        <%if Client.Tariff != null: %>
-        <tr>
-             <td><span class="description">Тариф:</span> ${Client.Tariff.GetFullName()}</td>
-        </tr>
-         <%end %>
+		<%if Client.WhoRegistered != null: %>
+			<tr>
+				<td><span class="description">Зарегистрировал:</span> ${Client.WhoRegistered.Name}</td>
+			</tr>
+		<%end %>
+		<%end %>
+		<%if Client.Tariff != null: %>
+		<tr>
+			 <td><span class="description">Тариф:</span> ${Client.Tariff.GetFullName()}</td>
+		</tr>
+		 <%end %>
 
-         <%if PartnerAccessSet.AccesPartner("SSI"): %>
-        <tr>
-            <td><span class="description">Баланс:</span> ${Client.Balance}</td>
-        </tr>
-                <tr>
-        <%if Client.Status != null: %>
-            <tr>
-                <td><span class="description">Статус клиента:</span> ${Client.Status.Name}</td>
-            </tr>
-        <%end %>
-        </tr>
-        <%end %>
-        <%if PartnerAccessSet.AccesPartner("SSI"): %>
-                <%if IsDefined("RegisntationDate"): %>
-		    <tr>
-                <td><span class="description">Дата регистрации заявки:</span> ${RegisntationDate}</td>
-            </tr>
-        <%end %>
+		 <%if PartnerAccessSet.AccesPartner("SSI"): %>
+		<tr>
+			<td><span class="description">Баланс:</span> ${Client.Balance}</td>
+		</tr>
+				<tr>
+		<%if Client.Status != null: %>
+			<tr>
+				<td><span class="description">Статус клиента:</span> ${Client.Status.Name}</td>
+			</tr>
+		<%end %>
+		</tr>
+		<%end %>
+		<%if PartnerAccessSet.AccesPartner("SSI"): %>
+				<%if IsDefined("RegisntationDate"): %>
+			<tr>
+				<td><span class="description">Дата регистрации заявки:</span> ${RegisntationDate}</td>
+			</tr>
+		<%end %>
 		<%if IsDefined("CloseDate"): %>
 		<tr>
-                <td><span class="description">Дата подключения:</span> ${CloseDate}</td>
-        </tr>
-        <%end %>
-        <%end %>
-    </tbody>
+				<td><span class="description">Дата подключения:</span> ${CloseDate}</td>
+		</tr>
+		<%end %>
+		<%end %>
+	</tbody>
 </table>
-    <%else:%>
-    <form class="form edit" method="post" action="${siteroot}/UserInfo/EditInformation">
-    <input type="hidden" name="ClientID" value="${ClientCode}" />
-    <table class="table" style="width:100%; " border="0" id="EditTable"> 
+	<%else:%>
+	<form class="form edit" method="post" action="${siteroot}/UserInfo/EditInformation">
+	<input type="hidden" name="ClientID" value="${ClientCode}" />
+	<table class="table" style="width:100%; " border="0" id="EditTable"> 
    <% OutputSubView("""\Subview\Client""") %>
-               <tr>
-               <td >
-                  <div class="actions">
-                       <button type="submit" id="SaveButton" class="button">
-                       <img alt="Save" src="../Images/application_edit.png"> Сохранить
-                       </button>
-                                <!--    <input class="button" id="RegisterButton" type="submit" value="Зарегистрировать" /></td> -->
-                  </div>
-               </td>
-               </tr>
-    </table>
-    </form>
-    <%end %>
+			   <tr>
+			   <td >
+				  <div class="actions">
+					   <button type="submit" id="SaveButton" class="button">
+					   <img alt="Save" src="../Images/application_edit.png"> Сохранить
+					   </button>
+								<!--    <input class="button" id="RegisterButton" type="submit" value="Зарегистрировать" /></td> -->
+				  </div>
+			   </td>
+			   </tr>
+	</table>
+	</form>
+	<%end %>
 <br />
 <div style="clear:both;">
 <%if PartnerAccessSet.AccesPartner("DHCP"): %>
  <%if IsDefined("Client"): %>
-    <%if not EditingConnect: %>
-        <form class="formConnect" method="post" action="${siteroot}/UserInfo/LoadEditConnectMudule">
-    <input type="hidden" name="ClientID" value="${ClientCode}" />
-    <input type="hidden" name="EditConnectFlag" value="${EditingConnect}" />
+	<%if not EditingConnect: %>
+		<form class="formConnect" method="post" action="${siteroot}/UserInfo/LoadEditConnectMudule">
+	<input type="hidden" name="ClientID" value="${ClientCode}" />
+	<input type="hidden" name="EditConnectFlag" value="${EditingConnect}" />
 	<table class="table" style="width: 100%;" align="left">
-    <thead>
-        <th colspan=2>Информация по подключению ${Client.Surname}  ${Client.Name}  ${Client.Patronymic}
-        <%if PartnerAccessSet.AccesPartner("DHCP"): %>
-         <input id="Submit1" type="submit" value="Редактировать"  align="right" />
-         <%end %>
-        </th>
-    </thead>
-    <tbody>
-        <tr>
-          <td><span class="description">Фиксированный </span></td>
-          <td>${ConnectInfo.static_IP}</td>
-        </tr>
-        <tr>
-          <td><span class="description">Арендованный IP </span></td>
-          <td>${ConnectInfo.Leased_IP}</td>
-        </tr>
-        <tr>
-          <td><span class="description">Свич </span></td>
-          <td>${ConnectInfo.Swith_adr} (${ConnectInfo.swith_IP})</td>
-        </tr>
-        <tr>
-          <td><span class="description">Порт </span></td>
-          <td>${ConnectInfo.Port}</td>
-        </tr>
-                <tr>
-          <td><span class="description">Скорость </span></td>
-          <td>${ConnectInfo.GetNormalSpeed()} мб/с</td>
-        </tr>
-         <tr>
-          <td><span class="description">Мониторинг </span></td>
-          <td><%if (ConnectInfo.Monitoring): %>
-                Да
-                <%else: %>
-                Нет
-                <%end %></td>
-        </tr>
-        <tr>
-          <td><span class="description">Бригада </span></td>
-          <%if Client.HasConnected != null : %>
-          <td>${Client.HasConnected.Name}</td>
-          <%else: %>
-          <td></td>
-          <%end %>
-        </tr>
-    </tbody>
-    </table>
-    </form>
-    <%else: %>
-    <form class="formConnect" method="post" action="${siteroot}/UserInfo/SaveSwitchForClient">
-    <input type="hidden" name="ClientID" value="${ClientCode}" />
-    <input type="hidden" name="EditConnectFlag" value="${EditingConnect}" />
+	<thead>
+		<th colspan=2>Информация по подключению ${Client.Surname}  ${Client.Name}  ${Client.Patronymic}
+		<%if PartnerAccessSet.AccesPartner("DHCP"): %>
+		 <input id="Submit1" type="submit" value="Редактировать"  align="right" />
+		 <%end %>
+		</th>
+	</thead>
+	<tbody>
+		<tr>
+		  <td><span class="description">Фиксированный </span></td>
+		  <td>${ConnectInfo.static_IP}</td>
+		</tr>
+		<tr>
+		  <td><span class="description">Арендованный IP </span></td>
+		  <td>${ConnectInfo.Leased_IP}</td>
+		</tr>
+		<tr>
+		  <td><span class="description">Свич </span></td>
+		  <td>${ConnectInfo.Swith_adr} (${ConnectInfo.swith_IP})</td>
+		</tr>
+		<tr>
+		  <td><span class="description">Порт </span></td>
+		  <td>${ConnectInfo.Port}</td>
+		</tr>
+				<tr>
+		  <td><span class="description">Скорость </span></td>
+		  <td>${ConnectInfo.GetNormalSpeed()} мб/с</td>
+		</tr>
+		 <tr>
+		  <td><span class="description">Мониторинг </span></td>
+		  <td><%if (ConnectInfo.Monitoring): %>
+				Да
+				<%else: %>
+				Нет
+				<%end %></td>
+		</tr>
+		<tr>
+		  <td><span class="description">Бригада </span></td>
+		  <%if Client.WhoConnected != null : %>
+		  <td>${Client.WhoConnected.Name}</td>
+		  <%else: %>
+		  <td></td>
+		  <%end %>
+		</tr>
+	</tbody>
+	</table>
+	</form>
+	<%else: %>
+	<form class="formConnect" method="post" action="${siteroot}/UserInfo/SaveSwitchForClient">
+	<input type="hidden" name="ClientID" value="${ClientCode}" />
+	<input type="hidden" name="EditConnectFlag" value="${EditingConnect}" />
 	<table class="table" style="width: 100%;" align="left">
-    <thead>
-        <th colspan = 2 > Информация по подключению ${Client.Surname}  ${Client.Name}  ${Client.Patronymic}
-        <%if PartnerAccessSet.AccesPartner("DHCP"): %>
-         <input id="Submit2" type="submit" value="Сохранить"  align="right" />
-         <%end %>
-        </th>
-    </thead>
-    <tbody>
-        <tr>
-          <td>Фиксированный IP</td>
-          <td><input type="text" id="static_IP"  name="ConnectInfo.static_IP"  value="${ConnectInfo.static_IP}" style="width: 50%; " /></td>
-        </tr>
-        <tr>
-          <td>Арендованный IP</td>
-          <td>${ConnectInfo.Leased_IP}</td>
-        </tr>
-        <tr>
-          <td>Свич</td>
-          <td><select name="ConnectInfo.Switch" id="SelectSwitches${ConnectInfo.Switch}" style="width: 100%" >
-                                   <%
-                                    for j, Switch in enumerate(Switches): 
-                                    %>
-                                    <option id="Option${j}" value="${Switch.Id}" ${"selected" if (Switch.Id.ToString() == ConnectInfo.Switch)} > ${Switch.Name} </option>
-                                   <% end %>
-                            </select></td>
-        </tr>
-        <tr>
-          <td>Порт</td>
-          <td><input type="text" id="Port"  name="ConnectInfo.Port"  value="${ConnectInfo.Port}" style="width: 50%; " /></td>
-        </tr>
-                <tr>
-          <td>Скорость</td>
-          <td>${ConnectInfo.GetNormalSpeed()} мб/с</td>
-        </tr>
-        <tr>
-          <td>Мониторинг</td>
-          <td ><input type="checkbox" id="Monitoring" name="ConnectInfo.Monitoring" value=true  ${"checked" if (ConnectInfo.Monitoring)}/> </td>
-        </tr>
-        <tr>
-         <td>Бригада по подключению</td>
-         <%if Client.HasConnected == null: %>
-          <td><select name="BrigadForConnect" id="BrigadForConnect" style="width: 100%" >
-          <% for j, Brigad in enumerate(Brigads): %>
-                                    <option id="OptionBrigad${j}" value="${Brigad.Id}" ${"selected" if (Brigad.Id == ChBrigad)} > ${Brigad.Name} </option>
-                                   <% end %>
-           </select>
-          </td>
-         <%else: %>
-         <td>
-             ${Client.HasConnected.Name}
-         </td>
-         <%end %>
-         </tr>
-    </tbody>
-    </table>
-    </form>
-    <%end %>
+	<thead>
+		<th colspan = 2 > Информация по подключению ${Client.Surname}  ${Client.Name}  ${Client.Patronymic}
+		<%if PartnerAccessSet.AccesPartner("DHCP"): %>
+		 <input id="Submit2" type="submit" value="Сохранить"  align="right" />
+		 <%end %>
+		</th>
+	</thead>
+	<tbody>
+		<tr>
+		  <td>Фиксированный IP</td>
+		  <td><input type="text" id="static_IP"  name="ConnectInfo.static_IP"  value="${ConnectInfo.static_IP}" style="width: 50%; " /></td>
+		</tr>
+		<tr>
+		  <td>Арендованный IP</td>
+		  <td>${ConnectInfo.Leased_IP}</td>
+		</tr>
+		<tr>
+		  <td>Свич</td>
+		  <td><select name="ConnectInfo.Switch" id="SelectSwitches${ConnectInfo.Switch}" style="width: 100%" >
+								   <%
+									for j, Switch in enumerate(Switches): 
+									%>
+									<option id="Option${j}" value="${Switch.Id}" ${"selected" if (Switch.Id.ToString() == ConnectInfo.Switch)} > ${Switch.Name} </option>
+								   <% end %>
+							</select></td>
+		</tr>
+		<tr>
+		  <td>Порт</td>
+		  <td><input type="text" id="Port"  name="ConnectInfo.Port"  value="${ConnectInfo.Port}" style="width: 50%; " /></td>
+		</tr>
+				<tr>
+		  <td>Скорость</td>
+		  <td>${ConnectInfo.GetNormalSpeed()} мб/с</td>
+		</tr>
+		<tr>
+		  <td>Мониторинг</td>
+		  <td ><input type="checkbox" id="Monitoring" name="ConnectInfo.Monitoring" value=true  ${"checked" if (ConnectInfo.Monitoring)}/> </td>
+		</tr>
+		<tr>
+		 <td>Бригада по подключению</td>
+		 <%if Client.WhoConnected == null: %>
+		  <td><select name="BrigadForConnect" id="BrigadForConnect" style="width: 100%" >
+		  <% for j, Brigad in enumerate(Brigads): %>
+									<option id="OptionBrigad${j}" value="${Brigad.Id}" ${"selected" if (Brigad.Id == ChBrigad)} > ${Brigad.Name} </option>
+								   <% end %>
+		   </select>
+		  </td>
+		 <%else: %>
+		 <td>
+			 ${Client.WhoConnected.Name}
+		 </td>
+		 <%end %>
+		 </tr>
+	</tbody>
+	</table>
+	</form>
+	<%end %>
   <%end %>
 <%end %>
 </div>
 <%if PartnerAccessSet.AccesPartner("SSI"): %>
 <div style="clear:both;">
 <%if (Payments.Length == 0): %>
-                  <div class="flash">
-                     <div class="message error">
-                       <p>Платежи отсутствуют</p>
-                     </div>
-                  </div>
+				  <div class="flash">
+					 <div class="message error">
+					   <p>Платежи отсутствуют</p>
+					 </div>
+				  </div>
 <%else: %>
 <table class="table"  style="width: 100%; font-size: small;" align="left">
-    <thead>
-        <tr valign="top">
-            <th>Платеж зарегистрировал</th>
-            <th>Дата оплаты клиентом</th>
-            <th>Дата регистрации платежа</th>
-            <th>Сумма</th>
-        </tr>
-    </thead>
+	<thead>
+		<tr valign="top">
+			<th>Платеж зарегистрировал</th>
+			<th>Дата оплаты клиентом</th>
+			<th>Дата регистрации платежа</th>
+			<th>Сумма</th>
+		</tr>
+	</thead>
 
-    <tbody id="SearchResults" class="HighLightCurrentRow">
-    <% for i,item in enumerate(Payments): %>
-        <tr id="Row${i}">
-        <%if item.Agent != null: %>
-            <td>${item.Agent.Name}</td>   
-            <%else: %>
-            <td></td>
-            <%end %>
-            <td>${item.PaidOn}</td>
-            <td>${item.RecievedOn}</td>
-            <td>${item.Sum}</td>
-        </tr>
-    <% end %>
-    </tbody> 
+	<tbody id="SearchResults" class="HighLightCurrentRow">
+	<% for i,item in enumerate(Payments): %>
+		<tr id="Row${i}">
+		<%if item.Agent != null: %>
+			<td>${item.Agent.Name}</td>   
+			<%else: %>
+			<td></td>
+			<%end %>
+			<td>${item.PaidOn}</td>
+			<td>${item.RecievedOn}</td>
+			<td>${item.Sum}</td>
+		</tr>
+	<% end %>
+	</tbody> 
 
 </table>
 <%end %>
@@ -285,66 +285,66 @@
 
 <div id="WriteOffTable" style="display:none">
 <table class="table"  style="width: 100%; font-size: small;" align="left">
-    <thead>
-        <tr valign="top">
-            <th>Дата списания</th>
-            <th>Сумма</th>
-        </tr>
-    </thead>
-        <tbody id="Tbody1" class="HighLightCurrentRow">
-    <% for i,item in enumerate(WriteOffs): %>
-        <tr id="Tr1">
-            <td>${item.WriteOffDate}</td>
-            <td>${item.WriteOffSum}</td>
-        </tr>
-    <% end %>
-    </tbody>
-    </table>
+	<thead>
+		<tr valign="top">
+			<th>Дата списания</th>
+			<th>Сумма</th>
+		</tr>
+	</thead>
+		<tbody id="Tbody1" class="HighLightCurrentRow">
+	<% for i,item in enumerate(WriteOffs): %>
+		<tr id="Tr1">
+			<td>${item.WriteOffDate}</td>
+			<td>${item.WriteOffSum}</td>
+		</tr>
+	<% end %>
+	</tbody>
+	</table>
 </div>
 </div>
 
 <%if PartnerAccessSet.AccesPartner("CB"): %>
 <div style="clear:both;">
 <form class="form login" method="post" action="${siteroot}/UserInfo/ChangeBalance">
-    <input type="hidden" name="ClientID" value="${ClientCode}" />
-    <table class="table">
-        <thead>
-            <th colspan="3">Пополнить баланс клиента</th>
-            
-        </thead>
-        <tbody>
-                <% OutputSubView("""\Subview\Payment""") %>
-                <td >
-                       <%if IsDefined("thisPay"): %>
-                       <% if (thisPay.GetErrorText("Sum") != ""): %>
-                                                <div class="flash">
-                                                    <div class="message error">
-                                                    <p>${thisPay.GetErrorText("Sum")}</p>
-                                                    </div>
-                                                </div>
-                      <%end %>
-                      <%end %>
-                </td>
-             </tr>
-        <tr colspan="3">
-            <td>
-               <button type="submit" id="ChangeBalanceButton" class="button">
-                  <img alt="Save" src="../Images/tick.png"> Пополнить баланс
-                </button>
-            </td>
-                </form>
-            <%if PartnerAccessSet.AccesPartner("SSI"): %>
-            <td style="font-size:small;">
-            <form class="form login" method="post" action="${siteroot}/UserInfo/PassAndShowCard">
-                <input type="hidden" name="ClientID" value="${ClientCode}" />
-                   <button type="submit" id="Button1" class="button">
-                  <img alt="Save" src="../Images/tick.png">Изменить пароль и показать карту</button>
-                </form>
-            </td>
-            <%end %>
-        </tr>
-        </tbody>
-    </table>
+	<input type="hidden" name="ClientID" value="${ClientCode}" />
+	<table class="table">
+		<thead>
+			<th colspan="3">Пополнить баланс клиента</th>
+			
+		</thead>
+		<tbody>
+				<% OutputSubView("""\Subview\Payment""") %>
+				<td >
+					   <%if IsDefined("thisPay"): %>
+					   <% if (thisPay.GetErrorText("Sum") != ""): %>
+												<div class="flash">
+													<div class="message error">
+													<p>${thisPay.GetErrorText("Sum")}</p>
+													</div>
+												</div>
+					  <%end %>
+					  <%end %>
+				</td>
+			 </tr>
+		<tr colspan="3">
+			<td>
+			   <button type="submit" id="ChangeBalanceButton" class="button">
+				  <img alt="Save" src="../Images/tick.png"> Пополнить баланс
+				</button>
+			</td>
+				</form>
+			<%if PartnerAccessSet.AccesPartner("SSI"): %>
+			<td style="font-size:small;">
+			<form class="form login" method="post" action="${siteroot}/UserInfo/PassAndShowCard">
+				<input type="hidden" name="ClientID" value="${ClientCode}" />
+				   <button type="submit" id="Button1" class="button">
+				  <img alt="Save" src="../Images/tick.png">Изменить пароль и показать карту</button>
+				</form>
+			</td>
+			<%end %>
+		</tr>
+		</tbody>
+	</table>
 
 </div>
 <div>
@@ -358,42 +358,42 @@
 </form>
 </div>
 <div style="width:49%; float:right; padding-top:5px;">
-        <table class="table">
-        <thead>
-            <th colspan="3">Обращения клиента</th>
-        </thead>
-        <tbody>
-            <form class="form appeal" method="post" action="${siteroot}/UserInfo/CreateAppeal">
-            <tr>
-                <td>
-                <input type="hidden" name="ClientID" value="${ClientCode}" />
-                <label for="textField"><b>Введите текст обращения :</b></label>
-                <textarea id="textField" name="Appeal" rows="8" cols="100%"></textarea>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                   <button type="submit" id="Button2" class="button">
-                  <img alt="Save" src="../Images/tick.png">Зарегистрировать</button>
-                </td>
-            </tr>
-            </form>
-           </tbody>
-        </table>
-       <table class="table" style="background-color:#FFFFFF">
-        <thead>
-            <th>Текст обращения</th>
-            <th>Дата</th>
-            <th>Зарегистрировал</th>
-        </thead>
-        <tbody>
-            <% for i,item in enumerate(Appeals): %>
-                <tr>
-                    <td>${item.GetTransformedAppeal()}</td>
-                    <td>${item.Date}</td>
-                    <td>${item.Partner.Name}</td>
-                </tr>
-            <%end %>
-          </tbody>
-        </table>
+		<table class="table">
+		<thead>
+			<th colspan="3">Обращения клиента</th>
+		</thead>
+		<tbody>
+			<form class="form appeal" method="post" action="${siteroot}/UserInfo/CreateAppeal">
+			<tr>
+				<td>
+				<input type="hidden" name="ClientID" value="${ClientCode}" />
+				<label for="textField"><b>Введите текст обращения :</b></label>
+				<textarea id="textField" name="Appeal" rows="8" cols="100%"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td>
+				   <button type="submit" id="Button2" class="button">
+				  <img alt="Save" src="../Images/tick.png">Зарегистрировать</button>
+				</td>
+			</tr>
+			</form>
+		   </tbody>
+		</table>
+	   <table class="table" style="background-color:#FFFFFF">
+		<thead>
+			<th>Текст обращения</th>
+			<th>Дата</th>
+			<th>Зарегистрировал</th>
+		</thead>
+		<tbody>
+			<% for i,item in enumerate(Appeals): %>
+				<tr>
+					<td>${item.GetTransformedAppeal()}</td>
+					<td>${item.Date}</td>
+					<td>${item.Partner.Name}</td>
+				</tr>
+			<%end %>
+		  </tbody>
+		</table>
  </div>

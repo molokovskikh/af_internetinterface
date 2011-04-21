@@ -124,7 +124,7 @@ namespace InternetInterface.Models
 		public virtual string PassportNumber { get; set; }
 
 		[Property, UserValidateNonEmpty("Введите дату выдачи паспорта"), ValidateDate("Ошибка формата даты **-**-****")]
-		public virtual string OutputDate { get; set; }
+		public virtual string PassportOutputDate { get; set; }
 
 		[Property, UserValidateNonEmpty("Заполните поле 'Кем выдан паспорт'")]
 		public virtual string WhoGivePassport { get; set; }
@@ -147,11 +147,11 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string Password { get; set; }
 
-		[BelongsTo("HasRegistered")]
-		public virtual Partner HasRegistered { get; set; }
+		[BelongsTo("WhoRegistered")]
+		public virtual Partner WhoRegistered { get; set; }
 
-		[BelongsTo("HasConnected")]
-		public virtual Brigad HasConnected { get; set; }
+		[BelongsTo("WhoConnected")]
+		public virtual Brigad WhoConnected { get; set; }
 
 		[BelongsTo("Status")]
 		public virtual Status Status { get; set; }
@@ -197,7 +197,7 @@ namespace InternetInterface.Models
 				_client.Tariff = Tariff.Find(_tariff);
 				_client.Status = Status.Find((uint)StatusType.BlockedAndNoConnected);
 				_client.Password = CryptoPass.GetHashString(_client.Password);
-				_client.HasRegistered = hasRegistered;
+				_client.WhoRegistered = hasRegistered;
 				_client.AutoUnblocked = true;
 				_client.SaveAndFlush();
 				connectSumm.ClientId = _client;

@@ -50,7 +50,7 @@ namespace InternetInterface.Controllers
 			IList<PhysicalClients> clients = new List<PhysicalClients>();
 			clients = GetClientsLogic.GetClients(searchProperties, connectedType, tariff, whoregister, searchText, brigad);
 			Flash["SClients"] = clients;
-			PropertyBag["ConnectBlockDisplay"] = ((List<PhysicalClients>) clients).Find(p => p.HasConnected == null);
+			PropertyBag["ConnectBlockDisplay"] = ((List<PhysicalClients>) clients).Find(p => p.WhoConnected == null);
 
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["WhoRegistered"] = Partner.FindAllSort();

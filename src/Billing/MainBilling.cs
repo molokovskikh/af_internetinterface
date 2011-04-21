@@ -116,17 +116,17 @@ namespace Billing
 								}
 				           		var clients = Clients.FindAll(DetachedCriteria.For(typeof (Clients))
 									.CreateAlias("PhysicalClient", "PC", JoinType.InnerJoin)
-									.CreateAlias("PC.Status","S", JoinType.InnerJoin)
 				           		                              	.Add(Restrictions.IsNotNull("PhysicalClient"))
-																.Add(Restrictions.Eq("S.Blocked", true))
+																.Add(Restrictions.Eq("Disabled", true))
 																.Add(Restrictions.Eq("PC.AutoUnblocked", true))
 																.Add(Restrictions.Ge("PC.Balance" , 0m)));
 								foreach (var client in clients)
 								{
 									var phisicalClient = client.PhysicalClient;
 									phisicalClient.Status = Status.Find((uint) StatusType.Worked);
-									//client.FirstLease = true;
+									client.FirstLease = true;
 									client.ShowBalanceWarningPage = false;
+									client.Disabled = false;
 									client.UpdateAndFlush();
 									phisicalClient.UpdateAndFlush();
 								}
@@ -233,7 +233,7 @@ namespace Billing
 				if (!person.Client.Disabled)
 				{
 					var thisDate = SystemTime.Now();
-					decimal spis = person.Tariff/DateTime.DaysInMonth(thisDate.Year, thisDate.Month);
+					decimal spis = person.Tariff / DateTime.DaysInMonth(thisDate.Year, thisDate.Month);
 					person.Balance -= spis;
 					person.UpdateAndFlush();
 				}

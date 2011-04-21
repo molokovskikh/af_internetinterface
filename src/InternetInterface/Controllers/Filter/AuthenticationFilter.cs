@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Castle.MonoRail.Framework;
 using InternetInterface.Models;
@@ -19,7 +20,7 @@ namespace InternetInterface.Controllers.Filter
 		public bool Perform(ExecuteWhen exec, IEngineContext context, IController controller, IControllerContext controllerContext)
 		{
 #if DEBUG
-			//context.Session["Login"] = "zolotarev";
+			context.Session["Login"] = Environment.UserName;
 #endif
 			if (context.Session["Login"] == null)
 			{
