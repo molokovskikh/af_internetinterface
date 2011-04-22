@@ -31,11 +31,13 @@
                     </thead>
                     <tbody>
                         <%for i,pay in enumerate(item.Payments): %>
+                        <%if pay.Sum != 0 : %>
                             <tr>
                                 <td>${pay.Sum}</td>
                                 <td>${pay.PaidOn}</td>
                                 <td>${pay.Agent.Name}</td>
                             </tr>
+                            <%end %>
                         <%end %>
                     </tbody>
                     </table>

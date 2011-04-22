@@ -94,6 +94,7 @@ namespace InternetInterface.Controllers
 								clientEntPoint.Client = client;
 								newFlag = true;
 							}
+							clientEntPoint.PackageId = phisCl.Tariff.PackageId;
 							clientEntPoint.Client = clients.First();
 							clientEntPoint.Ip = ConnectInfo.static_IP;
 							clientEntPoint.Port = Port;
@@ -333,6 +334,11 @@ namespace InternetInterface.Controllers
 				var clients = Clients.FindAllByProperty("PhysicalClient", updateClient);
 				if (clients.Length != 0)
 				{
+					var endPoints = ClientEndpoints.Queryable.Where(p => p.Client == clients.First()).ToList();
+					foreach (var clientEndpointse in endPoints)
+					{
+						clientEndpointse.PackageId = updateClient.Tariff.PackageId;
+					}
 					if (updateClient.Status.Blocked)
 					{
 						foreach (var clientse in clients)

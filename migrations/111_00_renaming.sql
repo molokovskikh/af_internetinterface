@@ -28,3 +28,23 @@ ALTER TABLE `internet`.`PhysicalClients` MODIFY COLUMN `AutoUnblocked` TINYINT(1
 update internet.PhysicalClients pc, internet.Clients c
 set pc.ConnectionPaid = true
 where pc.id = c.PhysicalClient and c.BeginWork is not null;
+
+
+DROP TEMPORARY TABLE IF EXISTS internet.nullPayments;
+
+CREATE TEMPORARY TABLE internet.nullPayments (
+Payment INT unsigned);
+
+INSERT
+INTO    internet.nullPayments
+
+SELECT p.id FROM internet.Payments P
+where Client not in (select pc.id from internet.PhysicalCLients pc);
+
+delete from internet.Payments
+where id in (select * from internet.nullPayments);
+
+
+update internet.`Status` s
+set s.Connected = true
+where s.id in (5,7);

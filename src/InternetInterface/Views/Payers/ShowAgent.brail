@@ -1,6 +1,17 @@
-﻿<% OutputSubView("AgentFilter") %>
-<span>Всего платежей ${Payment.Count()}</span>
-<span>Всего платежей ${TotalSumm}</span>
+﻿<% import System.Linq.Enumerable from System.Core %>
+<% OutputSubView("AgentFilter") %>
+<style type="text/css">
+    .info_paym
+    {
+        font-size:16px;
+        font-style:inherit;
+        font-weight:bold;
+        }
+</style>
+<center>
+<span class="info_paym" style="color:Green;">Всего ${Payments.Count} платежей</span>
+<span class="info_paym" style="color:Green;">на сумму  ${TotalSumm.ToString("#.00")} рублей</span>
+</center>
 <table class="table"  style="width: 100%; font-style:oblique">
         <thead>
             <tr valign="top">
@@ -11,11 +22,11 @@
             </tr>
         </thead>
         <tbody>
-            <%for i,item in enumerate(Payment): %>
+            <%for i,item in enumerate(Payments): %>
                 <tr>
                     <td><a href="../UserInfo/SearchUserInfo.rails?ClientCode=${item.Client.Id}"> ${item.Client.Id.ToString("00000")}</a></td>
                     <td>${item.Client.Surname} ${item.Client.Name} ${item.Client.Patronymic}</td>
-                    <td>${item.Sum}</td>
+                    <td>${item.Sum.ToString("#.00")}</td>
                     <td>${item.PaidOn}</td>
                 </tr>
             <%end %>
