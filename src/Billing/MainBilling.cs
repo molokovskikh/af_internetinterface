@@ -87,7 +87,7 @@ namespace Billing
 				           	{
 				           		var newClients = Clients.FindAll(DetachedCriteria.For(typeof (Clients))
 				           		                                 	.CreateAlias("PhysicalClient", "PC", JoinType.InnerJoin)
-																	.Add(Restrictions.Eq("ConnectionPaid", false))
+																	.Add(Restrictions.Eq("PC.ConnectionPaid", false))
 				           		                                 	.Add(Restrictions.IsNotNull("BeginWork"))
 				           		                                 	.Add(Restrictions.IsNotNull("PhysicalClient")));
 				           		foreach (var newClient in newClients)
@@ -163,7 +163,15 @@ namespace Billing
 			{
 				var thisDateMax = InternetSettings.FindFirst().NextBillingDate;
 				if ((thisDateMax - DateTime.Now).TotalMinutes <= 0)
-				UseSession(Compute);
+				{
+					UseSession(Compute);
+					if (DateTime.Now.Hour < 22)
+					{
+						var billingTime = InternetSettings.FindFirst();
+						billingTime.NextBillingDate = new DateTime(thisDateMax.Year, thisDateMax.Month, thisDateMax.Day, 22, 0, 0);
+						billingTime.SaveAndFlush();
+					}
+				}
 			}
 			catch (Exception ex)
 			{
@@ -181,7 +189,7 @@ namespace Billing
 				var balance = Convert.ToDecimal(phisicalClient.Balance);
 				if ((balance >= 0) &&
 					(!client.Disabled) &&
-					(client.RatedPeriodDate != DateTime.MinValue))
+					(client.RatedPeriodDate != DateTime.MinValue) && (client.RatedPeriodDate != null))
 				{
 					DtNow = SystemTime.Now();
 
@@ -203,7 +211,7 @@ namespace Billing
 				//if (phisicalClient.Status.Blocked == false)
 				if (!client.Disabled)
 				{
-					if (client.RatedPeriodDate != DateTime.MinValue)
+					if (client.RatedPeriodDate != DateTime.MinValue && client.RatedPeriodDate != null)
 					{
 						decimal toDt = client.GetInterval();
 						var dec = phisicalClient.Tariff.Price / toDt;
