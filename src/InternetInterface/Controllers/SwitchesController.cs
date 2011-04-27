@@ -115,16 +115,15 @@ inet_ntoa(L.Ip) as Leased_IP,
 CE.Client,
 CE.Id as endpointId,
 C.Name,
-Ce.Switch,
+L.Switch,
 NS.Name as Swith_adr,
 inet_ntoa(NS.ip) as swith_IP,
-CE.Module,
-CE.Port,
+L.Port,
 CE.PackageId,
 PS.Speed
 from internet.Leases L
 left join internet.ClientEndpoints CE on L.Endpoint = CE.Id
-join internet.NetworkSwitches NS on NS.Id = CE.Switch
+left join internet.NetworkSwitches NS on NS.Id = L.Switch
 left join internet.Clients C on CE.Client = C.Id
 left join internet.PackageSpeed PS on PS.PackageId = CE.PackageId
 where NS.Zone = {0}", Zone)).SetResultTransformer(

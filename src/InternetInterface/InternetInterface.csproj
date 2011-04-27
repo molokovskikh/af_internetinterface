@@ -132,6 +132,7 @@
     <None Include="Views\Payers\Filter.brail" />
     <None Include="Views\Payers\Show.brail" />
     <None Include="Views\Payers\ShowAgent.brail" />
+    <None Include="Views\Register\RegisterLegalPerson.brail" />
     <None Include="Views\Rescue\404.brail" />
     <None Include="Views\Subview\Client.brail" />
     <None Include="Views\Subview\CreateEditLabel.brail" />
@@ -199,6 +200,7 @@
     <Compile Include="Models\Label.cs" />
     <Compile Include="Models\LawyerPerson.cs" />
     <Compile Include="Models\Lease.cs" />
+    <Compile Include="Models\LegalPerson.cs" />
     <Compile Include="Models\NetworkSwitches.cs" />
     <Compile Include="Models\OnLineClient.cs" />
     <Compile Include="Models\PaymentForConnect.cs" />

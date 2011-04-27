@@ -31,7 +31,6 @@ $(document).ready(function () {
                 <th>Свитч</th>
                 <th>Название свича</th>
                 <th>IP свича</th>
-                <th>Модуль</th>
                 <th>Порт</th>
                 <th>PackageId</th>
                 <th>Скорость</th>
@@ -47,7 +46,6 @@ $(document).ready(function () {
                     <td>${Client.Switch}</td>
                     <td>${Client.Swith_adr}</td>
                     <td>${Client.swith_IP}</td>
-                    <td>${Client.Module}</td>
                     <td>${Client.Port}</td>
                     <td>${Client.PackageId}</td>
                     <td>${Client.GetNormalSpeed()} мб/с</td>

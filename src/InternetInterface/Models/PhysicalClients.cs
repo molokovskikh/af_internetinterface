@@ -56,7 +56,7 @@ namespace InternetInterface.Models
 		public string Swith_adr { get; set; }
 		public string swith_IP { get; set; }
 
-		public int? Module { get; set; }
+		//public int? Module { get; set; }
 		public int? PackageId { get; set; }
 
 		public string Port { get; set; }

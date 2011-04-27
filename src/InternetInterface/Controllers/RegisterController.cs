@@ -167,6 +167,11 @@ namespace InternetInterface.Controllers
 			}
 		}
 
+		public void RegisterLegalPerson()
+		{
+
+		}
+
 		[AccessibleThrough(Verb.Post)]
 		public void RegisterPartner([DataBind("Partner")]Partner partner)
 		{
