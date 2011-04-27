@@ -84,7 +84,8 @@ namespace InternetInterface.Models.Access
 			                 	{
 									"RegisterClient",
 									"SiteMap",
-									"ClientRegisteredInfoFromDiller"
+									"ClientRegisteredInfoFromDiller",
+									"RegisterLegalPerson"
 			                 	};
 			return _registerClient.Contains(methodName) ? "RC" : string.Empty;
 		}

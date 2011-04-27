@@ -169,7 +169,29 @@ namespace InternetInterface.Controllers
 
 		public void RegisterLegalPerson()
 		{
+			PropertyBag["Editing"] = false;
+			PropertyBag["LegalPerson"] = new LawyerPerson();
+			PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(new LawyerPerson());
+		}
 
+		public void RegisterLegalPerson([DataBind("LegalPerson")]LawyerPerson person, int speed)
+		{
+			if (Validator.IsValid(person))
+			{
+				person.Speed = PackageSpeed.Find(speed);
+				person.SaveAndFlush();
+				PropertyBag["Editing"] = false;
+				PropertyBag["LegalPerson"] = new LawyerPerson();
+				PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(new LawyerPerson());
+				PropertyBag["EditiongMessage"] = "Клиент успешно загистрирвоан";
+			}
+			else
+			{
+				PropertyBag["Editing"] = false;
+				PropertyBag["LegalPerson"] = person;
+				person.SetValidationErrors(Validator.GetErrorSummary(person));
+				PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(person);
+			}
 		}
 
 		[AccessibleThrough(Verb.Post)]

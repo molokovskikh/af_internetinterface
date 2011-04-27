@@ -13,8 +13,10 @@ using Castle.ActiveRecord.Framework;
 using Castle.ActiveRecord.Framework.Config;
 using Castle.MonoRail.Framework;
 using Castle.MonoRail.Framework.Configuration;
+using Castle.MonoRail.Framework.Container;
 using Castle.MonoRail.Framework.Internal;
 using Castle.MonoRail.Framework.Routing;
+using Castle.MonoRail.Framework.Services;
 using Castle.MonoRail.Framework.Views.Aspx;
 using Castle.MonoRail.Views.Brail;
 using log4net;
@@ -22,7 +24,7 @@ using log4net.Config;
 
 namespace InternetInterface
 {
-	public class Global : HttpApplication, IMonoRailConfigurationEvents
+	public class Global : HttpApplication, IMonoRailConfigurationEvents, IMonoRailContainerEvents
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof(Global));
 
@@ -118,6 +120,14 @@ namespace InternetInterface
 			/*			configuration.SmtpConfig.Host = "mail.adc.analit.net";
 			configuration.ExtensionEntries.Add(new ExtensionEntry(typeof(ExceptionChainingExtension),
 				new MutableConfiguration("mailTo")));*/
+		}
+
+		public void Created(IMonoRailContainer container)
+		{ }
+
+		public void Initialized(IMonoRailContainer container)
+		{
+			((DefaultViewComponentFactory)container.GetService<IViewComponentFactory>()).Inspect(Assembly.Load("InternetInterface"));
 		}
 
 		void Session_End(object sender, EventArgs e)

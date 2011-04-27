@@ -1,1 +1,60 @@
-﻿
+﻿<head> 
+<link href="../Styles/style.css" type="text/css" rel="stylesheet" />
+<link rel="stylesheet" href="../Styles/base.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../Styles/RegStyle.css" type="text/css" media="screen" />
+<title>Регистрация юридического лица</title>   
+</head> 
+<% OutputSubView("""\Subview\MapHead""") %>
+
+<input type="hidden" name="hiddenClient" value="${LegalPerson}" />
+<div id="main">
+<div id="container">
+	<div id="block-tables" class="block">
+		<div class="content">
+							<%if IsDefined("EditiongMessage"):
+							output WriteMessageNotice(EditiongMessage)
+							end%>
+				<div class="inner">
+							<%if IsDefined("Editing"): %>
+							<%if (not Editing): %>
+				  <form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Register/RegisterLegalPerson" >
+							<%else: %>
+				  <form class="form" id="RegistrationFormEdit" name="RegistrationForm" method="post" action="${siteroot}/Register/EditLegalPerson" >
+				  <input type="hidden" name="PartnerKey" value=${PersonKey} />
+							  <%end %>
+							  <%end %>
+							<table class="table" style="width:100%; " border="0" id="RegTable"> 
+							<tr>
+								<th colspan="3">
+							<%if IsDefined("Editing"): %>
+							<%if (not Editing): %>
+									<strong>Форма регистрации</strong></th>
+									<%end %>
+									<%end %>
+							</tr>
+
+							<% OutputSubView("""\Subview\LegalPerson""") %>
+							<tr>
+								<td colspan="3">
+								<div class="actions">
+												<button type="submit" id="RegisterLegalButton" class="button" >
+												<img alt="Save" src="../Images/application_edit.png">
+							<%if IsDefined("Editing"): %>
+							<%if (not Editing): %>
+												 Зарегистрировать
+												 <%else: %>
+												 Изменить
+												 <%end %>
+												 <%end %>
+												 </button>
+								</div>
+								</td>
+							</tr>
+						</table>
+				  </form>
+			</div>
+		</div>
+	 </div>
+ </div>
+ </div>
+</body>

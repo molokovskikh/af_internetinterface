@@ -39,5 +39,5 @@
                                     <input id="Login" type="text" value="${Partner.Login}" name="Partner.Login"/></td>
                                  <td>
                                     ${VB.GetBlock("Login")}
-                                </td>
-                            </tr>
+     	                           </td>
+</tr>

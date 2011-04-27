@@ -136,6 +136,7 @@
     <None Include="Views\Rescue\404.brail" />
     <None Include="Views\Subview\Client.brail" />
     <None Include="Views\Subview\CreateEditLabel.brail" />
+    <None Include="Views\Subview\LegalPerson.brail" />
     <None Include="Views\Switches\MakeSwitch.brail" />
     <None Include="Views\Switches\OnLineClient.brail" />
     <None Include="Views\Switches\ShowSwitches.brail" />
@@ -157,6 +158,7 @@
   <ItemGroup>
     <Compile Include="AllLogic\ColorWork.cs" />
     <Compile Include="AllLogic\GetClientsLogic.cs" />
+    <Compile Include="Components\SelectList.cs" />
     <Compile Include="Controllers\BrigadsController.cs" />
     <Compile Include="Controllers\ExitPartner.cs" />
     <Compile Include="Controllers\Filter\AuthenticationFilter.cs" />
@@ -200,9 +202,9 @@
     <Compile Include="Models\Label.cs" />
     <Compile Include="Models\LawyerPerson.cs" />
     <Compile Include="Models\Lease.cs" />
-    <Compile Include="Models\LegalPerson.cs" />
     <Compile Include="Models\NetworkSwitches.cs" />
     <Compile Include="Models\OnLineClient.cs" />
+    <Compile Include="Models\PackageSpeed.cs" />
     <Compile Include="Models\PaymentForConnect.cs" />
     <Compile Include="Models\Requests.cs" />
     <Compile Include="Models\Status.cs" />
