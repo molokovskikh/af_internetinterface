@@ -16,5 +16,5 @@ namespace InternetInterface.Models
 		{
 			return FindAll(DetachedCriteria.For(typeof(T)).AddOrder(Order.Asc("Name")));
 		}
-	}
+	}	
 }

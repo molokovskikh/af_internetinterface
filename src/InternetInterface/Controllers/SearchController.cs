@@ -43,14 +43,14 @@ namespace InternetInterface.Controllers
 		private static readonly ILog _log = LogManager.GetLogger(typeof(SearchController));
 
 		[AccessibleThrough(Verb.Get)]
-		public void SearchBy([DataBind("SearchBy")]UserSearchProperties searchProperties, 
-							[DataBind("ConnectedType")]ConnectedTypeProperties connectedType,
+		public void SearchBy([DataBind("SearchBy")]UserSearchProperties searchProperties,
+							[DataBind("ConnectedType")]ConnectedTypeProperties connectedType, [DataBind("clientTypeFilter")]ClientTypeProperties clientTypeFilter, 
 			uint tariff, uint whoregister, uint brigad ,string searchText)
 		{
-			IList<PhysicalClients> clients = new List<PhysicalClients>();
-			clients = GetClientsLogic.GetClients(searchProperties, connectedType, tariff, whoregister, searchText, brigad);
+			IList<Clients> clients = new List<Clients>();
+			clients = GetClientsLogic.GetClients(searchProperties, connectedType, clientTypeFilter, tariff, whoregister, searchText, brigad);
 			Flash["SClients"] = clients;
-			PropertyBag["ConnectBlockDisplay"] = ((List<PhysicalClients>) clients).Find(p => p.WhoConnected == null);
+			//PropertyBag["ConnectBlockDisplay"] = ((List<Clients>) clients).Find(p => p.PhysicalClient.WhoConnected == null || p.LawyerPerson.WhoConnected == null);
 
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["WhoRegistered"] = Partner.FindAllSort();
@@ -58,7 +58,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["ChRegistr"] = whoregister;
 			PropertyBag["ChBrigad"] = brigad;
 			PropertyBag["SearchText"] = searchText;
-
+			PropertyBag["clientTypeFilter"] = clientTypeFilter;
 			PropertyBag["FindBy"] = searchProperties;
 			PropertyBag["ConnectBy"] = connectedType;
 
@@ -70,6 +70,7 @@ namespace InternetInterface.Controllers
 		{
 			var searchProperties = new UserSearchProperties {SearchBy = SearchUserBy.Auto};
 			var connectProperties = new ConnectedTypeProperties {Type = ConnectedType.AllConnected};
+			var clientTypeFilter = new ClientTypeProperties { Type = ForSearchClientType.AllClients };
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["WhoRegistered"] = Partner.FindAllSort();
 			PropertyBag["SearchText"] = "";
@@ -78,12 +79,23 @@ namespace InternetInterface.Controllers
 			PropertyBag["ChBrigad"] = 0;
 			PropertyBag["FindBy"] = searchProperties;
 			PropertyBag["ConnectBy"] = connectProperties;
+			PropertyBag["clientTypeFilter"] = clientTypeFilter;
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
 			PropertyBag["Connected"] = false;
 			if (sClients != null)
 			{
 				Flash["SClients"] = sClients;
 			}
+		}
+
+		public void Redirect(uint ClientCode)
+		{
+			var client = Clients.Find(ClientCode);
+			if (client.PhysicalClient != null)
+				RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientCode);
+			else
+				RedirectToUrl("../UserInfo/LawyerPersonInfo.rails?ClientCode=" + ClientCode);
+			CancelView();
 		}
 	}
 }

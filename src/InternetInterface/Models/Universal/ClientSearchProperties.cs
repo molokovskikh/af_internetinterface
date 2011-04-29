@@ -23,6 +23,16 @@ namespace InternetInterface.Models
 		OtherSumm,
 	}
 
+	public enum ForSearchClientType
+	{
+		[Description("Физические лица")]
+		Physical,
+		[Description("Юридические лица")]
+		Lawyer,
+		[Description("Все")]
+		AllClients
+	}
+
 	public enum ConnectedType
 	{
 		[Description("Подключенных")]
@@ -31,6 +41,26 @@ namespace InternetInterface.Models
 		NoConnected,
 		[Description("Всех")]
 		AllConnected
+	}
+
+	public class ClientTypeProperties
+	{
+		public ForSearchClientType Type { get; set; }
+
+		public bool IsPhysical()
+		{
+			return Type == ForSearchClientType.Physical;
+		}
+
+		public bool IsLawyer()
+		{
+			return Type == ForSearchClientType.Lawyer;
+		}
+
+		public bool IsAll()
+		{
+			return Type == ForSearchClientType.AllClients;
+		}
 	}
 
 	public class ConnectedTypeProperties

@@ -24,7 +24,7 @@
 		<%if IsDefined("errorMessage"):
 			  output  WriteMessageError(errorMessage)
 		   end%>
-		<th>Информация по клиенту ${Client.Surname}  ${Client.Name}  ${Client.Patronymic}
+		<th>Информация по клиенту   ${Client.ShortName}  
 		<%if PartnerAccessSet.AccesPartner("ECI"): %>
 		 <input id="EditButton" type="submit" value="Редактировать"  align="right" />
 		 <%end %>
@@ -37,25 +37,16 @@
 		</tr>
 	<%if PartnerAccessSet.AccesPartner("SSI"): %>
 		<tr>
-			<td><span class="description">Город: </span> ${Client.City}</td>
+			<td><span class="description">Юридический адрес: </span> ${Client.LawyerAdress} </td>
 		</tr>
 		<tr>
-			<td><span class="description">Адрес подключения: </span>   ${Client.Street} ${Client.House}${Client.CaseHouse} ${Client.Apartment} Подъезд ${Client.Entrance} Этаж ${Client.Floor}</td>
+			<td><span class="description">Фактический адрес: </span> ${Client.ActualAdress} </td>
 		</tr>
 		<tr>
-			<td><span class="description">Номер телефона: </span> ${Client.PhoneNumber}</td>
+			<td><span class="description">Номер телефона: </span> ${Client.Telephone}</td>
 		</tr>
 		<tr>
 			<td><span class="description">Email:</span> ${Client.Email}</td>
-		</tr>
-		<%end %>
-		<%if PartnerAccessSet.AccesPartner("VP"): %>
-		<tr>
-			<td>Паспортные данные: <br />
-												 <span class="description">Серия\Номер</span> ${Client.PassportSeries} \ ${Client.PassportNumber}<br />
-												 <span class="description">Кем выдан: </span> ${Client.WhoGivePassport}<br />
-												 <span class="description">Адрес регистрации:</span> ${Client.RegistrationAdress}<br />
-												 <span class="description">Дата выдачи :</span> ${Client.PassportDate}</td>
 		</tr>
 		<%end %>
 		<%if PartnerAccessSet.AccesPartner("SSI"): %>
@@ -72,7 +63,7 @@
 		<%end %>
 		<%if Client.Tariff != null: %>
 		<tr>
-			 <td><span class="description">Тариф:</span> ${Client.Tariff.GetFullName()}</td>
+			 <td><span class="description">Тариф:</span> ${Client.Speed.GetNormalizeSpeed()}</td>
 		</tr>
 		 <%end %>
 
@@ -88,25 +79,13 @@
 		<%end %>
 		</tr>
 		<%end %>
-		<%if PartnerAccessSet.AccesPartner("SSI"): %>
-				<%if IsDefined("RegisntationDate"): %>
-			<tr>
-				<td><span class="description">Дата регистрации заявки:</span> ${RegisntationDate}</td>
-			</tr>
-		<%end %>
-		<%if IsDefined("CloseDate"): %>
-		<tr>
-				<td><span class="description">Дата подключения:</span> ${CloseDate}</td>
-		</tr>
-		<%end %>
-		<%end %>
 	</tbody>
 </table>
 	<%else:%>
 	<form class="form edit" method="post" action="${siteroot}/UserInfo/EditInformation">
 	<input type="hidden" name="ClientID" value="${ClientCode}" />
 	<table class="table" style="width:100%; " border="0" id="EditTable"> 
-   <% OutputSubView("""\Subview\Client""") %>
+   <% OutputSubView("""\Subview\LegalPerson""") %>
 			   <tr>
 			   <td >
 				  <div class="actions">
@@ -123,19 +102,3 @@
 <br />
 
 <% OutputSubView("""\Subview\ConnectInfo""") %>
-
-<% OutputSubView("""\Subview\PaymentInfo""") %>
-
-<br />
-
-<% OutputSubView("""\Subview\WriteOffInfo""") %>
-
-<% OutputSubView("""\Subview\ChangeBalanceInfo""") %>
-
-</div>
-</div>
-</div>
-</form>
-</div>
-
-<% OutputSubView("""\Subview\AppealsInfo""") %>

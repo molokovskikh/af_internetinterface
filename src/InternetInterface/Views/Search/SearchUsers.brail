@@ -51,14 +51,15 @@
                 <input type="radio" id="SearchAccount" name="SearchBy.SearchBy" value=SearchAccount ${"checked" if FindBy.IsSearchAccount()} />
                 <label for="Autosearch">По номеру счета</label><br />
                 <input type="radio" id="SearchByClientId" name="SearchBy.SearchBy" value=ByFio ${"checked" if FindBy.IsSearchByFio()} />
-                <label for="SearchByClientId">ФИО</label><br />
-                <%if (PartnerAccessSet.AccesPartner("VP")):%>
-                <input type="radio" id="SearchByUserId" name="SearchBy.SearchBy" value=ByPassportSet ${"checked" if FindBy.IsSearchByPassportSet()} />
-                <label for="SearchByUserId">Паспортные данные</label><br />
-                <%end %>
+                <label for="SearchByClientId">Имя</label><br />
             </td>
             <td>
-                
+                <input type="radio" id="Radio4" name="clientTypeFilter.Type" value=AllClients ${"checked" if clientTypeFilter.IsAll()} />
+                <label for="AutoRadio4search">Все</label><br />
+                <input type="radio" id="Radio5" name="clientTypeFilter.Type" value=Physical ${"checked" if clientTypeFilter.IsPhysical()} />
+                <label for="Radio5">Физические лица</label><br />
+                <input type="radio" id="Radio6" name="clientTypeFilter.Type" value=Lawyer ${"checked" if clientTypeFilter.IsLawyer()} />
+                <label for="Radio6">Юридические лица</label><br />
             </td>
         </tr>
     </table>

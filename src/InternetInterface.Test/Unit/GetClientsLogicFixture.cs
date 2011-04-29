@@ -12,14 +12,14 @@ namespace InternetInterface.Test.Unit
 	[TestFixture]
 	class GetClientsLogicFixture : WatinFixture
 	{
-		private static bool ResultAssert(Func<IList<PhysicalClients>> result)
+		private static bool ResultAssert(Func<IList<Clients>> result)
 		{
 			var _result = result();
 			if (result != null)
 			{
 				if (_result.Count != 0)
 				{
-					if (!_result.First().Status.Connected)
+					if (!_result.First().PhysicalClient.Status.Connected)
 						return true;
 					if (result.Method.Name == "<GetClientsTest>b__0")
 						return true;
@@ -40,7 +40,7 @@ namespace InternetInterface.Test.Unit
 		public void GetClientsTest()
 		{
 			ResultAssert(() => GetClientsLogic.GetClients(UserSearchPropertiesHelper.CreateUserSearchProperties(),
-			                                                           ConnectedTypePropertiesHelper.CreateUserSearchProperties(), 0,
+																	   ConnectedTypePropertiesHelper.CreateUserSearchProperties(), ClientTypeHelper.CreateUserSearchProperties(), 0,
 			                                                           0,
 			                                                           string.Empty, 0));
 		}
@@ -49,7 +49,7 @@ namespace InternetInterface.Test.Unit
 		public void GetWhereTest()
 		{
 			var query = GetClientsLogic.GetWhere(UserSearchPropertiesHelper.CreateUserSearchProperties(),
-			                                     ConnectedTypePropertiesHelper.CreateUserSearchProperties(),
+			                                     ConnectedTypePropertiesHelper.CreateUserSearchProperties(),ClientTypeHelper.CreateUserSearchProperties(),
 			                                     0, 0, "Test", 0);
 			Assert.That(query, Is.StringContaining(@"WHERE LOWER(P.Name) like :SearchText or LOWER(P.Surname) like :SearchText
 or LOWER(P.Patronymic) like :SearchText or LOWER(P.City) like :SearchText 

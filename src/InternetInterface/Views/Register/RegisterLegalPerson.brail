@@ -34,6 +34,9 @@
 							</tr>
 
 							<% OutputSubView("""\Subview\LegalPerson""") %>
+
+							<% OutputSubView("""\Subview\ConnectMenu""") %>
+
 							<tr>
 								<td colspan="3">
 								<div class="actions">

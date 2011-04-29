@@ -1,0 +1,40 @@
+﻿<div style="width:49%; float:right; padding-top:5px;">
+		<table class="table">
+		<thead>
+			<th colspan="3">Обращения клиента</th>
+		</thead>
+		<tbody>
+			<form class="form appeal" method="post" action="${siteroot}/UserInfo/CreateAppeal">
+			<tr>
+				<td>
+				<input type="hidden" name="ClientID" value="${ClientCode}" />
+				<label for="textField"><b>Введите текст обращения :</b></label>
+				<textarea id="textField" name="Appeal" rows="8" cols="100%"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td>
+				   <button type="submit" id="Button2" class="button">
+				  <img alt="Save" src="../Images/tick.png">Зарегистрировать</button>
+				</td>
+			</tr>
+			</form>
+		   </tbody>
+		</table>
+	   <table class="table" style="background-color:#FFFFFF">
+		<thead>
+			<th>Текст обращения</th>
+			<th>Дата</th>
+			<th>Зарегистрировал</th>
+		</thead>
+		<tbody>
+			<% for i,item in enumerate(Appeals): %>
+				<tr>
+					<td>${item.GetTransformedAppeal()}</td>
+					<td>${item.Date}</td>
+					<td>${item.Partner.Name}</td>
+				</tr>
+			<%end %>
+		  </tbody>
+		</table>
+ </div>

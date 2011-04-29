@@ -16,20 +16,33 @@ namespace InternetInterface.Controllers
 	{
 		public void SearchUserInfo(uint clientCode, bool Editing, bool EditingConnect)
 		{
-			var phisCl = PhysicalClients.Find(clientCode);
-			PropertyBag["Client"] = phisCl;
+			var client = Clients.Find(clientCode);
+			PropertyBag["Client"] = client.PhysicalClient;
 
 			SendParam(clientCode);
-			Flash["Editing"] = Editing;
-			if (phisCl.Status.Connected)
-			Flash["EditingConnect"] = EditingConnect;
+			PropertyBag["Editing"] = Editing;
+			if (client.PhysicalClient.Status.Connected)
+			PropertyBag["EditingConnect"] = EditingConnect;
 			else
 			{
-				Flash["EditingConnect"] = true;
+				PropertyBag["EditingConnect"] = true;
 			}
 			PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClients>(new PhysicalClients());
-			PropertyBag["ConnectInfo"] = phisCl.GetConnectInfo();
+			PropertyBag["ConnectInfo"] = client.GetConnectInfo();
 			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(t => t.Name != null);
+		}
+
+		public void LawyerPersonInfo(uint clientCode, bool Editing, bool EditingConnect)
+		{
+			var client = Clients.Find(clientCode).LawyerPerson;
+			PropertyBag["Client"] = client;
+			PropertyBag["Editing"] = Editing;
+			if (client.Status.Connected)
+				PropertyBag["EditingConnect"] = EditingConnect;
+			else
+			{
+				PropertyBag["EditingConnect"] = true;
+			}
 		}
 
 		public void SaveSwitchForClient(uint ClientID, [DataBind("ConnectInfo")]PhisicalClientConnectInfo ConnectInfo,
@@ -134,7 +147,7 @@ namespace InternetInterface.Controllers
 			{
 				errorMessage += "Ошибка ввода IP адреса";
 			}
-			PropertyBag["ConnectInfo"] = phisCl.GetConnectInfo();
+			PropertyBag["ConnectInfo"] = Clients.Queryable.Where(c => c.PhysicalClient == phisCl).First().GetConnectInfo();
 			PropertyBag["Editing"] = true;
 			PropertyBag["ChBrigad"] = BrigadForConnect;
 			Flash["errorMessage"] = errorMessage;
@@ -174,7 +187,7 @@ namespace InternetInterface.Controllers
 		public void LoadEditConnectMudule(uint ClientID)
 		{
 			Flash["EditingConnect"] = true;
-			var phisCl = PhysicalClients.Find(ClientID);
+			var phisCl = Clients.Find(ClientID);
 			PropertyBag["ConnectInfo"] = phisCl.GetConnectInfo();
 			RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientID + "&EditingConnect=true");
 		}
@@ -383,31 +396,28 @@ namespace InternetInterface.Controllers
 
 		private void SendParam(UInt32 ClientCode)
 		{
-			var phisCl = PhysicalClients.Find(ClientCode);
-			PropertyBag["ConnectInfo"] = phisCl.GetConnectInfo();;
-			PropertyBag["Appeals"] = Appeals.FindAllByProperty("PhysicalClient", phisCl);
+			var client = Clients.Find(ClientCode);
+			PropertyBag["ConnectInfo"] = client.GetConnectInfo();
+			PropertyBag["Appeals"] = Appeals.FindAllByProperty("Client", client);
 			PropertyBag["ClientCode"] = ClientCode;
 			PropertyBag["UserInfo"] = true;
 			PropertyBag["BalanceText"] = string.Empty;
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
-			PropertyBag["ChTariff"] = phisCl.Tariff.Id;
-			if (phisCl.Status != null)
-				PropertyBag["ChStatus"] = phisCl.Status.Id;
+			PropertyBag["ChTariff"] = client.PhysicalClient.Tariff.Id;
+			if (client.PhysicalClient.Status != null)
+				PropertyBag["ChStatus"] = client.PhysicalClient.Status.Id;
 			else
 				PropertyBag["ChStatus"] = Status.FindFirst().Id;
-			if (phisCl.WhoConnected != null)
-				PropertyBag["ChBrigad"] = phisCl.WhoConnected.Id;
+			if (client.PhysicalClient.WhoConnected != null)
+				PropertyBag["ChBrigad"] = client.PhysicalClient.WhoConnected.Id;
 			else
 				PropertyBag["ChBrigad"] = Brigad.FindFirst().Id;
 			PropertyBag["Statuss"] = Status.FindAllSort();
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties {ChangeType = TypeChangeBalance.OtherSumm};
 			PropertyBag["PartnerAccessSet"] = new CategorieAccessSet();
-			PropertyBag["Payments"] = Payment.FindAllByProperty("Client", phisCl).OrderBy(t => t.PaidOn).ToArray();
-			var client = Clients.FindAllByProperty("PhysicalClient", phisCl);
-			if (client.Length != 0)
-				PropertyBag["WriteOffs"] = WriteOff.FindAllByProperty("Client", client.First()).OrderBy(t => t.WriteOffDate);
-			else PropertyBag["WriteOffs"] = new List<WriteOff>();
+			PropertyBag["Payments"] = Payment.FindAllByProperty("Client", client.PhysicalClient).OrderBy(t => t.PaidOn).ToArray();
+			PropertyBag["WriteOffs"] = WriteOff.FindAllByProperty("Client", client).OrderBy(t => t.WriteOffDate);
 		}
 
 		[AccessibleThrough(Verb.Post)]

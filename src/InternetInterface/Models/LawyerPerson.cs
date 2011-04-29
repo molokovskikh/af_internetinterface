@@ -9,6 +9,13 @@ using InternetInterface.Models.Universal;
 
 namespace InternetInterface.Models
 {
+	public class ConnectInfo
+	{
+		public string Port { get; set; }
+		public uint Switch { get; set; }
+		public uint Brigad { get; set; }
+	}
+
 	[ActiveRecord(Schema = "Internet", Table = "LawyerPerson", Lazy = true)]
 	public class LawyerPerson : ValidActiveRecordLinqBase<LawyerPerson>
 	{
@@ -45,7 +52,25 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual decimal Balance { get; set; }
 
+		/*[BelongsTo]
+		public virtual Clients Client { get; set; }*/
+
 		[BelongsTo]
-		public virtual Clients Client { get; set; }
+		public virtual Partner WhoRegistered { get; set; }
+
+		[Property]
+		public virtual string WhoRegisteredName { get; set; }
+
+		[BelongsTo]
+		public virtual Brigad WhoConnected { get; set; }
+
+		[Property]
+		public virtual string WhoConnectedName { get; set; }
+
+		[BelongsTo]
+		public virtual Status Status { get; set; }
+
+		[Property]
+		public virtual DateTime RegDate { get; set; }
 	}
 }

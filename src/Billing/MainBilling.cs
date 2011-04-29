@@ -137,7 +137,7 @@ namespace Billing
 								var lawyerPerson = LawyerPerson.FindAll();
 				           		foreach (var person in lawyerPerson)
 				           		{
-				           			var client = person.Client;
+				           			var client = Clients.Queryable.Where(c => c.LawyerPerson == person).ToList().First();
 									if (person.Balance < -(person.Tariff * 1.9m))
 									{
 										client.ShowBalanceWarningPage = true;
@@ -239,10 +239,11 @@ namespace Billing
 					client.UpdateAndFlush();
 				}
 			}
-			var lawyerPerson = LawyerPerson.FindAll();
-			foreach (var person in lawyerPerson)
+			var lawyerclients = Clients.Queryable.Where(c => c.LawyerPerson != null).ToList();
+			foreach (var client in lawyerclients)
 			{
-				if (!person.Client.Disabled)
+				var person = client.LawyerPerson;
+				if (!client.Disabled)
 				{
 					var thisDate = SystemTime.Now();
 					decimal spis = person.Tariff / DateTime.DaysInMonth(thisDate.Year, thisDate.Month);

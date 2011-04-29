@@ -88,7 +88,6 @@ namespace Billing.Test.Unit
 			              	{
 			              		Balance = 0,
 								Tariff = 10000m,
-								Client = client
 			              	};
 			lPerson.SaveAndFlush();
 			for (int i = 0; i < 60; i++)
@@ -99,12 +98,12 @@ namespace Billing.Test.Unit
 			Console.WriteLine(lPerson.Balance);
 			Assert.That(-20000m, Is.LessThan(lPerson.Balance));
 			billing.On();
-			Assert.IsTrue(lPerson.Client.ShowBalanceWarningPage);
-			Console.WriteLine(lPerson.Client.ShowBalanceWarningPage);
+			/*Assert.IsTrue(lPerson.Client.ShowBalanceWarningPage);
+			Console.WriteLine(lPerson.Client.ShowBalanceWarningPage);*/
 			lPerson.Balance += 1000;
 			billing.On();
-			Assert.IsTrue(!lPerson.Client.ShowBalanceWarningPage);
-			Console.WriteLine(lPerson.Client.ShowBalanceWarningPage);
+			/*Assert.IsTrue(!lPerson.Client.ShowBalanceWarningPage);
+			Console.WriteLine(lPerson.Client.ShowBalanceWarningPage);*/
 		}
 
 		[Test]

@@ -1,0 +1,36 @@
+﻿	<%if PartnerAccessSet.AccesPartner("DHCP"): %>
+<tr>
+	<th colspan="3">Данные подключения</th> </tr>
+<tr>
+	<td>Свич</td>
+	<td><select name="ConnectInfo.Switch" id="SelectSwitches${ConnectInfo.Switch}" style="width: 100%" >
+		<option id="Option2" value="0" > </option>
+		<%
+		for j, Switch in enumerate(Switches): 
+		%>
+		<option id="Option${j}" value="${Switch.Id}" ${"selected" if (Switch.Id == ConnectInfo.Switch)} > ${Switch.Name} </option>
+		<% end %>
+</select></td>
+<td></td>
+</tr>
+<tr>
+	<td>Порт</td>
+	<td><input type="text" id="Port"  name="ConnectInfo.Port"  value="${ConnectInfo.Port}" style="width: 50%; " /></td>
+	<td>            <%if IsDefined("PortError"): %>
+				   <% if PortError != "":
+		output  WriteMessageError(PortError)
+		end%> 
+		<%end %></td>
+</tr>
+<tr>
+	<td>Бригада по подключению</td>
+	<td><select name="BrigadForConnect" id="BrigadForConnect" style="width: 100%" >
+		<%
+		for j, Brigad in enumerate(Brigads): 
+		%>
+		<option id="OptionBrigad${j}" value="${Brigad.Id}" ${"selected" if (Brigad.Id == ChBrigad)} > ${Brigad.Name} </option>
+		<% end %>
+</select></td>
+<td></td>
+</tr>
+<%end %>

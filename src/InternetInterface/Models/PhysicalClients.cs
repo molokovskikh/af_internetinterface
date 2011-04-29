@@ -233,48 +233,6 @@ namespace InternetInterface.Models
 			return Lease.Queryable.FirstOrDefault(l => l.Ip == addressValue);
 		}
 
-		public virtual PhisicalClientConnectInfo GetConnectInfo()
-		{
-			if (Status != null && Status.Connected)
-			{
-				var client = Clients.FindAllByProperty("PhysicalClient", this);
-				if (client.Length != 0)
-				{
-					IList<PhisicalClientConnectInfo> ConnectInfo = new List<PhisicalClientConnectInfo>();
-					ARSesssionHelper<PhisicalClientConnectInfo>.QueryWithSession(session =>
-					                                                             	{
-					                                                             		var query =
-					                                                             			session.CreateSQLQuery(string.Format(
-																								@"
-select
-inet_ntoa(CE.Ip) as static_IP,
-inet_ntoa(L.Ip) as Leased_IP,
-CE.Client,
-Ce.Switch,
-NS.Name as Swith_adr,
-inet_ntoa(NS.ip) as swith_IP,
-CE.Port,
-PS.Speed,
-CE.Monitoring
-from internet.ClientEndpoints CE
-join internet.NetworkSwitches NS on NS.Id = CE.Switch
-join internet.Clients C on CE.Client = C.Id
-left join internet.Leases L on L.Endpoint = CE.Id
-left join internet.PackageSpeed PS on PS.PackageId = CE.PackageId
-where CE.Client = {0}",
-					 				client[0].Id)).SetResultTransformer(
-					 				new AliasToPropertyTransformer(
-					 					typeof (PhisicalClientConnectInfo)))
-					 				.List<PhisicalClientConnectInfo>();
-					 		ConnectInfo = query;
-							return query;
-																					});
-					if (ConnectInfo.Count != 0)
-					return ConnectInfo.First();
-				}
-			}
-			return new PhisicalClientConnectInfo();
-		}
 	}
 
 }

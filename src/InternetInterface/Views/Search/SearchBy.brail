@@ -24,9 +24,6 @@
             <th>Адрес подключения</th>
             <th>Номер телефона</th>
             <%end %>
-            <%if (PartnerAccessSet.AccesPartner("VP")):%>
-            <th>Паспортные данные</th>
-            <%end %>
             <%if PartnerAccessSet.AccesPartner("SSI"): %>
             <th>Дата регистрации</th>
             <%end %>
@@ -40,34 +37,49 @@
     <tbody id="SearchResults">
     <% for i,item in enumerate(SClients): %>
         <tr class="${item.Name}">
-            <td>${item.Id.ToString("00000")}</td>
-            <td><a href="../UserInfo/SearchUserInfo.rails?ClientCode=${item.Id}"> ${item.Surname} ${item.Name} ${item.Patronymic}</a></td>
+            <td><a href="../Search/Redirect?ClientCode=${item.Id}">${item.Id.ToString("00000")}</a></td>
+            <td> ${item.Name}</td>
             <%if PartnerAccessSet.AccesPartner("SSI"): %>
-            <td>ул. ${item.Street} д. ${item.House} корп. ${item.CaseHouse} кв. ${item.Apartment} Подъезд ${item.Entrance} Этаж ${item.Floor}</td>
-            <td>${item.PhoneNumber}</td>
+            <%if item.PhysicalClient != null: %>
+            <td>ул. ${item.PhysicalClient.Street} д. ${item.PhysicalClient.House} корп. ${item.PhysicalClient.CaseHouse} кв. ${item.PhysicalClient.Apartment} Подъезд ${item.PhysicalClient.Entrance} Этаж ${item.PhysicalClient.Floor}</td>
+            <td>${item.PhysicalClient.PhoneNumber}</td>
+            <%else : %>
+            <td>${item.LawyerPerson.ActualAdress}</td>
+            <td>${item.LawyerPerson.Telephone}</td>
             <%end %>
-            <%if (PartnerAccessSet.AccesPartner("VP")):%>
-            <td>${item.PassportSeries} ${item.PassportNumber}
-            ${item.WhoGivePassport}
-            ${item.RegistrationAdress}
-            ${item.PassportDate}
-            </td>  
             <%end %>
             <%if PartnerAccessSet.AccesPartner("SSI"): %>
-            <td>${item.RegDate}</td>
-            <%end %>
-            <%if item.Tariff != null:  %>
-            <td>${item.Tariff.Name}</td>
+            <%if item.PhysicalClient != null: %>
+            <td>${item.PhysicalClient.RegDate}</td>
             <%else: %>
-            <td>Тариф не определен </td>
+            <td>${item.LawyerPerson.RegDate}</td>
+            <%end %>
+            <%end %>
+            <%if item.PhysicalClient != null:  %>
+            <td>${item.PhysicalClient.Tariff.Name}</td>
+            <%else: %>
+                <% if item.LawyerPerson.Speed != null:%>
+                <td>${item.LawyerPerson.Speed.GetNormalizeSpeed()} </td>
+                <%else: %>
+                <td>Тариф не задан</td>
+                <%end %>
             <%end %>
             <%if MapPartner.Categorie.ReductionName == "Office": %>
-            <td>${item.Balance}</td>
-            <%if item.Status != null: %>
-            <td>${item.Status.Name}</td>
-            <%else: %>
-            <td>Статус не задан</td>
-            <%end %>
+                <%if item.PhysicalClient != null: %>
+                    <td>${item.PhysicalClient.Balance}</td>
+                    <%if item.PhysicalClient.Status != null: %>
+                    <td>${item.PhysicalClient.Status.Name}</td>
+                    <%else: %>
+                    <td>Статус не задан</td>
+                    <%end %>
+                <%else: %>
+                    <td>${item.LawyerPerson.Balance}</td>
+                    <%if item.LawyerPerson.Status != null: %>
+                    <td>${item.LawyerPerson.Status.Name}</td>
+                    <%else: %>
+                    <td>Статус не задан</td>
+                    <%end %>
+                <%end %>
             <%end %>
         </tr>
     <% end %>        

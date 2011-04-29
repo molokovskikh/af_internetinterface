@@ -1,0 +1,40 @@
+﻿<%if PartnerAccessSet.AccesPartner("SSI"): %>
+<div style="clear:both;">
+<%if (Payments.Length == 0): %>
+				  <div class="flash">
+					 <div class="message error">
+					   <p>Платежи отсутствуют</p>
+					 </div>
+				  </div>
+<%else: %>
+<table class="table"  style="width: 100%; font-size: small;" align="left">
+	<thead>
+		<tr valign="top">
+			<th>Платеж зарегистрировал</th>
+			<th>Дата оплаты клиентом</th>
+			<th>Дата регистрации платежа</th>
+			<th>Сумма</th>
+		</tr>
+	</thead>
+
+	<tbody id="SearchResults" class="HighLightCurrentRow">
+	<% for i,item in enumerate(Payments): %>
+	<%if item.Sum != 0: %>
+		<tr id="Row${i}">
+		<%if item.Agent != null: %>
+			<td>${item.Agent.Name}</td>   
+			<%else: %>
+			<td></td>
+			<%end %>
+			<td>${item.PaidOn}</td>
+			<td>${item.RecievedOn}</td>
+			<td>${item.Sum}</td>
+		</tr>
+		<%end %>
+	<% end %>
+	</tbody> 
+
+</table>
+<%end %>
+</div>
+<%end %>

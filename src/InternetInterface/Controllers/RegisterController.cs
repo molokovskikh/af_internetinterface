@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using Castle.ActiveRecord;
 using Castle.MonoRail.Framework;
+using InternetInterface.AllLogic;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
@@ -169,24 +170,63 @@ namespace InternetInterface.Controllers
 
 		public void RegisterLegalPerson()
 		{
+			PropertyBag["Brigads"] = Brigad.FindAllSort();
+			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(s => !string.IsNullOrEmpty(s.Name));
+			PropertyBag["ChBrigad"] = Brigad.FindFirst().Id;
+			PropertyBag["ConnectInfo"] = new ConnectInfo();
 			PropertyBag["Editing"] = false;
 			PropertyBag["LegalPerson"] = new LawyerPerson();
 			PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(new LawyerPerson());
 		}
 
-		public void RegisterLegalPerson([DataBind("LegalPerson")]LawyerPerson person, int speed)
+		public void RegisterLegalPerson([DataBind("LegalPerson")]LawyerPerson person, int speed, [DataBind("ConnectInfo")]ConnectInfo info, uint brigadForConnect)
 		{
-			if (Validator.IsValid(person))
+			var connectErrors = Validation.ValidationConnectInfo(info);
+			if (Validator.IsValid(person) && string.IsNullOrEmpty(connectErrors))
 			{
+				person.WhoRegistered = InithializeContent.partner;
+				person.WhoRegisteredName = InithializeContent.partner.Name;
+				person.RegDate = DateTime.Now;
 				person.Speed = PackageSpeed.Find(speed);
+				person.Status = Status.Find((uint) StatusType.BlockedAndNoConnected);
 				person.SaveAndFlush();
-				PropertyBag["Editing"] = false;
+				var client = new Clients
+				             	{
+				             		LawyerPerson = person,
+									Name = person.ShortName,
+									Type = ClientType.Legal,
+				             	};
+				client.SaveAndFlush();
+				if (!string.IsNullOrEmpty(info.Port))
+				{
+					new ClientEndpoints
+						{	
+							Client = client,
+							PackageId = person.Speed.PackageId,
+							Port = Int32.Parse(info.Port),
+							Switch = NetworkSwitches.Find(info.Switch),
+							
+						}.SaveAndFlush();
+					var brigad =  Brigad.Find(brigadForConnect);
+					person.WhoConnected = brigad;
+					person.WhoConnectedName = brigad.Name;
+					person.Status = Status.Find((uint) StatusType.Worked);
+					person.UpdateAndFlush();
+
+				}
+				/*PropertyBag["Editing"] = false;
 				PropertyBag["LegalPerson"] = new LawyerPerson();
-				PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(new LawyerPerson());
+				PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(new LawyerPerson());*/
+				RegisterLegalPerson();
 				PropertyBag["EditiongMessage"] = "Клиент успешно загистрирвоан";
 			}
 			else
 			{
+				PropertyBag["Brigads"] = Brigad.FindAllSort();
+				PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(s => !string.IsNullOrEmpty(s.Name));
+				PropertyBag["ChBrigad"] = brigadForConnect;
+				PropertyBag["ConnectInfo"] = info;
+				PropertyBag["PortError"] = connectErrors;
 				PropertyBag["Editing"] = false;
 				PropertyBag["LegalPerson"] = person;
 				person.SetValidationErrors(Validator.GetErrorSummary(person));
@@ -274,7 +314,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Applying"] = "false";
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties { ChangeType = TypeChangeBalance.OtherSumm };
 			PropertyBag["BalanceText"] = 0;
-			PropertyBag["ConnectInfo"] = new PhysicalClients().GetConnectInfo();
+			PropertyBag["ConnectInfo"] = new Clients().GetConnectInfo();
 			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(s => !string.IsNullOrEmpty(s.Name));
 		}
 

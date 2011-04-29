@@ -1,0 +1,49 @@
+﻿<%if PartnerAccessSet.AccesPartner("CB"): %>
+<div style="clear:both;">
+<form class="form login" method="post" action="${siteroot}/UserInfo/ChangeBalance">
+	<input type="hidden" name="ClientID" value="${ClientCode}" />
+	<table class="table">
+		<thead>
+			<th colspan="3">Пополнить баланс клиента</th>
+			
+		</thead>
+		<tbody>
+				<% OutputSubView("""\Subview\Payment""") %>
+				<td >
+					   <%if IsDefined("thisPay"): %>
+					   <% if (thisPay.GetErrorText("Sum") != ""): %>
+												<div class="flash">
+													<div class="message error">
+													<p>${thisPay.GetErrorText("Sum")}</p>
+													</div>
+												</div>
+					  <%end %>
+					  <%end %>
+				</td>
+			 </tr>
+		<tr colspan="3">
+			<td>
+			   <button type="submit" id="ChangeBalanceButton" class="button">
+				  <img alt="Save" src="../Images/tick.png"> Пополнить баланс
+				</button>
+			</td>
+				</form>
+			<%if PartnerAccessSet.AccesPartner("SSI"): %>
+			<td style="font-size:small;">
+			<form class="form login" method="post" action="${siteroot}/UserInfo/PassAndShowCard">
+				<input type="hidden" name="ClientID" value="${ClientCode}" />
+				   <button type="submit" id="Button1" class="button">
+				  <img alt="Save" src="../Images/tick.png">Изменить пароль и показать карту</button>
+				</form>
+			</td>
+			<%end %>
+		</tr>
+		</tbody>
+	</table>
+
+</div>
+<div>
+
+</div>
+</div>
+<%end %>

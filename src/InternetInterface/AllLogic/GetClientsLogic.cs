@@ -13,11 +13,11 @@ namespace InternetInterface.AllLogic
 {
 	public class GetClientsLogic
 	{
-		public static IList<PhysicalClients> GetClients(UserSearchProperties searchProperties,
-			ConnectedTypeProperties connectedType, uint tariff, uint whoregister, string searchText, uint brigad)
+		public static IList<Clients> GetClients(UserSearchProperties searchProperties,
+			ConnectedTypeProperties connectedType, ClientTypeProperties clientType, uint tariff, uint whoregister, string searchText, uint brigad)
 		{
-			IList<PhysicalClients> result = new List<PhysicalClients>();
-			ARSesssionHelper<PhysicalClients>.QueryWithSession(session =>
+			IList<Clients> result = new List<Clients>();
+			ARSesssionHelper<Clients>.QueryWithSession(session =>
 			{
 				searchProperties.SearchText = searchText;
 				var sqlStr = string.Empty;
@@ -25,9 +25,13 @@ namespace InternetInterface.AllLogic
 				if (CategorieAccessSet.AccesPartner("SSI"))
 				if (!searchProperties.IsSearchAccount())
 				{
-					sqlStr = String.Format(@"SELECT * FROM internet.PhysicalClients P join internet.Status S on s.id = p.Status {0} ORDER BY P.Surname",
-										   GetWhere(searchProperties, connectedType, whoregister, tariff, searchText, brigad));
-					query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(PhysicalClients));
+					sqlStr = String.Format(@"SELECT * FROM internet.Clients c
+left join internet.PhysicalClients p on p.id = c.PhysicalClient
+left join internet.LawyerPerson l on l.id = c.LawyerPerson
+join internet.Status S on s.id = p.Status or s.id = l.status
+{0} ORDER BY C.Name",
+					GetWhere(searchProperties, connectedType, clientType, whoregister, tariff, searchText, brigad));
+					query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Clients));
 					if (whoregister != 0)
 						query.SetParameter("whoregister", whoregister);
 					if (tariff != 0)
@@ -43,38 +47,45 @@ namespace InternetInterface.AllLogic
 				}
 				else
 				{
-					sqlStr = @"SELECT * FROM internet.PhysicalClients P join internet.Status S on s.id = p.Status where P.id = :SearchText ORDER BY P.Surname";
-					query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(PhysicalClients));
+					sqlStr = @"SELECT * FROM internet.Clients c
+left join internet.PhysicalClients p on p.id = c.PhysicalClient
+left join internet.LawyerPerson l on l.id = c.LawyerPerson
+join internet.Status S on s.id = p.Status or s.id = l.status
+where C.id = :SearchText ORDER BY C.name";
+					query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Clients));
 					if (searchText != null)
 						query.SetParameter("SearchText", searchText.ToLower());
 				}
 				else
 				{
 					if (searchText != null)
-						sqlStr = string.Format(@"SELECT * FROM internet.PhysicalClients P join internet.Status S on s.id = p.Status
-WHERE LOWER(P.Name) like {0} or LOWER(P.Surname) like {0} or LOWER(P.Patronymic) like {0} or LOWER(P.Id) like {0}
-ORDER BY P.Surname", ":SearchText");
+						sqlStr = string.Format(@"SELECT * FROM internet.Clients c
+left join internet.PhysicalClients p on p.id = c.PhysicalClient
+left join internet.LawyerPerson l on l.id = c.LawyerPerson
+join internet.Status S on s.id = p.Status or s.id = l.status
+WHERE LOWER(C.Name) like {0} or LOWER(C.Id) like {0}
+ORDER BY C.Name", ":SearchText");
 					else
 					{
-						sqlStr = @"SELECT * FROM internet.PhysicalClients P ORDER BY P.Surname";
+						sqlStr = @"SELECT * FROM internet.Clients P ORDER BY C.name";
 					}
-					query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(PhysicalClients));
+					query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Clients));
 					if (searchText != null)
 						query.SetParameter("SearchText", "%" + searchText.ToLower() + "%");
 				}
-				result = query.List<PhysicalClients>();
+				result = query.List<Clients>();
 				return result;
 			});
 			return result;
 		}
 
 
-		public static string GetWhere(UserSearchProperties sp, ConnectedTypeProperties ct, uint whoregister, uint tariff, string searchText, uint brigad)
+		public static string GetWhere(UserSearchProperties sp, ConnectedTypeProperties ct, ClientTypeProperties clT, uint whoregister, uint tariff, string searchText, uint brigad)
 		{
 			var _return = string.Empty;
 			if (whoregister != 0)
 			{
-				_return += " and P.WhoRegistered = :whoregister";
+				_return += " and P.WhoRegistered = :whoregister or l.WhoRegistered = :whoregister";
 			}
 
 			if (tariff != 0)
@@ -83,11 +94,19 @@ ORDER BY P.Surname", ":SearchText");
 			}
 			if (brigad != 0)
 			{
-				_return += " and P.WhoConnected = :Brigad";
+				_return += " and P.WhoConnected = :Brigad or l.WhoConnected = :Brigad";
 			}
 			if ((ct.IsConnected()) || (ct.IsNoConnected()))
 			{
 				_return += " and S.Connected = :Connected";
+			}
+			if (clT.IsPhysical())
+			{
+				_return += " and C.PhysicalClient is not null";
+			}
+			if (clT.IsLawyer())
+			{
+				_return += " and C.LawyerPerson is not null";
 			}
 			if (searchText != null)
 			{
@@ -96,28 +115,14 @@ ORDER BY P.Surname", ":SearchText");
 					return
 						String.Format(
 							@"
-WHERE LOWER(P.Name) like {0} or LOWER(P.Surname) like {0}
-or LOWER(P.Patronymic) like {0} or LOWER(P.City) like {0} 
-or LOWER(P.PassportSeries) like {0}
-or LOWER(P.PassportNumber) like {0} or LOWER(P.WhoGivePassport) like {0}
-or LOWER(P.RegistrationAdress) like {0}",
+WHERE LOWER(C.Name) like {0} or C.id = :SearchText",
 							":SearchText") + _return;
 				}
 				if (sp.IsSearchByFio())
 				{
 					return
 						String.Format(@"
-WHERE LOWER(P.Name) like {0} or LOWER(P.Surname) like {0}
-or LOWER(P.Patronymic) like {0}", ":SearchText") + _return;
-				}
-				if (sp.IsSearchByPassportSet())
-				{
-					return
-						String.Format(
-							@"
-WHERE LOWER(P.PassportSeries) like {0}
-or LOWER(P.PassportNumber) like {0} or LOWER(P.WhoGivePassport) like {0}
-or LOWER(P.RegistrationAdress) like {0}", ":SearchText") + _return;
+WHERE LOWER(C.Name) like {0} ", ":SearchText") + _return;
 				}
 			}
 			else

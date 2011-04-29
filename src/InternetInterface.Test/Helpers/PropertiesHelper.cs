@@ -39,4 +39,15 @@ namespace InternetInterface.Test.Helpers
 			};
 		}
 	}
+
+	class ClientTypeHelper : ClientTypeProperties
+	{
+		public static ClientTypeProperties CreateUserSearchProperties()
+		{
+			return new ClientTypeProperties
+			{
+				Type = ForSearchClientType.AllClients
+			};
+		}
+	}
 }

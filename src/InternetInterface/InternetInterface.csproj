@@ -134,16 +134,23 @@
     <None Include="Views\Payers\ShowAgent.brail" />
     <None Include="Views\Register\RegisterLegalPerson.brail" />
     <None Include="Views\Rescue\404.brail" />
+    <None Include="Views\Subview\AppealsInfo.brail" />
+    <None Include="Views\Subview\ChangeBalanceInfo.brail" />
     <None Include="Views\Subview\Client.brail" />
+    <None Include="Views\Subview\ConnectMenu.brail" />
     <None Include="Views\Subview\CreateEditLabel.brail" />
     <None Include="Views\Subview\LegalPerson.brail" />
+    <None Include="Views\Subview\PaymentInfo.brail" />
+    <None Include="Views\Subview\WriteOffInfo.brail" />
     <None Include="Views\Switches\MakeSwitch.brail" />
     <None Include="Views\Switches\OnLineClient.brail" />
     <None Include="Views\Switches\ShowSwitches.brail" />
     <None Include="Views\UserInfo\ClientRegisteredInfoFromDiller.brail" />
+    <None Include="Views\UserInfo\LawyerPersonInfo.brail" />
     <None Include="Views\UserInfo\PartnersPreview.brail" />
     <None Include="Views\UserInfo\ClientRegisteredInfo.brail" />
     <None Include="Views\Subview\DeleteLabel.brail" />
+    <None Include="Views\Subview\ConnectInfo.brail" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -158,6 +165,7 @@
   <ItemGroup>
     <Compile Include="AllLogic\ColorWork.cs" />
     <Compile Include="AllLogic\GetClientsLogic.cs" />
+    <Compile Include="AllLogic\Validation.cs" />
     <Compile Include="Components\SelectList.cs" />
     <Compile Include="Controllers\BrigadsController.cs" />
     <Compile Include="Controllers\ExitPartner.cs" />

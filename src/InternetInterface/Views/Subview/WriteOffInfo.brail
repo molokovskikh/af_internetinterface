@@ -1,0 +1,24 @@
+﻿<div style="clear:both;">
+<input type="button" value="Показать списания по клиенту" onclick="$('#WriteOffTable').slideToggle('slow');"> 
+
+<div id="WriteOffTable" style="display:none">
+<table class="table"  style="width: 100%; font-size: small;" align="left">
+	<thead>
+		<tr valign="top">
+			<th>Дата списания</th>
+			<th>Сумма</th>
+		</tr>
+	</thead>
+		<tbody id="Tbody1" class="HighLightCurrentRow">
+	<% for i,item in enumerate(WriteOffs): %>
+	<%if item.WriteOffSum != 0 : %>
+		<tr id="Tr1">
+			<td>${item.WriteOffDate}</td>
+			<td>${item.WriteOffSum}</td>
+		</tr>
+		<%end %>
+	<% end %>
+	</tbody>
+	</table>
+</div>
+</div>
