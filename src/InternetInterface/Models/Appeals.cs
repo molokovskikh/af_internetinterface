@@ -23,8 +23,8 @@ namespace InternetInterface.Models
 		[BelongsTo("Partner")]
 		public virtual Partner Partner { get; set; }
 
-		[BelongsTo("PhysicalClient")]
-		public virtual PhysicalClients PhysicalClient { get; set; }
+		[BelongsTo("Client")]
+		public virtual Clients Client { get; set; }
 
 		public virtual string GetTransformedAppeal()
 		{

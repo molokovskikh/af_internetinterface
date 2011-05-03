@@ -23,7 +23,7 @@ namespace InternetInterface.Controllers
 		public void RegisterClient([DataBind("ChangedBy")]ChangeBalaceProperties changeProperties,
 			[DataBind("client")]PhysicalClients phisClient, string balanceText, uint tariff, uint status, uint BrigadForConnect//,
 			/*[DataBind("ConnectSumm")]PaymentForConnect connectSumm*/
-			 , [DataBind("ConnectInfo")]PhisicalClientConnectInfo ConnectInfo, bool VisibleRegisteredInfo,
+			 , [DataBind("ConnectInfo")]ConnectInfo ConnectInfo, bool VisibleRegisteredInfo,
 			uint requestID)
 		{
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
@@ -48,14 +48,14 @@ namespace InternetInterface.Controllers
 			{
 				ConnectInfo.Port = null;
 			}
-			var unPort = false;
+			var portException = Validation.ValidationConnectInfo(ConnectInfo);
+			/*var unPort = false;
 			var validPortSwitch = true;
 			try
 			{
 				var Switch = NetworkSwitches.FindAll(DetachedCriteria.For(typeof(NetworkSwitches)).Add(Expression.Eq("Id", Convert.ToUInt32(ConnectInfo.Switch))));
 				if ((Switch.Length != 0) && (ConnectInfo.Port != null))
-				unPort = Point.isUnique(Switch.First(),
-			                            Convert.ToInt32(ConnectInfo.Port));
+				unPort = Point.isUnique(Switch.First(), Convert.ToInt32(ConnectInfo.Port));
 				else
 				{
 					validPortSwitch = false;
@@ -77,18 +77,24 @@ namespace InternetInterface.Controllers
 			{
 				PropertyBag["PortError"] = "Ошибка ввода номера порта";
 				validPortSwitch = false;
-			}
+			}*/
 			//var registerClient = PhisicalClients.RegistrLogicClient(phisClient, tariff, status, Validator, InithializeContent.partner, connectSumm);
 			var registerClient = Validator.IsValid(phisClient)/* && Validator.IsValid(connectSumm)*/;
 			/*if (registerClient && validPortSwitch) &&
 				((!string.IsNullOrEmpty(ConnectInfo.Port) &&
 					 (unPort))
 					|| string.IsNullOrEmpty(ConnectInfo.Port)))*/
-			if ((registerClient && validPortSwitch && unPort) || (registerClient && string.IsNullOrEmpty(ConnectInfo.Port)))
+			if ((registerClient && String.IsNullOrEmpty(portException)) || (registerClient && string.IsNullOrEmpty(ConnectInfo.Port)))
 			{
-				PhysicalClients.RegistrLogicClient(phisClient, tariff, status, Validator, InithializeContent.partner/*, connectSumm*/);
+				PhysicalClients.RegistrLogicClient(phisClient, tariff, Validator);
 				var client = new Clients
 				{
+					AutoUnblocked = true,
+					RegDate = DateTime.Now,
+					WhoRegistered = InithializeContent.partner,
+					WhoRegisteredName = InithializeContent.partner.Name,
+					Status = Status.Find((uint)StatusType.BlockedAndNoConnected),
+
 					Name = string.Format("{0} {1} {2}", phisClient.Surname, phisClient.Name, phisClient.Patronymic),
 					PhysicalClient = phisClient,
 					Type = ClientType.Phisical,
@@ -101,7 +107,7 @@ namespace InternetInterface.Controllers
 				              	{
 									Agent = Agent.FindAllByProperty("Partner", InithializeContent.partner).First(),
 									BillingAccount = true,
-									Client = phisClient,
+									Client = client,
 									PaidOn = DateTime.Now,
 									RecievedOn = DateTime.Now,
 									Sum = phisClient.Balance
@@ -120,13 +126,13 @@ namespace InternetInterface.Controllers
 					if (BrigadForConnect != 0)
 					{
 						var brigad = Brigad.Find(BrigadForConnect);
-						phisClient.WhoConnected = brigad;
-						phisClient.WhoConnectedName = brigad.Name;
+						client.WhoConnected = brigad;
+						client.WhoConnectedName = brigad.Name;
 					}
 					//phisClient.Connected = true;
-					phisClient.ConnectedDate = DateTime.Now;
-					phisClient.Status = Status.Find((uint)StatusType.BlockedAndConnected);
-					phisClient.UpdateAndFlush();
+					client.ConnectedDate = DateTime.Now;
+					client.Status = Status.Find((uint)StatusType.BlockedAndConnected);
+					client.UpdateAndFlush();
 				}
 				Flash["Password"] = Password;
 				Flash["Client"] = phisClient;
@@ -140,7 +146,7 @@ namespace InternetInterface.Controllers
 					RedirectToUrl("..//UserInfo/ClientRegisteredInfo.rails");
 					else
 					{
-						RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + phisClient.Id);
+						RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + client.Id);
 					}
 				if (InithializeContent.partner.Categorie.ReductionName == "Diller")
 					RedirectToUrl("..//UserInfo/ClientRegisteredInfoFromDiller.rails");
@@ -152,8 +158,9 @@ namespace InternetInterface.Controllers
 				//connectSumm.ManagerID = InithializeContent.partner;
 				//PropertyBag["ConnectSumm"] = connectSumm;
 				PropertyBag["Applying"] = "false";
-				if (!unPort && validPortSwitch)
-					PropertyBag["PortError"] = @"Такая пара порт\свич уже существует";
+				/*if (!unPort && validPortSwitch)
+					PropertyBag["PortError"] = @"Такая пара порт\свич уже существует";*/
+				PropertyBag["PortError"] = portException;
 				PropertyBag["ChStatus"] = status;
 				PropertyBag["ChTariff"] = tariff;
 				PropertyBag["ChBrigad"] = BrigadForConnect;
@@ -184,14 +191,19 @@ namespace InternetInterface.Controllers
 			var connectErrors = Validation.ValidationConnectInfo(info);
 			if (Validator.IsValid(person) && string.IsNullOrEmpty(connectErrors))
 			{
-				person.WhoRegistered = InithializeContent.partner;
+				/*person.WhoRegistered = InithializeContent.partner;
 				person.WhoRegisteredName = InithializeContent.partner.Name;
 				person.RegDate = DateTime.Now;
+				person.Status = Status.Find((uint) StatusType.BlockedAndNoConnected);*/
 				person.Speed = PackageSpeed.Find(speed);
-				person.Status = Status.Find((uint) StatusType.BlockedAndNoConnected);
 				person.SaveAndFlush();
 				var client = new Clients
 				             	{
+									WhoRegistered = InithializeContent.partner,
+									WhoRegisteredName = InithializeContent.partner.Name,
+									RegDate = DateTime.Now,
+									Status = Status.Find((uint) StatusType.BlockedAndNoConnected),
+
 				             		LawyerPerson = person,
 									Name = person.ShortName,
 									Type = ClientType.Legal,
@@ -208,10 +220,10 @@ namespace InternetInterface.Controllers
 							
 						}.SaveAndFlush();
 					var brigad =  Brigad.Find(brigadForConnect);
-					person.WhoConnected = brigad;
-					person.WhoConnectedName = brigad.Name;
-					person.Status = Status.Find((uint) StatusType.Worked);
-					person.UpdateAndFlush();
+					client.WhoConnected = brigad;
+					client.WhoConnectedName = brigad.Name;
+					client.Status = Status.Find((uint)StatusType.Worked);
+					client.UpdateAndFlush();
 
 				}
 				/*PropertyBag["Editing"] = false;
@@ -284,7 +296,7 @@ namespace InternetInterface.Controllers
 				Apartment = request.Apartment,
 				Entrance = request.Entrance,
 				Email = request.ApplicantEmail,
-				RegDate = DateTime.Now
+				//RegDate = DateTime.Now
 			};
 			if (request.ApplicantPhoneNumber.Length == 10)
 				newPhisClient.PhoneNumber = UsersParsers.MobileTelephoneParcer(request.ApplicantPhoneNumber);

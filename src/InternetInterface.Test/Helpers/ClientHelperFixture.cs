@@ -24,8 +24,8 @@ namespace InternetInterface.Test.Helpers
 			       		//Connected = false,
 			       		Entrance = "1",
 			       		Floor = "1",
-			       		WhoConnected = null,
-			       		WhoRegistered = Partner.Find((uint)1),
+			       		/*WhoConnected = null,
+			       		WhoRegistered = Partner.Find((uint)1),*/
 			       		HomePhoneNumber = "1111-22222",
 			       		House = "1",
 			       		//Login = "Login" + new Random().Next(100),
@@ -36,7 +36,7 @@ namespace InternetInterface.Test.Helpers
 						Password = CryptoPass.GetHashString(CryptoPass.GeneratePassword()),
 						Patronymic = "testOtch",
 						PhoneNumber = "8-111-222-33-44",
-						RegDate = DateTime.Now,
+						//RegDate = DateTime.Now,
 						RegistrationAdress = "vrnReg",
 						Street = "testStreet",
 						Surname = "testSurn",
@@ -49,7 +49,7 @@ namespace InternetInterface.Test.Helpers
 			{
 				var pay = new Payment
 				          	{
-				          		Client = client,
+								Client = Clients.Queryable.First(c => c.PhysicalClient == client),
 				          		//Agent = InithializeContent.partner,
 				          		PaidOn = DateTime.Now,
 								RecievedOn = DateTime.Now,

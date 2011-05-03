@@ -44,8 +44,8 @@
 		</tr>
 		<tr>
 		  <td><span class="description">Бригада </span></td>
-		  <%if Client.WhoConnected != null : %>
-		  <td>${Client.WhoConnected.Name}</td>
+		  <%if _client.WhoConnected != null : %>
+		  <td>${_client.WhoConnected.Name}</td>
 		  <%else: %>
 		  <td></td>
 		  <%end %>
@@ -98,7 +98,7 @@
 		</tr>
 		<tr>
 		 <td>Бригада по подключению</td>
-		 <%if Client.WhoConnected == null: %>
+		 <%if _client.WhoConnected == null: %>
 		  <td><select name="BrigadForConnect" id="BrigadForConnect" style="width: 100%" >
 		  <% for j, Brigad in enumerate(Brigads): %>
 									<option id="OptionBrigad${j}" value="${Brigad.Id}" ${"selected" if (Brigad.Id == ChBrigad)} > ${Brigad.Name} </option>
@@ -107,7 +107,7 @@
 		  </td>
 		 <%else: %>
 		 <td>
-			 ${Client.WhoConnected.Name}
+			 ${_client.WhoConnected.Name}
 		 </td>
 		 <%end %>
 		 </tr>

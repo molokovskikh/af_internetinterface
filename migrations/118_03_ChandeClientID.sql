@@ -81,4 +81,48 @@ ALTER TABLE `internet`.`Clients` ADD CONSTRAINT `Law` FOREIGN KEY `Law` (`Lawyer
     ON DELETE SET NULL
     ON UPDATE CASCADE;
 
+	
+	ALTER TABLE `internet`.`Appeals` CHANGE COLUMN `PhysicalClient` `Client` INT(10) UNSIGNED DEFAULT NULL,
+ DROP INDEX `PhysicalClient`,
+ ADD INDEX `PhysicalClient` USING BTREE(`Client`),
+ DROP FOREIGN KEY `PhysicalClient`,
+ ADD CONSTRAINT `Clients` FOREIGN KEY `Clients` (`Client`)
+    REFERENCES `Clients` (`Id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE;
 
+
+	
+ALTER TABLE `internet`.`Clients` ADD COLUMN `RegDate` DATETIME AFTER `LawyerPerson`,
+ ADD COLUMN `WhoRegistered` INT(10) UNSIGNED AFTER `RegDate`,
+ ADD COLUMN `WhoRegisteredName` VARCHAR(45) AFTER `WhoRegistered`,
+ ADD COLUMN `WhoConnected` INT(10) UNSIGNED AFTER `WhoRegisteredName`,
+ ADD COLUMN `WhoConnectedName` VARCHAR(45) AFTER `WhoConnected`,
+ ADD COLUMN `ConnectedDate` DATETIME AFTER `WhoConnectedName`,
+ ADD COLUMN `AutoUnblocked` TINYINT(1) UNSIGNED NOT NULL AFTER `ConnectedDate`,
+ ADD COLUMN `Status` INT(10) UNSIGNED AFTER `AutoUnblocked`,
+ ADD CONSTRAINT `Part` FOREIGN KEY `Part` (`WhoRegistered`)
+    REFERENCES `Partners` (`Id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE,
+ ADD CONSTRAINT `Connect` FOREIGN KEY `Connect` (`WhoConnected`)
+    REFERENCES `ConnectBrigads` (`Id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE,
+ ADD CONSTRAINT `Status` FOREIGN KEY `Status` (`Status`)
+    REFERENCES `Status` (`Id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE;
+
+update internet.Clients C
+left join internet.PhysicalClients pc on c.PhysicalClient = pc.id
+left join internet.LawyerPerson lp on c.LawyerPerson = lp.id
+set
+c.RegDate = if (c.physicalClient is not null , pc.RegDate, lp.RegDate),
+c.WhoRegistered = if (c.physicalClient is not null , pc.WhoRegistered, lp.WhoRegistered),
+c.WhoRegisteredName = if (c.physicalClient is not null , pc.WhoRegisteredName, lp.WhoRegisteredName),
+c.WhoConnected = if (c.physicalClient is not null , pc.WhoConnected, lp.WhoConnected),
+c.WhoConnectedName = if (c.physicalClient is not null , pc.WhoConnectedName, lp.WhoConnectedName),
+c.ConnectedDate = pc.ConnectedDate,
+c.AutoUnblocked = true,
+c.Status = if (c.physicalClient is not null , pc.Status, lp.Status);

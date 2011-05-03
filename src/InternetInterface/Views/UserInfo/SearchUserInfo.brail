@@ -33,7 +33,7 @@
 	<tbody>
 	</form>
 		<tr>
-			<td><span class="description">Номер лицевого счета: </span> ${Client.Id.ToString("00000")}</td>
+			<td><span class="description">Номер лицевого счета: </span> ${_client.Id.ToString("00000")}</td>
 		</tr>
 	<%if PartnerAccessSet.AccesPartner("SSI"): %>
 		<tr>
@@ -60,13 +60,13 @@
 		<%end %>
 		<%if PartnerAccessSet.AccesPartner("SSI"): %>
 		<tr>
-			<td><span class="description">Дата регистрации:</span> ${Client.RegDate}</td>
+			<td><span class="description">Дата регистрации:</span> ${_client.RegDate}</td>
 		</tr>
 				
 		
-		<%if Client.WhoRegistered != null: %>
+		<%if _client.WhoRegistered != null: %>
 			<tr>
-				<td><span class="description">Зарегистрировал:</span> ${Client.WhoRegistered.Name}</td>
+				<td><span class="description">Зарегистрировал:</span> ${_client.WhoRegistered.Name}</td>
 			</tr>
 		<%end %>
 		<%end %>
@@ -81,9 +81,9 @@
 			<td><span class="description">Баланс:</span> ${Client.Balance}</td>
 		</tr>
 				<tr>
-		<%if Client.Status != null: %>
+		<%if _client.Status != null: %>
 			<tr>
-				<td><span class="description">Статус клиента:</span> ${Client.Status.Name}</td>
+				<td><span class="description">Статус клиента:</span> ${_client.Status.Name}</td>
 			</tr>
 		<%end %>
 		</tr>

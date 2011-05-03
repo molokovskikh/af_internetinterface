@@ -70,7 +70,7 @@ namespace Billing.Test.Unit
 
 			billing.On();
 			var unblockedClient = Clients.FindAllByProperty("Name", "testblockedClient").First();
-			Assert.That(unblockedClient.PhysicalClient.Status.Blocked , Is.EqualTo(false));
+			Assert.That(unblockedClient.Status.Blocked , Is.EqualTo(false));
 			Assert.That(unblockedClient.PhysicalClient.Balance, Is.EqualTo(1300));
 		}
 

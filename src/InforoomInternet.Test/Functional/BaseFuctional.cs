@@ -184,7 +184,7 @@ namespace InforoomInternet.Test.Unit
 			client.SaveAndFlush();
 			new Payment
 				{
-					Client = phisClient,
+					Client = Clients.Queryable.First(c => c.PhysicalClient == phisClient),
 					Agent = Agent.FindFirst(),
 					Sum = 500
 				}.SaveAndFlush();

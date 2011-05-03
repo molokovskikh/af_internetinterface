@@ -111,11 +111,23 @@ namespace Billing
 				           		                                  	.Add(Restrictions.Eq("BillingAccount", false)));
 								foreach (var newPayment in newPayments)
 								{
-									var updateClient = PhysicalClients.Find(newPayment.Client.Id);
-									updateClient.Balance += Convert.ToDecimal(newPayment.Sum);
-									updateClient.UpdateAndFlush();
-									newPayment.BillingAccount = true;
-									newPayment.UpdateAndFlush();
+									var updateClient = Clients.Find(newPayment.Client.Id);
+									var physicalClient = updateClient.PhysicalClient;
+									var lawyerClient = updateClient.LawyerPerson;
+									if (physicalClient != null)
+									{
+										physicalClient.Balance += Convert.ToDecimal(newPayment.Sum);
+										physicalClient.UpdateAndFlush();
+										newPayment.BillingAccount = true;
+										newPayment.UpdateAndFlush();
+									}
+									if (lawyerClient != null)
+									{
+										lawyerClient.Balance += Convert.ToDecimal(newPayment.Sum);
+										lawyerClient.UpdateAndFlush();
+										newPayment.BillingAccount = true;
+										newPayment.UpdateAndFlush();
+									}
 								}
 				           		var clients = Clients.FindAll(DetachedCriteria.For(typeof (Clients))
 									.CreateAlias("PhysicalClient", "PC", JoinType.InnerJoin)
@@ -125,14 +137,14 @@ namespace Billing
 																.Add(Restrictions.Ge("PC.Balance" , 0m)));
 								foreach (var client in clients)
 								{
-									var phisicalClient = client.PhysicalClient;
-									phisicalClient.Status = Status.Find((uint) StatusType.Worked);
+									//var phisicalClient = client.PhysicalClient;
+									client.Status = Status.Find((uint)StatusType.Worked);
 									//client.FirstLease = true;
 									client.RatedPeriodDate = null;
 									client.ShowBalanceWarningPage = false;
 									client.Disabled = false;
 									client.UpdateAndFlush();
-									phisicalClient.UpdateAndFlush();
+									//phisicalClient.UpdateAndFlush();
 								}
 								var lawyerPerson = LawyerPerson.FindAll();
 				           		foreach (var person in lawyerPerson)
@@ -234,8 +246,8 @@ namespace Billing
 				    (!client.Disabled))
 				{
 					client.Disabled = true;
-					phisicalClient.Status = Status.Find((uint) StatusType.NoWorked);
-					phisicalClient.UpdateAndFlush();
+					client.Status = Status.Find((uint) StatusType.NoWorked);
+					//phisicalClient.UpdateAndFlush();
 					client.UpdateAndFlush();
 				}
 			}
@@ -249,6 +261,12 @@ namespace Billing
 					decimal spis = person.Tariff / DateTime.DaysInMonth(thisDate.Year, thisDate.Month);
 					person.Balance -= spis;
 					person.UpdateAndFlush();
+					new WriteOff
+						{
+							Client = client,
+							WriteOffDate = SystemTime.Now(),
+							WriteOffSum = spis
+						}.SaveAndFlush();
 				}
 			}
 			var thisDateMax = InternetSettings.FindFirst();

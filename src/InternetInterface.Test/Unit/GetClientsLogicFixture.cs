@@ -19,7 +19,7 @@ namespace InternetInterface.Test.Unit
 			{
 				if (_result.Count != 0)
 				{
-					if (!_result.First().PhysicalClient.Status.Connected)
+					if (!_result.First().Status.Connected)
 						return true;
 					if (result.Method.Name == "<GetClientsTest>b__0")
 						return true;

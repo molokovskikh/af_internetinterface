@@ -72,11 +72,11 @@ namespace Billing.Test.Unit
 			return  new PhysicalClients
 			       	{
 			       		Name = "TestPhisicalClient",
-						AutoUnblocked = true,
+						//AutoUnblocked = true,
 						Balance = balance,
 						//Connected = true,
 						Tariff = tariff,
-						Status = Status.Find((uint)StatusType.Worked)
+						//Status = Status.Find((uint)StatusType.Worked)
 			       	};
 		}
 
@@ -104,7 +104,7 @@ namespace Billing.Test.Unit
 			new Payment
 				{
 					BillingAccount = false,
-					Client = Clients.Queryable.Where(c => c.Name== "testblockedClient").Count() != 0 ? Clients.Queryable.Where(c => c.Name== "testblockedClient").First().PhysicalClient : PhysicalClients.FindFirst(),
+					Client = Clients.Queryable.Where(c => c.Name== "testblockedClient").Count() != 0 ? Clients.Queryable.Where(c => c.Name== "testblockedClient").First() : Clients.FindFirst(),
 					PaidOn = DateTime.Now,
 					RecievedOn = DateTime.Now,
 					Sum = sum

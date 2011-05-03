@@ -36,7 +36,7 @@ namespace NHibernateFixtute.RegisterTest
 				//AdressConnect = "",
 				//Balance = 0,
 				City = "",
-				WhoRegistered = new Partner
+				/*WhoRegistered = new Partner
 				{
 					Adress = "TestAdr",
 					Email = "TestEmail",
@@ -44,14 +44,14 @@ namespace NHibernateFixtute.RegisterTest
 					Name = "TestName",
 					//Pass = "TestPass",
 					TelNum = "TestTel"
-				},
+				},*/
 				//Login = "",
 				Name = "dfg",
 				PassportNumber = "",
 				PassportSeries = "ASDAD",
 				Password = "qw",
 				RegistrationAdress = "",
-				RegDate = DateTime.Now,
+				//RegDate = DateTime.Now,
 				WhoGivePassport = "",
 				Tariff = new Tariff
 				         	{

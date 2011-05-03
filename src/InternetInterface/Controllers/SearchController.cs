@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Castle.ActiveRecord;
 using Castle.MonoRail.Framework;
 using InternetInterface.AllLogic;
@@ -90,11 +91,18 @@ namespace InternetInterface.Controllers
 
 		public void Redirect(uint ClientCode)
 		{
-			var client = Clients.Find(ClientCode);
-			if (client.PhysicalClient != null)
-				RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientCode);
+			var builder = string.Empty;
+			foreach (string name in Request.QueryString)
+				builder += String.Format("{0}={1}&", name, Request.QueryString[name]);
+			builder = builder.Substring(0, builder.Length - 1);
+			if (Clients.Find(ClientCode).GetClientType() == ClientType.Phisical)
+			{
+				RedirectToUrl(string.Format("../UserInfo/SearchUserInfo.rails?{0}" , builder));
+			}
 			else
-				RedirectToUrl("../UserInfo/LawyerPersonInfo.rails?ClientCode=" + ClientCode);
+			{
+				RedirectToUrl(string.Format("../UserInfo/LawyerPersonInfo.rails?{0}", builder));
+			}
 			CancelView();
 		}
 	}

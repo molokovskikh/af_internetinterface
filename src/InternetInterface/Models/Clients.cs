@@ -35,20 +35,11 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual DateTime? RatedPeriodDate { get; set; }
 
-		/*[Property]
-		public virtual DateTime PreRatedPeriodDate { get; set; }*/
-
 		[Property]
 		public virtual int DebtDays { get; set; }
 
-		/*[Property]
-		public virtual bool FirstLease { get; set; }*/
-
 		[Property]
 		public virtual bool ShowBalanceWarningPage { get; set; }
-
-		/*[Property]
-		public virtual bool SayDhcpIsNewClient  { get; set; }*/
 
 		[Property]
 		public virtual DateTime? BeginWork { get; set; }
@@ -56,9 +47,46 @@ namespace InternetInterface.Models
 		[BelongsTo]
 		public virtual LawyerPerson LawyerPerson { get; set; }
 
-		/*[Property]
-		public virtual bool SayBillingIsNewClient  { get; set; }*/
 
+
+[Property]
+public virtual DateTime RegDate { get; set; }
+
+[BelongsTo("WhoRegistered")]
+public virtual Partner WhoRegistered { get; set; }
+
+[Property]
+public virtual string WhoRegisteredName { get; set; }
+
+[BelongsTo("WhoConnected")]
+public virtual Brigad WhoConnected { get; set; }
+
+[Property]
+public virtual string WhoConnectedName { get; set; }
+
+[Property]
+public virtual DateTime ConnectedDate { get; set; }
+
+[Property]
+public virtual bool AutoUnblocked { get; set; }
+
+[BelongsTo]
+public virtual Status Status { get; set; }
+
+
+
+
+		[HasMany(ColumnKey = "Client", OrderBy = "PaidOn")]
+		public virtual IList<Payment> Payments { get; set; }
+
+		public virtual ClientType GetClientType()
+		{
+			if (PhysicalClient != null)
+				return ClientType.Phisical;
+			if (LawyerPerson != null)
+				return ClientType.Legal;
+			return ClientType.Phisical;
+		}
 
 		public virtual decimal GetInterval()
 		{
@@ -68,8 +96,8 @@ namespace InternetInterface.Models
 
 		public virtual PhisicalClientConnectInfo GetConnectInfo()
 		{
-			if ((PhysicalClient!= null && PhysicalClient.Status != null && PhysicalClient.Status.Connected) ||
-				(LawyerPerson != null && LawyerPerson.Status != null && LawyerPerson.Status.Connected))
+			if ((PhysicalClient!= null && Status != null && Status.Connected) ||
+				(LawyerPerson != null && Status != null && Status.Connected))
 			{
 				//var client = Clients.FindAllByProperty("PhysicalClient", this);
 					IList<PhisicalClientConnectInfo> ConnectInfo = new List<PhisicalClientConnectInfo>();

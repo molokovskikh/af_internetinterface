@@ -29,7 +29,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["registrId"] = registrator;
 			//var payers = Payment.Queryable.Where(p => p.Client.Id == registrator).GroupBy(g => g.Client);
 			//PropertyBag["Payers"] = payers;
-			PropertyBag["Payers"] = PhysicalClients.Queryable.Where(p => p.WhoRegistered.Id == registrator);
+			PropertyBag["Payers"] = Clients.Queryable.Where(p => p.WhoRegistered.Id == registrator).Select(p => p.PhysicalClient);
 		}
 
 		public void ShowAgent(string startDate, string endDate, uint agent)

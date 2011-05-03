@@ -37,14 +37,15 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual int PackageId { get; set; }
+ 
 	}
 
 	public class Point
 	{
-		public static bool isUnique(NetworkSwitches _Switch, int _Port)
+		public static bool isUnique(uint _Switch, int _Port)
 		{
 			if (ClientEndpoints.FindAll(DetachedCriteria.For(typeof(ClientEndpoints))
-								.Add(Expression.Eq("Switch", _Switch))
+								.Add(Expression.Eq("Switch.Id", _Switch))
 								.Add(Expression.Eq("Port", _Port))).Length == 0)
 				return true;
 			return false;

@@ -14,6 +14,8 @@ namespace InternetInterface.Models
 		public string Port { get; set; }
 		public uint Switch { get; set; }
 		public uint Brigad { get; set; }
+		public string static_IP { get; set; }
+		public bool Monitoring { get; set; }
 	}
 
 	[ActiveRecord(Schema = "Internet", Table = "LawyerPerson", Lazy = true)]
@@ -55,7 +57,7 @@ namespace InternetInterface.Models
 		/*[BelongsTo]
 		public virtual Clients Client { get; set; }*/
 
-		[BelongsTo]
+		/*[BelongsTo]
 		public virtual Partner WhoRegistered { get; set; }
 
 		[Property]
@@ -71,6 +73,6 @@ namespace InternetInterface.Models
 		public virtual Status Status { get; set; }
 
 		[Property]
-		public virtual DateTime RegDate { get; set; }
+		public virtual DateTime RegDate { get; set; }*/
 	}
 }
