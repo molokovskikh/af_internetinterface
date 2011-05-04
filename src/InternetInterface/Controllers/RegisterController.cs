@@ -231,6 +231,7 @@ namespace InternetInterface.Controllers
 				PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(new LawyerPerson());*/
 				RegisterLegalPerson();
 				PropertyBag["EditiongMessage"] = "Клиент успешно загистрирвоан";
+				RedirectToUrl("../UserInfo/LawyerPersonInfo.rails?ClientCode=" + client.Id);
 			}
 			else
 			{

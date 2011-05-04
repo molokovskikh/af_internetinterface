@@ -50,9 +50,9 @@
             <%end %>
             <%if PartnerAccessSet.AccesPartner("SSI"): %>
             <%if item.PhysicalClient != null: %>
-            <td>${item.PhysicalClient.RegDate}</td>
+            <td>${item.RegDate}</td>
             <%else: %>
-            <td>${item.LawyerPerson.RegDate}</td>
+            <td>${item.RegDate}</td>
             <%end %>
             <%end %>
             <%if item.PhysicalClient != null:  %>
@@ -67,15 +67,15 @@
             <%if MapPartner.Categorie.ReductionName == "Office": %>
                 <%if item.PhysicalClient != null: %>
                     <td>${item.PhysicalClient.Balance}</td>
-                    <%if item.PhysicalClient.Status != null: %>
-                    <td>${item.PhysicalClient.Status.Name}</td>
+                    <%if item.Status != null: %>
+                    <td>${item.Status.Name}</td>
                     <%else: %>
                     <td>Статус не задан</td>
                     <%end %>
                 <%else: %>
                     <td>${item.LawyerPerson.Balance}</td>
-                    <%if item.LawyerPerson.Status != null: %>
-                    <td>${item.LawyerPerson.Status.Name}</td>
+                    <%if item.Status != null: %>
+                    <td>${item.Status.Name}</td>
                     <%else: %>
                     <td>Статус не задан</td>
                     <%end %>

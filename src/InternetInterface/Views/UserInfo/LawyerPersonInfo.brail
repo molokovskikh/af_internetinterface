@@ -82,7 +82,7 @@
 	</tbody>
 </table>
 	<%else:%>
-	<form class="form edit" method="post" action="${siteroot}/UserInfo/EditInformation">
+	<form class="form edit" method="post" action="${siteroot}/UserInfo/EditLawyerPerson">
 	<input type="hidden" name="ClientID" value="${ClientCode}" />
 	<table class="table" style="width:100%; " border="0" id="EditTable"> 
    <% OutputSubView("""\Subview\LegalPerson""") %>

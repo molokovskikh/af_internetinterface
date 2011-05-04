@@ -1,4 +1,10 @@
-﻿update internet.Clients c set
+﻿ALTER TABLE `internet`.`Payments` ADD CONSTRAINT `FK_Payments_2` FOREIGN KEY `FK_Payments_2` (`Client`)
+    REFERENCES `Clients` (`Id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE;
+
+
+update internet.Clients c set
 c.id = c.id + 500;
 
 update internet.Clients c set
@@ -126,3 +132,13 @@ c.WhoConnectedName = if (c.physicalClient is not null , pc.WhoConnectedName, lp.
 c.ConnectedDate = pc.ConnectedDate,
 c.AutoUnblocked = true,
 c.Status = if (c.physicalClient is not null , pc.Status, lp.Status);
+
+
+ALTER TABLE `internet`.`Appeals`
+ DROP FOREIGN KEY `Clients`;
+
+ALTER TABLE `internet`.`Appeals` ADD CONSTRAINT `Clients` FOREIGN KEY `Clients` (`Client`)
+    REFERENCES `Clients` (`Id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE;
+

@@ -28,7 +28,7 @@ namespace InternetInterface.AllLogic
 					sqlStr = String.Format(@"SELECT * FROM internet.Clients c
 left join internet.PhysicalClients p on p.id = c.PhysicalClient
 left join internet.LawyerPerson l on l.id = c.LawyerPerson
-join internet.Status S on s.id = p.Status or s.id = l.status
+join internet.Status S on s.id = c.Status
 {0} ORDER BY C.Name",
 					GetWhere(searchProperties, connectedType, clientType, whoregister, tariff, searchText, brigad));
 					query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Clients));
@@ -50,7 +50,7 @@ join internet.Status S on s.id = p.Status or s.id = l.status
 					sqlStr = @"SELECT * FROM internet.Clients c
 left join internet.PhysicalClients p on p.id = c.PhysicalClient
 left join internet.LawyerPerson l on l.id = c.LawyerPerson
-join internet.Status S on s.id = p.Status or s.id = l.status
+join internet.Status S on s.id = c.Status
 where C.id = :SearchText ORDER BY C.name";
 					query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Clients));
 					if (searchText != null)
@@ -62,7 +62,7 @@ where C.id = :SearchText ORDER BY C.name";
 						sqlStr = string.Format(@"SELECT * FROM internet.Clients c
 left join internet.PhysicalClients p on p.id = c.PhysicalClient
 left join internet.LawyerPerson l on l.id = c.LawyerPerson
-join internet.Status S on s.id = p.Status or s.id = l.status
+join internet.Status S on s.id = c.Status
 WHERE LOWER(C.Name) like {0} or LOWER(C.Id) like {0}
 ORDER BY C.Name", ":SearchText");
 					else
@@ -115,7 +115,7 @@ ORDER BY C.Name", ":SearchText");
 					return
 						String.Format(
 							@"
-WHERE LOWER(C.Name) like {0} or C.id = :SearchText",
+WHERE LOWER(C.Name) like {0} or C.id like :SearchText",
 							":SearchText") + _return;
 				}
 				if (sp.IsSearchByFio())

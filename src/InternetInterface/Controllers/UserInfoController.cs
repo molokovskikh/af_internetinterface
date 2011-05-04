@@ -359,6 +359,40 @@ namespace InternetInterface.Controllers
 		}
 
 		[AccessibleThrough(Verb.Post)]
+		public void EditLawyerPerson(/*[DataBind("LegalPerson")]LawyerPerson LegalPerson,*/ uint ClientID, int Speed)
+		{
+			var _client = Clients.Queryable.First(c => c.Id == ClientID);
+			var updateClient = _client.LawyerPerson;
+
+			BindObjectInstance(updateClient, ParamStore.Form, "LegalPerson");
+
+			if (Validator.IsValid(updateClient))
+			{
+				updateClient.Speed = PackageSpeed.Find(Speed);
+				updateClient.UpdateAndFlush();
+				var clientEndPoint = ClientEndpoints.Queryable.First(c => c.Client == _client);
+				clientEndPoint.PackageId = updateClient.Speed.PackageId;
+				clientEndPoint.UpdateAndFlush();
+				RedirectToUrl("../Search/Redirect?ClientCode=" + ClientID);
+			}
+			else
+			{
+				updateClient.SetValidationErrors(Validator.GetErrorSummary(updateClient));
+				PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(updateClient);
+				ARSesssionHelper<PhysicalClients>.QueryWithSession(session =>
+				{
+					session.Evict(updateClient);
+					return new List<PhysicalClients>();
+				});
+				PropertyBag["Editing"] = true;
+				PropertyBag["EditingConnect"] = false;
+				PropertyBag["LegalPerson"] = updateClient;
+				RedirectToReferrer();
+			}
+		}
+
+
+		[AccessibleThrough(Verb.Post)]
 		public void EditInformation([DataBind("Client")]PhysicalClients client, uint ClientID, uint tariff, uint status)
 		{
 			//var updateClient = PhysicalClients.Find(ClientID);

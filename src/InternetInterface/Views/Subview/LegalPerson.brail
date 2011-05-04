@@ -1,12 +1,12 @@
 ﻿<tr>
-								<td >Полное наименвоание</td>
+								<td ><b>Полное наименвоание</b></td>
 								<td > <input id="FullName" type="text" value="${LegalPerson.FullName}" name="LegalPerson.FullName" /> </td>
 								<td>
 									${VB.GetBlock("FullName")}
 								 </td>
 							</tr>
 							<tr>
-								<td>Краткое наименование</td>
+								<td><b>Краткое наименование</b></td>
 								<td><input id="ShortName" type="text" value="${LegalPerson.ShortName}" name="LegalPerson.ShortName" /></td>
 								 <td>
 									${VB.GetBlock("ShortName")}
@@ -50,7 +50,7 @@
 							</tr>
 														<tr>
 								<td >
-									Номер телефона</td>
+									<b>Номер телефона</b></td>
 								<td>
 									<input id="Telephone" type="text" value="${LegalPerson.Telephone}" name="LegalPerson.Telephone"/></td>
 								 <td>

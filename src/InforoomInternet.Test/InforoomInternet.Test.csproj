@@ -58,9 +58,6 @@
     <Reference Include="Castle.ActiveRecord, Version=3.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\..\lib\Castle.ActiveRecord.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.ActiveRecord.Linq, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\Castle.ActiveRecord.Linq.dll</HintPath>
-    </Reference>
     <Reference Include="Castle.ActiveRecord.Web">
       <HintPath>..\..\lib\Castle.ActiveRecord.Web.dll</HintPath>
     </Reference>
@@ -91,14 +88,13 @@
     <Reference Include="mysql.data, Version=6.3.5.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\..\lib\mysql.data.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate, Version=3.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+    <Reference Include="NHibernate, Version=3.1.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\NHibernate.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate.ByteCode.Castle, Version=3.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+    <Reference Include="NHibernate.ByteCode.Castle, Version=3.1.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\NHibernate.ByteCode.Castle.dll</HintPath>
-    </Reference>
-    <Reference Include="NHibernate.Linq, Version=1.1.0.1001, Culture=neutral, PublicKeyToken=444cf6a87fdab271, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\NHibernate.Linq.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework, Version=2.5.1.9189, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <HintPath>..\..\lib\nunit.framework.dll</HintPath>
