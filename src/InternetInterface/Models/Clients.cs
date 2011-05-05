@@ -49,29 +49,29 @@ namespace InternetInterface.Models
 
 
 
-[Property]
-public virtual DateTime RegDate { get; set; }
+		[Property]
+		public virtual DateTime RegDate { get; set; }
 
-[BelongsTo("WhoRegistered")]
-public virtual Partner WhoRegistered { get; set; }
+		[BelongsTo("WhoRegistered")]
+		public virtual Partner WhoRegistered { get; set; }
 
-[Property]
-public virtual string WhoRegisteredName { get; set; }
+		[Property]
+		public virtual string WhoRegisteredName { get; set; }
 
-[BelongsTo("WhoConnected")]
-public virtual Brigad WhoConnected { get; set; }
+		[BelongsTo("WhoConnected")]
+		public virtual Brigad WhoConnected { get; set; }
 
-[Property]
-public virtual string WhoConnectedName { get; set; }
+		[Property]
+		public virtual string WhoConnectedName { get; set; }
 
-[Property]
-public virtual DateTime ConnectedDate { get; set; }
+		[Property]
+		public virtual DateTime ConnectedDate { get; set; }
 
-[Property]
-public virtual bool AutoUnblocked { get; set; }
+		[Property]
+		public virtual bool AutoUnblocked { get; set; }
 
-[BelongsTo]
-public virtual Status Status { get; set; }
+		[BelongsTo]
+		public virtual Status Status { get; set; }
 
 
 

@@ -417,7 +417,7 @@ div.WordSection1
   normal'><u>${Client.Tariff.Name}<b style='mso-bidi-font-weight:normal'><o:p></o:p></b></u></i></p>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
   justify;line-height:normal'>Лицевой счет № <i style='mso-bidi-font-style:
-  normal'><u>${Client.Id.ToString("00000")}<b style='mso-bidi-font-weight:
+  normal'><u>${AccountNumber}<b style='mso-bidi-font-weight:
   normal'><o:p></o:p></b></u></i></p>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
   justify;line-height:normal'><b style='mso-bidi-font-weight:normal'>Для оплаты
@@ -448,7 +448,7 @@ div.WordSection1
   style='mso-bidi-font-style:normal'><span lang=EN-US style='mso-ansi-language:
   EN-US'>net</span></i></b></a>: </p>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'>Логин: <b style='mso-bidi-font-weight:normal'><u>${Client.Id.ToString("00000")}</u></b></p>
+  justify;line-height:normal'>Логин: <b style='mso-bidi-font-weight:normal'><u>${AccountNumber}</u></b></p>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
   justify;line-height:normal'>Пароль: <b style='mso-bidi-font-weight:normal'><u>${Password}<o:p></o:p></u></b></p>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:

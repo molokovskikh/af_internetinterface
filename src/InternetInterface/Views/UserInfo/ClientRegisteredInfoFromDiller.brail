@@ -36,7 +36,7 @@ normal'><i style='mso-bidi-font-style:normal'><o:p>&nbsp;</o:p></i></b></p>
 
 <p class=MsoNormal>Абонент: <i style='mso-bidi-font-style:normal'><u>${Client.Surname} ${Client.Name} ${Client.Patronymic}</u></i></p>
 
-<p class=MsoNormal>Номер лицевого счета: <i style='mso-bidi-font-style:normal'><u> ${Client.Id.ToString("00000")} </u></i></p>
+<p class=MsoNormal>Номер лицевого счета: <i style='mso-bidi-font-style:normal'><u> ${AccountNumber} </u></i></p>
 
 <p class=MsoNormal>Дата регистрации: <i style='mso-bidi-font-style:normal'><u>${Client.RegDate}</u></i></p>
 
@@ -74,7 +74,7 @@ style='mso-bidi-font-style:normal'><span lang=EN-US style='mso-ansi-language:
 EN-US'>net</span></i></b></a>: </p>
 
 <p class=MsoNormal style='text-align:justify'>Логин: <b style='mso-bidi-font-weight:
-normal'><i style='mso-bidi-font-style:normal'><u>${Client.Id.ToString("00000")}</u></i></b></p>
+normal'><i style='mso-bidi-font-style:normal'><u>${AccountNumber}</u></i></b></p>
 
 <p class=MsoNormal style='text-align:justify'>Пароль: <b style='mso-bidi-font-weight:
 normal'><i style='mso-bidi-font-style:normal'><u>${Password}</u></i></b></p>

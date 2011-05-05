@@ -137,14 +137,11 @@ namespace Billing
 																.Add(Restrictions.Ge("PC.Balance" , 0m)));
 								foreach (var client in clients)
 								{
-									//var phisicalClient = client.PhysicalClient;
 									client.Status = Status.Find((uint)StatusType.Worked);
-									//client.FirstLease = true;
 									client.RatedPeriodDate = null;
 									client.ShowBalanceWarningPage = false;
 									client.Disabled = false;
 									client.UpdateAndFlush();
-									//phisicalClient.UpdateAndFlush();
 								}
 								var lawyerPerson = LawyerPerson.FindAll();
 				           		foreach (var person in lawyerPerson)

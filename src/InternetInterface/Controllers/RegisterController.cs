@@ -137,6 +137,7 @@ namespace InternetInterface.Controllers
 				Flash["WhoConnected"] = client.WhoConnected;
 				Flash["Password"] = Password;
 				Flash["Client"] = phisClient;
+				Flash["AccountNumber"] = client.Id.ToString("00000");
 				Flash["ConnectSumm"] = phisClient.ConnectSum;
 				foreach (var requestse in Requests.FindAllByProperty("Id", requestID))
 				{

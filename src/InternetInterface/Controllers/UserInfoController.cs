@@ -152,7 +152,7 @@ namespace InternetInterface.Controllers
 						client.WhoConnectedName = brigad.Name;
 					}
 					client.ConnectedDate = DateTime.Now;
-					client.Status = Status.Find((uint)StatusType.NoWorked);
+					client.Status = Status.Find((uint)StatusType.Worked);
 					client.UpdateAndFlush();
 					/*PropertyBag["Editing"] = false;
 					PropertyBag["EditFlag"] = "Данные изменены";*/
@@ -201,7 +201,8 @@ namespace InternetInterface.Controllers
 		{
 			if (CategorieAccessSet.AccesPartner("SSI"))
 			{
-				var client = Clients.Find(ClientID).PhysicalClient;
+				var _client = Clients.Find(ClientID);
+				var client = _client.PhysicalClient;
 				var Password = CryptoPass.GeneratePassword();
 				client.Password = CryptoPass.GetHashString(Password);
 				client.UpdateAndFlush();
@@ -209,6 +210,7 @@ namespace InternetInterface.Controllers
 				PropertyBag["WhoConnected"] = Clients.Find(ClientID).WhoConnected;
 				PropertyBag["Client"] = client;
 				PropertyBag["Password"] = Password;
+				PropertyBag["AccountNumber"] = _client.Id.ToString("00000");
 				//PropertyBag["ConnectSumm"] = connectSumm;
 				RenderView("ClientRegisteredInfo");
 			}
