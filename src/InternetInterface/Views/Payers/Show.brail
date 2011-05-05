@@ -12,10 +12,10 @@
         <tbody>
             <%for i,item in enumerate(Payers): %>
                 <tr>
-                    <td><a href="../UserInfo/SearchUserInfo.rails?ClientCode=${item.Id}"> ${item.Id.ToString("00000")}</a></td>
-                    <td>${item.Surname} ${item.Name} ${item.Patronymic}</td>
-                    <td>${item.Tariff.Name}</td>
-                    <td>${item.Balance}</td>
+                    <td><a href="../Search/Redirect?ClientCode=${item.Id}"> ${item.Id.ToString("00000")}</a></td>
+                    <td>${item.PhysicalClient.Surname} ${item.PhysicalClient.Name} ${item.PhysicalClient.Patronymic}</td>
+                    <td>${item.PhysicalClient.Tariff.Name}</td>
+                    <td>${item.PhysicalClient.Balance}</td>
                     <td>${item.Status.Name}</td>
                 </tr>
                 <tr>

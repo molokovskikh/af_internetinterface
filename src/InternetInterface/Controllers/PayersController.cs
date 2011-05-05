@@ -29,7 +29,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["registrId"] = registrator;
 			//var payers = Payment.Queryable.Where(p => p.Client.Id == registrator).GroupBy(g => g.Client);
 			//PropertyBag["Payers"] = payers;
-			PropertyBag["Payers"] = Clients.Queryable.Where(p => p.WhoRegistered.Id == registrator).Select(p => p.PhysicalClient);
+			PropertyBag["Payers"] = Clients.Queryable.Where(p => p.WhoRegistered.Id == registrator && p.PhysicalClient != null);
 		}
 
 		public void ShowAgent(string startDate, string endDate, uint agent)
@@ -38,7 +38,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["agentId"] = agent;
 			var _startDate = DateTime.Parse(startDate);
 			var _endDate = DateTime.Parse(endDate);
-			var payments = Payment.Queryable.Where(t => t.Agent.Id == agent && t.PaidOn >= _startDate && t.PaidOn <= _endDate && t.Sum != 0).ToList();
+			var payments = Payment.Queryable.Where(t => t.Agent.Id == agent && t.PaidOn >= _startDate && t.PaidOn <= _endDate && t.Sum != 0 && t.Client.PhysicalClient != null).ToList();
 			PropertyBag["Payments"] = payments;
 			PropertyBag["TotalSumm"] = payments.Sum(h => h.Sum);
 

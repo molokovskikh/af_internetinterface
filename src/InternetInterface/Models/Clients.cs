@@ -47,8 +47,6 @@ namespace InternetInterface.Models
 		[BelongsTo]
 		public virtual LawyerPerson LawyerPerson { get; set; }
 
-
-
 		[Property]
 		public virtual DateTime RegDate { get; set; }
 

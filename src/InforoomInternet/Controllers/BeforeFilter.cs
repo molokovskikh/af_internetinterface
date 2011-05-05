@@ -63,10 +63,10 @@ namespace InforoomInternet.Controllers
 			{
 				context.Session["LoginClient"] =
 					lease.Where(l => l.Endpoint != null && l.Endpoint.Client != null && l.Endpoint.Client.PhysicalClient != null).
-						Select(l => l.Endpoint.Client.PhysicalClient.Id).First();
+						Select(l => l.Endpoint.Client.Id).First();
 				return true;
 			}
-			if ((context.Session["LoginClient"] == null) || (PhysicalClients.Find(Convert.ToUInt32(context.Session["Login"])) == null))
+			if ((context.Session["LoginClient"] == null) || (Clients.Find(Convert.ToUInt32(context.Session["Login"])) == null))
 			{
 				context.Response.RedirectToUrl(@"..//Login/LoginPage");
 				return false;

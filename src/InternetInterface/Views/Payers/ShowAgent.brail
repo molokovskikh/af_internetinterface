@@ -24,8 +24,8 @@
         <tbody>
             <%for i,item in enumerate(Payments): %>
                 <tr>
-                    <td><a href="../UserInfo/SearchUserInfo.rails?ClientCode=${item.Client.Id}"> ${item.Client.Id.ToString("00000")}</a></td>
-                    <td>${item.Client.Surname} ${item.Client.Name} ${item.Client.Patronymic}</td>
+                    <td><a href="../Search/Redirect?ClientCode=${item.Client.Id}"> ${item.Client.Id.ToString("00000")}</a></td>
+                    <td>${item.Client.PhysicalClient.Surname} ${item.Client.PhysicalClient.Name} ${item.Client.PhysicalClient.Patronymic}</td>
                     <td>${item.Sum.ToString("#.00")}</td>
                     <td>${item.PaidOn}</td>
                 </tr>
