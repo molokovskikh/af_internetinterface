@@ -1,10 +1,4 @@
-﻿ALTER TABLE `internet`.`Payments` ADD CONSTRAINT `FK_Payments_2` FOREIGN KEY `FK_Payments_2` (`Client`)
-    REFERENCES `Clients` (`Id`)
-    ON DELETE SET NULL
-    ON UPDATE CASCADE;
-
-
-update internet.Clients c set
+﻿update internet.Clients c set
 c.id = c.id + 500;
 
 update internet.Clients c set
@@ -142,3 +136,7 @@ ALTER TABLE `internet`.`Appeals` ADD CONSTRAINT `Clients` FOREIGN KEY `Clients` 
     ON DELETE CASCADE
     ON UPDATE CASCADE;
 
+ALTER TABLE `internet`.`Payments` ADD CONSTRAINT `FK_Payments_2` FOREIGN KEY `FK_Payments_2` (`Client`)
+    REFERENCES `Clients` (`Id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE;

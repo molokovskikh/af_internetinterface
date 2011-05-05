@@ -133,7 +133,7 @@ namespace Billing
 									.CreateAlias("PhysicalClient", "PC", JoinType.InnerJoin)
 				           		                              	.Add(Restrictions.IsNotNull("PhysicalClient"))
 																.Add(Restrictions.Eq("Disabled", true))
-																.Add(Restrictions.Eq("PC.AutoUnblocked", true))
+																.Add(Restrictions.Eq("AutoUnblocked", true))
 																.Add(Restrictions.Ge("PC.Balance" , 0m)));
 								foreach (var client in clients)
 								{

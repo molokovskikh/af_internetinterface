@@ -206,6 +206,7 @@ namespace InternetInterface.Controllers
 				client.Password = CryptoPass.GetHashString(Password);
 				client.UpdateAndFlush();
 				//var connectSumm = PaymentForConnect.FindAllByProperty("ClientId", client).First();
+				PropertyBag["WhoConnected"] = Clients.Find(ClientID).WhoConnected;
 				PropertyBag["Client"] = client;
 				PropertyBag["Password"] = Password;
 				//PropertyBag["ConnectSumm"] = connectSumm;
