@@ -38,7 +38,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["agentId"] = agent;
 			var _startDate = DateTime.Parse(startDate);
 			var _endDate = DateTime.Parse(endDate);
-			var payments = Payment.Queryable.Where(t => t.Agent.Id == agent && t.PaidOn >= _startDate && t.PaidOn <= _endDate && t.Sum != 0 && t.Client.PhysicalClient != null).ToList();
+			var payments = Payment.Queryable.Where(t => t.Agent.Id == agent && t.PaidOn >= _startDate && t.PaidOn <= _endDate.AddHours(23).AddMinutes(59) && t.Sum != 0 && t.Client.PhysicalClient != null).ToList();
 			PropertyBag["Payments"] = payments;
 			PropertyBag["TotalSumm"] = payments.Sum(h => h.Sum);
 
