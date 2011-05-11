@@ -194,7 +194,10 @@ namespace InternetInterface.Models.Access
 									"EditInformation",
 									"LoadEditMudule",
 									"SiteMap",
-									"EditLawyerPerson"
+									"EditLawyerPerson",
+									"AddInfo",
+									"Refused",
+									"NoPhoned"
 			                 	};
 			return _visibleDemand.Contains(methodName) ? "ECI" : string.Empty;
 		}

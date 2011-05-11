@@ -152,7 +152,7 @@ namespace InternetInterface.Controllers
 						client.WhoConnectedName = brigad.Name;
 					}
 					client.ConnectedDate = DateTime.Now;
-					client.Status = Status.Find((uint)StatusType.Worked);
+					client.Status = Status.Find((uint)StatusType.BlockedAndConnected);
 					client.UpdateAndFlush();
 					/*PropertyBag["Editing"] = false;
 					PropertyBag["EditFlag"] = "Данные изменены";*/
@@ -453,11 +453,12 @@ namespace InternetInterface.Controllers
 			}
 		}
 
+
 		private void SendParam(UInt32 ClientCode)
 		{
 			var client = Clients.Find(ClientCode);
 			PropertyBag["ConnectInfo"] = client.GetConnectInfo();
-			PropertyBag["Appeals"] = Appeals.FindAllByProperty("Client", client);
+			PropertyBag["Appeals"] = Appeals.FindAllByProperty("Client", client).OrderByDescending(a => a.Date);
 			PropertyBag["ClientCode"] = ClientCode;
 			PropertyBag["UserInfo"] = true;
 			PropertyBag["BalanceText"] = string.Empty;
@@ -529,6 +530,45 @@ namespace InternetInterface.Controllers
 				});
 			}
 			RedirectToUrl(@"../Search/Redirect?ClientCode=" + clientId);
+		}
+
+		public void AddInfo(uint ClientCode)
+		{
+			PropertyBag["ClientCode"] = ClientCode;
+		}
+
+		public void Refused(uint ClientID, string prichina, string Appeal)
+		{
+			var client = Clients.Find(ClientID);
+			client.AdditionalStatus = AdditionalStatus.Find((uint) AdditionalStatusType.Refused);
+			CreateAppeal("Причина отказа:  " + prichina  + " \r\n Комментарий: \r\n " + Appeal, ClientID);
+		}
+
+		public void NoPhoned(uint ClientCode)
+		{
+			PropertyBag["ClientCode"] = ClientCode;
+			if (DateTime.Now.Hour <= 12)
+				PropertyBag["StartDate"] = DateTime.Now.ToShortDateString();
+			else
+				PropertyBag["StartDate"] = DateTime.Now.AddDays(1).ToShortDateString();
+		}
+
+		public void NoPhoned(uint ClientID, string NoPhoneDate, string Appeal, string prichina)
+		{
+			var client = Clients.Find(ClientID);
+			client.AdditionalStatus = AdditionalStatus.Find((uint)AdditionalStatusType.NotPhoned);
+			DateTime _noPhoneDate;
+			if (DateTime.TryParse(NoPhoneDate, out _noPhoneDate))
+			{
+				new Appeals
+					{
+						Appeal = "Причина недозвона:  " + prichina + " \r\n Комментарий: \r\n " + Appeal,
+						Date = _noPhoneDate.AddHours(DateTime.Now.Hour).AddMinutes(DateTime.Now.Minute),
+						Partner = InithializeContent.partner,
+						Client = Clients.Find(ClientID)
+					}.SaveAndFlush();
+			}
+			RedirectToUrl("../Search/Redirect?ClientCode=" + ClientID);
 		}
 	}
 }

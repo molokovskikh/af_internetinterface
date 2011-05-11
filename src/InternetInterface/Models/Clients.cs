@@ -71,7 +71,13 @@ namespace InternetInterface.Models
 		[BelongsTo]
 		public virtual Status Status { get; set; }
 
+		[BelongsTo]
+		public virtual AdditionalStatus AdditionalStatus { get; set; }
 
+		public virtual bool AdditionalCanUsed(string aStatus)
+		{
+			return Status.Additional.Contains(AdditionalStatus.Queryable.First(a => a.ShortName == aStatus));
+		}
 
 
 		[HasMany(ColumnKey = "Client", OrderBy = "PaidOn")]

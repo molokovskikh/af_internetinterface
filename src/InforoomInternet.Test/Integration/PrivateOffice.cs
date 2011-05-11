@@ -66,9 +66,6 @@ namespace InforoomInternet.Test.Integration
 				                 		Name = "Test",
 										Password = CryptoPass.GetHashString("123")
 				                 	};*/
-				var phisClient = PhysicalClients.Find((uint) 13);
-				phisClient.Password = CryptoPass.GetHashString("123");
-				phisClient.UpdateAndFlush();
 				/*var client = new Clients
 				             	{
 				             		PhisicalClient = phisClient,
@@ -89,10 +86,10 @@ namespace InforoomInternet.Test.Integration
 				/*client.SaveAndFlush();
 				endPoint.SaveAndFlush();
 				newLease.SaveAndFlush();*/
-				/*var filter = new AccessFilter();
-				Request.UserHostAddress = "91.219.7.3";
+				var filter = new AccessFilter();
+				Request.UserHostAddress = "192.168.200.1";
 				Assert.IsTrue(filter.Perform(ExecuteWhen.BeforeAction, controller.Context, controller, controller.ControllerContext));
-				client.DeleteAndFlush();
+				/*client.DeleteAndFlush();
 				endPoint.DeleteAndFlush();
 				newLease.DeleteAndFlush();*/
 			}

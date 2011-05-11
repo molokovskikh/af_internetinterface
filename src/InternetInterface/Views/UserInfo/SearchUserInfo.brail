@@ -1,7 +1,22 @@
 ﻿<script type="text/javascript" src="../Scripts/jquery-1.4.1.min.js"></script>
+<script type="text/javascript" src="../Scripts/jquery.nyroModal/js/jquery.nyroModal.custom.js"></script>
+
+
+	<link href="../Styles/datePicker.css" type="text/css" rel="stylesheet" />
+	<script type="text/javascript" src="../Scripts/jquery.datePicker.js"></script>
+	<script type="text/javascript" src="../Scripts/date.js"></script>
+	<script type="text/javascript" src="../Scripts/jquery.bgiframe.js"></script>
+	<script type="text/javascript" src="../Scripts/date_ru_utf8.js"></script>
+
 <link href="../Styles/style.css" type="text/css" rel="stylesheet" />
 <link rel="stylesheet" href="../Styles/base.css" type="text/css" media="screen" />
 <!-- <link href="../Styles/base.css" type="text/css" rel="stylesheet" /> --->
+
+<script type="text/javascript">
+    $(function () {
+        $('.nyroModal').nyroModal();
+    });
+</script>
 
 <% OutputSubView("""\Subview\MapHead""") %>
 <div style="width:50%; float:left;">
@@ -86,6 +101,11 @@
 				<td><span class="description">Статус клиента:</span> ${_client.Status.Name}</td>
 			</tr>
 		<%end %>
+        <%if _client.AdditionalStatus != null: %>
+			<tr>
+				<td><span class="description">Дополнительный статус:</span> ${_client.AdditionalStatus.Name}</td>
+			</tr>
+		<%end %>
 		</tr>
 		<%end %>
 		<%if PartnerAccessSet.AccesPartner("SSI"): %>
@@ -100,6 +120,29 @@
 		</tr>
 		<%end %>
 		<%end %>
+		<tr>
+			<td>
+			<% if _client.AdditionalCanUsed("Refused"): %>
+				<a class="nyromodal" href="../UserInfo/AddInfo.rails?ClientCode=${ClientCode}">
+				<button id="Button1" class="button">
+				<img alt="Save" src="../Images/application_edit.png"> Отказ
+				</button>
+				</a>
+			<%end %>
+			<% if _client.AdditionalCanUsed("NotPhoned"): %>
+                 <a class="nyromodal" href="../UserInfo/NoPhoned.rails?ClientCode=${ClientCode}">
+				<button id="Button2" class="button">
+				<img alt="Save" src="../Images/application_edit.png"> Недозвон
+				</button>
+                </a>
+			<%end %>
+			<% if _client.AdditionalCanUsed("AppointedToTheGraph"): %>
+				<button type="submit" id="Button3" class="button">
+				<img alt="Save" src="../Images/application_edit.png"> Назначить в граффик
+				</button>
+			<%end %>
+			</td>
+		</tr>
 	</tbody>
 </table>
 	<%else:%>
@@ -113,7 +156,6 @@
 					   <button type="submit" id="SaveButton" class="button">
 					   <img alt="Save" src="../Images/application_edit.png"> Сохранить
 					   </button>
-								<!--    <input class="button" id="RegisterButton" type="submit" value="Зарегистрировать" /></td> -->
 				  </div>
 			   </td>
 			   </tr>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Castle.ActiveRecord;
 using Castle.Components.Validator;
 using InternetInterface.Models.Universal;
@@ -38,5 +39,16 @@ namespace InternetInterface.Models
 				return false;
 			return true;
 		}
+
+		[HasAndBelongsToMany(typeof(AdditionalStatus),
+			RelationType.Bag,
+			Table = "StatusCorrelation",
+			Schema = "internet",
+			ColumnKey = "StatusId",
+			ColumnRef = "AdditionalStatusId",
+			Lazy = true)]
+		public virtual IList<AdditionalStatus> Additional { get; set; }
+
+
 	}
 }

@@ -6,6 +6,7 @@ using InforoomInternet.Models;
 using InternetInterface;
 using InternetInterface.Models;
 using NHibernate.Criterion;
+using NHibernate.SqlCommand;
 
 namespace InforoomInternet.Logic
 {
@@ -13,9 +14,10 @@ namespace InforoomInternet.Logic
 	{
 		public static bool IsAccessibleClient(uint id, string password)
 		{
-			return PhysicalClients.FindAll(DetachedCriteria.For(typeof (PhysicalClients))
+			return Clients.FindAll(DetachedCriteria.For(typeof(Clients))
+											.CreateAlias("PhysicalClient", "PC", JoinType.InnerJoin)
 			                              	.Add(Restrictions.Eq("Id", id))
-			                              	.Add(Restrictions.Eq("Password", CryptoPass.GetHashString(password)))).Length != 0;
+			                              	.Add(Restrictions.Eq("PC.Password", CryptoPass.GetHashString(password)))).Length != 0;
 		}
 
 		public static bool IsAccessiblePartner(object name)
