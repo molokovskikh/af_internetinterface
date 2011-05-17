@@ -89,7 +89,8 @@ namespace CardGenerator
 	public class PaymentCard
 	{
 		private static Random random = new Random();
-		private const string chars = "23456789qwertyupasdfghjkzxcvbnm";
+		private const string pinChars = "23456789qwertyupasdfghjkzxcvbnm";
+		private const string serialChars = "123456789";
 
 		public PaymentCard()
 		{}
@@ -98,8 +99,8 @@ namespace CardGenerator
 		{
 			Sum = sum;
 			GenerateAt = DateTime.Now;
-			Serial = RandomDigits(12);
-			Pin = RandomDigits(6);
+			Serial = RandomDigits(12, serialChars);
+			Pin = RandomDigits(6, pinChars);
 		}
 
 		[PrimaryKey]
@@ -117,9 +118,9 @@ namespace CardGenerator
 		[Property]
 		public DateTime GenerateAt { get; set; }
 
-		public string RandomDigits(int lenght)
+		public string RandomDigits(int lenght, string chars)
 		{
-			if (chars.Length == 0)
+			if (String.IsNullOrEmpty(chars))
 				throw new Exception("Не заданы символы для генерации");
 
 			string result = "";
