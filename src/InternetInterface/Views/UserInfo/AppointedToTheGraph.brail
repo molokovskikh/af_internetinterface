@@ -1,0 +1,152 @@
+﻿
+		<style type="text/css">
+		.turn-me-into-datepicker {
+			float: left;
+			margin:10px;
+			
+		}				.jCalendar		{			font-size:10px;		}
+		.hasDatepicker
+		{
+			margin-top:10px;
+			float:none;
+		}
+			
+		a.dp-choose-date 
+		{
+			float: left;
+			width: 16px;
+			height: 16px;
+			padding: 0;
+			margin: 5px 3px 0;
+			display: block;
+			text-indent: -2000px;
+			overflow: hidden;
+			background: url(../Images/calendar.png) no-repeat; 
+		}
+					
+		a.dp-choose-date.dp-disabled 
+		{
+			background-position: 0 -20px;
+			cursor: default;
+		}
+		
+		input.dp-applied 
+		{
+			width: 140px;
+			float: left;
+			margin-left:15px;
+		}
+			
+		#back   
+		{
+			width:1200px;
+			height:550px;
+			background-color:White;
+			border-style:double;
+			border-width:1px;
+		 }
+		 
+		#modalTable
+		{
+			 min-width:0px;
+		}
+	</style>
+
+	<script type="text/javascript">
+
+
+		function fillData() {
+			$('#graph_table').remove();
+			var req = {};
+			req.graph_date = $('#graph_date').val();
+			$.post("GetGraph", req, function (data) {
+			    var str = '<table class="table" id="graph_table"> <thead> <tr>';
+			    $(data.brigads).each(function () {
+			        str += '<th colspan="2" id=th_' + this.Id + '>' + this.Name + '</th>';
+			    });
+			    str += '<tbody> ';
+			    for (var i = 0; i < data.intervals.length; i++) {
+			        str += '<tr id="tr_' + i + '"></tr>';
+			    }
+
+			    $('#graph_div').append(str + '</tr> </thead> </table>');
+
+			    for (var i = 0; i < data.intervals.length; i++) {
+			        var tds = '';
+			        $(data.brigads).each(function () {
+			            tds += '<td >' + data.intervals[i] + '</td>';
+			            tds += '<td id="tdi_' + i + '_' + this.Id + '"> <input type="radio" name="graph_button" value="' + i + '_' + this.Id + '"> </td>';
+			        });
+			        $('#tr_' + i).append(tds);
+			    }
+			    $(data.graphs).each(function () {
+			        $('#tdi_' + this.IntervalId + '_' + this.brigadId).empty();
+			        $('#tdi_' + this.IntervalId + '_' + this.brigadId).append('<a href="../Search/Redirect?ClientCode=' + this.clientId + '">' + this.clientId + '</a>');
+			    });
+			});
+
+		 }
+
+		 $(function () {
+		     Date.firstDayOfWeek = 0;
+		     Date.format = 'dd.mm.yyyy';
+		     $('.date-pick').datePicker({
+		         startDate: '01/01/1996'
+		     }).val('${StartDate}').change(function () { fillData(); });
+		     fillData();
+		 });
+
+		 function Save() {
+		     var req = {};
+		     req.clientId = $('#clientId').val();
+		     var check_field = $('input:radio[name="graph_button"]:checked');
+		     req.graph_button = check_field.val();
+		     req.graph_date = $('#graph_date').val();
+		     $.post("SaveGraph", req, function (data) {
+		         if (data) {
+		             alert("Заявка включена в рассписание");
+		             $('a').each(function () {
+		                 var client_id = $(this).attr('href').split('=')[1];
+		                 if (client_id == req.clientId) {
+		                     var clear_field = $(this).parent();
+		                     clear_field.empty();
+		                     clear_field.append('<input type="radio" name="graph_button" value="' + clear_field.attr('id') + '">');
+		                 }
+		             });
+		             var appended_field = check_field.parent();
+		             appended_field.empty();
+		             appended_field.append('<a href="../Search/Redirect?ClientCode=' + req.clientId + '">' + req.clientId + '</a>');
+		         }
+		     });
+         }
+
+
+	</script>
+
+<div id="back">
+<table class="table" id="modalTable">
+	<thead>
+		<th colspan="3">Назначить в граффик</th>
+	</thead>
+	<tbody>
+		<input type="hidden" id="clientId" name="ClientID" value="${ClientCode}" />
+			<tr>
+				<td>
+				<div>
+					<input name="graph_date" id="graph_date" class="date-pick dp-applied">
+				</div>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<div id="graph_div"></div>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<button id="Save" onclick="Save()">Назначить</button>
+				</td>
+			</tr>
+	</tbody>
+</table>
+</div>

@@ -1,8 +1,4 @@
-﻿<link href="../Styles/style.css" type="text/css" rel="stylesheet" />
-<link rel="stylesheet" href="../Styles/base.css" type="text/css" media="screen" />
-<script type="text/javascript" src="../Scripts/jquery-1.4.1.min.js"></script> 
-
-  <script type="text/javascript">
+﻿  <script type="text/javascript">
 
 
 $(document).ready(function () {
@@ -14,10 +10,7 @@ $(document).ready(function () {
 
 });
   </script>
-<body>
-<div id="non-printable"> 
-    <% OutputSubView("""\Subview\MapHead""") %>
-</div> 
+
 <div id="main" style="width:100%;">
 <div id="container">
     <div id="block-tables" class="block">

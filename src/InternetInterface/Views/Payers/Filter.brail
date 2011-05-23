@@ -1,6 +1,4 @@
-﻿    <link href="../Styles/Style.css" type="text/css" rel="stylesheet" />
-    <link href="../Styles/base.css" type="text/css" rel="stylesheet" />
-        <style type="text/css">
+﻿        <style type="text/css">
         .filterDiv
         {
             width:600px;
@@ -17,7 +15,6 @@
             border: 1px solid black;
             }
     </style>
-<% OutputSubView("""\Subview\MapHead""") %>
 <center>
     <div class="filterDiv">
         <form method="get" action="${siteroot}/Payers/Show">

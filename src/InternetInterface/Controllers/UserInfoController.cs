@@ -11,6 +11,7 @@ using NHibernate.Criterion;
 
 namespace InternetInterface.Controllers
 {
+	[Layout("Main")]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class UserInfoController : SmartDispatcherController
 	{
@@ -535,6 +536,7 @@ namespace InternetInterface.Controllers
 		public void AddInfo(uint ClientCode)
 		{
 			PropertyBag["ClientCode"] = ClientCode;
+			LayoutName = "NoMap";
 		}
 
 		public void Refused(uint ClientID, string prichina, string Appeal)
@@ -542,6 +544,7 @@ namespace InternetInterface.Controllers
 			var client = Clients.Find(ClientID);
 			client.AdditionalStatus = AdditionalStatus.Find((uint) AdditionalStatusType.Refused);
 			CreateAppeal("Причина отказа:  " + prichina  + " \r\n Комментарий: \r\n " + Appeal, ClientID);
+			LayoutName = "NoMap";
 		}
 
 		public void NoPhoned(uint ClientCode)
@@ -551,6 +554,7 @@ namespace InternetInterface.Controllers
 				PropertyBag["StartDate"] = DateTime.Now.ToShortDateString();
 			else
 				PropertyBag["StartDate"] = DateTime.Now.AddDays(1).ToShortDateString();
+			LayoutName = "NoMap";
 		}
 
 		public void NoPhoned(uint ClientID, string NoPhoneDate, string Appeal, string prichina)
@@ -569,6 +573,44 @@ namespace InternetInterface.Controllers
 					}.SaveAndFlush();
 			}
 			RedirectToUrl("../Search/Redirect?ClientCode=" + ClientID);
+		}
+
+		public void AppointedToTheGraph(uint ClientCode)
+		{
+			PropertyBag["ClientCode"] = ClientCode;
+			PropertyBag["Brigads"] = Brigad.FindAllSort();
+			PropertyBag["StartDate"] = DateTime.Now.ToShortDateString();
+			LayoutName = "NoMap";
+		}
+
+		[return: JSONReturnBinder]
+		public object GetGraph()
+		{
+			var selDate = DateTime.Parse(Request.Form["graph_date"]);
+			return new
+			             	{
+			             		brigads = Brigad.FindAll().Select(b => new {b.Id, b.Name}).ToArray(),
+			             		graphs =
+			             			ConnectGraph.Queryable.Where(c => c.Day.Date == selDate).Select(
+			             				g => new {brigadId = g.Brigad.Id, clientId = g.Client.Id, g.IntervalId}).ToArray(),
+			             		intervals = Intervals.GetIntervals()
+			             	};
+		}
+
+		[return: JSONReturnBinder]
+		public bool SaveGraph()
+		{
+			var client = Clients.Find(Convert.ToUInt32(Request.Form["clientId"]));
+			var but_id = Request.Form["graph_button"].Split('_');
+			foreach(var graph in ConnectGraph.Queryable.Where(c => c.Client == client).ToList())
+			{ graph.Delete(); }
+			new ConnectGraph {
+			                 	IntervalId = Convert.ToUInt32(but_id[0]),
+								Brigad = Brigad.Find(Convert.ToUInt32(but_id[1])),
+								Client = client,
+								Day = DateTime.Parse(Request.Form["graph_date"]),
+			                 }.Save();
+			return true;
 		}
 	}
 }

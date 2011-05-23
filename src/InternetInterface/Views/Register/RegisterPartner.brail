@@ -1,15 +1,4 @@
-﻿<head> 
-
-<link href="../Styles/style.css" type="text/css" rel="stylesheet" />
-<link rel="stylesheet" href="../Styles/base.css" type="text/css" media="screen" />
-<link rel="stylesheet" href="../Styles/RegStyle.css" type="text/css" media="screen" />
- <title>Регистрация партнера</title>   
-
-</head> 
-<% OutputSubView("""\Subview\MapHead""") %>
-<body class="style1"> 
-<input type="hidden" name="hiddenClient" value="${Partner}" />
-<div id="main">
+﻿<div id="main">
 <div id="container">
 	<div id="block-tables" class="block">
 		<div class="content">
@@ -61,4 +50,3 @@
 	 </div>
  </div>
  </div>
-</body>

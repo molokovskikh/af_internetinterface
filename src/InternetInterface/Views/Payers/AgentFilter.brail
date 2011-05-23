@@ -1,12 +1,4 @@
-﻿	<link href="../Styles/Style.css" type="text/css" rel="stylesheet" />
-	<link href="../Styles/base.css" type="text/css" rel="stylesheet" />
-	<link href="../Styles/datePicker.css" type="text/css" rel="stylesheet" />
-	<script type="text/javascript" src="../Scripts/jquery-1.4.1.js"></script>
-	<script type="text/javascript" src="../Scripts/jquery.datePicker.js"></script>
-	<script type="text/javascript" src="../Scripts/date.js"></script>
-	<script type="text/javascript" src="../Scripts/jquery.bgiframe.js"></script>
-	<script type="text/javascript" src="../Scripts/date_ru_utf8.js"></script>
-		<style type="text/css">
+﻿		<style type="text/css">
 		.turn-me-into-datepicker {
 			float: left;
 			margin:10px;
@@ -35,8 +27,6 @@
 			}
 			
 	</style>
-<% OutputSubView("""\Subview\MapHead""") %>
-<body>
 	<script type="text/javascript">
 		Date.firstDayOfWeek = 0;
 		Date.format = 'dd.mm.yyyy';
@@ -99,4 +89,3 @@
 		</form>
 	</div>
 </center>
-</body>

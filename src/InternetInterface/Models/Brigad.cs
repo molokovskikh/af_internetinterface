@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
 using Castle.Components.Validator;
@@ -14,6 +15,9 @@ namespace InternetInterface.Models
 
 		[Property, ValidateNonEmpty("Введите имя бригады")]
 		public virtual string Name { get; set; }
+
+		[HasMany(ColumnKey = "Brigad")]
+		public virtual IList<ConnectGraph> Graphs { get; set; }
 	}
 
 }

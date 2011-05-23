@@ -9,6 +9,7 @@ using InternetInterface.Models;
 
 namespace InternetInterface.Controllers
 {
+	[Layout("Main")]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class BrigadsController : SmartDispatcherController
 	{

@@ -124,6 +124,8 @@
     <None Include="Views\Brigads\MakeBrigad.brail" />
     <None Include="Views\Brigads\ShowBrigad.brail" />
     <None Include="Views\CommonScripts\WriteMessage.brail" />
+    <None Include="Views\Layouts\Main.brail" />
+    <None Include="Views\Layouts\NoMap.brail" />
     <None Include="Views\Payers\AgentFilter.brail" />
     <None Include="Views\Payers\Filter.brail" />
     <None Include="Views\Payers\Show.brail" />
@@ -142,6 +144,7 @@
     <None Include="Views\Switches\OnLineClient.brail" />
     <None Include="Views\Switches\ShowSwitches.brail" />
     <None Include="Views\UserInfo\AddInfo.brail" />
+    <None Include="Views\UserInfo\AppointedToTheGraph.brail" />
     <None Include="Views\UserInfo\ClientRegisteredInfoFromDiller.brail" />
     <None Include="Views\UserInfo\LawyerPersonInfo.brail" />
     <None Include="Views\UserInfo\NoPhoned.brail" />
@@ -205,6 +208,7 @@
     <Compile Include="Models\Brigad.cs" />
     <Compile Include="Models\ClientEndpoints.cs" />
     <Compile Include="Models\Clients.cs" />
+    <Compile Include="Models\ConnectGraph.cs" />
     <Compile Include="Models\InternetSettings.cs" />
     <Compile Include="Models\Label.cs" />
     <Compile Include="Models\LawyerPerson.cs" />

@@ -16,6 +16,7 @@ using NHibernate.SqlCommand;
 
 namespace InternetInterface.Controllers
 {
+	[Layout("Main")]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class RegisterController : SmartDispatcherController
 	{

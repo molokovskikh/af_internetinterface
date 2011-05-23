@@ -16,7 +16,7 @@ namespace InternetInterface.Models
 
 
 	[ActiveRecord("AdditionalStatus", Schema = "internet", Lazy = true)]
-		public class AdditionalStatus : ValidActiveRecordLinqBase<AdditionalStatus>
+	public class AdditionalStatus : ValidActiveRecordLinqBase<AdditionalStatus>
 	{
 		[PrimaryKey]
 		public virtual uint Id { get; set; }

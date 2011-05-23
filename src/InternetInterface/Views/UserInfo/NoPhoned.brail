@@ -68,17 +68,17 @@
 		<input type="hidden" name="ClientID" value="${ClientCode}" />
 			<tr>
 				<td>
-                <div  style="float:left;">
+				<div  style="float:left;">
 					<select name="prichina">
 						<option value="Неудобно говорить">Неудобно говорить</option>
 						<option value="Думает">Думает</option>
 						<option value="Нет ответа">Нет ответа</option>
 						<option value="Другое">Другое</option>
 					</select>
-                </div>
-                <div>
+				</div>
+				<div>
 					<input name="NoPhoneDate" id="date1" class="date-pick dp-applied">
-                </div>
+				</div>
 				</td>
 			</tr>
 			<tr>

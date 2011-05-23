@@ -1,8 +1,4 @@
-﻿<head>
-	<link href="../Styles/Style.css" type="text/css" rel="stylesheet" />
-	<link href="../Styles/base.css" type="text/css" rel="stylesheet" />
-
-<script type="text/javascript">
+﻿<script type="text/javascript">
 	jQuery(document).ready(
 		function() {
 			jQuery("#SearchText").focus();
@@ -11,14 +7,13 @@
 
 </script>
 
-	<style type="text/css">
-		#TableSize
-		{
-			width: 600px;
-		}
-	</style>
-</head>
-<% OutputSubView("""\Subview\MapHead""") %>
+<style type="text/css">
+	#TableSize
+	{
+		width: 600px;
+	}
+</style>
+
 <%if PartnerAccessSet.AccesPartner("GCI") or PartnerAccessSet.AccesPartner("SD"): %>
 <form id="SearchForm" name="SearchForm" action="${siteroot}/Search/SearchBy" 
 	style="width: 100%; ">
@@ -65,7 +60,7 @@
 	</table>
 	<fieldset style="padding: 0; margin: 0; text-align: left; width: 99%;">
 		<legend>Фильтры: </legend>
-		<table style="width:100%; height: 80px;" border="0" class="table">
+		<table style="width:100%; height: 80px;" border="0" class="table">k
 			<col style="width:50%" />
 			<col style="width:50%" />
 			<thead>

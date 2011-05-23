@@ -1,11 +1,4 @@
-﻿<link href="../Styles/style.css" type="text/css" rel="stylesheet" />
-<link rel="stylesheet" href="../Styles/base.css" type="text/css" media="screen" />
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <title>Информация о партнерах</title>
-    <style type="text/css">
+﻿    <style type="text/css">
         #Name
         {
             width: 300px;
@@ -23,11 +16,7 @@
             width: 300px;
         }
     </style>
-</head>
-<body>
-<div id="non-printable"> 
-    <% OutputSubView("""\Subview\MapHead""") %>
-</div> 
+
 <div id="main">
 <div id="container">
     <div id="block-tables" class="block">
@@ -96,5 +85,3 @@
     </div>
 </div>
 </div>
-</body>
-</html>

@@ -1,15 +1,4 @@
-﻿<head>
-
-<link href="../Styles/style.css" type="text/css" rel="stylesheet" />
-<link rel="stylesheet" href="../Styles/base.css" type="text/css" media="screen" />
-<link rel="stylesheet" href="../Styles/RegStyle.css" type="text/css" media="screen" />
-<script type="text/javascript" src="../Scripts/jquery-1.4.1.min.js"></script>
-<script type="text/javascript" src="../Scripts/jquery.validate.js"></script>
- <title>Регистрация клиента</title>   
-
-
-</head> 
-
+﻿
 <script type="text/javascript">
 
 var cost = [];
@@ -77,10 +66,6 @@ $(function() {
 #RegistrationForm label.error {  color: Red; }
 </style>
 
-
-<% OutputSubView("""\Subview\MapHead""") %>
-<body class="style1"> 
-	<input type="hidden" name="hiddenClient" value="${Client}" />
 <div id="main">
 <div id="container">
 	<div id="block-tables" class="block">
@@ -200,4 +185,3 @@ $(function() {
 	 </div>
  </div>
  </div>
-</body>

@@ -197,7 +197,10 @@ namespace InternetInterface.Models.Access
 									"EditLawyerPerson",
 									"AddInfo",
 									"Refused",
-									"NoPhoned"
+									"NoPhoned",
+									"AppointedToTheGraph",
+									"GetGraph",
+									"SaveGraph"
 			                 	};
 			return _visibleDemand.Contains(methodName) ? "ECI" : string.Empty;
 		}
