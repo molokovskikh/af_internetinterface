@@ -79,7 +79,6 @@ namespace InternetInterface.Models
 			return Status.Additional.Contains(AdditionalStatus.Queryable.First(a => a.ShortName == aStatus));
 		}
 
-
 		[HasMany(ColumnKey = "Client", OrderBy = "PaidOn")]
 		public virtual IList<Payment> Payments { get; set; }
 
@@ -96,7 +95,6 @@ namespace InternetInterface.Models
 		{
 			return (((DateTime)RatedPeriodDate).AddMonths(1) - (DateTime)RatedPeriodDate).Days + DebtDays;
 		}
-
 
 		public virtual PhisicalClientConnectInfo GetConnectInfo()
 		{

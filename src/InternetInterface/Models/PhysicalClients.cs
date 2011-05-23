@@ -107,8 +107,11 @@ namespace InternetInterface.Models
 		[Property, ValidateNonEmpty("Введите номер этажа"), ValidateInteger("Должно быть введено число")]
 		public virtual string Floor { get; set; }
 
-		[Property, ValidateRegExp(@"^((\d{1})-(\d{3})-(\d{3})-(\d{2})-(\d{2}))", "Ошибка фотмата телефонного номера: мобильный телефн (8-***-***-**-**))")
-		, ValidateNonEmpty("Введите номер телефона")]
+		[
+			Property,
+			ValidateRegExp(@"^((\d{1})-(\d{3})-(\d{3})-(\d{2})-(\d{2}))", "Ошибка фотмата телефонного номера: мобильный телефн (8-***-***-**-**))"),
+			ValidateNonEmpty("Введите номер телефона")
+		]
 		public virtual string PhoneNumber { get; set; }
 
 		[Property, ValidateRegExp(@"^((\d{4,5})-(\d{5,6}))", "Ошибка фотмата телефонного номера (Код города (4-5 цифр) + местный номер (5-6 цифр)")]
@@ -226,12 +229,10 @@ namespace InternetInterface.Models
 			return Math.Abs(Balance) + Tariff.Price;
 		}
 
-		public  static Lease FindByIP(string ip)
+		public static Lease FindByIP(string ip)
 		{
 			var addressValue = BigEndianConverter.ToInt32(IPAddress.Parse(ip).GetAddressBytes());
 			return Lease.Queryable.FirstOrDefault(l => l.Ip == addressValue);
 		}
-
 	}
-
 }

@@ -25,9 +25,26 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool Hidden { get; set; }
 
+		[Property]
+		public virtual int FinalPriceInterval { get; set; }
+
+		[Property]
+		public virtual decimal FinalPrice { get; set; }
+
 		public virtual string GetFullName()
 		{
 			return string.Format("{0} ({1} рублей)", Name, Price);
+		}
+
+		public virtual decimal GetPrice(Clients client)
+		{
+			if (FinalPriceInterval == 0 || FinalPrice == 0)
+				return Price;
+
+			if (client.BeginWork.Value.AddMonths(FinalPriceInterval) <= DateTime.Now)
+				return FinalPrice;
+
+			return Price;
 		}
 
 		public override string ToString()

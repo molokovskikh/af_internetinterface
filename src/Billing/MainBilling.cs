@@ -222,9 +222,10 @@ namespace Billing
 				{
 					if (client.RatedPeriodDate != DateTime.MinValue && client.RatedPeriodDate != null)
 					{
-						decimal toDt = client.GetInterval();
-						var dec = phisicalClient.Tariff.Price / toDt;
-						phisicalClient.Balance = (balance - dec);
+						var toDt = client.GetInterval();
+						var price = phisicalClient.Tariff.GetPrice(client);
+						var dec = price / toDt;
+						phisicalClient.Balance -= dec;
 						phisicalClient.UpdateAndFlush();
 						var bufBal = phisicalClient.Balance;
 						client.ShowBalanceWarningPage = bufBal - dec < 0;
