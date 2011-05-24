@@ -111,21 +111,21 @@
 			<% if _client.AdditionalCanUsed("Refused"): %>
 				<a class="nyromodal" href="../UserInfo/AddInfo.rails?ClientCode=${ClientCode}">
 				<button id="Button1" class="button">
-				<img alt="Save" src="../Images/application_edit.png"> Отказ
+				 Отказ
 				</button>
 				</a>
 			<%end %>
 			<% if _client.AdditionalCanUsed("NotPhoned"): %>
 				 <a class="nyromodal" href="../UserInfo/NoPhoned.rails?ClientCode=${ClientCode}">
 				<button id="Button2" class="button">
-				<img alt="Save" src="../Images/application_edit.png"> Недозвон
+				 Недозвон
 				</button>
 				</a>
 			<%end %>
 			<% if _client.AdditionalCanUsed("AppointedToTheGraph"): %>
 				<a class="nyromodal" href="../UserInfo/AppointedToTheGraph.rails?ClientCode=${ClientCode}">
-				<button id="Button3" class="button">
-				<img alt="Save" src="../Images/application_edit.png"> Назначить в граффик
+				<button id="naznach_but" class="button">
+				 ${naznach_text}
 				</button>
 				</a>
 			<%end %>

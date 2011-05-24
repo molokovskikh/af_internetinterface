@@ -85,8 +85,8 @@ namespace Billing.Test.Unit
 			{
 				billing.Compute();
 			}
+            Console.WriteLine(lPerson.Balance);
 			Assert.That( -19999m, Is.GreaterThan(lPerson.Balance));
-			Console.WriteLine(lPerson.Balance);
 			Assert.That(-20000m, Is.LessThan(lPerson.Balance));
 			billing.On();
 			/*Assert.IsTrue(lPerson.Client.ShowBalanceWarningPage);

@@ -4,7 +4,13 @@
 			float: left;
 			margin:10px;
 			
-		}				.jCalendar		{			font-size:10px;		}
+		}
+		
+		.jCalendar
+		{
+			font-size:10px;
+		}
+
 		.hasDatepicker
 		{
 			margin-top:10px;
@@ -81,7 +87,7 @@
 			    }
 			    $(data.graphs).each(function () {
 			        $('#tdi_' + this.IntervalId + '_' + this.brigadId).empty();
-			        $('#tdi_' + this.IntervalId + '_' + this.brigadId).append('<a href="../Search/Redirect?ClientCode=' + this.clientId + '">' + this.clientId + '</a>');
+			        $('#tdi_' + this.IntervalId + '_' + this.brigadId).append('<a class="graph_link" href="../Search/Redirect?ClientCode=' + this.clientId + '">' + this.clientId + '</a>');
 			    });
 			});
 
@@ -105,7 +111,7 @@
 		     $.post("SaveGraph", req, function (data) {
 		         if (data) {
 		             alert("Заявка включена в рассписание");
-		             $('a').each(function () {
+		             $('.graph_link').each(function () {
 		                 var client_id = $(this).attr('href').split('=')[1];
 		                 if (client_id == req.clientId) {
 		                     var clear_field = $(this).parent();
@@ -115,7 +121,9 @@
 		             });
 		             var appended_field = check_field.parent();
 		             appended_field.empty();
-		             appended_field.append('<a href="../Search/Redirect?ClientCode=' + req.clientId + '">' + req.clientId + '</a>');
+		             appended_field.append('<a class="graph_link" href="../Search/Redirect?ClientCode=' + req.clientId + '">' + req.clientId + '</a>');
+		             $('#naznach_but_1').text('Переназначить');
+		             $('#naznach_but').text('Переназначить');
 		         }
 		     });
          }
@@ -144,7 +152,7 @@
 			</tr>
 			<tr>
 				<td>
-					<button id="Save" onclick="Save()">Назначить</button>
+                    <button id="naznach_but_1" class="button" onclick="Save()" value="Назначить">Назначить </button>
 				</td>
 			</tr>
 	</tbody>

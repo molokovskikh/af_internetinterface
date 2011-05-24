@@ -479,6 +479,9 @@ namespace InternetInterface.Controllers
 			PropertyBag["PartnerAccessSet"] = new CategorieAccessSet();
 			PropertyBag["Payments"] = Payment.FindAllByProperty("Client", client).OrderBy(t => t.PaidOn).ToArray();
 			PropertyBag["WriteOffs"] = WriteOff.FindAllByProperty("Client", client).OrderBy(t => t.WriteOffDate);
+		    PropertyBag["naznach_text"] = ConnectGraph.Queryable.Count(c => c.Client.Id == ClientCode) != 0
+		                                      ? "Переназначить в граффик"
+		                                      : "Назначить в граффик";
 		}
 
 		[AccessibleThrough(Verb.Post)]
