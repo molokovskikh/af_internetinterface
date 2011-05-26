@@ -61,9 +61,7 @@
 								<td >
 									Скорость доступа</td>
 								<td>
-								   <% 
-	component SelectList, {}
-%></td>
+								   <% Component SelectList, {"clientCode" : ("${ClientCode}")} %></td>
 								 <td>
 									${VB.GetBlock("Speed")}
 								   </td>
