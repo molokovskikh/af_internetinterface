@@ -23,7 +23,7 @@ namespace InternetInterface.Test.Functional
 			_webServer = new Server(port, "/", Path.GetFullPath(webDir));
 			_webServer.Start();
 			Settings.Instance.AutoMoveMousePointerToTopLeft = false;
-			//Settings.Instance.MakeNewIeInstanceVisible = false;
+			Settings.Instance.MakeNewIeInstanceVisible = false;
 		}
 
 		[TearDown]

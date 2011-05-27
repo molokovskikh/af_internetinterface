@@ -115,7 +115,7 @@
 		addedSub.children('.rightDiv').children('.linkSelector').children("option[name='1']").attr('selected', 'selected');
 		addedSub.children('.rightDiv').children('.linkSelector').children("option[value='Content']").attr('selected', 'selected');
 		
-		/*$(toDiv)*/addedSub.children('.rightDiv').children('.delSubMenuItem:last').click(function () {
+		/*$(toDiv)*/addedSub.children('.rightDiv').children('.delSubMenuItem').click(function () {
 			delSubMenu(this);
 		});
 		AddEventArrow(addedSub.children('.leftDivSub').children('.upArrowSub'));
@@ -196,7 +196,9 @@
 			delSubMenu(this);
 		});
 
+
 		$('.delMenuItem').click(function () {
+
 			delSubMenu(this);
 		});
 

@@ -125,7 +125,8 @@ namespace InternetInterface.Models.Access
 									"PartnerRegisteredInfo",
 									"PartnersPreview",
 									"EditPartner",
-									"RegisterPartnerI"
+									"RegisterPartnerI",
+                                    "Administration"
 			                 	};
 			return _registerPartner.Contains(methodName) ? "RP" : string.Empty;
 		}
@@ -200,7 +201,9 @@ namespace InternetInterface.Models.Access
 									"NoPhoned",
 									"AppointedToTheGraph",
 									"GetGraph",
-									"SaveGraph"
+									"SaveGraph",
+                                    "RequestGraph",
+                                    "CreateAndPrintGraph"
 			                 	};
 			return _visibleDemand.Contains(methodName) ? "ECI" : string.Empty;
 		}

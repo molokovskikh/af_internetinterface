@@ -30,8 +30,8 @@ namespace InforoomInternet.Components
 		public override void Render()
 		{
 			var thisPath = EngineContext.UrlInfo.Controller + "/" + EngineContext.UrlInfo.Action;
-			if (thisPath == @"Main/Index")
-				thisPath = string.Empty;
+			/*if (thisPath == @"Main/Index")
+				thisPath = string.Empty;*/
 			if (thisPath == "Login/LoginPage")
 				thisPath = "PrivateOffice/IndexOffice";
 			MenuField currentMenu = null;
@@ -167,35 +167,13 @@ namespace InforoomInternet.Components
 				}
 				foreach (var field in menuField.subMenu)
 				{
-					/*htmlCode += "<div class=\"delSubMenu\">";
-					htmlCode += "<Div class=\"leftDivSub\">";
-					htmlCode += "<Div class=\"upArrowSub\"></Div>";
-					htmlCode += "<Div class=\"downArrowSub\"></Div>";
-					htmlCode += "</Div>";
-					htmlCode += "<Div class=\"rightDiv\">";*/
 					htmlCode += beforSubContent;
 					var subIntem =
 						"<input type=text name=\"fieldName\" id=\"{1}\" value=\"{0}\" class=\"subitem\"/>";
 					htmlCode += string.Format(subIntem, field.Name, "sn_" + field.Id);
 					htmlCode += GenerateSelectList("sl_" + field.Id, field.Link);
-					//htmlCode += string.Format(subIntem, field.Link, "sl_" + field.Id);
 					htmlCode += afterSubContent;
-					/*htmlCode += "<div class=\"delSubMenuItem\"> </div>";
-					htmlCode += " <br />";
-					htmlCode += "</div>";
-					htmlCode += "</div>";*/
 				}
-				/*ARSesssionHelper<SubMenuField>.QueryWithSession(session => {
-					foreach (var subMenuField in menuField.subMenu)
-				                                                           	{
-																				session.Evict(subMenuField);
-				                                                           	}
-				                                                           	return new List<SubMenuField>();
-				});*/
-				/*htmlCode += menuField.subMenu.Count > 0
-								? string.Format(
-								"<div class=\"{0}\"></div>", "appendDiv" + menuField.Id) : string.Empty;*/
-				//htmlCode += menuField.subMenu.Count > 0 ? "</div>" : string.Empty;
 				htmlCode += "</div>";
 				htmlCode += "</div>";
 				htmlCode += "</div>";

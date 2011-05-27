@@ -33,8 +33,8 @@ namespace InforoomInternet
 				new ActiveRecord().Initialize(ActiveRecordSectionHandler.Instance);
 
 				RoutingModuleEx.Engine.Add(new PatternRoute("/")
-					.DefaultForController().Is("Main")
-					.DefaultForAction().Is("Index"));
+                    .DefaultForController().Is("Content")
+                    .DefaultForAction().Is("Новости"));
 
 				RoutingModuleEx.Engine.Add(new PatternRoute("/Warning")
 					.DefaultForController().Is("Main")

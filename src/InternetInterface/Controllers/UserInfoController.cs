@@ -208,7 +208,7 @@ namespace InternetInterface.Controllers
 				client.Password = CryptoPass.GetHashString(Password);
 				client.UpdateAndFlush();
 				//var connectSumm = PaymentForConnect.FindAllByProperty("ClientId", client).First();
-				PropertyBag["WhoConnected"] = Clients.Find(ClientID).WhoConnected;
+                PropertyBag["WhoConnected"] = _client.WhoConnected;
 				PropertyBag["Client"] = client;
 				PropertyBag["Password"] = Password;
 				PropertyBag["AccountNumber"] = _client.Id.ToString("00000");
@@ -546,6 +546,7 @@ namespace InternetInterface.Controllers
 		{
 			var client = Clients.Find(ClientID);
 			client.AdditionalStatus = AdditionalStatus.Find((uint) AdditionalStatusType.Refused);
+		    client.Update();
 			CreateAppeal("Причина отказа:  " + prichina  + " \r\n Комментарий: \r\n " + Appeal, ClientID);
 			LayoutName = "NoMap";
 		}
@@ -569,8 +570,8 @@ namespace InternetInterface.Controllers
 			{
 				new Appeals
 					{
-						Appeal = "Причина недозвона:  " + prichina + " \r\n Комментарий: \r\n " + Appeal,
-						Date = _noPhoneDate.AddHours(DateTime.Now.Hour).AddMinutes(DateTime.Now.Minute),
+                        Appeal = "Причина недозвона:  " + prichina + " \r\n Дата: " + _noPhoneDate.ToShortDateString() + " \r\n Комментарий: \r\n " + Appeal,
+						Date = DateTime.Now,
 						Partner = InithializeContent.partner,
 						Client = Clients.Find(ClientID)
 					}.SaveAndFlush();
@@ -613,7 +614,34 @@ namespace InternetInterface.Controllers
 								Client = client,
 								Day = DateTime.Parse(Request.Form["graph_date"]),
 			                 }.Save();
+		    client.AdditionalStatus = AdditionalStatus.Find((uint) AdditionalStatusType.AppointedToTheGraph);
+            client.Update(); 
 			return true;
 		}
+
+        public void Administration()
+        {
+        }
+
+        public void RequestGraph(DateTime selectDate, uint brig)
+        {
+            PropertyBag["selectDate"] = selectDate != DateTime.MinValue ? selectDate : DateTime.Now;
+            PropertyBag["Brigad"] = brig != 0 ? Brigad.Find(brig) : Brigad.FindFirst();
+            PropertyBag["Brigads"] = Brigad.FindAll();
+            /*PropertyBag["Graphs"] =
+                ConnectGraph.Queryable.Where(c => c.Day.Date == selectDate).Select(
+                    g => new {brigadId = g.Brigad.Id, clientId = g.Client.Id, g.IntervalId}).ToList();*/
+            PropertyBag["Intervals"] = Intervals.GetIntervals();
+        }
+
+        public void CreateAndPrintGraph(uint Brig, DateTime selectDate)
+        {
+            PropertyBag["Clients"] =
+                ConnectGraph.Queryable.Where(c => c.Brigad.Id == Brig && c.Day.Date == selectDate.Date).Select(
+                    s => s.Client);
+            PropertyBag["selectDate"] = selectDate;
+            PropertyBag["Brigad"] = Brigad.Find(Brig);
+            PropertyBag["Intervals"] = Intervals.GetIntervals();
+        }
 	}
 }

@@ -56,45 +56,56 @@ namespace Billing.Test.Unit
 		[Test]
 		public void OnTest()
 		{
-			var client = BaseBillingFixture.CreateAndSaveClient("testblockedClient", true, 1000);
-			client.SaveAndFlush();
-
-			BaseBillingFixture.CreatePayment(500m);
-
-			billing.On();
-			var unblockedClient = Clients.FindAllByProperty("Name", "testblockedClient").First();
-			Assert.That(unblockedClient.Status.Blocked , Is.EqualTo(false));
-			Assert.That(unblockedClient.PhysicalClient.Balance, Is.EqualTo(1300));
+            CreateClient();
+		    var unblockedClient = Clients.FindFirst();
+		    unblockedClient.AutoUnblocked = true;
+            unblockedClient.Update();
+		    var phisClient = unblockedClient.PhysicalClient;
+		    phisClient.Balance = -100;
+            phisClient.Update();
+            billing.Compute();
+            Assert.IsTrue(unblockedClient.Status.Blocked);
+		    new Payment {
+		                    Client = unblockedClient,
+                            Sum = 200
+		                }.Save();
+            billing.On();
+            Assert.IsFalse(unblockedClient.Status.Blocked);
+			Assert.That(unblockedClient.PhysicalClient.Balance, Is.EqualTo(100));
 		}
 
 		[Test]
 		public void LawyerPersonTest()
 		{
+		    SystemTime.Reset();
+            var lPerson = new LawyerPerson
+            {
+                Balance = 0,
+                Tariff = 10000m,
+            };
+            lPerson.SaveAndFlush();
 			var client = new Clients {
 				Disabled = false,
 				Name = "TestLawyer",
-				ShowBalanceWarningPage = false
+				ShowBalanceWarningPage = false,
+                LawyerPerson = lPerson
 			};
 			client.SaveAndFlush();
-			var lPerson = new LawyerPerson {
-				Balance = 0,
-				Tariff = 10000m,
-			};
-			lPerson.SaveAndFlush();
-			for (int i = 0; i < 60; i++)
-			{
-				billing.Compute();
-			}
+
+            for (int i = 0; i < DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month) * 2; i++)
+            {
+                billing.Compute();
+            }
             Console.WriteLine(lPerson.Balance);
 			Assert.That( -19999m, Is.GreaterThan(lPerson.Balance));
 			Assert.That(-20000m, Is.LessThan(lPerson.Balance));
 			billing.On();
-			/*Assert.IsTrue(lPerson.Client.ShowBalanceWarningPage);
-			Console.WriteLine(lPerson.Client.ShowBalanceWarningPage);*/
+			Assert.IsTrue(client.ShowBalanceWarningPage);
+			Console.WriteLine(client.ShowBalanceWarningPage);
 			lPerson.Balance += 1000;
 			billing.On();
-			/*Assert.IsTrue(!lPerson.Client.ShowBalanceWarningPage);
-			Console.WriteLine(lPerson.Client.ShowBalanceWarningPage);*/
+			Assert.IsTrue(!client.ShowBalanceWarningPage);
+			Console.WriteLine(client.ShowBalanceWarningPage);
 		}
 
 		[Test]
@@ -167,6 +178,14 @@ namespace Billing.Test.Unit
 		public void IntervalTest()
 		{
 			BaseBillingFixture.CreateAndSaveInternetSettings();
+		    foreach (var writeOff in WriteOff.FindAll())
+		    {
+		        writeOff.Delete();
+		    }
+		    foreach (var clientse in Clients.FindAll())
+		    {
+		        clientse.Delete();   
+		    }
 			var client = CreateClient();
 
 			var dates = new List<List<Interval>> {

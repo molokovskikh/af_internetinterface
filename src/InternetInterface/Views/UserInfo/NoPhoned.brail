@@ -1,13 +1,17 @@
-﻿
-		<style type="text/css">
+﻿		<style type="text/css">
 		.turn-me-into-datepicker {
 			float: left;
 			margin:10px;
 			
-		}				.jCalendar		{			font-size:10px;		}
+		}
+		
+		.jCalendar
+		{
+			font-size:10px;
+		}
+
 		.hasDatepicker
 		{
-			margin-top:10px;
 			float:none;
 		}
 			
@@ -53,9 +57,16 @@
 	</style>
 
 	<script type="text/javascript">
-		Date.firstDayOfWeek = 0;
+		/*Date.firstDayOfWeek = 0;
 		Date.format = 'dd.mm.yyyy';
-		$('.date-pick').datePicker({ startDate: '01/01/1996' }).val('${StartDate}').trigger('change');
+		$('.date-pick').datePicker({ startDate: '01/01/1996' }).val('${StartDate}').trigger('change');*/
+
+
+	    $(function () {
+	        $('#NoPhoneDate').datepicker({
+	            inline: true
+	        });
+	    });
 	</script>
 
 <div id="back">
@@ -77,19 +88,19 @@
 					</select>
 				</div>
 				<div>
-					<input name="NoPhoneDate" id="date1" class="date-pick dp-applied">
+					<input type=text value="${StartDate}" name="NoPhoneDate" id="NoPhoneDate" class="date-pick dp-applied">
 				</div>
 				</td>
 			</tr>
 			<tr>
 				<td>
 				<label for="textField"><b>Введите комментарий :</b></label>
-				<textarea id="textField" name="Appeal" rows="6" cols="55%"></textarea>
+				<textarea id="NotPhoned_textField" name="Appeal" rows="6" cols="55%"></textarea>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					<button type="submit" id="Button2" class="button">
+					<button type="submit" id="NotPhoned_but" class="button">
 					<img alt="Save" src="../Images/tick.png">Зарегистрировать</button>
 				</td>
 			</tr>

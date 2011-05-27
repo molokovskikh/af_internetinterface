@@ -1,0 +1,29 @@
+﻿    <style type="text/css">
+        .MA
+        {
+            color: #4c5390;
+        }
+        .comment_text
+        {
+            color:Gray;
+            font-size:small;
+            }
+    </style>
+<table class="table" style="width:400px">
+    <tbody>
+        <%if PartnerAccessSet.AccesPartner("RP"): %>
+        <tr><td>
+        <a href = "../UserInfo/PartnersPreview.rails?catType=1" ><span class="MA"><div class=menudiv>Диллеры</div></span></a>
+        <span class="comment_text">Просмотр и регистрация диллеров (Диллер - сотрудник сторонней, партнерской организации, осуществляющий работу с клиентами)</span></td></tr>
+        <%end %>
+        <%if PartnerAccessSet.AccesPartner("RP"): %>
+        <tr><td>
+        <a href = "../UserInfo/PartnersPreview.rails?catType=3" ><span class="MA"><div class=menudiv>Сотрудники </div></span></a>
+        <span class="comment_text">Просмотр и регистрация сотрудников АК "Инфорум"</span></td></tr>
+        <%end %>
+        <%if PartnerAccessSet.AccesPartner("RP"): %>
+        <tr><td><a href = "../Brigads/ShowBrigad.rails" ><span class="MA"><div class=menudiv>Бригады</div></span></a>
+        <span class="comment_text">Просмотр и создание бригад. Бригады осуществляют физическое подключение абонентов, на них составляется расписание и разначаются заявки.</span></td></tr>
+        <%end %>
+    </tbody>
+</table>

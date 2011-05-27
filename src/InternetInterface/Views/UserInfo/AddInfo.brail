@@ -34,12 +34,12 @@
 	        <tr>
 		        <td>
 		        <label for="textField"><b>Введите комментарий :</b></label>
-		        <textarea id="textField" name="Appeal" rows="6" cols="55%"></textarea>
+		        <textarea id="Refused_textField" name="Appeal" rows="6" cols="55%"></textarea>
 		        </td>
 	        </tr>
 	        <tr>
 		        <td>
-			        <button type="submit" id="Button2" class="button">
+			        <button type="submit" id="Refused_but" class="button">
 			        <img alt="Save" src="../Images/tick.png">Зарегистрировать</button>
 		        </td>
 	        </tr>

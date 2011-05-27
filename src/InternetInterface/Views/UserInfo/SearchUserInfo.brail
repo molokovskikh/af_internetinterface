@@ -1,9 +1,60 @@
 ﻿
+<link rel="stylesheet" href="../Scripts/modal/reveal.css">
+
+<script src="../Scripts/modal/jquery.reveal.js" type="text/javascript"></script>
+
+
 <script type="text/javascript">
-	$(function () {
-		$('.nyroModal').nyroModal();
-	});
+    $(function () {
+        //$('.nyroModal').nyroModal();
+        $('.button_mod').click(function () {
+
+            loadData(this);
+
+            $('.reveal-modal').css('left', '50%');
+            $('.reveal-modal').width(500);
+
+            $('#myModal').reveal({
+                animation: 'fadeAndPop',                   //fade, fadeAndPop, none
+                animationspeed: 0,                       //how fast animtions are
+                closeonbackgroundclick: true,              //if you click background will modal close?
+                dismissmodalclass: 'close-reveal-modal'    //the class of a button or element that will close an open modal
+            });
+
+
+        });
+
+        $('#naznach_but').click(function () {
+
+            loadData(this);
+
+            $('.reveal-modal').width(1200);
+            $('.reveal-modal').css('left','33.3%');
+
+            $('#myModal').reveal({
+                animation: 'fadeAndPop',                 
+                animationspeed: 0,                     
+                closeonbackgroundclick: true,              
+                dismissmodalclass: 'close-reveal-modal'    
+            });
+
+
+        });
+    });
+
+    function loadData(bytel) {
+        var html = $.ajax({
+            url: $(bytel).attr('name'),
+            async: false
+        }).responseText;
+        //alert(html);
+        $('#myModal').empty();
+        $('#myModal').append(html);
+    }
 </script>
+		<div id="myModal" class="reveal-modal"> 
+		</div> 
+	
 
 <div style="width:50%; float:left;">
 <div id="main" style="width: 100%;">
@@ -109,30 +160,37 @@
 		<tr>
 			<td>
 			<% if _client.AdditionalCanUsed("Refused"): %>
-				<a class="nyromodal" href="../UserInfo/AddInfo.rails?ClientCode=${ClientCode}">
-				<button id="Button1" class="button">
+				<a href="#" class="big-link" data-reveal-id="myModal" > 
+				<button id="Refused" name="../UserInfo/AddInfo.rails?ClientCode=${ClientCode}" class="button_mod">
 				 Отказ
 				</button>
 				</a>
 			<%end %>
 			<% if _client.AdditionalCanUsed("NotPhoned"): %>
-				 <a class="nyromodal" href="../UserInfo/NoPhoned.rails?ClientCode=${ClientCode}">
-				<button id="Button2" class="button">
+				<a href="#" class="big-link" data-reveal-id="myModal"> 
+				<button id="NotPhoned" name="../UserInfo/NoPhoned.rails?ClientCode=${ClientCode}" class="button_mod">
 				 Недозвон
 				</button>
 				</a>
 			<%end %>
 			<% if _client.AdditionalCanUsed("AppointedToTheGraph"): %>
-				<a class="nyromodal" href="../UserInfo/AppointedToTheGraph.rails?ClientCode=${ClientCode}">
-				<button id="naznach_but" class="button">
+				<!--<a class="nyromodal" href="../UserInfo/AppointedToTheGraph.rails?ClientCode=${ClientCode}"> -->
+                <a href="#" class="big-link" data-reveal-id="myModal" > 
+				<button id="naznach_but" name="../UserInfo/AppointedToTheGraph.rails?ClientCode=${ClientCode}" class="button_mod2" >
 				 ${naznach_text}
 				</button>
 				</a>
 			<%end %>
-			</td>
+  		 </td>
 		</tr>
 	</tbody>
 </table>
+<div class="overlay" id="overlay">
+
+	<!-- the external content is loaded inside this tag -->
+	<div class="wrap"></div>
+
+</div>
 	<%else:%>
 	<form class="form edit" method="post" action="${siteroot}/UserInfo/EditInformation">
 	<input type="hidden" name="ClientID" value="${ClientCode}" />

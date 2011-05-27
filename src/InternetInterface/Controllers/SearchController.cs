@@ -46,11 +46,11 @@ namespace InternetInterface.Controllers
 
 		[AccessibleThrough(Verb.Get)]
 		public void SearchBy([DataBind("SearchBy")]UserSearchProperties searchProperties,
-							[DataBind("ConnectedType")]ConnectedTypeProperties connectedType, [DataBind("clientTypeFilter")]ClientTypeProperties clientTypeFilter, 
-			uint tariff, uint whoregister, uint brigad ,string searchText)
+							[DataBind("ConnectedType")]ConnectedTypeProperties connectedType, [DataBind("clientTypeFilter")]ClientTypeProperties clientTypeFilter,
+            uint tariff, uint whoregister, uint brigad, string searchText, uint addtionalStatus)
 		{
 			IList<Clients> clients = new List<Clients>();
-			clients = GetClientsLogic.GetClients(searchProperties, connectedType, clientTypeFilter, tariff, whoregister, searchText, brigad);
+            clients = GetClientsLogic.GetClients(searchProperties, connectedType, clientTypeFilter, tariff, whoregister, searchText, brigad, addtionalStatus);
 			Flash["SClients"] = clients;
 			//PropertyBag["ConnectBlockDisplay"] = ((List<Clients>) clients).Find(p => p.PhysicalClient.WhoConnected == null || p.LawyerPerson.WhoConnected == null);
 
@@ -63,6 +63,8 @@ namespace InternetInterface.Controllers
 			PropertyBag["clientTypeFilter"] = clientTypeFilter;
 			PropertyBag["FindBy"] = searchProperties;
 			PropertyBag["ConnectBy"] = connectedType;
+            PropertyBag["additionalStatuses"] = AdditionalStatus.FindAll();
+            PropertyBag["ChAdditional"] = addtionalStatus;
 
 			Flash["Brigads"] = Brigad.FindAllSort();
 		}
@@ -84,6 +86,8 @@ namespace InternetInterface.Controllers
 			PropertyBag["clientTypeFilter"] = clientTypeFilter;
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
 			PropertyBag["Connected"] = false;
+            PropertyBag["additionalStatuses"] = AdditionalStatus.FindAll();
+		    PropertyBag["ChAdditional"] = 0;
 			if (sClients != null)
 			{
 				Flash["SClients"] = sClients;

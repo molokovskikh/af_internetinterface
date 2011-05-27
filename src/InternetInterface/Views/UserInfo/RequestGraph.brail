@@ -1,0 +1,95 @@
+﻿<script type="text/javascript">
+    $(function () {
+
+        /*$.datepicker.regional['ru'] = {
+            closeText: 'Закрыть',
+            prevText: '&#x3c;Пред',
+            nextText: 'След&#x3e;',
+            currentText: 'Сегодня',
+            monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+		'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+            monthNamesShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн',
+		'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+            dayNames: ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота'],
+            dayNamesShort: ['вск', 'пнд', 'втр', 'срд', 'чтв', 'птн', 'сбт'],
+            dayNamesMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+            weekHeader: 'Нед',
+            dateFormat: 'dd.mm.yy',
+            firstDay: 1,
+            isRTL: false,
+            showMonthAfterYear: false,
+            yearSuffix: ''
+        };
+        $.datepicker.setDefaults($.datepicker.regional['ru']);*/
+
+        $('#datepicker').datepicker({
+            inline: true
+        });
+    });
+</script>
+
+
+<center>
+<form method=post action="">
+<table class="table" style="width:700px; border-style:solid; border-color:Black; border-width:1px;">
+    <thead>
+        <tr><th colspan="2">Настройки</th></tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><span>Выберете дату</span></td>
+            <td>
+            <meta charset="UTF-8" />
+                <input type="text" name="selectDate" id="datepicker" value="${selectDate.ToShortDateString()}"/>
+            </td>
+        </tr>
+        <tr>
+            <td><span>Выберете бригаду</span></td>
+            <td>
+                <select name="brig">
+                <% for i, Brig in enumerate(Brigads):  %>
+                    <option value=${Brig.Id}>${Brig.Name}</option>
+                <%end %>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td><button id="naznach_but_1" class="button" type=submit value="Назначить">Показать расписание</button></td>
+        </tr>
+    </tbody>
+</table>
+</form>
+<form method=post action="${siteroot}/UserInfo/CreateAndPrintGraph">
+<input type=hidden name="selectDate" value=${selectDate} />
+<input type=hidden name="Brig" value=${Brigad.Id} />
+<table class="table" style="width:700px; border-style:solid; border-color:Black; border-width:1px;">
+    <thead>
+        <tr>
+            <th colspan="2" style="text-align:center; border-style:solid; border-color:White; border-width:2px;"> ${Brigad.Name} </th>
+        </tr>
+        <tr>
+            <th style="text-align:center;">Время</th>
+            <th style="text-align:center;">Номер счета</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% for i, interval in enumerate(Intervals):  %>
+        <%client = Brigad.GetOneGraph(i, selectDate) %>
+            <tr>
+                <td style="text-align:center;">
+                    ${interval}
+                </td>
+                <td style="text-align:center;">
+                <%if client != null: %>
+                    <a href="../Search/Redirect?ClientCode=${client.Id}">${client.Id.ToString("00000")}</a>
+                <%end %>
+                </td>
+            </tr>
+        <%end %>
+            <tr>
+                <td><button id="Button1" class="button" type=submit value="Назначить">Сформировать и распечатать заявки</button></td>
+            </tr>
+    </tbody>
+</table>
+</form>
+</center>

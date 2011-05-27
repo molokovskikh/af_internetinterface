@@ -42,7 +42,7 @@ namespace InternetInterface.Test.Unit
 			ResultAssert(() => GetClientsLogic.GetClients(UserSearchPropertiesHelper.CreateUserSearchProperties(),
 																	   ConnectedTypePropertiesHelper.CreateUserSearchProperties(), ClientTypeHelper.CreateUserSearchProperties(), 0,
 			                                                           0,
-			                                                           string.Empty, 0));
+			                                                           string.Empty, 0, 0));
 		}
 
 		[Test]
@@ -50,7 +50,7 @@ namespace InternetInterface.Test.Unit
 		{
 			var query = GetClientsLogic.GetWhere(UserSearchPropertiesHelper.CreateUserSearchProperties(),
 			                                     ConnectedTypePropertiesHelper.CreateUserSearchProperties(),ClientTypeHelper.CreateUserSearchProperties(),
-			                                     0, 0, "Test", 0);
+			                                     0, 0, "Test", 0,0);
 			Assert.That(query, Is.StringContaining(@"WHERE LOWER(P.Name) like :SearchText or LOWER(P.Surname) like :SearchText
 or LOWER(P.Patronymic) like :SearchText or LOWER(P.City) like :SearchText 
 or LOWER(P.PassportSeries) like :SearchText

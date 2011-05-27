@@ -93,14 +93,24 @@
 
 		 }
 
-		 $(function () {
+		 /*$(function () {
 		     Date.firstDayOfWeek = 0;
 		     Date.format = 'dd.mm.yyyy';
 		     $('.date-pick').datePicker({
 		         startDate: '01/01/1996'
 		     }).val('${StartDate}').change(function () { fillData(); });
 		     fillData();
+		 });*/
+
+		 //$.datepicker.setDefaults($.datepicker.regional['ru']);
+
+		 $(function () {
+		     $('#graph_date').datepicker({
+		         inline: true
+		     }).change(function () { fillData(); });
+		     fillData();
 		 });
+
 
 		 function Save() {
 		     var req = {};
@@ -141,7 +151,7 @@
 			<tr>
 				<td>
 				<div>
-					<input name="graph_date" id="graph_date" class="date-pick dp-applied">
+					<input type=text value="${StartDate}" name="graph_date" id="graph_date" class="date-pick dp-applied">
 				</div>
 				</td>
 			</tr>

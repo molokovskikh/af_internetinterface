@@ -1,15 +1,19 @@
 ﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <script type="text/javascript" src="../Scripts/jquery-1.4.1.js"></script>
-    <script type="text/javascript" src="../Scripts/jquery.datePicker.js"></script>
-    <script type="text/javascript" src="../Scripts/date.js"></script>
-    <script type="text/javascript" src="../Scripts/jquery.bgiframe.js"></script>
-    <script type="text/javascript" src="../Scripts/date_ru_utf8.js"></script>
-    <script type="text/javascript" src="../Scripts/jquery.nyroModal/js/jquery.nyroModal.custom.js"></script>
-    <link href="../Styles/Style.css" type="text/css" rel="stylesheet" />
-    <link href="../Styles/base.css" type="text/css" rel="stylesheet" />
-    <link href="../Styles/datePicker.css" type="text/css" rel="stylesheet" />
+<link href="../Styles/Style.css" type="text/css" rel="stylesheet" />
+<link href="../Styles/base.css" type="text/css" rel="stylesheet" />
+<link href="../Styles/datePicker.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="../Scripts/jquery-1.5.1.min.js"></script>
+<!--<script type="text/javascript" src="../Scripts/jquery.datePicker.js"></script>
+<script type="text/javascript" src="../Scripts/date.js"></script>
+<script type="text/javascript" src="../Scripts/jquery.bgiframe.js"></script>
+<script type="text/javascript" src="../Scripts/date_ru_utf8.js"></script>-->
+<script type="text/javascript" src="../Scripts/jquery.nyroModal/js/jquery.nyroModal.custom.js"></script>
+
+<link type="text/css" href="../Scripts/JQueryUi/css/smoothness/jquery-ui-1.8.13.custom.css" rel="stylesheet" />
+<!--<script type="text/javascript" src="../Scripts/JQueryUi/css/smoothness/jquery.ui.datepicker.js>	</script>  -->
+<script type="text/javascript" src="../Scripts/JQueryUi/js/jquery-ui-1.8.13.custom.min.js"></script><script type="text/javascript" src="../Scripts/JQueryUi/js/jquery.ui.datepicker-ru.js"></script> 
     <title>Интернет интерфейс</title>
 </head>
 <body>

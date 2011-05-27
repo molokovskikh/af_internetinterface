@@ -144,8 +144,11 @@
     <None Include="Views\Switches\OnLineClient.brail" />
     <None Include="Views\Switches\ShowSwitches.brail" />
     <None Include="Views\UserInfo\AddInfo.brail" />
+    <None Include="Views\UserInfo\Administration.brail" />
     <None Include="Views\UserInfo\AppointedToTheGraph.brail" />
     <None Include="Views\UserInfo\ClientRegisteredInfoFromDiller.brail" />
+    <None Include="Views\UserInfo\CreateAndPrintGraph.brail" />
+    <None Include="Views\UserInfo\RequestGraph.brail" />
     <None Include="Views\UserInfo\LawyerPersonInfo.brail" />
     <None Include="Views\UserInfo\NoPhoned.brail" />
     <None Include="Views\UserInfo\PartnersPreview.brail" />

@@ -12,6 +12,13 @@ hr {
   background: #aaa; 
 }
 
+@media print { 
+.non-printable 
+{
+    display:none; 
+    }
+}
+
 p {
   font-size: 12px;
   line-height: 20px;

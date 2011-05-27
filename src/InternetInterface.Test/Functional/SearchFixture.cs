@@ -11,7 +11,24 @@ namespace InternetInterface.Test.Functional
 	[TestFixture]
 	class SearchFixture : WatinFixture
 	{
-		[Test]
+        [Test]
+        public void FindAdditionalStatus()
+        {
+            using (var browser = Open("Search/SearchUsers.rails"))
+            {
+                var client = Clients.FindFirst();
+                var addStat = AdditionalStatus.FindAll();
+                client.Status = Status.Find((uint) StatusType.BlockedAndNoConnected);
+                client.AdditionalStatus = addStat.First();
+                client.Update();
+                browser.SelectList("addtionalStatus").SelectByValue(addStat.First().Id.ToString());
+                browser.Button(Find.ById("SearchButton")).Click();
+                Thread.Sleep(1000);
+                Assert.That(browser.Text, Is.StringContaining(client.Id.ToString("00000")));
+            }
+        }
+
+	    [Test]
 		public void SearchTest()
 		{
 			using (var browser = Open("Search/SearchUsers.rails"))
@@ -21,7 +38,6 @@ namespace InternetInterface.Test.Functional
 				Assert.That(browser.Text, Is.StringContaining("Автоматически"));
 				Assert.That(browser.Text, Is.StringContaining("Тариф"));
 				Assert.That(browser.Text, Is.StringContaining("Все"));
-				Assert.That(browser.Text, Is.StringContaining("Кем загистрирован"));
 				Assert.That(browser.Text, Is.StringContaining("Назначено на бригаду"));
 				browser.Button(Find.ById("SearchButton")).Click();
 				Thread.Sleep(400);

@@ -14,7 +14,7 @@ namespace InternetInterface.AllLogic
 	public class GetClientsLogic
 	{
 		public static IList<Clients> GetClients(UserSearchProperties searchProperties,
-			ConnectedTypeProperties connectedType, ClientTypeProperties clientType, uint tariff, uint whoregister, string searchText, uint brigad)
+            ConnectedTypeProperties connectedType, ClientTypeProperties clientType, uint tariff, uint whoregister, string searchText, uint brigad, uint addtionalStatus)
 		{
 			IList<Clients> result = new List<Clients>();
 			ARSesssionHelper<Clients>.QueryWithSession(session =>
@@ -25,12 +25,15 @@ namespace InternetInterface.AllLogic
 				if (CategorieAccessSet.AccesPartner("SSI"))
 				if (!searchProperties.IsSearchAccount())
 				{
-					sqlStr = String.Format(@"SELECT * FROM internet.Clients c
+				    sqlStr =
+				        String.Format(
+				            @"SELECT * FROM internet.Clients c
 left join internet.PhysicalClients p on p.id = c.PhysicalClient
 left join internet.LawyerPerson l on l.id = c.LawyerPerson
 join internet.Status S on s.id = c.Status
 {0} ORDER BY C.Name",
-					GetWhere(searchProperties, connectedType, clientType, whoregister, tariff, searchText, brigad));
+				            GetWhere(searchProperties, connectedType, clientType, whoregister, tariff, searchText, brigad,
+				                     addtionalStatus));
 					query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Clients));
 					if (whoregister != 0)
 						query.SetParameter("whoregister", whoregister);
@@ -38,6 +41,8 @@ join internet.Status S on s.id = c.Status
 						query.SetParameter("tariff", tariff);
 					if (brigad != 0)
 						query.SetParameter("Brigad", brigad);
+                    if (addtionalStatus != 0)
+                        query.SetParameter("addtionalStatus", addtionalStatus);
 					if (connectedType.IsConnected())
 						query.SetParameter("Connected", true);
 					if (connectedType.IsNoConnected())
@@ -80,7 +85,7 @@ ORDER BY C.Name", ":SearchText");
 		}
 
 
-		public static string GetWhere(UserSearchProperties sp, ConnectedTypeProperties ct, ClientTypeProperties clT, uint whoregister, uint tariff, string searchText, uint brigad)
+        public static string GetWhere(UserSearchProperties sp, ConnectedTypeProperties ct, ClientTypeProperties clT, uint whoregister, uint tariff, string searchText, uint brigad, uint addtionalStatus)
 		{
 			var _return = string.Empty;
 			if (whoregister != 0)
@@ -96,7 +101,11 @@ ORDER BY C.Name", ":SearchText");
 			{
 				_return += " and P.WhoConnected = :Brigad or l.WhoConnected = :Brigad";
 			}
-			if ((ct.IsConnected()) || (ct.IsNoConnected()))
+            if (addtionalStatus != 0)
+            {
+                _return += " and C.AdditionalStatus = :addtionalStatus";
+            }
+            if ((ct.IsConnected()) || (ct.IsNoConnected()))
 			{
 				_return += " and S.Connected = :Connected";
 			}

@@ -82,12 +82,21 @@ namespace InternetInterface.Models
 		[HasMany(ColumnKey = "Client", OrderBy = "PaidOn")]
 		public virtual IList<Payment> Payments { get; set; }
 
-		public virtual ClientType GetClientType()
+        public virtual string ChangePhysicalClientPassword()
+        {
+            var pass =  CryptoPass.GeneratePassword();
+            PhysicalClient.Password = CryptoPass.GetHashString(pass);
+            PhysicalClient.Update();
+            return pass;
+        }
+
+
+	    public virtual ClientType GetClientType()
 		{
 			if (PhysicalClient != null)
 				return ClientType.Phisical;
 			if (LawyerPerson != null)
-				return ClientType.Legal;
+				return ClientType.Legal;    
 			return ClientType.Phisical;
 		}
 

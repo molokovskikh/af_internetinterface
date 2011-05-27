@@ -116,6 +116,20 @@
 						   <label for="SearchByUserId">Подключены</label><br />
 				</td>
 			   </tr>
+               <tr>
+                    <td style="padding: 5px;">Дополнительный статус<br />
+                          <div>
+						  <select name="addtionalStatus" id="addtionalStatus" style="width: 100%" >
+						  <option id="Option0" value="0" > Все </option>
+						  <%
+						  for i, additionalStatus in enumerate(additionalStatuses): 
+						  %>
+						  <option id="Option${additionalStatus.Id}" value="${additionalStatus.Id}" ${"selected" if (additionalStatus.Id == ChAdditional)}> ${additionalStatus.Name} </option>
+						  <% end %>
+						  </select>
+					</div>
+                    </td>
+               </tr>
 			</thead>
 		</table>
 	</fieldset>

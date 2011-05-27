@@ -35,14 +35,6 @@
             </div>
             </th>
             <tr valign="top">
-                <%if PartnerAccessSet.AccesPartner("RP"): %>
-               <th>
-               <a href = "../UserInfo/PartnersPreview.rails?catType=1" ><span class="MH"><div class=menudiv>Диллеры</div></span></a></th>
-                <%end %>
-                <%if PartnerAccessSet.AccesPartner("RP"): %>
-               <th>
-               <a href = "../UserInfo/PartnersPreview.rails?catType=3" ><span class="MH"><div class=menudiv>Сотрудники </div></span></a></th>
-                <%end %>
                 <%if PartnerAccessSet.AccesPartner("RC"): %>
                <th><a href = "../Register/RegisterClient.rails" ><span class="MH"><div class=menudiv>Регистрация абонента</div></span></a></th>
                <%end %>
@@ -50,7 +42,7 @@
                <th><a href = "../Register/RegisterLegalPerson.rails" ><span class="MH"><div class=menudiv>Регистрация ЮрЛица</div></span></a></th>
                <%end %>
                <%if PartnerAccessSet.AccesPartner("VD"): %>
-               <th><a href = "../UserInfo/RequestView.brail?labelId=0" ><span class="MH"><div class=menudiv>Заявки</div></span></a></th>
+               <th><a href = "../UserInfo/RequestView.rails?labelId=0" ><span class="MH"><div class=menudiv>Заявки</div></span></a></th>
                <%end %>
                <%if PartnerAccessSet.AccesPartner("GCI"): %>
                <th><a href = "../Search/SearchUsers.rails" ><span class="MH"><div class=menudiv>Клиенты</div></span></a></th>
@@ -62,14 +54,17 @@
                <th><a href = "../Switches/OnLineClient.rails?Zone=4" ><span class="MH"><div class=menudiv>OnLine клиенты</div></span></a></th>
                <%end %>
                <%if PartnerAccessSet.AccesPartner("SSI"): %>
-               <th><a href = "../Brigads/ShowBrigad.rails" ><span class="MH"><div class=menudiv>Бригады</div></span></a></th>
-               <%end %>
-               <%if PartnerAccessSet.AccesPartner("SSI"): %>
                <th><a href = "../Payers/Filter.rails" ><span class="MH"><div class=menudiv>Платежи</div></span></a></th>
                <%end %>
-                              <%if PartnerAccessSet.AccesPartner("SSI"): %>
+               <%if PartnerAccessSet.AccesPartner("SSI"): %>
                <th><a href = "../Payers/AgentFilter.rails" ><span class="MH"><div class=menudiv>Платежи по агентам</div></span></a></th>
                <%end %>
+               <%if PartnerAccessSet.AccesPartner("SSI"): %>
+               <th><a href = "../UserInfo/RequestGraph.rails" ><span class="MH"><div class=menudiv>График подключений</div></span></a></th>
+               <%end %>
+                <%if PartnerAccessSet.AccesPartner("RP"): %>
+                <th><a href = "../UserInfo/Administration.rails" ><span class="MH"><div class=menudiv>Администрирование</div></span></a></th>
+                <%end %>
                <th>
                   <form class="form" id="Exit" name="Exit" method="post" action="${siteroot}/ExitPartner/Yes" >
                   <button type="submit" class="button">

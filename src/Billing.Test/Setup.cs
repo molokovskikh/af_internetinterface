@@ -64,12 +64,12 @@ namespace Billing.Test
 		[TearDown]
 		public void Teardown()
 		{
+            scope.Dispose();
+            scope = null;
 			if (mysql != null)
 				mysql.Kill();
 			if (scope == null)
 				return;
-			scope.Dispose();
-			scope = null;
 			SystemTime.Reset();
 		}
 	}

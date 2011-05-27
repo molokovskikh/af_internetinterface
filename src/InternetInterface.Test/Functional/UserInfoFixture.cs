@@ -12,38 +12,104 @@ namespace InternetInterface.Test.Functional
 	[TestFixture]
 	class UserInfoFixture : WatinFixture
 	{
-		[Test]
+        public string format;
+	    public PhysicalClients physicalClient;
+        public Clients client;
+        public ClientEndpoints endPoint;
+
+        public UserInfoFixture()
+        {
+          using (new SessionScope())
+            {
+                physicalClient = new PhysicalClients {
+                                                         Name = "Alexandr"
+                                                         ,
+                                                         Surname = "Zolotarev",
+                                                         Patronymic = "Alekseevich",
+                                                         Street = "Stud",
+                                                         House = "12",
+                                                         Apartment = "1",
+                                                         Entrance = "2",
+                                                         Floor = "2",
+                                                         PhoneNumber = "8-473-2606-000",
+                                                         Balance = 0,
+                                                         Tariff = Tariff.Queryable.First()
+
+                                                     };
+                physicalClient.SaveAndFlush();
+                client = new Clients {
+                                         PhysicalClient = physicalClient,
+                                         BeginWork = null,
+                                         Name =
+                                             string.Format("{0} {1} {2}", physicalClient.Name, physicalClient.Surname,
+                                                           physicalClient.Patronymic)
+                                     };
+                client.SaveAndFlush();
+                endPoint = new ClientEndpoints {
+                                                   Client = client,
+                                               };
+                endPoint.SaveAndFlush();
+                format = string.Format("UserInfo/SearchUserInfo.rails?ClientCode={0}&EditingConnect=true",
+                                       physicalClient.Id);
+            }
+        }
+
+        [Test]
+        public void AdditionalStatusTest()
+        {
+            using (new SessionScope())
+            {
+                client = Clients.Queryable.Where(
+    c => c.PhysicalClient != null && Brigad.FindAll().Contains(c.WhoConnected)).
+    First();
+                client.AdditionalStatus = null;
+                client.Status = Status.Find((uint)StatusType.BlockedAndNoConnected);
+                client.UpdateAndFlush();
+                format = string.Format("UserInfo/SearchUserInfo.rails?ClientCode={0}", client.Id);
+            }
+            using (var browser = Open(format))
+            {
+                //using (new SessionScope())
+                {
+                    browser.Button(Find.ById("Refused")).Click();
+                    Thread.Sleep(1000);
+                    browser.TextField("Refused_textField").AppendText("Тестовое сообщение отказ");
+                    browser.Button("Refused_but").Click();
+                    Thread.Sleep(2000);
+                    using (new SessionScope())
+                    {
+                        client.Refresh();
+                        Assert.That(client.AdditionalStatus.Id, Is.EqualTo((uint)AdditionalStatusType.Refused));
+                        Assert.That(browser.Text, Is.StringContaining("Тестовое сообщение отказ"));
+                        Assert.That(browser.Text, Is.StringContaining("Перезвонит сам"));
+                    }
+                    browser.Button("NotPhoned").Click();
+                    browser.TextField("NotPhoned_textField").AppendText("Тестовое сообщение перезвонить");
+                    browser.Button("NotPhoned_but").Click();
+                    using (new SessionScope())
+                    {
+                        client.Refresh();
+                        Assert.That(client.AdditionalStatus.Id, Is.EqualTo((uint)AdditionalStatusType.NotPhoned));
+                        Assert.That(browser.Text, Is.StringContaining("Тестовое сообщение перезвонить"));
+                        Assert.That(browser.Text, Is.StringContaining("Неудобно говорить"));
+                    }
+                    browser.Button("naznach_but").Click();
+                    browser.RadioButton(Find.ByName("graph_button")).Checked = true;
+                    browser.Button("naznach_but_1").Click();
+                    Thread.Sleep(2000);
+                    using (new SessionScope())
+                    {
+                        client.Refresh();
+                        Assert.That(client.AdditionalStatus.Id, Is.EqualTo((uint)AdditionalStatusType.AppointedToTheGraph));
+                        Assert.That(ConnectGraph.Queryable.Where(c => c.Client == client).Count(), Is.EqualTo(1));
+                    }
+                }
+            }
+        }
+
+	    [Test]
 		public void SaveSwitchForClientTest()
 		{
-			var physicalClient = new PhysicalClients
-			                     	{
-			                     		Name = "Alexandr"
-										,Surname = "Zolotarev",
-										Patronymic = "Alekseevich",
-										Street = "Stud",
-										House = "12",
-										Apartment = "1",
-										Entrance = "2",
-										Floor = "2",
-										PhoneNumber = "8-473-2606-000",
-										Balance = 0,
-										Tariff = Tariff.Queryable.First()
-
-			                     	};
-			physicalClient.SaveAndFlush();
-			var client = new Clients
-			             	{
-			             		PhysicalClient = physicalClient,
-								BeginWork = null,
-								Name = string.Format("{0} {1} {2}",physicalClient.Name , physicalClient.Surname, physicalClient.Patronymic)
-			             	};
-			client.SaveAndFlush();
-			var endPoint = new ClientEndpoints
-			               	{
-			               		Client = client,
-			               	};
-			endPoint.SaveAndFlush();
-			var format = string.Format("UserInfo/SearchUserInfo.rails?ClientCode={0}&EditingConnect=true", physicalClient.Id);
 			using (var browser = Open(format))
 			{
 				var selectList = browser.SelectList(Find.ByName("ConnectInfo.Switch"));
@@ -51,7 +117,6 @@ namespace InternetInterface.Test.Functional
 				browser.TextField("Port").AppendText("10");
 				browser.Button("Submit2").Click();
 				Thread.Sleep(500);
-				Assert.That(browser.Text, Is.StringContaining("Данные изменены"));
 				using (new SessionScope())
 				{
 					endPoint.Refresh();
