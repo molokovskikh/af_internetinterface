@@ -63,7 +63,7 @@ where C.id = :SearchText ORDER BY C.name";
 				}
 				else
 				{
-					if (searchText != null)
+					if (!string.IsNullOrEmpty(searchText))
 						sqlStr = string.Format(@"SELECT * FROM internet.Clients c
 left join internet.PhysicalClients p on p.id = c.PhysicalClient
 left join internet.LawyerPerson l on l.id = c.LawyerPerson
