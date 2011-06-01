@@ -34,10 +34,6 @@ namespace InternetInterface.Models.Access
 			{
 				result.Add(GetRulesName_manageBrigads());
 			}
-			/*if (GetRulesName_closeDemand() != string.Empty)
-			{
-				result.Add(GetRulesName_closeDemand());
-			}*/
 			if (GetRulesName_registerPartner() != string.Empty)
 			{
 				result.Add(GetRulesName_registerPartner());
@@ -103,18 +99,6 @@ namespace InternetInterface.Models.Access
 			return _manageBrigads.Contains(methodName) ? "MB" : string.Empty;
 		}
 
-		/*private static string GetRulesName_closeDemand()
-		{
-			_closeDemand = new HashSet<string>
-			                 	{
-									"GetClientsForCloseDemand",
-									"CloseDemand",
-									"SearchBy",
-									"SiteMap",
-									"SearchUserInfo"
-			                 	};
-			return _closeDemand.Contains(methodName) ? "CD" : string.Empty;
-		}*/
 
 		private static string GetRulesName_registerPartner()
 		{

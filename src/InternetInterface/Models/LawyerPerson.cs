@@ -53,26 +53,5 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual decimal Balance { get; set; }
-
-		/*[BelongsTo]
-		public virtual Clients Client { get; set; }*/
-
-		/*[BelongsTo]
-		public virtual Partner WhoRegistered { get; set; }
-
-		[Property]
-		public virtual string WhoRegisteredName { get; set; }
-
-		[BelongsTo]
-		public virtual Brigad WhoConnected { get; set; }
-
-		[Property]
-		public virtual string WhoConnectedName { get; set; }
-
-		[BelongsTo]
-		public virtual Status Status { get; set; }
-
-		[Property]
-		public virtual DateTime RegDate { get; set; }*/
 	}
 }

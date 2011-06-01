@@ -303,12 +303,8 @@ namespace InternetInterface.Controllers
 			RedirectToUrl("../Search/Redirect?ClientCode=" + ClientID + "&Editing=true");
 		}
 
-		//public void ClientRegisteredInfo(PhysicalClients client, string Password, PaymentForConnect connectSumm)
 		public void ClientRegisteredInfo()
 		{
-			/*PropertyBag["Client"] = client;
-			PropertyBag["Password"] = Password;
-			PropertyBag["ConnectSumm"] = connectSumm;*/
 		}
 
 		public void ClientRegisteredInfoFromDiller()
@@ -328,7 +324,7 @@ namespace InternetInterface.Controllers
 		}
 
 		[AccessibleThrough(Verb.Post)]
-        public void EditLawyerPerson(/*[DataBind("LegalPerson")]LawyerPerson LegalPerson,*/ uint ClientID, int Speed, string grouped)
+        public void EditLawyerPerson(uint ClientID, int Speed, string grouped)
 		{
 			var _client = Clients.Queryable.First(c => c.Id == ClientID);
 			var updateClient = _client.LawyerPerson;
@@ -612,9 +608,7 @@ namespace InternetInterface.Controllers
             PropertyBag["selectDate"] = selectDate != DateTime.MinValue ? selectDate : DateTime.Now;
             PropertyBag["Brigad"] = brig != 0 ? Brigad.Find(brig) : Brigad.FindFirst();
             PropertyBag["Brigads"] = Brigad.FindAll();
-            /*PropertyBag["Graphs"] =
-                ConnectGraph.Queryable.Where(c => c.Day.Date == selectDate).Select(
-                    g => new {brigadId = g.Brigad.Id, clientId = g.Client.Id, g.IntervalId}).ToList();*/
+
             PropertyBag["Intervals"] = Intervals.GetIntervals();
         }
 

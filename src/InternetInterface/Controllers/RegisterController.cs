@@ -22,8 +22,7 @@ namespace InternetInterface.Controllers
 	{
 		[AccessibleThrough(Verb.Post)]
 		public void RegisterClient([DataBind("ChangedBy")]ChangeBalaceProperties changeProperties,
-			[DataBind("client")]PhysicalClients phisClient, string balanceText, uint tariff, uint status, uint BrigadForConnect//,
-			/*[DataBind("ConnectSumm")]PaymentForConnect connectSumm*/
+			[DataBind("client")]PhysicalClients phisClient, string balanceText, uint tariff, uint status, uint BrigadForConnect
 			 , [DataBind("ConnectInfo")]ConnectInfo ConnectInfo, bool VisibleRegisteredInfo,
 			uint requestID)
 		{
@@ -32,7 +31,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
 			if (changeProperties.IsForTariff())
 			{
-				phisClient.Balance = Tariff.Find(tariff).Price;//.ToString();
+				phisClient.Balance = Tariff.Find(tariff).Price;
 			}
 			if (changeProperties.IsOtherSumm())
 			{
@@ -50,41 +49,8 @@ namespace InternetInterface.Controllers
 				ConnectInfo.Port = null;
 			}
 			var portException = Validation.ValidationConnectInfo(ConnectInfo);
-			/*var unPort = false;
-			var validPortSwitch = true;
-			try
-			{
-				var Switch = NetworkSwitches.FindAll(DetachedCriteria.For(typeof(NetworkSwitches)).Add(Expression.Eq("Id", Convert.ToUInt32(ConnectInfo.Switch))));
-				if ((Switch.Length != 0) && (ConnectInfo.Port != null))
-				unPort = Point.isUnique(Switch.First(), Convert.ToInt32(ConnectInfo.Port));
-				else
-				{
-					validPortSwitch = false;
-				}
-				if ((Convert.ToInt32(ConnectInfo.Port) > 48) || (Convert.ToInt32(ConnectInfo.Port) < 1))
-					throw new BaseUsersException("Невалидное значения порта (1-48)");
-				if (ConnectInfo.Switch == 0.ToString())
-					throw new BaseUsersException("Не выбран свич");
-			}
-			catch (BaseUsersException ex)
-			{
-				if (!string.IsNullOrEmpty(ConnectInfo.Port))
-				{
-					PropertyBag["PortError"] = ex.Message;
-					validPortSwitch = false;
-				}
-			}
-			catch(Exception ex)
-			{
-				PropertyBag["PortError"] = "Ошибка ввода номера порта";
-				validPortSwitch = false;
-			}*/
-			//var registerClient = PhisicalClients.RegistrLogicClient(phisClient, tariff, status, Validator, InithializeContent.partner, connectSumm);
-			var registerClient = Validator.IsValid(phisClient)/* && Validator.IsValid(connectSumm)*/;
-			/*if (registerClient && validPortSwitch) &&
-				((!string.IsNullOrEmpty(ConnectInfo.Port) &&
-					 (unPort))
-					|| string.IsNullOrEmpty(ConnectInfo.Port)))*/
+			var registerClient = Validator.IsValid(phisClient);
+
 			if ((registerClient && String.IsNullOrEmpty(portException)) || (registerClient && string.IsNullOrEmpty(ConnectInfo.Port)))
 			{
 				PhysicalClients.RegistrLogicClient(phisClient, tariff, Validator);
@@ -99,9 +65,7 @@ namespace InternetInterface.Controllers
 					Name = string.Format("{0} {1} {2}", phisClient.Surname, phisClient.Name, phisClient.Patronymic),
 					PhysicalClient = phisClient,
 					Type = ClientType.Phisical,
-					//FirstLease = true,
 					BeginWork = null
-					//SayDhcpIsNewClient = true
 				};
 				client.SaveAndFlush();
 				var payment = new Payment
@@ -130,7 +94,6 @@ namespace InternetInterface.Controllers
 						client.WhoConnected = brigad;
 						client.WhoConnectedName = brigad.Name;
 					}
-					//phisClient.Connected = true;
 					client.ConnectedDate = DateTime.Now;
 					client.Status = Status.Find((uint)StatusType.BlockedAndConnected);
 					client.UpdateAndFlush();
@@ -158,22 +121,16 @@ namespace InternetInterface.Controllers
 			{
 				PropertyBag["Client"] = phisClient;
 				PropertyBag["BalanceText"] = balanceText;
-				//connectSumm.ManagerID = InithializeContent.partner;
-				//PropertyBag["ConnectSumm"] = connectSumm;
+
 				PropertyBag["Applying"] = "false";
-				/*if (!unPort && validPortSwitch)
-					PropertyBag["PortError"] = @"Такая пара порт\свич уже существует";*/
 				PropertyBag["PortError"] = portException;
 				PropertyBag["ChStatus"] = status;
 				PropertyBag["ChTariff"] = tariff;
 				PropertyBag["ChBrigad"] = BrigadForConnect;
-				/*Validator.IsValid(connectSumm);
-				connectSumm.SetValidationErrors(Validator.GetErrorSummary(connectSumm));*/
 				phisClient.SetValidationErrors(Validator.GetErrorSummary(phisClient));
 				PropertyBag["ConnectInfo"] = ConnectInfo;
 				PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(s => !string.IsNullOrEmpty(s.Name));
 				PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClients>(phisClient);
-				//PropertyBag["NS"] = new ValidBuilderHelper<PaymentForConnect>(connectSumm);
 				PropertyBag["ChangeBy"] = changeProperties;
 			}
 		}
@@ -316,12 +273,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["ChBrigad"] = 0;
 			PropertyBag["Statuss"] = Status.FindAllSort();
 			PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClients>(new PhysicalClients());
-			//PropertyBag["NS"] = new ValidBuilderHelper<PaymentForConnect>(new PaymentForConnect());
-			/*PropertyBag["ConnectSumm"] = new PaymentForConnect
-			                             	{
-			                             		Summ = 700.ToString(),
-												ManagerID = InithializeContent.partner
-			                             	};*/
+
 			PropertyBag["Applying"] = "false";
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties { ChangeType = TypeChangeBalance.OtherSumm };
 			PropertyBag["BalanceText"] = 0;

@@ -31,7 +31,6 @@ namespace InternetInterface
 		void Application_Start(object sender, EventArgs e)
 		{
 			XmlConfigurator.Configure();
-			// Code that runs on application startup
 			ActiveRecordStarter.Initialize(
 					Assembly.Load("InternetInterface"),
 					ActiveRecordSectionHandler.Instance);
@@ -104,8 +103,7 @@ namespace InternetInterface
 			configuration.ControllersConfig.AddAssembly("InternetInterface");
 			//configuration.ControllersConfig.AddAssembly("Common.Web.Ui");
 			configuration.ViewComponentsConfig.Assemblies = new[] {
-				"InternetInterface"//,
-				//"Common.Web.Ui"
+				"InternetInterface"
 			};
 			configuration.ViewEngineConfig.ViewPathRoot = "Views";
 			configuration.ViewEngineConfig.ViewEngines.Add(new ViewEngineInfo(typeof(BooViewEngine), false));
@@ -117,9 +115,6 @@ namespace InternetInterface
 #if DEBUG
 			//MonoRail.Debugger.Toolbar.Toolbar.Init(configuration);
 #endif
-			/*			configuration.SmtpConfig.Host = "mail.adc.analit.net";
-			configuration.ExtensionEntries.Add(new ExtensionEntry(typeof(ExceptionChainingExtension),
-				new MutableConfiguration("mailTo")));*/
 		}
 
 		public void Created(IMonoRailContainer container)
