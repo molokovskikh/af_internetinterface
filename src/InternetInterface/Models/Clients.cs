@@ -76,7 +76,9 @@ namespace InternetInterface.Models
 
 		public virtual bool AdditionalCanUsed(string aStatus)
 		{
-			return Status.Additional.Contains(AdditionalStatus.Queryable.First(a => a.ShortName == aStatus));
+            if (AdditionalStatus != null && AdditionalStatus.Id == (uint)AdditionalStatusType.Refused)
+                return false;
+		    return Status.Additional.Contains(AdditionalStatus.Queryable.First(a => a.ShortName == aStatus));
 		}
 
 		[HasMany(ColumnKey = "Client", OrderBy = "PaidOn")]
@@ -104,6 +106,31 @@ namespace InternetInterface.Models
 		{
 			return (((DateTime)RatedPeriodDate).AddMonths(1) - (DateTime)RatedPeriodDate).Days + DebtDays;
 		}
+
+
+        public virtual IList<WriteOff> GetWriteOffs(string groupedKey)
+        {
+            IList<WriteOff> writeOffs = new List<WriteOff>();
+            var gpoupKey = "concat(YEAR(WriteOffDate),'-',MONTH(WriteOffDate),'-',DAYOFMONTH(WriteOffDate))";
+            if (groupedKey == "day")
+                gpoupKey = "concat(YEAR(WriteOffDate),'-',MONTH(WriteOffDate),'-',DAYOFMONTH(WriteOffDate))";
+            if (groupedKey == "month")
+                gpoupKey = "concat(YEAR(WriteOffDate),'-',MONTH(WriteOffDate))";
+            if (groupedKey == "year")
+                gpoupKey = "YEAR(WriteOffDate)";
+            ARSesssionHelper<WriteOff>.QueryWithSession(session =>
+            {
+                var query =
+                    session.CreateSQLQuery(string.Format(
+@"SELECT id, Sum(WriteOffSum) as WriteOffSum, WriteOffDate, Client  FROM internet.WriteOff W
+where Client = :clientid
+group by {0}", gpoupKey)).AddEntity(typeof(WriteOff));
+                query.SetParameter("clientid", Id);
+                writeOffs = query.List<WriteOff>();
+                return query.List<WriteOff>();
+            });
+            return writeOffs;
+        }
 
 		public virtual PhisicalClientConnectInfo GetConnectInfo()
 		{

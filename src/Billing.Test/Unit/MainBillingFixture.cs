@@ -74,7 +74,16 @@ namespace Billing.Test.Unit
 			Assert.That(unblockedClient.PhysicalClient.Balance, Is.EqualTo(100));
 		}
 
-		[Test]
+        [Test]
+        public void RatedTest()
+        {
+            var client = BaseBillingFixture.CreateAndSaveClient("testRated", false, 100);
+            client.RatedPeriodDate = SystemTime.Now().AddMonths(-1);
+            client.Save();
+            billing.Compute();
+        }
+
+	    [Test]
 		public void LawyerPersonTest()
 		{
 		    SystemTime.Reset();

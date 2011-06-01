@@ -180,6 +180,7 @@ namespace InternetInterface.Controllers
 
 		public void RegisterLegalPerson()
 		{
+		    PropertyBag["ClientCode"] = 0;
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
 			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(s => !string.IsNullOrEmpty(s.Name));
 			PropertyBag["ChBrigad"] = Brigad.FindFirst().Id;
@@ -194,10 +195,6 @@ namespace InternetInterface.Controllers
 			var connectErrors = Validation.ValidationConnectInfo(info);
 			if (Validator.IsValid(person) && string.IsNullOrEmpty(connectErrors))
 			{
-				/*person.WhoRegistered = InithializeContent.partner;
-				person.WhoRegisteredName = InithializeContent.partner.Name;
-				person.RegDate = DateTime.Now;
-				person.Status = Status.Find((uint) StatusType.BlockedAndNoConnected);*/
 				person.Speed = PackageSpeed.Find(speed);
 				person.SaveAndFlush();
 				var client = new Clients
@@ -229,15 +226,13 @@ namespace InternetInterface.Controllers
 					client.UpdateAndFlush();
 
 				}
-				/*PropertyBag["Editing"] = false;
-				PropertyBag["LegalPerson"] = new LawyerPerson();
-				PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(new LawyerPerson());*/
 				RegisterLegalPerson();
 				PropertyBag["EditiongMessage"] = "Клиент успешно загистрирвоан";
 				RedirectToUrl("../UserInfo/LawyerPersonInfo.rails?ClientCode=" + client.Id);
 			}
 			else
 			{
+			    PropertyBag["ClientCode"] = 0;
 				PropertyBag["Brigads"] = Brigad.FindAllSort();
 				PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(s => !string.IsNullOrEmpty(s.Name));
 				PropertyBag["ChBrigad"] = brigadForConnect;

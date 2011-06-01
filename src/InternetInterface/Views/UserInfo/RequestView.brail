@@ -1,14 +1,7 @@
-﻿<link href="../Styles/style.css" type="text/css" rel="stylesheet" />
-<link rel="stylesheet" href="../Styles/base.css" type="text/css" media="screen" />
-<script type="text/javascript" src="../Scripts/jquery-1.4.1.min.js"></script>
-<script type="text/javascript" src="../Scripts/jquery.tablesorter.js"></script>
+﻿<script type="text/javascript" src="../Scripts/jquery.tablesorter.js"></script>
 <script type="text/javascript" src="../Scripts/jquery.tablesorter.pager.js"></script>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <title>Клиенты оставили заявки</title>
-    <style type="text/css">
+<style type="text/css">
         
         
 #content 
@@ -82,7 +75,6 @@ div.scroller
 <body class="body_cl">
 
 <div class=scroller>
-<% OutputSubView("""\Subview\MapHead""") %>
 
 <div id="main" style="width:100%; float:none;">
          <div id="content">

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
+using InternetInterface.Helpers;
 
 namespace InternetInterface.Models
 {

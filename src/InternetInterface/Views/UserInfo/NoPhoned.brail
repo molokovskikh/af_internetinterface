@@ -68,7 +68,7 @@
 	        });
 	    });
 	</script>
-
+<a class="close-reveal-modal">&#215;</a> 
 <div id="back">
 <table class="table" id="modalTable">
 	<thead>

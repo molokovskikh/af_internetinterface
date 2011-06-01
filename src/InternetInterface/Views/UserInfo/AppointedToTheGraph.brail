@@ -56,6 +56,11 @@
 		{
 			 min-width:0px;
 		}
+		
+		#mymodal
+		{
+		    /*height:700px;*/
+		    }
 	</style>
 
 	<script type="text/javascript">
@@ -93,16 +98,6 @@
 
 		 }
 
-		 /*$(function () {
-		     Date.firstDayOfWeek = 0;
-		     Date.format = 'dd.mm.yyyy';
-		     $('.date-pick').datePicker({
-		         startDate: '01/01/1996'
-		     }).val('${StartDate}').change(function () { fillData(); });
-		     fillData();
-		 });*/
-
-		 //$.datepicker.setDefaults($.datepicker.regional['ru']);
 
 		 $(function () {
 		     $('#graph_date').datepicker({
@@ -134,6 +129,7 @@
 		             appended_field.append('<a class="graph_link" href="../Search/Redirect?ClientCode=' + req.clientId + '">' + req.clientId + '</a>');
 		             $('#naznach_but_1').text('Переназначить');
 		             $('#naznach_but').text('Переназначить');
+		             window.location.href = '../Search/Redirect?ClientCode=${ClientCode}';
 		         }
 		     });
          }
@@ -141,6 +137,7 @@
 
 	</script>
 
+<a class="close-reveal-modal">&#215;</a> 
 <div id="back">
 <table class="table" id="modalTable">
 	<thead>

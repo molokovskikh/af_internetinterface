@@ -24,26 +24,7 @@ namespace InforoomInternet.Controllers
 			/*var writeOffs = WriteOff.FindAll(DetachedCriteria.For(typeof (WriteOff))
 			                                 	.Add(Restrictions.Eq("Client", client))).GroupBy(y => new { y.WriteOffDate.Year, y.WriteOffDate.Month });
 			PropertyBag["WriteOffs"] = writeOffs.Select(t => t.Sum(y => y.WriteOffSum));*/
-			IList<WriteOff> writeOffs = new List<WriteOff>();
-			var gpoupKey = "concat(YEAR(WriteOffDate),'-',MONTH(WriteOffDate),'-',DAYOFMONTH(WriteOffDate))";
-			if (grouped == "day")
-				gpoupKey = "concat(YEAR(WriteOffDate),'-',MONTH(WriteOffDate),'-',DAYOFMONTH(WriteOffDate))";
-			if (grouped == "month")
-				gpoupKey = "concat(YEAR(WriteOffDate),'-',MONTH(WriteOffDate))";
-			if (grouped == "year")
-				gpoupKey = "YEAR(WriteOffDate)";
-			ARSesssionHelper<WriteOff>.QueryWithSession(session =>
-			                                            	{
-			                                            		var query =
-			                                            			session.CreateSQLQuery(string.Format(
-@"SELECT id, Sum(WriteOffSum) as WriteOffSum, WriteOffDate, Client  FROM internet.WriteOff W
-where Client = :clientid
-group by {0}", gpoupKey)).AddEntity(typeof(WriteOff));
-			                                            		query.SetParameter("clientid", Client.Id);
-			                                            		writeOffs = query.List<WriteOff>();
-																return query.List<WriteOff>();
-			                                            	});
-			PropertyBag["WriteOffs"] = writeOffs.OrderBy(e => e.WriteOffDate).ToArray();
+            PropertyBag["WriteOffs"] = Client.GetWriteOffs(grouped).OrderBy(e => e.WriteOffDate).ToArray();
 			PropertyBag["grouped"] = grouped;
 			PropertyBag["Payments"] = Payment.FindAllByProperty("Client", Client).OrderBy(e => e.PaidOn).ToArray();
 		}

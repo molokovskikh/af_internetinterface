@@ -20,10 +20,10 @@ namespace InternetInterface.Test.Functional
         public UserInfoFixture()
         {
           using (new SessionScope())
-            {
+          {
+              new Status {Name = "ConnectAndBlocked"}.Save();
                 physicalClient = new PhysicalClients {
-                                                         Name = "Alexandr"
-                                                         ,
+                                                         Name = "Alexandr",
                                                          Surname = "Zolotarev",
                                                          Patronymic = "Alekseevich",
                                                          Street = "Stud",
@@ -31,26 +31,30 @@ namespace InternetInterface.Test.Functional
                                                          Apartment = "1",
                                                          Entrance = "2",
                                                          Floor = "2",
-                                                         PhoneNumber = "8-473-2606-000",
+                                                         PhoneNumber = "8-900-200-80-80",
                                                          Balance = 0,
-                                                         Tariff = Tariff.Queryable.First()
-
+                                                         Tariff = Tariff.Queryable.First(),
+                                                         CaseHouse = "sdf",
+                                                         City = "bebsk",
+                                                         Email = "test@test.ru",
+                                                         
                                                      };
                 physicalClient.SaveAndFlush();
                 client = new Clients {
                                          PhysicalClient = physicalClient,
                                          BeginWork = null,
                                          Name =
-                                             string.Format("{0} {1} {2}", physicalClient.Name, physicalClient.Surname,
-                                                           physicalClient.Patronymic)
+                                             string.Format("{0} {1} {2}", physicalClient.Surname, physicalClient.Name,
+                                                           physicalClient.Patronymic),
+                                        Status = Status.FindFirst()
                                      };
                 client.SaveAndFlush();
                 endPoint = new ClientEndpoints {
                                                    Client = client,
                                                };
                 endPoint.SaveAndFlush();
-                format = string.Format("UserInfo/SearchUserInfo.rails?ClientCode={0}&EditingConnect=true",
-                                       physicalClient.Id);
+                format = string.Format("UserInfo/SearchUserInfo.rails?ClientCode={0}&EditingConnect=true&Editing=true",
+                                       client.Id);
             }
         }
 
@@ -71,18 +75,6 @@ namespace InternetInterface.Test.Functional
             {
                 //using (new SessionScope())
                 {
-                    browser.Button(Find.ById("Refused")).Click();
-                    Thread.Sleep(1000);
-                    browser.TextField("Refused_textField").AppendText("Тестовое сообщение отказ");
-                    browser.Button("Refused_but").Click();
-                    Thread.Sleep(2000);
-                    using (new SessionScope())
-                    {
-                        client.Refresh();
-                        Assert.That(client.AdditionalStatus.Id, Is.EqualTo((uint)AdditionalStatusType.Refused));
-                        Assert.That(browser.Text, Is.StringContaining("Тестовое сообщение отказ"));
-                        Assert.That(browser.Text, Is.StringContaining("Перезвонит сам"));
-                    }
                     browser.Button("NotPhoned").Click();
                     browser.TextField("NotPhoned_textField").AppendText("Тестовое сообщение перезвонить");
                     browser.Button("NotPhoned_but").Click();
@@ -102,6 +94,18 @@ namespace InternetInterface.Test.Functional
                         client.Refresh();
                         Assert.That(client.AdditionalStatus.Id, Is.EqualTo((uint)AdditionalStatusType.AppointedToTheGraph));
                         Assert.That(ConnectGraph.Queryable.Where(c => c.Client == client).Count(), Is.EqualTo(1));
+                    }
+                    browser.Button(Find.ById("Refused")).Click();
+                    Thread.Sleep(1000);
+                    browser.TextField("Refused_textField").AppendText("Тестовое сообщение отказ");
+                    browser.Button("Refused_but").Click();
+                    Thread.Sleep(2000);
+                    using (new SessionScope())
+                    {
+                        client.Refresh();
+                        Assert.That(client.AdditionalStatus.Id, Is.EqualTo((uint)AdditionalStatusType.Refused));
+                        Assert.That(browser.Text, Is.StringContaining("Тестовое сообщение отказ"));
+                        Assert.That(browser.Text, Is.StringContaining("Перезвонит сам"));
                     }
                 }
             }
@@ -126,5 +130,30 @@ namespace InternetInterface.Test.Functional
 				}
 			}
 		}
+
+        [Test]
+        public void EditClientNameTest()
+        {
+            using (var browser = Open(format))
+            {
+                Console.WriteLine(format);
+                //Console.WriteLine(browser.Html);
+                browser.TextField("Surname").Clear();
+                browser.TextField("Surname").AppendText("Иванов");
+                browser.TextField("Name").Clear();
+                browser.TextField("Name").AppendText("Иван");
+                browser.TextField("Patronymic").Clear();
+                browser.TextField("Patronymic").AppendText("Иванович");
+                browser.Button("SaveButton").Click();
+                Thread.Sleep(500);
+            }
+            using (new SessionScope())
+            {
+                client.Refresh();
+                Assert.That(client.Name,
+                            Is.EqualTo(string.Format("{0} {1} {2}", "Иванов",
+                                                     "Иван", "Иванович")));
+            }
+        }
 	}
 }

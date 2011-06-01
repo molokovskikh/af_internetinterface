@@ -1,10 +1,4 @@
-﻿<script type="text/javascript" src="../Scripts/jquery-1.4.1.min.js"></script>
-<link href="../Styles/style.css" type="text/css" rel="stylesheet" />
-<link rel="stylesheet" href="../Styles/base.css" type="text/css" media="screen" />
-<!-- <link href="../Styles/base.css" type="text/css" rel="stylesheet" /> --->
-
-<% OutputSubView("""\Subview\MapHead""") %>
-<div style="width:50%; float:left;">
+﻿<div style="width:50%; float:left;">
 <div id="main" style="width: 100%;">
 <div id="container">
 <div id="block-tables" class="block">

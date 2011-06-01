@@ -47,7 +47,7 @@ ALTER TABLE `internet`.`StatusCorrelation` CHANGE COLUMN `Status` `StatusId` INT
     ON UPDATE CASCADE;*/
 
 	
-	ALTER TABLE `internet`.`Clients` ADD COLUMN `AdditionalStatus` INT(10) UNSIGNED AFTER `Status`,
+	ALTER TABLE `internet`.`Clients` /*ADD COLUMN `AdditionalStatus` INT(10) UNSIGNED AFTER `Status`,*/
  ADD CONSTRAINT `AdStat` FOREIGN KEY `AdStat` (`AdditionalStatus`)
     REFERENCES `AdditionalStatus` (`Id`)
     ON DELETE CASCADE

@@ -15,15 +15,15 @@ namespace InternetInterface.Controllers
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class UserInfoController : SmartDispatcherController
 	{
-		public void SearchUserInfo(uint clientCode, bool Editing, bool EditingConnect)
+        public void SearchUserInfo(uint clientCode, bool Editing, bool EditingConnect, string grouped)
 		{
 			var client = Clients.Find(clientCode);
 			PropertyBag["_client"] = client;
 			PropertyBag["Client"] = client.PhysicalClient;
 
-			SendParam(clientCode);
+            SendParam(clientCode, grouped);
 			PropertyBag["Editing"] = Editing;
-			if (client.Status.Connected)
+			if (client.Status.Id != (uint)StatusType.BlockedAndNoConnected)
 			PropertyBag["EditingConnect"] = EditingConnect;
 			else
 			{
@@ -34,7 +34,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(t => t.Name != null);
 		}
 
-		public void LawyerPersonInfo(uint clientCode, bool Editing, bool EditingConnect)
+        public void LawyerPersonInfo(uint clientCode, bool Editing, bool EditingConnect, string grouped)
 		{
 			var client = Clients.Find(clientCode);
 
@@ -47,6 +47,7 @@ namespace InternetInterface.Controllers
 				PropertyBag["ChBrigad"] = client.WhoConnected.Id;
 			else
 				PropertyBag["ChBrigad"] = Brigad.FindFirst().Id;
+            PropertyBag["grouped"] = grouped;
 			PropertyBag["Statuss"] = Status.FindAllSort();
 			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(t => t.Name != null);
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
@@ -61,6 +62,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["ConnectInfo"] = client.GetConnectInfo();
 			PropertyBag["Payments"] = client.Payments.OrderBy(c => c.PaidOn).ToArray();
 			PropertyBag["WriteOffs"] = WriteOff.Queryable.Where(w => w.Client == client).OrderBy(w => w.WriteOffDate).ToArray();
+            PropertyBag["writeOffSum"] = WriteOff.FindAllByProperty("Client", client).Sum(s => s.WriteOffSum);
 			PropertyBag["BalanceText"] = string.Empty;
 			PropertyBag["Appeals"] = Appeals.Queryable.Where(a => a.Client == client).ToArray();
 			if (client.Status.Connected)
@@ -108,31 +110,8 @@ namespace InternetInterface.Controllers
 			var errorMessage = Validation.ValidationConnectInfo(ConnectInfo);
 			if ((ConnectInfo.static_IP != string.Empty) || (nullFlag))
 			{
-				/*try
-				{
-					var Port = Convert.ToInt32(ConnectInfo.Port);
-					if ((Port > 48) && (Port < 1))
-					{
-						errorMessage += "Неправильно введен порт, введите число от 1 до 48";
-					}*/
-				/*if (Point.isUnique(ConnectInfo.Switch, Int32.Parse(ConnectInfo.Port)) ||
-				(((ConnectInfo.Switch)) == oldSwitch) && (Port == olpPort)))
-				{*/
 				if (errorMessage == string.Empty || (oldSwitch != null && ConnectInfo.Switch == oldSwitch.Id && ConnectInfo.Port == olpPort.ToString()))
 				{
-					/*if (clients.Length == 0)
-					{
-						var client = new Clients
-										{
-											Name = string.Format("{0} {1} {2}", phisCl.Surname, phisCl.Name, phisCl.Patronymic),
-											PhysicalClient = phisCl,
-											Type = ClientType.Phisical,
-											//FirstLease = true
-										};
-						client.SaveAndFlush();
-						clientEntPoint.Client = client;
-						newFlag = true;
-					}*/
 					if (client.GetClientType() == ClientType.Phisical)
 						clientEntPoint.PackageId = client.PhysicalClient.Tariff.PackageId;
 					else
@@ -155,23 +134,10 @@ namespace InternetInterface.Controllers
 					client.ConnectedDate = DateTime.Now;
 					client.Status = Status.Find((uint)StatusType.BlockedAndConnected);
 					client.UpdateAndFlush();
-					/*PropertyBag["Editing"] = false;
-					PropertyBag["EditFlag"] = "Данные изменены";*/
 
 					RedirectToUrl("../Search/Redirect?ClientCode=" + ClientID);
 					return;
 				}
-				/*}
-				else
-				{
-					errorMessage = "Такая пара порт/свич уже существует";
-				}
-			}
-			catch (Exception)
-			{
-				throw;
-				errorMessage += "Неправильно введен порт, введите число от 1 до 48";
-			}*/
 			}
 			else
 			{
@@ -183,7 +149,6 @@ namespace InternetInterface.Controllers
 			PropertyBag["ChBrigad"] = BrigadForConnect;
 			PropertyBag["errorMessage"] = errorMessage;
 			RedirectToReferrer();
-			//RedirectToUrl("../Search/Redirect?ClientCode=" + ClientID + "&EditingConnect=true");
 		}
 
 		public void CreateAppeal(string Appeal, uint ClientID)
@@ -363,7 +328,7 @@ namespace InternetInterface.Controllers
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void EditLawyerPerson(/*[DataBind("LegalPerson")]LawyerPerson LegalPerson,*/ uint ClientID, int Speed)
+        public void EditLawyerPerson(/*[DataBind("LegalPerson")]LawyerPerson LegalPerson,*/ uint ClientID, int Speed, string grouped)
 		{
 			var _client = Clients.Queryable.First(c => c.Id == ClientID);
 			var updateClient = _client.LawyerPerson;
@@ -391,13 +356,14 @@ namespace InternetInterface.Controllers
 				PropertyBag["Editing"] = true;
 				PropertyBag["EditingConnect"] = false;
 				PropertyBag["LegalPerson"] = updateClient;
+			    PropertyBag["grouped"] = grouped;
 				RedirectToReferrer();
 			}
 		}
 
 
 		[AccessibleThrough(Verb.Post)]
-		public void EditInformation([DataBind("Client")]PhysicalClients client, uint ClientID, uint tariff, uint status)
+		public void EditInformation([DataBind("Client")]PhysicalClients client, uint ClientID, uint tariff, uint status, string group)
 		{
 			//var updateClient = PhysicalClients.Find(ClientID);
 			var _client = Clients.Queryable.First(c => c.Id == ClientID);
@@ -414,6 +380,7 @@ namespace InternetInterface.Controllers
 				updateClient.PassportDate = DateTime.Parse(updateClient.PassportDate).ToShortDateString();
 				updateClient.Tariff = Tariff.Find(tariff);
 				updateClient.UpdateAndFlush();
+                _client.Name = string.Format("{0} {1} {2}", updateClient.Surname, updateClient.Name, updateClient.Patronymic);
 					var endPoints = ClientEndpoints.Queryable.Where(p => p.Client == _client).ToList();
 					foreach (var clientEndpointse in endPoints)
 					{
@@ -422,13 +389,12 @@ namespace InternetInterface.Controllers
 					if (_client.Status.Blocked)
 					{
 						_client.Disabled = true;
-						_client.UpdateAndFlush();
 					}
 					else
 					{
 						_client.Disabled = false;
-						_client.UpdateAndFlush();
 					}
+                _client.Update();
 				PropertyBag["Editing"] = false;
 				Flash["EditFlag"] = "Данные изменены";
 				RedirectToUrl("../Search/Redirect?ClientCode=" + ClientID);
@@ -447,18 +413,20 @@ namespace InternetInterface.Controllers
 				RenderView("SearchUserInfo");
 				Flash["Editing"] = true;
 				Flash["EditingConnect"] = false;
+                Flash["_client"] = _client;
 				Flash["Client"] = updateClient;
 				Flash["ChTariff"] = Tariff.Find(tariff).Id;
 				Flash["ChStatus"] = Tariff.Find(status).Id;
-				SendParam(ClientID);
+				SendParam(ClientID, group);
 			}
 		}
 
 
-		private void SendParam(UInt32 ClientCode)
+		private void SendParam(UInt32 ClientCode, string grouped)
 		{
 			var client = Clients.Find(ClientCode);
 			PropertyBag["ConnectInfo"] = client.GetConnectInfo();
+		    PropertyBag["grouped"] = grouped;
 			PropertyBag["Appeals"] = Appeals.FindAllByProperty("Client", client).OrderByDescending(a => a.Date);
 			PropertyBag["ClientCode"] = ClientCode;
 			PropertyBag["UserInfo"] = true;
@@ -478,10 +446,11 @@ namespace InternetInterface.Controllers
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties {ChangeType = TypeChangeBalance.OtherSumm};
 			PropertyBag["PartnerAccessSet"] = new CategorieAccessSet();
 			PropertyBag["Payments"] = Payment.FindAllByProperty("Client", client).OrderBy(t => t.PaidOn).ToArray();
-			PropertyBag["WriteOffs"] = WriteOff.FindAllByProperty("Client", client).OrderBy(t => t.WriteOffDate);
+            PropertyBag["WriteOffs"] = client.GetWriteOffs(grouped).OrderBy(w => w.WriteOffDate);//WriteOff.FindAllByProperty("Client", client).OrderBy(t => t.WriteOffDate);
 		    PropertyBag["naznach_text"] = ConnectGraph.Queryable.Count(c => c.Client.Id == ClientCode) != 0
 		                                      ? "Переназначить в граффик"
 		                                      : "Назначить в граффик";
+		    PropertyBag["writeOffSum"] = WriteOff.FindAllByProperty("Client", client).Sum(s => s.WriteOffSum);
 		}
 
 		[AccessibleThrough(Verb.Post)]
@@ -547,6 +516,10 @@ namespace InternetInterface.Controllers
 			var client = Clients.Find(ClientID);
 			client.AdditionalStatus = AdditionalStatus.Find((uint) AdditionalStatusType.Refused);
 		    client.Update();
+            foreach (var graph in ConnectGraph.Queryable.Where(c => c.Client == client))
+		    {
+		        graph.Delete();
+		    }
 			CreateAppeal("Причина отказа:  " + prichina  + " \r\n Комментарий: \r\n " + Appeal, ClientID);
 			LayoutName = "NoMap";
 		}
@@ -608,14 +581,25 @@ namespace InternetInterface.Controllers
 			var but_id = Request.Form["graph_button"].Split('_');
 			foreach(var graph in ConnectGraph.Queryable.Where(c => c.Client == client).ToList())
 			{ graph.Delete(); }
+		    var briad = Brigad.Find(Convert.ToUInt32(but_id[1]));
+		    var interval = Convert.ToUInt32(but_id[0]);
 			new ConnectGraph {
-			                 	IntervalId = Convert.ToUInt32(but_id[0]),
-								Brigad = Brigad.Find(Convert.ToUInt32(but_id[1])),
+			                 	IntervalId = interval,
+                                Brigad = briad,
 								Client = client,
 								Day = DateTime.Parse(Request.Form["graph_date"]),
 			                 }.Save();
 		    client.AdditionalStatus = AdditionalStatus.Find((uint) AdditionalStatusType.AppointedToTheGraph);
-            client.Update(); 
+            client.Update();
+		    new Appeals {
+		                    Client = client,
+		                    Date = DateTime.Now,
+		                    Partner = InithializeContent.partner,
+		                    Appeal =
+		                        string.Format("Назначен в график, \r\n Брагада: {0} \r\n Дата: {1} \r\n Время: {2}",
+                                              briad.Name, DateTime.Parse(Request.Form["graph_date"]).ToShortDateString(),
+		                                      Intervals.GetIntervals()[(int) interval])
+		                }.Save();
 			return true;
 		}
 

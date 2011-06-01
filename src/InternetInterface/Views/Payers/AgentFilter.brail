@@ -1,4 +1,5 @@
 ﻿		<style type="text/css">
+		    
 		.turn-me-into-datepicker {
 			float: left;
 			margin:10px;
@@ -9,6 +10,7 @@
 			margin-top:10px;
 			float:none;
 			}
+			
 		.filterDiv
 		{
 			width:800px;
@@ -19,6 +21,7 @@
 			 padding: 10px;
 			 margin:10px;
 		}
+		
 		.table .whiteBr
 		{
 			background-color:White;
@@ -28,7 +31,16 @@
 			
 	</style>
 	<script type="text/javascript">
-		Date.firstDayOfWeek = 0;
+        Date.format = 'dd.mm.yyyy';
+	    $(function () {
+	        $('.graph_date').datepicker({
+	            inline: true
+	        });
+	        $('#endDate').val('${System.DateTime.Now.ToShortDateString()}');
+	    });
+
+
+		/*Date.firstDayOfWeek = 0;
 		Date.format = 'dd.mm.yyyy';
 		$(function () {
 			$('#startCalendar')
@@ -51,7 +63,7 @@
 				$('#endDate').val(selectedDate.getDate() + '.' + Number(selectedDate.getMonth() + 1) + '.' + selectedDate.getFullYear());
 			}
 		);
-		});
+		});*/
 	</script>
 
 <center>
@@ -75,12 +87,14 @@
 				<tbody>
 					<tr>
 						<td>
-						<div class="turn-me-into-datepicker" id="startCalendar"></div>
-						<input type="hidden" name="startDate" id="startDate" class="hasDatepicker">
+						<!--<div class="turn-me-into-datepicker" id="startCalendar"></div>
+						<input type="hidden" name="startDate" id="startDate" class="hasDatepicker">-->
+                        <input type=text value="${System.DateTime.Now.AddDays(-1).ToShortDateString()}" name="startDate" id="startDate" class="graph_date" class="date-pick dp-applied">
 						</td>
 						<td>
-						<div class="turn-me-into-datepicker" id="endCalendar"></div>
-						<input type="hidden" name="endDate" id="endDate" class="hasDatepicker">
+						<!--<div class="turn-me-into-datepicker" id="endCalendar"></div>
+						<input type="hidden" name="endDate" id="endDate" class="hasDatepicker">-->
+                        <input type=text name="endDate" id="endDate" class="graph_date" class="date-pick dp-applied">
 						</td>
 					</tr>
 				</tbody>
