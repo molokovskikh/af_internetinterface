@@ -7,22 +7,36 @@ using InternetInterface.Models.Universal;
 
 namespace InternetInterface.Models
 {
-    [ActiveRecord("House", Schema = "internet", Lazy = true)]
-    public class House : ValidActiveRecordLinqBase<ConnectGraph>
+    [ActiveRecord("Houses", Schema = "internet", Lazy = true)]
+    public class House : ValidActiveRecordLinqBase<House>
     {
         [PrimaryKey]
         public virtual uint Id { get; set; }
 
+        [Property]
         public virtual string Street { get; set; }
 
+        [Property]
         public virtual int Number { get; set; }
 
-        public virtual int CaseHouse { get; set; }
+        [Property]
+        public virtual int? Case { get; set; }
 
+        [Property]
         public virtual int ApartmentCount { get; set; }
 
-        public virtual DateTime LastPassDate { get; set; }
+        [Property]
+        public virtual DateTime? LastPassDate { get; set; }
 
+        [Property]
         public virtual int PassCount { get; set; }
+
+        [HasMany(ColumnKey = "House", OrderBy = "Number")]
+        public virtual IList<Entrance> Entrances { get; set; }
+
+        public virtual int GetApartmentCount()
+        {
+            return Entrances.SelectMany(e => e.Apartments).Count();
+        }
     }
 }

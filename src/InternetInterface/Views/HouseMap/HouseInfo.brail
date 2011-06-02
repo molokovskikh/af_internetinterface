@@ -1,0 +1,9 @@
+﻿<table class="table">
+    <thead>
+        <tr>
+            <th>Адрес: ${House.Street} ${House.Number} ${House.Case}</th>
+            <th>Количество подъездов: ${House.Entrances.Count}</th>
+            <th>Количество квартир: ${House.GetApartmentCount()}</th>
+        </tr>
+    </thead>
+</table>

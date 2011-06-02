@@ -124,6 +124,11 @@
     <None Include="Views\Brigads\MakeBrigad.brail" />
     <None Include="Views\Brigads\ShowBrigad.brail" />
     <None Include="Views\CommonScripts\WriteMessage.brail" />
+    <None Include="Views\HouseMap\BasicHouseInfo.brail" />
+    <None Include="Views\HouseMap\HouseEdit.brail" />
+    <None Include="Views\HouseMap\HouseInfo.brail" />
+    <None Include="Views\HouseMap\NetworkSwitches.brail" />
+    <None Include="Views\HouseMap\ViewHouseInfo.brail" />
     <None Include="Views\Layouts\Main.brail" />
     <None Include="Views\Layouts\NoMap.brail" />
     <None Include="Views\Payers\AgentFilter.brail" />
@@ -175,6 +180,7 @@
     <Compile Include="Controllers\ExitPartner.cs" />
     <Compile Include="Controllers\Filter\AuthenticationFilter.cs" />
     <Compile Include="Controllers\Filter\InithializeContent.cs" />
+    <Compile Include="Controllers\HouseMapController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\MapController.cs" />
     <Compile Include="Controllers\PayersController.cs" />
@@ -212,8 +218,6 @@
     <Compile Include="Models\Brigad.cs" />
     <Compile Include="Models\ClientEndpoints.cs" />
     <Compile Include="Models\Clients.cs" />
-    <Compile Include="Models\Competitor.cs" />
-    <Compile Include="Models\CompetitorType.cs" />
     <Compile Include="Models\ConnectGraph.cs" />
     <Compile Include="Models\Entrance.cs" />
     <Compile Include="Models\House.cs" />

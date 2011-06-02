@@ -83,7 +83,11 @@ namespace InternetInterface.Models.Access
 									"RegisterClient",
 									"SiteMap",
 									"ClientRegisteredInfoFromDiller",
-									"RegisterLegalPerson"
+									"RegisterLegalPerson",
+                                    "ViewHouseInfo",
+                                    "BasicHouseInfo",
+                                    "NetworkSwitches",
+                                    "SaveHouseMap"
 			                 	};
 			return _registerClient.Contains(methodName) ? "RC" : string.Empty;
 		}

@@ -20,122 +20,124 @@ namespace InternetInterface.Controllers
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class RegisterController : SmartDispatcherController
 	{
-		[AccessibleThrough(Verb.Post)]
-		public void RegisterClient([DataBind("ChangedBy")]ChangeBalaceProperties changeProperties,
-			[DataBind("client")]PhysicalClients phisClient, string balanceText, uint tariff, uint status, uint BrigadForConnect
-			 , [DataBind("ConnectInfo")]ConnectInfo ConnectInfo, bool VisibleRegisteredInfo,
-			uint requestID)
-		{
-			PropertyBag["Tariffs"] = Tariff.FindAllSort();
-			PropertyBag["Statuss"] = Status.FindAllSort();
-			PropertyBag["Brigads"] = Brigad.FindAllSort();
-			if (changeProperties.IsForTariff())
-			{
-				phisClient.Balance = Tariff.Find(tariff).Price;
-			}
-			if (changeProperties.IsOtherSumm())
-			{
-				phisClient.Balance = Convert.ToDecimal(balanceText);
-			}
-			var Password = CryptoPass.GeneratePassword();
-			phisClient.Password = Password;
-			if (!CategorieAccessSet.AccesPartner("SSI"))
-			{
-				phisClient.ConnectSum = 700;
-				status = 1;
-			}
-			if (!CategorieAccessSet.AccesPartner("DHCP"))
-			{
-				ConnectInfo.Port = null;
-			}
-			var portException = Validation.ValidationConnectInfo(ConnectInfo);
-			var registerClient = Validator.IsValid(phisClient);
+        [AccessibleThrough(Verb.Post)]
+        public void RegisterClient([DataBind("ChangedBy")]ChangeBalaceProperties changeProperties,
+            [DataBind("client")]PhysicalClients phisClient, string balanceText, uint tariff, uint status, uint BrigadForConnect
+             , [DataBind("ConnectInfo")]ConnectInfo ConnectInfo, bool VisibleRegisteredInfo,
+            uint requestID)
+        {
+            PropertyBag["Tariffs"] = Tariff.FindAllSort();
+            PropertyBag["Statuss"] = Status.FindAllSort();
+            PropertyBag["Brigads"] = Brigad.FindAllSort();
+            if (changeProperties.IsForTariff())
+            {
+                phisClient.Balance = Tariff.Find(tariff).Price;
+            }
+            if (changeProperties.IsOtherSumm())
+            {
+                phisClient.Balance = Convert.ToDecimal(balanceText);
+            }
+            var Password = CryptoPass.GeneratePassword();
+            phisClient.Password = Password;
+            if (!CategorieAccessSet.AccesPartner("SSI"))
+            {
+                phisClient.ConnectSum = 700;
+                status = 1;
+            }
+            if (!CategorieAccessSet.AccesPartner("DHCP"))
+            {
+                ConnectInfo.Port = null;
+            }
+            var portException = Validation.ValidationConnectInfo(ConnectInfo);
+            var registerClient = Validator.IsValid(phisClient);
 
-			if ((registerClient && String.IsNullOrEmpty(portException)) || (registerClient && string.IsNullOrEmpty(ConnectInfo.Port)))
-			{
-				PhysicalClients.RegistrLogicClient(phisClient, tariff, Validator);
-				var client = new Clients
-				{
-					AutoUnblocked = true,
-					RegDate = DateTime.Now,
-					WhoRegistered = InithializeContent.partner,
-					WhoRegisteredName = InithializeContent.partner.Name,
-					Status = Status.Find((uint)StatusType.BlockedAndNoConnected),
+            if ((registerClient && String.IsNullOrEmpty(portException)) ||
+                (registerClient && string.IsNullOrEmpty(ConnectInfo.Port)))
+            {
+                PhysicalClients.RegistrLogicClient(phisClient, tariff, Validator);
+                var client = new Clients {
+                                             AutoUnblocked = true,
+                                             RegDate = DateTime.Now,
+                                             WhoRegistered = InithializeContent.partner,
+                                             WhoRegisteredName = InithializeContent.partner.Name,
+                                             Status = Status.Find((uint) StatusType.BlockedAndNoConnected),
 
-					Name = string.Format("{0} {1} {2}", phisClient.Surname, phisClient.Name, phisClient.Patronymic),
-					PhysicalClient = phisClient,
-					Type = ClientType.Phisical,
-					BeginWork = null
-				};
-				client.SaveAndFlush();
-				var payment = new Payment
-				              	{
-									Agent = Agent.FindAllByProperty("Partner", InithializeContent.partner).First(),
-									BillingAccount = true,
-									Client = client,
-									PaidOn = DateTime.Now,
-									RecievedOn = DateTime.Now,
-									Sum = phisClient.Balance
-				              	};
-				payment.SaveAndFlush();
-				if (!string.IsNullOrEmpty(ConnectInfo.Port) && CategorieAccessSet.AccesPartner("DHCP"))
-				{
-					var newCEP = new ClientEndpoints
-					             	{
-					             		Client = client,
-					             		Port = Convert.ToInt32(ConnectInfo.Port),
-					             		Switch = NetworkSwitches.Find(Convert.ToUInt32(ConnectInfo.Switch)),
-										PackageId = phisClient.Tariff.PackageId
-					             	};
-					newCEP.SaveAndFlush();
-					if (BrigadForConnect != 0)
-					{
-						var brigad = Brigad.Find(BrigadForConnect);
-						client.WhoConnected = brigad;
-						client.WhoConnectedName = brigad.Name;
-					}
-					client.ConnectedDate = DateTime.Now;
-					client.Status = Status.Find((uint)StatusType.BlockedAndConnected);
-					client.UpdateAndFlush();
-				}
-				Flash["WhoConnected"] = client.WhoConnected;
-				Flash["Password"] = Password;
-				Flash["Client"] = phisClient;
-				Flash["AccountNumber"] = client.Id.ToString("00000");
-				Flash["ConnectSumm"] = phisClient.ConnectSum;
-				foreach (var requestse in Requests.FindAllByProperty("Id", requestID))
-				{
-					requestse.DeleteAndFlush();
-				}
-				if (InithializeContent.partner.Categorie.ReductionName == "Office")
-					if (VisibleRegisteredInfo)
-					RedirectToUrl("..//UserInfo/ClientRegisteredInfo.rails");
-					else
-					{
-						RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + client.Id);
-					}
-				if (InithializeContent.partner.Categorie.ReductionName == "Diller")
-					RedirectToUrl("..//UserInfo/ClientRegisteredInfoFromDiller.rails");
-			}
-			else
-			{
-				PropertyBag["Client"] = phisClient;
-				PropertyBag["BalanceText"] = balanceText;
+                                             Name =
+                                                 string.Format("{0} {1} {2}", phisClient.Surname, phisClient.Name,
+                                                               phisClient.Patronymic),
+                                             PhysicalClient = phisClient,
+                                             Type = ClientType.Phisical,
+                                             BeginWork = null
+                                         };
+                client.SaveAndFlush();
+                var payment = new Payment {
+                                              Agent =
+                                                  Agent.FindAllByProperty("Partner", InithializeContent.partner).First(),
+                                              BillingAccount = true,
+                                              Client = client,
+                                              PaidOn = DateTime.Now,
+                                              RecievedOn = DateTime.Now,
+                                              Sum = phisClient.Balance
+                                          };
+                payment.SaveAndFlush();
+                if (!string.IsNullOrEmpty(ConnectInfo.Port) && CategorieAccessSet.AccesPartner("DHCP"))
+                {
+                    var newCEP = new ClientEndpoints {
+                                                         Client = client,
+                                                         Port = Convert.ToInt32(ConnectInfo.Port),
+                                                         Switch =
+                                                             NetworkSwitches.Find(Convert.ToUInt32(ConnectInfo.Switch)),
+                                                         PackageId = phisClient.Tariff.PackageId
+                                                     };
+                    newCEP.SaveAndFlush();
+                    if (BrigadForConnect != 0)
+                    {
+                        var brigad = Brigad.Find(BrigadForConnect);
+                        client.WhoConnected = brigad;
+                        client.WhoConnectedName = brigad.Name;
+                    }
+                    client.ConnectedDate = DateTime.Now;
+                    client.Status = Status.Find((uint) StatusType.BlockedAndConnected);
+                    client.UpdateAndFlush();
+                }
+                Flash["WhoConnected"] = client.WhoConnected;
+                Flash["Password"] = Password;
+                Flash["Client"] = phisClient;
+                Flash["AccountNumber"] = client.Id.ToString("00000");
+                Flash["ConnectSumm"] = phisClient.ConnectSum;
+                foreach (var requestse in Requests.FindAllByProperty("Id", requestID))
+                {
+                    requestse.DeleteAndFlush();
+                }
+                if (InithializeContent.partner.Categorie.ReductionName == "Office")
+                    if (VisibleRegisteredInfo)
+                        RedirectToUrl("..//UserInfo/ClientRegisteredInfo.rails");
+                    else
+                    {
+                        RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + client.Id);
+                    }
+                if (InithializeContent.partner.Categorie.ReductionName == "Diller")
+                    RedirectToUrl("..//UserInfo/ClientRegisteredInfoFromDiller.rails");
+            }
+            else
+            {
+                PropertyBag["Client"] = phisClient;
+                PropertyBag["BalanceText"] = balanceText;
 
-				PropertyBag["Applying"] = "false";
-				PropertyBag["PortError"] = portException;
-				PropertyBag["ChStatus"] = status;
-				PropertyBag["ChTariff"] = tariff;
-				PropertyBag["ChBrigad"] = BrigadForConnect;
-				phisClient.SetValidationErrors(Validator.GetErrorSummary(phisClient));
-				PropertyBag["ConnectInfo"] = ConnectInfo;
-				PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(s => !string.IsNullOrEmpty(s.Name));
-				PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClients>(phisClient);
-				PropertyBag["ChangeBy"] = changeProperties;
-			}
-		}
+                PropertyBag["Applying"] = "false";
+                PropertyBag["PortError"] = portException;
+                PropertyBag["ChStatus"] = status;
+                PropertyBag["ChTariff"] = tariff;
+                PropertyBag["ChBrigad"] = BrigadForConnect;
+                phisClient.SetValidationErrors(Validator.GetErrorSummary(phisClient));
+                PropertyBag["ConnectInfo"] = ConnectInfo;
+                PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(s => !string.IsNullOrEmpty(s.Name));
+                PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClients>(phisClient);
+                PropertyBag["ChangeBy"] = changeProperties;
+            }
+        }
 
-		public void RegisterLegalPerson()
+	    public void RegisterLegalPerson()
 		{
 		    PropertyBag["ClientCode"] = 0;
 			PropertyBag["Brigads"] = Brigad.FindAllSort();

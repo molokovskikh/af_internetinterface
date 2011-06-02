@@ -1,0 +1,64 @@
+﻿<script type="text/javascript">
+    $(function () {
+        $('#EnCount').change(function () {
+            $('#enEditor').empty();
+            var str = '<div><table class="table"><thead><tr>' +
+            '<th>№ подъезда</th>';
+            for (var i = 0; i < $('#EnCount').val(); i++) {
+                str += '<th id="th_' + i + '">' + Number(i+1) + '</th>';
+            }
+            str += '</thead><tbody>';
+            str += '<tr><td>Оборудование</td>'
+            for (var i = 0; i < $('#EnCount').val(); i++) {
+                str += '<td id="th_' + i + '">' + $.ajax({
+                    url: '../HouseMap/NetworkSwitches?id='+i,
+                    async: false
+                }).responseText + '</td>';
+            }
+            str += '</tr><tr><td>Стояки</td>';
+            for (var i = 0; i < $('#EnCount').val(); i++) {
+                str += '<td><input type="checkbox" id="Strut' + i + '" value="true" /></td>'
+            }
+            str += '</tr><tr><td>Кабель</td>';
+            for (var i = 0; i < $('#EnCount').val(); i++) {
+                str += '<td><input type="checkbox" id="Cable' + i + '" value="true" /></td>'
+            }
+            str += '</tr></tbody></table>';
+            str += '<button class="button" onclick="SaveHouseMap()" value="Назначить">Назначить </button></div>'
+            $('#enEditor').append(str);
+        });
+    });
+
+    function SaveHouseMap() {
+        var req = {};
+        var NetSwitch = new Array();
+        var Strut = new Array();
+        var Cable = new Array();
+        for (var i = 0; i < $('#EnCount').val(); i++) {
+            NetSwitch.push($('#NetSwitch' + i).val());
+            Strut.push($('#Strut' + i).is(':checked'));
+            Cable.push($('#Cable' + i).is(':checked'));
+        }
+        req.NetSwitch = NetSwitch;
+        req.Strut = Strut;
+        req.Cable = Cable;
+        req.SelectHouse = $('#SelectHouse').val();
+        $.post("SaveHouseMap", req, function (data) {
+            var html = $.ajax({
+                url: '../HouseMap/BasicHouseInfo?id=' + $('#SelectHouse').val(),
+                async: false
+            }).responseText;
+            //alert(html);
+            $('#BasicInfo').css('display', 'block');
+            $('#BasicInfo').empty();
+            $('#BasicInfo').append(html);
+        });
+    }
+</script>
+<div>
+    <div>   
+        <span>Введите количество подъездов</span>
+        <input type="text" id="EnCount" name="EnCount" />
+        <div style="padding-top:10px;" id="enEditor"></div>
+    </div>
+</div>

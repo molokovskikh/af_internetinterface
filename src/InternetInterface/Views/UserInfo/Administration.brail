@@ -3,6 +3,12 @@
         {
             color: #4c5390;
         }
+        
+        .MA .menudiv
+        {
+            border: 0px;
+            padding-left:0px;
+        }
         .comment_text
         {
             color:Gray;
@@ -24,6 +30,10 @@
         <%if PartnerAccessSet.AccesPartner("RP"): %>
         <tr><td><a href = "../Brigads/ShowBrigad.rails" ><span class="MA"><div class=menudiv>Бригады</div></span></a>
         <span class="comment_text">Просмотр и создание бригад. Бригады осуществляют физическое подключение абонентов, на них составляется расписание и разначаются заявки.</span></td></tr>
+        <%end %>
+        <%if PartnerAccessSet.AccesPartner("DHCP"): %>
+        <tr><td><a href = "../Switches/ShowSwitches.rails" ><span class="MA"><div class=menudiv>Коммутаторы</div></span></a>
+        <span class="comment_text">Просмотр и редактирование коммутаторов</span></td></tr>
         <%end %>
     </tbody>
 </table>

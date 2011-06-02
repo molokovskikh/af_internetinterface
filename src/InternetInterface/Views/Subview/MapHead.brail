@@ -48,9 +48,6 @@
                <th><a href = "../Search/SearchUsers.rails" ><span class="MH"><div class=menudiv>Клиенты</div></span></a></th>
                <%end %> 
                <%if PartnerAccessSet.AccesPartner("DHCP"): %>
-               <th><a href = "../Switches/ShowSwitches.rails" ><span class="MH"><div class=menudiv>Коммутаторы</div></span></a></th>
-               <%end %>
-               <%if PartnerAccessSet.AccesPartner("DHCP"): %>
                <th><a href = "../Switches/OnLineClient.rails?Zone=4" ><span class="MH"><div class=menudiv>OnLine клиенты</div></span></a></th>
                <%end %>
                <%if PartnerAccessSet.AccesPartner("SSI"): %>
@@ -61,6 +58,9 @@
                <%end %>
                <%if PartnerAccessSet.AccesPartner("SSI"): %>
                <th><a href = "../UserInfo/RequestGraph.rails" ><span class="MH"><div class=menudiv>График подключений</div></span></a></th>
+               <%end %>
+               <%if PartnerAccessSet.AccesPartner("RC"): %>
+               <th><a href = "../HouseMap/ViewHouseInfo.rails" ><span class="MH"><div class=menudiv>Карта дома</div></span></a></th>
                <%end %>
                 <%if PartnerAccessSet.AccesPartner("RP"): %>
                 <th><a href = "../UserInfo/Administration.rails" ><span class="MH"><div class=menudiv>Администрирование</div></span></a></th>
