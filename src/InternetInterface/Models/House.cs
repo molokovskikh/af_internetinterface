@@ -32,11 +32,14 @@ namespace InternetInterface.Models
         public virtual int PassCount { get; set; }
 
         [HasMany(ColumnKey = "House", OrderBy = "Number")]
+        public virtual IList<Apartment> Apartments { get; set; }
+
+        [HasMany(ColumnKey = "House", OrderBy = "Number")]
         public virtual IList<Entrance> Entrances { get; set; }
 
         public virtual int GetApartmentCount()
         {
-            return Entrances.SelectMany(e => e.Apartments).Count();
+            return Apartments.Count();
         }
     }
 }

@@ -20,8 +20,8 @@
 			background-color:White;
 			text-align:left;
 			border: 1px solid black;
-			 padding: 10px;
-			 margin:10px;
+			padding: 10px;
+			margin:10px;
         }
 </style>
 <center>

@@ -13,16 +13,16 @@ namespace InternetInterface.Test.Unit
         [Test]
         public void ApartamentCountTest()
         {
-            var house = new House{Entrances = new List<Entrance>()};
-            house.Entrances.Add(new Entrance { House = house });
-            house.Entrances.Add(new Entrance { House = house });
-            house.Entrances.Add(new Entrance { House = house });
-            foreach (var en in house.Entrances)
+            var house = new House { Apartments = new List<Apartment>() };
+            house.Apartments.Add(new Apartment { House = house });
+            house.Apartments.Add(new Apartment { House = house });
+            house.Apartments.Add(new Apartment { House = house });
+            /*foreach (var en in house.Apartments)
             {
                 en.Apartments = new List<Apartment>();
                 for (int i = 0; i < 10; i++)
                     en.Apartments.Add(new Apartment());
-            }
+            }*/
             Assert.That(house.GetApartmentCount(), Is.EqualTo(30));
         }
     }

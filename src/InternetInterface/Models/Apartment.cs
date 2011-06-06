@@ -14,7 +14,7 @@ namespace InternetInterface.Models
         public virtual uint Id { get; set; }
 
         [BelongsTo]
-        public virtual Entrance Entrance { get; set; }
+        public virtual House House { get; set; }
 
         [Property]
         public virtual int Number { get; set; }

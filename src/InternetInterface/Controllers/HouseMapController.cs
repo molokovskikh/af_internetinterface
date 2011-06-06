@@ -27,7 +27,7 @@ namespace InternetInterface.Controllers
 
         public void BasicHouseInfo(uint id)
         {
-            PropertyBag["Editing"] = House.Find(id).Entrances.Count == 0 ? true : false;
+            PropertyBag["Editing"] = House.Find(id).Apartments.Count == 0 ? true : false;
             PropertyBag["sHouse"] = House.Find(id);
             CancelLayout();
         }

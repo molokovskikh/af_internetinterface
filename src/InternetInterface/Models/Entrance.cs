@@ -25,7 +25,7 @@ namespace InternetInterface.Models
         [Property]
         public virtual bool Cable { get; set; }
 
-        [HasMany(ColumnKey = "Entrance", OrderBy = "Number")]
-        public virtual IList<Apartment> Apartments { get; set; }
+        /*[HasMany(ColumnKey = "Entrance", OrderBy = "Number")]
+        public virtual IList<Apartment> Apartments { get; set; }*/
     }
 }

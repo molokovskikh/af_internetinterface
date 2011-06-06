@@ -86,11 +86,22 @@ update internet.physicalclients pc set
 pc.Street = 'Юго-Восточный мкр.'
 where pc.id in (337,361);
 
-insert into Internet.Houses (street, number, casehouse)
+insert into Internet.`Houses` (`street`, `number`, `case`)
 SELECT p.street , p.house as number , p.casehouse FROM internet.physicalclients p
 group by p.street , p.house , p.casehouse;
 
 ALTER TABLE `internet`.`networkswitches` ADD COLUMN `PortCount` INT(10) UNSIGNED AFTER `Zone`;
 
 ALTER TABLE `internet`.`Apartments` ADD COLUMN `Number` INT(10) UNSIGNED NOT NULL AFTER `Comment`;
+
+ALTER TABLE `internet`.`Apartments` CHANGE COLUMN `Entrance` `House` INT(10) UNSIGNED NOT NULL,
+ DROP INDEX `EntranceKey`,
+ ADD INDEX `EntranceKey` USING BTREE(`House`),
+ DROP FOREIGN KEY `EntranceKey`;
+
+ ALTER TABLE `internet`.`Apartments` ADD CONSTRAINT `FK_Apartments_1` FOREIGN KEY `FK_Apartments_1` (`House`)
+    REFERENCES `Houses` (`Id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE;
+
 

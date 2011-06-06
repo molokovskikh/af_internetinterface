@@ -1,11 +1,12 @@
 ﻿<script type="text/javascript">
     $(function () {
+
         $('#EnCount').change(function () {
             $('#enEditor').empty();
-            var str = '<div><table class="table"><thead><tr>' +
+            var str = '<form id="editHouse"><div><table class="table"><thead><tr>' +
             '<th>№ подъезда</th>';
             for (var i = 0; i < $('#EnCount').val(); i++) {
-                str += '<th id="th_' + i + '">' + Number(i+1) + '</th>';
+                str += '<th style="text-align:center;" id="th_' + i + '">' + Number(i+1) + '</th>';
             }
             str += '</thead><tbody>';
             str += '<tr><td>Оборудование</td>'
@@ -24,12 +25,24 @@
                 str += '<td><input type="checkbox" id="Cable' + i + '" value="true" /></td>'
             }
             str += '</tr></tbody></table>';
-            str += '<button class="button" onclick="SaveHouseMap()" value="Назначить">Назначить </button></div>'
+            str += '<div><span>Введите количество квартир  </span><input type="text" id="ApCount" name="ApCount" /></div>'
+            str += '<div><button class="button" onclick="SaveHouseMap()" value="Назначить">Назначить </button></div></div></form>'
             $('#enEditor').append(str);
         });
+
+        $("#editHouse").validate({
+        rules :{
+        ApCount: {
+                required: true,
+                digits : true
+            }
+        }
+    })
     });
 
     function SaveHouseMap() {
+        if ($("#editHouse").valid())
+            {
         var req = {};
         var NetSwitch = new Array();
         var Strut = new Array();
@@ -53,7 +66,24 @@
             $('#BasicInfo').empty();
             $('#BasicInfo').append(html);
         });
+        }
     }
+
+    $("#editHouse").validate({
+        rules :{
+        ApCount: {
+                digits : true
+            }
+            }
+        //},
+        /*messages: {
+            name: "Please specify your name",
+            email: {
+                required: "We need your email address to contact you",
+                email: "Your email address must be in the format of name@domain.com"
+            }
+        }*/
+    })
 </script>
 <div>
     <div>   
