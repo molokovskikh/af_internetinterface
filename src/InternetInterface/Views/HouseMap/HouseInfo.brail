@@ -1,9 +1,109 @@
-﻿<table class="table">
+﻿<style type="text/css">
+    #kv_table
+    {
+        border-style:double;
+        width:50%;
+        }
+</style>
+<table class="table">
     <thead>
         <tr>
             <th>Адрес: ${House.Street} ${House.Number} ${House.Case}</th>
             <th>Количество подъездов: ${House.Entrances.Count}</th>
-            <th>Количество квартир: ${House.GetApartmentCount()}</th>
+            <th>Количество квартир: ${House.ApartmentCount}</th>
         </tr>
     </thead>
+</table>
+<table class="table">
+    <thead>
+        <tr><th>№ подъезда</th>
+            <% for i, Entrance in enumerate(House.Entrances): %>
+		    <th>${i+1}</th>
+        <% end %>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>Оборудование</td>
+          <% for i, Entrance in enumerate(House.Entrances): %>
+          <%if Entrance.Switch != null : %>
+		    <td>${Entrance.Switch.Name}</td>
+            <%else: %>
+            <%if Entrance.Cable : %>
+            <td> Кабель</td>
+            <%else: %>
+            <td> Нет</td>
+            <%end %>
+          <% end %>
+          <% end %>
+        </tr>
+        <tr><td>Стояки</td>
+          <% for i, Entrance in enumerate(House.Entrances): %>
+          <%if Entrance.Strut : %>
+		    <td>Да</td>
+            <%else: %>
+           <td> Нет</td>
+          <% end %>
+          <% end %>
+        </tr>
+        <tr><td>Возможность подключения</td>
+          <% for i, Entrance in enumerate(House.Entrances): %>
+          <%if Entrance.WasConnected() : %>
+		    <td>Да</td>
+            <%else: %>
+            <td> Нет</td>
+          <% end %>
+          <% end %>
+        </tr>
+    </tbody>
+</table>
+<table style="width:100%">
+    <tbody>
+    <tr>
+<%for j in range(0 , 2): %>
+<td valign=top>
+<table border="1" style="width:490px;" class="table" id="kv_table">
+    <thead>
+        <tr align=center>
+            <th></th>
+            <th colspan=2>Было</th>
+            <th colspan=2>Результат</th>
+            <th></th>
+        </tr>
+        <tr>
+            <th>кв.</th>
+            <th>Int</th>
+            <th>TV</th>
+            <th>INT</th>
+            <th>TV</th>
+            <th>Комментарии</th>
+        </tr>
+    </thead>
+    <tbody>
+    <% ap_count = House.ApartmentCount %>
+    <% for i in range(ap_count / 2 * j, ap_count / 2 + ap_count / 2 * j + ap_count % 2 *j): %>
+    <tr>
+        <td>${i+1}</td>
+        <%apartment = House.GetApartmentWithNumber(i+1) %>
+        <%if apartment != null : %>
+        <td>${apartment.LastInternet}</td>
+        <td>${apartment.LastTV}</td>
+        <%else: %>
+        <td></td>
+        <td></td>
+        <%end %>
+        <td></td>
+        <td></td>
+        <%if apartment != null : %>
+        <td>${apartment.Comment}</td>
+        <%else: %>
+        <td></td>
+        <%end %>
+    </tr>
+    <%end %>
+    </tbody>
+</table>
+</td>
+<%end %>
+</tr>
+</tbody>
 </table>

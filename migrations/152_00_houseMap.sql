@@ -104,4 +104,9 @@ ALTER TABLE `internet`.`Apartments` CHANGE COLUMN `Entrance` `House` INT(10) UNS
     ON DELETE CASCADE
     ON UPDATE CASCADE;
 
+ALTER TABLE `internet`.`Entrances` ADD COLUMN `Switch` INT(10) UNSIGNED AFTER `Cable`,
+ ADD CONSTRAINT `FK_Entrances_2` FOREIGN KEY `FK_Entrances_2` (`Switch`)
+    REFERENCES `networkswitches` (`Id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE;
 

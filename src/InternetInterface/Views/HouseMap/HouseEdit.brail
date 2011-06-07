@@ -3,16 +3,16 @@
 
         $('#EnCount').change(function () {
             $('#enEditor').empty();
-            var str = '<form id="editHouse"><div><table class="table"><thead><tr>' +
+            var str = '<div><table class="table"><thead><tr>' +
             '<th>№ подъезда</th>';
             for (var i = 0; i < $('#EnCount').val(); i++) {
-                str += '<th style="text-align:center;" id="th_' + i + '">' + Number(i+1) + '</th>';
+                str += '<th style="text-align:center;" id="th_' + i + '">' + Number(i + 1) + '</th>';
             }
             str += '</thead><tbody>';
             str += '<tr><td>Оборудование</td>'
             for (var i = 0; i < $('#EnCount').val(); i++) {
                 str += '<td id="th_' + i + '">' + $.ajax({
-                    url: '../HouseMap/NetworkSwitches?id='+i,
+                    url: '../HouseMap/NetworkSwitches?id=' + i,
                     async: false
                 }).responseText + '</td>';
             }
@@ -25,70 +25,80 @@
                 str += '<td><input type="checkbox" id="Cable' + i + '" value="true" /></td>'
             }
             str += '</tr></tbody></table>';
-            str += '<div><span>Введите количество квартир  </span><input type="text" id="ApCount" name="ApCount" /></div>'
-            str += '<div><button class="button" onclick="SaveHouseMap()" value="Назначить">Назначить </button></div></div></form>'
+            str += '<div><span>Введите количество квартир  </span><input  type="text" id="ApCount" name="ApCount" /></div>'
+            str += '<div><button class="button" onclick="SaveHouseMap()" value="Назначить">Назначить </button></div></div>'
             $('#enEditor').append(str);
         });
 
         $("#editHouse").validate({
-        rules :{
-        ApCount: {
-                required: true,
-                digits : true
+            rules: {
+                ApCount: {
+                    required: true,
+                    digits: true
+                }
+            },
+            messages:
+        {
+            ApCount:
+            {
+                required: "Введите количество квартир в доме",
+                digits: "Должно быть введено число"
             }
         }
-    })
+        })
     });
 
     function SaveHouseMap() {
-        if ($("#editHouse").valid())
-            {
-        var req = {};
-        var NetSwitch = new Array();
-        var Strut = new Array();
-        var Cable = new Array();
-        for (var i = 0; i < $('#EnCount').val(); i++) {
-            NetSwitch.push($('#NetSwitch' + i).val());
-            Strut.push($('#Strut' + i).is(':checked'));
-            Cable.push($('#Cable' + i).is(':checked'));
-        }
-        req.NetSwitch = NetSwitch;
-        req.Strut = Strut;
-        req.Cable = Cable;
-        req.SelectHouse = $('#SelectHouse').val();
-        $.post("SaveHouseMap", req, function (data) {
-            var html = $.ajax({
-                url: '../HouseMap/BasicHouseInfo?id=' + $('#SelectHouse').val(),
-                async: false
-            }).responseText;
-            //alert(html);
-            $('#BasicInfo').css('display', 'block');
-            $('#BasicInfo').empty();
-            $('#BasicInfo').append(html);
-        });
+        if ($("#editHouse").valid()) {
+            var req = {};
+            var NetSwitch = new Array();
+            var Strut = new Array();
+            var Cable = new Array();
+            for (var i = 0; i < $('#EnCount').val(); i++) {
+                NetSwitch.push($('#NetSwitch' + i).val());
+                Strut.push($('#Strut' + i).is(':checked'));
+                Cable.push($('#Cable' + i).is(':checked'));
+            }
+            req.NetSwitch = NetSwitch;
+            req.Strut = Strut;
+            req.Cable = Cable;
+            req.SelectHouse = $('#SelectHouse').val();
+            req.ApCount = $('#ApCount').val();
+            $.post("SaveHouseMap", req, function (data) {
+                var html = $.ajax({
+                    url: '../HouseMap/BasicHouseInfo?id=' + $('#SelectHouse').val(),
+                    async: false
+                }).responseText;
+                alert(html);
+                $('#BasicInfo').css('display', 'block');
+                $('#BasicInfo').empty();
+                $('#BasicInfo').append(html);
+            });
         }
     }
 
     $("#editHouse").validate({
-        rules :{
-        ApCount: {
-                digits : true
+        rules: {
+            ApCount: {
+                digits: true
             }
-            }
-        //},
-        /*messages: {
-            name: "Please specify your name",
-            email: {
-                required: "We need your email address to contact you",
-                email: "Your email address must be in the format of name@domain.com"
-            }
-        }*/
+        }
     })
 </script>
+<style type="text/css">
+    .error
+    {
+        color:Red;
+        font-size:12px;
+        font-style:oblique;
+        }
+</style>
 <div>
     <div>   
+    <form id="editHouse">
         <span>Введите количество подъездов</span>
-        <input type="text" id="EnCount" name="EnCount" />
+        <input class="digitInput" type="text" id="EnCount" name="EnCount" />
         <div style="padding-top:10px;" id="enEditor"></div>
+    </form>
     </div>
 </div>

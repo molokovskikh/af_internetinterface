@@ -19,7 +19,7 @@ namespace InternetInterface.Models
         [Property]
         public virtual int Number { get; set; }
 
-        [Property]
+        [Property("`Case`")]
         public virtual int? Case { get; set; }
 
         [Property]
@@ -37,9 +37,12 @@ namespace InternetInterface.Models
         [HasMany(ColumnKey = "House", OrderBy = "Number")]
         public virtual IList<Entrance> Entrances { get; set; }
 
-        public virtual int GetApartmentCount()
+        public virtual Apartment GetApartmentWithNumber(int num)
         {
-            return Apartments.Count();
+            var apartment = Apartments.Where(a => a.Number == num).ToList();
+            if (apartment.Count != 0)
+                return apartment.First();
+            return null;
         }
     }
 }

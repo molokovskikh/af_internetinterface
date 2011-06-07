@@ -25,6 +25,14 @@ namespace InternetInterface.Models
         [Property]
         public virtual bool Cable { get; set; }
 
+        [BelongsTo]
+        public virtual NetworkSwitches Switch { get; set; }
+
+        public virtual bool WasConnected()
+        {
+            return Switch != null;
+        }
+
         /*[HasMany(ColumnKey = "Entrance", OrderBy = "Number")]
         public virtual IList<Apartment> Apartments { get; set; }*/
     }

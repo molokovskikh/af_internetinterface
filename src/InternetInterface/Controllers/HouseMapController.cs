@@ -27,7 +27,7 @@ namespace InternetInterface.Controllers
 
         public void BasicHouseInfo(uint id)
         {
-            PropertyBag["Editing"] = House.Find(id).Apartments.Count == 0 ? true : false;
+            PropertyBag["Editing"] = House.Find(id).ApartmentCount == 0 ? true : false;
             PropertyBag["sHouse"] = House.Find(id);
             CancelLayout();
         }
@@ -39,13 +39,18 @@ namespace InternetInterface.Controllers
             var NetSwitch = Request.Form["NetSwitch[]"].Split(new[] {','});
             var Strut = Request.Form["Strut[]"].Split(new[] {','});
             var Cable = Request.Form["Cable[]"].Split(new[] {','});
+            var apCount = Request.Form["ApCount"];
+            var house = House.Find(Convert.ToUInt32(SelectHouse));
+            house.ApartmentCount = Convert.ToInt32(apCount);
+            house.Update();
             for (int i = 0; i < NetSwitch.Length; i++)
             {
                 new Entrance {
                                  Cable = Convert.ToBoolean(Cable[i]),
-                                 House = House.Find(Convert.ToUInt32(SelectHouse)),
+                                 House = house,
                                  Number = i + 1,
                                  Strut = Convert.ToBoolean(Strut[i]),
+                                 Switch = Convert.ToInt32(NetSwitch[i]) > 0 ? Models.NetworkSwitches.Find(Convert.ToUInt32(NetSwitch[i])) : null
                              }.Save();
             }
         }
