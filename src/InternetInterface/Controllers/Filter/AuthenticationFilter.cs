@@ -20,7 +20,7 @@ namespace InternetInterface.Controllers.Filter
 		public bool Perform(ExecuteWhen exec, IEngineContext context, IController controller, IControllerContext controllerContext)
 		{
 #if DEBUG
-			context.Session["Login"] = Environment.UserName;
+			//context.Session["Login"] = Environment.UserName;
 #endif
 			if (context.Session["Login"] == null)
 			{
