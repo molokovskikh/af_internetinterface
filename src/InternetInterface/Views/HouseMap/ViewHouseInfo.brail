@@ -45,9 +45,7 @@
         }
 </style>
 		<div id="myModal" class="reveal-modal"> 
-        asdfsdfsad
-        asdf
-        sdf
+            <% OutputSubView("""\HouseMap\RegisterHouse""") %>
         <a class="close-reveal-modal">х</a>
 		</div> 
 <center>

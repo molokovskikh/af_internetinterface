@@ -128,6 +128,7 @@
     <None Include="Views\HouseMap\HouseEdit.brail" />
     <None Include="Views\HouseMap\HouseInfo.brail" />
     <None Include="Views\HouseMap\NetworkSwitches.brail" />
+    <None Include="Views\HouseMap\RegisterHouse.brail" />
     <None Include="Views\HouseMap\ViewHouseInfo.brail" />
     <None Include="Views\Layouts\Main.brail" />
     <None Include="Views\Layouts\NoMap.brail" />
@@ -142,6 +143,7 @@
     <None Include="Views\Subview\Client.brail" />
     <None Include="Views\Subview\ConnectMenu.brail" />
     <None Include="Views\Subview\CreateEditLabel.brail" />
+    <None Include="Views\Subview\House.brail" />
     <None Include="Views\Subview\LegalPerson.brail" />
     <None Include="Views\Subview\PaymentInfo.brail" />
     <None Include="Views\Subview\WriteOffInfo.brail" />

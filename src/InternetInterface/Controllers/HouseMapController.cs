@@ -33,7 +33,22 @@ namespace InternetInterface.Controllers
         }
 
         [return: JSONReturnBinder]
-        public void SaveHouseMap()
+        public string Register()
+        {
+            var street = Request.Form["Street"];
+            var number = Request.Form["Number"];
+            var _case = Request.Form["Case"];
+            int res;
+            var errors = string.Empty;
+            if (!Int32.TryParse(number, out res))
+                errors += "Неправильно введен номер дома" + res;
+            if (string.IsNullOrEmpty(errors))
+                new House {Street = street, Number = Int32.Parse(number), Case = Int32.Parse(_case)}.Save();
+            return errors;
+        }
+
+        [return: JSONReturnBinder]
+        public bool SaveHouseMap()
         {
             var SelectHouse = Request.Form["SelectHouse"];
             var NetSwitch = Request.Form["NetSwitch[]"].Split(new[] {','});
@@ -53,6 +68,7 @@ namespace InternetInterface.Controllers
                                  Switch = Convert.ToInt32(NetSwitch[i]) > 0 ? Models.NetworkSwitches.Find(Convert.ToUInt32(NetSwitch[i])) : null
                              }.Save();
             }
+            return true;
         }
     }
 }

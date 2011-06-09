@@ -87,7 +87,8 @@ namespace InternetInterface.Models.Access
                                     "ViewHouseInfo",
                                     "BasicHouseInfo",
                                     "NetworkSwitches",
-                                    "SaveHouseMap"
+                                    "SaveHouseMap",
+                                    "Register"
 			                 	};
 			return _registerClient.Contains(methodName) ? "RC" : string.Empty;
 		}
