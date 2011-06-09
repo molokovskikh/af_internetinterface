@@ -57,6 +57,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Castle.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Castle.MonoRail.ActiveRecordSupport">
+      <HintPath>..\..\lib\Castle.MonoRail.ActiveRecordSupport.dll</HintPath>
+    </Reference>
     <Reference Include="Castle.MonoRail.Framework, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Castle.MonoRail.Framework.dll</HintPath>
@@ -125,6 +128,7 @@
     <None Include="Views\Brigads\ShowBrigad.brail" />
     <None Include="Views\CommonScripts\WriteMessage.brail" />
     <None Include="Views\HouseMap\BasicHouseInfo.brail" />
+    <None Include="Views\HouseMap\EditHouse.brail" />
     <None Include="Views\HouseMap\HouseEdit.brail" />
     <None Include="Views\HouseMap\HouseInfo.brail" />
     <None Include="Views\HouseMap\NetworkSwitches.brail" />

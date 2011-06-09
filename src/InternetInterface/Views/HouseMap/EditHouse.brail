@@ -1,0 +1,133 @@
+﻿<style type="text/css">
+    .error
+    {
+        color:Red;
+        font-size:12px;
+        font-style:oblique;
+        }
+</style>
+<script type="text/javascript">
+    $(function () {
+        delEnt($('.delBut'));
+
+       /* $("#editHouse").validate({
+            rules: {
+                ApCount: {
+                    required: true,
+                    digits: true
+                }
+            },
+            messages:
+        {
+            ApCount:
+            {
+                required: "Введите количество квартир в доме",
+                digits: "Должно быть введено число"
+            }
+        },
+        submitHandler: function(form) {
+            var appCount = $('#ApCount').val();
+            $('#ValidAppCount').val(appCount);
+            form.submit();
+        }
+        })*/
+    });
+
+    function addEnt() {
+        var enClount = $('.enNums').children().length;
+        var str = '<th style="text-align:center;" class="ent' + enClount + '">' + enClount + '<a href="#" class="delBut" >Удалить</a>' + '</th>';
+        $('.enNums').append(str);
+        str = '<td class="ent' + enClount + '">' + $.ajax({
+                    url: '../HouseMap/NetworkSwitches?id=' + enClount,
+                    async: false
+                }).responseText + '</td>';
+        $('.enObor').append(str);
+        str = '<td  class="ent' + enClount + '"><input type="checkbox" name="Entrances[' + enClount + '].Strut" value="true" /></td>'
+        $('.enStruts').append(str);
+        str = '<td  class="ent' + enClount + '"><input type="checkbox" name="Entrances[' + enClount + '].Cable" value="true" /></td>'
+        $('.enCables').append(str);
+        delEnt($('.delBut'));
+    }
+
+    function delEnt(links) {
+        $(links).click(function () {
+            var delClassName = $(this).parent().attr('class');
+            $('.' + delClassName).remove();
+            var nums = $('.enNums').children();
+            for (var i = 1; i < nums.length; i++) {
+                $(nums[i]).empty();
+                $(nums[i]).append(i + '<a href="#" class="delBut" >Удалить</a>');
+            }
+            delEnt($('.delBut'));
+        });
+    }
+</script>
+<div style="width:800px;">
+${FormHelper.FormTag("${Siteroot}/HouseMap/EditHouse", {"id" : "editHouse"})}
+<!-- <form id="editHouse" action="${Siteroot}/HouseMap/EditHouse" method=post> -->
+<input type=hidden value=${house.Id} name="house.Id" />
+<table class="table">
+    <thead>
+        <tr><th>Общая информация</th></tr>
+    </thead>
+</table>
+<% OutputSubView("""\Subview\House""") %>
+<table class="table">
+    <thead>
+        <tr class="enNums">
+            <th>№ подъезда</th>
+            <% for i, Entrance in enumerate(Entrances): %>
+                <th class="ent${i}">${Entrance.Number}<a href="#" class="delBut" >Удалить</a></th>
+            <% end %>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="enObor"><td>Оборудование</td>
+          <% for i, Entrance in enumerate(Entrances): %>
+
+		    <td class="ent${i}">
+                <input type=hidden name="Entrances[${i}].Id" value="${Entrance.Id}" />
+                <select name="Entrances[${i}].Switch.Id" id="NetSwitch${Entrance.Number}" style="width: 100%" >
+                <option id="Option1" value="0" >Нет</option>
+                <% for i, Switch in enumerate(Switches): %>
+                        <%if Entrance.Switch != null:  %>
+		                <option id="Option${i}" value="${Switch.Id}"  ${"selected" if (Switch.Id == Entrance.Switch.Id)}>${Switch.Name}</option>
+                        <%else: %>
+                        <option id="Option2" value="${Switch.Id}">${Switch.Name}</option>
+                        <%end %>
+                <% end %>
+                </select>
+            </td>
+          <% end %>
+        </tr>
+        <tr class="enStruts"><td>Стояки</td>
+          <% for i, Entrance in enumerate(Entrances): %>
+            <td class="ent${i}">${FormHelper.CheckboxField("Entrances[${i}].Strut")}</td>
+          <% end %>
+        </tr>
+        <tr class="enCables"><td>Кабель</td>
+          <% for i, Entrance in enumerate(Entrances): %>
+          <td class="ent${i}">${FormHelper.CheckboxField("Entrances[${i}].Cable")}</td>
+          <%end %>
+        </tr>
+        <tr>
+            <td>Количество подъездов</td>
+            <td colspan=${Entrances.Count}>
+                <!-- <input type=hidden name="house.ApartmentCount" id="ValidAppCount" />
+                <input type="text" id="ApCount" name="ApCount" value=${house.ApartmentCount} /> -->
+                ${FormHelper.TextField("house.ApartmentCount")}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button type=submit class="button">Сохранить</button>
+            </td>
+            <td>
+                <input type=button class="button" onclick="addEnt()" value="Добавить подъезд" />
+            </td>
+        </tr>
+    </tbody>
+</table>
+${FormHelper.EndFormTag()}
+<!-- </form> -->
+</div>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
@@ -10,7 +11,7 @@ namespace InternetInterface.Controllers
 {
     [Layout("Main")]
     [FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
-    public class HouseMapController : SmartDispatcherController
+    public class HouseMapController : ARSmartDispatcherController 
     {
         public void NetworkSwitches(int id)
         {
@@ -30,6 +31,38 @@ namespace InternetInterface.Controllers
             PropertyBag["Editing"] = House.Find(id).ApartmentCount == 0 ? true : false;
             PropertyBag["sHouse"] = House.Find(id);
             CancelLayout();
+        }
+
+       public void EditHouse(uint House)
+        {
+            PropertyBag["house"] = Models.House.Find(House);
+            PropertyBag["Entrances"] = Entrance.Queryable.Where(e => e.House.Id == House).ToList();
+            PropertyBag["Switches"] = Models.NetworkSwitches.FindAll().Where(n => !string.IsNullOrEmpty(n.Name));
+        }
+
+        [AccessibleThrough(Verb.Post)]
+       public void EditHouse([ARDataBind("house")]House house, [ARDataBind("Entrances")]Entrance[] enterances)
+        {
+            house.Save();
+            foreach (var enterance in Entrance.Queryable.Where(e => e.House.Id == house.Id).ToList())
+            {
+                enterance.Delete();
+            }
+            var enCount = 0;
+            foreach (var enterance in enterances)
+            {
+                enCount++;
+                var _switch = Models.NetworkSwitches.Queryable.Where(n => n.Id == enterance.Switch.Id).ToList();
+                new Entrance {
+                                 Cable = enterance.Cable,
+                                 House = house,
+                                 Number = enCount,
+                                 Strut = enterance.Strut,
+                                 Switch = _switch.Count > 0 ? _switch.First() : null
+                             }.Save();
+            }
+            EditHouse(house.Id);
+            //var items = (Entrance[])BindObject(ParamStore.Form, typeof(Entrance[]), "Entrances", AutoLoadBehavior.Always);
         }
 
         [return: JSONReturnBinder]

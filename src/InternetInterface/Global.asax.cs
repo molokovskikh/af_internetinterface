@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Resources;
 using System.Text;
 using System.Web;
 using System.Web.Security;
@@ -11,10 +12,14 @@ using Castle.ActiveRecord;
 using System.Reflection;
 using Castle.ActiveRecord.Framework;
 using Castle.ActiveRecord.Framework.Config;
+using Castle.Components.Validator;
 using Castle.MonoRail.Framework;
 using Castle.MonoRail.Framework.Configuration;
 using Castle.MonoRail.Framework.Container;
+using Castle.MonoRail.Framework.Helpers.ValidationStrategy;
 using Castle.MonoRail.Framework.Internal;
+using Castle.MonoRail.Framework.JSGeneration;
+using Castle.MonoRail.Framework.JSGeneration.jQuery;
 using Castle.MonoRail.Framework.Routing;
 using Castle.MonoRail.Framework.Services;
 using Castle.MonoRail.Framework.Views.Aspx;
@@ -112,6 +117,15 @@ namespace InternetInterface
 			configuration.ViewEngineConfig.VirtualPathRoot = configuration.ViewEngineConfig.ViewPathRoot;
 			configuration.ViewEngineConfig.ViewPathRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configuration.ViewEngineConfig.ViewPathRoot);
 
+            configuration.JSGeneratorConfiguration.AddLibrary("jquery", typeof(JQueryGenerator))
+                    .AddExtension(typeof(CommonJSExtension))
+                    .ElementGenerator
+                         .AddExtension(typeof(JQueryElementGenerator))
+                         .Done
+                    .BrowserValidatorIs(typeof(JQueryValidator))
+                    .SetAsDefault();
+
+
 #if DEBUG
 			//MonoRail.Debugger.Toolbar.Toolbar.Init(configuration);
 #endif
@@ -123,6 +137,7 @@ namespace InternetInterface
 		public void Initialized(IMonoRailContainer container)
 		{
 			((DefaultViewComponentFactory)container.GetService<IViewComponentFactory>()).Inspect(Assembly.Load("InternetInterface"));
+            container.ValidatorRegistry = new CachedValidationRegistry(new ResourceManager("Castle.Components.Validator.Messages", typeof(CachedValidationRegistry).Assembly));
 		}
 
 		void Session_End(object sender, EventArgs e)
