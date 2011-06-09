@@ -72,7 +72,8 @@ WHERE LOWER(C.Name) like {0} or LOWER(C.Id) like {0}
 ORDER BY C.Name", ":SearchText");
 					else
 					{
-                        sqlStr = @"SELECT * FROM internet.Clients C ORDER BY C.Name";
+					    return new List<Clients>();
+					    //sqlStr = @"SELECT * FROM internet.Clients C ORDER BY C.Name";
 					}
 					query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Clients));
 					if (!string.IsNullOrEmpty(searchText))
