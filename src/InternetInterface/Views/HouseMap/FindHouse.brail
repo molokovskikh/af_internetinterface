@@ -92,7 +92,8 @@
             <td>Количество абонентов</td>
             <td>${FormHelper.TextField("SubscriberCount")}</td>
             <td>Оператор</td>
-            <td>${FormHelper.Select("SubscriberCount_Oper", SelectEn, SelectName {"text" : SelectName})}</td>
+
+            <td><%output OperatorsSelect("SubscriberCount_Oper") %></td>
         </tr>
         <tr>
             <td>Процента проникновения</td>
