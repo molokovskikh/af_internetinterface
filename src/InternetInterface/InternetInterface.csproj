@@ -129,7 +129,9 @@
     <None Include="Views\CommonScripts\WriteMessage.brail" />
     <None Include="Views\HouseMap\BasicHouseInfo.brail" />
     <None Include="Views\HouseMap\EditHouse.brail" />
+    <None Include="Views\HouseMap\FindHouse.brail" />
     <None Include="Views\HouseMap\HouseEdit.brail" />
+    <None Include="Views\HouseMap\HouseFindResult.brail" />
     <None Include="Views\HouseMap\HouseInfo.brail" />
     <None Include="Views\HouseMap\NetworkSwitches.brail" />
     <None Include="Views\HouseMap\RegisterHouse.brail" />

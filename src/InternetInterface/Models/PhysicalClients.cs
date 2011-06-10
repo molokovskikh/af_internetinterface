@@ -150,6 +150,9 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool ConnectionPaid { get; set; }
 
+        [BelongsTo]
+        public virtual House HouseObj { get; set; }
+
 		[Property, ValidateNonEmpty("Введите сумму"), ValidateDecimal("Непрвильно введено значение суммы")]
 		public virtual decimal ConnectSum { get; set; }
 

@@ -20,10 +20,10 @@ namespace InternetInterface.Models
         [Property, ValidateNonEmpty("Введите номер дома"), ValidateInteger("Это поле должно быть число")]
         public virtual int Number { get; set; }
 
-        [Property("`Case`")]
+        [Property("CaseHouse")]
         public virtual int? Case { get; set; }
 
-        [Property, ValidateNonEmpty("Введите номер дома"), ValidateInteger("Это поле должно быть число")]
+        [Property, ValidateNonEmpty("Ввкдите количество квартир"), ValidateInteger("Это поле должно быть число")]
         public virtual int ApartmentCount { get; set; }
 
         [Property]
@@ -44,6 +44,18 @@ namespace InternetInterface.Models
             if (apartment.Count != 0)
                 return apartment.First();
             return null;
+        }
+
+        public virtual int GetSubscriberCount()
+        {
+            return PhysicalClients.Queryable.Where(p => p.HouseObj == this).Count();
+        }
+
+        public virtual float GetPenetrationPercent()
+        {
+            if (ApartmentCount == 0)
+                return 1;
+            return PhysicalClients.Queryable.Where(p => p.HouseObj == this).Count() / ApartmentCount;
         }
     }
 }

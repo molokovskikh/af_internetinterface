@@ -294,7 +294,7 @@ namespace InternetInterface.Controllers
 				partner.SetValidationErrors(Validator.GetErrorSummary(partner));
 				var ve = partner.GetValidationErrors();
 				if (ve.ErrorsCount == 1)
-				if (ve.ErrorMessages[0] == "Логин должен быть уникальный")
+                    if ((ve.ErrorMessages[0] == "Логин должен быть уникальный") || (ve.ErrorMessages[0] == "Login is currently in use. Please pick up a new Login."))
 				{
 					edit = true;
 				}

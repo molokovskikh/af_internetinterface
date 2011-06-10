@@ -5,6 +5,7 @@ using System.Web;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using InternetInterface.Controllers.Filter;
+using InternetInterface.Helpers;
 using InternetInterface.Models;
 
 namespace InternetInterface.Controllers
@@ -63,6 +64,70 @@ namespace InternetInterface.Controllers
             }
             EditHouse(house.Id);
             //var items = (Entrance[])BindObject(ParamStore.Form, typeof(Entrance[]), "Entrances", AutoLoadBehavior.Always);
+        }
+
+        public void FindHouse()
+        {
+            PropertyBag["SelectEn"] = new List<string> {
+                                                           " = ",
+                                                           " > ",
+                                                           " < "
+                                                       };
+            PropertyBag["SelectName"] = new List<string> {
+                                                           "Равно",
+                                                           "Больше",
+                                                           "Меньше"
+                                                       };
+        }
+
+        public void HouseFindResult(string adress, int SubscriberCount, int PenetrationPercent, int PassCount, DateTime startDate, DateTime endDate,
+            string SubscriberCount_Oper, string PenetrationPercent_Oper, string PassCount_Oper)
+        {
+            /*var result = House.FindAll().ToList();
+            if (!string.IsNullOrEmpty(adress))
+                result = result.Where(r => r.Street.Contains(adress)).ToList();*/
+            IList<House> result = new List<House>();
+            ARSesssionHelper<House>.QueryWithSession(session => {
+                var where = string.Empty;
+                if (!string.IsNullOrEmpty(adress))
+                    where += "and h.Street like :houseAdress ";
+                if (PassCount != 0)
+                    where += string.Format(" and h.PassCount {0} :PassCount", PassCount_Oper);
+                if ((startDate != DateTime.MinValue) && (endDate != DateTime.MinValue))
+                    where += " and h.LastPassDate >= :startDate and h.LastPassDate <= :endDate";
+                if (where != string.Empty)
+                    where = " WHERE " + where.Remove(0, 4);
+                where += " group by h.id ";
+                var having = string.Empty;
+                if (SubscriberCount != 0)
+                    having += string.Format(" and Count(pc.id) {0} :SubscriberCount", SubscriberCount_Oper);
+                if (PenetrationPercent != 0)
+                    having += string.Format(" and Count(pc.id)/h.ApartmentCount {0} :PenetrationPercent", PenetrationPercent_Oper);
+                if (having != string.Empty)
+                    having = " HAVING " + having.Remove(0, 4);
+                var sqlStr =
+                    @"select h.*  from internet.Houses h 
+                join internet.PhysicalClients pc on pc.HouseObj = h.id " +
+                    where + having;
+                var query = session.CreateSQLQuery(sqlStr).AddEntity(typeof (House));
+                if (!string.IsNullOrEmpty(adress))
+                    query.SetParameter("houseAdress", '%' + adress + '%');
+                if (SubscriberCount != 0)
+                    query.SetParameter("SubscriberCount", SubscriberCount);
+                if (PenetrationPercent != 0)
+                    query.SetParameter("PenetrationPercent", PenetrationPercent);
+                if (PassCount != 0)
+                    query.SetParameter("PassCount", PassCount);
+                if ((startDate != DateTime.MinValue) && (endDate != DateTime.MinValue))
+                {
+                    query.SetParameter("startDate", startDate);
+                    query.SetParameter("endDate", endDate);
+                }
+                result = query.List<House>();
+                return result;
+            });
+            PropertyBag["Houses"] = result;
+            FindHouse();
         }
 
         [return: JSONReturnBinder]

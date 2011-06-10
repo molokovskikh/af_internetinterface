@@ -1,0 +1,31 @@
+﻿<% OutputSubView("""\HouseMap\FindHouse""") %>
+<center>
+    <div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Адрес</th>
+                    <th>Количество абонентов</th>
+                    <th>Процент проникновения</th>
+                    <th>Количество агентских проходов</th>
+                    <th>Дата последнего прохода</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for i, House in enumerate(Houses): %>
+                <tr>
+                    <td>${House.Street} ${House.Number} ${House.Case}</td>
+                    <td>${House.GetSubscriberCount()}</td>
+                    <td>${House.GetPenetrationPercent()}</td>
+                    <td>${House.PassCount}</td>
+                    <%if House.LastPassDate != null: %>
+                    <td>${House.LastPassDate}</td>
+                    <%else: %>
+                    <td>Нет проходов</td>
+                    <%end %>
+                </tr>
+                <%end %>
+            </tbody>
+        </table>
+    </div>
+</center>

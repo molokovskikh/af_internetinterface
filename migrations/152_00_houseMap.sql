@@ -110,3 +110,20 @@ ALTER TABLE `internet`.`Entrances` ADD COLUMN `Switch` INT(10) UNSIGNED AFTER `C
     ON DELETE SET NULL
     ON UPDATE CASCADE;
 
+ALTER TABLE `internet`.`physicalclients` ADD COLUMN `HouseObj` INT(10) UNSIGNED AFTER `ConnectionPaid`;
+ALTER TABLE `internet`.`physicalclients` ADD CONSTRAINT `FK_physicalclients_1` FOREIGN KEY `FK_physicalclients_1` (`HouseObj`)
+    REFERENCES `Houses` (`Id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE,
+ ADD CONSTRAINT `FK_physicalclients_2` FOREIGN KEY `FK_physicalclients_2` (`Tariff`)
+    REFERENCES `Tariffs` (`Id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE;
+
+	update internet.physicalclients p
+ join internet.Houses h on h.Street = p.Street and h.Number = p.House
+set p.HouseObj = h.id;
+
+ALTER TABLE `internet`.`Houses` CHANGE COLUMN `Case` `CaseHouse` INT(10) UNSIGNED DEFAULT NULL;
+
+

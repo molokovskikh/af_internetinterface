@@ -11,15 +11,19 @@
             $('#BasicInfo').css('display', 'block');
             $('#BasicInfo').empty();
             $('#BasicInfo').append(html);
-        });
 
+
+        });
 
         $('.button').click(function () {
 
             //loadData(this);
 
-            $('.reveal-modal').css('left', '50%');
-            $('.reveal-modal').width(500);
+            $('#myModal').css('left', '50%');
+            $('#myModal').width(500);
+
+            $('#myModal_1').css('left', '40%');
+            $('#myModal_1').width(800);
 
             $('#myModal').reveal({
                 animation: 'Pop',                   //fade, fadeAndPop, none
@@ -48,6 +52,12 @@
             <% OutputSubView("""\HouseMap\RegisterHouse""") %>
         <a class="close-reveal-modal">х</a>
 		</div> 
+
+        <div id="myModal_1" class="reveal-modal"> 
+            <% OutputSubView("""\HouseMap\FindHouse""") %>
+        <a class="close-reveal-modal">х</a>
+		</div> 
+
 <center>
 <div class="house_selector_div">
 <form action="${Siteroot}/HouseMap/EditHouse" method=post>
@@ -61,6 +71,10 @@
 <button class="button" style="margin-top:15px;" value="Назначить"><img alt="Save" src="${Siteroot}/Images/application_edit.png"> Создать дом </button>
 </a>
 <button type=submit class="button" style="margin-top:15px;"><img alt="Save" src="${Siteroot}/Images/application_edit.png"> Редактировать </button>
+
+<a href="#" class="big-link" data-reveal-id="myModal_1" > 
+<button class="button" style="margin-top:15px;" value="Назначить"><img alt="Save" src="${Siteroot}/Images/application_edit.png"> Найти </button>
+</a>
 </form>
 </div>
 <div id="BasicInfo" class="house_selector_div" style="display:none; width:1000px; min-height:250px; height:auto;">
