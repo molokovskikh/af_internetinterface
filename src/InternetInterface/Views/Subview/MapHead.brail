@@ -60,7 +60,7 @@
                <th><a href = "../UserInfo/RequestGraph.rails" ><span class="MH"><div class=menudiv>График подключений</div></span></a></th>
                <%end %>
                <%if PartnerAccessSet.AccesPartner("RC"): %>
-               <th><a href = "../HouseMap/ViewHouseInfo.rails" ><span class="MH"><div class=menudiv>Карта дома</div></span></a></th>
+               <th><a href = "../HouseMap/FindHouse.rails" ><span class="MH"><div class=menudiv>Карта дома</div></span></a></th>
                <%end %>
                 <%if PartnerAccessSet.AccesPartner("RP"): %>
                 <th><a href = "../UserInfo/Administration.rails" ><span class="MH"><div class=menudiv>Администрирование</div></span></a></th>

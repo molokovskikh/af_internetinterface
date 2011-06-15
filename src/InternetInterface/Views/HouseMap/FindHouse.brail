@@ -92,20 +92,19 @@
             <td>Количество абонентов</td>
             <td>${FormHelper.TextField("SubscriberCount")}</td>
             <td>Оператор</td>
-
-            <td><%output OperatorsSelect("SubscriberCount_Oper") %></td>
+            <td>${FormHelper.Select("SubscriberCount_Oper", SelectEn, {"text" : "OptionName", "value" : "Operator"})}</td>
         </tr>
         <tr>
             <td>Процента проникновения</td>
             <td>${FormHelper.TextField("PenetrationPercent")}</td>
             <td>Оператор</td>
-            <td><%output OperatorsSelect("PenetrationPercent_Oper") %></td>
+            <td>${FormHelper.Select("PenetrationPercent_Oper", SelectEn, {"text" : "OptionName", "value" : "Operator"})}</td>
         </tr>
         <tr>
             <td>Количеству агентских проходов</td>
             <td>${FormHelper.TextField("PassCount")}</td>
             <td>Оператор</td>
-            <td><%output OperatorsSelect("PassCount_Oper") %></td>
+            <td>${FormHelper.Select("PassCount_Oper", SelectEn, {"text" : "OptionName", "value" : "Operator"})}</td>
         </tr>
         <tr>
             <td><label for="startDate"> Дата начала периода </label><input type=text  name="startDate" id="startDate" class="date-pick dp-applied"> </td>

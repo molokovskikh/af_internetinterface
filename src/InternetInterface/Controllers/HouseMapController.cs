@@ -10,10 +10,20 @@ using InternetInterface.Models;
 
 namespace InternetInterface.Controllers
 {
+    public class SelectOperator
+    {
+        public string Operator { get; set; }
+        public string OptionName { get; set; }
+    }
+
     [Layout("Main")]
     [FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
     public class HouseMapController : ARSmartDispatcherController 
     {
+        public void HouseEdit()
+        {
+        }
+
         public void NetworkSwitches(int id)
         {
             PropertyBag["id"] = id;
@@ -63,21 +73,17 @@ namespace InternetInterface.Controllers
                              }.Save();
             }
             EditHouse(house.Id);
+            RedirectToUrl("..//HouseMap/ViewHouseInfo.rails?House=" + house.Id);
             //var items = (Entrance[])BindObject(ParamStore.Form, typeof(Entrance[]), "Entrances", AutoLoadBehavior.Always);
         }
 
         public void FindHouse()
         {
-            PropertyBag["SelectEn"] = new List<string> {
-                                                           " = ",
-                                                           " > ",
-                                                           " < "
-                                                       };
-            PropertyBag["SelectName"] = new List<string> {
-                                                           "Равно",
-                                                           "Больше",
-                                                           "Меньше"
-                                                       };
+            PropertyBag["SelectEn"] = new List<SelectOperator> {
+                                                                   new SelectOperator{Operator = " = ", OptionName = "Равно"},
+                                                                   new SelectOperator{Operator = " > ", OptionName = "Больше"},
+                                                                   new SelectOperator{Operator = " < ", OptionName = "Меньше"}
+                                                               };
         }
 
         public void HouseFindResult(string adress, int SubscriberCount, int PenetrationPercent, int PassCount, DateTime startDate, DateTime endDate,
@@ -146,6 +152,41 @@ namespace InternetInterface.Controllers
         }
 
         [return: JSONReturnBinder]
+        public string SaveApartment()
+        {
+            var house = Request.Form["House"];
+            var apartment = Request.Form["Apartment"];
+            var last_inet = Request.Form["last_inet"];
+            var last_TV = Request.Form["last_TV"];
+            var comment = Request.Form["comment"];
+            var apps =
+                Apartment.Queryable.Where(a => a.Number == Int32.Parse(apartment) && a.House.Id == Int32.Parse(house)).ToList();
+            if (apps.Count != 0)
+            {
+                foreach (var app in apps)
+                {
+                    app.LastInternet = last_inet;
+                    app.LastTV = last_TV;
+                    app.Comment = comment;
+                    app.Update();
+                }
+                return "Информация обновлена";
+            }
+            else
+            {
+                new Apartment
+                {
+                    House = House.Find(Convert.ToUInt32(house)),
+                    Number = Int32.Parse(apartment),
+                    LastInternet = last_inet,
+                    LastTV = last_TV,
+                    Comment = comment
+                }.Save();
+                return "Информация сохранена";
+            }
+        }
+
+        [return: JSONReturnBinder]
         public bool SaveHouseMap()
         {
             var SelectHouse = Request.Form["SelectHouse"];
@@ -167,6 +208,13 @@ namespace InternetInterface.Controllers
                              }.Save();
             }
             return true;
+        }
+
+        public void V_Prohod()
+        {
+            var agent = Request.Form["agent"];
+            var date_agent = Request.Form["date_agent"];
+            var house_id = Request.Form["house"];
         }
     }
 }

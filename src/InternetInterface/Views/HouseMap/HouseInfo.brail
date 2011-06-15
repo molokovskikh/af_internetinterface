@@ -5,6 +5,35 @@
         width:50%;
         }
 </style>
+<script type="text/javascript">
+    $(function () {
+        $('.big-link').click(function () {
+            $('#apartment_div').val($(this).parent().children('input:first').val());
+        });
+        $('#SaveButton').click(function () {
+            var req = {};
+            req.House = $('#House').val();
+            req.Apartment = $('#apartment_div').val();
+            req.last_inet = $('#last_inet').val();
+            req.last_TV = $('#last_TV').val();
+            req.comment = $('#comment').val();
+            $.post("SaveApartment", req, function (data) {
+                var inetTD = $('#td_last_inet_' + $('#apartment_div').val());
+                inetTD.empty();
+                inetTD.append($('#last_inet').val());
+                var TVTD = $('#td_last_TV_' + $('#apartment_div').val());
+                TVTD.empty();
+                TVTD.append($('#last_TV').val());
+                var comment = $('#td_comment_' + $('#apartment_div').val());
+                comment.empty();
+                comment.append($('#comment').val());
+                $('#myModal_IT').trigger('reveal:close');
+                //alert(data);
+            });
+        });
+        //$('#myModal_IT').reveal();
+    });
+</script>
 <table class="table">
     <thead>
         <tr>
@@ -26,7 +55,7 @@
         <tr><td>Оборудование</td>
           <% for i, Entrance in enumerate(House.Entrances): %>
           <%if Entrance.Switch != null : %>
-		    <td>${Entrance.Switch.Name}</td>
+		    <td><a href="${Siteroot}/Switches/MakeSwitch?Switch=${Entrance.Switch.Id}"> ${Entrance.Switch.Name} </a></td>
             <%else: %>
             <%if Entrance.Cable : %>
             <td> Кабель</td>
@@ -56,6 +85,51 @@
         </tr>
     </tbody>
 </table>
+<input type=hidden id="House" value=${House.Id} />
+<div id="myModal_IT" class="reveal-modal"> 
+        <input type=hidden name="apartment" id="apartment_div"  />
+        <table class="table">
+            <tbody>
+            <tr>
+                <td>
+                    <label for="last_inet" >Интернет</label>
+                </td>
+                <td>
+                   <!-- <input type=text id="last_inet" name="last_inet" /> <br /> -->
+                   <select id="last_inet"  name="last_inet" style="width:200px;">
+                        <option value="И">И - Инфорум</option>
+                        <option value="Д">Д - Домолинк</option>
+                   </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="last_TV" >TV</label>
+                </td>
+                <td>
+                   <!-- <input type=text id="last_TV" name="last_TV" /> -->
+                    <select id="last_TV"  name="last_TV" style="width:200px;">
+                        <option value="С.Т">С.Т - Спутник триколор</option>
+                        <option value="К">К - Кабельное</option>
+                        <option value="С.Н">С.Н - Снутник НТВ</option>
+                   </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="comment" >Комментарий</label>
+                </td>
+                <td>
+                    <input type=text id="comment" name="comment" /> 
+                </td>
+            </tr>
+            <tr>
+                <td><button id="SaveButton" class="SaveButton">Сохранить</button></td>
+            </tr>
+            </tbody>
+        </table>
+    <a class="close-reveal-modal">х</a>
+</div> 
 <table style="width:100%">
     <tbody>
     <tr>
@@ -82,21 +156,26 @@
     <% ap_count = House.ApartmentCount %>
     <% for i in range(ap_count / 2 * j, ap_count / 2 + ap_count / 2 * j + ap_count % 2 *j): %>
     <tr>
-        <td>${i+1}</td>
+        <td><a href="#" class="big-link" data-reveal-id="myModal_IT" > 
+        ${i+1}</a>
+        <input type=hidden name="apartment" value=${i+1} class="apartment_table" />
+        </td>
         <%apartment = House.GetApartmentWithNumber(i+1) %>
         <%if apartment != null : %>
-        <td>${apartment.LastInternet}</td>
-        <td>${apartment.LastTV}</td>
+        <td id="td_last_inet_${i+1}">${apartment.LastInternet}</td>
+        <td id="td_last_TV_${i+1}">${apartment.LastTV}</td>
+        <td>${apartment.PresentInternet}</td>
+        <td>${apartment.PresentTV}</td>
         <%else: %>
+        <td id="td_last_inet_${i+1}"></td>
+        <td id="td_last_TV_${i+1}"></td>
         <td></td>
         <td></td>
         <%end %>
-        <td></td>
-        <td></td>
         <%if apartment != null : %>
-        <td>${apartment.Comment}</td>
+        <td id="td_comment_${i+1}">${apartment.Comment}</td>
         <%else: %>
-        <td></td>
+        <td id="td_comment_${i+1}"></td>
         <%end %>
     </tr>
     <%end %>

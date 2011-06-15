@@ -127,6 +127,8 @@
     <None Include="Views\Brigads\MakeBrigad.brail" />
     <None Include="Views\Brigads\ShowBrigad.brail" />
     <None Include="Views\CommonScripts\WriteMessage.brail" />
+    <None Include="Views\HouseAgent\RegisterAgent.brail" />
+    <None Include="Views\HouseAgent\ShowAgents.brail" />
     <None Include="Views\HouseMap\BasicHouseInfo.brail" />
     <None Include="Views\HouseMap\EditHouse.brail" />
     <None Include="Views\HouseMap\FindHouse.brail" />
@@ -188,6 +190,7 @@
     <Compile Include="Controllers\ExitPartner.cs" />
     <Compile Include="Controllers\Filter\AuthenticationFilter.cs" />
     <Compile Include="Controllers\Filter\InithializeContent.cs" />
+    <Compile Include="Controllers\HouseAgentController.cs" />
     <Compile Include="Controllers\HouseMapController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\MapController.cs" />
@@ -229,6 +232,7 @@
     <Compile Include="Models\ConnectGraph.cs" />
     <Compile Include="Models\Entrance.cs" />
     <Compile Include="Models\House.cs" />
+    <Compile Include="Models\HouseAgents.cs" />
     <Compile Include="Models\InternetSettings.cs" />
     <Compile Include="Models\Label.cs" />
     <Compile Include="Models\LawyerPerson.cs" />

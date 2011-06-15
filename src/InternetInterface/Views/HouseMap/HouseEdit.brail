@@ -26,7 +26,7 @@
             }
             str += '</tr></tbody></table>';
             str += '<div><span>Введите количество квартир  </span><input  type="text" id="ApCount" name="ApCount" /></div>'
-            str += '<div><button class="button" onclick="SaveHouseMap()" value="Назначить">Назначить </button></div></div>'
+            str += '<div><a href="#" onclick="SaveHouseMap()" value="Назначить">Назначить </a></div></div>'
             $('#enEditor').append(str);
         });
 
@@ -62,11 +62,13 @@
             req.NetSwitch = NetSwitch;
             req.Strut = Strut;
             req.Cable = Cable;
-            req.SelectHouse = $('#SelectHouse').val();
+            var houseId = $('#SelectHouse').val();
+            req.SelectHouse = houseId;
             req.ApCount = $('#ApCount').val();
             $.post("SaveHouseMap", req, function (data) {
+                
                 var html = $.ajax({
-                    url: '../HouseMap/BasicHouseInfo?id=' + $('#SelectHouse').val(),
+                    url: '../HouseMap/BasicHouseInfo?id=' + houseId,
                     async: false
                 }).responseText;
                 alert(html);
@@ -97,6 +99,7 @@
     <div>   
     <form id="editHouse">
         <span>Введите количество подъездов</span>
+        <!-- <input type=text value=35 id="SelectHouse" /> -->
         <input class="digitInput" type="text" id="EnCount" name="EnCount" />
         <div style="padding-top:10px;" id="enEditor"></div>
     </form>

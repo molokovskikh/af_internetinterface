@@ -1,7 +1,37 @@
-﻿<% OutputSubView("""\HouseMap\FindHouse""") %>
+﻿<script src="../Scripts/modal/jquery.reveal.js" type="text/javascript"></script>
+<link rel="stylesheet" href="../Scripts/modal/reveal.css">
+<style type="text/css">
+    #find_result_table th
+    {
+        text-align:center;
+        }
+</style>
+<script type="text/javascript">
+    $(function () {
+        $('big-link').click(function () {
+            var house = $(this).parent().children('input:first').val();
+            $('#selected_house').val(house);
+        });
+
+        $('#date_agent').datepicker({
+            inline: true
+        });
+    });
+
+    function V_Prohod() {
+        var req = {};
+        req.agent = $('#agent').val();
+        req.date_agent = $('#date_agent').val();
+        req.house = $('#selected_house').val();
+        $.post("V_Prohod", req, function () {
+            $('#myModal_IT').trigger('reveal:close');
+        })
+    }
+</script>
+<% OutputSubView("""\HouseMap\FindHouse""") %>
 <center>
     <div>
-        <table class="table">
+        <table class="table" id="find_result_table" style="margin-top:15px;">
             <thead>
                 <tr>
                     <th>Адрес</th>
@@ -13,15 +43,18 @@
             </thead>
             <tbody>
                 <% for i, House in enumerate(Houses): %>
-                <tr>
-                    <td>${House.Street} ${House.Number} ${House.Case}</td>
+                <tr id="tr_house_${House.Id}" style="text-align:center">
+                    <td><a href="${Siteroot}/HouseMap/ViewHouseInfo.rails?House=${House.Id}"> ${House.Street} ${House.Number} ${House.Case}</a></td>
                     <td>${House.GetSubscriberCount()}</td>
                     <td>${House.GetPenetrationPercent()}</td>
                     <td>${House.PassCount}</td>
                     <%if House.LastPassDate != null: %>
-                    <td>${House.LastPassDate}</td>
+                    <td>
+                        ${House.LastPassDate} (<a class="big-link" data-reveal-id="myModal_IT" href="#" >Назначить</a>)
+                        <input type=hidden id="house_id" value="${House.Id}" />
+                    </td>
                     <%else: %>
-                    <td>Нет проходов</td>
+                    <td>Нет проходов (<a class="big-link" data-reveal-id="myModal_IT" href="#" >Назначить</a>)</td>
                     <%end %>
                 </tr>
                 <%end %>
@@ -29,3 +62,35 @@
         </table>
     </div>
 </center>
+
+<div id="myModal_IT" class="reveal-modal"> 
+    <input type=hidden name="selected_house" />
+    <table class="table">
+        <tbody>
+            <tr>
+                <td>
+                    <label for="agent">Агент</label>
+                </td>
+                <td>
+                    <select id="agent" name="agent" style="width:200px;">
+                        <option value="0">Вася</option>
+                        <option value="1">Петя</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="date_agent">Дата прохода</label>
+                </td>
+                <td>
+                    <input type=text  name="date_agent" id="date_agent" class="date-pick dp-applied">
+                </td>
+            </tr>
+            <tr>
+                <td colspan=2><Button class="button" onclick="V_Prohod()">Назначить в проход</Button></td>
+            </tr>
+        </tbody>
+    </table>
+    <a class="close-reveal-modal">х</a>
+</div>
+

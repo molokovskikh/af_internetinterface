@@ -126,7 +126,7 @@ namespace InternetInterface.Controllers
 					else
 						clientEntPoint.SaveAndFlush();
 					if (brigadChangeFlag)
-					{
+					{   
 						var brigad = Brigad.Find(BrigadForConnect);
 						client.WhoConnected = brigad;
 						client.WhoConnectedName = brigad.Name;

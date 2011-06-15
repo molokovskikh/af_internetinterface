@@ -91,7 +91,11 @@ namespace InternetInterface.Models.Access
                                     "Register",
                                     "EditHouse",
                                     "FindHouse",
-                                    "HouseFindResult"
+                                    "HouseFindResult",
+                                    "SaveApartment",
+                                    "HouseEdit",
+                                    "V_Prohod",
+                                    "RegisterAgent"
 			                 	};
 			return _registerClient.Contains(methodName) ? "RC" : string.Empty;
 		}
@@ -175,7 +179,8 @@ namespace InternetInterface.Models.Access
 									"Filter",
 									"Show",
 									"AgentFilter",
-									"ShowAgent"
+									"ShowAgent",
+                                    "ShowAgents"
 			                 	};
 			return _visibleDemand.Contains(methodName) ? "SSI" : string.Empty;
 		}

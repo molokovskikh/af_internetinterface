@@ -19,21 +19,25 @@
     <tbody>
         <%if PartnerAccessSet.AccesPartner("RP"): %>
         <tr><td>
-        <a href = "../UserInfo/PartnersPreview.rails?catType=1" ><span class="MA"><div class=menudiv>Диллеры</div></span></a>
+        <a href = "${Siteroot}/UserInfo/PartnersPreview.rails?catType=1" ><span class="MA"><div class=menudiv>Диллеры</div></span></a>
         <span class="comment_text">Просмотр и регистрация диллеров (Диллер - сотрудник сторонней, партнерской организации, осуществляющий работу с клиентами)</span></td></tr>
         <%end %>
         <%if PartnerAccessSet.AccesPartner("RP"): %>
         <tr><td>
-        <a href = "../UserInfo/PartnersPreview.rails?catType=3" ><span class="MA"><div class=menudiv>Сотрудники </div></span></a>
+        <a href = "${Siteroot}/UserInfo/PartnersPreview.rails?catType=3" ><span class="MA"><div class=menudiv>Сотрудники </div></span></a>
         <span class="comment_text">Просмотр и регистрация сотрудников АК "Инфорум"</span></td></tr>
         <%end %>
         <%if PartnerAccessSet.AccesPartner("RP"): %>
-        <tr><td><a href = "../Brigads/ShowBrigad.rails" ><span class="MA"><div class=menudiv>Бригады</div></span></a>
+        <tr><td><a href = "${Siteroot}/Brigads/ShowBrigad.rails" ><span class="MA"><div class=menudiv>Бригады</div></span></a>
         <span class="comment_text">Просмотр и создание бригад. Бригады осуществляют физическое подключение абонентов, на них составляется расписание и разначаются заявки.</span></td></tr>
         <%end %>
         <%if PartnerAccessSet.AccesPartner("DHCP"): %>
-        <tr><td><a href = "../Switches/ShowSwitches.rails" ><span class="MA"><div class=menudiv>Коммутаторы</div></span></a>
+        <tr><td><a href = "${Siteroot}/Switches/ShowSwitches.rails" ><span class="MA"><div class=menudiv>Коммутаторы</div></span></a>
         <span class="comment_text">Просмотр и редактирование коммутаторов</span></td></tr>
+        <%end %>
+        <%if PartnerAccessSet.AccesPartner("SSI"): %>
+        <tr><td><a href = "${Siteroot}/HouseAgent/ShowAgents.rails" ><span class="MA"><div class=menudiv>Агенты</div></span></a>
+        <span class="comment_text">Просмотр и редактирование списка агентов, осуществляющих обход домов</span></td></tr>
         <%end %>
     </tbody>
 </table>
