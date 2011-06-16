@@ -32,11 +32,17 @@ namespace InternetInterface.Models
         [Property]
         public virtual int PassCount { get; set; }
 
+        [Property]
+        public virtual int CompetitorCount { get; set; }
+
         [HasMany(ColumnKey = "House", OrderBy = "Number")]
         public virtual IList<Apartment> Apartments { get; set; }
 
         [HasMany(ColumnKey = "House", OrderBy = "Number")]
         public virtual IList<Entrance> Entrances { get; set; }
+
+        [HasMany(ColumnKey = "House", OrderBy = "BypassDate")]
+        public virtual IList<BypassHouse> Bypass { get; set; }
 
         public virtual Apartment GetApartmentWithNumber(int num)
         {
@@ -51,11 +57,23 @@ namespace InternetInterface.Models
             return PhysicalClients.Queryable.Where(p => p.HouseObj == this).Count();
         }
 
-        public virtual float GetPenetrationPercent()
+        public virtual BypassHouse GetLastBypass()
+        {
+            return Bypass.Last();
+        }
+
+        public virtual double GetCompetitorsPenetrationPercent()
         {
             if (ApartmentCount == 0)
                 return 1;
-            return PhysicalClients.Queryable.Where(p => p.HouseObj == this).Count() / ApartmentCount;
+            return CompetitorCount / ApartmentCount * 100;
+        }
+
+        public virtual double GetPenetrationPercent()
+        {
+            if (ApartmentCount == 0)
+                return 1;
+            return Convert.ToDouble(PhysicalClients.Queryable.Where(p => p.HouseObj == this).Count()) / ApartmentCount * 100;
         }
     }
 }

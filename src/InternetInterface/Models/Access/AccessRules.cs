@@ -95,7 +95,10 @@ namespace InternetInterface.Models.Access
                                     "SaveApartment",
                                     "HouseEdit",
                                     "V_Prohod",
-                                    "RegisterAgent"
+                                    "Agent",
+                                    "RegisterHouseAgent",
+                                    "EditHouseAgent",
+                                    "ForPrintToAgent"
 			                 	};
 			return _registerClient.Contains(methodName) ? "RC" : string.Empty;
 		}

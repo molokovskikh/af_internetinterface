@@ -153,3 +153,24 @@ ALTER TABLE `internet`.`HouseAgents` ADD COLUMN `Name` VARCHAR(45) NOT NULL AFTE
  ADD COLUMN `Surname` VARCHAR(45) NOT NULL AFTER `Name`,
  ADD COLUMN `Patronymic` VARCHAR(45) NOT NULL AFTER `Surname`;
 
+ 
+ CREATE TABLE `internet`.`BypassHouses` (
+  `Id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+  `House` INT(10) UNSIGNED,
+  `Agent` INT(10) UNSIGNED,
+  `BypassDate` DATETIME,
+  PRIMARY KEY (`Id`),
+  CONSTRAINT `FK_BypassHouses_1` FOREIGN KEY `FK_BypassHouses_1` (`Agent`)
+    REFERENCES `HouseAgents` (`Id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `FK_BypassHouses_2` FOREIGN KEY `FK_BypassHouses_2` (`House`)
+    REFERENCES `Houses` (`Id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+)
+ENGINE = InnoDB;
+
+
+ALTER TABLE `internet`.`Houses` ADD COLUMN `CompetitorCount` INT(10) UNSIGNED NOT NULL AFTER `PassCount`;
+

@@ -5,6 +5,17 @@
         font-size:12px;
         font-style:oblique;
         }
+        
+                .house_selector_div
+        {
+			    width:800px;
+			    height:500px;
+			    background-color:White;
+			    text-align:left;
+			    border: 1px solid black;
+			    padding: 10px;
+			    margin:10px;
+            }
 </style>
 <script type="text/javascript">
     $(function () {
@@ -62,6 +73,8 @@
         });
     }
 </script>
+<center>
+<div class="house_selector_div">
 <div style="width:800px;">
 ${FormHelper.FormTag("${Siteroot}/HouseMap/EditHouse", {"id" : "editHouse"})}
 <!-- <form id="editHouse" action="${Siteroot}/HouseMap/EditHouse" method=post> -->
@@ -72,7 +85,7 @@ ${FormHelper.FormTag("${Siteroot}/HouseMap/EditHouse", {"id" : "editHouse"})}
     </thead>
 </table>
 <% OutputSubView("""\Subview\House""") %>
-<table class="table">
+<table class="table" style="border-width:2px;">
     <thead>
         <tr class="enNums">
             <th>№ подъезда</th>
@@ -131,3 +144,5 @@ ${FormHelper.FormTag("${Siteroot}/HouseMap/EditHouse", {"id" : "editHouse"})}
 ${FormHelper.EndFormTag()}
 <!-- </form> -->
 </div>
+</div>
+</center>

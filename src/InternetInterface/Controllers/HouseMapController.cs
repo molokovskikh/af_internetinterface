@@ -35,6 +35,8 @@ namespace InternetInterface.Controllers
         {
             PropertyBag["Houses"] = House.FindAll().OrderBy(h => h.Street);
             PropertyBag["SelectedHouse"] = House.FindFirst().Id;
+            PropertyBag["agents"] = HouseAgent.FindAll();
+            FindHouse();
         }
 
         public void BasicHouseInfo(uint id)
@@ -44,7 +46,12 @@ namespace InternetInterface.Controllers
             CancelLayout();
         }
 
-       public void EditHouse(uint House)
+        public void ForPrintToAgent(uint id)
+        {
+            PropertyBag["sHouse"] = House.Find(id);
+        }
+
+        public void EditHouse(uint House)
         {
             PropertyBag["house"] = Models.House.Find(House);
             PropertyBag["Entrances"] = Entrance.Queryable.Where(e => e.House.Id == House).ToList();
@@ -133,6 +140,7 @@ namespace InternetInterface.Controllers
                 return result;
             });
             PropertyBag["Houses"] = result;
+            PropertyBag["agents"] = HouseAgent.FindAll();
             FindHouse();
         }
 
@@ -194,8 +202,10 @@ namespace InternetInterface.Controllers
             var Strut = Request.Form["Strut[]"].Split(new[] {','});
             var Cable = Request.Form["Cable[]"].Split(new[] {','});
             var apCount = Request.Form["ApCount"];
+            var CompetitorCount = Int32.Parse(Request.Form["CompetitorCount"]);
             var house = House.Find(Convert.ToUInt32(SelectHouse));
             house.ApartmentCount = Convert.ToInt32(apCount);
+            house.CompetitorCount = CompetitorCount;
             house.Update();
             for (int i = 0; i < NetSwitch.Length; i++)
             {
@@ -210,11 +220,20 @@ namespace InternetInterface.Controllers
             return true;
         }
 
+        [return: JSONReturnBinder]
         public void V_Prohod()
         {
-            var agent = Request.Form["agent"];
-            var date_agent = Request.Form["date_agent"];
-            var house_id = Request.Form["house"];
+            var agent = HouseAgent.Find(UInt32.Parse(Request.Form["agent"]));
+            var date_agent = DateTime.Parse(Request.Form["date_agent"]);
+            var house = House.Find(UInt32.Parse(Request.Form["house"]));
+            new BypassHouse {
+                                Agent = agent,
+                                House = house,
+                                BypassDate = date_agent
+                            }.Save();
+            house.LastPassDate = date_agent;
+            house.PassCount++;
+            house.Update();
         }
     }
 }

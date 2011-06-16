@@ -4,6 +4,10 @@
         border-style:double;
         width:50%;
         }
+    .delimiter_td
+    {
+        border-right:1px solid #AAA 
+        }
 </style>
 <script type="text/javascript">
     $(function () {
@@ -43,6 +47,7 @@
         </tr>
     </thead>
 </table>
+<input type="hidden" name="selected_house" id="selected_house" value="${House.Id}" />
 <table class="table">
     <thead>
         <tr><th>№ подъезда</th>
@@ -85,6 +90,28 @@
         </tr>
     </tbody>
 </table>
+
+<table class="table" style="border:1px solid #AAA ;">
+    <tbody>
+        <tr>
+            <td>Абоненты</td>
+            <td class="delimiter_td">${House.GetSubscriberCount()}</td>
+            <td>Абоненты конкурентов</td>
+            <td class="delimiter_td">${House.CompetitorCount}</td>
+            <td>Инфорум</td>
+            <td class="delimiter_td">${House.GetPenetrationPercent().ToString("F2")}%</td>
+            <td>Конкуренты</td>
+            <td class="delimiter_td">${House.GetCompetitorsPenetrationPercent().ToString("F2")}%</td>
+            <td>Последний проход</td>
+            <%if House.LastPassDate!=null: %>
+            <td class="delimiter_td">${House.LastPassDate.ToShortDateString()}</td>
+            <%else: %>
+            <td class="delimiter_td">Нет</td>
+            <%end %>
+        </tr>
+    </tbody>
+</table>
+
 <input type=hidden id="House" value=${House.Id} />
 <div id="myModal_IT" class="reveal-modal"> 
         <input type=hidden name="apartment" id="apartment_div"  />
