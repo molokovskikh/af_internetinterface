@@ -359,7 +359,7 @@ namespace InternetInterface.Controllers
 
 
 		[AccessibleThrough(Verb.Post)]
-		public void EditInformation([DataBind("Client")]PhysicalClients client, uint ClientID, uint tariff, uint status, string group)
+        public void EditInformation([DataBind("Client")]PhysicalClients client, uint ClientID, uint tariff, uint status, string group, uint house)
 		{
 			//var updateClient = PhysicalClients.Find(ClientID);
 			var _client = Clients.Queryable.First(c => c.Id == ClientID);
@@ -374,6 +374,11 @@ namespace InternetInterface.Controllers
 			{
 				if (updateClient.PassportDate != null)
 				updateClient.PassportDate = DateTime.Parse(updateClient.PassportDate).ToShortDateString();
+			    var _house = House.Find(house);
+			    updateClient.HouseObj = _house;
+			    updateClient.Street = _house.Street;
+			    updateClient.House = _house.Number.ToString();
+			    updateClient.CaseHouse = _house.Case.ToString();
 				updateClient.Tariff = Tariff.Find(tariff);
 				updateClient.UpdateAndFlush();
                 _client.Name = string.Format("{0} {1} {2}", updateClient.Surname, updateClient.Name, updateClient.Patronymic);
@@ -421,6 +426,8 @@ namespace InternetInterface.Controllers
 		private void SendParam(UInt32 ClientCode, string grouped)
 		{
 			var client = Clients.Find(ClientCode);
+		    PropertyBag["Houses"] = House.FindAll();
+            PropertyBag["ChHouse"] = client.PhysicalClient.HouseObj != null ? client.PhysicalClient.HouseObj.Id : 0;
 			PropertyBag["ConnectInfo"] = client.GetConnectInfo();
 		    PropertyBag["grouped"] = grouped;
 			PropertyBag["Appeals"] = Appeals.FindAllByProperty("Client", client).OrderByDescending(a => a.Date);
@@ -444,8 +451,8 @@ namespace InternetInterface.Controllers
 			PropertyBag["Payments"] = Payment.FindAllByProperty("Client", client).OrderBy(t => t.PaidOn).ToArray();
             PropertyBag["WriteOffs"] = client.GetWriteOffs(grouped).OrderBy(w => w.WriteOffDate);//WriteOff.FindAllByProperty("Client", client).OrderBy(t => t.WriteOffDate);
 		    PropertyBag["naznach_text"] = ConnectGraph.Queryable.Count(c => c.Client.Id == ClientCode) != 0
-		                                      ? "Переназначить в граффик"
-		                                      : "Назначить в граффик";
+		                                      ? "Переназначить в график"
+		                                      : "Назначить в график";
 		    PropertyBag["writeOffSum"] = WriteOff.FindAllByProperty("Client", client).Sum(s => s.WriteOffSum);
 		}
 
@@ -552,7 +559,7 @@ namespace InternetInterface.Controllers
 		{
 			PropertyBag["ClientCode"] = ClientCode;
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
-			PropertyBag["StartDate"] = DateTime.Now.ToShortDateString();
+			PropertyBag["StartDate"] = DateTime.Now.AddDays(1).ToShortDateString();
 			LayoutName = "NoMap";
 		}
 

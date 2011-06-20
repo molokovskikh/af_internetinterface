@@ -1,6 +1,7 @@
 ﻿    <script type="text/javascript">
         $(function () {
-
+            $('#myModal').trigger('reveal:close');
+            $('#myModal_1').trigger('reveal:close');
             var tmp = new Array();
             var tmp2 = new Array();
             var param = new Array();
@@ -43,6 +44,9 @@
 
 
             });
+
+            $("#myModal").css({ opacity: 0.0 });
+            $("#myModal_1").css({ opacity: 0.0 });
         });
 
         function ViewInfo(House) {
@@ -61,7 +65,7 @@
     <style type="text/css">
         .house_selector_div
         {
-			    width:500px;
+			    width:600px;
 			    height:100px;
 			    background-color:White;
 			    text-align:left;
@@ -70,12 +74,12 @@
 			    margin:10px;
             }
     </style>
-		    <div id="myModal" class="reveal-modal"> 
+		    <div id="myModal"class="reveal-modal"> 
                 <% OutputSubView("""\HouseMap\RegisterHouse""") %>
             <a class="close-reveal-modal">х</a>
 		    </div> 
 
-            <div id="myModal_1" class="reveal-modal"> 
+            <div id="myModal_1"  class="reveal-modal"> 
                 <% OutputSubView("""\HouseMap\FindHouse""") %>
             <a class="close-reveal-modal">х</a>
 		    </div> 

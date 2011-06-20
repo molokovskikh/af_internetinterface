@@ -153,6 +153,9 @@ namespace InternetInterface.Models
         [BelongsTo]
         public virtual House HouseObj { get; set; }
 
+        [Property]
+        public virtual DateTime DateOfBirth { get; set; }
+
 		[Property, ValidateNonEmpty("Введите сумму"), ValidateDecimal("Непрвильно введено значение суммы")]
 		public virtual decimal ConnectSum { get; set; }
 
@@ -171,11 +174,16 @@ namespace InternetInterface.Models
 		}
 
 
-		public static bool RegistrLogicClient(PhysicalClients _client, uint _tariff,
+		public static bool RegistrLogicClient(PhysicalClients _client, uint _tariff, uint house,
 			ValidatorRunner validator)
 		{
 			if (validator.IsValid(_client))
 			{
+                var _house = Models.House.Find(house);;
+			    _client.HouseObj = _house;
+			    _client.Street = _house.Street;
+			    _client.House = _house.Number.ToString();
+			    _client.CaseHouse = _house.Case.ToString();
 				_client.Tariff = Tariff.Find(_tariff);
 				_client.Password = CryptoPass.GetHashString(_client.Password);
 				_client.SaveAndFlush();

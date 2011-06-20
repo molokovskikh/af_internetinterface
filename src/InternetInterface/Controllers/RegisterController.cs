@@ -23,7 +23,7 @@ namespace InternetInterface.Controllers
         [AccessibleThrough(Verb.Post)]
         public void RegisterClient([DataBind("ChangedBy")]ChangeBalaceProperties changeProperties,
             [DataBind("client")]PhysicalClients phisClient, string balanceText, uint tariff, uint status, uint BrigadForConnect
-             , [DataBind("ConnectInfo")]ConnectInfo ConnectInfo, bool VisibleRegisteredInfo,
+             , [DataBind("ConnectInfo")]ConnectInfo ConnectInfo, bool VisibleRegisteredInfo, uint house,
             uint requestID)
         {
             PropertyBag["Tariffs"] = Tariff.FindAllSort();
@@ -54,7 +54,7 @@ namespace InternetInterface.Controllers
             if ((registerClient && String.IsNullOrEmpty(portException)) ||
                 (registerClient && string.IsNullOrEmpty(ConnectInfo.Port)))
             {
-                PhysicalClients.RegistrLogicClient(phisClient, tariff, Validator);
+                PhysicalClients.RegistrLogicClient(phisClient, tariff, house, Validator);
                 var client = new Clients {
                                              AutoUnblocked = true,
                                              RegDate = DateTime.Now,
@@ -123,7 +123,7 @@ namespace InternetInterface.Controllers
             {
                 PropertyBag["Client"] = phisClient;
                 PropertyBag["BalanceText"] = balanceText;
-
+                PropertyBag["ChHouse"] = house;
                 PropertyBag["Applying"] = "false";
                 PropertyBag["PortError"] = portException;
                 PropertyBag["ChStatus"] = status;
@@ -266,8 +266,31 @@ namespace InternetInterface.Controllers
 			SendRegisterParam();
 		}
 
-		public void SendRegisterParam()
+        [return : JSONReturnBinder]
+        public object RegisterHouse()
+        {
+            var street = Request.Form["Street"];
+            var number = Request.Form["Number"];
+            var _case = Request.Form["Case"];
+            int res;
+            var house = new House();
+            var errors = string.Empty;
+            if (!Int32.TryParse(number, out res))
+                errors += "Неправильно введен номер дома" + res;
+            if (string.IsNullOrEmpty(errors))
+            {
+                house = new House {Street = street, Number = Int32.Parse(number)};
+                if (!string.IsNullOrEmpty(_case))
+                    house.Case = Int32.Parse(_case);
+                house.Save();
+            }
+            return new { Name = string.Format("{0} {1} {2}", street, number, _case), Id = house.Id};
+        }
+
+	    public void SendRegisterParam()
 		{
+            PropertyBag["Houses"] = House.FindAll();
+	        PropertyBag["ChHouse"] = 0;
 			PropertyBag["BalanceText"] = string.Empty;
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["Brigads"] = Brigad.FindAllSort();

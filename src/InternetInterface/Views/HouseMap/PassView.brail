@@ -10,6 +10,7 @@
     }
 
     $(function () {
+        $("#myModal_Pass").css({ opacity: 0.0 });
         $('#date_agent').datepicker({
             inline: true
         });

@@ -1,5 +1,6 @@
 ﻿<script type="text/javascript">
     $(function () {
+
         $('#startDate').datepicker({
             inline: true
         });
@@ -8,54 +9,39 @@
         });
 
         $("#findForm").validate({
-        rules: {
-            SubscriberCount: {
+            rules: {
+                SubscriberCount: {
                     digits: true
-                    },
-            PenetrationPercent: {
+                },
+                PenetrationPercent: {
                     digits: true
-                    },
-            PassCount: {
+                },
+                PassCount: {
                     digits: true
-                    }
-        },
-        messages:
+                }
+            },
+            messages:
         {
             SubscriberCount:
                 {
-                digits: "Должно быть введено число"
+                    digits: "Должно быть введено число"
                 },
             PenetrationPercent:
                 {
-                digits: "Должно быть введено число"
+                    digits: "Должно быть введено число"
                 },
             PassCount:
                 {
-                digits: "Должно быть введено число"
+                    digits: "Должно быть введено число"
                 }
         },
-        submitHandler: function(form) {
-        var appCount = $('#ApCount').val();
-        $('#ValidAppCount').val(appCount);
-        form.submit();
-        }
+            submitHandler: function (form) {
+                var appCount = $('#ApCount').val();
+                $('#ValidAppCount').val(appCount);
+                form.submit();
+            }
         })
     });
-
-
-
-    function FindHouseNow() {
-        var req = {};
-        req.adress = $('#adress').val();
-        req.SubscriberCount = $('#SubscriberCount').val();
-        req.PenetrationPercent = $('#PenetrationPercent').val();
-        req.PassCount = $('#PassCount').val();
-        req.startDate = $('#startDate').val();
-        req.endDate = $('#endDate').val();
-        $.post("FindHouseNow", req, function (data) { 
-            
-        });
-    }
 </script>
 <style type="text/css">
     #round
@@ -111,7 +97,7 @@
             <td><label for="endDate"> Дата конца периода </label><input type=text  name="endDate" id="endDate" class="date-pick dp-applied"> </td>
         </tr>
         <tr>
-            <td colspan=4><button class="button" onclick="FindHouseNow()">Найти</button></td>
+            <td colspan=4><button type="submit" id="FindHouseButton" class="button">Найти</button></td>
         </tr>
     </tbody>
 </table>

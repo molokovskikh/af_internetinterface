@@ -11,6 +11,7 @@
 </style>
 <script type="text/javascript">
     $(function () {
+        $("#myModal_IT").css({ opacity: 0.0 });
         $('.big-link').click(function () {
             $('#apartment_div').val($(this).parent().children('input:first').val());
         });

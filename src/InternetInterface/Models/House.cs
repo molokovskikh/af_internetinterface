@@ -66,14 +66,14 @@ namespace InternetInterface.Models
         {
             if (ApartmentCount == 0)
                 return 1;
-            return CompetitorCount / ApartmentCount * 100;
+            return (double)CompetitorCount / ApartmentCount * 100;
         }
 
         public virtual double GetPenetrationPercent()
         {
             if (ApartmentCount == 0)
                 return 1;
-            return Convert.ToDouble(PhysicalClients.Queryable.Where(p => p.HouseObj == this).Count()) / ApartmentCount * 100;
+            return (double)(PhysicalClients.Queryable.Where(p => p.HouseObj == this).Count()) / ApartmentCount * 100;
         }
     }
 }
