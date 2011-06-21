@@ -572,7 +572,7 @@ namespace InternetInterface.Controllers
 			             		brigads = Brigad.FindAll().Select(b => new {b.Id, b.Name}).ToArray(),
 			             		graphs =
 			             			ConnectGraph.Queryable.Where(c => c.Day.Date == selDate).Select(
-			             				g => new {brigadId = g.Brigad.Id, clientId = g.Client.Id, g.IntervalId}).ToArray(),
+			             				g => new {brigadId =  g.Brigad.Id, clientId = g.Client != null ? g.Client.Id : 0, g.IntervalId}).ToArray(),
 			             		intervals = Intervals.GetIntervals()
 			             	};
 		}
@@ -606,7 +606,21 @@ namespace InternetInterface.Controllers
 			return true;
 		}
 
-        public void Administration()
+        [return : JSONReturnBinder]
+        public string ReservGraph()
+        {
+            var but_id = Request.Form["graph_button"].Split('_');
+            var briad = Brigad.Find(Convert.ToUInt32(but_id[1]));
+            var interval = Convert.ToUInt32(but_id[0]);
+            new ConnectGraph {
+                                 Brigad = briad,
+                                 IntervalId = interval,
+                                 Day = DateTime.Parse(Request.Form["graph_date"])
+                             }.Save();
+            return "Время зарезервировано";
+        }
+
+	    public void Administration()
         {
         }
 

@@ -39,6 +39,9 @@
 		<tr>
 			<td><span class="description">Номер телефона: </span> ${Client.Telephone}</td>
 		</tr>
+        <tr>
+			<td><span class="description">Контактное лицо: </span> ${Client.ContactPerson}</td>
+		</tr>
 		<tr>
 			<td><span class="description">Email:</span> ${Client.Email}</td>
 		</tr>

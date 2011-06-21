@@ -59,7 +59,7 @@
                             </tr>
                             <tr>
                                 <td ><b>
-                                   Мобильный Номер телефона</b></td>
+                                   Мобильный телефон</b></td>
                                 <td>
                                     <input id="PhoneNumber" type="text" value="${client.PhoneNumber}" name="client.PhoneNumber"/></td>
                                  <td>
@@ -68,7 +68,7 @@
                             </tr>
                             <tr>
                                 <td >
-                                   Домашний номер телефона</td>
+                                   Домашний телефон</td>
                                 <td>
                                     <input id="HomePhoneNumber" type="text" value="${client.HomePhoneNumber}" name="client.HomePhoneNumber"/></td>
                                  <td>

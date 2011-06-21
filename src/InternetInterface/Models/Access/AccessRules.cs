@@ -202,6 +202,7 @@ namespace InternetInterface.Models.Access
 									"NoPhoned",
 									"AppointedToTheGraph",
 									"GetGraph",
+                                    "ReservGraph",
 									"SaveGraph",
                                     "RequestGraph",
                                     "CreateAndPrintGraph"
