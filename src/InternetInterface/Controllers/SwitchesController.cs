@@ -22,8 +22,8 @@ namespace InternetInterface.Controllers
 			                                                   	{
 			                                                   		var query =
 			                                                   			session.CreateSQLQuery(
-																			@"
-SELECT NS.id, NS.Mac, inet_ntoa(NS.IP) as Ip, NS.Name, NS.Zone
+                                                                            @"
+SELECT NS.id, NS.Mac, inet_ntoa(NS.IP) as Ip, NS.Name, NS.Zone, NS.PortCount
 FROM internet.NetworkSwitches NS").AddEntity(typeof(NetworkSwitches)).List<NetworkSwitches>();
 			                                                   		switches = query;
 			                                                   		return query;

@@ -1,0 +1,118 @@
+﻿<script type="text/javascript">
+    $(function () {
+
+        $('#EnCount').change(function () {
+            $('#enEditor').empty();
+            var str = '<div><table class="table"><thead><tr>' +
+            '<th>№ подъезда</th>';
+            for (var i = 0; i < $('#EnCount').val(); i++) {
+                str += '<th style="text-align:center;" id="th_' + i + '">' + Number(i + 1) + '</th>';
+            }
+            str += '</thead><tbody>';
+            str += '<tr><td>Оборудование</td>'
+            for (var i = 0; i < $('#EnCount').val(); i++) {
+                str += '<td id="th_' + i + '">' + $.ajax({
+                    url: '../HouseMap/NetworkSwitches?id=' + i,
+                    async: false
+                }).responseText + '</td>';
+            }
+            str += '</tr><tr><td>Стояки</td>';
+            for (var i = 0; i < $('#EnCount').val(); i++) {
+                str += '<td><input type="checkbox" id="Strut' + i + '" value="true" /></td>'
+            }
+            str += '</tr><tr><td>Кабель</td>';
+            for (var i = 0; i < $('#EnCount').val(); i++) {
+                str += '<td><input type="checkbox" id="Cable' + i + '" value="true" /></td>'
+            }
+            str += '</tr></tbody></table>';
+            str += '<div><span>Введите количество квартир  </span><input  type="text" id="ApCount" name="ApCount" /><span style="padding-left:5px;"">Введите количество абонентов конкурентов  </span><input  type="text" id="CompetitorCount" name="CompetitorCount" /></div>'
+            str += '<div><a href="#" id="naznach_link" onclick="SaveHouseMap()" value="Назначить">Назначить </a></div></div>'
+            $('#enEditor').append(str);
+        });
+
+        $("#editHouse").validate({
+            rules: {
+                ApCount: {
+                    required: true,
+                    digits: true
+                },
+                CompetitorCount:
+                {
+                    required: true,
+                    digits: true
+                }
+            },
+            messages:
+            {
+            ApCount:
+            {
+                required: "Введите количество квартир в доме",
+                digits: "Должно быть введено число"
+            },
+              CompetitorCount:
+            {
+                required: "Введите количество квартир в доме",
+                digits: "Должно быть введено число"
+            }
+        }
+        })
+    });
+
+    function SaveHouseMap() {
+        if ($("#editHouse").valid()) {
+            var req = {};
+            var NetSwitch = new Array();
+            var Strut = new Array();
+            var Cable = new Array();
+            for (var i = 0; i < $('#EnCount').val(); i++) {
+                NetSwitch.push($('#NetSwitch' + i).val());
+                Strut.push($('#Strut' + i).is(':checked'));
+                Cable.push($('#Cable' + i).is(':checked'));
+            }
+            req.NetSwitch = NetSwitch;
+            req.Strut = Strut;
+            req.Cable = Cable;
+            var houseId = $('#SelectHouse').val();
+            req.SelectHouse = houseId;
+            req.ApCount = $('#ApCount').val();
+            req.CompetitorCount = $('#CompetitorCount').val();
+            $.post("SaveHouseMap", req, function (data) {
+                
+                var html = $.ajax({
+                    url: '../HouseMap/BasicHouseInfo?id=' + houseId,
+                    async: false
+                }).responseText;
+                //alert(html);
+                $('#BasicInfo').css('display', 'block');
+                $('#BasicInfo').empty();
+                $('#BasicInfo').append(html);
+            });
+        }
+    }
+
+    $("#editHouse").validate({
+        rules: {
+            ApCount: {
+                digits: true
+            }
+        }
+    })
+</script>
+<style type="text/css">
+    .error
+    {
+        color:Red;
+        font-size:12px;
+        font-style:oblique;
+        }
+</style>
+<div>
+    <div>   
+    <form id="editHouse">
+        <span>Введите количество подъездов</span>
+        <!-- <input type=text value=35 id="SelectHouse" /> -->
+        <input class="digitInput" type="text" id="EnCount" name="EnCount" />
+        <div style="padding-top:10px;" id="enEditor"></div>
+    </form>
+    </div>
+</div>

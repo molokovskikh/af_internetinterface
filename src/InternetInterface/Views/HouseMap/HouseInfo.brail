@@ -1,0 +1,216 @@
+﻿<style type="text/css">
+    #kv_table
+    {
+        border-style:double;
+        width:50%;
+        }
+    .delimiter_td
+    {
+        border-right:1px solid #AAA 
+        }
+</style>
+<script type="text/javascript">
+    $(function () {
+        $("#myModal_IT").css({ opacity: 0.0 });
+        $('.big-link').click(function () {
+            $('#apartment_div').val($(this).parent().children('input:first').val());
+        });
+        $('#SaveButton').click(function () {
+            var req = {};
+            req.House = $('#House').val();
+            req.Apartment = $('#apartment_div').val();
+            req.last_inet = $('#last_inet').val();
+            req.last_TV = $('#last_TV').val();
+            req.comment = $('#comment').val();
+            $.post("SaveApartment", req, function (data) {
+                var inetTD = $('#td_last_inet_' + $('#apartment_div').val());
+                inetTD.empty();
+                inetTD.append($('#last_inet').val());
+                var TVTD = $('#td_last_TV_' + $('#apartment_div').val());
+                TVTD.empty();
+                TVTD.append($('#last_TV').val());
+                var comment = $('#td_comment_' + $('#apartment_div').val());
+                comment.empty();
+                comment.append($('#comment').val());
+                $('#myModal_IT').trigger('reveal:close');
+                //alert(data);
+            });
+        });
+        //$('#myModal_IT').reveal();
+    });
+</script>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Адрес: ${House.Street} ${House.Number} ${House.Case}</th>
+            <th>Количество подъездов: ${House.Entrances.Count}</th>
+            <th>Количество квартир: ${House.ApartmentCount}</th>
+        </tr>
+    </thead>
+</table>
+<input type="hidden" name="selected_house" id="selected_house" value="${House.Id}" />
+<table class="table">
+    <thead>
+        <tr><th>№ подъезда</th>
+            <% for i, Entrance in enumerate(House.Entrances): %>
+		    <th>${i+1}</th>
+        <% end %>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>Оборудование</td>
+          <% for i, Entrance in enumerate(House.Entrances): %>
+          <%if Entrance.Switch != null : %>
+		    <td><a href="${Siteroot}/Switches/MakeSwitch?Switch=${Entrance.Switch.Id}"> ${Entrance.Switch.Name} </a></td>
+            <%else: %>
+            <%if Entrance.Cable : %>
+            <td> Кабель</td>
+            <%else: %>
+            <td> Нет</td>
+            <%end %>
+          <% end %>
+          <% end %>
+        </tr>
+        <tr><td>Стояки</td>
+          <% for i, Entrance in enumerate(House.Entrances): %>
+          <%if Entrance.Strut : %>
+		    <td>Да</td>
+            <%else: %>
+           <td> Нет</td>
+          <% end %>
+          <% end %>
+        </tr>
+        <tr><td>Возможность подключения</td>
+          <% for i, Entrance in enumerate(House.Entrances): %>
+          <%if Entrance.WasConnected() : %>
+		    <td>Да</td>
+            <%else: %>
+            <td> Нет</td>
+          <% end %>
+          <% end %>
+        </tr>
+    </tbody>
+</table>
+
+<table class="table" style="border:1px solid #AAA ;">
+    <tbody>
+        <tr>
+            <td>Абоненты</td>
+            <td class="delimiter_td">${House.GetSubscriberCount()}</td>
+            <td>Абоненты конкурентов</td>
+            <td class="delimiter_td">${House.CompetitorCount}</td>
+            <td>Инфорум</td>
+            <td class="delimiter_td">${House.GetPenetrationPercent().ToString("F2")}%</td>
+            <td>Конкуренты</td>
+            <td class="delimiter_td">${House.GetCompetitorsPenetrationPercent().ToString("F2")}%</td>
+            <td>Последний проход</td>
+            <%if House.LastPassDate!=null: %>
+            <td class="delimiter_td">${House.LastPassDate.ToShortDateString()}</td>
+            <%else: %>
+            <td class="delimiter_td">Нет</td>
+            <%end %>
+        </tr>
+    </tbody>
+</table>
+
+<input type=hidden id="House" value=${House.Id} />
+<div id="myModal_IT" class="reveal-modal"> 
+        <input type=hidden name="apartment" id="apartment_div"  />
+        <table class="table">
+            <tbody>
+            <tr>
+                <td>
+                    <label for="last_inet" >Интернет</label>
+                </td>
+                <td>
+                   <!-- <input type=text id="last_inet" name="last_inet" /> <br /> -->
+                   <select id="last_inet"  name="last_inet" style="width:200px;">
+                        <option value="И">И - Инфорум</option>
+                        <option value="Д">Д - Домолинк</option>
+                   </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="last_TV" >TV</label>
+                </td>
+                <td>
+                   <!-- <input type=text id="last_TV" name="last_TV" /> -->
+                    <select id="last_TV"  name="last_TV" style="width:200px;">
+                        <option value="С.Т">С.Т - Спутник триколор</option>
+                        <option value="К">К - Кабельное</option>
+                        <option value="С.Н">С.Н - Снутник НТВ</option>
+                   </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="comment" >Комментарий</label>
+                </td>
+                <td>
+                    <input type=text id="comment" name="comment" /> 
+                </td>
+            </tr>
+            <tr>
+                <td><button id="SaveButton" class="SaveButton">Сохранить</button></td>
+            </tr>
+            </tbody>
+        </table>
+    <a class="close-reveal-modal">х</a>
+</div> 
+<table style="width:100%">
+    <tbody>
+    <tr>
+<%for j in range(0 , 2): %>
+<td valign=top>
+<table border="1" style="width:490px;" class="table" id="kv_table">
+    <thead>
+        <tr align=center>
+            <th></th>
+            <th colspan=2>Было</th>
+            <th colspan=2>Результат</th>
+            <th></th>
+        </tr>
+        <tr>
+            <th>кв.</th>
+            <th>Int</th>
+            <th>TV</th>
+            <th>INT</th>
+            <th>TV</th>
+            <th>Комментарии</th>
+        </tr>
+    </thead>
+    <tbody>
+    <% ap_count = House.ApartmentCount %>
+    <% for i in range(ap_count / 2 * j, ap_count / 2 + ap_count / 2 * j + ap_count % 2 *j): %>
+    <tr>
+        <td><a href="#" class="big-link" data-reveal-id="myModal_IT" > 
+        ${i+1}</a>
+        <input type=hidden name="apartment" value=${i+1} class="apartment_table" />
+        </td>
+        <%apartment = House.GetApartmentWithNumber(i+1) %>
+        <%if apartment != null : %>
+        <td id="td_last_inet_${i+1}">${apartment.LastInternet}</td>
+        <td id="td_last_TV_${i+1}">${apartment.LastTV}</td>
+        <td>${apartment.PresentInternet}</td>
+        <td>${apartment.PresentTV}</td>
+        <%else: %>
+        <td id="td_last_inet_${i+1}"></td>
+        <td id="td_last_TV_${i+1}"></td>
+        <td></td>
+        <td></td>
+        <%end %>
+        <%if apartment != null : %>
+        <td id="td_comment_${i+1}">${apartment.Comment}</td>
+        <%else: %>
+        <td id="td_comment_${i+1}"></td>
+        <%end %>
+    </tr>
+    <%end %>
+    </tbody>
+</table>
+</td>
+<%end %>
+</tr>
+</tbody>
+</table>

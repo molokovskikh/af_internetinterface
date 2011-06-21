@@ -1,0 +1,32 @@
+﻿<table class="table">
+    <thead>
+        <tr>
+            <th>ФИО</th>
+            <th>Дата рождения</th>
+            <th>Контактный телефон</th>
+            <th>Адрес проживания</th>
+            <th>Паспортные данные</th>
+            <th>Прописка</th>
+        </tr>
+    </thead>
+    <tbody>
+    <% for i, agent in enumerate(agents): %>
+        <tr>
+            <td><a href="${Siteroot}/HouseAgent/Agent?id=${agent.Id}"> ${agent.Name} ${agent.Surname} ${agent.Patronymic} </a></td>
+            <td>${agent.DateOfBirth.ToShortDateString()}</td>
+            <td>${agent.Telephone}</td>
+            <td>${agent.Adress}</td>
+            <td>
+            Паспортные данные: <br />
+												 <span class="description">Серия\Номер</span> ${agent.PassportSeries} \ ${agent.PassportNumber}<br />
+												 <span class="description">Кем выдан: </span> ${agent.WhoGivePassport}<br />
+												 <span class="description">Адрес регистрации:</span> ${agent.RegistrationAdress}<br />
+												 <span class="description">Дата выдачи :</span> ${agent.PassportDate.ToShortDateString()}</td>
+            <td>${agent.RegistrationAdress}</td>
+        </tr>
+    <%end %>
+        <tr><td style="background-color:#576C82;">
+            <a style="color:White;" href="${Siteroot}/HouseAgent/Agent">Создать нового агента</a>
+        </td></tr>
+    </tbody>
+</table>

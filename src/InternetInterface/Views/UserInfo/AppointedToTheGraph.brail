@@ -92,7 +92,10 @@
 			    }
 			    $(data.graphs).each(function () {
 			        $('#tdi_' + this.IntervalId + '_' + this.brigadId).empty();
-			        $('#tdi_' + this.IntervalId + '_' + this.brigadId).append('<a class="graph_link" href="../Search/Redirect?ClientCode=' + this.clientId + '">' + this.clientId + '</a>');
+			        if (this.clientId != 0)
+			            $('#tdi_' + this.IntervalId + '_' + this.brigadId).append('<a class="graph_link" href="../Search/Redirect?ClientCode=' + this.clientId + '">' + this.clientId + '</a>');
+                    else
+                        $('#tdi_' + this.IntervalId + '_' + this.brigadId).append('Резерв');
 			    });
 			});
 
@@ -100,12 +103,26 @@
 
 
 		 $(function () {
+		     $('#graph_date').datepicker("setDate", '01/26/2009');
 		     $('#graph_date').datepicker({
 		         inline: true
 		     }).change(function () { fillData(); });
 		     fillData();
 		 });
 
+
+		 function Reserv() {
+		     var req = {};
+		     var check_field = $('input:radio[name="graph_button"]:checked');
+		     req.graph_button = check_field.val();
+		     req.graph_date = $('#graph_date').val();
+		     $.post("ReservGraph", req, function (data) {
+		         alert(data);
+		         var appended_field = check_field.parent();
+		         appended_field.empty();
+		         appended_field.append('Резерв');
+              });
+         }
 
 		 function Save() {
 		     var req = {};
@@ -160,6 +177,7 @@
 			<tr>
 				<td>
                     <button id="naznach_but_1" class="button" onclick="Save()" value="Назначить">Назначить </button>
+                    <button id="reserv_but" class="button" onclick="Reserv()" value="Назначить">Зарезервировать </button>
 				</td>
 			</tr>
 	</tbody>

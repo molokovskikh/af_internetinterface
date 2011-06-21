@@ -45,6 +45,9 @@ namespace InternetInterface.Models
 		[Property, ValidateNonEmpty("Введите номер телефона"), ValidateRegExp(@"^((\d{4,5})-(\d{5,6}))|((\d{1})-(\d{3})-(\d{3})-(\d{2})-(\d{2}))", "Ошибка фотмата телефонного номера (Код города (4-5 цифр) + местный номер (5-6 цифр) или мобильный телефн (8-***-***-**-**))")]
 		public virtual string Telephone { get; set; }
 
+        [Property]
+        public virtual string ContactPerson { get; set; }
+
 		[BelongsTo]
 		public virtual PackageSpeed Speed { get; set; }
 
@@ -53,26 +56,5 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual decimal Balance { get; set; }
-
-		/*[BelongsTo]
-		public virtual Clients Client { get; set; }*/
-
-		/*[BelongsTo]
-		public virtual Partner WhoRegistered { get; set; }
-
-		[Property]
-		public virtual string WhoRegisteredName { get; set; }
-
-		[BelongsTo]
-		public virtual Brigad WhoConnected { get; set; }
-
-		[Property]
-		public virtual string WhoConnectedName { get; set; }
-
-		[BelongsTo]
-		public virtual Status Status { get; set; }
-
-		[Property]
-		public virtual DateTime RegDate { get; set; }*/
 	}
 }

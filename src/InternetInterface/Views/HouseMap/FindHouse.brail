@@ -1,0 +1,106 @@
+﻿<script type="text/javascript">
+    $(function () {
+
+        $('#startDate').datepicker({
+            inline: true
+        });
+        $('#endDate').datepicker({
+            inline: true
+        });
+
+        $("#findForm").validate({
+            rules: {
+                SubscriberCount: {
+                    digits: true
+                },
+                PenetrationPercent: {
+                    digits: true
+                },
+                PassCount: {
+                    digits: true
+                }
+            },
+            messages:
+        {
+            SubscriberCount:
+                {
+                    digits: "Должно быть введено число"
+                },
+            PenetrationPercent:
+                {
+                    digits: "Должно быть введено число"
+                },
+            PassCount:
+                {
+                    digits: "Должно быть введено число"
+                }
+        },
+            submitHandler: function (form) {
+                var appCount = $('#ApCount').val();
+                $('#ValidAppCount').val(appCount);
+                form.submit();
+            }
+        })
+    });
+</script>
+<style type="text/css">
+    #round
+    {
+        width:800px;
+        border: 1px solid black;
+        border-color:Black;
+        background-color:White;
+        }
+        
+            .error
+    {
+        color:Red;
+        font-size:12px;
+        font-style:oblique;
+        }
+</style>
+<center>
+<div id="round">
+<form id="findForm" action="${Siteroot}/HouseMap/HouseFindResult" method=post>
+<table class="table">
+    <thead>
+        <tr>
+            <th colspan=4>Поиск</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Адрес</td>
+            <td>${FormHelper.TextField("adress")}</td>
+            <td></td><td></td>
+        </tr>
+        <tr>
+            <td>Количество абонентов</td>
+            <td>${FormHelper.TextField("SubscriberCount")}</td>
+            <td>Оператор</td>
+            <td>${FormHelper.Select("SubscriberCount_Oper", SelectEn, {"text" : "OptionName", "value" : "Operator"})}</td>
+        </tr>
+        <tr>
+            <td>Процента проникновения</td>
+            <td>${FormHelper.TextField("PenetrationPercent")}</td>
+            <td>Оператор</td>
+            <td>${FormHelper.Select("PenetrationPercent_Oper", SelectEn, {"text" : "OptionName", "value" : "Operator"})}</td>
+        </tr>
+        <tr>
+            <td>Количеству агентских проходов</td>
+            <td>${FormHelper.TextField("PassCount")}</td>
+            <td>Оператор</td>
+            <td>${FormHelper.Select("PassCount_Oper", SelectEn, {"text" : "OptionName", "value" : "Operator"})}</td>
+        </tr>
+        <tr>
+            <td><label for="startDate"> Дата начала периода </label><input type=text  name="startDate" id="startDate" class="date-pick dp-applied"> </td>
+            <td><label for="endDate"> Дата конца периода </label><input type=text  name="endDate" id="endDate" class="date-pick dp-applied"> </td>
+        </tr>
+        <tr>
+            <td colspan=4><button type="submit" id="FindHouseButton" class="button">Найти</button></td>
+        </tr>
+    </tbody>
+</table>
+</form>
+</div>
+</center>

@@ -1,0 +1,39 @@
+﻿<div style="width:1000px; min-height:250px; height:auto;">
+<% OutputSubView("""\HouseMap\HouseInfo""", {
+					"House": sHouse
+}) %>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Было</th>
+            <th>Результат</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>И - Инфорум</td>
+            <td>0 - Никого нет</td>
+        </tr>
+        <tr>
+            <td>D - Домолинк</td>
+            <td>1 - Не открыли</td>
+        </tr>
+        <tr>
+            <td>С.Т - Спутник триколор</td>
+            <td>2 - Отказ</td>
+        </tr>
+        <tr>
+            <td>К - Кабельное</td>
+            <td>3 - Заинтересовались</td>
+        </tr>
+        <tr>
+            <td>С.П - Спутник НТВ</td>
+            <td>4 - Заявка</td>
+        </tr>
+        <tr>
+            <td>Фио агента: ${SHouse.GetLastBypass().Agent.GetFIO()}</td>
+            <td>Дата: ${sHouse.LastPassDate.ToShortDateString()}</td>
+        </tr>
+    </tbody>
+</table>
+</div>

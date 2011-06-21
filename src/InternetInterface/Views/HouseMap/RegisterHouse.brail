@@ -1,0 +1,16 @@
+﻿<script type="text/javascript">
+    function registerHouse() {
+        if ($("#editHouse").valid()) {
+            var req = {};
+            req.Street = $('#house_Street').val();
+            req.Number = $('#house_Number').val();
+            req.Case = $('#house_Case').val();
+            $.post("Register", req, function (data) {
+                alert("Зарегистрировано");
+                window.location.href = '${SiteRoot}/HouseMap/ViewHouseInfo';
+            });
+        }
+    }
+</script>
+<% OutputSubView("""\Subview\House""") %>
+<button class="button" onclick=registerHouse()><img alt="Save" src="${Siteroot}/Images/application_edit.png">Зарегистрировать</button>

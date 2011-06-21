@@ -157,9 +157,6 @@ namespace InternetInterface.Models
 																		.Add(Expression.Eq("Categorie", userCategorie)));
 					foreach (var toadd in toAdd)
 					{
-						/*if (PartnerAccessSet.FindAll(DetachedCriteria.For(typeof (PartnerAccessSet))
-						                             	.Add(Expression.Eq("PartnerId", partner))
-														.Add(Expression.Eq("AccessCat", AccessCategories.Find((int)toadd)))).Length == 0)*/
 						if (partnerAccessSet.Where(c => c.AccessCat == toadd).ToList().Count == 0)
 						{
 							var newRight = new CategorieAccessSet

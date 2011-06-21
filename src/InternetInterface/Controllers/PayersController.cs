@@ -28,8 +28,6 @@ namespace InternetInterface.Controllers
 		{
 			PropertyBag["Registrators"] = Partner.FindAll();
 			PropertyBag["registrId"] = registrator;
-			//var payers = Payment.Queryable.Where(p => p.Client.Id == registrator).GroupBy(g => g.Client);
-			//PropertyBag["Payers"] = payers;
 			PropertyBag["Payers"] = Clients.Queryable.Where(p => p.WhoRegistered.Id == registrator && p.PhysicalClient != null);
 		}
 

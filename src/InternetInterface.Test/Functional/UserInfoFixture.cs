@@ -59,6 +59,19 @@ namespace InternetInterface.Test.Functional
         }
 
         [Test]
+        public void ReservTest()
+        {
+            using (var browser = Open(string.Format("UserInfo/SearchUserInfo.rails?ClientCode={0}", client.Id)))
+            {
+                browser.Button("naznach_but").Click();
+                browser.RadioButton(Find.ByName("graph_button")).Checked = true;
+                browser.Button("reserv_but").Click();
+                Console.WriteLine(browser.Html);
+                Assert.IsTrue(browser.Text.Contains("Резерв"));
+            }
+        }
+
+	    [Test]
         public void AdditionalStatusTest()
         {
             using (new SessionScope())

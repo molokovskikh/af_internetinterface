@@ -1,0 +1,48 @@
+﻿<script type="text/javascript">
+   /* $(function () {
+        $("#houseForm").validate({
+            rules: {
+                house_Number: {
+                    required: true,
+                    digits: true
+                }
+            },
+            messages:
+        {
+            house_Number:
+            {
+                required: "Введите количество квартир в доме",
+                digits: "Должно быть введено число"
+            }
+        }
+        })
+    });*/
+</script>
+<table class="table">
+    <tbody>
+        <tr>
+            <td>
+                Улица
+            </td>
+            <td>
+                ${FormHelper.TextField("house.Street")}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Номер
+            </td>
+            <td>
+                ${FormHelper.TextField("house.Number")}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Корпус
+            </td>
+            <td>
+                ${FormHelper.TextField("house.Case")}
+            </td>
+        </tr>
+    </tbody>
+</table>

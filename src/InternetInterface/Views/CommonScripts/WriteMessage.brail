@@ -13,3 +13,12 @@ def WriteMessageError(MessageText as string):
                </div> 
            </div>"""
 end
+
+def OperatorsSelect(name as string):
+            return """
+    <select name="${name}">
+        <option value=" = ">Равно</option>
+        <option value=" > ">Больше</option>
+        <option value=" < ">Меньше</option>
+    </select>""" 
+end

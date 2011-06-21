@@ -1,0 +1,6 @@
+﻿<select name="Entrances[${id}].Switch.Id" id="NetSwitch${id}" style="width: 100%" >
+<option id="Option1" value="0" >Нет</option>
+<% for i, Switch in enumerate(Switches): %>
+		<option id="Option${i}" value="${Switch.Id}" >${Switch.Name}</option>
+<% end %>
+</select>

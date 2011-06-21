@@ -57,6 +57,17 @@
 									${VB.GetBlock("Telephone")}
 								   </td>
 							</tr>
+                            <tr>
+                                <td>
+                                    Контактное лицо
+                                </td>
+                                <td>
+									<input id="ContactPerson" type="text" value="${LegalPerson.ContactPerson}" name="LegalPerson.ContactPerson"/></td>
+								 <td>
+                                 <td>
+									${VB.GetBlock("ContactPerson")}
+								 </td>
+                            </tr>
 														<tr>
 								<td >
 									Скорость доступа</td>
