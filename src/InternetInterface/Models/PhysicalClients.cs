@@ -89,10 +89,10 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string City { get; set; }
 
-		[Property, ValidateNonEmpty("Введите улицу")]
+		[Property]
 		public virtual string Street { get; set; }
 
-		[Property, ValidateNonEmpty("Введите номер дома"), ValidateInteger("Должно быть введено число")]
+		[Property, ValidateInteger("Должно быть введено число")]
 		public virtual string House { get; set; }
 
 		[Property]
@@ -183,7 +183,7 @@ namespace InternetInterface.Models
 			    _client.HouseObj = _house;
 			    _client.Street = _house.Street;
 			    _client.House = _house.Number.ToString();
-			    _client.CaseHouse = _house.Case.ToString();
+			    _client.CaseHouse = _house.Case;
 				_client.Tariff = Tariff.Find(_tariff);
 				_client.Password = CryptoPass.GetHashString(_client.Password);
 				_client.SaveAndFlush();

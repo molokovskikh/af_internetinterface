@@ -1,87 +1,87 @@
 ﻿<tr>
-								<td ><b>Полное наименвоание</b></td>
-								<td >${FormHelper.TextField("LegalPerson.FullName")} <!-- <input id="FullName" type="text" value="${LegalPerson.FullName}" name="LegalPerson.FullName" /> </td>-->
-								<td>
-									${VB.GetBlock("FullName")}
-								 </td>
-							</tr>
+	<td ><b>Полное наименвоание</b></td>
+	<td >${FormHelper.TextField("LegalPerson.FullName")} <!-- <input id="FullName" type="text" value="${LegalPerson.FullName}" name="LegalPerson.FullName" /> </td>-->
+	<td>
+		${VB.GetBlock("FullName")}
+		</td>
+</tr>
+<tr>
+	<td><b>Краткое наименование</b></td>
+	<td>${FormHelper.TextField("LegalPerson.ShortName")}<!-- <input id="ShortName" type="text" value="${LegalPerson.ShortName}" name="LegalPerson.ShortName" /></td>-->
+		<td>
+		${VB.GetBlock("ShortName")}
+		</td>
+</tr>
+<tr>
+	<td>
+		Юридический адрес</td>
+	<td >
+		<input id="LawyerAdress" type="text" value="${LegalPerson.LawyerAdress}" name="LegalPerson.LawyerAdress"/></td>
+	<td>
+		${VB.GetBlock("LawyerAdress")}
+	</td>
+</tr>
+<tr>
+	<td>
+		Фактический адрес</td>
+	<td >
+		<input id="ActualAdress" type="text" value="${LegalPerson.ActualAdress}" name="LegalPerson.ActualAdress"/></td>
+	<td>
+		${VB.GetBlock("ActualAdress")}
+	</td>
+</tr>
+<tr>
+	<td >
+		ИНН</td>
+	<td>
+		<input id="INN" type="text" value="${LegalPerson.INN}" name="LegalPerson.INN"/></td>
+		<td>
+		${VB.GetBlock("INN")}
+		</td>
+</tr>
 							<tr>
-								<td><b>Краткое наименование</b></td>
-								<td>${FormHelper.TextField("LegalPerson.ShortName")}<!-- <input id="ShortName" type="text" value="${LegalPerson.ShortName}" name="LegalPerson.ShortName" /></td>-->
-								 <td>
-									${VB.GetBlock("ShortName")}
-								 </td>
-							</tr>
+	<td >
+		Email</td>
+	<td>
+		<input id="Email" type="text" value="${LegalPerson.Email}" name="LegalPerson.Email"/></td>
+		<td>
+		${VB.GetBlock("Email")}
+		</td>
+</tr>
 							<tr>
-								<td>
-								   Юридический адрес</td>
-								<td >
-									<input id="LawyerAdress" type="text" value="${LegalPerson.LawyerAdress}" name="LegalPerson.LawyerAdress"/></td>
-								<td>
-									${VB.GetBlock("LawyerAdress")}
-								</td>
-							</tr>
+	<td >
+		<b>Номер телефона</b></td>
+	<td>
+		<input id="Telephone" type="text" value="${LegalPerson.Telephone}" name="LegalPerson.Telephone"/></td>
+		<td>
+		${VB.GetBlock("Telephone")}
+		</td>
+</tr>
+<tr>
+    <td>
+        Контактное лицо
+    </td>
+    <td>
+		<input id="ContactPerson" type="text" value="${LegalPerson.ContactPerson}" name="LegalPerson.ContactPerson"/></td>
+		<td>
+        <td>
+		${VB.GetBlock("ContactPerson")}
+		</td>
+</tr>
 							<tr>
-								<td>
-									Фактический адрес</td>
-								<td >
-									<input id="ActualAdress" type="text" value="${LegalPerson.ActualAdress}" name="LegalPerson.ActualAdress"/></td>
-								<td>
-									${VB.GetBlock("ActualAdress")}
-								</td>
-							</tr>
-							<tr>
-								<td >
-									ИНН</td>
-								<td>
-									<input id="INN" type="text" value="${LegalPerson.INN}" name="LegalPerson.INN"/></td>
-								 <td>
-									${VB.GetBlock("INN")}
-								   </td>
-							</tr>
-														<tr>
-								<td >
-									Email</td>
-								<td>
-									<input id="Email" type="text" value="${LegalPerson.Email}" name="LegalPerson.Email"/></td>
-								 <td>
-									${VB.GetBlock("Email")}
-								   </td>
-							</tr>
-														<tr>
-								<td >
-									<b>Номер телефона</b></td>
-								<td>
-									<input id="Telephone" type="text" value="${LegalPerson.Telephone}" name="LegalPerson.Telephone"/></td>
-								 <td>
-									${VB.GetBlock("Telephone")}
-								   </td>
-							</tr>
-                            <tr>
-                                <td>
-                                    Контактное лицо
-                                </td>
-                                <td>
-									<input id="ContactPerson" type="text" value="${LegalPerson.ContactPerson}" name="LegalPerson.ContactPerson"/></td>
-								 <td>
-                                 <td>
-									${VB.GetBlock("ContactPerson")}
-								 </td>
-                            </tr>
-														<tr>
-								<td >
-									Скорость доступа</td>
-								<td>
-								   <% Component SelectList, {"clientCode" : ("${ClientCode}")} %></td>
-								 <td>
-									${VB.GetBlock("Speed")}
-								   </td>
-							</tr>
-																					<tr>
-								<td >
-									Абонентская плата</td>
-								<td>
-									<input id="Text1" type="text" value="${LegalPerson.Tariff}" name="LegalPerson.Tariff"/></td>
-								 <td>
-									${VB.GetBlock("Tariff")}
-								   </td>
+	<td >
+		Скорость доступа</td>
+	<td>
+		<% Component SelectList, {"clientCode" : ("${ClientCode}")} %></td>
+		<td>
+		${VB.GetBlock("Speed")}
+		</td>
+</tr>
+<tr>
+	<td >
+		Абонентская плата</td>
+	<td>
+		<input id="Text1" type="text" value="${LegalPerson.Tariff}" name="LegalPerson.Tariff"/></td>
+		<td>
+		${VB.GetBlock("Tariff")}
+		</td>

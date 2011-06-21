@@ -12,6 +12,7 @@ using InternetInterface.Models;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.SqlCommand;
+using IFilter = Castle.MonoRail.Framework.IFilter;
 
 
 namespace InternetInterface.Controllers
@@ -23,7 +24,7 @@ namespace InternetInterface.Controllers
         [AccessibleThrough(Verb.Post)]
         public void RegisterClient([DataBind("ChangedBy")]ChangeBalaceProperties changeProperties,
             [DataBind("client")]PhysicalClients phisClient, string balanceText, uint tariff, uint status, uint BrigadForConnect
-             , [DataBind("ConnectInfo")]ConnectInfo ConnectInfo, bool VisibleRegisteredInfo, uint house,
+             , [DataBind("ConnectInfo")]ConnectInfo ConnectInfo, bool VisibleRegisteredInfo, uint house_id,
             uint requestID)
         {
             PropertyBag["Tariffs"] = Tariff.FindAllSort();
@@ -49,12 +50,13 @@ namespace InternetInterface.Controllers
                 ConnectInfo.Port = null;
             }
             var portException = Validation.ValidationConnectInfo(ConnectInfo);
+
             var registerClient = Validator.IsValid(phisClient);
 
             if ((registerClient && String.IsNullOrEmpty(portException)) ||
                 (registerClient && string.IsNullOrEmpty(ConnectInfo.Port)))
             {
-                PhysicalClients.RegistrLogicClient(phisClient, tariff, house, Validator);
+                PhysicalClients.RegistrLogicClient(phisClient, tariff, house_id, Validator);
                 var client = new Clients {
                                              AutoUnblocked = true,
                                              RegDate = DateTime.Now,
@@ -123,7 +125,8 @@ namespace InternetInterface.Controllers
             {
                 PropertyBag["Client"] = phisClient;
                 PropertyBag["BalanceText"] = balanceText;
-                PropertyBag["ChHouse"] = house;
+                PropertyBag["ChHouse"] = house_id;
+                PropertyBag["Houses"] = House.FindAll().OrderBy(h => h.Street);
                 PropertyBag["Applying"] = "false";
                 PropertyBag["PortError"] = portException;
                 PropertyBag["ChStatus"] = status;
@@ -231,6 +234,7 @@ namespace InternetInterface.Controllers
 		public void RegisterClient()
 		{
 			SendRegisterParam();
+            PropertyBag["ChHouse"] = 0;
 			PropertyBag["Client"] = new PhysicalClients();
 			PropertyBag["ChTariff"] = Tariff.FindFirst().Id;
 		}
@@ -263,6 +267,16 @@ namespace InternetInterface.Controllers
 			PropertyBag["Client"] = newPhisClient;
 			PropertyBag["ChTariff"] = request.Tariff.Id;
 			PropertyBag["requestID"] = requestID;
+		    var houses =
+		        House.Queryable.Where(
+		            h =>
+		            h.Street == newPhisClient.Street &&
+                    h.Number == Int32.Parse(newPhisClient.House) &&
+                    h.Case == newPhisClient.CaseHouse).ToList();
+            if (houses.Count != 0)
+                PropertyBag["ChHouse"] = houses.First().Id;
+            else
+                PropertyBag["ChHouse"] = 0;
 			SendRegisterParam();
 		}
 
@@ -281,7 +295,7 @@ namespace InternetInterface.Controllers
             {
                 house = new House {Street = street, Number = Int32.Parse(number)};
                 if (!string.IsNullOrEmpty(_case))
-                    house.Case = Int32.Parse(_case);
+                    house.Case = _case;
                 house.Save();
             }
             return new { Name = string.Format("{0} {1} {2}", street, number, _case), Id = house.Id};
@@ -290,7 +304,6 @@ namespace InternetInterface.Controllers
 	    public void SendRegisterParam()
 		{
             PropertyBag["Houses"] = House.FindAll();
-	        PropertyBag["ChHouse"] = 0;
 			PropertyBag["BalanceText"] = string.Empty;
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["Brigads"] = Brigad.FindAllSort();

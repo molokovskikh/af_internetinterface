@@ -359,7 +359,7 @@ namespace InternetInterface.Controllers
 
 
 		[AccessibleThrough(Verb.Post)]
-        public void EditInformation([DataBind("Client")]PhysicalClients client, uint ClientID, uint tariff, uint status, string group, uint house)
+        public void EditInformation([DataBind("Client")]PhysicalClients client, uint ClientID, uint tariff, uint status, string group, uint house_id)
 		{
 			//var updateClient = PhysicalClients.Find(ClientID);
 			var _client = Clients.Queryable.First(c => c.Id == ClientID);
@@ -374,11 +374,11 @@ namespace InternetInterface.Controllers
 			{
 				if (updateClient.PassportDate != null)
 				updateClient.PassportDate = DateTime.Parse(updateClient.PassportDate).ToShortDateString();
-			    var _house = House.Find(house);
+                var _house = House.Find(house_id);
 			    updateClient.HouseObj = _house;
 			    updateClient.Street = _house.Street;
 			    updateClient.House = _house.Number.ToString();
-			    updateClient.CaseHouse = _house.Case.ToString();
+			    updateClient.CaseHouse = _house.Case;
 				updateClient.Tariff = Tariff.Find(tariff);
 				updateClient.UpdateAndFlush();
                 _client.Name = string.Format("{0} {1} {2}", updateClient.Surname, updateClient.Name, updateClient.Patronymic);

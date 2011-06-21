@@ -155,7 +155,7 @@ namespace InternetInterface.Controllers
             if (!Int32.TryParse(number, out res))
                 errors += "Неправильно введен номер дома" + res;
             if (string.IsNullOrEmpty(errors))
-                new House {Street = street, Number = Int32.Parse(number), Case = Int32.Parse(_case)}.Save();
+                new House {Street = street, Number = Int32.Parse(number), Case = _case}.Save();
             return errors;
         }
 

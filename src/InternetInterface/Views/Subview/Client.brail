@@ -1,285 +1,265 @@
 ﻿<script type="text/javascript">
-    function registerHouse() {
-            var req = {};
-            req.Street = $('#house_Street').val();
-            req.Number = $('#house_Number').val();
-            req.Case = $('#house_Case').val();
-            $.post("RegisterHouse", req, function (data) {
-                alert("Зарегистрировано");
-                $('#houses_select').append($('<option value="' + data.Id + '">' + data.Name + '</option>'));
-                $('#register_house').trigger('reveal:close');
-            });
-    }
+function registerHouse() {
+var req = {};
+req.Street = $('#house_Street').val();
+req.Number = $('#house_Number').val();
+req.Case = $('#house_Case').val();
+$.post("RegisterHouse", req, function (data) {
+alert("Зарегистрировано");
+$('#houses_select').append($('<option value="' + data.Id + '">' + data.Name + '</option>'));
+$('#register_house').trigger('reveal:close');
+});
+}
 </script>
 
 
-                            <tr>
-                                <th colspan="3">
-                                    Личная информация</th>
-                            </tr>
-                            <tr>
-                                <td ><b>Фамилия</b></td>
-                                <td > <input id="Surname" type="text" value="${Client.Surname}" name="client.Surname" /> </td>
-                                <td>
-                                    ${VB.GetBlock("Surname")}
-                                 </td>
-                            </tr>
-                            <tr>
-                                <td><b>
-                                    Имя</b></td>
-                                <td ><input id="Name" type="text" value="${Client.Name}" name="client.Name" /></td>
-                                 <td>
-                                    ${VB.GetBlock("Name")}
-                                 </td>
-                            </tr>
-                            <tr>
-                                <td><b>
-                                    Отчество</b></td>
-                                <td >
-                                    <input id="Patronymic" type="text" value="${client.Patronymic}" name="client.Patronymic"/></td>
-                                <td>
-                                    ${VB.GetBlock("Patronymic")}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    Дата рождения</td>
-                                <td >
-                                    <input id="DateOfBirth" type="text" value="${client.DateOfBirth}" name="client.DateOfBirth"/></td>
-                                <td>
-                                    ${VB.GetBlock("DateOfBirth")}
-                                </td>
-                            </tr>
-                            <tr >
-                                <td>
-                                    Город</td>
-                                <td >
-                                    <input id="City" type="text" value="${client.City}" name="client.City"/></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td ><b>
-                                   Мобильный телефон</b></td>
-                                <td>
-                                    <input id="PhoneNumber" type="text" value="${client.PhoneNumber}" name="client.PhoneNumber"/></td>
-                                 <td>
-                                    ${VB.GetBlock("PhoneNumber")}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td >
-                                   Домашний телефон</td>
-                                <td>
-                                    <input id="HomePhoneNumber" type="text" value="${client.HomePhoneNumber}" name="client.HomePhoneNumber"/></td>
-                                 <td>
-                                    ${VB.GetBlock("HomePhoneNumber")}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td > 
-                                    Email</td>
-                                <td>
-                                    <input id="Email" type="text" value="${client.Email}" name="client.Email"/></td>
-                                 <td>
-                                    ${VB.GetBlock("Email")}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td >
-                                    Канал продаж</td>
-                                <td>
-                                <select name="client.WhenceAbout">
-                                    <option value="Контактный центр">Контактный центр</option>
-                                    <option value="Агенты">Агенты</option>
-                                    <option value="Офис продаж">Офис продаж</option>
-                                    <option value="Сайт">Сайт</option>
-                                    <option value="Диллер">Диллер</option>
-                                    <option value="Другое">Другое</option>
-                                </select>
-                                    </td>
-                            </tr>
-                            </table>
-                            <table class="table" border="0" id="AdressTable" style="margin-bottom: 15px;"> 
-                            <thead>
-                            <th colspan=14>Адрес</th>
-                            </thead>
- 
-                           
-                           <tbody>
-                           <tr>
-                            <tr>
-                              <!--  <td>
-                                   <b> Улица </b></td> <td>  <input id="Street" type="text" value="${client.Street}" name="client.Street"/></td>
-                                 <td style="width: 200px">
-                                    ${VB.GetBlock("Street")}
-                                </td>
-                                <td >
-                                   <b> Дом </b></td> <td>  <input id="House" type="text" style="width:50px" value="${client.House}" name="client.House"/></td>
-                                 <td>
-                                    ${VB.GetBlock("House")}
-                                </td>
-                                <td >
-                                    Корпус </td> <td>  <input id="CaseHouse" type="text" style="width:50px" value="${client.CaseHouse}" name="client.CaseHouse"/></td>
-                                 <td>
-                                    ${VB.GetBlock("CaseHouse")}
-                                </td>-->
-                                <td>
-                                    <b>Дом</b>
-                                </td>
-                                <td>
-                                    <select name="house" id="houses_select">
-                                        <% for i, house in enumerate(Houses): %>
-                                        <option value="${house.Id}"  ${"selected" if (house.Id == ChHouse)} >${house.Street} ${house.Number} ${house.Case}</option>
-                                        <%end %>
-                                    </select>
-                                </td>
-                                <td>
+<tr>
+    <th colspan="3">
+        Личная информация</th>
+</tr>
+<tr>
+    <td ><b>Фамилия</b></td>
+    <td > <input id="Surname" type="text" value="${Client.Surname}" name="client.Surname" /> </td>
+    <td>
+        ${VB.GetBlock("Surname")}
+        </td>
+</tr>
+<tr>
+    <td><b>
+        Имя</b></td>
+    <td ><input id="Name" type="text" value="${Client.Name}" name="client.Name" /></td>
+        <td>
+        ${VB.GetBlock("Name")}
+        </td>
+</tr>
+<tr>
+    <td><b>
+        Отчество</b></td>
+    <td >
+        <input id="Patronymic" type="text" value="${client.Patronymic}" name="client.Patronymic"/></td>
+    <td>
+        ${VB.GetBlock("Patronymic")}
+    </td>
+</tr>
+<tr>
+    <td>
+        Дата рождения</td>
+    <td >
+        <input id="DateOfBirth" type="text" value="${client.DateOfBirth}" name="client.DateOfBirth"/></td>
+    <td>
+        ${VB.GetBlock("DateOfBirth")}
+    </td>
+</tr>
+<tr >
+    <td>
+        Город</td>
+    <td >
+        <input id="City" type="text" value="${client.City}" name="client.City"/></td>
+    <td></td>
+</tr>
+<tr>
+    <td ><b>
+        Мобильный телефон</b></td>
+    <td>
+        <input id="PhoneNumber" type="text" value="${client.PhoneNumber}" name="client.PhoneNumber"/></td>
+        <td>
+        ${VB.GetBlock("PhoneNumber")}
+    </td>
+</tr>
+<tr>
+    <td >
+        Домашний телефон</td>
+    <td>
+        <input id="HomePhoneNumber" type="text" value="${client.HomePhoneNumber}" name="client.HomePhoneNumber"/></td>
+        <td>
+        ${VB.GetBlock("HomePhoneNumber")}
+    </td>
+</tr>
+<tr>
+    <td > 
+        Email</td>
+    <td>
+        <input id="Email" type="text" value="${client.Email}" name="client.Email"/></td>
+        <td>
+        ${VB.GetBlock("Email")}
+    </td>
+</tr>
+<tr>
+    <td >
+        Канал продаж</td>
+    <td>
+    <select name="client.WhenceAbout">
+        <option value="Контактный центр">Контактный центр</option>
+        <option value="Агенты">Агенты</option>
+        <option value="Офис продаж">Офис продаж</option>
+        <option value="Сайт">Сайт</option>
+        <option value="Диллер">Диллер</option>
+        <option value="Другое">Другое</option>
+    </select>
+        </td>
+</tr>
+</table>
+<table class="table" border="0" id="AdressTable" style="margin-bottom: 15px;"> 
+<thead>
+<th colspan=14>Адрес</th>
+</thead>                         
+<tbody>
+<tr>
+<tr>
+    <td style="width:200px;">
+        <b>Дом </b> (<a href="#" class="big-link" data-reveal-id="register_house" >Создать новый</a>)
+    </td>
+    <td style="width:200px;">
+        <select name="house_id" id="houses_select">
+            <% for i, house_sel in enumerate(Houses): %>
+            <option value="${house_sel.Id}"  ${"selected" if (house_sel.Id == ChHouse)} >${house_sel.Street} ${house_sel.Number} ${house_sel.Case}</option>
+            <%end %>
+        </select>
+
+    </td>
+
+    <td>
 <div id="register_house"class="reveal-modal"> 
 <% OutputSubView("""\Subview\House""") %>
 <a href="#" onclick=registerHouse()><img alt="Save" src="${Siteroot}/Images/application_edit.png">Зарегистрировать</a>
 </div>
-                                </td>
-                                <td>
-                                    <a href="#" class="big-link" data-reveal-id="register_house" >
-                                    Создать новый дом
-                                    </a>
-                                </td>
-                                <td >
-                                   <b> Квартира </b> </td> <td> <input id="Apartment" type="text" style="width:50px" value="${client.Apartment}" name="client.Apartment"/></td>
-                                 <td colspan=3>
-                                    ${VB.GetBlock("Apartment")}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td >
-                                   <b> Подъезд </b> </td> <td>  <input id="Entrance" type="text" value="${client.Entrance}" name="client.Entrance"/></td>
-                                 <td colspan = 3>
-                                    ${VB.GetBlock("Entrance")}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td >
-                                   <b> Этаж </b></td> <td>  <input id="Floor" type="text" value="${client.Floor}" name="client.Floor"/></td>
-                                 <td colspan = 3>
-                                    ${VB.GetBlock("Floor")}
-                                </td>
-                            </tr>
-                            </tr>
-                            </tbody>
-                            </table>
+    </td>
+    <td style="width:100px;">
+        <b> Квартира </b> </td> <td> <input id="Apartment" type="text" style="width:50px" value="${client.Apartment}" name="client.Apartment"/></td>
+        <td colspan=3>
+        ${VB.GetBlock("Apartment")}
+    </td>
+</tr>
+<tr>
+    <td >
+        <b> Подъезд </b> </td> <td>  <input id="Entrance" type="text" value="${client.Entrance}" name="client.Entrance"/></td>
+        <td colspan = 3>
+        ${VB.GetBlock("Entrance")}
+    </td>
+</tr>
+<tr>
+    <td >
+        <b> Этаж </b></td> <td>  <input id="Floor" type="text" value="${client.Floor}" name="client.Floor"/></td>
+        <td colspan = 3>
+        ${VB.GetBlock("Floor")}
+    </td>
+</tr>
+</tr>
+</tbody>
+</table>
 
-                             <table class="table" border="0" id="Table1"> 
+    <table class="table" border="0" id="Table1"> 
                              
+<tr>
+    <th colspan="3">
+        Паспортные данные</th>
+</tr>
+<tr>
+    <%if PartnerAccessSet.AccesPartner("SSI"): %>
+    <td >Серия паспорта</td>
+    <%else: %>
+    <td ><b>Серия паспорта</b></td>
+    <%end %>
+    <td >
+        <input id="PassportSeries" type="text" value="${client.PassportSeries}" name="client.PassportSeries"/></td>
+    <td>
+        ${VB.GetBlock("PassportSeries")}
+    </td>
+</tr>
+<tr>
+    <%if PartnerAccessSet.AccesPartner("SSI"): %>
+    <td >Номер паспорта</td>
+    <%else: %>
+    <td ><b>Номер паспорта</b></td>
+    <%end %>
+    <td >
+        <input id="PassportNumber" type="text" value="${client.PassportNumber}" name="client.PassportNumber"/></td>
+    <td>
+        ${VB.GetBlock("PassportNumber")}
+    </td>
+</tr>
                             <tr>
-                                <th colspan="3">
-                                    Паспортные данные</th>
-                            </tr>
-                            <tr>
-                                <%if PartnerAccessSet.AccesPartner("SSI"): %>
-                                <td >Серия паспорта</td>
-                                <%else: %>
-                                <td ><b>Серия паспорта</b></td>
-                                <%end %>
-                                <td >
-                                    <input id="PassportSeries" type="text" value="${client.PassportSeries}" name="client.PassportSeries"/></td>
-                                <td>
-                                    ${VB.GetBlock("PassportSeries")}
-                                </td>
-                            </tr>
-                            <tr>
-                                <%if PartnerAccessSet.AccesPartner("SSI"): %>
-                                <td >Номер паспорта</td>
-                                <%else: %>
-                                <td ><b>Номер паспорта</b></td>
-                                <%end %>
-                                <td >
-                                    <input id="PassportNumber" type="text" value="${client.PassportNumber}" name="client.PassportNumber"/></td>
-                                <td>
-                                    ${VB.GetBlock("PassportNumber")}
-                                </td>
-                            </tr>
-                                                        <tr>
-                                <%if PartnerAccessSet.AccesPartner("SSI"): %>
-                                <td >Дата выдачи паспорта</td>
-                                <%else: %>
-                                <td ><b>Дата выдачи паспорта</b></td>
-                                <%end %>
-                                <td >
-                                    <input id="PassportDate" type="text" value="${client.PassportDate}" name="client.PassportDate"/></td>
-                                <td>
-                                    ${VB.GetBlock("PassportDate")}
-                                </td>
-                            </tr>
-                            <tr>
-                                <%if PartnerAccessSet.AccesPartner("SSI"): %>
-                                <td >Кем выдан</td>
-                                <%else: %>
-                                <td ><b>Кем выдан</b></td>
-                                <%end %>
-                                <td >
-                                    <input id="WhoGivePassport" type="text" value="${client.WhoGivePassport}" name="client.WhoGivePassport"/></td>
-                                <td>
-                                    ${VB.GetBlock("WhoGivePassport")}
-                                </td>
-                            </tr>
-                            <tr>
-                                <%if PartnerAccessSet.AccesPartner("SSI"): %>
-                                <td >Адрес регистрации</td>
-                                <%else: %>
-                                <td ><b>Адрес регистрации</b></td>
-                                <%end %>
-                                <td >
-                                    <input id="RegistrationAdress" type="text" value="${client.RegistrationAdress}" name="client.RegistrationAdress"/></td>
-                                <td>
-                                    ${VB.GetBlock("RegistrationAdress")}
-                                </td>
-                            </tr>
-                            <tr>
-                                <th colspan="3">
-                                    Регистрационные данные</th>
-                            </tr>
-                            <tr>
-                                <td >
-                                   <b> Тариф</b></td>
-                                <td >
+    <%if PartnerAccessSet.AccesPartner("SSI"): %>
+    <td >Дата выдачи паспорта</td>
+    <%else: %>
+    <td ><b>Дата выдачи паспорта</b></td>
+    <%end %>
+    <td >
+        <input id="PassportDate" type="text" value="${client.PassportDate}" name="client.PassportDate"/></td>
+    <td>
+        ${VB.GetBlock("PassportDate")}
+    </td>
+</tr>
+<tr>
+    <%if PartnerAccessSet.AccesPartner("SSI"): %>
+    <td >Кем выдан</td>
+    <%else: %>
+    <td ><b>Кем выдан</b></td>
+    <%end %>
+    <td >
+        <input id="WhoGivePassport" type="text" value="${client.WhoGivePassport}" name="client.WhoGivePassport"/></td>
+    <td>
+        ${VB.GetBlock("WhoGivePassport")}
+    </td>
+</tr>
+<tr>
+    <%if PartnerAccessSet.AccesPartner("SSI"): %>
+    <td >Адрес регистрации</td>
+    <%else: %>
+    <td ><b>Адрес регистрации</b></td>
+    <%end %>
+    <td >
+        <input id="RegistrationAdress" type="text" value="${client.RegistrationAdress}" name="client.RegistrationAdress"/></td>
+    <td>
+        ${VB.GetBlock("RegistrationAdress")}
+    </td>
+</tr>
+<tr>
+    <th colspan="3">
+        Регистрационные данные</th>
+</tr>
+<tr>
+    <td >
+        <b> Тариф</b></td>
+    <td >
 
-                                       <select name="tariff" id="ChTariff" style="width: 95%;">
-                                       <%
-                                        for i, Tariff in enumerate(Tariffs): 
-                                        %>
-                                            <option id="Tarif${Tariff.Id}" value="${Tariff.Id}" ${"selected" if (Tariff.Id == ChTariff)}> ${Tariff.GetFullName()} </option>
-                                            <% end %>
-                                        </select>
-
-
-                                </td>
-                                <td></td>
-                            </tr>
-                            <%if PartnerAccessSet.AccesPartner("SSI"): %>
-                            <%if IsDefined("Editing"): %>
-                            <%if Editing: %>
-                            <tr>
-                                <td >
-                                    Статус</td>
-                                <td >
-                                       <select name="status" id="Select1" style="width: 95%;">
-                                       <%
-                                        for i, Status in enumerate(Statuss): 
-                                        %>
-                                        <%if Status.Visualisible(): %>
-                                            <option id="Status${Status.Id}" value="${Status.Id}" ${"selected" if (Status.Id == ChStatus)}> ${Status.Name} </option>
-                                            <% end %>
-                                            <%end %>
-                                        </select>
+            <select name="tariff" id="ChTariff" style="width: 95%;">
+            <%
+            for i, Tariff in enumerate(Tariffs): 
+            %>
+                <option id="Tarif${Tariff.Id}" value="${Tariff.Id}" ${"selected" if (Tariff.Id == ChTariff)}> ${Tariff.GetFullName()} </option>
+                <% end %>
+            </select>
 
 
-                                </td>
-                                <td>
-                                <%if IsDefined("statusCanChanged"): 
-                                 output  WriteMessageError(statusCanChanged)
-                                 end %>
-                                </td>
-                            </tr>
-                            <%end %>
-                            <%end %>
-                            <%end %>
+    </td>
+    <td></td>
+</tr>
+<%if PartnerAccessSet.AccesPartner("SSI"): %>
+<%if IsDefined("Editing"): %>
+<%if Editing: %>
+<tr>
+    <td >
+        Статус</td>
+    <td >
+            <select name="status" id="Select1" style="width: 95%;">
+            <%
+            for i, Status in enumerate(Statuss): 
+            %>
+            <%if Status.Visualisible(): %>
+                <option id="Status${Status.Id}" value="${Status.Id}" ${"selected" if (Status.Id == ChStatus)}> ${Status.Name} </option>
+                <% end %>
+                <%end %>
+            </select>
+
+
+    </td>
+    <td>
+    <%if IsDefined("statusCanChanged"): 
+        output  WriteMessageError(statusCanChanged)
+        end %>
+    </td>
+</tr>
+<%end %>
+<%end %>
+<%end %>
