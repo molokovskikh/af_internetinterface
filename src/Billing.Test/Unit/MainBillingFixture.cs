@@ -75,6 +75,68 @@ namespace Billing.Test.Unit
 		}
 
         [Test]
+        public void PostponedPayment()
+        {
+            var client_Post = BaseBillingFixture.CreateAndSaveClient("testRated", false, 100);
+            client_Post.Save();
+            var client_simple = BaseBillingFixture.CreateAndSaveClient("testRated", false, 100);
+            client_simple.Save();
+            var pclient_post = client_Post.PhysicalClient;
+            pclient_post.Balance -= 200;
+            pclient_post.Update();
+
+            billing.Compute();
+
+            client_simple.Refresh();
+            client_Post.Refresh();
+            Assert.IsTrue(client_Post.Disabled);
+            Assert.IsFalse(client_simple.Disabled);
+
+            client_Post.PostponedPayment = DateTime.Now;
+            client_Post.Disabled = false;
+            client_Post.Update();
+
+            billing.Compute();
+            billing.On();
+
+            client_simple.Refresh();
+            client_Post.Refresh();
+            Assert.IsFalse(client_Post.Disabled);
+            Assert.IsFalse(client_simple.Disabled);
+
+            SystemTime.Now = () => DateTime.Now.AddHours(25);
+
+            //billing.Compute();
+            billing.On();
+
+            client_simple.Refresh();
+            client_Post.Refresh();
+            Assert.IsTrue(client_Post.Disabled);
+            Assert.IsFalse(client_simple.Disabled);
+
+            client_Post.Disabled = false;
+            client_Post.Update();
+
+            billing.Compute();
+
+            client_simple.Refresh();
+            client_Post.Refresh();
+            Assert.IsTrue(client_Post.Disabled);
+            Assert.IsFalse(client_simple.Disabled);
+
+            new Payment {
+                            Client = client_Post,
+                            Sum = 1000
+                        }.Save();
+
+            billing.On();
+
+            client_Post.Refresh();
+
+            Assert.IsNull(client_Post.PostponedPayment);
+        }
+
+	    [Test]
         public void RatedTest()
         {
             var client = BaseBillingFixture.CreateAndSaveClient("testRated", false, 100);

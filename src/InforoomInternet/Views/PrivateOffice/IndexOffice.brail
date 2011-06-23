@@ -1,4 +1,35 @@
-﻿<h2>Ваш личный кабинет, ${PhysClientName}</h2>
+﻿<style type="text/css">
+        .button
+        {
+            line-height: 17px;
+            padding: 5px 10px 5px 7px;
+            overflow: visible;
+            width: auto;
+            background-color: #EEEEEE;
+            border: 1px solid #BFBFBF;
+            color: #222222;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 0 7px 0 0;
+            text-decoration: none;
+            border-style: solid;
+        }
+</style>
+<form method=post action="PostponedPayment">
+<table>
+    <tbody>
+        <tr>
+            <td style="padding-left:0px; width:400px;"><h2 style="padding-left:0px;">Ваш личный кабинет, ${PhysClientName}</h2></td>
+            <td>
+                <input type=hidden value=${Client.Id} name="clientId" id="clientId" />
+                     <button type="submit" id="PostponedBut" class="button">
+                      <img alt="Save" src="${siteroot}/Content/tick.png"> Активировать обещанный платеж
+                    </button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</form>
      <div class="text">
         <h3>Баланс составляет <b> ${PhysicalClient.Balance} </b></h3>
         <h3>Номер лицевого счета для оплаты через терминалы <b> ${Client.Id.ToString("00000")} </b></h3>

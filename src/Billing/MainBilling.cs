@@ -83,82 +83,96 @@ namespace Billing
 		{
 			try
 			{
-				UseSession(() =>
-				           	{
-				           		var newClients = Clients.FindAll(DetachedCriteria.For(typeof (Clients))
-				           		                                 	.CreateAlias("PhysicalClient", "PC", JoinType.InnerJoin)
-																	.Add(Restrictions.Eq("PC.ConnectionPaid", false))
-				           		                                 	.Add(Restrictions.IsNotNull("BeginWork"))
-				           		                                 	.Add(Restrictions.IsNotNull("PhysicalClient")));
-				           		foreach (var newClient in newClients)
-				           		{
-				           			var phisCl = newClient.PhysicalClient;
-				           			//var connectSum = PaymentForConnect.FindAllByProperty("ClientId", phisCl).First().Summ;
-				           			phisCl.Balance -= phisCl.ConnectSum;
-				           			phisCl.ConnectionPaid = true;
-									phisCl.UpdateAndFlush();
-				           			//newClient = false;
-									newClient.UpdateAndFlush();
-									new WriteOff
-									{
-										Client = newClient,
-										WriteOffDate = SystemTime.Now(),
-										WriteOffSum = phisCl.ConnectSum
-									}.SaveAndFlush();
+                UseSession(() => {
+                    var newClients = Clients.FindAll(DetachedCriteria.For(typeof (Clients))
+                                                         .CreateAlias("PhysicalClient", "PC", JoinType.InnerJoin)
+                                                         .Add(Restrictions.Eq("PC.ConnectionPaid", false))
+                                                         .Add(Restrictions.IsNotNull("BeginWork"))
+                                                         .Add(Restrictions.IsNotNull("PhysicalClient")));
+                    foreach (var newClient in newClients)
+                    {
+                        var phisCl = newClient.PhysicalClient;
+                        //var connectSum = PaymentForConnect.FindAllByProperty("ClientId", phisCl).First().Summ;
+                        phisCl.Balance -= phisCl.ConnectSum;
+                        phisCl.ConnectionPaid = true;
+                        phisCl.UpdateAndFlush();
+                        //newClient = false;
+                        newClient.UpdateAndFlush();
+                        new WriteOff {
+                                         Client = newClient,
+                                         WriteOffDate = SystemTime.Now(),
+                                         WriteOffSum = phisCl.ConnectSum
+                                     }.SaveAndFlush();
 
-				           		}
-				           		var newPayments = Payment.FindAll(DetachedCriteria.For(typeof (Payment))
-				           		                                  	.Add(Restrictions.Eq("BillingAccount", false)));
-								foreach (var newPayment in newPayments)
-								{
-									var updateClient = Clients.Find(newPayment.Client.Id);
-									var physicalClient = updateClient.PhysicalClient;
-									var lawyerClient = updateClient.LawyerPerson;
-									if (physicalClient != null)
-									{
-										physicalClient.Balance += Convert.ToDecimal(newPayment.Sum);
-										physicalClient.UpdateAndFlush();
-										newPayment.BillingAccount = true;
-										newPayment.UpdateAndFlush();
-									}
-									if (lawyerClient != null)
-									{
-										lawyerClient.Balance += Convert.ToDecimal(newPayment.Sum);
-										lawyerClient.UpdateAndFlush();
-										newPayment.BillingAccount = true;
-										newPayment.UpdateAndFlush();
-									}
-								}
-				           		var clients = Clients.FindAll(DetachedCriteria.For(typeof (Clients))
-									.CreateAlias("PhysicalClient", "PC", JoinType.InnerJoin)
-				           		                              	.Add(Restrictions.IsNotNull("PhysicalClient"))
-																.Add(Restrictions.Eq("Disabled", true))
-																.Add(Restrictions.Eq("AutoUnblocked", true))
-																.Add(Restrictions.Ge("PC.Balance" , 0m)));
-								foreach (var client in clients)
-								{
-									client.Status = Status.Find((uint)StatusType.Worked);
-									client.RatedPeriodDate = null;
-									client.ShowBalanceWarningPage = false;
-									client.Disabled = false;
-									client.UpdateAndFlush();
-								}
-								var lawyerPerson = LawyerPerson.FindAll();
-				           		foreach (var person in lawyerPerson)
-				           		{
-				           			var client = Clients.Queryable.Where(c => c.LawyerPerson == person).ToList().First();
-									if (person.Balance < -(person.Tariff * 1.9m))
-									{
-										client.ShowBalanceWarningPage = true;
-									}
-									else
-									{
-										if (client.ShowBalanceWarningPage)
-											client.ShowBalanceWarningPage = false;
-									}
-									client.UpdateAndFlush();
-				           		}
-				           	});
+                    }
+                    var newPayments = Payment.FindAll(DetachedCriteria.For(typeof (Payment))
+                                                          .Add(Restrictions.Eq("BillingAccount", false)));
+                    foreach (var newPayment in newPayments)
+                    {
+                        var updateClient = Clients.Find(newPayment.Client.Id);
+                        var physicalClient = updateClient.PhysicalClient;
+                        var lawyerClient = updateClient.LawyerPerson;
+                        if (physicalClient != null)
+                        {
+                            var balance = physicalClient.Balance;
+                            physicalClient.Balance += Convert.ToDecimal(newPayment.Sum);
+                            if (balance < 0 && physicalClient.Balance > 0 && updateClient.PostponedPayment != null)
+                            {
+                                updateClient.PostponedPayment = null;
+                                updateClient.Update();
+                            }
+                            physicalClient.UpdateAndFlush();
+                            newPayment.BillingAccount = true;
+                            newPayment.UpdateAndFlush();
+                        }
+                        if (lawyerClient != null)
+                        {
+                            lawyerClient.Balance += Convert.ToDecimal(newPayment.Sum);
+                            lawyerClient.UpdateAndFlush();
+                            newPayment.BillingAccount = true;
+                            newPayment.UpdateAndFlush();
+                        }
+                    }
+                    var clients = Clients.FindAll(DetachedCriteria.For(typeof (Clients))
+                                                      .CreateAlias("PhysicalClient", "PC", JoinType.InnerJoin)
+                                                      .Add(Restrictions.IsNotNull("PhysicalClient"))
+                                                      .Add(Restrictions.Eq("Disabled", true))
+                                                      .Add(Restrictions.Eq("AutoUnblocked", true))
+                                                      .Add(Restrictions.Ge("PC.Balance", 0m)));
+                    foreach (var client in clients)
+                    {
+                        client.Status = Status.Find((uint) StatusType.Worked);
+                        client.RatedPeriodDate = null;
+                        client.ShowBalanceWarningPage = false;
+                        client.Disabled = false;
+                        client.UpdateAndFlush();
+                    }
+                    var lawyerPerson = LawyerPerson.FindAll();
+                    foreach (var person in lawyerPerson)
+                    {
+                        var client = Clients.Queryable.Where(c => c.LawyerPerson == person).ToList().First();
+                        if (person.Balance < -(person.Tariff*1.9m))
+                        {
+                            client.ShowBalanceWarningPage = true;
+                        }
+                        else
+                        {
+                            if (client.ShowBalanceWarningPage)
+                                client.ShowBalanceWarningPage = false;
+                        }
+                        client.UpdateAndFlush();
+                    }
+                    var postPClients = Clients.Queryable.Where(c => c.PostponedPayment != null).ToList();
+                    foreach (var postPClient in postPClients)
+                    {
+                        if ((((DateTime) postPClient.PostponedPayment).AddDays(1) - SystemTime.Now()).Hours <= 0)
+                        {
+                            postPClient.Disabled = true;
+                            postPClient.Status = Status.Find((uint) StatusType.NoWorked);
+                            postPClient.UpdateAndFlush();
+                        }
+                    }
+                });
 			}
 			catch (Exception ex)
 			{
@@ -188,88 +202,90 @@ namespace Billing
 			}
 		}
 
-		public void Compute()
-		{
-			var clients = Clients.FindAll(DetachedCriteria.For(typeof (Clients))
-			                              	.Add(Restrictions.IsNotNull("PhysicalClient")));
-			foreach (var client in clients)
-			{
-				var phisicalClient = client.PhysicalClient;
-				var balance = Convert.ToDecimal(phisicalClient.Balance);
-				if ((balance >= 0) &&
-					(!client.Disabled) &&
-					(client.RatedPeriodDate != DateTime.MinValue) && (client.RatedPeriodDate != null))
-				{
-					DtNow = SystemTime.Now();
+        public void Compute()
+        {
+            var clients = Clients.FindAll(DetachedCriteria.For(typeof (Clients))
+                                              .Add(Restrictions.IsNotNull("PhysicalClient")));
+            foreach (var client in clients)
+            {
+                var phisicalClient = client.PhysicalClient;
+                var balance = Convert.ToDecimal(phisicalClient.Balance);
+                if ((balance >= 0) &&
+                    (!client.Disabled) &&
+                    (client.RatedPeriodDate != DateTime.MinValue) && (client.RatedPeriodDate != null))
+                {
+                    DtNow = SystemTime.Now();
 
-					if ((((DateTime)client.RatedPeriodDate).AddMonths(1) - DtNow).Days == -client.DebtDays)
-					{
-						var dtFrom = (DateTime)client.RatedPeriodDate;
-						var dtTo = DtNow;
-						client.DebtDays += dtFrom.Day - dtTo.Day;
-						var thisMonth = DtNow.Month;
-						client.RatedPeriodDate = DtNow.AddDays(client.DebtDays);
-						while (((DateTime)client.RatedPeriodDate).Month != thisMonth)
-						{
-							client.RatedPeriodDate = ((DateTime)client.RatedPeriodDate).AddDays(-1);
-						}
-						client.UpdateAndFlush();
-					}
-				}
+                    if ((((DateTime) client.RatedPeriodDate).AddMonths(1) - DtNow).Days == -client.DebtDays)
+                    {
+                        var dtFrom = (DateTime) client.RatedPeriodDate;
+                        var dtTo = DtNow;
+                        client.DebtDays += dtFrom.Day - dtTo.Day;
+                        var thisMonth = DtNow.Month;
+                        client.RatedPeriodDate = DtNow.AddDays(client.DebtDays);
+                        while (((DateTime) client.RatedPeriodDate).Month != thisMonth)
+                        {
+                            client.RatedPeriodDate = ((DateTime) client.RatedPeriodDate).AddDays(-1);
+                        }
+                        client.UpdateAndFlush();
+                    }
+                }
 
-				//if (phisicalClient.Status.Blocked == false)
-				if (!client.Disabled)
-				{
-					if (client.RatedPeriodDate != DateTime.MinValue && client.RatedPeriodDate != null)
-					{
-						var toDt = client.GetInterval();
-						var price = phisicalClient.Tariff.GetPrice(client);
-						var dec = price / toDt;
-						phisicalClient.Balance -= dec;
-						phisicalClient.UpdateAndFlush();
-						var bufBal = phisicalClient.Balance;
-						client.ShowBalanceWarningPage = bufBal - dec < 0;
-						client.UpdateAndFlush();
-						new WriteOff
-							{
-								Client = client,
-								WriteOffDate = SystemTime.Now(),
-								WriteOffSum = dec
-							}.SaveAndFlush();
-					}
-				}
+                //if (phisicalClient.Status.Blocked == false)
+                if (!client.Disabled)
+                {
+                    if (client.RatedPeriodDate != DateTime.MinValue && client.RatedPeriodDate != null)
+                    {
+                        var toDt = client.GetInterval();
+                        var price = phisicalClient.Tariff.GetPrice(client);
+                        var dec = price/toDt;
+                        phisicalClient.Balance -= dec;
+                        phisicalClient.UpdateAndFlush();
+                        var bufBal = phisicalClient.Balance;
+                        client.ShowBalanceWarningPage = bufBal - dec < 0;
+                        client.UpdateAndFlush();
+                        new WriteOff {
+                                         Client = client,
+                                         WriteOffDate = SystemTime.Now(),
+                                         WriteOffSum = dec
+                                     }.SaveAndFlush();
+                    }
+                }
 
-				// Тут со временем должно устанавливаться дисейбл
-				if ((phisicalClient.Balance < 0) &&
-				    (!client.Disabled))
-				{
-					client.Disabled = true;
-					client.Status = Status.Find((uint) StatusType.NoWorked);
-					//phisicalClient.UpdateAndFlush();
-					client.UpdateAndFlush();
-				}
-			}
-			var lawyerclients = Clients.Queryable.Where(c => c.LawyerPerson != null).ToList();
-			foreach (var client in lawyerclients)
-			{
-				var person = client.LawyerPerson;
-				if (!client.Disabled)
-				{
-					var thisDate = SystemTime.Now();
-					decimal spis = person.Tariff / DateTime.DaysInMonth(thisDate.Year, thisDate.Month);
-					person.Balance -= spis;
-					person.UpdateAndFlush();
-					new WriteOff
-						{
-							Client = client,
-							WriteOffDate = SystemTime.Now(),
-							WriteOffSum = spis
-						}.SaveAndFlush();
-				}
-			}
-			var thisDateMax = InternetSettings.FindFirst();
-			thisDateMax.NextBillingDate = DateTime.Now.AddDays(1);
-			thisDateMax.UpdateAndFlush();
-		}
+                // Тут со временем должно устанавливаться дисейбл
+                if ((phisicalClient.Balance < 0) &&
+                    (!client.Disabled))
+                {
+                    if ((client.PostponedPayment == null) ||
+                        (client.PostponedPayment != null &&
+                         (((DateTime) client.PostponedPayment).AddDays(1) - SystemTime.Now()).Hours <= 0))
+                    {
+                        client.Disabled = true;
+                        client.Status = Status.Find((uint) StatusType.NoWorked);
+                        client.UpdateAndFlush();
+                    }
+                }
+            }
+            var lawyerclients = Clients.Queryable.Where(c => c.LawyerPerson != null).ToList();
+            foreach (var client in lawyerclients)
+            {
+                var person = client.LawyerPerson;
+                if (!client.Disabled)
+                {
+                    var thisDate = SystemTime.Now();
+                    decimal spis = person.Tariff/DateTime.DaysInMonth(thisDate.Year, thisDate.Month);
+                    person.Balance -= spis;
+                    person.UpdateAndFlush();
+                    new WriteOff {
+                                     Client = client,
+                                     WriteOffDate = SystemTime.Now(),
+                                     WriteOffSum = spis
+                                 }.SaveAndFlush();
+                }
+            }
+            var thisDateMax = InternetSettings.FindFirst();
+            thisDateMax.NextBillingDate = DateTime.Now.AddDays(1);
+            thisDateMax.UpdateAndFlush();
+        }
 	}
 }

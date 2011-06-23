@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using CassiniDev;
+using Castle.ActiveRecord;
 using InternetInterface;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
@@ -166,49 +167,48 @@ namespace InforoomInternet.Test.Unit
 			}
 		}
 
-		[Test]
-		public void PrivateOfficeTest()
-		{
-			var phisClient = new PhysicalClients
-			{
-				Name = "Петр",
-				Patronymic = "Иванович",
-				Balance = 500,
-				Password = CryptoPass.GetHashString("123")
-			};
-			phisClient.SaveAndFlush();
-			var client = new Clients
-			{
-				PhysicalClient = phisClient
-			};
-			client.SaveAndFlush();
-			new Payment
-				{
-					Client = Clients.Queryable.First(c => c.PhysicalClient == phisClient),
-					Agent = Agent.FindFirst(),
-					Sum = 500
-				}.SaveAndFlush();
-			new WriteOff
-				{
-					Client = client,
-					WriteOffDate = DateTime.Now,
-					WriteOffSum = 400
-				}.SaveAndFlush();
-			using (var browser = Open("PrivateOffice/IndexOffice"))
-			{
-				browser.TextField("Login").AppendText(phisClient.Id.ToString());
-				browser.TextField("Password").AppendText("123");
-				browser.Button("LogBut").Click();
-				Thread.Sleep(500);
-				Assert.That(browser.Text, Is.StringContaining("Ваш личный кабинет, Петр Иванович"));
-				Assert.That(browser.Text, Is.StringContaining("Номер лицевого счета для оплаты через терминалы " + phisClient.Id.ToString("00000")));
-				Assert.That(browser.Text, Is.StringContaining("500"));
-				Assert.That(browser.Text, Is.StringContaining("400"));
-			}
-			Console.WriteLine("PrivateOfficeTest Complite");
-		}
+        [Test]
+        public void PrivateOfficeTest()
+        {
+            Clients client;
+            PhysicalClients phisClient;
+            string clientId;
+            using (var browser = Open("PrivateOffice/IndexOffice"))
+            {
+                using (new SessionScope())
+                {
+                    clientId = browser.Element("clientId").GetAttributeValue("value");
+                    client = Clients.Find(Convert.ToUInt32(clientId));
+                    phisClient = client.PhysicalClient;
+                    Console.WriteLine(clientId);
+                    Console.WriteLine(client.Id);
+                    Assert.That(browser.Text, Is.StringContaining("Ваш личный кабинет"));
+                    Assert.That(browser.Text,
+                                Is.StringContaining("Номер лицевого счета для оплаты через терминалы " +
+                                                    client.Id.ToString("00000")));
+                    Assert.That(browser.Text,
+                                Is.StringContaining(
+                                    WriteOff.Queryable.Where(w => w.Client == client).First().WriteOffSum.ToString()));
 
-		[Test]
+                    phisClient.Balance = -100;
+                    phisClient.Update();
+                    client.PostponedPayment = null;
+                    client.Disabled = true;
+                    client.Update();
+                }
+                using (new SessionScope())
+                {
+                    browser.Button("PostponedBut").Click();
+                    Assert.That(browser.Text, Is.StringContaining("Услуга \"Обещанный платеж активирована\""));
+                    client = Clients.Find(Convert.ToUInt32(clientId));
+                    Assert.IsFalse(client.Disabled);
+                }
+
+            }
+            Console.WriteLine("PrivateOfficeTest Complite");
+        }
+
+	    [Test]
 		public void LinkTest()
 		{
 			using (var browser = Open(""))

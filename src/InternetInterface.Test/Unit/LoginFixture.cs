@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using InternetInterface.Helpers;
+using InternetInterface.Models;
 using NUnit.Framework;
 using InternetInterface.Controllers;
 
@@ -12,7 +13,13 @@ namespace InternetInterface.Test.Unit_
 	[TestFixture]
 	class LoginFixture : ActiveDirectoryHelper
 	{
-		[Test]
+        [Test]
+        public void GenPass()
+        {
+            Console.WriteLine(CryptoPass.GetHashString("1234"));
+        }
+
+	    [Test]
 		public void ImageTest()
 		{
 

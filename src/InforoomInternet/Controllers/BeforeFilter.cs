@@ -54,7 +54,11 @@ namespace InforoomInternet.Controllers
 		public bool Perform(ExecuteWhen exec, IEngineContext context, IController controller, IControllerContext controllerContext)
 		{
 			var ip = context.Request.UserHostAddress;
+#if DEBUG
+		    var lease = Lease.FindAll();
+#else
 			var lease = Lease.FindAllByProperty("Ip", Convert.ToUInt32(NetworkSwitches.SetProgramIp(ip)));
+#endif
 			if (lease.Length != 0)
 			{
 				var clientsId = lease.Where(
