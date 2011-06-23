@@ -19,51 +19,56 @@
 <table>
     <tbody>
         <tr>
-            <td style="padding-left:0px; width:400px;"><h2 style="padding-left:0px;">Ваш личный кабинет, ${PhysClientName}</h2></td>
+            <td style="padding-left:0px; width:350px;">
+                <h2 style="padding-left:0px;">Ваш личный кабинет, ${PhysClientName}</h2>
+                <h3>Баланс составляет <b> ${PhysicalClient.Balance} </b></h3>
+                <h3>Номер лицевого счета для оплаты через терминалы <b> ${Client.Id.ToString("00000")} </b></h3>
+            </td>
             <td>
                 <input type=hidden value=${Client.Id} name="clientId" id="clientId" />
-                     <button type="submit" id="PostponedBut" class="button">
-                      <img alt="Save" src="${siteroot}/Content/tick.png"> Активировать обещанный платеж
-                    </button>
+                <button type="submit" id="PostponedBut" class="button">
+                    <img alt="Save" src="${siteroot}/Content/tick.png"> Активировать обещанный платеж
+                </button>
+                <span style="font-size:small; color:#8d8d8e; ">
+                    Услуга "Обещанный платеж" открывает доступ к Интернет, сроком на одни сутки, при отрицательном балансе, единовременно, до внесения платежа, покрывающего задолженность.
+                </span>
             </td>
         </tr>
     </tbody>
 </table>
 </form>
-     <div class="text">
-        <h3>Баланс составляет <b> ${PhysicalClient.Balance} </b></h3>
-        <h3>Номер лицевого счета для оплаты через терминалы <b> ${Client.Id.ToString("00000")} </b></h3>
-         <h3><b>Зачисления</b></h3>
-             <table cellpadding="3" cellspacing="0" width="100%">
-                 <tr class="caption">
-                     <td >Сумма</td>
-                     <td >Дата</td>
-   	              </tr>
-                 <% for item in Payments :  %>
-                <tr>
-                    <td>${item.Sum}</td>
-                    <td>${item.PaidOn.ToShortDateString()}</td>
-                </tr>
-                <%end %>
-            </table>
-            <h3><b>Списания</b></h3>
-         <p>
-         <a href="IndexOffice.brail?grouped=day">Сгруппировать по дням</a>
-         <a href="IndexOffice.brail?grouped=month">Сгруппировать по месяцам</a>
-         <a href="IndexOffice.brail?grouped=year">Сгруппировать по годам</a>
-         </p>
-             <table cellpadding="3" cellspacing="0" width="100%">
-                 <tr class="caption">
-                     <td >Сумма</td>
-                     <td >Дата</td>
-                 </tr>
-                <% for item in WriteOffs :  %>
-                <tr>
-                    <td>${item.WriteOffSum}</td>
-                    <td>${item.GetDate(grouped)}</td>
-                </tr>
-                <%end %>
-             </table>
-      </div>
-      <div class="text">
-      </div>
+<div class="text">
+    <h3><b>Зачисления</b></h3>
+        <table cellpadding="3" cellspacing="0" width="100%">
+            <tr class="caption">
+                <td >Сумма</td>
+                <td >Дата</td>
+   	        </tr>
+            <% for item in Payments :  %>
+        <tr>
+            <td>${item.Sum}</td>
+            <td>${item.PaidOn.ToShortDateString()}</td>
+        </tr>
+        <%end %>
+    </table>
+    <h3><b>Списания</b></h3>
+    <p>
+    <a href="IndexOffice.brail?grouped=day">Сгруппировать по дням</a>
+    <a href="IndexOffice.brail?grouped=month">Сгруппировать по месяцам</a>
+    <a href="IndexOffice.brail?grouped=year">Сгруппировать по годам</a>
+    </p>
+        <table cellpadding="3" cellspacing="0" width="100%">
+            <tr class="caption">
+                <td >Сумма</td>
+                <td >Дата</td>
+            </tr>
+        <% for item in WriteOffs :  %>
+        <tr>
+            <td>${item.WriteOffSum}</td>
+            <td>${item.GetDate(grouped)}</td>
+        </tr>
+        <%end %>
+        </table>
+</div>
+<div class="text">
+</div>
