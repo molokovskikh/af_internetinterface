@@ -25,18 +25,27 @@ namespace InforoomInternet.Controllers
 			PropertyBag["Payments"] = Payment.FindAllByProperty("Client", Client).OrderBy(e => e.PaidOn).ToArray();
 		}
 
-        public void PostponedPayment(uint clientId)
+        public void PostponedPayment()
         {
+            var clientId = Convert.ToUInt32(Session["LoginClient"]);
             var client = Clients.Find(clientId);
-            var pclient = client.PhysicalClient;
+            PropertyBag["Client"] = client;
             var message = string.Empty;
             if (client.PostponedPayment != null)
-                message += "Повторное использование услуги \"Обещаный платеж невозможно\"";
-            if (!client.Disabled)
+                message += "Повторное использование услуги \"Обещаный платеж\" невозможно";
+            if (!client.Disabled && string.IsNullOrEmpty(message))
                 message += "Воспользоваться устугой возможно только при отрицательном балансе";
-            if (!client.Disabled || !client.AutoUnblocked)
+            if ((!client.Disabled || !client.AutoUnblocked) && string.IsNullOrEmpty(message))
                 message += "Услуга \"Обещанный платеж\" недоступна";
-            if (client.PostponedPayment == null && client.Disabled && pclient.Balance < 0 && client.AutoUnblocked)
+            PropertyBag["message"] = message;
+        }
+
+	    public void PostponedPaymentActivate()
+        {
+            var clientId = Convert.ToUInt32(Session["LoginClient"]);
+            var client = Clients.Find(clientId);
+            var pclient = client.PhysicalClient;
+            if (client.CanUsedPostponedPayment())
             {
                 client.PostponedPayment = DateTime.Now;
                 client.Disabled = false;
@@ -49,9 +58,9 @@ namespace InforoomInternet.Controllers
                              }.Save();
                 pclient.Update();
                 client.Update();
-                message += "Услуга \"Обещанный платеж активирована\"";
+                Flash["message"] = "Услуга \"Обещанный платеж активирована\"";
             }
-            PropertyBag["message"] = message;
+            RedirectToUrl("IndexOffice");
         }
 	}
 }

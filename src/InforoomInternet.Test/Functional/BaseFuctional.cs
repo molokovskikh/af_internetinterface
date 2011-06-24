@@ -180,8 +180,6 @@ namespace InforoomInternet.Test.Unit
                     clientId = browser.Element("clientId").GetAttributeValue("value");
                     client = Clients.Find(Convert.ToUInt32(clientId));
                     phisClient = client.PhysicalClient;
-                    Console.WriteLine(clientId);
-                    Console.WriteLine(client.Id);
                     Assert.That(browser.Text, Is.StringContaining("Ваш личный кабинет"));
                     Assert.That(browser.Text,
                                 Is.StringContaining("Номер лицевого счета для оплаты через терминалы " +
@@ -191,20 +189,25 @@ namespace InforoomInternet.Test.Unit
                                     WriteOff.Queryable.Where(w => w.Client == client).First().WriteOffSum.ToString()));
 
                     phisClient.Balance = -100;
-                    phisClient.Update();
+                    phisClient.UpdateAndFlush();
                     client.PostponedPayment = null;
                     client.Disabled = true;
-                    client.Update();
+                    client.AutoUnblocked = true;
+                    client.UpdateAndFlush();
                 }
+            }
+            using (var browser = Open("PrivateOffice/IndexOffice"))
                 using (new SessionScope())
                 {
+                    browser.Element("podrob").Click();
+                    //Console.WriteLine(browser.Html);
                     browser.Button("PostponedBut").Click();
-                    Assert.That(browser.Text, Is.StringContaining("Услуга \"Обещанный платеж активирована\""));
+                    Assert.That(browser.Text, Is.StringContaining("Ваш личный кабинет"));
                     client = Clients.Find(Convert.ToUInt32(clientId));
                     Assert.IsFalse(client.Disabled);
                 }
 
-            }
+
             Console.WriteLine("PrivateOfficeTest Complite");
         }
 

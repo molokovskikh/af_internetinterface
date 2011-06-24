@@ -80,11 +80,11 @@ namespace InternetInterface.Controllers
             var message = string.Empty;
             if (client.PostponedPayment != null)
                 message += "Повторное использование услуги \"Обещаный платеж невозможно\"";
-            if (pclient.Balance > 0)
+            if (pclient.Balance > 0 && string.IsNullOrEmpty(message))
                 message += "Воспользоваться устугой возможно только при отрицательном балансе";
-            if (!client.Disabled || client.AutoUnblocked)
+            if ((!client.Disabled || !client.AutoUnblocked) && string.IsNullOrEmpty(message))
                 message += "Услуга \"Обещанный платеж\" недоступна";
-            if (client.PostponedPayment == null && client.Disabled && pclient.Balance < 0 && client.AutoUnblocked)
+            if (client.CanUsedPostponedPayment())
             {
                 client.PostponedPayment = DateTime.Now;
                 client.Disabled = false;

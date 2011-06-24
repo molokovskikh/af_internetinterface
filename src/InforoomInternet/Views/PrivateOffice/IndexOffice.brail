@@ -1,42 +1,18 @@
-﻿<style type="text/css">
-        .button
-        {
-            line-height: 17px;
-            padding: 5px 10px 5px 7px;
-            overflow: visible;
-            width: auto;
-            background-color: #EEEEEE;
-            border: 1px solid #BFBFBF;
-            color: #222222;
-            cursor: pointer;
-            font-weight: bold;
-            margin: 0 7px 0 0;
-            text-decoration: none;
-            border-style: solid;
-        }
-</style>
-<form method=post action="PostponedPayment">
-<table>
-    <tbody>
-        <tr>
-            <td style="padding-left:0px; width:350px;">
-                <h2 style="padding-left:0px;">Ваш личный кабинет, ${PhysClientName}</h2>
-                <h3>Баланс составляет <b> ${PhysicalClient.Balance} </b></h3>
-                <h3>Номер лицевого счета для оплаты через терминалы <b> ${Client.Id.ToString("00000")} </b></h3>
-            </td>
-            <td>
-                <input type=hidden value=${Client.Id} name="clientId" id="clientId" />
-                <button type="submit" id="PostponedBut" class="button">
-                    <img alt="Save" src="${siteroot}/Content/tick.png"> Активировать обещанный платеж
-                </button>
-                <span style="font-size:small; color:#8d8d8e; ">
-                    Услуга "Обещанный платеж" открывает доступ к Интернет, сроком на одни сутки, при отрицательном балансе, единовременно, до внесения платежа, покрывающего задолженность.
-                </span>
-            </td>
-        </tr>
-    </tbody>
-</table>
-</form>
+﻿<script type="text/javascript">
+<% if IsDefined("message"): %>
+    $(function () { 
+        alert('${message}');
+    }); 
+<%end %>
+</script>
+<input type=hidden value=${Client.Id} id="clientId" />
+<h2 style="padding-left:0px;">Ваш личный кабинет, ${PhysClientName}</h2>
+<h3 style="padding-bottom:0px;">Баланс составляет <b> ${PhysicalClient.Balance} </b></h3>
+<%if Client.CanUsedPostponedPayment(): %>
+<p style="color:#8d8d8e;">Доступ в интернет заблокирован, Вы можете воспольваться услугой "Обещанный платеж" <a id="podrob" href="PostponedPayment">Подробнее...</a></p>
+<%end %>
+<h3>Номер лицевого счета для оплаты через терминалы <b> ${Client.Id.ToString("00000")} </b></h3>
+
 <div class="text">
     <h3><b>Зачисления</b></h3>
         <table cellpadding="3" cellspacing="0" width="100%">
@@ -45,11 +21,11 @@
                 <td >Дата</td>
    	        </tr>
             <% for item in Payments :  %>
-        <tr>
-            <td>${item.Sum}</td>
-            <td>${item.PaidOn.ToShortDateString()}</td>
-        </tr>
-        <%end %>
+                <tr>
+                    <td>${item.Sum}</td>
+                    <td>${item.PaidOn.ToShortDateString()}</td>
+                </tr>
+            <%end %>
     </table>
     <h3><b>Списания</b></h3>
     <p>

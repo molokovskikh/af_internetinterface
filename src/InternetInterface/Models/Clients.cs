@@ -74,8 +74,13 @@ namespace InternetInterface.Models
         [Property]
         public virtual DateTime? PostponedPayment { get; set; }
 
-		[BelongsTo]
-		public virtual AdditionalStatus AdditionalStatus { get; set; }
+        [BelongsTo]
+        public virtual AdditionalStatus AdditionalStatus { get; set; }
+
+        public virtual bool CanUsedPostponedPayment()
+        {
+            return PhysicalClient != null && PostponedPayment == null && Disabled && PhysicalClient.Balance < 0 && AutoUnblocked;
+        }
 
 		public virtual bool AdditionalCanUsed(string aStatus)
 		{
