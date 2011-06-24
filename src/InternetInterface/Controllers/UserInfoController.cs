@@ -373,7 +373,7 @@ namespace InternetInterface.Controllers
 			if (Validator.IsValid(updateClient) && statusCanChanged)
 			{
 				if (updateClient.PassportDate != null)
-				updateClient.PassportDate = DateTime.Parse(updateClient.PassportDate).ToShortDateString();
+				updateClient.PassportDate = updateClient.PassportDate;
                 var _house = House.Find(house_id);
 			    updateClient.HouseObj = _house;
 			    updateClient.Street = _house.Street;

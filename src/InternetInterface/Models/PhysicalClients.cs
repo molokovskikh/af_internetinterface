@@ -127,7 +127,7 @@ namespace InternetInterface.Models
 		public virtual string PassportNumber { get; set; }
 
 		[Property, UserValidateNonEmpty("Введите дату выдачи паспорта"), ValidateDate("Ошибка формата даты **-**-****")]
-		public virtual string PassportDate { get; set; }
+        public virtual DateTime PassportDate { get; set; }
 
 		[Property, UserValidateNonEmpty("Заполните поле 'Кем выдан паспорт'")]
 		public virtual string WhoGivePassport { get; set; }

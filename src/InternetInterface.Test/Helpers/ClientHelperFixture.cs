@@ -30,7 +30,7 @@ namespace InternetInterface.Test.Helpers
 			       		House = "1",
 			       		//Login = "Login" + new Random().Next(100),
 			       		Name = "testName",
-			       		PassportDate = DateTime.Now.ToShortDateString(),
+			       		PassportDate = DateTime.Now,
 						PassportNumber = "123456",
 						PassportSeries = "1234",
 						Password = CryptoPass.GetHashString(CryptoPass.GeneratePassword()),

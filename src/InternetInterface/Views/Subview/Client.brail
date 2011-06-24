@@ -45,7 +45,7 @@ $('#register_house').trigger('reveal:close');
     <td>
         Дата рождения</td>
     <td >
-        <input id="DateOfBirth" type="text" value="${client.DateOfBirth}" name="client.DateOfBirth"/></td>
+        <input id="DateOfBirth" type="text" value="${client.DateOfBirth.ToShortDateString()}" name="client.DateOfBirth"/></td>
     <td>
         ${VB.GetBlock("DateOfBirth")}
     </td>
@@ -185,7 +185,7 @@ $('#register_house').trigger('reveal:close');
     <td ><b>Дата выдачи паспорта</b></td>
     <%end %>
     <td >
-        <input id="PassportDate" type="text" value="${client.PassportDate}" name="client.PassportDate"/></td>
+        <input id="PassportDate" type="text" value="${client.PassportDate.ToShortDateString()}" name="client.PassportDate"/></td>
     <td>
         ${VB.GetBlock("PassportDate")}
     </td>

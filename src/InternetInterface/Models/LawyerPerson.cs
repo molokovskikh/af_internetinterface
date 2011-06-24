@@ -56,5 +56,8 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual decimal Balance { get; set; }
+
+        [Property]
+        public virtual string MailingAddress { get; set; }
 	}
 }

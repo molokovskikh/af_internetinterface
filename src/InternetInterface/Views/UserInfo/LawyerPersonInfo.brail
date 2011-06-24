@@ -35,6 +35,9 @@
 		</tr>
 		<tr>
 			<td><span class="description">Фактический адрес: </span> ${Client.ActualAdress} </td>
+		</tr>		
+        <tr>
+			<td><span class="description">Почтовый адрес: </span> ${Client.MailingAddress} </td>
 		</tr>
 		<tr>
 			<td><span class="description">Номер телефона: </span> ${Client.Telephone}</td>

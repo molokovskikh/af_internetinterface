@@ -83,6 +83,9 @@
 			<td><span class="description">Номер лицевого счета: </span> ${_client.Id.ToString("00000")}</td>
 		</tr>
 	<%if PartnerAccessSet.AccesPartner("SSI"): %>
+        <tr>
+            <td><span class="description">Дата рождения: </span> ${Client.DateOfBirth.ToShortDateString()}</td>
+        </tr>
 		<tr>
 			<td><span class="description">Город: </span> ${Client.City}</td>
 		</tr>
@@ -102,12 +105,12 @@
 												 <span class="description">Серия\Номер</span> ${Client.PassportSeries} \ ${Client.PassportNumber}<br />
 												 <span class="description">Кем выдан: </span> ${Client.WhoGivePassport}<br />
 												 <span class="description">Адрес регистрации:</span> ${Client.RegistrationAdress}<br />
-												 <span class="description">Дата выдачи :</span> ${Client.PassportDate}</td>
+												 <span class="description">Дата выдачи :</span> ${Client.PassportDate.ToShortDateString()}</td>
 		</tr>
 		<%end %>
 		<%if PartnerAccessSet.AccesPartner("SSI"): %>
 		<tr>
-			<td><span class="description">Дата регистрации:</span> ${_client.RegDate}</td>
+			<td><span class="description">Дата регистрации:</span> ${_client.RegDate.ToShortDateString()}</td>
 		</tr>
 				
 		

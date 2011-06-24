@@ -31,6 +31,15 @@
 	</td>
 </tr>
 <tr>
+	<td>
+		Почтовый адрес адрес</td>
+	<td >
+		<input id="MailingAddress" type="text" value="${LegalPerson.MailingAddress}" name="LegalPerson.MailingAddress"/></td>
+	<td>
+		${VB.GetBlock("MailingAddress")}
+	</td>
+</tr>
+<tr>
 	<td >
 		ИНН</td>
 	<td>
