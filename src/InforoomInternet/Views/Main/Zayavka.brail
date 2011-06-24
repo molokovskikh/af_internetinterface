@@ -5,7 +5,7 @@
 	<div id="wrapper_inner">
 		<form method="post" action="send" id="zakazform">
 		<p id="connect_message">
-			Стоимость подключения 700р.
+			Стоимость подключения 0р.
 		</p>
 		<p>
 			<label for="fio">Ф.И.О.</label>

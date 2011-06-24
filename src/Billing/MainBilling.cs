@@ -149,7 +149,7 @@ namespace Billing
 				           			var client = Clients.Queryable.Where(c => c.LawyerPerson == person).ToList().First();
 									if (person.Balance < -(person.Tariff * 1.9m))
 									{
-										client.ShowBalanceWarningPage = true;
+										//client.ShowBalanceWarningPage = true;
 									}
 									else
 									{
