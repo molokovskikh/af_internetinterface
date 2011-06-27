@@ -135,7 +135,7 @@ namespace InternetInterface.Models
 		[Property, UserValidateNonEmpty("Введите адрес регистрации")]
 		public virtual string RegistrationAdress { get; set; }
 
-		[BelongsTo("Tariff", Cascade = CascadeEnum.All)]
+		[BelongsTo("Tariff", Cascade = CascadeEnum.SaveUpdate)]
 		public virtual Tariff Tariff { get; set; }
 
 		[Property, ValidateNonEmpty("Введите сумму"), ValidateDecimal("Неверно введено число")]

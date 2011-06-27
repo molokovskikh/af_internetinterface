@@ -51,7 +51,7 @@ namespace InternetInterface.Controllers
 		{
 			IList<Clients> clients = new List<Clients>();
             clients = GetClientsLogic.GetClients(searchProperties, connectedType, clientTypeFilter, tariff, whoregister, searchText, brigad, addtionalStatus);
-			Flash["SClients"] = clients;
+            PropertyBag["SClients"] = clients;
 			//PropertyBag["ConnectBlockDisplay"] = ((List<Clients>) clients).Find(p => p.PhysicalClient.WhoConnected == null || p.LawyerPerson.WhoConnected == null);
 
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
@@ -66,7 +66,7 @@ namespace InternetInterface.Controllers
             PropertyBag["additionalStatuses"] = AdditionalStatus.FindAll();
             PropertyBag["ChAdditional"] = addtionalStatus;
 
-			Flash["Brigads"] = Brigad.FindAllSort();
+            PropertyBag["Brigads"] = Brigad.FindAllSort();
 		}
 
 

@@ -20,7 +20,7 @@ namespace InternetInterface.Models
 		[Property("`ip`")]
 		public uint Ip { get; set; }
 
-		[BelongsTo(Cascade = CascadeEnum.All)]
+		[BelongsTo(Cascade = CascadeEnum.SaveUpdate)]
 		public ClientEndpoints Endpoint { get; set; }
 
 	}
