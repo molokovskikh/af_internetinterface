@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading;
 using CassiniDev;
+using Castle.ActiveRecord;
 using InternetInterface;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
@@ -45,10 +47,34 @@ namespace InforoomInternet.Test.Unit
 		[Test]
 		public void WarningTest()
 		{
-			using (var browser = Open("Warning?host=http://google.com&url="))
+		    var mashineIp = BigEndianConverter.ToInt32(
+		        IPAddress.Parse("127.0.0.1").
+		            GetAddressBytes());
+            using (new SessionScope())
+            {
+                new Lease
+                {
+                    Ip = mashineIp,
+                    Endpoint = new ClientEndpoints
+                    {
+                        Client = new Clients
+                        {
+                            Disabled = false,
+                            LawyerPerson =
+                                new LawyerPerson
+                                {
+                                    Balance = -100,
+                                    Tariff = 1000,
+                                }
+                        }
+                    }
+                }.Save();
+            }
+		    using (var browser = Open("Warning?host=http://google.com&url="))
 			{
 				Thread.Sleep(1000);
 				Assert.That(browser.Text, Is.StringContaining("Продолжить"));
+                Assert.That(browser.Text, Is.StringContaining("Ваша задолженность за оказанные услуги по доступу в интернет составляет 100,00 руб."));
 				browser.Button(Find.ById("ConButton")).Click();
 				Thread.Sleep(2000);
 				Assert.That(browser.Text, Is.StringContaining("google"));
@@ -61,6 +87,50 @@ namespace InforoomInternet.Test.Unit
 				Thread.Sleep(2000);
 				Assert.That(browser.Text, Is.StringContaining("Тарифы"));
 			}
+            using (new SessionScope())
+            {
+                foreach (var lease in Lease.Queryable.Where(l => l.Ip == mashineIp).ToList())
+                    lease.Delete();
+                new Lease
+                {
+                    Ip = mashineIp,
+                    Endpoint = new ClientEndpoints
+                    {
+                        Client = new Clients
+                        {
+                            Disabled = false,
+                            PhysicalClient =
+                                new PhysicalClients()
+                                {
+                                    Balance = -200,
+                                    Tariff = new Tariff
+                                    {
+                                        Name = "Тестовый",
+                                        Price = 100,
+                                        Description = "Тестовый тариф"
+                                    }
+                                }
+                        }
+                    }
+                }.Save();
+            }
+            using (var browser = Open("Warning?host=http://google.com&url="))
+            {
+                Thread.Sleep(1000);
+                Assert.That(browser.Text, Is.StringContaining("Продолжить"));
+                Assert.That(browser.Text, Is.StringContaining("Ваша задолженность за оказанные услуги по доступу в интернет составляет 200,00 руб."));
+                browser.Button(Find.ById("ConButton")).Click();
+                Thread.Sleep(2000);
+                Assert.That(browser.Text, Is.StringContaining("google"));
+            }
+            using (var browser = Open("Warning"))
+            {
+                Thread.Sleep(1000);
+                Assert.That(browser.Text, Is.StringContaining("Продолжить"));
+                browser.Button(Find.ById("ConButton")).Click();
+                Thread.Sleep(2000);
+                Assert.That(browser.Text, Is.StringContaining("Тарифы"));
+            }
 			Console.WriteLine("WarningTest Complite");
 		}
 

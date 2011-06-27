@@ -17,7 +17,7 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string Ip { get; set; }
 
-		[BelongsTo("Client")]
+		[BelongsTo("Client", Cascade = CascadeEnum.All)]
 		public virtual Clients Client { get; set; }
 
 		[Property]

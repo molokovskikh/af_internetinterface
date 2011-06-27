@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
 using Common.Models.Helpers;
@@ -29,7 +30,7 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual ClientType Type { get; set; }
 
-		[BelongsTo("PhysicalClient", Lazy = FetchWhen.OnInvoke)]
+		[BelongsTo("PhysicalClient", Lazy = FetchWhen.OnInvoke, Cascade = CascadeEnum.All)]
 		public virtual PhysicalClients PhysicalClient { get; set; }
 
 		[Property]
@@ -44,7 +45,7 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual DateTime? BeginWork { get; set; }
 
-		[BelongsTo]
+		[BelongsTo(Cascade = CascadeEnum.All)]
 		public virtual LawyerPerson LawyerPerson { get; set; }
 
 		[Property]
@@ -172,5 +173,11 @@ typeof(PhisicalClientConnectInfo)))
 				}
 			return new PhisicalClientConnectInfo();
 		}
+
+        public static Lease FindByIP(string ip)
+        {
+            var addressValue = BigEndianConverter.ToInt32(IPAddress.Parse(ip).GetAddressBytes());
+            return Lease.Queryable.FirstOrDefault(l => l.Ip == addressValue);
+        }
 	}
 }

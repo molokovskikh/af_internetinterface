@@ -465,7 +465,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["ChangeBalance"] = true;
 			if (changeProperties.IsForTariff())
 			{
-				forChangeSumm = PhysicalClients.Find(clientId).Tariff.Price.ToString();
+				forChangeSumm = Clients.Find(clientId).PhysicalClient.Tariff.Price.ToString();
 			}
 			if (changeProperties.IsOtherSumm())
 			{

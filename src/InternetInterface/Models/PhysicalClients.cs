@@ -135,7 +135,7 @@ namespace InternetInterface.Models
 		[Property, UserValidateNonEmpty("Введите адрес регистрации")]
 		public virtual string RegistrationAdress { get; set; }
 
-		[BelongsTo("Tariff")]
+		[BelongsTo("Tariff", Cascade = CascadeEnum.All)]
 		public virtual Tariff Tariff { get; set; }
 
 		[Property, ValidateNonEmpty("Введите сумму"), ValidateDecimal("Неверно введено число")]
@@ -195,12 +195,6 @@ namespace InternetInterface.Models
 		public virtual decimal ToPay()
 		{
 			return Math.Abs(Balance) + Tariff.Price;
-		}
-
-		public static Lease FindByIP(string ip)
-		{
-			var addressValue = BigEndianConverter.ToInt32(IPAddress.Parse(ip).GetAddressBytes());
-			return Lease.Queryable.FirstOrDefault(l => l.Ip == addressValue);
 		}
 	}
 }

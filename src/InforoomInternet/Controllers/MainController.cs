@@ -93,13 +93,13 @@ namespace InforoomInternet.Controllers
 
 		public void Warning()
 		{
-			var hostAdress = Request.UserHostAddress;
+			var hostAdress = Request.UserHostAddress;   
 /*#if DEBUG
 			hostAdress = "91.219.6.6";
 #endif*/
-			var lease = PhysicalClients.FindByIP(hostAdress);
+			var lease = Clients.FindByIP(hostAdress);
 #if DEBUG
-			lease = new Lease {
+			/*lease = new Lease {
 				Endpoint = new ClientEndpoints {
 					Client = new Clients {
 						Disabled = false,
@@ -111,7 +111,7 @@ namespace InforoomInternet.Controllers
 						}
 					}
 				}
-			};
+			};*/
 #endif
 			if (lease == null)
 			{
@@ -119,14 +119,6 @@ namespace InforoomInternet.Controllers
 				//RedirectToSiteRoot();
 				return;
 			}
-			if (lease.Endpoint.Client.PhysicalClient == null)
-			{
-				Redirecter.RedirectRoot(Context, this);
-				//RedirectToSiteRoot();
-				return;
-			}
-			var pclient = lease.Endpoint.Client.PhysicalClient;
-			var client = lease.Endpoint.Client;
 
 			if (IsPost)
 			{
@@ -137,14 +129,28 @@ namespace InforoomInternet.Controllers
 					//RedirectToSiteRoot();
 				else
 					RedirectToUrl(url);
+                return;
 			}
-			var host = Request["host"];
-			var rUrl = Request["url"];
-			if (!string.IsNullOrEmpty(host))
-				PropertyBag["referer"] = host + rUrl;
-			else PropertyBag["referer"] = string.Empty;
+
+            var host = Request["host"];
+            var rUrl = Request["url"];
+            if (!string.IsNullOrEmpty(host))
+                PropertyBag["referer"] = host + rUrl;
+            else PropertyBag["referer"] = string.Empty;
+
+            var pclient = lease.Endpoint.Client.PhysicalClient;
+            var client = lease.Endpoint.Client;
+
+            PropertyBag["Client"] = client;
+
+            if (lease.Endpoint.Client.PhysicalClient == null)
+            {
+                PropertyBag["LClient"] = client.LawyerPerson;
+                RenderView("WarningLawyer");
+                return;
+            }
+
 			PropertyBag["PClient"] = pclient;
-			PropertyBag["Client"] = client;
 		}
 
 
