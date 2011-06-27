@@ -36,6 +36,13 @@
 				  <img alt="Save" src="../Images/tick.png">Изменить пароль и показать карту</button>
 				</form>
 			</td>
+            <td style="font-size:small;">
+               <form class="form login" method="post" action="${siteroot}/UserInfo/PostponedPayment">
+				<input type="hidden" name="ClientID" value="${ClientCode}" />
+				   <button type="submit" id="Button2" class="button">
+				  <img alt="Save" src="../Images/tick.png">Активировать обещанный платеж</button>
+				</form>
+            </td>
 			<%end %>
 		</tr>
 		</tbody>

@@ -73,7 +73,38 @@ namespace InternetInterface.Controllers
 			}
 		}
 
-		public void SaveSwitchForClient(uint ClientID, [DataBind("ConnectInfo")]ConnectInfo ConnectInfo,
+        public void PostponedPayment(uint ClientID)
+        {
+            var client = Clients.Find(ClientID);
+            var pclient = client.PhysicalClient;
+            var message = string.Empty;
+            if (client.PostponedPayment != null)
+                message += "Повторное использование услуги \"Обещаный платеж невозможно\"";
+            if (pclient.Balance > 0 && string.IsNullOrEmpty(message))
+                message += "Воспользоваться устугой возможно только при отрицательном балансе";
+            if ((!client.Disabled || !client.AutoUnblocked) && string.IsNullOrEmpty(message))
+                message += "Услуга \"Обещанный платеж\" недоступна";
+            if (client.CanUsedPostponedPayment())
+            {
+                client.PostponedPayment = DateTime.Now;
+                client.Disabled = false;
+                var writeOff = pclient.Tariff.GetPrice(client) / client.GetInterval();
+                pclient.Balance -= writeOff;
+                new WriteOff
+                {
+                    Client = client,
+                    WriteOffDate = DateTime.Now,
+                    WriteOffSum = writeOff
+                }.Save();
+                pclient.Update();
+                client.Update();
+                message += "Услуга \"Обещанный платеж активирована\"";
+            }
+            Flash["Applying"] = message;
+            RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientID);
+        }
+
+	    public void SaveSwitchForClient(uint ClientID, [DataBind("ConnectInfo")]ConnectInfo ConnectInfo,
 			uint BrigadForConnect)
 		{
 			var client = Clients.Find(ClientID);

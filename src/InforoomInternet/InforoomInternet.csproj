@@ -490,6 +490,7 @@
       <SubType>Designer</SubType>
     </Content>
     <None Include="Views\PrivateOffice\IndexOffice.brail" />
+    <None Include="Views\PrivateOffice\PostponedPayment.brail" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\InternetInterface\InternetInterface.csproj">

@@ -1,0 +1,43 @@
+﻿<style type="text/css">
+        .button
+        {
+            line-height: 17px;
+            padding: 5px 10px 5px 7px;
+            overflow: visible;
+            width: auto;
+            background-color: #EEEEEE;
+            border: 1px solid #BFBFBF;
+            color: #222222;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 0 7px 0 0;
+            text-decoration: none;
+            border-style: solid;
+        }
+</style>
+<%if Client.CanUsedPostponedPayment(): %>
+<form method=post action="PostponedPaymentActivate">
+<table>
+    <tbody>
+        <tr>
+            <td>
+                <span style="font-size:small; color:#8d8d8e; ">
+                    Услуга "Обещанный платеж" открывает доступ к Интернет, сроком на одни сутки, при отрицательном балансе. Услуга предоставляется однократно. Повторное использование возможно после внесения платежа, покрывающего задолженность.
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button type="submit" id="PostponedBut" class="button">
+                    <img alt="Save" src="${siteroot}/Content/tick.png"> Разблокировать
+                </button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</form>
+<%else: %>
+<%if IsDefined("message"): %>
+<h2>${message}</h2>
+<%end %>
+<%end %>
