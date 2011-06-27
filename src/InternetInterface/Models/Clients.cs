@@ -187,5 +187,12 @@ typeof(PhisicalClientConnectInfo)))
             var addressValue = BigEndianConverter.ToInt32(IPAddress.Parse(ip).GetAddressBytes());
             return Lease.Queryable.FirstOrDefault(l => l.Ip == addressValue);
         }
+
+        public virtual bool OnLine()
+        {
+            if (Lease.Queryable.Where(l => l.Endpoint.Client == this).FirstOrDefault() != null)
+                return true;
+            return false;
+        }
 	}
 }

@@ -8,7 +8,7 @@ using Castle.ActiveRecord.Framework;
 
 namespace InternetInterface.Models
 {
-	[ActiveRecord(Schema = "Internet")]
+	[ActiveRecord(Schema = "Internet", Table = "Leases")]
 	public class Lease : ActiveRecordLinqBase<Lease>
 	{
 		private const string IPRegExp =

@@ -66,18 +66,18 @@
             <%end %>
             <%if MapPartner.Categorie.ReductionName == "Office": %>
                 <%if item.PhysicalClient != null: %>
-                    <td>${item.PhysicalClient.Balance}</td>
+                    <td style="background-color:${"#d79c9c" if item.PhysicalClient.Balance < 0};">${item.PhysicalClient.Balance}</td>
                     <%if item.Status != null: %>
-                    <td>${item.Status.Name}</td>
-                    <%else: %>
-                    <td>Статус не задан</td>
+                        <td  style="background-color:${"#a3dcb0" if item.OnLine()};" >${item.Status.Name}</td>
+                        <%else: %>
+                        <td  style="background-color:${"#a3dcb0" if item.OnLine()};">Статус не задан</td>
                     <%end %>
                 <%else: %>
-                    <td>${item.LawyerPerson.Balance}</td>
+                    <td style="background-color:${"#d79c9c" if item.LawyerPerson.Balance < 0};">${item.LawyerPerson.Balance}</td>
                     <%if item.Status != null: %>
-                    <td>${item.Status.Name}</td>
+                    <td  style="background-color:${"#a3dcb0" if item.OnLine()};">${item.Status.Name}</td>
                     <%else: %>
-                    <td>Статус не задан</td>
+                    <td  style="background-color:${"#a3dcb0" if item.OnLine()};">Статус не задан</td>
                     <%end %>
                 <%end %>
             <%end %>
@@ -85,6 +85,16 @@
     <% end %>        
       </tbody>
     </form>
+</table>
+<table class="table" style="width:auto;">
+    <tbody>
+        <tr>
+            <td style="width:150px;">Клиент Он-Лайн</td>
+            <td style="width:25px;"><div style="background-color:#a3dcb0; width:25px; height:25px; border:1 solid black;"></div></td>
+            <td style="width:180px;">Отрицательный баланс</td>
+            <td style="width:25px;"><div style="background-color:#d79c9c; width:25px; height:25px; border:1 solid black;"></div></td>
+        </tr>
+    </tbody>
 </table>
 <% end %>
 </div>

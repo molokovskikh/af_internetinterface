@@ -18,7 +18,7 @@
 		<%if IsDefined("errorMessage"):
 			  output  WriteMessageError(errorMessage)
 		   end%>
-		<th>Информация по клиенту   ${Client.ShortName}  
+		<th>Информация по клиенту   ${Client.ShortName}  ${"(Он-Лайн)" if _client.OnLine()}
 		<%if PartnerAccessSet.AccesPartner("ECI"): %>
 		 <input id="EditButton" type="submit" value="Редактировать"  align="right" />
 		 <%end %>
