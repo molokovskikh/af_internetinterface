@@ -1,6 +1,21 @@
 ﻿<div id="main">
 <div id="container">
     <div id="block-tables" class="block">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <td>
+                        <form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Register/RegisterPartner" >
+                       <input type="hidden" name="catType" value=${catType} />
+                       <button type="submit" id="RegisterPartnerButton" class="button" >
+                       <img alt="Save" src="../Images/application_edit.png">
+                           Зарегистрировать партнера
+                       </button>
+                       </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
         <table class="table" style="width:100%; " border="0" id="PartnerInfoTable">
             <thead>
                 <th>ФИО партнера</th>
@@ -29,17 +44,6 @@
                     <td>${Partner.Login}</td>
                 </tr>
              <%end %>
-             <tr>
-                <td colspan = 6>
-                       <form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Register/RegisterPartner" >
-                       <input type="hidden" name="catType" value=${catType} />
-                       <button type="submit" id="RegisterPartnerButton" class="button" >
-                       <img alt="Save" src="../Images/application_edit.png">
-                           Зарегистрировать партнера
-                       </button>
-                       </form>
-                </td>
-             </tr>
             </tbody>
         </table>
         

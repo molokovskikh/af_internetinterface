@@ -1,6 +1,20 @@
 ﻿<div id="main">
 <div id="container">
     <div id="block-tables" class="block">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <td>
+                        <form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Switches/MakeSwitch" >
+                       <button type="submit" id="RegisterPartnerButton" class="button" >
+                       <img alt="Save" src="../Images/application_edit.png">
+                           Зарегистрирвоать коммутатор
+                       </button>
+                       </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
         <table class="table" style="width:100%; " border="0" id="PartnerInfoTable">
             <thead>
                 <th>ID</th>
@@ -23,16 +37,6 @@
                     <td>${Switch.Zone.Name}</td>
                 </tr>
              <%end %>
-             <tr>
-                <td colspan=4>
-                       <form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Switches/MakeSwitch" >
-                       <button type="submit" id="RegisterPartnerButton" class="button" >
-                       <img alt="Save" src="../Images/application_edit.png">
-                           Создать новый коммутатор
-                       </button>
-                       </form>
-                </td>
-             </tr>
             </tbody>
         </table>
         

@@ -1,6 +1,20 @@
 ﻿<div id="main">
 <div id="container">
     <div id="block-tables" class="block">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <td>
+                       <form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Brigads/MakeBrigad" >
+                       <button type="submit" id="RegisterBrigad" class="button" >
+                       <img alt="Save" src="../Images/application_edit.png">
+                           Зарегистрирвоать бригаду
+                       </button>
+                       </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
         <table class="table" style="width:100%; " border="0" id="PartnerInfoTable">
             <thead>
                 <th>ID</th>
@@ -17,16 +31,6 @@
                     <%end %>
                 </tr>
              <%end %>
-             <tr>
-                <td colspan=4>
-                       <form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Brigads/MakeBrigad" >
-                       <button type="submit" id="RegisterBrigad" class="button" >
-                       <img alt="Save" src="../Images/application_edit.png">
-                           Создать новую бригаду
-                       </button>
-                       </form>
-                </td>
-             </tr>
             </tbody>
         </table>
         

@@ -1,4 +1,17 @@
 ﻿<table class="table">
+    <tbody>
+        <tr>
+            <td>
+                <a style="color:White;" href="${Siteroot}/HouseAgent/Agent">
+                <button type="button" id="RegisterPartnerButton" class="button" >
+                       <img alt="Save" src="../Images/application_edit.png">
+                       Зарегистрирвоать агента
+                       </button></a>    
+            </td>
+        </tr>
+    </tbody>
+</table>
+<table class="table">
     <thead>
         <tr>
             <th>ФИО</th>
@@ -25,8 +38,5 @@
             <td>${agent.RegistrationAdress}</td>
         </tr>
     <%end %>
-        <tr><td style="background-color:#576C82;">
-            <a style="color:White;" href="${Siteroot}/HouseAgent/Agent">Создать нового агента</a>
-        </td></tr>
     </tbody>
 </table>

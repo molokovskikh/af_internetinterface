@@ -71,30 +71,30 @@
     <tbody>
         <tr>
             <td>Адрес</td>
+            <td></td>
             <td>${FormHelper.TextField("adress")}</td>
-            <td></td><td></td>
+            <td></td>
         </tr>
         <tr>
             <td>Количество абонентов</td>
-            <td>${FormHelper.TextField("SubscriberCount")}</td>
-            <td>Оператор</td>
             <td>${FormHelper.Select("SubscriberCount_Oper", SelectEn, {"text" : "OptionName", "value" : "Operator"})}</td>
+            <td>${FormHelper.TextField("SubscriberCount")}</td>
         </tr>
         <tr>
-            <td>Процента проникновения</td>
-            <td>${FormHelper.TextField("PenetrationPercent")}</td>
-            <td>Оператор</td>
+            <td>Процент проникновения</td>
             <td>${FormHelper.Select("PenetrationPercent_Oper", SelectEn, {"text" : "OptionName", "value" : "Operator"})}</td>
+            <td>${FormHelper.TextField("PenetrationPercent")}</td>
         </tr>
         <tr>
-            <td>Количеству агентских проходов</td>
-            <td>${FormHelper.TextField("PassCount")}</td>
-            <td>Оператор</td>
+            <td>Количество агентских проходов</td>
             <td>${FormHelper.Select("PassCount_Oper", SelectEn, {"text" : "OptionName", "value" : "Operator"})}</td>
+            <td>${FormHelper.TextField("PassCount")}</td>
+
         </tr>
         <tr>
-            <td><label for="startDate"> Дата начала периода </label><input type=text  name="startDate" id="startDate" class="date-pick dp-applied"> </td>
-            <td><label for="endDate"> Дата конца периода </label><input type=text  name="endDate" id="endDate" class="date-pick dp-applied"> </td>
+            <td>Дата последнего прохода</td>
+            <td><label for="startDate">Начала периода </label><input type=text  name="startDate" id="startDate" class="date-pick dp-applied"> </td>
+            <td><label for="endDate"> Конец периода </label><input type=text  name="endDate" id="endDate" class="date-pick dp-applied"> </td>
         </tr>
         <tr>
             <td colspan=4><button type="submit" id="FindHouseButton" class="button">Найти</button></td>

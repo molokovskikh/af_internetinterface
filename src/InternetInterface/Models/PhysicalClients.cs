@@ -8,6 +8,7 @@ using Castle.ActiveRecord.Linq;
 using Castle.Components.Validator;
 using Castle.MonoRail.Framework;
 using Common.Models.Helpers;
+using Common.Web.Ui.Helpers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models.Universal;
@@ -47,7 +48,7 @@ namespace InternetInterface.Models
 	{
 		public string static_IP { get; set; }
 		public string Leased_IP { get; set; }
-		public string Client { get; set; }
+		public int Client { get; set; }
 
 		public int? endpointId { get; set; }
 		public string Name { get; set; }
@@ -70,20 +71,20 @@ namespace InternetInterface.Models
 	}
 
 
-	[ActiveRecord("PhysicalClients", Schema = "internet", Lazy = true)]
+    [ActiveRecord("PhysicalClients", Schema = "internet", Lazy = true), Auditable]
 	public class PhysicalClients : ValidActiveRecordLinqBase<PhysicalClients>
 	{
 
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
-		[Property, ValidateNonEmpty("Введите имя")]
+        [Property, ValidateNonEmpty("Введите имя"), Auditable("Имя")]
 		public virtual string Name { get; set; }
 
-		[Property, ValidateNonEmpty("Введите фамилию")]
+        [Property, ValidateNonEmpty("Введите фамилию"), Auditable("Фамилия")]
 		public virtual string Surname { get; set; }
 
-		[Property, ValidateNonEmpty("Введите отчество")]
+        [Property, ValidateNonEmpty("Введите отчество"), Auditable("Отчество")]
 		public virtual string Patronymic { get; set; }
 
 		[Property]
@@ -98,50 +99,50 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string CaseHouse { get; set; }
 
-		[Property, ValidateNonEmpty("Введите номер квартиры"), ValidateInteger("Должно быть введено число")]
+        [Property, ValidateNonEmpty("Введите номер квартиры"), ValidateInteger("Должно быть введено число"), Auditable("Номер квартиры")]
 		public virtual string Apartment { get; set; }
 
-		[Property, ValidateNonEmpty("Введите номер подъезда"), ValidateInteger("Должно быть введено число")]
+        [Property, ValidateNonEmpty("Введите номер подъезда"), ValidateInteger("Должно быть введено число"), Auditable("Номер подъезда")]
 		public virtual string Entrance { get; set; }
 
-		[Property, ValidateNonEmpty("Введите номер этажа"), ValidateInteger("Должно быть введено число")]
+        [Property, ValidateNonEmpty("Введите номер этажа"), ValidateInteger("Должно быть введено число"), Auditable("Этаж")]
 		public virtual string Floor { get; set; }
 
 		[
 			Property,
 			ValidateRegExp(@"^((\d{1})-(\d{3})-(\d{3})-(\d{2})-(\d{2}))", "Ошибка фотмата телефонного номера: мобильный телефн (8-***-***-**-**))"),
-			ValidateNonEmpty("Введите номер телефона")
+            ValidateNonEmpty("Введите номер телефона"), Auditable("Номер мобильного телефона")
 		]
 		public virtual string PhoneNumber { get; set; }
 
-		[Property, ValidateRegExp(@"^((\d{4,5})-(\d{5,6}))", "Ошибка фотмата телефонного номера (Код города (4-5 цифр) + местный номер (5-6 цифр)")]
+        [Property, ValidateRegExp(@"^((\d{4,5})-(\d{5,6}))", "Ошибка фотмата телефонного номера (Код города (4-5 цифр) + местный номер (5-6 цифр)"), Auditable("Номер домашнего телефона")]
 		public virtual string HomePhoneNumber { get; set; }
 
-		[Property]
+        [Property, Auditable("Канал продаж")]
 		public virtual string WhenceAbout { get; set; }
 
-		[Property, ValidateRegExp(@"^(\d{4})?$", "Неправильный формат серии паспорта (4 цифры)"), UserValidateNonEmpty("Поле не должно быть пустым")]
+        [Property, ValidateRegExp(@"^(\d{4})?$", "Неправильный формат серии паспорта (4 цифры)"), UserValidateNonEmpty("Поле не должно быть пустым"), Auditable("Серия наспорта")]
 		public virtual string PassportSeries { get; set; }
 
-		[Property, ValidateRegExp(@"^(\d{6})?$", "Неправильный формат номера паспорта (6 цифр)"), UserValidateNonEmpty("Поле не должно быть пустым")]
+        [Property, ValidateRegExp(@"^(\d{6})?$", "Неправильный формат номера паспорта (6 цифр)"), UserValidateNonEmpty("Поле не должно быть пустым"), Auditable("Номер паспорта")]
 		public virtual string PassportNumber { get; set; }
 
-		[Property, UserValidateNonEmpty("Введите дату выдачи паспорта"), ValidateDate("Ошибка формата даты **-**-****")]
+        [Property, UserValidateNonEmpty("Введите дату выдачи паспорта"), ValidateDate("Ошибка формата даты **-**-****"), Auditable("Дата выдачи паспорта")]
         public virtual DateTime PassportDate { get; set; }
 
-		[Property, UserValidateNonEmpty("Заполните поле 'Кем выдан паспорт'")]
+        [Property, UserValidateNonEmpty("Заполните поле 'Кем выдан паспорт'"), Auditable("Кем выдан паспорт")]
 		public virtual string WhoGivePassport { get; set; }
 
-		[Property, UserValidateNonEmpty("Введите адрес регистрации")]
+        [Property, UserValidateNonEmpty("Введите адрес регистрации"), Auditable("Адрес регистрации")]
 		public virtual string RegistrationAdress { get; set; }
 
-		[BelongsTo("Tariff", Cascade = CascadeEnum.SaveUpdate)]
+        [BelongsTo("Tariff", Cascade = CascadeEnum.SaveUpdate), Auditable("Тариф")]
 		public virtual Tariff Tariff { get; set; }
 
-		[Property, ValidateNonEmpty("Введите сумму"), ValidateDecimal("Неверно введено число")]
+        [Property, ValidateNonEmpty("Введите сумму"), ValidateDecimal("Неверно введено число"), Auditable("Баланс")]
 		public virtual decimal Balance { get; set; }
 
-		[Property, ValidateIsUnique("Email должен быть уникальный"), ValidateEmail("Ошибка ввода (требуется adr@serv.dom)")]
+        [Property, ValidateIsUnique("Email должен быть уникальный"), ValidateEmail("Ошибка ввода (требуется adr@serv.dom)"), Auditable("Email")]
 		public virtual string Email { get; set; }
 
 		[Property]
@@ -150,7 +151,7 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool ConnectionPaid { get; set; }
 
-        [BelongsTo]
+        [BelongsTo, Auditable("Дом")]
         public virtual House HouseObj { get; set; }
 
         [Property]

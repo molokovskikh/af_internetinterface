@@ -10,8 +10,7 @@ namespace InternetInterface.Models
 	[ActiveRecord("Appeals", Schema = "internet", Lazy = true)]
 	public class Appeals : ValidActiveRecordLinqBase<Appeals>
 	{
-
-		[PrimaryKey]
+	    [PrimaryKey]
 		public virtual uint Id { get; set; }
 
 		[Property]

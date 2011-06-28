@@ -13,3 +13,6 @@
 [submodule "src/Common.Models"]
 	path = src/Common.Models
 	url = ssh://git.analit.net/var/www/git/Common.Models
+[submodule "src/Common.Web.UI"]
+	path = src/Common.Web.UI
+	url = ssh://git.analit.net/var/www/git/Common.Web.UI

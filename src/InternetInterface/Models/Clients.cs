@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
 using Common.Models.Helpers;
+using Common.Web.Ui.Helpers;
 using InternetInterface.Helpers;
 
 namespace InternetInterface.Models
@@ -15,7 +17,7 @@ namespace InternetInterface.Models
 		Legal = 2
 	}
 
-	[ActiveRecord("Clients", Schema = "Internet", Lazy = true)]
+    [ActiveRecord("Clients", Schema = "Internet", Lazy = true), Auditable]
 	public class Clients : ChildActiveRecordLinqBase<Clients>
 	{
 		[PrimaryKey]
@@ -66,10 +68,10 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual DateTime ConnectedDate { get; set; }
 
-		[Property]
+		[Property]  
 		public virtual bool AutoUnblocked { get; set; }
 
-		[BelongsTo]
+        [BelongsTo, Auditable("Статус")]
 		public virtual Status Status { get; set; }
 
         [Property]

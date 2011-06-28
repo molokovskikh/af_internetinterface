@@ -1,10 +1,11 @@
 ﻿using System;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
+using Common.Web.Ui.Helpers;
 
 namespace InternetInterface.Models
 {
-	[ActiveRecord("Tariffs", Schema = "internet", Lazy = true)]
+    [ActiveRecord("Tariffs", Schema = "internet", Lazy = true), Auditable]
 	public class Tariff : ChildActiveRecordLinqBase<Tariff>
 	{
 		[PrimaryKey]

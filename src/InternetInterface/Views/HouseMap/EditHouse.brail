@@ -124,7 +124,7 @@ ${FormHelper.FormTag("${Siteroot}/HouseMap/EditHouse", {"id" : "editHouse"})}
           <%end %>
         </tr>
         <tr>
-            <td>Количество подъездов</td>
+            <td>Количество квартир</td>
             <td colspan=${Entrances.Count}>
                 <!-- <input type=hidden name="house.ApartmentCount" id="ValidAppCount" />
                 <input type="text" id="ApCount" name="ApCount" value=${house.ApartmentCount} /> -->

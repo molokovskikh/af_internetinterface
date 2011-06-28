@@ -33,11 +33,11 @@ $(document).ready(function () {
                 <tr>
                     <td>${Client.static_IP}</td>
                     <td>${Client.Leased_IP}</td>
-                    <td>${Client.Client}</td>
+                    <td><a href="${Siteroot}/Search/Redirect?ClientCode=${Client.Client}">${Client.Client.ToString("00000")}</a></td>
                     <td>${Client.endpointId}</td>
                     <td>${Client.Name}</td>
                     <td>${Client.Switch}</td>
-                    <td>${Client.Swith_adr}</td>
+                    <td><a href="${Siteroot}/Switches/MakeSwitch?Switch=${Client.Switch}">${Client.Swith_adr}</a></td>
                     <td>${Client.swith_IP}</td>
                     <td>${Client.Port}</td>
                     <td>${Client.PackageId}</td>

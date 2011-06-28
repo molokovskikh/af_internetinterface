@@ -97,7 +97,7 @@
     <button class="button" style="margin-top:15px;" value="Назначить"><img alt="Save" src="${Siteroot}/Images/application_edit.png"> Создать дом </button>
     </a>
 
-    <button type=submit class="button" style="margin-top:15px;"><img alt="Save" src="${Siteroot}/Images/application_edit.png"> Редактировать </button>
+    <button type=submit class="button" style="margin-top:15px; height:25px;"><img alt="Save" src="${Siteroot}/Images/application_edit.png"> Редактировать </button>
 
     <a href="#" class="big-link" data-reveal-id="myModal_1" > 
     <button class="button" style="margin-top:15px;" value="Назначить"><img alt="Save" src="${Siteroot}/Images/application_edit.png"> Найти </button>

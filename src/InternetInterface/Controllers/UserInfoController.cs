@@ -178,7 +178,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["ConnectInfo"] = client.GetConnectInfo();
 			PropertyBag["Editing"] = true;
 			PropertyBag["ChBrigad"] = BrigadForConnect;
-			PropertyBag["errorMessage"] = errorMessage;
+			Flash["errorMessage"] = errorMessage;
 			RedirectToReferrer();
 		}
 
@@ -429,7 +429,7 @@ namespace InternetInterface.Controllers
                 _client.Update();
 				PropertyBag["Editing"] = false;
 				Flash["EditFlag"] = "Данные изменены";
-				RedirectToUrl("../Search/Redirect?ClientCode=" + ClientID);
+                RedirectToUrl("../UserInfo/SearchUserInfo?ClientCode=" + ClientID);
 			}
 			else
 			{
