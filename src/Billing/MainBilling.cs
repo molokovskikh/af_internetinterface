@@ -252,7 +252,6 @@ namespace Billing
                     }
                 }
 
-                // Тут со временем должно устанавливаться дисейбл
                 if ((phisicalClient.Balance < 0) &&
                     (!client.Disabled))
                 {

@@ -44,19 +44,10 @@ namespace InforoomInternet.Controllers
         {
             var clientId = Convert.ToUInt32(Session["LoginClient"]);
             var client = Clients.Find(clientId);
-            var pclient = client.PhysicalClient;
             if (client.CanUsedPostponedPayment())
             {
                 client.PostponedPayment = DateTime.Now;
                 client.Disabled = false;
-                var writeOff = pclient.Tariff.GetPrice(client)/client.GetInterval();
-                pclient.Balance -= writeOff;
-                new WriteOff {
-                                 Client = client,
-                                 WriteOffDate = DateTime.Now,
-                                 WriteOffSum = writeOff
-                             }.Save();
-                pclient.Update();
                 client.Update();
                 Flash["message"] = "Услуга \"Обещанный платеж активирована\"";
             }
