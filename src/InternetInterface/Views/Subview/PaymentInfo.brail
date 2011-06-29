@@ -28,7 +28,7 @@
 			<%end %>
 			<td>${item.PaidOn}</td>
 			<td>${item.RecievedOn}</td>
-			<td>${item.Sum}</td>
+			<td>${item.Sum.ToString(".00")}</td>
 		</tr>
 		<%end %>
 	<% end %>
