@@ -1,7 +1,4 @@
-﻿<link href="../Styles/style.css" type="text/css" rel="stylesheet" />
-<link rel="stylesheet" href="../Styles/base.css" type="text/css" media="screen" />
-
-<div id="container">
+﻿<div id="container">
 <div class="content">
 
 <% OutputSubView("""\Subview\MapHead""") %>

@@ -2,8 +2,8 @@
     .error
     {
         color:Red;
-        font-size:10px;
-        padding-left:10px;
+        /*font-size:10px;
+        padding-left:10px;*/
         }
         
     .house_selector_div
