@@ -45,8 +45,13 @@ namespace InternetInterface.Helpers
     }
 
     [EventListener]
-    public class Listner : BaseAuditListner<AuditablePropertyUser>
+    public class Listner : BaseAuditListner
     {
+        protected override AuditablePropertyBase GetAuditableProperty(PropertyInfo property, string name, object newState, object oldState)
+        {
+            return new AuditablePropertyUser(property, name, newState, oldState);
+        }
+
         protected override void Log(NHibernate.Event.PostUpdateEvent @event, string message)
         {
             var client = new Clients();
