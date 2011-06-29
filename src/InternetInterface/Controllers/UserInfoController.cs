@@ -366,6 +366,8 @@ namespace InternetInterface.Controllers
 			{
 				updateClient.Speed = PackageSpeed.Find(Speed);
 				updateClient.UpdateAndFlush();
+			    _client.Name = updateClient.ShortName;
+                _client.Update();
 				var clientEndPoint = ClientEndpoints.Queryable.First(c => c.Client == _client);
 				clientEndPoint.PackageId = updateClient.Speed.PackageId;
 				clientEndPoint.UpdateAndFlush();
