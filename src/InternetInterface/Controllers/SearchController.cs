@@ -163,7 +163,7 @@ ORDER BY C.Name Limit {1}, {2}", ":SearchText", CurrentPage * PageSize, PageSize
                 return result;
             });
 
-            var clientsInfo = result.Select(c => new ClientInfo(c));
+            var clientsInfo = result.Select(c => new ClientInfo(c)).ToList();
             var onLineClients = Lease.Queryable.Select(c => c.Endpoint.Client.Id).ToList();
             foreach (var clientInfo in clientsInfo.Where(clientInfo => onLineClients.Contains(clientInfo.client.Id)))
             {
