@@ -9,7 +9,6 @@ namespace InternetInterface.Controllers
 	public class MapController : SmartDispatcherController
 	{
 		public void SiteMap()
-		{
-		}
+		{}
 	}
 }

@@ -127,7 +127,7 @@ namespace InternetInterface
 
 
 #if DEBUG
-			//MonoRail.Debugger.Toolbar.Toolbar.Init(configuration);
+			MonoRail.Debugger.Toolbar.Toolbar.Init(configuration);
 #endif
 		}
 

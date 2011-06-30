@@ -29,7 +29,7 @@
 			<tr>
 			<td>
 			<p style="text-align: left; margin-left: 32px;" >Введите текст для поиска:<br />
-			<input type="text" id="SearchText"  name="SearchText"  value="${SearchText}" style="width: 80%; " />
+			<input type="text" id="SearchText"  name="filter.searchText"  value="${filter.searchText}" style="width: 80%; " />
 			<input id="SearchButton" type="submit" value="Поиск"  align="right" /> <br /> </p>
 			</td>
 			</tr>
@@ -41,19 +41,19 @@
 			<td>
 			</td>
 			<td>
-				<input type="radio" id="Autosearch" name="SearchBy.SearchBy" value=Auto ${"checked" if FindBy.IsSearchAuto()} />
+				<input type="radio" id="Autosearch" name="filter.searchProperties.SearchBy" value=Auto ${"checked" if filter.searchProperties.IsSearchAuto()} />
 				<label for="Autosearch">Автоматически</label><br />
-				<input type="radio" id="SearchAccount" name="SearchBy.SearchBy" value=SearchAccount ${"checked" if FindBy.IsSearchAccount()} />
+				<input type="radio" id="SearchAccount" name="filter.searchProperties.SearchBy" value=SearchAccount ${"checked" if filter.searchProperties.IsSearchAccount()} />
 				<label for="Autosearch">По номеру счета</label><br />
-				<input type="radio" id="SearchByClientId" name="SearchBy.SearchBy" value=ByFio ${"checked" if FindBy.IsSearchByFio()} />
+				<input type="radio" id="SearchByClientId" name="filter.searchProperties.SearchBy" value=ByFio ${"checked" if filter.searchProperties.IsSearchByFio()} />
 				<label for="SearchByClientId">Имя</label><br />
 			</td>
 			<td>
-				<input type="radio" id="Radio4" name="clientTypeFilter.Type" value=AllClients ${"checked" if clientTypeFilter.IsAll()} />
+				<input type="radio" id="Radio4" name="filter.clientTypeFilter.Type" value=AllClients ${"checked" if filter.clientTypeFilter.IsAll()} />
 				<label for="AutoRadio4search">Все</label><br />
-				<input type="radio" id="Radio5" name="clientTypeFilter.Type" value=Physical ${"checked" if clientTypeFilter.IsPhysical()} />
+				<input type="radio" id="Radio5" name="filter.clientTypeFilter.Type" value=Physical ${"checked" if filter.clientTypeFilter.IsPhysical()} />
 				<label for="Radio5">Физические лица</label><br />
-				<input type="radio" id="Radio6" name="clientTypeFilter.Type" value=Lawyer ${"checked" if clientTypeFilter.IsLawyer()} />
+				<input type="radio" id="Radio6" name="filter.clientTypeFilter.Type" value=Lawyer ${"checked" if filter.clientTypeFilter.IsLawyer()} />
 				<label for="Radio6">Юридические лица</label><br />
 			</td>
 		</tr>
@@ -67,7 +67,7 @@
 				<tr align="left">
 					<td style="padding: 5px;">Тариф<br />
 					<div>
-				   <select name="tariff" id="ChTariff" style="width: 100%" >
+				   <select name="filter.tariff" id="ChTariff" style="width: 100%" >
 				   <option id="Option1" value="0"> Все </option>
 				   <%
 					for i, Tariff in enumerate(Tariffs): 
@@ -81,7 +81,7 @@
 
 					<td style="padding: 5px;">Кем загистрирован<br />
 					<div>
-						  <select name="whoregister" id="ChRegister" style="width: 100%" >
+						  <select name="filter.whoregister" id="ChRegister" style="width: 100%" >
 						  <option id="Option2" value="0" > Все </option>
 						  <%
 						  for i, RigistrName in enumerate(WhoRegistered): 
@@ -96,7 +96,7 @@
 				 <%if PartnerAccessSet.AccesPartner("SSI"): %>
 				<td style="padding: 5px;">Назначено на бригаду<br />
 					<div>
-				   <select name="brigad" id="Select1" style="width: 100%" >
+				   <select name="filter.brigad" id="Select1" style="width: 100%" >
 				   <option id="Option3" value="0"> Все </option>
 				   <%
 					for i, Brigad in enumerate(Brigads): 
@@ -108,18 +108,18 @@
 					</td>
 					<%end %>
 				<td>
-						   <input type="radio" id="Radio1" name="ConnectedType.Type" value=AllConnected ${"checked" if ConnectBy.IsAllConnected()} />
+						   <input type="radio" id="Radio1" name="filter.connectedType.Type" value=AllConnected ${"checked" if filter.connectedType.IsAllConnected()} />
 						   <label for="Autosearch">Все</label><br />
-						   <input type="radio" id="Radio2" name="ConnectedType.Type" value=NoConnected ${"checked" if ConnectBy.IsNoConnected()} />
+						   <input type="radio" id="Radio2" name="filter.connectedType.Type" value=NoConnected ${"checked" if filter.connectedType.IsNoConnected()} />
 						   <label for="SearchByClientId">Не подключены</label><br />
-						   <input type="radio" id="Radio3" name="ConnectedType.Type" value=Connected ${"checked" if ConnectBy.IsConnected()} />
+						   <input type="radio" id="Radio3" name="filter.connectedType.Type" value=Connected ${"checked" if filter.connectedType.IsConnected()} />
 						   <label for="SearchByUserId">Подключены</label><br />
 				</td>
 			   </tr>
                <tr>
                     <td style="padding: 5px;">Дополнительный статус<br />
                           <div>
-						  <select name="addtionalStatus" id="addtionalStatus" style="width: 100%" >
+						  <select name="filter.addtionalStatus" id="addtionalStatus" style="width: 100%" >
 						  <option id="Option0" value="0" > Все </option>
 						  <%
 						  for i, additionalStatus in enumerate(additionalStatuses): 

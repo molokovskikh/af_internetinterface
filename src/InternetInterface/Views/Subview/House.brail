@@ -1,24 +1,4 @@
-﻿<script type="text/javascript">
-   /* $(function () {
-        $("#houseForm").validate({
-            rules: {
-                house_Number: {
-                    required: true,
-                    digits: true
-                }
-            },
-            messages:
-        {
-            house_Number:
-            {
-                required: "Введите количество квартир в доме",
-                digits: "Должно быть введено число"
-            }
-        }
-        })
-    });*/
-</script>
-<table class="table">
+﻿<table class="table">
     <tbody>
         <tr>
             <td>

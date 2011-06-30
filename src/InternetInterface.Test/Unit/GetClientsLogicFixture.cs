@@ -36,14 +36,14 @@ namespace InternetInterface.Test.Unit
 			ResultAssert(GetClientsLogic.GetClientsForCloseDemand);
 		}*/
 
-		[Test]
+		/*[Test]
 		public void GetClientsTest()
 		{
 			ResultAssert(() => GetClientsLogic.GetClients(UserSearchPropertiesHelper.CreateUserSearchProperties(),
 																	   ConnectedTypePropertiesHelper.CreateUserSearchProperties(), ClientTypeHelper.CreateUserSearchProperties(), 0,
 			                                                           0,
 			                                                           string.Empty, 0, 0));
-		}
+		}*/
 
 
 
