@@ -4,6 +4,8 @@ using System.Linq;
 using Castle.MonoRail.Framework;
 using InternetInterface.Models;
 using InternetInterface.Models.Access;
+using NHibernate.Criterion;
+using NHibernate.SqlCommand;
 
 namespace InternetInterface.Controllers.Filter
 {
@@ -36,6 +38,15 @@ namespace InternetInterface.Controllers.Filter
 				InithializeContent.partner = Partner.GetPartnerForLogin(context.Session["login"].ToString());
 				controllerContext.PropertyBag["PartnerAccessSet"] = new CategorieAccessSet();
 				controllerContext.PropertyBag["MapPartner"] = InithializeContent.partner;
+                if (CategorieAccessSet._accesedPartner == null)
+			    CategorieAccessSet._accesedPartner = CategorieAccessSet.FindAll(DetachedCriteria.For(typeof (CategorieAccessSet))
+			                                                                        .CreateAlias("AccessCat", "AC",
+			                                                                                     JoinType.InnerJoin)
+			                                                                        .Add(Restrictions.Eq("Categorie",
+			                                                                                             InithializeContent.
+			                                                                                                 partner.Categorie)))
+			        .Select(
+			            c => c.AccessCat.ReduceName).ToList();
 				if (AccessRules.GetAccessName(controllerContext.Action).Count(CategorieAccessSet.AccesPartner) == 0)
 				{
 					context.Response.RedirectToUrl(@"..\\Errors\AccessDin.aspx");

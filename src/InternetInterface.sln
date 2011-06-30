@@ -37,6 +37,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{6E4BCEB3
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardGenerator", "CardGenerator\CardGenerator.csproj", "{A88B78B2-BEE0-4E06-A700-8ED26109C524}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Web.Ui", "Common.Web.UI\Common.Web.Ui\Common.Web.Ui.csproj", "{95E2C313-46FA-4B4B-9EFF-3228662908F4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -272,6 +274,18 @@ Global
 		{A88B78B2-BEE0-4E06-A700-8ED26109C524}.Release|x64.ActiveCfg = Release|x86
 		{A88B78B2-BEE0-4E06-A700-8ED26109C524}.Release|x86.ActiveCfg = Release|x86
 		{A88B78B2-BEE0-4E06-A700-8ED26109C524}.Release|x86.Build.0 = Release|x86
+		{95E2C313-46FA-4B4B-9EFF-3228662908F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95E2C313-46FA-4B4B-9EFF-3228662908F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95E2C313-46FA-4B4B-9EFF-3228662908F4}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{95E2C313-46FA-4B4B-9EFF-3228662908F4}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{95E2C313-46FA-4B4B-9EFF-3228662908F4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{95E2C313-46FA-4B4B-9EFF-3228662908F4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{95E2C313-46FA-4B4B-9EFF-3228662908F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95E2C313-46FA-4B4B-9EFF-3228662908F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95E2C313-46FA-4B4B-9EFF-3228662908F4}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{95E2C313-46FA-4B4B-9EFF-3228662908F4}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{95E2C313-46FA-4B4B-9EFF-3228662908F4}.Release|x64.ActiveCfg = Release|Any CPU
+		{95E2C313-46FA-4B4B-9EFF-3228662908F4}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

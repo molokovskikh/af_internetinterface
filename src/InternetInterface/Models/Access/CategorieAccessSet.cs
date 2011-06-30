@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Castle.ActiveRecord.Linq;
@@ -21,13 +23,25 @@ namespace InternetInterface.Models
 		[BelongsTo("AccessCat")]
 		public virtual AccessCategories AccessCat { get; set; }
 
-		public static Boolean AccesPartner(string reduseRulesName)
+	    public static IList<string> _accesedPartner;
+
+        /*
+        public CategorieAccessSet()
+        {
+            _accesedPartner = FindAll(DetachedCriteria.For(typeof(CategorieAccessSet))
+                                     .CreateAlias("AccessCat", "AC", JoinType.InnerJoin)
+                                     .Add(Restrictions.Eq("Categorie", InithializeContent.partner.Categorie))).Select(
+                                         c => c.Categorie.ReductionName).ToList();
+        }*/
+
+	    public static Boolean AccesPartner(string reduseRulesName)
 		{
-			var result = FindAll(DetachedCriteria.For(typeof(CategorieAccessSet))
+			/*var result = FindAll(DetachedCriteria.For(typeof(CategorieAccessSet))
 									.CreateAlias("AccessCat", "AC", JoinType.InnerJoin)
 									.Add(Restrictions.Eq("Categorie", InithializeContent.partner.Categorie))
 									.Add(Restrictions.Eq("AC.ReduceName", reduseRulesName)));
-			return result.Length != 0 ? true : false;
+			return result.Length != 0 ? true : false;*/
+	        return _accesedPartner.Contains(reduseRulesName);
 		}
 
 		public static IList<CategorieAccessSet> GetAccessPartner()

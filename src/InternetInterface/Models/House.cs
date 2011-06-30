@@ -35,13 +35,13 @@ namespace InternetInterface.Models
         [Property]
         public virtual int CompetitorCount { get; set; }
 
-        [HasMany(ColumnKey = "House", OrderBy = "Number")]
+        [HasMany(ColumnKey = "House", OrderBy = "Number", Lazy = true)]
         public virtual IList<Apartment> Apartments { get; set; }
 
-        [HasMany(ColumnKey = "House", OrderBy = "Number")]
+        [HasMany(ColumnKey = "House", OrderBy = "Number", Lazy = true)]
         public virtual IList<Entrance> Entrances { get; set; }
 
-        [HasMany(ColumnKey = "House", OrderBy = "BypassDate")]
+        [HasMany(ColumnKey = "House", OrderBy = "BypassDate", Lazy = true)]
         public virtual IList<BypassHouse> Bypass { get; set; }
 
         public virtual Apartment GetApartmentWithNumber(int num)

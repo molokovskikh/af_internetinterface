@@ -1,11 +1,8 @@
-﻿<div id="container">
-<div class="content">
-
-<% OutputSubView("""\Subview\MapHead""") %>
-<table class="table">
-<tbody>
-</tbody>
-</table>
-</div>
+﻿<link href="../Styles/Style.css" type="text/css" rel="stylesheet" />
+<link href="../Styles/base.css" type="text/css" rel="stylesheet" />
+<div id="container">
+    <div class="content">
+         <% OutputSubView("""\Subview\MapHead""") %>
+    </div>
 </div>
 </div>

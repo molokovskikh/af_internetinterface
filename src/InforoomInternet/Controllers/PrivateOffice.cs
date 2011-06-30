@@ -22,7 +22,8 @@ namespace InforoomInternet.Controllers
 			PropertyBag["Client"] = Client;
             PropertyBag["WriteOffs"] = Client.GetWriteOffs(grouped).OrderBy(e => e.WriteOffDate).ToArray();
 			PropertyBag["grouped"] = grouped;
-			PropertyBag["Payments"] = Payment.FindAllByProperty("Client", Client).OrderBy(e => e.PaidOn).ToArray();
+		    PropertyBag["Payments"] =
+		        Payment.FindAllByProperty("Client", Client).Where(p => p.Sum != 0).OrderBy(e => e.PaidOn).ToArray();
 		}
 
         public void PostponedPayment()
