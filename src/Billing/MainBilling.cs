@@ -64,7 +64,7 @@ namespace Billing
 				                  			},
 				                  		{Environment.Hbm2ddlKeyWords, "none"},
 				                  	});
-				ActiveRecordStarter.Initialize( new [] {typeof (Clients).Assembly, typeof(InternetSettings).Assembly},
+				ActiveRecordStarter.Initialize( new [] {typeof (Clients).Assembly},
 				                               configuration);
 			}
 		}

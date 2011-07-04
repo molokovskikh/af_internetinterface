@@ -216,7 +216,7 @@ namespace Billing.Test.Unit
 			Assert.That(thisSettings.ToShortDateString(), Is.EqualTo(DateTime.Now.AddDays(1).ToShortDateString()));
 		}
 
-		[Test]
+		[Test, Ignore]
 		public void Complex_tariff()
 		{
 			var tariff = new Tariff {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Web;
 using System.Linq;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using Castle.MonoRail.Framework;
 using Common.Web.Ui.Helpers;
 using InternetInterface.AllLogic;
 using InternetInterface.Controllers.Filter;
+using InternetInterface.Controllers.ParentControllers;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 using NHibernate;
@@ -15,7 +17,7 @@ namespace InternetInterface.Controllers
 {
 	[Layout("Main")]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
-	public class UserInfoController : SmartDispatcherController
+    public class UserInfoController : ParentControllerItem
 	{
         public void SearchUserInfo(uint clientCode, bool Editing, bool EditingConnect, string grouped, int appealType)
 		{
@@ -327,10 +329,10 @@ namespace InternetInterface.Controllers
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void LoadEditMudule(uint ClientID)
+        public void LoadEditMudule(uint ClientID, int appealType)
 		{
 			Flash["Editing"] = true;
-			RedirectToUrl("../Search/Redirect?ClientCode=" + ClientID + "&Editing=true");
+            RedirectToUrl("../Search/Redirect?ClientCode=" + ClientID + "&Editing=true&appealType=" + appealType);
 		}
 
 		public void ClientRegisteredInfo()
@@ -354,31 +356,41 @@ namespace InternetInterface.Controllers
 		}
 
 		[AccessibleThrough(Verb.Post)]
-        public void EditLawyerPerson(uint ClientID, int Speed, string grouped)
+        public void EditLawyerPerson(uint ClientID, int Speed, string grouped, int appealType, string comment)
 		{
 			var _client = Clients.Queryable.First(c => c.Id == ClientID);
 			var updateClient = _client.LawyerPerson;
-
+            InitializeHelper.InitializeModel(_client);
+            InitializeHelper.InitializeModel(updateClient);
 			BindObjectInstance(updateClient, ParamStore.Form, "LegalPerson");
 
 			if (Validator.IsValid(updateClient))
 			{
 				updateClient.Speed = PackageSpeed.Find(Speed);
                 InitializeHelper.InitializeModel(_client);
+                InitializeHelper.InitializeModel(updateClient);
 				updateClient.Update();
 				var clientEndPoint = ClientEndpoints.Queryable.First(c => c.Client == _client);
 				clientEndPoint.PackageId = updateClient.Speed.PackageId;
 				clientEndPoint.Update();
-				RedirectToUrl("../Search/Redirect?ClientCode=" + ClientID);
+                if (!string.IsNullOrEmpty(comment))
+                    new Appeals {
+                                    Appeal = comment,
+                                    AppealType = (int)AppealType.System,
+                                    Client = _client,
+                                    Date = DateTime.Now,
+                                    Partner = CurrentPartner
+                                }.Save();
+                RedirectToUrl("../Search/Redirect?ClientCode=" + ClientID + "&appealType=" + appealType);
 			}
 			else
 			{
 				updateClient.SetValidationErrors(Validator.GetErrorSummary(updateClient));
 				PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(updateClient);
-				ARSesssionHelper<PhysicalClients>.QueryWithSession(session =>
+				ARSesssionHelper<LawyerPerson>.QueryWithSession(session =>
 				{
 					session.Evict(updateClient);
-					return new List<PhysicalClients>();
+                    return new List<LawyerPerson>();
 				});
 				PropertyBag["Editing"] = true;
 				PropertyBag["EditingConnect"] = false;
@@ -389,76 +401,86 @@ namespace InternetInterface.Controllers
 		}
 
 
-		[AccessibleThrough(Verb.Post)]
-        public void EditInformation([DataBind("Client")]PhysicalClients client, uint ClientID, uint tariff, uint status, string group, uint house_id, int appealType)
-		{
-			//var updateClient = PhysicalClients.Find(ClientID);
-			var _client = Clients.Queryable.First(c => c.Id == ClientID);
-		    //var updateClient = PhysicalClients.Queryable.Where(p => p.Id == _client.PhysicalClient.Id).FirstOrDefault();
-		    var updateClient = _client.PhysicalClient;
-			
-			BindObjectInstance(updateClient, ParamStore.Form, "Client");
+        [AccessibleThrough(Verb.Post)]
+        public void EditInformation([DataBind("Client")]PhysicalClients client, uint ClientID, uint tariff, uint status, string group, uint house_id, int appealType, string comment)
+        {
+            var _client = Clients.Queryable.First(c => c.Id == ClientID);
+            var updateClient = _client.PhysicalClient;
+            InitializeHelper.InitializeModel(updateClient);
+            InitializeHelper.InitializeModel(_client);
 
-			var statusCanChanged = true;
-			if ((_client.Status.Id == (uint)StatusType.BlockedAndNoConnected) && (status == (uint)StatusType.NoWorked))
-				statusCanChanged = false;
-			_client.Status = Status.Find(status);
-			if (Validator.IsValid(updateClient) && statusCanChanged)
-			{
-				if (updateClient.PassportDate != null)
-				updateClient.PassportDate = updateClient.PassportDate;
+            BindObjectInstance(updateClient, ParamStore.Form, "Client");
+
+            var statusCanChanged = true;
+            if ((_client.Status.Id == (uint) StatusType.BlockedAndNoConnected) && (status == (uint) StatusType.NoWorked))
+                statusCanChanged = false;
+            _client.Status = Status.Find(status);
+            if (Validator.IsValid(updateClient) && statusCanChanged)
+            {
+                if (updateClient.PassportDate != null)
+                    updateClient.PassportDate = updateClient.PassportDate;
                 var _house = House.Find(house_id);
-			    updateClient.HouseObj = _house;
-			    updateClient.Street = _house.Street;
-			    updateClient.House = _house.Number.ToString();
-			    updateClient.CaseHouse = _house.Case;
-				updateClient.Tariff = Tariff.Find(tariff);
+                updateClient.HouseObj = _house;
+                updateClient.Street = _house.Street;
+                updateClient.House = _house.Number.ToString();
+                updateClient.CaseHouse = _house.Case;
+                updateClient.Tariff = Tariff.Find(tariff);
                 InitializeHelper.InitializeModel(updateClient);
                 InitializeHelper.InitializeModel(_client);
-				updateClient.UpdateAndFlush();
-                _client.Name = string.Format("{0} {1} {2}", updateClient.Surname, updateClient.Name, updateClient.Patronymic);
-					var endPoints = ClientEndpoints.Queryable.Where(p => p.Client == _client).ToList();
-					foreach (var clientEndpointse in endPoints)
-					{
-						clientEndpointse.PackageId = updateClient.Tariff.PackageId;
-					}
-					if (_client.Status.Blocked)
-					{
-						_client.Disabled = true;
-					}
-					else
-					{
-						_client.Disabled = false;
-					}
+
+                updateClient.UpdateAndFlush();
+                _client.Name = string.Format("{0} {1} {2}", updateClient.Surname, updateClient.Name,
+                                             updateClient.Patronymic);
+                var endPoints = ClientEndpoints.Queryable.Where(p => p.Client == _client).ToList();
+                foreach (var clientEndpointse in endPoints)
+                {
+                    clientEndpointse.PackageId = updateClient.Tariff.PackageId;
+                }
+                if (_client.Status.Blocked)
+                {
+                    _client.Disabled = true;
+                }
+                else
+                {
+                    _client.Disabled = false;
+                }
                 _client.Update();
-				PropertyBag["Editing"] = false;
-				Flash["EditFlag"] = "Данные изменены";
+                PropertyBag["Editing"] = false;
+                if (!string.IsNullOrEmpty(comment))
+                    new Appeals {
+                                    Appeal = comment,
+                                    AppealType = (int) AppealType.System,
+                                    Client = _client,
+                                    Date = DateTime.Now,
+                                    Partner = InithializeContent.partner
+                                }.Save();
+                Flash["EditFlag"] = "Данные изменены";
                 RedirectToUrl("../UserInfo/SearchUserInfo?ClientCode=" + ClientID + "&appealType=" + appealType);
-			}
-			else
-			{
-				updateClient.SetValidationErrors(Validator.GetErrorSummary(updateClient));
-				PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClients>(updateClient);
-				ARSesssionHelper<PhysicalClients>.QueryWithSession(session =>
-				{
-					session.Evict(updateClient);
-					return new List<PhysicalClients>();
-				});
-				if (!statusCanChanged)
-					Flash["statusCanChanged"] = "Если установлет статус Зарегистрирован, но нет информации о подключении, нельзя поставить статус НеРаботает";
-				RenderView("SearchUserInfo");
-				Flash["Editing"] = true;
-				Flash["EditingConnect"] = false;
+            }
+            else
+            {
+                updateClient.SetValidationErrors(Validator.GetErrorSummary(updateClient));
+                PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClients>(updateClient);
+                ARSesssionHelper<PhysicalClients>.QueryWithSession(session => {
+                    session.Evict(updateClient);
+                    return new List<PhysicalClients>();
+                });
+                if (!statusCanChanged)
+                    Flash["statusCanChanged"] =
+                        "Если установлет статус Зарегистрирован, но нет информации о подключении, нельзя поставить статус НеРаботает";
+                RenderView("SearchUserInfo");
+                Flash["Editing"] = true;
+                Flash["EditingConnect"] = false;
                 Flash["_client"] = _client;
-				Flash["Client"] = updateClient;
-				Flash["ChTariff"] = Tariff.Find(tariff).Id;
-				Flash["ChStatus"] = Tariff.Find(status).Id;
-				SendParam(ClientID, group, appealType);
-			}
-		}
+                Flash["Client"] = updateClient;
+                Flash["ChTariff"] = Tariff.Find(tariff).Id;
+                Flash["ChStatus"] = Tariff.Find(status).Id;
+                SendParam(ClientID, group, appealType);
+            }
+        }
 
 
-		private void SendParam(UInt32 ClientCode, string grouped, int appealType)
+	    private void SendParam(UInt32 ClientCode, string grouped, int appealType)
 		{
 			var client = Clients.Find(ClientCode);
 		    PropertyBag["Houses"] = House.FindAll();

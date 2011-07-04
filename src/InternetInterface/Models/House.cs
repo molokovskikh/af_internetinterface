@@ -75,5 +75,10 @@ namespace InternetInterface.Models
                 return 1;
             return (double)(PhysicalClients.Queryable.Where(p => p.HouseObj == this).Count()) / ApartmentCount * 100;
         }
+
+        public override string ToString()
+        {
+            return string.Format("{0} {1} {2}", Street, Number, !string.IsNullOrEmpty(Case) ? "корп " + Case : string.Empty);
+        }
     }
 }

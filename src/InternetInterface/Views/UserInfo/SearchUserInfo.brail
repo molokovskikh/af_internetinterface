@@ -60,6 +60,7 @@
 		<form class="form login" method="post" action="${siteroot}/UserInfo/LoadEditMudule">
 	<input type="hidden" name="ClientID" value="${ClientCode}" />
 	<input type="hidden" name="EditFlag" value="${Editing}" />
+    <input type="hidden" name="appealType" value="${appealType}" />
 	<table class="table" style="width: 100%;" align="left">
 	<thead>
 			<%if IsDefined("EditFlag"):
@@ -192,17 +193,24 @@
 	<%else:%>
 	<form class="form edit" method="post" action="${siteroot}/UserInfo/EditInformation">
 	<input type="hidden" name="ClientID" value="${ClientCode}" />
+    <input type=hidden name="appealType" value="${appealType}" />
 	<table class="table" style="width:100%; " border="0" id="EditTable"> 
    <% OutputSubView("""\Subview\Client""") %>
-			   <tr>
-			   <td >
-				  <div class="actions">
-					   <button type="submit" id="SaveButton" class="button">
-					   <img alt="Save" src="../Images/application_edit.png"> Сохранить
-					   </button>
-				  </div>
-			   </td>
-			   </tr>
+    <tr>
+        <td colspan=4>
+            <label for="comment"><b>Введите Комментарий :</b></label>
+            <textarea id="comment" name="comment" rows="5" cols="100%"></textarea>
+        </td>
+    </tr>
+    <tr>
+    <td >
+	    <div class="actions">
+		    <button type="submit" id="SaveButton" class="button">
+		    <img alt="Save" src="../Images/application_edit.png"> Сохранить
+		    </button>
+	    </div>
+    </td>
+    </tr>
 	</table>
 	</form>
 	<%end %>
