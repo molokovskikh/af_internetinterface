@@ -50,12 +50,12 @@ href="НАРЯД%20НА%20ПОДКЛЮЧЕНИЕ.files/colorschememapping.xml">
 	mso-style-parent:"";
 	margin-top:0cm;
 	margin-right:0cm;
-	margin-bottom:10.0pt;
+	margin-bottom:6.0pt;
 	margin-left:0cm;
-	line-height:115%;
+	line-height:100%;
 	mso-pagination:widow-orphan;
-	font-size:11.0pt;
 	font-family:"Calibri","sans-serif";
+	font-size:10pt;
 	mso-ascii-font-family:Calibri;
 	mso-ascii-theme-font:minor-latin;
 	mso-fareast-font-family:Calibri;
@@ -164,6 +164,16 @@ div.WordSection1
 	{
 		height: 6px;
 	}
+    .style3
+    {
+        width: 537.9pt;
+        height: 19pt;
+    }
+    .style4
+    {
+        width: 537.9pt;
+        height: 5pt;
+    }
 </style>
 
 </head>
@@ -193,7 +203,7 @@ div.WordSection1
   justify;line-height:normal'>Абонент <b style='mso-bidi-font-weight:normal'><i
   style='mso-bidi-font-style:normal'><u>${Client.Surname} ${Client.Name} ${Client.Patronymic}</u></i></b>,<a
   name=Фамилия></a> </p>
-  <%if (Client.PassportSeries == ""): %>
+  <%if (Client.PassportSeries != ""): %>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
   justify;line-height:normal'>паспорт серия <i style='mso-bidi-font-style:normal'><u>${Client.PassportSeries}</u></i>
   № <i style='mso-bidi-font-style:normal'><u>${Client.PassportNumber}</u></i> выдан <i
@@ -224,13 +234,14 @@ div.WordSection1
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
   justify;line-height:normal'>Дополнительные услуги: </p>
   <table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0
-   style='border-collapse:collapse;border:none;mso-border-alt:solid black .5pt;
-   mso-border-themecolor:text1;mso-yfti-tbllook:1184;mso-padding-alt:0cm 5.4pt 0cm 5.4pt'>
+   
+          style='border-style: none; border-color: inherit; border-width: medium; border-collapse:collapse; mso-border-alt:solid black .5pt;
+   mso-border-themecolor:text1; mso-yfti-tbllook:1184; mso-padding-alt:0cm 5.4pt 0cm 5.4pt; height: 10px; margin-bottom: 0px;'>
    <tr style='mso-yfti-irow:0;mso-yfti-firstrow:yes;mso-yfti-lastrow:yes;
-	height:23.85pt'>
-	<td width=717 valign=top style='width:537.9pt;border:solid black 1.0pt;
+	'>
+	<td width=717 valign=top style='border:solid black 1.0pt;
 	mso-border-themecolor:text1;mso-border-alt:solid black .5pt;mso-border-themecolor:
-	text1;padding:0cm 5.4pt 0cm 5.4pt;height:23.85pt'>
+	text1;padding:0cm 5.4pt 0cm 5.4pt;' class="style4">
 	<p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;
 	text-align:justify;line-height:normal'><o:p>&nbsp;</o:p></p>
 	<p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;
@@ -269,7 +280,7 @@ div.WordSection1
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
   justify;line-height:normal'>
   <![if !vml]><span style='mso-ignore:vglayout'>
-  <table cellpadding=0 cellspacing=0 align=left>
+  <table cellpadding=0 cellspacing=0 align=left style="height: 101px">
    <tr>
 	<td width=532 class="style2"></td>
    </tr>
@@ -288,7 +299,7 @@ div.WordSection1
   normal'><i style='mso-bidi-font-style:normal'>Просим Вас оценить качество
   подключения по десятибалльной шкале <o:p></o:p></i></p>
 	   </td>
-	<td width=175 height=93 bgcolor=white style='border:.75pt solid black;
+	<td width=175 height=75 bgcolor=white style='border:.75pt solid black;
 	vertical-align:top;background:white'><![endif]><![if !mso]><span
 	style='position:absolute;mso-ignore:vglayout;left:0pt;z-index:7'>
 	<table cellpadding=0 cellspacing=0 width="100%">
@@ -328,11 +339,11 @@ div.WordSection1
   style='mso-ansi-language:EN-US'>UTP</span> 2</b><b style='mso-bidi-font-weight:
   normal'><span lang=EN-US style='mso-ansi-language:EN-US'>x</span>2</b> начальная
   метка 
-  <![if !vml]><img width=114 height=32
+  <![if !vml]><img width=114 height=30
   src="../Images/image003.gif" v:shapes="_x0000_s1033"><![endif]>
   <span
   style='mso-spacerun:yes'> </span>конечная метка 
-  <![if !vml]><img width=114 height=32
+  <![if !vml]><img width=114 height=30
   src="../Images/image003.gif" v:shapes="_x0000_s1032"><![endif]>
   </p>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
@@ -393,7 +404,7 @@ div.WordSection1
   justify;line-height:normal'>
   <![if !vml]><span style='mso-ignore:vglayout;
   position:absolute;z-index:9;left:0px;margin-left:20px;margin-top:7px;
-  width:152px;height:51px'><img width=152 height=51
+  width:152px;height:40px'><img width=152 height=51
   src="../Images/image002.jpg" v:shapes="_x0000_s1035"></span><![endif]><b
   style='mso-bidi-font-weight:normal'><i style='mso-bidi-font-style:normal'><o:p></o:p></i></b></p>
   <p class=MsoNormal style='margin-top:0cm;margin-right:0cm;margin-bottom:0cm;
@@ -428,10 +439,10 @@ div.WordSection1
    style='border-collapse:collapse;border:none;mso-border-alt:solid black .5pt;
    mso-border-themecolor:text1;mso-yfti-tbllook:1184;mso-padding-alt:0cm 5.4pt 0cm 5.4pt'>
    <tr style='mso-yfti-irow:0;mso-yfti-firstrow:yes;mso-yfti-lastrow:yes;
-	height:30.9pt'>
-	<td width=717 valign=top style='width:537.9pt;border:solid black 1.0pt;
+	'>
+	<td width=717 valign=top style='border:solid black 1.0pt;
 	mso-border-themecolor:text1;mso-border-alt:solid black .5pt;mso-border-themecolor:
-	text1;padding:0cm 5.4pt 0cm 5.4pt;height:30.9pt'>
+	text1;padding:0cm 5.4pt 0cm 5.4pt;' class="style3">
 	<p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;
 	text-align:justify;line-height:normal'><o:p>&nbsp;</o:p></p>
 	</td>

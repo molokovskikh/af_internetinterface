@@ -21,7 +21,7 @@
 					  <%end %>
 				</td>
 			 </tr>
-		<tr colspan="3">
+		<tr>
 			<td>
 			   <button type="submit" id="ChangeBalanceButton" class="button">
 				  <img alt="Save" src="../Images/tick.png"> Пополнить баланс

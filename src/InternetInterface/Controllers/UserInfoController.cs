@@ -3,10 +3,12 @@ using System.Web;
 using System.Linq;
 using System.Collections.Generic;
 using Castle.MonoRail.Framework;
+using Common.Web.Ui.Helpers;
 using InternetInterface.AllLogic;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using NHibernate;
 using NHibernate.Criterion;
 
 namespace InternetInterface.Controllers
@@ -15,14 +17,17 @@ namespace InternetInterface.Controllers
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class UserInfoController : SmartDispatcherController
 	{
-        public void SearchUserInfo(uint clientCode, bool Editing, bool EditingConnect, string grouped)
+        public void SearchUserInfo(uint clientCode, bool Editing, bool EditingConnect, string grouped, int appealType)
 		{
 			var client = Clients.Find(clientCode);
 			PropertyBag["_client"] = client;
 			PropertyBag["Client"] = client.PhysicalClient;
 
-            SendParam(clientCode, grouped);
+            if (appealType == 0)
+                appealType = (int) AppealType.User;
+            SendParam(clientCode, grouped, appealType);
 			PropertyBag["Editing"] = Editing;
+            PropertyBag["appealType"] = appealType;//CreateAppealLink(Request.Url, "Отобразить", appealType);
 			if (client.Status.Id != (uint)StatusType.BlockedAndNoConnected)
 			PropertyBag["EditingConnect"] = EditingConnect;
 			else
@@ -34,7 +39,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(t => t.Name != null);
 		}
 
-        public void LawyerPersonInfo(uint clientCode, bool Editing, bool EditingConnect, string grouped)
+        public void LawyerPersonInfo(uint clientCode, bool Editing, bool EditingConnect, string grouped, int appealType)
 		{
 			var client = Clients.Find(clientCode);
 
@@ -48,6 +53,7 @@ namespace InternetInterface.Controllers
 			else
 				PropertyBag["ChBrigad"] = Brigad.FindFirst().Id;
             PropertyBag["grouped"] = grouped;
+            PropertyBag["appealType"] = appealType == 0 ? (int)AppealType.User : appealType;
 			PropertyBag["Statuss"] = Status.FindAllSort();
 			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(t => t.Name != null);
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
@@ -64,7 +70,8 @@ namespace InternetInterface.Controllers
 			PropertyBag["WriteOffs"] = WriteOff.Queryable.Where(w => w.Client == client).OrderBy(w => w.WriteOffDate).ToArray();
             PropertyBag["writeOffSum"] = WriteOff.FindAllByProperty("Client", client).Sum(s => s.WriteOffSum);
 			PropertyBag["BalanceText"] = string.Empty;
-			PropertyBag["Appeals"] = Appeals.Queryable.Where(a => a.Client == client).ToArray();
+            PropertyBag["Appeals"] = Appeals.Queryable.Where(a => a.Client == client && a.AppealType == (appealType == 0 ? (int)AppealType.User : appealType)).OrderByDescending(
+		            a => a.Date).ToArray();
 			if (client.Status.Connected)
 				PropertyBag["EditingConnect"] = EditingConnect;
 			else
@@ -88,15 +95,6 @@ namespace InternetInterface.Controllers
             {
                 client.PostponedPayment = DateTime.Now;
                 client.Disabled = false;
-                var writeOff = pclient.Tariff.GetPrice(client) / client.GetInterval();
-                pclient.Balance -= writeOff;
-                new WriteOff
-                {
-                    Client = client,
-                    WriteOffDate = DateTime.Now,
-                    WriteOffSum = writeOff
-                }.Save();
-                pclient.Update();
                 client.Update();
                 message += "Услуга \"Обещанный платеж активирована\"";
             }
@@ -189,7 +187,8 @@ namespace InternetInterface.Controllers
 					Appeal = Appeal,
 					Date = DateTime.Now,
 					Partner = InithializeContent.partner,
-					Client = Clients.Find(ClientID)
+					Client = Clients.Find(ClientID),
+                    AppealType = (int)AppealType.User
 				}.SaveAndFlush();
 			RedirectToUrl("../Search/Redirect?ClientCode=" + ClientID);
 		}
@@ -365,10 +364,11 @@ namespace InternetInterface.Controllers
 			if (Validator.IsValid(updateClient))
 			{
 				updateClient.Speed = PackageSpeed.Find(Speed);
-				updateClient.UpdateAndFlush();
+                InitializeHelper.InitializeModel(_client);
+				updateClient.Update();
 				var clientEndPoint = ClientEndpoints.Queryable.First(c => c.Client == _client);
 				clientEndPoint.PackageId = updateClient.Speed.PackageId;
-				clientEndPoint.UpdateAndFlush();
+				clientEndPoint.Update();
 				RedirectToUrl("../Search/Redirect?ClientCode=" + ClientID);
 			}
 			else
@@ -390,13 +390,15 @@ namespace InternetInterface.Controllers
 
 
 		[AccessibleThrough(Verb.Post)]
-        public void EditInformation([DataBind("Client")]PhysicalClients client, uint ClientID, uint tariff, uint status, string group, uint house_id)
+        public void EditInformation([DataBind("Client")]PhysicalClients client, uint ClientID, uint tariff, uint status, string group, uint house_id, int appealType)
 		{
 			//var updateClient = PhysicalClients.Find(ClientID);
 			var _client = Clients.Queryable.First(c => c.Id == ClientID);
-			var updateClient = _client.PhysicalClient;
+		    //var updateClient = PhysicalClients.Queryable.Where(p => p.Id == _client.PhysicalClient.Id).FirstOrDefault();
+		    var updateClient = _client.PhysicalClient;
 			
 			BindObjectInstance(updateClient, ParamStore.Form, "Client");
+
 			var statusCanChanged = true;
 			if ((_client.Status.Id == (uint)StatusType.BlockedAndNoConnected) && (status == (uint)StatusType.NoWorked))
 				statusCanChanged = false;
@@ -411,6 +413,8 @@ namespace InternetInterface.Controllers
 			    updateClient.House = _house.Number.ToString();
 			    updateClient.CaseHouse = _house.Case;
 				updateClient.Tariff = Tariff.Find(tariff);
+                InitializeHelper.InitializeModel(updateClient);
+                InitializeHelper.InitializeModel(_client);
 				updateClient.UpdateAndFlush();
                 _client.Name = string.Format("{0} {1} {2}", updateClient.Surname, updateClient.Name, updateClient.Patronymic);
 					var endPoints = ClientEndpoints.Queryable.Where(p => p.Client == _client).ToList();
@@ -429,7 +433,7 @@ namespace InternetInterface.Controllers
                 _client.Update();
 				PropertyBag["Editing"] = false;
 				Flash["EditFlag"] = "Данные изменены";
-                RedirectToUrl("../UserInfo/SearchUserInfo?ClientCode=" + ClientID);
+                RedirectToUrl("../UserInfo/SearchUserInfo?ClientCode=" + ClientID + "&appealType=" + appealType);
 			}
 			else
 			{
@@ -449,19 +453,21 @@ namespace InternetInterface.Controllers
 				Flash["Client"] = updateClient;
 				Flash["ChTariff"] = Tariff.Find(tariff).Id;
 				Flash["ChStatus"] = Tariff.Find(status).Id;
-				SendParam(ClientID, group);
+				SendParam(ClientID, group, appealType);
 			}
 		}
 
 
-		private void SendParam(UInt32 ClientCode, string grouped)
+		private void SendParam(UInt32 ClientCode, string grouped, int appealType)
 		{
 			var client = Clients.Find(ClientCode);
 		    PropertyBag["Houses"] = House.FindAll();
             PropertyBag["ChHouse"] = client.PhysicalClient.HouseObj != null ? client.PhysicalClient.HouseObj.Id : 0;
 			PropertyBag["ConnectInfo"] = client.GetConnectInfo();
 		    PropertyBag["grouped"] = grouped;
-			PropertyBag["Appeals"] = Appeals.FindAllByProperty("Client", client).OrderByDescending(a => a.Date);
+		    PropertyBag["Appeals"] =
+		        Appeals.FindAllByProperty("Client", client).Where(a => a.AppealType == appealType).OrderByDescending(
+		            a => a.Date);
 			PropertyBag["ClientCode"] = ClientCode;
 			PropertyBag["UserInfo"] = true;
 			PropertyBag["BalanceText"] = string.Empty;
@@ -580,7 +586,8 @@ namespace InternetInterface.Controllers
                         Appeal = "Причина недозвона:  " + prichina + " \r\n Дата: " + _noPhoneDate.ToShortDateString() + " \r\n Комментарий: \r\n " + Appeal,
 						Date = DateTime.Now,
 						Partner = InithializeContent.partner,
-						Client = Clients.Find(ClientID)
+						Client = Clients.Find(ClientID),
+                        AppealType = (int)AppealType.User
 					}.SaveAndFlush();
 			}
 			RedirectToUrl("../Search/Redirect?ClientCode=" + ClientID);
@@ -632,7 +639,8 @@ namespace InternetInterface.Controllers
 		                    Appeal =
 		                        string.Format("Назначен в график, \r\n Брагада: {0} \r\n Дата: {1} \r\n Время: {2}",
                                               briad.Name, DateTime.Parse(Request.Form["graph_date"]).ToShortDateString(),
-		                                      Intervals.GetIntervals()[(int) interval])
+		                                      Intervals.GetIntervals()[(int) interval]),
+                            AppealType = (int)AppealType.User
 		                }.Save();
 			return true;
 		}
@@ -672,6 +680,13 @@ namespace InternetInterface.Controllers
             PropertyBag["selectDate"] = selectDate;
             PropertyBag["Brigad"] = Brigad.Find(Brig);
             PropertyBag["Intervals"] = Intervals.GetIntervals();
+        }
+
+        private string CreateAppealLink(string link, string name, int type)
+        {
+            return string.Format("<a href=\"{0}\"" +
+                   "<button type=\"button\" id=\"Button1\" class=\"button\">" +
+				    "<img alt=\"Save\" src=\"../Images/tick.png\">{1}</button></a>", link.Remove(link.IndexOf("appalType")) + "appealType" + type, name);
         }
 	}
 }

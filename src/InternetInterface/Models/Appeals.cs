@@ -7,7 +7,13 @@ using InternetInterface.Models.Universal;
 
 namespace InternetInterface.Models
 {
-	[ActiveRecord("Appeals", Schema = "internet", Lazy = true)]
+    public enum AppealType
+    {
+        User = 1,
+        System = 3
+    }
+
+    [ActiveRecord("Appeals", Schema = "internet", Lazy = true)]
 	public class Appeals : ValidActiveRecordLinqBase<Appeals>
 	{
 	    [PrimaryKey]
@@ -25,7 +31,10 @@ namespace InternetInterface.Models
 		[BelongsTo("Client")]
 		public virtual Clients Client { get; set; }
 
-		public virtual string GetTransformedAppeal()
+        [Property]
+        public virtual int AppealType { get; set; }
+
+        public virtual string GetTransformedAppeal()
 		{
 			return HttpUtility.HtmlEncode(Appeal).Replace("\r\n", "<br/>");
 		}

@@ -168,5 +168,21 @@ namespace InternetInterface.Test.Functional
                                                      "Иван", "Иванович")));
             }
         }
+
+        [Test]
+        public void UpdateTest()
+        {
+            using (var browser = Open("UserInfo/SearchUserInfo.rails?ClientCode=173&Editing=true"))
+            {
+                var tariffList = browser.SelectList("ChTariff");
+                browser.SelectList("ChTariff").SelectByValue(
+                    tariffList.Options.Where(s => s.Value != tariffList.SelectedOption.Value).First().Value);
+                var statusList = browser.SelectList("ChStatus");
+                browser.SelectList("ChStatus").SelectByValue(
+                    statusList.Options.Where(s => s.Value != statusList.SelectedOption.Value).First().Value);
+                browser.Button("SaveButton").Click();
+                Assert.That(browser.Text, Is.StringContaining("Данные изменены"));
+            }
+        }
 	}
 }

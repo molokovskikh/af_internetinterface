@@ -1,5 +1,5 @@
 ﻿ <tr>
-    <td>
+    <td colspan=2>
     <div>
     <%if PartnerAccessSet.AccesPartner("SSI"): %>
       <%if IsDefined("UserInfo"): %>

@@ -49,6 +49,9 @@ namespace InternetInterface.Models
 			Lazy = true)]
 		public virtual IList<AdditionalStatus> Additional { get; set; }
 
-
+        public override string ToString()
+        {
+            return Name;
+        }
 	}
 }

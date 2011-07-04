@@ -24,5 +24,10 @@ namespace InternetInterface.Models
 			float mb = Speed / 1000000.00f;
 			return mb >= 1 ? mb.ToString("#.00") + " Mb" : (mb * 1000).ToString("#.00") + " Kb";
 		}
+
+        public override string ToString()
+        {
+            return GetNormalizeSpeed();
+        }
 	}
 }

@@ -16,9 +16,20 @@
 				<td>
 				   <button type="submit" id="Button2" class="button">
 				  <img alt="Save" src="../Images/tick.png">Зарегистрировать</button>
-				</td>
+            </form>
+                    <%if appealType == 1: %>
+                    <a href="${Siteroot}/Search/Redirect?ClientCode=${ClientCode}&appealType=3">
+                        <button type="button" id="Button1" class="button">
+				        <img alt="Save" src="../Images/tick.png">Показать системные обращения</button>
+                    </a>
+                    <%else: %>
+                    <a href="${Siteroot}/Search/Redirect?ClientCode=${ClientCode}&appealType=1">
+                        <button type="button" id="Button3" class="button">
+				        <img alt="Save" src="../Images/tick.png">Показать пользовательские обращения</button>
+                    </a>
+                    <%end %>
+                </td>
 			</tr>
-			</form>
 		   </tbody>
 		</table>
 	   <table class="table" style="background-color:#FFFFFF">

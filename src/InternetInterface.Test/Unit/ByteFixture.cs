@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Common.Web.Ui.Helpers;
+using InternetInterface.Models;
 using NUnit.Framework;
 
 namespace InternetInterface.Test.Unit
@@ -21,5 +23,6 @@ namespace InternetInterface.Test.Unit
 			string dfg = BitConverter.ToInt64(fg, 0).ToString();
 			Assert.That(dfg, Is.StringContaining("2886730166"));
 		}
+
 	}
 }

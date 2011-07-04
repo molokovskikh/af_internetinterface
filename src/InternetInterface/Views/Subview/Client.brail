@@ -242,7 +242,7 @@ $('#register_house').trigger('reveal:close');
     <td >
         Статус</td>
     <td >
-            <select name="status" id="Select1" style="width: 95%;">
+            <select name="status" id="ChStatus" style="width: 95%;">
             <%
             for i, Status in enumerate(Statuss): 
             %>

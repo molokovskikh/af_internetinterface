@@ -32,7 +32,7 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual ClientType Type { get; set; }
 
-        [BelongsTo("PhysicalClient", Lazy = FetchWhen.OnInvoke, Cascade = CascadeEnum.SaveUpdate)]
+        [BelongsTo("PhysicalClient", Lazy = FetchWhen.OnInvoke, Cascade = CascadeEnum.SaveUpdate), Auditable]
 		public virtual PhysicalClients PhysicalClient { get; set; }
 
 		[Property]
@@ -47,7 +47,7 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual DateTime? BeginWork { get; set; }
 
-		[BelongsTo(Cascade = CascadeEnum.SaveUpdate)]
+        [BelongsTo(Cascade = CascadeEnum.SaveUpdate), Auditable]
 		public virtual LawyerPerson LawyerPerson { get; set; }
 
 		[Property]
