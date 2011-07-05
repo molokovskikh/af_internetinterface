@@ -17,7 +17,7 @@ namespace InternetInterface.Models
 		[Property, ValidateNonEmpty("Введите имя бригады")]
 		public virtual string Name { get; set; }
 
-		[HasMany(ColumnKey = "Brigad")]
+		[HasMany(ColumnKey = "Brigad", Lazy = true)]
 		public virtual IList<ConnectGraph> Graphs { get; set; }
 
         public virtual Clients GetOneGraph(int intervalNum, DateTime selectDate)

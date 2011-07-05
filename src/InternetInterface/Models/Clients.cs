@@ -53,13 +53,13 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual DateTime RegDate { get; set; }
 
-		[BelongsTo("WhoRegistered")]
+        [BelongsTo("WhoRegistered", Lazy = FetchWhen.OnInvoke)]
 		public virtual Partner WhoRegistered { get; set; }
 
 		[Property]
 		public virtual string WhoRegisteredName { get; set; }
 
-		[BelongsTo("WhoConnected")]
+        [BelongsTo("WhoConnected", Lazy = FetchWhen.OnInvoke)]
 		public virtual Brigad WhoConnected { get; set; }
 
 		[Property]
@@ -77,7 +77,7 @@ namespace InternetInterface.Models
         [Property]
         public virtual DateTime? PostponedPayment { get; set; }
 
-        [BelongsTo]
+        [BelongsTo(Lazy = FetchWhen.OnInvoke)]
         public virtual AdditionalStatus AdditionalStatus { get; set; }
 
         public virtual bool CanUsedPostponedPayment()
@@ -92,7 +92,7 @@ namespace InternetInterface.Models
 		    return Status.Additional.Contains(AdditionalStatus.Queryable.First(a => a.ShortName == aStatus));
 		}
 
-		[HasMany(ColumnKey = "Client", OrderBy = "PaidOn")]
+		[HasMany(ColumnKey = "Client", OrderBy = "PaidOn", Lazy = true)]
 		public virtual IList<Payment> Payments { get; set; }
 
         public virtual string ChangePhysicalClientPassword()

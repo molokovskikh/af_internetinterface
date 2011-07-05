@@ -67,7 +67,9 @@
 			 <td><span class="description">Тариф:</span> ${Client.Speed.GetNormalizeSpeed()}</td>
 		</tr>
 		 <%end %>
-
+        <tr>
+			<td><span class="description">Абонентская плата:</span> ${Client.Tariff}</td>
+		</tr>
 		 <%if PartnerAccessSet.AccesPartner("SSI"): %>
 		<tr>
 			<td><span class="description">Баланс:</span> ${Client.Balance}</td>

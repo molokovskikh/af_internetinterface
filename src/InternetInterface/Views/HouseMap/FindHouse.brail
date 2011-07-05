@@ -24,15 +24,15 @@
         {
             SubscriberCount:
                 {
-                    digits: "Должно быть введено число"
+                    digits: "  Введите число"
                 },
             PenetrationPercent:
                 {
-                    digits: "Должно быть введено число"
+                    digits: "  Введите число"
                 },
             PassCount:
                 {
-                    digits: "Должно быть введено число"
+                    digits: "  Введите число"
                 }
         },
             submitHandler: function (form) {
@@ -55,8 +55,8 @@
             .error
     {
         color:Red;
-        font-size:12px;
-        font-style:oblique;
+        /*font-size:12px;
+        font-style:oblique;*/
         }
 </style>
 <center>

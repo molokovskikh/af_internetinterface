@@ -1,0 +1,18 @@
+.tablesorter_head tr th {
+	background-image: url(bg.gif);
+	background-repeat: no-repeat;
+	background-position: center right;
+	border: 1px solid #FFF;
+	padding: 6px;
+	cursor: pointer;
+}
+
+.tablesorter_head tr .headerSortUp {
+	background-image: url(asc.gif);
+}
+.tablesorter_head tr .headerSortDown {
+	background-image: url(desc.gif);
+}
+.tablesorter_head tr .headerSortDown, .tablesorter_head tr .headerSortUp {
+background-color: #8dbdd8;
+}

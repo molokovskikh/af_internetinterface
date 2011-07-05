@@ -22,7 +22,7 @@
    	        </tr>
             <% for item in Payments :  %>
                 <tr>
-                    <td>${item.Sum}</td>
+                    <td>${item.Sum.ToString("0.00")}</td>
                     <td>${item.PaidOn.ToShortDateString()}</td>
                 </tr>
             <%end %>

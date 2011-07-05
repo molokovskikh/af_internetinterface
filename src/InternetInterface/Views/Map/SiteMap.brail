@@ -1,14 +1,8 @@
-﻿<link href="../Styles/style.css" type="text/css" rel="stylesheet" />
-<link rel="stylesheet" href="../Styles/base.css" type="text/css" media="screen" />
-
+﻿<link href="../Styles/Style.css" type="text/css" rel="stylesheet" />
+<link href="../Styles/base.css" type="text/css" rel="stylesheet" />
 <div id="container">
-<div class="content">
-
-<% OutputSubView("""\Subview\MapHead""") %>
-<table class="table">
-<tbody>
-</tbody>
-</table>
-</div>
+    <div class="content">
+         <% OutputSubView("""\Subview\MapHead""") %>
+    </div>
 </div>
 </div>

@@ -22,7 +22,8 @@ namespace InforoomInternet.Controllers
 			PropertyBag["Client"] = Client;
             PropertyBag["WriteOffs"] = Client.GetWriteOffs(grouped).OrderBy(e => e.WriteOffDate).ToArray();
 			PropertyBag["grouped"] = grouped;
-			PropertyBag["Payments"] = Payment.FindAllByProperty("Client", Client).OrderBy(e => e.PaidOn).ToArray();
+		    PropertyBag["Payments"] =
+		        Payment.FindAllByProperty("Client", Client).Where(p => p.Sum != 0).OrderBy(e => e.PaidOn).ToArray();
 		}
 
         public void PostponedPayment()
@@ -44,19 +45,10 @@ namespace InforoomInternet.Controllers
         {
             var clientId = Convert.ToUInt32(Session["LoginClient"]);
             var client = Clients.Find(clientId);
-            var pclient = client.PhysicalClient;
             if (client.CanUsedPostponedPayment())
             {
                 client.PostponedPayment = DateTime.Now;
                 client.Disabled = false;
-                var writeOff = pclient.Tariff.GetPrice(client)/client.GetInterval();
-                pclient.Balance -= writeOff;
-                new WriteOff {
-                                 Client = client,
-                                 WriteOffDate = DateTime.Now,
-                                 WriteOffSum = writeOff
-                             }.Save();
-                pclient.Update();
                 client.Update();
                 Flash["message"] = "Услуга \"Обещанный платеж активирована\"";
             }

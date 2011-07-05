@@ -20,11 +20,11 @@
         <tr valign="top">
             <th>Номер счета:</th>
             <th>ФИО</th>
-            <%if PartnerAccessSet.AccesPartner("SSI"): %>
+            <%if CategorieAccessSet.AccesPartner("SSI"): %>
             <th>Адрес подключения</th>
             <th>Номер телефона</th>
             <%end %>
-            <%if PartnerAccessSet.AccesPartner("SSI"): %>
+            <%if CategorieAccessSet.AccesPartner("SSI"): %>
             <th>Дата регистрации</th>
             <%end %>
             <th>Тариф</th>
@@ -35,25 +35,26 @@
         </tr>
     </thead>
     <tbody id="SearchResults">
-    <% for i,item in enumerate(SClients): %>
+    <% for i,itemInfo in enumerate(SClients): %>
+     <%item = itemInfo.client %>
         <tr class="${item.Name}">
             <td><a href="../Search/Redirect?ClientCode=${item.Id}">${item.Id.ToString("00000")}</a></td>
             <td> ${item.Name}</td>
-            <%if PartnerAccessSet.AccesPartner("SSI"): %>
-            <%if item.PhysicalClient != null: %>
-            <td>ул. ${item.PhysicalClient.Street} д. ${item.PhysicalClient.House} корп. ${item.PhysicalClient.CaseHouse} кв. ${item.PhysicalClient.Apartment} Подъезд ${item.PhysicalClient.Entrance} Этаж ${item.PhysicalClient.Floor}</td>
-            <td>${item.PhysicalClient.PhoneNumber}</td>
-            <%else : %>
-            <td>${item.LawyerPerson.ActualAdress}</td>
-            <td>${item.LawyerPerson.Telephone}</td>
+            <%if CategorieAccessSet.AccesPartner("SSI"): %>
+                <%if item.PhysicalClient != null: %>
+                <td>ул. ${item.PhysicalClient.Street} д. ${item.PhysicalClient.House} корп. ${item.PhysicalClient.CaseHouse} кв. ${item.PhysicalClient.Apartment} Подъезд ${item.PhysicalClient.Entrance} Этаж ${item.PhysicalClient.Floor}</td>
+                <td>${item.PhysicalClient.PhoneNumber}</td>
+                <%else : %>
+                <td>${item.LawyerPerson.ActualAdress}</td>
+                <td>${item.LawyerPerson.Telephone}</td>
+                <%end %>
             <%end %>
-            <%end %>
-            <%if PartnerAccessSet.AccesPartner("SSI"): %>
-            <%if item.PhysicalClient != null: %>
-            <td>${item.RegDate}</td>
-            <%else: %>
-            <td>${item.RegDate}</td>
-            <%end %>
+            <%if CategorieAccessSet.AccesPartner("SSI"): %>
+                <%if item.PhysicalClient != null: %>
+                <td>${item.RegDate}</td>
+                <%else: %>
+                <td>${item.RegDate}</td>
+                <%end %>
             <%end %>
             <%if item.PhysicalClient != null:  %>
             <td>${item.PhysicalClient.Tariff.Name}</td>
@@ -68,21 +69,28 @@
                 <%if item.PhysicalClient != null: %>
                     <td style="background-color:${"#d79c9c" if item.PhysicalClient.Balance < 0};">${item.PhysicalClient.Balance}</td>
                     <%if item.Status != null: %>
-                        <td  style="background-color:${"#a3dcb0" if item.OnLine()};" >${item.Status.Name}</td>
+                        <td  style="background-color:${"#a3dcb0" if itemInfo.OnLine};" >${item.Status.Name}</td>
                         <%else: %>
-                        <td  style="background-color:${"#a3dcb0" if item.OnLine()};">Статус не задан</td>
+                        <td  style="background-color:${"#a3dcb0" if itemInfo.OnLine};">Статус не задан</td>
                     <%end %>
                 <%else: %>
                     <td style="background-color:${"#d79c9c" if item.LawyerPerson.Balance < 0};">${item.LawyerPerson.Balance}</td>
                     <%if item.Status != null: %>
-                    <td  style="background-color:${"#a3dcb0" if item.OnLine()};">${item.Status.Name}</td>
+                    <td  style="background-color:${"#a3dcb0" if itemInfo.OnLine};">${item.Status.Name}</td>
                     <%else: %>
-                    <td  style="background-color:${"#a3dcb0" if item.OnLine()};">Статус не задан</td>
+                    <td  style="background-color:${"#a3dcb0" if itemInfo.OnLine};">Статус не задан</td>
                     <%end %>
                 <%end %>
             <%end %>
         </tr>
-    <% end %>        
+    <% end %>   
+      <tr>
+        <td colspan=8>
+        <div class="Paginator">
+             ${PaginatorHelper.ShowPaginator()}
+        </div>
+        </td>
+      </tr>     
       </tbody>
     </form>
 </table>

@@ -6,27 +6,20 @@
 </style>
 <script type="text/javascript">
     $(function () {
+        $("#find_result_table").tablesorter({ widthFixed: true, widgets: ['zebra'] });
+
         $('.big-link').click(function () {
             var house = $(this).parent().children('input:first').val();
             $('#selected_house').val(house);
         });
     });
-
-   /* function V_Prohod() {
-        var req = {};
-        req.agent = $('#agent').val();
-        req.date_agent = $('#date_agent').val();
-        req.house = $('#selected_house').val();
-        $.post("V_Prohod", req, function (data) {
-            window.location.href = '${SiteRoot}/HouseMap/ForPrintToAgent?id=' + req.house;
-        })
-    }*/
 </script>
+
 <% OutputSubView("""\HouseMap\FindHouse""") %>
 <center>
     <div>
         <table class="table" id="find_result_table" style="margin-top:15px;">
-            <thead>
+            <thead class="tablesorter_head">
                 <tr>
                     <th>Адрес</th>
                     <th>Количество абонентов</th>

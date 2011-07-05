@@ -367,9 +367,15 @@ namespace InternetInterface.Controllers
 			if (Validator.IsValid(updateClient))
 			{
 				updateClient.Speed = PackageSpeed.Find(Speed);
+
                 InitializeHelper.InitializeModel(_client);
-                InitializeHelper.InitializeModel(updateClient);
+			    InitializeHelper.InitializeModel(updateClient);
+
 				updateClient.Update();
+
+			    _client.Name = updateClient.ShortName;
+                _client.Update();
+
 				var clientEndPoint = ClientEndpoints.Queryable.First(c => c.Client == _client);
 				clientEndPoint.PackageId = updateClient.Speed.PackageId;
 				clientEndPoint.Update();
