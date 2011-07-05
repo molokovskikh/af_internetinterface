@@ -18,7 +18,7 @@ namespace InternetInterface.AllLogic
 			var _return = string.Empty;
 			if (whoregister != 0)
 			{
-				_return += " and P.WhoRegistered = :whoregister or l.WhoRegistered = :whoregister";
+				_return += " and C.WhoRegistered = :whoregister or l.WhoRegistered = :whoregister";
 			}
 
 			if (tariff != 0)
@@ -27,7 +27,7 @@ namespace InternetInterface.AllLogic
 			}
 			if (brigad != 0)
 			{
-				_return += " and P.WhoConnected = :Brigad or l.WhoConnected = :Brigad";
+				_return += " and C.WhoConnected = :Brigad or l.WhoConnected = :Brigad";
 			}
             if (addtionalStatus != 0)
             {

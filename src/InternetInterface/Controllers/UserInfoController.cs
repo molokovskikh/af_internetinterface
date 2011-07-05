@@ -184,6 +184,7 @@ namespace InternetInterface.Controllers
 
 		public void CreateAppeal(string Appeal, uint ClientID)
 		{
+            if (!string.IsNullOrEmpty(Appeal))
 			new Appeals
 				{
 					Appeal = Appeal,
