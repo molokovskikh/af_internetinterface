@@ -379,7 +379,7 @@ namespace InternetInterface.Controllers
                                     AppealType = (int)AppealType.System,
                                     Client = _client,
                                     Date = DateTime.Now,
-                                    Partner = CurrentPartner
+                                    Partner = InithializeContent.partner
                                 }.Save();
                 RedirectToUrl("../Search/Redirect?ClientCode=" + ClientID + "&appealType=" + appealType);
 			}

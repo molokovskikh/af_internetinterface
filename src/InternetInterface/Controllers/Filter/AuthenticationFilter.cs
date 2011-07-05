@@ -33,7 +33,7 @@ namespace InternetInterface.Controllers.Filter
 			}
 			else
 			{
-				InithializeContent.partner = Partner.GetPartnerForLogin(context.Session["login"].ToString());
+				//InithializeContent.partner = Partner.GetPartnerForLogin(context.Session["login"].ToString());
 				controllerContext.PropertyBag["PartnerAccessSet"] = new CategorieAccessSet();
 				controllerContext.PropertyBag["MapPartner"] = InithializeContent.partner;
 				if (AccessRules.GetAccessName(controllerContext.Action).Count(CategorieAccessSet.AccesPartner) == 0)

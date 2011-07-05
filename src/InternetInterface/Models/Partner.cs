@@ -40,7 +40,7 @@ namespace InternetInterface.Models
 
 		public static Partner GetPartnerForLogin(string login)
 		{
-			return FindAllByProperty("Login", login)[0];
+			return FindAllByProperty("Login", login).FirstOrDefault();
 		}
 
 

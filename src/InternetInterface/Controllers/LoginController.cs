@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web;
 using System.Web.Security;
 using Castle.MonoRail.Framework;
 using InternetInterface.Helpers;
@@ -20,6 +21,7 @@ namespace InternetInterface.Controllers
 			{
 				FormsAuthentication.RedirectFromLoginPage(Login, true);
 				Session.Add("Login", Login);
+                //HttpContext.Current.Items.Add("Login", Login);
 				RedirectToUrl(@"..//Map/SiteMap.rails");
 			}
 			else

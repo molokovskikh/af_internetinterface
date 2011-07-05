@@ -9,13 +9,13 @@ namespace InternetInterface.Controllers.ParentControllers
 {
     public class ParentControllerItem : SmartDispatcherController
     {
-        public Partner CurrentPartner
+        /*public Partner CurrentPartner
         {
             get
             {
                 return
                     Partner.Queryable.First(p => p.Login == (string) Context.Session["Login"]);
             }
-        }
+        }*/
     }
 }

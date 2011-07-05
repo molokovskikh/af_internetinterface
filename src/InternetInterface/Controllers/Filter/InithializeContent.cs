@@ -1,24 +1,45 @@
-﻿using System.Linq;
-
+﻿using System;
+using System.Linq;
+using System.Web;
 using InternetInterface.Models;
 
 namespace InternetInterface.Controllers.Filter
 {
-	/*public class InithializeContent
-	{
-	    public static Partner partner
-	    {
-	        get
-	        {
-	            return
-                    Partner.Queryable.First(p => p.Login == Context.Session["Login"]);
-	        }
-	        set { }
-	    }
-	}*/
+    public class NotAuthorizedException : Exception
+    {
+    }
 
     public class InithializeContent
     {
-        public static Partner partner;
+        private const string AdministratorKey = "Login";
+
+        public static Func<Partner> GetAdministrator = () => {
+            var httpContext = HttpContext.Current;
+            if (httpContext == null)
+                throw new Exception("HttpContext не инициализирован");
+
+            var admin = Partner.GetPartnerForLogin(httpContext.Session[AdministratorKey].ToString());
+            if (admin == null)
+            {
+                admin = Partner.GetPartnerForLogin(httpContext.User.Identity.Name);
+                if (admin != null)
+                    httpContext.Items[AdministratorKey] = admin;
+            }
+
+            return admin;
+        };
+
+
+        public static Partner partner
+        {
+            get
+            {
+                var admin = GetAdministrator();
+                if (admin == null)
+                    throw new NotAuthorizedException();
+
+                return admin;
+            }
+        }
     }
 }

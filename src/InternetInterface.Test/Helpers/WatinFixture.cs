@@ -68,7 +68,7 @@ namespace InternetInterface.Test.Helpers
 				                               		Assembly.Load("InternetInterface"),
 				                               		Assembly.Load("InternetInterface.Test"),
 				                               	}, ActiveRecordSectionHandler.Instance);
-			InithializeContent.partner = Partner.FindAllByProperty("Login", "zolotarev")[0];
+			//InithializeContent.partner = Partner.FindAllByProperty("Login", "zolotarev")[0];
 		}
 	}
 }
