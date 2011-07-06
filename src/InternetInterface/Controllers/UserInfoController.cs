@@ -376,10 +376,13 @@ namespace InternetInterface.Controllers
 			    _client.Name = updateClient.ShortName;
                 _client.Update();
 
-				var clientEndPoint = ClientEndpoints.Queryable.First(c => c.Client == _client);
-				clientEndPoint.PackageId = updateClient.Speed.PackageId;
-				clientEndPoint.Update();
-                if (!string.IsNullOrEmpty(comment))
+				var clientEndPoint = ClientEndpoints.Queryable.FirstOrDefault(c => c.Client == _client);
+                if (clientEndPoint != null)
+                {
+                    clientEndPoint.PackageId = updateClient.Speed.PackageId;
+                    clientEndPoint.Update();
+                }
+			    if (!string.IsNullOrEmpty(comment))
                     new Appeals {
                                     Appeal = comment,
                                     AppealType = (int)AppealType.System,

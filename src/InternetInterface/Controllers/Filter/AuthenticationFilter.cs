@@ -35,19 +35,14 @@ namespace InternetInterface.Controllers.Filter
 			}
 			else
 			{
-				//InithializeContent.partner = Partner.GetPartnerForLogin(context.Session["login"].ToString());
-                context.Items.Add("Login", context.Session["login"]);
+			    var partner = Partner.GetPartnerForLogin(context.Session["login"].ToString());
+                partner.AccesedPartner = CategorieAccessSet.FindAll(DetachedCriteria.For(typeof(CategorieAccessSet))
+                                                            .CreateAlias("AccessCat", "AC", JoinType.InnerJoin)
+                                                            .Add(Restrictions.Eq("Categorie", partner.Categorie)))
+                                                            .Select(c => c.AccessCat.ReduceName).ToList();
+                context.Items.Add("Administrator", partner);
 				controllerContext.PropertyBag["PartnerAccessSet"] = new CategorieAccessSet();
-				controllerContext.PropertyBag["MapPartner"] = InithializeContent.partner;
-                if (CategorieAccessSet._accesedPartner == null)
-			    CategorieAccessSet._accesedPartner = CategorieAccessSet.FindAll(DetachedCriteria.For(typeof (CategorieAccessSet))
-			                                                                        .CreateAlias("AccessCat", "AC",
-			                                                                                     JoinType.InnerJoin)
-			                                                                        .Add(Restrictions.Eq("Categorie",
-			                                                                                             InithializeContent.
-			                                                                                                 partner.Categorie)))
-			        .Select(
-			            c => c.AccessCat.ReduceName).ToList();
+				controllerContext.PropertyBag["MapPartner"] = partner;
 				if (AccessRules.GetAccessName(controllerContext.Action).Count(CategorieAccessSet.AccesPartner) == 0)
 				{
 					context.Response.RedirectToUrl(@"..\\Errors\AccessDin.aspx");

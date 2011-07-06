@@ -11,14 +11,15 @@ namespace InternetInterface.Controllers.Filter
 
     public class InithializeContent
     {
-        private const string AdministratorKey = "Login";
+        private const string AdministratorKey = "Administrator";
 
         public static Func<Partner> GetAdministrator = () => {
             var httpContext = HttpContext.Current;
             if (httpContext == null)
                 throw new Exception("HttpContext не инициализирован");
 
-            var admin = Partner.GetPartnerForLogin(httpContext.Items[AdministratorKey].ToString());
+            //var admin = Partner.GetPartnerForLogin(httpContext.Items[AdministratorKey].ToString());
+            var admin = (Partner)httpContext.Items[AdministratorKey];
             if (admin == null)
             {
                 admin = Partner.GetPartnerForLogin(httpContext.User.Identity.Name);

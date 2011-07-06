@@ -23,25 +23,10 @@ namespace InternetInterface.Models
 		[BelongsTo("AccessCat")]
 		public virtual AccessCategories AccessCat { get; set; }
 
-	    public static IList<string> _accesedPartner;
-
-        /*
-        public CategorieAccessSet()
-        {
-            _accesedPartner = FindAll(DetachedCriteria.For(typeof(CategorieAccessSet))
-                                     .CreateAlias("AccessCat", "AC", JoinType.InnerJoin)
-                                     .Add(Restrictions.Eq("Categorie", InithializeContent.partner.Categorie))).Select(
-                                         c => c.Categorie.ReductionName).ToList();
-        }*/
 
 	    public static Boolean AccesPartner(string reduseRulesName)
 		{
-			/*var result = FindAll(DetachedCriteria.For(typeof(CategorieAccessSet))
-									.CreateAlias("AccessCat", "AC", JoinType.InnerJoin)
-									.Add(Restrictions.Eq("Categorie", InithializeContent.partner.Categorie))
-									.Add(Restrictions.Eq("AC.ReduceName", reduseRulesName)));
-			return result.Length != 0 ? true : false;*/
-	        return _accesedPartner.Contains(reduseRulesName);
+            return InithializeContent.partner.AccesedPartner.Contains(reduseRulesName);
 		}
 
 		public static IList<CategorieAccessSet> GetAccessPartner()

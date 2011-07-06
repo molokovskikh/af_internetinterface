@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Castle.ActiveRecord;
 using Castle.Components.Validator;
+using InternetInterface.Controllers.Filter;
 using InternetInterface.Models.Universal;
 using NHibernate.Criterion;
 using NHibernate.SqlCommand;
@@ -13,8 +14,7 @@ namespace InternetInterface.Models
 	[ActiveRecord("Partners", Schema = "internet", Lazy = true)]
 	public class Partner : ValidActiveRecordLinqBase<Partner>
 	{
-
-		[PrimaryKey]
+	    [PrimaryKey]
 		public virtual uint Id { get; set; }
 
 		[Property, ValidateNonEmpty("Введите имя")]
@@ -38,7 +38,10 @@ namespace InternetInterface.Models
 		[BelongsTo("Categorie")]
 		public virtual UserCategorie Categorie { get; set; }
 
-		public static Partner GetPartnerForLogin(string login)
+        public virtual IList<string> AccesedPartner { get; set; }
+
+
+	    public static Partner GetPartnerForLogin(string login)
 		{
 			return FindAllByProperty("Login", login).FirstOrDefault();
 		}
