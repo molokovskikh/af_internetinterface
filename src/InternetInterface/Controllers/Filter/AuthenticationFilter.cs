@@ -36,6 +36,7 @@ namespace InternetInterface.Controllers.Filter
 			else
 			{
 				//InithializeContent.partner = Partner.GetPartnerForLogin(context.Session["login"].ToString());
+                context.Items.Add("Login", context.Session["login"]);
 				controllerContext.PropertyBag["PartnerAccessSet"] = new CategorieAccessSet();
 				controllerContext.PropertyBag["MapPartner"] = InithializeContent.partner;
                 if (CategorieAccessSet._accesedPartner == null)

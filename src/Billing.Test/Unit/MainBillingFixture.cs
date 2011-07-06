@@ -3,7 +3,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Castle.ActiveRecord;
 using Common.Tools;
+using InternetInterface.Controllers.Filter;
 using NUnit.Framework;
 using InternetInterface.Models;
 
@@ -18,6 +20,18 @@ namespace Billing.Test.Unit
 		public MainBillingFixture()
 		{
 			billing = new MainBilling();
+
+            new Partner
+            {
+                Login = "Test",
+            }.SaveAndFlush();
+
+
+
+            SessionScope.Current.Flush();
+
+            InithializeContent.GetAdministrator = () => Partner.FindFirst();
+
 
 			new Status
 			{
@@ -53,7 +67,44 @@ namespace Billing.Test.Unit
 			billing.Compute();
 		}
 
-		[Test]
+        [Test]
+        public void Test1151()
+        {
+            var client = CreateClient();
+            client.Disabled = false;
+            client.RatedPeriodDate = new DateTime(2011, 5, 31); //, 15, 05, 23);
+            SystemTime.Now = () => new DateTime(2011, 6, 30);//, 22, 02, 03);
+            billing.Compute();
+            Console.WriteLine(WriteOff.Queryable.Where(w => w.Client == client).ToList().Last().WriteOffSum);
+            client.Refresh();
+            Console.WriteLine(client.RatedPeriodDate);
+            Console.WriteLine(client.GetInterval());
+            Console.WriteLine(client.DebtDays);
+            Assert.That(client.DebtDays, Is.EqualTo(1));
+            SystemTime.Now = () => new DateTime(2011, 7, 31);//, 19, 03, 6);
+            billing.Compute();
+            Console.WriteLine(WriteOff.Queryable.Where(w => w.Client == client).ToList().Last().WriteOffSum);
+            client.Refresh();
+            Console.WriteLine(client.RatedPeriodDate);
+            Console.WriteLine(client.GetInterval());
+            Console.WriteLine(client.DebtDays);
+            Assert.That(client.DebtDays, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void TetsDebtDays()
+        {
+            var client = CreateClient();
+            client.Disabled = false;
+            client.RatedPeriodDate = new DateTime(2011, 5, 15, 15, 05, 23);
+            SystemTime.Now = () => new DateTime(2011, 6, 15, 22, 02, 03);
+            billing.Compute();
+            client.Refresh();
+            Assert.That(client.DebtDays, Is.EqualTo(0));
+            Assert.That(((DateTime)client.RatedPeriodDate).Date, Is.EqualTo(new DateTime(2011, 6, 15)));
+        }
+
+	    [Test]
 		public void OnTest()
 		{
             CreateClient();

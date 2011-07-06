@@ -53,6 +53,7 @@ namespace InternetInterface.Controllers
 
         public string[] ToUrl()
         {
+            if (CategorieAccessSet.AccesPartner("SSI"))
             return new[] {
 				String.Format("filter.searchText={0}", searchText),
 				String.Format("filter.searchProperties.SearchBy={0}", searchProperties.SearchBy),
@@ -63,6 +64,9 @@ namespace InternetInterface.Controllers
 				String.Format("filter.addtionalStatus={0}", addtionalStatus),
 				String.Format("filter.connectedType.Type={0}", connectedType.Type),
 			};
+            return new[] {
+                             String.Format("filter.searchText={0}", searchText)
+                         };
         }
 
         public string ToUrlQuery()
@@ -96,6 +100,8 @@ namespace InternetInterface.Controllers
             IList<Clients> result = new List<Clients>();
             ArHelper.WithSession(session =>
             {
+                if (searchProperties == null)
+                    searchProperties = new UserSearchProperties();
                 searchProperties.SearchText = searchText;
                 var sqlStr = string.Empty;
                 IQuery query = null;
@@ -164,7 +170,8 @@ ORDER BY C.Name Limit {1}, {2}", ":SearchText", CurrentPage * PageSize, PageSize
             });
 
             var clientsInfo = result.Select(c => new ClientInfo(c)).ToList();
-            var onLineClients = Lease.Queryable.Select(c => c.Endpoint.Client.Id).ToList();
+            var onLineClients =
+                Lease.Queryable.Where(l => l.Endpoint.Client != null).Select(c => c.Endpoint.Client.Id).ToList();
             foreach (var clientInfo in clientsInfo.Where(clientInfo => onLineClients.Contains(clientInfo.client.Id)))
             {
                 clientInfo.OnLine = true;

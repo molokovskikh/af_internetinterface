@@ -7,7 +7,6 @@ using Castle.MonoRail.Framework;
 using Common.Web.Ui.Helpers;
 using InternetInterface.AllLogic;
 using InternetInterface.Controllers.Filter;
-using InternetInterface.Controllers.ParentControllers;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 using NHibernate;
@@ -17,7 +16,7 @@ namespace InternetInterface.Controllers
 {
 	[Layout("Main")]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
-    public class UserInfoController : ParentControllerItem
+    public class UserInfoController : SmartDispatcherController
 	{
         public void SearchUserInfo(uint clientCode, bool Editing, bool EditingConnect, string grouped, int appealType)
 		{

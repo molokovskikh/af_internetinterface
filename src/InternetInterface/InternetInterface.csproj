@@ -197,7 +197,6 @@
     <Compile Include="Controllers\HouseMapController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\MapController.cs" />
-    <Compile Include="Controllers\ParentControllers\ParentControllerItem.cs" />
     <Compile Include="Controllers\PayersController.cs" />
     <Compile Include="Controllers\RegisterController.cs" />
     <Compile Include="Controllers\SearchController.cs" />

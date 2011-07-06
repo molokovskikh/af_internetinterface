@@ -18,7 +18,7 @@ namespace InternetInterface.Controllers.Filter
             if (httpContext == null)
                 throw new Exception("HttpContext не инициализирован");
 
-            var admin = Partner.GetPartnerForLogin(httpContext.Session[AdministratorKey].ToString());
+            var admin = Partner.GetPartnerForLogin(httpContext.Items[AdministratorKey].ToString());
             if (admin == null)
             {
                 admin = Partner.GetPartnerForLogin(httpContext.User.Identity.Name);
