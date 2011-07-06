@@ -272,7 +272,7 @@ namespace Billing
                 if (!client.Disabled)
                 {
                     var thisDate = SystemTime.Now();
-                    decimal spis = person.Tariff/DateTime.DaysInMonth(thisDate.Year, thisDate.Month);
+                    decimal spis = person.Tariff / DateTime.DaysInMonth(thisDate.Year, thisDate.Month);
                     person.Balance -= spis;
                     person.UpdateAndFlush();
                     new WriteOff {
