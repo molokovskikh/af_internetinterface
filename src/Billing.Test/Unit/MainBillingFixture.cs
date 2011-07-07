@@ -1,17 +1,18 @@
-﻿#define TEST
+﻿#define BILLING_TEST
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Castle.ActiveRecord;
 using Common.Tools;
 using InternetInterface.Controllers.Filter;
 using NUnit.Framework;
 using InternetInterface.Models;
 
+
 namespace Billing.Test.Unit
 {
-
 	[TestFixture]
 	public class MainBillingFixture
 	{
@@ -24,7 +25,7 @@ namespace Billing.Test.Unit
             new Partner
             {
                 Login = "Test",
-            }.SaveAndFlush();
+            }.Save();
 
 
 
@@ -32,28 +33,27 @@ namespace Billing.Test.Unit
 
             InithializeContent.GetAdministrator = () => Partner.FindFirst();
 
-
 			new Status
 			{
 				Blocked = false,
 				Id = (uint)StatusType.Worked,
 				Name = "unblocked"
-			}.SaveAndFlush();
+			}.Save();
 
 			new Status
 			{
 				Blocked = true,
 				Id = (uint)StatusType.NoWorked,
 				Name = "testBlockedStatus"
-			}.SaveAndFlush();
+			}.Save();
 
-			new InternetSettings{NextBillingDate = DateTime.Now}.SaveAndFlush();
+			new InternetSettings{NextBillingDate = DateTime.Now}.Save();
 		}
 
 		public Clients CreateClient()
 		{
 			var client = BaseBillingFixture.CreateAndSaveClient("testClient1", false, 590);
-			client.SaveAndFlush();
+			client.Save();
 			return client;
 		}
 
@@ -61,7 +61,7 @@ namespace Billing.Test.Unit
 		{
 			client = Clients.FindFirst();
 			client.RatedPeriodDate = rd.dtFrom;
-			client.UpdateAndFlush();
+			client.Update();
 			SystemTime.Now = () => rd.dtTo;
 			//billing.DtNow = rd.dtTo;
 			billing.Compute();
@@ -72,8 +72,8 @@ namespace Billing.Test.Unit
         {
             var client = CreateClient();
             client.Disabled = false;
-            client.RatedPeriodDate = new DateTime(2011, 5, 31); //, 15, 05, 23);
-            SystemTime.Now = () => new DateTime(2011, 6, 30);//, 22, 02, 03);
+            client.RatedPeriodDate = new DateTime(2011, 5, 31, 15, 05, 23);
+            SystemTime.Now = () => new DateTime(2011, 6, 30, 22, 02, 03);
             billing.Compute();
             Console.WriteLine(WriteOff.Queryable.Where(w => w.Client == client).ToList().Last().WriteOffSum);
             client.Refresh();
@@ -81,7 +81,7 @@ namespace Billing.Test.Unit
             Console.WriteLine(client.GetInterval());
             Console.WriteLine(client.DebtDays);
             Assert.That(client.DebtDays, Is.EqualTo(1));
-            SystemTime.Now = () => new DateTime(2011, 7, 31);//, 19, 03, 6);
+            SystemTime.Now = () => new DateTime(2011, 7, 31 , 19, 03, 6);
             billing.Compute();
             Console.WriteLine(WriteOff.Queryable.Where(w => w.Client == client).ToList().Last().WriteOffSum);
             client.Refresh();
@@ -103,6 +103,38 @@ namespace Billing.Test.Unit
             Assert.That(client.DebtDays, Is.EqualTo(0));
             Assert.That(((DateTime)client.RatedPeriodDate).Date, Is.EqualTo(new DateTime(2011, 6, 15)));
         }
+
+        [Test]
+        public void FindDebt()
+        {
+           var count = 0;
+           var client = BaseBillingFixture.CreateAndSaveClient("testClient1", false, 500000);
+            client.Disabled = false;
+            client.RatedPeriodDate = new DateTime(2011, 6, 9, 15, 00, 9);
+            client.Save();
+            var tarif = client.PhysicalClient.Tariff;
+            tarif.Price = 500;
+            tarif.Update();
+            while (client.DebtDays < 1 && count < 365)
+            {
+                Console.WriteLine("Count: " + count + " Date: " + SystemTime.Now().Date);
+                SystemTime.Now = () => new DateTime(2011, 6, 7, 22, 15, 9).AddDays(count);
+                Console.WriteLine("IterDate " + SystemTime.Now().ToShortDateString());
+                billing.Compute();
+                client.Refresh();
+                count++;
+                Console.WriteLine("Rated Date: " + client.RatedPeriodDate);
+                Console.WriteLine("DateNow : " + SystemTime.Now());
+                Console.WriteLine("-------------------------------------------------");
+            }
+            Console.WriteLine("***********************************");
+            Console.WriteLine("All iterations " + count);
+            Console.WriteLine("DebtDays " + client.DebtDays);
+            Console.WriteLine("Rated Date: " + client.RatedPeriodDate);
+            Console.WriteLine("DateNow : " + SystemTime.Now());
+            Assert.That(365 , Is.EqualTo(count));
+        }
+
 
 	    [Test]
 		public void OnTest()
@@ -205,14 +237,14 @@ namespace Billing.Test.Unit
                 Balance = 0,
                 Tariff = 10000m,
             };
-            lPerson.SaveAndFlush();
+            lPerson.Save();
 			var client = new Clients {
 				Disabled = false,
 				Name = "TestLawyer",
 				ShowBalanceWarningPage = false,
                 LawyerPerson = lPerson
 			};
-			client.SaveAndFlush();
+			client.Save();
 
             for (int i = 0; i < DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month) * 2; i++)
             {
@@ -238,7 +270,7 @@ namespace Billing.Test.Unit
 			var client = Clients.FindFirst();
 			//var client = CreateClient();
 			client.PhysicalClient.Balance = Tariff.FindFirst().Price;
-			client.UpdateAndFlush();
+			client.Update();
 			var interval = new Interval("15.01.2011", "15.02.2011");
 			var dayCount = interval.GetInterval();
 			interval.dtTo = DateTime.Parse("15.01.2011");
@@ -267,7 +299,7 @@ namespace Billing.Test.Unit
 			Assert.That(thisSettings.ToShortDateString(), Is.EqualTo(DateTime.Now.AddDays(1).ToShortDateString()));
 		}
 
-		[Test, Ignore]
+		[Test]
 		public void Complex_tariff()
 		{
 			var tariff = new Tariff {
@@ -350,7 +382,7 @@ namespace Billing.Test.Unit
 			foreach (var date in dates)
 			{
 				client.DebtDays = 0;
-				client.UpdateAndFlush();
+				client.Update();
 				for (int i = 0; i < date.Count-1; i++)
 				{
 					SetClientDate(client, date[i]);
@@ -358,6 +390,8 @@ namespace Billing.Test.Unit
 					Console.WriteLine(string.Format("Между датами {0} прошло {1} дней", date[i], date[i].GetInterval()));
 				}
 			}
+            
+            //client.DeleteAndFlush();
 		}
 	}
 }

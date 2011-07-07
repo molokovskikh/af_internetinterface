@@ -216,7 +216,7 @@ namespace Billing
                 {
                     DtNow = SystemTime.Now();
 
-                    if ((((DateTime) client.RatedPeriodDate).AddMonths(1) - DtNow).Days == -client.DebtDays)
+                    if ((((DateTime) client.RatedPeriodDate).AddMonths(1).Date - DtNow.Date).Days == -client.DebtDays)
                     {
                         var dtFrom = (DateTime) client.RatedPeriodDate;
                         var dtTo = DtNow;

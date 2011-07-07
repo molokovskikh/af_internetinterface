@@ -42,7 +42,9 @@ namespace InternetInterface.Helpers
         }
     }
 
+#if BILLING_TEST
     [EventListener]
+#endif
     public class Listner : BaseAuditListner
     {
         protected override AuditableProperty GetAuditableProperty(PropertyInfo property, string name, object newState, object oldState)

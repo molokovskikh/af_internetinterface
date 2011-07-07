@@ -43,7 +43,7 @@ namespace Billing.Test
 							ActiveRecordStarter.DropSchema();
 							done = true;
 						}
-						scope = new SessionScope(FlushAction.Never);
+                        scope = new SessionScope();
 					}
 					catch (MySqlException e)
 					{
