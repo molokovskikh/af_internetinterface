@@ -1,6 +1,7 @@
 ﻿using System;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
+using Common.Tools;
 using Common.Web.Ui.Helpers;
 
 namespace InternetInterface.Models
@@ -42,7 +43,7 @@ namespace InternetInterface.Models
 			if (FinalPriceInterval == 0 || FinalPrice == 0)
 				return Price;
 
-			if (client.BeginWork.Value.AddMonths(FinalPriceInterval) <= DateTime.Now)
+			if (client.BeginWork.Value.AddMonths(FinalPriceInterval) <= SystemTime.Now())
 				return FinalPrice;
 
 			return Price;

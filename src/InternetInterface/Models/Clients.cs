@@ -95,6 +95,9 @@ namespace InternetInterface.Models
 		[HasMany(ColumnKey = "Client", OrderBy = "PaidOn", Lazy = true)]
 		public virtual IList<Payment> Payments { get; set; }
 
+        [HasMany(ColumnKey = "Client", OrderBy = "WriteOffDate", Lazy = true)]
+        public virtual IList<WriteOff> WriteOffs { get; set; }
+
         public virtual string ChangePhysicalClientPassword()
         {
             var pass =  CryptoPass.GeneratePassword();

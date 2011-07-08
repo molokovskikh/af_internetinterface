@@ -68,6 +68,30 @@ namespace Billing.Test.Unit
 		}
 
         [Test]
+        public void MaxDebtTest()
+        {
+            var client = CreateClient();
+            client.Disabled = false;
+            SystemTime.Reset();
+            var dayInMonth = DateTime.DaysInMonth(SystemTime.Now().AddDays(-15).Year, SystemTime.Now().AddDays(-15).Month);
+            client.RatedPeriodDate = SystemTime.Now().AddDays(-15);
+            client.Update();
+            billing.Compute();
+            var spisD0 = WriteOff.Queryable.FirstOrDefault(w => w.Client == client);
+            client.Refresh();
+            Console.WriteLine("Interval DO: " + client.GetInterval());
+            Assert.That(dayInMonth, Is.EqualTo(client.GetInterval()));
+            client.DebtDays = 29;
+            client.Update();
+            billing.Compute();
+            var slisD29 = WriteOff.Queryable.Where(w => w.Client == client).ToList().LastOrDefault();
+            client.Refresh();
+            Console.WriteLine("Interval D29: " + client.GetInterval());
+            Assert.That(dayInMonth + 29, Is.EqualTo(client.GetInterval()));
+            Console.WriteLine(string.Format("spisDO: {0}  spisD29: {1}", spisD0.WriteOffSum.ToString("0.00"), slisD29.WriteOffSum.ToString("0.00")));
+        }
+
+	    [Test]
         public void Test1151()
         {
             var client = CreateClient();
@@ -75,19 +99,19 @@ namespace Billing.Test.Unit
             client.RatedPeriodDate = new DateTime(2011, 5, 31, 15, 05, 23);
             SystemTime.Now = () => new DateTime(2011, 6, 30, 22, 02, 03);
             billing.Compute();
-            Console.WriteLine(WriteOff.Queryable.Where(w => w.Client == client).ToList().Last().WriteOffSum);
+            Console.WriteLine("WriteOffSum "+WriteOff.Queryable.Where(w => w.Client == client).ToList().Last().WriteOffSum.ToString("0.00"));
             client.Refresh();
-            Console.WriteLine(client.RatedPeriodDate);
-            Console.WriteLine(client.GetInterval());
-            Console.WriteLine(client.DebtDays);
+            Console.WriteLine("RatedDate " + client.RatedPeriodDate.Value.ToShortDateString());
+            Console.WriteLine("Interval " + client.GetInterval());
+            Console.WriteLine("DebtDays " + client.DebtDays);
             Assert.That(client.DebtDays, Is.EqualTo(1));
             SystemTime.Now = () => new DateTime(2011, 7, 31 , 19, 03, 6);
             billing.Compute();
-            Console.WriteLine(WriteOff.Queryable.Where(w => w.Client == client).ToList().Last().WriteOffSum);
+            Console.WriteLine("WriteOffSum " + WriteOff.Queryable.Where(w => w.Client == client).ToList().Last().WriteOffSum.ToString("0.00"));
             client.Refresh();
-            Console.WriteLine(client.RatedPeriodDate);
-            Console.WriteLine(client.GetInterval());
-            Console.WriteLine(client.DebtDays);
+            Console.WriteLine("RatedDate " + client.RatedPeriodDate.Value.ToShortDateString());
+            Console.WriteLine("Interval " + client.GetInterval());
+            Console.WriteLine("DebtDays " + client.DebtDays);
             Assert.That(client.DebtDays, Is.EqualTo(0));
         }
 
