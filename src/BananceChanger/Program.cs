@@ -16,18 +16,43 @@ namespace BananceChanger
         {
             Init();
 
+            CreateWriteOffs();
+        }
+
+        public static void CreateWriteOffs()
+        {
+            using (new SessionScope())
+            {
+                foreach (var source in Clients.Queryable.Where(c=>c.Id < 87).ToList())
+                {
+                    var balance = source.PhysicalClient.Balance;
+                    var writeOffs = source.WriteOffs.Sum(w => w.WriteOffSum);
+                    var payments = Payment.Queryable.Where(p => p.Client == source).ToList().Sum(p => p.Sum);
+                    new WriteOff {
+                                     Client = source,
+                                     WriteOffDate = new DateTime(2011, 03, 15),
+                                     WriteOffSum = payments - balance - writeOffs
+                                 }.Save();
+                }
+                Console.WriteLine("Complete");
+            }
+        }
+
+        public void ChangeBalance()
+        {
             using (new SessionScope())
             {
                 var trueCount = 0;
                 var falseCount = 0;
-                new WriteOff {
+                /*new WriteOff {
                                  Client = Clients.Queryable.First(c => c.Id == 87),
                                  WriteOffDate = DateTime.Now,
                                  WriteOffSum = 700
-                             }.Save();
-                foreach (var clientse in Clients.Queryable.Where(c => c.PhysicalClient != null && c.Id != 1163 && c.Id != 105 && c.Id != 619).ToList())
+                             }.Save();*/
+                //foreach (var clientse in Clients.Queryable.Where(c => c.Id == 101 || c.Id == 1065).ToList())
+                foreach (var clientse in Clients.Queryable.Where(c => c.PhysicalClient != null && c.Id == 63 || c.Id == 105 || c.Id == 4).ToList())
                 {
-                    if (clientse.PhysicalClient.Tariff.Id != 10 && clientse.Id >= 87)
+                    if (clientse.PhysicalClient.Tariff.Id != 10)
                     {
                         var firstWriteOff = clientse.WriteOffs.FirstOrDefault();
                         if (firstWriteOff != null)
@@ -36,26 +61,40 @@ namespace BananceChanger
                         }
                         clientse.DebtDays = 0;
                         clientse.Update();
+
+                        {
+                            var phisCl = clientse.PhysicalClient;
+                            phisCl.Tariff = Tariff.Find((uint)1);
+                            phisCl.Update();
+                        }
                         var writeOffs = clientse.WriteOffs.ToList();
                         foreach (var writeOff in clientse.WriteOffs)
                         {
+                            if ((writeOff.WriteOffDate.Date >= new DateTime(2011, 6, 15) && clientse.Id == 4)
+                                || (writeOff.WriteOffDate.Date >= new DateTime(2011, 5, 05) && clientse.Id == 63)
+                                || (writeOff.WriteOffDate.Date >= new DateTime(2011, 5, 13) && clientse.Id == 105))
+                            {
+                                var phisCl = clientse.PhysicalClient;
+                                phisCl.Tariff = Tariff.Find((uint)6);
+                                phisCl.Update();
+                            }
                             if (writeOff.WriteOffSum > 0)
                             {
                                 var thisIndex = writeOffs.IndexOf(writeOff);
                                 if ((writeOffs.Count < thisIndex + 1) &&
-                                    (writeOff.WriteOffDate != writeOffs[thisIndex + 1].WriteOffDate.AddDays(-1)))
+                                    (writeOff.WriteOffDate.Date != writeOffs[thisIndex + 1].WriteOffDate.AddDays(-1).Date))
                                 {
                                     clientse.RatedPeriodDate = writeOff.WriteOffDate;
                                     clientse.Update();
                                 }
-                                if ((((DateTime)clientse.RatedPeriodDate).AddMonths(1).Date - SystemTime.Now().Date).Days == 0)
+                                if ((((DateTime)clientse.RatedPeriodDate).AddMonths(1).Date - SystemTime.Now().Date).Days <= 0)
                                 {
                                     clientse.RatedPeriodDate = writeOff.WriteOffDate;
                                     clientse.Update();
                                 }
 
                                 SystemTime.Now = () => writeOff.WriteOffDate;
-                                var writeOffSum = clientse.PhysicalClient.Tariff.GetPrice(clientse)/
+                                var writeOffSum = clientse.PhysicalClient.Tariff.GetPrice(clientse) /
                                                   clientse.GetInterval();
                                 if (writeOff.WriteOffSum.ToString("0.00") == writeOffSum.ToString("0.00"))
                                 {
