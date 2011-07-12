@@ -69,7 +69,7 @@ $(function() {
 <div id="main">
 <div id="container">
 	<div id="block-tables" class="block">
-		<div class="content">
+		<div class="content" style="width:900px;">
 			<div class="inner">
 			<h2 id="warning"></h2>
 			<h2 id="summary"></h2>

@@ -1,9 +1,9 @@
 ﻿
 <input type="hidden" name="hiddenClient" value="${LegalPerson}" />
 <div id="main">
-<div id="container">
+<div id="container" >
 	<div id="block-tables" class="block">
-		<div class="content">
+		<div class="content" style="width:900px; padding-top: 10px;">
 							<%if IsDefined("EditiongMessage"):
 							output WriteMessageNotice(EditiongMessage)
 							end%>

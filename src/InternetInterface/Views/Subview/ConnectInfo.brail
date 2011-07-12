@@ -9,7 +9,9 @@
 	<thead>
 		<th colspan=2>Информация по подключению 
 		<%if PartnerAccessSet.AccesPartner("DHCP"): %>
-		 <input id="Submit1" type="submit" value="Редактировать"  align="right" />
+		    <button type="submit"  class="editBut">
+		    <img alt="Save" src="../Images/application_edit.png"> Редактировать
+		    </button>
 		 <%end %>
 		</th>
 	</thead>

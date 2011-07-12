@@ -283,9 +283,11 @@ input.checkbox {
 
 /* tables */
 
-.table th {
-  background: #576C82;
-  color: #FFF;
+.table th 
+{
+  border: 1px double black;
+  background: #b7d2af;
+  color: #625a5b;
   font-weight:normal;
   padding:3px;
 }

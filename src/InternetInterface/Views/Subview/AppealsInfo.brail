@@ -43,9 +43,14 @@
 				<tr>
 					<td>${item.GetTransformedAppeal()}</td>
 					<td>${item.Date}</td>
+                    <%if item.Partner != null: %>
 					<td>${item.Partner.Name}</td>
+                    <%else: %>
+                    <td></td>
+                    <%end %>
 				</tr>
 			<%end %>
 		  </tbody>
 		</table>
+        <% OutputSubView("""\Subview\Leases""") %>
  </div>

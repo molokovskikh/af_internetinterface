@@ -1,17 +1,31 @@
 ﻿<style type="text/css">
     #itogo
     {
-        color:Red;
+        color:#274e26;
         font-size:16px;
+        }
+    .group_link a
+    {
+        color:#274e26;
+        }
+            .group_link a:hover
+    {
+        font-weight:bold;
+        color:#030c02;
         }
 </style>
 <div style="clear:both;">
-<input type="button" value="Показать списания по клиенту" onclick="$('#WriteOffTable').slideToggle('slow');"> 
 <span id="itogo"><b>Всего списано: ${writeOffSum}</b></span>
- <a style="display:none" href="${siteroot}/UserInfo/SearchUserInfo.rails?ClientCode=${ClientCode}&grouped=day">Сгруппировать по дням</a>
-<a style="display:none" href="${siteroot}/UserInfo/SearchUserInfo.rails?ClientCode=${ClientCode}&grouped=month">Сгруппировать по месяцам</a>
-<a style="display:none" href="${SiteRoot}/UserInfo/SearchUserInfo.rails?ClientCode=${ClientCode}&grouped=year">Сгруппировать по годам</a>
+<button type="button"  class="editBut" onclick="$('#WriteOffTable').slideToggle('slow');"> Показать списания по клиенту
+</button>
+
 <div id="WriteOffTable" style="display:none">
+<div class="group_link">
+<span>Группировка: </span>
+<a href="${siteroot}/UserInfo/SearchUserInfo.rails?ClientCode=${ClientCode}&grouped=day">День</a>
+<a href="${siteroot}/UserInfo/SearchUserInfo.rails?ClientCode=${ClientCode}&grouped=month">Месяц</a>
+<a href="${SiteRoot}/UserInfo/SearchUserInfo.rails?ClientCode=${ClientCode}&grouped=year">Год</a>
+</div>
 <table class="table"  style="width: 100%; font-size: small;" align="left">
 	<thead>
 		<tr valign="top">

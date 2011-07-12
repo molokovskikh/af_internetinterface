@@ -139,7 +139,7 @@ namespace InternetInterface.Models
         [BelongsTo("Tariff", Cascade = CascadeEnum.SaveUpdate), Auditable("Тариф")]
 		public virtual Tariff Tariff { get; set; }
 
-        [Property, ValidateNonEmpty("Введите сумму"), ValidateDecimal("Неверно введено число"), Auditable("Баланс")]
+        [Property, ValidateNonEmpty("Введите сумму"), ValidateDecimal("Неверно введено число")]
 		public virtual decimal Balance { get; set; }
 
         [Property, ValidateIsUnique("Email должен быть уникальный"), ValidateEmail("Ошибка ввода (требуется adr@serv.dom)"), Auditable("Email")]

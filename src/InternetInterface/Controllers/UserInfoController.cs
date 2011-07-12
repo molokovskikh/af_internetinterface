@@ -92,12 +92,22 @@ namespace InternetInterface.Controllers
                 message += "Воспользоваться устугой возможно только при отрицательном балансе";
             if ((!client.Disabled || !client.AutoUnblocked) && string.IsNullOrEmpty(message))
                 message += "Услуга \"Обещанный платеж\" недоступна";
+            if (client.Payments.Count() == 0)
+                message += "Воспользоваться услугой возможно только при наличии платежей";
             if (client.CanUsedPostponedPayment())
             {
                 client.PostponedPayment = DateTime.Now;
                 client.Disabled = false;
                 client.Update();
                 message += "Услуга \"Обещанный платеж активирована\"";
+                new Appeals
+                {
+                    Appeal = "Услуга \"Обещанный платеж активирована\"",
+                    AppealType = (int)AppealType.System,
+                    Client = client,
+                    Date = DateTime.Now,
+                    Partner = InithializeContent.partner
+                }.Save();
             }
             Flash["Applying"] = message;
             RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientID);
@@ -370,6 +380,7 @@ namespace InternetInterface.Controllers
 
                 InitializeHelper.InitializeModel(_client);
 			    InitializeHelper.InitializeModel(updateClient);
+                DbLogHelper.SetupParametersForTriggerLogging();
 
 				updateClient.Update();
 
@@ -434,8 +445,10 @@ namespace InternetInterface.Controllers
                 updateClient.House = _house.Number.ToString();
                 updateClient.CaseHouse = _house.Case;
                 updateClient.Tariff = Tariff.Find(tariff);
+
                 InitializeHelper.InitializeModel(updateClient);
                 InitializeHelper.InitializeModel(_client);
+                DbLogHelper.SetupParametersForTriggerLogging();
 
                 updateClient.UpdateAndFlush();
                 _client.Name = string.Format("{0} {1} {2}", updateClient.Surname, updateClient.Name,

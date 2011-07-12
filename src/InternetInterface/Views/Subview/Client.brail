@@ -19,7 +19,7 @@ $('#register_house').trigger('reveal:close');
 </tr>
 <tr>
     <td ><b>Фамилия</b></td>
-    <td > <input id="Surname" type="text" value="${Client.Surname}" name="client.Surname" /> </td>
+    <td > <input id="Surname" type="text" value="${Client.Surname}" name="client.Surname"  /> </td>
     <td>
         ${VB.GetBlock("Surname")}
         </td>

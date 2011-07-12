@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Castle.ActiveRecord;
+using Common.Web.Ui.Helpers;
 using InternetInterface.Models.Universal;
 
 namespace InternetInterface.Models
@@ -35,8 +36,9 @@ namespace InternetInterface.Models
         public virtual int AppealType { get; set; }
 
         public virtual string GetTransformedAppeal()
-		{
-			return HttpUtility.HtmlEncode(Appeal).Replace("\r\n", "<br/>");
-		}
+        {
+           var appeal = HttpUtility.HtmlEncode(Appeal).Replace("\r\n", "<br/>");
+            return AppealHelper.TnasformRedmineToLink(appeal);
+        }
 	}
 }

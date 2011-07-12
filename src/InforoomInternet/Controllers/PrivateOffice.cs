@@ -38,6 +38,8 @@ namespace InforoomInternet.Controllers
                 message += "Воспользоваться устугой возможно только при отрицательном балансе";
             if ((!client.Disabled || !client.AutoUnblocked) && string.IsNullOrEmpty(message))
                 message += "Услуга \"Обещанный платеж\" недоступна";
+            if (client.Payments.Count() == 0)
+                message += "Воспользоваться услугой возможно только при наличии платежей";
             PropertyBag["message"] = message;
         }
 
@@ -51,6 +53,12 @@ namespace InforoomInternet.Controllers
                 client.Disabled = false;
                 client.Update();
                 Flash["message"] = "Услуга \"Обещанный платеж активирована\"";
+                new Appeals {
+                                Appeal = "Услуга \"Обещанный платеж активирована\"",
+                                AppealType = (int) AppealType.System,
+                                Client = client,
+                                Date = DateTime.Now
+                            }.Save();
             }
             RedirectToUrl("IndexOffice");
         }

@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
 using Castle.Components.Validator;
+using InternetInterface.Helpers;
 using InternetInterface.Models.Universal;
 
 namespace InternetInterface.Models
@@ -10,7 +11,7 @@ namespace InternetInterface.Models
 	[ActiveRecord("NetworkSwitches", Schema = "Internet", Lazy = true)]
 	public class NetworkSwitches : ValidActiveRecordLinqBase<NetworkSwitches>
 	{
-		private const string IPRegExp =
+		public const string IPRegExp =
 			@"\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b";
 
 		private const string MACRegExp = @"^([0-9a-fA-F][0-9a-fA-F]-){5}([0-9a-fA-F][0-9a-fA-F])$";
@@ -36,22 +37,7 @@ namespace InternetInterface.Models
 
 		public virtual string GetNormalIp()
 		{
-			if (!string.IsNullOrEmpty(IP))
-			{
-				var splited = IP.Split('.');
-				var valid = new Regex(IPRegExp);
-				if ((valid.IsMatch(IP)) || (splited.Length == 1))
-				{
-					var normalip = BitConverter.GetBytes(Convert.ToInt64(IP));
-					return string.Format("{0}.{1}.{2}.{3}", normalip[3], normalip[2], normalip[1],
-					                     normalip[0]);
-				}
-				else
-				{
-					return IP;
-				}
-			}
-			return string.Empty;
+		    return IpHeper.GetNormalIp(IP);
 		}
 
 		public static string SetProgramIp(string ip)

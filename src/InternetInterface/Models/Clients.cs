@@ -82,7 +82,7 @@ namespace InternetInterface.Models
 
         public virtual bool CanUsedPostponedPayment()
         {
-            return PhysicalClient != null && PostponedPayment == null && Disabled && PhysicalClient.Balance < 0 && AutoUnblocked;
+            return PhysicalClient != null && PostponedPayment == null && Disabled && PhysicalClient.Balance < 0 && AutoUnblocked && Payments.Count() != 0;
         }
 
 		public virtual bool AdditionalCanUsed(string aStatus)
@@ -116,7 +116,23 @@ namespace InternetInterface.Models
 			return ClientType.Phisical;
 		}
 
-		public virtual decimal GetInterval()
+        public virtual List<Internetsessionslog> GetClientLeases()
+        {
+            return Internetsessionslog.Queryable.Where(l => l.EndpointId.Client == this).ToList();
+        }
+
+        public virtual Internetsessionslog GetFirstLease()
+        {
+            return GetClientLeases().First();
+        }
+
+        public virtual Internetsessionslog GetLastLease()
+        {
+            return GetClientLeases().Last();
+        }
+
+
+        public virtual decimal GetInterval()
 		{
 			return (((DateTime)RatedPeriodDate).AddMonths(1) - (DateTime)RatedPeriodDate).Days + DebtDays;
 		}

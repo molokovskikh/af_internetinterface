@@ -1,4 +1,15 @@
-﻿<script type="text/javascript">
+﻿<style type="text/css">
+    .editBut
+    {
+        padding:3px 10px 3px 7px;
+        background-color: #ccdfcc;
+        border:1px solid #bfbfbf;
+        cursor:pointer;
+        line-height: 1.3em;
+        font-weight:bold;
+        }
+</style>
+<script type="text/javascript">
     $(function () {
         //$('.nyroModal').nyroModal();
         $('.button_mod').click(function () {
@@ -72,9 +83,11 @@
 		<%if IsDefined("errorMessage"):
 			  output  WriteMessageError(errorMessage)
 		   end%>
-		<th>Информация по клиенту ${Client.Surname}  ${Client.Name}  ${Client.Patronymic} ${"(Он-Лайн)" if _client.OnLine()}
+		<th><span style="color:#787676"> Информация по клиенту </span> <span style="color:Black">  ${Client.Surname}  ${Client.Name}  ${Client.Patronymic} ${"(Он-Лайн)" if _client.OnLine()} </span>
 		<%if PartnerAccessSet.AccesPartner("ECI"): %>
-		 <input id="EditButton" type="submit" value="Редактировать"  align="right" />
+        	<button type="submit"  class="editBut">
+		    <img alt="Save" src="../Images/application_edit.png"> Редактировать
+		    </button>
 		 <%end %>
 		</th>
 	</thead>

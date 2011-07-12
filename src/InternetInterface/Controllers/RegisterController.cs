@@ -56,6 +56,8 @@ namespace InternetInterface.Controllers
             if ((registerClient && String.IsNullOrEmpty(portException)) ||
                 (registerClient && string.IsNullOrEmpty(ConnectInfo.Port)))
             {
+                DbLogHelper.SetupParametersForTriggerLogging();
+
                 PhysicalClients.RegistrLogicClient(phisClient, tariff, house_id, Validator);
                 var client = new Clients {
                                              AutoUnblocked = true,
@@ -157,6 +159,7 @@ namespace InternetInterface.Controllers
 			var connectErrors = Validation.ValidationConnectInfo(info);
 			if (Validator.IsValid(person) && string.IsNullOrEmpty(connectErrors))
 			{
+                DbLogHelper.SetupParametersForTriggerLogging();
 				person.Speed = PackageSpeed.Find(speed);
 				person.SaveAndFlush();
 				var client = new Clients
@@ -339,7 +342,13 @@ namespace InternetInterface.Controllers
 			{
 				BindObjectInstance(part, ParamStore.Form, "Partner");
 				part.UpdateAndFlush();
-				Flash["EditiongMessage"] = "Изменения внесены успешно";
+			    var agent = Agent.Queryable.Where(a => a.Partner == part).ToList().FirstOrDefault();
+			    if (agent != null)
+			    {
+			        agent.Name = partner.Name;
+			        agent.Update();
+			    }
+			    Flash["EditiongMessage"] = "Изменения внесены успешно";
 				RedirectToUrl("../Register/RegisterPartner?PartnerKey=" + part.Id + "&catType=" + part.Categorie.Id);
 			}
 			else

@@ -173,6 +173,7 @@
     <None Include="Views\Subview\DeleteLabel.brail" />
     <None Include="Views\Subview\ConnectInfo.brail" />
     <Content Include="Styles\tablesorter.css" />
+    <None Include="Views\Subview\Leases.brail" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -218,7 +219,9 @@
     </Compile>
     <Compile Include="Helpers\ActiveDirectoryHelper.cs" />
     <Compile Include="Helpers\ARSesssionHelper.cs" />
+    <Compile Include="Helpers\DbLogHelper.cs" />
     <Compile Include="Helpers\ExceptionHelper.cs" />
+    <Compile Include="Helpers\IpHeper.cs" />
     <Compile Include="Helpers\Listner.cs" />
     <Compile Include="Helpers\LoginCreatorHelper.cs" />
     <Compile Include="Helpers\UsersParsers.cs" />
@@ -238,6 +241,7 @@
     <Compile Include="Models\Entrance.cs" />
     <Compile Include="Models\House.cs" />
     <Compile Include="Models\HouseAgent.cs" />
+    <Compile Include="Models\Internetsessionslog.cs" />
     <Compile Include="Models\InternetSettings.cs" />
     <Compile Include="Models\Label.cs" />
     <Compile Include="Models\LawyerPerson.cs" />
