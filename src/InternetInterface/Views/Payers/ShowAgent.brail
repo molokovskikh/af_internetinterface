@@ -9,7 +9,7 @@
         }
 </style>
 <center>
-<span class="info_paym" style="color:Green;">Всего ${Payments.Count} платежей</span>
+<span class="info_paym" style="color:Green;">Всего ${filter._lastRowsCount} платежей</span>
 <span class="info_paym" style="color:Green;">на сумму  ${TotalSumm.ToString("#.00")} рублей</span>
 </center>
 <table class="table"  style="width: 100%; font-style:oblique">

@@ -15,7 +15,8 @@ namespace InternetInterface.Controllers
         public DateTime? startDate { get; set; }
         public DateTime? endDate { get; set; }
 
-        private int _lastRowsCount;
+        public int _lastRowsCount;
+        public decimal TotalSum;
 
         public int RowsCount
         {
@@ -30,7 +31,7 @@ namespace InternetInterface.Controllers
         {
             return new[] {
                              String.Format("filter.agent={0}", agent),
-                             String.Format("filter.beginDate={0}", startDate),
+                             String.Format("filter.startDate={0}", startDate),
                              String.Format("filter.endDate={0}", endDate)
                          };
         }
@@ -52,21 +53,19 @@ namespace InternetInterface.Controllers
                 startDate = new DateTime(thisD.Year, thisD.Month, 1);
             if (endDate == null)
                 endDate = DateTime.Now;
-            _lastRowsCount =
+            var totalRes =
                 Payment.Queryable.Where(
                     t =>
                     t.Agent.Id == agent && t.PaidOn >= startDate.Value &&
                     t.PaidOn <= endDate.Value.AddHours(23).AddMinutes(59) && t.Sum != 0 &&
-                    t.Client.PhysicalClient != null).Count();
+                    t.Client.PhysicalClient != null).ToList();
+            _lastRowsCount = totalRes.Count();
+            TotalSum = totalRes.Sum(h => h.Sum);
             if (_lastRowsCount > 0)
             {
                 var getCount = _lastRowsCount - PageSize * CurrentPage < PageSize ? _lastRowsCount - PageSize * CurrentPage : PageSize;
                 return
-                    Payment.Queryable.Where(
-                        t =>
-                        t.Agent.Id == agent && t.PaidOn >= startDate.Value &&
-                        t.PaidOn <= endDate.Value.AddHours(23).AddMinutes(59) && t.Sum != 0).ToList().GetRange(
-                            PageSize*CurrentPage, getCount);
+                    totalRes.GetRange(PageSize*CurrentPage, getCount);
             }
             return new List<Payment>();
         }
@@ -104,13 +103,10 @@ namespace InternetInterface.Controllers
 		{
 			PropertyBag["agents"] = Agent.FindAll();
             PropertyBag["agentId"] = filter.agent;
-            //var _startDate = DateTime.Parse(filter.startDate);
-			//var _endDate = DateTime.Parse(endDate);
-			//var payments = Payment.Queryable.Where(t => t.Agent.Id == agent && t.PaidOn >= _startDate && t.PaidOn <= _endDate.AddHours(23).AddMinutes(59) && t.Sum != 0 && t.Client.PhysicalClient != null).ToList();
             var payments = filter.Find();
             PropertyBag["filter"] = filter;
 			PropertyBag["Payments"] = payments;
-			PropertyBag["TotalSumm"] = payments.Sum(h => h.Sum);
+			PropertyBag["TotalSumm"] = filter.TotalSum;
 
 
 		}

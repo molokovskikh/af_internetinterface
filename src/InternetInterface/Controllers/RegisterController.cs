@@ -118,7 +118,7 @@ namespace InternetInterface.Controllers
                         RedirectToUrl("..//UserInfo/ClientRegisteredInfo.rails");
                     else
                     {
-                        RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + client.Id);
+                        RedirectToUrl("../UserInfo/SearchUserInfo.rails?filter.ClientCode=" + client.Id);
                     }
                 if (InithializeContent.partner.Categorie.ReductionName == "Diller")
                     RedirectToUrl("..//UserInfo/ClientRegisteredInfoFromDiller.rails");
@@ -193,7 +193,7 @@ namespace InternetInterface.Controllers
 				}
 				RegisterLegalPerson();
 				PropertyBag["EditiongMessage"] = "Клиент успешно загистрирвоан";
-				RedirectToUrl("../UserInfo/LawyerPersonInfo.rails?ClientCode=" + client.Id);
+				RedirectToUrl("../UserInfo/LawyerPersonInfo.rails?filter.ClientCode=" + client.Id);
 			}
 			else
 			{
