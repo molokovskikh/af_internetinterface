@@ -24,11 +24,18 @@
         <tbody>
             <%for i,item in enumerate(Payments): %>
                 <tr>
-                    <td><a href="../Search/Redirect?ClientCode=${item.Client.Id}"> ${item.Client.Id.ToString("00000")}</a></td>
-                    <td>${item.Client.PhysicalClient.Surname} ${item.Client.PhysicalClient.Name} ${item.Client.PhysicalClient.Patronymic}</td>
+                    <td><a href="../Search/Redirect?filter.ClientCode=${item.Client.Id}"> ${item.Client.Id.ToString("00000")}</a></td>
+                    <td>${item.Client.Name}</td>
                     <td>${item.Sum.ToString("#.00")}</td>
                     <td>${item.PaidOn}</td>
                 </tr>
             <%end %>
+                <tr>
+                    <td colspan=4>
+                        <div class="Paginator">
+                            ${PaginatorHelper.ShowPaginator()}
+                        </div>
+                    </td>
+                </tr>
         </tbody>
 </table>

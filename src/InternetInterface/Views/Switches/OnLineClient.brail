@@ -33,7 +33,7 @@ $(document).ready(function () {
                 <tr>
                     <td>${Client.static_IP}</td>
                     <td>${Client.Leased_IP}</td>
-                    <td><a href="${Siteroot}/Search/Redirect?ClientCode=${Client.Client}">${Client.Client.ToString("00000")}</a></td>
+                    <td><a href="${Siteroot}/Search/Redirect?filter.ClientCode=${Client.Client}">${Client.Client.ToString("00000")}</a></td>
                     <td>${Client.endpointId}</td>
                     <td>${Client.Name}</td>
                     <td>${Client.Switch}</td>
