@@ -1,4 +1,15 @@
 ﻿<style type="text/css">
+    .editBut
+    {
+        padding:3px 10px 3px 7px;
+        background-color: #ccdfcc;
+        border:1px solid #bfbfbf;
+        cursor:pointer;
+        line-height: 1.3em;
+        font-weight:bold;
+        }
+</style>
+<style type="text/css">
     #itogo
     {
         color:#274e26;
@@ -22,9 +33,9 @@
 <div id="WriteOffTable" style="display:none">
 <div class="group_link">
 <span>Группировка: </span>
-<a href="${siteroot}/UserInfo/SearchUserInfo.rails?filter.ClientCode=${ClientCode}&filter.grouped=day">День</a>
-<a href="${siteroot}/UserInfo/SearchUserInfo.rails?filter.ClientCode=${ClientCode}&filter.grouped=month">Месяц</a>
-<a href="${SiteRoot}/UserInfo/SearchUserInfo.rails?filter.ClientCode=${ClientCode}&filter.grouped=year">Год</a>
+<a href="${siteroot}/Search/Redirect?filter.ClientCode=${ClientCode}&filter.grouped=day">День</a>
+<a href="${siteroot}/Search/Redirect?filter.ClientCode=${ClientCode}&filter.grouped=month">Месяц</a>
+<a href="${SiteRoot}/Search/Redirect?filter.ClientCode=${ClientCode}&filter.grouped=year">Год</a>
 </div>
 <table class="table"  style="width: 100%; font-size: small;" align="left">
 	<thead>

@@ -44,7 +44,7 @@ namespace InternetInterface.Models
 		}
 	}
 
-	public class PhisicalClientConnectInfo
+	public class ClientConnectInfo
 	{
 		public string static_IP { get; set; }
 		public string Leased_IP { get; set; }
@@ -64,7 +64,9 @@ namespace InternetInterface.Models
 		public string Speed { get; set; }
 		public bool Monitoring { get; set; }
 
-		public Int32 GetNormalSpeed()
+        public DateTime LeaseBegin { get; set; }
+
+	    public Int32 GetNormalSpeed()
 		{
 			return Convert.ToInt32(Speed) / 1000000;
 		}

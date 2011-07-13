@@ -162,14 +162,14 @@ group by {0}", gpoupKey)).AddEntity(typeof(WriteOff));
             return writeOffs;
         }
 
-		public virtual PhisicalClientConnectInfo GetConnectInfo()
+		public virtual ClientConnectInfo GetConnectInfo()
 		{
 			if ((PhysicalClient!= null && Status != null && Status.Connected) ||
 				(LawyerPerson != null && Status != null && Status.Connected))
 			{
 				//var client = Clients.FindAllByProperty("PhysicalClient", this);
-					IList<PhisicalClientConnectInfo> ConnectInfo = new List<PhisicalClientConnectInfo>();
-					ARSesssionHelper<PhisicalClientConnectInfo>.QueryWithSession(session =>
+					IList<ClientConnectInfo> ConnectInfo = new List<ClientConnectInfo>();
+					ARSesssionHelper<ClientConnectInfo>.QueryWithSession(session =>
 					{
 						var query =
 							session.CreateSQLQuery(string.Format(
@@ -192,15 +192,15 @@ left join internet.PackageSpeed PS on PS.PackageId = CE.PackageId
 where CE.Client = {0}",
 Id)).SetResultTransformer(
 new AliasToPropertyTransformer(
-typeof(PhisicalClientConnectInfo)))
-.List<PhisicalClientConnectInfo>();
+typeof(ClientConnectInfo)))
+.List<ClientConnectInfo>();
 						ConnectInfo = query;
 						return query;
 					});
 					if (ConnectInfo.Count != 0)
 						return ConnectInfo.First();
 				}
-			return new PhisicalClientConnectInfo();
+			return new ClientConnectInfo();
 		}
 
         public static Lease FindByIP(string ip)

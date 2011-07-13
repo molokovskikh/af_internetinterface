@@ -104,7 +104,7 @@ FROM internet.NetworkSwitches NS").AddEntity(typeof(NetworkSwitches)).List<Netwo
 
 		public void OnLineClient(int Zone)
 		{
-			IList<PhisicalClientConnectInfo> clients = new List<PhisicalClientConnectInfo>();
+			IList<ClientConnectInfo> clients = new List<ClientConnectInfo>();
 			ARSesssionHelper<object>.QueryWithSession(session =>
 			{
 				var query =
@@ -121,7 +121,8 @@ NS.Name as Swith_adr,
 inet_ntoa(NS.ip) as swith_IP,
 L.Port,
 CE.PackageId,
-PS.Speed
+PS.Speed,
+L.LeaseBegin
 from internet.Leases L
 left join internet.ClientEndpoints CE on L.Endpoint = CE.Id
 left join internet.NetworkSwitches NS on NS.Id = L.Switch
@@ -129,8 +130,8 @@ left join internet.Clients C on CE.Client = C.Id
 left join internet.PackageSpeed PS on PS.PackageId = CE.PackageId
 where NS.Zone = {0}", Zone)).SetResultTransformer(
 									new AliasToPropertyTransformer(
-										typeof(PhisicalClientConnectInfo)))
-									.List<PhisicalClientConnectInfo>();
+										typeof(ClientConnectInfo)))
+									.List<ClientConnectInfo>();
 				clients = query;
 				return query;
 			});

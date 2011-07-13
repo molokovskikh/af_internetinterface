@@ -1,15 +1,4 @@
-﻿<style type="text/css">
-    .editBut
-    {
-        padding:3px 10px 3px 7px;
-        background-color: #ccdfcc;
-        border:1px solid #bfbfbf;
-        cursor:pointer;
-        line-height: 1.3em;
-        font-weight:bold;
-        }
-</style>
-<script type="text/javascript">
+﻿<script type="text/javascript">
     $(function () {
         //$('.nyroModal').nyroModal();
         $('.button_mod').click(function () {

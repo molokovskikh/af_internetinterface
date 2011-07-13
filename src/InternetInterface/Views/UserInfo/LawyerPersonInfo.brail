@@ -21,7 +21,9 @@
 		   end%>
 		<th>Информация по клиенту   ${Client.ShortName}  ${"(Он-Лайн)" if _client.OnLine()}
 		<%if PartnerAccessSet.AccesPartner("ECI"): %>
-		 <input id="EditButton" type="submit" value="Редактировать"  align="right" />
+        	<button type="submit"  class="editBut">
+		    <img alt="Save" src="../Images/application_edit.png"> Редактировать
+		    </button>
 		 <%end %>
 		</th>
 	</thead>
