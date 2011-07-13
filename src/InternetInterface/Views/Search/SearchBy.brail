@@ -42,7 +42,7 @@
     <%else: %>
         <tr class="${item.Name}" style="background-color:#f5efdf;">
     <%end %>
-            <td><a href="../Search/Redirect?ClientCode=${item.Id}">${item.Id.ToString("00000")}</a></td>
+            <td><a href="../Search/Redirect?filter.ClientCode=${item.Id}">${item.Id.ToString("00000")}</a></td>
             <td> ${item.Name}</td>
             <%if CategorieAccessSet.AccesPartner("SSI"): %>
                 <%if item.PhysicalClient != null: %>

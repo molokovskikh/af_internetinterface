@@ -53,7 +53,7 @@ namespace InternetInterface.Test.Functional
                                                    Client = client,
                                                };
                 endPoint.SaveAndFlush();
-                format = string.Format("UserInfo/SearchUserInfo.rails?ClientCode={0}&EditingConnect=true&Editing=true",
+                format = string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}&filter.EditingConnect=true&filter.Editing=true",
                                        client.Id);
             }
         }
@@ -61,7 +61,7 @@ namespace InternetInterface.Test.Functional
         [Test]
         public void ReservTest()
         {
-            using (var browser = Open(string.Format("UserInfo/SearchUserInfo.rails?ClientCode={0}", client.Id)))
+            using (var browser = Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", client.Id)))
             {
                 browser.Button("naznach_but").Click();
                 browser.RadioButton(Find.ByName("graph_button")).Checked = true;
@@ -82,7 +82,7 @@ namespace InternetInterface.Test.Functional
                 client.AdditionalStatus = null;
                 client.Status = Status.Find((uint)StatusType.BlockedAndNoConnected);
                 client.UpdateAndFlush();
-                format = string.Format("UserInfo/SearchUserInfo.rails?ClientCode={0}", client.Id);
+                format = string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", client.Id);
             }
             using (var browser = Open(format))
             {
@@ -145,6 +145,28 @@ namespace InternetInterface.Test.Functional
 		}
 
         [Test]
+        public void StatisticTest()
+        {
+            using (new SessionScope())
+            {
+                var insStatClient =
+                    Internetsessionslog.Queryable.Where(i => i.EndpointId.Client.PhysicalClient != null).ToList().
+                        GroupBy(i => i.EndpointId).Where(g => g.Count() > 20).First().Select(
+                            e => e.EndpointId.Client.Id).First();
+                using (
+                    var browser =
+                        Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", insStatClient)))
+                {
+                    browser.Button("Statistic").Click();
+                    Assert.That(browser.Text, Is.StringContaining("Статистика работы клиента"));
+                    Assert.That(browser.Text, Is.StringContaining("Первая"));
+                    Assert.That(browser.Text, Is.StringContaining("Последняя"));
+                    Assert.That(browser.Text, Is.StringContaining("Mac адрес"));
+                }
+            }
+        }
+
+	    [Test]
         public void EditClientNameTest()
         {
             using (var browser = Open(format))
@@ -172,7 +194,7 @@ namespace InternetInterface.Test.Functional
         [Test]
         public void UpdateTest()
         {
-            using (var browser = Open("UserInfo/SearchUserInfo.rails?ClientCode=173&Editing=true"))
+            using (var browser = Open("UserInfo/SearchUserInfo.rails?filter.ClientCode=173&filter.Editing=true"))
             {
                 var tariffList = browser.SelectList("ChTariff");
                 browser.SelectList("ChTariff").SelectByValue(

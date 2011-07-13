@@ -93,7 +93,7 @@
 			    $(data.graphs).each(function () {
 			        $('#tdi_' + this.IntervalId + '_' + this.brigadId).empty();
 			        if (this.clientId != 0)
-			            $('#tdi_' + this.IntervalId + '_' + this.brigadId).append('<a class="graph_link" href="../Search/Redirect?ClientCode=' + this.clientId + '">' + this.clientId + '</a>');
+			            $('#tdi_' + this.IntervalId + '_' + this.brigadId).append('<a class="graph_link" href="../Search/Redirect?filter.ClientCode=' + this.clientId + '">' + this.clientId + '</a>');
                     else
                         $('#tdi_' + this.IntervalId + '_' + this.brigadId).append('Резерв');
 			    });
@@ -143,10 +143,10 @@
 		             });
 		             var appended_field = check_field.parent();
 		             appended_field.empty();
-		             appended_field.append('<a class="graph_link" href="../Search/Redirect?ClientCode=' + req.clientId + '">' + req.clientId + '</a>');
+		             appended_field.append('<a class="graph_link" href="../Search/Redirect?filter.ClientCode=' + req.clientId + '">' + req.clientId + '</a>');
 		             $('#naznach_but_1').text('Переназначить');
 		             $('#naznach_but').text('Переназначить');
-		             window.location.href = '../Search/Redirect?ClientCode=${ClientCode}';
+		             window.location.href = '../Search/Redirect?filter.ClientCode=${ClientCode}';
 		         }
 		     });
          }

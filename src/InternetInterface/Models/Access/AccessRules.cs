@@ -71,7 +71,8 @@ namespace InternetInterface.Models.Access
 									"SiteMap",
 									"SearchUserInfo",
 									"Redirect",
-									"LawyerPersonInfo"
+									"LawyerPersonInfo",
+                                    "Leases"
 			                 	};
 			return _getClientInfo.Contains(methodName) ? "GCI" : string.Empty;
 		}

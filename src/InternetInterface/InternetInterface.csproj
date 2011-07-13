@@ -173,7 +173,7 @@
     <None Include="Views\Subview\DeleteLabel.brail" />
     <None Include="Views\Subview\ConnectInfo.brail" />
     <Content Include="Styles\tablesorter.css" />
-    <None Include="Views\Subview\Leases.brail" />
+    <None Include="Views\UserInfo\Leases.brail" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

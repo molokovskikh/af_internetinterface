@@ -87,7 +87,7 @@ namespace InternetInterface.Models
         [Property, ValidateNonEmpty("Введите отчество"), Auditable("Отчество")]
 		public virtual string Patronymic { get; set; }
 
-		[Property, Auditable]
+		[Property, Auditable("Город")]
 		public virtual string City { get; set; }
 
 		[Property]

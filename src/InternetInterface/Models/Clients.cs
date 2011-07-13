@@ -123,12 +123,12 @@ namespace InternetInterface.Models
 
         public virtual Internetsessionslog GetFirstLease()
         {
-            return GetClientLeases().First();
+            return GetClientLeases().FirstOrDefault();
         }
 
         public virtual Internetsessionslog GetLastLease()
         {
-            return GetClientLeases().Last();
+            return GetClientLeases().LastOrDefault();
         }
 
 

@@ -232,13 +232,13 @@ ORDER BY C.Name Limit {1}, {2}", ":SearchText", CurrentPage * PageSize, PageSize
 			}
 		}
 
-		public void Redirect(uint ClientCode)
+        public void Redirect([DataBind("filter")]ClientFilter filter)
 		{
 			var builder = string.Empty;
 			foreach (string name in Request.QueryString)
 				builder += String.Format("{0}={1}&", name, Request.QueryString[name]);
 			builder = builder.Substring(0, builder.Length - 1);
-			if (Clients.Find(ClientCode).GetClientType() == ClientType.Phisical)
+            if (Clients.Find(filter.ClientCode).GetClientType() == ClientType.Phisical)
 			{
 				RedirectToUrl(string.Format("../UserInfo/SearchUserInfo.rails?{0}" , builder));
 			}

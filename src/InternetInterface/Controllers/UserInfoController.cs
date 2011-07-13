@@ -14,23 +14,97 @@ using NHibernate.Criterion;
 
 namespace InternetInterface.Controllers
 {
-	[Layout("Main")]
+    public class ClientFilter
+    {
+        public uint ClientCode { get; set; }
+        public int appealType  { get; set; }
+        public string grouped  { get; set; }
+        public bool Editing  { get; set; }
+        public bool EditingConnect  { get; set; }
+    }
+
+    public class AppealFilter : IPaginable
+    {
+        public uint ClientCode { get; set; }
+        public DateTime? beginDate { get; set; }
+        public DateTime? endDate { get; set; }
+
+        private int _lastRowsCount;
+
+        public int RowsCount
+        {
+            get { return _lastRowsCount; }
+        }
+
+        public int PageSize { get { return 20; } }
+
+        public int CurrentPage { get; set; }
+
+        public string[] ToUrl()
+        {
+            return new[] {
+                             String.Format("filter.ClientCode={0}", ClientCode),
+                             String.Format("filter.beginDate={0}", beginDate),
+                             String.Format("filter.endDate={0}", endDate)
+                         };
+        }
+
+        public string ToUrlQuery()
+        {
+            return string.Join("&", ToUrl());
+        }
+
+        public string GetUri()
+        {
+            return ToUrlQuery();
+        }
+
+        public List<Internetsessionslog> Find()
+        {
+            var thisD = DateTime.Now;
+            if (beginDate == null)
+                beginDate = new DateTime(thisD.Year, thisD.Month, 1);
+            if (endDate == null)
+                endDate = DateTime.Now;
+            _lastRowsCount =
+                Internetsessionslog.Queryable.Where(
+                    i =>
+                    i.EndpointId.Client.Id == ClientCode && i.LeaseBegin.Date >= beginDate.Value.Date &&
+                    i.LeaseEnd.Date <= endDate.Value.Date).Count();
+            if (_lastRowsCount > 0)
+            {
+                var getCount = _lastRowsCount - PageSize * CurrentPage < PageSize ? _lastRowsCount - PageSize * CurrentPage : PageSize;
+                return
+                    Internetsessionslog.Queryable.Where(
+                        i =>
+                        i.EndpointId.Client.Id == ClientCode && i.LeaseBegin.Date >= beginDate.Value.Date &&
+                        i.LeaseEnd.Date <= endDate.Value.Date).ToList().GetRange(
+                            PageSize * CurrentPage, getCount);
+            }
+            return new List<Internetsessionslog>();
+        }
+    }
+
+    [Layout("Main")]
+    [Helper(typeof(PaginatorHelper))]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
     public class UserInfoController : SmartDispatcherController
 	{
-        public void SearchUserInfo(uint clientCode, bool Editing, bool EditingConnect, string grouped, int appealType)
+        public void SearchUserInfo([DataBind("filter")]ClientFilter filter)
 		{
-			var client = Clients.Find(clientCode);
+            var client = Clients.Find(filter.ClientCode);
+            PropertyBag["filter"] = filter;
 			PropertyBag["_client"] = client;
 			PropertyBag["Client"] = client.PhysicalClient;
+            //PropertyBag["Leases"] = filter.Find();
 
-            if (appealType == 0)
-                appealType = (int) AppealType.User;
-            SendParam(clientCode, grouped, appealType);
-			PropertyBag["Editing"] = Editing;
-            PropertyBag["appealType"] = appealType;//CreateAppealLink(Request.Url, "Отобразить", appealType);
+            if (filter.appealType == 0)
+                filter.appealType = (int) AppealType.User;
+            SendParam(filter.ClientCode, filter.grouped, filter.appealType);
+			PropertyBag["Editing"] = filter.Editing;
+            PropertyBag["appealType"] = filter.appealType;//CreateAppealLink(Request.Url, "Отобразить", appealType);
 			if (client.Status.Id != (uint)StatusType.BlockedAndNoConnected)
-			PropertyBag["EditingConnect"] = EditingConnect;
+			PropertyBag["EditingConnect"] = filter.EditingConnect;
 			else
 			{
 				PropertyBag["EditingConnect"] = true;
@@ -40,9 +114,16 @@ namespace InternetInterface.Controllers
 			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(t => t.Name != null);
 		}
 
-        public void LawyerPersonInfo(uint clientCode, bool Editing, bool EditingConnect, string grouped, int appealType)
+        public void Leases([DataBind("filter")]AppealFilter filter)
+        {
+            PropertyBag["_client"] = Clients.Find(filter.ClientCode);
+            PropertyBag["filter"] = filter;
+            PropertyBag["Leases"] = filter.Find();
+        }
+
+        public void LawyerPersonInfo([DataBind("filter")]ClientFilter filter)
 		{
-			var client = Clients.Find(clientCode);
+			var client = Clients.Find(filter.ClientCode);
 
 
 			if (client.Status != null)
@@ -53,8 +134,9 @@ namespace InternetInterface.Controllers
 				PropertyBag["ChBrigad"] = client.WhoConnected.Id;
 			else
 				PropertyBag["ChBrigad"] = Brigad.FindFirst().Id;
-            PropertyBag["grouped"] = grouped;
-            PropertyBag["appealType"] = appealType == 0 ? (int)AppealType.User : appealType;
+            PropertyBag["ClientCode"] = filter.ClientCode;
+            PropertyBag["grouped"] = filter.grouped;
+            PropertyBag["appealType"] = filter.appealType == 0 ? (int)AppealType.User : filter.appealType;
 			PropertyBag["Statuss"] = Status.FindAllSort();
 			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(t => t.Name != null);
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
@@ -65,16 +147,16 @@ namespace InternetInterface.Controllers
 			PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(new LawyerPerson());
 
 			PropertyBag["_client"] = client;
-			PropertyBag["Editing"] = Editing;
+			PropertyBag["Editing"] = filter.Editing;
 			PropertyBag["ConnectInfo"] = client.GetConnectInfo();
 			PropertyBag["Payments"] = client.Payments.OrderBy(c => c.PaidOn).ToArray();
 			PropertyBag["WriteOffs"] = WriteOff.Queryable.Where(w => w.Client == client).OrderBy(w => w.WriteOffDate).ToArray();
             PropertyBag["writeOffSum"] = WriteOff.FindAllByProperty("Client", client).Sum(s => s.WriteOffSum);
 			PropertyBag["BalanceText"] = string.Empty;
-            PropertyBag["Appeals"] = Appeals.Queryable.Where(a => a.Client == client && a.AppealType == (appealType == 0 ? (int)AppealType.User : appealType)).OrderByDescending(
+            PropertyBag["Appeals"] = Appeals.Queryable.Where(a => a.Client == client && a.AppealType == (filter.appealType == 0 ? (int)AppealType.User : filter.appealType)).OrderByDescending(
 		            a => a.Date).ToArray();
 			if (client.Status.Connected)
-				PropertyBag["EditingConnect"] = EditingConnect;
+				PropertyBag["EditingConnect"] = filter.EditingConnect;
 			else
 			{
 				PropertyBag["EditingConnect"] = true;
@@ -110,7 +192,7 @@ namespace InternetInterface.Controllers
                 }.Save();
             }
             Flash["Applying"] = message;
-            RedirectToUrl("../UserInfo/SearchUserInfo.rails?ClientCode=" + ClientID);
+            RedirectToUrl("../UserInfo/SearchUserInfo.rails?filter.ClientCode=" + ClientID);
         }
 
 	    public void SaveSwitchForClient(uint ClientID, [DataBind("ConnectInfo")]ConnectInfo ConnectInfo,
@@ -175,7 +257,7 @@ namespace InternetInterface.Controllers
 					client.Status = Status.Find((uint)StatusType.BlockedAndConnected);
 					client.UpdateAndFlush();
 
-					RedirectToUrl("../Search/Redirect?ClientCode=" + ClientID);
+					RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID);
 					return;
 				}
 			}
@@ -202,7 +284,7 @@ namespace InternetInterface.Controllers
 					Client = Clients.Find(ClientID),
                     AppealType = (int)AppealType.User
 				}.SaveAndFlush();
-			RedirectToUrl("../Search/Redirect?ClientCode=" + ClientID);
+			RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID);
 		}
 
 		public void PassAndShowCard(uint ClientID)
@@ -229,7 +311,7 @@ namespace InternetInterface.Controllers
 			Flash["EditingConnect"] = true;
 			var Cl = Clients.Find(ClientID);
 			PropertyBag["ConnectInfo"] = Cl.GetConnectInfo();
-			RedirectToUrl("../Search/Redirect.rails?ClientCode=" + ClientID + "&EditingConnect=true");
+			RedirectToUrl("../Search/Redirect.rails?filter.ClientCode=" + ClientID + "&filter.EditingConnect=true");
 		}
 
 		private void SendRequestEditParameter()
@@ -342,7 +424,7 @@ namespace InternetInterface.Controllers
         public void LoadEditMudule(uint ClientID, int appealType)
 		{
 			Flash["Editing"] = true;
-            RedirectToUrl("../Search/Redirect?ClientCode=" + ClientID + "&Editing=true&appealType=" + appealType);
+            RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID + "&filter.Editing=true&filter.appealType=" + appealType);
 		}
 
 		public void ClientRegisteredInfo()
@@ -401,7 +483,7 @@ namespace InternetInterface.Controllers
                                     Date = DateTime.Now,
                                     Partner = InithializeContent.partner
                                 }.Save();
-                RedirectToUrl("../Search/Redirect?ClientCode=" + ClientID + "&appealType=" + appealType);
+                RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID + "&filter.appealType=" + appealType);
 			}
 			else
 			{
@@ -422,7 +504,7 @@ namespace InternetInterface.Controllers
 
 
         [AccessibleThrough(Verb.Post)]
-        public void EditInformation([DataBind("Client")]PhysicalClients client, uint ClientID, uint tariff, uint status, string group, uint house_id, int appealType, string comment)
+        public void EditInformation([DataBind("Client")]PhysicalClients client, uint ClientID, uint tariff, uint status, string group, uint house_id, int appealType, string comment, [DataBind("filter")]ClientFilter filter)
         {
             var _client = Clients.Queryable.First(c => c.Id == ClientID);
             var updateClient = _client.PhysicalClient;
@@ -477,7 +559,8 @@ namespace InternetInterface.Controllers
                                     Partner = InithializeContent.partner
                                 }.Save();
                 Flash["EditFlag"] = "Данные изменены";
-                RedirectToUrl("../UserInfo/SearchUserInfo?ClientCode=" + ClientID + "&appealType=" + appealType);
+                RedirectToUrl("../UserInfo/SearchUserInfo?filter.ClientCode=" + ClientID + "&filter.appealType=" +
+                              appealType);
             }
             else
             {
@@ -497,12 +580,15 @@ namespace InternetInterface.Controllers
                 Flash["Client"] = updateClient;
                 Flash["ChTariff"] = Tariff.Find(tariff).Id;
                 Flash["ChStatus"] = Tariff.Find(status).Id;
+                filter.ClientCode = _client.Id;
+                //PropertyBag["Leases"] = filter.Find();
+                PropertyBag["filter"] = filter;
                 SendParam(ClientID, group, appealType);
             }
         }
 
 
-	    private void SendParam(UInt32 ClientCode, string grouped, int appealType)
+        private void SendParam(UInt32 ClientCode, string grouped, int appealType)
 		{
 			var client = Clients.Find(ClientCode);
 		    PropertyBag["Houses"] = House.FindAll();
@@ -586,7 +672,7 @@ namespace InternetInterface.Controllers
 					return new List<Payment>();
 				});
 			}
-			RedirectToUrl(@"../Search/Redirect?ClientCode=" + clientId);
+			RedirectToUrl(@"../Search/Redirect?filter.ClientCode=" + clientId);
 		}
 
 		public void AddInfo(uint ClientCode)
@@ -634,7 +720,7 @@ namespace InternetInterface.Controllers
                         AppealType = (int)AppealType.User
 					}.SaveAndFlush();
 			}
-			RedirectToUrl("../Search/Redirect?ClientCode=" + ClientID);
+			RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID);
 		}
 
 		public void AppointedToTheGraph(uint ClientCode)

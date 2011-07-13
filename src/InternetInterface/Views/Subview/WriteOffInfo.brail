@@ -22,9 +22,9 @@
 <div id="WriteOffTable" style="display:none">
 <div class="group_link">
 <span>Группировка: </span>
-<a href="${siteroot}/UserInfo/SearchUserInfo.rails?ClientCode=${ClientCode}&grouped=day">День</a>
-<a href="${siteroot}/UserInfo/SearchUserInfo.rails?ClientCode=${ClientCode}&grouped=month">Месяц</a>
-<a href="${SiteRoot}/UserInfo/SearchUserInfo.rails?ClientCode=${ClientCode}&grouped=year">Год</a>
+<a href="${siteroot}/UserInfo/SearchUserInfo.rails?filter.ClientCode=${ClientCode}&filter.grouped=day">День</a>
+<a href="${siteroot}/UserInfo/SearchUserInfo.rails?filter.ClientCode=${ClientCode}&filter.grouped=month">Месяц</a>
+<a href="${SiteRoot}/UserInfo/SearchUserInfo.rails?filter.ClientCode=${ClientCode}&filter.grouped=year">Год</a>
 </div>
 <table class="table"  style="width: 100%; font-size: small;" align="left">
 	<thead>
