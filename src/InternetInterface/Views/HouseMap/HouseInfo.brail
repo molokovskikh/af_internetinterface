@@ -12,9 +12,20 @@
 <script type="text/javascript">
     $(function () {
         $("#myModal_IT").css({ opacity: 0.0 });
+
         $('.big-link').click(function () {
-            $('#apartment_div').val($(this).parent().children('input:first').val());
+            var apartment_num = $(this).parent().children('input:first').val();
+            $('#apartment_div').val(apartment_num);
+            var req = {};
+            req.House = $('#House').val();
+            req.apartment_num = apartment_num;
+            $.post("LoadApartmentHistory", req, function (data) {
+                    for(hist in data){
+                        alert(data[hist].ActionName);
+                    };
+            } );
         });
+
         $('#SaveButton').click(function () {
             var req = {};
             req.House = $('#House').val();
@@ -22,6 +33,7 @@
             req.last_inet = $('#last_inet').val();
             req.last_TV = $('#last_TV').val();
             req.comment = $('#comment').val();
+            req.status = $('#ap_status').val();
             $.post("SaveApartment", req, function (data) {
                 var inetTD = $('#td_last_inet_' + $('#apartment_div').val());
                 inetTD.empty();
@@ -32,6 +44,21 @@
                 var comment = $('#td_comment_' + $('#apartment_div').val());
                 comment.empty();
                 comment.append($('#comment').val());
+                if ($('#ap_status').val() != 0)
+                {
+                    var status = $('#td_status_' + $('#apartment_div').val())
+                    status.empty();
+                    status.append(document.getElementById("ap_status").options[$('#ap_status').val()].text);
+                }
+                var CompetitorCount = $('#CompetitorCount_field');
+                CompetitorCount.empty();
+                $.post("GetCompetitorCount", req, function (data) {
+                    CompetitorCount.append(data);
+                    var appCount = ${House.ApartmentCount};
+                    var CompPers = $('#CompetitorsPenetrationPercent_field');
+                    CompPers.empty();
+                    CompPers.append( Number(data / appCount * 100).toFixed(2)   + "%");
+                 });
                 $('#myModal_IT').trigger('reveal:close');
                 //alert(data);
             });
@@ -98,11 +125,11 @@
             <td>Абоненты</td>
             <td class="delimiter_td">${House.GetSubscriberCount()}</td>
             <td>Абоненты конкурентов</td>
-            <td class="delimiter_td">${House.CompetitorCount}</td>
+            <td class="delimiter_td" id="CompetitorCount_field">${House.CompetitorCount}</td>
             <td>Инфорум</td>
             <td class="delimiter_td">${House.GetPenetrationPercent().ToString("F2")}%</td>
             <td>Конкуренты</td>
-            <td class="delimiter_td">${House.GetCompetitorsPenetrationPercent().ToString("F2")}%</td>
+            <td class="delimiter_td" id="CompetitorsPenetrationPercent_field">${House.GetCompetitorsPenetrationPercent().ToString("F2")}%</td>
             <td>Последний проход</td>
             <%if House.LastPassDate!=null: %>
             <td class="delimiter_td">${House.LastPassDate.ToShortDateString()}</td>
@@ -117,6 +144,11 @@
 <div id="myModal_IT" class="reveal-modal"> 
         <input type=hidden name="apartment" id="apartment_div"  />
         <table class="table">
+            <thead>
+                <tr>
+                    <th colspan=2>Радаетировать квартиру</th>
+                </tr>
+            </thead>
             <tbody>
             <tr>
                 <td>
@@ -125,7 +157,6 @@
                 <td>
                    <!-- <input type=text id="last_inet" name="last_inet" /> <br /> -->
                    <select id="last_inet"  name="last_inet" style="width:200px;">
-                        <option value="И">И - Инфорум</option>
                         <option value="Д">Д - Домолинк</option>
                    </select>
                 </td>
@@ -152,8 +183,38 @@
                 </td>
             </tr>
             <tr>
-                <td><button id="SaveButton" class="SaveButton">Сохранить</button></td>
+                <td>
+                    Статус
+                </td>
+                <td>
+                    <select name="ap_status" id="ap_status" style="width:200px;">
+                            <option value="0">Нет</option>
+                        <% for i, status in enumerate(ApStatuses): %>
+                            <option value=${status.Id}>${status.Name}</option>
+                        <%end %>
+                    </select>
+                </td>
             </tr>
+            <tr>
+                <td colspan=2><button type=button id="SaveButton" class="Button">Сохранить</button></td>
+            </tr>
+            <tr></tr>
+            <tr><td colspan=2><button type=button id="Button1" class="Button">Сформировать заявку</button></td></tr>
+            </tbody>
+        </table>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th colspan=3>История действий</th>
+                </tr>
+                <tr>
+                    <th>Действие</th>
+                    <th>Дата</th>
+                    <th>Оператор</th>
+                </tr>
+            </thead>
+            <tbody>
+                <div id="history_place"></div>
             </tbody>
         </table>
     <a class="close-reveal-modal">х</a>
@@ -168,15 +229,23 @@
         <tr align=center>
             <th></th>
             <th colspan=2>Было</th>
+            <%if IsDefined("ForPrint"): %>
             <th colspan=2>Результат</th>
+            <%else: %>
+            <th colspan=2>Статус</th>
+            <%end %>
             <th></th>
         </tr>
         <tr>
             <th>кв.</th>
             <th>Int</th>
             <th>TV</th>
+            <%if IsDefined("ForPrint"): %>
             <th>INT</th>
             <th>TV</th>
+            <%else: %>
+            <th colspan=2></th>
+            <%end %>
             <th>Комментарии</th>
         </tr>
     </thead>
@@ -184,21 +253,42 @@
     <% ap_count = House.ApartmentCount %>
     <% for i in range(ap_count / 2 * j, ap_count / 2 + ap_count / 2 * j + ap_count % 2 *j): %>
     <tr>
-        <td><a href="#" class="big-link" data-reveal-id="myModal_IT" > 
-        ${i+1}</a>
+        <%apartment = House.GetApartmentWithNumber(i+1) %>
+        <%inforumClient = House.GetClientWithApNumber("${i+1}") %>
+        <%if inforumClient == 0: %>
+            <td><a href="#" class="big-link" data-reveal-id="myModal_IT" > 
+            ${i+1}</a>
+            <%else: %>
+            <td>${i+1}</td>
+        <%end %>
         <input type=hidden name="apartment" value=${i+1} class="apartment_table" />
         </td>
-        <%apartment = House.GetApartmentWithNumber(i+1) %>
         <%if apartment != null : %>
-        <td id="td_last_inet_${i+1}">${apartment.LastInternet}</td>
-        <td id="td_last_TV_${i+1}">${apartment.LastTV}</td>
-        <td>${apartment.PresentInternet}</td>
-        <td>${apartment.PresentTV}</td>
+            <td id="td_last_inet_${i+1}">${apartment.LastInternet}</td>
+            <td id="td_last_TV_${i+1}">${apartment.LastTV}</td>
+            <%if IsDefined("ForPrint"): %>
+            <td></td>
+            <td></td>
+            <%else: %>
+                <%if apartment.Status != null : %>
+                <td colspan=2 id="td_status_${i+1}">${apartment.Status.Name}</td>
+                <%else: %>
+                <td colspan=2 id="td_status_${i+1}"></td>
+                <%end %>
+            <%end %>
         <%else: %>
-        <td id="td_last_inet_${i+1}"></td>
-        <td id="td_last_TV_${i+1}"></td>
-        <td></td>
-        <td></td>
+            <%if inforumClient != 0: %>
+                <td style="color:#258936;" id="td_last_inet_${i+1}"><b>${inforumClient}</b></td>
+                <%else: %>
+                <td id="td_last_inet_${i+1}"></td>
+            <%end %>
+            <td id="td_last_TV_${i+1}"></td>
+            <%if IsDefined("ForPrint"): %>
+            <td></td>
+            <td></td>
+            <%else: %>
+            <td colspan=2 id="td_status_${i+1}"></td>
+            <%end %>
         <%end %>
         <%if apartment != null : %>
         <td id="td_comment_${i+1}">${apartment.Comment}</td>

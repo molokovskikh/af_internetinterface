@@ -25,7 +25,7 @@
                 str += '<td><input type="checkbox" id="Cable' + i + '" value="true" /></td>'
             }
             str += '</tr></tbody></table>';
-            str += '<div><span>Введите количество квартир  </span><input  type="text" id="ApCount" name="ApCount" /><span style="padding-left:5px;"">Введите количество абонентов конкурентов  </span><input  type="text" id="CompetitorCount" name="CompetitorCount" /></div>'
+            str += '<div><span>Введите количество квартир  </span><input  type="text" id="ApCount" name="ApCount" /></div>'
             str += '<div><a href="#" id="naznach_link" onclick="SaveHouseMap()" value="Назначить">Назначить </a></div></div>'
             $('#enEditor').append(str);
         });
@@ -44,17 +44,12 @@
             },
             messages:
             {
-            ApCount:
-            {
-                required: "Введите количество квартир в доме",
-                digits: "Должно быть введено число"
-            },
-              CompetitorCount:
+                ApCount:
             {
                 required: "Введите количество квартир в доме",
                 digits: "Должно быть введено число"
             }
-        }
+            }
         })
     });
 
@@ -75,7 +70,6 @@
             var houseId = $('#SelectHouse').val();
             req.SelectHouse = houseId;
             req.ApCount = $('#ApCount').val();
-            req.CompetitorCount = $('#CompetitorCount').val();
             $.post("SaveHouseMap", req, function (data) {
                 
                 var html = $.ajax({

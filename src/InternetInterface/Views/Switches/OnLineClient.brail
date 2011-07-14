@@ -11,11 +11,18 @@ $(document).ready(function () {
 });
   </script>
 
+  <style type="text/css">
+        #on_line_clients_head th
+        {
+            border:1px double black;
+            }
+  </style>
+
 <div id="main" style="width:100%;">
 <div id="container">
     <div id="block-tables" class="block">
         <table class="table" id="on_line_clients" style="width:100%; " border="0" id="PartnerInfoTable">
-            <thead class="tablesorter_head">
+            <thead class="tablesorter_head" id="on_line_clients_head">
                 <th style="width:130px;">Статический IP</th>
                 <th style="width:150px;">Арендованный IP</th>
                 <th >Дата аренды</th>

@@ -33,5 +33,8 @@ namespace InternetInterface.Models
 
         [Property]
         public virtual string Comment { get; set; }
+
+        [BelongsTo]
+        public virtual ApartmentStatus Status { get; set; }
     }
 }

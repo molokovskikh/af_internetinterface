@@ -66,7 +66,7 @@
             <%if PartnerAccessSet.AccesPartner("SSI"): %>
             <th><a href = "../UserInfo/RequestGraph.rails" ><span class="MH"><div class=menudiv>График подключений</div></span></a></th>
             <%end %>
-            <%if PartnerAccessSet.AccesPartner("RC"): %>
+            <%if PartnerAccessSet.AccesPartner("HMA"): %>
             <th><a href = "../HouseMap/FindHouse.rails" ><span class="MH"><div class=menudiv>Карта дома</div></span></a></th>
             <%end %>
             <%if PartnerAccessSet.AccesPartner("RP"): %>

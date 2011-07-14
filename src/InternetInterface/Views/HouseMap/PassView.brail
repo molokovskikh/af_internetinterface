@@ -27,7 +27,7 @@
                 <td>
                     <select id="agent" name="agent" style="width:200px;">
                     <% for i, agent in enumerate(agents): %>
-                        <option value="${agent.Id}">${agent.Name} ${agent.Surname} ${agent.Patronymic}</option>
+                        <option value="${agent.Id}">${agent.Name}</option>
                     <%end %>
                     </select>
                 </td>

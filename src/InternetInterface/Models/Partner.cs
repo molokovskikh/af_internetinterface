@@ -46,8 +46,12 @@ namespace InternetInterface.Models
 			return FindAllByProperty("Login", login).FirstOrDefault();
 		}
 
+        public static List<Partner> GetHouseMapAgents()
+        {
+            return Queryable.Where(p => p.Categorie.ReductionName == "Agent").ToList();
+        }
 
-		public override void SaveAndFlush()
+	    public override void SaveAndFlush()
 		{
 			base.SaveAndFlush();
 			var catAS = CategorieAccessSet.FindAllByProperty("Categorie", Categorie);
