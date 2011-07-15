@@ -16,7 +16,8 @@ namespace InternetInterface.Models.Access
 		private static HashSet<string> _changeBalance;
 		private static HashSet<string> _accessDHCP;
 		private static HashSet<string> _visibleDemand;
-	    private static HashSet<string> _houseMapUse; 
+	    private static HashSet<string> _houseMapUse;
+	    private static HashSet<string> _agentInfo; 
 
 		public static List<string> GetAccessName(string _methodName)
 		{
@@ -63,10 +64,22 @@ namespace InternetInterface.Models.Access
             {
                 result.Add(GetRulesName_houseMapUse());
             }
+            if (GetRulesName_agentInfo() != string.Empty)
+            {
+                result.Add(GetRulesName_agentInfo());
+            }
 		    return result;
 		}
 
-        private static string GetRulesName_houseMapUse()
+        private static string GetRulesName_agentInfo()
+        {
+            _agentInfo = new HashSet<string> {
+                                                 "SummaryInformation"
+                                             };
+            return _agentInfo.Contains(methodName) ? "AIV" : string.Empty;
+        }
+
+	    private static string GetRulesName_houseMapUse()
         {
             _houseMapUse = new HashSet<string> {
                                                    "SiteMap",
@@ -87,7 +100,8 @@ namespace InternetInterface.Models.Access
                                                    "NetworkSwitches",
                                                    "SaveHouseMap",
                                                    "GetCompetitorCount",
-                                                   "LoadApartmentHistory"
+                                                   "LoadApartmentHistory",
+                                                   "RegisterRequest"
                                                };
             return _houseMapUse.Contains(methodName) ? "HMA" : string.Empty;
         }

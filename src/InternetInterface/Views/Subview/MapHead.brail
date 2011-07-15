@@ -72,6 +72,9 @@
             <%if PartnerAccessSet.AccesPartner("RP"): %>
             <th><a href = "../UserInfo/Administration.rails" ><span class="MH"><div class=menudiv>Администрирование</div></span></a></th>
             <%end %>
+            <%if PartnerAccessSet.AccesPartner("AIV"): %>
+            <th><a href = "../AgentInfo/SummaryInformation.rails" ><span class="MH"><div class=menudiv>Платежи</div></span></a></th>
+            <%end %>
             <th>
                 <form class="form" id="Exit" name="Exit" method="post" action="${siteroot}/ExitPartner/Yes" >
                 <button type="submit" class="button">

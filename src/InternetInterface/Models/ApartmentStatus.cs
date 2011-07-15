@@ -18,5 +18,8 @@ namespace InternetInterface.Models
 
         [Property]
         public virtual int ActivateDate { get; set; }
+
+        [Property]
+        public virtual string ShortName { get; set; }
     }
 }

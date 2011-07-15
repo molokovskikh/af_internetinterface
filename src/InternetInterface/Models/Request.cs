@@ -12,22 +12,22 @@ namespace InternetInterface.Models
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
-		[Property]
+		[Property, ValidateNonEmpty("Введите ФИО")]
 		public virtual string ApplicantName { get; set; }
 
-		[Property]
+        [Property, ValidateNonEmpty("Введите номер телефона"), ValidateRegExp(@"^(([0-9]{1})-([0-9]{3})-([0-9]{3})-([0-9]{2})-([0-9]{2}))", "Ошибка фотмата телефонного номера: мобильный телефн (8-***-***-**-**))")]
 		public virtual string ApplicantPhoneNumber { get; set; }
 
-		[Property]
+        [Property, ValidateEmail("Ошибка вооба Email (должно быть adr@domen.com)")]
 		public virtual string ApplicantEmail { get; set; }
 
 		[Property]
 		public virtual string City { get; set; }
 
-		[Property]
+        [Property, ValidateNonEmpty("Введите улицу")]
 		public virtual string Street { get; set; }
 
-		[Property]
+		[Property, ValidateNonEmpty("Введите номер дома"), ValidateInteger("Здесь должно быть число")]
 		public virtual string House { get; set; }
 
 		/// <summary>
@@ -39,19 +39,19 @@ namespace InternetInterface.Models
 		/// <summary>
 		/// Квартира
 		/// </summary>
-		[Property]
+        [Property, ValidateNonEmpty("Введите номер квартиры"), ValidateInteger("Здесь должно быть число")]
 		public virtual string Apartment { get; set; }
 
 		/// <summary>
 		/// Подъезд
 		/// </summary>
-		[Property]
+        [Property, ValidateInteger("Здесь должно быть число")]
 		public virtual string Entrance { get; set; }
 
 		/// <summary>
 		/// Этаж
 		/// </summary>
-		[Property]
+        [Property, ValidateInteger("Здесь должно быть число")]
 		public virtual string Floor { get; set; }
 
 		[Property]
@@ -68,6 +68,12 @@ namespace InternetInterface.Models
 
 		[BelongsTo("Operator")]
 		public virtual Partner Operator { get; set; }
+
+        [BelongsTo]
+        public virtual Partner Registrator { get; set; }
+
+        [Property]
+        public virtual bool Registered { get; set; }
 	}
 
 }

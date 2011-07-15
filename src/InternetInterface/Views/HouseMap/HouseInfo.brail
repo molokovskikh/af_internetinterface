@@ -12,7 +12,8 @@
 <script type="text/javascript">
     $(function () {
         $("#myModal_IT").css({ opacity: 0.0 });
-
+        $("#myModal_IT").width(700);
+        $('.reveal-modal').css('left','45%');
         $('.big-link').click(function () {
             var apartment_num = $(this).parent().children('input:first').val();
             $('#apartment_div').val(apartment_num);
@@ -20,10 +21,32 @@
             req.House = $('#House').val();
             req.apartment_num = apartment_num;
             $.post("LoadApartmentHistory", req, function (data) {
+                    var newTr = "";
+                    if (data.length > 0)
+                    {
+                        $('#historyTable').css('display','table');
+                        $('#history_head').empty();
+                        $('#history_head').append("История действий по квартире №" + data[0].Number);
+                    }
+                    else{
+                        $('#historyTable').css('display','none');
+                    }
                     for(hist in data){
-                        alert(data[hist].ActionName);
+                        newTr += "<tr><td>"
+                        newTr += data[hist].ActionName
+                        newTr += "</td><td>"
+                        newTr += data[hist].ActionDate
+                        newTr += "</td><td>"
+                        newTr += data[hist].Agent
+                        newTr += "</tr></td>"
                     };
+                    $('#history_place').empty();
+                    $('#history_place').append(newTr);
             } );
+        });
+
+        $('#CreateRequest').click(function () {
+            window.location.href = '${SiteRoot}/Register/RegisterRequest?house=${House.Id}&apartment='+$('#apartment_div').val();
         });
 
         $('#SaveButton').click(function () {
@@ -146,7 +169,7 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th colspan=2>Радаетировать квартиру</th>
+                    <th colspan=2>Радактировать квартиру</th>
                 </tr>
             </thead>
             <tbody>
@@ -199,13 +222,13 @@
                 <td colspan=2><button type=button id="SaveButton" class="Button">Сохранить</button></td>
             </tr>
             <tr></tr>
-            <tr><td colspan=2><button type=button id="Button1" class="Button">Сформировать заявку</button></td></tr>
+            <tr><td colspan=2><button type=button id="CreateRequest" class="Button">Сформировать заявку</button></td></tr>
             </tbody>
         </table>
-        <table class="table">
+        <table class="table" style="display:none" id="historyTable">
             <thead>
                 <tr>
-                    <th colspan=3>История действий</th>
+                    <th id="history_head" colspan=3>История действий</th>
                 </tr>
                 <tr>
                     <th>Действие</th>
@@ -213,8 +236,7 @@
                     <th>Оператор</th>
                 </tr>
             </thead>
-            <tbody>
-                <div id="history_place"></div>
+            <tbody id="history_place">
             </tbody>
         </table>
     <a class="close-reveal-modal">х</a>
@@ -256,10 +278,13 @@
         <%apartment = House.GetApartmentWithNumber(i+1) %>
         <%inforumClient = House.GetClientWithApNumber("${i+1}") %>
         <%if inforumClient == 0: %>
-            <td><a href="#" class="big-link" data-reveal-id="myModal_IT" > 
-            ${i+1}</a>
+            <%if ((apartment!= null) and  (apartment.Status != null) and (apartment.Status.ShortName == "request")): %>
+            <td>${i+1}
             <%else: %>
-            <td>${i+1}</td>
+            <td><a href="#" class="big-link" data-reveal-id="myModal_IT" > ${i+1}</a>
+            <%end %>
+            <%else: %>
+            <td>${i+1}
         <%end %>
         <input type=hidden name="apartment" value=${i+1} class="apartment_table" />
         </td>

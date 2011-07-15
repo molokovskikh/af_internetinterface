@@ -18,7 +18,13 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string Color { get; set; }
 
-		public virtual string GetBorderColor()
+        [Property]
+        public virtual bool Deleted { get; set; }
+
+        [Property]
+        public virtual string ShortComment { get; set; }
+
+	    public virtual string GetBorderColor()
 		{
 			var oColor = ColorTranslator.FromHtml(Color);
 			

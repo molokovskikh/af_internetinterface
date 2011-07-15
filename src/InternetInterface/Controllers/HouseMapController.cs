@@ -43,7 +43,7 @@ namespace InternetInterface.Controllers
         {
             PropertyBag["Editing"] = House.Find(id).ApartmentCount == 0 ? true : false;
             PropertyBag["sHouse"] = House.Find(id);
-            PropertyBag["sStatuses"] = ApartmentStatus.FindAll();
+            PropertyBag["sStatuses"] = ApartmentStatus.Queryable.Where(s => s.ShortName != "request").ToList();
             CancelLayout();
         }
 
@@ -221,7 +221,7 @@ namespace InternetInterface.Controllers
                                      Apartment = apartment,
                                      ActionName =
                                          string.Format(
-                                             "Установлены параметры - \r\n Интернет:{0} \r\n TV: {1} \r\n Статус:{2} \r\n Комментарий:{3}",
+                                             "<b> Установлены параметры </b> - <br /> Интернет:{0} <br /> TV: {1} <br /> Статус:{2} <br /> Комментарий:{3}",
                                              lastInet, lastTv, comment, status != null ? status.Name : string.Empty),
                                      ActionDate = DateTime.Now
                                  }.Save();
@@ -286,8 +286,9 @@ namespace InternetInterface.Controllers
         ToList().FirstOrDefault();
             if (apps != null)
                 return
-                    ApartmentHistory.Queryable.Where(a => a.Apartment == apps).ToList().Select(
-                        a => new HistoryInfo(a)).ToList();
+                    ApartmentHistory.Queryable.Where(a => a.Apartment == apps).ToList().OrderByDescending(
+                        a => a.ActionDate).Select(
+                            a => new HistoryInfo(a)).ToList();
             return new List<HistoryInfo>();
         }
 

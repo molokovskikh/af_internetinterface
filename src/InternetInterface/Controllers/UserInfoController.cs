@@ -243,11 +243,15 @@ namespace InternetInterface.Controllers
 					clientEntPoint.Port = Int32.Parse(ConnectInfo.Port);
 					clientEntPoint.Switch = NetworkSwitches.Find(Convert.ToUInt32(ConnectInfo.Switch));
 					clientEntPoint.Monitoring = ConnectInfo.Monitoring;
-					if (!newFlag)
-						clientEntPoint.UpdateAndFlush();
-					else
-						clientEntPoint.SaveAndFlush();
-					if (brigadChangeFlag)
+                    if (!newFlag)
+                        clientEntPoint.UpdateAndFlush();
+                    else
+                    {
+                        clientEntPoint.SaveAndFlush();
+                        if (client.PhysicalClient != null && client.PhysicalClient.Request != null && client.PhysicalClient.Request.Registrator != null)
+                            PaymentsForAgent.CreatePayment(AgentActions.ConnectClient, "Зачисление за подключение клиента", client.PhysicalClient.Request.Registrator);
+                    }
+				    if (brigadChangeFlag)
 					{   
 						var brigad = Brigad.Find(BrigadForConnect);
 						client.WhoConnected = brigad;
@@ -324,7 +328,7 @@ namespace InternetInterface.Controllers
 		public void EditLabel(uint deletelabelch, string LabelName, string labelcolor)
 		{
 			var labelForEdit = Label.Find(deletelabelch);
-			if (labelForEdit != null)
+			if (labelForEdit != null && labelForEdit.Deleted)
 			{
 				if (LabelName != null)
 					labelForEdit.Name = LabelName;
@@ -340,7 +344,7 @@ namespace InternetInterface.Controllers
 		public void DeleteLabel(uint deletelabelch)
 		{
 			var labelForDel = Label.Find(deletelabelch);
-			if (labelForDel != null)
+			if (labelForDel != null && labelForDel.Deleted)
 			{
 				labelForDel.DeleteAndFlush();
 				ARSesssionHelper<Label>.QueryWithSession(session =>
@@ -363,7 +367,11 @@ namespace InternetInterface.Controllers
 
 		public void RequestView()
 		{
-			PropertyBag["Clients"] = Requests.FindAll().OrderByDescending(f => f.ActionDate).ToArray();
+		    var requests = Requests.Queryable.Where(r => !r.Registered).OrderByDescending(f => f.ActionDate);
+            if (InithializeContent.partner.Categorie.ReductionName == "Agent")
+                PropertyBag["Clients"] = requests.Where(r => r.Registrator == InithializeContent.partner).ToList();
+            else
+                PropertyBag["Clients"] = requests.ToList();
 			SendRequestEditParameter();
 		}
 
@@ -389,10 +397,14 @@ namespace InternetInterface.Controllers
 		/// <param name="labelId"></param>
 		public void RequestView(uint labelId)
 		{
-			PropertyBag["Clients"] = Requests.FindAll(DetachedCriteria.For(typeof (Requests))
-			                                          	.Add(Expression.Eq("Label.Id", labelId)))
-														.OrderByDescending(
-															f => f.ActionDate).ToArray();
+		    var requests = Requests.FindAll(DetachedCriteria.For(typeof (Requests))
+		                                        .Add(Expression.Eq("Label.Id", labelId)))
+		                                        .OrderByDescending(
+		                                            f => f.ActionDate).Where(r => !r.Registered);
+            if (InithializeContent.partner.Categorie.ReductionName == "Agent")
+                PropertyBag["Clients"] = requests.Where(r => r.Registrator == InithializeContent.partner).ToList();
+            else
+                PropertyBag["Clients"] = requests.ToList();
 			SendRequestEditParameter();
 		}
 
@@ -404,15 +416,22 @@ namespace InternetInterface.Controllers
 		[AccessibleThrough(Verb.Post)]
 		public void RequestView([DataBind("LabelList")]List<uint> labelList, uint labelch)
 		{
+		    var _label = Label.Find(labelch);
 			foreach (var label in labelList)
 			{
 				var request = Requests.Find(label);
-				request.Label = Label.Find(labelch);
+                request.Label = _label;
 				request.ActionDate = DateTime.Now;
 				request.Operator = InithializeContent.partner;
 				request.UpdateAndFlush();
+                if (_label.ShortComment == "Refused" && request.Registrator != null)
+                    PaymentsForAgent.CreatePayment(AgentActions.DeleteRequest, "Списание за отказ заявки", request.Registrator);
 			}
-			PropertyBag["Clients"] = Requests.FindAll().OrderByDescending(f => f.ActionDate).ToArray();
+		    var requests = Requests.Queryable.Where(r => !r.Registered).OrderByDescending(f => f.ActionDate);
+            if (InithializeContent.partner.Categorie.ReductionName == "Agent")
+                PropertyBag["Clients"] = requests.Where(r => r.Registrator == InithializeContent.partner).ToList();
+            else
+                PropertyBag["Clients"] = requests.ToList();
 			SendRequestEditParameter();
 		}
 
@@ -690,6 +709,8 @@ namespace InternetInterface.Controllers
 		    {
 		        graph.Delete();
 		    }
+            if (client.PhysicalClient.Request != null && client.PhysicalClient.Request.Registrator != null)
+                PaymentsForAgent.CreatePayment(AgentActions.RefusedClient, "Списание за отказ клиента от подключения", client.PhysicalClient.Request.Registrator);
 			CreateAppeal("Причина отказа:  " + prichina  + " \r\n Комментарий: \r\n " + Appeal, ClientID);
 			LayoutName = "NoMap";
 		}

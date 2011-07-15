@@ -36,7 +36,7 @@
         <span class="comment_text">Просмотр и редактирование коммутаторов</span></td></tr>
         <%end %>
         <%if PartnerAccessSet.AccesPartner("SSI"): %>
-        <tr><td><a href = "${Siteroot}/HouseAgent/ShowAgents.rails" ><span class="MA"><div class=menudiv>Агенты</div></span></a>
+        <tr><td><a href = "${Siteroot}/UserInfo/PartnersPreview.rails?catType=5" ><span class="MA"><div class=menudiv>Агенты</div></span></a>
         <span class="comment_text">Просмотр и редактирование списка агентов, осуществляющих обход домов</span></td></tr>
         <%end %>
     </tbody>
