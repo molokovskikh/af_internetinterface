@@ -49,6 +49,7 @@ namespace InforoomInternet.Controllers
             var client = Clients.Find(clientId);
             if (client.CanUsedPostponedPayment())
             {
+                client.Status = Status.Find((uint)StatusType.Worked);
                 client.PostponedPayment = DateTime.Now;
                 client.Disabled = false;
                 client.Update();
