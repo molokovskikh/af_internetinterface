@@ -150,19 +150,43 @@ namespace InternetInterface.Controllers
             FindHouse();
         }
 
-        [return: JSONReturnBinder]
-        public string Register()
+        public class houseReturned
         {
+            public houseReturned()
+            {
+                Id = 0;
+                errorMessage = String.Empty;
+            }
+
+            public int Id;
+            public string errorMessage;
+        }
+
+        [return: JSONReturnBinder]
+        public houseReturned Register()
+        {
+            var returnObj = new houseReturned();
             var street = Request.Form["Street"];
             var number = Request.Form["Number"];
             var _case = Request.Form["Case"];
             int res;
-            var errors = string.Empty;
+            //var errors = string.Empty;
             if (!Int32.TryParse(number, out res))
-                errors += "Неправильно введен номер дома" + res;
-            if (string.IsNullOrEmpty(errors))
-                new House {Street = street, Number = Int32.Parse(number), Case = _case}.Save();
-            return errors;
+            {
+                returnObj.errorMessage += "Неправильно введен номер дома" + res;
+                if (House.Queryable.Where(h => h.Street == street && h.Number == Int32.Parse(number) && h.Case == _case)
+                        .Count() > 0)
+                    returnObj.errorMessage += "Дом с таким одресом уже существует";
+            }
+            if (string.IsNullOrEmpty(returnObj.errorMessage))
+            {
+                var newHouse = new House { Street = street, Number = Int32.Parse(number), Case = _case };
+                newHouse.Refresh();
+                returnObj.Id = (int)newHouse.Id;
+                return returnObj;
+            }
+            return returnObj;
+            //return errors;
         }
 
         [return: JSONReturnBinder]

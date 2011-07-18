@@ -97,10 +97,20 @@
             <td><label for="endDate"> Конец периода </label><input type=text  name="endDate" id="endDate" class="date-pick dp-applied"> </td>
         </tr>
         <tr>
-            <td colspan=4><button type="submit" id="FindHouseButton" class="button">Найти</button></td>
+            <td><button type="submit" id="FindHouseButton" class="button">Найти</button></td>
+            <td colspan=2>
+                    <a href="#" class="big-link" data-reveal-id="myModal" > 
+                    <button class="button" value="Назначить"><img alt="Save" src="${Siteroot}/Images/application_edit.png"> Создать дом </button>
+                    </a>
+            </td>
         </tr>
     </tbody>
 </table>
 </form>
 </div>
 </center>
+
+<div id="myModal"class="reveal-modal"> 
+    <% OutputSubView("""\HouseMap\RegisterHouse""") %>
+<a class="close-reveal-modal">х</a>
+</div> 

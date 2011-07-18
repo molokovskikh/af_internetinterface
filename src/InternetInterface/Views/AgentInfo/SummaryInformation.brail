@@ -1,4 +1,34 @@
-﻿<div style="width:800px; margin: 0 auto;">
+﻿<script type="text/javascript">
+    $(function () {
+        $('#startDate').datepicker({
+            inline: true
+        });
+        $('#endDate').datepicker({
+            inline: true
+        });
+    });
+</script>
+
+<div style="width:800px; margin: 0 auto;">
+<form method=get action="SummaryInformation">
+<table class="table" style="border: 1px double #AAA;">
+    <thead>
+        <tr>
+            <th colspan=2>Выберите интервал</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><label for="startDate">Начала периода </label><input type=text value="${startDate}"  name="startDate" id="startDate" class="date-pick dp-applied"> </td>
+            <td><label for="endDate"> Конец периода </label><input type=text value="${endDate}"  name="endDate" id="endDate" class="date-pick dp-applied"> </td>
+        </tr>
+        <tr>
+            <td colspan=2><button type=submit class="button">Показать</button></td>
+        </tr>
+    </tbody>
+</table>
+</form>
+<%if Payments.Count > 0: %>
 <table class="table" style="border:1px solid #AAA;">
     <thead>
         <tr>
@@ -20,4 +50,7 @@
     <%end %>
     </tbody>
 </table>
+<%else:
+output WriteMessageError("За выбраный период платежей не зарегистрировано")
+ end %>
 </div>

@@ -6,8 +6,12 @@
             req.Number = $('#house_Number').val();
             req.Case = $('#house_Case').val();
             $.post("Register", req, function (data) {
-                alert("Зарегистрировано");
-                window.location.href = '${SiteRoot}/HouseMap/ViewHouseInfo';
+                if (data.Id > 0) {
+                    window.location.href = '${SiteRoot}/HouseMap/ViewHouseInfo?House=' + data.Id;
+                    alert("Зарегистрировано");
+                } else {
+                    alert(data.errorMessage);
+                }
             });
         }
     }
