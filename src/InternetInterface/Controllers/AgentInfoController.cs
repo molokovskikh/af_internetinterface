@@ -30,9 +30,11 @@ namespace InternetInterface.Controllers
 
         public virtual void SummaryInformation(DateTime startDate, DateTime endDate)
         {
-            PropertyBag["Payments"] = GetPayments(startDate, endDate);
+            var payments = GetPayments(startDate, endDate);
+            PropertyBag["Payments"] = payments;
             PropertyBag["startDate"] = startDate.ToShortDateString();
             PropertyBag["endDate"] = endDate.ToShortDateString();
+            PropertyBag["TotalSum"] = payments.Sum(p => p.Sum);
         }
     }
 }

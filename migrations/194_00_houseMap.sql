@@ -100,5 +100,11 @@ ALTER TABLE `internet`.`BypassHouses` ADD CONSTRAINT `FK_BypassHouses_1` FOREIGN
     REFERENCES `partners` (`Id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE;
+	
+update internet.labels set deleted = true;	
+	
+insert into internet.labels (`Name`, Color, Deleted, ShortComment)
+values ('Отказ заявки','#FFF', false, 'Refused');
 
-
+insert into internet.labels (`Name`, Color, Deleted, ShortComment)
+values ('Зарегистрирована','#000', false, 'Registered');

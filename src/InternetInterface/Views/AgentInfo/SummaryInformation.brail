@@ -30,7 +30,7 @@
 </form>
 <%if Payments.Count > 0: %>
 <table class="table" style="border:1px solid #AAA;">
-    <thead>
+    <thead>k
         <tr>
             <th colspan=3>Сводная информация по выплатам</th>
         </tr>
@@ -48,6 +48,9 @@
             <td>${payment.RegistrationDate.ToShortDateString()}</td>
         </tr>
     <%end %>
+    <tr>
+        <td colspan=3>Всего к выплате: <b style="color:#026e1b;">${TotalSum.ToString("#.00")}</b>  рублей.</td>
+    </tr>
     </tbody>
 </table>
 <%else:

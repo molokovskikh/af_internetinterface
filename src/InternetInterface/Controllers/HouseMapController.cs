@@ -62,10 +62,11 @@ namespace InternetInterface.Controllers
         }
 
         [AccessibleThrough(Verb.Post)]
-        public void EditHouse([ARDataBind("house")] House house, [ARDataBind("Entrances")] Entrance[] enterances)
+        public void EditHouse([ARDataBind("house", AutoLoad = AutoLoadBehavior.Always)] House house, [ARDataBind("Entrances")] Entrance[] enterances)
         {
-            house.Save();
+            house.Update();
             foreach (var enterance in Entrance.Queryable.Where(e => e.House.Id == house.Id).ToList())
+            //foreach (var enterance in Entrance.FindAllByProperty("House", house))
             {
                 enterance.Delete();
             }
