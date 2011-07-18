@@ -449,6 +449,14 @@ namespace InternetInterface.Controllers
                     Apartment.Queryable.Where(
                         a => a.House == House.Find(houseNumber) && a.Number == Int32.Parse(request.Apartment)).
                         FirstOrDefault();
+                if (apartment == null)
+                {
+                    apartment = new Apartment {
+                                                  House = House.Find(houseNumber),
+                                                  Number = Int32.Parse(request.Apartment),
+                                              };
+                    apartment.Save();
+                }
                 apartment.Status = ApartmentStatus.Queryable.Where(aps => aps.ShortName == "request").FirstOrDefault();
                 apartment.Update();
                 PaymentsForAgent.CreatePayment(AgentActions.CreateRequest, "Начисление за создание заявки", InithializeContent.partner);

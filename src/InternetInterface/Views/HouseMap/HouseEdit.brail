@@ -26,7 +26,7 @@
             }
             str += '</tr></tbody></table>';
             str += '<div><span>Введите количество квартир  </span><input  type="text" id="ApCount" name="ApCount" /></div>'
-            str += '<div><a href="#" id="naznach_link" onclick="SaveHouseMap()" value="Назначить">Назначить </a></div></div>'
+            str += '<div><button type="button" class="button" href="#" id="naznach_link" onclick="SaveHouseMap()" >Назначить </button></div></div>'
             $('#enEditor').append(str);
         });
 

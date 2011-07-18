@@ -17,11 +17,11 @@ ${FormHelper.HiddenField("houseNumber")}
     </thead>
     <tbody>
         <tr>
-            <td>ФИО</td>
+            <td><b>ФИО</b></td>
             <td>${FormHelper.TextField("request.ApplicantName")}</td>
         </tr>
         <tr>
-            <td>Номер телефона</td>
+            <td><b>Номер телефона</b></td>
             <td>${FormHelper.TextField("request.ApplicantPhoneNumber")}</td>
         </tr>
         <tr>

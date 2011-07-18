@@ -49,7 +49,9 @@ namespace InternetInterface.Controllers
 
         public void ForPrintToAgent(uint id)
         {
+            PropertyBag["ApStatuses"] = ApartmentStatus.FindAll();
             PropertyBag["sHouse"] = House.Find(id);
+            PropertyBag["ForPrint"] = true;
         }
 
         public void EditHouse(uint House)
@@ -150,18 +152,6 @@ namespace InternetInterface.Controllers
             FindHouse();
         }
 
-        public class houseReturned
-        {
-            public houseReturned()
-            {
-                Id = 0;
-                errorMessage = String.Empty;
-            }
-
-            public int Id;
-            public string errorMessage;
-        }
-
         [return: JSONReturnBinder]
         public houseReturned Register()
         {
@@ -173,16 +163,18 @@ namespace InternetInterface.Controllers
             //var errors = string.Empty;
             if (!Int32.TryParse(number, out res))
             {
-                returnObj.errorMessage += "Неправильно введен номер дома" + res;
-                if (House.Queryable.Where(h => h.Street == street && h.Number == Int32.Parse(number) && h.Case == _case)
-                        .Count() > 0)
+                returnObj.errorMessage += "Неправильно введен номер дома";
+            }
+            if (string.IsNullOrEmpty(returnObj.errorMessage))
+            {
+                if (House.Queryable.Where(h => h.Street == street && h.Number == Int32.Parse(number) && h.Case == _case).Count() > 0)
                     returnObj.errorMessage += "Дом с таким одресом уже существует";
             }
             if (string.IsNullOrEmpty(returnObj.errorMessage))
             {
                 var newHouse = new House { Street = street, Number = Int32.Parse(number), Case = _case };
-                newHouse.Refresh();
-                returnObj.Id = (int)newHouse.Id;
+                newHouse.Save();
+                returnObj.houseId = (int)newHouse.Id;
                 return returnObj;
             }
             return returnObj;
@@ -280,11 +272,12 @@ namespace InternetInterface.Controllers
         [return: JSONReturnBinder]
         public void V_Prohod()
         {
-            //var agent = HouseAgent.Find(UInt32.Parse(Request.Form["agent"]));
+            var agent = Partner.Find(UInt32.Parse(Request.Form["agent"]));
             var date_agent = DateTime.Parse(Request.Form["date_agent"]);
             var house = House.Find(UInt32.Parse(Request.Form["house"]));
             new BypassHouse {
-                                //Agent = agent,
+                                //Agent = InithializeContent.partner,
+                                Agent = agent,
                                 House = house,
                                 BypassDate = date_agent
                             }.Save();
@@ -334,6 +327,18 @@ namespace InternetInterface.Controllers
                 Agent = history.Agent.Name;
                 ActionDate = history.ActionDate.ToShortDateString();
             }
+        }
+
+        public class houseReturned
+        {
+            public houseReturned()
+            {
+                houseId = 0;
+                errorMessage = String.Empty;
+            }
+
+            public int houseId;
+            public string errorMessage;
         }
     }
 }

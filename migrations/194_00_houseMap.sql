@@ -92,3 +92,13 @@ ALTER TABLE `internet`.`physicalclients` ADD COLUMN `Request` INT(10) UNSIGNED A
 	
 ALTER TABLE `internet`.`requests` ADD COLUMN `Registered` TINYINT(1) UNSIGNED NOT NULL AFTER `Registrator`;
 
+
+ALTER TABLE `internet`.`BypassHouses`
+ DROP FOREIGN KEY `FK_BypassHouses_1`;
+
+ALTER TABLE `internet`.`BypassHouses` ADD CONSTRAINT `FK_BypassHouses_1` FOREIGN KEY `FK_BypassHouses_1` (`Agent`)
+    REFERENCES `partners` (`Id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE;
+
+

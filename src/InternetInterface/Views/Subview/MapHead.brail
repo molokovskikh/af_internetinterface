@@ -49,7 +49,7 @@
             <th><a href = "../Register/RegisterLegalPerson.rails" ><span class="MH"><div class=menudiv>Регистрация ЮрЛица</div></span></a></th>
             <%end %>
             <%if PartnerAccessSet.AccesPartner("VD"): %>
-            <th><a href = "../UserInfo/RequestView.rails?labelId=0" ><span class="MH"><div class=menudiv>Заявки</div></span></a></th>
+            <th><a href = "../UserInfo/RequestView.rails" ><span class="MH"><div class=menudiv>Заявки</div></span></a></th>
             <%end %>
             <%if PartnerAccessSet.AccesPartner("GCI"): %>
             <th><a href = "../Search/SearchUsers.rails" ><span class="MH"><div class=menudiv>Клиенты</div></span></a></th>
