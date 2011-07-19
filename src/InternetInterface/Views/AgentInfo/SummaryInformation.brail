@@ -49,7 +49,7 @@
         </tr>
     <%end %>
     <tr>
-        <td colspan=3>Всего к выплате: <b style="color:#026e1b;">${TotalSum.ToString("#.00")}</b>  рублей.</td>
+        <td colspan=3>Итого: <b style="color:#026e1b;">${TotalSum.ToString("0.00")}</b>  рублей.</td>
     </tr>
     </tbody>
 </table>

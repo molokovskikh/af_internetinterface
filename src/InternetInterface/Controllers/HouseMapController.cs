@@ -239,7 +239,7 @@ namespace InternetInterface.Controllers
                                      ActionName =
                                          string.Format(
                                              "<b> Установлены параметры </b> - <br /> Интернет:{0} <br /> TV: {1} <br /> Статус:{2} <br /> Комментарий:{3}",
-                                             lastInet, lastTv, comment, status != null ? status.Name : string.Empty),
+                                             lastInet, lastTv, status != null ? status.Name : string.Empty, comment),
                                      ActionDate = DateTime.Now
                                  }.Save();
         }
@@ -291,6 +291,21 @@ namespace InternetInterface.Controllers
         public int GetCompetitorCount()
         {
             return House.Find(UInt32.Parse(Request.Form["House"])).CompetitorCount;
+        }
+
+        [return: JSONReturnBinder]
+        public object GetApartment()
+        {
+            var house = Request.Form["House"];
+            var apartment = Int32.Parse(Request.Form["apartment_num"]);
+            var apps = Apartment.Queryable.Where(a => a.Number == apartment && a.House.Id == Int32.Parse(house)).
+        ToList().FirstOrDefault();
+            //var retObj = new {status = string.Empty};
+            if (apps != null)
+            {
+                return new { status = apps.Status.Id, apps.LastInternet, apps.LastTV };
+            }
+            return new {status = 0};
         }
 
 

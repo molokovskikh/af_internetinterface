@@ -101,7 +101,8 @@ namespace InternetInterface.Models.Access
                                                    "SaveHouseMap",
                                                    "GetCompetitorCount",
                                                    "LoadApartmentHistory",
-                                                   "RegisterRequest"
+                                                   "RegisterRequest",
+                                                   "GetApartment"
                                                };
             return _houseMapUse.Contains(methodName) ? "HMA" : string.Empty;
         }

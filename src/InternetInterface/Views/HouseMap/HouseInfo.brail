@@ -28,9 +28,32 @@
                         $('#history_head').empty();
                         $('#history_head').append("История действий по квартире №" + data[0].Number);
                     }
-                    else{
+                    else
+                    {
                         $('#historyTable').css('display','none');
                     }
+                    $.post("GetApartment", req, function (data) {
+                        $('#ap_status option').each(function () {
+                            if ($(this).val() == data.status)
+                            {
+                                $(this).attr('selected', 'selected');
+                            }
+                        });
+
+                        $('#last_TV option').each(function () {
+                            if ($(this).val() == data.LastTV)
+                            {
+                                $(this).attr('selected', 'selected');
+                            }
+                        });
+
+                        $('#last_inet option').each(function () {
+                            if ($(this).val() == data.LastInternet)
+                            {
+                                $(this).attr('selected', 'selected');
+                            }
+                        });
+                    });
                     for(hist in data){
                         newTr += "<tr><td>"
                         newTr += data[hist].ActionName
@@ -180,6 +203,7 @@
                 <td>
                    <!-- <input type=text id="last_inet" name="last_inet" /> <br /> -->
                    <select id="last_inet"  name="last_inet" style="width:200px;">
+                        <option value="">Нет</option>
                         <option value="Д">Д - Домолинк</option>
                    </select>
                 </td>
@@ -191,6 +215,7 @@
                 <td>
                    <!-- <input type=text id="last_TV" name="last_TV" /> -->
                     <select id="last_TV"  name="last_TV" style="width:200px;">
+                        <option value="">Нет</option>
                         <option value="С.Т">С.Т - Спутник триколор</option>
                         <option value="К">К - Кабельное</option>
                         <option value="С.Н">С.Н - Снутник НТВ</option>
@@ -277,8 +302,13 @@
     <tr>
         <%apartment = House.GetApartmentWithNumber(i+1) %>
         <%inforumClient = House.GetClientWithApNumber("${i+1}") %>
+        <%if apartment!= null: %>
+            <%request = apartment.GetRequestForThis() %>
+        <%else: %>
+            <%request = null %>
+        <%end %>
         <%if inforumClient == 0: %>
-            <%if ((apartment!= null) and  (apartment.Status != null) and (apartment.Status.ShortName == "request")): %>
+            <%if (request != null): %>
             <td>${i+1}
             <%else: %>
             <td><a href="#" class="big-link" data-reveal-id="myModal_IT" > ${i+1}</a>
@@ -295,10 +325,14 @@
             <td></td>
             <td></td>
             <%else: %>
-                <%if apartment.Status != null : %>
-                <td colspan=2 id="td_status_${i+1}">${apartment.Status.Name}</td>
+                <%if request == null: %>
+                    <%if apartment.Status != null : %>
+                    <td colspan=2 id="td_status_${i+1}">${apartment.Status.Name}</td>
+                    <%else: %>
+                    <td colspan=2 id="td_status_${i+1}"></td>
+                    <%end %>
                 <%else: %>
-                <td colspan=2 id="td_status_${i+1}"></td>
+                    <td colspan=2 id="td_status_${i+1}">В заявке (№${request.Id})</td>
                 <%end %>
             <%end %>
         <%else: %>
@@ -316,7 +350,11 @@
             <%end %>
         <%end %>
         <%if apartment != null : %>
-        <td id="td_comment_${i+1}">${apartment.Comment}</td>
+            <%if ((request == null) or ((request != null) and (request.Label == null))): %>
+                <td id="td_comment_${i+1}">${apartment.Comment}</td>
+            <%else: %>
+                <td id="td_comment_${i+1}">${request.Label.Name}</td>
+            <%end %>
         <%else: %>
         <td id="td_comment_${i+1}"></td>
         <%end %>

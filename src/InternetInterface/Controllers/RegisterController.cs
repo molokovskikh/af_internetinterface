@@ -122,7 +122,8 @@ namespace InternetInterface.Controllers
                         phisClient.Update();
                         PaymentsForAgent.CreatePayment(AgentActions.CreateClient, "Зачисление за зарегистрированного клиента", requestse.Registrator);
                     }
-                    requestse.Registered = true;
+                    //requestse.Registered = true;
+                    requestse.Label = Label.Queryable.Where(l => l.ShortComment == "Registered").FirstOrDefault();
                     requestse.Update();
                     //requestse.DeleteAndFlush();
                 }
@@ -275,9 +276,10 @@ namespace InternetInterface.Controllers
 				Apartment = request.Apartment,
 				Entrance = request.Entrance,
 				Email = request.ApplicantEmail,
+                //PhoneNumber = request.ApplicantPhoneNumber
 				//RegDate = DateTime.Now
 			};
-			if (request.ApplicantPhoneNumber.Length == 10)
+			if (request.ApplicantPhoneNumber.Length == 16)
 				newPhisClient.PhoneNumber = UsersParsers.MobileTelephoneParcer(request.ApplicantPhoneNumber);
 			if (request.ApplicantPhoneNumber.Length == 5)
 				newPhisClient.HomePhoneNumber = UsersParsers.HomeTelephoneParser(request.ApplicantPhoneNumber);
@@ -457,6 +459,7 @@ namespace InternetInterface.Controllers
                                               };
                     apartment.Save();
                 }
+                //apartment.Comment = string.Format("Заявка номер {0}", request.Id);
                 apartment.Status = ApartmentStatus.Queryable.Where(aps => aps.ShortName == "request").FirstOrDefault();
                 apartment.Update();
                 PaymentsForAgent.CreatePayment(AgentActions.CreateRequest, "Начисление за создание заявки", InithializeContent.partner);

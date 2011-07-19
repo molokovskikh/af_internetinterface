@@ -36,5 +36,15 @@ namespace InternetInterface.Models
 
         [BelongsTo]
         public virtual ApartmentStatus Status { get; set; }
+
+        public virtual Requests GetRequestForThis()
+        {
+            var notNullReq = Requests.Queryable.Where(
+                r => r.House != string.Empty && r.Apartment != string.Empty).ToList();
+            return notNullReq.Where(r =>
+                                    r.Street == House.Street && Int32.Parse(r.House) == House.Number &&
+                                    r.CaseHouse == House.Case && Int32.Parse(r.Apartment) == Number &&
+                                    r.Registrator != null).FirstOrDefault();
+        }
     }
 }

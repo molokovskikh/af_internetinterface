@@ -367,7 +367,7 @@ namespace InternetInterface.Controllers
 
 		public void RequestView()
 		{
-		    var requests = Requests.Queryable.Where(r => !r.Registered).OrderByDescending(f => f.ActionDate);
+		    var requests = Requests.FindAll().OrderByDescending(f => f.ActionDate);
             if (InithializeContent.partner.Categorie.ReductionName == "Agent")
                 PropertyBag["Clients"] = requests.Where(r => r.Registrator == InithializeContent.partner).ToList();
             else
@@ -400,7 +400,7 @@ namespace InternetInterface.Controllers
 		    var requests = Requests.FindAll(DetachedCriteria.For(typeof (Requests))
 		                                        .Add(Expression.Eq("Label.Id", labelId)))
 		                                        .OrderByDescending(
-		                                            f => f.ActionDate).Where(r => !r.Registered);
+		                                            f => f.ActionDate);
             if (InithializeContent.partner.Categorie.ReductionName == "Agent")
                 PropertyBag["Clients"] = requests.Where(r => r.Registrator == InithializeContent.partner).ToList();
             else
@@ -427,7 +427,7 @@ namespace InternetInterface.Controllers
                 if (_label.ShortComment == "Refused" && request.Registrator != null)
                     PaymentsForAgent.CreatePayment(AgentActions.DeleteRequest, "Списание за отказ заявки", request.Registrator);
 			}
-		    var requests = Requests.Queryable.Where(r => !r.Registered).OrderByDescending(f => f.ActionDate);
+		    var requests = Requests.FindAll().OrderByDescending(f => f.ActionDate);
             if (InithializeContent.partner.Categorie.ReductionName == "Agent")
                 PropertyBag["Clients"] = requests.Where(r => r.Registrator == InithializeContent.partner).ToList();
             else

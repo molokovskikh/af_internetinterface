@@ -31,12 +31,23 @@ namespace InternetInterface.Test.Functional
                         browser.TextField("CompetitorCount").AppendText("10");
                         browser.Link("naznach_link").Click();
                     }
-                    //Console.WriteLine(browser.Text);
+                    Console.WriteLine(browser.Text);
                     Assert.IsTrue(browser.Text.Contains("TV"));
                     Assert.IsTrue(browser.Text.Contains("INT"));
                     Assert.IsTrue(browser.Text.Contains("20"));
 
                 }
+            }
+        }
+
+        [Test]
+        public void FindHouseTest()
+        {
+            using (var browser = Open("HouseMap/FindHouse.rails"))
+            {
+                browser.Button("FindHouseButton").Click();
+                Assert.Greater(browser.Table("find_result_table").TableRows.Count, 0);
+                browser.Link("huise_link_0").Click();
             }
         }
     }

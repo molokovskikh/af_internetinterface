@@ -72,8 +72,8 @@ namespace InternetInterface.Models
         [BelongsTo]
         public virtual Partner Registrator { get; set; }
 
-        [Property]
-        public virtual bool Registered { get; set; }
+        /*[Property]
+        public virtual bool Registered { get; set; }*/
 	}
 
 }
