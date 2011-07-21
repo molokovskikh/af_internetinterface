@@ -16,6 +16,8 @@ namespace InternetInterface.Models.Access
 		private static HashSet<string> _changeBalance;
 		private static HashSet<string> _accessDHCP;
 		private static HashSet<string> _visibleDemand;
+	    private static HashSet<string> _houseMapUse;
+	    private static HashSet<string> _agentInfo; 
 
 		public static List<string> GetAccessName(string _methodName)
 		{
@@ -58,10 +60,54 @@ namespace InternetInterface.Models.Access
 			{
 				result.Add(GetRulesName_editClientInfo());
 			}
-			return result;
+            if (GetRulesName_houseMapUse() != string.Empty)
+            {
+                result.Add(GetRulesName_houseMapUse());
+            }
+            if (GetRulesName_agentInfo() != string.Empty)
+            {
+                result.Add(GetRulesName_agentInfo());
+            }
+		    return result;
 		}
 
-		private static string GetRulesName_getClientInfo()
+        private static string GetRulesName_agentInfo()
+        {
+            _agentInfo = new HashSet<string> {
+                                                 "SummaryInformation"
+                                             };
+            return _agentInfo.Contains(methodName) ? "AIV" : string.Empty;
+        }
+
+	    private static string GetRulesName_houseMapUse()
+        {
+            _houseMapUse = new HashSet<string> {
+                                                   "SiteMap",
+                                                   "Register",
+                                                   "EditHouse",
+                                                   "FindHouse",
+                                                   "HouseFindResult",
+                                                   "SaveApartment",
+                                                   "HouseEdit",
+                                                   "V_Prohod",
+                                                   "Agent",
+                                                   "RegisterHouseAgent",
+                                                   "EditHouseAgent",
+                                                   "ForPrintToAgent",
+                                                   "RegisterHouse",
+                                                   "ViewHouseInfo",
+                                                   "BasicHouseInfo",
+                                                   "NetworkSwitches",
+                                                   "SaveHouseMap",
+                                                   "GetCompetitorCount",
+                                                   "LoadApartmentHistory",
+                                                   "RegisterRequest",
+                                                   "GetApartment"
+                                               };
+            return _houseMapUse.Contains(methodName) ? "HMA" : string.Empty;
+        }
+
+	    private static string GetRulesName_getClientInfo()
 		{
 			_getClientInfo = new HashSet<string>
 			                 	{
@@ -84,23 +130,7 @@ namespace InternetInterface.Models.Access
 									"RegisterClient",
 									"SiteMap",
 									"ClientRegisteredInfoFromDiller",
-									"RegisterLegalPerson",
-                                    "ViewHouseInfo",
-                                    "BasicHouseInfo",
-                                    "NetworkSwitches",
-                                    "SaveHouseMap",
-                                    "Register",
-                                    "EditHouse",
-                                    "FindHouse",
-                                    "HouseFindResult",
-                                    "SaveApartment",
-                                    "HouseEdit",
-                                    "V_Prohod",
-                                    "Agent",
-                                    "RegisterHouseAgent",
-                                    "EditHouseAgent",
-                                    "ForPrintToAgent",
-                                    "RegisterHouse"
+									"RegisterLegalPerson"
 			                 	};
 			return _registerClient.Contains(methodName) ? "RC" : string.Empty;
 		}
@@ -186,7 +216,8 @@ namespace InternetInterface.Models.Access
 									"Show",
 									"AgentFilter",
 									"ShowAgent",
-                                    "ShowAgents"
+                                    "ShowAgents",
+                                    "GroupInfo"
 			                 	};
 			return _visibleDemand.Contains(methodName) ? "SSI" : string.Empty;
 		}

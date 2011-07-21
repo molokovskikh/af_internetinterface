@@ -162,7 +162,10 @@ namespace InternetInterface.Models
 		[Property, ValidateNonEmpty("Введите сумму"), ValidateDecimal("Непрвильно введено значение суммы")]
 		public virtual decimal ConnectSum { get; set; }
 
-		public virtual string HowManyToPay(bool change)
+        [BelongsTo]
+        public virtual Requests Request { get; set; }
+
+        public virtual string HowManyToPay(bool change)
 		{
 			var format = change ? "({0})" : "{0}";
 			if (Tariff == null)

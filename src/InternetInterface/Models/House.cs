@@ -32,8 +32,11 @@ namespace InternetInterface.Models
         [Property]
         public virtual int PassCount { get; set; }
 
-        [Property]
-        public virtual int CompetitorCount { get; set; }
+        //[Property]
+        public virtual int CompetitorCount
+        {
+            get { return Apartments.Where(a => a.Status == null || a.Status.ShortName != "request").Count(); }
+        }
 
         [HasMany(ColumnKey = "House", OrderBy = "Number", Lazy = true)]
         public virtual IList<Apartment> Apartments { get; set; }
@@ -50,6 +53,13 @@ namespace InternetInterface.Models
             if (apartment.Count != 0)
                 return apartment.First();
             return null;
+        }
+
+        public virtual uint GetClientWithApNumber(string num)
+        {
+            return
+                Clients.Queryable.Where(c => c.PhysicalClient.HouseObj == this && c.PhysicalClient.Apartment == num).
+                    ToList().Select(c => c.Id).FirstOrDefault();
         }
 
         public virtual int GetSubscriberCount()

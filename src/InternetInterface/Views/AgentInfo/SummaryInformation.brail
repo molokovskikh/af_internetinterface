@@ -1,0 +1,59 @@
+﻿<script type="text/javascript">
+    $(function () {
+        $('#startDate').datepicker({
+            inline: true
+        });
+        $('#endDate').datepicker({
+            inline: true
+        });
+    });
+</script>
+
+<div style="width:800px; margin: 0 auto;">
+<form method=get action="SummaryInformation">
+<table class="table" style="border: 1px double #AAA;">
+    <thead>
+        <tr>
+            <th colspan=2>Выберите интервал</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><label for="startDate">Начала периода </label><input type=text value="${startDate}"  name="startDate" id="startDate" class="date-pick dp-applied"> </td>
+            <td><label for="endDate"> Конец периода </label><input type=text value="${endDate}"  name="endDate" id="endDate" class="date-pick dp-applied"> </td>
+        </tr>
+        <tr>
+            <td colspan=2><button type=submit class="button">Показать</button></td>
+        </tr>
+    </tbody>
+</table>
+</form>
+<%if Payments.Count > 0: %>
+<table class="table" style="border:1px solid #AAA;">
+    <thead>k
+        <tr>
+            <th colspan=3>Сводная информация по выплатам</th>
+        </tr>
+        <tr>
+            <td>Сумма палтежа</td>
+            <td>Описание</td>
+            <td>Дата действия</td>
+        </tr>
+    </thead>
+    <tbody>
+    <% for i, payment in enumerate(Payments): %>
+        <tr>
+            <td>${payment.Sum}</td>
+            <td>${payment.Comment}</td>
+            <td>${payment.RegistrationDate.ToShortDateString()}</td>
+        </tr>
+    <%end %>
+    <tr>
+        <td colspan=3>Итого: <b style="color:#026e1b;">${TotalSum.ToString("0.00")}</b>  рублей.</td>
+    </tr>
+    </tbody>
+</table>
+<%else:
+output WriteMessageError("За выбраный период платежей не зарегистрировано")
+ end %>
+</div>

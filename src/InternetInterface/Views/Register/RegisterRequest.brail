@@ -1,0 +1,65 @@
+﻿<style type="text/css">
+    .error
+    {
+        color:Red;
+        font-size:small;
+        margin-left:10px;   
+        }
+</style>
+<div style="width:800px; margin:0 auto;">
+${FormHelper.FormTag("${Siteroot}/Register/RegisterRequest", {"id" : "registerRequest_Form"})}
+${FormHelper.HiddenField("houseNumber")}
+<table class="table" style="border:1px solid #AAA">
+    <thead>
+        <tr>
+            <th colspan=2>Регистрация заявки</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><b>ФИО</b></td>
+            <td>${FormHelper.TextField("request.ApplicantName")}</td>
+        </tr>
+        <tr>
+            <td><b>Номер телефона</b></td>
+            <td>${FormHelper.TextField("request.ApplicantPhoneNumber")}</td>
+        </tr>
+        <tr>
+            <td>Email</td>
+            <td>${FormHelper.TextField("request.ApplicantEmail")}</td>
+        </tr>
+        <tr>
+            <td>Тариф</td>
+            <td>${FormHelper.Select("tariff", tariffs, {"text" : "Name", "value" : "Id"})}</td>
+        </tr>
+        <tr>
+            <td>Улица</td>
+            <td>${FormHelper.TextField("request.Street")}</td>
+        </tr>
+        <tr>
+            <td>Дом</td>
+            <td>${FormHelper.TextField("request.House")}</td>
+        </tr>
+        <tr>
+            <td>Корпус</td>
+            <td>${FormHelper.TextField("request.CaseHouse")}</td>
+        </tr>
+        <tr>
+            <td>Квартира</td>
+            <td>${FormHelper.TextField("request.Apartment")}</td>
+        </tr>
+        <tr>
+            <td>Подъезд</td>
+            <td>${FormHelper.TextField("request.Entrance")}</td>
+        </tr>
+        <tr>
+            <td>Этаж</td>
+            <td>${FormHelper.TextField("request.Floor")}</td>
+        </tr>
+        <tr>
+            <td colspan=2><button class="button" type=submit>Зарегистрировать</button></td>
+        </tr>
+    </tbody>
+</table>
+${FormHelper.EndFormTag()}
+</div>

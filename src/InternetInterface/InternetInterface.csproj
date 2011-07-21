@@ -124,6 +124,8 @@
     <Content Include="Styles\base.css" />
     <Content Include="Styles\datePicker.css" />
     <Content Include="Styles\style.css" />
+    <None Include="Views\AgentInfo\GroupInfo.brail" />
+    <None Include="Views\AgentInfo\SummaryInformation.brail" />
     <None Include="Views\Brigads\MakeBrigad.brail" />
     <None Include="Views\Brigads\ShowBrigad.brail" />
     <None Include="Views\CommonScripts\WriteMessage.brail" />
@@ -147,6 +149,7 @@
     <None Include="Views\Payers\Show.brail" />
     <None Include="Views\Payers\ShowAgent.brail" />
     <None Include="Views\Register\RegisterLegalPerson.brail" />
+    <None Include="Views\Register\RegisterRequest.brail" />
     <None Include="Views\Rescue\404.brail" />
     <None Include="Views\Subview\AppealsInfo.brail" />
     <None Include="Views\Subview\ChangeBalanceInfo.brail" />
@@ -190,6 +193,7 @@
     <Compile Include="AllLogic\GetClientsLogic.cs" />
     <Compile Include="AllLogic\Validation.cs" />
     <Compile Include="Components\SelectList.cs" />
+    <Compile Include="Controllers\AgentInfoController.cs" />
     <Compile Include="Controllers\BrigadsController.cs" />
     <Compile Include="Controllers\ExitPartner.cs" />
     <Compile Include="Controllers\Filter\AuthenticationFilter.cs" />
@@ -231,7 +235,10 @@
     <Compile Include="Models\Access\AccessRules.cs" />
     <Compile Include="Models\AdditionalStatus.cs" />
     <Compile Include="Models\Agents.cs" />
+    <Compile Include="Models\AgentTariff.cs" />
     <Compile Include="Models\Apartment.cs" />
+    <Compile Include="Models\ApartmentHistory.cs" />
+    <Compile Include="Models\ApartmentStatus.cs" />
     <Compile Include="Models\Appeals.cs" />
     <Compile Include="Models\Brigad.cs" />
     <Compile Include="Models\BypassHouse.cs" />
@@ -249,7 +256,8 @@
     <Compile Include="Models\NetworkSwitches.cs" />
     <Compile Include="Models\OnLineClient.cs" />
     <Compile Include="Models\PackageSpeed.cs" />
-    <Compile Include="Models\Requests.cs" />
+    <Compile Include="Models\PaymentsForAgent.cs" />
+    <Compile Include="Models\Request.cs" />
     <Compile Include="Models\Status.cs" />
     <Compile Include="Models\Universal\ChildActiveRecordLinqBase.cs" />
     <Compile Include="Models\Universal\ClientSearchProperties.cs" />

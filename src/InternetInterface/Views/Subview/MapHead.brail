@@ -49,7 +49,7 @@
             <th><a href = "../Register/RegisterLegalPerson.rails" ><span class="MH"><div class=menudiv>Регистрация ЮрЛица</div></span></a></th>
             <%end %>
             <%if PartnerAccessSet.AccesPartner("VD"): %>
-            <th><a href = "../UserInfo/RequestView.rails?labelId=0" ><span class="MH"><div class=menudiv>Заявки</div></span></a></th>
+            <th><a href = "../UserInfo/RequestView.rails" ><span class="MH"><div class=menudiv>Заявки</div></span></a></th>
             <%end %>
             <%if PartnerAccessSet.AccesPartner("GCI"): %>
             <th><a href = "../Search/SearchUsers.rails" ><span class="MH"><div class=menudiv>Клиенты</div></span></a></th>
@@ -66,11 +66,14 @@
             <%if PartnerAccessSet.AccesPartner("SSI"): %>
             <th><a href = "../UserInfo/RequestGraph.rails" ><span class="MH"><div class=menudiv>График подключений</div></span></a></th>
             <%end %>
-            <%if PartnerAccessSet.AccesPartner("RC"): %>
+            <%if PartnerAccessSet.AccesPartner("HMA"): %>
             <th><a href = "../HouseMap/FindHouse.rails" ><span class="MH"><div class=menudiv>Карта дома</div></span></a></th>
             <%end %>
             <%if PartnerAccessSet.AccesPartner("RP"): %>
             <th><a href = "../UserInfo/Administration.rails" ><span class="MH"><div class=menudiv>Администрирование</div></span></a></th>
+            <%end %>
+            <%if PartnerAccessSet.AccesPartner("AIV"): %>
+            <th><a href = "../AgentInfo/SummaryInformation.rails" ><span class="MH"><div class=menudiv>Платежи</div></span></a></th>
             <%end %>
             <th>
                 <form class="form" id="Exit" name="Exit" method="post" action="${siteroot}/ExitPartner/Yes" >

@@ -1,0 +1,41 @@
+﻿<div style="width:800px; margin:0 auto;">
+<table class="table" style="border:1px solid #AAA">
+    <thead>
+        <tr>
+            <th colspan=3>Выплаты по агентам</th>
+        </tr>
+    </thead>
+    <tbody>
+    <%for i, agent in enumerate(Agents): %>
+        <tr>
+            <td colspan=3 style="background-color:#D5E6D0">${agent.Name}</td>
+        </tr>
+        <tr>
+            <td colspan=3>
+                <table style="border:1px solid #AAA" class="table">
+                    <thead>
+                        <tr>
+                            <th>Дата действия</th>
+                            <th>Сумма</th>
+                            <th>Действие</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <%for i, payment in enumerate(agent.Payments): %>
+                        <tr>
+                            <td>${payment.RegistrationDate.ToShortDateString()}</td>
+                            <td>${payment.Sum}</td>
+                            <td>${payment.Comment}</td>
+                        </tr>
+                    <%end %>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td style="color:Black"><b> Итого: ${agent.GetAgentPayment()} рублей </b></td>
+        </tr>
+    <%end %>
+    </tbody>
+</table>
+</div>

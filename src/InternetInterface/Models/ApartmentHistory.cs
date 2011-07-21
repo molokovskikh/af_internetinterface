@@ -7,19 +7,22 @@ using Castle.ActiveRecord.Framework;
 
 namespace InternetInterface.Models
 {
-    [ActiveRecord("BypassHouses", Schema = "internet", Lazy = true)]
-    public class BypassHouse : ActiveRecordLinqBase<BypassHouse>
+    [ActiveRecord("ApartmentHistory", Schema = "Internet", Lazy = true)]
+    public class ApartmentHistory : ActiveRecordLinqBase<ApartmentHistory>
     {
         [PrimaryKey]
         public virtual uint Id { get; set; }
 
         [BelongsTo]
-        public virtual House House { get; set; }
+        public virtual Apartment Apartment { get; set; }
+
+        [Property]
+        public virtual string ActionName { get; set; }
 
         [BelongsTo]
         public virtual Partner Agent { get; set; }
 
         [Property]
-        public virtual DateTime BypassDate { get; set; }
+        public virtual DateTime ActionDate { get; set; }
     }
 }

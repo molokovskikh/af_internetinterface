@@ -109,7 +109,7 @@ namespace Billing
                                                           .Add(Restrictions.Eq("BillingAccount", false)));
                     foreach (var newPayment in newPayments)
                     {
-                        var updateClient = Clients.Find(newPayment.Client.Id);
+                        var updateClient = newPayment.Client; //Clients.Find(newPayment.Client.Id);
                         var physicalClient = updateClient.PhysicalClient;
                         var lawyerClient = updateClient.LawyerPerson;
                         if (physicalClient != null)

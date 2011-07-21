@@ -103,6 +103,11 @@ namespace InternetInterface.Controllers
                     client.ConnectedDate = DateTime.Now;
                     client.Status = Status.Find((uint) StatusType.BlockedAndConnected);
                     client.UpdateAndFlush();
+                    foreach (var requestse in Requests.FindAllByProperty("Id", requestID))
+                    {
+                        if (requestse.Registrator != null)
+                            PaymentsForAgent.CreatePayment(AgentActions.ConnectClient, "Зачисление за подключенного клиента", requestse.Registrator);
+                    }
                 }
                 Flash["WhoConnected"] = client.WhoConnected;
                 Flash["Password"] = Password;
@@ -111,7 +116,18 @@ namespace InternetInterface.Controllers
                 Flash["ConnectSumm"] = phisClient.ConnectSum;
                 foreach (var requestse in Requests.FindAllByProperty("Id", requestID))
                 {
-                    requestse.DeleteAndFlush();
+                    if (requestse.Registrator != null)
+                    {
+                        phisClient.Request = requestse;
+                        phisClient.Update();
+                        PaymentsForAgent.CreatePayment(AgentActions.CreateClient, "Зачисление за зарегистрированного клиента", requestse.Registrator);
+                    }
+                    if (requestse.Label != null && requestse.Label.ShortComment == "Refused" && requestse.Registrator != null)
+                        PaymentsForAgent.CreatePayment(AgentActions.CreateRequest, "Зачисление за открытую заявку", requestse.Registrator);
+                    //requestse.Registered = true;
+                    requestse.Label = Label.Queryable.Where(l => l.ShortComment == "Registered").FirstOrDefault();
+                    requestse.Update();
+                    //requestse.DeleteAndFlush();
                 }
                 if (InithializeContent.partner.Categorie.ReductionName == "Office")
                     if (VisibleRegisteredInfo)
@@ -141,6 +157,7 @@ namespace InternetInterface.Controllers
                 PropertyBag["ChangeBy"] = changeProperties;
             }
         }
+
 
 	    public void RegisterLegalPerson()
 		{
@@ -261,9 +278,10 @@ namespace InternetInterface.Controllers
 				Apartment = request.Apartment,
 				Entrance = request.Entrance,
 				Email = request.ApplicantEmail,
+                //PhoneNumber = request.ApplicantPhoneNumber
 				//RegDate = DateTime.Now
 			};
-			if (request.ApplicantPhoneNumber.Length == 10)
+			if (request.ApplicantPhoneNumber.Length == 15)
 				newPhisClient.PhoneNumber = UsersParsers.MobileTelephoneParcer(request.ApplicantPhoneNumber);
 			if (request.ApplicantPhoneNumber.Length == 5)
 				newPhisClient.HomePhoneNumber = UsersParsers.HomeTelephoneParser(request.ApplicantPhoneNumber);
@@ -408,6 +426,48 @@ namespace InternetInterface.Controllers
 			PropertyBag["Editing"] = false;
 			PropertyBag["catType"] = catType;
 		}
+
+        public void RegisterRequest(uint house, int apartment)
+        {
+            var _house = House.Find(house);
+            PropertyBag["tariffs"] = Tariff.FindAll();
+            PropertyBag["request"] = new Requests {
+                                                      Street = _house.Street,
+                                                      CaseHouse = _house.Case,
+                                                      House = _house.Number.ToString(),
+                                                      Apartment = apartment.ToString()
+                                                  };
+            PropertyBag["houseNumber"] = house;
+        }
+
+        public void RegisterRequest([DataBind("request")]Requests request, uint houseNumber, uint tariff)
+        {
+            if (Validator.IsValid(request))
+            {
+                request.Tariff = Tariff.Find(tariff);
+                request.Registrator = InithializeContent.partner;
+                request.ActionDate = DateTime.Now;
+                request.Operator = InithializeContent.partner;
+                request.Save();
+                var apartment =
+                    Apartment.Queryable.Where(
+                        a => a.House == House.Find(houseNumber) && a.Number == Int32.Parse(request.Apartment)).
+                        FirstOrDefault();
+                if (apartment == null)
+                {
+                    apartment = new Apartment {
+                                                  House = House.Find(houseNumber),
+                                                  Number = Int32.Parse(request.Apartment),
+                                              };
+                    apartment.Save();
+                }
+                //apartment.Comment = string.Format("Заявка номер {0}", request.Id);
+                apartment.Status = ApartmentStatus.Queryable.Where(aps => aps.ShortName == "request").FirstOrDefault();
+                apartment.Update();
+                PaymentsForAgent.CreatePayment(AgentActions.CreateRequest, "Начисление за создание заявки", InithializeContent.partner);
+                RedirectToUrl("../HouseMap/ViewHouseInfo.rails?House=" + houseNumber);
+            }
+        }
 	}
 
 }

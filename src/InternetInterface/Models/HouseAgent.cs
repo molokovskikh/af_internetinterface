@@ -9,7 +9,7 @@ using InternetInterface.Models.Universal;
 
 namespace InternetInterface.Models
 {
-    [ActiveRecord("HouseAgents", Schema = "internet", Lazy = true)]
+    /*[ActiveRecord("HouseAgents", Schema = "internet", Lazy = true)]
     public class HouseAgent : ValidActiveRecordLinqBase<HouseAgent>
     {
         [PrimaryKey]
@@ -56,5 +56,5 @@ namespace InternetInterface.Models
         {
             return string.Format("{0} {1} {2}", Surname, Name, Patronymic);
         }
-    }
+    }*/
 }

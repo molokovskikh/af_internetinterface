@@ -10,7 +10,7 @@ using InternetInterface.Models;
 namespace InternetInterface.Controllers
 {
 
-    [Layout("Main")]
+   /* [Layout("Main")]
     [FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
     public class HouseAgentController : ARSmartDispatcherController
     {
@@ -64,5 +64,5 @@ namespace InternetInterface.Controllers
         {
             PropertyBag["agents"] = HouseAgent.FindAllSort();
         }
-    }
+    }*/
 }

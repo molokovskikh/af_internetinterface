@@ -16,7 +16,19 @@ namespace BananceChanger
         {
             Init();
 
-            CreateWriteOffs();
+            //CreateWriteOffs();
+            ZeroTarif();
+        }
+
+        public static void ZeroTarif()
+        {
+            using (new SessionScope())
+            {
+                var client = Clients.Find((uint) 1082);
+                Console.WriteLine("Interver" + client.GetInterval());
+                Console.WriteLine("Price" + client.PhysicalClient.Tariff.GetPrice(client));
+            }
+            Console.ReadLine();
         }
 
         public static void CreateWriteOffs()

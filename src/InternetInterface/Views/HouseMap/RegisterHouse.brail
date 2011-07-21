@@ -1,15 +1,19 @@
 ﻿<script type="text/javascript">
     function registerHouse() {
-        if ($("#editHouse").valid()) {
+        //if ($("#editHouse").valid()) {
             var req = {};
             req.Street = $('#house_Street').val();
             req.Number = $('#house_Number').val();
             req.Case = $('#house_Case').val();
             $.post("Register", req, function (data) {
-                alert("Зарегистрировано");
-                window.location.href = '${SiteRoot}/HouseMap/ViewHouseInfo';
+                if (data.houseId > 0) {
+                    window.location.href = '${SiteRoot}/HouseMap/ViewHouseInfo?House=' + data.houseId;
+                    alert("Зарегистрировано");
+                } else {
+                    alert(data.errorMessage);
+                }
             });
-        }
+        //}
     }
 </script>
 <% OutputSubView("""\Subview\House""") %>
