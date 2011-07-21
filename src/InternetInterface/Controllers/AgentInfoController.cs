@@ -36,5 +36,10 @@ namespace InternetInterface.Controllers
             PropertyBag["endDate"] = endDate.ToShortDateString();
             PropertyBag["TotalSum"] = payments.Sum(p => p.Sum);
         }
+
+        public virtual void GroupInfo()
+        {
+            PropertyBag["Agents"] = Partner.Queryable.Where(p => p.Categorie.ReductionName == "Agent").ToList();
+        }
     }
 }

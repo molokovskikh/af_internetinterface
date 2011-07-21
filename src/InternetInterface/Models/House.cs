@@ -35,7 +35,7 @@ namespace InternetInterface.Models
         //[Property]
         public virtual int CompetitorCount
         {
-            get { return Apartments.Count(); }
+            get { return Apartments.Where(a => a.Status == null || a.Status.ShortName != "request").Count(); }
         }
 
         [HasMany(ColumnKey = "House", OrderBy = "Number", Lazy = true)]

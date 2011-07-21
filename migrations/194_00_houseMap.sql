@@ -108,3 +108,17 @@ values ('Отказ заявки','#FFF', false, 'Refused');
 
 insert into internet.labels (`Name`, Color, Deleted, ShortComment)
 values ('Зарегистрирована','#000', false, 'Registered');
+
+ALTER TABLE `internet`.`requests` MODIFY COLUMN `Label` INT(10) UNSIGNED NOT NULL;
+ALTER TABLE `internet`.`requests` MODIFY COLUMN `Label` INT(10) UNSIGNED DEFAULT NULL;
+
+
+update internet.requests r set
+r.`label` = null
+where r.`label` = 0;
+
+insert into internet.ApartmentStatuses  (Name, ActivateDate, ShortName)
+values  ("В заявке", 0, "request");
+
+insert into internet.ApartmentStatuses  (Name, ActivateDate)
+values ("Никого нет", 5), ("Не открыли", 7),  ("Отказ", 0),  ("Заинтересовались", 3);

@@ -397,10 +397,14 @@ namespace InternetInterface.Controllers
 		/// <param name="labelId"></param>
 		public void RequestView(uint labelId)
 		{
-		    var requests = Requests.FindAll(DetachedCriteria.For(typeof (Requests))
-		                                        .Add(Expression.Eq("Label.Id", labelId)))
-		                                        .OrderByDescending(
-		                                            f => f.ActionDate);
+		    var requests = Requests.FindAll().ToList();
+		                                        /*.Add(Expression.Eq("Label.Id", labelId)))*/
+
+            if (labelId == 0)
+                requests = requests.Where(r => r.Label == null).ToList();
+            else
+                requests = requests.Where(r => r.Label != null && r.Label.Id == labelId).ToList();
+            requests = requests.OrderByDescending(f => f.ActionDate).ToList();
             if (InithializeContent.partner.Categorie.ReductionName == "Agent")
                 PropertyBag["Clients"] = requests.Where(r => r.Registrator == InithializeContent.partner).ToList();
             else
@@ -419,12 +423,15 @@ namespace InternetInterface.Controllers
 		    var _label = Label.Find(labelch);
 			foreach (var label in labelList)
 			{
-				var request = Requests.Find(label);
-                request.Label = _label;
-				request.ActionDate = DateTime.Now;
-				request.Operator = InithializeContent.partner;
-				request.UpdateAndFlush();
-                if (_label.ShortComment == "Refused" && request.Registrator != null)
+                var request = Requests.Find(label);
+                if ((request.Label == null) || (request.Label.ShortComment != "Refused" && request.Label.ShortComment != "Registered"))
+                {
+                    request.Label = _label;
+                    request.ActionDate = DateTime.Now;
+                    request.Operator = InithializeContent.partner;
+                    request.UpdateAndFlush();
+                }
+			    if (_label.ShortComment == "Refused" && request.Registrator != null)
                     PaymentsForAgent.CreatePayment(AgentActions.DeleteRequest, "Списание за отказ заявки", request.Registrator);
 			}
 		    var requests = Requests.FindAll().OrderByDescending(f => f.ActionDate);

@@ -61,6 +61,17 @@
 </style>
 <center>
 <div id="round">
+<table class="table">
+    <tbody>
+        <tr> 
+            <td>
+                    <a href="#" class="big-link" data-reveal-id="myModal" > 
+                    <button class="button" value="Назначить"><img alt="Save" src="${Siteroot}/Images/application_edit.png"> Создать дом </button>
+                    </a>
+            </td>
+        </tr>
+    </tbody>
+</table>
 <form id="findForm" action="${Siteroot}/HouseMap/HouseFindResult" method=post>
 <table class="table">
     <thead>
@@ -99,9 +110,7 @@
         <tr>
             <td><button type="submit" id="FindHouseButton" class="button">Найти</button></td>
             <td colspan=2>
-                    <a href="#" class="big-link" data-reveal-id="myModal" > 
-                    <button class="button" value="Назначить"><img alt="Save" src="${Siteroot}/Images/application_edit.png"> Создать дом </button>
-                    </a>
+
             </td>
         </tr>
     </tbody>

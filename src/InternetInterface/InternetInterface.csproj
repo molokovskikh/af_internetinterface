@@ -124,6 +124,7 @@
     <Content Include="Styles\base.css" />
     <Content Include="Styles\datePicker.css" />
     <Content Include="Styles\style.css" />
+    <None Include="Views\AgentInfo\GroupInfo.brail" />
     <None Include="Views\AgentInfo\SummaryInformation.brail" />
     <None Include="Views\Brigads\MakeBrigad.brail" />
     <None Include="Views\Brigads\ShowBrigad.brail" />

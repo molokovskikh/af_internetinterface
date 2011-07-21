@@ -12,7 +12,8 @@
     $(function () {
         $("#myModal_Pass").css({ opacity: 0.0 });
         $('#date_agent').datepicker({
-            inline: true
+            inline: true,
+            minDate: '${System.DateTime.Now.ToShortDateString()}'
         });
     });
 </script>

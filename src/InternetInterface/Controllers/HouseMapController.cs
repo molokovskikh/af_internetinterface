@@ -303,7 +303,10 @@ namespace InternetInterface.Controllers
             //var retObj = new {status = string.Empty};
             if (apps != null)
             {
-                return new { status = apps.Status.Id, apps.LastInternet, apps.LastTV };
+                if (apps.Status != null)
+                    return new { status = apps.Status.Id, apps.LastInternet, apps.LastTV };
+                else
+                    return new { apps.LastInternet, apps.LastTV };
             }
             return new {status = 0};
         }

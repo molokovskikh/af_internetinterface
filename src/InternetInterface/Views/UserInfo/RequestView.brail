@@ -61,6 +61,11 @@ div.scroller
     color:#fff;
     font-weight:bold;
 }
+
+    #on_line_clients_head th
+        {
+            border:1px double black;
+        }
 </style>
 </head>
 
@@ -83,17 +88,17 @@ div.scroller
             output WriteMessageError("Нет заявок на подключение")
             else: %>
             <table class="table" id="for_sort">
-            <thead>
+            <thead class="tablesorter_head" id="on_line_clients_head">
             <tr>
                 <th></th>
-                <th>Номер</th>
-                <th>Имя</th>
-                <th>Телефон</th>
-                <th>Email</th>
-                <th>Адрес</th>
-                <th>Тариф</th>
-                <th><center>Метка</center></th>
-                <th><center>Дата действия</center></th>
+                <th style="width:70px;">Номер</th>
+                <th >Имя</th>
+                <th  style="width:120px;">Телефон</th>
+                <th >Email</th>
+                <th >Адрес</th>
+                <th >Тариф</th>
+                <th ><center>Метка</center></th>
+                <th style="width:140px;"><center>Дата действия</center></th>
             </tr>
             </thead>
             <tbody>

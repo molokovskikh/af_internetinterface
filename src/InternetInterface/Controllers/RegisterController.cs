@@ -122,6 +122,8 @@ namespace InternetInterface.Controllers
                         phisClient.Update();
                         PaymentsForAgent.CreatePayment(AgentActions.CreateClient, "Зачисление за зарегистрированного клиента", requestse.Registrator);
                     }
+                    if (requestse.Label != null && requestse.Label.ShortComment == "Refused" && requestse.Registrator != null)
+                        PaymentsForAgent.CreatePayment(AgentActions.CreateRequest, "Зачисление за открытую заявку", requestse.Registrator);
                     //requestse.Registered = true;
                     requestse.Label = Label.Queryable.Where(l => l.ShortComment == "Registered").FirstOrDefault();
                     requestse.Update();
@@ -279,7 +281,7 @@ namespace InternetInterface.Controllers
                 //PhoneNumber = request.ApplicantPhoneNumber
 				//RegDate = DateTime.Now
 			};
-			if (request.ApplicantPhoneNumber.Length == 16)
+			if (request.ApplicantPhoneNumber.Length == 15)
 				newPhisClient.PhoneNumber = UsersParsers.MobileTelephoneParcer(request.ApplicantPhoneNumber);
 			if (request.ApplicantPhoneNumber.Length == 5)
 				newPhisClient.HomePhoneNumber = UsersParsers.HomeTelephoneParser(request.ApplicantPhoneNumber);

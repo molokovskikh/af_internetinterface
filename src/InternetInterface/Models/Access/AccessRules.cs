@@ -216,7 +216,8 @@ namespace InternetInterface.Models.Access
 									"Show",
 									"AgentFilter",
 									"ShowAgent",
-                                    "ShowAgents"
+                                    "ShowAgents",
+                                    "GroupInfo"
 			                 	};
 			return _visibleDemand.Contains(methodName) ? "SSI" : string.Empty;
 		}

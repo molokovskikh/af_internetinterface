@@ -38,6 +38,9 @@ namespace InternetInterface.Models
 		[BelongsTo("Categorie")]
 		public virtual UserCategorie Categorie { get; set; }
 
+        [HasMany(ColumnKey = "Agent", OrderBy = "RegistrationDate", Lazy = true)]
+        public virtual IList<PaymentsForAgent> Payments { get; set; }
+
         public virtual IList<string> AccesedPartner { get; set; }
 
 
@@ -46,7 +49,12 @@ namespace InternetInterface.Models
 			return FindAllByProperty("Login", login).FirstOrDefault();
 		}
 
-        public static List<Partner> GetHouseMapAgents()
+        public virtual decimal GetAgentPayment()
+        {
+            return Payments.Sum(p => p.Sum);
+        }
+
+	    public static List<Partner> GetHouseMapAgents()
         {
             return Queryable.Where(p => p.Categorie.ReductionName == "Agent").ToList();
         }
