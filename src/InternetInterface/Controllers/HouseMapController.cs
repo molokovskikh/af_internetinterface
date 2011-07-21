@@ -153,6 +153,7 @@ namespace InternetInterface.Controllers
             FindHouse();
         }
 
+
         [return: JSONReturnBinder]
         public houseReturned Register()
         {

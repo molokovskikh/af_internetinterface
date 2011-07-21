@@ -33,9 +33,14 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual decimal FinalPrice { get; set; }
 
-		public virtual string GetFullName()
+        public virtual string GetFullName()
+        {
+            return string.Format("{0} ({1} рублей)", Name, Price);
+        }
+
+        public virtual string GetFullName(Clients client)
 		{
-			return string.Format("{0} ({1} рублей)", Name, Price);
+            return string.Format("{0} ({1} рублей)", Name, GetPrice(client).ToString("0"));
 		}
 
 		public virtual decimal GetPrice(Clients client)

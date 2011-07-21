@@ -53,12 +53,11 @@ namespace InternetInterface.Controllers
                 startDate = new DateTime(thisD.Year, thisD.Month, 1);
             if (endDate == null)
                 endDate = DateTime.Now;
-            var totalRes =
-                Payment.Queryable.Where(
-                    t =>
-                    t.Agent.Id == agent && t.PaidOn >= startDate.Value &&
-                    t.PaidOn <= endDate.Value.AddHours(23).AddMinutes(59) && t.Sum != 0 &&
-                    t.Client.PhysicalClient != null).ToList();
+            var totalRes = agent > 0 ?
+                Payment.Queryable.Where(t => t.Agent.Id == agent).ToList() : Payment.FindAll().ToList();
+            totalRes = totalRes.Where(t => t.PaidOn >= startDate.Value &&
+                                           t.PaidOn <= endDate.Value.AddHours(23).AddMinutes(59) && t.Sum != 0 &&
+                                           t.Client.PhysicalClient != null).ToList();
             _lastRowsCount = totalRes.Count();
             TotalSum = totalRes.Sum(h => h.Sum);
             if (_lastRowsCount > 0)
@@ -87,9 +86,12 @@ namespace InternetInterface.Controllers
             var thisD = DateTime.Now;
             if (filter.startDate == null)
                 filter.startDate = new DateTime(thisD.Year, thisD.Month, 1);
+            if (filter.endDate == null)
+                filter.endDate = DateTime.Now;
             PropertyBag["filter"] = filter;
 			PropertyBag["agents"] = Agent.FindAll();
-			PropertyBag["agentId"] = Agent.FindFirst().Id;
+			PropertyBag["agentId"] = filter.agent;
+            PropertyBag["colorId"] = 0;
 		}
 
 		public void Show(uint registrator)
@@ -107,8 +109,10 @@ namespace InternetInterface.Controllers
             PropertyBag["filter"] = filter;
 			PropertyBag["Payments"] = payments;
 			PropertyBag["TotalSumm"] = filter.TotalSum;
-
-
+            if (filter.startDate.Value.Month == filter.endDate.Value.Month)
+                PropertyBag["colorId"] = filter.startDate.Value.Month;
+            else
+                PropertyBag["colorId"] = 0;
 		}
 	}
 }

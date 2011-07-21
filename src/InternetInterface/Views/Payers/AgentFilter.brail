@@ -3,7 +3,7 @@
 		.turn-me-into-datepicker {
 			float: left;
 			margin:10px;
-			
+			font-size:9px;
 		}				.jCalendar		{			font-size:10px;			}
 		.hasDatepicker
 		{
@@ -13,7 +13,7 @@
 			
 		.filterDiv
 		{
-			width:800px;
+			width:950px;
 			height:300px;
 			background-color:White;
 			text-align:left;
@@ -29,77 +29,112 @@
 			border: 1px solid black;
 			}
 			
+		.monthDiv
+		{
+		    width:80px;
+		    height:20px;
+		    background-color:#D5E6D0;
+		    border: 1px solid #5f6060;
+		    float:left;
+		    text-align:center;
+		    }
 	</style>
 	<script type="text/javascript">
         Date.format = 'dd.mm.yyyy';
-	    $(function () {
-	        $('.graph_date').datepicker({
-	            inline: true
-	        });
-	        $('#endDate').val('${System.DateTime.Now.ToShortDateString()}');
-	    });
-
-
-		/*Date.firstDayOfWeek = 0;
-		Date.format = 'dd.mm.yyyy';
-		$(function () {
-			$('#startCalendar')
-		.datePicker({ inline: true, startDate: '01/01/2010' })
-		.bind(
-			'dateSelected',
-			function (e, selectedDate, $td) {
-				$('#startDate').val(selectedDate.getDate() + '.' + Number(selectedDate.getMonth() + 1) + '.' + selectedDate.getFullYear());
-			}
-		).val(new Date().asString()).trigger('change');
-
-        $('#startDate').val(new Date().asString());
-        $('#endDate').val(new Date().asString());
-
-		$('#endCalendar')
-		.datePicker({ inline: true, startDate: '01/01/2010' })
-		.bind(
-			'dateSelected',
-			function (e, selectedDate, $td) {
-				$('#endDate').val(selectedDate.getDate() + '.' + Number(selectedDate.getMonth() + 1) + '.' + selectedDate.getFullYear());
-			}
-		);
-		});*/
+        $(function () {
+            $('.graph_date').datepicker();
+            //$('.turn-me-into-datepicker').datepicker();
+            //$('#endDate').val('${System.DateTime.Now.ToShortDateString()}');
+            $('.monthDiv').css('background-color', '#D5E6D0');
+            $('#${colorId}').parent().css('background-color', '#7ec469');
+            $('.monthDiv').click(function () {
+                var month = $(this).children('a:first').attr('id');
+                var dayCount = 32 - new Date($('#year').val(), Number(month - 1), 32).getDate();
+                var formatedStartDate = "01." + month + "." + $('#year').val();
+                var formatedEndDate = dayCount + "." + month + "." + $('#year').val();
+                $('#startDate').val(formatedStartDate);
+                $('#endDate').val(formatedEndDate);
+                $('#showBut').click();
+            });
+        });
 	</script>
 
 <center>
 	<div class="filterDiv">
 		<form method="get" action="${siteroot}/Payers/ShowAgent">
-			<p>Выберете регистратора по которому будет применен фильтр</p>
-			<select name="filter.agent" id="agent" style="width: 70%" >
-			<%for i, agent in enumerate(agents):%>
-			<option id="agent${agent.Id}" value="${agent.Id}" ${"selected" if (agent.Id == agentId)}> ${agent.Name} </option>
-			<% end %>
-			</select>
-			<input id="SearchButton" type="submit" value="Показать"  align="right" />
-			<p>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th colspan=2>Выберете регистратора по которому будет применен фильтр</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <select name="filter.agent" id="agent" style="width: 100%" >
+                            <option value="0" ${"selected" if ("0" == agentId)} >Все </option>
+			                <%for i, agent in enumerate(agents):%>
+			                <option id="agent${agent.Id}" value="${agent.Id}" ${"selected" if (agent.Id == agentId)}> ${agent.Name} </option>
+			                <% end %>
+			                </select>
+                        </td>
+                        <td>
+                            <button id="showBut" type=submit class="button">Показать</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
 			<table>
 				<thead>
 					<tr>
 						<th>Начало периода</th>
-						<th>Конец периода</th>
+						<th style="border-right:1px solid #AAA">Конец периода</th>
 					</tr>
 				</thead>
 				<tbody>
+                    <tr>
+                        <td></td>
+                        <td style="border-right:1px solid #AAA"></td>
+                        <td style="text-align:center;">Год:
+                            <select id="year" name="year">
+                                <option>2010</option>
+                                <option selected>2011</option>
+                                <option>2012</option>
+                                <option>2013</option>
+                            </select>
+                        </td>
+                    </tr>
 					<tr>
 						<td>
-						<!--<div class="turn-me-into-datepicker" id="startCalendar"></div>
-						<input type="hidden" name="startDate" id="startDate" class="hasDatepicker">-->
+						<!--<div class="turn-me-into-datepicker"  id="startCalendar"></div>
+						<input type="hidden" name="filter.startDate" id="startDate" class="hasDatepicker">-->
                         <input type=text value="${filter.startDate.ToShortDateString()}" name="filter.startDate" id="startDate" class="graph_date" class="date-pick dp-applied">
 						</td>
-						<td>
-						<!--<div class="turn-me-into-datepicker" id="endCalendar"></div>
-						<input type="hidden" name="endDate" id="endDate" class="hasDatepicker">-->
-                        <input type=text value="${filter.endDate}" name="filter.endDate" id="endDate" class="graph_date" class="date-pick dp-applied">
+						<td style="border-right:1px solid #AAA; padding-right:30px;">
+						<!--<div class="turn-me-into-datepicker" id="endCalendar">-->
+                        <input type=text value="${filter.endDate.ToShortDateString()}" name="filter.endDate" id="endDate" class="graph_date" class="dp-hover"></div>
 						</td>
+                        <td>
+                            <div style="margin:30px;">
+                                <div class="monthDiv"><a href="#" id="1">Январь</a></div>
+                                <div class="monthDiv"><a href="#" id="2">Февраль</a></div>
+                                <div class="monthDiv"><a href="#" id="3">Март</a></div>
+                                <div class="monthDiv"><a href="#" id="4">Апрель</a></div>
+                                <div class="monthDiv"><a href="#" id="5">Май</a></div>
+                                <div class="monthDiv"><a href="#" id="6">Июнь</a></div>
+                                <div></div>
+                                <div class="monthDiv"><a href="#" id="7">Июль</a></div>
+                                <div class="monthDiv"><a href="#" id="8">Август</a></div>
+                                <div class="monthDiv"><a href="#" id="9">Сентябрь</a></div>
+                                <div class="monthDiv"><a href="#" id="10">Октябрь</a></div>
+                                <div class="monthDiv"><a href="#" id="11">Ноябрь</a></div>
+                                <div class="monthDiv"><a href="#" id="12">Декабрь</a></div>
+                            </div>
+                        </td>
 					</tr>
 				</tbody>
 				</table>
-			</p>
+                <p></p>
 		</form>
 	</div>
 </center>

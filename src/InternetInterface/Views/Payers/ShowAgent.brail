@@ -10,7 +10,7 @@
 </style>
 <center>
 <span class="info_paym" style="color:Green;">Всего ${filter._lastRowsCount} платежей</span>
-<span class="info_paym" style="color:Green;">на сумму  ${TotalSumm.ToString("#.00")} рублей</span>
+<span class="info_paym" style="color:Green;">на сумму  ${TotalSumm.ToString("0.00")} рублей</span>
 </center>
 <table class="table"  style="width: 100%; font-style:oblique">
         <thead>
@@ -26,7 +26,7 @@
                 <tr>
                     <td><a href="../Search/Redirect?filter.ClientCode=${item.Client.Id}"> ${item.Client.Id.ToString("00000")}</a></td>
                     <td>${item.Client.Name}</td>
-                    <td>${item.Sum.ToString("#.00")}</td>
+                    <td>${item.Sum.ToString("0.00")}</td>
                     <td>${item.PaidOn}</td>
                 </tr>
             <%end %>
