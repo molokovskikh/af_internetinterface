@@ -4,9 +4,6 @@
 <div id="wrapper_in">
 	<div id="wrapper_inner">
 		<form method="post" action="send" id="zakazform">
-		<p id="connect_message">
-			Стоимость подключения 0р.
-		</p>
 		<p>
 			<label for="fio">Ф.И.О.</label>
 			<input type="text" id="fio" name="application.ApplicantName" value="${application.ApplicantName if IsDefined( "application" )}" size="45" />
@@ -17,7 +14,7 @@
 		<p><label for="phone_">Номер телефона:</label><input type="text" id="phone_" name="application.ApplicantPhoneNumber" value="${application.ApplicantPhoneNumber if IsDefined( "application" )}" size="25" />
 		<% if IsDefined ( "application" ) and application.InDictionaryError ( "ApplicantPhoneNumber" ) : %><br/><span class="error">${application.GetValidationError("ApplicantPhoneNumber")}</span><% end %>
         <br />
-		<span class="example">Например: номер "12345" или 10-значный "9991234567" без +7 или 8</span>
+		<span class="example">Например: "8-000-000-00-00"</span>
 		</p>
 		<p><label for="email">Электронная почта:</label>
 			<input type="text" id="email" name="application.ApplicantEmail" value="${application.ApplicantEmail if IsDefined( "application" )}" size="25" />

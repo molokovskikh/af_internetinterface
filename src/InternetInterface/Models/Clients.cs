@@ -80,9 +80,15 @@ namespace InternetInterface.Models
         [BelongsTo(Lazy = FetchWhen.OnInvoke)]
         public virtual AdditionalStatus AdditionalStatus { get; set; }
 
+        public virtual bool PaymentForTariff()
+        {
+            return Payments.Sum(p => p.Sum) >= PhysicalClient.Tariff.GetPrice(this);
+        }
+
         public virtual bool CanUsedPostponedPayment()
         {
-            return PhysicalClient != null && PostponedPayment == null && Disabled && PhysicalClient.Balance < 0 && AutoUnblocked && Payments.Count() != 0;
+            return PhysicalClient != null && PostponedPayment == null && Disabled && PhysicalClient.Balance < 0 &&
+                   AutoUnblocked && PaymentForTariff();
         }
 
 		public virtual bool AdditionalCanUsed(string aStatus)

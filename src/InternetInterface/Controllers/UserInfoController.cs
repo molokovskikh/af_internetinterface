@@ -174,8 +174,9 @@ namespace InternetInterface.Controllers
                 message += "Воспользоваться устугой возможно только при отрицательном балансе";
             if ((!client.Disabled || !client.AutoUnblocked) && string.IsNullOrEmpty(message))
                 message += "Услуга \"Обещанный платеж\" недоступна";
-            if (client.Payments.Count() == 0)
-                message += "Воспользоваться услугой возможно только при наличии платежей";
+            if (!client.PaymentForTariff())
+                message +=
+                    "Воспользоваться услугой возможно если все платежи клиента первышают его абонентскую плату за месяц";
             if (client.CanUsedPostponedPayment())
             {
                 client.PostponedPayment = DateTime.Now;
@@ -199,15 +200,11 @@ namespace InternetInterface.Controllers
 			uint BrigadForConnect)
 		{
 			var client = Clients.Find(ClientID);
-			//var phisCl = PhysicalClients.Find(ClientID);
 			var brigadChangeFlag = true;
 			if (client.WhoConnected != null)
 				brigadChangeFlag = false;
 			var newFlag = false;
 			var clientEntPoint = new ClientEndpoints();
-			//var clients = Clients.FindAllByProperty("PhysicalClient", phisCl);
-			//if (clients.Length != 0)
-			//var clientsEndPoint = ClientEndpoints.FindAllByProperty("Client", clients[0]);
 			var clientsEndPoint = ClientEndpoints.Queryable.Where(c => c.Client == client).ToArray();
 			if (clientsEndPoint.Length != 0)
 			{
@@ -776,31 +773,41 @@ namespace InternetInterface.Controllers
 		[return: JSONReturnBinder]
 		public bool SaveGraph()
 		{
-			var client = Clients.Find(Convert.ToUInt32(Request.Form["clientId"]));
-			var but_id = Request.Form["graph_button"].Split('_');
-			foreach(var graph in ConnectGraph.Queryable.Where(c => c.Client == client).ToList())
-			{ graph.Delete(); }
-		    var briad = Brigad.Find(Convert.ToUInt32(but_id[1]));
-		    var interval = Convert.ToUInt32(but_id[0]);
-			new ConnectGraph {
-			                 	IntervalId = interval,
-                                Brigad = briad,
-								Client = client,
-								Day = DateTime.Parse(Request.Form["graph_date"]),
-			                 }.Save();
-		    client.AdditionalStatus = AdditionalStatus.Find((uint) AdditionalStatusType.AppointedToTheGraph);
-            client.Update();
-		    new Appeals {
-		                    Client = client,
-		                    Date = DateTime.Now,
-		                    Partner = InithializeContent.partner,
-		                    Appeal =
-		                        string.Format("Назначен в график, \r\n Брагада: {0} \r\n Дата: {1} \r\n Время: {2}",
-                                              briad.Name, DateTime.Parse(Request.Form["graph_date"]).ToShortDateString(),
-		                                      Intervals.GetIntervals()[(int) interval]),
-                            AppealType = (int)AppealType.User
-		                }.Save();
-			return true;
+            if (Request.Form["graph_button"] != null)
+            {
+                var client = Clients.Find(Convert.ToUInt32(Request.Form["clientId"]));
+                var but_id = Request.Form["graph_button"].Split('_');
+                foreach (var graph in ConnectGraph.Queryable.Where(c => c.Client == client).ToList())
+                {
+                    graph.Delete();
+                }
+                var briad = Brigad.Find(Convert.ToUInt32(but_id[1]));
+                var interval = Convert.ToUInt32(but_id[0]);
+                new ConnectGraph {
+                                     IntervalId = interval,
+                                     Brigad = briad,
+                                     Client = client,
+                                     Day = DateTime.Parse(Request.Form["graph_date"]),
+                                 }.Save();
+                client.AdditionalStatus = AdditionalStatus.Find((uint) AdditionalStatusType.AppointedToTheGraph);
+                client.Update();
+                new Appeals {
+                                Client = client,
+                                Date = DateTime.Now,
+                                Partner = InithializeContent.partner,
+                                Appeal =
+                                    string.Format("Назначен в график, \r\n Брагада: {0} \r\n Дата: {1} \r\n Время: {2}",
+                                                  briad.Name,
+                                                  DateTime.Parse(Request.Form["graph_date"]).ToShortDateString(),
+                                                  Intervals.GetIntervals()[(int) interval]),
+                                AppealType = (int) AppealType.User
+                            }.Save();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
 		}
 
         [return : JSONReturnBinder]

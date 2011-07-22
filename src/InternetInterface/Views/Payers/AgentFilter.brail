@@ -87,8 +87,8 @@
 			<table>
 				<thead>
 					<tr>
-						<th>Начало периода</th>
-						<th style="border-right:1px solid #AAA">Конец периода</th>
+						<th></th>
+						<th style="border-right:1px solid #AAA"></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -108,10 +108,12 @@
 						<td>
 						<!--<div class="turn-me-into-datepicker"  id="startCalendar"></div>
 						<input type="hidden" name="filter.startDate" id="startDate" class="hasDatepicker">-->
+                        <label for="startDate"><b>Начало периода</b></label>
                         <input type=text value="${filter.startDate.ToShortDateString()}" name="filter.startDate" id="startDate" class="graph_date" class="date-pick dp-applied">
 						</td>
 						<td style="border-right:1px solid #AAA; padding-right:30px;">
 						<!--<div class="turn-me-into-datepicker" id="endCalendar">-->
+                        <label for="startDate"><b>Конец периода</b></label>
                         <input type=text value="${filter.endDate.ToShortDateString()}" name="filter.endDate" id="endDate" class="graph_date" class="dp-hover"></div>
 						</td>
                         <td>

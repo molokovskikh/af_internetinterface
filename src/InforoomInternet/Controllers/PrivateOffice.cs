@@ -38,8 +38,8 @@ namespace InforoomInternet.Controllers
                 message += "Воспользоваться устугой возможно только при отрицательном балансе";
             if ((!client.Disabled || !client.AutoUnblocked) && string.IsNullOrEmpty(message))
                 message += "Услуга \"Обещанный платеж\" недоступна";
-            if (client.Payments.Count() == 0)
-                message += "Воспользоваться услугой возможно только при наличии платежей";
+            if (!client.PaymentForTariff())
+                message += "Воспользоваться услугой возможно только при наличии платежей, в сумме равных или превышающих абонентскую плату за месяц";
             PropertyBag["message"] = message;
         }
 

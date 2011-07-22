@@ -19,4 +19,4 @@ namespace InternetInterface.Models
 		public string Port;
 		public string PackageId;
 	}
-}
+}   

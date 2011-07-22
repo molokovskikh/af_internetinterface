@@ -35,11 +35,11 @@ namespace InforoomInternet.Models
 		[Property(NotNull = true), ValidateNonEmpty("Пожалуйста, укажите свои данные")]
 		public virtual string ApplicantName { get; set; }
 
-		[
-			Property(NotNull = true),
-			ValidateNonEmpty("Пожалуйста, укажите телефон"),
-			ValidateRegExp(@"^\d{5}(?:\d{5})?$", "Недопустимый номер телефона")
-		]
+        [
+            Property,
+            ValidateRegExp(@"^((\d{1})-(\d{3})-(\d{3})-(\d{2})-(\d{2}))", "Ошибка фотмата телефонного номера: мобильный телефн (8-***-***-**-**))"),
+            ValidateNonEmpty("Введите номер телефона")
+        ]
 		public virtual string ApplicantPhoneNumber { get; set; }
 
 		[Property, ValidateEmail("Недопустимый адрес электронной почты")]

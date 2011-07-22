@@ -125,7 +125,7 @@
 		<%end %>
 		<%if Client.Tariff != null: %>
 		<tr>
-			 <td><span class="description">Тариф:</span> ${Client.Tariff.GetFullName(_client)}</td>
+			 <td><span class="description">Тариф:</span> ${Client.Tariff.GetFullName()}</td>
 		</tr>
 		 <%end %>
 

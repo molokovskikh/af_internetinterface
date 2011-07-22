@@ -265,18 +265,33 @@ namespace InforoomInternet.Test.Unit
                     client.Disabled = true;
                     client.AutoUnblocked = true;
                     client.UpdateAndFlush();
+                    foreach (var payment in Payment.Queryable.Where(p=>p.Client == client).ToList())
+                    {
+                        payment.Delete();
+                    }
+
                 }
             }
-            using (var browser = Open("PrivateOffice/IndexOffice"))
-                using (new SessionScope())
+            using (new SessionScope())
+            {
+                client.Refresh();
+                Assert.IsFalse(client.PaymentForTariff());
+                new Payment
                 {
-                    browser.Element("podrob").Click();
-                    //Console.WriteLine(browser.Html);
-                    browser.Button("PostponedBut").Click();
-                    Assert.That(browser.Text, Is.StringContaining("Ваш личный кабинет"));
-                    client = Clients.Find(Convert.ToUInt32(clientId));
-                    Assert.IsFalse(client.Disabled);
-                }
+                    Client = client,
+                    Sum = client.PhysicalClient.Tariff.GetPrice(client),
+                }.Save();
+            }
+            using (var browser = Open("PrivateOffice/IndexOffice"))
+            using (new SessionScope())
+            {
+                browser.Element("podrob").Click();
+                //Console.WriteLine(browser.Html);
+                browser.Button("PostponedBut").Click();
+                Assert.That(browser.Text, Is.StringContaining("Ваш личный кабинет"));
+                client = Clients.Find(Convert.ToUInt32(clientId));
+                Assert.IsFalse(client.Disabled);
+            }
 
 
             Console.WriteLine("PrivateOfficeTest Complite");

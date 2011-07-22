@@ -148,6 +148,9 @@
 		             $('#naznach_but').text('Переназначить');
 		             window.location.href = '../Search/Redirect?filter.ClientCode=${ClientCode}';
 		         }
+		         else {
+		             alert("Не выбран интервал времени");
+		         }
 		     });
          }
 
