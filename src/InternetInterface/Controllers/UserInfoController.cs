@@ -97,7 +97,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["_client"] = client;
 			PropertyBag["Client"] = client.PhysicalClient;
             //PropertyBag["Leases"] = filter.Find();
-
+            
             if (filter.appealType == 0)
                 filter.appealType = (int) AppealType.User;
             SendParam(filter.ClientCode, filter.grouped, filter.appealType);

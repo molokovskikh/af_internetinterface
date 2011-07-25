@@ -221,6 +221,7 @@
       <DependentUpon>NotFound.aspx</DependentUpon>
     </Compile>
     <Compile Include="Helpers\ActiveDirectoryHelper.cs" />
+    <Compile Include="Helpers\AppHelperInterface.cs" />
     <Compile Include="Helpers\ARSesssionHelper.cs" />
     <Compile Include="Helpers\DbLogHelper.cs" />
     <Compile Include="Helpers\ExceptionHelper.cs" />

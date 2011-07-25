@@ -29,7 +29,7 @@ namespace InternetInterface.Controllers
         public bool OnLine;
     }
 
-    public class SeachFilter : IPaginable
+    public class SeachFilter : IPaginable, SortableContributor
     {
         public UserSearchProperties searchProperties { get; set; }
         public ConnectedTypeProperties connectedType { get; set; }
@@ -182,14 +182,17 @@ ORDER BY C.Name Limit {1}, {2}", ":SearchText", CurrentPage * PageSize, PageSize
 
 	[Layout("Main"),
     Helper(typeof(PaginatorHelper)),
-    Helper(typeof(CategorieAccessSet))]
+    Helper(typeof(CategorieAccessSet)),
+    Helper(typeof(AppHelperInterface), "app")]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class SearchController : SmartDispatcherController
 	{
 		[AccessibleThrough(Verb.Get)]
-        public void SearchBy([DataBind("filter")]SeachFilter filter)
+        public void SearchBy([DataBind("filter")]SeachFilter filter, string Direction, string SortBy)
 		{
             PropertyBag["SClients"] = filter.Find();
+		    PropertyBag["Direction"] = Direction;
+		    PropertyBag["SortBy"] = SortBy;
 		    PropertyBag["filter"] = filter;
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["WhoRegistered"] = Partner.FindAllSort();

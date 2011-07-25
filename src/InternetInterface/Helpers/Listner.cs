@@ -63,8 +63,7 @@ namespace InternetInterface.Helpers
                     client = (Clients) @event.Entity;
                 if (@event.Entity.GetType() == typeof (PhysicalClients))
                     client =
-                        Clients.Queryable.Where(c => c.PhysicalClient == (PhysicalClients) @event.Entity).FirstOrDefault
-                            ();
+                        Clients.Queryable.Where(c => c.PhysicalClient == (PhysicalClients) @event.Entity).FirstOrDefault();
                 if (@event.Entity.GetType() == typeof (LawyerPerson))
                     client =
                         Clients.Queryable.Where(c => c.LawyerPerson == (LawyerPerson) @event.Entity).FirstOrDefault();
