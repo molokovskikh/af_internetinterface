@@ -17,6 +17,7 @@
 				   <button type="submit" id="Button2" class="button">
 				  <img alt="Save" src="../Images/tick.png">Зарегистрировать</button>
             </form>
+            <%if PartnerAccessSet.AccesPartner("SSI"): %>
                     <%if appealType == 1: %>
                     <a href="${Siteroot}/Search/Redirect?filter.ClientCode=${ClientCode}&filter.appealType=3">
                         <button type="button" id="Button1" class="button">
@@ -33,6 +34,7 @@
                   <button type="submit" id="Statistic" class="button">
 				  <img alt="Save" src="../Images/tick.png">Показать статистику работы</button>
                   </form>
+                <%end %>
                 </td>
 			</tr>
 		   </tbody>

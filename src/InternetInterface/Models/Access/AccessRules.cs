@@ -118,7 +118,6 @@ namespace InternetInterface.Models.Access
 									"SearchUserInfo",
 									"Redirect",
 									"LawyerPersonInfo",
-                                    "Leases"
 			                 	};
 			return _getClientInfo.Contains(methodName) ? "GCI" : string.Empty;
 		}
@@ -217,7 +216,8 @@ namespace InternetInterface.Models.Access
 									"AgentFilter",
 									"ShowAgent",
                                     "ShowAgents",
-                                    "GroupInfo"
+                                    "GroupInfo",
+                                    "Leases"
 			                 	};
 			return _visibleDemand.Contains(methodName) ? "SSI" : string.Empty;
 		}

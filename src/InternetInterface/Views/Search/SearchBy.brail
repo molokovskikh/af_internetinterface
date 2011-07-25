@@ -18,19 +18,19 @@
 <table class="table"  style="width: 100%; font-size: small;">
     <thead>
         <tr valign="top">
-            <th>Номер счета:</th>
-            <th>${app.Sortable("ФИО", "Name")}</th>
+            <th id="">${app.Sortable("Номер счета", "Id", "head_id")}</th>
+            <th id="">${app.Sortable("ФИО", "Name", "head_name")}</th>
             <%if CategorieAccessSet.AccesPartner("SSI"): %>
-            <th>Адрес подключения</th>
-            <th>Номер телефона</th>
+            <th id="">${app.Sortable("Адрес подключения", "Adress", "head_adress")}</th>
+            <th id="">${app.Sortable("Номер телефона", "TelNum", "head_telNum")}</th>
             <%end %>
             <%if CategorieAccessSet.AccesPartner("SSI"): %>
-            <th>Дата регистрации</th>
+            <th id="">${app.Sortable("Дата регистрации", "RegDate", "head_regDate")}</th>
             <%end %>
-            <th>Тариф</th>
+            <th id="">${app.Sortable("Тариф", "Tariff", "head_tariff")}</th>
             <%if MapPartner.Categorie.ReductionName == "Office": %>
-            <th>Баланс</th>
-            <th>Статус</th>
+            <th id="">${app.Sortable("Баланс", "Balance", "head_balance")}</th>
+            <th id="">${app.Sortable("Статус", "Status", "head_status")}</th>
             <%end %>
         </tr>
     </thead>

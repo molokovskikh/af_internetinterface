@@ -29,7 +29,7 @@ namespace InternetInterface.Controllers
         public bool OnLine;
     }
 
-    public class SeachFilter : IPaginable, SortableContributor
+    public class SeachFilter : IPaginable, ISortableContributor, SortableContributor
     {
         public UserSearchProperties searchProperties { get; set; }
         public ConnectedTypeProperties connectedType { get; set; }
@@ -39,6 +39,8 @@ namespace InternetInterface.Controllers
         public uint brigad { get; set; }
         public string searchText { get; set; }
         public uint addtionalStatus { get; set; }
+        public string SortBy { get; set; }
+        public string Direction { get; set; }
 
         private int _lastRowsCount;
 
@@ -53,20 +55,31 @@ namespace InternetInterface.Controllers
 
         public string[] ToUrl()
         {
+            return
+                GetParameters().Where(p => p.Key != "CurrentPage").Select(p => string.Format("{0}={1}", p.Key, p.Value))
+                    .ToArray();
+        }
+
+        public Dictionary<string,object> GetParameters()
+        {
             if (CategorieAccessSet.AccesPartner("SSI"))
-            return new[] {
-				String.Format("filter.searchText={0}", searchText),
-				String.Format("filter.searchProperties.SearchBy={0}", searchProperties.SearchBy),
-				String.Format("filter.clientTypeFilter.Type={0}", clientTypeFilter.Type),
-				String.Format("filter.tariff={0}", tariff),
-				String.Format("filter.whoregister={0}", whoregister),
-				String.Format("filter.brigad={0}", brigad),
-				String.Format("filter.addtionalStatus={0}", addtionalStatus),
-				String.Format("filter.connectedType.Type={0}", connectedType.Type),
-			};
-            return new[] {
-                             String.Format("filter.searchText={0}", searchText)
-                         };
+            return new Dictionary<string, object> {
+                                                      {"filter.searchText", searchText},
+                                                      {"filter.searchProperties.SearchBy", searchProperties.SearchBy},
+                                                      {"filter.clientTypeFilter.Type", clientTypeFilter.Type},
+                                                      {"filter.tariff", tariff},
+                                                      {"filter.whoregister", whoregister},
+                                                      {"filter.brigad", brigad},
+                                                      {"filter.addtionalStatus", addtionalStatus},
+                                                      {"filter.connectedType.Type", connectedType.Type},
+                                                      {"filter.SortBy", SortBy},
+                                                      {"filter.Direction", Direction},
+                                                      {"CurrentPage", CurrentPage}
+                                                  };
+            return new Dictionary<string, object> {
+                                                      {"filter.searchText", searchText},
+                                                      {"CurrentPage", CurrentPage}
+                                                  };
         }
 
         public string ToUrlQuery()
@@ -95,6 +108,27 @@ namespace InternetInterface.Controllers
                 query.SetParameter("Connected", false);
         }
 
+        private string GetOrderField()
+        {        
+            if (SortBy == "Name")
+                return string.Format("{0} {1} ", "C.Name", Direction);
+            if (SortBy == "Id")
+                return string.Format("{0} {1} ", "C.Id", Direction);
+            if (SortBy == "TelNum")
+                return string.Format("{0} {1} ", "if (c.PhysicalClient is null, l.Telephone, p.PhoneNumber)", Direction);
+            if (SortBy == "RegDate")
+                return string.Format("{0} {1} ", "C.RegDate", Direction);
+            if (SortBy == "Tariff")
+                return string.Format("{0} {1} ", "if (c.PhysicalClient is null, l.Speed, p.Tariff)", Direction);
+            if (SortBy == "Balance")
+                return string.Format("{0} {1} ", "if (c.PhysicalClient is null, l.Balance, p.Balance)", Direction);
+            if (SortBy == "Status")
+                return string.Format("{0} {1} ", "C.Status", Direction);
+            if (SortBy == "Adress")
+                return string.Format("{0} {1}", "if (c.PhysicalClient is null, l.ActualAdress, CONCAT(p.Street, p.House, p.CaseHouse, p.Apartment))", Direction);
+            return string.Format("{0} {1} ", "C.Name", "ASC");
+        }
+
         public IList<ClientInfo> Find()
         {
             IList<Clients> result = new List<Clients>();
@@ -114,9 +148,9 @@ namespace InternetInterface.Controllers
 left join internet.PhysicalClients p on p.id = c.PhysicalClient
 left join internet.LawyerPerson l on l.id = c.LawyerPerson
 join internet.Status S on s.id = c.Status
-{0} ORDER BY C.Name Limit {1}, {2}",
+{0} ORDER BY {3} Limit {1}, {2}",
                                 GetClientsLogic.GetWhere(searchProperties, connectedType, clientTypeFilter, whoregister, tariff, searchText, brigad,
-                                         addtionalStatus), CurrentPage * PageSize, PageSize);
+                                         addtionalStatus), CurrentPage * PageSize, PageSize, GetOrderField());
                         query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Clients));
                         SetParameters(query);
                         if (searchText != null)
@@ -128,9 +162,8 @@ join internet.Status S on s.id = c.Status
 left join internet.PhysicalClients p on p.id = c.PhysicalClient
 left join internet.LawyerPerson l on l.id = c.LawyerPerson
 join internet.Status S on s.id = c.Status
-where C.id = :SearchText ORDER BY C.name Limit {0}, {1}",  CurrentPage * PageSize, PageSize);
+where C.id = :SearchText ORDER BY {2} Limit {0}, {1}", CurrentPage * PageSize, PageSize, GetOrderField());
                         query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Clients));
-                        //query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Clients));
                         if (searchText != null)
                             query.SetParameter("SearchText", searchText.ToLower());
                     }
@@ -142,18 +175,15 @@ left join internet.PhysicalClients p on p.id = c.PhysicalClient
 left join internet.LawyerPerson l on l.id = c.LawyerPerson
 join internet.Status S on s.id = c.Status
 WHERE LOWER(C.Name) like {0} or LOWER(C.Id) like {0}
-ORDER BY C.Name Limit {1}, {2}", ":SearchText", CurrentPage * PageSize, PageSize);
+ORDER BY {3} Limit {1}, {2}", ":SearchText", CurrentPage * PageSize, PageSize, GetOrderField());
                     else
                     {
                         return new List<Clients>();
-                        //sqlStr = @"SELECT * FROM internet.Clients C ORDER BY C.Name";
                     }
-                    //query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Clients));
                     query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Clients));
                     if (!string.IsNullOrEmpty(searchText))
                         query.SetParameter("SearchText", "%" + searchText.ToLower() + "%");
                 }
-                //query.Add("SELECT FOUND_ROWS();");
                 result = query.List<Clients>();
 
                 var newSql = sqlStr.Replace("*", "count(*)");
@@ -188,11 +218,13 @@ ORDER BY C.Name Limit {1}, {2}", ":SearchText", CurrentPage * PageSize, PageSize
 	public class SearchController : SmartDispatcherController
 	{
 		[AccessibleThrough(Verb.Get)]
-        public void SearchBy([DataBind("filter")]SeachFilter filter, string Direction, string SortBy)
+        public void SearchBy([DataBind("filter")]SeachFilter filter/*, string Direction, string SortBy*/)
 		{
+		    /*filter.SortBy = SortBy;
+		    filter.Direction = Direction;*/
             PropertyBag["SClients"] = filter.Find();
-		    PropertyBag["Direction"] = Direction;
-		    PropertyBag["SortBy"] = SortBy;
+		    PropertyBag["Direction"] = filter.Direction;
+		    PropertyBag["SortBy"] = filter.SortBy;
 		    PropertyBag["filter"] = filter;
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["WhoRegistered"] = Partner.FindAllSort();

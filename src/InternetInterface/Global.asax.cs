@@ -135,6 +135,7 @@ namespace InternetInterface
 
 		public void Initialized(IMonoRailContainer container)
 		{
+            container.UrlBuilder.UseExtensions = false;
 			((DefaultViewComponentFactory)container.GetService<IViewComponentFactory>()).Inspect(Assembly.Load("InternetInterface"));
             container.ValidatorRegistry = new CachedValidationRegistry(new ResourceManager("Castle.Components.Validator.Messages", typeof(CachedValidationRegistry).Assembly));
 		}

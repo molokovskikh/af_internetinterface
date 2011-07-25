@@ -31,13 +31,29 @@ namespace InternetInterface.Helpers
             return AccessRules.GetAccessName(action).Count(CategorieAccessSet.AccesPartner) > 0;
         }
 
-        public override string GetFutAdr(string url)
-        {
-            return Context.CurrentControllerContext.Action + url.Remove(0, 1);
-        }
-
         public override string GetQuerystring(string key, string direction)
         {
+            if (uriParams.Contains("SortBy") && uriParams.Contains("Direction"))
+            {
+                var sortByPos = uriParams.IndexOf("SortBy");
+                var newxtAndPos = uriParams.IndexOf('&', sortByPos);
+                uriParams = uriParams.Remove(sortByPos - 8, newxtAndPos - sortByPos + 8);
+                var DirectionPos = uriParams.IndexOf("Direction");
+                newxtAndPos = uriParams.IndexOf('&', DirectionPos);
+                if (newxtAndPos == -1)
+                    newxtAndPos = uriParams.Length;
+                uriParams = uriParams.Remove(DirectionPos - 8, newxtAndPos - DirectionPos + 8);
+            }
+            if ((ControllerContext.PropertyBag["filter"] is ISortableContributor))
+            {
+                var sortableContributor = ControllerContext.PropertyBag["filter"] as ISortableContributor;
+                if (sortableContributor != null)
+                {
+                    var curpage =
+                        sortableContributor.GetParameters()["CurrentPage"];
+                    uriParams += "&filter.CurrentPage=" + curpage;
+                }
+            }
             return String.Format("filter.SortBy={0}&filter.Direction={1}", key, direction);
         }
     }

@@ -28,6 +28,32 @@ namespace InternetInterface.Test.Functional
             }
         }
 
+        [Test]
+        public void SortTest()
+        {
+            using (var browser = Open("Search/SearchUsers.rails"))
+            {
+                browser.Button(Find.ById("SearchButton")).Click();
+                Thread.Sleep(1000);
+                browser.Link("head_id").Click();
+                Assert.That(browser.Text, Is.StringContaining("Номер счета"));
+                browser.Link("head_name").Click();
+                Assert.That(browser.Text, Is.StringContaining("Номер счета"));
+                browser.Link("head_adress").Click();
+                Assert.That(browser.Text, Is.StringContaining("Номер счета"));
+                browser.Link("head_telNum").Click();
+                Assert.That(browser.Text, Is.StringContaining("Номер счета"));
+                browser.Link("head_regDate").Click();
+                Assert.That(browser.Text, Is.StringContaining("Номер счета"));
+                browser.Link("head_tariff").Click();
+                Assert.That(browser.Text, Is.StringContaining("Номер счета"));
+                browser.Link("head_balance").Click();
+                Assert.That(browser.Text, Is.StringContaining("Номер счета"));
+                browser.Link("head_status").Click();
+                Assert.That(browser.Text, Is.StringContaining("Номер счета"));
+            }
+        }
+
 	    [Test]
 		public void SearchTest()
 		{
