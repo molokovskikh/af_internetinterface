@@ -257,6 +257,7 @@
     <Compile Include="Models\PackageSpeed.cs" />
     <Compile Include="Models\PaymentsForAgent.cs" />
     <Compile Include="Models\Request.cs" />
+    <Compile Include="Models\Service.cs" />
     <Compile Include="Models\Status.cs" />
     <Compile Include="Models\Universal\ChildActiveRecordLinqBase.cs" />
     <Compile Include="Models\Universal\ClientSearchProperties.cs" />

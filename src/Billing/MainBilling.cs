@@ -130,6 +130,12 @@ namespace Billing
                                 updateClient.ShowBalanceWarningPage = false;
                                 updateClient.Update();
                             }
+                            if (updateClient.VoluntaryBlockingDate != null)
+                            {
+                                updateClient.VoluntaryBlockingDate = null;
+                                updateClient.VoluntaryUnblockedDate = SystemTime.Now();
+                                updateClient.RatedPeriodDate = SystemTime.Now();
+                            }
                         }
                         if (lawyerClient != null)
                         {
@@ -149,6 +155,7 @@ namespace Billing
                     {
                         client.Status = Status.Find((uint) StatusType.Worked);
                         client.RatedPeriodDate = null;
+                        client.DebtDays = 0;
                         client.ShowBalanceWarningPage = false;
                         client.Disabled = false;
                         client.UpdateAndFlush();

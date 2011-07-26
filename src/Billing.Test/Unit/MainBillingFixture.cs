@@ -372,7 +372,14 @@ namespace Billing.Test.Unit
 			Assert.That(writeOffs[0].WriteOffSum, Is.GreaterThan(10));
 		}
 
-		/// <summary>
+        [Test]
+        public void sdf()
+        {
+            Console.WriteLine(new DateTime(2011, 08, 31).AddMonths(1).ToShortDateString());
+            Console.WriteLine((new DateTime(2011, 08, 31).AddMonths(1) - new DateTime(2011, 08, 31)).Days);
+        }
+
+	    /// <summary>
 		/// Следить за состоянием client.DebtDays;
 		/// </summary>
 		[Test]

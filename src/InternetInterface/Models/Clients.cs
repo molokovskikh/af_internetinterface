@@ -71,6 +71,12 @@ namespace InternetInterface.Models
 		[Property]  
 		public virtual bool AutoUnblocked { get; set; }
 
+        [Property]
+        public virtual DateTime? VoluntaryBlockingDate { get; set; }
+
+        [Property]
+        public virtual DateTime? VoluntaryUnblockedDate { get; set; }
+
         [BelongsTo, Auditable("Статус")]
 		public virtual Status Status { get; set; }
 

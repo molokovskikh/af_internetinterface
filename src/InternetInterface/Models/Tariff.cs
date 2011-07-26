@@ -45,7 +45,14 @@ namespace InternetInterface.Models
 
 		public virtual decimal GetPrice(Clients client)
 		{
-			if (FinalPriceInterval == 0 || FinalPrice == 0)
+            if (client.VoluntaryBlockingDate != null)
+            {
+                if ((SystemTime.Now() - client.VoluntaryBlockingDate.Value).Days < 15)
+                    return 0;
+                return Service.GetByName("VoluntaryBlocking").Price;
+            }
+
+		    if (FinalPriceInterval == 0 || FinalPrice == 0)
 				return Price;
 
 			if (client.BeginWork.Value.AddMonths(FinalPriceInterval) <= SystemTime.Now())
