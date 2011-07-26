@@ -666,13 +666,13 @@ namespace InternetInterface.Controllers
 			thisPay.Client = clientToch;
 			thisPay.RecievedOn = DateTime.Now;
 			thisPay.PaidOn = DateTime.Now;
-			thisPay.BillingAccount = true;
+			thisPay.BillingAccount = false;
 			if (Validator.IsValid(thisPay))
 			{
 				thisPay.SaveAndFlush();
 				Flash["thisPay"] = new Payment();
 				Flash["Applying"] = "Баланс пополнен";
-				if (clientToch.GetClientType() == ClientType.Phisical)
+				/*if (clientToch.GetClientType() == ClientType.Phisical)
 				{
 					var physicalClient = clientToch.PhysicalClient;
 					physicalClient.Balance = physicalClient.Balance + Convert.ToDecimal(forChangeSumm);
@@ -683,7 +683,7 @@ namespace InternetInterface.Controllers
 					var lawyerPerson = clientToch.LawyerPerson;
 					lawyerPerson.Balance += Convert.ToDecimal(forChangeSumm);
 					lawyerPerson.UpdateAndFlush();
-				}
+				}*/
 			}
 			else
 			{

@@ -57,6 +57,23 @@ body {
   float: left;    
 }
 
+.sort
+{
+    padding-left: 20px;
+    background-repeat: no-repeat;
+    background-position:  left center;
+}
+
+.asc
+{
+    background-image: url(../Scripts/blue/asc.gif);
+}
+
+.desc
+{
+    background-image: url(../Scripts/blue/desc.gif);
+}
+
 .actions-bar {
   padding: 10px 1px;
 }

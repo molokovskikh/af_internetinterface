@@ -124,6 +124,12 @@ namespace Billing
                             physicalClient.UpdateAndFlush();
                             newPayment.BillingAccount = true;
                             newPayment.UpdateAndFlush();
+                            var bufBal = physicalClient.Balance;
+                            if (bufBal - updateClient.PhysicalClient.Tariff.GetPrice(updateClient) / updateClient.GetInterval() > 0)
+                            {
+                                updateClient.ShowBalanceWarningPage = false;
+                                updateClient.Update();
+                            }
                         }
                         if (lawyerClient != null)
                         {

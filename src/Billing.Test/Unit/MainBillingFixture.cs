@@ -159,6 +159,29 @@ namespace Billing.Test.Unit
             Assert.That(365 , Is.EqualTo(count));
         }
 
+        [Test]
+        public void ShowBalWarning()
+        {
+            var client = BaseBillingFixture.CreateAndSaveClient("ShowClient", false, 300);
+            client.RatedPeriodDate = DateTime.Now;
+            client.Save();
+            var tariff = Tariff.FindFirst();
+            var partBalance = tariff.GetPrice(client)/client.GetInterval();
+            client.PhysicalClient.Balance = partBalance * 2 - 1;
+            client.Update();
+            billing.Compute();
+            client.Refresh();
+            Assert.IsTrue(client.ShowBalanceWarningPage);
+            Assert.Greater(client.PhysicalClient.Balance, 0);
+            new Payment {
+                            Client = client, 
+                            Sum = partBalance,
+                            BillingAccount = false,
+                        }.Save();
+            billing.On();
+            client.Refresh();
+            Assert.IsFalse(client.ShowBalanceWarningPage);
+        }
 
 	    [Test]
 		public void OnTest()
