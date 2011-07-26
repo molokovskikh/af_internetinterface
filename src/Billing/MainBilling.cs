@@ -92,11 +92,9 @@ namespace Billing
                     foreach (var newClient in newClients)
                     {
                         var phisCl = newClient.PhysicalClient;
-                        //var connectSum = PaymentForConnect.FindAllByProperty("ClientId", phisCl).First().Summ;
                         phisCl.Balance -= phisCl.ConnectSum;
                         phisCl.ConnectionPaid = true;
                         phisCl.UpdateAndFlush();
-                        //newClient = false;
                         newClient.UpdateAndFlush();
                         new WriteOff {
                                          Client = newClient,
@@ -109,7 +107,7 @@ namespace Billing
                                                           .Add(Restrictions.Eq("BillingAccount", false)));
                     foreach (var newPayment in newPayments)
                     {
-                        var updateClient = newPayment.Client; //Clients.Find(newPayment.Client.Id);
+                        var updateClient = newPayment.Client;
                         var physicalClient = updateClient.PhysicalClient;
                         var lawyerClient = updateClient.LawyerPerson;
                         if (physicalClient != null)
@@ -125,7 +123,7 @@ namespace Billing
                             newPayment.BillingAccount = true;
                             newPayment.UpdateAndFlush();
                             var bufBal = physicalClient.Balance;
-                            if (bufBal - updateClient.PhysicalClient.Tariff.GetPrice(updateClient) / updateClient.GetInterval() > 0)
+                            if (bufBal - updateClient.GetPrice() / updateClient.GetInterval() > 0)
                             {
                                 updateClient.ShowBalanceWarningPage = false;
                                 updateClient.Update();
@@ -133,6 +131,7 @@ namespace Billing
                             if (updateClient.VoluntaryBlockingDate != null)
                             {
                                 updateClient.VoluntaryBlockingDate = null;
+                                updateClient.DebtDays = 0;
                                 updateClient.VoluntaryUnblockedDate = SystemTime.Now();
                                 updateClient.RatedPeriodDate = SystemTime.Now();
                             }
@@ -244,13 +243,12 @@ namespace Billing
                     }
                 }
 
-                //if (phisicalClient.Status.Blocked == false)
-                if (!client.Disabled)
+                if (client.GetPrice() > 0)
                 {
                     if (client.RatedPeriodDate != DateTime.MinValue && client.RatedPeriodDate != null)
                     {
                         var toDt = client.GetInterval();
-                        var price = phisicalClient.Tariff.GetPrice(client);
+                        var price = client.GetPrice();
                         var dec = price/toDt;
                         phisicalClient.Balance -= dec;
                         phisicalClient.UpdateAndFlush();

@@ -40,25 +40,7 @@ namespace InternetInterface.Models
 
         public virtual string GetFullName(Clients client)
 		{
-            return string.Format("{0} ({1} рублей)", Name, GetPrice(client).ToString("0"));
-		}
-
-		public virtual decimal GetPrice(Clients client)
-		{
-            if (client.VoluntaryBlockingDate != null)
-            {
-                if ((SystemTime.Now() - client.VoluntaryBlockingDate.Value).Days < 15)
-                    return 0;
-                return Service.GetByName("VoluntaryBlocking").Price;
-            }
-
-		    if (FinalPriceInterval == 0 || FinalPrice == 0)
-				return Price;
-
-			if (client.BeginWork.Value.AddMonths(FinalPriceInterval) <= SystemTime.Now())
-				return FinalPrice;
-
-			return Price;
+            return string.Format("{0} ({1} рублей)", Name, client.GetPrice().ToString("0"));
 		}
 
 		public override string ToString()

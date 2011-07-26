@@ -286,7 +286,7 @@ namespace InforoomInternet.Test.Unit
                 Assert.IsFalse(client.PaymentForTariff());
                 new Payment {
                                 Client = client,
-                                Sum = client.PhysicalClient.Tariff.GetPrice(client),
+                                Sum = client.GetPrice(),
                             }.Save();
             }
             using (var browser = Open("PrivateOffice/IndexOffice"))

@@ -26,7 +26,7 @@ namespace BananceChanger
             {
                 var client = Clients.Find((uint) 1082);
                 Console.WriteLine("Interver" + client.GetInterval());
-                Console.WriteLine("Price" + client.PhysicalClient.Tariff.GetPrice(client));
+                Console.WriteLine("Price" + client.GetPrice());
             }
             Console.ReadLine();
         }
@@ -106,7 +106,7 @@ namespace BananceChanger
                                 }
 
                                 SystemTime.Now = () => writeOff.WriteOffDate;
-                                var writeOffSum = clientse.PhysicalClient.Tariff.GetPrice(clientse) /
+                                var writeOffSum = clientse.GetPrice() /
                                                   clientse.GetInterval();
                                 if (writeOff.WriteOffSum.ToString("0.00") == writeOffSum.ToString("0.00"))
                                 {

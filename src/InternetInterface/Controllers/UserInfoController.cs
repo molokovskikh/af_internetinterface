@@ -567,16 +567,17 @@ namespace InternetInterface.Controllers
                 {
                     clientEndpointse.PackageId = updateClient.Tariff.PackageId;
                 }
-                if (_client.Status.Type == StatusType.VoluntaryBlocking)
+                if (oldStatus.Type != StatusType.VoluntaryBlocking && _client.Status.Type == StatusType.VoluntaryBlocking)
                 {
                     _client.RatedPeriodDate = DateTime.Now;
                     _client.DebtDays = 0;
                     _client.VoluntaryBlockingDate = DateTime.Now;
                     _client.VoluntaryUnblockedDate = null;
                 }
-                if (oldStatus.Type == StatusType.VoluntaryBlocking)
+                if (oldStatus.Type == StatusType.VoluntaryBlocking && _client.Status.Type != StatusType.VoluntaryBlocking)
                 {
                     _client.VoluntaryBlockingDate = null;
+                    _client.DebtDays = 0;
                     _client.VoluntaryUnblockedDate = DateTime.Now;
                     _client.RatedPeriodDate = DateTime.Now;
                 }

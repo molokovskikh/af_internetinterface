@@ -165,8 +165,7 @@ namespace Billing.Test.Unit
             var client = BaseBillingFixture.CreateAndSaveClient("ShowClient", false, 300);
             client.RatedPeriodDate = DateTime.Now;
             client.Save();
-            var tariff = Tariff.FindFirst();
-            var partBalance = tariff.GetPrice(client)/client.GetInterval();
+            var partBalance = client.GetPrice() / client.GetInterval();
             client.PhysicalClient.Balance = partBalance * 2 - 1;
             client.Update();
             billing.Compute();
@@ -208,6 +207,7 @@ namespace Billing.Test.Unit
         public void PostponedPayment()
         {
             var client_Post = BaseBillingFixture.CreateAndSaveClient("testRated", false, 100);
+            client_Post.RatedPeriodDate = DateTime.Now;
             client_Post.Save();
             var client_simple = BaseBillingFixture.CreateAndSaveClient("testRated", false, 100);
             client_simple.Save();
@@ -256,7 +256,8 @@ namespace Billing.Test.Unit
 
             new Payment {
                             Client = client_Post,
-                            Sum = 1000
+                            Sum = 1000,
+                            BillingAccount = false
                         }.Save();
 
             billing.On();

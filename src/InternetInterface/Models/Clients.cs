@@ -6,6 +6,7 @@ using System.Net;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
 using Common.Models.Helpers;
+using Common.Tools;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Helpers;
 
@@ -88,7 +89,7 @@ namespace InternetInterface.Models
 
         public virtual bool PaymentForTariff()
         {
-            return Payments.Sum(p => p.Sum) >= PhysicalClient.Tariff.GetPrice(this);
+            return Payments.Sum(p => p.Sum) >= GetPrice();
         }
 
         public virtual bool CanUsedPostponedPayment()
@@ -226,6 +227,27 @@ typeof(ClientConnectInfo)))
             if (Lease.Queryable.Where(l => l.Endpoint.Client == this).FirstOrDefault() != null)
                 return true;
             return false;
+        }
+
+        public virtual decimal GetPrice()
+        {
+            if (Disabled && VoluntaryBlockingDate == null)
+                return 0;
+
+            if (VoluntaryBlockingDate != null)
+            {
+                if ((SystemTime.Now() - VoluntaryBlockingDate.Value).Days < 15)
+                    return 0;
+                return Service.GetByName("VoluntaryBlocking").Price;
+            }
+
+            if (PhysicalClient.Tariff.FinalPriceInterval == 0 || PhysicalClient.Tariff.FinalPrice == 0)
+                return PhysicalClient.Tariff.Price;
+
+            if (BeginWork != null && BeginWork.Value.AddMonths(PhysicalClient.Tariff.FinalPriceInterval) <= SystemTime.Now())
+                return PhysicalClient.Tariff.FinalPrice;
+
+            return PhysicalClient.Tariff.Price;
         }
 	}
 }
