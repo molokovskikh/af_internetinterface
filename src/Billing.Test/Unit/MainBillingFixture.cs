@@ -196,8 +196,7 @@ namespace Billing.Test.Unit
             client.BeginWork = DateTime.Now;
             client.RatedPeriodDate = DateTime.Now;
             client.Save();
-            var tariff = Tariff.FindFirst();
-            var partBalance = tariff.GetPrice(client)/client.GetInterval();
+            var partBalance = client.GetPrice() / client.GetInterval();
             client.PhysicalClient.Balance = partBalance * 2 - 1;
             client.Update();
             billing.Compute();
@@ -239,6 +238,7 @@ namespace Billing.Test.Unit
         public void PostponedPayment()
         {
             var client_Post = BaseBillingFixture.CreateAndSaveClient("testRated", false, 100);
+            client_Post.RatedPeriodDate = DateTime.Now;
             client_Post.Save();
             var client_simple = BaseBillingFixture.CreateAndSaveClient("testRated", false, 100);
             client_simple.Save();
@@ -287,7 +287,8 @@ namespace Billing.Test.Unit
 
             new Payment {
                             Client = client_Post,
-                            Sum = 1000
+                            Sum = 1000,
+                            BillingAccount = false
                         }.Save();
 
             billing.On();
@@ -403,7 +404,14 @@ namespace Billing.Test.Unit
 			Assert.That(writeOffs[0].WriteOffSum, Is.GreaterThan(10));
 		}
 
-		/// <summary>
+        [Test]
+        public void sdf()
+        {
+            Console.WriteLine(new DateTime(2011, 08, 31).AddMonths(1).ToShortDateString());
+            Console.WriteLine((new DateTime(2011, 08, 31).AddMonths(1) - new DateTime(2011, 08, 31)).Days);
+        }
+
+	    /// <summary>
 		/// Следить за состоянием client.DebtDays;
 		/// </summary>
 		[Test]

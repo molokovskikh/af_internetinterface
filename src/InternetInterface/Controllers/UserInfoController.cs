@@ -528,16 +528,20 @@ namespace InternetInterface.Controllers
         public void EditInformation([DataBind("Client")]PhysicalClients client, uint ClientID, uint tariff, uint status, string group, uint house_id, int appealType, string comment, [DataBind("filter")]ClientFilter filter)
         {
             var _client = Clients.Queryable.First(c => c.Id == ClientID);
+            var _status = Status.Find(status);
             var updateClient = _client.PhysicalClient;
+            var oldStatus = _client.Status;
             InitializeHelper.InitializeModel(updateClient);
             InitializeHelper.InitializeModel(_client);
 
             BindObjectInstance(updateClient, ParamStore.Form, "Client");
 
             var statusCanChanged = true;
-            if ((_client.Status.Id == (uint) StatusType.BlockedAndNoConnected) && (status == (uint) StatusType.NoWorked))
+            if ((_client.Status.Type == StatusType.BlockedAndNoConnected) && ((_status.Type == StatusType.NoWorked) || _status.Type == StatusType.VoluntaryBlocking))
                 statusCanChanged = false;
-            _client.Status = Status.Find(status);
+            if (_status.Type == StatusType.VoluntaryBlocking && _client.VoluntaryUnblockedDate != null && (DateTime.Now - _client.VoluntaryUnblockedDate.Value).Days < 45)
+                statusCanChanged = false;
+            _client.Status = _status;
             if (Validator.IsValid(updateClient) && statusCanChanged)
             {
                 if (updateClient.PassportDate != null)
@@ -567,12 +571,28 @@ namespace InternetInterface.Controllers
                 {
                     clientEndpointse.PackageId = updateClient.Tariff.PackageId;
                 }
+                if (oldStatus.Type != StatusType.VoluntaryBlocking && _client.Status.Type == StatusType.VoluntaryBlocking)
+                {
+                    _client.RatedPeriodDate = DateTime.Now;
+                    _client.DebtDays = 0;
+                    _client.VoluntaryBlockingDate = DateTime.Now;
+                    _client.VoluntaryUnblockedDate = null;
+                }
+                if (oldStatus.Type == StatusType.VoluntaryBlocking && _client.Status.Type != StatusType.VoluntaryBlocking)
+                {
+                    _client.VoluntaryBlockingDate = null;
+                    _client.DebtDays = 0;
+                    _client.VoluntaryUnblockedDate = DateTime.Now;
+                    _client.RatedPeriodDate = DateTime.Now;
+                }
                 if (_client.Status.Blocked)
                 {
+                    _client.AutoUnblocked = false;
                     _client.Disabled = true;
                 }
                 else
                 {
+                    _client.AutoUnblocked = true;
                     _client.Disabled = false;
                 }
                 _client.Update();

@@ -40,18 +40,7 @@ namespace InternetInterface.Models
 
         public virtual string GetFullName(Clients client)
 		{
-            return string.Format("{0} ({1} рублей)", Name, GetPrice(client).ToString("0"));
-		}
-
-		public virtual decimal GetPrice(Clients client)
-		{
-			if (FinalPriceInterval == 0 || FinalPrice == 0)
-				return Price;
-
-			if (client.BeginWork.Value.AddMonths(FinalPriceInterval) <= SystemTime.Now())
-				return FinalPrice;
-
-			return Price;
+            return string.Format("{0} ({1} рублей)", Name, client.GetPrice().ToString("0"));
 		}
 
 		public override string ToString()
