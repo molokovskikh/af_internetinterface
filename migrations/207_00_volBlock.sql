@@ -7,7 +7,6 @@ ALTER TABLE `internet`.`status` ADD COLUMN `ShortName` VARCHAR(45) NOT NULL AFTE
 
 ALTER TABLE `internet`.`Clients` CHANGE COLUMN `VoluntaryBlocking` `VoluntaryBlockingDate` DATETIME DEFAULT NULL;
 
-ALTER TABLE `internet`.`Clients` CHANGE COLUMN `VoluntaryBlockingDate` `VoluntaryBlocking` TINYINT(1) UNSIGNED NOT NULL;
 
 
 
