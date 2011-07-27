@@ -91,6 +91,36 @@ namespace Billing.Test.Unit
             Console.WriteLine(string.Format("spisDO: {0}  spisD29: {1}", spisD0.WriteOffSum.ToString("0.00"), slisD29.WriteOffSum.ToString("0.00")));
         }
 
+        [Test]
+        public void CanBlockTest()
+        {
+            var client = BaseBillingFixture.CreateAndSaveClient("testClient1", false, -1000);
+            client.Disabled = false;
+            client.Save();
+            Assert.IsTrue(client.CanBlock());
+            client.DebtWork = true;
+            client.Update();
+            Assert.IsFalse(client.CanBlock());
+            client.DebtWork = false;
+            client.PostponedPayment = DateTime.Now;
+            SystemTime.Now = () => DateTime.Now;
+            client.Update();
+            Assert.IsFalse(client.CanBlock());
+            SystemTime.Now = () => DateTime.Now.AddDays(2);
+            client.Update();
+            Assert.IsTrue(client.CanBlock());
+            client.DebtWork = true;
+            client.Update();
+            Assert.IsFalse(client.CanBlock());
+            client.DebtWork = false;
+            client.PostponedPayment = null;
+            client.Update();
+            Assert.IsTrue(client.CanBlock());
+            client.Disabled = true;
+            client.Update();
+            Assert.IsFalse(client.CanBlock());
+        }
+
 	    [Test]
         public void Test1151()
         {

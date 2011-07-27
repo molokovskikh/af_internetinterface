@@ -6,12 +6,13 @@ using System.Net;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
 using Common.Models.Helpers;
+using Common.Tools;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Helpers;
 
 namespace InternetInterface.Models
 {
-	public enum ClientType
+    public enum ClientType
 	{
 		Phisical = 1,
 		Legal = 2
@@ -76,6 +77,9 @@ namespace InternetInterface.Models
 
         [Property]
         public virtual DateTime? PostponedPayment { get; set; }
+
+        [Property]
+        public virtual bool DebtWork { get; set; }
 
         [BelongsTo(Lazy = FetchWhen.OnInvoke)]
         public virtual AdditionalStatus AdditionalStatus { get; set; }
@@ -142,6 +146,19 @@ namespace InternetInterface.Models
 		{
 			return (((DateTime)RatedPeriodDate).AddMonths(1) - (DateTime)RatedPeriodDate).Days + DebtDays;
 		}
+
+        public virtual bool CanBlock()
+        {
+            if (DebtWork)
+                return false;
+
+            if (PostponedPayment != null && (PostponedPayment.Value.AddDays(1) - SystemTime.Now()).TotalHours >= 0)
+                return false;
+
+            if ((Disabled) || (PhysicalClient.Balance > 0))
+                return false;
+            return true;
+        }
 
 
         public virtual IList<WriteOff> GetWriteOffs(string groupedKey)

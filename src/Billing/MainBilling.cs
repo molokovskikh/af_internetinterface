@@ -265,18 +265,19 @@ namespace Billing
                     }
                 }
 
-                if ((phisicalClient.Balance < 0) &&
+                /*if ((phisicalClient.Balance < 0) &&
                     (!client.Disabled))
                 {
                     if ((client.PostponedPayment == null) ||
                         (client.PostponedPayment != null &&
-                         (((DateTime) client.PostponedPayment).AddDays(1) - SystemTime.Now()).Hours <= 0))
+                         (((DateTime) client.PostponedPayment).AddDays(1) - SystemTime.Now()).Hours <= 0))*/
+                if (client.CanBlock())
                     {
                         client.Disabled = true;
                         client.Status = Status.Find((uint) StatusType.NoWorked);
                         client.UpdateAndFlush();
                     }
-                }
+                //}
             }
             var lawyerclients = Clients.Queryable.Where(c => c.LawyerPerson != null).ToList();
             foreach (var client in lawyerclients)
