@@ -487,6 +487,12 @@ namespace InternetInterface.Controllers
 			    InitializeHelper.InitializeModel(updateClient);
                 DbLogHelper.SetupParametersForTriggerLogging();
 
+                if (!string.IsNullOrEmpty(comment))
+                {
+                    _client.LogComment = comment;
+                    updateClient.LogComment = comment;
+                }
+
 				updateClient.Update();
 
 			    _client.Name = updateClient.ShortName;
@@ -498,14 +504,14 @@ namespace InternetInterface.Controllers
                     clientEndPoint.PackageId = updateClient.Speed.PackageId;
                     clientEndPoint.Update();
                 }
-			    if (!string.IsNullOrEmpty(comment))
+			    /*if (!string.IsNullOrEmpty(comment))
                     new Appeals {
                                     Appeal = comment,
                                     AppealType = (int)AppealType.System,
                                     Client = _client,
                                     Date = DateTime.Now,
                                     Partner = InithializeContent.partner
-                                }.Save();
+                                }.Save();*/
                 RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID + "&filter.appealType=" + appealType);
 			}
 			else
@@ -555,7 +561,13 @@ namespace InternetInterface.Controllers
                 InitializeHelper.InitializeModel(_client);
                 DbLogHelper.SetupParametersForTriggerLogging();
 
-                updateClient.UpdateAndFlush();
+                if (!string.IsNullOrEmpty(comment))
+                {
+                    _client.LogComment = comment;
+                    updateClient.LogComment = comment;
+                }
+
+                updateClient.Update();
                 _client.Name = string.Format("{0} {1} {2}", updateClient.Surname, updateClient.Name,
                                              updateClient.Patronymic);
                 var endPoints = ClientEndpoints.Queryable.Where(p => p.Client == _client).ToList();
@@ -573,14 +585,7 @@ namespace InternetInterface.Controllers
                 }
                 _client.Update();
                 PropertyBag["Editing"] = false;
-                if (!string.IsNullOrEmpty(comment))
-                    new Appeals {
-                                    Appeal = comment,
-                                    AppealType = (int) AppealType.System,
-                                    Client = _client,
-                                    Date = DateTime.Now,
-                                    Partner = InithializeContent.partner
-                                }.Save();
+
                 Flash["EditFlag"] = "Данные изменены";
                 RedirectToUrl("../UserInfo/SearchUserInfo?filter.ClientCode=" + ClientID + "&filter.appealType=" +
                               appealType);

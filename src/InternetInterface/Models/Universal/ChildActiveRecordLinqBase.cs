@@ -12,7 +12,9 @@ namespace InternetInterface.Models
 {
 	public class ChildActiveRecordLinqBase<T> : ActiveRecordLinqBase<T>
 	{
-		public static IList<T> FindAllSort()
+        public virtual string LogComment { get; set; }
+
+	    public static IList<T> FindAllSort()
 		{
 			return FindAll(DetachedCriteria.For(typeof(T)).AddOrder(Order.Asc("Name")));
 		}
