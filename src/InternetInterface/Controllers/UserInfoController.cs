@@ -504,14 +504,6 @@ namespace InternetInterface.Controllers
                     clientEndPoint.PackageId = updateClient.Speed.PackageId;
                     clientEndPoint.Update();
                 }
-			    /*if (!string.IsNullOrEmpty(comment))
-                    new Appeals {
-                                    Appeal = comment,
-                                    AppealType = (int)AppealType.System,
-                                    Client = _client,
-                                    Date = DateTime.Now,
-                                    Partner = InithializeContent.partner
-                                }.Save();*/
                 RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID + "&filter.appealType=" + appealType);
 			}
 			else

@@ -5,12 +5,21 @@ using System.Reflection;
 using System.Web;
 using System.Web.Services.Description;
 using Castle.ActiveRecord;
+using Castle.ActiveRecord.Framework.Internal.EventListener;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 
 namespace InternetInterface.Helpers
 {
+    public class RemoverListner
+    {
+        public static void Make(EventListenerContributor target)
+        {
+            target.Remove(typeof(Listner));
+        }
+    }
+
     public class AuditablePropertyUser : AuditableProperty
     {
 

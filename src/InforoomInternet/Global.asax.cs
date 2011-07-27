@@ -15,6 +15,7 @@ using Castle.MonoRail.Framework.Routing;
 using Castle.MonoRail.Framework.Services;
 using Castle.MonoRail.Views.Brail;
 using InforoomInternet.Initializers;
+using InternetInterface.Helpers;
 using log4net;
 using log4net.Config;
 
@@ -29,7 +30,7 @@ namespace InforoomInternet
 			try {
 				XmlConfigurator.Configure();
 				GlobalContext.Properties["Version"] = Assembly.GetExecutingAssembly().GetName().Version;
-
+                ActiveRecordStarter.EventListenerComponentRegistrationHook += RemoverListner.Make;
 				new ActiveRecord().Initialize(ActiveRecordSectionHandler.Instance);
 
 				RoutingModuleEx.Engine.Add(new PatternRoute("/")

@@ -7,7 +7,9 @@ using System.Reflection;
 using System.Text;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework.Config;
+using Castle.ActiveRecord.Framework.Internal.EventListener;
 using Common.Tools;
+using InternetInterface.Helpers;
 using InternetInterface.Models;
 using log4net;
 using log4net.Config;
@@ -64,12 +66,15 @@ namespace Billing
 				                  			},
 				                  		{Environment.Hbm2ddlKeyWords, "none"},
 				                  	});
+                ActiveRecordStarter.EventListenerComponentRegistrationHook += RemoverListner.Make;
 				ActiveRecordStarter.Initialize( new [] {typeof (Clients).Assembly},
 				                               configuration);
 			}
 		}
 
-		public void UseSession(Action func)
+
+
+	    public void UseSession(Action func)
 		{
 			using (var session = new TransactionScope(OnDispose.Rollback))
 			{
