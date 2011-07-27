@@ -125,11 +125,12 @@ namespace Billing
                             newPayment.BillingAccount = true;
                             newPayment.UpdateAndFlush();
                             var bufBal = physicalClient.Balance;
-                            if (bufBal - updateClient.PhysicalClient.Tariff.GetPrice(updateClient) / updateClient.GetInterval() > 0)
-                            {
-                                updateClient.ShowBalanceWarningPage = false;
-                                updateClient.Update();
-                            }
+                            if (updateClient.RatedPeriodDate != null)
+                                if (bufBal - updateClient.PhysicalClient.Tariff.GetPrice(updateClient) / updateClient.GetInterval() > 0)
+                                {
+                                    updateClient.ShowBalanceWarningPage = false;
+                                    updateClient.Update();
+                                }
                         }
                         if (lawyerClient != null)
                         {
@@ -149,6 +150,7 @@ namespace Billing
                     {
                         client.Status = Status.Find((uint) StatusType.Worked);
                         client.RatedPeriodDate = null;
+                        client.DebtDays = 0;
                         client.ShowBalanceWarningPage = false;
                         client.Disabled = false;
                         client.UpdateAndFlush();

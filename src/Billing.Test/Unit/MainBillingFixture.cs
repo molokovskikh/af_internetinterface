@@ -163,6 +163,7 @@ namespace Billing.Test.Unit
         public void ShowBalWarning()
         {
             var client = BaseBillingFixture.CreateAndSaveClient("ShowClient", false, 300);
+            client.BeginWork = DateTime.Now;
             client.RatedPeriodDate = DateTime.Now;
             client.Save();
             var tariff = Tariff.FindFirst();
