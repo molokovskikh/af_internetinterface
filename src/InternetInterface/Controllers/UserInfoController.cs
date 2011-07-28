@@ -571,7 +571,7 @@ namespace InternetInterface.Controllers
                 {
                     clientEndpointse.PackageId = updateClient.Tariff.PackageId;
                 }
-                if (oldStatus.Type != StatusType.VoluntaryBlocking && _client.Status.Type == StatusType.VoluntaryBlocking)
+                /*if (oldStatus.Type != StatusType.VoluntaryBlocking && _client.Status.Type == StatusType.VoluntaryBlocking)
                 {
                     _client.RatedPeriodDate = DateTime.Now;
                     _client.DebtDays = 0;
@@ -584,7 +584,7 @@ namespace InternetInterface.Controllers
                     _client.DebtDays = 0;
                     _client.VoluntaryUnblockedDate = DateTime.Now;
                     _client.RatedPeriodDate = DateTime.Now;
-                }
+                }*/
                 if (_client.Status.Blocked)
                 {
                     _client.AutoUnblocked = false;

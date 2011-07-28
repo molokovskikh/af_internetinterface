@@ -1,0 +1,50 @@
+[1mdiff --git a/migrations/208_00_debt_work.sql b/migrations/208_00_debt_work.sql[m
+[1mindex 6bf5959..59adb6a 100755[m
+[1m--- a/migrations/208_00_debt_work.sql[m
+[1m+++ b/migrations/208_00_debt_work.sql[m
+[36m@@ -1 +1,12 @@[m
+ ALTER TABLE `internet`.`Clients` ADD COLUMN `DebtWork` TINYINT(1) UNSIGNED NOT NULL AFTER `PostponedPayment`;[m
+[32m+[m
+[32m+[m
+[32m+[m[32mCREATE TABLE `internet`.`ClientServices` ([m
+[32m+[m[32m  `Id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,[m
+[32m+[m[32m  `Client` INT(10) UNSIGNED NOT NULL,[m
+[32m+[m[32m  `Service` INT(10) UNSIGNED NOT NULL,[m
+[32m+[m[32m  `BeginWorkDate` DATETIME,[m
+[32m+[m[32m  `EndWorkDate` DATETIME,[m
+[32m+[m[32m  PRIMARY KEY (`Id`)[m
+[32m+[m[32m)[m
+[32m+[m[32mENGINE = InnoDB;[m
+[1mdiff --git a/src/InternetInterface/Models/Clients.cs b/src/InternetInterface/Models/Clients.cs[m
+[1mindex 9d907fa..78d426f 100755[m
+[1m--- a/src/InternetInterface/Models/Clients.cs[m
+[1m+++ b/src/InternetInterface/Models/Clients.cs[m
+[36m@@ -114,6 +114,9 @@[m [mnamespace InternetInterface.Models[m
+         [HasMany(ColumnKey = "Client", OrderBy = "WriteOffDate", Lazy = true)][m
+         public virtual IList<WriteOff> WriteOffs { get; set; }[m
+ [m
+[32m+[m[32m        [HasMany(ColumnKey = "Client", Lazy = true)][m[41m[m
+[32m+[m[32m        public virtual IList<ClientService> ClientServices { get; set; }[m[41m[m
+[32m+[m[41m[m
+         public virtual string ChangePhysicalClientPassword()[m
+         {[m
+             var pass =  CryptoPass.GeneratePassword();[m
+[1mdiff --git a/src/InternetInterface/Views/Layouts/NoMap.brail b/src/InternetInterface/Views/Layouts/NoMap.brail[m
+[1mindex 38bc182..b36598e 100644[m
+[1m--- a/src/InternetInterface/Views/Layouts/NoMap.brail[m
+[1m+++ b/src/InternetInterface/Views/Layouts/NoMap.brail[m
+[36m@@ -5,14 +5,9 @@[m
+ <link href="../Styles/base.css" type="text/css" rel="stylesheet" />[m
+ <link href="../Styles/datePicker.css" type="text/css" rel="stylesheet" />[m
+ <script type="text/javascript" src="../Scripts/jquery-1.5.1.min.js"></script>[m
+[31m-<!--<script type="text/javascript" src="../Scripts/jquery.datePicker.js"></script>[m
+[31m-<script type="text/javascript" src="../Scripts/date.js"></script>[m
+[31m-<script type="text/javascript" src="../Scripts/jquery.bgiframe.js"></script>[m
+[31m-<script type="text/javascript" src="../Scripts/date_ru_utf8.js"></script>-->[m
+ <script type="text/javascript" src="../Scripts/jquery.nyroModal/js/jquery.nyroModal.custom.js"></script>[m
+ [m
+ <link type="text/css" href="../Scripts/JQueryUi/css/smoothness/jquery-ui-1.8.13.custom.css" rel="stylesheet" />[m
+[31m-<!--<script type="text/javascript" src="../Scripts/JQueryUi/css/smoothness/jquery.ui.datepicker.js>	</script>  -->[m
+ <script type="text/javascript" src="../Scripts/JQueryUi/js/jquery-ui-1.8.13.custom.min.js"></script><script type="text/javascript" src="../Scripts/JQueryUi/js/jquery.ui.datepicker-ru.js"></script> [m
+     <title>Интернет интерфейс</title>[m
+ </head>[m

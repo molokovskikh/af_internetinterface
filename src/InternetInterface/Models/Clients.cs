@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using Castle.ActiveRecord;
+using Castle.ActiveRecord.Framework.Internal.EventListener;
 using Castle.ActiveRecord.Linq;
 using Common.Models.Helpers;
 using Common.Tools;
@@ -19,7 +20,7 @@ namespace InternetInterface.Models
 	}
 
     [ActiveRecord("Clients", Schema = "Internet", Lazy = true), Auditable]
-	public class Clients : ChildActiveRecordLinqBase<Clients>
+	public class Client : ChildActiveRecordLinqBase<Client>
 	{
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
@@ -113,6 +114,10 @@ namespace InternetInterface.Models
 
         [HasMany(ColumnKey = "Client", OrderBy = "WriteOffDate", Lazy = true)]
         public virtual IList<WriteOff> WriteOffs { get; set; }
+
+        [HasMany(ColumnKey = "Client", Lazy = true)]
+        public virtual IList<ClientService> ClientServices { get; set; }
+
 
         public virtual string ChangePhysicalClientPassword()
         {

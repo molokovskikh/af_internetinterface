@@ -244,6 +244,7 @@
     <Compile Include="Models\BypassHouse.cs" />
     <Compile Include="Models\ClientEndpoints.cs" />
     <Compile Include="Models\Clients.cs" />
+    <Compile Include="Models\ClientService.cs" />
     <Compile Include="Models\ConnectGraph.cs" />
     <Compile Include="Models\Entrance.cs" />
     <Compile Include="Models\House.cs" />
