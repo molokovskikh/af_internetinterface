@@ -20,7 +20,7 @@ namespace InternetInterface.Models
 		[HasMany(ColumnKey = "Brigad", Lazy = true)]
 		public virtual IList<ConnectGraph> Graphs { get; set; }
 
-        public virtual Clients GetOneGraph(int intervalNum, DateTime selectDate)
+        public virtual Client GetOneGraph(int intervalNum, DateTime selectDate)
         {
             var graphs =
                 ConnectGraph.Queryable.Where(c => c.Brigad == this && c.Day.Date == selectDate.Date && c.IntervalId == (uint)intervalNum).ToList();

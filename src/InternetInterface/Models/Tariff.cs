@@ -38,7 +38,7 @@ namespace InternetInterface.Models
             return string.Format("{0} ({1} рублей)", Name, Price);
         }
 
-        public virtual string GetFullName(Clients client)
+        public virtual string GetFullName(Client client)
 		{
             return string.Format("{0} ({1} рублей)", Name, client.GetPrice().ToString("0"));
 		}

@@ -16,7 +16,7 @@ namespace InternetInterface.Test.Functional
         {
             using (var browser = Open("Search/SearchUsers.rails"))
             {
-                var client = Clients.FindFirst();
+                var client = Client.FindFirst();
                 var addStat = AdditionalStatus.FindAll();
                 client.Status = Status.Find((uint) StatusType.BlockedAndNoConnected);
                 client.AdditionalStatus = addStat.First();

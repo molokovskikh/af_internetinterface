@@ -14,7 +14,7 @@ namespace InforoomInternet.Logic
 	{
 		public static bool IsAccessibleClient(uint id, string password)
 		{
-			return Clients.FindAll(DetachedCriteria.For(typeof(Clients))
+			return Client.FindAll(DetachedCriteria.For(typeof(Client))
 											.CreateAlias("PhysicalClient", "PC", JoinType.InnerJoin)
 			                              	.Add(Restrictions.Eq("Id", id))
 			                              	.Add(Restrictions.Eq("PC.Password", CryptoPass.GetHashString(password)))).Length != 0;

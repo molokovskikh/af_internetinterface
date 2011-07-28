@@ -73,20 +73,20 @@ namespace InternetInterface.Models
 		[Property]  
 		public virtual bool AutoUnblocked { get; set; }
 
-        [Property]
+        /*[Property]
         public virtual DateTime? VoluntaryBlockingDate { get; set; }
 
         [Property]
-        public virtual DateTime? VoluntaryUnblockedDate { get; set; }
+        public virtual DateTime? VoluntaryUnblockedDate { get; set; }*/
 
         [BelongsTo, Auditable("Статус")]
 		public virtual Status Status { get; set; }
 
-        [Property]
-        public virtual DateTime? PostponedPayment { get; set; }
+        /*[Property]
+        public virtual DateTime? PostponedPayment { get; set; }*/
 
-        [Property]
-        public virtual bool DebtWork { get; set; }
+        /*[Property]
+        public virtual bool DebtWork { get; set; }*/
 
         [BelongsTo(Lazy = FetchWhen.OnInvoke)]
         public virtual AdditionalStatus AdditionalStatus { get; set; }
@@ -98,11 +98,13 @@ namespace InternetInterface.Models
 
         public virtual bool CanUsedPostponedPayment()
         {
-            return PhysicalClient != null && PostponedPayment == null && Disabled && PhysicalClient.Balance < 0 &&
+            return PhysicalClient != null &&
+                   !ClientServices.Select(c => c.Service).Contains(Service.GetByType(typeof(DebtWork))) && Disabled &&
+                   PhysicalClient.Balance < 0 &&
                    AutoUnblocked && PaymentForTariff();
         }
 
-		public virtual bool AdditionalCanUsed(string aStatus)
+        public virtual bool AdditionalCanUsed(string aStatus)
 		{
             if (AdditionalStatus != null && AdditionalStatus.Id == (uint)AdditionalStatusType.Refused)
                 return false;
@@ -160,11 +162,18 @@ namespace InternetInterface.Models
 
         public virtual bool CanBlock()
         {
-            if (DebtWork)
-                return false;
+            if (ClientServices != null)
+            {
+                var CServ =
+                    ClientServices.Where(c => c.Service == Service.GetByType(typeof (DebtWork))).FirstOrDefault();
+                if (CServ != null && !CServ.Service.CanBlock(CServ))
+                {
+                    return false;
+                }
+            }
 
-            if (PostponedPayment != null && (PostponedPayment.Value.AddDays(1) - SystemTime.Now()).TotalHours >= 0)
-                return false;
+            /*if (PostponedPayment != null && (PostponedPayment.Value.AddDays(1) - SystemTime.Now()).TotalHours >= 0)
+                return false;*/
 
             if ((Disabled) || (PhysicalClient.Balance > 0))
                 return false;
@@ -252,23 +261,23 @@ typeof(ClientConnectInfo)))
 
         public virtual decimal GetPrice()
         {
-            if (Disabled && VoluntaryBlockingDate == null)
-                return 0;
-
-            if (VoluntaryBlockingDate != null)
+            var servisesPrice = 0m;
+            if (ClientServices != null)
             {
-                if ((SystemTime.Now() - VoluntaryBlockingDate.Value).Days < 15)
-                    return 0;
-                return Service.GetByName("VoluntaryBlocking").Price;
+                var blockingService = ClientServices.Where(c => c.Service.BlockingAll).ToList().FirstOrDefault();
+                if (blockingService != null)
+                    return blockingService.Service.GetPrice(blockingService);
+
+                servisesPrice = ClientServices.Sum(c => c.Service.GetPrice(c));
             }
 
             if (PhysicalClient.Tariff.FinalPriceInterval == 0 || PhysicalClient.Tariff.FinalPrice == 0)
-                return PhysicalClient.Tariff.Price;
+                return PhysicalClient.Tariff.Price + servisesPrice;
 
             if (BeginWork != null && BeginWork.Value.AddMonths(PhysicalClient.Tariff.FinalPriceInterval) <= SystemTime.Now())
-                return PhysicalClient.Tariff.FinalPrice;
+                return PhysicalClient.Tariff.FinalPrice + servisesPrice;
 
-            return PhysicalClient.Tariff.Price;
+            return PhysicalClient.Tariff.Price + servisesPrice;
         }
 	}
 }

@@ -30,7 +30,7 @@ namespace InternetInterface.Models
 		public virtual Partner Partner { get; set; }
 
 		[BelongsTo("Client")]
-		public virtual Clients Client { get; set; }
+		public virtual Client Client { get; set; }
 
         [Property]
         public virtual int AppealType { get; set; }

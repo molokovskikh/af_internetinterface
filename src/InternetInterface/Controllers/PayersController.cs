@@ -98,7 +98,7 @@ namespace InternetInterface.Controllers
 		{
 			PropertyBag["Registrators"] = Partner.FindAll();
 			PropertyBag["registrId"] = registrator;
-			PropertyBag["Payers"] = Clients.Queryable.Where(p => p.WhoRegistered.Id == registrator && p.PhysicalClient != null);
+			PropertyBag["Payers"] = Client.Queryable.Where(p => p.WhoRegistered.Id == registrator && p.PhysicalClient != null);
 		}
 
         public void ShowAgent([DataBind("filter")]AgentFilter filter)

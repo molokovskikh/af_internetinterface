@@ -67,7 +67,7 @@ namespace Billing
 				                  		{Environment.Hbm2ddlKeyWords, "none"},
 				                  	});
                 ActiveRecordStarter.EventListenerComponentRegistrationHook += RemoverListner.Make;
-				ActiveRecordStarter.Initialize( new [] {typeof (Clients).Assembly},
+				ActiveRecordStarter.Initialize( new [] {typeof (Client).Assembly},
 				                               configuration);
 			}
 		}
@@ -89,7 +89,7 @@ namespace Billing
 			try
 			{
                 UseSession(() => {
-                    var newClients = Clients.FindAll(DetachedCriteria.For(typeof (Clients))
+                    var newClients = Client.FindAll(DetachedCriteria.For(typeof (Client))
                                                          .CreateAlias("PhysicalClient", "PC", JoinType.InnerJoin)
                                                          .Add(Restrictions.Eq("PC.ConnectionPaid", false))
                                                          .Add(Restrictions.IsNotNull("BeginWork"))
@@ -117,13 +117,13 @@ namespace Billing
                         var lawyerClient = updateClient.LawyerPerson;
                         if (physicalClient != null)
                         {
-                            var balance = physicalClient.Balance;
+                            //var balance = physicalClient.Balance;
                             physicalClient.Balance += Convert.ToDecimal(newPayment.Sum);
-                            if (balance < 0 && physicalClient.Balance > 0 && updateClient.PostponedPayment != null)
+                            /*if (balance < 0 && physicalClient.Balance > 0 && updateClient.PostponedPayment != null)
                             {
                                 updateClient.PostponedPayment = null;
                                 updateClient.Update();
-                            }
+                            }*/
                             physicalClient.UpdateAndFlush();
                             newPayment.BillingAccount = true;
                             newPayment.UpdateAndFlush();
@@ -134,13 +134,16 @@ namespace Billing
                                     updateClient.ShowBalanceWarningPage = false;
                                     updateClient.Update();
                                 }
-                            if (updateClient.VoluntaryBlockingDate != null)
+                            if (updateClient.ClientServices != null)
+                            foreach (var cserv in updateClient.ClientServices)
+                                cserv.Service.PaymentClient(cserv);
+                            /*if (updateClient.VoluntaryBlockingDate != null)
                             {
                                 updateClient.VoluntaryBlockingDate = null;
                                 updateClient.DebtDays = 0;
                                 updateClient.VoluntaryUnblockedDate = SystemTime.Now();
                                 updateClient.RatedPeriodDate = SystemTime.Now();
-                            }
+                            }*/
                         }
                         if (lawyerClient != null)
                         {
@@ -150,7 +153,7 @@ namespace Billing
                             newPayment.UpdateAndFlush();
                         }
                     }
-                    var clients = Clients.FindAll(DetachedCriteria.For(typeof (Clients))
+                    var clients = Client.FindAll(DetachedCriteria.For(typeof (Client))
                                                       .CreateAlias("PhysicalClient", "PC", JoinType.InnerJoin)
                                                       .Add(Restrictions.IsNotNull("PhysicalClient"))
                                                       .Add(Restrictions.Eq("Disabled", true))
@@ -168,7 +171,7 @@ namespace Billing
                     var lawyerPerson = LawyerPerson.FindAll();
                     foreach (var person in lawyerPerson)
                     {
-                        var client = Clients.Queryable.Where(c => c.LawyerPerson == person).ToList().First();
+                        var client = Client.Queryable.Where(c => c.LawyerPerson == person).ToList().First();
                         if (person.Balance < -(person.Tariff*1.9m))
                         {
                             client.ShowBalanceWarningPage = true;
@@ -180,7 +183,11 @@ namespace Billing
                         }
                         client.UpdateAndFlush();
                     }
-                    var postPClients = Clients.Queryable.Where(c => c.PostponedPayment != null).ToList();
+                    foreach (var cserv in ClientService.FindAll())
+                    {
+                        cserv.Service.Diactivate(cserv);
+                    }
+                    /*var postPClients = Client.Queryable.Where(c => c.PostponedPayment != null).ToList();
                     foreach (var postPClient in postPClients)
                     {
                         if ((((DateTime) postPClient.PostponedPayment).AddDays(1) - SystemTime.Now()).Hours <= 0)
@@ -189,7 +196,7 @@ namespace Billing
                             postPClient.Status = Status.Find((uint) StatusType.NoWorked);
                             postPClient.UpdateAndFlush();
                         }
-                    }
+                    }*/
                 });
 			}
 			catch (Exception ex)
@@ -222,7 +229,7 @@ namespace Billing
 
         public void Compute()
         {
-            var clients = Clients.FindAll(DetachedCriteria.For(typeof (Clients))
+            var clients = Client.FindAll(DetachedCriteria.For(typeof (Client))
                                               .Add(Restrictions.IsNotNull("PhysicalClient")));
             foreach (var client in clients)
             {
@@ -283,7 +290,7 @@ namespace Billing
                     }
                 //}
             }
-            var lawyerclients = Clients.Queryable.Where(c => c.LawyerPerson != null).ToList();
+            var lawyerclients = Client.Queryable.Where(c => c.LawyerPerson != null).ToList();
             foreach (var client in lawyerclients)
             {
                 var person = client.LawyerPerson;

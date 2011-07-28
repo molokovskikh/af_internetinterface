@@ -58,7 +58,7 @@ namespace InternetInterface.Models
         public virtual uint GetClientWithApNumber(string num)
         {
             return
-                Clients.Queryable.Where(c => c.PhysicalClient.HouseObj == this && c.PhysicalClient.Apartment == num).
+                Client.Queryable.Where(c => c.PhysicalClient.HouseObj == this && c.PhysicalClient.Apartment == num).
                     ToList().Select(c => c.Id).FirstOrDefault();
         }
 

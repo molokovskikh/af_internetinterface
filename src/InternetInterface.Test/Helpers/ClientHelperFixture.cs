@@ -49,7 +49,7 @@ namespace InternetInterface.Test.Helpers
 			{
 				var pay = new Payment
 				          	{
-								Client = Clients.Queryable.First(c => c.PhysicalClient == client),
+								Client = Client.Queryable.First(c => c.PhysicalClient == client),
 				          		//Agent = InithializeContent.partner,
 				          		PaidOn = DateTime.Now,
 								RecievedOn = DateTime.Now,

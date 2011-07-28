@@ -12,7 +12,7 @@ namespace InternetInterface.Test.Unit
 	[TestFixture]
 	class GetClientsLogicFixture : WatinFixture
 	{
-		private static bool ResultAssert(Func<IList<Clients>> result)
+		private static bool ResultAssert(Func<IList<Client>> result)
 		{
 			var _result = result();
 			if (result != null)

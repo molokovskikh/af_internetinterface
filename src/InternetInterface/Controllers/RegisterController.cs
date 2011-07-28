@@ -59,7 +59,7 @@ namespace InternetInterface.Controllers
                 DbLogHelper.SetupParametersForTriggerLogging();
 
                 PhysicalClients.RegistrLogicClient(phisClient, tariff, house_id, Validator);
-                var client = new Clients {
+                var client = new Client {
                                              AutoUnblocked = true,
                                              RegDate = DateTime.Now,
                                              WhoRegistered = InithializeContent.partner,
@@ -179,7 +179,7 @@ namespace InternetInterface.Controllers
                 DbLogHelper.SetupParametersForTriggerLogging();
 				person.Speed = PackageSpeed.Find(speed);
 				person.SaveAndFlush();
-				var client = new Clients
+				var client = new Client
 				             	{
 									WhoRegistered = InithializeContent.partner,
 									WhoRegisteredName = InithializeContent.partner.Name,
@@ -336,7 +336,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Applying"] = "false";
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties { ChangeType = TypeChangeBalance.OtherSumm };
 			PropertyBag["BalanceText"] = 0;
-			PropertyBag["ConnectInfo"] = new Clients().GetConnectInfo();
+			PropertyBag["ConnectInfo"] = new Client().GetConnectInfo();
 			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(s => !string.IsNullOrEmpty(s.Name));
 		}
 

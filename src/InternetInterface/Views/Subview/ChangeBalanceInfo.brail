@@ -40,7 +40,7 @@
                <form class="form login" method="post" action="${siteroot}/UserInfo/PostponedPayment">
 				<input type="hidden" name="ClientID" value="${ClientCode}" />
 				   <button type="submit" id="Button2" class="button">
-				  <img alt="Save" src="../Images/tick.png">Активировать обещанный платеж</button>
+				  <img alt="Save" src="../Images/tick.png">Активировать услуги</button>
 				</form>
             </td>
 			<%end %>

@@ -14,7 +14,7 @@ namespace InternetInterface.Models
         public virtual uint Id { get; set; }
 
         [BelongsTo]
-        public virtual Clients Client { get; set; }
+        public virtual Client Client { get; set; }
 
         [BelongsTo]
         public virtual Service Service { get; set; }
@@ -24,5 +24,11 @@ namespace InternetInterface.Models
 
         [Property]
         public virtual DateTime? EndWorkDate { get; set; }
+
+        public override void Delete()
+        {
+            if (Service.CanDelete(this))
+                base.Delete();
+        }
     }
 }

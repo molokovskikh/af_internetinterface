@@ -12,7 +12,7 @@ namespace InternetInterface.Components
 		public override void Render()
 		{
 		    var clientCode = Convert.ToUInt32(ComponentParams["clientCode"].ToString());
-            var client = Clients.Find(clientCode);
+            var client = Client.Find(clientCode);
 			var htmlCode = string.Format("<select class=\"linkSelector\" name=\"speed\" id=\"{0}\">", "Speed");
 			foreach (var packageSpeed in PackageSpeed.FindAll().OrderBy(o => o.Speed))
 			{
