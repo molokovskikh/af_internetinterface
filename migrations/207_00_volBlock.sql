@@ -1,12 +1,9 @@
-ALTER TABLE `internet`.`Clients` ADD COLUMN `VoluntaryBlocking` TINYINT(1) UNSIGNED AFTER `PostponedPayment`;
-
-ALTER TABLE `internet`.`Clients` ADD COLUMN `VoluntaryUnblockedDate` DATETIME AFTER `VoluntaryBlocking`;
-
 ALTER TABLE `internet`.`status` ADD COLUMN `ShortName` VARCHAR(45) NOT NULL AFTER `Connected`;
 
 
-ALTER TABLE `internet`.`Clients` CHANGE COLUMN `VoluntaryBlocking` `VoluntaryBlockingDate` DATETIME DEFAULT NULL;
+ALTER TABLE `internet`.`Services` ADD COLUMN `BlockingAll` TINYINT(1) UNSIGNED NOT NULL AFTER `Price`;
 
+ALTER TABLE `internet`.`Services` ADD COLUMN `HumanName` VARCHAR(45) NOT NULL AFTER `BlockingAll`;
 
 
 

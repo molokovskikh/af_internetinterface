@@ -135,8 +135,8 @@ namespace Billing
                                     updateClient.Update();
                                 }
                             if (updateClient.ClientServices != null)
-                            foreach (var cserv in updateClient.ClientServices)
-                                cserv.Service.PaymentClient(cserv);
+                                foreach (var cserv in updateClient.ClientServices)
+                                    cserv.Service.PaymentClient(cserv);
                             /*if (updateClient.VoluntaryBlockingDate != null)
                             {
                                 updateClient.VoluntaryBlockingDate = null;

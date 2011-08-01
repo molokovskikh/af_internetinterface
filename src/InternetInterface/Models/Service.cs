@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Web;
 using Castle.ActiveRecord;
 using Common.Tools;
@@ -33,11 +34,15 @@ namespace InternetInterface.Models
         public virtual string Name { get; set; }*/
 
         [Property]
+        public virtual string HumanName { get; set; }
+
+        [Property]
         public virtual decimal Price { get; set; }
 
         [Property]
         public virtual bool BlockingAll { get; set; }
 
+        //public virtual Func<bool> CreateAppeal { get; set; }
 
         public static Service GetByType(Type type)
         {
@@ -73,7 +78,7 @@ namespace InternetInterface.Models
             return Price;
         }
 
-        public virtual void CreateAppeal(string message, ClientService CService)
+        /*public virtual void CreateAppeal(string message, ClientService CService)
         {
             new Appeals {
                             Appeal = message,
@@ -82,7 +87,7 @@ namespace InternetInterface.Models
                             Date = DateTime.Now,
                             Partner = InithializeContent.partner
                         }.Save();
-        }
+        }*/
     }
 
 
@@ -121,7 +126,7 @@ namespace InternetInterface.Models
             client.Disabled = false;
             client.Status = Status.Find((uint)StatusType.Worked);
             client.Update();
-            CreateAppeal("Услуга \"Обещанный платеж активирована\"", CService);
+            //CreateAppeal("Услуга \"Обещанный платеж активирована\"", CService);
         }
     }
 
@@ -141,7 +146,7 @@ namespace InternetInterface.Models
             CService.BeginWorkDate = DateTime.Now;
             CService.EndWorkDate = null;
             CService.Update();
-            CreateAppeal("Услуга добровольная блокировка включена", CService);
+            //CreateAppeal("Услуга добровольная блокировка включена", CService);
         }
 
         public virtual void DiactivateVoluntaryBlockin(ClientService CService)
@@ -162,7 +167,7 @@ namespace InternetInterface.Models
                 client.Update();
                 CService.EndWorkDate = DateTime.Now;
                 CService.Update();
-                CreateAppeal("Услуга добровольная блокировка отключена", CService);
+                //CreateAppeal("Услуга добровольная блокировка отключена", CService);
             }
         }
 

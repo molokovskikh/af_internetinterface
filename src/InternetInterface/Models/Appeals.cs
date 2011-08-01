@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using Castle.ActiveRecord;
 using Common.Web.Ui.Helpers;
+using InternetInterface.Controllers.Filter;
 using InternetInterface.Models.Universal;
 
 namespace InternetInterface.Models
@@ -39,6 +40,18 @@ namespace InternetInterface.Models
         {
            var appeal = HttpUtility.HtmlEncode(Appeal).Replace("\r\n", "<br/>");
             return AppealHelper.TnasformRedmineToLink(appeal);
+        }
+
+        public static void CreareAppeal(string message, Client client, AppealType type)
+        {
+            new Appeals
+            {
+                Appeal = message,
+                Client = client,
+                AppealType = (int)type,
+                Date = DateTime.Now,
+                Partner = InithializeContent.partner
+            }.Save();
         }
 	}
 }

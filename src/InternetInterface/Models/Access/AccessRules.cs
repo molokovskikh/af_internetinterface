@@ -168,7 +168,7 @@ namespace InternetInterface.Models.Access
 									"ChangeBalance",
 									"SiteMap",
 									"SearchUserInfo",
-                                    "PostponedPayment"
+                                    "ActivateService"
 			                 	};
 			return _changeBalance.Contains(methodName) ? "CB" : string.Empty;
 		}

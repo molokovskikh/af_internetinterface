@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Web;
 using Castle.ActiveRecord;
 using InternetInterface.Models.Universal;
@@ -29,6 +30,16 @@ namespace InternetInterface.Models
         {
             if (Service.CanDelete(this))
                 base.Delete();
+        }
+
+        public virtual void Activate()
+        {
+            Service.Activate(this);
+        }
+
+        public virtual void Deactivate()
+        {
+            Service.Diactivate(this);
         }
     }
 }

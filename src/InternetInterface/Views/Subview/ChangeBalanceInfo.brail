@@ -37,11 +37,14 @@
 				</form>
 			</td>
             <td style="font-size:small;">
-               <form class="form login" method="post" action="${siteroot}/UserInfo/PostponedPayment">
+                    <a class="big-link" data-reveal-id="myModal_active" href="#" >
+                    <button type="button" id="Button2" class="button"><img alt="Save" src="../Images/tick.png"> Активировать услуги </button>
+                    </a>
+              <!-- <form class="form login" method="post" action="${siteroot}/UserInfo/PostponedPayment">
 				<input type="hidden" name="ClientID" value="${ClientCode}" />
-				   <button type="submit" id="Button2" class="button">
+				  <button type="submit" id="Button2" class="button">
 				  <img alt="Save" src="../Images/tick.png">Активировать услуги</button>
-				</form>
+				</form> -->
             </td>
 			<%end %>
 		</tr>
@@ -54,3 +57,60 @@
 </div>
 </div>
 <%end %>
+
+<script type="text/javascript">
+    $(function () {
+
+        $('#startDate').datepicker({
+            inline: true
+        }).change(function () {
+            $('.startDate_local').val($(this).val());
+        });
+        $('#endDate').datepicker({
+            inline: true
+        }).change(function () {
+            $('.endDate_local').val($(this).val());
+        });
+    });
+</script>
+
+<div id="myModal_active"class="reveal-modal"> 
+    <table class="table">
+        <thead>
+            <tr>
+                <th colspan=2>
+                    Назначить услуги
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <% for i, service in enumerate(services): %>
+            <tr>
+                <td>${service.HumanName}</td>
+                <td>
+                <% if not (_client.HaveService(service)): %>
+                    <form method=post action="${siteroot}/UserInfo/ActivateService">
+                        <input type="hidden" name="clientId" value="${ClientCode}" />
+                        <input type="hidden" name="serviceId" value="${service.Id}" />
+                        <input type="hidden" class="startDate_local" name="startDate_local"/>
+                        <input type="hidden" class="endDate_local" name="endDate_local"/>
+                        <button class="button" style="margin-top:15px;" value="Назначить"><img alt="Save" src="${Siteroot}/Images/application_edit.png"> Активировать </button>
+                    </form>
+                <%else: %>
+                    Услуга активирована
+                <%end %>
+                </td>
+            </tr>
+            <%end %>
+            <tr>
+                <td>
+                    <label for="startDate">Начала периода </label><input type=text  name="startDate" id="startDate" class="date-pick dp-applied"> 
+                </td>
+                <td>
+                    <label for="endDate"> Конец периода </label><input type=text  name="endDate" id="endDate" class="date-pick dp-applied">
+                </td>
+            </tr>
+        </tbody>
+    </table>
+<a class="close-reveal-modal">х</a>
+</div> 

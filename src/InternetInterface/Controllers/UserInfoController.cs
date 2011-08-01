@@ -95,6 +95,7 @@ namespace InternetInterface.Controllers
             var client = Client.Find(filter.ClientCode);
             PropertyBag["filter"] = filter;
 			PropertyBag["_client"] = client;
+            PropertyBag["services"] = Service.FindAll();
 			PropertyBag["Client"] = client.PhysicalClient;
             //PropertyBag["Leases"] = filter.Find();
             
@@ -196,7 +197,31 @@ namespace InternetInterface.Controllers
             RedirectToUrl("../UserInfo/SearchUserInfo.rails?filter.ClientCode=" + ClientID);
         }
 
-	    public void SaveSwitchForClient(uint ClientID, [DataBind("ConnectInfo")]ConnectInfo ConnectInfo,
+        public void ActivateService(uint clientId, uint serviceId, DateTime? startDate_local, DateTime? endDate_local)
+        {
+            var servise = Service.Find(serviceId);
+            var client = Client.Find(clientId);
+            if (ClientService.Queryable.Count(c => c.Service == servise && c.Client == client) == 0)
+            {
+                var clientService = new ClientService {
+                                                          Client = client,
+                                                          Service = servise,
+                                                          BeginWorkDate = startDate_local,
+                                                          EndWorkDate = endDate_local
+                                                      };
+                clientService.Save();
+                clientService.Activate();
+                Appeals.CreareAppeal(
+                    string.Format("Услуга \"{0}\" активирована на период с {1} по {2}", servise.HumanName,
+                                  clientService.BeginWorkDate != null ? clientService.BeginWorkDate.Value.ToShortDateString() : string.Empty,
+                                  clientService.EndWorkDate != null ? clientService.EndWorkDate.Value.ToShortDateString() : string.Empty),
+                    client,
+                    AppealType.User);
+            }
+            RedirectToUrl("../UserInfo/SearchUserInfo.rails?filter.ClientCode=" + clientId);
+        }
+
+        public void SaveSwitchForClient(uint ClientID, [DataBind("ConnectInfo")]ConnectInfo ConnectInfo,
 			uint BrigadForConnect)
 		{
 			var client = Client.Find(ClientID);

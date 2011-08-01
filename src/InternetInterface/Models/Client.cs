@@ -99,7 +99,7 @@ namespace InternetInterface.Models
         public virtual bool CanUsedPostponedPayment()
         {
             return PhysicalClient != null &&
-                   !ClientServices.Select(c => c.Service).Contains(Service.GetByType(typeof(DebtWork))) && Disabled &&
+                   !ClientServices.Select(c => c.Service).Contains(Service.GetByType(typeof (DebtWork))) && Disabled &&
                    PhysicalClient.Balance < 0 &&
                    AutoUnblocked && PaymentForTariff();
         }
@@ -129,8 +129,12 @@ namespace InternetInterface.Models
             return pass;
         }
 
+        public virtual bool HaveService(Service service)
+        {
+            return ClientServices.Select(c => c.Service).ToList().Contains(service);
+        }
 
-	    public virtual ClientType GetClientType()
+        public virtual ClientType GetClientType()
 		{
 			if (PhysicalClient != null)
 				return ClientType.Phisical;
