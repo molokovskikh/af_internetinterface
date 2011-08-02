@@ -8,10 +8,11 @@
           <label for="Autosearch"><b>Внести сумму по тарифному плану (${Client.Tariff.Price} рублей)</b> </label><br />
           <input type="radio" id="OtherSummChange" name="ChangedBy.ChangeType" value="OtherSumm" ${"checked" if ChangeBy.IsOtherSumm()} />
         <%end %>
+         <%end %>
         <%else: %>
             <input type="hidden" name="ChangedBy.ChangeType" value="OtherSumm" />
        <%end %>
-     <%end %>
+
           <label for="Other_Balance"><b>Внести сумму на счет:</b> </label>
           <input type="text" class="BalanceText" id="BalanceText"  name="BalanceText"  value="${BalanceText}" style="width: 50%; " />
           <br />
