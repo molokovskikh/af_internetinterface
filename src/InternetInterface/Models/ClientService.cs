@@ -26,6 +26,9 @@ namespace InternetInterface.Models
         [Property]
         public virtual DateTime? EndWorkDate { get; set; }
 
+        [Property]
+        public virtual bool Activated { get; set; }
+
         public override void Delete()
         {
             if (Service.CanDelete(this))

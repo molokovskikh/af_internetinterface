@@ -89,6 +89,10 @@ namespace Billing
 			try
 			{
                 UseSession(() => {
+                    foreach (var cserv in ClientService.FindAll())
+                    {
+                        cserv.Service.Activate(cserv);
+                    }
                     var newClients = Client.FindAll(DetachedCriteria.For(typeof (Client))
                                                          .CreateAlias("PhysicalClient", "PC", JoinType.InnerJoin)
                                                          .Add(Restrictions.Eq("PC.ConnectionPaid", false))
@@ -178,7 +182,7 @@ namespace Billing
                         }
                         else
                         {
-                            if (client.ShowBalanceWarningPage)
+                            //if (client.ShowBalanceWarningPage)
                                 client.ShowBalanceWarningPage = false;
                         }
                         client.UpdateAndFlush();

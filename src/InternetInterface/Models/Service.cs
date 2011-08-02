@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Web;
 using Castle.ActiveRecord;
 using Common.Tools;
@@ -63,6 +64,11 @@ namespace InternetInterface.Models
         public virtual void PaymentClient(ClientService CService)
         {}
 
+        public virtual string GetParameters()
+        {
+            return string.Empty;
+        }
+
         public virtual bool CanDelete(ClientService CService)
         {
             return true;
@@ -76,6 +82,12 @@ namespace InternetInterface.Models
         public virtual decimal GetPrice(ClientService CService)
         {
             return Price;
+        }
+
+        public virtual bool CanActivate(Client client)
+        {
+            return !client.ClientServices.Select(c => c.Service).Contains(this);
+            //return true;
         }
 
         /*public virtual void CreateAppeal(string message, ClientService CService)
@@ -95,6 +107,24 @@ namespace InternetInterface.Models
     [ActiveRecord(DiscriminatorValue = "DebtWork")]
     public class DebtWork : Service
     {
+        public override string GetParameters()
+        {
+            var builder = new StringBuilder();
+            builder.Append("<tr>");
+            builder.Append(
+                string.Format(
+                    "<td><label for=\"endDate\"> Конец периода </label><input type=text  name=\"endDate\" id=\"endDate\" value=\"{0}\" class=\"date-pick dp-applied\"></td>",
+                    DateTime.Now.AddDays(1).ToShortDateString()));
+            builder.Append("</tr>");
+            return builder.ToString();
+        }
+
+        public override bool CanActivate(Client client)
+        {
+            return base.CanActivate(client) &&
+                   !client.ClientServices.Select(c => c.Service).Contains(GetByType(typeof (VoluntaryBlockin)));
+        }
+
         public override void PaymentClient(ClientService CService)
         {
             if (CService.Client.PhysicalClient.Balance > 0)
@@ -122,10 +152,13 @@ namespace InternetInterface.Models
 
         public override void Activate(ClientService CService)
         {
-            var client = CService.Client;
-            client.Disabled = false;
-            client.Status = Status.Find((uint)StatusType.Worked);
-            client.Update();
+            if (!CService.Activated)
+            {
+                var client = CService.Client;
+                client.Disabled = false;
+                client.Status = Status.Find((uint) StatusType.Worked);
+                client.Update();
+            }
             //CreateAppeal("Услуга \"Обещанный платеж активирована\"", CService);
         }
     }
@@ -133,40 +166,65 @@ namespace InternetInterface.Models
     [ActiveRecord(DiscriminatorValue = "VoluntaryBlockin")]
     public class VoluntaryBlockin : Service
     {
-        private bool diactivate { get; set; }
+        public override string GetParameters()
+        {
+            var builder = new StringBuilder();
+            builder.Append("<tr>");
+            builder.Append(
+                string.Format(
+                    "<td><label for=\"startDate\">Начала периода </label><input type=text value=\"{0}\" name=\"startDate\" id=\"startDate\" class=\"date-pick dp-applied\"> </td>",
+                    DateTime.Now.ToShortDateString()));
+            builder.Append(
+                string.Format(
+                    "<td><label for=\"endDate\"> Конец периода </label><input type=text  name=\"endDate\" value=\"{0}\"  id=\"endDate\" class=\"date-pick dp-applied\"></td>",
+                    DateTime.Now.AddDays(1).ToShortDateString()));
+            builder.Append("</tr>");
+            return builder.ToString();
+        }
+
+        public override bool CanActivate(Client client)
+        {
+            return base.CanActivate(client) &&
+                   !client.ClientServices.Select(c => c.Service).Contains(GetByType(typeof (DebtWork)));
+        }
 
         public override void Activate(ClientService CService)
         {
-            var client = CService.Client;
-            client.RatedPeriodDate = DateTime.Now;
-            client.Disabled = true;
-            client.AutoUnblocked = false;
-            client.DebtDays = 0;
-            client.Update();
-            CService.BeginWorkDate = DateTime.Now;
-            CService.EndWorkDate = null;
-            CService.Update();
+            if (((SystemTime.Now().Date - CService.BeginWorkDate.Value.Date).TotalHours <= 0) && !CService.Activated)
+            {
+                var client = CService.Client;
+                client.RatedPeriodDate = DateTime.Now;
+                client.Disabled = true;
+                client.AutoUnblocked = false;
+                client.DebtDays = 0;
+                client.Update();
+                CService.Activated = true;
+                //CService.BeginWorkDate = DateTime.Now;
+                //CService.EndWorkDate = null;
+                CService.Update();
+            }
             //CreateAppeal("Услуга добровольная блокировка включена", CService);
         }
 
-        public virtual void DiactivateVoluntaryBlockin(ClientService CService)
+        /*public virtual void DiactivateVoluntaryBlockin(ClientService CService)
         {
             diactivate = true;
             Diactivate(CService);
-        }
+        }*/
 
         public override void Diactivate(ClientService CService)
         {
-            if (diactivate)
+            if ((CService.EndWorkDate == null && CService.Client.PhysicalClient.Balance < 0) ||
+                (CService.EndWorkDate != null && (SystemTime.Now().Date - CService.EndWorkDate.Value.Date).TotalHours < 0))
             {
                 var client = CService.Client;
                 client.DebtDays = 0;
                 client.RatedPeriodDate = DateTime.Now;
-                client.Disabled = false;
+                client.Disabled = CService.Client.PhysicalClient.Balance < 0;
                 client.AutoUnblocked = true;
                 client.Update();
-                CService.EndWorkDate = DateTime.Now;
-                CService.Update();
+                //CService.EndWorkDate = DateTime.Now;
+                CService.Delete();
                 //CreateAppeal("Услуга добровольная блокировка отключена", CService);
             }
         }
@@ -180,7 +238,7 @@ namespace InternetInterface.Models
         {
             if (CService.EndWorkDate == null)
                 return true;
-            return (DateTime.Now - CService.EndWorkDate.Value).Days < 45;
+            return (SystemTime.Now().Date - CService.EndWorkDate.Value.Date).Days < 45;
         }
 
         public override decimal GetPrice(ClientService CService)
@@ -188,7 +246,7 @@ namespace InternetInterface.Models
             if (CService.BeginWorkDate == null)
                 return 0;
 
-            if ((SystemTime.Now() - CService.BeginWorkDate.Value).Days < 15)
+            if ((SystemTime.Now().Date - CService.BeginWorkDate.Value.Date).TotalDays < 15)
                 return 0;
             return Price;
         }

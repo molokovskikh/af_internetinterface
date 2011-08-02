@@ -197,7 +197,7 @@ namespace InternetInterface.Controllers
             RedirectToUrl("../UserInfo/SearchUserInfo.rails?filter.ClientCode=" + ClientID);
         }
 
-        public void ActivateService(uint clientId, uint serviceId, DateTime? startDate_local, DateTime? endDate_local)
+        public void ActivateService(uint clientId, uint serviceId, DateTime? startDate, DateTime? endDate)
         {
             var servise = Service.Find(serviceId);
             var client = Client.Find(clientId);
@@ -206,14 +206,14 @@ namespace InternetInterface.Controllers
                 var clientService = new ClientService {
                                                           Client = client,
                                                           Service = servise,
-                                                          BeginWorkDate = startDate_local,
-                                                          EndWorkDate = endDate_local
+                                                          BeginWorkDate = startDate,
+                                                          EndWorkDate = endDate
                                                       };
                 clientService.Save();
                 clientService.Activate();
                 Appeals.CreareAppeal(
                     string.Format("Услуга \"{0}\" активирована на период с {1} по {2}", servise.HumanName,
-                                  clientService.BeginWorkDate != null ? clientService.BeginWorkDate.Value.ToShortDateString() : string.Empty,
+                                  clientService.BeginWorkDate != null ? clientService.BeginWorkDate.Value.ToShortDateString() : DateTime.Now.ToShortDateString(),
                                   clientService.EndWorkDate != null ? clientService.EndWorkDate.Value.ToShortDateString() : string.Empty),
                     client,
                     AppealType.User);

@@ -79,6 +79,37 @@ namespace Billing.Test.Unit
 		}
 
         [Test]
+        public void DebtWorkTest()
+        {
+            var client = CreateClient();
+            const int countDays = 10;
+            var physClient = client.PhysicalClient;
+            physClient.Balance = 0m;
+            physClient.Update();
+            client.Disabled = true;
+            client.RatedPeriodDate = SystemTime.Now();
+            client.Update();
+            var CServive = new ClientService {
+                                                 Client = client,
+                                                 EndWorkDate = SystemTime.Now().AddDays(countDays),
+                                                 Service = Service.GetByType(typeof(DebtWork)),
+                                             };
+            CServive.Save();
+            CServive.Activate();
+            for (int i = 0; i < countDays; i++)
+            {
+                billing.On();
+                billing.Compute();
+            }
+            physClient.Refresh();
+            Assert.That(Math.Round(- client.GetPrice() / client.GetInterval() * countDays, 5), Is.EqualTo(physClient.Balance));
+        }
+
+        /*[Test]
+        public void */
+
+
+	    [Test]
         public void MaxDebtTest()
         {
             var client = CreateClient();

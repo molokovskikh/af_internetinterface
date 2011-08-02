@@ -60,7 +60,9 @@
 
 <script type="text/javascript">
     $(function () {
-
+        $("#accordion").accordion({
+            collapsible: true
+        });
         $('#startDate').datepicker({
             inline: true
         }).change(function () {
@@ -84,31 +86,30 @@
             </tr>
         </thead>
         <tbody>
+        <tr>
+            <td>
+            <div id="accordion" style="font-size:1em;">
             <% for i, service in enumerate(services): %>
-            <tr>
-                <td>${service.HumanName}</td>
-                <td>
-                <% if not (_client.HaveService(service)): %>
-                    <form method=post action="${siteroot}/UserInfo/ActivateService">
-                        <input type="hidden" name="clientId" value="${ClientCode}" />
-                        <input type="hidden" name="serviceId" value="${service.Id}" />
-                        <input type="hidden" class="startDate_local" name="startDate_local"/>
-                        <input type="hidden" class="endDate_local" name="endDate_local"/>
-                        <button class="button" style="margin-top:15px;" value="Назначить"><img alt="Save" src="${Siteroot}/Images/application_edit.png"> Активировать </button>
-                    </form>
-                <%else: %>
-                    Услуга активирована
-                <%end %>
-                </td>
-            </tr>
+                <% if service.CanActivate(_client): %>
+                    <h4><a href="#"> ${service.HumanName} </a> </h4>
+                    <div>
+                        <form method=post action="${siteroot}/UserInfo/ActivateService">
+                            <input type="hidden" name="clientId" value="${ClientCode}" />
+                            <input type="hidden" name="serviceId" value="${service.Id}" />
+                            <table>
+                                <tbody>
+                                    ${service.GetParameters()}
+                                </tbody>
+                            </table>
+                            <button class="button" style="margin-top:15px;" value="Назначить"><img alt="Save" src="${Siteroot}/Images/application_edit.png"> Активировать </button>
+                        </form>
+                    </div>
+                    <%else: %>
+                      Активация услуги "${service.HumanName}" невозможна
+                    <%end %>
             <%end %>
-            <tr>
-                <td>
-                    <label for="startDate">Начала периода </label><input type=text  name="startDate" id="startDate" class="date-pick dp-applied"> 
-                </td>
-                <td>
-                    <label for="endDate"> Конец периода </label><input type=text  name="endDate" id="endDate" class="date-pick dp-applied">
-                </td>
+            </div>
+            </td>
             </tr>
         </tbody>
     </table>
