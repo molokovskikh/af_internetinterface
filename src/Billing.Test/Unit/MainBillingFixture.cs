@@ -50,12 +50,13 @@ namespace Billing.Test.Unit
             new DebtWork
             {
                 BlockingAll = false,
-                Price = 100m
+                Price = 0
             }.Save();
+
             new VoluntaryBlockin
             {
                 BlockingAll = true,
-                Price = 100m
+                Price = 0
             }.Save();
 
 			new InternetSettings{NextBillingDate = DateTime.Now}.Save();
@@ -68,7 +69,15 @@ namespace Billing.Test.Unit
 			return client;
 		}
 
-		private void SetClientDate(Client client, Interval rd)
+        private void PrepareTest()
+        {
+            WriteOff.DeleteAll();
+            Payment.DeleteAll();
+            Client.DeleteAll();
+            SystemTime.Reset();
+        }
+
+	    private void SetClientDate(Client client, Interval rd)
 		{
 			client = Client.FindFirst();
 			client.RatedPeriodDate = rd.dtFrom;
@@ -81,6 +90,7 @@ namespace Billing.Test.Unit
         [Test]
         public void DebtWorkTest()
         {
+            SystemTime.Reset();
             var client = CreateClient();
             const int countDays = 10;
             var physClient = client.PhysicalClient;
@@ -91,6 +101,7 @@ namespace Billing.Test.Unit
             client.Update();
             var CServive = new ClientService {
                                                  Client = client,
+                                                 BeginWorkDate = DateTime.Now,
                                                  EndWorkDate = SystemTime.Now().AddDays(countDays),
                                                  Service = Service.GetByType(typeof(DebtWork)),
                                              };
@@ -100,13 +111,41 @@ namespace Billing.Test.Unit
             {
                 billing.On();
                 billing.Compute();
+                SystemTime.Now = () => DateTime.Now.AddDays(i+1);
             }
             physClient.Refresh();
+            client.Refresh();
+            Console.WriteLine(client.RatedPeriodDate);
+            Assert.That(physClient.Balance, Is.EqualTo(0));
+            new Payment {
+                            Client = client,
+                            Sum = client.GetPrice(),
+                            PaidOn = DateTime.Now.AddDays(-1)
+                        }.Save();
+            client.Refresh();
+            SystemTime.Reset();
+            CServive.Refresh();
+            CServive.Activate();
+            for (int i = 0; i < countDays; i++)
+            {
+                billing.On();
+                billing.Compute();
+                SystemTime.Now = () => DateTime.Now.AddDays(i + 1);
+            }
+            Assert.That(physClient.Balance, Is.LessThan(0m));
             Assert.That(Math.Round(- client.GetPrice() / client.GetInterval() * countDays, 5), Is.EqualTo(physClient.Balance));
+            Assert.That(client.RatedPeriodDate.Value.Date, Is.EqualTo(DateTime.Now.Date));
+            Assert.IsTrue(client.Disabled);
+            //Assert.IsEmpty(client.ClientServices.ToArray());
+            Client.DeleteAll();
+            SystemTime.Reset();
         }
 
-        /*[Test]
-        public void */
+        [Test]
+        public void VoluntaryBlockinTest()
+        {
+
+        }
 
 
 	    [Test]
@@ -182,6 +221,7 @@ namespace Billing.Test.Unit
             client.Update();
             Assert.IsFalse(client.CanBlock());
             ClientService.DeleteAll();
+            Client.DeleteAll();
         }
 
 	    [Test]
@@ -381,8 +421,9 @@ namespace Billing.Test.Unit
 
 	    [Test]
 		public void LawyerPersonTest()
-		{
-		    SystemTime.Reset();
+	    {
+	        PrepareTest();
+		    //SystemTime.Reset();
             var lPerson = new LawyerPerson
             {
                 Balance = 0,
@@ -405,6 +446,7 @@ namespace Billing.Test.Unit
 			Assert.That( -19999m, Is.GreaterThan(lPerson.Balance));
 			Assert.That(-20000m, Is.LessThan(lPerson.Balance));
 			billing.On();
+            //client.Refresh();
 			Assert.IsTrue(client.ShowBalanceWarningPage);
 			Console.WriteLine(client.ShowBalanceWarningPage);
 			lPerson.Balance += 1000;
@@ -474,14 +516,10 @@ namespace Billing.Test.Unit
 			var writeOffs = WriteOff.Queryable.Where(w => w.Client == client).ToList();
 			Assert.That(writeOffs.Count, Is.EqualTo(1));
 			Assert.That(writeOffs[0].WriteOffSum, Is.GreaterThan(10));
+		    WriteOff.DeleteAll();
+            Client.DeleteAll();
 		}
 
-        [Test]
-        public void sdf()
-        {
-            Console.WriteLine(new DateTime(2011, 08, 31).AddMonths(1).ToShortDateString());
-            Console.WriteLine((new DateTime(2011, 08, 31).AddMonths(1) - new DateTime(2011, 08, 31)).Days);
-        }
 
 	    /// <summary>
 		/// Следить за состоянием client.DebtDays;

@@ -89,9 +89,9 @@ namespace Billing
 			try
 			{
                 UseSession(() => {
-                    foreach (var cserv in ClientService.FindAll())
+                    foreach (var cserv in ClientService.Queryable.Where(c => !c.Activated).ToList())
                     {
-                        cserv.Service.Activate(cserv);
+                        cserv.Activate();
                     }
                     var newClients = Client.FindAll(DetachedCriteria.For(typeof (Client))
                                                          .CreateAlias("PhysicalClient", "PC", JoinType.InnerJoin)
@@ -172,10 +172,12 @@ namespace Billing
                         client.Disabled = false;
                         client.UpdateAndFlush();
                     }
-                    var lawyerPerson = LawyerPerson.FindAll();
-                    foreach (var person in lawyerPerson)
+                    //var lawyerPerson = LawyerPerson.FindAll();
+                    var lawyerPersons = Client.Queryable.Where(c => c.LawyerPerson != null);
+                    foreach (var client in lawyerPersons)
                     {
-                        var client = Client.Queryable.Where(c => c.LawyerPerson == person).ToList().First();
+                        //var client = Client.Queryable.Where(c => c.LawyerPerson == person).ToList().First();
+                        var person = client.LawyerPerson;
                         if (person.Balance < -(person.Tariff*1.9m))
                         {
                             client.ShowBalanceWarningPage = true;
@@ -189,7 +191,7 @@ namespace Billing
                     }
                     foreach (var cserv in ClientService.FindAll())
                     {
-                        cserv.Service.Diactivate(cserv);
+                        cserv.Deactivate();
                     }
                     /*var postPClients = Client.Queryable.Where(c => c.PostponedPayment != null).ToList();
                     foreach (var postPClient in postPClients)
@@ -233,8 +235,9 @@ namespace Billing
 
         public void Compute()
         {
-            var clients = Client.FindAll(DetachedCriteria.For(typeof (Client))
-                                              .Add(Restrictions.IsNotNull("PhysicalClient")));
+            var clients = Client.Queryable.Where(c => c.PhysicalClient != null).ToList();
+            /*var clients = Client.FindAll(DetachedCriteria.For(typeof (Client))
+                                              .Add(Restrictions.IsNotNull("PhysicalClient")));*/
             foreach (var client in clients)
             {
                 var phisicalClient = client.PhysicalClient;

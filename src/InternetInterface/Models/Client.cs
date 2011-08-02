@@ -93,7 +93,9 @@ namespace InternetInterface.Models
 
         public virtual bool PaymentForTariff()
         {
-            return Payments.Sum(p => p.Sum) >= GetPrice();
+            if (Payments != null)
+                return Payments.Sum(p => p.Sum) >= GetPrice();
+            return false;
         }
 
         public virtual bool CanUsedPostponedPayment()
@@ -275,13 +277,13 @@ typeof(ClientConnectInfo)))
                 servisesPrice = ClientServices.Sum(c => c.Service.GetPrice(c));
             }
 
-            if (PhysicalClient.Tariff.FinalPriceInterval == 0 || PhysicalClient.Tariff.FinalPrice == 0)
+            if ((PhysicalClient.Tariff.FinalPriceInterval == 0 || PhysicalClient.Tariff.FinalPrice == 0) && !Disabled)
                 return PhysicalClient.Tariff.Price + servisesPrice;
 
-            if (BeginWork != null && BeginWork.Value.AddMonths(PhysicalClient.Tariff.FinalPriceInterval) <= SystemTime.Now())
+            if ((BeginWork != null && BeginWork.Value.AddMonths(PhysicalClient.Tariff.FinalPriceInterval) <= SystemTime.Now()) && !Disabled)
                 return PhysicalClient.Tariff.FinalPrice + servisesPrice;
 
-            return PhysicalClient.Tariff.Price + servisesPrice;
+            return 0;
         }
 	}
 }

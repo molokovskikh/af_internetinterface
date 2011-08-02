@@ -55,8 +55,10 @@ namespace InternetInterface.Models
         public virtual void Activate(ClientService CService)
         {}
 
-        public virtual void Diactivate(ClientService CService)
-        {}
+        public virtual bool Diactivate(ClientService CService)
+        {
+            return false;
+        }
 
         public virtual void EditClient(ClientService CService)
         {}
@@ -121,7 +123,7 @@ namespace InternetInterface.Models
 
         public override bool CanActivate(Client client)
         {
-            return base.CanActivate(client) &&
+            return client.PaymentForTariff() && base.CanActivate(client) &&
                    !client.ClientServices.Select(c => c.Service).Contains(GetByType(typeof (VoluntaryBlockin)));
         }
 
@@ -138,7 +140,23 @@ namespace InternetInterface.Models
             return (CService.EndWorkDate.Value - SystemTime.Now()).TotalHours <= 0;
         }
 
-        public override void Diactivate(ClientService CService)
+        public override bool CanDelete(ClientService CService)
+        {
+            if (CService.Activator != null)
+                return true;
+
+            var lastPayments =
+                Payment.Queryable.Where(
+                    p => p.Client == CService.Client && (CService.BeginWorkDate.Value - p.PaidOn).TotalHours <= 0).
+                    ToList().Sum(p => p.Sum);
+            var balance = CService.Client.PhysicalClient.Balance;
+            if (balance > 0 &&
+                balance - lastPayments <= 0)
+                return true;
+            return false;
+        }
+
+        public override bool Diactivate(ClientService CService)
         {
             if ((CService.EndWorkDate.Value - SystemTime.Now()).TotalHours <= 0)
             {
@@ -146,18 +164,23 @@ namespace InternetInterface.Models
                 client.Disabled = true;
                 client.Status = Status.Find((uint)StatusType.NoWorked);
                 client.UpdateAndFlush();
-                CService.Delete();
+                return true;
+                //CService.Delete();
             }
+            return false;
         }
 
         public override void Activate(ClientService CService)
         {
-            if (!CService.Activated)
+            if (!CService.Activated && CanActivate(CService.Client))
             {
                 var client = CService.Client;
                 client.Disabled = false;
+                client.RatedPeriodDate = SystemTime.Now();
                 client.Status = Status.Find((uint) StatusType.Worked);
                 client.Update();
+                CService.Activated = true;
+                CService.Update();
             }
             //CreateAppeal("Услуга \"Обещанный платеж активирована\"", CService);
         }
@@ -212,7 +235,7 @@ namespace InternetInterface.Models
             Diactivate(CService);
         }*/
 
-        public override void Diactivate(ClientService CService)
+        public override bool Diactivate(ClientService CService)
         {
             if ((CService.EndWorkDate == null && CService.Client.PhysicalClient.Balance < 0) ||
                 (CService.EndWorkDate != null && (SystemTime.Now().Date - CService.EndWorkDate.Value.Date).TotalHours < 0))
@@ -223,10 +246,12 @@ namespace InternetInterface.Models
                 client.Disabled = CService.Client.PhysicalClient.Balance < 0;
                 client.AutoUnblocked = true;
                 client.Update();
+                return true;
                 //CService.EndWorkDate = DateTime.Now;
-                CService.Delete();
+                //CService.Delete();
                 //CreateAppeal("Услуга добровольная блокировка отключена", CService);
             }
+            return false;
         }
 
         public override void PaymentClient(ClientService CService)
@@ -246,9 +271,9 @@ namespace InternetInterface.Models
             if (CService.BeginWorkDate == null)
                 return 0;
 
-            if ((SystemTime.Now().Date - CService.BeginWorkDate.Value.Date).TotalDays < 15)
+            if ((SystemTime.Now().Date - CService.BeginWorkDate.Value.AddMonths(1).Date).TotalDays >= 0 )
                 return 0;
-            return Price;
+            return CService.Client.GetInterval()*2m;
         }
     }
 }

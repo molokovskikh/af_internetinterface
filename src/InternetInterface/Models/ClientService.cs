@@ -29,6 +29,9 @@ namespace InternetInterface.Models
         [Property]
         public virtual bool Activated { get; set; }
 
+        [BelongsTo]
+        public virtual Partner Activator { get; set; }
+
         public override void Delete()
         {
             if (Service.CanDelete(this))
@@ -42,7 +45,8 @@ namespace InternetInterface.Models
 
         public virtual void Deactivate()
         {
-            Service.Diactivate(this);
+            if (Service.Diactivate(this))
+                Delete();
         }
     }
 }

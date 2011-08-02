@@ -206,8 +206,22 @@ namespace InternetInterface.Controllers
                 var clientService = new ClientService {
                                                           Client = client,
                                                           Service = servise,
-                                                          BeginWorkDate = startDate,
-                                                          EndWorkDate = endDate
+                                                          BeginWorkDate =
+                                                              startDate == null
+                                                                  ? startDate
+                                                                  : new DateTime(startDate.Value.Year,
+                                                                                 startDate.Value.Month,
+                                                                                 startDate.Value.Day, DateTime.Now.Hour,
+                                                                                 DateTime.Now.Minute,
+                                                                                 DateTime.Now.Second),
+                                                          EndWorkDate = endDate == null
+                                                                            ? endDate
+                                                                            : new DateTime(endDate.Value.Year,
+                                                                                           endDate.Value.Month,
+                                                                                           endDate.Value.Day,
+                                                                                           DateTime.Now.Hour,
+                                                                                           DateTime.Now.Minute,
+                                                                                           DateTime.Now.Second),
                                                       };
                 clientService.Save();
                 clientService.Activate();

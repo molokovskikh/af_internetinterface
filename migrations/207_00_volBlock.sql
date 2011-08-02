@@ -15,4 +15,4 @@ CREATE TABLE `internet`.`Services` (
 )
 ENGINE = InnoDB;
 
-ALTER TABLE `internet`.`ClientServices` ADD COLUMN `Activated` TINYINT(1) UNSIGNED NOT NULL AFTER `EndWorkDate`;
+
