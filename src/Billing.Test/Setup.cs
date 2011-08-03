@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Billing.Test.Unit;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework.Config;
 using Common.Tools;
@@ -43,7 +44,7 @@ namespace Billing.Test
 							ActiveRecordStarter.DropSchema();
 							done = true;
 						}
-                        scope = new SessionScope();
+                        //scope = new SessionScope();
 					}
 					catch (MySqlException e)
 					{
@@ -52,6 +53,10 @@ namespace Billing.Test
 					}
 				}
 				ActiveRecordStarter.CreateSchema();
+                using (new SessionScope())
+                {
+                    MainBillingFixture.PrepareTests();
+                }
 			}
 			catch (Exception ex)
 			{
@@ -64,8 +69,8 @@ namespace Billing.Test
 		[TearDown]
 		public void Teardown()
 		{
-            scope.Dispose();
-            scope = null;
+            //scope.Dispose();
+            //scope = null;
 			if (mysql != null)
 				mysql.Kill();
 			if (scope == null)

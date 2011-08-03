@@ -13,15 +13,37 @@ using InternetInterface.Models;
 
 namespace Billing.Test.Unit
 {
-	[TestFixture]
-	public class MainBillingFixture
+    [TestFixture]
+    public class IntegrationFixture
+    {
+        protected ISessionScope scope;
+
+        [SetUp]
+        public void Setup()
+        {
+            scope = new SessionScope();
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            if (scope != null)
+                scope.Dispose();
+        }
+    }
+
+    public class MainBillingFixture : IntegrationFixture
 	{
 		private MainBilling billing;
 
-		public MainBillingFixture()
-		{
-			billing = new MainBilling();
+        [SetUp]
+        public void CreateBilling()
+        {
+            billing = new MainBilling();
+        }
 
+        public static void PrepareTests()
+		{
             new Partner
             {
                 Login = "Test",
@@ -29,7 +51,7 @@ namespace Billing.Test.Unit
 
 
 
-            SessionScope.Current.Flush();
+            //SessionScope.Current.Flush();
 
             InithializeContent.GetAdministrator = () => Partner.FindFirst();
 
@@ -71,6 +93,7 @@ namespace Billing.Test.Unit
 
         private void PrepareTest()
         {
+            ClientService.DeleteAll();
             WriteOff.DeleteAll();
             Payment.DeleteAll();
             Client.DeleteAll();
@@ -94,37 +117,46 @@ namespace Billing.Test.Unit
             var client = CreateClient();
             const int countDays = 10;
             var physClient = client.PhysicalClient;
-            physClient.Balance = 0m;
+            physClient.Balance = -10m;
             physClient.Update();
             client.Disabled = true;
+            client.AutoUnblocked = true;
             client.RatedPeriodDate = SystemTime.Now();
             client.Update();
             var CServive = new ClientService {
                                                  Client = client,
                                                  BeginWorkDate = DateTime.Now,
                                                  EndWorkDate = SystemTime.Now().AddDays(countDays),
-                                                 Service = Service.GetByType(typeof(DebtWork)),
+                                                 Service = Service.GetByType(typeof (DebtWork)),
                                              };
-            CServive.Save();
+            /*CServive.Save();
+            client.Refresh();*/
+            client.ClientServices.Add(CServive);
             CServive.Activate();
             for (int i = 0; i < countDays; i++)
             {
                 billing.On();
                 billing.Compute();
-                SystemTime.Now = () => DateTime.Now.AddDays(i+1);
+                SystemTime.Now = () => DateTime.Now.AddDays(i + 1);
             }
-            physClient.Refresh();
-            client.Refresh();
+            /*physClient.Refresh();
+            client.Refresh();*/
             Console.WriteLine(client.RatedPeriodDate);
-            Assert.That(physClient.Balance, Is.EqualTo(0));
+            Assert.That(physClient.Balance, Is.EqualTo(-10));
             new Payment {
                             Client = client,
-                            Sum = client.GetPrice(),
+                            Sum = client.PhysicalClient.Tariff.Price,
                             PaidOn = DateTime.Now.AddDays(-1)
                         }.Save();
+            billing.On();
+            physClient.Balance = -10;
+            client.RatedPeriodDate = DateTime.Now;
+            client.Update();
+            physClient.Update();
             client.Refresh();
             SystemTime.Reset();
-            CServive.Refresh();
+            //CServive.Refresh();
+            //CServive.Client.Update();
             CServive.Activate();
             for (int i = 0; i < countDays; i++)
             {
@@ -133,12 +165,77 @@ namespace Billing.Test.Unit
                 SystemTime.Now = () => DateTime.Now.AddDays(i + 1);
             }
             Assert.That(physClient.Balance, Is.LessThan(0m));
-            Assert.That(Math.Round(- client.GetPrice() / client.GetInterval() * countDays, 5), Is.EqualTo(physClient.Balance));
-            Assert.That(client.RatedPeriodDate.Value.Date, Is.EqualTo(DateTime.Now.Date));
             Assert.IsTrue(client.Disabled);
-            //Assert.IsEmpty(client.ClientServices.ToArray());
-            Client.DeleteAll();
+            client.Disabled = false;
+            client.Update();
+            //SystemTime.Reset();
+            Assert.That(Math.Round(-client.GetPrice()/client.GetInterval()*countDays, 5) - 10,
+                        Is.EqualTo(Math.Round(physClient.Balance, 5)));
+            Assert.That(client.RatedPeriodDate.Value.Date, Is.EqualTo(DateTime.Now.Date));
+            CServive = new ClientService {
+                                             Client = client,
+                                             BeginWorkDate = DateTime.Now,
+                                             EndWorkDate = SystemTime.Now().AddDays(countDays),
+                                             Service = Service.GetByType(typeof (DebtWork)),
+                                         };
+            client.ClientServices.Add(CServive);
+            //CServive.Save();
+            Assert.That(CServive.LogComment, !Is.EqualTo(string.Empty));
+            client.Disabled = true;
+            client.Update();
+            new Payment {
+                            Client = client,
+                            Sum = client.PhysicalClient.Tariff.Price,
+                            PaidOn = DateTime.Now.AddDays(1)
+                        }.Save();
+            SystemTime.Now = () => DateTime.Now.AddDays(countDays + 1);
+            billing.On();
+            physClient.Balance = -10;
+            client.Refresh();
+            CServive = new ClientService {
+                                             Client = client,
+                                             BeginWorkDate = DateTime.Now,
+                                             EndWorkDate = SystemTime.Now().AddDays(countDays),
+                                             Service = Service.GetByType(typeof (DebtWork)),
+                                         };
+            client.ClientServices.Add(CServive);
+            //CServive.Save();
+            CServive.Activate();
+            Assert.That(CServive.Activated, Is.EqualTo(true));
+        }
+
+        [Test]
+        public void DebtWorkTestPartner()
+        {
+            PrepareTest();
             SystemTime.Reset();
+            var client = CreateClient();
+            const int countDays = 10;
+            var physClient = client.PhysicalClient;
+            physClient.Balance = -10m;
+            physClient.Update();
+            client.Disabled = true;
+            client.AutoUnblocked = true;
+            client.RatedPeriodDate = SystemTime.Now();
+            client.Update();
+            var CServive = new ClientService
+            {
+                Client = client,
+                BeginWorkDate = DateTime.Now,
+                EndWorkDate = SystemTime.Now().AddDays(countDays),
+                Service = Service.GetByType(typeof(DebtWork)),
+                Activator = InithializeContent.partner
+            };
+            client.ClientServices.Add(CServive);
+            //CServive.Save();
+            CServive.Refresh();
+            CServive.Activate();
+            Assert.That(CServive.Activated, Is.EqualTo(true));
+            Assert.IsFalse(CServive.Client.Disabled);
+            CServive.CompulsoryDiactivate();
+            Assert.IsTrue(CServive.Client.Disabled);
+            //scope.Flush();
+            Assert.That(client.ClientServices, Is.Empty);
         }
 
         [Test]
@@ -181,30 +278,32 @@ namespace Billing.Test.Unit
             Assert.IsTrue(client.CanBlock());
             var service = new ClientService {
                                   Client = client,
-                                  Service = ActiveRecordMediator<DebtWork>.FindFirst() //Service.GetByType(typeof(DebtWork))
+                                  Service = ActiveRecordMediator<DebtWork>.FindFirst() //service.GetByType(typeof(DebtWork))
                               };
             service.Save();
             //client.DebtWork = true;
             //client.Update();
             client.Refresh();
             Assert.IsFalse(client.CanBlock());
-            service.DeleteAndFlush();
+            client.ClientServices.Remove(service);
+            //scope.Flush();
+            //service.Delete();
             service = new ClientService {
                                             Client = client,
                                             Service = Service.GetByType(typeof(DebtWork)),
                                             BeginWorkDate = DateTime.Now,
                                             EndWorkDate = DateTime.Now.AddDays(1)
                                         };
-            service.Save();
+            client.ClientServices.Add(service);
+            //service.Save();
             //client.DebtWork = false;
             //client.PostponedPayment = DateTime.Now;
             SystemTime.Now = () => DateTime.Now;
             //client.Update();
             Assert.IsFalse(client.CanBlock());
             SystemTime.Now = () => DateTime.Now.AddDays(2);
-            client.Refresh();
             Assert.IsTrue(client.CanBlock());
-            service.DeleteAndFlush();
+            client.ClientServices.Add(service);
             new ClientService {
                                   Client = client,
                                   Service = Service.GetByType(typeof(DebtWork))
@@ -214,14 +313,13 @@ namespace Billing.Test.Unit
             Assert.IsFalse(client.CanBlock());
             //client.DebtWork = false;
             //client.PostponedPayment = null;
-            ClientService.DeleteAll();
-            client.Refresh();
+            //ClientService.DeleteAll();
+            client.ClientServices.Clear();
+            //client.Refresh();
             Assert.IsTrue(client.CanBlock());
             client.Disabled = true;
             client.Update();
             Assert.IsFalse(client.CanBlock());
-            ClientService.DeleteAll();
-            Client.DeleteAll();
         }
 
 	    [Test]

@@ -6,6 +6,7 @@ using System.Net;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework.Internal.EventListener;
 using Castle.ActiveRecord.Linq;
+using Castle.Components.DictionaryAdapter;
 using Common.Models.Helpers;
 using Common.Tools;
 using Common.Web.Ui.Helpers;
@@ -22,7 +23,13 @@ namespace InternetInterface.Models
     [ActiveRecord("Clients", Schema = "Internet", Lazy = true), Auditable]
 	public class Client : ChildActiveRecordLinqBase<Client>
 	{
-		[PrimaryKey]
+        public Client()
+        {
+            ClientServices = new List<ClientService>();
+            //Payments = new List<Payment>();
+        }
+
+        [PrimaryKey]
 		public virtual uint Id { get; set; }
 
 		[Property]
@@ -119,7 +126,7 @@ namespace InternetInterface.Models
         [HasMany(ColumnKey = "Client", OrderBy = "WriteOffDate", Lazy = true)]
         public virtual IList<WriteOff> WriteOffs { get; set; }
 
-        [HasMany(ColumnKey = "Client", Lazy = true)]
+        [HasMany(ColumnKey = "Client", Lazy = true, Cascade = ManyRelationCascadeEnum.All)]
         public virtual IList<ClientService> ClientServices { get; set; }
 
 
@@ -272,9 +279,9 @@ typeof(ClientConnectInfo)))
             {
                 var blockingService = ClientServices.Where(c => c.Service.BlockingAll).ToList().FirstOrDefault();
                 if (blockingService != null)
-                    return blockingService.Service.GetPrice(blockingService);
+                    return blockingService.GetPrice();
 
-                servisesPrice = ClientServices.Sum(c => c.Service.GetPrice(c));
+                servisesPrice = ClientServices.Sum(c => c.GetPrice());
             }
 
             if ((PhysicalClient.Tariff.FinalPriceInterval == 0 || PhysicalClient.Tariff.FinalPrice == 0) && !Disabled)

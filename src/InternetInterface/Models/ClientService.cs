@@ -8,6 +8,10 @@ using InternetInterface.Models.Universal;
 
 namespace InternetInterface.Models
 {
+    public class UniqueServiceException : Exception
+    {
+    }
+
     [ActiveRecord("ClientServices", Schema = "Internet", Lazy = true)]
     public class ClientService : ValidActiveRecordLinqBase<ClientService>
     {
@@ -32,10 +36,26 @@ namespace InternetInterface.Models
         [BelongsTo]
         public virtual Partner Activator { get; set; }
 
-        public override void Delete()
+        public virtual void DeleteFromClient()
         {
             if (Service.CanDelete(this))
-                base.Delete();
+            {
+                //base.Delete();
+                Client.ClientServices.Remove(this);
+            }
+        }
+
+        public override void Save()
+        {
+            if (Client.ClientServices != null)
+                if (Client.ClientServices.Select(c => c.Service).Contains(Service))
+                {
+                    LogComment = "Невозможно использовать данную услугу";
+                    return;
+                }
+            //throw new UniqueServiceException();
+            base.Save();
+            Client.Refresh();
         }
 
         public virtual void Activate()
@@ -43,10 +63,22 @@ namespace InternetInterface.Models
             Service.Activate(this);
         }
 
-        public virtual void Deactivate()
+        public virtual void Diactivate()
         {
             if (Service.Diactivate(this))
-                Delete();
+                DeleteFromClient();
+        }
+
+        public virtual void CompulsoryDiactivate()
+        {
+            Service.CompulsoryDiactivate(this);
+            //Client.ClientServices
+            DeleteFromClient();
+        }
+
+        public virtual decimal GetPrice()
+        {
+            return Service.GetPrice(this);
         }
     }
 }

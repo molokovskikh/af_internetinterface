@@ -22,7 +22,7 @@ namespace InternetInterface.Test.Integration
         {
             using (new SessionScope())
             {
-                //var service = Service.GetByName("DebtWork");
+                //var service = service.GetByName("DebtWork");
                 //service.EditClient(new Client());
                 //new DebtWork().Save();
             }

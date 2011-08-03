@@ -25,7 +25,7 @@ namespace InternetInterface.Models
     }
 
     [ActiveRecord("Services", Schema = "Internet", Lazy = true, DiscriminatorColumn = "Name",
-        DiscriminatorType = "String", DiscriminatorValue = "Service")]
+        DiscriminatorType = "String", DiscriminatorValue = "service")]
     public class Service : ValidActiveRecordLinqBase<Service>
     {
         [PrimaryKey]
@@ -43,8 +43,6 @@ namespace InternetInterface.Models
         [Property]
         public virtual bool BlockingAll { get; set; }
 
-        //public virtual Func<bool> CreateAppeal { get; set; }
-
         public static Service GetByType(Type type)
         {
             return FindAll().Where(s => s.GetType() == type).FirstOrDefault();
@@ -59,6 +57,9 @@ namespace InternetInterface.Models
         {
             return false;
         }
+
+        public virtual void CompulsoryDiactivate(ClientService CService)
+        {}
 
         public virtual void EditClient(ClientService CService)
         {}
@@ -86,10 +87,9 @@ namespace InternetInterface.Models
             return Price;
         }
 
-        public virtual bool CanActivate(Client client)
+        public virtual bool CanActivate(ClientService CService)
         {
-            return !client.ClientServices.Select(c => c.Service).Contains(this);
-            //return true;
+            return true;
         }
 
         /*public virtual void CreateAppeal(string message, ClientService CService)
@@ -121,23 +121,29 @@ namespace InternetInterface.Models
             return builder.ToString();
         }
 
-        public override bool CanActivate(Client client)
+        public override bool CanActivate(ClientService CService)
         {
-            return client.PaymentForTariff() && base.CanActivate(client) &&
-                   !client.ClientServices.Select(c => c.Service).Contains(GetByType(typeof (VoluntaryBlockin)));
+            var client = CService.Client;
+            var payTar = client.PaymentForTariff();
+            if (CService.Activator != null)
+                payTar = true;
+            //var baseActive = base.CanActivate(client);
+            var balance = client.PhysicalClient.Balance < 0;
+            var conVol = !client.ClientServices.Select(c => c.Service).Contains(GetByType(typeof (VoluntaryBlockin)));
+            return payTar && conVol && balance;
         }
 
         public override void PaymentClient(ClientService CService)
         {
             if (CService.Client.PhysicalClient.Balance > 0)
-                Diactivate(CService);
+                CService.Diactivate();
         }
 
         public override bool CanBlock(ClientService CService)
         {
             if (CService.EndWorkDate == null)
                 return false;
-            return (CService.EndWorkDate.Value - SystemTime.Now()).TotalHours <= 0;
+            return CService.EndWorkDate.Value < SystemTime.Now();
         }
 
         public override bool CanDelete(ClientService CService)
@@ -147,7 +153,7 @@ namespace InternetInterface.Models
 
             var lastPayments =
                 Payment.Queryable.Where(
-                    p => p.Client == CService.Client && (CService.BeginWorkDate.Value - p.PaidOn).TotalHours <= 0).
+                    p => p.Client == CService.Client && CService.BeginWorkDate.Value < p.PaidOn).
                     ToList().Sum(p => p.Sum);
             var balance = CService.Client.PhysicalClient.Balance;
             if (balance > 0 &&
@@ -156,14 +162,21 @@ namespace InternetInterface.Models
             return false;
         }
 
+        public override void CompulsoryDiactivate(ClientService CService)
+        {
+            var client = CService.Client;
+            client.Disabled = true;
+            client.Status = Status.Find((uint)StatusType.NoWorked);
+            client.UpdateAndFlush();
+            CService.Activated = false;
+            CService.Update();
+        }
+
         public override bool Diactivate(ClientService CService)
         {
-            if ((CService.EndWorkDate.Value - SystemTime.Now()).TotalHours <= 0)
+            if (CService.Activated && CService.EndWorkDate.Value.Date < SystemTime.Now().Date)
             {
-                var client = CService.Client;
-                client.Disabled = true;
-                client.Status = Status.Find((uint)StatusType.NoWorked);
-                client.UpdateAndFlush();
+                CompulsoryDiactivate(CService);
                 return true;
                 //CService.Delete();
             }
@@ -172,7 +185,7 @@ namespace InternetInterface.Models
 
         public override void Activate(ClientService CService)
         {
-            if (!CService.Activated && CanActivate(CService.Client))
+            if ((!CService.Activated && CanActivate(CService)))
             {
                 var client = CService.Client;
                 client.Disabled = false;
@@ -182,7 +195,6 @@ namespace InternetInterface.Models
                 CService.Activated = true;
                 CService.Update();
             }
-            //CreateAppeal("Услуга \"Обещанный платеж активирована\"", CService);
         }
     }
 
@@ -205,10 +217,9 @@ namespace InternetInterface.Models
             return builder.ToString();
         }
 
-        public override bool CanActivate(Client client)
+        public override bool CanActivate(ClientService CService)
         {
-            return base.CanActivate(client) &&
-                   !client.ClientServices.Select(c => c.Service).Contains(GetByType(typeof (DebtWork)));
+            return !CService.Client.ClientServices.Select(c => c.Service).Contains(GetByType(typeof(DebtWork)));
         }
 
         public override void Activate(ClientService CService)

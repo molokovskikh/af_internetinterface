@@ -83,12 +83,16 @@ namespace Billing
 			}
 		}
 
+        public void On()
+        {
+            UseSession(OnMethod);
+        }
 
-		public void On()
+	    public void OnMethod()
 		{
 			try
 			{
-                UseSession(() => {
+               // UseSession(() => {
                     foreach (var cserv in ClientService.Queryable.Where(c => !c.Activated).ToList())
                     {
                         cserv.Activate();
@@ -191,7 +195,7 @@ namespace Billing
                     }
                     foreach (var cserv in ClientService.FindAll())
                     {
-                        cserv.Deactivate();
+                        cserv.Diactivate();
                     }
                     /*var postPClients = Client.Queryable.Where(c => c.PostponedPayment != null).ToList();
                     foreach (var postPClient in postPClients)
@@ -203,7 +207,7 @@ namespace Billing
                             postPClient.UpdateAndFlush();
                         }
                     }*/
-                });
+               // });
 			}
 			catch (Exception ex)
 			{
