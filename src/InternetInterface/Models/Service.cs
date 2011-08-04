@@ -93,6 +93,17 @@ namespace InternetInterface.Models
             return Price;
         }
 
+        public virtual bool CanActivate(Client client)
+        {
+            if (client.ClientServices != null)
+            {
+                var cs = client.ClientServices.Where(c => c.Service == this).FirstOrDefault();
+                if (cs != null)
+                    return CanActivate(cs);
+            }
+            return true;
+        }
+
         public virtual bool CanActivate(ClientService CService)
         {
             return true;

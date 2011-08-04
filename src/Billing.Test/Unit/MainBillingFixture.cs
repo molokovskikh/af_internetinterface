@@ -295,6 +295,7 @@ namespace Billing.Test.Unit
             SystemTime.Now = () => service.EndWorkDate.Value.AddDays(46);
             billing.On();
             Assert.That(client.ClientServices, Is.Empty);
+            Assert.IsFalse(client.Disabled);
             SystemTime.Reset();
             service = new ClientService
             {
@@ -315,7 +316,6 @@ namespace Billing.Test.Unit
                 SystemTime.Now = () => DateTime.Now.AddDays(countDays + 1);
                 countDays++;
                 physClient.Refresh();
-                Console.WriteLine(countDays);
             }
             var firstdate = WriteOff.FindFirst().WriteOffDate;
             Console.WriteLine(physClient.Balance);
@@ -327,6 +327,7 @@ namespace Billing.Test.Unit
                 Is.EqualTo(Math.Round(
                     WriteOff.Queryable.Where(w => w.Client == client).ToList().Sum(w => w.WriteOffSum), 2)));
             Assert.That(firstdate.Date, Is.EqualTo(DateTime.Now.AddMonths(1).Date));
+            WriteOff.FindAll().Select(w => w.WriteOffSum).Each(c => Assert.That(c, Is.EqualTo(2m)));
         }
 
 

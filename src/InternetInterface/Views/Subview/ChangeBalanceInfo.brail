@@ -63,12 +63,12 @@
         $("#accordion").accordion({
             collapsible: true
         });
-        $('#startDate').datepicker({
+        $('.startDate').datepicker({
             inline: true
         }).change(function () {
             $('.startDate_local').val($(this).val());
         });
-        $('#endDate').datepicker({
+        $('.endDate').datepicker({
             inline: true
         }).change(function () {
             $('.endDate_local').val($(this).val());
