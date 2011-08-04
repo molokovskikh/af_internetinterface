@@ -73,8 +73,8 @@ namespace Billing.Test
             //scope = null;
 			if (mysql != null)
 				mysql.Kill();
-			if (scope == null)
-				return;
+			//if (scope == null)
+				//return;
 			SystemTime.Reset();
 		}
 	}

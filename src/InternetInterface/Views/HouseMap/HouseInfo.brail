@@ -41,8 +41,8 @@
                         });
 
                         $('#last_TV option').each(function () {
-                            alert("this" + $(this).val());
-                            alert("LastTV" + data.LastTV);
+                            //alert("this" + $(this).val());
+                            //alert("LastTV" + data.LastTV);
                             if ($(this).val() == data.LastTV)
                             {
                                 $(this).attr('selected', 'selected');

@@ -43,11 +43,17 @@ namespace InternetInterface.Models
         [Property]
         public virtual bool BlockingAll { get; set; }
 
+        /*public static T GetByType<T>() where T : class 
+        {
+            return ActiveRecordMediator<T>.FindFirst();
+        }*/
+
         public static Service GetByType(Type type)
         {
-            return FindAll().Where(s => s.GetType() == type).FirstOrDefault();
-        }
+            return (Service)ActiveRecordMediator.FindFirst(type);
 
+            //return FindAll().Where(s => s.GetType() == type).FirstOrDefault();
+        }
 
 
         public virtual void Activate(ClientService CService)
@@ -174,7 +180,7 @@ namespace InternetInterface.Models
 
         public override bool Diactivate(ClientService CService)
         {
-            if (CService.Activated && CService.EndWorkDate.Value.Date < SystemTime.Now().Date)
+            if (CService.Activated && CService.EndWorkDate.Value < SystemTime.Now())
             {
                 CompulsoryDiactivate(CService);
                 return true;
@@ -219,12 +225,15 @@ namespace InternetInterface.Models
 
         public override bool CanActivate(ClientService CService)
         {
-            return !CService.Client.ClientServices.Select(c => c.Service).Contains(GetByType(typeof(DebtWork)));
+            var balance = CService.Client.PhysicalClient.Balance > 0;
+            var debtWork = !CService.Client.ClientServices.Select(c => c.Service).Contains(GetByType(typeof (DebtWork)));
+            var begin = SystemTime.Now() > CService.BeginWorkDate.Value;
+            return debtWork && begin && balance;
         }
 
         public override void Activate(ClientService CService)
         {
-            if (((SystemTime.Now().Date - CService.BeginWorkDate.Value.Date).TotalHours <= 0) && !CService.Activated)
+            if (CanActivate(CService) && !CService.Activated)
             {
                 var client = CService.Client;
                 client.RatedPeriodDate = DateTime.Now;
@@ -233,48 +242,43 @@ namespace InternetInterface.Models
                 client.DebtDays = 0;
                 client.Update();
                 CService.Activated = true;
-                //CService.BeginWorkDate = DateTime.Now;
-                //CService.EndWorkDate = null;
                 CService.Update();
             }
-            //CreateAppeal("Услуга добровольная блокировка включена", CService);
         }
 
-        /*public virtual void DiactivateVoluntaryBlockin(ClientService CService)
+        public override void CompulsoryDiactivate(ClientService CService)
         {
-            diactivate = true;
-            Diactivate(CService);
-        }*/
+            var client = CService.Client;
+            client.DebtDays = 0;
+            client.RatedPeriodDate = DateTime.Now;
+            client.Disabled = CService.Client.PhysicalClient.Balance < 0;
+            client.AutoUnblocked = true;
+            if (CService.Client.PhysicalClient.Balance > 0)
+                client.Disabled = false;
+            client.Update();
+        }
 
         public override bool Diactivate(ClientService CService)
         {
             if ((CService.EndWorkDate == null && CService.Client.PhysicalClient.Balance < 0) ||
-                (CService.EndWorkDate != null && (SystemTime.Now().Date - CService.EndWorkDate.Value.Date).TotalHours < 0))
+                (CService.EndWorkDate != null && (SystemTime.Now() > CService.EndWorkDate.Value)))
             {
-                var client = CService.Client;
-                client.DebtDays = 0;
-                client.RatedPeriodDate = DateTime.Now;
-                client.Disabled = CService.Client.PhysicalClient.Balance < 0;
-                client.AutoUnblocked = true;
-                client.Update();
+                CompulsoryDiactivate(CService);
                 return true;
-                //CService.EndWorkDate = DateTime.Now;
-                //CService.Delete();
-                //CreateAppeal("Услуга добровольная блокировка отключена", CService);
             }
             return false;
         }
 
         public override void PaymentClient(ClientService CService)
         {
-            Diactivate(CService);
+            CompulsoryDiactivate(CService);
         }
 
         public override bool CanDelete(ClientService CService)
         {
             if (CService.EndWorkDate == null)
                 return true;
-            return (SystemTime.Now().Date - CService.EndWorkDate.Value.Date).Days < 45;
+            return (SystemTime.Now().Date - CService.EndWorkDate.Value.Date).Days > 45;
         }
 
         public override decimal GetPrice(ClientService CService)
@@ -282,7 +286,7 @@ namespace InternetInterface.Models
             if (CService.BeginWorkDate == null)
                 return 0;
 
-            if ((SystemTime.Now().Date - CService.BeginWorkDate.Value.AddMonths(1).Date).TotalDays >= 0 )
+            if ((SystemTime.Now().Date < CService.BeginWorkDate.Value.AddMonths(1).Date))
                 return 0;
             return CService.Client.GetInterval()*2m;
         }

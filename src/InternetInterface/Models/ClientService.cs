@@ -15,6 +15,7 @@ namespace InternetInterface.Models
     [ActiveRecord("ClientServices", Schema = "Internet", Lazy = true)]
     public class ClientService : ValidActiveRecordLinqBase<ClientService>
     {
+
         [PrimaryKey]
         public virtual uint Id { get; set; }
 
@@ -79,6 +80,11 @@ namespace InternetInterface.Models
         public virtual decimal GetPrice()
         {
             return Service.GetPrice(this);
+        }
+
+        public virtual void PaymentClient()
+        {
+            Service.PaymentClient(this);
         }
     }
 }

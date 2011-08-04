@@ -26,7 +26,7 @@ namespace InternetInterface.Models
         public Client()
         {
             ClientServices = new List<ClientService>();
-            //Payments = new List<Payment>();
+            Payments = new List<Payment>();
         }
 
         [PrimaryKey]
@@ -101,14 +101,14 @@ namespace InternetInterface.Models
         public virtual bool PaymentForTariff()
         {
             if (Payments != null)
-                return Payments.Sum(p => p.Sum) >= GetPrice();
+                return Payments.Sum(p => p.Sum) >= GetPriceForTariff();
             return false;
         }
 
         public virtual bool CanUsedPostponedPayment()
         {
             return PhysicalClient != null &&
-                   !ClientServices.Select(c => c.Service).Contains(Service.GetByType(typeof (DebtWork))) && Disabled &&
+                   !ClientServices.Select(c => c.Service).Contains(Service.GetByType(typeof(DebtWork))) && Disabled &&
                    PhysicalClient.Balance < 0 &&
                    AutoUnblocked && PaymentForTariff();
         }
@@ -178,7 +178,7 @@ namespace InternetInterface.Models
             if (ClientServices != null)
             {
                 var CServ =
-                    ClientServices.Where(c => c.Service == Service.GetByType(typeof (DebtWork))).FirstOrDefault();
+                    ClientServices.Where(c => c.Service.Id == Service.GetByType(typeof (DebtWork)).Id).FirstOrDefault();
                 if (CServ != null && !CServ.Service.CanBlock(CServ))
                 {
                     return false;
@@ -272,16 +272,26 @@ typeof(ClientConnectInfo)))
             return false;
         }
 
+        public virtual decimal GetPriceForTariff()
+        {
+            if ((PhysicalClient.Tariff.FinalPriceInterval == 0 || PhysicalClient.Tariff.FinalPrice == 0) )
+                return PhysicalClient.Tariff.Price ;
+
+            if ((BeginWork != null && BeginWork.Value.AddMonths(PhysicalClient.Tariff.FinalPriceInterval) <= SystemTime.Now()))
+                return PhysicalClient.Tariff.FinalPrice;
+            return PhysicalClient.Tariff.Price;
+        }
+
         public virtual decimal GetPrice()
         {
             var servisesPrice = 0m;
             if (ClientServices != null)
             {
-                var blockingService = ClientServices.Where(c => c.Service.BlockingAll).ToList().FirstOrDefault();
+                var blockingService = ClientServices.Where(c => c.Service.BlockingAll && c.Activated).ToList().FirstOrDefault();
                 if (blockingService != null)
                     return blockingService.GetPrice();
 
-                servisesPrice = ClientServices.Sum(c => c.GetPrice());
+                servisesPrice = ClientServices.Where(c=> !c.Service.BlockingAll && c.Activated).Sum(c => c.GetPrice());
             }
 
             if ((PhysicalClient.Tariff.FinalPriceInterval == 0 || PhysicalClient.Tariff.FinalPrice == 0) && !Disabled)
