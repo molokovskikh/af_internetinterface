@@ -38,7 +38,7 @@
 			</td>
             <td style="font-size:small;">
                     <a class="big-link" data-reveal-id="myModal_active" href="#" >
-                    <button type="button" id="Button2" class="button"><img alt="Save" src="../Images/tick.png"> Активировать услуги </button>
+                    <button type="button" id="Button2" class="button"><img alt="Save" src="../Images/tick.png"> Управление услугами </button>
                     </a>
               <!-- <form class="form login" method="post" action="${siteroot}/UserInfo/PostponedPayment">
 				<input type="hidden" name="ClientID" value="${ClientCode}" />
@@ -63,16 +63,14 @@
         $("#accordion").accordion({
             collapsible: true
         });
-        $('.startDate').datepicker({
-            inline: true
-        }).change(function () {
+        $('.date-pick').datepicker().change(function () {
             $('.startDate_local').val($(this).val());
         });
-        $('.endDate').datepicker({
+        /*$('.endDate').datepicker({;
             inline: true
         }).change(function () {
             $('.endDate_local').val($(this).val());
-        });
+        });*/
     });
 </script>
 
@@ -90,7 +88,7 @@
             <td>
             <div id="accordion" style="font-size:1em;">
             <% for i, service in enumerate(services): %>
-                <% if service.CanActivate(_client): %>
+                <% if service.CanActivateInWeb(_client): %>
                     <h4><a href="#"> ${service.HumanName} </a> </h4>
                     <div>
                         <form method=post action="${siteroot}/UserInfo/ActivateService">
@@ -105,7 +103,19 @@
                         </form>
                     </div>
                     <%else: %>
-                      Активация услуги "${service.HumanName}" невозможна
+                      <%if service.ActivatedForClient(_client): %>
+                        <h4><a href="#"> ${service.HumanName} </a> </h4>
+                        <div>
+                            <form method=post action="${siteroot}/UserInfo/DiactivateService">
+                                <input type="hidden" name="clientId" value="${ClientCode}" />
+                                <input type="hidden" name="serviceId" value="${service.Id}" />
+                                <button class="button" style="margin-top:15px;" value="Назначить"><img alt="Save" src="${Siteroot}/Images/application_edit.png"> Деактивировать </button>
+                            </form>
+                        </div>
+                      <%else: %>
+                       <h4><a href="#"> ${service.HumanName} </a> </h4>
+                       <div>Активация услуги  невозможна</div>
+                      <%end %>
                     <%end %>
             <%end %>
             </div>

@@ -61,15 +61,17 @@ namespace InforoomInternet.Controllers
                                       EndWorkDate = DateTime.Now.AddDays(1),
                                       Service = Service.GetByType(typeof(DebtWork))
                                   };
-                CService.Save();
-                CService.Service.Activate(CService);
 
-                /*new Appeals {
+                //CService.Save();
+                client.ClientServices.Add(CService);
+                CService.Activate();
+
+                new Appeals {
                                 Appeal = "Услуга \"Обещанный платеж активирована\"",
                                 AppealType = (int) AppealType.System,
                                 Client = client,
                                 Date = DateTime.Now
-                            }.Save();*/
+                            }.Save();
             }
             RedirectToUrl("IndexOffice");
         }

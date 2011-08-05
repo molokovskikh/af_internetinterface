@@ -80,20 +80,8 @@ namespace InternetInterface.Models
 		[Property]  
 		public virtual bool AutoUnblocked { get; set; }
 
-        /*[Property]
-        public virtual DateTime? VoluntaryBlockingDate { get; set; }
-
-        [Property]
-        public virtual DateTime? VoluntaryUnblockedDate { get; set; }*/
-
         [BelongsTo, Auditable("Статус")]
 		public virtual Status Status { get; set; }
-
-        /*[Property]
-        public virtual DateTime? PostponedPayment { get; set; }*/
-
-        /*[Property]
-        public virtual bool DebtWork { get; set; }*/
 
         [BelongsTo(Lazy = FetchWhen.OnInvoke)]
         public virtual AdditionalStatus AdditionalStatus { get; set; }
@@ -167,6 +155,10 @@ namespace InternetInterface.Models
             return GetClientLeases().LastOrDefault();
         }
 
+        public virtual bool StartWork()
+        {
+            return BeginWork != null;
+        }
 
         public virtual decimal GetInterval()
 		{
@@ -184,9 +176,6 @@ namespace InternetInterface.Models
                     return false;
                 }
             }
-
-            /*if (PostponedPayment != null && (PostponedPayment.Value.AddDays(1) - SystemTime.Now()).TotalHours >= 0)
-                return false;*/
 
             if ((Disabled) || (PhysicalClient.Balance > 0))
                 return false;
@@ -288,7 +277,7 @@ typeof(ClientConnectInfo)))
             if (ClientServices != null)
             {
                 var blockingService = ClientServices.Where(c => c.Service.BlockingAll && c.Activated).ToList().FirstOrDefault();
-                if (blockingService != null)
+                if (blockingService != null && !blockingService.Diactivated)
                     return blockingService.GetPrice();
 
                 servisesPrice = ClientServices.Where(c=> !c.Service.BlockingAll && c.Activated).Sum(c => c.GetPrice());

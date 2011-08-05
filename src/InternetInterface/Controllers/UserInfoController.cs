@@ -201,36 +201,63 @@ namespace InternetInterface.Controllers
         {
             var servise = Service.Find(serviceId);
             var client = Client.Find(clientId);
-            if (ClientService.Queryable.Count(c => c.Service == servise && c.Client == client) == 0)
-            {
-                var clientService = new ClientService {
-                                                          Client = client,
-                                                          Service = servise,
-                                                          BeginWorkDate =
-                                                              startDate == null
-                                                                  ? startDate
-                                                                  : new DateTime(startDate.Value.Year,
-                                                                                 startDate.Value.Month,
-                                                                                 startDate.Value.Day, DateTime.Now.Hour,
-                                                                                 DateTime.Now.Minute,
-                                                                                 DateTime.Now.Second),
-                                                          EndWorkDate = endDate == null
-                                                                            ? endDate
-                                                                            : new DateTime(endDate.Value.Year,
-                                                                                           endDate.Value.Month,
-                                                                                           endDate.Value.Day,
-                                                                                           DateTime.Now.Hour,
-                                                                                           DateTime.Now.Minute,
-                                                                                           DateTime.Now.Second),
-                                                      };
-                clientService.Save();
-                clientService.Activate();
+            var dtn = DateTime.Now;
+            /*if (ClientService.Queryable.Count(c => c.Service == servise && c.Client == client) == 0)
+            {*/
+            var clientService = new ClientService {
+                                                      Client = client,
+                                                      Service = servise,
+                                                      BeginWorkDate =
+                                                          startDate == null
+                                                              ? dtn
+                                                              : new DateTime(startDate.Value.Year,
+                                                                             startDate.Value.Month,
+                                                                             startDate.Value.Day, dtn.Hour,
+                                                                             dtn.Minute,
+                                                                             dtn.Second),
+                                                      EndWorkDate = endDate == null
+                                                                        ? endDate
+                                                                        : new DateTime(endDate.Value.Year,
+                                                                                       endDate.Value.Month,
+                                                                                       endDate.Value.Day,
+                                                                                       dtn.Hour,
+                                                                                       dtn.Minute,
+                                                                                       dtn.Second),
+                                                      Activator = InithializeContent.partner
+                                                  };
+            //clientService.Save();
+            client.ClientServices.Add(clientService);
+            clientService.Activate();
+            if (string.IsNullOrEmpty(clientService.LogComment))
                 Appeals.CreareAppeal(
                     string.Format("Услуга \"{0}\" активирована на период с {1} по {2}", servise.HumanName,
-                                  clientService.BeginWorkDate != null ? clientService.BeginWorkDate.Value.ToShortDateString() : DateTime.Now.ToShortDateString(),
-                                  clientService.EndWorkDate != null ? clientService.EndWorkDate.Value.ToShortDateString() : string.Empty),
+                                  clientService.BeginWorkDate != null
+                                      ? clientService.BeginWorkDate.Value.ToShortDateString()
+                                      : DateTime.Now.ToShortDateString(),
+                                  clientService.EndWorkDate != null
+                                      ? clientService.EndWorkDate.Value.ToShortDateString()
+                                      : string.Empty),
                     client,
                     AppealType.User);
+            else
+                PropertyBag["errorMessage"] = clientService.LogComment;
+            //}
+            RedirectToUrl("../UserInfo/SearchUserInfo.rails?filter.ClientCode=" + clientId);
+        }
+
+        public void DiactivateService(uint clientId, uint serviceId)
+        {
+            var servise = Service.Find(serviceId);
+            var client = Client.Find(clientId);
+            if (client.ClientServices != null)
+            {
+                var cservice =
+                    client.ClientServices.Where(c => c.Service.Id == serviceId && c.Activated).FirstOrDefault();
+                if (cservice != null)
+                {
+                    cservice.CompulsoryDiactivate();
+                    Appeals.CreareAppeal(string.Format("Услуга \"{0}\" деактивирована", servise.HumanName), client, AppealType.User);
+                }
             }
             RedirectToUrl("../UserInfo/SearchUserInfo.rails?filter.ClientCode=" + clientId);
         }

@@ -37,12 +37,15 @@ namespace InternetInterface.Models
         [BelongsTo]
         public virtual Partner Activator { get; set; }
 
+        [Property]
+        public virtual bool Diactivated { get; set; }
+
         public virtual void DeleteFromClient()
         {
             if (Service.CanDelete(this))
             {
-                //base.Delete();
                 Client.ClientServices.Remove(this);
+                base.Delete();
             }
         }
 

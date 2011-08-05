@@ -170,7 +170,7 @@ namespace Billing.Test.Unit
             }
             SystemTime.Now = () => DateTime.Now.AddDays(countDays + 1);
             billing.OnMethod();
-            client.Refresh();
+            //client.Refresh();
             Assert.That(WriteOff.FindAll().Count(), Is.EqualTo(countDays));
             Assert.That(physClient.Balance, Is.LessThan(0m));
             Assert.IsTrue(client.Disabled);
@@ -330,8 +330,71 @@ namespace Billing.Test.Unit
             WriteOff.FindAll().Select(w => w.WriteOffSum).Each(c => Assert.That(c, Is.EqualTo(2m)));
         }
 
+        [Test]
+        public void ActiveDeactive()
+        {
+            PrepareTest();
+            SystemTime.Reset();
+            var client = CreateClient();
+            const int countDays = 5;
+            var physClient = client.PhysicalClient;
+            physClient.Balance = -10m;
+            physClient.Update();
+            client.Disabled = true;
+            client.AutoUnblocked = true;
+            client.RatedPeriodDate = SystemTime.Now();
+            client.Update();
 
-	    [Test]
+            var CServive = new ClientService
+            {
+                Client = client,
+                BeginWorkDate = DateTime.Now,
+                EndWorkDate = SystemTime.Now().AddDays(countDays),
+                Service = Service.GetByType(typeof(DebtWork)),
+                Activator = InithializeContent.partner
+            };
+            client.ClientServices.Add(CServive);
+            CServive.Activate();
+            billing.OnMethod();
+            billing.Compute();
+            Assert.IsFalse(client.Disabled);
+            CServive.CompulsoryDiactivate();
+            Assert.IsTrue(client.Disabled);
+            billing.OnMethod();
+            Assert.IsTrue(client.Disabled);
+            CServive = new ClientService
+            {
+                Client = client,
+                BeginWorkDate = DateTime.Now,
+                EndWorkDate = SystemTime.Now().AddDays(countDays),
+                Service = Service.GetByType(typeof(VoluntaryBlockin)),
+                Activator = InithializeContent.partner
+            };
+            physClient.Balance = 200m;
+            physClient.Update();
+            billing.OnMethod();
+            Assert.IsFalse(client.Disabled);// = true;
+            Assert.IsTrue(client.AutoUnblocked);
+            Assert.IsNull(client.RatedPeriodDate);
+            //client.AutoUnblocked = true;
+            //client.RatedPeriodDate = null;
+            //client.Update();
+            client.ClientServices.Add(CServive);
+            CServive.Activate();
+            Assert.IsTrue(client.Disabled);
+            SystemTime.Now = () => DateTime.Now.AddMonths(1).AddDays(1);
+            billing.Compute();
+            Assert.That(WriteOff.FindAll().Last().WriteOffSum, Is.EqualTo(2m));
+            CServive.CompulsoryDiactivate();
+            billing.Compute();
+            Assert.That(WriteOff.FindAll().Last().WriteOffSum, Is.GreaterThan(5m));
+            Assert.IsFalse(client.Disabled);
+            billing.OnMethod();
+            Assert.IsFalse(client.Disabled);
+        }
+
+
+        [Test]
         public void MaxDebtTest()
         {
             var client = CreateClient();
@@ -643,6 +706,7 @@ namespace Billing.Test.Unit
 		public void Write_off()
 		{
 			BaseBillingFixture.CreateAndSaveInternetSettings();
+            PrepareTest();
 			var client = CreateClient();
 			//var client = CreateClient();
 			client.PhysicalClient.Balance = Tariff.FindFirst().Price;

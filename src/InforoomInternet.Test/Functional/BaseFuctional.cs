@@ -249,6 +249,10 @@ namespace InforoomInternet.Test.Unit
         [Test]
         public void PrivateOfficeTest()
         {
+            using (new SessionScope())
+            {
+                ClientService.DeleteAll();
+            }
             Client client;
             PhysicalClients phisClient;
             string clientId;
@@ -286,20 +290,32 @@ namespace InforoomInternet.Test.Unit
                 Assert.IsFalse(client.PaymentForTariff());
                 new Payment {
                                 Client = client,
-                                Sum = client.GetPrice(),
+                                Sum = client.GetPriceForTariff()*2,
                             }.Save();
+                client.ClientServices.Clear();
+                client.Update();
             }
             using (var browser = Open("PrivateOffice/IndexOffice"))
             using (new SessionScope())
             {
+                
+                Console.WriteLine(client.PhysicalClient != null);
+                Console.WriteLine(!client.ClientServices.Select(c => c.Service).Contains(Service.GetByType(typeof(DebtWork))));
+                Console.WriteLine(client.Disabled);
+                Console.WriteLine(client.PhysicalClient.Balance < 0);
+                Console.WriteLine(client.AutoUnblocked);
+                Console.WriteLine(client.PaymentForTariff());
                 browser.Element("podrob").Click();
                 //Console.WriteLine(browser.Html);
                 browser.Button("PostponedBut").Click();
+                Console.WriteLine(browser.Text);
                 Assert.That(browser.Text, Is.StringContaining("Ваш личный кабинет"));
+            }
+            using (new SessionScope())
+            {
                 client = Client.Find(Convert.ToUInt32(clientId));
                 Assert.IsFalse(client.Disabled);
             }
-
 
             Console.WriteLine("PrivateOfficeTest Complite");
         }

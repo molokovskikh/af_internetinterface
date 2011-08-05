@@ -26,3 +26,7 @@ ALTER TABLE `internet`.`ClientServices` ADD CONSTRAINT `FK_ClientServices_1` FOR
     REFERENCES `Clients` (`Id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE;
+
+	
+	ALTER TABLE `internet`.`ClientServices` MODIFY COLUMN `Client` INT(10) UNSIGNED DEFAULT NULL,
+ ADD COLUMN `Diactivated` TINYINT(1) UNSIGNED NOT NULL AFTER `Activator`;

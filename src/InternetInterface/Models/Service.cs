@@ -95,18 +95,30 @@ namespace InternetInterface.Models
 
         public virtual bool CanActivate(Client client)
         {
-            if (client.ClientServices != null)
-            {
-                var cs = client.ClientServices.Where(c => c.Service == this).FirstOrDefault();
-                if (cs != null)
-                    return CanActivate(cs);
-            }
             return true;
+            //return !client.ClientServices.Select(c => c.Service.Id).Contains(Id);
         }
 
         public virtual bool CanActivate(ClientService CService)
         {
             return true;
+        }
+
+        public virtual bool CanActivateInWeb(Client client)
+        {
+            return CanActivate(client) && !client.ClientServices.Select(c => c.Service.Id).Contains(Id);
+        }
+
+
+        public virtual bool ActivatedForClient(Client client)
+        {
+            if (client.ClientServices != null)
+            {
+                var cs = client.ClientServices.Where(c => c.Service == this && c.Activated && !c.Diactivated).FirstOrDefault();
+                if (cs != null)
+                    return true;
+            }
+            return false;
         }
 
         /*public virtual void CreateAppeal(string message, ClientService CService)
@@ -138,16 +150,20 @@ namespace InternetInterface.Models
             return builder.ToString();
         }
 
+        public override bool CanActivate(Client client)
+        {
+            var balance = client.PhysicalClient.Balance < 0;
+            var conVol = !client.ClientServices.Select(c => c.Service).Contains(GetByType(typeof(VoluntaryBlockin)));
+            return balance && conVol && client.StartWork();
+        }
+
         public override bool CanActivate(ClientService CService)
         {
             var client = CService.Client;
             var payTar = client.PaymentForTariff();
             if (CService.Activator != null)
                 payTar = true;
-            //var baseActive = base.CanActivate(client);
-            var balance = client.PhysicalClient.Balance < 0;
-            var conVol = !client.ClientServices.Select(c => c.Service).Contains(GetByType(typeof (VoluntaryBlockin)));
-            return payTar && conVol && balance;
+            return payTar && CanActivate(client);
         }
 
         public override void PaymentClient(ClientService CService)
@@ -183,8 +199,9 @@ namespace InternetInterface.Models
         {
             var client = CService.Client;
             client.Disabled = true;
+            client.AutoUnblocked = true;
             client.Status = Status.Find((uint)StatusType.NoWorked);
-            client.UpdateAndFlush();
+            client.Update();
             CService.Activated = false;
             CService.Update();
         }
@@ -234,12 +251,19 @@ namespace InternetInterface.Models
             return builder.ToString();
         }
 
+        public override bool CanActivate(Client client)
+        {
+            var balance = client.PhysicalClient.Balance >= 0;
+            var debtWork = !client.ClientServices.Select(c => c.Service).Contains(GetByType(typeof(DebtWork)));
+            return balance && debtWork && client.StartWork();
+        }
+
         public override bool CanActivate(ClientService CService)
         {
-            var balance = CService.Client.PhysicalClient.Balance > 0;
-            var debtWork = !CService.Client.ClientServices.Select(c => c.Service).Contains(GetByType(typeof (DebtWork)));
+            /*var balance = CService.Client.PhysicalClient.Balance > 0;
+            var debtWork = !CService.Client.ClientServices.Select(c => c.Service).Contains(GetByType(typeof (DebtWork)));*/
             var begin = SystemTime.Now() > CService.BeginWorkDate.Value;
-            return debtWork && begin && balance;
+            return  begin && CanActivate(CService.Client);
         }
 
         public override void Activate(ClientService CService)
@@ -251,6 +275,7 @@ namespace InternetInterface.Models
                 client.Disabled = true;
                 client.AutoUnblocked = false;
                 client.DebtDays = 0;
+                client.Status = Status.Find((uint)StatusType.NoWorked);
                 client.Update();
                 CService.Activated = true;
                 CService.Update();
@@ -265,8 +290,13 @@ namespace InternetInterface.Models
             client.Disabled = CService.Client.PhysicalClient.Balance < 0;
             client.AutoUnblocked = true;
             if (CService.Client.PhysicalClient.Balance > 0)
+            {
                 client.Disabled = false;
+                client.Status = Status.Find((uint)StatusType.Worked);
+            }
             client.Update();
+            CService.Diactivated = true;
+            CService.Update();
         }
 
         public override bool Diactivate(ClientService CService)
