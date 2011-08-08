@@ -11,7 +11,7 @@ using InternetInterface.Models.Universal;
 
 namespace InternetInterface.Models
 {
-    public class ServiceNames
+    /*public class ServiceNames
     {
         public static string DebtWork
         {
@@ -20,9 +20,9 @@ namespace InternetInterface.Models
 
         public static string VoluntaryBlockin
         {
-            get { return "DebtWork"; }
+            get { return "VoluntaryBlockin"; }
         }
-    }
+    }*/
 
     [ActiveRecord("Services", Schema = "Internet", Lazy = true, DiscriminatorColumn = "Name",
         DiscriminatorType = "String", DiscriminatorValue = "service")]
@@ -264,7 +264,7 @@ namespace InternetInterface.Models
                 client.Disabled = true;
                 client.AutoUnblocked = false;
                 client.DebtDays = 0;
-                client.Status = Status.Find((uint)StatusType.NoWorked);
+                client.Status = Status.Find((uint)StatusType.VoluntaryBlocking);
                 client.Update();
                 CService.Activated = true;
                 CService.Update();

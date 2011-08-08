@@ -21,7 +21,7 @@ namespace InternetInterface.Test.Functional
         {
           using (new SessionScope())
           {
-              new Status {Name = "ConnectAndBlocked"}.Save();
+              //new Status { Name = "ConnectAndBlocked", ShortName = "ConnectAndBlocked" }.Save();
                 physicalClient = new PhysicalClients {
                                                          Name = "Alexandr",
                                                          Surname = "Zolotarev",
@@ -61,7 +61,7 @@ namespace InternetInterface.Test.Functional
         [Test]
         public void ChangeBalanceLawyerPersonTest()
         {
-            var lp = new Clients();
+            var lp = new Client();
             using (new SessionScope())
             {
                 lp = ClientHelperFixture.CreateLaywerPerson();

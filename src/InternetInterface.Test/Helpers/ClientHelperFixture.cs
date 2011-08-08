@@ -12,7 +12,7 @@ namespace InternetInterface.Test.Helpers
 {
 	class ClientHelperFixture
 	{
-        public static Clients CreateLaywerPerson()
+        public static Client CreateLaywerPerson()
         {
             var LPerson = new LawyerPerson {
                                                FullName = "TestClient",
@@ -20,7 +20,7 @@ namespace InternetInterface.Test.Helpers
                                                Tariff = 100,
                                                Speed = PackageSpeed.FindFirst()
                                            };
-            return new Clients {
+            return new Client {
                                    LawyerPerson = LPerson,
                                    Disabled = false,
                                    BeginWork = DateTime.Now,

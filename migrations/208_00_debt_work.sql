@@ -39,3 +39,22 @@ values ("DebtWork", 0, false, "Работа в долг"),
 insert into internet.ClientServices (Client, Service, BeginWorkDate, EndWorkDate, Activated, Diactivated)
 SELECT c.id, 1,c.PostponedPayment, DATE_ADD(c.PostponedPayment, INTERVAL 1 DAY), if (c.Disabled, false, true), false  FROM internet.Clients C
 where  c.PostponedPayment is not null;
+
+update internet.`status` s
+set ShortName = "BlockedAndNoConnected"
+where s.id = 1;
+
+update internet.`status` s
+set ShortName = "BlockedAndConnected"
+where s.id = 3;
+
+update internet.`status` s
+set ShortName = "Worked"
+where s.id = 5;
+
+update internet.`status` s
+set ShortName = "NoWorked"
+where s.id = 7;
+
+insert into internet.`status` (id, name, blocked, connected, ShortName)
+values (9, 'Добровольная блокировка', true, true, 'VoluntaryBlocking');
