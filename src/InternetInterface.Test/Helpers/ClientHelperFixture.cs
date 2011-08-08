@@ -12,7 +12,23 @@ namespace InternetInterface.Test.Helpers
 {
 	class ClientHelperFixture
 	{
-		//public static PhisicalClients CreateClient(Func<bool> Ok)
+        public static Clients CreateLaywerPerson()
+        {
+            var LPerson = new LawyerPerson {
+                                               FullName = "TestClient",
+                                               Balance = 1000,
+                                               Tariff = 100,
+                                               Speed = PackageSpeed.FindFirst()
+                                           };
+            return new Clients {
+                                   LawyerPerson = LPerson,
+                                   Disabled = false,
+                                   BeginWork = DateTime.Now,
+                                   Status = Status.Find((uint)StatusType.Worked)
+                               };
+        }
+
+	    //public static PhisicalClients CreateClient(Func<bool> Ok)
 		public static void CreateClient(Func<PhysicalClients, bool > Ok)
 		{
 			var client =  new PhysicalClients

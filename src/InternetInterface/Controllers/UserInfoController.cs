@@ -142,7 +142,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
 
 			PropertyBag["Client"] = client.LawyerPerson;
-
+            PropertyBag["UserInfo"] = false;
 			PropertyBag["LegalPerson"] = client.LawyerPerson;
 			PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(new LawyerPerson());
 
@@ -666,21 +666,9 @@ namespace InternetInterface.Controllers
 			thisPay.BillingAccount = false;
 			if (Validator.IsValid(thisPay))
 			{
-				thisPay.SaveAndFlush();
+				thisPay.Save();
 				Flash["thisPay"] = new Payment();
 				Flash["Applying"] = "Баланс пополнен";
-				/*if (clientToch.GetClientType() == ClientType.Phisical)
-				{
-					var physicalClient = clientToch.PhysicalClient;
-					physicalClient.Balance = physicalClient.Balance + Convert.ToDecimal(forChangeSumm);
-					physicalClient.UpdateAndFlush();
-				}
-				else
-				{
-					var lawyerPerson = clientToch.LawyerPerson;
-					lawyerPerson.Balance += Convert.ToDecimal(forChangeSumm);
-					lawyerPerson.UpdateAndFlush();
-				}*/
 			}
 			else
 			{

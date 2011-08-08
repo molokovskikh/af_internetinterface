@@ -59,6 +59,25 @@ namespace InternetInterface.Test.Functional
         }
 
         [Test]
+        public void ChangeBalanceLawyerPersonTest()
+        {
+            var lp = new Clients();
+            using (new SessionScope())
+            {
+                lp = ClientHelperFixture.CreateLaywerPerson();
+                lp.Save();
+            }
+            using (var browser = Open("Search/Redirect?filter.ClientCode=" + lp.Id))
+            {
+                browser.TextField("BalanceText").AppendText("1234");
+                browser.Button("ChangeBalanceButton").Click();
+                Console.WriteLine(lp.LawyerPerson.Balance);
+                Assert.That(browser.Text, Is.StringContaining("1234"));
+            }
+            lp.Delete();
+        }
+
+	    [Test]
         public void ReservTest()
         {
             using (var browser = Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", client.Id)))
