@@ -16,7 +16,7 @@ namespace InforoomInternet.Controllers
 		public void IndexOffice(string grouped)
 		{
 			var clientId = Convert.ToUInt32(Session["LoginClient"]);
-			var Client = Clients.Find(clientId);
+			var Client = InternetInterface.Models.Client.Find(clientId);
 			PropertyBag["PhysClientName"] = string.Format("{0} {1}", Client.PhysicalClient.Name, Client.PhysicalClient.Patronymic);
 			PropertyBag["PhysicalClient"] = Client.PhysicalClient;
 			PropertyBag["Client"] = Client;
@@ -29,10 +29,10 @@ namespace InforoomInternet.Controllers
         public void PostponedPayment()
         {
             var clientId = Convert.ToUInt32(Session["LoginClient"]);
-            var client = Clients.Find(clientId);
+            var client = Client.Find(clientId);
             PropertyBag["Client"] = client;
             var message = string.Empty;
-            if (client.PostponedPayment != null)
+            if (client.ClientServices.Select(c => c.Service).Contains(Service.GetByType(typeof(DebtWork))))
                 message += "Повторное использование услуги \"Обещаный платеж\" невозможно";
             if (!client.Disabled && string.IsNullOrEmpty(message))
                 message += "Воспользоваться устугой возможно только при отрицательном балансе";
@@ -46,14 +46,26 @@ namespace InforoomInternet.Controllers
 	    public void PostponedPaymentActivate()
         {
             var clientId = Convert.ToUInt32(Session["LoginClient"]);
-            var client = Clients.Find(clientId);
+            var client = Client.Find(clientId);
             if (client.CanUsedPostponedPayment())
             {
-                client.Status = Status.Find((uint)StatusType.Worked);
-                client.PostponedPayment = DateTime.Now;
-                client.Disabled = false;
-                client.Update();
+                //client.Status = Status.Find((uint)StatusType.Worked);
+                //client.PostponedPayment = DateTime.Now;
+                //client.Disabled = false;
+                //client.Update();
+
                 Flash["message"] = "Услуга \"Обещанный платеж активирована\"";
+                var CService = new ClientService {
+                                      BeginWorkDate = DateTime.Now,
+                                      Client = client,
+                                      EndWorkDate = DateTime.Now.AddDays(1),
+                                      Service = Service.GetByType(typeof(DebtWork))
+                                  };
+
+                //CService.Save();
+                client.ClientServices.Add(CService);
+                CService.Activate();
+
                 new Appeals {
                                 Appeal = "Услуга \"Обещанный платеж активирована\"",
                                 AppealType = (int) AppealType.System,

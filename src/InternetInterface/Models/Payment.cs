@@ -10,7 +10,12 @@ namespace InternetInterface.Models
 	public class Payment : ValidActiveRecordLinqBase<Payment>
 	{
 
-		[PrimaryKey]
+        /*public Payment()
+        {
+            Client.Payments.Add(this);
+        }*/
+
+	    [PrimaryKey]
 		public virtual uint Id { get; set; }
 
 		[Property]
@@ -20,7 +25,7 @@ namespace InternetInterface.Models
 		public virtual DateTime PaidOn { get; set; }
 
 		[BelongsTo("Client")]
-		public virtual Clients Client { get; set; }
+		public virtual Client Client { get; set; }
 
 		[Property, ValidateNonEmpty("Введите сумму"),
 				   ValidateRange(1, 100000, "Сумма должна быть больше 0 и меньше 100 000 рублей"),

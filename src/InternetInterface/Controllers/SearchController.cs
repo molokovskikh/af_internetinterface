@@ -20,12 +20,12 @@ namespace InternetInterface.Controllers
 {
     public class ClientInfo
     {
-        public ClientInfo(Clients _client)
+        public ClientInfo(Client _client)
         {
             client = _client;
         }
 
-        public Clients client;
+        public Client client;
         public bool OnLine;
     }
 
@@ -131,7 +131,7 @@ namespace InternetInterface.Controllers
 
         public IList<ClientInfo> Find()
         {
-            IList<Clients> result = new List<Clients>();
+            IList<Client> result = new List<Client>();
             ArHelper.WithSession(session =>
             {
                 if (searchProperties == null)
@@ -151,7 +151,7 @@ join internet.Status S on s.id = c.Status
 {0} ORDER BY {3} Limit {1}, {2}",
                                 GetClientsLogic.GetWhere(searchProperties, connectedType, clientTypeFilter, whoregister, tariff, searchText, brigad,
                                          addtionalStatus), CurrentPage * PageSize, PageSize, GetOrderField());
-                        query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Clients));
+                        query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Client));
                         SetParameters(query);
                         if (searchText != null)
                             query.SetParameter("SearchText", "%" + searchText.ToLower() + "%");
@@ -163,7 +163,7 @@ left join internet.PhysicalClients p on p.id = c.PhysicalClient
 left join internet.LawyerPerson l on l.id = c.LawyerPerson
 join internet.Status S on s.id = c.Status
 where C.id = :SearchText ORDER BY {2} Limit {0}, {1}", CurrentPage * PageSize, PageSize, GetOrderField());
-                        query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Clients));
+                        query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Client));
                         if (searchText != null)
                             query.SetParameter("SearchText", searchText.ToLower());
                     }
@@ -178,13 +178,13 @@ WHERE LOWER(C.Name) like {0} or LOWER(C.Id) like {0}
 ORDER BY {3} Limit {1}, {2}", ":SearchText", CurrentPage * PageSize, PageSize, GetOrderField());
                     else
                     {
-                        return new List<Clients>();
+                        return new List<Client>();
                     }
-                    query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Clients));
+                    query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Client));
                     if (!string.IsNullOrEmpty(searchText))
                         query.SetParameter("SearchText", "%" + searchText.ToLower() + "%");
                 }
-                result = query.List<Clients>();
+                result = query.List<Client>();
 
                 var newSql = sqlStr.Replace("*", "count(*)");
                 var limitPosition = newSql.IndexOf("Limit");
@@ -273,7 +273,7 @@ ORDER BY {3} Limit {1}, {2}", ":SearchText", CurrentPage * PageSize, PageSize, G
 			foreach (string name in Request.QueryString)
 				builder += String.Format("{0}={1}&", name, Request.QueryString[name]);
 			builder = builder.Substring(0, builder.Length - 1);
-            if (Clients.Find(filter.ClientCode).GetClientType() == ClientType.Phisical)
+            if (Client.Find(filter.ClientCode).GetClientType() == ClientType.Phisical)
 			{
 				RedirectToUrl(string.Format("../UserInfo/SearchUserInfo.rails?{0}" , builder));
 			}

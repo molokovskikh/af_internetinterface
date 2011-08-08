@@ -38,7 +38,7 @@ namespace InternetInterface.Models
 		public virtual uint IntervalId { get; set; }
 
 		[BelongsTo]
-		public virtual Clients Client { get; set; }
+		public virtual Client Client { get; set; }
 
 		[Property]
 		public virtual DateTime Day { get; set; }

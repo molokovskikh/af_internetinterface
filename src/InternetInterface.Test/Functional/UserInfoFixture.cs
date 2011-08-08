@@ -14,7 +14,7 @@ namespace InternetInterface.Test.Functional
 	{
         public string format;
 	    public PhysicalClients physicalClient;
-        public Clients client;
+        public Client client;
         public ClientEndpoints endPoint;
 
         public UserInfoFixture()
@@ -40,7 +40,7 @@ namespace InternetInterface.Test.Functional
                                                          
                                                      };
                 physicalClient.SaveAndFlush();
-                client = new Clients {
+                client = new Client {
                                          PhysicalClient = physicalClient,
                                          BeginWork = null,
                                          Name =
@@ -95,7 +95,7 @@ namespace InternetInterface.Test.Functional
         {
             using (new SessionScope())
             {
-                client = Clients.Queryable.Where(
+                client = Client.Queryable.Where(
     c => c.PhysicalClient != null && Brigad.FindAll().Contains(c.WhoConnected)).
     First();
                 client.AdditionalStatus = null;

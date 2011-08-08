@@ -22,203 +22,211 @@ using Environment = NHibernate.Cfg.Environment;
 namespace Billing
 {
 
-	public static class Error
-	{
-		public static string GerError(Exception ex)
-		{
-			return ex.Message + "\n \r" + ex.StackTrace + "\n \r" + ex.InnerException + "\n \r" + ex.Source + "\n \r" + ex.Data;
-		}
-	}
+    public static class Error
+    {
+        public static string GerError(Exception ex)
+        {
+            return ex.Message + "\n \r" + ex.StackTrace + "\n \r" + ex.InnerException + "\n \r" + ex.Source + "\n \r" +
+                   ex.Data;
+        }
+    }
 
-	public class MainBilling
-	{
-		public DateTime DtNow;
-		private readonly ILog _log = LogManager.GetLogger(typeof(MainBilling));
+    public class MainBilling
+    {
+        public DateTime DtNow;
+        private readonly ILog _log = LogManager.GetLogger(typeof (MainBilling));
 
-		public MainBilling()
-		{
-			try
-			{
-				XmlConfigurator.Configure();
-				InitActiveRecord();
-			}
-			catch (Exception ex)
-			{
-				_log.Error(Error.GerError(ex));
-			}
-		}
+        public MainBilling()
+        {
+            try
+            {
+                XmlConfigurator.Configure();
+                InitActiveRecord();
+            }
+            catch (Exception ex)
+            {
+                _log.Error(Error.GerError(ex));
+            }
+        }
 
-		public static void InitActiveRecord()
-		{
-			if (!ActiveRecordStarter.IsInitialized)
-			{
-				var configuration = new InPlaceConfigurationSource();
-				configuration.PluralizeTableNames = true;
-				configuration.Add(typeof (ActiveRecordBase),
-				                  new Dictionary<string, string>
-				                  	{
-				                  		{Environment.Dialect, "NHibernate.Dialect.MySQLDialect"},
-				                  		{Environment.ConnectionDriver, "NHibernate.Driver.MySqlDataDriver"},
-				                  		{Environment.ConnectionProvider, "NHibernate.Connection.DriverConnectionProvider"},
-				                  		{Environment.ConnectionStringName, "DB"},
-										{Environment.ProxyFactoryFactoryClass,
-				                  			"NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle"
-				                  			},
-				                  		{Environment.Hbm2ddlKeyWords, "none"},
-				                  	});
+        public static void InitActiveRecord()
+        {
+            if (!ActiveRecordStarter.IsInitialized)
+            {
+                var configuration = new InPlaceConfigurationSource();
+                configuration.PluralizeTableNames = true;
+                configuration.Add(typeof (ActiveRecordBase),
+                                  new Dictionary<string, string> {
+                                                                     {
+                                                                         Environment.Dialect,
+                                                                         "NHibernate.Dialect.MySQLDialect"
+                                                                         },
+                                                                     {
+                                                                         Environment.ConnectionDriver,
+                                                                         "NHibernate.Driver.MySqlDataDriver"
+                                                                         },
+                                                                     {
+                                                                         Environment.ConnectionProvider,
+                                                                         "NHibernate.Connection.DriverConnectionProvider"
+                                                                         },
+                                                                     {Environment.ConnectionStringName, "DB"},
+                                                                     {
+                                                                         Environment.ProxyFactoryFactoryClass,
+                                                                         "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle"
+                                                                         },
+                                                                     {Environment.Hbm2ddlKeyWords, "none"},
+                                                                 });
                 ActiveRecordStarter.EventListenerComponentRegistrationHook += RemoverListner.Make;
-				ActiveRecordStarter.Initialize( new [] {typeof (Clients).Assembly},
-				                               configuration);
-			}
-		}
+                ActiveRecordStarter.Initialize(new[] {typeof (Client).Assembly},
+                                               configuration);
+            }
+        }
 
 
 
-	    public void UseSession(Action func)
-		{
-			using (var session = new TransactionScope(OnDispose.Rollback))
-			{
-				func();
-				session.VoteCommit();
-			}
-		}
+        public void UseSession(Action func)
+        {
+            using (var session = new TransactionScope(OnDispose.Rollback))
+            {
+                func();
+                session.VoteCommit();
+            }
+        }
 
+        public void On()
+        {
+            try
+            {
+                UseSession(OnMethod);
+            }
+            catch (Exception ex)
+            {
+                _log.Error(Error.GerError(ex));
+            }
+        }
 
-		public void On()
-		{
-			try
-			{
-                UseSession(() => {
-                    var newClients = Clients.FindAll(DetachedCriteria.For(typeof (Clients))
-                                                         .CreateAlias("PhysicalClient", "PC", JoinType.InnerJoin)
-                                                         .Add(Restrictions.Eq("PC.ConnectionPaid", false))
-                                                         .Add(Restrictions.IsNotNull("BeginWork"))
-                                                         .Add(Restrictions.IsNotNull("PhysicalClient")));
-                    foreach (var newClient in newClients)
-                    {
-                        var phisCl = newClient.PhysicalClient;
-                        //var connectSum = PaymentForConnect.FindAllByProperty("ClientId", phisCl).First().Summ;
-                        phisCl.Balance -= phisCl.ConnectSum;
-                        phisCl.ConnectionPaid = true;
-                        phisCl.UpdateAndFlush();
-                        //newClient = false;
-                        newClient.UpdateAndFlush();
-                        new WriteOff {
-                                         Client = newClient,
-                                         WriteOffDate = SystemTime.Now(),
-                                         WriteOffSum = phisCl.ConnectSum
-                                     }.SaveAndFlush();
+        public void OnMethod()
+        {
+            foreach (var cserv in ClientService.Queryable.Where(c => !c.Activated).ToList())
+            {
+                cserv.Activate();
+            }
+            var newClients = Client.FindAll(DetachedCriteria.For(typeof (Client))
+                                                .CreateAlias("PhysicalClient", "PC", JoinType.InnerJoin)
+                                                .Add(Restrictions.Eq("PC.ConnectionPaid", false))
+                                                .Add(Restrictions.IsNotNull("BeginWork"))
+                                                .Add(Restrictions.IsNotNull("PhysicalClient")));
+            foreach (var newClient in newClients)
+            {
+                var phisCl = newClient.PhysicalClient;
+                phisCl.Balance -= phisCl.ConnectSum;
+                phisCl.ConnectionPaid = true;
+                phisCl.UpdateAndFlush();
+                newClient.UpdateAndFlush();
+                new WriteOff {
+                                 Client = newClient,
+                                 WriteOffDate = SystemTime.Now(),
+                                 WriteOffSum = phisCl.ConnectSum
+                             }.SaveAndFlush();
 
-                    }
-                    var newPayments = Payment.FindAll(DetachedCriteria.For(typeof (Payment))
-                                                          .Add(Restrictions.Eq("BillingAccount", false)));
-                    foreach (var newPayment in newPayments)
-                    {
-                        var updateClient = newPayment.Client; //Clients.Find(newPayment.Client.Id);
-                        var physicalClient = updateClient.PhysicalClient;
-                        var lawyerClient = updateClient.LawyerPerson;
-                        if (physicalClient != null)
+            }
+            var newPayments = Payment.FindAll(DetachedCriteria.For(typeof (Payment))
+                                                  .Add(Restrictions.Eq("BillingAccount", false)));
+            foreach (var newPayment in newPayments)
+            {
+                var updateClient = newPayment.Client;
+                var physicalClient = updateClient.PhysicalClient;
+                var lawyerClient = updateClient.LawyerPerson;
+                if (physicalClient != null)
+                {
+                    physicalClient.Balance += Convert.ToDecimal(newPayment.Sum);
+                    physicalClient.UpdateAndFlush();
+                    newPayment.BillingAccount = true;
+                    newPayment.UpdateAndFlush();
+                    var bufBal = physicalClient.Balance;
+                    if (updateClient.RatedPeriodDate != null)
+                        if (bufBal - updateClient.GetPrice()/updateClient.GetInterval() > 0)
                         {
-                            var balance = physicalClient.Balance;
-                            physicalClient.Balance += Convert.ToDecimal(newPayment.Sum);
-                            if (balance < 0 && physicalClient.Balance > 0 && updateClient.PostponedPayment != null)
-                            {
-                                updateClient.PostponedPayment = null;
-                                updateClient.Update();
-                            }
-                            physicalClient.UpdateAndFlush();
-                            newPayment.BillingAccount = true;
-                            newPayment.UpdateAndFlush();
-                            var bufBal = physicalClient.Balance;
-                            if (updateClient.RatedPeriodDate != null)
-                                if (bufBal - updateClient.PhysicalClient.Tariff.GetPrice(updateClient) / updateClient.GetInterval() > 0)
-                                {
-                                    updateClient.ShowBalanceWarningPage = false;
-                                    updateClient.Update();
-                                }
+                            updateClient.ShowBalanceWarningPage = false;
+                            updateClient.Update();
                         }
-                        if (lawyerClient != null)
+                    if (updateClient.ClientServices != null)
+                        for (int i = updateClient.ClientServices.Count - 1; i > -1; i--)
                         {
-                            lawyerClient.Balance += Convert.ToDecimal(newPayment.Sum);
-                            lawyerClient.UpdateAndFlush();
-                            newPayment.BillingAccount = true;
-                            newPayment.UpdateAndFlush();
+                            var cserv = updateClient.ClientServices[i];
+                            cserv.PaymentClient();
                         }
-                    }
-                    var clients = Clients.FindAll(DetachedCriteria.For(typeof (Clients))
-                                                      .CreateAlias("PhysicalClient", "PC", JoinType.InnerJoin)
-                                                      .Add(Restrictions.IsNotNull("PhysicalClient"))
-                                                      .Add(Restrictions.Eq("Disabled", true))
-                                                      .Add(Restrictions.Eq("AutoUnblocked", true))
-                                                      .Add(Restrictions.Ge("PC.Balance", 0m)));
-                    foreach (var client in clients)
-                    {
-                        client.Status = Status.Find((uint) StatusType.Worked);
-                        client.RatedPeriodDate = null;
-                        client.DebtDays = 0;
-                        client.ShowBalanceWarningPage = false;
-                        client.Disabled = false;
-                        client.UpdateAndFlush();
-                    }
-                    var lawyerPerson = LawyerPerson.FindAll();
-                    foreach (var person in lawyerPerson)
-                    {
-                        var client = Clients.Queryable.Where(c => c.LawyerPerson == person).ToList().First();
-                        if (person.Balance < -(person.Tariff*1.9m))
-                        {
-                            client.ShowBalanceWarningPage = true;
-                        }
-                        else
-                        {
-                            if (client.ShowBalanceWarningPage)
-                                client.ShowBalanceWarningPage = false;
-                        }
-                        client.UpdateAndFlush();
-                    }
-                    var postPClients = Clients.Queryable.Where(c => c.PostponedPayment != null).ToList();
-                    foreach (var postPClient in postPClients)
-                    {
-                        if ((((DateTime) postPClient.PostponedPayment).AddDays(1) - SystemTime.Now()).Hours <= 0)
-                        {
-                            postPClient.Disabled = true;
-                            postPClient.Status = Status.Find((uint) StatusType.NoWorked);
-                            postPClient.UpdateAndFlush();
-                        }
-                    }
-                });
-			}
-			catch (Exception ex)
-			{
-				_log.Error(Error.GerError(ex));
-			}
-		}
+                }
+                if (lawyerClient != null)
+                {
+                    lawyerClient.Balance += Convert.ToDecimal(newPayment.Sum);
+                    lawyerClient.UpdateAndFlush();
+                    newPayment.BillingAccount = true;
+                    newPayment.UpdateAndFlush();
+                }
+            }
+            var clients = Client.FindAll(DetachedCriteria.For(typeof (Client))
+                                             .CreateAlias("PhysicalClient", "PC", JoinType.InnerJoin)
+                                             .Add(Restrictions.IsNotNull("PhysicalClient"))
+                                             .Add(Restrictions.Eq("Disabled", true))
+                                             .Add(Restrictions.Eq("AutoUnblocked", true))
+                                             .Add(Restrictions.Ge("PC.Balance", 0m)));
+            foreach (var client in clients)
+            {
+                client.Status = Status.Find((uint) StatusType.Worked);
+                client.RatedPeriodDate = null;
+                client.DebtDays = 0;
+                client.ShowBalanceWarningPage = false;
+                client.Disabled = false;
+                client.UpdateAndFlush();
+            }
+            var lawyerPersons = Client.Queryable.Where(c => c.LawyerPerson != null);
+            foreach (var client in lawyerPersons)
+            {
+                var person = client.LawyerPerson;
+                if (person.Balance < -(person.Tariff*1.9m))
+                {
+                    client.ShowBalanceWarningPage = true;
+                }
+                else
+                {
+                    client.ShowBalanceWarningPage = false;
+                }
+                client.UpdateAndFlush();
+            }
+            foreach (var cserv in ClientService.FindAll())
+            {
+                cserv.Diactivate();
+            }
+        }
 
-		public void Run()
-		{
-			try
-			{
-				var thisDateMax = InternetSettings.FindFirst().NextBillingDate;
-				if ((thisDateMax - DateTime.Now).TotalMinutes <= 0)
-				{
-					UseSession(Compute);
-					if (DateTime.Now.Hour < 22)
-					{
-						var billingTime = InternetSettings.FindFirst();
-						billingTime.NextBillingDate = new DateTime(thisDateMax.Year, thisDateMax.Month, thisDateMax.Day, 22, 0, 0);
-						billingTime.SaveAndFlush();
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				_log.Error(Error.GerError(ex));
-			}
-		}
+
+        public void Run()
+        {
+            try
+            {
+                var thisDateMax = InternetSettings.FindFirst().NextBillingDate;
+                if ((thisDateMax - DateTime.Now).TotalMinutes <= 0)
+                {
+                    UseSession(Compute);
+                    if (DateTime.Now.Hour < 22)
+                    {
+                        var billingTime = InternetSettings.FindFirst();
+                        billingTime.NextBillingDate = new DateTime(thisDateMax.Year, thisDateMax.Month, thisDateMax.Day,
+                                                                   22, 0, 0);
+                        billingTime.SaveAndFlush();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.Error(Error.GerError(ex));
+            }
+        }
 
         public void Compute()
         {
-            var clients = Clients.FindAll(DetachedCriteria.For(typeof (Clients))
-                                              .Add(Restrictions.IsNotNull("PhysicalClient")));
+            var clients = Client.Queryable.Where(c => c.PhysicalClient != null).ToList();
             foreach (var client in clients)
             {
                 var phisicalClient = client.PhysicalClient;
@@ -244,13 +252,12 @@ namespace Billing
                     }
                 }
 
-                //if (phisicalClient.Status.Blocked == false)
-                if (!client.Disabled)
+                if (client.GetPrice() > 0)
                 {
                     if (client.RatedPeriodDate != DateTime.MinValue && client.RatedPeriodDate != null)
                     {
                         var toDt = client.GetInterval();
-                        var price = phisicalClient.Tariff.GetPrice(client);
+                        var price = client.GetPrice();
                         var dec = price/toDt;
                         phisicalClient.Balance -= dec;
                         phisicalClient.UpdateAndFlush();
@@ -264,28 +271,21 @@ namespace Billing
                                      }.SaveAndFlush();
                     }
                 }
-
-                if ((phisicalClient.Balance < 0) &&
-                    (!client.Disabled))
+                if (client.CanBlock())
                 {
-                    if ((client.PostponedPayment == null) ||
-                        (client.PostponedPayment != null &&
-                         (((DateTime) client.PostponedPayment).AddDays(1) - SystemTime.Now()).Hours <= 0))
-                    {
-                        client.Disabled = true;
-                        client.Status = Status.Find((uint) StatusType.NoWorked);
-                        client.UpdateAndFlush();
-                    }
+                    client.Disabled = true;
+                    client.Status = Status.Find((uint) StatusType.NoWorked);
+                    client.UpdateAndFlush();
                 }
             }
-            var lawyerclients = Clients.Queryable.Where(c => c.LawyerPerson != null).ToList();
+            var lawyerclients = Client.Queryable.Where(c => c.LawyerPerson != null).ToList();
             foreach (var client in lawyerclients)
             {
                 var person = client.LawyerPerson;
                 if (!client.Disabled)
                 {
                     var thisDate = SystemTime.Now();
-                    decimal spis = person.Tariff / DateTime.DaysInMonth(thisDate.Year, thisDate.Month);
+                    decimal spis = person.Tariff/DateTime.DaysInMonth(thisDate.Year, thisDate.Month);
                     person.Balance -= spis;
                     person.UpdateAndFlush();
                     new WriteOff {
@@ -299,5 +299,5 @@ namespace Billing
             thisDateMax.NextBillingDate = DateTime.Now.AddDays(1);
             thisDateMax.UpdateAndFlush();
         }
-	}
+    }
 }

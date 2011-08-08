@@ -134,6 +134,7 @@
     <Compile Include="Helpers\PropertiesHelper.cs" />
     <Compile Include="Helpers\WatinFixture.cs" />
     <Compile Include="Integration\HouseMapFixture.cs" />
+    <Compile Include="Integration\ServicesFixture.cs" />
     <Compile Include="PartnerAccessSetFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegisterFixture.cs" />

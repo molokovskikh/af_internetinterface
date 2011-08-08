@@ -4,23 +4,32 @@ using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using Castle.ActiveRecord;
+using Castle.ActiveRecord.Framework.Internal.EventListener;
 using Castle.ActiveRecord.Linq;
+using Castle.Components.DictionaryAdapter;
 using Common.Models.Helpers;
+using Common.Tools;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Helpers;
 
 namespace InternetInterface.Models
 {
-	public enum ClientType
+    public enum ClientType
 	{
 		Phisical = 1,
 		Legal = 2
 	}
 
     [ActiveRecord("Clients", Schema = "Internet", Lazy = true), Auditable]
-	public class Clients : ChildActiveRecordLinqBase<Clients>
+	public class Client : ChildActiveRecordLinqBase<Client>
 	{
-		[PrimaryKey]
+        public Client()
+        {
+            ClientServices = new List<ClientService>();
+            Payments = new List<Payment>();
+        }
+
+        [PrimaryKey]
 		public virtual uint Id { get; set; }
 
 		[Property]
@@ -74,24 +83,25 @@ namespace InternetInterface.Models
         [BelongsTo, Auditable("Статус")]
 		public virtual Status Status { get; set; }
 
-        [Property]
-        public virtual DateTime? PostponedPayment { get; set; }
-
         [BelongsTo(Lazy = FetchWhen.OnInvoke)]
         public virtual AdditionalStatus AdditionalStatus { get; set; }
 
         public virtual bool PaymentForTariff()
         {
-            return Payments.Sum(p => p.Sum) >= PhysicalClient.Tariff.GetPrice(this);
+            if (Payments != null)
+                return Payments.Sum(p => p.Sum) >= GetPriceForTariff();
+            return false;
         }
 
         public virtual bool CanUsedPostponedPayment()
         {
-            return PhysicalClient != null && PostponedPayment == null && Disabled && PhysicalClient.Balance < 0 &&
+            return PhysicalClient != null &&
+                   !ClientServices.Select(c => c.Service).Contains(Service.GetByType(typeof(DebtWork))) && Disabled &&
+                   PhysicalClient.Balance < 0 &&
                    AutoUnblocked && PaymentForTariff();
         }
 
-		public virtual bool AdditionalCanUsed(string aStatus)
+        public virtual bool AdditionalCanUsed(string aStatus)
 		{
             if (AdditionalStatus != null && AdditionalStatus.Id == (uint)AdditionalStatusType.Refused)
                 return false;
@@ -104,6 +114,10 @@ namespace InternetInterface.Models
         [HasMany(ColumnKey = "Client", OrderBy = "WriteOffDate", Lazy = true)]
         public virtual IList<WriteOff> WriteOffs { get; set; }
 
+        [HasMany(ColumnKey = "Client", Lazy = true, Cascade = ManyRelationCascadeEnum.All)]
+        public virtual IList<ClientService> ClientServices { get; set; }
+
+
         public virtual string ChangePhysicalClientPassword()
         {
             var pass =  CryptoPass.GeneratePassword();
@@ -112,8 +126,12 @@ namespace InternetInterface.Models
             return pass;
         }
 
+        public virtual bool HaveService(Service service)
+        {
+            return ClientServices.Select(c => c.Service).ToList().Contains(service);
+        }
 
-	    public virtual ClientType GetClientType()
+        public virtual ClientType GetClientType()
 		{
 			if (PhysicalClient != null)
 				return ClientType.Phisical;
@@ -137,11 +155,32 @@ namespace InternetInterface.Models
             return GetClientLeases().LastOrDefault();
         }
 
+        public virtual bool StartWork()
+        {
+            return BeginWork != null;
+        }
 
         public virtual decimal GetInterval()
 		{
 			return (((DateTime)RatedPeriodDate).AddMonths(1) - (DateTime)RatedPeriodDate).Days + DebtDays;
 		}
+
+        public virtual bool CanBlock()
+        {
+            if (ClientServices != null)
+            {
+                var CServ =
+                    ClientServices.Where(c => c.Service.Id == Service.GetByType(typeof (DebtWork)).Id).FirstOrDefault();
+                if (CServ != null && !CServ.Service.CanBlock(CServ))
+                {
+                    return false;
+                }
+            }
+
+            if ((Disabled) || (PhysicalClient.Balance > 0))
+                return false;
+            return true;
+        }
 
 
         public virtual IList<WriteOff> GetWriteOffs(string groupedKey)
@@ -220,6 +259,37 @@ typeof(ClientConnectInfo)))
             if (Lease.Queryable.Where(l => l.Endpoint.Client == this).FirstOrDefault() != null)
                 return true;
             return false;
+        }
+
+        public virtual decimal GetPriceForTariff()
+        {
+            if ((PhysicalClient.Tariff.FinalPriceInterval == 0 || PhysicalClient.Tariff.FinalPrice == 0) )
+                return PhysicalClient.Tariff.Price ;
+
+            if ((BeginWork != null && BeginWork.Value.AddMonths(PhysicalClient.Tariff.FinalPriceInterval) <= SystemTime.Now()))
+                return PhysicalClient.Tariff.FinalPrice;
+            return PhysicalClient.Tariff.Price;
+        }
+
+        public virtual decimal GetPrice()
+        {
+            var servisesPrice = 0m;
+            if (ClientServices != null)
+            {
+                var blockingService = ClientServices.Where(c => c.Service.BlockingAll && c.Activated).ToList().FirstOrDefault();
+                if (blockingService != null && !blockingService.Diactivated)
+                    return blockingService.GetPrice();
+
+                servisesPrice = ClientServices.Where(c=> !c.Service.BlockingAll && c.Activated).Sum(c => c.GetPrice());
+            }
+
+            if ((PhysicalClient.Tariff.FinalPriceInterval == 0 || PhysicalClient.Tariff.FinalPrice == 0) && !Disabled)
+                return PhysicalClient.Tariff.Price + servisesPrice;
+
+            if ((BeginWork != null && BeginWork.Value.AddMonths(PhysicalClient.Tariff.FinalPriceInterval) <= SystemTime.Now()) && !Disabled)
+                return PhysicalClient.Tariff.FinalPrice + servisesPrice;
+
+            return 0;
         }
 	}
 }

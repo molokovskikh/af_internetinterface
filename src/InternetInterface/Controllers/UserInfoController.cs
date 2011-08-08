@@ -92,9 +92,10 @@ namespace InternetInterface.Controllers
 	{
         public void SearchUserInfo([DataBind("filter")]ClientFilter filter)
 		{
-            var client = Clients.Find(filter.ClientCode);
+            var client = Client.Find(filter.ClientCode);
             PropertyBag["filter"] = filter;
 			PropertyBag["_client"] = client;
+            PropertyBag["services"] = Service.FindAll();
 			PropertyBag["Client"] = client.PhysicalClient;
             //PropertyBag["Leases"] = filter.Find();
             
@@ -116,14 +117,14 @@ namespace InternetInterface.Controllers
 
         public void Leases([DataBind("filter")]AppealFilter filter)
         {
-            PropertyBag["_client"] = Clients.Find(filter.ClientCode);
+            PropertyBag["_client"] = Client.Find(filter.ClientCode);
             PropertyBag["filter"] = filter;
             PropertyBag["Leases"] = filter.Find();
         }
 
         public void LawyerPersonInfo([DataBind("filter")]ClientFilter filter)
 		{
-			var client = Clients.Find(filter.ClientCode);
+			var client = Client.Find(filter.ClientCode);
 
 
 			if (client.Status != null)
@@ -138,6 +139,7 @@ namespace InternetInterface.Controllers
             PropertyBag["grouped"] = filter.grouped;
             PropertyBag["appealType"] = filter.appealType == 0 ? (int)AppealType.User : filter.appealType;
 			PropertyBag["Statuss"] = Status.FindAllSort();
+            PropertyBag["services"] = Service.FindAll();
 			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(t => t.Name != null);
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
 
@@ -165,10 +167,10 @@ namespace InternetInterface.Controllers
 
         public void PostponedPayment(uint ClientID)
         {
-            var client = Clients.Find(ClientID);
+            var client = Client.Find(ClientID);
             var pclient = client.PhysicalClient;
             var message = string.Empty;
-            if (client.PostponedPayment != null)
+            if (client.ClientServices.Select(c => c.Service).Contains(Service.GetByType(typeof(DebtWork))))
                 message += "Повторное использование услуги \"Обещаный платеж невозможно\"";
             if (pclient.Balance > 0 && string.IsNullOrEmpty(message))
                 message += "Воспользоваться устугой возможно только при отрицательном балансе";
@@ -179,7 +181,7 @@ namespace InternetInterface.Controllers
                     "Воспользоваться услугой возможно если все платежи клиента первышают его абонентскую плату за месяц";
             if (client.CanUsedPostponedPayment())
             {
-                client.PostponedPayment = DateTime.Now;
+                //client.PostponedPayment = DateTime.Now;
                 client.Disabled = false;
                 client.Update();
                 message += "Услуга \"Обещанный платеж активирована\"";
@@ -196,10 +198,75 @@ namespace InternetInterface.Controllers
             RedirectToUrl("../UserInfo/SearchUserInfo.rails?filter.ClientCode=" + ClientID);
         }
 
-	    public void SaveSwitchForClient(uint ClientID, [DataBind("ConnectInfo")]ConnectInfo ConnectInfo,
+        public void ActivateService(uint clientId, uint serviceId, DateTime? startDate, DateTime? endDate)
+        {
+            var servise = Service.Find(serviceId);
+            var client = Client.Find(clientId);
+            var dtn = DateTime.Now;
+            /*if (ClientService.Queryable.Count(c => c.Service == servise && c.Client == client) == 0)
+            {*/
+            var clientService = new ClientService {
+                                                      Client = client,
+                                                      Service = servise,
+                                                      BeginWorkDate =
+                                                          startDate == null
+                                                              ? dtn
+                                                              : new DateTime(startDate.Value.Year,
+                                                                             startDate.Value.Month,
+                                                                             startDate.Value.Day, dtn.Hour,
+                                                                             dtn.Minute,
+                                                                             dtn.Second),
+                                                      EndWorkDate = endDate == null
+                                                                        ? endDate
+                                                                        : new DateTime(endDate.Value.Year,
+                                                                                       endDate.Value.Month,
+                                                                                       endDate.Value.Day,
+                                                                                       dtn.Hour,
+                                                                                       dtn.Minute,
+                                                                                       dtn.Second),
+                                                      Activator = InithializeContent.partner
+                                                  };
+            //clientService.Save();
+            client.ClientServices.Add(clientService);
+            clientService.Activate();
+            if (string.IsNullOrEmpty(clientService.LogComment))
+                Appeals.CreareAppeal(
+                    string.Format("Услуга \"{0}\" активирована на период с {1} по {2}", servise.HumanName,
+                                  clientService.BeginWorkDate != null
+                                      ? clientService.BeginWorkDate.Value.ToShortDateString()
+                                      : DateTime.Now.ToShortDateString(),
+                                  clientService.EndWorkDate != null
+                                      ? clientService.EndWorkDate.Value.ToShortDateString()
+                                      : string.Empty),
+                    client,
+                    AppealType.User);
+            else
+                PropertyBag["errorMessage"] = clientService.LogComment;
+            //}
+            RedirectToUrl("../UserInfo/SearchUserInfo.rails?filter.ClientCode=" + clientId);
+        }
+
+        public void DiactivateService(uint clientId, uint serviceId)
+        {
+            var servise = Service.Find(serviceId);
+            var client = Client.Find(clientId);
+            if (client.ClientServices != null)
+            {
+                var cservice =
+                    client.ClientServices.Where(c => c.Service.Id == serviceId && c.Activated).FirstOrDefault();
+                if (cservice != null)
+                {
+                    cservice.CompulsoryDiactivate();
+                    Appeals.CreareAppeal(string.Format("Услуга \"{0}\" деактивирована", servise.HumanName), client, AppealType.User);
+                }
+            }
+            RedirectToUrl("../UserInfo/SearchUserInfo.rails?filter.ClientCode=" + clientId);
+        }
+
+        public void SaveSwitchForClient(uint ClientID, [DataBind("ConnectInfo")]ConnectInfo ConnectInfo,
 			uint BrigadForConnect)
 		{
-			var client = Clients.Find(ClientID);
+			var client = Client.Find(ClientID);
 			var brigadChangeFlag = true;
 			if (client.WhoConnected != null)
 				brigadChangeFlag = false;
@@ -282,7 +349,7 @@ namespace InternetInterface.Controllers
 					Appeal = Appeal,
 					Date = DateTime.Now,
 					Partner = InithializeContent.partner,
-					Client = Clients.Find(ClientID),
+					Client = Client.Find(ClientID),
                     AppealType = (int)AppealType.User
 				}.SaveAndFlush();
 			RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID);
@@ -292,7 +359,7 @@ namespace InternetInterface.Controllers
 		{
 			if (CategorieAccessSet.AccesPartner("SSI"))
 			{
-				var _client = Clients.Find(ClientID);
+				var _client = Client.Find(ClientID);
 				var client = _client.PhysicalClient;
 				var Password = CryptoPass.GeneratePassword();
 				client.Password = CryptoPass.GetHashString(Password);
@@ -310,7 +377,7 @@ namespace InternetInterface.Controllers
 		public void LoadEditConnectMudule(uint ClientID)
 		{
 			Flash["EditingConnect"] = true;
-			var Cl = Clients.Find(ClientID);
+			var Cl = Client.Find(ClientID);
 			PropertyBag["ConnectInfo"] = Cl.GetConnectInfo();
 			RedirectToUrl("../Search/Redirect.rails?filter.ClientCode=" + ClientID + "&filter.EditingConnect=true");
 		}
@@ -473,7 +540,7 @@ namespace InternetInterface.Controllers
 		[AccessibleThrough(Verb.Post)]
         public void EditLawyerPerson(uint ClientID, int Speed, string grouped, int appealType, string comment)
 		{
-			var _client = Clients.Queryable.First(c => c.Id == ClientID);
+			var _client = Client.Queryable.First(c => c.Id == ClientID);
 			var updateClient = _client.LawyerPerson;
             InitializeHelper.InitializeModel(_client);
             InitializeHelper.InitializeModel(updateClient);
@@ -527,17 +594,21 @@ namespace InternetInterface.Controllers
         [AccessibleThrough(Verb.Post)]
         public void EditInformation([DataBind("Client")]PhysicalClients client, uint ClientID, uint tariff, uint status, string group, uint house_id, int appealType, string comment, [DataBind("filter")]ClientFilter filter)
         {
-            var _client = Clients.Queryable.First(c => c.Id == ClientID);
+            var _client = Client.Queryable.First(c => c.Id == ClientID);
+            var _status = Status.Find(status);
             var updateClient = _client.PhysicalClient;
+            var oldStatus = _client.Status;
             InitializeHelper.InitializeModel(updateClient);
             InitializeHelper.InitializeModel(_client);
 
             BindObjectInstance(updateClient, ParamStore.Form, "Client");
 
             var statusCanChanged = true;
-            if ((_client.Status.Id == (uint) StatusType.BlockedAndNoConnected) && (status == (uint) StatusType.NoWorked))
+            if ((_client.Status.Type == StatusType.BlockedAndNoConnected) && ((_status.Type == StatusType.NoWorked) || _status.Type == StatusType.VoluntaryBlocking))
                 statusCanChanged = false;
-            _client.Status = Status.Find(status);
+            /*if (_status.Type == StatusType.VoluntaryBlocking && _client.VoluntaryUnblockedDate != null && (DateTime.Now - _client.VoluntaryUnblockedDate.Value).Days < 45)
+                statusCanChanged = false;*/
+            _client.Status = _status;
             if (Validator.IsValid(updateClient) && statusCanChanged)
             {
                 if (updateClient.PassportDate != null)
@@ -567,12 +638,28 @@ namespace InternetInterface.Controllers
                 {
                     clientEndpointse.PackageId = updateClient.Tariff.PackageId;
                 }
+                /*if (oldStatus.Type != StatusType.VoluntaryBlocking && _client.Status.Type == StatusType.VoluntaryBlocking)
+                {
+                    _client.RatedPeriodDate = DateTime.Now;
+                    _client.DebtDays = 0;
+                    _client.VoluntaryBlockingDate = DateTime.Now;
+                    _client.VoluntaryUnblockedDate = null;
+                }
+                if (oldStatus.Type == StatusType.VoluntaryBlocking && _client.Status.Type != StatusType.VoluntaryBlocking)
+                {
+                    _client.VoluntaryBlockingDate = null;
+                    _client.DebtDays = 0;
+                    _client.VoluntaryUnblockedDate = DateTime.Now;
+                    _client.RatedPeriodDate = DateTime.Now;
+                }*/
                 if (_client.Status.Blocked)
                 {
+                    _client.AutoUnblocked = false;
                     _client.Disabled = true;
                 }
                 else
                 {
+                    _client.AutoUnblocked = true;
                     _client.Disabled = false;
                 }
                 _client.Update();
@@ -610,7 +697,7 @@ namespace InternetInterface.Controllers
 
         private void SendParam(UInt32 ClientCode, string grouped, int appealType)
 		{
-			var client = Clients.Find(ClientCode);
+			var client = Client.Find(ClientCode);
 		    PropertyBag["Houses"] = House.FindAll();
             PropertyBag["ChHouse"] = client.PhysicalClient.HouseObj != null ? client.PhysicalClient.HouseObj.Id : 0;
 			PropertyBag["ConnectInfo"] = client.GetConnectInfo();
@@ -646,13 +733,13 @@ namespace InternetInterface.Controllers
 		[AccessibleThrough(Verb.Post)]
 		public void ChangeBalance([DataBind("ChangedBy")]ChangeBalaceProperties changeProperties, uint clientId, string balanceText)
 		{
-			var clientToch = Clients.Find(clientId);
+			var clientToch = Client.Find(clientId);
 			string forChangeSumm = string.Empty;
 			var thisPay = new Payment();
 			PropertyBag["ChangeBalance"] = true;
 			if (changeProperties.IsForTariff())
 			{
-				forChangeSumm = Clients.Find(clientId).PhysicalClient.Tariff.Price.ToString();
+				forChangeSumm = Client.Find(clientId).PhysicalClient.Tariff.Price.ToString();
 			}
 			if (changeProperties.IsOtherSumm())
 			{
@@ -691,7 +778,7 @@ namespace InternetInterface.Controllers
 
 		public void Refused(uint ClientID, string prichina, string Appeal)
 		{
-			var client = Clients.Find(ClientID);
+			var client = Client.Find(ClientID);
 			client.AdditionalStatus = AdditionalStatus.Find((uint) AdditionalStatusType.Refused);
 		    client.Update();
             foreach (var graph in ConnectGraph.Queryable.Where(c => c.Client == client))
@@ -716,7 +803,7 @@ namespace InternetInterface.Controllers
 
 		public void NoPhoned(uint ClientID, string NoPhoneDate, string Appeal, string prichina)
 		{
-			var client = Clients.Find(ClientID);
+			var client = Client.Find(ClientID);
 			client.AdditionalStatus = AdditionalStatus.Find((uint)AdditionalStatusType.NotPhoned);
 			DateTime _noPhoneDate;
 			if (DateTime.TryParse(NoPhoneDate, out _noPhoneDate))
@@ -726,7 +813,7 @@ namespace InternetInterface.Controllers
                         Appeal = "Причина недозвона:  " + prichina + " \r\n Дата: " + _noPhoneDate.ToShortDateString() + " \r\n Комментарий: \r\n " + Appeal,
 						Date = DateTime.Now,
 						Partner = InithializeContent.partner,
-						Client = Clients.Find(ClientID),
+						Client = Client.Find(ClientID),
                         AppealType = (int)AppealType.User
 					}.SaveAndFlush();
 			}
@@ -760,7 +847,7 @@ namespace InternetInterface.Controllers
 		{
             if (Request.Form["graph_button"] != null)
             {
-                var client = Clients.Find(Convert.ToUInt32(Request.Form["clientId"]));
+                var client = Client.Find(Convert.ToUInt32(Request.Form["clientId"]));
                 var but_id = Request.Form["graph_button"].Split('_');
                 foreach (var graph in ConnectGraph.Queryable.Where(c => c.Client == client).ToList())
                 {

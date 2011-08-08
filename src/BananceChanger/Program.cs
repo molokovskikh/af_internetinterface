@@ -24,9 +24,9 @@ namespace BananceChanger
         {
             using (new SessionScope())
             {
-                var client = Clients.Find((uint) 1082);
+                var client = Client.Find((uint) 1082);
                 Console.WriteLine("Interver" + client.GetInterval());
-                Console.WriteLine("Price" + client.PhysicalClient.Tariff.GetPrice(client));
+                Console.WriteLine("Price" + client.GetPrice());
             }
             Console.ReadLine();
         }
@@ -35,7 +35,7 @@ namespace BananceChanger
         {
             using (new SessionScope())
             {
-                foreach (var source in Clients.Queryable.Where(c=>c.Id < 87).ToList())
+                foreach (var source in Client.Queryable.Where(c=>c.Id < 87).ToList())
                 {
                     var balance = source.PhysicalClient.Balance;
                     var writeOffs = source.WriteOffs.Sum(w => w.WriteOffSum);
@@ -62,7 +62,7 @@ namespace BananceChanger
                                  WriteOffSum = 700
                              }.Save();*/
                 //foreach (var clientse in Clients.Queryable.Where(c => c.Id == 101 || c.Id == 1065).ToList())
-                foreach (var clientse in Clients.Queryable.Where(c => c.PhysicalClient != null && c.Id == 63 || c.Id == 105 || c.Id == 4).ToList())
+                foreach (var clientse in Client.Queryable.Where(c => c.PhysicalClient != null && c.Id == 63 || c.Id == 105 || c.Id == 4).ToList())
                 {
                     if (clientse.PhysicalClient.Tariff.Id != 10)
                     {
@@ -106,7 +106,7 @@ namespace BananceChanger
                                 }
 
                                 SystemTime.Now = () => writeOff.WriteOffDate;
-                                var writeOffSum = clientse.PhysicalClient.Tariff.GetPrice(clientse) /
+                                var writeOffSum = clientse.GetPrice() /
                                                   clientse.GetInterval();
                                 if (writeOff.WriteOffSum.ToString("0.00") == writeOffSum.ToString("0.00"))
                                 {
@@ -152,7 +152,7 @@ namespace BananceChanger
 					{Environment.Hbm2ddlKeyWords, "none"},
 				});
             ActiveRecordStarter.Initialize(
-                new[] { typeof(Clients).Assembly },
+                new[] { typeof(Client).Assembly },
                 configuration);
         }
     }

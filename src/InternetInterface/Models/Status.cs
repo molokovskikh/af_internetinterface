@@ -12,6 +12,7 @@ namespace InternetInterface.Models
 		BlockedAndConnected = 3,
 		Worked = 5,
 		NoWorked = 7,
+        VoluntaryBlocking = 9
 	};
 
 
@@ -31,7 +32,10 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool Connected { get; set; }
 
-		public virtual bool Visualisible()
+        [Property]
+        public virtual string ShortName { get; set; }
+
+	    public virtual bool Visualisible()
 		{
 			if (Id == (uint)StatusType.BlockedAndConnected)
 				return false;
@@ -40,7 +44,26 @@ namespace InternetInterface.Models
 			return true;
 		}
 
-		[HasAndBelongsToMany(typeof(AdditionalStatus),
+	    public virtual StatusType Type
+	    {
+	        get
+	        {
+	            if (ShortName == "VoluntaryBlocking")
+	                return StatusType.VoluntaryBlocking;
+	            if (ShortName == "BlockedAndNoConnected")
+	                return StatusType.BlockedAndNoConnected;
+	            if (ShortName == "BlockedAndConnected")
+	                return StatusType.BlockedAndConnected;
+	            if (ShortName == "Worked")
+	                return StatusType.Worked;
+	            if (ShortName == "NoWorked")
+	                return StatusType.NoWorked;
+	            return 0;
+	        }
+	    }
+
+
+	    [HasAndBelongsToMany(typeof(AdditionalStatus),
 			RelationType.Bag,
 			Table = "StatusCorrelation",
 			Schema = "internet",

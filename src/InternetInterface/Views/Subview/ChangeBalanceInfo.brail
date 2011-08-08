@@ -37,11 +37,14 @@
 				</form>
 			</td>
             <td style="font-size:small;">
-               <form class="form login" method="post" action="${siteroot}/UserInfo/PostponedPayment">
+                    <a class="big-link" data-reveal-id="myModal_active" href="#" >
+                    <button type="button" id="Button2" class="button"><img alt="Save" src="../Images/tick.png"> Управление услугами </button>
+                    </a>
+              <!-- <form class="form login" method="post" action="${siteroot}/UserInfo/PostponedPayment">
 				<input type="hidden" name="ClientID" value="${ClientCode}" />
-				   <button type="submit" id="Button2" class="button">
-				  <img alt="Save" src="../Images/tick.png">Активировать обещанный платеж</button>
-				</form>
+				  <button type="submit" id="Button2" class="button">
+				  <img alt="Save" src="../Images/tick.png">Активировать услуги</button>
+				</form> -->
             </td>
 			<%end %>
 		</tr>
@@ -54,3 +57,71 @@
 </div>
 </div>
 <%end %>
+
+<script type="text/javascript">
+    $(function () {
+        $("#accordion").accordion({
+            collapsible: true
+        });
+        $('.date-pick').datepicker().change(function () {
+            $('.startDate_local').val($(this).val());
+        });
+        /*$('.endDate').datepicker({;
+            inline: true
+        }).change(function () {
+            $('.endDate_local').val($(this).val());
+        });*/
+    });
+</script>
+
+<div id="myModal_active"class="reveal-modal"> 
+    <table class="table">
+        <thead>
+            <tr>
+                <th colspan=2>
+                    Назначить услуги
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+            <div id="accordion" style="font-size:1em;">
+            <% for i, service in enumerate(services): %>
+                <% if service.CanActivateInWeb(_client): %>
+                    <h4><a href="#"> ${service.HumanName} </a> </h4>
+                    <div>
+                        <form method=post action="${siteroot}/UserInfo/ActivateService">
+                            <input type="hidden" name="clientId" value="${ClientCode}" />
+                            <input type="hidden" name="serviceId" value="${service.Id}" />
+                            <table>
+                                <tbody>
+                                    ${service.GetParameters()}
+                                </tbody>
+                            </table>
+                            <button class="button" style="margin-top:15px;" value="Назначить"><img alt="Save" src="${Siteroot}/Images/application_edit.png"> Активировать </button>
+                        </form>
+                    </div>
+                    <%else: %>
+                      <%if service.ActivatedForClient(_client): %>
+                        <h4><a href="#"> ${service.HumanName} </a> </h4>
+                        <div>
+                            <form method=post action="${siteroot}/UserInfo/DiactivateService">
+                                <input type="hidden" name="clientId" value="${ClientCode}" />
+                                <input type="hidden" name="serviceId" value="${service.Id}" />
+                                <button class="button" style="margin-top:15px;" value="Назначить"><img alt="Save" src="${Siteroot}/Images/application_edit.png"> Деактивировать </button>
+                            </form>
+                        </div>
+                      <%else: %>
+                       <h4><a href="#"> ${service.HumanName} </a> </h4>
+                       <div>Активация услуги  невозможна</div>
+                      <%end %>
+                    <%end %>
+            <%end %>
+            </div>
+            </td>
+            </tr>
+        </tbody>
+    </table>
+<a class="close-reveal-modal">х</a>
+</div> 

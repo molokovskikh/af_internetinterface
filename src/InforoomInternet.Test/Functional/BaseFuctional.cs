@@ -57,7 +57,7 @@ namespace InforoomInternet.Test.Unit
                 new Lease {
                               Ip = mashineIp,
                               Endpoint = new ClientEndpoints {
-                                                                 Client = new Clients {
+                                                                 Client = new Client {
                                                                                           Disabled = false,
                                                                                           LawyerPerson =
                                                                                               new LawyerPerson {
@@ -98,7 +98,7 @@ namespace InforoomInternet.Test.Unit
                 new Lease {
                               Ip = mashineIp,
                               Endpoint = new ClientEndpoints {
-                                                                 Client = new Clients {
+                                                                 Client = new Client {
                                                                                           Disabled = false,
                                                                                           PhysicalClient =
                                                                                               new PhysicalClients() {
@@ -249,7 +249,11 @@ namespace InforoomInternet.Test.Unit
         [Test]
         public void PrivateOfficeTest()
         {
-            Clients client;
+            using (new SessionScope())
+            {
+                ClientService.DeleteAll();
+            }
+            Client client;
             PhysicalClients phisClient;
             string clientId;
             using (var browser = Open("PrivateOffice/IndexOffice"))
@@ -257,7 +261,7 @@ namespace InforoomInternet.Test.Unit
                 using (new SessionScope())
                 {
                     clientId = browser.Element("clientId").GetAttributeValue("value");
-                    client = Clients.Find(Convert.ToUInt32(clientId));
+                    client = Client.Find(Convert.ToUInt32(clientId));
                     phisClient = client.PhysicalClient;
                     Assert.That(browser.Text, Is.StringContaining("Ваш личный кабинет"));
                     Assert.That(browser.Text,
@@ -269,7 +273,7 @@ namespace InforoomInternet.Test.Unit
 
                     phisClient.Balance = -100;
                     phisClient.UpdateAndFlush();
-                    client.PostponedPayment = null;
+                    //client.PostponedPayment = null;
                     client.Disabled = true;
                     client.AutoUnblocked = true;
                     client.UpdateAndFlush();
@@ -286,20 +290,32 @@ namespace InforoomInternet.Test.Unit
                 Assert.IsFalse(client.PaymentForTariff());
                 new Payment {
                                 Client = client,
-                                Sum = client.PhysicalClient.Tariff.GetPrice(client),
+                                Sum = client.GetPriceForTariff()*2,
                             }.Save();
+                client.ClientServices.Clear();
+                client.Update();
             }
             using (var browser = Open("PrivateOffice/IndexOffice"))
             using (new SessionScope())
             {
+                
+                Console.WriteLine(client.PhysicalClient != null);
+                Console.WriteLine(!client.ClientServices.Select(c => c.Service).Contains(Service.GetByType(typeof(DebtWork))));
+                Console.WriteLine(client.Disabled);
+                Console.WriteLine(client.PhysicalClient.Balance < 0);
+                Console.WriteLine(client.AutoUnblocked);
+                Console.WriteLine(client.PaymentForTariff());
                 browser.Element("podrob").Click();
                 //Console.WriteLine(browser.Html);
                 browser.Button("PostponedBut").Click();
+                Console.WriteLine(browser.Text);
                 Assert.That(browser.Text, Is.StringContaining("Ваш личный кабинет"));
-                client = Clients.Find(Convert.ToUInt32(clientId));
+            }
+            using (new SessionScope())
+            {
+                client = Client.Find(Convert.ToUInt32(clientId));
                 Assert.IsFalse(client.Disabled);
             }
-
 
             Console.WriteLine("PrivateOfficeTest Complite");
         }

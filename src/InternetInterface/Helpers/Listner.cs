@@ -68,23 +68,23 @@ namespace InternetInterface.Helpers
             using (new SessionScope())
             {
                 var logInfo = string.Empty;
-                var client = new Clients();
-                if (@event.Entity.GetType() == typeof(Clients))
+                var client = new Client();
+                if (@event.Entity.GetType() == typeof(Client))
                 {
-                    client = (Clients) @event.Entity;
-                    logInfo = ((Clients) @event.Entity).LogComment;
+                    client = (Client) @event.Entity;
+                    logInfo = ((Client) @event.Entity).LogComment;
                 }
                 if (@event.Entity.GetType() == typeof(PhysicalClients))
                 {
                     client =
-                        Clients.Queryable.Where(c => c.PhysicalClient == (PhysicalClients) @event.Entity).FirstOrDefault
+                        Client.Queryable.Where(c => c.PhysicalClient == (PhysicalClients) @event.Entity).FirstOrDefault
                             ();
                     logInfo = ((PhysicalClients) @event.Entity).LogComment;
                 }
                 if (@event.Entity.GetType() == typeof(LawyerPerson))
                 {
                     client =
-                        Clients.Queryable.Where(c => c.LawyerPerson == (LawyerPerson) @event.Entity).FirstOrDefault();
+                        Client.Queryable.Where(c => c.LawyerPerson == (LawyerPerson) @event.Entity).FirstOrDefault();
                     logInfo = ((LawyerPerson)@event.Entity).LogComment;
                 }
                 @event.Session.Save(new Appeals {

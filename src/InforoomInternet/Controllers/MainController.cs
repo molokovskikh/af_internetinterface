@@ -97,7 +97,7 @@ namespace InforoomInternet.Controllers
 /*#if DEBUG
 			hostAdress = "91.219.6.6";
 #endif*/
-			var lease = Clients.FindByIP(hostAdress);
+			var lease = Client.FindByIP(hostAdress);
 #if DEBUG
 			/*lease = new Lease {
 				Endpoint = new ClientEndpoints {
