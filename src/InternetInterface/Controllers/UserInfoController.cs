@@ -139,6 +139,7 @@ namespace InternetInterface.Controllers
             PropertyBag["grouped"] = filter.grouped;
             PropertyBag["appealType"] = filter.appealType == 0 ? (int)AppealType.User : filter.appealType;
 			PropertyBag["Statuss"] = Status.FindAllSort();
+            PropertyBag["services"] = Service.FindAll();
 			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(t => t.Name != null);
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
 

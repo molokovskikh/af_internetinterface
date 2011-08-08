@@ -31,9 +31,6 @@ namespace InternetInterface.Models
         [PrimaryKey]
         public virtual uint Id { get; set; }
 
-        /*[Property]
-        public virtual string Name { get; set; }*/
-
         [Property]
         public virtual string HumanName { get; set; }
 
@@ -51,8 +48,6 @@ namespace InternetInterface.Models
         public static Service GetByType(Type type)
         {
             return (Service)ActiveRecordMediator.FindFirst(type);
-
-            //return FindAll().Where(s => s.GetType() == type).FirstOrDefault();
         }
 
 
@@ -96,7 +91,6 @@ namespace InternetInterface.Models
         public virtual bool CanActivate(Client client)
         {
             return true;
-            //return !client.ClientServices.Select(c => c.Service.Id).Contains(Id);
         }
 
         public virtual bool CanActivate(ClientService CService)
@@ -120,17 +114,6 @@ namespace InternetInterface.Models
             }
             return false;
         }
-
-        /*public virtual void CreateAppeal(string message, ClientService CService)
-        {
-            new Appeals {
-                            Appeal = message,
-                            Client = CService.Client,
-                            AppealType = (int)AppealType.System,
-                            Date = DateTime.Now,
-                            Partner = InithializeContent.partner
-                        }.Save();
-        }*/
     }
 
 
@@ -152,9 +135,14 @@ namespace InternetInterface.Models
 
         public override bool CanActivate(Client client)
         {
-            var balance = client.PhysicalClient.Balance < 0;
-            var conVol = !client.ClientServices.Select(c => c.Service).Contains(GetByType(typeof(VoluntaryBlockin)));
-            return balance && conVol && client.StartWork();
+            if (client.PhysicalClient != null)
+            {
+                var balance = client.PhysicalClient.Balance < 0;
+                var conVol =
+                    !client.ClientServices.Select(c => c.Service).Contains(GetByType(typeof (VoluntaryBlockin)));
+                return balance && conVol && client.StartWork();
+            }
+            return false;
         }
 
         public override bool CanActivate(ClientService CService)
@@ -212,7 +200,6 @@ namespace InternetInterface.Models
             {
                 CompulsoryDiactivate(CService);
                 return true;
-                //CService.Delete();
             }
             return false;
         }
@@ -253,15 +240,17 @@ namespace InternetInterface.Models
 
         public override bool CanActivate(Client client)
         {
-            var balance = client.PhysicalClient.Balance >= 0;
-            var debtWork = !client.ClientServices.Select(c => c.Service).Contains(GetByType(typeof(DebtWork)));
-            return balance && debtWork && client.StartWork();
+            if (client.PhysicalClient != null)
+            {
+                var balance = client.PhysicalClient.Balance >= 0;
+                var debtWork = !client.ClientServices.Select(c => c.Service).Contains(GetByType(typeof (DebtWork)));
+                return balance && debtWork && client.StartWork();
+            }
+            return false;
         }
 
         public override bool CanActivate(ClientService CService)
         {
-            /*var balance = CService.Client.PhysicalClient.Balance > 0;
-            var debtWork = !CService.Client.ClientServices.Select(c => c.Service).Contains(GetByType(typeof (DebtWork)));*/
             var begin = SystemTime.Now() > CService.BeginWorkDate.Value;
             return  begin && CanActivate(CService.Client);
         }

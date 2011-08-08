@@ -30,3 +30,12 @@ ALTER TABLE `internet`.`ClientServices` ADD CONSTRAINT `FK_ClientServices_1` FOR
 	
 	ALTER TABLE `internet`.`ClientServices` MODIFY COLUMN `Client` INT(10) UNSIGNED DEFAULT NULL,
  ADD COLUMN `Diactivated` TINYINT(1) UNSIGNED NOT NULL AFTER `Activator`;
+
+ 
+ insert into internet.Services (Name, Price, BlockingAll, HumanName)
+values ("DebtWork", 0, false, "Работа в долг"),
+("VoluntaryBlockin", 0, true, "Добровольная блокировка");
+
+insert into internet.ClientServices (Client, Service, BeginWorkDate, EndWorkDate, Activated, Diactivated)
+SELECT c.id, 1,c.PostponedPayment, DATE_ADD(c.PostponedPayment, INTERVAL 1 DAY), if (c.Disabled, false, true), false  FROM internet.Clients C
+where  c.PostponedPayment is not null;

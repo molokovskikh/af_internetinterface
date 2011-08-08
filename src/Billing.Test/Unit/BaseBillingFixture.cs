@@ -50,6 +50,7 @@ namespace Billing.Test.Unit
 			       		DebtDays = 0,
 			       		Name = name,
 			       		PhysicalClient = phisicalClient,
+                        BeginWork = DateTime.Now
 			       		//SayBillingIsNewClient = true
 			       	};
 		}

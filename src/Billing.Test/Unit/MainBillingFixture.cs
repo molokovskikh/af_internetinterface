@@ -171,7 +171,7 @@ namespace Billing.Test.Unit
             SystemTime.Now = () => DateTime.Now.AddDays(countDays + 1);
             billing.OnMethod();
             //client.Refresh();
-            Assert.That(WriteOff.FindAll().Count(), Is.EqualTo(countDays));
+            Assert.That(WriteOff.FindAll().Count(), Is.EqualTo(countDays +1));
             Assert.That(physClient.Balance, Is.LessThan(0m));
             Assert.IsTrue(client.Disabled);
             client.Disabled = false;
@@ -643,7 +643,7 @@ namespace Billing.Test.Unit
             billing.OnMethod();
             billing.Compute();
 
-            Assert.That(WriteOff.Queryable.Where(w=>w.Client == client_Post).Count(), Is.EqualTo(2));
+            Assert.That(WriteOff.Queryable.Where(w => w.Client == client_Post).Count(), Is.EqualTo(3));
 
             client_simple.Refresh();
             client_Post.Refresh();
