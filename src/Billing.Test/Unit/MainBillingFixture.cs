@@ -69,6 +69,13 @@ namespace Billing.Test.Unit
 				Name = "testBlockedStatus"
 			}.Save();
 
+            new Status {
+                           ShortName = "VoluntaryBlocking",
+                           Id = (uint)StatusType.VoluntaryBlocking,
+                           Blocked = true,
+                           Connected = true,
+                       }.Save();
+
             new DebtWork
             {
                 BlockingAll = false,
@@ -109,6 +116,29 @@ namespace Billing.Test.Unit
 			//billing.DtNow = rd.dtTo;
 			billing.Compute();
 		}
+
+        [Test]
+        public void TariffTest()
+        {
+            var client = CreateClient();
+            var intervalTariff = new Tariff {
+                                                FinalPrice = 200,
+                                                FinalPriceInterval = 2,
+                                                Price = 100,
+                                            };
+            intervalTariff.Save();
+            client.PhysicalClient.Tariff = intervalTariff;
+            client.Update();
+            Assert.That(client.GetPrice(), Is.EqualTo(100));
+            SystemTime.Now = () => DateTime.Now.AddMonths(2).AddHours(1);
+            Assert.That(client.GetPrice(), Is.EqualTo(200));
+            var simpleTariff = new Tariff {
+                                              Price = 300
+                                          };
+            client.PhysicalClient.Tariff = simpleTariff;
+            client.Update();
+            Assert.That(client.GetPrice(), Is.EqualTo(300));
+        }
 
         [Test]
         public void DebtWorkTest()

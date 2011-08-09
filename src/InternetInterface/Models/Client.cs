@@ -286,10 +286,18 @@ typeof(ClientConnectInfo)))
             if ((PhysicalClient.Tariff.FinalPriceInterval == 0 || PhysicalClient.Tariff.FinalPrice == 0) && !Disabled)
                 return PhysicalClient.Tariff.Price + servisesPrice;
 
-            if ((BeginWork != null && BeginWork.Value.AddMonths(PhysicalClient.Tariff.FinalPriceInterval) <= SystemTime.Now()) && !Disabled)
-                return PhysicalClient.Tariff.FinalPrice + servisesPrice;
+            if ((BeginWork != null) && !Disabled)
+            {
+                var beginWorkAdded = BeginWork.Value.AddMonths(PhysicalClient.Tariff.FinalPriceInterval);
 
-            return 0;
+                if (beginWorkAdded > SystemTime.Now())
+                    return PhysicalClient.Tariff.Price + servisesPrice;
+
+                if (beginWorkAdded <= SystemTime.Now())
+                    return PhysicalClient.Tariff.FinalPrice + servisesPrice;
+            }
+
+            return 0m;
         }
 	}
 }
