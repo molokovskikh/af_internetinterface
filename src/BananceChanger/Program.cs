@@ -17,7 +17,39 @@ namespace BananceChanger
             Init();
 
             //CreateWriteOffs();
-            ZeroTarif();
+            //ZeroTarif();
+            IntervalTariffs();
+        }
+
+
+        public static void IntervalTariffs()
+        {
+            using (new SessionScope())
+            {
+                var writeOffs = WriteOff.Queryable.Where(w => w.WriteOffDate.Date == DateTime.Now.AddDays(-1).Date).ToList();
+                foreach (var writeOff in writeOffs)
+                {
+                    var ph = writeOff.Client.PhysicalClient;
+                    var lp = writeOff.Client.LawyerPerson;
+                    if (ph != null)
+                    {
+                        ph.Balance += writeOff.WriteOffSum;
+                        ph.Update();
+                        Console.WriteLine(string.Format("Клиент {0} зачислено {1}", writeOff.Client.Id, writeOff.WriteOffSum.ToString("0.00")));
+                        writeOff.Delete();
+                        continue;
+                    }
+                    if (lp != null)
+                    {
+                        lp.Balance += writeOff.WriteOffSum;
+                        lp.Update();
+                        Console.WriteLine(string.Format("Клиент {0} зачислено {1}", writeOff.Client.Id, writeOff.WriteOffSum.ToString("0.00")));
+                        writeOff.Delete();
+                        continue;
+                    }
+                }
+            }
+            Console.ReadLine();
         }
 
         public static void ZeroTarif()
