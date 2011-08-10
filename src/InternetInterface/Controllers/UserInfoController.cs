@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
 using System.Linq;
 using System.Collections.Generic;
+using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Common.Web.Ui.Helpers;
 using InternetInterface.AllLogic;
@@ -88,7 +90,7 @@ namespace InternetInterface.Controllers
     [Layout("Main")]
     [Helper(typeof(PaginatorHelper))]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
-    public class UserInfoController : SmartDispatcherController
+    public class UserInfoController : ARSmartDispatcherController
 	{
         public void SearchUserInfo([DataBind("filter")]ClientFilter filter)
 		{
@@ -264,84 +266,102 @@ namespace InternetInterface.Controllers
         }
 
         public void SaveSwitchForClient(uint ClientID, [DataBind("ConnectInfo")]ConnectInfo ConnectInfo,
-			uint BrigadForConnect)
-		{
-			var client = Client.Find(ClientID);
-			var brigadChangeFlag = true;
-			if (client.WhoConnected != null)
-				brigadChangeFlag = false;
-			var newFlag = false;
-			var clientEntPoint = new ClientEndpoints();
-			var clientsEndPoint = ClientEndpoints.Queryable.Where(c => c.Client == client).ToArray();
-			if (clientsEndPoint.Length != 0)
-			{
-				clientEntPoint = clientsEndPoint[0];
-			}
-			else
-			{
-				newFlag = true;
-			}
-			var olpPort = clientEntPoint.Port;
-			var oldSwitch = clientEntPoint.Switch;
-			var nullFlag = false;
-			if (ConnectInfo.static_IP == null)
-			{
-				clientEntPoint.Ip = null;
-				nullFlag = true;
-			}
-			else
-			{
-				ConnectInfo.static_IP = NetworkSwitches.SetProgramIp(ConnectInfo.static_IP);
-			}
-			var errorMessage = Validation.ValidationConnectInfo(ConnectInfo);
-			if ((ConnectInfo.static_IP != string.Empty) || (nullFlag))
-			{
-				if (errorMessage == string.Empty || (oldSwitch != null && ConnectInfo.Switch == oldSwitch.Id && ConnectInfo.Port == olpPort.ToString()))
-				{
-					if (client.GetClientType() == ClientType.Phisical)
-						clientEntPoint.PackageId = client.PhysicalClient.Tariff.PackageId;
-					else
-						clientEntPoint.PackageId = client.LawyerPerson.Speed.PackageId;
-					clientEntPoint.Client = client;
-					clientEntPoint.Ip = ConnectInfo.static_IP;
-					clientEntPoint.Port = Int32.Parse(ConnectInfo.Port);
-					clientEntPoint.Switch = NetworkSwitches.Find(Convert.ToUInt32(ConnectInfo.Switch));
-					clientEntPoint.Monitoring = ConnectInfo.Monitoring;
+            uint BrigadForConnect, [ARDataBind("staticAdress", AutoLoad = AutoLoadBehavior.NewInstanceIfInvalidKey)]StaticIp[] staticAdress)
+        {
+            var client = Client.Find(ClientID);
+            var brigadChangeFlag = true;
+            if (client.WhoConnected != null)
+                brigadChangeFlag = false;
+            var newFlag = false;
+            var clientEntPoint = new ClientEndpoints();
+            var clientsEndPoint = ClientEndpoints.Queryable.Where(c => c.Client == client).ToArray();
+            if (clientsEndPoint.Length != 0)
+            {
+                clientEntPoint = clientsEndPoint[0];
+            }
+            else
+            {
+                newFlag = true;
+            }
+            var olpPort = clientEntPoint.Port;
+            var oldSwitch = clientEntPoint.Switch;
+            var nullFlag = false;
+            if (ConnectInfo.static_IP == null)
+            {
+                clientEntPoint.Ip = null;
+                nullFlag = true;
+            }
+            else
+            {
+                ConnectInfo.static_IP = NetworkSwitches.SetProgramIp(ConnectInfo.static_IP);
+            }
+            var errorMessage = Validation.ValidationConnectInfo(ConnectInfo);
+            if ((ConnectInfo.static_IP != string.Empty) || (nullFlag))
+            {
+                if (errorMessage == string.Empty ||
+                    (oldSwitch != null && ConnectInfo.Switch == oldSwitch.Id && ConnectInfo.Port == olpPort.ToString()))
+                {
+                    if (client.GetClientType() == ClientType.Phisical)
+                        clientEntPoint.PackageId = client.PhysicalClient.Tariff.PackageId;
+                    else
+                        clientEntPoint.PackageId = client.LawyerPerson.Speed.PackageId;
+                    clientEntPoint.Client = client;
+                    clientEntPoint.Ip = ConnectInfo.static_IP;
+                    clientEntPoint.Port = Int32.Parse(ConnectInfo.Port);
+                    clientEntPoint.Switch = NetworkSwitches.Find(Convert.ToUInt32(ConnectInfo.Switch));
+                    clientEntPoint.Monitoring = ConnectInfo.Monitoring;
                     if (!newFlag)
                         clientEntPoint.UpdateAndFlush();
                     else
                     {
                         clientEntPoint.SaveAndFlush();
-                        if (client.PhysicalClient != null && client.PhysicalClient.Request != null && client.PhysicalClient.Request.Registrator != null)
-                            PaymentsForAgent.CreatePayment(AgentActions.ConnectClient, "Зачисление за подключение клиента", client.PhysicalClient.Request.Registrator);
+                        if (client.PhysicalClient != null && client.PhysicalClient.Request != null &&
+                            client.PhysicalClient.Request.Registrator != null)
+                            PaymentsForAgent.CreatePayment(AgentActions.ConnectClient,
+                                                           "Зачисление за подключение клиента",
+                                                           client.PhysicalClient.Request.Registrator);
                     }
-				    if (brigadChangeFlag)
-					{   
-						var brigad = Brigad.Find(BrigadForConnect);
-						client.WhoConnected = brigad;
-						client.WhoConnectedName = brigad.Name;
-					}
-					client.ConnectedDate = DateTime.Now;
-					client.Status = Status.Find((uint)StatusType.BlockedAndConnected);
-					client.UpdateAndFlush();
+                    if (brigadChangeFlag)
+                    {
+                        var brigad = Brigad.Find(BrigadForConnect);
+                        client.WhoConnected = brigad;
+                        client.WhoConnectedName = brigad.Name;
+                    }
+                    client.ConnectedDate = DateTime.Now;
+                    client.Status = Status.Find((uint) StatusType.BlockedAndConnected);
+                    client.UpdateAndFlush();
 
-					RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID);
-					return;
-				}
-			}
-			else
-			{
-				errorMessage = string.Empty;
-				errorMessage += "Ошибка ввода IP адреса";
-			}
-			PropertyBag["ConnectInfo"] = client.GetConnectInfo();
-			PropertyBag["Editing"] = true;
-			PropertyBag["ChBrigad"] = BrigadForConnect;
-			Flash["errorMessage"] = errorMessage;
-			RedirectToReferrer();
-		}
+                    StaticIp.Queryable.Where(s => s.Client == client).ToList().Where(
+                        s => !staticAdress.Select(f => f.Id).Contains(s.Id)).ToList().
+                        ForEach(s => s.Delete());
 
-		public void CreateAppeal(string Appeal, uint ClientID)
+                    foreach (var s in staticAdress)
+                    {
+                        if (!string.IsNullOrEmpty(s.Ip))
+                            if (Regex.IsMatch(s.Ip, NetworkSwitches.IPRegExp))
+                            {
+                                s.Client = client;
+                                s.Save();
+                            }
+                    }
+
+                    RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID);
+                    return;
+                }
+            }
+            else
+            {
+                errorMessage = string.Empty;
+                errorMessage += "Ошибка ввода IP адреса";
+            }
+            PropertyBag["ConnectInfo"] = client.GetConnectInfo();
+            PropertyBag["Editing"] = true;
+            PropertyBag["ChBrigad"] = BrigadForConnect;
+            Flash["errorMessage"] = errorMessage;
+            RedirectToReferrer();
+        }
+
+        public void CreateAppeal(string Appeal, uint ClientID)
 		{
             if (!string.IsNullOrEmpty(Appeal))
 			new Appeals
@@ -728,6 +748,7 @@ namespace InternetInterface.Controllers
 		                                      ? "Переназначить в график"
 		                                      : "Назначить в график";
 		    PropertyBag["writeOffSum"] = WriteOff.FindAllByProperty("Client", client).Sum(s => s.WriteOffSum);
+            PropertyBag["staticIps"] = StaticIp.Queryable.Where(s => s.Client.Id == ClientCode).ToList();
 		}
 
 		[AccessibleThrough(Verb.Post)]
