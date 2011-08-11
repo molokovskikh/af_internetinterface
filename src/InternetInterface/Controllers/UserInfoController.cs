@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
+using Common.Tools;
 using Common.Web.Ui.Helpers;
 using InternetInterface.AllLogic;
 using InternetInterface.Controllers.Filter;
@@ -263,6 +265,41 @@ namespace InternetInterface.Controllers
                 }
             }
             RedirectToUrl("../UserInfo/SearchUserInfo.rails?filter.ClientCode=" + clientId);
+        }
+
+        [return : JSONReturnBinder]
+        public bool ThisGateWayInInterval()
+        {
+            var startAdress = Request.Form["startAdress"];
+            var gateway = Request.Form["gateway"];
+            var mask = Int32.Parse(Request.Form["mask"]);
+            var startIp = IPAddress.Parse(startAdress);
+            var _mask = SubnetMask.CreateByNetBitLength(mask);
+            var endIp = startIp.GetBroadcastAddress(_mask).ToString();
+            //eturn startIp < IPAddress.Parse(gateway)
+            //return Ip1GreatestIp2(gateway, startAdress) && Ip1GreatestIp2(endIp, gateway);
+            return (Convert.ToInt64(NetworkSwitches.SetProgramIp(startAdress)) <
+                    Convert.ToInt64(NetworkSwitches.SetProgramIp(gateway))) &&
+                   (Convert.ToInt64(NetworkSwitches.SetProgramIp(endIp)) >
+                    Convert.ToInt64(NetworkSwitches.SetProgramIp(gateway)));
+        }
+
+        private bool Ip1GreatestIp2(string ip1, string ip2)
+        {
+            return Convert.ToInt64(NetworkSwitches.SetProgramIp(ip1))+1 >= Convert.ToInt64(NetworkSwitches.SetProgramIp(ip2))-1;
+            /*var sip1 = ip1.Split('.').ToList();
+            var sip2 = ip2.Split('.').ToList();
+            var isip1 = sip1.Select(Int32.Parse).ToList();
+            var isip2 = sip2.Select(Int32.Parse).ToList();
+            if (isip1[0] > isip2[0])
+                return true;
+            if ((isip1[0] < isip2[0]) && (isip1[1] > isip2[1]))
+                return true;
+            if ((isip1[0] < isip2[0]) && (isip1[1] < isip2[1]) && (isip1[2] > isip2[2]))
+                return true;
+            if ((isip1[0] < isip2[0]) && (isip1[1] < isip2[1]) && (isip1[2] < isip2[2]) && (isip1[3] > isip2[3]))
+                return true;
+            return false;*/
         }
 
         public void SaveSwitchForClient(uint ClientID, [DataBind("ConnectInfo")]ConnectInfo ConnectInfo,

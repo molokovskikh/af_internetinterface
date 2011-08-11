@@ -20,6 +20,9 @@ namespace InternetInterface.Models
         public virtual string Ip { get; set; } 
         
         [Property]
+        public virtual string Gateway { get; set; } 
+        
+        [Property]
         public virtual string Mask { get; set; }
     }
 }

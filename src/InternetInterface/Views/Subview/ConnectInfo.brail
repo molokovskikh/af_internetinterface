@@ -86,13 +86,18 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>Статические адреса клиента</th>
+                    <th colspan=2 style="text-align:center;">Статические адреса клиента</th>
+                </tr>
+                <tr>
+                    <th>IP адрес / маска</th>
+                    <th>Шлюз</th>
                 </tr>
             </thead>
             <tbody>
                 <% for i,item in enumerate(staticIps): %>
                     <tr>
-                        <td>${item.Ip}/${item.Mask}</td>
+                        <td>${item.Ip} ${"/" if item.Mask != null} ${item.Mask}</td>
+                        <td>${item.Gateway}</td>
                     </tr>
                 <%end %>
             </tbody>
@@ -165,7 +170,9 @@
         <table class="table">
         <thead> 
             <tr>
-                <th colspan=4>Статические адреса клиента</th>
+                <th style="width:1px; border-right:0px double black;"></th>
+                <th colspan=2 style=" border-left:0px double black;">IP адрес / маска</th>
+                <th colspan=2>Шлюз</th>
             </tr>
         </thead>
         <tbody id="adresesBlock">
@@ -175,11 +182,14 @@
                     <input type=hidden value=${i} />
                     <input type=hidden name="staticAdress[${i}].Id" value=${item.Id} />
                 </td>
-                <td style="width:150px;">
-                    <input type=text class="ipinp" value="${item.Ip}" name="staticAdress[${i}].Ip"/>
+                <td class="ipinp_td" style="width:150px;">
+                    <input type=text class="ipinp" id="ipinp" value="${item.Ip}" name="staticAdress[${i}].Ip"/>
+                </td>
+                <td class="ipPrefix_td">
+                   <input type=text class="ipPrefix" value="${item.Mask}" name="staticAdress[${i}].Mask"/>
                 </td>
                 <td>
-                   ${"/" if item.Mask != null} <input type=text class="ipPrefix" value="${item.Mask}" name="staticAdress[${i}].Mask"/>
+                    <input type=text class="ipGateway" id="ipGateway" value="${item.Gateway}" name="staticAdress[${i}].Gateway"/>
                 </td>
                 <td>
                     <div class=delMenuItem id="delMenuItem_${i}"></div>
@@ -202,13 +212,47 @@
             delMenu(this);
         });
 
-        $("#formConnect").validate();
+        $("#formConnect").validate({
+            submitHandler: function (form) {
+                var correckMask = true;
+                var correctGateWay = true;
+                $('.ipPrefix').each(function () {
+                    if (Number($(this).val()) < 25) {
+                        correckMask = false;
+                    }
+                });
+                if (!correckMask)
+                    if (confirm('Одна из масок содержит более 256 адресов, продолжить ?')) {
+                        correckMask = true;
+                    }
+                if (correckMask) {
+                    $('.ipGateway').each(function () {
+                        if ($(this).val() != '') {
+                            var req = {};
+                            req.gateway = $(this).val();
+                            req.startAdress = $(this).parent().parent().children('.ipinp_td:first').children('input:first').val();
+                            req.mask = $(this).parent().parent().children('.ipPrefix_td:first').children('input:first').val();
+                            if (req.mask != '')
+                                $.post("ThisGateWayInInterval", req, function (data) {
+                                    if (data) {
+                                        if (correckMask)
+                                            form.submit();
+                                    }
+                                    else {
+                                        alert("Указанный шлюз " + req.gateway + " находится вне диапазона адресов " + req.startAdress + "/" + req.mask);
+                                    }
+                                });
+                        }
+                    });
+                }
+            }
+        });
 
         $.validator.addMethod(
         "regex",
         function (value, element, regexp) {
-        var re = new RegExp(regexp);
-        return this.optional(element) || re.test(value);
+            var re = new RegExp(regexp);
+            return this.optional(element) || re.test(value);
         },
         "Формат ввода IP адреса: ***.***.***.***"
         );
@@ -217,9 +261,11 @@
         $('.ipinp').each(function () {
             SetValid(this);
         });
+        $('.ipGateway').each(function () {
+            SetValidGate(this);
+        });
 
     });
-
 
     function SetValid(elem) {
         $(elem).rules("add", { required: true, regex: "^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$",
@@ -227,6 +273,10 @@
                 required : "Поле не может быть пустым"
             }
         })
+    }   
+    
+     function SetValidGate(elem) {
+        $(elem).rules("add", { regex: "^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$" })
     }
 
     function delMenu(clickDiv) {
@@ -239,11 +289,14 @@
             lastIndex = 0;  
         var elementAdress = "<tr>";
         elementAdress += "<td  class='indexes' style='width:1px;'><input type=hidden value=" + lastIndex + " /> </td>";
-        elementAdress += "<td style='width:150px;'>";
+        elementAdress += "<td class='ipinp_td' style='width:150px;'>";
         elementAdress += "<input type=text class='ipinp' id='staticAdress_" + lastIndex + "' name='staticAdress[" + lastIndex + "].Ip'/>";
         elementAdress += "</td>";
+        elementAdress += "<td class='ipPrefix_td'>";
+        elementAdress += "<input type=text class='ipPrefix' id='staticPrefix_" + lastIndex + "' name='staticAdress[" + lastIndex + "].Mask'/>";
+        elementAdress += "</td>";
         elementAdress += "<td>";
-        elementAdress += "/ <input type=text class='ipPrefix' id='staticPrefix_" + lastIndex + "' name='staticAdress[" + lastIndex + "].Mask'/>";
+        elementAdress += "<input type=text class='ipGateway' id='ipGateway_" + lastIndex + "' name='staticAdress[" + lastIndex + "].Gateway'/>";
         elementAdress += "</td>";
         elementAdress += "<td>";
         elementAdress += "<div class=delMenuItem id='delMenuItem_" + lastIndex + "'></div>";
@@ -254,5 +307,6 @@
             delMenu(this);
         });
         SetValid($('#staticAdress_' + lastIndex));
+        SetValidGate($('#ipGateway_' + lastIndex));
     }
 </script>

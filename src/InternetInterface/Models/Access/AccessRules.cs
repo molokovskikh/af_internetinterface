@@ -186,7 +186,8 @@ namespace InternetInterface.Models.Access
 									"SaveSwitchForClient",
 									"LoadEditConnectMudule",
 									"GoZone",
-									"SiteMap"
+									"SiteMap",
+                                    "ThisGateWayInInterval"
 			                 	};
 			return _accessDHCP.Contains(methodName) ? "DHCP" : string.Empty;
 		}
