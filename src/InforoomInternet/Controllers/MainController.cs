@@ -33,7 +33,10 @@ namespace InforoomInternet.Controllers
 		}
 
 		public void Ok()
-		{}
+		{
+		    if (Flash["application"] == null)
+                RedirectToSiteRoot();
+		}
 
 		public void OfferContract(bool edit)
 		{}

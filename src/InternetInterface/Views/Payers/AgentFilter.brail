@@ -62,6 +62,7 @@
 <center>
 	<div class="filterDiv">
 		<form method="get" action="${siteroot}/Payers/ShowAgent">
+        <%if PartnerAccessSet.AccesPartner("SSI"): %>
             <table class="table">
                 <thead>
                     <tr>
@@ -84,6 +85,7 @@
                     </tr>
                 </tbody>
             </table>
+        <%end %>
 			<table>
 				<thead>
 					<tr>
