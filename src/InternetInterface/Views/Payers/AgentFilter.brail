@@ -72,15 +72,12 @@
                 <tbody>
                     <tr>
                         <td>
-                            <select name="filter.agent" id="agent" style="width: 100%" >
+                            <select name="filter.agent" id="agent" style="width: 500px" >
                             <option value="0" ${"selected" if ("0" == agentId)} >Все </option>
 			                <%for i, agent in enumerate(agents):%>
 			                <option id="agent${agent.Id}" value="${agent.Id}" ${"selected" if (agent.Id == agentId)}> ${agent.Name} </option>
 			                <% end %>
 			                </select>
-                        </td>
-                        <td>
-                            <button id="showBut" type=submit class="button">Показать</button>
                         </td>
                     </tr>
                 </tbody>
@@ -136,6 +133,11 @@
                             </div>
                         </td>
 					</tr>
+                    <tr>
+                        <td>
+                                <button id="showBut" type=submit class="button showpay">Показать</button>
+                        </td>
+                    </tr>
 				</tbody>
 				</table>
                 <p></p>

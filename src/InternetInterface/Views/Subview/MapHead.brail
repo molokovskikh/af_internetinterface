@@ -58,10 +58,10 @@
             <th><a href = "../Switches/OnLineClient.rails?Zone=4" ><span class="MH"><div class=menudiv>OnLine клиенты</div></span></a></th>
             <%end %>
             <%if PartnerAccessSet.AccesPartner("SSI"): %>
-            <th><a href = "../Payers/Filter.rails" ><span class="MH"><div class=menudiv>Платежи</div></span></a></th>
+            <th><a href = "../Payers/Filter.rails" ><span class="MH"><div class=menudiv>Платежи по регистраторам</div></span></a></th>
             <%end %>
-            <%if PartnerAccessSet.AccesPartner("SSI"): %>
-            <th><a href = "../Payers/AgentFilter.rails" ><span class="MH"><div class=menudiv>Платежи по агентам</div></span></a></th>
+            <%if (PartnerAccessSet.AccesPartner("SSI") or PartnerAccessSet.AccesPartner("PFA")): %>
+            <th><a href = "../Payers/AgentFilter.rails" ><span class="MH"><div class=menudiv>Платежи</div></span></a></th>
             <%end %>
             <%if PartnerAccessSet.AccesPartner("SSI"): %>
             <th><a href = "../UserInfo/RequestGraph.rails" ><span class="MH"><div class=menudiv>График подключений</div></span></a></th>
