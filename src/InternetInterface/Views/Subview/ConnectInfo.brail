@@ -217,6 +217,7 @@
                 var correckMask = true;
                 var correctGateWay = true;
                 $('.ipPrefix').each(function () {
+                if ($(this).val() != '')
                     if (Number($(this).val()) < 25) {
                         correckMask = false;
                     }
@@ -232,7 +233,7 @@
                             req.gateway = $(this).val();
                             req.startAdress = $(this).parent().parent().children('.ipinp_td:first').children('input:first').val();
                             req.mask = $(this).parent().parent().children('.ipPrefix_td:first').children('input:first').val();
-                            if (req.mask != '')
+                            if (req.mask != '') {
                                 $.post("ThisGateWayInInterval", req, function (data) {
                                     if (data) {
                                         if (correckMask)
@@ -241,7 +242,10 @@
                                     else {
                                         alert("Указанный шлюз " + req.gateway + " находится вне диапазона адресов " + req.startAdress + "/" + req.mask);
                                     }
-                                });
+                                })
+                            } else {
+                                alert("Для IP адреса " + req.startAdress+ " был введен шлюз, но не была введена маска сети");
+                            };
                         }
                     });
                 }
@@ -264,7 +268,9 @@
         $('.ipGateway').each(function () {
             SetValidGate(this);
         });
-
+        $('.ipPrefix').each(function () {
+            SetValidMask(this);
+        });
     });
 
     function SetValid(elem) {
@@ -277,6 +283,15 @@
     
      function SetValidGate(elem) {
         $(elem).rules("add", { regex: "^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$" })
+    }
+
+    function SetValidMask(elem) {
+        $(elem).rules("add", { max: 30 , min : 8,
+            messages: {
+                max: "Маска не может быть больше 30",
+                min: "Маска не может быть меньше 8"
+            }
+        })
     }
 
     function delMenu(clickDiv) {
@@ -308,5 +323,6 @@
         });
         SetValid($('#staticAdress_' + lastIndex));
         SetValidGate($('#ipGateway_' + lastIndex));
+        SetValidMask($('#staticPrefix_' + lastIndex))
     }
 </script>
