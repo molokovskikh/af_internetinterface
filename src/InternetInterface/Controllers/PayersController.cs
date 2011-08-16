@@ -7,6 +7,7 @@ using Castle.MonoRail.Framework;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
+using BankPayment = InternetInterface.Models.BankPayment;
 
 namespace InternetInterface.Controllers
 {

@@ -24,20 +24,31 @@ using Castle.MonoRail.Framework.Routing;
 using Castle.MonoRail.Framework.Services;
 using Castle.MonoRail.Framework.Views.Aspx;
 using Castle.MonoRail.Views.Brail;
+using Common.Web.Ui.Helpers;
 using log4net;
 using log4net.Config;
 
 namespace InternetInterface
 {
-	public class Global : HttpApplication, IMonoRailConfigurationEvents, IMonoRailContainerEvents
+    public class Global : WebApplication, IMonoRailConfigurationEvents, IMonoRailContainerEvents
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof(Global));
+
+
+        public Global()
+            : base(Assembly.Load("InternetInterface"))
+        {
+            LibAssemblies.Add(Assembly.Load("Common.Web.Ui"));
+            Logger.ErrorSubject = "Ошибка в Административном интерфейсе";
+            Logger.SmtpHost = "box.analit.net";
+        }
 
 		void Application_Start(object sender, EventArgs e)
 		{
 			XmlConfigurator.Configure();
-			ActiveRecordStarter.Initialize(
+			ActiveRecordStarter.Initialize( new [] {
 					Assembly.Load("InternetInterface"),
+            Assembly.Load("Common.Web.Ui")},
 					ActiveRecordSectionHandler.Instance);
 
 			RoutingModuleEx.Engine.Add(new PatternRoute("/")
@@ -105,14 +116,15 @@ namespace InternetInterface
 		public void Configure(IMonoRailConfiguration configuration)
 		{
 			configuration.ControllersConfig.AddAssembly("InternetInterface");
-			//configuration.ControllersConfig.AddAssembly("Common.Web.Ui");
+			configuration.ControllersConfig.AddAssembly("Common.Web.Ui");
 			configuration.ViewComponentsConfig.Assemblies = new[] {
-				"InternetInterface"
+				"InternetInterface",
+                "Common.Web.Ui"
 			};
 			configuration.ViewEngineConfig.ViewPathRoot = "Views";
 			configuration.ViewEngineConfig.ViewEngines.Add(new ViewEngineInfo(typeof(BooViewEngine), false));
 			configuration.ViewEngineConfig.ViewEngines.Add(new ViewEngineInfo(typeof(WebFormsViewEngine), false));
-			//configuration.ViewEngineConfig.AssemblySources.Add(new AssemblySourceInfo("Common.Web.Ui", "Common.Web.Ui.Views"));
+			configuration.ViewEngineConfig.AssemblySources.Add(new AssemblySourceInfo("Common.Web.Ui", "Common.Web.Ui.Views"));
 			configuration.ViewEngineConfig.VirtualPathRoot = configuration.ViewEngineConfig.ViewPathRoot;
 			configuration.ViewEngineConfig.ViewPathRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configuration.ViewEngineConfig.ViewPathRoot);
 
@@ -128,6 +140,7 @@ namespace InternetInterface
 #if DEBUG
 			MonoRail.Debugger.Toolbar.Toolbar.Init(configuration);
 #endif
+            base.Configure(configuration);
 		}
 
 		public void Created(IMonoRailContainer container)

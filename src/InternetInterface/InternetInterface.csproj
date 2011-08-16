@@ -240,6 +240,7 @@
     <Compile Include="Models\ApartmentHistory.cs" />
     <Compile Include="Models\ApartmentStatus.cs" />
     <Compile Include="Models\Appeals.cs" />
+    <Compile Include="Models\BankPayment.cs" />
     <Compile Include="Models\Brigad.cs" />
     <Compile Include="Models\BypassHouse.cs" />
     <Compile Include="Models\ClientEndpoints.cs" />
