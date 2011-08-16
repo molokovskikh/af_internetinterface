@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Services.Description;
 using Castle.MonoRail.Framework;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Controllers.Filter;
@@ -116,5 +117,25 @@ namespace InternetInterface.Controllers
             else
                 PropertyBag["colorId"] = 0;
 		}
+
+        public void NewPaymets()
+        {
+            if (IsPost)
+            {
+                var file = Request.Files["inputfile"] as HttpPostedFile;
+                if (file == null || file.ContentLength == 0)
+                {
+                    //PropertyBag["Message"] = Message.Error("Нужно выбрать файл для загрузки");
+                    return;
+                }
+
+                Session["payments"] = BankPayment.Parse(file.FileName, file.InputStream);
+                RedirectToReferrer();
+            }
+            else
+            {
+                PropertyBag["payments"] = Session["payments"];
+            }
+        }
 	}
 }

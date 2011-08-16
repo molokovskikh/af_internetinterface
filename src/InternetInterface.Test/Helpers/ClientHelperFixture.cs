@@ -15,7 +15,7 @@ namespace InternetInterface.Test.Helpers
         public static Client CreateLaywerPerson()
         {
             var LPerson = new LawyerPerson {
-                                               FullName = "TestClient",
+                                               Name = "TestClient",
                                                Balance = 1000,
                                                Tariff = 100,
                                                Speed = PackageSpeed.FindFirst()

@@ -20,13 +20,13 @@ namespace InternetInterface.Models
 	}
 
     [ActiveRecord(Schema = "Internet", Table = "LawyerPerson", Lazy = true), Auditable]
-	public class LawyerPerson : ValidActiveRecordLinqBase<LawyerPerson>
+    public class LawyerPerson : ValidActiveRecordLinqBase<LawyerPerson>, IPayer
 	{
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
-        [Property, ValidateNonEmpty("Введите полное наименование"), Auditable("Полное наименование")]
-		public virtual string FullName { get; set; }
+        [Property("FullName"), ValidateNonEmpty("Введите полное наименование"), Auditable("Полное наименование")]
+		public virtual string Name { get; set; }
 
         [Property, ValidateNonEmpty("Введите краткое наименование"), Auditable("Краткое наименование")]
 		public virtual string ShortName { get; set; }
@@ -60,5 +60,8 @@ namespace InternetInterface.Models
 
         [Property, Auditable("Почтовый адрес")]
         public virtual string MailingAddress { get; set; }
+
+        [BelongsTo]
+        public Recipient Recipient { get; set; }
 	}
 }

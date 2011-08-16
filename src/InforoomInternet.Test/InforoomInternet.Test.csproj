@@ -139,6 +139,10 @@
       <Project>{72AFCFE8-C9E9-45FA-9698-BEE896A517A3}</Project>
       <Name>Common.Tools</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Common.Web.UI\Common.Web.Ui\Common.Web.Ui.csproj">
+      <Project>{95E2C313-46FA-4B4B-9EFF-3228662908F4}</Project>
+      <Name>Common.Web.Ui</Name>
+    </ProjectReference>
     <ProjectReference Include="..\InforoomInternet\InforoomInternet.csproj">
       <Project>{78BE8691-9A92-409B-89CE-D5172D5F16CD}</Project>
       <Name>InforoomInternet</Name>
