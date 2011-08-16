@@ -34,7 +34,17 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual int PackageId { get; set; }
- 
+
+		[Property]
+		public virtual int? MaxLeaseCount { get; set; }
+
+		[Property]
+		public virtual uint? Pool { get; set; }
+
+		public virtual bool IsMultilease
+		{
+			get { return Pool != null || (MaxLeaseCount != null && MaxLeaseCount > 1); }
+		}
 	}
 
 	public class Point
