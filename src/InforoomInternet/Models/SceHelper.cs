@@ -12,10 +12,10 @@ namespace InforoomInternet.Models
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof (SceHelper));
 
-		public static string SceHelperPath = @"SceHelper\com.sce.helper.jar";
+		public static string SceHelperPath = @"U:\Apps\dhcp\com.sce.helper\com.sce.helper.jar";
 		public static string JavaPath = @"java";
 
-		public static void Action(string action, Lease lease)
+		public static void Action(string action, Lease lease, string ip)
 		{
 			try
 			{
@@ -35,7 +35,7 @@ namespace InforoomInternet.Models
 					packageId,
 					endpoint.Monitoring ? 1 : 0,
 					endpoint.IsMultilease.ToString().ToLower(),
-					lease.Ip);
+					ip);
 				RunCommand(command);
 			}
 			catch (Exception e)
@@ -44,14 +44,14 @@ namespace InforoomInternet.Models
 			}
 		}
 
-		public static void Login(Lease lease)
+		public static void Login(Lease lease, string ip)
 		{
-			Action("login", lease);
+			Action("login", lease, ip);
 		}
 
-		public static void Logout(Lease lease)
+		public static void Logout(Lease lease, string ip)
 		{
-			Action("logout", lease);
+			Action("logout", lease, ip);
 		}
 
 		public static void RunCommand(string command)

@@ -41,7 +41,7 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual uint? Pool { get; set; }
 
-		public object IsMultilease
+		public virtual bool IsMultilease
 		{
 			get { return Pool != null || (MaxLeaseCount != null && MaxLeaseCount > 1); }
 		}

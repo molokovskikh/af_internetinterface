@@ -125,7 +125,7 @@ namespace InforoomInternet.Controllers
 
 			if (IsPost)
 			{
-				SceHelper.Login(lease);
+				SceHelper.Login(lease, Request.UserHostAddress);
 				var url = Request["referer"];
 				if (String.IsNullOrEmpty(url))
 					Redirecter.RedirectRoot(Context, this);
