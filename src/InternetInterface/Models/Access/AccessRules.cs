@@ -17,7 +17,8 @@ namespace InternetInterface.Models.Access
 		private static HashSet<string> _accessDHCP;
 		private static HashSet<string> _visibleDemand;
 	    private static HashSet<string> _houseMapUse;
-	    private static HashSet<string> _agentInfo; 
+	    private static HashSet<string> _agentInfo;
+        private static HashSet<string> _agentPayers; 
 
 		public static List<string> GetAccessName(string _methodName)
 		{
@@ -68,10 +69,23 @@ namespace InternetInterface.Models.Access
             {
                 result.Add(GetRulesName_agentInfo());
             }
+            if (GetRulesName_agentPayers() != string.Empty)
+            {
+                result.Add(GetRulesName_agentPayers());
+            }
 		    return result;
 		}
 
-        private static string GetRulesName_agentInfo()
+        public static string GetRulesName_agentPayers()
+        {
+            _agentPayers = new HashSet<string> {
+                                                   	"AgentFilter",
+									                "ShowAgent",
+                                               };
+            return _agentPayers.Contains(methodName) ? "PFA" : string.Empty;
+        }
+
+	    private static string GetRulesName_agentInfo()
         {
             _agentInfo = new HashSet<string> {
                                                  "SummaryInformation"

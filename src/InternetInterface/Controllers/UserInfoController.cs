@@ -426,6 +426,7 @@ namespace InternetInterface.Controllers
 				PropertyBag["Client"] = client;
 				PropertyBag["Password"] = Password;
 				PropertyBag["AccountNumber"] = _client.Id.ToString("00000");
+			    PropertyBag["ConnectInfo"] = _client.GetConnectInfo();
 				//PropertyBag["ConnectSumm"] = connectSumm;
 				RenderView("ClientRegisteredInfo");
 			}
