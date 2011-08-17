@@ -1,0 +1,12 @@
+CREATE TABLE `internet`.`StaticIps` (
+  `Id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+  `Client` INT(10) UNSIGNED,
+  `Ip` VARCHAR(45) NOT NULL,
+  `Mask` VARCHAR(45),
+  PRIMARY KEY (`Id`),
+  CONSTRAINT `FK_StaticIps_1` FOREIGN KEY `FK_StaticIps_1` (`Client`)
+    REFERENCES `Clients` (`Id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+)
+ENGINE = InnoDB;

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
+using Common.Tools;
 
 namespace InternetInterface.Models
 {
@@ -19,10 +20,17 @@ namespace InternetInterface.Models
         [Property]
         public virtual string Ip { get; set; } 
         
-        [Property]
-        public virtual string Gateway { get; set; } 
+        /*[Property]
+        public virtual string Gateway { get; set; } */
         
         [Property]
-        public virtual string Mask { get; set; }
+        public virtual int? Mask { get; set; }
+
+        public virtual string GetSubnet()
+        {
+            if (Mask != null)
+                return SubnetMask.CreateByNetBitLength(Mask.Value).ToString();
+            return string.Empty;
+        }
     }
 }

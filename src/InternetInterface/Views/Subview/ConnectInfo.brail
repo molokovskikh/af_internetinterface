@@ -90,14 +90,14 @@
                 </tr>
                 <tr>
                     <th>IP адрес / маска</th>
-                    <th>Шлюз</th>
+                    <th>Маска</th>
                 </tr>
             </thead>
             <tbody>
                 <% for i,item in enumerate(staticIps): %>
                     <tr>
                         <td>${item.Ip} ${"/" if item.Mask != null} ${item.Mask}</td>
-                        <td>${item.Gateway}</td>
+                        <td>${item.GetSubnet()}</td>
                     </tr>
                 <%end %>
             </tbody>
@@ -172,7 +172,8 @@
             <tr>
                 <th style="width:1px; border-right:0px double black;"></th>
                 <th colspan=2 style=" border-left:0px double black;">IP адрес / маска</th>
-                <th colspan=2>Шлюз</th>
+                <th>Маска</th>
+                <th style="text-align:center;"></th>
             </tr>
         </thead>
         <tbody id="adresesBlock">
@@ -188,8 +189,8 @@
                 <td class="ipPrefix_td">
                    <input type=text class="ipPrefix" value="${item.Mask}" name="staticAdress[${i}].Mask"/>
                 </td>
-                <td>
-                    <input type=text class="ipGateway" id="ipGateway" value="${item.Gateway}" name="staticAdress[${i}].Gateway"/>
+                <td class="subnet_mask">
+                    <label>${item.GetSubnet()}</label>
                 </td>
                 <td>
                     <div class=delMenuItem id="delMenuItem_${i}"></div>
@@ -217,38 +218,15 @@
                 var correckMask = true;
                 var correctGateWay = true;
                 $('.ipPrefix').each(function () {
-                if ($(this).val() != '')
-                    if (Number($(this).val()) < 25) {
-                        correckMask = false;
-                    }
+                    if ($(this).val() != '')
+                        if (Number($(this).val()) < 25) {
+                            correckMask = false;
+                        }
                 });
                 if (!correckMask)
                     if (confirm('Одна из масок содержит более 256 адресов, продолжить ?')) {
-                        correckMask = true;
+                        form.submit();
                     }
-                if (correckMask) {
-                    $('.ipGateway').each(function () {
-                        if ($(this).val() != '') {
-                            var req = {};
-                            req.gateway = $(this).val();
-                            req.startAdress = $(this).parent().parent().children('.ipinp_td:first').children('input:first').val();
-                            req.mask = $(this).parent().parent().children('.ipPrefix_td:first').children('input:first').val();
-                            if (req.mask != '') {
-                                $.post("ThisGateWayInInterval", req, function (data) {
-                                    if (data) {
-                                        if (correckMask)
-                                            form.submit();
-                                    }
-                                    else {
-                                        alert("Указанный шлюз " + req.gateway + " находится вне диапазона адресов " + req.startAdress + "/" + req.mask);
-                                    }
-                                })
-                            } else {
-                                alert("Для IP адреса " + req.startAdress+ " был введен шлюз, но не была введена маска сети");
-                            };
-                        }
-                    });
-                }
             }
         });
 
@@ -261,16 +239,15 @@
         "Формат ввода IP адреса: ***.***.***.***"
         );
 
-        /*SetValid($('.ipinp'));*/
         $('.ipinp').each(function () {
             SetValid(this);
         });
-        $('.ipGateway').each(function () {
-            SetValidGate(this);
-        });
         $('.ipPrefix').each(function () {
             SetValidMask(this);
+            VisualSubnet(this);
         });
+
+
     });
 
     function SetValid(elem) {
@@ -286,8 +263,9 @@
     }
 
     function SetValidMask(elem) {
-        $(elem).rules("add", { max: 30 , min : 8,
+        $(elem).rules("add", {digits:true, max: 30 , min : 8, 
             messages: {
+                digits: "Введите число",
                 max: "Маска не может быть больше 30",
                 min: "Маска не может быть меньше 8"
             }
@@ -296,6 +274,17 @@
 
     function delMenu(clickDiv) {
         $(clickDiv).parent().parent().remove();
+    }
+
+    function VisualSubnet(field) {
+        $(field).keyup(function () {
+            var label = $(this).parent().parent().children('.subnet_mask:first').children('label:first');
+            var req = {};
+            req.mask = $(this).val();
+            $.post("GetSubnet", req, function (data) {
+                label.text(data);
+            });
+        });
     }
 
     function addNewAdress() {
@@ -310,8 +299,8 @@
         elementAdress += "<td class='ipPrefix_td'>";
         elementAdress += "<input type=text class='ipPrefix' id='staticPrefix_" + lastIndex + "' name='staticAdress[" + lastIndex + "].Mask'/>";
         elementAdress += "</td>";
-        elementAdress += "<td>";
-        elementAdress += "<input type=text class='ipGateway' id='ipGateway_" + lastIndex + "' name='staticAdress[" + lastIndex + "].Gateway'/>";
+        elementAdress += "<td class='subnet_mask'>";
+        elementAdress += "<label></label>";
         elementAdress += "</td>";
         elementAdress += "<td>";
         elementAdress += "<div class=delMenuItem id='delMenuItem_" + lastIndex + "'></div>";
@@ -322,7 +311,7 @@
             delMenu(this);
         });
         SetValid($('#staticAdress_' + lastIndex));
-        SetValidGate($('#ipGateway_' + lastIndex));
         SetValidMask($('#staticPrefix_' + lastIndex))
+        VisualSubnet($('#staticPrefix_' + lastIndex));
     }
 </script>

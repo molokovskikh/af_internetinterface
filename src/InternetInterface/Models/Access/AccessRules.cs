@@ -201,7 +201,7 @@ namespace InternetInterface.Models.Access
 									"LoadEditConnectMudule",
 									"GoZone",
 									"SiteMap",
-                                    "ThisGateWayInInterval"
+                                    "GetSubnet"
 			                 	};
 			return _accessDHCP.Contains(methodName) ? "DHCP" : string.Empty;
 		}
