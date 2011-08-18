@@ -1,4 +1,32 @@
-﻿<div style="clear:both;">
+﻿<style type="text/css">
+    	 .addMenuItem
+	 {
+		 width:20px;
+		 height:20px;
+		 background: url(${Siteroot}/images/plus__orange.png) no-repeat center top;
+		 /*background-color:Green;*/
+		 float:right;
+		 }
+		  .delMenuItem
+	 {
+		 width:20px;
+		 height:20px;
+		 /*background-color:Red;*/
+		 float:right;
+		 margin-right:90%;
+		 background: url(${Siteroot}/images/onebit_32.png) no-repeat center top;
+		 }
+    .error
+    {
+        color:Red;
+        font-size:small;
+        }
+    .ipPrefix
+    {
+        width:25px;
+        }
+</style>
+<div style="clear:both;">
 <%if PartnerAccessSet.AccesPartner("DHCP"): %>
  <%if IsDefined("Client"): %>
 	<%if not EditingConnect: %>
@@ -54,9 +82,30 @@
 		</tr>
 	</tbody>
 	</table>
+    <%if staticIps.Count != 0: %>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th colspan=2 style="text-align:center;">Статические адреса клиента</th>
+                </tr>
+                <tr>
+                    <th>IP адрес / маска</th>
+                    <th>Маска</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for i,item in enumerate(staticIps): %>
+                    <tr>
+                        <td>${item.Ip} ${"/" if item.Mask != null} ${item.Mask}</td>
+                        <td>${item.GetSubnet()}</td>
+                    </tr>
+                <%end %>
+            </tbody>
+        </table>
+    <%end %>
 	</form>
 	<%else: %>
-	<form class="formConnect" method="post" action="${siteroot}/UserInfo/SaveSwitchForClient">
+	<form class="formConnect" id="formConnect" method="post" action="${siteroot}/UserInfo/SaveSwitchForClient">
 	<input type="hidden" name="ClientID" value="${ClientCode}" />
 	<input type="hidden" name="EditConnectFlag" value="${EditingConnect}" />
 	<table class="table" style="width: 100%;" align="left">
@@ -115,8 +164,156 @@
 		 </tr>
 	</tbody>
 	</table>
+    <button type="button"  class="editBut" onclick="$('#staticAdreses').slideToggle('slow');"> Редактировать статические адреса
+    </button>
+    <div id="staticAdreses" style="display:none; padding:10px;">
+        <table class="table">
+        <thead> 
+            <tr>
+                <th style="width:1px; border-right:0px double black;"></th>
+                <th colspan=2 style=" border-left:0px double black;">IP адрес / маска</th>
+                <th>Маска</th>
+                <th style="text-align:center;"></th>
+            </tr>
+        </thead>
+        <tbody id="adresesBlock">
+            <% for i,item in enumerate(staticIps): %>
+            <tr>
+                <td class="indexes" style="width:1px;">
+                    <input type=hidden value=${i} />
+                    <input type=hidden name="staticAdress[${i}].Id" value=${item.Id} />
+                </td>
+                <td class="ipinp_td" style="width:150px;">
+                    <input type=text class="ipinp" id="ipinp" value="${item.Ip}" name="staticAdress[${i}].Ip"/>
+                </td>
+                <td class="ipPrefix_td">
+                   <input type=text class="ipPrefix" value="${item.Mask}" name="staticAdress[${i}].Mask"/>
+                </td>
+                <td class="subnet_mask">
+                    <label>${item.GetSubnet()}</label>
+                </td>
+                <td>
+                    <div class=delMenuItem id="delMenuItem_${i}"></div>
+                </td>
+            </tr>
+            <%end %>
+        </tbody>
+        </table>
+        <button type="button"  class="editBut" onclick="addNewAdress()"> Добавить новый адрес
+    </button>
+    </div>
 	</form>
 	<%end %>
   <%end %>
 <%end %>
 </div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.delMenuItem').click(function () {
+            delMenu(this);
+        });
+
+        $("#formConnect").validate({
+            submitHandler: function (form) {
+                var correckMask = true;
+                $('.ipPrefix').each(function () {
+                    if ($(this).val() != '')
+                        if (Number($(this).val()) < 24) {
+                            correckMask = false;
+                        }
+                });
+                if (!correckMask) {
+                    if (confirm('Одна из масок содержит более 256 адресов, продолжить ?')) {
+                        form.submit();
+                    }
+                }
+                else
+                { form.submit(); }
+            }
+        });
+
+        $.validator.addMethod(
+        "regex",
+        function (value, element, regexp) {
+            var re = new RegExp(regexp);
+            return this.optional(element) || re.test(value);
+        },
+        "Формат ввода IP адреса: ***.***.***.***"
+        );
+
+        $('.ipinp').each(function () {
+            SetValid(this);
+        });
+        $('.ipPrefix').each(function () {
+            SetValidMask(this);
+            VisualSubnet(this);
+        });
+
+
+    });
+
+    function SetValid(elem) {
+        $(elem).rules("add", { required: true, regex: "^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$",
+            messages: {
+                required : "Поле не может быть пустым"
+            }
+        })
+    }   
+    
+     function SetValidGate(elem) {
+        $(elem).rules("add", { regex: "^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$" })
+    }
+
+    function SetValidMask(elem) {
+        $(elem).rules("add", {digits:true, max: 30 , min : 8, 
+            messages: {
+                digits: "Введите число",
+                max: "Маска не может быть больше 30",
+                min: "Маска не может быть меньше 8"
+            }
+        })
+    }
+
+    function delMenu(clickDiv) {
+        $(clickDiv).parent().parent().remove();
+    }
+
+    function VisualSubnet(field) {
+        $(field).keyup(function () {
+            var label = $(this).parent().parent().children('.subnet_mask:first').children('label:first');
+            var req = {};
+            req.mask = $(this).val();
+            $.post("GetSubnet", req, function (data) {
+                label.text(data);
+            });
+        });
+    }
+
+    function addNewAdress() {
+        var lastIndex = Number($('#adresesBlock').children('tr:last').children('.indexes:last').children('input:first').val()) + 1;
+        if (isNaN(lastIndex))
+            lastIndex = 0;  
+        var elementAdress = "<tr>";
+        elementAdress += "<td  class='indexes' style='width:1px;'><input type=hidden value=" + lastIndex + " /> </td>";
+        elementAdress += "<td class='ipinp_td' style='width:150px;'>";
+        elementAdress += "<input type=text class='ipinp' id='staticAdress_" + lastIndex + "' name='staticAdress[" + lastIndex + "].Ip'/>";
+        elementAdress += "</td>";
+        elementAdress += "<td class='ipPrefix_td'>";
+        elementAdress += "<input type=text class='ipPrefix' id='staticPrefix_" + lastIndex + "' name='staticAdress[" + lastIndex + "].Mask'/>";
+        elementAdress += "</td>";
+        elementAdress += "<td class='subnet_mask'>";
+        elementAdress += "<label></label>";
+        elementAdress += "</td>";
+        elementAdress += "<td>";
+        elementAdress += "<div class=delMenuItem id='delMenuItem_" + lastIndex + "'></div>";
+        elementAdress += "</td>";
+        elementAdress += "</tr>";
+        $('#adresesBlock').append(elementAdress);
+        $('#delMenuItem_' + lastIndex).click(function () {
+            delMenu(this);
+        });
+        SetValid($('#staticAdress_' + lastIndex));
+        SetValidMask($('#staticPrefix_' + lastIndex))
+        VisualSubnet($('#staticPrefix_' + lastIndex));
+    }
+</script>

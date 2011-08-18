@@ -200,7 +200,8 @@ namespace InternetInterface.Models.Access
 									"SaveSwitchForClient",
 									"LoadEditConnectMudule",
 									"GoZone",
-									"SiteMap"
+									"SiteMap",
+                                    "GetSubnet"
 			                 	};
 			return _accessDHCP.Contains(methodName) ? "DHCP" : string.Empty;
 		}

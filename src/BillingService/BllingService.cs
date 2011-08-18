@@ -33,6 +33,7 @@ namespace BillingService
 		private RunCommand computeCommand;
 		private RunCommand OnCommand;
 		private static MainBilling billing;
+        private ILog log = LogManager.GetLogger(typeof(BllingService));
 
 		public BllingService()
 		{
@@ -41,19 +42,33 @@ namespace BillingService
 
 		protected override void OnStart(string[] args)
 		{
-			billing = new MainBilling();
+            try
+            {
+                billing = new MainBilling();
 
-			OnCommand = new RunCommand(billing.On , 600000);
-			OnCommand.Start();
+                OnCommand = new RunCommand(billing.On, 600000);
+                OnCommand.Start();
 
-			computeCommand = new RunCommand(billing.Run, 180000);
-			computeCommand.Start();
+                computeCommand = new RunCommand(billing.Run, 180000);
+                computeCommand.Start();
+            }
+            catch (Exception e)
+            {
+                log.Error("Ошибка при запуске сервиса", e);
+            }
 		}
 
 		protected override void OnStop()
 		{
-			OnCommand.Stop();
-			computeCommand.Stop();
+            try
+            {
+                OnCommand.Stop();
+                computeCommand.Stop();
+            }
+            catch (Exception e)
+            {
+                log.Error("Ошибка при остановке сервиса", e);
+            }
 		}
 	}
 }
