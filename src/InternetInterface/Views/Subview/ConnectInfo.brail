@@ -216,17 +216,19 @@
         $("#formConnect").validate({
             submitHandler: function (form) {
                 var correckMask = true;
-                var correctGateWay = true;
                 $('.ipPrefix').each(function () {
                     if ($(this).val() != '')
-                        if (Number($(this).val()) < 25) {
+                        if (Number($(this).val()) < 24) {
                             correckMask = false;
                         }
                 });
-                if (!correckMask)
+                if (!correckMask) {
                     if (confirm('Одна из масок содержит более 256 адресов, продолжить ?')) {
                         form.submit();
                     }
+                }
+                else
+                { form.submit(); }
             }
         });
 
