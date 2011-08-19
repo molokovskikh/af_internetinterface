@@ -40,6 +40,11 @@ namespace InternetInterface.Models
 		    return IpHeper.GetNormalIp(IP);
 		}
 
+        public static string GetNormalIp(uint ip)
+        {
+            return IpHeper.GetNormalIp(ip.ToString());
+        }
+
 		public static string SetProgramIp(string ip)
 		{
 			var valid = new Regex(IPRegExp);

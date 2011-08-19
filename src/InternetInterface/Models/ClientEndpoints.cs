@@ -24,7 +24,7 @@ namespace InternetInterface.Models
 		public virtual int Module { get; set; }
 
 		[Property]
-		public virtual int Port { get; set; }
+		public virtual int? Port { get; set; }
 
 		[BelongsTo("Switch")]
 		public virtual NetworkSwitches Switch { get; set; }

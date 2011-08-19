@@ -174,6 +174,16 @@ namespace InforoomInternet.Test.Unit
         }
 
         [Test]
+        public void WarningPackageIdTest()
+        {
+            using (var browser = Open("Main/WarningPackageId"))
+            {
+                Assert.That(browser.Text, Is.StringContaining("К сожалению, услуга доступа интернет Вам временно заблокирована."));
+            }
+            Console.WriteLine("RequsiteTest Complite");
+        }
+
+        [Test]
         public void ZayavkaTest()
         {
             using (var browser = Open("Main/zayavka"))
