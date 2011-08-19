@@ -39,7 +39,7 @@ namespace InternetInterface
             : base(Assembly.Load("InternetInterface"))
         {
             LibAssemblies.Add(Assembly.Load("Common.Web.Ui"));
-            Logger.ErrorSubject = "Ошибка в Административном интерфейсе";
+            Logger.ErrorSubject = "Ошибка в Интернет интерфейсе";
             Logger.SmtpHost = "box.analit.net";
         }
 
