@@ -225,5 +225,18 @@ namespace InternetInterface.Test.Functional
                 Assert.That(browser.Text, Is.StringContaining("Данные изменены"));
             }
         }
+
+        [Test]
+        public void RequestGraphTest()
+        {
+            using (var browser = Open("UserInfo/RequestGraph.rails"))
+            {
+                Assert.That(browser.Text, Is.StringContaining("Настройки"));
+                browser.Button("naznach_but_1").Click();
+                Assert.That(browser.Text, Is.StringContaining("Настройки"));
+                browser.Button("print_button").Click();
+                Assert.That(browser.Text, Is.StringContaining("Время"));
+            }
+        }
 	}
 }
