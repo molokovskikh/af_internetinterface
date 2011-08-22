@@ -289,17 +289,24 @@ namespace InternetInterface.Controllers
 			PropertyBag["Client"] = newPhisClient;
 			PropertyBag["ChTariff"] = request.Tariff.Id;
 			PropertyBag["requestID"] = requestID;
-		    var houses =
-		        House.Queryable.Where(
-		            h =>
-		            h.Street == newPhisClient.Street &&
-                    h.Number == Int32.Parse(newPhisClient.House) &&
-                    h.Case == newPhisClient.CaseHouse).ToList();
-            if (houses.Count != 0)
-                PropertyBag["ChHouse"] = houses.First().Id;
+            if (newPhisClient.House != null)
+            {
+                var houses =
+                    House.Queryable.Where(
+                        h =>
+                        h.Street == newPhisClient.Street &&
+                        h.Number == Int32.Parse(newPhisClient.House) &&
+                        h.Case == newPhisClient.CaseHouse).ToList();
+                if (houses.Count != 0)
+                    PropertyBag["ChHouse"] = houses.First().Id;
+                else
+                    PropertyBag["ChHouse"] = 0;
+            }
             else
+            {
                 PropertyBag["ChHouse"] = 0;
-			SendRegisterParam();
+            }
+		    SendRegisterParam();
 		}
 
         [return : JSONReturnBinder]

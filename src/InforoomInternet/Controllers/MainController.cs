@@ -210,7 +210,7 @@ namespace InforoomInternet.Controllers
             var lease = Client.FindByIP(hostAdress);
             if (lease == null)
             {
-                messageText.AppendLine("Пришел запрос на страницу WarningPackageId от стороннего клиента");
+                messageText.AppendLine(string.Format("Пришел запрос на страницу WarningPackageId от стороннего клиента (IP: {0})", hostAdress));
             }
             else
             {
