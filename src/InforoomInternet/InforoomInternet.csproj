@@ -442,6 +442,7 @@
     <Content Include="JavaScript\lightbox\prevlabel.gif" />
     <Content Include="JavaScript\lightbox\prototype.js" />
     <Content Include="JavaScript\lightbox\scriptaculous.js" />
+    <None Include="Views\Main\WarningPackageId.brail" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

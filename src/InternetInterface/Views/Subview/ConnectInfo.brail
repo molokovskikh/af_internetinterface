@@ -33,6 +33,7 @@
 		<form class="formConnect" method="post" action="${siteroot}/UserInfo/LoadEditConnectMudule">
 	<input type="hidden" name="ClientID" value="${ClientCode}" />
 	<input type="hidden" name="EditConnectFlag" value="${EditingConnect}" />
+    <table  style="width: 100%;"><tbody><tr><td>
 	<table class="table" style="width: 100%;" align="left">
 	<thead>
 		<th colspan=2>Информация по подключению 
@@ -80,10 +81,11 @@
 		  <td></td>
 		  <%end %>
 		</tr>
-	</tbody>
-	</table>
+        </tbody>
+    </table>
+    </td></tr><tr><td>
     <%if staticIps.Count != 0: %>
-        <table class="table">
+        <table class="table" align="left">
             <thead>
                 <tr>
                     <th colspan=2 style="text-align:center;">Статические адреса клиента</th>
@@ -103,6 +105,7 @@
             </tbody>
         </table>
     <%end %>
+    </td></tr></tbody></table>
 	</form>
 	<%else: %>
 	<form class="formConnect" id="formConnect" method="post" action="${siteroot}/UserInfo/SaveSwitchForClient">
@@ -162,8 +165,8 @@
 		 </td>
 		 <%end %>
 		 </tr>
-	</tbody>
-	</table>
+        <tr>
+        <td colspan=2>
     <button type="button"  class="editBut" onclick="$('#staticAdreses').slideToggle('slow');"> Редактировать статические адреса
     </button>
     <div id="staticAdreses" style="display:none; padding:10px;">
@@ -202,6 +205,10 @@
         <button type="button"  class="editBut" onclick="addNewAdress()"> Добавить новый адрес
     </button>
     </div>
+        </td>
+   </tr>
+   </tbody>
+   </table>
 	</form>
 	<%end %>
   <%end %>

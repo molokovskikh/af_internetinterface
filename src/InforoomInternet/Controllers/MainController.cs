@@ -2,6 +2,8 @@
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Mail;
+using System.Text;
 using Castle.MonoRail.Framework;
 using InforoomInternet.Logic;
 using InforoomInternet.Models;
@@ -195,5 +197,48 @@ namespace InforoomInternet.Controllers
 				PropertyBag["ShowEditLink"] = true;
 			}
 		}
+
+        public void WarningPackageId()
+        {
+            var hostAdress = Request.UserHostAddress;
+            var mailToAdress = "internet@ivrn.net";
+            var messageText = new StringBuilder();
+#if DEBUG
+            hostAdress = NetworkSwitches.GetNormalIp(Lease.FindFirst().Ip);
+            mailToAdress = "a.zolotarev@analit.net";
+#endif
+            var lease = Client.FindByIP(hostAdress);
+            if (lease == null)
+            {
+                messageText.AppendLine(string.Format("Пришел запрос на страницу WarningPackageId от стороннего клиента (IP: {0})", hostAdress));
+            }
+            else
+            {
+                messageText.AppendLine(string.Format("Пришел запрос на страницу WarningPackageId от клиента {0}", lease.Endpoint.Client.Id.ToString("00000")));
+                if (lease.Endpoint.Switch != null)
+                {
+                    messageText.AppendLine("Свич: " + lease.Endpoint.Switch.Name);
+                }
+                else
+                {
+                    messageText.AppendLine("Свич неопределен");
+                }
+                if (lease.Endpoint.Port != null)
+                {
+                    messageText.AppendLine("Порт: " + lease.Endpoint.Port);
+                }
+                else
+                {
+                    messageText.AppendLine("Порт неопределен");
+                }
+            }
+            var message = new MailMessage();
+            message.To.Add(mailToAdress);
+            message.Subject = "Преадресация на страницу WarningPackageId";
+            message.From = new MailAddress("service@analit.net");
+            message.Body = messageText.ToString();
+            var smtp = new SmtpClient("box.analit.net");
+            smtp.Send(message);
+        }
 	}
 }

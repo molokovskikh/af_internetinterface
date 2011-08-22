@@ -46,6 +46,12 @@
         $('#myModal').append(html);
     }
 </script>
+<style type="text/css">
+    /*.reveal-modal 
+    {
+        display:none;
+        }*/
+</style>
 		<div id="myModal" class="reveal-modal"> 
         <a class="close-reveal-modal">x</a>
 		</div> 
