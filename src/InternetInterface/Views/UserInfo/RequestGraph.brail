@@ -1,27 +1,6 @@
 ﻿<script type="text/javascript">
     $(function () {
 
-        /*$.datepicker.regional['ru'] = {
-            closeText: 'Закрыть',
-            prevText: '&#x3c;Пред',
-            nextText: 'След&#x3e;',
-            currentText: 'Сегодня',
-            monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
-		'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
-            monthNamesShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн',
-		'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
-            dayNames: ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота'],
-            dayNamesShort: ['вск', 'пнд', 'втр', 'срд', 'чтв', 'птн', 'сбт'],
-            dayNamesMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
-            weekHeader: 'Нед',
-            dateFormat: 'dd.mm.yy',
-            firstDay: 1,
-            isRTL: false,
-            showMonthAfterYear: false,
-            yearSuffix: ''
-        };
-        $.datepicker.setDefaults($.datepicker.regional['ru']);*/
-
         $('#datepicker').datepicker({
             inline: true
         });
@@ -48,7 +27,7 @@
             <td>
                 <select name="brig">
                 <% for i, Brig in enumerate(Brigads):  %>
-                    <option value=${Brig.Id}>${Brig.Name}</option>
+                    <option value=${Brig.Id} ${"selected" if (Brig.Id == Brigad.Id)}>${Brig.Name}</option>
                 <%end %>
                 </select>
             </td>
@@ -94,7 +73,7 @@
             </tr>
         <%end %>
             <tr>
-                <td><button id="Button1" class="button" type=submit value="Назначить">Сформировать и распечатать заявки</button></td>
+                <td><button id="print_button" class="button" type=submit value="Назначить">Сформировать и распечатать заявки</button></td>
                 <td></td><td></td>
             </tr>
     </tbody>

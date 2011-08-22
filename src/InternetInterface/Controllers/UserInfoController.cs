@@ -549,8 +549,7 @@ namespace InternetInterface.Controllers
 		}
 
 		public void ClientRegisteredInfo()
-		{
-		}
+		{}
 
 		public void ClientRegisteredInfoFromDiller()
 		{}
@@ -937,7 +936,6 @@ namespace InternetInterface.Controllers
             PropertyBag["selectDate"] = selectDate != DateTime.MinValue ? selectDate : DateTime.Now;
             PropertyBag["Brigad"] = brig != 0 ? Brigad.Find(brig) : Brigad.FindFirst();
             PropertyBag["Brigads"] = Brigad.FindAll();
-
             PropertyBag["Intervals"] = Intervals.GetIntervals();
         }
 
