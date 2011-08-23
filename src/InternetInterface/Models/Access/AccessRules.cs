@@ -183,7 +183,18 @@ namespace InternetInterface.Models.Access
 									"SiteMap",
 									"SearchUserInfo",
                                     "ActivateService",
-                                    "DiactivateService"
+                                    "DiactivateService",
+                                    "ProcessPayments",
+                                    "NewPaymets",
+                                    "Index",
+                                    "New",
+                                    "SavePayments",
+                                    "EditTemp",
+                                    "Delete",
+                                    "DeleteTemp",
+                                    "Edit",
+                                    "SearchPayer",
+                                    "CancelPayments"
 			                 	};
 			return _changeBalance.Contains(methodName) ? "CB" : string.Empty;
 		}

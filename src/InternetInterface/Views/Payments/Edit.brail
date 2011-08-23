@@ -1,0 +1,159 @@
+﻿
+<script>
+	$(function () {
+	    $('.date-pick').datepicker();
+
+		$("form").validate();
+
+		$("#payment_Payer_Name").autocomplete({
+			source: "SearchPayer",
+			minLength: 2,
+			select: function (event, ui) {
+				$("#payment_Payer_PayerId").val(ui.item.id)
+			}
+		});
+		//$("#payer").focus();
+
+		$.ui.autocomplete.prototype._renderItem = function (ul, item) {
+			uri = "${siteroot}/Billing/Edit?billingcode=" + item.id;
+			return $("<li></li>")
+				.data("item.autocomplete", item)
+				.append("<a href='" + uri + "'>" + item.label + "</a>")
+				.appendTo(ul);
+		};
+	});
+</script>
+<style type="text/css">
+     .error {
+  border: 1px solid #fbb;
+  background-color: #fdd;
+  padding:10px;
+}
+</style>
+<div style="width:900px; background-color:White; border:1px double Black; margin:15px; padding:10px;">
+<% if warning = payment.GetWarning(): %>
+<div class="error">
+	${warning}
+</div>
+<% end %>
+
+<form class="accountant-friendly" method="post">
+	${FormHelper.HiddenField("payment.Id")}
+	${FormHelper.HiddenField("payment.Payer.PayerId")}
+
+	<p>
+		<% if payment.PayerClient: %>
+		<h4>Отправитель</h4>
+		<table class="table">
+			<tr>
+				<td>Наименование:</td>
+				<td>${payment.PayerClient.Name}</td>
+			</tr>
+			<tr>
+				<td>ИНН:</td>
+				<td>${payment.PayerClient.Inn}</td>
+			</tr>
+			<tr>
+				<td>Номер счета:</td>
+				<td>${payment.PayerClient.AccountCode}</td>
+			</tr>
+		</table>
+		<% end %>
+
+		<% if payment.PayerBank: %>
+		<h4>Банк отправителя</h4>
+		<table class="table">
+			<tr>
+				<td>Наименование:</td>
+				<td>${payment.PayerBank.Description}</td>
+			</tr>
+			<tr>
+				<td>БИК:</td>
+				<td>${payment.PayerBank.Bic}</td>
+			</tr>
+			<tr>
+				<td>Номер счета:</td>
+				<td>${payment.PayerBank.AccountCode}</td>
+			</tr>
+		</table>
+		<% end %>
+
+		<% if payment.Comment: %>
+		<h4>Примечание</h4>
+		<span>
+			!{payment.Comment}
+		</span>
+		<% end %>
+	</p>
+
+	<table class="table">
+		<tr>
+			<td>
+				Дата:
+			</td>
+			<td>
+                <input type=text value="${payment.PayedOn.ToShortDateString()}" name="payment.PayedOn" id="startDate"  class="date-pick dp-applied">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Сумма:
+			</td>
+			<td>
+				<input type=text name="payment.Sum" value="${payment.Sum}" class="input-sum required">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				№ документа:
+			</td>
+			<td>
+				<input type=text name="payment.DocumentNumber" value="${payment.DocumentNumber}">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Получатель:
+			</td>
+			<td>
+				<select name="payment.Recipient.Id">
+					<% for recipient in recipients: %>
+					<option value=${recipient.Id} ${"selected" if payment.Recipient and recipient.Id == payment.Recipient.Id}>
+					${recipient.Name}
+					</option>
+					<% end %>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Плательщик:
+			</td>
+			<td>
+				<input type=text id="payment_Payer_Name" value="${payment.Payer.Name if payment.Payer}">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Примечание:
+			</td>
+			<td>
+				<textarea cols=30 rows=2 name=payment.OperatorComment>${payment.OperatorComment}</textarea>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Обновить ИНН плательщика:
+			</td>
+			<td>
+				${FormHelper.CheckboxField("payment.UpdatePayerInn")}
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<button id="Button1" type=submit class="button showpay">Сохранить</button>
+			</td>
+		</tr>
+	</table>
+</form>
+</div>

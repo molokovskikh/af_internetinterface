@@ -16,7 +16,7 @@ namespace InternetInterface.Controllers
         public string OptionName { get; set; }
     }
 
-    [Layout("Main")]
+    //[Layout("Main")]
     [FilterAttribute(ExecuteWhen.BeforeAction, typeof (AuthenticationFilter))]
     public class HouseMapController : ARSmartDispatcherController
     {

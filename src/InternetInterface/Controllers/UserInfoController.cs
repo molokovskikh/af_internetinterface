@@ -89,7 +89,7 @@ namespace InternetInterface.Controllers
         }
     }
 
-    [Layout("Main")]
+    //[Layout("Main")]
     [Helper(typeof(PaginatorHelper))]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
     public class UserInfoController : ARSmartDispatcherController

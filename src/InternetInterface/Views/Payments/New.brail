@@ -1,0 +1,94 @@
+﻿
+<script>
+    $(function () {
+        $("form").validate();
+        $('.date-pick').datepicker();
+        $("#payer").autocomplete({
+            source: "SearchPayer",
+            minLength: 2,
+            select: function (event, ui) {
+                $("#payment_payer_id").val(ui.item.id)
+            }
+        });
+        $("#payer").focus();
+
+        $.ui.autocomplete.prototype._renderItem = function (ul, item) {
+            uri = "${siteroot}/Billing/Edit?billingcode=" + item.id;
+            return $("<li></li>")
+				.data("item.autocomplete", item)
+				.append("<a href='" + uri + "'>" + item.label + "</a>")
+				.appendTo(ul);
+        };
+    });
+</script>
+
+<h3>Разнесение платежей</h3>
+<div class=block>
+<form class="accountant-friendly" method=post>
+	<h4>Новый платеж</h4>
+	<table class="Table">
+		<tr>
+			<th>Получатель</th>
+			<th>Дата платежа</th>
+			<th>Плательщик</th>
+			<th>Номер документа</th>
+			<th colspan=2>Сумма</th>
+		</tr>
+		<tr>
+			<td>
+				<select name=Payment.Recipient.Id>
+					<% for recipient in recipients: %>
+					<option value=${recipient.Id}>${recipient.Name}</option>
+					<% end %>
+				</select>
+			</td>
+			<td>
+                <input type=text value="${System.DateTime.Today.ToShortDateString()}" name="payment.PayedOn" id="startDate"  class="date-pick dp-applied">
+			</td>
+			<td>
+				<input type=hidden id="payment_payer_id" name=Payment.Payer.PayerId>
+				<input type=text id=payer class="required">
+			</td>
+			<td>
+				<input type=text name=Payment.DocumentNumber>
+			</td>
+			<td>
+				<input type=text name=Payment.Sum class="input-sum required">
+			</td>
+			<td>
+				<button id="Button1" type=submit class="button showpay">Добавить</button>
+			</td>
+		</tr>
+	</table>
+</form>
+</div>
+
+<table class="table">
+	<% if payments.Count: %>
+	<tr>
+		<th></th>
+		<th>${app.Sortable("Получатель", "recipient")}</th>
+		<th>${app.Sortable("Дата платежа", "payedOn")}</th>
+		<th>${app.Sortable("Плательщик", "payer")}</th>
+		<th>${app.Sortable("Сумма", "sum")}</th>
+		<th>${app.Sortable("Дата внесения платежа", "registredOn")}</th>
+	</tr>
+	<% for i, payment in enumerate(payments): %>
+	<tr class="${ViewHelper.GetRowStyle(i)}">
+		<td>
+			<a href="${siteroot}/Payments/Edit?id=${payment.Id}">Редактировать</a>
+			<a href="${siteroot}/Payments/Delete?id=${payment.Id}">Удалить</a>
+		</td>
+		<td>${payment.Recipient.Name}</td>
+		<td>${payment.PayedOn}</td>
+		<td>${app.LinkTo(payment.Payer)}</td>
+		<td>${payment.Sum}</td>
+		<td>${payment.RegistredOn}</td>
+	</tr>
+	<% end %>
+	<% else: %>
+	<tr class=EmptyData>
+		<td>Платежи за сегоднящний день не вносились</td>
+	</tr>
+	<% end %>
+</table>

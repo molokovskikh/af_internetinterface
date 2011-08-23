@@ -32,6 +32,7 @@
 			width:1000px;
 			height:350px;
 			background-color:White;
+			border: 1px double black;
 		}
 		
 		/*.table .whiteBr
@@ -51,11 +52,16 @@
 		    float:left;
 		    text-align:center;
 		    }
+		    
+		#downLink
+		{
+		    font-size:14px;
+		    font-weight:bold;
+		    }
 	</style>
 	<script type="text/javascript">
         Date.format = 'dd.mm.yyyy';
         $(function () {
-            $("#tabs").tabs();
             $('.graph_date').datepicker();
             //$('.turn-me-into-datepicker').datepicker();
             //$('#endDate').val('${System.DateTime.Now.ToShortDateString()}');
@@ -75,10 +81,6 @@
 
 <center>
 <div id="tabs">
-    <ul>
-        <li><a href="#fragment-1"><span>Просмотр</span></a></li>
-        <li><a href="#fragment-2"><span>Загрузка</span></a></li>
-    </ul>
 	<div class="filterDiv" id="fragment-1">
 		<form method="get" action="${siteroot}/Payers/ShowAgent">
         <%if PartnerAccessSet.AccesPartner("SSI"): %>
@@ -161,14 +163,9 @@
 				</table>
                 <p></p>
 		</form>
+        <span><a id="downLink" href="${Siteroot}\Payments\ProcessPayments">Загрузить платежи</a></span>
+        <span><a id="downLink" href="${Siteroot}\Payments\Index">Банковские выписки</a></span>
+        <span><a id="downLink" href="${Siteroot}\Payments\New">Новый платеж</a></span>
 	</div>
-    <div id="fragment-2">
-        <div style="border:1px double black; text-align:center; margin-top:100px; width:500px; padding:15px;">
-            <form enctype="multipart/form-data" action="myup.php" method=POST>
-            Выберете файл: <input name="myfile" type="file">
-            <input type="submit" value="Загрузить" style="width:100px;">
-            </form>
-        </div>
-    </div>
 </div>
 </center>

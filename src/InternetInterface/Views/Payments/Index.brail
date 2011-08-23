@@ -1,0 +1,70 @@
+﻿<script>
+    $(function () {
+        $('.date-pick').datepicker();
+    });
+</script>
+
+<div style="width:80%; ">
+
+<div class=block style="border:1px double Black; width:700px; background-color:White; padding:10px; margin:15px;">
+<table class="table">
+    <thead>
+        <tr>
+            <th>История платежей</th>
+        </tr>
+    </thead>
+    <tbody>
+    	${app.BeginFormFor("filter")}
+        <tr>
+            <td>Период</td>
+            <td>
+                <label for="startDate">c</label>
+                <input type=text value="${filter.Period.Begin.ToShortDateString()}" name="filter.Period.Begin" id="startDate"  class="date-pick dp-applied">
+                <label for="EndDate">по</label>
+                <input type=text value="${filter.Period.End.ToShortDateString()}" name="filter.Period.End" id="EndDate"  class="date-pick dp-applied">
+            </td>
+        </tr>
+        <tr>
+            <td>${app.FilterFor("filter.Recipients")}</td>
+            <td>${app.FilterFor("filter.SearchText")}</td>
+            <td>${app.FilterFor("Показывать только неопознанные:", "filter.ShowOnlyUnknown")}</td>
+            <td>${app.EndFormFor("filter")}</td>
+        </tr>
+    </tbody>
+</table>
+</div>
+
+<div class=block style="font-size:14px;  margin:15px;">
+<b>	Всего платежей ${stat.Count} на сумму ${stat.Sum.ToString("C")}</b>
+</div>
+
+<table class=table style="border:1px double Black; background-color:White; padding:10px; margin:15px;">
+	<% if payments.Count: %>
+	<tr>
+		<th></th>
+		<th>${app.Sortable("Получатель", "recipient")}</th>
+		<th>${app.Sortable("Дата платежа", "payedOn")}</th>
+		<th>${app.Sortable("Плательщик", "payer")}</th>
+		<th>${app.Sortable("Сумма", "sum")}</th>
+		<th>${app.Sortable("Дата внесения платежа", "registredOn")}</th>
+	</tr>
+	<% for i, payment in enumerate(payments): %>
+	<tr class="${ViewHelper.GetRowStyle(i)}">
+		<td>
+            <a href="${siteroot}/Payments/Edit?id=${payment.Id}">Редактировать</a>
+			<a href="${siteroot}/Payments/Delete?id=${payment.Id}">Удалить</a>
+		</td>
+		<td>${payment.Recipient.Name}</td>
+		<td>${payment.PayedOn.ToShortDateString()}</td>
+		<td>${app.LinkTo(payment.Payer)}</td>
+		<td style="text-align:right;">${payment.Sum.ToString("C")}</td>
+		<td>${payment.RegistredOn}</td>
+	</tr>
+	<% end %>
+	<% else: %>
+	<tr class="EmptyData">
+		<td>По вашему запросу ничего не найдено</td>
+	</tr>
+	<% end %>
+</table>
+</div>

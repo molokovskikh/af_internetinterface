@@ -20,7 +20,7 @@ namespace InternetInterface.Models
 	}
 
     [ActiveRecord(Schema = "Internet", Table = "LawyerPerson", Lazy = true), Auditable]
-    public class LawyerPerson : ValidActiveRecordLinqBase<LawyerPerson>, IPayer
+    public class LawyerPerson : ValidActiveRecordLinqBase<LawyerPerson>
 	{
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
@@ -62,6 +62,6 @@ namespace InternetInterface.Models
         public virtual string MailingAddress { get; set; }
 
         [BelongsTo]
-        public Recipient Recipient { get; set; }
+        public virtual Recipient Recipient { get; set; }
 	}
 }

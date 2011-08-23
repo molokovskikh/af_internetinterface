@@ -18,7 +18,6 @@ hr {
     display:none; 
     }
 }
-
 p {
   font-size: 12px;
   line-height: 20px;
@@ -351,6 +350,18 @@ input.checkbox {
 }
 
 /* flash-messages */
+.flash
+{
+    margin-top: 10px;
+    margin-bottom: 30px;
+    margin-left: 30%;
+    width: 30%;
+    height: 20px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+}
+
 .flash .message {
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
@@ -364,16 +375,27 @@ input.checkbox {
 .flash .error {
   border: 1px solid #fbb;
   background-color: #fdd;
+   height: 100%;
+       padding: 10px;
+}
+.EmptyData
+{
+    border: 1px solid Black;
+    background-color: #ffffcc;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
 }
 .flash .warning {
   border: 1px solid #fffaaa;
   background-color: #ffffcc;
 }
 .flash .notice {
-  border: 1px solid #ddf;
-  background-color: #eef;
+  border: 1px solid #1FDF00;
+  background-color: #BBFFB6;
+   height: 100%;
+       padding: 10px;
 }
-
 /* lists */
 
 ul.list li {

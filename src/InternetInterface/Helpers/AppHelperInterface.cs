@@ -8,7 +8,7 @@ using InternetInterface.Models.Access;
 
 namespace InternetInterface.Helpers
 {
-    public class AppHelperInterface : AppHelper
+    public class AppHelper : Common.Web.Ui.Helpers.AppHelper
     {
         public override string LinkTo(object item, object title, string action)
         {

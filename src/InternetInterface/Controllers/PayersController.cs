@@ -74,7 +74,7 @@ namespace InternetInterface.Controllers
         }
     }
 
-	[Layout("Main")]
+	//[Layout("Main")]
     [Helper(typeof(PaginatorHelper))]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class PayersController : SmartDispatcherController
@@ -136,6 +136,7 @@ namespace InternetInterface.Controllers
             else
             {
                 PropertyBag["payments"] = Session["payments"];
+                RedirectToUrl(@"../Payments/ProcessPayments");
             }
         }
 	}

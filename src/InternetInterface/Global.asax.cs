@@ -38,7 +38,7 @@ namespace InternetInterface
         public Global()
             : base(Assembly.Load("InternetInterface"))
         {
-            LibAssemblies.Add(Assembly.Load("Common.Web.Ui"));
+            //LibAssemblies.Add(Assembly.Load("Common.Web.Ui"));
             Logger.ErrorSubject = "Ошибка в Интернет интерфейсе";
             Logger.SmtpHost = "box.analit.net";
         }
@@ -47,8 +47,8 @@ namespace InternetInterface
 		{
 			XmlConfigurator.Configure();
 			ActiveRecordStarter.Initialize( new [] {
-					Assembly.Load("InternetInterface"),
-            Assembly.Load("Common.Web.Ui")},
+					Assembly.Load("InternetInterface")/*,
+            Assembly.Load("Common.Web.Ui")*/},
 					ActiveRecordSectionHandler.Instance);
 
 			RoutingModuleEx.Engine.Add(new PatternRoute("/")
@@ -116,7 +116,7 @@ namespace InternetInterface
 		public void Configure(IMonoRailConfiguration configuration)
 		{
 			configuration.ControllersConfig.AddAssembly("InternetInterface");
-			configuration.ControllersConfig.AddAssembly("Common.Web.Ui");
+			//configuration.ControllersConfig.AddAssembly("Common.Web.Ui");
 			configuration.ViewComponentsConfig.Assemblies = new[] {
 				"InternetInterface",
                 "Common.Web.Ui"
@@ -124,7 +124,7 @@ namespace InternetInterface
 			configuration.ViewEngineConfig.ViewPathRoot = "Views";
 			configuration.ViewEngineConfig.ViewEngines.Add(new ViewEngineInfo(typeof(BooViewEngine), false));
 			configuration.ViewEngineConfig.ViewEngines.Add(new ViewEngineInfo(typeof(WebFormsViewEngine), false));
-			configuration.ViewEngineConfig.AssemblySources.Add(new AssemblySourceInfo("Common.Web.Ui", "Common.Web.Ui.Views"));
+			//configuration.ViewEngineConfig.AssemblySources.Add(new AssemblySourceInfo("Common.Web.Ui", "Common.Web.Ui.Views"));
 			configuration.ViewEngineConfig.VirtualPathRoot = configuration.ViewEngineConfig.ViewPathRoot;
 			configuration.ViewEngineConfig.ViewPathRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configuration.ViewEngineConfig.ViewPathRoot);
 
@@ -151,6 +151,8 @@ namespace InternetInterface
             container.UrlBuilder.UseExtensions = false;
 			((DefaultViewComponentFactory)container.GetService<IViewComponentFactory>()).Inspect(Assembly.Load("InternetInterface"));
             container.ValidatorRegistry = new CachedValidationRegistry(new ResourceManager("Castle.Components.Validator.Messages", typeof(CachedValidationRegistry).Assembly));
+
+            base.Initialized(container);
 		}
 
 		void Session_End(object sender, EventArgs e)

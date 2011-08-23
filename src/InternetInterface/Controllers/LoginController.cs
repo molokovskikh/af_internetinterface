@@ -33,6 +33,7 @@ namespace InternetInterface.Controllers
 
 		public void LoginPartner()
 		{
+		    LayoutName = "NoMap";
 			if (Context.Session["Login"] == null)
 			Context.Session["Login"] = Context.CurrentUser.Identity.Name;
 			if (Context.Session["Login"] != null && !String.IsNullOrEmpty(Context.Session["Login"].ToString()))

@@ -210,10 +210,10 @@ ORDER BY {3} Limit {1}, {2}", ":SearchText", CurrentPage * PageSize, PageSize, G
         }
     }
 
-	[Layout("Main"),
+	[/*Layout("Main"),*/
     Helper(typeof(PaginatorHelper)),
     Helper(typeof(CategorieAccessSet)),
-    Helper(typeof(AppHelperInterface), "app")]
+    /*Helper(typeof(AppHelperInterface), "app")*/]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class SearchController : SmartDispatcherController
 	{

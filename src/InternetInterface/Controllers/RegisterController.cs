@@ -17,7 +17,7 @@ using IFilter = Castle.MonoRail.Framework.IFilter;
 
 namespace InternetInterface.Controllers
 {
-	[Layout("Main")]
+	//[Layout("Main")]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class RegisterController : SmartDispatcherController
 	{
