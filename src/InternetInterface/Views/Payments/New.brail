@@ -46,7 +46,7 @@
                 <input type=text value="${System.DateTime.Today.ToShortDateString()}" name="payment.PayedOn" id="startDate"  class="date-pick dp-applied">
 			</td>
 			<td>
-				<input type=hidden id="payment_payer_id" name=Payment.Payer.PayerId>
+				<input type=hidden id="payment_payer_id" name=Payment.Payer.Id>
 				<input type=text id=payer class="required">
 			</td>
 			<td>

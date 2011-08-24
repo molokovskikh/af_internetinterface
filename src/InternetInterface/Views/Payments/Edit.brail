@@ -1,18 +1,22 @@
 ﻿
 <script>
 	$(function () {
-	    $('.date-pick').datepicker();
+	    //$('.date-pick').datepicker();
 
-		$("form").validate();
+		//$("form").validate();
 
 		$("#payment_Payer_Name").autocomplete({
 			source: "SearchPayer",
 			minLength: 2,
 			select: function (event, ui) {
-				$("#payment_Payer_PayerId").val(ui.item.id)
+				$("#payment_payer_id").val(ui.item.id)
 			}
 		});
 		//$("#payer").focus();
+
+		/*$("input#autocomplete").autocomplete({
+			source: ["c++", "java", "php", "coldfusion", "javascript", "asp", "ruby"]
+		});*/
 
 		$.ui.autocomplete.prototype._renderItem = function (ul, item) {
 			uri = "${siteroot}/Billing/Edit?billingcode=" + item.id;
@@ -30,6 +34,7 @@
   padding:10px;
 }
 </style>
+
 <div style="width:900px; background-color:White; border:1px double Black; margin:15px; padding:10px;">
 <% if warning = payment.GetWarning(): %>
 <div class="error">
@@ -130,6 +135,7 @@
 				Плательщик:
 			</td>
 			<td>
+				<input type=hidden id="payment_payer_id" name=Payment.Payer.Id>
 				<input type=text id="payment_Payer_Name" value="${payment.Payer.Name if payment.Payer}">
 			</td>
 		</tr>

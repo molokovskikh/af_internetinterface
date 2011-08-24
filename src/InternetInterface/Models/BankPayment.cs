@@ -120,7 +120,7 @@ namespace InternetInterface.Models
         [Property, ValidateNonEmpty]
         public DateTime PayedOn { get; set; }
 
-        [Property, ValidateGreaterThanZero]
+        [Property, ValidateIsGreater(IsGreaterValidationType.Decimal, "0", "Сумма должна быть больше 0")]
         public decimal Sum { get; set; }
 
         [Property]

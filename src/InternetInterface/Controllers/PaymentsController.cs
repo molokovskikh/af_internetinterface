@@ -51,6 +51,13 @@ namespace AdminInterface.Controllers
 				BindObjectInstance(payment, "payment", AutoLoadBehavior.OnlyNested);
 				payment.RegisterPayment();
 				payment.Save();
+				new Payment
+				{
+					Client = Client.Queryable.FirstOrDefault(c => c.LawyerPerson == payment.Payer),
+					Sum = payment.Sum,
+					RecievedOn = payment.RegistredOn,
+					PaidOn = payment.PayedOn
+				}.Save();
 				RedirectToReferrer();
 			}
 			else
