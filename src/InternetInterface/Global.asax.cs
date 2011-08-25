@@ -39,7 +39,7 @@ namespace InternetInterface
             : base(Assembly.Load("InternetInterface"))
         {
             //LibAssemblies.Add(Assembly.Load("Common.Web.Ui"));
-            Logger.ErrorSubject = "Ошибка в Интернет интерфейсе";
+            Logger.ErrorSubject = "[Internet] Ошибка в Интернет интерфейсе";
             Logger.SmtpHost = "box.analit.net";
         }
 
@@ -63,7 +63,7 @@ namespace InternetInterface
 
 		void Application_Error(object sender, EventArgs e)
 		{
-			var exception = Server.GetLastError();
+			/*var exception = Server.GetLastError();
 
 			var builder = new StringBuilder();
 			builder.AppendLine("----UrlReferer-------");
@@ -103,7 +103,7 @@ namespace InternetInterface
 			{ }
 			builder.AppendLine("--------------");
 
-			_log.Error(builder.ToString());
+			_log.Error(builder.ToString());*/
 
 		}
 
