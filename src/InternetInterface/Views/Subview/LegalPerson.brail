@@ -1,13 +1,13 @@
 ﻿<tr>
 	<td ><b>Полное наименвоание</b></td>
-	<td >${FormHelper.TextField("LegalPerson.FullName")} <!-- <input id="FullName" type="text" value="${LegalPerson.FullName}" name="LegalPerson.FullName" /> </td>-->
+	<td >${FormHelper.TextField("LegalPerson.Name")} 
 	<td>
-		${VB.GetBlock("FullName")}
+		${VB.GetBlock("Name")}
 		</td>
 </tr>
 <tr>
 	<td><b>Краткое наименование</b></td>
-	<td>${FormHelper.TextField("LegalPerson.ShortName")}<!-- <input id="ShortName" type="text" value="${LegalPerson.ShortName}" name="LegalPerson.ShortName" /></td>-->
+	<td>${FormHelper.TextField("LegalPerson.ShortName")}
 		<td>
 		${VB.GetBlock("ShortName")}
 		</td>

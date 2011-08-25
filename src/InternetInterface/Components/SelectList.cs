@@ -7,7 +7,7 @@ using InternetInterface.Models;
 
 namespace InternetInterface.Components
 {
-	/*public class SelectList : ViewComponent
+	public class SelectList : ViewComponent
 	{
 		public override void Render()
 		{
@@ -24,5 +24,5 @@ namespace InternetInterface.Components
 			htmlCode += "</select>";
 			RenderText(htmlCode);
 		}
-	}*/
+	}
 }

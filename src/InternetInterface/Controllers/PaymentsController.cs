@@ -7,6 +7,7 @@ using Castle.ActiveRecord.Framework;
 using Castle.ActiveRecord.Linq;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
+using Castle.MonoRail.Framework.Helpers;
 using Common.Tools;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Controllers.Filter;
@@ -45,24 +46,36 @@ namespace AdminInterface.Controllers
 
 		public void New()
 		{
+			Binder.Validator = Validator;
 			if (IsPost)
 			{
                 var payment = new BankPayment();
 				BindObjectInstance(payment, "payment", AutoLoadBehavior.OnlyNested);
-				payment.RegisterPayment();
-				payment.Save();
-				new Payment
+				if (!HasValidationError(payment))
 				{
-					Client = Client.Queryable.FirstOrDefault(c => c.LawyerPerson == payment.Payer),
-					Sum = payment.Sum,
-					RecievedOn = payment.RegistredOn,
-					PaidOn = payment.PayedOn,
-					Agent = Agent.GetByInitPartner()
-				}.Save();
-				RedirectToReferrer();
+					payment.RegisterPayment();
+					payment.Save();
+					new Payment {
+					            	Client =
+					            		Client.Queryable.FirstOrDefault(c => c.LawyerPerson != null && c.LawyerPerson == payment.Payer),
+					            	Sum = payment.Sum,
+					            	RecievedOn = payment.RegistredOn,
+					            	PaidOn = payment.PayedOn,
+					            	Agent = Agent.GetByInitPartner()
+					            }.Save();
+					RedirectToReferrer();
+					return;
+				}
+				else
+				{
+					ArHelper.WithSession(s => ArHelper.Evict(s, new[] { payment }));
+					PropertyBag["Payment"] = payment;
+				}
 			}
-			else
+			//else
 			{
+				if (PropertyBag["Payment"] == null)
+					PropertyBag["Payment"] = new BankPayment();
 				PropertyBag["recipients"] = Recipient.Queryable.OrderBy(r => r.Name).ToList();
                 PropertyBag["payments"] = BankPayment.Queryable
 					.Where(p => p.RegistredOn >= DateTime.Today)
@@ -72,6 +85,7 @@ namespace AdminInterface.Controllers
 
 		public void SavePayments()
 		{
+			//Binder.Validator = Validator;
 			var payments = TempPayments();
 			if (payments == null)
 			{
@@ -87,15 +101,23 @@ namespace AdminInterface.Controllers
                 if (payment.Payer != null)
                     payment.Payer = ActiveRecordLinqBase<LawyerPerson>.Queryable.Where(p => p.Id == payment.Payer.Id).FirstOrDefault(); //IPayer.Find(payment.Payer.Id);
 
-				payment.RegisterPayment();
-				payment.Save();
-				new Payment {
-				            	Client = Client.Queryable.FirstOrDefault(c => c.LawyerPerson == payment.Payer),
-				            	Sum = payment.Sum,
-				            	RecievedOn = payment.RegistredOn,
-				            	PaidOn = payment.PayedOn,
-								Agent = Agent.GetByInitPartner()
-				            }.Save();
+				if (Validator.IsValid(payment))
+				{
+					payment.RegisterPayment();
+					payment.Save();
+					new Payment {
+					            	Client =
+					            		Client.Queryable.FirstOrDefault(c => c.LawyerPerson != null && c.LawyerPerson == payment.Payer),
+					            	Sum = payment.Sum,
+					            	RecievedOn = payment.RegistredOn,
+					            	PaidOn = payment.PayedOn,
+					            	Agent = Agent.GetByInitPartner()
+					            }.Save();
+				}
+				else
+				{
+					ArHelper.WithSession(s => ArHelper.Evict(s, new[] { payment }));
+				}
 			}
 
 			RedirectToAction("Index",
@@ -176,15 +198,25 @@ namespace AdminInterface.Controllers
 
 		public void Edit(uint id)
 		{
+			Binder.Validator = Validator;
             var payment = BankPayment.TryFind(id);
 			if (IsPost)
 			{
 				BindObjectInstance(payment, "payment", AutoLoadBehavior.NullIfInvalidKey);
-				payment.DoUpdate();
-				Flash["Message"] = Message.Notify("Сохранено");
-				RedirectToReferrer();
+				if (!HasValidationError(payment))
+				{
+					payment.DoUpdate();
+					Flash["Message"] = Message.Notify("Сохранено");
+					RedirectToReferrer();
+					return;
+				}
+				else
+				{
+					ArHelper.WithSession(s => ArHelper.Evict(s, new[] { payment }));
+					//PropertyBag["Payment"] = payment;
+				}
 			}
-			else
+			//else
 			{
 				PropertyBag["payment"] = payment;
 				PropertyBag["recipients"] = Recipient.Queryable.OrderBy(r => r.Name).ToList();

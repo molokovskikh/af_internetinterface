@@ -138,7 +138,7 @@ namespace InternetInterface
 
 
 #if DEBUG
-			MonoRail.Debugger.Toolbar.Toolbar.Init(configuration);
+			//5MonoRail.Debugger.Toolbar.Toolbar.Init(configuration);
 #endif
             base.Configure(configuration);
 		}
@@ -148,9 +148,9 @@ namespace InternetInterface
 
 		public void Initialized(IMonoRailContainer container)
 		{
-            container.UrlBuilder.UseExtensions = false;
-			((DefaultViewComponentFactory)container.GetService<IViewComponentFactory>()).Inspect(Assembly.Load("InternetInterface"));
-            container.ValidatorRegistry = new CachedValidationRegistry(new ResourceManager("Castle.Components.Validator.Messages", typeof(CachedValidationRegistry).Assembly));
+            //container.UrlBuilder.UseExtensions = false;
+			//((DefaultViewComponentFactory)container.GetService<IViewComponentFactory>()).Inspect(Assembly.Load("InternetInterface"));
+            //container.ValidatorRegistry = new CachedValidationRegistry(new ResourceManager("Castle.Components.Validator.Messages", typeof(CachedValidationRegistry).Assembly));
 
             base.Initialized(container);
 		}

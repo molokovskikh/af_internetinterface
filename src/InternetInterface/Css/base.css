@@ -57,6 +57,10 @@ body {
   float: left;    
 }
 
+.error {
+	color: red;
+}
+
 .sort
 {
     padding-left: 20px;
@@ -66,12 +70,12 @@ body {
 
 .asc
 {
-    background-image: url(../Scripts/blue/asc.gif);
+    background-image: url(../asc.gif);
 }
 
 .desc
 {
-    background-image: url(../Scripts/blue/desc.gif);
+    background-image: url(../desc.gif);
 }
 
 .actions-bar {

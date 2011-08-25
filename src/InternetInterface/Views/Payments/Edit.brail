@@ -104,8 +104,9 @@
 			<td>
 				<input type=text name="payment.Sum" value="${payment.Sum}" class="input-sum required">
 			</td>
+			<td>${app.GetValidationError(payment, "Sum")}</td>
 		</tr>
-		<tr>
+		<tr>a
 			<td>
 				№ документа:
 			</td>
@@ -126,15 +127,17 @@
 					<% end %>
 				</select>
 			</td>
+			<td>${app.GetValidationError(payment, "Recipient")}</td>
 		</tr>
 		<tr>
 			<td>
 				Плательщик:
 			</td>
 			<td>
-				<input type=hidden id="payment_payer_id" name=Payment.Payer.Id>
+				<input type=hidden id="payment_payer_id" name=Payment.Payer.Id value="${payment.Payer.Id if payment.Payer}">
 				<input type=text id="payment_Payer_Name" value="${payment.Payer.Name if payment.Payer}">
 			</td>
+			<td>${app.GetValidationError(payment, "Payer")}</td>
 		</tr>
 		<tr>
 			<td>

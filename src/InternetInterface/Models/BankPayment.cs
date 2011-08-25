@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -15,6 +16,55 @@ using Common.Web.Ui.Helpers;
 
 namespace InternetInterface.Models
 {
+	public class GreaterThanZeroValidator : AbstractValidator
+	{
+		public GreaterThanZeroValidator()
+		{
+			ErrorMessage = "Значение должно быть больше нуля";
+		}
+
+		public override void ApplyBrowserValidation(BrowserValidationConfiguration config,
+			InputElementType inputType,
+			IBrowserValidationGenerator generator,
+			IDictionary attributes,
+			string target)
+		{
+			base.ApplyBrowserValidation(config, inputType, generator, attributes, target);
+			generator.SetDigitsOnly(target, BuildErrorMessage());
+		}
+
+		public override bool IsValid(object instance, object fieldValue)
+		{
+			if (fieldValue != null && !(fieldValue.ToString() == ""))
+			{
+				decimal num;
+				if (!decimal.TryParse(fieldValue.ToString(), out num))
+					return false;
+
+				return num > 0;
+			}
+			return true;
+		}
+
+		public override bool SupportsBrowserValidation
+		{
+			get
+			{
+				return true;
+			}
+		}
+	}
+
+	public class ValidateGreaterThanZero : AbstractValidationAttribute
+	{
+		public override IValidator Build()
+		{
+			var validator = new GreaterThanZeroValidator();
+			ConfigureValidatorMessage(validator);
+			return validator;
+		}
+	}
+
     [ActiveRecord(Schema = "Billing", Table = "Recipients")]
     public class Recipient : ActiveRecordLinqBase<Recipient>
     {
@@ -120,7 +170,7 @@ namespace InternetInterface.Models
         [Property, ValidateNonEmpty]
         public DateTime PayedOn { get; set; }
 
-        [Property, ValidateIsGreater(IsGreaterValidationType.Decimal, "0", "Сумма должна быть больше 0")]
+		[Property, ValidateGreaterThanZero]
         public decimal Sum { get; set; }
 
         [Property]
@@ -143,7 +193,7 @@ namespace InternetInterface.Models
 
         //все что выше получается из выписки
         //дата занесения платежа
-        [BelongsTo(Column = "PayerId", Cascade = CascadeEnum.SaveUpdate)]
+        [BelongsTo(Column = "PayerId", Cascade = CascadeEnum.SaveUpdate), ValidateNonEmpty("Обязательно укажите плательщика")]
         public virtual LawyerPerson Payer { get; set; }
 
         [BelongsTo(Column = "RecipientId")]
@@ -455,10 +505,19 @@ namespace InternetInterface.Models
         [ValidateSelf]
         public void Validate(ErrorSummary summary)
         {
-            if (Recipient.Id != Payer.Recipient.Id)
-                summary.RegisterErrorMessage(
-                    "Recipient",
-                    "Получатель платежей плательщика должен соответствовать получателю платежей выбранном в платеже");
+			if (Payer != null)
+			{
+				if (Recipient.Id != Payer.Recipient.Id)
+					summary.RegisterErrorMessage(
+						"Recipient",
+						"Получатель платежей плательщика должен соответствовать получателю платежей выбранном в платеже");
+			}
+			else
+			{
+				summary.RegisterErrorMessage(
+					"Recipient",
+					"Не выбран плательщик");
+			}
         }
 
         private bool IsDuplicate()
