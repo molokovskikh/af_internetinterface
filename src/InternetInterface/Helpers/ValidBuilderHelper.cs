@@ -14,8 +14,8 @@ namespace InternetInterface.Helpers
 		{
 			if (!string.IsNullOrEmpty(_validClient.GetErrorText(blockName)))
 			{
-				return "<div class=\"flash\"> \r\n" +
-				       "<div class=\"message error\"> \r\n" +
+				return "<div class=\"flash\" style=\"margin:0px; padding:0px; height:100%; width:100%;\"> \r\n" +
+					   "<div class=\"message error\" style=\"margin:0px; padding:0px;\"> \r\n" +
 				       "<p>" + _validClient.GetErrorText(blockName) + "</p> \r\n" +
 				       "</div> \r\n" +
 				       "</div>";

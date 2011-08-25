@@ -1,7 +1,4 @@
-﻿<script type="text/javascript" src="../Scripts/jquery.tablesorter.js"></script>
-<script type="text/javascript" src="../Scripts/jquery.tablesorter.pager.js"></script>
-
-<style type="text/css">
+﻿<style type="text/css">
         
         
 #content 
@@ -134,7 +131,7 @@ div.scroller
                 <td>${Client.Tariff.Name}</td>
                 <%if (Client.Label != null) and (Client.Label.Id != 0): %>
                 <td style="width:180px;">
-                    <div class='flash' style="float:left; height:40px; width:180px; float: left;"> 
+                    <div class='flash' style="float:left; height:40px; width:180px; float: left; padding:0px; margin:0px;"> 
                         <div class="fontgit">
                             <div class='message error'style="border-color:${Client.Label.GetBorderColor()}; background-color:${Client.Label.Color}" align="center" >
                              ${Client.Label.Name}

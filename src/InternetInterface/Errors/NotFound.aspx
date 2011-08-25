@@ -5,8 +5,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head id="Head1" runat="server">
     <title>Страница не найдена</title>
-<link href="../Styles/style.css" type="text/css" rel="stylesheet" />
-<link rel="stylesheet" href="../Styles/base.css" type="text/css" media="screen" />
+<link href="../css/style.css" type="text/css" rel="stylesheet" />
+<link rel="stylesheet" href="../css/base.css" type="text/css" media="screen" />
 </head>
 <body>
 <div id="main" style="width: 100%;">

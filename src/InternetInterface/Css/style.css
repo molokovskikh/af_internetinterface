@@ -4,7 +4,7 @@ h1, h2, h3 {color: #444}
 
 body {
   color: #333;
-  background: #EBEBEB;
+  background: #EBEBEB; 
   font: normal 12px/1.5em "Lucida Grande", "Helvetica Neue", Arial, sans-serif;
 }
 
@@ -380,7 +380,7 @@ input.checkbox {
 }
 .EmptyData
 {
-    border: 1px solid Black;
+    border: 1px solid #c4c42e;
     background-color: #ffffcc;
     text-align: center;
     font-size: 14px;

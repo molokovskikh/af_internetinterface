@@ -13,7 +13,7 @@
         $("#payer").focus();
 
         $.ui.autocomplete.prototype._renderItem = function (ul, item) {
-            uri = "${siteroot}/Billing/Edit?billingcode=" + item.id;
+        	uri = "${siteroot}/UserInfo/LawyerPersonInfo.rails?filter.ClientCode=" + item.id;
             return $("<li></li>")
 				.data("item.autocomplete", item)
 				.append("<a href='" + uri + "'>" + item.label + "</a>")
@@ -22,11 +22,13 @@
     });
 </script>
 
-<h3>Разнесение платежей</h3>
-<div class=block>
+<div class=block  style="margin: 0 auto; width:1000px;">
 <form class="accountant-friendly" method=post>
-	<h4>Новый платеж</h4>
-	<table class="Table">
+	<table class="table" style="border: 1px double Black; border-right: 1px double Black;">
+	<thead>
+		<tr>
+			<th colspan=5 style="text-align:center; font-size:16px;">Новый платеж</th>
+		</tr>
 		<tr>
 			<th>Получатель</th>
 			<th>Дата платежа</th>
@@ -34,6 +36,8 @@
 			<th>Номер документа</th>
 			<th colspan=2>Сумма</th>
 		</tr>
+	</thead>
+	<tbody>
 		<tr>
 			<td>
 				<select name=Payment.Recipient.Id>
@@ -55,10 +59,13 @@
 			<td>
 				<input type=text name=Payment.Sum class="input-sum required">
 			</td>
-			<td>
-				<button id="Button1" type=submit class="button showpay">Добавить</button>
+		</tr>
+		<tr>
+			<td colspan=5>
+				<button id="addPayment" type=submit class="button showpay">Добавить</button>
 			</td>
 		</tr>
+	</tbody>
 	</table>
 </form>
 </div>

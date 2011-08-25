@@ -23,9 +23,9 @@ namespace InternetInterface.Helpers
 	{
 		public override bool IsValid(object instance, object fieldValue)
 		{
-			if (InithializeContent.partner.Categorie.ReductionName == "Office")
+			if (InitializeContent.partner.Categorie.ReductionName == "Office")
 				return true;
-			if (InithializeContent.partner.Categorie.ReductionName == "Diller")
+			if (InitializeContent.partner.Categorie.ReductionName == "Diller")
 			{
 				if (string.IsNullOrEmpty((string)fieldValue))
 					return false;

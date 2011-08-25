@@ -235,7 +235,7 @@ namespace InternetInterface.Controllers
         private void CreateAppealHistoryElement(Apartment apartment, string lastInet, string lastTv, string comment, ApartmentStatus status)
         {
             new ApartmentHistory {
-                                     Agent = InithializeContent.partner,
+                                     Agent = InitializeContent.partner,
                                      Apartment = apartment,
                                      ActionName =
                                          string.Format(

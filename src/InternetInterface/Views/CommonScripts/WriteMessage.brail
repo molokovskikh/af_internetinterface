@@ -7,7 +7,7 @@
 end
 
 def WriteMessageError(MessageText as string):
-             return """<div class='flash'> 
+             return """<div class='flash' style="margin:0px; padding:0px; height:100%; width:100%;"> 
                <div class='message error'> 
                   <p><strong>${MessageText}</strong></p> 
                </div> 

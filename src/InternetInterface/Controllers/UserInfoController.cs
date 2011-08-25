@@ -196,7 +196,7 @@ namespace InternetInterface.Controllers
                     AppealType = (int)AppealType.System,
                     Client = client,
                     Date = DateTime.Now,
-                    Partner = InithializeContent.partner
+                    Partner = InitializeContent.partner
                 }.Save();
             }
             Flash["Applying"] = message;
@@ -229,7 +229,7 @@ namespace InternetInterface.Controllers
                                                                                        dtn.Hour,
                                                                                        dtn.Minute,
                                                                                        dtn.Second),
-                                                      Activator = InithializeContent.partner
+                                                      Activator = InitializeContent.partner
                                                   };
             //clientService.Save();
             client.ClientServices.Add(clientService);
@@ -378,7 +378,7 @@ namespace InternetInterface.Controllers
 				{
 					Appeal = Appeal,
 					Date = DateTime.Now,
-					Partner = InithializeContent.partner,
+					Partner = InitializeContent.partner,
 					Client = Client.Find(ClientID),
                     AppealType = (int)AppealType.User
 				}.SaveAndFlush();
@@ -452,7 +452,7 @@ namespace InternetInterface.Controllers
 				                                         					typeof (Label));
 				                                         		query.SetParameter("LabelIndex", deletelabelch);
 																query.SetParameter("ActDate", DateTime.Now);
-																query.SetParameter("Oper", InithializeContent.partner.Id);
+																query.SetParameter("Oper", InitializeContent.partner.Id);
 				                                         		query.ExecuteUpdate();
 				                                         		return new List<Label>();
 				                                         	});
@@ -463,8 +463,8 @@ namespace InternetInterface.Controllers
 		public void RequestView()
 		{
 		    var requests = Requests.FindAll().OrderByDescending(f => f.ActionDate);
-            if (InithializeContent.partner.Categorie.ReductionName == "Agent")
-                PropertyBag["Clients"] = requests.Where(r => r.Registrator == InithializeContent.partner).ToList();
+            if (InitializeContent.partner.Categorie.ReductionName == "Agent")
+                PropertyBag["Clients"] = requests.Where(r => r.Registrator == InitializeContent.partner).ToList();
             else
                 PropertyBag["Clients"] = requests.ToList();
 			SendRequestEditParameter();
@@ -500,8 +500,8 @@ namespace InternetInterface.Controllers
             else
                 requests = requests.Where(r => r.Label != null && r.Label.Id == labelId).ToList();
             requests = requests.OrderByDescending(f => f.ActionDate).ToList();
-            if (InithializeContent.partner.Categorie.ReductionName == "Agent")
-                PropertyBag["Clients"] = requests.Where(r => r.Registrator == InithializeContent.partner).ToList();
+            if (InitializeContent.partner.Categorie.ReductionName == "Agent")
+                PropertyBag["Clients"] = requests.Where(r => r.Registrator == InitializeContent.partner).ToList();
             else
                 PropertyBag["Clients"] = requests.ToList();
 			SendRequestEditParameter();
@@ -523,15 +523,15 @@ namespace InternetInterface.Controllers
                 {
                     request.Label = _label;
                     request.ActionDate = DateTime.Now;
-                    request.Operator = InithializeContent.partner;
+                    request.Operator = InitializeContent.partner;
                     request.UpdateAndFlush();
                 }
 			    if (_label.ShortComment == "Refused" && request.Registrator != null)
                     PaymentsForAgent.CreatePayment(AgentActions.DeleteRequest, "Списание за отказ заявки", request.Registrator);
 			}
 		    var requests = Requests.FindAll().OrderByDescending(f => f.ActionDate);
-            if (InithializeContent.partner.Categorie.ReductionName == "Agent")
-                PropertyBag["Clients"] = requests.Where(r => r.Registrator == InithializeContent.partner).ToList();
+            if (InitializeContent.partner.Categorie.ReductionName == "Agent")
+                PropertyBag["Clients"] = requests.Where(r => r.Registrator == InitializeContent.partner).ToList();
             else
                 PropertyBag["Clients"] = requests.ToList();
 			SendRequestEditParameter();
@@ -777,7 +777,7 @@ namespace InternetInterface.Controllers
 				forChangeSumm = balanceText;
 			}
 			thisPay.Sum = Convert.ToDecimal(forChangeSumm);
-			thisPay.Agent = Agent.FindAll(DetachedCriteria.For(typeof(Agent)).Add(Expression.Eq("Partner", InithializeContent.partner)))[0];
+			thisPay.Agent = Agent.FindAll(DetachedCriteria.For(typeof(Agent)).Add(Expression.Eq("Partner", InitializeContent.partner)))[0];
 			thisPay.Client = clientToch;
 			thisPay.RecievedOn = DateTime.Now;
 			thisPay.PaidOn = DateTime.Now;
@@ -843,7 +843,7 @@ namespace InternetInterface.Controllers
 					{
                         Appeal = "Причина недозвона:  " + prichina + " \r\n Дата: " + _noPhoneDate.ToShortDateString() + " \r\n Комментарий: \r\n " + Appeal,
 						Date = DateTime.Now,
-						Partner = InithializeContent.partner,
+						Partner = InitializeContent.partner,
 						Client = Client.Find(ClientID),
                         AppealType = (int)AppealType.User
 					}.SaveAndFlush();
@@ -897,7 +897,7 @@ namespace InternetInterface.Controllers
                 new Appeals {
                                 Client = client,
                                 Date = DateTime.Now,
-                                Partner = InithializeContent.partner,
+                                Partner = InitializeContent.partner,
                                 Appeal =
                                     string.Format("Назначен в график, \r\n Брагада: {0} \r\n Дата: {1} \r\n Время: {2}",
                                                   briad.Name,

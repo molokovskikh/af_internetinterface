@@ -1,11 +1,4 @@
-﻿<head>
-
-<link href="${siteroot}/Styles/style.css" type="text/css" rel="stylesheet" />
-<link rel="stylesheet" href="${siteroot}/Styles/base.css" type="text/css" media="screen" />
-
-</head>
-
-<body>
+﻿<body>
 <div id="container" align="center">
 <div id="box">
 <div id="block-login" class="block">

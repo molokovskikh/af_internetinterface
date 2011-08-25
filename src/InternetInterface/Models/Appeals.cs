@@ -50,7 +50,7 @@ namespace InternetInterface.Models
                 Client = client,
                 AppealType = (int)type,
                 Date = DateTime.Now,
-                Partner = InithializeContent.partner
+                Partner = InitializeContent.partner
             }.Save();
         }
 	}

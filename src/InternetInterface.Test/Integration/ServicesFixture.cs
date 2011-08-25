@@ -12,20 +12,5 @@ namespace InternetInterface.Test.Integration
     [TestFixture]
     class ServicesFixture
     {
-        public ServicesFixture()
-        {
-            WatinFixture.ConfigTest();
-        }
-
-        [Test]
-        public void CreateService()
-        {
-            using (new SessionScope())
-            {
-                //var service = service.GetByName("DebtWork");
-                //service.EditClient(new Client());
-                //new DebtWork().Save();
-            }
-        }
     }
 }

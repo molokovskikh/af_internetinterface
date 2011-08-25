@@ -1,5 +1,5 @@
 ﻿<center>
-<div style="width:900px; height:300px;">
+<div style="width:900px; height:200px;">
 <table class="table" style="border:1px double Black;">
     <thead>
         <tr>
@@ -9,7 +9,7 @@
     <tbody>
     <form method=post enctype="multipart/form-data">
     <tr>
-        <td><label>Выберете файл для загрузки в формате xml</label><br><input type=file class="button" name="inputfile"><br></td>
+        <td><label>Выберете файл для загрузки в формате xml</label><br><input type=file class="button" id="inputfile" name="inputfile"><br></td>
         <td><button id="Button2" type=submit class="button showpay">Загрузить</button></td>
     </tr>
     </form>
@@ -57,7 +57,7 @@
 	<% end %>
 	<% else: %>
 	<tr class="EmptyData">
-		<td>По вашему запросу ничего не найдено</td>
+		<td style="width:300px;">По вашему запросу ничего не найдено</td>
 	</tr>
 	<% end %>
 </table>

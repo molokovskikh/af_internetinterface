@@ -95,7 +95,7 @@ namespace InternetInterface.Helpers
                                                                             logInfo),
                                                     Client = client,
                                                     Date = DateTime.Now,
-                                                    Partner = InithializeContent.partner,
+                                                    Partner = InitializeContent.partner,
                                                     AppealType = (int) AppealType.System
                                                 });
             }

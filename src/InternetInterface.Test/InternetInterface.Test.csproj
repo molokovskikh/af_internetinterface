@@ -123,6 +123,7 @@
     <Compile Include="Functional\BrigadFixture.cs" />
     <Compile Include="Functional\CloseDemandFixture.cs" />
     <Compile Include="Functional\HouseMapFixture.cs" />
+    <Compile Include="Functional\PaymentFixture.cs" />
     <Compile Include="Functional\RegisterClientFixture.cs" />
     <Compile Include="Functional\RegisterPartnerFixrure.cs" />
     <Compile Include="Functional\RequestViewFixture.cs" />
@@ -134,11 +135,11 @@
     <Compile Include="Helpers\PropertiesHelper.cs" />
     <Compile Include="Helpers\WatinFixture.cs" />
     <Compile Include="Integration\HouseMapFixture.cs" />
+    <Compile Include="Integration\IntegrationFixture.cs" />
+    <Compile Include="Integration\PaymentFixture.cs" />
     <Compile Include="Integration\ServicesFixture.cs" />
-    <Compile Include="PartnerAccessSetFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RegisterFixture.cs" />
-    <Compile Include="SearchFixture.cs" />
+    <Compile Include="Integration\SetupFixture.cs" />
     <Compile Include="Unit\ByteFixture.cs" />
     <Compile Include="Unit\HouseFixture.cs" />
     <Compile Include="Unit\Image.cs" />

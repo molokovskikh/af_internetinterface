@@ -34,14 +34,6 @@
 			background-color:White;
 			border: 1px double black;
 		}
-		
-		/*.table .whiteBr
-		{
-			background-color:White;
-			color:Black;
-			border: 1px solid black;
-			padding:10px;
-			}*/
 			
 		.monthDiv
 		{
@@ -53,18 +45,11 @@
 		    text-align:center;
 		    }
 		    
-		#downLink
-		{
-		    font-size:14px;
-		    font-weight:bold;
-		    }
 	</style>
 	<script type="text/javascript">
         Date.format = 'dd.mm.yyyy';
         $(function () {
             $('.graph_date').datepicker();
-            //$('.turn-me-into-datepicker').datepicker();
-            //$('#endDate').val('${System.DateTime.Now.ToShortDateString()}');
             $('.monthDiv').css('background-color', '#D5E6D0');
             $('#${colorId}').parent().css('background-color', '#7ec469');
             $('.monthDiv').click(function () {
@@ -126,13 +111,10 @@
                     </tr>
 					<tr>
 						<td>
-						<!--<div class="turn-me-into-datepicker"  id="startCalendar"></div>
-						<input type="hidden" name="filter.startDate" id="startDate" class="hasDatepicker">-->
                         <label for="startDate"><b>Начало периода</b></label>
                         <input type=text value="${filter.startDate.ToShortDateString()}" name="filter.startDate" id="startDate" class="graph_date" class="date-pick dp-applied">
 						</td>
 						<td style="border-right:1px solid #AAA; padding-right:30px;">
-						<!--<div class="turn-me-into-datepicker" id="endCalendar">-->
                         <label for="startDate"><b>Конец периода</b></label>
                         <input type=text value="${filter.endDate.ToShortDateString()}" name="filter.endDate" id="endDate" class="graph_date" class="dp-hover"></div>
 						</td>
@@ -163,9 +145,6 @@
 				</table>
                 <p></p>
 		</form>
-        <span><a id="downLink" href="${Siteroot}\Payments\ProcessPayments">Загрузить платежи</a></span>
-        <span><a id="downLink" href="${Siteroot}\Payments\Index">Банковские выписки</a></span>
-        <span><a id="downLink" href="${Siteroot}\Payments\New">Новый платеж</a></span>
 	</div>
 </div>
 </center>

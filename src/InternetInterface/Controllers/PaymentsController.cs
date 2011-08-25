@@ -56,7 +56,8 @@ namespace AdminInterface.Controllers
 					Client = Client.Queryable.FirstOrDefault(c => c.LawyerPerson == payment.Payer),
 					Sum = payment.Sum,
 					RecievedOn = payment.RegistredOn,
-					PaidOn = payment.PayedOn
+					PaidOn = payment.PayedOn,
+					Agent = Agent.GetByInitPartner()
 				}.Save();
 				RedirectToReferrer();
 			}
@@ -88,12 +89,13 @@ namespace AdminInterface.Controllers
 
 				payment.RegisterPayment();
 				payment.Save();
-			    new Payment {
-			                    Client = Client.Queryable.FirstOrDefault(c=>c.LawyerPerson == payment.Payer),
-                                Sum = payment.Sum,
-                                RecievedOn = payment.RegistredOn,
-                                PaidOn = payment.PayedOn
-			                }.Save();
+				new Payment {
+				            	Client = Client.Queryable.FirstOrDefault(c => c.LawyerPerson == payment.Payer),
+				            	Sum = payment.Sum,
+				            	RecievedOn = payment.RegistredOn,
+				            	PaidOn = payment.PayedOn,
+								Agent = Agent.GetByInitPartner()
+				            }.Save();
 			}
 
 			RedirectToAction("Index",
@@ -195,13 +197,13 @@ namespace AdminInterface.Controllers
 			uint id;
 			uint.TryParse(term, out id);
 			return ActiveRecordLinq
-				.AsQueryable<LawyerPerson>()
-				.Where(p => p.Name.Contains(term) || p.Id == id)
+				.AsQueryable<Client>()
+				.Where(p => p.LawyerPerson.Name.Contains(term) || p.Id == id)
 				.Take(20)
 				.ToList()
 				.Select(p => new {
-					id = p.Id,
-					label = String.Format("[{0}]. {1} ИНН {2}", p.Id, p.Name, p.INN)
+					id = p.LawyerPerson.Id,
+					label = String.Format("[{0}]. {1} ИНН {2}", p.Id, p.LawyerPerson.Name, p.LawyerPerson.INN)
 				});
 		}
 	}

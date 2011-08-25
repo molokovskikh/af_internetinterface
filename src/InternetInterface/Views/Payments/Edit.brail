@@ -1,9 +1,9 @@
 ﻿
 <script>
 	$(function () {
-	    //$('.date-pick').datepicker();
+	    $('.date-pick').datepicker();
 
-		//$("form").validate();
+		$("form").validate();
 
 		$("#payment_Payer_Name").autocomplete({
 			source: "SearchPayer",
@@ -12,14 +12,11 @@
 				$("#payment_payer_id").val(ui.item.id)
 			}
 		});
-		//$("#payer").focus();
+		$("#payer").focus();
 
-		/*$("input#autocomplete").autocomplete({
-			source: ["c++", "java", "php", "coldfusion", "javascript", "asp", "ruby"]
-		});*/
 
 		$.ui.autocomplete.prototype._renderItem = function (ul, item) {
-			uri = "${siteroot}/Billing/Edit?billingcode=" + item.id;
+			uri = "${siteroot}/UserInfo/LawyerPersonInfo.rails?filter.ClientCode=" + item.id;
 			return $("<li></li>")
 				.data("item.autocomplete", item)
 				.append("<a href='" + uri + "'>" + item.label + "</a>")

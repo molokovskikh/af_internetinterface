@@ -182,19 +182,6 @@ namespace InternetInterface.Models.Access
 									"ChangeBalance",
 									"SiteMap",
 									"SearchUserInfo",
-                                    "ActivateService",
-                                    "DiactivateService",
-                                    "ProcessPayments",
-                                    "NewPaymets",
-                                    "Index",
-                                    "New",
-                                    "SavePayments",
-                                    "EditTemp",
-                                    "Delete",
-                                    "DeleteTemp",
-                                    "Edit",
-                                    "SearchPayer",
-                                    "CancelPayments"
 			                 	};
 			return _changeBalance.Contains(methodName) ? "CB" : string.Empty;
 		}
@@ -244,7 +231,21 @@ namespace InternetInterface.Models.Access
 									"ShowAgent",
                                     "ShowAgents",
                                     "GroupInfo",
-                                    "Leases"
+                                    "Leases",
+									 "ActivateService",
+                                    "DiactivateService",
+                                    "ProcessPayments",
+                                    "NewPaymets",
+                                    "Index",
+                                    "New",
+                                    "SavePayments",
+                                    "EditTemp",
+                                    "Delete",
+                                    "DeleteTemp",
+                                    "Edit",
+                                    "SearchPayer",
+                                    "CancelPayments"
+
 			                 	};
 			return _visibleDemand.Contains(methodName) ? "SSI" : string.Empty;
 		}

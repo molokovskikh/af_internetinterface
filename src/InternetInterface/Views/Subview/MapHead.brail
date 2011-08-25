@@ -10,6 +10,12 @@
             text-align:center;
            /* width : 60%;*/
         }
+        .submenu th
+        {
+        	border-color:#7cae6d;
+        	padding-top:0px;
+        	padding-bottom:0px;
+        	}
         .menudiv
         {
             /*border : 2px solid;*/
@@ -83,6 +89,25 @@
                 </form>
             </th>
         </tr>
+		<tr class="submenu">
+			<th></th>
+			<th></th>
+			<th></th>
+			<th></th>
+			<th></th>
+			<th></th>
+			<th>
+			<%if PartnerAccessSet.AccesPartner("SSI"): %>
+				<a id="downLink" href="${Siteroot}\Payments\ProcessPayments">Загрузить платежи</a> <br />
+				<a id="A1" href="${Siteroot}\Payments\Index">Банковские выписки</a><br />
+				<a id="A2" href="${Siteroot}\Payments\New">Новый платеж</a> <br />
+			<%end %>
+			</th>
+			<th></th>
+			<th></th>
+			<th></th>
+			<th></th>
+		</tr>
     </thead>
 </table>
 </div>

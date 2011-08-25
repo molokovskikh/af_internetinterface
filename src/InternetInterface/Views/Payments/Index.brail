@@ -4,9 +4,7 @@
     });
 </script>
 
-<div style="width:80%; ">
-
-<div class=block style="border:1px double Black; width:700px; background-color:White; padding:10px; margin:15px;">
+<div class=block style="border:1px double Black; width:700px; background-color:White; padding:10px; margin: 0 auto;">
 <table class="table">
     <thead>
         <tr>
@@ -38,7 +36,7 @@
 <b>	Всего платежей ${stat.Count} на сумму ${stat.Sum.ToString("C")}</b>
 </div>
 
-<table class=table style="border:1px double Black; background-color:White; padding:10px; margin:15px;">
+<table class=table style="border:1px double Black; background-color:White; padding:10px; margin:15px; margin-left:0px;">
 	<% if payments.Count: %>
 	<tr>
 		<th></th>

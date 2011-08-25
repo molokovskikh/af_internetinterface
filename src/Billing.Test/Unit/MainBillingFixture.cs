@@ -53,7 +53,7 @@ namespace Billing.Test.Unit
 
             //SessionScope.Current.Flush();
 
-            InithializeContent.GetAdministrator = () => Partner.FindFirst();
+            InitializeContent.GetAdministrator = () => Partner.FindFirst();
 
 			new Status
 			{
@@ -265,7 +265,7 @@ namespace Billing.Test.Unit
                 BeginWorkDate = DateTime.Now,
                 EndWorkDate = SystemTime.Now().AddDays(countDays),
                 Service = Service.GetByType(typeof(DebtWork)),
-                Activator = InithializeContent.partner
+                Activator = InitializeContent.partner
             };
             client.ClientServices.Add(CServive);
             //CServive.Save();
@@ -292,7 +292,7 @@ namespace Billing.Test.Unit
             client.Update();
             var service = new ClientService {
                                                 Client = client,
-                                                Activator = InithializeContent.partner,
+                                                Activator = InitializeContent.partner,
                                                 Service = Service.GetByType(typeof(VoluntaryBlockin)),
                                                 BeginWorkDate = DateTime.Now.AddDays(2),
                                                 EndWorkDate = DateTime.Now.AddDays(countDays+2)
@@ -330,7 +330,7 @@ namespace Billing.Test.Unit
             service = new ClientService
             {
                 Client = client,
-                Activator = InithializeContent.partner,
+                Activator = InitializeContent.partner,
                 Service = Service.GetByType(typeof(VoluntaryBlockin)),
                 BeginWorkDate = DateTime.Now,
             };
@@ -381,7 +381,7 @@ namespace Billing.Test.Unit
                 BeginWorkDate = DateTime.Now,
                 EndWorkDate = SystemTime.Now().AddDays(countDays),
                 Service = Service.GetByType(typeof(DebtWork)),
-                Activator = InithializeContent.partner
+                Activator = InitializeContent.partner
             };
             client.ClientServices.Add(CServive);
             CServive.Activate();
@@ -398,7 +398,7 @@ namespace Billing.Test.Unit
                 BeginWorkDate = DateTime.Now,
                 EndWorkDate = SystemTime.Now().AddDays(countDays),
                 Service = Service.GetByType(typeof(VoluntaryBlockin)),
-                Activator = InithializeContent.partner
+                Activator = InitializeContent.partner
             };
             physClient.Balance = 200m;
             physClient.Update();

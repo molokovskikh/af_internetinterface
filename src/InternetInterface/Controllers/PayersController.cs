@@ -56,7 +56,7 @@ namespace InternetInterface.Controllers
             if (endDate == null)
                 endDate = DateTime.Now;
             if (!CategorieAccessSet.AccesPartner("SSI"))
-                agent = Agent.Queryable.Where(a => a.Partner == InithializeContent.partner).FirstOrDefault().Id;
+                agent = Agent.Queryable.Where(a => a.Partner == InitializeContent.partner).FirstOrDefault().Id;
             var totalRes = agent > 0 ?
                 Payment.Queryable.Where(t => t.Agent.Id == agent).ToList() : Payment.FindAll().ToList();
             totalRes = totalRes.Where(t => t.PaidOn >= startDate.Value &&

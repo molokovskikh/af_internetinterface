@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="windows-1251"?><XMLExport>
+<FileEncoding>Windows</FileEncoding>
+<ProgramReceiver>PSBOnline2</ProgramReceiver>
+<ProgramReceiver>XMLExportReader</ProgramReceiver>
+<CreationDate>21.01.2011</CreationDate>
+<extrCond>
+<extractStartDate>13.01.2011</extractStartDate>
+<extractEndDate>13.01.2011</extractEndDate>
+<AccountCode>40702810900010229801</AccountCode>
+</extrCond>
+<accDescr>
+<extractStartDate>13.01.2011</extractStartDate>
+<extractEndDate>13.01.2011</extractEndDate>
+<AccountCode>40702810900010229801</AccountCode>
+<incomeAmount>3041083.86</incomeAmount>
+<incomeTurns>36000.00</incomeTurns>
+<outTurns>30000.00</outTurns>
+<outAmount>3047083.86</outAmount>
+</accDescr>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>54</NDoc>
+<DatePorucheniya>13.01.2011</DatePorucheniya>
+<Summa>800.00</Summa>
+<AssignPayment>Информационные услуги за январь согласно счета N1583 от 01.10.2010г. Без НДС</AssignPayment>
+<Payer>
+<Name>ООО &quot;Ксения&quot;</Name>
+<INN>3120087190</INN>
+<AccountCode>40702810101080000019</AccountCode>
+</Payer>
+<BankPayer>
+<Description>БФ ЗАО КБ &quot;РУСНАРБАНК&quot;</Description>
+<BIC>041403802</BIC>
+<AccountCode>30101810300000000802</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>ООО &quot;АналитФармация&quot;</Name>
+<INN>3666141056</INN>
+<AccountCode>40702810900010229801</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ВОРОНЕЖСКИЙ Ф-Л ОАО &quot;ПРОМСВЯЗЬБАНК&quot; г ВОРОНЕЖ</Description>
+<BIC>042007882</BIC>
+<AccountCode>30101810700000000882</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>13.01.2011</ExpiredDate>
+<Queue>6</Queue>
+<SendDate>13.01.2011</SendDate>
+<PayerKPP>312001001</PayerKPP>
+<RecepientKPP>366601001</RecepientKPP>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>28</NDoc>
+<DatePorucheniya>13.01.2011</DatePorucheniya>
+<Summa>800.00</Summa>
+<AssignPayment>Счет 1405 от 11.01.11 информационные услуги за январь 2011г.Без НДС</AssignPayment>
+<Payer>
+<Name>ООО &quot;КлаГМ&quot; (СБ РФ N 8426 СТАРООСКОЛЬСКОЕ Г.СТАРЫЙ ОСКОЛ) р/с 40702810807070101767 БЕЛГОРОДСКОЕ ОСБ N 8592 Г.БЕЛГОРОД</Name>
+<INN>3128012485</INN>
+<AccountCode>30302810013006000707</AccountCode>
+</Payer>
+<BankPayer>
+<Description>ЦЕНТРАЛЬНО-ЧЕРНОЗЕМНЫЙ БАНК СБЕРБАНКА РФ</Description>
+<BIC>042007681</BIC>
+<AccountCode>30101810600000000681</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>ООО &quot;АналитФармация&quot;</Name>
+<INN>3666141056</INN>
+<AccountCode>40702810900010229801</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ВОРОНЕЖСКИЙ Ф-Л ОАО &quot;ПРОМСВЯЗЬБАНК&quot; г ВОРОНЕЖ</Description>
+<BIC>042007882</BIC>
+<AccountCode>30101810700000000882</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>13.01.2011</ExpiredDate>
+<Queue>6</Queue>
+<SendDate>13.01.2011</SendDate>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>4</NDoc>
+<DatePorucheniya>12.01.2011</DatePorucheniya>
+<Summa>2400.00</Summa>
+<AssignPayment>Оплата за информационные услуги 1 кв. 2011 года, согл. сч №647 от 11.01.11 Cумма 2400-00, без налога (НДС).</AssignPayment>
+<Payer>
+<Name>Индивидуальный предприниматель Пятницкая Алла Юрьевна</Name>
+<INN>462902344450</INN>
+<AccountCode>40802810900520030252</AccountCode>
+</Payer>
+<BankPayer>
+<Description>КУРСКИЙ ФИЛИАЛ ОАО &quot;БАНК МОСКВЫ&quot;</Description>
+<BIC>043807728</BIC>
+<AccountCode>30101810000000000728</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>ООО&quot;АналитФармация&quot;</Name>
+<INN>3666141056</INN>
+<AccountCode>40702810900010229801</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ВОРОНЕЖСКИЙ Ф-Л ОАО &quot;ПРОМСВЯЗЬБАНК&quot; г ВОРОНЕЖ</Description>
+<BIC>042007882</BIC>
+<AccountCode>30101810700000000882</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>13.01.2011</ExpiredDate>
+<Queue>6</Queue>
+<SendDate>13.01.2011</SendDate>
+<RecepientKPP>366601001</RecepientKPP>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>15</NDoc>
+<DatePorucheniya>13.01.2011</DatePorucheniya>
+<Summa>2400.00</Summa>
+<AssignPayment>Оплата по счету № 337 от 11.01.10 за Информационные услуги сумма 2400-00 без налога (НДС)</AssignPayment>
+<Payer>
+<Name>Общество с ограниченной ответственностью Братья р/с 40702810535000105458 ЛИПЕЦКОЕ ОСБ N 8593 Г.ЛИПЕЦК</Name>
+<INN>4823027100</INN>
+<AccountCode>30302810013006003500</AccountCode>
+</Payer>
+<BankPayer>
+<Description>ЦЕНТРАЛЬНО-ЧЕРНОЗЕМНЫЙ БАНК СБЕРБАНКА РФ</Description>
+<BIC>042007681</BIC>
+<AccountCode>30101810600000000681</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>&quot;ООО &quot;АналитФармация&quot;&quot;</Name>
+<INN>3666141056</INN>
+<AccountCode>40702810900010229801</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ВОРОНЕЖСКИЙ Ф-Л ОАО &quot;ПРОМСВЯЗЬБАНК&quot; г ВОРОНЕЖ</Description>
+<BIC>042007882</BIC>
+<AccountCode>30101810700000000882</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>13.01.2011</ExpiredDate>
+<Queue>6</Queue>
+<SendDate>13.01.2011</SendDate>
+<PayerKPP>482301001</PayerKPP>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>3</NDoc>
+<DatePorucheniya>13.01.2011</DatePorucheniya>
+<Summa>2400.00</Summa>
+<AssignPayment>Предварительная оплата по счету 321 от 11.01.2011 года за информационные услуги 1 квартал 2011 года Без НДС</AssignPayment>
+<Payer>
+<Name>ООО &quot;Артфарм&quot; Р/С 40702810924030000071 В ЛИПЕЦКИЙ РФ ОАО &quot;РОССЕЛЬХОЗБАНК&quot; в г.ЛИПЕЦК</Name>
+<INN>4816011036</INN>
+<AccountCode>30302810600000022400</AccountCode>
+</Payer>
+<BankPayer>
+<Description>ОАО &quot;РОССЕЛЬХОЗБАНК&quot;</Description>
+<BIC>044525111</BIC>
+<AccountCode>30101810200000000111</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>ООО &quot;АналитФармация&quot;</Name>
+<INN>3666141056</INN>
+<AccountCode>40702810900010229801</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ВОРОНЕЖСКИЙ Ф-Л ОАО &quot;ПРОМСВЯЗЬБАНК&quot; г ВОРОНЕЖ</Description>
+<BIC>042007882</BIC>
+<AccountCode>30101810700000000882</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>13.01.2011</ExpiredDate>
+<Queue>6</Queue>
+<SendDate>13.01.2011</SendDate>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>1</NDoc>
+<DatePorucheniya>13.01.2011</DatePorucheniya>
+<Summa>3000.00</Summa>
+<AssignPayment>За информационные услуги за январь, февраль, март 2011 г по сч. N313 от 11.01.1011 Сумма 3000-00, без налога (НДС).</AssignPayment>
+<Payer>
+<Name>ООО &quot;ТИАфарм&quot; Елецкое ОСБ 927 г.Елец р/с 40702810135100100229 ЛИПЕЦКОЕ ОСБ N 8593 Г.ЛИПЕЦК</Name>
+<INN>4821011507</INN>
+<AccountCode>30302810113006003510</AccountCode>
+</Payer>
+<BankPayer>
+<Description>ЦЕНТРАЛЬНО-ЧЕРНОЗЕМНЫЙ БАНК СБЕРБАНКА РФ</Description>
+<BIC>042007681</BIC>
+<AccountCode>30101810600000000681</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>ООО &quot;АналитФармация&quot;</Name>
+<INN>3666141056</INN>
+<AccountCode>40702810900010229801</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ВОРОНЕЖСКИЙ Ф-Л ОАО &quot;ПРОМСВЯЗЬБАНК&quot; г ВОРОНЕЖ</Description>
+<BIC>042007882</BIC>
+<AccountCode>30101810700000000882</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>13.01.2011</ExpiredDate>
+<Queue>6</Queue>
+<SendDate>13.01.2011</SendDate>
+<PayerKPP>482101001</PayerKPP>
+<RecepientKPP>36601001</RecepientKPP>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>158</NDoc>
+<DatePorucheniya>12.01.2011</DatePorucheniya>
+<Summa>4800.00</Summa>
+<AssignPayment>Оплата мониторинга оптового фармрынка: ИП Склярук Н.А. +ИП Склярук В.В. за I кв. 2011 г. Сумма 4800-00. Без НДС.</AssignPayment>
+<Payer>
+<Name>ПБОЮЛ Склярук Наталья Александровна Филиал АК Сберегательного банка РФ Курское отделение 8596, Курск р/с 40802810233000004506 КУРСКОЕ ОСБ N8596 Г.КУРСК</Name>
+<INN>463207786466</INN>
+<AccountCode>30302810213006003300</AccountCode>
+</Payer>
+<BankPayer>
+<Description>ЦЕНТРАЛЬНО-ЧЕРНОЗЕМНЫЙ БАНК СБЕРБАНКА РФ</Description>
+<BIC>042007681</BIC>
+<AccountCode>30101810600000000681</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>ООО &lt;АналитФармация&gt;</Name>
+<INN>3666141056</INN>
+<AccountCode>40702810900010229801</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ВОРОНЕЖСКИЙ Ф-Л ОАО &quot;ПРОМСВЯЗЬБАНК&quot; г ВОРОНЕЖ</Description>
+<BIC>042007882</BIC>
+<AccountCode>30101810700000000882</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>13.01.2011</ExpiredDate>
+<Queue>6</Queue>
+<SendDate>13.01.2011</SendDate>
+<RecepientKPP>366601001</RecepientKPP>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>29</NDoc>
+<DatePorucheniya>13.01.2011</DatePorucheniya>
+<Summa>9600.00</Summa>
+<AssignPayment>За услуги по счету №1295 от 11.01.2011г.Без НДС.</AssignPayment>
+<Payer>
+<Name>Общество с ограниченной ответственностью ВИТА-1 (СБ РФ N 3867 НОВООСКОЛЬСКОЕ Г.НОВЫЙ ОСКОЛ) р/с 40702810307120100354 БЕЛГОРОДСКОЕ ОСБ N 8592 Г.БЕЛГОРОД</Name>
+<INN>3114007189</INN>
+<AccountCode>30302810613006000712</AccountCode>
+</Payer>
+<BankPayer>
+<Description>ЦЕНТРАЛЬНО-ЧЕРНОЗЕМНЫЙ БАНК СБЕРБАНКА РФ</Description>
+<BIC>042007681</BIC>
+<AccountCode>30101810600000000681</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>ООО &quot;АналитФармация&quot;</Name>
+<INN>3666141056</INN>
+<AccountCode>40702810900010229801</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ВОРОНЕЖСКИЙ Ф-Л ОАО &quot;ПРОМСВЯЗЬБАНК&quot; г ВОРОНЕЖ</Description>
+<BIC>042007882</BIC>
+<AccountCode>30101810700000000882</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>13.01.2011</ExpiredDate>
+<Queue>6</Queue>
+<SendDate>13.01.2011</SendDate>
+<PayerKPP>311401001</PayerKPP>
+<RecepientKPP>366601001</RecepientKPP>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>100</NDoc>
+<DatePorucheniya>13.01.2011</DatePorucheniya>
+<Summa>9800.00</Summa>
+<AssignPayment>оплато по счету №30 от 11.01.11 Без НДС</AssignPayment>
+<Payer>
+<Name>Общество с ограниченной ответственностью &quot;Фармсклад 46&quot; р/с 40702810333000007121 КУРСКОЕ ОСБ N8596 Г.КУРСК</Name>
+<INN>4632121470</INN>
+<AccountCode>30302810213006003300</AccountCode>
+</Payer>
+<BankPayer>
+<Description>ЦЕНТРАЛЬНО-ЧЕРНОЗЕМНЫЙ БАНК СБЕРБАНКА РФ</Description>
+<BIC>042007681</BIC>
+<AccountCode>30101810600000000681</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>ООО &quot;АналитФармация&quot; г.Воронеж</Name>
+<INN>3666141056</INN>
+<AccountCode>40702810900010229801</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ВОРОНЕЖСКИЙ Ф-Л ОАО &quot;ПРОМСВЯЗЬБАНК&quot; г ВОРОНЕЖ</Description>
+<BIC>042007882</BIC>
+<AccountCode>30101810700000000882</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>13.01.2011</ExpiredDate>
+<Queue>6</Queue>
+<SendDate>13.01.2011</SendDate>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>973</NDoc>
+<DatePorucheniya>13.01.2011</DatePorucheniya>
+<Summa>15000.00</Summa>
+<AssignPayment>Оплата за услуги связи (аванс январь-март 2011) по Договору №2 от 31.12.2009г. НДС не облагается.</AssignPayment>
+<Payer>
+<Name>Общество с ограниченной ответственностью &quot;АналитФармация&quot;</Name>
+<INN>3666141056</INN>
+<AccountCode>40702810900010229801</AccountCode>
+</Payer>
+<BankPayer>
+<Description>ВОРОНЕЖСКИЙ Ф-Л ОАО &quot;ПРОМСВЯЗЬБАНК&quot; г ВОРОНЕЖ </Description>
+<BIC>042007882</BIC>
+<AccountCode>30101810700000000882</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>ООО &quot;Инфорум&quot;</Name>
+<INN>3666152146</INN>
+<AccountCode>40702810500000758601</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ВОРОНЕЖСКИЙ Ф-Л ОАО &quot;ПРОМСВЯЗЬБАНК&quot; г ВОРОНЕЖ</Description>
+<BIC>042007882</BIC>
+<AccountCode>30101810700000000882</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>13.01.2011</ExpiredDate>
+<Queue>6</Queue>
+<DiscardDate>13.01.2011</DiscardDate>
+<PayerKPP>366601001</PayerKPP>
+<RecepientKPP>366601001</RecepientKPP>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>974</NDoc>
+<DatePorucheniya>13.01.2011</DatePorucheniya>
+<Summa>15000.00</Summa>
+<AssignPayment>Оплата за работы (аванс январь-март 2011г) по Договору 3 от 30.09.09г на техническое обслуживание оборудования. НДС не облагается.</AssignPayment>
+<Payer>
+<Name>Общество с ограниченной ответственностью &quot;АналитФармация&quot;</Name>
+<INN>3666141056</INN>
+<AccountCode>40702810900010229801</AccountCode>
+</Payer>
+<BankPayer>
+<Description>ВОРОНЕЖСКИЙ Ф-Л ОАО &quot;ПРОМСВЯЗЬБАНК&quot; г ВОРОНЕЖ </Description>
+<BIC>042007882</BIC>
+<AccountCode>30101810700000000882</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>ООО &quot;Инфорум&quot;</Name>
+<INN>3666152146</INN>
+<AccountCode>40702810500000758601</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ВОРОНЕЖСКИЙ Ф-Л ОАО &quot;ПРОМСВЯЗЬБАНК&quot; г ВОРОНЕЖ</Description>
+<BIC>042007882</BIC>
+<AccountCode>30101810700000000882</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>13.01.2011</ExpiredDate>
+<Queue>6</Queue>
+<DiscardDate>13.01.2011</DiscardDate>
+<PayerKPP>366601001</PayerKPP>
+<RecepientKPP>366601001</RecepientKPP>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+</XMLExport>

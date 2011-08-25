@@ -62,8 +62,8 @@ namespace InternetInterface.Controllers
                 var client = new Client {
                                              AutoUnblocked = true,
                                              RegDate = DateTime.Now,
-                                             WhoRegistered = InithializeContent.partner,
-                                             WhoRegisteredName = InithializeContent.partner.Name,
+                                             WhoRegistered = InitializeContent.partner,
+                                             WhoRegisteredName = InitializeContent.partner.Name,
                                              Status = Status.Find((uint) StatusType.BlockedAndNoConnected),
 
                                              Name =
@@ -76,7 +76,7 @@ namespace InternetInterface.Controllers
                 client.SaveAndFlush();
                 var payment = new Payment {
                                               Agent =
-                                                  Agent.FindAllByProperty("Partner", InithializeContent.partner).First(),
+                                                  Agent.FindAllByProperty("Partner", InitializeContent.partner).First(),
                                               BillingAccount = true,
                                               Client = client,
                                               PaidOn = DateTime.Now,
@@ -130,14 +130,14 @@ namespace InternetInterface.Controllers
                     requestse.Update();
                     //requestse.DeleteAndFlush();
                 }
-                if (InithializeContent.partner.Categorie.ReductionName == "Office")
+                if (InitializeContent.partner.Categorie.ReductionName == "Office")
                     if (VisibleRegisteredInfo)
                         RedirectToUrl("..//UserInfo/ClientRegisteredInfo.rails");
                     else
                     {
                         RedirectToUrl("../UserInfo/SearchUserInfo.rails?filter.ClientCode=" + client.Id);
                     }
-                if (InithializeContent.partner.Categorie.ReductionName == "Diller")
+                if (InitializeContent.partner.Categorie.ReductionName == "Diller")
                     RedirectToUrl("..//UserInfo/ClientRegisteredInfoFromDiller.rails");
             }
             else
@@ -182,8 +182,8 @@ namespace InternetInterface.Controllers
 				person.SaveAndFlush();
 				var client = new Client
 				             	{
-									WhoRegistered = InithializeContent.partner,
-									WhoRegisteredName = InithializeContent.partner.Name,
+									WhoRegistered = InitializeContent.partner,
+									WhoRegisteredName = InitializeContent.partner.Name,
 									RegDate = DateTime.Now,
 									Status = Status.Find((uint) StatusType.BlockedAndNoConnected),
 
@@ -453,9 +453,9 @@ namespace InternetInterface.Controllers
             if (Validator.IsValid(request))
             {
                 request.Tariff = Tariff.Find(tariff);
-                request.Registrator = InithializeContent.partner;
+                request.Registrator = InitializeContent.partner;
                 request.ActionDate = DateTime.Now;
-                request.Operator = InithializeContent.partner;
+                request.Operator = InitializeContent.partner;
                 request.Save();
                 var apartment =
                     Apartment.Queryable.Where(
@@ -472,7 +472,7 @@ namespace InternetInterface.Controllers
                 //apartment.Comment = string.Format("Заявка номер {0}", request.Id);
                 apartment.Status = ApartmentStatus.Queryable.Where(aps => aps.ShortName == "request").FirstOrDefault();
                 apartment.Update();
-                PaymentsForAgent.CreatePayment(AgentActions.CreateRequest, "Начисление за создание заявки", InithializeContent.partner);
+                PaymentsForAgent.CreatePayment(AgentActions.CreateRequest, "Начисление за создание заявки", InitializeContent.partner);
                 RedirectToUrl("../HouseMap/ViewHouseInfo.rails?House=" + houseNumber);
             }
         }

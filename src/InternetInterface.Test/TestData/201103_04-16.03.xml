@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="windows-1251"?><XMLExport>
+<FileEncoding>Windows</FileEncoding>
+<ProgramReceiver>PSBOnline2</ProgramReceiver>
+<ProgramReceiver>XMLExportReader</ProgramReceiver>
+<CreationDate>17.03.2011</CreationDate>
+<extrCond>
+<extractStartDate>04.03.2011</extractStartDate>
+<extractEndDate>16.03.2011</extractEndDate>
+<AccountCode>40802810900010085301</AccountCode>
+</extrCond>
+<accDescr>
+<extractStartDate>04.03.2011</extractStartDate>
+<extractEndDate>16.03.2011</extractEndDate>
+<AccountCode>40802810900010085301</AccountCode>
+<incomeAmount>2638183.61</incomeAmount>
+<incomeTurns>1814000.00</incomeTurns>
+<outTurns>2000000.00</outTurns>
+<outAmount>2452183.61</outAmount>
+</accDescr>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>401</NDoc>
+<DatePorucheniya>04.03.2011</DatePorucheniya>
+<Summa>3000.00</Summa>
+<AssignPayment>Оплата за мониторинг оптового фарм.рынка,справочно-информационные услуги в марте 2011 г.по сч.N 34 от 01.03.11г. НДС не облагается.</AssignPayment>
+<Payer>
+<Name>ООО &quot;Логос-Фарм&quot;</Name>
+<INN>3662078501</INN>
+<AccountCode>40702810103000000565</AccountCode>
+</Payer>
+<BankPayer>
+<Description>ФКБ &quot;СДМ-БАНК&quot; (ОАО) В Г.ВОРОНЕЖЕ г ВОРОНЕЖ</Description>
+<BIC>042007778</BIC>
+<AccountCode>30101810500000000778</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>ИП Борисов Юрий Александрович</Name>
+<INN>366400460994</INN>
+<AccountCode>40802810900010085301</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ВОРОНЕЖСКИЙ Ф-Л ОАО &quot;ПРОМСВЯЗЬБАНК&quot; г ВОРОНЕЖ</Description>
+<BIC>042007882</BIC>
+<AccountCode>30101810700000000882</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>04.03.2011</ExpiredDate>
+<Queue>6</Queue>
+<SendDate>04.03.2011</SendDate>
+<PayerKPP>366201001</PayerKPP>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>17</NDoc>
+<DatePorucheniya>04.03.2011</DatePorucheniya>
+<Summa>900000.00</Summa>
+<AssignPayment>Перечисление по Агентскому договору 1 от 01.04.2008г. (март 2011г) НДС не облагается.</AssignPayment>
+<Payer>
+<Name>ООО &quot;ИнфорумСтрой&quot;</Name>
+<INN>3666133810</INN>
+<AccountCode>40702810900000003303</AccountCode>
+</Payer>
+<BankPayer>
+<Description>ОАО &quot;РУСЬ-БАНК&quot; г МОСКВА</Description>
+<BIC>044579174</BIC>
+<AccountCode>30101810800000000174</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>Индивидуальный предприниматель Борисов Юрий Александович</Name>
+<INN>366400460994</INN>
+<AccountCode>40802810900010085301</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ВОРОНЕЖСКИЙ Ф-Л ОАО &quot;ПРОМСВЯЗЬБАНК&quot; г ВОРОНЕЖ</Description>
+<BIC>042007882</BIC>
+<AccountCode>30101810700000000882</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>04.03.2011</ExpiredDate>
+<Queue>6</Queue>
+<SendDate>04.03.2011</SendDate>
+<PayerKPP>366101001</PayerKPP>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>17</NDoc>
+<DatePorucheniya>04.03.2011</DatePorucheniya>
+<Summa>1000000.00</Summa>
+<AssignPayment>Выплата доходов, полученных при осуществлении предпринимательской деятельности. НДС не облагается.</AssignPayment>
+<Payer>
+<Name>ИП БОЮЛ Борисов Юрий Александрович</Name>
+<INN>366400460994</INN>
+<AccountCode>40802810900010085301</AccountCode>
+</Payer>
+<BankPayer>
+<Description>ВОРОНЕЖСКИЙ Ф-Л ОАО &quot;ПРОМСВЯЗЬБАНК&quot; г ВОРОНЕЖ</Description>
+<BIC>042007882</BIC>
+<AccountCode>30101810700000000882</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>Борисов Юрий Александрович</Name>
+<INN>366400460994</INN>
+<AccountCode>40817810600000049617</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ОАО &quot;РУСЬ-БАНК&quot; г МОСКВА</Description>
+<BIC>044579174</BIC>
+<AccountCode>30101810800000000174</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>04.03.2011</ExpiredDate>
+<Queue>6</Queue>
+<DiscardDate>04.03.2011</DiscardDate>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>264</NDoc>
+<DatePorucheniya>05.03.2011</DatePorucheniya>
+<Summa>2600.00</Summa>
+<AssignPayment>По счету 72 от 01.03.11г за информационные услуги за март 2011года НДС не облагается.</AssignPayment>
+<Payer>
+<Name>ИП БАХТИН АНДРЕЙ ВАСИЛЬЕВИЧ</Name>
+<INN>362100795689</INN>
+<AccountCode>40802810613370107831</AccountCode>
+</Payer>
+<BankPayer>
+<Description>ЦЕНТРАЛЬНО-ЧЕРНОЗЕМНЫЙ БАНК СБЕРБАНКА РФ г ВОРОНЕЖ</Description>
+<BIC>042007681</BIC>
+<AccountCode>30101810600000000681</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>ИП Борисов Юрий Александрович</Name>
+<INN>366400460994</INN>
+<AccountCode>40802810900010085301</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ВОРОНЕЖСКИЙ Ф-Л ОАО &quot;ПРОМСВЯЗЬБАНК&quot; г ВОРОНЕЖ</Description>
+<BIC>042007882</BIC>
+<AccountCode>30101810700000000882</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>05.03.2011</ExpiredDate>
+<Queue>6</Queue>
+<SendDate>05.03.2011</SendDate>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>20</NDoc>
+<DatePorucheniya>05.03.2011</DatePorucheniya>
+<Summa>900000.00</Summa>
+<AssignPayment>Перечисление по Агентскому договору 1 от 01.04.2008г. (февраль-март 2011г) НДС не облагается.</AssignPayment>
+<Payer>
+<Name>ООО &quot;ИнфорумСтрой&quot;</Name>
+<INN>3666133810</INN>
+<AccountCode>40702810900000003303</AccountCode>
+</Payer>
+<BankPayer>
+<Description>ОАО &quot;РУСЬ-БАНК&quot; г МОСКВА</Description>
+<BIC>044579174</BIC>
+<AccountCode>30101810800000000174</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>Индивидуальный предприниматель Борисов Юрий Александович</Name>
+<INN>366400460994</INN>
+<AccountCode>40802810900010085301</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ВОРОНЕЖСКИЙ Ф-Л ОАО &quot;ПРОМСВЯЗЬБАНК&quot; г ВОРОНЕЖ</Description>
+<BIC>042007882</BIC>
+<AccountCode>30101810700000000882</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>05.03.2011</ExpiredDate>
+<Queue>6</Queue>
+<SendDate>05.03.2011</SendDate>
+<PayerKPP>366101001</PayerKPP>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>965</NDoc>
+<DatePorucheniya>05.03.2011</DatePorucheniya>
+<Summa>800.00</Summa>
+<AssignPayment>Адрес: УЛ. ЭНГЕЛЬСА,40-18 Назн.платежа: за информац. услуги (принят: п.о. N 965 от 05.03.11)</AssignPayment>
+<Payer>
+<Name>МАЛЫШЕВА ЕЛЕНА ВЛАДИМИРОВА</Name>
+<AccountCode>40911810677010000002</AccountCode>
+</Payer>
+<BankPayer>
+<Description>ОАО &quot;ЧЕЛЯБИНВЕСТБАНК&quot; г ЧЕЛЯБИНСК</Description>
+<BIC>047501779</BIC>
+<AccountCode>30101810400000000779</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>ИП Борисов Юрий Александрович</Name>
+<INN>366400460994</INN>
+<AccountCode>40802810900010085301</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ВОРОНЕЖСКИЙ Ф-Л ОАО &quot;ПРОМСВЯЗЬБАНК&quot; г ВОРОНЕЖ</Description>
+<BIC>042007882</BIC>
+<AccountCode>30101810700000000882</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>09.03.2011</ExpiredDate>
+<Queue>6</Queue>
+<SendDate>09.03.2011</SendDate>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>125</NDoc>
+<DatePorucheniya>09.03.2011</DatePorucheniya>
+<Summa>3000.00</Summa>
+<AssignPayment>Оплата за информационные услуги по договору N2407 от 06.10 .06г. за март 2011 г. Cумма 3000-00, без налога (НДС).</AssignPayment>
+<Payer>
+<Name>Общество с ограниченной ответственностью &quot; Р-Центр&quot;</Name>
+<INN>3661034205</INN>
+<AccountCode>40702810345000037548</AccountCode>
+</Payer>
+<BankPayer>
+<Description>ФИЛИАЛ ОАО &quot;ТРАНСКРЕДИТБАНК&quot; В Г.ВОРОНЕЖЕ г ВОРОНЕЖ</Description>
+<BIC>042007810</BIC>
+<AccountCode>30101810400000000810</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>ИП Борисов Юрий Александрович</Name>
+<INN>366400460994</INN>
+<AccountCode>40802810900010085301</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ВОРОНЕЖСКИЙ Ф-Л ОАО &quot;ПРОМСВЯЗЬБАНК&quot; г ВОРОНЕЖ</Description>
+<BIC>042007882</BIC>
+<AccountCode>30101810700000000882</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>10.03.2011</ExpiredDate>
+<Queue>6</Queue>
+<SendDate>10.03.2011</SendDate>
+<PayerKPP>366201001</PayerKPP>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>339</NDoc>
+<DatePorucheniya>10.03.2011</DatePorucheniya>
+<Summa>4600.00</Summa>
+<AssignPayment>Оплата по счету №30 от 01.03.2011 г. информ.услуги за март 2011 года Cумма 4600-00, без налога (НДС).</AssignPayment>
+<Payer>
+<Name>ООО &quot;АПТЕКА -219&quot;</Name>
+<INN>3663043445</INN>
+<AccountCode>40702810213380109183</AccountCode>
+</Payer>
+<BankPayer>
+<Description>ЦЕНТРАЛЬНО-ЧЕРНОЗЕМНЫЙ БАНК СБЕРБАНКА РФ г ВОРОНЕЖ</Description>
+<BIC>042007681</BIC>
+<AccountCode>30101810600000000681</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>Индивидуальный предприниматель Борисов Юрий Александрович</Name>
+<INN>366400460994</INN>
+<AccountCode>40802810900010085301</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ВОРОНЕЖСКИЙ Ф-Л ОАО &quot;ПРОМСВЯЗЬБАНК&quot; г ВОРОНЕЖ</Description>
+<BIC>042007882</BIC>
+<AccountCode>30101810700000000882</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>10.03.2011</ExpiredDate>
+<Queue>6</Queue>
+<SendDate>10.03.2011</SendDate>
+<PayerKPP>366301001</PayerKPP>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>18</NDoc>
+<DatePorucheniya>13.03.2011</DatePorucheniya>
+<Summa>1000000.00</Summa>
+<AssignPayment>Выплата доходов, полученных при осуществлении предпринимательской деятельности. Задолженности по налогам нет. НДС не облагается.</AssignPayment>
+<Payer>
+<Name>ИП БОЮЛ Борисов Юрий Александрович</Name>
+<INN>366400460994</INN>
+<AccountCode>40802810900010085301</AccountCode>
+</Payer>
+<BankPayer>
+<Description>ВОРОНЕЖСКИЙ Ф-Л ОАО &quot;ПРОМСВЯЗЬБАНК&quot; г ВОРОНЕЖ</Description>
+<BIC>042007882</BIC>
+<AccountCode>30101810700000000882</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>Борисов Юрий Александрович</Name>
+<INN>366400460994</INN>
+<AccountCode>40817810900961066744</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ЗАО &quot;БАНК РУССКИЙ СТАНДАРТ&quot; ГОРОД МОСКВА</Description>
+<BIC>044583151</BIC>
+<AccountCode>30101810600000000151</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>13.03.2011</ExpiredDate>
+<Queue>5</Queue>
+<DiscardDate>14.03.2011</DiscardDate>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+</XMLExport>

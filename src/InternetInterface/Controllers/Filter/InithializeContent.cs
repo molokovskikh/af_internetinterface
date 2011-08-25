@@ -9,7 +9,7 @@ namespace InternetInterface.Controllers.Filter
     {
     }
 
-    public class InithializeContent
+    public class InitializeContent
     {
         private const string AdministratorKey = "Administrator";
 
