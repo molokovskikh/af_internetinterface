@@ -106,7 +106,7 @@ namespace InforoomInternet.Controllers
 #if DEBUG
 			/*lease = new Lease {
 				Endpoint = new ClientEndpoints {
-					Client = new Clients {
+					Client = new Client {
 						Disabled = false,
 						PhysicalClient = new PhysicalClients {
 							Balance = 100,
@@ -128,7 +128,7 @@ namespace InforoomInternet.Controllers
 			if (IsPost)
 			{
 				SceHelper.Login(lease, Request.UserHostAddress);
-				var url = Request["referer"];
+				var url = Request.Form["referer"];
 				if (String.IsNullOrEmpty(url))
 					Redirecter.RedirectRoot(Context, this);
 					//RedirectToSiteRoot();
