@@ -99,7 +99,6 @@ namespace InternetInterface.Controllers
             var client = Client.Find(filter.ClientCode);
             PropertyBag["filter"] = filter;
 			PropertyBag["_client"] = client;
-            PropertyBag["services"] = Service.FindAll();
 			PropertyBag["Client"] = client.PhysicalClient;
             //PropertyBag["Leases"] = filter.Find();
             
@@ -150,6 +149,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Client"] = client.LawyerPerson;
             PropertyBag["UserInfo"] = false;
 			PropertyBag["LegalPerson"] = client.LawyerPerson;
+			if (PropertyBag["VB"] == null)
 			PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(new LawyerPerson());
 
 			PropertyBag["_client"] = client;
@@ -612,11 +612,20 @@ namespace InternetInterface.Controllers
 					session.Evict(updateClient);
                     return new List<LawyerPerson>();
 				});
-				PropertyBag["Editing"] = true;
-				PropertyBag["EditingConnect"] = false;
+				RenderView("LawyerPersonInfo");
+				/*PropertyBag["Editing"] = true;
+				PropertyBag["EditingConnect"] = false;*/
 				PropertyBag["LegalPerson"] = updateClient;
 			    PropertyBag["grouped"] = grouped;
-				RedirectToReferrer();
+				var fil = new ClientFilter {
+				                           	ClientCode = ClientID,
+											grouped = grouped,
+											appealType = appealType,
+											Editing = true,
+											EditingConnect = false
+				                           };
+				LawyerPersonInfo(fil);
+				//RedirectToReferrer();
 			}
 		}
 
@@ -633,13 +642,9 @@ namespace InternetInterface.Controllers
 
             BindObjectInstance(updateClient, ParamStore.Form, "Client");
 
-            //var statusCanChanged = true;
-            /*if ((_client.Status.Type == StatusType.BlockedAndNoConnected) && ((_status.Type == StatusType.NoWorked) || _status.Type == StatusType.VoluntaryBlocking))
-                statusCanChanged = false;*/
-            //_client.Status = _status;
 			if (oldStatus.ManualSet)
 				_client.Status = _status;
-            if (Validator.IsValid(updateClient) /*&& statusCanChanged*/)
+            if (Validator.IsValid(updateClient))
             {
                 if (updateClient.PassportDate != null)
                     updateClient.PassportDate = updateClient.PassportDate;
@@ -693,16 +698,12 @@ namespace InternetInterface.Controllers
                     session.Evict(updateClient);
                     return new List<PhysicalClients>();
                 });
-                /*if (!statusCanChanged)
-                    Flash["statusCanChanged"] =
-                        "Если установлет статус Зарегистрирован, но нет информации о подключении, нельзя поставить статус НеРаботает";*/
                 RenderView("SearchUserInfo");
                 Flash["Editing"] = true;
                 Flash["EditingConnect"] = false;
                 Flash["_client"] = _client;
                 Flash["Client"] = updateClient;
                 filter.ClientCode = _client.Id;
-                //PropertyBag["Leases"] = filter.Find();
                 PropertyBag["filter"] = filter;
                 SendParam(ClientID, group, appealType);
             }
@@ -743,6 +744,7 @@ namespace InternetInterface.Controllers
 		                                      : "Назначить в график";
 		    PropertyBag["writeOffSum"] = WriteOff.FindAllByProperty("Client", client).Sum(s => s.WriteOffSum);
             PropertyBag["staticIps"] = StaticIp.Queryable.Where(s => s.Client.Id == ClientCode).ToList();
+			PropertyBag["services"] = Service.FindAll();
 		}
 
 		[AccessibleThrough(Verb.Post)]
