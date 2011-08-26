@@ -338,7 +338,8 @@ namespace InternetInterface.Controllers
                         client.WhoConnectedName = brigad.Name;
                     }
                     client.ConnectedDate = DateTime.Now;
-                    client.Status = Status.Find((uint) StatusType.BlockedAndConnected);
+					if (client.Status.Id == (uint) StatusType.BlockedAndNoConnected)
+						client.Status = Status.Find((uint) StatusType.BlockedAndConnected);
                     client.UpdateAndFlush();
 
                     StaticIp.Queryable.Where(s => s.Client == client).ToList().Where(

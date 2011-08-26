@@ -133,7 +133,7 @@ div.scroller
                 <td style="width:180px;">
                     <div class='flash' style="float:left; height:40px; width:180px; float: left; padding:0px; margin:0px;"> 
                         <div class="fontgit">
-                            <div class='message error'style="border-color:${Client.Label.GetBorderColor()}; background-color:${Client.Label.Color}" align="center" >
+                            <div class='message error'style="border-color:${Client.Label.GetBorderColor()}; background-color:${Client.Label.Color}; Color:Black;" align="center" >
                              ${Client.Label.Name}
                              </div>
                         </div>
