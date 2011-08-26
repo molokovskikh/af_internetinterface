@@ -246,7 +246,7 @@ $('#register_house').trigger('reveal:close');
             <%
             for i, Status in enumerate(Statuss): 
             %>
-            <%if Status.Visualisible(): %>
+            <%if Status.ManualSet: %>
                 <option id="Status${Status.Id}" value="${Status.Id}" ${"selected" if (Status.Id == ChStatus)}> ${Status.Name} </option>
                 <% end %>
                 <%end %>

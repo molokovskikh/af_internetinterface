@@ -32,7 +32,10 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool Connected { get; set; }
 
-        [Property]
+		[Property]
+		public virtual bool ManualSet { get; set; }
+
+		[Property]
         public virtual string ShortName { get; set; }
 
 	    public virtual bool Visualisible()

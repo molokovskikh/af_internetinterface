@@ -633,13 +633,13 @@ namespace InternetInterface.Controllers
 
             BindObjectInstance(updateClient, ParamStore.Form, "Client");
 
-            var statusCanChanged = true;
-            if ((_client.Status.Type == StatusType.BlockedAndNoConnected) && ((_status.Type == StatusType.NoWorked) || _status.Type == StatusType.VoluntaryBlocking))
-                statusCanChanged = false;
-            /*if (_status.Type == StatusType.VoluntaryBlocking && _client.VoluntaryUnblockedDate != null && (DateTime.Now - _client.VoluntaryUnblockedDate.Value).Days < 45)
+            //var statusCanChanged = true;
+            /*if ((_client.Status.Type == StatusType.BlockedAndNoConnected) && ((_status.Type == StatusType.NoWorked) || _status.Type == StatusType.VoluntaryBlocking))
                 statusCanChanged = false;*/
-            _client.Status = _status;
-            if (Validator.IsValid(updateClient) && statusCanChanged)
+            //_client.Status = _status;
+			if (oldStatus.ManualSet)
+				_client.Status = _status;
+            if (Validator.IsValid(updateClient) /*&& statusCanChanged*/)
             {
                 if (updateClient.PassportDate != null)
                     updateClient.PassportDate = updateClient.PassportDate;
@@ -668,20 +668,6 @@ namespace InternetInterface.Controllers
                 {
                     clientEndpointse.PackageId = updateClient.Tariff.PackageId;
                 }
-                /*if (oldStatus.Type != StatusType.VoluntaryBlocking && _client.Status.Type == StatusType.VoluntaryBlocking)
-                {
-                    _client.RatedPeriodDate = DateTime.Now;
-                    _client.DebtDays = 0;
-                    _client.VoluntaryBlockingDate = DateTime.Now;
-                    _client.VoluntaryUnblockedDate = null;
-                }
-                if (oldStatus.Type == StatusType.VoluntaryBlocking && _client.Status.Type != StatusType.VoluntaryBlocking)
-                {
-                    _client.VoluntaryBlockingDate = null;
-                    _client.DebtDays = 0;
-                    _client.VoluntaryUnblockedDate = DateTime.Now;
-                    _client.RatedPeriodDate = DateTime.Now;
-                }*/
                 if (_client.Status.Blocked)
                 {
                     _client.AutoUnblocked = false;
@@ -707,16 +693,14 @@ namespace InternetInterface.Controllers
                     session.Evict(updateClient);
                     return new List<PhysicalClients>();
                 });
-                if (!statusCanChanged)
+                /*if (!statusCanChanged)
                     Flash["statusCanChanged"] =
-                        "Если установлет статус Зарегистрирован, но нет информации о подключении, нельзя поставить статус НеРаботает";
+                        "Если установлет статус Зарегистрирован, но нет информации о подключении, нельзя поставить статус НеРаботает";*/
                 RenderView("SearchUserInfo");
                 Flash["Editing"] = true;
                 Flash["EditingConnect"] = false;
                 Flash["_client"] = _client;
                 Flash["Client"] = updateClient;
-                Flash["ChTariff"] = Tariff.Find(tariff).Id;
-                Flash["ChStatus"] = Tariff.Find(status).Id;
                 filter.ClientCode = _client.Id;
                 //PropertyBag["Leases"] = filter.Find();
                 PropertyBag["filter"] = filter;

@@ -58,6 +58,8 @@ namespace InternetInterface.Test.Functional
             }
         }
 
+
+
         [Test]
         public void ChangeBalanceLawyerPersonTest()
         {
@@ -77,7 +79,44 @@ namespace InternetInterface.Test.Functional
             lp.Delete();
         }
 
-	    [Test]
+		[Test]
+		public void ChangeStatus()
+		{
+			using (new SessionScope())
+			{
+				client.Status = Status.Find((uint) StatusType.BlockedAndNoConnected);
+				client.Update();
+			}
+			using (var browser = Open(format))
+			{
+				Assert.That(browser.SelectList("ChStatus").SelectedItem, Is.EqualTo("Заблокирован"));
+				browser.Button("SaveButton").Click();
+			}
+			using (new SessionScope())
+			{
+				client.Refresh();
+				Assert.That(client.Status.Type, Is.EqualTo(StatusType.BlockedAndNoConnected));
+			}
+			using (new SessionScope())
+			{
+				client.Status = Status.Find((uint)StatusType.Worked);
+				client.Update();
+			}
+			using (var browser = Open(format))
+			{
+				Assert.That(browser.SelectList("ChStatus").SelectedItem, Is.EqualTo("Подключен"));
+				browser.SelectList("ChStatus").Select("Заблокирован");
+				browser.Button("SaveButton").Click();
+				Assert.That(browser.Text, Is.StringContaining("Данные изменены"));
+			}
+			using (new SessionScope())
+			{
+				client.Refresh();
+				Assert.That(client.Status.Type, Is.EqualTo(StatusType.NoWorked));
+			}
+		}
+
+		[Test]
         public void ReservTest()
         {
             using (var browser = Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", client.Id)))
