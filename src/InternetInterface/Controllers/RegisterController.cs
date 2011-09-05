@@ -84,6 +84,11 @@ namespace InternetInterface.Controllers
 											  Sum = phisClient.Balance
 										  };
 				payment.SaveAndFlush();
+				var apartmentForClient =
+					Apartment.Queryable.Where(a => a.House == phisClient.HouseObj && a.Number == Int32.Parse(phisClient.Apartment)).
+						FirstOrDefault();
+				if (apartmentForClient != null)
+					apartmentForClient.Delete();
 				if (!string.IsNullOrEmpty(ConnectInfo.Port) && CategorieAccessSet.AccesPartner("DHCP"))
 				{
 					var newCEP = new ClientEndpoints {

@@ -7,6 +7,7 @@ using Castle.MonoRail.Framework;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using log4net;
 
 namespace InternetInterface.Controllers
 {
@@ -20,6 +21,8 @@ namespace InternetInterface.Controllers
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof (AuthenticationFilter))]
 	public class HouseMapController : ARSmartDispatcherController
 	{
+		private static readonly ILog _log = LogManager.GetLogger(typeof(HouseMapController));
+
 		public void HouseEdit()
 		{
 		}
@@ -299,15 +302,22 @@ namespace InternetInterface.Controllers
 		{
 			var house = Request.Form["House"];
 			var apartment = Int32.Parse(Request.Form["apartment_num"]);
-			var apps = Apartment.Queryable.Where(a => a.Number == apartment && a.House.Id == Int32.Parse(house)).
-		ToList().FirstOrDefault();
-			//var retObj = new {status = string.Empty};
-			if (apps != null)
+			try
 			{
-				if (apps.Status != null)
-					return new { status = apps.Status.Id, apps.LastInternet, apps.LastTV };
-				else
-					return new { apps.LastInternet, apps.LastTV };
+				var apps = Apartment.Queryable.Where(a => a.Number == apartment && a.House.Id == Int32.Parse(house)).
+					ToList().FirstOrDefault();
+				//var retObj = new {status = string.Empty};
+				if (apps != null)
+				{
+					if (apps.Status != null)
+						return new { status = apps.Status.Id, apps.LastInternet, apps.LastTV };
+					else
+						return new { apps.LastInternet, apps.LastTV };
+				}
+			}
+			catch (Exception ex)
+			{
+				_log.Error(string.Format("Возникла ошибка GetApartment, номер квартиры: {0}, номер дома: {1}", apartment, house));
 			}
 			return new {status = 0};
 		}
@@ -319,8 +329,8 @@ namespace InternetInterface.Controllers
 			var house = Request.Form["House"];
 			var apartment = Int32.Parse(Request.Form["apartment_num"]);
 			var apps =
-	Apartment.Queryable.Where(a => a.Number == apartment && a.House.Id == Int32.Parse(house)).
-		ToList().FirstOrDefault();
+				Apartment.Queryable.Where(a => a.Number == apartment && a.House.Id == Int32.Parse(house)).
+					ToList().FirstOrDefault();
 			if (apps != null)
 				return
 					ApartmentHistory.Queryable.Where(a => a.Apartment == apps).ToList().OrderByDescending(
