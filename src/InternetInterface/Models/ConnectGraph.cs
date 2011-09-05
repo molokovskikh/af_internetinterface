@@ -13,8 +13,8 @@ namespace InternetInterface.Models
 		public static List<string> GetIntervals()
 		{
 			return new List<string>
-			       	{
-			       		"9:30 - 10:30",
+					{
+						"9:30 - 10:30",
 						"10:30 - 11:30",
 						"11:30 - 12:30",
 						//"12:30 - 13:30",
@@ -22,8 +22,8 @@ namespace InternetInterface.Models
 						"14:30 - 15:30",
 						"15:30 - 16:30",
 						"16:30 - 17:30",
-                        "17-30 - 18:30"
-			       	};
+						"17-30 - 18:30"
+					};
 		}
 	}
 

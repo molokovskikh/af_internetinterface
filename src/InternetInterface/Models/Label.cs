@@ -18,13 +18,13 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string Color { get; set; }
 
-        [Property]
-        public virtual bool Deleted { get; set; }
+		[Property]
+		public virtual bool Deleted { get; set; }
 
-        [Property]
-        public virtual string ShortComment { get; set; }
+		[Property]
+		public virtual string ShortComment { get; set; }
 
-	    public virtual string GetBorderColor()
+		public virtual string GetBorderColor()
 		{
 			var oColor = ColorTranslator.FromHtml(Color);
 			
@@ -65,11 +65,11 @@ namespace InternetInterface.Models
 			byte g = (byte)(color >> 8);
 			byte b = (byte)(color >> 0);
 			return new MyColor
-			       	{
-			       		R = r,
-			       		B = b,
-			       		G = g
-			       	};
+					{
+						R = r,
+						B = b,
+						G = g
+					};
 		}
 
 		public class MyColor

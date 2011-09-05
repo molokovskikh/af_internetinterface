@@ -12,7 +12,7 @@ namespace InternetInterface.Models
 		BlockedAndConnected = 3,
 		Worked = 5,
 		NoWorked = 7,
-        VoluntaryBlocking = 9
+		VoluntaryBlocking = 9
 	};
 
 
@@ -36,9 +36,9 @@ namespace InternetInterface.Models
 		public virtual bool ManualSet { get; set; }
 
 		[Property]
-        public virtual string ShortName { get; set; }
+		public virtual string ShortName { get; set; }
 
-	    public virtual bool Visualisible()
+		public virtual bool Visualisible()
 		{
 			if (Id == (uint)StatusType.BlockedAndConnected)
 				return false;
@@ -47,26 +47,26 @@ namespace InternetInterface.Models
 			return true;
 		}
 
-	    public virtual StatusType Type
-	    {
-	        get
-	        {
-	            if (ShortName == "VoluntaryBlocking")
-	                return StatusType.VoluntaryBlocking;
-	            if (ShortName == "BlockedAndNoConnected")
-	                return StatusType.BlockedAndNoConnected;
-	            if (ShortName == "BlockedAndConnected")
-	                return StatusType.BlockedAndConnected;
-	            if (ShortName == "Worked")
-	                return StatusType.Worked;
-	            if (ShortName == "NoWorked")
-	                return StatusType.NoWorked;
-	            return 0;
-	        }
-	    }
+		public virtual StatusType Type
+		{
+			get
+			{
+				if (ShortName == "VoluntaryBlocking")
+					return StatusType.VoluntaryBlocking;
+				if (ShortName == "BlockedAndNoConnected")
+					return StatusType.BlockedAndNoConnected;
+				if (ShortName == "BlockedAndConnected")
+					return StatusType.BlockedAndConnected;
+				if (ShortName == "Worked")
+					return StatusType.Worked;
+				if (ShortName == "NoWorked")
+					return StatusType.NoWorked;
+				return 0;
+			}
+		}
 
 
-	    [HasAndBelongsToMany(typeof(AdditionalStatus),
+		[HasAndBelongsToMany(typeof(AdditionalStatus),
 			RelationType.Bag,
 			Table = "StatusCorrelation",
 			Schema = "internet",
@@ -75,9 +75,9 @@ namespace InternetInterface.Models
 			Lazy = true)]
 		public virtual IList<AdditionalStatus> Additional { get; set; }
 
-        public override string ToString()
-        {
-            return Name;
-        }
+		public override string ToString()
+		{
+			return Name;
+		}
 	}
 }

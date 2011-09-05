@@ -30,25 +30,25 @@ using log4net.Config;
 
 namespace InternetInterface
 {
-    public class Global : WebApplication, IMonoRailConfigurationEvents, IMonoRailContainerEvents
+	public class Global : WebApplication, IMonoRailConfigurationEvents, IMonoRailContainerEvents
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof(Global));
 
 
-        public Global()
-            : base(Assembly.Load("InternetInterface"))
-        {
-            //LibAssemblies.Add(Assembly.Load("Common.Web.Ui"));
-            Logger.ErrorSubject = "[Internet] Ошибка в Интернет интерфейсе";
-            Logger.SmtpHost = "box.analit.net";
-        }
+		public Global()
+			: base(Assembly.Load("InternetInterface"))
+		{
+			//LibAssemblies.Add(Assembly.Load("Common.Web.Ui"));
+			Logger.ErrorSubject = "[Internet] Ошибка в Интернет интерфейсе";
+			Logger.SmtpHost = "box.analit.net";
+		}
 
 		void Application_Start(object sender, EventArgs e)
 		{
 			XmlConfigurator.Configure();
 			ActiveRecordStarter.Initialize( new [] {
 					Assembly.Load("InternetInterface")/*,
-            Assembly.Load("Common.Web.Ui")*/},
+			Assembly.Load("Common.Web.Ui")*/},
 					ActiveRecordSectionHandler.Instance);
 
 			RoutingModuleEx.Engine.Add(new PatternRoute("/")
@@ -119,7 +119,7 @@ namespace InternetInterface
 			//configuration.ControllersConfig.AddAssembly("Common.Web.Ui");
 			configuration.ViewComponentsConfig.Assemblies = new[] {
 				"InternetInterface",
-                "Common.Web.Ui"
+				"Common.Web.Ui"
 			};
 			configuration.ViewEngineConfig.ViewPathRoot = "Views";
 			configuration.ViewEngineConfig.ViewEngines.Add(new ViewEngineInfo(typeof(BooViewEngine), false));
@@ -128,19 +128,19 @@ namespace InternetInterface
 			configuration.ViewEngineConfig.VirtualPathRoot = configuration.ViewEngineConfig.ViewPathRoot;
 			configuration.ViewEngineConfig.ViewPathRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configuration.ViewEngineConfig.ViewPathRoot);
 
-            configuration.JSGeneratorConfiguration.AddLibrary("jquery", typeof(JQueryGenerator))
-                    .AddExtension(typeof(CommonJSExtension))
-                    .ElementGenerator
-                         .AddExtension(typeof(JQueryElementGenerator))
-                         .Done
-                    .BrowserValidatorIs(typeof(JQueryValidator))
-                    .SetAsDefault();
+			configuration.JSGeneratorConfiguration.AddLibrary("jquery", typeof(JQueryGenerator))
+					.AddExtension(typeof(CommonJSExtension))
+					.ElementGenerator
+						 .AddExtension(typeof(JQueryElementGenerator))
+						 .Done
+					.BrowserValidatorIs(typeof(JQueryValidator))
+					.SetAsDefault();
 
 
 #if DEBUG
 			//5MonoRail.Debugger.Toolbar.Toolbar.Init(configuration);
 #endif
-            base.Configure(configuration);
+			base.Configure(configuration);
 		}
 
 		public void Created(IMonoRailContainer container)
@@ -148,11 +148,11 @@ namespace InternetInterface
 
 		public void Initialized(IMonoRailContainer container)
 		{
-            //container.UrlBuilder.UseExtensions = false;
+			//container.UrlBuilder.UseExtensions = false;
 			//((DefaultViewComponentFactory)container.GetService<IViewComponentFactory>()).Inspect(Assembly.Load("InternetInterface"));
-            //container.ValidatorRegistry = new CachedValidationRegistry(new ResourceManager("Castle.Components.Validator.Messages", typeof(CachedValidationRegistry).Assembly));
+			//container.ValidatorRegistry = new CachedValidationRegistry(new ResourceManager("Castle.Components.Validator.Messages", typeof(CachedValidationRegistry).Assembly));
 
-            base.Initialized(container);
+			base.Initialized(container);
 		}
 
 		void Session_End(object sender, EventArgs e)

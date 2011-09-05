@@ -18,16 +18,14 @@ namespace InternetInterface.Controllers
 		public void ShowSwitches()
 		{
 			IList<NetworkSwitches> switches = new List<NetworkSwitches>();
-			ARSesssionHelper<NetworkSwitches>.QueryWithSession(session=>
-			                                                   	{
-			                                                   		var query =
-			                                                   			session.CreateSQLQuery(
-                                                                            @"
-SELECT NS.id, NS.Mac, inet_ntoa(NS.IP) as Ip, NS.Name, NS.Zone, NS.PortCount
-FROM internet.NetworkSwitches NS").AddEntity(typeof(NetworkSwitches)).List<NetworkSwitches>();
-			                                                   		switches = query;
-			                                                   		return query;
-			                                                   	});
+			ARSesssionHelper<NetworkSwitches>.QueryWithSession(session => {
+				var query =
+					session.CreateSQLQuery(
+						@"SELECT NS.id, NS.Mac, inet_ntoa(NS.IP) as Ip, NS.Name, NS.Zone, NS.PortCount FROM internet.NetworkSwitches NS")
+						.AddEntity(typeof (NetworkSwitches)).List<NetworkSwitches>();
+				switches = query;
+				return query;
+			});
 			PropertyBag["Switches"] = switches;
 		}
 
@@ -42,9 +40,9 @@ FROM internet.NetworkSwitches NS").AddEntity(typeof(NetworkSwitches)).List<Netwo
 		public void MakeSwitch()
 		{
 			PropertyBag["Switch"] = new NetworkSwitches
-			                        	{
-			                        		Zone = new Zone()
-			                        	};
+										{
+											Zone = new Zone()
+										};
 			PropertyBag["Zones"] = Zone.FindAllSort();
 			PropertyBag["Editing"] = false;
 			PropertyBag["VB"] = new ValidBuilderHelper<NetworkSwitches>(new NetworkSwitches());

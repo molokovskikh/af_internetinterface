@@ -10,12 +10,12 @@ namespace InternetInterface.Models
 	public class Payment : ValidActiveRecordLinqBase<Payment>
 	{
 
-        /*public Payment()
-        {
-            Client.Payments.Add(this);
-        }*/
+		/*public Payment()
+		{
+			Client.Payments.Add(this);
+		}*/
 
-	    [PrimaryKey]
+		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
 		[Property]

@@ -1,59 +1,59 @@
 ﻿<script type="text/javascript">
-    $(function () {
-        //$('.nyroModal').nyroModal();
-        $('.button_mod').click(function () {
+	$(function () {
+		//$('.nyroModal').nyroModal();
+		$('.button_mod').click(function () {
 
-            loadData(this);
+			loadData(this);
 
-            $('.reveal-modal').css('left', '50%');
-            $('.reveal-modal').width(500);
+			$('.reveal-modal').css('left', '50%');
+			$('.reveal-modal').width(500);
 
-            $('#myModal').reveal({
-                animation: 'fadeAndPop',                   //fade, fadeAndPop, none
-                animationspeed: 0,                       //how fast animtions are
-                closeonbackgroundclick: true,              //if you click background will modal close?
-                dismissmodalclass: 'close-reveal-modal'    //the class of a button or element that will close an open modal
-            });
-
-
-        });
-
-        $('#naznach_but').click(function () {
-
-            loadData(this);
-
-            $('.reveal-modal').width(1200);
-            $('.reveal-modal').css('left','33.3%');
-
-            $('#myModal').reveal({
-                animation: 'fadeAndPop',                 
-                animationspeed: 0,                     
-                closeonbackgroundclick: true,              
-                dismissmodalclass: 'close-reveal-modal'    
-            });
+			$('#myModal').reveal({
+				animation: 'fadeAndPop',                   //fade, fadeAndPop, none
+				animationspeed: 0,                       //how fast animtions are
+				closeonbackgroundclick: true,              //if you click background will modal close?
+				dismissmodalclass: 'close-reveal-modal'    //the class of a button or element that will close an open modal
+			});
 
 
-        });
-    });
+		});
 
-    function loadData(bytel) {
-        var html = $.ajax({
-            url: $(bytel).attr('name'),
-            async: false
-        }).responseText;
-        //alert(html);
-        $('#myModal').empty();
-        $('#myModal').append(html);
-    }
+		$('#naznach_but').click(function () {
+
+			loadData(this);
+
+			$('.reveal-modal').width(1200);
+			$('.reveal-modal').css('left','33.3%');
+
+			$('#myModal').reveal({
+				animation: 'fadeAndPop',                 
+				animationspeed: 0,                     
+				closeonbackgroundclick: true,              
+				dismissmodalclass: 'close-reveal-modal'    
+			});
+
+
+		});
+	});
+
+	function loadData(bytel) {
+		var html = $.ajax({
+			url: $(bytel).attr('name'),
+			async: false
+		}).responseText;
+		//alert(html);
+		$('#myModal').empty();
+		$('#myModal').append(html);
+	}
 </script>
 <style type="text/css">
-    /*.reveal-modal 
-    {
-        display:none;
-        }*/
+	/*.reveal-modal 
+	{
+		display:none;
+		}*/
 </style>
 		<div id="myModal" class="reveal-modal"> 
-        <a class="close-reveal-modal">x</a>
+		<a class="close-reveal-modal">x</a>
 		</div> 
 	
 
@@ -66,7 +66,7 @@
 		<form class="form login" method="post" action="${siteroot}/UserInfo/LoadEditMudule">
 	<input type="hidden" name="ClientID" value="${ClientCode}" />
 	<input type="hidden" name="EditFlag" value="${Editing}" />
-    <input type="hidden" name="appealType" value="${appealType}" />
+	<input type="hidden" name="appealType" value="${appealType}" />
 	<table class="table" style="width: 100%;" align="left">
 	<thead>
 			<%if IsDefined("EditFlag"):
@@ -80,9 +80,9 @@
 		   end%>
 		<th><span style="color:#787676"> Информация по клиенту </span> <span style="color:Black">  ${Client.Surname}  ${Client.Name}  ${Client.Patronymic} ${"(Он-Лайн)" if _client.OnLine()} </span>
 		<%if PartnerAccessSet.AccesPartner("ECI"): %>
-        	<button type="submit"  class="editBut">
-		    <img alt="Save" src="../Images/application_edit.png"> Редактировать
-		    </button>
+			<button type="submit"  class="editBut">
+			<img alt="Save" src="../Images/application_edit.png"> Редактировать
+			</button>
 		 <%end %>
 		</th>
 	</thead>
@@ -92,9 +92,9 @@
 			<td><span class="description">Номер лицевого счета: </span> ${_client.Id.ToString("00000")}</td>
 		</tr>
 	<%if PartnerAccessSet.AccesPartner("SSI"): %>
-        <tr>
-            <td><span class="description">Дата рождения: </span> ${Client.DateOfBirth.ToShortDateString()}</td>
-        </tr>
+		<tr>
+			<td><span class="description">Дата рождения: </span> ${Client.DateOfBirth.ToShortDateString()}</td>
+		</tr>
 		<tr>
 			<td><span class="description">Город: </span> ${Client.City}</td>
 		</tr>
@@ -182,13 +182,13 @@
 			<%end %>
 			<% if _client.AdditionalCanUsed("AppointedToTheGraph"): %>
 				<!--<a class="nyromodal" href="../UserInfo/AppointedToTheGraph.rails?ClientCode=${ClientCode}"> -->
-                <a href="#" class="big-link" data-reveal-id="myModal" > 
+				<a href="#" class="big-link" data-reveal-id="myModal" > 
 				<button id="naznach_but" name="../UserInfo/AppointedToTheGraph.rails?ClientCode=${ClientCode}" class="button_mod2" >
 				 ${naznach_text}
 				</button>
 				</a>
 			<%end %>
-  		 </td>
+		 </td>
 		</tr>
 	</tbody>
 </table>
@@ -201,24 +201,24 @@
 	<%else:%>
 	<form class="form edit" method="post" action="${siteroot}/UserInfo/EditInformation">
 	<input type="hidden" name="ClientID" value="${ClientCode}" />
-    <input type=hidden name="appealType" value="${appealType}" />
+	<input type=hidden name="appealType" value="${appealType}" />
 	<table class="table" style="width:100%; " border="0" id="EditTable"> 
    <% OutputSubView("""\Subview\Client""") %>
-    <tr>
-        <td colspan=4>
-            <label for="comment"><b>Введите Комментарий :</b></label>
-            <textarea id="comment" name="comment" rows="5" cols="100%"></textarea>
-        </td>
-    </tr>
-    <tr>
-    <td >
-	    <div class="actions">
-		    <button type="submit" id="SaveButton" class="button">
-		    <img alt="Save" src="../Images/application_edit.png"> Сохранить
-		    </button>
-	    </div>
-    </td>
-    </tr>
+	<tr>
+		<td colspan=4>
+			<label for="comment"><b>Введите Комментарий :</b></label>
+			<textarea id="comment" name="comment" rows="5" cols="100%"></textarea>
+		</td>
+	</tr>
+	<tr>
+	<td >
+		<div class="actions">
+			<button type="submit" id="SaveButton" class="button">
+			<img alt="Save" src="../Images/application_edit.png"> Сохранить
+			</button>
+		</div>
+	</td>
+	</tr>
 	</table>
 	</form>
 	<%end %>

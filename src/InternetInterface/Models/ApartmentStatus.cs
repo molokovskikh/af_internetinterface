@@ -7,19 +7,19 @@ using Castle.ActiveRecord.Framework;
 
 namespace InternetInterface.Models
 {
-    [ActiveRecord("ApartmentStatuses", Schema = "Internet", Lazy = true)]
-    public class ApartmentStatus :ActiveRecordLinqBase<ApartmentStatus>
-    {
-        [PrimaryKey]
-        public virtual uint Id { get; set; }
+	[ActiveRecord("ApartmentStatuses", Schema = "Internet", Lazy = true)]
+	public class ApartmentStatus :ActiveRecordLinqBase<ApartmentStatus>
+	{
+		[PrimaryKey]
+		public virtual uint Id { get; set; }
 
-        [Property]
-        public virtual string Name { get; set; }
+		[Property]
+		public virtual string Name { get; set; }
 
-        [Property]
-        public virtual int ActivateDate { get; set; }
+		[Property]
+		public virtual int ActivateDate { get; set; }
 
-        [Property]
-        public virtual string ShortName { get; set; }
-    }
+		[Property]
+		public virtual string ShortName { get; set; }
+	}
 }

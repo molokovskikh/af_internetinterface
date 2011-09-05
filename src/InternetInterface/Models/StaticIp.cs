@@ -8,29 +8,29 @@ using Common.Tools;
 
 namespace InternetInterface.Models
 {
-    [ActiveRecord(Schema = "Internet", Table = "StaticIps")]
-    public class StaticIp : ActiveRecordLinqBase<StaticIp>
-    {
-        [PrimaryKey]
-        public virtual uint Id { get; set; }
+	[ActiveRecord(Schema = "Internet", Table = "StaticIps")]
+	public class StaticIp : ActiveRecordLinqBase<StaticIp>
+	{
+		[PrimaryKey]
+		public virtual uint Id { get; set; }
 
-        [BelongsTo]
-        public virtual Client Client { get; set; }
+		[BelongsTo]
+		public virtual Client Client { get; set; }
 
-        [Property]
-        public virtual string Ip { get; set; } 
-        
-        /*[Property]
-        public virtual string Gateway { get; set; } */
-        
-        [Property]
-        public virtual int? Mask { get; set; }
+		[Property]
+		public virtual string Ip { get; set; } 
+		
+		 /*[Property]
+		public virtual string Gateway { get; set; } */
+		
+		[Property]
+		public virtual int? Mask { get; set; }
 
-        public virtual string GetSubnet()
-        {
-            if (Mask != null)
-                return SubnetMask.CreateByNetBitLength(Mask.Value).ToString();
-            return string.Empty;
-        }
-    }
+		public virtual string GetSubnet()
+		{
+			if (Mask != null)
+				return SubnetMask.CreateByNetBitLength(Mask.Value).ToString();
+			return string.Empty;
+		}
+	}
 }

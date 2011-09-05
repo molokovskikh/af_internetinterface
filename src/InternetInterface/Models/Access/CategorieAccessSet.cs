@@ -24,9 +24,9 @@ namespace InternetInterface.Models
 		public virtual AccessCategories AccessCat { get; set; }
 
 
-	    public static Boolean AccesPartner(string reduseRulesName)
+		public static Boolean AccesPartner(string reduseRulesName)
 		{
-            return InitializeContent.partner.AccesedPartner.Contains(reduseRulesName);
+			return InitializeContent.partner.AccesedPartner.Contains(reduseRulesName);
 		}
 
 		public static IList<CategorieAccessSet> GetAccessPartner()

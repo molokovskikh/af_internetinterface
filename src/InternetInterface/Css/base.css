@@ -2,11 +2,11 @@
 .clear { clear: both; height: 0; }
 
 .wat-cf:after {
-     content: "."; 
-     display: block; 
-     height: 0; 
-     clear: both; 
-     visibility: hidden;
+	 content: "."; 
+	 display: block; 
+	 height: 0; 
+	 clear: both; 
+	 visibility: hidden;
 }
 
 .wat-cf {display: inline-block;}
@@ -63,19 +63,19 @@ body {
 
 .sort
 {
-    padding-left: 20px;
-    background-repeat: no-repeat;
-    background-position:  left center;
+	padding-left: 20px;
+	background-repeat: no-repeat;
+	background-position:  left center;
 }
 
 .asc
 {
-    background-image: url(../asc.gif);
+	background-image: url(asc.gif);
 }
 
 .desc
 {
-    background-image: url(../desc.gif);
+	background-image: url(desc.gif);
 }
 
 .actions-bar {
@@ -112,7 +112,7 @@ body {
 
 .block
 {
-      margin-bottom: 20px;
+	  margin-bottom: 20px;
   padding-top: 1px;
 }
 

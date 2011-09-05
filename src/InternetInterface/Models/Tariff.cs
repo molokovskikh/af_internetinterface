@@ -6,7 +6,7 @@ using Common.Web.Ui.Helpers;
 
 namespace InternetInterface.Models
 {
-    [ActiveRecord("Tariffs", Schema = "internet", Lazy = true), Auditable]
+	[ActiveRecord("Tariffs", Schema = "internet", Lazy = true), Auditable]
 	public class Tariff : ChildActiveRecordLinqBase<Tariff>
 	{
 		[PrimaryKey]
@@ -33,14 +33,14 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual decimal FinalPrice { get; set; }
 
-        public virtual string GetFullName()
-        {
-            return string.Format("{0} ({1} рублей)", Name, Price);
-        }
-
-        public virtual string GetFullName(Client client)
+		public virtual string GetFullName()
 		{
-            return string.Format("{0} ({1} рублей)", Name, client.GetPrice().ToString("0"));
+			return string.Format("{0} ({1} рублей)", Name, Price);
+		}
+
+		public virtual string GetFullName(Client client)
+		{
+			return string.Format("{0} ({1} рублей)", Name, client.GetPrice().ToString("0"));
 		}
 
 		public override string ToString()

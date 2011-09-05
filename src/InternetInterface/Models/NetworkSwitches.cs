@@ -31,19 +31,19 @@ namespace InternetInterface.Models
 		[BelongsTo("Zone")]
 		public virtual Zone Zone { get; set; }
 
-        [Property]
-        public virtual int PortCount { get; set; }
+		[Property]
+		public virtual int PortCount { get; set; }
 
 
 		public virtual string GetNormalIp()
 		{
-		    return IpHeper.GetNormalIp(IP);
+			return IpHeper.GetNormalIp(IP);
 		}
 
-        public static string GetNormalIp(uint ip)
-        {
-            return IpHeper.GetNormalIp(ip.ToString());
-        }
+		public static string GetNormalIp(uint ip)
+		{
+			return IpHeper.GetNormalIp(ip.ToString());
+		}
 
 		public static string SetProgramIp(string ip)
 		{

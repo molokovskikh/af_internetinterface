@@ -9,16 +9,16 @@ using InternetInterface.Models.Universal;
 
 namespace InternetInterface.Models
 {
-    public enum AppealType
-    {
-        User = 1,
-        System = 3
-    }
+	public enum AppealType
+	{
+		User = 1,
+		System = 3
+	}
 
-    [ActiveRecord("Appeals", Schema = "internet", Lazy = true)]
+	[ActiveRecord("Appeals", Schema = "internet", Lazy = true)]
 	public class Appeals : ValidActiveRecordLinqBase<Appeals>
 	{
-	    [PrimaryKey]
+		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
 		[Property]
@@ -33,25 +33,25 @@ namespace InternetInterface.Models
 		[BelongsTo("Client")]
 		public virtual Client Client { get; set; }
 
-        [Property]
-        public virtual int AppealType { get; set; }
+		[Property]
+		public virtual int AppealType { get; set; }
 
-        public virtual string GetTransformedAppeal()
-        {
-           var appeal = HttpUtility.HtmlEncode(Appeal).Replace("\r\n", "<br/>");
-            return AppealHelper.TnasformRedmineToLink(appeal);
-        }
+		public virtual string GetTransformedAppeal()
+		{
+		   var appeal = HttpUtility.HtmlEncode(Appeal).Replace("\r\n", "<br/>");
+			return AppealHelper.TnasformRedmineToLink(appeal);
+		}
 
-        public static void CreareAppeal(string message, Client client, AppealType type)
-        {
-            new Appeals
-            {
-                Appeal = message,
-                Client = client,
-                AppealType = (int)type,
-                Date = DateTime.Now,
-                Partner = InitializeContent.partner
-            }.Save();
-        }
+		public static void CreareAppeal(string message, Client client, AppealType type)
+		{
+			new Appeals
+			{
+				Appeal = message,
+				Client = client,
+				AppealType = (int)type,
+				Date = DateTime.Now,
+				Partner = InitializeContent.partner
+			}.Save();
+		}
 	}
 }

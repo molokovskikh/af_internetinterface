@@ -21,7 +21,7 @@ namespace InternetInterface.Controllers
 			{
 				FormsAuthentication.RedirectFromLoginPage(Login, true);
 				Session.Add("Login", Login);
-                //HttpContext.Current.Items.Add("Login", Login);
+				//HttpContext.Current.Items.Add("Login", Login);
 				RedirectToUrl(@"..//Map/SiteMap.rails");
 			}
 			else
@@ -33,7 +33,7 @@ namespace InternetInterface.Controllers
 
 		public void LoginPartner()
 		{
-		    LayoutName = "NoMap";
+			LayoutName = "NoMap";
 			if (Context.Session["Login"] == null)
 			Context.Session["Login"] = Context.CurrentUser.Identity.Name;
 			if (Context.Session["Login"] != null && !String.IsNullOrEmpty(Context.Session["Login"].ToString()))

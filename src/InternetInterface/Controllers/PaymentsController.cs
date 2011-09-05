@@ -17,7 +17,7 @@ namespace AdminInterface.Controllers
 {
 	public class PaymentStatistics
 	{
-        public PaymentStatistics(List<BankPayment> payments)
+		public PaymentStatistics(List<BankPayment> payments)
 		{
 			Count = payments.Count;
 			Sum = payments.Sum(p => p.Sum);
@@ -28,9 +28,9 @@ namespace AdminInterface.Controllers
 	}
 
 
-    //[Layout("Main")]
-    [Helper(typeof(ViewHelper))]
-    [FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
+	//[Layout("Main")]
+	[Helper(typeof(ViewHelper))]
+	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class PaymentsController : ARSmartDispatcherController
 	{
 		public void Index([DataBind("filter")] PaymentFilter filter)
@@ -49,20 +49,20 @@ namespace AdminInterface.Controllers
 			Binder.Validator = Validator;
 			if (IsPost)
 			{
-                var payment = new BankPayment();
+				var payment = new BankPayment();
 				BindObjectInstance(payment, "payment", AutoLoadBehavior.OnlyNested);
 				if (!HasValidationError(payment))
 				{
 					payment.RegisterPayment();
 					payment.Save();
 					new Payment {
-					            	Client =
-					            		Client.Queryable.FirstOrDefault(c => c.LawyerPerson != null && c.LawyerPerson == payment.Payer),
-					            	Sum = payment.Sum,
-					            	RecievedOn = payment.RegistredOn,
-					            	PaidOn = payment.PayedOn,
-					            	Agent = Agent.GetByInitPartner()
-					            }.Save();
+									Client =
+										Client.Queryable.FirstOrDefault(c => c.LawyerPerson != null && c.LawyerPerson == payment.Payer),
+									Sum = payment.Sum,
+									RecievedOn = payment.RegistredOn,
+									PaidOn = payment.PayedOn,
+									Agent = Agent.GetByInitPartner()
+								}.Save();
 					RedirectToReferrer();
 					return;
 				}
@@ -77,7 +77,7 @@ namespace AdminInterface.Controllers
 				if (PropertyBag["Payment"] == null)
 					PropertyBag["Payment"] = new BankPayment();
 				PropertyBag["recipients"] = Recipient.Queryable.OrderBy(r => r.Name).ToList();
-                PropertyBag["payments"] = BankPayment.Queryable
+				PropertyBag["payments"] = BankPayment.Queryable
 					.Where(p => p.RegistredOn >= DateTime.Today)
 					.OrderBy(p => p.RegistredOn).ToList();
 			}
@@ -98,21 +98,21 @@ namespace AdminInterface.Controllers
 				//если зайти в два платежа и отредактировать их
 				//то получим двух плательщиков из разных сесей
 				//правим это
-                if (payment.Payer != null)
-                    payment.Payer = ActiveRecordLinqBase<LawyerPerson>.Queryable.Where(p => p.Id == payment.Payer.Id).FirstOrDefault(); //IPayer.Find(payment.Payer.Id);
+				if (payment.Payer != null)
+					payment.Payer = ActiveRecordLinqBase<LawyerPerson>.Queryable.Where(p => p.Id == payment.Payer.Id).FirstOrDefault(); //IPayer.Find(payment.Payer.Id);
 
 				if (Validator.IsValid(payment))
 				{
 					payment.RegisterPayment();
 					payment.Save();
 					new Payment {
-					            	Client =
-					            		Client.Queryable.FirstOrDefault(c => c.LawyerPerson != null && c.LawyerPerson == payment.Payer),
-					            	Sum = payment.Sum,
-					            	RecievedOn = payment.RegistredOn,
-					            	PaidOn = payment.PayedOn,
-					            	Agent = Agent.GetByInitPartner()
-					            }.Save();
+									Client =
+										Client.Queryable.FirstOrDefault(c => c.LawyerPerson != null && c.LawyerPerson == payment.Payer),
+									Sum = payment.Sum,
+									RecievedOn = payment.RegistredOn,
+									PaidOn = payment.PayedOn,
+									Agent = Agent.GetByInitPartner()
+								}.Save();
 				}
 				else
 				{
@@ -144,7 +144,7 @@ namespace AdminInterface.Controllers
 					return;
 				}
 
-                Session["payments"] = BankPayment.Parse(file.FileName, file.InputStream);
+				Session["payments"] = BankPayment.Parse(file.FileName, file.InputStream);
 				RedirectToReferrer();
 			}
 			else
@@ -161,7 +161,7 @@ namespace AdminInterface.Controllers
 				BindObjectInstance(payment, "payment", AutoLoadBehavior.NullIfInvalidKey);
 				payment.UpdateInn();
 				Flash["Message"] = Message.Notify("Сохранено");
-                RedirectToAction("ProcessPayments");
+				RedirectToAction("ProcessPayments");
 				//RedirectToReferrer();
 			}
 			else
@@ -172,19 +172,19 @@ namespace AdminInterface.Controllers
 			}
 		}
 
-        private BankPayment FindTempPayment(uint id)
+		private BankPayment FindTempPayment(uint id)
 		{
 			return TempPayments().First(p => p.GetHashCode() == id);
 		}
 
-        private List<BankPayment> TempPayments()
+		private List<BankPayment> TempPayments()
 		{
-            return (List<BankPayment>)Session["payments"];
+			return (List<BankPayment>)Session["payments"];
 		}
 
 		public void Delete(uint id)
 		{
-            var payment = BankPayment.Find(id);
+			var payment = BankPayment.Find(id);
 			payment.Delete();
 			RedirectToReferrer();
 		}
@@ -199,7 +199,7 @@ namespace AdminInterface.Controllers
 		public void Edit(uint id)
 		{
 			Binder.Validator = Validator;
-            var payment = BankPayment.TryFind(id);
+			var payment = BankPayment.TryFind(id);
 			if (IsPost)
 			{
 				BindObjectInstance(payment, "payment", AutoLoadBehavior.NullIfInvalidKey);

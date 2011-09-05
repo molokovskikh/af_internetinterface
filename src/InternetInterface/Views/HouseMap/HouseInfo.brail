@@ -1,370 +1,370 @@
 ﻿<style type="text/css">
-    #kv_table
-    {
-        border-style:double;
-        width:50%;
-        }
-    .delimiter_td
-    {
-        border-right:1px solid #AAA 
-        }
+	#kv_table
+	{
+		border-style:double;
+		width:50%;
+		}
+	.delimiter_td
+	{
+		border-right:1px solid #AAA 
+		}
 </style>
 <script type="text/javascript">
-    $(function () {
-        $("#myModal_IT").css({ opacity: 0.0 });
-        $("#myModal_IT").width(700);
-        $('.reveal-modal').css('left','45%');
-        $('.big-link').click(function () {
-            var apartment_num = $(this).parent().children('input:first').val();
-            $('#apartment_div').val(apartment_num);
-            var req = {};
-            req.House = $('#House').val();
-            req.apartment_num = apartment_num;
-            $.post("LoadApartmentHistory", req, function (data) {
-                    var newTr = "";
-                    if (data.length > 0)
-                    {
-                        $('#historyTable').css('display','table');
-                        $('#history_head').empty();
-                        $('#history_head').append("История действий по квартире №" + data[0].Number);
-                    }
-                    else
-                    {
-                        $('#historyTable').css('display','none');
-                    }
-                    $.post("GetApartment", req, function (data) {
-                        $('#ap_status option').each(function () {
-                            if ($(this).val() == data.status)
-                            {
-                                $(this).attr('selected', 'selected');
-                            }
-                        });
+	$(function () {
+		$("#myModal_IT").css({ opacity: 0.0 });
+		$("#myModal_IT").width(700);
+		$('.reveal-modal').css('left','45%');
+		$('.big-link').click(function () {
+			var apartment_num = $(this).parent().children('input:first').val();
+			$('#apartment_div').val(apartment_num);
+			var req = {};
+			req.House = $('#House').val();
+			req.apartment_num = apartment_num;
+			$.post("LoadApartmentHistory", req, function (data) {
+					var newTr = "";
+					if (data.length > 0)
+					{
+						$('#historyTable').css('display','table');
+						$('#history_head').empty();
+						$('#history_head').append("История действий по квартире №" + data[0].Number);
+					}
+					else
+					{
+						$('#historyTable').css('display','none');
+					}
+					$.post("GetApartment", req, function (data) {
+						$('#ap_status option').each(function () {
+							if ($(this).val() == data.status)
+							{
+								$(this).attr('selected', 'selected');
+							}
+						});
 
-                        $('#last_TV option').each(function () {
-                            //alert("this" + $(this).val());
-                            //alert("LastTV" + data.LastTV);
-                            if ($(this).val() == data.LastTV)
-                            {
-                                $(this).attr('selected', 'selected');
-                            }
-                        });
+						$('#last_TV option').each(function () {
+							//alert("this" + $(this).val());
+							//alert("LastTV" + data.LastTV);
+							if ($(this).val() == data.LastTV)
+							{
+								$(this).attr('selected', 'selected');
+							}
+						});
 
-                        $('#last_inet option').each(function () {
-                            if ($(this).val() == data.LastInternet)
-                            {
-                                $(this).attr('selected', 'selected');
-                            }
-                        });
-                    });
-                    for(hist in data){
-                        newTr += "<tr><td>"
-                        newTr += data[hist].ActionName
-                        newTr += "</td><td>"
-                        newTr += data[hist].ActionDate
-                        newTr += "</td><td>"
-                        newTr += data[hist].Agent
-                        newTr += "</tr></td>"
-                    };
-                    $('#history_place').empty();
-                    $('#history_place').append(newTr);
-            } );
-        });
+						$('#last_inet option').each(function () {
+							if ($(this).val() == data.LastInternet)
+							{
+								$(this).attr('selected', 'selected');
+							}
+						});
+					});
+					for(hist in data){
+						newTr += "<tr><td>"
+						newTr += data[hist].ActionName
+						newTr += "</td><td>"
+						newTr += data[hist].ActionDate
+						newTr += "</td><td>"
+						newTr += data[hist].Agent
+						newTr += "</tr></td>"
+					};
+					$('#history_place').empty();
+					$('#history_place').append(newTr);
+			} );
+		});
 
-        $('#CreateRequest').click(function () {
-            window.location.href = '${SiteRoot}/Register/RegisterRequest?house=${House.Id}&apartment='+$('#apartment_div').val();
-        });
+		$('#CreateRequest').click(function () {
+			window.location.href = '${SiteRoot}/Register/RegisterRequest?house=${House.Id}&apartment='+$('#apartment_div').val();
+		});
 
-        $('#SaveButton').click(function () {
-            var req = {};
-            req.House = $('#House').val();
-            req.Apartment = $('#apartment_div').val();
-            req.last_inet = $('#last_inet').val();
-            req.last_TV = $('#last_TV').val();
-            req.comment = $('#comment').val();
-            req.status = $('#ap_status').val();
-            $.post("SaveApartment", req, function (data) {
-                var inetTD = $('#td_last_inet_' + $('#apartment_div').val());
-                inetTD.empty();
-                inetTD.append($('#last_inet').val());
-                var TVTD = $('#td_last_TV_' + $('#apartment_div').val());
-                TVTD.empty();
-                TVTD.append($('#last_TV').val());
-                var comment = $('#td_comment_' + $('#apartment_div').val());
-                comment.empty();
-                comment.append($('#comment').val());
-                if ($('#ap_status').val() != 0)
-                {
-                    var status = $('#td_status_' + $('#apartment_div').val())
-                    status.empty();
-                    //status.append(document.getElementById("ap_status").options[$('#ap_status').val()].text);
-                    status.append(document.getElementById('option_'+$('#ap_status').val()).text);
-                }
-                var CompetitorCount = $('#CompetitorCount_field');
-                CompetitorCount.empty();
-                $.post("GetCompetitorCount", req, function (data) {
-                    CompetitorCount.append(data);
-                    var appCount = ${House.ApartmentCount};
-                    var CompPers = $('#CompetitorsPenetrationPercent_field');
-                    CompPers.empty();
-                    CompPers.append( Number(data / appCount * 100).toFixed(2)   + "%");
-                 });
-                $('#myModal_IT').trigger('reveal:close');
-                //alert(data);
-            });
-        });
-        //$('#myModal_IT').reveal();
-    });
+		$('#SaveButton').click(function () {
+			var req = {};
+			req.House = $('#House').val();
+			req.Apartment = $('#apartment_div').val();
+			req.last_inet = $('#last_inet').val();
+			req.last_TV = $('#last_TV').val();
+			req.comment = $('#comment').val();
+			req.status = $('#ap_status').val();
+			$.post("SaveApartment", req, function (data) {
+				var inetTD = $('#td_last_inet_' + $('#apartment_div').val());
+				inetTD.empty();
+				inetTD.append($('#last_inet').val());
+				var TVTD = $('#td_last_TV_' + $('#apartment_div').val());
+				TVTD.empty();
+				TVTD.append($('#last_TV').val());
+				var comment = $('#td_comment_' + $('#apartment_div').val());
+				comment.empty();
+				comment.append($('#comment').val());
+				if ($('#ap_status').val() != 0)
+				{
+					var status = $('#td_status_' + $('#apartment_div').val())
+					status.empty();
+					//status.append(document.getElementById("ap_status").options[$('#ap_status').val()].text);
+					status.append(document.getElementById('option_'+$('#ap_status').val()).text);
+				}
+				var CompetitorCount = $('#CompetitorCount_field');
+				CompetitorCount.empty();
+				$.post("GetCompetitorCount", req, function (data) {
+					CompetitorCount.append(data);
+					var appCount = ${House.ApartmentCount};
+					var CompPers = $('#CompetitorsPenetrationPercent_field');
+					CompPers.empty();
+					CompPers.append( Number(data / appCount * 100).toFixed(2)   + "%");
+				 });
+				$('#myModal_IT').trigger('reveal:close');
+				//alert(data);
+			});
+		});
+		//$('#myModal_IT').reveal();
+	});
 </script>
 <table class="table">
-    <thead>
-        <tr>
-            <th>Адрес: ${House.Street} ${House.Number} ${House.Case}</th>
-            <th>Количество подъездов: ${House.Entrances.Count}</th>
-            <th>Количество квартир: ${House.ApartmentCount}</th>
-        </tr>
-        <tr>
-        <%if House.LastPassDate!=null: %>
-            <th colspan=3>Последний проход: ${House.LastPassDate.ToShortDateString()}, назначен на ${House.GetLastBypass().Agent.Name}</th>
-        <%else: %>
-            <th colspan=3>Нет проходов по данному дому</th>
-        <%end %>
-        </tr>
-    </thead>
+	<thead>
+		<tr>
+			<th>Адрес: ${House.Street} ${House.Number} ${House.Case}</th>
+			<th>Количество подъездов: ${House.Entrances.Count}</th>
+			<th>Количество квартир: ${House.ApartmentCount}</th>
+		</tr>
+		<tr>
+		<%if House.LastPassDate!=null: %>
+			<th colspan=3>Последний проход: ${House.LastPassDate.ToShortDateString()}, назначен на ${House.GetLastBypass().Agent.Name}</th>
+		<%else: %>
+			<th colspan=3>Нет проходов по данному дому</th>
+		<%end %>
+		</tr>
+	</thead>
 </table>
 <input type="hidden" name="selected_house" id="selected_house" value="${House.Id}" />
 <table class="table">
-    <thead>
-        <tr><th>№ подъезда</th>
-            <% for i, Entrance in enumerate(House.Entrances): %>
-		    <th>${i+1}</th>
-        <% end %>
-        </tr>
-    </thead>
-    <tbody>
-        <tr><td>Оборудование</td>
-          <% for i, Entrance in enumerate(House.Entrances): %>
-          <%if Entrance.Switch != null : %>
-		    <td><a href="${Siteroot}/Switches/MakeSwitch?Switch=${Entrance.Switch.Id}"> ${Entrance.Switch.Name} </a></td>
-            <%else: %>
-            <%if Entrance.Cable : %>
-            <td> Кабель</td>
-            <%else: %>
-            <td> Нет</td>
-            <%end %>
-          <% end %>
-          <% end %>
-        </tr>
-        <tr><td>Стояки</td>
-          <% for i, Entrance in enumerate(House.Entrances): %>
-          <%if Entrance.Strut : %>
-		    <td>Да</td>
-            <%else: %>
-           <td> Нет</td>
-          <% end %>
-          <% end %>
-        </tr>
-        <tr><td>Возможность подключения</td>
-          <% for i, Entrance in enumerate(House.Entrances): %>
-          <%if Entrance.WasConnected() : %>
-		    <td>Да</td>
-            <%else: %>
-            <td> Нет</td>
-          <% end %>
-          <% end %>
-        </tr>
-    </tbody>
+	<thead>
+		<tr><th>№ подъезда</th>
+			<% for i, Entrance in enumerate(House.Entrances): %>
+			<th>${i+1}</th>
+		<% end %>
+		</tr>
+	</thead>
+	<tbody>
+		<tr><td>Оборудование</td>
+		  <% for i, Entrance in enumerate(House.Entrances): %>
+		  <%if Entrance.Switch != null : %>
+			<td><a href="${Siteroot}/Switches/MakeSwitch?Switch=${Entrance.Switch.Id}"> ${Entrance.Switch.Name} </a></td>
+			<%else: %>
+			<%if Entrance.Cable : %>
+			<td> Кабель</td>
+			<%else: %>
+			<td> Нет</td>
+			<%end %>
+		  <% end %>
+		  <% end %>
+		</tr>
+		<tr><td>Стояки</td>
+		  <% for i, Entrance in enumerate(House.Entrances): %>
+		  <%if Entrance.Strut : %>
+			<td>Да</td>
+			<%else: %>
+		   <td> Нет</td>
+		  <% end %>
+		  <% end %>
+		</tr>
+		<tr><td>Возможность подключения</td>
+		  <% for i, Entrance in enumerate(House.Entrances): %>
+		  <%if Entrance.WasConnected() : %>
+			<td>Да</td>
+			<%else: %>
+			<td> Нет</td>
+		  <% end %>
+		  <% end %>
+		</tr>
+	</tbody>
 </table>
 
 <table class="table" style="border:1px solid #AAA ;">
-    <tbody>
-        <tr>
-            <td>Абоненты Инфорум</td>
-            <td class="delimiter_td">${House.GetSubscriberCount()}</td>
-            <td>Абоненты конкурентов</td>
-            <td class="delimiter_td" id="CompetitorCount_field">${House.CompetitorCount}</td>
-            <td>Проникновение Инфорум</td>
-            <td class="delimiter_td">${House.GetPenetrationPercent().ToString("F2")}%</td>
-            <td>Проникновение конкурентов</td>
-            <td class="delimiter_td" id="CompetitorsPenetrationPercent_field">${House.GetCompetitorsPenetrationPercent().ToString("F2")}%</td>
-        </tr>
-    </tbody>
+	<tbody>
+		<tr>
+			<td>Абоненты Инфорум</td>
+			<td class="delimiter_td">${House.GetSubscriberCount()}</td>
+			<td>Абоненты конкурентов</td>
+			<td class="delimiter_td" id="CompetitorCount_field">${House.CompetitorCount}</td>
+			<td>Проникновение Инфорум</td>
+			<td class="delimiter_td">${House.GetPenetrationPercent().ToString("F2")}%</td>
+			<td>Проникновение конкурентов</td>
+			<td class="delimiter_td" id="CompetitorsPenetrationPercent_field">${House.GetCompetitorsPenetrationPercent().ToString("F2")}%</td>
+		</tr>
+	</tbody>
 </table>
 
 <input type=hidden id="House" value=${House.Id} />
 <div id="myModal_IT" class="reveal-modal"> 
-        <input type=hidden name="apartment" id="apartment_div"  />
-        <table class="table">
-            <thead>
-                <tr>
-                    <th colspan=2>Радактировать квартиру</th>
-                </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>
-                    <label for="last_inet" >Интернет</label>
-                </td>
-                <td>
-                   <!-- <input type=text id="last_inet" name="last_inet" /> <br /> -->
-                   <select id="last_inet"  name="last_inet" style="width:200px;">
-                        <option value="">Нет</option>
-                        <option value="Д">Д - Домолинк</option>
-                   </select>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label for="last_TV" >TV</label>
-                </td>
-                <td>
-                   <!-- <input type=text id="last_TV" name="last_TV" /> -->
-                    <select id="last_TV"  name="last_TV" style="width:200px;">
-                        <option value="">Нет</option>
-                        <option value="С.Т">С.Т - Спутник триколор</option>
-                        <option value="К">К - Кабельное</option>
-                        <option value="С.Н">С.Н - Снутник НТВ</option>
-                   </select>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label for="comment" >Комментарий</label>
-                </td>
-                <td>
-                    <input type=text id="comment" name="comment" /> 
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Статус
-                </td>
-                <td>
-                    <select name="ap_status" id="ap_status" style="width:200px;">
-                            <option value="0">Нет</option>
-                        <% for i, status in enumerate(ApStatuses): %>
-                            <option id="option_${status.Id}" value=${status.Id}>${status.Name}</option>
-                        <%end %>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td colspan=2><button type=button id="SaveButton" class="Button">Сохранить</button></td>
-            </tr>
-            <tr></tr>
-            <tr><td colspan=2><button type=button id="CreateRequest" class="Button">Сформировать заявку</button></td></tr>
-            </tbody>
-        </table>
-        <table class="table" style="display:none" id="historyTable">
-            <thead>
-                <tr>
-                    <th id="history_head" colspan=3>История действий</th>
-                </tr>
-                <tr>
-                    <th>Действие</th>
-                    <th>Дата</th>
-                    <th>Оператор</th>
-                </tr>
-            </thead>
-            <tbody id="history_place">
-            </tbody>
-        </table>
-    <a class="close-reveal-modal">х</a>
+		<input type=hidden name="apartment" id="apartment_div"  />
+		<table class="table">
+			<thead>
+				<tr>
+					<th colspan=2>Радактировать квартиру</th>
+				</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<td>
+					<label for="last_inet" >Интернет</label>
+				</td>
+				<td>
+				   <!-- <input type=text id="last_inet" name="last_inet" /> <br /> -->
+				   <select id="last_inet"  name="last_inet" style="width:200px;">
+						<option value="">Нет</option>
+						<option value="Д">Д - Домолинк</option>
+				   </select>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="last_TV" >TV</label>
+				</td>
+				<td>
+				   <!-- <input type=text id="last_TV" name="last_TV" /> -->
+					<select id="last_TV"  name="last_TV" style="width:200px;">
+						<option value="">Нет</option>
+						<option value="С.Т">С.Т - Спутник триколор</option>
+						<option value="К">К - Кабельное</option>
+						<option value="С.Н">С.Н - Снутник НТВ</option>
+				   </select>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="comment" >Комментарий</label>
+				</td>
+				<td>
+					<input type=text id="comment" name="comment" /> 
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Статус
+				</td>
+				<td>
+					<select name="ap_status" id="ap_status" style="width:200px;">
+							<option value="0">Нет</option>
+						<% for i, status in enumerate(ApStatuses): %>
+							<option id="option_${status.Id}" value=${status.Id}>${status.Name}</option>
+						<%end %>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td colspan=2><button type=button id="SaveButton" class="Button">Сохранить</button></td>
+			</tr>
+			<tr></tr>
+			<tr><td colspan=2><button type=button id="CreateRequest" class="Button">Сформировать заявку</button></td></tr>
+			</tbody>
+		</table>
+		<table class="table" style="display:none" id="historyTable">
+			<thead>
+				<tr>
+					<th id="history_head" colspan=3>История действий</th>
+				</tr>
+				<tr>
+					<th>Действие</th>
+					<th>Дата</th>
+					<th>Оператор</th>
+				</tr>
+			</thead>
+			<tbody id="history_place">
+			</tbody>
+		</table>
+	<a class="close-reveal-modal">х</a>
 </div> 
 <table style="width:100%">
-    <tbody>
-    <tr>
+	<tbody>
+	<tr>
 <%for j in range(0 , 2): %>
 <td valign=top>
 <table border="1" style="width:490px;" class="table" id="kv_table">
-    <thead>
-        <tr align=center>
-            <th></th>
-            <th colspan=2>Было</th>
-            <%if IsDefined("ForPrint"): %>
-            <th colspan=2>Результат</th>
-            <%else: %>
-            <th colspan=2>Статус</th>
-            <%end %>
-            <th></th>
-        </tr>
-        <tr>
-            <th>кв.</th>
-            <th>Int</th>
-            <th>TV</th>
-            <%if IsDefined("ForPrint"): %>
-            <th>INT</th>
-            <th>TV</th>
-            <%else: %>
-            <th colspan=2></th>
-            <%end %>
-            <th>Комментарии</th>
-        </tr>
-    </thead>
-    <tbody>
-    <% ap_count = House.ApartmentCount %>
-    <% for i in range(ap_count / 2 * j, ap_count / 2 + ap_count / 2 * j + ap_count % 2 *j): %>
-    <tr>
-        <%apartment = House.GetApartmentWithNumber(i+1) %>
-        <%inforumClient = House.GetClientWithApNumber("${i+1}") %>
-        <%if apartment!= null: %>
-            <%request = apartment.GetRequestForThis() %>
-        <%else: %>
-            <%request = null %>
-        <%end %>
-        <%if inforumClient == 0: %>
-            <%if (request != null): %>
-            <td>${i+1}
-            <%else: %>
-            <td><a href="#" class="big-link" data-reveal-id="myModal_IT" > ${i+1}</a>
-            <%end %>
-            <%else: %>
-            <td>${i+1}
-        <%end %>
-        <input type=hidden name="apartment" value=${i+1} class="apartment_table" />
-        </td>
-        <%if apartment != null : %>
-            <td id="td_last_inet_${i+1}">${apartment.LastInternet}</td>
-            <td id="td_last_TV_${i+1}">${apartment.LastTV}</td>
-            <%if IsDefined("ForPrint"): %>
-            <td></td>
-            <td></td>
-            <%else: %>
-                <%if request == null: %>
-                    <%if apartment.Status != null : %>
-                    <td colspan=2 id="td_status_${i+1}">${apartment.Status.Name}</td>
-                    <%else: %>
-                    <td colspan=2 id="td_status_${i+1}"></td>
-                    <%end %>
-                <%else: %>
-                    <td colspan=2 id="td_status_${i+1}">В заявке (№${request.Id})</td>
-                <%end %>
-            <%end %>
-        <%else: %>
-            <%if inforumClient != 0: %>
-                <td style="color:#258936;" id="td_last_inet_${i+1}"><b>${inforumClient}</b></td>
-                <%else: %>
-                <td id="td_last_inet_${i+1}"></td>
-            <%end %>
-            <td id="td_last_TV_${i+1}"></td>
-            <%if IsDefined("ForPrint"): %>
-            <td></td>
-            <td></td>
-            <%else: %>
-            <td colspan=2 id="td_status_${i+1}"></td>
-            <%end %>
-        <%end %>
-        <%if apartment != null : %>
-            <%if ((request == null) or ((request != null) and (request.Label == null))): %>
-                <td id="td_comment_${i+1}">${apartment.Comment}</td>
-            <%else: %>
-                <td id="td_comment_${i+1}">${request.Label.Name}</td>
-            <%end %>
-        <%else: %>
-        <td id="td_comment_${i+1}"></td>
-        <%end %>
-    </tr>
-    <%end %>
-    </tbody>
+	<thead>
+		<tr align=center>
+			<th></th>
+			<th colspan=2>Было</th>
+			<%if IsDefined("ForPrint"): %>
+			<th colspan=2>Результат</th>
+			<%else: %>
+			<th colspan=2>Статус</th>
+			<%end %>
+			<th></th>
+		</tr>
+		<tr>
+			<th>кв.</th>
+			<th>Int</th>
+			<th>TV</th>
+			<%if IsDefined("ForPrint"): %>
+			<th>INT</th>
+			<th>TV</th>
+			<%else: %>
+			<th colspan=2></th>
+			<%end %>
+			<th>Комментарии</th>
+		</tr>
+	</thead>
+	<tbody>
+	<% ap_count = House.ApartmentCount %>
+	<% for i in range(ap_count / 2 * j, ap_count / 2 + ap_count / 2 * j + ap_count % 2 *j): %>
+	<tr>
+		<%apartment = House.GetApartmentWithNumber(i+1) %>
+		<%inforumClient = House.GetClientWithApNumber("${i+1}") %>
+		<%if apartment!= null: %>
+			<%request = apartment.GetRequestForThis() %>
+		<%else: %>
+			<%request = null %>
+		<%end %>
+		<%if inforumClient == 0: %>
+			<%if (request != null): %>
+			<td>${i+1}
+			<%else: %>
+			<td><a href="#" class="big-link" data-reveal-id="myModal_IT" > ${i+1}</a>
+			<%end %>
+			<%else: %>
+			<td>${i+1}
+		<%end %>
+		<input type=hidden name="apartment" value=${i+1} class="apartment_table" />
+		</td>
+		<%if apartment != null : %>
+			<td id="td_last_inet_${i+1}">${apartment.LastInternet}</td>
+			<td id="td_last_TV_${i+1}">${apartment.LastTV}</td>
+			<%if IsDefined("ForPrint"): %>
+			<td></td>
+			<td></td>
+			<%else: %>
+				<%if request == null: %>
+					<%if apartment.Status != null : %>
+					<td colspan=2 id="td_status_${i+1}">${apartment.Status.Name}</td>
+					<%else: %>
+					<td colspan=2 id="td_status_${i+1}"></td>
+					<%end %>
+				<%else: %>
+					<td colspan=2 id="td_status_${i+1}">В заявке (№${request.Id})</td>
+				<%end %>
+			<%end %>
+		<%else: %>
+			<%if inforumClient != 0: %>
+				<td style="color:#258936;" id="td_last_inet_${i+1}"><b>${inforumClient}</b></td>
+				<%else: %>
+				<td id="td_last_inet_${i+1}"></td>
+			<%end %>
+			<td id="td_last_TV_${i+1}"></td>
+			<%if IsDefined("ForPrint"): %>
+			<td></td>
+			<td></td>
+			<%else: %>
+			<td colspan=2 id="td_status_${i+1}"></td>
+			<%end %>
+		<%end %>
+		<%if apartment != null : %>
+			<%if ((request == null) or ((request != null) and (request.Label == null))): %>
+				<td id="td_comment_${i+1}">${apartment.Comment}</td>
+			<%else: %>
+				<td id="td_comment_${i+1}">${request.Label.Name}</td>
+			<%end %>
+		<%else: %>
+		<td id="td_comment_${i+1}"></td>
+		<%end %>
+	</tr>
+	<%end %>
+	</tbody>
 </table>
 </td>
 <%end %>

@@ -14,7 +14,7 @@ namespace InternetInterface.Models
 	[ActiveRecord("Partners", Schema = "internet", Lazy = true)]
 	public class Partner : ValidActiveRecordLinqBase<Partner>
 	{
-	    [PrimaryKey]
+		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
 		[Property, ValidateNonEmpty("Введите имя")]
@@ -38,28 +38,28 @@ namespace InternetInterface.Models
 		[BelongsTo("Categorie")]
 		public virtual UserCategorie Categorie { get; set; }
 
-        [HasMany(ColumnKey = "Agent", OrderBy = "RegistrationDate", Lazy = true)]
-        public virtual IList<PaymentsForAgent> Payments { get; set; }
+		[HasMany(ColumnKey = "Agent", OrderBy = "RegistrationDate", Lazy = true)]
+		public virtual IList<PaymentsForAgent> Payments { get; set; }
 
-        public virtual IList<string> AccesedPartner { get; set; }
+		public virtual IList<string> AccesedPartner { get; set; }
 
 
-	    public static Partner GetPartnerForLogin(string login)
+		public static Partner GetPartnerForLogin(string login)
 		{
 			return FindAllByProperty("Login", login).FirstOrDefault();
 		}
 
-        public virtual decimal GetAgentPayment()
-        {
-            return Payments.Sum(p => p.Sum);
-        }
+		public virtual decimal GetAgentPayment()
+		{
+			return Payments.Sum(p => p.Sum);
+		}
 
-	    public static List<Partner> GetHouseMapAgents()
-        {
-            return Queryable.Where(p => p.Categorie.ReductionName == "Agent").ToList();
-        }
+		public static List<Partner> GetHouseMapAgents()
+		{
+			return Queryable.Where(p => p.Categorie.ReductionName == "Agent").ToList();
+		}
 
-	    public override void SaveAndFlush()
+		public override void SaveAndFlush()
 		{
 			base.SaveAndFlush();
 			var catAS = CategorieAccessSet.FindAllByProperty("Categorie", Categorie);

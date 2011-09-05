@@ -16,9 +16,9 @@ namespace InternetInterface.Models.Access
 		private static HashSet<string> _changeBalance;
 		private static HashSet<string> _accessDHCP;
 		private static HashSet<string> _visibleDemand;
-	    private static HashSet<string> _houseMapUse;
-	    private static HashSet<string> _agentInfo;
-        private static HashSet<string> _agentPayers; 
+		private static HashSet<string> _houseMapUse;
+		private static HashSet<string> _agentInfo;
+		private static HashSet<string> _agentPayers; 
 
 		public static List<string> GetAccessName(string _methodName)
 		{
@@ -61,70 +61,70 @@ namespace InternetInterface.Models.Access
 			{
 				result.Add(GetRulesName_editClientInfo());
 			}
-            if (GetRulesName_houseMapUse() != string.Empty)
-            {
-                result.Add(GetRulesName_houseMapUse());
-            }
-            if (GetRulesName_agentInfo() != string.Empty)
-            {
-                result.Add(GetRulesName_agentInfo());
-            }
-            if (GetRulesName_agentPayers() != string.Empty)
-            {
-                result.Add(GetRulesName_agentPayers());
-            }
-		    return result;
+			if (GetRulesName_houseMapUse() != string.Empty)
+			{
+				result.Add(GetRulesName_houseMapUse());
+			}
+			if (GetRulesName_agentInfo() != string.Empty)
+			{
+				result.Add(GetRulesName_agentInfo());
+			}
+			if (GetRulesName_agentPayers() != string.Empty)
+			{
+				result.Add(GetRulesName_agentPayers());
+			}
+			return result;
 		}
 
-        public static string GetRulesName_agentPayers()
-        {
-            _agentPayers = new HashSet<string> {
-                                                   	"AgentFilter",
-									                "ShowAgent",
-                                               };
-            return _agentPayers.Contains(methodName) ? "PFA" : string.Empty;
-        }
+		public static string GetRulesName_agentPayers()
+		{
+			_agentPayers = new HashSet<string> {
+													"AgentFilter",
+													"ShowAgent",
+											   };
+			return _agentPayers.Contains(methodName) ? "PFA" : string.Empty;
+		}
 
-	    private static string GetRulesName_agentInfo()
-        {
-            _agentInfo = new HashSet<string> {
-                                                 "SummaryInformation"
-                                             };
-            return _agentInfo.Contains(methodName) ? "AIV" : string.Empty;
-        }
+		private static string GetRulesName_agentInfo()
+		{
+			_agentInfo = new HashSet<string> {
+												 "SummaryInformation"
+											 };
+			return _agentInfo.Contains(methodName) ? "AIV" : string.Empty;
+		}
 
-	    private static string GetRulesName_houseMapUse()
-        {
-            _houseMapUse = new HashSet<string> {
-                                                   "SiteMap",
-                                                   "Register",
-                                                   "EditHouse",
-                                                   "FindHouse",
-                                                   "HouseFindResult",
-                                                   "SaveApartment",
-                                                   "HouseEdit",
-                                                   "V_Prohod",
-                                                   "Agent",
-                                                   "RegisterHouseAgent",
-                                                   "EditHouseAgent",
-                                                   "ForPrintToAgent",
-                                                   "RegisterHouse",
-                                                   "ViewHouseInfo",
-                                                   "BasicHouseInfo",
-                                                   "NetworkSwitches",
-                                                   "SaveHouseMap",
-                                                   "GetCompetitorCount",
-                                                   "LoadApartmentHistory",
-                                                   "RegisterRequest",
-                                                   "GetApartment"
-                                               };
-            return _houseMapUse.Contains(methodName) ? "HMA" : string.Empty;
-        }
+		private static string GetRulesName_houseMapUse()
+		{
+			_houseMapUse = new HashSet<string> {
+												   "SiteMap",
+												   "Register",
+												   "EditHouse",
+												   "FindHouse",
+												   "HouseFindResult",
+												   "SaveApartment",
+												   "HouseEdit",
+												   "V_Prohod",
+												   "Agent",
+												   "RegisterHouseAgent",
+												   "EditHouseAgent",
+												   "ForPrintToAgent",
+												   "RegisterHouse",
+												   "ViewHouseInfo",
+												   "BasicHouseInfo",
+												   "NetworkSwitches",
+												   "SaveHouseMap",
+												   "GetCompetitorCount",
+												   "LoadApartmentHistory",
+												   "RegisterRequest",
+												   "GetApartment"
+											   };
+			return _houseMapUse.Contains(methodName) ? "HMA" : string.Empty;
+		}
 
-	    private static string GetRulesName_getClientInfo()
+		private static string GetRulesName_getClientInfo()
 		{
 			_getClientInfo = new HashSet<string>
-			                 	{
+								{
 									"GetClients",
 									"SearchUsers",
 									"SearchBy",
@@ -132,30 +132,30 @@ namespace InternetInterface.Models.Access
 									"SearchUserInfo",
 									"Redirect",
 									"LawyerPersonInfo",
-			                 	};
+								};
 			return _getClientInfo.Contains(methodName) ? "GCI" : string.Empty;
 		}
 
 		private static string GetRulesName_registerClient()
 		{
 			_registerClient = new HashSet<string>
-			                 	{
+								{
 									"RegisterClient",
 									"SiteMap",
 									"ClientRegisteredInfoFromDiller",
 									"RegisterLegalPerson"
-			                 	};
+								};
 			return _registerClient.Contains(methodName) ? "RC" : string.Empty;
 		}
 
 		private static string GetRulesName_manageBrigads()
 		{
 			_manageBrigads = new HashSet<string>
-			                 	{
+								{
 									"MakeBrigad",
 									"RegisterBrigad",
 									"EditBrigad"
-			                 	};
+								};
 			return _manageBrigads.Contains(methodName) ? "MB" : string.Empty;
 		}
 
@@ -163,33 +163,33 @@ namespace InternetInterface.Models.Access
 		private static string GetRulesName_registerPartner()
 		{
 			_registerPartner = new HashSet<string>
-			                 	{
+								{
 									"RegisterPartner",
 									"SiteMap",
 									"PartnerRegisteredInfo",
 									"PartnersPreview",
 									"EditPartner",
 									"RegisterPartnerI",
-                                    "Administration"
-			                 	};
+									"Administration"
+								};
 			return _registerPartner.Contains(methodName) ? "RP" : string.Empty;
 		}
 
 		private static string GetRulesName_changeBalance()
 		{
 			_changeBalance = new HashSet<string>
-			                 	{
+								{
 									"ChangeBalance",
 									"SiteMap",
 									"SearchUserInfo",
-			                 	};
+								};
 			return _changeBalance.Contains(methodName) ? "CB" : string.Empty;
 		}
 
 		private static string GetRulesName_accessDHCP()
 		{
 			_accessDHCP = new HashSet<string>
-			                 	{
+								{
 									"ShowSwitches",
 									"MakeSwitch",
 									"EditSwitch",
@@ -199,28 +199,28 @@ namespace InternetInterface.Models.Access
 									"LoadEditConnectMudule",
 									"GoZone",
 									"SiteMap",
-                                    "GetSubnet"
-			                 	};
+									"GetSubnet"
+								};
 			return _accessDHCP.Contains(methodName) ? "DHCP" : string.Empty;
 		}
 
 		private static string GetRulesName_visibleDemand()
 		{
 			_visibleDemand = new HashSet<string>
-			                 	{
+								{
 									"RequestView",
 									"ChangeLabel",
 									"EditLabel",
 									"DeleteLabel",
 									"SiteMap"
-			                 	};
+								};
 			return _visibleDemand.Contains(methodName) ? "VD" : string.Empty;
 		}
 
 		private static string GetRulesName_showSecretInfo()
 		{
 			_visibleDemand = new HashSet<string>
-			                 	{
+								{
 									"ClientRegisteredInfo",
 									"ShowBrigad",
 									"PassAndShowCard",
@@ -229,31 +229,31 @@ namespace InternetInterface.Models.Access
 									"Show",
 									"AgentFilter",
 									"ShowAgent",
-                                    "ShowAgents",
-                                    "GroupInfo",
-                                    "Leases",
+									"ShowAgents",
+									"GroupInfo",
+									"Leases",
 									 "ActivateService",
-                                    "DiactivateService",
-                                    "ProcessPayments",
-                                    "NewPaymets",
-                                    "Index",
-                                    "New",
-                                    "SavePayments",
-                                    "EditTemp",
-                                    "Delete",
-                                    "DeleteTemp",
-                                    "Edit",
-                                    "SearchPayer",
-                                    "CancelPayments"
+									"DiactivateService",
+									"ProcessPayments",
+									"NewPaymets",
+									"Index",
+									"New",
+									"SavePayments",
+									"EditTemp",
+									"Delete",
+									"DeleteTemp",
+									"Edit",
+									"SearchPayer",
+									"CancelPayments"
 
-			                 	};
+								};
 			return _visibleDemand.Contains(methodName) ? "SSI" : string.Empty;
 		}
 
 		private static string GetRulesName_editClientInfo()
 		{
 			_visibleDemand = new HashSet<string>
-			                 	{
+								{
 									"EditInformation",
 									"LoadEditMudule",
 									"SiteMap",
@@ -263,11 +263,11 @@ namespace InternetInterface.Models.Access
 									"NoPhoned",
 									"AppointedToTheGraph",
 									"GetGraph",
-                                    "ReservGraph",
+									"ReservGraph",
 									"SaveGraph",
-                                    "RequestGraph",
-                                    "CreateAndPrintGraph"
-			                 	};
+									"RequestGraph",
+									"CreateAndPrintGraph"
+								};
 			return _visibleDemand.Contains(methodName) ? "ECI" : string.Empty;
 		}
 	}
