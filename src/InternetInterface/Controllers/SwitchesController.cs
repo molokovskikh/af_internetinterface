@@ -101,6 +101,14 @@ namespace InternetInterface.Controllers
 			RedirectToUrl(string.Format("../Switches/OnLineClient.rails?Zone={0}",Zone));
 		}
 
+		public void FreePortForSwitch(string ids)
+		{
+			var id = !string.IsNullOrEmpty(ids) ? UInt32.Parse(ids) : NetworkSwitches.FindFirst().Id;
+			var diniedPorts = ClientEndpoints.Queryable.Where(c => c.Switch.Id == id).ToList().Select(c => c.Port).ToList();
+				PropertyBag["diniedPorts"] = diniedPorts;
+			CancelLayout();
+		}
+
 		public void OnLineClient(int Zone)
 		{
 			IList<ClientConnectInfo> clients = new List<ClientConnectInfo>();

@@ -1,88 +1,88 @@
 ﻿<% import System.Linq.Enumerable from System.Core %>
 <script type="text/javascript">
-    $(function () {
-        $('#beginDate').datepicker({
-            inline: true
-        });
-        $('#endDate').datepicker({
-            inline: true
-        });
-    });
+	$(function () {
+		$('#beginDate').datepicker({
+			inline: true
+		});
+		$('#endDate').datepicker({
+			inline: true
+		});
+	});
 </script>
 <div style="width:1000px; margin: 0 auto;">
 <form method=get action="${Siteroot}/UserInfo/Leases">
 <table class="table" style="border: 1px double black;">
-    <thead>
-        <tr>
-            <th colspan=3>Статистика работы клиента: <a href="${Siteroot}/Search/Redirect?filter.ClientCode=${_client.Id}"> ${_client.Name}</a></th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>
-                <label for="beginDate">Начало периода</label>
-                <input id="beginDate" type=text name="filter.beginDate" value="${filter.beginDate.ToShortDateString()}"/>
-            </td>
-            <td>
-                <label for="endDate">Конец периода</label>
-                <input id="endDate" type=text name="filter.endDate" value="${filter.endDate.ToShortDateString()}" />
-            </td>
-            <td>
-                  <input type="hidden" name="filter.ClientCode" value="${filter.ClientCode}" />
-                  <button type="submit" id="Button4" class="button">
+	<thead>
+		<tr>
+			<th colspan=3>Статистика работы клиента: <a href="${Siteroot}/Search/Redirect?filter.ClientCode=${_client.Id}"> ${_client.Name}</a></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>
+				<label for="beginDate">Начало периода</label>
+				<input id="beginDate" type=text name="filter.beginDate" value="${filter.beginDate.ToShortDateString()}"/>
+			</td>
+			<td>
+				<label for="endDate">Конец периода</label>
+				<input id="endDate" type=text name="filter.endDate" value="${filter.endDate.ToShortDateString()}" />
+			</td>
+			<td>
+				  <input type="hidden" name="filter.ClientCode" value="${filter.ClientCode}" />
+				  <button type="submit" id="Button4" class="button">
 				  <img alt="Save" src="../Images/tick.png">Выбрать период</button>
-            </td>
-        </tr>
-    </tbody>
+			</td>
+		</tr>
+	</tbody>
 </table>
 </form>
 <table class="table" style="border: 1px double black;">
-    <thead>
-            <%firstLease = _client.GetFirstLease() %>
-            <%lastLease = _client.GetLastLease() %>
-    <%if firstLease != null: %>
-        <tr>
-            <th colspan=4>Аренды -
-                Первая: ${firstLease.LeaseBegin}
-                Последняя: ${lastLease.LeaseBegin}
-            </th>
-        </tr>
-        <tr>
-            <th>Ip адрес</th>
-            <th>Mac адрес</th>
-            <th>Начало аренды</th>
-            <th>Конец аренды</th>
-        </tr>
-    <%else: %>
-        <tr>
-            <th>Данный клиент не начинал работу</th>
-        </tr>
-    <%end %>
-    </thead>
-    <tbody>
-    <% for i,item in enumerate(Leases): %>
-        <tr>
-            <td>
-                ${item.GetNormalIp()}
-            </td>
-            <td>
-                ${item.HwId}
-            </td>
-            <td>
-                ${item.LeaseBegin}
-            </td>
-            <td>
-                ${item.LeaseEnd}
-            </td>
-        </tr>
-    <%end %>
-        <tr>
-            <td colspan=4>
-                <div class="Paginator">
-                    ${PaginatorHelper.ShowPaginator()}
-                </div>
-            </td>
-        </tr>
-    </tbody>
+	<thead>
+			<%firstLease = _client.GetFirstLease() %>
+			<%lastLease = _client.GetLastLease() %>
+	<%if firstLease != null: %>
+		<tr>
+			<th colspan=4>Аренды -
+				Первая: ${firstLease.LeaseBegin}
+				Последняя: ${lastLease.LeaseBegin}
+			</th>
+		</tr>
+		<tr>
+			<th>Ip адрес</th>
+			<th>Mac адрес</th>
+			<th>Начало аренды</th>
+			<th>Конец аренды</th>
+		</tr>
+	<%else: %>
+		<tr>
+			<th>Данный клиент не начинал работу</th>
+		</tr>
+	<%end %>
+	</thead>
+	<tbody>
+	<% for i,item in enumerate(Leases): %>
+		<tr>
+			<td>
+				${item.GetNormalIp()}
+			</td>
+			<td>
+				${item.HwId}
+			</td>
+			<td>
+				${item.LeaseBegin}
+			</td>
+			<td>
+				${item.LeaseEnd}
+			</td>
+		</tr>
+	<%end %>
+		<tr>
+			<td colspan=4>
+				<div class="Paginator">
+					${PaginatorHelper.ShowPaginator()}
+				</div>
+			</td>
+		</tr>
+	</tbody>
 </table>
 </div>

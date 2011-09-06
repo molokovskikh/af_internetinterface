@@ -2,115 +2,115 @@
 <div id="main" style="width: 100%;">
 <% if (SClients.Count == 0): %>
 <div class="flash">
-    <div class="message error">
-        <p>По вашему запросу ничего не найдено, либо вы не ввели информацию для поиска</p>
-    </div>
+	<div class="message error">
+		<p>По вашему запросу ничего не найдено, либо вы не ввели информацию для поиска</p>
+	</div>
 </div>
 <% else: %>
-        <%if IsDefined("PornNumError"):
-               output WriteMessageError(PornNumError)
-        end %>
+		<%if IsDefined("PornNumError"):
+			   output WriteMessageError(PornNumError)
+		end %>
 <div id="block-tables" class="block">
 <div class="content">
-        <%if IsDefined("DemandAccept"):
-              output  WriteMessageError(DemandAccept)
-        end %>
+		<%if IsDefined("DemandAccept"):
+			  output  WriteMessageError(DemandAccept)
+		end %>
 <table class="table"  style="width: 100%; font-size: small;">
-    <thead>
-        <tr valign="top">
-            <th id="">${app.Sortable("Номер счета", "Id", "head_id")}</th>
-            <th id="">${app.Sortable("ФИО", "Name", "head_name")}</th>
-            <%if CategorieAccessSet.AccesPartner("SSI"): %>
-            <th id="">${app.Sortable("Адрес подключения", "Adress", "head_adress")}</th>
-            <th id="">${app.Sortable("Номер телефона", "TelNum", "head_telNum")}</th>
-            <%end %>
-            <%if CategorieAccessSet.AccesPartner("SSI"): %>
-            <th id="">${app.Sortable("Дата регистрации", "RegDate", "head_regDate")}</th>
-            <%end %>
-            <th id="">${app.Sortable("Тариф", "Tariff", "head_tariff")}</th>
-            <%if MapPartner.Categorie.ReductionName == "Office": %>
-            <th id="">${app.Sortable("Баланс", "Balance", "head_balance")}</th>
-            <th id="">${app.Sortable("Статус", "Status", "head_status")}</th>
-            <%end %>
-        </tr>
-    </thead>
-    <tbody id="SearchResults">
-    <% for i,itemInfo in enumerate(SClients): %>
-     <%item = itemInfo.client %>
-     <%if itemInfo.client.LawyerPerson == null:  %>
-        <tr class="${item.Name}" style="background-color:#e3e7f7;">
-    <%else: %>
-        <tr class="${item.Name}" style="background-color:#f5efdf;">
-    <%end %>
-            <td><a href="../Search/Redirect?filter.ClientCode=${item.Id}">${item.Id.ToString("00000")}</a></td>
-            <td> ${item.Name}</td>
-            <%if CategorieAccessSet.AccesPartner("SSI"): %>
-                <%if item.PhysicalClient != null: %>
-                <td>ул. ${item.PhysicalClient.Street} д. ${item.PhysicalClient.House} корп. ${item.PhysicalClient.CaseHouse} кв. ${item.PhysicalClient.Apartment} Подъезд ${item.PhysicalClient.Entrance} Этаж ${item.PhysicalClient.Floor}</td>
-                <td>${item.PhysicalClient.PhoneNumber}</td>
-                <%else : %>
-                <td>${item.LawyerPerson.ActualAdress}</td>
-                <td>${item.LawyerPerson.Telephone}</td>
-                <%end %>
-            <%end %>
-            <%if CategorieAccessSet.AccesPartner("SSI"): %>
-                <%if item.PhysicalClient != null: %>
-                <td>${item.RegDate}</td>
-                <%else: %>
-                <td>${item.RegDate}</td>
-                <%end %>
-            <%end %>
-            <%if item.PhysicalClient != null:  %>
-            <td>${item.PhysicalClient.Tariff.Name}</td>
-            <%else: %>
-                <% if item.LawyerPerson.Speed != null:%>
-                <td>${item.LawyerPerson.Speed.GetNormalizeSpeed()} </td>
-                <%else: %>
-                <td>Тариф не задан</td>
-                <%end %>
-            <%end %>
-            <%if MapPartner.Categorie.ReductionName == "Office": %>
-                <%if item.PhysicalClient != null: %>
-                    <td style="background-color:${"#facada" if item.PhysicalClient.Balance < 0};">${item.PhysicalClient.Balance}</td>
-                    <%if item.Status != null: %>
-                        <td  style="background-color:${"#b0dca3" if itemInfo.OnLine};" >${item.Status.Name}</td>
-                        <%else: %>
-                        <td  style="background-color:${"#b0dca3" if itemInfo.OnLine};">Статус не задан</td>
-                    <%end %>
-                <%else: %>
-                    <td style="background-color:${"#facada" if item.LawyerPerson.Balance < 0};">${item.LawyerPerson.Balance}</td>
-                    <%if item.Status != null: %>
-                    <td  style="background-color:${"#b0dca3" if itemInfo.OnLine};">${item.Status.Name}</td>
-                    <%else: %>
-                    <td  style="background-color:${"#b0dca3" if itemInfo.OnLine};">Статус не задан</td>
-                    <%end %>
-                <%end %>
-            <%end %>
-        </tr>
-    <% end %>   
-      <tr>
-        <td colspan=8>
-        <div class="Paginator">
-             ${PaginatorHelper.ShowPaginator()}
-        </div>
-        </td>
-      </tr>     
-      </tbody>
-    </form>
+	<thead>
+		<tr valign="top">
+			<th id="">${app.Sortable("Номер счета", "Id", "head_id")}</th>
+			<th id="">${app.Sortable("ФИО", "Name", "head_name")}</th>
+			<%if CategorieAccessSet.AccesPartner("SSI"): %>
+			<th id="">${app.Sortable("Адрес подключения", "Adress", "head_adress")}</th>
+			<th id="">${app.Sortable("Номер телефона", "TelNum", "head_telNum")}</th>
+			<%end %>
+			<%if CategorieAccessSet.AccesPartner("SSI"): %>
+			<th id="">${app.Sortable("Дата регистрации", "RegDate", "head_regDate")}</th>
+			<%end %>
+			<th id="">${app.Sortable("Тариф", "Tariff", "head_tariff")}</th>
+			<%if MapPartner.Categorie.ReductionName == "Office": %>
+			<th id="">${app.Sortable("Баланс", "Balance", "head_balance")}</th>
+			<th id="">${app.Sortable("Статус", "Status", "head_status")}</th>
+			<%end %>
+		</tr>
+	</thead>
+	<tbody id="SearchResults">
+	<% for i,itemInfo in enumerate(SClients): %>
+	 <%item = itemInfo.client %>
+	 <%if itemInfo.client.LawyerPerson == null:  %>
+		<tr class="${item.Name}" style="background-color:#e3e7f7;">
+	<%else: %>
+		<tr class="${item.Name}" style="background-color:#f5efdf;">
+	<%end %>
+			<td><a href="../Search/Redirect?filter.ClientCode=${item.Id}">${item.Id.ToString("00000")}</a></td>
+			<td> ${item.Name}</td>
+			<%if CategorieAccessSet.AccesPartner("SSI"): %>
+				<%if item.PhysicalClient != null: %>
+				<td>ул. ${item.PhysicalClient.Street} д. ${item.PhysicalClient.House} корп. ${item.PhysicalClient.CaseHouse} кв. ${item.PhysicalClient.Apartment} Подъезд ${item.PhysicalClient.Entrance} Этаж ${item.PhysicalClient.Floor}</td>
+				<td>${item.PhysicalClient.PhoneNumber}</td>
+				<%else : %>
+				<td>${item.LawyerPerson.ActualAdress}</td>
+				<td>${item.LawyerPerson.Telephone}</td>
+				<%end %>
+			<%end %>
+			<%if CategorieAccessSet.AccesPartner("SSI"): %>
+				<%if item.PhysicalClient != null: %>
+				<td>${item.RegDate}</td>
+				<%else: %>
+				<td>${item.RegDate}</td>
+				<%end %>
+			<%end %>
+			<%if item.PhysicalClient != null:  %>
+			<td>${item.PhysicalClient.Tariff.Name}</td>
+			<%else: %>
+				<% if item.LawyerPerson.Speed != null:%>
+				<td>${item.LawyerPerson.Speed.GetNormalizeSpeed()} </td>
+				<%else: %>
+				<td>Тариф не задан</td>
+				<%end %>
+			<%end %>
+			<%if MapPartner.Categorie.ReductionName == "Office": %>
+				<%if item.PhysicalClient != null: %>
+					<td style="background-color:${"#facada" if item.PhysicalClient.Balance < 0};">${item.PhysicalClient.Balance}</td>
+					<%if item.Status != null: %>
+						<td  style="background-color:${"#b0dca3" if itemInfo.OnLine};" >${item.Status.Name}</td>
+						<%else: %>
+						<td  style="background-color:${"#b0dca3" if itemInfo.OnLine};">Статус не задан</td>
+					<%end %>
+				<%else: %>
+					<td style="background-color:${"#facada" if item.LawyerPerson.Balance < 0};">${item.LawyerPerson.Balance}</td>
+					<%if item.Status != null: %>
+					<td  style="background-color:${"#b0dca3" if itemInfo.OnLine};">${item.Status.Name}</td>
+					<%else: %>
+					<td  style="background-color:${"#b0dca3" if itemInfo.OnLine};">Статус не задан</td>
+					<%end %>
+				<%end %>
+			<%end %>
+		</tr>
+	<% end %>   
+	  <tr>
+		<td colspan=8>
+		<div class="Paginator">
+			 ${PaginatorHelper.ShowPaginator()}
+		</div>
+		</td>
+	  </tr>     
+	  </tbody>
+	</form>
 </table>
 <table class="table" style="width:auto;">
-    <tbody>
-        <tr>
-            <td style="width:25px;"><div style="background-color:#b0dca3; width:25px; height:25px; border:1 solid black;"></div></td>
-            <td style="width:150px;">Клиент Он-Лайн</td>
-            <td style="width:25px;"><div style="background-color:#d79c9c; width:25px; height:25px; border:1 solid black;"></div></td>
-            <td style="width:180px;">Отрицательный баланс</td>
-            <td style="width:25px;"><div style="background-color:#f5efdf; width:25px; height:25px; border:1 solid black;"></div></td>
-            <td style="width:180px;">Юридическое лицо</td>
-            <td style="width:25px;"><div style="background-color:#e3e7f7; width:25px; height:25px; border:1 solid black;"></div></td>
-            <td style="width:180px;">Физическое лицо</td>
-        </tr>
-    </tbody>
+	<tbody>
+		<tr>
+			<td style="width:25px;"><div style="background-color:#b0dca3; width:25px; height:25px; border:1 solid black;"></div></td>
+			<td style="width:150px;">Клиент Он-Лайн</td>
+			<td style="width:25px;"><div style="background-color:#d79c9c; width:25px; height:25px; border:1 solid black;"></div></td>
+			<td style="width:180px;">Отрицательный баланс</td>
+			<td style="width:25px;"><div style="background-color:#f5efdf; width:25px; height:25px; border:1 solid black;"></div></td>
+			<td style="width:180px;">Юридическое лицо</td>
+			<td style="width:25px;"><div style="background-color:#e3e7f7; width:25px; height:25px; border:1 solid black;"></div></td>
+			<td style="width:180px;">Физическое лицо</td>
+		</tr>
+	</tbody>
 </table>
 <% end %>
 </div>

@@ -199,7 +199,8 @@ namespace InternetInterface.Models.Access
 									"LoadEditConnectMudule",
 									"GoZone",
 									"SiteMap",
-									"GetSubnet"
+									"GetSubnet",
+									"FreePortForSwitch"
 								};
 			return _accessDHCP.Contains(methodName) ? "DHCP" : string.Empty;
 		}

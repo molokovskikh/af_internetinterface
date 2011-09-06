@@ -53,7 +53,7 @@ namespace InternetInterface.Controllers
 
 			var registerClient = Validator.IsValid(phisClient);
 
-			if ((registerClient && String.IsNullOrEmpty(portException)) ||
+			if ((registerClient && string.IsNullOrEmpty(portException)) ||
 				(registerClient && string.IsNullOrEmpty(ConnectInfo.Port)))
 			{
 				DbLogHelper.SetupParametersForTriggerLogging();
@@ -157,6 +157,8 @@ namespace InternetInterface.Controllers
 				PropertyBag["ChTariff"] = tariff;
 				PropertyBag["ChBrigad"] = BrigadForConnect;
 				phisClient.SetValidationErrors(Validator.GetErrorSummary(phisClient));
+				if (!string.IsNullOrEmpty(portException))
+					ConnectInfo.Port = string.Empty;
 				PropertyBag["ConnectInfo"] = ConnectInfo;
 				PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(s => !string.IsNullOrEmpty(s.Name));
 				PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClients>(phisClient);
@@ -224,6 +226,8 @@ namespace InternetInterface.Controllers
 				PropertyBag["Brigads"] = Brigad.FindAllSort();
 				PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(s => !string.IsNullOrEmpty(s.Name));
 				PropertyBag["ChBrigad"] = brigadForConnect;
+				if (!string.IsNullOrEmpty(connectErrors))
+					info.Port = string.Empty;
 				PropertyBag["ConnectInfo"] = info;
 				PropertyBag["PortError"] = connectErrors;
 				PropertyBag["Editing"] = false;

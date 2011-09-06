@@ -1,94 +1,94 @@
-﻿    <style type="text/css">
-        .MH
-        {
-            color: #1f3813;
-        }
-        .fiodiv
-        {
-            /*border : 1px solid;*/
-            padding: 4px 4px 4px 30px;
-            text-align:center;
-           /* width : 60%;*/
-        }
-        .submenu th
-        {
-        	border-color:#7cae6d;
-        	padding-top:0px;
-        	padding-bottom:0px;
-        	}
-        .menudiv
-        {
-            /*border : 2px solid;*/
-            padding: 4px 4px 4px 4px;
-        }
-        .wid
-        {
-            width:100%;
-        }
-        .menuItem th
-        {
-            background-color:#d5e6d0;
-            }
-            
-        .menuItem th:hover
-        {
-            background-color:#7cae6d;
-            }
-    </style>
+﻿	<style type="text/css">
+		.MH
+		{
+			color: #1f3813;
+		}
+		.fiodiv
+		{
+			/*border : 1px solid;*/
+			padding: 4px 4px 4px 30px;
+			text-align:center;
+		   /* width : 60%;*/
+		}
+		.submenu th
+		{
+			border-color:#7cae6d;
+			padding-top:0px;
+			padding-bottom:0px;
+			}
+		.menudiv
+		{
+			/*border : 2px solid;*/
+			padding: 4px 4px 4px 4px;
+		}
+		.wid
+		{
+			width:100%;
+		}
+		.menuItem th
+		{
+			background-color:#d5e6d0;
+			}
+			
+		.menuItem th:hover
+		{
+			background-color:#7cae6d;
+			}
+	</style>
 <div class=wid>
 <table class="table" id="mapHead" style = "width:100%" >
-    <thead>
-        <th colspan = "12" align="center"> 
-        <div class=fiodiv>
-        <%if MapPartner.Categorie.ReductionName != "Office": %>
-            Интерфейс для партнера: ${MapPartner.Name}
-            <%else: %>
-            Интерфейс ${MapPartner.Name}
-            <%end %>
-        </div>
-        </th>
-        <tr valign="top"  class="menuItem">
-            <%if PartnerAccessSet.AccesPartner("RC"): %>
-            <th><a href = "../Register/RegisterClient.rails" ><span class="MH"><div class=menudiv>Регистрация абонента</div></span></a></th>
-            <%end %>
-            <%if PartnerAccessSet.AccesPartner("RC"): %>
-            <th><a href = "../Register/RegisterLegalPerson.rails" ><span class="MH"><div class=menudiv>Регистрация ЮрЛица</div></span></a></th>
-            <%end %>
-            <%if PartnerAccessSet.AccesPartner("VD"): %>
-            <th><a href = "../UserInfo/RequestView.rails" ><span class="MH"><div class=menudiv>Заявки</div></span></a></th>
-            <%end %>
-            <%if PartnerAccessSet.AccesPartner("GCI"): %>
-            <th><a href = "../Search/SearchUsers.rails" ><span class="MH"><div class=menudiv>Клиенты</div></span></a></th>
-            <%end %> 
-            <%if PartnerAccessSet.AccesPartner("DHCP"): %>
-            <th><a href = "../Switches/OnLineClient.rails?Zone=4" ><span class="MH"><div class=menudiv>OnLine клиенты</div></span></a></th>
-            <%end %>
-            <%if PartnerAccessSet.AccesPartner("SSI"): %>
-            <th><a href = "../Payers/Filter.rails" ><span class="MH"><div class=menudiv>Платежи по регистраторам</div></span></a></th>
-            <%end %>
-            <%if (PartnerAccessSet.AccesPartner("SSI") or PartnerAccessSet.AccesPartner("PFA")): %>
-            <th><a href = "../Payers/AgentFilter.rails" ><span class="MH"><div class=menudiv>Платежи</div></span></a></th>
-            <%end %>
-            <%if PartnerAccessSet.AccesPartner("SSI"): %>
-            <th><a href = "../UserInfo/RequestGraph.rails" ><span class="MH"><div class=menudiv>График подключений</div></span></a></th>
-            <%end %>
-            <%if PartnerAccessSet.AccesPartner("HMA"): %>
-            <th><a href = "../HouseMap/FindHouse.rails" ><span class="MH"><div class=menudiv>Карта дома</div></span></a></th>
-            <%end %>
-            <%if PartnerAccessSet.AccesPartner("RP"): %>
-            <th><a href = "../UserInfo/Administration.rails" ><span class="MH"><div class=menudiv>Администрирование</div></span></a></th>
-            <%end %>
-            <%if PartnerAccessSet.AccesPartner("AIV"): %>
-            <th><a href = "../AgentInfo/SummaryInformation.rails" ><span class="MH"><div class=menudiv>Платежи</div></span></a></th>
-            <%end %>
-            <th>
-                <form class="form" id="Exit" name="Exit" method="post" action="${siteroot}/ExitPartner/Yes" >
-                <button type="submit" class="button">
-                <img alt="Save" src="../Images/application_edit.png"> Выход
-                </button>
-                </form>
-            </th>
-        </tr>
+	<thead>
+		<th colspan = "12" align="center"> 
+		<div class=fiodiv>
+		<%if MapPartner.Categorie.ReductionName != "Office": %>
+			Интерфейс для партнера: ${MapPartner.Name}
+			<%else: %>
+			Интерфейс ${MapPartner.Name}
+			<%end %>
+		</div>
+		</th>
+		<tr valign="top"  class="menuItem">
+			<%if PartnerAccessSet.AccesPartner("RC"): %>
+			<th><a href = "../Register/RegisterClient.rails" ><span class="MH"><div class=menudiv>Регистрация абонента</div></span></a></th>
+			<%end %>
+			<%if PartnerAccessSet.AccesPartner("RC"): %>
+			<th><a href = "../Register/RegisterLegalPerson.rails" ><span class="MH"><div class=menudiv>Регистрация ЮрЛица</div></span></a></th>
+			<%end %>
+			<%if PartnerAccessSet.AccesPartner("VD"): %>
+			<th><a href = "../UserInfo/RequestView.rails" ><span class="MH"><div class=menudiv>Заявки</div></span></a></th>
+			<%end %>
+			<%if PartnerAccessSet.AccesPartner("GCI"): %>
+			<th><a href = "../Search/SearchUsers.rails" ><span class="MH"><div class=menudiv>Клиенты</div></span></a></th>
+			<%end %> 
+			<%if PartnerAccessSet.AccesPartner("DHCP"): %>
+			<th><a href = "../Switches/OnLineClient.rails?Zone=4" ><span class="MH"><div class=menudiv>OnLine клиенты</div></span></a></th>
+			<%end %>
+			<%if PartnerAccessSet.AccesPartner("SSI"): %>
+			<th><a href = "../Payers/Filter.rails" ><span class="MH"><div class=menudiv>Платежи по регистраторам</div></span></a></th>
+			<%end %>
+			<%if (PartnerAccessSet.AccesPartner("SSI") or PartnerAccessSet.AccesPartner("PFA")): %>
+			<th><a href = "../Payers/AgentFilter.rails" ><span class="MH"><div class=menudiv>Платежи</div></span></a></th>
+			<%end %>
+			<%if PartnerAccessSet.AccesPartner("SSI"): %>
+			<th><a href = "../UserInfo/RequestGraph.rails" ><span class="MH"><div class=menudiv>График подключений</div></span></a></th>
+			<%end %>
+			<%if PartnerAccessSet.AccesPartner("HMA"): %>
+			<th><a href = "../HouseMap/FindHouse.rails" ><span class="MH"><div class=menudiv>Карта дома</div></span></a></th>
+			<%end %>
+			<%if PartnerAccessSet.AccesPartner("RP"): %>
+			<th><a href = "../UserInfo/Administration.rails" ><span class="MH"><div class=menudiv>Администрирование</div></span></a></th>
+			<%end %>
+			<%if PartnerAccessSet.AccesPartner("AIV"): %>
+			<th><a href = "../AgentInfo/SummaryInformation.rails" ><span class="MH"><div class=menudiv>Платежи</div></span></a></th>
+			<%end %>
+			<th>
+				<form class="form" id="Exit" name="Exit" method="post" action="${siteroot}/ExitPartner/Yes" >
+				<button type="submit" class="button">
+				<img alt="Save" src="../Images/application_edit.png"> Выход
+				</button>
+				</form>
+			</th>
+		</tr>
 		<tr class="submenu">
 			<th></th>
 			<th></th>
@@ -108,6 +108,6 @@
 			<th></th>
 			<th></th>
 		</tr>
-    </thead>
+	</thead>
 </table>
 </div>
