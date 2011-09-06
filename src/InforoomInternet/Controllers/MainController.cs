@@ -36,8 +36,8 @@ namespace InforoomInternet.Controllers
 
 		public void Ok()
 		{
-		    if (Flash["application"] == null)
-                RedirectToSiteRoot();
+			if (Flash["application"] == null)
+				RedirectToSiteRoot();
 		}
 
 		public void OfferContract(bool edit)
@@ -134,26 +134,26 @@ namespace InforoomInternet.Controllers
 					//RedirectToSiteRoot();
 				else
 					RedirectToUrl(url);
-                return;
+				return;
 			}
 
-            var host = Request["host"];
-            var rUrl = Request["url"];
-            if (!string.IsNullOrEmpty(host))
-                PropertyBag["referer"] = host + rUrl;
-            else PropertyBag["referer"] = string.Empty;
+			var host = Request["host"];
+			var rUrl = Request["url"];
+			if (!string.IsNullOrEmpty(host))
+				PropertyBag["referer"] = host + rUrl;
+			else PropertyBag["referer"] = string.Empty;
 
-            var pclient = lease.Endpoint.Client.PhysicalClient;
-            var client = lease.Endpoint.Client;
+			var pclient = lease.Endpoint.Client.PhysicalClient;
+			var client = lease.Endpoint.Client;
 
-            PropertyBag["Client"] = client;
+			PropertyBag["Client"] = client;
 
-            if (lease.Endpoint.Client.PhysicalClient == null)
-            {
-                PropertyBag["LClient"] = client.LawyerPerson;
-                RenderView("WarningLawyer");
-                return;
-            }
+			if (lease.Endpoint.Client.PhysicalClient == null)
+			{
+				PropertyBag["LClient"] = client.LawyerPerson;
+				RenderView("WarningLawyer");
+				return;
+			}
 
 			PropertyBag["PClient"] = pclient;
 		}
@@ -198,47 +198,47 @@ namespace InforoomInternet.Controllers
 			}
 		}
 
-        public void WarningPackageId()
-        {
-            var hostAdress = Request.UserHostAddress;
-            var mailToAdress = "internet@ivrn.net";
-            var messageText = new StringBuilder();
+		public void WarningPackageId()
+		{
+			var hostAdress = Request.UserHostAddress;
+			var mailToAdress = "internet@ivrn.net";
+			var messageText = new StringBuilder();
 #if DEBUG
-            hostAdress = NetworkSwitches.GetNormalIp(Lease.FindFirst().Ip);
-            mailToAdress = "a.zolotarev@analit.net";
+			hostAdress = NetworkSwitches.GetNormalIp(Lease.FindFirst().Ip);
+			mailToAdress = "a.zolotarev@analit.net";
 #endif
-            var lease = Client.FindByIP(hostAdress);
-            if (lease == null)
-            {
-                messageText.AppendLine(string.Format("Пришел запрос на страницу WarningPackageId от стороннего клиента (IP: {0})", hostAdress));
-            }
-            else
-            {
-                messageText.AppendLine(string.Format("Пришел запрос на страницу WarningPackageId от клиента {0}", lease.Endpoint.Client.Id.ToString("00000")));
-                if (lease.Endpoint.Switch != null)
-                {
-                    messageText.AppendLine("Свич: " + lease.Endpoint.Switch.Name);
-                }
-                else
-                {
-                    messageText.AppendLine("Свич неопределен");
-                }
-                if (lease.Endpoint.Port != null)
-                {
-                    messageText.AppendLine("Порт: " + lease.Endpoint.Port);
-                }
-                else
-                {
-                    messageText.AppendLine("Порт неопределен");
-                }
-            }
-            var message = new MailMessage();
-            message.To.Add(mailToAdress);
-            message.Subject = "Преадресация на страницу WarningPackageId";
-            message.From = new MailAddress("service@analit.net");
-            message.Body = messageText.ToString();
-            var smtp = new SmtpClient("box.analit.net");
-            smtp.Send(message);
-        }
+			var lease = Client.FindByIP(hostAdress);
+			if (lease == null)
+			{
+				messageText.AppendLine(string.Format("Пришел запрос на страницу WarningPackageId от стороннего клиента (IP: {0})", hostAdress));
+			}
+			else
+			{
+				messageText.AppendLine(string.Format("Пришел запрос на страницу WarningPackageId от клиента {0}", lease.Endpoint.Client.Id.ToString("00000")));
+				if (lease.Endpoint.Switch != null)
+				{
+					messageText.AppendLine("Свич: " + lease.Endpoint.Switch.Name);
+				}
+				else
+				{
+					messageText.AppendLine("Свич неопределен");
+				}
+				if (lease.Endpoint.Port != null)
+				{
+					messageText.AppendLine("Порт: " + lease.Endpoint.Port);
+				}
+				else
+				{
+					messageText.AppendLine("Порт неопределен");
+				}
+			}
+			var message = new MailMessage();
+			message.To.Add(mailToAdress);
+			message.Subject = "Преадресация на страницу WarningPackageId";
+			message.From = new MailAddress("service@analit.net");
+			message.Body = messageText.ToString();
+			var smtp = new SmtpClient("box.analit.net");
+			smtp.Send(message);
+		}
 	}
 }
