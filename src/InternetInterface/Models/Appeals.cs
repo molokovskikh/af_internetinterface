@@ -38,8 +38,9 @@ namespace InternetInterface.Models
 
 		public virtual string GetTransformedAppeal()
 		{
-		   var appeal = HttpUtility.HtmlEncode(Appeal).Replace("\r\n", "<br/>");
-			return AppealHelper.TnasformRedmineToLink(appeal);
+			return AppealHelper.GetTransformedAppeal(Appeal);
+			/*var appeal = HttpUtility.HtmlEncode(Appeal).Replace("\r\n", "<br/>");
+			return AppealHelper.TnasformRedmineToLink(appeal);*/
 		}
 
 		public static void CreareAppeal(string message, Client client, AppealType type)

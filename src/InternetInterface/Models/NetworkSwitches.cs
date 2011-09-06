@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
 using Castle.Components.Validator;
+using Common.Web.Ui.Helpers;
 using InternetInterface.Helpers;
 using InternetInterface.Models.Universal;
 
@@ -34,6 +35,14 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual int PortCount { get; set; }
 
+		[Property]
+		public virtual string Comment { get; set; }
+
+		public virtual string GetCommentForWeb()
+		{
+			return AppealHelper.GetTransformedAppeal(Comment);
+		}
+
 
 		public virtual string GetNormalIp()
 		{
@@ -48,7 +57,7 @@ namespace InternetInterface.Models
 		public static string SetProgramIp(string ip)
 		{
 			var valid = new Regex(IPRegExp);
-			if (valid.IsMatch(ip))
+			if (!string.IsNullOrEmpty(ip) && valid.IsMatch(ip))
 			{
 				var splited = ip.Split('.');
 				var fg = new byte[8];

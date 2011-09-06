@@ -1,87 +1,95 @@
-﻿    <style type="text/css">
-        #Name
-        {
-            width: 300px;
-        }
-        #ChZone
-        {
-            width: 300px;
-        }
-        #IP
-        {
-            width: 300px;
-        }
-        #MAC
-        {
-            width: 300px;
-        }
-    </style>
+﻿	<style type="text/css">
+		#Name
+		{
+			width: 300px;
+		}
+		#ChZone
+		{
+			width: 300px;
+		}
+		#IP
+		{
+			width: 300px;
+		}
+		#MAC
+		{
+			width: 300px;
+		}
+	</style>
 
 <div id="main">
 <div id="container">
-    <div id="block-tables" class="block">
-                            <%if IsDefined("Editing"): %>
-                            <%if (not Editing): %>
-                  <form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Switches/RegisterSwitch" >
-                            <%else: %>
-                  <form class="form" id="RegistrationFormEdit" name="RegistrationForm" method="post" action="${siteroot}/Switches/EditSwitch" >
-                              <%end %><%end %>
-        <input type="hidden" name="switchid" value="${Switch.Id}" />
-        <table class="table" style="width:100%; " border="0" id="PartnerInfoTable">
-            <thead>
-                <th colspan = 4>Редактирование коммутатора</th>
-            </thead>
-            <tbody>
-                <tr>
-                    <td >Название</td>
-                    <td colspan = 2> <input id="Name" type="text" value="${Switch.Name}" name="Switch.Name" /> </td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td >IP адрес</td>
-                    <td colspan = 2> <input id="Ip" type="text" value="${Switch.GetNormalIp()}" name="Switch.IP" /> </td>
-                                        <td>
-                      ${VB.GetBlock("IP")}
-                    </td>
-                </tr>
-                <tr>
-                    <td >MAC адрес</td>
-                    <td colspan = 2> <input id="Mac" type="text" value="${Switch.Mac}" name="Switch.Mac" /> </td>
-                    <td>
-                      ${VB.GetBlock("Mac")}
-                    </td>
-                </tr>
-                <tr>
-                    <td >Зона</td>
-                    <td colspan = 2>
-                          <select name="Zoned" id="ChZone" >
-                          <%
-                          for i, Zone in enumerate(Zones): 
-                          %>
-                          <option id="Zone${Zone.Id}" value="${Zone.Id}" ${"selected" if (Zone.Id == Switch.Zone.Id)}> ${Zone.Name} </option>
-                          <% end %>
-                          </select>
-                    </td>
-                    <td></td>
-                </tr>
-                <tr>
-                       <td colspan = 3>
-                       <button type="submit" id="RegisterPartnerButton" class="button" >
-                       <img alt="Save" src="../Images/application_edit.png">
-                                                 <%if IsDefined("Editing"): %>
-                                                 <%if (not Editing): %>
-                                                 Зарегистрировать
-                                                 <%else: %>
-                                                 Изменить
-                                                 <%end %>
-                                                 <%end %>
-                       </button>
-                       </td>
-                       <td></td>
-                </tr>
-            </tbody>
-        </table>
-        </form>
-    </div>
+	<div id="block-tables" class="block">
+							<%if IsDefined("Editing"): %>
+							<%if (not Editing): %>
+				  <form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Switches/RegisterSwitch" >
+							<%else: %>
+				  <form class="form" id="RegistrationFormEdit" name="RegistrationForm" method="post" action="${siteroot}/Switches/EditSwitch" >
+							  <%end %><%end %>
+		<input type="hidden" name="switchid" value="${Switch.Id}" />
+		<table class="table" style="width:100%; " border="0" id="PartnerInfoTable">
+			<thead>
+				<th colspan = 4>Редактирование коммутатора</th>
+			</thead>
+			<tbody>
+				<tr>
+					<td >Название</td>
+					<td colspan = 2> <input id="Name" type="text" value="${Switch.Name}" name="Switch.Name" /> </td>
+					<td></td>
+				</tr>
+				<tr>
+					<td >IP адрес</td>
+					<td colspan = 2> <input id="Ip" type="text" value="${Switch.GetNormalIp()}" name="Switch.IP" /> </td>
+										<td>
+					  ${VB.GetBlock("IP")}
+					</td>
+				</tr>
+				<tr>
+					<td >MAC адрес</td>
+					<td colspan = 2> <input id="Mac" type="text" value="${Switch.Mac}" name="Switch.Mac" /> </td>
+					<td>
+					  ${VB.GetBlock("Mac")}
+					</td>
+				</tr>
+				<tr>
+					<td >Зона</td>
+					<td colspan = 2>
+						  <select name="Zoned" id="ChZone" >
+						  <%
+						  for i, Zone in enumerate(Zones): 
+						  %>
+						  <option id="Zone${Zone.Id}" value="${Zone.Id}" ${"selected" if (Zone.Id == Switch.Zone.Id)}> ${Zone.Name} </option>
+						  <% end %>
+						  </select>
+					</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>
+						<label for="textField"><b>Введите текст обращения :</b></label>
+					</td>
+					<td colspan>
+						<textarea id="textField" name="Switch.Comment" rows="5" cols="80%">${Switch.Comment}</textarea>
+					</td>
+				</tr>
+				<tr>
+					   <td colspan = 3>
+					   <button type="submit" id="RegisterPartnerButton" class="button" >
+					   <img alt="Save" src="../Images/application_edit.png">
+												 <%if IsDefined("Editing"): %>
+												 <%if (not Editing): %>
+												 Зарегистрировать
+												 <%else: %>
+												 Изменить
+												 <%end %>
+												 <%end %>
+					   </button>
+					   </td>
+					   <td></td>
+				</tr>
+			</tbody>
+		</table>
+		</form>
+	</div>
 </div>
 </div>

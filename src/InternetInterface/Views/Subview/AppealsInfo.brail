@@ -16,26 +16,26 @@
 				<td>
 				   <button type="submit" id="Button2" class="button">
 				  <img alt="Save" src="../Images/tick.png">Зарегистрировать</button>
-            </form>
-            <%if PartnerAccessSet.AccesPartner("SSI"): %>
-                    <%if appealType == 1: %>
-                    <a href="${Siteroot}/Search/Redirect?filter.ClientCode=${ClientCode}&filter.appealType=3">
-                        <button type="button" id="Button1" class="button">
-				        <img alt="Save" src="../Images/tick.png">Показать системные обращения</button>
-                    </a>
-                    <%else: %>
-                    <a href="${Siteroot}/Search/Redirect?filter.ClientCode=${ClientCode}&filter.appealType=1">
-                        <button type="button" id="Button3" class="button">
-				        <img alt="Save" src="../Images/tick.png">Показать пользовательские обращения</button>
-                    </a>
-                    <%end %>
-                  <form method=get action="${Siteroot}/UserInfo/Leases">
-                  <input type="hidden" name="filter.ClientCode" value="${ClientCode}" />
-                  <button type="submit" id="Statistic" class="button">
+			</form>
+			<%if PartnerAccessSet.AccesPartner("SSI"): %>
+					<%if appealType == 1: %>
+					<a href="${Siteroot}/Search/Redirect?filter.ClientCode=${ClientCode}&filter.appealType=3">
+						<button type="button" id="Button1" class="button">
+						<img alt="Save" src="../Images/tick.png">Показать системные обращения</button>
+					</a>
+					<%else: %>
+					<a href="${Siteroot}/Search/Redirect?filter.ClientCode=${ClientCode}&filter.appealType=1">
+						<button type="button" id="Button3" class="button">
+						<img alt="Save" src="../Images/tick.png">Показать пользовательские обращения</button>
+					</a>
+					<%end %>
+				  <form method=get action="${Siteroot}/UserInfo/Leases">
+				  <input type="hidden" name="filter.ClientCode" value="${ClientCode}" />
+				  <button type="submit" id="Statistic" class="button">
 				  <img alt="Save" src="../Images/tick.png">Показать статистику работы</button>
-                  </form>
-                <%end %>
-                </td>
+				  </form>
+				<%end %>
+				</td>
 			</tr>
 		   </tbody>
 		</table>
@@ -50,11 +50,11 @@
 				<tr>
 					<td>${item.GetTransformedAppeal()}</td>
 					<td>${item.Date}</td>
-                    <%if item.Partner != null: %>
+					<%if item.Partner != null: %>
 					<td>${item.Partner.Name}</td>
-                    <%else: %>
-                    <td></td>
-                    <%end %>
+					<%else: %>
+					<td></td>
+					<%end %>
 				</tr>
 			<%end %>
 		  </tbody>

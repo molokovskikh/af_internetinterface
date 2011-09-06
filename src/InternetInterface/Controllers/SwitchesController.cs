@@ -18,11 +18,12 @@ namespace InternetInterface.Controllers
 		public void ShowSwitches()
 		{
 			IList<NetworkSwitches> switches = new List<NetworkSwitches>();
-			ARSesssionHelper<NetworkSwitches>.QueryWithSession(session => {
+			ARSesssionHelper<NetworkSwitches>.QueryWithSession(session =>
+			{
 				var query =
 					session.CreateSQLQuery(
-						@"SELECT NS.id, NS.Mac, inet_ntoa(NS.IP) as Ip, NS.Name, NS.Zone, NS.PortCount FROM internet.NetworkSwitches NS")
-						.AddEntity(typeof (NetworkSwitches)).List<NetworkSwitches>();
+						@"SELECT NS.id, NS.Mac, inet_ntoa(NS.IP) as Ip, NS.Name, NS.Zone, NS.PortCount, NS.Comment FROM internet.NetworkSwitches NS")
+						.AddEntity(typeof(NetworkSwitches)).List<NetworkSwitches>();
 				switches = query;
 				return query;
 			});
