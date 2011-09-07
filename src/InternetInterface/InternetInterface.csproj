@@ -303,6 +303,7 @@
     <Compile Include="Models\Partner.cs" />
     <Compile Include="Models\PhysicalClients.cs" />
     <Compile Include="Models\UserCategorie.cs" />
+    <Compile Include="Models\UserWriteOff.cs" />
     <Compile Include="Models\WriteOff.cs" />
     <Compile Include="Models\Zone.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

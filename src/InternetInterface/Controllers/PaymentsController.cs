@@ -185,6 +185,12 @@ namespace AdminInterface.Controllers
 		public void Delete(uint id)
 		{
 			var payment = BankPayment.Find(id);
+			var client = Client.Queryable.FirstOrDefault(c => c.LawyerPerson == payment.Payer);
+			new UserWriteOff {
+			                 	Client = client,
+								Sum = payment.Sum,
+								Date = DateTime.Now,
+			                 }.Save();
 			payment.Delete();
 			RedirectToReferrer();
 		}
