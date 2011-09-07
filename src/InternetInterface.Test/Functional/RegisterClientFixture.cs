@@ -7,6 +7,7 @@ using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 using WatiN.Core;
+using WatiN.Core.Native.Windows;
 
 namespace InternetInterface.Test.Functional
 {
@@ -19,6 +20,7 @@ namespace InternetInterface.Test.Functional
 		{
 			using (var browser = Open("Register/RegisterClient.rails"))
 			{
+				browser.ShowWindow(NativeMethods.WindowShowStyle.ShowDefault);
 				Assert.That(browser.Text, Is.StringContaining("Форма регистрации"));
 				Assert.That(browser.Text, Is.StringContaining("Личная информация"));
 				Assert.That(browser.Text, Is.StringContaining("Фамилия"));
@@ -56,6 +58,8 @@ namespace InternetInterface.Test.Functional
 					var sw = browser.SelectList("SelectSwitches").Options.Select(o => UInt32.Parse(o.Value)).ToList();
 					var diniedPorts = ClientEndpoints.Queryable.Where(c => c.Switch.Id == sw[1]).ToList().Select(c => c.Port).ToList();
 					browser.SelectList("SelectSwitches").SelectByValue(sw[1].ToString());
+					browser.Eval(String.Format("$('#SelectSwitches').change()"));
+					Console.WriteLine(browser.SelectList("SelectSwitches").SelectedItem);
 					var brow_accesed = browser.Elements.Where(e => e.ClassName == "access_port").Count();
 					Console.WriteLine("brow_accesed " + brow_accesed);
 					Assert.That(brow_accesed, Is.EqualTo(diniedPorts.Count));

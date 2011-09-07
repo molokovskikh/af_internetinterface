@@ -1,15 +1,16 @@
 ﻿<% import System.Linq.Enumerable from System.Core %>
-<table>
+<table style="border: 1px double Black;">
 	<tbody>
 		<%for i in range(0, 2): %>
 			<tr>
 				<%for j in range(0, 24): %>
 					<%if diniedPorts.Contains(24*i+j + 1): %>
-					<td class="access_port" style="width:18px; height:15px; background-color:#facada; padding:0px; text-align:center;">
+					<td class="access_port" style="border: 1px double Black; width:18px; height:15px; background-color:#facada; padding:0px; text-align:center;">
+					<a href="${Siteroot}/Search/Redirect?filter.ClientCode=${port_client[24*i+j + 1]}">${24*i+j + 1}</a>
 					<%else: %>
-					<td class="added_port" style="width:18px; height:15px; background-color:#b0dca3; padding:0px; text-align:center; cursor:pointer;">
-					<%end %>
+					<td class="added_port" style="border: 1px double Black; width:18px; height:15px; background-color:#b0dca3; padding:0px; text-align:center; cursor:pointer;">
 					${24*i+j + 1}
+					<%end %>
 					</td>
 				<%end %>
 			</tr>

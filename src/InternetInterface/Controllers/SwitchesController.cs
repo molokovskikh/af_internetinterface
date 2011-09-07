@@ -104,8 +104,9 @@ namespace InternetInterface.Controllers
 		public void FreePortForSwitch(string ids)
 		{
 			var id = !string.IsNullOrEmpty(ids) ? UInt32.Parse(ids) : NetworkSwitches.FindFirst().Id;
-			var diniedPorts = ClientEndpoints.Queryable.Where(c => c.Switch.Id == id).ToList().Select(c => c.Port).ToList();
-				PropertyBag["diniedPorts"] = diniedPorts;
+			var diniedPorts = ClientEndpoints.Queryable.Where(c => c.Switch.Id == id).ToList().Select(c => new { c.Port, client = c.Client.Id}).ToList();
+			PropertyBag["port_client"] = diniedPorts.ToDictionary(d => d.Port, d => d.client);
+			PropertyBag["diniedPorts"] = diniedPorts.Select(p => p.Port).ToList();
 			CancelLayout();
 		}
 
