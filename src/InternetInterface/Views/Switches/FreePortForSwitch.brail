@@ -1,5 +1,5 @@
 ﻿<% import System.Linq.Enumerable from System.Core %>
-<table style="border: 1px double Black;">
+<table style="border: 1px double Black; border-collapse:collapse;">
 	<tbody>
 		<%for i in range(0, 2): %>
 			<tr>

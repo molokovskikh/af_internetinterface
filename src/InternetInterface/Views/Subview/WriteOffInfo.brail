@@ -1,29 +1,29 @@
 ﻿<style type="text/css">
-    .editBut
-    {
-        padding:3px 10px 3px 7px;
-        background-color: #ccdfcc;
-        border:1px solid #bfbfbf;
-        cursor:pointer;
-        line-height: 1.3em;
-        font-weight:bold;
-        }
+	.editBut
+	{
+		padding:3px 10px 3px 7px;
+		background-color: #ccdfcc;
+		border:1px solid #bfbfbf;
+		cursor:pointer;
+		line-height: 1.3em;
+		font-weight:bold;
+		}
 </style>
 <style type="text/css">
-    #itogo
-    {
-        color:#274e26;
-        font-size:16px;
-        }
-    .group_link a
-    {
-        color:#274e26;
-        }
-            .group_link a:hover
-    {
-        font-weight:bold;
-        color:#030c02;
-        }
+	#itogo
+	{
+		color:#274e26;
+		font-size:16px;
+		}
+	.group_link a
+	{
+		color:#274e26;
+		}
+			.group_link a:hover
+	{
+		font-weight:bold;
+		color:#030c02;
+		}
 </style>
 <div style="clear:both;">
 <span id="itogo"><b>Всего списано: ${writeOffSum}</b></span>
@@ -53,7 +53,7 @@
 		</tr>
 		<%end %>
 	<% end %>
-    <tr><td></td></tr>
+	<tr><td></td></tr>
 	</tbody>
 	</table>
 </div>

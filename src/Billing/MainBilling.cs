@@ -116,10 +116,6 @@ namespace Billing
 												.Add(Restrictions.Eq("PC.ConnectionPaid", false))
 												.Add(Restrictions.IsNotNull("BeginWork"))
 												.Add(Restrictions.IsNotNull("PhysicalClient")));
-			/*var newClients = Client.Queryable.Where(
-				c => c.PhysicalClient != null &&
-				c.PhysicalClient.ConnectionPaid == false &&
-				c.BeginWork != null).ToList();*/
 			foreach (var newClient in newClients)
 			{
 				var phisCl = newClient.PhysicalClient;
