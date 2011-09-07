@@ -25,6 +25,9 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool BillingAccount { get; set; }
 
+		[Property]
+		public virtual string Comment { get; set; }
+
 		/*public virtual string GetDate(string grouped)
 		{
 			if (grouped == "month")

@@ -15,3 +15,6 @@ ALTER TABLE `internet`.`UserWriteOff` RENAME TO `internet`.`UserWriteOffs`;
 
 ALTER TABLE `internet`.`UserWriteOffs` ADD COLUMN `BillingAccount` TINYINT(1) UNSIGNED NOT NULL AFTER `Client`;
 
+ALTER TABLE `internet`.`UserWriteOffs` ADD COLUMN `Comment` VARCHAR(255) NOT NULL AFTER `BillingAccount`;
+
+update internet.lawyerperson set Recipient = 7;

@@ -190,6 +190,7 @@ namespace AdminInterface.Controllers
 			                 	Client = client,
 								Sum = payment.Sum,
 								Date = DateTime.Now,
+								Comment = "Списание в связи с удалением баковского платежа"
 			                 }.Save();
 			payment.Delete();
 			RedirectToReferrer();
