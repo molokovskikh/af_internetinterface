@@ -13,7 +13,7 @@
 		</p>
 		<p><label for="phone_">Номер телефона:</label><input type="text" id="phone_" name="application.ApplicantPhoneNumber" value="${application.ApplicantPhoneNumber if IsDefined( "application" )}" size="25" />
 		<% if IsDefined ( "application" ) and application.InDictionaryError ( "ApplicantPhoneNumber" ) : %><br/><span class="error">${application.GetValidationError("ApplicantPhoneNumber")}</span><% end %>
-        <br />
+		<br />
 		<span class="example">Например: "8-000-000-00-00"</span>
 		</p>
 		<p><label for="email">Электронная почта:</label>
@@ -21,71 +21,71 @@
 			<% if IsDefined ( "application" ) and application.InDictionaryError ( "ApplicantEmail" ) : %>
 				<span class="error">${application.GetValidationError("ApplicantEmail")}</span>
 			<% end %>
-            <br />
+			<br />
 			<span class="example">Необязательный параметр</span>
 		</p>
-        <p>
-			    <label>Адрес проживания:</label>
-        </p>
-        <p>
-                <label for="City">Город:</label>
-			    <input type="text" id="City" name="application.City" value="${application.City if IsDefined( "application" )}" size="30" />
-        </p>
-        <p>
-            <label for="residence">Улица:</label>
+		<p>
+				<label>Адрес проживания:</label>
+		</p>
+		<p>
+				<label for="City">Город:</label>
+				<input type="text" id="City" name="application.City" value="${application.City if IsDefined( "application" )}" size="30" />
+		</p>
+		<p>
+			<label for="residence">Улица:</label>
 			<input type="text" id="residence" name="application.Street" value="${application.Street if IsDefined( "application" )}" size="30" />
 			<% if IsDefined ( "application" ) and application.InDictionaryError ( "Street" ) : %>
-            <br />
+			<br />
 				<span class="error">${application.GetValidationError("Street")}</span>
-                <% else: %>
+				<% else: %>
 
-                <%end %>
-          </p>
-          <div style="position:absolute">
-            <div style="float:left">
-                <label class="adress_Label" for="House" style="padding-left:0px">Дом:</label>
-			    <input type="text" id="House" name="application.House" value="${application.House if IsDefined( "application" )}" size="10" />
-			    <% if IsDefined ( "application" ) and application.InDictionaryError ( "House" ) : %>
-                <br />
-				    <span class="error">${application.GetValidationError("House")}</span>
-				    <% else: %>
+				<%end %>
+		  </p>
+		  <div style="position:absolute">
+			<div style="float:left">
+				<label class="adress_Label" for="House" style="padding-left:0px">Дом:</label>
+				<input type="text" id="House" name="application.House" value="${application.House if IsDefined( "application" )}" size="10" />
+				<% if IsDefined ( "application" ) and application.InDictionaryError ( "House" ) : %>
+				<br />
+					<span class="error">${application.GetValidationError("House")}</span>
+					<% else: %>
 
-                    <%end %>
-            </div>
-            <div style="float:left">
-                <label class="adress_Label" for="CaseHouse">Корпус:</label>
-			    <input type="text" id="CaseHouse" name="application.CaseHouse" value="${application.CaseHouse if IsDefined( "application" )}" size="10" />
-            </div>
-            <div style="float:left">
-                <label class="adress_Label" for="Apartment">Квартира:</label>
-			    <input type="text" id="Apartment" name="application.Apartment" value="${application.Apartment if IsDefined( "application" )}" size="10" />
-			    <% if IsDefined ( "application" ) and application.InDictionaryError ( "Apartment" ) : %>
-                <br />
-				    <span class="error">${application.GetValidationError("Apartment")}</span>
-				    <% else: %>
+					<%end %>
+			</div>
+			<div style="float:left">
+				<label class="adress_Label" for="CaseHouse">Корпус:</label>
+				<input type="text" id="CaseHouse" name="application.CaseHouse" value="${application.CaseHouse if IsDefined( "application" )}" size="10" />
+			</div>
+			<div style="float:left">
+				<label class="adress_Label" for="Apartment">Квартира:</label>
+				<input type="text" id="Apartment" name="application.Apartment" value="${application.Apartment if IsDefined( "application" )}" size="10" />
+				<% if IsDefined ( "application" ) and application.InDictionaryError ( "Apartment" ) : %>
+				<br />
+					<span class="error">${application.GetValidationError("Apartment")}</span>
+					<% else: %>
 
-                    <%end %>
-            </div>
-        </div> 
-        <br />
-        <br />
-        <p>
-            <label for="Entrance">Подъезд:</label>
+					<%end %>
+			</div>
+		</div> 
+		<br />
+		<br />
+		<p>
+			<label for="Entrance">Подъезд:</label>
 			<input type="text" id="Entrance" name="application.Entrance" value="${application.Entrance if IsDefined( "application" )}" size="10" />
 			<% if IsDefined ( "application" ) and application.InDictionaryError ( "Entrance" ) : %>
-                <br />
+				<br />
 				<span class="error">${application.GetValidationError("Entrance")}</span>
 				<% end %>
-       </p>
-        <p>
-            <label for="Floor">Этаж:</label>
+	   </p>
+		<p>
+			<label for="Floor">Этаж:</label>
 			<input type="text" id="Floor" name="application.Floor" value="${application.Floor if IsDefined( "application" )}" size="10" />
 			<% if IsDefined ( "application" ) and application.InDictionaryError ( "Floor" ) : %>
-                <br />
+				<br />
 				<span class="error">${application.GetValidationError("Floor")}</span>
 				<% end %>
-         </p>
-          <span class="example">Фактический адрес для подключения к интернету</span>
+		 </p>
+		  <span class="example">Фактический адрес для подключения к интернету</span>
 		<p><label for="tariff">Тарифный план:</label>
 			<select id="tariff" name="application.Tariff.Id">
 			<% for tariff in tariffs : %>
@@ -100,17 +100,17 @@
 		</p>
 		<p id="last"><input id="appbut" type="submit" value="Отправить" /></p>
 <script type="text/javascript">
-    $(function () {
-        $("#residence").autocomplete("/assist", {
-            delay: 100,
-            minChars: 2,
-            selectFirst: true,
-            matchSubset: 1,
-            cacheLength: 10,
-            selectOnly: true,
-            maxItemsToShow: 6
-        });
-    });
+	$(function () {
+		$("#residence").autocomplete("/assist", {
+			delay: 100,
+			minChars: 2,
+			selectFirst: true,
+			matchSubset: 1,
+			cacheLength: 10,
+			selectOnly: true,
+			maxItemsToShow: 6
+		});
+	});
 </script>
 		</form>
 	</div>

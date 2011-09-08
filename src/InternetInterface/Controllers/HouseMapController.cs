@@ -300,24 +300,24 @@ namespace InternetInterface.Controllers
 		[return: JSONReturnBinder]
 		public object GetApartment()
 		{
-			var house = Request.Form["House"];
-			var apartment = Int32.Parse(Request.Form["apartment_num"]);
 			try
 			{
+				var house = Request.Form["House"];
+				var apartment = Int32.Parse(Request.Form["apartment_num"]);
 				var apps = Apartment.Queryable.Where(a => a.Number == apartment && a.House.Id == Int32.Parse(house)).
 					ToList().FirstOrDefault();
 				//var retObj = new {status = string.Empty};
 				if (apps != null)
 				{
 					if (apps.Status != null)
-						return new { status = apps.Status.Id, apps.LastInternet, apps.LastTV };
+						return new {status = apps.Status.Id, apps.LastInternet, apps.LastTV};
 					else
-						return new { apps.LastInternet, apps.LastTV };
+						return new {apps.LastInternet, apps.LastTV};
 				}
 			}
 			catch (Exception ex)
 			{
-				_log.Error(string.Format("Возникла ошибка GetApartment, номер квартиры: {0}, номер дома: {1}", apartment, house));
+				_log.Error(string.Format("Возникла ошибка GetApartment, номер квартиры: {0}, номер дома: {1}", Request.Form["apartment_num"], Request.Form["House"]));
 			}
 			return new {status = 0};
 		}
