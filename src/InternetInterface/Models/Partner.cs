@@ -72,16 +72,16 @@ namespace InternetInterface.Models
 
 		public static bool RegistrLogicPartner(Partner _Partner, ValidatorRunner validator)
 		{
-				if (validator.IsValid(_Partner))
-				{
-					_Partner.RegDate = DateTime.Now;
-					_Partner.SaveAndFlush();
-					return true;
-				}
-				else
-				{
-					return false;
-				}
+			if (validator.IsValid(_Partner))
+			{
+				_Partner.RegDate = DateTime.Now;
+				_Partner.SaveAndFlush();
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 	}
 

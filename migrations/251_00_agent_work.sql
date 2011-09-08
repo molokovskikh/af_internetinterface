@@ -3,3 +3,6 @@ ALTER TABLE `internet`.`PaymentsForAgent` ADD COLUMN `Action` INT(10) UNSIGNED A
     REFERENCES `AgentTariffs` (`Id`)
     ON DELETE SET NULL
     ON UPDATE CASCADE;
+
+	
+	ALTER TABLE `internet`.`requests` DROP COLUMN `Registered`;

@@ -14,7 +14,7 @@
 		$("#myModal_IT").css({ opacity: 0.0 });
 		$("#myModal_IT").width(700);
 		$('.reveal-modal').css('left','45%');
-		$('.big-link').click(function () {
+		$('.apartment_link').click(function () {
 			var apartment_num = $(this).parent().children('input:first').val();
 			$('#apartment_div').val(apartment_num);
 			var req = {};
@@ -315,7 +315,7 @@
 			<%if (request != null): %>
 			<td>${i+1}
 			<%else: %>
-			<td><a href="#" class="big-link" data-reveal-id="myModal_IT" > ${i+1}</a>
+			<td><a href="#" class="apartment_link" data-reveal-id="myModal_IT" > ${i+1}</a>
 			<%end %>
 			<%else: %>
 			<td>${i+1}

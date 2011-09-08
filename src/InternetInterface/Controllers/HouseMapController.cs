@@ -317,9 +317,10 @@ namespace InternetInterface.Controllers
 			}
 			catch (Exception ex)
 			{
-				_log.Error(string.Format("Возникла ошибка GetApartment, номер квартиры: {0}, номер дома: {1}", Request.Form["apartment_num"], Request.Form["House"]));
+				_log.Error(string.Format("Возникла ошибка GetApartment, номер квартиры: {0}, номер дома: {1}, оператор: {2}",
+				                         Request.Form["apartment_num"], Request.Form["House"], InitializeContent.partner.Name));
 			}
-			return new {status = 0};
+			return new { status = 0 };
 		}
 
 

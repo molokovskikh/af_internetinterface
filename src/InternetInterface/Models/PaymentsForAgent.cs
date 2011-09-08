@@ -5,6 +5,7 @@ using System.Web;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using InternetInterface.Controllers.Filter;
+using InternetInterface.Helpers;
 
 namespace InternetInterface.Models
 {
@@ -35,8 +36,22 @@ namespace InternetInterface.Models
 									Agent = agent,
 									Comment = coment,
 									RegistrationDate = DateTime.Now,
-									Sum = AgentTariff.GetPriceForAction(action)
+									Sum = AgentTariff.GetPriceForAction(action),
+									Action = AgentTariff.GetAction(action)
 								 }.Save();
+		}
+
+		public static List<PaymentsForAgent> GetPayments(Partner agent, Week interval)
+		{
+			var simplePayments =
+				Queryable.Where(p => p.RegistrationDate >= interval.StartDate && p.RegistrationDate <= interval.EndDate).ToList();
+			var clientWhoWorks =
+				Client.Queryable.Where(
+					c =>
+					c.BeginWork != null && c.BeginWork.Value >= interval.StartDate && c.BeginWork.Value <= interval.EndDate &&
+					c.PhysicalClient != null && c.PhysicalClient.Request != null).
+					ToList();
+			return new List<PaymentsForAgent>();
 		}
 	}
 }
