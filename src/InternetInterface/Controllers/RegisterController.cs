@@ -111,7 +111,11 @@ namespace InternetInterface.Controllers
 					foreach (var requestse in Requests.FindAllByProperty("Id", requestID))
 					{
 						if (requestse.Registrator != null)
-							PaymentsForAgent.CreatePayment(AgentActions.ConnectClient, "Зачисление за подключенного клиента", requestse.Registrator);
+						{
+							PaymentsForAgent.CreatePayment(AgentActions.ConnectClient, "Зачисление за подключенного клиента",
+							                               requestse.Registrator);
+							requestse.SetRequestBoduses();
+						}
 					}
 				}
 				Flash["WhoConnected"] = client.WhoConnected;

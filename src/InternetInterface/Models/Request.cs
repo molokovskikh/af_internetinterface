@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Castle.ActiveRecord.Linq;
 using Castle.Components.Validator;
+using InternetInterface.Controllers.Filter;
+using InternetInterface.Helpers;
 
 namespace InternetInterface.Models
 {
@@ -72,8 +76,54 @@ namespace InternetInterface.Models
 		[BelongsTo]
 		public virtual Partner Registrator { get; set; }
 
+		[Property]
+		public virtual DateTime RegDate { get; set; }
+
+		[Property]
+		public virtual decimal VirtualBonus { get; set; }
+		
+		[Property]
+		public virtual decimal VirtualWriteOff { get; set; }
+
 		/*[Property]
 		public virtual bool Registered { get; set; }*/
+
+		public static List<Requests> GetRequestsForInterval(Week Interval)
+		{
+			return Queryable.Where(
+				r => r.RegDate >= Interval.StartDate && r.RegDate <= Interval.EndDate && r.Registrator == InitializeContent.partner).
+				ToList();
+		}
+
+		public virtual void SetRequestBoduses()
+		{
+			var bonusForRequest = 0m;
+			var Interval = DateHelper.GetWeekInterval(RegDate);
+			var requestsInInterval = GetRequestsForInterval(Interval);
+			if (requestsInInterval.Count >= 20)
+				bonusForRequest += 100m;
+			else
+			{
+				if (requestsInInterval.Count >= 10)
+					bonusForRequest += 50m;
+			}
+			var weekBonus = true;
+			for (int i = 0; i < 5; i++)
+			{
+				if (requestsInInterval.Count(r => r.RegDate.Date == Interval.StartDate.AddDays(i).Date) <= 0)
+					weekBonus = false;
+			}
+			if (weekBonus)
+				bonusForRequest += 50m;
+			foreach (var requestse in requestsInInterval)
+			{
+				if (requestse.VirtualBonus > 0m && requestse.VirtualBonus < bonusForRequest)
+				{
+					requestse.VirtualWriteOff += bonusForRequest - requestse.VirtualBonus;
+				}
+				requestse.VirtualBonus = bonusForRequest;
+			}
+		}
 	}
 
 }

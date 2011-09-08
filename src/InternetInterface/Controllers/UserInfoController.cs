@@ -327,9 +327,12 @@ namespace InternetInterface.Controllers
 						clientEntPoint.SaveAndFlush();
 						if (client.PhysicalClient != null && client.PhysicalClient.Request != null &&
 							client.PhysicalClient.Request.Registrator != null)
+						{
 							PaymentsForAgent.CreatePayment(AgentActions.ConnectClient,
-														   "Зачисление за подключение клиента",
-														   client.PhysicalClient.Request.Registrator);
+							                               "Зачисление за подключение клиента",
+							                               client.PhysicalClient.Request.Registrator);
+							client.PhysicalClient.Request.SetRequestBoduses();
+						}
 					}
 					if (brigadChangeFlag)
 					{
