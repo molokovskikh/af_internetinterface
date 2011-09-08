@@ -104,7 +104,7 @@ namespace InforoomInternet.Controllers
 #endif*/
 			var lease = Client.FindByIP(hostAdress);
 #if DEBUG
-			/*lease = new Lease {
+			lease = new Lease {
 				Endpoint = new ClientEndpoints {
 					Client = new Client {
 						Disabled = false,
@@ -116,7 +116,7 @@ namespace InforoomInternet.Controllers
 						}
 					}
 				}
-			};*/
+			};
 #endif
 			if (lease == null)
 			{
@@ -133,7 +133,7 @@ namespace InforoomInternet.Controllers
 					Redirecter.RedirectRoot(Context, this);
 					//RedirectToSiteRoot();
 				else
-					RedirectToUrl(url);
+					RedirectToUrl(string.Format("http://{0}", url));
 				return;
 			}
 
