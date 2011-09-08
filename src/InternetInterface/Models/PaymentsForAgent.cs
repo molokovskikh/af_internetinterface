@@ -26,6 +26,9 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual DateTime RegistrationDate { get; set; }
 
+		[BelongsTo]
+		public virtual AgentTariff Action { get; set; }
+
 		public static void CreatePayment(string action, string coment, Partner agent)
 		{
 			new PaymentsForAgent {
