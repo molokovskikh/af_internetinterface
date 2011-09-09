@@ -41,40 +41,14 @@ namespace InternetInterface.Models
 								 }.Save();
 		}
 
-		/*public static List<PaymentsForAgent> GetPayments(Partner agent, Week interval)
+		public static void CreatePayment(Partner agent, string comment, decimal sum)
 		{
-			var simplePayments =
-				Queryable.Where(p => p.RegistrationDate >= interval.StartDate && p.RegistrationDate <= interval.EndDate).ToList();
-			var requestWhoWorks =
-				Client.Queryable.Where(
-					c =>
-					c.BeginWork != null && c.BeginWork.Value >= interval.StartDate && c.BeginWork.Value <= interval.EndDate &&
-					c.PhysicalClient != null && c.PhysicalClient.Request != null).
-					ToList().Select(c => c.PhysicalClient.Request);
-			var bonusForRequest = 0m;
-			foreach (var requestWhoWork in requestWhoWorks)
-			{
-				var Interval = DateHelper.GetWeekInterval(requestWhoWork.RegDate);
-				var requestsInInterval =
-					Requests.Queryable.Where(r => r.RegDate >= Interval.StartDate && r.RegDate <= Interval.EndDate).
-						ToList();
-				if (requestsInInterval.Count >= 20)
-					bonusForRequest += 100m;
-				else
-				{
-					if (requestsInInterval.Count >= 10)
-						bonusForRequest += 50m;
-				}
-				var weekBonus = true;
-				for (int i = 0; i < 5; i++)
-				{
-					if (requestsInInterval.Count(r => r.RegDate.Date == Interval.StartDate.AddDays(i).Date) <= 0)
-						weekBonus = false;
-				}
-				if (weekBonus)
-					bonusForRequest += 50m;
-			}
-			return new List<PaymentsForAgent>();
-		}*/
+			new PaymentsForAgent {
+									Agent = agent,
+									RegistrationDate = DateTime.Now,
+									Sum = sum,
+									Comment = comment
+								 }.Save();
+		}
 	}
 }

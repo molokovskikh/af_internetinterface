@@ -328,10 +328,21 @@ namespace InternetInterface.Controllers
 						if (client.PhysicalClient != null && client.PhysicalClient.Request != null &&
 							client.PhysicalClient.Request.Registrator != null)
 						{
-							PaymentsForAgent.CreatePayment(AgentActions.ConnectClient,
-							                               "Зачисление за подключение клиента",
-							                               client.PhysicalClient.Request.Registrator);
-							client.PhysicalClient.Request.SetRequestBoduses();
+							var request = client.PhysicalClient.Request;
+							var registrator = request.Registrator;
+							PaymentsForAgent.CreatePayment(AgentActions.ConnectClient, "Зачисление за подключение клиента", registrator);
+							PaymentsForAgent.CreatePayment(registrator, "Зачисление бонусов", request.VirtualBonus);
+							PaymentsForAgent.CreatePayment(registrator, "Зачисление штрафов", request.VirtualWriteOff);
+							request.PaidBonus = true;
+							request.Update();
+							if (client.AdditionalStatus != null && client.AdditionalStatus.ShortName == "Refused")
+							{
+								PaymentsForAgent.CreatePayment(request.Registrator, "Снятие штрафа за отказ клиента заявки",
+							   -AgentTariff.GetPriceForAction(AgentActions.RefusedClient));
+								client.AdditionalStatus = null;
+								client.Update();
+							}
+							//client.PhysicalClient.Request.SetRequestBoduses();
 						}
 					}
 					if (brigadChangeFlag)
@@ -497,7 +508,6 @@ namespace InternetInterface.Controllers
 		public void RequestView(uint labelId)
 		{
 			var requests = Requests.FindAll().ToList();
-												/*.Add(Expression.Eq("Label.Id", labelId)))*/
 
 			if (labelId == 0)
 				requests = requests.Where(r => r.Label == null).ToList();
@@ -531,7 +541,10 @@ namespace InternetInterface.Controllers
 					request.UpdateAndFlush();
 				}
 				if (_label.ShortComment == "Refused" && request.Registrator != null)
+				{
 					PaymentsForAgent.CreatePayment(AgentActions.DeleteRequest, "Списание за отказ заявки", request.Registrator);
+					request.SetRequestBoduses();
+				}
 			}
 			var requests = Requests.FindAll().OrderByDescending(f => f.ActionDate);
 			if (InitializeContent.partner.Categorie.ReductionName == "Agent")

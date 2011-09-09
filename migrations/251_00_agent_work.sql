@@ -11,3 +11,4 @@ ALTER TABLE `internet`.`PaymentsForAgent` ADD COLUMN `Action` INT(10) UNSIGNED A
 	
 	ALTER TABLE `internet`.`requests` ADD COLUMN `VirtualBonus` DECIMAL(10,2) NOT NULL AFTER `RegDate`,
  ADD COLUMN `VirtualWriteOff` DECIMAL(10,2) NOT NULL AFTER `VirtualBonus`;
+ALTER TABLE `internet`.`requests` ADD COLUMN `PaidBonus` TINYINT(1) UNSIGNED NOT NULL AFTER `VirtualWriteOff`;

@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Castle.ActiveRecord;
+using Castle.ActiveRecord.Framework;
 using Castle.MonoRail.Framework;
 using InternetInterface.AllLogic;
 using InternetInterface.Controllers.Filter;
@@ -114,7 +117,11 @@ namespace InternetInterface.Controllers
 						{
 							PaymentsForAgent.CreatePayment(AgentActions.ConnectClient, "Зачисление за подключенного клиента",
 							                               requestse.Registrator);
-							requestse.SetRequestBoduses();
+							PaymentsForAgent.CreatePayment(requestse.Registrator, "Зачисление бонусов", requestse.VirtualBonus);
+							PaymentsForAgent.CreatePayment(requestse.Registrator, "Зачисление штрафов", -requestse.VirtualWriteOff);
+							requestse.PaidBonus = true;
+							requestse.Update();
+							//requestse.SetRequestBoduses();
 						}
 					}
 				}
@@ -133,7 +140,11 @@ namespace InternetInterface.Controllers
 						PaymentsForAgent.CreatePayment(AgentActions.CreateClient, "Зачисление за зарегистрированного клиента", requestse.Registrator);
 					}
 					if (requestse.Label != null && requestse.Label.ShortComment == "Refused" && requestse.Registrator != null)
+					{
 						PaymentsForAgent.CreatePayment(AgentActions.CreateRequest, "Зачисление за открытую заявку", requestse.Registrator);
+						PaymentsForAgent.CreatePayment(requestse.Registrator, "Снятие штрафа за закрытие заявки",
+						                               -AgentTariff.GetPriceForAction(AgentActions.DeleteRequest));
+					}
 					//requestse.Registered = true;
 					requestse.Label = Label.Queryable.Where(l => l.ShortComment == "Registered").FirstOrDefault();
 					requestse.Update();
@@ -292,8 +303,6 @@ namespace InternetInterface.Controllers
 				Apartment = request.Apartment,
 				Entrance = request.Entrance,
 				Email = request.ApplicantEmail,
-				//PhoneNumber = request.ApplicantPhoneNumber
-				//RegDate = DateTime.Now
 			};
 			if (request.ApplicantPhoneNumber.Length == 15)
 				newPhisClient.PhoneNumber = UsersParsers.MobileTelephoneParcer(request.ApplicantPhoneNumber);
@@ -468,8 +477,10 @@ namespace InternetInterface.Controllers
 				request.Tariff = Tariff.Find(tariff);
 				request.Registrator = InitializeContent.partner;
 				request.ActionDate = DateTime.Now;
+				request.RegDate = DateTime.Now;
 				request.Operator = InitializeContent.partner;
 				request.Save();
+				request.SetRequestBoduses();
 				var apartment =
 					Apartment.Queryable.Where(
 						a => a.House == House.Find(houseNumber) && a.Number == Int32.Parse(request.Apartment)).

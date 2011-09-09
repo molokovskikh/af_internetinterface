@@ -85,6 +85,9 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual decimal VirtualWriteOff { get; set; }
 
+		[Property]
+		public virtual bool PaidBonus { get; set; }
+
 		/*[Property]
 		public virtual bool Registered { get; set; }*/
 
@@ -100,28 +103,30 @@ namespace InternetInterface.Models
 			var bonusForRequest = 0m;
 			var Interval = DateHelper.GetWeekInterval(RegDate);
 			var requestsInInterval = GetRequestsForInterval(Interval);
-			if (requestsInInterval.Count >= 20)
+			var for_bonus_requests = requestsInInterval.Where(r => r.Label == null || r.Label.ShortComment != "Refused").ToList();
+			if (for_bonus_requests.Count >= 20)
 				bonusForRequest += 100m;
 			else
 			{
-				if (requestsInInterval.Count >= 10)
+				if (for_bonus_requests.Count >= 10)
 					bonusForRequest += 50m;
 			}
 			var weekBonus = true;
 			for (int i = 0; i < 5; i++)
 			{
-				if (requestsInInterval.Count(r => r.RegDate.Date == Interval.StartDate.AddDays(i).Date) <= 0)
+				if (for_bonus_requests.Count(r => r.RegDate.Date == Interval.StartDate.AddDays(i).Date) <= 0)
 					weekBonus = false;
 			}
 			if (weekBonus)
 				bonusForRequest += 50m;
-			foreach (var requestse in requestsInInterval)
+
+			foreach (var requestse in requestsInInterval.Where(r => !r.PaidBonus))
 			{
-				if (requestse.VirtualBonus > 0m && requestse.VirtualBonus < bonusForRequest)
-				{
-					requestse.VirtualWriteOff += bonusForRequest - requestse.VirtualBonus;
-				}
 				requestse.VirtualBonus = bonusForRequest;
+			}
+			foreach (var requestse in requestsInInterval.Where(r => r.PaidBonus))
+			{
+				requestse.VirtualWriteOff = requestse.VirtualBonus - bonusForRequest;
 			}
 		}
 	}
