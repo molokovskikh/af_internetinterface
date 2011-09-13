@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Castle.ActiveRecord;
@@ -19,7 +20,11 @@ namespace InternetInterface.Models
 		[Property, ValidateNonEmpty("Введите ФИО")]
 		public virtual string ApplicantName { get; set; }
 
-		[Property, ValidateNonEmpty("Введите номер телефона"), ValidateRegExp(@"^(([0-9]{1})-([0-9]{3})-([0-9]{3})-([0-9]{2})-([0-9]{2}))", "Ошибка фотмата телефонного номера: мобильный телефн (8-***-***-**-**))")]
+		[
+			Property,
+			ValidateNonEmpty("Введите номер телефона"),
+			ValidateRegExp(@"^(([0-9]{1})-([0-9]{3})-([0-9]{3})-([0-9]{2})-([0-9]{2}))", "Ошибка фотмата телефонного номера: мобильный телефн (8-***-***-**-**))")
+		]
 		public virtual string ApplicantPhoneNumber { get; set; }
 
 		[Property, ValidateEmail("Ошибка вооба Email (должно быть adr@domen.com)")]
@@ -32,7 +37,7 @@ namespace InternetInterface.Models
 		public virtual string Street { get; set; }
 
 		[Property, ValidateNonEmpty("Введите номер дома"), ValidateInteger("Здесь должно быть число")]
-		public virtual string House { get; set; }
+		public virtual int? House { get; set; }
 
 		/// <summary>
 		/// Корпус
@@ -44,19 +49,19 @@ namespace InternetInterface.Models
 		/// Квартира
 		/// </summary>
 		[Property, ValidateNonEmpty("Введите номер квартиры"), ValidateInteger("Здесь должно быть число")]
-		public virtual string Apartment { get; set; }
+		public virtual int? Apartment { get; set; }
 
 		/// <summary>
 		/// Подъезд
 		/// </summary>
 		[Property, ValidateInteger("Здесь должно быть число")]
-		public virtual string Entrance { get; set; }
+		public virtual int? Entrance { get; set; }
 
 		/// <summary>
 		/// Этаж
 		/// </summary>
 		[Property, ValidateInteger("Здесь должно быть число")]
-		public virtual string Floor { get; set; }
+		public virtual int? Floor { get; set; }
 
 		[Property]
 		public virtual bool SelfConnect { get; set; }
@@ -82,14 +87,39 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual decimal VirtualBonus { get; set; }
 		
-		[Property]
-		public virtual decimal VirtualWriteOff { get; set; }
+		/*[Property]
+		public virtual decimal VirtualWriteOff { get; set; }*/
 
 		[Property]
 		public virtual bool PaidBonus { get; set; }
 
 		/*[Property]
 		public virtual bool Registered { get; set; }*/
+
+		/*public static IOrderedQueryable<Requests> Queryable
+		{
+			get { return ActiveRecordLinqBase<Requests>.Queryable; }
+		}*/
+
+		public virtual IDictionary GetValidateionErrors()
+		{
+			var validator = new ActiveRecordValidator(this);
+			validator.IsValid();
+			return validator.PropertiesValidationErrorMessages;
+		}
+
+		public virtual string GetValidationError(string field)
+		{
+			var errors =  GetValidateionErrors();
+			return ((ArrayList)errors[GetType().GetProperty(field)])[0].ToString();
+		}
+
+		public virtual bool InDictionaryError(string field)
+		{
+			var errors = GetValidateionErrors();
+			return errors.Contains(GetType().GetProperty(field));
+		}
+
 
 		public static List<Requests> GetRequestsForInterval(Week Interval)
 		{
@@ -111,24 +141,32 @@ namespace InternetInterface.Models
 				if (for_bonus_requests.Count >= 10)
 					bonusForRequest += 50m;
 			}
-			var weekBonus = true;
+			var weekBonus = 0;
 			for (int i = 0; i < 5; i++)
 			{
 				if (for_bonus_requests.Count(r => r.RegDate.Date == Interval.StartDate.AddDays(i).Date) <= 0)
-					weekBonus = false;
+					weekBonus++;
 			}
-			if (weekBonus)
+			if (weekBonus >= 5)
 				bonusForRequest += 50m;
 
 			foreach (var requestse in requestsInInterval.Where(r => !r.PaidBonus))
 			{
 				requestse.VirtualBonus = bonusForRequest;
 			}
+
 			foreach (var requestse in requestsInInterval.Where(r => r.PaidBonus))
 			{
-				requestse.VirtualWriteOff = requestse.VirtualBonus - bonusForRequest;
+				var payment = bonusForRequest - requestse.VirtualBonus;
+				//requestse.VirtualWriteOff = payment;
+				requestse.VirtualBonus = bonusForRequest;
+				var message = payment > 0
+				              	? "Начисление за пересчет бонусов за период с {0} по {1} для заявки #{2}"
+				              	: "Списание за пересчет бонусов за период с {0} по {1} для заявки #{2}";
+				PaymentsForAgent.CreatePayment(requestse.Registrator, string.Format(message,
+				                                                                    Interval.GetStartString(),
+				                                                                    Interval.GetEndString(), requestse.Id), payment);
 			}
 		}
 	}
-
 }

@@ -43,6 +43,7 @@ namespace InternetInterface.Models
 
 		public static void CreatePayment(Partner agent, string comment, decimal sum)
 		{
+			if (sum != 0)
 			new PaymentsForAgent {
 									Agent = agent,
 									RegistrationDate = DateTime.Now,

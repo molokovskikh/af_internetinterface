@@ -4,6 +4,7 @@ using System.Linq;
 using Castle.ActiveRecord;
 using Castle.Components.Validator;
 using InternetInterface.Controllers.Filter;
+using InternetInterface.Helpers;
 using InternetInterface.Models.Universal;
 using NHibernate.Criterion;
 using NHibernate.SqlCommand;
@@ -67,7 +68,34 @@ namespace InternetInterface.Models
 			{
 				categorieAccessSet.AccessCat.AcceptToOne(this);
 			}
-			
+		}
+
+		private List<PaymentsForAgent> GetPaymentsFoInterval(Week interval)
+		{
+			return
+				Payments.Where(
+					p => 
+					p.RegistrationDate.Date >= interval.StartDate.Date && p.RegistrationDate.Date <= interval.EndDate.Date).ToList();
+		}
+
+		public virtual List<PaymentsForAgent> GetPaymentsForInterval(Week interval)
+		{
+			return GetPaymentsFoInterval(interval).Where(p => p.Sum >= 0 && p.Action != null).ToList();
+		}
+
+		public virtual List<PaymentsForAgent> GetWriteOffsForInterval(Week interval)
+		{
+			return GetPaymentsFoInterval(interval).Where(p => p.Sum < 0 && p.Action != null).ToList();
+		}
+
+		public virtual List<PaymentsForAgent> GetBunosesForInterval(Week interval)
+		{
+			return GetPaymentsFoInterval(interval).Where(p => p.Sum >= 0 && p.Action == null).ToList();
+		}
+
+		public virtual List<PaymentsForAgent> GetPenaltyForInterval(Week interval)
+		{
+			return GetPaymentsFoInterval(interval).Where(p => p.Sum < 0 && p.Action == null).ToList();
 		}
 
 		public static bool RegistrLogicPartner(Partner _Partner, ValidatorRunner validator)

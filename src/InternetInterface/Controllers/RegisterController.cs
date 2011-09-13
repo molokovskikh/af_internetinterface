@@ -88,7 +88,7 @@ namespace InternetInterface.Controllers
 										  };
 				payment.SaveAndFlush();
 				var apartmentForClient =
-					Apartment.Queryable.Where(a => a.House == phisClient.HouseObj && a.Number == Int32.Parse(phisClient.Apartment)).
+					Apartment.Queryable.Where(a => a.House == phisClient.HouseObj && a.Number == phisClient.Apartment).
 						FirstOrDefault();
 				if (apartmentForClient != null)
 					apartmentForClient.Delete();
@@ -115,16 +115,19 @@ namespace InternetInterface.Controllers
 					{
 						if (requestse.Registrator != null)
 						{
-							PaymentsForAgent.CreatePayment(AgentActions.ConnectClient, "Зачисление за подключенного клиента",
+							PaymentsForAgent.CreatePayment(AgentActions.ConnectClient, string.Format("Зачисление за подключенного клиента #{0}", client.Id),
 							                               requestse.Registrator);
-							PaymentsForAgent.CreatePayment(requestse.Registrator, "Зачисление бонусов", requestse.VirtualBonus);
-							PaymentsForAgent.CreatePayment(requestse.Registrator, "Зачисление штрафов", -requestse.VirtualWriteOff);
+							PaymentsForAgent.CreatePayment(requestse.Registrator,
+							                               string.Format("Зачисление бонусов по заявке #{0} за поключенного клиента #{1}",
+							                                             requestse.Id, client.Id), requestse.VirtualBonus);
+							//PaymentsForAgent.CreatePayment(requestse.Registrator, "Зачисление штрафов", -requestse.VirtualWriteOff);
 							requestse.PaidBonus = true;
 							requestse.Update();
 							//requestse.SetRequestBoduses();
 						}
 					}
 				}
+
 				Flash["WhoConnected"] = client.WhoConnected;
 				Flash["Password"] = Password;
 				Flash["Client"] = phisClient;
@@ -137,12 +140,13 @@ namespace InternetInterface.Controllers
 					{
 						phisClient.Request = requestse;
 						phisClient.Update();
-						PaymentsForAgent.CreatePayment(AgentActions.CreateClient, "Зачисление за зарегистрированного клиента", requestse.Registrator);
+						PaymentsForAgent.CreatePayment(AgentActions.CreateClient, string.Format("Зачисление за зарегистрированного клиента #{0}", client.Id), requestse.Registrator);
 					}
 					if (requestse.Label != null && requestse.Label.ShortComment == "Refused" && requestse.Registrator != null)
 					{
-						PaymentsForAgent.CreatePayment(AgentActions.CreateRequest, "Зачисление за открытую заявку", requestse.Registrator);
-						PaymentsForAgent.CreatePayment(requestse.Registrator, "Снятие штрафа за закрытие заявки",
+						//PaymentsForAgent.CreatePayment(AgentActions.CreateRequest, "Зачисление за открытую заявку", requestse.Registrator);
+						PaymentsForAgent.CreatePayment(requestse.Registrator,
+						                               string.Format("Снятие штрафа за закрытие заявки #{0}", requestse.Id),
 						                               -AgentTariff.GetPriceForAction(AgentActions.DeleteRequest));
 					}
 					//requestse.Registered = true;
@@ -317,7 +321,7 @@ namespace InternetInterface.Controllers
 					House.Queryable.Where(
 						h =>
 						h.Street == newPhisClient.Street &&
-						h.Number == Int32.Parse(newPhisClient.House) &&
+						h.Number == newPhisClient.House &&
 						h.Case == newPhisClient.CaseHouse).ToList();
 				if (houses.Count != 0)
 					PropertyBag["ChHouse"] = houses.First().Id;
@@ -464,8 +468,8 @@ namespace InternetInterface.Controllers
 			PropertyBag["request"] = new Requests {
 													  Street = _house.Street,
 													  CaseHouse = _house.Case,
-													  House = _house.Number.ToString(),
-													  Apartment = apartment.ToString()
+													  House = _house.Number,
+													  Apartment = apartment
 												  };
 			PropertyBag["houseNumber"] = house;
 		}
@@ -483,20 +487,22 @@ namespace InternetInterface.Controllers
 				request.SetRequestBoduses();
 				var apartment =
 					Apartment.Queryable.Where(
-						a => a.House == House.Find(houseNumber) && a.Number == Int32.Parse(request.Apartment)).
+						a => a.House == House.Find(houseNumber) && a.Number == request.Apartment).
 						FirstOrDefault();
 				if (apartment == null)
 				{
 					apartment = new Apartment {
 												  House = House.Find(houseNumber),
-												  Number = Int32.Parse(request.Apartment),
+												  Number = request.Apartment != null ? request.Apartment.Value : 0,
 											  };
 					apartment.Save();
 				}
 				//apartment.Comment = string.Format("Заявка номер {0}", request.Id);
 				apartment.Status = ApartmentStatus.Queryable.Where(aps => aps.ShortName == "request").FirstOrDefault();
 				apartment.Update();
-				PaymentsForAgent.CreatePayment(AgentActions.CreateRequest, "Начисление за создание заявки", InitializeContent.partner);
+				PaymentsForAgent.CreatePayment(AgentActions.CreateRequest,
+				                               string.Format("Начисление за создание заявки #{0}", request.Id),
+				                               InitializeContent.partner);
 				RedirectToUrl("../HouseMap/ViewHouseInfo.rails?House=" + houseNumber);
 			}
 		}

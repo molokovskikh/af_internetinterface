@@ -330,17 +330,22 @@ namespace InternetInterface.Controllers
 						{
 							var request = client.PhysicalClient.Request;
 							var registrator = request.Registrator;
-							PaymentsForAgent.CreatePayment(AgentActions.ConnectClient, "Зачисление за подключение клиента", registrator);
-							PaymentsForAgent.CreatePayment(registrator, "Зачисление бонусов", request.VirtualBonus);
-							PaymentsForAgent.CreatePayment(registrator, "Зачисление штрафов", request.VirtualWriteOff);
+							PaymentsForAgent.CreatePayment(AgentActions.ConnectClient, string.Format("Зачисление за подключение клиента #{0}", client.Id), registrator);
+							PaymentsForAgent.CreatePayment(registrator,
+							                               string.Format("Зачисление бонусов по заявке #{0} за поключенного клиента #{1}",
+							                                             request.Id, client.Id), request.VirtualBonus);
+							//PaymentsForAgent.CreatePayment(registrator, "Зачисление штрафов", request.VirtualWriteOff);
 							request.PaidBonus = true;
 							request.Update();
 							if (client.AdditionalStatus != null && client.AdditionalStatus.ShortName == "Refused")
 							{
-								PaymentsForAgent.CreatePayment(request.Registrator, "Снятие штрафа за отказ клиента заявки",
-							   -AgentTariff.GetPriceForAction(AgentActions.RefusedClient));
+								PaymentsForAgent.CreatePayment(request.Registrator,
+								                               string.Format("Снятие штрафа за отказ клиента заявки #{0}", request.Id),
+								                               -AgentTariff.GetPriceForAction(AgentActions.RefusedClient));
 								client.AdditionalStatus = null;
 								client.Update();
+								request.Label = null;
+								request.Update();
 							}
 							//client.PhysicalClient.Request.SetRequestBoduses();
 						}
@@ -540,9 +545,10 @@ namespace InternetInterface.Controllers
 					request.Operator = InitializeContent.partner;
 					request.UpdateAndFlush();
 				}
-				if (_label.ShortComment == "Refused" && request.Registrator != null)
+				if (_label.ShortComment == "Refused" && request.Registrator != null && (request.Label == null || request.Label.ShortComment != "Registered"))
 				{
-					PaymentsForAgent.CreatePayment(AgentActions.DeleteRequest, "Списание за отказ заявки", request.Registrator);
+					if (!DateHelper.IncludeDateInCurrentInterval(request.RegDate))
+						PaymentsForAgent.CreatePayment(AgentActions.DeleteRequest, string.Format("Списание за отказ заявки #{0}", request.Id), request.Registrator);
 					request.SetRequestBoduses();
 				}
 			}
@@ -668,7 +674,7 @@ namespace InternetInterface.Controllers
 				var _house = House.Find(house_id);
 				updateClient.HouseObj = _house;
 				updateClient.Street = _house.Street;
-				updateClient.House = _house.Number.ToString();
+				updateClient.House = _house.Number;
 				updateClient.CaseHouse = _house.Case;
 				updateClient.Tariff = Tariff.Find(tariff);
 
@@ -684,7 +690,7 @@ namespace InternetInterface.Controllers
 
 				updateClient.Update();
 				_client.Name = string.Format("{0} {1} {2}", updateClient.Surname, updateClient.Name,
-											 updateClient.Patronymic);
+				                             updateClient.Patronymic);
 				var endPoints = ClientEndpoints.Queryable.Where(p => p.Client == _client).ToList();
 				foreach (var clientEndpointse in endPoints)
 				{
@@ -705,7 +711,7 @@ namespace InternetInterface.Controllers
 
 				Flash["EditFlag"] = "Данные изменены";
 				RedirectToUrl("../UserInfo/SearchUserInfo?filter.ClientCode=" + ClientID + "&filter.appealType=" +
-							  appealType);
+				              appealType);
 			}
 			else
 			{

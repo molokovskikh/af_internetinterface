@@ -26,7 +26,8 @@ namespace InforoomInternet.Models
 		public virtual uint Price { get; set; }
 	}
 	*/
-	[ActiveRecord(Schema = "Internet")]
+
+	/*[ActiveRecord(Schema = "Internet")]
 	public class Request : ActiveRecordValidationBase<Request>
 	{
 		[PrimaryKey]
@@ -68,8 +69,6 @@ namespace InforoomInternet.Models
 
 		[Property, ValidateNonEmpty("Введите номер этажа"), ValidateInteger("Должно быть введено число")]
 		public virtual string Floor { get; set; }
-		/*[Property(NotNull = true), ValidateNonEmpty("Пожалуйста, укажите адрес проживания")]
-		public virtual string ApplicantResidence { get; set; }*/
 
 		[BelongsTo(NotNull = true), ValidateNonEmpty("Вы не выбрали тарифный план")]
 		public virtual Tariff Tariff { get; set; }
@@ -87,7 +86,7 @@ namespace InforoomInternet.Models
 			return PropertiesValidationErrorMessages.Contains(GetType().GetProperty(field));
 		}
 	}
-
+	*/
 	[ActiveRecord(Schema = "Internet")]
 	public class Street : ActiveRecordLinqBase<Street>
 	{

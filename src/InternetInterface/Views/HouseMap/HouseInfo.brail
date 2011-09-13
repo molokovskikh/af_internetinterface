@@ -305,7 +305,7 @@
 	<% for i in range(ap_count / 2 * j, ap_count / 2 + ap_count / 2 * j + ap_count % 2 *j): %>
 	<tr>
 		<%apartment = House.GetApartmentWithNumber(i+1) %>
-		<%inforumClient = House.GetClientWithApNumber("${i+1}") %>
+		<%inforumClient = House.GetClientWithApNumber(i+1) %>
 		<%if apartment!= null: %>
 			<%request = apartment.GetRequestForThis() %>
 		<%else: %>
