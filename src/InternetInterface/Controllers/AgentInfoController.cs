@@ -25,15 +25,8 @@ namespace InternetInterface.Controllers
 		{
 			var endDate = DateTime.Now;
 			var startDate = new DateTime(endDate.Year, endDate.Month, 1);
-			var interval = new Week(startDate, endDate);
-			//SummaryInformation(startDate, endDate);
-			PropertyBag["interval"] = interval;
+			SummaryInformation(startDate, endDate);
 		}
-
-		/*public virtual void SummaryInformation()
-		{
-			PropertyBag["interval"] = interval;
-		}*/
 
 		public virtual void SummaryInformation(DateTime startDate, DateTime endDate)
 		{

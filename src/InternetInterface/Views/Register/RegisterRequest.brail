@@ -57,7 +57,7 @@ ${FormHelper.HiddenField("houseNumber")}
             <td>${FormHelper.TextField("request.Floor")}</td>
         </tr>
         <tr>
-            <td colspan=2><button class="button" type=submit>Зарегистрировать</button></td>
+            <td colspan=2><button id="register_button" class="button" type=submit>Зарегистрировать</button></td>
         </tr>
     </tbody>
 </table>

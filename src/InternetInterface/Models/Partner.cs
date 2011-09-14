@@ -36,7 +36,7 @@ namespace InternetInterface.Models
 		[Property, ValidateNonEmpty("Введите логин"), ValidateIsUnique("Логин должен быть уникальный")]
 		public virtual string Login { get; set; }
 
-		[BelongsTo("Categorie")]
+		[BelongsTo("Categorie", Lazy = FetchWhen.OnInvoke, Cascade = CascadeEnum.SaveUpdate)]
 		public virtual UserCategorie Categorie { get; set; }
 
 		[HasMany(ColumnKey = "Agent", OrderBy = "RegistrationDate", Lazy = true)]

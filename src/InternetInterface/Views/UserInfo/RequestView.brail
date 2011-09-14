@@ -104,7 +104,7 @@ div.scroller
              <td><input type="checkbox" id="Checkbox1" name="LabelList[${i}]" value=${Client.Id} /></td>
              <td>${Client.Id}</td>
                 <%if PartnerAccessSet.AccesPartner("RC"): %>
-                <td><a href="../Register/RegisterClient.rails?requestID=${Client.Id}"> ${Client.ApplicantName}</a></td>
+                <td><a id="request_to_reg_${Client.Id}" href="../Register/RegisterClient.rails?requestID=${Client.Id}"> ${Client.ApplicantName}</a></td>
                 <%else: %>
                 <td>${Client.ApplicantName}</td>
                 <%end %>
