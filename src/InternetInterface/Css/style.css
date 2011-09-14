@@ -15,8 +15,8 @@ hr {
 @media print { 
 .non-printable 
 {
-    display:none; 
-    }
+	display:none; 
+	}
 }
 p {
   font-size: 12px;
@@ -352,14 +352,14 @@ input.checkbox {
 /* flash-messages */
 .flash
 {
-    margin-top: 10px;
-    margin-bottom: 30px;
-    margin-left: 30%;
-    width: 30%;
-    height: 20px;
-    text-align: center;
-    font-size: 14px;
-    font-weight: bold;
+	margin-top: 10px;
+	margin-bottom: 30px;
+	margin-left: 30%;
+	width: 30%;
+	height: 20px;
+	text-align: center;
+	font-size: 14px;
+	font-weight: bold;
 }
 
 .flash .message {
@@ -375,16 +375,16 @@ input.checkbox {
 .flash .error {
   border: 1px solid #fbb;
   background-color: #fdd;
-   height: 100%;
-       padding: 10px;
+  height: auto;
+	   /*padding: 10px;*/
 }
 .EmptyData
 {
-    border: 1px solid #c4c42e;
-    background-color: #ffffcc;
-    text-align: center;
-    font-size: 14px;
-    font-weight: bold;
+	border: 1px solid #c4c42e;
+	background-color: #ffffcc;
+	text-align: center;
+	font-size: 14px;
+	font-weight: bold;
 }
 .flash .warning {
   border: 1px solid #fffaaa;
@@ -394,7 +394,7 @@ input.checkbox {
   border: 1px solid #1FDF00;
   background-color: #BBFFB6;
    height: 100%;
-       padding: 10px;
+	   padding: 10px;
 }
 /* lists */
 

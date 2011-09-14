@@ -30,10 +30,10 @@ namespace InternetInterface.Controllers
 			PropertyBag["interval"] = interval;
 		}
 
-		public virtual void SummaryInformation([DataBind("interval")]Week interval)
+		/*public virtual void SummaryInformation()
 		{
 			PropertyBag["interval"] = interval;
-		}
+		}*/
 
 		public virtual void SummaryInformation(DateTime startDate, DateTime endDate)
 		{
@@ -49,6 +49,12 @@ namespace InternetInterface.Controllers
 			var endDate = DateTime.Now;
 			var startDate = new DateTime(endDate.Year, endDate.Month, 1);
 			var interval = new Week(startDate, endDate);
+			PropertyBag["Agents"] = Partner.Queryable.Where(p => p.Categorie.ReductionName == "Agent").ToList();
+			PropertyBag["interval"] = interval;
+		}
+
+		public virtual void GroupInfo([DataBind("interval")]Week interval)
+		{
 			PropertyBag["Agents"] = Partner.Queryable.Where(p => p.Categorie.ReductionName == "Agent").ToList();
 			PropertyBag["interval"] = interval;
 		}

@@ -7,8 +7,8 @@ namespace InternetInterface.Helpers
 {
 	public class Week
 	{
-		private readonly DateTime _startDate;
-		private readonly DateTime _endDate;
+		private DateTime _startDate;
+		private DateTime _endDate;
 
 		public Week()
 		{
@@ -26,11 +26,13 @@ namespace InternetInterface.Helpers
 		public DateTime StartDate
 		{
 			get { return _startDate; }
+			set { _startDate = value; }
 		}
 
 		public DateTime EndDate
 		{
 			get { return _endDate; }
+			set { _endDate = value; }
 		}
 
 		public string GetStartString()

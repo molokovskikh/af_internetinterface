@@ -135,6 +135,7 @@
     <Content Include="Images\key.png" />
     <Content Include="Images\tick.png" />
     <None Include="Views\AgentInfo\GroupInfo.brail" />
+    <None Include="Views\AgentInfo\PaymentBlock.brail" />
     <None Include="Views\AgentInfo\SummaryInformation.brail" />
     <None Include="Views\Brigads\MakeBrigad.brail" />
     <None Include="Views\Brigads\ShowBrigad.brail" />

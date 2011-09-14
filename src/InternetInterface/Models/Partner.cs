@@ -50,9 +50,12 @@ namespace InternetInterface.Models
 			return FindAllByProperty("Login", login).FirstOrDefault();
 		}
 
-		public virtual decimal GetAgentPayment()
+		public virtual decimal GetAgentPayment(Week interval)
 		{
-			return Payments.Sum(p => p.Sum);
+			return
+				Payments.Where(
+					p => p.RegistrationDate.Date >= interval.StartDate.Date && p.RegistrationDate.Date <= interval.EndDate.Date).Sum(
+						p => p.Sum);
 		}
 
 		public static List<Partner> GetHouseMapAgents()
