@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -167,16 +168,16 @@ namespace InternetInterface.Models
 
 		//информация ниже получается из выписки
 		//фактическа дата платежа когда он прошел через банк
-		[Property, ValidateNonEmpty]
+		[Property, ValidateNonEmpty, Description("Дата платежа")]
 		public DateTime PayedOn { get; set; }
 
-		[Property, ValidateGreaterThanZero]
+		[Property, ValidateGreaterThanZero, Description("Сумма")]
 		public decimal Sum { get; set; }
 
-		[Property]
+		[Property, Description("Описание платежа")]
 		public string Comment { get; set; }
 
-		[Property]
+		[Property, Description("Номер документа")]
 		public string DocumentNumber { get; set; }
 
 		[Nested(ColumnPrefix = "Payer")]
@@ -193,26 +194,26 @@ namespace InternetInterface.Models
 
 		//все что выше получается из выписки
 		//дата занесения платежа
-		[BelongsTo(Column = "PayerId", Cascade = CascadeEnum.SaveUpdate), ValidateNonEmpty("Обязательно укажите плательщика")]
+		[BelongsTo(Column = "PayerId", Cascade = CascadeEnum.SaveUpdate)/*, ValidateNonEmpty("Обязательно укажите плательщика")*/]
 		public virtual LawyerPerson Payer { get; set; }
 
 		[BelongsTo(Column = "RecipientId")]
 		public virtual Recipient Recipient { get; set; }
 
-		[Property]
+		[Property, Description("Когда зарегистрирован")]
 		public DateTime RegistredOn { get; set; }
 
-		[Property]
+		[Property, Description("Комментарий оператора")]
 		public string OperatorComment { get; set; }
 
 		/*[BelongsTo(Cascade = CascadeEnum.All)]
 		public Advertising Ad { get; set; }*/
 
-		[Property]
+		/*[Property]
 		public bool ForAd { get; set; }
 
 		[Property, ValidateDecimal]
-		public decimal? AdSum { get; set; }
+		public decimal? AdSum { get; set; }*/
 
 		public bool UpdatePayerInn { get; set; }
 
@@ -512,12 +513,12 @@ namespace InternetInterface.Models
 						"Recipient",
 						"Получатель платежей плательщика должен соответствовать получателю платежей выбранном в платеже");
 			}
-			else
+			/*else
 			{
 				summary.RegisterErrorMessage(
 					"Recipient",
 					"Не выбран плательщик");
-			}
+			}*/
 		}
 
 		private bool IsDuplicate()

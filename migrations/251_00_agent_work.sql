@@ -9,9 +9,8 @@ ALTER TABLE `internet`.`PaymentsForAgent` ADD COLUMN `Action` INT(10) UNSIGNED A
 	
 	ALTER TABLE `internet`.`requests` ADD COLUMN `RegDate` DATETIME AFTER `Registrator`;
 	
-	ALTER TABLE `internet`.`requests` ADD COLUMN `VirtualBonus` DECIMAL(10,2) NOT NULL AFTER `RegDate`,
- ADD COLUMN `VirtualWriteOff` DECIMAL(10,2) NOT NULL AFTER `VirtualBonus`;
-ALTER TABLE `internet`.`requests` ADD COLUMN `PaidBonus` TINYINT(1) UNSIGNED NOT NULL AFTER `VirtualWriteOff`;
+	ALTER TABLE `internet`.`requests` ADD COLUMN `VirtualBonus` DECIMAL(10,2) NOT NULL AFTER `RegDate`;
+ALTER TABLE `internet`.`requests` ADD COLUMN `PaidBonus` TINYINT(1) UNSIGNED NOT NULL AFTER `VirtualBonus`;
 
 
 update internet.AgentTariffs a set
@@ -38,3 +37,5 @@ ALTER TABLE `internet`.`requests` MODIFY COLUMN `House` INT(10) UNSIGNED DEFAULT
  MODIFY COLUMN `Apartment` INT(10) UNSIGNED DEFAULT NULL,
  MODIFY COLUMN `Entrance` INT(10) UNSIGNED DEFAULT NULL,
  MODIFY COLUMN `Floor` INT(10) UNSIGNED DEFAULT NULL;
+ 
+ delete FROM internet.PaymentsForAgent;

@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
+using System.Reflection;
+using System.ComponentModel;
+using System.Text;
 using System.Web;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
@@ -12,6 +16,7 @@ using Common.Tools;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
+using NHibernate;
 
 namespace AdminInterface.Controllers
 {
@@ -83,6 +88,38 @@ namespace AdminInterface.Controllers
 			}
 		}
 
+		public void NotifyInforum()
+		{
+			foreach (var bankPayment in TempPayments())
+			{
+				if (bankPayment.Payer == null)
+				{
+					var mailToAdress = "a.zolotarev@analit.net";
+					var messageText = new StringBuilder();
+					var type = NHibernateUtil.GetClass(bankPayment);
+					foreach (var propertyInfo in type.GetProperties(BindingFlags.Instance | BindingFlags.Public))
+					{
+						if (propertyInfo.GetCustomAttributes(typeof(PropertyAttribute), true).Length > 0)
+						{
+							var value = propertyInfo.GetValue(bankPayment, null);
+							var name = BindingHelper.GetDescription(propertyInfo);
+							if (!string.IsNullOrEmpty(name))
+								messageText.AppendLine(string.Format("{0} = {1}", name, value));
+						}
+					}
+					var message = new MailMessage();
+					message.To.Add(mailToAdress);
+					message.Subject = "Получен нераспознаный платеж";
+					message.From = new MailAddress("service@analit.net");
+					message.Body = messageText.ToString();
+					var smtp = new SmtpClient("box.analit.net");
+					smtp.Send(message);
+				}
+			}
+			Flash["notify_message"] = "Письма отправлены";
+			RedirectToAction("ProcessPayments");
+		}
+
 		public void SavePayments()
 		{
 			//Binder.Validator = Validator;
@@ -143,7 +180,6 @@ namespace AdminInterface.Controllers
 					PropertyBag["Message"] = Message.Error("Нужно выбрать файл для загрузки");
 					return;
 				}
-
 				Session["payments"] = BankPayment.Parse(file.FileName, file.InputStream);
 				RedirectToReferrer();
 			}

@@ -15,6 +15,22 @@ using WatiN.Core;
 
 namespace InternetInterface.Test.Helpers
 {
+	public class WatinFixture2 : WatinFixture
+	{
+		public WatinFixture2()
+		{
+			UseTestScope = true;
+			SaveBrowser = true;
+		}
+
+		protected void Refresh()
+		{
+			if (scope != null)
+				scope.Flush();
+			browser.Refresh();
+		}
+	}
+
 	[TestFixture]
 	public class WatinFixture
 	{

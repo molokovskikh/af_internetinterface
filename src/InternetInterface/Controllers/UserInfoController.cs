@@ -761,7 +761,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties {ChangeType = TypeChangeBalance.OtherSumm};
 			PropertyBag["PartnerAccessSet"] = new CategorieAccessSet();
 			PropertyBag["Payments"] = Payment.FindAllByProperty("Client", client).OrderBy(t => t.PaidOn).ToArray();
-			PropertyBag["WriteOffs"] = client.GetWriteOffs(grouped).OrderBy(w => w.WriteOffDate);//WriteOff.FindAllByProperty("Client", client).OrderBy(t => t.WriteOffDate);
+			PropertyBag["WriteOffs"] = client.GetWriteOffs(grouped).OrderBy(w => w.WriteOffDate);//WriteO	ff.FindAllByProperty("Client", client).OrderBy(t => t.WriteOffDate);
 			PropertyBag["naznach_text"] = ConnectGraph.Queryable.Count(c => c.Client.Id == ClientCode) != 0
 											  ? "Переназначить в график"
 											  : "Назначить в график";
@@ -826,7 +826,9 @@ namespace InternetInterface.Controllers
 				graph.Delete();
 			}
 			if (client.PhysicalClient.Request != null && client.PhysicalClient.Request.Registrator != null)
-				PaymentsForAgent.CreatePayment(AgentActions.RefusedClient, "Списание за отказ клиента от подключения", client.PhysicalClient.Request.Registrator);
+				PaymentsForAgent.CreatePayment(AgentActions.RefusedClient,
+				                               string.Format("Списание за отказ клиента #{0} от подключения", client.Id),
+				                               client.PhysicalClient.Request.Registrator);
 			CreateAppeal("Причина отказа:  " + prichina  + " \r\n Комментарий: \r\n " + Appeal, ClientID);
 			LayoutName = "NoMap";
 		}

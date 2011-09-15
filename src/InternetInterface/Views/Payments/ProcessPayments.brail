@@ -1,31 +1,36 @@
 ﻿<center>
 <div style="width:900px; height:200px;">
 <table class="table" style="border:1px double Black;">
-    <thead>
-        <tr>
-            <th colspan=2>Загрузка выписки</th>
-        </tr>
-    </thead>
-    <tbody>
-    <form method=post enctype="multipart/form-data">
-    <tr>
-        <td><label>Выберете файл для загрузки в формате xml</label><br><input type=file class="button" id="inputfile" name="inputfile"><br></td>
-        <td><button id="Button2" type=submit class="button showpay">Загрузить</button></td>
-    </tr>
-    </form>
-    <tr>
-        <td>
-            <form method=post action="${siteroot}/Payments/SavePayments" style="display:inline">
-		    <button id="showBut" type=submit class="button showpay">Сохранить</button>
-	        </form>
-        </td>
-        <td>
-            <form method=post action="${siteroot}/Payments/CancelPayments" style="display:inline">
-		    <button id="Button1" type=submit class="button showpay">Очистить</button>
-	        </form>
-        </td>
-    </tr>
-
+	<thead>
+		<tr>
+			<th colspan=3>Загрузка выписки</th>
+		</tr>
+	</thead>
+	<tbody>
+	<form method=post enctype="multipart/form-data">
+	<tr>
+		<td><label>Выберете файл для загрузки в формате xml</label><br><input type=file class="button" id="inputfile" name="inputfile"><br></td>
+		<td><button id="Button2" type=submit class="button showpay">Загрузить</button></td>
+		<td></td>
+	</tr>
+	</form>
+	<tr>
+		<td>
+			<form method=post action="${siteroot}/Payments/SavePayments" style="display:inline">
+			<button id="showBut" type=submit class="button showpay">Сохранить</button>
+			</form>
+		</td>
+		<td>
+			<form method=post action="${siteroot}/Payments/NotifyInforum" style="display:inline">
+			<button id="Button3" type=submit class="button showpay">Уведомить инфорум</button>
+			</form>
+		</td>
+		<td>
+			<form method=post action="${siteroot}/Payments/CancelPayments" style="display:inline">
+			<button id="Button1" type=submit class="button showpay">Очистить</button>
+			</form>
+		</td>
+	</tr>
 </tbody>
 </table>
 </div>
@@ -60,4 +65,11 @@
 		<td style="width:300px;">По вашему запросу ничего не найдено</td>
 	</tr>
 	<% end %>
+	<% if IsDefined("notify_message"): %>
+	<tr>
+		<td colspan=7>
+			<% output  WriteMessageNotice(notify_message) %>
+		</td>
+	</tr>
+	<%end %>
 </table>
