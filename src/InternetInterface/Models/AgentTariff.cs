@@ -43,9 +43,17 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual decimal Sum { get; set; }
 
+		public static AgentTariff GetAction(string action)
+		{
+			return Queryable.Where(a => a.ActionName == action).FirstOrDefault();
+		}
+
 		public static decimal GetPriceForAction(string action)
 		{
-		   return Queryable.Where(a => a.ActionName == action).Select(a => a.Sum).FirstOrDefault();
+			var act = GetAction(action);
+			if (act != null)
+				return GetAction(action).Sum;
+			return 0m;
 		}
 	}
 }

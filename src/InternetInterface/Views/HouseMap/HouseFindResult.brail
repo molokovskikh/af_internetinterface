@@ -31,7 +31,7 @@
             <tbody>
                 <% for i, House in enumerate(Houses): %>
                 <tr id="tr_house_${House.Id}" style="text-align:center">
-                    <td><a id="huise_link_${i}" href="${Siteroot}/HouseMap/ViewHouseInfo.rails?House=${House.Id}"> ${House.Street} ${House.Number} ${House.Case}</a></td>
+                    <td><a id="huise_link_${i}" class="houses_links" href="${Siteroot}/HouseMap/ViewHouseInfo.rails?House=${House.Id}"> ${House.Street} ${House.Number} ${House.Case}</a></td>
                     <td>${House.GetSubscriberCount()}</td>
                     <td>${House.GetPenetrationPercent().ToString("F2")}%</td>
                     <td>${House.PassCount}</td>

@@ -24,5 +24,13 @@ namespace InternetInterface.Test.Unit
 			Assert.That(dfg, Is.StringContaining("2886730166"));
 		}
 
+		[Test]
+		public void DateTest()
+		{
+			var day = DateTime.Now;
+			var indexDay = (int) day.DayOfWeek;
+			Console.WriteLine(day.AddDays(-indexDay+1));
+			Console.WriteLine(day.AddDays(7 - indexDay));
+		}
 	}
 }

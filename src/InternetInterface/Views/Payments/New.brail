@@ -1,25 +1,25 @@
 ﻿
 <script>
-    $(function () {
-        $("form").validate();
-        $('.date-pick').datepicker();
-        $("#payer").autocomplete({
-            source: "SearchPayer",
-            minLength: 2,
-            select: function (event, ui) {
-                $("#payment_payer_id").val(ui.item.id)
-            }
-        });
-        $("#payer").focus();
+	$(function () {
+		$("form").validate();
+		$('.date-pick').datepicker();
+		$("#payer").autocomplete({
+			source: "SearchPayer",
+			minLength: 2,
+			select: function (event, ui) {
+				$("#payment_payer_id").val(ui.item.id)
+			}
+		});
+		$("#payer").focus();
 
-        $.ui.autocomplete.prototype._renderItem = function (ul, item) {
-        	uri = "${siteroot}/UserInfo/LawyerPersonInfo.rails?filter.ClientCode=" + item.id;
-            return $("<li></li>")
+		$.ui.autocomplete.prototype._renderItem = function (ul, item) {
+			uri = "${siteroot}/UserInfo/LawyerPersonInfo.rails?filter.ClientCode=" + item.id;
+			return $("<li></li>")
 				.data("item.autocomplete", item)
 				.append("<a href='" + uri + "'>" + item.label + "</a>")
 				.appendTo(ul);
-        };
-    });
+		};
+	});
 </script>
 
 <div class=block  style="margin: 0 auto; width:1000px;">
@@ -47,7 +47,7 @@
 				</select>
 			</td>
 			<td>
-                <input type=text value="${System.DateTime.Today.ToShortDateString()}" name="payment.PayedOn" id="startDate"  class="date-pick dp-applied">
+				<input type=text value="${System.DateTime.Today.ToShortDateString()}" name="payment.PayedOn" id="startDate"  class="date-pick dp-applied">
 			</td>
 			<td>
 				<input type=hidden id="payment_payer_id" value="${Payment.Payer.Id if Payment.Payer != null }" name=Payment.Payer.Id>

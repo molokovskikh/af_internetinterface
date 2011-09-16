@@ -4,6 +4,7 @@ using System.Linq;
 using Castle.ActiveRecord;
 using Castle.Components.Validator;
 using InternetInterface.Controllers.Filter;
+using InternetInterface.Helpers;
 using InternetInterface.Models.Universal;
 using NHibernate.Criterion;
 using NHibernate.SqlCommand;
@@ -35,7 +36,7 @@ namespace InternetInterface.Models
 		[Property, ValidateNonEmpty("Введите логин"), ValidateIsUnique("Логин должен быть уникальный")]
 		public virtual string Login { get; set; }
 
-		[BelongsTo("Categorie")]
+		[BelongsTo("Categorie", Lazy = FetchWhen.OnInvoke, Cascade = CascadeEnum.SaveUpdate)]
 		public virtual UserCategorie Categorie { get; set; }
 
 		[HasMany(ColumnKey = "Agent", OrderBy = "RegistrationDate", Lazy = true)]
@@ -49,9 +50,12 @@ namespace InternetInterface.Models
 			return FindAllByProperty("Login", login).FirstOrDefault();
 		}
 
-		public virtual decimal GetAgentPayment()
+		public virtual decimal GetAgentPayment(Week interval)
 		{
-			return Payments.Sum(p => p.Sum);
+			return
+				Payments.Where(
+					p => p.RegistrationDate.Date >= interval.StartDate.Date && p.RegistrationDate.Date <= interval.EndDate.Date).Sum(
+						p => p.Sum);
 		}
 
 		public static List<Partner> GetHouseMapAgents()
@@ -67,21 +71,48 @@ namespace InternetInterface.Models
 			{
 				categorieAccessSet.AccessCat.AcceptToOne(this);
 			}
-			
+		}
+
+		private List<PaymentsForAgent> GetPaymentsFoInterval(Week interval)
+		{
+			return
+				Payments.Where(
+					p => 
+					p.RegistrationDate.Date >= interval.StartDate.Date && p.RegistrationDate.Date <= interval.EndDate.Date).ToList();
+		}
+
+		public virtual List<PaymentsForAgent> GetPaymentsForInterval(Week interval)
+		{
+			return GetPaymentsFoInterval(interval).Where(p => p.Sum >= 0 && p.Action != null).ToList();
+		}
+
+		public virtual List<PaymentsForAgent> GetWriteOffsForInterval(Week interval)
+		{
+			return GetPaymentsFoInterval(interval).Where(p => p.Sum < 0 && p.Action != null).ToList();
+		}
+
+		public virtual List<PaymentsForAgent> GetBunosesForInterval(Week interval)
+		{
+			return GetPaymentsFoInterval(interval).Where(p => p.Sum >= 0 && p.Action == null).ToList();
+		}
+
+		public virtual List<PaymentsForAgent> GetPenaltyForInterval(Week interval)
+		{
+			return GetPaymentsFoInterval(interval).Where(p => p.Sum < 0 && p.Action == null).ToList();
 		}
 
 		public static bool RegistrLogicPartner(Partner _Partner, ValidatorRunner validator)
 		{
-				if (validator.IsValid(_Partner))
-				{
-					_Partner.RegDate = DateTime.Now;
-					_Partner.SaveAndFlush();
-					return true;
-				}
-				else
-				{
-					return false;
-				}
+			if (validator.IsValid(_Partner))
+			{
+				_Partner.RegDate = DateTime.Now;
+				_Partner.SaveAndFlush();
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 	}
 

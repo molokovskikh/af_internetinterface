@@ -26,7 +26,8 @@ namespace InforoomInternet.Models
 		public virtual uint Price { get; set; }
 	}
 	*/
-	[ActiveRecord(Schema = "Internet")]
+
+	/*[ActiveRecord(Schema = "Internet")]
 	public class Request : ActiveRecordValidationBase<Request>
 	{
 		[PrimaryKey]
@@ -35,11 +36,11 @@ namespace InforoomInternet.Models
 		[Property(NotNull = true), ValidateNonEmpty("Пожалуйста, укажите свои данные")]
 		public virtual string ApplicantName { get; set; }
 
-        [
-            Property,
-            ValidateRegExp(@"^((\d{1})-(\d{3})-(\d{3})-(\d{2})-(\d{2}))", "Ошибка фотмата телефонного номера: мобильный телефн (8-***-***-**-**))"),
-            ValidateNonEmpty("Введите номер телефона")
-        ]
+		[
+			Property,
+			ValidateRegExp(@"^((\d{1})-(\d{3})-(\d{3})-(\d{2})-(\d{2}))", "Ошибка фотмата телефонного номера: мобильный телефн (8-***-***-**-**))"),
+			ValidateNonEmpty("Введите номер телефона")
+		]
 		public virtual string ApplicantPhoneNumber { get; set; }
 
 		[Property, ValidateEmail("Недопустимый адрес электронной почты")]
@@ -68,8 +69,6 @@ namespace InforoomInternet.Models
 
 		[Property, ValidateNonEmpty("Введите номер этажа"), ValidateInteger("Должно быть введено число")]
 		public virtual string Floor { get; set; }
-		/*[Property(NotNull = true), ValidateNonEmpty("Пожалуйста, укажите адрес проживания")]
-		public virtual string ApplicantResidence { get; set; }*/
 
 		[BelongsTo(NotNull = true), ValidateNonEmpty("Вы не выбрали тарифный план")]
 		public virtual Tariff Tariff { get; set; }
@@ -87,7 +86,7 @@ namespace InforoomInternet.Models
 			return PropertiesValidationErrorMessages.Contains(GetType().GetProperty(field));
 		}
 	}
-
+	*/
 	[ActiveRecord(Schema = "Internet")]
 	public class Street : ActiveRecordLinqBase<Street>
 	{

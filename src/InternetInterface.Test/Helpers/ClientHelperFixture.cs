@@ -33,17 +33,17 @@ namespace InternetInterface.Test.Helpers
 		{
 			var client =  new PhysicalClients
 			       	{
-			       		Apartment = "1",
+			       		Apartment = 1,
 			       		Balance = 100,
 			       		CaseHouse = "A",
 			       		City = "VRN",
 			       		//Connected = false,
-			       		Entrance = "1",
-			       		Floor = "1",
+			       		Entrance = 1,
+			       		Floor = 1,
 			       		/*WhoConnected = null,
 			       		WhoRegistered = Partner.Find((uint)1),*/
 			       		HomePhoneNumber = "1111-22222",
-			       		House = "1",
+			       		House = 1,
 			       		//Login = "Login" + new Random().Next(100),
 			       		Name = "testName",
 			       		PassportDate = DateTime.Now,

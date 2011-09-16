@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using Castle.MonoRail.Framework;
 using InternetInterface.Controllers.Filter;
+using InternetInterface.Helpers;
 using InternetInterface.Models;
 
 namespace InternetInterface.Controllers
@@ -38,7 +39,17 @@ namespace InternetInterface.Controllers
 
 		public virtual void GroupInfo()
 		{
+			var endDate = DateTime.Now;
+			var startDate = new DateTime(endDate.Year, endDate.Month, 1);
+			var interval = new Week(startDate, endDate);
 			PropertyBag["Agents"] = Partner.Queryable.Where(p => p.Categorie.ReductionName == "Agent").ToList();
+			PropertyBag["interval"] = interval;
+		}
+
+		public virtual void GroupInfo([DataBind("interval")]Week interval)
+		{
+			PropertyBag["Agents"] = Partner.Queryable.Where(p => p.Categorie.ReductionName == "Agent").ToList();
+			PropertyBag["interval"] = interval;
 		}
 	}
 }

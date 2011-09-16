@@ -96,19 +96,19 @@ namespace InternetInterface.Models
 		public virtual string Street { get; set; }
 
 		[Property, ValidateInteger("Должно быть введено число")]
-		public virtual string House { get; set; }
+		public virtual int? House { get; set; }
 
 		[Property]
 		public virtual string CaseHouse { get; set; }
 
 		[Property, ValidateNonEmpty("Введите номер квартиры"), ValidateInteger("Должно быть введено число"), Auditable("Номер квартиры")]
-		public virtual string Apartment { get; set; }
+		public virtual int? Apartment { get; set; }
 
 		[Property, ValidateNonEmpty("Введите номер подъезда"), ValidateInteger("Должно быть введено число"), Auditable("Номер подъезда")]
-		public virtual string Entrance { get; set; }
+		public virtual int? Entrance { get; set; }
 
 		[Property, ValidateNonEmpty("Введите номер этажа"), ValidateInteger("Должно быть введено число"), Auditable("Этаж")]
-		public virtual string Floor { get; set; }
+		public virtual int? Floor { get; set; }
 
 		[
 			Property,
@@ -188,7 +188,7 @@ namespace InternetInterface.Models
 				var _house = Models.House.Find(house);;
 				_client.HouseObj = _house;
 				_client.Street = _house.Street;
-				_client.House = _house.Number.ToString();
+				_client.House = _house.Number;
 				_client.CaseHouse = _house.Case;
 				_client.Tariff = Tariff.Find(_tariff);
 				_client.Password = CryptoPass.GetHashString(_client.Password);

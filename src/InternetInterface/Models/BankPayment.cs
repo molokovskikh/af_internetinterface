@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -167,52 +168,52 @@ namespace InternetInterface.Models
 
 		//информация ниже получается из выписки
 		//фактическа дата платежа когда он прошел через банк
-		[Property, ValidateNonEmpty]
+		[Property, ValidateNonEmpty, Description("Дата платежа")]
 		public DateTime PayedOn { get; set; }
 
-		[Property, ValidateGreaterThanZero]
+		[Property, ValidateGreaterThanZero, Description("Сумма")]
 		public decimal Sum { get; set; }
 
-		[Property]
+		[Property, Description("Описание платежа")]
 		public string Comment { get; set; }
 
-		[Property]
+		[Property, Description("Номер документа")]
 		public string DocumentNumber { get; set; }
 
-		[Nested(ColumnPrefix = "Payer")]
+		[Nested(ColumnPrefix = "Payer"), Description("ИНФОРМАЦИЯ О КЛИЕНТЕ")]
 		public BankClient PayerClient { get; set; }
 
-		[Nested(ColumnPrefix = "PayerBank")]
+		[Nested(ColumnPrefix = "PayerBank"), Description("ИНФОРМАЦИЯ О БАНКЕ КЛИЕНТА")]
 		public BankInfo PayerBank { get; set; }
 
-		[Nested(ColumnPrefix = "Recipient")]
+		[Nested(ColumnPrefix = "Recipient"), Description("ИНФОРМАЦИЯ О ПОЛУЧАТЕЛЕ")]
 		public BankClient RecipientClient { get; set; }
 
-		[Nested(ColumnPrefix = "RecipientBank")]
+		[Nested(ColumnPrefix = "RecipientBank"), Description("ИНФОРМАЦИЯ О БАНКЕ ПОЛУЧАТЕЛЯ")]
 		public BankInfo RecipientBank { get; set; }
 
 		//все что выше получается из выписки
 		//дата занесения платежа
-		[BelongsTo(Column = "PayerId", Cascade = CascadeEnum.SaveUpdate), ValidateNonEmpty("Обязательно укажите плательщика")]
+		[BelongsTo(Column = "PayerId", Cascade = CascadeEnum.SaveUpdate)/*, ValidateNonEmpty("Обязательно укажите плательщика")*/]
 		public virtual LawyerPerson Payer { get; set; }
 
 		[BelongsTo(Column = "RecipientId")]
 		public virtual Recipient Recipient { get; set; }
 
-		[Property]
+		[Property, Description("Когда зарегистрирован")]
 		public DateTime RegistredOn { get; set; }
 
-		[Property]
+		[Property, Description("Комментарий оператора")]
 		public string OperatorComment { get; set; }
 
 		/*[BelongsTo(Cascade = CascadeEnum.All)]
 		public Advertising Ad { get; set; }*/
 
-		[Property]
+		/*[Property]
 		public bool ForAd { get; set; }
 
 		[Property, ValidateDecimal]
-		public decimal? AdSum { get; set; }
+		public decimal? AdSum { get; set; }*/
 
 		public bool UpdatePayerInn { get; set; }
 
@@ -458,13 +459,13 @@ namespace InternetInterface.Models
 
 		public class BankInfo
 		{
-			[Property]
+			[Property, Description("Описание")]
 			public string Description { get; set; }
 
-			[Property]
+			[Property, Description("БИК")]
 			public string Bic { get; set; }
 
-			[Property]
+			[Property, Description("Номер счета")]
 			public string AccountCode { get; set; }
 
 			public BankInfo()
@@ -481,13 +482,13 @@ namespace InternetInterface.Models
 
 		public class BankClient
 		{
-			[Property]
+			[Property, Description("ИНН")]
 			public string Inn { get; set; }
 
-			[Property]
+			[Property, Description("Имя")]
 			public string Name { get; set; }
 
-			[Property]
+			[Property, Description("Номер счета")]
 			public string AccountCode { get; set; }
 
 			public BankClient()
@@ -512,12 +513,12 @@ namespace InternetInterface.Models
 						"Recipient",
 						"Получатель платежей плательщика должен соответствовать получателю платежей выбранном в платеже");
 			}
-			else
+			/*else
 			{
 				summary.RegisterErrorMessage(
 					"Recipient",
 					"Не выбран плательщик");
-			}
+			}*/
 		}
 
 		private bool IsDuplicate()
@@ -525,46 +526,11 @@ namespace InternetInterface.Models
 			if (Payer == null)
 				return false;
 
-			return ActiveRecordLinqBase<BankPayment>.Queryable.FirstOrDefault(p => p.Payer == Payer
-																				   && p.PayedOn == PayedOn
-																				   && p.Sum == Sum
-																				   && p.DocumentNumber == DocumentNumber) !=
-				   null;
+			return Queryable.FirstOrDefault(p => p.Payer == Payer
+					&& p.PayedOn == PayedOn
+					&& p.Sum == Sum
+					&& p.DocumentNumber == DocumentNumber) != null;
 		}
-
-		/*protected override void OnUpdate()
-		{
-			UpdateAd();
-			base.OnUpdate();
-		}
-
-		protected override void OnSave()
-		{
-			UpdateAd();
-			base.OnSave();
-		}
-
-		private void UpdateAd()
-		{
-			if (Payer != null
-				&& ForAd
-				&& this.IsChanged(p => p.ForAd))
-			{
-				//магия будь бдителен!
-				//запрос должен быть в другой сесии а то будет stackoverflow
-				Advertising ad = null;
-				using(new SessionScope())
-					ad = Advertising.Queryable.FirstOrDefault(a => a.Payer == Payer && a.Payment == null);
-				if (ad == null)
-				{
-					ad = new Advertising(Payer);
-					ad.Cost = AdSum.Value;
-				}
-				Ad = ad;
-				ad.PayedSum = AdSum;
-				ad.Payment = this;
-			}
-		}*/
 
 		public void DoUpdate()
 		{

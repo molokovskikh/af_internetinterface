@@ -55,7 +55,7 @@ namespace InternetInterface.Models
 			return null;
 		}
 
-		public virtual uint GetClientWithApNumber(string num)
+		public virtual uint GetClientWithApNumber(int num)
 		{
 			return
 				Client.Queryable.Where(c => c.PhysicalClient.HouseObj == this && c.PhysicalClient.Apartment == num).

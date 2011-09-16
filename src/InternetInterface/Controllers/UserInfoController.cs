@@ -327,9 +327,28 @@ namespace InternetInterface.Controllers
 						clientEntPoint.SaveAndFlush();
 						if (client.PhysicalClient != null && client.PhysicalClient.Request != null &&
 							client.PhysicalClient.Request.Registrator != null)
-							PaymentsForAgent.CreatePayment(AgentActions.ConnectClient,
-														   "Зачисление за подключение клиента",
-														   client.PhysicalClient.Request.Registrator);
+						{
+							var request = client.PhysicalClient.Request;
+							var registrator = request.Registrator;
+							PaymentsForAgent.CreatePayment(AgentActions.ConnectClient, string.Format("Зачисление за подключение клиента #{0}", client.Id), registrator);
+							PaymentsForAgent.CreatePayment(registrator,
+							                               string.Format("Зачисление бонусов по заявке #{0} за поключенного клиента #{1}",
+							                                             request.Id, client.Id), request.VirtualBonus);
+							//PaymentsForAgent.CreatePayment(registrator, "Зачисление штрафов", request.VirtualWriteOff);
+							request.PaidBonus = true;
+							request.Update();
+							if (client.AdditionalStatus != null && client.AdditionalStatus.ShortName == "Refused")
+							{
+								PaymentsForAgent.CreatePayment(request.Registrator,
+								                               string.Format("Снятие штрафа за отказ клиента заявки #{0}", request.Id),
+								                               -AgentTariff.GetPriceForAction(AgentActions.RefusedClient));
+								client.AdditionalStatus = null;
+								client.Update();
+								request.Label = null;
+								request.Update();
+							}
+							//client.PhysicalClient.Request.SetRequestBoduses();
+						}
 					}
 					if (brigadChangeFlag)
 					{
@@ -494,7 +513,6 @@ namespace InternetInterface.Controllers
 		public void RequestView(uint labelId)
 		{
 			var requests = Requests.FindAll().ToList();
-												/*.Add(Expression.Eq("Label.Id", labelId)))*/
 
 			if (labelId == 0)
 				requests = requests.Where(r => r.Label == null).ToList();
@@ -527,8 +545,12 @@ namespace InternetInterface.Controllers
 					request.Operator = InitializeContent.partner;
 					request.UpdateAndFlush();
 				}
-				if (_label.ShortComment == "Refused" && request.Registrator != null)
-					PaymentsForAgent.CreatePayment(AgentActions.DeleteRequest, "Списание за отказ заявки", request.Registrator);
+				if (_label.ShortComment == "Refused" && request.Registrator != null && (request.Label == null || request.Label.ShortComment != "Registered"))
+				{
+					if (!DateHelper.IncludeDateInCurrentInterval(request.RegDate))
+						PaymentsForAgent.CreatePayment(AgentActions.DeleteRequest, string.Format("Списание за отказ заявки #{0}", request.Id), request.Registrator);
+					request.SetRequestBoduses();
+				}
 			}
 			var requests = Requests.FindAll().OrderByDescending(f => f.ActionDate);
 			if (InitializeContent.partner.Categorie.ReductionName == "Agent")
@@ -652,7 +674,7 @@ namespace InternetInterface.Controllers
 				var _house = House.Find(house_id);
 				updateClient.HouseObj = _house;
 				updateClient.Street = _house.Street;
-				updateClient.House = _house.Number.ToString();
+				updateClient.House = _house.Number;
 				updateClient.CaseHouse = _house.Case;
 				updateClient.Tariff = Tariff.Find(tariff);
 
@@ -668,7 +690,7 @@ namespace InternetInterface.Controllers
 
 				updateClient.Update();
 				_client.Name = string.Format("{0} {1} {2}", updateClient.Surname, updateClient.Name,
-											 updateClient.Patronymic);
+				                             updateClient.Patronymic);
 				var endPoints = ClientEndpoints.Queryable.Where(p => p.Client == _client).ToList();
 				foreach (var clientEndpointse in endPoints)
 				{
@@ -689,7 +711,7 @@ namespace InternetInterface.Controllers
 
 				Flash["EditFlag"] = "Данные изменены";
 				RedirectToUrl("../UserInfo/SearchUserInfo?filter.ClientCode=" + ClientID + "&filter.appealType=" +
-							  appealType);
+				              appealType);
 			}
 			else
 			{
@@ -739,7 +761,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties {ChangeType = TypeChangeBalance.OtherSumm};
 			PropertyBag["PartnerAccessSet"] = new CategorieAccessSet();
 			PropertyBag["Payments"] = Payment.FindAllByProperty("Client", client).OrderBy(t => t.PaidOn).ToArray();
-			PropertyBag["WriteOffs"] = client.GetWriteOffs(grouped).OrderBy(w => w.WriteOffDate);//WriteOff.FindAllByProperty("Client", client).OrderBy(t => t.WriteOffDate);
+			PropertyBag["WriteOffs"] = client.GetWriteOffs(grouped).OrderBy(w => w.WriteOffDate);//WriteO	ff.FindAllByProperty("Client", client).OrderBy(t => t.WriteOffDate);
 			PropertyBag["naznach_text"] = ConnectGraph.Queryable.Count(c => c.Client.Id == ClientCode) != 0
 											  ? "Переназначить в график"
 											  : "Назначить в график";
@@ -804,7 +826,9 @@ namespace InternetInterface.Controllers
 				graph.Delete();
 			}
 			if (client.PhysicalClient.Request != null && client.PhysicalClient.Request.Registrator != null)
-				PaymentsForAgent.CreatePayment(AgentActions.RefusedClient, "Списание за отказ клиента от подключения", client.PhysicalClient.Request.Registrator);
+				PaymentsForAgent.CreatePayment(AgentActions.RefusedClient,
+				                               string.Format("Списание за отказ клиента #{0} от подключения", client.Id),
+				                               client.PhysicalClient.Request.Registrator);
 			CreateAppeal("Причина отказа:  " + prichina  + " \r\n Комментарий: \r\n " + Appeal, ClientID);
 			LayoutName = "NoMap";
 		}

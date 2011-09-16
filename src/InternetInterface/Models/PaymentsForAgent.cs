@@ -5,6 +5,7 @@ using System.Web;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using InternetInterface.Controllers.Filter;
+using InternetInterface.Helpers;
 
 namespace InternetInterface.Models
 {
@@ -26,13 +27,28 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual DateTime RegistrationDate { get; set; }
 
+		[BelongsTo]
+		public virtual AgentTariff Action { get; set; }
+
 		public static void CreatePayment(string action, string coment, Partner agent)
 		{
 			new PaymentsForAgent {
 									Agent = agent,
 									Comment = coment,
 									RegistrationDate = DateTime.Now,
-									Sum = AgentTariff.GetPriceForAction(action)
+									Sum = AgentTariff.GetPriceForAction(action),
+									Action = AgentTariff.GetAction(action)
+								 }.Save();
+		}
+
+		public static void CreatePayment(Partner agent, string comment, decimal sum)
+		{
+			if (sum != 0)
+			new PaymentsForAgent {
+									Agent = agent,
+									RegistrationDate = DateTime.Now,
+									Sum = sum,
+									Comment = comment
 								 }.Save();
 		}
 	}
