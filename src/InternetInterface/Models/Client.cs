@@ -177,7 +177,7 @@ namespace InternetInterface.Models
 				}
 			}
 
-			if ((Disabled) || (PhysicalClient.Balance > 0))
+			if ((Disabled) || (PhysicalClient.Balance >= 0))
 				return false;
 			return true;
 		}

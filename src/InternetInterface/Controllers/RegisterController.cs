@@ -205,6 +205,7 @@ namespace InternetInterface.Controllers
 			{
 				DbLogHelper.SetupParametersForTriggerLogging();
 				person.Speed = PackageSpeed.Find(speed);
+				person.Recipient = Recipient.Queryable.Where(r => r.INN == "3666152146").FirstOrDefault();
 				person.SaveAndFlush();
 				var client = new Client
 								{
@@ -212,7 +213,7 @@ namespace InternetInterface.Controllers
 									WhoRegisteredName = InitializeContent.partner.Name,
 									RegDate = DateTime.Now,
 									Status = Status.Find((uint) StatusType.BlockedAndNoConnected),
-
+									
 									LawyerPerson = person,
 									Name = person.ShortName,
 									Type = ClientType.Legal,

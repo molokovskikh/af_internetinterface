@@ -94,7 +94,7 @@ namespace AdminInterface.Controllers
 			{
 				if (bankPayment.Payer == null)
 				{
-					var mailToAdress = "a.zolotarev@analit.net";
+					var mailToAdress = "internet@ivrn.net";
 					var messageText = new StringBuilder();
 					var type = NHibernateUtil.GetClass(bankPayment);
 					foreach (var propertyInfo in type.GetProperties(BindingFlags.Instance | BindingFlags.Public))
@@ -105,6 +105,21 @@ namespace AdminInterface.Controllers
 							var name = BindingHelper.GetDescription(propertyInfo);
 							if (!string.IsNullOrEmpty(name))
 								messageText.AppendLine(string.Format("{0} = {1}", name, value));
+						}
+						if (propertyInfo.GetCustomAttributes(typeof(NestedAttribute), true).Length > 0)
+						{
+							var class_dicrioprion = BindingHelper.GetDescription(propertyInfo);
+							messageText.AppendLine();
+							messageText.AppendLine(class_dicrioprion);
+							var value_class = propertyInfo.GetValue(bankPayment, null);
+							var type_nested = NHibernateUtil.GetClass(value_class);
+							foreach (var nested_propertyInfo in type_nested.GetProperties(BindingFlags.Instance | BindingFlags.Public))
+							{
+								var value = nested_propertyInfo.GetValue(value_class, null);
+								var name = BindingHelper.GetDescription(nested_propertyInfo);
+								if (!string.IsNullOrEmpty(name))
+									messageText.AppendLine(string.Format("{0} = {1}", name, value));
+							}
 						}
 					}
 					var message = new MailMessage();
@@ -142,6 +157,7 @@ namespace AdminInterface.Controllers
 				{
 					payment.RegisterPayment();
 					payment.Save();
+					if (payment.Payer != null)
 					new Payment {
 									Client =
 										Client.Queryable.FirstOrDefault(c => c.LawyerPerson != null && c.LawyerPerson == payment.Payer),

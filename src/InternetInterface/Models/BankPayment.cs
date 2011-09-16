@@ -180,16 +180,16 @@ namespace InternetInterface.Models
 		[Property, Description("Номер документа")]
 		public string DocumentNumber { get; set; }
 
-		[Nested(ColumnPrefix = "Payer")]
+		[Nested(ColumnPrefix = "Payer"), Description("ИНФОРМАЦИЯ О КЛИЕНТЕ")]
 		public BankClient PayerClient { get; set; }
 
-		[Nested(ColumnPrefix = "PayerBank")]
+		[Nested(ColumnPrefix = "PayerBank"), Description("ИНФОРМАЦИЯ О БАНКЕ КЛИЕНТА")]
 		public BankInfo PayerBank { get; set; }
 
-		[Nested(ColumnPrefix = "Recipient")]
+		[Nested(ColumnPrefix = "Recipient"), Description("ИНФОРМАЦИЯ О ПОЛУЧАТЕЛЕ")]
 		public BankClient RecipientClient { get; set; }
 
-		[Nested(ColumnPrefix = "RecipientBank")]
+		[Nested(ColumnPrefix = "RecipientBank"), Description("ИНФОРМАЦИЯ О БАНКЕ ПОЛУЧАТЕЛЯ")]
 		public BankInfo RecipientBank { get; set; }
 
 		//все что выше получается из выписки
@@ -459,13 +459,13 @@ namespace InternetInterface.Models
 
 		public class BankInfo
 		{
-			[Property]
+			[Property, Description("Описание")]
 			public string Description { get; set; }
 
-			[Property]
+			[Property, Description("БИК")]
 			public string Bic { get; set; }
 
-			[Property]
+			[Property, Description("Номер счета")]
 			public string AccountCode { get; set; }
 
 			public BankInfo()
@@ -482,13 +482,13 @@ namespace InternetInterface.Models
 
 		public class BankClient
 		{
-			[Property]
+			[Property, Description("ИНН")]
 			public string Inn { get; set; }
 
-			[Property]
+			[Property, Description("Имя")]
 			public string Name { get; set; }
 
-			[Property]
+			[Property, Description("Номер счета")]
 			public string AccountCode { get; set; }
 
 			public BankClient()
@@ -526,46 +526,11 @@ namespace InternetInterface.Models
 			if (Payer == null)
 				return false;
 
-			return ActiveRecordLinqBase<BankPayment>.Queryable.FirstOrDefault(p => p.Payer == Payer
-																				   && p.PayedOn == PayedOn
-																				   && p.Sum == Sum
-																				   && p.DocumentNumber == DocumentNumber) !=
-				   null;
+			return Queryable.FirstOrDefault(p => p.Payer == Payer
+					&& p.PayedOn == PayedOn
+					&& p.Sum == Sum
+					&& p.DocumentNumber == DocumentNumber) != null;
 		}
-
-		/*protected override void OnUpdate()
-		{
-			UpdateAd();
-			base.OnUpdate();
-		}
-
-		protected override void OnSave()
-		{
-			UpdateAd();
-			base.OnSave();
-		}
-
-		private void UpdateAd()
-		{
-			if (Payer != null
-				&& ForAd
-				&& this.IsChanged(p => p.ForAd))
-			{
-				//магия будь бдителен!
-				//запрос должен быть в другой сесии а то будет stackoverflow
-				Advertising ad = null;
-				using(new SessionScope())
-					ad = Advertising.Queryable.FirstOrDefault(a => a.Payer == Payer && a.Payment == null);
-				if (ad == null)
-				{
-					ad = new Advertising(Payer);
-					ad.Cost = AdSum.Value;
-				}
-				Ad = ad;
-				ad.PayedSum = AdSum;
-				ad.Payment = this;
-			}
-		}*/
 
 		public void DoUpdate()
 		{
