@@ -485,7 +485,7 @@ namespace InternetInterface.Models
 			[Property, Description("ИНН")]
 			public string Inn { get; set; }
 
-			[Property, Description("Имя")]
+			[Property, Description("Название")]
 			public string Name { get; set; }
 
 			[Property, Description("Номер счета")]
