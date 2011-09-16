@@ -261,9 +261,70 @@ namespace AdminInterface.Controllers
 			var payment = BankPayment.TryFind(id);
 			if (IsPost)
 			{
+				var oldBalance = payment.Sum;
+				var oldPayer = payment.Payer;
+				var oldPayment = payment;
 				BindObjectInstance(payment, "payment", AutoLoadBehavior.NullIfInvalidKey);
+				var newBalance = payment.Sum;
+				var newPayerFlag = oldPayer == null && payment.Payer != null;
 				if (!HasValidationError(payment))
 				{
+					if (oldPayer != null && payment.Payer == oldPayer)
+					{
+						var client = Client.Queryable.Where(c => c.LawyerPerson.Id == payment.Payer.Id).FirstOrDefault();
+						if (newBalance - oldBalance < 0 && payment.Payer != null)
+						{
+							new UserWriteOff {
+							                 	Client = client,
+							                 	Sum = oldBalance - newBalance,
+							                 	Date = DateTime.Now,
+							                 	Comment =
+							                 		string.Format("Списание после редактирования банковского платежа (id = {0})", payment.Id)
+							                 }.Save();
+						}
+						if (newBalance - oldBalance > 0 && payment.Payer != null)
+						{
+							new Payment {
+							            	Client = client,
+							            	PaidOn = DateTime.Now,
+							            	RecievedOn = DateTime.Now,
+							            	Sum = newBalance - oldBalance,
+							            	LogComment =
+							            		string.Format("Зачисление после редактирования банковского платежа (id = {0})", payment.Id)
+							            }.Save();
+						}
+					}
+					if (newPayerFlag)
+					{
+						new Payment {
+						            	Client = Client.Queryable.Where(c => c.LawyerPerson.Id == payment.Payer.Id).FirstOrDefault(),
+						            	PaidOn = DateTime.Now,
+						            	RecievedOn = DateTime.Now,
+						            	Sum = payment.Sum,
+						            	LogComment =
+						            		string.Format(
+						            			"Зачисление после редактирования банковского платежа (id = {0}), назначен плательщик", payment.Id)
+						            }.Save();
+					}
+					if (oldPayer != null && oldPayer != payment.Payer)
+					{
+						new Payment {
+						            	Client = Client.Queryable.Where(c => c.LawyerPerson.Id == payment.Payer.Id).FirstOrDefault(),
+						            	PaidOn = DateTime.Now,
+						            	RecievedOn = DateTime.Now,
+						            	Sum = payment.Sum,
+						            	LogComment =
+						            		string.Format("Зачисление после редактирования банковского платежа (id = {0})", payment.Id)
+						            }.Save();
+						new UserWriteOff {
+						                 	Client = Client.Queryable.Where(c => c.LawyerPerson == oldPayer).FirstOrDefault(),
+						                 	Comment =
+						                 		string.Format("Списание после смены плательщика, при редактировании банковского платежа №{0}",
+						                 		              payment.Id),
+						                 	Date = DateTime.Now,
+						                 	Sum = oldPayment.Sum
+						                 }.Save();
+					}
 					payment.DoUpdate();
 					Flash["Message"] = Message.Notify("Сохранено");
 					RedirectToReferrer();
@@ -271,7 +332,7 @@ namespace AdminInterface.Controllers
 				}
 				else
 				{
-					ArHelper.WithSession(s => ArHelper.Evict(s, new[] { payment }));
+					ArHelper.WithSession(s => ArHelper.Evict(s, new[] {payment}));
 					//PropertyBag["Payment"] = payment;
 				}
 			}
