@@ -166,6 +166,27 @@ namespace Billing.Test.Unit
 		}
 
 		[Test]
+		public void TimeTest()
+		{
+			var client = CreateClient();
+			client.RatedPeriodDate = DateTime.Now;
+			client.Update();
+			var time = InternetSettings.FindFirst();
+			time.NextBillingDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day - 1, 22, 00, 00);
+			time.Update();
+			SystemTime.Reset();
+			billing.Run();
+			Assert.That(WriteOff.Queryable.Count(w => w.Client == client), Is.EqualTo(1));
+			billing.Run();
+			billing.Run();
+			Assert.That(WriteOff.Queryable.Count(w => w.Client == client), Is.EqualTo(1));
+			SystemTime.Now = () => new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 22, 10, 00);
+			billing.Run();
+			Assert.That(WriteOff.Queryable.Count(w => w.Client == client), Is.EqualTo(2));
+
+		}
+
+		[Test]
 		public void DebtWorkTest()
 		{
 			PrepareTest();

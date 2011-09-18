@@ -227,13 +227,14 @@ namespace Billing
 			try
 			{
 				var thisDateMax = InternetSettings.FindFirst().NextBillingDate;
-				if ((thisDateMax - DateTime.Now).TotalMinutes <= 0)
+				var now = SystemTime.Now();
+				if ((thisDateMax - now).TotalMinutes <= 0)
 				{
 					UseSession(Compute);
-					if (DateTime.Now.Hour < 22)
+					if (now.Hour < 22)
 					{
 						var billingTime = InternetSettings.FindFirst();
-						billingTime.NextBillingDate = new DateTime(thisDateMax.Year, thisDateMax.Month, thisDateMax.Day,
+						billingTime.NextBillingDate = new DateTime(now.Year, now.Month, now.Day,
 																   22, 0, 0);
 						billingTime.SaveAndFlush();
 					}
@@ -241,7 +242,7 @@ namespace Billing
 			}
 			catch (Exception ex)
 			{
-				_log.Error(Error.GerError(ex));
+				_log.Error("Ошибка запуска процедуры Run Billing", ex);
 			}
 		}
 
