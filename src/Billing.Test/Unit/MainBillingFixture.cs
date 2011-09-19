@@ -184,6 +184,7 @@ namespace Billing.Test.Unit
 			billing.Run();
 			Assert.That(WriteOff.Queryable.Count(w => w.Client == client), Is.EqualTo(2));
 
+
 		}
 
 		[Test]

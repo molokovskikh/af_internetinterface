@@ -29,7 +29,7 @@ namespace BananceChanger
 			{
 				var errWrite =
 					WriteOff.Queryable.Where(
-						w => w.WriteOffDate.Date == new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day)).ToList();
+						w => w.WriteOffDate >= new DateTime(DateTime.Now.Year, DateTime.Now.Month, 18, 22,00,00)).ToList();
 				foreach (var writeOff in errWrite)
 				{
 					if (writeOff.Client.PhysicalClient != null)
