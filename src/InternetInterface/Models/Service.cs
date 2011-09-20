@@ -191,6 +191,7 @@ namespace InternetInterface.Models
 			client.Status = Status.Find((uint)StatusType.NoWorked);
 			client.Update();
 			CService.Activated = false;
+			CService.Diactivated = true;
 			CService.Update();
 		}
 

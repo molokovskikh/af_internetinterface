@@ -107,7 +107,7 @@ namespace Billing
 
 		public void OnMethod()
 		{
-			foreach (var cserv in ClientService.Queryable.Where(c => !c.Activated).ToList())
+			foreach (var cserv in ClientService.Queryable.Where(c => !c.Activated && !c.Diactivated).ToList())
 			{
 				cserv.Activate();
 			}
@@ -318,7 +318,7 @@ namespace Billing
 				}
 			}
 			var thisDateMax = InternetSettings.FindFirst();
-			thisDateMax.NextBillingDate = DateTime.Now.AddDays(1);
+			thisDateMax.NextBillingDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day + 1, 22, 00, 00);
 			thisDateMax.UpdateAndFlush();
 		}
 	}

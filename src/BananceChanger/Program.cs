@@ -19,9 +19,111 @@ namespace BananceChanger
 			//CreateWriteOffs();
 			//ZeroTarif();
 			//IntervalTariffs();
-			ChangeWriteOffsToday();
+			diactivateClient();
 		}
 
+		public static void diactivateClient()
+		{
+			using (var session = new TransactionScope(OnDispose.Rollback))
+			{
+				var inlogs =
+					PhysicalClientInternetLogs.Queryable.Where(
+						p =>
+						p.LogTime >= DateTime.Parse("2011-09-19 16:14:04") && p.OperatorName == "Zolotarev" &&
+						p.LogTime <= DateTime.Parse("2011-09-19 16:33:04") && p.Balance != null).Select(
+							i => Client.Queryable.Where(c => c.PhysicalClient == i.ClientId).FirstOrDefault()).ToList().Where(c => c != null)
+						.ToList();
+				foreach (var client in inlogs)
+				{
+					if (client.PhysicalClient.Balance >= 0)
+						client.Disabled = false;
+					else
+					{
+						client.Disabled = true;
+						Console.WriteLine("Деактивирован клиент " + client.Id.ToString("00000"));
+					}
+					client.Update();
+				}
+				session.VoteCommit();
+			}
+			Console.ReadLine();
+		}
+
+		public static void DeleteWriteOffs()
+		{
+			using (var session = new TransactionScope(OnDispose.Rollback))
+			{
+				var inlogs =
+					PhysicalClientInternetLogs.Queryable.Where(
+						p =>
+						p.LogTime >= DateTime.Parse("2011-09-19 16:14:04") && p.OperatorName == "Zolotarev" &&
+						p.LogTime <= DateTime.Parse("2011-09-19 16:33:04") && p.Balance != null).Select(
+							i => Client.Queryable.Where(c => c.PhysicalClient == i.ClientId).FirstOrDefault()).ToList().Where(c => c != null).Select(c=>c.Id).ToList()
+						.ToList();
+				var errWrite =
+					WriteOff.Queryable.Where(
+						w => w.WriteOffDate >= new DateTime(DateTime.Now.Year, DateTime.Now.Month, 18, 00, 00, 00)).ToList().Where(
+							c => inlogs.Contains(c.Client.Id)).ToList();
+				foreach (var writeOff in errWrite)
+				{
+					writeOff.Delete();
+					Console.WriteLine(string.Format("Списание {0} удалено сумма {1} клиент {2}", writeOff.Id,
+					                                writeOff.WriteOffSum.ToString("0.00"), writeOff.Client.Id.ToString("00000")));
+				}
+				session.VoteCommit();
+				Console.WriteLine("Всего " + errWrite.Count);
+			}
+			Console.WriteLine("Conmmited");
+			Console.ReadLine();
+		}
+
+		public static void DeleteWriteOffsWhoDis()
+		{
+			using (var session = new TransactionScope(OnDispose.Rollback))
+			{
+				var errWrite =
+					WriteOff.Queryable.Where(
+						w => w.WriteOffDate >= new DateTime(DateTime.Now.Year, DateTime.Now.Month, 18, 00, 00, 00) && w.Client.Disabled).ToList();
+				var disClientWork =
+					Internetsessionslog.Queryable.Where(
+						i =>
+						i.LeaseBegin > new DateTime(DateTime.Now.Year, DateTime.Now.Month, 18, 00, 00, 00) &&
+						i.LeaseBegin < new DateTime(DateTime.Now.Year, DateTime.Now.Month, 18, 18, 10, 00) && i.EndpointId.Client.Disabled)
+						.ToList();
+				var clientDisWorked = disClientWork.Where(i => WhiteIp(i.IP)).Select(i => i.EndpointId.Client.Id).ToList();
+				var deletingWO = errWrite.Where(w => !clientDisWorked.Contains(w.Client.Id)).ToList();
+				foreach (var writeOff in deletingWO)
+				{
+					if (writeOff.Client.PhysicalClient != null)
+					{
+						var pClient = writeOff.Client.PhysicalClient;
+						pClient.Balance -= writeOff.WriteOffSum;
+						pClient.Update();
+					}
+					if (writeOff.Client.LawyerPerson != null)
+					{
+						var lCLient = writeOff.Client.LawyerPerson;
+						lCLient.Balance -= writeOff.WriteOffSum;
+						lCLient.Update();
+					}
+					Console.WriteLine(string.Format("Клиент {0} дата списания {1} зачислено {2} рублей",
+					                                writeOff.Client.Id.ToString("00000"),
+					                                writeOff.WriteOffDate,
+					                                writeOff.WriteOffSum.ToString("0.00")));
+					writeOff.Delete();
+				}
+				session.VoteCommit();
+				Console.WriteLine(string.Format("Следующие клиенты работали, хотя они заблокированы: {0}", clientDisWorked.Implode(" ")));
+			}
+			Console.ReadLine();
+		}
+
+		public static bool WhiteIp(string IP)
+		{
+			return (Int64.Parse("1541080065") <= Int64.Parse(IP)) && (Int64.Parse("1541080319") >= Int64.Parse(IP)) ||
+			       (Int64.Parse("1541080833") <= Int64.Parse(IP)) && (Int64.Parse("1541081086") >= Int64.Parse(IP)) ||
+			       (Int64.Parse("1541080321") <= Int64.Parse(IP)) && (Int64.Parse("1541080575") >= Int64.Parse(IP));
+		}
 
 		public static void ChangeWriteOffsToday()
 		{
@@ -219,7 +321,7 @@ namespace BananceChanger
 					{Environment.Hbm2ddlKeyWords, "none"},
 				});
 			ActiveRecordStarter.Initialize(
-				new[] { typeof(Client).Assembly },
+				new[] { typeof(Client).Assembly, typeof(PhysicalClientInternetLogs).Assembly },
 				configuration);
 		}
 	}
