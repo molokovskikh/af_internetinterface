@@ -299,5 +299,28 @@ typeof(ClientConnectInfo)))
 
 			return 0m;
 		}
+
+		public virtual decimal GetBalance()
+		{
+			if (PhysicalClient != null)
+				return PhysicalClient.Balance;
+			if (LawyerPerson != null)
+				return LawyerPerson.Balance;
+			return 0m;
+		}
+
+		public virtual void SetBalance(decimal sum)
+		{
+			if (PhysicalClient != null)
+			{
+				PhysicalClient.Balance = sum;
+				PhysicalClient.Update();
+			}
+			if (LawyerPerson != null)
+			{
+				LawyerPerson.Balance = sum;
+				LawyerPerson.Update();
+			}
+		}
 	}
 }

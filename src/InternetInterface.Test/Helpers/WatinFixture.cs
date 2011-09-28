@@ -122,7 +122,7 @@ namespace InternetInterface.Test.Helpers
 		protected IE Open(string uri, params object[] args)
 		{
 			return Open(String.Format(uri, args));
-		}
+		}	
 
 
 		[TestFixtureSetUp]

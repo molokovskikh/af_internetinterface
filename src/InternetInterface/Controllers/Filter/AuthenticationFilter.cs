@@ -35,12 +35,12 @@ namespace InternetInterface.Controllers.Filter
 			}
 			else
 			{
-			    var partner = Partner.GetPartnerForLogin(context.Session["login"].ToString());
-                partner.AccesedPartner = CategorieAccessSet.FindAll(DetachedCriteria.For(typeof(CategorieAccessSet))
-                                                            .CreateAlias("AccessCat", "AC", JoinType.InnerJoin)
-                                                            .Add(Restrictions.Eq("Categorie", partner.Categorie)))
-                                                            .Select(c => c.AccessCat.ReduceName).ToList();
-                context.Items.Add("Administrator", partner);
+				var partner = Partner.GetPartnerForLogin(context.Session["login"].ToString());
+				partner.AccesedPartner = CategorieAccessSet.FindAll(DetachedCriteria.For(typeof(CategorieAccessSet))
+															.CreateAlias("AccessCat", "AC", JoinType.InnerJoin)
+															.Add(Restrictions.Eq("Categorie", partner.Categorie)))
+															.Select(c => c.AccessCat.ReduceName).ToList();
+				context.Items.Add("Administrator", partner);
 				controllerContext.PropertyBag["PartnerAccessSet"] = new CategorieAccessSet();
 				controllerContext.PropertyBag["MapPartner"] = partner;
 				if (AccessRules.GetAccessName(controllerContext.Action).Count(CategorieAccessSet.AccesPartner) == 0)

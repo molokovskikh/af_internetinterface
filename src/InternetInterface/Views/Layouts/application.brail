@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <head>
-    <title>Интернет интерфейс</title>
+	<title>Интернет интерфейс</title>
 
 	${app.JS("jquery-1.6.1.js",
 	"jquery.validate.js",
@@ -23,10 +23,10 @@
 </head>
 <body>
 <div class="non-printable"> 
-    <% OutputSubView("""\Subview\MapHead""") %>
+	<% OutputSubView("""\Subview\MapHead""") %>
 </div> 
 	<% if IsDefined("Message"): %>
-    <div class="flash">
+	<div class="flash">
 		<% if Message isa string: %>
 		<div class="notice">
 			${Message}
@@ -36,7 +36,7 @@
 			${Message}
 		</div>
 		<% end %>
-    </div>
+	</div>
 	<% end %>
 ${ChildOutput}
 </body>

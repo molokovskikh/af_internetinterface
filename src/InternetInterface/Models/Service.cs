@@ -305,12 +305,13 @@ namespace InternetInterface.Models
 			CompulsoryDiactivate(CService);
 		}
 
-		public override bool CanDelete(ClientService CService)
+		//Если раскоментировать этот кусочек, будет введено ограничение - использовать услугу можно будет только после истичения 45 дней с момента последней активации.
+		/*public override bool CanDelete(ClientService CService)
 		{
 			if (CService.EndWorkDate == null)
 				return true;
 			return (SystemTime.Now().Date - CService.EndWorkDate.Value.Date).Days > 45;
-		}
+		}*/
 
 		public override decimal GetPrice(ClientService CService)
 		{

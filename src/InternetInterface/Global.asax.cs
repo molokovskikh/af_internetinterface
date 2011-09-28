@@ -138,7 +138,7 @@ namespace InternetInterface
 
 
 #if DEBUG
-			//5MonoRail.Debugger.Toolbar.Toolbar.Init(configuration);
+			//MonoRail.Debugger.Toolbar.Toolbar.Init(configuration);
 #endif
 			base.Configure(configuration);
 		}
