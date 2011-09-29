@@ -30,12 +30,12 @@ namespace InforoomInternet
 			try {
 				XmlConfigurator.Configure();
 				GlobalContext.Properties["Version"] = Assembly.GetExecutingAssembly().GetName().Version;
-                ActiveRecordStarter.EventListenerComponentRegistrationHook += RemoverListner.Make;
+				ActiveRecordStarter.EventListenerComponentRegistrationHook += RemoverListner.Make;
 				new ActiveRecord().Initialize(ActiveRecordSectionHandler.Instance);
 
 				RoutingModuleEx.Engine.Add(new PatternRoute("/")
-                    .DefaultForController().Is("Content")
-                    .DefaultForAction().Is("Новости"));
+					.DefaultForController().Is("Content")
+					.DefaultForAction().Is("Новости"));
 
 				RoutingModuleEx.Engine.Add(new PatternRoute("/Warning")
 					.DefaultForController().Is("Main")

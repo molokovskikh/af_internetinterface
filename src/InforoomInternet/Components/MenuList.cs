@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security;
 using System.Web;
 using Castle.MonoRail.Framework;
 using InforoomInternet.Controllers;
@@ -18,7 +19,7 @@ namespace InforoomInternet.Components
 			foreach (var menuField in MenuField.FindAll())
 			{
 				htmlText += string.Format("<li class=\"bottom-line\"><a href=\"{0}\" id=\"{2}\">{1}</a></li>", EngineContext.ApplicationPath + "/" + menuField.Link,
-					menuField.Name, Path.GetFileNameWithoutExtension(menuField.Link) + "1");
+					menuField.Name, Path.GetFileNameWithoutExtension(SecurityElement.Escape(menuField.Link)) + "1");
 			}
 			htmlText += "</ul>";
 			RenderText(htmlText);
@@ -67,14 +68,14 @@ namespace InforoomInternet.Components
 				var id = Path.GetFileNameWithoutExtension(menuField.Link.Split(new[] { '\\' }).Last());
 
 				blockMenu += string.Format("<li class=\"main {2}\">" +
-						   "<a href=\"{0}\" id=\"{3}\" class=\"menu-item one-line {2}\">{1}</a><br />", EngineContext.ApplicationPath + "/" + menuField.Link,
+						   "<a href=\"{0}\" id=\"{3}\" class=\"menu-item one-line {2}\">{1}</a><br />", EngineContext.ApplicationPath + "/" + SecurityElement.Escape(menuField.Link),
 						   menuField.Name, active, id);
 				//if (menuField.subMenu.Count != 0 || mitemFirst)
 				{
 					blockMenu += mitemFirst ? "<ul  class=\"sub\">" : "<ul style=\"background:none\" class=\"sub\">";
 					foreach (var subField in menuField.subMenu)
 					{
-						blockMenu += string.Format("<li><a href=\"{0}\" style=\"display:{2}\" class=\"submenu-item\">{1}</a></li>", EngineContext.ApplicationPath + "/" + subField.Link, subField.Name, subMenDis);
+						blockMenu += string.Format("<li><a href=\"{0}\" style=\"display:{2}\" class=\"submenu-item\">{1}</a></li>", EngineContext.ApplicationPath + "/" + SecurityElement.Escape(subField.Link), subField.Name, subMenDis);
 					}
 					if (string.IsNullOrEmpty(active) && mitemFirst)
 						blockMenu += "<br />" + "<br />"; else

@@ -108,6 +108,7 @@ namespace InforoomInternet.Controllers
 				Endpoint = new ClientEndpoints {
 					Client = new Client {
 						Disabled = false,
+						ShowBalanceWarningPage = true,
 						PhysicalClient = new PhysicalClients {
 							Balance = 100,
 							Tariff = new Tariff {
@@ -128,6 +129,9 @@ namespace InforoomInternet.Controllers
 			if (IsPost)
 			{
 				SceHelper.Login(lease, Request.UserHostAddress);
+				var client_w = lease.Endpoint.Client;
+				client_w.ShowBalanceWarningPage = false;
+				client_w.Update();
 				var url = Request.Form["referer"];
 				if (String.IsNullOrEmpty(url))
 					Redirecter.RedirectRoot(Context, this);

@@ -142,9 +142,9 @@ namespace InternetInterface.Models
 					bonusForRequest += 50m;
 			}
 			var weekBonus = 0;
-			for (int i = 0; i < 5; i++)
+			for (int i = 0; i < 7; i++)
 			{
-				if (for_bonus_requests.Count(r => r.RegDate.Date == Interval.StartDate.AddDays(i).Date) <= 0)
+				if (for_bonus_requests.Count(r => r.RegDate.Date == Interval.StartDate.AddDays(i).Date) > 0)
 					weekBonus++;
 			}
 			if (weekBonus >= 5)
