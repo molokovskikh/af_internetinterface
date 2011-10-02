@@ -318,7 +318,7 @@ namespace Billing
 				}
 			}
 			var thisDateMax = InternetSettings.FindFirst();
-			thisDateMax.NextBillingDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day + 1, 22, 00, 00);
+			thisDateMax.NextBillingDate = SystemTime.Now().AddDays(1).Date.AddHours(22);
 			thisDateMax.UpdateAndFlush();
 		}
 	}

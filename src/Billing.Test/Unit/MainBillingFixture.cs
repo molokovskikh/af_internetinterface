@@ -119,6 +119,19 @@ namespace Billing.Test.Unit
 		}
 
 		[Test]
+		public void TestBillingDate()
+		{
+			var set = InternetSettings.FindFirst();
+			set.NextBillingDate = new DateTime(2011, 9, 30, 22, 00, 00);
+			set.SaveAndFlush();
+			SystemTime.Now = () => new DateTime(2011, 9, 30, 22, 10, 00);
+			billing.Run();
+			set.Refresh();
+			Assert.That(set.NextBillingDate, Is.EqualTo(new DateTime(2011, 10, 1, 22, 00, 00)));
+			SystemTime.Reset();
+		}
+
+		[Test]
 		public void TariffTest()
 		{
 			var client = CreateClient();

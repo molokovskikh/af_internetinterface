@@ -45,7 +45,7 @@ namespace Billing.Test
 							ActiveRecordStarter.DropSchema();
 							done = true;
 						}
-                        //scope = new SessionScope();
+						//scope = new SessionScope();
 					}
 					catch (MySqlException e)
 					{
@@ -54,10 +54,10 @@ namespace Billing.Test
 					}
 				}
 				ActiveRecordStarter.CreateSchema();
-                using (new SessionScope())
-                {
-                    MainBillingFixture.PrepareTests();
-                }
+				using (new SessionScope())
+				{
+					MainBillingFixture.PrepareTests();
+				}
 			}
 			catch (Exception ex)
 			{
@@ -70,8 +70,8 @@ namespace Billing.Test
 		[TearDown]
 		public void Teardown()
 		{
-            //scope.Dispose();
-            //scope = null;
+			//scope.Dispose();
+			//scope = null;
 			if (mysql != null)
 				mysql.Kill();
 			//if (scope == null)
