@@ -35,6 +35,16 @@
 		 margin-right:150px;
 		 background: url(../Content/onebit_32.png) no-repeat center top;
 		 }
+		 
+	.delFreeLink
+	 {
+		 width:20px;
+		 height:20px;
+		 /*background-color:Red;*/
+		 float:right;
+		 margin-right:150px;
+		 background: url(../Content/onebit_32.png) no-repeat center top;
+		 }
 	.upArrow
 	{
 		 width:12px;
@@ -146,6 +156,12 @@
 
 	$(document).ready(function () {
 
+		$('.delFreeLink').click(function () {
+			var req = {};
+			req.delLink = $(this).parent().children('input:first').val();
+			$.post("DelLink", req, function (data) { alert(data); window.location.href = '../Editor/Menu'; });
+		});
+
 		AddEventArrow($('.upArrow'));
 		AddEventArrowDown($('.downArrow'));
 
@@ -236,6 +252,15 @@
 			alert("Data Loaded: " + aElems.length);
 	});*/
 	}
+
+	function addLink()
+	{
+		var req = {};
+		req.newLink = $('#newLink').val();
+		$.post("FreeLinks", req, function (data) { alert(data); window.location.href = '../Editor/Menu'; });
+	}
+
+
 </script>
 
 <button id="addMenuBut" >Добавить новый пункт меню</button>
@@ -244,4 +269,9 @@
 	component EditMenuList, {}
 %>
 </div>
+
+<input id="newLink" type=text style="width:250px;" />
+<button onclick="addLink()">Добавить страницу без пункта меню</button>
+<br />
+<br />
 <button id="Save" onclick="Save()">Сохранить</button>

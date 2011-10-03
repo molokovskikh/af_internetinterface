@@ -75,7 +75,7 @@ namespace InforoomInternet.Components
 					blockMenu += mitemFirst ? "<ul  class=\"sub\">" : "<ul style=\"background:none\" class=\"sub\">";
 					foreach (var subField in menuField.subMenu)
 					{
-						blockMenu += string.Format("<li><a href=\"{0}\" style=\"display:{2}\" class=\"submenu-item\">{1}</a></li>", EngineContext.ApplicationPath + "/" + SecurityElement.Escape(subField.Link), subField.Name, subMenDis);
+						blockMenu += string.Format("<span><a href=\"{0}\" style=\"display:{2}\" class=\"submenu-item\">{1}</a></span>", EngineContext.ApplicationPath + "/" + SecurityElement.Escape(subField.Link), subField.Name, subMenDis);
 					}
 					if (string.IsNullOrEmpty(active) && mitemFirst)
 						blockMenu += "<br />" + "<br />"; else
@@ -179,6 +179,25 @@ namespace InforoomInternet.Components
 				htmlCode += "</div>";
 				htmlCode += "</div>";
 			}
+			htmlCode += "<div class=\"freeLinks\">";
+			htmlCode += "Ссылки, не имеющие пунктов меню";
+			var menufield =
+				MenuField.Queryable.Where(m => m.Link.Contains("Content")).ToList().Select(m =>m.Link.Split(new[] {'/'})[1]).ToList();
+			var submenu =
+				SubMenuField.Queryable.Where(m => m.Link.Contains("Content")).ToList().Select(m => m.Link.Split(new[] { '/' })[1]);
+			menufield.AddRange(submenu);
+			var freeLinks =
+				IVRNContent.FindAll().Where(w => !menufield.Select(m => m).Contains(w.ViewName)).Select(
+					i => new {name = i.ViewName, link = "Content/" + i.ViewName});
+			foreach (var freeLink in freeLinks)
+			{
+				htmlCode += "<div class=\"field\">";
+				htmlCode += "<span>" + freeLink.name + "</span>" + string.Format("<a href=\"../{0}\" >Ссылка</a>", freeLink.link);
+				htmlCode += string.Format("<input type=\"hidden\" value=\"{0}\" />", freeLink.name);
+				htmlCode += "<div class=\"delFreeLink\"> </div>";
+				htmlCode += "</div>";
+			}
+			htmlCode += "</div>";
 			RenderText(htmlCode);
 		}
 	}

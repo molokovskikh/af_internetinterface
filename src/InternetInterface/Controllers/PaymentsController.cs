@@ -18,7 +18,7 @@ using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using NHibernate;
 
-namespace AdminInterface.Controllers
+namespace InternetInterface.Controllers
 {
 	public class PaymentStatistics
 	{

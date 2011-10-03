@@ -21,7 +21,7 @@
 <body>
 <div id="wrapper">
 	<div class="left">
-		<a href="#" id="logo">&nbsp;</a>
+		<a href="${siteroot}/" id="logo">&nbsp;</a>
 	</div>
 	<div class="right">
 		<div id="icons">
@@ -29,7 +29,7 @@
 			<a href="#" class="mail">&nbsp;</a>
 			<a href="#" class="search">&nbsp;</a>
 			<%if not AccessEditLink: %>
-			<a href="${siteroot}\Login\LoginPage?partner=true" class="login">&nbsp;</a>
+			<a href="${siteroot}/Login/LoginPage?partner=true" class="login">&nbsp;</a>
 			<%end %>
 		</div>
 	</div>
@@ -62,7 +62,7 @@
 			<!-- Телефон // -->
 			<div id="phone">
 				<small>473</small><br />
-				<span>260-60-00</span>
+				<span>22-999-87</span>
 			</div>
 			<!-- // Телефон -->
 
@@ -135,7 +135,8 @@
 			<!-- Контакты // -->
 			<div id="contacts">
 				<h3>Контакты</h3>
-				<p>Воронеж,<br />ул.Студенческая, 12а<br />Тел.: 260-60-00<br />
+				<p>Воронеж,<br />ул.Студенческая, 12а<br />Тел: 22-999-87<br />
+				Тел: +7-920-22-999-87
 				Почта: <a id="mail_link" title="адрес службы поддержки пользователей" href="mailto:internet@ivrn.net">internet@ivrn.net</a>
 				</p>
 			</div>
