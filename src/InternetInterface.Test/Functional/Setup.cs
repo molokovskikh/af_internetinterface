@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using System.IO;
 using CassiniDev;
 using InternetInterface.Test.Helpers;
@@ -18,7 +19,11 @@ namespace InternetInterface.Test.Functional
 			WatinFixture.ConfigTest();
 
 			var port = int.Parse(ConfigurationManager.AppSettings["webPort"]);
-			var webDir = ConfigurationManager.AppSettings["webDirectory"];
+			var webDir = string.Empty;
+			if (Environment.MachineName.ToLower() == "devsrv")
+				webDir = ConfigurationManager.AppSettings["webDirectoryDev"];
+			else
+				webDir = ConfigurationManager.AppSettings["webDirectory"];
 
 			_webServer = new Server(port, "/", Path.GetFullPath(webDir));
 			_webServer.Start();
