@@ -32,6 +32,7 @@ namespace InternetInterface.Test.Functional
 				webDir = ConfigurationManager.AppSettings["webDirectory"];
 
 			var err = new StringBuilder();
+			err.AppendLine("InternetInterface.Test");
 			err.AppendLine("SERVERNAME " + webDir);
 			err.AppendLine("MASHINE " + Environment.MachineName.ToLower());
 			err.AppendLine("FULLPATH " + Path.GetFullPath(webDir));
