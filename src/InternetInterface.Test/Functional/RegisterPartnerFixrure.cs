@@ -22,7 +22,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void MigrationTets()
 		{
-			ActiveRecordStarter.GenerateCreationScripts(@"..\\..\\..\\SQL_Migrate_ActiveRecordGenerator.sql");
+			//ActiveRecordStarter.GenerateCreationScripts(@"..\\..\\..\\SQL_Migrate_ActiveRecordGenerator.sql");
 		}
 
 
