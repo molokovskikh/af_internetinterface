@@ -140,6 +140,7 @@
     <None Include="Views\Brigads\MakeBrigad.brail" />
     <None Include="Views\Brigads\ShowBrigad.brail" />
     <None Include="Views\CommonScripts\WriteMessage.brail" />
+    <None Include="Views\Copy of Rescue\404.brail" />
     <None Include="Views\HouseAgent\Agent.brail" />
     <None Include="Views\HouseAgent\ShowAgents.brail" />
     <None Include="Views\HouseMap\BasicHouseInfo.brail" />
@@ -165,7 +166,7 @@
     <None Include="Views\Payments\ProcessPayments.brail" />
     <None Include="Views\Register\RegisterLegalPerson.brail" />
     <None Include="Views\Register\RegisterRequest.brail" />
-    <None Include="Views\Rescue\404.brail" />
+    <None Include="Views\Rescues\404.brail" />
     <None Include="Views\Subview\AppealsInfo.brail" />
     <None Include="Views\Subview\ChangeBalanceInfo.brail" />
     <None Include="Views\Subview\Client.brail" />

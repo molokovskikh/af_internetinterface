@@ -100,11 +100,13 @@ namespace Billing.Test.Unit
 
 		private static void PrepareTest()
 		{
+			//InternetSettings.DeleteAll();
 			UserWriteOff.DeleteAll();
 			ClientService.DeleteAll();
 			WriteOff.DeleteAll();
 			Payment.DeleteAll();
 			Client.DeleteAll();
+			PhysicalClients.DeleteAll();
 			SystemTime.Reset();
 		}
 
@@ -342,21 +344,27 @@ namespace Billing.Test.Unit
 		[Test]
 		public void VoluntaryBlockinTest()
 		{
-			PrepareTest();
 			SystemTime.Reset();
-			var client = CreateClient();
+			Client client;
+			using (var tr = new TransactionScope(OnDispose.Rollback))
+			{
+				PrepareTest();
+				client = CreateClient();
+				tr.VoteCommit();
+			}
 			int countDays = 10;
 			var physClient = client.PhysicalClient;
 			//client.Disabled = true;
+			//client.RatedPeriodDate = DateTime.Now;
 			client.AutoUnblocked = true;
 			client.Update();
 			var service = new ClientService {
-												Client = client,
-												Activator = InitializeContent.partner,
-												Service = Service.GetByType(typeof(VoluntaryBlockin)),
-												BeginWorkDate = DateTime.Now.AddDays(2),
-												EndWorkDate = DateTime.Now.AddDays(countDays+2)
-											};
+			                                	Client = client,
+			                                	Activator = InitializeContent.partner,
+			                                	Service = Service.GetByType(typeof (VoluntaryBlockin)),
+			                                	BeginWorkDate = DateTime.Now.AddDays(2),
+			                                	EndWorkDate = DateTime.Now.AddDays(countDays + 2)
+			                                };
 			client.ClientServices.Add(service);
 			service.Activate();
 			billing.OnMethod();
@@ -376,36 +384,44 @@ namespace Billing.Test.Unit
 				SystemTime.Now = () => DateTime.Now.AddDays(i1 + 3);
 			}
 			Assert.That(WriteOff.Queryable.Where(c => c.Client == client).ToList().Sum(w => w.WriteOffSum),
-						Is.EqualTo(0));
+			            Is.EqualTo(0));
 			SystemTime.Now = () => DateTime.Now.AddDays(countDays + 3);
 			billing.OnMethod();
 			//client.Refresh();
 			Assert.IsFalse(client.Disabled);
-			Assert.That(client.ClientServices, !Is.Empty);
+			Assert.That(client.ClientServices, Is.Empty);
 			SystemTime.Now = () => service.EndWorkDate.Value.AddDays(46);
 			billing.On();
 			Assert.That(client.ClientServices, Is.Empty);
 			Assert.IsFalse(client.Disabled);
 			SystemTime.Reset();
-			service = new ClientService
+			using (var tr = new TransactionScope(OnDispose.Rollback))
 			{
-				Client = client,
-				Activator = InitializeContent.partner,
-				Service = Service.GetByType(typeof(VoluntaryBlockin)),
-				BeginWorkDate = DateTime.Now,
-			};
-			client.ClientServices.Add(service);
-			service.Activate();
+				service = new ClientService {
+				                            	Client = client,
+				                            	Activator = InitializeContent.partner,
+				                            	Service = Service.GetByType(typeof (VoluntaryBlockin)),
+				                            	BeginWorkDate = DateTime.Now,
+				                            };
+				client.ClientServices.Add(service);
+				service.Activate();
+				client.Update();
+				tr.VoteCommit();
+			}
 			countDays = 29;
 			//WriteOff.DeleteAll();
-			physClient.Refresh();
+			//physClient.Refresh();
 			while (physClient.Balance > 0)
 			{
 				billing.OnMethod();
-				billing.Compute();
+				using (var tr = new TransactionScope(OnDispose.Rollback))
+				{
+					billing.Compute();
+					tr.VoteCommit();
+				}
 				SystemTime.Now = () => DateTime.Now.AddDays(countDays);
 				countDays++;
-				physClient.Refresh();
+				physClient = PhysicalClients.FindFirst();
 			}
 			var firstdate = WriteOff.FindFirst().WriteOffDate;
 			Console.WriteLine(physClient.Balance);
@@ -822,11 +838,21 @@ namespace Billing.Test.Unit
 		[Test]
 		public void RealTest()
 		{
-			BaseBillingFixture.CreateAndSaveInternetSettings();
-			var b = new MainBilling();
-			b.Run();
+			SystemTime.Reset();
+			using (var t = new TransactionScope(OnDispose.Rollback))
+			{
+				InternetSettings.DeleteAll();
+				t.VoteCommit();
+				BaseBillingFixture.CreateAndSaveInternetSettings();
+			}
+			using (var t = new TransactionScope(OnDispose.Rollback))
+			{
+				var b = new MainBilling();
+				b.Run();
+				t.VoteCommit();
+			}
 			var thisSettings = InternetSettings.FindFirst().NextBillingDate;
-			Assert.That(thisSettings.ToShortDateString(), Is.EqualTo(DateTime.Now.AddDays(1).ToShortDateString()));
+			Assert.That(thisSettings.ToShortDateString(), Is.EqualTo(DateTime.Now.ToShortDateString()));
 		}
 
 		[Test]

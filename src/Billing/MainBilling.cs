@@ -56,29 +56,29 @@ namespace Billing
 				var configuration = new InPlaceConfigurationSource();
 				configuration.PluralizeTableNames = true;
 				configuration.Add(typeof (ActiveRecordBase),
-								  new Dictionary<string, string> {
-																	 {
-																		 Environment.Dialect,
-																		 "NHibernate.Dialect.MySQLDialect"
-																		 },
-																	 {
-																		 Environment.ConnectionDriver,
-																		 "NHibernate.Driver.MySqlDataDriver"
-																		 },
-																	 {
-																		 Environment.ConnectionProvider,
-																		 "NHibernate.Connection.DriverConnectionProvider"
-																		 },
-																	 {Environment.ConnectionStringName, "DB"},
-																	 {
-																		 Environment.ProxyFactoryFactoryClass,
-																		 "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle"
-																		 },
-																	 {Environment.Hbm2ddlKeyWords, "none"},
-																 });
+				                  new Dictionary<string, string> {
+				                                                 	{
+				                                                 		Environment.Dialect,
+				                                                 		"NHibernate.Dialect.MySQLDialect"
+				                                                 		},
+				                                                 	{
+				                                                 		Environment.ConnectionDriver,
+				                                                 		"NHibernate.Driver.MySqlDataDriver"
+				                                                 		},
+				                                                 	{
+				                                                 		Environment.ConnectionProvider,
+				                                                 		"NHibernate.Connection.DriverConnectionProvider"
+				                                                 		},
+				                                                 	{Environment.ConnectionStringName, "DB"},
+				                                                 	{
+				                                                 		Environment.ProxyFactoryFactoryClass,
+				                                                 		"NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle"
+				                                                 		},
+				                                                 	{Environment.Hbm2ddlKeyWords, "none"},
+				                                                 });
 				ActiveRecordStarter.EventListenerComponentRegistrationHook += RemoverListner.Make;
 				ActiveRecordStarter.Initialize(new[] {typeof (Client).Assembly},
-											   configuration);
+				                               configuration);
 			}
 		}
 

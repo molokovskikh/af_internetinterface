@@ -19,7 +19,59 @@ namespace BananceChanger
 			//CreateWriteOffs();
 			//ZeroTarif();
 			//IntervalTariffs();
-			diactivateClient();
+			//diactivateClient();
+			LawyerPersonMonth();
+		}
+
+		public static void LawyerPersonMonth()
+		{
+			var totalSum = 0m;
+			var totalCount = 0;
+			var unClient = new List<uint>();
+			using (var transaction = new TransactionScope(OnDispose.Rollback))
+			{
+				var lawPerson = Client.Queryable.Where(c => c.LawyerPerson != null && c.PhysicalClient == null).ToList();
+				Console.WriteLine("Всего персон " + lawPerson.Count);
+				foreach (var client in lawPerson)
+				{
+					var writeOffs =
+						WriteOff.Queryable.Where(w => w.Client == client).ToList().Where(
+							w => w.WriteOffDate.Date == new DateTime(2011, 10, 1)).ToList();
+					var writeOff30 = writeOffs.FirstOrDefault();
+					//var writeOff30Last = writeOffs.LastOrDefault();
+					if (writeOff30 != null)
+					{
+						var writeOff29 =
+							WriteOff.Queryable.Where(w => w.Client == client).ToList().Where(
+								w => w.WriteOffDate.Date == new DateTime(2011, 09, 29)).FirstOrDefault();
+						if (writeOff29 != null)
+						{
+							var balanceChange = writeOff29.WriteOffSum - writeOff30.WriteOffSum;
+							writeOff30.WriteOffSum = writeOff29.WriteOffSum;
+							writeOff30.Update();
+							var lawyer = client.LawyerPerson;
+							lawyer.Balance -= balanceChange;
+							lawyer.Update();
+							Console.WriteLine(string.Format("Коррекция для клиента {0} на {1} рублей", client.Id.ToString("00000"),
+							                                balanceChange));
+							totalCount++;
+							totalSum += balanceChange;
+						}
+						else
+						{
+							unClient.Add(client.Id);
+						}
+					}
+					else
+					{
+						unClient.Add(client.Id);
+					}
+				}
+				transaction.VoteCommit();
+			}
+			Console.WriteLine(string.Format("Всего клиентов обработано: {0} общая сумма корроектировки : {1}", totalCount, totalSum));
+			Console.WriteLine("Клиенты не обработаны: " + unClient.Implode(" "));
+			Console.ReadLine();
 		}
 
 		public static void diactivateClient()
@@ -120,9 +172,10 @@ namespace BananceChanger
 
 		public static bool WhiteIp(string IP)
 		{
-			return (Int64.Parse("1541080065") <= Int64.Parse(IP)) && (Int64.Parse("1541080319") >= Int64.Parse(IP)) ||
-			       (Int64.Parse("1541080833") <= Int64.Parse(IP)) && (Int64.Parse("1541081086") >= Int64.Parse(IP)) ||
-			       (Int64.Parse("1541080321") <= Int64.Parse(IP)) && (Int64.Parse("1541080575") >= Int64.Parse(IP));
+			var ip = Int64.Parse(IP);
+			return (Int64.Parse("1541080065") <= ip) && (Int64.Parse("1541080319") >= ip) ||
+			       (Int64.Parse("1541080833") <= ip) && (Int64.Parse("1541081086") >= ip) ||
+			       (Int64.Parse("1541080321") <= ip) && (Int64.Parse("1541080575") >= ip);
 		}
 
 		public static void ChangeWriteOffsToday()

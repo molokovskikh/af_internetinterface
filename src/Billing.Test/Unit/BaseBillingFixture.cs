@@ -41,7 +41,7 @@ namespace Billing.Test.Unit
 		public static Client CreateAndSaveClient(string name, bool statusBlocked, decimal balance)
 		{
 			var phisicalClient = CreatePhisicalClient(statusBlocked, balance);
-			phisicalClient.SaveAndFlush();
+			phisicalClient.Save();
 			CreateAndSavePaymentForConnect(phisicalClient);
 			return new Client
 			       	{
@@ -50,7 +50,8 @@ namespace Billing.Test.Unit
 			       		DebtDays = 0,
 			       		Name = name,
 			       		PhysicalClient = phisicalClient,
-                        BeginWork = DateTime.Now 
+                        BeginWork = DateTime.Now ,
+						RatedPeriodDate = DateTime.Now
 			       		//SayBillingIsNewClient = true
 			       	};
 		}
@@ -67,7 +68,7 @@ namespace Billing.Test.Unit
 		public static PhysicalClients CreatePhisicalClient(bool statusBlocked, decimal balance)
 		{
 			var tariff = CreateTariff((int)balance);
-			tariff.SaveAndFlush();
+			tariff.Save();
 			//var status = CreateStatus(statusBlocked);
 			//status.SaveAndFlush();
 			return  new PhysicalClients
