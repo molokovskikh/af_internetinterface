@@ -24,6 +24,7 @@ namespace InternetInterface.Test.Functional
 			//WatinFixture.ConfigTest();
 
 			var port = int.Parse(ConfigurationManager.AppSettings["webPort"]);
+
 			var webDir = string.Empty;
 			if (Environment.MachineName.ToLower() == "devsrv")
 				webDir = ConfigurationManager.AppSettings["webDirectoryDev"];
