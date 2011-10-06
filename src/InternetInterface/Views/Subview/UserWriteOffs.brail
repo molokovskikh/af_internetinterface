@@ -1,0 +1,25 @@
+﻿<%if _client.UserWriteOffs.Count != 0: %>
+<div style="clear:both;">
+	<table class="table">
+		<thead>
+			<tr>
+				<th colspan=3>Списания за предоставленные услуги</th>
+			</tr>
+			<tr>
+				<td>Дата</td>
+				<td>Сумма</td>
+				<td>Комментарий</td>
+			</tr>
+		</thead>
+		<tbody>
+			<% for i,item in enumerate(_client.UserWriteOffs): %>
+			<tr>
+				<td>${item.Date.ToShortDateString()}</td>
+				<td>${item.Sum.ToString("0.00")}</td>
+				<td>${item.Comment}</td>
+			</tr>
+			<%end %>
+		</tbody>
+	</table>
+</div>
+<%end %>

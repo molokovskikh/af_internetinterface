@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Common.Tools;
+using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
 using InternetInterface.AllLogic;
 using InternetInterface.Controllers.Filter;
@@ -95,7 +96,7 @@ namespace InternetInterface.Controllers
 	//[Layout("Main")]
 	[Helper(typeof (PaginatorHelper))]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof (AuthenticationFilter))]
-	public class UserInfoController : ARSmartDispatcherController
+	public class UserInfoController : BaseController
 	{
 		public void SearchUserInfo([DataBind("filter")] ClientFilter filter)
 		{
@@ -787,8 +788,7 @@ namespace InternetInterface.Controllers
 		                          string balanceText)
 		{
 			var clientToch = Client.Find(clientId);
-			string forChangeSumm = string.Empty;
-			var thisPay = new Payment();
+			var forChangeSumm = string.Empty;
 			PropertyBag["ChangeBalance"] = true;
 			if (changeProperties.IsForTariff())
 			{
@@ -798,29 +798,47 @@ namespace InternetInterface.Controllers
 			{
 				forChangeSumm = balanceText;
 			}
-			thisPay.Sum = Convert.ToDecimal(forChangeSumm);
-			thisPay.Agent =
-				Agent.FindAll(DetachedCriteria.For(typeof (Agent)).Add(Expression.Eq("Partner", InitializeContent.partner)))[0];
-			thisPay.Client = clientToch;
-			thisPay.RecievedOn = DateTime.Now;
-			thisPay.PaidOn = DateTime.Now;
-			thisPay.BillingAccount = false;
-			if (Validator.IsValid(thisPay))
+			decimal tryBalance;
+			if (decimal.TryParse(forChangeSumm, out tryBalance) && tryBalance > 0)
 			{
-				thisPay.Save();
-				Flash["thisPay"] = new Payment();
-				Flash["Applying"] = "Баланс пополнен";
+				new Payment {
+				            	Client = clientToch,
+								Agent = Agent.GetByInitPartner(),
+								PaidOn = DateTime.Now,
+								RecievedOn = DateTime.Now,
+								Sum = tryBalance,
+								BillingAccount = false
+				            }.Save();
+				Flash["Message"] = Message.Notify("Платеж ожидает обработки");
 			}
 			else
 			{
-				thisPay.SetValidationErrors(Validator.GetErrorSummary(thisPay));
-				Flash["thisPay"] = thisPay;
-				ARSesssionHelper<Payment>.QueryWithSession(session => {
-					session.Evict(thisPay);
-					return new List<Payment>();
-				});
+				Flash["Message"] = Message.Error("Введена неверная сумма, должно быть положительное число.");
 			}
-			RedirectToUrl(@"../Search/Redirect?filter.ClientCode=" + clientId);
+			RedirectToUrl(clientToch.Redirect());
+		}
+
+		[AccessibleThrough(Verb.Post)]
+		public void UserWriteOff(uint ClientID, string writeOffSum, string comment)
+		{
+			var client = Client.Find(ClientID);
+			decimal writeOff;
+			if (decimal.TryParse(writeOffSum, out writeOff) && writeOff > 0)
+			{
+				new UserWriteOff {
+				                 	Client = client,
+									Sum = writeOff,
+									Date = DateTime.Now,
+									Comment = comment,
+									Registrator = InitializeContent.partner
+				                 }.Save();
+				Flash["Message"] = Message.Notify("Списание ожидает обработки");
+			}
+			else
+			{
+				Flash["Message"] = Message.Error("Введена неверная сумма, должно быть положительное число.");
+			}
+			RedirectToUrl(client.Redirect());
 		}
 
 		public void AddInfo(uint ClientCode)

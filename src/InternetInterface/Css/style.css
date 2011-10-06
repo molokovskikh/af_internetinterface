@@ -378,6 +378,13 @@ input.checkbox {
   height: auto;
 	   /*padding: 10px;*/
 }
+
+.flash .err {
+  border: 1px solid #fbb;
+  background-color: #fdd;
+  height: auto;
+  padding: 10px;
+}
 .EmptyData
 {
 	border: 1px solid #c4c42e;

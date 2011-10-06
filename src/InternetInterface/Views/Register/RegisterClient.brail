@@ -5,14 +5,13 @@ var cost = [];
 
 function ShowMinPrice()
 {
-			$("#deldiv").remove();
-			
-			<%for i, Tariff in enumerate(Tariffs):%>
-			 cost[${Tariff.Id}] = ${Tariff.Price};
-			 <%end %>
-			$("#my-div").append('<div id="deldiv" style="color:green;"> Минимальная сумма к зачислению: '
-			 + cost[$('#ChTariff').val()] + ' + ' + $('#ConnectSumm').val() + ' = '
-			+ (Number(cost[$('#ChTariff').val()]) + Number($('#ConnectSumm').val())) + '</div>');
+$("#deldiv").remove();
+<%for i, Tariff in enumerate(Tariffs):%>
+	cost[${Tariff.Id}] = ${Tariff.Price};
+<%end %>
+$("#my-div").append('<div id="deldiv" style="color:green;"> Минимальная сумма к зачислению: '
+	+ cost[$('#ChTariff').val()] + ' + ' + $('#ConnectSumm').val() + ' = '
++ (Number(cost[$('#ChTariff').val()]) + Number($('#ConnectSumm').val())) + '</div>');
 }
 
 function ChBalace()
@@ -66,87 +65,92 @@ $(function() {
 
 <div id="main">
 <div id="container">
-	<div id="block-tables" class="block">
-		<div class="content" style="width:900px;">
-			<div class="inner">
-			<h2 id="warning"></h2>
-			<h2 id="summary"></h2>
-				  <form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Register/RegisterClient" >
-				  <%if IsDefined("requestID"): %>
-				  <input type=hidden value=${requestID} name=requestID />
-				  <%end %>
-				   <table class="table" style="width:100%; " border="0" id="RegTable"> 
-							<tr>
-								<th colspan="3">
-									<strong>Форма регистрации (обязательные для заполнения поля выделены жирным шрифтом)</strong></th>
-							</tr>
-							<% OutputSubView("""\Subview\Client""") %>
-														 <tr>
-							 <td>
-								   <b> Сумма за подключение:</b>
-								</td>
-								 <td >
-								 <%if PartnerAccessSet.AccesPartner("SSI"): %>
-									<input id="ConnectSumm" type="text" value="${Client.ConnectSum}" name="client.ConnectSum"/>
-									<%else: %>
-								 <input id="ConnectSumm" type="hidden" name="client.ConnectSum" value=700 />
-								 700руб
-								 <%end %>
-								 </td>
-									<td>${VB.GetBlock("ConnectSum")}</td>
-							 </tr> 
-							 <tr>
-							<td>
-							<div>
-							<%if PartnerAccessSet.AccesPartner("SSI"): %>
-							  <%if IsDefined("UserInfo"): %>
-							   <%if UserInfo: %>
-								  <input type="radio" id="ForTariffChange" name="ChangedBy.ChangeType" value="ForTariff" ${"checked" if ChangeBy.IsForTariff()} />
-								  <label for="Autosearch"><b>Внести сумму по тарифному плану (${Client.Tariff.Price} рублей)</b> </label><br />
-								  <input type="radio" id="OtherSummChange" name="ChangedBy.ChangeType" value="OtherSumm" ${"checked" if ChangeBy.IsOtherSumm()} />
-								<%end %>
-								<%else: %>
-									<input type="hidden" name="ChangedBy.ChangeType" value="OtherSumm" />
-							   <%end %>
-							 <%end %>
-								  <label for="Other_Balance"><b>Внести сумму на счет:</b> </label>
-								  <input type="text" class="BalanceText" id="BalanceText"  name="BalanceText"  value="${BalanceText}" style="width: 50%; " />
-								  <br />
-								 <div class="errorjava">
-								</div>
-
-							 </div>
-								  <div style="float:left;" id="my-div"></div>
-							</td>
-							<div id="summary"></div>
-								<td  colspan="3">
-									${VB.GetBlock("Balance")}
-								</td>
-							 </tr>
-							
-							<% OutputSubView("""\Subview\ConnectMenu""") %>
-
-							 <%if  PartnerAccessSet.AccesPartner("SSI"):%>
-							<tr>
-								<td colspan=2>
-								<label for="VisibleRegisteredInfo">Показывать наряд на подключение  </label>
-																	<input type="checkbox" id="VisibleRegisteredInfo" name="VisibleRegisteredInfo" value=true />
-								</td>
-							</tr>
-							<%end %>
-							<tr>
-								<td  colspan="3">
-								<div class="actions">
-												 <button type="submit" class="button" id="RegisterClientButton">
-												<img alt="Save" src="../Images/application_edit.png"> Зарегистрировать
-												 </button>
-								<!--    <input class="button" id="RegisterButton" type="submit" value="Зарегистрировать" /></td> -->
-								</div>
-							</tr>
-					   </table>
-				  </form>
-			</div>
-		</div>
-	 </div>
- </div>
- </div>
+<div id="block-tables" class="block">
+<div class="content" style="width:900px;">
+<div class="inner">
+<form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Register/RegisterClient" >
+<%if IsDefined("requestID"): %>
+	<input type=hidden value=${requestID} name=requestID />
+<%end %>
+<table class="table" style="width:100%; " border="0" id="RegTable">
+	<thead>
+		<tr>
+			<th colspan="3">
+				<strong>Форма регистрации (обязательные для заполнения поля выделены жирным шрифтом)</strong>
+			</th>
+		</tr>
+	</thead>
+</table>
+<% OutputSubView("""\Subview\Client""") %>
+<table class="table">
+	<tbody>
+		<tr>
+			<td>
+				<b> Сумма за подключение:</b>
+			</td>
+			<td >
+				<%if PartnerAccessSet.AccesPartner("SSI"): %>
+				<input id="ConnectSumm" type="text" value="${Client.ConnectSum}" name="client.ConnectSum"/>
+				<%else: %>
+				<input id="ConnectSumm" type="hidden" name="client.ConnectSum" value=700 />
+				700руб
+				<%end %>
+			</td>
+			<td>${VB.GetBlock("ConnectSum")}</td>
+		</tr> 
+		<tr>
+			<td>
+				<div>
+				<%if PartnerAccessSet.AccesPartner("SSI"): %>
+					<%if IsDefined("UserInfo"): %>
+					<%if UserInfo: %>
+						<input type="radio" id="ForTariffChange" name="ChangedBy.ChangeType" value="ForTariff" ${"checked" if ChangeBy.IsForTariff()} />
+						<label for="Autosearch"><b>Внести сумму по тарифному плану (${Client.Tariff.Price} рублей)</b> </label><br />
+						<input type="radio" id="OtherSummChange" name="ChangedBy.ChangeType" value="OtherSumm" ${"checked" if ChangeBy.IsOtherSumm()} />
+					<%end %>
+					<%else: %>
+						<input type="hidden" name="ChangedBy.ChangeType" value="OtherSumm" />
+					<%end %>
+				<%end %>
+					<label for="Other_Balance"><b>Внести сумму на счет:</b> </label>
+					<input type="text" class="BalanceText" id="BalanceText"  name="BalanceText"  value="${BalanceText}" style="width: 50%; " />
+					<br />
+					<div class="errorjava"></div>
+				</div>
+				<div style="float:left;" id="my-div"></div>
+			</td>
+		<div id="summary"></div>
+			<td  colspan="3">
+				${VB.GetBlock("Balance")}
+			</td>
+		</tr>
+	</tbody>
+</table>
+<% OutputSubView("""\Subview\ConnectMenu""") %>
+<table>
+	<tbody>
+		<%if  PartnerAccessSet.AccesPartner("SSI"):%>
+		<tr>
+			<td colspan=2>
+				<label for="VisibleRegisteredInfo">Показывать наряд на подключение  </label>
+				<input type="checkbox" id="VisibleRegisteredInfo" name="VisibleRegisteredInfo" value=true />
+			</td>
+		</tr>
+		<%end %>
+		<tr>
+			<td  colspan="3">
+				<div class="actions">
+					<button type="submit" class="button" id="RegisterClientButton">
+					<img alt="Save" src="../Images/application_edit.png"> Зарегистрировать
+					</button>
+				</div>
+			</td>
+		</tr>
+	</tbody>
+</table>
+</form>
+</div>
+</div>
+</div>
+</div>
+</div>

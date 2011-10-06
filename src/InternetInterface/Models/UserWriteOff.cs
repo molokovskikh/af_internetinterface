@@ -28,6 +28,9 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string Comment { get; set; }
 
+		[BelongsTo]
+		public virtual Partner Registrator { get; set; }
+
 		/*public virtual string GetDate(string grouped)
 		{
 			if (grouped == "month")

@@ -182,7 +182,8 @@ namespace InternetInterface.Models.Access
 									"ChangeBalance",
 									"SiteMap",
 									"SearchUserInfo",
-									"NotifyInforum"
+									"NotifyInforum",
+									"UserWriteOff"
 								};
 			return _changeBalance.Contains(methodName) ? "CB" : string.Empty;
 		}
