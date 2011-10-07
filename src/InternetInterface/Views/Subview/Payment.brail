@@ -1,26 +1,34 @@
-﻿ <tr>
-	<td colspan=2>
-	<div>
-	<%if PartnerAccessSet.AccesPartner("SSI"): %>
-	  <%if IsDefined("UserInfo"): %>
-		   <%if UserInfo: %>
-			  <input type="radio" id="ForTariffChange" name="ChangedBy.ChangeType" value="ForTariff" ${"checked" if ChangeBy.IsForTariff()} />
-			  <label for="Autosearch"><b>Внести сумму по тарифному плану (${Client.Tariff.Price} рублей)</b> </label><br />
-			  <input type="radio" id="OtherSummChange" name="ChangedBy.ChangeType" value="OtherSumm" ${"checked" if ChangeBy.IsOtherSumm()} />
-			<%else: %>
-				<input type="hidden" name="ChangedBy.ChangeType" value="OtherSumm" />
-			<%end %>
-		<%end %>
-		<%else: %>
-			<input type="hidden" name="ChangedBy.ChangeType" value="OtherSumm" />
-	   <%end %>
-
-		  <label for="Other_Balance"><b>Внести сумму на счет:</b> </label>
-		  <input type="text" style="width:200px; margin-left:100px;"  class="BalanceText" id="BalanceText"  name="BalanceText"  value="${BalanceText}" style="width: 50%; " />
-		  <br />
-		 <div class="errorjava">
-		</div>
-
-	 </div>
-		  <div style="float:left;" id="my-div"></div>
-	</td>
+﻿<table class="table">
+	<thead>
+		<th colspan=4>Пополнить баланс клиента</th>
+	</thead>
+	<tbody>
+		<tr>
+			<td colspan=2>
+				<%if PartnerAccessSet.AccesPartner("SSI"): %>
+					<%if IsDefined("UserInfo"): %>
+						<%if UserInfo: %>
+							<input type="radio" id="ForTariffChange" name="ChangedBy.ChangeType" value="ForTariff" ${"checked" if ChangeBy.IsForTariff()} />
+							<label for="Autosearch"><b>Внести сумму по тарифному плану (${Client.Tariff.Price} рублей)</b> </label><br />
+							<input type="radio" id="OtherSummChange" name="ChangedBy.ChangeType" value="OtherSumm" ${"checked" if ChangeBy.IsOtherSumm()} />
+						<%else: %>
+							<input type="hidden" name="ChangedBy.ChangeType" value="OtherSumm" />
+						<%end %>
+					<%end %>
+					<%else: %>
+						<input type="hidden" name="ChangedBy.ChangeType" value="OtherSumm" />
+				<%end %>
+				<label for="Other_Balance"><b>Внести сумму на счет:</b> </label>
+				<input type="text" style="width:200px; margin-left:100px;"  class="BalanceText" id="BalanceText"  name="BalanceText"  value="${BalanceText}" style="width: 50%; " />
+				<br />
+				<div class="errorjava">
+				</div>
+				<div style="float:left;" id="my-div"></div>
+			</td>
+			<td>
+				<button type="submit" id="ChangeBalanceButton" class="button">
+				<img alt="Save" src="../Images/tick.png"> Пополнить баланс</button>
+			</td>
+		</tr>
+	</tbody>
+</table>

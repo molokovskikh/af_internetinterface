@@ -135,6 +135,7 @@
 		</tr>
 		<%end %>
 		<%end %>
+<%if PartnerAccessSet.AccesPartner("ECI"): %>
 		<tr>
 			<td>
 				<% if _client.AdditionalCanUsed("Refused"): %>
@@ -154,13 +155,14 @@
 				<%end %>
 			 </td>
 		</tr>
+<%end %>
 	</tbody>
 </table>
 <%else:%>
 <form class="form edit" method="post" action="${siteroot}/UserInfo/EditInformation">
 <input type="hidden" name="ClientID" value="${ClientCode}" />
 <input type=hidden name="appealType" value="${appealType}" />
-<table class="table" style="width:100%; " border="0" id="EditTable"> 
+
 <% OutputSubView("""\Subview\Client""") %>
 	<table>
 		<tbody>
@@ -186,21 +188,14 @@
 <br />
 
 <% OutputSubView("""\Subview\ConnectInfo""") %>
-
 <% OutputSubView("""\Subview\PaymentInfo""") %>
-
 <br />
-
 <% OutputSubView("""\Subview\WriteOffInfo""") %>
-
 <% OutputSubView("""\Subview\UserWriteOffs""") %>
-
 <% OutputSubView("""\Subview\ChangeBalanceInfo""") %>
-
 </div>
 </div>
 </div>
 </form>
 </div>
-
 <% OutputSubView("""\Subview\AppealsInfo""") %>

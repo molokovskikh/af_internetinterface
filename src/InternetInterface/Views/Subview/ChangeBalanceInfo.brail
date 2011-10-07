@@ -2,21 +2,9 @@
 <div style="clear:both;">
 <form class="form login" method="post" action="${siteroot}/UserInfo/ChangeBalance">
 	<input type="hidden" name="ClientID" value="${ClientCode}" />
-	<table class="table">
-		<thead>
-			<th colspan=4>Пополнить баланс клиента</th>
-		</thead>
-		<tbody>
-				<% OutputSubView("""\Subview\Payment""") %>
-			<td>
-			   <button type="submit" id="ChangeBalanceButton" class="button">
-				  <img alt="Save" src="../Images/tick.png"> Пополнить баланс
-				</button>
-			</td>
-		</tr>
-		</tbody>
-	</table>
+	<% OutputSubView("""\Subview\Payment""") %>
 </form>
+<%if PartnerAccessSet.AccesPartner("ECI"): %>
 <form method="post" action="${siteroot}/UserInfo/UserWriteOff">
 <table class="table">
 	<thead>
@@ -25,20 +13,23 @@
 		</tr>
 	</thead>
 	<tbody>
-<%if PartnerAccessSet.AccesPartner("CB"): %>
 		<tr>
 			<td style="width:300px;">Введите сумму для списания</td>
-			<td colspan=2><input type=text name="writeOffSum"/> <input type="hidden" name="ClientID" value="${ClientCode}" /></td>
+			<td><input type=text name="userWO.Sum" value="${userWO.Sum}"/> <input type="hidden" name="ClientID" value="${ClientCode}" /></td>
+			<td>${app.GetValidationError(userWO, "Sum")}</td>
 		</tr>
 		<tr>
 			<td>Введите комментарий: </td>
-			<td><input type=text name="comment" /></td>
-			<td><button type="submit" id="Button3" class="button"><img alt="Save" src="../Images/tick.png">Списать</button></td>
+			<td><input type=text name="userWO.Comment" value="${userWO.Comment}" /></td>
+			<td>${app.GetValidationError(userWO, "Comment")}</td>
 		</tr>
-<%end %>
+		<tr>
+			<td colspan=3><button type="submit" id="Button3" class="button"><img alt="Save" src="../Images/tick.png">Списать</button></td>
+		</tr>
 	</tbody>
 </table>
 </form>
+<%end %>
 <%if PartnerAccessSet.AccesPartner("SSI"): %>
 <table>
 	<tbody>

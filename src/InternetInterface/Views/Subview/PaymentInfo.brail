@@ -1,6 +1,6 @@
 ﻿<%if PartnerAccessSet.AccesPartner("SSI"): %>
 <div style="clear:both;">
-<%if (Payments.Length == 0): %>
+<%if (Payments.Count == 0): %>
 				  <div class="flash">
 					 <div class="message error">
 					   <p>Платежи отсутствуют</p>
@@ -33,7 +33,6 @@
 		<%end %>
 	<% end %>
 	</tbody> 
-
 </table>
 <%end %>
 </div>

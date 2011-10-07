@@ -182,8 +182,7 @@ namespace InternetInterface.Models.Access
 									"ChangeBalance",
 									"SiteMap",
 									"SearchUserInfo",
-									"NotifyInforum",
-									"UserWriteOff"
+									"NotifyInforum"
 								};
 			return _changeBalance.Contains(methodName) ? "CB" : string.Empty;
 		}
@@ -269,7 +268,8 @@ namespace InternetInterface.Models.Access
 									"ReservGraph",
 									"SaveGraph",
 									"RequestGraph",
-									"CreateAndPrintGraph"
+									"CreateAndPrintGraph",
+									"UserWriteOff"
 								};
 			return _visibleDemand.Contains(methodName) ? "ECI" : string.Empty;
 		}

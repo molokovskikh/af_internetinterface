@@ -98,14 +98,14 @@ namespace InternetInterface.Controllers
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof (AuthenticationFilter))]
 	public class UserInfoController : BaseController
 	{
-		public void SearchUserInfo([DataBind("filter")] ClientFilter filter)
+		public void SearchUserInfo([DataBind("filter")] ClientFilter filter, [DataBind("userWO")] UserWriteOff writeOff)
 		{
 			var client = Client.Find(filter.ClientCode);
 			PropertyBag["filter"] = filter;
 			PropertyBag["_client"] = client;
 			PropertyBag["Client"] = client.PhysicalClient;
 			//PropertyBag["Leases"] = filter.Find();
-
+			//PropertyBag["userWO"] = writeOff;
 			if (filter.appealType == 0)
 				filter.appealType = (int) AppealType.User;
 			SendParam(filter.ClientCode, filter.grouped, filter.appealType);
@@ -748,39 +748,45 @@ namespace InternetInterface.Controllers
 		private void SendParam(UInt32 ClientCode, string grouped, int appealType)
 		{
 			var client = Client.Find(ClientCode);
+			PropertyBag["ClientCode"] = ClientCode;
+			PropertyBag["staticIps"] = StaticIp.Queryable.Where(s => s.Client.Id == ClientCode).ToList();
+			PropertyBag["Payments"] = Payment.Queryable.Where(p => p.Client.Id == client.Id).OrderBy(t => t.PaidOn).ToList();
+			PropertyBag["writeOffSum"] = WriteOff.Queryable.Where(p => p.Client.Id == client.Id).ToList().Sum(s => s.WriteOffSum);
+			PropertyBag["WriteOffs"] = client.GetWriteOffs(grouped).OrderBy(w => w.WriteOffDate);
+			PropertyBag["grouped"] = grouped;
+			PropertyBag["BalanceText"] = string.Empty;
+			PropertyBag["services"] = Service.FindAll();
+			PropertyBag["Appeals"] =
+				Appeals.Queryable.Where(a => a.Client.Id == client.Id && a.AppealType == appealType).ToList().OrderByDescending(
+					a => a.Date);
+
+
 			PropertyBag["Houses"] = House.FindAll();
 			PropertyBag["ChHouse"] = client.PhysicalClient.HouseObj != null ? client.PhysicalClient.HouseObj.Id : 0;
-			PropertyBag["ConnectInfo"] = client.GetConnectInfo();
-			PropertyBag["grouped"] = grouped;
-			PropertyBag["Appeals"] =
-				Appeals.FindAllByProperty("Client", client).Where(a => a.AppealType == appealType).OrderByDescending(
-					a => a.Date);
-			PropertyBag["ClientCode"] = ClientCode;
-			PropertyBag["UserInfo"] = true;
-			PropertyBag["BalanceText"] = string.Empty;
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
-			PropertyBag["Brigads"] = Brigad.FindAllSort();
 			PropertyBag["ChTariff"] = client.PhysicalClient.Tariff.Id;
-			if (client.Status != null)
-				PropertyBag["ChStatus"] = client.Status.Id;
-			else
-				PropertyBag["ChStatus"] = Status.FindFirst().Id;
-			if (client.WhoConnected != null)
-				PropertyBag["ChBrigad"] = client.WhoConnected.Id;
-			else
-				PropertyBag["ChBrigad"] = Brigad.FindFirst().Id;
 			PropertyBag["Statuss"] = Status.FindAllSort();
-			PropertyBag["ChangeBy"] = new ChangeBalaceProperties {ChangeType = TypeChangeBalance.OtherSumm};
-			PropertyBag["PartnerAccessSet"] = new CategorieAccessSet();
-			PropertyBag["Payments"] = Payment.FindAllByProperty("Client", client).OrderBy(t => t.PaidOn).ToArray();
-			PropertyBag["WriteOffs"] = client.GetWriteOffs(grouped).OrderBy(w => w.WriteOffDate);
-				//WriteO	ff.FindAllByProperty("Client", client).OrderBy(t => t.WriteOffDate);
+			PropertyBag["ChStatus"] = client.Status != null ? client.Status.Id : Status.FindFirst().Id;
 			PropertyBag["naznach_text"] = ConnectGraph.Queryable.Count(c => c.Client.Id == ClientCode) != 0
 			                              	? "Переназначить в график"
 			                              	: "Назначить в график";
-			PropertyBag["writeOffSum"] = WriteOff.FindAllByProperty("Client", client).Sum(s => s.WriteOffSum);
-			PropertyBag["staticIps"] = StaticIp.Queryable.Where(s => s.Client.Id == ClientCode).ToList();
-			PropertyBag["services"] = Service.FindAll();
+			PropertyBag["Brigads"] = Brigad.FindAllSort();
+			PropertyBag["ChBrigad"] = client.WhoConnected != null ? client.WhoConnected.Id : Brigad.FindFirst().Id;
+			PropertyBag["ConnectInfo"] = client.GetConnectInfo();
+			PropertyBag["ChangeBy"] = new ChangeBalaceProperties { ChangeType = TypeChangeBalance.OtherSumm };
+
+			PropertyBag["UserInfo"] = true;
+			/*
+			PropertyBag["PartnerAccessSet"] = new CategorieAccessSet();
+			*/
+			if (Flash["userWO"] != null)
+			{
+				var userVriteOffs = Flash["userWO"];
+				Validator.IsValid(userVriteOffs);
+				PropertyBag["userWO"] = userVriteOffs;
+			}
+			else
+				PropertyBag["userWO"] = new UserWriteOff();
 		}
 
 		[AccessibleThrough(Verb.Post)]
@@ -819,25 +825,19 @@ namespace InternetInterface.Controllers
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void UserWriteOff(uint ClientID, string writeOffSum, string comment)
+		public void UserWriteOff(uint ClientID)
 		{
 			var client = Client.Find(ClientID);
-			decimal writeOff;
-			if (decimal.TryParse(writeOffSum, out writeOff) && writeOff > 0)
+			var writeOff = new UserWriteOff(client);
+			BindObjectInstance(writeOff, "userWO");
+			if (!HasValidationError(writeOff))
 			{
-				new UserWriteOff {
-				                 	Client = client,
-									Sum = writeOff,
-									Date = DateTime.Now,
-									Comment = comment,
-									Registrator = InitializeContent.partner
-				                 }.Save();
+				writeOff.Save();
 				Flash["Message"] = Message.Notify("Списание ожидает обработки");
 			}
 			else
-			{
-				Flash["Message"] = Message.Error("Введена неверная сумма, должно быть положительное число.");
-			}
+				Flash["userWO"] = writeOff;
+
 			RedirectToUrl(client.Redirect());
 		}
 
