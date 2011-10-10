@@ -1,0 +1,76 @@
+﻿<script type="text/javascript">
+	Date.format = 'dd.mm.yyyy';
+	$(function () {
+		$('.date_field').datepicker();
+	});
+</script>
+<div style="width:800px; margin: 0 auto; ">
+<form action="${Siteroot}\UserInfo\ShowAppeals" method=get>
+<table style="border: 1px solid #AAA;" class="table">
+	<thead>
+		<tr>
+			<th colspan=2 style="text-align:center;">Фильт по обращениям</th>
+		</tr>
+	</thead>
+	<tbody style="text-align:center;">
+		<tr>
+			<td colspan=2>
+				<label for="queryText">Введите фразу для поиска : </label> 
+				<input type=text name="filter.query" value="${filter.query}" id="queryText" style="width:400px; margin-left:50px;" />
+			</td>
+		</tr>
+		<tr>
+			<td>Начало периода</td>
+			<td>Конец периода</td>
+		</tr>
+		<tr>
+			<td> <input type=text class="date_field" value="${filter.startDate.ToShortDateString()}" name="filter.startDate" /> </td>
+			<td> <input type=text class="date_field" value="${filter.endDate.ToShortDateString()}" name="filter.endDate" /> </td>
+		</tr>
+		<tr>
+			<td>Тип обращения</td>
+			<td style="text-align:left; padding-left:180px;">
+				<input type=radio name="filter.appealType.appealType" id="userAppeal" value=User ${"checked" if filter.appealType.IsUser()}/>
+				<label for="userAppeal">Пользовательские</label> <br />
+				<input type=radio name="filter.appealType.appealType" id="systemAppeal" value=System ${"checked" if filter.appealType.IsSystem()}/>
+				<label for="systemAppeal">Системные</label>
+			</td>
+		</tr>
+		<tr>
+			<td colspan=2 style="text-align:left;">
+				<button id="showBut" type=submit class="button showpay">Показать</button>
+			</td>
+		</tr>
+	</tbody>
+</table>
+</form>
+</div>
+<table class="table">
+	<thead>
+		<tr>
+			<th>Зарегистрировал</th>
+			<th>Дата</th>
+			<th>Тип</th>
+			<th>Счет</th>
+			<th>Текст обращения</th>
+		</tr>
+	</thead>
+	<tbody>
+		<% for i,item in enumerate(appeals): %>
+		<tr>
+		<%if item.Partner != null: %>
+			<td>${item.Partner.Name}</td>
+		<%else: %>
+			<td></td>
+		<%end %>
+			<td>${item.Date.ToShortDateString()}</td>
+			<td>${item.AppealType}</td>
+			<td><a href="../Search/Redirect?filter.ClientCode=${item.Id}">${item.Client.Id.ToString("00000")}</a></td>
+			<td style="width:800px;">${item.Appeal}</td>
+		</tr>
+		<%end %>
+		<tr>
+			<td colspan=5>${PaginatorHelper.ShowPaginator()}</td>
+		</tr>
+	</tbody>
+</table>
