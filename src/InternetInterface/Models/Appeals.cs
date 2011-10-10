@@ -54,5 +54,15 @@ namespace InternetInterface.Models
 				Partner = InitializeContent.partner
 			}.Save();
 		}
+
+		public virtual string Type()
+		{
+			var type = string.Empty;
+			if (AppealType == (int)Models.AppealType.User)
+				type = "Пользовательское";
+			if (AppealType == (int)Models.AppealType.System)
+				type = "Системное";
+			return type;
+		}
 	}
 }

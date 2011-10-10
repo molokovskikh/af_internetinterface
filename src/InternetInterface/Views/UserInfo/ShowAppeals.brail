@@ -64,8 +64,8 @@
 			<td></td>
 		<%end %>
 			<td>${item.Date.ToShortDateString()}</td>
-			<td>${item.AppealType}</td>
-			<td><a href="../Search/Redirect?filter.ClientCode=${item.Id}">${item.Client.Id.ToString("00000")}</a></td>
+			<td>${item.Type()}</td>
+			<td><a href="../Search/Redirect?filter.ClientCode=${item.Client.Id}">${item.Client.Id.ToString("00000")}</a></td>
 			<td style="width:800px;">${item.Appeal}</td>
 		</tr>
 		<%end %>
