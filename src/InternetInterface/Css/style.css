@@ -403,6 +403,12 @@ input.checkbox {
    height: 100%;
 	   padding: 10px;
 }
+
+.slide
+{
+	width: 300px;
+	text-align: left;
+}
 /* lists */
 
 ul.list li {

@@ -26,8 +26,8 @@
 		}
 </style>
 <div style="clear:both;">
-<span id="itogo"><b>Всего списано: ${writeOffSum}</b></span>
-<button type="button"  class="editBut" onclick="$('#WriteOffTable').slideToggle('slow');"> Показать списания по клиенту
+<span id="itogo"><b>Всего списано: ${writeOffSum}</b></span> <br />
+<button type="button"  class="editBut slide" onclick="$('#WriteOffTable').slideToggle('slow');"> Показать списания абонентской платы
 </button>
 
 <div id="WriteOffTable" style="display:none">

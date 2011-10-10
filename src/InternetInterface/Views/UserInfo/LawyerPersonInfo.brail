@@ -7,7 +7,7 @@
 		<form class="form login" method="post" action="${siteroot}/UserInfo/LoadEditMudule">
 	<input type="hidden" name="ClientID" value="${ClientCode}" />
 	<input type="hidden" name="EditFlag" value="${Editing}" />
-    <input type="hidden" name="appealType" value="${appealType}" />
+	<input type="hidden" name="appealType" value="${appealType}" />
 	<table class="table" style="width: 100%;" align="left">
 	<thead>
 			<%if IsDefined("EditFlag"):
@@ -21,9 +21,9 @@
 		   end%>
 		<th>Информация по клиенту   ${Client.ShortName}  ${"(Он-Лайн)" if _client.OnLine()}
 		<%if PartnerAccessSet.AccesPartner("ECI"): %>
-        	<button type="submit"  class="editBut">
-		    <img alt="Save" src="../Images/application_edit.png"> Редактировать
-		    </button>
+			<button type="submit"  class="editBut">
+			<img alt="Save" src="../Images/application_edit.png"> Редактировать
+			</button>
 		 <%end %>
 		</th>
 	</thead>
@@ -39,13 +39,13 @@
 		<tr>
 			<td><span class="description">Фактический адрес: </span> ${Client.ActualAdress} </td>
 		</tr>		
-        <tr>
+		<tr>
 			<td><span class="description">Почтовый адрес: </span> ${Client.MailingAddress} </td>
 		</tr>
 		<tr>
 			<td><span class="description">Номер телефона: </span> ${Client.Telephone}</td>
 		</tr>
-        <tr>
+		<tr>
 			<td><span class="description">Контактное лицо: </span> ${Client.ContactPerson}</td>
 		</tr>
 		<tr>
@@ -69,7 +69,7 @@
 			 <td><span class="description">Тариф:</span> ${Client.Speed.GetNormalizeSpeed()}</td>
 		</tr>
 		 <%end %>
-        <tr>
+		<tr>
 			<td><span class="description">Абонентская плата:</span> ${Client.Tariff}</td>
 		</tr>
 		 <%if PartnerAccessSet.AccesPartner("SSI"): %>
@@ -89,15 +89,15 @@
 	<%else:%>
 	<form class="form edit" method="post" action="${siteroot}/UserInfo/EditLawyerPerson">
 	<input type="hidden" name="ClientID" value="${ClientCode}" />
-    <input type=hidden name="appealType" value="${appealType}" />
+	<input type=hidden name="appealType" value="${appealType}" />
 	<table class="table" style="width:100%; " border="0" id="EditTable"> 
    <% OutputSubView("""\Subview\LegalPerson""") %>
-       <tr>
-        <td colspan=4>
-            <label for="comment"><b>Введите Комментарий :</b></label>
-            <textarea id="comment" name="comment" rows="5" cols="100%"></textarea>
-        </td>
-       </tr>
+	   <tr>
+		<td colspan=4>
+			<label for="comment"><b>Введите Комментарий :</b></label>
+			<textarea id="comment" name="comment" rows="5" cols="100%"></textarea>
+		</td>
+	   </tr>
 		<tr>
 		<td >
 			<div class="actions">
@@ -120,7 +120,7 @@
 <br />
 
 <% OutputSubView("""\Subview\WriteOffInfo""") %>
-
+<% OutputSubView("""\Subview\UserWriteOffs""") %>
 <% OutputSubView("""\Subview\ChangeBalanceInfo""") %>
 
 </div>

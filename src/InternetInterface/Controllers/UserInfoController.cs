@@ -159,7 +159,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["_client"] = client;
 			PropertyBag["Editing"] = filter.Editing;
 			PropertyBag["ConnectInfo"] = client.GetConnectInfo();
-			PropertyBag["Payments"] = client.Payments.OrderBy(c => c.PaidOn).ToArray();
+			PropertyBag["Payments"] = client.Payments.OrderBy(c => c.PaidOn).ToList();
 			PropertyBag["WriteOffs"] = client.GetWriteOffs(filter.grouped).OrderBy(w => w.WriteOffDate);
 			PropertyBag["writeOffSum"] = WriteOff.FindAllByProperty("Client", client).Sum(s => s.WriteOffSum);
 			PropertyBag["BalanceText"] = string.Empty;
@@ -175,6 +175,7 @@ namespace InternetInterface.Controllers
 				PropertyBag["EditingConnect"] = true;
 			}
 			PropertyBag["staticIps"] = StaticIp.Queryable.Where(s => s.Client.Id == filter.ClientCode).ToList();
+			SendUserWriteOff();
 		}
 
 		public void PostponedPayment(uint ClientID)
@@ -751,7 +752,10 @@ namespace InternetInterface.Controllers
 			PropertyBag["ClientCode"] = ClientCode;
 			PropertyBag["staticIps"] = StaticIp.Queryable.Where(s => s.Client.Id == ClientCode).ToList();
 			PropertyBag["Payments"] = Payment.Queryable.Where(p => p.Client.Id == client.Id).OrderBy(t => t.PaidOn).ToList();
-			PropertyBag["writeOffSum"] = WriteOff.Queryable.Where(p => p.Client.Id == client.Id).ToList().Sum(s => s.WriteOffSum);
+			var abonentSum = WriteOff.Queryable.Where(p => p.Client.Id == client.Id).ToList().Sum(s => s.WriteOffSum);
+			PropertyBag["writeOffSum"] = abonentSum +
+			                             Models.UserWriteOff.Queryable.Where(w => w.Client.Id == client.Id).ToList().Sum(
+			                             	w => w.Sum);
 			PropertyBag["WriteOffs"] = client.GetWriteOffs(grouped).OrderBy(w => w.WriteOffDate);
 			PropertyBag["grouped"] = grouped;
 			PropertyBag["BalanceText"] = string.Empty;
@@ -779,6 +783,11 @@ namespace InternetInterface.Controllers
 			/*
 			PropertyBag["PartnerAccessSet"] = new CategorieAccessSet();
 			*/
+			SendUserWriteOff();
+		}
+
+		private void SendUserWriteOff()
+		{
 			if (Flash["userWO"] != null)
 			{
 				var userVriteOffs = Flash["userWO"];

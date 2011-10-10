@@ -20,7 +20,7 @@
 	<tbody id="SearchResults" class="HighLightCurrentRow">
 	<% for i,item in enumerate(Payments): %>
 	<%if item.Sum != 0: %>
-		<tr id="Row${i}">
+		<tr id="Row${i}" style="background-color:${"#facada" if not item.BillingAccount};">
 		<%if item.Agent != null: %>
 			<td>${item.Agent.Name}</td>   
 			<%else: %>

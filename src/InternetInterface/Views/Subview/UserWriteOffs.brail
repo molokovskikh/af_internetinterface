@@ -1,9 +1,12 @@
 ﻿<%if PartnerAccessSet.AccesPartner("ECI"): %>
+<button type="button" class="editBut slide" onclick="$('#UserWriteOffs').slideToggle('slow');"> Показать списания по клиенту </button>
 <%if _client.UserWriteOffs.Count != 0: %>
+<div id="UserWriteOffs" style="display:none;">
 <div style="clear:both;">
 	<table class="table">
 		<thead>
 			<tr>
+				<th>Зарегистрировал</th>
 				<th>Дата</th>
 				<th>Сумма</th>
 				<th>Комментарий</th>
@@ -11,7 +14,12 @@
 		</thead>
 		<tbody>
 			<% for i,item in enumerate(_client.UserWriteOffs): %>
-			<tr>
+			<tr style="background-color:${"#facada" if not item.BillingAccount};">
+			<%if item.Registrator != null: %>
+				<td>${item.Registrator.Name}</td>
+			<%else: %>
+				<td></td>
+			<%end %>
 				<td>${item.Date.ToShortDateString()}</td>
 				<td>${item.Sum.ToString("0.00")}</td>
 				<td>${item.Comment}</td>
@@ -19,6 +27,7 @@
 			<%end %>
 		</tbody>
 	</table>
+</div>
 </div>
 <%end %>
 <%end %>

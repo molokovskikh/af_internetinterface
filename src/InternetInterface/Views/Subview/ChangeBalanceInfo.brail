@@ -15,16 +15,16 @@
 	<tbody>
 		<tr>
 			<td style="width:300px;">Введите сумму для списания</td>
-			<td><input type=text name="userWO.Sum" value="${userWO.Sum}"/> <input type="hidden" name="ClientID" value="${ClientCode}" /></td>
+			<td><input type=text id="userWriteOffSum" name="userWO.Sum" value="${userWO.Sum}"/> <input type="hidden" name="ClientID" value="${ClientCode}" /></td>
 			<td>${app.GetValidationError(userWO, "Sum")}</td>
 		</tr>
 		<tr>
 			<td>Введите комментарий: </td>
-			<td><input type=text name="userWO.Comment" value="${userWO.Comment}" /></td>
+			<td><input type=text id="userWriteOffComment" name="userWO.Comment" value="${userWO.Comment}" /></td>
 			<td>${app.GetValidationError(userWO, "Comment")}</td>
 		</tr>
 		<tr>
-			<td colspan=3><button type="submit" id="Button3" class="button"><img alt="Save" src="../Images/tick.png">Списать</button></td>
+			<td colspan=3><button type="submit" id="userWriteOffButton" class="button"><img alt="Save" src="../Images/tick.png">Списать</button></td>
 		</tr>
 	</tbody>
 </table>
@@ -64,7 +64,8 @@
 	});
 </script>
 
-<div id="myModal_active"class="reveal-modal"> 
+
+<div id="myModal_active" class="reveal-modal"> 
 	<table class="table">
 		<thead>
 			<tr>

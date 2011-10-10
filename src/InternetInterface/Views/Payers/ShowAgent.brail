@@ -9,8 +9,10 @@
         }
 </style>
 <center>
+<%if PartnerAccessSet.AccesPartner("SSI"): %>
 <span class="info_paym" style="color:Green;">Всего ${filter._lastRowsCount} платежей</span>
 <span class="info_paym" style="color:Green;">на сумму  ${TotalSumm.ToString("0.00")} рублей</span>
+<%end %>
 </center>
 <table class="table"  style="width: 100%; font-style:oblique">
         <thead>
