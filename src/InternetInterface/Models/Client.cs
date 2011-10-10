@@ -114,6 +114,9 @@ namespace InternetInterface.Models
 		[HasMany(ColumnKey = "Client", OrderBy = "WriteOffDate", Lazy = true)]
 		public virtual IList<WriteOff> WriteOffs { get; set; }
 
+		[HasMany(ColumnKey = "Client", OrderBy = "Date", Lazy = true)]
+		public virtual IList<UserWriteOff> UserWriteOffs { get; set; }
+
 		[HasMany(ColumnKey = "Client", Lazy = true, Cascade = ManyRelationCascadeEnum.All)]
 		public virtual IList<ClientService> ClientServices { get; set; }
 
@@ -321,6 +324,13 @@ typeof(ClientConnectInfo)))
 				LawyerPerson.Balance = sum;
 				LawyerPerson.Update();
 			}
+		}
+
+		public virtual string Redirect()
+		{
+			return GetClientType() == ClientType.Phisical
+			       	? "../UserInfo/SearchUserInfo.rails?filter.ClientCode=" + Id
+			       	: "../UserInfo/LawyerPersonInfo.rails?filter.ClientCode=" + Id;
 		}
 	}
 }

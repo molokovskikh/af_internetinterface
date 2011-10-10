@@ -12,72 +12,72 @@ namespace InternetInterface.Test.Functional
 	[TestFixture]
 	class UserInfoFixture : WatinFixture
 	{
-        public string format;
-	    public PhysicalClients physicalClient;
-        public Client client;
-        public ClientEndpoints endPoint;
+		public string format;
+		public PhysicalClients physicalClient;
+		public Client client;
+		public ClientEndpoints endPoint;
 
-        public UserInfoFixture()
-        {
-          using (new SessionScope())
-          {
-              //new Status { Name = "ConnectAndBlocked", ShortName = "ConnectAndBlocked" }.Save();
-                physicalClient = new PhysicalClients {
-                                                         Name = "Alexandr",
-                                                         Surname = "Zolotarev",
-                                                         Patronymic = "Alekseevich",
-                                                         Street = "Stud",
-                                                         House = 12,
-                                                         Apartment = 1,
-                                                         Entrance = 2,
-                                                         Floor = 2,
-                                                         PhoneNumber = "8-900-200-80-80",
-                                                         Balance = 0,
-                                                         Tariff = Tariff.Queryable.First(),
-                                                         CaseHouse = "sdf",
-                                                         City = "bebsk",
-                                                         Email = "test@test.ru",
-                                                         
-                                                     };
-                physicalClient.SaveAndFlush();
-                client = new Client {
-                                         PhysicalClient = physicalClient,
-                                         BeginWork = null,
-                                         Name =
-                                             string.Format("{0} {1} {2}", physicalClient.Surname, physicalClient.Name,
-                                                           physicalClient.Patronymic),
-                                        Status = Status.FindFirst()
-                                     };
-                client.SaveAndFlush();
-                endPoint = new ClientEndpoints {
-                                                   Client = client,
-                                               };
-                endPoint.SaveAndFlush();
-                format = string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}&filter.EditingConnect=true&filter.Editing=true",
-                                       client.Id);
-            }
-        }
+		public UserInfoFixture()
+		{
+		  using (new SessionScope())
+		  {
+			  //new Status { Name = "ConnectAndBlocked", ShortName = "ConnectAndBlocked" }.Save();
+				physicalClient = new PhysicalClients {
+														 Name = "Alexandr",
+														 Surname = "Zolotarev",
+														 Patronymic = "Alekseevich",
+														 Street = "Stud",
+														 House = 12,
+														 Apartment = 1,
+														 Entrance = 2,
+														 Floor = 2,
+														 PhoneNumber = "8-900-200-80-80",
+														 Balance = 0,
+														 Tariff = Tariff.Queryable.First(),
+														 CaseHouse = "sdf",
+														 City = "bebsk",
+														 Email = "test@test.ru",
+														 
+													 };
+				physicalClient.SaveAndFlush();
+				client = new Client {
+										 PhysicalClient = physicalClient,
+										 BeginWork = null,
+										 Name =
+											 string.Format("{0} {1} {2}", physicalClient.Surname, physicalClient.Name,
+														   physicalClient.Patronymic),
+										Status = Status.FindFirst()
+									 };
+				client.SaveAndFlush();
+				endPoint = new ClientEndpoints {
+												   Client = client,
+											   };
+				endPoint.SaveAndFlush();
+				format = string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}&filter.EditingConnect=true&filter.Editing=true",
+									   client.Id);
+			}
+		}
 
 
 
-        [Test]
-        public void ChangeBalanceLawyerPersonTest()
-        {
-            var lp = new Client();
-            using (new SessionScope())
-            {
-                lp = ClientHelperFixture.CreateLaywerPerson();
-                lp.Save();
-            }
-            using (var browser = Open("Search/Redirect?filter.ClientCode=" + lp.Id))
-            {
-                browser.TextField("BalanceText").AppendText("1234");
-                browser.Button("ChangeBalanceButton").Click();
-                Console.WriteLine(lp.LawyerPerson.Balance);
-                Assert.That(browser.Text, Is.StringContaining("1234"));
-            }
-            lp.Delete();
-        }
+		[Test]
+		public void ChangeBalanceLawyerPersonTest()
+		{
+			var lp = new Client();
+			using (new SessionScope())
+			{
+				lp = ClientHelperFixture.CreateLaywerPerson();
+				lp.Save();
+			}
+			using (var browser = Open("Search/Redirect?filter.ClientCode=" + lp.Id))
+			{
+				browser.TextField("BalanceText").AppendText("1234");
+				browser.Button("ChangeBalanceButton").Click();
+				Console.WriteLine(lp.LawyerPerson.Balance);
+				Assert.That(browser.Text, Is.StringContaining("1234"));
+			}
+			lp.Delete();
+		}
 
 		[Test]
 		public void ChangeStatus()
@@ -117,72 +117,72 @@ namespace InternetInterface.Test.Functional
 		}
 
 		[Test]
-        public void ReservTest()
-        {
-            using (var browser = Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", client.Id)))
-            {
-                browser.Button("naznach_but").Click();
-                browser.RadioButton(Find.ByName("graph_button")).Checked = true;
-                browser.Button("reserv_but").Click();
-                Console.WriteLine(browser.Html);
-                Assert.IsTrue(browser.Text.Contains("Резерв"));
-            }
-        }
+		public void ReservTest()
+		{
+			using (var browser = Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", client.Id)))
+			{
+				browser.Button("naznach_but").Click();
+				browser.RadioButton(Find.ByName("graph_button")).Checked = true;
+				browser.Button("reserv_but").Click();
+				Console.WriteLine(browser.Html);
+				Assert.IsTrue(browser.Text.Contains("Резерв"));
+			}
+		}
 
-	    [Test]
-        public void AdditionalStatusTest()
-        {
-            using (new SessionScope())
-            {
-                client = Client.Queryable.Where(
-    c => c.PhysicalClient != null && Brigad.FindAll().Contains(c.WhoConnected)).
-    First();
-                client.AdditionalStatus = null;
-                client.Status = Status.Find((uint)StatusType.BlockedAndNoConnected);
-                client.UpdateAndFlush();
-                format = string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", client.Id);
-            }
-            using (var browser = Open(format))
-            {
-                //using (new SessionScope())
-                {
-                    browser.Button("NotPhoned").Click();
-                    browser.TextField("NotPhoned_textField").AppendText("Тестовое сообщение перезвонить");
-                    browser.Button("NotPhoned_but").Click();
-                    using (new SessionScope())
-                    {
-                        client.Refresh();
-                        Assert.That(client.AdditionalStatus.Id, Is.EqualTo((uint)AdditionalStatusType.NotPhoned));
-                        Assert.That(browser.Text, Is.StringContaining("Тестовое сообщение перезвонить"));
-                        Assert.That(browser.Text, Is.StringContaining("Неудобно говорить"));
-                    }
-                    browser.Button("naznach_but").Click();
-                    browser.RadioButton(Find.ByName("graph_button")).Checked = true;
-                    browser.Button("naznach_but_1").Click();
-                    Thread.Sleep(2000);
-                    using (new SessionScope())
-                    {
-                        client.Refresh();
-                        Assert.That(client.AdditionalStatus.Id, Is.EqualTo((uint)AdditionalStatusType.AppointedToTheGraph));
-                        Assert.That(ConnectGraph.Queryable.Where(c => c.Client == client).Count(), Is.EqualTo(1));
-                    }
-                    browser.Button(Find.ById("Refused")).Click();
-                    Thread.Sleep(1000);
-                    browser.TextField("Refused_textField").AppendText("Тестовое сообщение отказ");
-                    browser.Button("Refused_but").Click();
-                    Thread.Sleep(2000);
-                    using (new SessionScope())
-                    {
-                        client.Refresh();
-                        Assert.That(client.AdditionalStatus.Id, Is.EqualTo((uint)AdditionalStatusType.Refused));
-                        Assert.That(browser.Text, Is.StringContaining("Тестовое сообщение отказ"));
-                        Assert.That(browser.Text, Is.StringContaining("Перезвонит сам"));
-                    }
-                }
-            }
-        }
+		[Test]
+		public void AdditionalStatusTest()
+		{
+			using (new SessionScope())
+			{
+				client = Client.Queryable.Where(
+	c => c.PhysicalClient != null && Brigad.FindAll().Contains(c.WhoConnected)).
+	First();
+				client.AdditionalStatus = null;
+				client.Status = Status.Find((uint)StatusType.BlockedAndNoConnected);
+				client.UpdateAndFlush();
+				format = string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", client.Id);
+			}
+			using (var browser = Open(format))
+			{
+				//using (new SessionScope())
+				{
+					browser.Button("NotPhoned").Click();
+					browser.TextField("NotPhoned_textField").AppendText("Тестовое сообщение перезвонить");
+					browser.Button("NotPhoned_but").Click();
+					using (new SessionScope())
+					{
+						client.Refresh();
+						Assert.That(client.AdditionalStatus.Id, Is.EqualTo((uint)AdditionalStatusType.NotPhoned));
+						Assert.That(browser.Text, Is.StringContaining("Тестовое сообщение перезвонить"));
+						Assert.That(browser.Text, Is.StringContaining("Неудобно говорить"));
+					}
+					browser.Button("naznach_but").Click();
+					browser.RadioButton(Find.ByName("graph_button")).Checked = true;
+					browser.Button("naznach_but_1").Click();
+					Thread.Sleep(2000);
+					using (new SessionScope())
+					{
+						client.Refresh();
+						Assert.That(client.AdditionalStatus.Id, Is.EqualTo((uint)AdditionalStatusType.AppointedToTheGraph));
+						Assert.That(ConnectGraph.Queryable.Where(c => c.Client == client).Count(), Is.EqualTo(1));
+					}
+					browser.Button(Find.ById("Refused")).Click();
+					Thread.Sleep(1000);
+					browser.TextField("Refused_textField").AppendText("Тестовое сообщение отказ");
+					browser.Button("Refused_but").Click();
+					Thread.Sleep(2000);
+					using (new SessionScope())
+					{
+						client.Refresh();
+						Assert.That(client.AdditionalStatus.Id, Is.EqualTo((uint)AdditionalStatusType.Refused));
+						Assert.That(browser.Text, Is.StringContaining("Тестовое сообщение отказ"));
+						Assert.That(browser.Text, Is.StringContaining("Перезвонит сам"));
+					}
+				}
+			}
+		}
 
-	    [Test]
+		[Test]
 		public void SaveSwitchForClientTest()
 		{
 			using (var browser = Open(format))
@@ -202,80 +202,95 @@ namespace InternetInterface.Test.Functional
 			}
 		}
 
-        [Test]
-        public void StatisticTest()
-        {
-            using (new SessionScope())
-            {
-                var insStatClient =
-                    Internetsessionslog.Queryable.Where(i => i.EndpointId.Client.PhysicalClient != null).ToList().
-                        GroupBy(i => i.EndpointId).Where(g => g.Count() > 20).First().Select(
-                            e => e.EndpointId.Client.Id).First();
-                using (
-                    var browser =
-                        Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", insStatClient)))
-                {
-                    browser.Button("Statistic").Click();
-                    Assert.That(browser.Text, Is.StringContaining("Статистика работы клиента"));
-                    Assert.That(browser.Text, Is.StringContaining("Первая"));
-                    Assert.That(browser.Text, Is.StringContaining("Последняя"));
-                    Assert.That(browser.Text, Is.StringContaining("Mac адрес"));
-                }
-            }
-        }
+		[Test]
+		public void StatisticTest()
+		{
+			using (new SessionScope())
+			{
+				var insStatClient =
+					Internetsessionslog.Queryable.Where(i => i.EndpointId.Client.PhysicalClient != null).ToList().
+						GroupBy(i => i.EndpointId).Where(g => g.Count() > 20).First().Select(
+							e => e.EndpointId.Client.Id).First();
+				using (
+					var browser =
+						Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", insStatClient)))
+				{
+					browser.Button("Statistic").Click();
+					Assert.That(browser.Text, Is.StringContaining("Статистика работы клиента"));
+					Assert.That(browser.Text, Is.StringContaining("Первая"));
+					Assert.That(browser.Text, Is.StringContaining("Последняя"));
+					Assert.That(browser.Text, Is.StringContaining("Mac адрес"));
+				}
+			}
+		}
 
-	    [Test]
-        public void EditClientNameTest()
-        {
-            using (var browser = Open(format))
-            {
-                Console.WriteLine(format);
-                //Console.WriteLine(browser.Html);
-                browser.TextField("Surname").Clear();
-                browser.TextField("Surname").AppendText("Иванов");
-                browser.TextField("Name").Clear();
-                browser.TextField("Name").AppendText("Иван");
-                browser.TextField("Patronymic").Clear();
-                browser.TextField("Patronymic").AppendText("Иванович");
-                browser.Button("SaveButton").Click();
-                Thread.Sleep(500);
-            }
-            using (new SessionScope())
-            {
-                client.Refresh();
-                Assert.That(client.Name,
-                            Is.EqualTo(string.Format("{0} {1} {2}", "Иванов",
-                                                     "Иван", "Иванович")));
-            }
-        }
+		[Test]
+		public void EditClientNameTest()
+		{
+			using (var browser = Open(format))
+			{
+				Console.WriteLine(format);
+				//Console.WriteLine(browser.Html);
+				browser.TextField("Surname").Clear();
+				browser.TextField("Surname").AppendText("Иванов");
+				browser.TextField("Name").Clear();
+				browser.TextField("Name").AppendText("Иван");
+				browser.TextField("Patronymic").Clear();
+				browser.TextField("Patronymic").AppendText("Иванович");
+				browser.Button("SaveButton").Click();
+				Thread.Sleep(500);
+			}
+			using (new SessionScope())
+			{
+				client.Refresh();
+				Assert.That(client.Name,
+							Is.EqualTo(string.Format("{0} {1} {2}", "Иванов",
+													 "Иван", "Иванович")));
+			}
+		}
 
-        [Test]
-        public void UpdateTest()
-        {
-            using (var browser = Open("UserInfo/SearchUserInfo.rails?filter.ClientCode=173&filter.Editing=true"))
-            {
-                var tariffList = browser.SelectList("ChTariff");
-                browser.SelectList("ChTariff").SelectByValue(
-                    tariffList.Options.Where(s => s.Value != tariffList.SelectedOption.Value).First().Value);
-                var statusList = browser.SelectList("ChStatus");
-                browser.SelectList("ChStatus").SelectByValue(
-                    statusList.Options.Where(s => s.Value != statusList.SelectedOption.Value).First().Value);
-                browser.Button("SaveButton").Click();
-                Assert.That(browser.Text, Is.StringContaining("Данные изменены"));
-            }
-        }
+		[Test]
+		public void UpdateTest()
+		{
+			using (var browser = Open("UserInfo/SearchUserInfo.rails?filter.ClientCode=173&filter.Editing=true"))
+			{
+				var tariffList = browser.SelectList("ChTariff");
+				browser.SelectList("ChTariff").SelectByValue(
+					tariffList.Options.Where(s => s.Value != tariffList.SelectedOption.Value).First().Value);
+				var statusList = browser.SelectList("ChStatus");
+				browser.SelectList("ChStatus").SelectByValue(
+					statusList.Options.Where(s => s.Value != statusList.SelectedOption.Value).First().Value);
+				browser.Button("SaveButton").Click();
+				Assert.That(browser.Text, Is.StringContaining("Данные изменены"));
+			}
+		}
 
-        [Test]
-        public void RequestGraphTest()
-        {
-            using (var browser = Open("UserInfo/RequestGraph.rails"))
-            {
-                Assert.That(browser.Text, Is.StringContaining("Настройки"));
-                browser.Button("naznach_but_1").Click();
-                Assert.That(browser.Text, Is.StringContaining("Настройки"));
-                browser.Button("print_button").Click();
-                Assert.That(browser.Text, Is.StringContaining("Время"));
-            }
-        }
+		[Test]
+		public void RequestGraphTest()
+		{
+			using (var browser = Open("UserInfo/RequestGraph.rails"))
+			{
+				Assert.That(browser.Text, Is.StringContaining("Настройки"));
+				browser.Button("naznach_but_1").Click();
+				Assert.That(browser.Text, Is.StringContaining("Настройки"));
+				browser.Button("print_button").Click();
+				Assert.That(browser.Text, Is.StringContaining("Время"));
+			}
+		}
+
+		[Test]
+		public void UserWriteOffsTest()
+		{
+			using (var browser = Open(format))
+			{
+				browser.Button("userWriteOffButton").Click();
+				Assert.That(browser.Text, Is.StringContaining("Значение должно быть больше нуля"));
+				Assert.That(browser.Text, Is.StringContaining("Введите комментарий"));
+				browser.TextField("userWriteOffComment").AppendText("Тестовый комментарий");
+				browser.TextField("userWriteOffSum").AppendText("50");
+				browser.Button("userWriteOffButton").Click();
+				Assert.That(browser.Text, Is.StringContaining("Списание ожидает обработки"));
+			}
+		}
 	}
 }

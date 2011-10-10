@@ -30,7 +30,7 @@
 <%if PartnerAccessSet.AccesPartner("DHCP"): %>
  <%if IsDefined("Client"): %>
 	<%if not EditingConnect: %>
-		<form class="formConnect" method="post" action="${siteroot}/UserInfo/LoadEditConnectMudule">
+	<form class="formConnect" method="post" action="${siteroot}/UserInfo/LoadEditConnectMudule">
 	<input type="hidden" name="ClientID" value="${ClientCode}" />
 	<input type="hidden" name="EditConnectFlag" value="${EditingConnect}" />
 	<table  style="width: 100%;"><tbody><tr><td>

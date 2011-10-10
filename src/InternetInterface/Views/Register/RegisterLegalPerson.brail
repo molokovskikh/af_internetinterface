@@ -25,11 +25,11 @@
 									<%end %>
 									<%end %>
 							</tr>
-
+							<tr> <td colspan="3">
 							<% OutputSubView("""\Subview\LegalPerson""") %>
-
+							</td> </tr> <tr> <td colspan="3">
 							<% OutputSubView("""\Subview\ConnectMenu""") %>
-
+							</td> </tr>
 							<tr>
 								<td colspan="3">
 								<div class="actions">

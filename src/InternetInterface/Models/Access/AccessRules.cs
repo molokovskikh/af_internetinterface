@@ -268,7 +268,8 @@ namespace InternetInterface.Models.Access
 									"ReservGraph",
 									"SaveGraph",
 									"RequestGraph",
-									"CreateAndPrintGraph"
+									"CreateAndPrintGraph",
+									"UserWriteOff"
 								};
 			return _visibleDemand.Contains(methodName) ? "ECI" : string.Empty;
 		}

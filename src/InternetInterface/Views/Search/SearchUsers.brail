@@ -108,12 +108,12 @@
 					</td>
 					<%end %>
 				<td>
-						   <input type="radio" id="Radio1" name="filter.connectedType.Type" value=AllConnected ${"checked" if filter.connectedType.IsAllConnected()} />
-						   <label for="Autosearch">Все</label><br />
-						   <input type="radio" id="Radio2" name="filter.connectedType.Type" value=NoConnected ${"checked" if filter.connectedType.IsNoConnected()} />
-						   <label for="SearchByClientId">Не подключены</label><br />
-						   <input type="radio" id="Radio3" name="filter.connectedType.Type" value=Connected ${"checked" if filter.connectedType.IsConnected()} />
-						   <label for="SearchByUserId">Подключены</label><br />
+					<input type="radio" id="Radio1" name="filter.connectedType.Type" value=AllConnected ${"checked" if filter.connectedType.IsAllConnected()} />
+					<label for="Autosearch">Все</label><br />
+					<input type="radio" id="Radio2" name="filter.connectedType.Type" value=NoConnected ${"checked" if filter.connectedType.IsNoConnected()} />
+					<label for="SearchByClientId">Не подключены</label><br />
+					<input type="radio" id="Radio3" name="filter.connectedType.Type" value=Connected ${"checked" if filter.connectedType.IsConnected()} />
+					<label for="SearchByUserId">Подключены</label><br />
 				</td>
 			   </tr>
 			   <tr>

@@ -378,6 +378,13 @@ input.checkbox {
   height: auto;
 	   /*padding: 10px;*/
 }
+
+.flash .err {
+  border: 1px solid #fbb;
+  background-color: #fdd;
+  height: auto;
+  padding: 10px;
+}
 .EmptyData
 {
 	border: 1px solid #c4c42e;
@@ -395,6 +402,12 @@ input.checkbox {
   background-color: #BBFFB6;
    height: 100%;
 	   padding: 10px;
+}
+
+.slide
+{
+	width: 300px;
+	text-align: left;
 }
 /* lists */
 

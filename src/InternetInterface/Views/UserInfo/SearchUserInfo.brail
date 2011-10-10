@@ -1,38 +1,17 @@
 ﻿<script type="text/javascript">
 	$(function () {
-		//$('.nyroModal').nyroModal();
 		$('.button_mod').click(function () {
-
 			loadData(this);
-
 			$('.reveal-modal').css('left', '50%');
 			$('.reveal-modal').width(500);
-
-			$('#myModal').reveal({
-				animation: 'fadeAndPop',                   //fade, fadeAndPop, none
-				animationspeed: 0,                       //how fast animtions are
-				closeonbackgroundclick: true,              //if you click background will modal close?
-				dismissmodalclass: 'close-reveal-modal'    //the class of a button or element that will close an open modal
-			});
-
-
+			$('#myModal').reveal();
 		});
 
 		$('#naznach_but').click(function () {
-
 			loadData(this);
-
 			$('.reveal-modal').width(1200);
 			$('.reveal-modal').css('left','33.3%');
-
-			$('#myModal').reveal({
-				animation: 'fadeAndPop',                 
-				animationspeed: 0,                     
-				closeonbackgroundclick: true,              
-				dismissmodalclass: 'close-reveal-modal'    
-			});
-
-
+			$('#myModal').reveal();
 		});
 	});
 
@@ -41,43 +20,35 @@
 			url: $(bytel).attr('name'),
 			async: false
 		}).responseText;
-		//alert(html);
 		$('#myModal').empty();
 		$('#myModal').append(html);
 	}
 </script>
-<style type="text/css">
-	/*.reveal-modal 
-	{
-		display:none;
-		}*/
-</style>
-		<div id="myModal" class="reveal-modal"> 
-		<a class="close-reveal-modal">x</a>
-		</div> 
-	
+<div id="myModal" class="reveal-modal"> 
+<a class="close-reveal-modal">x</a>
+</div> 
 
 <div style="width:50%; float:left;">
 <div id="main" style="width: 100%;">
 <div id="container">
 <div id="block-tables" class="block">
 <div class="content">
-	<%if not Editing: %>
-		<form class="form login" method="post" action="${siteroot}/UserInfo/LoadEditMudule">
-	<input type="hidden" name="ClientID" value="${ClientCode}" />
-	<input type="hidden" name="EditFlag" value="${Editing}" />
-	<input type="hidden" name="appealType" value="${appealType}" />
-	<table class="table" style="width: 100%;" align="left">
+<%if not Editing: %>
+<form class="form login" method="post" action="${siteroot}/UserInfo/LoadEditMudule">
+<input type="hidden" name="ClientID" value="${ClientCode}" />
+<input type="hidden" name="EditFlag" value="${Editing}" />
+<input type="hidden" name="appealType" value="${appealType}" />
+<table class="table" style="width: 100%;" align="left">
 	<thead>
-			<%if IsDefined("EditFlag"):
+		<%if IsDefined("EditFlag"):
 			  output  WriteMessageNotice(EditFlag)
 		end %>
-				<%if IsDefined("Applying"):
+		<%if IsDefined("Applying"):
 			   output WriteMessageNotice(Applying)
 		end %>
 		<%if IsDefined("errorMessage"):
 			  output  WriteMessageError(errorMessage)
-		   end%>
+		end%>
 		<th><span style="color:#787676"> Информация по клиенту </span> <span style="color:Black">  ${Client.Surname}  ${Client.Name}  ${Client.Patronymic} ${"(Он-Лайн)" if _client.OnLine()} </span>
 		<%if PartnerAccessSet.AccesPartner("ECI"): %>
 			<button type="submit"  class="editBut">
@@ -164,80 +135,67 @@
 		</tr>
 		<%end %>
 		<%end %>
+<%if PartnerAccessSet.AccesPartner("ECI"): %>
 		<tr>
 			<td>
-			<% if _client.AdditionalCanUsed("Refused"): %>
-				<a href="#" class="big-link" data-reveal-id="myModal" > 
-				<button id="Refused" name="../UserInfo/AddInfo.rails?ClientCode=${ClientCode}" class="button_mod">
-				 Отказ
-				</button>
-				</a>
-			<%end %>
-			<% if _client.AdditionalCanUsed("NotPhoned"): %>
-				<a href="#" class="big-link" data-reveal-id="myModal"> 
-				<button id="NotPhoned" name="../UserInfo/NoPhoned.rails?ClientCode=${ClientCode}" class="button_mod">
-				 Недозвон
-				</button>
-				</a>
-			<%end %>
-			<% if _client.AdditionalCanUsed("AppointedToTheGraph"): %>
-				<!--<a class="nyromodal" href="../UserInfo/AppointedToTheGraph.rails?ClientCode=${ClientCode}"> -->
-				<a href="#" class="big-link" data-reveal-id="myModal" > 
-				<button id="naznach_but" name="../UserInfo/AppointedToTheGraph.rails?ClientCode=${ClientCode}" class="button_mod2" >
-				 ${naznach_text}
-				</button>
-				</a>
-			<%end %>
-		 </td>
+				<% if _client.AdditionalCanUsed("Refused"): %>
+					<a href="#" class="big-link" data-reveal-id="myModal"> 
+						<button id="Refused" name="../UserInfo/AddInfo.rails?ClientCode=${ClientCode}" class="button_mod">Отказ</button>
+					</a>
+				<%end %>
+				<% if _client.AdditionalCanUsed("NotPhoned"): %>
+					<a href="#" class="big-link" data-reveal-id="myModal"> 
+						<button id="NotPhoned" name="../UserInfo/NoPhoned.rails?ClientCode=${ClientCode}" class="button_mod">Недозвон</button>
+					</a>
+				<%end %>
+				<% if _client.AdditionalCanUsed("AppointedToTheGraph"): %>
+					<a href="#" class="big-link" data-reveal-id="myModal" > 
+						<button id="naznach_but" name="../UserInfo/AppointedToTheGraph.rails?ClientCode=${ClientCode}" class="button_mod2" >${naznach_text}</button>
+					</a>
+				<%end %>
+			 </td>
 		</tr>
+<%end %>
 	</tbody>
 </table>
-<div class="overlay" id="overlay">
-
-	<!-- the external content is loaded inside this tag -->
-	<div class="wrap"></div>
-
-</div>
-	<%else:%>
-	<form class="form edit" method="post" action="${siteroot}/UserInfo/EditInformation">
-	<input type="hidden" name="ClientID" value="${ClientCode}" />
-	<input type=hidden name="appealType" value="${appealType}" />
-	<table class="table" style="width:100%; " border="0" id="EditTable"> 
-   <% OutputSubView("""\Subview\Client""") %>
-	<tr>
-		<td colspan=4>
-			<label for="comment"><b>Введите Комментарий :</b></label>
-			<textarea id="comment" name="comment" rows="5" cols="100%"></textarea>
-		</td>
-	</tr>
-	<tr>
-	<td >
-		<div class="actions">
-			<button type="submit" id="SaveButton" class="button">
-			<img alt="Save" src="../Images/application_edit.png"> Сохранить
-			</button>
-		</div>
-	</td>
-	</tr>
+<%else:%>
+<form class="form edit" method="post" action="${siteroot}/UserInfo/EditInformation">
+<input type="hidden" name="ClientID" value="${ClientCode}" />
+<input type=hidden name="appealType" value="${appealType}" />
+
+<% OutputSubView("""\Subview\Client""") %>
+	<table>
+		<tbody>
+			<tr>
+				<td colspan=4>
+					<label for="comment"><b>Введите Комментарий :</b></label>
+					<textarea id="comment" name="comment" rows="5" cols="100%"></textarea>
+				</td>
+			</tr>
+			<tr>
+			<td >
+				<div class="actions">
+					<button type="submit" id="SaveButton" class="button">
+					<img alt="Save" src="../Images/application_edit.png"> Сохранить
+					</button>
+				</div>
+			</td>
+			</tr>
+		</tbody>
 	</table>
-	</form>
-	<%end %>
+</form>
+<%end %>
 <br />
 
 <% OutputSubView("""\Subview\ConnectInfo""") %>
-
 <% OutputSubView("""\Subview\PaymentInfo""") %>
-
 <br />
-
 <% OutputSubView("""\Subview\WriteOffInfo""") %>
-
+<% OutputSubView("""\Subview\UserWriteOffs""") %>
 <% OutputSubView("""\Subview\ChangeBalanceInfo""") %>
-
 </div>
 </div>
 </div>
 </form>
 </div>
-
 <% OutputSubView("""\Subview\AppealsInfo""") %>
