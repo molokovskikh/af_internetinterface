@@ -11,6 +11,7 @@ namespace InternetInterface.Models
 {
 	public enum AppealType
 	{
+		All = 0,
 		User = 1,
 		System = 3
 	}

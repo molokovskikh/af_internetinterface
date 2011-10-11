@@ -56,10 +56,10 @@ namespace InternetInterface.Filters
 			if (appealType == null)
 				appealType = new AppealTypeProperties();
 			var totalRes =
-				Appeals.Queryable.Where(
-					a =>
-					a.Date.Date >= startDate.Value.Date && a.Date.Date <= endDate.Value.Date && a.AppealType == (int)appealType.appealType).
-					ToList();
+				Appeals.Queryable.Where(a => a.Date.Date >= startDate.Value.Date && a.Date.Date <= endDate.Value.Date).
+					OrderByDescending(o => o.Date).ToList();
+			if (appealType.appealType != AppealType.All)
+				totalRes = totalRes.Where(a => a.AppealType == (int)appealType.appealType).ToList();
 			if (!string.IsNullOrEmpty(query))
 				totalRes = totalRes.Where(t => t.Appeal.ToLower().Contains(query.ToLower())).ToList();
 			_lastRowsCount = totalRes.Count();

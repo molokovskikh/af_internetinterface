@@ -110,7 +110,7 @@ namespace InternetInterface.Models
 	{
 		public AppealTypeProperties()
 		{
-			appealType = AppealType.User;
+			appealType = AppealType.All;
 		}
 
 		public AppealType appealType { get; set; }
@@ -123,6 +123,11 @@ namespace InternetInterface.Models
 		public bool IsSystem()
 		{
 			return appealType == AppealType.System;
+		}
+
+		public bool IsAll()
+		{
+			return appealType == AppealType.All;
 		}
 	}
 
