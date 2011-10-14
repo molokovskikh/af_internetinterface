@@ -26,7 +26,7 @@ namespace InternetInterface.Controllers
 		public int appealType  { get; set; }
 		public string grouped  { get; set; }
 		public bool Editing  { get; set; }
-		public bool EditingConnect  { get; set; }
+		public List<bool> EditingConnect  { get; set; }
 	}
 
 	public class SessionFilter : IPaginable
@@ -119,7 +119,7 @@ namespace InternetInterface.Controllers
 				PropertyBag["EditingConnect"] = true;
 			}
 			PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClients>(new PhysicalClients());
-			PropertyBag["ConnectInfo"] = client.GetConnectInfo();
+			//PropertyBag["ConnectInfo"] = client.GetConnectInfo();
 			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(t => t.Name != null);
 		}
 
@@ -339,10 +339,8 @@ namespace InternetInterface.Controllers
 						{
 							var request = client.PhysicalClient.Request;
 							var registrator = request.Registrator;
-							PaymentsForAgent.CreatePayment(AgentActions.ConnectClient,
-							                               string.Format("Зачисление за подключение клиента #{0}", client.Id), registrator);
-							PaymentsForAgent.CreatePayment(registrator,
-							                               string.Format("Зачисление бонусов по заявке #{0} за поключенного клиента #{1}",
+							PaymentsForAgent.CreatePayment(AgentActions.ConnectClient, string.Format("Зачисление за подключение клиента #{0}", client.Id), registrator);
+							PaymentsForAgent.CreatePayment(registrator, string.Format("Зачисление бонусов по заявке #{0} за поключенного клиента #{1}",
 							                                             request.Id, client.Id), request.VirtualBonus);
 							//PaymentsForAgent.CreatePayment(registrator, "Зачисление штрафов", request.VirtualWriteOff);
 							request.PaidBonus = true;
@@ -394,7 +392,7 @@ namespace InternetInterface.Controllers
 				errorMessage = string.Empty;
 				errorMessage += "Ошибка ввода IP адреса";
 			}
-			PropertyBag["ConnectInfo"] = client.GetConnectInfo();
+			//PropertyBag["ConnectInfo"] = client.GetConnectInfo();
 			PropertyBag["Editing"] = true;
 			PropertyBag["ChBrigad"] = BrigadForConnect;
 			Flash["errorMessage"] = errorMessage;
@@ -428,7 +426,7 @@ namespace InternetInterface.Controllers
 				PropertyBag["Client"] = client;
 				PropertyBag["Password"] = Password;
 				PropertyBag["AccountNumber"] = _client.Id.ToString("00000");
-				PropertyBag["ConnectInfo"] = _client.GetConnectInfo();
+				//PropertyBag["ConnectInfo"] = _client.GetConnectInfo();
 				//PropertyBag["ConnectSumm"] = connectSumm;
 				RenderView("ClientRegisteredInfo");
 			}
@@ -438,7 +436,7 @@ namespace InternetInterface.Controllers
 		{
 			Flash["EditingConnect"] = true;
 			var Cl = Client.Find(ClientID);
-			PropertyBag["ConnectInfo"] = Cl.GetConnectInfo();
+			//PropertyBag["ConnectInfo"] = Cl.GetConnectInfo();
 			RedirectToUrl("../Search/Redirect.rails?filter.ClientCode=" + ClientID + "&filter.EditingConnect=true");
 		}
 
@@ -777,7 +775,7 @@ namespace InternetInterface.Controllers
 			                              	: "Назначить в график";
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
 			PropertyBag["ChBrigad"] = client.WhoConnected != null ? client.WhoConnected.Id : Brigad.FindFirst().Id;
-			PropertyBag["ConnectInfo"] = client.GetConnectInfo();
+			//PropertyBag["ConnectInfo"] = client.GetConnectInfo();
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties { ChangeType = TypeChangeBalance.OtherSumm };
 
 			PropertyBag["UserInfo"] = true;

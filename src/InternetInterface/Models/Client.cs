@@ -213,7 +213,7 @@ group by {0} order by WriteOffDate;", gpoupKey))
 			return writeOffs;
 		}
 
-		public virtual ClientConnectInfo GetConnectInfo()
+		public virtual IList<ClientConnectInfo> GetConnectInfo()
 		{
 			if ((PhysicalClient!= null && Status != null && Status.Connected) ||
 				(LawyerPerson != null && Status != null && Status.Connected))
@@ -237,7 +237,7 @@ PS.Speed,
 CE.Monitoring
 from internet.ClientEndpoints CE
 join internet.NetworkSwitches NS on NS.Id = CE.Switch
-join internet.Clients C on CE.Client = C.Id
+#join internet.Clients C on CE.Client = C.Id
 left join internet.Leases L on L.Endpoint = CE.Id
 left join internet.PackageSpeed PS on PS.PackageId = CE.PackageId
 where CE.Client = {0}",
@@ -249,9 +249,9 @@ typeof(ClientConnectInfo)))
 						return query;
 					});
 					if (ConnectInfo.Count != 0)
-						return ConnectInfo.First();
+						return ConnectInfo;
 				}
-			return new ClientConnectInfo();
+			return new List<ClientConnectInfo>();
 		}
 
 		public static Lease FindByIP(string ip)

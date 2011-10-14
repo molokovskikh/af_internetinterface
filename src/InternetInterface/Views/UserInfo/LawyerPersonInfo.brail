@@ -113,7 +113,10 @@
 	<%end %>
 <br />
 
-<% OutputSubView("""\Subview\ConnectInfo""") %>
+<% for i,item in enumerate(_client.GetConnectInfo()):
+ OutputSubView("""\Subview\ConnectInfo""", {
+					"ConnectInfo": item})
+end %>
 
 <% OutputSubView("""\Subview\PaymentInfo""") %>
 

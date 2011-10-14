@@ -207,10 +207,10 @@
 		<button type="button"  class="editBut" onclick="addNewAdress()"> Добавить новый адрес
 	</button>
 	</div>
-		</td>
-   </tr>
-   </tbody>
-   </table>
+	</td>
+	</tr>
+	</tbody>
+	</table>
 	</form>
 	<%end %>
   <%end %>
