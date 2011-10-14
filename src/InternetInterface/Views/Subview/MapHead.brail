@@ -93,7 +93,11 @@
 			<th></th>
 			<th></th>
 			<th></th>
-			<th></th>
+			<th>
+				<a id="appeal_link" href="${Siteroot}\UserInfo\ShowAppeals">Обращения</a>
+				<br />
+				<br />
+			</th>
 			<th></th>
 			<th></th>
 			<th>

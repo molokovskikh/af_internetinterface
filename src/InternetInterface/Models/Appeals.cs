@@ -11,6 +11,7 @@ namespace InternetInterface.Models
 {
 	public enum AppealType
 	{
+		All = 0,
 		User = 1,
 		System = 3
 	}
@@ -53,6 +54,16 @@ namespace InternetInterface.Models
 				Date = DateTime.Now,
 				Partner = InitializeContent.partner
 			}.Save();
+		}
+
+		public virtual string Type()
+		{
+			var type = string.Empty;
+			if (AppealType == (int)Models.AppealType.User)
+				type = "Пользовательское";
+			if (AppealType == (int)Models.AppealType.System)
+				type = "Системное";
+			return type;
 		}
 	}
 }

@@ -3,6 +3,14 @@
 
 namespace InternetInterface.Models
 {
+	/*public enum AppealInPropType
+	{
+		[Description("Пользовательские")]
+		User,
+		[Description("Системные")]
+		System,
+	}*/
+
 	public enum SearchUserBy
 	{
 		[Description("Автоматически")]
@@ -95,6 +103,31 @@ namespace InternetInterface.Models
 		public bool IsOtherSumm()
 		{
 			return ChangeType == TypeChangeBalance.OtherSumm;
+		}
+	}
+
+	public class AppealTypeProperties
+	{
+		public AppealTypeProperties()
+		{
+			appealType = AppealType.All;
+		}
+
+		public AppealType appealType { get; set; }
+
+		public bool IsUser()
+		{
+			return appealType == AppealType.User;
+		}
+
+		public bool IsSystem()
+		{
+			return appealType == AppealType.System;
+		}
+
+		public bool IsAll()
+		{
+			return appealType == AppealType.All;
 		}
 	}
 

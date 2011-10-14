@@ -246,8 +246,8 @@ namespace InternetInterface.Models.Access
 									"DeleteTemp",
 									"Edit",
 									"SearchPayer",
-									"CancelPayments"
-
+									"CancelPayments",
+									"ShowAppeals"
 								};
 			return _visibleDemand.Contains(methodName) ? "SSI" : string.Empty;
 		}

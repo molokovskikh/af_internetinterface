@@ -216,6 +216,7 @@
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>
     </Content>
+    <None Include="Views\UserInfo\ShowAppeals.brail" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AllLogic\ColorWork.cs" />
@@ -250,6 +251,7 @@
     <Compile Include="Errors\NotFound.aspx.designer.cs">
       <DependentUpon>NotFound.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Filters\AppealFilter.cs" />
     <Compile Include="Helpers\ActiveDirectoryHelper.cs" />
     <Compile Include="Helpers\AppHelperInterface.cs" />
     <Compile Include="Helpers\ARSesssionHelper.cs" />

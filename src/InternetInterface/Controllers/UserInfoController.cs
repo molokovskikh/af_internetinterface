@@ -12,6 +12,7 @@ using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
 using InternetInterface.AllLogic;
 using InternetInterface.Controllers.Filter;
+using InternetInterface.Filters;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 using NHibernate;
@@ -28,7 +29,7 @@ namespace InternetInterface.Controllers
 		public bool EditingConnect  { get; set; }
 	}
 
-	public class AppealFilter : IPaginable
+	public class SessionFilter : IPaginable
 	{
 		public uint ClientCode { get; set; }
 		public DateTime? beginDate { get; set; }
@@ -122,7 +123,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(t => t.Name != null);
 		}
 
-		public void Leases([DataBind("filter")] AppealFilter filter)
+		public void Leases([DataBind("filter")] SessionFilter filter)
 		{
 			PropertyBag["_client"] = Client.Find(filter.ClientCode);
 			PropertyBag["filter"] = filter;
@@ -1007,6 +1008,12 @@ namespace InternetInterface.Controllers
 			                     "<button type=\"button\" id=\"Button1\" class=\"button\">" +
 			                     "<img alt=\"Save\" src=\"../Images/tick.png\">{1}</button></a>",
 			                     link.Remove(link.IndexOf("appalType")) + "appealType" + type, name);
+		}
+
+		public void ShowAppeals([DataBind("filter")]AppealFilter filter)
+		{
+			PropertyBag["appeals"] = filter.Find();
+			PropertyBag["filter"] = filter;
 		}
 	}
 }
