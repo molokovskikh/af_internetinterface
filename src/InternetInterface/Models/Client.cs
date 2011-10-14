@@ -186,9 +186,9 @@ namespace InternetInterface.Models
 		}
 
 
-		public virtual IList<WriteOff> GetWriteOffs(string groupedKey)
+		public virtual IList<BaseWriteOff> GetWriteOffs(string groupedKey)
 		{
-			IList<WriteOff> writeOffs = new List<WriteOff>();
+			IList<BaseWriteOff> writeOffs = new List<BaseWriteOff>();
 			var gpoupKey = "concat(YEAR(WriteOffDate),'-',MONTH(WriteOffDate),'-',DAYOFMONTH(WriteOffDate))";
 			if (groupedKey == "day")
 				gpoupKey = "concat(YEAR(WriteOffDate),'-',MONTH(WriteOffDate),'-',DAYOFMONTH(WriteOffDate))";
@@ -196,16 +196,19 @@ namespace InternetInterface.Models
 				gpoupKey = "concat(YEAR(WriteOffDate),'-',MONTH(WriteOffDate))";
 			if (groupedKey == "year")
 				gpoupKey = "YEAR(WriteOffDate)";
-			ARSesssionHelper<WriteOff>.QueryWithSession(session =>
+			ARSesssionHelper<BaseWriteOff>.QueryWithSession(session =>
 			{
 				var query =
 					session.CreateSQLQuery(string.Format(
-@"SELECT id, Sum(WriteOffSum) as WriteOffSum, WriteOffDate, Client  FROM internet.WriteOff W
+@"SELECT Id, Sum(WriteOffSum) as WriteOffSum, WriteOffDate, Client  FROM internet.WriteOff W
 where Client = :clientid
-group by {0}", gpoupKey)).AddEntity(typeof(WriteOff));
-				query.SetParameter("clientid", Id);
-				writeOffs = query.List<WriteOff>();
-				return query.List<WriteOff>();
+group by {0} order by WriteOffDate;", gpoupKey))
+				.SetParameter("clientid", Id)
+				.SetResultTransformer(
+					new AliasToPropertyTransformer(
+						typeof (BaseWriteOff)));
+				writeOffs = query.List<BaseWriteOff>();
+				return query.List<BaseWriteOff>();
 			});
 			return writeOffs;
 		}

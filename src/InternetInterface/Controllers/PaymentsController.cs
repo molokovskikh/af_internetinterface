@@ -35,7 +35,7 @@ namespace InternetInterface.Controllers
 
 	//[Layout("Main")]
 	[Helper(typeof(ViewHelper))]
-	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
+	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter)), System.Runtime.InteropServices.GuidAttribute("5382FACE-DB49-4A02-9E2E-0A512B0D2E49")]
 	public class PaymentsController : ARSmartDispatcherController
 	{
 		public void Index([DataBind("filter")] PaymentFilter filter)
