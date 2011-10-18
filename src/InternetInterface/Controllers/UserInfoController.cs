@@ -26,7 +26,8 @@ namespace InternetInterface.Controllers
 		public int appealType  { get; set; }
 		public string grouped  { get; set; }
 		public bool Editing  { get; set; }
-		public List<bool> EditingConnect  { get; set; }
+		//public List<bool> EditingConnect  { get; set; }
+		public int EditingConnect { get; set; }
 	}
 
 	public class SessionFilter : IPaginable
@@ -113,10 +114,10 @@ namespace InternetInterface.Controllers
 			PropertyBag["Editing"] = filter.Editing;
 			PropertyBag["appealType"] = filter.appealType; //CreateAppealLink(Request.Url, "Отобразить", appealType);
 			if (client.Status.Id != (uint) StatusType.BlockedAndNoConnected)
-				PropertyBag["EditingConnect"] = filter.EditingConnect;
+				PropertyBag["EConnect"] = filter.EditingConnect;
 			else
 			{
-				PropertyBag["EditingConnect"] = true;
+				PropertyBag["EConnect"] = 0;
 			}
 			PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClients>(new PhysicalClients());
 			//PropertyBag["ConnectInfo"] = client.GetConnectInfo();
@@ -169,11 +170,12 @@ namespace InternetInterface.Controllers
 					a => a.Client == client && a.AppealType == (filter.appealType == 0 ? (int) AppealType.User : filter.appealType)).
 					OrderByDescending(
 						a => a.Date).ToArray();
+
 			if (client.Status.Connected)
-				PropertyBag["EditingConnect"] = filter.EditingConnect;
+				PropertyBag["EConnect"] = filter.EditingConnect;
 			else
 			{
-				PropertyBag["EditingConnect"] = true;
+				PropertyBag["EConnect"] = true;
 			}
 			PropertyBag["staticIps"] = StaticIp.Queryable.Where(s => s.Client.Id == filter.ClientCode).ToList();
 			SendUserWriteOff();
@@ -218,27 +220,28 @@ namespace InternetInterface.Controllers
 			var dtn = DateTime.Now;
 			/*if (ClientService.Queryable.Count(c => c.Service == servise && c.Client == client) == 0)
 			{*/
-			var clientService = new ClientService {
-			                                      	Client = client,
-			                                      	Service = servise,
-			                                      	BeginWorkDate =
-			                                      		startDate == null
-			                                      			? dtn
-			                                      			: new DateTime(startDate.Value.Year,
-			                                      			               startDate.Value.Month,
-			                                      			               startDate.Value.Day, dtn.Hour,
-			                                      			               dtn.Minute,
-			                                      			               dtn.Second),
-			                                      	EndWorkDate = endDate == null
-			                                      	              	? endDate
-			                                      	              	: new DateTime(endDate.Value.Year,
-			                                      	              	               endDate.Value.Month,
-			                                      	              	               endDate.Value.Day,
-			                                      	              	               dtn.Hour,
-			                                      	              	               dtn.Minute,
-			                                      	              	               dtn.Second),
-			                                      	Activator = InitializeContent.partner
-			                                      };
+			var clientService = new ClientService 
+				{
+				Client = client,
+				Service = servise,
+				BeginWorkDate =
+					startDate == null
+						? dtn
+						: new DateTime(startDate.Value.Year,
+										startDate.Value.Month,
+										startDate.Value.Day, dtn.Hour,
+										dtn.Minute,
+										dtn.Second),
+				EndWorkDate = endDate == null
+								? endDate
+								: new DateTime(endDate.Value.Year,
+												endDate.Value.Month,
+												endDate.Value.Day,
+												dtn.Hour,
+												dtn.Minute,
+												dtn.Second),
+				Activator = InitializeContent.partner
+				};
 			//clientService.Save();
 			client.ClientServices.Add(clientService);
 			clientService.Activate();
@@ -285,7 +288,8 @@ namespace InternetInterface.Controllers
 
 		public void SaveSwitchForClient(uint ClientID, [DataBind("ConnectInfo")] ConnectInfo ConnectInfo,
 		                                uint BrigadForConnect,
-		                                [ARDataBind("staticAdress", AutoLoad = AutoLoadBehavior.NewInstanceIfInvalidKey)] StaticIp[] staticAdress)
+		                                [ARDataBind("staticAdress", AutoLoad = AutoLoadBehavior.NewInstanceIfInvalidKey)] StaticIp[] staticAdress,
+			uint EditConnect)
 		{
 			var client = Client.Find(ClientID);
 			var brigadChangeFlag = true;
@@ -293,7 +297,7 @@ namespace InternetInterface.Controllers
 				brigadChangeFlag = false;
 			var newFlag = false;
 			var clientEntPoint = new ClientEndpoints();
-			var clientsEndPoint = ClientEndpoints.Queryable.Where(c => c.Client == client).ToArray();
+			var clientsEndPoint = ClientEndpoints.Queryable.Where(c => c.Client == client && c.Id == EditConnect).ToArray();
 			if (clientsEndPoint.Length != 0)
 			{
 				clientEntPoint = clientsEndPoint[0];
@@ -432,12 +436,10 @@ namespace InternetInterface.Controllers
 			}
 		}
 
-		public void LoadEditConnectMudule(uint ClientID)
+		public void LoadEditConnectMudule(uint ClientID, int EditConnectFlag)
 		{
-			Flash["EditingConnect"] = true;
-			var Cl = Client.Find(ClientID);
-			//PropertyBag["ConnectInfo"] = Cl.GetConnectInfo();
-			RedirectToUrl("../Search/Redirect.rails?filter.ClientCode=" + ClientID + "&filter.EditingConnect=true");
+			//Flash["EditingConnect"] = true;
+			RedirectToUrl("../Search/Redirect.rails?filter.ClientCode=" + ClientID + "&filter.EditingConnect=" + EditConnectFlag);
 		}
 
 		private void SendRequestEditParameter()
@@ -650,13 +652,14 @@ namespace InternetInterface.Controllers
 				PropertyBag["EditingConnect"] = false;*/
 				PropertyBag["LegalPerson"] = updateClient;
 				PropertyBag["grouped"] = grouped;
-				var fil = new ClientFilter {
-				                           	ClientCode = ClientID,
-				                           	grouped = grouped,
-				                           	appealType = appealType,
-				                           	Editing = true,
-				                           	EditingConnect = false
-				                           };
+				var fil = new ClientFilter
+				{
+					ClientCode = ClientID,
+					grouped = grouped,
+					appealType = appealType,
+					Editing = true,
+					EditingConnect = 0
+				};
 				LawyerPersonInfo(fil);
 				//RedirectToReferrer();
 			}
@@ -735,7 +738,7 @@ namespace InternetInterface.Controllers
 				});
 				RenderView("SearchUserInfo");
 				Flash["Editing"] = true;
-				Flash["EditingConnect"] = false;
+				//Flash["EditingConnect"] = false;
 				Flash["_client"] = _client;
 				Flash["Client"] = updateClient;
 				filter.ClientCode = _client.Id;
@@ -775,9 +778,12 @@ namespace InternetInterface.Controllers
 			                              	: "Назначить в график";
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
 			PropertyBag["ChBrigad"] = client.WhoConnected != null ? client.WhoConnected.Id : Brigad.FindFirst().Id;
+			var connectInfo = client.GetConnectInfo();
+			if (connectInfo.Count == 0)
+				connectInfo.Add(new ClientConnectInfo());
+			PropertyBag["ClientConnectInf"] = connectInfo;
 			//PropertyBag["ConnectInfo"] = client.GetConnectInfo();
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties { ChangeType = TypeChangeBalance.OtherSumm };
-
 			PropertyBag["UserInfo"] = true;
 			/*
 			PropertyBag["PartnerAccessSet"] = new CategorieAccessSet();

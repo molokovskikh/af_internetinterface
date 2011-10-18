@@ -50,7 +50,7 @@ namespace InternetInterface.Models
 		public string Leased_IP { get; set; }
 		public int Client { get; set; }
 
-		public int? endpointId { get; set; }
+		public int endpointId { get; set; }
 		public string Name { get; set; }
 
 		public string Switch { get; set; }

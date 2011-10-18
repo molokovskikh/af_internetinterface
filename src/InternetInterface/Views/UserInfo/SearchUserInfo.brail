@@ -186,9 +186,10 @@
 </form>
 <%end %>
 <br />
-<% for i,item in enumerate(_client.GetConnectInfo()):
+<% for i,item in enumerate(ClientConnectInf):
  OutputSubView("""\Subview\ConnectInfo""", {
-					"ConnectInfo": item})
+					"ConnectInfo": item,
+					"EditingConnect" : EConnect == item.endpointId})
 end %>
 <% OutputSubView("""\Subview\PaymentInfo""") %>
 <br />

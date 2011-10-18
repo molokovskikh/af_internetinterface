@@ -371,7 +371,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Applying"] = "false";
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties { ChangeType = TypeChangeBalance.OtherSumm };
 			PropertyBag["BalanceText"] = 0;
-			PropertyBag["ConnectInfo"] = new Client().GetConnectInfo();
+			PropertyBag["ConnectInfo"] = new ClientConnectInfo();
 			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(s => !string.IsNullOrEmpty(s.Name));
 		}
 

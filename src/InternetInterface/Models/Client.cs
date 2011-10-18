@@ -116,6 +116,9 @@ namespace InternetInterface.Models
 
 		[HasMany(ColumnKey = "Client", OrderBy = "Date", Lazy = true)]
 		public virtual IList<UserWriteOff> UserWriteOffs { get; set; }
+	
+		/*[HasMany(ColumnKey = "Client", OrderBy = "Date", Lazy = true)]
+		public virtual IList<ClientEndpoints> Endpoints { get; set; }*/
 
 		[HasMany(ColumnKey = "Client", Lazy = true, Cascade = ManyRelationCascadeEnum.All)]
 		public virtual IList<ClientService> ClientServices { get; set; }
@@ -234,7 +237,8 @@ NS.Name as Swith_adr,
 inet_ntoa(NS.ip) as swith_IP,
 CE.Port,
 PS.Speed,
-CE.Monitoring
+CE.Monitoring,
+CE.Id as endpointId
 from internet.ClientEndpoints CE
 join internet.NetworkSwitches NS on NS.Id = CE.Switch
 #join internet.Clients C on CE.Client = C.Id
