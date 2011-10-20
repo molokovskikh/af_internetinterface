@@ -240,7 +240,7 @@ PS.Speed,
 CE.Monitoring,
 CE.Id as endpointId
 from internet.ClientEndpoints CE
-join internet.NetworkSwitches NS on NS.Id = CE.Switch
+left join internet.NetworkSwitches NS on NS.Id = CE.Switch
 #join internet.Clients C on CE.Client = C.Id
 left join internet.Leases L on L.Endpoint = CE.Id
 left join internet.PackageSpeed PS on PS.PackageId = CE.PackageId

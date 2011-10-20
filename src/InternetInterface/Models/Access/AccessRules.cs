@@ -201,7 +201,10 @@ namespace InternetInterface.Models.Access
 									"GoZone",
 									"SiteMap",
 									"GetSubnet",
-									"FreePortForSwitch"
+									"FreePortForSwitch",
+									"AddEndPoint",
+									"DeleteEndPoint",
+									"AddPoint"
 								};
 			return _accessDHCP.Contains(methodName) ? "DHCP" : string.Empty;
 		}

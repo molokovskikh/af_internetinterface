@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
 using System.Linq;
 using System.Collections.Generic;
+using Castle.ActiveRecord.Framework;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Common.Tools;
@@ -104,8 +106,8 @@ namespace InternetInterface.Controllers
 		{
 			var client = Client.Find(filter.ClientCode);
 			PropertyBag["filter"] = filter;
-			PropertyBag["_client"] = client;
-			PropertyBag["Client"] = client.PhysicalClient;
+			//PropertyBag["_client"] = client;
+			//PropertyBag["Client"] = client.PhysicalClient;
 			//PropertyBag["Leases"] = filter.Find();
 			//PropertyBag["userWO"] = writeOff;
 			if (filter.appealType == 0)
@@ -175,8 +177,9 @@ namespace InternetInterface.Controllers
 				PropertyBag["EConnect"] = filter.EditingConnect;
 			else
 			{
-				PropertyBag["EConnect"] = true;
+				PropertyBag["EConnect"] = 0;
 			}
+			SendConnectInfo(client);
 			PropertyBag["staticIps"] = StaticIp.Queryable.Where(s => s.Client.Id == filter.ClientCode).ToList();
 			SendUserWriteOff();
 		}
@@ -751,8 +754,8 @@ namespace InternetInterface.Controllers
 		private void SendParam(UInt32 ClientCode, string grouped, int appealType)
 		{
 			var client = Client.Find(ClientCode);
-			PropertyBag["ClientCode"] = ClientCode;
-			PropertyBag["staticIps"] = StaticIp.Queryable.Where(s => s.Client.Id == ClientCode).ToList();
+			//PropertyBag["ClientCode"] = ClientCode;
+			//PropertyBag["staticIps"] = StaticIp.Queryable.Where(s => s.Client.Id == ClientCode).ToList();
 			PropertyBag["Payments"] = Payment.Queryable.Where(p => p.Client.Id == client.Id).OrderBy(t => t.PaidOn).ToList();
 			var abonentSum = WriteOff.Queryable.Where(p => p.Client.Id == client.Id).ToList().Sum(s => s.WriteOffSum);
 			PropertyBag["writeOffSum"] = abonentSum +
@@ -776,19 +779,38 @@ namespace InternetInterface.Controllers
 			PropertyBag["naznach_text"] = ConnectGraph.Queryable.Count(c => c.Client.Id == ClientCode) != 0
 			                              	? "Переназначить в график"
 			                              	: "Назначить в график";
-			PropertyBag["Brigads"] = Brigad.FindAllSort();
-			PropertyBag["ChBrigad"] = client.WhoConnected != null ? client.WhoConnected.Id : Brigad.FindFirst().Id;
-			var connectInfo = client.GetConnectInfo();
-			if (connectInfo.Count == 0)
-				connectInfo.Add(new ClientConnectInfo());
-			PropertyBag["ClientConnectInf"] = connectInfo;
+			//PropertyBag["Brigads"] = Brigad.FindAllSort();
+			//PropertyBag["ChBrigad"] = client.WhoConnected != null ? client.WhoConnected.Id : Brigad.FindFirst().Id;
+
 			//PropertyBag["ConnectInfo"] = client.GetConnectInfo();
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties { ChangeType = TypeChangeBalance.OtherSumm };
 			PropertyBag["UserInfo"] = true;
 			/*
 			PropertyBag["PartnerAccessSet"] = new CategorieAccessSet();
 			*/
+			ConnectPropertyBag(ClientCode);
+			SendConnectInfo(client);
 			SendUserWriteOff();
+		}
+
+		public void SendConnectInfo(Client client)
+		{
+			var connectInfo = client.GetConnectInfo();
+			if (connectInfo.Count == 0)
+				connectInfo.Add(new ClientConnectInfo());
+			PropertyBag["ClientConnectInf"] = connectInfo;
+		}
+
+		public void ConnectPropertyBag(uint clientId)
+		{
+			var client = Client.FirstOrDefault(clientId);
+			PropertyBag["_client"] = client;
+			PropertyBag["Client"] = client.PhysicalClient;
+			PropertyBag["ClientCode"] = clientId;
+			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(t => !string.IsNullOrEmpty(t.Name));
+			PropertyBag["Brigads"] = Brigad.FindAllSort();
+			PropertyBag["ChBrigad"] = client.WhoConnected != null ? client.WhoConnected.Id : Brigad.FindFirst().Id;
+			PropertyBag["staticIps"] = StaticIp.Queryable.Where(s => s.Client.Id == clientId).ToList();
 		}
 
 		private void SendUserWriteOff()
@@ -1018,6 +1040,40 @@ namespace InternetInterface.Controllers
 		{
 			PropertyBag["appeals"] = filter.Find();
 			PropertyBag["filter"] = filter;
+		}
+
+		[AccessibleThrough(Verb.Post)]
+		public void AddEndPoint(uint clientId)
+		{
+			/*var client = Client.FirstOrDefault(clientId);
+			new ClientEndpoints {
+			                    	Client = client
+			                    }.Save();
+			RedirectToReferrer();*/
+			RedirectToAction("AddPoint", new Dictionary<string, string> { { "clientId", clientId.ToString() } });
+		}
+
+		public void AddPoint(uint clientId)
+		{
+			PropertyBag["connectInfo"] = new ClientConnectInfo();
+			ConnectPropertyBag(clientId);
+		}
+
+		[AccessibleThrough(Verb.Post)]
+		public void DeleteEndPoint(uint endPointForDelete)
+		{
+			var endPoint = ClientEndpoints.FirstOrDefault(endPointForDelete);
+
+			if (endPoint != null)
+			{
+				var client = endPoint.Client;
+				var endPointsForClient = ClientEndpoints.Queryable.Where(c => c.Client == client).ToList();
+				if (endPointsForClient.Count > 1)
+					endPoint.Delete();
+				else
+					Flash["Message"] = Message.Error("Последняя точка подключения не может быть удалена!");
+			}
+			RedirectToReferrer();
 		}
 	}
 }

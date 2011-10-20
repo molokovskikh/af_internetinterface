@@ -202,7 +202,7 @@ namespace InternetInterface.Models
 				CompulsoryDiactivate(CService);
 				return true;
 			}
-			return false;
+			return CService.Diactivated;
 		}
 
 		public override void Activate(ClientService CService)

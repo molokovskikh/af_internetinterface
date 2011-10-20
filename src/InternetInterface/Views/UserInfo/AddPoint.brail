@@ -1,0 +1,11 @@
+﻿<div style="width:850px; margin: 0px auto;">
+<% OutputSubView("""\Subview\ConnectInfo""", {
+					"ConnectInfo": connectInfo,
+					"EditingConnect" : true }) %>
+</div>
+<style type="text/css">
+	#editConnectTable
+	{
+		border:1px double Black;
+		}
+</style>

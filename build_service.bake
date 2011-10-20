@@ -8,10 +8,9 @@ import file from WindowsServiceSupport.bake
 
 Global(
 	Project : "BillingService",
-	project : "BillingService",
-	server : "fms",
+	Server : "fms",
 	DeployTo : """\\fms\BillingService""",
-	serviceName : "BillingInternetService",
+	ServiceName : "BillingInternetService",
 	HumanReadableName : "Сервис биллинга"
 )
 

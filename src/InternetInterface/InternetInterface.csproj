@@ -182,6 +182,7 @@
     <None Include="Views\Switches\OnLineClient.brail" />
     <None Include="Views\Switches\ShowSwitches.brail" />
     <None Include="Views\UserInfo\AddInfo.brail" />
+    <None Include="Views\UserInfo\AddPoint.brail" />
     <None Include="Views\UserInfo\Administration.brail" />
     <None Include="Views\UserInfo\AppointedToTheGraph.brail" />
     <None Include="Views\UserInfo\ClientRegisteredInfoFromDiller.brail" />
@@ -206,6 +207,7 @@
     <Content Include="JavaScript\jquery.tablesorter.js" />
     <Content Include="JavaScript\jquery.ui.datepicker-ru.js" />
     <Content Include="JavaScript\jquery.validate.js" />
+    <None Include="Views\Subview\StaticIps.brail" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

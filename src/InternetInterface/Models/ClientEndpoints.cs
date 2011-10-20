@@ -6,7 +6,7 @@ using NHibernate.Criterion;
 namespace InternetInterface.Models
 {
 	[ActiveRecord("ClientEndpoints", Schema = "Internet", Lazy = true)]
-	public class ClientEndpoints : ActiveRecordLinqBase<ClientEndpoints>
+	public class ClientEndpoints : ChildActiveRecordLinqBase<ClientEndpoints>
 	{
 		[PrimaryKey]
 		public virtual uint Id { get; set; }

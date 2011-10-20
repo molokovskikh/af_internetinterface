@@ -26,6 +26,17 @@
 		width:25px;
 		}
 </style>
+
+<div id="deletePointDialog" class="reveal-modal"> 
+<form class="formConnect" method="post" action="${siteroot}/UserInfo/DeleteEndPoint">
+<input type="hidden" name="endPointForDelete" id="endPointForDelete"/>
+<p>Вы собираетесь удалить точку подключения, если клиент уже работает на этой точке, он  будет отключен ! </p>
+<p>Вы уверены, что хотите удалить данную точку подключения ?</p>
+<button type="submit"  class="editBut">Удалить</button>
+</form>
+<a class="close-reveal-modal">x</a>
+</div> 
+
 <div style="clear:both;">
 <%if PartnerAccessSet.AccesPartner("DHCP"): %>
  <%if IsDefined("Client"): %>
@@ -36,13 +47,21 @@
 	<table  style="width: 100%;"><tbody><tr><td>
 	<table class="table" style="width: 100%;" align="left">
 	<thead>
-		<th colspan=2>Информация по подключению 
+		<tr>
+		<th style="border-right-width:0px;">Информация по подключению 
 		<%if PartnerAccessSet.AccesPartner("DHCP"): %>
 			<button type="submit"  class="editBut">
 			<img alt="Save" src="../Images/application_edit.png"> Редактировать
 			</button>
 		 <%end %>
 		</th>
+		<th style="border-left-width:0px; text-align:right;">
+			<a href="#" class="big-link" data-reveal-id="deletePointDialog" > 
+			<input type="hidden" value="${ConnectInfo.endpointId}" />
+			<img class="deletePointControl" src="../images/onebit_32.png" />
+			</a>
+		</th>
+		</tr>
 	</thead>
 	<tbody>
 		<tr>
@@ -54,7 +73,7 @@
 		  <td>${ConnectInfo.Leased_IP}</td>
 		</tr>
 		<tr>
-		  <td><span class="description">Свич </span></td>
+		  <td style="width:400px;"><span class="description">Свич </span></td>
 		  <td>${ConnectInfo.Swith_adr} (${ConnectInfo.swith_IP})</td>
 		</tr>
 		<tr>
@@ -83,35 +102,13 @@
 		</tr>
 		</tbody>
 	</table>
-	</td></tr><tr><td>
-	<%if staticIps.Count != 0: %>
-		<table class="table" align="left">
-			<thead>
-				<tr>
-					<th colspan=2 style="text-align:center;">Статические адреса клиента</th>
-				</tr>
-				<tr>
-					<th>IP адрес / маска</th>
-					<th>Маска</th>
-				</tr>
-			</thead>
-			<tbody>
-				<% for i,item in enumerate(staticIps): %>
-					<tr>
-						<td>${item.Ip} ${"/" if item.Mask != null} ${item.Mask}</td>
-						<td>${item.GetSubnet()}</td>
-					</tr>
-				<%end %>
-			</tbody>
-		</table>
-	<%end %>
 	</td></tr></tbody></table>
 	</form>
 	<%else: %>
 	<form class="formConnect" id="formConnect" method="post" action="${siteroot}/UserInfo/SaveSwitchForClient">
 	<input type="hidden" name="ClientID" value="${ClientCode}" />
 	<input type="hidden" name="EditConnect" value="${ConnectInfo.endpointId}" />
-	<table class="table" style="width: 100%;" align="left">
+	<table id="editConnectTable" class="table" style="width: 100%;">
 	<thead>
 		<th colspan = 3 > Информация по подключению 
 		<%if PartnerAccessSet.AccesPartner("DHCP"): %>
@@ -218,6 +215,12 @@
 </div>
 <script type="text/javascript">
 	$(document).ready(function () {
+
+		$('.deletePointControl').click(function () {
+			var endPointId = $(this).parent().children('input:first').val();
+			$('#endPointForDelete').val(endPointId);
+		});
+
 		$('.delMenuItem').click(function () {
 			delMenu(this);
 		});
@@ -227,7 +230,7 @@
 		else
 			RenderSwitchInfo('${ConnectInfo.Switch}');
 
-		$('#SelectSwitches').change(function () {RenderSwitchInfo($(this).val());});
+		$('#SelectSwitches').change(function () { RenderSwitchInfo($(this).val()); });
 
 		$('.added_port').click(function () {
 			var port = this.innerText;

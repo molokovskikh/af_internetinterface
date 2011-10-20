@@ -55,7 +55,7 @@
 
 <script type="text/javascript">
 	$(function () {
-		$("#accordion").accordion({
+		$(".accordion").accordion({
 			collapsible: true
 		});
 		$('.date-pick').datepicker().change(function () {
@@ -77,7 +77,7 @@
 		<tbody>
 		<tr>
 			<td>
-			<div id="accordion" style="font-size:1em;">
+			<div class="accordion" style="font-size:1em;">
 			<% for i, service in enumerate(services): %>
 				<% if service.CanActivateInWeb(_client): %>
 					<h4><a href="#"> ${service.HumanName} </a> </h4>
