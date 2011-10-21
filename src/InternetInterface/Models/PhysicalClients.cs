@@ -64,6 +64,8 @@ namespace InternetInterface.Models
 		public string Speed { get; set; }
 		public bool Monitoring { get; set; }
 
+		public string ConnectSum { get; set; }
+
 		public DateTime LeaseBegin { get; set; }
 
 		public Int32 GetNormalSpeed()

@@ -293,6 +293,7 @@
     <Compile Include="Models\NetworkSwitches.cs" />
     <Compile Include="Models\OnLineClient.cs" />
     <Compile Include="Models\PackageSpeed.cs" />
+    <Compile Include="Models\PaymentForConnect.cs" />
     <Compile Include="Models\PaymentsForAgent.cs" />
     <Compile Include="Models\Request.cs" />
     <Compile Include="Models\Service.cs" />

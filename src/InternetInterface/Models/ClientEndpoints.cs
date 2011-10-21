@@ -1,4 +1,5 @@
-﻿using Castle.ActiveRecord;
+﻿using System.Collections.Generic;
+using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Castle.ActiveRecord.Linq;
 using NHibernate.Criterion;
@@ -40,6 +41,12 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual uint? Pool { get; set; }
+
+		[OneToOne]
+		public virtual PaymentForConnect PayForCon { get; set; }
+
+		/*[HasMany(ColumnKey = "Client", OrderBy = "Date", Lazy = true)]
+		public virtual IList<UserWriteOff> UserWriteOffs { get; set; }*/
 
 		public virtual bool IsMultilease
 		{

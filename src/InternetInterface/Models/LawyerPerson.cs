@@ -17,6 +17,7 @@ namespace InternetInterface.Models
 		public uint Brigad { get; set; }
 		public string static_IP { get; set; }
 		public bool Monitoring { get; set; }
+		public uint PackageId { get; set; }
 	}
 
 	[ActiveRecord(Schema = "Internet", Table = "LawyerPerson", Lazy = true), Auditable]

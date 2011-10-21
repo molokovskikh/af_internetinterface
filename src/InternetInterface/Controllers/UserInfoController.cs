@@ -112,15 +112,15 @@ namespace InternetInterface.Controllers
 			//PropertyBag["userWO"] = writeOff;
 			if (filter.appealType == 0)
 				filter.appealType = (int) AppealType.User;
-			SendParam(filter.ClientCode, filter.grouped, filter.appealType);
-			PropertyBag["Editing"] = filter.Editing;
-			PropertyBag["appealType"] = filter.appealType; //CreateAppealLink(Request.Url, "Отобразить", appealType);
-			if (client.Status.Id != (uint) StatusType.BlockedAndNoConnected)
+			if (client.Status.Id != (uint)StatusType.BlockedAndNoConnected)
 				PropertyBag["EConnect"] = filter.EditingConnect;
 			else
 			{
 				PropertyBag["EConnect"] = 0;
 			}
+			SendParam(filter.ClientCode, filter.grouped, filter.appealType);
+			PropertyBag["Editing"] = filter.Editing;
+			PropertyBag["appealType"] = filter.appealType; //CreateAppealLink(Request.Url, "Отобразить", appealType);
 			PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClients>(new PhysicalClients());
 			//PropertyBag["ConnectInfo"] = client.GetConnectInfo();
 			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(t => t.Name != null);
@@ -142,17 +142,18 @@ namespace InternetInterface.Controllers
 				PropertyBag["ChStatus"] = client.Status.Id;
 			else
 				PropertyBag["ChStatus"] = Status.FindFirst().Id;
-			if (client.WhoConnected != null)
+			/*if (client.WhoConnected != null)
 				PropertyBag["ChBrigad"] = client.WhoConnected.Id;
 			else
-				PropertyBag["ChBrigad"] = Brigad.FindFirst().Id;
-			PropertyBag["ClientCode"] = filter.ClientCode;
+				PropertyBag["ChBrigad"] = Brigad.FindFirst().Id;*/
+			//PropertyBag["ClientCode"] = filter.ClientCode;
 			PropertyBag["grouped"] = filter.grouped;
 			PropertyBag["appealType"] = filter.appealType == 0 ? (int) AppealType.User : filter.appealType;
 			PropertyBag["Statuss"] = Status.FindAllSort();
 			PropertyBag["services"] = Service.FindAll();
-			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(t => t.Name != null);
-			PropertyBag["Brigads"] = Brigad.FindAllSort();
+			//PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(t => t.Name != null);
+			PropertyBag["Speeds"] = PackageSpeed.FindAll();
+			//PropertyBag["Brigads"] = Brigad.FindAllSort();
 
 			PropertyBag["Client"] = client.LawyerPerson;
 			PropertyBag["UserInfo"] = false;
@@ -160,7 +161,7 @@ namespace InternetInterface.Controllers
 			if (PropertyBag["VB"] == null)
 				PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(new LawyerPerson());
 
-			PropertyBag["_client"] = client;
+			//PropertyBag["_client"] = client;
 			PropertyBag["Editing"] = filter.Editing;
 			PropertyBag["ConnectInfo"] = client.GetConnectInfo();
 			PropertyBag["Payments"] = client.Payments.OrderBy(c => c.PaidOn).ToList();
@@ -180,7 +181,8 @@ namespace InternetInterface.Controllers
 				PropertyBag["EConnect"] = 0;
 			}
 			SendConnectInfo(client);
-			PropertyBag["staticIps"] = StaticIp.Queryable.Where(s => s.Client.Id == filter.ClientCode).ToList();
+			ConnectPropertyBag(filter.ClientCode);
+			//PropertyBag["staticIps"] = StaticIp.Queryable.Where(s => s.Client.Id == filter.ClientCode).ToList();
 			SendUserWriteOff();
 		}
 
@@ -292,7 +294,7 @@ namespace InternetInterface.Controllers
 		public void SaveSwitchForClient(uint ClientID, [DataBind("ConnectInfo")] ConnectInfo ConnectInfo,
 		                                uint BrigadForConnect,
 		                                [ARDataBind("staticAdress", AutoLoad = AutoLoadBehavior.NewInstanceIfInvalidKey)] StaticIp[] staticAdress,
-			uint EditConnect)
+			uint EditConnect, string ConnectSum)
 		{
 			var client = Client.Find(ClientID);
 			var brigadChangeFlag = true;
@@ -327,10 +329,24 @@ namespace InternetInterface.Controllers
 				if (errorMessage == string.Empty ||
 				    (oldSwitch != null && ConnectInfo.Switch == oldSwitch.Id && ConnectInfo.Port == olpPort.ToString()))
 				{
-					if (client.GetClientType() == ClientType.Phisical)
+					/*if (client.GetClientType() == ClientType.Phisical)
 						clientEntPoint.PackageId = client.PhysicalClient.Tariff.PackageId;
 					else
-						clientEntPoint.PackageId = client.LawyerPerson.Speed.PackageId;
+						clientEntPoint.PackageId = client.LawyerPerson.Speed.PackageId;*/
+					//var packageSpeed = PackageSpeed.Find(Convert.ToUInt32(ConnectInfo.PackageId));
+					var packageSpeed =
+						PackageSpeed.Queryable.Where(p => p.PackageId == ConnectInfo.PackageId).ToList().FirstOrDefault();
+					clientEntPoint.PackageId = packageSpeed.PackageId;
+					if (client.GetClientType() == ClientType.Phisical)
+					{
+						client.PhysicalClient.Tariff = Tariff.Queryable.Where(t => t.PackageId == packageSpeed.PackageId).ToList().FirstOrDefault();
+						client.Update();
+					}
+					else
+					{
+						client.LawyerPerson.Speed = packageSpeed;
+						client.Update();
+					}
 					clientEntPoint.Client = client;
 					clientEntPoint.Ip = ConnectInfo.static_IP;
 					clientEntPoint.Port = Int32.Parse(ConnectInfo.Port);
@@ -388,6 +404,17 @@ namespace InternetInterface.Controllers
 								s.Client = client;
 								s.Save();
 							}
+					}
+
+					var connectSum = 0m;
+					if (!string.IsNullOrEmpty(ConnectSum) && decimal.TryParse(ConnectSum, out connectSum) && connectSum > 0)
+					{
+						new PaymentForConnect {
+						                      	Sum = connectSum,
+												Partner = InitializeContent.partner,
+												EndPoint = clientEntPoint,
+												RegDate = DateTime.Now
+						                      }.Save();
 					}
 
 					RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID);
@@ -754,8 +781,7 @@ namespace InternetInterface.Controllers
 		private void SendParam(UInt32 ClientCode, string grouped, int appealType)
 		{
 			var client = Client.Find(ClientCode);
-			//PropertyBag["ClientCode"] = ClientCode;
-			//PropertyBag["staticIps"] = StaticIp.Queryable.Where(s => s.Client.Id == ClientCode).ToList();
+
 			PropertyBag["Payments"] = Payment.Queryable.Where(p => p.Client.Id == client.Id).OrderBy(t => t.PaidOn).ToList();
 			var abonentSum = WriteOff.Queryable.Where(p => p.Client.Id == client.Id).ToList().Sum(s => s.WriteOffSum);
 			PropertyBag["writeOffSum"] = abonentSum +
@@ -768,7 +794,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Appeals"] =
 				Appeals.Queryable.Where(a => a.Client.Id == client.Id && a.AppealType == appealType).ToList().OrderByDescending(
 					a => a.Date);
-
+			PropertyBag["Client"] = client.PhysicalClient;
 
 			PropertyBag["Houses"] = House.FindAll();
 			PropertyBag["ChHouse"] = client.PhysicalClient.HouseObj != null ? client.PhysicalClient.HouseObj.Id : 0;
@@ -779,15 +805,10 @@ namespace InternetInterface.Controllers
 			PropertyBag["naznach_text"] = ConnectGraph.Queryable.Count(c => c.Client.Id == ClientCode) != 0
 			                              	? "Переназначить в график"
 			                              	: "Назначить в график";
-			//PropertyBag["Brigads"] = Brigad.FindAllSort();
-			//PropertyBag["ChBrigad"] = client.WhoConnected != null ? client.WhoConnected.Id : Brigad.FindFirst().Id;
 
-			//PropertyBag["ConnectInfo"] = client.GetConnectInfo();
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties { ChangeType = TypeChangeBalance.OtherSumm };
 			PropertyBag["UserInfo"] = true;
-			/*
-			PropertyBag["PartnerAccessSet"] = new CategorieAccessSet();
-			*/
+
 			ConnectPropertyBag(ClientCode);
 			SendConnectInfo(client);
 			SendUserWriteOff();
@@ -805,12 +826,31 @@ namespace InternetInterface.Controllers
 		{
 			var client = Client.FirstOrDefault(clientId);
 			PropertyBag["_client"] = client;
-			PropertyBag["Client"] = client.PhysicalClient;
+			//PropertyBag["Client"] = client.PhysicalClient;
 			PropertyBag["ClientCode"] = clientId;
 			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(t => !string.IsNullOrEmpty(t.Name));
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
 			PropertyBag["ChBrigad"] = client.WhoConnected != null ? client.WhoConnected.Id : Brigad.FindFirst().Id;
 			PropertyBag["staticIps"] = StaticIp.Queryable.Where(s => s.Client.Id == clientId).ToList();
+			List<PackageSpeed> speeds;
+			var tariffs = Tariff.FindAll().Select(t => t.PackageId).ToList();
+			if (client.GetClientType() == ClientType.Phisical)
+			{
+				speeds = PackageSpeed.Queryable.Where(p => tariffs.Contains(p.PackageId)).ToList();
+				/*PropertyBag["ChSpeed"] =
+					PackageSpeed.Queryable.Where(p => p.PackageId == client.PhysicalClient.Tariff.PackageId).Select(p => p.PackageId).
+						FirstOrDefault();*/
+			}
+			else
+			{
+				speeds = PackageSpeed.FindAll().ToList();
+				//PropertyBag["ChSpeed"] = client.LawyerPerson.Speed.PackageId;
+			}
+			var clientEndPointId = Convert.ToUInt32(PropertyBag["EConnect"]);
+			if (clientEndPointId > 0)
+				PropertyBag["ChSpeed"] =
+					ClientEndpoints.Queryable.Where(c => c.Id == clientEndPointId).Select(c => c.PackageId).FirstOrDefault();
+			PropertyBag["Speeds"] = speeds;
 		}
 
 		private void SendUserWriteOff()

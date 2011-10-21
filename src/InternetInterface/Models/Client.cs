@@ -238,12 +238,14 @@ inet_ntoa(NS.ip) as swith_IP,
 CE.Port,
 PS.Speed,
 CE.Monitoring,
-CE.Id as endpointId
+CE.Id as endpointId,
+pfc.`Sum` as ConnectSum
 from internet.ClientEndpoints CE
 left join internet.NetworkSwitches NS on NS.Id = CE.Switch
 #join internet.Clients C on CE.Client = C.Id
 left join internet.Leases L on L.Endpoint = CE.Id
 left join internet.PackageSpeed PS on PS.PackageId = CE.PackageId
+left join internet.PaymentForConnect pfc on pfc.EndPoint = CE.id
 where CE.Client = {0}",
 Id)).SetResultTransformer(
 new AliasToPropertyTransformer(
