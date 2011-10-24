@@ -70,7 +70,9 @@ namespace InternetInterface.Models
 
 		public string GetNormalSpeed()
 		{
-			return PackageSpeed.GetNormalizeSpeed(Int32.Parse(Speed));
+			if (!string.IsNullOrEmpty(Speed))
+				return PackageSpeed.GetNormalizeSpeed(Int32.Parse(Speed));
+			return string.Empty;
 		}
 
 		/*public Int32 GetNormalSpeed()
