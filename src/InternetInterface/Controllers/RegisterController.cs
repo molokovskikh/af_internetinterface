@@ -144,15 +144,12 @@ namespace InternetInterface.Controllers
 					}
 					if (requestse.Label != null && requestse.Label.ShortComment == "Refused" && requestse.Registrator != null)
 					{
-						//PaymentsForAgent.CreatePayment(AgentActions.CreateRequest, "Зачисление за открытую заявку", requestse.Registrator);
 						PaymentsForAgent.CreatePayment(requestse.Registrator,
 						                               string.Format("Снятие штрафа за закрытие заявки #{0}", requestse.Id),
 						                               -AgentTariff.GetPriceForAction(AgentActions.DeleteRequest));
 					}
-					//requestse.Registered = true;
 					requestse.Label = Label.Queryable.Where(l => l.ShortComment == "Registered").FirstOrDefault();
 					requestse.Update();
-					//requestse.DeleteAndFlush();
 				}
 				if (InitializeContent.partner.Categorie.ReductionName == "Office")
 					if (VisibleRegisteredInfo)
@@ -204,8 +201,6 @@ namespace InternetInterface.Controllers
 			if (Validator.IsValid(person) && string.IsNullOrEmpty(connectErrors))
 			{
 				DbLogHelper.SetupParametersForTriggerLogging();
-				//person.Speed = PackageSpeed.Find(speed);
-				//var packageId = PackageSpeed.Find(speed).PackageId;
 				person.Recipient = Recipient.Queryable.Where(r => r.INN == "3666152146").FirstOrDefault();
 				person.SaveAndFlush();
 				var client = new Client
@@ -225,8 +220,6 @@ namespace InternetInterface.Controllers
 					new ClientEndpoints
 						{	
 							Client = client,
-							//PackageId = person.Speed.PackageId,
-							//PackageId = info.PackageId,
 							Port = Int32.Parse(info.Port),
 							Switch = NetworkSwitches.Find(info.Switch),
 							

@@ -106,10 +106,6 @@ namespace InternetInterface.Controllers
 		{
 			var client = Client.Find(filter.ClientCode);
 			PropertyBag["filter"] = filter;
-			//PropertyBag["_client"] = client;
-			//PropertyBag["Client"] = client.PhysicalClient;
-			//PropertyBag["Leases"] = filter.Find();
-			//PropertyBag["userWO"] = writeOff;
 			if (filter.appealType == 0)
 				filter.appealType = (int) AppealType.User;
 			if (client.Status.Id != (uint)StatusType.BlockedAndNoConnected)
@@ -120,9 +116,8 @@ namespace InternetInterface.Controllers
 			}
 			SendParam(filter.ClientCode, filter.grouped, filter.appealType);
 			PropertyBag["Editing"] = filter.Editing;
-			PropertyBag["appealType"] = filter.appealType; //CreateAppealLink(Request.Url, "Отобразить", appealType);
+			PropertyBag["appealType"] = filter.appealType;
 			PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClients>(new PhysicalClients());
-			//PropertyBag["ConnectInfo"] = client.GetConnectInfo();
 			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(t => t.Name != null);
 		}
 
@@ -142,18 +137,11 @@ namespace InternetInterface.Controllers
 				PropertyBag["ChStatus"] = client.Status.Id;
 			else
 				PropertyBag["ChStatus"] = Status.FindFirst().Id;
-			/*if (client.WhoConnected != null)
-				PropertyBag["ChBrigad"] = client.WhoConnected.Id;
-			else
-				PropertyBag["ChBrigad"] = Brigad.FindFirst().Id;*/
-			//PropertyBag["ClientCode"] = filter.ClientCode;
 			PropertyBag["grouped"] = filter.grouped;
 			PropertyBag["appealType"] = filter.appealType == 0 ? (int) AppealType.User : filter.appealType;
 			PropertyBag["Statuss"] = Status.FindAllSort();
 			PropertyBag["services"] = Service.FindAll();
-			//PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(t => t.Name != null);
 			PropertyBag["Speeds"] = PackageSpeed.FindAll();
-			//PropertyBag["Brigads"] = Brigad.FindAllSort();
 
 			PropertyBag["Client"] = client.LawyerPerson;
 			PropertyBag["UserInfo"] = false;
@@ -161,7 +149,6 @@ namespace InternetInterface.Controllers
 			if (PropertyBag["VB"] == null)
 				PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(new LawyerPerson());
 
-			//PropertyBag["_client"] = client;
 			PropertyBag["Editing"] = filter.Editing;
 			PropertyBag["ConnectInfo"] = client.GetConnectInfo();
 			PropertyBag["Payments"] = client.Payments.OrderBy(c => c.PaidOn).ToList();
@@ -182,7 +169,6 @@ namespace InternetInterface.Controllers
 			}
 			SendConnectInfo(client);
 			ConnectPropertyBag(filter.ClientCode);
-			//PropertyBag["staticIps"] = StaticIp.Queryable.Where(s => s.Client.Id == filter.ClientCode).ToList();
 			SendUserWriteOff();
 		}
 
@@ -202,7 +188,6 @@ namespace InternetInterface.Controllers
 					"Воспользоваться услугой возможно если все платежи клиента первышают его абонентскую плату за месяц";
 			if (client.CanUsedPostponedPayment())
 			{
-				//client.PostponedPayment = DateTime.Now;
 				client.Disabled = false;
 				client.Update();
 				message += "Услуга \"Обещанный платеж активирована\"";
@@ -223,8 +208,6 @@ namespace InternetInterface.Controllers
 			var servise = Service.Find(serviceId);
 			var client = Client.Find(clientId);
 			var dtn = DateTime.Now;
-			/*if (ClientService.Queryable.Count(c => c.Service == servise && c.Client == client) == 0)
-			{*/
 			var clientService = new ClientService 
 				{
 				Client = client,
@@ -247,7 +230,6 @@ namespace InternetInterface.Controllers
 												dtn.Second),
 				Activator = InitializeContent.partner
 				};
-			//clientService.Save();
 			client.ClientServices.Add(clientService);
 			clientService.Activate();
 			if (string.IsNullOrEmpty(clientService.LogComment))
@@ -328,25 +310,14 @@ namespace InternetInterface.Controllers
 			if ((ConnectInfo.static_IP != string.Empty) || (nullFlag)) {
 				if (validateSum && string.IsNullOrEmpty(errorMessage) || validateSum &&
 				    (oldSwitch != null && ConnectInfo.Switch == oldSwitch.Id && ConnectInfo.Port == olpPort.ToString())) {
-					/*if (client.GetClientType() == ClientType.Phisical)
-						clientEntPoint.PackageId = client.PhysicalClient.Tariff.PackageId;
-					else
-						clientEntPoint.PackageId = client.LawyerPerson.Speed.PackageId;*/
-					//var packageSpeed = PackageSpeed.Find(Convert.ToUInt32(ConnectInfo.PackageId));
+
 					var packageSpeed =
 						PackageSpeed.Queryable.Where(p => p.PackageId == ConnectInfo.PackageId).ToList().FirstOrDefault();
 					clientEntPoint.PackageId = packageSpeed.PackageId;
 					if (client.GetClientType() == ClientType.Phisical) {
 						clientEntPoint.PackageId = client.PhysicalClient.Tariff.PackageId;
-						/*client.PhysicalClient.Tariff =
-							Tariff.Queryable.Where(t => t.PackageId == packageSpeed.PackageId).ToList().FirstOrDefault();
-						client.Update();*/
 					}
-					/*else
-					{
-						client.LawyerPerson.Speed = packageSpeed;
-						client.Update();
-					}*/
+
 					clientEntPoint.Client = client;
 					clientEntPoint.Ip = ConnectInfo.static_IP;
 					clientEntPoint.Port = Int32.Parse(ConnectInfo.Port);
@@ -365,7 +336,6 @@ namespace InternetInterface.Controllers
 							PaymentsForAgent.CreatePayment(registrator,
 							                               string.Format("Зачисление бонусов по заявке #{0} за поключенного клиента #{1}",
 							                                             request.Id, client.Id), request.VirtualBonus);
-							//PaymentsForAgent.CreatePayment(registrator, "Зачисление штрафов", request.VirtualWriteOff);
 							request.PaidBonus = true;
 							request.Update();
 							if (client.AdditionalStatus != null && client.AdditionalStatus.ShortName == "Refused") {
@@ -377,7 +347,6 @@ namespace InternetInterface.Controllers
 								request.Label = null;
 								request.Update();
 							}
-							//client.PhysicalClient.Request.SetRequestBoduses();
 						}
 					}
 					if (brigadChangeFlag) {
@@ -427,7 +396,6 @@ namespace InternetInterface.Controllers
 				errorMessage = string.Empty;
 				errorMessage += "Ошибка ввода IP адреса";
 			}
-			//PropertyBag["ConnectInfo"] = client.GetConnectInfo();
 			PropertyBag["Editing"] = true;
 			PropertyBag["ChBrigad"] = BrigadForConnect;
 			Flash["errorMessage"] = errorMessage;
@@ -456,20 +424,17 @@ namespace InternetInterface.Controllers
 				var Password = CryptoPass.GeneratePassword();
 				client.Password = CryptoPass.GetHashString(Password);
 				client.UpdateAndFlush();
-				//var connectSumm = PaymentForConnect.FindAllByProperty("ClientId", client).First();
 				PropertyBag["WhoConnected"] = _client.WhoConnected;
 				PropertyBag["Client"] = client;
 				PropertyBag["Password"] = Password;
 				PropertyBag["AccountNumber"] = _client.Id.ToString("00000");
 				PropertyBag["ConnectInfo"] = _client.GetConnectInfo().FirstOrDefault();
-				//PropertyBag["ConnectSumm"] = connectSumm;
 				RenderView("ClientRegisteredInfo");
 			}
 		}
 
 		public void LoadEditConnectMudule(uint ClientID, int EditConnectFlag)
 		{
-			//Flash["EditingConnect"] = true;
 			RedirectToUrl("../Search/Redirect.rails?filter.ClientCode=" + ClientID + "&filter.EditingConnect=" + EditConnectFlag);
 		}
 
@@ -662,12 +627,6 @@ namespace InternetInterface.Controllers
 				_client.Name = updateClient.ShortName;
 				_client.Update();
 
-				/*var clientEndPoint = ClientEndpoints.Queryable.FirstOrDefault(c => c.Client == _client);
-				if (clientEndPoint != null)
-				{
-					clientEndPoint.PackageId = updateClient.Speed.PackageId;
-					clientEndPoint.Update();
-				}*/
 				RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID + "&filter.appealType=" + appealType);
 			}
 			else
@@ -679,8 +638,6 @@ namespace InternetInterface.Controllers
 					return new List<LawyerPerson>();
 				});
 				RenderView("LawyerPersonInfo");
-				/*PropertyBag["Editing"] = true;
-				PropertyBag["EditingConnect"] = false;*/
 				PropertyBag["LegalPerson"] = updateClient;
 				PropertyBag["grouped"] = grouped;
 				var fil = new ClientFilter
@@ -692,7 +649,6 @@ namespace InternetInterface.Controllers
 					EditingConnect = 0
 				};
 				LawyerPersonInfo(fil);
-				//RedirectToReferrer();
 			}
 		}
 
@@ -838,14 +794,10 @@ namespace InternetInterface.Controllers
 			if (client.GetClientType() == ClientType.Phisical)
 			{
 				speeds = PackageSpeed.Queryable.Where(p => tariffs.Contains(p.PackageId)).ToList();
-				/*PropertyBag["ChSpeed"] =
-					PackageSpeed.Queryable.Where(p => p.PackageId == client.PhysicalClient.Tariff.PackageId).Select(p => p.PackageId).
-						FirstOrDefault();*/
 			}
 			else
 			{
 				speeds = PackageSpeed.FindAll().OrderBy(s => s.Speed).ToList();
-				//PropertyBag["ChSpeed"] = client.LawyerPerson.Speed.PackageId;
 			}
 			var clientEndPointId = Convert.ToUInt32(PropertyBag["EConnect"]);
 			if (clientEndPointId > 0)
@@ -1095,11 +1047,6 @@ namespace InternetInterface.Controllers
 		[AccessibleThrough(Verb.Post)]
 		public void AddEndPoint(uint clientId)
 		{
-			/*var client = Client.FirstOrDefault(clientId);
-			new ClientEndpoints {
-			                    	Client = client
-			                    }.Save();
-			RedirectToReferrer();*/
 			RedirectToAction("AddPoint", new Dictionary<string, string> { { "clientId", clientId.ToString() } });
 		}
 
