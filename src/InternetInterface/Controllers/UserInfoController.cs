@@ -303,32 +303,31 @@ namespace InternetInterface.Controllers
 			var newFlag = false;
 			var clientEntPoint = new ClientEndpoints();
 			var clientsEndPoint = ClientEndpoints.Queryable.Where(c => c.Client == client && c.Id == EditConnect).ToArray();
-			if (clientsEndPoint.Length != 0)
-			{
+			if (clientsEndPoint.Length != 0) {
 				clientEntPoint = clientsEndPoint[0];
 			}
-			else
-			{
+			else {
 				newFlag = true;
 			}
 			var olpPort = clientEntPoint.Port;
 			var oldSwitch = clientEntPoint.Switch;
 			var nullFlag = false;
-			if (ConnectInfo.static_IP == null)
-			{
+			if (ConnectInfo.static_IP == null) {
 				clientEntPoint.Ip = null;
 				nullFlag = true;
 			}
-			else
-			{
+			else {
 				ConnectInfo.static_IP = NetworkSwitches.SetProgramIp(ConnectInfo.static_IP);
 			}
 			var errorMessage = Validation.ValidationConnectInfo(ConnectInfo);
-			if ((ConnectInfo.static_IP != string.Empty) || (nullFlag))
-			{
-				if (errorMessage == string.Empty ||
-				    (oldSwitch != null && ConnectInfo.Switch == oldSwitch.Id && ConnectInfo.Port == olpPort.ToString()))
-				{
+			decimal _connectSum;
+			var validateSum =
+				!(!string.IsNullOrEmpty(ConnectSum) && (!decimal.TryParse(ConnectSum, out _connectSum) || _connectSum <= 0));
+			if (!validateSum)
+				errorMessage = "Введена невалидная сумма";
+			if ((ConnectInfo.static_IP != string.Empty) || (nullFlag)) {
+				if (validateSum && string.IsNullOrEmpty(errorMessage) || validateSum &&
+				    (oldSwitch != null && ConnectInfo.Switch == oldSwitch.Id && ConnectInfo.Port == olpPort.ToString())) {
 					/*if (client.GetClientType() == ClientType.Phisical)
 						clientEntPoint.PackageId = client.PhysicalClient.Tariff.PackageId;
 					else
@@ -337,16 +336,17 @@ namespace InternetInterface.Controllers
 					var packageSpeed =
 						PackageSpeed.Queryable.Where(p => p.PackageId == ConnectInfo.PackageId).ToList().FirstOrDefault();
 					clientEntPoint.PackageId = packageSpeed.PackageId;
-					if (client.GetClientType() == ClientType.Phisical)
-					{
-						client.PhysicalClient.Tariff = Tariff.Queryable.Where(t => t.PackageId == packageSpeed.PackageId).ToList().FirstOrDefault();
-						client.Update();
+					if (client.GetClientType() == ClientType.Phisical) {
+						clientEntPoint.PackageId = client.PhysicalClient.Tariff.PackageId;
+						/*client.PhysicalClient.Tariff =
+							Tariff.Queryable.Where(t => t.PackageId == packageSpeed.PackageId).ToList().FirstOrDefault();
+						client.Update();*/
 					}
-					else
+					/*else
 					{
 						client.LawyerPerson.Speed = packageSpeed;
 						client.Update();
-					}
+					}*/
 					clientEntPoint.Client = client;
 					clientEntPoint.Ip = ConnectInfo.static_IP;
 					clientEntPoint.Port = Int32.Parse(ConnectInfo.Port);
@@ -354,22 +354,21 @@ namespace InternetInterface.Controllers
 					clientEntPoint.Monitoring = ConnectInfo.Monitoring;
 					if (!newFlag)
 						clientEntPoint.UpdateAndFlush();
-					else
-					{
+					else {
 						clientEntPoint.SaveAndFlush();
 						if (client.PhysicalClient != null && client.PhysicalClient.Request != null &&
-						    client.PhysicalClient.Request.Registrator != null)
-						{
+						    client.PhysicalClient.Request.Registrator != null) {
 							var request = client.PhysicalClient.Request;
 							var registrator = request.Registrator;
-							PaymentsForAgent.CreatePayment(AgentActions.ConnectClient, string.Format("Зачисление за подключение клиента #{0}", client.Id), registrator);
-							PaymentsForAgent.CreatePayment(registrator, string.Format("Зачисление бонусов по заявке #{0} за поключенного клиента #{1}",
+							PaymentsForAgent.CreatePayment(AgentActions.ConnectClient,
+							                               string.Format("Зачисление за подключение клиента #{0}", client.Id), registrator);
+							PaymentsForAgent.CreatePayment(registrator,
+							                               string.Format("Зачисление бонусов по заявке #{0} за поключенного клиента #{1}",
 							                                             request.Id, client.Id), request.VirtualBonus);
 							//PaymentsForAgent.CreatePayment(registrator, "Зачисление штрафов", request.VirtualWriteOff);
 							request.PaidBonus = true;
 							request.Update();
-							if (client.AdditionalStatus != null && client.AdditionalStatus.ShortName == "Refused")
-							{
+							if (client.AdditionalStatus != null && client.AdditionalStatus.ShortName == "Refused") {
 								PaymentsForAgent.CreatePayment(request.Registrator,
 								                               string.Format("Снятие штрафа за отказ клиента заявки #{0}", request.Id),
 								                               -AgentTariff.GetPriceForAction(AgentActions.RefusedClient));
@@ -381,8 +380,7 @@ namespace InternetInterface.Controllers
 							//client.PhysicalClient.Request.SetRequestBoduses();
 						}
 					}
-					if (brigadChangeFlag)
-					{
+					if (brigadChangeFlag) {
 						var brigad = Brigad.Find(BrigadForConnect);
 						client.WhoConnected = brigad;
 						client.WhoConnectedName = brigad.Name;
@@ -396,33 +394,36 @@ namespace InternetInterface.Controllers
 						s => !staticAdress.Select(f => f.Id).Contains(s.Id)).ToList().
 						ForEach(s => s.Delete());
 
-					foreach (var s in staticAdress)
-					{
+					foreach (var s in staticAdress) {
 						if (!string.IsNullOrEmpty(s.Ip))
-							if (Regex.IsMatch(s.Ip, NetworkSwitches.IPRegExp))
-							{
+							if (Regex.IsMatch(s.Ip, NetworkSwitches.IPRegExp)) {
 								s.Client = client;
 								s.Save();
 							}
 					}
 
 					var connectSum = 0m;
-					if (!string.IsNullOrEmpty(ConnectSum) && decimal.TryParse(ConnectSum, out connectSum) && connectSum > 0)
-					{
-						new PaymentForConnect {
-						                      	Sum = connectSum,
-												Partner = InitializeContent.partner,
-												EndPoint = clientEntPoint,
-												RegDate = DateTime.Now
-						                      }.Save();
+					if (!string.IsNullOrEmpty(ConnectSum) && decimal.TryParse(ConnectSum, out connectSum) && connectSum > 0) {
+						var payments = PaymentForConnect.Queryable.Where(p => p.EndPoint == clientEntPoint).ToList();
+						if (payments.Count() == 0)
+							new PaymentForConnect {
+								Sum = connectSum,
+								Partner = InitializeContent.partner,
+								EndPoint = clientEntPoint,
+								RegDate = DateTime.Now
+							}.Save();
+						else {
+							var payment = payments.First();
+							payment.Sum = connectSum;
+							payment.Update();
+						}
 					}
 
 					RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID);
 					return;
 				}
 			}
-			else
-			{
+			else {
 				errorMessage = string.Empty;
 				errorMessage += "Ошибка ввода IP адреса";
 			}
@@ -460,7 +461,7 @@ namespace InternetInterface.Controllers
 				PropertyBag["Client"] = client;
 				PropertyBag["Password"] = Password;
 				PropertyBag["AccountNumber"] = _client.Id.ToString("00000");
-				//PropertyBag["ConnectInfo"] = _client.GetConnectInfo();
+				PropertyBag["ConnectInfo"] = _client.GetConnectInfo().FirstOrDefault();
 				//PropertyBag["ConnectSumm"] = connectSumm;
 				RenderView("ClientRegisteredInfo");
 			}
@@ -644,7 +645,7 @@ namespace InternetInterface.Controllers
 
 			if (Validator.IsValid(updateClient))
 			{
-				updateClient.Speed = PackageSpeed.Find(Speed);
+				//updateClient.Speed = PackageSpeed.Find(Speed);
 
 				InitializeHelper.InitializeModel(_client);
 				InitializeHelper.InitializeModel(updateClient);
@@ -661,12 +662,12 @@ namespace InternetInterface.Controllers
 				_client.Name = updateClient.ShortName;
 				_client.Update();
 
-				var clientEndPoint = ClientEndpoints.Queryable.FirstOrDefault(c => c.Client == _client);
+				/*var clientEndPoint = ClientEndpoints.Queryable.FirstOrDefault(c => c.Client == _client);
 				if (clientEndPoint != null)
 				{
 					clientEndPoint.PackageId = updateClient.Speed.PackageId;
 					clientEndPoint.Update();
-				}
+				}*/
 				RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID + "&filter.appealType=" + appealType);
 			}
 			else
@@ -843,13 +844,22 @@ namespace InternetInterface.Controllers
 			}
 			else
 			{
-				speeds = PackageSpeed.FindAll().ToList();
+				speeds = PackageSpeed.FindAll().OrderBy(s => s.Speed).ToList();
 				//PropertyBag["ChSpeed"] = client.LawyerPerson.Speed.PackageId;
 			}
 			var clientEndPointId = Convert.ToUInt32(PropertyBag["EConnect"]);
 			if (clientEndPointId > 0)
 				PropertyBag["ChSpeed"] =
 					ClientEndpoints.Queryable.Where(c => c.Id == clientEndPointId).Select(c => c.PackageId).FirstOrDefault();
+			else {
+				if (client.GetClientType() == ClientType.Phisical) {
+					var tariff = client.PhysicalClient.Tariff;
+					PropertyBag["ChSpeed"] = tariff.PackageId;
+				}
+				else {
+					PropertyBag["ChSpeed"] = 0;
+				}
+			}
 			PropertyBag["Speeds"] = speeds;
 		}
 

@@ -63,8 +63,8 @@
 			<%if item.PhysicalClient != null:  %>
 			<td>${item.PhysicalClient.Tariff.Name}</td>
 			<%else: %>
-				<% if item.LawyerPerson.Speed != null:%>
-				<td>${item.LawyerPerson.Speed.GetNormalizeSpeed()} </td>
+				<% if item.LawyerPerson.Tariff != null:%>
+				<td>${item.LawyerPerson.Tariff} руб.</td>
 				<%else: %>
 				<td>Тариф не задан</td>
 				<%end %>

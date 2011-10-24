@@ -18,7 +18,7 @@ namespace InternetInterface.Test.Helpers
                                                Name = "TestClient",
                                                Balance = 1000,
                                                Tariff = 100,
-                                               Speed = PackageSpeed.FindFirst()
+                                               //BSpeed = PackageSpeed.FindFirst()
                                            };
             return new Client {
                                    LawyerPerson = LPerson,

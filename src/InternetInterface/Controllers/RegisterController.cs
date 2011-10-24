@@ -204,7 +204,8 @@ namespace InternetInterface.Controllers
 			if (Validator.IsValid(person) && string.IsNullOrEmpty(connectErrors))
 			{
 				DbLogHelper.SetupParametersForTriggerLogging();
-				person.Speed = PackageSpeed.Find(speed);
+				//person.Speed = PackageSpeed.Find(speed);
+				//var packageId = PackageSpeed.Find(speed).PackageId;
 				person.Recipient = Recipient.Queryable.Where(r => r.INN == "3666152146").FirstOrDefault();
 				person.SaveAndFlush();
 				var client = new Client
@@ -224,7 +225,8 @@ namespace InternetInterface.Controllers
 					new ClientEndpoints
 						{	
 							Client = client,
-							PackageId = person.Speed.PackageId,
+							//PackageId = person.Speed.PackageId,
+							//PackageId = info.PackageId,
 							Port = Int32.Parse(info.Port),
 							Switch = NetworkSwitches.Find(info.Switch),
 							

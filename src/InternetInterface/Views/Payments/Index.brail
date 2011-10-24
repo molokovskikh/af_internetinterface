@@ -1,34 +1,34 @@
 ﻿<script>
-    $(function () {
-        $('.date-pick').datepicker();
-    });
+	$(function () {
+		$('.date-pick').datepicker();
+	});
 </script>
 
 <div class=block style="border:1px double Black; width:700px; background-color:White; padding:10px; margin: 0 auto;">
 <table class="table">
-    <thead>
-        <tr>
-            <th>История платежей</th>
-        </tr>
-    </thead>
-    <tbody>
-    	${app.BeginFormFor("filter")}
-        <tr>
-            <td>Период</td>
-            <td>
-                <label for="startDate">c</label>
-                <input type=text value="${filter.Period.Begin.ToShortDateString()}" name="filter.Period.Begin" id="startDate"  class="date-pick dp-applied">
-                <label for="EndDate">по</label>
-                <input type=text value="${filter.Period.End.ToShortDateString()}" name="filter.Period.End" id="EndDate"  class="date-pick dp-applied">
-            </td>
-        </tr>
-        <tr>
-            <td>${app.FilterFor("filter.Recipients")}</td>
-            <td>${app.FilterFor("filter.SearchText")}</td>
-            <td>${app.FilterFor("Показывать только неопознанные:", "filter.ShowOnlyUnknown")}</td>
-            <td>${app.EndFormFor("filter")}</td>
-        </tr>
-    </tbody>
+	<thead>
+		<tr>
+			<th>История платежей</th>
+		</tr>
+	</thead>
+	<tbody>
+		${app.BeginFormFor("filter")}
+		<tr>
+			<td>Период</td>
+			<td>
+				<label for="startDate">c</label>
+				<input type=text value="${filter.Period.Begin.ToShortDateString()}" name="filter.Period.Begin" id="startDate"  class="date-pick dp-applied">
+				<label for="EndDate">по</label>
+				<input type=text value="${filter.Period.End.ToShortDateString()}" name="filter.Period.End" id="EndDate"  class="date-pick dp-applied">
+			</td>
+		</tr>
+		<tr>
+			<td>${app.FilterFor("filter.Recipients")}</td>
+			<td>${app.FilterFor("filter.SearchText")}</td>
+			<td>${app.FilterFor("Показывать только неопознанные:", "filter.ShowOnlyUnknown")}</td>
+			<td>${app.EndFormFor("filter")}</td>
+		</tr>
+	</tbody>
 </table>
 </div>
 
@@ -49,12 +49,12 @@
 	<% for i, payment in enumerate(payments): %>
 	<tr class="${ViewHelper.GetRowStyle(i)}">
 		<td>
-            <a href="${siteroot}/Payments/Edit?id=${payment.Id}">Редактировать</a>
+			<a href="${siteroot}/Payments/Edit?id=${payment.Id}">Редактировать</a>
 			<a href="${siteroot}/Payments/Delete?id=${payment.Id}">Удалить</a>
 		</td>
 		<td>${payment.Recipient.Name}</td>
 		<td>${payment.PayedOn.ToShortDateString()}</td>
-		<td>${app.LinkTo(payment.Payer)}</td>
+		<td><a href="../Search/Redirect?filter.ClientCode=${payment.Payer.client.Id}">${payment.Payer.Name}</a></td>
 		<td style="text-align:right;">${payment.Sum.ToString("C")}</td>
 		<td>${payment.RegistredOn}</td>
 	</tr>

@@ -48,14 +48,14 @@
 	<table class="table" style="width: 100%;" align="left">
 	<thead>
 		<tr>
-		<th style="border-right-width:0px;">Информация по подключению 
+		<th style="border-right-width:0px;">Информация по подключению (точка № ${ConnectInfo.endpointId})
 		<%if PartnerAccessSet.AccesPartner("DHCP"): %>
 			<button type="submit"  class="editBut">
 			<img alt="Save" src="../Images/application_edit.png"> Редактировать
 			</button>
 		 <%end %>
 		</th>
-		<th style="border-left-width:0px; text-align:right;">
+		<th style="border-left-width:0px; text-align:right; width:400px;">
 			<a href="#" class="big-link" data-reveal-id="deletePointDialog" > 
 			<input type="hidden" value="${ConnectInfo.endpointId}" />
 			<img class="deletePointControl" src="../images/onebit_32.png" />
@@ -82,7 +82,7 @@
 		</tr>
 				<tr>
 		  <td><span class="description">Скорость </span></td>
-		  <td>${ConnectInfo.GetNormalSpeed()} мб/с</td>
+		  <td>${ConnectInfo.GetNormalSpeed()}</td>
 		</tr>
 		 <tr>
 		  <td><span class="description">Мониторинг </span></td>
@@ -103,7 +103,7 @@
 		<%if ConnectInfo.ConnectSum != null : %>
 		<tr>
 			<td><span class="description">Стоимость подключения </span></td>
-			<td>${ConnectInfo.ConnectSum}</td>
+			<td>${ConnectInfo.ConnectSum} руб.</td>
 		</tr>
 		<%end %>
 		</tbody>
@@ -135,9 +135,7 @@
 		  <td>Свич</td>
 		  <td style="width:200px;"><select name="ConnectInfo.Switch" id="SelectSwitches" style="width: 100%">
 									<option value="0">Нет</option>
-								   <%
-									for j, Switch in enumerate(Switches): 
-									%>
+								   <%for j, Switch in enumerate(Switches): %>
 									<option id="Option${j}" value="${Switch.Id}" ${"selected" if (Switch.Id.ToString() == ConnectInfo.Switch)} > ${Switch.Name} </option>
 								   <% end %>
 			</select></td>
@@ -152,7 +150,7 @@
 		  <td colspan=2>
 			<select name="ConnectInfo.PackageId" style="width: 200px;">
 				<%for j, speed in enumerate(Speeds): %>
-					<option value="${speed.PackageId}" ${"selected" if (speed.PackageId == ChSpeed)}> ${speed} </option>
+					<option value="${speed.PackageId}" ${"selected" if (speed.PackageId == ChSpeed)}> ${speed}  PID(${speed.PackageId}) </option>
 				<%end %>
 		  </td>
 		</tr>
@@ -241,16 +239,21 @@
 			delMenu(this);
 		});
 
+		if ('${EditingConnect}' == 'True'){
 		if ('${ConnectInfo.Switch}' == '')
 			RenderSwitchInfo('0');
 		else
-			RenderSwitchInfo('${ConnectInfo.Switch}');
+			RenderSwitchInfo('${ConnectInfo.Switch}');}
 
-		$('#SelectSwitches').change(function () { RenderSwitchInfo($(this).val()); });
+		$('#SelectSwitches').change(function () {
+			RenderSwitchInfo($(this).val());
+			$('.added_port').click(function () {
+				SetPortLick(this);
+			});
+		});
 
 		$('.added_port').click(function () {
-			var port = this.innerText;
-			$('#Port').val(port);
+			SetPortLick(this);
 		});
 
 		$("#formConnect").validate({
@@ -292,7 +295,12 @@
 
 	});
 
-	function RenderSwitchInfo(swit) { 
+	function SetPortLick(clicked) {
+		var port = clicked.innerText;
+		$('#Port').val(port);
+	}
+
+	function RenderSwitchInfo(swit) {
 		var text = $.ajax({
 			url: '../Switches/FreePortForSwitch?ids=' + swit,
 			async: false

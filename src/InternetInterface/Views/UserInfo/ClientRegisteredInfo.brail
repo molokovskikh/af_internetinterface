@@ -233,11 +233,13 @@ div.WordSection1
     Счет: <i style='mso-bidi-font-style:
   normal'><u>${AccountNumber}<b style='mso-bidi-font-weight:normal'><o:p></o:p></b></u></i>
   <%if IsDefined("ConnectInfo"): %>
+  <%if ConnectInfo != null: %>
   <%if ConnectInfo.Switch != null: %>
   Свитч: <i style='mso-bidi-font-style:
   normal'><u>${ConnectInfo.Swith_adr} (${ConnectInfo.swith_IP})<b style='mso-bidi-font-weight:normal'><o:p></o:p></b></u></i>
     Порт: <i style='mso-bidi-font-style:
   normal'><u>${ConnectInfo.Port}<b style='mso-bidi-font-weight:normal'><o:p></o:p></b></u></i>
+  <%end %>
   <%end %>
   <%end %>
   Тарифный план: <i style='mso-bidi-font-style:

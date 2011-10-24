@@ -68,10 +68,15 @@ namespace InternetInterface.Models
 
 		public DateTime LeaseBegin { get; set; }
 
-		public Int32 GetNormalSpeed()
+		public string GetNormalSpeed()
+		{
+			return PackageSpeed.GetNormalizeSpeed(Int32.Parse(Speed));
+		}
+
+		/*public Int32 GetNormalSpeed()
 		{
 			return Convert.ToInt32(Speed) / 1000000;
-		}
+		}*/
 	}
 
 

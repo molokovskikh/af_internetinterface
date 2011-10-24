@@ -50,8 +50,8 @@ namespace InternetInterface.Models
 		[Property, Auditable("Контактное лицо")]
 		public virtual string ContactPerson { get; set; }
 
-		[BelongsTo, Auditable("Тариф")]
-		public virtual PackageSpeed Speed { get; set; }
+		/*[BelongsTo, Auditable("Тариф")]
+		public virtual PackageSpeed Speed { get; set; }*/
 
 		[Property, ValidateNonEmpty("Введите размер абонентской платы"), ValidateDecimal("Ошибка ввода суммы"), Auditable("Абон. плата")]
 		public virtual decimal Tariff { get; set; }
@@ -64,5 +64,10 @@ namespace InternetInterface.Models
 
 		[BelongsTo]
 		public virtual Recipient Recipient { get; set; }
+
+		public virtual Client client
+		{
+			get { return Client.Queryable.Where(c => c.LawyerPerson == this).FirstOrDefault(); }
+		}
 	}
 }

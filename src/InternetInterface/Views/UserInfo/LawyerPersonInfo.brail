@@ -64,11 +64,6 @@
 			</tr>
 		<%end %>
 		<%end %>
-		<%if Client.Tariff != null: %>
-		<tr>
-			 <td><span class="description">Тариф:</span> ${Client.Speed.GetNormalizeSpeed()}</td>
-		</tr>
-		 <%end %>
 		<tr>
 			<td><span class="description">Абонентская плата:</span> ${Client.Tariff}</td>
 		</tr>
