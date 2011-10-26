@@ -497,14 +497,16 @@ namespace InternetInterface.Controllers
 		/// </summary>
 		/// <param name="LabelName"></param>
 		/// <param name="labelcolor"></param>
-		public void RequestView(string LabelName, string labelcolor)
+		public void CreateLabel(string LabelName, string labelcolor)
 		{
 			var newlab = new Label {
 				Color = labelcolor,
-				Name = LabelName
+				Name = LabelName,
+				Deleted = true
 			};
 			newlab.SaveAndFlush();
-			RequestView();
+			RedirectToAction("RequestView");
+			//RequestView();
 		}
 
 		/// <summary>
