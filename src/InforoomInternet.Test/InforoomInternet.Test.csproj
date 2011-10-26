@@ -53,9 +53,7 @@
     <Reference Include="Boo.Lang.Extensions, Version=2.0.9.3, Culture=neutral, PublicKeyToken=32c39770e9a21a67, processorArchitecture=MSIL">
       <HintPath>..\..\lib\Boo.Lang.Extensions.dll</HintPath>
     </Reference>
-    <Reference Include="CassiniDev-lib">
-      <HintPath>..\..\lib\CassiniDev-lib.dll</HintPath>
-    </Reference>
+    <Reference Include="CassiniDev4-lib, Version=4.0.1.7, Culture=neutral, PublicKeyToken=f7f6e0b4240c7c27, processorArchitecture=x86" />
     <Reference Include="Castle.ActiveRecord, Version=3.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\..\lib\Castle.ActiveRecord.dll</HintPath>
     </Reference>
@@ -97,9 +95,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\NHibernate.ByteCode.Castle.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.framework, Version=2.5.1.9189, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\nunit.framework.dll</HintPath>
-    </Reference>
+    <Reference Include="nunit.framework, Version=2.5.10.11092, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
