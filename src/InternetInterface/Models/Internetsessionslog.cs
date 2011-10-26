@@ -27,7 +27,7 @@ namespace InternetInterface.Models
 		public virtual DateTime LeaseBegin { get; set; }
 
 		[Property]
-		public virtual DateTime LeaseEnd { get; set; }
+		public virtual DateTime? LeaseEnd { get; set; }
 		
 		public virtual string GetNormalIp()
 		{

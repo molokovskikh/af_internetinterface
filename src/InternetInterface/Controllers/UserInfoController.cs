@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.Linq.Expressions;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -78,20 +79,19 @@ namespace InternetInterface.Controllers
 				beginDate = new DateTime(thisD.Year, thisD.Month, 1);
 			if (endDate == null)
 				endDate = DateTime.Now;
-			_lastRowsCount =
-				Internetsessionslog.Queryable.Where(
-					i =>
-					i.EndpointId.Client.Id == ClientCode && i.LeaseBegin.Date >= beginDate.Value.Date &&
-					i.LeaseEnd.Date <= endDate.Value.Date).Count();
+			Expression<Func<Internetsessionslog, bool>> predicate = i =>
+				i.EndpointId.Client.Id == ClientCode && i.LeaseBegin.Date >= beginDate.Value.Date
+				&& (i.LeaseEnd.Value.Date <= endDate.Value.Date
+					|| i.LeaseEnd == null);
+
+			_lastRowsCount = Internetsessionslog.Queryable.Where(predicate).Count();
 			if (_lastRowsCount > 0)
 			{
 				var getCount = _lastRowsCount - PageSize*CurrentPage < PageSize ? _lastRowsCount - PageSize*CurrentPage : PageSize;
-				return
-					Internetsessionslog.Queryable.Where(
-						i =>
-						i.EndpointId.Client.Id == ClientCode && i.LeaseBegin.Date >= beginDate.Value.Date &&
-						i.LeaseEnd.Date <= endDate.Value.Date).ToList().GetRange(
-							PageSize*CurrentPage, getCount);
+				return Internetsessionslog.Queryable.Where(predicate)
+					.Skip(PageSize * CurrentPage)
+					.Take(getCount)
+					.ToList();
 			}
 			return new List<Internetsessionslog>();
 		}
