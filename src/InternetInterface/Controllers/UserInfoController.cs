@@ -208,28 +208,27 @@ namespace InternetInterface.Controllers
 			var servise = Service.Find(serviceId);
 			var client = Client.Find(clientId);
 			var dtn = DateTime.Now;
-			var clientService = new ClientService 
-				{
+			var clientService = new ClientService {
 				Client = client,
 				Service = servise,
 				BeginWorkDate =
 					startDate == null
 						? dtn
 						: new DateTime(startDate.Value.Year,
-										startDate.Value.Month,
-										startDate.Value.Day, dtn.Hour,
-										dtn.Minute,
-										dtn.Second),
+						               startDate.Value.Month,
+						               startDate.Value.Day, dtn.Hour,
+						               dtn.Minute,
+						               dtn.Second),
 				EndWorkDate = endDate == null
-								? endDate
-								: new DateTime(endDate.Value.Year,
-												endDate.Value.Month,
-												endDate.Value.Day,
-												dtn.Hour,
-												dtn.Minute,
-												dtn.Second),
+				              	? endDate
+				              	: new DateTime(endDate.Value.Year,
+				              	               endDate.Value.Month,
+				              	               endDate.Value.Day,
+				              	               dtn.Hour,
+				              	               dtn.Minute,
+				              	               dtn.Second),
 				Activator = InitializeContent.partner
-				};
+			};
 			client.ClientServices.Add(clientService);
 			clientService.Activate();
 			if (string.IsNullOrEmpty(clientService.LogComment))
@@ -487,10 +486,9 @@ namespace InternetInterface.Controllers
 		public void RequestView()
 		{
 			var requests = Requests.FindAll().OrderByDescending(f => f.ActionDate);
-			if (InitializeContent.partner.Categorie.ReductionName == "Agent")
-				PropertyBag["Clients"] = requests.Where(r => r.Registrator == InitializeContent.partner).ToList();
-			else
-				PropertyBag["Clients"] = requests.ToList();
+			PropertyBag["Clients"] = InitializeContent.partner.Categorie.ReductionName == "Agent"
+			                         	? requests.Where(r => r.Registrator == InitializeContent.partner).ToList()
+			                         	: requests.ToList();
 			SendRequestEditParameter();
 		}
 
@@ -499,14 +497,16 @@ namespace InternetInterface.Controllers
 		/// </summary>
 		/// <param name="LabelName"></param>
 		/// <param name="labelcolor"></param>
-		public void RequestView(string LabelName, string labelcolor)
+		public void CreateLabel(string LabelName, string labelcolor)
 		{
 			var newlab = new Label {
-			                       	Color = labelcolor,
-			                       	Name = LabelName
-			                       };
+				Color = labelcolor,
+				Name = LabelName,
+				Deleted = true
+			};
 			newlab.SaveAndFlush();
-			RequestView();
+			RedirectToAction("RequestView");
+			//RequestView();
 		}
 
 		/// <summary>

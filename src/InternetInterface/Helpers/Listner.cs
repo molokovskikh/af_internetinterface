@@ -62,7 +62,7 @@ namespace InternetInterface.Helpers
 	}
 
 	[EventListener]
-	public class Listner : BaseAuditListner
+	public class Listner : BaseAuditListener
 	{
 		protected override AuditableProperty GetAuditableProperty(PropertyInfo property, string name, object newState, object oldState)
 		{

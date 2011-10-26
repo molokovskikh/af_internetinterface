@@ -9,13 +9,12 @@ using WatiN.Core;
 namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
-	class SearchFixture : WatinFixture
+	internal class SearchFixture : WatinFixture
 	{
 		[Test]
 		public void FindAdditionalStatus()
 		{
-			using (var browser = Open("Search/SearchUsers.rails"))
-			{
+			using (var browser = Open("Search/SearchUsers.rails")) {
 				var client = Client.FindFirst();
 				var addStat = AdditionalStatus.FindAll();
 				client.Status = Status.Find((uint) StatusType.BlockedAndNoConnected);
@@ -31,8 +30,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void SortTest()
 		{
-			using (var browser = Open("Search/SearchUsers.rails"))
-			{
+			using (var browser = Open("Search/SearchUsers.rails")) {
 				browser.Button(Find.ById("SearchButton")).Click();
 				Thread.Sleep(1000);
 				browser.Link("head_id").Click();
@@ -57,8 +55,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void SearchTest()
 		{
-			using (var browser = Open("Search/SearchUsers.rails"))
-			{
+			using (var browser = Open("Search/SearchUsers.rails")) {
 				Assert.That(browser.Text, Is.StringContaining("Поиск пользователей"));
 				Assert.That(browser.Text, Is.StringContaining("Введите текст для поиска:"));
 				Assert.That(browser.Text, Is.StringContaining("Автоматически"));
@@ -78,36 +75,35 @@ namespace InternetInterface.Test.Functional
 				Assert.That(browser.Text, Is.StringContaining("Информация по клиенту"));
 			}
 		}
+
 		[Test]
 		public void ClientInfoTest()
 		{
-			ClientHelperFixture.CreateClient(l =>
-												{
-													using (var browser = Open("UserInfo/SearchUserInfo.rails?ClientCode=" + l.Id))
-													{
-														Assert.That(browser.Text, Is.StringContaining("Город"));
-														Assert.That(browser.Text, Is.StringContaining("Паспортные данные:"));
-														Assert.That(browser.Text, Is.StringContaining("Адрес регистрации:"));
-														Assert.That(browser.Text, Is.StringContaining("Дата регистрации:"));
-														Assert.That(browser.Text, Is.StringContaining("Тариф"));
-														Assert.That(browser.Text, Is.StringContaining("Платеж зарегистрировал"));
-														Assert.That(browser.Text, Is.StringContaining("Дата оплаты"));
-														Assert.That(browser.Text, Is.StringContaining("Сумма"));
-														browser.Button(Find.ById("EditButton")).Click();
-														Assert.That(browser.Text, Is.StringContaining("Регистрационные данные"));
-														Assert.That(browser.Text, Is.StringContaining("Паспортные данные"));
-														Assert.That(browser.Text, Is.StringContaining("Личная информация"));
-														browser.Button(Find.ById("SaveButton")).Click();
-														Thread.Sleep(400);
-														Assert.That(browser.Text, Is.StringContaining("Данные изменены"));
-														browser.RadioButton(Find.ById("ForTariffChange")).Checked = true;
-														browser.Button(Find.ById("ChangeBalanceButton")).Click();
-														Thread.Sleep(400);
-														Assert.That(browser.Text, Is.StringContaining("Баланс пополнен"));
-													}
-													return true;
-												});
+			ClientHelperFixture.CreateClient(l => {
+				using (var browser = Open("UserInfo/SearchUserInfo.rails?ClientCode=" + l.Id)) {
+					Assert.That(browser.Text, Is.StringContaining("Город"));
+					Assert.That(browser.Text, Is.StringContaining("Паспортные данные:"));
+					Assert.That(browser.Text, Is.StringContaining("Адрес регистрации:"));
+					Assert.That(browser.Text, Is.StringContaining("Дата регистрации:"));
+					Assert.That(browser.Text, Is.StringContaining("Тариф"));
+					Assert.That(browser.Text, Is.StringContaining("Платеж зарегистрировал"));
+					Assert.That(browser.Text, Is.StringContaining("Дата оплаты"));
+					Assert.That(browser.Text, Is.StringContaining("Сумма"));
+					browser.Button(Find.ById("EditButton")).Click();
+					Assert.That(browser.Text, Is.StringContaining("Регистрационные данные"));
+					Assert.That(browser.Text, Is.StringContaining("Паспортные данные"));
+					Assert.That(browser.Text, Is.StringContaining("Личная информация"));
+					browser.Button(Find.ById("SaveButton")).Click();
+					Thread.Sleep(400);
+					Assert.That(browser.Text, Is.StringContaining("Данные изменены"));
+					browser.RadioButton(Find.ById("ForTariffChange")).Checked = true;
+					browser.Button(Find.ById("ChangeBalanceButton")).Click();
+					Thread.Sleep(400);
+					Assert.That(browser.Text, Is.StringContaining("Баланс пополнен"));
+				}
+				return true;
+			});
 			//client.DeleteAndFlush();
 		}
 	}
-	}
+}

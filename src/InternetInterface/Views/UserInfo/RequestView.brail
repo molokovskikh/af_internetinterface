@@ -195,7 +195,7 @@ div.scroller
                 </tbody>
                 </table>
               </form>
-               <form id="Form1" name="RequestViewForm" method=post action="${siteroot}/UserInfo/RequestView">
+               <form id="Form1" name="RequestViewForm" method=post action="${siteroot}/UserInfo/CreateLabel">
               <table class="table" style="width:170px;" >
                 <thead>
                     <th>Создать метку</th>
