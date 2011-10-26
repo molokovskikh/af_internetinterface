@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using Castle.ActiveRecord;
 using Common.Tools;
+using Common.Web.Ui.Helpers;
 using InternetInterface.Controllers.Filter;
 using NUnit.Framework;
 using InternetInterface.Models;
@@ -198,9 +199,54 @@ namespace Billing.Test.Unit
 			SystemTime.Now = () => new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 22, 10, 00);
 			billing.Run();
 			Assert.That(WriteOff.Queryable.Count(w => w.Client == client), Is.EqualTo(2));
-
-
 		}
+
+		[Test]
+		public void SemaphoreTest()
+		{
+			var client = CreateClient();
+			client.PhysicalClient.ConnectionPaid = true;
+			client.RatedPeriodDate = SystemTime.Now();
+			client.Update();
+			billing.Compute();
+			var writeOff = WriteOff.Queryable.Where(w => w.Client == client).FirstOrDefault();
+			Assert.That(writeOff, !Is.Null);
+			Console.WriteLine(writeOff.WriteOffDate + " " + writeOff.WriteOffSum);
+			writeOff.Delete();
+			Console.WriteLine(writeOff);
+				new Payment {
+					Client = client,
+					Sum = 100,
+					BillingAccount = false
+				}.Save();
+			var set = InternetSettings.FindFirst();
+			set.NextBillingDate = new DateTime(2011, 10, 26, 22, 00, 00);
+			set.Save();
+			SystemTime.Now = () => new DateTime(2011, 10, 26, 22, 20, 0);
+			scope.Commit();
+			scope.Dispose();
+			scope = null;
+			var ishBalance = 0m;
+			using (new SessionScope()) {
+				writeOff = WriteOff.Queryable.Where(w => w.Client == client).FirstOrDefault();
+				client.Refresh();
+				ishBalance = client.PhysicalClient.Balance;
+				Assert.That(writeOff, Is.Null);
+			}
+			new Thread(() =>  billing.On()).Start();
+			//Thread.Sleep(100);
+			new Thread(() =>  billing.Run()).Start();
+			Thread.Sleep(5000);
+			using (new SessionScope()) {
+				writeOff = WriteOff.Queryable.Where(w => w.Client == client).FirstOrDefault();
+				client.Refresh();
+				Console.WriteLine(client.PhysicalClient.Balance);
+				Console.WriteLine(writeOff.WriteOffSum);
+				Assert.That(writeOff, !Is.Null);
+				Assert.That(client.PhysicalClient.Balance,Is.EqualTo(Math.Round(ishBalance + 100 - client.GetPrice()/ client.GetInterval(), 5)));
+			}
+		}
+
 
 		[Test]
 		public void DebtWorkTest()

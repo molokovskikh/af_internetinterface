@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Mail;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework.Config;
 using Castle.ActiveRecord.Framework.Internal.EventListener;
@@ -33,8 +34,10 @@ namespace Billing
 
 	public class MainBilling
 	{
-		public DateTime DtNow;
+		//public DateTime DtNow;
 		private readonly ILog _log = LogManager.GetLogger(typeof (MainBilling));
+		private bool _semaphore;
+		private Mutex _mutex = new Mutex();
 
 		public MainBilling()
 		{
@@ -42,6 +45,8 @@ namespace Billing
 			{
 				XmlConfigurator.Configure();
 				InitActiveRecord();
+				//_mutex = new Mutex();
+				//_pool = new Semaphore(1, 1);
 			}
 			catch (Exception ex)
 			{
@@ -51,19 +56,21 @@ namespace Billing
 
 		public static void InitActiveRecord()
 		{
-			if (!ActiveRecordStarter.IsInitialized)
-			{
+			if (!ActiveRecordStarter.IsInitialized) {
 				var configuration = new InPlaceConfigurationSource();
 				configuration.PluralizeTableNames = true;
-				configuration.Add(typeof(ActiveRecordBase),
-								  new Dictionary<string, string> {
-				                                                 	{Environment.Dialect,"NHibernate.Dialect.MySQLDialect"},
-				                                                 	{Environment.ConnectionDriver,"NHibernate.Driver.MySqlDataDriver"},
-				                                                 	{Environment.ConnectionProvider,"NHibernate.Connection.DriverConnectionProvider"},
-				                                                 	{Environment.ConnectionStringName, "DB"},
-				                                                 	{Environment.ProxyFactoryFactoryClass,"NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle"},
-				                                                 	{Environment.Hbm2ddlKeyWords, "none"}
-				                                                 });
+				configuration.Add(typeof (ActiveRecordBase),
+				                  new Dictionary<string, string> {
+				                  	{Environment.Dialect, "NHibernate.Dialect.MySQLDialect"},
+				                  	{Environment.ConnectionDriver, "NHibernate.Driver.MySqlDataDriver"},
+				                  	{Environment.ConnectionProvider, "NHibernate.Connection.DriverConnectionProvider"},
+				                  	{Environment.ConnectionStringName, "DB"},
+				                  	{
+				                  	Environment.ProxyFactoryFactoryClass,
+				                  	"NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle"
+				                  	},
+				                  	{Environment.Hbm2ddlKeyWords, "none"}
+				                  });
 				ActiveRecordStarter.EventListenerComponentRegistrationHook += RemoverListner.Make;
 				ActiveRecordStarter.Initialize(new[] {typeof (Client).Assembly},
 				                               configuration);
@@ -83,14 +90,14 @@ namespace Billing
 
 		public void On()
 		{
-			try
-			{
+			_mutex.WaitOne();
+			try {
 				UseSession(OnMethod);
 			}
-			catch (Exception ex)
-			{
+			catch (Exception ex) {
 				_log.Error(Error.GerError(ex));
 			}
+			_mutex.ReleaseMutex();
 		}
 
 		public void OnMethod()
@@ -212,8 +219,8 @@ namespace Billing
 
 		public void Run()
 		{
-			try
-			{
+			_mutex.WaitOne();
+			try {
 				var thisDateMax = InternetSettings.FindFirst().NextBillingDate;
 				var now = SystemTime.Now();
 				if ((thisDateMax - now).TotalMinutes <= 0)
@@ -222,9 +229,8 @@ namespace Billing
 					if (now.Hour < 22)
 					{
 						var billingTime = InternetSettings.FindFirst();
-						billingTime.NextBillingDate = new DateTime(now.Year, now.Month, now.Day,
-																   22, 0, 0);
-						billingTime.SaveAndFlush();
+						billingTime.NextBillingDate = new DateTime(now.Year, now.Month, now.Day, 22, 0, 0);
+						billingTime.Save();
 					}
 				}
 			}
@@ -232,6 +238,7 @@ namespace Billing
 			{
 				_log.Error("Ошибка запуска процедуры Run Billing", ex);
 			}
+			_mutex.ReleaseMutex();
 		}
 
 		public void Compute()
@@ -245,7 +252,7 @@ namespace Billing
 					(!client.Disabled) &&
 					(client.RatedPeriodDate != DateTime.MinValue) && (client.RatedPeriodDate != null))
 				{
-					DtNow = SystemTime.Now();
+					var DtNow = SystemTime.Now();
 
 					if ((((DateTime) client.RatedPeriodDate).AddMonths(1).Date - DtNow.Date).Days == -client.DebtDays)
 					{
