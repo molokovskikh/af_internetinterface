@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security;
 using System.Web;
 using Castle.MonoRail.Framework;
+using Common.Web.Ui.Controllers;
 using InforoomInternet.Controllers;
 using InforoomInternet.Models;
 using InternetInterface.Helpers;
@@ -35,7 +36,7 @@ namespace InforoomInternet.Components
 				thisPath = string.Empty;*/
 			if (thisPath == "Login/LoginPage")
 				thisPath = "PrivateOffice/IndexOffice";
-			MenuField currentMenu = null;
+			IMenuField currentMenu = null;
 			foreach (var menuField in MenuField.FindAll())
 			{
 				if (menuField.Link == thisPath)
@@ -97,11 +98,12 @@ namespace InforoomInternet.Components
 	{
 		public string GenerateSelectList(string id, string selectedLink)
 		{
+			var controller = new EditorController();
 			var select = string.Format("<select class=\"linkSelector\" name=\"tariff\" id=\"{0}\">", id);
 			var selected = string.Empty;
 			var selectedFlag = false;
 			var nameIndex = 0;
-			foreach (var item in MenuField.Queryable.Where(el => EditorController.SpecialLinks.Contains(el.Link)))
+			foreach (var item in MenuField.Queryable.Where(el => controller.SpecialLinks.Contains(el.Link)))
 			{
 				if (item.Link == selectedLink)
 				{
@@ -113,7 +115,7 @@ namespace InforoomInternet.Components
 				select += string.Format("<option name=\"{3}\" value=\"{0}\" {2}>{1}</option>", item.Link, item.Name, selected, nameIndex);
 				nameIndex++;
 			}
-			foreach (var item in EditorController.SpecialLinks.Where(t=>!MenuField.FindAll().Select(g => g.Link).Contains(t)))
+			foreach (var item in controller.SpecialLinks.Where(t=>!MenuField.FindAll().Select(g => g.Link).Contains(t)))
 			{
 				select += string.Format("<option value=\"{0}\" >{1}</option>", item, item);
 			}

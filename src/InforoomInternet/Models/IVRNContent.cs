@@ -4,11 +4,12 @@ using System.Linq;
 using System.Web;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
+using Common.Web.Ui.Controllers;
 
 namespace InforoomInternet.Models
 {
 	[ActiveRecord(Schema = "Internet", Table = "IVRNContent")]
-	public class IVRNContent : ActiveRecordLinqBase<IVRNContent>
+	public class IVRNContent : ActiveRecordLinqBase<IVRNContent>, IContent
 	{
 
 		[PrimaryKey]

@@ -121,20 +121,6 @@ namespace InforoomInternet
 			configuration.ViewEngineConfig.ViewEngines.Add(new ViewEngineInfo(typeof(BooViewEngine), false));
 			configuration.ViewEngineConfig.VirtualPathRoot = configuration.ViewEngineConfig.ViewPathRoot;
 			configuration.ViewEngineConfig.ViewPathRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configuration.ViewEngineConfig.ViewPathRoot);
-
-			/*configuration.JSGeneratorConfiguration.AddLibrary("jquery-1.2.1", typeof(JQueryGenerator))
-	.AddExtension(typeof(CommonJSExtension))
-	.AddExtension(typeof(InterfaceLibEffects))
-	.ElementGenerator
-		.AddExtension(typeof(SomeElementLevelExtension))
-		.Done
-	.BrowserValidatorIs(typeof(VinterValidatorProvider))
-	.SetAsDefault();*/
-			/*	
-			configuration.SmtpConfig.Host = "mail.adc.analit.net";
-			configuration.ExtensionEntries.Add(new ExtensionEntry(typeof(ExceptionChainingExtension),
-			new MutableConfiguration("mailTo")));
-			*/
 		}
 
 		public void Created(IMonoRailContainer container)
