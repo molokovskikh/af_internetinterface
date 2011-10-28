@@ -700,7 +700,7 @@ namespace InternetInterface.Controllers
 				}
 				if (_client.Status.Blocked)
 				{
-					_client.AutoUnblocked = false;
+					//_client.AutoUnblocked = false;
 					_client.Disabled = true;
 				}
 				else
