@@ -4,7 +4,8 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion></ProductVersion>
+    <ProductVersion>
+    </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{E2B03BC7-AACB-4A72-BBC7-DF4325912504}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
@@ -140,7 +141,6 @@
     <None Include="Views\Brigads\MakeBrigad.brail" />
     <None Include="Views\Brigads\ShowBrigad.brail" />
     <None Include="Views\CommonScripts\WriteMessage.brail" />
-    <None Include="Views\Copy of Rescue\404.brail" />
     <None Include="Views\HouseAgent\Agent.brail" />
     <None Include="Views\HouseAgent\ShowAgents.brail" />
     <None Include="Views\HouseMap\BasicHouseInfo.brail" />
@@ -362,10 +362,12 @@
           <AutoAssignPort>False</AutoAssignPort>
           <DevelopmentServerPort>59059</DevelopmentServerPort>
           <DevelopmentServerVPath>/InternetInterface</DevelopmentServerVPath>
-          <IISUrl></IISUrl>
+          <IISUrl>
+          </IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
-          <CustomServerUrl></CustomServerUrl>
+          <CustomServerUrl>
+          </CustomServerUrl>
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>

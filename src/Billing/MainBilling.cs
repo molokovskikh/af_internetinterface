@@ -23,15 +23,6 @@ using Environment = NHibernate.Cfg.Environment;
 namespace Billing
 {
 
-	public static class Error
-	{
-		public static string GerError(Exception ex)
-		{
-			return ex.Message + "\n \r" + ex.StackTrace + "\n \r" + ex.InnerException + "\n \r" + ex.Source + "\n \r" +
-			       ex.Data;
-		}
-	}
-
 	public class MainBilling
 	{
 		private readonly ILog _log = LogManager.GetLogger(typeof (MainBilling));
@@ -44,7 +35,7 @@ namespace Billing
 				InitActiveRecord();
 			}
 			catch (Exception ex) {
-				_log.Error(Error.GerError(ex));
+				_log.Error("Ошибка к конструкторе" ,ex);
 			}
 		}
 
@@ -88,7 +79,7 @@ namespace Billing
 				UseSession(OnMethod);
 			}
 			catch (Exception ex) {
-				_log.Error(Error.GerError(ex));
+				_log.Error("Ошибка в методе On" ,ex);
 			}
 			_mutex.ReleaseMutex();
 		}
