@@ -14,6 +14,7 @@ using Castle.MonoRail.Framework.JSGeneration.jQuery;
 using Castle.MonoRail.Framework.Routing;
 using Castle.MonoRail.Framework.Services;
 using Castle.MonoRail.Views.Brail;
+using Common.Web.Ui.Helpers;
 using InforoomInternet.Initializers;
 using InternetInterface.Helpers;
 using log4net;
@@ -21,9 +22,16 @@ using log4net.Config;
 
 namespace InforoomInternet
 {
-	public class Global : HttpApplication, IMonoRailConfigurationEvents, IMonoRailContainerEvents
+	public class Global : WebApplication, IMonoRailConfigurationEvents, IMonoRailContainerEvents
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof(Global));
+
+		public Global()
+			: base(Assembly.Load("InforoomInternet"))
+		{
+			Logger.ErrorSubject = "Ошибка в IVRN";
+			Logger.SmtpHost = "box.analit.net";
+		}
 
 		void Application_Start(object sender, EventArgs e)
 		{
@@ -124,12 +132,12 @@ namespace InforoomInternet
 			configuration.ViewEngineConfig.ViewPathRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configuration.ViewEngineConfig.ViewPathRoot);
 		}
 
-		public void Created(IMonoRailContainer container)
-		{ }
+		/*public void Created(IMonoRailContainer container)
+		{ }*/
 
-		public void Initialized(IMonoRailContainer container)
+		/*public void Initialized(IMonoRailContainer container)
 		{
 			((DefaultViewComponentFactory)container.GetService<IViewComponentFactory>()).Inspect(Assembly.Load("InforoomInternet"));
-		}
+		}*/
 	}
 }
