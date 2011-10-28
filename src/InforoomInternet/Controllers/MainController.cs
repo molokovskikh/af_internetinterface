@@ -12,7 +12,7 @@ using InternetInterface.Models;
 
 namespace InforoomInternet.Controllers
 {
-	[Filter(ExecuteWhen.BeforeAction, typeof(NHibernateFilter))]
+	//[Filter(ExecuteWhen.BeforeAction, typeof(NHibernateFilter))]
 	[Filter(ExecuteWhen.BeforeAction, typeof(BeforeFilter))]
 	public class MainController : SmartDispatcherController
 	{
