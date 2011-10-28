@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Castle.MonoRail.Framework;
+using InforoomInternet.Logic;
 
 namespace InforoomInternet.Controllers
 {
@@ -10,5 +11,9 @@ namespace InforoomInternet.Controllers
 	[Filter(ExecuteWhen.BeforeAction, typeof(NHibernateFilter))]
 	public class ContentController : BaseContentController
 	{
+		public override bool IsAcces()
+		{
+			return LoginLogic.IsAccessiblePartner(Session["LoginPartner"]);
+		}
 	}
 }

@@ -36,7 +36,7 @@ namespace InforoomInternet.Components
 				thisPath = string.Empty;*/
 			if (thisPath == "Login/LoginPage")
 				thisPath = "PrivateOffice/IndexOffice";
-			IMenuField currentMenu = null;
+			MenuField currentMenu = null;
 			foreach (var menuField in MenuField.FindAll())
 			{
 				if (menuField.Link == thisPath)
@@ -189,7 +189,7 @@ namespace InforoomInternet.Components
 				SubMenuField.Queryable.Where(m => m.Link.Contains("Content")).ToList().Select(m => m.Link.Split(new[] { '/' })[1]);
 			menufield.AddRange(submenu);
 			var freeLinks =
-				IVRNContent.FindAll().Where(w => !menufield.Select(m => m).Contains(w.ViewName)).Select(
+				SiteContent.FindAll().Where(w => !menufield.Select(m => m).Contains(w.ViewName)).Select(
 					i => new {name = i.ViewName, link = "Content/" + i.ViewName});
 			foreach (var freeLink in freeLinks)
 			{

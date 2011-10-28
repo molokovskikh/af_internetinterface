@@ -469,12 +469,9 @@
     <None Include="Content\tiny_mce\tiny_mce_4490A91EECF6B6B85D1DC70190EE1A2E.gz" />
     <None Include="Content\tiny_mce\tiny_mce_8069770E71311F90EE8787DC0C7325A5.gz" />
     <Content Include="Content\tiny_mce\tiny_mce_gzip.ashx" />
-    <None Include="Views\Editor\Menu.brail" />
     <None Include="Views\Layouts\Main.brail" />
-    <None Include="Views\Layouts\TinyMCE.brail" />
     <None Include="Views\Main\Assist.brail" />
     <None Include="Views\Main\HowPay.brail" />
-    <None Include="Views\Main\Dynamic.brail" />
     <None Include="Views\Login\LoginPage.brail" />
     <None Include="Views\Main\OfferContract.brail" />
     <None Include="Views\Main\Ok.brail">

@@ -35,6 +35,13 @@ namespace InforoomInternet.Controllers
 		}
 	}
 
+	public class EditAccessFilter : IFilter
+	{
+		public bool Perform(ExecuteWhen exec, IEngineContext context, IController controller, IControllerContext controllerContext)
+		{
+			return LoginLogic.IsAccessiblePartner(context.Session["LoginPartner"]);
+		}
+	}
 
 	public class BeforeFilter : IFilter
 	{

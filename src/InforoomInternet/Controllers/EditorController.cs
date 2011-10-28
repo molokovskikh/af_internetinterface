@@ -12,9 +12,10 @@ namespace InforoomInternet.Controllers
 	[Layout("Main")]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof (BeforeFilter))]
 	[Filter(ExecuteWhen.BeforeAction, typeof (NHibernateFilter))]
-	public class EditorController : SmartDispatcherController
+	[Filter(ExecuteWhen.BeforeAction, typeof(EditAccessFilter))]
+	public class EditorController : BaseEditorController
 	{
-		public /*override*/ IEnumerable<string> SpecialLinks
+		public override IEnumerable<string> SpecialLinks
 		{
 			get
 			{

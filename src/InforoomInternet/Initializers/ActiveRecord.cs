@@ -19,7 +19,7 @@ namespace InforoomInternet.Initializers
 		public void Initialize(IConfigurationSource config)
 		{
 			ActiveRecordStarter.Initialize(
-				new[] { Assembly.Load("InforoomInternet"), Assembly.Load("InternetInterface") },
+				new[] { Assembly.Load("InforoomInternet"), Assembly.Load("InternetInterface"), Assembly.Load("Common.Web.Ui")},
 				config
 			);
 

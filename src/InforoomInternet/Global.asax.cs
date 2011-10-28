@@ -115,8 +115,9 @@ namespace InforoomInternet
 
 		public void Configure(IMonoRailConfiguration configuration) {
 			configuration.ControllersConfig.AddAssembly("InforoomInternet");
-			configuration.ViewComponentsConfig.Assemblies = new[] {"InforoomInternet"};
+			configuration.ViewComponentsConfig.Assemblies = new[] {"InforoomInternet", "Common.Web.Ui"};
 			configuration.ViewEngineConfig.ViewPathRoot = "Views";
+			configuration.ViewEngineConfig.AssemblySources.Add(new AssemblySourceInfo("Common.Web.Ui", "Common.Web.Ui.Views"));
 			configuration.UrlConfig.UseExtensions = false;
 			configuration.ViewEngineConfig.ViewEngines.Add(new ViewEngineInfo(typeof(BooViewEngine), false));
 			configuration.ViewEngineConfig.VirtualPathRoot = configuration.ViewEngineConfig.ViewPathRoot;

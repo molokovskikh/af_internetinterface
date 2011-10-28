@@ -163,15 +163,15 @@ namespace InforoomInternet.Controllers
 		}
 
 
-		public void Save()
+		/*public void Save()
 		{
 			var localPath = Request.Form["LocalPath"];
 			if (LoginLogic.IsAccessiblePartner(Session["LoginPartner"]))
 			{
 				var htmlcode = Request.Form["htmlcode"];
-				var views = IVRNContent.FindAllByProperty("ViewName", localPath);
+				var views = SiteContent.FindAllByProperty("ViewName", localPath);
 				if (views.Length == 0)
-					new IVRNContent
+					new SiteContent
 						{
 							Content = htmlcode,
 							ViewName = localPath
@@ -186,11 +186,11 @@ namespace InforoomInternet.Controllers
 			}
 			var url = localPath == "HowPay" ? string.Empty :  Context.ApplicationPath + "/Content/";
 			RedirectToUrl(url + localPath);
-		}
+		}*/
 
 		private void SetEdatableAttribute(bool edit, string viewName)
 		{
-			PropertyBag["Content"] = IVRNContent.FindAllByProperty("ViewName", viewName).First().Content;
+			PropertyBag["Content"] = SiteContent.FindAllByProperty("ViewName", viewName).First().Content;
 			if (edit)
 			{
 				LayoutName = "TinyMCE";
