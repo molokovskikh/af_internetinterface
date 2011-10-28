@@ -33,7 +33,7 @@ namespace InforoomInternet.Test.Integration
 			using (new SessionScope())
 			{
 				var editController = new EditorController();
-				PrepareController(editController);
+				//PrepareController(editController);
 				//Request.
 				/*editController.Menu();
 				Console.WriteLine(editController.PropertyBag["Content"]);

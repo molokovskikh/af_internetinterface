@@ -4,7 +4,8 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion></ProductVersion>
+    <ProductVersion>
+    </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{78BE8691-9A92-409B-89CE-D5172D5F16CD}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
@@ -450,7 +451,7 @@
   <ItemGroup>
     <Compile Include="Components\MenuList.cs" />
     <Compile Include="Controllers\BeforeFilter.cs" />
-    <Compile Include="Controllers\DynamicController.cs" />
+    <Compile Include="Controllers\ContentController.cs" />
     <Compile Include="Controllers\EditorController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\MainController.cs" />
@@ -460,12 +461,9 @@
     </Compile>
     <Compile Include="Initializers\ActiveRecord.cs" />
     <Compile Include="Logic\LoginLogic.cs" />
-    <Compile Include="Models\IVRNContent.cs" />
     <Compile Include="Models\Lease.cs" />
     <Compile Include="Models\Main.cs" />
-    <Compile Include="Models\MenuField.cs" />
     <Compile Include="Models\SceHelper.cs" />
-    <Compile Include="Models\SubMenuField.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="Content\tiny_mce\tiny_mce_09EFA8059243DF3F46253936C4603EF6.gz" />
     <None Include="Content\tiny_mce\tiny_mce_4490A91EECF6B6B85D1DC70190EE1A2E.gz" />
@@ -514,10 +512,12 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>53759</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl></IISUrl>
+          <IISUrl>
+          </IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
-          <CustomServerUrl></CustomServerUrl>
+          <CustomServerUrl>
+          </CustomServerUrl>
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>

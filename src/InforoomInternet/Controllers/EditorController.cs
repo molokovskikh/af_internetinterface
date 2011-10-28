@@ -12,9 +12,9 @@ namespace InforoomInternet.Controllers
 	[Layout("Main")]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof (BeforeFilter))]
 	[Filter(ExecuteWhen.BeforeAction, typeof (NHibernateFilter))]
-	public class EditorController : BaseEditorController<IVRNContent, MenuField, SubMenuField>
+	public class EditorController : SmartDispatcherController
 	{
-		public override IEnumerable<string> SpecialLinks
+		public /*override*/ IEnumerable<string> SpecialLinks
 		{
 			get
 			{
@@ -28,11 +28,11 @@ namespace InforoomInternet.Controllers
 			}
 		}
 
-		[return: JSONReturnBinder]
+		/*[return: JSONReturnBinder]
 		public string Save()
 		{
 			return Save(() => ArHelper.WithSession(
 				s => s.CreateSQLQuery(@"delete from internet.menufield; delete from internet.submenufield;").ExecuteUpdate()));
-		}
+		}*/
 	}
 }
