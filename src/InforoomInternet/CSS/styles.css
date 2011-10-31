@@ -691,25 +691,3 @@ br.noheight {
   line-height: 0px;
 }
 
-.freeLinks
-{
-	padding: 10px;
-	background-color: #E7E7E8;
-	text-align: center;
-	font-size: 14px;
-	font-weight: bold;
-	margin: 15px;
-}
-
-.freeLinks .field
-{
-	font-size: 14px;
-	font-weight: normal;
-	text-align: left;
-	padding: 2px;
-}
-
-.freeLinks .field span
-{
-	margin-right: 30px;
-}

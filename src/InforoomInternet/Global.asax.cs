@@ -29,6 +29,7 @@ namespace InforoomInternet
 		public Global()
 			: base(Assembly.Load("InforoomInternet"))
 		{
+			LibAssemblies.Add(Assembly.Load("Common.Web.Ui"));
 			Logger.ErrorSubject = "Ошибка в IVRN";
 			Logger.SmtpHost = "box.analit.net";
 		}
@@ -66,7 +67,7 @@ namespace InforoomInternet
 
 		void Application_AuthenticateRequest(object sender, EventArgs e) { }
 
-		void Application_Error(object sender, EventArgs e) {
+		/*void Application_Error(object sender, EventArgs e) {
 			var exception = Server.GetLastError();
 
 			if (exception is ControllerNotFoundException
@@ -115,7 +116,7 @@ namespace InforoomInternet
 			Response.Redirect("~/Rescue/Error.aspx");
 #endif
 */
-		}
+		//}
 
 		void Session_End(object sender, EventArgs e) { }
 

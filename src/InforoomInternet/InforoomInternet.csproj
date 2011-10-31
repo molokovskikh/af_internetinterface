@@ -449,7 +449,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Components\MenuList.cs" />
     <Compile Include="Controllers\BeforeFilter.cs" />
     <Compile Include="Controllers\ContentController.cs" />
     <Compile Include="Controllers\EditorController.cs" />

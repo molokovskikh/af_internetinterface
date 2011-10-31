@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Castle.MonoRail.Framework;
+using Common.Web.Ui.Controllers;
 using InforoomInternet.Logic;
 
 namespace InforoomInternet.Controllers

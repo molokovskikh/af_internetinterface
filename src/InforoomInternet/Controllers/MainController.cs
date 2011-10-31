@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Text;
 using Castle.MonoRail.Framework;
+using Common.Web.Ui.Models.Editor;
 using InforoomInternet.Logic;
 using InforoomInternet.Models;
 using InternetInterface.Models;
