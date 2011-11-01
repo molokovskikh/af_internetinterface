@@ -44,14 +44,6 @@ namespace InforoomInternet.Controllers
 		public void OfferContract(bool edit)
 		{}
 
-		/*public void requisite(bool edit)
-		{
-			//PropertyBag["Content"] = IVRNContent.FindAllByProperty("ViewName", "requisite").First().Content;
-			SetEdatableAttribute(edit, "requisite");
-			/*if (edit)
-				LayoutName = "TinyMCE";*/
-		//}
-
 		public void PrivateOffice()
 		{}
 
@@ -76,6 +68,8 @@ namespace InforoomInternet.Controllers
 			{
 				return;
 			}
+			CancelLayout();
+			CancelView();
 		}
 
 		[AccessibleThrough(Verb.Post)]
