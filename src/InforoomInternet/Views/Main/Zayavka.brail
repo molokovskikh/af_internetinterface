@@ -104,7 +104,7 @@
 		<p id="last"><input id="appbut" type="submit" value="Отправить" /></p>
 <script type="text/javascript">
 	$(function () {
-		$("#residence").autocomplete("/assist", {
+		$("#residence").autocomplete("assist", {
 			delay: 100,
 			minChars: 2,
 			selectFirst: true,
