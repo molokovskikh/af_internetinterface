@@ -1,78 +1,73 @@
 ﻿<style type="text/css">
-        #loginblock
-        {
-            width:250px;
-            padding-left:33%;
-        }
-        .labelLogin
-        {
-            font-weight: bold;
-            padding-bottom: 2px;
-            font-size: 1.2em;
-            color: #666262;
-            margin: 0;
-            padding: 1px 0;
-            float:left;
-            width:25%;
-            margin-bottom: 15px;
-        }
-        .labelRight
-        {
-            float:right;
-            width:75%;
-            margin-bottom: 15px;
-        }
-        .blockDiv
-        {
-            display:block;
-        }
-        .search
-        {
-            border-style: solid;
-            border-width: 1px;
-            width:150px; 
-            border-color: #CCCCCC #DDDDDD #DDDDDD #CCCCCC;
-            border-right: 1px solid #DDDDDD;
-            font-size: 1.2em;
-            margin: 0;
-            padding: 1px 0;
-        }
-        .button
-        {
-            line-height: 17px;
-            padding: 5px 10px 5px 7px;
-            overflow: visible;
-            width: auto;
-            background-color: #EEEEEE;
-            border: 1px solid #BFBFBF;
-            color: #222222;
-            cursor: pointer;
-            font-weight: bold;
-            margin: 0 7px 0 0;
-            text-decoration: none;
-            border-style: solid;
-        }
+		#loginblock
+		{
+			width:250px;
+			margin : 0 auto;
+		}
+		.blockDiv
+		{
+			display:block;
+		}
+		.search
+		{
+			border-style: solid;
+			border-width: 1px;
+			width:150px; 
+			border-color: #CCCCCC #DDDDDD #DDDDDD #CCCCCC;
+			border-right: 1px solid #DDDDDD;
+			font-size: 1.2em;
+			margin: 0;
+			padding: 1px 0;
+		}
+		.button
+		{
+			line-height: 17px;
+			padding: 5px 10px 5px 7px;
+			overflow: visible;
+			width: auto;
+			background-color: #EEEEEE;
+			border: 1px solid #BFBFBF;
+			color: #222222;
+			cursor: pointer;
+			font-weight: bold;
+			margin: 0 7px 0 0;
+			text-decoration: none;
+			border-style: solid;
+		}
 </style>
-          <form class="form login" method="post" action="${siteroot}/Login/${AcceptName}">
-            <div id="loginblock">
-                <div class="blockDiv">
-                    <div class="labelLogin"> 
-                    Логин</div> 
-                    <div class="labelRight">
-                    <input type="text" id="Login" class="search" name="Login">
-                    </div>
-                </div>
-                <div class="blockDiv">
-                <div class="labelLogin">
-                    Пароль</div>
-                    <div class="labelRight">
-                    <input type="password" id="Password" class="search" name="Password">
-                    </div>
-                </div>
-                <div class="blockBut">
-                    <button type="submit" id="LogBut" class="button">
-                      <img alt="Save" src="${siteroot}/Content/key.png"> Войти
-                    </button>
-                </div>
-            </div>
-          </form>
+<form class="form login" method="post" action="${siteroot}/Login/${AcceptName}">
+<div id="loginblock">
+<table cellpadding=0px cellspacing=0px class=loginTable>
+	 <tbody>
+	 <tr>
+		<td>
+			<div class="labelLogin">Логин</div>
+		</td>
+		<td>
+			<div class="labelRight">
+				<input type="text" id="Login" class="search" name="Login">
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<div class="labelLogin">Пароль</div></td>
+		<td>
+			<div class="labelRight">
+				<input type="password" id="Password" class="search" name="Password">
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td colspan=2>
+			<div class="blockBut">
+				<button type="submit" id="LogBut" class="button">
+					<img alt="Save" src="${siteroot}/Content/key.png"> Войти
+				</button>
+			</div>
+		</td>
+	</tr>
+	</tbody>
+</table>
+</div>
+</form>

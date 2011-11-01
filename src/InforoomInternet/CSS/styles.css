@@ -215,6 +215,11 @@ color: #f00; /* ÷вет активной ссылки */
   line-height: 10px;
 }
 
+#content
+{
+	min-height: 220px;
+}
+
 #content span.adres {
   color: #939393;
   font-size: 9px;
