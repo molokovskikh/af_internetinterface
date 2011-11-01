@@ -7,15 +7,11 @@
   <title>Инфорум</title>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 
-  <script type="text/javascript" src="../JavaScript/jquery-1.4.2.min.js"></script>
+  <script type="text/javascript" src="${siteroot}/assets/javascripts/jquery-1.6.4.min.js"></script>
+  <script type="text/javascript" src="${siteroot}/assets/javascripts/jquery-ui-1.8.16.min.js"></script>
 
   <link rel="stylesheet" href="${siteroot}/CSS/styles.css" type="text/css" />
 
-  <script type="text/javascript">
-	  $(document).ready(function () { 
-		$('a[href=]')
-	  });
-  </script>
 </head>
 
 <body>

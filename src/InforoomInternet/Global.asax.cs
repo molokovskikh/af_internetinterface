@@ -50,6 +50,10 @@ namespace InforoomInternet
 					.DefaultForController().Is("Main")
 					.DefaultForAction().Is("Warning"));
 
+				RoutingModuleEx.Engine.Add(new PatternRoute("/Assist")
+					.DefaultForController().Is("Main")
+					.DefaultForAction().Is("Assist"));
+
 				//Эта страница находится гуглом по запросу воронеж ООО Инфорум
 				RoutingModuleEx.Engine.Add(new PatternRoute("/Main/requisite")
 					.DefaultForController().Is("Content")
