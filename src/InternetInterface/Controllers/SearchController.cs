@@ -210,18 +210,14 @@ ORDER BY {3} Limit {1}, {2}", ":SearchText", CurrentPage * PageSize, PageSize, G
 		}
 	}
 
-	[/*Layout("Main"),*/
-	Helper(typeof(PaginatorHelper)),
-	Helper(typeof(CategorieAccessSet)),
-	/*Helper(typeof(AppHelperInterface), "app")*/]
+	[Helper(typeof(PaginatorHelper)),
+	Helper(typeof(CategorieAccessSet)),]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class SearchController : SmartDispatcherController
 	{
 		[AccessibleThrough(Verb.Get)]
-		public void SearchBy([DataBind("filter")]SeachFilter filter/*, string Direction, string SortBy*/)
+		public void SearchBy([DataBind("filter")]SeachFilter filter)
 		{
-			/*filter.SortBy = SortBy;
-			filter.Direction = Direction;*/
 			PropertyBag["SClients"] = filter.Find();
 			PropertyBag["Direction"] = filter.Direction;
 			PropertyBag["SortBy"] = filter.SortBy;
@@ -244,11 +240,6 @@ ORDER BY {3} Limit {1}, {2}", ":SearchText", CurrentPage * PageSize, PageSize, G
 											 connectedType = new ConnectedTypeProperties {Type = ConnectedType.AllConnected},
 											 clientTypeFilter =
 												 new ClientTypeProperties {Type = ForSearchClientType.AllClients},
-											 /*searchText = string.Empty,
-											 addtionalStatus = 0,
-											 brigad = 0,
-											 tariff = 0,
-											 whoregister = 0*/
 										 };
 			PropertyBag["filter"] = filter;
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();

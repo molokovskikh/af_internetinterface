@@ -107,9 +107,6 @@ namespace InternetInterface.Controllers
 									DateTime startDate, DateTime endDate,
 									string SubscriberCount_Oper, string PenetrationPercent_Oper, string PassCount_Oper)
 		{
-			/*var result = House.FindAll().ToList();
-			if (!string.IsNullOrEmpty(adress))
-				result = result.Where(r => r.Street.Contains(adress)).ToList();*/
 			IList<House> result = new List<House>();
 			ARSesssionHelper<House>.QueryWithSession(session => {
 				var where = string.Empty;

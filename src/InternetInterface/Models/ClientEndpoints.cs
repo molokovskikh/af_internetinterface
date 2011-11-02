@@ -45,8 +45,8 @@ namespace InternetInterface.Models
 		[OneToOne]
 		public virtual PaymentForConnect PayForCon { get; set; }
 
-		/*[HasMany(ColumnKey = "Client", OrderBy = "Date", Lazy = true)]
-		public virtual IList<UserWriteOff> UserWriteOffs { get; set; }*/
+		[HasMany(ColumnKey = "EndPoint", OrderBy = "Ip", Lazy = true)]
+		public virtual IList<StaticIp> StaticIps { get; set; }
 
 		public virtual bool IsMultilease
 		{

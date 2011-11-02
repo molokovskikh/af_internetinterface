@@ -96,9 +96,9 @@ namespace InternetInterface.Models
 		public virtual bool CanUsedPostponedPayment()
 		{
 			return PhysicalClient != null &&
-				   !ClientServices.Select(c => c.Service).Contains(Service.GetByType(typeof(DebtWork))) && Disabled &&
-				   PhysicalClient.Balance < 0 &&
-				   AutoUnblocked && PaymentForTariff();
+				!ClientServices.Select(c => c.Service).Contains(Service.GetByType(typeof(DebtWork))) && Disabled &&
+				PhysicalClient.Balance < 0 &&
+				AutoUnblocked && PaymentForTariff();
 		}
 
 		public virtual bool AdditionalCanUsed(string aStatus)

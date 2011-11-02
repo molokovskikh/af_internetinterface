@@ -49,11 +49,6 @@ namespace InforoomInternet.Controllers
 			var client = Client.Find(clientId);
 			if (client.CanUsedPostponedPayment())
 			{
-				//client.Status = Status.Find((uint)StatusType.Worked);
-				//client.PostponedPayment = DateTime.Now;
-				//client.Disabled = false;
-				//client.Update();
-
 				Flash["message"] = "Услуга \"Обещанный платеж активирована\"";
 				var CService = new ClientService {
 									  BeginWorkDate = DateTime.Now,
@@ -61,11 +56,8 @@ namespace InforoomInternet.Controllers
 									  EndWorkDate = DateTime.Now.AddDays(1),
 									  Service = Service.GetByType(typeof(DebtWork))
 								  };
-
-				//CService.Save();
 				client.ClientServices.Add(CService);
 				CService.Activate();
-
 				new Appeals {
 								Appeal = "Услуга \"Обещанный платеж активирована\"",
 								AppealType = (int) AppealType.System,

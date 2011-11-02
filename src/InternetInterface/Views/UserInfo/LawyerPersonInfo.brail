@@ -123,8 +123,6 @@
 					"ConnectInfo": item,
 					"EditingConnect" : EConnect == item.endpointId})
 end %>
-
-<% OutputSubView("""\Subview\StaticIps""") %>
 <% OutputSubView("""\Subview\PaymentInfo""") %>
 
 <br />

@@ -109,6 +109,30 @@
 		</tbody>
 	</table>
 	</td></tr></tbody></table>
+	<%if PartnerAccessSet.AccesPartner("DHCP"): %>
+<%staticIps = ConnectInfo.GetStaticAdreses() %>
+<%if staticIps.Count != 0: %>
+	<table class="table" align="left">
+		<thead>
+			<tr>
+				<th colspan=2 style="text-align:center;">Статические адреса клиента</th>
+			</tr>
+			<tr>
+				<th>IP адрес / маска</th>
+				<th>Маска</th>
+			</tr>
+		</thead>
+		<tbody>
+			<% for i,item in enumerate(staticIps): %>
+				<tr>
+					<td>${item.Ip} ${"/" if item.Mask != null} ${item.Mask}</td>
+					<td>${item.GetSubnet()}</td>
+				</tr>
+			<%end %>
+		</tbody>
+	</table>
+<%end %>
+<%end %>
 	</form>
 	<%else: %>
 	<form class="formConnect" id="formConnect" method="post" action="${siteroot}/UserInfo/SaveSwitchForClient">
@@ -194,7 +218,7 @@
 			</tr>
 		</thead>
 		<tbody id="adresesBlock">
-			<% for i,item in enumerate(staticIps): %>
+			<% for i,item in enumerate(ConnectInfo.GetStaticAdreses()): %>
 			<tr>
 				<td class="indexes" style="width:1px;">
 					<input type=hidden value=${i} />
@@ -223,7 +247,7 @@
 	</tr>
 	</tbody>
 	</table>
-	</form>
+	</form>	
 	<%end %>
 <%end %>
 </div>

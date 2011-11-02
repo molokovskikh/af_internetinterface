@@ -29,7 +29,6 @@ namespace InternetInterface.Controllers
 		public int appealType  { get; set; }
 		public string grouped  { get; set; }
 		public bool Editing  { get; set; }
-		//public List<bool> EditingConnect  { get; set; }
 		public int EditingConnect { get; set; }
 	}
 
@@ -97,7 +96,6 @@ namespace InternetInterface.Controllers
 		}
 	}
 
-	//[Layout("Main")]
 	[Helper(typeof (PaginatorHelper))]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof (AuthenticationFilter))]
 	public class UserInfoController : BaseController
@@ -358,14 +356,14 @@ namespace InternetInterface.Controllers
 						client.Status = Status.Find((uint) StatusType.BlockedAndConnected);
 					client.UpdateAndFlush();
 
-					StaticIp.Queryable.Where(s => s.Client == client).ToList().Where(
+					StaticIp.Queryable.Where(s => s.EndPoint == clientEntPoint).ToList().Where(
 						s => !staticAdress.Select(f => f.Id).Contains(s.Id)).ToList().
 						ForEach(s => s.Delete());
 
 					foreach (var s in staticAdress) {
 						if (!string.IsNullOrEmpty(s.Ip))
 							if (Regex.IsMatch(s.Ip, NetworkSwitches.IPRegExp)) {
-								s.Client = client;
+								s.EndPoint = clientEntPoint;
 								s.Save();
 							}
 					}
@@ -506,7 +504,6 @@ namespace InternetInterface.Controllers
 			};
 			newlab.SaveAndFlush();
 			RedirectToAction("RequestView");
-			//RequestView();
 		}
 
 		/// <summary>
@@ -574,8 +571,7 @@ namespace InternetInterface.Controllers
 		public void LoadEditMudule(uint ClientID, int appealType)
 		{
 			Flash["Editing"] = true;
-			RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID + "&filter.Editing=true&filter.appealType=" +
-			              appealType);
+			RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID + "&filter.Editing=true&filter.appealType=" + appealType);
 		}
 
 		public void ClientRegisteredInfo()
@@ -753,7 +749,7 @@ namespace InternetInterface.Controllers
 					a => a.Date);
 			PropertyBag["Client"] = client.PhysicalClient;
 
-			PropertyBag["Houses"] = House.FindAll();
+			PropertyBag["Houses"] = House.AllSort;
 			PropertyBag["ChHouse"] = client.PhysicalClient.HouseObj != null ? client.PhysicalClient.HouseObj.Id : 0;
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["ChTariff"] = client.PhysicalClient.Tariff.Id;
@@ -783,12 +779,10 @@ namespace InternetInterface.Controllers
 		{
 			var client = Client.FirstOrDefault(clientId);
 			PropertyBag["_client"] = client;
-			//PropertyBag["Client"] = client.PhysicalClient;
 			PropertyBag["ClientCode"] = clientId;
 			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(t => !string.IsNullOrEmpty(t.Name));
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
 			PropertyBag["ChBrigad"] = client.WhoConnected != null ? client.WhoConnected.Id : Brigad.FindFirst().Id;
-			PropertyBag["staticIps"] = StaticIp.Queryable.Where(s => s.Client.Id == clientId).ToList();
 			List<PackageSpeed> speeds;
 			var tariffs = Tariff.FindAll().Select(t => t.PackageId).ToList();
 			if (client.GetClientType() == ClientType.Phisical)

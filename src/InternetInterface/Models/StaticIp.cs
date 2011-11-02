@@ -15,7 +15,7 @@ namespace InternetInterface.Models
 		public virtual uint Id { get; set; }
 
 		[BelongsTo]
-		public virtual Client Client { get; set; }
+		public virtual ClientEndpoints EndPoint { get; set; }
 
 		[Property]
 		public virtual string Ip { get; set; } 

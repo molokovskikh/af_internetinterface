@@ -75,10 +75,13 @@ namespace InternetInterface.Models
 			return string.Empty;
 		}
 
-		/*public Int32 GetNormalSpeed()
+		public IList<StaticIp> GetStaticAdreses()
 		{
-			return Convert.ToInt32(Speed) / 1000000;
-		}*/
+			var endPoint = ClientEndpoints.TryFind((uint) endpointId);
+			if (endPoint != null)
+				return endPoint.StaticIps;
+			return new List<StaticIp>();
+		}
 	}
 
 

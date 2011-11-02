@@ -8,6 +8,7 @@ using System.Reflection;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Castle.MonoRail.Framework;
+using Common.Tools;
 using InternetInterface.AllLogic;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
@@ -321,8 +322,10 @@ namespace InternetInterface.Controllers
 						h.Case == newPhisClient.CaseHouse).ToList();
 				if (houses.Count != 0)
 					PropertyBag["ChHouse"] = houses.First().Id;
-				else
+				else {
 					PropertyBag["ChHouse"] = 0;
+					PropertyBag["Message"] = Message.Error("Не удалось сопоставить адрес из заявки ! Будте внимательны при заполнении адреса клиента !");
+				}
 			}
 			else
 			{
@@ -354,7 +357,7 @@ namespace InternetInterface.Controllers
 
 		public void SendRegisterParam()
 		{
-			PropertyBag["Houses"] = House.FindAll();
+			PropertyBag["Houses"] = House.AllSort;
 			PropertyBag["BalanceText"] = string.Empty;
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
