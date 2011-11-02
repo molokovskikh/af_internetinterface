@@ -32,6 +32,7 @@ namespace InforoomInternet
 			LibAssemblies.Add(Assembly.Load("Common.Web.Ui"));
 			Logger.ErrorSubject = "Ошибка в IVRN";
 			Logger.SmtpHost = "box.analit.net";
+			Logger.ExcludeExceptionTypes.Add(typeof(ControllerNotFoundException));
 		}
 
 		void Application_Start(object sender, EventArgs e)
@@ -49,10 +50,6 @@ namespace InforoomInternet
 				RoutingModuleEx.Engine.Add(new PatternRoute("/Warning")
 					.DefaultForController().Is("Main")
 					.DefaultForAction().Is("Warning"));
-
-				/*RoutingModuleEx.Engine.Add(new PatternRoute("/Assist")
-					.DefaultForController().Is("Main")
-					.DefaultForAction().Is("Assist"));*/
 
 				//Эта страница находится гуглом по запросу воронеж ООО Инфорум
 				RoutingModuleEx.Engine.Add(new PatternRoute("/Main/requisite")
