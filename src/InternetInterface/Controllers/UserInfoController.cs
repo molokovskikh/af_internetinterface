@@ -284,6 +284,7 @@ namespace InternetInterface.Controllers
 			var clientsEndPoint = ClientEndpoints.Queryable.Where(c => c.Client == client && c.Id == EditConnect).ToArray();
 			if (clientsEndPoint.Length != 0) {
 				clientEntPoint = clientsEndPoint[0];
+				InitializeHelper.InitializeModel(clientEntPoint);
 			}
 			else {
 				newFlag = true;
@@ -320,8 +321,10 @@ namespace InternetInterface.Controllers
 					clientEntPoint.Port = Int32.Parse(ConnectInfo.Port);
 					clientEntPoint.Switch = NetworkSwitches.Find(Convert.ToUInt32(ConnectInfo.Switch));
 					clientEntPoint.Monitoring = ConnectInfo.Monitoring;
-					if (!newFlag)
+					if (!newFlag) {
+						InitializeHelper.InitializeModel(clientEntPoint);
 						clientEntPoint.UpdateAndFlush();
+					}
 					else {
 						clientEntPoint.SaveAndFlush();
 						if (client.PhysicalClient != null && client.PhysicalClient.Request != null &&
@@ -354,7 +357,7 @@ namespace InternetInterface.Controllers
 					client.ConnectedDate = DateTime.Now;
 					if (client.Status.Id == (uint) StatusType.BlockedAndNoConnected)
 						client.Status = Status.Find((uint) StatusType.BlockedAndConnected);
-					client.UpdateAndFlush();
+					client.Update();
 
 					StaticIp.Queryable.Where(s => s.EndPoint == clientEntPoint).ToList().Where(
 						s => !staticAdress.Select(f => f.Id).Contains(s.Id)).ToList().

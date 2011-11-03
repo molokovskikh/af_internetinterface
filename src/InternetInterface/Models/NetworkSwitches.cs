@@ -38,6 +38,11 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string Comment { get; set; }
 
+		public override string ToString()
+		{
+			return Name + string.Format("({0})", GetNormalIp());
+		}
+
 		public virtual string GetCommentForWeb()
 		{
 			return AppealHelper.GetTransformedAppeal(Comment);

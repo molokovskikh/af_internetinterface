@@ -2,11 +2,12 @@
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Castle.ActiveRecord.Linq;
+using Common.Web.Ui.Helpers;
 using NHibernate.Criterion;
 
 namespace InternetInterface.Models
 {
-	[ActiveRecord("ClientEndpoints", Schema = "Internet", Lazy = true)]
+	[ActiveRecord("ClientEndpoints", Schema = "Internet", Lazy = true), Auditable]
 	public class ClientEndpoints : ChildActiveRecordLinqBase<ClientEndpoints>
 	{
 		[PrimaryKey]
@@ -18,22 +19,22 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string Ip { get; set; }
 
-		[BelongsTo("Client", Cascade = CascadeEnum.SaveUpdate)]
+		[BelongsTo(Cascade = CascadeEnum.SaveUpdate), Auditable]
 		public virtual Client Client { get; set; }
 
 		[Property]
 		public virtual int Module { get; set; }
 
-		[Property]
+		[Property, Auditable("Порт")]
 		public virtual int? Port { get; set; }
 
-		[BelongsTo("Switch")]
+		[BelongsTo("Switch"), Auditable("Свитч")]
 		public virtual NetworkSwitches Switch { get; set; }
 
-		[Property]
+		[Property, Auditable("Мониторинг")]
 		public virtual bool Monitoring { get; set; }
 
-		[Property]
+		[Property, Auditable("PackageId")]
 		public virtual int PackageId { get; set; }
 
 		[Property]

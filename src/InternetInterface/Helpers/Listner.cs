@@ -17,7 +17,7 @@ namespace InternetInterface.Helpers
 	{
 		public static void Make(EventListenerContributor target)
 		{
-			target.Remove(typeof(Listner));
+			target.Remove(typeof (Listner));
 		}
 	}
 
@@ -40,21 +40,17 @@ namespace InternetInterface.Helpers
 
 		protected override void Convert(PropertyInfo property, object newValue, object oldValue)
 		{
-			if (oldValue == null)
-			{
+			if (oldValue == null) {
 				OldValue = "";
 			}
-			else
-			{
+			else {
 				OldValue = AsString(property, oldValue);
 			}
 
-			if (newValue == null)
-			{
+			if (newValue == null) {
 				NewValue = "";
 			}
-			else
-			{
+			else {
 				NewValue = AsString(property, newValue);
 			}
 			Message = String.Format("Изменено '{0}' было '{1}' стало '{2}'", Name, OldValue, NewValue);
@@ -64,7 +60,8 @@ namespace InternetInterface.Helpers
 	[EventListener]
 	public class Listner : BaseAuditListener
 	{
-		protected override AuditableProperty GetAuditableProperty(PropertyInfo property, string name, object newState, object oldState)
+		protected override AuditableProperty GetAuditableProperty(PropertyInfo property, string name, object newState,
+		                                                          object oldState)
 		{
 			return new AuditablePropertyUser(
 				property,
@@ -75,39 +72,39 @@ namespace InternetInterface.Helpers
 
 		protected override void Log(NHibernate.Event.PostUpdateEvent @event, string message)
 		{
-			using (new SessionScope())
-			{
+			using (new SessionScope()) {
 				var logInfo = string.Empty;
 				var client = new Client();
-				if (@event.Entity.GetType() == typeof(Client))
-				{
+				if (@event.Entity.GetType() == typeof (Client)) {
 					client = (Client) @event.Entity;
 					logInfo = ((Client) @event.Entity).LogComment;
 				}
-				if (@event.Entity.GetType() == typeof(PhysicalClients))
-				{
+				if (@event.Entity.GetType() == typeof (PhysicalClients)) {
 					client =
 						Client.Queryable.Where(c => c.PhysicalClient == (PhysicalClients) @event.Entity).FirstOrDefault
 							();
 					logInfo = ((PhysicalClients) @event.Entity).LogComment;
 				}
-				if (@event.Entity.GetType() == typeof(LawyerPerson))
-				{
+				if (@event.Entity.GetType() == typeof (LawyerPerson)) {
 					client =
 						Client.Queryable.Where(c => c.LawyerPerson == (LawyerPerson) @event.Entity).FirstOrDefault();
-					logInfo = ((LawyerPerson)@event.Entity).LogComment;
+					logInfo = ((LawyerPerson) @event.Entity).LogComment;
+				}
+				if (@event.Entity.GetType() == typeof (ClientEndpoints)) {
+					client = ((ClientEndpoints) @event.Entity).Client;
+					logInfo = ((ClientEndpoints) @event.Entity).LogComment;
 				}
 				@event.Session.Save(new Appeals {
-													Appeal =
-														string.IsNullOrEmpty(logInfo)
-															? message
-															: string.Format("{0} \r\n Комментарий: \r\n {1}", message,
-																			logInfo),
-													Client = client,
-													Date = DateTime.Now,
-													Partner = InitializeContent.partner,
-													AppealType = (int) AppealType.System
-												});
+					Appeal =
+				                    	string.IsNullOrEmpty(logInfo)
+				                    		? message
+				                    		: string.Format("{0} \r\n Комментарий: \r\n {1}", message,
+				                    		                logInfo),
+					Client = client,
+					Date = DateTime.Now,
+					Partner = InitializeContent.partner,
+					AppealType = (int) AppealType.System
+				});
 			}
 		}
 	}
