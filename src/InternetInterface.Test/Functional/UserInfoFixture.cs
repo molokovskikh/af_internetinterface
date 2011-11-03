@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Castle.ActiveRecord;
@@ -19,46 +20,49 @@ namespace InternetInterface.Test.Functional
 
 		public UserInfoFixture()
 		{
-		  using (new SessionScope())
-		  {
-			  //new Status { Name = "ConnectAndBlocked", ShortName = "ConnectAndBlocked" }.Save();
+			using (new SessionScope()) {
+				//new Status { Name = "ConnectAndBlocked", ShortName = "ConnectAndBlocked" }.Save();
 				physicalClient = new PhysicalClients {
-														 Name = "Alexandr",
-														 Surname = "Zolotarev",
-														 Patronymic = "Alekseevich",
-														 Street = "Stud",
-														 House = 12,
-														 Apartment = 1,
-														 Entrance = 2,
-														 Floor = 2,
-														 PhoneNumber = "8-900-200-80-80",
-														 Balance = 0,
-														 Tariff = Tariff.Queryable.First(),
-														 CaseHouse = "sdf",
-														 City = "bebsk",
-														 Email = "test@test.ru",
-														 
-													 };
+					Name = "Alexandr",
+					Surname = "Zolotarev",
+					Patronymic = "Alekseevich",
+					Street = "Stud",
+					House = 12,
+					Apartment = 1,
+					Entrance = 2,
+					Floor = 2,
+					PhoneNumber = "8-900-200-80-80",
+					Balance = 0,
+					Tariff = Tariff.Queryable.First(),
+					CaseHouse = "sdf",
+					City = "bebsk",
+					Email = "test@test.ru",
+
+				};
 				physicalClient.SaveAndFlush();
 				client = new Client {
-										 PhysicalClient = physicalClient,
-										 BeginWork = null,
-										 Name =
-											 string.Format("{0} {1} {2}", physicalClient.Surname, physicalClient.Name,
-														   physicalClient.Patronymic),
-										Status = Status.FindFirst()
-									 };
+					PhysicalClient = physicalClient,
+					BeginWork = null,
+					Name =
+						string.Format("{0} {1} {2}", physicalClient.Surname, physicalClient.Name,
+						              physicalClient.Patronymic),
+					Status = Status.FindFirst()
+				};
 				client.SaveAndFlush();
 				endPoint = new ClientEndpoints {
-												   Client = client,
-											   };
+					Client = client,
+				};
 				endPoint.SaveAndFlush();
-				format = string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}&filter.EditingConnect=true&filter.Editing=true",
-									   client.Id);
+				format =
+					string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}&filter.EditingConnect=true&filter.Editing=true",
+					              client.Id);
 			}
 		}
 
-
+		public string tr(Func<string, string> func)
+		{
+			return func("");
+		}
 
 		[Test]
 		public void ChangeBalanceLawyerPersonTest()
