@@ -150,7 +150,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Editing"] = filter.Editing;
 			PropertyBag["ConnectInfo"] = client.GetConnectInfo();
 			PropertyBag["Payments"] = client.Payments.OrderBy(c => c.PaidOn).ToList();
-			PropertyBag["WriteOffs"] = client.GetWriteOffs(filter.grouped).OrderBy(w => w.WriteOffDate);
+			PropertyBag["WriteOffs"] = client.GetWriteOffs(filter.grouped).OrderByDescending(w => w.WriteOffDate).ToList();
 			PropertyBag["writeOffSum"] = WriteOff.FindAllByProperty("Client", client).Sum(s => s.WriteOffSum);
 			PropertyBag["BalanceText"] = string.Empty;
 			PropertyBag["Appeals"] =
@@ -743,7 +743,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["writeOffSum"] = abonentSum +
 			                             Models.UserWriteOff.Queryable.Where(w => w.Client.Id == client.Id).ToList().Sum(
 			                             	w => w.Sum);
-			PropertyBag["WriteOffs"] = client.GetWriteOffs(grouped).OrderBy(w => w.WriteOffDate);
+			PropertyBag["WriteOffs"] = client.GetWriteOffs(grouped).OrderByDescending(w => w.WriteOffDate).ToList();
 			PropertyBag["grouped"] = grouped;
 			PropertyBag["BalanceText"] = string.Empty;
 			PropertyBag["services"] = Service.FindAll();

@@ -27,9 +27,9 @@
 </style>
 <div style="clear:both;">
 <span id="itogo"><b>Всего списано: ${writeOffSum}</b></span> <br />
+<%if (WriteOffs.Count != 0): %>
 <button type="button"  class="editBut slide" onclick="$('#WriteOffTable').slideToggle('slow');"> Показать списания абонентской платы
 </button>
-
 <div id="WriteOffTable" style="display:none">
 <div class="group_link">
 <span>Группировка: </span>
@@ -37,24 +37,50 @@
 <a href="${siteroot}/Search/Redirect?filter.ClientCode=${ClientCode}&filter.grouped=month">Месяц</a>
 <a href="${SiteRoot}/Search/Redirect?filter.ClientCode=${ClientCode}&filter.grouped=year">Год</a>
 </div>
-<table class="table"  style="width: 100%; font-size: small;" align="left">
+<table class="table"  style="width: 100%;font-size: small;" align="left">
 	<thead>
 		<tr valign="top">
 			<th>Дата списания</th>
 			<th>Сумма</th>
 		</tr>
 	</thead>
-		<tbody id="Tbody1" class="HighLightCurrentRow">
+	<% groupYear = IsDefined("filter.grouped") and filter.grouped == """year""" %>
+	<%if not groupYear: %>
+	</table>
+	<div class="accordion" style="font-size:1em; display:table;">
+	<%end %>
+	<%if (WriteOffs.Count != 0) and not groupYear:
+	firstMonth = WriteOffs[0].WriteOffDate %>
+	<h4><a href="#"> ${firstMonth.Month}.${firstMonth.Year}</a> </h4>
+	<div>
+	<table class="table">
+	<tbody>
+	<%end %>
 	<% for i,item in enumerate(WriteOffs): %>
-	<%if item.WriteOffSum != 0 : %>
-		<tr id="Tr${i}">
-			<td>${item.GetDate(grouped)}</td>
-			<td>${item.WriteOffSum}</td>
-		</tr>
+		<%if item.WriteOffSum != 0 : %>
+		<%if not groupYear and item.WriteOffDate.Month != firstMonth.Month : %>
+			</tbody>
+			</table>
+			</div>
+			<h4><a href="#"> ${item.WriteOffDate.Month}.${item.WriteOffDate.Year}</a> </h4>
+			<div>
+			<table class="table">
+			<tbody>
+			<%firstMonth =  item.WriteOffDate%>
+		<%end %>
+			<tr id="Tr${i}">
+				<td>${item.GetDate(grouped)}</td>
+				<td>${item.WriteOffSum}</td>
+			</tr>
 		<%end %>
 	<% end %>
-	<tr><td></td></tr>
 	</tbody>
+	</table>
+	</div>
+	<%if not groupYear: %>
+	</div>
+	<%end %>
 </table>
 </div>
+<%end %>
 </div>

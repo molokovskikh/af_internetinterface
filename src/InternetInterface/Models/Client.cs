@@ -204,7 +204,7 @@ namespace InternetInterface.Models
 				var query =
 					session.CreateSQLQuery(string.Format(
 @"SELECT Id, Sum(WriteOffSum) as WriteOffSum, WriteOffDate, Client  FROM internet.WriteOff W
-where Client = :clientid
+where Client = :clientid and WriteOffSum > 0
 group by {0} order by WriteOffDate;", gpoupKey))
 				.SetParameter("clientid", Id)
 				.SetResultTransformer(

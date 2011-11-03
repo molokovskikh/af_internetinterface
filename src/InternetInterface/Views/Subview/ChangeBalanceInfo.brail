@@ -56,7 +56,8 @@
 <script type="text/javascript">
 	$(function () {
 		$(".accordion").accordion({
-			collapsible: true
+			collapsible: true,
+			autoHeight: false
 		});
 		$('.date-pick').datepicker().change(function () {
 			$('.startDate_local').val($(this).val());

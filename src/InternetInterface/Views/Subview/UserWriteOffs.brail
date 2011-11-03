@@ -1,6 +1,6 @@
 ﻿<%if PartnerAccessSet.AccesPartner("ECI"): %>
-<button type="button" class="editBut slide" onclick="$('#UserWriteOffs').slideToggle('slow');"> Показать списания по клиенту </button>
 <%if _client.UserWriteOffs.Count != 0: %>
+<button type="button" class="editBut slide" onclick="$('#UserWriteOffs').slideToggle('slow');"> Показать списания по клиенту </button>
 <div id="UserWriteOffs" style="display:none;">
 <div style="clear:both;">
 	<table class="table">
