@@ -254,12 +254,12 @@ namespace Billing
 					client.UpdateAndFlush();
 				}
 			}
-			var lawyerclients = Client.Queryable.Where(c => c.LawyerPerson != null).ToList();
+			var lawyerclients = Client.Queryable.Where(c => c.LawyerPerson != null && c.LawyerPerson.Tariff != null).ToList();
 			foreach (var client in lawyerclients) {
 				var person = client.LawyerPerson;
 				if (!client.Disabled) {
 					var thisDate = SystemTime.Now();
-					decimal spis = person.Tariff/DateTime.DaysInMonth(thisDate.Year, thisDate.Month);
+					decimal spis = person.Tariff.Value / DateTime.DaysInMonth(thisDate.Year, thisDate.Month);
 					person.Balance -= spis;
 					person.UpdateAndFlush();
 					new WriteOff {

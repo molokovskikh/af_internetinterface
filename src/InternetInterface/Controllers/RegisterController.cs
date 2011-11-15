@@ -210,7 +210,7 @@ namespace InternetInterface.Controllers
 									WhoRegisteredName = InitializeContent.Partner.Name,
 									RegDate = DateTime.Now,
 									Status = Status.Find((uint) StatusType.BlockedAndNoConnected),
-									
+									Disabled = person.Tariff == null,
 									LawyerPerson = person,
 									Name = person.ShortName,
 									Type = ClientType.Legal,

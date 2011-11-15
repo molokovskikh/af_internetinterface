@@ -1,0 +1,1 @@
+ALTER TABLE `internet`.`lawyerperson` MODIFY COLUMN `Tariff` DECIMAL(10,2) DEFAULT NULL;
