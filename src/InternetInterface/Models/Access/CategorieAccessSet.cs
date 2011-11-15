@@ -26,13 +26,13 @@ namespace InternetInterface.Models
 
 		public static Boolean AccesPartner(string reduseRulesName)
 		{
-			return InitializeContent.partner.AccesedPartner.Contains(reduseRulesName);
+			return InitializeContent.Partner.AccesedPartner.Contains(reduseRulesName);
 		}
 
 		public static IList<CategorieAccessSet> GetAccessPartner()
 		{
 			return FindAll(DetachedCriteria.For(typeof(CategorieAccessSet))
-									.Add(Restrictions.Eq("Categorie", InitializeContent.partner.Categorie)));
+									.Add(Restrictions.Eq("Categorie", InitializeContent.Partner.Categorie)));
 		}
 
 		public override void SaveAndFlush()

@@ -31,7 +31,7 @@ namespace InternetInterface.Controllers.Filter
         };
 
 
-        public static Partner partner
+        public static Partner Partner
         {
             get
             {

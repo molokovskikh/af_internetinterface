@@ -14,7 +14,7 @@ namespace InternetInterface.Helpers
         {
             ArHelper.WithSession(session => SetupParametersForTriggerLogging(new
             {
-                InUser = InitializeContent.partner.Name,
+                InUser = InitializeContent.Partner.Name,
                 InHost = HttpContext.Current.Request.UserHostAddress
             },
                 session));

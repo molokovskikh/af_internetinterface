@@ -124,7 +124,7 @@ namespace InternetInterface.Models
 		public static List<Requests> GetRequestsForInterval(Week Interval)
 		{
 			return Queryable.Where(
-				r => r.RegDate.Date >= Interval.StartDate.Date && r.RegDate.Date <= Interval.EndDate.Date && r.Registrator == InitializeContent.partner).
+				r => r.RegDate.Date >= Interval.StartDate.Date && r.RegDate.Date <= Interval.EndDate.Date && r.Registrator == InitializeContent.Partner).
 				ToList();
 		}
 

@@ -19,7 +19,7 @@ namespace InternetInterface.Models
 		{
 			Client = client;
 			Date = DateTime.Now;
-			Registrator = InitializeContent.partner;
+			Registrator = InitializeContent.Partner;
 		}
 
 		[PrimaryKey]

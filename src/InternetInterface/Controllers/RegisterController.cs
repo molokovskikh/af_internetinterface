@@ -66,8 +66,8 @@ namespace InternetInterface.Controllers
 				var client = new Client {
 											 AutoUnblocked = true,
 											 RegDate = DateTime.Now,
-											 WhoRegistered = InitializeContent.partner,
-											 WhoRegisteredName = InitializeContent.partner.Name,
+											 WhoRegistered = InitializeContent.Partner,
+											 WhoRegisteredName = InitializeContent.Partner.Name,
 											 Status = Status.Find((uint) StatusType.BlockedAndNoConnected),
 
 											 Name =
@@ -80,7 +80,7 @@ namespace InternetInterface.Controllers
 				client.SaveAndFlush();
 				var payment = new Payment {
 											  Agent =
-												  Agent.FindAllByProperty("Partner", InitializeContent.partner).First(),
+												  Agent.FindAllByProperty("Partner", InitializeContent.Partner).First(),
 											  BillingAccount = true,
 											  Client = client,
 											  PaidOn = DateTime.Now,
@@ -152,14 +152,14 @@ namespace InternetInterface.Controllers
 					requestse.Label = Label.Queryable.Where(l => l.ShortComment == "Registered").FirstOrDefault();
 					requestse.Update();
 				}
-				if (InitializeContent.partner.Categorie.ReductionName == "Office")
+				if (InitializeContent.Partner.Categorie.ReductionName == "Office")
 					if (VisibleRegisteredInfo)
 						RedirectToUrl("..//UserInfo/ClientRegisteredInfo.rails");
 					else
 					{
 						RedirectToUrl("../UserInfo/SearchUserInfo.rails?filter.ClientCode=" + client.Id);
 					}
-				if (InitializeContent.partner.Categorie.ReductionName == "Diller")
+				if (InitializeContent.Partner.Categorie.ReductionName == "Diller")
 					RedirectToUrl("..//UserInfo/ClientRegisteredInfoFromDiller.rails");
 			}
 			else
@@ -206,8 +206,8 @@ namespace InternetInterface.Controllers
 				person.SaveAndFlush();
 				var client = new Client
 								{
-									WhoRegistered = InitializeContent.partner,
-									WhoRegisteredName = InitializeContent.partner.Name,
+									WhoRegistered = InitializeContent.Partner,
+									WhoRegisteredName = InitializeContent.Partner.Name,
 									RegDate = DateTime.Now,
 									Status = Status.Find((uint) StatusType.BlockedAndNoConnected),
 									
@@ -478,10 +478,10 @@ namespace InternetInterface.Controllers
 			if (Validator.IsValid(request))
 			{
 				request.Tariff = Tariff.Find(tariff);
-				request.Registrator = InitializeContent.partner;
+				request.Registrator = InitializeContent.Partner;
 				request.ActionDate = DateTime.Now;
 				request.RegDate = DateTime.Now;
-				request.Operator = InitializeContent.partner;
+				request.Operator = InitializeContent.Partner;
 				request.Save();
 				request.SetRequestBoduses();
 				var apartment =
@@ -501,7 +501,7 @@ namespace InternetInterface.Controllers
 				apartment.Update();
 				PaymentsForAgent.CreatePayment(AgentActions.CreateRequest,
 				                               string.Format("Начисление за создание заявки #{0}", request.Id),
-				                               InitializeContent.partner);
+				                               InitializeContent.Partner);
 				RedirectToUrl("../HouseMap/ViewHouseInfo.rails?House=" + houseNumber);
 			}
 		}

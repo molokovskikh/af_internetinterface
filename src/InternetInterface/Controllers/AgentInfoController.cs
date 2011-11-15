@@ -17,7 +17,7 @@ namespace InternetInterface.Controllers
 		{
 			return PaymentsForAgent.Queryable.Where(
 				p =>
-				p.Agent == InitializeContent.partner && p.RegistrationDate >= startDate &&
+				p.Agent == InitializeContent.Partner && p.RegistrationDate >= startDate &&
 				p.RegistrationDate <= endDate).ToList();
 		}
 

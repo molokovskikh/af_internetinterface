@@ -194,7 +194,7 @@ namespace InternetInterface.Controllers
 				            	AppealType = (int) AppealType.System,
 				            	Client = client,
 				            	Date = DateTime.Now,
-				            	Partner = InitializeContent.partner
+				            	Partner = InitializeContent.Partner
 				            }.Save();
 			}
 			Flash["Applying"] = message;
@@ -225,7 +225,7 @@ namespace InternetInterface.Controllers
 				              	               dtn.Hour,
 				              	               dtn.Minute,
 				              	               dtn.Second),
-				Activator = InitializeContent.partner
+				Activator = InitializeContent.Partner
 			};
 			client.ClientServices.Add(clientService);
 			clientService.Activate();
@@ -377,7 +377,7 @@ namespace InternetInterface.Controllers
 						if (payments.Count() == 0)
 							new PaymentForConnect {
 								Sum = connectSum,
-								Partner = InitializeContent.partner,
+								Partner = InitializeContent.Partner,
 								EndPoint = clientEntPoint,
 								RegDate = DateTime.Now
 							}.Save();
@@ -408,7 +408,7 @@ namespace InternetInterface.Controllers
 				new Appeals {
 				            	Appeal = Appeal,
 				            	Date = DateTime.Now,
-				            	Partner = InitializeContent.partner,
+				            	Partner = InitializeContent.Partner,
 				            	Client = Client.Find(ClientID),
 				            	AppealType = (int) AppealType.User
 				            }.SaveAndFlush();
@@ -464,19 +464,19 @@ namespace InternetInterface.Controllers
 		public void DeleteLabel(uint deletelabelch)
 		{
 			var labelForDel = Label.Find(deletelabelch);
-			if (labelForDel != null && labelForDel.Deleted)
-			{
+			if (labelForDel != null && labelForDel.Deleted) {
 				labelForDel.DeleteAndFlush();
 				ARSesssionHelper<Label>.QueryWithSession(session => {
 					var query =
 						session.CreateSQLQuery(
-							@"update internet.Requests R set r.`Label` = 0, r.`ActionDate` = :ActDate, r.`Operator` = :Oper
-																where r.`Label`= :LabelIndex ;")
-							.AddEntity(
-								typeof (Label));
+@"update internet.Requests R 
+set r.`Label` = null,
+r.`ActionDate` = :ActDate,
+r.`Operator` = :Oper 
+where r.`Label`= :LabelIndex ;").AddEntity(typeof (Label));
 					query.SetParameter("LabelIndex", deletelabelch);
 					query.SetParameter("ActDate", DateTime.Now);
-					query.SetParameter("Oper", InitializeContent.partner.Id);
+					query.SetParameter("Oper", InitializeContent.Partner.Id);
 					query.ExecuteUpdate();
 					return new List<Label>();
 				});
@@ -487,8 +487,8 @@ namespace InternetInterface.Controllers
 		public void RequestView()
 		{
 			var requests = Requests.FindAll().OrderByDescending(f => f.ActionDate);
-			PropertyBag["Clients"] = InitializeContent.partner.Categorie.ReductionName == "Agent"
-			                         	? requests.Where(r => r.Registrator == InitializeContent.partner).ToList()
+			PropertyBag["Clients"] = InitializeContent.Partner.Categorie.ReductionName == "Agent"
+			                         	? requests.Where(r => r.Registrator == InitializeContent.Partner).ToList()
 			                         	: requests.ToList();
 			SendRequestEditParameter();
 		}
@@ -522,8 +522,8 @@ namespace InternetInterface.Controllers
 			else
 				requests = requests.Where(r => r.Label != null && r.Label.Id == labelId).ToList();
 			requests = requests.OrderByDescending(f => f.ActionDate).ToList();
-			if (InitializeContent.partner.Categorie.ReductionName == "Agent")
-				PropertyBag["Clients"] = requests.Where(r => r.Registrator == InitializeContent.partner).ToList();
+			if (InitializeContent.Partner.Categorie.ReductionName == "Agent")
+				PropertyBag["Clients"] = requests.Where(r => r.Registrator == InitializeContent.Partner).ToList();
 			else
 				PropertyBag["Clients"] = requests.ToList();
 			SendRequestEditParameter();
@@ -546,7 +546,7 @@ namespace InternetInterface.Controllers
 				{
 					request.Label = _label;
 					request.ActionDate = DateTime.Now;
-					request.Operator = InitializeContent.partner;
+					request.Operator = InitializeContent.Partner;
 					request.UpdateAndFlush();
 				}
 				if (_label.ShortComment == "Refused" && request.Registrator != null &&
@@ -559,8 +559,8 @@ namespace InternetInterface.Controllers
 				}
 			}
 			var requests = Requests.FindAll().OrderByDescending(f => f.ActionDate);
-			if (InitializeContent.partner.Categorie.ReductionName == "Agent")
-				PropertyBag["Clients"] = requests.Where(r => r.Registrator == InitializeContent.partner).ToList();
+			if (InitializeContent.Partner.Categorie.ReductionName == "Agent")
+				PropertyBag["Clients"] = requests.Where(r => r.Registrator == InitializeContent.Partner).ToList();
 			else
 				PropertyBag["Clients"] = requests.ToList();
 			SendRequestEditParameter();
@@ -921,7 +921,7 @@ namespace InternetInterface.Controllers
 				            		"Причина недозвона:  " + prichina + " \r\n Дата: " + _noPhoneDate.ToShortDateString() +
 				            		" \r\n Комментарий: \r\n " + Appeal,
 				            	Date = DateTime.Now,
-				            	Partner = InitializeContent.partner,
+				            	Partner = InitializeContent.Partner,
 				            	Client = Client.Find(ClientID),
 				            	AppealType = (int) AppealType.User
 				            }.SaveAndFlush();
@@ -942,13 +942,12 @@ namespace InternetInterface.Controllers
 		{
 			var selDate = DateTime.Parse(Request.Form["graph_date"]);
 			return new {
-			           	brigads = Brigad.FindAll().Select(b => new {b.Id, b.Name}).ToArray(),
-			           	graphs =
-			           		ConnectGraph.Queryable.Where(c => c.Day.Date == selDate).Select(
-			           			g => new {brigadId = g.Brigad.Id, clientId = g.Client != null ? g.Client.Id : 0, g.IntervalId}).ToArray
-			           			(),
-			           	intervals = Intervals.GetIntervals()
-			           };
+				brigads = Brigad.FindAll().Select(b => new {b.Id, b.Name}).ToArray(),
+				graphs =
+					ConnectGraph.Queryable.Where(c => c.Day.Date == selDate).Select(
+						g => new {brigadId = g.Brigad.Id, clientId = g.Client != null ? g.Client.Id : 0, g.IntervalId}).ToArray(),
+				intervals = Intervals.GetIntervals()
+			};
 		}
 
 		[return: JSONReturnBinder]
@@ -975,7 +974,7 @@ namespace InternetInterface.Controllers
 				new Appeals {
 				            	Client = client,
 				            	Date = DateTime.Now,
-				            	Partner = InitializeContent.partner,
+				            	Partner = InitializeContent.Partner,
 				            	Appeal =
 				            		string.Format("Назначен в график, \r\n Брагада: {0} \r\n Дата: {1} \r\n Время: {2}",
 				            		              briad.Name,

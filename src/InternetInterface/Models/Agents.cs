@@ -26,7 +26,7 @@ namespace InternetInterface.Models
 
 		public static Agent GetByInitPartner()
 		{
-			return Queryable.FirstOrDefault(a => a.Partner == InitializeContent.partner);
+			return Queryable.FirstOrDefault(a => a.Partner == InitializeContent.Partner);
 		}
 	}
 }
