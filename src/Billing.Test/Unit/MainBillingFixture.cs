@@ -522,7 +522,7 @@ namespace Billing.Test.Unit
 				Service = Service.GetByType(typeof(VoluntaryBlockin)),
 				Activator = InitializeContent.Partner
 			};
-			physClient.Balance = 200m;
+			physClient.Balance = client.GetPriceForTariff();
 			physClient.Update();
 			billing.OnMethod();
 			Assert.IsFalse(client.Disabled);// = true;
@@ -707,7 +707,7 @@ namespace Billing.Test.Unit
 			Assert.Greater(client.PhysicalClient.Balance, 0);
 			new Payment {
 							Client = client, 
-							Sum = partBalance,
+							Sum = client.GetPriceForTariff() - client.PhysicalClient.Balance,
 							BillingAccount = false,
 						}.Save();
 			billing.OnMethod();
@@ -728,7 +728,7 @@ namespace Billing.Test.Unit
 			Assert.IsTrue(unblockedClient.Status.Blocked);
 			new Payment {
 							Client = unblockedClient,
-							Sum = 200
+							Sum = unblockedClient.GetPriceForTariff() - phisClient.Balance
 						}.Save();
 			billing.OnMethod();
 			unblockedClient.Refresh();

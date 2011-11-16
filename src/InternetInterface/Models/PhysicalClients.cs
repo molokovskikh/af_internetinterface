@@ -209,10 +209,5 @@ namespace InternetInterface.Models
 			}
 			return false;
 		}
-
-		public virtual decimal ToPay()
-		{
-			return Math.Abs(Balance) + Tariff.Price;
-		}
 	}
 }

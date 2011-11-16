@@ -613,6 +613,7 @@ where r.`Label`= :LabelIndex ;").AddEntity(typeof (Label));
 
 				InitializeHelper.InitializeModel(_client);
 				InitializeHelper.InitializeModel(updateClient);
+
 				DbLogHelper.SetupParametersForTriggerLogging();
 
 				if (!string.IsNullOrEmpty(comment))

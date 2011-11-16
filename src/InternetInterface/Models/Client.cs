@@ -273,6 +273,11 @@ typeof(ClientConnectInfo)))
 			return false;
 		}
 
+		public virtual decimal ToPay()
+		{
+			return GetPriceForTariff() - PhysicalClient.Balance;
+		}
+
 		public virtual decimal GetPriceForTariff()
 		{
 			if ((PhysicalClient.Tariff.FinalPriceInterval == 0 || PhysicalClient.Tariff.FinalPrice == 0) )

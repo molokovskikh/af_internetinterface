@@ -460,7 +460,6 @@
     </Compile>
     <Compile Include="Initializers\ActiveRecord.cs" />
     <Compile Include="Logic\LoginLogic.cs" />
-    <Compile Include="Models\Lease.cs" />
     <Compile Include="Models\Main.cs" />
     <Compile Include="Models\SceHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
