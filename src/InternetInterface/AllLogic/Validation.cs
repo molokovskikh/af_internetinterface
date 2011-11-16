@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Castle.Components.Binder;
+using Castle.Components.Validator;
+using Castle.MonoRail.Framework;
 using InternetInterface.Models;
 
 namespace InternetInterface.AllLogic
@@ -27,6 +30,23 @@ namespace InternetInterface.AllLogic
 			else
 			{
 				return "Вы ввели некорректное значение порта";
+			}
+		}
+	}
+
+	public class DecimalValidateBinder : DataBinder
+	{
+		protected override void BeforeBindingProperty(object instance, System.Reflection.PropertyInfo prop, string prefix, CompositeNode node)
+		{
+			var child = node.GetChildNode(prop.Name);
+			if (child != null) {
+				if (child.GetType() != typeof (LeafNode))
+					return;
+				var value = ((LeafNode) child).Value;
+				var validators = Validator.GetValidators(instance.GetType(), prop);
+				var decValidator = validators.OfType<DecimalValidator>().FirstOrDefault();
+				if (decValidator != null && !decValidator.IsValid(instance, value)) {
+				}
 			}
 		}
 	}

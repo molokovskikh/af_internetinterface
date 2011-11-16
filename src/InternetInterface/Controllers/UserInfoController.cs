@@ -165,6 +165,8 @@ namespace InternetInterface.Controllers
 			{
 				PropertyBag["EConnect"] = 0;
 			}
+			if (client.LawyerPerson.Tariff == null)
+				PropertyBag["Message"] = Message.Error("Не задана абонентская плата для клиента ! Клиент отключен !");
 			SendConnectInfo(client);
 			ConnectPropertyBag(filter.ClientCode);
 			SendUserWriteOff();
@@ -473,7 +475,8 @@ namespace InternetInterface.Controllers
 set r.`Label` = null,
 r.`ActionDate` = :ActDate,
 r.`Operator` = :Oper 
-where r.`Label`= :LabelIndex ;").AddEntity(typeof (Label));
+where r.`Label`= :LabelIndex ;")
+							.AddEntity(typeof (Label));
 					query.SetParameter("LabelIndex", deletelabelch);
 					query.SetParameter("ActDate", DateTime.Now);
 					query.SetParameter("Oper", InitializeContent.Partner.Id);
@@ -601,6 +604,7 @@ where r.`Label`= :LabelIndex ;").AddEntity(typeof (Label));
 		[AccessibleThrough(Verb.Post)]
 		public void EditLawyerPerson(uint ClientID, int Speed, string grouped, int appealType, string comment)
 		{
+			SetBinder(new DecimalValidateBinder {Validator = Validator});
 			var _client = Client.Queryable.First(c => c.Id == ClientID);
 			var updateClient = _client.LawyerPerson;
 			InitializeHelper.InitializeModel(_client);
@@ -623,6 +627,7 @@ where r.`Label`= :LabelIndex ;").AddEntity(typeof (Label));
 
 				updateClient.Update();
 
+				_client.Disabled = updateClient.Tariff == null;
 				_client.Name = updateClient.ShortName;
 				_client.Update();
 

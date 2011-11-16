@@ -86,6 +86,17 @@ namespace InternetInterface.Models
 		[BelongsTo(Lazy = FetchWhen.OnInvoke)]
 		public virtual AdditionalStatus AdditionalStatus { get; set; }
 
+		public virtual bool StatusCanChange()
+		{
+			if (PhysicalClient != null)
+				return true;
+			if (LawyerPerson != null) {
+				if (LawyerPerson.Tariff != null)
+					return true;
+			}
+			return false;
+		}
+
 		public virtual bool PaymentForTariff()
 		{
 			if (Payments != null)

@@ -199,6 +199,7 @@ namespace InternetInterface.Controllers
 		public void RegisterLegalPerson([DataBind("LegalPerson")]LawyerPerson person, int speed, [DataBind("ConnectInfo")]ConnectInfo info, uint brigadForConnect)
 		{
 			var connectErrors = Validation.ValidationConnectInfo(info);
+			//var te = Binder.ErrorList["Tariff"].ErrorMessage;
 			if (Validator.IsValid(person) && string.IsNullOrEmpty(connectErrors))
 			{
 				DbLogHelper.SetupParametersForTriggerLogging();
