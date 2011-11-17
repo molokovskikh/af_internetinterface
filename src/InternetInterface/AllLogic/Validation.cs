@@ -38,14 +38,17 @@ namespace InternetInterface.AllLogic
 	{
 		protected override void BeforeBindingProperty(object instance, System.Reflection.PropertyInfo prop, string prefix, CompositeNode node)
 		{
-			var child = node.GetChildNode(prop.Name);
+			dynamic child = node.GetChildNode(prop.Name);
 			if (child != null) {
 				if (child.GetType() != typeof (LeafNode))
 					return;
-				var value = ((LeafNode) child).Value;
+				//var value = ((LeafNode) child).Value;
+				//var value = child.Value;
 				var validators = Validator.GetValidators(instance.GetType(), prop);
 				var decValidator = validators.OfType<DecimalValidator>().FirstOrDefault();
-				if (decValidator != null && !decValidator.IsValid(instance, value)) {
+				if (decValidator != null && !decValidator.IsValid(instance, child.Value)) {
+					var errorSummary = GetValidationSummary(instance);
+					errorSummary.RegisterErrorMessage(prop, decValidator.ErrorMessage);
 				}
 			}
 		}

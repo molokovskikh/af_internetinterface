@@ -611,7 +611,7 @@ where r.`Label`= :LabelIndex ;")
 			InitializeHelper.InitializeModel(updateClient);
 			BindObjectInstance(updateClient, ParamStore.Form, "LegalPerson");
 
-			if (Validator.IsValid(updateClient))
+			if (IsValid(updateClient))
 			{
 				//updateClient.Speed = PackageSpeed.Find(Speed);
 
