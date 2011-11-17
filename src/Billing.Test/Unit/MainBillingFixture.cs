@@ -698,18 +698,26 @@ namespace Billing.Test.Unit
 			client.BeginWork = DateTime.Now;
 			client.RatedPeriodDate = DateTime.Now;
 			client.Save();
-			var partBalance = client.GetPrice() / client.GetInterval();
-			client.PhysicalClient.Balance = partBalance * 2 - 1;
+			var partBalance = client.GetPrice()/client.GetInterval();
+			client.PhysicalClient.Balance = partBalance*2 - 1;
 			client.Update();
 			billing.Compute();
 			client.Refresh();
 			Assert.IsTrue(client.ShowBalanceWarningPage);
 			Assert.Greater(client.PhysicalClient.Balance, 0);
 			new Payment {
-							Client = client, 
-							Sum = client.GetPriceForTariff() - client.PhysicalClient.Balance,
-							BillingAccount = false,
-						}.Save();
+				Client = client,
+				Sum = 100,
+				BillingAccount = false,
+			}.Save();
+			billing.OnMethod();
+			client.Refresh();
+			Assert.IsTrue(client.ShowBalanceWarningPage);
+			new Payment {
+				Client = client,
+				Sum = client.GetPriceForTariff() - client.PhysicalClient.Balance,
+				BillingAccount = false,
+			}.Save();
 			billing.OnMethod();
 			client.Refresh();
 			Assert.IsFalse(client.ShowBalanceWarningPage);

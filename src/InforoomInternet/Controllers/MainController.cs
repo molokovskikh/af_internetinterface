@@ -47,7 +47,6 @@ namespace InforoomInternet.Controllers
 		public void PrivateOffice()
 		{}
 
-
 		public void Assist()
 		{
 			if (Request != null)
@@ -102,10 +101,11 @@ namespace InforoomInternet.Controllers
 			lease = new Lease {
 				Endpoint = new ClientEndpoints {
 					Client = new Client {
-						Disabled = false,
+						Disabled = true,
 						ShowBalanceWarningPage = true,
+						RatedPeriodDate = DateTime.Now,
 						PhysicalClient = new PhysicalClients {
-							Balance = 100,
+							Balance = -15,
 							Tariff = new Tariff {
 								Price = 500
 							}
