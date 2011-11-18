@@ -212,4 +212,8 @@ end %>
 </div>
 </form>
 </div>
+<div style="width:49%; float:right; padding-top:5px;">
+<% OutputSubView("""\Subview\ContactInfo""") %>
 <% OutputSubView("""\Subview\AppealsInfo""") %>
+<% OutputSubView("""\Subview\CallsHistory""") %>
+</div>

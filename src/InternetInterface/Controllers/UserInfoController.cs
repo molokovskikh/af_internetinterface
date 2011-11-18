@@ -7,6 +7,7 @@ using System.Threading;
 using System.Web;
 using System.Linq;
 using System.Collections.Generic;
+using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
@@ -29,6 +30,7 @@ namespace InternetInterface.Controllers
 		public int appealType  { get; set; }
 		public string grouped  { get; set; }
 		public bool Editing  { get; set; }
+		public bool EditConnectInfoFlag  { get; set; }
 		public int EditingConnect { get; set; }
 	}
 
@@ -115,6 +117,7 @@ namespace InternetInterface.Controllers
 			SendParam(filter.ClientCode, filter.grouped, filter.appealType);
 			PropertyBag["Editing"] = filter.Editing;
 			PropertyBag["appealType"] = filter.appealType;
+			PropertyBag["EditConnectInfoFlag"] = filter.EditConnectInfoFlag;
 			PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClients>(new PhysicalClients());
 			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(t => t.Name != null);
 		}
@@ -201,6 +204,45 @@ namespace InternetInterface.Controllers
 			}
 			Flash["Applying"] = message;
 			RedirectToUrl("../UserInfo/SearchUserInfo.rails?filter.ClientCode=" + ClientID);
+		}
+
+		[AccessibleThrough(Verb.Post)]
+		public void BindPhone(uint clientCode, ulong phoneId)
+		{
+			var client = Client.Find(clientCode);
+			var phone = UnresolvedCall.Find(phoneId);
+			if (phone != null && client != null) {
+				var number = phone.PhoneNumber;
+				new Contact {
+					Client = client,
+					Text = string.Format("8-{0}-{1}", number.Substring(0, 3), number.Substring(3, 7)),
+					Type = ContactType.ConnectedPhone,
+					Registrator = InitializeContent.Partner,
+					Date = DateTime.Now
+				}.Save();
+				phone.Delete();
+			}
+			RedirectToReferrer();
+		}
+
+		[AccessibleThrough(Verb.Post)]
+		public void SaveContacts([ARDataBind("contact", AutoLoad = AutoLoadBehavior.NewInstanceIfInvalidKey)]Contact[] contacts, uint ClientID)
+		{
+			foreach (var contact in contacts) {
+				contact.Save();
+			}
+			RedirectToUrl("../Search/Redirect.rails?filter.ClientCode=" + ClientID);
+		}
+
+		public void DeleteContact(uint contactId)
+		{
+			Contact.Find(contactId).Delete();
+			RedirectToReferrer();
+		}
+
+		public void LoadContactEditModule(uint ClientID)
+		{
+			RedirectToUrl("../Search/Redirect.rails?filter.ClientCode=" + ClientID + "&filter.EditConnectInfoFlag=" + true);
 		}
 
 		public void ActivateService(uint clientId, uint serviceId, DateTime? startDate, DateTime? endDate)
@@ -772,6 +814,10 @@ where r.`Label`= :LabelIndex ;")
 
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties { ChangeType = TypeChangeBalance.OtherSumm };
 			PropertyBag["UserInfo"] = true;
+			PropertyBag["CallLogs"] = UnresolvedCall.LastCalls;
+			PropertyBag["Contacts"] =
+				Contact.Queryable.Where(c => c.Client.Id == ClientCode).OrderBy(c => c.Type).Select(
+					c => new { c.Id ,ContactText = c.Text, Type = c.GetReadbleCategorie()}).ToList();
 
 			ConnectPropertyBag(ClientCode);
 			SendConnectInfo(client);

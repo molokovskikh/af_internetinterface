@@ -273,7 +273,11 @@ namespace InternetInterface.Models.Access
 									"SaveGraph",
 									"RequestGraph",
 									"CreateAndPrintGraph",
-									"UserWriteOff"
+									"UserWriteOff",
+									"BindPhone",
+									"LoadContactEditModule",
+									"SaveContacts",
+									"DeleteContact"
 								};
 			return _visibleDemand.Contains(methodName) ? "ECI" : string.Empty;
 		}

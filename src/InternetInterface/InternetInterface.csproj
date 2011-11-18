@@ -168,9 +168,11 @@
     <None Include="Views\Register\RegisterRequest.brail" />
     <None Include="Views\Rescues\404.brail" />
     <None Include="Views\Subview\AppealsInfo.brail" />
+    <None Include="Views\Subview\CallsHistory.brail" />
     <None Include="Views\Subview\ChangeBalanceInfo.brail" />
     <None Include="Views\Subview\Client.brail" />
     <None Include="Views\Subview\ConnectMenu.brail" />
+    <None Include="Views\Subview\ContactInfo.brail" />
     <None Include="Views\Subview\CreateEditLabel.brail" />
     <None Include="Views\Subview\UserWriteOffs.brail" />
     <None Include="Views\Switches\FreePortForSwitch.brail" />
@@ -224,7 +226,7 @@
     <Compile Include="AllLogic\ColorWork.cs" />
     <Compile Include="AllLogic\GetClientsLogic.cs" />
     <Compile Include="AllLogic\Validation.cs" />
-    <Compile Include="Components\SelectList.cs" />
+    <Compile Include="Components\ContactTypeList.cs" />
     <Compile Include="Controllers\AgentInfoController.cs" />
     <Compile Include="Controllers\BrigadsController.cs" />
     <Compile Include="Controllers\ExitPartner.cs" />
@@ -283,6 +285,7 @@
     <Compile Include="Models\Client.cs" />
     <Compile Include="Models\ClientService.cs" />
     <Compile Include="Models\ConnectGraph.cs" />
+    <Compile Include="Models\Contact.cs" />
     <Compile Include="Models\Entrance.cs" />
     <Compile Include="Models\House.cs" />
     <Compile Include="Models\Internetsessionslog.cs" />
@@ -311,6 +314,7 @@
     </Compile>
     <Compile Include="Models\Partner.cs" />
     <Compile Include="Models\PhysicalClients.cs" />
+    <Compile Include="Models\UnresolvedCalls.cs" />
     <Compile Include="Models\UserCategorie.cs" />
     <Compile Include="Models\UserWriteOff.cs" />
     <Compile Include="Models\WriteOff.cs" />

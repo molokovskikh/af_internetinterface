@@ -1,4 +1,7 @@
-﻿<%if PartnerAccessSet.AccesPartner("SSI"): %>
+﻿<button type="button"  class="editBut slide" onclick="$('#PaymentTable').slideToggle('slow');"> Показать платежи клиента
+</button>
+<div id="PaymentTable" style="display:none">
+<%if PartnerAccessSet.AccesPartner("SSI"): %>
 <div style="clear:both;">
 <%if (Payments.Count == 0): %>
 				  <div class="flash">
@@ -37,3 +40,4 @@
 <%end %>
 </div>
 <%end %>
+</div>

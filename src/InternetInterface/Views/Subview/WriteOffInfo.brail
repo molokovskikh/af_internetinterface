@@ -26,10 +26,10 @@
 		}
 </style>
 <div style="clear:both;">
-<span id="itogo"><b>Всего списано: ${writeOffSum}</b></span> <br />
 <%if (WriteOffs.Count != 0): %>
 <button type="button"  class="editBut slide" onclick="$('#WriteOffTable').slideToggle('slow');"> Показать списания абонентской платы
 </button>
+<span id="itogo"><b>Всего списано: ${writeOffSum}</b></span>
 <div id="WriteOffTable" style="display:none">
 <div class="group_link">
 <span>Группировка: </span>
