@@ -47,7 +47,6 @@ namespace InforoomInternet.Controllers
 		public void PrivateOffice()
 		{}
 
-
 		public void Assist()
 		{
 			if (Request != null)
@@ -104,8 +103,9 @@ namespace InforoomInternet.Controllers
 					Client = new Client {
 						Disabled = false,
 						ShowBalanceWarningPage = true,
+						RatedPeriodDate = DateTime.Now,
 						PhysicalClient = new PhysicalClients {
-							Balance = 100,
+							Balance = 15,
 							Tariff = new Tariff {
 								Price = 500
 							}

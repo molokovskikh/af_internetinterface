@@ -522,7 +522,7 @@ namespace Billing.Test.Unit
 				Service = Service.GetByType(typeof(VoluntaryBlockin)),
 				Activator = InitializeContent.Partner
 			};
-			physClient.Balance = 200m;
+			physClient.Balance = client.GetPriceForTariff();
 			physClient.Update();
 			billing.OnMethod();
 			Assert.IsFalse(client.Disabled);// = true;
@@ -698,18 +698,26 @@ namespace Billing.Test.Unit
 			client.BeginWork = DateTime.Now;
 			client.RatedPeriodDate = DateTime.Now;
 			client.Save();
-			var partBalance = client.GetPrice() / client.GetInterval();
-			client.PhysicalClient.Balance = partBalance * 2 - 1;
+			var partBalance = client.GetPrice()/client.GetInterval();
+			client.PhysicalClient.Balance = partBalance*2 - 1;
 			client.Update();
 			billing.Compute();
 			client.Refresh();
 			Assert.IsTrue(client.ShowBalanceWarningPage);
 			Assert.Greater(client.PhysicalClient.Balance, 0);
 			new Payment {
-							Client = client, 
-							Sum = partBalance,
-							BillingAccount = false,
-						}.Save();
+				Client = client,
+				Sum = 100,
+				BillingAccount = false,
+			}.Save();
+			billing.OnMethod();
+			client.Refresh();
+			Assert.IsTrue(client.ShowBalanceWarningPage);
+			new Payment {
+				Client = client,
+				Sum = client.GetPriceForTariff() - client.PhysicalClient.Balance,
+				BillingAccount = false,
+			}.Save();
 			billing.OnMethod();
 			client.Refresh();
 			Assert.IsFalse(client.ShowBalanceWarningPage);
@@ -728,7 +736,7 @@ namespace Billing.Test.Unit
 			Assert.IsTrue(unblockedClient.Status.Blocked);
 			new Payment {
 							Client = unblockedClient,
-							Sum = 200
+							Sum = unblockedClient.GetPriceForTariff() - phisClient.Balance
 						}.Save();
 			billing.OnMethod();
 			unblockedClient.Refresh();

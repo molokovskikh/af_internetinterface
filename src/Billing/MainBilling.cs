@@ -140,9 +140,8 @@ namespace Billing
 					physicalClient.UpdateAndFlush();
 					newPayment.BillingAccount = true;
 					newPayment.UpdateAndFlush();
-					var bufBal = physicalClient.Balance;
 					if (updateClient.RatedPeriodDate != null)
-						if (bufBal - updateClient.GetPrice()/updateClient.GetInterval() > 0) {
+						if (physicalClient.Balance >= updateClient.GetPriceForTariff()) {
 							updateClient.ShowBalanceWarningPage = false;
 							updateClient.Update();
 						}
@@ -177,13 +176,12 @@ namespace Billing
 				userWriteOff.Update();
 			}
 
-			var clients = Client.FindAll(DetachedCriteria.For(typeof (Client))
-			                             	.CreateAlias("PhysicalClient", "PC", JoinType.InnerJoin)
-			                             	.Add(Restrictions.IsNotNull("PhysicalClient"))
-			                             	.Add(Restrictions.Eq("Disabled", true))
-			                             	.Add(Restrictions.Eq("AutoUnblocked", true))
-			                             	.Add(Restrictions.Ge("PC.Balance", 0m)));
+			var clients =
+				Client.Queryable.Where(
+					c => c.PhysicalClient != null && c.Disabled && c.AutoUnblocked).ToList().Where(
+						c => c.PhysicalClient.Balance >= c.GetPriceForTariff()).ToList();
 			foreach (var client in clients) {
+
 				client.Status = Status.Find((uint) StatusType.Worked);
 				client.RatedPeriodDate = null;
 				client.DebtDays = 0;

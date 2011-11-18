@@ -284,6 +284,16 @@ typeof(ClientConnectInfo)))
 			return false;
 		}
 
+		public virtual decimal ToPay()
+		{
+			return GetPriceForTariff() - PhysicalClient.Balance;
+		}
+
+		public virtual bool MinimumBalance()
+		{
+			return PhysicalClient.Balance - GetPrice()/GetInterval() < 0;
+		}
+
 		public virtual decimal GetPriceForTariff()
 		{
 			if ((PhysicalClient.Tariff.FinalPriceInterval == 0 || PhysicalClient.Tariff.FinalPrice == 0) )
