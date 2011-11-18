@@ -9,6 +9,7 @@ using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Castle.MonoRail.Framework;
 using Common.Tools;
+using Common.Web.Ui.Controllers;
 using InternetInterface.AllLogic;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
@@ -23,7 +24,7 @@ namespace InternetInterface.Controllers
 {
 	//[Layout("Main")]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
-	public class RegisterController : SmartDispatcherController
+	public class RegisterController : BaseController
 	{
 		[AccessibleThrough(Verb.Post)]
 		public void RegisterClient([DataBind("ChangedBy")]ChangeBalaceProperties changeProperties,
@@ -196,11 +197,14 @@ namespace InternetInterface.Controllers
 			PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(new LawyerPerson());
 		}
 
-		public void RegisterLegalPerson([DataBind("LegalPerson")]LawyerPerson person, int speed, [DataBind("ConnectInfo")]ConnectInfo info, uint brigadForConnect)
+		public void RegisterLegalPerson(/*[DataBind("LegalPerson")]LawyerPerson person,*/ int speed, [DataBind("ConnectInfo")]ConnectInfo info, uint brigadForConnect)
 		{
+			SetBinder(new DecimalValidateBinder {Validator = Validator});
+			var person = new LawyerPerson();
+			BindObjectInstance(person, ParamStore.Form, "LegalPerson");
 			var connectErrors = Validation.ValidationConnectInfo(info);
 			//var te = Binder.ErrorList["Tariff"].ErrorMessage;
-			if (Validator.IsValid(person) && string.IsNullOrEmpty(connectErrors))
+			if (IsValid(person) && string.IsNullOrEmpty(connectErrors))
 			{
 				DbLogHelper.SetupParametersForTriggerLogging();
 				person.Recipient = Recipient.Queryable.Where(r => r.INN == "3666152146").FirstOrDefault();

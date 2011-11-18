@@ -30,18 +30,16 @@ namespace InternetInterface.Test.Unit
 		{
 			var args = new NameValueCollection
 			           	{
-			           		{"lawyerPerson.Tariff", "dsfgsdfg"},
+			           		{"lawyerPerson.Tariff", "sdfsd"},
 			           		{"lawyerPerson.Name", "Test"},
 			           		{"lawyerPerson.ShortName", "Test"},
 			           		{"lawyerPerson.Telephone", "8-900-900-90-90"}
 			           	};
-			//var paramsNode = GetParamsNode(expectedValue);
-			//var myList = (LawyerPerson) binder.BindObject(typeof (LawyerPerson), "myList", paramsNode);
 			var instance = binder.BindObject(typeof (LawyerPerson), "lawyerPerson", builder.BuildSourceNode(args));
-			/*foreach(var e in binder.ErrorList)
-				Console.WriteLine(e);*/
-			Assert.IsFalse(binder.Validator.IsValid(instance));
-			//Assert.AreEqual(expectedValue, myList);
+			Assert.IsTrue(binder.GetValidationSummary(instance).HasError);
+			args["lawyerPerson.Tariff"] = "600";
+			instance = binder.BindObject(typeof (LawyerPerson), "lawyerPerson", builder.BuildSourceNode(args));
+			Assert.IsFalse(binder.GetValidationSummary(instance).HasError);
 		}
 	}
 }

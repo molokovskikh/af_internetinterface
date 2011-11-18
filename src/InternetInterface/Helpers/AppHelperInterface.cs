@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Web;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Models;
@@ -55,6 +56,17 @@ namespace InternetInterface.Helpers
 				}
 			}
 			return String.Format("filter.SortBy={0}&filter.Direction={1}", key, direction);
+		}
+
+		public override string GetErrorHtmlObject(string errorText)
+		{
+			var errObj = new StringBuilder();
+			errObj.AppendLine("<div class=\"flash\" style=\"margin:0px; padding:0px; height:100%; width:100%;\" >");
+			errObj.AppendLine("<div class=\"message error\" style=\"margin:0px; padding:0px;\" >");
+			errObj.AppendLine(string.Format("<p>{0}</p>", errorText));
+			errObj.AppendLine("</div>");
+			errObj.AppendLine("</div>");
+			return errObj.ToString();
 		}
 	}
 }

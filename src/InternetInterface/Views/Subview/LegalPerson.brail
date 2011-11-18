@@ -82,5 +82,5 @@
 	<td>
 		<input id="Text1" type="text" value="${LegalPerson.Tariff}" name="LegalPerson.Tariff"/></td>
 		<td>
-		${VB.GetBlock("Tariff")}
+		${app.GetValidationError(LegalPerson, "Tariff")}
 		</td>
