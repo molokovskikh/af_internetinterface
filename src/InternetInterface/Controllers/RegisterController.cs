@@ -294,8 +294,14 @@ namespace InternetInterface.Controllers
 		{
 			var request = Requests.Find(requestID);
 			var fio = new string[3];
-			request.ApplicantName.Split(' ').Select(s => s.Replace(" ", string.Empty)).Where(s => !string.IsNullOrEmpty(s)).
-				ToArray().CopyTo(fio, 0);
+			var _fio =
+				request.ApplicantName.Split(' ').Select(s => s.Replace(" ", string.Empty)).Where(s => !string.IsNullOrEmpty(s)).ToArray();
+			if (_fio.Length >= 3) {
+				_fio.Take(3).ToArray().CopyTo(fio, 0);
+			}
+			else {
+				_fio.Take(_fio.Length).ToArray().CopyTo(fio, 0);
+			}
 			var newPhisClient = new PhysicalClients
 			{
 				Surname = fio[0],

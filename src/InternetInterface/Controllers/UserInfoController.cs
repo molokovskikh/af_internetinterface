@@ -503,12 +503,14 @@ where r.`Label`= :LabelIndex ;")
 		/// <param name="labelcolor"></param>
 		public void CreateLabel(string LabelName, string labelcolor)
 		{
-			var newlab = new Label {
-				Color = labelcolor,
-				Name = LabelName,
-				Deleted = true
-			};
-			newlab.SaveAndFlush();
+			if (!string.IsNullOrEmpty(LabelName)) {
+				new Label {
+					Color = labelcolor,
+					Name = LabelName,
+					Deleted = true
+				}.SaveAndFlush();
+			}
+			Flash["Message"] = Message.Error("Нельзя создать метку без имени");
 			RedirectToAction("RequestView");
 		}
 
