@@ -1,0 +1,23 @@
+﻿<table id="UnknownPhones" class="table"	>
+<thead>
+	<tr>
+		<th colspan=2>Неопознанные звонки:</th>
+	</tr>
+</thead>
+<% if CallLogs.Length == 0: %>
+	<tr><td class="EmptyData">Нет звонков</td></tr>
+<% else: %>
+	<% for i, call in enumerate(CallLogs): %>
+	<tr>
+		<td style="width:150px;">
+			<form action="BindPhone?clientcode=${_client.Id}&phoneId=${call.Id}" method=post>
+				<button type=submit class="button">
+				Связать
+				</button>
+			</form>
+		</td>
+		<td>${call.PhoneNumber}</td>
+	</tr>
+	<% end %>
+<% end %>
+</table>

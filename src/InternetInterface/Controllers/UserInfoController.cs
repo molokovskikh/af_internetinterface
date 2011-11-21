@@ -228,7 +228,11 @@ namespace InternetInterface.Controllers
 		[AccessibleThrough(Verb.Post)]
 		public void SaveContacts([ARDataBind("contact", AutoLoad = AutoLoadBehavior.NewInstanceIfInvalidKey)]Contact[] contacts, uint ClientID)
 		{
+			var client = Client.Find(ClientID);
 			foreach (var contact in contacts) {
+				contact.Client = client;
+				contact.Registrator = InitializeContent.Partner;
+				contact.Date = DateTime.Now;
 				contact.Save();
 			}
 			RedirectToUrl("../Search/Redirect.rails?filter.ClientCode=" + ClientID);

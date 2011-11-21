@@ -417,3 +417,8 @@ button.button:active, a.button:active {
 .link_button{
   cursor: pointer;
 }
+
+.deletePointControl
+{
+	cursor: pointer;
+}
