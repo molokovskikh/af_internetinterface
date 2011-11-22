@@ -38,6 +38,7 @@
     <% OutputSubView("""\UserInfo\ClientRegisteredInfo""", {
 					"Client": Client.PhysicalClient,
                     "WhoConnected" : Client.WhoConnected,
+					"ConnectInfo": Client.ConnectInfoFirst(),
                     "Password" : Client.ChangePhysicalClientPassword(),
                     "AccountNumber" : Client.Id.ToString("00000")}) %>
 <%end %>

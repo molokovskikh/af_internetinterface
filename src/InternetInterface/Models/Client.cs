@@ -227,6 +227,11 @@ group by {0} order by WriteOffDate;", gpoupKey))
 			return writeOffs;
 		}
 
+		public virtual ClientConnectInfo ConnectInfoFirst()
+		{
+			return GetConnectInfo().FirstOrDefault();
+		}
+
 		public virtual IList<ClientConnectInfo> GetConnectInfo()
 		{
 			if ((PhysicalClient!= null && Status != null && Status.Connected) ||
