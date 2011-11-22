@@ -103,8 +103,9 @@ namespace InternetInterface.Models
 
 		public static bool RegistrLogicPartner(Partner _Partner, ValidatorRunner validator)
 		{
-			if (validator.IsValid(_Partner))
-			{
+			if (validator.IsValid(_Partner)) {
+				_Partner.Categorie.Refresh();
+				//var categorie = UserCategorie.Queryable.Where(u => u.Id == _Partner.Categorie.Id);
 				_Partner.RegDate = DateTime.Now;
 				_Partner.SaveAndFlush();
 				return true;

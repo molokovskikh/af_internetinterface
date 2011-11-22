@@ -404,6 +404,7 @@ namespace InternetInterface.Controllers
 			if (Validator.IsValid(partner) || edit)
 			{
 				BindObjectInstance(part, ParamStore.Form, "Partner");
+				part.Categorie.Refresh();
 				part.UpdateAndFlush();
 				var agent = Agent.Queryable.Where(a => a.Partner == part).ToList().FirstOrDefault();
 				if (agent != null)
@@ -447,10 +448,11 @@ namespace InternetInterface.Controllers
 
 		public void RegisterPartner(int PartnerKey, int catType)
 		{
-			if (Partner.FindAll().Count(p => p.Id == PartnerKey) != 0)
+			var partner = Partner.Queryable.Where(p => p.Id == (uint) PartnerKey).FirstOrDefault();
+			if (partner != null)
 			{
 				RegisterPartnerSendParam(PartnerKey);
-				PropertyBag["Partner"] = Partner.Find((uint)PartnerKey);
+				PropertyBag["Partner"] = partner;
 				PropertyBag["catType"] = catType;
 				PropertyBag["PartnerKey"] = PartnerKey;
 			}
