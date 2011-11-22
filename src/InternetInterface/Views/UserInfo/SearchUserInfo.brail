@@ -72,12 +72,6 @@
 		<tr>
 			<td><span class="description">Адрес подключения: </span>   ${Client.Street} ${Client.House}${Client.CaseHouse} ${Client.Apartment} Подъезд ${Client.Entrance} Этаж ${Client.Floor}</td>
 		</tr>
-		<tr>
-			<td><span class="description">Номер телефона: </span> ${Client.PhoneNumber}</td>
-		</tr>
-		<tr>
-			<td><span class="description">Email:</span> ${Client.Email}</td>
-		</tr>
 		<%end %>
 		<%if PartnerAccessSet.AccesPartner("VP"): %>
 		<tr>

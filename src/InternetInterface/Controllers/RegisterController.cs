@@ -64,6 +64,7 @@ namespace InternetInterface.Controllers
 				DbLogHelper.SetupParametersForTriggerLogging();
 
 				PhysicalClients.RegistrLogicClient(phisClient, tariff, house_id, Validator);
+
 				var client = new Client {
 											 AutoUnblocked = true,
 											 RegDate = DateTime.Now,
@@ -79,6 +80,16 @@ namespace InternetInterface.Controllers
 											 BeginWork = null
 										 };
 				client.SaveAndFlush();
+
+				if (!string.IsNullOrEmpty(phisClient.PhoneNumber))
+					Contact.SaveNew(client, phisClient.PhoneNumber, "Указан при регистрации", ContactType.MobilePhone);
+
+				if (!string.IsNullOrEmpty(phisClient.HomePhoneNumber))
+					Contact.SaveNew(client, phisClient.HomePhoneNumber, "Указан при регистрации", ContactType.HousePhone);
+
+				if (!string.IsNullOrEmpty(phisClient.Email))
+					Contact.SaveNew(client, phisClient.Email, "Указан при регистрации", ContactType.Email);
+
 				var payment = new Payment {
 											  Agent =
 												  Agent.FindAllByProperty("Partner", InitializeContent.Partner).First(),
@@ -221,6 +232,13 @@ namespace InternetInterface.Controllers
 									Type = ClientType.Legal,
 								};
 				client.SaveAndFlush();
+
+				if (!string.IsNullOrEmpty(person.Telephone))
+					Contact.SaveNew(client, person.Telephone, "Указан при регистрации", ContactType.MobilePhone);
+
+				if (!string.IsNullOrEmpty(person.Email))
+					Contact.SaveNew(client, person.Email, "Указан при регистрации", ContactType.Email);
+
 				if (!string.IsNullOrEmpty(info.Port))
 				{
 					new ClientEndpoints

@@ -20,7 +20,9 @@ namespace InternetInterface.Models
 		[Description("Паспортные данные")]
 		ByPassportSet,
 		[Description("Номер счета")]
-		SearchAccount
+		SearchAccount,
+		[Description("Номер телефона")]
+		TelNum
 	}
 
 	public enum TypeChangeBalance
@@ -155,6 +157,11 @@ namespace InternetInterface.Models
 		public bool IsSearchAccount()
 		{
 			return SearchBy == SearchUserBy.SearchAccount;
+		}
+
+		public bool IsSearchTelephone()
+		{
+			return SearchBy == SearchUserBy.TelNum;
 		}
 	}
 }

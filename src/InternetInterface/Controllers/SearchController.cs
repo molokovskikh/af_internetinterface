@@ -144,11 +144,12 @@ namespace InternetInterface.Controllers
 					{
 						sqlStr =
 							String.Format(
-								@"SELECT * FROM internet.Clients c
+								@"SELECT c.*, co.Contact FROM internet.Clients c
 left join internet.PhysicalClients p on p.id = c.PhysicalClient
 left join internet.LawyerPerson l on l.id = c.LawyerPerson
+left join internet.Contacts co on co.Client = c.id
 join internet.Status S on s.id = c.Status
-{0} ORDER BY {3} Limit {1}, {2}",
+{0} group by c.id ORDER BY {3} Limit {1}, {2}",
 								GetClientsLogic.GetWhere(searchProperties, connectedType, clientTypeFilter, whoregister, tariff, searchText, brigad,
 										 addtionalStatus), CurrentPage * PageSize, PageSize, GetOrderField());
 						query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Client));
@@ -158,11 +159,12 @@ join internet.Status S on s.id = c.Status
 					}
 					else
 					{
-						sqlStr = string.Format(@"SELECT * FROM internet.Clients c
+						sqlStr = string.Format(@"SELECT c.*, co.Contact FROM internet.Clients c
 left join internet.PhysicalClients p on p.id = c.PhysicalClient
 left join internet.LawyerPerson l on l.id = c.LawyerPerson
 join internet.Status S on s.id = c.Status
-where C.id = :SearchText ORDER BY {2} Limit {0}, {1}", CurrentPage * PageSize, PageSize, GetOrderField());
+left join internet.Contacts co on co.Client = c.id
+where C.id = :SearchText group by c.id ORDER BY {2} Limit {0}, {1}", CurrentPage * PageSize, PageSize, GetOrderField());
 						query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Client));
 						if (searchText != null)
 							query.SetParameter("SearchText", searchText.ToLower());
@@ -170,11 +172,13 @@ where C.id = :SearchText ORDER BY {2} Limit {0}, {1}", CurrentPage * PageSize, P
 				else
 				{
 					if (!string.IsNullOrEmpty(searchText))
-						sqlStr = string.Format(@"SELECT * FROM internet.Clients c
+						sqlStr = string.Format(@"SELECT c.*, co.Contact FROM internet.Clients c
 left join internet.PhysicalClients p on p.id = c.PhysicalClient
 left join internet.LawyerPerson l on l.id = c.LawyerPerson
 join internet.Status S on s.id = c.Status
-WHERE LOWER(C.Name) like {0} or LOWER(C.Id) like {0}
+left join internet.Contacts co on co.Client = c.id
+WHERE LOWER(C.Name) like {0} or LOWER(C.Id) like {0} or LOWER(co.Contact) like {0}
+group by c.id
 ORDER BY {3} Limit {1}, {2}", ":SearchText", CurrentPage * PageSize, PageSize, GetOrderField());
 					else
 					{
@@ -186,9 +190,12 @@ ORDER BY {3} Limit {1}, {2}", ":SearchText", CurrentPage * PageSize, PageSize, G
 				}
 				result = query.List<Client>();
 
-				var newSql = sqlStr.Replace("*", "count(*)");
+				var newSql = sqlStr.Replace("c.*", "count(*)");
+				newSql = newSql.Replace(", co.Contact", string.Empty);
 				var limitPosition = newSql.IndexOf("Limit");
-				var countQuery = session.CreateSQLQuery(newSql.Remove(limitPosition));
+				newSql = newSql.Remove(limitPosition);
+				newSql = string.Format("select count(*) from ({0}) as t1;", newSql);
+				var countQuery = session.CreateSQLQuery(newSql);
 				if (!string.IsNullOrEmpty(searchText))
 					countQuery.SetParameter("SearchText", "%" + searchText.ToLower() + "%");
 				if (CategorieAccessSet.AccesPartner("SSI"))

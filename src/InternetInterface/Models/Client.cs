@@ -86,6 +86,19 @@ namespace InternetInterface.Models
 		[BelongsTo(Lazy = FetchWhen.OnInvoke)]
 		public virtual AdditionalStatus AdditionalStatus { get; set; }
 
+		//[Nested]
+		public virtual string Contact
+		{
+			get
+			{
+				var contact = Contacts.FirstOrDefault();
+				if (contact != null) {
+					return string.Format("8-{0}-{1}", contact.Text.Substring(0, 3), contact.Text.Substring(3, 7));
+				}
+				return string.Empty;
+			}
+		}
+
 		public virtual bool StatusCanChange()
 		{
 			if (PhysicalClient != null)
@@ -127,6 +140,9 @@ namespace InternetInterface.Models
 
 		[HasMany(ColumnKey = "Client", OrderBy = "Date", Lazy = true)]
 		public virtual IList<UserWriteOff> UserWriteOffs { get; set; }
+
+		[HasMany(ColumnKey = "Client", OrderBy = "Date")]
+		public virtual IList<Contact> Contacts { get; set; }
 	
 		/*[HasMany(ColumnKey = "Client", OrderBy = "Date", Lazy = true)]
 		public virtual IList<ClientEndpoints> Endpoints { get; set; }*/

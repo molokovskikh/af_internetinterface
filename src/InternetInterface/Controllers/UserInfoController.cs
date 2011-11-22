@@ -108,16 +108,10 @@ namespace InternetInterface.Controllers
 			PropertyBag["filter"] = filter;
 			if (filter.appealType == 0)
 				filter.appealType = (int) AppealType.User;
-			if (client.Status.Id != (uint)StatusType.BlockedAndNoConnected)
-				PropertyBag["EConnect"] = filter.EditingConnect;
-			else
-			{
-				PropertyBag["EConnect"] = 0;
-			}
-			SendParam(filter.ClientCode, filter.grouped, filter.appealType);
+
+			SendParam(filter, filter.grouped, filter.appealType);
 			PropertyBag["Editing"] = filter.Editing;
 			PropertyBag["appealType"] = filter.appealType;
-			PropertyBag["EditConnectInfoFlag"] = filter.EditConnectInfoFlag;
 			PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClients>(new PhysicalClients());
 			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(t => t.Name != null);
 		}
@@ -170,6 +164,12 @@ namespace InternetInterface.Controllers
 			}
 			if (client.LawyerPerson.Tariff == null)
 				PropertyBag["Message"] = Message.Error("Не задана абонентская плата для клиента ! Клиент отключен !");
+
+			PropertyBag["CallLogs"] = UnresolvedCall.LastCalls;
+			PropertyBag["Contacts"] =
+				Contact.Queryable.Where(c => c.Client.Id == filter.ClientCode).OrderBy(c => c.Type).Select(
+					c => new { c.Id ,ContactText = c.HumanableNumber(), Type = c.GetReadbleCategorie()}).ToList();
+			PropertyBag["EditConnectInfoFlag"] = filter.EditConnectInfoFlag;
 			SendConnectInfo(client);
 			ConnectPropertyBag(filter.ClientCode);
 			SendUserWriteOff();
@@ -215,7 +215,7 @@ namespace InternetInterface.Controllers
 				var number = phone.PhoneNumber;
 				new Contact {
 					Client = client,
-					Text = string.Format("8-{0}-{1}", number.Substring(0, 3), number.Substring(3, 7)),
+					Text = number,
 					Type = ContactType.ConnectedPhone,
 					Registrator = InitializeContent.Partner,
 					Date = DateTime.Now
@@ -230,6 +230,7 @@ namespace InternetInterface.Controllers
 		{
 			var client = Client.Find(ClientID);
 			foreach (var contact in contacts) {
+				contact.Text = contact.Text.Substring(2, contact.Text.Length - 2).Replace("-", string.Empty);
 				contact.Client = client;
 				contact.Registrator = InitializeContent.Partner;
 				contact.Date = DateTime.Now;
@@ -783,14 +784,14 @@ where r.`Label`= :LabelIndex ;")
 				Flash["Client"] = updateClient;
 				filter.ClientCode = _client.Id;
 				PropertyBag["filter"] = filter;
-				SendParam(ClientID, group, appealType);
+				SendParam(filter, group, appealType);
 			}
 		}
 
 
-		private void SendParam(UInt32 ClientCode, string grouped, int appealType)
+		private void SendParam(ClientFilter filter, string grouped, int appealType)
 		{
-			var client = Client.Find(ClientCode);
+			var client = Client.Find(filter.ClientCode);
 
 			PropertyBag["Payments"] = Payment.Queryable.Where(p => p.Client.Id == client.Id).OrderBy(t => t.PaidOn).ToList();
 			var abonentSum = WriteOff.Queryable.Where(p => p.Client.Id == client.Id).ToList().Sum(s => s.WriteOffSum);
@@ -812,7 +813,7 @@ where r.`Label`= :LabelIndex ;")
 			PropertyBag["ChTariff"] = client.PhysicalClient.Tariff.Id;
 			PropertyBag["Statuss"] = Status.FindAllSort();
 			PropertyBag["ChStatus"] = client.Status != null ? client.Status.Id : Status.FindFirst().Id;
-			PropertyBag["naznach_text"] = ConnectGraph.Queryable.Count(c => c.Client.Id == ClientCode) != 0
+			PropertyBag["naznach_text"] = ConnectGraph.Queryable.Count(c => c.Client.Id == filter.ClientCode) != 0
 			                              	? "Переназначить в график"
 			                              	: "Назначить в график";
 
@@ -820,10 +821,17 @@ where r.`Label`= :LabelIndex ;")
 			PropertyBag["UserInfo"] = true;
 			PropertyBag["CallLogs"] = UnresolvedCall.LastCalls;
 			PropertyBag["Contacts"] =
-				Contact.Queryable.Where(c => c.Client.Id == ClientCode).OrderBy(c => c.Type).Select(
-					c => new { c.Id ,ContactText = c.Text, Type = c.GetReadbleCategorie()}).ToList();
+				Contact.Queryable.Where(c => c.Client.Id == filter.ClientCode).OrderBy(c => c.Type).Select(
+					c => new { c.Id , ContactText = c.HumanableNumber(), Type = c.GetReadbleCategorie()}).ToList();
 
-			ConnectPropertyBag(ClientCode);
+			if (client.Status.Id != (uint)StatusType.BlockedAndNoConnected)
+				PropertyBag["EConnect"] = filter.EditingConnect;
+			else
+			{
+				PropertyBag["EConnect"] = 0;
+			}
+			PropertyBag["EditConnectInfoFlag"] = filter.EditConnectInfoFlag;
+			ConnectPropertyBag(filter.ClientCode);
 			SendConnectInfo(client);
 			SendUserWriteOff();
 		}

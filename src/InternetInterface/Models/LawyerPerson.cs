@@ -41,10 +41,10 @@ namespace InternetInterface.Models
 		[Property, Auditable("ИНН")]
 		public virtual string INN { get; set; }
 
-		[Property, ValidateEmail("Ошибка воода Email (adr@dom.com)"), Auditable("Email")]
+		[ValidateEmail("Ошибка воода Email (adr@dom.com)")]
 		public virtual string Email { get; set; }
 
-		[Property, ValidateNonEmpty("Введите номер телефона"), ValidateRegExp(@"^((\d{4,5})-(\d{5,6}))|((\d{1})-(\d{3})-(\d{3})-(\d{2})-(\d{2}))", "Ошибка фотмата телефонного номера (Код города (4-5 цифр) + местный номер (5-6 цифр) или мобильный телефн (8-***-***-**-**))"), Auditable("Номер телефона")]
+		[/*ValidateNonEmpty("Введите номер телефона"),*/ ValidateRegExp(@"^((\d{3})-(\d{7}))", "Ошибка фотмата телефонного номера (***-*******)")]
 		public virtual string Telephone { get; set; }
 
 		[Property, Auditable("Контактное лицо")]

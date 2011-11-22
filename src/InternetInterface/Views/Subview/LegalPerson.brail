@@ -32,7 +32,7 @@
 </tr>
 <tr>
 	<td>
-		Почтовый адрес адрес</td>
+		Почтовый адрес</td>
 	<td >
 		<input id="MailingAddress" type="text" value="${LegalPerson.MailingAddress}" name="LegalPerson.MailingAddress"/></td>
 	<td>
@@ -48,7 +48,8 @@
 		${VB.GetBlock("INN")}
 		</td>
 </tr>
-							<tr>
+<%if not IsDefined("Editing"): %>
+<tr>
 	<td >
 		Email</td>
 	<td>
@@ -57,7 +58,7 @@
 		${VB.GetBlock("Email")}
 		</td>
 </tr>
-							<tr>
+<tr>
 	<td >
 		<b>Номер телефона</b></td>
 	<td>
@@ -66,6 +67,7 @@
 		${VB.GetBlock("Telephone")}
 		</td>
 </tr>
+<%end %>
 <tr>
 	<td>
 		Контактное лицо

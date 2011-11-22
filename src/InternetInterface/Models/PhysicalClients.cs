@@ -123,13 +123,12 @@ namespace InternetInterface.Models
 		public virtual int? Floor { get; set; }
 
 		[
-			Property,
-			ValidateRegExp(@"^((\d{1})-(\d{3})-(\d{3})-(\d{2})-(\d{2}))", "Ошибка фотмата телефонного номера: мобильный телефн (8-***-***-**-**))"),
-			ValidateNonEmpty("Введите номер телефона"), Auditable("Номер мобильного телефона")
+			ValidateRegExp(@"^((\d{3})-(\d{7}))", "Ошибка фотмата телефонного номера: мобильный телефн (***-*******)"),
+			/*ValidateNonEmpty("Введите номер телефона")*/
 		]
 		public virtual string PhoneNumber { get; set; }
 
-		[Property, ValidateRegExp(@"^((\d{4,5})-(\d{5,6}))", "Ошибка фотмата телефонного номера (Код города (4-5 цифр) + местный номер (5-6 цифр)"), Auditable("Номер домашнего телефона")]
+		[ValidateRegExp(@"^((\d{3})-(\d{7}))", "Ошибка фотмата телефонного номера (***-*******)")]
 		public virtual string HomePhoneNumber { get; set; }
 
 		[Property, Auditable("Канал продаж")]
@@ -156,7 +155,7 @@ namespace InternetInterface.Models
 		[Property, ValidateNonEmpty("Введите сумму"), ValidateDecimal("Неверно введено число")]
 		public virtual decimal Balance { get; set; }
 
-		[Property, ValidateIsUnique("Email должен быть уникальный"), ValidateEmail("Ошибка ввода (требуется adr@serv.dom)"), Auditable("Email")]
+		[/*ValidateIsUnique("Email должен быть уникальный"),*/ ValidateEmail("Ошибка ввода (требуется adr@serv.dom)")]
 		public virtual string Email { get; set; }
 
 		[Property]
@@ -204,7 +203,7 @@ namespace InternetInterface.Models
 				_client.CaseHouse = _house.Case;
 				_client.Tariff = Tariff.Find(_tariff);
 				_client.Password = CryptoPass.GetHashString(_client.Password);
-				_client.SaveAndFlush();
+				_client.Save();
 				return true;
 			}
 			return false;

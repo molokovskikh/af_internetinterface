@@ -47,12 +47,11 @@
 			<%if CategorieAccessSet.AccesPartner("SSI"): %>
 				<%if item.PhysicalClient != null: %>
 				<td>ул. ${item.PhysicalClient.Street} д. ${item.PhysicalClient.House} корп. ${item.PhysicalClient.CaseHouse} кв. ${item.PhysicalClient.Apartment} Подъезд ${item.PhysicalClient.Entrance} Этаж ${item.PhysicalClient.Floor}</td>
-				<td>${item.PhysicalClient.PhoneNumber}</td>
 				<%else : %>
 				<td>${item.LawyerPerson.ActualAdress}</td>
-				<td>${item.LawyerPerson.Telephone}</td>
 				<%end %>
 			<%end %>
+			<td>${item.Contact}</td>
 			<%if CategorieAccessSet.AccesPartner("SSI"): %>
 				<%if item.PhysicalClient != null: %>
 				<td>${item.RegDate}</td>

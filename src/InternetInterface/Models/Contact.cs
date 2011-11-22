@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 using Castle.ActiveRecord;
+using InternetInterface.Controllers.Filter;
 
 namespace InternetInterface.Models
 {
@@ -39,6 +41,13 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual DateTime Date { get; set; }
 
+		public virtual string HumanableNumber()
+		{
+			if (new Regex(@"^((\d{10}))").IsMatch(Text))
+				return string.Format("8-{0}-{1}", Text.Substring(0, 3), Text.Substring(3, 7));
+			return Text;
+		}
+
 		public static string GetReadbleCategorie(ContactType type)
 		{
 			switch (type) {
@@ -60,6 +69,18 @@ namespace InternetInterface.Models
 		public virtual string GetReadbleCategorie()
 		{
 			return GetReadbleCategorie(Type);
+		}
+
+		public static void SaveNew(Client client, string contact, string comment, ContactType type)
+		{
+			new Contact {
+				Date = DateTime.Now,
+				Registrator = InitializeContent.Partner,
+				Client = client,
+				Text = contact,
+				Comment = comment,
+				Type = type
+			}.Save();
 		}
 	}
 }
