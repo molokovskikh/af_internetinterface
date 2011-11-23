@@ -740,9 +740,6 @@ namespace Billing.Test.Unit
 			unblockedClient.Status =  Status.Find((uint) StatusType.BlockedAndConnected);
 			unblockedClient.Update();
 			var phisClient = unblockedClient.PhysicalClient;
-			//phisClient.Balance = 0;
-			//phisClient.Update();
-			//billing.Compute();
 			billing.OnMethod();
 			unblockedClient.Refresh();
 			Assert.IsTrue(unblockedClient.Status.Blocked);
