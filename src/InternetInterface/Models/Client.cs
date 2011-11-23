@@ -93,7 +93,7 @@ namespace InternetInterface.Models
 			{
 				var contact = Contacts.FirstOrDefault();
 				if (contact != null) {
-					return string.Format("8-{0}-{1}", contact.Text.Substring(0, 3), contact.Text.Substring(3, 7));
+					return string.Format("{0}-{1}", contact.Text.Substring(0, 3), contact.Text.Substring(3, 7));
 				}
 				return string.Empty;
 			}

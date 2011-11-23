@@ -11,7 +11,7 @@
 	<tr>
 		<td style="width:150px;">
 			<form action="BindPhone?clientcode=${_client.Id}&phoneId=${call.Id}" method=post>
-				<button type=submit class="button">
+				<button type=submit class="button" name="callButton">
 				Связать
 				</button>
 			</form>

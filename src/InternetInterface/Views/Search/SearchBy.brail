@@ -22,7 +22,7 @@
 			<th id="">${app.Sortable("ФИО", "Name", "head_name")}</th>
 			<%if CategorieAccessSet.AccesPartner("SSI"): %>
 			<th id="">${app.Sortable("Адрес подключения", "Adress", "head_adress")}</th>
-			<th id="">${app.Sortable("Номер телефона", "TelNum", "head_telNum")}</th>
+			<th id="">${app.Sortable("Контактная информация", "TelNum", "head_telNum")}</th>
 			<%end %>
 			<%if CategorieAccessSet.AccesPartner("SSI"): %>
 			<th id="">${app.Sortable("Дата регистрации", "RegDate", "head_regDate")}</th>

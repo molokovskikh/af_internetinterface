@@ -28,7 +28,7 @@
 <thead>
 	<tr>
 		<th colspan=3>Редактивание списка контактов
-		<input id="Submit2" type="submit" value="Сохранить"  align="right" /></th>
+		<input id="SaveContactButton" type="submit" value="Сохранить"  align="right" /></th>
 	</tr>
 </thead>
 <tbody id="numbersButton">
@@ -46,7 +46,7 @@
 	<%end %>
 		<tr>
 			<td colspan=3>
-				<button type=button onclick="addNumber()" class="button">
+				<button type=button onclick="addNumber()" class="button" id="addContactButton">
 				<img alt="Save" src="../Images/tick.png">
 				Добавить контакт
 				</button>
@@ -79,7 +79,7 @@
 				}
 			}
 			return this.optional(element) || re.test(value) || emailValid;
-		}, "Введите либо телефон в формате 8-***-*******, либо Email");
+		}, "Введите либо телефон в формате ***-*******, либо Email");
 
 		$('.telephoneField').each(function () {
 			SetValid(this);
@@ -110,7 +110,7 @@
 	}
 
 	function SetValid(elem) {
-		$(elem).rules("add", { required: true, regex: "^([0-9]{1})\-([0-9]{3})\-([0-9]{7})$",
+		$(elem).rules("add", { required: true, regex: "^([0-9]{3})\-([0-9]{7})$",
 			messages: {
 				required: "Поле не может быть пустым"
 			}

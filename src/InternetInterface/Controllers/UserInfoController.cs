@@ -230,7 +230,7 @@ namespace InternetInterface.Controllers
 		{
 			var client = Client.Find(ClientID);
 			foreach (var contact in contacts) {
-				contact.Text = contact.Text.Substring(2, contact.Text.Length - 2).Replace("-", string.Empty);
+				contact.Text = contact.Text.Replace("-", string.Empty);
 				contact.Client = client;
 				contact.Registrator = InitializeContent.Partner;
 				contact.Date = DateTime.Now;

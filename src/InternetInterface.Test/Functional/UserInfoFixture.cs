@@ -134,6 +134,20 @@ namespace InternetInterface.Test.Functional
 		}
 
 		[Test]
+		public void TelephoneTest()
+		{
+			using (var browser = Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}&filter.EditConnectInfoFlag=True", client.Id))) {
+				browser.Button(Find.ByName("callButton")).Click();
+				Assert.That(browser.Text, Is.StringContaining("Информация по клиенту"));
+				browser.Button("addContactButton").Click();
+				browser.TextFields.Where(f => f.ClassName == "telephoneField").Last().AppendText("900-9090900");
+				browser.Button("SaveContactButton").Click();
+				Assert.That(browser.Text, Is.StringContaining("900-9090900"));
+				Assert.IsNull(browser.TextFields.Where(f => f.ClassName == "telephoneField").LastOrDefault());
+			}
+		}
+
+		[Test]
 		public void AdditionalStatusTest()
 		{
 			using (new SessionScope())
