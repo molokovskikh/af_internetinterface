@@ -5,6 +5,7 @@ using System.Reflection;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Castle.ActiveRecord.Framework.Config;
+using Common.Web.Ui.Models.Editor;
 using InternetInterface.Models;
 using NHibernate.Engine;
 using NHibernate.Linq;
@@ -19,9 +20,8 @@ namespace InforoomInternet.Initializers
 		public void Initialize(IConfigurationSource config)
 		{
 			ActiveRecordStarter.Initialize(
-				new[] { Assembly.Load("InforoomInternet"), Assembly.Load("InternetInterface"), Assembly.Load("Common.Web.Ui")},
-				config
-			);
+				new[] {Assembly.Load("InforoomInternet"), Assembly.Load("InternetInterface")/*, Assembly.Load("Common.Web.Ui")*/},
+				config, new [] {typeof(MenuField), typeof(SiteContent), typeof(SubMenuField)});
 
 			SetupFilters();
 			SetDefaultValues();

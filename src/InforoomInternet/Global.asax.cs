@@ -30,6 +30,7 @@ namespace InforoomInternet
 			: base(Assembly.Load("InforoomInternet"))
 		{
 			LibAssemblies.Add(Assembly.Load("Common.Web.Ui"));
+			//LibAssemblies.Add(Assembly.Load("InternetInterface"));
 			Logger.ErrorSubject = "Ошибка в IVRN";
 			Logger.SmtpHost = "box.analit.net";
 			Logger.ExcludeExceptionTypes.Add(typeof(ControllerNotFoundException));
