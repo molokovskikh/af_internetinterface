@@ -66,7 +66,9 @@ namespace InternetInterface.Controllers
 				PhysicalClients.RegistrLogicClient(phisClient, tariff, house_id, Validator);
 
 				var client = new Client {
-											 AutoUnblocked = true,
+											 AutoUnblocked = false,
+											 Disabled = true,
+											 PercentBalance = 0.0m,
 											 RegDate = DateTime.Now,
 											 WhoRegistered = InitializeContent.Partner,
 											 WhoRegisteredName = InitializeContent.Partner.Name,

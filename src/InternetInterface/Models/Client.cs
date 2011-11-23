@@ -86,7 +86,14 @@ namespace InternetInterface.Models
 		[BelongsTo(Lazy = FetchWhen.OnInvoke)]
 		public virtual AdditionalStatus AdditionalStatus { get; set; }
 
-		//[Nested]
+		[Property]
+		public virtual decimal PercentBalance { get; set; }
+
+		public virtual bool HavePayment
+		{
+			get { return Payments.Where(p => p.BillingAccount).ToList().Count > 0; }
+		}
+
 		public virtual string Contact
 		{
 			get

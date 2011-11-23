@@ -63,6 +63,14 @@ namespace Billing.Test.Unit
 				Name = "unblocked"
 			}.Save();
 
+			
+			new Status
+			{
+				Blocked = true,
+				Id = (uint)StatusType.BlockedAndConnected,
+				Name = "unblocked"
+			}.Save();
+
 			new Status
 			{
 				Blocked = true,
@@ -727,12 +735,16 @@ namespace Billing.Test.Unit
 		public void OnTest()
 		{
 			var unblockedClient = CreateClient();
-			unblockedClient.AutoUnblocked = true;
+			unblockedClient.AutoUnblocked = false;
+			unblockedClient.Disabled = true;
+			unblockedClient.Status =  Status.Find((uint) StatusType.BlockedAndConnected);
 			unblockedClient.Update();
 			var phisClient = unblockedClient.PhysicalClient;
-			phisClient.Balance = -100;
-			phisClient.Update();
-			billing.Compute();
+			//phisClient.Balance = 0;
+			//phisClient.Update();
+			//billing.Compute();
+			billing.OnMethod();
+			unblockedClient.Refresh();
 			Assert.IsTrue(unblockedClient.Status.Blocked);
 			new Payment {
 							Client = unblockedClient,
@@ -742,6 +754,24 @@ namespace Billing.Test.Unit
 			unblockedClient.Refresh();
 			Assert.IsFalse(unblockedClient.Status.Blocked);
 			Assert.That(unblockedClient.PhysicalClient.Balance, Is.GreaterThan(0));
+			phisClient.Balance = -5;
+			phisClient.Update();
+			unblockedClient.Disabled = true;
+			unblockedClient.Update();
+			new Payment {
+				Client = unblockedClient,
+				Sum = 20
+			}.Save();
+			billing.OnMethod();
+			unblockedClient.Refresh();
+			Assert.IsTrue(unblockedClient.Disabled);
+			new Payment {
+				Client = unblockedClient,
+				Sum = unblockedClient.GetPriceForTariff() - phisClient.Balance
+			}.Save();
+			billing.OnMethod();
+			unblockedClient.Refresh();
+			Assert.IsFalse(unblockedClient.Disabled);
 		}
 
 		[Test]

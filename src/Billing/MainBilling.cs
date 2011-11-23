@@ -57,8 +57,7 @@ namespace Billing
 				                  	{Environment.Hbm2ddlKeyWords, "none"}
 				                  });
 				ActiveRecordStarter.EventListenerComponentRegistrationHook += RemoverListner.Make;
-				ActiveRecordStarter.Initialize(new[] {typeof (Client).Assembly},
-				                               configuration);
+				ActiveRecordStarter.Initialize(new[] {typeof (Client).Assembly}, configuration);
 			}
 		}
 
@@ -135,21 +134,28 @@ namespace Billing
 				var updateClient = newPayment.Client;
 				var physicalClient = updateClient.PhysicalClient;
 				var lawyerClient = updateClient.LawyerPerson;
+				var havePayment = updateClient.HavePayment;
 				if (physicalClient != null) {
 					physicalClient.Balance += Convert.ToDecimal(newPayment.Sum);
 					physicalClient.UpdateAndFlush();
 					newPayment.BillingAccount = true;
-					newPayment.UpdateAndFlush();
+					newPayment.Update();
+					if (!havePayment) {
+						updateClient.AutoUnblocked = true;
+					}
+					else {
+						updateClient.PercentBalance = 0.8m;
+					}
 					if (updateClient.RatedPeriodDate != null)
 						if (physicalClient.Balance >= updateClient.GetPriceForTariff()) {
 							updateClient.ShowBalanceWarningPage = false;
-							updateClient.Update();
 						}
 					if (updateClient.ClientServices != null)
 						for (int i = updateClient.ClientServices.Count - 1; i > -1; i--) {
 							var cserv = updateClient.ClientServices[i];
 							cserv.PaymentClient();
 						}
+					updateClient.Update();
 				}
 				if (lawyerClient != null) {
 					lawyerClient.Balance += Convert.ToDecimal(newPayment.Sum);
@@ -179,9 +185,8 @@ namespace Billing
 			var clients =
 				Client.Queryable.Where(
 					c => c.PhysicalClient != null && c.Disabled && c.AutoUnblocked).ToList().Where(
-						c => c.PhysicalClient.Balance >= c.GetPriceForTariff()).ToList();
+						c => c.PhysicalClient.Balance >= c.GetPriceForTariff()*c.PercentBalance).ToList();
 			foreach (var client in clients) {
-
 				client.Status = Status.Find((uint) StatusType.Worked);
 				client.RatedPeriodDate = null;
 				client.DebtDays = 0;
