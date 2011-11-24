@@ -14,7 +14,8 @@ namespace InternetInterface.Models
 		HousePhone,
 		ConnectedPhone,
 		Email,
-		FinancePhone
+		FinancePhone,
+		HeadPhone
 	}
 
 	[ActiveRecord(Table = "Contacts", Schema = "Internet", Lazy = true)]
@@ -60,7 +61,9 @@ namespace InternetInterface.Models
 				case ContactType.FinancePhone:
 					return "Финансовые вопросы";
 				case ContactType.Email:
-					return "Почтовый адрес";
+					return "EMail";
+				case ContactType.HeadPhone:
+					return "Главный телефон";
 				default: 
 				return "Номер без категории";
 			}

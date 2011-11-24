@@ -167,7 +167,7 @@ namespace InternetInterface.Controllers
 
 			PropertyBag["CallLogs"] = UnresolvedCall.LastCalls;
 			PropertyBag["Contacts"] =
-				Contact.Queryable.Where(c => c.Client.Id == filter.ClientCode).OrderBy(c => c.Type).Select(
+				Contact.Queryable.Where(c => c.Client.Id == filter.ClientCode).OrderByDescending(c => c.Type).Select(
 					c => new { c.Id ,ContactText = c.HumanableNumber(), Type = c.GetReadbleCategorie()}).ToList();
 			PropertyBag["EditConnectInfoFlag"] = filter.EditConnectInfoFlag;
 			SendConnectInfo(client);
@@ -821,7 +821,7 @@ where r.`Label`= :LabelIndex ;")
 			PropertyBag["UserInfo"] = true;
 			PropertyBag["CallLogs"] = UnresolvedCall.LastCalls;
 			PropertyBag["Contacts"] =
-				Contact.Queryable.Where(c => c.Client.Id == filter.ClientCode).OrderBy(c => c.Type).Select(
+				Contact.Queryable.Where(c => c.Client.Id == filter.ClientCode).OrderByDescending(c => c.Type).Select(
 					c => new { c.Id , ContactText = c.HumanableNumber(), Type = c.GetReadbleCategorie()}).ToList();
 
 			if (client.Status.Id != (uint)StatusType.BlockedAndNoConnected)

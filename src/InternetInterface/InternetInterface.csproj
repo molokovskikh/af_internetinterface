@@ -266,6 +266,7 @@
     <Compile Include="Helpers\Listner.cs" />
     <Compile Include="Helpers\LoginCreatorHelper.cs" />
     <Compile Include="Helpers\PaymentFilter.cs" />
+    <Compile Include="Helpers\TextHelper.cs" />
     <Compile Include="Helpers\UsersParsers.cs" />
     <Compile Include="Helpers\ValidationHelper.cs" />
     <Compile Include="Helpers\ValidBuilderHelper.cs" />

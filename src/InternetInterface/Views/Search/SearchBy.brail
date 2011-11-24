@@ -42,8 +42,8 @@
 	<%else: %>
 		<tr class="${item.Name}" style="background-color:#f5efdf;">
 	<%end %>
-			<td><a href="../Search/Redirect?filter.ClientCode=${item.Id}">${item.Id.ToString("00000")}</a></td>
-			<td> ${item.Name}</td>
+			<td><a href="../Search/Redirect?filter.ClientCode=${item.Id}">${item.ForSearchId(filter.searchText)}</a></td>
+			<td> ${item.ForSearchName(filter.searchText)}</td>
 			<%if CategorieAccessSet.AccesPartner("SSI"): %>
 				<%if item.PhysicalClient != null: %>
 				<td>ул. ${item.PhysicalClient.Street} д. ${item.PhysicalClient.House} корп. ${item.PhysicalClient.CaseHouse} кв. ${item.PhysicalClient.Apartment} Подъезд ${item.PhysicalClient.Entrance} Этаж ${item.PhysicalClient.Floor}</td>
@@ -51,7 +51,7 @@
 				<td>${item.LawyerPerson.ActualAdress}</td>
 				<%end %>
 			<%end %>
-			<td>${item.Contact}</td>
+			<td>${item.ForSearchContact(filter.searchText)}</td>
 			<%if CategorieAccessSet.AccesPartner("SSI"): %>
 				<%if item.PhysicalClient != null: %>
 				<td>${item.RegDate}</td>

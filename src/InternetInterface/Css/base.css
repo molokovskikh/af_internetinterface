@@ -422,3 +422,8 @@ button.button:active, a.button:active {
 {
 	cursor: pointer;
 }
+
+.selectorQuery
+{
+	color: red;
+}

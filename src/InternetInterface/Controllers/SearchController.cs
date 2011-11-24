@@ -149,7 +149,9 @@ left join internet.PhysicalClients p on p.id = c.PhysicalClient
 left join internet.LawyerPerson l on l.id = c.LawyerPerson
 left join internet.Contacts co on co.Client = c.id
 join internet.Status S on s.id = c.Status
-{0} group by c.id ORDER BY {3} Limit {1}, {2}",
+{0}
+group by c.id
+ORDER BY {3} Limit {1}, {2}",
 								GetClientsLogic.GetWhere(searchProperties, connectedType, clientTypeFilter, whoregister, tariff, searchText, brigad,
 										 addtionalStatus), CurrentPage * PageSize, PageSize, GetOrderField());
 						query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Client));
@@ -164,7 +166,9 @@ left join internet.PhysicalClients p on p.id = c.PhysicalClient
 left join internet.LawyerPerson l on l.id = c.LawyerPerson
 join internet.Status S on s.id = c.Status
 left join internet.Contacts co on co.Client = c.id
-where C.id = :SearchText group by c.id ORDER BY {2} Limit {0}, {1}", CurrentPage * PageSize, PageSize, GetOrderField());
+where C.id = :SearchText
+group by c.id
+ORDER BY {2} Limit {0}, {1}", CurrentPage * PageSize, PageSize, GetOrderField());
 						query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Client));
 						if (searchText != null)
 							query.SetParameter("SearchText", searchText.ToLower());

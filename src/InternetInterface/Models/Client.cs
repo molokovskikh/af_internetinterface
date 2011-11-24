@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework.Internal.EventListener;
 using Castle.ActiveRecord.Linq;
@@ -98,12 +99,55 @@ namespace InternetInterface.Models
 		{
 			get
 			{
-				var contact = Contacts.FirstOrDefault();
+				var contact = Contacts.Where(c => c.Type == ContactType.HeadPhone).FirstOrDefault();
 				if (contact != null) {
-					return string.Format("{0}-{1}", contact.Text.Substring(0, 3), contact.Text.Substring(3, 7));
+					return contact.HumanableNumber();
+					//return string.Format("{0}-{1}", contact.Text.Substring(0, 3), contact.Text.Substring(3, 7));
 				}
+				contact = Contacts.FirstOrDefault();
+				if (contact != null)
+					return contact.HumanableNumber();
 				return string.Empty;
 			}
+		}
+
+		public virtual string ForSearchId(string query)
+		{
+			return TextHelper.SelectQuery(query, Id.ToString("00000"));
+		}
+
+		public virtual string ForSearchName(string query)
+		{
+			return TextHelper.SelectQuery(query, Name);
+		}
+
+		public virtual string ForSearchContact(string query)
+		{
+			var result = string.Empty;
+			var delimeterIndex = 3;
+			var contacts = Contacts.Where(c => c.Text.Contains(query));
+			foreach (var contact in contacts) {
+				var text = TextHelper.SelectQuery(query, contact.Text);
+				var kolvoChisel = 0;
+				if (text != contact.Text) {
+					for (int i = 0; i< text.Length; i++){
+						var outI = 0;
+						if (int.TryParse(text[i].ToString(), out outI)) {
+							delimeterIndex = i;
+							kolvoChisel++;
+						}
+						if (kolvoChisel >= 3)
+							break;
+					}
+				}
+				if (new Regex(@"^((\d{10}))").IsMatch(contact.Text))
+					text = text.Insert(delimeterIndex + 1, "-");
+				result += text + "<br/>";
+			}
+			if (string.IsNullOrEmpty(result)) {
+				return Contact;
+			}
+			return result;
 		}
 
 		public virtual bool StatusCanChange()
