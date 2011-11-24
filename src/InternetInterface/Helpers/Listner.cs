@@ -94,6 +94,11 @@ namespace InternetInterface.Helpers
 					client = ((ClientEndpoints) @event.Entity).Client;
 					logInfo = ((ClientEndpoints) @event.Entity).LogComment;
 				}
+				if (@event.Entity.GetType() == typeof (Contact)) {
+					var contact = ((Contact) @event.Entity);
+					client = contact.Client;
+					logInfo = "Контакт: " + contact.Text;
+				}
 				@event.Session.Save(new Appeals {
 					Appeal =
 				                    	string.IsNullOrEmpty(logInfo)

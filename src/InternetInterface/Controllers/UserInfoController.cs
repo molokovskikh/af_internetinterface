@@ -221,6 +221,13 @@ namespace InternetInterface.Controllers
 					Date = DateTime.Now
 				}.Save();
 				phone.Delete();
+				new Appeals {
+					Client = client,
+					Date = DateTime.Now,
+					AppealType = (int) AppealType.System,
+					Partner = InitializeContent.Partner,
+					Appeal = string.Format("Номер {0} был привязян к данному клиенту", number)
+				}.Save();
 			}
 			RedirectToReferrer();
 		}

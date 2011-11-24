@@ -1,24 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
 using Castle.ActiveRecord;
+using Common.Web.Ui.Helpers;
 using InternetInterface.Controllers.Filter;
 
 namespace InternetInterface.Models
 {
 	public enum ContactType
 	{
+		[Description("Мобильный номер")]
 		MobilePhone,
+		[Description("Домашний номер")]
 		HousePhone,
+		[Description("Связанный номер")]
 		ConnectedPhone,
+		[Description("EMail")]
 		Email,
+		[Description("Финансовые вопросы")]
 		FinancePhone,
+		[Description("Главный телефон")]
 		HeadPhone
 	}
 
-	[ActiveRecord(Table = "Contacts", Schema = "Internet", Lazy = true)]
+	[ActiveRecord(Table = "Contacts", Schema = "Internet", Lazy = true), Auditable]
 	public class Contact : ChildActiveRecordLinqBase<Contact>
 	{
 		[PrimaryKey]
@@ -27,10 +35,10 @@ namespace InternetInterface.Models
 		[BelongsTo]
 		public virtual Client Client { get; set; }
 
-		[Property]
+		[Property, Auditable("Тип")]
 		public virtual ContactType Type { get; set; }
 
-		[Property(Column = "Contact")]
+		[Property(Column = "Contact"), Auditable("Контакт")]
 		public virtual string Text { get; set; }
 
 		[Property]
