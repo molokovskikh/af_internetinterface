@@ -23,7 +23,11 @@
 				</td>
 				<td>
 				<%if client != null: %>
-					${client.PhysicalClient.Surname, client.PhysicalClient.Name, client.PhysicalClient.Patronymic}
+				<% ConnectInfo = client.ConnectInfoFirst() %>
+					<b>${client.PhysicalClient.Street} ${client.PhysicalClient.House}${client.PhysicalClient.CaseHouse} кв ${client.PhysicalClient.Apartment} </b> Подъезд ${client.PhysicalClient.Entrance} Этаж ${client.PhysicalClient.Floor} <br />
+					<%if ConnectInfo != null: %>
+					Свитч: ${ConnectInfo.Swith_adr} (${ConnectInfo.swith_IP}) Порт: ${ConnectInfo.Port}
+					<%end %>
 				<%end %>
 				</td>
 			</tr>
@@ -36,6 +40,7 @@
 <% for i, Client in enumerate(Clients):  %>
 	<br style="page-break-before:always"/>
 	<% OutputSubView("""\UserInfo\ClientRegisteredInfo""", {
+					"_client": Client,
 					"Client": Client.PhysicalClient,
                     "WhoConnected" : Client.WhoConnected,
 					"ConnectInfo": Client.ConnectInfoFirst(),

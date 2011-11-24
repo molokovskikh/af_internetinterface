@@ -67,7 +67,11 @@
 				</td>
 				<td>
 				<%if client != null: %>
-					<b>${client.PhysicalClient.Street} ${client.PhysicalClient.House}${client.PhysicalClient.CaseHouse} кв ${client.PhysicalClient.Apartment} </b> Подъезд ${client.PhysicalClient.Entrance} Этаж ${client.PhysicalClient.Floor}
+				<% ConnectInfo = client.ConnectInfoFirst() %>
+					<b>${client.PhysicalClient.Street} ${client.PhysicalClient.House}${client.PhysicalClient.CaseHouse} кв ${client.PhysicalClient.Apartment} </b> Подъезд ${client.PhysicalClient.Entrance} Этаж ${client.PhysicalClient.Floor} <br />
+					<%if ConnectInfo != null: %>
+					Свитч: ${ConnectInfo.Swith_adr} (${ConnectInfo.swith_IP}) Порт: ${ConnectInfo.Port}
+					<%end %>
 				<%end %>
 				</td>
 			</tr>

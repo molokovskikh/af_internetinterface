@@ -221,7 +221,7 @@ div.WordSection1
   <%end %>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
   justify;line-height:normal'>мобильный телефон: <i style='mso-bidi-font-style:
-  normal'><u>${Client.PhoneNumber}</u></i></p>
+  normal'><u>${_client.Contact}</u></i></p>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
   justify;line-height:normal'>принял подключение услуги доступа к сети интернет
   со следующими параметрами:</p>
