@@ -101,7 +101,7 @@ div.scroller
 				<input type=hidden name="filter.Archive" value="${filter.Archive}" />
 				<input type=hidden name="filter.SortBy" value="${filter.SortBy}" />
 				<input type=hidden name="filter.Direction" value="${filter.Direction}" />
-				<input type=hidden name="filter.labelId" value="${filter.labelId}" />
+				<input type=hidden name="filter.labelId" value="${filter.labelId}" />	
 				<tr>
 					<td style="width:150px;">Период</td>
 					<td>
@@ -120,7 +120,7 @@ div.scroller
 					</td>
 				</tr>
 				<tr>
-					<td colspan=2>				<button type=submit class="button">Найти</button></td>
+					<td colspan=2><button type=submit class="button">Найти</button></td>
 				</tr>
 			</tbody>
 		</table>
