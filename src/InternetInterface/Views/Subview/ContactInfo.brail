@@ -63,7 +63,7 @@
 		$("#telephoneForm").validate();
 		$('#firstListSelector').css('display', 'none');
 		$.validator.addMethod(
-		"regex",
+		"regexContact",
 		function (value, element, regexp) {
 			var re = new RegExp(regexp);
 			var filter = /^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
@@ -82,7 +82,7 @@
 		}, "Введите либо телефон в формате ***-*******, либо Email");
 
 		$('.telephoneField').each(function () {
-			SetValid(this);
+			SetValidContact(this);
 		});
 	});
 
@@ -101,7 +101,7 @@
 			deleteNumder(this);
 		});
 		$("#totalTelCount").val(Number(countTelephones) + 1);
-		SetValid($('.telephoneField:last'));
+		SetValidContact($('.telephoneField:last'));
 	}
 
 	function deleteNumder(element) {
@@ -109,8 +109,8 @@
 		$("#totalTelCount").val(Number(countTelephones) - 1);
 	}
 
-	function SetValid(elem) {
-		$(elem).rules("add", { required: true, regex: "^([0-9]{3})\-([0-9]{7})$",
+	function SetValidContact(elem) {
+		$(elem).rules("add", { required: true, regexContact: "^([0-9]{3})\-([0-9]{7})$",
 			messages: {
 				required: "Поле не может быть пустым"
 			}
