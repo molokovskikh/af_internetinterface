@@ -482,6 +482,7 @@ namespace InternetInterface.Controllers
 				client.UpdateAndFlush();
 				PropertyBag["WhoConnected"] = _client.WhoConnected;
 				PropertyBag["Client"] = client;
+				PropertyBag["_client"] = _client;
 				PropertyBag["Password"] = Password;
 				PropertyBag["AccountNumber"] = _client.Id.ToString("00000");
 				PropertyBag["ConnectInfo"] = _client.GetConnectInfo().FirstOrDefault();

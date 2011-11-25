@@ -10,6 +10,7 @@ namespace InternetInterface.Helpers
 		public static string SelectQuery(string query, string value)
 		{
 			if (!string.IsNullOrEmpty(query)) {
+				query = query.ToLower();
 				var bufValue = value.ToLower();
 				var indexQuery = bufValue.IndexOf(query);
 				if (indexQuery != -1) {
