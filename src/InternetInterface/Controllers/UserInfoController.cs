@@ -174,7 +174,7 @@ namespace InternetInterface.Controllers
 			Expression<Func<Requests, bool>> predicate;
 			if (labelId != 0)
 				if (!string.IsNullOrEmpty(query))
-					predicate = i => i.Street.Contains(query) && i.ActionDate.Date >= beginDate.Value.Date && i.ActionDate.Date <= endDate.Value.Date && i.Label.Id == labelId && i.Archive == Archive;
+					predicate = i => (i.Street.Contains(query) || i.ApplicantPhoneNumber.Contains(query)) && i.ActionDate.Date >= beginDate.Value.Date && i.ActionDate.Date <= endDate.Value.Date && i.Label.Id == labelId && i.Archive == Archive;
 				else {
 					predicate = i => i.ActionDate.Date >= beginDate.Value.Date && i.ActionDate.Date <= endDate.Value.Date && i.Label.Id == labelId && i.Archive == Archive;
 				}
@@ -182,7 +182,8 @@ namespace InternetInterface.Controllers
 				if (!string.IsNullOrEmpty(query))
 					predicate =
 						i =>
-						i.Street.Contains(query) && i.ActionDate.Date >= beginDate.Value.Date && i.ActionDate.Date <= endDate.Value.Date &&
+						(i.Street.Contains(query) || i.ApplicantPhoneNumber.Contains(query)) && i.ActionDate.Date >= beginDate.Value.Date &&
+						i.ActionDate.Date <= endDate.Value.Date &&
 						i.Archive == Archive;
 				else {
 					predicate =
@@ -662,6 +663,19 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 		public void RequestOne(uint id)
 		{
 			PropertyBag["request"] = Requests.Find(id);
+			PropertyBag["Messages"] = RequestMessage.Queryable.Where(r => r.Request.Id == id).ToList();
+		}
+
+		public void CreateRequestComment(uint requestId, string comment)
+		{
+			if (!string.IsNullOrEmpty(comment))
+			new RequestMessage {
+				Date = DateTime.Now,
+				Registrator = InitializeContent.Partner,
+				Comment = comment,
+				Request = Requests.Find(requestId)
+			}.Save();
+			RedirectToReferrer();
 		}
 
 		public void RequestInArchive(uint id)
@@ -703,11 +717,13 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 			{
 				var request = Requests.Find(label);
 				if ((request.Label == null) ||
-				    (request.Label.ShortComment != "Refused" && request.Label.ShortComment != "Registered"))
-				{
+				    (request.Label.ShortComment != "Refused" && request.Label.ShortComment != "Registered")) {
 					request.Label = _label;
 					request.ActionDate = DateTime.Now;
 					request.Operator = InitializeContent.Partner;
+					if (_label.ShortComment == "Refused" || _label.ShortComment == "Deleted" || _label.ShortComment == "Registered") {
+						request.Archive = true;
+					}
 					request.UpdateAndFlush();
 				}
 				if (_label.ShortComment == "Refused" && request.Registrator != null &&
@@ -719,12 +735,6 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 					request.SetRequestBoduses();
 				}
 			}
-			/*var requests = Requests.FindAll().OrderByDescending(f => f.ActionDate);
-			if (InitializeContent.Partner.Categorie.ReductionName == "Agent")
-				PropertyBag["Clients"] = requests.Where(r => r.Registrator == InitializeContent.Partner).ToList();
-			else
-				PropertyBag["Clients"] = requests.ToList();
-			SendRequestEditParameter();*/
 			RedirectToReferrer();
 		}
 

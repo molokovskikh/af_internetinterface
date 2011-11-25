@@ -164,6 +164,7 @@ namespace InternetInterface.Controllers
 						                               -AgentTariff.GetPriceForAction(AgentActions.DeleteRequest));
 					}
 					requestse.Label = Label.Queryable.Where(l => l.ShortComment == "Registered").FirstOrDefault();
+					requestse.Archive = true;
 					requestse.Client = client;
 					requestse.Update();
 				}

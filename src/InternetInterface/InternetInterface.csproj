@@ -301,6 +301,7 @@
     <Compile Include="Models\PaymentForConnect.cs" />
     <Compile Include="Models\PaymentsForAgent.cs" />
     <Compile Include="Models\Request.cs" />
+    <Compile Include="Models\RequestMessage.cs" />
     <Compile Include="Models\Service.cs" />
     <Compile Include="Models\StaticIp.cs" />
     <Compile Include="Models\Status.cs" />

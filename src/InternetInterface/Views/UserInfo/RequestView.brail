@@ -103,7 +103,7 @@ div.scroller
 				<input type=hidden name="filter.Direction" value="${filter.Direction}" />
 				<input type=hidden name="filter.labelId" value="${filter.labelId}" />
 				<tr>
-					<td style="width:100px;">Период</td>
+					<td style="width:150px;">Период</td>
 					<td>
 						<label for="startDate">c</label>
 						<input type=text value="${filter.beginDate.ToShortDateString()}" name="filter.beginDate" id="startDate"  class="date-pick dp-applied">
@@ -113,7 +113,7 @@ div.scroller
 				</tr>
 				<tr>
 					<td>
-						<label for="streetText">Поиск по улице: </label>
+						<label for="streetText">Поиск по улице/телефону: </label>
 					</td>
 					<td>
 						<input id="streetText" type="text" value="${filter.query}" name="filter.query" />
@@ -152,7 +152,7 @@ div.scroller
 			 <td>${Client.Id}</td>
 				<%if PartnerAccessSet.AccesPartner("RC"): %>
 					<%if Client.Client == null: %>
-				<td><a id="request_to_reg_${Client.Id}" href="../Register/RegisterClient.rails?requestID=${Client.Id}"> ${Client.ApplicantName}</a></td>
+				<td><a id="request_to_reg_${Client.Id}" href="../UserInfo/RequestOne?id=${Client.Id}"> ${Client.ApplicantName}</a></td>
 					<%else: %>
 				<td><a id="request_to_reg_${Client.Id}" href="../Search/Redirect?filter.ClientCode=${Client.Client.Id}"> ${Client.ApplicantName}</a></td>
 					<%end %>

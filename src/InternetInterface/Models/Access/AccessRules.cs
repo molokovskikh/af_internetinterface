@@ -221,7 +221,8 @@ namespace InternetInterface.Models.Access
 									"CreateLabel",
 									"SetLabel",
 									"RequestInArchive",
-									"RequestOne"
+									"RequestOne",
+									"CreateRequestComment"
 								};
 			return _visibleDemand.Contains(methodName) ? "VD" : string.Empty;
 		}
