@@ -742,14 +742,18 @@ namespace Billing.Test.Unit
 			var phisClient = unblockedClient.PhysicalClient;
 			billing.OnMethod();
 			unblockedClient.Refresh();
-			Assert.IsTrue(unblockedClient.Status.Blocked);
+			Assert.IsTrue(unblockedClient.Disabled);
 			new Payment {
 							Client = unblockedClient,
-							Sum = unblockedClient.GetPriceForTariff() - phisClient.Balance
+							Sum = 0
+						}.Save();
+			new Payment {
+							Client = unblockedClient,
+							Sum = unblockedClient.GetPriceForTariff() / 2
 						}.Save();
 			billing.OnMethod();
 			unblockedClient.Refresh();
-			Assert.IsFalse(unblockedClient.Status.Blocked);
+			Assert.IsFalse(unblockedClient.Disabled);
 			Assert.That(unblockedClient.PhysicalClient.Balance, Is.GreaterThan(0));
 			phisClient.Balance = -5;
 			phisClient.Update();

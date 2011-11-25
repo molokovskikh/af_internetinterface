@@ -98,6 +98,112 @@ namespace InternetInterface.Controllers
 		}
 	}
 
+
+	public class RequestFilter : IPaginable, ISortableContributor, SortableContributor
+	{
+		public string query { get; set; }
+		public DateTime? beginDate { get; set; }
+		public DateTime? endDate { get; set; }
+		public string SortBy { get; set; }
+		public string Direction { get; set; }
+		public uint? labelId { get; set; }
+		public bool Archive { get; set; }
+
+		private int _lastRowsCount;
+
+		public int RowsCount
+		{
+			get { return _lastRowsCount; }
+		}
+
+		public int PageSize
+		{
+			get { return 20; }
+		}
+
+		public int CurrentPage { get; set; }
+
+		public string[] ToUrl()
+		{
+			return
+				GetParameters().Where(p => p.Key != "CurrentPage").Select(p => string.Format("{0}={1}", p.Key, p.Value))
+					.ToArray();
+		}
+
+		public Dictionary<string,object> GetParameters()
+		{
+			return new Dictionary<string, object> {
+													{"filter.query", query},
+													{"filter.beginDate", beginDate},
+													{"filter.endDate", endDate},
+													{"filter.labelId", labelId},
+													{"filter.Archive", Archive},
+													{"filter.SortBy", SortBy},
+													{"filter.Direction", Direction},
+													{"CurrentPage", CurrentPage}
+												  };
+		}
+
+		public string ToUrlQuery()
+		{
+			return string.Join("&", ToUrl());
+		}
+
+		public string GetUriToArchive()
+		{
+			Archive = !Archive;
+			var label = Archive ? "Показать архив" : "Показать заявки";
+			var a = string.Format("<a href=\"../UserInfo/RequestView?{0}\">{1}</a>", GetUri(), label);
+			Archive = ! Archive;
+			return a;
+		}
+
+		public string GetUri()
+		{
+			return ToUrlQuery();
+		}
+
+		public List<Requests> Find()
+		{
+			var thisD = DateTime.Now;
+			if (beginDate == null)
+				beginDate = new DateTime(thisD.Year, thisD.Month, 1);
+			if (endDate == null)
+				endDate = DateTime.Now;
+
+			Expression<Func<Requests, bool>> predicate;
+			if (labelId != 0)
+				if (!string.IsNullOrEmpty(query))
+					predicate = i => i.Street.Contains(query) && i.ActionDate.Date >= beginDate.Value.Date && i.ActionDate.Date <= endDate.Value.Date && i.Label.Id == labelId && i.Archive == Archive;
+				else {
+					predicate = i => i.ActionDate.Date >= beginDate.Value.Date && i.ActionDate.Date <= endDate.Value.Date && i.Label.Id == labelId && i.Archive == Archive;
+				}
+			else {
+				if (!string.IsNullOrEmpty(query))
+					predicate =
+						i =>
+						i.Street.Contains(query) && i.ActionDate.Date >= beginDate.Value.Date && i.ActionDate.Date <= endDate.Value.Date &&
+						i.Archive == Archive;
+				else {
+					predicate =
+						i => i.ActionDate.Date >= beginDate.Value.Date && i.ActionDate.Date <= endDate.Value.Date && i.Archive == Archive;
+				}
+			}
+
+			_lastRowsCount = Requests.Queryable.Where(predicate).Count();
+			if (_lastRowsCount > 0) {
+				var getCount = _lastRowsCount - PageSize*CurrentPage < PageSize ? _lastRowsCount - PageSize*CurrentPage : PageSize;
+				var result = Requests.Queryable.Where(predicate).ToList();
+				if (!string.IsNullOrEmpty(SortBy))
+					result.Sort(new PropertyComparer<Requests>(Direction == "asc" ? SortDirection.Asc : SortDirection.Desc, SortBy));
+				return result.Skip(PageSize*CurrentPage)
+					.Take(getCount)
+					.ToList();
+			}
+			return new List<Requests>();
+		}
+	}
+
 	[Helper(typeof (PaginatorHelper))]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof (AuthenticationFilter))]
 	public class UserInfoController : BaseController
@@ -530,8 +636,7 @@ namespace InternetInterface.Controllers
 set r.`Label` = null,
 r.`ActionDate` = :ActDate,
 r.`Operator` = :Oper 
-where r.`Label`= :LabelIndex ;")
-							.AddEntity(typeof (Label));
+where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 					query.SetParameter("LabelIndex", deletelabelch);
 					query.SetParameter("ActDate", DateTime.Now);
 					query.SetParameter("Oper", InitializeContent.Partner.Id);
@@ -542,13 +647,24 @@ where r.`Label`= :LabelIndex ;")
 			RedirectToUrl("../UserInfo/RequestView.rails");
 		}
 
-		public void RequestView()
+		public void RequestView([DataBind("filter")]RequestFilter filter)
 		{
-			var requests = Requests.FindAll().OrderByDescending(f => f.ActionDate);
+			var requests = filter.Find();
 			PropertyBag["Clients"] = InitializeContent.Partner.Categorie.ReductionName == "Agent"
 			                         	? requests.Where(r => r.Registrator == InitializeContent.Partner).ToList()
 			                         	: requests.ToList();
+			PropertyBag["filter"] = filter;
+			PropertyBag["Direction"] = filter.Direction;
+			PropertyBag["SortBy"] = filter.SortBy;
 			SendRequestEditParameter();
+		}
+
+		public void RequestInArchive(uint id)
+		{
+			var request = Requests.Find(id);
+			request.Archive = true;
+			request.Update();
+			RedirectToReferrer();
 		}
 
 		/// <summary>
@@ -570,32 +686,12 @@ where r.`Label`= :LabelIndex ;")
 		}
 
 		/// <summary>
-		/// Фильтр по меткам
-		/// </summary>
-		/// <param name="labelId"></param>
-		public void RequestView(uint labelId)
-		{
-			var requests = Requests.FindAll().ToList();
-
-			if (labelId == 0)
-				requests = requests.Where(r => r.Label == null).ToList();
-			else
-				requests = requests.Where(r => r.Label != null && r.Label.Id == labelId).ToList();
-			requests = requests.OrderByDescending(f => f.ActionDate).ToList();
-			if (InitializeContent.Partner.Categorie.ReductionName == "Agent")
-				PropertyBag["Clients"] = requests.Where(r => r.Registrator == InitializeContent.Partner).ToList();
-			else
-				PropertyBag["Clients"] = requests.ToList();
-			SendRequestEditParameter();
-		}
-
-		/// <summary>
 		/// Устанавливает метки на клиентов
 		/// </summary>
 		/// <param name="labelList"></param>
 		/// <param name="labelch"></param>
 		[AccessibleThrough(Verb.Post)]
-		public void RequestView([DataBind("LabelList")] List<uint> labelList, uint labelch)
+		public void SetLabel([DataBind("LabelList")] List<uint> labelList, uint labelch)
 		{
 			var _label = Label.Find(labelch);
 			foreach (var label in labelList)
@@ -618,12 +714,13 @@ where r.`Label`= :LabelIndex ;")
 					request.SetRequestBoduses();
 				}
 			}
-			var requests = Requests.FindAll().OrderByDescending(f => f.ActionDate);
+			/*var requests = Requests.FindAll().OrderByDescending(f => f.ActionDate);
 			if (InitializeContent.Partner.Categorie.ReductionName == "Agent")
 				PropertyBag["Clients"] = requests.Where(r => r.Registrator == InitializeContent.Partner).ToList();
 			else
 				PropertyBag["Clients"] = requests.ToList();
-			SendRequestEditParameter();
+			SendRequestEditParameter();*/
+			RedirectToReferrer();
 		}
 
 		public void InforoomUsersPreview()

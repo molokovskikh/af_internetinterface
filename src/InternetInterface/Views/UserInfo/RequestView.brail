@@ -1,10 +1,10 @@
 ﻿<style type="text/css">
-        
-        
+		
+		
 #content 
 {
 width:75%;
-z-index:10;
+/*z-index:1;*/
 border-right:#ddd 1px solid;
 position:absolute;
 }
@@ -18,57 +18,67 @@ display:block;
 
 .fontgit
 {
-    font-family: Verdana;
-    font-size: small;
-    font-weight: normal;
+	font-family: Verdana;
+	font-size: small;
+	font-weight: normal;
 }
 div.scroller 
 {
-    min-width:1250;
-    width:expression(document.body.clientWidth < 1250? "1250px": "auto" );
+	min-width:1250;
+	width:expression(document.body.clientWidth < 1250? "1250px": "auto" );
 }
 
 .table_us
 {
-    margin-bottom : 15px;
-    border-collapse :collapse;
-    background-color:#fff;
+	margin-bottom : 15px;
+	border-collapse :collapse;
+	background-color:#fff;
 }
 
 .table_us TD
 {
-    padding-right:10px;
-    padding-top:10px;
-    padding-left:5px;
-    padding-bottom:0px;
-    font-size:x-small;
-    border-bottom:#aaa 1px solid;
-    border-top:#aaa 1px solid;
+	padding-right:10px;
+	padding-top:10px;
+	padding-left:5px;
+	padding-bottom:0px;
+	font-size:x-small;
+	border-bottom:#aaa 1px solid;
+	border-top:#aaa 1px solid;
 }
 
 .table_us TH
 {
-    padding-right:2px;
-    padding-top:2px;
-    padding-left:2px;
-    padding-bottom:2px;
-    text-align:inherit;
-    font-weight:normal;
-    background:#576c82;
-    color:#fff;
-    font-weight:bold;
+	padding-right:2px;
+	padding-top:2px;
+	padding-left:2px;
+	padding-bottom:2px;
+	text-align:inherit;
+	font-weight:normal;
+	background:#576c82;
+	color:#fff;
+	font-weight:bold;
 }
 
-    #on_line_clients_head th
-        {
-            border:1px double black;
-        }
+	#on_line_clients_head th
+		{
+			border:1px double black;
+		}
+#searchTable
+{
+	width:600px;
+	height:200px;
+	border: 1px double Black;
+	background-color:White;
+	}
 </style>
 </head>
 
 <script type="text/javascript" id="js">    $(document).ready(function () {
-        $("#for_sort").tablesorter({
-        });
+		/*$("#for_sort").tablesorter({
+		});*/
+		$(function () {
+			$('.date-pick').datepicker();
+		});
 });
 </script>
 
@@ -77,162 +87,223 @@ div.scroller
 <body class="body_cl">
 
 <div class=scroller>
-
 <div id="main" style="width:100%; float:none;">
-         <div id="content">
-        <form id="SearchForm" name="SearchForm" method=post action="${siteroot}/UserInfo/RequestView">
-            <% if (Clients.Count == 0):
-            output WriteMessageError("Нет заявок на подключение")
-            else: %>
-            <table class="table" id="for_sort">
-            <thead class="tablesorter_head" id="on_line_clients_head">
-            <tr>
-                <th></th>
-                <th style="width:70px;">Номер</th>
-                <th >Имя</th>
-                <th  style="width:120px;">Телефон</th>
-                <th >Email</th>
-                <th >Адрес</th>
-                <th >Тариф</th>
-                <th ><center>Метка</center></th>
-                <th style="width:140px;"><center>Дата действия</center></th>
-            </tr>
-            </thead>
-            <tbody>
-            <% for i,Client in enumerate(Clients): %>
-            <tr> 
-             <td><input type="checkbox" id="Checkbox1" name="LabelList[${i}]" value=${Client.Id} /></td>
-             <td>${Client.Id}</td>
-                <%if PartnerAccessSet.AccesPartner("RC"): %>
-                <td><a id="request_to_reg_${Client.Id}" href="../Register/RegisterClient.rails?requestID=${Client.Id}"> ${Client.ApplicantName}</a></td>
-                <%else: %>
-                <td>${Client.ApplicantName}</td>
-                <%end %>
-                <td>${Client.ApplicantPhoneNumber}</td>
-                <td>${Client.ApplicantEmail}</td>
-                <td style="width:200px;">
-                    ${Client.City} ул. ${Client.Street}
-                    <%if Client.House != null: %>
-                     д. ${Client.House} 
-                     <%end %>
-                     <%if Client.CaseHouse != null: %>
-                     корп. ${Client.CaseHouse} 
-                     <%end %>
-                     <%if Client.Apartment != null: %>
-                     кв. ${Client.Apartment} 
-                     <%end %>
-                     <%if Client.Entrance != null: %>
-                     подъезд ${Client.Entrance}
-                     <%end %>
-                     <%if Client.Floor != null: %>
-                     этаж ${Client.Floor}
-                     <%end %>
-                </td>
-                <td>${Client.Tariff.Name}</td>
-                <%if (Client.Label != null) and (Client.Label.Id != 0): %>
-                <td style="width:180px;">
-                    <div class='flash' style="float:left; height:40px; width:180px; float: left; padding:0px; margin:0px;"> 
-                        <div class="fontgit">
-                            <div class='message error'style="border-color:${Client.Label.GetBorderColor()}; background-color:${Client.Label.Color}; Color:Black;" align="center" >
-                             ${Client.Label.Name}
-                             </div>
-                        </div>
-                    </div>
-                    </td>
-                <%else: %>
-                <td style="width:180px;">
-                </td>
-                <%end %>
-                    <%if Client.ActionDate.ToShortDateString() != "01.01.0001": %>
-                    <td>
-                        ${Client.ActionDate.ToShortDateString()}
-                    </td>
-                    <%else: %>
-                    <td>---------</td>
-                    <%end %>
-                <%i++ %>
-                </tr>
-            <%end %>
-            <%end %>
-            </tbody>
-            </table>
-             </div>
+		 <div id="content">
+		<center>
+		<form method=get>
+		<table class="table" id="searchTable">
+			<thead>
+				<tr>
+					<th colspan=2>Поиск заявки</th>
+				</tr>
+			</thead>
+			<tbody>
+				<input type=hidden name="filter.Archive" value="${filter.Archive}" />
+				<input type=hidden name="filter.SortBy" value="${filter.SortBy}" />
+				<input type=hidden name="filter.Direction" value="${filter.Direction}" />
+				<input type=hidden name="filter.labelId" value="${filter.labelId}" />
+				<tr>
+					<td style="width:100px;">Период</td>
+					<td>
+						<label for="startDate">c</label>
+						<input type=text value="${filter.beginDate.ToShortDateString()}" name="filter.beginDate" id="startDate"  class="date-pick dp-applied">
+						<label for="EndDate">по</label>
+						<input type=text value="${filter.endDate.ToShortDateString()}" name="filter.endDate" id="EndDate"  class="date-pick dp-applied">
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label for="streetText">Поиск по улице: </label>
+					</td>
+					<td>
+						<input id="streetText" type="text" value="${filter.query}" name="filter.query" />
+					</td>
+				</tr>
+				<tr>
+					<td colspan=2>				<button type=submit class="button">Найти</button></td>
+				</tr>
+			</tbody>
+		</table>
+		</form>
+		</center>
+		<form id="SearchForm" name="SearchForm" method=post action="${siteroot}/UserInfo/SetLabel">
+			<% if (Clients.Count == 0):
+			output WriteMessageError("Нет заявок на подключение")
+			else: %>
+			<table class="table" id="for_sort">
+			<thead class="tablesorter_head1" id="on_line_clients_head">
+			<tr>
+				<th></th>
+				<th style="width:70px;">${app.Sortable("Номер", "Id", "Number")}</th>
+				<th >${app.Sortable("Имя", "ApplicantName", "Name")}</th>
+				<th  style="width:120px;">Телефон</th>
+				<th >Email</th>
+				<th >${app.Sortable("Адрес", "Street", "Adress")}</th>
+				<th >Тариф</th>
+				<th ><center>Метка</center></th>
+				<th style="width:100px;"><center>${app.Sortable("Дата действия", "ActionDate", "ActionDate")}</center></th>
+				<th>Направить</th>
+			</tr>
+			</thead>
+			<tbody>
+			<% for i,Client in enumerate(Clients): %>
+			<tr> 
+			 <td><input type="checkbox" id="Checkbox1" name="LabelList[${i}]" value=${Client.Id} /></td>
+			 <td>${Client.Id}</td>
+				<%if PartnerAccessSet.AccesPartner("RC"): %>
+					<%if Client.Client == null: %>
+				<td><a id="request_to_reg_${Client.Id}" href="../Register/RegisterClient.rails?requestID=${Client.Id}"> ${Client.ApplicantName}</a></td>
+					<%else: %>
+				<td><a id="request_to_reg_${Client.Id}" href="../Search/Redirect?filter.ClientCode=${Client.Client.Id}"> ${Client.ApplicantName}</a></td>
+					<%end %>
+				<%else: %>
+				<td>${Client.ApplicantName}</td>
+				<%end %>
+				<td>${Client.ApplicantPhoneNumber}</td>
+				<td>${Client.ApplicantEmail}</td>
+				<td style="width:200px;">
+					${Client.City} ул. ${Client.Street}
+					<%if Client.House != null: %>
+					 д. ${Client.House} 
+					 <%end %>
+					 <%if Client.CaseHouse != null: %>
+					 корп. ${Client.CaseHouse} 
+					 <%end %>
+					 <%if Client.Apartment != null: %>
+					 кв. ${Client.Apartment} 
+					 <%end %>
+					 <%if Client.Entrance != null: %>
+					 подъезд ${Client.Entrance}
+					 <%end %>
+					 <%if Client.Floor != null: %>
+					 этаж ${Client.Floor}
+					 <%end %>
+				</td>
+				<td>${Client.Tariff.Name}</td>
+				<%if (Client.Label != null) and (Client.Label.Id != 0): %>
+				<td style="width:180px;">
+					<div class='flash' style="float:left; height:40px; width:180px; float: left; padding:0px; margin:0px;"> 
+						<div class="fontgit">
+							<div class='message error'style="border-color:${Client.Label.GetBorderColor()}; background-color:${Client.Label.Color}; Color:Black;" align="center" >
+							 ${Client.Label.Name}
+							 </div>
+						</div>
+					</div>
+					</td>
+				<%else: %>
+				<td style="width:180px;">
+				</td>
+				<%end %>
+					<%if Client.ActionDate.ToShortDateString() != "01.01.0001": %>
+					<td>
+						${Client.ActionDate.ToShortDateString()}
+					</td>
+					<%else: %>
+					<td>---------</td>
+					<%end %>
+					<%if not Client.Archive: %>
+					<td><a class="button" href="../UserInfo/RequestInArchive?id=${Client.Id}">В архив</a></td>
+					<%else: %>
+					<td></td>
+					<%end %>
+				<%i++ %>
+				</tr>
+			<%end %>
+			<%end %>
+				<tr>
+					<td colspan=10>
+					<div class="Paginator">
+						 ${PaginatorHelper.ShowPaginator()}
+					</div>
+					</td>
+				</tr> 
+			</tbody>
+			</table>
+			 </div>
 
-             <div id="sidebar">
-             <table class="table" style="width:170px; font-size:16px;">
-             <thead>
-             <th colspan=2 style="font-size=16px;">Метки</th>
-             </thead>
-             <tbody>
-             <tr><td colspan=2><a href="../UserInfo/RequestView.rails">Все</a></td></tr>
-             <tr><td colspan=2><a href="../UserInfo/RequestView.rails?labelId=0">Нет</a></td></tr>
-                    <% for i, Label in enumerate(Labels): %>
-                    <tr>
-                    <td style="width:20px;">
-                        <div class='message error' style=" width:20px; height:20px; background-color:${Label.Color}; border: 1px solid; border-color: ${Label.GetBorderColor()}; " align="left">
-                     </div>
-                     </td>
-                     <td>
-                      <a href="../UserInfo/RequestView.rails?labelId=${Label.Id}">${Label.Name}</a>
-                     </td>
-                    </tr>
-                    <% end %>
-                <tr>
-                    <td colspan=2>
-                             <select name="labelch" id="labelch" style="width: 100%" >
-                             <option id="Option2" value = 0 style="background-color: White"> Нет </option>
-                             <% for i, Label in enumerate(Labels): %>
-                             <option id="Option1" value=${Label.Id} style="background-color: ${Label.Color}"> ${Label.Name} </option>
-                             <% end %>
-                             
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan=2>
-                    <button  name="SetlabelButton"  id="SetlabelButton" type="submit" class="button"  align="right" >Установить метки </button>
-                    </td>
-                 </tr>
-                </tbody>
-                </table>
-              </form>
-               <form id="Form1" name="RequestViewForm" method=post action="${siteroot}/UserInfo/CreateLabel">
-              <table class="table" style="width:170px;" >
-                <thead>
-                    <th>Создать метку</th>
-                </thead>
-                <tbody>
-                <% OutputSubView("""\Subview\CreateEditLabel""") %>
-                    <tr>
-                        <td><button id="CreateLabelButton" type="submit" class="button" align="right" >Создать метку</button></td>
-                    </tr>
-                </tbody>
-             </table>
-             </form>
-             <form id="Form2" name="RequestViewForm" method=post action="${siteroot}/UserInfo/DeleteLabel">
-              <table class="table" style="width:170px;" >
-                <thead>
-                    <th>Удалить метку</th>
-                </thead>
-                <tbody>
-                <% OutputSubView("""\Subview\DeleteLabel""") %>
-                <tr><td><button id="DeleteLabelButton" type="submit" align="right" class="button" >Удалить метку</button></td></tr>
-                </tbody>
-               </table>
-             </form>
-             <form id="Form3" name="RequestViewForm" method=post action="${siteroot}/UserInfo/EditLabel">
-              <table class="table" style="width:170px;" >
-                <thead >
-                    <th >Редактировать</th>
-                </thead>
-                <tbody>
-                <% OutputSubView("""\Subview\DeleteLabel""") %>
-                <% OutputSubView("""\Subview\CreateEditLabel""") %>
-                <tr><td><button id="Submit2" type="submit" class="button"  align="right">Редактировать</button></td></tr>
-                </tbody>
-               </table>
-             </form>
-             </div>
-             </div>
-             </div>
+			 <div id="sidebar">
+			 <table class="table" style="width:170px;" >
+				<thead>
+					<tr>
+						<th>${filter.GetUriToArchive()}</th>
+					</tr>
+				</thead>
+			 </table>
+			 <table class="table" style="width:170px; font-size:16px;">
+			 <thead>
+			 <th colspan=2 style="font-size=16px;">Метки</th>
+			 </thead>
+			 <tbody>
+			 <tr><td colspan=2><a href="../UserInfo/RequestView.rails?filter.labelId=0">Все</a></td></tr>
+			 <tr><td colspan=2><a href="../UserInfo/RequestView.rails">Нет</a></td></tr>
+					<% for i, Label in enumerate(Labels): %>
+					<tr>
+					<td style="width:20px;">
+						<div class='message error' style=" width:20px; height:20px; background-color:${Label.Color}; border: 1px solid; border-color: ${Label.GetBorderColor()}; " align="left">
+					 </div>
+					 </td>
+					 <td>
+					  <a href="../UserInfo/RequestView.rails?filter.labelId=${Label.Id}&filter.Archive=${filter.Archive}">${Label.Name}</a>
+					 </td>
+					</tr>
+					<% end %>
+				<tr>
+					<td colspan=2>
+							 <select name="labelch" id="labelch" style="width: 100%" >
+							 <option id="Option2" value = 0 style="background-color: White"> Нет </option>
+							 <% for i, Label in enumerate(Labels): %>
+							 <option id="Option1" value=${Label.Id} style="background-color: ${Label.Color}"> ${Label.Name} </option>
+							 <% end %>
+							 
+					</td>
+				</tr>
+				<tr>
+					<td colspan=2>
+					<button  name="SetlabelButton"  id="SetlabelButton" type="submit" class="button"  align="right" >Установить метки </button>
+					</td>
+				 </tr>
+				</tbody>
+				</table>
+
+			   <form id="Form1" name="RequestViewForm" method=post action="${siteroot}/UserInfo/CreateLabel">
+			  <table class="table" style="width:170px;" >
+				<thead>
+					<th>Создать метку</th>
+				</thead>
+				<tbody>
+				<% OutputSubView("""\Subview\CreateEditLabel""") %>
+					<tr>
+						<td><button id="CreateLabelButton" type="submit" class="button" align="right" >Создать метку</button></td>
+					</tr>
+				</tbody>
+			 </table>
+			 </form>
+			 <form id="Form2" name="RequestViewForm" method=post action="${siteroot}/UserInfo/DeleteLabel">
+			  <table class="table" style="width:170px;" >
+				<thead>
+					<th>Удалить метку</th>
+				</thead>
+				<tbody>
+				<% OutputSubView("""\Subview\DeleteLabel""") %>
+				<tr><td><button id="DeleteLabelButton" type="submit" align="right" class="button" >Удалить метку</button></td></tr>
+				</tbody>
+			   </table>
+			 </form>
+			 <form id="Form3" name="RequestViewForm" method=post action="${siteroot}/UserInfo/EditLabel">
+			  <table class="table" style="width:170px;" >
+				<thead >
+					<th >Редактировать</th>
+				</thead>
+				<tbody>
+				<% OutputSubView("""\Subview\DeleteLabel""") %>
+				<% OutputSubView("""\Subview\CreateEditLabel""") %>
+				<tr><td><button id="Submit2" type="submit" class="button"  align="right">Редактировать</button></td></tr>
+				</tbody>
+			   </table>
+			 </form>
+			 </div>
+						  </form>
+			 </div>
+			 </div>
 </body>
 </html>

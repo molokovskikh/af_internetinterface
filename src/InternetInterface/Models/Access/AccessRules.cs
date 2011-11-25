@@ -218,7 +218,9 @@ namespace InternetInterface.Models.Access
 									"EditLabel",
 									"DeleteLabel",
 									"SiteMap",
-									"CreateLabel"
+									"CreateLabel",
+									"SetLabel",
+									"RequestInArchive"
 								};
 			return _visibleDemand.Contains(methodName) ? "VD" : string.Empty;
 		}

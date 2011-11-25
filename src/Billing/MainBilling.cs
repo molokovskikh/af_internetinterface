@@ -126,7 +126,6 @@ namespace Billing
 					WriteOffDate = SystemTime.Now(),
 					WriteOffSum = phisCl.ConnectSum
 				}.SaveAndFlush();
-
 			}
 			var newPayments = Payment.FindAll(DetachedCriteria.For(typeof (Payment))
 			                                  	.Add(Restrictions.Eq("BillingAccount", false)));

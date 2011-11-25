@@ -87,19 +87,15 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual decimal VirtualBonus { get; set; }
 		
-		/*[Property]
-		public virtual decimal VirtualWriteOff { get; set; }*/
+		[Property]
+		public virtual bool Archive { get; set; }
+
+		[BelongsTo]
+		public virtual Client Client { get; set; }
 
 		[Property]
 		public virtual bool PaidBonus { get; set; }
 
-		/*[Property]
-		public virtual bool Registered { get; set; }*/
-
-		/*public static IOrderedQueryable<Requests> Queryable
-		{
-			get { return ActiveRecordLinqBase<Requests>.Queryable; }
-		}*/
 
 		public virtual IDictionary GetValidateionErrors()
 		{
