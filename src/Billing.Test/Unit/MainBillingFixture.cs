@@ -745,6 +745,10 @@ namespace Billing.Test.Unit
 			Assert.IsTrue(unblockedClient.Status.Blocked);
 			new Payment {
 							Client = unblockedClient,
+							Sum = unblockedClient.GetPriceForTariff() / 2
+						}.Save();
+			new Payment {
+							Client = unblockedClient,
 							Sum = unblockedClient.GetPriceForTariff() - phisClient.Balance
 						}.Save();
 			billing.OnMethod();

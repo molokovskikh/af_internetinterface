@@ -92,7 +92,7 @@ namespace InternetInterface.Models
 
 		public virtual bool HavePayment
 		{
-			get { return Payments.Where(p => p.BillingAccount).ToList().Count > 0; }
+			get { return Payments.Where(p => p.BillingAccount && p.Sum > 0).ToList().Count > 0; }
 		}
 
 		public virtual string Contact
