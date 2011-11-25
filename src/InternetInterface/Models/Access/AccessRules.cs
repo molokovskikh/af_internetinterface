@@ -220,7 +220,8 @@ namespace InternetInterface.Models.Access
 									"SiteMap",
 									"CreateLabel",
 									"SetLabel",
-									"RequestInArchive"
+									"RequestInArchive",
+									"RequestOne"
 								};
 			return _visibleDemand.Contains(methodName) ? "VD" : string.Empty;
 		}

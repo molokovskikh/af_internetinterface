@@ -659,6 +659,11 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 			SendRequestEditParameter();
 		}
 
+		public void RequestOne(uint id)
+		{
+			PropertyBag["request"] = Requests.Find(id);
+		}
+
 		public void RequestInArchive(uint id)
 		{
 			var request = Requests.Find(id);

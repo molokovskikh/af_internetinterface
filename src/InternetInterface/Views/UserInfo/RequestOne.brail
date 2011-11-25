@@ -1,0 +1,70 @@
+﻿<div style="width:50%;">
+<div style="width:50%; float:left;">
+<table class="table">
+	<thead>
+		<tr>
+			<th>Заявка</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td></td>
+			<td>${request.ApplicantName}</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td>${request.ApplicantPhoneNumber}</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td>${request.ApplicantEmail}</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td>${request.Street} ${request.House}${request.CaseHouse} ${request.Apartment} Подъезд ${request.Entrance} Этаж ${request.Floor}</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td>${request.Tariff.Name}</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td>${request.Label.Name}</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td>${request.ActionDate}</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td>${request.Operator.Name}</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td>${request.RegDate}</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td>${request.Registrator.Name}</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td>${request.Archive}</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td>${request.Client.Name}</td>
+		</tr>
+	</tbody>
+</table>
+</div>
+<div style="width:49%; float:right;">
+<table class="table">
+	<thead>
+		<tr>
+			<th>123</th>
+		</tr>
+	</thead>
+</table>
+</div>
+</div>

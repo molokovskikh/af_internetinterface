@@ -189,6 +189,7 @@
     <None Include="Views\UserInfo\AppointedToTheGraph.brail" />
     <None Include="Views\UserInfo\ClientRegisteredInfoFromDiller.brail" />
     <None Include="Views\UserInfo\CreateAndPrintGraph.brail" />
+    <None Include="Views\UserInfo\RequestOne.brail" />
     <None Include="Views\UserInfo\RequestGraph.brail" />
     <None Include="Views\UserInfo\LawyerPersonInfo.brail" />
     <None Include="Views\UserInfo\NoPhoned.brail" />

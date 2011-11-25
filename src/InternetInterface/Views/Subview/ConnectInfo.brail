@@ -342,7 +342,7 @@
 	}   
 	
 	 function SetValidGate(elem) {
-		$(elem).rules("add", { regex: "^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$" })
+	 	$(elem).rules("add", { regex: "^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$" })
 	}
 
 	function SetValidMask(elem) {
