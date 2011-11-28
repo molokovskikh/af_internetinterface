@@ -22,7 +22,6 @@ using IFilter = Castle.MonoRail.Framework.IFilter;
 
 namespace InternetInterface.Controllers
 {
-	//[Layout("Main")]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class RegisterController : BaseController
 	{
@@ -35,23 +34,19 @@ namespace InternetInterface.Controllers
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["Statuss"] = Status.FindAllSort();
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
-			if (changeProperties.IsForTariff())
-			{
+			if (changeProperties.IsForTariff()) {
 				phisClient.Balance = Tariff.Find(tariff).Price;
 			}
-			if (changeProperties.IsOtherSumm())
-			{
+			if (changeProperties.IsOtherSumm()) {
 				phisClient.Balance = Convert.ToDecimal(balanceText);
 			}
 			var Password = CryptoPass.GeneratePassword();
 			phisClient.Password = Password;
-			if (!CategorieAccessSet.AccesPartner("SSI"))
-			{
+			if (!CategorieAccessSet.AccesPartner("SSI")) {
 				phisClient.ConnectSum = 700;
 				status = 1;
 			}
-			if (!CategorieAccessSet.AccesPartner("DHCP"))
-			{
+			if (!CategorieAccessSet.AccesPartner("DHCP")) {
 				ConnectInfo.Port = null;
 			}
 			var portException = Validation.ValidationConnectInfo(ConnectInfo);
@@ -59,28 +54,29 @@ namespace InternetInterface.Controllers
 			var registerClient = Validator.IsValid(phisClient);
 
 			if ((registerClient && string.IsNullOrEmpty(portException)) ||
-				(registerClient && string.IsNullOrEmpty(ConnectInfo.Port)))
-			{
+			    (registerClient && string.IsNullOrEmpty(ConnectInfo.Port))) {
 				DbLogHelper.SetupParametersForTriggerLogging();
 
 				PhysicalClients.RegistrLogicClient(phisClient, tariff, house_id, Validator);
 
-				var client = new Client {
-											 AutoUnblocked = false,
-											 Disabled = true,
-											 PercentBalance = 0.0m,
-											 RegDate = DateTime.Now,
-											 WhoRegistered = InitializeContent.Partner,
-											 WhoRegisteredName = InitializeContent.Partner.Name,
-											 Status = Status.Find((uint) StatusType.BlockedAndNoConnected),
+				var havePayment = phisClient.Balance > 0;
 
-											 Name =
-												 string.Format("{0} {1} {2}", phisClient.Surname, phisClient.Name,
-															   phisClient.Patronymic),
-											 PhysicalClient = phisClient,
-											 Type = ClientType.Phisical,
-											 BeginWork = null
-										 };
+				var client = new Client {
+					AutoUnblocked = havePayment,
+					Disabled = !havePayment,
+					PercentBalance = havePayment ? 0.8m : 0.0m,
+					RegDate = DateTime.Now,
+					WhoRegistered = InitializeContent.Partner,
+					WhoRegisteredName = InitializeContent.Partner.Name,
+					Status = Status.Find((uint) StatusType.BlockedAndNoConnected),
+
+					Name =
+						string.Format("{0} {1} {2}", phisClient.Surname, phisClient.Name,
+						              phisClient.Patronymic),
+					PhysicalClient = phisClient,
+					Type = ClientType.Phisical,
+					BeginWork = null
+				};
 				client.SaveAndFlush();
 
 				if (!string.IsNullOrEmpty(phisClient.PhoneNumber))
@@ -92,33 +88,34 @@ namespace InternetInterface.Controllers
 				if (!string.IsNullOrEmpty(phisClient.Email))
 					Contact.SaveNew(client, phisClient.Email, "Указан при регистрации", ContactType.Email);
 
-				var payment = new Payment {
-											  Agent =
-												  Agent.FindAllByProperty("Partner", InitializeContent.Partner).First(),
-											  BillingAccount = true,
-											  Client = client,
-											  PaidOn = DateTime.Now,
-											  RecievedOn = DateTime.Now,
-											  Sum = phisClient.Balance
-										  };
-				payment.SaveAndFlush();
+
+				if (havePayment) {
+					var payment = new Payment {
+						Agent =
+							Agent.FindAllByProperty("Partner", InitializeContent.Partner).First(),
+						BillingAccount = true,
+						Client = client,
+						PaidOn = DateTime.Now,
+						RecievedOn = DateTime.Now,
+						Sum = phisClient.Balance
+					};
+					payment.SaveAndFlush();
+				}
 				var apartmentForClient =
 					Apartment.Queryable.Where(a => a.House == phisClient.HouseObj && a.Number == phisClient.Apartment).
 						FirstOrDefault();
 				if (apartmentForClient != null)
 					apartmentForClient.Delete();
-				if (!string.IsNullOrEmpty(ConnectInfo.Port) && CategorieAccessSet.AccesPartner("DHCP"))
-				{
+				if (!string.IsNullOrEmpty(ConnectInfo.Port) && CategorieAccessSet.AccesPartner("DHCP")) {
 					var newCEP = new ClientEndpoints {
-														 Client = client,
-														 Port = Convert.ToInt32(ConnectInfo.Port),
-														 Switch =
-															 NetworkSwitches.Find(Convert.ToUInt32(ConnectInfo.Switch)),
-														 PackageId = phisClient.Tariff.PackageId
-													 };
+						Client = client,
+						Port = Convert.ToInt32(ConnectInfo.Port),
+						Switch =
+							NetworkSwitches.Find(Convert.ToUInt32(ConnectInfo.Switch)),
+						PackageId = phisClient.Tariff.PackageId
+					};
 					newCEP.SaveAndFlush();
-					if (BrigadForConnect != 0)
-					{
+					if (BrigadForConnect != 0) {
 						var brigad = Brigad.Find(BrigadForConnect);
 						client.WhoConnected = brigad;
 						client.WhoConnectedName = brigad.Name;
@@ -126,19 +123,16 @@ namespace InternetInterface.Controllers
 					client.ConnectedDate = DateTime.Now;
 					client.Status = Status.Find((uint) StatusType.BlockedAndConnected);
 					client.UpdateAndFlush();
-					foreach (var requestse in Requests.FindAllByProperty("Id", requestID))
-					{
-						if (requestse.Registrator != null)
-						{
-							PaymentsForAgent.CreatePayment(AgentActions.ConnectClient, string.Format("Зачисление за подключенного клиента #{0}", client.Id),
+					foreach (var requestse in Requests.FindAllByProperty("Id", requestID)) {
+						if (requestse.Registrator != null) {
+							PaymentsForAgent.CreatePayment(AgentActions.ConnectClient,
+							                               string.Format("Зачисление за подключенного клиента #{0}", client.Id),
 							                               requestse.Registrator);
 							PaymentsForAgent.CreatePayment(requestse.Registrator,
 							                               string.Format("Зачисление бонусов по заявке #{0} за поключенного клиента #{1}",
 							                                             requestse.Id, client.Id), requestse.VirtualBonus);
-							//PaymentsForAgent.CreatePayment(requestse.Registrator, "Зачисление штрафов", -requestse.VirtualWriteOff);
 							requestse.PaidBonus = true;
 							requestse.Update();
-							//requestse.SetRequestBoduses();
 						}
 					}
 				}
@@ -149,16 +143,15 @@ namespace InternetInterface.Controllers
 				Flash["AccountNumber"] = client.Id.ToString("00000");
 				Flash["ConnectSumm"] = phisClient.ConnectSum;
 				Flash["ConnectInfo"] = client.GetConnectInfo();
-				foreach (var requestse in Requests.FindAllByProperty("Id", requestID))
-				{
-					if (requestse.Registrator != null)
-					{
+				foreach (var requestse in Requests.FindAllByProperty("Id", requestID)) {
+					if (requestse.Registrator != null) {
 						phisClient.Request = requestse;
 						phisClient.Update();
-						PaymentsForAgent.CreatePayment(AgentActions.CreateClient, string.Format("Зачисление за зарегистрированного клиента #{0}", client.Id), requestse.Registrator);
+						PaymentsForAgent.CreatePayment(AgentActions.CreateClient,
+						                               string.Format("Зачисление за зарегистрированного клиента #{0}", client.Id),
+						                               requestse.Registrator);
 					}
-					if (requestse.Label != null && requestse.Label.ShortComment == "Refused" && requestse.Registrator != null)
-					{
+					if (requestse.Label != null && requestse.Label.ShortComment == "Refused" && requestse.Registrator != null) {
 						PaymentsForAgent.CreatePayment(requestse.Registrator,
 						                               string.Format("Снятие штрафа за закрытие заявки #{0}", requestse.Id),
 						                               -AgentTariff.GetPriceForAction(AgentActions.DeleteRequest));
@@ -171,15 +164,13 @@ namespace InternetInterface.Controllers
 				if (InitializeContent.Partner.Categorie.ReductionName == "Office")
 					if (VisibleRegisteredInfo)
 						RedirectToUrl("..//UserInfo/ClientRegisteredInfo.rails");
-					else
-					{
+					else {
 						RedirectToUrl("../UserInfo/SearchUserInfo.rails?filter.ClientCode=" + client.Id);
 					}
 				if (InitializeContent.Partner.Categorie.ReductionName == "Diller")
 					RedirectToUrl("..//UserInfo/ClientRegisteredInfoFromDiller.rails");
 			}
-			else
-			{
+			else {
 				PropertyBag["Client"] = phisClient;
 				PropertyBag["BalanceText"] = balanceText;
 				PropertyBag["ChHouse"] = house_id;
@@ -364,6 +355,7 @@ namespace InternetInterface.Controllers
 			else
 			{
 				PropertyBag["ChHouse"] = 0;
+				PropertyBag["Message"] = Message.Error("Не удалось сопоставить адрес из заявки ! Будте внимательны при заполнении адреса клиента !");
 			}
 			SendRegisterParam();
 		}
