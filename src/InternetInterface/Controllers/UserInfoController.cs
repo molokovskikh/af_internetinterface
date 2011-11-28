@@ -296,18 +296,17 @@ namespace InternetInterface.Controllers
 			if (!client.PaymentForTariff())
 				message +=
 					"Воспользоваться услугой возможно если все платежи клиента первышают его абонентскую плату за месяц";
-			if (client.CanUsedPostponedPayment())
-			{
+			if (client.CanUsedPostponedPayment()) {
 				client.Disabled = false;
 				client.Update();
 				message += "Услуга \"Обещанный платеж активирована\"";
 				new Appeals {
-				            	Appeal = "Услуга \"Обещанный платеж активирована\"",
-				            	AppealType = (int) AppealType.System,
-				            	Client = client,
-				            	Date = DateTime.Now,
-				            	Partner = InitializeContent.Partner
-				            }.Save();
+					Appeal = "Услуга \"Обещанный платеж активирована\"",
+					AppealType = (int) AppealType.System,
+					Client = client,
+					Date = DateTime.Now,
+					Partner = InitializeContent.Partner
+				}.Save();
 			}
 			Flash["Applying"] = message;
 			RedirectToUrl("../UserInfo/SearchUserInfo.rails?filter.ClientCode=" + ClientID);

@@ -234,7 +234,7 @@ div.scroller
 			 <th colspan=2 style="font-size=16px;">Метки</th>
 			 </thead>
 			 <tbody>
-			 <tr><td colspan=2><a href="../UserInfo/RequestView.rails?filter.labelId=0">Все</a></td></tr>
+			 <tr><td colspan=2><a href="../UserInfo/RequestView.rails?filter.labelId=0&filter.Archive=${filter.Archive}&filter.beginDate=${filter.beginDate.ToShortDateString()}&filter.endDate=${filter.endDate.ToShortDateString()}">Все</a></td></tr>
 			 <tr><td colspan=2><a href="../UserInfo/RequestView.rails">Нет</a></td></tr>
 					<% for i, Label in enumerate(Labels): %>
 					<tr>
@@ -243,7 +243,7 @@ div.scroller
 					 </div>
 					 </td>
 					 <td>
-					  <a href="../UserInfo/RequestView.rails?filter.labelId=${Label.Id}&filter.Archive=${filter.Archive}">${Label.Name}</a>
+					  <a href="../UserInfo/RequestView.rails?filter.labelId=${Label.Id}&filter.Archive=${filter.Archive}&filter.beginDate=${filter.beginDate.ToShortDateString()}&filter.endDate=${filter.endDate.ToShortDateString()}">${Label.Name}</a>
 					 </td>
 					</tr>
 					<% end %>
