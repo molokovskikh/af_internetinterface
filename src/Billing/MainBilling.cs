@@ -243,6 +243,7 @@ namespace Billing
 						var bufBal = phisicalClient.Balance;
 						client.ShowBalanceWarningPage = bufBal - dec < 0;
 						client.UpdateAndFlush();
+						if (dec > 0)
 						new WriteOff {
 							Client = client,
 							WriteOffDate = SystemTime.Now(),
@@ -264,6 +265,7 @@ namespace Billing
 					decimal spis = person.Tariff.Value / DateTime.DaysInMonth(thisDate.Year, thisDate.Month);
 					person.Balance -= spis;
 					person.UpdateAndFlush();
+					if (spis > 0)
 					new WriteOff {
 						Client = client,
 						WriteOffDate = SystemTime.Now(),
