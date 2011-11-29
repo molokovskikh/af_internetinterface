@@ -880,6 +880,7 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 				{
 					_client.AutoUnblocked = true;
 					_client.Disabled = false;
+					_client.ShowBalanceWarningPage = false;
 				}
 				_client.Update();
 				PropertyBag["Editing"] = false;
