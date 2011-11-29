@@ -4,6 +4,7 @@ import file from Lib.bake
 import file from Migration.bake
 import file from Tools.bake
 import file from Test.bake
+import file from Db.bake
 
 Global(
 	Project : "InternetInterface",
