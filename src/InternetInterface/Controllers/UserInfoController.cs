@@ -227,7 +227,7 @@ namespace InternetInterface.Controllers
 		{
 			PropertyBag["_client"] = Client.Find(filter.ClientCode);
 			PropertyBag["filter"] = filter;
-			PropertyBag["Leases"] = filter.Find();
+			PropertyBag["Leases"] = filter.Find();	
 		}
 
 		public void LawyerPersonInfo([DataBind("filter")] ClientFilter filter)
@@ -237,7 +237,7 @@ namespace InternetInterface.Controllers
 
 			if (client.Status != null)
 				PropertyBag["ChStatus"] = client.Status.Id;
-			else
+			else ;
 				PropertyBag["ChStatus"] = Status.FindFirst().Id;
 			PropertyBag["grouped"] = filter.grouped;
 			PropertyBag["appealType"] = filter.appealType == 0 ? (int) AppealType.User : filter.appealType;

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework.Config;
+using InforoomInternet.Initializers;
 using NHibernate.Cfg;
 using NUnit.Framework;
 
@@ -36,8 +37,8 @@ namespace InforoomInternet.Test
 						Assembly.Load("InternetInterface")
 					},
 					configuration);
-
-				ActiveRecordStarter.UpdateSchema();
+				//ActiveRecord.SetupFilters();
+				//ActiveRecordStarter.UpdateSchema();
 			}
 		}
 	}

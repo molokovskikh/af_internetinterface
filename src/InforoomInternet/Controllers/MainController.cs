@@ -98,6 +98,7 @@ namespace InforoomInternet.Controllers
 #endif*/
 			var lease = Client.FindByIP(hostAdress);
 #if DEBUG
+			if (lease == null)
 			lease = new Lease {
 				Endpoint = new ClientEndpoints {
 					Client = new Client {
