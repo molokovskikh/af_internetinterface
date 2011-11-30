@@ -93,9 +93,6 @@ namespace InforoomInternet.Controllers
 		public void Warning()
 		{
 			var hostAdress = Request.UserHostAddress;   
-/*#if DEBUG
-			hostAdress = "91.219.6.6";
-#endif*/
 			var lease = Client.FindByIP(hostAdress);
 #if DEBUG
 			if (lease == null)
@@ -118,7 +115,6 @@ namespace InforoomInternet.Controllers
 			if (lease == null)
 			{
 				Redirecter.RedirectRoot(Context, this);
-				//RedirectToSiteRoot();
 				return;
 			}
 
@@ -131,7 +127,6 @@ namespace InforoomInternet.Controllers
 				var url = Request.Form["referer"];
 				if (String.IsNullOrEmpty(url))
 					Redirecter.RedirectRoot(Context, this);
-					//RedirectToSiteRoot();
 				else
 					RedirectToUrl(string.Format("http://{0}", url));
 				return;
@@ -157,32 +152,6 @@ namespace InforoomInternet.Controllers
 
 			PropertyBag["PClient"] = pclient;
 		}
-
-
-		/*public void Save()
-		{
-			var localPath = Request.Form["LocalPath"];
-			if (LoginLogic.IsAccessiblePartner(Session["LoginPartner"]))
-			{
-				var htmlcode = Request.Form["htmlcode"];
-				var views = SiteContent.FindAllByProperty("ViewName", localPath);
-				if (views.Length == 0)
-					new SiteContent
-						{
-							Content = htmlcode,
-							ViewName = localPath
-						}.SaveAndFlush();
-				else
-				{
-					var forEdit = views.First();
-					forEdit.Content = htmlcode;
-					forEdit.ViewName = localPath;
-					forEdit.UpdateAndFlush();
-				}
-			}
-			var url = localPath == "HowPay" ? string.Empty :  Context.ApplicationPath + "/Content/";
-			RedirectToUrl(url + localPath);
-		}*/
 
 		private void SetEdatableAttribute(bool edit, string viewName)
 		{

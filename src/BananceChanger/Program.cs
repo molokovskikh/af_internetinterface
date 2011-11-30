@@ -5,7 +5,9 @@ using System.Text;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework.Config;
 using Common.Tools;
+using InternetInterface.Helpers;
 using InternetInterface.Models;
+using Test.Support.Helpers;
 using Environment = NHibernate.Cfg.Environment;
 
 namespace BananceChanger
@@ -20,7 +22,74 @@ namespace BananceChanger
 			//ZeroTarif();
 			//IntervalTariffs();
 			//diactivateClient();
-			LawyerPersonMonth();
+			TheeDaysTrial();
+		}
+
+		//Начисляет бонусные 3 дня клиентам, которые вчера работали
+		public static void TheeDaysTrial()
+		{
+			using (var session = new TransactionScope(OnDispose.Rollback)) {
+				var whoRealWork = Client.Queryable.Where(c =>
+				                                         !c.Disabled &&
+				                                         c.PhysicalClient != null &&
+				                                         c.BeginWork != null &&
+				                                         c.RatedPeriodDate != null).ToList();
+				//!!!!!!!!!!!!!!!! ИЗМЕНИ ПРИ SQL2!!!!!!!!!!!1
+				var lastDay = new DateTime(2011, 11, 29, 00, 00, 00);
+				var clientWhoBlocked = ClientInternetLogs.Queryable.Where(c =>
+				                                                          c.Disabled &&
+				                                                          c.OperatorName == "InternetBilling" &&
+				                                                          c.LogTime >= lastDay).ToList().Select(c => c.Client).ToList();
+				whoRealWork.AddRange(clientWhoBlocked);
+				foreach (var client in whoRealWork) {
+					decimal add_sum = 0m;
+					for (int i = 0; i < 3; i++) {
+						SystemTime.Now = () => DateTime.Now.AddDays(i);
+						if (client.RatedPeriodDate == null)
+							client.RatedPeriodDate = SystemTime.Now();
+						if ((client.RatedPeriodDate.Value.AddMonths(1).Date - SystemTime.Now().Date).Days <= 0)
+							client.RatedPeriodDate = SystemTime.Now();
+						var toDt = client.GetInterval();
+						var price = client.GetPrice();
+						add_sum += price/toDt;
+					}
+					if (add_sum > 0)
+					new Payment {
+						Client = client,
+						Sum = add_sum,
+						PaidOn = DateTime.Now,
+						RecievedOn = DateTime.Now
+					}.Save();
+					Console.WriteLine(string.Format("Клиент {0} активирован, ему начислено {1} руб", client.Id.ToString("00000"), add_sum.ToString("0.00")));
+				}
+				foreach (var client in whoRealWork) {
+					session.Evict(client);
+				}
+				session.VoteCommit();
+			}
+			using (var session = new TransactionScope(OnDispose.Rollback)) {
+				//!!!!!!!!!!!!!!!! ИЗМЕНИ ПРИ SQL2!!!!!!!!!!!1
+				var lastDay = new DateTime(2011, 11, 29, 00, 00, 00);
+				var clientWhoBlocked = ClientInternetLogs.Queryable.Where(c =>
+				                                                          c.Disabled &&
+				                                                          c.OperatorName == "InternetBilling" &&
+				                                                          c.LogTime >= lastDay).ToList().Select(c => c.Client).ToList();
+				foreach (var client in clientWhoBlocked) {
+					client.Disabled = false;
+					client.AutoUnblocked = true;
+					client.RatedPeriodDate = null;
+					client.ShowBalanceWarningPage = false;
+					client.Status = Status.Find((uint) StatusType.Worked);
+					Console.WriteLine(string.Format("Клиент {0} активирован", client.Id.ToString("00000")));
+					var service = client.ClientServices.FirstOrDefault();
+					if (service != null && service.GetType() == typeof(DebtWork)) {
+						service.Delete();
+						Console.WriteLine(string.Format("Для клиента {0} удалена услуга обещанный платеж", client.Id.ToString("00000")));
+					}
+				}
+				session.VoteCommit();
+			}
+			Console.WriteLine("ГОТОВО!");
 		}
 
 		public static void LawyerPersonMonth()
@@ -373,9 +442,11 @@ namespace BananceChanger
 					{Environment.ProxyFactoryFactoryClass, "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle" },
 					{Environment.Hbm2ddlKeyWords, "none"},
 				});
+			ActiveRecordStarter.EventListenerComponentRegistrationHook += RemoverListner.Make;
 			ActiveRecordStarter.Initialize(
 				new[] { typeof(Client).Assembly, typeof(PhysicalClientInternetLogs).Assembly },
 				configuration);
+
 		}
 	}
 }
