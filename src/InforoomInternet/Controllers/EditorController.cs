@@ -24,16 +24,10 @@ namespace InforoomInternet.Controllers
 					"Main/zayavka",
 					"Main/OfferContract",
 					"PrivateOffice/IndexOffice",
-					"Main/Index"
+					"Main/Index",
+					"Main/Feedback"
 				};
 			}
 		}
-
-		/*[return: JSONReturnBinder]
-		public string Save()
-		{
-			return Save(() => ArHelper.WithSession(
-				s => s.CreateSQLQuery(@"delete from internet.menufield; delete from internet.submenufield;").ExecuteUpdate()));
-		}*/
 	}
 }

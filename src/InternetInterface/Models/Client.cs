@@ -99,14 +99,16 @@ namespace InternetInterface.Models
 		{
 			get
 			{
-				var contact = Contacts.Where(c => c.Type == ContactType.HeadPhone).FirstOrDefault();
-				if (contact != null) {
-					return contact.HumanableNumber();
-					//return string.Format("{0}-{1}", contact.Text.Substring(0, 3), contact.Text.Substring(3, 7));
+				if (Contacts != null) {
+					var contact = Contacts.Where(c => c.Type == ContactType.HeadPhone).FirstOrDefault();
+					if (contact != null) {
+						return contact.HumanableNumber();
+						//return string.Format("{0}-{1}", contact.Text.Substring(0, 3), contact.Text.Substring(3, 7));
+					}
+					contact = Contacts.FirstOrDefault();
+					if (contact != null)
+						return contact.HumanableNumber();
 				}
-				contact = Contacts.FirstOrDefault();
-				if (contact != null)
-					return contact.HumanableNumber();
 				return string.Empty;
 			}
 		}

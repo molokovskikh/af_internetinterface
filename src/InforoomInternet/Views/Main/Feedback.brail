@@ -1,0 +1,90 @@
+﻿<script type="text/javascript">
+	$(function () {
+		$("#feedbackForm").validate({
+			errorElement: "span",
+			errorLabelContainer: "#messageBox",
+			wrapper: "div",
+  highlight: function(element, errorClass, validClass) {
+	$(element).addClass(errorClass + "_input").removeClass("valid");
+	 $(element.form).find("label[for=" + element.id + "]")
+					.addClass(errorClass);
+  },
+  unhighlight: function(element, errorClass, validClass) {
+	$(element).removeClass(errorClass + "_input").addClass("valid");
+	 $(element.form).find("label[for=" + element.id + "]")
+					.removeClass(errorClass);
+  },
+			rules: {
+				clientId: {
+					digits: true
+				},
+				clientName: {
+					required: true
+				},
+				appealText: {
+					required: true
+				}
+			},
+			messages:
+			{
+				clientId: {
+					digits : "Должно быть введено число",
+					required : "Введите номер лицевого счета"
+				},
+				clientName: {
+					required : "Введите ФИО"
+				},
+				appealText: {
+					required: "Введите текст обращения"
+				}
+			}
+		});
+		$.validator.addMethod(
+		"regexContact",
+		function (value, element, regexp) {
+			var re = new RegExp(regexp);
+			var filter = /^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+			var reEmail = new RegExp(filter);
+			var emailValid = reEmail.test(value);
+			return this.optional(element) || re.test(value) || emailValid;
+		}, "Введите телефон в формате ***-*******, либо Email");
+
+		$("#contactInfo").rules("add", { required: true, regexContact: "^([0-9]{3})\-([0-9]{7})$",
+			messages: {
+				required: "Введите телефон в формате ***-*******, либо Email"
+			}
+		});
+	});
+</script>
+
+<style>
+
+</style>
+
+<div class="appeal_main">
+<center><h3>Форма обратной связи</h3></center>
+<form class="form" id="feedbackForm" method="post" action="${siteroot}/Main/FeedBack">
+<input type=hidden name="autoClientId" value="${client.Id}" />
+<div id="messageBox">
+</div>
+<p>
+	<span for="clientName">ФИО</span>  <br />
+	<input type=text id="clientName" name="clientName" value="${client.Name}" size=50/>
+</p>
+<p>
+	<span for="contactInfo">Контактная информация</span>  <br />
+	<input type=text id="contactInfo" name="contactInfo" value="${client.Contact}" />
+</p>
+<p>
+	<span for="clientId">Номер лицевого счета</span> <br />
+	<input type=text id="clientId" name="clientId" value="${client.Id.ToString("00000")}" size=3>
+</p>
+<p>
+	<span for="appealText">Введите текст обращения</span><br />
+	<textarea id="appealText" name="appealText" rows="8" cols="70%" ></textarea>
+</p>
+<p>
+	<button type=submit class="button">Отправить</button>
+</p>
+</form>
+</div>

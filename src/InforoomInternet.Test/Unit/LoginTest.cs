@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Common.Models;
+using Common.Models.Repositories;
 using Common.MySql;
 using InforoomInternet.Controllers;
 using InforoomInternet.Models;
@@ -22,11 +24,16 @@ namespace InforoomInternet.Test.Unit
 		[Test]
 		public void Test()
 		{
-			//var u = MenuField.FindFirst();
 			var Con = new MySqlConnection(@"Data Source=testSQL.analit.net;Database=internet;User ID=system;Password=newpass;Connect Timeout=300;pooling=true;convert zero datetime=yes;Default command timeout=300;Allow User Variables=true;");
 			Con.Open();
 			var h = new MySqlHelper(Con);
 			h.Command(string.Format("insert into internet.PhysicalClients (Password) values (\"{0}\")", CryptoPass.GetHashString("123"))).Execute();
 		}
+
+		/*[Test]
+		public void HiberTest()
+		{
+			var q = HiberWorker.GetObject<IAppeals>((uint)5);
+		}*/
 	}
 }

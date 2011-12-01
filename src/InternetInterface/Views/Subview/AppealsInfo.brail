@@ -17,22 +17,11 @@
 			<img alt="Save" src="../Images/tick.png">Зарегистрировать</button>
 	</form>
 	<%if PartnerAccessSet.AccesPartner("SSI"): %>
-			<%if appealType == 1: %>
-			<a href="${Siteroot}/Search/Redirect?filter.ClientCode=${ClientCode}&filter.appealType=3">
-				<button type="button" id="Button1" class="button">
-				<img alt="Save" src="../Images/tick.png">Показать системные обращения</button>
-			</a>
-			<%else: %>
-			<a href="${Siteroot}/Search/Redirect?filter.ClientCode=${ClientCode}&filter.appealType=1">
-				<button type="button" id="Button3" class="button">
-				<img alt="Save" src="../Images/tick.png">Показать пользовательские обращения</button>
-			</a>
-			<%end %>
-			<form method=get action="${Siteroot}/UserInfo/Leases">
-			<input type="hidden" name="filter.ClientCode" value="${ClientCode}" />
-			<button type="submit" id="Statistic" class="button">
-			<img alt="Save" src="../Images/tick.png">Показать статистику работы</button>
-			</form>
+			<a href="${Siteroot}/Search/Redirect?filter.ClientCode=${ClientCode}&filter.appealType=1" class="button" style="background-color:${"#cdc6c6" if appealType == 1};">Пользовательские</a>
+			<a href="${Siteroot}/Search/Redirect?filter.ClientCode=${ClientCode}&filter.appealType=3" class="button" style="background-color:${"#cdc6c6" if appealType == 3};">Системные</a>
+			<a href="${Siteroot}/Search/Redirect?filter.ClientCode=${ClientCode}&filter.appealType=5" class="button" style="background-color:${"#cdc6c6" if appealType == 5};">Внешние</a>
+
+			<a href="${Siteroot}/UserInfo/Leases?filter.ClientCode=${ClientCode}" class="button" style="background: #EEE url(../Images/tick.png) no-repeat; background-position: 5px 5px; padding-left:2em;">Показать статистику работы</a>
 		<%end %>
 		</td>
 	</tr>

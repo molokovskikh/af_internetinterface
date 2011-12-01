@@ -127,6 +127,11 @@ namespace InternetInterface.Models
 			return appealType == AppealType.System;
 		}
 
+		public bool IsFeedBack()
+		{
+			return appealType == AppealType.FeedBack;
+		}
+
 		public bool IsAll()
 		{
 			return appealType == AppealType.All;

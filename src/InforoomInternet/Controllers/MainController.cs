@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
 using Castle.MonoRail.Framework;
+using Common.Web.Ui.Helpers;
 using Common.Web.Ui.Models.Editor;
 using InforoomInternet.Logic;
 using InforoomInternet.Models;
@@ -46,6 +48,61 @@ namespace InforoomInternet.Controllers
 
 		public void PrivateOffice()
 		{}
+
+		public void Feedback(string clientName, string contactInfo, uint clientId, string appealText, uint autoClientId)
+		{
+			var ip = Request.UserHostAddress;
+			var mailToAdress = "internet@ivrn.net";
+#if DEBUG
+			var lease = new List<Lease>(); //Lease.FindAll();
+			mailToAdress = "a.zolotarev@analit.net";
+#else
+			var lease = Lease.FindAllByProperty("Ip", Convert.ToUInt32(NetworkSwitches.SetProgramIp(ip)));
+#endif
+			var client = lease.Where(
+				l => l.Endpoint != null && l.Endpoint.Client != null && l.Endpoint.Client.PhysicalClient != null).
+				Select(l => l.Endpoint.Client).FirstOrDefault();
+			client = client ?? new Client();
+			PropertyBag["client"] = client;
+
+			if (IsPost) {
+				var Text = new StringBuilder();
+				Text.AppendLine("Обращение клиента через сайт WWW.IVRN.NET \r\n");
+				Text.AppendLine("Клиент пришел с адреса: " + ip);
+				Text.AppendLine(string.Format("Наша система определила запрос с лицевого счета номер: {0} \r\n", autoClientId));
+				Text.AppendLine("Введена информация : \r\n");
+				Text.AppendLine("ФИО: " + clientName);
+				Text.AppendLine("Контактная информация: " + contactInfo);
+				Text.AppendLine("Номер счета: " + clientId);
+				Text.AppendLine("Текст обращения: \r\n" + appealText);
+				var userClient = Client.Queryable.Where(c => c.Id == clientId).FirstOrDefault();
+				new Appeals {
+					Client = userClient,
+					Date = DateTime.Now,
+					AppealType = (int) AppealType.FeedBack,
+					Appeal = Text.ToString()
+				}.Save();
+				if (userClient != null) {
+					if (userClient.Contacts != null && !userClient.Contacts.Select(c => c.Text).Contains(contactInfo))
+						new Contact {
+							Client = userClient,
+							Date = DateTime.Now,
+							Text = contactInfo,
+							Type = ContactType.ConnectedPhone
+						}.Save();
+				}
+				var message = new MailMessage();
+				message.To.Add(mailToAdress);
+				message.Subject = "Принято новое обращение клиента";
+				message.From = new MailAddress("internet@ivrn.net");
+				message.Body = Text.ToString();
+				var smtp = new SmtpClient("box.analit.net");
+				smtp.Send(message);
+				RedirectToAction("MessageSended", new Dictionary<string, string> {{"clientName", clientName}});
+			}
+
+			ArHelper.WithSession(s => s.Evict(client));
+		}
 
 		public void Assist()
 		{

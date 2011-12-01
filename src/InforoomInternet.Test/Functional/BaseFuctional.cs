@@ -48,7 +48,6 @@ namespace InforoomInternet.Test.Unit
 		}
 
 
-
 		[Test]
 		public void WarningTest()
 		{

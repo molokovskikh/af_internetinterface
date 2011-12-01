@@ -34,6 +34,8 @@
 				<label for="userAppeal">Пользовательские</label> <br />
 				<input type=radio name="filter.appealType.appealType" id="systemAppeal" value=System ${"checked" if filter.appealType.IsSystem()}/>
 				<label for="systemAppeal">Системные</label><br />
+				<input type=radio name="filter.appealType.appealType" id="feedBack" value=FeedBack ${"checked" if filter.appealType.IsFeedBack()}/>
+				<label for="systemAppeal">Внешние</label><br />
 				<input type=radio name="filter.appealType.appealType" id="Radio1" value=All ${"checked" if filter.appealType.IsAll()}/>
 				<label for="systemAppeal">Все</label>
 			</td>
@@ -69,13 +71,17 @@
 		<%end %>
 			<td>${item.Date.ToShortDateString()}</td>
 			<td>${item.Type()}</td>
-			<td><a href="${Siteroot}/Search/Redirect?filter.ClientCode=${item.Client.Id}">${item.Client.Id.ToString("00000")}</a></td>
+			<%if item.Client != null : %>
+			<td><a href="${Siteroot}/Search/Redirect?filter.ClientCode=${item.Client.Id}&filter.appealType=${item.AppealType}">${item.Client.Id.ToString("00000")}</a></td>
 			<td>${item.Client.Name}</td>
-			<td style="width:800px;">${item.Appeal}</td>
+			<%else: %>
+			<td colspan=2></td>
+			<%end %>
+			<td style="width:800px;">${item.GetTransformedAppeal()}</td>
 		</tr>
 		<%end %>
 		<tr>
-			<td colspan=5>${PaginatorHelper.ShowPaginator()}</td>
+			<td colspan=6>${PaginatorHelper.ShowPaginator()}</td>
 		</tr>
 	</tbody>
 </table>

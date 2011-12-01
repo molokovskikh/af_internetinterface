@@ -543,6 +543,8 @@ color: #f00; /* ÷вет активной ссылки */
   background: #ff7200 url(../Content/Layouts/button-orange.png) no-repeat top center;
   margin-bottom: 30px;
   margin-left: 10px;
+	position: relative;
+	z-index: 1000;
 }
 
 .button-blue {
@@ -696,3 +698,44 @@ br.noheight {
   line-height: 0px;
 }
 
+.appeal_main input
+{
+	margin-top: 5px;
+}
+
+.error_input
+{
+	background-color: #FFBCBC;
+	border: 1px solid #C24949;
+}
+
+.error
+{
+	color:Red;
+}
+
+#messageBox
+{
+	display:none;
+	margin-bottom: 2em	;
+}
+
+.button
+{
+	background-color: #EEE;
+	padding: 5px 10px 5px 7px;
+	color: #222;
+	display:block;
+	margin:0 7px 0 0;
+	border: 1px solid #BFBFBF;
+	font-size:1em;
+	font-weight:bold;
+	cursor:pointer;
+	text-decoration:none;
+}
+
+
+button.button:hover
+{
+	background-color:#DEDEDE;
+}

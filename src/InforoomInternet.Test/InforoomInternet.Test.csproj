@@ -128,6 +128,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common.Models\Common.Models\Common.Models.csproj">
+      <Project>{80C9F352-5EED-41B2-989A-6628BCAF4D36}</Project>
+      <Name>Common.Models</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common.MySql\Common.MySql\Common.MySql.csproj">
       <Project>{8A680813-C83B-497A-85E6-E8F07B7D7650}</Project>
       <Name>Common.MySql</Name>
