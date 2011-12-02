@@ -30,10 +30,43 @@ namespace InternetInterface.Helpers
 		}
 	}
 
-	public class AuditablePropertyUser : AuditableProperty
+	public class AuditablePropertyIp : AuditableProperty
 	{
 
-		public AuditablePropertyUser(PropertyInfo property, string name, object newValue, object oldValue)
+		public AuditablePropertyIp(PropertyInfo property, string name, object newValue, object oldValue)
+			: base(property, name, newValue, oldValue)
+		{
+		}
+
+		protected override void Convert(PropertyInfo property, object newValue, object oldValue)
+		{
+			if (oldValue == null) {
+				OldValue = "";
+			}
+			else {
+				OldValue = AsString(oldValue);
+			}
+
+			if (newValue == null) {
+				NewValue = "";
+			}
+			else {
+				NewValue = AsString(newValue);
+			}
+			Message = String.Format("Изменено '{0}' было '{1}' стало '{2}'", Name, OldValue, NewValue);
+		}
+
+		public string AsString(object value)
+		{
+			return IpHeper.GetNormalIp(value.ToString());
+		}
+	}
+
+
+	public class AuditablePropertyInternet : AuditableProperty
+	{
+
+		public AuditablePropertyInternet(PropertyInfo property, string name, object newValue, object oldValue)
 			: base(property, name, newValue, oldValue)
 		{
 		}
@@ -63,11 +96,10 @@ namespace InternetInterface.Helpers
 		protected override AuditableProperty GetAuditableProperty(PropertyInfo property, string name, object newState,
 		                                                          object oldState)
 		{
-			return new AuditablePropertyUser(
-				property,
-				name,
-				newState,
-				oldState);
+			var attrs = property.GetCustomAttributes(typeof (Auditable), false);
+			if (attrs.Length > 0 && ((Auditable)attrs.First()).Name == "Фиксированный IP")
+			return new AuditablePropertyIp(property, name, newState, oldState);
+			return new AuditablePropertyInternet(property, name, newState, oldState);
 		}
 
 		protected override void Log(NHibernate.Event.PostUpdateEvent @event, string message)
@@ -81,8 +113,7 @@ namespace InternetInterface.Helpers
 				}
 				if (@event.Entity.GetType() == typeof (PhysicalClients)) {
 					client =
-						Client.Queryable.Where(c => c.PhysicalClient == (PhysicalClients) @event.Entity).FirstOrDefault
-							();
+						Client.Queryable.Where(c => c.PhysicalClient == (PhysicalClients) @event.Entity).FirstOrDefault();
 					logInfo = ((PhysicalClients) @event.Entity).LogComment;
 				}
 				if (@event.Entity.GetType() == typeof (LawyerPerson)) {

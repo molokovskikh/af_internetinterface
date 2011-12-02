@@ -16,7 +16,7 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool Disabled { get; set; }
 
-		[Property]
+		[Property, Auditable("Фиксированный IP")]
 		public virtual string Ip { get; set; }
 
 		[BelongsTo(Cascade = CascadeEnum.SaveUpdate), Auditable]
