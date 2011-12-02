@@ -62,9 +62,7 @@ namespace InternetInterface.Models
 		[BelongsTo]
 		public virtual Recipient Recipient { get; set; }
 
-		public virtual Client client
-		{
-			get { return Client.Queryable.Where(c => c.LawyerPerson == this).FirstOrDefault(); }
-		}
+		[OneToOne(PropertyRef = "LawyerPerson")]
+		public virtual Client client { get; set; }
 	}
 }

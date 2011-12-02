@@ -105,42 +105,21 @@ namespace InternetInterface.Helpers
 		protected override void Log(NHibernate.Event.PostUpdateEvent @event, string message)
 		{
 			using (new SessionScope()) {
-				var logInfo = string.Empty;
-				var client = new Client();
-				if (@event.Entity.GetType() == typeof (Client)) {
-					client = (Client) @event.Entity;
-					logInfo = ((Client) @event.Entity).LogComment;
+				var clientProp = @event.Entity.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(
+					p => p.PropertyType == typeof (Client)).FirstOrDefault();
+				if (clientProp != null) {
+					{
+
+						var client = (Client)clientProp.GetValue(@event.Entity, null);
+						@event.Session.Save(new Appeals {
+							Appeal = string.IsNullOrEmpty(client.LogComment) ? message : string.Format("{0} \r\n Комментарий: \r\n {1}", message, client.LogComment),
+							Client = client,
+							Date = DateTime.Now,
+							Partner = InitializeContent.Partner,
+							AppealType = (int) AppealType.System
+						});
+					}
 				}
-				if (@event.Entity.GetType() == typeof (PhysicalClients)) {
-					client =
-						Client.Queryable.Where(c => c.PhysicalClient == (PhysicalClients) @event.Entity).FirstOrDefault();
-					logInfo = ((PhysicalClients) @event.Entity).LogComment;
-				}
-				if (@event.Entity.GetType() == typeof (LawyerPerson)) {
-					client =
-						Client.Queryable.Where(c => c.LawyerPerson == (LawyerPerson) @event.Entity).FirstOrDefault();
-					logInfo = ((LawyerPerson) @event.Entity).LogComment;
-				}
-				if (@event.Entity.GetType() == typeof (ClientEndpoints)) {
-					client = ((ClientEndpoints) @event.Entity).Client;
-					logInfo = ((ClientEndpoints) @event.Entity).LogComment;
-				}
-				if (@event.Entity.GetType() == typeof (Contact)) {
-					var contact = ((Contact) @event.Entity);
-					client = contact.Client;
-					logInfo = "Контакт: " + contact.Text;
-				}
-				@event.Session.Save(new Appeals {
-					Appeal =
-				                    	string.IsNullOrEmpty(logInfo)
-				                    		? message
-				                    		: string.Format("{0} \r\n Комментарий: \r\n {1}", message,
-				                    		                logInfo),
-					Client = client,
-					Date = DateTime.Now,
-					Partner = InitializeContent.Partner,
-					AppealType = (int) AppealType.System
-				});
 			}
 		}
 	}

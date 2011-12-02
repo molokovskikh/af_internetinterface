@@ -679,10 +679,10 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 			RedirectToReferrer();
 		}
 
-		public void RequestInArchive(uint id)
+		public void RequestInArchive(uint id, bool action)
 		{
 			var request = Requests.Find(id);
-			request.Archive = true;
+			request.Archive = action;
 			request.Update();
 			RedirectToReferrer();
 		}

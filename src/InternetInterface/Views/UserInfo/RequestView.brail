@@ -202,9 +202,9 @@ div.scroller
 					<td>---------</td>
 					<%end %>
 					<%if not Client.Archive: %>
-					<td><a class="button" href="../UserInfo/RequestInArchive?id=${Client.Id}">В архив</a></td>
+					<td><a class="button" href="../UserInfo/RequestInArchive?id=${Client.Id}&action=true">В архив</a></td>
 					<%else: %>
-					<td></td>
+					<td><a class="button" href="../UserInfo/RequestInArchive?id=${Client.Id}&action=false">Из архива</a></td>
 					<%end %>
 				<%i++ %>
 				</tr>

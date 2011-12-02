@@ -176,6 +176,9 @@ namespace InternetInterface.Models
 		[BelongsTo]
 		public virtual Requests Request { get; set; }
 
+		[OneToOne(PropertyRef = "PhysicalClient")]
+		public virtual Client Client { get; set; }
+
 		public virtual string HowManyToPay(bool change)
 		{
 			var format = change ? "({0})" : "{0}";
