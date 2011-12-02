@@ -38,9 +38,8 @@
 	</div>
 	<div class="right">
 		<div id="icons">
-			<a href="#" class="home">&nbsp;</a>
-			<a href="#" class="mail">&nbsp;</a>
-			<a href="#" class="search">&nbsp;</a>
+			<a href="${siteroot}/" class="home">&nbsp;</a>
+			<a href="mailto:internet@ivrn.net" class="mail">&nbsp;</a>
 			<%if not AccessEditLink: %>
 			<a href="${siteroot}/Login/LoginPage?partner=true" class="login">&nbsp;</a>
 			<%end %>
@@ -58,9 +57,7 @@
 			<div class="top">&nbsp;</div>
 			<div class="middle">
 			<ul class="main">
-				<% 
-	component MenuList, {}
-%>	
+<%	component MenuList, {} %>
 			</ul>
 			</div>
 		</div>
@@ -78,72 +75,6 @@
 				<span>22-999-87</span>
 			</div>
 			<!-- // Телефон -->
-
-			<!-- Новости // -->
-			<div id="news">
-				<a href="#" title="RSS" class="news-rss">&nbsp;</a>
-				<div class="news-border">
-				<div class="news-block">
-					<div class="news-date">
-						<small>01.11.2010</small>
-					</div>
-					<div class="news-content">
-						<div class="news-header">
-							<h4>Новый тариф "Супер"</h4>
-						</div>
-						<div class="news-text">
-							<p>Слово "тариф" происходит от названия небольшого города Тарифа близ...</p>
-						</div>
-						<div class="news-readmore">
-							<a href="#">Подробнее</a>
-						</div>
-					</div>
-				</div>
-				<div class="news-block">
-					<div class="news-date">
-						<small>01.11.2010</small>
-					</div>
-					<div class="news-content">
-						<div class="news-header">
-							<h4>Новый тариф "Супер"</h4>
-						</div>
-						<div class="news-text">
-							<p>Слово "тариф" происходит от названия небольшого города Тарифа близ...</p>
-						</div>
-						<div class="news-readmore">
-							<a href="#">Подробнее</a>
-						</div>
-					</div>
-				</div>
-				<div class="news-block">
-					<div class="news-date">
-						<small>01.11.2010</small>
-					</div>
-					<div class="news-content">
-						<div class="news-header">
-							<h4>Новый тариф "Супер"</h4>
-						</div>
-						<div class="news-text">
-							<p>Слово "тариф" происходит от названия небольшого города Тарифа близ...</p>
-						</div>
-						<div class="news-readmore">
-							<a href="#">Подробнее</a>
-						</div>
-					</div>
-				</div>
-				<a href="#" class="news-all">Все новости</a>
-			</div>
-			</div>
-			<!-- // Новости -->
-
-			<!-- Поиск // -->
-			<div id="search">
-				<form action="#">
-					<input name="" value="Поиск" class="search" />
-					<input type="button" name="" class="submit" />
-				</form>
-			</div>
-			<!-- // Поиск -->
 
 			<!-- Контакты // -->
 			<div id="contacts">
@@ -167,43 +98,6 @@
 			<%if AccessEditLink: %>
 			<a href="${siteroot}/Editor/Menu" style="color:White; margin-left:10px;">Редактировать меню</a>
 			<%end %>
-			 <div style="display:none" id="poll">
-				<h3>А что вы думаете?</h3>
-				<p>Проснувшись утром, я, первым делом:</p>
-				<form action="#">
-					<input type="radio" name="v1" class="radio" id="v1" />
-					<label for="v1">иду в ванную</label><br />
-					<input type="radio" name="v2" class="radio" id="v2" />
-					<label for="v2">готовлю завтрак</label><br />
-					<input type="radio" name="v3" class="radio" id="v3" />
-					<label for="v3">включаю телевизор</label><br />
-					<input type="radio" name="v4" class="radio" id="v4" />
-					<label for="v4">включаю радио</label><br />
-					<input type="radio" name="v5" class="radio" id="v5" />
-					<label for="v5">застилаю постель</label><br />
-					<input type="radio" name="v6" class="radio" id="v6" />
-					<label for="v6">отдёргиваю занавески</label><br />
-					<input type="radio" name="v7" class="radio" id="v7" />
-					<label for="v7">делаю зарядку</label><br />
-					<input type="radio" name="v8" class="radio" id="v8" />
-					<label for="v8">пью кофе (чай)</label><br />
-					<input type="radio" name="v9" class="radio" id="v9" />
-					<label for="v9">бужу домашних</label><br />
-					<input type="button" name="" value="ПРОГОЛОСОВАТЬ" class="button" />
-				</form>
-				<span>Всего голосов: 372</span>
-			</div>
-			<div style="display:none" id="test">
-				<p>Вы хороший человек?</p>
-				<a href="#" class="test">Пройти тест</a>
-				<small><a href="#">Все тесты</a></small>
-			</div>
-			<div style="display:none" id="mini-banner">
-				<a href="#">&nbsp;</a>
-			</div>
-			<!-- Линия // -->
-			<hr style="display:none" noshade="noshade" width="165" color="#7197b5" class="line-home-right" />
-			<!-- // Линия -->
 		</div>
 		<!-- //Правая колонка -->
 
@@ -229,16 +123,7 @@
 		Все права защищены
 		</div>
 		<div class="center">
-						<% 
-	component FooterMenu, {}
-%>
-			<!--<ul>
-				<li class="bottom-line"><a href="${siteroot}/" id="Main1">Тарифы</a></li>
-				<li class="bottom-line"><a href="${siteroot}/Main/requisite" id="requisite1">Реквизиты</a></li>
-				<li class="bottom-line"><a href="${siteroot}/Main/Zayavka" id="Zayavka1">Заявка на подключение</a></li>
-				<li class="bottom-line"><a href="${siteroot}/Main/OfferContract" id="OfferContract1">Договор оферта</a></li>
-				<li><a href="${siteroot}/PrivateOffice/IndexOffice" id="PrivateOffice1">Личный кабинет</a></li>
-			</ul>-->
+<% 	component FooterMenu, {} %>
 		</div>
 		<br clear="all" />
 		<div class="cable">&nbsp;</div>
