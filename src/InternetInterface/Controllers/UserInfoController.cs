@@ -342,8 +342,10 @@ namespace InternetInterface.Controllers
 		public void SaveContacts([ARDataBind("contact", AutoLoad = AutoLoadBehavior.NewInstanceIfInvalidKey)]Contact[] contacts, uint ClientID)
 		{
 			var client = Client.Find(ClientID);
+			var telephoneRegex = new Regex(@"^((\d{10}))");
 			foreach (var contact in contacts) {
-				contact.Text = contact.Text.Replace("-", string.Empty);
+				var replaseContact = contact.Text.Replace("-", string.Empty);
+				contact.Text = telephoneRegex.IsMatch(replaseContact) ? replaseContact : contact.Text;
 				contact.Client = client;
 				contact.Registrator = InitializeContent.Partner;
 				contact.Date = DateTime.Now;
