@@ -72,7 +72,7 @@
 	<input type=text id="clientName" name="clientName" value="${client.Name}" size=50/>
 </p>
 <p>
-	<span for="contactInfo">Контактная информация</span>  <br />
+	<span for="contactInfo">Телефон или Email</span>  <br />
 	<input type=text id="contactInfo" name="contactInfo" value="${client.Contact}" />
 </p>
 <p>
@@ -84,7 +84,7 @@
 	<textarea id="appealText" name="appealText" rows="8" cols="70%" ></textarea>
 </p>
 <p>
-	<button type=submit class="button">Отправить</button>
+	<button id="saveFeedback" type=submit class="button">Отправить</button>
 </p>
 </form>
 </div>

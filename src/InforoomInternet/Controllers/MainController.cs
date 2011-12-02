@@ -54,7 +54,7 @@ namespace InforoomInternet.Controllers
 			var ip = Request.UserHostAddress;
 			var mailToAdress = "internet@ivrn.net";
 #if DEBUG
-			var lease = new List<Lease>(); //Lease.FindAll();
+			var lease = /*new List<Lease>(); */Lease.FindAll();
 			mailToAdress = "a.zolotarev@analit.net";
 #else
 			var lease = Lease.FindAllByProperty("Ip", Convert.ToUInt32(NetworkSwitches.SetProgramIp(ip)));
@@ -75,30 +75,32 @@ namespace InforoomInternet.Controllers
 				Text.AppendLine("Контактная информация: " + contactInfo);
 				Text.AppendLine("Номер счета: " + clientId);
 				Text.AppendLine("Текст обращения: \r\n" + appealText);
-				var userClient = Client.Queryable.Where(c => c.Id == clientId).FirstOrDefault();
-				new Appeals {
-					Client = userClient,
-					Date = DateTime.Now,
-					AppealType = (int) AppealType.FeedBack,
-					Appeal = Text.ToString()
-				}.Save();
-				if (userClient != null) {
-					if (userClient.Contacts != null && !userClient.Contacts.Select(c => c.Text).Contains(contactInfo))
-						new Contact {
-							Client = userClient,
-							Date = DateTime.Now,
-							Text = contactInfo,
-							Type = ContactType.ConnectedPhone
-						}.Save();
+				if (!string.IsNullOrEmpty(clientName) && !string.IsNullOrEmpty(contactInfo) && !string.IsNullOrEmpty(appealText)) {
+					var userClient = Client.Queryable.Where(c => c.Id == clientId).FirstOrDefault();
+					new Appeals {
+						Client = userClient,
+						Date = DateTime.Now,
+						AppealType = (int) AppealType.FeedBack,
+						Appeal = Text.ToString()
+					}.Save();
+					if (userClient != null) {
+						if (userClient.Contacts != null && !userClient.Contacts.Select(c => c.Text).Contains(contactInfo))
+							new Contact {
+								Client = userClient,
+								Date = DateTime.Now,
+								Text = contactInfo,
+								Type = ContactType.ConnectedPhone
+							}.Save();
+					}
+					var message = new MailMessage();
+					message.To.Add(mailToAdress);
+					message.Subject = "Принято новое обращение клиента";
+					message.From = new MailAddress("internet@ivrn.net");
+					message.Body = Text.ToString();
+					var smtp = new SmtpClient("box.analit.net");
+					smtp.Send(message);
+					RedirectToAction("MessageSended", new Dictionary<string, string> {{"clientName", clientName}});
 				}
-				var message = new MailMessage();
-				message.To.Add(mailToAdress);
-				message.Subject = "Принято новое обращение клиента";
-				message.From = new MailAddress("internet@ivrn.net");
-				message.Body = Text.ToString();
-				var smtp = new SmtpClient("box.analit.net");
-				smtp.Send(message);
-				RedirectToAction("MessageSended", new Dictionary<string, string> {{"clientName", clientName}});
 			}
 
 			ArHelper.WithSession(s => s.Evict(client));

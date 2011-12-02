@@ -47,6 +47,16 @@ namespace InforoomInternet.Test.Unit
 			_webServer.ShutDown();
 		}
 
+		[Test]
+		public void FeedBackTest()
+		{
+			using (var ie = Open("Main/Feedback")) {
+				ie.TextField("appealText").AppendText("TestAppeal");
+				ie.Button("saveFeedback").Click();
+				Assert.That(ie.Text, Is.StringContaining("Спасибо, Ваша заявка принята."));
+			}
+		}
+
 
 		[Test]
 		public void WarningTest()
@@ -292,12 +302,14 @@ namespace InforoomInternet.Test.Unit
 								Sum = client.GetPriceForTariff()*2,
 							}.Save();
 				client.ClientServices.Clear();
+				client.AutoUnblocked = true;
+				client.Disabled = true;
 				client.Update();
 			}
 			using (var browser = Open("PrivateOffice/IndexOffice"))
 			using (new SessionScope())
 			{
-				
+				//client.Refresh();
 				Console.WriteLine(client.PhysicalClient != null);
 				Console.WriteLine(!client.ClientServices.Select(c => c.Service).Contains(Service.GetByType(typeof(DebtWork))));
 				Console.WriteLine(client.Disabled);
@@ -309,11 +321,6 @@ namespace InforoomInternet.Test.Unit
 				browser.Button("PostponedBut").Click();
 				Console.WriteLine(browser.Text);
 				Assert.That(browser.Text, Is.StringContaining("Ваш личный кабинет"));
-			}
-			using (new SessionScope())
-			{
-				client = Client.Find(Convert.ToUInt32(clientId));
-				Assert.IsFalse(client.Disabled);
 			}
 
 			Console.WriteLine("PrivateOfficeTest Complite");

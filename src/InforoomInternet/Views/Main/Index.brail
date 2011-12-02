@@ -1,20 +1,23 @@
 ﻿<h2>Тарифы</h2>
-     <div class="text">
-        <h3>На всех тарифах доступ к крупнейшему торрент-треккеру г. Воронежа и локальной сети ИНФОРУМ на скорости до 100 Мбит/с - БЕСПЛАТНО!!!</h3>
-         <p>
-             <table cellpadding="3" cellspacing="0" width="100%">
-                 <tr class="caption">
-                     <td class="left">Название тарифа</td>
-                     <td >Скорость доступа</td>
-                     <td class="right">Абонентская плата</td>
-                 </tr>
-                     <% for tariff in tariffs :  %>
-                     <tr>
-                     <td>${tariff.Name}</td>
-                     <td>${tariff.Description}</td>
-                     <td>${tariff.Price} рублей</td>
-                     </tr>
-                     <% end %>
-             </table>
-         </p>
-      </div>
+<div class="text">
+<h3>На всех тарифах доступ к крупнейшему торрент-треккеру г. Воронежа и локальной сети ИНФОРУМ на скорости до 100 Мбит/с - БЕСПЛАТНО!!!</h3>
+	<p>
+		<table cellpadding="3" cellspacing="0" width="100%">
+			<tr class="caption">
+				<td class="left">Название тарифа</td>
+				<td >Скорость доступа</td>
+				<td class="right">Абонентская плата</td>
+			</tr>
+				<% for tariff in tariffs :  %>
+				<tr>
+				<td>${tariff.Name}</td>
+				<td>${tariff.Description}</td>
+				<td>${tariff.Price} рублей</td>
+				</tr>
+				<% end %>
+		</table>
+	</p>
+</div>
+<div style="display:inline;" id="vk_like"></div>
+<g:plusone></g:plusone>
+<a href="https://twitter.com/share" class="twitter-share-button" data-count="horizontal">Tweet</a>
