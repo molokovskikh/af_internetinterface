@@ -43,6 +43,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Web.Ui.Test", "Commo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BananceChanger", "BananceChanger\BananceChanger.csproj", "{C4BC2483-8D79-4DAA-9450-97BA41ED425A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternetInterface.Background", "InternetInterface.Background\InternetInterface.Background.csproj", "{3D0FEB94-663A-421F-B28E-621E365879D7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -314,6 +316,18 @@ Global
 		{C4BC2483-8D79-4DAA-9450-97BA41ED425A}.Release|x64.ActiveCfg = Release|x86
 		{C4BC2483-8D79-4DAA-9450-97BA41ED425A}.Release|x86.ActiveCfg = Release|x86
 		{C4BC2483-8D79-4DAA-9450-97BA41ED425A}.Release|x86.Build.0 = Release|x86
+		{3D0FEB94-663A-421F-B28E-621E365879D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D0FEB94-663A-421F-B28E-621E365879D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D0FEB94-663A-421F-B28E-621E365879D7}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{3D0FEB94-663A-421F-B28E-621E365879D7}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{3D0FEB94-663A-421F-B28E-621E365879D7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3D0FEB94-663A-421F-B28E-621E365879D7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3D0FEB94-663A-421F-B28E-621E365879D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D0FEB94-663A-421F-B28E-621E365879D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D0FEB94-663A-421F-B28E-621E365879D7}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{3D0FEB94-663A-421F-B28E-621E365879D7}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{3D0FEB94-663A-421F-B28E-621E365879D7}.Release|x64.ActiveCfg = Release|Any CPU
+		{3D0FEB94-663A-421F-B28E-621E365879D7}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

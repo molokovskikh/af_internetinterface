@@ -5,14 +5,34 @@ import file from Migration.bake
 import file from Tools.bake
 import file from Test.bake
 import file from Db.bake
+import file from AppSupport.bake
+import System.Linq.Enumerable
 
 Global(
 	Project : "InternetInterface",
 	HumanReadableName : "Интернет интерфейс"
 )
 
-task @default, [@Build]
+task @default, [@Build, @BuildBackground]
 
 task @Build, [@BuildWebSite]
 
 Task @deploy, [@Production, @Build, @Migrate, @Backup, @WebDeploy, @SendDeployNotification]
+
+
+task @DeployBackground, [@BuildBackground]:
+	Globals.Project = "InternetInterface.Background"
+	Globals.DeployTo = """\\fms\TopShelf\Services\""" + Globals.Project
+	Engine.Tasks.First({t| t.Name == "WebDeploy"}).Executed = false
+	Engine.Execute("WebDeploy")
+
+task @BuildBackground:
+	oldProject = Globals.Project
+	Globals.Project = "InternetInterface.Background"
+	project = "InternetInterface.Background"
+	Engine.Tasks.First({t| t.Name == "BuildApp"}).Executed = false
+	Engine.Execute("BuildApp")
+	Rm("output/$project/_PublishedWebsites", true)
+	Cp("src/$project/app.release.config", "output/$project/$project.config")
+	Rm("output/$project/$project.*.config")
+	Globals.Project = oldProject

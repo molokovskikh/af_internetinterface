@@ -23,5 +23,25 @@ namespace InternetInterface.Models
 		[BelongsTo(Cascade = CascadeEnum.SaveUpdate)]
 		public ClientEndpoints Endpoint { get; set; }
 
+		[Property]
+		public int Port { get; set; }
+
+		[BelongsTo]
+		public NetworkSwitches Switch { get; set; }
+
+		[Property]
+		public DateTime LeaseBegin { get; set; }
+
+		[Property]
+		public DateTime LeaseEnd { get; set; }
+
+		[Property]
+		public string LeasedTo { get; set; }
+
+		[Property]
+		public virtual uint? Pool { get; set; }
+
+		[Property]
+		public virtual int Module { get; set; }
 	}
 }
