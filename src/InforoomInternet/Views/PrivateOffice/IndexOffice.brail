@@ -1,8 +1,8 @@
 ﻿<script type="text/javascript">
 <% if IsDefined("message"): %>
-    $(function () { 
-        alert('${message}');
-    }); 
+	$(function () { 
+		alert('${message}');
+	}); 
 <%end %>
 </script>
 <input type=hidden value=${Client.Id} id="clientId" />
@@ -14,37 +14,56 @@
 <h3>Номер лицевого счета для оплаты через терминалы <b> ${Client.Id.ToString("00000")} </b></h3>
 
 <div class="text">
-    <h3><b>Зачисления</b></h3>
-        <table cellpadding="3" cellspacing="0" width="100%">
-            <tr class="caption">
-                <td >Сумма</td>
-                <td >Дата</td>
-   	        </tr>
-            <% for item in Payments :  %>
-                <tr>
-                    <td>${item.Sum.ToString("0.00")}</td>
-                    <td>${item.PaidOn.ToShortDateString()}</td>
-                </tr>
-            <%end %>
-    </table>
-    <h3><b>Списания</b></h3>
-    <p>
-    <a href="IndexOffice.brail?grouped=day">Сгруппировать по дням</a>
-    <a href="IndexOffice.brail?grouped=month">Сгруппировать по месяцам</a>
-    <a href="IndexOffice.brail?grouped=year">Сгруппировать по годам</a>
-    </p>
-        <table cellpadding="3" cellspacing="0" width="100%">
-            <tr class="caption">
-                <td >Сумма</td>
-                <td >Дата</td>
-            </tr>
-        <% for item in WriteOffs :  %>
-        <tr>
-            <td>${item.WriteOffSum}</td>
-            <td>${item.GetDate(grouped)}</td>
-        </tr>
-        <%end %>
-        </table>
+	<h3><b>Зачисления</b></h3>
+		<table cellpadding="3" cellspacing="0" width="100%">
+			<tr class="caption">
+				<td >Сумма</td>
+				<td >Дата</td>
+			</tr>
+			<% for item in Payments :  %>
+				<tr>
+					<td>${item.Sum.ToString("0.00")}</td>
+					<td>${item.PaidOn.ToShortDateString()}</td>
+				</tr>
+			<%end %>
+	</table>
+	<%if Client.UserWriteOffs.Count != 0: %>
+	<h3><b>Дополнительные услуги</b></h3>
+	<table cellpadding="3" cellspacing="0" width="100%">
+		<thead>
+			<tr class="caption">
+				<td>Сумма</td>
+				<td>Дата</td>
+			</tr>
+		</thead>
+		<tbody>
+			<%for item in Client.UserWriteOffs: %>
+				<tr>
+					<td>${item.Sum.ToString("0.00")}</td>
+					<td>${item.Date.ToShortDateString()}</td>
+				</tr>
+			<%end %>
+		</tbody>
+	</table>
+	<%end %>
+	<h3><b>Списания абонентской платы</b></h3>
+	<p>
+	<a href="IndexOffice.brail?grouped=day">Сгруппировать по дням</a>
+	<a href="IndexOffice.brail?grouped=month">Сгруппировать по месяцам</a>
+	<a href="IndexOffice.brail?grouped=year">Сгруппировать по годам</a>
+	</p>
+	<table cellpadding="3" cellspacing="0" width="100%">
+		<tr class="caption">
+			<td >Сумма</td>
+			<td >Дата</td>
+		</tr>
+	<% for item in WriteOffs :  %>
+	<tr>
+		<td>${item.WriteOffSum}</td>
+		<td>${item.GetDate(grouped)}</td>
+	</tr>
+	<%end %>
+	</table>
 </div>
 <div class="text">
 </div>

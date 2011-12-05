@@ -84,6 +84,7 @@ namespace InforoomInternet.Controllers
 						Appeal = Text.ToString()
 					}.Save();
 					if (userClient != null) {
+						contactInfo = contactInfo.Replace("-", string.Empty);
 						if (userClient.Contacts != null && !userClient.Contacts.Select(c => c.Text).Contains(contactInfo))
 							new Contact {
 								Client = userClient,
