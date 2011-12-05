@@ -105,12 +105,15 @@ namespace InternetInterface.Helpers
 		protected override void Log(NHibernate.Event.PostUpdateEvent @event, string message)
 		{
 			using (new SessionScope()) {
+				Client client = null;
+				if (@event.Entity.GetType() == typeof(Client))
+					client = (Client)@event.Entity;
 				var clientProp = @event.Entity.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(
 					p => p.PropertyType == typeof (Client)).FirstOrDefault();
-				if (clientProp != null) {
+				if (clientProp != null || client != null) {
 					{
-
-						var client = (Client)clientProp.GetValue(@event.Entity, null);
+						if (clientProp != null)
+						client = (Client)clientProp.GetValue(@event.Entity, null);
 						@event.Session.Save(new Appeals {
 							Appeal = string.IsNullOrEmpty(client.LogComment) ? message : string.Format("{0} \r\n Комментарий: \r\n {1}", message, client.LogComment),
 							Client = client,
