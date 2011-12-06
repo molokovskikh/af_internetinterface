@@ -464,6 +464,7 @@
     <Compile Include="Logic\LoginLogic.cs" />
     <Compile Include="Models\Main.cs" />
     <Compile Include="Models\SceHelper.cs" />
+    <Compile Include="Models\SceThread.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="Content\tiny_mce\tiny_mce_09EFA8059243DF3F46253936C4603EF6.gz" />
     <None Include="Content\tiny_mce\tiny_mce_4490A91EECF6B6B85D1DC70190EE1A2E.gz" />
@@ -507,7 +508,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>53759</DevelopmentServerPort>
+          <DevelopmentServerPort>60580</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

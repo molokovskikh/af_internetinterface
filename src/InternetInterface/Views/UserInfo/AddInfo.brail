@@ -1,50 +1,50 @@
 ﻿<style type="text/css">
-    #back   
-    {
-        width:500px;
-        height:300px;
-        background-color:White;
-        border-style:double;
-        border-width:1px;
-         }
-         #modalTable
-         {
-             min-width:0px;
-             }
+	#back   
+	{
+		width:500px;
+		height:300px;
+		background-color:White;
+		border-style:double;
+		border-width:1px;
+		 }
+		 #modalTable
+		 {
+			 min-width:0px;
+			 }
 </style>
 <a class="close-reveal-modal">&#215;</a> 
 <div id="back">
 <table class="table" id="modalTable">
-    <thead>
-	    <th colspan="3">Причина отказа</th>
-    </thead>
-    <tbody>
-	    <form class="form appeal" method="post" action="${siteroot}/UserInfo/Refused">
-        <input type="hidden" name="ClientID" value="${ClientCode}" />
-            <tr>
-                <td>
-                    <select name="prichina">
-                        <option value="Перезвонит сам">Перезвонит сам</option>
-                        <option value="Устраивает нынешний провайдер">Устраивает нынешний провайдер</option>
-                        <option value="Переезд">Переезд</option>
-                        <option value="Дорого">Дорого</option>
-                        <option value="Рассоветовали">Рассоветовали</option>
-                    </select>
-                </td>
-            </tr>
-	        <tr>
-		        <td>
-		        <label for="textField"><b>Введите комментарий :</b></label>
-		        <textarea id="Refused_textField" name="Appeal" rows="6" cols="55%"></textarea>
-		        </td>
-	        </tr>
-	        <tr>
-		        <td>
-			        <button type="submit" id="Refused_but" class="button">
-			        <img alt="Save" src="../Images/tick.png">Зарегистрировать</button>
-		        </td>
-	        </tr>
-	    </form>
-    </tbody>
+	<thead>
+		<th colspan="3">Причина отказа</th>
+	</thead>
+	<tbody>
+		<form class="form appeal" method="post" action="${siteroot}/UserInfo/Refused">
+		<input type="hidden" name="ClientID" value="${ClientCode}" />
+			<tr>
+				<td>
+					<select name="prichina">
+						<option value="Перезвонит сам">Перезвонит сам</option>
+						<option value="Устраивает нынешний провайдер">Устраивает нынешний провайдер</option>
+						<option value="Переезд">Переезд</option>
+						<option value="Дорого">Дорого</option>
+						<option value="Рассоветовали">Рассоветовали</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td>
+				<label for="textField"><b>Введите комментарий :</b></label>
+				<textarea id="Refused_textField" name="Appeal" rows="6" cols="55%"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<button type="submit" id="Refused_but" class="button">
+					<img alt="Save" src="../Images/tick.png">Зарегистрировать</button>
+				</td>
+			</tr>
+		</form>
+	</tbody>
 </table>
 </div>

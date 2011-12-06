@@ -335,8 +335,7 @@ left join internet.PackageSpeed PS on PS.PackageId = CE.PackageId
 left join internet.PaymentForConnect pfc on pfc.EndPoint = CE.id
 where CE.Client = {0}",
 Id)).SetResultTransformer(
-new AliasToPropertyTransformer(
-typeof(ClientConnectInfo)))
+new AliasToPropertyTransformer(typeof(ClientConnectInfo)))
 .List<ClientConnectInfo>();
 						ConnectInfo = query;
 						return query;

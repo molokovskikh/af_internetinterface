@@ -59,8 +59,8 @@
 		
 		#mymodal
 		{
-		    /*height:700px;*/
-		    }
+			/*height:700px;*/
+			}
 	</style>
 
 	<script type="text/javascript">
@@ -71,88 +71,88 @@
 			var req = {};
 			req.graph_date = $('#graph_date').val();
 			$.post("GetGraph", req, function (data) {
-			    var str = '<table class="table" id="graph_table"> <thead> <tr>';
-			    $(data.brigads).each(function () {
-			        str += '<th colspan="2" id=th_' + this.Id + '>' + this.Name + '</th>';
-			    });
-			    str += '<tbody> ';
-			    for (var i = 0; i < data.intervals.length; i++) {
-			        str += '<tr id="tr_' + i + '"></tr>';
-			    }
+				var str = '<table class="table" id="graph_table"> <thead> <tr>';
+				$(data.brigads).each(function () {
+					str += '<th colspan="2" id=th_' + this.Id + '>' + this.Name + '</th>';
+				});
+				str += '<tbody> ';
+				for (var i = 0; i < data.intervals.length; i++) {
+					str += '<tr id="tr_' + i + '"></tr>';
+				}
 
-			    $('#graph_div').append(str + '</tr> </thead> </table>');
+				$('#graph_div').append(str + '</tr> </thead> </table>');
 
-			    for (var i = 0; i < data.intervals.length; i++) {
-			        var tds = '';
-			        $(data.brigads).each(function () {
-			            tds += '<td >' + data.intervals[i] + '</td>';
-			            tds += '<td id="tdi_' + i + '_' + this.Id + '"> <input type="radio" name="graph_button" value="' + i + '_' + this.Id + '"> </td>';
-			        });
-			        $('#tr_' + i).append(tds);
-			    }
-			    $(data.graphs).each(function () {
-			        $('#tdi_' + this.IntervalId + '_' + this.brigadId).empty();
-			        if (this.clientId != 0)
-			            $('#tdi_' + this.IntervalId + '_' + this.brigadId).append('<a class="graph_link" href="../Search/Redirect?filter.ClientCode=' + this.clientId + '">' + this.clientId + '</a>');
-                    else
-                        $('#tdi_' + this.IntervalId + '_' + this.brigadId).append('Резерв');
-			    });
+				for (var i = 0; i < data.intervals.length; i++) {
+					var tds = '';
+					$(data.brigads).each(function () {
+						tds += '<td >' + data.intervals[i] + '</td>';
+						tds += '<td id="tdi_' + i + '_' + this.Id + '"> <input type="radio" name="graph_button" value="' + i + '_' + this.Id + '"> </td>';
+					});
+					$('#tr_' + i).append(tds);
+				}
+				$(data.graphs).each(function () {
+					$('#tdi_' + this.IntervalId + '_' + this.brigadId).empty();
+					if (this.clientId != 0)
+						$('#tdi_' + this.IntervalId + '_' + this.brigadId).append('<a class="graph_link" href="../Search/Redirect?filter.ClientCode=' + this.clientId + '">' + this.clientId + '</a>');
+					else
+						$('#tdi_' + this.IntervalId + '_' + this.brigadId).append('Резерв');
+				});
 			});
 
 		 }
 
 
 		 $(function () {
-		     $('#graph_date').datepicker("setDate", '01/26/2009');
-		     $('#graph_date').datepicker({
-		         inline: true
-		     }).change(function () { fillData(); });
-		     fillData();
+			 $('#graph_date').datepicker("setDate", '01/26/2009');
+			 $('#graph_date').datepicker({
+				 inline: true
+			 }).change(function () { fillData(); });
+			 fillData();
 		 });
 
 
 		 function Reserv() {
-		     var req = {};
-		     var check_field = $('input:radio[name="graph_button"]:checked');
-		     req.graph_button = check_field.val();
-		     req.graph_date = $('#graph_date').val();
-		     $.post("ReservGraph", req, function (data) {
-		         alert(data);
-		         var appended_field = check_field.parent();
-		         appended_field.empty();
-		         appended_field.append('Резерв');
-              });
-         }
+			 var req = {};
+			 var check_field = $('input:radio[name="graph_button"]:checked');
+			 req.graph_button = check_field.val();
+			 req.graph_date = $('#graph_date').val();
+			 $.post("ReservGraph", req, function (data) {
+				 alert(data);
+				 var appended_field = check_field.parent();
+				 appended_field.empty();
+				 appended_field.append('Резерв');
+			  });
+		 }
 
 		 function Save() {
-		     var req = {};
-		     req.clientId = $('#clientId').val();
-		     var check_field = $('input:radio[name="graph_button"]:checked');
-		     req.graph_button = check_field.val();
-		     req.graph_date = $('#graph_date').val();
-		     $.post("SaveGraph", req, function (data) {
-		         if (data) {
-		             alert("Заявка включена в рассписание");
-		             $('.graph_link').each(function () {
-		                 var client_id = $(this).attr('href').split('=')[1];
-		                 if (client_id == req.clientId) {
-		                     var clear_field = $(this).parent();
-		                     clear_field.empty();
-		                     clear_field.append('<input type="radio" name="graph_button" value="' + clear_field.attr('id') + '">');
-		                 }
-		             });
-		             var appended_field = check_field.parent();
-		             appended_field.empty();
-		             appended_field.append('<a class="graph_link" href="../Search/Redirect?filter.ClientCode=' + req.clientId + '">' + req.clientId + '</a>');
-		             $('#naznach_but_1').text('Переназначить');
-		             $('#naznach_but').text('Переназначить');
-		             window.location.href = '../Search/Redirect?filter.ClientCode=${ClientCode}';
-		         }
-		         else {
-		             alert("Не выбран интервал времени");
-		         }
-		     });
-         }
+			 var req = {};
+			 req.clientId = $('#clientId').val();
+			 var check_field = $('input:radio[name="graph_button"]:checked');
+			 req.graph_button = check_field.val();
+			 req.graph_date = $('#graph_date').val();
+			 $.post("SaveGraph", req, function (data) {
+				 if (data) {
+					 alert("Заявка включена в рассписание");
+					 $('.graph_link').each(function () {
+						 var client_id = $(this).attr('href').split('=')[1];
+						 if (client_id == req.clientId) {
+							 var clear_field = $(this).parent();
+							 clear_field.empty();
+							 clear_field.append('<input type="radio" name="graph_button" value="' + clear_field.attr('id') + '">');
+						 }
+					 });
+					 var appended_field = check_field.parent();
+					 appended_field.empty();
+					 appended_field.append('<a class="graph_link" href="../Search/Redirect?filter.ClientCode=' + req.clientId + '">' + req.clientId + '</a>');
+					 $('#naznach_but_1').text('Переназначить');
+					 $('#naznach_but').text('Переназначить');
+					 window.location.href = '../Search/Redirect?filter.ClientCode=${ClientCode}';
+				 }
+				 else {
+					 alert("Не выбран интервал времени");
+				 }
+			 });
+		 }
 
 
 	</script>
@@ -179,8 +179,8 @@
 			</tr>
 			<tr>
 				<td>
-                    <button id="naznach_but_1" class="button" onclick="Save()" value="Назначить">Назначить </button>
-                    <button id="reserv_but" class="button" onclick="Reserv()" value="Назначить">Зарезервировать </button>
+					<button id="naznach_but_1" class="button" onclick="Save()" value="Назначить">Назначить </button>
+					<button id="reserv_but" class="button" onclick="Reserv()" value="Назначить">Зарезервировать </button>
 				</td>
 			</tr>
 	</tbody>

@@ -21,7 +21,7 @@ namespace InforoomInternet.Test.Unit
 	[TestFixture]
 	class LoginTest
 	{
-		[Test]
+		[Test, Ignore]
 		public void Test()
 		{
 			var Con = new MySqlConnection(@"Data Source=testSQL.analit.net;Database=internet;User ID=system;Password=newpass;Connect Timeout=300;pooling=true;convert zero datetime=yes;Default command timeout=300;Allow User Variables=true;");
@@ -29,11 +29,5 @@ namespace InforoomInternet.Test.Unit
 			var h = new MySqlHelper(Con);
 			h.Command(string.Format("insert into internet.PhysicalClients (Password) values (\"{0}\")", CryptoPass.GetHashString("123"))).Execute();
 		}
-
-		/*[Test]
-		public void HiberTest()
-		{
-			var q = HiberWorker.GetObject<IAppeals>((uint)5);
-		}*/
 	}
 }

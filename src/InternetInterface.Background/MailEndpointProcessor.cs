@@ -16,7 +16,7 @@ namespace InternetInterface.Background
 		{
 			var smtp = new SmtpClient("box.analit.net");
 #if !DEBUG
-			var mailToAdress = "service@analit.net";
+			var mailToAdress = "internet@ivrn.net";
 #else
 			var mailToAdress = "a.zolotarev@analit.net";
 #endif

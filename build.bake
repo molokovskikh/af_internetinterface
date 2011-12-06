@@ -20,7 +20,7 @@ task @Build, [@BuildWebSite]
 Task @deploy, [@Production, @Build, @Migrate, @Backup, @WebDeploy, @SendDeployNotification]
 
 
-task @DeployBackground, [@BuildBackground]:
+task @DeployBackground, [@BuildBackground, @Production, @Migrate, @SendDeployNotification]:
 	Globals.Project = "InternetInterface.Background"
 	Globals.DeployTo = """\\fms\TopShelf\Services\""" + Globals.Project
 	Engine.Tasks.First({t| t.Name == "WebDeploy"}).Executed = false

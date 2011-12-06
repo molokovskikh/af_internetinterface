@@ -55,43 +55,14 @@ namespace InforoomInternet.Test.Integration
 		}
 
 
-
 		[Test]
 		public void ProvateOffice()
 		{
 			using (new SessionScope())
 			{
-				/*var phisClient = new PhysicalClients
-				                 	{
-				                 		Name = "Test",
-										Password = CryptoPass.GetHashString("123")
-				                 	};*/
-				/*var client = new Clients
-				             	{
-				             		PhisicalClient = phisClient,
-									Name = "test",
-									Disabled = false
-				             	};
-				var endPoint = new ClientEndpoints
-				               	{
-				               		Client = client,
-				               		Disabled = false
-				               	};
-				var newLease = new Lease
-				               	{
-									Endpoint = endPoint,
-				               		Ip = Convert.ToUInt32(NetworkSwitches.SetProgramIp("91.219.7.3"))
-				               	};
-				phisClient.SaveAndFlush();*/
-				/*client.SaveAndFlush();
-				endPoint.SaveAndFlush();
-				newLease.SaveAndFlush();*/
 				var filter = new AccessFilter();
 				Request.UserHostAddress = "192.168.200.1";
 				Assert.IsTrue(filter.Perform(ExecuteWhen.BeforeAction, controller.Context, controller, controller.ControllerContext));
-				/*client.DeleteAndFlush();
-				endPoint.DeleteAndFlush();
-				newLease.DeleteAndFlush();*/
 			}
 		}
 	}
