@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Threading;
 using System.Web;
+using Common.Tools;
 using InternetInterface.Models;
+using log4net;
 
 namespace InforoomInternet.Models
 {
@@ -31,10 +34,37 @@ namespace InforoomInternet.Models
 		public int? Interation;
 	}
 
-	public class ClientData
+	public class RepeatableEntity : RepeatableCommand
+	{
+		private static readonly ILog _log = LogManager.GetLogger(typeof(RepeatableEntity));
+
+		public RepeatableEntity(Action action, int delay)
+			: base(action, delay)
+		{
+		}
+
+		public override void Error(Exception e)
+		{
+			_log.Error(e.Message);
+		}
+	}
+
+	public static class ClientData
 	{
 		private static List<UnknownClientInfo> _info = new List<UnknownClientInfo>();
 		private static Mutex _mutex = new Mutex();
+		private static int _clearInterval = int.Parse(ConfigurationManager.AppSettings["clearInterval"]);
+		private static RepeatableEntity _clearCommand = new RepeatableEntity(ClearList, _clearInterval);
+
+		static ClientData()
+		{
+			_clearCommand.Start();
+		}
+
+		private static void ClearList()
+		{
+			_info.Clear();
+		}
 
 		public static UnknownClientStatus Get(uint client)
 		{
@@ -101,7 +131,7 @@ namespace InforoomInternet.Models
 	{
 		public readonly Thread CurrentThread;
 
-		private const int IterationCount = 100;
+		private static readonly int IterationCount = int.Parse(ConfigurationManager.AppSettings["connectIterationCount"]);
 
 		private Lease _lease;
 		private string _ip;
@@ -121,7 +151,7 @@ namespace InforoomInternet.Models
 
 		private void StatusSet(UnknownClientStatus status, int? iteration = null)
 		{
-			ClientData.Set(_client , status, iteration);
+			ClientData.Set(_client, status, iteration);
 		}
 
 		private UnknownClientStatus ClientStatus
@@ -136,6 +166,7 @@ namespace InforoomInternet.Models
 				try
 				{
 #if DEBUG
+					//Thread.Sleep(800);
 					Thread.Sleep(40);
 					if (i < 70)
 						throw new Exception();

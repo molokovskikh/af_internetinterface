@@ -30,6 +30,8 @@ namespace InforoomInternet.Test.Integration
 				var firstClient = leases.First().Endpoint.Client.Id;
 				var assertStatus = UnknownClientStatus.InProcess;
 				UnknownClientStatus firstClientStatus;
+				//Ждем, чтобы отработала инициализирующая очистка
+				Thread.Sleep(50);
 				do {
 					firstClientStatus = ClientData.Get(firstClient);
 					if (firstClientStatus == UnknownClientStatus.Connected) {

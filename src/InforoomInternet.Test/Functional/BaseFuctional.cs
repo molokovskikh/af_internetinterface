@@ -13,6 +13,7 @@ using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 using WatiN.Core;
+using WatiN.Core.Native.Windows;
 
 namespace InforoomInternet.Test.Unit
 {
@@ -174,8 +175,9 @@ namespace InforoomInternet.Test.Unit
 		{
 			using (var ie = Open("Main/WarningPackageId"))
 			{
+				//Ждем чтобы JavaScript получил данные
 				Thread.Sleep(500);
-				Assert.That(ie.Text, Is.StringContaining("К сожалению, услуга доступа интернет Вам временно заблокирована."));
+				Assert.That(ie.Text, Is.StringContaining("Ждите, идет подключение к интернет"));
 			}
 			Console.WriteLine("RequsiteTest Complite");
 		}

@@ -27,7 +27,7 @@ namespace InforoomInternet.Test.Integration
 		}
 
 
-		[Test]
+		[Test, Ignore]
 		public void EditMenu()
 		{
 			using (new SessionScope())

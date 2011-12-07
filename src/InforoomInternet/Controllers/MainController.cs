@@ -269,7 +269,7 @@ namespace InforoomInternet.Controllers
 		[return: JSONReturnBinder]
 		public ReturnInFormInfo GetClientStatus(uint client)
 		{
-			Thread.Sleep(400);
+			Thread.Sleep(300);
 			var info = ClientData.GetInfo(client);
 			if (info != null) {
 				if (info.Status == UnknownClientStatus.InProcess)
@@ -300,7 +300,7 @@ namespace InforoomInternet.Controllers
 			}
 			return new ReturnInFormInfo {
 				Iteration = 0,
-				Message = "Нет информации",
+				Message = "Нет информации о процессе подключения.",
 				WaitingInfo = false,
 				Status = UnknownClientStatus.NoInfo
 			};
