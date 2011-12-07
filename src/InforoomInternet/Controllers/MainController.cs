@@ -138,6 +138,9 @@ namespace InforoomInternet.Controllers
 		{
 			if (Validator.IsValid(application)) {
 				application.ActionDate = DateTime.Now;
+				var phoneNumber = application.ApplicantPhoneNumber.Substring(2, application.ApplicantPhoneNumber.Length - 2).Replace(
+					"-", string.Empty);
+				application.ApplicantPhoneNumber = phoneNumber;
 				application.Save();
 				Flash["application"] = application;
 				RedirectToAction("Ok");
