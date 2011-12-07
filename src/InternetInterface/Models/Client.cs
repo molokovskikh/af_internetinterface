@@ -361,7 +361,8 @@ new AliasToPropertyTransformer(typeof(ClientConnectInfo)))
 
 		public virtual decimal ToPay()
 		{
-			return GetPriceForTariff() - PhysicalClient.Balance;
+			var toPay =  GetPriceForTariff() - PhysicalClient.Balance;
+			return toPay < 10 ? 10 : toPay;
 		}
 
 		public virtual bool MinimumBalance()
