@@ -268,6 +268,8 @@ namespace InternetInterface.Models
 				client.Status = Status.Find((uint)StatusType.VoluntaryBlocking);
 				client.Update();
 				CService.Activated = true;
+				var evd = CService.EndWorkDate.Value;
+				CService.EndWorkDate = new DateTime(evd.Year, evd.Month, evd.Day);
 				CService.Update();
 			}
 		}
