@@ -7,7 +7,13 @@
 </script>
 <input type=hidden value=${Client.Id} id="clientId" />
 <h2 style="padding-left:0px;">Ваш личный кабинет, ${PhysClientName}</h2>
-<h3 style="padding-bottom:0px;">Баланс составляет <b> ${PhysicalClient.Balance} </b></h3>
+<!-- <h3 style="padding-bottom:0px;">Баланс составляет <b> ${PhysicalClient.Balance} </b></h3> -->
+<div style="color:#4D7DA2; font-size:14px;">
+	<% OutputSubView("""\Subview\WarningText""", {
+					"PClient": PhysicalClient,
+					"referer" : ""} ) %>
+</div>
+<br />
 <%if Client.CanUsedPostponedPayment(): %>
 <p style="color:#8d8d8e;">Доступ в интернет заблокирован, Вы можете воспольваться услугой "Обещанный платеж" <a id="podrob" href="PostponedPayment">Подробнее...</a></p>
 <%end %>

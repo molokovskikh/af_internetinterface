@@ -544,7 +544,7 @@ color: #f00; /* ÷вет активной ссылки */
   margin-bottom: 30px;
   margin-left: 10px;
 	position: relative;
-	z-index: 1000;
+	z-index: 10;
 }
 
 .button-blue {

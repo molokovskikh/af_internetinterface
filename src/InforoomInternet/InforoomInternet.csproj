@@ -449,6 +449,7 @@
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
+    <None Include="Views\Subview\WarningText.brail" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\BeforeFilter.cs" />

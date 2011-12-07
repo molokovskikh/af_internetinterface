@@ -159,11 +159,11 @@ namespace InforoomInternet.Controllers
 				lease = new Lease {
 					Endpoint = new ClientEndpoints {
 						Client = new Client {
-							Disabled = false,
+							Disabled = true,
 							ShowBalanceWarningPage = true,
 							RatedPeriodDate = DateTime.Now,
 							PhysicalClient = new PhysicalClients {
-								Balance = 15,
+								Balance = 150,
 								Tariff = new Tariff {
 									Price = 500
 								}
