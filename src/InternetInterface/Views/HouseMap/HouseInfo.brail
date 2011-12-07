@@ -41,8 +41,6 @@
 						});
 
 						$('#last_TV option').each(function () {
-							//alert("this" + $(this).val());
-							//alert("LastTV" + data.LastTV);
 							if ($(this).val() == data.LastTV)
 							{
 								$(this).attr('selected', 'selected');
@@ -96,7 +94,6 @@
 				{
 					var status = $('#td_status_' + $('#apartment_div').val())
 					status.empty();
-					//status.append(document.getElementById("ap_status").options[$('#ap_status').val()].text);
 					status.append(document.getElementById('option_'+$('#ap_status').val()).text);
 				}
 				var CompetitorCount = $('#CompetitorCount_field');
@@ -109,10 +106,8 @@
 					CompPers.append( Number(data / appCount * 100).toFixed(2)   + "%");
 				 });
 				$('#myModal_IT').trigger('reveal:close');
-				//alert(data);
 			});
 		});
-		//$('#myModal_IT').reveal();
 	});
 </script>
 <table class="table">

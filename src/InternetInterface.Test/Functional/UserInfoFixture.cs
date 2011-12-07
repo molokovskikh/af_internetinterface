@@ -147,7 +147,7 @@ namespace InternetInterface.Test.Functional
 			}
 		}
 
-		[Test]
+		[Test, Ignore]
 		public void AdditionalStatusTest()
 		{
 			using (new SessionScope())

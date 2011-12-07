@@ -48,13 +48,10 @@
 		});
 
 		function ViewInfo(House) {
-			//if (House == undefined)
-			//    House = $('#SelectHouse').val();
 			var html = $.ajax({
 				url: '../HouseMap/BasicHouseInfo?id=' + House,
 				async: false
 			}).responseText;
-			//alert(html);
 			$('#BasicInfo').css('display', 'block');
 			$('#BasicInfo').empty();
 			$('#BasicInfo').append(html);

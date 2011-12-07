@@ -1,6 +1,5 @@
 ﻿<script type="text/javascript">
     function registerHouse() {
-        //if ($("#editHouse").valid()) {
             var req = {};
             req.Street = $('#house_Street').val();
             req.Number = $('#house_Number').val();

@@ -76,7 +76,6 @@
                     url: '../HouseMap/BasicHouseInfo?id=' + houseId,
                     async: false
                 }).responseText;
-                //alert(html);
                 $('#BasicInfo').css('display', 'block');
                 $('#BasicInfo').empty();
                 $('#BasicInfo').append(html);
