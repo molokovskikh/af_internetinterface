@@ -201,6 +201,7 @@ namespace InternetInterface.Models.Access
 									"GoZone",
 									"SiteMap",
 									"GetSubnet",
+									"GetStaticIp",
 									"FreePortForSwitch",
 									"AddEndPoint",
 									"DeleteEndPoint",

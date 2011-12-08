@@ -135,6 +135,26 @@
 <%end %>
 	</form>
 	<%else: %>
+<script type="text/javascript">
+	function GetStaticIp() { 
+		var req = {};
+		req.endPontId = ${ConnectInfo.endpointId};
+		$.post("GetStaticIp", req, function (data) { 
+			if (data){
+				$('#static_IP_hiden').val(data);
+				$('#staticIdLabel').text(data);
+			} else {
+				$('#staticIdLabel').text("Ошибка, не удалось получить IP адрес");
+				$('#staticIdLabel').css("color", "Red");
+			}
+		});
+	}
+
+	function DeleteStaticIp() {
+		$('#static_IP_hiden').val("");
+		$('#staticIdLabel').text("Удалено");
+	}
+</script>
 	<form class="formConnect" id="formConnect" method="post" action="${siteroot}/UserInfo/SaveSwitchForClient">
 	<input type="hidden" name="ClientID" value="${ClientCode}" />
 	<input type="hidden" name="EditConnect" value="${ConnectInfo.endpointId}" />
@@ -149,7 +169,12 @@
 	<tbody>
 		<tr>
 		  <td>Фиксированный IP</td>
-		  <td colspan=2><input type="text" id="static_IP"  name="ConnectInfo.static_IP"  value="${ConnectInfo.static_IP}" style="width: 50%; " /></td>
+		  <td colspan=2>
+				<input type="button" onclick="DeleteStaticIp()" value="Удалить" style="width: 10%; " />
+				<input type="button" onclick="GetStaticIp()" id="static_IP" value="Назначить" style="width: 10%; " />
+				<input type="hidden" id="static_IP_hiden" name="ConnectInfo.static_IP"  value="${ConnectInfo.static_IP}" />
+				<label id="staticIdLabel" style="font-weight:bold;">${ConnectInfo.static_IP}</label>
+		  </td>
 		</tr>
 		<tr>
 		  <td>Арендованный IP</td>

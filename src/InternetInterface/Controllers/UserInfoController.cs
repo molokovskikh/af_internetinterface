@@ -434,6 +434,16 @@ namespace InternetInterface.Controllers
 			return SubnetMask.CreateByNetBitLength(mask).ToString();
 		}
 
+		[return: JSONReturnBinder]
+		public string GetStaticIp()
+		{
+			var endPontId = UInt32.Parse(Request.Form["endPontId"]);
+			var lease = Lease.Queryable.Where(l=>l.Endpoint.Id == endPontId).FirstOrDefault();
+			if (lease != null)
+				return NetworkSwitches.GetNormalIp(Convert.ToUInt32(lease.Ip));
+			return string.Empty;
+		}
+
 		public void SaveSwitchForClient(uint ClientID, [DataBind("ConnectInfo")] ConnectInfo ConnectInfo,
 		                                uint BrigadForConnect,
 		                                [ARDataBind("staticAdress", AutoLoad = AutoLoadBehavior.NewInstanceIfInvalidKey)] StaticIp[] staticAdress,
