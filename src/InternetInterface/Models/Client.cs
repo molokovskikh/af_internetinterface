@@ -367,7 +367,7 @@ new AliasToPropertyTransformer(typeof(ClientConnectInfo)))
 
 		public virtual bool MinimumBalance()
 		{
-			return PhysicalClient.Balance - GetPrice()/GetInterval() < 0;
+			return PhysicalClient.Balance - GetPrice() / GetInterval() < 0;
 		}
 
 		public virtual decimal GetPriceForTariff()

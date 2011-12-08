@@ -34,6 +34,7 @@ namespace InforoomInternet
 			Logger.ErrorSubject = "Ошибка в IVRN";
 			Logger.SmtpHost = "box.analit.net";
 			Logger.ExcludeExceptionTypes.Add(typeof(ControllerNotFoundException));
+			Logger.ExcludeExceptionTypes.Add(typeof(FileNotFoundException));
 		}
 
 		void Application_Start(object sender, EventArgs e)
