@@ -152,17 +152,17 @@ div.scroller
 			 <td>${Client.Id}</td>
 				<%if PartnerAccessSet.AccesPartner("RC"): %>
 					<%if Client.Client == null: %>
-				<td><a id="request_to_reg_${Client.Id}" href="../UserInfo/RequestOne?id=${Client.Id}"> ${Client.ApplicantName}</a></td>
+				<td><a id="request_to_reg_${Client.Id}" href="../UserInfo/RequestOne?id=${Client.Id}">${TextHelper.SelectQuery(filter.query, Client.ApplicantName)}</a></td>
 					<%else: %>
-				<td><a id="request_to_reg_${Client.Id}" href="../Search/Redirect?filter.ClientCode=${Client.Client.Id}"> ${Client.ApplicantName}</a></td>
+				<td><a id="request_to_reg_${Client.Id}" href="../Search/Redirect?filter.ClientCode=${Client.Client.Id}"> ${TextHelper.SelectQuery(filter.query, Client.ApplicantName)}</a></td>
 					<%end %>
 				<%else: %>
 				<td>${Client.ApplicantName}</td>
 				<%end %>
-				<td>${Client.ApplicantPhoneNumber}</td>
+				<td>${TextHelper.SelectContact(filter.query, Client.ApplicantPhoneNumber)}</td>
 				<td>${Client.ApplicantEmail}</td>
 				<td style="width:200px;">
-					${Client.City} ул. ${Client.Street}
+					${Client.City} ул. ${TextHelper.SelectQuery(filter.query, Client.Street)}
 					<%if Client.House != null: %>
 					 д. ${Client.House} 
 					 <%end %>
@@ -234,8 +234,8 @@ div.scroller
 			 <th colspan=2 style="font-size=16px;">Метки</th>
 			 </thead>
 			 <tbody>
-			 <tr><td colspan=2><a href="../UserInfo/RequestView.rails?filter.labelId=0&filter.Archive=${filter.Archive}&filter.beginDate=${filter.beginDate.ToShortDateString()}&filter.endDate=${filter.endDate.ToShortDateString()}">Все</a></td></tr>
-			 <tr><td colspan=2><a href="../UserInfo/RequestView.rails">Нет</a></td></tr>
+			 <tr><td colspan=2><a href="../UserInfo/RequestView.rails?filter.labelId=0&filter.Archive=${filter.Archive}&filter.beginDate=${filter.beginDate.ToShortDateString()}&filter.endDate=${filter.endDate.ToShortDateString()}&filter.query=${filter.query}">Все</a></td></tr>
+			 <tr><td colspan=2><a href="../UserInfo/RequestView.rails?filter.labelId=0&filter.Archive=${filter.Archive}&filter.beginDate=${filter.beginDate.ToShortDateString()}&filter.endDate=${filter.endDate.ToShortDateString()}&filter.query=${filter.query}">Нет</a></td></tr>
 					<% for i, Label in enumerate(Labels): %>
 					<tr>
 					<td style="width:20px;">
@@ -243,7 +243,7 @@ div.scroller
 					 </div>
 					 </td>
 					 <td>
-					  <a href="../UserInfo/RequestView.rails?filter.labelId=${Label.Id}&filter.Archive=${filter.Archive}&filter.beginDate=${filter.beginDate.ToShortDateString()}&filter.endDate=${filter.endDate.ToShortDateString()}">${Label.Name}</a>
+					  <a href="../UserInfo/RequestView.rails?filter.labelId=${Label.Id}&filter.Archive=${filter.Archive}&filter.beginDate=${filter.beginDate.ToShortDateString()}&filter.endDate=${filter.endDate.ToShortDateString()}&filter.query=${filter.query}">${Label.Name}</a>
 					 </td>
 					</tr>
 					<% end %>

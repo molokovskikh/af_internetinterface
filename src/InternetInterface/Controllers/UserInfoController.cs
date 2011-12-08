@@ -174,7 +174,7 @@ namespace InternetInterface.Controllers
 			Expression<Func<Requests, bool>> predicate;
 			if (labelId != 0)
 				if (!string.IsNullOrEmpty(query))
-					predicate = i => (i.Street.Contains(query) || i.ApplicantPhoneNumber.Contains(query)) && i.ActionDate.Date >= beginDate.Value.Date && i.ActionDate.Date <= endDate.Value.Date && i.Label.Id == labelId && i.Archive == Archive;
+					predicate = i => (i.Street.Contains(query) || i.ApplicantPhoneNumber.Contains(query) || i.ApplicantName.Contains(query)) && i.ActionDate.Date >= beginDate.Value.Date && i.ActionDate.Date <= endDate.Value.Date && i.Label.Id == labelId && i.Archive == Archive;
 				else {
 					predicate = i => i.ActionDate.Date >= beginDate.Value.Date && i.ActionDate.Date <= endDate.Value.Date && i.Label.Id == labelId && i.Archive == Archive;
 				}
@@ -182,7 +182,7 @@ namespace InternetInterface.Controllers
 				if (!string.IsNullOrEmpty(query))
 					predicate =
 						i =>
-						(i.Street.Contains(query) || i.ApplicantPhoneNumber.Contains(query)) && i.ActionDate.Date >= beginDate.Value.Date &&
+						(i.Street.Contains(query) || i.ApplicantPhoneNumber.Contains(query) || i.ApplicantName.Contains(query)) && i.ActionDate.Date >= beginDate.Value.Date &&
 						i.ActionDate.Date <= endDate.Value.Date &&
 						i.Archive == Archive;
 				else {
@@ -206,6 +206,7 @@ namespace InternetInterface.Controllers
 	}
 
 	[Helper(typeof (PaginatorHelper))]
+	[Helper(typeof (TextHelper))]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof (AuthenticationFilter))]
 	public class UserInfoController : BaseController
 	{
@@ -489,7 +490,14 @@ namespace InternetInterface.Controllers
 					if (client.GetClientType() == ClientType.Phisical) {
 						clientEntPoint.PackageId = client.PhysicalClient.Tariff.PackageId;
 					}
-
+					if (string.IsNullOrEmpty(clientEntPoint.Ip) && !string.IsNullOrEmpty(ConnectInfo.static_IP))
+						new UserWriteOff {
+							Client = client,
+							Date = DateTime.Now,
+							Sum = 200,
+							Comment = string.Format("Плата за фиксированный Ip адрес ({0})", NetworkSwitches.GetNormalIp(UInt32.Parse(ConnectInfo.static_IP))),
+							Registrator = InitializeContent.Partner
+						}.Save();
 					clientEntPoint.Client = client;
 					clientEntPoint.Ip = ConnectInfo.static_IP;
 					clientEntPoint.Port = Int32.Parse(ConnectInfo.Port);

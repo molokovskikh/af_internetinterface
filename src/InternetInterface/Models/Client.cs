@@ -127,25 +127,9 @@ namespace InternetInterface.Models
 		{
 			var result = string.Empty;
 			if (!string.IsNullOrEmpty(query)) {
-				var delimeterIndex = 3;
 				var contacts = Contacts.Where(c => c.Text.Contains(query));
 				foreach (var contact in contacts) {
-					var text = TextHelper.SelectQuery(query, contact.Text);
-					var kolvoChisel = 0;
-					if (text != contact.Text) {
-						for (int i = 0; i < text.Length; i++) {
-							var outI = 0;
-							if (int.TryParse(text[i].ToString(), out outI)) {
-								delimeterIndex = i;
-								kolvoChisel++;
-							}
-							if (kolvoChisel >= 3)
-								break;
-						}
-					}
-					if (new Regex(@"^((\d{10}))").IsMatch(contact.Text))
-						text = text.Insert(delimeterIndex + 1, "-");
-					result += text + "<br/>";
+					result += TextHelper.SelectContact(query, contact.Text) + "<br/>";
 				}
 			}
 			if (string.IsNullOrEmpty(result)) {
