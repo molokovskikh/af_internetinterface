@@ -96,7 +96,7 @@
 		<%end %>
 		<%if Client.Tariff != null: %>
 		<tr>
-			 <td><span class="description">Тариф:</span> ${Client.Tariff.GetFullName()}</td>
+			 <td><span class="description">Тариф:</span> ${Client.Tariff.Name} (${_client.GetPriceForTariff().ToString("0.00")} рублей)</td>
 		</tr>
 		 <%end %>
 

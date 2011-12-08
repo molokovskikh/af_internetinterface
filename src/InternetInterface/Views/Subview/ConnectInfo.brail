@@ -151,8 +151,10 @@
 	}
 
 	function DeleteStaticIp() {
+	if ($('#static_IP_hiden').val()){
 		$('#static_IP_hiden').val("");
 		$('#staticIdLabel').text("Удалено");
+		}
 	}
 </script>
 	<form class="formConnect" id="formConnect" method="post" action="${siteroot}/UserInfo/SaveSwitchForClient">
