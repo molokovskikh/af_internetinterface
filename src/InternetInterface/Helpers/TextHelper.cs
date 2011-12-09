@@ -27,7 +27,7 @@ namespace InternetInterface.Helpers
 
 		public static string SelectContact(string query, string value)
 		{
-			if (value.Contains(query)) {
+			if (!string.IsNullOrEmpty(query) && value.Contains(query)) {
 				var delimeterIndex = 3;
 				var text = SelectQuery(query, value);
 				var kolvoChisel = 0;
