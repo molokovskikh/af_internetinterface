@@ -141,6 +141,7 @@
     <None Include="Views\Brigads\MakeBrigad.brail" />
     <None Include="Views\Brigads\ShowBrigad.brail" />
     <None Include="Views\CommonScripts\WriteMessage.brail" />
+    <None Include="Views\Hardware\PortInfo.brail" />
     <None Include="Views\HouseAgent\Agent.brail" />
     <None Include="Views\HouseAgent\ShowAgents.brail" />
     <None Include="Views\HouseMap\BasicHouseInfo.brail" />
@@ -233,6 +234,7 @@
     <Compile Include="Controllers\ExitPartner.cs" />
     <Compile Include="Controllers\Filter\AuthenticationFilter.cs" />
     <Compile Include="Controllers\Filter\InithializeContent.cs" />
+    <Compile Include="Controllers\HardwareController.cs" />
     <Compile Include="Controllers\HouseMapController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\MapController.cs" />
@@ -267,6 +269,7 @@
     <Compile Include="Helpers\Listner.cs" />
     <Compile Include="Helpers\LoginCreatorHelper.cs" />
     <Compile Include="Helpers\PaymentFilter.cs" />
+    <Compile Include="Helpers\TelnetInterface.cs" />
     <Compile Include="Helpers\TextHelper.cs" />
     <Compile Include="Helpers\UsersParsers.cs" />
     <Compile Include="Helpers\ValidationHelper.cs" />

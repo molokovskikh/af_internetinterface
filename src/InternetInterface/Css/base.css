@@ -427,3 +427,14 @@ button.button:active, a.button:active {
 {
 	color: red;
 }
+
+.hardWareInfoBlock
+{
+	padding:20px;
+	background-color:#BDE5F8;
+	width:400px;
+	border: 1px double #00529B;
+	font-weight:bold;
+	margin-left:30px;
+	margin-top: 20px;
+}

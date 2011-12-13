@@ -1,7 +1,7 @@
 ﻿<script type="text/javascript">
 	$(function () {
 		$("#feedbackForm").validate({
-			errorElement: "span",
+			errorElement: "div",
 			errorLabelContainer: "#messageBox",
 			wrapper: "div",
   highlight: function(element, errorClass, validClass) {

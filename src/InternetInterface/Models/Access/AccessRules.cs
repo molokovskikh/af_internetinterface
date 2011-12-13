@@ -205,7 +205,8 @@ namespace InternetInterface.Models.Access
 									"FreePortForSwitch",
 									"AddEndPoint",
 									"DeleteEndPoint",
-									"AddPoint"
+									"AddPoint",
+									"PortInfo"
 								};
 			return _accessDHCP.Contains(methodName) ? "DHCP" : string.Empty;
 		}

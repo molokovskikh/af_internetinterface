@@ -16,6 +16,7 @@ namespace InternetInterface.Controllers
 		public uint agent { get; set; }
 		public DateTime? startDate { get; set; }
 		public DateTime? endDate { get; set; }
+		public string year { get; set; }
 
 		public int _lastRowsCount;
 		public decimal TotalSum;
@@ -34,7 +35,8 @@ namespace InternetInterface.Controllers
 			return new[] {
 							 String.Format("filter.agent={0}", agent),
 							 String.Format("filter.startDate={0}", startDate),
-							 String.Format("filter.endDate={0}", endDate)
+							 String.Format("filter.endDate={0}", endDate),
+							 String.Format("filter.year={0}", year)
 						 };
 		}
 

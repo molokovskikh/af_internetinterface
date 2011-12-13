@@ -709,7 +709,7 @@ br.noheight {
 	border: 1px solid #C24949;
 }
 
-.error
+span .error
 {
 	color:Red;
 }

@@ -101,11 +101,11 @@
 						<td></td>
 						<td style="border-right:1px solid #AAA"></td>
 						<td style="text-align:center;">Год:
-							<select id="year" name="year">
-								<option>2010</option>
-								<option selected>2011</option>
-								<option>2012</option>
-								<option>2013</option>
+							<select id="year" name="filter.year" id="${filter.year}">
+								<option ${"selected" if filter.year == "2010"}>2010</option>
+								<option ${"selected" if filter.year == "2011"}>2011</option>
+								<option ${"selected" if filter.year == "2012"}>2012</option>
+								<option ${"selected" if filter.year == "2013"}>2013</option>
 							</select>
 						</td>
 					</tr>
