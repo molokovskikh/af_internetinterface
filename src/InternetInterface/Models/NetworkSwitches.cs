@@ -40,7 +40,7 @@ namespace InternetInterface.Models
 
 		public override string ToString()
 		{
-			return Name + string.Format("({0})", GetNormalIp());
+			return Name + string.Format(" ({0})", GetNormalIp());
 		}
 
 		public virtual string GetCommentForWeb()

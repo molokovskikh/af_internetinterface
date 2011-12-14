@@ -430,11 +430,45 @@ button.button:active, a.button:active {
 
 .hardWareInfoBlock
 {
-	padding:20px;
+	padding:15px;
 	background-color:#BDE5F8;
 	width:400px;
 	border: 1px double #00529B;
 	font-weight:bold;
-	margin-left:30px;
-	margin-top: 20px;
+	margin-bottom: 20px;
+	font-family:Courier;
+	text-align: center;
+}
+
+.hardWareInfoBlock th
+{
+	padding: 6px;
+}
+
+.switchInfoBlock
+{
+	background-color:#d7d4d4;
+	border:1px double Black;
+	color:Black;
+	padding:15px;
+	width:600px;
+	font-family:Courier;
+}
+
+.switchInfoClient
+{
+	background-color:#DFF2BF;
+	border:1px double #4F8A10;
+	margin-bottom:20px;
+	padding:15px;
+	width:600px;
+}
+
+.backGroundBlock
+{
+	background-color:White;
+	padding-bottom: 30px;
+	padding-top:10px;
+	height:700px;
+	min-width:1300px;
 }

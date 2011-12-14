@@ -46,7 +46,7 @@
 	<table class="table" style="width: 100%;" align="left">
 	<thead>
 		<tr>
-		<th style="border-right-width:0px;">Информация по подключению (точка № ${ConnectInfo.endpointId})
+		<th style="border-right-width:0px; width:400px;">Информация по подключению (точка № ${ConnectInfo.endpointId})
 		<%if PartnerAccessSet.AccesPartner("DHCP"): %>
 			<form class="formConnect" method="post" action="${siteroot}/UserInfo/LoadEditConnectMudule" style="display:inline;">
 			<input type="hidden" name="ClientID" value="${ClientCode}" />
@@ -55,7 +55,6 @@
 			<img alt="Save" src="../Images/application_edit.png"> Редактировать
 			</button>
 			</form>
-			<a class="button" href="${siteroot}/Hardware/PortInfo?endPoint=${ConnectInfo.endpointId}">Показать информацию по оборудованию</a>
 		 <%end %>
 		</th>
 		<th style="border-left-width:0px; text-align:right; width:400px;">
@@ -76,8 +75,14 @@
 		  <td>${ConnectInfo.Leased_IP}</td>
 		</tr>
 		<tr>
-		  <td style="width:400px;"><span class="description">Свич </span></td>
-		  <td>${ConnectInfo.Swith_adr} (${ConnectInfo.swith_IP})</td>
+		  <td style="width:400px;">
+			<span class="description">Свич</span>
+		</td>
+		  <td>
+			<a class="button" href="${siteroot}/Hardware/PortInfo?endPoint=${ConnectInfo.endpointId}" target="_blank" style="display:inline; float:none; background-color:#BDE5F8;">
+				${ConnectInfo.Swith_adr} (${ConnectInfo.swith_IP})
+			</a>
+		</td>
 		</tr>
 		<tr>
 		  <td><span class="description">Порт </span></td>

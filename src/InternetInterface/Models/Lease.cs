@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
+using InternetInterface.Helpers;
 
 namespace InternetInterface.Models
 {
@@ -43,5 +44,25 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual int Module { get; set; }
+
+		public string GetIp()
+		{
+			return IpHeper.GetNormalIp(Ip.ToString());
+		}
+
+		public string GetMac()
+		{
+			return LeasedTo.Substring(0, 17);
+		}
+
+		public bool CompareIp(string ip)
+		{
+			return GetIp().Equals(ip);
+		}
+
+		public bool CompareMac(string mac)
+		{
+			return GetMac().Equals(mac);
+		}
 	}
 }

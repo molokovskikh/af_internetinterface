@@ -669,6 +669,51 @@ namespace Billing.Test.Unit
 		}
 
 		[Test]
+		public void DomolinkTariffTest()
+		{
+			var domTariff = new Tariff {
+				Name = "domolink",
+				Price = 0,
+				PackageId = 8,
+				Hidden = true,
+				FinalPriceInterval = 1,
+				FinalPrice = 590
+			};
+			domTariff.Save();
+
+			var physDom = new PhysicalClients {
+				Name = "Александр",
+				Surname = "Барабановский",
+				Patronymic = "Тарасович",
+				City = "Борисоглебск",
+				Street = "Северный мкр.",
+				Balance = 0m,
+				Tariff = domTariff
+			};
+			physDom.Save();
+			var domolinkClient = new Client {
+				PhysicalClient = physDom,
+				Disabled = true,
+				Type = ClientType.Phisical,
+				Name = "Александр Барабановский",
+				DebtDays = 0,
+				ShowBalanceWarningPage = false,
+				RegDate = DateTime.Now,
+				AutoUnblocked = false,
+				PercentBalance = 0m
+			};
+			domolinkClient.Save();
+			new Payment {
+				Client = domolinkClient,
+				Sum = 5m
+			}.Save();
+
+			billing.OnMethod();
+			Assert.IsTrue(domolinkClient.AutoUnblocked);
+			Assert.IsFalse(domolinkClient.Disabled);
+		}
+
+		[Test]
 		public void FindDebt()
 		{
 		   var count = 0;

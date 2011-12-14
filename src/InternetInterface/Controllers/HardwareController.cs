@@ -13,17 +13,10 @@ using InternetInterface.Models;
 namespace InternetInterface.Controllers
 {
 	[Helper(typeof(PaginatorHelper))]
+	[Helper(typeof(IpHeper))]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class HardwareController : ARSmartDispatcherController
 	{
-		/*private string RemoveTerminalCommandInRequest(string request, string command)
-		{
-			var beginNameIndex = request.IndexOf("\r\n");
-			var endNameIndex = request.IndexOf("#");
-			var terminalName = request.Substring(beginNameIndex, endNameIndex - beginNameIndex);
-			return request.Remove(0, endNameIndex + command.Length + 3).Replace(terminalName + "#", string.Empty);
-		}*/
-
 		private string DelCommandAndHello(string info, string command)
 		{
 			info = info.Replace(command, string.Empty);
@@ -40,6 +33,8 @@ namespace InternetInterface.Controllers
 		public void PortInfo(uint endPoint)
 		{
 			var point = ClientEndpoints.Find(endPoint);
+			PropertyBag["point"] = point;
+			PropertyBag["lease"] = Lease.Queryable.Where(l => l.Endpoint == point).FirstOrDefault();
 
 			try {
 #if DEBUG
@@ -92,15 +87,13 @@ namespace InternetInterface.Controllers
 						}
 					}
 					macAddr = macAddr.ToUpper();
-					//macAddr.ToUpper().Replace(".", string.Empty);
-					//PropertyBag["MACCommand"] = command;
-					PropertyBag["MACResult"] = macAddr;
+
+					PropertyBag["MACResult"] = macAddr.Replace(":", "-");
 
 					command = string.Format("show ip dh sn bi | inc {0}", macAddr);
 					telnet.WriteLine(command);
 					var ipInfo = ResultInArray(telnet.Read(), command);
 
-					//PropertyBag["IPCommand"] = command;
 					PropertyBag["IPResult"] = ipInfo[1];
 
 					command = string.Format("show interfaces fastEthernet 0/{0} counters", port);
@@ -120,10 +113,13 @@ namespace InternetInterface.Controllers
 						DelCommandAndHello(errorCounterInfo, command).TrimStart('\r', '\n').TrimEnd('\r', '\n').Split(new[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries).
 							Select(i => i.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries)).ToList();
 				}
+				else {
+					PropertyBag["Message"] = Message.Error("Соединение на порту отсутствует");
+				}
 				telnet.WriteLine("exit");
 			}
 			catch (Exception) {
-
+				PropertyBag["Message"] = Message.Error("Ошибка подключения к коммутатору");
 			}
 		}
 	}
