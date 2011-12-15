@@ -55,11 +55,19 @@
 				<td>IP на порту коммутатора</td>
 				<td>${IPResult}</td>
 			</tr>
+			<%else: %>
+			<tr>
+				<td colspan=2 style="background-color:#FFBABA; text-align:center;"><b>Не удалось определить IP на порту коммутатора</b></td>
+			</tr>
 			<%end %>
 			<%if IsDefined("MACResult"): %>
 			<tr>
 				<td>MAC на порту коммутатора</td>
 				<td>${MACResult}</td>
+			</tr>
+			<%else: %>
+			<tr>
+				<td colspan=2 style="background-color:#FFBABA; text-align:center;"><b>Не удалось определить MAC на порту коммутатора</b></td>
 			</tr>
 			<%end %>
 			<%end %>
