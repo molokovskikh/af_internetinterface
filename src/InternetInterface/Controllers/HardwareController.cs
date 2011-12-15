@@ -45,7 +45,7 @@ namespace InternetInterface.Controllers
 #else
 				var telnet = new TelnetConnection(point.Switch.GetNormalIp(), 23);
 				telnet.Login("ii", "analit", 100);
-				var port = point.Port;
+				var port = point.Port.ToString();
 #endif
 				//Грязный хук, чтобы поиск осущесвтлять по нужному порту
 				if (port.Length == 1)
