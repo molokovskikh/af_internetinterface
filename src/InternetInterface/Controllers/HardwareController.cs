@@ -40,11 +40,11 @@ namespace InternetInterface.Controllers
 #if DEBUG
 				//var telnet = new TelnetConnection("91.209.124.59", 23);
 				var telnet = new TelnetConnection("172.16.1.114", 23);
-				telnet.Login("ii", "ii", 100);
+				telnet.Login("ii", "analit", 100);
 				var port = 2.ToString();
 #else
 				var telnet = new TelnetConnection(point.Switch.GetNormalIp(), 23);
-				telnet.Login("ii", "ii", 100);
+				telnet.Login("ii", "analit", 100);
 				var port = point.Port;
 #endif
 				//Грязный хук, чтобы поиск осущесвтлять по нужному порту

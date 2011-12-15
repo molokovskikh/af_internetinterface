@@ -7,6 +7,7 @@ using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 using WatiN.Core;
+using WatiN.Core.Native.Windows;
 
 namespace InternetInterface.Test.Functional
 {
@@ -131,6 +132,25 @@ namespace InternetInterface.Test.Functional
 				Console.WriteLine(browser.Html);
 				Assert.IsTrue(browser.Text.Contains("Резерв"));
 			}
+		}
+
+		[Test]
+		public void HardWareTest()
+		{
+			Client validClient;
+			using (new SessionScope()) {
+				validClient = Client.Queryable.Where(c => c.Status.Id == 5).FirstOrDefault();
+			}
+			if (validClient != null)
+				using (var browser = Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", validClient.Id)))
+				{
+					browser.Link(Find.ByClass("button hardwareInfo")).Click();
+					browser.ShowWindow(NativeMethods.WindowShowStyle.ShowDefault);
+					Assert.That(browser.Text, Is.StringContaining(validClient.Name));
+					Assert.That(browser.Text, Is.StringContaining("FastEthernet"));
+				}
+			else
+				throw new Exception();
 		}
 
 		[Test]

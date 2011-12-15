@@ -79,7 +79,7 @@
 			<span class="description">Свич</span>
 		</td>
 		  <td>
-			<a class="button" href="${siteroot}/Hardware/PortInfo?endPoint=${ConnectInfo.endpointId}" target="_blank" style="display:inline; float:none; background-color:#BDE5F8;">
+			<a class="button hardwareInfo" href="${siteroot}/Hardware/PortInfo?endPoint=${ConnectInfo.endpointId}" target="_blank" style="display:inline; float:none; background-color:#BDE5F8;">
 				${ConnectInfo.Swith_adr} (${ConnectInfo.swith_IP})
 			</a>
 		</td>
