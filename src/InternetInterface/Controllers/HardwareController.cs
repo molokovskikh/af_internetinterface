@@ -9,6 +9,7 @@ using Common.Web.Ui.Helpers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using log4net;
 
 namespace InternetInterface.Controllers
 {
@@ -17,6 +18,8 @@ namespace InternetInterface.Controllers
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class HardwareController : ARSmartDispatcherController
 	{
+		private readonly ILog _log = LogManager.GetLogger(typeof (HardwareController));
+
 		private string DelCommandAndHello(string info, string command)
 		{
 			info = info.Replace(command, string.Empty);
@@ -38,10 +41,10 @@ namespace InternetInterface.Controllers
 
 			try {
 #if DEBUG
-				//var telnet = new TelnetConnection("91.209.124.59", 23);
-				var telnet = new TelnetConnection("172.16.1.114", 23);
-				telnet.Login("ii", "analit", 100);
-				var port = 2.ToString();
+				var telnet = new TelnetConnection("91.209.124.59", 23);
+				//var telnet = new TelnetConnection("172.16.1.114", 23);
+				telnet.Login("ii", "ii", 100);
+				var port = 3.ToString();
 #else
 				var telnet = new TelnetConnection(point.Switch.GetNormalIp(), 23);
 				telnet.Login("ii", "analit", 100);
@@ -74,28 +77,29 @@ namespace InternetInterface.Controllers
 					command = string.Format("show mac address-table interface fastEthernet 0/{0} | inc a0/{0}", port);
 					telnet.WriteLine(command);
 					var macInfo = ResultInArray(telnet.Read(), command);
-					var macAddr = string.Empty;
-					var chetFlag = 0;
-					foreach (var _char in macInfo[1].Replace(".", string.Empty)) {
-						if (chetFlag < 2) {
-							macAddr += _char;
-							chetFlag++;
+					if (macInfo.Length > 0) {
+						var macAddr = string.Empty;
+						var chetFlag = 0;
+						foreach (var _char in macInfo[1].Replace(".", string.Empty)) {
+							if (chetFlag < 2) {
+								macAddr += _char;
+								chetFlag++;
+							}
+							else {
+								chetFlag = 1;
+								macAddr += ":" + _char;
+							}
 						}
-						else {
-							chetFlag = 1;
-							macAddr += ":" + _char;
-						}
+						macAddr = macAddr.ToUpper();
+
+						PropertyBag["MACResult"] = macAddr.Replace(":", "-");
+
+						command = string.Format("show ip dh sn bi | inc {0}", macAddr);
+						telnet.WriteLine(command);
+						var ipInfo = ResultInArray(telnet.Read(), command);
+
+						PropertyBag["IPResult"] = ipInfo[1];
 					}
-					macAddr = macAddr.ToUpper();
-
-					PropertyBag["MACResult"] = macAddr.Replace(":", "-");
-
-					command = string.Format("show ip dh sn bi | inc {0}", macAddr);
-					telnet.WriteLine(command);
-					var ipInfo = ResultInArray(telnet.Read(), command);
-
-					PropertyBag["IPResult"] = ipInfo[1];
-
 					command = string.Format("show interfaces fastEthernet 0/{0} counters", port);
 					telnet.WriteLine(command);
 					var counterInfo = telnet.Read();
@@ -118,8 +122,9 @@ namespace InternetInterface.Controllers
 				}
 				telnet.WriteLine("exit");
 			}
-			catch (Exception) {
+			catch (Exception e) {
 				PropertyBag["Message"] = Message.Error("Ошибка подключения к коммутатору");
+				_log.Error(string.Format("Коммутатор {0} Порт {1}", point.Switch.GetNormalIp(), point.Port.ToString()), e);
 			}
 		}
 	}
