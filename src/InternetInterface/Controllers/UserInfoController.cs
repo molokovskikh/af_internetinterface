@@ -1048,15 +1048,20 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 			decimal tryBalance;
 			if (decimal.TryParse(forChangeSumm, out tryBalance) && tryBalance > 0)
 			{
-				new Payment {
-				            	Client = clientToch,
-								Agent = Agent.GetByInitPartner(),
-								PaidOn = DateTime.Now,
-								RecievedOn = DateTime.Now,
-								Sum = tryBalance,
-								BillingAccount = false
-				            }.Save();
-				Flash["Message"] = Message.Notify("Платеж ожидает обработки");
+				if (clientToch.LawyerPerson == null) {
+					new Payment {
+						Client = clientToch,
+						Agent = Agent.GetByInitPartner(),
+						PaidOn = DateTime.Now,
+						RecievedOn = DateTime.Now,
+						Sum = tryBalance,
+						BillingAccount = false
+					}.Save();
+					Flash["Message"] = Message.Notify("Платеж ожидает обработки");
+				}
+				else {
+					Flash["Message"] = Message.Error("Юридические лица не могут оплачивать наличностью");
+				}
 			}
 			else
 			{

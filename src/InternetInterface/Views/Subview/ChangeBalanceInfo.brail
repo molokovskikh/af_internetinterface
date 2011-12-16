@@ -1,9 +1,11 @@
 ﻿<%if PartnerAccessSet.AccesPartner("CB"): %>
 <div style="clear:both;">
+<%if _client.LawyerPerson == null: %>
 <form class="form login" method="post" action="${siteroot}/UserInfo/ChangeBalance">
 	<input type="hidden" name="ClientID" value="${ClientCode}" />
 	<% OutputSubView("""\Subview\Payment""") %>
 </form>
+<%end %>
 <%if PartnerAccessSet.AccesPartner("ECI"): %>
 <form method="post" action="${siteroot}/UserInfo/UserWriteOff">
 <table class="table">
