@@ -54,7 +54,11 @@
 		</td>
 		<td>${payment.Recipient.Name}</td>
 		<td>${payment.PayedOn.ToShortDateString()}</td>
+		<%if payment.Payer != null: %>
 		<td><a href="../Search/Redirect?filter.ClientCode=${payment.Payer.client.Id}">${payment.Payer.Name}</a></td>
+		<%else: %>
+		<td></td>
+		<%end %>
 		<td style="text-align:right;">${payment.Sum.ToString("C")}</td>
 		<td>${payment.RegistredOn}</td>
 	</tr>

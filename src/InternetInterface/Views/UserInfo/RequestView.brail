@@ -112,8 +112,8 @@ div.scroller
 					</td>
 				</tr>
 				<tr>
-					<td>
-						<label for="streetText">Поиск по улице/телефону: </label>
+					<td style="width:200px;">
+						<label for="streetText">Поиск по адресу / телефону / ФИО: </label>
 					</td>
 					<td>
 						<input id="streetText" type="text" value="${filter.query}" name="filter.query" />

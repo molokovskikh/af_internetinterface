@@ -236,6 +236,7 @@ namespace InternetInterface.Controllers
 		{
 			var payment = BankPayment.Find(id);
 			var client = Client.Queryable.FirstOrDefault(c => c.LawyerPerson == payment.Payer);
+			if (client != null)
 			new UserWriteOff {
 			                 	Client = client,
 								Sum = payment.Sum,

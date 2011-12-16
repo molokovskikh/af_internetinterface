@@ -343,7 +343,7 @@ namespace InternetInterface.Controllers
 		public void SaveContacts([ARDataBind("contact", AutoLoad = AutoLoadBehavior.NewInstanceIfInvalidKey)]Contact[] contacts, uint ClientID)
 		{
 			var client = Client.Find(ClientID);
-			var telephoneRegex = new Regex(@"^((\d{10}))");
+			var telephoneRegex = new Regex(@"^(\d{10})$");
 			foreach (var contact in contacts) {
 				var replaseContact = contact.Text.Replace("-", string.Empty);
 				contact.Text = telephoneRegex.IsMatch(replaseContact) ? replaseContact : contact.Text;

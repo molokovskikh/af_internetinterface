@@ -52,7 +52,7 @@ namespace InternetInterface.Models
 
 		public virtual string HumanableNumber()
 		{
-			if (new Regex(@"^((\d{10}))").IsMatch(Text))
+			if (new Regex(@"^(\d{10})$").IsMatch(Text))
 				return string.Format("{0}-{1}", Text.Substring(0, 3), Text.Substring(3, 7));
 			return Text;
 		}

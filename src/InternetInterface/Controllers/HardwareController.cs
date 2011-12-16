@@ -16,7 +16,7 @@ namespace InternetInterface.Controllers
 	[Helper(typeof(PaginatorHelper))]
 	[Helper(typeof(IpHeper))]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
-	public class HardwareController : ARSmartDispatcherController
+	public class	HardwareController : ARSmartDispatcherController
 	{
 		private readonly ILog _log = LogManager.GetLogger(typeof (HardwareController));
 
