@@ -3,19 +3,7 @@
 		{
 			color: #1f3813;
 		}
-		.fiodiv
-		{
-			/*border : 1px solid;*/
-			padding: 4px 4px 4px 30px;
-			text-align:center;
-		   /* width : 60%;*/
-		}
-		.submenu th
-		{
-			border-color:#7cae6d;
-			padding-top:0px;
-			padding-bottom:0px;
-			}
+
 		.menudiv
 		{
 			/*border : 2px solid;*/
@@ -25,15 +13,7 @@
 		{
 			width:100%;
 		}
-		.menuItem th
-		{
-			background-color:#d5e6d0;
-			}
-			
-		.menuItem th:hover
-		{
-			background-color:#7cae6d;
-			}
+
 	</style>
 <div class=wid>
 <table class="table" id="mapHead" style = "width:100%" >

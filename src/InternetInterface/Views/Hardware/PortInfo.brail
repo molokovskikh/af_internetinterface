@@ -19,9 +19,9 @@
 			</tr>
 			<tr>
 				<%if IsDefined("IPResult"): %>
-				<td colspan=2 style="background-color:${"#FFBABA" if not lease.CompareIp(IPResult)}">
+				<td colspan=2 style="background-color:${"#f7d7d7" if not lease.CompareIp(IPResult)}">
 				<%else: %>
-				<td colspan=2 style="background-color:#FFBABA;">
+				<td colspan=2 style="background-color:#f7d7d7;">
 				<%end %>
 					Арендованный IP
 					<b>${lease.GetIp()}</b>
@@ -34,9 +34,9 @@
 			</tr>
 			<tr>
 				<%if IsDefined("MACResult"): %>
-				<td colspan=2 style="background-color:${"#FFBABA" if not lease.CompareMac(MACResult)}">
+				<td colspan=2 style="background-color:${"#f7d7d7" if not lease.CompareMac(MACResult)}">
 				<%else: %>
-				<td colspan=2 style="background-color:#FFBABA;">
+				<td colspan=2 style="background-color:#f7d7d7;">
 				<%end %>
 					МАС адрес <b>${lease.GetMac()} </b>
 					<%if IsDefined("MACResult"): %>
@@ -48,7 +48,7 @@
 			</tr>
 			<%else: %>
 			<tr>
-				<td colspan=2 style="background-color:#FFBABA; text-align:center; font-weight:bold; font-size:14px;">Сессия DHCP не зерегистрирована</td>
+				<td colspan=2 style="background-color:#f7d7d7; text-align:center; font-weight:bold; font-size:14px;">Сессия DHCP не зерегистрирована</td>
 			</tr>
 			<%if IsDefined("IPResult"): %>
 			<tr>
@@ -57,7 +57,7 @@
 			</tr>
 			<%else: %>
 			<tr>
-				<td colspan=2 style="background-color:#FFBABA; text-align:center;"><b>Не удалось определить IP на порту коммутатора</b></td>
+				<td colspan=2 style="background-color:#f7d7d7; text-align:center;"><b>Не удалось определить IP на порту коммутатора</b></td>
 			</tr>
 			<%end %>
 			<%if IsDefined("MACResult"): %>
@@ -67,7 +67,7 @@
 			</tr>
 			<%else: %>
 			<tr>
-				<td colspan=2 style="background-color:#FFBABA; text-align:center;"><b>Не удалось определить MAC на порту коммутатора</b></td>
+				<td colspan=2 style="background-color:#f7d7d7; text-align:center;"><b>Не удалось определить MAC на порту коммутатора</b></td>
 			</tr>
 			<%end %>
 			<%end %>

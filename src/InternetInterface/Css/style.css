@@ -285,10 +285,59 @@ input.checkbox {
 .table th 
 {
   border: 1px double black;
-  background: #b7d2af;
+  background: #cfe5f0;
   color: #625a5b;
   font-weight:normal;
   padding:3px;
+}
+
+.menuItem th
+{
+	background-color:#dbeaf0;
+	}
+			
+.menuItem th:hover
+{
+	background-color:#7dbcd7;
+	}
+	
+.submenu th
+{
+	border-color:#7dbcd7;
+	padding-top:0px;
+	padding-bottom:0px;
+	}
+	
+.editBut
+{
+	padding:3px 10px 3px 7px;
+	background-color: #dbeaf0;
+	border:1px solid #bfbfbf;
+	cursor:pointer;
+	line-height: 1.3em;
+	font-weight:bold;
+	}
+		
+.EmptyData
+{
+	border: 1px solid #7dbcd7;
+	background-color: #dbeaf0;
+	text-align: center;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.fiodiv
+{
+	padding: 4px 4px 4px 30px;
+	text-align:center;
+	font-size: 14px;
+}
+
+#itogo
+{
+	color:#004f70;
+	font-size:16px;
 }
 
 .table th a.toggle {
@@ -384,14 +433,6 @@ input.checkbox {
   background-color: #fdd;
   height: auto;
   padding: 10px;
-}
-.EmptyData
-{
-	border: 1px solid #c4c42e;
-	background-color: #ffffcc;
-	text-align: center;
-	font-size: 14px;
-	font-weight: bold;
 }
 .flash .warning {
   border: 1px solid #fffaaa;

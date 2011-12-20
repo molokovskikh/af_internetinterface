@@ -1,20 +1,8 @@
 ﻿<style type="text/css">
-	.editBut
-	{
-		padding:3px 10px 3px 7px;
-		background-color: #ccdfcc;
-		border:1px solid #bfbfbf;
-		cursor:pointer;
-		line-height: 1.3em;
-		font-weight:bold;
-		}
+
 </style>
 <style type="text/css">
-	#itogo
-	{
-		color:#274e26;
-		font-size:16px;
-		}
+
 	.group_link a
 	{
 		color:#274e26;

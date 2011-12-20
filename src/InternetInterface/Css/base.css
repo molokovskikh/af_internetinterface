@@ -457,8 +457,8 @@ button.button:active, a.button:active {
 
 .switchInfoClient
 {
-	background-color:#DFF2BF;
-	border:1px double #4F8A10;
+	background-color:#dbeaf0;
+	border:1px double #7dbcd7;
 	margin-bottom:20px;
 	padding:15px;
 	width:600px;

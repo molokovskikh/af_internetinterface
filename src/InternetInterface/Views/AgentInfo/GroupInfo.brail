@@ -28,7 +28,7 @@
 	<tbody>
 	<%for i, agent in enumerate(Agents): %>
 		<tr>
-			<td colspan=3 style="background-color:#D5E6D0; font-size:18px; font-weight:bold;">${agent.Name} (<b>Итого: ${agent.GetAgentPayment(interval)} рублей</b>)</td>
+			<td colspan=3 style="background-color:#b7d9e8; font-size:18px; font-weight:bold;">${agent.Name} (<b>Итого: ${agent.GetAgentPayment(interval)} рублей</b>)</td>
 		</tr>
 		<tr>
 			<td colspan=3>
