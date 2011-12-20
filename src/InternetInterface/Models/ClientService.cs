@@ -89,5 +89,10 @@ namespace InternetInterface.Models
 		{
 			Service.PaymentClient(this);
 		}
+
+		public virtual void WriteOff()
+		{
+			Service.WriteOff(this);
+		}
 	}
 }

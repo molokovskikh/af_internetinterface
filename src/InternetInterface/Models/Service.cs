@@ -114,6 +114,9 @@ namespace InternetInterface.Models
 			}
 			return false;
 		}
+
+		public virtual void WriteOff(ClientService cService)
+		{}
 	}
 
 
@@ -263,6 +266,10 @@ namespace InternetInterface.Models
 				var client = CService.Client;
 				client.RatedPeriodDate = DateTime.Now;
 				client.Disabled = true;
+
+				client.ShowBalanceWarningPage = true;
+				client.FreeBlockDays--;
+
 				client.AutoUnblocked = false;
 				client.DebtDays = 0;
 				client.Status = Status.Find((uint)StatusType.VoluntaryBlocking);
@@ -271,6 +278,14 @@ namespace InternetInterface.Models
 				var evd = CService.EndWorkDate.Value;
 				CService.EndWorkDate = new DateTime(evd.Year, evd.Month, evd.Day);
 				CService.Update();
+				new UserWriteOff {
+					Client = client,
+					Sum = 50m,
+					Date = DateTime.Now,
+					Comment =
+						string.Format("Платеж за активацию услуги добровольная блокировка с {0} по {1}",
+						              CService.BeginWorkDate.Value.ToShortDateString(), CService.EndWorkDate.Value.ToShortDateString())
+				}.Save();
 			}
 		}
 
@@ -280,15 +295,34 @@ namespace InternetInterface.Models
 			client.DebtDays = 0;
 			client.RatedPeriodDate = DateTime.Now;
 			client.Disabled = CService.Client.PhysicalClient.Balance < 0;
+
+			client.ShowBalanceWarningPage = CService.Client.PhysicalClient.Balance < 0;
+
+			client.FreeBlockDays -= (int) (CService.BeginWorkDate.Value - CService.EndWorkDate.Value).TotalDays;
+
 			client.AutoUnblocked = true;
 			if (CService.Client.PhysicalClient.Balance > 0)
 			{
 				client.Disabled = false;
 				client.Status = Status.Find((uint)StatusType.Worked);
 			}
-			client.Update();
+			CService.Activated = false;
 			CService.Diactivated = true;
 			CService.Update();
+
+			if (!client.PaidDay) {
+				client.PaidDay = true;
+				var toDt = client.GetInterval();
+				var price = client.GetPrice();
+				new UserWriteOff {
+					Client = client,
+					Date = DateTime.Now,
+					Sum = price/toDt,
+					Comment = "Абоненская плата за день из-за добровольной разблокировки клиента"
+				}.Save();
+			}
+
+			client.Update();
 		}
 
 		public override bool Diactivate(ClientService CService)
@@ -320,9 +354,18 @@ namespace InternetInterface.Models
 			if (CService.BeginWorkDate == null)
 				return 0;
 
-			if ((SystemTime.Now().Date < CService.BeginWorkDate.Value.AddMonths(1).Date))
+			if (CService.Client.FreeBlockDays > 0)
 				return 0;
-			return CService.Client.GetInterval()*2m;
+			return CService.Client.GetInterval()*3m;
+		}
+
+		public override void WriteOff(ClientService cService)
+		{
+			var client = cService.Client;
+			if (cService.BeginWorkDate.Value.Date != SystemTime.Now().Date) {
+				client.FreeBlockDays --;
+				client.Update();
+			}
 		}
 	}
 }

@@ -90,6 +90,11 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual decimal PercentBalance { get; set; }
 
+		[Property]
+		public virtual bool PaidDay { get; set; }
+
+		public virtual int FreeBlockDays { get; set; }
+
 		public virtual bool HavePayment
 		{
 			get { return Payments.Where(p => p.BillingAccount && p.Sum > 0).ToList().Count > 0; }

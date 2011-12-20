@@ -233,7 +233,7 @@ namespace Billing
 					}
 				}
 
-				if (client.GetPrice() > 0) {
+				if (client.GetPrice() > 0 && !client.PaidDay) {
 					if (client.RatedPeriodDate != DateTime.MinValue && client.RatedPeriodDate != null) {
 						var toDt = client.GetInterval();
 						var price = client.GetPrice();
@@ -241,6 +241,7 @@ namespace Billing
 						phisicalClient.Balance -= dec;
 						phisicalClient.UpdateAndFlush();
 						var bufBal = phisicalClient.Balance;
+						client.PaidDay = true;
 						client.ShowBalanceWarningPage = bufBal - dec < 0;
 						client.UpdateAndFlush();
 						if (dec > 0)
@@ -276,6 +277,8 @@ namespace Billing
 			var thisDateMax = InternetSettings.FindFirst();
 			thisDateMax.NextBillingDate = SystemTime.Now().AddDays(1).Date.AddHours(22);
 			thisDateMax.UpdateAndFlush();
+
+			ClientService.Queryable.ToList().Each(cs => cs.WriteOff());
 		}
 	}
 }
