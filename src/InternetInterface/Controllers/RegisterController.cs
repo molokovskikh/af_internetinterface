@@ -330,10 +330,10 @@ namespace InternetInterface.Controllers
 				Entrance = request.Entrance,
 				Email = request.ApplicantEmail,
 			};
-			if (request.ApplicantPhoneNumber.Length == 15)
+			if (request.ApplicantPhoneNumber.Length == 10)
 				newPhisClient.PhoneNumber = UsersParsers.MobileTelephoneParcer(request.ApplicantPhoneNumber);
-			if (request.ApplicantPhoneNumber.Length == 5)
-				newPhisClient.HomePhoneNumber = UsersParsers.HomeTelephoneParser(request.ApplicantPhoneNumber);
+			if (request.ApplicantPhoneNumber.FirstOrDefault() == '4')
+				newPhisClient.HomePhoneNumber = UsersParsers.MobileTelephoneParcer(request.ApplicantPhoneNumber);
 			PropertyBag["Client"] = newPhisClient;
 			PropertyBag["ChTariff"] = request.Tariff.Id;
 			PropertyBag["requestID"] = requestID;
@@ -503,8 +503,10 @@ namespace InternetInterface.Controllers
 
 		public void RegisterRequest([DataBind("request")]Requests request, uint houseNumber, uint tariff)
 		{
-			if (Validator.IsValid(request))
-			{
+			if (Validator.IsValid(request)) {
+				var phone = request.ApplicantPhoneNumber;
+				phone = phone.Remove(0, 2);
+				request.ApplicantPhoneNumber = phone.Replace("-", string.Empty);
 				request.Tariff = Tariff.Find(tariff);
 				request.Registrator = InitializeContent.Partner;
 				request.ActionDate = DateTime.Now;

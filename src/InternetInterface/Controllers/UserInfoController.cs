@@ -1031,8 +1031,7 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void ChangeBalance([DataBind("ChangedBy")] ChangeBalaceProperties changeProperties, uint clientId,
-		                          string balanceText)
+		public void ChangeBalance([DataBind("ChangedBy")] ChangeBalaceProperties changeProperties, uint clientId, string balanceText)
 		{
 			var clientToch = Client.Find(clientId);
 			var forChangeSumm = string.Empty;
