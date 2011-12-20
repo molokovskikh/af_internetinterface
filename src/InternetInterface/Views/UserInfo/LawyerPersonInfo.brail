@@ -94,7 +94,7 @@
 	   <tr>
 		<td colspan=4>
 			<label for="comment"><b>Введите Комментарий :</b></label>
-			<textarea id="comment" name="comment" rows="5" cols="100%"></textarea>
+			<textarea id="comment" name="comment" rows="5" cols="80%"></textarea>
 		</td>
 	   </tr>
 		<tr>

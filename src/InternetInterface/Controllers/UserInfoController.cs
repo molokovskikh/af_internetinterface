@@ -244,7 +244,10 @@ namespace InternetInterface.Controllers
 			PropertyBag["appealType"] = filter.appealType == 0 ? (int) AppealType.User : filter.appealType;
 			PropertyBag["Statuss"] = Status.FindAllSort();
 			PropertyBag["services"] = Service.FindAll();
-			PropertyBag["Speeds"] = PackageSpeed.FindAll();
+
+			var packagesForTariff = Tariff.Queryable.Select(t => t.PackageId).ToList();
+			PropertyBag["Speeds"] =
+				PackageSpeed.Queryable.Where(p => !packagesForTariff.Contains(p.PackageId)).OrderBy(p => p.PackageId);
 
 			PropertyBag["Client"] = client.LawyerPerson;
 			PropertyBag["UserInfo"] = false;

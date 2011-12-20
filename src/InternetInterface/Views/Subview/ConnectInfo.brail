@@ -179,8 +179,8 @@
 		<tr>
 		  <td>Фиксированный IP</td>
 		  <td colspan=2>
-				<input type="button" onclick="DeleteStaticIp()" value="Удалить" style="width: 10%; " />
-				<input type="button" onclick="GetStaticIp()" id="static_IP" value="Назначить" style="width: 10%; " />
+				<input type="button" onclick="DeleteStaticIp()" value="Удалить" style="width: 100px; " />
+				<input type="button" onclick="GetStaticIp()" id="static_IP" value="Назначить" style="width: 100px; " />
 				<input type="hidden" id="static_IP_hiden" name="ConnectInfo.static_IP"  value="${ConnectInfo.static_IP}" />
 				<label id="staticIdLabel" style="font-weight:bold;">${ConnectInfo.static_IP}</label>
 		  </td>
