@@ -36,11 +36,14 @@ namespace Billing.Test.Unit
 	public class MainBillingFixture : IntegrationFixture
 	{
 		private MainBilling billing;
+		private Client _client;
 
 		[SetUp]
 		public void CreateBilling()
 		{
 			billing = new MainBilling();
+			PrepareTest();
+			_client = CreateClient();
 		}
 
 		public static void PrepareTests()
@@ -127,6 +130,73 @@ namespace Billing.Test.Unit
 			SystemTime.Now = () => rd.dtTo;
 			//billing.DtNow = rd.dtTo;
 			billing.Compute();
+		}
+
+
+		[Test]
+		public void VoluntaryBlockingTest2()
+		{
+			_client.YearCycleDate = DateTime.Now.AddYears(-1);
+			billing.Compute();
+			Assert.That(_client.FreeBlockDays, Is.EqualTo(MainBilling.FreeDaysVoluntaryBlockin));
+			WriteOff.DeleteAll();
+			var cService = new ClientService {
+				Client = _client,
+				BeginWorkDate = DateTime.Now,
+				EndWorkDate = DateTime.Now.AddDays(100),
+				Service = Service.GetByType(typeof (VoluntaryBlockin))
+			};
+
+			_client.ClientServices.Add(cService);
+			cService.Activate();
+			Assert.That(_client.FreeBlockDays, Is.EqualTo(MainBilling.FreeDaysVoluntaryBlockin));
+			cService.CompulsoryDiactivate();
+			Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(0));
+			billing.Compute();
+			Assert.That(_client.FreeBlockDays, Is.EqualTo(MainBilling.FreeDaysVoluntaryBlockin));
+			//using (var trans = new TransactionScope(OnDispose.Rollback)) {
+				cService = new ClientService {
+					Client = _client,
+					BeginWorkDate = DateTime.Now,
+					EndWorkDate = DateTime.Now.AddDays(100),
+					Service = Service.GetByType(typeof (VoluntaryBlockin))
+				};
+
+				_client.ClientServices.Add(cService);
+				cService.Activate();
+
+				//trans.VoteCommit();
+			//}
+			var sessionHolder = ActiveRecordMediator.GetSessionFactoryHolder();
+			var session = sessionHolder.CreateSession(typeof(ActiveRecordBase));
+			session.Flush();
+
+			Console.WriteLine(WriteOff.Queryable.Count());
+			for (int i = 0; i < MainBilling.FreeDaysVoluntaryBlockin; i++) {
+				billing.Compute();
+			}
+			Thread.Sleep(2000);
+			_client.Refresh();
+			Assert.That(_client.FreeBlockDays, Is.EqualTo(0));
+			Console.WriteLine(WriteOff.FindFirst().WriteOffSum);
+			Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(1));
+
+			cService.CompulsoryDiactivate();
+			Console.WriteLine(_client.PaidDay);
+			cService = new ClientService {
+				Client = _client,
+				BeginWorkDate = DateTime.Now,
+				EndWorkDate = DateTime.Now.AddDays(100),
+				Service = Service.GetByType(typeof (VoluntaryBlockin))
+			};
+			_client.ClientServices.Add(cService);
+			cService.Activate();
+
+			billing.Compute();
+			Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(1));
+			billing.Compute();
+			Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(2));
+			Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(2));
 		}
 
 		[Test]
@@ -411,14 +481,17 @@ namespace Billing.Test.Unit
 			//client.Disabled = true;
 			//client.RatedPeriodDate = DateTime.Now;
 			client.AutoUnblocked = true;
+			client.FreeBlockDays = MainBilling.FreeDaysVoluntaryBlockin;
 			client.Update();
+
 			var service = new ClientService {
-			                                	Client = client,
-			                                	Activator = InitializeContent.Partner,
-			                                	Service = Service.GetByType(typeof (VoluntaryBlockin)),
-			                                	BeginWorkDate = DateTime.Now.AddDays(2),
-			                                	EndWorkDate = DateTime.Now.AddDays(countDays + 2)
-			                                };
+				Client = client,
+				Activator = InitializeContent.Partner,
+				Service = Service.GetByType(typeof (VoluntaryBlockin)),
+				BeginWorkDate = DateTime.Now.AddDays(2),
+				EndWorkDate = DateTime.Now.AddDays(countDays + 2)
+			};
+
 			client.ClientServices.Add(service);
 			service.Activate();
 			billing.OnMethod();
@@ -456,21 +529,25 @@ namespace Billing.Test.Unit
 				                            	Activator = InitializeContent.Partner,
 				                            	Service = Service.GetByType(typeof (VoluntaryBlockin)),
 				                            	BeginWorkDate = DateTime.Now,
+												EndWorkDate = DateTime.Now.AddDays(300)
 				                            };
 				client.ClientServices.Add(service);
 				service.Activate();
 				client.Update();
 				tr.VoteCommit();
 			}
-			countDays = 29;
+			countDays = 0;
 			//WriteOff.DeleteAll();
 			//physClient.Refresh();
+			client.FreeBlockDays = MainBilling.FreeDaysVoluntaryBlockin;
+			client.Update();
 			while (physClient.Balance > 0)
 			{
 				billing.OnMethod();
 				using (var tr = new TransactionScope(OnDispose.Rollback))
 				{
 					billing.Compute();
+					//billing.OnMethod();
 					tr.VoteCommit();
 				}
 				SystemTime.Now = () => DateTime.Now.AddDays(countDays);
@@ -482,12 +559,12 @@ namespace Billing.Test.Unit
 			Assert.That(
 				Math.Round(
 					Convert.ToDecimal(
-						((WriteOff.FindAll().Last().WriteOffDate - WriteOff.FindFirst().WriteOffDate).TotalDays + 1)*2),
+						((WriteOff.FindAll().Last().WriteOffDate - WriteOff.FindFirst().WriteOffDate).TotalDays + 1)*3),
 					2),
 				Is.EqualTo(Math.Round(
 					WriteOff.Queryable.Where(w => w.Client == client).ToList().Sum(w => w.WriteOffSum), 2)));
-			Assert.That(firstdate.Date, Is.EqualTo(DateTime.Now.AddMonths(1).Date));
-			WriteOff.FindAll().Select(w => w.WriteOffSum).Each(c => Assert.That(c, Is.EqualTo(2m)));
+			Assert.That(firstdate.Date, Is.EqualTo(DateTime.Now.AddDays(28).Date));
+			WriteOff.FindAll().Select(w => w.WriteOffSum).Each(c => Assert.That(c, Is.EqualTo(3m)));
 		}
 
 		[Test]
@@ -536,18 +613,23 @@ namespace Billing.Test.Unit
 			Assert.IsFalse(client.Disabled);// = true;
 			Assert.IsTrue(client.AutoUnblocked);
 			Assert.IsNull(client.RatedPeriodDate);
-			//client.AutoUnblocked = true;
-			//client.RatedPeriodDate = null;
-			//client.Update();
+
 			client.ClientServices.Add(CServive);
 			CServive.Activate();
 			Assert.IsTrue(client.Disabled);
-			SystemTime.Now = () => DateTime.Now.AddMonths(1).AddDays(1);
+			//SystemTime.Now = () => DateTime.Now.AddMonths(1).AddDays(1);
 			billing.Compute();
-			Assert.That(WriteOff.FindAll().Last().WriteOffSum, Is.EqualTo(2m));
+			//billing.Compute();
+			Assert.That(WriteOff.FindAll().Last().WriteOffSum, Is.EqualTo(3m));
 			CServive.CompulsoryDiactivate();
+			billing.OnMethod();
 			billing.Compute();
-			Assert.That(WriteOff.FindAll().Last().WriteOffSum, Is.GreaterThan(5m));
+			//Assert.That(WriteOff.FindAll().Last().WriteOffSum, Is.GreaterThan(5m));
+			var userWriteOffs = UserWriteOff.Queryable.ToList();
+			Assert.That(userWriteOffs.Count, Is.EqualTo(2));
+			Assert.That(userWriteOffs.First().Sum, Is.EqualTo(50m));
+			Assert.That(userWriteOffs.Last().Sum, Is.GreaterThan(5m));
+			Assert.That(userWriteOffs.Last().Sum, Is.LessThan(25m));
 			Assert.IsFalse(client.Disabled);
 			billing.OnMethod();
 			Assert.IsFalse(client.Disabled);
@@ -563,7 +645,7 @@ namespace Billing.Test.Unit
 			var dayInMonth = DateTime.DaysInMonth(SystemTime.Now().AddDays(-15).Year, SystemTime.Now().AddDays(-15).Month);
 			client.RatedPeriodDate = SystemTime.Now().AddDays(-15);
 			client.Update();
-			billing.Compute();
+			;billing.Compute();
 			var spisD0 = WriteOff.Queryable.FirstOrDefault(w => w.Client == client);
 			client.Refresh();
 			Console.WriteLine("Interval DO: " + client.GetInterval());

@@ -241,7 +241,8 @@ namespace InternetInterface.Controllers
 			                 	Client = client,
 								Sum = payment.Sum,
 								Date = DateTime.Now,
-								Comment = "Списание в связи с удалением баковского платежа"
+								Comment = "Списание в связи с удалением баковского платежа",
+								Registrator = InitializeContent.Partner
 			                 }.Save();
 			payment.Delete();
 			RedirectToReferrer();

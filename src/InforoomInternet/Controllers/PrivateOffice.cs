@@ -67,5 +67,52 @@ namespace InforoomInternet.Controllers
 			}
 			RedirectToUrl("IndexOffice");
 		}
+
+		[AccessibleThrough(Verb.Post)]
+		public void VoluntaryBlockinActivate(DateTime startDate, DateTime endDate)
+		{
+			var clientId = Convert.ToUInt32(Session["LoginClient"]);
+			var client = Client.Find(clientId);
+			if (client.CanUsedVoluntaryBlockin()) {
+				//Flash["message"] = "Услуга \"Работа в долг\" активирована";
+				var cService = new ClientService {
+					BeginWorkDate = startDate,
+					EndWorkDate = endDate,
+					Client = client,
+					Service = Service.GetByType(typeof(VoluntaryBlockin))
+				};
+				client.ClientServices.Add(cService);
+				cService.Activate();
+				new Appeals {
+					Appeal = string.Format("Услуга \"Работа в долг\" активирована на период с {0} по {1}", startDate.ToShortDateString(), endDate.ToShortDateString()),
+					AppealType = (int) AppealType.System,
+					Client = client,
+					Date = DateTime.Now
+				}.Save();
+			}
+			RedirectToUrl("IndexOffice");
+		}
+
+		[AccessibleThrough(Verb.Post)]
+		public void DiactivateVoluntaryBlockin()
+		{
+			var clientId = Convert.ToUInt32(Session["LoginClient"]);
+			var client = Client.Find(clientId);
+			var cService = client.ClientServices.Where(c => c.Service.Id == Service.GetByType(typeof (VoluntaryBlockin)).Id).FirstOrDefault();
+			if (cService != null) {
+				cService.CompulsoryDiactivate();
+				Flash["message"] = "Услуга \"Работа в долг\" деактивирована";
+			}
+			RedirectToUrl("IndexOffice");
+		}
+
+		public void Services()
+		{
+			var clientId = Convert.ToUInt32(Session["LoginClient"]);
+			var client = Client.Find(clientId);
+			PropertyBag["Client"] = client;
+			PropertyBag["VoluntaryBlockinService"] = new VoluntaryBlockin();
+			//PropertyBag["services"] = Service.FindAll();
+		}
 	}
 }

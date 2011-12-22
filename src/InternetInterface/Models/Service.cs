@@ -11,19 +11,6 @@ using InternetInterface.Models.Universal;
 
 namespace InternetInterface.Models
 {
-	/*public class ServiceNames
-	{
-		public static string DebtWork
-		{
-			get { return "DebtWork"; }
-		}
-
-		public static string VoluntaryBlockin
-		{
-			get { return "VoluntaryBlockin"; }
-		}
-	}*/
-
 	[ActiveRecord("Services", Schema = "Internet", Lazy = true, DiscriminatorColumn = "Name",
 		DiscriminatorType = "String", DiscriminatorValue = "service")]
 	public class Service : ValidActiveRecordLinqBase<Service>
@@ -40,7 +27,10 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool BlockingAll { get; set; }
 
-			/*public static T GetByType<T>() where T : class 
+		[Property]
+		public virtual bool InterfaceControl { get; set; }
+
+		/*public static T GetByType<T>() where T : class 
 		{
 			return ActiveRecordMediator<T>.FindFirst();
 		}*/
@@ -268,23 +258,26 @@ namespace InternetInterface.Models
 				client.Disabled = true;
 
 				client.ShowBalanceWarningPage = true;
-				client.FreeBlockDays--;
+				//client.FreeBlockDays--;
 
 				client.AutoUnblocked = false;
 				client.DebtDays = 0;
 				client.Status = Status.Find((uint)StatusType.VoluntaryBlocking);
 				client.Update();
 				CService.Activated = true;
+				CService.Diactivated = false;
 				var evd = CService.EndWorkDate.Value;
 				CService.EndWorkDate = new DateTime(evd.Year, evd.Month, evd.Day);
 				CService.Update();
+
+				if (client.FreeBlockDays <= 0)
 				new UserWriteOff {
 					Client = client,
 					Sum = 50m,
 					Date = DateTime.Now,
 					Comment =
 						string.Format("Платеж за активацию услуги добровольная блокировка с {0} по {1}",
-						              CService.BeginWorkDate.Value.ToShortDateString(), CService.EndWorkDate.Value.ToShortDateString())
+						CService.BeginWorkDate.Value.ToShortDateString(), CService.EndWorkDate.Value.ToShortDateString())
 				}.Save();
 			}
 		}
@@ -298,7 +291,7 @@ namespace InternetInterface.Models
 
 			client.ShowBalanceWarningPage = CService.Client.PhysicalClient.Balance < 0;
 
-			client.FreeBlockDays -= (int) (CService.BeginWorkDate.Value - CService.EndWorkDate.Value).TotalDays;
+			//client.FreeBlockDays -= (int) (CService.BeginWorkDate.Value - CService.EndWorkDate.Value).TotalDays;
 
 			client.AutoUnblocked = true;
 			if (CService.Client.PhysicalClient.Balance > 0)
@@ -310,7 +303,7 @@ namespace InternetInterface.Models
 			CService.Diactivated = true;
 			CService.Update();
 
-			if (!client.PaidDay) {
+			if (client.FreeBlockDays <= 0 && !client.PaidDay && CService.BeginWorkDate.Value.Date == SystemTime.Now().Date) {
 				client.PaidDay = true;
 				var toDt = client.GetInterval();
 				var price = client.GetPrice();
@@ -362,7 +355,7 @@ namespace InternetInterface.Models
 		public override void WriteOff(ClientService cService)
 		{
 			var client = cService.Client;
-			if (cService.BeginWorkDate.Value.Date != SystemTime.Now().Date) {
+			if (cService.Activated && client.FreeBlockDays > 0) {
 				client.FreeBlockDays --;
 				client.Update();
 			}

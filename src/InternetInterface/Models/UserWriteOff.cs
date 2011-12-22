@@ -25,7 +25,7 @@ namespace InternetInterface.Models
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
-		[Property, ValidateDecimal("Должно быть введено число"), ValidateGreaterThanZero()]
+		[Property, ValidateDecimal("Должно быть введено число"), ValidateGreaterThanZero]
 		public virtual decimal Sum { get; set; }
 
 		[Property]
@@ -42,14 +42,5 @@ namespace InternetInterface.Models
 
 		[BelongsTo]
 		public virtual Partner Registrator { get; set; }
-
-		/*public virtual string GetDate(string grouped)
-		{
-			if (grouped == "month")
-				return string.Format("{0}.{1}", Date.Month.ToString("00"), Date.Year);
-			if (grouped == "year")
-				return string.Format("{0}", Date.Year);
-			return string.Format("{0}.{1}.{2}", Date.Day.ToString("00"), Date.Month.ToString("00"), Date.Year);
-		}*/
 	}
 }

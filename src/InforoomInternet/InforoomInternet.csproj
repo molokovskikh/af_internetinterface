@@ -449,6 +449,9 @@
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
+    <None Include="Views\PrivateOffice\DiactivateVoluntaryBlockin.brail" />
+    <None Include="Views\PrivateOffice\Services.brail" />
+    <None Include="Views\PrivateOffice\VoluntaryBlockin.brail" />
     <None Include="Views\Subview\WarningText.brail" />
   </ItemGroup>
   <ItemGroup>

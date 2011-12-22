@@ -374,6 +374,7 @@ namespace InternetInterface.Controllers
 			var servise = Service.Find(serviceId);
 			var client = Client.Find(clientId);
 			var dtn = DateTime.Now;
+			if (servise.InterfaceControl) { 
 			var clientService = new ClientService {
 				Client = client,
 				Service = servise,
@@ -410,7 +411,7 @@ namespace InternetInterface.Controllers
 					AppealType.User);
 			else
 				PropertyBag["errorMessage"] = clientService.LogComment;
-			//}
+			}
 			RedirectToUrl("../UserInfo/SearchUserInfo.rails?filter.ClientCode=" + clientId);
 		}
 

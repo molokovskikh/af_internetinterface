@@ -1,0 +1,50 @@
+﻿<script type="text/javascript">
+	$(function () {
+		$('#startDate').datepicker({
+			inline: true,
+			minDate: 0
+		});
+		$('#endDate').datepicker({
+			inline: true,
+			minDate: +1
+		});
+	});
+</script>
+
+<form method=post action="VoluntaryBlockinActivate">
+<table id="serviceTable">
+	<tbody>
+		<tr>
+			<td colspan=2 style="padding: 10px 10px 0px 30px;">Выберите интервал работы услуги</td>
+		</tr>
+		${VoluntaryBlockinService.GetParameters()}
+		<tr>
+			<td>Количество бесплатных дней:</td>
+			<td style="">
+				<b style="margin-left:-70px; color:${"Red" if Client.FreeBlockDays <= 0}">${Client.FreeBlockDays}</b>
+			</td>
+		</tr>
+		<%if Client.FreeBlockDays <= 0: %>
+		<tr>
+			<td>Стоимость активации</td>
+			<td>
+				<b style="margin-left:-70px;">50 рублей</b>
+			</td>
+		</tr>
+		<%end %>
+		<tr>
+			<td>Абонентская плата</td>
+			<td>
+				<b style="margin-left:-70px;">3 руб./день</b>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<button type="submit" id="PostponedBut" class="button">
+					<img alt="Save" src="${siteroot}/Content/tick.png"> Активировать
+				</button>
+			</td>
+		</tr>
+	</tbody>
+</table>
+</form>

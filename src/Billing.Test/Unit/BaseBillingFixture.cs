@@ -51,7 +51,9 @@ namespace Billing.Test.Unit
 			       		Name = name,
 			       		PhysicalClient = phisicalClient,
                         BeginWork = DateTime.Now ,
-						RatedPeriodDate = DateTime.Now
+						RatedPeriodDate = DateTime.Now,
+						YearCycleDate = DateTime.Now
+						//FreeBlockDays = 28
 			       		//SayBillingIsNewClient = true
 			       	};
 		}

@@ -55,6 +55,7 @@ namespace Billing.Test
 					}
 				}
 				ActiveRecordStarter.CreateSchema();
+				//ActiveRecordStarter.();
 				using (new SessionScope())
 				{
 					MainBillingFixture.PrepareTests();

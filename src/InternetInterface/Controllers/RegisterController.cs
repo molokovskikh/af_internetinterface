@@ -70,6 +70,9 @@ namespace InternetInterface.Controllers
 					WhoRegisteredName = InitializeContent.Partner.Name,
 					Status = Status.Find((uint) StatusType.BlockedAndNoConnected),
 
+					YearCycleDate = DateTime.Now,
+					FreeBlockDays = 28,
+
 					Name =
 						string.Format("{0} {1} {2}", phisClient.Surname, phisClient.Name,
 						              phisClient.Patronymic),

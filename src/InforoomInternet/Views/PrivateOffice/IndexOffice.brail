@@ -40,6 +40,7 @@
 			<tr class="caption">
 				<td>Сумма</td>
 				<td>Дата</td>
+				<td>Комментарий</td>
 			</tr>
 		</thead>
 		<tbody>
@@ -47,6 +48,11 @@
 				<tr>
 					<td>${item.Sum.ToString("0.00")}</td>
 					<td>${item.Date.ToShortDateString()}</td>
+					<%if item.Registrator == null: %>
+						<td style="width:300px;">${item.Comment}</td>
+					<%else: %>
+						<td>Пользовательские услуги</td>
+					<%end %>
 				</tr>
 			<%end %>
 		</tbody>

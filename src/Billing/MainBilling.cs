@@ -25,6 +25,8 @@ namespace Billing
 
 	public class MainBilling
 	{
+		public const int FreeDaysVoluntaryBlockin = 28;
+
 		private readonly ILog _log = LogManager.GetLogger(typeof (MainBilling));
 		private Mutex _mutex = new Mutex();
 
@@ -61,7 +63,10 @@ namespace Billing
 			}
 		}
 
-
+		private int DayInCurrentYear()
+		{
+			return DateTime.IsLeapYear(SystemTime.Now().Year) ? 366 : 365;
+		}
 
 		public void UseSession(Action func)
 		{
@@ -241,7 +246,6 @@ namespace Billing
 						phisicalClient.Balance -= dec;
 						phisicalClient.UpdateAndFlush();
 						var bufBal = phisicalClient.Balance;
-						client.PaidDay = true;
 						client.ShowBalanceWarningPage = bufBal - dec < 0;
 						client.UpdateAndFlush();
 						if (dec > 0)
@@ -255,8 +259,15 @@ namespace Billing
 				if (client.CanBlock()) {
 					client.Disabled = true;
 					client.Status = Status.Find((uint) StatusType.NoWorked);
-					client.UpdateAndFlush();
 				}
+				if (client.PaidDay) {
+					client.PaidDay = false;
+				}
+				if (client.YearCycleDate == null || (SystemTime.Now().Date - client.YearCycleDate.Value.Date).TotalDays >= DayInCurrentYear()) {
+					client.FreeBlockDays = FreeDaysVoluntaryBlockin;
+					client.YearCycleDate = SystemTime.Now();
+				}
+				client.Update();
 			}
 			var lawyerclients = Client.Queryable.Where(c => c.LawyerPerson != null && c.LawyerPerson.Tariff != null).ToList();
 			foreach (var client in lawyerclients) {

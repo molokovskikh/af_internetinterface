@@ -4,6 +4,9 @@
 <%else: %>
 	<% minPrice = false %>
 <%end %>
+<%if Client.HaveVoluntaryBlockin():
+		OutputSubView("""\PrivateOffice\DiactivateVoluntaryBlockin""")
+else: %>
 	<%if Client.Disabled and minPrice: %>
 	<p class="error">
 	Доступ в интернет заблокирован.
@@ -35,6 +38,7 @@
 			<% end %>
 		<% end %>
 	<% end %>
+<%end %>
 <%else: %>
 	<p class="info">
 		Для начала работы внесите первый платеж.

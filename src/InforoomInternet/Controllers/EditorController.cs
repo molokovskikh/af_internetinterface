@@ -24,6 +24,7 @@ namespace InforoomInternet.Controllers
 					"Main/zayavka",
 					"Main/OfferContract",
 					"PrivateOffice/IndexOffice",
+					"PrivateOffice/Services",
 					"Main/Index",
 					"Main/Feedback"
 				};

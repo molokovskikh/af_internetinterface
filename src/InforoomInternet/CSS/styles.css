@@ -768,3 +768,30 @@ color: #D8000C;
 background-color: #FFBABA;
 
 }
+
+.button
+{
+	line-height: 17px;
+	padding: 5px 10px 5px 7px;
+	overflow: visible;
+	width: auto;
+	background-color: #EEEEEE;
+	border: 1px solid #BFBFBF;
+	color: #222222;
+	cursor: pointer;
+	font-weight: bold;
+	margin: 0 7px 0 0;
+	text-decoration: none;
+	border-style: solid;
+}
+
+#serviceTable td
+{
+	background: none;
+}
+
+.servicePage p
+{
+	text-align:center;
+	font-size:16px;
+}

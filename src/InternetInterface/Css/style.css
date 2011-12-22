@@ -327,6 +327,13 @@ input.checkbox {
 	font-weight: bold;
 }
 
+#box .block h2 {
+  background: #7dbcd7;  
+  color: #FFF;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
 .fiodiv
 {
 	padding: 4px 4px 4px 30px;
@@ -471,11 +478,4 @@ ul.list li .left  {
   background: #FFF;
   border: 1px solid #ddd;
   border-radius: 10px;
-}
-
-#box .block h2 {
-  background: #79b567;  
-  color: #FFF;
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
 }

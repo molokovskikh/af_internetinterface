@@ -93,7 +93,11 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool PaidDay { get; set; }
 
+		[Property]
 		public virtual int FreeBlockDays { get; set; }
+
+		[Property]
+		public virtual DateTime? YearCycleDate { get; set; }
 
 		public virtual bool HavePayment
 		{
@@ -108,7 +112,6 @@ namespace InternetInterface.Models
 					var contact = Contacts.Where(c => c.Type == ContactType.HeadPhone).FirstOrDefault();
 					if (contact != null) {
 						return contact.HumanableNumber();
-						//return string.Format("{0}-{1}", contact.Text.Substring(0, 3), contact.Text.Substring(3, 7));
 					}
 					contact = Contacts.FirstOrDefault();
 					if (contact != null)
@@ -167,6 +170,19 @@ namespace InternetInterface.Models
 				!ClientServices.Select(c => c.Service).Contains(Service.GetByType(typeof(DebtWork))) && Disabled &&
 				PhysicalClient.Balance < 0 &&
 				AutoUnblocked && PaymentForTariff();
+		}
+
+		public virtual bool CanUsedVoluntaryBlockin()
+		{
+
+			return new VoluntaryBlockin().CanActivate(this) && !HaveVoluntaryBlockin();
+		}
+
+		public virtual bool HaveVoluntaryBlockin()
+		{
+			var clientServices = ClientServices.Select(s => s.Service.Id).ToList();
+			var volBlockService = Service.GetByType(typeof (VoluntaryBlockin));
+			return clientServices.Any(s => s == volBlockService.Id);
 		}
 
 		public virtual bool AdditionalCanUsed(string aStatus)

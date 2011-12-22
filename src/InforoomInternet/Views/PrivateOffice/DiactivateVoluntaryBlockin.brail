@@ -1,0 +1,8 @@
+﻿<div class="info">
+	<p style="text-align:center; font-size:16px;">Услуга добровольная блокировка активирована</p>
+	<form method="post" action="DiactivateVoluntaryBlockin">
+		<button type="submit" id="PostponedBut" class="button">
+			Деактивировать
+		</button>
+	</form>
+</div>

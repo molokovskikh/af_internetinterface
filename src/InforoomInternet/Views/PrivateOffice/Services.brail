@@ -1,0 +1,29 @@
+﻿<div class="servicePage">
+<% CanUsedPostponedPayment = Client.CanUsedPostponedPayment() %>
+<%if Client.CanUsedPostponedPayment(): %>
+<div class="info">
+	<p>Вам доступна услуга обещанный платеж</p>
+	<% OutputSubView("""\PrivateOffice\PostponedPayment""", { "Client" : Client })%>
+</div>
+<%end %>
+<% CanUsedVoluntaryBlockin = Client.CanUsedVoluntaryBlockin() %>
+<%if CanUsedVoluntaryBlockin: %>
+<div class="info">
+	<p>Вам доступна услуга добровольная блокировка</p>
+	<% OutputSubView("""\PrivateOffice\VoluntaryBlockin""", { 
+	"VoluntaryBlockinService" : VoluntaryBlockinService,
+	"client" : Client })%>
+</div>
+<%else: 
+	if Client.HaveVoluntaryBlockin():
+		OutputSubView("""\PrivateOffice\DiactivateVoluntaryBlockin""")
+	end 
+end %>
+<%if not CanUsedPostponedPayment and not CanUsedVoluntaryBlockin and not Client.HaveVoluntaryBlockin(): %>
+<div class="error">
+	<p>
+		Вам не доступны услуги для активации
+	</p>
+</div>
+<%end %>
+</div>
