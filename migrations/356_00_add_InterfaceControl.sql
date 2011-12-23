@@ -7,3 +7,8 @@ where s.id = 1;
 update internet.Services s
 set s.InterfaceControl = 0
 where s.id = 3;
+
+update internet.Clients c
+set
+FreeBlockDays = 28,
+YearCycleDate =  curdate();
