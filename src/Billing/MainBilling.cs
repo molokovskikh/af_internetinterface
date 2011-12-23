@@ -126,6 +126,7 @@ namespace Billing
 				phisCl.ConnectionPaid = true;
 				phisCl.UpdateAndFlush();
 				newClient.UpdateAndFlush();
+				if (phisCl.ConnectSum > 0)
 				new WriteOff {
 					Client = newClient,
 					WriteOffDate = SystemTime.Now(),
@@ -288,7 +289,7 @@ namespace Billing
 			var thisDateMax = InternetSettings.FindFirst();
 			thisDateMax.NextBillingDate = SystemTime.Now().AddDays(1).Date.AddHours(22);
 			thisDateMax.UpdateAndFlush();
-
+			//Console.WriteLine(ClientService.Queryable.Count());
 			ClientService.Queryable.ToList().Each(cs => cs.WriteOff());
 		}
 	}

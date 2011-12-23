@@ -175,7 +175,7 @@ namespace InternetInterface.Models
 		public virtual bool CanUsedVoluntaryBlockin()
 		{
 
-			return new VoluntaryBlockin().CanActivate(this) && !HaveVoluntaryBlockin();
+			return new VoluntaryBlockin().CanActivate(this) && !HaveVoluntaryBlockin() && !Disabled;
 		}
 
 		public virtual bool HaveVoluntaryBlockin()

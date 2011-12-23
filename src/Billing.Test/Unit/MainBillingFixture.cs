@@ -132,7 +132,7 @@ namespace Billing.Test.Unit
 			billing.Compute();
 		}
 
-
+		//Если не поперло, запусти 3 раза отдельно
 		[Test]
 		public void VoluntaryBlockingTest2()
 		{
@@ -151,35 +151,40 @@ namespace Billing.Test.Unit
 			cService.Activate();
 			Assert.That(_client.FreeBlockDays, Is.EqualTo(MainBilling.FreeDaysVoluntaryBlockin));
 			cService.CompulsoryDiactivate();
-			Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(0));
+			Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(1));
 			billing.Compute();
+			Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(0));
 			Assert.That(_client.FreeBlockDays, Is.EqualTo(MainBilling.FreeDaysVoluntaryBlockin));
-			//using (var trans = new TransactionScope(OnDispose.Rollback)) {
 				cService = new ClientService {
 					Client = _client,
 					BeginWorkDate = DateTime.Now,
 					EndWorkDate = DateTime.Now.AddDays(100),
 					Service = Service.GetByType(typeof (VoluntaryBlockin))
 				};
+			Console.WriteLine("cService preActive {0}", cService.Id);
+			_client.ClientServices.Add(cService);
+			cService.Activate();
 
-				_client.ClientServices.Add(cService);
-				cService.Activate();
+			Console.WriteLine("cService postActive {0}", cService.Id);
 
-				//trans.VoteCommit();
-			//}
+			Thread.Sleep(500);
+
+			Console.WriteLine(WriteOff.Queryable.Count());
+			for (int i = 0; i < MainBilling.FreeDaysVoluntaryBlockin + 1; i++) {
+				SystemTime.Now = () => DateTime.Now.AddDays(i);
+				billing.Compute();
+			}
 			var sessionHolder = ActiveRecordMediator.GetSessionFactoryHolder();
 			var session = sessionHolder.CreateSession(typeof(ActiveRecordBase));
 			session.Flush();
+			//		trans.VoteCommit();
+			//}
 
-			Console.WriteLine(WriteOff.Queryable.Count());
-			for (int i = 0; i < MainBilling.FreeDaysVoluntaryBlockin; i++) {
-				billing.Compute();
-			}
-			Thread.Sleep(2000);
 			_client.Refresh();
+
 			Assert.That(_client.FreeBlockDays, Is.EqualTo(0));
-			Console.WriteLine(WriteOff.FindFirst().WriteOffSum);
-			Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(1));
+			//Console.WriteLine(WriteOff.FindFirst().WriteOffSum);
+			Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(0));
 
 			cService.CompulsoryDiactivate();
 			Console.WriteLine(_client.PaidDay);
@@ -193,10 +198,48 @@ namespace Billing.Test.Unit
 			cService.Activate();
 
 			billing.Compute();
-			Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(1));
+			Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(0));
 			billing.Compute();
-			Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(2));
+			Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(1));
+			//UserWriteOff.Queryable.ToList().Each(w => Console.WriteLine(w.Sum));
+			Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(4));
+
+			cService.CompulsoryDiactivate();
+
+			billing.Compute();
+			Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(1));
+
+			cService = new ClientService {
+				Client = _client,
+				BeginWorkDate = DateTime.Now,
+				EndWorkDate = DateTime.Now.AddDays(4),
+				Service = Service.GetByType(typeof (VoluntaryBlockin))
+			};
+			SystemTime.Reset();
+			UserWriteOff.DeleteAll();
+			WriteOff.DeleteAll();
+			
+			_client.ClientServices.Add(cService);
+			cService.Activate();
+
+			UserWriteOff.Queryable.ToList().Each(w => Console.WriteLine(w.Sum));
+			Console.WriteLine(cService.BeginWorkDate);
+			Console.WriteLine(cService.EndWorkDate);
+
+			Console.WriteLine(WriteOff.Queryable.Count());
+
 			Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(2));
+
+			for (int i = 0; i < 5; i++) {
+				SystemTime.Now = () => DateTime.Now.AddDays(i);
+				Console.WriteLine(SystemTime.Now());
+				billing.OnMethod();
+				billing.Compute();
+			}
+
+			Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(3));
+
+			Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(3));
 		}
 
 		[Test]
@@ -387,7 +430,8 @@ namespace Billing.Test.Unit
 			SystemTime.Now = () => DateTime.Now.AddDays(countDays + 1);
 			billing.OnMethod();
 			//client.Refresh();
-			Assert.That(WriteOff.FindAll().Count(), Is.EqualTo(countDays +1));
+			WriteOff.Queryable.ToList().Each(w=>Console.WriteLine(w.WriteOffSum));
+			Assert.That(WriteOff.FindAll().Count(), Is.EqualTo(countDays));
 			Assert.That(physClient.Balance, Is.LessThan(0m));
 			Assert.IsTrue(client.Disabled);
 			client.Disabled = false;
@@ -563,7 +607,7 @@ namespace Billing.Test.Unit
 					2),
 				Is.EqualTo(Math.Round(
 					WriteOff.Queryable.Where(w => w.Client == client).ToList().Sum(w => w.WriteOffSum), 2)));
-			Assert.That(firstdate.Date, Is.EqualTo(DateTime.Now.AddDays(28).Date));
+			Assert.That(firstdate.Date, Is.EqualTo(DateTime.Now.AddDays(29).Date));
 			WriteOff.FindAll().Select(w => w.WriteOffSum).Each(c => Assert.That(c, Is.EqualTo(3m)));
 		}
 
@@ -611,6 +655,7 @@ namespace Billing.Test.Unit
 			physClient.Update();
 			billing.OnMethod();
 			Assert.IsFalse(client.Disabled);// = true;
+			Assert.IsFalse(client.PaidDay);// = true;
 			Assert.IsTrue(client.AutoUnblocked);
 			Assert.IsNull(client.RatedPeriodDate);
 
@@ -620,16 +665,19 @@ namespace Billing.Test.Unit
 			//SystemTime.Now = () => DateTime.Now.AddMonths(1).AddDays(1);
 			billing.Compute();
 			//billing.Compute();
-			Assert.That(WriteOff.FindAll().Last().WriteOffSum, Is.EqualTo(3m));
+			Assert.That(WriteOff.FindAll().Last().WriteOffSum, Is.GreaterThan(3m));
 			CServive.CompulsoryDiactivate();
 			billing.OnMethod();
 			billing.Compute();
 			//Assert.That(WriteOff.FindAll().Last().WriteOffSum, Is.GreaterThan(5m));
 			var userWriteOffs = UserWriteOff.Queryable.ToList();
-			Assert.That(userWriteOffs.Count, Is.EqualTo(2));
-			Assert.That(userWriteOffs.First().Sum, Is.EqualTo(50m));
-			Assert.That(userWriteOffs.Last().Sum, Is.GreaterThan(5m));
-			Assert.That(userWriteOffs.Last().Sum, Is.LessThan(25m));
+			userWriteOffs.Each(q=>Console.WriteLine(q.Sum));
+			Assert.That(userWriteOffs.Count, Is.EqualTo(3));
+			Assert.That(userWriteOffs[0].Sum, Is.GreaterThan(5m));
+			Assert.That(userWriteOffs[0].Sum, Is.LessThan(25m));
+			Assert.That(userWriteOffs[1].Sum, Is.EqualTo(50m));
+			Assert.That(userWriteOffs[2].Sum, Is.GreaterThan(5m));
+			Assert.That(userWriteOffs[2].Sum, Is.LessThan(25m));
 			Assert.IsFalse(client.Disabled);
 			billing.OnMethod();
 			Assert.IsFalse(client.Disabled);
@@ -961,7 +1009,7 @@ namespace Billing.Test.Unit
 			billing.OnMethod();
 			billing.Compute();
 
-			Assert.That(WriteOff.Queryable.Where(w => w.Client == client_Post).Count(), Is.EqualTo(3));
+			Assert.That(WriteOff.Queryable.Where(w => w.Client == client_Post).Count(), Is.EqualTo(2));
 
 			client_simple.Refresh();
 			client_Post.Refresh();

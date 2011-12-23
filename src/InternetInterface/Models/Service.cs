@@ -254,16 +254,33 @@ namespace InternetInterface.Models
 			if (CanActivate(CService) && !CService.Activated)
 			{
 				var client = CService.Client;
+
 				client.RatedPeriodDate = DateTime.Now;
+
+				//Это должно быть на этом месте, иначе возможно списывать неправильную сумму
+				var now = SystemTime.Now();
+				if (!client.PaidDay && now.Hour < 22) {
+					client.PaidDay = true;
+					var toDt = client.GetInterval();
+					var price = client.GetPrice();
+					new UserWriteOff {
+						Client = client,
+						Date = DateTime.Now,
+						Sum = price/toDt,
+						Comment = string.Format("Абоненская плата за {0} из-за добровольной блокировки клиента",
+							DateTime.Now.ToShortDateString())
+					}.Save();
+				}
+
 				client.Disabled = true;
 
 				client.ShowBalanceWarningPage = true;
-				//client.FreeBlockDays--;
 
 				client.AutoUnblocked = false;
 				client.DebtDays = 0;
 				client.Status = Status.Find((uint)StatusType.VoluntaryBlocking);
 				client.Update();
+				Console.WriteLine("ACTIVATED  ID = {0}", CService.Id);
 				CService.Activated = true;
 				CService.Diactivated = false;
 				var evd = CService.EndWorkDate.Value;
@@ -291,7 +308,6 @@ namespace InternetInterface.Models
 
 			client.ShowBalanceWarningPage = CService.Client.PhysicalClient.Balance < 0;
 
-			//client.FreeBlockDays -= (int) (CService.BeginWorkDate.Value - CService.EndWorkDate.Value).TotalDays;
 
 			client.AutoUnblocked = true;
 			if (CService.Client.PhysicalClient.Balance > 0)
@@ -303,7 +319,7 @@ namespace InternetInterface.Models
 			CService.Diactivated = true;
 			CService.Update();
 
-			if (client.FreeBlockDays <= 0 && !client.PaidDay && CService.BeginWorkDate.Value.Date == SystemTime.Now().Date) {
+			if (!client.PaidDay) {
 				client.PaidDay = true;
 				var toDt = client.GetInterval();
 				var price = client.GetPrice();
@@ -311,7 +327,7 @@ namespace InternetInterface.Models
 					Client = client,
 					Date = DateTime.Now,
 					Sum = price/toDt,
-					Comment = "Абоненская плата за день из-за добровольной разблокировки клиента"
+					Comment = string.Format("Абоненская плата за {0} из-за добровольной разблокировки клиента", DateTime.Now.ToShortDateString())
 				}.Save();
 			}
 
@@ -321,7 +337,7 @@ namespace InternetInterface.Models
 		public override bool Diactivate(ClientService CService)
 		{
 			if ((CService.EndWorkDate == null && CService.Client.PhysicalClient.Balance < 0) ||
-				(CService.EndWorkDate != null && (SystemTime.Now() > CService.EndWorkDate.Value)))
+				(CService.EndWorkDate != null && (SystemTime.Now().Date >= CService.EndWorkDate.Value)))
 			{
 				CompulsoryDiactivate(CService);
 				return true;
@@ -355,7 +371,9 @@ namespace InternetInterface.Models
 		public override void WriteOff(ClientService cService)
 		{
 			var client = cService.Client;
-			if (cService.Activated && client.FreeBlockDays > 0) {
+			if (cService.Activated && client.FreeBlockDays > 0 &&
+				cService.BeginWorkDate.Value.Date != SystemTime.Now().Date &&
+				cService.EndWorkDate.Value.Date != SystemTime.Now().Date) {
 				client.FreeBlockDays --;
 				client.Update();
 			}
