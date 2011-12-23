@@ -2,32 +2,42 @@
 	$(function () {
 		$('#startDate').datepicker({
 			inline: true,
-			minDate: 0
+			minDate: 0,
+			showOn: "button",
+			buttonImage: "../Content/calendar.gif",
+			buttonImageOnly: true,
+			buttonText : "Дата начата периода"
 		});
 		$('#endDate').datepicker({
 			inline: true,
-			minDate: +1
+			minDate: +1,
+			showOn: "button",
+			buttonImage: "../Content/calendar.gif",
+			buttonImageOnly: true,
+			buttonText: "Дата конца периода"
 		});
 	});
 </script>
 
 <form method=post action="VoluntaryBlockinActivate">
-<table id="serviceTable">
+<table id="serviceTable" style="width:100%;">
 	<tbody>
-		<tr>
-			<td colspan=2 style="padding: 10px 10px 0px 30px;">Выберите интервал работы услуги</td>
+		<tr class="caption">
+			<td colspan=2 style="text-align:center; font-size:14px;">Вам доступна услуга добровольная блокировка</td>
 		</tr>
-		${VoluntaryBlockinService.GetParameters()}
+		<tr>
+			${VoluntaryBlockinService.GetParameters()}
+		</tr>
 		<tr>
 			<td>Количество бесплатных дней:</td>
-			<td style="">
-				<b style="margin-left:-70px; color:${"Red" if Client.FreeBlockDays <= 0}">${Client.FreeBlockDays}</b>
+			<td>
+				<b style="margin-left:-70px; color:${"#f0555d" if Client.FreeBlockDays <= 0}">${Client.FreeBlockDays}</b>
 			</td>
 		</tr>
 		<%if Client.FreeBlockDays <= 0: %>
 		<tr>
 			<td>Стоимость активации</td>
-			<td>
+			<td style="width:250px;">
 				<b style="margin-left:-70px;">50 рублей</b>
 			</td>
 		</tr>

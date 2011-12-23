@@ -2,6 +2,9 @@
 <form method=post action="PostponedPaymentActivate">
 <table>
 	<tbody>
+		<tr class="caption" style="text-align:center; font-size:14px;">
+			<td>Вам доступна услуга обещанный платеж</td>
+		</tr>
 		<tr>
 			<td style="background:none">
 				<span style="font-size:small; ">

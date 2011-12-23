@@ -222,11 +222,11 @@ namespace InternetInterface.Models
 			builder.Append("<tr>");
 			builder.Append(
 				string.Format(
-					"<td><label for=\"startDate\">Начала периода </label><input type=text value=\"{0}\" name=\"startDate\" id=\"startDate\" class=\"date-pick dp-applied\"> </td>",
+					"<td><label for=\"startDate\" >Активировать с </label><input type=text value=\"{0}\" name=\"startDate\" id=\"startDate\" class=\"date-pick dp-applied\"> </td>",
 					DateTime.Now.ToShortDateString()));
 			builder.Append(
 				string.Format(
-					"<td><label for=\"endDate\"> Конец периода </label><input type=text  name=\"endDate\" value=\"{0}\"  id=\"endDate\" class=\"date-pick dp-applied\"></td>",
+					"<td><label for=\"endDate\" id=\"endDateLabel\"> по </label><input type=text  name=\"endDate\" value=\"{0}\"  id=\"endDate\" class=\"date-pick dp-applied\"></td>",
 					DateTime.Now.AddDays(1).ToShortDateString()));
 			builder.Append("</tr>");
 			return builder.ToString();

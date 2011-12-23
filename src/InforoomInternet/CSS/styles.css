@@ -790,8 +790,40 @@ background-color: #FFBABA;
 	background: none;
 }
 
+#serviceTable tr label
+{
+	margin-right: 15px;
+}
+
+#serviceTable tr input
+{
+	width: 100px;
+}
+
 .servicePage p
 {
 	text-align:center;
 	font-size:16px;
+}
+
+.ui-datepicker-trigger
+{
+	margin-left: 2px;
+	padding-top: 2px;
+	cursor: pointer;
+}
+
+#serviceTable #endDate
+{
+	/*margin-left: -70px;*/
+}
+
+#serviceTable #endDateLabel
+{
+	margin-left: -70px;
+}
+
+#PostponedButDeactive
+{
+	display: inline;
 }
