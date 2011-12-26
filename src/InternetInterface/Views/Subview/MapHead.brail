@@ -70,27 +70,47 @@
 			</th>
 		</tr>
 		<tr class="submenu">
+			<%if PartnerAccessSet.AccesPartner("RC"): %>
 			<th></th>
+			<%end %>
+			<%if PartnerAccessSet.AccesPartner("RC"): %>
 			<th></th>
+			<%end %>
+			<%if PartnerAccessSet.AccesPartner("VD"): %>
 			<th></th>
+			<%end %>
+			<%if PartnerAccessSet.AccesPartner("SSI"): %>
 			<th>
 				<a id="appeal_link" href="${Siteroot}/UserInfo/ShowAppeals">Обращения</a>
 				<br />
 				<br />
 			</th>
+			<%end %>
+			<%if PartnerAccessSet.AccesPartner("DHCP"): %>
 			<th></th>
-			<th></th>
-			<th>
+			<%end %>
 			<%if PartnerAccessSet.AccesPartner("SSI"): %>
+			<th></th>
+			<%end %>
+			<%if PartnerAccessSet.AccesPartner("SSI"): %>
+			<th>
 				<a id="downLink" href="${Siteroot}/Payments/ProcessPayments">Загрузить платежи</a> <br />
 				<a id="A1" href="${Siteroot}/Payments/Index">Банковские выписки</a><br />
 				<a id="A2" href="${Siteroot}/Payments/New">Новый платеж</a> <br />
-			<%end %>
 			</th>
+			<%end %>
+			<%if PartnerAccessSet.AccesPartner("SSI"): %>
 			<th></th>
+			<%end %>
+			<%if PartnerAccessSet.AccesPartner("HMA"): %>
 			<th></th>
+			<%end %>
+			<%if PartnerAccessSet.AccesPartner("RP"): %>
 			<th></th>
+			<%end %>
+			<%if PartnerAccessSet.AccesPartner("AIV"): %>
 			<th></th>
+			<%end %>
 		</tr>
 	</thead>
 </table>
