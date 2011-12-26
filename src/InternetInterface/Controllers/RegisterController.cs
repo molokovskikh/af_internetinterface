@@ -83,10 +83,10 @@ namespace InternetInterface.Controllers
 				client.SaveAndFlush();
 
 				if (!string.IsNullOrEmpty(phisClient.PhoneNumber))
-					Contact.SaveNew(client, phisClient.PhoneNumber, "Указан при регистрации", ContactType.MobilePhone);
+					Contact.SaveNew(client, phisClient.PhoneNumber.Replace("-", string.Empty), "Указан при регистрации", ContactType.MobilePhone);
 
 				if (!string.IsNullOrEmpty(phisClient.HomePhoneNumber))
-					Contact.SaveNew(client, phisClient.HomePhoneNumber, "Указан при регистрации", ContactType.HousePhone);
+					Contact.SaveNew(client, phisClient.HomePhoneNumber.Replace("-", string.Empty), "Указан при регистрации", ContactType.HousePhone);
 
 				if (!string.IsNullOrEmpty(phisClient.Email))
 					Contact.SaveNew(client, phisClient.Email, "Указан при регистрации", ContactType.Email);

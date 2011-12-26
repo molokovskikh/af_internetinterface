@@ -102,6 +102,12 @@ namespace InforoomInternet.Controllers
 			if (cService != null) {
 				cService.CompulsoryDiactivate();
 				Flash["message"] = "Услуга \"Работа в долг\" деактивирована";
+					new Appeals {
+					Appeal = string.Format("Услуга \"Работа в долг\" деактивирована"),
+					AppealType = (int) AppealType.System,
+					Client = client,
+					Date = DateTime.Now
+				}.Save();
 			}
 			RedirectToUrl("IndexOffice");
 		}
