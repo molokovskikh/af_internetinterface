@@ -11,18 +11,18 @@
 			<label for="fio">Ф.И.О.</label>
 			<input type="text" id="fio" name="application.ApplicantName" value="${application.ApplicantName if IsDefined( "application" )}" size="45" />
 			<% if IsDefined ( "application" ) and application.InDictionaryError ( "ApplicantName" ) : %>
-				<span class="error">${application.GetValidationError("ApplicantName")}</span>
+				<span class="errorSpan">${application.GetValidationError("ApplicantName")}</span>
 			<% end %>
 		</p>
 		<p><label for="phone_">Номер телефона:</label><input type="text" id="phone_" name="application.ApplicantPhoneNumber" value="${application.ApplicantPhoneNumber if IsDefined( "application" )}" size="25" />
-		<% if IsDefined ( "application" ) and application.InDictionaryError ( "ApplicantPhoneNumber" ) : %><br/><span class="error">${application.GetValidationError("ApplicantPhoneNumber")}</span><% end %>
+		<% if IsDefined ( "application" ) and application.InDictionaryError ( "ApplicantPhoneNumber" ) : %><br/><span class="errorSpan">${application.GetValidationError("ApplicantPhoneNumber")}</span><% end %>
 		<br />
 		<span class="example">Например: "8-000-000-00-00"</span>
 		</p>
 		<p><label for="email">Электронная почта:</label>
 			<input type="text" id="email" name="application.ApplicantEmail" value="${application.ApplicantEmail if IsDefined( "application" )}" size="25" />
 			<% if IsDefined ( "application" ) and application.InDictionaryError ( "ApplicantEmail" ) : %>
-				<span class="error">${application.GetValidationError("ApplicantEmail")}</span>
+				<span class="errorSpan">${application.GetValidationError("ApplicantEmail")}</span>
 			<% end %>
 			<br />
 			<span class="example">Необязательный параметр</span>
@@ -39,7 +39,7 @@
 			<input type="text" id="residence" name="application.Street" value="${application.Street if IsDefined( "application" )}" size="30" />
 			<% if IsDefined ( "application" ) and application.InDictionaryError ( "Street" ) : %>
 			<br />
-				<span class="error">${application.GetValidationError("Street")}</span>
+				<span class="errorSpan">${application.GetValidationError("Street")}</span>
 				<% else: %>
 
 				<%end %>
@@ -50,7 +50,7 @@
 				<input type="text" id="House" name="application.House" value="${application.House if IsDefined( "application" )}" size="10" />
 				<% if IsDefined ( "application" ) and application.InDictionaryError ( "House" ) : %>
 				<br />
-					<span class="error">${application.GetValidationError("House")}</span>
+					<span class="errorSpan">${application.GetValidationError("House")}</span>
 					<% else: %>
 
 					<%end %>
@@ -64,7 +64,7 @@
 				<input type="text" id="Apartment" name="application.Apartment" value="${application.Apartment if IsDefined( "application" )}" size="10" />
 				<% if IsDefined ( "application" ) and application.InDictionaryError ( "Apartment" ) : %>
 				<br />
-					<span class="error">${application.GetValidationError("Apartment")}</span>
+					<span class="errorSpan">${application.GetValidationError("Apartment")}</span>
 					<% else: %>
 
 					<%end %>
@@ -77,7 +77,7 @@
 			<input type="text" id="Entrance" name="application.Entrance" value="${application.Entrance if IsDefined( "application" )}" size="10" />
 			<% if IsDefined ( "application" ) and application.InDictionaryError ( "Entrance" ) : %>
 				<br />
-				<span class="error">${application.GetValidationError("Entrance")}</span>
+				<span class="errorSpan">${application.GetValidationError("Entrance")}</span>
 				<% end %>
 	   </p>
 		<p>
@@ -85,7 +85,7 @@
 			<input type="text" id="Floor" name="application.Floor" value="${application.Floor if IsDefined( "application" )}" size="10" />
 			<% if IsDefined ( "application" ) and application.InDictionaryError ( "Floor" ) : %>
 				<br />
-				<span class="error">${application.GetValidationError("Floor")}</span>
+				<span class="errorSpan">${application.GetValidationError("Floor")}</span>
 				<% end %>
 		 </p>
 		  <span class="example">Фактический адрес для подключения к интернету</span>
@@ -95,7 +95,7 @@
 				<option value="${tariff.Id}"<% if IsDefined ( "application" ) and tariff == application.Tariff : %> selected<% end %>>${tariff.Name}</option>
 			<% end %>
 			</select>
-			<% if IsDefined ( "application" ) and application.InDictionaryError ( "Tariff" ) : %><span class="error">${application.GetValidationError("Tariff")}</span><% end %>
+			<% if IsDefined ( "application" ) and application.InDictionaryError ( "Tariff" ) : %><span class="errorSpan">${application.GetValidationError("Tariff")}</span><% end %>
 		</p>
 		<p>
 			<label for="autocon">Возможность самостоятельного подключения:</label><input type="checkbox" id="autocon" name="application.SelfConnect" value="true" /> <br /><br /><br />
@@ -111,7 +111,7 @@
 			matchSubset: 1,
 			cacheLength: 10,
 			selectOnly: true,
-			maxItemsToShow: 6
+			maxItemsToShow: 10
 		});
 	});
 </script>
