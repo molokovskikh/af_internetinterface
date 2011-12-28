@@ -415,7 +415,7 @@ input.checkbox {
 	height: 20px;
 	text-align: center;
 	font-size: 14px;
-	font-weight: bold;
+	/*font-weight: bold;*/
 }
 
 .flash .message {
@@ -423,7 +423,7 @@ input.checkbox {
   -webkit-border-radius: 3px;
   text-align:center;
   margin:0 auto 5px;
-  width:80%;
+ /* width:80%;*/
 }
 .flash .message p {
   margin:8px;

@@ -20,7 +20,7 @@ namespace InternetInterface.Models
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
-		[Property, ValidateRegExp(MACRegExp, "Ошибка ввода MAC (**-**-**-**-**)")]
+		[Property, ValidateRegExp(MACRegExp, "Ошибка ввода MAC (**-**-**-**-**)"), ValidateIsUnique("Такой МАС уже существует")]
 		public virtual string Mac { get; set; }
 
 		[Property, ValidateRegExp(IPRegExp, "Ошибка фотмата IP адреса (max 255.255.255.255))")]

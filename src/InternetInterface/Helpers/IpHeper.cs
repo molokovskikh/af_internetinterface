@@ -16,15 +16,16 @@ namespace InternetInterface.Helpers
 			{
 				var splited = IP.Split('.');
 				var valid = new Regex(NetworkSwitches.IPRegExp);
-				if ((valid.IsMatch(IP)) || (splited.Length == 1))
+				long intIp;
+				if (((splited.Length == 1) && long.TryParse(splited.First(), out intIp)))
 				{
-					var normalip = BitConverter.GetBytes(Convert.ToInt64(IP));
-					return string.Format("{0}.{1}.{2}.{3}", normalip[3], normalip[2], normalip[1],
-										 normalip[0]);
+					var normalip = BitConverter.GetBytes(intIp);
+					return string.Format("{0}.{1}.{2}.{3}", normalip[3], normalip[2], normalip[1], normalip[0]);
 				}
 				else
 				{
-					return IP;
+					if (valid.IsMatch(IP))
+						return IP;
 				}
 			}
 			return string.Empty;
