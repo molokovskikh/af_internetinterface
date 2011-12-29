@@ -108,7 +108,7 @@
 			<%if PartnerAccessSet.AccesPartner("RP"): %>
 			<th></th>
 			<%end %>
-			<%if PartnerAccessSet.AccesPartner("AIV"): %>
+			<%if PartnerAccessSet.AccesPartner("RP"): %>
 			<th></th>
 			<%end %>
 		</tr>

@@ -280,7 +280,6 @@ namespace InternetInterface.Models
 				client.DebtDays = 0;
 				client.Status = Status.Find((uint)StatusType.VoluntaryBlocking);
 				client.Update();
-				Console.WriteLine("ACTIVATED  ID = {0}", CService.Id);
 				CService.Activated = true;
 				CService.Diactivated = false;
 				var evd = CService.EndWorkDate.Value;
@@ -320,17 +319,20 @@ namespace InternetInterface.Models
 			CService.Update();
 
 			if (!client.PaidDay) {
-				client.PaidDay = true;
 				var toDt = client.GetInterval();
 				var price = client.GetPrice();
-				new UserWriteOff {
-					Client = client,
-					Date = DateTime.Now,
-					Sum = price/toDt,
-					Comment = string.Format("Абоненская плата за {0} из-за добровольной разблокировки клиента", DateTime.Now.ToShortDateString())
-				}.Save();
+				if (price / toDt > 0) {
+					client.PaidDay = true;
+					new UserWriteOff {
+						Client = client,
+						Date = DateTime.Now,
+						Sum = price/toDt,
+						Comment =
+							string.Format("Абоненская плата за {0} из-за добровольной разблокировки клиента",
+							              DateTime.Now.ToShortDateString())
+					}.Save();
+				}
 			}
-
 			client.Update();
 		}
 

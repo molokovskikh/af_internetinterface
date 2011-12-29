@@ -132,6 +132,38 @@ namespace Billing.Test.Unit
 			billing.Compute();
 		}
 
+		[Test]
+		public void VolBlockIfMinimumBalance()
+		{
+			var client = CreateClient();
+			client.FreeBlockDays = 28;
+			client.PhysicalClient.Balance = client.GetPrice()/client.GetInterval() - 5;
+			client.Save();
+			Assert.That(client.PhysicalClient.Balance, Is.GreaterThan(0));
+
+			var cService = new ClientService {
+				Client = client,
+				BeginWorkDate = DateTime.Now,
+				EndWorkDate = DateTime.Now.AddDays(1),
+				Service = Service.GetByType(typeof (VoluntaryBlockin))
+			};
+
+			client.ClientServices.Add(cService);
+			cService.Activate();
+
+			Assert.IsTrue(client.PaidDay);
+
+			billing.Compute();
+
+			SystemTime.Now = () => DateTime.Now.AddDays(1);
+
+			billing.Compute();
+
+			Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(1));
+			Assert.That(WriteOff.Queryable.Where(w => w.Client == client).Count(), Is.EqualTo(0));
+			Assert.IsFalse(client.PaidDay);
+		}
+
 		//Если не поперло, запусти 3 раза отдельно
 		[Test]
 		public void VoluntaryBlockingTest2()

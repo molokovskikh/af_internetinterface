@@ -22,6 +22,7 @@
 			<%end %>
 		<%end %>
 		<input type="hidden" name="switchid" value="${Switch.Id}" />
+		<input type="hidden" name="Switch.Id" value="${Switch.Id}" />
 		<table class="table" style="width:60%; " border="0" id="PartnerInfoTable">
 			<thead>
 				<th colspan = 4>Редактирование коммутатора</th>

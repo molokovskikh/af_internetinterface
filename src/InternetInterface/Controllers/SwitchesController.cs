@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Web;
+using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Common.Models.Helpers;
 using InternetInterface.Controllers.Filter;
@@ -67,15 +68,11 @@ namespace InternetInterface.Controllers
 		}
 
 
-		public void EditSwitch([DataBind("Switch")]NetworkSwitches Switch,uint Zoned, uint switchid)
+		public void EditSwitch([ARDataBind("Switch", AutoLoad = AutoLoadBehavior.Always, Validate = true)]NetworkSwitches Switch,uint Zoned, uint switchid)
 		{
 			if (Validator.IsValid(Switch))
 			{
-				var edSwitch = NetworkSwitches.Find(switchid);
-				BindObjectInstance(edSwitch, ParamStore.Form, "Switch");
-				edSwitch.Zone = Zone.Find(Zoned);
-				edSwitch.IP = NetworkSwitches.SetProgramIp(Switch.IP);
-				edSwitch.UpdateAndFlush();
+				Switch.Update();
 				RedirectToUrl("../Switches/ShowSwitches.rails");
 			}
 			else
