@@ -84,7 +84,7 @@ namespace InforoomInternet.Controllers
 				client.ClientServices.Add(cService);
 				cService.Activate();
 				new Appeals {
-					Appeal = string.Format("Услуга \"Работа в долг\" активирована на период с {0} по {1}", startDate.ToShortDateString(), endDate.ToShortDateString()),
+					Appeal = string.Format("Услуга \"добровольная блокировка\" активирована на период с {0} по {1}", startDate.ToShortDateString(), endDate.ToShortDateString()),
 					AppealType = (int) AppealType.System,
 					Client = client,
 					Date = DateTime.Now
@@ -103,7 +103,7 @@ namespace InforoomInternet.Controllers
 				cService.CompulsoryDiactivate();
 				Flash["message"] = "Услуга \"Работа в долг\" деактивирована";
 					new Appeals {
-					Appeal = string.Format("Услуга \"Работа в долг\" деактивирована"),
+					Appeal = string.Format("Услуга \"добровольная блокировка\" деактивирована"),
 					AppealType = (int) AppealType.System,
 					Client = client,
 					Date = DateTime.Now

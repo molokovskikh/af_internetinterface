@@ -70,8 +70,8 @@ namespace InternetInterface.Controllers
 
 		public void EditSwitch([ARDataBind("Switch", AutoLoad = AutoLoadBehavior.Always, Validate = true)]NetworkSwitches Switch,uint Zoned, uint switchid)
 		{
-			if (Validator.IsValid(Switch))
-			{
+			if (Validator.IsValid(Switch)) {
+				Switch.IP = NetworkSwitches.SetProgramIp(Switch.IP);
 				Switch.Update();
 				RedirectToUrl("../Switches/ShowSwitches.rails");
 			}

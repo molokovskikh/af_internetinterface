@@ -259,7 +259,7 @@ namespace InternetInterface.Models
 
 				//Это должно быть на этом месте, иначе возможно списывать неправильную сумму
 				var now = SystemTime.Now();
-				if (!client.PaidDay && now.Hour < 22) {
+				if (!client.PaidDay && now.Hour < 22 && CService.BeginWorkDate.Value.Date == now.Date) {
 					client.PaidDay = true;
 					var toDt = client.GetInterval();
 					var price = client.GetPrice();
