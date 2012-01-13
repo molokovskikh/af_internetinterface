@@ -703,7 +703,7 @@ namespace Billing.Test.Unit
 			billing.Compute();
 			//Assert.That(WriteOff.FindAll().Last().WriteOffSum, Is.GreaterThan(5m));
 			var userWriteOffs = UserWriteOff.Queryable.ToList();
-			userWriteOffs.Each(q=>Console.WriteLine(q.Sum));
+			userWriteOffs.Each( q => Console.WriteLine(q.Sum));
 			Assert.That(userWriteOffs.Count, Is.EqualTo(3));
 			Assert.That(userWriteOffs[0].Sum, Is.GreaterThan(5m));
 			Assert.That(userWriteOffs[0].Sum, Is.LessThan(25m));

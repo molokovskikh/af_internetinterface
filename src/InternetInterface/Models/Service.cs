@@ -318,7 +318,7 @@ namespace InternetInterface.Models
 			CService.Diactivated = true;
 			CService.Update();
 
-			if (!client.PaidDay) {
+			if (!client.PaidDay && CService.Activated) {
 				var toDt = client.GetInterval();
 				var price = client.GetPrice();
 				if (price / toDt > 0) {
@@ -333,6 +333,11 @@ namespace InternetInterface.Models
 					}.Save();
 				}
 			}
+
+			CService.Activated = false;
+			CService.Diactivated = true;
+			CService.Update();
+
 			client.Update();
 		}
 
