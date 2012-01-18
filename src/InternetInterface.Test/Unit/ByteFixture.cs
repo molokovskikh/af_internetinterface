@@ -67,7 +67,7 @@ namespace InternetInterface.Test.Unit
 							new XElement("password", "analitFarmacia"),
 							new XElement("action", "send"),
 							new XElement("text", "Проверка рассылки SMS компании Inforoom (от Золотарева)"),
-							new XElement("source", "inforoom"),
+							new XElement("source", "inforoom")/*,
 							new XElement("to", 
 									new XAttribute("number", "+79507738447")
 								),
@@ -76,14 +76,18 @@ namespace InternetInterface.Test.Unit
 								),
 							new XElement("to", 
 									new XAttribute("number", "+79103495077")
-								)
+								)*/
 						)
 				);
+
+			var dataElement = document.Element("data");
+			if (dataElement != null)
+				dataElement.Add(new XElement("to", new XAttribute("number", "+79202299222")));
 
 			document.Declaration = new XDeclaration("1.0", "utf-8", "true");
 
 			Console.WriteLine(document);
-			document.Save("c:/test.xml");
+			//document.Save("c:/test.xml");
 			//document.
 
 			var data = Encoding.UTF8.GetBytes(document.ToString());
