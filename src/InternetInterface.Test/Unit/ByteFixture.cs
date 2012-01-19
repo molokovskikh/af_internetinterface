@@ -31,6 +31,7 @@ namespace InternetInterface.Test.Unit
 		[Test]
 		public void DateTest()
 		{
+			Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
 			var day = DateTime.Now;
 			var indexDay = (int) day.DayOfWeek;
 			Console.WriteLine(day.AddDays(-indexDay+1));
@@ -66,7 +67,7 @@ namespace InternetInterface.Test.Unit
 							new XElement("login", "inforoom"),
 							new XElement("password", "analitFarmacia"),
 							new XElement("action", "send"),
-							new XElement("text", "Проверка рассылки SMS компании Inforoom (от Золотарева)"),
+							//new XElement("text", "Проверка рассылки SMS компании Inforoom (от Золотарева)"),
 							new XElement("source", "inforoom")/*,
 							new XElement("to", 
 									new XAttribute("number", "+79507738447")
@@ -82,7 +83,7 @@ namespace InternetInterface.Test.Unit
 
 			var dataElement = document.Element("data");
 			if (dataElement != null)
-				dataElement.Add(new XElement("to", new XAttribute("number", "+79202299222")));
+				dataElement.Add(new XElement("to", new XAttribute("number", "+79507738447"), "Проверка рассылки SMS компании Inforoom (от Золотарева)"));
 
 			document.Declaration = new XDeclaration("1.0", "utf-8", "true");
 

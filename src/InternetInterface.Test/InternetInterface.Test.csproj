@@ -146,6 +146,7 @@
     <Compile Include="Unit\LoginFixture.cs" />
     <Compile Include="Unit\GetClientsLogicFixture.cs" />
     <Compile Include="Unit\OnLineClientFixture.cs" />
+    <Compile Include="Unit\SmsFixture.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

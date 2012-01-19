@@ -266,6 +266,7 @@
     <Compile Include="Helpers\Listner.cs" />
     <Compile Include="Helpers\LoginCreatorHelper.cs" />
     <Compile Include="Helpers\PaymentFilter.cs" />
+    <Compile Include="Helpers\SmsHelper.cs" />
     <Compile Include="Helpers\TelnetInterface.cs" />
     <Compile Include="Helpers\TextHelper.cs" />
     <Compile Include="Helpers\UsersParsers.cs" />
@@ -304,6 +305,7 @@
     <Compile Include="Models\RequestMessage.cs" />
     <Compile Include="Models\SendedLease.cs" />
     <Compile Include="Models\Service.cs" />
+    <Compile Include="Models\SmsMessage.cs" />
     <Compile Include="Models\StaticIp.cs" />
     <Compile Include="Models\Status.cs" />
     <Compile Include="Models\Universal\ChildActiveRecordLinqBase.cs" />
