@@ -75,7 +75,7 @@ namespace InternetInterface.Models
 		public virtual Client Client { get; set; }
 
 		[Property]
-		public virtual int AppealType { get; set; }
+		public virtual AppealType AppealType { get; set; }
 
 		public virtual string GetTransformedAppeal()
 		{
@@ -88,7 +88,7 @@ namespace InternetInterface.Models
 			{
 				Appeal = message,
 				Client = client,
-				AppealType = (int)type,
+				AppealType = type,
 				Date = DateTime.Now,
 				Partner = InitializeContent.Partner
 			}.Save();
@@ -97,9 +97,9 @@ namespace InternetInterface.Models
 		public virtual string Type()
 		{
 			var type = string.Empty;
-			if (AppealType == (int)Models.AppealType.User)
+			if (AppealType == Models.AppealType.User)
 				type = "Пользовательское";
-			if (AppealType == (int)Models.AppealType.System)
+			if (AppealType == Models.AppealType.System)
 				type = "Системное";
 			return type;
 		}

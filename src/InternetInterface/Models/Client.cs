@@ -99,7 +99,7 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual DateTime? YearCycleDate { get; set; }
 
-		[Property]
+		[Property, Auditable("Смс рассылка")]
 		public virtual bool SendSmsNotifocation { get; set; }
 
 		public virtual bool HavePayment

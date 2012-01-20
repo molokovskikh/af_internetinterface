@@ -82,8 +82,12 @@ namespace InternetInterface.Controllers
 				};
 				client.SaveAndFlush();
 
-				if (!string.IsNullOrEmpty(phisClient.PhoneNumber))
-					Contact.SaveNew(client, phisClient.PhoneNumber.Replace("-", string.Empty), "Указан при регистрации", ContactType.MobilePhone);
+				if (!string.IsNullOrEmpty(phisClient.PhoneNumber)) {
+					Contact.SaveNew(client, phisClient.PhoneNumber.Replace("-", string.Empty), "Указан при регистрации",
+					                ContactType.MobilePhone);
+					Contact.SaveNew(client, phisClient.PhoneNumber.Replace("-", string.Empty), "Указан при регистрации",
+					                ContactType.SmsSending);
+				}
 
 				if (!string.IsNullOrEmpty(phisClient.HomePhoneNumber))
 					Contact.SaveNew(client, phisClient.HomePhoneNumber.Replace("-", string.Empty), "Указан при регистрации", ContactType.HousePhone);

@@ -60,7 +60,7 @@ namespace InforoomInternet.Controllers
 				CService.Activate();
 				new Appeals {
 								Appeal = "Услуга \"Обещанный платеж активирована\"",
-								AppealType = (int) AppealType.System,
+								AppealType = AppealType.System,
 								Client = client,
 								Date = DateTime.Now
 							}.Save();
@@ -85,7 +85,7 @@ namespace InforoomInternet.Controllers
 				cService.Activate();
 				new Appeals {
 					Appeal = string.Format("Услуга \"добровольная блокировка\" активирована на период с {0} по {1}", startDate.ToShortDateString(), endDate.ToShortDateString()),
-					AppealType = (int) AppealType.System,
+					AppealType = AppealType.System,
 					Client = client,
 					Date = DateTime.Now
 				}.Save();
@@ -104,7 +104,7 @@ namespace InforoomInternet.Controllers
 				Flash["message"] = "Услуга \"Работа в долг\" деактивирована";
 					new Appeals {
 					Appeal = string.Format("Услуга \"добровольная блокировка\" деактивирована"),
-					AppealType = (int) AppealType.System,
+					AppealType = AppealType.System,
 					Client = client,
 					Date = DateTime.Now
 				}.Save();
@@ -155,7 +155,15 @@ namespace InforoomInternet.Controllers
 					}
 				}
 				PropertyBag["telephoneNum"] = telephoneInput;
-				client.SendSmsNotifocation = SendSmsNotifocation;
+				if (client.SendSmsNotifocation != SendSmsNotifocation) {
+					new Appeals {
+						Client = client,
+						Date = DateTime.Now,
+						AppealType = AppealType.System,
+						Appeal = SendSmsNotifocation ? "Пользователь подписался на sms рассылку" : "Пользователь отписался от sms рассылки"
+					}.Save();
+					client.SendSmsNotifocation = SendSmsNotifocation;
+				}
 				PropertyBag["SendSmsNotifocation"] = SendSmsNotifocation;
 				client.Save();
 			}

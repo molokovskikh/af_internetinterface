@@ -119,7 +119,7 @@ namespace InternetInterface.Helpers
 							Client = client,
 							Date = DateTime.Now,
 							Partner = InitializeContent.Partner,
-							AppealType = (int) AppealType.System
+							AppealType = AppealType.System
 						});
 					}
 				}

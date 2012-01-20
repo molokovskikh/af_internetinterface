@@ -86,7 +86,7 @@ namespace InforoomInternet.Controllers
 					new Appeals {
 						Client = userClient,
 						Date = DateTime.Now,
-						AppealType = (int) AppealType.FeedBack,
+						AppealType = AppealType.FeedBack,
 						Appeal = Text.ToString()
 					}.Save();
 					if (userClient != null) {

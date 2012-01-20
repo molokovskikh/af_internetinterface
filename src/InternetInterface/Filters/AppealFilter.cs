@@ -59,7 +59,7 @@ namespace InternetInterface.Filters
 				Appeals.Queryable.Where(a => a.Date.Date >= startDate.Value.Date && a.Date.Date <= endDate.Value.Date).
 					OrderByDescending(o => o.Date).ToList();
 			if (appealType.appealType != AppealType.All)
-				totalRes = totalRes.Where(a => a.AppealType == (int)appealType.appealType).ToList();
+				totalRes = totalRes.Where(a => a.AppealType == appealType.appealType).ToList();
 			if (!string.IsNullOrEmpty(query))
 				totalRes = totalRes.Where(t => t.Appeal.ToLower().Contains(query.ToLower())).ToList();
 			_lastRowsCount = totalRes.Count();

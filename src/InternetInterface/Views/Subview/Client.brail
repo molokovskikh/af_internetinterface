@@ -255,6 +255,10 @@ $('#register_house').trigger('reveal:close');
 				end %>
 			</td>
 		</tr>
+		<tr>
+			<td>Отправлять СМС уведомления </td>
+			<td><input type=checkbox id="sendSmsNot" name="SendSmsNotifocation" ${"checked" if SendSmsNotifocation}/></td>
+		</tr>
 		<%end %>
 		<%end %>
 		<%end %>

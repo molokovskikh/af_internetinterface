@@ -27,7 +27,7 @@ namespace InternetInterface.Controllers
 	public class ClientFilter
 	{
 		public uint ClientCode { get; set; }
-		public int appealType  { get; set; }
+		public AppealType appealType  { get; set; }
 		public string grouped  { get; set; }
 		public bool Editing  { get; set; }
 		public bool EditConnectInfoFlag  { get; set; }
@@ -215,7 +215,7 @@ namespace InternetInterface.Controllers
 			var client = Client.Find(filter.ClientCode);
 			PropertyBag["filter"] = filter;
 			if (filter.appealType == 0)
-				filter.appealType = (int) AppealType.User;
+				filter.appealType = AppealType.User;
 
 			SendParam(filter, filter.grouped, filter.appealType);
 			PropertyBag["Editing"] = filter.Editing;
@@ -241,7 +241,7 @@ namespace InternetInterface.Controllers
 			else ;
 				PropertyBag["ChStatus"] = Status.FindFirst().Id;
 			PropertyBag["grouped"] = filter.grouped;
-			PropertyBag["appealType"] = filter.appealType == 0 ? (int) AppealType.User : filter.appealType;
+			PropertyBag["appealType"] = filter.appealType == 0 ? AppealType.User : filter.appealType;
 			PropertyBag["Statuss"] = Status.FindAllSort();
 			PropertyBag["services"] = Service.FindAll();
 
@@ -263,7 +263,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["BalanceText"] = string.Empty;
 			PropertyBag["Appeals"] =
 				Appeals.Queryable.Where(
-					a => a.Client == client && a.AppealType == (filter.appealType == 0 ? (int) AppealType.User : filter.appealType)).
+					a => a.Client == client && a.AppealType == (filter.appealType == AppealType.All ? AppealType.User : filter.appealType)).
 					OrderByDescending(
 						a => a.Date).ToArray();
 
@@ -306,7 +306,7 @@ namespace InternetInterface.Controllers
 				message += "Услуга \"Обещанный платеж активирована\"";
 				new Appeals {
 					Appeal = "Услуга \"Обещанный платеж активирована\"",
-					AppealType = (int) AppealType.System,
+					AppealType = AppealType.System,
 					Client = client,
 					Date = DateTime.Now,
 					Partner = InitializeContent.Partner
@@ -334,7 +334,7 @@ namespace InternetInterface.Controllers
 				new Appeals {
 					Client = client,
 					Date = DateTime.Now,
-					AppealType = (int) AppealType.System,
+					AppealType = AppealType.System,
 					Partner = InitializeContent.Partner,
 					Appeal = string.Format("Номер {0} был привязян к данному клиенту", number)
 				}.Save();
@@ -596,7 +596,7 @@ namespace InternetInterface.Controllers
 				            	Date = DateTime.Now,
 				            	Partner = InitializeContent.Partner,
 				            	Client = Client.Find(ClientID),
-				            	AppealType = (int) AppealType.User
+				            	AppealType = AppealType.User
 				            }.SaveAndFlush();
 			RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID);
 		}
@@ -766,7 +766,7 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void LoadEditMudule(uint ClientID, int appealType)
+		public void LoadEditMudule(uint ClientID, AppealType appealType)
 		{
 			Flash["Editing"] = true;
 			RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID + "&filter.Editing=true&filter.appealType=" + appealType);
@@ -794,7 +794,7 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void EditLawyerPerson(uint ClientID, int Speed, string grouped, int appealType, string comment)
+		public void EditLawyerPerson(uint ClientID, int Speed, string grouped, AppealType appealType, string comment)
 		{
 			SetBinder(new DecimalValidateBinder {Validator = Validator});
 			var _client = Client.Queryable.First(c => c.Id == ClientID);
@@ -852,8 +852,8 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 
 		[AccessibleThrough(Verb.Post)]
 		public void EditInformation([DataBind("Client")] PhysicalClients client, uint ClientID, uint tariff, uint status,
-		                            string group, uint house_id, int appealType, string comment,
-		                            [DataBind("filter")] ClientFilter filter)
+		                            string group, uint house_id, AppealType appealType, string comment,
+		                            [DataBind("filter")] ClientFilter filter, bool SendSmsNotifocation)
 		{
 			var _client = Client.Queryable.First(c => c.Id == ClientID);
 			var _status = Status.Find(status);
@@ -888,6 +888,7 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 				}
 
 				updateClient.Update();
+				_client.SendSmsNotifocation = SendSmsNotifocation;
 				_client.Name = string.Format("{0} {1} {2}", updateClient.Surname, updateClient.Name,
 				                             updateClient.Patronymic);
 				var endPoints = ClientEndpoints.Queryable.Where(p => p.Client == _client).ToList();
@@ -933,7 +934,7 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 		}
 
 
-		private void SendParam(ClientFilter filter, string grouped, int appealType)
+		private void SendParam(ClientFilter filter, string grouped, AppealType appealType)
 		{
 			var client = Client.Find(filter.ClientCode);
 
@@ -975,6 +976,7 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 				PropertyBag["EConnect"] = 0;
 			}
 			PropertyBag["EditConnectInfoFlag"] = filter.EditConnectInfoFlag;
+			PropertyBag["SendSmsNotifocation"] = client.SendSmsNotifocation;
 			ConnectPropertyBag(filter.ClientCode);
 			SendConnectInfo(client);
 			SendUserWriteOff();
@@ -1137,7 +1139,7 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 				            	Date = DateTime.Now,
 				            	Partner = InitializeContent.Partner,
 				            	Client = Client.Find(ClientID),
-				            	AppealType = (int) AppealType.User
+				            	AppealType = AppealType.User
 				            }.SaveAndFlush();
 			}
 			RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID);
@@ -1194,7 +1196,7 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 				            		              briad.Name,
 				            		              DateTime.Parse(Request.Form["graph_date"]).ToShortDateString(),
 				            		              Intervals.GetIntervals()[(int) interval]),
-				            	AppealType = (int) AppealType.User
+				            	AppealType = AppealType.User
 				            }.Save();
 				return true;
 			}

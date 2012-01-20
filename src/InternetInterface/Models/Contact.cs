@@ -74,6 +74,8 @@ namespace InternetInterface.Models
 					return "EMail";
 				case ContactType.HeadPhone:
 					return "Главный телефон";
+				case ContactType.SmsSending:
+					return "Для СМС рассылки";
 				default: 
 				return "Номер без категории";
 			}
