@@ -29,6 +29,7 @@ namespace Billing
 
 		private readonly ILog _log = LogManager.GetLogger(typeof (MainBilling));
 		private Mutex _mutex = new Mutex();
+		public List<SmsMessage> Messages;
 
 		public MainBilling()
 		{
@@ -217,6 +218,7 @@ namespace Billing
 
 		public void Compute()
 		{
+			Messages = new List<SmsMessage>();
 			var clients = Client.Queryable.Where(c => c.PhysicalClient != null).ToList();
 			foreach (var client in clients) {
 				var phisicalClient = client.PhysicalClient;
@@ -247,7 +249,21 @@ namespace Billing
 						phisicalClient.Balance -= dec;
 						phisicalClient.UpdateAndFlush();
 						var bufBal = phisicalClient.Balance;
-						client.ShowBalanceWarningPage = bufBal - dec < 0;
+						var minimumBalance = bufBal - dec < 0;
+						if (minimumBalance) {
+							client.ShowBalanceWarningPage = true;
+							string message;
+							if (phisicalClient.Balance > 0)
+								message = string.Format("Ваш баланс составляет {0} руб. При непоступлении оплаты, доступ в сеть будет заблокирован в течение суток.", client.PhysicalClient.Balance.ToString("0.00"));
+							else
+								message = string.Format("Ваш баланс составляет {0} руб. Доступ в интернет заблокирован.", client.PhysicalClient.Balance.ToString("0.00"));
+							var smsMessage = new SmsMessage(client, message);
+							smsMessage.Save();
+							Messages.Add(smsMessage);
+						}
+						else {
+							client.ShowBalanceWarningPage = false;
+						}
 						client.UpdateAndFlush();
 						if (dec > 0)
 						new WriteOff {
@@ -264,7 +280,7 @@ namespace Billing
 				if (client.PaidDay) {
 					client.PaidDay = false;
 				}
-				if (client.YearCycleDate == null || (SystemTime.Now().Date - client.YearCycleDate.Value.Date).TotalDays >= DayInCurrentYear()) {
+				if (client.YearCycleDate == null || (SystemTime.Now().Date >= client.YearCycleDate.Value.AddYears(1).Date)) {
 					client.FreeBlockDays = FreeDaysVoluntaryBlockin;
 					client.YearCycleDate = SystemTime.Now();
 				}
@@ -289,8 +305,17 @@ namespace Billing
 			var thisDateMax = InternetSettings.FindFirst();
 			thisDateMax.NextBillingDate = SystemTime.Now().AddDays(1).Date.AddHours(22);
 			thisDateMax.UpdateAndFlush();
-			//Console.WriteLine(ClientService.Queryable.Count());
+
 			ClientService.Queryable.ToList().Each(cs => cs.WriteOff());
+
+			try {
+#if !DEBUG
+			SmsHelper.SendMessages(Messages);
+#endif
+			}
+			catch (Exception e) {
+				_log.Error("Ошибка отправки сообщений", e);
+			}
 		}
 	}
 }

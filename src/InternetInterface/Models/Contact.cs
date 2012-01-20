@@ -23,7 +23,9 @@ namespace InternetInterface.Models
 		[Description("Финансовые вопросы")]
 		FinancePhone,
 		[Description("Главный телефон")]
-		HeadPhone
+		HeadPhone,
+		[Description("Телефон для смс рассылки")]
+		SmsSending
 	}
 
 	[ActiveRecord(Table = "Contacts", Schema = "Internet", Lazy = true), Auditable]

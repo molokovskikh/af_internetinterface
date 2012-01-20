@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Billing.Test.Unit;
+using Billing.Test.Integration;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework.Config;
 using Common.Tools;

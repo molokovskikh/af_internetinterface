@@ -8,6 +8,7 @@ using System.Threading;
 using System.Web;
 using System.Xml.Linq;
 using InternetInterface.Models;
+using log4net;
 
 namespace InternetInterface.Helpers
 {
@@ -18,6 +19,7 @@ namespace InternetInterface.Helpers
 
 	public class SmsHelper
 	{
+		private static readonly ILog _log = LogManager.GetLogger(typeof (SmsHelper));
 		private const string Login = "inforoom";
 		private const string Password = "analitFarmacia";
 		private const string Source = "inforoom";
@@ -61,7 +63,7 @@ namespace InternetInterface.Helpers
 
 			ServicePointManager.ServerCertificateValidationCallback = AcceptAllCertifications;
 
-			var groupedSmses = smses.Where(s=> !s.IsSended).GroupBy(s => s.ShouldBeSend);
+			var groupedSmses = smses.Where(s => !s.IsSended).GroupBy(s => s.ShouldBeSend);
 
 			foreach (var groupedSms in groupedSmses) {
 				var request = (HttpWebRequest)WebRequest.Create(@"https://transport.sms-pager.com:7214/send.xml");
@@ -83,11 +85,19 @@ namespace InternetInterface.Helpers
 					dataElement.Add(new XElement("SMSID", smsId));
 
 					foreach (var smsMessage in groupedSms) {
-						dataElement.Add(new XElement("to", new XAttribute("number", smsMessage.PhoneNumber), smsMessage.Text));
-						smsMessage.IsSended = true;
-						smsMessage.SendToOperatorDate = DateTime.Now;
-						smsMessage.SMSID = smsId;
-						smsMessage.Save();
+						if (!string.IsNullOrEmpty(smsMessage.PhoneNumber)) {
+							dataElement.Add(new XElement("to", new XAttribute("number", smsMessage.PhoneNumber), smsMessage.Text));
+							smsMessage.IsSended = true;
+							smsMessage.SendToOperatorDate = DateTime.Now;
+							smsMessage.SMSID = smsId;
+							smsMessage.Save();
+						}
+						else {
+							_log.Error(
+								string.Format(
+									"Не было отправлено сообщение для клиента {0} Из-за того, что небыл найден номер для отправки. Текст: {1}",
+									smsMessage.Client.Id, smsMessage.Text));
+						}
 					}
 				}
 
@@ -106,8 +116,16 @@ namespace InternetInterface.Helpers
 				var responseStream = request.GetResponse().GetResponseStream();
 
 				var reader = new StreamReader(responseStream);
-				result.Add(XDocument.Parse(reader.ReadToEnd()));
+				var resultDoc = XDocument.Parse(reader.ReadToEnd());
 				responseStream.Close();
+				var resultDocData = resultDoc.Element("data");
+				if (resultDocData != null) {
+					foreach (var smsMessage in groupedSms.Where(s => !string.IsNullOrEmpty(s.PhoneNumber))) {
+						smsMessage.ServerRequest = Int32.Parse(resultDocData.Element("code").Value);
+						smsMessage.Save();
+					}
+				}
+				result.Add(resultDoc);
 			}
 
 			return result;

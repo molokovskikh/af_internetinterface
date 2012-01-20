@@ -314,11 +314,9 @@ namespace InternetInterface.Models
 				client.Disabled = false;
 				client.Status = Status.Find((uint)StatusType.Worked);
 			}
-			CService.Activated = false;
-			CService.Diactivated = true;
-			CService.Update();
 
 			if (!client.PaidDay && CService.Activated) {
+				CService.Activated = false;
 				var toDt = client.GetInterval();
 				var price = client.GetPrice();
 				if (price / toDt > 0) {
@@ -328,8 +326,7 @@ namespace InternetInterface.Models
 						Date = DateTime.Now,
 						Sum = price/toDt,
 						Comment =
-							string.Format("Абоненская плата за {0} из-за добровольной разблокировки клиента",
-							              DateTime.Now.ToShortDateString())
+							string.Format("Абоненская плата за {0} из-за добровольной разблокировки клиента", DateTime.Now.ToShortDateString())
 					}.Save();
 				}
 			}

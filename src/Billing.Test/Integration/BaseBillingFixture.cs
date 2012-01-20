@@ -7,7 +7,7 @@ using InternetInterface.Helpers;
 using InternetInterface.Models;
 using NUnit.Framework;
 
-namespace Billing.Test.Unit
+namespace Billing.Test.Integration
 {
 	public class Interval
 	{
