@@ -118,7 +118,47 @@ namespace InforoomInternet.Controllers
 			var client = Client.Find(clientId);
 			PropertyBag["Client"] = client;
 			PropertyBag["VoluntaryBlockinService"] = new VoluntaryBlockin();
-			//PropertyBag["services"] = Service.FindAll();
+		}
+
+		private string TransformTelNum(string num)
+		{
+			return "8-" + num.Substring(0, 3) + "-" + num.Substring(3, 3) + "-" + num.Substring(6, 2) + "-" + num.Substring(8, 2);
+		}
+
+		public void SmsNotification(string telephoneInput, bool SendSmsNotifocation)
+		{
+			var clientId = Convert.ToUInt32(Session["LoginClient"]);
+			var client = Client.Find(clientId);
+			PropertyBag["telephoneNum"] = string.Empty;
+			PropertyBag["SendSmsNotifocation"] = client.SendSmsNotifocation;
+			if (client.Contacts != null) {
+				var smsNotContact = client.Contacts.Where(c => c.Type == ContactType.SmsSending).FirstOrDefault();
+				if (smsNotContact != null)
+					PropertyBag["telephoneNum"] = TransformTelNum(smsNotContact.Text);
+			}
+			if (IsPost) {
+				var telNum = telephoneInput.Replace("-", string.Empty).Remove(0, 1);
+				if (client.Contacts != null) {
+					var smsNotContact = client.Contacts.Where(c => c.Type == ContactType.SmsSending).FirstOrDefault();
+					if (smsNotContact != null) {
+						smsNotContact.Text = telNum;
+						smsNotContact.Save();
+					}
+					else {
+						new Contact {
+							Client = client,
+							Text = telNum,
+							Date = DateTime.Now,
+							Type = ContactType.SmsSending,
+							Comment = "Пользователь создал из личного кабинета"
+						}.Save();
+					}
+				}
+				PropertyBag["telephoneNum"] = telephoneInput;
+				client.SendSmsNotifocation = SendSmsNotifocation;
+				PropertyBag["SendSmsNotifocation"] = SendSmsNotifocation;
+				client.Save();
+			}
 		}
 	}
 }

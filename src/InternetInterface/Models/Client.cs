@@ -99,6 +99,9 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual DateTime? YearCycleDate { get; set; }
 
+		[Property]
+		public virtual bool SendSmsNotifocation { get; set; }
+
 		public virtual bool HavePayment
 		{
 			get { return Payments.Where(p => p.BillingAccount && p.Sum > 0).ToList().Count > 0; }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Castle.ActiveRecord;
+using InternetInterface.Helpers;
 using InternetInterface.Models;
 using NUnit.Framework;
 
@@ -14,6 +15,7 @@ namespace Billing.Test.Integration
 		public void PrepareClientAndBilling()
 		{
 			_client.PhysicalClient.Balance = _client.GetPrice()/_client.GetInterval() + 1;
+			_client.SendSmsNotifocation = true;
 			_client.Update();
 		}
 
@@ -32,7 +34,7 @@ namespace Billing.Test.Integration
 					Client = _client,
 					Date = DateTime.Now,
 					Text = "9507738447",
-					Type = ContactType.MobilePhone
+					Type = ContactType.SmsSending
 			};
 			_client.Contacts = new List<Contact> {contact};
 			contact.Save();
@@ -45,6 +47,25 @@ namespace Billing.Test.Integration
 			var dtnAd = DateTime.Now.AddDays(1);
 			var ShouldBeSend = new DateTime(dtnAd.Year, dtnAd.Month, dtnAd.Day, 12, 00, 00);
 			Assert.That(message.ShouldBeSend, Is.EqualTo(ShouldBeSend));
+		}
+
+		[Test]
+		public void Real_Sms_Test()
+		{
+			var contact = new Contact {
+					Client = _client,
+					Date = DateTime.Now,
+					Text = "9507738447",
+					Type = ContactType.SmsSending
+			};
+			_client.Contacts = new List<Contact> {contact};
+			contact.Save();
+			billing.Compute();
+			var message = billing.Messages.FirstOrDefault();
+			if (message != null) {
+				message.ShouldBeSend = null;
+			}
+			//SmsHelper.SendMessage(message);
 		}
 	}
 }
