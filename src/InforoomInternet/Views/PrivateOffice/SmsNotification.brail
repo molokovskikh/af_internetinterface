@@ -33,25 +33,26 @@
 	<table id="serviceTable" style="width:100%;">
 		<tbody>
 			<tr class="caption">
-				<td colspan=2>Настойка СМС уведомлений</td>
+				<td>Настойка СМС уведомлений</td>
 			</tr>
 			<tr>
-				<td colspan=2>Телефонный номер для смс уведомлений</td>
+				<td  style="padding-top:20px;">Телефонный номер для смс уведомлений</td>
 			</tr>
 			<tr>
-				<td><input type=text style="width:300px;" id="telephoneInput" name="telephoneInput" value="${telephoneNum}"/></td>
-
+				<td style="padding-top:0px; "><input type=text style="width:150px;font-size:16px;" id="telephoneInput" name="telephoneInput" value="${telephoneNum}"/></td>
+			</tr>
+			<tr>
+				<td>
+					<label for="sendSmsNot">Отправлять уведомления</label>
+					<input type=checkbox id="sendSmsNot" name="SendSmsNotifocation" ${"checked" if SendSmsNotifocation}/>
+				</td>
+			</tr>
+			<tr>
 				<td>
 					<button type=submit class="button" >
 						<img src="${siteroot}/Content/tick.png" />
 						Сохранить
 					</button>
-				</td>
-			</tr>
-			<tr>
-				<td colspan=2>
-					<label for="sendSmsNot">Отправлять уведомления</label>
-					<input type=checkbox id="sendSmsNot" name="SendSmsNotifocation" ${"checked" if SendSmsNotifocation}/>
 				</td>
 			</tr>
 		</tbody>
