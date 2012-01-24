@@ -85,7 +85,7 @@
 	<span>Выберете дом: </span>
 	<select name="House" id="SelectHouse" style="width: 100%" >
 	<% for i, House in enumerate(Houses): %>
-			<option id="Option${i}" value="${House.Id}" ${"selected" if (House.Id == SelectedHouse)} >${House.Street} ${House.Number} ${House.Case}</option>
+		<option id="Option${i}" value="${House.Id}" ${"selected" if (House.Id == SelectedHouse)} >${House.Street} ${House.Number} ${House.Case}</option>
 	<% end %>
 	</select>
 	<a href="#" class="big-link" data-reveal-id="myModal" > 

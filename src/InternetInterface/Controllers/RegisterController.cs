@@ -78,7 +78,8 @@ namespace InternetInterface.Controllers
 						              phisClient.Patronymic),
 					PhysicalClient = phisClient,
 					Type = ClientType.Phisical,
-					BeginWork = null
+					BeginWork = null,
+					SendSmsNotifocation = true
 				};
 				client.SaveAndFlush();
 
