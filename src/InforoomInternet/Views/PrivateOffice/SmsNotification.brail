@@ -33,7 +33,7 @@
 	<table id="serviceTable" style="width:100%;">
 		<tbody>
 			<tr class="caption">
-				<td>Настойка СМС уведомлений</td>
+				<td>Настройка СМС уведомлений</td>
 			</tr>
 			<tr>
 				<td  style="padding-top:20px;">Телефонный номер для смс уведомлений</td>
