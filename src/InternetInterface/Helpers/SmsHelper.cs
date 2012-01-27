@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -96,7 +97,7 @@ namespace InternetInterface.Helpers
 							_log.Error(
 								string.Format(
 									"Не было отправлено сообщение для клиента {0} Из-за того, что небыл найден номер для отправки. Текст: {1}",
-									smsMessage.Client.Id, smsMessage.Text));
+									smsMessage.Client != null ? smsMessage.Client.Id.ToString(CultureInfo.InvariantCulture) : "<Не удалось определить клиента>", smsMessage.Text));
 						}
 					}
 				}

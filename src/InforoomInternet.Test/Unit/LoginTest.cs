@@ -29,5 +29,11 @@ namespace InforoomInternet.Test.Unit
 			var h = new MySqlHelper(Con);
 			h.Command(string.Format("insert into internet.PhysicalClients (Password) values (\"{0}\")", CryptoPass.GetHashString("123"))).Execute();
 		}
+
+		[Test]
+		public void Ip_Test()
+		{
+			Console.WriteLine( Convert.ToUInt32(NetworkSwitches.SetProgramIp("91.219.7.115")));
+		}
 	}
 }

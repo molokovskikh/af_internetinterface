@@ -192,8 +192,9 @@ namespace Billing
 				Client.Queryable.Where(
 					c => c.PhysicalClient != null && c.Disabled && c.AutoUnblocked).ToList().Where(
 						c => c.PhysicalClient.Balance >= c.GetPriceForTariff()*c.PercentBalance).ToList();
+			var workStatus = Status.Find((uint) StatusType.Worked);
 			foreach (var client in clients) {
-				client.Status = Status.Find((uint) StatusType.Worked);
+				client.Status = workStatus;
 				client.RatedPeriodDate = null;
 				client.DebtDays = 0;
 				client.ShowBalanceWarningPage = false;

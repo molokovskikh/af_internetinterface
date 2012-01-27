@@ -22,25 +22,86 @@ namespace BananceChanger
 			//ZeroTarif();
 			//IntervalTariffs();
 			//diactivateClient();
-			TheeDaysTrial();
+			//TheeDaysTrial();
+			DonachislitKlientamUkogo();
+			//SmsHelper.SendMessage(string.Empty, "123");
+		}
+
+		//Предыдущий метод не включит и не заплатит денег клиентас, которые были отключены и сейчас отключены тоже, здесь мы доделываем это
+		public static void DonachislitKlientamUkogo()
+		{
+			using (var transaction = new TransactionScope()) {
+				var clients = SmsMessage.Queryable.Where(m => 
+					m.Text == "Уважаемый абонент! Предоставляем 3 дня бесплатного интернета с 27 Янв."
+					&& m.Client.PhysicalClient.Balance < 0).Select(m => m.Client).ToList();
+				var workStatus = Status.Find((uint) StatusType.Worked);
+				var paymentCount = 0;
+				foreach (var client in clients) {
+					if (client.ClientServices.FirstOrDefault(s => s.Service.GetType() == typeof(VoluntaryBlockin)) == null)
+					{ 
+						client.Disabled = false;
+						client.AutoUnblocked = true;
+						client.RatedPeriodDate = null;
+						client.DebtDays = 0;
+						client.ShowBalanceWarningPage = false;
+						client.Status = workStatus;
+					}
+					decimal add_sum = 0m;
+					var lastWriteOffs = client.WriteOffs.ToList().Where(w => w.WriteOffDate.Date == new DateTime(2012, 01, 26).Date).FirstOrDefault();
+					if (lastWriteOffs != null)
+					{
+						add_sum += lastWriteOffs.WriteOffSum;
+						lastWriteOffs.Delete();
+					}
+					if (client.Payments.ToList().Where(p => p.PaidOn.Date == new DateTime(2012, 01, 26).Date).FirstOrDefault() == null) { 
+						for (int i = 0; i < 3; i++) {
+							SystemTime.Now = () => DateTime.Now.AddDays(i);
+							if (client.RatedPeriodDate == null)
+								client.RatedPeriodDate = SystemTime.Now();
+							if ((client.RatedPeriodDate.Value.AddMonths(1).Date - SystemTime.Now().Date).Days <= 0)
+								client.RatedPeriodDate = SystemTime.Now();
+							var toDt = client.GetInterval();
+							var price = client.GetPrice();
+							add_sum += price/toDt;
+						}
+						if (add_sum > 0)
+						{ 
+							new Payment {
+								Client = client,
+								Sum = add_sum,
+								PaidOn = DateTime.Now,
+								RecievedOn = DateTime.Now
+							}.Save();
+							Console.WriteLine(string.Format("Клиент {0} активирован, ему начислено {1} руб", client.Id.ToString("00000"), add_sum.ToString("0.00")));
+							paymentCount ++;
+						}
+					}
+				}
+				Console.WriteLine("Начислены деньги {0} клиентам", paymentCount);
+				transaction.VoteCommit();
+			}
 		}
 
 		//Начисляет бонусные 3 дня клиентам, которые вчера работали
 		public static void TheeDaysTrial()
 		{
+			var forSmsClients = new List<Client>();
+			//!!!!!!!!!!!!!!!! ИЗМЕНИ ПРИ SQL2!!!!!!!!!!!1
+			var lastDay = DateTime.Now.AddMonths(-1).Date;
 			using (var session = new TransactionScope(OnDispose.Rollback)) {
 				var whoRealWork = Client.Queryable.Where(c =>
 				                                         !c.Disabled &&
 				                                         c.PhysicalClient != null &&
 				                                         c.BeginWork != null &&
 				                                         c.RatedPeriodDate != null).ToList();
-				//!!!!!!!!!!!!!!!! ИЗМЕНИ ПРИ SQL2!!!!!!!!!!!1
-				var lastDay = new DateTime(2011, 11, 29, 00, 00, 00);
+
 				var clientWhoBlocked = ClientInternetLogs.Queryable.Where(c =>
 				                                                          c.Disabled &&
 				                                                          c.OperatorName == "InternetBilling" &&
-				                                                          c.LogTime >= lastDay).ToList().Select(c => c.Client).ToList();
+				                                                          c.LogTime >= lastDay).ToList().Select(c => c.Client).Distinct().ToList();
 				whoRealWork.AddRange(clientWhoBlocked);
+				whoRealWork = whoRealWork.Distinct().ToList();
+				forSmsClients = whoRealWork;
 				foreach (var client in whoRealWork) {
 					decimal add_sum = 0m;
 					for (int i = 0; i < 3; i++) {
@@ -69,25 +130,40 @@ namespace BananceChanger
 			}
 			using (var session = new TransactionScope(OnDispose.Rollback)) {
 				//!!!!!!!!!!!!!!!! ИЗМЕНИ ПРИ SQL2!!!!!!!!!!!1
-				var lastDay = new DateTime(2011, 11, 29, 00, 00, 00);
+				//lastDay = new DateTime(2012, 1, 20, 00, 00, 00);
 				var clientWhoBlocked = ClientInternetLogs.Queryable.Where(c =>
 				                                                          c.Disabled &&
 				                                                          c.OperatorName == "InternetBilling" &&
-				                                                          c.LogTime >= lastDay).ToList().Select(c => c.Client).ToList();
+				                                                          c.LogTime >= lastDay).ToList().Select(c => c.Client).Where(c => c.Disabled).Distinct().ToList();
+				var workStatus = Status.Find((uint) StatusType.Worked);
 				foreach (var client in clientWhoBlocked) {
-					client.Disabled = false;
-					client.AutoUnblocked = true;
-					client.RatedPeriodDate = null;
-					client.ShowBalanceWarningPage = false;
-					client.Status = Status.Find((uint) StatusType.Worked);
-					Console.WriteLine(string.Format("Клиент {0} активирован", client.Id.ToString("00000")));
-					var service = client.ClientServices.FirstOrDefault();
-					if (service != null && service.GetType() == typeof(DebtWork)) {
+					if (client.ClientServices.FirstOrDefault(s => s.Service.GetType() == typeof(VoluntaryBlockin)) == null)
+					{ 
+						client.Disabled = false;
+						client.AutoUnblocked = true;
+						client.RatedPeriodDate = null;
+						client.DebtDays = 0;
+						client.ShowBalanceWarningPage = false;
+						client.Status = workStatus;
+						Console.WriteLine(string.Format("Клиент {0} активирован", client.Id.ToString("00000")));
+					}
+					else {
+						Console.WriteLine("У клиента {0} активирована услуга добровольной блокировки");
+					}
+					var service = client.ClientServices.FirstOrDefault(s => s.Service.GetType() == typeof(DebtWork));
+					if (service != null) {
 						service.Delete();
 						Console.WriteLine(string.Format("Для клиента {0} удалена услуга обещанный платеж", client.Id.ToString("00000")));
 					}
 				}
 				session.VoteCommit();
+			}
+			try {
+					var messages = forSmsClients.Select(forSmsClient => new SmsMessage(forSmsClient, "Уважаемый абонент! Предоставляем 3 дня бесплатного интернета с 27 Янв.", DateTime.Now)).ToList();
+					//SmsHelper.SendMessages(messages);
+			}
+			catch (Exception) {
+
 			}
 			Console.WriteLine("ГОТОВО!");
 		}
