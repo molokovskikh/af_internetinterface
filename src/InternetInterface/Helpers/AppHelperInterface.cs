@@ -11,22 +11,6 @@ namespace InternetInterface.Helpers
 {
 	public class AppHelper : Common.Web.Ui.Helpers.AppHelper
 	{
-		public override string LinkTo(object item, object title, string action)
-		{
-			if (item == null)
-				return "";
-
-			if (!HavePermission(GetControllerName(item), action))
-				return String.Format("<a href='#' class='NotAllowedLink'>{0}</a>", title);
-
-			var clazz = "";
-			 /*if (item is Address && !((Address)item).Enabled)
-				clazz = "DisabledByBilling";*/
-
-			var uri = GetUrl(item, action);
-			return String.Format("<a class='{1}' href='{2}'>{0}</a>", title, clazz, uri);
-		}
-
 		public override bool HavePermission(string controller, string action)
 		{
 			return AccessRules.GetAccessName(action).Count(CategorieAccessSet.AccesPartner) > 0;

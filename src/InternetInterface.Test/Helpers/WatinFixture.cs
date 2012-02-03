@@ -81,11 +81,6 @@ namespace InternetInterface.Test.Helpers
 			}
 		}
 
-		protected IE Open(object item, string action = null)
-		{
-			return Open(AppHelper.GetShortUrl(item, action));
-		}
-
 		protected IE Open(string uri = "/")
 		{
 			if (scope != null)
