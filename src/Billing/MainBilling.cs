@@ -254,18 +254,12 @@ namespace Billing
 						if (minimumBalance) {
 							client.ShowBalanceWarningPage = true;
 							if (client.SendSmsNotifocation) {
-								string message;
-								if (phisicalClient.Balance > 0)
-									message =
-										string.Format(
-											"Ваш баланс составляет {0} руб. При непоступлении оплаты доступ в сеть будет заблокирован в течение суток.",
-											client.PhysicalClient.Balance.ToString("0.00"));
-								else
-									message = string.Format("Ваш баланс составляет {0} руб. Доступ в интернет заблокирован.",
-									                        client.PhysicalClient.Balance.ToString("0.00"));
-								var smsMessage = new SmsMessage(client, message);
-								smsMessage.Save();
-								Messages.Add(smsMessage);
+								if (phisicalClient.Balance > 0) { 
+									var message = string.Format("Ваш баланс {0} руб. Завтра доступ в сеть будет заблокирован.", client.PhysicalClient.Balance.ToString("0.00"));
+									var smsMessage = new SmsMessage(client, message);
+									smsMessage.Save();
+									Messages.Add(smsMessage);
+								}
 							}
 						}
 						else {

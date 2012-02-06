@@ -42,66 +42,39 @@ namespace Billing.Test.Integration
 		{
 			var phisicalClient = CreatePhisicalClient(statusBlocked, balance);
 			phisicalClient.Save();
-			CreateAndSavePaymentForConnect(phisicalClient);
 			return new Client
-			       	{
-			       		Disabled = false,
-			       		//FirstLease = true,
-			       		DebtDays = 0,
-			       		Name = name,
-			       		PhysicalClient = phisicalClient,
-                        BeginWork = DateTime.Now ,
+					{
+						Disabled = false,
+						//FirstLease = true,
+						DebtDays = 0,
+						Name = name,
+						PhysicalClient = phisicalClient,
+						BeginWork = DateTime.Now ,
 						RatedPeriodDate = DateTime.Now,
 						YearCycleDate = DateTime.Now
-						//FreeBlockDays = 28
-			       		//SayBillingIsNewClient = true
-			       	};
-		}
-
-		public static void CreateAndSavePaymentForConnect(PhysicalClients pclient)
-		{
-			/*new PaymentForConnect
-				{
-					ClientId = pclient,
-					Summ = 200.ToString()
-				}.SaveAndFlush();*/
+					};
 		}
 
 		public static PhysicalClients CreatePhisicalClient(bool statusBlocked, decimal balance)
 		{
 			var tariff = CreateTariff((int)balance);
 			tariff.Save();
-			//var status = CreateStatus(statusBlocked);
-			//status.SaveAndFlush();
 			return  new PhysicalClients
-			       	{
-			       		Name = "TestPhisicalClient",
-						//AutoUnblocked = true,
+					{
+						Name = "TestPhisicalClient",
 						Balance = balance,
-						//Connected = true,
 						Tariff = tariff,
-						//Status = Status.Find((uint)StatusType.Worked)
-			       	};
+					};
 		}
 
 		public static Tariff CreateTariff(int balanceForTariff)
 		{
 			return new Tariff
-			       	{
-			       		Name = "testTariff",
+					{
+						Name = "testTariff",
 						Price = balanceForTariff
-			       	};
+					};
 		}
-
-		/*public static Status CreateStatus(bool blocked)
-		{
-			return new Status
-			       	{
-			       		Blocked = blocked,
-						Name = "testStatus",
-						Id = 7
-			       	};
-		}*/
 
 		public static void CreatePayment(decimal sum)
 		{

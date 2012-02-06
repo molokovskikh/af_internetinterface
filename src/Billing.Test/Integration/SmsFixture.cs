@@ -26,8 +26,7 @@ namespace Billing.Test.Integration
 			var message = billing.Messages.FirstOrDefault();
 			Assert.IsNotNull(message);
 			var messageText =
-				string.Format(
-					"Ваш баланс составляет 1,00 руб. При непоступлении оплаты, доступ в сеть будет заблокирован в течение суток.");
+				string.Format("Ваш баланс 1,00 руб. Завтра доступ в сеть будет заблокирован.");
 			Assert.That(message.Text, Is.StringContaining(messageText));
 			Assert.IsNullOrEmpty(message.PhoneNumber);
 			var contact = new Contact {
@@ -38,12 +37,6 @@ namespace Billing.Test.Integration
 			};
 			_client.Contacts = new List<Contact> {contact};
 			contact.Save();
-			billing.Compute();
-			message = billing.Messages.FirstOrDefault();
-			Assert.IsNotNull(message);
-			messageText = string.Format("Ваш баланс составляет {0} руб. Доступ в интернет заблокирован.", (_client.PhysicalClient.Balance - _client.GetPrice()/_client.GetInterval()).ToString("0.00"));
-			Assert.That(message.Text, Is.StringContaining(messageText));
-			Assert.That(message.PhoneNumber, Is.StringContaining("9507738447"));
 			var dtnAd = DateTime.Now.AddDays(1);
 			var ShouldBeSend = new DateTime(dtnAd.Year, dtnAd.Month, dtnAd.Day, 12, 00, 00);
 			Assert.That(message.ShouldBeSend, Is.EqualTo(ShouldBeSend));
