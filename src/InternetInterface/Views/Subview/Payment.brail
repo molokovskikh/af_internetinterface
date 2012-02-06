@@ -1,4 +1,16 @@
-﻿<table class="table">
+﻿<%if IsDefined("sleepButton"): %>
+<script type="text/javascript">
+	$(function () {
+		$('#ChangeBalanceButton').attr("disabled", "disabled");
+		$('#BalanceText').attr("disabled", "disabled");
+		var timeout = window.setTimeout(function () {
+			$('#ChangeBalanceButton').removeAttr("disabled");
+			$('#BalanceText').removeAttr("disabled");
+		}, 3000);
+	});
+</script>
+<%end %>
+<table class="table">
 	<thead>
 		<th colspan=4>Пополнить баланс клиента</th>
 	</thead>

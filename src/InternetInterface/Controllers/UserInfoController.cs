@@ -1063,6 +1063,7 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 						BillingAccount = false
 					}.Save();
 					Flash["Message"] = Message.Notify("Платеж ожидает обработки");
+					Flash["sleepButton"] = true;
 				}
 				else {
 					Flash["Message"] = Message.Error("Юридические лица не могут оплачивать наличностью");
