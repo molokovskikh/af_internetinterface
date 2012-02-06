@@ -8,7 +8,7 @@ using InternetInterface.Models;
 
 namespace InternetInterface.Helpers
 {
-	public class IpHeper: AbstractHelper
+	public class IpHelper: AbstractHelper
 	{
 		public static string GetNormalIp(string IP)
 		{

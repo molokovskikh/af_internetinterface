@@ -262,7 +262,7 @@
     <Compile Include="Helpers\DateHelper.cs" />
     <Compile Include="Helpers\DbLogHelper.cs" />
     <Compile Include="Helpers\ExceptionHelper.cs" />
-    <Compile Include="Helpers\IpHeper.cs" />
+    <Compile Include="Helpers\IpHelper.cs" />
     <Compile Include="Helpers\Listner.cs" />
     <Compile Include="Helpers\LoginCreatorHelper.cs" />
     <Compile Include="Helpers\PaymentFilter.cs" />
@@ -293,6 +293,7 @@
     <Compile Include="Models\House.cs" />
     <Compile Include="Models\Internetsessionslog.cs" />
     <Compile Include="Models\InternetSettings.cs" />
+    <Compile Include="Models\IpPool.cs" />
     <Compile Include="Models\Label.cs" />
     <Compile Include="Models\LawyerPerson.cs" />
     <Compile Include="Models\Lease.cs" />

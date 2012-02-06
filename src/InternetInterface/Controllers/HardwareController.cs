@@ -14,7 +14,7 @@ using log4net;
 namespace InternetInterface.Controllers
 {
 	[Helper(typeof(PaginatorHelper))]
-	[Helper(typeof(IpHeper))]
+	[Helper(typeof(IpHelper))]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class	HardwareController : ARSmartDispatcherController
 	{

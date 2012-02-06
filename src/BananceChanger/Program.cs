@@ -23,8 +23,19 @@ namespace BananceChanger
 			//IntervalTariffs();
 			//diactivateClient();
 			//TheeDaysTrial();
-			DonachislitKlientamUkogo();
+			//DonachislitKlientamUkogo();
 			//SmsHelper.SendMessage(string.Empty, "123");
+			SendSmsIfNoSending();
+		}
+
+		public static void SendSmsIfNoSending()
+		{
+			var createDate = new DateTime(2012, 1, 30);
+			using (new SessionScope()) {
+				var smses = SmsMessage.Queryable.Where(s => s.CreateDate.Date >= createDate).ToList();
+				SmsHelper.SendMessages(smses);
+				//SmsHelper.SendMessage("+79507738447", "123456");
+			}
 		}
 
 		//Предыдущий метод не включит и не заплатит денег клиентас, которые были отключены и сейчас отключены тоже, здесь мы доделываем это

@@ -88,7 +88,6 @@ namespace InternetInterface.Helpers
 					foreach (var smsMessage in groupedSms) {
 						if (!string.IsNullOrEmpty(smsMessage.PhoneNumber)) {
 							dataElement.Add(new XElement("to", new XAttribute("number", smsMessage.PhoneNumber), smsMessage.Text));
-							smsMessage.IsSended = true;
 							smsMessage.SendToOperatorDate = DateTime.Now;
 							smsMessage.SMSID = smsId;
 							smsMessage.Save();
@@ -121,8 +120,10 @@ namespace InternetInterface.Helpers
 				responseStream.Close();
 				var resultDocData = resultDoc.Element("data");
 				if (resultDocData != null) {
+					var serverRequest = Int32.Parse(resultDocData.Element("code").Value);
 					foreach (var smsMessage in groupedSms.Where(s => !string.IsNullOrEmpty(s.PhoneNumber))) {
-						smsMessage.ServerRequest = Int32.Parse(resultDocData.Element("code").Value);
+						smsMessage.IsSended = serverRequest == (int) SmsRequestType.ValidOperation;
+						smsMessage.ServerRequest = serverRequest;
 						smsMessage.Save();
 					}
 				}

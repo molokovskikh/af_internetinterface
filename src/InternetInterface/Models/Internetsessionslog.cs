@@ -31,7 +31,7 @@ namespace InternetInterface.Models
 		
 		public virtual string GetNormalIp()
 		{
-			return IpHeper.GetNormalIp(IP);
+			return IpHelper.GetNormalIp(IP);
 		}
 	}
 }

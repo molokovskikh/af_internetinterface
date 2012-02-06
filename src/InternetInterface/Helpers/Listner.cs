@@ -58,7 +58,7 @@ namespace InternetInterface.Helpers
 
 		public string AsString(object value)
 		{
-			return IpHeper.GetNormalIp(value.ToString());
+			return IpHelper.GetNormalIp(value.ToString());
 		}
 	}
 

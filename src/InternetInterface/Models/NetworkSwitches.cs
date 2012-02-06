@@ -51,12 +51,12 @@ namespace InternetInterface.Models
 
 		public virtual string GetNormalIp()
 		{
-			return IpHeper.GetNormalIp(IP);
+			return IpHelper.GetNormalIp(IP);
 		}
 
 		public static string GetNormalIp(uint ip)
 		{
-			return IpHeper.GetNormalIp(ip.ToString());
+			return IpHelper.GetNormalIp(ip.ToString());
 		}
 
 		public static string SetProgramIp(string ip)

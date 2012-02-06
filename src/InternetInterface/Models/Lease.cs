@@ -47,7 +47,7 @@ namespace InternetInterface.Models
 
 		public string GetIp()
 		{
-			return IpHeper.GetNormalIp(Ip.ToString());
+			return IpHelper.GetNormalIp(Ip.ToString());
 		}
 
 		public string GetMac()
@@ -63,6 +63,27 @@ namespace InternetInterface.Models
 		public bool CompareMac(string mac)
 		{
 			return GetMac().Equals(mac);
+		}
+
+		public virtual bool IsGray()
+		{
+			return IsGray(Ip);
+		}
+
+		public static bool IsGray(string ip)
+		{
+			if (string.IsNullOrEmpty(ip))
+				return true;
+			var programIp = NetworkSwitches.SetProgramIp(ip);
+			if (string.IsNullOrEmpty(programIp))
+				return true;
+			return IsGray(uint.Parse(programIp));
+		}
+
+		public static bool IsGray(uint ip)
+		{
+			var grayPools = IpPool.Queryable.Where( i => i.IsGray ).ToList();
+			return grayPools.Any(grayPool => grayPool.Begin <= ip && grayPool.End >= ip);
 		}
 	}
 }
