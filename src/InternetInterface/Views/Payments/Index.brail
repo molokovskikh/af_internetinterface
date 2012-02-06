@@ -23,7 +23,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>${app.FilterFor("filter.Recipients")}</td>
+			<td>${app.FilterFor("filter.Recipient")}</td>
 			<td>${app.FilterFor("filter.SearchText")}</td>
 			<td>${app.FilterFor("Показывать только неопознанные:", "filter.ShowOnlyUnknown")}</td>
 			<td>${app.EndFormFor("filter")}</td>
