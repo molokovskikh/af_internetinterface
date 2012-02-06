@@ -32,10 +32,7 @@
 			${VoluntaryBlockinService.GetParameters()}
 		</tr>
 		<tr>
-			<td>Количество бесплатных дней:</td>
-			<td>
-				<b style="margin-left:-70px; color:${"#f0555d" if Client.FreeBlockDays <= 0}">${Client.FreeBlockDays}</b>
-			</td>
+			<td>Количество бесплатных дней: <b style="margin-left:50px; color:${"#f0555d" if Client.FreeBlockDays <= 0}">${Client.FreeBlockDays}</b></td>
 		</tr>
 		<tr>
 			<td>

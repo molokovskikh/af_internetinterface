@@ -69,14 +69,14 @@ namespace InforoomInternet.Controllers
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void VoluntaryBlockinActivate(DateTime startDate, DateTime endDate)
+		public void VoluntaryBlockinActivate(DateTime endDate)
 		{
 			var clientId = Convert.ToUInt32(Session["LoginClient"]);
 			var client = Client.Find(clientId);
 			if (client.CanUsedVoluntaryBlockin()) {
 				//Flash["message"] = "Услуга \"Работа в долг\" активирована";
 				var cService = new ClientService {
-					BeginWorkDate = startDate,
+					BeginWorkDate = DateTime.Now,
 					EndWorkDate = endDate,
 					Client = client,
 					Service = Service.GetByType(typeof(VoluntaryBlockin))
@@ -84,7 +84,7 @@ namespace InforoomInternet.Controllers
 				client.ClientServices.Add(cService);
 				cService.Activate();
 				new Appeals {
-					Appeal = string.Format("Услуга \"добровольная блокировка\" активирована на период с {0} по {1}", startDate.ToShortDateString(), endDate.ToShortDateString()),
+					Appeal = string.Format("Услуга \"добровольная блокировка\" активирована на период с {0} по {1}", DateTime.Now.ToShortDateString(), endDate.ToShortDateString()),
 					AppealType = AppealType.System,
 					Client = client,
 					Date = DateTime.Now

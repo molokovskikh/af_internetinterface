@@ -213,6 +213,7 @@ namespace InternetInterface.Models
 		}
 	}
 
+	/*Если раскоментировать строчку, будет отображать ещё и дату активации*/
 	[ActiveRecord(DiscriminatorValue = "VoluntaryBlockin")]
 	public class VoluntaryBlockin : Service
 	{
@@ -220,13 +221,13 @@ namespace InternetInterface.Models
 		{
 			var builder = new StringBuilder();
 			builder.Append("<tr>");
-			builder.Append(
+			/*builder.Append(
 				string.Format(
 					"<td><label for=\"startDate\" >Активировать с </label><input type=text value=\"{0}\" name=\"startDate\" id=\"startDate\" class=\"date-pick dp-applied\"> </td>",
-					DateTime.Now.ToShortDateString()));
+					DateTime.Now.ToShortDateString()));*/
 			builder.Append(
 				string.Format(
-					"<td><label for=\"endDate\" id=\"endDateLabel\"> по </label><input type=text  name=\"endDate\" value=\"{0}\"  id=\"endDate\" class=\"date-pick dp-applied\"></td>",
+					"<td><label for=\"endDate\" id=\"endDateLabel\"> Заблокировать до  </label><input type=text  name=\"endDate\" value=\"{0}\"  id=\"endDate\" class=\"date-pick dp-applied\"></td>",
 					DateTime.Now.AddDays(1).ToShortDateString()));
 			builder.Append("</tr>");
 			return builder.ToString();
