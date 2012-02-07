@@ -2,10 +2,14 @@
 <script type="text/javascript">
 	$(function () {
 		$('#ChangeBalanceButton').attr("disabled", "disabled");
+		$('#changeBalanceForm').attr("disabled", "disabled");
 		$('#BalanceText').attr("disabled", "disabled");
+		$('#BalanceText').val("Подождите 3 секунды");
 		var timeout = window.setTimeout(function () {
 			$('#ChangeBalanceButton').removeAttr("disabled");
+			$('#changeBalanceForm').removeAttr("disabled");
 			$('#BalanceText').removeAttr("disabled");
+			$('#BalanceText').val("");
 		}, 3000);
 	});
 </script>
