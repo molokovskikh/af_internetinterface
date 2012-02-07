@@ -20,6 +20,19 @@ namespace Billing.Test.Integration
 		}
 
 		[Test]
+		public void Payment_and_sms_Test()
+		{
+			billing.Compute();
+			Assert.That(SmsMessage.Queryable.Count(m => m.Client == _client), Is.EqualTo(1));
+			new Payment {
+				Client = _client,
+				Sum = 1000
+			}.Save();
+			billing.OnMethod();
+			Assert.That(SmsMessage.Queryable.Count(m => m.Client == _client), Is.EqualTo(0));
+		}
+
+		[Test]
 		public void Generated_sms_for_simple_Client()
 		{
 			billing.Compute();

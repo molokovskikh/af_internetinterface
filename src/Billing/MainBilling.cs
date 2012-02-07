@@ -155,6 +155,7 @@ namespace Billing
 					if (updateClient.RatedPeriodDate != null)
 						if (physicalClient.Balance >= updateClient.GetPriceForTariff()) {
 							updateClient.ShowBalanceWarningPage = false;
+							SmsHelper.DeleteNoSendingMessages(updateClient);
 						}
 					if (updateClient.ClientServices != null)
 						for (int i = updateClient.ClientServices.Count - 1; i > -1; i--) {
@@ -200,6 +201,7 @@ namespace Billing
 				client.ShowBalanceWarningPage = false;
 				client.Disabled = false;
 				client.UpdateAndFlush();
+				SmsHelper.DeleteNoSendingMessages(client);
 			}
 			var lawyerPersons = Client.Queryable.Where(c => c.LawyerPerson != null);
 			foreach (var client in lawyerPersons) {
@@ -308,15 +310,6 @@ namespace Billing
 			thisDateMax.UpdateAndFlush();
 
 			ClientService.Queryable.ToList().Each(cs => cs.WriteOff());
-
-			try {
-#if !DEBUG
-			SmsHelper.SendMessages(Messages);
-#endif
-			}
-			catch (Exception e) {
-				_log.Error("Ошибка отправки сообщений", e);
-			}
 		}
 	}
 }

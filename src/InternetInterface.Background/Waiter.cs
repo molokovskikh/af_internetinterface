@@ -15,9 +15,7 @@ namespace InternetInterface.Background
 		public Waiter()
 		{
 			Delay = (int) TimeSpan.FromMinutes(1).TotalMilliseconds;
-			Action = () => {
-				new MailEndpointProcessor().Process();
-			};
+			Action = SendProcessor.Process;
 		}
 
 		public void DoStart()

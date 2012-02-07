@@ -58,6 +58,11 @@ namespace InternetInterface.Helpers
 			return SendMessages(new List<SmsMessage> {message}).FirstOrDefault();
 		}
 
+		public static void DeleteNoSendingMessages(Client client)
+		{
+			SmsMessage.Queryable.Where(m => m.Client == client && !m.IsSended).ToList().ForEach(m => m.Delete());
+		}
+
 		public static List<XDocument> SendMessages(IList<SmsMessage> smses)
 		{
 			var result = new List<XDocument>();

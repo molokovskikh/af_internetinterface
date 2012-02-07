@@ -15,5 +15,8 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual DateTime NextBillingDate { get; set; }
+
+		[Property]
+		public virtual DateTime NextSmsSendDate { get; set; }
 	}
 }

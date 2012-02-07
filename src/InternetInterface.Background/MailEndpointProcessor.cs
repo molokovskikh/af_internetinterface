@@ -6,13 +6,42 @@ using System.Text;
 using Castle.ActiveRecord;
 using Common.Web.Ui.Helpers;
 using Common.Tools;
+using InternetInterface.Helpers;
 using InternetInterface.Models;
 
 namespace InternetInterface.Background
 {
-	public class MailEndpointProcessor
+	public class SendProcessor
 	{
-		public void Process()
+		public static void Process()
+		{
+			SendUnknowEndPoint();
+
+			var thisDateMax = InternetSettings.FindFirst().NextSmsSendDate;
+			var now = SystemTime.Now();
+			if ((thisDateMax - now).TotalMinutes <= 0) {
+				SendSmsNotification();
+				if (now.Hour < 12) {
+					var smsTime = InternetSettings.FindFirst();
+					smsTime.NextSmsSendDate = new DateTime(now.Year, now.Month, now.Day, 12, 0, 0);
+					smsTime.Save();
+				}
+			}
+		}
+
+		public static List<SmsMessage> SendSmsNotification()
+		{
+			var messages = new List<SmsMessage>();
+			using (new SessionScope()) {
+				SmsMessage.Queryable.Where(m => !m.IsSended).ToList().ForEach(messages.Add);
+			}
+#if !DEBUG
+			SmsHelper.SendMessages(messages);
+#endif
+			return messages;
+		}
+
+		public static void SendUnknowEndPoint()
 		{
 			var smtp = new SmtpClient("box.analit.net");
 #if !DEBUG

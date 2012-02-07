@@ -20,6 +20,31 @@ namespace InternetInterface.Background.Tests
 		}
 
 		[Test]
+		public void SmsTest()
+		{
+			SmsMessage.DeleteAll();
+
+			var messages = new List<SmsMessage> {
+				new SmsMessage(),
+				new SmsMessage {
+					IsSended = true
+				},
+				new SmsMessage(),
+				new SmsMessage {
+					IsSended = true
+				}
+			};
+			using (new SessionScope()) {
+				foreach (var smsMessage in messages) {
+					smsMessage.Save();
+				}
+			}
+			var sededMessages = SendProcessor.SendSmsNotification();
+
+			Assert.That(sededMessages.Count, Is.EqualTo(2));
+		}
+
+		[Test]
 		public void BaseTest()
 		{
 			Lease unknownLease;
@@ -37,16 +62,15 @@ namespace InternetInterface.Background.Tests
 				unknownLease.Save();
 			}
 
-			new MailEndpointProcessor().Process();
+			SendProcessor.Process();
 
 			using (new SessionScope()) {
 				var sendedLease = SendedLease.Queryable.Where(s => s.LeaseId == unknownLease.Id).FirstOrDefault();
 				Assert.IsNotNull(sendedLease);
 			}
 
-			new MailEndpointProcessor().Process();
+			SendProcessor.Process();
 
-			
 			using (new SessionScope()) {
 				var sendedLease = SendedLease.Queryable.Where(s => s.LeaseId == unknownLease.Id).ToList();
 				Assert.LessOrEqual(1, sendedLease.Count);
