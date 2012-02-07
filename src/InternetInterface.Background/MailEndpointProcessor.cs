@@ -34,10 +34,13 @@ namespace InternetInterface.Background
 			var messages = new List<SmsMessage>();
 			using (new SessionScope()) {
 				SmsMessage.Queryable.Where(m => !m.IsSended).ToList().ForEach(messages.Add);
-			}
 #if !DEBUG
-			SmsHelper.SendMessages(messages);
+				SmsHelper.SendMessages(messages);
 #endif
+				var thisDateMax = InternetSettings.FindFirst();
+				thisDateMax.NextSmsSendDate = SystemTime.Now().AddDays(1).Date.AddHours(12);
+				thisDateMax.Update();
+			}
 			return messages;
 		}
 
