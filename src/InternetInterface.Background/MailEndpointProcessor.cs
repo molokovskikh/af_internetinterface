@@ -33,7 +33,7 @@ namespace InternetInterface.Background
 		{
 			var messages = new List<SmsMessage>();
 			using (new SessionScope()) {
-				SmsMessage.Queryable.Where(m => !m.IsSended).ToList().ForEach(messages.Add);
+				SmsMessage.Queryable.Where(m => !m.IsSended && m.PhoneNumber != null).ToList().ForEach(messages.Add);
 #if !DEBUG
 				SmsHelper.SendMessages(messages);
 #endif
