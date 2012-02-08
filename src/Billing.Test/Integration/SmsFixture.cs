@@ -26,7 +26,7 @@ namespace Billing.Test.Integration
 			Assert.That(SmsMessage.Queryable.Count(m => m.Client == _client), Is.EqualTo(1));
 			new Payment {
 				Client = _client,
-				Sum = 1000
+				Sum = 100
 			}.Save();
 			billing.OnMethod();
 			Assert.That(SmsMessage.Queryable.Count(m => m.Client == _client), Is.EqualTo(0));

@@ -38,7 +38,7 @@ namespace InternetInterface.Background
 #if !DEBUG
 			SmsHelper.SendMessages(messages);
 #endif
-			var thisDateMax = InternetSettings.FindFirst();
+			var thisDateMax = InternetSettings.FindFirst();	
 			thisDateMax.NextSmsSendDate = SystemTime.Now().AddDays(1).Date.AddHours(12);
 			thisDateMax.Update();
 			return messages;

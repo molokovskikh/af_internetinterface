@@ -146,6 +146,7 @@ namespace Billing
 					physicalClient.UpdateAndFlush();
 					newPayment.BillingAccount = true;
 					newPayment.Update();
+					SmsHelper.DeleteNoSendingMessages(updateClient);
 					if (!havePayment) {
 						updateClient.AutoUnblocked = true;
 					}
@@ -155,7 +156,6 @@ namespace Billing
 					if (updateClient.RatedPeriodDate != null)
 						if (physicalClient.Balance >= updateClient.GetPriceForTariff()) {
 							updateClient.ShowBalanceWarningPage = false;
-							SmsHelper.DeleteNoSendingMessages(updateClient);
 						}
 					if (updateClient.ClientServices != null)
 						for (int i = updateClient.ClientServices.Count - 1; i > -1; i--) {
