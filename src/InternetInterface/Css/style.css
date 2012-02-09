@@ -284,7 +284,7 @@ input.checkbox {
 
 .table th 
 {
-  border: 1px double black;
+  border: 1px double #9a9999;
   background: #cfe5f0;
   color: #625a5b;
   font-weight:normal;
@@ -298,7 +298,8 @@ input.checkbox {
 			
 .menuItem th:hover
 {
-	background-color:#7dbcd7;
+	/*background-color:#7dbcd7;*/
+	font-weight: bold;
 	}
 	
 .submenu th
@@ -478,4 +479,15 @@ ul.list li .left  {
   background: #FFF;
   border: 1px solid #ddd;
   border-radius: 10px;
+}
+
+div.backGround {
+	background-color:White;
+	padding:15px;
+	border: 1px double #d2d4d4;
+	margin-left:15px;
+}
+
+div.backGround.table.td  {
+	border-left : 1px double #AAA;
 }

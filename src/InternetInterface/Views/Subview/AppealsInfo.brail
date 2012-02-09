@@ -20,8 +20,6 @@
 			<a href="${Siteroot}/Search/Redirect?filter.ClientCode=${ClientCode}&filter.appealType=1" class="button" style="background-color:${"#cdc6c6" if appealType == 1};">Пользовательские</a>
 			<a href="${Siteroot}/Search/Redirect?filter.ClientCode=${ClientCode}&filter.appealType=3" class="button" style="background-color:${"#cdc6c6" if appealType == 3};">Системные</a>
 			<a href="${Siteroot}/Search/Redirect?filter.ClientCode=${ClientCode}&filter.appealType=5" class="button" style="background-color:${"#cdc6c6" if appealType == 5};">Внешние</a>
-
-			<a href="${Siteroot}/UserInfo/Leases?filter.ClientCode=${ClientCode}" class="button" style="background: #EEE url(../Images/tick.png) no-repeat; background-position: 5px 5px; padding-left:2em;">Показать статистику работы</a>
 		<%end %>
 		</td>
 	</tr>

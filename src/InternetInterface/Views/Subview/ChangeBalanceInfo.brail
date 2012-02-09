@@ -42,11 +42,6 @@
 					<button type="submit" id="Button1" class="button"><img alt="Save" src="../Images/tick.png">Изменить пароль и показать карту</button>
 				</form>
 			</td>
-			<td style="font-size:small;">
-					<a class="big-link" data-reveal-id="myModal_active" href="#" >
-					<button type="button" id="Button2" class="button"><img alt="Save" src="../Images/tick.png"> Управление услугами </button>
-					</a>
-			</td>
 		</tr>
 	</tbody>
 </table>

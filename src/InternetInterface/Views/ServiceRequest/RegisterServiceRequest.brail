@@ -1,0 +1,97 @@
+﻿<script type="text/javascript">
+	$(function () {
+		$('.contact_link').click(function () {
+			$('#contact_text').val(this.innerText);
+		});
+
+		$("#registrationForm").validate({
+			errorElement: "div",
+			errorLabelContainer: "#errorContainer"
+		});
+		$.validator.addMethod(
+		"regexContact",
+		function (value, element, regexp) {
+			var re = new RegExp(regexp);
+			return this.optional(element) || re.test(value);
+		}, "Введите телефон в формате ***-*******");
+
+		$('#contact_text').rules("add", { required: true, regexContact: "^([0-9]{3})\-([0-9]{7})$",
+			messages: {
+				required: "Введите номер телефона"
+			}
+		});
+		$('#DescriptionText').rules("add", { required: true,
+			messages: {
+				required: "Введите текст заявки"
+			}
+		})
+	})
+</script>
+<style>
+	.table td
+	{
+		border-bottom: none;
+		}
+</style>
+<div style="width:750px;" class="backGround">
+<form id="registrationForm" method=post>
+	<table class="table">
+		<thead>
+			<tr>
+				<th colspan=2>
+					Регистрация сервисной заявки <a href="${SiteRoot}/UserInfo/SearchUserInfo?filter.ClientCode=${client.Id}"> ${client.Name}</a>
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr><td colspan=2 id="errorContainer"></td></tr>
+			<tr>
+				<td colspan=2>
+					<input type="hidden" name="request.Client.Id" value="${client.Id}" />
+					<label for="DescriptionText"><b>Текст заявки :</b></label>
+					<textarea id="DescriptionText" name="request.Description" rows="8" cols="90%"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Телефон для связи с клиентом:
+				</td>
+				<td>
+					<input type=text id="contact_text" style="margin-right:15px;" name="request.Contact"/><a href="#" style="margin-left:15px;" onclick="$('#contacts').slideToggle('slow');">Существующие</a>
+					<div id="contacts" style="display:none; background-color:#d7d9d9; border: 1px double #bfbfbf; margin-top:7px; width:250px;">
+						<table>
+							<tbody>
+								<%for contact in client.Contacts: %>
+								<tr>
+									<td>
+										<a href="#" class="contact_link"><b> ${contact.HumanableNumber()} </b></a>
+									</td>
+									<td>
+										${contact.GetReadbleCategorie()}
+									</td>
+								</tr>
+								<%end %>
+							</tbody>
+						</table>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Назначить на инженера :
+				</td>
+				<td>
+					<select name="request.Performer.Id">
+						<%for ing in ingeners: %>
+							<option value="${ing.Id}">${ing.Name}</option>
+						<%end %>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td colspan=2><button type=submit class="button">Сохранить</button></td>
+			</tr>
+		</tbody>
+	</table>
+</form>
+</div>

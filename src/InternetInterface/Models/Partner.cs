@@ -63,6 +63,11 @@ namespace InternetInterface.Models
 			return Queryable.Where(p => p.Categorie.ReductionName == "Agent").ToList();
 		}
 
+		public static List<Partner> GetServiceIngeners()
+		{
+			return Queryable.Where( p => p.Categorie.ReductionName == "Service").ToList();
+		}
+
 		public override void SaveAndFlush()
 		{
 			base.SaveAndFlush();

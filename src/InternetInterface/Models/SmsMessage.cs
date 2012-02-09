@@ -13,7 +13,9 @@ namespace InternetInterface.Models
 	public class SmsMessage : ActiveRecordLinqBase<SmsMessage>
 	{
 		public SmsMessage()
-		{}
+		{
+			CreateDate = DateTime.Now;
+		}
 
 		public SmsMessage(Client client, string text, DateTime? shouldBeSend = null)
 		{

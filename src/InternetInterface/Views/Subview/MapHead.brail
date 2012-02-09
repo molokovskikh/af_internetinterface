@@ -61,9 +61,12 @@
 			<%if PartnerAccessSet.AccesPartner("AIV"): %>
 			<th><a href = "../AgentInfo/SummaryInformation.rails" ><span class="MH"><div class=menudiv>Платежи</div></span></a></th>
 			<%end %>
-			<th>
+			<%if PartnerAccessSet.AccesPartner("SR"): %>
+			<th><a href = "../ServiceRequest/ViewMyRequest.rails" ><span class="MH"><div class=menudiv>Посмотреть назначенные заявки</div></span></a></th>
+			<%end %>
+			<th align=right style="text-align:right;">
 				<form class="form" id="Exit" name="Exit" method="post" action="${siteroot}/ExitPartner/Yes" >
-				<button type="submit" class="button">
+				<button type="submit" class="button" style="float:none; display:inline;">
 				<img alt="Save" src="../Images/application_edit.png"> Выход
 				</button>
 				</form>

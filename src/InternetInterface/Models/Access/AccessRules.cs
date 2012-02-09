@@ -19,6 +19,8 @@ namespace InternetInterface.Models.Access
 		private static HashSet<string> _houseMapUse;
 		private static HashSet<string> _agentInfo;
 		private static HashSet<string> _agentPayers; 
+		private static HashSet<string> _serviceRequest; 
+		private static HashSet<string> _adminServiceRequest; 
 
 		public static List<string> GetAccessName(string _methodName)
 		{
@@ -72,6 +74,13 @@ namespace InternetInterface.Models.Access
 			if (GetRulesName_agentPayers() != string.Empty)
 			{
 				result.Add(GetRulesName_agentPayers());
+			}
+			if (GetRulesName_serviceRequest() != string.Empty)
+			{
+				result.Add(GetRulesName_serviceRequest());
+			}
+			if (GetRulesName_adminServiceRequest() != string.Empty) {
+				result.Add(GetRulesName_adminServiceRequest());
 			}
 			return result;
 		}
@@ -286,6 +295,23 @@ namespace InternetInterface.Models.Access
 									"DeleteContact"
 								};
 			return _visibleDemand.Contains(methodName) ? "ECI" : string.Empty;
+		}
+
+		private static string GetRulesName_serviceRequest()
+		{
+			_serviceRequest = new HashSet<string> {
+				"SiteMap",
+				"ViewMyRequest"
+			};
+			return _serviceRequest.Contains(methodName) ? "SR" : string.Empty;
+		}
+
+		private static string GetRulesName_adminServiceRequest()
+		{
+			_adminServiceRequest = new HashSet<string> {
+				"RegisterServiceRequest"
+			};
+			return _adminServiceRequest.Contains(methodName) ? "ASR" : string.Empty;
 		}
 	}
 }

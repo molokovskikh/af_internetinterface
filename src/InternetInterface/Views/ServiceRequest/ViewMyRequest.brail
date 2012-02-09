@@ -1,0 +1,29 @@
+﻿<div class="backGround" style="width:800px;">
+	<table class="table">
+		<thead>
+			<tr>
+				<th colspan=5>
+					Назначенные заявки
+				</th>
+			</tr>
+			<tr style="text-align:center;">
+				<th>ID заявки</th>
+				<th>Клиент</th>
+				<th>Краткое описание</th>
+				<th>Контакт</th>
+				<th>Статус</th>
+			</tr>
+		</thead>
+		<tbody>
+		<%for request in requests: %>
+			<tr>
+				<td><a href="${Siteroot}/ServiceRequest/ShowRequest?Id=${request.Id}">${request.Id}</a></td>
+				<td>[${request.Client.Id}] ${request.Client.Name}</td>
+				<td>${request.GetMinDiscription()}</td>
+				<td>${request.Contact}</td>
+				<td>${request.GetStatusName()}</td>
+			</tr>
+		<%end %>
+		</tbody>
+	</table>
+</div>

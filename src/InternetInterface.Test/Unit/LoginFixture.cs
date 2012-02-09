@@ -13,13 +13,13 @@ namespace InternetInterface.Test.Unit_
 	[TestFixture]
 	class LoginFixture : ActiveDirectoryHelper
 	{
-        [Test]
-        public void GenPass()
-        {
-            Console.WriteLine(CryptoPass.GetHashString("1234"));
-        }
+		[Test]
+		public void GenPass()
+		{
+			Console.WriteLine(CryptoPass.GetHashString("1234"));
+		}
 
-	    [Test]
+		[Test]
 		public void ImageTest()
 		{
 
