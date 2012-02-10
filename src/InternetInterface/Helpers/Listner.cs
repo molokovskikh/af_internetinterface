@@ -108,8 +108,7 @@ namespace InternetInterface.Helpers
 				Client client = null;
 				if (@event.Entity.GetType() == typeof(Client))
 					client = (Client)@event.Entity;
-				var clientProp = @event.Entity.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(
-					p => p.PropertyType == typeof (Client)).FirstOrDefault();
+				var clientProp = @event.Entity.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance).FirstOrDefault(p => p.PropertyType == typeof (Client));
 				if (clientProp != null || client != null) {
 					{
 						if (clientProp != null)
@@ -122,6 +121,13 @@ namespace InternetInterface.Helpers
 							AppealType = AppealType.System
 						});
 					}
+				}
+				if (@event.Entity.GetType() == typeof(ServiceRequest)) {
+					@event.Session.Save(
+						new ServiceIteration {
+							Description = message,
+							Request = (ServiceRequest)@event.Entity
+						});
 				}
 			}
 		}

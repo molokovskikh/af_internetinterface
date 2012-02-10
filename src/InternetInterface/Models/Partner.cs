@@ -50,6 +50,11 @@ namespace InternetInterface.Models
 			return FindAllByProperty("Login", login).FirstOrDefault();
 		}
 
+		public virtual bool CategorieIs(string reductionName)
+		{
+			return Categorie.ReductionName == reductionName;
+		}
+
 		public virtual decimal GetAgentPayment(Week interval)
 		{
 			return
@@ -119,6 +124,11 @@ namespace InternetInterface.Models
 			{
 				return false;
 			}
+		}
+
+		public override string ToString()
+		{
+			return Name;
 		}
 	}
 

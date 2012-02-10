@@ -301,7 +301,10 @@ namespace InternetInterface.Models.Access
 		{
 			_serviceRequest = new HashSet<string> {
 				"SiteMap",
-				"ViewMyRequest"
+				"ViewMyRequest",
+				"ShowRequest",
+				"AddIteration",
+				"EditServiceRequest"
 			};
 			return _serviceRequest.Contains(methodName) ? "SR" : string.Empty;
 		}
@@ -309,7 +312,10 @@ namespace InternetInterface.Models.Access
 		private static string GetRulesName_adminServiceRequest()
 		{
 			_adminServiceRequest = new HashSet<string> {
-				"RegisterServiceRequest"
+				"RegisterServiceRequest",
+				"ShowRequest",
+				"AddIteration",
+				"EditServiceRequest"
 			};
 			return _adminServiceRequest.Contains(methodName) ? "ASR" : string.Empty;
 		}

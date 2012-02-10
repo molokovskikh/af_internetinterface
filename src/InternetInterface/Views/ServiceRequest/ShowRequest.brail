@@ -1,0 +1,171 @@
+﻿<%if Edit: %>
+<script type="text/javascript" src="${Siteroot}/JavaScript/vaidServiceRequest.js"></script>
+<%else: %>
+<script type="text/javascript">
+	$(function () {
+		$("#DescriptionForm").validate({
+			errorElement: "div",
+			errorLabelContainer: "#errorContainer",
+		});
+		$('#DescriptionText').rules("add", { required: true,
+			messages: {
+				required: "Введите текст заявки"
+			}
+		});
+	});
+</script>
+<%end %>
+<style>
+	.table td
+	{
+		border-bottom: none;
+		}
+	.requestCutInfo td
+	{
+		padding-left: 20px;
+		}
+		
+	.requestCutInfo.last
+	{
+		border-bottom: 1px double #AAA;
+		}
+		
+	.requestCutInfo.last td
+	{
+		padding-bottom: 20px;
+	}
+</style>
+<%if request != null: %>
+<div style="width:1200px; font-family:Verdana, sans-serif; color:#484848; font-size:12px;" class="backGround">
+<%if Edit: %>
+<form class="validateFormService" action="${Siteroot}/ServiceRequest/EditServiceRequest" method=post >
+<input type=hidden name="request.Id" value="${request.Id}" />
+<input type=hidden name="request.Client.Id" value="${request.Client.Id}" />
+<input type=hidden name="request.Description" value="${request.Description}" />
+<%end %>
+<table class="table" style="width:100%; background-color:#FFD; border:1px double #AAA;">
+	<thead>
+		<tr>
+			<th colspan=4>Заявка клиента: ${request.Client.Name}
+			<%if not Edit: %>
+			<a href="?Id=${request.Id}&Edit=true">(Редактировать)</a>
+			<%end %>
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr class="requestCutInfo">
+			<td><b>Статус</b></td>
+			<%if not Edit: %>
+			<td>${request.GetStatusName()}</td>
+			<%else: %>
+			<td>
+				<select name="request.Status">
+					<%for status in RequestStatuses: %>
+						<option value="${status.Id}" ${"selected" if (request.Status == status.Id)}>${status.Name}</option>
+					<%end %>
+				</select>
+			</td>
+			<%end %>
+			<td><b>Дата создания</b></td>
+			<td>${request.RegDate.ToShortDateString()}</td>
+		</tr>
+		<tr class=requestCutInfo>
+			<td><b>Телефон для связи</b></td>
+			<%if not Edit: %>
+			<td>${request.Contact}</td>
+			<%else: %>
+			<td>
+				<input id="contact_text" type=text value="${request.Contact}" name="request.Contact" />
+			</td>
+			<%end %>
+			<td><b>Дата выполнения</b></td>
+			<%if not Edit: %>
+				<%if request.PerformanceDate != null: %>
+				<td>${request.PerformanceDate.ToShortDateString()}</td>
+				<%else: %><td></td><%end %>
+			<%else: %>
+				<%if request.PerformanceDate != null: %>
+					<td><input type=text value="${request.PerformanceDate.ToShortDateString()}" name="request.PerformanceDate" class="graph_date" class="dp-hover"></td>
+				<%else: %>
+					<td><input type=text name="request.PerformanceDate" class="graph_date" class="dp-hover"></td>
+				<%end %>
+			<%end %>
+		</tr>
+		<tr class="requestCutInfo">
+			<td><b>Назначена</b></td>
+			<%if not Edit: %>
+			<td>${request.Performer.Name}</td>
+			<%else: %>
+			<td>
+				<select name="request.Performer.Id">
+					<%for ingener in ingeners: %>
+						<option value="${ingener.Id}" ${"selected" if (request.Performer.Id == ingener.Id)}>${ingener.Name}</option>
+					<%end %>
+				</select>
+			</td>
+			<%end %>
+			<td><b>Зарегистрировал</b></td>
+			<td>${request.Registrator.Name}</td>
+		</tr>
+		<tr class="requestCutInfo last">
+			<td><b>Сумма за оказанные услуги</b></td>
+			<%if not Edit: %>
+				<%if request.Sum != null: %>
+				<td>${request.Sum.ToString("0.00")} руб.</td>
+				<%else: %>
+				<td></td>
+				<%end %>
+			<%else: %>
+				<%if request.Sum != null: %>
+				<td><input id="sumField" type=text name="request.Sum" value="${request.Sum.ToString("0.00").Replace(",",".")}" /></td>
+				<%else: %>
+				<td><input id="Text1" type=text name="request.Sum" /></td>
+				<%end %>
+			<%end %>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td colspan=4 style="padding:20px;"><b>Описание</b><br /><br />${request.GetDescription()}</td>
+		</tr>
+		<%if Edit: %>
+		<tr><td colspan=4 id="errorContainer"></td></tr>
+		<tr><td colspan=4><button type=submit class="button">Сохранить</button></td></tr>
+		<%end %>
+	</tbody>
+</table>
+<%if Edit: %>
+</form>
+<%end %>
+<%if request.Iterations.Count > 0: %>
+<table class=table>
+	<tbody>
+	<%for iteration in  request.Iterations: %>
+		<tr><td>Добавлено<b> ${iteration.Performer.Name} </b> ${iteration.RegDate}</td></tr>
+		<tr><td>${iteration.GetDescription()}</td></tr>
+	<%end %>
+	</tbody>
+</table>
+<%end %>
+<form id="DescriptionForm" class="validateFormService" action="${Siteroot}/ServiceRequest/AddIteration" method="post">
+<table class="table">
+	<tbody>
+		<tr><td colspan=2><b>Добавить описание</b></td></tr>
+		<%if not Edit: %>
+		<tr><td id="errorContainer" style="display:none;"></td></tr>
+		<%end %>
+		<tr>
+			<td colspan=2>
+				<input type="hidden" name="iteration.Request.Id" value="${request.Id}" />
+				<textarea id="DescriptionText" name="iteration.Description" rows="7" cols="90%"></textarea>
+			</td>
+		</tr>
+		<tr>
+			<td colspan=2><button type=submit class="button">Добавить</button></td>
+		</tr>
+	</tbody>
+</table>
+</form>
+</div>
+<%end %>
