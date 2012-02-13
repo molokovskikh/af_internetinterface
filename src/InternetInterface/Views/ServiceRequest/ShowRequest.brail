@@ -1,5 +1,67 @@
 ﻿<%if Edit: %>
 <script type="text/javascript" src="${Siteroot}/JavaScript/vaidServiceRequest.js"></script>
+<script type="text/javascript">
+	$(function () {
+		var checkFlag = false;
+		$('.validateFormService').validate({
+			errorElement: "div",
+			errorLabelContainer: "#errorContainer",
+			submitHandler: function (form) {
+				var flagFree = document.getElementById('request_Free').checked;
+				if (flagFree && checkFlag) {
+					var url = "${Siteroot}/ServiceRequest/AddServiceComment";
+					$.ajax({
+						url: url,
+						data: { "requestId": ${request.Id},
+								"commentText" : $('.comment_sum_text:first').val()},
+						cache: false
+					});
+				}
+				form.submit();
+			}
+		});
+
+		$.validator.addMethod(
+		"zeroSumValidator",
+		function (value, element, validValue) {
+			if (element.checked && checkFlag) {
+				if ($('.comment_sum_text').length == 0) {
+					$('#comment_sum').append('<br />Причина: <input type="text" class="comment_sum_text">');
+				}
+				if ($('.comment_sum_text:first').val() != "") {
+					return true;
+				}
+			} else { return true; }
+			return false;
+		}, "Введите комментарий");
+
+		$('#sumField').rules("add", { number: true,
+			messages: {
+				number: "Должно быть введено число"
+			}
+		});
+
+		$('#contact_text').rules("add", { required: true, regexContact: "^([0-9]{3})\-([0-9]{7})$",
+			messages: {
+				required: "Введите номер телефона"
+			}
+		});
+
+		$('#request_Free').rules("add", { zeroSumValidator: true,
+			messages: {
+				zeroSumValidator: "Опишите причину, почему заявка стала бесплатной"
+			}
+		});
+		$('#request_Free').click(function () { 
+			checkFlag = true;
+			if (this.checked){
+				if ($('.comment_sum_text').length == 0) {
+					$('#comment_sum').append('<br />Причина: <input type="text" class="comment_sum_text">');
+				}
+			}
+		});
+	});
+</script>
 <%else: %>
 <script type="text/javascript">
 	$(function () {
@@ -15,28 +77,10 @@
 	});
 </script>
 <%end %>
-<style>
-	.table td
-	{
-		border-bottom: none;
-		}
-	.requestCutInfo td
-	{
-		padding-left: 20px;
-		}
-		
-	.requestCutInfo.last
-	{
-		border-bottom: 1px double #AAA;
-		}
-		
-	.requestCutInfo.last td
-	{
-		padding-bottom: 20px;
-	}
-</style>
+<link type="text/css" rel=Stylesheet href="${Siteroot}/Css/validServiceRequest.css"/>
+
 <%if request != null: %>
-<div style="width:1200px; font-family:Verdana, sans-serif; color:#484848; font-size:12px;" class="backGround">
+<div style="width:1200px; font-family:Verdana, sans-serif; color:#484848; font-size:12px;" class="backGround whereNewTable">
 <%if Edit: %>
 <form class="validateFormService" action="${Siteroot}/ServiceRequest/EditServiceRequest" method=post >
 <input type=hidden name="request.Id" value="${request.Id}" />
@@ -46,7 +90,12 @@
 <table class="table" style="width:100%; background-color:#FFD; border:1px double #AAA;">
 	<thead>
 		<tr>
-			<th colspan=4>Заявка клиента: ${request.Client.Name}
+			<th colspan=4>
+			<%if IsService: %>
+			Заявка клиента: ${request.Client.Name}
+			<%else: %>
+				<a href="${Siteroot}/Search/Redirect?filter.ClientCode=${request.Client.Id}">${request.Client.Name}</a>
+			<%end %>
 			<%if not Edit: %>
 			<a href="?Id=${request.Id}&Edit=true">(Редактировать)</a>
 			<%end %>
@@ -120,11 +169,20 @@
 				<%if request.Sum != null: %>
 				<td><input id="sumField" type=text name="request.Sum" value="${request.Sum.ToString("0.00").Replace(",",".")}" /></td>
 				<%else: %>
-				<td><input id="Text1" type=text name="request.Sum" /></td>
+				<td><input id="sumField" type=text name="request.Sum" /></td>
 				<%end %>
 			<%end %>
-			<td></td>
-			<td></td>
+			<td id="comment_sum"><b>Бесплатная</b></td>
+			<%if not Edit: 
+				if request.Free: %>
+					<td>Да</td>
+				<%else: %>
+					<td>Нет</td>
+				<%end else: %>
+					<td>
+						${app.Edit("request.Free")}
+					</td>
+			<%end %>
 		</tr>
 		<tr>
 			<td colspan=4 style="padding:20px;"><b>Описание</b><br /><br />${request.GetDescription()}</td>
@@ -168,4 +226,10 @@
 </table>
 </form>
 </div>
+<%else: %>
+	<div class="flash">
+		<div class="error">
+			Заявка либо не найдена, либо вы не имеете доступа к ней
+		</div>
+	</div>
 <%end %>

@@ -1,0 +1,77 @@
+﻿<script type="text/javascript">
+	$(function () {
+		$('.graph_date').datepicker();
+	});
+</script>
+<link type="text/css" rel=Stylesheet href="${Siteroot}/Css/validServiceRequest.css"/>
+<div class="backGround" style="width:800px;">
+<div class="whereNewTable">
+<form method=get>
+	<table class="table" style="border:1px double #AAA;">
+		<thead>
+			<tr>
+				<th>Фильтр</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>
+					Статус
+					<select name="filter.Status" style="margin-left:20px;">
+						<option value="0">Любой</option>
+						<%for status in Statuses: %>
+							<option value="${status.Id}" ${"selected" if (filter.Status == status.Id)}>${status.Name}</option>
+						<%end %>
+					</select>
+				</td>
+			</tr>
+			<tr class="witch_padding_date">
+				<td>
+					Интервал даты 
+					<select name="filter.DateSelector">
+						<option value=0 ${"selected" if (filter.DateSelector == 0)}>Создания</option>
+						<option value=1 ${"selected" if (filter.DateSelector == 1)}>Назначения</option>
+						<option value=2 ${"selected" if (filter.DateSelector == 2)}>Закрытия</option>
+					</select>
+					с
+					<input type=text name="filter.Period.Begin" value="${filter.Period.Begin.ToShortDateString()}" class="graph_date">
+					по
+					<input type=text name="filter.Period.End" value="${filter.Period.End.ToShortDateString()}" class="graph_date">
+				</td>
+			</tr>
+			<tr>
+				<td><button class="button" type=submit>Применить</button></td>
+			</tr>
+		</tbody>
+	</table>
+</form>
+</div>
+	<table class="table">
+		<thead>
+			<tr>
+				<th colspan=5>
+					Назначенные заявки
+				</th>
+			</tr>
+			<tr style="text-align:center;">
+				<th>${app.Sortable("ID заявки", "RequestId")}</th>
+				<th>${app.Sortable("Клиент", "ClientId")}</th>
+				<th>${app.Sortable("Краткое описание", "Description")}</th>
+				<th>${app.Sortable("Контакт", "Contact")}</th>
+				<th>${app.Sortable("Статус", "Status")}</th>
+			</tr>
+		</thead>
+		<tbody>
+		<%for request in requests: %>
+			<% OutputSubView("""\Subview\ServiceRequestRow""", {"request" : request}) %>
+		<%end %>
+		<tr>
+			<td colspan=5>
+				<div class="Paginator">
+					 ${PaginatorHelper.ShowPaginator()}
+				</div>
+			</td>
+		</tr>
+		</tbody>
+	</table>
+</div>

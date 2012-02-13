@@ -977,6 +977,11 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 			}
 			PropertyBag["EditConnectInfoFlag"] = filter.EditConnectInfoFlag;
 			PropertyBag["SendSmsNotifocation"] = client.SendSmsNotifocation;
+			PropertyBag["ServiceRequests"] = new RequestFinderFilter {
+				_Client = client,
+				Period = null
+			}.Find();
+			PropertyBag["isService"] = false;
 			ConnectPropertyBag(filter.ClientCode);
 			SendConnectInfo(client);
 			SendUserWriteOff();

@@ -301,10 +301,11 @@ namespace InternetInterface.Models.Access
 		{
 			_serviceRequest = new HashSet<string> {
 				"SiteMap",
-				"ViewMyRequest",
+				"ViewRequests",
 				"ShowRequest",
 				"AddIteration",
-				"EditServiceRequest"
+				"EditServiceRequest",
+				"AddServiceComment"
 			};
 			return _serviceRequest.Contains(methodName) ? "SR" : string.Empty;
 		}
@@ -315,7 +316,8 @@ namespace InternetInterface.Models.Access
 				"RegisterServiceRequest",
 				"ShowRequest",
 				"AddIteration",
-				"EditServiceRequest"
+				"EditServiceRequest",
+				"AddServiceComment"
 			};
 			return _adminServiceRequest.Contains(methodName) ? "ASR" : string.Empty;
 		}

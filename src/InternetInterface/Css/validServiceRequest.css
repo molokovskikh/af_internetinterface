@@ -1,0 +1,25 @@
+.whereNewTable table td
+{
+	border-bottom: none;
+}
+
+.whereNewTable.requestCutInfo td
+{
+	padding-left: 20px;
+}
+	
+.whereNewTable.requestCutInfo.last
+{
+	border-bottom: 1px double #AAA;
+}
+	
+.whereNewTable.requestCutInfo.last td
+{
+	padding-bottom: 20px;
+}
+
+.witch_padding_date .graph_date
+{
+	margin-left:10px;
+	margin-right:10px;
+}

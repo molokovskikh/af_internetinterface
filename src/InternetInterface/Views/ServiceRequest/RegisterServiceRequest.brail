@@ -73,13 +73,9 @@
 				</td>
 			</tr>
 			<tr>
-				<td>Стоимость оказываемых услуг</td>
-				<td><input type=text  name="request.Sum" id="sumField" /></td>
-			</tr>
-			<tr>
 				<td>Дата исполнения заявки</td>
 				<td>
-					<input type=text  name="filter.endDate" id="endDate" class="graph_date" class="dp-hover">
+					<input type=text  name="request.PerformanceDate" id="endDate" class="graph_date" class="dp-hover">
 				</td>
 			</tr>
 			<tr>

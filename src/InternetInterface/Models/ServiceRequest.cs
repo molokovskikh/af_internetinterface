@@ -33,6 +33,8 @@ namespace InternetInterface.Models
 			Status = ServiceRequestStatus.New;
 		}
 
+		private ServiceRequestStatus _status;
+
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
@@ -42,8 +44,21 @@ namespace InternetInterface.Models
 		[Property, Auditable("Контактный телефон")]
 		public virtual string Contact { get; set; }
 
-		[Property, Auditable("Статус")]
-		public virtual ServiceRequestStatus Status { get; set; }
+		[Property, Auditable("Статус сервисной заявки")]
+		public virtual ServiceRequestStatus Status 
+		{ 
+			get
+			{
+				return _status;
+			}
+		
+			set
+			{
+				if (value == ServiceRequestStatus.Close && value != _status)
+					ClosedDate = DateTime.Now;
+					_status = value;
+			} 
+		}
 
 		[BelongsTo]
 		public virtual Client Client { get; set; }
@@ -59,6 +74,9 @@ namespace InternetInterface.Models
 
 		[Property, Auditable("Сумма за предоставленные услуги")]
 		public virtual decimal? Sum { get; set; }
+
+		[Property, Auditable("Бесплатная заявка")]
+		public virtual bool Free { get; set; }
 
 		[BelongsTo]
 		public virtual Partner Registrator { get; set; }
@@ -99,6 +117,11 @@ namespace InternetInterface.Models
 					return "Ожидает";
 			}
 			return string.Empty;
+		}
+
+		public static List<object> GetStatuses()
+		{
+			return new List<object>(Enum.GetValues(typeof(ServiceRequestStatus)).Cast<int>().Select(s => new {Id = s, Name = GetStatusName((ServiceRequestStatus)s)}));
 		}
 	}
 }

@@ -166,7 +166,7 @@
     <None Include="Views\Register\RegisterRequest.brail" />
     <None Include="Views\Rescues\404.brail" />
     <None Include="Views\ServiceRequest\ShowRequest.brail" />
-    <None Include="Views\ServiceRequest\ViewMyRequest.brail" />
+    <None Include="Views\ServiceRequest\ViewRequests.brail" />
     <None Include="Views\Subview\AppealsInfo.brail" />
     <None Include="Views\Subview\CallsHistory.brail" />
     <None Include="Views\Subview\ChangeBalanceInfo.brail" />
@@ -175,6 +175,7 @@
     <None Include="Views\Subview\ContactInfo.brail" />
     <None Include="Views\Subview\CreateEditLabel.brail" />
     <None Include="Views\Subview\UserWriteOffs.brail" />
+    <None Include="Views\Subview\ViewServiceRequests.brail" />
     <None Include="Views\Switches\FreePortForSwitch.brail" />
     <None Include="Views\Subview\House.brail" />
     <None Include="Views\Subview\LegalPerson.brail" />
@@ -212,6 +213,7 @@
     <Content Include="JavaScript\jquery.validate.js" />
     <None Include="Views\Subview\StaticIps.brail" />
     <None Include="Views\ServiceRequest\RegisterServiceRequest.brail" />
+    <None Include="Views\Subview\ServiceRequestRow.brail" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

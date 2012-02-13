@@ -29,40 +29,40 @@
 		</th>
 		<tr valign="top"  class="menuItem">
 			<%if PartnerAccessSet.AccesPartner("RC"): %>
-			<th><a href = "../Register/RegisterClient.rails" ><span class="MH"><div class=menudiv>Регистрация абонента</div></span></a></th>
+			<th><a href = "../Register/RegisterClient" ><span class="MH"><div class=menudiv>Регистрация абонента</div></span></a></th>
 			<%end %>
 			<%if PartnerAccessSet.AccesPartner("RC"): %>
-			<th><a href = "../Register/RegisterLegalPerson.rails" ><span class="MH"><div class=menudiv>Регистрация ЮрЛица</div></span></a></th>
+			<th><a href = "../Register/RegisterLegalPerson" ><span class="MH"><div class=menudiv>Регистрация ЮрЛица</div></span></a></th>
 			<%end %>
 			<%if PartnerAccessSet.AccesPartner("VD"): %>
-			<th><a href = "../UserInfo/RequestView.rails" ><span class="MH"><div class=menudiv>Заявки</div></span></a></th>
+			<th><a href = "../UserInfo/RequestView" ><span class="MH"><div class=menudiv>Заявки</div></span></a></th>
 			<%end %>
 			<%if PartnerAccessSet.AccesPartner("GCI"): %>
-			<th><a href = "../Search/SearchUsers.rails" ><span class="MH"><div class=menudiv>Клиенты</div></span></a></th>
+			<th><a href = "../Search/SearchUsers" ><span class="MH"><div class=menudiv>Клиенты</div></span></a></th>
 			<%end %> 
 			<%if PartnerAccessSet.AccesPartner("DHCP"): %>
-			<th><a href = "../Switches/OnLineClient.rails?Zone=4" ><span class="MH"><div class=menudiv>OnLine клиенты</div></span></a></th>
+			<th><a href = "../Switches/OnLineClient?Zone=4" ><span class="MH"><div class=menudiv>OnLine клиенты</div></span></a></th>
 			<%end %>
 			<%if PartnerAccessSet.AccesPartner("SSI"): %>
-			<th><a href = "../Payers/Filter.rails" ><span class="MH"><div class=menudiv>Платежи по регистраторам</div></span></a></th>
+			<th><a href = "../Payers/Filter" ><span class="MH"><div class=menudiv>Платежи по регистраторам</div></span></a></th>
 			<%end %>
 			<%if (PartnerAccessSet.AccesPartner("SSI") or PartnerAccessSet.AccesPartner("PFA")): %>
-			<th><a href = "../Payers/AgentFilter.rails" ><span class="MH"><div class=menudiv>Платежи</div></span></a></th>
+			<th><a href = "../Payers/AgentFilter" ><span class="MH"><div class=menudiv>Платежи</div></span></a></th>
 			<%end %>
 			<%if PartnerAccessSet.AccesPartner("SSI"): %>
-			<th><a href = "../UserInfo/RequestGraph.rails" ><span class="MH"><div class=menudiv>График подключений</div></span></a></th>
+			<th><a href = "../UserInfo/RequestGraph" ><span class="MH"><div class=menudiv>График подключений</div></span></a></th>
 			<%end %>
 			<%if PartnerAccessSet.AccesPartner("HMA"): %>
-			<th><a href = "../HouseMap/FindHouse.rails" ><span class="MH"><div class=menudiv>Карта дома</div></span></a></th>
-			<%end %>
-			<%if PartnerAccessSet.AccesPartner("RP"): %>
-			<th><a href = "../UserInfo/Administration.rails" ><span class="MH"><div class=menudiv>Администрирование</div></span></a></th>
-			<%end %>
-			<%if PartnerAccessSet.AccesPartner("AIV"): %>
-			<th><a href = "../AgentInfo/SummaryInformation.rails" ><span class="MH"><div class=menudiv>Платежи</div></span></a></th>
+			<th><a href = "../HouseMap/FindHouse" ><span class="MH"><div class=menudiv>Карта дома</div></span></a></th>
 			<%end %>
 			<%if PartnerAccessSet.AccesPartner("SR"): %>
-			<th><a href = "../ServiceRequest/ViewMyRequest.rails" ><span class="MH"><div class=menudiv>Посмотреть назначенные заявки</div></span></a></th>
+			<th><a href = "../ServiceRequest/ViewRequests" ><span class="MH"><div class=menudiv>Сервисные заявки</div></span></a></th>
+			<%end %>
+			<%if PartnerAccessSet.AccesPartner("RP"): %>
+			<th><a href = "../UserInfo/Administration" ><span class="MH"><div class=menudiv>Администрирование</div></span></a></th>
+			<%end %>
+			<%if PartnerAccessSet.AccesPartner("AIV"): %>
+			<th><a href = "../AgentInfo/SummaryInformation" ><span class="MH"><div class=menudiv>Платежи</div></span></a></th>
 			<%end %>
 			<th align=right style="text-align:right;">
 				<form class="form" id="Exit" name="Exit" method="post" action="${siteroot}/ExitPartner/Yes" >
@@ -106,6 +106,9 @@
 			<th></th>
 			<%end %>
 			<%if PartnerAccessSet.AccesPartner("HMA"): %>
+			<th></th>
+			<%end %>
+			<%if PartnerAccessSet.AccesPartner("RP"): %>
 			<th></th>
 			<%end %>
 			<%if PartnerAccessSet.AccesPartner("RP"): %>
