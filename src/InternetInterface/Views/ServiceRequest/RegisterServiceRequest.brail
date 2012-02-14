@@ -1,8 +1,18 @@
 ﻿<script type="text/javascript" src="${Siteroot}/JavaScript/vaidServiceRequest.js"></script>
 <script type="text/javascript">
 	$(function () {
+		$('.validateFormService').validate({
+			errorElement: "div",
+			errorLabelContainer: "#errorContainer"
+		});
 		$('.contact_link').click(function () {
 			$('#contact_text').val(this.innerText);
+		});
+
+		$('#contact_text').rules("add", { required: true, regexContact: "^([0-9]{3})\-([0-9]{7})$",
+			messages: {
+				required: "Введите номер телефона"
+			}
 		});
 		$('#DescriptionText').rules("add", { required: true,
 			messages: {

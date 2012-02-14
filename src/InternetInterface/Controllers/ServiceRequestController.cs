@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Web;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
+using Common.Tools;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Controllers.Filter;
@@ -127,15 +128,21 @@ namespace InternetInterface.Controllers
 				newRequest.Save();
 				var endPoint = client.FirstPoint();
 				var port = endPoint != null ? endPoint.Port.ToString() : string.Empty;
-				var message = new SmsMessage {
-					PhoneNumber = "+7" + newRequest.Performer.TelNum,
-					Text = string.Format("Сервис {0} т. {1} п. {2} сч. {3}", client.GetCutAdress(), "+7-" + newRequest.Contact.Replace("-", string.Empty), port, client.Id)
-				};
+				if (newRequest.Performer != null)
+				{ 
+					var message = new SmsMessage {
+						PhoneNumber = "+7" + newRequest.Performer.TelNum,
+						Text = string.Format("Сервис {0} т. {1} п. {2} сч. {3}", client.GetCutAdress(), "+7-" + newRequest.Contact.Replace("-", string.Empty), port, client.Id)
+					};
 #if !DEBUG
-				SmsHelper.SendMessage(message);
+					SmsHelper.SendMessage(message);
 #endif
-				Flash["Message"] = "Сохранено";
-				RedirectToUrl("../Search/Redirect?filter.ClientCode=" + client.Id);
+					Flash["Message"] = "Сохранено";
+					RedirectToUrl("../Search/Redirect?filter.ClientCode=" + client.Id);
+				}
+				else {
+					Flash["Message"] = Message.Error("Не выбран исполнитель !");
+				}
 			}
 		}
 
