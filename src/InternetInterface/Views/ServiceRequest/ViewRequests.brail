@@ -54,6 +54,7 @@
 	</table>
 </form>
 </div>
+<% if requests.Count > 0: %>
 	<table class="table">
 		<thead>
 			<tr>
@@ -92,4 +93,11 @@
 		</tr>
 		</tbody>
 	</table>
+<%else: %>
+<div class="flash" style="width:100%; margin-left:0px;">
+	<div class="message error" >
+		По вашему запросу ничего не найдено, либо вы не ввели информацию для поиска
+	</div>
+</div>
+<%end %>
 </div>
