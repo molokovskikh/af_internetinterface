@@ -25,7 +25,24 @@ namespace BananceChanger
 			//TheeDaysTrial();
 			//DonachislitKlientamUkogo();
 			//SmsHelper.SendMessage(string.Empty, "123");
-			SendSmsIfNoSending();
+			//SendSmsIfNoSending();
+			DeleteWriteOffInNowDay();
+		}
+
+		/*Удаляет списания за определенный день*/
+		public static void DeleteWriteOffInNowDay()
+		{
+			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
+				var writeOffs = WriteOff.Queryable.Where( w => w.WriteOffDate >= DateTime.Now.AddDays(-1) && w.Client.PhysicalClient != null).ToList();
+				foreach (var writeOff in writeOffs) {
+					var physicalClient = writeOff.Client.PhysicalClient;
+					physicalClient.Balance += writeOff.WriteOffSum;
+					Console.WriteLine("Клиенту {0} начислено {1}", writeOff.Client.Id, writeOff.WriteOffSum);
+					physicalClient.Update();
+					writeOff.Delete();
+				}
+				transaction.VoteCommit();
+			}
 		}
 
 		public static void SendSmsIfNoSending()
