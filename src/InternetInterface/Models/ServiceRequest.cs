@@ -17,10 +17,8 @@ namespace InternetInterface.Models
 		New = 1,
 		[Description("Закрыт")]
 		Close = 3,
-		[Description("Ожидает")]
-		Waiting = 5,
-		[Description("Заблокирован")]
-		Block = 7
+		[Description("Отменен")]
+		Cancel = 5
 	}
 
 	[ActiveRecord("ServiceRequest", Schema = "internet", Lazy = true), Auditable]
@@ -29,7 +27,6 @@ namespace InternetInterface.Models
 		public ServiceRequest()
 		{
 			RegDate = DateTime.Now;
-			Registrator = InitializeContent.Partner;
 			Status = ServiceRequestStatus.New;
 		}
 
@@ -111,10 +108,8 @@ namespace InternetInterface.Models
 					return "Новый";
 				case ServiceRequestStatus.Close:
 					return "Закрыт";
-				case ServiceRequestStatus.Block:
-					return "Заброкирован";
-				case ServiceRequestStatus.Waiting:
-					return "Ожидает";
+				case ServiceRequestStatus.Cancel:
+					return "Отменен";
 			}
 			return string.Empty;
 		}

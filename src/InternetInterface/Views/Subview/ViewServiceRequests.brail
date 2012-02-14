@@ -1,23 +1,33 @@
 ﻿<%if ServiceRequests.Count > 0: %>
 <div id="ServiceRequestDiv" style="display:none">
-<table class="table">
+<table class="table" id="serviceTableInClient" style="background-color:White; border:1px double #AAA; text-align:center;">
 	<thead>
 		<tr>
 			<th colspan=5 style="text-align:center;">
 				Сервисные заявки
 			</th>
 		</tr>
-		<tr style="text-align:center;">
+		<tr>
 				<th>Номер</th>
-				<th>Клиент</th>
 				<th>Краткое описание</th>
-				<th>Контакт</th>
+				<th>Дата создания</th>
+				<th>Дата выполнения</th>
 				<th>Статус</th>
 			</tr>
 	</thead>
 	<tbody>
 		<%for request in ServiceRequests: %>
-			<% OutputSubView("""\Subview\ServiceRequestRow""", {"request" : request}) %>
+			<tr>
+				<td style="font-size:16px;"><a href="${Siteroot}/ServiceRequest/ShowRequest?Id=${request.Id}">${request.Id.ToString("000")}</a></td>
+				<td>${request.GetMinDiscription()}</td>
+				<td>${request.RegDate.ToShortDateString()}</td>
+				<%if request.PerformanceDate != null: %>
+				<td>${request.PerformanceDate.ToShortDateString()}</td>
+				<%else: %>
+				<td></td>
+				<%end %>
+				<td>${request.GetStatusName()}</td>
+			</tr>
 		<%end %>
 	</tbody>
 </table>

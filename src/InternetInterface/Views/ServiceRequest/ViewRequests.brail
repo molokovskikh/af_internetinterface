@@ -10,14 +10,16 @@
 	<table class="table" style="border:1px double #AAA;">
 		<thead>
 			<tr>
-				<th>Фильтр</th>
+				<th colspan=2>Фильтр</th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr>
 				<td>
 					Статус
-					<select name="filter.Status" style="margin-left:20px;">
+				</td>
+				<td>
+					<select name="filter.Status">
 						<option value="0">Любой</option>
 						<%for status in Statuses: %>
 							<option value="${status.Id}" ${"selected" if (filter.Status == status.Id)}>${status.Name}</option>
@@ -28,6 +30,8 @@
 			<tr class="witch_padding_date">
 				<td>
 					Интервал даты 
+				</td>
+				<td>
 					<select name="filter.DateSelector">
 						<option value=0 ${"selected" if (filter.DateSelector == 0)}>Создания</option>
 						<option value=1 ${"selected" if (filter.DateSelector == 1)}>Назначения</option>
@@ -40,7 +44,11 @@
 				</td>
 			</tr>
 			<tr>
-				<td><button class="button" type=submit>Применить</button></td>
+				<td>Бесплатные</td>
+				<td>${app.Edit("filter.FreeFlag")}</td>
+			</tr>
+			<tr>
+				<td colspan=2><button class="button" type=submit>Применить</button></td>
 			</tr>
 		</tbody>
 	</table>
@@ -63,7 +71,17 @@
 		</thead>
 		<tbody>
 		<%for request in requests: %>
-			<% OutputSubView("""\Subview\ServiceRequestRow""", {"request" : request}) %>
+			<tr>
+				<td><a href="${Siteroot}/ServiceRequest/ShowRequest?Id=${request.Id}">${request.Id}</a></td>
+				<%if isService: %>
+					<td>[${request.Client.Id}] ${request.Client.Name}</td>
+				<%else: %>
+					<td><a href="${Siteroot}/Search/Redirect?filter.ClientCode=${request.Client.Id}">${request.Client.Name}</a></td>
+				<%end %>
+				<td>${request.GetMinDiscription()}</td>
+				<td>${request.Contact}</td>
+				<td>${request.GetStatusName()}</td>
+			</tr>
 		<%end %>
 		<tr>
 			<td colspan=5>

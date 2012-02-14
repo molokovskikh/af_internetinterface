@@ -22,6 +22,7 @@ namespace InternetInterface.Controllers
 		public DatePeriod Period { get; set; }
 		public Client _Client { get; set; }
 		public int DateSelector { get; set; }
+		public bool FreeFlag { get; set; }
 
 		private int _lastRowsCount;
 		public bool IsService;
@@ -95,6 +96,8 @@ namespace InternetInterface.Controllers
 			if (Period != null) {
 				criteria.Add(Restrictions.Ge(dateSelectorField, Period.Begin));
 				criteria.Add(Restrictions.Le(dateSelectorField, Period.End));
+			if (FreeFlag)
+				criteria.Add(Restrictions.Eq("Free", FreeFlag));
 			}
 
 			return criteria;
@@ -119,12 +122,14 @@ namespace InternetInterface.Controllers
 			PropertyBag["client"] = client;
 			PropertyBag["ingeners"] = Partner.GetServiceIngeners();
 			if (IsPost) {
-				var newRequest = new ServiceRequest();
+				var newRequest = new ServiceRequest{Registrator = InitializeContent.Partner};
 				BindObjectInstance(newRequest, "request", AutoLoadBehavior.NewInstanceIfInvalidKey);
 				newRequest.Save();
+				var endPoint = client.FirstPoint();
+				var port = endPoint != null ? endPoint.Port.ToString() : string.Empty;
 				var message = new SmsMessage {
 					PhoneNumber = "+7" + newRequest.Performer.TelNum,
-					Text = string.Format("Зарегистрирован вызов к клиенту. Заявка №{0}, клиент №{1}", newRequest.Id, client.Id)
+					Text = string.Format("Сервис {0} т. {1} п. {2} сч. {3}", client.GetCutAdress(), "+7-" + newRequest.Contact.Replace("-", string.Empty), port, client.Id)
 				};
 #if !DEBUG
 				SmsHelper.SendMessage(message);

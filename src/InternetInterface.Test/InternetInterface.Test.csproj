@@ -107,6 +107,7 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -127,6 +128,7 @@
     <Compile Include="Functional\RegisterPartnerFixrure.cs" />
     <Compile Include="Functional\RequestViewFixture.cs" />
     <Compile Include="Functional\SearchFixture.cs" />
+    <Compile Include="Functional\ServiceFixture.cs" />
     <Compile Include="Functional\Setup.cs" />
     <Compile Include="Functional\UserInfoFixture.cs" />
     <Compile Include="Helpers\ClientHelperFixture.cs" />

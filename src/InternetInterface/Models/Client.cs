@@ -107,6 +107,21 @@ namespace InternetInterface.Models
 			get { return Payments.Where(p => p.BillingAccount && p.Sum > 0).ToList().Count > 0; }
 		}
 
+		public virtual string GetAdress()
+		{
+			if (PhysicalClient != null) {
+				return PhysicalClient.GetAdress();
+			}
+			return string.Empty;
+		}
+
+		public virtual string GetCutAdress()
+		{
+			if (PhysicalClient != null)
+				return PhysicalClient.GetCutAdress();
+			return string.Empty;
+		}
+
 		public virtual string Contact
 		{
 			get
@@ -207,8 +222,13 @@ namespace InternetInterface.Models
 		[HasMany(ColumnKey = "Client", OrderBy = "Date")]
 		public virtual IList<Contact> Contacts { get; set; }
 	
-		/*[HasMany(ColumnKey = "Client", OrderBy = "Date", Lazy = true)]
-		public virtual IList<ClientEndpoints> Endpoints { get; set; }*/
+		[HasMany(ColumnKey = "Client", OrderBy = "Switch", Lazy = true)]
+		public virtual IList<ClientEndpoints> Endpoints { get; set; }
+
+		public virtual ClientEndpoints FirstPoint()
+		{
+			return Endpoints.FirstOrDefault();
+		}
 
 		[HasMany(ColumnKey = "Client", Lazy = true, Cascade = ManyRelationCascadeEnum.All)]
 		public virtual IList<ClientService> ClientServices { get; set; }

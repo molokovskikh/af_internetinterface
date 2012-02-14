@@ -179,6 +179,22 @@ namespace InternetInterface.Models
 		[OneToOne(PropertyRef = "PhysicalClient")]
 		public virtual Client Client { get; set; }
 
+		public virtual string GetAdress()
+		{
+			return string.Format("ул. {0} д. {1} {2} кв. {3} Подъезд {4} Этаж {5}",
+					Street,
+					House,
+					!string.IsNullOrEmpty(CaseHouse) ? " Корп " + CaseHouse : string.Empty,
+					Apartment,
+					Entrance,
+					Floor);
+		}
+
+		public virtual string GetCutAdress()
+		{
+			return string.Format("ул. {0} д. {1} кв. {2}", Street, House, Apartment);
+		}
+
 		public virtual string HowManyToPay(bool change)
 		{
 			var format = change ? "({0})" : "{0}";

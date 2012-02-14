@@ -3,6 +3,7 @@
 <script type="text/javascript">
 	$(function () {
 		var checkFlag = false;
+		var vvodSumFlag = false;
 		$('.validateFormService').validate({
 			errorElement: "div",
 			errorLabelContainer: "#errorContainer",
@@ -41,6 +42,10 @@
 			}
 		});
 
+		$('#sumField').change(function () {
+			$('#request_Free').removeAttr("checked");
+		});
+
 		$('#contact_text').rules("add", { required: true, regexContact: "^([0-9]{3})\-([0-9]{7})$",
 			messages: {
 				required: "Введите номер телефона"
@@ -55,6 +60,7 @@
 		$('#request_Free').click(function () { 
 			checkFlag = true;
 			if (this.checked){
+				$('#sumField').val("");
 				if ($('.comment_sum_text').length == 0) {
 					$('#comment_sum').append('<br />Причина: <input type="text" class="comment_sum_text">');
 				}
@@ -103,6 +109,15 @@
 		</tr>
 	</thead>
 	<tbody>
+		<tr class="requestCutInfo">
+			<td><b>Адрес клиента</b></td>
+			<td>${request.Client.PhysicalClient.GetAdress()}</td>
+			<%endPoint = request.Client.FirstPoint() %>
+			<%if endPoint != null: %>
+			<td><b>Подключен</b></td>
+			<td>${endPoint.Switch.Name} (${endPoint.Switch.GetNormalIp()}) <b>Порт </b> ${endPoint.Port}</td>
+			<%end %>
+		</tr>
 		<tr class="requestCutInfo">
 			<td><b>Статус</b></td>
 			<%if not Edit: %>
@@ -189,7 +204,7 @@
 		</tr>
 		<%if Edit: %>
 		<tr><td colspan=4 id="errorContainer"></td></tr>
-		<tr><td colspan=4><button type=submit class="button">Сохранить</button></td></tr>
+		<tr><td colspan=4><button type=submit id="saveButton" class="button">Сохранить</button></td></tr>
 		<%end %>
 	</tbody>
 </table>

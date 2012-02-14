@@ -491,3 +491,7 @@ div.backGround {
 div.backGround.table.td  {
 	border-left : 1px double #AAA;
 }
+
+#serviceTableInClient th {
+	text-align:center;
+}
