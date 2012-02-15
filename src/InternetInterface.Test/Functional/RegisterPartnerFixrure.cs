@@ -20,30 +20,6 @@ namespace InternetInterface.Test.Functional
 	class RegisterPartnerFixrure : WatinFixture
 	{
 		[Test]
-		public void MigrationTets()
-		{
-			//ActiveRecordStarter.GenerateCreationScripts(@"..\\..\\..\\SQL_Migrate_ActiveRecordGenerator.sql");
-		}
-
-
-		[Test]
-		public void TestAccessDependence()
-		{
-			Console.WriteLine(AccessCategoriesType.SendDemand.ToString());
-			AccessCategoriesType res;
-		}
-
-		[Test]
-		public void TAccessDependence()
-		{
-			/*AccessDependence.SetAccessDependence();
-			AccessDependence.GenerateAddList(AccessDependence.accessDependence, "2");
-			AccessDependence.GenerateDeleteList(AccessDependence.accessDependence, "7");*/
-			/*Console.WriteLine(AccessDependence.toAdd);
-			Console.WriteLine(AccessDependence.toDelete);*/
-		}
-
-		[Test]
 		public void TestRegistrPartner()
 		{
 			using (var browser = Open("Register/RegisterPartner.rails"))

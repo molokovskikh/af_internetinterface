@@ -26,22 +26,6 @@ namespace InforoomInternet.Test.Integration
 			PrepareController(controller);
 		}
 
-
-		[Test, Ignore]
-		public void EditMenu()
-		{
-			using (new SessionScope())
-			{
-				var editController = new EditorController();
-				//PrepareController(editController);
-				//Request.
-				/*editController.Menu();
-				Console.WriteLine(editController.PropertyBag["Content"]);
-				Assert.That(countVhog(editController.PropertyBag["Content"].ToString(), "BRBABRBABRBA"), Is.EqualTo(4));
-				Assert.That(countVhog(editController.PropertyBag["Content"].ToString(), "ARARARARARAR"), Is.EqualTo(4));*/
-			}
-		}
-
 		private int countVhog(string text, string virog)
 		{
 			var count = 0;

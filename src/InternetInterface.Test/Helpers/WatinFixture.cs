@@ -77,7 +77,6 @@ namespace InternetInterface.Test.Helpers
 		{
 			if (browser.ContainsText("Error"))
 			{
-				Console.WriteLine(browser.Text);
 			}
 		}
 
@@ -87,13 +86,7 @@ namespace InternetInterface.Test.Helpers
 				scope.Flush();
 
 			var browser = new IE(BuildTestUrl(uri));
-/*
-			((InternetExplorerClass)browser.InternetExplorer).DocumentComplete += (object disp, ref object url) => {
-				Console.WriteLine(Thread.CurrentThread.ManagedThreadId);
-				//Console.WriteLine(browser.Text);
-				//Assert.That(browser.Text, Is.Not.ContainsSubstring("exception"));
-			};
-*/
+
 			if (SaveBrowser)
 			{
 				if (this.browser != null)

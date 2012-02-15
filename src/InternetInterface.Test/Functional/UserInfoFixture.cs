@@ -78,7 +78,6 @@ namespace InternetInterface.Test.Functional
 			{
 				browser.TextField("BalanceText").AppendText("1234");
 				browser.Button("ChangeBalanceButton").Click();
-				Console.WriteLine(lp.LawyerPerson.Balance);
 				Assert.That(browser.Text, Is.StringContaining("1234"));
 			}
 			lp.Delete();
@@ -129,7 +128,6 @@ namespace InternetInterface.Test.Functional
 				browser.Button("naznach_but").Click();
 				browser.RadioButton(Find.ByName("graph_button")).Checked = true;
 				browser.Button("reserv_but").Click();
-				Console.WriteLine(browser.Html);
 				Assert.IsTrue(browser.Text.Contains("Резерв"));
 			}
 		}
@@ -264,8 +262,6 @@ namespace InternetInterface.Test.Functional
 		{
 			using (var browser = Open(format))
 			{
-				Console.WriteLine(format);
-				//Console.WriteLine(browser.Html);
 				browser.TextField("Surname").Clear();
 				browser.TextField("Surname").AppendText("Иванов");
 				browser.TextField("Name").Clear();

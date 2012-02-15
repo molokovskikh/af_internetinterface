@@ -19,20 +19,16 @@ namespace InternetInterface.Test.Unit_
 			Console.WriteLine(CryptoPass.GetHashString("1234"));
 		}
 
-		[Test]
+		/*[Test]
 		public void ImageTest()
 		{
-
-			//IsAuthenticated("test123", "0o9i8u7y6t");
-			//IsAuthenticated("Diller1", "1q2w3e4r5t");
-			//ChangePassword("test123", "0o9i8u7y6t");
 			StreamReader sr = new StreamReader("c:\\test.txt", Encoding.UTF8);
 			while (sr.Peek() != -1)
 			{
-				var Line = sr.ReadLine();      // Line = sr.ReadToEnd();
+				var Line = sr.ReadLine();
 				Console.WriteLine(Line.Replace("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "***"));
 			}
-			sr.Dispose();    // sr.Close();
-		}
+			sr.Dispose();
+		}*/
 	}
 }

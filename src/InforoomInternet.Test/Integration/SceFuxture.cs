@@ -39,7 +39,6 @@ namespace InforoomInternet.Test.Integration
 						//Ждем когда все станут Connected и проверяем
 						Thread.Sleep(3000);
 					}
-					Console.WriteLine(assertStatus);
 					foreach (var lease in leases.Select(l => l.Endpoint.Client.Id)) {
 						Assert.That(ClientData.Get(lease), Is.EqualTo(assertStatus));
 					}

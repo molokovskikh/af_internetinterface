@@ -25,16 +25,5 @@ namespace InternetInterface.Test.Unit
 			byte b = (byte)(color >> 0);
 			return Color.FromArgb( r, g, b);
 		}
-
-		[Test]
-		public void ImageTest()
-		{
-			Console.WriteLine(ColorTranslator.FromHtml("#112233"));
-			var ucolor = ColorToUInt(ColorTranslator.FromHtml("#112233"));
-			Console.WriteLine(ucolor);
-			Console.WriteLine(UIntToColor(ucolor));
-			Console.WriteLine(ColorTranslator.ToOle(Color.FromName("Red")).ToString());
-			//CreateImage(Color.DeepSkyBlue, 30, 30, "5");
-		}
 	}
 }

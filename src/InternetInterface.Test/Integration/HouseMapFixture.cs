@@ -49,14 +49,6 @@ namespace InternetInterface.Test.Integration
             // Show the seventh letter (g)
             object[] indexArgs = { 6 };
             object value = pinfo.GetValue(test, indexArgs);
-
-            Console.WriteLine(value);
-
-            // Show the complete string.
-            for (int x = 0; x < test.Length; x++)
-            {
-                Console.Write(pinfo.GetValue(test, new Object[] { x }));
-            }
         }
 
         [Test]

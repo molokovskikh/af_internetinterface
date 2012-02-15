@@ -103,9 +103,7 @@ namespace Billing.Test.Integration
 			billing.Compute();
 			var writeOff = WriteOff.Queryable.Where(w => w.Client == client).FirstOrDefault();
 			Assert.That(writeOff, !Is.Null);
-			Console.WriteLine(writeOff.WriteOffDate + " " + writeOff.WriteOffSum);
 			writeOff.Delete();
-			Console.WriteLine(writeOff);
 			new Payment {
 				Client = client,
 				Sum = 100,
@@ -131,8 +129,6 @@ namespace Billing.Test.Integration
 			using (new SessionScope()) {
 				writeOff = WriteOff.Queryable.Where(w => w.Client == client).FirstOrDefault();
 				client.Refresh();
-				Console.WriteLine(client.PhysicalClient.Balance);
-				Console.WriteLine(writeOff.WriteOffSum);
 				Assert.That(writeOff, !Is.Null);
 				Assert.That(client.PhysicalClient.Balance,
 				            Is.EqualTo(Math.Round(ishBalance + 100 - client.GetPrice()/client.GetInterval(), 5)));
@@ -152,17 +148,13 @@ namespace Billing.Test.Integration
 			billing.Compute();
 			var spisD0 = WriteOff.Queryable.FirstOrDefault(w => w.Client == client);
 			client.Refresh();
-			Console.WriteLine("Interval DO: " + client.GetInterval());
 			Assert.That(dayInMonth, Is.EqualTo(client.GetInterval()));
 			client.DebtDays = 29;
 			client.Update();
 			billing.Compute();
 			var slisD29 = WriteOff.Queryable.Where(w => w.Client == client).ToList().LastOrDefault();
 			client.Refresh();
-			Console.WriteLine("Interval D29: " + client.GetInterval());
 			Assert.That(dayInMonth + 29, Is.EqualTo(client.GetInterval()));
-			Console.WriteLine(string.Format("spisDO: {0}  spisD29: {1}", spisD0.WriteOffSum.ToString("0.00"),
-			                                slisD29.WriteOffSum.ToString("0.00")));
 		}
 
 		[Test]
@@ -173,21 +165,11 @@ namespace Billing.Test.Integration
 			client.RatedPeriodDate = new DateTime(2011, 5, 31, 15, 05, 23);
 			SystemTime.Now = () => new DateTime(2011, 6, 30, 22, 02, 03);
 			billing.Compute();
-			Console.WriteLine("WriteOffSum " +
-			                  WriteOff.Queryable.Where(w => w.Client == client).ToList().Last().WriteOffSum.ToString("0.00"));
 			client.Refresh();
-			Console.WriteLine("RatedDate " + client.RatedPeriodDate.Value.ToShortDateString());
-			Console.WriteLine("Interval " + client.GetInterval());
-			Console.WriteLine("DebtDays " + client.DebtDays);
 			Assert.That(client.DebtDays, Is.EqualTo(1));
 			SystemTime.Now = () => new DateTime(2011, 7, 31, 19, 03, 6);
 			billing.Compute();
-			Console.WriteLine("WriteOffSum " +
-			                  WriteOff.Queryable.Where(w => w.Client == client).ToList().Last().WriteOffSum.ToString("0.00"));
 			client.Refresh();
-			Console.WriteLine("RatedDate " + client.RatedPeriodDate.Value.ToShortDateString());
-			Console.WriteLine("Interval " + client.GetInterval());
-			Console.WriteLine("DebtDays " + client.DebtDays);
 			Assert.That(client.DebtDays, Is.EqualTo(0));
 		}
 
@@ -261,21 +243,11 @@ namespace Billing.Test.Integration
 			tarif.Price = 500;
 			tarif.Update();
 			while (client.DebtDays < 1 && count < 365) {
-				Console.WriteLine("Count: " + count + " Date: " + SystemTime.Now().Date);
 				SystemTime.Now = () => new DateTime(2011, 6, 7, 22, 15, 9).AddDays(count);
-				Console.WriteLine("IterDate " + SystemTime.Now().ToShortDateString());
 				billing.Compute();
 				client.Refresh();
 				count++;
-				Console.WriteLine("Rated Date: " + client.RatedPeriodDate);
-				Console.WriteLine("DateNow : " + SystemTime.Now());
-				Console.WriteLine("-------------------------------------------------");
 			}
-			Console.WriteLine("***********************************");
-			Console.WriteLine("All iterations " + count);
-			Console.WriteLine("DebtDays " + client.DebtDays);
-			Console.WriteLine("Rated Date: " + client.RatedPeriodDate);
-			Console.WriteLine("DateNow : " + SystemTime.Now());
 			Assert.That(365, Is.EqualTo(count));
 		}
 
@@ -376,17 +348,13 @@ namespace Billing.Test.Integration
 			for (int i = 0; i < DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)*2; i++) {
 				billing.Compute();
 			}
-			Console.WriteLine(lPerson.Balance);
 			Assert.That(-19999m, Is.GreaterThan(lPerson.Balance));
 			Assert.That(-20000m, Is.LessThan(lPerson.Balance));
 			billing.OnMethod();
-			//client.Refresh();
 			Assert.IsTrue(client.ShowBalanceWarningPage);
-			Console.WriteLine(client.ShowBalanceWarningPage);
 			lPerson.Balance += 1000;
 			billing.OnMethod();
 			Assert.IsTrue(!client.ShowBalanceWarningPage);
-			Console.WriteLine(client.ShowBalanceWarningPage);
 		}
 
 		[Test]
@@ -406,13 +374,6 @@ namespace Billing.Test.Integration
 				SetClientDate(client, interval);
 			}
 			Assert.That(Math.Round(Convert.ToDecimal(client.PhysicalClient.Balance), 2), Is.LessThan(0.00));
-			Console.WriteLine("End balance = " + Math.Round(Convert.ToDecimal(client.PhysicalClient.Balance), 2));
-			var writeOffs = WriteOff.FindAll();
-
-			foreach (var writeOff in writeOffs) {
-				Console.WriteLine(string.Format("id = {0} date = {1} sum = {2}", writeOff.Id,
-				                                writeOff.WriteOffDate.ToShortDateString(), Math.Round(writeOff.WriteOffSum, 2)));
-			}
 		}
 
 		[Test]
@@ -520,7 +481,6 @@ namespace Billing.Test.Integration
 				for (int i = 0; i < date.Count - 1; i++) {
 					SetClientDate(client, date[i]);
 					Assert.That(date[i + 1].GetInterval(), Is.EqualTo(client.GetInterval()));
-					Console.WriteLine(string.Format("Между датами {0} прошло {1} дней", date[i], date[i].GetInterval()));
 				}
 			}
 		}

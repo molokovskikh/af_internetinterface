@@ -74,15 +74,10 @@ namespace Billing.Test.Integration
 				EndWorkDate = DateTime.Now.AddDays(100),
 				Service = Service.GetByType(typeof (VoluntaryBlockin))
 			};
-			Console.WriteLine("cService preActive {0}", cService.Id);
 			_client.ClientServices.Add(cService);
 			cService.Activate();
 
-			Console.WriteLine("cService postActive {0}", cService.Id);
-
 			Thread.Sleep(500);
-
-			Console.WriteLine(WriteOff.Queryable.Count());
 			for (int i = 0; i < MainBilling.FreeDaysVoluntaryBlockin + 1; i++) {
 				SystemTime.Now = () => DateTime.Now.AddDays(i);
 				billing.Compute();
@@ -98,7 +93,6 @@ namespace Billing.Test.Integration
 			Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(0));
 
 			cService.CompulsoryDiactivate();
-			Console.WriteLine(_client.PaidDay);
 			cService = new ClientService {
 				Client = _client,
 				BeginWorkDate = DateTime.Now,
@@ -133,17 +127,10 @@ namespace Billing.Test.Integration
 			_client.ClientServices.Add(cService);
 			cService.Activate();
 
-			UserWriteOff.Queryable.ToList().Each(w => Console.WriteLine(w.Sum));
-			Console.WriteLine(cService.BeginWorkDate);
-			Console.WriteLine(cService.EndWorkDate);
-
-			Console.WriteLine(WriteOff.Queryable.Count());
-
 			Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(2));
 
 			for (int i = 0; i < 5; i++) {
 				SystemTime.Now = () => DateTime.Now.AddDays(i);
-				Console.WriteLine(SystemTime.Now());
 				billing.OnMethod();
 				billing.Compute();
 			}
@@ -182,8 +169,6 @@ namespace Billing.Test.Integration
 				billing.Compute();
 				SystemTime.Now = () => DateTime.Now.AddDays(i + 1);
 			}
-
-			Console.WriteLine(client.RatedPeriodDate);
 			Assert.That(physClient.Balance, Is.EqualTo(-10));
 			new Payment {
 				Client = client,
@@ -208,7 +193,6 @@ namespace Billing.Test.Integration
 			SystemTime.Now = () => DateTime.Now.AddDays(countDays + 1);
 			billing.OnMethod();
 
-			WriteOff.Queryable.ToList().Each(w => Console.WriteLine(w.WriteOffSum));
 			Assert.That(WriteOff.FindAll().Count(), Is.EqualTo(countDays));
 			Assert.That(physClient.Balance, Is.LessThan(0m));
 			Assert.IsTrue(client.Disabled);
@@ -367,7 +351,6 @@ namespace Billing.Test.Integration
 				physClient = PhysicalClients.FindFirst();
 			}
 			var firstdate = WriteOff.FindFirst().WriteOffDate;
-			Console.WriteLine(physClient.Balance);
 			Assert.That(
 				Math.Round(
 					Convert.ToDecimal(
@@ -437,7 +420,7 @@ namespace Billing.Test.Integration
 			billing.Compute();
 
 			var userWriteOffs = UserWriteOff.Queryable.ToList();
-			userWriteOffs.Each(q => Console.WriteLine(q.Sum));
+
 			Assert.That(userWriteOffs.Count, Is.EqualTo(3));
 			Assert.That(userWriteOffs[0].Sum, Is.GreaterThan(5m));
 			Assert.That(userWriteOffs[0].Sum, Is.LessThan(25m));

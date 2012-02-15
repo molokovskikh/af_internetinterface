@@ -25,7 +25,6 @@ namespace InternetInterface.Test.Unit
 						return true;
 				}
 			}
-			Console.WriteLine("Не найден клиент");
 			return true;
 		}
 

@@ -34,7 +34,6 @@ namespace InternetInterface.Test.Functional
 						browser.TextField("CompetitorCount").AppendText("10");
 						browser.Link("naznach_link").Click();
 					}
-					Console.WriteLine(browser.Text);
 					Assert.IsTrue(browser.Text.Contains("TV"));
 					Assert.IsTrue(browser.Text.Contains("INT"));
 					Assert.IsTrue(browser.Text.Contains("20"));
@@ -74,13 +73,10 @@ namespace InternetInterface.Test.Functional
 		{
 			CreateRequestForApartment();
 			var adress = browser.Url;
-			Console.WriteLine(adress);
 			var _params =
 				adress.Split(new char[] {'?'}).Last().Split(new char[] {'&'}).Select(a => a.Split(new char[] {'='}).Last());
 			var house = House.Find(UInt32.Parse(_params.First()));
 			var apartment = UInt32.Parse(_params.Last());
-			foreach (var el in _params)
-				Console.WriteLine(el);
 			browser.Button("register_button").Click();
 
 			var requests = new List<Requests>();
@@ -95,13 +91,11 @@ namespace InternetInterface.Test.Functional
 				partner = Partner.Queryable.FirstOrDefault(p => p.Login == Environment.UserName);
 				partner.Categorie.Id = 3;
 				partner.Update();
-				Console.WriteLine(partner.Categorie.ReductionName);
 			}
 			var clientCode = string.Empty;
 			using (var browser2 = Open("UserInfo/RequestView.rails"))
 			{
 				browser2.Link("request_to_reg_" + requests.First().Id).Click();
-				Console.WriteLine(browser2.Url);
 				var sw = browser2.SelectList("SelectSwitches").Options.Select(o => UInt32.Parse(o.Value)).ToList();
 				//using (new SessionScope())
 				{
@@ -113,14 +107,12 @@ namespace InternetInterface.Test.Functional
 				browser2.Button("RegisterClientButton").Click();
 				Assert.That(browser2.Text, Is.StringContaining("Информация по клиенту"), "Не осуществлена регистрация клиента");
 				clientCode = browser2.Url.Split(new char[] {'?'}).Last().Split(new char[] {'='}).Last();
-				Console.WriteLine(clientCode);
 			}
 			//using (new SessionScope())
 			{
 				var payments =
 					PaymentsForAgent.Queryable.Where(
 						p => p.Comment.Contains(clientCode) || p.Comment.Contains(requests.First().Id.ToString())).ToList();
-				Console.WriteLine(payments.Count);
 				Assert.That(payments.Count, Is.GreaterThanOrEqualTo(3), "Неверное количество платежей, какого-то не хватает");
 				var requests_for_partner = Requests.Queryable.Where(r => r.Registrator == partner).ToList();
 				var deleted = requests_for_partner.Count - 8;
@@ -144,10 +136,9 @@ namespace InternetInterface.Test.Functional
 					scope.Dispose();
 					scope = new SessionScope();
 				}
-				//scope.Flush();
 
 				var for_bonuses = Requests.Queryable.Where(r => r.Registrator == partner).ToList();
-				for_bonuses.ForEach(f => Console.WriteLine(string.Format("Id:{0} SumBonus:{1}", f.Id, f.VirtualBonus)));
+
 				Thread.Sleep(2000);
 				Assert.That(for_bonuses.Sum(f => f.VirtualBonus), Is.GreaterThanOrEqualTo(500m));
 			}
@@ -165,7 +156,6 @@ namespace InternetInterface.Test.Functional
 				scope = new SessionScope();
 			}
 			var for_bonuses = Requests.Queryable.Where(r => r.Registrator == partner).ToList();
-			for_bonuses.ForEach(f => Console.WriteLine(string.Format("Id:{0} SumBonus:{1}", f.Id, f.VirtualBonus)));
 			Thread.Sleep(2000);
 			Assert.That(for_bonuses.Sum(f => f.VirtualBonus), Is.GreaterThanOrEqualTo(2000m));
 		}

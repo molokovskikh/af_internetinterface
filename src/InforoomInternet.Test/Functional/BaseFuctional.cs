@@ -25,9 +25,6 @@ namespace InforoomInternet.Test.Unit
 		[SetUp]
 		public void SetupFixture()
 		{
-
-			//WatinFixture.ConfigTest();
-
 			var port = int.Parse(ConfigurationManager.AppSettings["webPort"]);
 
 			var webDir = string.Empty;
@@ -88,7 +85,6 @@ namespace InforoomInternet.Test.Unit
 				Assert.That(ie.Text, Is.StringContaining("Ваша задолженность за оказанные услуги по доступу в интернет составляет 100,00 руб."));
 				ie.Button(Find.ById("ConButton")).Click();
 				Thread.Sleep(1000);
-				Console.WriteLine(ie.Uri);
 				Assert.That(ie.Text, Is.StringContaining("google"));
 			}
 			using (var browser = Open("Warning")) {
@@ -137,7 +133,6 @@ namespace InforoomInternet.Test.Unit
 				Thread.Sleep(2000);
 				Assert.That(ie.Text, Is.StringContaining("Тарифы"));
 			}
-			Console.WriteLine("WarningTest Complite");
 		}
 
 		[Test]
@@ -152,7 +147,6 @@ namespace InforoomInternet.Test.Unit
 				Assert.That(ie.Text, Is.StringContaining("Реквизиты"));
 				Assert.That(ie.Text, Is.StringContaining("Уважаемые абоненты!"));
 			}
-			Console.WriteLine("MainTest Complite");
 		}
 
 		[Test]
@@ -167,7 +161,6 @@ namespace InforoomInternet.Test.Unit
 				Assert.That(ie.Text, Is.StringContaining("Расчетный"));
 				Assert.That(ie.Text, Is.StringContaining("Директор"));
 			}
-			Console.WriteLine("RequsiteTest Complite");
 		}
 
 		[Test]
@@ -179,7 +172,6 @@ namespace InforoomInternet.Test.Unit
 				Thread.Sleep(500);
 				Assert.That(ie.Text, Is.StringContaining("Ждите, идет подключение к интернет"));
 			}
-			Console.WriteLine("RequsiteTest Complite");
 		}
 
 		[Test]
@@ -213,7 +205,6 @@ namespace InforoomInternet.Test.Unit
 				Assert.That(ie.Text, Is.StringContaining("Введите улицу"));
 				Assert.That(ie.Text, Is.StringContaining("Введите номер дома"));
 			}
-			Console.WriteLine("ZayavkaTest Complite");
 		}
 
 
@@ -253,7 +244,6 @@ namespace InforoomInternet.Test.Unit
 					ie.GoTo(imagesUri);
 					Assert.That(ie.Text, Is.Not.StringContaining("Description: HTTP 404"));
 				}
-				Console.WriteLine("OfferTest Complite");
 			}
 		}
 
@@ -284,7 +274,6 @@ namespace InforoomInternet.Test.Unit
 
 					phisClient.Balance = -100;
 					phisClient.UpdateAndFlush();
-					//client.PostponedPayment = null;
 					client.Disabled = true;
 					client.AutoUnblocked = true;
 					client.UpdateAndFlush();
@@ -311,21 +300,10 @@ namespace InforoomInternet.Test.Unit
 			using (var browser = Open("PrivateOffice/IndexOffice"))
 			using (new SessionScope())
 			{
-				//client.Refresh();
-				Console.WriteLine(client.PhysicalClient != null);
-				Console.WriteLine(!client.ClientServices.Select(c => c.Service).Contains(Service.GetByType(typeof(DebtWork))));
-				Console.WriteLine(client.Disabled);
-				Console.WriteLine(client.PhysicalClient.Balance < 0);
-				Console.WriteLine(client.AutoUnblocked);
-				Console.WriteLine(client.PaymentForTariff());
 				browser.Element("podrob").Click();
-				//Console.WriteLine(browser.Html);
 				browser.Button("PostponedBut").Click();
-				Console.WriteLine(browser.Text);
 				Assert.That(browser.Text, Is.StringContaining("Ваш личный кабинет"));
 			}
-
-			Console.WriteLine("PrivateOfficeTest Complite");
 		}
 
 		[Test]
@@ -338,14 +316,12 @@ namespace InforoomInternet.Test.Unit
 			}
 			foreach (var link in links)
 			{
-				Console.WriteLine(link);
 				using (var ie = Open(link))
 				{
 					Thread.Sleep(100);
 					Assert.That(ie.Text, Is.StringContaining("Новости"));
 				}
 			}
-			Console.WriteLine("LinkTest Complite");
 		}
 	}
 }

@@ -28,22 +28,12 @@ namespace InternetInterface.Test.Unit
 			Assert.That(dfg, Is.StringContaining("2886730166"));
 		}
 
-		[Test]
-		public void DateTest()
-		{
-			Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-			var day = DateTime.Now;
-			var indexDay = (int) day.DayOfWeek;
-			Console.WriteLine(day.AddDays(-indexDay+1));
-			Console.WriteLine(day.AddDays(7 - indexDay));
-		}
-
 		public bool AcceptAllCertifications(object sender, System.Security.Cryptography.X509Certificates.X509Certificate certification, System.Security.Cryptography.X509Certificates.X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
 		{
 			return true;
 		}
 
-		[Test]
+		[Test, Ignore]
 		public void SmsTest()
 		{
 			ServicePointManager.ServerCertificateValidationCallback =
@@ -87,7 +77,6 @@ namespace InternetInterface.Test.Unit
 
 			document.Declaration = new XDeclaration("1.0", "utf-8", "true");
 
-			Console.WriteLine(document);
 			//document.Save("c:/test.xml");
 			//document.
 
@@ -110,8 +99,6 @@ namespace InternetInterface.Test.Unit
 
 			var reader = new StreamReader(responseStream);
 			string htmlContent = reader.ReadToEnd();
-
-			Console.WriteLine(htmlContent);
 		}
 	}
 }

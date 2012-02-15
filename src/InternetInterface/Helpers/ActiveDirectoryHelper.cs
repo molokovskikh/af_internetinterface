@@ -33,9 +33,6 @@ namespace InternetInterface.Helpers
 
 			var domainAndUsername = @"analit\" + username;
 			entryAu = new DirectoryEntry(LDAP, domainAndUsername, pwd, AuthenticationTypes.None);
-#if DEBUG
-			//Console.WriteLine(entryAu.Guid);
-#endif
 			try
 			{
 				// Bind to the native AdsObject to force authentication.
