@@ -9,7 +9,7 @@ namespace InternetInterfaceFixture.Functional
 	[TestFixture]
 	class BrigadFixture :WatinFixture
 	{
-		[Test]
+		[Test, Ignore]
 		public void BrigadTest()
 		{
 			using (var browser = Open("Brigads/ShowBrigad.rails"))

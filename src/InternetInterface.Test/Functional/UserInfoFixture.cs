@@ -145,7 +145,6 @@ namespace InternetInterface.Test.Functional
 				using (var browser = Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", validClient.Id)))
 				{
 					browser.Link(Find.ByClass("button hardwareInfo")).Click();
-					browser.ShowWindow(NativeMethods.WindowShowStyle.ShowDefault);
 					Assert.That(browser.Text, Is.StringContaining(validClient.Name));
 					Assert.That(browser.Text, Is.StringContaining("FastEthernet"));
 				}
@@ -172,9 +171,7 @@ namespace InternetInterface.Test.Functional
 		{
 			using (new SessionScope())
 			{
-				client = Client.Queryable.Where(
-	c => c.PhysicalClient != null && Brigad.FindAll().Contains(c.WhoConnected)).
-	First();
+				client = Client.Queryable.Where(c => c.PhysicalClient != null && Brigad.FindAll().Contains(c.WhoConnected)).First();
 				client.AdditionalStatus = null;
 				client.Status = Status.Find((uint)StatusType.BlockedAndNoConnected);
 				client.UpdateAndFlush();
