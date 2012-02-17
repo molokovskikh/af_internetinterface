@@ -19,6 +19,15 @@ namespace InternetInterface.Test.Unit_
 			Console.WriteLine(CryptoPass.GetHashString("1234"));
 		}
 
+		[Test]
+		public void Date_Time()
+		{
+			var d1 = DateTime.Now;
+			var d2 = DateTime.Now.AddMonths(-1);
+			var spin = (d1 - d2).Ticks;
+			Console.WriteLine(new DateTime(spin));
+		}
+
 		/*[Test]
 		public void ImageTest()
 		{

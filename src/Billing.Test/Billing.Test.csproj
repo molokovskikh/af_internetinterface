@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Integration\BalanceFuntionalFixture.cs" />
+    <Compile Include="Integration\SaleFixture.cs" />
     <Compile Include="Integration\ServiceFixture.cs" />
     <Compile Include="Integration\SmsFixture.cs" />
     <Compile Include="Setup.cs" />

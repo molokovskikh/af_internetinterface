@@ -197,6 +197,7 @@ namespace Billing
 			foreach (var client in clients) {
 				client.Status = workStatus;
 				client.RatedPeriodDate = null;
+				client.StartNoBlock = null;
 				client.DebtDays = 0;
 				client.ShowBalanceWarningPage = false;
 				client.Disabled = false;
@@ -223,6 +224,7 @@ namespace Billing
 		{
 			Messages = new List<SmsMessage>();
 			var clients = Client.Queryable.Where(c => c.PhysicalClient != null).ToList();
+			var saleSettings  = SaleSettings.FindFirst();
 			foreach (var client in clients) {
 				var phisicalClient = client.PhysicalClient;
 				var balance = Convert.ToDecimal(phisicalClient.Balance);
@@ -243,12 +245,23 @@ namespace Billing
 						client.UpdateAndFlush();
 					}
 				}
-
+				if (client.StartNoBlock != null) {
+					decimal sale = 0;
+					var monthOnStart = SystemTime.Now().TotalMonth(client.StartNoBlock.Value);
+					if (monthOnStart >= saleSettings.PeriodCount)
+						sale = saleSettings.MinSale + (monthOnStart - saleSettings.PeriodCount) * saleSettings.SaleStep;
+					if (sale > saleSettings.MaxSale)
+						sale = saleSettings.MaxSale;
+					if (sale >= saleSettings.MinSale)
+						client.Sale = sale;
+				}
 				if (client.GetPrice() > 0 && !client.PaidDay) {
 					if (client.RatedPeriodDate != DateTime.MinValue && client.RatedPeriodDate != null) {
 						var toDt = client.GetInterval();
 						var price = client.GetPrice();
-						var dec = price/toDt;
+						var dec = price / toDt;
+						if (client.Sale > 0)
+							dec *= 1 - client.Sale / 100;
 						phisicalClient.Balance -= dec;
 						phisicalClient.UpdateAndFlush();
 						var bufBal = phisicalClient.Balance;
@@ -272,12 +285,14 @@ namespace Billing
 						new WriteOff {
 							Client = client,
 							WriteOffDate = SystemTime.Now(),
-							WriteOffSum = dec
+							WriteOffSum = dec,
+							Sale = client.Sale
 						}.SaveAndFlush();
 					}
 				}
 				if (client.CanBlock()) {
-					client.Disabled = true;
+					client.Disabled = true; 
+					client.Sale = 0;
 					client.Status = Status.Find((uint) StatusType.NoWorked);
 				}
 				if (client.PaidDay) {

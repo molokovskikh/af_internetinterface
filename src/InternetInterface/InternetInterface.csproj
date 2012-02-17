@@ -214,6 +214,7 @@
     <None Include="Views\Subview\StaticIps.brail" />
     <None Include="Views\ServiceRequest\RegisterServiceRequest.brail" />
     <None Include="Views\Subview\ServiceRequestRow.brail" />
+    <None Include="Views\Payments\СhangeSaleSettings.brail" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -310,6 +311,7 @@
     <Compile Include="Models\PaymentsForAgent.cs" />
     <Compile Include="Models\Request.cs" />
     <Compile Include="Models\RequestMessage.cs" />
+    <Compile Include="Models\SaleSettings.cs" />
     <Compile Include="Models\SendedLease.cs" />
     <Compile Include="Models\Service.cs" />
     <Compile Include="Models\ServiceRequest.cs" />

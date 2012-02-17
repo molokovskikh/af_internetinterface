@@ -47,5 +47,9 @@
 		<tr><td><a href = "${Siteroot}/UserInfo/PartnersPreview.rails?catType=7" ><span class="MA"><div class=menudiv>Сервисные инженеры</div></span></a>
 		<span class="comment_text">Просмотр и редактирование списка сервисных инженеров, устраняющих поломки клиента</span></td></tr>
 		<%end %>
+		<%if PartnerAccessSet.AccesPartner("SSI"): %>
+		<tr><td><a href = "${Siteroot}/Payments/СhangeSaleSettings" ><span class="MA"><div class=menudiv>Редактировать настрйки скидок</div></span></a>
+		<span class="comment_text">Здесь можно выставить настйки системы скидок</span></td></tr>
+		<%end %>
 	</tbody>
 </table>

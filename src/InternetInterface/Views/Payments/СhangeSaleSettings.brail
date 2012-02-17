@@ -1,0 +1,43 @@
+﻿<div style="width:800px;" class="backGround whereNewTable">
+	<form method=post>
+		${FormHelper.HiddenField("settings.Id")}
+		<table class="table" style="border:1px double #AAA;">
+			<thead>
+				<tr><th colspan=2>Настройки скидок</th></tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Необходимо работать беспрерывно для получения скидки (месяцев)</td>
+					<td>
+						${app.Edit("settings.PeriodCount")}
+						${app.GetValidationError(settings, "PeriodCount")}
+					</td>
+				</tr>
+				<tr>
+					<td>Минимальный процент</td>
+					<td>
+						${app.Edit("settings.MinSale")}
+						${app.GetValidationError(settings, "MinSale")}
+					</td>
+				</tr>
+				<tr>
+					<td>Максимальный процент</td>
+					<td>
+						${app.Edit("settings.MaxSale")}
+						${app.GetValidationError(settings, "MaxSale")}
+					</td>
+				</tr>
+				<tr>
+					<td>Шаг прироста скидки за каждый последующий месяц (в %)</td>
+					<td>
+						${app.Edit("settings.SaleStep")}
+						${app.GetValidationError(settings, "SaleStep")}
+					</td>
+				</tr>
+				<tr>
+					<td colspan=2><button class="button" type=submit>Сохранить</button></td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</div>

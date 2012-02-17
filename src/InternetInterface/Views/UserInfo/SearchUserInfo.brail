@@ -131,13 +131,18 @@
 				<td><span class="description">Статус клиента:</span> ${_client.Status.Name}</td>
 			</tr>
 		<%end %>
-				<tr>
+		<tr>
 			<td><span class="description">Смс рассылка</span>
 			<%if (_client.SendSmsNotifocation): %>
 				Да
 				<%else: %>
 				Нет
 				<%end %></td>
+		</tr>
+		<tr>
+			<td>
+				<span class="description">Скидка: </span>${_client.Sale.ToString("0.00")}%
+			</td>
 		</tr>
 		<%if _client.AdditionalStatus != null: %>
 			<tr>

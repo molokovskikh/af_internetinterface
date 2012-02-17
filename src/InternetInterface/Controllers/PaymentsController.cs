@@ -358,5 +358,18 @@ namespace InternetInterface.Controllers
 					label = String.Format("[{0}]. {1} ИНН {2}", p.Id, p.LawyerPerson.Name, p.LawyerPerson.INN)
 				});
 		}
+
+		public void СhangeSaleSettings()
+		{
+			PropertyBag["settings"] = SaleSettings.FindFirst();
+		}
+
+		public void СhangeSaleSettings([ARDataBind("settings", AutoLoadBehavior.Always, Validate = true)] SaleSettings setting)
+		{
+			PropertyBag["settings"] = SaleSettings.FindFirst();
+			if (IsPost && Validator.IsValid(setting)) {
+				setting.Save();
+			}
+		}
 	}
 }

@@ -47,7 +47,7 @@ namespace InternetInterface.Helpers
 
 	}
 
-	public class DateHelper
+	public static class DateHelper
 	{
 		public static Week GetWeekInterval(DateTime day)
 		{
@@ -66,6 +66,14 @@ namespace InternetInterface.Helpers
 		{
 			var interval = GetWeekInterval(DateTime.Now);
 			return IncludeDateInInterval(interval, date);
+		}
+
+		public static int TotalMonth(this DateTime lValue, DateTime rValue)
+		{
+			var spin = (lValue - rValue).Ticks;
+			var interval = new DateTime(spin);
+			return (interval.Month - 1) + 12 * (interval.Year - 1);
+			//return Math.Abs((lValue.Month - rValue.Month) + 12 * (lValue.Year - rValue.Year));
 		}
 	}
 }
