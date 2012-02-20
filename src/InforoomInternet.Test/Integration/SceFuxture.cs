@@ -43,6 +43,8 @@ namespace InforoomInternet.Test.Integration
 						Assert.That(ClientData.Get(lease), Is.EqualTo(assertStatus));
 					}
 				} while (firstClientStatus != UnknownClientStatus.Connected);
+
+				ClientData.StopClearing();
 			}
 		}
 	}

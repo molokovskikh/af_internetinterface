@@ -66,6 +66,11 @@ namespace InforoomInternet.Models
 			_info.Clear();
 		}
 
+		public static void StopClearing()
+		{
+			_clearCommand.Stop();
+		}
+
 		public static UnknownClientStatus Get(uint client)
 		{
 			_mutex.WaitOne();
