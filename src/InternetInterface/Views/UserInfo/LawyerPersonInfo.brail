@@ -3,6 +3,22 @@
 <div id="container">
 <div id="block-tables" class="block">
 <div class="content">
+<%if PartnerAccessSet.AccesPartner("SSI"): %>
+<table class="table" style="width:100%;">
+	<thead>
+		<tr>
+			<th colspan=4>Панель действий</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>
+				<a href="${Siteroot}/UserInfo/Leases?filter.ClientCode=${ClientCode}" class="button" style="background: #EEE url(../Images/tick.png) no-repeat; background-position: 5px 5px; padding-left:2em;">Показать статистику работы</a>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<%end %>
 	<%if not Editing: %>
 		<form class="form login" method="post" action="${siteroot}/UserInfo/LoadEditMudule">
 	<input type="hidden" name="ClientID" value="${ClientCode}" />
