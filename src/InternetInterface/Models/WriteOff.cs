@@ -46,7 +46,7 @@ namespace InternetInterface.Models
 		public virtual Client Client { get; set; }
 
 		[Property]
-		public virtual decimal Sale { get; set; }
+		public virtual decimal? Sale { get; set; }
 
 		[Property]
 		public virtual string Comment { get; set; }

@@ -13,7 +13,9 @@ using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Castle.MonoRail.Framework.Helpers;
 using Common.Tools;
+using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
+using InternetInterface.AllLogic;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using NHibernate;
@@ -34,7 +36,7 @@ namespace InternetInterface.Controllers
 
 	[Helper(typeof(ViewHelper))]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter)), System.Runtime.InteropServices.GuidAttribute("5382FACE-DB49-4A02-9E2E-0A512B0D2E49")]
-	public class PaymentsController : ARSmartDispatcherController
+	public class PaymentsController : BaseController
 	{
 		public void Index([DataBind("filter")] PaymentFilter filter)
 		{
@@ -361,15 +363,13 @@ namespace InternetInterface.Controllers
 
 		public void СhangeSaleSettings()
 		{
-			PropertyBag["settings"] = SaleSettings.FindFirst();
-		}
-
-		public void СhangeSaleSettings([ARDataBind("settings", AutoLoadBehavior.Always, Validate = true)] SaleSettings setting)
-		{
-			PropertyBag["settings"] = SaleSettings.FindFirst();
-			if (IsPost && Validator.IsValid(setting)) {
+			var setting = SaleSettings.FindFirst();
+			if (IsPost) {
+				BindObjectInstance(setting, ParamStore.Form, "settings", AutoLoadBehavior.Always);
 				setting.Save();
+				PropertyBag["Message"] = Message.Notify("Настройки сохранены");
 			}
+			PropertyBag["settings"] = setting;
 		}
 	}
 }

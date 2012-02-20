@@ -449,6 +449,7 @@
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
+    <None Include="Views\PrivateOffice\AboutSale.brail" />
     <None Include="Views\PrivateOffice\DiactivateVoluntaryBlockin.brail" />
     <None Include="Views\PrivateOffice\Services.brail" />
     <None Include="Views\PrivateOffice\SmsNotification.brail" />

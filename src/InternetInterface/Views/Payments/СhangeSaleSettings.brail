@@ -1,6 +1,31 @@
-﻿<div style="width:800px;" class="backGround whereNewTable">
-	<form method=post>
-		${FormHelper.HiddenField("settings.Id")}
+﻿<script type="text/javascript">
+	$(function () {
+		$('#saleSettings').validate();
+		$('#settings_PeriodCount').rules("add", { required: true, digits: true, messages: {
+			required : "Введите длительность периода",
+			digits : "Должно быть введено число"
+			}
+		});
+		$('#settings_MinSale').rules("add", { required: true, digits: true, messages: {
+			required: "Введите минимальную скидку",
+			digits: "Должно быть введено число"
+			}
+		});
+		$('#settings_MaxSale').rules("add", { required: true, digits: true, messages: {
+			required: "Введите максимальную скидку",
+			digits: "Должно быть введено число"
+			}
+		});
+		$('#settings_SaleStep').rules("add", { required: true, number: true, range: [0.5, 5], messages: {
+			required: "Введите шаг прироста",
+			number: "Должно быть введено число",
+			range : "Число должно быть от 0,5 до 5"
+			}
+		});
+	});
+</script>
+<div style="width:800px;" class="backGround whereNewTable">
+	<form id="saleSettings" method=post>
 		<table class="table" style="border:1px double #AAA;">
 			<thead>
 				<tr><th colspan=2>Настройки скидок</th></tr>
@@ -10,28 +35,24 @@
 					<td>Необходимо работать беспрерывно для получения скидки (месяцев)</td>
 					<td>
 						${app.Edit("settings.PeriodCount")}
-						${app.GetValidationError(settings, "PeriodCount")}
 					</td>
 				</tr>
 				<tr>
 					<td>Минимальный процент</td>
 					<td>
 						${app.Edit("settings.MinSale")}
-						${app.GetValidationError(settings, "MinSale")}
 					</td>
 				</tr>
 				<tr>
 					<td>Максимальный процент</td>
 					<td>
 						${app.Edit("settings.MaxSale")}
-						${app.GetValidationError(settings, "MaxSale")}
 					</td>
 				</tr>
 				<tr>
 					<td>Шаг прироста скидки за каждый последующий месяц (в %)</td>
 					<td>
-						${app.Edit("settings.SaleStep")}
-						${app.GetValidationError(settings, "SaleStep")}
+						<input type=text name="settings.SaleStep" id="settings_SaleStep" value=${settings.SaleStep.ToString("0.00").Replace(",",".")} />
 					</td>
 				</tr>
 				<tr>

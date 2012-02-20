@@ -9,7 +9,7 @@ using Castle.Components.Validator;
 namespace InternetInterface.Models
 {
 	[ActiveRecord("SaleSettings", Schema = "internet")]
-	public class SaleSettings : ActiveRecordValidationBase<SaleSettings>
+	public class SaleSettings : ActiveRecordLinqBase<SaleSettings>
 	{
 		[PrimaryKey]
 		public uint Id { get; set; }

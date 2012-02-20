@@ -96,6 +96,7 @@ namespace Billing.Test.Integration
 		[Test]
 		public void SemaphoreTest()
 		{
+			Client.DeleteAll();
 			var client = CreateClient();
 			client.PhysicalClient.ConnectionPaid = true;
 			client.RatedPeriodDate = SystemTime.Now();
@@ -110,9 +111,10 @@ namespace Billing.Test.Integration
 				BillingAccount = false
 			}.Save();
 			var set = InternetSettings.FindFirst();
-			set.NextBillingDate = new DateTime(2011, 10, 26, 22, 00, 00);
+			var dtn = SystemTime.Now();
+			set.NextBillingDate = new DateTime(dtn.Year, dtn.Month, dtn.Day, 22, 00, 00);
 			set.Save();
-			SystemTime.Now = () => new DateTime(2011, 10, 26, 22, 20, 0);
+			SystemTime.Now = () => new DateTime(dtn.Year, dtn.Month, dtn.Day, 22, 20, 0);
 			scope.Commit();
 			scope.Dispose();
 			scope = null;
@@ -130,8 +132,7 @@ namespace Billing.Test.Integration
 				writeOff = WriteOff.Queryable.Where(w => w.Client == client).FirstOrDefault();
 				client.Refresh();
 				Assert.That(writeOff, !Is.Null);
-				Assert.That(client.PhysicalClient.Balance,
-				            Is.EqualTo(Math.Round(ishBalance + 100 - client.GetPrice()/client.GetInterval(), 5)));
+				Assert.That(client.PhysicalClient.Balance, Is.EqualTo(Math.Round(ishBalance + 100 - client.GetPrice()/client.GetInterval(), 5)));
 			}
 		}
 

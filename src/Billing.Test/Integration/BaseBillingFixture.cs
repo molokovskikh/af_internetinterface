@@ -45,6 +45,7 @@ namespace Billing.Test.Integration
 			return new Client
 					{
 						Disabled = false,
+						Sale = 0,
 						//FirstLease = true,
 						DebtDays = 0,
 						Name = name,

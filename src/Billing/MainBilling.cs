@@ -197,7 +197,6 @@ namespace Billing
 			foreach (var client in clients) {
 				client.Status = workStatus;
 				client.RatedPeriodDate = null;
-				client.StartNoBlock = null;
 				client.DebtDays = 0;
 				client.ShowBalanceWarningPage = false;
 				client.Disabled = false;
@@ -257,11 +256,11 @@ namespace Billing
 				}
 				if (client.GetPrice() > 0 && !client.PaidDay) {
 					if (client.RatedPeriodDate != DateTime.MinValue && client.RatedPeriodDate != null) {
+						if (client.StartNoBlock == null)
+							client.StartNoBlock = SystemTime.Now();
 						var toDt = client.GetInterval();
 						var price = client.GetPrice();
 						var dec = price / toDt;
-						if (client.Sale > 0)
-							dec *= 1 - client.Sale / 100;
 						phisicalClient.Balance -= dec;
 						phisicalClient.UpdateAndFlush();
 						var bufBal = phisicalClient.Balance;
@@ -293,6 +292,7 @@ namespace Billing
 				if (client.CanBlock()) {
 					client.Disabled = true; 
 					client.Sale = 0;
+					client.StartNoBlock = null;
 					client.Status = Status.Find((uint) StatusType.NoWorked);
 				}
 				if (client.PaidDay) {

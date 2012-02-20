@@ -18,6 +18,11 @@
 <p style="color:#8d8d8e;">Доступ в интернет заблокирован, Вы можете воспольваться услугой "Обещанный платеж" <a id="podrob" href="PostponedPayment">Подробнее...</a></p>
 <%end %>
 <h3>Номер лицевого счета для оплаты через терминалы <b> ${Client.Id.ToString("00000")} </b></h3>
+<%if fullMonth != null: %>
+<h3>Вы работаете ${fullMonth} полных месяцев подряд, ваша скидка составляет: ${Client.Sale.ToString("0.0")}% <a style="font-size:10px;" href="AboutSale">(подробнее)</a></h3>
+<%else: %>
+<h3>Вы работаете 0 полных месяцев подряд, ваша скидка составляет: ${Client.Sale.ToString("0.0")}% <a style="font-size:10px;" href="AboutSale">(подробнее)</a></h3>
+<%end %>
 
 <div class="text">
 	<h3><b>Зачисления</b></h3>

@@ -38,12 +38,24 @@ namespace Billing.Test.Integration
 		protected MainBilling billing;
 		protected Client _client;
 
+		protected const int MaxSale = 15;
+		protected const int MinSale = 3;
+		protected const int PerionCount = 3;
+		protected const decimal SaleStep = 1m;
+
 		[SetUp]
 		public void CreateBilling()
 		{
 			billing = new MainBilling();
 			PrepareTest();
 			_client = CreateClient();
+			SaleSettings.DeleteAll();
+			new SaleSettings {
+				MaxSale = MaxSale,
+				MinSale = MinSale,
+				PeriodCount = PerionCount,
+				SaleStep = SaleStep
+			}.Save();
 		}
 
 		public static void PrepareTests()

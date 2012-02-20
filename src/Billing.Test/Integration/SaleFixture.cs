@@ -10,21 +10,9 @@ namespace Billing.Test.Integration
 {
 	public class SaleFixture : MainBillingFixture
 	{
-		private const int MaxSale = 15;
-		private const int MinSale = 3;
-		private const int PerionCount = 3;
-		private const decimal SaleStep = 1m;
-
 		[SetUp]
 		public void SetupThis()
 		{
-			SaleSettings.DeleteAll();
-			new SaleSettings {
-				MaxSale = MaxSale,
-				MinSale = MinSale,
-				PeriodCount = PerionCount,
-				SaleStep = SaleStep
-			}.Save();
 			_client.PhysicalClient.Balance = 100000;
 			_client.RatedPeriodDate = DateTime.Now;
 			_client.StartNoBlock = DateTime.Now;
@@ -54,7 +42,7 @@ namespace Billing.Test.Integration
 			billing.Compute();
 			Assert.AreEqual(_client.Sale, SaleStep*MinSale);
 			var writeOff = WriteOff.FindFirst();
-			var preSaleSum = _client.GetPrice() / _client.GetInterval();
+			var preSaleSum = _client.PhysicalClient.Tariff.Price / _client.GetInterval();
 			Assert.AreEqual(writeOff.WriteOffSum, preSaleSum - preSaleSum*(SaleStep*MinSale / 100));
 			Assert.AreEqual(writeOff.Sale, SaleStep*MinSale);
 		}
@@ -86,6 +74,34 @@ namespace Billing.Test.Integration
 			SystemTime.Now = () => DateTime.Now.AddMonths(8).AddDays(-10);
 			billing.Compute();
 			Assert.AreEqual(_client.Sale, SaleStep*MinSale);
+		}
+
+		[Test]
+		public void Set_start_date()
+		{
+			_client.PhysicalClient.Balance = 100;
+			_client.Update();
+			var iterationCount = 0;
+			while (!_client.Disabled) {
+				billing.Compute();
+				iterationCount ++;
+			}
+			Assert.Greater(iterationCount, 1);
+			Assert.IsNull(_client.StartNoBlock);
+			billing.Compute();
+			Assert.IsNull(_client.StartNoBlock);
+			var writeOffs = WriteOff.Queryable.ToList();
+			Assert.That(writeOffs.Sum(off => off.Sale), Is.EqualTo(0));
+			Assert.Greater(writeOffs.Count, 0);
+			new Payment {
+				Sum = _client.GetPriceForTariff(),
+				Client = _client
+			}.Save();
+			billing.OnMethod();
+			_client.RatedPeriodDate = DateTime.Now;
+			_client.Update();
+			billing.Compute();
+			Assert.That(_client.StartNoBlock.Value.Date, Is.EqualTo(SystemTime.Now().Date));
 		}
 	}
 } 

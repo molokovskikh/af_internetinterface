@@ -26,6 +26,7 @@ namespace InforoomInternet.Controllers
 					"PrivateOffice/IndexOffice",
 					"PrivateOffice/Services",
 					"PrivateOffice/SmsNotification",
+					"PrivateOffice/AboutSale",
 					"Main/Index",
 					"Main/Feedback"
 				};

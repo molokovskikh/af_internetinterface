@@ -13,17 +13,27 @@ namespace InforoomInternet.Controllers
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(BeforeFilter))]
 	public class PrivateOffice:SmartDispatcherController
 	{
+		public void AboutSale()
+		{
+			PropertyBag["saleSettings"] = SaleSettings.FindFirst();
+		}
+
 		public void IndexOffice(string grouped)
 		{
 			var clientId = Convert.ToUInt32(Session["LoginClient"]);
-			var Client = InternetInterface.Models.Client.Find(clientId);
-			PropertyBag["PhysClientName"] = string.Format("{0} {1}", Client.PhysicalClient.Name, Client.PhysicalClient.Patronymic);
-			PropertyBag["PhysicalClient"] = Client.PhysicalClient;
-			PropertyBag["Client"] = Client;
-			PropertyBag["WriteOffs"] = Client.GetWriteOffs(grouped).OrderBy(e => e.WriteOffDate).ToArray();
+			var client = Client.Find(clientId);
+			PropertyBag["PhysClientName"] = string.Format("{0} {1}", client.PhysicalClient.Name, client.PhysicalClient.Patronymic);
+			PropertyBag["PhysicalClient"] = client.PhysicalClient;
+			PropertyBag["Client"] = client;
+			PropertyBag["WriteOffs"] = client.GetWriteOffs(grouped).OrderBy(e => e.WriteOffDate).ToArray();
 			PropertyBag["grouped"] = grouped;
 			PropertyBag["Payments"] =
-				Payment.FindAllByProperty("Client", Client).Where(p => p.Sum != 0).OrderBy(e => e.PaidOn).ToArray();
+				Payment.FindAllByProperty("Client", client).Where(p => p.Sum != 0).OrderBy(e => e.PaidOn).ToArray();
+			if (client.StartNoBlock != null)
+				PropertyBag["fullMonth"] = DateTime.Now.TotalMonth(client.StartNoBlock.Value);
+			else {
+				PropertyBag["fullMonth"] = null;
+			}
 		}
 
 		public void PostponedPayment()

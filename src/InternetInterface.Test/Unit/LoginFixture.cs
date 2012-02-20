@@ -28,7 +28,7 @@ namespace InternetInterface.Test.Unit_
 			Console.WriteLine(new DateTime(spin));
 		}
 
-		/*[Test]
+		[Test]
 		public void ImageTest()
 		{
 			StreamReader sr = new StreamReader("c:\\test.txt", Encoding.UTF8);
@@ -38,6 +38,6 @@ namespace InternetInterface.Test.Unit_
 				Console.WriteLine(Line.Replace("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "***"));
 			}
 			sr.Dispose();
-		}*/
+		}
 	}
 }
