@@ -31,11 +31,11 @@ namespace InternetInterface.Test.Unit_
 		[Test]
 		public void ImageTest()
 		{
-			StreamReader sr = new StreamReader("c:\\test.txt", Encoding.UTF8);
-			while (sr.Peek() != -1)
-			{
-				var Line = sr.ReadLine();
-				Console.WriteLine(Line.Replace("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "***"));
+			var sr = new StreamReader("c:\\test.txt", Encoding.UTF8);
+			while (sr.Peek() != -1) {
+				var line = sr.ReadLine();
+				if (line != null)
+					Console.WriteLine(line.Replace("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "***"));
 			}
 			sr.Dispose();
 		}

@@ -140,18 +140,14 @@ namespace Billing
 				var updateClient = newPayment.Client;
 				var physicalClient = updateClient.PhysicalClient;
 				var lawyerClient = updateClient.LawyerPerson;
-				var havePayment = updateClient.HavePayment;
 				if (physicalClient != null) {
 					physicalClient.Balance += Convert.ToDecimal(newPayment.Sum);
 					physicalClient.UpdateAndFlush();
 					newPayment.BillingAccount = true;
 					newPayment.Update();
 					SmsHelper.DeleteNoSendingMessages(updateClient);
-					if (!havePayment) {
+					if (updateClient.HavePaymentToStart()) {
 						updateClient.AutoUnblocked = true;
-					}
-					else {
-						updateClient.PercentBalance = 0.8m;
 					}
 					if (updateClient.RatedPeriodDate != null)
 						if (physicalClient.Balance >= updateClient.GetPriceForTariff()) {

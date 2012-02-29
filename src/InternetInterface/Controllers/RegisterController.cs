@@ -64,7 +64,7 @@ namespace InternetInterface.Controllers
 				var client = new Client {
 					AutoUnblocked = havePayment,
 					Disabled = !havePayment,
-					PercentBalance = havePayment ? 0.8m : 0.0m,
+					PercentBalance = 0.8m,
 					RegDate = DateTime.Now,
 					WhoRegistered = InitializeContent.Partner,
 					WhoRegisteredName = InitializeContent.Partner.Name,

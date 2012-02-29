@@ -108,9 +108,16 @@ namespace InternetInterface.Models
 		[Property, Auditable("Смс рассылка")]
 		public virtual bool SendSmsNotifocation { get; set; }
 
-		public virtual bool HavePayment
+		public virtual bool HavePaymentToStart()
 		{
-			get { return Payments.Where(p => p.BillingAccount && p.Sum > 0).ToList().Count > 0; }
+			var tariffSum = 0m;
+			if ((PhysicalClient.Tariff.FinalPriceInterval == 0 || PhysicalClient.Tariff.FinalPrice == 0))
+				tariffSum = PhysicalClient.Tariff.Price;
+			else
+				tariffSum = PhysicalClient.Tariff.FinalPrice;
+			if (Payments == null)
+				return false;
+			return Payments.Sum(s => s.Sum) >= tariffSum*PercentBalance;
 		}
 
 		public virtual string GetAdress()

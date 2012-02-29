@@ -290,6 +290,7 @@ namespace Billing.Test.Integration
 			var unblockedClient = CreateClient();
 			unblockedClient.AutoUnblocked = false;
 			unblockedClient.Disabled = true;
+			unblockedClient.PercentBalance = 0.8m;
 			unblockedClient.Status = Status.Find((uint) StatusType.BlockedAndConnected);
 			unblockedClient.Update();
 			var phisClient = unblockedClient.PhysicalClient;
@@ -306,8 +307,29 @@ namespace Billing.Test.Integration
 			}.Save();
 			billing.OnMethod();
 			unblockedClient.Refresh();
-			Assert.IsFalse(unblockedClient.Disabled);
+			Assert.IsTrue(unblockedClient.Disabled);
 			Assert.That(unblockedClient.PhysicalClient.Balance, Is.GreaterThan(0));
+			phisClient.Tariff.FinalPrice = phisClient.Tariff.Price + 1000;
+			phisClient.Tariff.FinalPriceInterval = 3;
+			phisClient.Update();
+			new Payment {
+				Client = unblockedClient,
+				Sum = unblockedClient.GetPriceForTariff()
+			}.Save();
+			billing.OnMethod();
+			unblockedClient.Refresh();
+			Assert.IsTrue(unblockedClient.Disabled);
+
+			phisClient.Balance = 0;
+			phisClient.Update();
+			new Payment {
+				Client = unblockedClient,
+				Sum = phisClient.Tariff.FinalPrice
+			}.Save();
+			billing.OnMethod();
+			unblockedClient.Refresh();
+			Assert.IsFalse(unblockedClient.Disabled);
+
 			phisClient.Balance = -5;
 			phisClient.Update();
 			unblockedClient.Disabled = true;
