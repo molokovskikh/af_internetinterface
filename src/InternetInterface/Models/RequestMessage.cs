@@ -23,7 +23,7 @@ namespace InternetInterface.Models
 		public virtual Partner Registrator { get; set; }
 
 		[BelongsTo]
-		public virtual Requests Request { get; set; }
+		public virtual Request Request { get; set; }
 
 		public virtual string Text
 		{

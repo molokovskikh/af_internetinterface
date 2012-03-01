@@ -124,7 +124,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["ingeners"] = Partner.GetServiceIngeners();
 			if (IsPost) {
 				var newRequest = new ServiceRequest{Registrator = InitializeContent.Partner};
-				BindObjectInstance(newRequest, "request", AutoLoadBehavior.NewInstanceIfInvalidKey);
+				BindObjectInstance(newRequest, "Request", AutoLoadBehavior.NewInstanceIfInvalidKey);
 				newRequest.Save();
 				var endPoint = client.FirstPoint();
 				var port = endPoint != null ? endPoint.Port.ToString() : string.Empty;
@@ -158,7 +158,7 @@ namespace InternetInterface.Controllers
 		{
 			var request = ServiceRequest.Find(Id);
 			var isService = InitializeContent.Partner.CategorieIs("Service");
-			PropertyBag["request"] = ((isService && request.Performer == InitializeContent.Partner) || ! isService) ? request : null;
+			PropertyBag["Request"] = ((isService && request.Performer == InitializeContent.Partner) || ! isService) ? request : null;
 			PropertyBag["Edit"] = Edit;
 			PropertyBag["IsService"] = InitializeContent.Partner.CategorieIs("Service");
 			if (Edit) {
@@ -178,7 +178,7 @@ namespace InternetInterface.Controllers
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void EditServiceRequest([ARDataBind("request", AutoLoadBehavior.NullIfInvalidKey)]ServiceRequest request)
+		public void EditServiceRequest([ARDataBind("Request", AutoLoadBehavior.NullIfInvalidKey)]ServiceRequest request)
 		{
 			if (request != null){
 				InitializeHelper.InitializeModel(request);

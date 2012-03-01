@@ -1,4 +1,4 @@
-/*  Prototype JavaScript framework, version 1.6.0.2
+﻿/*  Prototype JavaScript framework, version 1.6.0.2
  *  (c) 2005-2008 Sam Stephenson
  *
  *  Prototype is freely distributable under the terms of an MIT-style license.
@@ -1222,7 +1222,7 @@ Ajax.Request = Class.create(Ajax.Base, {
       this.body = this.method == 'post' ? (this.options.postBody || params) : null;
       this.transport.send(this.body);
 
-      /* Force Firefox to handle ready state 4 for synchronous requests */
+      /* Force Firefox to handle ready state 4 for synchronous Requests */
       if (!this.options.asynchronous && this.transport.overrideMimeType)
         this.onStateChange();
 

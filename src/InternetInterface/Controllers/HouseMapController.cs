@@ -46,7 +46,7 @@ namespace InternetInterface.Controllers
 		{
 			PropertyBag["Editing"] = House.Find(id).ApartmentCount == 0 ? true : false;
 			PropertyBag["sHouse"] = House.Find(id);
-			PropertyBag["sStatuses"] = ApartmentStatus.Queryable.Where(s => s.ShortName != "request").ToList();
+			PropertyBag["sStatuses"] = ApartmentStatus.Queryable.Where(s => s.ShortName != "Request").ToList();
 			CancelLayout();
 		}
 

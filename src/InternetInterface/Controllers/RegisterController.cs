@@ -131,7 +131,7 @@ namespace InternetInterface.Controllers
 					client.ConnectedDate = DateTime.Now;
 					client.Status = Status.Find((uint) StatusType.BlockedAndConnected);
 					client.UpdateAndFlush();
-					foreach (var requestse in Requests.FindAllByProperty("Id", requestID)) {
+					foreach (var requestse in Models.Request.FindAllByProperty("Id", requestID)) {
 						if (requestse.Registrator != null) {
 							PaymentsForAgent.CreatePayment(AgentActions.ConnectClient,
 							                               string.Format("Зачисление за подключенного клиента #{0}", client.Id),
@@ -151,7 +151,7 @@ namespace InternetInterface.Controllers
 				Flash["AccountNumber"] = client.Id.ToString("00000");
 				Flash["ConnectSumm"] = phisClient.ConnectSum;
 				Flash["ConnectInfo"] = client.GetConnectInfo();
-				foreach (var requestse in Requests.FindAllByProperty("Id", requestID)) {
+				foreach (var requestse in Models.Request.FindAllByProperty("Id", requestID)) {
 					if (requestse.Registrator != null) {
 						phisClient.Request = requestse;
 						phisClient.Update();
@@ -313,7 +313,7 @@ namespace InternetInterface.Controllers
 
 		public void RegisterClient(uint requestID)
 		{
-			var request = Requests.Find(requestID);
+			var request = Models.Request.Find(requestID);
 			var fio = new string[3];
 			var _fio =
 				request.ApplicantName.Split(' ').Select(s => s.Replace(" ", string.Empty)).Where(s => !string.IsNullOrEmpty(s)).ToArray();
@@ -500,7 +500,7 @@ namespace InternetInterface.Controllers
 		{
 			var _house = House.Find(house);
 			PropertyBag["tariffs"] = Tariff.FindAll();
-			PropertyBag["request"] = new Requests {
+			PropertyBag["Request"] = new Request {
 													  Street = _house.Street,
 													  CaseHouse = _house.Case,
 													  House = _house.Number,
@@ -509,7 +509,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["houseNumber"] = house;
 		}
 
-		public void RegisterRequest([DataBind("request")]Requests request, uint houseNumber, uint tariff)
+		public void RegisterRequest([DataBind("Request")]Request request, uint houseNumber, uint tariff)
 		{
 			if (Validator.IsValid(request)) {
 				var phone = request.ApplicantPhoneNumber;
@@ -534,8 +534,8 @@ namespace InternetInterface.Controllers
 											  };
 					apartment.Save();
 				}
-				//apartment.Comment = string.Format("Заявка номер {0}", request.Id);
-				apartment.Status = ApartmentStatus.Queryable.Where(aps => aps.ShortName == "request").FirstOrDefault();
+				//apartment.Comment = string.Format("Заявка номер {0}", Request.Id);
+				apartment.Status = ApartmentStatus.Queryable.Where(aps => aps.ShortName == "Request").FirstOrDefault();
 				apartment.Update();
 				PaymentsForAgent.CreatePayment(AgentActions.CreateRequest,
 				                               string.Format("Начисление за создание заявки #{0}", request.Id),

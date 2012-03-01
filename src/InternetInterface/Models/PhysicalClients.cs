@@ -174,7 +174,7 @@ namespace InternetInterface.Models
 		public virtual decimal ConnectSum { get; set; }
 
 		[BelongsTo]
-		public virtual Requests Request { get; set; }
+		public virtual Request Request { get; set; }
 
 		[OneToOne(PropertyRef = "PhysicalClient")]
 		public virtual Client Client { get; set; }

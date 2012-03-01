@@ -12,7 +12,7 @@ using InternetInterface.Helpers;
 namespace InternetInterface.Models
 {
 	[ActiveRecord("Requests", Schema = "Internet", Lazy = true)]
-	public class Requests : ActiveRecordLinqBase<Requests>
+	public class Request : ActiveRecordLinqBase<Request>
 	{
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
@@ -117,7 +117,7 @@ namespace InternetInterface.Models
 		}
 
 
-		public static List<Requests> GetRequestsForInterval(Week Interval)
+		public static List<Request> GetRequestsForInterval(Week Interval)
 		{
 			return Queryable.Where(
 				r => r.RegDate.Date >= Interval.StartDate.Date && r.RegDate.Date <= Interval.EndDate.Date && r.Registrator == InitializeContent.Partner).
@@ -154,14 +154,12 @@ namespace InternetInterface.Models
 			foreach (var requestse in requestsInInterval.Where(r => r.PaidBonus))
 			{
 				var payment = bonusForRequest - requestse.VirtualBonus;
-				//requestse.VirtualWriteOff = payment;
+
 				requestse.VirtualBonus = bonusForRequest;
 				var message = payment > 0
 				              	? "Начисление за пересчет бонусов за период с {0} по {1} для заявки #{2}"
 				              	: "Списание за пересчет бонусов за период с {0} по {1} для заявки #{2}";
-				PaymentsForAgent.CreatePayment(requestse.Registrator, string.Format(message,
-				                                                                    Interval.GetStartString(),
-				                                                                    Interval.GetEndString(), requestse.Id), payment);
+				PaymentsForAgent.CreatePayment(requestse.Registrator, string.Format(message, Interval.GetStartString(), Interval.GetEndString(), requestse.Id), payment);
 			}
 		}
 	}

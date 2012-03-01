@@ -6185,7 +6185,7 @@ jQuery.fn.extend({
 		if ( typeof url !== "string" && _load ) {
 			return _load.apply( this, arguments );
 
-		// Don't do a request if no elements are being requested
+		// Don't do a Request if no elements are being Requested
 		} else if ( !this.length ) {
 			return this;
 		}
@@ -6196,7 +6196,7 @@ jQuery.fn.extend({
 			url = url.slice( 0, off );
 		}
 
-		// Default to a GET request
+		// Default to a GET Request
 		var type = "GET";
 
 		// If the second parameter was provided
@@ -6491,7 +6491,7 @@ jQuery.extend({
 					return this;
 				},
 
-				// Cancel the request
+				// Cancel the Request
 				abort: function( statusText ) {
 					statusText = statusText || "abort";
 					if ( transport ) {
@@ -6644,7 +6644,7 @@ jQuery.extend({
 		// Extract dataTypes list
 		s.dataTypes = jQuery.trim( s.dataType || "*" ).toLowerCase().split( rspacesAjax );
 
-		// Determine if a cross-domain request is in order
+		// Determine if a cross-domain Request is in order
 		if ( !s.crossDomain ) {
 			parts = rurl.exec( s.url.toLowerCase() );
 			s.crossDomain = !!( parts &&
@@ -6662,7 +6662,7 @@ jQuery.extend({
 		// Apply prefilters
 		inspectPrefiltersOrTransports( prefilters, s, options, jqXHR );
 
-		// If request was aborted inside a prefiler, stop there
+		// If Request was aborted inside a prefiler, stop there
 		if ( state === 2 ) {
 			return false;
 		}
@@ -6673,15 +6673,15 @@ jQuery.extend({
 		// Uppercase the type
 		s.type = s.type.toUpperCase();
 
-		// Determine if request has content
+		// Determine if Request has content
 		s.hasContent = !rnoContent.test( s.type );
 
-		// Watch for a new set of requests
+		// Watch for a new set of Requests
 		if ( fireGlobals && jQuery.active++ === 0 ) {
 			jQuery.event.trigger( "ajaxStart" );
 		}
 
-		// More options handling for requests with no content
+		// More options handling for Requests with no content
 		if ( !s.hasContent ) {
 
 			// If data is available, append data to url
@@ -6860,13 +6860,13 @@ jQuery.extend({
 	// Counter for holding the number of active queries
 	active: 0,
 
-	// Last-Modified header cache for next request
+	// Last-Modified header cache for next Request
 	lastModified: {},
 	etag: {}
 
 });
 
-/* Handles responses to an ajax request:
+/* Handles responses to an ajax Request:
  * - sets all responseXXX fields accordingly
  * - finds the right dataType (mediates between content-type and expected dataType)
  * - returns the corresponding response
@@ -6935,7 +6935,7 @@ function ajaxHandleResponses( s, jqXHR, responses ) {
 	}
 }
 
-// Chain conversions given the request and the original response
+// Chain conversions given the Request and the original response
 function ajaxConvert( s, response ) {
 
 	// Apply the dataFilter if provided
@@ -7034,7 +7034,7 @@ jQuery.ajaxSetup({
 	}
 });
 
-// Detect, normalize options and install callbacks for jsonp requests
+// Detect, normalize options and install callbacks for jsonp Requests
 jQuery.ajaxPrefilter( "json jsonp", function( s, originalSettings, jqXHR ) {
 
 	var dataIsString = ( typeof s.data === "string" );
@@ -7134,7 +7134,7 @@ jQuery.ajaxPrefilter( "script", function( s ) {
 // Bind script tag hack transport
 jQuery.ajaxTransport( "script", function(s) {
 
-	// This transport only deals with cross domain requests
+	// This transport only deals with cross domain Requests
 	if ( s.crossDomain ) {
 
 		var script,
@@ -7203,7 +7203,7 @@ var // #5280: next active xhr id and list of active xhrs' callbacks
 // #5280: Internet Explorer will keep connections alive if we don't abort on unload
 function xhrOnUnloadAbort() {
 	jQuery( window ).unload(function() {
-		// Abort all pending requests
+		// Abort all pending Requests
 		for ( var key in xhrCallbacks ) {
 			xhrCallbacks[ key ]( 0, 1 );
 		}
@@ -7223,11 +7223,11 @@ function createActiveXHR() {
 	} catch( e ) {}
 }
 
-// Create the request object
+// Create the Request object
 // (This is still attached to ajaxSettings for backward compatibility)
 jQuery.ajaxSettings.xhr = window.ActiveXObject ?
 	/* Microsoft failed to properly
-	 * implement the XMLHttpRequest in IE7 (can't request local files),
+	 * implement the XMLHttpRequest in IE7 (can't Request local files),
 	 * so we use the ActiveXObject when it is available
 	 * Additionally XMLHttpRequest can be disabled in IE7/IE8 so
 	 * we need a fallback.
@@ -7242,7 +7242,7 @@ jQuery.ajaxSettings.xhr = window.ActiveXObject ?
 testXHR = jQuery.ajaxSettings.xhr();
 jQuery.support.ajax = !!testXHR;
 
-// Does this browser support crossDomain XHR requests
+// Does this browser support crossDomain XHR Requests
 jQuery.support.cors = testXHR && ( "withCredentials" in testXHR );
 
 // No need for the temporary xhr anymore
@@ -7286,21 +7286,21 @@ if ( jQuery.support.ajax ) {
 					}
 
 					// Requested-With header
-					// Not set for crossDomain requests with no content
+					// Not set for crossDomain Requests with no content
 					// (see why at http://trac.dojotoolkit.org/ticket/9486)
 					// Won't change header if already provided
 					if ( !( s.crossDomain && !s.hasContent ) && !headers["X-Requested-With"] ) {
 						headers[ "X-Requested-With" ] = "XMLHttpRequest";
 					}
 
-					// Need an extra try/catch for cross domain requests in Firefox 3
+					// Need an extra try/catch for cross domain Requests in Firefox 3
 					try {
 						for ( i in headers ) {
 							xhr.setRequestHeader( i, headers[ i ] );
 						}
 					} catch( _ ) {}
 
-					// Do send the request
+					// Do send the Request
 					// This may raise an exception which is actually
 					// handled in jQuery.ajax (so no try/catch here)
 					xhr.send( ( s.hasContent && s.data ) || null );
@@ -7350,7 +7350,7 @@ if ( jQuery.support.ajax ) {
 									responses.text = xhr.responseText;
 
 									// Firefox throws an exception when accessing
-									// statusText for faulty cross-domain requests
+									// statusText for faulty cross-domain Requests
 									try {
 										statusText = xhr.statusText;
 									} catch( e ) {
@@ -7360,7 +7360,7 @@ if ( jQuery.support.ajax ) {
 
 									// Filter status for non standard behaviors
 
-									// If the request is local and we have data: assume a success
+									// If the Request is local and we have data: assume a success
 									// (success with no data won't get notified, that's the best we
 									// can do given current implementations)
 									if ( !status && s.isLocal && !s.crossDomain ) {

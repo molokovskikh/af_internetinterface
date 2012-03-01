@@ -195,7 +195,7 @@ namespace InforoomInternet.Test.Unit
 				ie.Button("appbut").Click();
 				Thread.Sleep(2000);
 				Assert.That(ie.Text, Is.StringContaining("Спасибо, Ваша заявка принята."));
-				Requests.FindAll().Last().DeleteAndFlush();
+				Request.FindAll().Last().DeleteAndFlush();
 			}
 			using (var ie = Open("Main/zayavka"))
 			{

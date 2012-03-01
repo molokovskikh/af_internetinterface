@@ -108,6 +108,9 @@ namespace InternetInterface.Models
 		[Property, Auditable("Смс рассылка")]
 		public virtual bool SendSmsNotifocation { get; set; }
 
+		[OneToOne(PropertyRef = "Client")]
+		public virtual Request Request { get; set; }
+
 		public virtual bool HavePaymentToStart()
 		{
 			var tariffSum = 0m;

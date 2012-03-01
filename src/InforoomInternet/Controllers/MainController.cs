@@ -134,7 +134,7 @@ namespace InforoomInternet.Controllers
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void Send([DataBind("application")] Requests application)
+		public void Send([DataBind("application")] Request application)
 		{
 			if (Validator.IsValid(application)) {
 				application.ActionDate = DateTime.Now;

@@ -79,11 +79,11 @@ namespace InternetInterface.Test.Functional
 			var apartment = UInt32.Parse(_params.Last());
 			browser.Button("register_button").Click();
 
-			var requests = new List<Requests>();
+			var requests = new List<Request>();
 			Partner partner = null;
 			//using (new SessionScope())
 			{
-				requests = Requests.Queryable.Where(
+				requests = Request.Queryable.Where(
 					r =>
 					r.Street == house.Street && r.CaseHouse == house.Case && r.House == house.Number && r.Apartment == apartment).
 					ToList();
@@ -114,7 +114,7 @@ namespace InternetInterface.Test.Functional
 					PaymentsForAgent.Queryable.Where(
 						p => p.Comment.Contains(clientCode) || p.Comment.Contains(requests.First().Id.ToString())).ToList();
 				Assert.That(payments.Count, Is.GreaterThanOrEqualTo(3), "Неверное количество платежей, какого-то не хватает");
-				var requests_for_partner = Requests.Queryable.Where(r => r.Registrator == partner).ToList();
+				var requests_for_partner = Request.Queryable.Where(r => r.Registrator == partner).ToList();
 				var deleted = requests_for_partner.Count - 8;
 				foreach (var requestse in requests_for_partner)
 				{
@@ -127,9 +127,9 @@ namespace InternetInterface.Test.Functional
 				browser.Button("register_button").Click();
 				scope.Dispose();
 				scope = new SessionScope();
-				var bonuses = Requests.Queryable.Where(r => r.Registrator == partner).ToList().Sum(r => r.VirtualBonus);
+				var bonuses = Request.Queryable.Where(r => r.Registrator == partner).ToList().Sum(r => r.VirtualBonus);
 				Assert.That(bonuses, Is.EqualTo(0m), "Неверное количество бонусов, их не должно быть");
-				while (Requests.Queryable.Where(r => r.Registrator == partner).Count() < 10)
+				while (Request.Queryable.Where(r => r.Registrator == partner).Count() < 10)
 				{
 					CreateRequestForApartment();
 					browser.Button("register_button").Click();
@@ -137,7 +137,7 @@ namespace InternetInterface.Test.Functional
 					scope = new SessionScope();
 				}
 
-				var for_bonuses = Requests.Queryable.Where(r => r.Registrator == partner).ToList();
+				var for_bonuses = Request.Queryable.Where(r => r.Registrator == partner).ToList();
 
 				Thread.Sleep(2000);
 				Assert.That(for_bonuses.Sum(f => f.VirtualBonus), Is.GreaterThanOrEqualTo(500m));
@@ -148,14 +148,14 @@ namespace InternetInterface.Test.Functional
 		public void BonusTest()
 		{
 			var partner = Partner.Queryable.FirstOrDefault(p => p.Login == Environment.UserName);
-			while (Requests.Queryable.Where(r => r.Registrator == partner).Count() < 20)
+			while (Request.Queryable.Where(r => r.Registrator == partner).Count() < 20)
 			{
 				CreateRequestForApartment();
 				browser.Button("register_button").Click();
 				scope.Dispose();
 				scope = new SessionScope();
 			}
-			var for_bonuses = Requests.Queryable.Where(r => r.Registrator == partner).ToList();
+			var for_bonuses = Request.Queryable.Where(r => r.Registrator == partner).ToList();
 			Thread.Sleep(2000);
 			Assert.That(for_bonuses.Sum(f => f.VirtualBonus), Is.GreaterThanOrEqualTo(2000m));
 		}

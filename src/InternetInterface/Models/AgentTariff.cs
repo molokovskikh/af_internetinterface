@@ -45,7 +45,7 @@ namespace InternetInterface.Models
 
 		public static AgentTariff GetAction(string action)
 		{
-			return Queryable.Where(a => a.ActionName == action).FirstOrDefault();
+			return Queryable.FirstOrDefault(a => a.ActionName == action);
 		}
 
 		public static decimal GetPriceForAction(string action)

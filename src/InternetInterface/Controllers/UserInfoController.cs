@@ -163,7 +163,7 @@ namespace InternetInterface.Controllers
 			return ToUrlQuery();
 		}
 
-		public List<Requests> Find()
+		public List<Request> Find()
 		{
 			var thisD = DateTime.Now;
 			if (beginDate == null)
@@ -171,7 +171,7 @@ namespace InternetInterface.Controllers
 			if (endDate == null)
 				endDate = DateTime.Now;
 
-			Expression<Func<Requests, bool>> predicate;
+			Expression<Func<Request, bool>> predicate;
 			if (labelId != 0)
 				if (!string.IsNullOrEmpty(query))
 					predicate = i => (i.Street.Contains(query) || i.ApplicantPhoneNumber.Contains(query) || i.ApplicantName.Contains(query)) && i.ActionDate.Date >= beginDate.Value.Date && i.ActionDate.Date <= endDate.Value.Date && i.Label.Id == labelId && i.Archive == Archive;
@@ -191,17 +191,17 @@ namespace InternetInterface.Controllers
 				}
 			}
 
-			_lastRowsCount = Requests.Queryable.Where(predicate).Count();
+			_lastRowsCount = Request.Queryable.Where(predicate).Count();
 			if (_lastRowsCount > 0) {
 				var getCount = _lastRowsCount - PageSize*CurrentPage < PageSize ? _lastRowsCount - PageSize*CurrentPage : PageSize;
-				var result = Requests.Queryable.Where(predicate).ToList();
+				var result = Request.Queryable.Where(predicate).ToList();
 				if (!string.IsNullOrEmpty(SortBy))
-					result.Sort(new PropertyComparer<Requests>(Direction == "asc" ? SortDirection.Asc : SortDirection.Desc, SortBy));
+					result.Sort(new PropertyComparer<Request>(Direction == "asc" ? SortDirection.Asc : SortDirection.Desc, SortBy));
 				return result.Skip(PageSize*CurrentPage)
 					.Take(getCount)
 					.ToList();
 			}
-			return new List<Requests>();
+			return new List<Request>();
 		}
 	}
 
@@ -656,7 +656,7 @@ namespace InternetInterface.Controllers
 				ARSesssionHelper<Label>.QueryWithSession(session => {
 					var query =
 						session.CreateSQLQuery(
-@"update internet.Requests R 
+@"update internet.Request R 
 set r.`Label` = null,
 r.`ActionDate` = :ActDate,
 r.`Operator` = :Oper 
@@ -685,7 +685,7 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 
 		public void RequestOne(uint id)
 		{
-			PropertyBag["request"] = Requests.Find(id);
+			PropertyBag["Request"] = Models.Request.Find(id);
 			PropertyBag["Messages"] = RequestMessage.Queryable.Where(r => r.Request.Id == id).ToList();
 		}
 
@@ -696,14 +696,14 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 				Date = DateTime.Now,
 				Registrator = InitializeContent.Partner,
 				Comment = comment,
-				Request = Requests.Find(requestId)
+				Request = Models.Request.Find(requestId)
 			}.Save();
 			RedirectToReferrer();
 		}
 
 		public void RequestInArchive(uint id, bool action)
 		{
-			var request = Requests.Find(id);
+			var request = Models.Request.Find(id);
 			request.Archive = action;
 			request.Update();
 			RedirectToReferrer();
@@ -738,7 +738,7 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 			var _label = Label.Find(labelch);
 			foreach (var label in labelList)
 			{
-				var request = Requests.Find(label);
+				var request = Models.Request.Find(label);
 				if ((request.Label == null) ||
 				    (request.Label.ShortComment != "Refused" && request.Label.ShortComment != "Registered")) {
 					request.Label = _label;
