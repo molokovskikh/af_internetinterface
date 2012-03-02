@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
@@ -11,7 +12,7 @@ namespace InternetInterface.Controllers
 {
 	//[Layout("Main")]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
-	public class AgentInfoController : SmartDispatcherController 
+	public class AgentInfoController : ARSmartDispatcherController 
 	{
 		private List<PaymentsForAgent> GetPayments(DateTime startDate, DateTime endDate)
 		{
@@ -57,6 +58,17 @@ namespace InternetInterface.Controllers
 		}
 
 		public virtual void EditAgentSettings()
-		{}
+		{
+			PropertyBag["agentSettings"] = AgentTariff.FindAll();
+		}
+
+		[AccessibleThrough(Verb.Post)]
+		public void SaveSettings([ARDataBind("agentSettings", AutoLoad = AutoLoadBehavior.NewInstanceIfInvalidKey)]AgentTariff[] tariffs)
+		{
+			foreach (var agentTariff in tariffs) {
+				agentTariff.Save();
+			}
+			RedirectToReferrer();
+		}
 	}
 }

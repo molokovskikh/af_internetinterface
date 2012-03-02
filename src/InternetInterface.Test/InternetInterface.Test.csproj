@@ -168,6 +168,10 @@
       <Project>{E2B03BC7-AACB-4A72-BBC7-DF4325912504}</Project>
       <Name>InternetInterface</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Test.Support\Test.Support\Test.Support.csproj">
+      <Project>{A215E837-1208-49E3-AF93-A9612223122C}</Project>
+      <Name>Test.Support</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

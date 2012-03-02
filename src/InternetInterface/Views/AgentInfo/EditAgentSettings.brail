@@ -1,13 +1,35 @@
-﻿<div style="width:800px;" class="backGround whereNewTable">
-<form>
+﻿<script type="text/javascript" src="${Siteroot}/Javascript/DecimalValidate.js"></script>
+<script type="text/javascript">
+	$(function () {
+		$('#agentSettingsForm').validate();
+
+<%for i,item in enumerate(agentSettings): %>
+		$('#agentSumField${i}').rules("add", { required: true, decimal: true, messages: {
+			required: "Введите число"
+		}
+		});
+<%end %>
+	});
+</script>
+<div style="width:800px;" class="backGround whereNewTable">
+<form id="agentSettingsForm" method="post" action="SaveSettings">
 	<table class="table">
+	<thead>
 		<tr>
-			<td>Размер компенсации агенту за подключенного клиента</td>
-			<td><input type=text /></td>
+			<th colspan=2>Настройки работы агентов</th>
 		</tr>
+	</thead>
+	<%for i,item in enumerate(agentSettings): %>
 		<tr>
-			<td>Коэффициент проверки соответствия суммы компенсации и платежей клиента</td>
-			<td><input type=text/></td>
+			<td>${item.Description}</td>
+			<td>
+				<input type=hidden name="agentSettings[${i}].Id" value="${item.Id}"/>
+				<input type=text id="agentSumField${i}" name="agentSettings[${i}].Sum" value="${item.Sum}"/>
+			</td>
+		</tr>
+	<%end %>
+		<tr>
+			<td colspan=2><button class="button" id="button_validate" type=submit>Сохранить</button></td>
 		</tr>
 	</table>
 </form>

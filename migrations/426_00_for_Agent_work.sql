@@ -1,6 +1,6 @@
-delete from internet.agenttariffs;
+﻿delete from internet.agenttariffs;
 
-insert into internet.agenttariffs (ActionName, `Sum`)
+insert into internet.agenttariffs (ActionName, `Sum`, Description)
 values
-("WorkedClient", 250),
-("AgentPayIndex", 1.5);
+("WorkedClient", 250, "Размер компенсации агенту за подключенного клиента"),
+("AgentPayIndex", 1.5, "Коэффициент проверки соответствия суммы компенсации и платежей клиента");

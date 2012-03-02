@@ -200,6 +200,7 @@
     <None Include="Views\Subview\ConnectInfo.brail" />
     <None Include="Views\UserInfo\Leases.brail" />
     <Content Include="JavaScript\Common.js" />
+    <Content Include="JavaScript\DecimalValidate.js" />
     <Content Include="JavaScript\jquery-1.5.1.js" />
     <Content Include="JavaScript\jquery-1.5.1.min.js" />
     <Content Include="JavaScript\jquery-1.6.1.js" />

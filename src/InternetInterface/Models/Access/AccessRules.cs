@@ -268,7 +268,8 @@ namespace InternetInterface.Models.Access
 									"CancelPayments",
 									"ShowAppeals",
 									"СhangeSaleSettings",
-									"EditAgentSettings"
+									"EditAgentSettings",
+									"SaveSettings"
 								};
 			return _visibleDemand.Contains(methodName) ? "SSI" : string.Empty;
 		}

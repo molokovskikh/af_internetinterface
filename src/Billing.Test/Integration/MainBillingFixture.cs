@@ -102,6 +102,16 @@ namespace Billing.Test.Integration
 				Price = 0
 			}.Save();
 
+			new AgentTariff {
+				ActionName = AgentActions.WorkedClient,
+				Sum = 250
+			}.Save();
+
+			new AgentTariff {
+				ActionName = AgentActions.AgentPayIndex,
+				Sum = 1.5m
+			}.Save();
+
 			new VoluntaryBlockin
 			{
 				BlockingAll = true,
@@ -120,6 +130,7 @@ namespace Billing.Test.Integration
 
 		public static void PrepareTest()
 		{
+			Request.DeleteAll();
 			SmsMessage.DeleteAll();
 			UserWriteOff.DeleteAll();
 			ClientService.DeleteAll();
