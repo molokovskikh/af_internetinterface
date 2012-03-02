@@ -318,16 +318,6 @@ namespace Billing.Test.Integration
 			}.Save();
 			billing.OnMethod();
 			unblockedClient.Refresh();
-			Assert.IsTrue(unblockedClient.Disabled);
-
-			phisClient.Balance = 0;
-			phisClient.Update();
-			new Payment {
-				Client = unblockedClient,
-				Sum = phisClient.Tariff.FinalPrice
-			}.Save();
-			billing.OnMethod();
-			unblockedClient.Refresh();
 			Assert.IsFalse(unblockedClient.Disabled);
 
 			phisClient.Balance = -5;

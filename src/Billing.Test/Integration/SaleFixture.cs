@@ -43,7 +43,7 @@ namespace Billing.Test.Integration
 			Assert.AreEqual(_client.Sale, SaleStep*MinSale);
 			var writeOff = WriteOff.FindFirst();
 			var preSaleSum = _client.PhysicalClient.Tariff.Price / _client.GetInterval();
-			Assert.AreEqual(writeOff.WriteOffSum, preSaleSum - preSaleSum*(SaleStep*MinSale / 100));
+			Assert.AreEqual(Math.Round(writeOff.WriteOffSum, 5), Math.Round(preSaleSum - preSaleSum*(SaleStep*MinSale / 100), 5));
 			Assert.AreEqual(writeOff.Sale, SaleStep*MinSale);
 		}
 
