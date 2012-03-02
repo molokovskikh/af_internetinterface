@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
+using Common.Tools;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
@@ -67,6 +68,7 @@ namespace InternetInterface.Controllers
 			foreach (var agentTariff in tariffs) {
 				agentTariff.Save();
 			}
+			Flash["Message"] = Message.Notify("Сохранено");
 			RedirectToReferrer();
 		}
 	}
