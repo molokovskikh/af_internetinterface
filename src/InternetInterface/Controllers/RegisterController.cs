@@ -131,18 +131,6 @@ namespace InternetInterface.Controllers
 					client.ConnectedDate = DateTime.Now;
 					client.Status = Status.Find((uint) StatusType.BlockedAndConnected);
 					client.UpdateAndFlush();
-					/*foreach (var requestse in Models.Request.FindAllByProperty("Id", requestID)) {
-						if (requestse.Registrator != null) {
-							PaymentsForAgent.CreatePayment(AgentActions.ConnectClient,
-							                               string.Format("Зачисление за подключенного клиента #{0}", client.Id),
-							                               requestse.Registrator);
-							PaymentsForAgent.CreatePayment(requestse.Registrator,
-							                               string.Format("Зачисление бонусов по заявке #{0} за поключенного клиента #{1}",
-							                                             requestse.Id, client.Id), requestse.VirtualBonus);
-							requestse.PaidBonus = true;
-							requestse.Update();
-						}
-					}*/
 				}
 
 				Flash["WhoConnected"] = client.WhoConnected;
@@ -153,17 +141,8 @@ namespace InternetInterface.Controllers
 				Flash["ConnectInfo"] = client.GetConnectInfo();
 				foreach (var requestse in Models.Request.FindAllByProperty("Id", requestID)) {
 					if (requestse.Registrator != null) {
-						//phisClient.Request = requestse;
 						phisClient.Update();
-						/*PaymentsForAgent.CreatePayment(AgentActions.CreateClient,
-						                               string.Format("Зачисление за зарегистрированного клиента #{0}", client.Id),
-						                               requestse.Registrator);*/
 					}
-					/*if (requestse.Label != null && requestse.Label.ShortComment == "Refused" && requestse.Registrator != null) {
-						PaymentsForAgent.CreatePayment(requestse.Registrator,
-						                               string.Format("Снятие штрафа за закрытие заявки #{0}", requestse.Id),
-						                               -AgentTariff.GetPriceForAction(AgentActions.DeleteRequest));
-					}*/
 					requestse.Label = Label.Queryable.Where(l => l.ShortComment == "Registered").FirstOrDefault();
 					requestse.Archive = true;
 					requestse.Client = client;
@@ -521,7 +500,6 @@ namespace InternetInterface.Controllers
 				request.RegDate = DateTime.Now;
 				request.Operator = InitializeContent.Partner;
 				request.Save();
-				//request.SetRequestBoduses();
 				var apartment = Apartment.Queryable.FirstOrDefault(a => a.House == House.Find(houseNumber) && a.Number == request.Apartment);
 				if (apartment == null)
 				{
@@ -531,12 +509,8 @@ namespace InternetInterface.Controllers
 											  };
 					apartment.Save();
 				}
-				//apartment.Comment = string.Format("Заявка номер {0}", Request.Id);
 				apartment.Status = ApartmentStatus.Queryable.Where(aps => aps.ShortName == "Request").FirstOrDefault();
 				apartment.Update();
-				/*PaymentsForAgent.CreatePayment(AgentActions.CreateRequest,
-				                               string.Format("Начисление за создание заявки #{0}", request.Id),
-				                               InitializeContent.Partner);*/
 				RedirectToUrl("../HouseMap/ViewHouseInfo.rails?House=" + houseNumber);
 			}
 		}

@@ -327,7 +327,6 @@ namespace Billing
 			foreach (var client in bonusesClients) {
 				if (client.Payments.Sum(p => p.Sum) >= needToAgentSum * agentSettings) { 
 					var reuest = client.Request;
-					//var reuest = Request.Queryable.FirstOrDefault(r => r.Client == client);
 					reuest.PaidBonus = true;
 					reuest.Update();
 					new PaymentsForAgent {

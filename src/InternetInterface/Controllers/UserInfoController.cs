@@ -513,27 +513,10 @@ namespace InternetInterface.Controllers
 					}
 					else {
 						clientEntPoint.SaveAndFlush();
-						//if (client.PhysicalClient != null && client.PhysicalClient.Request != null &&
-						//    client.PhysicalClient.Request.Registrator != null) {
-							//var request = client.PhysicalClient.Request;
-							//var registrator = request.Registrator;
-							/*PaymentsForAgent.CreatePayment(AgentActions.ConnectClient,
-							                               string.Format("Зачисление за подключение клиента #{0}", client.Id), registrator);
-							PaymentsForAgent.CreatePayment(registrator,
-							                               string.Format("Зачисление бонусов по заявке #{0} за поключенного клиента #{1}",
-							                                             request.Id, client.Id), request.VirtualBonus);
-							request.PaidBonus = true;
-							request.Update();*/
 							if (client.AdditionalStatus != null && client.AdditionalStatus.ShortName == "Refused") {
-								/*PaymentsForAgent.CreatePayment(request.Registrator,
-								                               string.Format("Снятие штрафа за отказ клиента заявки #{0}", request.Id),
-								                               -AgentTariff.GetPriceForAction(AgentActions.RefusedClient));*/
 								client.AdditionalStatus = null;
 								client.Update();
-								//request.Label = null;
-								//request.Update();
 							}
-						//}
 					}
 					if (brigadChangeFlag) {
 						var brigad = Brigad.Find(BrigadForConnect);
@@ -749,14 +732,6 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 					}
 					request.UpdateAndFlush();
 				}
-				/*if (_label.ShortComment == "Refused" && request.Registrator != null &&
-				    (request.Label == null || request.Label.ShortComment != "Registered"))
-				{
-					if (!DateHelper.IncludeDateInCurrentInterval(request.RegDate))
-						PaymentsForAgent.CreatePayment(AgentActions.DeleteRequest,
-						                               string.Format("Списание за отказ заявки #{0}", request.Id), request.Registrator);
-					request.SetRequestBoduses();
-				}*/
 			}
 			RedirectToReferrer();
 		}
@@ -1113,10 +1088,6 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 			{
 				graph.Delete();
 			}
-			/*if (client.PhysicalClient.Request != null && client.PhysicalClient.Request.Registrator != null)
-				PaymentsForAgent.CreatePayment(AgentActions.RefusedClient,
-				                               string.Format("Списание за отказ клиента #{0} от подключения", client.Id),
-				                               client.PhysicalClient.Request.Registrator);*/
 			CreateAppeal("Причина отказа:  " + prichina + " \r\n Комментарий: \r\n " + Appeal, ClientID);
 			LayoutName = "NoMap";
 		}
