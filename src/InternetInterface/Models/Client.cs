@@ -110,11 +110,7 @@ namespace InternetInterface.Models
 
 		public virtual bool HavePaymentToStart()
 		{
-			var tariffSum = 0m;
-			if ((PhysicalClient.Tariff.FinalPriceInterval == 0 || PhysicalClient.Tariff.FinalPrice == 0))
-				tariffSum = PhysicalClient.Tariff.Price;
-			else
-				tariffSum = PhysicalClient.Tariff.FinalPrice;
+			var tariffSum = GetPriceForTariff();
 			if (Payments == null)
 				return false;
 			return Payments.Sum(s => s.Sum) >= tariffSum*PercentBalance;
