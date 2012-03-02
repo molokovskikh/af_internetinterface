@@ -45,8 +45,6 @@ namespace InternetInterface.Controllers
 			var interval = new Week(startDate, endDate);
 			var payments = PaymentsForAgent.Queryable.Where(p => p.RegistrationDate.Date >= startDate.Date && p.RegistrationDate.Date <= endDate.Date).ToList().GroupBy(p => p.Agent);
 			PropertyBag["payments"] = payments;
-
-			//PropertyBag["Agents"] = Partner.Queryable.Where(p => p.Categorie.ReductionName == "Agent").ToList();
 			PropertyBag["interval"] = interval;
 		}
 
@@ -65,6 +63,7 @@ namespace InternetInterface.Controllers
 		[AccessibleThrough(Verb.Post)]
 		public void SaveSettings([ARDataBind("agentSettings", AutoLoad = AutoLoadBehavior.NewInstanceIfInvalidKey)]AgentTariff[] tariffs)
 		{
+			DbLogHelper.SetupParametersForTriggerLogging();
 			foreach (var agentTariff in tariffs) {
 				agentTariff.Save();
 			}
