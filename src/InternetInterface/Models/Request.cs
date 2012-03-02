@@ -85,9 +85,6 @@ namespace InternetInterface.Models
 		public virtual DateTime RegDate { get; set; }
 
 		[Property]
-		public virtual decimal VirtualBonus { get; set; }
-		
-		[Property]
 		public virtual bool Archive { get; set; }
 
 		[BelongsTo]
@@ -117,14 +114,14 @@ namespace InternetInterface.Models
 		}
 
 
-		public static List<Request> GetRequestsForInterval(Week Interval)
+		/*public static List<Request> GetRequestsForInterval(Week Interval)
 		{
 			return Queryable.Where(
 				r => r.RegDate.Date >= Interval.StartDate.Date && r.RegDate.Date <= Interval.EndDate.Date && r.Registrator == InitializeContent.Partner).
 				ToList();
-		}
+		}*/
 
-		public virtual void SetRequestBoduses()
+		/*public virtual void SetRequestBoduses()
 		{
 			var bonusForRequest = 0m;
 			var Interval = DateHelper.GetWeekInterval(RegDate);
@@ -161,6 +158,6 @@ namespace InternetInterface.Models
 				              	: "Списание за пересчет бонусов за период с {0} по {1} для заявки #{2}";
 				PaymentsForAgent.CreatePayment(requestse.Registrator, string.Format(message, Interval.GetStartString(), Interval.GetEndString(), requestse.Id), payment);
 			}
-		}
+		}*/
 	}
 }

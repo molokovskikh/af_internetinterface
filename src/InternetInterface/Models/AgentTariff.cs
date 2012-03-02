@@ -9,26 +9,15 @@ namespace InternetInterface.Models
 {
 	public class AgentActions
 	{
-		public static string CreateRequest
+		public static string WorkedClient
 		{
-			get { return "CreateRequest"; }
+			get { return "WorkedClient"; }
+		}
+
+		public static string AgentPayIndex
+		{
+			get { return "AgentPayIndex"; }
 		} 
-		public static string DeleteRequest
-		{
-			get { return "DeleteRequest"; }
-		}
-		public static string CreateClient
-		{
-			get { return "CreateClient"; }
-		}
-		public static string RefusedClient
-		{
-			get { return "RefusedClient"; }
-		}
-		public static string ConnectClient
-		{
-			get { return "ConnectClient"; }
-		}
 	}
 
 	[ActiveRecord("AgentTariffs", Schema = "Internet", Lazy = true)]
@@ -42,6 +31,9 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual decimal Sum { get; set; }
+		
+		[Property]
+		public virtual string Description { get; set; }
 
 		public static AgentTariff GetAction(string action)
 		{

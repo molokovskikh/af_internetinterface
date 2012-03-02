@@ -137,6 +137,7 @@ namespace InforoomInternet.Controllers
 		public void Send([DataBind("application")] Request application)
 		{
 			if (Validator.IsValid(application)) {
+				application.RegDate = DateTime.Now;
 				application.ActionDate = DateTime.Now;
 				var phoneNumber = application.ApplicantPhoneNumber.Substring(2, application.ApplicantPhoneNumber.Length - 2).Replace(
 					"-", string.Empty);

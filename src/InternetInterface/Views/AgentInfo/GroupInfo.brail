@@ -26,56 +26,17 @@
 		</tr>
 	</thead>
 	<tbody>
-	<%for i, agent in enumerate(Agents): %>
+	<%for i, agentPay in enumerate(payments): %>
 		<tr>
-			<td colspan=3 style="background-color:#b7d9e8; font-size:18px; font-weight:bold;">${agent.Name} (<b>Итого: ${agent.GetAgentPayment(interval)} рублей</b>)</td>
+			<td colspan=3 style="background-color:#b7d9e8; font-size:18px; font-weight:bold;">${agentPay.Key.Name} (<b>Итого: ${agentPay.Key.GetAgentPayment(interval)} рублей</b>)</td>
 		</tr>
 		<tr>
 			<td colspan=3>
-				<%payments = agent.GetPaymentsForInterval(interval)
-				if (payments.Count != 0): 
+				<%payments = agentPay
 					OutputSubView("""\AgentInfo\PaymentBlock""", {
 					"payments": payments,
-					"message": """Начисления за текущий период""" }) 
-				else:
-					output  WriteMessageError("""Нет начислений за текущай период""")
-				end%>
-			</td>
-		</tr>
-		<tr>
-			<td colspan=3>
-				<%payments = agent.GetWriteOffsForInterval(interval)
-				if (payments.Count != 0): 
-					OutputSubView("""\AgentInfo\PaymentBlock""", {
-					"payments": payments,
-					"message": """Списания за текущий период""" })
-				else:
-					output  WriteMessageError("""Нет списаний за выбранный период""")
-				end%>
-			</td>
-		</tr>
-		<tr>
-			<td colspan=3>
-				<%payments = agent.GetBunosesForInterval(interval) 
-				if (payments.Count != 0): 
-					OutputSubView("""\AgentInfo\PaymentBlock""", {
-					"payments": payments,
-					"message": """Начисленные бонусы""" })
-				else:
-					output  WriteMessageError("""Нет бонусов за выбранный период""")
-				end%>
-			</td>
-		</tr>
-		<tr>
-			<td colspan=3>
-				<%payments = agent.GetPenaltyForInterval(interval)
-				if (payments.Count != 0): 
-					OutputSubView("""\AgentInfo\PaymentBlock""", {
-					"payments": payments,
-					"message": """Пересчитанные бонусы""" })
-				else:
-					output  WriteMessageError("""Бонусы не пересчитывались""")
-				end%>
+					"message": """Начисления за текущий период""" })
+				%>
 			</td>
 		</tr>
 	<%end %>

@@ -316,6 +316,22 @@ namespace Billing
 					}.SaveAndFlush();
 				}
 			}
+
+			var bonusesClients = Client.Queryable.Where(c => 
+				c.Request != null && 
+				!c.Request.PaidBonus && 
+				c.Request.Registrator != null &&
+				c.BeginWork != null).ToList();
+			foreach (var client in bonusesClients) {
+				var needToAgentSum = AgentTariff.GetPriceForAction(AgentActions.WorkedClient);
+				if (client.Payments.Sum(p => p.Sum) > needToAgentSum * 1.5m) { 
+					var reuest = client.Request;
+					reuest.PaidBonus = true;
+					reuest.Update();
+					PaymentsForAgent.CreatePayment(AgentActions.WorkedClient, string.Format("Клиент {0} начал работать (Заявка №{1})", client.Id, client.Request.Id), reuest.Registrator);
+				}
+			}
+
 			var thisDateMax = InternetSettings.FindFirst();
 			thisDateMax.NextBillingDate = SystemTime.Now().AddDays(1).Date.AddHours(22);
 			thisDateMax.UpdateAndFlush();

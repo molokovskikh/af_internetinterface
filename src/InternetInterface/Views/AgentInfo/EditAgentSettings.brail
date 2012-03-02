@@ -1,0 +1,14 @@
+﻿<div style="width:800px;" class="backGround whereNewTable">
+<form>
+	<table class="table">
+		<tr>
+			<td>Размер компенсации агенту за подключенного клиента</td>
+			<td><input type=text /></td>
+		</tr>
+		<tr>
+			<td>Коэффициент проверки соответствия суммы компенсации и платежей клиента</td>
+			<td><input type=text/></td>
+		</tr>
+	</table>
+</form>
+</div>

@@ -267,7 +267,8 @@ namespace InternetInterface.Models.Access
 									"SearchPayer",
 									"CancelPayments",
 									"ShowAppeals",
-									"СhangeSaleSettings"
+									"СhangeSaleSettings",
+									"EditAgentSettings"
 								};
 			return _visibleDemand.Contains(methodName) ? "SSI" : string.Empty;
 		}

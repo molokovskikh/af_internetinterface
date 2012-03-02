@@ -83,7 +83,7 @@ namespace InternetInterface.Models
 			}
 		}
 
-		private List<PaymentsForAgent> GetPaymentsFoInterval(Week interval)
+		/*private List<PaymentsForAgent> GetPaymentsFoInterval(Week interval)
 		{
 			return
 				Payments.Where(
@@ -110,12 +110,11 @@ namespace InternetInterface.Models
 		{
 			return GetPaymentsFoInterval(interval).Where(p => p.Sum < 0 && p.Action == null).ToList();
 		}
-
+		*/
 		public static bool RegistrLogicPartner(Partner _Partner, ValidatorRunner validator)
 		{
 			if (validator.IsValid(_Partner)) {
 				_Partner.Categorie.Refresh();
-				//var categorie = UserCategorie.Queryable.Where(u => u.Id == _Partner.Categorie.Id);
 				_Partner.RegDate = DateTime.Now;
 				_Partner.SaveAndFlush();
 				return true;

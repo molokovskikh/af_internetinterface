@@ -42,14 +42,21 @@ namespace InternetInterface.Controllers
 			var endDate = DateTime.Now;
 			var startDate = new DateTime(endDate.Year, endDate.Month, 1);
 			var interval = new Week(startDate, endDate);
-			PropertyBag["Agents"] = Partner.Queryable.Where(p => p.Categorie.ReductionName == "Agent").ToList();
+			var payments = PaymentsForAgent.Queryable.Where(p => p.RegistrationDate.Date >= startDate.Date && p.RegistrationDate.Date <= endDate.Date).ToList().GroupBy(p => p.Agent);
+			PropertyBag["payments"] = payments;
+
+			//PropertyBag["Agents"] = Partner.Queryable.Where(p => p.Categorie.ReductionName == "Agent").ToList();
 			PropertyBag["interval"] = interval;
 		}
 
 		public virtual void GroupInfo([DataBind("interval")]Week interval)
 		{
-			PropertyBag["Agents"] = Partner.Queryable.Where(p => p.Categorie.ReductionName == "Agent").ToList();
+			var payments = PaymentsForAgent.Queryable.Where(p => p.RegistrationDate.Date >= interval.StartDate.Date && p.RegistrationDate.Date <= interval.EndDate.Date).ToList().GroupBy(p => p.Agent);
+			PropertyBag["payments"] = payments;
 			PropertyBag["interval"] = interval;
 		}
+
+		public virtual void EditAgentSettings()
+		{}
 	}
 }

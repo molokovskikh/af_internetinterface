@@ -125,7 +125,6 @@
 		<tr>
 			<td><span class="description">Баланс:</span> ${Client.Balance}</td>
 		</tr>
-				<tr>
 		<%if _client.Status != null: %>
 			<tr>
 				<td><span class="description">Статус клиента:</span> ${_client.Status.Name}</td>
@@ -149,7 +148,11 @@
 				<td><span class="description">Дополнительный статус:</span> ${_client.AdditionalStatus.Name}</td>
 			</tr>
 		<%end %>
+		<%if _client.Request != null: %>
+		<tr>
+			<td><span class="description">Создан по заявке </span><a href="${Siteroot}/UserInfo/RequestOne?id=${_client.Request.Id}">№${_client.Request.Id}</a></td>
 		</tr>
+		<%end %>
 		<%end %>
 		<%if PartnerAccessSet.AccesPartner("SSI"): %>
 				<%if IsDefined("RegisntationDate"): %>

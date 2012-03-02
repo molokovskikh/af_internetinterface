@@ -73,9 +73,8 @@ div.scroller
 </style>
 </head>
 
-<script type="text/javascript" id="js">    $(document).ready(function () {
-		/*$("#for_sort").tablesorter({
-		});*/
+<script type="text/javascript" id="js">
+$(document).ready(function () {
 		$(function () {
 			$('.date-pick').datepicker();
 		});
@@ -141,7 +140,7 @@ div.scroller
 				<th >${app.Sortable("Адрес", "Street", "Adress")}</th>
 				<th >Тариф</th>
 				<th ><center>Метка</center></th>
-				<th style="width:100px;"><center>${app.Sortable("Дата действия", "ActionDate", "ActionDate")}</center></th>
+				<th style="width:100px;"><center>${app.Sortable("Дата регистрации", "RegDate", "RegDate")}</center></th>
 				<th>Направить</th>
 			</tr>
 			</thead>
@@ -194,9 +193,9 @@ div.scroller
 				<td style="width:180px;">
 				</td>
 				<%end %>
-					<%if Client.ActionDate.ToShortDateString() != "01.01.0001": %>
+					<%if Client.RegDate.ToShortDateString() != "01.01.0001": %>
 					<td>
-						${Client.ActionDate.ToShortDateString()}
+						${Client.RegDate.ToShortDateString()}
 					</td>
 					<%else: %>
 					<td>---------</td>

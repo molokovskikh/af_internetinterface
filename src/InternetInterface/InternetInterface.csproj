@@ -215,6 +215,7 @@
     <None Include="Views\ServiceRequest\RegisterServiceRequest.brail" />
     <None Include="Views\Subview\ServiceRequestRow.brail" />
     <None Include="Views\Payments\СhangeSaleSettings.brail" />
+    <None Include="Views\AgentInfo\EditAgentSettings.brail" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
