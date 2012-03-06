@@ -197,6 +197,8 @@ namespace InternetInterface.Controllers
 				Request = ServiceRequest.Find(requestId),
 				Description = commentText
 			}.Save();
+			CancelView();
+			CancelLayout();
 		}
 	}
 }

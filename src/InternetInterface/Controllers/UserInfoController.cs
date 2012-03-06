@@ -214,8 +214,8 @@ namespace InternetInterface.Controllers
 		{
 			var client = Client.Find(filter.ClientCode);
 			PropertyBag["filter"] = filter;
-			if (filter.appealType == 0)
-				filter.appealType = AppealType.User;
+			/*if (filter.appealType == 0)
+				filter.appealType = AppealType.User;*/
 
 			SendParam(filter, filter.grouped, filter.appealType);
 			PropertyBag["Editing"] = filter.Editing;
@@ -922,9 +922,9 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 			PropertyBag["grouped"] = grouped;
 			PropertyBag["BalanceText"] = string.Empty;
 			PropertyBag["services"] = Service.FindAll();
-			PropertyBag["Appeals"] =
-				Appeals.Queryable.Where(a => a.Client.Id == client.Id && a.AppealType == appealType).ToList().OrderByDescending(
-					a => a.Date);
+			PropertyBag["Appeals"] = Appeals.GetAllAppeal(client, appealType);
+				/*Appeals.Queryable.Where(a => a.Client.Id == client.Id && a.AppealType == appealType).ToList().OrderByDescending(
+					a => a.Date);*/
 			PropertyBag["Client"] = client.PhysicalClient;
 
 			PropertyBag["Houses"] = House.AllSort;
