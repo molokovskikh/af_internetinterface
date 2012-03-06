@@ -19,10 +19,11 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual int Speed { get; set; }
 
+		[Property]
+		public virtual string Description { get; set; }
+
 		public virtual string GetNormalizeSpeed()
 		{
-			/*float mb = Speed / 1000000.00f;
-			return mb >= 1 ? mb.ToString("#.00") + " Mb" : (mb * 1000).ToString("#.00") + " Kb";*/
 			return GetNormalizeSpeed(Speed);
 		}
 

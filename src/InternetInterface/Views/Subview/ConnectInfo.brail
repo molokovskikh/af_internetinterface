@@ -208,7 +208,7 @@
 		  <td colspan=2>
 			<select name="ConnectInfo.PackageId" style="width: 200px;">
 				<%for j, speed in enumerate(Speeds): %>
-					<option value="${speed.PackageId}" ${"selected" if (speed.PackageId == ChSpeed)}> ${speed}  PID(${speed.PackageId}) </option>
+					<option value="${speed.PackageId}" ${"selected" if (speed.PackageId == ChSpeed)}> ${speed}  PID(${speed.PackageId}) ${speed.Description} </option>
 				<%end %>
 		  </td>
 		</tr>
@@ -221,10 +221,10 @@
 		 <%if _client.WhoConnected == null: %>
 		  <td colspan=2><select name="BrigadForConnect" id="BrigadForConnect" style="width: 100%" >
 		  <% for j, Brigad in enumerate(Brigads): %>
-									<option id="OptionBrigad${j}" value="${Brigad.Id}" ${"selected" if (Brigad.Id == ChBrigad)} > ${Brigad.Name} </option>
-								   <% end %>
-		   </select>
-		  </td>
+				<option id="OptionBrigad${j}" value="${Brigad.Id}" ${"selected" if (Brigad.Id == ChBrigad)} > ${Brigad.Name} </option>
+		<% end %>
+		</select>
+		</td>
 		 <%else: %>
 		 <td colspan=2>
 			 ${_client.WhoConnected.Name}

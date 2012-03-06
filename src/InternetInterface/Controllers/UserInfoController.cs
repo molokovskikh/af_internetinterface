@@ -261,11 +261,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["WriteOffs"] = client.GetWriteOffs(filter.grouped).OrderByDescending(w => w.WriteOffDate).ToList();
 			PropertyBag["writeOffSum"] = WriteOff.FindAllByProperty("Client", client).Sum(s => s.WriteOffSum);
 			PropertyBag["BalanceText"] = string.Empty;
-			PropertyBag["Appeals"] =
-				Appeals.Queryable.Where(
-					a => a.Client == client && a.AppealType == (filter.appealType == AppealType.All ? AppealType.User : filter.appealType)).
-					OrderByDescending(
-						a => a.Date).ToArray();
+			PropertyBag["Appeals"] = Appeals.GetAllAppeal(client, filter.appealType);
 
 			if (client.Status.Connected)
 				PropertyBag["EConnect"] = filter.EditingConnect;
