@@ -203,10 +203,18 @@ namespace Billing
 			foreach (var client in lawyerPersons) {
 				var person = client.LawyerPerson;
 				if (person.Balance < -(person.Tariff*1.9m)) {
-					client.ShowBalanceWarningPage = true;
+					if (client.WhenShowWarning == null ||
+						(SystemTime.Now() - client.WhenShowWarning.Value).TotalHours >= 3) {
+							client.ShowBalanceWarningPage = true;
+							client.WhenShowWarning = SystemTime.Now();
+							if (!client.SendEmailNotification)
+								client.SendEmailNotification = EmailNotificationSender.SendLawyerPersonNotification(client);
+					}
 				}
 				else {
 					client.ShowBalanceWarningPage = false;
+					client.SendEmailNotification = false;
+					client.WhenShowWarning = null;
 				}
 				client.UpdateAndFlush();
 			}

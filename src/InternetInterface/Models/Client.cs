@@ -105,6 +105,12 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual DateTime? StartNoBlock { get; set; }
 
+		[Property]
+		public virtual DateTime? WhenShowWarning { get; set; }
+
+		[Property]
+		public virtual bool SendEmailNotification { get; set; }
+
 		[Property, Auditable("Смс рассылка")]
 		public virtual bool SendSmsNotifocation { get; set; }
 
