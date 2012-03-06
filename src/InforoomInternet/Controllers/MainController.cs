@@ -43,7 +43,7 @@ namespace InforoomInternet.Controllers
 
 		public void Ok()
 		{
-			if (Flash["application"] == null)
+			if (Flash["request"] == null)
 				RedirectToSiteRoot();
 		}
 
@@ -134,22 +134,26 @@ namespace InforoomInternet.Controllers
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void Send([DataBind("application")] Request application)
+		public void Send([DataBind("request")] Request request)
 		{
-			if (Validator.IsValid(application)) {
-				application.RegDate = DateTime.Now;
-				application.ActionDate = DateTime.Now;
-				var phoneNumber = application.ApplicantPhoneNumber.Substring(2, application.ApplicantPhoneNumber.Length - 2).Replace(
-					"-", string.Empty);
-				application.ApplicantPhoneNumber = phoneNumber;
-				application.Save();
-				Flash["application"] = application;
+			if (Validator.IsValid(request)) {
+				request.RegDate = DateTime.Now;
+				request.ActionDate = DateTime.Now;
+				if (AccessFilter.Authorized(Context)) {
+						var clientId = Convert.ToUInt32(Session["LoginClient"]);
+						var client = Client.Find(clientId);
+					request.FriendThisClient = client;
+				}
+				var phoneNumber = request.ApplicantPhoneNumber.Substring(2, request.ApplicantPhoneNumber.Length - 2).Replace("-", string.Empty);
+				request.ApplicantPhoneNumber = phoneNumber;
+				request.Save();
+				Flash["request"] = request;
 				RedirectToAction("Ok");
 			}
 			else {
 				var all = Tariff.FindAll();
 				PropertyBag["tariffs"] = all;
-				PropertyBag["application"] = application;
+				PropertyBag["request"] = request;
 				RenderView("Zayavka");
 			}
 		}

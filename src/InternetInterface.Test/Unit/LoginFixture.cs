@@ -13,6 +13,26 @@ namespace InternetInterface.Test.Unit_
 	[TestFixture]
 	class LoginFixture : ActiveDirectoryHelper
 	{
+		public class MyClass
+		{
+			public int i;
+		}
+
+		public void t1(MyClass c, MyClass c1)
+		{
+			c = c1;
+			c1.i = 5;
+		}
+
+		[Test]
+		public void MyTest()
+		{
+			MyClass c = null;
+			MyClass c1 = new MyClass();
+			t1(c, c1);
+			Console.WriteLine(c1.i);
+		}
+
 		[Test]
 		public void GenPass()
 		{

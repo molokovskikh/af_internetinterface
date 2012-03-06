@@ -93,6 +93,12 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool PaidBonus { get; set; }
 
+		[BelongsTo]
+		public virtual Client FriendThisClient { get; set; }
+
+		[Property]
+		public virtual bool PaidFriendBonus { get; set; }
+
 
 		public virtual IDictionary GetValidateionErrors()
 		{
@@ -112,52 +118,5 @@ namespace InternetInterface.Models
 			var errors = GetValidateionErrors();
 			return errors.Contains(GetType().GetProperty(field));
 		}
-
-
-		/*public static List<Request> GetRequestsForInterval(Week Interval)
-		{
-			return Queryable.Where(
-				r => r.RegDate.Date >= Interval.StartDate.Date && r.RegDate.Date <= Interval.EndDate.Date && r.Registrator == InitializeContent.Partner).
-				ToList();
-		}*/
-
-		/*public virtual void SetRequestBoduses()
-		{
-			var bonusForRequest = 0m;
-			var Interval = DateHelper.GetWeekInterval(RegDate);
-			var requestsInInterval = GetRequestsForInterval(Interval);
-			var for_bonus_requests = requestsInInterval.Where(r => r.Label == null || r.Label.ShortComment != "Refused").ToList();
-			if (for_bonus_requests.Count >= 20)
-				bonusForRequest += 100m;
-			else
-			{
-				if (for_bonus_requests.Count >= 10)
-					bonusForRequest += 50m;
-			}
-			var weekBonus = 0;
-			for (int i = 0; i < 7; i++)
-			{
-				if (for_bonus_requests.Count(r => r.RegDate.Date == Interval.StartDate.AddDays(i).Date) > 0)
-					weekBonus++;
-			}
-			if (weekBonus >= 5)
-				bonusForRequest += 50m;
-
-			foreach (var requestse in requestsInInterval.Where(r => !r.PaidBonus))
-			{
-				requestse.VirtualBonus = bonusForRequest;
-			}
-
-			foreach (var requestse in requestsInInterval.Where(r => r.PaidBonus))
-			{
-				var payment = bonusForRequest - requestse.VirtualBonus;
-
-				requestse.VirtualBonus = bonusForRequest;
-				var message = payment > 0
-				              	? "Начисление за пересчет бонусов за период с {0} по {1} для заявки #{2}"
-				              	: "Списание за пересчет бонусов за период с {0} по {1} для заявки #{2}";
-				PaymentsForAgent.CreatePayment(requestse.Registrator, string.Format(message, Interval.GetStartString(), Interval.GetEndString(), requestse.Id), payment);
-			}
-		}*/
 	}
 }

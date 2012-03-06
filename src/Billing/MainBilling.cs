@@ -23,6 +23,7 @@ using Environment = NHibernate.Cfg.Environment;
 namespace Billing
 {
 
+	[System.Runtime.InteropServices.GuidAttribute("B82D7DAA-938E-4202-BF51-CD10D18E39CB")]
 	public class MainBilling
 	{
 		public const int FreeDaysVoluntaryBlockin = 28;
@@ -210,6 +211,7 @@ namespace Billing
 				}
 				client.UpdateAndFlush();
 			}
+
 			foreach (var cserv in ClientService.FindAll()) {
 				cserv.Diactivate();
 			}
@@ -336,6 +338,24 @@ namespace Billing
 						Sum = needToAgentSum,
 						Comment = string.Format("Клиент {0} начал работать (Заявка №{1})", client.Id, client.Request.Id)
 					}.Save();
+				}
+			}
+
+			var friendBonusRequests = Request.Queryable.Where(r => 
+				r.Client != null &&
+				r.FriendThisClient != null &&
+				!r.PaidFriendBonus &&
+				r.Client.BeginWork != null).ToList();
+			foreach (var friendBonusRequest in friendBonusRequests) {
+				if (friendBonusRequest.Client.HavePaymentToStart()) {
+					new Payment {
+						Client = friendBonusRequest.FriendThisClient,
+						Sum = friendBonusRequest.Client.GetPriceForTariff(),
+						PaidOn = SystemTime.Now(),
+						RecievedOn = SystemTime.Now()
+					}.Save();
+					friendBonusRequest.PaidFriendBonus = true;
+					friendBonusRequest.Update();
 				}
 			}
 

@@ -46,6 +46,7 @@ namespace Billing.Test.Integration
 					{
 						Disabled = false,
 						Sale = 0,
+						PercentBalance = 0.8m,
 						//FirstLease = true,
 						DebtDays = 0,
 						Name = name,
