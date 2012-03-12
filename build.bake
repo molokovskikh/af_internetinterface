@@ -36,3 +36,5 @@ task @BuildBackground:
 	Cp("src/$project/app.release.config", "output/$project/$project.config")
 	Rm("output/$project/$project.*.config")
 	Globals.Project = oldProject
+	
+task @BeforeTest, [@PrepareLocal]
