@@ -28,11 +28,14 @@ namespace Billing
 		public const int FreeDaysVoluntaryBlockin = 28;
 
 		private readonly ILog _log = LogManager.GetLogger(typeof (MainBilling));
+		private readonly MemorableLogger _logger;
+
 		private Mutex _mutex = new Mutex();
 		public List<SmsMessage> Messages;
 
 		public MainBilling()
 		{
+			_logger = new MemorableLogger(_log);
 			try {
 				XmlConfigurator.Configure();
 				InitActiveRecord();
@@ -64,11 +67,6 @@ namespace Billing
 			}
 		}
 
-		private int DayInCurrentYear()
-		{
-			return DateTime.IsLeapYear(SystemTime.Now().Year) ? 366 : 365;
-		}
-
 		public void UseSession(Action func)
 		{
 			using (var session = new TransactionScope(OnDispose.Rollback)) {
@@ -82,9 +80,10 @@ namespace Billing
 			_mutex.WaitOne();
 			try {
 				UseSession(OnMethod);
+				_logger.Forget();
 			}
 			catch (Exception ex) {
-				_log.Error("Ошибка в методе On" ,ex);
+				_logger.Log(ex);
 			}
 			_mutex.ReleaseMutex();
 		}
@@ -104,9 +103,10 @@ namespace Billing
 						billingTime.Save();
 					}
 				}
+				_logger.Forget();
 			}
 			catch (Exception ex) {
-				_log.Error("Ошибка запуска процедуры Run Billing", ex);
+				_logger.Log(ex);
 			}
 			_mutex.ReleaseMutex();
 		}

@@ -34,6 +34,8 @@ namespace Billing.Test.Integration
 				FinalPrice = 200,
 				FinalPriceInterval = 2,
 				Price = 100,
+				Name = "intervalTariff",
+				Description = "intervalTariff"
 			};
 			intervalTariff.Save();
 			client.PhysicalClient.Tariff = intervalTariff;
@@ -42,7 +44,9 @@ namespace Billing.Test.Integration
 			SystemTime.Now = () => DateTime.Now.AddMonths(2).AddHours(1);
 			Assert.That(client.GetPrice(), Is.EqualTo(200));
 			var simpleTariff = new Tariff {
-				Price = 300
+				Price = 300,
+				Name = "simpleTariff",
+				Description = "simpleTariff"
 			};
 			client.PhysicalClient.Tariff = simpleTariff;
 			client.Update();
@@ -66,7 +70,8 @@ namespace Billing.Test.Integration
 			new UserWriteOff {
 				Client = client,
 				Sum = 500,
-				Date = SystemTime.Now()
+				Date = SystemTime.Now(),
+				Comment = string.Empty
 			}.Save();
 			billing.On();
 			client.Refresh();
@@ -132,7 +137,7 @@ namespace Billing.Test.Integration
 				writeOff = WriteOff.Queryable.Where(w => w.Client == client).FirstOrDefault();
 				client.Refresh();
 				Assert.That(writeOff, !Is.Null);
-				Assert.That(client.PhysicalClient.Balance, Is.EqualTo(Math.Round(ishBalance + 100 - client.GetPrice()/client.GetInterval(), 5)));
+				Assert.That(client.PhysicalClient.Balance, Is.EqualTo(Math.Round(ishBalance + 100 - client.GetPrice()/client.GetInterval(), 2)));
 			}
 		}
 
@@ -196,7 +201,8 @@ namespace Billing.Test.Integration
 				PackageId = 8,
 				Hidden = true,
 				FinalPriceInterval = 1,
-				FinalPrice = 590
+				FinalPrice = 590,
+				Description = "domolink"
 			};
 			domTariff.Save();
 
@@ -414,6 +420,8 @@ namespace Billing.Test.Integration
 				Price = 200,
 				FinalPriceInterval = 1,
 				FinalPrice = 400,
+				Name = "Complex_tariff",
+				Description = "Complex_tariff"
 			};
 			var client = new Client {
 				Name = "TestLawyer",

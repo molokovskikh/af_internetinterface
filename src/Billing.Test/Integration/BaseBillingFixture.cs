@@ -73,7 +73,8 @@ namespace Billing.Test.Integration
 			return new Tariff
 					{
 						Name = "testTariff",
-						Price = balanceForTariff
+						Price = balanceForTariff,
+						Description = "testTariff"
 					};
 		}
 

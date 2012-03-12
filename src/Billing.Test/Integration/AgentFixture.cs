@@ -21,7 +21,12 @@ namespace Billing.Test.Integration
 				Registrator = InitializeContent.Partner,
 				RegDate = DateTime.Now,
 				PaidBonus = false,
-				Client = _client
+				Client = _client,
+				ApplicantName = string.Empty,
+				ApplicantPhoneNumber = string.Empty,
+				ApplicantEmail = string.Empty,
+				Street = string.Empty,
+				Tariff = Tariff.FindFirst()
 			};
 			request.Save();
 			_client.BeginWork = DateTime.Now;
@@ -42,7 +47,12 @@ namespace Billing.Test.Integration
 				Registrator = InitializeContent.Partner,
 				RegDate = DateTime.Now,
 				PaidBonus = false,
-				Client = _client
+				Client = _client,
+				ApplicantName = string.Empty,
+				ApplicantPhoneNumber = string.Empty,
+				ApplicantEmail = string.Empty,
+				Street = string.Empty,
+				Tariff = Tariff.FindFirst()
 			};
 			request.Save();
 			_client.BeginWork = DateTime.Now;

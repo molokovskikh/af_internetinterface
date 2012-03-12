@@ -71,7 +71,8 @@ namespace Billing.Test.Integration
 			{
 				Blocked = false,
 				Id = (uint)StatusType.Worked,
-				Name = "unblocked"
+				Name = "unblocked",
+				ShortName = "Worked"
 			}.Save();
 
 			
@@ -79,27 +80,31 @@ namespace Billing.Test.Integration
 			{
 				Blocked = true,
 				Id = (uint)StatusType.BlockedAndConnected,
-				Name = "unblocked"
+				Name = "unblocked",
+				ShortName = "BlockedAndConnected"
 			}.Save();
 
 			new Status
 			{
 				Blocked = true,
 				Id = (uint)StatusType.NoWorked,
-				Name = "testBlockedStatus"
+				Name = "testBlockedStatus",
+				ShortName = "NoWorked"
 			}.Save();
 
 			new Status {
 						   ShortName = "VoluntaryBlocking",
 						   Id = (uint)StatusType.VoluntaryBlocking,
 						   Blocked = true,
-						   Connected = true,
+						   Name = "VoluntaryBlocking",
+						   Connected = true
 					   }.Save();
 
 			new DebtWork
 			{
 				BlockingAll = false,
-				Price = 0
+				Price = 0,
+				HumanName = "DebtWork"
 			}.Save();
 
 			new AgentTariff {
@@ -115,7 +120,8 @@ namespace Billing.Test.Integration
 			new VoluntaryBlockin
 			{
 				BlockingAll = true,
-				Price = 0
+				Price = 0,
+				HumanName = "VoluntaryBlockin"
 			}.Save();
 
 			new InternetSettings{NextBillingDate = DateTime.Now}.Save();
@@ -139,6 +145,7 @@ namespace Billing.Test.Integration
 			Client.DeleteAll();
 			PhysicalClients.DeleteAll();
 			SystemTime.Reset();
+			PaymentsForAgent.DeleteAll();
 		}
 
 		public void SetClientDate(Client client, Interval rd)

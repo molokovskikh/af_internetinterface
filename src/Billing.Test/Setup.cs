@@ -39,14 +39,8 @@ namespace Billing.Test
 						using (var connection = new MySqlConnection("server=localhost;user=root;"))
 						{
 							connection.Open();
-							new MySqlCommand("drop database if exists logs;create database logs;", connection).ExecuteNonQuery();
-							new MySqlCommand("drop database if exists Internet;create database Internet;", connection).ExecuteNonQuery();
-							new MySqlCommand("drop database if exists billing;create database billing;", connection).ExecuteNonQuery();
-							new MySqlCommand("drop database if exists telephony;create database telephony;", connection).ExecuteNonQuery();
-							ActiveRecordStarter.DropSchema();
 							done = true;
 						}
-						//scope = new SessionScope();
 					}
 					catch (MySqlException e)
 					{
@@ -54,8 +48,6 @@ namespace Billing.Test
 							throw;
 					}
 				}
-				ActiveRecordStarter.CreateSchema();
-				//ActiveRecordStarter.();
 				using (new SessionScope())
 				{
 					MainBillingFixture.PrepareTests();
@@ -72,12 +64,8 @@ namespace Billing.Test
 		[TearDown]
 		public void Teardown()
 		{
-			//scope.Dispose();
-			//scope = null;
 			if (mysql != null)
 				mysql.Kill();
-			//if (scope == null)
-				//return;
 			SystemTime.Reset();
 		}
 	}
