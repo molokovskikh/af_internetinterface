@@ -122,17 +122,11 @@ namespace InternetInterface.Models
 		[Property, ValidateNonEmpty("Введите номер этажа"), ValidateInteger("Должно быть введено число"), Auditable("Этаж")]
 		public virtual int? Floor { get; set; }
 
-		[
-			ValidateRegExp(@"^((\d{3})-(\d{7}))", "Ошибка фотмата телефонного номера: мобильный телефн (***-*******)"),
-			/*ValidateNonEmpty("Введите номер телефона")*/
-		]
+		[ValidateRegExp(@"^((\d{3})-(\d{7}))", "Ошибка фотмата телефонного номера: мобильный телефн (***-*******)")]
 		public virtual string PhoneNumber { get; set; }
 
 		[ValidateRegExp(@"^((\d{3})-(\d{7}))", "Ошибка фотмата телефонного номера (***-*******)")]
 		public virtual string HomePhoneNumber { get; set; }
-
-		[Property, Auditable("Канал продаж")]
-		public virtual string WhenceAbout { get; set; }
 
 		[Property, ValidateRegExp(@"^(\d{4})?$", "Неправильный формат серии паспорта (4 цифры)"), UserValidateNonEmpty("Поле не должно быть пустым"), Auditable("Серия наспорта")]
 		public virtual string PassportSeries { get; set; }

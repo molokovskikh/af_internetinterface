@@ -57,7 +57,6 @@ namespace InternetInterface.Test.Helpers
 						Street = "testStreet",
 						Surname = "testSurn",
 						Tariff = Tariff.Find((uint)1),
-						WhenceAbout = "ded",
 						WhoGivePassport = "guvd"
 			       	};
 			var valid = new ValidatorRunner(new CachedValidationRegistry());

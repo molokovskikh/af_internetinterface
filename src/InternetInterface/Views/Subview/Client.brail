@@ -85,25 +85,11 @@ $('#register_house').trigger('reveal:close');
 	</td>
 </tr>
 <%end %>
-<tr>
-	<td >
-		Канал продаж</td>
-	<td>
-		<select name="client.WhenceAbout">
-			<option value="Контактный центр" ${"selected" if client.WhenceAbout == "Контактный центр"}>Контактный центр</option>
-			<option value="Агенты" ${"selected" if client.WhenceAbout == "Агенты"}>Агенты</option>
-			<option value="Офис продаж" ${"selected" if client.WhenceAbout == "Офис продаж"}>Офис продаж</option>
-			<option value="Сайт" ${"selected" if client.WhenceAbout == "Сайт"}>Сайт</option>
-			<option value="Диллер" ${"selected" if client.WhenceAbout == "Диллер"}>Диллер</option>
-			<option value="Другое" ${"selected" if client.WhenceAbout == "Другое"}>Другое</option>
-		</select>
-	 </td>
-</tr>
 </table>
 <table class="table" border="0" id="AdressTable" style="margin-bottom: 15px;"> 
 <thead>
 <th colspan=14>Адрес</th>
-</thead>                         
+</thead>
 <tbody>
 <tr>
 	<td style="width:200px;">
