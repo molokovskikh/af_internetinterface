@@ -61,13 +61,12 @@ namespace InternetInterface.Controllers
 					payment.RegisterPayment();
 					payment.Save();
 					new Payment {
-									Client =
-										Client.Queryable.FirstOrDefault(c => c.LawyerPerson != null && c == payment.Payer),
-									Sum = payment.Sum,
-									RecievedOn = payment.RegistredOn,
-									PaidOn = payment.PayedOn,
-									Agent = Agent.GetByInitPartner()
-								}.Save();
+						Client = payment.Payer,
+						Sum = payment.Sum,
+						RecievedOn = payment.RegistredOn,
+						PaidOn = payment.PayedOn,
+						Agent = Agent.GetByInitPartner()
+					}.Save();
 					RedirectToReferrer();
 					return;
 				}
@@ -77,15 +76,12 @@ namespace InternetInterface.Controllers
 					PropertyBag["Payment"] = payment;
 				}
 			}
-			//else
-			{
-				if (PropertyBag["Payment"] == null)
-					PropertyBag["Payment"] = new BankPayment();
-				PropertyBag["recipients"] = Recipient.Queryable.OrderBy(r => r.Name).ToList();
-				PropertyBag["payments"] = BankPayment.Queryable
-					.Where(p => p.RegistredOn >= DateTime.Today)
-					.OrderBy(p => p.RegistredOn).ToList();
-			}
+			if (PropertyBag["Payment"] == null)
+				PropertyBag["Payment"] = new BankPayment();
+			PropertyBag["recipients"] = Recipient.Queryable.OrderBy(r => r.Name).ToList();
+			PropertyBag["payments"] = BankPayment.Queryable
+				.Where(p => p.RegistredOn >= DateTime.Today)
+				.OrderBy(p => p.RegistredOn).ToList();
 		}
 
 		public void NotifyInforum()
@@ -151,7 +147,7 @@ namespace InternetInterface.Controllers
 				//то получим двух плательщиков из разных сесей
 				//правим это
 				if (payment.Payer != null)
-					payment.Payer = ActiveRecordLinqBase<Client>.Queryable.Where(p => p.Id == payment.Payer.Id).FirstOrDefault(); //IPayer.Find(payment.Payer.Id);
+					payment.Payer = ActiveRecordLinqBase<Client>.Queryable.FirstOrDefault(p => p.Id == payment.Payer.Id); //IPayer.Find(payment.Payer.Id);
 
 				if (Validator.IsValid(payment))
 				{
@@ -159,12 +155,12 @@ namespace InternetInterface.Controllers
 					payment.Save();
 					if (payment.Payer != null)
 					new Payment {
-									Client = Client.Queryable.FirstOrDefault(c => c.LawyerPerson != null && c == payment.Payer),
-									Sum = payment.Sum,
-									RecievedOn = payment.RegistredOn,
-									PaidOn = payment.PayedOn,
-									Agent = Agent.GetByInitPartner()
-								}.Save();
+						Client = payment.Payer,
+						Sum = payment.Sum,
+						RecievedOn = payment.RegistredOn,
+						PaidOn = payment.PayedOn,
+						Agent = Agent.GetByInitPartner()
+					}.Save();
 				}
 				else
 				{
@@ -236,15 +232,14 @@ namespace InternetInterface.Controllers
 		public void Delete(uint id)
 		{
 			var payment = BankPayment.Find(id);
-			var client = Client.Queryable.FirstOrDefault(c => c == payment.Payer);
-			if (client != null)
-			new UserWriteOff {
-			                 	Client = client,
-								Sum = payment.Sum,
-								Date = DateTime.Now,
-								Comment = "Списание в связи с удалением баковского платежа",
-								Registrator = InitializeContent.Partner
-			                 }.Save();
+			if (payment.Payer != null)
+				new UserWriteOff {
+					Client = payment.Payer,
+					Sum = payment.Sum,
+					Date = DateTime.Now,
+					Comment = string.Format("Списание в связи с удалением баковского платежа (id = {0})", id),
+					Registrator = InitializeContent.Partner
+				}.Save();
 			payment.Delete();
 			RedirectToReferrer();
 		}
@@ -276,55 +271,52 @@ namespace InternetInterface.Controllers
 						if (newBalance - oldBalance < 0 && payment.Payer != null)
 						{
 							new UserWriteOff {
-							                 	Client = client,
-							                 	Sum = oldBalance - newBalance,
-							                 	Date = DateTime.Now,
-							                 	Comment =
-							                 		string.Format("Списание после редактирования банковского платежа (id = {0})", payment.Id)
-							                 }.Save();
+								Registrator = InitializeContent.Partner,
+								Client = client,
+								Sum = oldBalance - newBalance,
+								Date = DateTime.Now,
+								Comment = string.Format("Списание после редактирования банковского платежа (id = {0})", payment.Id)
+							}.Save();
 						}
 						if (newBalance - oldBalance > 0 && payment.Payer != null)
 						{
 							new Payment {
-							            	Client = client,
-							            	PaidOn = DateTime.Now,
-							            	RecievedOn = DateTime.Now,
-							            	Sum = newBalance - oldBalance,
-							            	LogComment =
-							            		string.Format("Зачисление после редактирования банковского платежа (id = {0})", payment.Id)
-							            }.Save();
+								Agent = Agent.GetByInitPartner(),
+								Client = client,
+								PaidOn = DateTime.Now,
+								RecievedOn = DateTime.Now,
+								Sum = newBalance - oldBalance,
+								LogComment = string.Format("Зачисление после редактирования банковского платежа (id = {0})", payment.Id)
+							}.Save();
 						}
 					}
-					if (newPayerFlag)
-					{
-						new Payment {
-						            	Client = payment.Payer,
-						            	PaidOn = DateTime.Now,
-						            	RecievedOn = DateTime.Now,
-						            	Sum = payment.Sum,
-						            	LogComment =
-						            		string.Format(
-						            			"Зачисление после редактирования банковского платежа (id = {0}), назначен плательщик", payment.Id)
-						            }.Save();
+					if (newPayerFlag) {
+							new Payment {
+							Agent = Agent.GetByInitPartner(),
+							Client = payment.Payer,
+							PaidOn = DateTime.Now,
+							RecievedOn = DateTime.Now,
+							Sum = payment.Sum,
+							LogComment = string.Format("Зачисление после редактирования банковского платежа (id = {0}), назначен плательщик", payment.Id)
+						}.Save();
 					}
 					if (oldPayer != null && oldPayer != payment.Payer)
 					{
 						new Payment {
-						            	Client = payment.Payer,
-						            	PaidOn = DateTime.Now,
-						            	RecievedOn = DateTime.Now,
-						            	Sum = payment.Sum,
-						            	LogComment =
-						            		string.Format("Зачисление после редактирования банковского платежа (id = {0})", payment.Id)
-						            }.Save();
+							Agent = Agent.GetByInitPartner(),
+							Client = payment.Payer,
+							PaidOn = DateTime.Now,
+							RecievedOn = DateTime.Now,
+							Sum = payment.Sum,
+							LogComment = string.Format("Зачисление после редактирования банковского платежа (id = {0})", payment.Id)
+						}.Save();
 						new UserWriteOff {
-						                 	Client = oldPayer,
-						                 	Comment =
-						                 		string.Format("Списание после смены плательщика, при редактировании банковского платежа №{0}",
-						                 		              payment.Id),
-						                 	Date = DateTime.Now,
-						                 	Sum = oldPayment.Sum
-						                 }.Save();
+							Registrator = InitializeContent.Partner,
+							Client = oldPayer,
+							Comment = string.Format("Списание после смены плательщика, при редактировании банковского платежа №{0} \r\n Клиент стал: {1}", payment.Id, payment.Payer.Id),
+							Date = DateTime.Now,
+							Sum = oldPayment.Sum
+						}.Save();
 					}
 					payment.DoUpdate();
 					Flash["Message"] = Message.Notify("Сохранено");
@@ -334,14 +326,10 @@ namespace InternetInterface.Controllers
 				else
 				{
 					ArHelper.WithSession(s => ArHelper.Evict(s, new[] {payment}));
-					//PropertyBag["Payment"] = payment;
 				}
 			}
-			//else
-			{
-				PropertyBag["payment"] = payment;
-				PropertyBag["recipients"] = Recipient.Queryable.OrderBy(r => r.Name).ToList();
-			}
+			PropertyBag["payment"] = payment;
+			PropertyBag["recipients"] = Recipient.Queryable.OrderBy(r => r.Name).ToList();
 		}
 
 		[return: JSONReturnBinder]

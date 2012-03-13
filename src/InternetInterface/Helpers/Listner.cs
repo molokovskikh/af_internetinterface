@@ -93,8 +93,7 @@ namespace InternetInterface.Helpers
 	[EventListener]
 	public class Listner : BaseAuditListener
 	{
-		protected override AuditableProperty GetAuditableProperty(PropertyInfo property, string name, object newState,
-		                                                          object oldState)
+		protected override AuditableProperty GetAuditableProperty(PropertyInfo property, string name, object newState, object oldState)
 		{
 			var attrs = property.GetCustomAttributes(typeof (Auditable), false);
 			if (attrs.Length > 0 && ((Auditable)attrs.First()).Name == "Фиксированный IP")
@@ -105,6 +104,14 @@ namespace InternetInterface.Helpers
 		protected override void Log(NHibernate.Event.PostUpdateEvent @event, string message)
 		{
 			using (new SessionScope()) {
+				if (@event.Entity.GetType() == typeof(ServiceRequest)) {
+					@event.Session.Save(
+						new ServiceIteration {
+							Description = message,
+							Request = (ServiceRequest)@event.Entity
+						});
+					return;
+				}
 				Client client = null;
 				if (@event.Entity.GetType() == typeof(Client))
 					client = (Client)@event.Entity;
@@ -121,13 +128,6 @@ namespace InternetInterface.Helpers
 							AppealType = AppealType.System
 						});
 					}
-				}
-				if (@event.Entity.GetType() == typeof(ServiceRequest)) {
-					@event.Session.Save(
-						new ServiceIteration {
-							Description = message,
-							Request = (ServiceRequest)@event.Entity
-						});
 				}
 			}
 		}
