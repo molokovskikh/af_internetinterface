@@ -28,20 +28,23 @@ namespace Billing
 		public const int FreeDaysVoluntaryBlockin = 28;
 
 		private readonly ILog _log = LogManager.GetLogger(typeof (MainBilling));
-		private readonly MemorableLogger _logger;
+		private static MemorableLogger _logger;
 
 		private Mutex _mutex = new Mutex();
 		public List<SmsMessage> Messages;
 
 		public MainBilling()
 		{
-			_logger = new MemorableLogger(_log);
 			try {
+				_logger = new MemorableLogger(_log) {
+					ErrorMessage = "Ошибка в сервисе биллинга",
+					RestoreMessage = "Восстановление работы сервиса биллинга"
+				};
 				XmlConfigurator.Configure();
 				InitActiveRecord();
 			}
 			catch (Exception ex) {
-				_log.Error("Ошибка к конструкторе" ,ex);
+				_logger.Log(ex);
 			}
 		}
 
