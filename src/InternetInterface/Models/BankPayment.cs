@@ -143,18 +143,18 @@ namespace InternetInterface.Models
 	[ActiveRecord("BankPayments", Schema = "Internet")]
 	public class BankPayment : ActiveRecordLinqBase<BankPayment> //: BalanceUpdater<Payment>
 	{
-		public BankPayment(LawyerPerson payer, DateTime payedOn, decimal sum)
+		public BankPayment(Client payer, DateTime payedOn, decimal sum)
 			: this(payer)
 		{
 			Sum = sum;
 			PayedOn = payedOn;
 		}
 
-		public BankPayment(LawyerPerson payer)
+		public BankPayment(Client payer)
 			: this()
 		{
 			Payer = payer;
-			Recipient = payer.Recipient;
+			Recipient = payer.LawyerPerson.Recipient;
 		}
 
 		public BankPayment()
@@ -195,7 +195,7 @@ namespace InternetInterface.Models
 		//все что выше получается из выписки
 		//дата занесения платежа
 		[BelongsTo(Column = "PayerId", Cascade = CascadeEnum.SaveUpdate)/*, ValidateNonEmpty("Обязательно укажите плательщика")*/]
-		public virtual LawyerPerson Payer { get; set; }
+		public virtual Client Payer { get; set; }
 
 		[BelongsTo(Column = "RecipientId")]
 		public virtual Recipient Recipient { get; set; }
@@ -255,9 +255,9 @@ namespace InternetInterface.Models
 			}
 		}
 
-		public virtual List<LawyerPerson> GetPayerForInn(string INN)
+		public virtual List<Client> GetPayerForInn(string INN)
 		{
-			return ActiveRecordLinq.AsQueryable<LawyerPerson>().Where(p => p.INN == INN).ToList();
+			return ActiveRecordLinq.AsQueryable<Client>().Where(p => p.LawyerPerson.INN == INN).ToList();
 		}
 
 		public static List<BankPayment> Parse(string file, Stream stream)
@@ -285,13 +285,13 @@ namespace InternetInterface.Models
 				var inn = payment.PayerClient.Inn;
 				if (!ignoredInns.Any(i => String.Equals(i.Inn, inn, StringComparison.InvariantCultureIgnoreCase)))
 				{
-					var payer = ActiveRecordLinq.AsQueryable<LawyerPerson>().FirstOrDefault(p => p.INN == inn);
+					var payer = ActiveRecordLinq.AsQueryable<Client>().FirstOrDefault(p => p.LawyerPerson.INN == inn);
 					payment.Payer = payer;
 				}
 
 				if (payment.IsDuplicate())
 					continue;
-
+				
 				yield return payment;
 			}
 		}
@@ -506,9 +506,9 @@ namespace InternetInterface.Models
 		[ValidateSelf]
 		public void Validate(ErrorSummary summary)
 		{
-			if (Payer != null)
+			if (Payer != null && Payer.LawyerPerson != null)
 			{
-				if (Recipient.Id != Payer.Recipient.Id)
+				if (Recipient.Id != Payer.LawyerPerson.Recipient.Id)
 					summary.RegisterErrorMessage(
 						"Recipient",
 						"Получатель платежей плательщика должен соответствовать получателю платежей выбранном в платеже");
@@ -543,10 +543,11 @@ namespace InternetInterface.Models
 				return;
 
 			if (Payer != null
+				&& Payer.LawyerPerson != null
 				&& PayerClient != null
 				&& !String.IsNullOrEmpty(PayerClient.Inn))
 			{
-				Payer.INN = PayerClient.Inn;
+				Payer.LawyerPerson.INN = PayerClient.Inn;
 				//Payer.Save();
 			}
 		}

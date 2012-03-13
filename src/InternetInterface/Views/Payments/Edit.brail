@@ -135,7 +135,7 @@
 			</td>
 			<td>
 				<input type=hidden id="payment_payer_id" name=Payment.Payer.Id value="${payment.Payer.Id if payment.Payer}">
-				<input type=text id="payment_Payer_Name" value="${payment.Payer.Name if payment.Payer}">
+				<input type=text style="width:300px;" id="payment_Payer_Name" value="${payment.Payer.Name.Replace("\"", "'") if payment.Payer}">
 			</td>
 			<td>${app.GetValidationError(payment, "Payer")}</td>
 		</tr>

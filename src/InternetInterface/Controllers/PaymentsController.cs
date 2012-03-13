@@ -62,7 +62,7 @@ namespace InternetInterface.Controllers
 					payment.Save();
 					new Payment {
 									Client =
-										Client.Queryable.FirstOrDefault(c => c.LawyerPerson != null && c.LawyerPerson == payment.Payer),
+										Client.Queryable.FirstOrDefault(c => c.LawyerPerson != null && c == payment.Payer),
 									Sum = payment.Sum,
 									RecievedOn = payment.RegistredOn,
 									PaidOn = payment.PayedOn,
@@ -151,7 +151,7 @@ namespace InternetInterface.Controllers
 				//то получим двух плательщиков из разных сесей
 				//правим это
 				if (payment.Payer != null)
-					payment.Payer = ActiveRecordLinqBase<LawyerPerson>.Queryable.Where(p => p.Id == payment.Payer.Id).FirstOrDefault(); //IPayer.Find(payment.Payer.Id);
+					payment.Payer = ActiveRecordLinqBase<Client>.Queryable.Where(p => p.Id == payment.Payer.Id).FirstOrDefault(); //IPayer.Find(payment.Payer.Id);
 
 				if (Validator.IsValid(payment))
 				{
@@ -159,8 +159,7 @@ namespace InternetInterface.Controllers
 					payment.Save();
 					if (payment.Payer != null)
 					new Payment {
-									Client =
-										Client.Queryable.FirstOrDefault(c => c.LawyerPerson != null && c.LawyerPerson == payment.Payer),
+									Client = Client.Queryable.FirstOrDefault(c => c.LawyerPerson != null && c == payment.Payer),
 									Sum = payment.Sum,
 									RecievedOn = payment.RegistredOn,
 									PaidOn = payment.PayedOn,
@@ -237,7 +236,7 @@ namespace InternetInterface.Controllers
 		public void Delete(uint id)
 		{
 			var payment = BankPayment.Find(id);
-			var client = Client.Queryable.FirstOrDefault(c => c.LawyerPerson == payment.Payer);
+			var client = Client.Queryable.FirstOrDefault(c => c == payment.Payer);
 			if (client != null)
 			new UserWriteOff {
 			                 	Client = client,
@@ -273,7 +272,7 @@ namespace InternetInterface.Controllers
 				{
 					if (oldPayer != null && payment.Payer == oldPayer)
 					{
-						var client = Client.Queryable.Where(c => c.LawyerPerson.Id == payment.Payer.Id).FirstOrDefault();
+						var client = payment.Payer;
 						if (newBalance - oldBalance < 0 && payment.Payer != null)
 						{
 							new UserWriteOff {
@@ -299,7 +298,7 @@ namespace InternetInterface.Controllers
 					if (newPayerFlag)
 					{
 						new Payment {
-						            	Client = Client.Queryable.Where(c => c.LawyerPerson.Id == payment.Payer.Id).FirstOrDefault(),
+						            	Client = payment.Payer,
 						            	PaidOn = DateTime.Now,
 						            	RecievedOn = DateTime.Now,
 						            	Sum = payment.Sum,
@@ -311,7 +310,7 @@ namespace InternetInterface.Controllers
 					if (oldPayer != null && oldPayer != payment.Payer)
 					{
 						new Payment {
-						            	Client = Client.Queryable.Where(c => c.LawyerPerson.Id == payment.Payer.Id).FirstOrDefault(),
+						            	Client = payment.Payer,
 						            	PaidOn = DateTime.Now,
 						            	RecievedOn = DateTime.Now,
 						            	Sum = payment.Sum,
@@ -319,7 +318,7 @@ namespace InternetInterface.Controllers
 						            		string.Format("Зачисление после редактирования банковского платежа (id = {0})", payment.Id)
 						            }.Save();
 						new UserWriteOff {
-						                 	Client = Client.Queryable.Where(c => c.LawyerPerson == oldPayer).FirstOrDefault(),
+						                 	Client = oldPayer,
 						                 	Comment =
 						                 		string.Format("Списание после смены плательщика, при редактировании банковского платежа №{0}",
 						                 		              payment.Id),
@@ -352,12 +351,12 @@ namespace InternetInterface.Controllers
 			uint.TryParse(term, out id);
 			return ActiveRecordLinq
 				.AsQueryable<Client>()
-				.Where(p => p.LawyerPerson.Name.Contains(term) || p.Id == id)
+				.Where(p => p.Name.Contains(term) || p.Id == id)
 				.Take(20)
 				.ToList()
 				.Select(p => new {
-					id = p.LawyerPerson.Id,
-					label = String.Format("[{0}]. {1} ИНН {2}", p.Id, p.LawyerPerson.Name, p.LawyerPerson.INN)
+					id = p.Id,
+					label = String.Format("[{0}]. {1}", p.Id, p.Name)
 				});
 		}
 

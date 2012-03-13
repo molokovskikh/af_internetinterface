@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Castle.ActiveRecord;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
@@ -18,6 +19,7 @@ namespace InternetInterface.Test.Functional
 		{
 			using (var browser = Open("Payments/ProcessPayments"))
 			{
+				Thread.Sleep(1000);
 				Assert.That(browser.Text, Is.StringContaining("Загрузка выписки"));
 			}
 		}
@@ -28,7 +30,7 @@ namespace InternetInterface.Test.Functional
 			using (var browser = Open("Payments/New"))
 			{
 				browser.Button("addPayment").Click();
-				Assert.That(browser.Text, Is.StringContaining("0,00"));
+				Assert.That(browser.Text, Is.StringContaining("Значение должно быть больше нуля"));
 			}
 		}
 
