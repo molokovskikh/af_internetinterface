@@ -70,6 +70,10 @@
     <Compile Include="Integration\MainBillingFixture.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BillingService\BillingService.csproj">
+      <Project>{B868FAF1-2F2D-4B39-94B8-E0BFC7E42E35}</Project>
+      <Name>BillingService</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Billing\Billing.csproj">
       <Project>{A30EB5BC-959B-4031-8D90-51F045AF3E6D}</Project>
       <Name>Billing</Name>

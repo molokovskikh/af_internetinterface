@@ -13,25 +13,10 @@ using log4net;
 
 namespace BillingService
 {
-	public class RunCommand : RepeatableCommand
-	{
-		private static readonly ILog _log = LogManager.GetLogger(typeof(RunCommand));
-
-		public RunCommand(Action action, int delay)
-			: base(action, delay)
-		{
-		}
-
-		public override void Error(Exception e)
-		{
-			_log.Error(e.Message);
-		}
-	}
-
 	public partial class BllingService : ServiceBase
 	{
-		private RunCommand computeCommand;
-		private RunCommand OnCommand;
+		private MemorableRepeatableCommand computeCommand;
+		private MemorableRepeatableCommand OnCommand;
 		private static MainBilling billing;
 		private ILog log = LogManager.GetLogger(typeof(BllingService));
 
@@ -46,10 +31,10 @@ namespace BillingService
 			{
 				billing = new MainBilling();
 
-				OnCommand = new RunCommand(billing.On, 600000);
+				OnCommand = new MemorableRepeatableCommand(billing.On, 600000);
 				OnCommand.Start();
 
-				computeCommand = new RunCommand(billing.Run, 180000);
+				computeCommand = new MemorableRepeatableCommand(billing.Run, 180000);
 				computeCommand.Start();
 			}
 			catch (Exception e)

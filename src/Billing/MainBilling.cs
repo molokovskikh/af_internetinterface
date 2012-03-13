@@ -28,7 +28,6 @@ namespace Billing
 		public const int FreeDaysVoluntaryBlockin = 28;
 
 		private readonly ILog _log = LogManager.GetLogger(typeof (MainBilling));
-		private static MemorableLogger _logger;
 
 		private Mutex _mutex = new Mutex();
 		public List<SmsMessage> Messages;
@@ -36,15 +35,11 @@ namespace Billing
 		public MainBilling()
 		{
 			try {
-				_logger = new MemorableLogger(_log) {
-					ErrorMessage = "Ошибка в сервисе биллинга",
-					RestoreMessage = "Восстановление работы сервиса биллинга"
-				};
 				XmlConfigurator.Configure();
 				InitActiveRecord();
 			}
 			catch (Exception ex) {
-				_logger.Log(ex);
+				_log.Error("Ошибка к конструкторе" ,ex);
 			}
 		}
 
@@ -81,13 +76,9 @@ namespace Billing
 		public void On()
 		{
 			_mutex.WaitOne();
-			try {
-				UseSession(OnMethod);
-				_logger.Forget();
-			}
-			catch (Exception ex) {
-				_logger.Log(ex);
-			}
+
+			UseSession(OnMethod);
+
 			_mutex.ReleaseMutex();
 		}
 
@@ -95,22 +86,18 @@ namespace Billing
 		public void Run()
 		{
 			_mutex.WaitOne();
-			try {
-				var thisDateMax = InternetSettings.FindFirst().NextBillingDate;
-				var now = SystemTime.Now();
-				if ((thisDateMax - now).TotalMinutes <= 0) {
-					UseSession(Compute);
-					if (now.Hour < 22) {
-						var billingTime = InternetSettings.FindFirst();
-						billingTime.NextBillingDate = new DateTime(now.Year, now.Month, now.Day, 22, 0, 0);
-						billingTime.Save();
-					}
+
+			var thisDateMax = InternetSettings.FindFirst().NextBillingDate;
+			var now = SystemTime.Now();
+			if ((thisDateMax - now).TotalMinutes <= 0) {
+				UseSession(Compute);
+				if (now.Hour < 22) {
+					var billingTime = InternetSettings.FindFirst();
+					billingTime.NextBillingDate = new DateTime(now.Year, now.Month, now.Day, 22, 0, 0);
+					billingTime.Save();
 				}
-				_logger.Forget();
 			}
-			catch (Exception ex) {
-				_logger.Log(ex);
-			}
+
 			_mutex.ReleaseMutex();
 		}
 
