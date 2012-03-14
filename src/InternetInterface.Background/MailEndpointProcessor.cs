@@ -17,7 +17,7 @@ namespace InternetInterface.Background
 		{
 			using (new SessionScope()) {
 				SendUnknowEndPoint();
-
+				SendNullTariffLawyerPerson();
 				var thisDateMax = InternetSettings.FindFirst().NextSmsSendDate;
 				var now = SystemTime.Now();
 				if ((thisDateMax - now).TotalMinutes <= 0) {
@@ -38,10 +38,46 @@ namespace InternetInterface.Background
 #if !DEBUG
 			SmsHelper.SendMessages(messages);
 #endif
-			var thisDateMax = InternetSettings.FindFirst();	
+			var thisDateMax = InternetSettings.FindFirst();
 			thisDateMax.NextSmsSendDate = SystemTime.Now().AddDays(1).Date.AddHours(12);
 			thisDateMax.Update();
 			return messages;
+		}
+
+		public static void SendNullTariffLawyerPerson()
+		{
+			var nullLeases = Lease.Queryable.Where( l => 
+				l.Endpoint != null &&
+				l.Endpoint.Client != null &&
+				l.Endpoint.Client.LawyerPerson != null &&
+				(l.Endpoint.Client.LawyerPerson.Tariff == null ||
+				l.Endpoint.Client.LawyerPerson.Tariff == 0)).ToList()
+				.Where(l => l.IsGray()).ToList();
+			var sndingLease = SendedLease.Queryable.Where(s => s.SendDate >= DateTime.Now.Date ).Select(s => s.LeaseId).ToList();
+			var smtp = new SmtpClient("box.analit.net");
+#if !DEBUG
+			var mailToAdress = "internet@ivrn.net";
+#else
+			var mailToAdress = "a.zolotarev@analit.net";
+#endif
+			var text = new StringBuilder();
+			foreach (var lease in nullLeases.Where(l => !sndingLease.Contains(l.Id))) {
+				new SendedLease {
+					LeaseId = lease.Id,
+					Ip = lease.Ip,
+					Endpoint = lease.Endpoint,
+					SendDate = DateTime.Now
+				}.Save();
+				text.AppendLine("Обнаружена активность отключенного юр. лица");
+				text.AppendLine(string.Format("{0} пытается выйти в интернет, но получает серый ай-пи {1} \r\n из-за незаданной абонентской платы", lease.Endpoint.Client.Name, IpHelper.GetNormalIp(lease.Ip.ToString())));
+				text.AppendLine("Ответственным лицам необходимо обратить внимание: счет №" + lease.Endpoint.Client.Id);
+				var message = new MailMessage();
+				message.To.Add(mailToAdress);
+				message.Subject = "Подозрительный клиент";
+				message.From = new MailAddress("service@analit.net");
+				message.Body = text.ToString();
+				smtp.Send(message);
+			}
 		}
 
 		public static void SendUnknowEndPoint()

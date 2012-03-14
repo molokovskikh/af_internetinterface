@@ -42,5 +42,7 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual DateTime SendDate { get; set; }
 
+		[BelongsTo]
+		public virtual ClientEndpoints Endpoint { get; set; }
 	}
 }

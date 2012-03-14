@@ -7,6 +7,7 @@ using Billing;
 using Castle.ActiveRecord;
 using InternetInterface.Models;
 using NUnit.Framework;
+using Test.Support.log4net;
 
 namespace InternetInterface.Background.Tests
 {
@@ -42,6 +43,15 @@ namespace InternetInterface.Background.Tests
 			var sededMessages = SendProcessor.SendSmsNotification();
 
 			Assert.That(sededMessages.Count, Is.EqualTo(2));
+		}
+
+		[Test]
+		public void LawyerTest()
+		{
+			using (new SessionScope()) {
+				QueryCatcher.Catch();
+				SendProcessor.SendNullTariffLawyerPerson();
+			}
 		}
 
 		[Test]
