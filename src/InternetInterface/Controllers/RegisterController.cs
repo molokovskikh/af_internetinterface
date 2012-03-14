@@ -200,10 +200,10 @@ namespace InternetInterface.Controllers
 			if (IsValid(person) && string.IsNullOrEmpty(connectErrors))
 			{
 				DbLogHelper.SetupParametersForTriggerLogging();
-				person.Recipient = Recipient.Queryable.Where(r => r.INN == "3666152146").FirstOrDefault();
 				person.SaveAndFlush();
 				var client = new Client
 								{
+									Recipient =  Recipient.Queryable.FirstOrDefault(r => r.INN == "3666152146"),
 									WhoRegistered = InitializeContent.Partner,
 									WhoRegisteredName = InitializeContent.Partner.Name,
 									RegDate = DateTime.Now,

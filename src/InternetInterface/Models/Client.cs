@@ -117,6 +117,9 @@ namespace InternetInterface.Models
 		[OneToOne(PropertyRef = "Client")]
 		public virtual Request Request { get; set; }
 
+		[BelongsTo]
+		public virtual Recipient Recipient { get; set; }
+
 		public virtual bool HavePaymentToStart()
 		{
 			var tariffSum = GetPriceForTariff();

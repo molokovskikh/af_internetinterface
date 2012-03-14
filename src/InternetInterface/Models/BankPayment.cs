@@ -154,7 +154,7 @@ namespace InternetInterface.Models
 			: this()
 		{
 			Payer = payer;
-			Recipient = payer.LawyerPerson.Recipient;
+			Recipient = payer.Recipient;
 		}
 
 		public BankPayment()
@@ -419,34 +419,34 @@ namespace InternetInterface.Models
 					bankAccountantCode = node.XPathSelectElement("BankPayer/AccountCode").Value;
 
 				var payment = new BankPayment {
-												  DocumentNumber = documentNumber,
-												  PayedOn =
-													  DateTime.Parse(dateNode.Value, CultureInfo.GetCultureInfo("ru-RU")),
-												  RegistredOn = DateTime.Now,
-												  Sum = Decimal.Parse(sum, CultureInfo.InvariantCulture),
-												  Comment = comment,
+					DocumentNumber = documentNumber,
+					PayedOn =
+						DateTime.Parse(dateNode.Value, CultureInfo.GetCultureInfo("ru-RU")),
+					RegistredOn = DateTime.Now,
+					Sum = Decimal.Parse(sum, CultureInfo.InvariantCulture),
+					Comment = comment,
 
-												  PayerBank = new BankInfo(
-													  node.XPathSelectElement("BankPayer/Description").Value,
-													  node.XPathSelectElement("BankPayer/BIC").Value,
-													  bankAccountantCode
-													  ),
-												  PayerClient = new BankClient(
-													  node.XPathSelectElement("Payer/Name").Value,
-													  null,
-													  node.XPathSelectElement("Payer/AccountCode").Value
-													  ),
-												  RecipientBank = new BankInfo(
-													  node.XPathSelectElement("BankRecipient/Description").Value,
-													  node.XPathSelectElement("BankRecipient/BIC").Value,
-													  node.XPathSelectElement("BankRecipient/AccountCode").Value
-													  ),
-												  RecipientClient = new BankClient(
-													  node.XPathSelectElement("Recepient/Client/Name").Value,
-													  node.XPathSelectElement("Recepient/Client/INN").Value,
-													  node.XPathSelectElement("Recepient/Client/AccountCode").Value
-													  ),
-											  };
+					PayerBank = new BankInfo(
+						node.XPathSelectElement("BankPayer/Description").Value,
+						node.XPathSelectElement("BankPayer/BIC").Value,
+						bankAccountantCode
+						),
+					PayerClient = new BankClient(
+						node.XPathSelectElement("Payer/Name").Value,
+						null,
+						node.XPathSelectElement("Payer/AccountCode").Value
+						),
+					RecipientBank = new BankInfo(
+						node.XPathSelectElement("BankRecipient/Description").Value,
+						node.XPathSelectElement("BankRecipient/BIC").Value,
+						node.XPathSelectElement("BankRecipient/AccountCode").Value
+						),
+					RecipientClient = new BankClient(
+						node.XPathSelectElement("Recepient/Client/Name").Value,
+						node.XPathSelectElement("Recepient/Client/INN").Value,
+						node.XPathSelectElement("Recepient/Client/AccountCode").Value
+						),
+				};
 				var element = node.XPathSelectElement("Payer/INN");
 				if (element != null)
 					payment.PayerClient.Inn = element.Value;
@@ -506,9 +506,9 @@ namespace InternetInterface.Models
 		[ValidateSelf]
 		public void Validate(ErrorSummary summary)
 		{
-			if (Payer != null && Payer.LawyerPerson != null)
+			if (Payer != null)
 			{
-				if (Recipient.Id != Payer.LawyerPerson.Recipient.Id)
+				if (Recipient.Id != Payer.Recipient.Id)
 					summary.RegisterErrorMessage(
 						"Recipient",
 						"Получатель платежей плательщика должен соответствовать получателю платежей выбранном в платеже");

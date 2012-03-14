@@ -59,9 +59,6 @@ namespace InternetInterface.Models
 		[Property, Auditable("Почтовый адрес")]
 		public virtual string MailingAddress { get; set; }
 
-		[BelongsTo]
-		public virtual Recipient Recipient { get; set; }
-
 		[OneToOne(PropertyRef = "LawyerPerson")]
 		public virtual Client client { get; set; }
 	}

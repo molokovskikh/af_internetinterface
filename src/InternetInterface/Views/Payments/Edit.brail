@@ -7,7 +7,7 @@
 
 		$("#payment_Payer_Name").autocomplete({
 			source: "SearchPayer",
-			minLength: 2,
+			minLength: 1,
 			select: function (event, ui) {
 				$("#payment_payer_id").val(ui.item.id)
 			}
