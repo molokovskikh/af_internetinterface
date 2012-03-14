@@ -21,6 +21,7 @@ namespace InternetInterface.Models.Access
 		private static HashSet<string> _agentPayers; 
 		private static HashSet<string> _serviceRequest; 
 		private static HashSet<string> _adminServiceRequest; 
+		private static HashSet<string> _smsRule; 
 
 		public static List<string> GetAccessName(string _methodName)
 		{
@@ -81,6 +82,9 @@ namespace InternetInterface.Models.Access
 			}
 			if (GetRulesName_adminServiceRequest() != string.Empty) {
 				result.Add(GetRulesName_adminServiceRequest());
+			}
+			if (GetRulesName_smsRule() != string.Empty) {
+				result.Add(GetRulesName_smsRule());
 			}
 			return result;
 		}
@@ -323,6 +327,15 @@ namespace InternetInterface.Models.Access
 				"AddServiceComment"
 			};
 			return _adminServiceRequest.Contains(methodName) ? "ASR" : string.Empty;
+		}
+
+		private static string GetRulesName_smsRule()
+		{
+			_smsRule = new HashSet<string> {
+				"SmsIndex",
+				"SendSms"
+			};
+			return _smsRule.Contains(methodName) ? "SMS" : string.Empty;
 		}
 	}
 }

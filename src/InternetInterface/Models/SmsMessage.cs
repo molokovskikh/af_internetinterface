@@ -67,5 +67,8 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual int ServerRequest { get; set; }
+
+		[BelongsTo]
+		public virtual Partner Registrator { get; set; }
 	}
 }

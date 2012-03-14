@@ -167,6 +167,7 @@
     <None Include="Views\Rescues\404.brail" />
     <None Include="Views\ServiceRequest\ShowRequest.brail" />
     <None Include="Views\ServiceRequest\ViewRequests.brail" />
+    <None Include="Views\Sms\SmsIndex.brail" />
     <None Include="Views\Subview\AppealsInfo.brail" />
     <None Include="Views\Subview\CallsHistory.brail" />
     <None Include="Views\Subview\ChangeBalanceInfo.brail" />
@@ -339,6 +340,7 @@
     <Compile Include="Models\WriteOff.cs" />
     <Compile Include="Models\Zone.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Controllers\SmsController.cs" />
     <None Include="Views\Register\RegisterPartner.brail" />
   </ItemGroup>
   <ItemGroup>

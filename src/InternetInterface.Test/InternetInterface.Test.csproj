@@ -130,6 +130,7 @@
     <Compile Include="Functional\SearchFixture.cs" />
     <Compile Include="Functional\ServiceFixture.cs" />
     <Compile Include="Functional\Setup.cs" />
+    <Compile Include="Functional\SmsFixture.cs" />
     <Compile Include="Functional\UserInfoFixture.cs" />
     <Compile Include="Helpers\ClientHelperFixture.cs" />
     <Compile Include="Helpers\PartnerHelper.cs" />
