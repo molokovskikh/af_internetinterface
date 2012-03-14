@@ -6,5 +6,7 @@ set b.PayerId = c.id;
 
 ALTER TABLE `internet`.`lawyerperson` DROP COLUMN `Recipient`;
 
+alter table Internet.Clients add column Recipient INTEGER UNSIGNED;
+
 update internet.Clients c 
 set c.Recipient = 7;
