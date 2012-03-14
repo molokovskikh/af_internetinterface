@@ -34,7 +34,6 @@ namespace InternetInterface.Test.Functional
 				Assert.That(browser.Text, Is.StringContaining("Адрес регистрации"));
 				Assert.That(browser.Text, Is.StringContaining("Регистрационные данные"));
 				Assert.That(browser.Text, Is.StringContaining("Тариф"));
-				//Assert.That(browser.Text, Is.StringContaining("Внести сумму по тарифному плану"));
 				Assert.That(browser.Text, Is.StringContaining("Внести сумму"));
 				Assert.That(browser.Text, Is.StringContaining("Зарегистрировать"));
 				browser.TextField(Find.ById("Surname")).AppendText("TestSurname");
@@ -44,8 +43,7 @@ namespace InternetInterface.Test.Functional
 				browser.TextField(Find.ById("Apartment")).AppendText("5");
 				browser.TextField(Find.ById("Entrance")).AppendText("5");
 				browser.TextField(Find.ById("Floor")).AppendText("1");
-				browser.TextField(Find.ById("PhoneNumber")).AppendText("8-111-222-33-44");
-				browser.TextField(Find.ById("HomePhoneNumber")).AppendText("1111-22222");
+				browser.TextField(Find.ById("PhoneNumber")).AppendText("900-9009090");
 				browser.TextField(Find.ById("PassportSeries")).AppendText("1234");
 				browser.TextField(Find.ById("PassportNumber")).AppendText("123456");
 				browser.TextField(Find.ById("WhoGivePassport")).AppendText("TestWhoGivePassport");
@@ -61,6 +59,7 @@ namespace InternetInterface.Test.Functional
 					var brow_accesed = browser.Elements.Where(e => e.ClassName == "access_port").Count();
 					Assert.That(brow_accesed, Is.EqualTo(diniedPorts.Count));
 				}
+				browser.ShowWindow(NativeMethods.WindowShowStyle.ShowNormal);
 				browser.CheckBox("VisibleRegisteredInfo").Checked = true;
 				browser.Button(Find.ById("RegisterClientButton")).Click();
 				Thread.Sleep(2000);

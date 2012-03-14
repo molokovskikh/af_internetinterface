@@ -132,7 +132,7 @@ namespace InternetInterface.Controllers
 					client.Status = Status.Find((uint) StatusType.BlockedAndConnected);
 					client.UpdateAndFlush();
 				}
-
+				Flash["_client"] = client;
 				Flash["WhoConnected"] = client.WhoConnected;
 				Flash["Password"] = Password;
 				Flash["Client"] = phisClient;

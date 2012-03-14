@@ -34,7 +34,7 @@ namespace InternetInterface.Test.Functional
 						browser.Link("naznach_link").Click();
 					}
 					Assert.IsTrue(browser.Text.Contains("TV"));
-					Assert.IsTrue(browser.Text.Contains("INT"));
+					Assert.IsTrue(browser.Text.Contains("Int"));
 					Assert.IsTrue(browser.Text.Contains("20"));
 				}
 			}
