@@ -65,6 +65,7 @@
 	</form>
 </tbody>
 </table>
+<%if messages.Count > 0: %>
 <table class="table">
 	<thead>
 		<tr>
@@ -101,3 +102,10 @@
 	</tbody>
 </table>
 </div>
+<%else: %>
+<div class="flash" style="width:auto; margin-left:0%;">
+	<div class="message error">
+		<p>Данному клиенту не посылалось ни одного сообщения</p>
+	</div>
+</div>
+<%end %>

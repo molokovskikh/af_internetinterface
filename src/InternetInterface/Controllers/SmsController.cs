@@ -16,7 +16,7 @@ namespace InternetInterface.Controllers
 	{
 		public void SmsIndex(uint clientId)
 		{
-			PropertyBag["messages"] = SmsMessage.Queryable.Where(s => s.Client != null && s.Client.Id == clientId).ToList();
+			PropertyBag["messages"] = SmsMessage.Queryable.Where(s => s.Client != null && s.Client.Id == clientId).OrderByDescending(s => s.CreateDate).ToList();
 			PropertyBag["client"] = Client.Find(clientId);
 		}
 
