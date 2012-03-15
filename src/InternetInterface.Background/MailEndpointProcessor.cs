@@ -16,8 +16,10 @@ namespace InternetInterface.Background
 		public static void Process()
 		{
 			using (new SessionScope()) {
+
 				SendUnknowEndPoint();
 				SendNullTariffLawyerPerson();
+
 				var thisDateMax = InternetSettings.FindFirst().NextSmsSendDate;
 				var now = SystemTime.Now();
 				if ((thisDateMax - now).TotalMinutes <= 0) {
@@ -46,10 +48,7 @@ namespace InternetInterface.Background
 
 		public static void SendNullTariffLawyerPerson()
 		{
-			var nullLeases = Lease.Queryable.Where( l => 
-				l.Endpoint != null &&
-				l.Endpoint.Client != null &&
-				l.Endpoint.Client.LawyerPerson != null &&
+			var nullLeases = Lease.Queryable.Where(l => 
 				l.Pool.IsGray &&
 				(l.Endpoint.Client.LawyerPerson.Tariff == null ||
 				l.Endpoint.Client.LawyerPerson.Tariff == 0)).ToList();
