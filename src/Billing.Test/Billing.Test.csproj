@@ -60,6 +60,7 @@
     <Compile Include="Integration\AgentFixture.cs" />
     <Compile Include="Integration\BalanceFuntionalFixture.cs" />
     <Compile Include="Integration\LawyerPersonFixture.cs" />
+    <Compile Include="Integration\MutexFixture.cs" />
     <Compile Include="Integration\SaleFixture.cs" />
     <Compile Include="Integration\ServiceFixture.cs" />
     <Compile Include="Integration\SmsFixture.cs" />

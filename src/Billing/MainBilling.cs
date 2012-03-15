@@ -75,30 +75,42 @@ namespace Billing
 
 		public void On()
 		{
-			_mutex.WaitOne();
+			try
+			{
+				_mutex.WaitOne();
 
-			UseSession(OnMethod);
-
-			_mutex.ReleaseMutex();
+				UseSession(OnMethod);
+			}
+			finally 
+			{ 
+				_mutex.ReleaseMutex();
+			}
 		}
 
 
 		public void Run()
 		{
-			_mutex.WaitOne();
+			try
+			{
+				_mutex.WaitOne();
 
-			var thisDateMax = InternetSettings.FindFirst().NextBillingDate;
-			var now = SystemTime.Now();
-			if ((thisDateMax - now).TotalMinutes <= 0) {
-				UseSession(Compute);
-				if (now.Hour < 22) {
-					var billingTime = InternetSettings.FindFirst();
-					billingTime.NextBillingDate = new DateTime(now.Year, now.Month, now.Day, 22, 0, 0);
-					billingTime.Save();
+				var thisDateMax = InternetSettings.FindFirst().NextBillingDate;
+				var now = SystemTime.Now();
+				if ((thisDateMax - now).TotalMinutes <= 0)
+				{
+					UseSession(Compute);
+					if (now.Hour < 22)
+					{
+						var billingTime = InternetSettings.FindFirst();
+						billingTime.NextBillingDate = new DateTime(now.Year, now.Month, now.Day, 22, 0, 0);
+						billingTime.Save();
+					}
 				}
 			}
-
-			_mutex.ReleaseMutex();
+			finally 
+			{ 
+				_mutex.ReleaseMutex();
+			}
 		}
 
 		public void OnMethod()

@@ -319,7 +319,7 @@ namespace Billing.Test.Integration
 			Assert.IsFalse(client.Disabled);
 			Assert.That(client.ClientServices, Is.Empty);
 			SystemTime.Now = () => service.EndWorkDate.Value.AddDays(46);
-			billing.On();
+			billing.OnMethod();
 			Assert.That(client.ClientServices, Is.Empty);
 			Assert.IsFalse(client.Disabled);
 			SystemTime.Reset();

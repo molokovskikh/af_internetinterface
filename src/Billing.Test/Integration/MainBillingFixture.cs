@@ -127,7 +127,7 @@ namespace Billing.Test.Integration
 			new InternetSettings{NextBillingDate = DateTime.Now}.Save();
 		}
 
-		public Client CreateClient()
+		public static Client CreateClient()
 		{
 			var client = BaseBillingFixture.CreateAndSaveClient("testClient1", false, 590);
 			client.Save();
