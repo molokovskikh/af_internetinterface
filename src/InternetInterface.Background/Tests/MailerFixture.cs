@@ -64,7 +64,7 @@ namespace InternetInterface.Background.Tests
 					LeaseEnd = DateTime.Now.AddHours(5),
 					LeasedTo = "14-D6-4D-38-07-2F-00-00-00-00-00-00-00-00-00-00",
 					Port = 5,
-					Pool = 1,
+					Pool = IpPool.FindFirst(),
 					Module = 1,
 					Switch = NetworkSwitches.FindFirst(),
 					Ip = 3541660034

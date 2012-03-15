@@ -50,9 +50,9 @@ namespace InternetInterface.Background
 				l.Endpoint != null &&
 				l.Endpoint.Client != null &&
 				l.Endpoint.Client.LawyerPerson != null &&
+				l.Pool.IsGray &&
 				(l.Endpoint.Client.LawyerPerson.Tariff == null ||
-				l.Endpoint.Client.LawyerPerson.Tariff == 0)).ToList()
-				.Where(l => l.IsGray()).ToList();
+				l.Endpoint.Client.LawyerPerson.Tariff == 0)).ToList();
 			var sndingLease = SendedLease.Queryable.Where(s => s.SendDate >= DateTime.Now.Date ).Select(s => s.LeaseId).ToList();
 			var smtp = new SmtpClient("box.analit.net");
 #if !DEBUG
@@ -62,14 +62,9 @@ namespace InternetInterface.Background
 #endif
 			var text = new StringBuilder();
 			foreach (var lease in nullLeases.Where(l => !sndingLease.Contains(l.Id))) {
-				new SendedLease {
-					LeaseId = lease.Id,
-					Ip = lease.Ip,
-					Endpoint = lease.Endpoint,
-					SendDate = DateTime.Now
-				}.Save();
+				new SendedLease(lease).Save();
 				text.AppendLine("Обнаружена активность отключенного юр. лица");
-				text.AppendLine(string.Format("{0} пытается выйти в интернет, но получает серый ай-пи {1} \r\n из-за незаданной абонентской платы", lease.Endpoint.Client.Name, IpHelper.GetNormalIp(lease.Ip.ToString())));
+				text.AppendLine(string.Format("\"{0}\" пытается выйти в интернет, но из-за незаданной абонентской платы, получает серый Ip {1} .", lease.Endpoint.Client.Name, IpHelper.GetNormalIp(lease.Ip.ToString())));
 				text.AppendLine("Ответственным лицам необходимо обратить внимание: счет №" + lease.Endpoint.Client.Id);
 				var message = new MailMessage();
 				message.To.Add(mailToAdress);

@@ -39,8 +39,8 @@ namespace InternetInterface.Models
 		[Property]
 		public string LeasedTo { get; set; }
 
-		[Property]
-		public virtual uint? Pool { get; set; }
+		[BelongsTo]
+		public virtual IpPool Pool { get; set; }
 
 		[Property]
 		public virtual int Module { get; set; }
