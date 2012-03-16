@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Castle.ActiveRecord;
+using Common.Tools;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 using NUnit.Framework;
@@ -35,6 +36,7 @@ namespace Billing.Test.Integration
 		[Test]
 		public void Generated_sms_for_simple_Client()
 		{
+			SystemTime.Now = () => DateTime.Now.Date.AddHours(22).AddMinutes(1);
 			billing.Compute();
 			var message = billing.Messages.FirstOrDefault();
 			Assert.IsNotNull(message);
@@ -72,6 +74,24 @@ namespace Billing.Test.Integration
 				message.ShouldBeSend = null;
 			}
 			//SmsHelper.SendMessage(message);
+		}
+
+		[Test]
+		public void DateSmsTest()
+		{
+			SystemTime.Now = () => DateTime.Now.Date.AddHours(15);
+			billing.Compute();
+			var sms = SmsMessage.Queryable.Where(m => m.Client == _client);
+			foreach (var smsMessage in sms) {
+				Assert.That(smsMessage.ShouldBeSend, Is.EqualTo(DateTime.Now.Date.AddHours(12)));
+			}
+			SystemTime.Now = () => DateTime.Now.Date.AddHours(22).AddMinutes(1);
+			SmsMessage.DeleteAll();
+			billing.Compute();
+			sms = SmsMessage.Queryable.Where(m => m.Client == _client);
+			foreach (var smsMessage in sms) {
+				Assert.That(smsMessage.ShouldBeSend, Is.EqualTo(DateTime.Now.Date.AddDays(1).AddHours(12)));
+			}
 		}
 	}
 }

@@ -276,7 +276,14 @@ namespace Billing
 							if (client.SendSmsNotifocation) {
 								if (phisicalClient.Balance > 0) { 
 									var message = string.Format("Ваш баланс {0} руб. Завтра доступ в сеть будет заблокирован.", client.PhysicalClient.Balance.ToString("0.00"));
-									var smsMessage = new SmsMessage(client, message);
+									var now = SystemTime.Now();
+									DateTime shouldBeSendDate;
+									if (now.Hour < 22)
+										shouldBeSendDate = new DateTime(now.Year, now.Month, now.Day, 12, 0, 0);
+									else {
+										shouldBeSendDate = new DateTime(now.Year, now.Month, now.Day + 1, 12, 0, 0);
+									}
+									var smsMessage = new SmsMessage(client, message, shouldBeSendDate);
 									smsMessage.Save();
 									Messages.Add(smsMessage);
 								}
