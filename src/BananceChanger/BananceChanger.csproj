@@ -79,6 +79,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Billing\Billing.csproj">
+      <Project>{A30EB5BC-959B-4031-8D90-51F045AF3E6D}</Project>
+      <Name>Billing</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common.Tools\Common.Tools\Common.Tools.csproj">
       <Project>{72AFCFE8-C9E9-45FA-9698-BEE896A517A3}</Project>
       <Name>Common.Tools</Name>

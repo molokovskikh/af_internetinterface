@@ -18,5 +18,8 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual DateTime NextSmsSendDate { get; set; }
+
+		[Property]
+		public virtual bool LastStartFail { get; set; }
 	}
 }
