@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using Castle.ActiveRecord;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 using NUnit.Framework;
@@ -40,20 +41,22 @@ namespace Billing.Test.Integration
 
 		public static Client CreateAndSaveClient(string name, bool statusBlocked, decimal balance)
 		{
-			var phisicalClient = CreatePhisicalClient(statusBlocked, balance);
-			phisicalClient.Save();
-			return new Client
-					{
-						Disabled = false,
-						Sale = 0,
-						//FirstLease = true,
-						DebtDays = 0,
-						Name = name,
-						PhysicalClient = phisicalClient,
-						BeginWork = DateTime.Now ,
-						RatedPeriodDate = DateTime.Now,
-						YearCycleDate = DateTime.Now
-					};
+			using (new SessionScope()) {
+				var phisicalClient = CreatePhisicalClient(statusBlocked, balance);
+				phisicalClient.Save();
+				return new Client
+						{
+							Disabled = false,
+							Sale = 0,
+							//FirstLease = true,
+							DebtDays = 0,
+							Name = name,
+							PhysicalClient = phisicalClient,
+							BeginWork = DateTime.Now ,
+							RatedPeriodDate = DateTime.Now,
+							YearCycleDate = DateTime.Now
+						};
+			}
 		}
 
 		public static PhysicalClients CreatePhisicalClient(bool statusBlocked, decimal balance)

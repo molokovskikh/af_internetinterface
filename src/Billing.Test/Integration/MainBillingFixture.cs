@@ -22,7 +22,7 @@ namespace Billing.Test.Integration
 		[SetUp]
 		public void Setup()
 		{
-			scope = new SessionScope();
+			//scope = new SessionScope();
 		}
 
 		[TearDown]
@@ -148,11 +148,13 @@ namespace Billing.Test.Integration
 			PaymentsForAgent.DeleteAll();
 		}
 
-		public void SetClientDate(Client client, Interval rd)
+		public void SetClientDate(/*Client client,*/ Interval rd)
 		{
-			client = Client.FindFirst();
-			client.RatedPeriodDate = rd.dtFrom;
-			client.Update();
+			using (new SessionScope()) {
+				var client = Client.FindFirst();
+				client.RatedPeriodDate = rd.dtFrom;
+				client.Update();
+			}
 			SystemTime.Now = () => rd.dtTo;
 			billing.Compute();
 		}

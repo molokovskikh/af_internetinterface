@@ -16,7 +16,7 @@ namespace Billing.Test.Integration
 		[Test]
 		public void Query_test()
 		{
-			QueryCatcher.Catch();
+			//QueryCatcher.Catch();
 			var request = new Request {
 				Registrator = InitializeContent.Partner,
 				RegDate = DateTime.Now,
@@ -32,12 +32,14 @@ namespace Billing.Test.Integration
 			_client.BeginWork = DateTime.Now;
 			_client.Request = request;
 			_client.Save();
-			var bonusesClients = Client.Queryable.Where(c => 
-				c.Request != null && 
-				!c.Request.PaidBonus && 
-				c.Request.Registrator != null &&
-				c.BeginWork != null).ToList();
-			Assert.That(bonusesClients.Count, Is.GreaterThan(0));
+			using (new SessionScope()) {
+				var bonusesClients = Client.Queryable.Where(c => 
+					c.Request != null && 
+					!c.Request.PaidBonus && 
+					c.Request.Registrator != null &&
+					c.BeginWork != null).ToList();
+				Assert.That(bonusesClients.Count, Is.GreaterThan(0));
+			}
 		}
 
 		[Test]
@@ -58,10 +60,11 @@ namespace Billing.Test.Integration
 			_client.BeginWork = DateTime.Now;
 			_client.Request = request;
 			_client.Save();
-			scope.Flush();
+//			scope.Flush();
+//			QueryCatcher.Catch();
 			billing.Compute();
 			billing.Compute();
-			scope.Flush();
+//			scope.Flush();
 			request.Refresh();
 			Assert.IsFalse(request.PaidBonus);
 			var payment = new Payment {
@@ -75,8 +78,10 @@ namespace Billing.Test.Integration
 			billing.Compute();
 			request.Refresh();
 			Assert.IsTrue(request.PaidBonus);
-			var payments = PaymentsForAgent.Queryable.Where(p => p.Agent == InitializeContent.Partner).ToList();
-			Assert.That(payments.Count, Is.EqualTo(1));
+			using (new SessionScope()) {
+				var payments = PaymentsForAgent.Queryable.Where(p => p.Agent == InitializeContent.Partner).ToList();
+				Assert.That(payments.Count, Is.EqualTo(1));
+			}
 		}
 	}
 }
