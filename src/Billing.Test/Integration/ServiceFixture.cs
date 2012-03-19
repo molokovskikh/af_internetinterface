@@ -366,69 +366,86 @@ namespace Billing.Test.Integration
 		[Test]
 		public void ActiveDeactive()
 		{
-			PrepareTest();
-			SystemTime.Reset();
-			var client = CreateClient();
+			Client client;
+			ClientService CServive;
+			PhysicalClients physClient;
 			const int countDays = 5;
-			var physClient = client.PhysicalClient;
-			physClient.Balance = -10m;
-			physClient.Update();
-			client.Disabled = true;
-			client.AutoUnblocked = true;
-			client.RatedPeriodDate = SystemTime.Now();
-			client.Update();
+			using (new SessionScope()) {
+				PrepareTest();
+				SystemTime.Reset();
+				client = CreateClient();
+				physClient = client.PhysicalClient;
+				physClient.Balance = -10m;
+				physClient.Update();
+				client.Disabled = true;
+				client.AutoUnblocked = true;
+				client.RatedPeriodDate = SystemTime.Now();
+				client.Update();
 
-			var CServive = new ClientService {
-				Client = client,
-				BeginWorkDate = DateTime.Now,
-				EndWorkDate = SystemTime.Now().AddDays(countDays),
-				Service = Service.GetByType(typeof (DebtWork)),
-				Activator = InitializeContent.Partner
-			};
-			client.ClientServices.Add(CServive);
-			CServive.Activate();
+				CServive = new ClientService {
+					Client = client,
+					BeginWorkDate = DateTime.Now,
+					EndWorkDate = SystemTime.Now().AddDays(countDays),
+					Service = Service.GetByType(typeof (DebtWork)),
+					Activator = InitializeContent.Partner
+				};
+				client.ClientServices.Add(CServive);
+				CServive.Activate();
+			}
 			billing.OnMethod();
 			billing.Compute();
-			Assert.IsFalse(client.Disabled);
-			CServive.CompulsoryDiactivate();
-			Assert.IsTrue(client.Disabled);
+			using (new SessionScope()) {
+				client.Refresh();
+				Assert.IsFalse(client.Disabled);
+				CServive.CompulsoryDiactivate();
+				Assert.IsTrue(client.Disabled);
+				billing.OnMethod();
+				Assert.IsTrue(client.Disabled);
+				CServive = new ClientService {
+					Client = client,
+					BeginWorkDate = DateTime.Now,
+					EndWorkDate = SystemTime.Now().AddDays(countDays),
+					Service = Service.GetByType(typeof (VoluntaryBlockin)),
+					Activator = InitializeContent.Partner
+				};
+				physClient = ActiveRecordMediator<PhysicalClients>.FindByPrimaryKey(physClient.Id);
+				physClient.Balance = client.GetPriceForTariff();
+				physClient.Update();
+			}
 			billing.OnMethod();
-			Assert.IsTrue(client.Disabled);
-			CServive = new ClientService {
-				Client = client,
-				BeginWorkDate = DateTime.Now,
-				EndWorkDate = SystemTime.Now().AddDays(countDays),
-				Service = Service.GetByType(typeof (VoluntaryBlockin)),
-				Activator = InitializeContent.Partner
-			};
-			physClient.Balance = client.GetPriceForTariff();
-			physClient.Update();
-			billing.OnMethod();
-			Assert.IsFalse(client.Disabled);
-			Assert.IsFalse(client.PaidDay);
-			Assert.IsTrue(client.AutoUnblocked);
-			Assert.IsNull(client.RatedPeriodDate);
+			using (new SessionScope()) {
+				client.Refresh();
+				Assert.IsFalse(client.Disabled);
+				Assert.IsFalse(client.PaidDay);
+				Assert.IsTrue(client.AutoUnblocked);
+				Assert.IsNull(client.RatedPeriodDate);
 
-			client.ClientServices.Add(CServive);
-			CServive.Activate();
-			Assert.IsTrue(client.Disabled);
-
+				client.ClientServices.Add(CServive);
+				CServive.Activate();
+				Assert.IsTrue(client.Disabled);
+			}
 			billing.Compute();
-			Assert.That(WriteOff.FindAll().Last().WriteOffSum, Is.GreaterThan(3m));
-			CServive.CompulsoryDiactivate();
+			using (new SessionScope()) {
+				Assert.That(WriteOff.FindAll().Last().WriteOffSum, Is.GreaterThan(3m));
+				CServive.CompulsoryDiactivate();
+			}
 			billing.OnMethod();
 			billing.Compute();
+			using (new SessionScope()) {
+				client.Refresh();
+				var userWriteOffs = UserWriteOff.Queryable.ToList();
 
-			var userWriteOffs = UserWriteOff.Queryable.ToList();
-
-			Assert.That(userWriteOffs.Count, Is.EqualTo(3));
-			Assert.That(userWriteOffs[0].Sum, Is.GreaterThan(5m));
-			Assert.That(userWriteOffs[0].Sum, Is.LessThan(25m));
-			Assert.That(userWriteOffs[1].Sum, Is.EqualTo(50m));
-			Assert.That(userWriteOffs[2].Sum, Is.GreaterThan(5m));
-			Assert.That(userWriteOffs[2].Sum, Is.LessThan(25m));
-			Assert.IsFalse(client.Disabled);
+				Assert.That(userWriteOffs.Count, Is.EqualTo(3));
+				Assert.That(userWriteOffs[0].Sum, Is.GreaterThan(5m));
+				Assert.That(userWriteOffs[0].Sum, Is.LessThan(25m));
+				Assert.That(userWriteOffs[1].Sum, Is.EqualTo(50m));
+				Assert.That(userWriteOffs[2].Sum, Is.GreaterThan(5m));
+				Assert.That(userWriteOffs[2].Sum, Is.LessThan(25m));
+				Assert.IsFalse(client.Disabled);
+			}
 			billing.OnMethod();
+			using (new SessionScope())
+				client.Refresh();
 			Assert.IsFalse(client.Disabled);
 		}
 

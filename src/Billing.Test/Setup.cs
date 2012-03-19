@@ -24,12 +24,12 @@ namespace Billing.Test
 		{
 			try
 			{
-				var info = new ProcessStartInfo("mysqld", "--standalone")
+				/*var info = new ProcessStartInfo("mysqld", "--standalone")
 				{
 					UseShellExecute = false,
 					CreateNoWindow = true
 				};
-				mysql = Process.Start(info);
+				mysql = Process.Start(info);*/
 				var done = false;
 				MainBilling.InitActiveRecord();
 				while (!done)
@@ -48,7 +48,7 @@ namespace Billing.Test
 							throw;
 					}
 				}
-				using (new SessionScope())
+				//using (new SessionScope())
 				{
 					MainBillingFixture.PrepareTests();
 				}

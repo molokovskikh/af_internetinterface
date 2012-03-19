@@ -41,22 +41,20 @@ namespace Billing.Test.Integration
 
 		public static Client CreateAndSaveClient(string name, bool statusBlocked, decimal balance)
 		{
-			using (new SessionScope()) {
-				var phisicalClient = CreatePhisicalClient(statusBlocked, balance);
-				phisicalClient.Save();
-				return new Client
-						{
-							Disabled = false,
-							Sale = 0,
-							//FirstLease = true,
-							DebtDays = 0,
-							Name = name,
-							PhysicalClient = phisicalClient,
-							BeginWork = DateTime.Now ,
-							RatedPeriodDate = DateTime.Now,
-							YearCycleDate = DateTime.Now
-						};
-			}
+			var phisicalClient = CreatePhisicalClient(statusBlocked, balance);
+			phisicalClient.Save();
+			return new Client
+					{
+						Disabled = false,
+						Sale = 0,
+						//FirstLease = true,
+						DebtDays = 0,
+						Name = name,
+						PhysicalClient = phisicalClient,
+						BeginWork = DateTime.Now ,
+						RatedPeriodDate = DateTime.Now,
+						YearCycleDate = DateTime.Now
+					};
 		}
 
 		public static PhysicalClients CreatePhisicalClient(bool statusBlocked, decimal balance)

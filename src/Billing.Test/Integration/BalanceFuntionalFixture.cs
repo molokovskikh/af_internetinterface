@@ -462,6 +462,7 @@ namespace Billing.Test.Integration
 		{
 			Client client;
 			Interval interval;
+			decimal dayCount;
 			using (new SessionScope()) {
 				BaseBillingFixture.CreateAndSaveInternetSettings();
 				PrepareTest();
@@ -470,10 +471,9 @@ namespace Billing.Test.Integration
 				client.PhysicalClient.Balance = client.PhysicalClient.Tariff.Price;
 				client.Update();
 				interval = new Interval("15.01.2011", "15.02.2011");
-				
-				//interval.dtTo = DateTime.Parse("15.01.2011");
+				dayCount = interval.GetInterval();
+				interval.dtTo = DateTime.Parse("15.01.2011");
 			}
-			var dayCount = interval.GetInterval();
 			for (var i = 0; i < dayCount; i++) {
 				interval.dtTo = interval.dtTo.AddDays(1);
 				SetClientDate(interval);

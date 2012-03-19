@@ -46,16 +46,18 @@ namespace Billing.Test.Integration
 		[SetUp]
 		public void CreateBilling()
 		{
-			billing = new MainBilling();
-			PrepareTest();
-			_client = CreateClient();
-			SaleSettings.DeleteAll();
-			new SaleSettings {
-				MaxSale = MaxSale,
-				MinSale = MinSale,
-				PeriodCount = PerionCount,
-				SaleStep = SaleStep
-			}.Save();
+			using (new SessionScope()) {
+				billing = new MainBilling();
+				PrepareTest();
+				_client = CreateClient();
+				SaleSettings.DeleteAll();
+				new SaleSettings {
+					MaxSale = MaxSale,
+					MinSale = MinSale,
+					PeriodCount = PerionCount,
+					SaleStep = SaleStep
+				}.Save();
+			}
 		}
 
 		public static void PrepareTests()
