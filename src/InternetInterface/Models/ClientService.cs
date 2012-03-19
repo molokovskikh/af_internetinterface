@@ -45,7 +45,7 @@ namespace InternetInterface.Models
 			if (Service.CanDelete(this))
 			{
 				Client.ClientServices.Remove(this);
-				base.Delete();
+				Client.Save();
 			}
 		}
 
@@ -76,7 +76,6 @@ namespace InternetInterface.Models
 		public virtual void CompulsoryDiactivate()
 		{
 			Service.CompulsoryDiactivate(this);
-			//Client.ClientServices
 			DeleteFromClient();
 		}
 

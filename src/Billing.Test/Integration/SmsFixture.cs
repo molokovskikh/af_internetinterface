@@ -24,13 +24,16 @@ namespace Billing.Test.Integration
 		public void Payment_and_sms_Test()
 		{
 			billing.Compute();
-			Assert.That(SmsMessage.Queryable.Count(m => m.Client == _client), Is.EqualTo(1));
-			new Payment {
-				Client = _client,
-				Sum = 100
-			}.Save();
+			using (new SessionScope()) {
+				Assert.That(SmsMessage.Queryable.Count(m => m.Client == _client), Is.EqualTo(1));
+				new Payment {
+					Client = _client,
+					Sum = 100
+				}.Save();
+			}
 			billing.OnMethod();
-			Assert.That(SmsMessage.Queryable.Count(m => m.Client == _client), Is.EqualTo(0));
+			using (new SessionScope())
+				Assert.That(SmsMessage.Queryable.Count(m => m.Client == _client), Is.EqualTo(0));
 		}
 
 		[Test]
@@ -79,18 +82,23 @@ namespace Billing.Test.Integration
 		[Test]
 		public void DateSmsTest()
 		{
+			IEnumerable<SmsMessage> sms;
 			SystemTime.Now = () => DateTime.Now.Date.AddHours(15);
 			billing.Compute();
-			var sms = SmsMessage.Queryable.Where(m => m.Client == _client);
-			foreach (var smsMessage in sms) {
-				Assert.That(smsMessage.ShouldBeSend, Is.EqualTo(DateTime.Now.Date.AddHours(12)));
+			using (new SessionScope()) {
+				sms = SmsMessage.Queryable.Where(m => m.Client == _client);
+				foreach (var smsMessage in sms) {
+					Assert.That(smsMessage.ShouldBeSend, Is.EqualTo(DateTime.Now.Date.AddHours(12)));
+				}
+				SystemTime.Now = () => DateTime.Now.Date.AddHours(22).AddMinutes(1);
+				SmsMessage.DeleteAll();
 			}
-			SystemTime.Now = () => DateTime.Now.Date.AddHours(22).AddMinutes(1);
-			SmsMessage.DeleteAll();
 			billing.Compute();
-			sms = SmsMessage.Queryable.Where(m => m.Client == _client);
-			foreach (var smsMessage in sms) {
-				Assert.That(smsMessage.ShouldBeSend, Is.EqualTo(DateTime.Now.Date.AddDays(1).AddHours(12)));
+			using (new SessionScope()) {
+				sms = SmsMessage.Queryable.Where(m => m.Client == _client);
+				foreach (var smsMessage in sms) {
+					Assert.That(smsMessage.ShouldBeSend, Is.EqualTo(DateTime.Now.Date.AddDays(1).AddHours(12)));
+				}
 			}
 		}
 	}

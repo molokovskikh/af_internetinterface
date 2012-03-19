@@ -12,6 +12,7 @@ using Common.Models.Helpers;
 using Common.Tools;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Helpers;
+using NHibernate;
 
 namespace InternetInterface.Models
 {
@@ -251,7 +252,7 @@ namespace InternetInterface.Models
 			return Endpoints.FirstOrDefault();
 		}
 
-		[HasMany(ColumnKey = "Client", Lazy = true, Cascade = ManyRelationCascadeEnum.All)]
+		[HasMany(ColumnKey = "Client", Lazy = true, Cascade = ManyRelationCascadeEnum.AllDeleteOrphan)]
 		public virtual IList<ClientService> ClientServices { get; set; }
 
 
@@ -306,9 +307,8 @@ namespace InternetInterface.Models
 		{
 			if (ClientServices != null)
 			{
-				var CServ =
-					ClientServices.Where(c => c.Service.Id == Service.GetByType(typeof (DebtWork)).Id).FirstOrDefault();
-				if (CServ != null && !CServ.Service.CanBlock(CServ))
+				var cServ = ClientServices.FirstOrDefault(c => NHibernateUtil.GetClass(c.Service) == typeof (DebtWork));
+				if (cServ != null && !cServ.Service.CanBlock(cServ))
 				{
 					return false;
 				}
