@@ -33,6 +33,21 @@ namespace Billing.Test.Integration
 		}
 	}
 
+	public class MainBillingForTest : MainBilling
+	{
+		public override void Compute()
+		{
+			base.Compute();
+
+			using (new SessionScope()) {
+				foreach (var paidClient in Client.FindAll()) {
+					paidClient.PaidDay = false;
+					paidClient.Update();
+				}
+			}
+		}
+	}
+
 	public class MainBillingFixture : IntegrationFixture
 	{
 		protected MainBilling billing;
@@ -47,7 +62,7 @@ namespace Billing.Test.Integration
 		public void CreateBilling()
 		{
 			using (new SessionScope()) {
-				billing = new MainBilling();
+				billing = new MainBillingForTest();
 				PrepareTest();
 				_client = CreateClient();
 				SaleSettings.DeleteAll();

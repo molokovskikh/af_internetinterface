@@ -66,14 +66,6 @@ namespace Billing
 			}
 		}
 
-		/*public void UseSession(Action func)
-		{
-			using (var session = new TransactionScope(OnDispose.Rollback)) {
-				func();
-				session.VoteCommit();
-			}
-		}*/
-
 		public void On()
 		{
 			try
@@ -94,7 +86,6 @@ namespace Billing
 
 		public void Run()
 		{
-			InternetSettings settings;
 			try
 			{
 				_mutex.WaitOne();
@@ -102,7 +93,7 @@ namespace Billing
 				bool errorFlag;
 				bool normalFlag;
 				using (new SessionScope()) {
-					settings = ActiveRecordMediator<InternetSettings>.FindFirst();
+					var settings = ActiveRecordMediator<InternetSettings>.FindFirst();
 					errorFlag = settings.LastStartFail && (settings.NextBillingDate - now).TotalMinutes > 0;
 					normalFlag = (settings.NextBillingDate - now).TotalMinutes <= 0;
 					if (normalFlag) {
@@ -111,7 +102,7 @@ namespace Billing
 	set c.PaidDay = false;
 
 	update internet.InternetSettings s
-	set s.LastStartFail = false;").ExecuteUpdate());
+	set s.LastStartFail = true;").ExecuteUpdate());
 
 						var billingTime = InternetSettings.FindFirst();
 						if (now.Hour < 22)
@@ -258,7 +249,7 @@ namespace Billing
 			}
 		}
 
-		public void Compute()
+		public virtual void Compute()
 		{
 			List<uint> clients;
 			SaleSettings saleSettings;
@@ -337,7 +328,6 @@ namespace Billing
 								else {
 									client.ShowBalanceWarningPage = false;
 								}
-								client.UpdateAndFlush();
 								if (dec > 0)
 								new WriteOff {
 									Client = client,
