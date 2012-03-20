@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using BillingService;
 using Castle.ActiveRecord;
 using Common.Tools;
 using InternetInterface.Models;
@@ -44,11 +45,18 @@ namespace Billing.Test.Integration
 		{
 			//Assert.Throws<NullReferenceException>(_billing.On);
 
-			var thread = new MemorableRepeatableCommand(_billing.On, 600000);
-			try {
+			var thread = new Thread(() => {
+				_billing.On();
+				Thread.Sleep(500);
+			});
+			try
+			{
 				thread.Start();
 			}
-			catch{}
+			catch { }
+			finally {
+				thread.Join();
+			}
 
 			using (new SessionScope()) {
 				MainBillingFixture.CreateClient();

@@ -151,8 +151,10 @@ namespace Billing.Test.Integration
 				ishBalance = client.PhysicalClient.Balance;
 				Assert.That(writeOff, Is.Null);
 			}
-			new Thread(() => billing.On()).Start();
-			new Thread(() => billing.Run()).Start();
+			var onTh = new Thread(() => billing.On());
+			var runTh = new Thread(() => billing.Run());
+			onTh.Start();
+			runTh.Start();
 			Thread.Sleep(5000);
 			using (new SessionScope()) {
 				writeOff = WriteOff.Queryable.Where(w => w.Client == client).FirstOrDefault();
@@ -160,6 +162,8 @@ namespace Billing.Test.Integration
 				Assert.That(writeOff, !Is.Null);
 				Assert.That(client.PhysicalClient.Balance, Is.EqualTo(Math.Round(ishBalance + 100 - client.GetPrice()/client.GetInterval(), 2)));
 			}
+			onTh.Join();
+			onTh.Join();
 		}
 
 		[Test]
