@@ -140,7 +140,7 @@ namespace Billing.Test.Integration
 				Price = 0,
 				HumanName = "VoluntaryBlockin"
 			}.Save();
-
+			InternetSettings.DeleteAll();
 			new InternetSettings{NextBillingDate = DateTime.Now}.Save();
 		}
 
