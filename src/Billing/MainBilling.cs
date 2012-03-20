@@ -98,32 +98,35 @@ namespace Billing
 			try
 			{
 				_mutex.WaitOne();
-				using (new SessionScope()) 
-					settings = ActiveRecordMediator<InternetSettings>.FindFirst();
 				var now = SystemTime.Now();
-				if (settings.LastStartFail && (settings.NextBillingDate - now).TotalMinutes > 0)
-					Compute();
-				if ((settings.NextBillingDate - now).TotalMinutes <= 0)
-				{
-					ArHelper.WithSession(s => s.CreateSQLQuery(@"
-update internet.Clients c
-set c.PaidDay = false;
+				bool errorFlag;
+				bool normalFlag;
+				using (new SessionScope()) {
+					settings = ActiveRecordMediator<InternetSettings>.FindFirst();
+					errorFlag = settings.LastStartFail && (settings.NextBillingDate - now).TotalMinutes > 0;
+					normalFlag = (settings.NextBillingDate - now).TotalMinutes <= 0;
+					if (normalFlag) {
+						ArHelper.WithSession(s => s.CreateSQLQuery(@"
+	update internet.Clients c
+	set c.PaidDay = false;
 
-update internet.InternetSettings i
-set i.LastStartFail = false;").ExecuteUpdate());
+	update internet.InternetSettings s
+	set s.LastStartFail = false;").ExecuteUpdate());
 
-					Compute();
-
-					var billingTime = InternetSettings.FindFirst();
-					if (now.Hour < 22)
-					{
-						billingTime.NextBillingDate = new DateTime(now.Year, now.Month, now.Day, 22, 0, 0);
+						var billingTime = InternetSettings.FindFirst();
+						if (now.Hour < 22)
+						{
+							billingTime.NextBillingDate = new DateTime(now.Year, now.Month, now.Day, 22, 0, 0);
+						}
+						else {
+							billingTime.NextBillingDate = SystemTime.Now().AddDays(1).Date.AddHours(22);
+						}
+						billingTime.Save();
 					}
-					else {
-						billingTime.NextBillingDate = SystemTime.Now().AddDays(1).Date.AddHours(22);
-					}
-					billingTime.Save();
 				}
+
+				if (normalFlag || errorFlag)
+					Compute();
 			}
 			catch (Exception ex) {
 				_log.Error("Ошибка в методе Compute", ex);
@@ -259,8 +262,12 @@ set i.LastStartFail = false;").ExecuteUpdate());
 		{
 			List<uint> clients;
 			SaleSettings saleSettings;
-			int errorCount = 0;
 			using (new SessionScope()) {
+
+				var settings = ActiveRecordMediator<InternetSettings>.FindFirst();
+				settings.LastStartFail = true;
+				settings.Save();
+
 				Messages = new List<SmsMessage>();
 				clients = Client.Queryable.Where(c => c.PhysicalClient != null && !c.PaidDay).Select(c => c.Id).ToList();
 				saleSettings  = SaleSettings.FindFirst();
@@ -356,7 +363,6 @@ set i.LastStartFail = false;").ExecuteUpdate());
 					}
 				}
 				catch (Exception ex) {
-					errorCount ++;
 					_log.Error(string.Format("Ошибка при обработке клиента {0}", id), ex);
 				}
 			}
@@ -391,19 +397,8 @@ set i.LastStartFail = false;").ExecuteUpdate());
 					}
 				}
 				catch (Exception ex) {
-					errorCount ++;
 					_log.Error(string.Format("Ошибка при обработке клиента {0}", id), ex);
 				}
-			}
-			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
-
-				var settings = InternetSettings.FindFirst();
-				settings.LastStartFail = errorCount > 0;
-				settings.Update();
-
-				ClientService.Queryable.ToList().Each(cs => cs.WriteOff());
-
-				transaction.VoteCommit();
 			}
 			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
 				var agentSettings = AgentTariff.GetPriceForAction(AgentActions.AgentPayIndex);
@@ -427,6 +422,16 @@ set i.LastStartFail = false;").ExecuteUpdate());
 						}.Save();
 					}
 				}
+				transaction.VoteCommit();
+			}
+			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
+
+				var settings = ActiveRecordMediator<InternetSettings>.FindFirst();
+				settings.LastStartFail = false;
+				settings.Save();
+
+				ClientService.Queryable.ToList().Each(cs => cs.WriteOff());
+
 				transaction.VoteCommit();
 			}
 		}
