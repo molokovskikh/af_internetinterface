@@ -252,6 +252,7 @@ namespace Billing
 		public virtual void Compute()
 		{
 			List<uint> clients;
+			int errorCount = 0;
 			SaleSettings saleSettings;
 			using (new SessionScope()) {
 
@@ -353,6 +354,7 @@ namespace Billing
 					}
 				}
 				catch (Exception ex) {
+					errorCount ++;
 					_log.Error(string.Format("Ошибка при обработке клиента {0}", id), ex);
 				}
 			}
@@ -387,6 +389,7 @@ namespace Billing
 					}
 				}
 				catch (Exception ex) {
+					errorCount ++;
 					_log.Error(string.Format("Ошибка при обработке клиента {0}", id), ex);
 				}
 			}
@@ -417,7 +420,7 @@ namespace Billing
 			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
 
 				var settings = ActiveRecordMediator<InternetSettings>.FindFirst();
-				settings.LastStartFail = false;
+				settings.LastStartFail = errorCount > 0;
 				settings.Save();
 
 				ClientService.Queryable.ToList().Each(cs => cs.WriteOff());
