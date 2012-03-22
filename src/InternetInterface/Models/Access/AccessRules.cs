@@ -273,7 +273,9 @@ namespace InternetInterface.Models.Access
 									"ShowAppeals",
 									"СhangeSaleSettings",
 									"EditAgentSettings",
-									"SaveSettings"
+									"SaveSettings",
+									"ForClient",
+									"ForSwitch"
 								};
 			return _visibleDemand.Contains(methodName) ? "SSI" : string.Empty;
 		}

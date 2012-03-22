@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Castle.MonoRail.Framework;
+using Common.Web.Ui.Helpers;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 
@@ -27,6 +28,9 @@ namespace InforoomInternet.Controllers
 			PropertyBag["Client"] = client;
 			PropertyBag["WriteOffs"] = client.GetWriteOffs(grouped).OrderBy(e => e.WriteOffDate).ToArray();
 			PropertyBag["grouped"] = grouped;
+			var message = MessageForClient.Queryable.FirstOrDefault(m => m.Client == client && m.Enabled && m.EndDate > DateTime.Now && !m.Client.Disabled);
+			if (message != null)
+				PropertyBag["PrivateMessage"] =  AppealHelper.GetTransformedAppeal(message.Text);
 			PropertyBag["Payments"] =
 				Payment.FindAllByProperty("Client", client).Where(p => p.Sum != 0).OrderBy(e => e.PaidOn).ToArray();
 			if (client.StartNoBlock != null)

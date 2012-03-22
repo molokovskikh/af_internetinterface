@@ -1,0 +1,33 @@
+﻿<script type="text/javascript">
+	$(function () {
+		$('.graph_date').datepicker();
+	});
+</script>
+<div class="backGround" style="width:800px;  border-top:none; padding-top:0px;">
+	<table class="table">
+	<tbody>
+		<tr>
+			<td  colspan=2>
+				<label for="textField"><b>Текст сообщения :</b></label><br />
+				<textarea id="sms_text" name="PrivateMessage.Text" rows="8" cols="80%">${PrivateMessage.Text}</textarea>
+			</td>
+			<td>${app.GetValidationError(PrivateMessage, "Text")}</td>
+		</tr>
+		<tr>
+			<td>Дата отключения</td>
+			<td><input type=text class="graph_date" name="PrivateMessage.EndDate" value="${PrivateMessage.EndDate.ToShortDateString()}"/></td>
+			<td>${app.GetValidationError(PrivateMessage, "EndDate")}</td>
+		</tr>
+		<tr>
+			<td>Показывать</td>
+			<td colspan=2>${FormHelper.CheckboxField("PrivateMessage.Enabled")}</td>
+		</tr>
+		<tr>
+			<td colspan=3>
+				<button type="submit" id="send_but" class="button">
+				<img alt="Save" src="../Images/tick.png">Сохранить</button>
+			</td>
+		</tr>
+	</tbody>
+	</table>
+</div>

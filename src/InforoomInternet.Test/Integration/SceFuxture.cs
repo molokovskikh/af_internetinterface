@@ -37,7 +37,7 @@ namespace InforoomInternet.Test.Integration
 					if (firstClientStatus == UnknownClientStatus.Connected) {
 						assertStatus = UnknownClientStatus.Connected;
 						//Ждем когда все станут Connected и проверяем
-						Thread.Sleep(3000);
+						Thread.Sleep(5000);
 					}
 					foreach (var lease in leases.Select(l => l.Endpoint.Client.Id)) {
 						Assert.That(ClientData.Get(lease), Is.EqualTo(assertStatus));

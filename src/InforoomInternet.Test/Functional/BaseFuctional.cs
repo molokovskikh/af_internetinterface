@@ -60,11 +60,12 @@ namespace InforoomInternet.Test.Unit
 		public void WarningTest()
 		{
 			var mashineIp = BigEndianConverter.ToInt32(
-				IPAddress.Parse("127.0.0.1").
-					GetAddressBytes());
+				IPAddress.Parse("127.0.0.1").GetAddressBytes());
 			using (new SessionScope()) {
 				foreach (var lease in Lease.Queryable.Where(l => l.Ip == mashineIp).ToList())
 					lease.Delete();
+			}
+			using (new SessionScope()) {
 				new Lease {
 					Ip = mashineIp,
 					Endpoint = new ClientEndpoints {
@@ -97,12 +98,16 @@ namespace InforoomInternet.Test.Unit
 			using (new SessionScope()) {
 				foreach (var lease in Lease.Queryable.Where(l => l.Ip == mashineIp).ToList())
 					lease.Delete();
-				new Lease {
+			}
+			Lease leaseC;
+			using (new SessionScope()) {
+				leaseC = new Lease {
 					Ip = mashineIp,
 					Endpoint = new ClientEndpoints {
 						Client = new Client {
 							Disabled = false,
 							RatedPeriodDate = DateTime.Now,
+							BeginWork = DateTime.Now,
 							PhysicalClient =
 								new PhysicalClients {
 									Balance = -200,
@@ -114,6 +119,11 @@ namespace InforoomInternet.Test.Unit
 								}
 						}
 					}
+				};
+				leaseC.Save();
+				new Payment {
+					Client = leaseC.Endpoint.Client,
+					Sum = 300
 				}.Save();
 			}
 			using (var ie = Open("Warning?host=google.com&url=")) {
@@ -213,7 +223,7 @@ namespace InforoomInternet.Test.Unit
 		{
 			using (var ie = Open("Main/OfferContract"))
 			{
-				Thread.Sleep(500);
+				Thread.Sleep(1000);
 				Assert.That(ie.Text, Is.StringContaining("Договор оферта стр1."));
 				Assert.That(ie.Text, Is.StringContaining("Договор оферта стр5."));
 				Assert.That(ie.Text, Is.StringContaining("Тарифы "));
@@ -295,14 +305,21 @@ namespace InforoomInternet.Test.Unit
 				client.ClientServices.Clear();
 				client.AutoUnblocked = true;
 				client.Disabled = true;
-				client.Update();
+				client.ClientServices.Clear();
+				client.Save();
+				new MessageForClient {
+					Text = "test_message_for_client",
+					Client = client
+				}.Save();
 			}
 			using (var browser = Open("PrivateOffice/IndexOffice"))
 			using (new SessionScope())
 			{
 				browser.Element("podrob").Click();
 				browser.Button("PostponedBut").Click();
+				Assert.That(browser.Text, Is.StringContaining("test_message_for_client"));
 				Assert.That(browser.Text, Is.StringContaining("Ваш личный кабинет"));
+				Assert.That(browser.Text, Is.StringContaining("Услуга \"Обещанный платеж активирована\""));
 			}
 		}
 

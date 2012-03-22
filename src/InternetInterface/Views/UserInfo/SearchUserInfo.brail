@@ -51,16 +51,17 @@
 				<a href="${Siteroot}/UserInfo/Leases?filter.ClientCode=${ClientCode}" class="button" style="background: #EEE url(../Images/tick.png) no-repeat; background-position: 5px 5px; padding-left:2em;">Показать статистику работы</a>
 				<a class="big-link" data-reveal-id="myModal_active" href="#" ><button type="button" class="button"><img alt="Save" src="../Images/tick.png"> Управление услугами </button></a>
 				<a id="createServiceLink" href="${Siteroot}/ServiceRequest/RegisterServiceRequest?ClientCode=${ClientCode}" class="button" style="background: #EEE url(../Images/tick.png) no-repeat; background-position: 5px 5px; padding-left:2em;">Сервисная заявка</a>
-				<a href="${Siteroot}/Sms/SmsIndex?clientId=${ClientCode}" class="button" style="background: #EEE url(../Images/tick.png) no-repeat; background-position: 5px 5px; padding-left:2em;">Отправить смс сообщение</a>
 			</td>
 		</tr>
-		<%if ServiceRequests.Count > 0: %>
 		<tr>
 			<td>
+				<a href="${Siteroot}/Sms/SmsIndex?clientId=${ClientCode}" class="button" style="background: #EEE url(../Images/tick.png) no-repeat; background-position: 5px 5px; padding-left:2em;">Отправить смс сообщение</a>
+				<a href="${Siteroot}/PrivateMessages/ForClient?clientId=${ClientCode}" class="button" style="background: #EEE url(../Images/tick.png) no-repeat; background-position: 5px 5px; padding-left:2em;">Приватное сообщение</a>
+			<%if ServiceRequests.Count > 0: %>
 				<a href="#" type="button"  class="button" onclick="$('#ServiceRequestDiv').slideToggle('slow');"> Показать Сервисные заявки </a>
+				<%end %>
 			</td>
 		</tr>
-		<%end %>
 	</tbody>
 </table>
 <%end %>

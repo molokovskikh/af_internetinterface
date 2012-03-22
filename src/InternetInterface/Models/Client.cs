@@ -121,6 +121,9 @@ namespace InternetInterface.Models
 		[BelongsTo]
 		public virtual Recipient Recipient { get; set; }
 
+		[OneToOne(PropertyRef = "Client")]
+		public virtual MessageForClient Message { get; set; }
+
 		public virtual bool HavePaymentToStart()
 		{
 			var tariffSum = GetPriceForTariff();

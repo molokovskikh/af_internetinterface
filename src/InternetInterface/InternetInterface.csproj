@@ -137,6 +137,9 @@
     <None Include="Views\AgentInfo\SummaryInformation.brail" />
     <None Include="Views\Brigads\MakeBrigad.brail" />
     <None Include="Views\Brigads\ShowBrigad.brail" />
+    <None Include="Views\PrivateMessages\ForClient.brail" />
+    <None Include="Views\PrivateMessages\ForSwitch.brail" />
+    <None Include="Views\PrivateMessages\Message.brail" />
     <None Include="Views\CommonScripts\WriteMessage.brail" />
     <None Include="Views\Hardware\PortInfo.brail" />
     <None Include="Views\HouseAgent\Agent.brail" />
@@ -237,6 +240,7 @@
     <Compile Include="Components\ContactTypeList.cs" />
     <Compile Include="Controllers\AgentInfoController.cs" />
     <Compile Include="Controllers\BrigadsController.cs" />
+    <Compile Include="Controllers\PrivateMessagesController.cs" />
     <Compile Include="Controllers\ExitPartner.cs" />
     <Compile Include="Controllers\Filter\AuthenticationFilter.cs" />
     <Compile Include="Controllers\Filter\InithializeContent.cs" />
@@ -307,6 +311,7 @@
     <Compile Include="Models\Label.cs" />
     <Compile Include="Models\LawyerPerson.cs" />
     <Compile Include="Models\Lease.cs" />
+    <Compile Include="Models\MessageForClient.cs" />
     <Compile Include="Models\NetworkSwitches.cs" />
     <Compile Include="Models\OnLineClient.cs" />
     <Compile Include="Models\PackageSpeed.cs" />

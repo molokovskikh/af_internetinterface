@@ -67,7 +67,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td colspan=4>
+					<td colspan=2>
 					<button type="submit" id="RegisterPartnerButton" class="button" >
 					<img alt="Save" src="../Images/application_edit.png">
 						<%if IsDefined("Editing"): %>
@@ -78,6 +78,9 @@
 							<%end %>
 						<%end %>
 					</button>
+					</td>
+					<td colspan=2>
+						<a href="${Siteroot}/PrivateMessages/ForSwitch?switchId=${Switch.Id}" class="button" style="background: #EEE url(../Images/tick.png) no-repeat; background-position: 5px 5px; padding-left:2em;">Приватное сообщение</a>
 					</td>
 				</tr>
 			</tbody>

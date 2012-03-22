@@ -76,7 +76,7 @@
 		</tr>
 		<tr>
 		  <td style="width:400px;">
-			<span class="description">Свич</span>
+			<span><a href="${SiteRoot}/Switches/MakeSwitch?Switch=${ConnectInfo.Switch}"> Свич</a> </span>
 		</td>
 		  <td>
 			<a class="button hardwareInfo" href="${siteroot}/Hardware/PortInfo?endPoint=${ConnectInfo.endpointId}" style="display:inline; float:none; background-color:#BDE5F8;">

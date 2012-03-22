@@ -1,13 +1,9 @@
-﻿<script type="text/javascript">
-<% if IsDefined("message"): %>
-	$(function () { 
-		alert('${message}');
-	}); 
-<%end %>
-</script>
+﻿</script>
 <input type=hidden value=${Client.Id} id="clientId" />
+<% if IsDefined("message"): %>
+	<p class="success"> ${message} </p>
+<%end %>
 <h2 style="padding-left:0px;">Ваш личный кабинет, ${PhysClientName}</h2>
-<!-- <h3 style="padding-bottom:0px;">Баланс составляет <b> ${PhysicalClient.Balance} </b></h3> -->
 <div style="font-size:13px;">
 	<% OutputSubView("""\Subview\WarningText""", {
 					"PClient": PhysicalClient,

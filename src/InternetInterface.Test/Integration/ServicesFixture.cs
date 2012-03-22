@@ -12,13 +12,27 @@ using InternetInterface.Controllers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
+using NHibernate.Criterion;
+using NHibernate.SqlCommand;
 using NUnit.Framework;
+using Test.Support.log4net;
 
 namespace InternetInterface.Test.Integration
 {
 	[TestFixture]
 	public class ServicesFixture : IntegrationFixture
 	{
+		[Test]
+		public void QueryTest()
+		{
+			QueryCatcher.Catch();
+			var messages = ClientEndpoints.FindAll(DetachedCriteria.For(typeof(ClientEndpoints))
+				.CreateAlias("Client", "c", JoinType.InnerJoin)
+				.CreateAlias("c.Message", "m", JoinType.InnerJoin)
+				.Add(Expression.Eq("Switch.Id", 136u))).Select(e => e.Client.Message).ToList();
+			Console.WriteLine(messages.Count);
+		}
+
 		[Test]
 		public void FilterTest()
 		{

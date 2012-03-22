@@ -35,6 +35,9 @@ else: %>
 			<p class="info">
 			Баланс составляет ${PClient.Balance} руб.
 			</p>
+			<%if IsDefined("PrivateMessage"): %>
+				<p class="warning">${PrivateMessage}</p>
+			<%end %>
 			<% end %>
 		<% end %>
 	<% end %>
