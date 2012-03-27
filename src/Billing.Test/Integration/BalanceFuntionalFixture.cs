@@ -14,6 +14,52 @@ namespace Billing.Test.Integration
 	public class BalanceFuntionalFixture : MainBillingFixture
 	{
 		[Test]
+		public void PastRatedPeriodDate()
+		{
+			using (new SessionScope()) {
+				_client.RatedPeriodDate = DateTime.Now.AddMonths(-1);
+				_client.Update();
+			}
+			billing.Compute();
+			using (new SessionScope()) {
+				_client.Refresh();
+				Assert.That(_client.RatedPeriodDate.Value.Date, Is.EqualTo(DateTime.Now.Date));
+				_client.RatedPeriodDate = DateTime.Now.AddMonths(-3).AddDays(-5);
+				_client.Update();
+			}
+			billing.Compute();
+			using (new SessionScope()) {
+				_client.Refresh();
+				Assert.That(_client.RatedPeriodDate.Value.Date, Is.EqualTo(DateTime.Now.Date));
+				var rpd = new DateTime(2012, 1, 31, 22, 10, 11);
+				_client.RatedPeriodDate = rpd;
+				_client.StartNoBlock = rpd;
+				SystemTime.Now = () => new DateTime(2012, 2, 29, 22, 10, 10);
+				_client.Update();
+			}
+			billing.Compute();
+			using (new SessionScope()) {
+				_client.Refresh();
+				Assert.That(_client.RatedPeriodDate.Value.Date, Is.EqualTo(new DateTime(2012, 2, 29)));
+				Assert.That(_client.DebtDays, Is.EqualTo(2));
+				SystemTime.Now = () => new DateTime(2012, 3, 30, 22, 10, 10);
+			}
+			billing.Compute();
+			using (new SessionScope()) {
+				_client.Refresh();
+				Assert.That(_client.RatedPeriodDate.Value.Date, Is.EqualTo(new DateTime(2012, 2, 29)));
+				Assert.That(_client.DebtDays, Is.EqualTo(2));
+				SystemTime.Now = () => new DateTime(2012, 3, 31, 22, 10, 10);
+			}
+			billing.Compute();
+			using (new SessionScope()) {
+				_client.Refresh();
+				Assert.That(_client.RatedPeriodDate.Value.Date, Is.EqualTo(new DateTime(2012, 3, 31)));
+				Assert.That(_client.DebtDays, Is.EqualTo(0));
+			}
+		}
+
+		[Test]
 		public void TestBillingDate()
 		{
 			InternetSettings set;

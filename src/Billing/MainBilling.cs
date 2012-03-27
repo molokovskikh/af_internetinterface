@@ -279,18 +279,23 @@ namespace Billing
 						if ((balance >= 0) &&
 							(!client.Disabled) &&
 							(client.RatedPeriodDate != DateTime.MinValue) && (client.RatedPeriodDate != null)) {
-							var DtNow = SystemTime.Now();
+							var dtNow = SystemTime.Now();
 
-							if ((((DateTime) client.RatedPeriodDate).AddMonths(1).Date - DtNow.Date).Days == -client.DebtDays) {
-								var dtFrom = (DateTime) client.RatedPeriodDate;
-								var dtTo = DtNow;
+							if ((client.RatedPeriodDate.Value.AddMonths(1).Date - dtNow.Date).Days == -client.DebtDays) {
+								var dtFrom = client.RatedPeriodDate.Value;
+								var dtTo = dtNow;
 								client.DebtDays += dtFrom.Day - dtTo.Day;
-								var thisMonth = DtNow.Month;
-								client.RatedPeriodDate = DtNow.AddDays(client.DebtDays);
-								while (((DateTime) client.RatedPeriodDate).Month != thisMonth) {
-									client.RatedPeriodDate = ((DateTime) client.RatedPeriodDate).AddDays(-1);
+								var thisMonth = dtNow.Month;
+								client.RatedPeriodDate = dtNow.AddDays(client.DebtDays);
+								while (client.RatedPeriodDate.Value.Month != thisMonth) {
+									client.RatedPeriodDate = client.RatedPeriodDate.Value.AddDays(-1);
 								}
-								client.UpdateAndFlush();
+							}
+							else {
+								if ((client.RatedPeriodDate.Value.AddMonths(1).Date - dtNow.Date).TotalDays < -client.DebtDays) {
+									client.RatedPeriodDate = dtNow.AddDays(client.DebtDays);;
+									client.DebtDays = 0;
+								}
 							}
 						}
 						if (client.StartNoBlock != null) {
