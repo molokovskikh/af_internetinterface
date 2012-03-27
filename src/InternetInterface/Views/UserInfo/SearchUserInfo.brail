@@ -34,10 +34,6 @@
 <div id="block-tables" class="block">
 <div class="content">
 <%if not Editing: %>
-<form class="form login" method="post" action="${siteroot}/UserInfo/LoadEditMudule">
-<input type="hidden" name="ClientID" value="${ClientCode}" />
-<input type="hidden" name="EditFlag" value="${Editing}" />
-<input type="hidden" name="appealType" value="${appealType}" />
 <%if PartnerAccessSet.AccesPartner("SSI"): %>
 <table class="table" style="width:100%;">
 	<thead>
@@ -74,6 +70,10 @@
 	</tbody>
 </table>
 <%end %>
+<form class="form login" method="post" action="${siteroot}/UserInfo/LoadEditMudule">
+<input type="hidden" name="ClientID" value="${ClientCode}" />
+<input type="hidden" name="EditFlag" value="${Editing}" />
+<input type="hidden" name="appealType" value="${appealType}" />
 <%end %>
 <table class="table" style="width: 100%;" align="left">
 	<thead>
