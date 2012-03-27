@@ -19,6 +19,13 @@ namespace InforoomInternet.Controllers
 			PropertyBag["saleSettings"] = SaleSettings.FindFirst();
 		}
 
+		public void BalanceInfo()
+		{
+			var clientId = Convert.ToUInt32(Session["LoginClient"]);
+			var client = Client.Find(clientId).PhysicalClient;
+			PropertyBag["client"] = client;
+		}
+
 		public void IndexOffice(string grouped)
 		{
 			var clientId = Convert.ToUInt32(Session["LoginClient"]);

@@ -161,8 +161,14 @@ namespace Billing
 					var physicalClient = updateClient.PhysicalClient;
 					var lawyerClient = updateClient.LawyerPerson;
 					if (physicalClient != null) {
+						if (newPayment.Virtual)
+							physicalClient.VirtualBalance += newPayment.Sum;
+						else {
+							physicalClient.MoneyBalance += newPayment.Sum;
+						}
+
 						physicalClient.Balance += Convert.ToDecimal(newPayment.Sum);
-						physicalClient.UpdateAndFlush();
+						physicalClient.Update();
 						newPayment.BillingAccount = true;
 						newPayment.Update();
 						SmsHelper.DeleteNoSendingMessages(updateClient);
@@ -174,7 +180,7 @@ namespace Billing
 								updateClient.ShowBalanceWarningPage = false;
 							}
 						if (updateClient.ClientServices != null)
-							for (int i = updateClient.ClientServices.Count - 1; i > -1; i--) {
+							for (var i = updateClient.ClientServices.Count - 1; i > -1; i--) {
 								var cserv = updateClient.ClientServices[i];
 								cserv.PaymentClient();
 							}
@@ -304,8 +310,30 @@ namespace Billing
 								var toDt = client.GetInterval();
 								var price = client.GetPrice();
 								var dec = price / toDt;
+								var physicalPart = dec;
+
 								phisicalClient.Balance -= dec;
-								phisicalClient.UpdateAndFlush();
+
+								var virtualAndMoneyParts = false;
+								var virtualWriteOffs = false;
+
+								if (phisicalClient.VirtualBalance > 0) {
+									if (phisicalClient.VirtualBalance - dec >= 0) {
+										phisicalClient.VirtualBalance -= dec;
+										virtualWriteOffs = true;
+									}
+									else {
+										physicalPart = dec - phisicalClient.VirtualBalance;
+										phisicalClient.MoneyBalance -= physicalPart;
+										phisicalClient.VirtualBalance -= dec - physicalPart;
+										virtualAndMoneyParts = true;
+									}
+								}
+								else {
+									phisicalClient.MoneyBalance -= physicalPart;
+								}
+
+								phisicalClient.Update();
 								var bufBal = phisicalClient.Balance;
 								var minimumBalance = bufBal - dec < 0;
 								if (minimumBalance) {
@@ -334,8 +362,10 @@ namespace Billing
 									Client = client,
 									WriteOffDate = SystemTime.Now(),
 									WriteOffSum = dec,
+									MoneySum = !virtualWriteOffs ? physicalPart : 0m,
+									VirtualSum = virtualAndMoneyParts ? dec - physicalPart : virtualWriteOffs ? dec : 0m,
 									Sale = client.Sale
-								}.SaveAndFlush();
+								}.Save();
 							}
 						}
 						if (client.CanBlock()) {

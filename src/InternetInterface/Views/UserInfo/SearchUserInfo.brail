@@ -131,6 +131,12 @@
 		<tr>
 			<td><span class="description">Баланс:</span> ${Client.Balance}</td>
 		</tr>
+		<tr>
+			<td><span class="description">Денежных средств:</span> ${Client.MoneyBalance.ToString("0.00")}</td>
+		</tr>
+		<tr>
+			<td><span class="description">Бонусов:</span> ${Client.VirtualBalance.ToString("0.00")}</td>
+		</tr>
 		<%if _client.Status != null: %>
 			<tr>
 				<td><span class="description">Статус клиента:</span> ${_client.Status.Name}</td>

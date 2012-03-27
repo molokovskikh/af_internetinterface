@@ -18,12 +18,16 @@ namespace InternetInterface.Models
 
 		public  uint Client { get; set; }
 
+		public decimal VirtualSum { get; set;}
+
+		public decimal MoneySum { get; set;}
+
 
 		public virtual string GetDate(string grouped)
 		{
 			if (grouped == "month")
 				return string.Format("{0}.{1}", WriteOffDate.Month.ToString("00"), WriteOffDate.Year);
-			if (grouped == "year")
+			if (grouped == "year") 
 				return string.Format("{0}", WriteOffDate.Year);
 			return string.Format("{0}.{1}.{2}", WriteOffDate.Day.ToString("00"), WriteOffDate.Month.ToString("00"), WriteOffDate.Year);
 		}
@@ -40,6 +44,12 @@ namespace InternetInterface.Models
 		public virtual decimal WriteOffSum { get; set; }
 
 		[Property]
+		public virtual decimal VirtualSum { get; set; }
+
+		[Property]
+		public virtual decimal MoneySum { get; set; }
+
+		[Property]
 		public virtual DateTime WriteOffDate { get; set; }
 
 		[BelongsTo("Client")]
@@ -50,5 +60,10 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual string Comment { get; set; }
+
+		public static IList<WriteOff> ForClient(Client client)
+		{
+			return Queryable.Where(w => w.Client == client).ToList();
+		}
 	}
 }

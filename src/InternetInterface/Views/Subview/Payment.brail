@@ -37,6 +37,11 @@
 				<label for="Other_Balance"><b>Внести сумму на счет:</b> </label>
 				<input type="text" style="width:200px; margin-left:100px;"  class="BalanceText" id="BalanceText"  name="BalanceText"  value="${BalanceText}" style="width: 50%; " />
 				<br />
+				<div style="padding-top:4px;">
+					<label for="virtualPayment" style="padding-right:5px;"><b>Зачислить как бонус</b> </label>
+					<input id="virtualPayment" type=checkbox name="virtualPayment" value="true"/>
+				</div>
+				<br />
 				<div class="errorjava">
 				</div>
 				<div style="float:left;" id="my-div"></div>

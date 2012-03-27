@@ -149,6 +149,12 @@ namespace InternetInterface.Models
 		[Property, ValidateNonEmpty("Введите сумму"), ValidateDecimal("Неверно введено число")]
 		public virtual decimal Balance { get; set; }
 
+		[Property]
+		public virtual decimal VirtualBalance { get; set; }
+
+		[Property]
+		public virtual decimal MoneyBalance { get; set; }
+
 		[/*ValidateIsUnique("Email должен быть уникальный"),*/ ValidateEmail("Ошибка ввода (требуется adr@serv.dom)")]
 		public virtual string Email { get; set; }
 

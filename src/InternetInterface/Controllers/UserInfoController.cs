@@ -1013,7 +1013,7 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void ChangeBalance([DataBind("ChangedBy")] ChangeBalaceProperties changeProperties, uint clientId, string balanceText)
+		public void ChangeBalance([DataBind("ChangedBy")] ChangeBalaceProperties changeProperties, uint clientId, string balanceText, bool virtualPayment)
 		{
 			var clientToch = Client.Find(clientId);
 			var forChangeSumm = string.Empty;
@@ -1036,7 +1036,8 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 						PaidOn = DateTime.Now,
 						RecievedOn = DateTime.Now,
 						Sum = tryBalance,
-						BillingAccount = false
+						BillingAccount = false,
+						Virtual = virtualPayment
 					}.Save();
 					Flash["Message"] = Message.Notify("Платеж ожидает обработки");
 					Flash["sleepButton"] = true;

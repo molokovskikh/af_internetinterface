@@ -451,6 +451,7 @@
     </Content>
     <None Include="Views\PrivateOffice\AboutFriendAction.brail" />
     <None Include="Views\PrivateOffice\AboutSale.brail" />
+    <None Include="Views\PrivateOffice\BalanceInfo.brail" />
     <None Include="Views\PrivateOffice\DiactivateVoluntaryBlockin.brail" />
     <None Include="Views\PrivateOffice\Services.brail" />
     <None Include="Views\PrivateOffice\SmsNotification.brail" />

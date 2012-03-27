@@ -337,13 +337,18 @@ namespace InternetInterface.Models
 			{
 				var query =
 					session.CreateSQLQuery(string.Format(
-@"SELECT Id, Sum(WriteOffSum) as WriteOffSum, WriteOffDate, Client  FROM internet.WriteOff W
+@"SELECT 
+Id, 
+Sum(WriteOffSum) as WriteOffSum,
+Sum(VirtualSum) as VirtualSum,
+Sum(MoneySum) as MoneySum,
+WriteOffDate,
+Client
+FROM internet.WriteOff W
 where Client = :clientid and WriteOffSum > 0
 group by {0} order by WriteOffDate;", gpoupKey))
 				.SetParameter("clientid", Id)
-				.SetResultTransformer(
-					new AliasToPropertyTransformer(
-						typeof (BaseWriteOff)));
+				.SetResultTransformer(new AliasToPropertyTransformer(typeof (BaseWriteOff)));
 				writeOffs = query.List<BaseWriteOff>();
 				return query.List<BaseWriteOff>();
 			});

@@ -15,7 +15,7 @@ else: %>
 
 	<% if PClient.Balance < 0: %>
 	<p class="error">
-	Ваша задолженность за оказанные услуги составляет ${System.Math.Abs(PClient.Balance)} руб.<br>
+	Ваша задолженность за оказанные услуги составляет ${System.Math.Abs(PClient.Balance)}. <br>
 	Для возобновления доступа в интернет Вам необходимо погасить задолженность и внести абонентскую плату за полный месяц (не менее ${Client.ToPay()} руб. )<br>
 	</p>
 	<% else: %>
@@ -33,11 +33,11 @@ else: %>
 			</p>
 			<% else: %>
 			<p class="info">
-			Баланс составляет ${PClient.Balance} руб.
+			Баланс<a href="${Siteroot}/PrivateOffice/BalanceInfo" style="text-decoration:none;">*</a> составляет ${PClient.Balance}.
 			</p>
-			<%if IsDefined("PrivateMessage"): %>
-				<p class="warning">${PrivateMessage}</p>
-			<%end %>
+				<%if IsDefined("PrivateMessage"): %>
+					<p class="warning">${PrivateMessage}</p>
+				<% end %>
 			<% end %>
 		<% end %>
 	<% end %>
