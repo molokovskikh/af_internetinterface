@@ -62,7 +62,8 @@ namespace InforoomInternet.Controllers
 		public bool Perform(ExecuteWhen exec, IEngineContext context, IController controller, IControllerContext controllerContext)
 		{
 			var ip = context.Request.UserHostAddress;
-#if DEBUG
+			ip = "192.168.0.1";
+#if !DEBUG
 		    var lease = Lease.FindAll();
 #else
 			var lease = Lease.FindAllByProperty("Ip", Convert.ToUInt32(NetworkSwitches.SetProgramIp(ip)));

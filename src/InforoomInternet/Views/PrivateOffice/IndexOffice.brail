@@ -1,4 +1,68 @@
-﻿</script>
+﻿<style type="text/css">
+	.WriteOffSum
+	{
+		width:250px;
+	}
+	.WriteOffDate
+	{
+		width:355px;
+	}
+	
+	#clientInfo table tbody tr td
+	{
+		border-bottom: 1px double #dfdddd;
+		padding-top : 5px;
+		padding-bottom : 5px;
+		}
+		
+	#clientInfo table
+	{
+		text-align:center;
+		}
+		
+	.hideH
+	{
+		display:inline;
+		padding:5px;
+		margin-bottom:5px;
+		}
+</style>
+<script type="text/javascript">
+	$(function () {
+		$('.But_slide_writeOff').click(function () { WriteOffSlide(); });
+
+		$('.But_slide_payment').click(function () { PaymentSlide(); });
+	});
+
+	var hideWriteOff = false;
+	var hidePayment = false;
+
+function WriteOffSlide() {
+	$('#WriteOffTable').slideToggle('slow');
+	var linkText = "";
+		if (hideWriteOff) {
+			linkText = "Показать все";
+		} else {
+		linkText = "Скрыть";
+	}
+	hideWriteOff = !hideWriteOff;
+	$('.But_slide_writeOff').replaceWith('<a href="javascript:" class="But_slide_writeOff">' + linkText + '</a>');
+	$('.But_slide_writeOff').click(function () { WriteOffSlide(); });
+}
+
+function PaymentSlide() {
+	$('#paymentDiv').slideToggle('slow');
+	var linkText = "";
+	if (hidePayment) {
+		linkText = "Показать все";
+	} else {
+		linkText = "Скрыть";
+	}
+	hidePayment = !hidePayment;
+	$('.But_slide_payment').replaceWith('<a href="javascript:" class="But_slide_payment">' + linkText + '</a>');
+	$('.But_slide_payment').click(function () { PaymentSlide(); });
+}
+</script>
 <input type=hidden value=${Client.Id} id="clientId" />
 <% if IsDefined("message"): %>
 	<p class="success"> ${message} </p>
@@ -11,6 +75,7 @@
 </div>
 <br />
 <%if Client.CanUsedPostponedPayment(): %>
+
 <p style="color:#8d8d8e;">Доступ в интернет заблокирован, Вы можете воспольваться услугой "Обещанный платеж" <a id="podrob" href="PostponedPayment">Подробнее...</a></p>
 <%end %>
 <h3>Номер лицевого счета для оплаты через терминалы <b> ${Client.Id.ToString("00000")} </b></h3>
@@ -20,21 +85,38 @@
 <h3>Вы работаете 0 полных месяцев подряд, ваша скидка составляет: ${Client.Sale.ToString("0.0")}% <a style="font-size:10px;" href="AboutSale">(подробнее)</a></h3>
 <%end %>
 
-<div class="text">
-	<h3><b>Зачисления</b></h3>
-		<table cellpadding="3" cellspacing="0" width="100%">
+<div class="text" id="clientInfo">
+<%if Payments.Length > 0: %>
+	<h3 class=hideH><b>Зачисления</b></h3>
+	<a href="javascript:" class="But_slide_payment"">Показать все</a>
+	<br />
+	<br />
+	<table cellpadding="3" cellspacing="0" width="100%">
+		<thead>
 			<tr class="caption">
 				<td >Сумма</td>
 				<td >Дата</td>
 			</tr>
-			<% for item in Payments :  %>
-				<tr>
-					<td>${item.Sum.ToString("0.00")}</td>
-					<td>${item.PaidOn.ToShortDateString()}</td>
-				</tr>
-			<%end %>
+		</thead>
+			<tr>
+				<td class="WriteOffSum">${Payments[0].Sum.ToString("0.00")}</td>
+				<td class="WriteOffDate">${Payments[0].PaidOn.ToShortDateString()}</td>
+			</tr>
 	</table>
-	<%if Client.UserWriteOffs.Count != 0: %>
+<div id="paymentDiv" style="display:none;">
+	<table cellpadding="3" cellspacing="0" width="100%">
+	<% for i,item in enumerate(Payments) : 
+	if i > 0: %>
+		<tr>
+			<td class="WriteOffSum">${item.Sum.ToString("0.00")}</td>
+			<td class="WriteOffDate">${item.PaidOn.ToShortDateString()}</td>
+		</tr>
+	<%end end%>
+	</table>
+</div>
+<%end 
+	userWriteOffs = Client.GetUserWriteOffs()
+	if userWriteOffs.Count > 0: %>
 	<h3><b>Дополнительные услуги</b></h3>
 	<table cellpadding="3" cellspacing="0" width="100%">
 		<thead>
@@ -45,7 +127,17 @@
 			</tr>
 		</thead>
 		<tbody>
-			<%for item in Client.UserWriteOffs: %>
+			<tr>
+				<td>${userWriteOffs[0].Sum.ToString("0.00")}</td>
+				<td>${userWriteOffs[0].Date.ToShortDateString()}</td>
+				<%if userWriteOffs[0].Registrator == null: %>
+					<td style="width:300px;">${userWriteOffs[0].Comment}</td>
+				<%else: %>
+					<td>Пользовательские услуги</td>
+				<%end %>
+			</tr>
+			<%for i,item in enumerate(userWriteOffs): 
+			if i > 0:%>
 				<tr>
 					<td>${item.Sum.ToString("0.00")}</td>
 					<td>${item.Date.ToShortDateString()}</td>
@@ -55,28 +147,39 @@
 						<td>Пользовательские услуги</td>
 					<%end %>
 				</tr>
-			<%end %>
+			<%end end %>
 		</tbody>
 	</table>
 	<%end %>
-	<h3><b>Списания абонентской платы</b></h3>
-	<p>
-	<a href="IndexOffice.brail?grouped=day">Сгруппировать по дням</a>
-	<a href="IndexOffice.brail?grouped=month">Сгруппировать по месяцам</a>
-	<a href="IndexOffice.brail?grouped=year">Сгруппировать по годам</a>
-	</p>
+	
+	<h3 class="hideH"><b>Списания абонентской платы</b></h3>
+	<a href="javascript:" class="But_slide_writeOff">Показать все</a>
+	<br />
+	<br />
 	<table cellpadding="3" cellspacing="0" width="100%">
+	<thead>
 		<tr class="caption">
 			<td >Сумма</td>
 			<td >Дата</td>
 		</tr>
-	<% for item in WriteOffs :  %>
+	</thead>
+	<% for item in VisibleWriteOffs :  %>
 	<tr>
-		<td>${item.WriteOffSum}</td>
-		<td>${item.GetDate(grouped)}</td>
+		<td class="WriteOffSum">${item.WriteOffSum}</td>
+		<td class="WriteOffDate">${item.GetDate(grouped)}</td>
 	</tr>
 	<%end %>
 	</table>
+<div id="WriteOffTable" style="display:none;">
+	<table cellpadding="3" cellspacing="0" width="100%">
+		<% for item in HideWriteOffs :  %>
+		<tr>
+			<td class="WriteOffSum">${item.WriteOffSum}</td>
+			<td class="WriteOffDate">${item.GetDate(grouped)}</td>
+		</tr>
+		<%end %>
+	</table>
+</div>
 </div>
 <div class="text">
 </div>

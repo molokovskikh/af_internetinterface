@@ -33,13 +33,24 @@ namespace InforoomInternet.Controllers
 			PropertyBag["PhysClientName"] = string.Format("{0} {1}", client.PhysicalClient.Name, client.PhysicalClient.Patronymic);
 			PropertyBag["PhysicalClient"] = client.PhysicalClient;
 			PropertyBag["Client"] = client;
-			PropertyBag["WriteOffs"] = client.GetWriteOffs(grouped).OrderBy(e => e.WriteOffDate).ToArray();
+			var writeOffs = client.GetWriteOffs(grouped).OrderByDescending(e => e.WriteOffDate).ToList();
+			if (client.RatedPeriodDate != null)
+			{
+				PropertyBag["VisibleWriteOffs"] = writeOffs.Where(w => w.WriteOffDate >= client.RatedPeriodDate).ToList();
+				PropertyBag["HideWriteOffs"] = writeOffs.Where(w => w.WriteOffDate < client.RatedPeriodDate).ToList();
+			}
+			else
+			{
+				PropertyBag["VisibleWriteOffs"] = writeOffs.Take(10).ToList();
+				PropertyBag["HideWriteOffs"] = writeOffs.Skip(10).ToList();
+			}
+
 			PropertyBag["grouped"] = grouped;
 			var message = MessageForClient.Queryable.FirstOrDefault(m => m.Client == client && m.Enabled && m.EndDate > DateTime.Now && !m.Client.Disabled);
 			if (message != null)
 				PropertyBag["PrivateMessage"] =  AppealHelper.GetTransformedAppeal(message.Text);
 			PropertyBag["Payments"] =
-				Payment.FindAllByProperty("Client", client).Where(p => p.Sum != 0).OrderBy(e => e.PaidOn).ToArray();
+				Payment.FindAllByProperty("Client", client).Where(p => p.Sum != 0).OrderByDescending(e => e.PaidOn).ToArray();
 			if (client.StartNoBlock != null)
 				PropertyBag["fullMonth"] = DateTime.Now.TotalMonth(client.StartNoBlock.Value);
 			else {

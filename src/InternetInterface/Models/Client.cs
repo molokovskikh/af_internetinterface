@@ -296,6 +296,11 @@ namespace InternetInterface.Models
 			return GetClientLeases().LastOrDefault();
 		}
 
+		public virtual IList<UserWriteOff> GetUserWriteOffs()
+		{
+			return UserWriteOffs.OrderByDescending(u => u.Date).ToList();
+		}
+
 		public virtual bool StartWork()
 		{
 			return BeginWork != null;
