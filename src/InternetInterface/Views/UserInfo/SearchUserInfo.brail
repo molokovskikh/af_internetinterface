@@ -62,8 +62,18 @@
 				<%end %>
 			</td>
 		</tr>
+<%if PartnerAccessSet.AccesPartner("SSI"): %>
+		<tr>
+			<td style="font-size:small;">
+				<form class="form login" method="post" action="${siteroot}/UserInfo/PassAndShowCard">
+					<input type="hidden" name="ClientID" value="${ClientCode}" />
+					<button type="submit" id="Button1" class="button"><img alt="Save" src="../Images/tick.png">Изменить пароль и показать карту</button>
+				</form>
+			</td>
+		</tr>
 	</tbody>
 </table>
+<%end %>
 <%end %>
 <table class="table" style="width: 100%;" align="left">
 	<thead>

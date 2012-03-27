@@ -15,36 +15,20 @@
 		</tr>
 	</thead>
 	<tbody>
-		<tr>
+		<tr style="border-bottom:0px double black;">
 			<td style="width:300px;">Введите сумму для списания</td>
 			<td><input type=text id="userWriteOffSum" name="userWO.Sum" value="${userWO.Sum}"/> <input type="hidden" name="ClientID" value="${ClientCode}" /></td>
 			<td>${app.GetValidationError(userWO, "Sum")}</td>
+			<td style="width:250px;"><button type="submit" id="userWriteOffButton" class="button"><img alt="Save" src="../Images/tick.png">Списать</button></td>
 		</tr>
 		<tr>
 			<td>Введите комментарий: </td>
 			<td><input type=text id="userWriteOffComment" name="userWO.Comment" value="${userWO.Comment}" /></td>
-			<td>${app.GetValidationError(userWO, "Comment")}</td>
-		</tr>
-		<tr>
-			<td colspan=3><button type="submit" id="userWriteOffButton" class="button"><img alt="Save" src="../Images/tick.png">Списать</button></td>
+			<td colspan=2>${app.GetValidationError(userWO, "Comment")}</td>
 		</tr>
 	</tbody>
 </table>
 </form>
-<%end %>
-<%if PartnerAccessSet.AccesPartner("SSI"): %>
-<table>
-	<tbody>
-		<tr>
-			<td style="font-size:small;">
-				<form class="form login" method="post" action="${siteroot}/UserInfo/PassAndShowCard">
-					<input type="hidden" name="ClientID" value="${ClientCode}" />
-					<button type="submit" id="Button1" class="button"><img alt="Save" src="../Images/tick.png">Изменить пароль и показать карту</button>
-				</form>
-			</td>
-		</tr>
-	</tbody>
-</table>
 <%end %>
 </div>
 </div>
