@@ -32,19 +32,17 @@
 		$('.But_slide_writeOff').click(function () { WriteOffSlide(); });
 
 		$('.But_slide_payment').click(function () { PaymentSlide(); });
+
+		$('.But_slide_User_WriteOff').click(function () { UserWriteOffsSlide(); });
 	});
 
 	var hideWriteOff = false;
 	var hidePayment = false;
+	var hideUserWriteOff = false;
 
 function WriteOffSlide() {
 	$('#WriteOffTable').slideToggle('slow');
-	var linkText = "";
-		if (hideWriteOff) {
-			linkText = "Показать все";
-		} else {
-		linkText = "Скрыть";
-	}
+	var linkText = GetLinkText(hideWriteOff);
 	hideWriteOff = !hideWriteOff;
 	$('.But_slide_writeOff').replaceWith('<a href="javascript:" class="But_slide_writeOff">' + linkText + '</a>');
 	$('.But_slide_writeOff').click(function () { WriteOffSlide(); });
@@ -52,15 +50,26 @@ function WriteOffSlide() {
 
 function PaymentSlide() {
 	$('#paymentDiv').slideToggle('slow');
-	var linkText = "";
-	if (hidePayment) {
-		linkText = "Показать все";
-	} else {
-		linkText = "Скрыть";
-	}
+	var linkText = GetLinkText(hidePayment);
 	hidePayment = !hidePayment;
 	$('.But_slide_payment').replaceWith('<a href="javascript:" class="But_slide_payment">' + linkText + '</a>');
 	$('.But_slide_payment').click(function () { PaymentSlide(); });
+}
+
+function UserWriteOffsSlide() {
+	$('#userWriteOffsDiv').slideToggle('slow');
+	var linkText = GetLinkText(hideUserWriteOff);
+	hideUserWriteOff = !hideUserWriteOff;
+	$('.But_slide_User_WriteOff').replaceWith('<a href="javascript:" class="But_slide_User_WriteOff">' + linkText + '</a>');
+	$('.But_slide_User_WriteOff').click(function () { UserWriteOffsSlide(); });
+}
+
+function GetLinkText(hide) {
+	if (hide) {
+		return "Показать все";
+	} else {
+		return "Скрыть";
+	}
 }
 </script>
 <input type=hidden value=${Client.Id} id="clientId" />
@@ -88,9 +97,10 @@ function PaymentSlide() {
 <div class="text" id="clientInfo">
 <%if Payments.Length > 0: %>
 	<h3 class=hideH><b>Зачисления</b></h3>
+	<%if Payments.Length > 1: %>
 	<a href="javascript:" class="But_slide_payment"">Показать все</a>
-	<br />
-	<br />
+	<%end %>
+	<br /><br />
 	<table cellpadding="3" cellspacing="0" width="100%">
 		<thead>
 			<tr class="caption">
@@ -117,7 +127,12 @@ function PaymentSlide() {
 <%end 
 	userWriteOffs = Client.GetUserWriteOffs()
 	if userWriteOffs.Count > 0: %>
-	<h3><b>Дополнительные услуги</b></h3>
+	<br />
+	<h3 class=hideH><b>Дополнительные услуги</b></h3>
+	<%if userWriteOffs.Count > 1: %>
+	<a href="javascript:" class="But_slide_User_WriteOff">Показать все</a>
+	<%end %>
+	<br /><br />
 	<table cellpadding="3" cellspacing="0" width="100%">
 		<thead>
 			<tr class="caption">
@@ -136,6 +151,10 @@ function PaymentSlide() {
 					<td>Пользовательские услуги</td>
 				<%end %>
 			</tr>
+		</tbody>
+	</table>
+	<div id="userWriteOffsDiv" style="display:none;">
+	<table cellpadding="3" cellspacing="0" width="100%">
 			<%for i,item in enumerate(userWriteOffs): 
 			if i > 0:%>
 				<tr>
@@ -150,12 +169,12 @@ function PaymentSlide() {
 			<%end end %>
 		</tbody>
 	</table>
+	</div>
 	<%end %>
-	
+	<br />
 	<h3 class="hideH"><b>Списания абонентской платы</b></h3>
 	<a href="javascript:" class="But_slide_writeOff">Показать все</a>
-	<br />
-	<br />
+	<br /><br />
 	<table cellpadding="3" cellspacing="0" width="100%">
 	<thead>
 		<tr class="caption">
