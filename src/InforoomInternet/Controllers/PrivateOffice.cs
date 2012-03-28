@@ -36,8 +36,8 @@ namespace InforoomInternet.Controllers
 			var writeOffs = client.GetWriteOffs(grouped).OrderByDescending(e => e.WriteOffDate).ToList();
 			if (client.RatedPeriodDate != null)
 			{
-				PropertyBag["VisibleWriteOffs"] = writeOffs.Where(w => w.WriteOffDate >= client.RatedPeriodDate).ToList();
-				PropertyBag["HideWriteOffs"] = writeOffs.Where(w => w.WriteOffDate < client.RatedPeriodDate).ToList();
+				PropertyBag["VisibleWriteOffs"] = writeOffs.Where(w => w.WriteOffDate.Date >= client.RatedPeriodDate.Value.Date).ToList();
+				PropertyBag["HideWriteOffs"] = writeOffs.Where(w => w.WriteOffDate.Date < client.RatedPeriodDate.Value.Date).ToList();
 			}
 			else
 			{

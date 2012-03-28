@@ -26,6 +26,15 @@
 		padding:5px;
 		margin-bottom:5px;
 		}
+		
+	#headDiv .headTable td
+	{
+		background:none;
+		}
+	.headTable
+	{
+		margin-left:-10px;
+		}
 </style>
 <script type="text/javascript">
 	$(function () {
@@ -72,28 +81,50 @@ function GetLinkText(hide) {
 	}
 }
 </script>
+<div id="headDiv">
 <input type=hidden value=${Client.Id} id="clientId" />
 <% if IsDefined("message"): %>
 	<p class="success"> ${message} </p>
 <%end %>
-<h2 style="padding-left:0px;">Ваш личный кабинет, ${PhysClientName}</h2>
-<div style="font-size:13px;">
-	<% OutputSubView("""\Subview\WarningText""", {
-					"PClient": PhysicalClient,
-					"referer" : ""} ) %>
+<table style="width:auto;" class="headTable">
+<tr>
+	<td colspan=2>
+		<h2 style="padding-left:0px;">Ваш личный кабинет, ${PhysClientName}</h2>
+	</td>
+</tr>
+<tr>
+	<td style="width:400px; padding-bottom:0px;">
+		<div style="font-size:13px;">
+			<% OutputSubView("""\Subview\WarningText""", {
+							"PClient": PhysicalClient,
+							"referer" : ""} ) %>
+		</div>
+		<br />
+		<%if Client.CanUsedPostponedPayment(): %>
+
+		<p style="color:#8d8d8e;">Доступ в интернет заблокирован, Вы можете воспольваться услугой "Обещанный платеж" <a id="podrob" href="PostponedPayment">Подробнее...</a></p>
+		<%end %>
+	</td>
+	<td valign=top style="padding-bottom:0px;">
+		<div style="text-align:right; font-weight:bold; margin-top:8px;">
+			<a href="${Siteroot}/PrivateOffice/Services">Управление услугами</a> <br />
+			<a href="${Siteroot}/PrivateOffice/SmsNotification" >Смс уведомления</a> <br />
+			<a href="${Siteroot}/PrivateOffice/AboutSale" >Программа скидок</a>
+		</div>
+	</td>
+</tr>
+<tr>
+	<td>
+		<h3>Номер лицевого счета для оплаты <b> ${Client.Id.ToString("00000")} </b></h3>
+		<%if fullMonth != null: %>
+		<h3>Вы работаете ${fullMonth} полных месяцев подряд, ваша скидка составляет: ${Client.Sale.ToString("0")}% <a style="font-size:10px;" href="AboutSale">(подробнее)</a></h3>
+		<%else: %>
+		<h3>Вы работаете 0 полных месяцев подряд, ваша скидка составляет: ${Client.Sale.ToString("0")}% <a style="font-size:10px;" href="AboutSale">(подробнее)</a></h3>
+		<%end %>
+	</td>
+</tr>
+</table>
 </div>
-<br />
-<%if Client.CanUsedPostponedPayment(): %>
-
-<p style="color:#8d8d8e;">Доступ в интернет заблокирован, Вы можете воспольваться услугой "Обещанный платеж" <a id="podrob" href="PostponedPayment">Подробнее...</a></p>
-<%end %>
-<h3>Номер лицевого счета для оплаты через терминалы <b> ${Client.Id.ToString("00000")} </b></h3>
-<%if fullMonth != null: %>
-<h3>Вы работаете ${fullMonth} полных месяцев подряд, ваша скидка составляет: ${Client.Sale.ToString("0.0")}% <a style="font-size:10px;" href="AboutSale">(подробнее)</a></h3>
-<%else: %>
-<h3>Вы работаете 0 полных месяцев подряд, ваша скидка составляет: ${Client.Sale.ToString("0.0")}% <a style="font-size:10px;" href="AboutSale">(подробнее)</a></h3>
-<%end %>
-
 <div class="text" id="clientInfo">
 <%if Payments.Length > 0: %>
 	<h3 class=hideH><b>Зачисления</b></h3>
