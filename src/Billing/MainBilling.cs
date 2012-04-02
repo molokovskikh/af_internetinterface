@@ -351,7 +351,7 @@ namespace Billing
 											if (now.Hour < 22)
 												shouldBeSendDate = new DateTime(now.Year, now.Month, now.Day, 12, 0, 0);
 											else {
-												shouldBeSendDate = new DateTime(now.Year, now.Month, now.Day + 1, 12, 0, 0);
+												shouldBeSendDate = SystemTime.Now().Date.AddDays(1).AddHours(12);
 											}
 											var smsMessage = new SmsMessage(client, message, shouldBeSendDate);
 											smsMessage.Save();

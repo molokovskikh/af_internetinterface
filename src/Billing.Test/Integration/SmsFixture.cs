@@ -21,6 +21,21 @@ namespace Billing.Test.Integration
 		}
 
 		[Test]
+		public void BorderDateSmsTest()
+		{
+			SystemTime.Now = () => new DateTime(2012, 3, 31, 22, 3, 0);
+			billing.Compute();
+			using (new SessionScope()) {
+				var sms = SmsMessage.Queryable.Where(m => m.Client == _client);
+				foreach (var smsMessage in sms) {
+					Assert.That(smsMessage.ShouldBeSend, Is.EqualTo(new DateTime(2012, 4, 1, 12, 00, 00)));
+					return;
+				}
+			}
+			throw new Exception();
+		}
+
+		[Test]
 		public void Payment_and_sms_Test()
 		{
 			billing.Compute();
