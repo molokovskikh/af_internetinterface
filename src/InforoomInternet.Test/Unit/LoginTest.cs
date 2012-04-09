@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using Common.Models;
 using Common.Models.Repositories;
 using Common.MySql;
+using Common.Tools;
 using InforoomInternet.Controllers;
 using InforoomInternet.Models;
 using InternetInterface;
@@ -28,6 +30,17 @@ namespace InforoomInternet.Test.Unit
 			Con.Open();
 			var h = new MySqlHelper(Con);
 			h.Command(string.Format("insert into internet.PhysicalClients (Password) values (\"{0}\")", CryptoPass.GetHashString("123"))).Execute();
+		}
+
+		[Test]
+		public void IpRangeTest()
+		{
+			var ip = new IPAddress(RangeFinder.reverseBytesArray(Convert.ToUInt32(NetworkSwitches.SetProgramIp("91.219.6.220"))));
+			var host = SubnetMask.CreateByNetBitLength(29);
+
+			var netw = ip.GetNetworkAddress(host);
+
+			Assert.IsTrue(ip.IsInSameSubnet(netw, host));
 		}
 	}
 }

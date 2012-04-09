@@ -7,6 +7,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading;
 using Castle.MonoRail.Framework;
+using Common.Tools;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.Models.Editor;
 using InforoomInternet.Logic;
@@ -157,35 +158,77 @@ namespace InforoomInternet.Controllers
 		public void Warning()
 		{
 			var hostAdress = Request.UserHostAddress;
+#if DEBUG
+			hostAdress = "91.209.124.75";
+#endif
+
 			var lease = Client.FindByIP(hostAdress);
 #if DEBUG
 			if (lease == null)
-				lease = new Lease {
-					Endpoint = new ClientEndpoints {
-						Client = new Client {
-							Disabled = true,
+				lease = new Lease
+				{
+					Endpoint = new ClientEndpoints
+					{
+						Client = new Client
+						{
+							//Disabled = true,
 							ShowBalanceWarningPage = true,
 							RatedPeriodDate = DateTime.Now,
-							PhysicalClient = new PhysicalClients {
+							/*PhysicalClient = new PhysicalClients {
 								Balance = 150,
 								Tariff = new Tariff {
 									Price = 500
 								}
+							}*/
+							LawyerPerson = new LawyerPerson {
+								Balance = -20000,
+								Tariff = 10000
 							}
 						}
 					}
 				};
 #endif
-			if (lease == null) {
+
+			ClientEndpoints point = null;
+			if (lease != null)
+				point = lease.Endpoint;
+			else {
+				var thisIp = new IPAddress(RangeFinder.reverseBytesArray(Convert.ToUInt32(NetworkSwitches.SetProgramIp(hostAdress))));
+
+				point = StaticIp.Queryable.ToList().Where(ip => {
+					if (ip.Ip == hostAdress)
+						return true;
+					if (ip.Mask != null)
+					{
+						var subnet = SubnetMask.CreateByNetBitLength(ip.Mask.Value);
+						var sIp = new IPAddress(RangeFinder.reverseBytesArray(Convert.ToUInt32(NetworkSwitches.SetProgramIp(ip.Ip))));
+						if (thisIp.IsInSameSubnet(sIp, subnet))
+							return true;
+					}
+					return false;
+				}).Select(s => s.EndPoint).FirstOrDefault();
+			}
+
+			if (point == null) {
 				Redirecter.RedirectRoot(Context, this);
 				return;
 			}
 
+			var clientW = lease != null ? lease.Endpoint.Client : point.Client;
+
 			if (IsPost) {
-				SceHelper.Login(lease, Request.UserHostAddress);
-				var client_w = lease.Endpoint.Client;
-				client_w.ShowBalanceWarningPage = false;
-				client_w.Update();
+				if (lease != null)
+				{
+					SceHelper.Login(lease, Request.UserHostAddress);
+				}
+				else {
+					var ips = StaticIp.Queryable.Where(s => s.EndPoint == point).ToList();
+					foreach (var staticIp in ips) {
+						SceHelper.Action("login", staticIp.Mask != null ? staticIp.Ip + "/" + staticIp.Mask : staticIp.Ip, "Static_" + staticIp.Id, false, false, point.PackageId);
+					}
+				}
+				clientW.ShowBalanceWarningPage = false;
+				clientW.Update();
 				var url = Request.Form["referer"];
 				if (String.IsNullOrEmpty(url))
 					Redirecter.RedirectRoot(Context, this);
@@ -200,12 +243,12 @@ namespace InforoomInternet.Controllers
 				PropertyBag["referer"] = host + rUrl;
 			else PropertyBag["referer"] = string.Empty;
 
-			var pclient = lease.Endpoint.Client.PhysicalClient;
-			var client = lease.Endpoint.Client;
+			var pclient = clientW.PhysicalClient;
+			var client = clientW;
 
 			PropertyBag["Client"] = client;
 
-			if (lease.Endpoint.Client.PhysicalClient == null) {
+			if (clientW.PhysicalClient == null) {
 				PropertyBag["LClient"] = client.LawyerPerson;
 				RenderView("WarningLawyer");
 				return;
