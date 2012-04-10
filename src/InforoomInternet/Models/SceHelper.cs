@@ -45,7 +45,7 @@ namespace InforoomInternet.Models
 			if (packageId == null)
 				return;
 
-			Action(action, Convert.ToString(lease.Ip), Convert.ToString(endpoint.Id), endpoint.Monitoring, endpoint.IsMultilease, packageId);
+			Action(action, ip, Convert.ToString(endpoint.Id), endpoint.Monitoring, endpoint.IsMultilease, packageId);
 		}
 
 		public static void Login(Lease lease, string ip)
