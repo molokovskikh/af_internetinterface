@@ -231,8 +231,7 @@ namespace Billing
 				}
 				var lawyerPersons = Client.Queryable.Where(c => c.LawyerPerson != null);
 				foreach (var client in lawyerPersons) {
-					var person = client.LawyerPerson;
-					if (person.Balance < -(person.Tariff*1.9m)) {
+					if (client.NeedShowWarningForLawyer()) {
 						if (client.WhenShowWarning == null ||
 							(SystemTime.Now() - client.WhenShowWarning.Value).TotalHours >= 3) {
 								client.ShowBalanceWarningPage = true;
@@ -246,7 +245,7 @@ namespace Billing
 						client.SendEmailNotification = false;
 						client.WhenShowWarning = null;
 					}
-					client.UpdateAndFlush();
+					client.Update();
 				}
 				foreach (var cserv in ClientService.FindAll()) {
 					cserv.Diactivate();

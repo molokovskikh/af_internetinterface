@@ -5,6 +5,7 @@ using Castle.MonoRail.Framework;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using InternetInterface.Services;
 
 namespace InforoomInternet.Controllers
 {

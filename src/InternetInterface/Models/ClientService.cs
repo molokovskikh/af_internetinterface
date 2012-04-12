@@ -5,13 +5,10 @@ using System.Reflection;
 using System.Web;
 using Castle.ActiveRecord;
 using InternetInterface.Models.Universal;
+using InternetInterface.Services;
 
 namespace InternetInterface.Models
 {
-	public class UniqueServiceException : Exception
-	{
-	}
-
 	[ActiveRecord("ClientServices", Schema = "Internet", Lazy = true)]
 	public class ClientService : ValidActiveRecordLinqBase<ClientService>
 	{

@@ -19,6 +19,7 @@ using InternetInterface.Controllers.Filter;
 using InternetInterface.Filters;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using InternetInterface.Services;
 using NHibernate;
 using NHibernate.Criterion;
 
@@ -392,6 +393,7 @@ namespace InternetInterface.Controllers
 				              	               dtn.Second),
 				Activator = InitializeContent.Partner
 			};
+			clientService.Save();
 			client.ClientServices.Add(clientService);
 			clientService.Activate();
 			if (string.IsNullOrEmpty(clientService.LogComment))
@@ -408,7 +410,7 @@ namespace InternetInterface.Controllers
 			else
 				PropertyBag["errorMessage"] = clientService.LogComment;
 			}
-			RedirectToUrl("../UserInfo/SearchUserInfo.rails?filter.ClientCode=" + clientId);
+			RedirectToUrl(client.Redirect());
 		}
 
 		public void DiactivateService(uint clientId, uint serviceId)
@@ -425,7 +427,7 @@ namespace InternetInterface.Controllers
 					Appeals.CreareAppeal(string.Format("Услуга \"{0}\" деактивирована", servise.HumanName), client, AppealType.User);
 				}
 			}
-			RedirectToUrl("../UserInfo/SearchUserInfo.rails?filter.ClientCode=" + clientId);
+			RedirectToUrl(client.Redirect());
 		}
 
 		[return: JSONReturnBinder]
@@ -1210,7 +1212,7 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 		{
 			PropertyBag["Clients"] =
 				ConnectGraph.Queryable.Where(c => c.Brigad.Id == Brig && c.Day.Date == selectDate.Date).Select(
-					s => s.Client);
+					s => s.Client).Where(c => c != null).ToList();
 			PropertyBag["selectDate"] = selectDate;
 			PropertyBag["Brigad"] = Brigad.Find(Brig);
 			PropertyBag["Intervals"] = Intervals.GetIntervals();

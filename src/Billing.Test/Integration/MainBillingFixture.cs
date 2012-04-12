@@ -8,6 +8,7 @@ using Castle.ActiveRecord;
 using Common.Tools;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Controllers.Filter;
+using InternetInterface.Services;
 using NUnit.Framework;
 using InternetInterface.Models;
 
@@ -140,6 +141,12 @@ namespace Billing.Test.Integration
 				Price = 0,
 				HumanName = "VoluntaryBlockin"
 			}.Save();
+
+			new WorkLawyer {
+				InterfaceControl = true,
+				HumanName = "WorkLawyer"
+			}.Save();
+
 			InternetSettings.DeleteAll();
 			new InternetSettings{NextBillingDate = DateTime.Now}.Save();
 		}

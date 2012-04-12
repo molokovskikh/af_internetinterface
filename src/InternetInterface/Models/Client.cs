@@ -12,6 +12,7 @@ using Common.Models.Helpers;
 using Common.Tools;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Helpers;
+using InternetInterface.Services;
 using NHibernate;
 
 namespace InternetInterface.Models
@@ -215,9 +216,22 @@ namespace InternetInterface.Models
 				AutoUnblocked && PaymentForTariff();
 		}
 
+		public virtual bool NeedShowWarningForLawyer()
+		{
+			if (LawyerPerson == null)
+				return false;
+			var haveService = ClientServices.FirstOrDefault(cs => cs.Service == Service.Type<WorkLawyer>());
+			var needShowWarning = LawyerPerson.NeedShowWarning();
+			if (haveService != null && haveService.Activated)
+				return false;
+			if ((haveService != null && haveService.Diactivated && needShowWarning) ||
+				(haveService == null && needShowWarning))
+				return true;
+			return needShowWarning;
+		}
+
 		public virtual bool CanUsedVoluntaryBlockin()
 		{
-
 			return new VoluntaryBlockin().CanActivate(this) && !HaveVoluntaryBlockin() && !Disabled;
 		}
 

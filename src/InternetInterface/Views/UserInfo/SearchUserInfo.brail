@@ -270,4 +270,5 @@ end %>
 <% OutputSubView("""\Subview\ContactInfo""") %>
 <% OutputSubView("""\Subview\AppealsInfo""") %>
 <% OutputSubView("""\Subview\CallsHistory""") %>
+<% OutputSubView("""\Subview\ServiceControl""") %>
 </div>

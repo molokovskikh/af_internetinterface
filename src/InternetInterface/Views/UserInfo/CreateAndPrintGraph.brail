@@ -35,10 +35,8 @@
 	</tbody>
 </table>
 
-
-
 <% for i, Client in enumerate(Clients):  %>
-	<br style="page-break-before:always"/>
+	<br style="page-break-before: always;"/>
 	<% OutputSubView("""\UserInfo\ClientRegisteredInfo""", {
 					"_client": Client,
 					"Client": Client.PhysicalClient,
