@@ -60,6 +60,8 @@ namespace InternetInterface.Services
 				client.Disabled = false;
 				client.Save();
 				CService.Activated = true;
+				CService.Diactivated = false;
+				CService.EndWorkDate = CService.EndWorkDate.Value.Date;
 				CService.Update();
 			}
 		}

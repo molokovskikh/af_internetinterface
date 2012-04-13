@@ -232,8 +232,8 @@ namespace Billing.Test.Integration
 				client.Disabled = false;
 				client.Update();
 
-				Assert.That(Math.Round(-client.GetPrice()/client.GetInterval()*countDays, 1) - 10,
-							Is.EqualTo(Math.Round(physClient.Balance, 1)));
+				Assert.That(Math.Round(-client.GetPrice()/client.GetInterval()*countDays, 0) - 10,
+							Is.EqualTo(Math.Round(physClient.Balance, 0)));
 				Assert.That(client.RatedPeriodDate.Value.Date, Is.EqualTo(DateTime.Now.Date));
 				CServive = new ClientService {
 					Client = client,
@@ -658,7 +658,7 @@ namespace Billing.Test.Integration
 				client.Refresh();
 				cService = new ClientService {
 					Client = client,
-					EndWorkDate = DateTime.Now.AddDays(1),
+					EndWorkDate = DateTime.Now.AddDays(2),
 					Service = Service.Type<WorkLawyer>()
 				};
 				cService.Save();
@@ -671,6 +671,13 @@ namespace Billing.Test.Integration
 				Assert.That(client.ClientServices.Count, Is.EqualTo(1));
 			}
 			SystemTime.Now = () => DateTime.Now.AddDays(1);
+			billing.Compute();
+			using (new SessionScope()) {
+				client.Refresh();
+				Assert.False(client.ShowBalanceWarningPage);
+				Assert.That(client.ClientServices.Count, Is.EqualTo(1));
+			}
+			SystemTime.Now = () => DateTime.Now.AddDays(2);
 			billing.Compute();
 			using (new SessionScope()) {
 				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
