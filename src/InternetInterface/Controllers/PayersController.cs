@@ -76,7 +76,6 @@ namespace InternetInterface.Controllers
 		}
 	}
 
-	//[Layout("Main")]
 	[Helper(typeof(PaginatorHelper))]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class PayersController : SmartDispatcherController

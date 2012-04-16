@@ -321,7 +321,6 @@ input.checkbox {
 		
 .EmptyData
 {
-	border: 1px solid #7dbcd7;
 	background-color: #dbeaf0;
 	text-align: center;
 	font-size: 14px;
@@ -363,7 +362,8 @@ input.checkbox {
 }
 
 .table td {
-  border-bottom: 1px solid #AAA;
+  border: 1px solid #AAA;
+  border-collapse: collapse;
 }
 
 /* forms */

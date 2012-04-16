@@ -3,7 +3,7 @@
 ${app.FilterFor("filter.SearchText")}
 ${app.EndFormFor("filter")}
 
-<form>
+<form method=post action=Process>
 	<div class=block>
 		<input type=submit value="Удалить" name="delete">
 		<input type=submit value="Напечатать" name="print">
@@ -11,8 +11,9 @@ ${app.EndFormFor("filter")}
 	</div>
 
 	<table class="table">
+		<% if invoices.Count: %>
 		<tr>
-			<th><input type=checkbox></th>
+			<th><input type=checkbox class=all></th>
 			<th></th>
 			<th>${app.Sortable("№", "Id")}</th>
 			<th>${app.Sortable("Номер счета", "ClientId")}</th>
@@ -22,7 +23,7 @@ ${app.EndFormFor("filter")}
 		</tr>
 		<% for invoice in invoices: %>
 		<tr>
-			<td><input type=checkbox value="${invoice.Id}"></td>
+			<td><input type=checkbox value="${invoice.Id}" name="invoices[${invoice.Id}].Id"></td>
 			<td>${app.LinkTo(invoice, "Редактировать", @Edit)}</td>
 			<td>${app.LinkTo(invoice, invoice.Id.ToString(), @Print)}</td>
 			<td>
@@ -31,6 +32,11 @@ ${app.EndFormFor("filter")}
 			<td>${invoice.PayerName}</td>
 			<td>${invoice.Sum.ToString("C")}</td>
 			<td>${invoice.Date.ToShortDateString()}</td>
+		</tr>
+		<% end %>
+		<% else: %>
+		<tr class="EmptyData">
+			<td>По вашему запросу ничего не найдено</td>
 		</tr>
 		<% end %>
 	</table>

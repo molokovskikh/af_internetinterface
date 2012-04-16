@@ -276,7 +276,8 @@ namespace InternetInterface.Models.Access
 									"SaveSettings",
 									"ForClient",
 									"ForSwitch",
-									"Print"
+									"Print",
+									"Process"
 								};
 			return _visibleDemand.Contains(methodName) ? "SSI" : string.Empty;
 		}
