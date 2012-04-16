@@ -3,6 +3,7 @@ using System.Web;
 using System.Web.Security;
 using Castle.MonoRail.Framework;
 using InternetInterface.Helpers;
+using InternetInterface.Models;
 
 
 namespace InternetInterface.Controllers
@@ -12,17 +13,16 @@ namespace InternetInterface.Controllers
 		/// <summary>
 		/// Метод выполняется по нажати. на кнопку "Войти"
 		/// </summary>
-		/// <param name="Login"></param>
-		/// <param name="Password"></param>
+		/// <param name="login"></param>
+		/// <param name="password"></param>
 		[AccessibleThrough(Verb.Post)]
-		public void Sub(string Login, string Password)
+		public void Sub(string login, string password)
 		{
-			if (ActiveDirectoryHelper.IsAuthenticated(Login, Password))
+			if (ActiveDirectoryHelper.IsAuthenticated(login, password))
 			{
-				FormsAuthentication.RedirectFromLoginPage(Login, true);
-				Session.Add("Login", Login);
-				//HttpContext.Current.Items.Add("Login", Login);
-				RedirectToUrl(@"..//Map/SiteMap.rails");
+				FormsAuthentication.RedirectFromLoginPage(login, true);
+				Session.Add("Login", login);
+				RedirectToUrl(@"~/Map/SiteMap.rails");
 			}
 			else
 			{
@@ -35,12 +35,9 @@ namespace InternetInterface.Controllers
 		{
 			LayoutName = "NoMap";
 			if (Context.Session["Login"] == null)
-			Context.Session["Login"] = Context.CurrentUser.Identity.Name;
+				Context.Session["Login"] = Context.CurrentUser.Identity.Name;
 			if (Context.Session["Login"] != null && !String.IsNullOrEmpty(Context.Session["Login"].ToString()))
-				RedirectToUrl(@"..//Map/SiteMap.rails");
-#if DEBUG
-			//RedirectToUrl(@"..//Map/SiteMap.rails");
-#endif
+				RedirectToUrl(@"~/Map/SiteMap.rails");
 		}
 	}
 }

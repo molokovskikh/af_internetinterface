@@ -214,9 +214,6 @@ namespace InternetInterface.Controllers
 		{
 			var client = Client.Find(filter.ClientCode);
 			PropertyBag["filter"] = filter;
-			/*if (filter.appealType == 0)
-				filter.appealType = AppealType.User;*/
-
 			SendParam(filter, filter.grouped, filter.appealType);
 			PropertyBag["Editing"] = filter.Editing;
 			PropertyBag["appealType"] = filter.appealType;
@@ -238,7 +235,7 @@ namespace InternetInterface.Controllers
 
 			if (client.Status != null)
 				PropertyBag["ChStatus"] = client.Status.Id;
-			else ;
+			else
 				PropertyBag["ChStatus"] = Status.FindFirst().Id;
 			PropertyBag["grouped"] = filter.grouped;
 			PropertyBag["appealType"] = filter.appealType == 0 ? AppealType.User : filter.appealType;

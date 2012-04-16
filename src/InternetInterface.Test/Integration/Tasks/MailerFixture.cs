@@ -1,25 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using Billing;
 using Castle.ActiveRecord;
+using InternetInterface.Background;
 using InternetInterface.Models;
 using NUnit.Framework;
 using Test.Support.log4net;
 
-namespace InternetInterface.Background.Tests
+namespace InternetInterface.Test.Integration.Tasks
 {
 	[TestFixture]
 	public class MailerFixture
 	{
-		[SetUp]
-		public void Setup()
-		{
-			MainBilling.InitActiveRecord();
-		}
-
 		[Test]
 		public void SmsTest()
 		{
@@ -49,7 +41,6 @@ namespace InternetInterface.Background.Tests
 		public void LawyerTest()
 		{
 			using (new SessionScope()) {
-				QueryCatcher.Catch();
 				SendProcessor.SendNullTariffLawyerPerson();
 			}
 		}
@@ -75,7 +66,7 @@ namespace InternetInterface.Background.Tests
 			SendProcessor.Process();
 
 			using (new SessionScope()) {
-				var sendedLease = SendedLease.Queryable.Where(s => s.LeaseId == unknownLease.Id).FirstOrDefault();
+				var sendedLease = SendedLease.Queryable.FirstOrDefault(s => s.LeaseId == unknownLease.Id);
 				Assert.IsNotNull(sendedLease);
 			}
 

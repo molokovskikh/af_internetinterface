@@ -93,7 +93,7 @@ namespace InternetInterface.Helpers
 	[EventListener]
 	public class Listner : BaseAuditListener
 	{
-		protected override AuditableProperty GetAuditableProperty(PropertyInfo property, string name, object newState, object oldState)
+		protected override AuditableProperty GetAuditableProperty(PropertyInfo property, string name, object newState, object oldState, object entity)
 		{
 			var attrs = property.GetCustomAttributes(typeof (Auditable), false);
 			if (attrs.Length > 0 && ((Auditable)attrs.First()).Name == "Фиксированный IP")
@@ -101,7 +101,7 @@ namespace InternetInterface.Helpers
 			return new AuditablePropertyInternet(property, name, newState, oldState);
 		}
 
-		protected override void Log(NHibernate.Event.PostUpdateEvent @event, string message)
+		protected override void Log(NHibernate.Event.PostUpdateEvent @event, string message, bool isHtml)
 		{
 			using (new SessionScope()) {
 				if (@event.Entity.GetType() == typeof(ServiceRequest)) {

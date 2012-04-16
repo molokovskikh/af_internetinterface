@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using InternetInterface.Test.Helpers;
+﻿using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 
-namespace InternetInterface.Test
+namespace InternetInterface.Test.Integration
 {
 	[SetUpFixture]
 	class SetupFixture

@@ -1,0 +1,72 @@
+﻿<h3>Образец заполнения платежного поручения</h3>
+<table>
+	<tr>
+		<td>ИНН ${invoice.Recipient.INN}</td>
+		<td>КПП ${invoice.Recipient.KPP}</td>
+		<td rowspan=2>СЧ. №</td>
+		<td rowspan=2>${invoice.Recipient.BankAccountNumber}</td>
+	</tr>
+	<tr>
+		<td colspan=2>
+			Получатель<br>
+			${invoice.Recipient.FullName}
+		</td>
+	</tr>
+	<tr>
+		<td colspan=2>Банк получателя</td>
+		<td>БИК</td>
+		<td>${invoice.Recipient.BIC}</td>
+	</tr>
+	<tr>
+		<td colspan=2>${invoice.Recipient.Bank}</td>
+		<td>СЧ. №</td>
+		<td>${invoice.Recipient.BankLoroAccount}</td>
+	</tr>
+</table>
+
+<h2>Счет №${invoice.Id} от ${invoice.Date.ToString("dd MMMM yyyy")}</h2>
+
+<p>
+	Плательщик: ${invoice.PayerName}
+	<br />
+	Заказчик: ${invoice.Customer}
+	<br>
+	Договор №${invoice.Client.Id}
+</p>
+
+<table>
+	<tr>
+		<th>№</th>
+		<th>Наименование товара</th>
+		<th>Единица измерения</th>
+		<th style="width:1%">Коли-чество</th>
+		<th>Цена</th>
+		<th>Сумма</th>
+	</tr>
+	<% for i, bill in enumerate(invoice.Parts): %>
+	<tr>
+		<td>${i + 1}</td>
+		<td>${bill.Name}</td>
+		<td>услуга</td>
+		<td>${bill.Count}</td>
+		<td style="width:10%">${bill.Cost.ToString("0.#")}</td>
+		<td style="width:10%">${bill.Sum.ToString("0.#")}</td>
+	</tr>
+	<% end %>
+	<tr class="result">
+		<td class="result-label" colspan="5">Итого:</td>
+		<td>${invoice.Sum.ToString("0.#")}</td>
+	</tr>
+	<tr class="result">
+		<td class="result-label" colspan="5">Без налога (НДС):</td>
+		<td>-</td>
+	</tr>
+	<tr class="result">
+		<td class="result-label" colspan="5">Всего к оплате:</td>
+		<td>${invoice.Sum.ToString("0.#")}</td>
+	</tr>
+</table>
+<p>
+	Всего наименований ${invoice.Parts.Count}, на сумму ${invoice.Sum.ToString("0.#")}<br />
+	<span style="font-weight:bold">${invoice.SumInWords()}</span>
+</p>

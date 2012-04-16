@@ -1,16 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading;
-using Castle.ActiveRecord;
-using Castle.ActiveRecord.Framework.Config;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
-using log4net.Config;
-using NHibernate.Cfg;
-using NHibernate.Tool.hbm2ddl;
 using NUnit.Framework;
 using WatiN.Core;
 

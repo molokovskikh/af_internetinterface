@@ -137,6 +137,12 @@
     <None Include="Views\AgentInfo\SummaryInformation.brail" />
     <None Include="Views\Brigads\MakeBrigad.brail" />
     <None Include="Views\Brigads\ShowBrigad.brail" />
+    <None Include="Views\Invoices\Edit.brail" />
+    <None Include="Views\Invoices\Index.brail" />
+    <None Include="Views\Invoices\InvoiceBody.brail" />
+    <None Include="Views\Invoices\MailAddressSubView.brail" />
+    <None Include="Views\Invoices\Print.brail" />
+    <None Include="Views\Layouts\print.brail" />
     <None Include="Views\PrivateMessages\ForClient.brail" />
     <None Include="Views\PrivateMessages\ForSwitch.brail" />
     <None Include="Views\PrivateMessages\Message.brail" />
@@ -240,6 +246,7 @@
     <Compile Include="Components\ContactTypeList.cs" />
     <Compile Include="Controllers\AgentInfoController.cs" />
     <Compile Include="Controllers\BrigadsController.cs" />
+    <Compile Include="Controllers\InvoicesController.cs" />
     <Compile Include="Controllers\PrivateMessagesController.cs" />
     <Compile Include="Controllers\ExitPartner.cs" />
     <Compile Include="Controllers\Filter\AuthenticationFilter.cs" />
@@ -286,6 +293,7 @@
     <Compile Include="Helpers\UsersParsers.cs" />
     <Compile Include="Helpers\ValidationHelper.cs" />
     <Compile Include="Helpers\ValidBuilderHelper.cs" />
+    <Compile Include="Initializers\ActiveRecord.cs" />
     <Compile Include="Models\Access\AccessCategories.cs" />
     <Compile Include="Models\Access\AccessRules.cs" />
     <Compile Include="Models\AdditionalStatus.cs" />
@@ -307,10 +315,12 @@
     <Compile Include="Models\House.cs" />
     <Compile Include="Models\Internetsessionslog.cs" />
     <Compile Include="Models\InternetSettings.cs" />
+    <Compile Include="Models\Invoice.cs" />
     <Compile Include="Models\IpPool.cs" />
     <Compile Include="Models\Label.cs" />
     <Compile Include="Models\LawyerPerson.cs" />
     <Compile Include="Models\Lease.cs" />
+    <Compile Include="Models\Mailer.cs" />
     <Compile Include="Models\MessageForClient.cs" />
     <Compile Include="Models\NetworkSwitches.cs" />
     <Compile Include="Models\OnLineClient.cs" />

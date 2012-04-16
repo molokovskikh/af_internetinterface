@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
+using Common.Tools;
 using InternetInterface.Helpers;
 
 namespace InternetInterface.Models
@@ -37,6 +38,16 @@ namespace InternetInterface.Models
 	[ActiveRecord("WriteOff", Schema = "internet", Lazy = true)]
 	public class WriteOff : ActiveRecordLinqBase<WriteOff>
 	{
+		public WriteOff()
+		{}
+
+		public WriteOff(Client client, decimal writeOffSum)
+		{
+			Client = client;
+			WriteOffSum = writeOffSum;
+			WriteOffDate = SystemTime.Now();
+		}
+
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 

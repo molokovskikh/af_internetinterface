@@ -30,7 +30,7 @@ namespace InternetInterface.Controllers.Filter
 			}
 			if (Partner.FindAllByProperty("Login", context.Session["Login"]).Length == 0)
 			{
-				context.Response.RedirectToUrl(@"..\\Login\LoginPartner.brail");
+				context.Response.RedirectToUrl(@"..\\Login\LoginPartner.rails");
 				return false;
 			}
 			else

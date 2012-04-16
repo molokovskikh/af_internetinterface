@@ -1,38 +1,12 @@
-﻿#define BILLING_TEST
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
+﻿using System;
 using Castle.ActiveRecord;
 using Common.Tools;
-using Common.Web.Ui.Helpers;
 using InternetInterface.Controllers.Filter;
 using NUnit.Framework;
 using InternetInterface.Models;
 
-
 namespace Billing.Test.Integration
 {
-	[TestFixture]
-	public class IntegrationFixture
-	{
-		protected ISessionScope scope;
-
-		[SetUp]
-		public void Setup()
-		{
-			//scope = new SessionScope();
-		}
-
-		[TearDown]
-		public void TearDown()
-		{
-			if (scope != null)
-				scope.Dispose();
-		}
-	}
-
 	public class MainBillingForTest : MainBilling
 	{
 		public override void Compute()
@@ -48,7 +22,7 @@ namespace Billing.Test.Integration
 		}
 	}
 
-	public class MainBillingFixture : IntegrationFixture
+	public class MainBillingFixture
 	{
 		protected MainBilling billing;
 		protected Client _client;

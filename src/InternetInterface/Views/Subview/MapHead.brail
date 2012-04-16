@@ -100,6 +100,7 @@
 				<a id="downLink" href="${Siteroot}/Payments/ProcessPayments">Загрузить платежи</a> <br />
 				<a id="A1" href="${Siteroot}/Payments/Index">Банковские выписки</a><br />
 				<a id="A2" href="${Siteroot}/Payments/New">Новый платеж</a> <br />
+				<a>${app.LinkTo("Счета", "Invoices", "Index")}</a> <br/>
 			</th>
 			<%end %>
 			<%if PartnerAccessSet.AccesPartner("SSI"): %>

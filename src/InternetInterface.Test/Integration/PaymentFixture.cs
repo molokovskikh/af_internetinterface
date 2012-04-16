@@ -1,4 +1,5 @@
 ﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Text;
 using Castle.ActiveRecord.Framework;
 using InternetInterface.Models;
 using NUnit.Framework;
+using Test.Support;
 
 namespace InternetInterface.Test.Integration
 {

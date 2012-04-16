@@ -1,0 +1,77 @@
+﻿<script>
+	$(function () {
+		$('.graph_date').datepicker();
+	});
+</script>
+
+<% if invoice.Id: %>
+<h2>Редактирование счета №${invoice.Id}</h2>
+<% else: %>
+<h2>Формирование дополнительного счета</h2>
+<% end %>
+
+<form class="accountant-friendly" method=post>
+
+	<div class=block>
+		<table>
+		<tr>
+			<td>Плательщик:</td>
+			<td>
+				${app.LinkTo(invoice.PayerName, @Search, @Redirect, {"filter.ClientCode": invoice.Client.Id})}
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label>Дата:</label>
+			</td>
+			<td>
+				<input type=text name="invoice.Date" class="required validate-date input-date graph_date" value="${invoice.Date.ToShortDateString()}">
+				${app.GetValidationError(invoice, "Date")}
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label>Период:</label>
+			</td>
+			<td>
+			</td>
+		</tr>
+		</table>
+	</div>
+
+	<div class=block>
+
+		<table id=bills class="table editable">
+			<thead>
+				<tr>
+					<th><a href="javascript:" class=add>Добавить</a></th>
+					<th>Услуга</th>
+					<th>Стоимость</th>
+					<th>Количество</th>
+				</tr>
+			</thead>
+			<% for i, part in enumerate(invoice.Parts): %>
+			<tr>
+				<td>
+					<a href="javascript:" class=delete>Удалить</a>
+				</td>
+				<td>
+					${FormHelper.HiddenField("invoice.parts[${i}].Id", part.Id)}
+					<textarea name="invoice.parts[${i}].name" cols=30 rows=2 class="required">${part.Name}</textarea>
+					${app.GetValidationError(part, "Name")}
+				</td>
+				<td>
+					<input name="invoice.parts[${i}].cost" type=text class="required validate-cost" value="${part.Cost.ToString("#.##")}">
+					${app.GetValidationError(part, "Cost")}
+				</td>
+				<td>
+					<input type=text name="invoice.parts[${i}].count" class="required validate-count" value="${part.Count}">
+					${app.GetValidationError(part, "Count")}
+				</td>
+			</tr>
+			<% end %>
+		</table>
+	</div>
+
+	<input type=submit value=Сохранить>
+</form>

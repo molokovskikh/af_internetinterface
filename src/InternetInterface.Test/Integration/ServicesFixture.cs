@@ -15,6 +15,7 @@ using InternetInterface.Test.Helpers;
 using NHibernate.Criterion;
 using NHibernate.SqlCommand;
 using NUnit.Framework;
+using Test.Support;
 using Test.Support.log4net;
 
 namespace InternetInterface.Test.Integration
@@ -25,7 +26,6 @@ namespace InternetInterface.Test.Integration
 		[Test]
 		public void QueryTest()
 		{
-			QueryCatcher.Catch();
 			var messages = ClientEndpoints.FindAll(DetachedCriteria.For(typeof(ClientEndpoints))
 				.CreateAlias("Client", "c", JoinType.InnerJoin)
 				.CreateAlias("c.Message", "m", JoinType.InnerJoin)

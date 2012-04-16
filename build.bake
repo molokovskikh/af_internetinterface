@@ -10,7 +10,8 @@ import System.Linq.Enumerable
 
 Global(
 	Project : "InternetInterface",
-	HumanReadableName : "Интернет интерфейс"
+	HumanReadableName : "Интернет интерфейс",
+	Environment: @Local
 )
 
 task @default, [@Build, @BuildBackground]
