@@ -15,6 +15,7 @@
 			<td>
 				${app.LinkTo("Показать статистику работы", @UserInfo, @Leases, {"filter.ClientCode": ClientCode, @attributes: {@class: "button ok"}})}
 				${app.LinkTo("Счета", @Invoices, @Index, {"filter.SearchText": ClientCode, @attributes: {@class: "button ok"}})}
+				${app.LinkTo("Новый счет", @Invoices, @New, {"id": ClientCode, @attributes: {@class: "button ok"}})}
 				<a class="big-link" data-reveal-id="myModal_active" href="#" ><button type="button" class="button"><img alt="Save" src="../Images/tick.png">Управление услугами </button></a>
 			</td>
 		</tr>

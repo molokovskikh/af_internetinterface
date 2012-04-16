@@ -111,6 +111,7 @@ namespace InternetInterface.Controllers
 		{
 			var client = DbSession.Load<Client>(id);
 			var invoice = new Invoice(client);
+			invoice.Parts.Add(new InvoicePart(invoice, 1, 0, ""));
 			PropertyBag["invoice"] = invoice;
 			RenderView("Edit");
 
@@ -134,7 +135,7 @@ namespace InternetInterface.Controllers
 					invoice.CalculateSum();
 					DbSession.SaveOrUpdate(invoice);
 					Notify("Сохранено");
-					RedirectToReferrer();
+					RedirectToAction("Edit", new {id = invoice.Id});
 				}
 			}
 		}
