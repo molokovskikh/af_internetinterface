@@ -220,8 +220,6 @@
     <None Include="Views\UserInfo\Leases.brail" />
     <Content Include="JavaScript\Common.js" />
     <Content Include="JavaScript\DecimalValidate.js" />
-    <Content Include="JavaScript\jquery-ui-1.8.13.custom.min.js" />
-    <Content Include="JavaScript\jquery-ui-1.8.16.custom.js" />
     <Content Include="JavaScript\jquery.maskedinput-1.2.2.js" />
     <Content Include="JavaScript\jquery.nyroModal.custom.js" />
     <Content Include="JavaScript\jquery.reveal.js" />

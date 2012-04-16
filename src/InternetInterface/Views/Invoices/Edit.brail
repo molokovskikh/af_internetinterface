@@ -1,6 +1,6 @@
 ﻿<script>
 	$(function () {
-		$("form").validate();
+		$("form.accountant-friendly").validate();
 		$("#bills").data("template", cloneRowTemplate);
 	});
 </script>
