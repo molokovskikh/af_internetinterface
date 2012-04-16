@@ -7,6 +7,7 @@ using Castle.ActiveRecord;
 using Common.Tools;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
+using InternetInterface.Services;
 using NHibernate.Impl;
 using NUnit.Framework;
 
@@ -231,8 +232,8 @@ namespace Billing.Test.Integration
 				client.Disabled = false;
 				client.Update();
 
-				Assert.That(Math.Round(-client.GetPrice()/client.GetInterval()*countDays, 1) - 10,
-							Is.EqualTo(Math.Round(physClient.Balance, 1)));
+				Assert.That(Math.Round(-client.GetPrice()/client.GetInterval()*countDays, 0) - 10,
+							Is.EqualTo(Math.Round(physClient.Balance, 0)));
 				Assert.That(client.RatedPeriodDate.Value.Date, Is.EqualTo(DateTime.Now.Date));
 				CServive = new ClientService {
 					Client = client,
@@ -630,6 +631,59 @@ namespace Billing.Test.Integration
 				Assert.IsFalse(client_simple.Disabled);
 
 				client_Post.Refresh();
+			}
+		}
+
+		[Test]
+		public void WorkLawyerTest()
+		{
+			Client client;
+			using (new SessionScope()) {
+				client = new Client {
+					LawyerPerson = new LawyerPerson {
+						Name = "testLawyerPerson",
+						Balance = -2000,
+						Tariff = 1000
+					}
+				};
+				client.Save();
+			}
+			billing.OnMethod();
+			using (new SessionScope()) {
+				client.Refresh();
+				Assert.IsTrue(client.ShowBalanceWarningPage);
+			}
+			ClientService cService;
+			using (new SessionScope()) {
+				client.Refresh();
+				cService = new ClientService {
+					Client = client,
+					EndWorkDate = DateTime.Now.AddDays(2),
+					Service = Service.Type<WorkLawyer>()
+				};
+				cService.Save();
+				Assert.IsNull(cService.LogComment);
+			}
+			billing.OnMethod();
+			using (new SessionScope()) {
+				client.Refresh();
+				Assert.False(client.ShowBalanceWarningPage);
+				Assert.That(client.ClientServices.Count, Is.EqualTo(1));
+			}
+			SystemTime.Now = () => DateTime.Now.AddDays(1);
+			billing.Compute();
+			using (new SessionScope()) {
+				client.Refresh();
+				Assert.False(client.ShowBalanceWarningPage);
+				Assert.That(client.ClientServices.Count, Is.EqualTo(1));
+			}
+			SystemTime.Now = () => DateTime.Now.AddDays(2);
+			billing.Compute();
+			using (new SessionScope()) {
+				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
+				Assert.True(client.ShowBalanceWarningPage);
+				Assert.True(client.Disabled);
+				Assert.That(client.ClientServices.Count, Is.EqualTo(0));
 			}
 		}
 	}

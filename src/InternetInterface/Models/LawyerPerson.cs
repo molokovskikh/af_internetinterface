@@ -61,5 +61,10 @@ namespace InternetInterface.Models
 
 		[OneToOne(PropertyRef = "LawyerPerson")]
 		public virtual Client client { get; set; }
+
+		public virtual bool NeedShowWarning()
+		{
+			return Balance < -(Tariff*1.9m);
+		}
 	}
 }

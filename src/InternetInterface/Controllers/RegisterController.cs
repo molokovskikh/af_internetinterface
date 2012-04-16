@@ -79,7 +79,8 @@ namespace InternetInterface.Controllers
 					PhysicalClient = phisClient,
 					Type = ClientType.Phisical,
 					BeginWork = null,
-					SendSmsNotifocation = true
+					SendSmsNotifocation = true,
+					Recipient = Recipient.Queryable.FirstOrDefault(r => r.INN == "3666152146")
 				};
 				client.SaveAndFlush();
 

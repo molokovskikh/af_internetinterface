@@ -8,6 +8,7 @@ using Castle.ActiveRecord.Framework.Config;
 using Common.Tools;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using InternetInterface.Services;
 using Test.Support.Helpers;
 using Environment = NHibernate.Cfg.Environment;
 

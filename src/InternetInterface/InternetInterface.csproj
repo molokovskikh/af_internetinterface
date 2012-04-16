@@ -331,7 +331,6 @@
     <Compile Include="Models\RequestMessage.cs" />
     <Compile Include="Models\SaleSettings.cs" />
     <Compile Include="Models\SendedLease.cs" />
-    <Compile Include="Models\Service.cs" />
     <Compile Include="Models\ServiceRequest.cs" />
     <Compile Include="Models\ServiceInteration.cs" />
     <Compile Include="Models\SmsMessage.cs" />
@@ -356,6 +355,11 @@
     <Compile Include="Models\Zone.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Controllers\SmsController.cs" />
+    <Compile Include="Services\DebtWork.cs" />
+    <Compile Include="Services\Service.cs" />
+    <Compile Include="Services\VoluntaryBlockin.cs" />
+    <Compile Include="Services\WorkLawyer.cs" />
+    <None Include="Views\Subview\ServiceControl.brail" />
     <None Include="Views\Register\RegisterPartner.brail" />
   </ItemGroup>
   <ItemGroup>
