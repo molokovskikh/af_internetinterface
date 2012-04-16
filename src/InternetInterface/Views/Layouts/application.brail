@@ -4,17 +4,19 @@
 <head>
 	<title>Интернет интерфейс</title>
 
-	${app.JS("jquery-1.6.1.js",
-	"jquery.validate.js",
-	"Common.js",
+	${app.Asset("jquery-1.6.4.js")}
+	${app.Asset("jquery-ui-1.8.16.js")}
+	${app.Asset("jquery.validate.js")}
+	${app.Asset("editable.js")}
+	${app.Asset("checkbox.all.js")}
+	${app.Asset("application.js")}
+
+	${app.JS("Common.js",
 	"jquery.maskedinput-1.2.2.js",
 	"jquery.reveal.js",
 	"jquery.nyroModal.custom.js",
-	"jquery-ui-1.8.16.custom.js",
 	"jquery.ui.datepicker-ru.js",
 	"jquery.tablesorter.js")}
-
-	${app.Asset("Application.js")}
 
 	${app.CSS("Style.css",
 		"base.css",

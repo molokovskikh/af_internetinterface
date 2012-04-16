@@ -1,4 +1,11 @@
-﻿<% if invoice.Id: %>
+﻿<script>
+	$(function () {
+		$("form").validate();
+		$("#bills").data("template", cloneRowTemplate);
+	});
+</script>
+
+<% if invoice.Id: %>
 <h2>Редактирование счета №${invoice.Id}</h2>
 <% else: %>
 <h2>Формирование дополнительного счета</h2>
