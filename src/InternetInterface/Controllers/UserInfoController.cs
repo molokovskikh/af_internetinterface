@@ -868,7 +868,6 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 				}
 				if (_client.Status.Blocked)
 				{
-					//_client.AutoUnblocked = false;
 					_client.Disabled = true;
 				}
 				else
@@ -894,7 +893,6 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 				});
 				RenderView("SearchUserInfo");
 				Flash["Editing"] = true;
-				//Flash["EditingConnect"] = false;
 				Flash["_client"] = _client;
 				Flash["Client"] = updateClient;
 				filter.ClientCode = _client.Id;
@@ -972,7 +970,13 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 			PropertyBag["ClientCode"] = clientId;
 			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(t => !string.IsNullOrEmpty(t.Name));
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
-			PropertyBag["ChBrigad"] = client.WhoConnected != null ? client.WhoConnected.Id : Brigad.FindFirst().Id;
+			if (client.WhoConnected != null)
+				PropertyBag["ChBrigad"] = client.WhoConnected.Id;
+			else {
+				var brigad = Brigad.FindFirst();
+				if (brigad != null)
+					PropertyBag["ChBrigad"] = Brigad.FindFirst().Id;
+			}
 			List<PackageSpeed> speeds;
 			var tariffs = Tariff.FindAll().Select(t => t.PackageId).ToList();
 			if (client.GetClientType() == ClientType.Phisical)

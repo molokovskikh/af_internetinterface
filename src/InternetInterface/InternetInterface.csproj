@@ -100,8 +100,13 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Css\asc.gif" />
     <Content Include="Css\base.css" />
+    <Content Include="Css\bg.gif" />
+    <Content Include="Css\button.css" />
     <Content Include="Css\datePicker.css" />
+    <Content Include="Css\desc.gif" />
+    <Content Include="Css\filter.css" />
     <Content Include="Css\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Css\images\ui-bg_flat_75_ffffff_40x100.png" />
     <Content Include="Css\images\ui-bg_glass_55_fbf9ee_1x400.png" />
@@ -117,11 +122,14 @@
     <Content Include="Css\images\ui-icons_cd0a0a_256x240.png" />
     <Content Include="Css\jquery-ui-1.8.13.custom.css" />
     <Content Include="Css\jquery-ui-1.8.16.custom.css" />
+    <Content Include="Css\modal-gloss.png" />
     <Content Include="Css\reveal.css" />
     <Content Include="Css\style.css" />
     <Content Include="Css\tablesorter.css" />
+    <Content Include="Css\validServiceRequest.css" />
     <Content Include="Errors\AccessDin.aspx" />
     <Content Include="Errors\NotFound.aspx" />
+    <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Images\application_edit.png" />
     <Content Include="Images\bg.gif" />

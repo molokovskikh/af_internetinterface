@@ -23,7 +23,7 @@ namespace InternetInterface.Controllers
 			SortDirection = "desc";
 			SortKeyMap = new Dictionary<string, string> {
 				{"Id", "Id"},
-				{"ClientId", "ClientId"},
+				{"ClientId", "c.Id"},
 				{"Date", "Date"},
 				{"Sum", "Sum"},
 				{"PayerName", "PayerName"}
@@ -32,9 +32,16 @@ namespace InternetInterface.Controllers
 
 		public IList<Invoice> Find(ISession session)
 		{
-			var criteria = DetachedCriteria.For<Invoice>();
+			var criteria = DetachedCriteria.For<Invoice>()
+				.CreateAlias("Client", "c");
 			if (!string.IsNullOrEmpty(SearchText))
-				criteria.Add(Expression.Like("PayerName", SearchText, MatchMode.Anywhere));
+			{
+				uint id;
+				if (uint.TryParse(SearchText, out id))
+					criteria.Add(Expression.Eq("c.Id", id));
+				else
+					criteria.Add(Expression.Like("PayerName", SearchText, MatchMode.Anywhere));
+			}
 			return Find<Invoice>(criteria);
 		}
 	}
