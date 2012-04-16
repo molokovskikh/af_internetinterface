@@ -1,10 +1,4 @@
-﻿<script>
-	$(function () {
-		$('.graph_date').datepicker();
-	});
-</script>
-
-<% if invoice.Id: %>
+﻿<% if invoice.Id: %>
 <h2>Редактирование счета №${invoice.Id}</h2>
 <% else: %>
 <h2>Формирование дополнительного счета</h2>

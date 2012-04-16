@@ -57,11 +57,6 @@
 	</style>
 
 	<script type="text/javascript">
-		/*Date.firstDayOfWeek = 0;
-		Date.format = 'dd.mm.yyyy';
-		$('.date-pick').datePicker({ startDate: '01/01/1996' }).val('${StartDate}').trigger('change');*/
-
-
 	    $(function () {
 	        $('#NoPhoneDate').datepicker({
 	            inline: true

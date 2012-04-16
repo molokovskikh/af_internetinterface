@@ -1,10 +1,4 @@
-﻿<script>
-	$(function () {
-		$('.date-pick').datepicker();
-	});
-</script>
-
-${app.BeginFormFor("filter")}
+﻿${app.BeginFormFor("filter")}
 <h3>История платежей</h3>
 <tr>
 	<td>Период</td>

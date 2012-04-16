@@ -5,6 +5,4 @@
 		var re = new RegExp(regexp);
 		return this.optional(element) || re.test(value);
 	}, "Введите телефон в формате ***-*******");
-
-	$('.graph_date').datepicker();
 });

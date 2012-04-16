@@ -1,9 +1,4 @@
-﻿<script type="text/javascript">
-	$(function () {
-		$('.graph_date').datepicker();
-	});
-</script>
-<div class="backGround" style="width:800px;  border-top:none; padding-top:0px;">
+﻿<div class="backGround" style="width:800px;  border-top:none; padding-top:0px;">
 	<table class="table">
 	<tbody>
 		<tr>

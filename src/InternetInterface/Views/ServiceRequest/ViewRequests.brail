@@ -1,9 +1,4 @@
-﻿<script type="text/javascript">
-	$(function () {
-		$('.graph_date').datepicker();
-	});
-</script>
-<link type="text/css" rel=Stylesheet href="${Siteroot}/Css/validServiceRequest.css"/>
+﻿<link type="text/css" rel=Stylesheet href="${Siteroot}/Css/validServiceRequest.css"/>
 <div class="backGround" style="width:800px;">
 <div class="whereNewTable">
 <form method=get>

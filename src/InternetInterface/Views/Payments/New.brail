@@ -2,7 +2,6 @@
 <script>
 	$(function () {
 		$("form").validate();
-		$('.date-pick').datepicker();
 		$("#payer").autocomplete({
 			source: "SearchPayer",
 			minLength: 2,

@@ -1,8 +1,6 @@
 ﻿
 <script>
 	$(function () {
-		$('.date-pick').datepicker();
-
 		$("form").validate();
 
 		$("#payment_Payer_Name").autocomplete({

@@ -73,16 +73,6 @@ div.scroller
 </style>
 </head>
 
-<script type="text/javascript" id="js">
-$(document).ready(function () {
-		$(function () {
-			$('.date-pick').datepicker();
-		});
-});
-</script>
-
-
-
 <body class="body_cl">
 
 <div class=scroller>
