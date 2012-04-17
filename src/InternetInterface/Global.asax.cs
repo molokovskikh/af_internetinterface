@@ -17,9 +17,16 @@ using log4net.Config;
 
 namespace InternetInterface
 {
+	public class AppConfig
+	{
+		public string PrinterPath { get; set; }
+	}
+
 	public class Global : WebApplication, IMonoRailConfigurationEvents
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof(Global));
+
+		public static AppConfig Config = new AppConfig();
 
 		public Global()
 			: base(Assembly.Load("InternetInterface"))
@@ -30,6 +37,7 @@ namespace InternetInterface
 
 		void Application_Start(object sender, EventArgs e)
 		{
+			ConfigReader.LoadSettings(Config);
 			Initialize();
 
 			RoutingModuleEx.Engine.Add(new PatternRoute("/")

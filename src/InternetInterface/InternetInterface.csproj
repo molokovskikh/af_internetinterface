@@ -300,6 +300,7 @@
     <Compile Include="Helpers\ValidationHelper.cs" />
     <Compile Include="Helpers\ValidBuilderHelper.cs" />
     <Compile Include="Initializers\ActiveRecord.cs" />
+    <Compile Include="Initializers\Development.cs" />
     <Compile Include="Models\Access\AccessCategories.cs" />
     <Compile Include="Models\Access\AccessRules.cs" />
     <Compile Include="Models\AdditionalStatus.cs" />
@@ -334,6 +335,7 @@
     <Compile Include="Models\PaymentForConnect.cs" />
     <Compile Include="Models\PaymentsForAgent.cs" />
     <Compile Include="Models\Period.cs" />
+    <Compile Include="Models\Printer.cs" />
     <Compile Include="Models\Request.cs" />
     <Compile Include="Models\RequestMessage.cs" />
     <Compile Include="Models\SaleSettings.cs" />

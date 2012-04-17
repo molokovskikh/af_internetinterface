@@ -8,8 +8,9 @@ ${app.EndFormFor("filter")}
 <form method=post action=Process>
 	<div class=block>
 		<input type=submit value="Удалить" name="delete">
-		<input type=submit value="Напечатать" name="print">
 		<input type=submit value="Отправить по e-mail" name="email">
+		${FormHelper.Select("printer", printers)}
+		<input type=submit value="Напечатать" name="print">
 	</div>
 
 	<table class="table">

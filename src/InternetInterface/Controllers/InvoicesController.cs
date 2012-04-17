@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
+using Common.Tools;
 using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.MonoRailExtentions;
@@ -90,6 +91,7 @@ namespace InternetInterface.Controllers
 		{
 			PropertyBag["filter"] = filter;
 			PropertyBag["invoices"] = filter.Find(DbSession);
+			PropertyBag["printers"] = Printer.All();
 		}
 
 		public void Process()
@@ -98,6 +100,9 @@ namespace InternetInterface.Controllers
 			binder.AutoLoad = AutoLoadBehavior.Always;
 			SetBinder(binder);
 			var invoices = BindObject<Invoice[]>("invoices");
+
+			if (invoices.Length == 0)
+				RedirectToReferrer();
 
 			if (Form["delete"] != null) {
 				foreach (var invoice in invoices)
@@ -114,9 +119,9 @@ namespace InternetInterface.Controllers
 			}
 
 			if (Form["print"] != null) {
-				foreach (var invoice in invoices) {
-					
-				}
+				var printer = Form["printer"];
+				var arguments = String.Format("invoice \"{0}\" \"{1}\"", printer, invoices.Implode(a => a.Id));
+				Printer.Execute(arguments);
 
 				Notify("Отправлено на печать");
 			}

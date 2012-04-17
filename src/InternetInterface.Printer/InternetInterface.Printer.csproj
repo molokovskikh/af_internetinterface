@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A22769FD-8F8C-41D5-83E5-6DA27A3B7331}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>InternetInterface.Printer</RootNamespace>
+    <AssemblyName>InternetInterface.Printer</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Castle.ActiveRecord">
+      <HintPath>..\..\lib\Castle.ActiveRecord\3.0\Castle.ActiveRecord.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Core">
+      <HintPath>..\..\packages\Castle.Core.2.5.2\lib\NET40ClientProfile\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.MonoRail.Framework">
+      <HintPath>..\..\lib\Castle.MonoRail.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.MonoRail.Views.Brail">
+      <HintPath>..\..\lib\Castle.MonoRail.Views.Brail.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate">
+      <HintPath>..\..\packages\NHibernate.3.1.0.4000\lib\net35\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate.ByteCode.Castle">
+      <HintPath>..\..\packages\NHibernate.Castle.3.1.0.4000\lib\Net35\NHibernate.ByteCode.Castle.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="StandaloneInitializer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common.Tools\Common.Tools\Common.Tools.csproj">
+      <Project>{72AFCFE8-C9E9-45FA-9698-BEE896A517A3}</Project>
+      <Name>Common.Tools</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common.Web.UI\Common.Web.Ui\Common.Web.Ui.csproj">
+      <Project>{95E2C313-46FA-4B4B-9EFF-3228662908F4}</Project>
+      <Name>Common.Web.Ui</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\InternetInterface\InternetInterface.csproj">
+      <Project>{E2B03BC7-AACB-4A72-BBC7-DF4325912504}</Project>
+      <Name>InternetInterface</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\InternetInterface\Views\Invoices\InvoiceBody.brail">
+      <Link>Views\Invoices\InvoiceBody.brail</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\InternetInterface\Views\Invoices\MailAddressSubView.brail">
+      <Link>Views\Invoices\MailAddressSubView.brail</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\InternetInterface\Views\Invoices\Print.brail">
+      <Link>Views\Invoices\Print.brail</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\InternetInterface\Views\Layouts\print.brail">
+      <Link>Views\Layouts\print.brail</Link>
+    </EmbeddedResource>
+    <None Include="App.config" />
+    <None Include="App.relase.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
