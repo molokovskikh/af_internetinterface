@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Billing;
 using Castle.ActiveRecord;
 using Common.Tools;
 using Common.Web.Ui.Models.Jobs;
+using InternetInterface.Helpers;
+using InternetInterface.Models;
 using log4net;
 
 namespace InternetInterface.Background
@@ -28,11 +32,14 @@ namespace InternetInterface.Background
 
 		public void DoStart()
 		{
-			MainBilling.InitActiveRecord();
+			StandaloneInitializer.Init();
 
 			using(new SessionScope())
 			{
-				var job = new ActiveRecordJob(new BuildInvoiceTask());
+				var mailer = new Mailer {
+					SiteRoot = ConfigurationManager.AppSettings["SiteRoot"]
+				};
+				var job = new ActiveRecordJob(new BuildInvoiceTask(mailer));
 				jobs.Add(job);
 			}
 

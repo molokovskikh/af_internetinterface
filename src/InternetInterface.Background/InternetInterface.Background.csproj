@@ -51,6 +51,7 @@
       <HintPath>..\..\packages\NUnit.2.5.10.11092\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -91,11 +92,21 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="..\InternetInterface\Views\Invoices\InvoiceBody.brail">
+      <Link>Views\Invoices\InvoiceBody.brail</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\InternetInterface\Views\Layouts\print.brail">
+      <Link>Views\Layouts\print.brail</Link>
+    </EmbeddedResource>
+    <None Include="..\InternetInterface\Views\Mail\Invoice.brail">
+      <Link>Views\Mail\Invoice.brail</Link>
+    </None>
     <None Include="App.config" />
     <None Include="App.release.config">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

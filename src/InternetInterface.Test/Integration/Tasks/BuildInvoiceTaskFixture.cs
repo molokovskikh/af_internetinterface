@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using InternetInterface.Background;
 using InternetInterface.Models;
 using NHibernate.Linq;
@@ -15,6 +17,9 @@ namespace InternetInterface.Test.Integration.Tasks
 		[Test]
 		public void Build_invoices()
 		{
+			var messages = new List<MailMessage>();
+			var mailer = Integration.MailerFixture.Prepare(m => messages.Add(m));
+
 			var client = new Client {
 				Status = Status.Find((uint)StatusType.Worked)
 			};
@@ -29,7 +34,7 @@ namespace InternetInterface.Test.Integration.Tasks
 			session.Save(client);
 			session.Save(writeOff);
 
-			var task = new BuildInvoiceTask();
+			var task = new BuildInvoiceTask(mailer);
 			task.Process(session);
 
 			var invoices = session.Query<Invoice>().Where(i => i.Client == client).ToList();
@@ -38,6 +43,7 @@ namespace InternetInterface.Test.Integration.Tasks
 			Assert.That(invoice.Sum, Is.EqualTo(writeOffSum));
 			Assert.That(invoice.Parts.Count, Is.EqualTo(1));
 			Assert.That(invoice.Parts[0].Sum, Is.EqualTo(writeOffSum));
+			Assert.That(messages.Count, Is.GreaterThan(0));
 		}
 	}
 }

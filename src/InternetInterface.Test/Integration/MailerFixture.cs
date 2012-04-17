@@ -31,10 +31,9 @@ namespace InternetInterface.Test.Integration
 		{
 			_message = null;
 			mailer = Prepare(m => _message = m);
-			BaseMailer.ViewEngineManager = GetViewManager();
 		}
 
-		private static Mailer Prepare(Action<MailMessage> action)
+		public static Mailer Prepare(Action<MailMessage> action)
 		{
 			MailMessage dummy = null;
 			var sender = MockRepository.GenerateStub<IEmailSender>();
@@ -44,35 +43,11 @@ namespace InternetInterface.Test.Integration
 					action(m);
 					return true;
 				}));
+
 			return new Mailer(sender) {
 				UnderTest = true,
 				SiteRoot = "https://stat.ivrn.net/ii"
 			};
-		}
-
-		
-		public static IViewEngineManager GetViewManager()
-		{
-			var config = new MonoRailConfiguration();
-			config.ViewEngineConfig.ViewEngines.Add(new ViewEngineInfo(typeof(BooViewEngine), false));
-			config.ViewEngineConfig.ViewPathRoot = Path.Combine(@"..\..\..\..\InternetInterface", "Views");
-
-			var provider = new FakeServiceProvider();
-			var loader = new FileAssemblyViewSourceLoader(config.ViewEngineConfig.ViewPathRoot);
-			provider.Services.Add(typeof(IMonoRailConfiguration), config);
-			provider.Services.Add(typeof(IViewSourceLoader), loader);
-
-			var manager = new DefaultViewEngineManager();
-			manager.Service(provider);
-			var options = ExposedObject.From(manager).viewEnginesFastLookup[0].Options;
-			var namespaces = options.NamespacesToImport;
-			namespaces.Add("Boo.Lang.Builtins");
-			return manager;
-		}
-
-		public static void InitializeMailer()
-		{
-			BaseMailer.ViewEngineManager = GetViewManager();
 		}
 
 		private MailMessage message

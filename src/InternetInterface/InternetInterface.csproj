@@ -294,6 +294,7 @@
     <Compile Include="Helpers\LoginCreatorHelper.cs" />
     <Compile Include="Helpers\PaymentFilter.cs" />
     <Compile Include="Helpers\SmsHelper.cs" />
+    <Compile Include="Helpers\StandaloneInitializer.cs" />
     <Compile Include="Helpers\TelnetInterface.cs" />
     <Compile Include="Helpers\TextHelper.cs" />
     <Compile Include="Helpers\UsersParsers.cs" />

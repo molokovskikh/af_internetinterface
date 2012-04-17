@@ -10,8 +10,11 @@ namespace InternetInterface.Background
 {
 	public class BuildInvoiceTask : MonthlyJob
 	{
-		public BuildInvoiceTask()
+		private Mailer _mailer;
+
+		public BuildInvoiceTask(Mailer mailer)
 		{
+			_mailer = mailer;
 			Plan(PlanPeriod.Month, 1.Day());
 			Action = () => WithSession(Process);
 		}
@@ -33,6 +36,10 @@ namespace InternetInterface.Background
 
 				var invoice = new Invoice(client, period, writeOffs);
 				session.Save(invoice);
+
+				_mailer.Invoice(invoice);
+				_mailer.Send();
+				_mailer.Clear();
 			}
 		}
 	}
