@@ -45,6 +45,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternetInterface.Backgroun
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternetInterface.Printer", "InternetInterface.Printer\InternetInterface.Printer.csproj", "{A22769FD-8F8C-41D5-83E5-6DA27A3B7331}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{443E97FC-E470-41C9-9301-CB5D1B9E8C6F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Support.Web", "Test.Support\Test.Support.Web\Test.Support.Web.csproj", "{12258B1D-35E8-45BA-9C1E-5F7B8ACD7D37}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -328,6 +332,18 @@ Global
 		{A22769FD-8F8C-41D5-83E5-6DA27A3B7331}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{A22769FD-8F8C-41D5-83E5-6DA27A3B7331}.Release|x64.ActiveCfg = Release|Any CPU
 		{A22769FD-8F8C-41D5-83E5-6DA27A3B7331}.Release|x86.ActiveCfg = Release|Any CPU
+		{12258B1D-35E8-45BA-9C1E-5F7B8ACD7D37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12258B1D-35E8-45BA-9C1E-5F7B8ACD7D37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12258B1D-35E8-45BA-9C1E-5F7B8ACD7D37}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{12258B1D-35E8-45BA-9C1E-5F7B8ACD7D37}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{12258B1D-35E8-45BA-9C1E-5F7B8ACD7D37}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{12258B1D-35E8-45BA-9C1E-5F7B8ACD7D37}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{12258B1D-35E8-45BA-9C1E-5F7B8ACD7D37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12258B1D-35E8-45BA-9C1E-5F7B8ACD7D37}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12258B1D-35E8-45BA-9C1E-5F7B8ACD7D37}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{12258B1D-35E8-45BA-9C1E-5F7B8ACD7D37}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{12258B1D-35E8-45BA-9C1E-5F7B8ACD7D37}.Release|x64.ActiveCfg = Release|Any CPU
+		{12258B1D-35E8-45BA-9C1E-5F7B8ACD7D37}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -335,5 +351,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{A88B78B2-BEE0-4E06-A700-8ED26109C524} = {6E4BCEB3-6EDB-4DD6-8773-39D48A03B88B}
 		{C4BC2483-8D79-4DAA-9450-97BA41ED425A} = {6E4BCEB3-6EDB-4DD6-8773-39D48A03B88B}
+		{12258B1D-35E8-45BA-9C1E-5F7B8ACD7D37} = {443E97FC-E470-41C9-9301-CB5D1B9E8C6F}
+		{A215E837-1208-49E3-AF93-A9612223122C} = {443E97FC-E470-41C9-9301-CB5D1B9E8C6F}
 	EndGlobalSection
 EndGlobal
