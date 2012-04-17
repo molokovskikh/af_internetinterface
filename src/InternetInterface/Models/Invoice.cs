@@ -23,11 +23,14 @@ namespace InternetInterface.Models
 			Client = client;
 			PayerName = client.LawyerPerson.Name;
 			Customer = client.LawyerPerson.Name;
+			Date = DateTime.Today;
+			Period = Date.ToPeriod();
 		}
 
-		public Invoice(Client client, IEnumerable<WriteOff> writeOffs)
+		public Invoice(Client client, Period period, IEnumerable<WriteOff> writeOffs)
 			: this(client)
 		{
+			Period = period;
 			var sum = writeOffs.Select(w => w.WriteOffSum).DefaultIfEmpty().Sum();
 			Parts.Add(new InvoicePart(this, 1, sum, "Услуги доступа в интернет"));
 
@@ -45,6 +48,9 @@ namespace InternetInterface.Models
 
 		[Property, ValidateNonEmpty]
 		public virtual string Customer { get; set; }
+
+		[Property(ColumnType = "InternetInterface.Models.PeriodUserType, InternetInterface"), ValidateNonEmpty]
+		public Period Period { get; set; }
 
 		[Property]
 		public virtual DateTime Date { get; set; }

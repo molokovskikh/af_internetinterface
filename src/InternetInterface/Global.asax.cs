@@ -13,11 +13,11 @@ using Castle.MonoRail.Framework.Views.Aspx;
 using Castle.MonoRail.Views.Brail;
 using Common.Web.Ui.Helpers;
 using log4net;
-using log4net.Config; 
+using log4net.Config;
 
 namespace InternetInterface
 {
-	public class Global : WebApplication, IMonoRailConfigurationEvents, IMonoRailContainerEvents
+	public class Global : WebApplication, IMonoRailConfigurationEvents
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof(Global));
 

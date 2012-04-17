@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using InternetInterface.Background;
 using InternetInterface.Models;
 using NHibernate.Linq;
@@ -23,7 +24,7 @@ namespace InternetInterface.Test.Integration.Tasks
 			};
 			client.LawyerPerson = lawyerPerson;
 			var writeOffSum = (lawyerPerson.Tariff/30).Value;
-			var writeOff = new WriteOff(client, writeOffSum);
+			var writeOff = new WriteOff(client, writeOffSum, DateTime.Today.AddMonths(-1));
 
 			session.Save(client);
 			session.Save(writeOff);

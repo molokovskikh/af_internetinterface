@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Castle.Core.Smtp;
 using Castle.MonoRail.Framework;
 using Common.Tools;
@@ -22,7 +23,7 @@ namespace InternetInterface.Models
 		public Mailer()
 		{}
 
-		public void Invoice(Invoice invoice)
+		public Mailer Invoice(Invoice invoice)
 		{
 			Layout = "Print";
 			Template = "Invoice";
@@ -30,9 +31,11 @@ namespace InternetInterface.Models
 
 			From = "internet@ivrn.net";
 			To = invoice.Client.Contacts.Where(c => c.Type == ContactType.Email).Implode(c => c.Text);
-			Subject = "Счет за ";
+			Subject = String.Format("Счет за {0}", invoice.Period);
 
 			PropertyBag["invoice"] = invoice;
+
+			return this;
 		}
 	}
 }

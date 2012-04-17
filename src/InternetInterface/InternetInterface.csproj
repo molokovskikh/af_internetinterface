@@ -101,6 +101,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Javascripts\application.js" />
+    <Content Include="Assets\Javascripts\messages_ru.js" />
     <Content Include="Css\asc.gif" />
     <Content Include="Css\base.css" />
     <Content Include="Css\bg.gif" />
@@ -332,6 +333,7 @@
     <Compile Include="Models\PackageSpeed.cs" />
     <Compile Include="Models\PaymentForConnect.cs" />
     <Compile Include="Models\PaymentsForAgent.cs" />
+    <Compile Include="Models\Period.cs" />
     <Compile Include="Models\Request.cs" />
     <Compile Include="Models\RequestMessage.cs" />
     <Compile Include="Models\SaleSettings.cs" />

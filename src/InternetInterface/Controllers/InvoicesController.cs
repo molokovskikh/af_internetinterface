@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using Castle.MonoRail.ActiveRecordSupport;
@@ -38,6 +40,12 @@ namespace InternetInterface.Controllers
 	{
 		public string SearchText { get; set; }
 
+		[Description("Выберите год:")]
+		public int? Year { get; set; }
+
+		[Description("Выберите период:")]
+		public Interval? Interval { get; set; }
+
 		public InvoiceFilter()
 		{
 			SortBy = "Date";
@@ -47,6 +55,7 @@ namespace InternetInterface.Controllers
 				{"ClientId", "c.Id"},
 				{"Date", "Date"},
 				{"Sum", "Sum"},
+				{"Period", "Period"},
 				{"PayerName", "PayerName"}
 			};
 		}
@@ -63,6 +72,13 @@ namespace InternetInterface.Controllers
 				else
 					criteria.Add(Expression.Like("PayerName", SearchText, MatchMode.Anywhere));
 			}
+
+			if (Year != null)
+				criteria.Add(Expression.Sql("{alias}.Period like " + String.Format("'{0}-%'", Year)));
+
+			if (Interval != null)
+				criteria.Add(Expression.Sql("{alias}.Period like " + String.Format("'%-{0}'", (int)Interval)));
+
 			return Find<Invoice>(criteria);
 		}
 	}
@@ -92,7 +108,7 @@ namespace InternetInterface.Controllers
 
 			if (Form["email"] != null) {
 				foreach (var invoice in invoices)
-					this.Mailer().Invoice(invoice);
+					this.Mailer().Invoice(invoice).Send();
 
 				Notify("Отправлено");
 			}

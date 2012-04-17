@@ -13,8 +13,11 @@ namespace InternetInterface.Background
 
 		public void Process()
 		{
-			var begin = DateTime.Today.FirstDayOfMonth();
-			var end = DateTime.Today.AddMonths(1).FirstDayOfMonth();
+			var period = DateTime.Today.AddMonths(-1).ToPeriod();
+			Console.Write(period);
+			var begin = period.GetPeriodBegin();
+			//окончание надо увеличить на один день что бы выбрать записи за этот день
+			var end = period.GetPeriodEnd().AddDays(1);
 
 			var clients = session.Query<Client>()
 				.Where(c => c.LawyerPerson != null)
@@ -24,7 +27,7 @@ namespace InternetInterface.Background
 			foreach (var client in clients) {
 				var writeOffs = session.Query<WriteOff>().Where(w => w.Client == client).ToList();
 
-				var invoice = new Invoice(client, writeOffs);
+				var invoice = new Invoice(client, period, writeOffs);
 				session.Save(invoice);
 			}
 		}

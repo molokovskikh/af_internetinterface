@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web;
+using Castle.MonoRail.Framework;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Models.Access;
@@ -11,9 +12,48 @@ namespace InternetInterface.Helpers
 {
 	public class AppHelper : Common.Web.Ui.Helpers.AppHelper
 	{
+		public AppHelper(IEngineContext engineContext) : base(engineContext)
+		{
+			RegisterEditor();
+		}
+
+		public AppHelper()
+		{
+			RegisterEditor();
+		}
+
 		public override bool HavePermission(string controller, string action)
 		{
 			return AccessRules.GetAccessName(action).Count(CategorieAccessSet.AccesPartner) > 0;
+		}
+
+		public void RegisterEditor()
+		{
+			Editors.Add(typeof(Period), (name, value, options) => {
+				var period = (Period) value;
+				if (period == null)
+					return null;
+
+				return "<label style='padding:2px'>Год</label>"
+					+ GetEdit(name + ".Year", typeof(int), period.Year, options)
+					+ "<label style='padding:2px'>Месяц</label>"
+					+ GetEdit(name + ".Interval", typeof(Interval), period.Interval, options);
+			});
+		}
+
+		protected override string GetBuiltinEdit(string name, Type valueType, object value, object options)
+		{
+			if (name.EndsWith(".Year"))
+			{
+				if (valueType == typeof(int))
+					return helper.Select(name, Period.Years);
+				else if (valueType == typeof(int?))
+				{
+					var items = new[] {"Все"}.Concat(Period.Years.Select(y => y.ToString())).ToArray();
+					return helper.Select(name, items);
+				}
+			}
+			return base.GetBuiltinEdit(name, valueType, value, options);
 		}
 
 		public override string GetQuerystring(string key, string direction)

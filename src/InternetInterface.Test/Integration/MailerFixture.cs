@@ -99,7 +99,7 @@ namespace InternetInterface.Test.Integration
 					new Contact {Type = ContactType.Email, Text = "test@analit.net"}
 				}
 			};
-			var invoice = new Invoice(client, new List<WriteOff> {
+			var invoice = new Invoice(client, DateTime.Today.ToPeriod(), new List<WriteOff> {
 				new WriteOff(client, 500)
 			});
 

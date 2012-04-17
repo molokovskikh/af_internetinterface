@@ -41,12 +41,16 @@ namespace InternetInterface.Models
 		public WriteOff()
 		{}
 
-		public WriteOff(Client client, decimal writeOffSum)
+		public WriteOff(Client client, decimal writeOffSum, DateTime date)
 		{
 			Client = client;
 			WriteOffSum = writeOffSum;
-			WriteOffDate = SystemTime.Now();
+			WriteOffDate = date;
 		}
+
+		public WriteOff(Client client, decimal writeOffSum)
+			: this(client, writeOffSum, SystemTime.Now())
+		{}
 
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
