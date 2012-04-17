@@ -30,6 +30,7 @@ namespace InternetInterface.Models
 		{
 			ClientServices = new List<ClientService>();
 			Payments = new List<Payment>();
+			Contacts = new List<Contact>();
 		}
 
 		[PrimaryKey]
@@ -153,7 +154,7 @@ namespace InternetInterface.Models
 			get
 			{
 				if (Contacts != null) {
-					var contact = Contacts.Where(c => c.Type == ContactType.HeadPhone).FirstOrDefault();
+					var contact = Contacts.FirstOrDefault(c => c.Type == ContactType.HeadPhone);
 					if (contact != null) {
 						return contact.HumanableNumber();
 					}

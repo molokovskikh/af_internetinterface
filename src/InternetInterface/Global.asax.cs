@@ -30,31 +30,14 @@ namespace InternetInterface
 
 		void Application_Start(object sender, EventArgs e)
 		{
-			XmlConfigurator.Configure();
 			Initialize();
+
 			RoutingModuleEx.Engine.Add(new PatternRoute("/")
 				.DefaultForController().Is("Login")
 				.DefaultForAction().Is("LoginPartner"));
-
 			RoutingModuleEx.Engine.Add(new PatternRoute("/<controller>/<action>"));
 			RoutingModuleEx.Engine.Add(new PatternRoute("/<controller>/<id>/<action>")
 				.Restrict("id").ValidInteger);
-		}
-
-		void Application_End(object sender, EventArgs e)
-		{
-			//  Code that runs on application shutdown
-		}
-
-		void Application_Error(object sender, EventArgs e)
-		{
-
-		}
-
-		void Session_Start(object sender, EventArgs e)
-		{
-			// Code that runs when a new session is started
-
 		}
 
 		public void Configure(IMonoRailConfiguration configuration)
@@ -82,23 +65,5 @@ namespace InternetInterface
 
 			base.Configure(configuration);
 		}
-
-		public void Created(IMonoRailContainer container)
-		{ }
-
-		public void Initialized(IMonoRailContainer container)
-		{
-			base.Initialized(container);
-		}
-
-		void Session_End(object sender, EventArgs e)
-		{
-			// Code that runs when a session ends. 
-			// Note: The Session_End event is raised only when the sessionstate mode
-			// is set to InProc in the Web.config file. If session mode is set to StateServer 
-			// or SQLServer, the event is not raised.
-
-		}
-
 	}
 }

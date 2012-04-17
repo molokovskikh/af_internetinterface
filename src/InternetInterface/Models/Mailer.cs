@@ -1,4 +1,7 @@
-﻿using Castle.MonoRail.Framework;
+﻿using System.Linq;
+using Castle.Core.Smtp;
+using Castle.MonoRail.Framework;
+using Common.Tools;
 using Common.Web.Ui.MonoRailExtentions;
 
 namespace InternetInterface.Models
@@ -13,9 +16,23 @@ namespace InternetInterface.Models
 
 	public class Mailer : BaseMailer
 	{
+		public Mailer(IEmailSender sender) : base(sender)
+		{}
+
+		public Mailer()
+		{}
+
 		public void Invoice(Invoice invoice)
 		{
-			throw new System.NotImplementedException();
+			Layout = "Print";
+			Template = "Invoice";
+			IsBodyHtml = true;
+
+			From = "internet@ivrn.net";
+			To = invoice.Client.Contacts.Where(c => c.Type == ContactType.Email).Implode(c => c.Text);
+			Subject = "Счет за ";
+
+			PropertyBag["invoice"] = invoice;
 		}
 	}
 }

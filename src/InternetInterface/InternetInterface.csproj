@@ -152,6 +152,7 @@
     <None Include="Views\Invoices\MailAddressSubView.brail" />
     <None Include="Views\Invoices\Print.brail" />
     <None Include="Views\Layouts\print.brail" />
+    <None Include="Views\Mail\Invoice.brail" />
     <None Include="Views\PrivateMessages\ForClient.brail" />
     <None Include="Views\PrivateMessages\ForSwitch.brail" />
     <None Include="Views\PrivateMessages\Message.brail" />
