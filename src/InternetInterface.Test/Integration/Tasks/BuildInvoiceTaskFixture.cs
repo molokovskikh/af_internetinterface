@@ -30,8 +30,7 @@ namespace InternetInterface.Test.Integration.Tasks
 			session.Save(writeOff);
 
 			var task = new BuildInvoiceTask();
-			task.session = session;
-			task.Process();
+			task.Process(session);
 
 			var invoices = session.Query<Invoice>().Where(i => i.Client == client).ToList();
 			Assert.That(invoices.Count, Is.EqualTo(1));

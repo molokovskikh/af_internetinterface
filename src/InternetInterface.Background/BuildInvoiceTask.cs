@@ -1,20 +1,24 @@
 ﻿using System;
 using System.Linq;
 using Common.Tools.Calendar;
+using Common.Web.Ui.Models.Jobs;
 using InternetInterface.Models;
 using NHibernate;
 using NHibernate.Linq;
 
 namespace InternetInterface.Background
 {
-	public class BuildInvoiceTask
+	public class BuildInvoiceTask : MonthlyJob
 	{
-		public ISession session;
+		public BuildInvoiceTask()
+		{
+			Plan(PlanPeriod.Month, 1.Day());
+			Action = () => WithSession(Process);
+		}
 
-		public void Process()
+		public void Process(ISession session)
 		{
 			var period = DateTime.Today.AddMonths(-1).ToPeriod();
-			Console.Write(period);
 			var begin = period.GetPeriodBegin();
 			//окончание надо увеличить на один день что бы выбрать записи за этот день
 			var end = period.GetPeriodEnd().AddDays(1);
