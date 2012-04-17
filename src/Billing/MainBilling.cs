@@ -128,6 +128,31 @@ namespace Billing
 			}
 		}
 
+		private decimal WriteOff(PhysicalClients physicalClient, decimal dec, out bool virtualAndMoneyParts, out bool virtualWriteOffs)
+		{
+			var VirtualAndMoneyParts = false;
+			var VirtualWriteOffs = false;
+			var physicalPart = dec;
+			if (physicalClient.VirtualBalance > 0) {
+				if (physicalClient.VirtualBalance - dec >= 0) {
+					physicalClient.VirtualBalance -= dec;
+					VirtualWriteOffs = true;
+				}
+				else {
+					physicalPart = dec - physicalClient.VirtualBalance;
+					physicalClient.MoneyBalance -= physicalPart;
+					physicalClient.VirtualBalance -= dec - physicalPart;
+					VirtualAndMoneyParts = true;
+				}
+			}
+			else {
+				physicalClient.MoneyBalance -= physicalPart;
+			}
+			virtualAndMoneyParts = VirtualAndMoneyParts;
+			virtualWriteOffs = VirtualWriteOffs;
+			return physicalPart;
+		}
+
 		public void OnMethod()
 		{
 			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
@@ -201,7 +226,15 @@ namespace Billing
 					var client = userWriteOff.Client;
 					if (client.PhysicalClient != null) {
 						var physicalClient = client.PhysicalClient;
-						physicalClient.Balance -= userWriteOff.Sum;
+
+						var dec = userWriteOff.Sum;
+
+						physicalClient.Balance -= dec;
+
+						var virtualAndMoneyParts = false;
+						var virtualWriteOffs = false;
+						WriteOff(physicalClient, dec, out virtualAndMoneyParts, out virtualWriteOffs);
+
 						physicalClient.Update();
 					}
 					if (client.LawyerPerson != null) {
@@ -314,28 +347,14 @@ namespace Billing
 								var toDt = client.GetInterval();
 								var price = client.GetPrice();
 								var dec = price / toDt;
-								var physicalPart = dec;
+								
 
 								phisicalClient.Balance -= dec;
 
-								var virtualAndMoneyParts = false;
-								var virtualWriteOffs = false;
+								bool virtualAndMoneyParts;
+								bool virtualWriteOffs;
 
-								if (phisicalClient.VirtualBalance > 0) {
-									if (phisicalClient.VirtualBalance - dec >= 0) {
-										phisicalClient.VirtualBalance -= dec;
-										virtualWriteOffs = true;
-									}
-									else {
-										physicalPart = dec - phisicalClient.VirtualBalance;
-										phisicalClient.MoneyBalance -= physicalPart;
-										phisicalClient.VirtualBalance -= dec - physicalPart;
-										virtualAndMoneyParts = true;
-									}
-								}
-								else {
-									phisicalClient.MoneyBalance -= physicalPart;
-								}
+								var physicalPart = WriteOff(phisicalClient, dec, out virtualAndMoneyParts, out virtualWriteOffs);
 
 								phisicalClient.Update();
 								var bufBal = phisicalClient.Balance;

@@ -24,7 +24,7 @@ namespace InternetInterface.Models
 		[Property, ValidateEmail("Ошибка формата Email")]
 		public virtual string Email { get; set; }
 
-		[Property, ValidateNonEmpty("Введите номер телефона"), ValidateRegExp(@"^([0-9]{3})\-([0-9]{7})$", "Ошибка фотмата телефонного номера ***-*******")]
+		[Property,/* ValidateNonEmpty("Введите номер телефона"),*/ ValidateRegExp(@"^([0-9]{3})\-([0-9]{7})$", "Ошибка фотмата телефонного номера ***-*******")]
 		public virtual string TelNum { get; set; }
 
 		[Property]
