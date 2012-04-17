@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
@@ -24,8 +25,11 @@ namespace InternetInterface.Test.Functional
 			var writeOffSum = (lawyerPerson.Tariff/30).Value;
 			var writeOff = new WriteOff(client, writeOffSum, DateTime.Today.AddMonths(-1));
 
+			var invoice = new Invoice(client, DateTime.Today.ToPeriod(), new [] {writeOff});
+
 			session.Save(client);
 			session.Save(writeOff);
+			session.Save(invoice);
 		}
 
 		[Test]

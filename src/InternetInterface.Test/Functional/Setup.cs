@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Configuration;
 using System.IO;
+using System.Linq;
 using System.Text;
 using CassiniDev;
+using Castle.ActiveRecord;
+using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 using WatiN.Core;
@@ -42,6 +45,14 @@ namespace InternetInterface.Test.Functional
 			_webServer.Start();
 			Settings.Instance.AutoMoveMousePointerToTopLeft = false;
 			Settings.Instance.MakeNewIeInstanceVisible = false;
+
+			using(new SessionScope()) {
+				var partner = Partner.Queryable.FirstOrDefault(p => p.Login == Environment.UserName);
+				if (partner == null) {
+					partner = new Partner(Environment.UserName);
+					partner.Save();
+				}
+			}
 		}
 
 		[TearDown]

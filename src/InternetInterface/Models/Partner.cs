@@ -15,6 +15,16 @@ namespace InternetInterface.Models
 	[ActiveRecord("Partners", Schema = "internet", Lazy = true)]
 	public class Partner : ValidActiveRecordLinqBase<Partner>
 	{
+		public Partner()
+		{}
+
+		public Partner(string login)
+		{
+			Login = login;
+			Name = login;
+			Categorie = UserCategorie.Find(3u);
+		}
+
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
