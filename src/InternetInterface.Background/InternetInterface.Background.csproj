@@ -47,9 +47,6 @@
     <Reference Include="NHibernate.ByteCode.Castle">
       <HintPath>..\..\packages\NHibernate.Castle.3.1.0.4000\lib\Net35\NHibernate.ByteCode.Castle.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.framework">
-      <HintPath>..\..\packages\NUnit.2.5.10.11092\lib\nunit.framework.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -85,10 +82,6 @@
     <ProjectReference Include="..\InternetInterface\InternetInterface.csproj">
       <Project>{E2B03BC7-AACB-4A72-BBC7-DF4325912504}</Project>
       <Name>InternetInterface</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Test.Support\Test.Support\Test.Support.csproj">
-      <Project>{A215E837-1208-49E3-AF93-A9612223122C}</Project>
-      <Name>Test.Support</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

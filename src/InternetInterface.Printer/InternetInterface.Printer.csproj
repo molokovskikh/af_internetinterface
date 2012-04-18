@@ -99,7 +99,7 @@
       <Link>Views\Layouts\print.brail</Link>
     </EmbeddedResource>
     <None Include="App.config" />
-    <None Include="App.relase.config" />
+    <None Include="App.release.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

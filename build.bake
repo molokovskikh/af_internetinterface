@@ -16,10 +16,9 @@ Global(
 
 task @default, [@Build, @BuildBackground]
 
-task @Build, [@BuildWebSite]
+task @Build, [@BuildWebSite, @BuildBackground, @BuildPrinter]
 
-Task @deploy, [@Production, @Build, @Migrate, @Backup, @WebDeploy, @SendDeployNotification]
-
+task @deploy, [@Production, @Build, @Migrate, @Backup, @WebDeploy, @DeployBackground, @DeployPrinter, @SendDeployNotification]
 
 task @DeployBackground, [@BuildBackground, @Production, @Migrate, @SendDeployNotification]:
 	Globals.Project = "InternetInterface.Background"
@@ -36,6 +35,25 @@ task @BuildBackground:
 	Rm("output/$project/_PublishedWebsites", true)
 	Cp("src/$project/app.release.config", "output/$project/$project.config")
 	Rm("output/$project/$project.*.config")
+
+task @BuildPrinter:
+	oldProject = Globals.Project
+	Globals.Project = "InternetInterface.Printer"
+	project = Globals.Project
+	Engine.Tasks.First({t| t.Name == "BuildApp"}).Executed = false
+	Engine.Execute("BuildApp")
+	Cp("src/$project/app.release.config", "output/$project/$project.exe.config", true)
+	Cp("lib/Chrome.Printer/*", "output/$project/", true)
+	Rm("output/$project/_PublishedWebsites", true)
 	Globals.Project = oldProject
-	
+
+task @DeployPrinter:
+	oldProject = Globals.Project
+	Globals.Project = "InternetInterface.Printer"
+	project = Globals.Project
+	Globals.DeployTo = """\\adc.analit.net\Inforoom\Apps\$project"""
+	Engine.Tasks.First({t| t.Name == "WebDeploy"}).Executed = false
+	Engine.Execute("WebDeploy")
+	Globals.Project = oldProject
+
 task @BeforeTest, [@PrepareLocal]
