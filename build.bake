@@ -21,10 +21,12 @@ task @Build, [@BuildWebSite, @BuildBackground, @BuildPrinter]
 task @deploy, [@Production, @Build, @Migrate, @Backup, @WebDeploy, @DeployBackground, @DeployPrinter, @SendDeployNotification]
 
 task @DeployBackground, [@BuildBackground, @Production, @Migrate, @SendDeployNotification]:
+	oldProject = Globals.Project
 	Globals.Project = "InternetInterface.Background"
 	Globals.DeployTo = """\\fms\TopShelf\Services\""" + Globals.Project
 	Engine.Tasks.First({t| t.Name == "WebDeploy"}).Executed = false
 	Engine.Execute("WebDeploy")
+	Globals.Project = oldProject
 
 task @BuildBackground:
 	oldProject = Globals.Project
@@ -35,6 +37,7 @@ task @BuildBackground:
 	Rm("output/$project/_PublishedWebsites", true)
 	Cp("src/$project/app.release.config", "output/$project/$project.config")
 	Rm("output/$project/$project.*.config")
+	Globals.Project = oldProject
 
 task @BuildPrinter:
 	oldProject = Globals.Project
@@ -51,7 +54,7 @@ task @DeployPrinter:
 	oldProject = Globals.Project
 	Globals.Project = "InternetInterface.Printer"
 	project = Globals.Project
-	Globals.DeployTo = """\\adc.analit.net\Inforoom\Apps\$project"""
+	Globals.DeployTo = "\\\\adc.analit.net\\Inforoom\\Apps\\$project"
 	Engine.Tasks.First({t| t.Name == "WebDeploy"}).Executed = false
 	Engine.Execute("WebDeploy")
 	Globals.Project = oldProject
