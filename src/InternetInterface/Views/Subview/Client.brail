@@ -230,7 +230,7 @@ $('#register_house').trigger('reveal:close');
 				<select name="status" id="ChStatus" style="width: 95%;">
 				<%for i, Status in enumerate(Statuss): %>
 					<%if Status.ManualSet: %>
-						<option id="Status${Status.Id}" value="${Status.Id}" ${"selected" if (Status.Id == ChStatus)}> ${Status.Name} </option>
+						<option id="${Status.ShortName}" value="${Status.Id}" ${"selected" if (Status.Id == ChStatus)}> ${Status.Name} </option>
 					<% end %>
 				<%end %>
 				</select>
@@ -250,3 +250,24 @@ $('#register_house').trigger('reveal:close');
 		<%end %>
 	</tbody>
 </table>
+
+<script type="text/javascript">
+	$(function () {
+		$('#clientEditForm').validate({
+			errorElement: "div",
+			errorLabelContainer: "#errorContainerComment"
+		});
+		$('#ChStatus').change(function () {
+			if ($('#ChStatus option:selected').attr("id") == "Dissolved") {
+				$('#comment').rules("add", { required: true,
+					messages: {
+						required: "Введите комментарий"
+					}
+				});
+			}
+			else {
+				$('#comment').rules("remove", "required");
+			}
+		});
+	})
+</script>

@@ -876,6 +876,10 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 					_client.Disabled = false;
 					_client.ShowBalanceWarningPage = false;
 				}
+				if (_client.Status.Type == StatusType.Dissolved) {
+					_client.Endpoints.Clear();
+					_client.PhysicalClient.HouseObj = null;
+				}
 				_client.Update();
 				PropertyBag["Editing"] = false;
 

@@ -222,7 +222,7 @@
 	</tbody>
 </table>
 <%else:%>
-<form class="form edit" method="post" action="${siteroot}/UserInfo/EditInformation">
+<form class="form edit" id="clientEditForm" method="post" action="${siteroot}/UserInfo/EditInformation">
 <input type="hidden" name="ClientID" value="${ClientCode}" />
 <input type=hidden name="appealType" value="${appealType}" />
 
@@ -231,8 +231,9 @@
 		<tbody>
 			<tr>
 				<td colspan=4>
-					<label for="comment"><b>Введите Комментарий :</b></label>
+					<label for="comment"><b>Введите Комментарий :</b></label> <br />
 					<textarea id="comment" name="comment" rows="5" cols="100%"></textarea>
+					<div style="" id="errorContainerComment"> </div>
 				</td>
 			</tr>
 			<tr>

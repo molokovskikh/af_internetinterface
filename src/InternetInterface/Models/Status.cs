@@ -12,7 +12,8 @@ namespace InternetInterface.Models
 		BlockedAndConnected = 3,
 		Worked = 5,
 		NoWorked = 7,
-		VoluntaryBlocking = 9
+		VoluntaryBlocking = 9,
+		Dissolved = 11
 	};
 
 
@@ -61,6 +62,8 @@ namespace InternetInterface.Models
 					return StatusType.Worked;
 				if (ShortName == "NoWorked")
 					return StatusType.NoWorked;
+				if (ShortName == "Dissolved")
+					return StatusType.Dissolved;
 				return 0;
 			}
 		}

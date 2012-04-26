@@ -164,7 +164,7 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool ConnectionPaid { get; set; }
 
-		[BelongsTo, Auditable("Дом")]
+		[BelongsTo(Cascade = CascadeEnum.SaveUpdate), Auditable("Дом")]
 		public virtual House HouseObj { get; set; }
 
 		[Property]

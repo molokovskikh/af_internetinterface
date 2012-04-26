@@ -262,7 +262,7 @@ namespace InternetInterface.Models
 		[HasMany(ColumnKey = "Client", OrderBy = "Date")]
 		public virtual IList<Contact> Contacts { get; set; }
 	
-		[HasMany(ColumnKey = "Client", OrderBy = "Switch", Lazy = true)]
+		[HasMany(ColumnKey = "Client", OrderBy = "Switch", Lazy = true, Cascade = ManyRelationCascadeEnum.SaveUpdate)]
 		public virtual IList<ClientEndpoints> Endpoints { get; set; }
 
 		public virtual ClientEndpoints FirstPoint()
