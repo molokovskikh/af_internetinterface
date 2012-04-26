@@ -1087,6 +1087,8 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 		{
 			var client = Client.Find(ClientID);
 			client.AdditionalStatus = AdditionalStatus.Find((uint) AdditionalStatusType.Refused);
+			client.Endpoints.Clear();
+			client.PhysicalClient.HouseObj = null;
 			client.Update();
 			foreach (var graph in ConnectGraph.Queryable.Where(c => c.Client == client))
 			{
