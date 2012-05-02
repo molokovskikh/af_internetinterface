@@ -32,7 +32,7 @@ namespace InternetInterface.Background
 
 		public void DoStart()
 		{
-			StandaloneInitializer.Init();
+			StandaloneInitializer.Init(typeof(SendProcessor).Assembly);
 
 			using(new SessionScope())
 			{
