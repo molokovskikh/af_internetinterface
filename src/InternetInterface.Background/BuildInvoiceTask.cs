@@ -32,7 +32,7 @@ namespace InternetInterface.Background
 				.ToList();
 
 			foreach (var client in clients) {
-				var writeOffs = session.Query<WriteOff>().Where(w => w.Client == client).ToList();
+				var writeOffs = session.Query<WriteOff>().Where(w => w.Client == client && w.WriteOffDate >= begin && w.WriteOffDate < end).ToList();
 
 				var invoice = new Invoice(client, period, writeOffs);
 				session.Save(invoice);

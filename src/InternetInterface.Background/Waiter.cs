@@ -21,7 +21,7 @@ namespace InternetInterface.Background
 
 		public Waiter()
 		{
-			Delay = (int) TimeSpan.FromMinutes(1).TotalMilliseconds;
+			Delay = (int) TimeSpan.FromHours(1).TotalMilliseconds;
 			Action = () => {
 				SendProcessor.Process();
 

@@ -151,9 +151,9 @@ namespace InternetInterface.Models
 					return new DateTime(year, 2, 1);
 				case Interval.March:
 					return new DateTime(year, 3, 1);
-				case Interval.May:
-					return new DateTime(year, 4, 1);
 				case Interval.April:
+					return new DateTime(year, 4, 1);
+				case Interval.May:
 					return new DateTime(year, 5, 1);
 				case Interval.June:
 					return new DateTime(year, 6, 1);
