@@ -6,6 +6,7 @@ using Castle.MonoRail.Framework.Configuration;
 using Castle.MonoRail.Framework.Internal;
 using Castle.MonoRail.Framework.Services;
 using Castle.MonoRail.Views.Brail;
+using Common.Web.Ui.Models.Jobs;
 using Common.Web.Ui.MonoRailExtentions;
 
 namespace InternetInterface.Helpers
@@ -21,7 +22,7 @@ namespace InternetInterface.Helpers
 				new[] {
 					Assembly.Load("InternetInterface"),
 				},
-				ActiveRecordSectionHandler.Instance);
+				ActiveRecordSectionHandler.Instance, typeof(JobLog));
 
 			return InitMailer(assembly);
 		}
