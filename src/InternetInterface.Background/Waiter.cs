@@ -39,7 +39,7 @@ namespace InternetInterface.Background
 				var mailer = new Mailer {
 					SiteRoot = ConfigurationManager.AppSettings["SiteRoot"]
 				};
-				var job = new ActiveRecordJob(new BuildInvoiceTask(mailer));
+				var job = new ActiveRecordJob(new BuildInvoiceTask(mailer)) {Name = "InternetInvoce"};
 				jobs.Add(job);
 			}
 
