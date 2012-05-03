@@ -103,7 +103,6 @@
 
 
 		 $(function () {
-			 $('#graph_date').datepicker("setDate", '01/26/2009');
 			 $('#graph_date').datepicker({
 				 inline: true
 			 }).change(function () { fillData(); });
