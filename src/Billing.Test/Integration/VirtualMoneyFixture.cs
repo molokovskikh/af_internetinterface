@@ -34,7 +34,7 @@ namespace Billing.Test.Integration
 
 			using (new SessionScope()) {
 				_client.Refresh();
-				Assert.That(_client.PhysicalClient.VirtualBalance, Is.EqualTo(Decimal.Round(paySum + 5, 5)));
+				Assert.That(_client.PhysicalClient.VirtualBalance, Is.EqualTo(Decimal.Round(paySum + 5, 2)));
 				Assert.That(_client.PhysicalClient.Balance, Is.EqualTo(Decimal.Round(paySum + 5 + 100, 2)));
 				Assert.That(_client.PhysicalClient.MoneyBalance, Is.EqualTo(100m));
 			}
@@ -45,7 +45,7 @@ namespace Billing.Test.Integration
 				var writeOff = WriteOff.ForClient(_client).FirstOrDefault();
 				Assert.That(writeOff.WriteOffSum, Is.EqualTo(Decimal.Round(writeOff.VirtualSum, 2)));
 				_client.Refresh();
-				Assert.That(_client.PhysicalClient.VirtualBalance, Is.EqualTo(Decimal.Round(5, 5)));
+				Assert.That(_client.PhysicalClient.VirtualBalance, Is.EqualTo(Decimal.Round(5, 2)));
 				Assert.That(_client.PhysicalClient.MoneyBalance, Is.EqualTo(100));
 			}
 
@@ -54,11 +54,11 @@ namespace Billing.Test.Integration
 			using (new SessionScope()) {
 			var writeOff = WriteOff.ForClient(_client).Last();
 				Assert.That(writeOff.WriteOffSum, Is.EqualTo(Decimal.Round(paySum, 2)));
-				Assert.That(writeOff.VirtualSum, Is.EqualTo(Decimal.Round(5, 2)));
+				Assert.That(writeOff.VirtualSum, Is.EqualTo(Decimal.Round(5, 5)));
 				Assert.That(writeOff.MoneySum, Is.EqualTo(Decimal.Round(paySum - 5, 5)));
 				_client.Refresh();
 				Assert.That(_client.PhysicalClient.VirtualBalance, Is.EqualTo(0));
-				Assert.That(_client.PhysicalClient.MoneyBalance, Is.EqualTo(Decimal.Round(100 - paySum + 5, 5)));
+				Assert.That(_client.PhysicalClient.MoneyBalance, Is.EqualTo(Decimal.Round(100 - paySum + 5, 2)));
 			}
 
 			billing.Compute();
@@ -66,7 +66,7 @@ namespace Billing.Test.Integration
 			using (new SessionScope()) {
 			var writeOff = WriteOff.ForClient(_client).Last();
 				Assert.That(writeOff.WriteOffSum, Is.EqualTo(Decimal.Round(paySum, 2)));
-				Assert.That(writeOff.VirtualSum, Is.EqualTo(Decimal.Round(0, 2)));
+				Assert.That(writeOff.VirtualSum, Is.EqualTo(Decimal.Round(0, 5)));
 				Assert.That(writeOff.MoneySum, Is.EqualTo(Decimal.Round(paySum, 5)));
 				_client.Refresh();
 				Assert.That(_client.PhysicalClient.VirtualBalance, Is.EqualTo(0));

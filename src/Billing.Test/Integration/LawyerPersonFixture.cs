@@ -70,5 +70,18 @@ namespace Billing.Test.Integration
 				Assert.IsTrue(lawyerClient.SendEmailNotification);
 			}
 		}
+
+		[Test]
+		public void Make_last_write_off_round_for_tariff()
+		{
+			for(var i = 1; i <= 30; i++) {
+				SystemTime.Now = () => new DateTime(2012, 4, i);
+				billing.Compute();
+			}
+			using (new SessionScope()) {
+				var writeOffs = WriteOff.Queryable.Where(w => w.Client == lawyerClient).ToList();
+				Assert.That(writeOffs.Sum(w => w.WriteOffSum), Is.EqualTo(1000));
+			}
+		}
 	}
 }

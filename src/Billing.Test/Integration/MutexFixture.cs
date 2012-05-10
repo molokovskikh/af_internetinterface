@@ -31,32 +31,21 @@ namespace Billing.Test.Integration
 		public void BaseMutexFixture()
 		{
 			var thread = new Thread(_billing.On);
-			try {
-				thread.Start();
-			}
-			finally {
-				thread.Join();
-			}
+			thread.Start();
+			thread.Join();
 			_billing.Run();
 		}
 
 		[Test]
 		public void NoWriteOff()
 		{
-			//Assert.Throws<NullReferenceException>(_billing.On);
-
 			var thread = new Thread(() => {
 				_billing.On();
 				Thread.Sleep(500);
 			});
-			try
-			{
-				thread.Start();
-			}
-			catch { }
-			finally {
-				thread.Join();
-			}
+
+			thread.Start();
+			thread.Join();
 
 			using (new SessionScope()) {
 				MainBillingFixture.CreateClient();

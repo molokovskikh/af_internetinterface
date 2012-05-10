@@ -10,6 +10,7 @@ using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework.Config;
 using Castle.ActiveRecord.Framework.Internal.EventListener;
 using Common.Tools;
+using Common.Tools.Calendar;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
@@ -411,41 +412,9 @@ namespace Billing
 					_log.Error(string.Format("Ошибка при обработке клиента {0}", id), ex);
 				}
 			}
-			var lawyerIds = new List<uint>();
-			using (new SessionScope()) {
-				lawyerIds = Client.Queryable.Where(c => c.LawyerPerson != null && c.LawyerPerson.Tariff != null && !c.PaidDay).Select(c => c.Id).ToList();
-			}
-			foreach (var id in lawyerIds) {
-				try
-				{
-					using (var transaction = new TransactionScope(OnDispose.Rollback))
-					{
-						var client = ActiveRecordMediator<Client>.FindByPrimaryKey(id);
-						var person = client.LawyerPerson;
-						if (!client.Disabled)
-						{
-							var thisDate = SystemTime.Now();
-							decimal spis = person.Tariff.Value / DateTime.DaysInMonth(thisDate.Year, thisDate.Month);
-							person.Balance -= spis;
-							person.UpdateAndFlush();
-							if (spis > 0)
-								new WriteOff
-								{
-									Client = client,
-									WriteOffDate = SystemTime.Now(),
-									WriteOffSum = spis
-								}.SaveAndFlush();
-							client.PaidDay = true;
-							client.Update();
-						}
-						transaction.VoteCommit();
-					}
-				}
-				catch (Exception ex) {
-					errorCount ++;
-					_log.Error(string.Format("Ошибка при обработке клиента {0}", id), ex);
-				}
-			}
+			ProcessAll(WriteOffFromLawyerPerson,
+				() => Client.Queryable.Where(c => c.LawyerPerson != null && c.LawyerPerson.Tariff != null && !c.PaidDay),
+				ref errorCount);
 			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
 				var agentSettings = AgentTariff.GetPriceForAction(AgentActions.AgentPayIndex);
 				var needToAgentSum = AgentTariff.GetPriceForAction(AgentActions.WorkedClient);
@@ -479,6 +448,53 @@ namespace Billing
 				ClientService.Queryable.ToList().Each(cs => cs.WriteOff());
 
 				transaction.VoteCommit();
+			}
+		}
+
+		private static void WriteOffFromLawyerPerson(Client client)
+		{
+			var person = client.LawyerPerson;
+			if (client.Disabled)
+				return;
+
+			var now = SystemTime.Now();
+			var daysInMonth = DateTime.DaysInMonth(now.Year, now.Month);
+			var tariff = person.Tariff.Value;
+			var sum = tariff/daysInMonth;
+			if (sum == 0)
+				return;
+
+			//если это последний день месяца то нам нужно учесть накопивщуюся ошибку округления
+			if (now.Date == now.Date.LastDayOfMonth()) {
+				sum += tariff - Math.Round(tariff/daysInMonth, 2) * daysInMonth;
+			}
+
+			person.Balance -= sum;
+			person.UpdateAndFlush();
+			new WriteOff(client, sum).SaveAndFlush();
+		}
+
+		private void ProcessAll(Action<Client> action, Func<IQueryable<Client>> query, ref int errorCount)
+		{
+			var lawyerIds = new List<uint>();
+			using (new SessionScope()) {
+				lawyerIds = query().Select(c => c.Id).ToList();
+			}
+
+			foreach (var id in lawyerIds) {
+				try {
+					using (var transaction = new TransactionScope(OnDispose.Rollback)) {
+						var client = ActiveRecordMediator<Client>.FindByPrimaryKey(id);
+						action(client);
+						client.PaidDay = true;
+						client.Update();
+						transaction.VoteCommit();
+					}
+				}
+				catch (Exception ex) {
+					errorCount++;
+					_log.Error(string.Format("Ошибка при обработке клиента {0}", id), ex);
+				}
 			}
 		}
 	}
