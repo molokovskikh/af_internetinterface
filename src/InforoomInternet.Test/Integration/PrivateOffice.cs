@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Castle.ActiveRecord;
+﻿using Castle.ActiveRecord;
 using Castle.MonoRail.Framework;
 using Castle.MonoRail.TestSupport;
 using InforoomInternet.Controllers;
-using InforoomInternet.Models;
-using InternetInterface;
-using InternetInterface.Models;
-using log4net.Config;
 using NUnit.Framework;
-using log4net;
+
 namespace InforoomInternet.Test.Integration
 {
 	[TestFixture]
@@ -25,19 +17,6 @@ namespace InforoomInternet.Test.Integration
 			controller = new PrivateOffice();
 			PrepareController(controller);
 		}
-
-		private int countVhog(string text, string virog)
-		{
-			var count = 0;
-			var lastVh = 0;
-			while (lastVh >= 0)
-			{
-				lastVh = text.IndexOf(virog, lastVh + 1);
-				count++;
-			}
-			return count - 1;
-		}
-
 
 		[Test]
 		public void ProvateOffice()

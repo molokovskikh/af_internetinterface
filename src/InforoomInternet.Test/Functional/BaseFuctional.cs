@@ -1,50 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading;
-using CassiniDev;
 using Castle.ActiveRecord;
-using InternetInterface;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 using WatiN.Core;
-using WatiN.Core.Native.Windows;
 
-namespace InforoomInternet.Test.Unit
+namespace InforoomInternet.Test.Functional
 {
 	[TestFixture]
 	internal class BaseFunctional : WatinFixture
 	{
-		private Server _webServer;
-
-		[SetUp]
-		public void SetupFixture()
-		{
-			var port = int.Parse(ConfigurationManager.AppSettings["webPort"]);
-
-			var webDir = string.Empty;
-			if (Environment.MachineName.ToLower() == "devsrv")
-				webDir = ConfigurationManager.AppSettings["webDirectoryDev"];
-			else
-				webDir = ConfigurationManager.AppSettings["webDirectory"];
-
-			_webServer = new Server(port, "/", Path.GetFullPath(webDir), false, true);
-			_webServer.Start();
-			Settings.Instance.AutoMoveMousePointerToTopLeft = false;
-			Settings.Instance.MakeNewIeInstanceVisible = false;
-		}
-
-		[TearDown]
-		public void TeardownFixture()
-		{
-			_webServer.ShutDown();
-		}
-
 		[Test]
 		public void FeedBackTest()
 		{
@@ -54,7 +23,6 @@ namespace InforoomInternet.Test.Unit
 				Assert.That(ie.Text, Is.StringContaining("Спасибо, Ваша заявка принята."));
 			}
 		}
-
 
 		[Test]
 		public void WarningTest()

@@ -28,7 +28,6 @@ namespace InforoomInternet.Test
 						{Environment.ConnectionStringName, "DB"},
 						{Environment.ProxyFactoryFactoryClass, "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle" },
 						{Environment.Hbm2ddlKeyWords, "none"},
-						//{Environment.ShowSql, "true"}
 					});
 				ActiveRecordStarter.Initialize(
 					new[] {
@@ -37,8 +36,6 @@ namespace InforoomInternet.Test
 						Assembly.Load("InternetInterface")
 					},
 					configuration);
-				//ActiveRecord.SetupFilters();
-				//ActiveRecordStarter.UpdateSchema();
 			}
 		}
 	}

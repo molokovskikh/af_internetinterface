@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Text;
 using CassiniDev;
-using Castle.ActiveRecord;
-using Castle.ActiveRecord.Framework.Config;
-using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 using System.Configuration;
+using WatiN.Core;
 using log4net;
-using Settings = WatiN.Core.Settings;
 
-namespace InternetInterface.Test.Functional
+namespace InforoomInternet.Test.Functional
 {
 	[SetUpFixture]
 	public class Setup
