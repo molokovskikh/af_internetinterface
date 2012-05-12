@@ -1,4 +1,4 @@
 ﻿<div id="mail_address">
 	Кому: ${invoice.Client.LawyerPerson.Name}<br>
-	Куда: ${invoice.Client.LawyerPerson.ActualAdress}<br>
+	Куда: ${invoice.Client.LawyerPerson.MailingAddress}<br>
 </div>

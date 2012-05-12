@@ -43,18 +43,16 @@ namespace Billing.Test.Integration
 		{
 			var phisicalClient = CreatePhisicalClient(statusBlocked, balance);
 			phisicalClient.Save();
-			return new Client
-					{
-						Disabled = false,
-						Sale = 0,
-						//FirstLease = true,
-						DebtDays = 0,
-						Name = name,
-						PhysicalClient = phisicalClient,
-						BeginWork = DateTime.Now ,
-						RatedPeriodDate = DateTime.Now,
-						YearCycleDate = DateTime.Now
-					};
+			return new Client {
+				Disabled = false,
+				Sale = 0,
+				DebtDays = 0,
+				Name = name,
+				PhysicalClient = phisicalClient,
+				BeginWork = DateTime.Now ,
+				RatedPeriodDate = DateTime.Now,
+				YearCycleDate = DateTime.Now
+			};
 		}
 
 		public static PhysicalClients CreatePhisicalClient(bool statusBlocked, decimal balance)
