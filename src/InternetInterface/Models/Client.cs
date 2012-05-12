@@ -221,7 +221,7 @@ namespace InternetInterface.Models
 		{
 			if (LawyerPerson == null)
 				return false;
-			var haveService = ClientServices.FirstOrDefault(cs => cs.Service == Service.Type<WorkLawyer>());
+			var haveService = ClientServices.FirstOrDefault(cs => cs.Service.Id == Service.Type<WorkLawyer>().Id);
 			var needShowWarning = LawyerPerson.NeedShowWarning();
 			if (haveService != null && haveService.Activated)
 				return false;
