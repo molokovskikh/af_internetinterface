@@ -131,31 +131,6 @@ namespace Billing
 			}
 		}
 
-		private decimal WriteOff(PhysicalClients physicalClient, decimal dec, out bool virtualAndMoneyParts, out bool virtualWriteOffs)
-		{
-			var VirtualAndMoneyParts = false;
-			var VirtualWriteOffs = false;
-			var physicalPart = dec;
-			if (physicalClient.VirtualBalance > 0) {
-				if (physicalClient.VirtualBalance - dec >= 0) {
-					physicalClient.VirtualBalance -= dec;
-					VirtualWriteOffs = true;
-				}
-				else {
-					physicalPart = dec - physicalClient.VirtualBalance;
-					physicalClient.MoneyBalance -= physicalPart;
-					physicalClient.VirtualBalance -= dec - physicalPart;
-					VirtualAndMoneyParts = true;
-				}
-			}
-			else {
-				physicalClient.MoneyBalance -= physicalPart;
-			}
-			virtualAndMoneyParts = VirtualAndMoneyParts;
-			virtualWriteOffs = VirtualWriteOffs;
-			return physicalPart;
-		}
-
 		public void OnMethod()
 		{
 			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
@@ -168,17 +143,14 @@ namespace Billing
 			                                		.Add(Restrictions.IsNotNull("BeginWork"))
 			                                		.Add(Restrictions.IsNotNull("PhysicalClient")));
 				foreach (var newClient in newClients) {
-					var phisCl = newClient.PhysicalClient;
-					phisCl.Balance -= phisCl.ConnectSum;
-					phisCl.ConnectionPaid = true;
-					phisCl.UpdateAndFlush();
+					var client = newClient.PhysicalClient;
+					client.ConnectionPaid = true;
+					var writeOff = client.WriteOff(client.ConnectSum);
+					client.UpdateAndFlush();
 					newClient.UpdateAndFlush();
-					if (phisCl.ConnectSum > 0)
-					new WriteOff {
-						Client = newClient,
-						WriteOffDate = SystemTime.Now(),
-						WriteOffSum = phisCl.ConnectSum
-					}.SaveAndFlush();
+
+					if (writeOff != null)
+						writeOff.Save();
 				}
 				transaction.VoteCommit();
 			}
@@ -229,15 +201,7 @@ namespace Billing
 					var client = userWriteOff.Client;
 					if (client.PhysicalClient != null) {
 						var physicalClient = client.PhysicalClient;
-
-						var dec = userWriteOff.Sum;
-
-						physicalClient.Balance -= dec;
-
-						var virtualAndMoneyParts = false;
-						var virtualWriteOffs = false;
-						WriteOff(physicalClient, dec, out virtualAndMoneyParts, out virtualWriteOffs);
-
+						physicalClient.WriteOff(userWriteOff.Sum);
 						physicalClient.Update();
 					}
 					if (client.LawyerPerson != null) {
@@ -374,7 +338,7 @@ namespace Billing
 		private void WriteOffFromPhysicalClient(Client client)
 		{
 			var phisicalClient = client.PhysicalClient;
-			var balance = Convert.ToDecimal(phisicalClient.Balance);
+			var balance = phisicalClient.Balance;
 			if ((balance >= 0) &&
 				(!client.Disabled) &&
 					(client.RatedPeriodDate != DateTime.MinValue) && (client.RatedPeriodDate != null)) {
@@ -412,21 +376,18 @@ namespace Billing
 				if (client.RatedPeriodDate != DateTime.MinValue && client.RatedPeriodDate != null) {
 					if (client.StartNoBlock == null)
 						client.StartNoBlock = SystemTime.Now();
-					var toDt = client.GetInterval();
+					var daysInInterval = client.GetInterval();
 					var price = client.GetPrice();
-					var dec = price/toDt;
+					var sum = price/daysInInterval;
 
-
-					phisicalClient.Balance -= dec;
-
-					bool virtualAndMoneyParts;
-					bool virtualWriteOffs;
-
-					var physicalPart = WriteOff(phisicalClient, dec, out virtualAndMoneyParts, out virtualWriteOffs);
+					var writeOff = phisicalClient.WriteOff(sum);
+					if (writeOff != null)
+						writeOff.Save();
 
 					phisicalClient.Update();
+
 					var bufBal = phisicalClient.Balance;
-					var minimumBalance = bufBal - dec < 0;
+					var minimumBalance = bufBal - sum < 0;
 					if (minimumBalance) {
 						client.ShowBalanceWarningPage = true;
 						if (client.SendSmsNotifocation) {
@@ -449,15 +410,6 @@ namespace Billing
 					else {
 						client.ShowBalanceWarningPage = false;
 					}
-					if (dec > 0)
-						new WriteOff {
-							Client = client,
-							WriteOffDate = SystemTime.Now(),
-							WriteOffSum = dec,
-							MoneySum = !virtualWriteOffs ? physicalPart : 0m,
-							VirtualSum = virtualAndMoneyParts ? dec - physicalPart : virtualWriteOffs ? dec : 0m,
-							Sale = client.Sale
-						}.Save();
 				}
 			}
 			if (client.CanBlock()) {

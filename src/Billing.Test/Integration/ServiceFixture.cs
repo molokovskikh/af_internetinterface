@@ -46,7 +46,7 @@ namespace Billing.Test.Integration
 			using (new SessionScope()) {
 				client.Refresh();
 				Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(1));
-				Assert.That(WriteOff.Queryable.Where(w => w.Client == client).Count(), Is.EqualTo(0));
+				Assert.That(WriteOff.Queryable.Count(w => w.Client == client), Is.EqualTo(0));
 				Assert.IsFalse(client.PaidDay);
 			}
 		}

@@ -36,6 +36,8 @@ namespace Billing.Test.Integration
 		[SetUp]
 		public void CreateBilling()
 		{
+			SystemTime.Reset();
+
 			using (new SessionScope()) {
 				billing = new MainBillingForTest();
 				PrepareTest();

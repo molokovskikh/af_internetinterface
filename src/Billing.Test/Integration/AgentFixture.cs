@@ -16,7 +16,6 @@ namespace Billing.Test.Integration
 		[Test]
 		public void Query_test()
 		{
-			//QueryCatcher.Catch();
 			using (new SessionScope()) {
 				var request = new Request {
 					Registrator = InitializeContent.Partner,

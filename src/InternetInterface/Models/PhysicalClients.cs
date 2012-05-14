@@ -1,18 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using Castle.ActiveRecord;
-using Castle.ActiveRecord.Linq;
 using Castle.Components.Validator;
-using Castle.MonoRail.Framework;
-using Common.Models.Helpers;
+using Common.Tools;
 using Common.Web.Ui.Helpers;
-using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models.Universal;
-//using NHibernate.Transform;
 
 namespace InternetInterface.Models
 {
@@ -57,7 +50,6 @@ namespace InternetInterface.Models
 		public string Swith_adr { get; set; }
 		public string swith_IP { get; set; }
 
-		//public int? Module { get; set; }
 		public int? PackageId { get; set; }
 
 		public string Port { get; set; }
@@ -155,7 +147,7 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual decimal MoneyBalance { get; set; }
 
-		[/*ValidateIsUnique("Email должен быть уникальный"),*/ ValidateEmail("Ошибка ввода (требуется adr@serv.dom)")]
+		[ValidateEmail("Ошибка ввода (требуется adr@serv.dom)")]
 		public virtual string Email { get; set; }
 
 		[Property]
@@ -173,18 +165,15 @@ namespace InternetInterface.Models
 		[Property, ValidateNonEmpty("Введите сумму"), ValidateDecimal("Непрвильно введено значение суммы")]
 		public virtual decimal ConnectSum { get; set; }
 
-		/*[BelongsTo]
-		public virtual Request Request { get; set; }*/
-
 		[OneToOne(PropertyRef = "PhysicalClient")]
 		public virtual Client Client { get; set; }
 
 		public virtual string GetAdress()
 		{
-			return string.Format("ул. {0} д. {1} {2} кв. {3} Подъезд {4} Этаж {5}",
+			return String.Format("ул. {0} д. {1} {2} кв. {3} Подъезд {4} Этаж {5}",
 					Street,
 					House,
-					!string.IsNullOrEmpty(CaseHouse) ? " Корп " + CaseHouse : string.Empty,
+					!String.IsNullOrEmpty(CaseHouse) ? " Корп " + CaseHouse : String.Empty,
 					Apartment,
 					Entrance,
 					Floor);
@@ -192,7 +181,7 @@ namespace InternetInterface.Models
 
 		public virtual string GetCutAdress()
 		{
-			return string.Format("ул. {0} д. {1} кв. {2}", Street, House, Apartment);
+			return String.Format("ул. {0} д. {1} кв. {2}", Street, House, Apartment);
 		}
 
 		public virtual string HowManyToPay(bool change)
@@ -200,32 +189,67 @@ namespace InternetInterface.Models
 			var format = change ? "({0})" : "{0}";
 			if (Tariff == null)
 			{
-				return string.Empty;
+				return String.Empty;
 			}
 			else
 			{
 				var pay = Tariff.Price - Convert.ToDecimal(Balance);
-				return string.Format(format, Convert.ToString(pay <= 0 ? 0 : pay));
+				return String.Format(format, Convert.ToString(pay <= 0 ? 0 : pay));
 			}
 		}
 
 
-		public static bool RegistrLogicClient(PhysicalClients _client, uint _tariff, uint house,
+		public static bool RegistrLogicClient(PhysicalClients client, uint tariffId, uint houseId,
 			ValidatorRunner validator)
 		{
-			if (validator.IsValid(_client))
+			if (validator.IsValid(client))
 			{
-				var _house = Models.House.Find(house);;
-				_client.HouseObj = _house;
-				_client.Street = _house.Street;
-				_client.House = _house.Number;
-				_client.CaseHouse = _house.Case;
-				_client.Tariff = Tariff.Find(_tariff);
-				_client.Password = CryptoPass.GetHashString(_client.Password);
-				_client.Save();
+				var house = ActiveRecordBase<House>.Find(houseId);
+				client.HouseObj = house;
+				client.Street = house.Street;
+				client.House = house.Number;
+				client.CaseHouse = house.Case;
+				client.Tariff = Tariff.Find(tariffId);
+				client.Password = CryptoPass.GetHashString(client.Password);
+				client.Save();
 				return true;
 			}
 			return false;
+		}
+
+		public virtual WriteOff WriteOff(decimal sum)
+		{
+			if (sum <= 0)
+				return null;
+
+			Balance -= sum;
+			var virtualAndMoneyParts = false;
+			var virtualWriteOffs = false;
+			var physicalPart = sum;
+			if (VirtualBalance > 0) {
+				if (VirtualBalance - sum >= 0) {
+					VirtualBalance -= sum;
+					virtualWriteOffs = true;
+				}
+				else {
+					physicalPart = sum - VirtualBalance;
+					MoneyBalance -= physicalPart;
+					VirtualBalance -= sum - physicalPart;
+					virtualAndMoneyParts = true;
+				}
+			}
+			else {
+				MoneyBalance -= physicalPart;
+			}
+
+			return new WriteOff {
+				Client = Client,
+				WriteOffDate = SystemTime.Now(),
+				WriteOffSum = sum,
+				MoneySum = !virtualWriteOffs ? physicalPart : 0m,
+				VirtualSum = virtualAndMoneyParts ? sum - physicalPart : virtualWriteOffs ? sum : 0m,
+				Sale = Client.Sale
+			};
 		}
 	}
 }
