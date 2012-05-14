@@ -32,6 +32,8 @@ namespace Billing
 		private readonly ILog _log = LogManager.GetLogger(typeof (MainBilling));
 
 		private Mutex _mutex = new Mutex();
+		private SaleSettings _saleSettings;
+
 		public List<SmsMessage> Messages;
 
 		public MainBilling()
@@ -290,9 +292,7 @@ namespace Billing
 
 		public virtual void Compute()
 		{
-			List<uint> clients;
 			int errorCount = 0;
-			SaleSettings saleSettings;
 			using (new SessionScope()) {
 
 				var settings = ActiveRecordMediator<InternetSettings>.FindFirst();
@@ -300,121 +300,17 @@ namespace Billing
 				settings.Save();
 
 				Messages = new List<SmsMessage>();
-				clients = Client.Queryable.Where(c => c.PhysicalClient != null && !c.PaidDay).Select(c => c.Id).ToList();
-				saleSettings  = SaleSettings.FindFirst();
+				_saleSettings  = SaleSettings.FindFirst();
 			}
-			foreach (var id in clients) {
-				try {
-					using (var transaction = new TransactionScope(OnDispose.Rollback)) {
-						var client = ActiveRecordMediator<Client>.FindByPrimaryKey(id);
-						var phisicalClient = client.PhysicalClient;
-						var balance = Convert.ToDecimal(phisicalClient.Balance);
-						if ((balance >= 0) &&
-							(!client.Disabled) &&
-							(client.RatedPeriodDate != DateTime.MinValue) && (client.RatedPeriodDate != null)) {
-							var dtNow = SystemTime.Now();
 
-							if ((client.RatedPeriodDate.Value.AddMonths(1).Date - dtNow.Date).Days == -client.DebtDays) {
-								var dtFrom = client.RatedPeriodDate.Value;
-								var dtTo = dtNow;
-								client.DebtDays += dtFrom.Day - dtTo.Day;
-								var thisMonth = dtNow.Month;
-								client.RatedPeriodDate = dtNow.AddDays(client.DebtDays);
-								while (client.RatedPeriodDate.Value.Month != thisMonth) {
-									client.RatedPeriodDate = client.RatedPeriodDate.Value.AddDays(-1);
-								}
-							}
-							else {
-								if ((client.RatedPeriodDate.Value.AddMonths(1).Date - dtNow.Date).TotalDays < -client.DebtDays) {
-									client.RatedPeriodDate = dtNow.AddDays(client.DebtDays);;
-									client.DebtDays = 0;
-								}
-							}
-						}
-						if (client.StartNoBlock != null) {
-							decimal sale = 0;
-							var monthOnStart = SystemTime.Now().TotalMonth(client.StartNoBlock.Value);
-							if (monthOnStart >= saleSettings.PeriodCount)
-								sale = saleSettings.MinSale + (monthOnStart - saleSettings.PeriodCount) * saleSettings.SaleStep;
-							if (sale > saleSettings.MaxSale)
-								sale = saleSettings.MaxSale;
-							if (sale >= saleSettings.MinSale)
-								client.Sale = sale;
-						}
-						if (client.GetPrice() > 0 && !client.PaidDay) {
-							if (client.RatedPeriodDate != DateTime.MinValue && client.RatedPeriodDate != null) {
-								if (client.StartNoBlock == null)
-									client.StartNoBlock = SystemTime.Now();
-								var toDt = client.GetInterval();
-								var price = client.GetPrice();
-								var dec = price / toDt;
-								
+			ProcessAll(WriteOffFromPhysicalClient,
+				() => Client.Queryable.Where(c => c.PhysicalClient != null && !c.PaidDay),
+				ref errorCount);
 
-								phisicalClient.Balance -= dec;
-
-								bool virtualAndMoneyParts;
-								bool virtualWriteOffs;
-
-								var physicalPart = WriteOff(phisicalClient, dec, out virtualAndMoneyParts, out virtualWriteOffs);
-
-								phisicalClient.Update();
-								var bufBal = phisicalClient.Balance;
-								var minimumBalance = bufBal - dec < 0;
-								if (minimumBalance) {
-									client.ShowBalanceWarningPage = true;
-									if (client.SendSmsNotifocation) {
-										if (phisicalClient.Balance > 0) { 
-											var message = string.Format("Ваш баланс {0} руб. Завтра доступ в сеть будет заблокирован.", client.PhysicalClient.Balance.ToString("0.00"));
-											var now = SystemTime.Now();
-											DateTime shouldBeSendDate;
-											if (now.Hour < 22)
-												shouldBeSendDate = new DateTime(now.Year, now.Month, now.Day, 12, 0, 0);
-											else {
-												shouldBeSendDate = SystemTime.Now().Date.AddDays(1).AddHours(12);
-											}
-											var smsMessage = new SmsMessage(client, message, shouldBeSendDate);
-											smsMessage.Save();
-											Messages.Add(smsMessage);
-										}
-									}
-								}
-								else {
-									client.ShowBalanceWarningPage = false;
-								}
-								if (dec > 0)
-								new WriteOff {
-									Client = client,
-									WriteOffDate = SystemTime.Now(),
-									WriteOffSum = dec,
-									MoneySum = !virtualWriteOffs ? physicalPart : 0m,
-									VirtualSum = virtualAndMoneyParts ? dec - physicalPart : virtualWriteOffs ? dec : 0m,
-									Sale = client.Sale
-								}.Save();
-							}
-						}
-						if (client.CanBlock()) {
-							client.Disabled = true; 
-							client.Sale = 0;
-							client.StartNoBlock = null;
-							client.Status = Status.Find((uint) StatusType.NoWorked);
-						}
-						if (client.YearCycleDate == null || (SystemTime.Now().Date >= client.YearCycleDate.Value.AddYears(1).Date)) {
-							client.FreeBlockDays = FreeDaysVoluntaryBlockin;
-							client.YearCycleDate = SystemTime.Now();
-						}
-						client.PaidDay = true;
-						client.Update();
-						transaction.VoteCommit();
-					}
-				}
-				catch (Exception ex) {
-					errorCount ++;
-					_log.Error(string.Format("Ошибка при обработке клиента {0}", id), ex);
-				}
-			}
 			ProcessAll(WriteOffFromLawyerPerson,
 				() => Client.Queryable.Where(c => c.LawyerPerson != null && c.LawyerPerson.Tariff != null && !c.PaidDay),
 				ref errorCount);
+
 			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
 				var agentSettings = AgentTariff.GetPriceForAction(AgentActions.AgentPayIndex);
 				var needToAgentSum = AgentTariff.GetPriceForAction(AgentActions.WorkedClient);
@@ -451,6 +347,131 @@ namespace Billing
 			}
 		}
 
+		private void ProcessAll(Action<Client> action, Func<IQueryable<Client>> query, ref int errorCount)
+		{
+			var ids = new List<uint>();
+			using (new SessionScope()) {
+				ids = query().Select(c => c.Id).ToList();
+			}
+
+			foreach (var id in ids) {
+				try {
+					using (var transaction = new TransactionScope(OnDispose.Rollback)) {
+						var client = ActiveRecordMediator<Client>.FindByPrimaryKey(id);
+						action(client);
+						client.PaidDay = true;
+						client.Update();
+						transaction.VoteCommit();
+					}
+				}
+				catch (Exception ex) {
+					errorCount++;
+					_log.Error(string.Format("Ошибка при обработке клиента {0}", id), ex);
+				}
+			}
+		}
+
+		private void WriteOffFromPhysicalClient(Client client)
+		{
+			var phisicalClient = client.PhysicalClient;
+			var balance = Convert.ToDecimal(phisicalClient.Balance);
+			if ((balance >= 0) &&
+				(!client.Disabled) &&
+					(client.RatedPeriodDate != DateTime.MinValue) && (client.RatedPeriodDate != null)) {
+				var dtNow = SystemTime.Now();
+
+				if ((client.RatedPeriodDate.Value.AddMonths(1).Date - dtNow.Date).Days == -client.DebtDays) {
+					var dtFrom = client.RatedPeriodDate.Value;
+					var dtTo = dtNow;
+					client.DebtDays += dtFrom.Day - dtTo.Day;
+					var thisMonth = dtNow.Month;
+					client.RatedPeriodDate = dtNow.AddDays(client.DebtDays);
+					while (client.RatedPeriodDate.Value.Month != thisMonth) {
+						client.RatedPeriodDate = client.RatedPeriodDate.Value.AddDays(-1);
+					}
+				}
+				else {
+					if ((client.RatedPeriodDate.Value.AddMonths(1).Date - dtNow.Date).TotalDays < -client.DebtDays) {
+						client.RatedPeriodDate = dtNow.AddDays(client.DebtDays);
+						;
+						client.DebtDays = 0;
+					}
+				}
+			}
+			if (client.StartNoBlock != null) {
+				decimal sale = 0;
+				var monthOnStart = SystemTime.Now().TotalMonth(client.StartNoBlock.Value);
+				if (monthOnStart >= _saleSettings.PeriodCount)
+					sale = _saleSettings.MinSale + (monthOnStart - _saleSettings.PeriodCount)*_saleSettings.SaleStep;
+				if (sale > _saleSettings.MaxSale)
+					sale = _saleSettings.MaxSale;
+				if (sale >= _saleSettings.MinSale)
+					client.Sale = sale;
+			}
+			if (client.GetPrice() > 0 && !client.PaidDay) {
+				if (client.RatedPeriodDate != DateTime.MinValue && client.RatedPeriodDate != null) {
+					if (client.StartNoBlock == null)
+						client.StartNoBlock = SystemTime.Now();
+					var toDt = client.GetInterval();
+					var price = client.GetPrice();
+					var dec = price/toDt;
+
+
+					phisicalClient.Balance -= dec;
+
+					bool virtualAndMoneyParts;
+					bool virtualWriteOffs;
+
+					var physicalPart = WriteOff(phisicalClient, dec, out virtualAndMoneyParts, out virtualWriteOffs);
+
+					phisicalClient.Update();
+					var bufBal = phisicalClient.Balance;
+					var minimumBalance = bufBal - dec < 0;
+					if (minimumBalance) {
+						client.ShowBalanceWarningPage = true;
+						if (client.SendSmsNotifocation) {
+							if (phisicalClient.Balance > 0) {
+								var message = string.Format("Ваш баланс {0} руб. Завтра доступ в сеть будет заблокирован.",
+									client.PhysicalClient.Balance.ToString("0.00"));
+								var now = SystemTime.Now();
+								DateTime shouldBeSendDate;
+								if (now.Hour < 22)
+									shouldBeSendDate = new DateTime(now.Year, now.Month, now.Day, 12, 0, 0);
+								else {
+									shouldBeSendDate = SystemTime.Now().Date.AddDays(1).AddHours(12);
+								}
+								var smsMessage = new SmsMessage(client, message, shouldBeSendDate);
+								smsMessage.Save();
+								Messages.Add(smsMessage);
+							}
+						}
+					}
+					else {
+						client.ShowBalanceWarningPage = false;
+					}
+					if (dec > 0)
+						new WriteOff {
+							Client = client,
+							WriteOffDate = SystemTime.Now(),
+							WriteOffSum = dec,
+							MoneySum = !virtualWriteOffs ? physicalPart : 0m,
+							VirtualSum = virtualAndMoneyParts ? dec - physicalPart : virtualWriteOffs ? dec : 0m,
+							Sale = client.Sale
+						}.Save();
+				}
+			}
+			if (client.CanBlock()) {
+				client.Disabled = true;
+				client.Sale = 0;
+				client.StartNoBlock = null;
+				client.Status = Status.Find((uint) StatusType.NoWorked);
+			}
+			if (client.YearCycleDate == null || (SystemTime.Now().Date >= client.YearCycleDate.Value.AddYears(1).Date)) {
+				client.FreeBlockDays = FreeDaysVoluntaryBlockin;
+				client.YearCycleDate = SystemTime.Now();
+			}
+		}
+
 		private static void WriteOffFromLawyerPerson(Client client)
 		{
 			var person = client.LawyerPerson;
@@ -472,30 +493,6 @@ namespace Billing
 			person.Balance -= sum;
 			person.UpdateAndFlush();
 			new WriteOff(client, sum).SaveAndFlush();
-		}
-
-		private void ProcessAll(Action<Client> action, Func<IQueryable<Client>> query, ref int errorCount)
-		{
-			var lawyerIds = new List<uint>();
-			using (new SessionScope()) {
-				lawyerIds = query().Select(c => c.Id).ToList();
-			}
-
-			foreach (var id in lawyerIds) {
-				try {
-					using (var transaction = new TransactionScope(OnDispose.Rollback)) {
-						var client = ActiveRecordMediator<Client>.FindByPrimaryKey(id);
-						action(client);
-						client.PaidDay = true;
-						client.Update();
-						transaction.VoteCommit();
-					}
-				}
-				catch (Exception ex) {
-					errorCount++;
-					_log.Error(string.Format("Ошибка при обработке клиента {0}", id), ex);
-				}
-			}
 		}
 	}
 }
