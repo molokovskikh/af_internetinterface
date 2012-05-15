@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Net;
-using System.Text.RegularExpressions;
 using Castle.ActiveRecord;
-using Castle.ActiveRecord.Framework.Internal.EventListener;
-using Castle.ActiveRecord.Linq;
-using Castle.Components.DictionaryAdapter;
-using Common.Models.Helpers;
 using Common.Tools;
 using Common.Web.Ui.Helpers;
+using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Helpers;
 using InternetInterface.Services;
 using NHibernate;
@@ -343,9 +338,8 @@ namespace InternetInterface.Models
 		}
 
 
-		public virtual IList<BaseWriteOff> GetWriteOffs(string groupedKey)
+		public virtual IList<BaseWriteOff> GetWriteOffs(ISession session, string groupedKey)
 		{
-			IList<BaseWriteOff> writeOffs = new List<BaseWriteOff>();
 			var gpoupKey = "concat(YEAR(WriteOffDate),'-',MONTH(WriteOffDate),'-',DAYOFMONTH(WriteOffDate))";
 			if (groupedKey == "day")
 				gpoupKey = "concat(YEAR(WriteOffDate),'-',MONTH(WriteOffDate),'-',DAYOFMONTH(WriteOffDate))";
@@ -353,10 +347,7 @@ namespace InternetInterface.Models
 				gpoupKey = "concat(YEAR(WriteOffDate),'-',MONTH(WriteOffDate))";
 			if (groupedKey == "year")
 				gpoupKey = "YEAR(WriteOffDate)";
-			ARSesssionHelper<BaseWriteOff>.QueryWithSession(session =>
-			{
-				var query =
-					session.CreateSQLQuery(string.Format(
+			var query = session.CreateSQLQuery(string.Format(
 @"SELECT 
 Id, 
 Sum(WriteOffSum) as WriteOffSum,
@@ -367,31 +358,21 @@ Client
 FROM internet.WriteOff W
 where Client = :clientid and WriteOffSum > 0
 group by {0} order by WriteOffDate;", gpoupKey))
-				.SetParameter("clientid", Id)
-				.SetResultTransformer(new AliasToPropertyTransformer(typeof (BaseWriteOff)));
-				writeOffs = query.List<BaseWriteOff>();
-				return query.List<BaseWriteOff>();
-			});
-			return writeOffs;
+				.SetParameter("clientid", Id);
+			return query.ToList<BaseWriteOff>();
 		}
 
-		public virtual ClientConnectInfo ConnectInfoFirst()
+		public virtual ClientConnectInfo ConnectInfoFirst(ISession session)
 		{
-			return GetConnectInfo().FirstOrDefault();
+			return GetConnectInfo(session).FirstOrDefault();
 		}
 
-		public virtual IList<ClientConnectInfo> GetConnectInfo()
+		public virtual IList<ClientConnectInfo> GetConnectInfo(ISession session)
 		{
 			if ((PhysicalClient!= null && Status != null && Status.Connected) ||
 				(LawyerPerson != null && Status != null && Status.Connected))
 			{
-				//var client = Clients.FindAllByProperty("PhysicalClient", this);
-					IList<ClientConnectInfo> ConnectInfo = new List<ClientConnectInfo>();
-					ARSesssionHelper<ClientConnectInfo>.QueryWithSession(session =>
-					{
-						var query =
-							session.CreateSQLQuery(string.Format(
-								@"
+				var infos = session.CreateSQLQuery(string.Format(@"
 select
 inet_ntoa(CE.Ip) as static_IP,
 inet_ntoa(L.Ip) as Leased_IP,
@@ -411,15 +392,10 @@ left join internet.Leases L on L.Endpoint = CE.Id
 left join internet.PackageSpeed PS on PS.PackageId = CE.PackageId
 left join internet.PaymentForConnect pfc on pfc.EndPoint = CE.id
 where CE.Client = {0}",
-Id)).SetResultTransformer(
-new AliasToPropertyTransformer(typeof(ClientConnectInfo)))
-.List<ClientConnectInfo>();
-						ConnectInfo = query;
-						return query;
-					});
-					if (ConnectInfo.Count != 0)
-						return ConnectInfo;
-				}
+Id))
+.ToList<ClientConnectInfo>();
+				return infos;
+			}
 			return new List<ClientConnectInfo>();
 		}
 

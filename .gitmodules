@@ -10,9 +10,6 @@
 [submodule "src/Test.Support"]
 	path = src/Test.Support
 	url = ssh://git.analit.net/var/www/git/Test.Support
-[submodule "src/Common.Models"]
-	path = src/Common.Models
-	url = ssh://git.analit.net/var/www/git/Common.Models
 [submodule "src/Common.Web.UI"]
 	path = src/Common.Web.UI
 	url = ssh://git.analit.net/var/www/git/Common.Web.UI
