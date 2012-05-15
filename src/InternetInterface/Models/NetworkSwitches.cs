@@ -80,7 +80,7 @@ namespace InternetInterface.Models
 
 		public static List<NetworkSwitches> All(ISession session)
 		{
-			return session.Query<NetworkSwitches>().Where(s => !String.IsNullOrEmpty(s.Name)).OrderBy(s => s.Name).ToList();
+			return session.Query<NetworkSwitches>().Where(s => s.Name != null && s.Name != "").OrderBy(s => s.Name).ToList();
 		}
 	}
 }
