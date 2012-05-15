@@ -239,6 +239,7 @@ namespace InternetInterface.Controllers
 			else
 				PropertyBag["ChStatus"] = Status.FindFirst().Id;
 			PropertyBag["grouped"] = filter.grouped;
+			PropertyBag["filter"] = filter;
 			PropertyBag["appealType"] = filter.appealType == 0 ? AppealType.User : filter.appealType;
 			PropertyBag["Statuss"] = Status.FindAllSort();
 			PropertyBag["services"] = Service.FindAll();
