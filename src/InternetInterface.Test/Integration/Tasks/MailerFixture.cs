@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Castle.ActiveRecord;
+using Castle.ActiveRecord.Framework;
 using InternetInterface.Background;
 using InternetInterface.Models;
 using NUnit.Framework;
@@ -57,7 +58,7 @@ namespace InternetInterface.Test.Integration.Tasks
 					Port = 5,
 					Pool = IpPool.FindFirst(),
 					Module = 1,
-					Switch = NetworkSwitches.FindFirst(),
+					Switch = ActiveRecordLinqBase<NetworkSwitches>.FindFirst(),
 					Ip = 3541660034
 				};
 				unknownLease.Save();

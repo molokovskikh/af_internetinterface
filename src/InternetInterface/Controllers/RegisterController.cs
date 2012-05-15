@@ -111,16 +111,14 @@ namespace InternetInterface.Controllers
 					payment.SaveAndFlush();
 				}
 				var apartmentForClient =
-					Apartment.Queryable.Where(a => a.House == phisClient.HouseObj && a.Number == phisClient.Apartment).
-						FirstOrDefault();
+					Apartment.Queryable.FirstOrDefault(a => a.House == phisClient.HouseObj && a.Number == phisClient.Apartment);
 				if (apartmentForClient != null)
 					apartmentForClient.Delete();
 				if (!string.IsNullOrEmpty(ConnectInfo.Port) && CategorieAccessSet.AccesPartner("DHCP")) {
 					var newCEP = new ClientEndpoints {
 						Client = client,
 						Port = Convert.ToInt32(ConnectInfo.Port),
-						Switch =
-							NetworkSwitches.Find(Convert.ToUInt32(ConnectInfo.Switch)),
+						Switch = DbSession.Load<NetworkSwitches>(ConnectInfo.Switch),
 						PackageId = phisClient.Tariff.PackageId
 					};
 					newCEP.SaveAndFlush();
@@ -172,7 +170,7 @@ namespace InternetInterface.Controllers
 				if (!string.IsNullOrEmpty(portException))
 					ConnectInfo.Port = string.Empty;
 				PropertyBag["ConnectInfo"] = ConnectInfo;
-				PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(s => !string.IsNullOrEmpty(s.Name));
+				PropertyBag["Switches"] = NetworkSwitches.All(DbSession);
 				PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClients>(phisClient);
 				PropertyBag["ChangeBy"] = changeProperties;
 			}
@@ -183,7 +181,7 @@ namespace InternetInterface.Controllers
 		{
 			PropertyBag["ClientCode"] = 0;
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
-			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(s => !string.IsNullOrEmpty(s.Name));
+			PropertyBag["Switches"] = NetworkSwitches.All(DbSession);
 			PropertyBag["ChBrigad"] = Brigad.FindFirst().Id;
 			PropertyBag["ConnectInfo"] = new ConnectInfo();
 			PropertyBag["Editing"] = false;
@@ -191,13 +189,12 @@ namespace InternetInterface.Controllers
 			PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(new LawyerPerson());
 		}
 
-		public void RegisterLegalPerson(/*[DataBind("LegalPerson")]LawyerPerson person,*/ int speed, [DataBind("ConnectInfo")]ConnectInfo info, uint brigadForConnect)
+		public void RegisterLegalPerson(int speed, [DataBind("ConnectInfo")]ConnectInfo info, uint brigadForConnect)
 		{
 			SetBinder(new DecimalValidateBinder {Validator = Validator});
 			var person = new LawyerPerson();
 			BindObjectInstance(person, ParamStore.Form, "LegalPerson");
 			var connectErrors = Validation.ValidationConnectInfo(info);
-			//var te = Binder.ErrorList["Tariff"].ErrorMessage;
 			if (IsValid(person) && string.IsNullOrEmpty(connectErrors))
 			{
 				DbLogHelper.SetupParametersForTriggerLogging();
@@ -228,7 +225,7 @@ namespace InternetInterface.Controllers
 						{	
 							Client = client,
 							Port = Int32.Parse(info.Port),
-							Switch = NetworkSwitches.Find(info.Switch),
+							Switch = DbSession.Load<NetworkSwitches>(info.Switch),
 							
 						}.SaveAndFlush();
 					var brigad =  Brigad.Find(brigadForConnect);
@@ -246,7 +243,7 @@ namespace InternetInterface.Controllers
 			{
 				PropertyBag["ClientCode"] = 0;
 				PropertyBag["Brigads"] = Brigad.FindAllSort();
-				PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(s => !string.IsNullOrEmpty(s.Name));
+				PropertyBag["Switches"] = NetworkSwitches.All(DbSession);
 				PropertyBag["ChBrigad"] = brigadForConnect;
 				if (!string.IsNullOrEmpty(connectErrors))
 					info.Port = string.Empty;
@@ -384,7 +381,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties { ChangeType = TypeChangeBalance.OtherSumm };
 			PropertyBag["BalanceText"] = 0;
 			PropertyBag["ConnectInfo"] = new ClientConnectInfo();
-			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(s => !string.IsNullOrEmpty(s.Name));
+			PropertyBag["Switches"] = NetworkSwitches.All(DbSession);
 		}
 
 		[AccessibleThrough(Verb.Post)]

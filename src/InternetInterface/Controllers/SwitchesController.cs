@@ -6,14 +6,16 @@ using System.Web;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Common.Models.Helpers;
+using Common.Web.Ui.Controllers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using NHibernate.Linq;
 
 namespace InternetInterface.Controllers
 {
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
-	public class SwitchesController : SmartDispatcherController
+	public class SwitchesController : BaseController
 	{
 		public void ShowSwitches()
 		{
@@ -32,64 +34,43 @@ namespace InternetInterface.Controllers
 
 		public void MakeSwitch(uint Switch)
 		{
-			PropertyBag["Switch"] = NetworkSwitches.Find(Switch);
-			PropertyBag["Zones"] = Zone.FindAllSort();
-			PropertyBag["Editing"] = true;
-			PropertyBag["VB"] = new ValidBuilderHelper<NetworkSwitches>(new NetworkSwitches());
+			PropertyBag["Switch"] = DbSession.Load<NetworkSwitches>(Switch);
 		}
 
 		public void MakeSwitch()
 		{
-			PropertyBag["Switch"] = new NetworkSwitches
-										{
-											Zone = new Zone()
-										};
-			PropertyBag["Zones"] = Zone.FindAllSort();
+			PropertyBag["Switch"] = new NetworkSwitches {
+				Zone = new Zone()
+			};
 			PropertyBag["Editing"] = false;
-			PropertyBag["VB"] = new ValidBuilderHelper<NetworkSwitches>(new NetworkSwitches());
 		}
 
-		public void RegisterSwitch([DataBind("Switch")]NetworkSwitches Switch, uint Zoned, uint switchid)
+		public void RegisterSwitch([ARDataBind("Switch", AutoLoadBehavior.NewRootInstanceIfInvalidKey)] NetworkSwitches @switch)
 		{
-			if (Validator.IsValid(Switch))
-			{
-				Switch.Zone = Zone.Find(Zoned);
-				Switch.IP = NetworkSwitches.SetProgramIp(Switch.IP);
-				Switch.SaveAndFlush();
-				RedirectToUrl("../Switches/ShowSwitches.rails");
+			if (IsValid(@switch)) {
+				@switch.IP = NetworkSwitches.SetProgramIp(@switch.IP);
+				DbSession.SaveOrUpdate(@switch);
+				RedirectToUrl("~/Switches/ShowSwitches.rails");
 			}
 			else
 			{
+				PropertyBag["Switch"] = @switch;
 				RenderView("MakeSwitch");
-				SendNoValidParam(Switch, switchid, Zoned);
-				Flash["Editing"] = false;
 			}
 		}
 
-
-		public void EditSwitch([ARDataBind("Switch", AutoLoad = AutoLoadBehavior.Always, Validate = true)]NetworkSwitches Switch,uint Zoned, uint switchid)
+		public void EditSwitch([ARDataBind("Switch", AutoLoad = AutoLoadBehavior.Always)] NetworkSwitches @switch)
 		{
-			if (Validator.IsValid(Switch)) {
-				Switch.IP = NetworkSwitches.SetProgramIp(Switch.IP);
-				Switch.Update();
-				RedirectToUrl("../Switches/ShowSwitches.rails");
+			if (IsValid(@switch)) {
+				@switch.IP = NetworkSwitches.SetProgramIp(@switch.IP);
+				DbSession.SaveOrUpdate(@switch);
+				RedirectToUrl("~/Switches/ShowSwitches.rails");
 			}
 			else
 			{
+				PropertyBag["Switch"] = @switch;
 				RenderView("MakeSwitch");
-				SendNoValidParam(Switch, switchid, Zoned);
-				Flash["Editing"] = true;
 			}
-		}
-
-		private void SendNoValidParam(NetworkSwitches Switch, uint switchid, uint Zoned)
-		{
-			Switch.SetValidationErrors(Validator.GetErrorSummary(Switch));
-			Switch.Zone = Zone.Find(Zoned);
-			Switch.Id = switchid;
-			Flash["VB"] = new ValidBuilderHelper<NetworkSwitches>(Switch);
-			Flash["Switch"] = Switch;
-			Flash["Zones"] = Zone.FindAllSort();
 		}
 
 		public void GoZone(int Zone)
@@ -99,7 +80,7 @@ namespace InternetInterface.Controllers
 
 		public void FreePortForSwitch(string ids)
 		{
-			var id = !string.IsNullOrEmpty(ids) ? UInt32.Parse(ids) : NetworkSwitches.FindFirst().Id;
+			var id = !string.IsNullOrEmpty(ids) ? UInt32.Parse(ids) : DbSession.Query<NetworkSwitches>().First().Id;
 			var diniedPorts = ClientEndpoints.Queryable.Where(c => c.Switch.Id == id).ToList().Select(c => new { c.Port, client = c.Client.Id}).ToList();
 			PropertyBag["port_client"] = diniedPorts.ToDictionary(d => d.Port, d => d.client);
 			PropertyBag["diniedPorts"] = diniedPorts.Select(p => p.Port).ToList();

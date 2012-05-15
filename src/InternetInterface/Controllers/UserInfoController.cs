@@ -219,7 +219,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Editing"] = filter.Editing;
 			PropertyBag["appealType"] = filter.appealType;
 			PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClients>(new PhysicalClients());
-			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(t => t.Name != null);
+			PropertyBag["Switches"] = NetworkSwitches.All(DbSession);
 		}
 
 		public void Leases([DataBind("filter")] SessionFilter filter)
@@ -500,7 +500,7 @@ namespace InternetInterface.Controllers
 					clientEntPoint.Client = client;
 					clientEntPoint.Ip = ConnectInfo.static_IP;
 					clientEntPoint.Port = Int32.Parse(ConnectInfo.Port);
-					clientEntPoint.Switch = NetworkSwitches.Find(Convert.ToUInt32(ConnectInfo.Switch));
+					clientEntPoint.Switch = DbSession.Load<NetworkSwitches>(ConnectInfo.Switch);
 					clientEntPoint.Monitoring = ConnectInfo.Monitoring;
 					if (!newFlag) {
 						InitializeHelper.InitializeModel(clientEntPoint);
@@ -972,7 +972,7 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 			var client = Client.FirstOrDefault(clientId);
 			PropertyBag["_client"] = client;
 			PropertyBag["ClientCode"] = clientId;
-			PropertyBag["Switches"] = NetworkSwitches.FindAllSort().Where(t => !string.IsNullOrEmpty(t.Name));
+			PropertyBag["Switches"] = NetworkSwitches.All(DbSession);
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
 			if (client.WhoConnected != null)
 				PropertyBag["ChBrigad"] = client.WhoConnected.Id;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Web;
 using Castle.MonoRail.Framework;
@@ -41,7 +42,7 @@ namespace InternetInterface.Helpers
 			});
 		}
 
-		protected override string GetBuiltinEdit(string name, Type valueType, object value, object options)
+		protected override string GetBuiltinEdit(string name, Type valueType, object value, object options, PropertyInfo property)
 		{
 			if (name.EndsWith(".Year"))
 			{
@@ -53,7 +54,7 @@ namespace InternetInterface.Helpers
 					return helper.Select(name, items);
 				}
 			}
-			return base.GetBuiltinEdit(name, valueType, value, options);
+			return base.GetBuiltinEdit(name, valueType, value, options, property);
 		}
 
 		public override string GetQuerystring(string key, string direction)

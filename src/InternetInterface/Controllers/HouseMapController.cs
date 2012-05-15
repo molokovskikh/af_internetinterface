@@ -4,9 +4,12 @@ using System.Linq;
 using System.Web;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
+using Common.Web.Ui.Controllers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using NHibernate;
+using NHibernate.Linq;
 using log4net;
 
 namespace InternetInterface.Controllers
@@ -18,7 +21,7 @@ namespace InternetInterface.Controllers
 	}
 
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof (AuthenticationFilter))]
-	public class HouseMapController : ARSmartDispatcherController
+	public class HouseMapController : BaseController
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof(HouseMapController));
 
@@ -29,7 +32,7 @@ namespace InternetInterface.Controllers
 		public void NetworkSwitches(int id)
 		{
 			PropertyBag["id"] = id;
-			PropertyBag["Switches"] = Models.NetworkSwitches.FindAll().Where(n => !string.IsNullOrEmpty(n.Name));
+			PropertyBag["Switches"] = Models.NetworkSwitches.All(DbSession);
 			CancelLayout();
 		}
 
@@ -43,7 +46,7 @@ namespace InternetInterface.Controllers
 
 		public void BasicHouseInfo(uint id)
 		{
-			PropertyBag["Editing"] = House.Find(id).ApartmentCount == 0 ? true : false;
+			PropertyBag["Editing"] = House.Find(id).ApartmentCount == 0;
 			PropertyBag["sHouse"] = House.Find(id);
 			PropertyBag["sStatuses"] = ApartmentStatus.Queryable.Where(s => s.ShortName != "Request").ToList();
 			CancelLayout();
@@ -60,7 +63,7 @@ namespace InternetInterface.Controllers
 		{
 			PropertyBag["house"] = Models.House.Find(House);
 			PropertyBag["Entrances"] = Entrance.Queryable.Where(e => e.House.Id == House).ToList();
-			PropertyBag["Switches"] = Models.NetworkSwitches.FindAll().Where(n => !string.IsNullOrEmpty(n.Name));
+			PropertyBag["Switches"] = Models.NetworkSwitches.All(DbSession);
 		}
 
 		[AccessibleThrough(Verb.Post)]
@@ -68,26 +71,23 @@ namespace InternetInterface.Controllers
 		{
 			house.Update();
 			foreach (var enterance in Entrance.Queryable.Where(e => e.House.Id == house.Id).ToList())
-			//foreach (var enterance in Entrance.FindAllByProperty("House", house))
-			{
 				enterance.Delete();
-			}
+
 			var enCount = 0;
 			foreach (var enterance in enterances)
 			{
 				enCount++;
-				var _switch = Models.NetworkSwitches.Queryable.Where(n => n.Id == enterance.Switch.Id).ToList();
+				var networkSwitche =  DbSession.Get<NetworkSwitches>(enterance.Switch.Id);
 				new Entrance {
-								 Cable = enterance.Cable,
-								 House = house,
-								 Number = enCount,
-								 Strut = enterance.Strut,
-								 Switch = _switch.Count > 0 ? _switch.First() : null
-							 }.Save();
+					Cable = enterance.Cable,
+					House = house,
+					Number = enCount,
+					Strut = enterance.Strut,
+					Switch = networkSwitche
+				 }.Save();
 			}
 			EditHouse(house.Id);
 			RedirectToUrl("..//HouseMap/ViewHouseInfo.rails?House=" + house.Id);
-			//var items = (Entrance[])BindObject(ParamStore.Form, typeof(Entrance[]), "Entrances", AutoLoadBehavior.Always);
 		}
 
 		public void FindHouse()
@@ -161,14 +161,13 @@ namespace InternetInterface.Controllers
 			var number = Request.Form["Number"];
 			var _case = Request.Form["Case"];
 			int res;
-			//var errors = string.Empty;
 			if (!Int32.TryParse(number, out res))
 			{
 				returnObj.errorMessage += "Неправильно введен номер дома";
 			}
 			if (string.IsNullOrEmpty(returnObj.errorMessage))
 			{
-				if (House.Queryable.Where(h => h.Street == street && h.Number == Int32.Parse(number) && h.Case == _case).Count() > 0)
+				if (House.Queryable.Any(h => h.Street == street && h.Number == Int32.Parse(number) && h.Case == _case))
 					returnObj.errorMessage += "Дом с таким одресом уже существует";
 			}
 			if (string.IsNullOrEmpty(returnObj.errorMessage))
@@ -179,7 +178,6 @@ namespace InternetInterface.Controllers
 				return returnObj;
 			}
 			return returnObj;
-			//return errors;
 		}
 
 		[return: JSONReturnBinder]
@@ -252,10 +250,8 @@ namespace InternetInterface.Controllers
 			var Strut = Request.Form["Strut[]"].Split(new[] {','});
 			var Cable = Request.Form["Cable[]"].Split(new[] {','});
 			var apCount = Request.Form["ApCount"];
-			//var CompetitorCount = Int32.Parse(Request.Form["CompetitorCount"]);
 			var house = House.Find(Convert.ToUInt32(SelectHouse));
 			house.ApartmentCount = Convert.ToInt32(apCount);
-			//house.CompetitorCount = CompetitorCount;
 			house.Update();
 			for (int i = 0; i < NetSwitch.Length; i++)
 			{
@@ -264,7 +260,7 @@ namespace InternetInterface.Controllers
 								 House = house,
 								 Number = i + 1,
 								 Strut = Convert.ToBoolean(Strut[i]),
-								 Switch = Convert.ToInt32(NetSwitch[i]) > 0 ? Models.NetworkSwitches.Find(Convert.ToUInt32(NetSwitch[i])) : null
+								 Switch = Convert.ToInt32(NetSwitch[i]) > 0 ? DbSession.Load<NetworkSwitches>(Convert.ToUInt32(NetSwitch[i])) : null
 							 }.Save();
 			}
 			return true;
@@ -277,7 +273,6 @@ namespace InternetInterface.Controllers
 			var date_agent = DateTime.Parse(Request.Form["date_agent"]);
 			var house = House.Find(UInt32.Parse(Request.Form["house"]));
 			new BypassHouse {
-								//Agent = InithializeContent.partner,
 								Agent = agent,
 								House = house,
 								BypassDate = date_agent
@@ -302,7 +297,6 @@ namespace InternetInterface.Controllers
 				var apartment = Int32.Parse(Request.Form["apartment_num"]);
 				var apps = Apartment.Queryable.Where(a => a.Number == apartment && a.House.Id == Int32.Parse(house)).
 					ToList().FirstOrDefault();
-				//var retObj = new {status = string.Empty};
 				if (apps != null)
 				{
 					if (apps.Status != null)

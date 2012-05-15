@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
@@ -6,11 +8,13 @@ using Castle.Components.Validator;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Helpers;
 using InternetInterface.Models.Universal;
+using NHibernate;
+using NHibernate.Linq;
 
 namespace InternetInterface.Models
 {
 	[ActiveRecord("NetworkSwitches", Schema = "Internet", Lazy = true)]
-	public class NetworkSwitches : ValidActiveRecordLinqBase<NetworkSwitches>
+	public class NetworkSwitches	
 	{
 		public const string IPRegExp =
 			@"\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b";
@@ -29,7 +33,7 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string Name { get; set; }
 
-		[BelongsTo("Zone")]
+		[BelongsTo, ValidateNonEmpty]
 		public virtual Zone Zone { get; set; }
 
 		[Property]
@@ -40,14 +44,13 @@ namespace InternetInterface.Models
 
 		public override string ToString()
 		{
-			return Name + string.Format(" ({0})", GetNormalIp());
+			return Name + String.Format(" ({0})", GetNormalIp());
 		}
 
 		public virtual string GetCommentForWeb()
 		{
 			return AppealHelper.GetTransformedAppeal(Comment);
 		}
-
 
 		public virtual string GetNormalIp()
 		{
@@ -62,7 +65,7 @@ namespace InternetInterface.Models
 		public static string SetProgramIp(string ip)
 		{
 			var valid = new Regex(IPRegExp);
-			if (!string.IsNullOrEmpty(ip) && valid.IsMatch(ip))
+			if (!String.IsNullOrEmpty(ip) && valid.IsMatch(ip))
 			{
 				var splited = ip.Split('.');
 				var fg = new byte[8];
@@ -72,7 +75,12 @@ namespace InternetInterface.Models
 				fg[3] = Convert.ToByte(splited[0]);
 				return BitConverter.ToInt64(fg, 0).ToString();
 			}
-			return string.Empty;
+			return String.Empty;
+		}
+
+		public static List<NetworkSwitches> All(ISession session)
+		{
+			return session.Query<NetworkSwitches>().Where(s => !String.IsNullOrEmpty(s.Name)).OrderBy(s => s.Name).ToList();
 		}
 	}
 }
