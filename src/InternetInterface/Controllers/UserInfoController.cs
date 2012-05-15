@@ -255,9 +255,9 @@ namespace InternetInterface.Controllers
 				PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(new LawyerPerson());
 
 			PropertyBag["Editing"] = filter.Editing;
-			PropertyBag["ConnectInfo"] = client.GetConnectInfo();
+			PropertyBag["ConnectInfo"] = client.GetConnectInfo(DbSession);
 			PropertyBag["Payments"] = client.Payments.OrderBy(c => c.PaidOn).ToList();
-			PropertyBag["WriteOffs"] = client.GetWriteOffs(filter.grouped).OrderByDescending(w => w.WriteOffDate).ToList();
+			PropertyBag["WriteOffs"] = client.GetWriteOffs(DbSession, filter.grouped).OrderByDescending(w => w.WriteOffDate).ToList();
 			PropertyBag["writeOffSum"] = WriteOff.FindAllByProperty("Client", client).Sum(s => s.WriteOffSum);
 			PropertyBag["BalanceText"] = string.Empty;
 			PropertyBag["Appeals"] = Appeals.GetAllAppeal(client, filter.appealType);
@@ -594,7 +594,7 @@ namespace InternetInterface.Controllers
 				PropertyBag["_client"] = _client;
 				PropertyBag["Password"] = Password;
 				PropertyBag["AccountNumber"] = _client.Id.ToString("00000");
-				PropertyBag["ConnectInfo"] = _client.GetConnectInfo().FirstOrDefault();
+				PropertyBag["ConnectInfo"] = _client.GetConnectInfo(DbSession).FirstOrDefault();
 				RenderView("ClientRegisteredInfo");
 			}
 		}
@@ -632,20 +632,16 @@ namespace InternetInterface.Controllers
 			var labelForDel = Label.Find(deletelabelch);
 			if (labelForDel != null && labelForDel.Deleted) {
 				labelForDel.DeleteAndFlush();
-				ARSesssionHelper<Label>.QueryWithSession(session => {
-					var query =
-						session.CreateSQLQuery(
+				DbSession.CreateSQLQuery(
 @"update internet.Request R 
 set r.`Label` = null,
 r.`ActionDate` = :ActDate,
 r.`Operator` = :Oper 
-where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
-					query.SetParameter("LabelIndex", deletelabelch);
-					query.SetParameter("ActDate", DateTime.Now);
-					query.SetParameter("Oper", InitializeContent.Partner.Id);
-					query.ExecuteUpdate();
-					return new List<Label>();
-				});
+where r.`Label`= :LabelIndex;")
+					.SetParameter("LabelIndex", deletelabelch)
+					.SetParameter("ActDate", DateTime.Now)
+					.SetParameter("Oper", InitializeContent.Partner.Id)
+					.ExecuteUpdate();
 			}
 			RedirectToUrl("../UserInfo/RequestView.rails");
 		}
@@ -776,8 +772,6 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 
 			if (IsValid(updateClient))
 			{
-				//updateClient.Speed = PackageSpeed.Find(Speed);
-
 				InitializeHelper.InitializeModel(_client);
 				InitializeHelper.InitializeModel(updateClient);
 
@@ -801,10 +795,7 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 			{
 				updateClient.SetValidationErrors(Validator.GetErrorSummary(updateClient));
 				PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(updateClient);
-				ARSesssionHelper<LawyerPerson>.QueryWithSession(session => {
-					session.Evict(updateClient);
-					return new List<LawyerPerson>();
-				});
+				DbSession.Evict(updateClient);
 				RenderView("LawyerPersonInfo");
 				PropertyBag["LegalPerson"] = updateClient;
 				PropertyBag["grouped"] = grouped;
@@ -892,10 +883,7 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 			{
 				updateClient.SetValidationErrors(Validator.GetErrorSummary(updateClient));
 				PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClients>(updateClient);
-				ARSesssionHelper<PhysicalClients>.QueryWithSession(session => {
-					session.Evict(updateClient);
-					return new List<PhysicalClients>();
-				});
+				DbSession.Evict(updateClient);
 				RenderView("SearchUserInfo");
 				Flash["Editing"] = true;
 				Flash["_client"] = _client;
@@ -916,13 +904,11 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 			PropertyBag["writeOffSum"] = abonentSum +
 			                             Models.UserWriteOff.Queryable.Where(w => w.Client.Id == client.Id).ToList().Sum(
 			                             	w => w.Sum);
-			PropertyBag["WriteOffs"] = client.GetWriteOffs(grouped).OrderByDescending(w => w.WriteOffDate).ToList();
+			PropertyBag["WriteOffs"] = client.GetWriteOffs(DbSession, grouped).OrderByDescending(w => w.WriteOffDate).ToList();
 			PropertyBag["grouped"] = grouped;
 			PropertyBag["BalanceText"] = string.Empty;
 			PropertyBag["services"] = Service.FindAll();
 			PropertyBag["Appeals"] = Appeals.GetAllAppeal(client, appealType);
-				/*Appeals.Queryable.Where(a => a.Client.Id == client.Id && a.AppealType == appealType).ToList().OrderByDescending(
-					a => a.Date);*/
 			PropertyBag["Client"] = client.PhysicalClient;
 
 			PropertyBag["Houses"] = House.AllSort;
@@ -962,7 +948,7 @@ where r.`Label`= :LabelIndex;").AddEntity(typeof (Label));
 
 		public void SendConnectInfo(Client client)
 		{
-			var connectInfo = client.GetConnectInfo();
+			var connectInfo = client.GetConnectInfo(DbSession);
 			if (connectInfo.Count == 0)
 				connectInfo.Add(new ClientConnectInfo());
 			PropertyBag["ClientConnectInf"] = connectInfo;

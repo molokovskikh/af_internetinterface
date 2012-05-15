@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Castle.MonoRail.Framework;
+using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
@@ -13,7 +14,7 @@ namespace InforoomInternet.Controllers
 	[Filter(ExecuteWhen.BeforeAction, typeof(NHibernateFilter))]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AccessFilter))]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(BeforeFilter))]
-	public class PrivateOffice:SmartDispatcherController
+	public class PrivateOffice : BaseController
 	{
 		public void AboutSale()
 		{
@@ -34,7 +35,7 @@ namespace InforoomInternet.Controllers
 			PropertyBag["PhysClientName"] = string.Format("{0} {1}", client.PhysicalClient.Name, client.PhysicalClient.Patronymic);
 			PropertyBag["PhysicalClient"] = client.PhysicalClient;
 			PropertyBag["Client"] = client;
-			var writeOffs = client.GetWriteOffs(grouped).OrderByDescending(e => e.WriteOffDate).ToList();
+			var writeOffs = client.GetWriteOffs(DbSession, grouped).OrderByDescending(e => e.WriteOffDate).ToList();
 			if (client.RatedPeriodDate != null)
 			{
 				PropertyBag["VisibleWriteOffs"] = writeOffs.Where(w => w.WriteOffDate.Date >= client.RatedPeriodDate.Value.Date).ToList();

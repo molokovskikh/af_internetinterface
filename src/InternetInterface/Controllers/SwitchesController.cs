@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using System.Web;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
-using Common.Models.Helpers;
 using Common.Web.Ui.Controllers;
+using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Controllers.Filter;
-using InternetInterface.Helpers;
 using InternetInterface.Models;
 using NHibernate.Linq;
 
@@ -19,16 +15,9 @@ namespace InternetInterface.Controllers
 	{
 		public void ShowSwitches()
 		{
-			IList<NetworkSwitches> switches = new List<NetworkSwitches>();
-			ARSesssionHelper<NetworkSwitches>.QueryWithSession(session =>
-			{
-				var query =
-					session.CreateSQLQuery(
-						@"SELECT NS.id, NS.Mac, inet_ntoa(NS.IP) as Ip, NS.Name, NS.Zone, NS.PortCount, NS.Comment FROM internet.NetworkSwitches NS")
-						.AddEntity(typeof(NetworkSwitches)).List<NetworkSwitches>();
-				switches = query;
-				return query;
-			});
+			var switches = DbSession.CreateSQLQuery(
+				@"SELECT NS.id, NS.Mac, inet_ntoa(NS.IP) as Ip, NS.Name, NS.Zone, NS.PortCount, NS.Comment FROM internet.NetworkSwitches NS")
+				.AddEntity(typeof(NetworkSwitches)).List<NetworkSwitches>();
 			PropertyBag["Switches"] = switches;
 		}
 
@@ -89,12 +78,7 @@ namespace InternetInterface.Controllers
 
 		public void OnLineClient(int Zone)
 		{
-			IList<ClientConnectInfo> clients = new List<ClientConnectInfo>();
-			ARSesssionHelper<object>.QueryWithSession(session =>
-			{
-				var query =
-					session.CreateSQLQuery(string.Format(
-						@"
+			var clients = DbSession.CreateSQLQuery(string.Format(@"
 select #*,
 inet_ntoa(CE.Ip) as static_IP,
 inet_ntoa(L.Ip) as Leased_IP,
@@ -113,13 +97,8 @@ left join internet.ClientEndpoints CE on L.Endpoint = CE.Id
 left join internet.NetworkSwitches NS on NS.Id = L.Switch
 left join internet.Clients C on CE.Client = C.Id
 left join internet.PackageSpeed PS on PS.PackageId = CE.PackageId
-where NS.Zone = {0}", Zone)).SetResultTransformer(
-									new AliasToPropertyTransformer(
-										typeof(ClientConnectInfo)))
-									.List<ClientConnectInfo>();
-				clients = query;
-				return query;
-			});
+where NS.Zone = {0}", Zone))
+				.ToList<ClientConnectInfo>();
 			PropertyBag["OnLineClients"] = clients;
 			PropertyBag["Zones"] = Models.Zone.FindAllSort();
 			PropertyBag["thisZone"] = Zone;

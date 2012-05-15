@@ -285,7 +285,6 @@
     <Compile Include="Filters\AppealFilter.cs" />
     <Compile Include="Helpers\ActiveDirectoryHelper.cs" />
     <Compile Include="Helpers\AppHelperInterface.cs" />
-    <Compile Include="Helpers\ARSesssionHelper.cs" />
     <Compile Include="Helpers\DateHelper.cs" />
     <Compile Include="Helpers\DbLogHelper.cs" />
     <Compile Include="Helpers\ExceptionHelper.cs" />
@@ -392,10 +391,6 @@
     <ProjectReference Include="..\..\lib\MonoRail.Debugger.Toolbar\src\MonoRail.Debugger.Toolbar\MonoRail.Debugger.Toolbar.csproj">
       <Project>{BF858A13-1FE7-42F0-AF78-D9909FA193D1}</Project>
       <Name>MonoRail.Debugger.Toolbar</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Common.Models\Common.Models\Common.Models.csproj">
-      <Project>{80C9F352-5EED-41B2-989A-6628BCAF4D36}</Project>
-      <Name>Common.Models</Name>
     </ProjectReference>
     <ProjectReference Include="..\Common.Tools\Common.Tools\Common.Tools.csproj">
       <Project>{72AFCFE8-C9E9-45FA-9698-BEE896A517A3}</Project>
