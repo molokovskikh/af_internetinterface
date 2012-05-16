@@ -362,6 +362,11 @@ group by {0} order by WriteOffDate;", gpoupKey))
 			return query.ToList<BaseWriteOff>();
 		}
 
+		public virtual ClientConnectInfo ConnectInfoFirst()
+		{
+			return ArHelper.WithSession(s => ConnectInfoFirst(s));
+		}
+
 		public virtual ClientConnectInfo ConnectInfoFirst(ISession session)
 		{
 			return GetConnectInfo(session).FirstOrDefault();
