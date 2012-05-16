@@ -169,18 +169,19 @@ namespace InternetInterface.Models
 
 		public virtual string GetAdress()
 		{
-			return String.Format("ул. {0} д. {1} {2} кв. {3} Подъезд {4} Этаж {5}",
-					Street,
-					House,
-					!String.IsNullOrEmpty(CaseHouse) ? " Корп " + CaseHouse : String.Empty,
-					Apartment,
+			return String.Format("{0} Подъезд {1} Этаж {2}",
+					GetCutAdress(),
 					Entrance,
 					Floor);
 		}
 
 		public virtual string GetCutAdress()
 		{
-			return String.Format("ул. {0} д. {1} кв. {2}", Street, House, Apartment);
+			return String.Format("ул. {0} д. {1}{2} кв. {3}",
+				Street,
+				House,
+				!String.IsNullOrEmpty(CaseHouse) ? " Корп " + CaseHouse : String.Empty,
+				Apartment);
 		}
 
 		public virtual string HowManyToPay(bool change)
