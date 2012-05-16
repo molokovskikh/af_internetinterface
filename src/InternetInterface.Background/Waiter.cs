@@ -34,14 +34,15 @@ namespace InternetInterface.Background
 		{
 			StandaloneInitializer.Init(typeof(SendProcessor).Assembly);
 
-			using(new SessionScope())
-			{
-				var mailer = new Mailer {
-					SiteRoot = ConfigurationManager.AppSettings["SiteRoot"]
-				};
-				var job = new ActiveRecordJob(new BuildInvoiceTask(mailer)) {Name = "InternetInvoce"};
-				jobs.Add(job);
-			}
+			//заблокировал формирование счетов, может быть вернемся ц нему позже
+			//using(new SessionScope())
+			//{
+			//    var mailer = new Mailer {
+			//        SiteRoot = ConfigurationManager.AppSettings["SiteRoot"]
+			//    };
+			//    var job = new ActiveRecordJob(new BuildInvoiceTask(mailer)) {Name = "InternetInvoce"};
+			//    jobs.Add(job);
+			//}
 
 			Start();
 		}
