@@ -17,7 +17,7 @@ namespace InternetInterface.Test.Integration
 		[SetUp]
 		public void Setup()
 		{
-			WatinFixture.ConfigTest();
+			Functional.Setup.ConfigTest();
 
 			BaseMailer.ViewEngineManager = GetViewManager();
 		}

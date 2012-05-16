@@ -9,12 +9,6 @@ namespace InternetInterface.Models
 	[ActiveRecord("Payments", Schema = "internet", Lazy = true)]
 	public class Payment : ValidActiveRecordLinqBase<Payment>
 	{
-
-		/*public Payment()
-		{
-			Client.Payments.Add(this);
-		}*/
-
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 

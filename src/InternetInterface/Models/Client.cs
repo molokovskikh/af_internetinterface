@@ -362,6 +362,7 @@ group by {0} order by WriteOffDate;", gpoupKey))
 			return query.ToList<BaseWriteOff>();
 		}
 
+		[Obsolete("Не исполдьзовать добавлено для обратной совместимости")]
 		public virtual ClientConnectInfo ConnectInfoFirst()
 		{
 			return ArHelper.WithSession(s => ConnectInfoFirst(s));
@@ -412,7 +413,7 @@ Id))
 
 		public virtual bool OnLine()
 		{
-			if (Lease.Queryable.Where(l => l.Endpoint.Client == this).FirstOrDefault() != null)
+			if (Lease.Queryable.FirstOrDefault(l => l.Endpoint.Client == this) != null)
 				return true;
 			return false;
 		}

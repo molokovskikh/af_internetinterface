@@ -52,42 +52,6 @@ namespace InternetInterface.Models
 		}
 	}
 
-	public static class HiberWorker
-	{
-		private static ISession _currentSession;
-		private static ISessionFactoryHolder _holder;
-
-		private static ISession CurrentSession
-		{
-			get
-			{
-				if (_currentSession == null) {
-					_holder = ActiveRecordMediator.GetSessionFactoryHolder();
-					_currentSession = _holder.CreateSession(typeof (ActiveRecordBase));
-				}
-				return _currentSession;
-			}
-		}
-
-		private static T Do<T>(Func<ISession, T> action)
-		{
-			T result;
-			try {
-				result = action(CurrentSession);
-			}
-			finally {
-				_holder.ReleaseSession(_currentSession);
-			}
-			return result;
-		}
-
-		public static T GetObject<T>(object id)
-		{
-			return Do(s => s.Get<T>(id));
-		}
-	}
-
-
 	[ActiveRecord("Appeals", Schema = "internet", Lazy = true)]
 	public class Appeals : ValidActiveRecordLinqBase<Appeals>
 	{

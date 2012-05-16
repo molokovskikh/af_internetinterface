@@ -80,7 +80,6 @@ namespace InternetInterface.Models
 	[ActiveRecord("PhysicalClients", Schema = "internet", Lazy = true), Auditable]
 	public class PhysicalClients : ValidActiveRecordLinqBase<PhysicalClients>
 	{
-
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 

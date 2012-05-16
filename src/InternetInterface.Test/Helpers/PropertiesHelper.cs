@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using InternetInterface.Models;
+﻿using InternetInterface.Models;
 
 namespace InternetInterface.Test.Helpers
 {
@@ -10,11 +6,10 @@ namespace InternetInterface.Test.Helpers
 	{
 		public static UserSearchProperties CreateUserSearchProperties()
 		{
-			return new UserSearchProperties
-			       	{
-			       		SearchText = string.Empty,
-			       		SearchBy = SearchUserBy.Auto
-			       	};
+			return new UserSearchProperties {
+				SearchText = string.Empty,
+				SearchBy = SearchUserBy.Auto
+			};
 		}
 	}
 

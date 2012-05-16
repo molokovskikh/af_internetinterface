@@ -10,14 +10,13 @@ namespace InternetInterface.Test.Helpers
 	{
 		public static Partner CreatePartner()
 		{
-			return new Partner
-			       	{
-			       		Adress = "testAdress",
-						Email = "test@mail.ru",
-						Login = "testLogin",
-						Name = "megaTESTpartner",
-						TelNum = "8-111-111-11-11"
-			       	};
+			return new Partner {
+				Adress = "testAdress",
+				Email = "test@mail.ru",
+				Login = "testLogin",
+				Name = "megaTESTpartner",
+				TelNum = "8-111-111-11-11"
+			};
 		}
 
 		public static List<CategorieAccessSet> CreatePartnerAccessSet(List<int> rights, Partner partner)
@@ -35,7 +34,6 @@ namespace InternetInterface.Test.Helpers
 					Categorie = partner.Categorie
 				};
 				resulr.Add(newAccess);
-				//newAccess.SaveAndFlush();
 			}
 			return resulr;
 		}

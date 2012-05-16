@@ -132,16 +132,8 @@ namespace InternetInterface.Models
 		public string Inn { get; set; }
 	}
 
-	/*public interface IPayer
-	{
-		uint Id { get; set; }
-		Recipient Recipient { get; set; }
-		string INN { get; set; }
-		string Name { get; set; }
-	}*/
-
 	[ActiveRecord("BankPayments", Schema = "Internet")]
-	public class BankPayment : ActiveRecordLinqBase<BankPayment> //: BalanceUpdater<Payment>
+	public class BankPayment : ActiveRecordLinqBase<BankPayment>
 	{
 		public BankPayment(Client payer, DateTime payedOn, decimal sum)
 			: this(payer)
@@ -206,15 +198,6 @@ namespace InternetInterface.Models
 		[Property, Description("Комментарий оператора")]
 		public string OperatorComment { get; set; }
 
-		/*[BelongsTo(Cascade = CascadeEnum.All)]
-		public Advertising Ad { get; set; }*/
-
-		/*[Property]
-		public bool ForAd { get; set; }
-
-		[Property, ValidateDecimal]
-		public decimal? AdSum { get; set; }*/
-
 		public bool UpdatePayerInn { get; set; }
 
 		public void RegisterPayment()
@@ -228,7 +211,6 @@ namespace InternetInterface.Models
 				|| PayerClient == null)
 				return "";
 
-			//var payers = ActiveRecordLinq.AsQueryable<IPayer>().Where(p => p.INN == PayerClient.Inn).ToList();
 			var payers = GetPayerForInn(PayerClient.Inn);
 			if (payers.Count == 0)
 			{
@@ -513,12 +495,6 @@ namespace InternetInterface.Models
 						"Recipient",
 						"Получатель платежей плательщика должен соответствовать получателю платежей выбранном в платеже");
 			}
-			/*else
-			{
-				summary.RegisterErrorMessage(
-					"Recipient",
-					"Не выбран плательщик");
-			}*/
 		}
 
 		private bool IsDuplicate()

@@ -18,7 +18,6 @@ namespace InternetInterface.Test.Functional
 		{
 			using (var browser = Open("UserInfo/RequestView.rails"))
 			{
-				//Assert.That(browser.Text, Is.StringContaining("Самостоятельность"));
 				Assert.That(browser.Text, Is.StringContaining("Email"));
 				Assert.That(browser.Text, Is.StringContaining("Адрес"));
 				var checkCount =  browser.Table(Find.ById("clientTable")).TableRows.Count;
@@ -33,7 +32,7 @@ namespace InternetInterface.Test.Functional
 				{
 					browser.CheckBox(Find.ByName("LabelList["+i+"]")).Checked = true;
 				}
-				var Labels = InternetInterface.Models.Label.FindAll();
+				var Labels = Models.Label.FindAll();
 				var rSelector = new Random();
 				var selectedlabel = Labels[rSelector.Next(Labels.Length)].Id.ToString();
 				browser.SelectList(Find.ById("labelch")).SelectByValue(selectedlabel);
@@ -47,7 +46,7 @@ namespace InternetInterface.Test.Functional
 				browser.Button(Find.ById("SetlabelButton")).Click();
 				browser.TextField(Find.ById("LabelName")).AppendText("TestLabel");
 				browser.Button(Find.ById("CreateLabelButton")).Click();
-				var deleteLabel = InternetInterface.Models.Label.FindAllByProperty("Name", "TestLabel");
+				var deleteLabel = Models.Label.FindAllByProperty("Name", "TestLabel");
 				foreach (var label in deleteLabel)
 				{
 					browser.SelectList(Find.ById("deletelabelch")).SelectByValue(label.Id.ToString());

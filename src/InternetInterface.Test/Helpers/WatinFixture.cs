@@ -15,6 +15,7 @@ using WatiN.Core;
 
 namespace InternetInterface.Test.Helpers
 {
+	[Obsolete("Устарел используй Test.Support.Web.WatinFixture2")]
 	public class WatinFixture2 : WatinFixture
 	{
 		public WatinFixture2()
@@ -31,7 +32,7 @@ namespace InternetInterface.Test.Helpers
 		}
 	}
 
-	[TestFixture]
+	[TestFixture, Obsolete("Устарел используй Test.Support.Web.WatinFixture2")]
 	public class WatinFixture
 	{
 
@@ -97,7 +98,7 @@ namespace InternetInterface.Test.Helpers
 				new TryFuncUntilTimeOut(2.Second()) {
 						SleepTime = TimeSpan.FromMilliseconds(50.0),
 						ExceptionMessage = () => string.Format("waiting {0} seconds for document text not null.", 2)
-					}.Try<bool>(() => browser.Text != null);
+					}.Try(() => browser.Text != null);
 			}
 			return browser;
 		}
@@ -110,18 +111,6 @@ namespace InternetInterface.Test.Helpers
 		protected IE Open(string uri, params object[] args)
 		{
 			return Open(String.Format(uri, args));
-		}	
-
-
-		[TestFixtureSetUp]
-		public static void ConfigTest()
-		{
-			XmlConfigurator.Configure();
-			if (!ActiveRecordStarter.IsInitialized)
-				ActiveRecordStarter.Initialize(new[] {
-				                                     	Assembly.Load("InternetInterface"),
-				                                     	Assembly.Load("InternetInterface.Test"),
-				                                     }, ActiveRecordSectionHandler.Instance);
 		}
 	}
 }

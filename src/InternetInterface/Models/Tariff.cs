@@ -9,6 +9,16 @@ namespace InternetInterface.Models
 	[ActiveRecord("Tariffs", Schema = "internet", Lazy = true), Auditable]
 	public class Tariff : ChildActiveRecordLinqBase<Tariff>
 	{
+		public Tariff()
+		{}
+
+		public Tariff(string name, int price)
+		{
+			Name = name;
+			Description = name;
+			Price = price;
+		}
+
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 

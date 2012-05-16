@@ -2,63 +2,78 @@
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using CassiniDev;
 using Castle.ActiveRecord;
+using Castle.ActiveRecord.Framework;
+using Castle.ActiveRecord.Framework.Config;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 using WatiN.Core;
 using log4net;
+using log4net.Config;
 
 namespace InternetInterface.Test.Functional
 {
 	[SetUpFixture]
 	public class Setup
 	{
-
-		private static readonly ILog _log = LogManager.GetLogger(typeof(Setup));
-
 		private Server _webServer;
 
 		[SetUp]
 		public void SetupFixture()
 		{	
-			WatinFixture.ConfigTest();
+			ConfigTest();
 
-			var port = int.Parse(ConfigurationManager.AppSettings["webPort"]);
+			var port = Int32.Parse(ConfigurationManager.AppSettings["webPort"]);
 
-			var webDir = string.Empty;
+			var webDir = String.Empty;
 			if (Environment.MachineName.ToLower() == "devsrv")
 				webDir = ConfigurationManager.AppSettings["webDirectoryDev"];
 			else
 				webDir = ConfigurationManager.AppSettings["webDirectory"];
-
-			var err = new StringBuilder();
-			err.AppendLine("InternetInterface.Test");
-			err.AppendLine("SERVERNAME " + webDir);
-			err.AppendLine("MASHINE " + Environment.MachineName.ToLower());
-			err.AppendLine("FULLPATH " + Path.GetFullPath(webDir));
-			_log.Error(err.ToString());
 
 			_webServer = new Server(port, "/", Path.GetFullPath(webDir));
 			_webServer.Start();
 			Settings.Instance.AutoMoveMousePointerToTopLeft = false;
 			Settings.Instance.MakeNewIeInstanceVisible = false;
 
-			using(new SessionScope()) {
-				var partner = Partner.Queryable.FirstOrDefault(p => p.Login == Environment.UserName);
-				if (partner == null) {
-					partner = new Partner(Environment.UserName);
-					partner.Save();
-				}
-			}
+			PrepareTestData();
 		}
 
 		[TearDown]
 		public void TeardownFixture()
 		{
 			_webServer.ShutDown();
+		}
+
+		private void PrepareTestData()
+		{
+			using(new SessionScope()) {
+
+				var partner = ActiveRecordLinqBase<Partner>.Queryable.FirstOrDefault(p => p.Login == Environment.UserName);
+				if (partner == null) {
+					partner = new Partner(Environment.UserName);
+					partner.Save();
+				}
+
+				if (!ActiveRecordLinqBase<Tariff>.Queryable.Any())
+					new Tariff("Тариф для тестирования", 500).Save();
+				if (!ActiveRecordLinqBase<Brigad>.Queryable.Any())
+					new Brigad("Бригада для тестирования").Save();
+			}
+		}
+
+		public static void ConfigTest()
+		{
+			XmlConfigurator.Configure();
+			if (!ActiveRecordStarter.IsInitialized)
+				ActiveRecordStarter.Initialize(new[] {
+					Assembly.Load("InternetInterface"),
+					Assembly.Load("InternetInterface.Test")
+				}, ActiveRecordSectionHandler.Instance);
 		}
 	}
 }

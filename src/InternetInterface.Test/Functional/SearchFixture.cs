@@ -79,7 +79,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void ClientInfoTest()
 		{
-			ClientHelperFixture.CreateClient(l => {
+			ClientHelper.CreateClient(l => {
 				using (var browser = Open("UserInfo/SearchUserInfo.rails?ClientCode=" + l.Id)) {
 					Assert.That(browser.Text, Is.StringContaining("Город"));
 					Assert.That(browser.Text, Is.StringContaining("Паспортные данные:"));

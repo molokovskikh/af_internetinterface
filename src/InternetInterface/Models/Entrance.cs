@@ -32,8 +32,5 @@ namespace InternetInterface.Models
 		{
 			return Switch != null;
 		}
-
-		/*[HasMany(ColumnKey = "Entrance", OrderBy = "Number")]
-		public virtual IList<Apartment> Apartments { get; set; }*/
 	}
 }

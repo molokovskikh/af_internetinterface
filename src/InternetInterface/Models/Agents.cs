@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
-using Castle.Components.Validator;
 using InternetInterface.Controllers.Filter;
-using InternetInterface.Models;
-
 
 namespace InternetInterface.Models
 {
-
 	[ActiveRecord("Agents", Schema = "internet", Lazy = true)]
 	public class Agent : ActiveRecordLinqBase<Agent>
 	{

@@ -54,7 +54,6 @@ namespace InternetInterface.Models
 					LogComment = "Невозможно использовать данную услугу";
 					return;
 				}
-				//throw new UniqueServiceException();
 			base.Save();
 			Client.Refresh();
 		}

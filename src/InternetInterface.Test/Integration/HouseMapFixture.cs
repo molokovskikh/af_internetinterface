@@ -8,6 +8,7 @@ using Castle.MonoRail.TestSupport;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Controllers;
 using InternetInterface.Models;
+using InternetInterface.Test.Functional;
 using InternetInterface.Test.Helpers;
 using NHibernate;
 using NUnit.Framework;
@@ -19,7 +20,7 @@ namespace InternetInterface.Test.Integration
     {
         public HouseMapFixture()
         {
-            WatinFixture.ConfigTest();
+            Setup.ConfigTest();
         }
 
         [Test]

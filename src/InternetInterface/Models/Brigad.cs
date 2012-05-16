@@ -11,6 +11,14 @@ namespace InternetInterface.Models
 	[ActiveRecord("ConnectBrigads", Schema = "Internet", Lazy = true)]
 	public class Brigad : ValidActiveRecordLinqBase<Brigad>
 	{
+		public Brigad()
+		{}
+
+		public Brigad(string name)
+		{
+			Name = name;
+		}
+
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
