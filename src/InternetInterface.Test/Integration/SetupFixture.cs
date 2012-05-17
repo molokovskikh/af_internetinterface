@@ -6,6 +6,8 @@ using Castle.MonoRail.Framework.Services;
 using Castle.MonoRail.Views.Brail;
 using Common.Web.Ui.MonoRailExtentions;
 using IgorO.ExposedObjectProject;
+using InternetInterface.Controllers.Filter;
+using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 
@@ -18,6 +20,7 @@ namespace InternetInterface.Test.Integration
 		public void Setup()
 		{
 			Functional.Setup.ConfigTest();
+			InitializeContent.GetAdministrator = () => Partner.FindFirst();
 
 			BaseMailer.ViewEngineManager = GetViewManager();
 		}

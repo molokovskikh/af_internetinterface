@@ -31,6 +31,17 @@ namespace InternetInterface.Models
 	[ActiveRecord(Table = "Contacts", Schema = "Internet", Lazy = true), Auditable]
 	public class Contact : ChildActiveRecordLinqBase<Contact>
 	{
+		public Contact()
+		{
+		}
+
+		public Contact(Client client, ContactType type, string text)
+		{
+			Client = client;
+			Type = type;
+			Text = text;
+		}
+
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 

@@ -144,6 +144,7 @@
     <Compile Include="Helpers\PartnerHelper.cs" />
     <Compile Include="Helpers\PropertiesHelper.cs" />
     <Compile Include="Helpers\WatinFixture.cs" />
+    <Compile Include="Integration\ContactFixture.cs" />
     <Compile Include="Integration\HouseMapFixture.cs" />
     <Compile Include="Integration\MailerFixture.cs" />
     <Compile Include="Integration\PaymentFixture.cs" />

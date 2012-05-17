@@ -10,6 +10,7 @@ using Common.Web.Ui.Helpers;
 using Common.Web.Ui.MonoRailExtentions;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
+using NHibernate.Event;
 
 namespace InternetInterface.Helpers
 {
@@ -101,35 +102,42 @@ namespace InternetInterface.Helpers
 			return new AuditablePropertyInternet(property, name, newState, oldState);
 		}
 
-		protected override void Log(NHibernate.Event.PostUpdateEvent @event, string message, bool isHtml)
+		protected override void Log(PostUpdateEvent @event, string message, bool isHtml)
 		{
-			using (new SessionScope()) {
-				if (@event.Entity.GetType() == typeof(ServiceRequest)) {
-					@event.Session.Save(
-						new ServiceIteration {
-							Description = message,
-							Request = (ServiceRequest)@event.Entity
-						});
-					return;
-				}
-				Client client = null;
-				if (@event.Entity.GetType() == typeof(Client))
-					client = (Client)@event.Entity;
-				var clientProp = @event.Entity.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance).FirstOrDefault(p => p.PropertyType == typeof (Client));
-				if (clientProp != null || client != null) {
-					{
-						if (clientProp != null)
-						client = (Client)clientProp.GetValue(@event.Entity, null);
-						@event.Session.Save(new Appeals {
-							Appeal = string.IsNullOrEmpty(client.LogComment) ? message : string.Format("{0} \r\n Комментарий: \r\n {1}", message, client.LogComment),
-							Client = client,
-							Date = DateTime.Now,
-							Partner = InitializeContent.Partner,
-							AppealType = AppealType.System
-						});
-					}
-				}
+			var session = @event.Session;
+			var entity = @event.Entity;
+			if (entity.GetType() == typeof(ServiceRequest)) {
+				session.Save(
+					new ServiceIteration {
+						Description = message,
+						Request = (ServiceRequest)entity
+					});
+				return;
 			}
+
+			Appeals appeal = null;
+			LoadData(session, () => {
+				Client client = null;
+				if (entity.GetType() == typeof(Client))
+					client = (Client)entity;
+
+				var clientProp = entity.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance).FirstOrDefault(p => p.PropertyType == typeof (Client));
+				if (clientProp != null)
+					client = (Client)clientProp.GetValue(entity, null);
+
+				if (client != null) {
+					appeal = new Appeals {
+						Appeal = string.IsNullOrEmpty(client.LogComment) ? message : string.Format("{0} \r\n Комментарий: \r\n {1}", message, client.LogComment),
+						Client = client,
+						Date = DateTime.Now,
+						Partner = InitializeContent.Partner,
+						AppealType = AppealType.System
+					};
+				}
+			});
+
+			if (appeal != null)
+				session.Save(appeal);
 		}
 	}
 }
