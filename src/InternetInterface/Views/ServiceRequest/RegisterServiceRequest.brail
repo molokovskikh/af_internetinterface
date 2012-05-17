@@ -58,7 +58,7 @@
 								<%for contact in client.Contacts: %>
 								<tr>
 									<td>
-										<a href="#" class="contact_link"><b> ${contact.HumanableNumber()} </b></a>
+										<a href="#" class="contact_link"><b> ${contact.HumanableNumber} </b></a>
 									</td>
 									<td>
 										${contact.GetReadbleCategorie()}

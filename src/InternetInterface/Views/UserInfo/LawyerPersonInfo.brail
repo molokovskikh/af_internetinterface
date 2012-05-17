@@ -122,7 +122,6 @@
 				<button type="submit" id="SaveButton" class="button">
 				<img alt="Save" src="../Images/application_edit.png"> Сохранить
 				</button>
-						<!--    <input class="button" id="RegisterButton" type="submit" value="Зарегистрировать" /></td> -->
 			</div>
 		</td>
 		</tr>

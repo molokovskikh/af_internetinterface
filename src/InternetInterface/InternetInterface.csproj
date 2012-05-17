@@ -35,10 +35,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Boo.Lang.Extensions, Version=2.0.9.3, Culture=neutral, PublicKeyToken=32c39770e9a21a67, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Boo.Lang.Extensions.dll</HintPath>
-    </Reference>
     <Reference Include="Castle.ActiveRecord, Version=3.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\..\lib\Castle.ActiveRecord.dll</HintPath>
     </Reference>
@@ -187,6 +183,7 @@
     <None Include="Views\Rescues\404.brail" />
     <None Include="Views\ServiceRequest\ShowRequest.brail" />
     <None Include="Views\ServiceRequest\ViewRequests.brail" />
+    <None Include="Views\Shared\EditorTemplates\Contact.brail" />
     <None Include="Views\Sms\SmsIndex.brail" />
     <None Include="Views\Subview\AppealsInfo.brail" />
     <None Include="Views\Subview\CallsHistory.brail" />

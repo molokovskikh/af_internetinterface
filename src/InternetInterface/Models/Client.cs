@@ -151,11 +151,11 @@ namespace InternetInterface.Models
 				if (Contacts != null) {
 					var contact = Contacts.FirstOrDefault(c => c.Type == ContactType.HeadPhone);
 					if (contact != null) {
-						return contact.HumanableNumber();
+						return contact.HumanableNumber;
 					}
 					contact = Contacts.FirstOrDefault();
 					if (contact != null)
-						return contact.HumanableNumber();
+						return contact.HumanableNumber;
 				}
 				return string.Empty;
 			}

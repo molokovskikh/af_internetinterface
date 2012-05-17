@@ -51,7 +51,7 @@
 		<td>Номер телефона
 			<select name="phoneId">
 				<% for i, contact in enumerate(client.Contacts): %>
-					<option value="${contact.Id}">${contact.HumanableNumber()} (${contact.GetReadbleCategorie()})</option>
+					<option value="${contact.Id}">${contact.HumanableNumber} (${contact.GetReadbleCategorie()})</option>
 				<%end %>
 			</select>
 		</td>

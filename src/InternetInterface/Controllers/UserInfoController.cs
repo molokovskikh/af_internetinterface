@@ -208,6 +208,7 @@ namespace InternetInterface.Controllers
 
 	[Helper(typeof (PaginatorHelper))]
 	[Helper(typeof (TextHelper))]
+	[Helper(typeof (BindingHelper))]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof (AuthenticationFilter))]
 	public class UserInfoController : BaseController
 	{
@@ -273,8 +274,7 @@ namespace InternetInterface.Controllers
 
 			PropertyBag["CallLogs"] = UnresolvedCall.LastCalls;
 			PropertyBag["Contacts"] =
-				Contact.Queryable.Where(c => c.Client.Id == filter.ClientCode).OrderByDescending(c => c.Type).Select(
-					c => new { c.Id ,ContactText = c.HumanableNumber(), Type = c.GetReadbleCategorie()}).ToList();
+				Contact.Queryable.Where(c => c.Client.Id == filter.ClientCode).OrderByDescending(c => c.Type).ToList();
 			PropertyBag["EditConnectInfoFlag"] = filter.EditConnectInfoFlag;
 			SendConnectInfo(client);
 			ConnectPropertyBag(filter.ClientCode);
@@ -338,7 +338,7 @@ namespace InternetInterface.Controllers
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void SaveContacts([ARDataBind("contact", AutoLoad = AutoLoadBehavior.NewInstanceIfInvalidKey)]Contact[] contacts, uint ClientID)
+		public void SaveContacts([ARDataBind("Contacts", AutoLoad = AutoLoadBehavior.NewInstanceIfInvalidKey)] Contact[] contacts, uint ClientID)
 		{
 			var client = Client.Find(ClientID);
 			var telephoneRegex = new Regex(@"^(\d{10})$");
@@ -925,8 +925,8 @@ where r.`Label`= :LabelIndex;")
 			PropertyBag["UserInfo"] = true;
 			PropertyBag["CallLogs"] = UnresolvedCall.LastCalls;
 			PropertyBag["Contacts"] =
-				Contact.Queryable.Where(c => c.Client.Id == filter.ClientCode).OrderByDescending(c => c.Type).Select(
-					c => new { c.Id , ContactText = c.HumanableNumber(), Type = c.GetReadbleCategorie()}).ToList();
+				Contact.Queryable.Where(c => c.Client.Id == filter.ClientCode)
+					.OrderByDescending(c => c.Type).ToList();
 
 			if (client.Status.Id != (uint)StatusType.BlockedAndNoConnected)
 				PropertyBag["EConnect"] = filter.EditingConnect;
