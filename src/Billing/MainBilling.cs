@@ -9,8 +9,10 @@ using System.Threading;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework.Config;
 using Castle.ActiveRecord.Framework.Internal.EventListener;
+using Common.MySql;
 using Common.Tools;
 using Common.Tools.Calendar;
+using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
@@ -50,22 +52,8 @@ namespace Billing
 		public static void InitActiveRecord()
 		{
 			if (!ActiveRecordStarter.IsInitialized) {
-				var configuration = new InPlaceConfigurationSource();
-				configuration.PluralizeTableNames = true;
-				configuration.Add(typeof (ActiveRecordBase),
-				                  new Dictionary<string, string> {
-				                  	{Environment.Dialect, "NHibernate.Dialect.MySQLDialect"},
-				                  	{Environment.ConnectionDriver, "NHibernate.Driver.MySqlDataDriver"},
-				                  	{Environment.ConnectionProvider, "NHibernate.Connection.DriverConnectionProvider"},
-				                  	{Environment.ConnectionStringName, "DB"},
-				                  	{
-				                  	Environment.ProxyFactoryFactoryClass,
-				                  	"NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle"
-				                  	},
-				                  	{Environment.Hbm2ddlKeyWords, "none"}
-				                  });
 				ActiveRecordStarter.EventListenerComponentRegistrationHook += RemoverListner.Make;
-				ActiveRecordStarter.Initialize(new[] {typeof (Client).Assembly}, configuration);
+				ActiveRecordInitialize.Init(ConnectionHelper.GetConnectionName(), new[] {typeof (Client).Assembly});
 			}
 		}
 

@@ -8,6 +8,8 @@ using CassiniDev;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Castle.ActiveRecord.Framework.Config;
+using Common.MySql;
+using Common.Web.Ui.ActiveRecordExtentions;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
@@ -70,10 +72,9 @@ namespace InternetInterface.Test.Functional
 		{
 			XmlConfigurator.Configure();
 			if (!ActiveRecordStarter.IsInitialized)
-				ActiveRecordStarter.Initialize(new[] {
+				ActiveRecordInitialize.Init(ConnectionHelper.GetConnectionName(),
 					Assembly.Load("InternetInterface"),
-					Assembly.Load("InternetInterface.Test")
-				}, ActiveRecordSectionHandler.Instance);
+					Assembly.Load("InternetInterface.Test"));
 		}
 	}
 }

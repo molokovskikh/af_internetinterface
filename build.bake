@@ -6,6 +6,7 @@ import file from Tools.bake
 import file from Test.bake
 import file from Db.bake
 import file from AppSupport.bake
+import file from MySql.bake
 import System.Linq.Enumerable
 
 Global(
@@ -59,4 +60,4 @@ task @DeployPrinter:
 	Engine.Execute("WebDeploy")
 	Globals.Project = oldProject
 
-task @BeforeTest, [@PrepareLocal]
+task @BeforeTest, [@RunMySql, @PrepareLocal]

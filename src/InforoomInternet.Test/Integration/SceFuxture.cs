@@ -24,7 +24,6 @@ namespace InforoomInternet.Test.Integration
 					Lease.Queryable.Where(
 						l => l.Endpoint != null && l.Endpoint.Client != null && l.Endpoint.Client.PhysicalClient != null).ToList();
 				foreach (var lease in leases) {
-					InitializeHelper.InithializeAllStructure(lease);
 					new SceThread(lease, "192.168.0.1").Go();
 				}
 				var firstClient = leases.First().Endpoint.Client.Id;
