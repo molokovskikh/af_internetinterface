@@ -12,7 +12,8 @@ import System.Linq.Enumerable
 Global(
 	Project : "InternetInterface",
 	HumanReadableName : "Интернет интерфейс",
-	Environment: @Local
+	Environment: @Local,
+	Port: 3308
 )
 
 task @default, [@Build, @BuildBackground]
