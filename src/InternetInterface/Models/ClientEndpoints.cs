@@ -10,6 +10,16 @@ namespace InternetInterface.Models
 	[ActiveRecord("ClientEndpoints", Schema = "Internet", Lazy = true), Auditable]
 	public class ClientEndpoints : ChildActiveRecordLinqBase<ClientEndpoints>
 	{
+		public ClientEndpoints()
+		{}
+
+		public ClientEndpoints(Client client, int? port, NetworkSwitches @switch)
+		{
+			Client = client;
+			Port = port;
+			Switch = @switch;
+		}
+
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
@@ -21,9 +31,6 @@ namespace InternetInterface.Models
 
 		[BelongsTo(Cascade = CascadeEnum.SaveUpdate), Auditable]
 		public virtual Client Client { get; set; }
-
-		[Property]
-		public virtual int Module { get; set; }
 
 		[Property, Auditable("Порт")]
 		public virtual int? Port { get; set; }

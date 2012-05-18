@@ -44,7 +44,7 @@ namespace InternetInterface.Models
 		[ValidateEmail("Ошибка воода Email (adr@dom.com)")]
 		public virtual string Email { get; set; }
 
-		[ValidateRegExp(@"^((\d{3})-(\d{7}))", "Ошибка фотмата телефонного номера (***-*******)")]
+		[ValidateRegExp(@"^((\d{3})-(\d{7}))", "Ошибка формата телефонного номера (***-*******)")]
 		public virtual string Telephone { get; set; }
 
 		[Property, Auditable("Контактное лицо")]

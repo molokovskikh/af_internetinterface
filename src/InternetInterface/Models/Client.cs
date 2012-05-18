@@ -26,6 +26,7 @@ namespace InternetInterface.Models
 			ClientServices = new List<ClientService>();
 			Payments = new List<Payment>();
 			Contacts = new List<Contact>();
+			Endpoints = new List<ClientEndpoints>();
 		}
 
 		[PrimaryKey]
@@ -257,7 +258,7 @@ namespace InternetInterface.Models
 		[HasMany(ColumnKey = "Client", OrderBy = "Date")]
 		public virtual IList<Contact> Contacts { get; set; }
 	
-		[HasMany(ColumnKey = "Client", OrderBy = "Switch", Lazy = true, Cascade = ManyRelationCascadeEnum.SaveUpdate)]
+		[HasMany(ColumnKey = "Client", OrderBy = "Switch", Lazy = true, Cascade = ManyRelationCascadeEnum.AllDeleteOrphan)]
 		public virtual IList<ClientEndpoints> Endpoints { get; set; }
 
 		public virtual ClientEndpoints FirstPoint()

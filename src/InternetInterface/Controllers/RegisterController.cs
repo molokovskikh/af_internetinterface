@@ -55,7 +55,6 @@ namespace InternetInterface.Controllers
 
 			if ((registerClient && string.IsNullOrEmpty(portException)) ||
 			    (registerClient && string.IsNullOrEmpty(ConnectInfo.Port))) {
-				DbLogHelper.SetupParametersForTriggerLogging();
 
 				PhysicalClients.RegistrLogicClient(phisClient, tariff, house_id, Validator);
 
@@ -197,7 +196,6 @@ namespace InternetInterface.Controllers
 			var connectErrors = Validation.ValidationConnectInfo(info);
 			if (IsValid(person) && string.IsNullOrEmpty(connectErrors))
 			{
-				DbLogHelper.SetupParametersForTriggerLogging();
 				person.SaveAndFlush();
 				var client = new Client
 								{

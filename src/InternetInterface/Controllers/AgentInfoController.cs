@@ -63,7 +63,6 @@ namespace InternetInterface.Controllers
 		[AccessibleThrough(Verb.Post)]
 		public void SaveSettings([ARDataBind("agentSettings", AutoLoad = AutoLoadBehavior.NewInstanceIfInvalidKey)]AgentTariff[] tariffs)
 		{
-			DbLogHelper.SetupParametersForTriggerLogging();
 			foreach (var agentTariff in tariffs) {
 				agentTariff.Save();
 			}

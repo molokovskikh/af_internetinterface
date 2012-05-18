@@ -20,8 +20,9 @@ namespace InternetInterface.Test.Integration
 		public void Setup()
 		{
 			Functional.Setup.ConfigTest();
-			InitializeContent.GetAdministrator = () => Partner.FindFirst();
 
+			Functional.Setup.PrepareTestData();
+			InitializeContent.GetAdministrator = () => Partner.FindFirst();
 			BaseMailer.ViewEngineManager = GetViewManager();
 		}
 

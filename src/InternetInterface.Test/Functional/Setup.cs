@@ -49,7 +49,7 @@ namespace InternetInterface.Test.Functional
 			_webServer.ShutDown();
 		}
 
-		private void PrepareTestData()
+		public static void PrepareTestData()
 		{
 			using(new SessionScope()) {
 

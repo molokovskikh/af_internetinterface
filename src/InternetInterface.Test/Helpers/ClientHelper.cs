@@ -76,7 +76,7 @@ namespace InternetInterface.Test.Helpers
 				Apartment = 1,
 				Entrance = 2,
 				Floor = 2,
-				PhoneNumber = "8-900-200-80-80",
+				PhoneNumber = "900-2008080",
 				Balance = 0,
 				Tariff = ActiveRecordLinqBase<Tariff>.Queryable.First(),
 				CaseHouse = "sdf",

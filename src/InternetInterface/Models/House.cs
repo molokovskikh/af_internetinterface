@@ -11,6 +11,15 @@ namespace InternetInterface.Models
 	[ActiveRecord("Houses", Schema = "internet", Lazy = true)]
 	public class House : ValidActiveRecordLinqBase<House>
 	{
+		public House()
+		{}
+
+		public House(string street, int number)
+		{
+			Street = street;
+			Number = number;
+		}
+
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 

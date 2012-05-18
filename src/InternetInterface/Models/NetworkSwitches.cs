@@ -27,7 +27,7 @@ namespace InternetInterface.Models
 		[Property, ValidateRegExp(MACRegExp, "Ошибка ввода MAC (**-**-**-**-**)"), ValidateIsUnique("Такой МАС уже существует")]
 		public virtual string Mac { get; set; }
 
-		[Property, ValidateRegExp(IPRegExp, "Ошибка фотмата IP адреса (max 255.255.255.255))")]
+		[Property, ValidateRegExp(IPRegExp, "Ошибка формата IP адреса (max 255.255.255.255))")]
 		public virtual string IP { get; set; }
 
 		[Property]

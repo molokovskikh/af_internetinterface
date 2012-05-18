@@ -775,8 +775,6 @@ where r.`Label`= :LabelIndex;")
 				InitializeHelper.InitializeModel(_client);
 				InitializeHelper.InitializeModel(updateClient);
 
-				DbLogHelper.SetupParametersForTriggerLogging();
-
 				if (!string.IsNullOrEmpty(comment))
 				{
 					_client.LogComment = comment;
@@ -841,7 +839,6 @@ where r.`Label`= :LabelIndex;")
 
 				InitializeHelper.InitializeModel(updateClient);
 				InitializeHelper.InitializeModel(_client);
-				DbLogHelper.SetupParametersForTriggerLogging();
 
 				if (!string.IsNullOrEmpty(comment))
 				{
