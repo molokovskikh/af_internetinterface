@@ -57,7 +57,6 @@ namespace InternetInterface.Test.Integration.Tasks
 					LeasedTo = "14-D6-4D-38-07-2F-00-00-00-00-00-00-00-00-00-00",
 					Port = 5,
 					Pool = IpPool.FindFirst(),
-					Module = 1,
 					Switch = ActiveRecordLinqBase<NetworkSwitches>.FindFirst(),
 					Ip = 3541660034
 				};

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
@@ -10,12 +9,8 @@ using Castle.MonoRail.Framework;
 using Common.Tools;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.Models.Editor;
-using InforoomInternet.Logic;
 using InforoomInternet.Models;
 using InternetInterface.Models;
-using NHibernate;
-
-//using Tariff = InforoomInternet.Models.Tariff;
 
 namespace InforoomInternet.Controllers
 {
@@ -61,7 +56,7 @@ namespace InforoomInternet.Controllers
 			var ip = Request.UserHostAddress;
 			var mailToAdress = "internet@ivrn.net";
 #if DEBUG
-			var lease = /*new List<Lease>(); */ Lease.FindAll();
+			var lease = Lease.FindAll();
 			mailToAdress = "a.zolotarev@analit.net";
 #else
 			var lease = Lease.FindAllByProperty("Ip", Convert.ToUInt32(NetworkSwitches.SetProgramIp(ip)));
@@ -171,15 +166,8 @@ namespace InforoomInternet.Controllers
 					{
 						Client = new Client
 						{
-							//Disabled = true,
 							ShowBalanceWarningPage = true,
 							RatedPeriodDate = DateTime.Now,
-							/*PhysicalClient = new PhysicalClients {
-								Balance = 150,
-								Tariff = new Tariff {
-									Price = 500
-								}
-							}*/
 							LawyerPerson = new LawyerPerson {
 								Balance = -20000,
 								Tariff = 10000
@@ -283,7 +271,6 @@ namespace InforoomInternet.Controllers
 			}
 			else {
 				if (ClientData.Get(lease.Endpoint.Client.Id) == UnknownClientStatus.NoInfo) {
-					InitializeHelper.InithializeAllStructure(lease);
 					var sceWorker = new SceThread(lease, hostAdress);
 					sceWorker.Go();
 				}
@@ -293,7 +280,8 @@ namespace InforoomInternet.Controllers
 				var rUrl = Request["url"];
 				if (!string.IsNullOrEmpty(host))
 					PropertyBag["referer"] = host + rUrl;
-				else PropertyBag["referer"] = string.Empty;
+				else
+					PropertyBag["referer"] = string.Empty;
 			}
 		}
 
@@ -363,7 +351,7 @@ namespace InforoomInternet.Controllers
 			if (client == null)
 				messageText.AppendLine(string.Format("Пришел запрос на страницу WarningPackageId от стороннего клиента (IP: {0})", Request.UserHostAddress));
 			else {
-				var lease = Lease.Queryable.Where(l => l.Endpoint.Client.Id == client.Value).FirstOrDefault();
+				var lease = Lease.Queryable.FirstOrDefault(l => l.Endpoint.Client.Id == client.Value);
 				messageText.AppendLine(string.Format("Пришел запрос на страницу WarningPackageId от клиента {0}",
 				                                     client.Value.ToString("00000")));
 				if (lease.Endpoint.Switch != null) {

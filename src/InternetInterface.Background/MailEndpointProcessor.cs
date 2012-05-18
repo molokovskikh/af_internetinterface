@@ -101,7 +101,6 @@ where sl.LeaseId in ({0})", guestLeases.Select(g => g.Id).Implode());
 					LeaseBegin = gl.LeaseBegin,
 					LeaseEnd = gl.LeaseEnd,
 					LeasedTo = gl.LeasedTo,
-					Module = gl.Module,
 					Port = gl.Port,
 					Switch = gl.Switch,
 					Pool = gl.Pool,

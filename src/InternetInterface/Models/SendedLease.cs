@@ -20,7 +20,6 @@ namespace InternetInterface.Models
 			LeaseEnd = lease.LeaseEnd;
 			Ip = lease.Ip;
 			Pool = lease.Pool;
-			Module = lease.Module;
 			Switch = lease.Switch;
 			SendDate = DateTime.Now;
 			Endpoint = lease.Endpoint;
@@ -47,9 +46,6 @@ namespace InternetInterface.Models
 
 		[BelongsTo]
 		public virtual IpPool Pool { get; set; }
-
-		[Property]
-		public virtual int Module { get; set; }
 
 		[Property]
 		public virtual int? Port { get; set; }

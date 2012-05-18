@@ -42,9 +42,6 @@ namespace InternetInterface.Models
 		[BelongsTo]
 		public virtual IpPool Pool { get; set; }
 
-		[Property]
-		public virtual int Module { get; set; }
-
 		public string GetIp()
 		{
 			return IpHelper.GetNormalIp(Ip.ToString());

@@ -117,6 +117,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Functional\Setup.cs" />
+    <Compile Include="Integration\MainControllerFixture.cs" />
     <Compile Include="Integration\PrivateOffice.cs" />
     <Compile Include="Integration\SceFuxture.cs" />
     <Compile Include="Integration\TariffFixture.cs" />
