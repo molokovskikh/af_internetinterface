@@ -14,7 +14,7 @@ using NHibernate.Linq;
 namespace InternetInterface.Models
 {
 	[ActiveRecord("NetworkSwitches", Schema = "Internet", Lazy = true)]
-	public class NetworkSwitches	
+	public class NetworkSwitches
 	{
 		public const string IPRegExp =
 			@"\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b";

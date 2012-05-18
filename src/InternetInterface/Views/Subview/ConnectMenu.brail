@@ -37,7 +37,7 @@
 			<select name="ConnectInfo.Switch" id="SelectSwitches" style="width: 100%" >
 				<option id="Option2" value="0" > </option>
 				<%for j, Switch in enumerate(Switches): %>
-				<option id="Option${j}" value="${Switch.Id}" ${"selected" if (Switch.Id == ConnectInfo.Switch)} > ${Switch.Name} </option>
+				<option id="Option${j}" value="${Switch.Id}" ${"selected" if (Switch.Id == ConnectInfo.Switch)} >${Switch.Name}</option>
 				<% end %>
 			</select>
 		</td>
