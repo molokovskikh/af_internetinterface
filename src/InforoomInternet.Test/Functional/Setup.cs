@@ -13,28 +13,12 @@ namespace InforoomInternet.Test.Functional
 	public class Setup
 	{
 		private Server _webServer;
-		private static readonly ILog _log = LogManager.GetLogger(typeof(Setup));
 
 		[SetUp]
 		public void SetupFixture()
 		{
-
-			//WatinFixture.ConfigTest();
-
 			var port = int.Parse(ConfigurationManager.AppSettings["webPort"]);
-
-			var webDir = string.Empty;
-			if (Environment.MachineName.ToLower() == "devsrv")
-				webDir = ConfigurationManager.AppSettings["webDirectoryDev"];
-			else
-				webDir = ConfigurationManager.AppSettings["webDirectory"];
-
-			var err = new StringBuilder();
-			err.AppendLine("InternetInterface.Test");
-			err.AppendLine("SERVERNAME " + webDir);
-			err.AppendLine("MASHINE " + Environment.MachineName.ToLower());
-			err.AppendLine("FULLPATH " + Path.GetFullPath(webDir));
-			_log.Error(err.ToString());
+			var webDir = ConfigurationManager.AppSettings["webDirectory"];
 
 			_webServer = new Server(port, "/", Path.GetFullPath(webDir));
 			_webServer.Start();
