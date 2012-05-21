@@ -164,6 +164,7 @@
     <Compile Include="Unit\GetClientsLogicFixture.cs" />
     <Compile Include="Unit\OnLineClientFixture.cs" />
     <Compile Include="Unit\PhysicalClientFixture.cs" />
+    <Compile Include="Unit\ServiceRequestFixture.cs" />
     <Compile Include="Unit\SmsFixture.cs" />
   </ItemGroup>
   <ItemGroup>

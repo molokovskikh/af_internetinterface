@@ -9,6 +9,7 @@ using Common.Web.Ui.Helpers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models.Universal;
 using NHibernate;
+using NHibernate.Linq;
 
 namespace InternetInterface.Models
 {
@@ -52,9 +53,21 @@ namespace InternetInterface.Models
 		}
 	}
 
-	[ActiveRecord("Appeals", Schema = "internet", Lazy = true)]
+	[ActiveRecord(Schema = "internet", Lazy = true)]
 	public class Appeals : ValidActiveRecordLinqBase<Appeals>
 	{
+		public Appeals()
+		{}
+
+		public Appeals(string appeal, Client client, AppealType appealType)
+		{
+			Appeal = appeal;
+			Client = client;
+			AppealType = appealType;
+			Date = DateTime.Now;
+			Partner = InitializeContent.Partner;
+		}
+
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
@@ -78,7 +91,7 @@ namespace InternetInterface.Models
 			return AppealHelper.GetTransformedAppeal(Appeal);
 		}
 
-		public static List<UniversalAppeal> GetAllAppeal(Client client, AppealType Type)
+		public static List<UniversalAppeal> GetAllAppeal(ISession session, Client client, AppealType Type)
 		{
 			Expression<Func<Appeals, bool>> predicate;
 			if (Type == AppealType.All)
@@ -93,11 +106,12 @@ namespace InternetInterface.Models
 				Type = UniversalAppealType.Appeal,
 				AppealType = a.AppealType
 			}).ToList();
-			if (Type == AppealType.All) { 
-				var service = ServiceRequest.Queryable.Where(s => s.Client == client).ToList().Select(s => new UniversalAppeal {
+			if (Type == AppealType.All) {
+				var serviceRequests = session.Query<ServiceRequest>().Where(s => s.Client == client);
+				var service = serviceRequests.ToList().Select(s => new UniversalAppeal {
 					Date = s.RegDate,
 					Partner = s.Registrator != null ? s.Registrator.Name : string.Empty,
-					Text = s.GetDescription(),
+					Text = String.Format("Сервисная заявка №{0} ", s.Id) + s.GetDescription(),
 					Type = UniversalAppealType.Service,
 					SubFields = s.Iterations.Count > 0 ? 
 					new List<UniversalAppeal>(s.Iterations.Select(i => new UniversalAppeal {
@@ -114,22 +128,15 @@ namespace InternetInterface.Models
 
 		public static void CreareAppeal(string message, Client client, AppealType type)
 		{
-			new Appeals
-			{
-				Appeal = message,
-				Client = client,
-				AppealType = type,
-				Date = DateTime.Now,
-				Partner = InitializeContent.Partner
-			}.Save();
+			new Appeals(message, client, type).Save();
 		}
 
 		public virtual string Type()
 		{
 			var type = string.Empty;
-			if (AppealType == Models.AppealType.User)
+			if (AppealType == AppealType.User)
 				type = "Пользовательское";
-			if (AppealType == Models.AppealType.System)
+			if (AppealType == AppealType.System)
 				type = "Системное";
 			return type;
 		}

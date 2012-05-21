@@ -27,7 +27,7 @@
 	}
 </script>
 
-<div style="width:1200px; font-family:Verdana, sans-serif; color:#484848; font-size:12px;" class="backGround whereNewTable">
+<div style="width:1200px; color:#484848; font-size:12px;" class="backGround whereNewTable">
 <table class="table">
 <thead>
 	<th colspan="3">Отправить сообщение</th>

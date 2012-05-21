@@ -42,15 +42,16 @@ namespace InternetInterface.Test.Integration
 			context.Items[InitializeContent.AdministratorKey] = Partner.FindFirst();
 			HttpContext.Current = context;
 
-			ServiceRequest.DeleteAll();
+			session.CreateSQLQuery("delete from ServiceRequests").ExecuteUpdate();
 			var client = new Client();
 			client.Save();
-			new ServiceRequest {
+			var request = new ServiceRequest {
 				Client = client,
 				Free = true,
 				RegDate = DateTime.Now.AddMonths(-1),
 				Registrator = null
-			}.Save();
+			};
+			session.Save(request);
 			scope.Flush();
 			var filter = new RequestFinderFilter();
 			Assert.That(filter.Find().Count, Is.EqualTo(0));

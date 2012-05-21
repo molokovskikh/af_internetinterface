@@ -6,6 +6,7 @@ using System.Web;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Common.Tools;
+using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Controllers.Filter;
@@ -115,38 +116,39 @@ namespace InternetInterface.Controllers
 
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	[Helper(typeof(PaginatorHelper))]
-	public class ServiceRequestController : ARSmartDispatcherController
+	public class ServiceRequestController : BaseController
 	{
+		public ServiceRequestController()
+		{
+			SetBinder(new ARDataBinder());
+		}
+
 		public void RegisterServiceRequest(uint clientCode)
 		{
 			var client = Client.Find(clientCode);
+			var request = new ServiceRequest{Registrator = InitializeContent.Partner};
 			PropertyBag["client"] = client;
+			PropertyBag["request"] = request;
 			PropertyBag["ingeners"] = Partner.GetServiceIngeners();
 			if (IsPost) {
-				var newRequest = new ServiceRequest{Registrator = InitializeContent.Partner};
-				BindObjectInstance(newRequest, "Request", AutoLoadBehavior.NewInstanceIfInvalidKey);
-				newRequest.Save();
-				var endPoint = client.FirstPoint();
-				var port = endPoint != null ? endPoint.Port.ToString() : string.Empty;
-				if (newRequest.Performer != null)
-				{ 
-					var message = new SmsMessage {
-						PhoneNumber = "+7" + newRequest.Performer.TelNum,
-						Text = string.Format("Сервис {0} т. {1} п. {2} сч. {3}", client.GetCutAdress(), "+7-" + newRequest.Contact.Replace("-", string.Empty), port, client.Id)
-					};
+				BindObjectInstance(request, "Request", AutoLoadBehavior.NewInstanceIfInvalidKey);
+
+				if (IsValid(request)) {
+					DbSession.Save(request);
+					var sms = request.GetSms();
+					if (sms != null) {
 #if !DEBUG
-					SmsHelper.SendMessage(message);
+						SmsHelper.SendMessage(message);
 #endif
-					Flash["Message"] = "Сохранено";
-					RedirectToUrl("../Search/Redirect?filter.ClientCode=" + client.Id);
-				}
-				else {
-					Flash["Message"] = Message.Error("Не выбран исполнитель !");
+					}
+
+					Notify("Сохранено");
+					RedirectToUrl("~/Search/Redirect?filter.ClientCode=" + client.Id);
 				}
 			}
 		}
 
-		public void ViewRequests([DataBind("filter")]RequestFinderFilter filter)
+		public void ViewRequests([DataBind("filter")] RequestFinderFilter filter)
 		{
 			PropertyBag["requests"] = filter.Find();
 			PropertyBag["filter"] = filter;
@@ -156,7 +158,7 @@ namespace InternetInterface.Controllers
 
 		public void ShowRequest(uint Id, bool Edit)
 		{
-			var request = ServiceRequest.Find(Id);
+			var request = DbSession.Load<ServiceRequest>(Id);
 			var isService = InitializeContent.Partner.CategorieIs("Service");
 			PropertyBag["Request"] = ((isService && request.Performer == InitializeContent.Partner) || ! isService) ? request : null;
 			PropertyBag["Edit"] = Edit;
@@ -178,23 +180,22 @@ namespace InternetInterface.Controllers
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void EditServiceRequest([ARDataBind("Request", AutoLoadBehavior.NullIfInvalidKey)]ServiceRequest request)
+		public void EditServiceRequest([ARDataBind("Request", AutoLoadBehavior.NullIfInvalidKey)] ServiceRequest request)
 		{
-			if (request != null){
-				InitializeHelper.InitializeModel(request);
-				request.Save();
+			if (request != null) {
+				DbSession.Save(request);
 				RedirectToUrl("../ServiceRequest/ShowRequest?Id=" + request.Id);
 			}
 			else
 				RedirectToReferrer();
 		}
 
-		public void AddServiceComment()
+		public void AddServiceComment(uint requestId, string commentText)
 		{
-			var requestId = Convert.ToUInt32(Request.Params["requestId"]);
-			var commentText = string.Format("Заявка стала бесплатной, поскольку: {0}", Request.Params["commentText"]);
+			commentText = string.Format("Заявка стала бесплатной, поскольку: {0}", commentText);
+			var request = DbSession.Load<ServiceRequest>(requestId);
 			new ServiceIteration {
-				Request = ServiceRequest.Find(requestId),
+				Request = request,
 				Description = commentText
 			}.Save();
 			CancelView();

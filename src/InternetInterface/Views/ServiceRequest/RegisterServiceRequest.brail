@@ -1,34 +1,17 @@
-﻿<script type="text/javascript" src="${Siteroot}/JavaScript/vaidServiceRequest.js"></script>
+﻿${app.Asset("service-requests.css")}
+
+<script type="text/javascript" src="${Siteroot}/JavaScript/vaidServiceRequest.js"></script>
+
 <script type="text/javascript">
 	$(function () {
-		$('.validateFormService').validate({
-			errorElement: "div",
-			errorLabelContainer: "#errorContainer"
-		});
 		$('.contact_link').click(function () {
-			$('#contact_text').val(this.innerText);
-		});
-
-		$('#contact_text').rules("add", { required: true, regexContact: "^([0-9]{3})\-([0-9]{7})$",
-			messages: {
-				required: "Введите номер телефона"
-			}
-		});
-		$('#DescriptionText').rules("add", { required: true,
-			messages: {
-				required: "Введите текст заявки"
-			}
+			$('#request_Contact').val(this.innerText);
 		});
 	})
 </script>
-<style>
-	.table td
-	{
-		border-bottom: none;
-		}
-</style>
+
 <div style="width:750px;" class="backGround">
-<form class="validateFormService" method=post>
+${FormHelper.FormTag("", {@class: @validateFormService})}
 	<table class="table">
 		<thead>
 			<tr>
@@ -38,24 +21,24 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr><td colspan=2 id="errorContainer"></td></tr>
 			<tr>
 				<td colspan=2>
 					<input type="hidden" name="request.Client.Id" value="${client.Id}" />
-					<label for="DescriptionText"><b>Текст заявки :</b></label>
-					<textarea id="DescriptionText" name="request.Description" rows="8" cols="90%"></textarea>
+					${app.Label("request.Description")}
+					${FormHelper.TextArea("request.Description", {@rows: 8, @cols: "90%"})}
 				</td>
 			</tr>
 			<tr>
 				<td>
-					Телефон для связи с клиентом:
+					${app.Label("request.Contact")}
 				</td>
 				<td>
-					<input type=text id="contact_text" style="margin-right:15px;" name="request.Contact"/><a href="#" style="margin-left:15px;" onclick="$('#contacts').slideToggle('slow');">Существующие</a>
+					${app.Edit("request.Contact")}
+					<a href="#" style="margin-left:15px;" onclick="$('#contacts').slideToggle('slow');">Существующие</a>
 					<div id="contacts" style="display:none; background-color:#d7d9d9; border: 1px double #bfbfbf; margin-top:7px; width:250px;">
 						<table>
 							<tbody>
-								<%for contact in client.Contacts: %>
+								<% for contact in client.Contacts: %>
 								<tr>
 									<td>
 										<a href="#" class="contact_link"><b> ${contact.HumanableNumber} </b></a>
@@ -64,7 +47,7 @@
 										${contact.GetReadbleCategorie()}
 									</td>
 								</tr>
-								<%end %>
+								<% end %>
 							</tbody>
 						</table>
 					</div>
@@ -72,20 +55,17 @@
 			</tr>
 			<tr>
 				<td>
-					Назначить на инженера :
+					Назначить на инженера
 				</td>
 				<td>
-					<select name="request.Performer.Id">
-						<%for ing in ingeners: %>
-							<option value="${ing.Id}">${ing.Name}</option>
-						<%end %>
-					</select>
+					${app.Edit("request.Performer", ingeners)}
 				</td>
 			</tr>
 			<tr>
-				<td>Дата исполнения заявки</td>
+				<td>Дата/время выполнения</td>
 				<td>
-					<input type=text  name="request.PerformanceDate" id="endDate" class="graph_date" class="dp-hover">
+					<input type=text value="${?request.PerformanceDate.ToShortDateString()}" name="request.PerformanceDate" class="graph_date" class="dp-hover">
+					${FormHelper.TextField("request.PerformanceTime", {@class: @time})}
 				</td>
 			</tr>
 			<tr>
@@ -93,5 +73,5 @@
 			</tr>
 		</tbody>
 	</table>
-</form>
+${FormHelper.EndFormTag()}
 </div>

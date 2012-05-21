@@ -98,6 +98,7 @@
   <ItemGroup>
     <Content Include="Assets\Javascripts\application.js" />
     <Content Include="Assets\Javascripts\messages_ru.js" />
+    <Content Include="Assets\Stylesheets\service-requests.css" />
     <Content Include="Css\asc.gif" />
     <Content Include="Css\base.css" />
     <Content Include="Css\bg.gif" />

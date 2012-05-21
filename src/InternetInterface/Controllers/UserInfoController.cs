@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Specialized;
 using System.Linq.Expressions;
-using System.Net;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Web;
 using System.Linq;
 using System.Collections.Generic;
-using Castle.ActiveRecord;
-using Castle.ActiveRecord.Framework;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Common.Tools;
@@ -20,8 +14,6 @@ using InternetInterface.Filters;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Services;
-using NHibernate;
-using NHibernate.Criterion;
 
 namespace InternetInterface.Controllers
 {
@@ -261,7 +253,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["WriteOffs"] = client.GetWriteOffs(DbSession, filter.grouped).OrderByDescending(w => w.WriteOffDate).ToList();
 			PropertyBag["writeOffSum"] = WriteOff.FindAllByProperty("Client", client).Sum(s => s.WriteOffSum);
 			PropertyBag["BalanceText"] = string.Empty;
-			PropertyBag["Appeals"] = Appeals.GetAllAppeal(client, filter.appealType);
+			PropertyBag["Appeals"] = Appeals.GetAllAppeal(DbSession, client, filter.appealType);
 
 			if (client.Status.Connected)
 				PropertyBag["EConnect"] = filter.EditingConnect;
@@ -451,9 +443,7 @@ namespace InternetInterface.Controllers
 			uint EditConnect, string ConnectSum)
 		{
 			var client = Client.Find(ClientID);
-			var brigadChangeFlag = true;
-			if (client.WhoConnected != null)
-				brigadChangeFlag = false;
+			bool brigadChangeFlag = client.WhoConnected == null;
 			var newFlag = false;
 			var clientEntPoint = new ClientEndpoints();
 			var clientsEndPoint = ClientEndpoints.Queryable.Where(c => c.Client == client && c.Id == EditConnect).ToArray();
@@ -905,7 +895,7 @@ where r.`Label`= :LabelIndex;")
 			PropertyBag["grouped"] = grouped;
 			PropertyBag["BalanceText"] = string.Empty;
 			PropertyBag["services"] = Service.FindAll();
-			PropertyBag["Appeals"] = Appeals.GetAllAppeal(client, appealType);
+			PropertyBag["Appeals"] = Appeals.GetAllAppeal(DbSession, client, appealType);
 			PropertyBag["Client"] = client.PhysicalClient;
 
 			PropertyBag["Houses"] = House.AllSort;
@@ -1207,14 +1197,6 @@ where r.`Label`= :LabelIndex;")
 			PropertyBag["selectDate"] = selectDate;
 			PropertyBag["Brigad"] = Brigad.Find(Brig);
 			PropertyBag["Intervals"] = Intervals.GetIntervals();
-		}
-
-		private string CreateAppealLink(string link, string name, int type)
-		{
-			return string.Format("<a href=\"{0}\"" +
-			                     "<button type=\"button\" id=\"Button1\" class=\"button\">" +
-			                     "<img alt=\"Save\" src=\"../Images/tick.png\">{1}</button></a>",
-			                     link.Remove(link.IndexOf("appalType")) + "appealType" + type, name);
 		}
 
 		public void ShowAppeals([DataBind("filter")]AppealFilter filter)

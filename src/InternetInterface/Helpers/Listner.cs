@@ -107,10 +107,11 @@ namespace InternetInterface.Helpers
 			var session = @event.Session;
 			var entity = @event.Entity;
 			if (entity.GetType() == typeof(ServiceRequest)) {
+				var serviceRequest = (ServiceRequest) entity;
 				session.Save(
 					new ServiceIteration {
 						Description = message,
-						Request = (ServiceRequest)entity
+						Request = serviceRequest
 					});
 				return;
 			}
@@ -126,8 +127,9 @@ namespace InternetInterface.Helpers
 					client = (Client)clientProp.GetValue(entity, null);
 
 				if (client != null) {
+					message = string.IsNullOrEmpty(client.LogComment) ? message : string.Format("{0} \r\n Комментарий: \r\n {1}", message, client.LogComment);
 					appeal = new Appeals {
-						Appeal = string.IsNullOrEmpty(client.LogComment) ? message : string.Format("{0} \r\n Комментарий: \r\n {1}", message, client.LogComment),
+						Appeal = message,
 						Client = client,
 						Date = DateTime.Now,
 						Partner = InitializeContent.Partner,
