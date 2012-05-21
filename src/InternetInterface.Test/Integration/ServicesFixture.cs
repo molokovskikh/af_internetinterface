@@ -42,7 +42,7 @@ namespace InternetInterface.Test.Integration
 			context.Items[InitializeContent.AdministratorKey] = Partner.FindFirst();
 			HttpContext.Current = context;
 
-			session.CreateSQLQuery("delete from ServiceRequests").ExecuteUpdate();
+			session.CreateSQLQuery("delete from ServiceRequest").ExecuteUpdate();
 			var client = new Client();
 			client.Save();
 			var request = new ServiceRequest {

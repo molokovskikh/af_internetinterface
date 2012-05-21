@@ -3,18 +3,14 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using CassiniDev;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
-using Castle.ActiveRecord.Framework.Config;
 using Common.MySql;
 using Common.Web.Ui.ActiveRecordExtentions;
 using InternetInterface.Models;
-using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 using WatiN.Core;
-using log4net;
 using log4net.Config;
 
 namespace InternetInterface.Test.Functional
@@ -30,12 +26,7 @@ namespace InternetInterface.Test.Functional
 			ConfigTest();
 
 			var port = Int32.Parse(ConfigurationManager.AppSettings["webPort"]);
-
-			var webDir = String.Empty;
-			if (Environment.MachineName.ToLower() == "devsrv")
-				webDir = ConfigurationManager.AppSettings["webDirectoryDev"];
-			else
-				webDir = ConfigurationManager.AppSettings["webDirectory"];
+			var webDir = ConfigurationManager.AppSettings["webDirectory"];
 
 			_webServer = new Server(port, "/", Path.GetFullPath(webDir));
 			_webServer.Start();
