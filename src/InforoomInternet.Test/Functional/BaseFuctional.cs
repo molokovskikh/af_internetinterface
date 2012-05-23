@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using Castle.ActiveRecord;
+using Common.Web.Ui.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
@@ -275,10 +276,12 @@ namespace InforoomInternet.Test.Functional
 				client.Disabled = true;
 				client.ClientServices.Clear();
 				client.Save();
-				new MessageForClient {
-					Text = "test_message_for_client",
-					Client = client
-				}.Save();
+				ArHelper.WithSession(s => {
+					s.Save(new MessageForClient {
+						Text = "test_message_for_client",
+						Client = client
+					});
+				});
 			}
 			using (var browser = Open("PrivateOffice/IndexOffice"))
 			using (new SessionScope())

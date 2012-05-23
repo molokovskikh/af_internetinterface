@@ -40,10 +40,10 @@ namespace InternetInterface.Services
 			return false;
 		}
 
-		public override bool CanActivate(ClientService CService)
+		public override bool CanActivate(ClientService cService)
 		{
-			var begin = SystemTime.Now() > CService.BeginWorkDate.Value;
-			return  begin && CanActivate(CService.Client);
+			var begin = SystemTime.Now() > cService.BeginWorkDate.Value;
+			return  begin && CanActivate(cService.Client);
 		}
 
 		public override void Activate(ClientService CService)

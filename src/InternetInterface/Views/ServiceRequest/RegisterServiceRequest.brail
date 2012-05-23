@@ -75,3 +75,28 @@ ${FormHelper.FormTag("", {@class: @validateFormService})}
 	</table>
 ${FormHelper.EndFormTag()}
 </div>
+
+<div class="backGround">
+	<table class="table">
+		<thead>
+			<tr>
+				<th>ID заявки</th>
+				<th>Клиент</th>
+				<th>Краткое описание</th>
+				<th>Контакт</th>
+				<th>Статус</th>
+			</tr>
+		</thead>
+		<tbody>
+			<%for request in requests: %>
+				<tr>
+					<td><a href="${Siteroot}/ServiceRequest/ShowRequest?Id=${request.Id}">${request.Id}</a></td>
+					<td><a href="${Siteroot}/Search/Redirect?filter.ClientCode=${request.Client.Id}">${request.Client.Name}</a></td>
+					<td>${request.GetMinDiscription()}</td>
+					<td>${request.Contact}</td>
+					<td>${request.GetStatusName()}</td>
+				</tr>
+			<%end %>
+		</tbody>
+	</table>
+</div>

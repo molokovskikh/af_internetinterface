@@ -36,26 +36,26 @@ namespace InternetInterface.Services
 			return false;
 		}
 
-		public override bool CanActivate(ClientService CService)
+		public override bool CanActivate(ClientService service)
 		{
-			var client = CService.Client;
+			var client = service.Client;
 			var payTar = client.PaymentForTariff();
-			if (CService.Activator != null)
+			if (service.Activator != null)
 				payTar = true;
 			return payTar && CanActivate(client);
 		}
 
-		public override void PaymentClient(ClientService CService)
+		public override void PaymentClient(ClientService service)
 		{
-			if (CService.Client.PhysicalClient.Balance > 0)
-				CService.Diactivate();
+			if (service.Client.PhysicalClient.Balance > 0)
+				service.Diactivate();
 		}
 
-		public override bool CanBlock(ClientService CService)
+		public override bool CanBlock(ClientService service)
 		{
-			if (CService.EndWorkDate == null)
+			if (service.EndWorkDate == null)
 				return false;
-			return CService.EndWorkDate.Value < SystemTime.Now();
+			return service.EndWorkDate.Value < SystemTime.Now();
 		}
 
 		public override bool CanDelete(ClientService CService)
@@ -74,39 +74,39 @@ namespace InternetInterface.Services
 			return false;
 		}
 
-		public override void CompulsoryDiactivate(ClientService CService)
+		public override void CompulsoryDiactivate(ClientService service)
 		{
-			var client = CService.Client;
+			var client = service.Client;
 			client.Disabled = true;
 			client.AutoUnblocked = true;
 			client.Status = Status.Find((uint)StatusType.NoWorked);
 			client.Update();
-			CService.Activated = false;
-			CService.Diactivated = true;
-			CService.Update();
+			service.Activated = false;
+			service.Diactivated = true;
+			service.Update();
 		}
 
-		public override bool Diactivate(ClientService CService)
+		public override bool Diactivate(ClientService service)
 		{
-			if (CService.Activated && CService.EndWorkDate.Value < SystemTime.Now())
+			if (service.Activated && service.EndWorkDate.Value < SystemTime.Now())
 			{
-				CompulsoryDiactivate(CService);
+				CompulsoryDiactivate(service);
 				return true;
 			}
-			return CService.Diactivated;
+			return service.Diactivated;
 		}
 
-		public override void Activate(ClientService CService)
+		public override void Activate(ClientService service)
 		{
-			if ((!CService.Activated && CanActivate(CService)))
+			if ((!service.Activated && CanActivate(service)))
 			{
-				var client = CService.Client;
+				var client = service.Client;
 				client.Disabled = false;
 				client.RatedPeriodDate = SystemTime.Now();
 				client.Status = Status.Find((uint) StatusType.Worked);
 				client.Update();
-				CService.Activated = true;
-				CService.Update();
+				service.Activated = true;
+				service.Update();
 			}
 		}
 	}

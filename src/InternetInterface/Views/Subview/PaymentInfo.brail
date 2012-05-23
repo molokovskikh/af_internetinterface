@@ -1,5 +1,4 @@
-﻿<button type="button"  class="editBut slide" onclick="$('#PaymentTable').slideToggle('slow');"> Показать платежи клиента
-</button>
+﻿<button type="button"  class="editBut slide" onclick="$('#PaymentTable').slideToggle('slow');">Платежи</button>
 <div id="PaymentTable" style="display:none">
 <%if PartnerAccessSet.AccesPartner("SSI"): %>
 <div style="clear:both;">

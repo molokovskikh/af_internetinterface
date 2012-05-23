@@ -27,11 +27,6 @@ namespace InternetInterface.Services
 		[Property]
 		public virtual bool InterfaceControl { get; set; }
 
-		/*public static T GetByType<T>() where T : class 
-		{
-			return ActiveRecordMediator<T>.FindFirst();
-		}*/
-
 		public static Service GetByType(Type type)
 		{
 			return (Service)ActiveRecordMediator.FindFirst(type);
@@ -85,7 +80,7 @@ namespace InternetInterface.Services
 			return true;
 		}
 
-		public virtual bool CanActivate(ClientService CService)
+		public virtual bool CanActivate(ClientService cService)
 		{
 			return true;
 		}

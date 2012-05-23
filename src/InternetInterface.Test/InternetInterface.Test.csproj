@@ -131,6 +131,7 @@
     <Compile Include="Functional\HouseMapFixture.cs" />
     <Compile Include="Functional\InvoiceFixture.cs" />
     <Compile Include="Functional\PaymentFixture.cs" />
+    <Compile Include="Functional\PrivateMessageFixture.cs" />
     <Compile Include="Functional\RegisterClientFixture.cs" />
     <Compile Include="Functional\RegisterPartnerFixrure.cs" />
     <Compile Include="Functional\RequestGraphFixture.cs" />

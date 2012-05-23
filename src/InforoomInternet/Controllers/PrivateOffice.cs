@@ -7,6 +7,7 @@ using Common.Web.Ui.Helpers;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Services;
+using NHibernate.Linq;
 
 namespace InforoomInternet.Controllers
 {
@@ -48,7 +49,7 @@ namespace InforoomInternet.Controllers
 			}
 
 			PropertyBag["grouped"] = grouped;
-			var message = MessageForClient.Queryable.FirstOrDefault(m => m.Client == client && m.Enabled && m.EndDate > DateTime.Now && !m.Client.Disabled);
+			var message = DbSession.Query<MessageForClient>().FirstOrDefault(m => m.Client == client && m.Enabled && m.EndDate > DateTime.Now && !m.Client.Disabled);
 			if (message != null)
 				PropertyBag["PrivateMessage"] =  AppealHelper.GetTransformedAppeal(message.Text);
 			PropertyBag["Payments"] =

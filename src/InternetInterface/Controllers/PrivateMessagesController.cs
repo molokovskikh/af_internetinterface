@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Castle.ActiveRecord;
+using Castle.Components.Binder;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Common.Tools;
@@ -10,6 +11,7 @@ using Common.Web.Ui.Controllers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using NHibernate.Criterion;
+using NHibernate.Linq;
 using NHibernate.SqlCommand;
 
 namespace InternetInterface.Controllers
@@ -17,10 +19,15 @@ namespace InternetInterface.Controllers
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class PrivateMessagesController : BaseController
 	{
+		public PrivateMessagesController()
+		{
+			SetBinder(new ARDataBinder());
+		}
+
 		public void ForClient(uint clientId)
 		{
-			var client = ActiveRecordMediator<Client>.FindByPrimaryKey(clientId);
-			var message = MessageForClient.Queryable.FirstOrDefault(m => m.Client.Id == clientId);
+			var client = DbSession.Load<Client>(clientId);
+			var message = DbSession.Query<MessageForClient>().FirstOrDefault(m => m.Client.Id == clientId);
 			message = message ?? new MessageForClient();
 			PropertyBag["PrivateMessage"] = message;
 			PropertyBag["client"] = client;
@@ -28,20 +35,20 @@ namespace InternetInterface.Controllers
 				BindObjectInstance(message, "PrivateMessage", AutoLoadBehavior.NewInstanceIfInvalidKey);
 				if (IsValid(message)) {
 					message.Registrator = InitializeContent.Partner;
-					message.Save();
-					PropertyBag["Message"] = Message.Notify("Сохранено");
+					DbSession.Save(message);
+					Notify("Сохранено");
 				}
 			}
 		}
 
 		public void ForSwitch(uint switchId)
 		{
-			var _switch = ActiveRecordMediator<NetworkSwitches>.FindByPrimaryKey(switchId);
-			PropertyBag["switch"] = _switch;
+			var @switch = DbSession.Load<NetworkSwitches>(switchId);
+			PropertyBag["switch"] = @switch;
 			var messages = ClientEndpoints.FindAll(DetachedCriteria.For(typeof(ClientEndpoints))
 				.CreateAlias("Client", "c", JoinType.InnerJoin)
 				.CreateAlias("c.Message", "m", JoinType.InnerJoin)
-				.Add(Expression.Eq("Switch", _switch))).Select(e => e.Client.Message).ToList();
+				.Add(Expression.Eq("Switch", @switch))).Select(e => e.Client.Message).ToList();
 			var message = new MessageForClient();
 			if (messages.Count > 0)
 				message = messages
@@ -52,7 +59,7 @@ namespace InternetInterface.Controllers
 					.FirstOrDefault();
 			PropertyBag["PrivateMessage"] = message;
 			if (IsPost) {
-				var clients = ClientEndpoints.Queryable.Where(e => e.Switch == _switch).Select(e => e.Client).ToList();
+				var clients = ClientEndpoints.Queryable.Where(e => e.Switch == @switch).Select(e => e.Client).ToList();
 				var applyCount = 0;
 				var errorClients = new List<uint>();
 				foreach (var client in clients) {
@@ -61,7 +68,7 @@ namespace InternetInterface.Controllers
 					toSave.Registrator = InitializeContent.Partner;
 					BindObjectInstance(toSave, "PrivateMessage", AutoLoadBehavior.OnlyNested);
 					if (IsValid(message)) {
-						toSave.Save();
+						DbSession.Save(toSave);
 						applyCount ++;
 					}
 					else {

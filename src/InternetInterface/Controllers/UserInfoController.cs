@@ -410,7 +410,7 @@ namespace InternetInterface.Controllers
 			if (client.ClientServices != null)
 			{
 				var cservice =
-					client.ClientServices.Where(c => c.Service.Id == serviceId && c.Activated).FirstOrDefault();
+					client.ClientServices.FirstOrDefault(c => c.Service.Id == serviceId && c.Activated);
 				if (cservice != null)
 				{
 					cservice.CompulsoryDiactivate();
@@ -431,7 +431,7 @@ namespace InternetInterface.Controllers
 		public string GetStaticIp()
 		{
 			var endPontId = UInt32.Parse(Request.Form["endPontId"]);
-			var lease = Lease.Queryable.Where(l=>l.Endpoint.Id == endPontId).FirstOrDefault();
+			var lease = Lease.Queryable.FirstOrDefault(l => l.Endpoint.Id == endPontId);
 			if (lease != null)
 				return NetworkSwitches.GetNormalIp(Convert.ToUInt32(lease.Ip));
 			return string.Empty;
@@ -923,10 +923,6 @@ where r.`Label`= :LabelIndex;")
 			}
 			PropertyBag["EditConnectInfoFlag"] = filter.EditConnectInfoFlag;
 			PropertyBag["SendSmsNotifocation"] = client.SendSmsNotifocation;
-			PropertyBag["ServiceRequests"] = new RequestFinderFilter {
-				_Client = client,
-				Period = null
-			}.Find();
 			PropertyBag["isService"] = false;
 			ConnectPropertyBag(filter.ClientCode);
 			SendConnectInfo(client);

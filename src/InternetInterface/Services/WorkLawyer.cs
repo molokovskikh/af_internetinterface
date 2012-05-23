@@ -24,9 +24,9 @@ namespace InternetInterface.Services
 			return builder.ToString();
 		}
 
-		public override bool CanActivate(ClientService CService)
+		public override bool CanActivate(ClientService cService)
 		{
-			return CanActivate(CService.Client);
+			return CanActivate(cService.Client);
 		}
 
 		public override bool CanActivate(Client client)
