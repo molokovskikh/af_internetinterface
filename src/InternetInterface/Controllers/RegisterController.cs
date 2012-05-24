@@ -1,12 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using Castle.ActiveRecord;
-using Castle.ActiveRecord.Framework;
 using Castle.MonoRail.Framework;
 using Common.Tools;
 using Common.Web.Ui.Controllers;
@@ -14,11 +7,6 @@ using InternetInterface.AllLogic;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
-using NHibernate;
-using NHibernate.Criterion;
-using NHibernate.SqlCommand;
-using IFilter = Castle.MonoRail.Framework.IFilter;
-
 
 namespace InternetInterface.Controllers
 {
@@ -141,7 +129,7 @@ namespace InternetInterface.Controllers
 					if (requestse.Registrator != null) {
 						phisClient.Update();
 					}
-					requestse.Label = Label.Queryable.Where(l => l.ShortComment == "Registered").FirstOrDefault();
+					requestse.Label = Label.Queryable.FirstOrDefault(l => l.ShortComment == "Registered");
 					requestse.Archive = true;
 					requestse.Client = client;
 					requestse.Update();
@@ -423,19 +411,6 @@ namespace InternetInterface.Controllers
 			}
 		}
 
-		/// <summary>
-		/// Возвращает список прав партнера
-		/// </summary>
-		/// <param name="Partner"></param>
-		/// <returns></returns>
-		private List<int> GetPartnerAccess(int Partner)
-		{
-			var RightArray = CategorieAccessSet.FindAll(DetachedCriteria.For(typeof (CategorieAccessSet))
-															.Add(Expression.Eq("Categorie",
-															Models.Partner.Find((uint) Partner).Categorie)));
-			return RightArray.Select(partnerAccessSet => partnerAccessSet.AccessCat.Id).ToList();
-		}
-
 		public void RegisterPartnerSendParam(int PartnerKey)
 		{
 			PropertyBag["VB"] = new ValidBuilderHelper<Partner>(new Partner());
@@ -445,7 +420,7 @@ namespace InternetInterface.Controllers
 
 		public void RegisterPartner(int PartnerKey, int catType)
 		{
-			var partner = Partner.Queryable.Where(p => p.Id == (uint) PartnerKey).FirstOrDefault();
+			var partner = Partner.Queryable.FirstOrDefault(p => p.Id == (uint) PartnerKey);
 			if (partner != null)
 			{
 				RegisterPartnerSendParam(PartnerKey);
@@ -500,12 +475,12 @@ namespace InternetInterface.Controllers
 				if (apartment == null)
 				{
 					apartment = new Apartment {
-												  House = House.Find(houseNumber),
-												  Number = request.Apartment != null ? request.Apartment.Value : 0,
-											  };
+						House = House.Find(houseNumber),
+						Number = request.Apartment != null ? request.Apartment.Value : 0,
+					};
 					apartment.Save();
 				}
-				apartment.Status = ApartmentStatus.Queryable.Where(aps => aps.ShortName == "Request").FirstOrDefault();
+				apartment.Status = ApartmentStatus.Queryable.FirstOrDefault(aps => aps.ShortName == "Request");
 				apartment.Update();
 				RedirectToUrl("../HouseMap/ViewHouseInfo.rails?House=" + houseNumber);
 			}

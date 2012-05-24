@@ -8,26 +8,30 @@
 <%end %>
 <%if PartnerAccessSet.AccesPartner("ECI"): %>
 <form method="post" action="${siteroot}/UserInfo/UserWriteOff">
-<table class="table">
-	<thead>
-		<tr>
-			<th colspan=4>Списание средств</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr style="border-bottom:0px double black;">
-			<td style="width:300px;">Введите сумму для списания</td>
-			<td><input type=text id="userWriteOffSum" name="userWO.Sum" value="${userWO.Sum}"/> <input type="hidden" name="ClientID" value="${ClientCode}" /></td>
-			<td>${app.GetValidationError(userWO, "Sum")}</td>
-			<td style="width:250px;"><button type="submit" id="userWriteOffButton" class="button"><img alt="Save" src="../Images/tick.png">Списать</button></td>
-		</tr>
-		<tr>
-			<td>Введите комментарий: </td>
-			<td><input type=text id="userWriteOffComment" name="userWO.Comment" value="${userWO.Comment}" /></td>
-			<td colspan=2>${app.GetValidationError(userWO, "Comment")}</td>
-		</tr>
-	</tbody>
-</table>
+	<table class="table">
+		<thead>
+			<tr>
+				<th colspan=4>Списание средств</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td style="width:300px;">Введите сумму для списания</td>
+				<td><input type=text id="userWriteOffSum" name="userWO.Sum" value="${userWO.Sum}"/> <input type="hidden" name="ClientID" value="${ClientCode}" /></td>
+				<td>${app.GetValidationError(userWO, "Sum")}</td>
+			</tr>
+			<tr>
+				<td>Введите комментарий: </td>
+				<td><input type=text id="userWriteOffComment" name="userWO.Comment" value="${userWO.Comment}" /></td>
+				<td>${app.GetValidationError(userWO, "Comment")}</td>
+			</tr>
+			<tr>
+				<td colspan=100>
+					<button type="submit" id="userWriteOffButton" class="button ok">Списать</button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
 </form>
 <%end %>
 </div>

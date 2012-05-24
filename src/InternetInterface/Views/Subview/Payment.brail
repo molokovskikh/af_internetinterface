@@ -47,8 +47,13 @@
 				<div style="float:left;" id="my-div"></div>
 			</td>
 			<td style="width:250px;">
-				<button type="submit" id="ChangeBalanceButton" class="button">
-				<img alt="Save" src="../Images/tick.png"> Пополнить баланс</button>
+			</td>
+		</tr>
+		<tr>
+			<td colspan=100>
+				<button type="submit" id="ChangeBalanceButton" class="button ok">
+					Пополнить баланс
+				</button>
 			</td>
 		</tr>
 	</tbody>
