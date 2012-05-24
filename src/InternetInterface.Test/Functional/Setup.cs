@@ -11,6 +11,7 @@ using Common.Web.Ui.ActiveRecordExtentions;
 using InternetInterface.Models;
 using NUnit.Framework;
 using WatiN.Core;
+using log4net;
 using log4net.Config;
 
 namespace InternetInterface.Test.Functional
@@ -27,6 +28,9 @@ namespace InternetInterface.Test.Functional
 
 			var port = Int32.Parse(ConfigurationManager.AppSettings["webPort"]);
 			var webDir = ConfigurationManager.AppSettings["webDirectory"];
+
+			LogManager.GetLogger(typeof(Setup)).Debug(Path.GetFullPath(webDir));
+			LogManager.GetLogger(typeof(Setup)).Debug(Environment.CurrentDirectory);
 
 			_webServer = new Server(port, "/", Path.GetFullPath(webDir));
 			_webServer.Start();
