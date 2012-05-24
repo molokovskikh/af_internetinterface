@@ -226,7 +226,6 @@ namespace InternetInterface.Controllers
 		{
 			var client = Client.Find(filter.ClientCode);
 
-
 			if (client.Status != null)
 				PropertyBag["ChStatus"] = client.Status.Id;
 			else
@@ -249,7 +248,7 @@ namespace InternetInterface.Controllers
 
 			PropertyBag["Editing"] = filter.Editing;
 			PropertyBag["ConnectInfo"] = client.GetConnectInfo(DbSession);
-			PropertyBag["Payments"] = client.Payments.OrderBy(c => c.PaidOn).ToList();
+			PropertyBag["Payments"] = client.Payments.Where(p => p.Sum > 0).OrderBy(c => c.PaidOn).ToList();
 			PropertyBag["WriteOffs"] = client.GetWriteOffs(DbSession, filter.grouped).OrderByDescending(w => w.WriteOffDate).ToList();
 			PropertyBag["writeOffSum"] = WriteOff.FindAllByProperty("Client", client).Sum(s => s.WriteOffSum);
 			PropertyBag["BalanceText"] = string.Empty;
@@ -258,9 +257,7 @@ namespace InternetInterface.Controllers
 			if (client.Status.Connected)
 				PropertyBag["EConnect"] = filter.EditingConnect;
 			else
-			{
 				PropertyBag["EConnect"] = 0;
-			}
 			if (client.LawyerPerson.Tariff == null)
 				PropertyBag["Message"] = Message.Error("Не задана абонентская плата для клиента ! Клиент отключен !");
 
@@ -410,7 +407,7 @@ namespace InternetInterface.Controllers
 			if (client.ClientServices != null)
 			{
 				var cservice =
-					client.ClientServices.Where(c => c.Service.Id == serviceId && c.Activated).FirstOrDefault();
+					client.ClientServices.FirstOrDefault(c => c.Service.Id == serviceId && c.Activated);
 				if (cservice != null)
 				{
 					cservice.CompulsoryDiactivate();
@@ -431,7 +428,7 @@ namespace InternetInterface.Controllers
 		public string GetStaticIp()
 		{
 			var endPontId = UInt32.Parse(Request.Form["endPontId"]);
-			var lease = Lease.Queryable.Where(l=>l.Endpoint.Id == endPontId).FirstOrDefault();
+			var lease = Lease.Queryable.FirstOrDefault(l => l.Endpoint.Id == endPontId);
 			if (lease != null)
 				return NetworkSwitches.GetNormalIp(Convert.ToUInt32(lease.Ip));
 			return string.Empty;
@@ -886,7 +883,7 @@ where r.`Label`= :LabelIndex;")
 		{
 			var client = Client.Find(filter.ClientCode);
 
-			PropertyBag["Payments"] = Payment.Queryable.Where(p => p.Client.Id == client.Id).OrderBy(t => t.PaidOn).ToList();
+			PropertyBag["Payments"] = Payment.Queryable.Where(p => p.Client.Id == client.Id).Where(p => p.Sum > 0).OrderBy(t => t.PaidOn).ToList();
 			var abonentSum = WriteOff.Queryable.Where(p => p.Client.Id == client.Id).ToList().Sum(s => s.WriteOffSum);
 			PropertyBag["writeOffSum"] = abonentSum +
 			                             Models.UserWriteOff.Queryable.Where(w => w.Client.Id == client.Id).ToList().Sum(

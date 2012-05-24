@@ -217,37 +217,32 @@ namespace InternetInterface.Models
 			return false;
 		}
 
-		public virtual WriteOff WriteOff(decimal sum)
+		public virtual WriteOff WriteOff(decimal sum, bool writeoffVirtualFirst = true)
 		{
 			if (sum <= 0)
 				return null;
 
-			Balance -= sum;
-			var virtualAndMoneyParts = false;
-			var virtualWriteOffs = false;
-			var physicalPart = sum;
-			if (VirtualBalance > 0) {
-				if (VirtualBalance - sum >= 0) {
-					VirtualBalance -= sum;
-					virtualWriteOffs = true;
-				}
-				else {
-					physicalPart = sum - VirtualBalance;
-					MoneyBalance -= physicalPart;
-					VirtualBalance -= sum - physicalPart;
-					virtualAndMoneyParts = true;
-				}
+			decimal virtualWriteoff;
+			decimal moneyWriteoff;
+
+			if (writeoffVirtualFirst) {
+				virtualWriteoff = Math.Min(sum, VirtualBalance);
 			}
 			else {
-				MoneyBalance -= physicalPart;
+				virtualWriteoff = Math.Min(Math.Abs(Math.Min(MoneyBalance - sum, 0)), VirtualBalance);
 			}
+			moneyWriteoff = sum - virtualWriteoff;
+
+			Balance -= sum;
+			VirtualBalance -= virtualWriteoff;
+			MoneyBalance -= moneyWriteoff;
 
 			return new WriteOff {
 				Client = Client,
 				WriteOffDate = SystemTime.Now(),
 				WriteOffSum = sum,
-				MoneySum = !virtualWriteOffs ? physicalPart : 0m,
-				VirtualSum = virtualAndMoneyParts ? sum - physicalPart : virtualWriteOffs ? sum : 0m,
+				MoneySum = moneyWriteoff,
+				VirtualSum = virtualWriteoff,
 				Sale = Client.Sale
 			};
 		}

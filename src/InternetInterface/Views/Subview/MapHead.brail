@@ -6,7 +6,6 @@
 
 		.menudiv
 		{
-			/*border : 2px solid;*/
 			padding: 4px 4px 4px 4px;
 		}
 		.wid

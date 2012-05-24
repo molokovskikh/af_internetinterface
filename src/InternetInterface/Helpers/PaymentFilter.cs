@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using Common.Tools;
@@ -13,6 +14,7 @@ namespace Common.Web.Ui.Helpers
 		public Recipient Recipient { get; set; }
 		public DatePeriod Period { get; set; }
 		public string SearchText { get; set; }
+		[Description("Показывать только неопознанные:")]
 		public bool ShowOnlyUnknown { get; set; }
 
 		public PaymentFilter()
