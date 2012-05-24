@@ -171,7 +171,6 @@ namespace InforoomInternet.Models
 				try
 				{
 #if DEBUG
-					//Thread.Sleep(800);
 					Thread.Sleep(40);
 					if (i < 70)
 						throw new Exception();
