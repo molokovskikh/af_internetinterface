@@ -18,4 +18,4 @@ Task @default, [@BuildService]
 
 task @Build, [@BuildService]
 
-Task @deploy, [@BuildService, @Production, @Migrate, @DeployService, @SendDeployNotification]
+Task @deploy, [@CheckScmChanges, @BuildService, @Production, @Migrate, @DeployService, @SendDeployNotification]
