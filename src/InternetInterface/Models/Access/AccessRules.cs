@@ -5,6 +5,7 @@ using System.Web;
 
 namespace InternetInterface.Models.Access
 {
+	[Obsolete("Не использовать, устарело используй Partner.HavePermissionTo")]
 	public class AccessRules
 	{
 		private static string methodName;

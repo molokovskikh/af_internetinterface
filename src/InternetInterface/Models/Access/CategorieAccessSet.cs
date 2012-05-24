@@ -47,5 +47,4 @@ namespace InternetInterface.Models
 			AccessCat.DeleteTo(Categorie);
 		}
 	}
-
 }

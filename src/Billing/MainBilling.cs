@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Net.Mail;
-using System.Reflection;
-using System.Text;
 using System.Threading;
 using Castle.ActiveRecord;
-using Castle.ActiveRecord.Framework.Config;
-using Castle.ActiveRecord.Framework.Internal.EventListener;
 using Common.MySql;
 using Common.Tools;
 using Common.Tools.Calendar;
@@ -18,15 +12,11 @@ using InternetInterface.Helpers;
 using InternetInterface.Models;
 using log4net;
 using log4net.Config;
-using NHibernate.Cfg;
 using NHibernate.Criterion;
 using NHibernate.SqlCommand;
-using Microsoft.Win32;
-using Environment = NHibernate.Cfg.Environment;
 
 namespace Billing
 {
-
 	public class MainBilling
 	{
 		public const int FreeDaysVoluntaryBlockin = 28;
@@ -73,7 +63,6 @@ namespace Billing
 				_mutex.ReleaseMutex();
 			}
 		}
-
 
 		public void Run()
 		{
