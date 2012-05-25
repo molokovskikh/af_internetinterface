@@ -4,10 +4,10 @@ using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 using WatiN.Core;
 
-namespace InternetInterfaceFixture.Functional
+namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
-	class BrigadFixture :WatinFixture
+	class BrigadFixture : WatinFixture
 	{
 		[Test, Ignore]
 		public void BrigadTest()
