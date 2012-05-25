@@ -1,16 +1,7 @@
 ﻿using System.ComponentModel;
 
-
 namespace InternetInterface.Models
 {
-	/*public enum AppealInPropType
-	{
-		[Description("Пользовательские")]
-		User,
-		[Description("Системные")]
-		System,
-	}*/
-
 	public enum SearchUserBy
 	{
 		[Description("Автоматически")]

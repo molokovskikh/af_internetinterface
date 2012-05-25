@@ -1,5 +1,6 @@
-﻿<button type="button"  class="editBut slide" onclick="$('#PaymentTable').slideToggle('slow');"> Показать платежи клиента
-</button>
+﻿<button type="button"  class="editBut slide" onclick="$('#PaymentTable').slideToggle('slow');">Платежи</button>
+<span id="itogo">Всего: ${paymentsSum.ToString("C")}</span>
+
 <div id="PaymentTable" style="display:none">
 
 ${app.Asset("payments.css")}

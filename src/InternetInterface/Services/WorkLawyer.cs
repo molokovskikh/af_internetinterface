@@ -24,9 +24,9 @@ namespace InternetInterface.Services
 			return builder.ToString();
 		}
 
-		public override bool CanActivate(ClientService CService)
+		public override bool CanActivate(ClientService cService)
 		{
-			return CanActivate(CService.Client);
+			return CanActivate(cService.Client);
 		}
 
 		public override bool CanActivate(Client client)
@@ -48,7 +48,6 @@ namespace InternetInterface.Services
 			client.Disabled = warning;
 			client.Update();
 			CService.Activated = false;
-			CService.Diactivated = true;
 			CService.Update();
 		}
 
@@ -60,7 +59,6 @@ namespace InternetInterface.Services
 				client.Disabled = false;
 				client.Save();
 				CService.Activated = true;
-				CService.Diactivated = false;
 				CService.EndWorkDate = CService.EndWorkDate.Value.Date;
 				CService.Update();
 			}

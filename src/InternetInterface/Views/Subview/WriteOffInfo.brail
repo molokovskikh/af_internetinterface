@@ -1,13 +1,11 @@
 ﻿<style type="text/css">
 
-</style>
-<style type="text/css">
-
 	.group_link a
 	{
 		color:#274e26;
-		}
-			.group_link a:hover
+	}
+
+	.group_link a:hover
 	{
 		font-weight:bold;
 		color:#030c02;
@@ -15,9 +13,9 @@
 </style>
 <div style="clear:both;">
 <%if (WriteOffs.Count != 0): %>
-<button type="button"  class="editBut slide" onclick="$('#WriteOffTable').slideToggle('slow');"> Показать списания абонентской платы
-</button>
-<span id="itogo"><b>Всего списано: ${writeOffSum}</b></span>
+<button type="button" class="editBut slide" onclick="$('#WriteOffTable').slideToggle('slow');">Абонентская плата</button>
+<span id="itogo">Всего: ${writeOffSum.ToString("C")}</span>
+
 <div id="WriteOffTable" style="display:none">
 <div class="group_link">
 <span>Группировка: </span>

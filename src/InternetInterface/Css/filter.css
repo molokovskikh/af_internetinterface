@@ -8,7 +8,7 @@
 	margin-bottom: 20px;
 }
 	
-.filter h3
+.filter h3, .form-sub-block h3
 {
 	border: 1px double #9A9999;
 	background: #CFE5F0;
@@ -17,4 +17,12 @@
 	font-size: 100%;
 	padding: 10px;
 	margin: 0 0 15px 0;
+}
+
+.form-table {
+	margin-bottom: 15px;
+}
+
+.form-table td {
+	padding: 3px;
 }

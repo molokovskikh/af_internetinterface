@@ -111,7 +111,7 @@ namespace Billing
 		public void OnMethod()
 		{
 			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
-				foreach (var cserv in ClientService.Queryable.Where(c => !c.Activated && !c.Diactivated).ToList()) {
+				foreach (var cserv in ClientService.Queryable.Where(c => !c.Activated).ToList()) {
 					cserv.Activate();
 				}
 				var newClients = Client.FindAll(DetachedCriteria.For(typeof (Client))

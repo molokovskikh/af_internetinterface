@@ -195,7 +195,6 @@
     <None Include="Views\Subview\ContactInfo.brail" />
     <None Include="Views\Subview\CreateEditLabel.brail" />
     <None Include="Views\Subview\UserWriteOffs.brail" />
-    <None Include="Views\Subview\ViewServiceRequests.brail" />
     <None Include="Views\Switches\FreePortForSwitch.brail" />
     <None Include="Views\Subview\House.brail" />
     <None Include="Views\Subview\LegalPerson.brail" />
@@ -362,6 +361,7 @@
     <Compile Include="Models\Zone.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Controllers\SmsController.cs" />
+    <Compile Include="Queries\RequestFinderFilter.cs" />
     <Compile Include="Services\DebtWork.cs" />
     <Compile Include="Services\Service.cs" />
     <Compile Include="Services\VoluntaryBlockin.cs" />

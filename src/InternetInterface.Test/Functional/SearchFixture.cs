@@ -103,7 +103,6 @@ namespace InternetInterface.Test.Functional
 				}
 				return true;
 			});
-			//client.DeleteAndFlush();
 		}
 	}
 }

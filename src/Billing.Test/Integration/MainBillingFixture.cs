@@ -54,15 +54,13 @@ namespace Billing.Test.Integration
 
 		public static void PrepareTests()
 		{
-			new Partner
-			{
+			new Partner {
 				Login = "Test",
 			}.Save();
 
 			InitializeContent.GetAdministrator = () => Partner.FindFirst();
 
-			new Status
-			{
+			new Status {
 				Blocked = false,
 				Id = (uint)StatusType.Worked,
 				Name = "unblocked",
@@ -70,16 +68,14 @@ namespace Billing.Test.Integration
 			}.Save();
 
 			
-			new Status
-			{
+			new Status {
 				Blocked = true,
 				Id = (uint)StatusType.BlockedAndConnected,
 				Name = "unblocked",
 				ShortName = "BlockedAndConnected"
 			}.Save();
 
-			new Status
-			{
+			new Status {
 				Blocked = true,
 				Id = (uint)StatusType.NoWorked,
 				Name = "testBlockedStatus",
@@ -87,15 +83,14 @@ namespace Billing.Test.Integration
 			}.Save();
 
 			new Status {
-						   ShortName = "VoluntaryBlocking",
-						   Id = (uint)StatusType.VoluntaryBlocking,
-						   Blocked = true,
-						   Name = "VoluntaryBlocking",
-						   Connected = true
-					   }.Save();
+				ShortName = "VoluntaryBlocking",
+				Id = (uint)StatusType.VoluntaryBlocking,
+				Blocked = true,
+				Name = "VoluntaryBlocking",
+				Connected = true
+			}.Save();
 
-			new DebtWork
-			{
+			new DebtWork {
 				BlockingAll = false,
 				Price = 0,
 				HumanName = "DebtWork"
@@ -111,8 +106,7 @@ namespace Billing.Test.Integration
 				Sum = 1.5m
 			}.Save();
 
-			new VoluntaryBlockin
-			{
+			new VoluntaryBlockin {
 				BlockingAll = true,
 				Price = 0,
 				HumanName = "VoluntaryBlockin"
@@ -148,7 +142,7 @@ namespace Billing.Test.Integration
 			PaymentsForAgent.DeleteAll();
 		}
 
-		public void SetClientDate(/*Client client,*/ Interval rd)
+		public void SetClientDate(Interval rd)
 		{
 			using (new SessionScope()) {
 				var client = Client.FindFirst();
