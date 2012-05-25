@@ -6,12 +6,21 @@ using System.Web;
 using Castle.ActiveRecord;
 using InternetInterface.Models.Universal;
 using InternetInterface.Services;
+using NHibernate;
 
 namespace InternetInterface.Models
 {
 	[ActiveRecord("ClientServices", Schema = "Internet", Lazy = true)]
 	public class ClientService : ValidActiveRecordLinqBase<ClientService>
 	{
+		public ClientService()
+		{}
+
+		public ClientService(Client client, Service service)
+		{
+			Client = client;
+			Service = service;
+		}
 
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
@@ -34,14 +43,13 @@ namespace InternetInterface.Models
 		[BelongsTo]
 		public virtual Partner Activator { get; set; }
 
-		[Property]
-		public virtual bool Diactivated { get; set; }
-
 		public virtual void DeleteFromClient()
 		{
 			if (Service.CanDelete(this))
 			{
-				Client.ClientServices.Remove(this);
+				//сторока ниже не работает, в тестt ServiceFixture.ActiveDeactive хотя должна, какой то бред
+				//Client.ClientServices.Remove(this);
+				Client.ClientServices.Remove(Client.ClientServices.First(c => c.Id == Id));
 				Client.Save();
 			}
 		}

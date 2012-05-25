@@ -124,6 +124,9 @@ namespace InternetInterface.Models
 
 		public virtual bool HavePaymentToStart()
 		{
+			var forbiddenByService = ClientServices.Any(s => s.Service.BlockingAll && s.Activated);
+			if (forbiddenByService)
+				return false;
 			var tariffSum = GetPriceForTariff();
 			if (Payments == null)
 				return false;
@@ -221,7 +224,7 @@ namespace InternetInterface.Models
 			var needShowWarning = LawyerPerson.NeedShowWarning();
 			if (haveService != null && haveService.Activated)
 				return false;
-			if ((haveService != null && haveService.Diactivated && needShowWarning) ||
+			if ((haveService != null && !haveService.Activated && needShowWarning) ||
 				(haveService == null && needShowWarning))
 				return true;
 			return needShowWarning;
@@ -268,7 +271,6 @@ namespace InternetInterface.Models
 
 		[HasMany(ColumnKey = "Client", Lazy = true, Cascade = ManyRelationCascadeEnum.AllDeleteOrphan)]
 		public virtual IList<ClientService> ClientServices { get; set; }
-
 
 		public virtual string ChangePhysicalClientPassword()
 		{
@@ -456,7 +458,7 @@ Id))
 			if (ClientServices != null)
 			{
 				var blockingService = ClientServices.Where(c => c.Service.BlockingAll && c.Activated).ToList().FirstOrDefault();
-				if (blockingService != null && !blockingService.Diactivated)
+				if (blockingService != null)
 					return blockingService.GetPrice();
 
 				servisesPrice = ClientServices.Where(c=> !c.Service.BlockingAll && c.Activated).Sum(c => c.GetPrice());

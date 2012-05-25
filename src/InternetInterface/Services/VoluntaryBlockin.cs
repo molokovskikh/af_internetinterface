@@ -78,42 +78,41 @@ namespace InternetInterface.Services
 				client.Status = Status.Find((uint)StatusType.VoluntaryBlocking);
 				client.Update();
 				CService.Activated = true;
-				CService.Diactivated = false;
 				var evd = CService.EndWorkDate.Value;
 				CService.EndWorkDate = new DateTime(evd.Year, evd.Month, evd.Day);
 				CService.Update();
 
 				if (client.FreeBlockDays <= 0)
-				new UserWriteOff {
-					Client = client,
-					Sum = 50m,
-					Date = DateTime.Now,
-					Comment =
-						string.Format("Платеж за активацию услуги добровольная блокировка с {0} по {1}",
-						CService.BeginWorkDate.Value.ToShortDateString(), CService.EndWorkDate.Value.ToShortDateString())
-				}.Save();
+					new UserWriteOff {
+						Client = client,
+						Sum = 50m,
+						Date = DateTime.Now,
+						Comment =
+							string.Format("Платеж за активацию услуги добровольная блокировка с {0} по {1}",
+							CService.BeginWorkDate.Value.ToShortDateString(), CService.EndWorkDate.Value.ToShortDateString())
+					}.Save();
 			}
 		}
 
-		public override void CompulsoryDiactivate(ClientService CService)
+		public override void CompulsoryDiactivate(ClientService service)
 		{
-			var client = CService.Client;
+			var client = service.Client;
 			client.DebtDays = 0;
 			client.RatedPeriodDate = DateTime.Now;
-			client.Disabled = CService.Client.PhysicalClient.Balance < 0;
+			client.Disabled = service.Client.PhysicalClient.Balance < 0;
 
-			client.ShowBalanceWarningPage = CService.Client.PhysicalClient.Balance < 0;
+			client.ShowBalanceWarningPage = service.Client.PhysicalClient.Balance < 0;
 
 
 			client.AutoUnblocked = true;
-			if (CService.Client.PhysicalClient.Balance > 0)
+			if (service.Client.PhysicalClient.Balance > 0)
 			{
 				client.Disabled = false;
 				client.Status = Status.Find((uint)StatusType.Worked);
 			}
 
-			if (!client.PaidDay && CService.Activated) {
-				CService.Activated = false;
+			if (!client.PaidDay && service.Activated) {
+				service.Activated = false;
 				var toDt = client.GetInterval();
 				var price = client.GetPrice();
 				if (price / toDt > 0) {
@@ -128,10 +127,8 @@ namespace InternetInterface.Services
 				}
 			}
 
-			CService.Activated = false;
-			CService.Diactivated = true;
-			CService.Update();
-
+			service.Activated = false;
+			service.Update();
 			client.Update();
 		}
 
@@ -144,11 +141,6 @@ namespace InternetInterface.Services
 				return true;
 			}
 			return false;
-		}
-
-		public override void PaymentClient(ClientService CService)
-		{
-			CompulsoryDiactivate(CService);
 		}
 
 		//Если раскоментировать этот кусочек, будет введено ограничение - использовать услугу можно будет только после истичения 45 дней с момента последней активации.

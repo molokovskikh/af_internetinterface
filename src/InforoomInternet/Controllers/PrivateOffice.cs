@@ -109,7 +109,6 @@ namespace InforoomInternet.Controllers
 			var clientId = Convert.ToUInt32(Session["LoginClient"]);
 			var client = Client.Find(clientId);
 			if (client.CanUsedVoluntaryBlockin()) {
-				//Flash["message"] = "Услуга \"Работа в долг\" активирована";
 				var cService = new ClientService {
 					BeginWorkDate = DateTime.Now,
 					EndWorkDate = endDate,

@@ -31,7 +31,6 @@ namespace InternetInterface.Test.Integration
 				.CreateAlias("Client", "c", JoinType.InnerJoin)
 				.CreateAlias("c.Message", "m", JoinType.InnerJoin)
 				.Add(Expression.Eq("Switch.Id", 136u))).Select(e => e.Client.Message).ToList();
-			Console.WriteLine(messages.Count);
 		}
 
 		[Test]

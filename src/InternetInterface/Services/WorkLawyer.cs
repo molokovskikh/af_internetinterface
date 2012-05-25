@@ -48,7 +48,6 @@ namespace InternetInterface.Services
 			client.Disabled = warning;
 			client.Update();
 			CService.Activated = false;
-			CService.Diactivated = true;
 			CService.Update();
 		}
 
@@ -60,7 +59,6 @@ namespace InternetInterface.Services
 				client.Disabled = false;
 				client.Save();
 				CService.Activated = true;
-				CService.Diactivated = false;
 				CService.EndWorkDate = CService.EndWorkDate.Value.Date;
 				CService.Update();
 			}

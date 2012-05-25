@@ -42,5 +42,10 @@ namespace InternetInterface.Models
 
 		[BelongsTo]
 		public virtual Partner Registrator { get; set; }
+
+		public override string ToString()
+		{
+			return String.Format("{0} - {1:C}", Comment, Sum);
+		}
 	}
 }

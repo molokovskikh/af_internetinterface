@@ -10,33 +10,43 @@ using InternetInterface.Models;
 using InternetInterface.Services;
 using NHibernate.Impl;
 using NUnit.Framework;
+using Test.Support.log4net;
 
 namespace Billing.Test.Integration
 {
 	public class ServiceFixture : MainBillingFixture
 	{
+		private ClientService Activate(Type type, DateTime? endDate = null)
+		{
+			if (endDate == null)
+				endDate = DateTime.Now.AddDays(1);
+
+			var service = new ClientService {
+				Client = _client,
+				BeginWorkDate = DateTime.Now,
+				EndWorkDate = endDate.Value,
+				Service = Service.GetByType(type),
+				Activator = InitializeContent.Partner
+			};
+
+			_client.ClientServices.Add(service);
+			service.Activate();
+
+			return service;
+		}
+
 		[Test]
 		public void VolBlockIfMinimumBalance()
 		{
-			Client client;
 			using (new SessionScope()) {
-				client = CreateClient();
-				client.FreeBlockDays = 28;
-				client.PhysicalClient.Balance = client.GetPrice()/client.GetInterval() - 5;
-				client.Save();
-				Assert.That(client.PhysicalClient.Balance, Is.GreaterThan(0));
+				_client.FreeBlockDays = 28;
+				_client.PhysicalClient.Balance = _client.GetPrice()/_client.GetInterval() - 5;
+				_client.Save();
+				Assert.That(_client.PhysicalClient.Balance, Is.GreaterThan(0));
 
-				var cService = new ClientService {
-					Client = client,
-					BeginWorkDate = DateTime.Now,
-					EndWorkDate = DateTime.Now.AddDays(1),
-					Service = Service.GetByType(typeof (VoluntaryBlockin))
-				};
+				Activate(typeof (VoluntaryBlockin));
 
-				client.ClientServices.Add(cService);
-				cService.Activate();
-
-				Assert.IsTrue(client.PaidDay);
+				Assert.IsTrue(_client.PaidDay);
 			}
 
 			billing.Compute();
@@ -44,18 +54,30 @@ namespace Billing.Test.Integration
 			billing.Compute();
 
 			using (new SessionScope()) {
-				client.Refresh();
+				_client.Refresh();
 				Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(1));
-				Assert.That(WriteOff.Queryable.Count(w => w.Client == client), Is.EqualTo(0));
-				Assert.IsFalse(client.PaidDay);
+				Assert.That(WriteOff.Queryable.Count(w => w.Client == _client), Is.EqualTo(0));
+				Assert.IsFalse(_client.PaidDay);
 			}
+		}
+
+		[Test]
+		public void Do_not_deactivate_voluntary_blocking_on_payment()
+		{
+			Activate(typeof(VoluntaryBlockin));
+			new Payment(_client, 500).Save();
+
+			billing.OnMethod();
+
+			_client.Refresh();
+			Assert.That(_client.Disabled, Is.True);
 		}
 
 		//Если не поперло, запусти 3 раза отдельно
 		[Test]
 		public void VoluntaryBlockingTest2()
 		{
-			ClientService cService;
+			ClientService service;
 			using (new SessionScope()) {
 				_client = ActiveRecordMediator<Client>.FindByPrimaryKey(_client.Id);
 				_client.YearCycleDate = DateTime.Now.AddYears(-1);
@@ -65,17 +87,10 @@ namespace Billing.Test.Integration
 				_client = ActiveRecordMediator<Client>.FindByPrimaryKey(_client.Id);
 				Assert.That(_client.FreeBlockDays, Is.EqualTo(MainBilling.FreeDaysVoluntaryBlockin));
 				WriteOff.DeleteAll();
-				cService = new ClientService {
-					Client = _client,
-					BeginWorkDate = DateTime.Now,
-					EndWorkDate = DateTime.Now.AddDays(100),
-					Service = Service.GetByType(typeof (VoluntaryBlockin))
-				};
 
-				_client.ClientServices.Add(cService);
-				cService.Activate();
+				service = Activate(typeof (VoluntaryBlockin), DateTime.Now.AddDays(100));
 				Assert.That(_client.FreeBlockDays, Is.EqualTo(MainBilling.FreeDaysVoluntaryBlockin));
-				cService.CompulsoryDiactivate();
+				service.CompulsoryDiactivate();
 				Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(1));
 			}
 			billing.Compute();
@@ -83,68 +98,60 @@ namespace Billing.Test.Integration
 				_client = ActiveRecordMediator<Client>.FindByPrimaryKey(_client.Id);
 				Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(0));
 				Assert.That(_client.FreeBlockDays, Is.EqualTo(MainBilling.FreeDaysVoluntaryBlockin));
-				cService = new ClientService {
+				service = new ClientService {
 					Client = _client,
 					BeginWorkDate = DateTime.Now,
 					EndWorkDate = DateTime.Now.AddDays(100),
 					Service = Service.GetByType(typeof (VoluntaryBlockin))
 				};
-				_client.ClientServices.Add(cService);
-				cService.Activate();
+				_client.ClientServices.Add(service);
+				service.Activate();
 			}
+
 			Thread.Sleep(500);
 			for (int i = 0; i < MainBilling.FreeDaysVoluntaryBlockin + 1; i++) {
 				SystemTime.Now = () => DateTime.Now.AddDays(i);
 				billing.Compute();
 			}
-			/*var sessionHolder = ActiveRecordMediator.GetSessionFactoryHolder();
-			var session = sessionHolder.CreateSession(typeof (ActiveRecordBase));
-			session.Flush();*/
+
 			using (new SessionScope()) {
 				_client = ActiveRecordMediator<Client>.FindByPrimaryKey(_client.Id);
-				cService = ActiveRecordMediator<ClientService>.FindByPrimaryKey(cService.Id);
+				service = ActiveRecordMediator<ClientService>.FindByPrimaryKey(service.Id);
 				Assert.That(_client.FreeBlockDays, Is.EqualTo(0));
 
 				Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(0));
 
-				cService.CompulsoryDiactivate();
-				cService = new ClientService {
+				service.CompulsoryDiactivate();
+				service = new ClientService {
 					Client = _client,
 					BeginWorkDate = DateTime.Now,
 					EndWorkDate = DateTime.Now.AddDays(100),
 					Service = Service.GetByType(typeof (VoluntaryBlockin))
 				};
-				_client.ClientServices.Add(cService);
-				cService.Activate();
+				_client.ClientServices.Add(service);
+				service.Activate();
 			}
 			billing.Compute();
 			using (new SessionScope())
 				Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(0));
 			billing.Compute();
-			using (new SessionScope()) { 
+			using (new SessionScope()) {
 				Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(1));
-
 				Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(4));
 
-				cService.CompulsoryDiactivate();
+				service.CompulsoryDiactivate();
 			}
 			billing.Compute();
-			using (new SessionScope()) { 
+			using (new SessionScope()) {
 				Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(1));
 				_client = ActiveRecordMediator<Client>.FindByPrimaryKey(_client.Id);
-				cService = new ClientService {
-					Client = _client,
-					BeginWorkDate = DateTime.Now,
-					EndWorkDate = DateTime.Now.AddDays(4),
-					Service = Service.GetByType(typeof (VoluntaryBlockin))
-				};
+				_client.ClientServices.Clear();
+
 				SystemTime.Reset();
 				UserWriteOff.DeleteAll();
 				WriteOff.DeleteAll();
 
-				_client.ClientServices.Add(cService);
-				cService.Activate();
-
+				Activate(typeof (VoluntaryBlockin), DateTime.Now.AddDays(4));
 				Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(2));
 			}
 			for (int i = 0; i < 5; i++) {
@@ -155,7 +162,8 @@ namespace Billing.Test.Integration
 			using (new SessionScope()) {
 				Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(3));
 
-				Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(3));
+				var userWriteOffs = UserWriteOff.Queryable.ToList();
+				Assert.That(userWriteOffs.Count(), Is.EqualTo(3), userWriteOffs.Implode());
 			}
 		}
 
@@ -163,13 +171,12 @@ namespace Billing.Test.Integration
 		public void DebtWorkTest()
 		{
 			const int countDays = 5;
-			Client client;
+			var client = _client;
+
 			PhysicalClients physClient;
 			ClientService CServive;
+			
 			using (new SessionScope()) {
-				PrepareTest();
-				SystemTime.Reset();
-				client = CreateClient();
 				physClient = client.PhysicalClient;
 				physClient.Balance = -10m;
 				physClient.Update();
@@ -179,10 +186,10 @@ namespace Billing.Test.Integration
 				client.Update();
 
 				CServive = new ClientService {
-					Client = client,
-					BeginWorkDate = DateTime.Now,
-					EndWorkDate = SystemTime.Now().AddDays(countDays),
-					Service = Service.GetByType(typeof (DebtWork)),
+				    Client = client,
+				    BeginWorkDate = DateTime.Now,
+				    EndWorkDate = SystemTime.Now().AddDays(countDays),
+				    Service = Service.GetByType(typeof (DebtWork)),
 				};
 
 				client.ClientServices.Add(CServive);
@@ -277,42 +284,40 @@ namespace Billing.Test.Integration
 		public void DebtWorkTestPartner()
 		{
 			using (new SessionScope()) {
-			PrepareTest();
-			SystemTime.Reset();
-			var client = CreateClient();
-			const int countDays = 10;
-			var physClient = client.PhysicalClient;
-			physClient.Balance = -10m;
-			physClient.Update();
-			client.Disabled = true;
-			client.AutoUnblocked = true;
-			client.RatedPeriodDate = SystemTime.Now();
-			client.Update();
+				PrepareTest();
+				var client = CreateClient();
+				const int countDays = 10;
+				var physClient = client.PhysicalClient;
+				physClient.Balance = -10m;
+				physClient.Update();
+				client.Disabled = true;
+				client.AutoUnblocked = true;
+				client.RatedPeriodDate = SystemTime.Now();
+				client.Update();
 
-			var CServive = new ClientService {
-				Client = client,
-				BeginWorkDate = DateTime.Now,
-				EndWorkDate = SystemTime.Now().AddDays(countDays),
-				Service = Service.GetByType(typeof (DebtWork)),
-				Activator = InitializeContent.Partner
-			};
-			client.ClientServices.Add(CServive);
+				var CServive = new ClientService {
+					Client = client,
+					BeginWorkDate = DateTime.Now,
+					EndWorkDate = SystemTime.Now().AddDays(countDays),
+					Service = Service.GetByType(typeof (DebtWork)),
+					Activator = InitializeContent.Partner
+				};
+				client.ClientServices.Add(CServive);
 
-			CServive.Refresh();
-			CServive.Activate();
-			Assert.That(CServive.Activated, Is.EqualTo(true));
-			Assert.IsFalse(CServive.Client.Disabled);
-			CServive.CompulsoryDiactivate();
-			Assert.IsTrue(CServive.Client.Disabled);
+				CServive.Refresh();
+				CServive.Activate();
+				Assert.That(CServive.Activated, Is.EqualTo(true));
+				Assert.IsFalse(CServive.Client.Disabled);
+				CServive.CompulsoryDiactivate();
+				Assert.IsTrue(CServive.Client.Disabled);
 
-			Assert.That(client.ClientServices, Is.Empty);
+				Assert.That(client.ClientServices, Is.Empty);
 			}
 		}
 
 		[Test]
 		public void VoluntaryBlockinTest()
 		{
-			SystemTime.Reset();
 			int countDays = 10;
 			Client client;
 			ClientService service;
@@ -423,88 +428,75 @@ namespace Billing.Test.Integration
 		[Test]
 		public void ActiveDeactive()
 		{
-			Client client;
-			ClientService CServive;
+			ClientService service;
 			PhysicalClients physClient;
 			const int countDays = 5;
 			using (new SessionScope()) {
-				PrepareTest();
-				SystemTime.Reset();
-				client = CreateClient();
-				physClient = client.PhysicalClient;
+				physClient = _client.PhysicalClient;
 				physClient.Balance = -10m;
 				physClient.Update();
-				client.Disabled = true;
-				client.AutoUnblocked = true;
-				client.RatedPeriodDate = SystemTime.Now();
-				client.Update();
+				_client.Disabled = true;
+				_client.AutoUnblocked = true;
+				_client.RatedPeriodDate = SystemTime.Now();
+				_client.Update();
 
-				CServive = new ClientService {
-					Client = client,
-					BeginWorkDate = DateTime.Now,
-					EndWorkDate = SystemTime.Now().AddDays(countDays),
-					Service = Service.GetByType(typeof (DebtWork)),
-					Activator = InitializeContent.Partner
-				};
-				client.ClientServices.Add(CServive);
-				CServive.Activate();
+				service = Activate(typeof(DebtWork), SystemTime.Now().AddDays(countDays));
 			}
 			billing.OnMethod();
 			billing.Compute();
 			using (new SessionScope()) {
-				client.Refresh();
-				Assert.IsFalse(client.Disabled);
-				CServive.CompulsoryDiactivate();
-				Assert.IsTrue(client.Disabled);
+				_client.Refresh();
+				Assert.IsFalse(_client.Disabled);
+				service.CompulsoryDiactivate();
+				Assert.IsTrue(_client.Disabled);
 				billing.OnMethod();
-				Assert.IsTrue(client.Disabled);
-				CServive = new ClientService {
-					Client = client,
+				Assert.IsTrue(_client.Disabled);
+				physClient = ActiveRecordMediator<PhysicalClients>.FindByPrimaryKey(physClient.Id);
+				physClient.Balance = _client.GetPriceForTariff();
+				physClient.Update();
+			}
+			billing.OnMethod();
+			using (new SessionScope()) {
+				_client.Refresh();
+				Assert.IsFalse(_client.Disabled);
+				Assert.IsFalse(_client.PaidDay);
+				Assert.IsTrue(_client.AutoUnblocked);
+				Assert.IsNull(_client.RatedPeriodDate);
+
+				service = new ClientService {
+					Client = _client,
 					BeginWorkDate = DateTime.Now,
 					EndWorkDate = SystemTime.Now().AddDays(countDays),
 					Service = Service.GetByType(typeof (VoluntaryBlockin)),
-					Activator = InitializeContent.Partner
 				};
-				physClient = ActiveRecordMediator<PhysicalClients>.FindByPrimaryKey(physClient.Id);
-				physClient.Balance = client.GetPriceForTariff();
-				physClient.Update();
-			}
-			billing.OnMethod();
-			using (new SessionScope()) {
-				client.Refresh();
-				Assert.IsFalse(client.Disabled);
-				Assert.IsFalse(client.PaidDay);
-				Assert.IsTrue(client.AutoUnblocked);
-				Assert.IsNull(client.RatedPeriodDate);
-
-				client.ClientServices.Add(CServive);
-				CServive.Activate();
-				Assert.IsTrue(client.Disabled);
+				_client.ClientServices.Add(service);
+				service.Activate();
+				Assert.IsTrue(_client.Disabled);
 			}
 			billing.Compute();
 			using (new SessionScope()) {
-				CServive = ActiveRecordMediator<ClientService>.FindByPrimaryKey(CServive.Id);
+				service = ActiveRecordMediator<ClientService>.FindByPrimaryKey(service.Id);
 				Assert.That(WriteOff.FindAll().Last().WriteOffSum, Is.GreaterThan(3m));
-				CServive.CompulsoryDiactivate();
+				service.CompulsoryDiactivate();
 			}
 			billing.OnMethod();
 			billing.Compute();
 			using (new SessionScope()) {
-				client.Refresh();
+				_client = Client.Find(_client.Id);
 				var userWriteOffs = UserWriteOff.Queryable.ToList();
-
-				Assert.That(userWriteOffs.Count, Is.EqualTo(3));
+				Console.WriteLine(userWriteOffs.Implode());
+				Assert.That(userWriteOffs.Count, Is.EqualTo(3), userWriteOffs.Implode());
 				Assert.That(userWriteOffs[0].Sum, Is.GreaterThan(5m));
 				Assert.That(userWriteOffs[0].Sum, Is.LessThan(25m));
 				Assert.That(userWriteOffs[1].Sum, Is.EqualTo(50m));
 				Assert.That(userWriteOffs[2].Sum, Is.GreaterThan(5m));
 				Assert.That(userWriteOffs[2].Sum, Is.LessThan(25m));
-				Assert.IsFalse(client.Disabled);
+				Assert.IsFalse(_client.Disabled);
 			}
 			billing.OnMethod();
 			using (new SessionScope())
-				client.Refresh();
-			Assert.IsFalse(client.Disabled);
+				_client.Refresh();
+			Assert.IsFalse(_client.Disabled);
 		}
 
 		[Test]
@@ -538,7 +530,6 @@ namespace Billing.Test.Integration
 			Assert.IsFalse(client.CanBlock());
 			SystemTime.Now = () => DateTime.Now.AddDays(2);
 			Assert.IsTrue(client.CanBlock());
-			//client.ClientServices.Add(service);
 			new ClientService {
 				Client = client,
 				Service = Service.GetByType(typeof (DebtWork))

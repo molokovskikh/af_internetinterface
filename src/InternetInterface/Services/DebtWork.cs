@@ -82,7 +82,6 @@ namespace InternetInterface.Services
 			client.Status = Status.Find((uint)StatusType.NoWorked);
 			client.Update();
 			service.Activated = false;
-			service.Diactivated = true;
 			service.Update();
 		}
 
@@ -93,7 +92,7 @@ namespace InternetInterface.Services
 				CompulsoryDiactivate(service);
 				return true;
 			}
-			return service.Diactivated;
+			return !service.Activated;
 		}
 
 		public override void Activate(ClientService service)

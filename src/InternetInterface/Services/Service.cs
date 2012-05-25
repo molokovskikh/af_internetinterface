@@ -95,7 +95,7 @@ namespace InternetInterface.Services
 		{
 			if (client.ClientServices != null)
 			{
-				var cs = client.ClientServices.Where(c => c.Service == this && c.Activated && !c.Diactivated).FirstOrDefault();
+				var cs = client.ClientServices.FirstOrDefault(c => c.Service == this && c.Activated);
 				if (cs != null)
 					return true;
 			}
