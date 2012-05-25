@@ -39,7 +39,7 @@ namespace InternetInterface.Test.Functional
 			Save(client, payment);
 
 			Open("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", client.Id);
-			Click("Показать платежи клиента");
+			Click("Платежи");
 			Click("#SearchResults", "Отменить");
 			AssertText("Отменено");
 

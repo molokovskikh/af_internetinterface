@@ -3,6 +3,7 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Web.Hosting;
 using CassiniDev;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
@@ -34,6 +35,7 @@ namespace InternetInterface.Test.Functional
 			Settings.Instance.MakeNewIeInstanceVisible = false;
 
 			PrepareTestData();
+			SetupEnvironment(_webServer);
 		}
 
 		[TearDown]
@@ -55,7 +57,14 @@ namespace InternetInterface.Test.Functional
 				if (!ActiveRecordLinqBase<Tariff>.Queryable.Any())
 					new Tariff("Тариф для тестирования", 500).Save();
 				if (!ActiveRecordLinqBase<Brigad>.Queryable.Any())
+				{
 					new Brigad("Бригада для тестирования").Save();
+					new Partner {
+						Name = "Сервисный инженер для тестирования",
+						Login = "test_serviceman",
+						Categorie = UserCategorie.Queryable.First(c => c.ReductionName == "service")
+					}.Save();
+				}
 			}
 		}
 
@@ -66,6 +75,17 @@ namespace InternetInterface.Test.Functional
 				ActiveRecordInitialize.Init(ConnectionHelper.GetConnectionName(),
 					Assembly.Load("InternetInterface"),
 					Assembly.Load("InternetInterface.Test"));
+		}
+
+		public static void SetupEnvironment(Server server)
+		{
+			var method = server.GetType().GetMethod("GetHost", BindingFlags.Instance | BindingFlags.NonPublic);
+			method.Invoke(server, null);
+
+			var manager = ApplicationManager.GetApplicationManager();
+			var apps = manager.GetRunningApplications();
+			var domain = manager.GetAppDomain(apps.Single().ID);
+			domain.SetData("environment", "test");
 		}
 	}
 }

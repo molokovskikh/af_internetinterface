@@ -15,7 +15,9 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void BaseFunctional()
 		{
-			var client = Client.FindFirst();
+			var client = ClientHelper.Client();
+			Save(client);
+
 			Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", client.Id));
 			browser.Link("createServiceLink").Click();
 
