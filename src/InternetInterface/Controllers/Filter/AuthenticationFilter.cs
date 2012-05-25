@@ -23,12 +23,11 @@ namespace InternetInterface.Controllers.Filter
 		{
 #if DEBUG
 			context.Session["Login"] = Environment.UserName;
-#else
+#endif
 			if (context.Session["Login"] == null)
 			{
 				context.Session["Login"] = context.CurrentUser.Identity.Name;
 			}
-#endif
 			if (Partner.FindAllByProperty("Login", context.Session["Login"]).Length == 0)
 			{
 				context.Response.RedirectToUrl(@"..\\Login\LoginPartner.rails");
