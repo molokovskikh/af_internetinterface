@@ -248,9 +248,9 @@ namespace InternetInterface.Controllers
 
 			PropertyBag["Editing"] = filter.Editing;
 			PropertyBag["ConnectInfo"] = client.GetConnectInfo(DbSession);
-			PropertyBag["Payments"] = client.Payments.Where(p => p.Sum > 0).OrderBy(c => c.PaidOn).ToList();
-			PropertyBag["WriteOffs"] = client.GetWriteOffs(DbSession, filter.grouped).OrderByDescending(w => w.WriteOffDate).ToList();
-			PropertyBag["writeOffSum"] = WriteOff.FindAllByProperty("Client", client).Sum(s => s.WriteOffSum);
+
+			LoadBalanceData(filter.grouped, client);
+
 			PropertyBag["BalanceText"] = string.Empty;
 			PropertyBag["Appeals"] = Appeals.GetAllAppeal(DbSession, client, filter.appealType);
 
@@ -883,12 +883,7 @@ where r.`Label`= :LabelIndex;")
 		{
 			var client = Client.Find(filter.ClientCode);
 
-			PropertyBag["Payments"] = Payment.Queryable.Where(p => p.Client.Id == client.Id).Where(p => p.Sum > 0).OrderBy(t => t.PaidOn).ToList();
-			var abonentSum = WriteOff.Queryable.Where(p => p.Client.Id == client.Id).ToList().Sum(s => s.WriteOffSum);
-			PropertyBag["writeOffSum"] = abonentSum +
-			                             Models.UserWriteOff.Queryable.Where(w => w.Client.Id == client.Id).ToList().Sum(
-			                             	w => w.Sum);
-			PropertyBag["WriteOffs"] = client.GetWriteOffs(DbSession, grouped).OrderByDescending(w => w.WriteOffDate).ToList();
+			LoadBalanceData(grouped, client);
 			PropertyBag["grouped"] = grouped;
 			PropertyBag["BalanceText"] = string.Empty;
 			PropertyBag["services"] = Service.FindAll();
@@ -924,6 +919,20 @@ where r.`Label`= :LabelIndex;")
 			ConnectPropertyBag(filter.ClientCode);
 			SendConnectInfo(client);
 			SendUserWriteOff();
+		}
+
+		private void LoadBalanceData(string grouped, Client client)
+		{
+			var payments =
+				Payment.Queryable.Where(p => p.Client.Id == client.Id).Where(p => p.Sum > 0).OrderBy(t => t.PaidOn).ToList();
+			var writeoffSum = WriteOff.Queryable.Where(p => p.Client.Id == client.Id).ToList().Sum(s => s.WriteOffSum);
+			var userWriteoffSum = Models.UserWriteOff.Queryable.Where(w => w.Client.Id == client.Id).ToList().Sum(w => w.Sum);
+
+			PropertyBag["Payments"] = payments;
+			PropertyBag["paymentsSum"] = payments.Sum(p => p.Sum);
+			PropertyBag["writeOffSum"] = writeoffSum + userWriteoffSum;
+
+			PropertyBag["WriteOffs"] = client.GetWriteOffs(DbSession, grouped).OrderByDescending(w => w.WriteOffDate).ToList();
 		}
 
 		public void SendConnectInfo(Client client)
