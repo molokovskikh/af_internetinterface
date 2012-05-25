@@ -1,66 +1,45 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Castle.ActiveRecord.Framework.Config;
+using Common.MySql;
+using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Models.Editor;
 using InternetInterface.Models;
 using NHibernate.Engine;
-using NHibernate.Linq;
-using NHibernate.Mapping;
-using NHibernate.Properties;
 using NHibernate.Type;
+using Environment=NHibernate.Cfg.Environment;
 
 namespace InforoomInternet.Initializers
 {
-	public class ActiveRecord
+	public class ActiveRecord : ActiveRecordInitializer
 	{
-		public void Initialize(IConfigurationSource config)
+		public ActiveRecord()
 		{
-			ActiveRecordStarter.Initialize(
-				new[] {Assembly.Load("InforoomInternet"), Assembly.Load("InternetInterface")/*, Assembly.Load("Common.Web.Ui")*/},
-				config, new [] {typeof(MenuField), typeof(SiteContent), typeof(SubMenuField)});
+			Assemblies = new [] { "InforoomInternet", "InternetInterface" };
+			AdditionalTypes = new[] {typeof(MenuField), typeof(SiteContent), typeof(SubMenuField)};
+		}
+
+		public override void Initialize(IConfigurationSource config)
+		{
+			var newConfig = new InPlaceConfigurationSource();
+			newConfig.IsRunningInWebApp = true;
+			newConfig.PluralizeTableNames = true;
+			newConfig.Add(typeof(ActiveRecordBase),
+				new Dictionary<string, string> {
+					{Environment.Dialect, "NHibernate.Dialect.MySQLDialect"},
+					{Environment.ConnectionDriver, "NHibernate.Driver.MySqlDataDriver"},
+					{Environment.ConnectionProvider, "NHibernate.Connection.DriverConnectionProvider"},
+					{Environment.ConnectionStringName, ConnectionHelper.GetConnectionName()},
+					{Environment.ProxyFactoryFactoryClass, "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle"},
+					{Environment.Hbm2ddlKeyWords, "none"},
+				});
+
+			base.Initialize(newConfig);
 
 			SetupFilters();
-			SetDefaultValues();
-		}
-
-		private void SetDefaultValues()
-		{
-			var configuration = ActiveRecordMediator.GetSessionFactoryHolder().GetAllConfigurations()[0];
-			foreach(var clazz in configuration.ClassMappings)
-			{
-				//тут баг для nested объектов я не выставлю is null
-				foreach(var property in clazz.PropertyIterator)
-				{
-					var getter = property.GetGetter(clazz.MappedClass);
-					var type = getter.ReturnType;
-					foreach (Column column in property.ColumnIterator)
-					{
-						//var type = ((SimpleValue)column.Value).Type.ReturnedClass;
-						if (String.IsNullOrEmpty(column.DefaultValue)
-							&& column.IsNullable
-								&& !IsNullableType(type))
-						{
-							column.IsNullable = false;
-							column.DefaultValue = "0";
-						}
-					}
-				}
-			}
-		}
-
-		private bool IsNullableType(Type type)
-		{
-			if (!type.IsValueType)
-				return true;
-
-			if (type.IsNullable())
-				return true;
-
-			return false;
 		}
 
 		public static void SetupFilters()

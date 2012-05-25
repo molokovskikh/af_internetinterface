@@ -98,6 +98,7 @@
   <ItemGroup>
     <Content Include="Assets\Javascripts\application.js" />
     <Content Include="Assets\Javascripts\messages_ru.js" />
+    <Content Include="Assets\Stylesheets\payments.css" />
     <Content Include="Assets\Stylesheets\service-requests.css" />
     <Content Include="Css\asc.gif" />
     <Content Include="Css\base.css" />
@@ -388,6 +389,10 @@
     <ProjectReference Include="..\..\lib\MonoRail.Debugger.Toolbar\src\MonoRail.Debugger.Toolbar\MonoRail.Debugger.Toolbar.csproj">
       <Project>{BF858A13-1FE7-42F0-AF78-D9909FA193D1}</Project>
       <Name>MonoRail.Debugger.Toolbar</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common.MySql\Common.MySql\Common.MySql.csproj">
+      <Project>{8A680813-C83B-497A-85E6-E8F07B7D7650}</Project>
+      <Name>Common.MySql</Name>
     </ProjectReference>
     <ProjectReference Include="..\Common.Tools\Common.Tools\Common.Tools.csproj">
       <Project>{72AFCFE8-C9E9-45FA-9698-BEE896A517A3}</Project>

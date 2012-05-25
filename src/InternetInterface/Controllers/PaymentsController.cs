@@ -51,10 +51,10 @@ namespace InternetInterface.Controllers
 
 		public void New()
 		{
-			Binder.Validator = Validator;
 			if (IsPost)
 			{
 				var payment = new BankPayment();
+				SetARDataBinder();
 				BindObjectInstance(payment, "payment", AutoLoadBehavior.OnlyNested);
 				if (!HasValidationError(payment))
 				{
@@ -133,7 +133,6 @@ namespace InternetInterface.Controllers
 
 		public void SavePayments()
 		{
-			//Binder.Validator = Validator;
 			var payments = TempPayments();
 			if (payments == null)
 			{
@@ -147,7 +146,7 @@ namespace InternetInterface.Controllers
 				//то получим двух плательщиков из разных сесей
 				//правим это
 				if (payment.Payer != null)
-					payment.Payer = ActiveRecordLinqBase<Client>.Queryable.FirstOrDefault(p => p.Id == payment.Payer.Id); //IPayer.Find(payment.Payer.Id);
+					payment.Payer = ActiveRecordLinqBase<Client>.Queryable.FirstOrDefault(p => p.Id == payment.Payer.Id);
 
 				if (Validator.IsValid(payment))
 				{
@@ -205,11 +204,11 @@ namespace InternetInterface.Controllers
 			var payment = FindTempPayment(id);
 			if (IsPost)
 			{
+				SetARDataBinder();
 				BindObjectInstance(payment, "payment", AutoLoadBehavior.NullIfInvalidKey);
 				payment.UpdateInn();
 				Flash["Message"] = Message.Notify("Сохранено");
 				RedirectToAction("ProcessPayments");
-				//RedirectToReferrer();
 			}
 			else
 			{
@@ -253,13 +252,13 @@ namespace InternetInterface.Controllers
 
 		public void Edit(uint id)
 		{
-			Binder.Validator = Validator;
 			var payment = BankPayment.TryFind(id);
 			if (IsPost)
 			{
 				var oldBalance = payment.Sum;
 				var oldPayer = payment.Payer;
 				var oldPayment = payment;
+				SetARDataBinder();
 				BindObjectInstance(payment, "payment", AutoLoadBehavior.NullIfInvalidKey);
 				var newBalance = payment.Sum;
 				var newPayerFlag = oldPayer == null && payment.Payer != null;
@@ -351,12 +350,25 @@ namespace InternetInterface.Controllers
 		public void СhangeSaleSettings()
 		{
 			var setting = SaleSettings.FindFirst();
+			PropertyBag["settings"] = setting;
+
 			if (IsPost) {
+				SetARDataBinder();
 				BindObjectInstance(setting, ParamStore.Form, "settings", AutoLoadBehavior.Always);
 				setting.Save();
-				PropertyBag["Message"] = Message.Notify("Настройки сохранены");
+				Notify("Настройки сохранены");
+				RedirectToReferrer();
 			}
-			PropertyBag["settings"] = setting;
+		}
+
+		public void Cancel(uint id)
+		{
+			var payment = DbSession.Load<Payment>(id);
+			var message = payment.Cancel();
+			DbSession.Delete(payment);
+			DbSession.Save(message);
+			Notify("Отменено");
+			RedirectToReferrer();
 		}
 	}
 }

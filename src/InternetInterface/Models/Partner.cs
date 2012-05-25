@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Castle.ActiveRecord;
 using Castle.Components.Validator;
-using InternetInterface.Controllers.Filter;
+using Castle.MonoRail.Framework;
+using Common.Tools;
+using Common.Web.Ui.Models.Security;
 using InternetInterface.Helpers;
 using InternetInterface.Models.Universal;
-using NHibernate.Criterion;
-using NHibernate.SqlCommand;
 
 namespace InternetInterface.Models
 {
-
 	[ActiveRecord("Partners", Schema = "internet", Lazy = true)]
 	public class Partner : ValidActiveRecordLinqBase<Partner>
 	{
@@ -93,24 +93,32 @@ namespace InternetInterface.Models
 			}
 		}
 
-		public static bool RegistrLogicPartner(Partner _Partner, ValidatorRunner validator)
+		public static bool RegistrLogicPartner(Partner partner, ValidatorRunner validator)
 		{
-			if (validator.IsValid(_Partner)) {
-				_Partner.Categorie.Refresh();
-				_Partner.RegDate = DateTime.Now;
-				_Partner.SaveAndFlush();
+			if (validator.IsValid(partner)) {
+				partner.Categorie.Refresh();
+				partner.RegDate = DateTime.Now;
+				partner.SaveAndFlush();
 				return true;
 			}
-			else
-			{
-				return false;
-			}
+			return false;
 		}
 
 		public override string ToString()
 		{
 			return Name;
 		}
-	}
 
+		public virtual bool HavePermissionTo(IControllerContext controllerContext)
+		{
+			return Permissions().Any(p => p.Match(controllerContext));
+		}
+
+		public virtual IEnumerable<IPermission> Permissions()
+		{
+			if (AccesedPartner.Any(p => p.Match("SSI")))
+				return new IPermission[] { new ControllerActionPermission("Payments", "Cancel") };
+			return Enumerable.Empty<IPermission>();
+		}
+	}
 }

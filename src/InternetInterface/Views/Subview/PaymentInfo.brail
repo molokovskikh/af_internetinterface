@@ -1,60 +1,54 @@
 ﻿<button type="button"  class="editBut slide" onclick="$('#PaymentTable').slideToggle('slow');">Платежи</button>
 <div id="PaymentTable" style="display:none">
+
+${app.Asset("payments.css")}
+
 <%if PartnerAccessSet.AccesPartner("SSI"): %>
 <div style="clear:both;">
-<%if (Payments.Count == 0): %>
-	<div class="flash">
-		<div class="message error">
-		<p>Платежи отсутствуют</p>
+	<% if (Payments.Count == 0): %>
+		<div class="flash">
+			<div class="message error">
+				<p>Платежи отсутствуют</p>
+			</div>
 		</div>
-	</div>
-<%else: %>
-<table class="table"  style="width: 100%; font-size: small;" align="left">
-	<thead>
-		<tr valign="top">
-			<th>Платеж зарегистрировал</th>
-			<th>Дата оплаты клиентом</th>
-			<th>Дата регистрации платежа</th>
-			<th>Сумма</th>
-		</tr>
-	</thead>
+	<% else: %>
+	<table class="table" style="width: 100%; font-size: small;" align="left">
+		<thead>
+			<tr>
+				<th></th>
+				<th>Платеж зарегистрировал</th>
+				<th>Дата оплаты клиентом</th>
+				<th>Дата регистрации платежа</th>
+				<th>Сумма</th>
+			</tr>
+		</thead>
+		<tbody id="SearchResults" class="HighLightCurrentRow">
+		<% for i, item in enumerate(Payments): %>
+			<tr id="Row${i}" class="${app.Style(item)}">
+				<td>
+					<form method=post action="${siteroot}/Payments/${item.Id}/Cancel">
+						<input type="submit" value="Отменить" />
+					</form>
+				</td>
+				<td>${?item.Agent.Name}</td>
+				<td>${item.PaidOn}</td>
+				<td>${item.RecievedOn}</td>
+				<td>${item.Sum.ToString(".00")}</td>
+			</tr>
+		<% end %>
+		</tbody>
+	</table>
 
-	<tbody id="SearchResults" class="HighLightCurrentRow">
-	<% for i,item in enumerate(Payments): %>
-	<%if item.Sum != 0: %>
-		<%if item.Virtual: %>
-			<%if not item.BillingAccount: %>
-				<tr id="Row${i}" style="background-color:#facada">
-			<%else: %>
-				<tr id="Row${i}" style="background-color:#aff5ae">
-			<%end %>
-		<%else: %>
-			<tr id="Row${i}" style="background-color:${"#facada" if not item.BillingAccount};">
-		<%end %>
-		<%if item.Agent != null: %>
-			<td>${item.Agent.Name}</td>
-			<%else: %>
-			<td></td>
-			<%end %>
-			<td>${item.PaidOn}</td>
-			<td>${item.RecievedOn}</td>
-			<td>${item.Sum.ToString(".00")}</td>
+	<table class="table legend"">
+		<tr>
+			<td><div class="legend-mark virtual"></div></td>
+			<td>Бонусный платеж</td>
+			<td><div class="legend-mark not-processed"></div></td>
+			<td>Платеж не обработан</td>
 		</tr>
-		<%end %>
+	</table>
+
 	<% end %>
-	</tbody> 
-</table>
-<%end %>
 </div>
 <%end %>
-<table class="table" style="width:auto; background-color:White; border:1px double #AAA;">
-	<tbody>
-		<tr>
-			<td style="width:25px;"><div style="background-color:#aff5ae; width:25px; height:25px; border:1 solid black;"></div></td>
-			<td style="width:150px;">Бонусный платеж</td>
-			<td style="width:25px;"><div style="background-color:#facada; width:25px; height:25px; border:1 solid black;"></div></td>
-			<td style="width:180px;">Платеж не обработан</td>
-		</tr>
-	</tbody>
-</table>
 </div>

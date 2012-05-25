@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using Castle.ActiveRecord;
-using InternetInterface.Models;
+﻿using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 using WatiN.Core;
@@ -12,36 +6,46 @@ using WatiN.Core;
 namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
-	class PaymentFixture : WatinFixture
+	public class PaymentFixture : global::Test.Support.Web.WatinFixture2
 	{
 		[Test]
 		public void ProcessPaymentTest()
 		{
-			using (var browser = Open("Payments/ProcessPayments"))
-			{
-				Thread.Sleep(1000);
-				Assert.That(browser.Text, Is.StringContaining("Загрузка выписки"));
-			}
+			Open("Payments/ProcessPayments");
+			Assert.That(browser.Text, Is.StringContaining("Загрузка выписки"));
 		}
 
 		[Test]
 		public void NewTest()
 		{
-			using (var browser = Open("Payments/New"))
-			{
-				browser.Button("addPayment").Click();
-				Assert.That(browser.Text, Is.StringContaining("Значение должно быть больше нуля"));
-			}
+			Open("Payments/New");
+			browser.Button("addPayment").Click();
+			Assert.That(browser.Text, Is.StringContaining("Значение должно быть больше нуля"));
 		}
 
 		[Test]
 		public void IndexTest()
 		{
-			using (var browser = Open("Payments/Index"))
-			{
-				browser.Button(Find.ByValue("Показать")).Click();
-				Assert.That(browser.Text, Is.StringContaining("История платежей"));
-			}
+			Open("Payments/Index");
+			browser.Button(Find.ByValue("Показать")).Click();
+			Assert.That(browser.Text, Is.StringContaining("История платежей"));
+		}
+
+		[Test]
+		public void Cancel_client_payment()
+		{
+			var client = ClientHelper.Client();
+			var payment = new Payment(client, 1000);
+			Save(client, payment);
+
+			Open("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", client.Id);
+			Click("Показать платежи клиента");
+			Click("#SearchResults", "Отменить");
+			AssertText("Отменено");
+
+			session.Clear();
+			payment = session.Get<Payment>(payment.Id);
+			Assert.That(payment, Is.Null);
 		}
 	}
 }

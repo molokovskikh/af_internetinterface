@@ -1,0 +1,19 @@
+﻿.virtual {
+	background-color:#aff5ae;
+}
+
+/*
+	вес этого селектора должен быть больше чем .virtual
+	тк если платеж не обработан то это важнее
+*/
+tr.not-processed, .not-processed {
+	background-color:#facada;
+}
+
+.legend {
+	width:auto; background-color:White; border:1px double #AAA;
+}
+
+.legend-mark {
+	width:25px; height:25px; border:1 solid black;
+}

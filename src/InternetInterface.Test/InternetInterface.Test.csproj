@@ -23,6 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -127,7 +128,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Functional\BrigadFixture.cs" />
-    <Compile Include="Functional\CloseDemandFixture.cs" />
     <Compile Include="Functional\HouseMapFixture.cs" />
     <Compile Include="Functional\InvoiceFixture.cs" />
     <Compile Include="Functional\PaymentFixture.cs" />
@@ -164,6 +164,7 @@
     <Compile Include="Unit\LoginFixture.cs" />
     <Compile Include="Unit\GetClientsLogicFixture.cs" />
     <Compile Include="Unit\OnLineClientFixture.cs" />
+    <Compile Include="Unit\PaymentFixture.cs" />
     <Compile Include="Unit\PhysicalClientFixture.cs" />
     <Compile Include="Unit\ServiceRequestFixture.cs" />
     <Compile Include="Unit\SmsFixture.cs" />

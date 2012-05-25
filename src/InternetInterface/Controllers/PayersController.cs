@@ -58,7 +58,7 @@ namespace InternetInterface.Controllers
 			if (endDate == null)
 				endDate = DateTime.Now;
 			if (!CategorieAccessSet.AccesPartner("SSI"))
-				agent = Agent.Queryable.Where(a => a.Partner == InitializeContent.Partner).FirstOrDefault().Id;
+				agent = Agent.GetByInitPartner().Id;
 			var totalRes = agent > 0 ?
 				Payment.Queryable.Where(t => t.Agent.Id == agent).ToList() : Payment.FindAll().ToList();
 			totalRes = totalRes.Where(t => t.PaidOn >= startDate.Value &&
@@ -126,10 +126,7 @@ namespace InternetInterface.Controllers
 			{
 				var file = Request.Files["inputfile"] as HttpPostedFile;
 				if (file == null || file.ContentLength == 0)
-				{
-					//PropertyBag["Message"] = Message.Error("Нужно выбрать файл для загрузки");
 					return;
-				}
 
 				Session["payments"] = BankPayment.Parse(file.FileName, file.InputStream);
 				RedirectToReferrer();
