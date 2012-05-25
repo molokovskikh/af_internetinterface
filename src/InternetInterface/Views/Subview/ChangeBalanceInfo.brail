@@ -1,39 +1,34 @@
 ﻿<%if PartnerAccessSet.AccesPartner("CB"): %>
 <div style="clear:both;">
-<%if _client.LawyerPerson == null: %>
-<form class="form login" id="changeBalanceForm" method="post" action="${siteroot}/UserInfo/ChangeBalance">
-	<input type="hidden" name="ClientID" value="${ClientCode}" />
-	<% OutputSubView("""\Subview\Payment""") %>
-</form>
-<%end %>
-<%if PartnerAccessSet.AccesPartner("ECI"): %>
-<form method="post" action="${siteroot}/UserInfo/UserWriteOff">
-	<table class="table">
-		<thead>
-			<tr>
-				<th colspan=4>Списание средств</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td style="width:300px;">Введите сумму для списания</td>
-				<td><input type=text id="userWriteOffSum" name="userWO.Sum" value="${userWO.Sum}"/> <input type="hidden" name="ClientID" value="${ClientCode}" /></td>
-				<td>${app.GetValidationError(userWO, "Sum")}</td>
-			</tr>
-			<tr>
-				<td>Введите комментарий: </td>
-				<td><input type=text id="userWriteOffComment" name="userWO.Comment" value="${userWO.Comment}" /></td>
-				<td>${app.GetValidationError(userWO, "Comment")}</td>
-			</tr>
-			<tr>
-				<td colspan=100>
-					<button type="submit" id="userWriteOffButton" class="button ok">Списать</button>
-				</td>
-			</tr>
-		</tbody>
-	</table>
-</form>
-<%end %>
+
+	<% if _client.LawyerPerson == null: %>
+		<% OutputSubView("""\Subview\Payment""") %>
+	<% end %>
+
+	<% if PartnerAccessSet.AccesPartner("ECI"): %>
+	<div class="form-sub-block">
+		<h3>Списание средств</h3>
+		<form method="post" action="${siteroot}/UserInfo/UserWriteOff">
+			<table class="form-table">
+				<tr>
+					<td><b>Введите сумму для списания</b></td>
+					<td><input type=text id="userWriteOffSum" name="userWO.Sum" value="${userWO.Sum}"/> <input type="hidden" name="ClientID" value="${ClientCode}" /></td>
+					<td>${app.GetValidationError(userWO, "Sum")}</td>
+				</tr>
+				<tr>
+					<td><b>Введите комментарий</b></td>
+					<td><input type=text id="userWriteOffComment" name="userWO.Comment" value="${userWO.Comment}" /></td>
+					<td>${app.GetValidationError(userWO, "Comment")}</td>
+				</tr>
+				<tr>
+					<td colspan=100>
+						<button type="submit" id="userWriteOffButton" class="button ok">Списать</button>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+	<%end %>
 </div>
 </div>
 <%end %>

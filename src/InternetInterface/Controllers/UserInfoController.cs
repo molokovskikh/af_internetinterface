@@ -987,21 +987,11 @@ where r.`Label`= :LabelIndex;")
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void ChangeBalance([DataBind("ChangedBy")] ChangeBalaceProperties changeProperties, uint clientId, string balanceText, bool virtualPayment)
+		public void ChangeBalance(uint clientId, string balanceText, bool virtualPayment)
 		{
 			var clientToch = Client.Find(clientId);
-			var forChangeSumm = string.Empty;
-			PropertyBag["ChangeBalance"] = true;
-			if (changeProperties.IsForTariff())
-			{
-				forChangeSumm = Client.Find(clientId).PhysicalClient.Tariff.Price.ToString();
-			}
-			if (changeProperties.IsOtherSumm())
-			{
-				forChangeSumm = balanceText;
-			}
 			decimal tryBalance;
-			if (decimal.TryParse(forChangeSumm, out tryBalance) && tryBalance > 0)
+			if (decimal.TryParse(balanceText, out tryBalance) && tryBalance > 0)
 			{
 				if (clientToch.LawyerPerson == null) {
 					new Payment {
