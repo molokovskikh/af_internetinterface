@@ -4,9 +4,8 @@
 		width: 300px;
 	}
 		
-	#PartnerInfoTable 
+	#block-tables
 	{
-		border: 1px solid #AAA;
 		margin-left:20px;
 	}
 </style>
@@ -15,6 +14,9 @@
 	<div id="container">
 		<div id="block-tables" class="block">
 			<% if Switch.Id: %>
+				<form method=post action="${siteroot}/Switches/${Switch.Id}/Delete">
+					<input type=submit value="Удалить"/>
+				</form>
 				<form class="form" id="RegistrationFormEdit" name="RegistrationForm" method="post" action="${siteroot}/Switches/EditSwitch" >
 			<% else: %>
 				<form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Switches/RegisterSwitch" >

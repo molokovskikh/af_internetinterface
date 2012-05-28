@@ -21,6 +21,20 @@ namespace InternetInterface.Controllers
 			PropertyBag["Switches"] = switches;
 		}
 
+		public void Delete(uint id)
+		{
+			var commutator = DbSession.Load<NetworkSwitches>(id);
+			if (DbSession.Query<ClientEndpoints>().Any(e => e.Switch == commutator)) {
+				Error("Коммутатор не может быть удален т.к. с ним работают клиенты");
+				RedirectToReferrer();
+			}
+			else {
+				DbSession.Delete(commutator);
+				Notify("Удалено");
+				RedirectToAction("ShowSwitches");
+			}
+		}
+
 		public void MakeSwitch(uint Switch)
 		{
 			PropertyBag["Switch"] = DbSession.Load<NetworkSwitches>(Switch);

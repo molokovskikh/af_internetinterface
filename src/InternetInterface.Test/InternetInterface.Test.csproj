@@ -128,6 +128,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Functional\BrigadFixture.cs" />
+    <Compile Include="Functional\CommutatorFixture.cs" />
     <Compile Include="Functional\HouseMapFixture.cs" />
     <Compile Include="Functional\InvoiceFixture.cs" />
     <Compile Include="Functional\PaymentFixture.cs" />
