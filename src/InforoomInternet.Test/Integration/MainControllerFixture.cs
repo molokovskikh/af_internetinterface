@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Castle.MonoRail.TestSupport;
@@ -6,6 +7,7 @@ using InforoomInternet.Controllers;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NHibernate;
+using NHibernate.Linq;
 using NUnit.Framework;
 
 namespace InforoomInternet.Test.Integration
@@ -40,7 +42,7 @@ namespace InforoomInternet.Test.Integration
 		public void Warning_package_id()
 		{
 			var client = ClientHelper.Client();
-			var commutator = new NetworkSwitches {Name = "Тестовый коммутатор"};
+			var commutator = new NetworkSwitches("Тестовый коммутатор", session.Query<Zone>().First());
 			var endpoint = new ClientEndpoints(client, 1, commutator);
 			var lease = new Lease {Endpoint = endpoint, Switch = commutator, Port = 1, Ip = (uint) new Random().Next()};
 

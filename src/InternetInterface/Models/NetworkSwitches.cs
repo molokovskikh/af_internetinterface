@@ -16,6 +16,15 @@ namespace InternetInterface.Models
 	[ActiveRecord("NetworkSwitches", Schema = "Internet", Lazy = true)]
 	public class NetworkSwitches
 	{
+		public NetworkSwitches()
+		{}
+
+		public NetworkSwitches(string name, Zone zone)
+		{
+			Name = name;
+			Zone = zone;
+		}
+
 		public const string IPRegExp =
 			@"\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b";
 

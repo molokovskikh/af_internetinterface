@@ -56,14 +56,21 @@ namespace InternetInterface.Test.Functional
 
 				if (!ActiveRecordLinqBase<Tariff>.Queryable.Any())
 					new Tariff("Тариф для тестирования", 500).Save();
-				if (!ActiveRecordLinqBase<Brigad>.Queryable.Any())
-				{
+
+				if (!ActiveRecordLinqBase<Brigad>.Queryable.Any()) {
 					new Brigad("Бригада для тестирования").Save();
 					new Partner {
 						Name = "Сервисный инженер для тестирования",
 						Login = "test_serviceman",
 						Categorie = UserCategorie.Queryable.First(c => c.ReductionName == "service")
 					}.Save();
+				}
+
+				if (!ActiveRecordLinqBase<Zone>.Queryable.Any()) {
+					var zone = new Zone {
+						Name = "Тестовая зона"
+					};
+					ActiveRecordMediator.Save(zone);
 				}
 			}
 		}

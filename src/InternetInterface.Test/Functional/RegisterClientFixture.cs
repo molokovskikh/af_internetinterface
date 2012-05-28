@@ -5,6 +5,7 @@ using Castle.ActiveRecord;
 using InternetInterface.Controllers;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
+using NHibernate.Linq;
 using NUnit.Framework;
 using WatiN.Core;
 using WatiN.Core.Native.Windows;
@@ -69,7 +70,9 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void Show_switch_comment()
 		{
-			var commutator = new NetworkSwitches {Name = "Тестовый коммутатор", Comment = "Тестовый комментарий к коммутатору"};
+			var commutator = new NetworkSwitches("Тестовый коммутатор", session.Query<Zone>().First()) {
+				Comment = "Тестовый комментарий к коммутатору"
+			};
 			session.Save(commutator);
 			session.Flush();
 			commutator.Name += " " + commutator.Id;
