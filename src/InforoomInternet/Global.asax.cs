@@ -1,24 +1,15 @@
 ﻿using System;
 using System.IO;
-using System.Text;
-using System.Web;
 using Castle.ActiveRecord;
-using Castle.ActiveRecord.Framework.Config;
 using System.Reflection;
 using Castle.MonoRail.Framework;
 using Castle.MonoRail.Framework.Configuration;
-using Castle.MonoRail.Framework.Container;
 using Castle.MonoRail.Framework.Internal;
-using Castle.MonoRail.Framework.JSGeneration;
-using Castle.MonoRail.Framework.JSGeneration.jQuery;
 using Castle.MonoRail.Framework.Routing;
-using Castle.MonoRail.Framework.Services;
 using Castle.MonoRail.Views.Brail;
 using Common.Web.Ui.Helpers;
-using InforoomInternet.Initializers;
 using InternetInterface.Helpers;
 using log4net;
-using log4net.Config;
 
 namespace InforoomInternet
 {
@@ -31,7 +22,6 @@ namespace InforoomInternet
 		{
 			Logger = new HttpSessionLog(typeof(Global));
 			LibAssemblies.Add(Assembly.Load("Common.Web.Ui"));
-			//LibAssemblies.Add(Assembly.Load("InternetInterface"));
 			Logger.ErrorSubject = "Ошибка в IVRN";
 			Logger.SmtpHost = "box.analit.net";
 			Logger.ExcludeExceptionTypes.Add(typeof(ControllerNotFoundException));
@@ -41,10 +31,9 @@ namespace InforoomInternet
 		void Application_Start(object sender, EventArgs e)
 		{
 			try {
-				XmlConfigurator.Configure();
-				GlobalContext.Properties["Version"] = Assembly.GetExecutingAssembly().GetName().Version;
+				Initialize();
+
 				ActiveRecordStarter.EventListenerComponentRegistrationHook += RemoverListner.Make;
-				new ActiveRecord().Initialize(ActiveRecordSectionHandler.Instance);
 
 				RoutingModuleEx.Engine.Add(new PatternRoute("/")
 					.DefaultForController().Is("Content")
