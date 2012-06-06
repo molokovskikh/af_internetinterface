@@ -187,12 +187,10 @@ namespace InternetInterface.Models
 		public virtual string HowManyToPay(bool change)
 		{
 			var format = change ? "({0})" : "{0}";
-			if (Tariff == null)
-			{
+			if (Tariff == null) {
 				return String.Empty;
 			}
-			else
-			{
+			else {
 				var pay = Tariff.Price - Convert.ToDecimal(Balance);
 				return String.Format(format, Convert.ToString(pay <= 0 ? 0 : pay));
 			}
@@ -202,8 +200,7 @@ namespace InternetInterface.Models
 		public static bool RegistrLogicClient(PhysicalClients client, uint tariffId, uint houseId,
 			ValidatorRunner validator)
 		{
-			if (validator.IsValid(client))
-			{
+			if (validator.IsValid(client)) {
 				var house = ActiveRecordBase<House>.Find(houseId);
 				client.HouseObj = house;
 				client.Street = house.Street;

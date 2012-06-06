@@ -15,6 +15,13 @@ namespace InternetInterface.Models
 		public UserWriteOff()
 		{}
 
+		public UserWriteOff(Client client, decimal sum, string comment)
+			: this(client)
+		{
+			Sum = sum;
+			Comment = comment;
+		}
+
 		public UserWriteOff(Client client)
 		{
 			Client = client;

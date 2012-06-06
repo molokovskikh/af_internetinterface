@@ -54,14 +54,14 @@ namespace InternetInterface.Controllers
 			PropertyBag["Statuses"] = ServiceRequest.GetStatuses();
 		}
 
-		public void ShowRequest(uint Id, bool Edit)
+		public void ShowRequest(uint id, bool edit)
 		{
-			var request = DbSession.Load<ServiceRequest>(Id);
+			var request = DbSession.Load<ServiceRequest>(id);
 			var isService = InitializeContent.Partner.CategorieIs("Service");
 			PropertyBag["Request"] = ((isService && request.Performer == InitializeContent.Partner) || ! isService) ? request : null;
-			PropertyBag["Edit"] = Edit;
+			PropertyBag["Edit"] = edit;
 			PropertyBag["IsService"] = InitializeContent.Partner.CategorieIs("Service");
-			if (Edit) {
+			if (edit) {
 				PropertyBag["RequestStatuses"] = ServiceRequest.GetStatuses();
 				PropertyBag["ingeners"] = Partner.GetServiceIngeners();
 			}
@@ -82,6 +82,9 @@ namespace InternetInterface.Controllers
 		{
 			if (request != null) {
 				DbSession.Save(request);
+				if (request.Writeoff != null) {
+					DbSession.Save(request.Writeoff);
+				}
 				RedirectToUrl("../ServiceRequest/ShowRequest?Id=" + request.Id);
 			}
 			else

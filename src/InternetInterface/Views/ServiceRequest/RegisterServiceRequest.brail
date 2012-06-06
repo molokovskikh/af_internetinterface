@@ -84,7 +84,9 @@ ${FormHelper.EndFormTag()}
 				<th>Клиент</th>
 				<th>Краткое описание</th>
 				<th>Контакт</th>
-				<th>Статус</th>
+				<th>Создана</th>
+				<th>Закрыта</th>
+				<th>Стоимость</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -94,7 +96,9 @@ ${FormHelper.EndFormTag()}
 					<td><a href="${Siteroot}/Search/Redirect?filter.ClientCode=${request.Client.Id}">${request.Client.Name}</a></td>
 					<td>${request.GetMinDiscription()}</td>
 					<td>${request.Contact}</td>
-					<td>${request.GetStatusName()}</td>
+					<td>${request.RegDate}</td>
+					<td>${request.ClosedDate}</td>
+					<td>${?request.Sum.ToString("C")}</td>
 				</tr>
 			<%end %>
 		</tbody>
