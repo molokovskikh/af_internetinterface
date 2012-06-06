@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Controllers.Filter;
@@ -9,31 +10,23 @@ using NHibernate.Criterion;
 
 namespace InternetInterface.Queries
 {
-	public class RequestFinderFilter : Sortable, IPaginable
+	public class RequestFinderFilter : PaginableSortable
 	{
-		public int Status { get; set; }
+		[Description("Статус")]
+		public ServiceRequestStatus? Status { get; set; }
+
 		public DatePeriod Period { get; set; }
 		public Client _Client { get; set; }
 		public int DateSelector { get; set; }
+
+		[Description("Бесплатные")]
 		public bool FreeFlag { get; set; }
 
-		private int _lastRowsCount;
 		public bool IsService;
-
-		public int RowsCount
-		{
-			get { return _lastRowsCount; }
-		}
-
-		public int PageSize
-		{
-			get { return 30; }
-		}
-
-		public int CurrentPage { get; set; }
 
 		public RequestFinderFilter()
 		{
+			PageSize = 30;
 			SortBy = "RegistrationDate";
 			SortDirection = "Desc";
 
@@ -42,7 +35,9 @@ namespace InternetInterface.Queries
 				{"ClientId", "Client.Id"},
 				{"Description", "Description"},
 				{"Contact", "Contact"},
-				{"Status", "Status"}
+				{"RegDate", "RegDate"},
+				{"ClosedDate", "ClosedDate"},
+				{"Sum", "Sum"},
 			};
 			var dtn = DateTime.Now;
 			Period = new DatePeriod(new DateTime(dtn.Year, dtn.Month, 1), dtn);
@@ -54,21 +49,6 @@ namespace InternetInterface.Queries
 		{
 			Period = null;
 			_Client = client;
-		}
-
-		private IList<ServiceRequest> AcceptPaginator(ISession session, DetachedCriteria criteria)
-		{
-			var countSubquery = CriteriaTransformer.TransformToRowCount(criteria);
-			_lastRowsCount = countSubquery.GetExecutableCriteria(session).UniqueResult<int>();
-
-			if (CurrentPage > 0)
-				criteria.SetFirstResult(CurrentPage*PageSize);
-
-			criteria.SetMaxResults(PageSize);
-
-			ApplySort(criteria);
-
-			return criteria.GetExecutableCriteria(session).List<ServiceRequest>();
 		}
 
 		public DetachedCriteria GetCriteria()
@@ -91,11 +71,11 @@ namespace InternetInterface.Queries
 					dateSelectorField = "ClosedDate";
 					break;
 			}
-			if (Status > 0)
-				criteria.Add(Restrictions.Eq("Status", (ServiceRequestStatus)Status));
+			if (Status != null)
+				criteria.Add(Restrictions.Eq("Status", Status));
 			if (Period != null) {
 				criteria.Add(Restrictions.Ge(dateSelectorField, Period.Begin));
-				criteria.Add(Restrictions.Le(dateSelectorField, Period.End));
+				criteria.Add(Restrictions.Le(dateSelectorField, Period.End.AddDays(1)));
 				if (FreeFlag)
 					criteria.Add(Restrictions.Eq("Free", FreeFlag));
 			}
@@ -105,7 +85,7 @@ namespace InternetInterface.Queries
 
 		public IList<ServiceRequest> Find(ISession session)
 		{
-			return AcceptPaginator(session, GetCriteria());
+			return Find<ServiceRequest>(GetCriteria());
 		}
 	}
 }

@@ -40,7 +40,7 @@ namespace InternetInterface.Models
 			ValidateNonEmpty,
 			ValidateRegExp(@"^\d{3}-\d{7}$", "Ошибка формата телефонного номера: мобильный телефн (***-*******)"),
 			Description("Контактный телефон"),
-			Auditable, ]
+			Auditable]
 		public virtual string Contact { get; set; }
 
 		[Property, Auditable("Статус сервисной заявки")]
@@ -55,8 +55,8 @@ namespace InternetInterface.Models
 			{
 				if (value == ServiceRequestStatus.Close && value != _status)
 					ClosedDate = DateTime.Now;
-					_status = value;
-			} 
+				_status = value;
+			}
 		}
 
 		[BelongsTo]

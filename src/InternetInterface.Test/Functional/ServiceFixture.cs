@@ -12,21 +12,27 @@ namespace InternetInterface.Test.Functional
 	[TestFixture]
 	public class ServiceFixture : global::Test.Support.Web.WatinFixture2
 	{
+		private Client client;
+
+		[SetUp]
+		public void Setup()
+		{
+			client = ClientHelper.Client();
+			Save(client);
+		}
+
 		[Test]
 		public void BaseFunctional()
 		{
-			var client = ClientHelper.Client();
-			Save(client);
-
 			Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", client.Id));
-			browser.Link("createServiceLink").Click();
+			Click("Сервисная заявка");
 
 			Css("textarea[name=\"request.Description\"]").Value = "test";
 			Css("input[name=\"request.Contact\"]").Value = "900-9090900";
 			Css("input[name=\"request.PerformanceDate\"]").Value = "21.05.2012";
 			Css("input[name=\"request.PerformanceTime\"]").Value = "10:00";
-			
-			browser.Button("register_button").Click();
+			Click("Сохранить");
+
 			Assert.That(browser.Text, Is.StringContaining("Информация по клиенту"));
 
 			var request = session.Query<ServiceRequest>().Where(r => r.Client == client).ToArray().Last();
@@ -38,7 +44,8 @@ namespace InternetInterface.Test.Functional
 		public void ViewRequests()
 		{
 			var request = new ServiceRequest {
-				Contact = "900-9090900"
+				Contact = "900-9090900",
+				Client = client
 			};
 			session.Save(request);
 
