@@ -410,7 +410,7 @@ namespace InternetInterface.Controllers
 					client.ClientServices.FirstOrDefault(c => c.Service.Id == serviceId && c.Activated);
 				if (cservice != null)
 				{
-					cservice.CompulsoryDiactivate();
+					cservice.CompulsoryDeactivate();
 					Appeals.CreareAppeal(string.Format("Услуга \"{0}\" деактивирована", servise.HumanName), client, AppealType.User);
 				}
 			}

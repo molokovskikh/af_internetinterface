@@ -48,7 +48,7 @@ namespace InternetInterface.Services
 		public override void PaymentClient(ClientService service)
 		{
 			if (service.Client.PhysicalClient.Balance > 0)
-				service.Diactivate();
+				service.Deactivate();
 		}
 
 		public override bool CanBlock(ClientService service)
@@ -63,10 +63,9 @@ namespace InternetInterface.Services
 			if (CService.Activator != null)
 				return true;
 
-			var lastPayments =
-				Payment.Queryable.Where(
-					p => p.Client == CService.Client && CService.BeginWorkDate.Value < p.PaidOn).
-					ToList().Sum(p => p.Sum);
+			var lastPayments = Payment.Queryable
+				.Where(p => p.Client == CService.Client && CService.BeginWorkDate.Value < p.PaidOn)
+				.ToList().Sum(p => p.Sum);
 			var balance = CService.Client.PhysicalClient.Balance;
 			if (balance > 0 &&
 				balance - lastPayments <= 0)
@@ -74,7 +73,7 @@ namespace InternetInterface.Services
 			return false;
 		}
 
-		public override void CompulsoryDiactivate(ClientService service)
+		public override void CompulsoryDeactivate(ClientService service)
 		{
 			var client = service.Client;
 			client.Disabled = true;
@@ -85,27 +84,27 @@ namespace InternetInterface.Services
 			service.Update();
 		}
 
-		public override bool Diactivate(ClientService service)
+		public override bool Deactivate(ClientService assignedService)
 		{
-			if (service.Activated && service.EndWorkDate.Value < SystemTime.Now())
+			if (assignedService.Activated && assignedService.EndWorkDate.Value < SystemTime.Now())
 			{
-				CompulsoryDiactivate(service);
+				CompulsoryDeactivate(assignedService);
 				return true;
 			}
-			return !service.Activated;
+			return !assignedService.Activated;
 		}
 
-		public override void Activate(ClientService service)
+		public override void Activate(ClientService assignedService)
 		{
-			if ((!service.Activated && CanActivate(service)))
+			if ((!assignedService.Activated && CanActivate(assignedService)))
 			{
-				var client = service.Client;
+				var client = assignedService.Client;
 				client.Disabled = false;
 				client.RatedPeriodDate = SystemTime.Now();
 				client.Status = Status.Find((uint) StatusType.Worked);
 				client.Update();
-				service.Activated = true;
-				service.Update();
+				assignedService.Activated = true;
+				assignedService.Update();
 			}
 		}
 	}

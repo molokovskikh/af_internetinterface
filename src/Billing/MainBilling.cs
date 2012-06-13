@@ -225,7 +225,7 @@ namespace Billing
 					client.Update();
 				}
 				foreach (var cserv in ClientService.FindAll()) {
-					cserv.Diactivate();
+					cserv.Deactivate();
 				}
 				transaction.VoteCommit();
 			}
@@ -316,9 +316,10 @@ namespace Billing
 		{
 			var phisicalClient = client.PhysicalClient;
 			var balance = phisicalClient.Balance;
-			if ((balance >= 0) &&
-				(!client.Disabled) &&
-					(client.RatedPeriodDate != DateTime.MinValue) && (client.RatedPeriodDate != null)) {
+			if (balance >= 0
+				&& !client.Disabled
+				&& client.RatedPeriodDate != DateTime.MinValue
+				&& client.RatedPeriodDate != null) {
 				var dtNow = SystemTime.Now();
 
 				if ((client.RatedPeriodDate.Value.AddMonths(1).Date - dtNow.Date).Days == -client.DebtDays) {
@@ -334,7 +335,6 @@ namespace Billing
 				else {
 					if ((client.RatedPeriodDate.Value.AddMonths(1).Date - dtNow.Date).TotalDays < -client.DebtDays) {
 						client.RatedPeriodDate = dtNow.AddDays(client.DebtDays);
-						;
 						client.DebtDays = 0;
 					}
 				}
@@ -349,44 +349,46 @@ namespace Billing
 				if (sale >= _saleSettings.MinSale)
 					client.Sale = sale;
 			}
-			if (client.GetPrice() > 0 && !client.PaidDay) {
-				if (client.RatedPeriodDate != DateTime.MinValue && client.RatedPeriodDate != null) {
-					if (client.StartNoBlock == null)
-						client.StartNoBlock = SystemTime.Now();
-					var daysInInterval = client.GetInterval();
-					var price = client.GetPrice();
-					var sum = price/daysInInterval;
+			if (client.GetPrice() > 0 && !client.PaidDay
+				&& client.RatedPeriodDate != DateTime.MinValue
+				&& client.RatedPeriodDate != null) {
 
-					var writeOff = phisicalClient.WriteOff(sum);
-					if (writeOff != null)
-						writeOff.Save();
+				if (client.StartNoBlock == null)
+					client.StartNoBlock = SystemTime.Now();
 
-					phisicalClient.Update();
+				var daysInInterval = client.GetInterval();
+				var price = client.GetPrice();
+				var sum = price/daysInInterval;
 
-					var bufBal = phisicalClient.Balance;
-					var minimumBalance = bufBal - sum < 0;
-					if (minimumBalance) {
-						client.ShowBalanceWarningPage = true;
-						if (client.SendSmsNotifocation) {
-							if (phisicalClient.Balance > 0) {
-								var message = string.Format("Ваш баланс {0} руб. Завтра доступ в сеть будет заблокирован.",
-									client.PhysicalClient.Balance.ToString("0.00"));
-								var now = SystemTime.Now();
-								DateTime shouldBeSendDate;
-								if (now.Hour < 22)
-									shouldBeSendDate = new DateTime(now.Year, now.Month, now.Day, 12, 0, 0);
-								else {
-									shouldBeSendDate = SystemTime.Now().Date.AddDays(1).AddHours(12);
-								}
-								var smsMessage = new SmsMessage(client, message, shouldBeSendDate);
-								smsMessage.Save();
-								Messages.Add(smsMessage);
+				var writeOff = phisicalClient.WriteOff(sum);
+				if (writeOff != null)
+					writeOff.Save();
+
+				phisicalClient.Update();
+
+				var bufBal = phisicalClient.Balance;
+				var minimumBalance = bufBal - sum < 0;
+				if (minimumBalance) {
+					client.ShowBalanceWarningPage = true;
+					if (client.SendSmsNotifocation) {
+						if (phisicalClient.Balance > 0) {
+							var message = string.Format("Ваш баланс {0} руб. Завтра доступ в сеть будет заблокирован.",
+								client.PhysicalClient.Balance.ToString("0.00"));
+							var now = SystemTime.Now();
+							DateTime shouldBeSendDate;
+							if (now.Hour < 22)
+								shouldBeSendDate = new DateTime(now.Year, now.Month, now.Day, 12, 0, 0);
+							else {
+								shouldBeSendDate = SystemTime.Now().Date.AddDays(1).AddHours(12);
 							}
+							var smsMessage = new SmsMessage(client, message, shouldBeSendDate);
+							smsMessage.Save();
+							Messages.Add(smsMessage);
 						}
 					}
-					else {
-						client.ShowBalanceWarningPage = false;
-					}
+				}
+				else {
+					client.ShowBalanceWarningPage = false;
 				}
 			}
 			if (client.CanBlock()) {

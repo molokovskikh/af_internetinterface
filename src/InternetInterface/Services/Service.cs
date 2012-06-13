@@ -27,6 +27,24 @@ namespace InternetInterface.Services
 		[Property]
 		public virtual bool InterfaceControl { get; set; }
 
+		//говорит о том что нужно вызывать GetPrice, даже если активирована блокирующая услуга
+		//"добровольная блокировка"
+		public virtual bool ProcessEvenInBlock
+		{
+			get
+			{
+				return false;
+			}
+		}
+
+		public virtual bool SupportUserActivation
+		{
+			get
+			{
+				return false;
+			}
+		}
+
 		public static Service GetByType(Type type)
 		{
 			return (Service)ActiveRecordMediator.FindFirst(type);
@@ -37,16 +55,25 @@ namespace InternetInterface.Services
 			return ActiveRecordMediator<T>.FindFirst();
 		}
 
-
-		public virtual void Activate(ClientService CService)
-		{}
-
-		public virtual bool Diactivate(ClientService CService)
+		public virtual void Activate(ClientService assignedService)
 		{
+			if (SupportUserActivation
+				&& assignedService.ActivatedByUser
+				&& !assignedService.Client.Disabled)
+				assignedService.Activated = true;
+			assignedService.Activated = true;
+		}
+
+		public virtual bool Deactivate(ClientService assignedService)
+		{
+			if (SupportUserActivation
+				&& (!assignedService.ActivatedByUser
+				|| assignedService.Client.Disabled))
+				assignedService.Activated = false;
 			return false;
 		}
 
-		public virtual void CompulsoryDiactivate(ClientService CService)
+		public virtual void CompulsoryDeactivate(ClientService CService)
 		{}
 
 		public virtual void EditClient(ClientService CService)
@@ -70,7 +97,7 @@ namespace InternetInterface.Services
 			return true;
 		}
 
-		public virtual decimal GetPrice(ClientService CService)
+		public virtual decimal GetPrice(ClientService assignedService)
 		{
 			return Price;
 		}
@@ -90,7 +117,6 @@ namespace InternetInterface.Services
 			return CanActivate(client) && !client.ClientServices.Select(c => c.Service.Id).Contains(Id);
 		}
 
-
 		public virtual bool ActivatedForClient(Client client)
 		{
 			if (client.ClientServices != null)
@@ -102,7 +128,7 @@ namespace InternetInterface.Services
 			return false;
 		}
 
-		public virtual void WriteOff(ClientService cService)
+		public virtual void WriteOff(ClientService assignedService)
 		{}
 	}
 }

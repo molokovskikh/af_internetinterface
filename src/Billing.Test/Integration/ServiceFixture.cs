@@ -29,8 +29,7 @@ namespace Billing.Test.Integration
 				Activator = InitializeContent.Partner
 			};
 
-			_client.ClientServices.Add(service);
-			service.Activate();
+			_client.Activate(service);
 
 			return service;
 		}
@@ -90,7 +89,7 @@ namespace Billing.Test.Integration
 
 				service = Activate(typeof (VoluntaryBlockin), DateTime.Now.AddDays(100));
 				Assert.That(_client.FreeBlockDays, Is.EqualTo(MainBilling.FreeDaysVoluntaryBlockin));
-				service.CompulsoryDiactivate();
+				service.CompulsoryDeactivate();
 				Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(1));
 			}
 			billing.Compute();
@@ -121,7 +120,7 @@ namespace Billing.Test.Integration
 
 				Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(0));
 
-				service.CompulsoryDiactivate();
+				service.CompulsoryDeactivate();
 				service = new ClientService {
 					Client = _client,
 					BeginWorkDate = DateTime.Now,
@@ -139,7 +138,7 @@ namespace Billing.Test.Integration
 				Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(1));
 				Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(4));
 
-				service.CompulsoryDiactivate();
+				service.CompulsoryDeactivate();
 			}
 			billing.Compute();
 			using (new SessionScope()) {
@@ -308,7 +307,7 @@ namespace Billing.Test.Integration
 				CServive.Activate();
 				Assert.That(CServive.Activated, Is.EqualTo(true));
 				Assert.IsFalse(CServive.Client.Disabled);
-				CServive.CompulsoryDiactivate();
+				CServive.CompulsoryDeactivate();
 				Assert.IsTrue(CServive.Client.Disabled);
 
 				Assert.That(client.ClientServices, Is.Empty);
@@ -447,7 +446,7 @@ namespace Billing.Test.Integration
 			using (new SessionScope()) {
 				_client.Refresh();
 				Assert.IsFalse(_client.Disabled);
-				service.CompulsoryDiactivate();
+				service.CompulsoryDeactivate();
 				Assert.IsTrue(_client.Disabled);
 				billing.OnMethod();
 				Assert.IsTrue(_client.Disabled);
@@ -477,7 +476,7 @@ namespace Billing.Test.Integration
 			using (new SessionScope()) {
 				service = ActiveRecordMediator<ClientService>.FindByPrimaryKey(service.Id);
 				Assert.That(WriteOff.FindAll().Last().WriteOffSum, Is.GreaterThan(3m));
-				service.CompulsoryDiactivate();
+				service.CompulsoryDeactivate();
 			}
 			billing.OnMethod();
 			billing.Compute();

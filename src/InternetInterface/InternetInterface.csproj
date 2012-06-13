@@ -339,6 +339,10 @@
     <Compile Include="Models\SendedLease.cs" />
     <Compile Include="Models\ServiceRequest.cs" />
     <Compile Include="Models\ServiceInteration.cs" />
+    <Compile Include="Models\Services\Internet.cs" />
+    <Compile Include="Models\Services\IpTv.cs" />
+    <Compile Include="Models\Services\IpTvBoxRent.cs" />
+    <Compile Include="Models\Services\IpTvChannelGroup.cs" />
     <Compile Include="Models\SmsMessage.cs" />
     <Compile Include="Models\StaticIp.cs" />
     <Compile Include="Models\Status.cs" />

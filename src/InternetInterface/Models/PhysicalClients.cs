@@ -216,6 +216,17 @@ namespace InternetInterface.Models
 
 		public virtual WriteOff WriteOff(decimal sum, bool writeoffVirtualFirst = true)
 		{
+			var writeoff = CalculateWriteoff(sum, writeoffVirtualFirst);
+
+			Balance -= writeoff.WriteOffSum;
+			VirtualBalance -= writeoff.VirtualSum;
+			MoneyBalance -= writeoff.MoneySum;
+
+			return writeoff;
+		}
+
+		public virtual WriteOff CalculateWriteoff(decimal sum, bool writeoffVirtualFirst = true)
+		{
 			if (sum <= 0)
 				return null;
 
@@ -229,10 +240,6 @@ namespace InternetInterface.Models
 				virtualWriteoff = Math.Min(Math.Abs(Math.Min(MoneyBalance - sum, 0)), VirtualBalance);
 			}
 			moneyWriteoff = sum - virtualWriteoff;
-
-			Balance -= sum;
-			VirtualBalance -= virtualWriteoff;
-			MoneyBalance -= moneyWriteoff;
 
 			return new WriteOff {
 				Client = Client,

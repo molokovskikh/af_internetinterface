@@ -34,7 +34,7 @@ namespace InternetInterface.Services
 			if (client.PhysicalClient != null)
 			{
 				var balance = client.PhysicalClient.Balance >= 0;
-				var debtWork = !client.ClientServices.Select(c => c.Service).Contains(GetByType(typeof (DebtWork)));
+				var debtWork = !client.HaveService<DebtWork>();
 				return balance && debtWork && client.StartWork();
 			}
 			return false;
@@ -46,17 +46,17 @@ namespace InternetInterface.Services
 			return  begin && CanActivate(cService.Client);
 		}
 
-		public override void Activate(ClientService CService)
+		public override void Activate(ClientService assignedService)
 		{
-			if (CanActivate(CService) && !CService.Activated)
+			if (CanActivate(assignedService) && !assignedService.Activated)
 			{
-				var client = CService.Client;
+				var client = assignedService.Client;
 
 				client.RatedPeriodDate = DateTime.Now;
 
 				//Это должно быть на этом месте, иначе возможно списывать неправильную сумму
 				var now = SystemTime.Now();
-				if (!client.PaidDay && now.Hour < 22 && CService.BeginWorkDate.Value.Date == now.Date) {
+				if (!client.PaidDay && now.Hour < 22 && assignedService.BeginWorkDate.Value.Date == now.Date) {
 					client.PaidDay = true;
 					var toDt = client.GetInterval();
 					var price = client.GetPrice();
@@ -70,17 +70,16 @@ namespace InternetInterface.Services
 				}
 
 				client.Disabled = true;
-
 				client.ShowBalanceWarningPage = true;
-
 				client.AutoUnblocked = false;
 				client.DebtDays = 0;
 				client.Status = Status.Find((uint)StatusType.VoluntaryBlocking);
 				client.Update();
-				CService.Activated = true;
-				var evd = CService.EndWorkDate.Value;
-				CService.EndWorkDate = new DateTime(evd.Year, evd.Month, evd.Day);
-				CService.Update();
+
+				assignedService.Activated = true;
+				var evd = assignedService.EndWorkDate.Value;
+				assignedService.EndWorkDate = new DateTime(evd.Year, evd.Month, evd.Day);
+				assignedService.Update();
 
 				if (client.FreeBlockDays <= 0)
 					new UserWriteOff {
@@ -89,24 +88,21 @@ namespace InternetInterface.Services
 						Date = DateTime.Now,
 						Comment =
 							string.Format("Платеж за активацию услуги добровольная блокировка с {0} по {1}",
-							CService.BeginWorkDate.Value.ToShortDateString(), CService.EndWorkDate.Value.ToShortDateString())
+							assignedService.BeginWorkDate.Value.ToShortDateString(), assignedService.EndWorkDate.Value.ToShortDateString())
 					}.Save();
 			}
 		}
 
-		public override void CompulsoryDiactivate(ClientService service)
+		public override void CompulsoryDeactivate(ClientService service)
 		{
 			var client = service.Client;
 			client.DebtDays = 0;
 			client.RatedPeriodDate = DateTime.Now;
 			client.Disabled = service.Client.PhysicalClient.Balance < 0;
-
 			client.ShowBalanceWarningPage = service.Client.PhysicalClient.Balance < 0;
-
-
 			client.AutoUnblocked = true;
-			if (service.Client.PhysicalClient.Balance > 0)
-			{
+
+			if (service.Client.PhysicalClient.Balance > 0) {
 				client.Disabled = false;
 				client.Status = Status.Find((uint)StatusType.Worked);
 			}
@@ -132,12 +128,12 @@ namespace InternetInterface.Services
 			client.Update();
 		}
 
-		public override bool Diactivate(ClientService CService)
+		public override bool Deactivate(ClientService assignedService)
 		{
-			if ((CService.EndWorkDate == null && CService.Client.PhysicalClient.Balance < 0) ||
-				(CService.EndWorkDate != null && (SystemTime.Now().Date >= CService.EndWorkDate.Value)))
+			if ((assignedService.EndWorkDate == null && assignedService.Client.PhysicalClient.Balance < 0) ||
+				(assignedService.EndWorkDate != null && (SystemTime.Now().Date >= assignedService.EndWorkDate.Value)))
 			{
-				CompulsoryDiactivate(CService);
+				CompulsoryDeactivate(assignedService);
 				return true;
 			}
 			return false;
@@ -151,22 +147,22 @@ namespace InternetInterface.Services
 			return (SystemTime.Now().Date - CService.EndWorkDate.Value.Date).Days > 45;
 		}*/
 
-		public override decimal GetPrice(ClientService CService)
+		public override decimal GetPrice(ClientService assignedService)
 		{
-			if (CService.BeginWorkDate == null)
+			if (assignedService.BeginWorkDate == null)
 				return 0;
 
-			if (CService.Client.FreeBlockDays > 0)
+			if (assignedService.Client.FreeBlockDays > 0)
 				return 0;
-			return CService.Client.GetInterval()*3m;
+			return assignedService.Client.GetInterval()*3m;
 		}
 
-		public override void WriteOff(ClientService cService)
+		public override void WriteOff(ClientService assignedService)
 		{
-			var client = cService.Client;
-			if (cService.Activated && client.FreeBlockDays > 0 &&
-				cService.BeginWorkDate.Value.Date != SystemTime.Now().Date &&
-				cService.EndWorkDate.Value.Date != SystemTime.Now().Date) {
+			var client = assignedService.Client;
+			if (assignedService.Activated && client.FreeBlockDays > 0 &&
+				assignedService.BeginWorkDate.Value.Date != SystemTime.Now().Date &&
+				assignedService.EndWorkDate.Value.Date != SystemTime.Now().Date) {
 				client.FreeBlockDays --;
 				client.Update();
 			}

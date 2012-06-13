@@ -40,7 +40,7 @@ namespace InternetInterface.Services
 			return false;
 		}
 
-		public override void CompulsoryDiactivate(ClientService CService)
+		public override void CompulsoryDeactivate(ClientService CService)
 		{
 			var client = CService.Client;
 			var warning = client.LawyerPerson.NeedShowWarning();
@@ -51,26 +51,26 @@ namespace InternetInterface.Services
 			CService.Update();
 		}
 
-		public override void Activate(ClientService CService)
+		public override void Activate(ClientService assignedService)
 		{
-			if ((!CService.Activated && CanActivate(CService))) {
-				var client = CService.Client;
+			if ((!assignedService.Activated && CanActivate(assignedService))) {
+				var client = assignedService.Client;
 				client.ShowBalanceWarningPage = false;
 				client.Disabled = false;
 				client.Save();
-				CService.Activated = true;
-				CService.EndWorkDate = CService.EndWorkDate.Value.Date;
-				CService.Update();
+				assignedService.Activated = true;
+				assignedService.EndWorkDate = assignedService.EndWorkDate.Value.Date;
+				assignedService.Update();
 			}
 		}
 
-		public override void WriteOff(ClientService cService)
+		public override void WriteOff(ClientService assignedService)
 		{
-			if ((cService.EndWorkDate == null) ||
-				(cService.EndWorkDate != null && (SystemTime.Now().Date >= cService.EndWorkDate.Value.Date)))
+			if ((assignedService.EndWorkDate == null) ||
+				(assignedService.EndWorkDate != null && (SystemTime.Now().Date >= assignedService.EndWorkDate.Value.Date)))
 			{
-				CompulsoryDiactivate(cService);
-				cService.Delete();
+				CompulsoryDeactivate(assignedService);
+				assignedService.Delete();
 			}
 		}
 	}

@@ -22,6 +22,13 @@ namespace InternetInterface.Models
 			Service = service;
 		}
 
+		public ClientService(Client client, Service service, bool activatedByUser)
+		{
+			Client = client;
+			Service = service;
+			ActivatedByUser = activatedByUser;
+		}
+
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
@@ -39,6 +46,9 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual bool Activated { get; set; }
+
+		[Property]
+		public virtual bool ActivatedByUser { get; set; }
 
 		[BelongsTo]
 		public virtual Partner Activator { get; set; }
@@ -71,15 +81,15 @@ namespace InternetInterface.Models
 			Service.Activate(this);
 		}
 
-		public virtual void Diactivate()
+		public virtual void Deactivate()
 		{
-			if (Service.Diactivate(this))
+			if (Service.Deactivate(this))
 				DeleteFromClient();
 		}
 
-		public virtual void CompulsoryDiactivate()
+		public virtual void CompulsoryDeactivate()
 		{
-			Service.CompulsoryDiactivate(this);
+			Service.CompulsoryDeactivate(this);
 			DeleteFromClient();
 		}
 

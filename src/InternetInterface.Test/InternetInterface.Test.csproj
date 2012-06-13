@@ -164,6 +164,8 @@
     <Compile Include="Unit\HouseFixture.cs" />
     <Compile Include="Unit\Image.cs" />
     <Compile Include="Unit\GetClientsLogicFixture.cs" />
+    <Compile Include="Unit\InternetFixture.cs" />
+    <Compile Include="Unit\IpTvFixture.cs" />
     <Compile Include="Unit\OnLineClientFixture.cs" />
     <Compile Include="Unit\PaymentFixture.cs" />
     <Compile Include="Unit\PhysicalClientFixture.cs" />

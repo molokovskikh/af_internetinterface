@@ -132,9 +132,9 @@ namespace InforoomInternet.Controllers
 		{
 			var clientId = Convert.ToUInt32(Session["LoginClient"]);
 			var client = Client.Find(clientId);
-			var cService = client.ClientServices.Where(c => c.Service.Id == Service.GetByType(typeof (VoluntaryBlockin)).Id).FirstOrDefault();
+			var cService = client.ClientServices.FirstOrDefault(c => c.Service.Id == Service.GetByType(typeof (VoluntaryBlockin)).Id);
 			if (cService != null) {
-				cService.CompulsoryDiactivate();
+				cService.CompulsoryDeactivate();
 				Flash["message"] = "Услуга \"Работа в долг\" деактивирована";
 					new Appeals {
 					Appeal = string.Format("Услуга \"добровольная блокировка\" деактивирована"),
@@ -166,14 +166,14 @@ namespace InforoomInternet.Controllers
 			PropertyBag["telephoneNum"] = string.Empty;
 			PropertyBag["SendSmsNotifocation"] = client.SendSmsNotifocation;
 			if (client.Contacts != null) {
-				var smsNotContact = client.Contacts.Where(c => c.Type == ContactType.SmsSending).FirstOrDefault();
+				var smsNotContact = client.Contacts.FirstOrDefault(c => c.Type == ContactType.SmsSending);
 				if (smsNotContact != null)
 					PropertyBag["telephoneNum"] = TransformTelNum(smsNotContact.Text);
 			}
 			if (IsPost) {
 				var telNum = telephoneInput.Replace("-", string.Empty).Remove(0, 1);
 				if (client.Contacts != null) {
-					var smsNotContact = client.Contacts.Where(c => c.Type == ContactType.SmsSending).FirstOrDefault();
+					var smsNotContact = client.Contacts.FirstOrDefault(c => c.Type == ContactType.SmsSending);
 					if (smsNotContact != null) {
 						smsNotContact.Text = telNum;
 						smsNotContact.Save();
