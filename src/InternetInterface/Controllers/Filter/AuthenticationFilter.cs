@@ -44,7 +44,7 @@ namespace InternetInterface.Controllers.Filter
 				controllerContext.PropertyBag["PartnerAccessSet"] = new CategorieAccessSet();
 				controllerContext.PropertyBag["MapPartner"] = partner;
 				if (AccessRules.GetAccessName(controllerContext.Action).Count(CategorieAccessSet.AccesPartner) == 0
-					&& !partner.HavePermissionTo(controllerContext))
+					&& !partner.HavePermissionTo(controllerContext.Name, controllerContext.Action))
 				{
 					context.Response.RedirectToUrl(@"..\\Errors\AccessDin.aspx");
 					return false;

@@ -258,27 +258,16 @@ namespace InternetInterface.Models.Access
 									"ShowAgents",
 									"GroupInfo",
 									"Leases",
-									 "ActivateService",
+									"ActivateService",
 									"DiactivateService",
 									"ProcessPayments",
 									"NewPaymets",
-									"Index",
-									"New",
-									"SavePayments",
-									"EditTemp",
-									"Delete",
-									"DeleteTemp",
-									"Edit",
-									"SearchPayer",
-									"CancelPayments",
 									"ShowAppeals",
 									"СhangeSaleSettings",
 									"EditAgentSettings",
 									"SaveSettings",
 									"ForClient",
 									"ForSwitch",
-									"Print",
-									"Process"
 								};
 			return _visibleDemand.Contains(methodName) ? "SSI" : string.Empty;
 		}

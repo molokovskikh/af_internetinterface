@@ -6,6 +6,7 @@ using System.Text;
 using System.Web;
 using Castle.MonoRail.Framework;
 using Common.Web.Ui.Helpers;
+using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using InternetInterface.Models.Access;
 
@@ -25,7 +26,8 @@ namespace InternetInterface.Helpers
 
 		public override bool HavePermission(string controller, string action)
 		{
-			return AccessRules.GetAccessName(action).Count(CategorieAccessSet.AccesPartner) > 0;
+			return AccessRules.GetAccessName(action).Count(CategorieAccessSet.AccesPartner) > 0
+				|| InitializeContent.Partner.HavePermissionTo(controller, action);
 		}
 
 		public void RegisterEditor()

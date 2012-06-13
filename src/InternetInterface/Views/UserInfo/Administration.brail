@@ -51,9 +51,18 @@
 		<tr><td><a href = "${Siteroot}/Payments/СhangeSaleSettings" ><span class="MA"><div class=menudiv>Редактировать настрйки скидок</div></span></a>
 		<span class="comment_text">Здесь можно выставить настройки системы скидок</span></td></tr>
 		<%end %>
-		<%if PartnerAccessSet.AccesPartner("SSI"): %>
-		<tr><td><a href = "${Siteroot}/AgentInfo/EditAgentSettings" ><span class="MA"><div class=menudiv>Редактировать настройки агентов</div></span></a>
-		<span class="comment_text">Здесь можно выставить настройки компенсации агетов и др.</span></td></tr>
-		<%end %>
+		<% if PartnerAccessSet.AccesPartner("SSI"): %>
+		<tr>
+			<td>
+				<a href = "${Siteroot}/AgentInfo/EditAgentSettings" ><span class="MA"><div class=menudiv>Редактировать настройки агентов</div></span></a>
+				<span class="comment_text">Здесь можно выставить настройки компенсации агетов и др.</span>
+			</td>
+		</tr>
+		<% end %>
+		<tr>
+			<td>
+				${app.LinkTo("Пакеты каналов", @ChannelGroups, @Index)}
+			</td>
+		</tr>
 	</tbody>
 </table>

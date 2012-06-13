@@ -145,6 +145,8 @@
     <None Include="Views\AgentInfo\SummaryInformation.brail" />
     <None Include="Views\Brigads\MakeBrigad.brail" />
     <None Include="Views\Brigads\ShowBrigad.brail" />
+    <None Include="Views\ChannelGroups\Index.brail" />
+    <None Include="Views\ChannelGroups\Edit.brail" />
     <None Include="Views\Invoices\Edit.brail" />
     <None Include="Views\Invoices\Index.brail" />
     <None Include="Views\Invoices\InvoiceBody.brail" />
@@ -250,6 +252,7 @@
     <Compile Include="Components\ContactTypeList.cs" />
     <Compile Include="Controllers\AgentInfoController.cs" />
     <Compile Include="Controllers\BrigadsController.cs" />
+    <Compile Include="Controllers\ChannelGroupsController.cs" />
     <Compile Include="Controllers\InvoicesController.cs" />
     <Compile Include="Controllers\PrivateMessagesController.cs" />
     <Compile Include="Controllers\ExitPartner.cs" />
@@ -342,7 +345,7 @@
     <Compile Include="Models\Services\Internet.cs" />
     <Compile Include="Models\Services\IpTv.cs" />
     <Compile Include="Models\Services\IpTvBoxRent.cs" />
-    <Compile Include="Models\Services\IpTvChannelGroup.cs" />
+    <Compile Include="Models\Services\ChannelGroup.cs" />
     <Compile Include="Models\SmsMessage.cs" />
     <Compile Include="Models\StaticIp.cs" />
     <Compile Include="Models\Status.cs" />

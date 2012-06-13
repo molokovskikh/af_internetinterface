@@ -10,10 +10,10 @@ namespace InternetInterface.Models.Services
 	{
 		public IpTv()
 		{
-			Channels = new List<IpTvChannelGroup>();
+			Channels = new List<ChannelGroup>();
 		}
 
-		public IpTv(params IpTvChannelGroup[] channels)
+		public IpTv(params ChannelGroup[] channels)
 			: this()
 		{
 			Channels = channels.ToList();
@@ -24,7 +24,7 @@ namespace InternetInterface.Models.Services
 			Table = "AssignedChannels",
 			ColumnKey = "AssignedServiceId",
 			ColumnRef = "ChannelGroupId")]
-		public virtual IList<IpTvChannelGroup> Channels { get; set; }
+		public virtual IList<ChannelGroup> Channels { get; set; }
 
 		public override bool SupportUserActivation
 		{

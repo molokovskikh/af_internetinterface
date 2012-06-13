@@ -6,6 +6,7 @@ using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Castle.Components.Validator;
 using Common.Web.Ui.Helpers;
+using Common.Web.Ui.MonoRailExtentions;
 using InternetInterface.Models.Universal;
 
 namespace InternetInterface.Models

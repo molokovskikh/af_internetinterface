@@ -1,0 +1,39 @@
+﻿<style>
+	label
+	{
+		display: block;
+		clear: both;
+	}
+	
+	.form-item
+	{
+		padding-bottom: 10px;
+	}
+	
+	form
+	{
+		padding: 5px;
+	}
+</style>
+${FormHelper.FormTag("", {})}
+<div class=form-item>
+	${app.Label("group.Name")}
+	${app.Edit("group.Name")}
+	${app.GetValidationError("group.Name")}
+</div>
+<div class=form-item>
+	${app.Edit("group.Hidden")}
+	${app.GetValidationError("group.Hidden")}
+</div>
+<div class=form-item>
+	${app.Label("group.CostPerMonth")}
+	${app.Edit("group.CostPerMonth")}
+	${app.GetValidationError("group.CostPerMonth")}
+</div>
+<div class=form-item>
+	${app.Label("group.CostPerMonthWithInternet")}
+	${app.Edit("group.CostPerMonthWithInternet")}
+	${app.GetValidationError("group.CostPerMonthWithInternet")}
+</div>
+${FormHelper.Submit("Сохранить")}
+${FormHelper.EndFormTag()}

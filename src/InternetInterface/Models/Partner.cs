@@ -7,8 +7,11 @@ using Castle.Components.Validator;
 using Castle.MonoRail.Framework;
 using Common.Tools;
 using Common.Web.Ui.Models.Security;
+using InternetInterface.Controllers;
 using InternetInterface.Helpers;
 using InternetInterface.Models.Universal;
+using NHibernate.Criterion;
+using NHibernate.SqlCommand;
 
 namespace InternetInterface.Models
 {
@@ -109,15 +112,26 @@ namespace InternetInterface.Models
 			return Name;
 		}
 
-		public virtual bool HavePermissionTo(IControllerContext controllerContext)
+		public virtual bool HavePermissionTo(string controller, string action)
 		{
-			return Permissions().Any(p => p.Match(controllerContext));
+			if (AccesedPartner == null) {
+				AccesedPartner = CategorieAccessSet.FindAll(DetachedCriteria.For(typeof(CategorieAccessSet))
+					.CreateAlias("AccessCat", "AC", JoinType.InnerJoin)
+					.Add(Restrictions.Eq("Categorie", Categorie)))
+					.Select(c => c.AccessCat.ReduceName).ToList();
+			}
+
+			return Permissions().Any(p => p.Match(controller, action));
 		}
 
 		public virtual IEnumerable<IPermission> Permissions()
 		{
 			if (AccesedPartner.Any(p => p.Match("SSI")))
-				return new IPermission[] { new ControllerActionPermission("Payments", "Cancel") };
+				return new IPermission[] {
+					new ControllerPermission(typeof(PaymentsController)),
+					new ControllerPermission(typeof(ChannelGroupsController)),
+					new ControllerPermission(typeof(InvoicesController)),
+				};
 			return Enumerable.Empty<IPermission>();
 		}
 	}

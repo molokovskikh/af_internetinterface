@@ -114,7 +114,7 @@ namespace InternetInterface.Test.Unit
 
 		private ClientService IpTv()
 		{
-			var clientService = new ClientService(client, new IpTv(new IpTvChannelGroup("Тестовый пакет", 300, 100)), true);
+			var clientService = new ClientService(client, new IpTv(new ChannelGroup("Тестовый пакет", 300, 100)), true);
 			client.Activate(clientService);
 			return clientService;
 		}
