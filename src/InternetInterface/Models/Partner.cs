@@ -114,13 +114,6 @@ namespace InternetInterface.Models
 
 		public virtual bool HavePermissionTo(string controller, string action)
 		{
-			if (AccesedPartner == null) {
-				AccesedPartner = CategorieAccessSet.FindAll(DetachedCriteria.For(typeof(CategorieAccessSet))
-					.CreateAlias("AccessCat", "AC", JoinType.InnerJoin)
-					.Add(Restrictions.Eq("Categorie", Categorie)))
-					.Select(c => c.AccessCat.ReduceName).ToList();
-			}
-
 			return Permissions().Any(p => p.Match(controller, action));
 		}
 
@@ -131,6 +124,7 @@ namespace InternetInterface.Models
 					new ControllerPermission(typeof(PaymentsController)),
 					new ControllerPermission(typeof(ChannelGroupsController)),
 					new ControllerPermission(typeof(InvoicesController)),
+					new ControllerPermission(typeof(ServicesController)),
 				};
 			return Enumerable.Empty<IPermission>();
 		}

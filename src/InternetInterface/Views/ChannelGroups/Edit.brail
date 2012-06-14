@@ -1,20 +1,5 @@
-﻿<style>
-	label
-	{
-		display: block;
-		clear: both;
-	}
-	
-	.form-item
-	{
-		padding-bottom: 10px;
-	}
-	
-	form
-	{
-		padding: 5px;
-	}
-</style>
+﻿${app.Asset("alt-form.css")}
+
 ${FormHelper.FormTag("", {})}
 <div class=form-item>
 	${app.Label("group.Name")}

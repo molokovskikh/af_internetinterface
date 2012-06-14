@@ -98,6 +98,7 @@
   <ItemGroup>
     <Content Include="Assets\Javascripts\application.js" />
     <Content Include="Assets\Javascripts\messages_ru.js" />
+    <Content Include="Assets\Stylesheets\alt-form.css" />
     <Content Include="Assets\Stylesheets\payments.css" />
     <Content Include="Assets\Stylesheets\service-requests.css" />
     <Content Include="Css\asc.gif" />
@@ -187,6 +188,7 @@
     <None Include="Views\Rescues\404.brail" />
     <None Include="Views\ServiceRequest\ShowRequest.brail" />
     <None Include="Views\ServiceRequest\ViewRequests.brail" />
+    <None Include="Views\Services\Edit.brail" />
     <None Include="Views\Shared\EditorTemplates\Contact.brail" />
     <None Include="Views\Sms\SmsIndex.brail" />
     <None Include="Views\Subview\AppealsInfo.brail" />
@@ -267,6 +269,7 @@
     <Compile Include="Controllers\RegisterController.cs" />
     <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Controllers\ServiceRequestController.cs" />
+    <Compile Include="Controllers\ServicesController.cs" />
     <Compile Include="Controllers\SwitchesController.cs" />
     <Compile Include="Controllers\UserInfoController.cs" />
     <Compile Include="Errors\AccessDin.aspx.cs">

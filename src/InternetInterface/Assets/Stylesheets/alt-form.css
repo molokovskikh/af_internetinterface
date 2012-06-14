@@ -1,0 +1,12 @@
+﻿label {
+	display: block;
+	clear: both;
+}
+
+.form-item {
+	padding-bottom: 10px;
+}
+
+form {
+	padding: 5px;
+}

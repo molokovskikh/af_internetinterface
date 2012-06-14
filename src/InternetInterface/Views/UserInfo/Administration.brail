@@ -64,5 +64,10 @@
 				${app.LinkTo("Пакеты каналов", @ChannelGroups, @Index)}
 			</td>
 		</tr>
+		<tr>
+			<td>
+				${app.LinkTo("Услуги", @Services, @Edit)}
+			</td>
+		</tr>
 	</tbody>
 </table>
