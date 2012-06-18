@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Common.Tools;
 using InternetInterface.Models;
@@ -114,7 +115,7 @@ namespace InternetInterface.Test.Unit
 
 		private ClientService IpTv()
 		{
-			var clientService = new ClientService(client, new IpTv(new ChannelGroup("Тестовый пакет", 300, 100)), true);
+			var clientService = new ClientService(client, new IpTv(), true) {Channels = {new ChannelGroup("Тестовый пакет", 300, 100)}};
 			client.Activate(clientService);
 			return clientService;
 		}

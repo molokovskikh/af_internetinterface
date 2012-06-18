@@ -307,7 +307,7 @@ namespace Billing.Test.Integration
 					Tariff = domTariff
 				};
 				physDom.Save();
-				domolinkClient = new Client {
+				domolinkClient = new Client() {
 					PhysicalClient = physDom,
 					Disabled = true,
 					Type = ClientType.Phisical,
@@ -477,7 +477,7 @@ namespace Billing.Test.Integration
 					Tariff = 10000m,
 				};
 				lPerson.Save();
-				client = new Client {
+				client = new Client() {
 					Disabled = false,
 					Name = "TestLawyer",
 					ShowBalanceWarningPage = false,
@@ -562,7 +562,7 @@ namespace Billing.Test.Integration
 				Name = "Complex_tariff",
 				Description = "Complex_tariff"
 			};
-			var client = new Client {
+			var client = new Client() {
 				Name = "TestLawyer",
 				BeginWork = DateTime.Now.AddMonths(-1),
 				RatedPeriodDate = DateTime.Now,

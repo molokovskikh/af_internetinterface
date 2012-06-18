@@ -31,7 +31,6 @@ namespace InternetInterface.Test.Functional
 			Assert.That(browser.Text, Is.StringContaining("Номер паспорта"));
 			Assert.That(browser.Text, Is.StringContaining("Кем выдан"));
 			Assert.That(browser.Text, Is.StringContaining("Адрес регистрации"));
-			Assert.That(browser.Text, Is.StringContaining("Регистрационные данные"));
 			Assert.That(browser.Text, Is.StringContaining("Тариф"));
 			Assert.That(browser.Text, Is.StringContaining("Внести сумму"));
 			Assert.That(browser.Text, Is.StringContaining("Зарегистрировать"));

@@ -8,24 +8,6 @@ namespace InternetInterface.Models.Services
 	[ActiveRecord(DiscriminatorValue = "IpTv")]
 	public class IpTv : Service
 	{
-		public IpTv()
-		{
-			Channels = new List<ChannelGroup>();
-		}
-
-		public IpTv(params ChannelGroup[] channels)
-			: this()
-		{
-			Channels = channels.ToList();
-		}
-
-		[HasAndBelongsToMany(
-			Schema = "Internet",
-			Table = "AssignedChannels",
-			ColumnKey = "AssignedServiceId",
-			ColumnRef = "ChannelGroupId")]
-		public virtual IList<ChannelGroup> Channels { get; set; }
-
 		public override bool SupportUserActivation
 		{
 			get
@@ -41,9 +23,9 @@ namespace InternetInterface.Models.Services
 				return 0;
 
 			if (assignedService.Client.HaveService<Internet>())
-				return Channels.Sum(c => c.CostPerMonthWithInternet);
+				return assignedService.Channels.Sum(c => c.CostPerMonthWithInternet);
 
-			return Channels.Sum(c => c.CostPerMonth);
+			return assignedService.Channels.Sum(c => c.CostPerMonth);
 		}
 	}
 }

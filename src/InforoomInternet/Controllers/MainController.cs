@@ -164,8 +164,7 @@ namespace InforoomInternet.Controllers
 				{
 					Endpoint = new ClientEndpoints
 					{
-						Client = new Client
-						{
+						Client = new Client() {
 							ShowBalanceWarningPage = true,
 							RatedPeriodDate = DateTime.Now,
 							LawyerPerson = new LawyerPerson {

@@ -14,7 +14,7 @@ namespace InternetInterface.Test.Unit
 		[SetUp]
 		public void Setup()
 		{
-			client = new Client {
+			client = new Client() {
 				PhysicalClient = new PhysicalClients()
 			};
 			physicalClient = client.PhysicalClient;

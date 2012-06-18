@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Web;
 using Castle.ActiveRecord;
+using InternetInterface.Models.Services;
 using InternetInterface.Models.Universal;
 using InternetInterface.Services;
 using NHibernate;
@@ -14,18 +16,20 @@ namespace InternetInterface.Models
 	public class ClientService : ValidActiveRecordLinqBase<ClientService>
 	{
 		public ClientService()
-		{}
+		{
+			Channels = new List<ChannelGroup>();
+		}
 
 		public ClientService(Client client, Service service)
+			: this()
 		{
 			Client = client;
 			Service = service;
 		}
 
 		public ClientService(Client client, Service service, bool activatedByUser)
+			: this(client, service)
 		{
-			Client = client;
-			Service = service;
 			ActivatedByUser = activatedByUser;
 		}
 
@@ -47,8 +51,15 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool Activated { get; set; }
 
-		[Property]
+		[Property, Description("Подключить")]
 		public virtual bool ActivatedByUser { get; set; }
+
+		[HasAndBelongsToMany(
+			Schema = "Internet",
+			Table = "AssignedChannels",
+			ColumnKey = "AssignedServiceId",
+			ColumnRef = "ChannelGroupId")]
+		public virtual IList<ChannelGroup> Channels { get; set; }
 
 		[BelongsTo]
 		public virtual Partner Activator { get; set; }

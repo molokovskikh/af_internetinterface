@@ -7,6 +7,7 @@ using Common.Tools;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Helpers;
+using InternetInterface.Models.Services;
 using InternetInterface.Services;
 using NHibernate;
 
@@ -27,6 +28,20 @@ namespace InternetInterface.Models
 			Payments = new List<Payment>();
 			Contacts = new List<Contact>();
 			Endpoints = new List<ClientEndpoints>();
+		}
+
+		public Client(ClientType type, IEnumerable<Service> defaultServices)
+			: this()
+		{
+			Type = type;
+			SendSmsNotifocation = true;
+			FreeBlockDays = 28;
+			YearCycleDate = DateTime.Now;
+			RegDate = DateTime.Now;
+			PercentBalance = 0.8m;
+			foreach (var defaultService in defaultServices) {
+				ClientServices.Add(new ClientService(this, defaultService));
+			}
 		}
 
 		[PrimaryKey]
@@ -283,7 +298,7 @@ namespace InternetInterface.Models
 		public virtual ClientService FindService<T>()
 		{
 			//client.ClientServices.Select(c => c.Service).Contains(GetByType(typeof (DebtWork)))
-			return ClientServices.FirstOrDefault(c => c.Activated && c.Service is T);
+			return ClientServices.FirstOrDefault(c => c.Activated && NHibernateUtil.GetClass(c.Service) == typeof(T));
 		}
 
 		public virtual bool HaveService<T>()

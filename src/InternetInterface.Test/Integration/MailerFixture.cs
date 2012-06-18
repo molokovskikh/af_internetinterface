@@ -66,7 +66,7 @@ namespace InternetInterface.Test.Integration
 		[Test]
 		public void Mail_invoice()
 		{
-			var client = new Client {
+			var client = new Client() {
 				LawyerPerson = new LawyerPerson {
 					Name = "ООО Рога и Копыта"
 				},

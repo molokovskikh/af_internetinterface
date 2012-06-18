@@ -14,7 +14,7 @@ namespace InternetInterface.Test.Functional
 		[SetUp]
 		public void Setup()
 		{
-			client = new Client {
+			client = new Client() {
 				Status = Status.Find((uint)StatusType.Worked)
 			};
 			var lawyerPerson = new LawyerPerson {

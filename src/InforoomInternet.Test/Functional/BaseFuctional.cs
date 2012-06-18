@@ -38,7 +38,7 @@ namespace InforoomInternet.Test.Functional
 				new Lease {
 					Ip = mashineIp,
 					Endpoint = new ClientEndpoints {
-						Client = new Client {
+						Client = new Client() {
 							Disabled = false,
 							LawyerPerson =
 								new LawyerPerson {
@@ -73,7 +73,7 @@ namespace InforoomInternet.Test.Functional
 				leaseC = new Lease {
 					Ip = mashineIp,
 					Endpoint = new ClientEndpoints {
-						Client = new Client {
+						Client = new Client() {
 							Disabled = false,
 							RatedPeriodDate = DateTime.Now,
 							BeginWork = DateTime.Now,

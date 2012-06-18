@@ -200,6 +200,31 @@ $('#register_house').trigger('reveal:close');
 		</tr>
 	</tbody>
 </table>
+
+<style>
+	.form-like
+	{
+		border: 1px double #9A9999;
+		background: #CFE5F0;
+		color: #625A5B;
+		padding: 10px;
+		font-weight: bold;
+		font-size: 12px;
+	}
+
+	.registration-sub-block
+	{
+		margin-bottom: 15px;
+	}
+</style>
+
+<% OutputSubView("/Templates/IpTv") %>
+<% OutputSubView("/Templates/Internet") %>
+
+<% if PartnerAccessSet.AccesPartner("SSI")\
+	and IsDefined("Editing")\
+	and Editing: %>
+
 <table class="table">
 	<thead>
 		<tr>
@@ -209,35 +234,20 @@ $('#register_house').trigger('reveal:close');
 	<tbody>
 		<tr>
 			<td>
-				<b>Тариф</b>
-			</td>
-			<td colspan=2>
-				<select name="tariff" id="ChTariff" style="width: 95%;">
-				<%for i, Tariff in enumerate(Tariffs): %>
-					<option id="Tarif${Tariff.Id}" value="${Tariff.Id}" ${"selected" if (Tariff.Id == ChTariff)}> ${Tariff.GetFullName()} </option>
-				<% end %>
-				</select>
-			</td>
-		</tr>
-		<%if PartnerAccessSet.AccesPartner("SSI"): %>
-		<%if IsDefined("Editing"): %>
-		<%if Editing: %>
-		<tr>
-			<td>
 				Статус
 			</td>
 			<td>
 				<select name="status" id="ChStatus" style="width: 95%;">
-				<%for i, Status in enumerate(Statuss): %>
-					<%if Status.ManualSet: %>
+				<% for i, Status in enumerate(Statuss): %>
+					<% if Status.ManualSet: %>
 						<option id="${Status.ShortName}" value="${Status.Id}" ${"selected" if (Status.Id == ChStatus)}> ${Status.Name} </option>
 					<% end %>
-				<%end %>
+				<% end %>
 				</select>
 			</td>
 			<td>
 				<%if IsDefined("statusCanChanged"): 
-					output  WriteMessageError(statusCanChanged)
+					output WriteMessageError(statusCanChanged)
 				end %>
 			</td>
 		</tr>
@@ -245,11 +255,10 @@ $('#register_house').trigger('reveal:close');
 			<td>Отправлять СМС уведомления </td>
 			<td><input type=checkbox id="sendSmsNot" name="SendSmsNotifocation" ${"checked" if SendSmsNotifocation}/></td>
 		</tr>
-		<%end %>
-		<%end %>
-		<%end %>
 	</tbody>
 </table>
+<% end %>
+
 
 <script type="text/javascript">
 	$(function () {

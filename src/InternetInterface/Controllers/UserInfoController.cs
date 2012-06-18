@@ -13,7 +13,9 @@ using InternetInterface.Controllers.Filter;
 using InternetInterface.Filters;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using InternetInterface.Models.Services;
 using InternetInterface.Services;
+using NHibernate;
 
 namespace InternetInterface.Controllers
 {
@@ -219,7 +221,7 @@ namespace InternetInterface.Controllers
 		{
 			PropertyBag["_client"] = Client.Find(filter.ClientCode);
 			PropertyBag["filter"] = filter;
-			PropertyBag["Leases"] = filter.Find();	
+			PropertyBag["Leases"] = filter.Find();
 		}
 
 		public void LawyerPersonInfo([DataBind("filter")] ClientFilter filter)
@@ -798,81 +800,75 @@ where r.`Label`= :LabelIndex;")
 
 
 		[AccessibleThrough(Verb.Post)]
-		public void EditInformation([DataBind("Client")] PhysicalClients client, uint ClientID, uint tariff, uint status,
+		public void EditInformation(uint ClientID, uint status,
 		                            string group, uint house_id, AppealType appealType, string comment,
 		                            [DataBind("filter")] ClientFilter filter, bool SendSmsNotifocation)
 		{
-			var _client = Client.Queryable.First(c => c.Id == ClientID);
-			var _status = Status.Find(status);
-			var updateClient = _client.PhysicalClient;
-			var oldStatus = _client.Status;
-			InitializeHelper.InitializeModel(updateClient);
-			InitializeHelper.InitializeModel(_client);
+			var client = DbSession.Load<Client>(ClientID);
+			var statusEntity = Status.Find(status);
+			var updateClient = client.PhysicalClient;
+			var oldStatus = client.Status;
 
-			BindObjectInstance(updateClient, ParamStore.Form, "Client");
+			var iptv = client.ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof(IpTv));
+			var internet = client.ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof(Internet));
+
+			SetARDataBinder();
+			BindObjectInstance(iptv, "iptv", AutoLoadBehavior.NullIfInvalidKey);
+			BindObjectInstance(internet, "internet", AutoLoadBehavior.NullIfInvalidKey);
+			BindObjectInstance(updateClient, ParamStore.Form, "Client", AutoLoadBehavior.NullIfInvalidKey);
 
 			if (oldStatus.ManualSet)
-				_client.Status = _status;
-			if (Validator.IsValid(updateClient))
-			{
-				if (updateClient.PassportDate != null)
-					updateClient.PassportDate = updateClient.PassportDate;
-				var _house = House.Find(house_id);
-				updateClient.HouseObj = _house;
-				updateClient.Street = _house.Street;
-				updateClient.House = _house.Number;
-				updateClient.CaseHouse = _house.Case;
-				updateClient.Tariff = Tariff.Find(tariff);
+				client.Status = statusEntity;
+			if (Validator.IsValid(updateClient)) {
+				var house = DbSession.Get<House>(house_id);
+				if (house != null) {
+					updateClient.HouseObj = house;
+					updateClient.Street = house.Street;
+					updateClient.House = house.Number;
+					updateClient.CaseHouse = house.Case;
+				}
 
-				InitializeHelper.InitializeModel(updateClient);
-				InitializeHelper.InitializeModel(_client);
-
-				if (!string.IsNullOrEmpty(comment))
-				{
-					_client.LogComment = comment;
+				if (!string.IsNullOrEmpty(comment)) {
+					client.LogComment = comment;
 					updateClient.LogComment = comment;
 				}
 
 				updateClient.Update();
-				_client.SendSmsNotifocation = SendSmsNotifocation;
-				_client.Name = string.Format("{0} {1} {2}", updateClient.Surname, updateClient.Name,
+				client.SendSmsNotifocation = SendSmsNotifocation;
+				client.Name = string.Format("{0} {1} {2}", updateClient.Surname, updateClient.Name,
 				                             updateClient.Patronymic);
-				var endPoints = ClientEndpoints.Queryable.Where(p => p.Client == _client).ToList();
-				foreach (var clientEndpointse in endPoints)
-				{
+				var endPoints = ClientEndpoints.Queryable.Where(p => p.Client == client).ToList();
+				foreach (var clientEndpointse in endPoints) {
 					clientEndpointse.PackageId = updateClient.Tariff.PackageId;
 				}
-				if (_client.Status.Blocked)
-				{
-					_client.Disabled = true;
+				if (client.Status.Blocked) {
+					client.Disabled = true;
 				}
-				else
-				{
-					_client.AutoUnblocked = true;
-					_client.Disabled = false;
-					_client.ShowBalanceWarningPage = false;
+				else {
+					client.AutoUnblocked = true;
+					client.Disabled = false;
+					client.ShowBalanceWarningPage = false;
 				}
-				if (_client.Status.Type == StatusType.Dissolved) {
-					_client.Endpoints.Clear();
-					_client.PhysicalClient.HouseObj = null;
+				if (client.Status.Type == StatusType.Dissolved) {
+					client.Endpoints.Clear();
+					client.PhysicalClient.HouseObj = null;
 				}
-				_client.Update();
+				client.Update();
 				PropertyBag["Editing"] = false;
 
 				Flash["EditFlag"] = "Данные изменены";
 				RedirectToUrl("../UserInfo/SearchUserInfo?filter.ClientCode=" + ClientID + "&filter.appealType=" +
 				              appealType);
 			}
-			else
-			{
+			else {
 				updateClient.SetValidationErrors(Validator.GetErrorSummary(updateClient));
 				PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClients>(updateClient);
 				DbSession.Evict(updateClient);
 				RenderView("SearchUserInfo");
 				Flash["Editing"] = true;
-				Flash["_client"] = _client;
+				Flash["_client"] = client;
 				Flash["Client"] = updateClient;
-				filter.ClientCode = _client.Id;
+				filter.ClientCode = client.Id;
 				PropertyBag["filter"] = filter;
 				SendParam(filter, group, appealType);
 			}
@@ -884,6 +880,8 @@ where r.`Label`= :LabelIndex;")
 			var client = Client.Find(filter.ClientCode);
 
 			LoadBalanceData(grouped, client);
+			PropertyBag["iptv"] = client.ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof(IpTv));
+			PropertyBag["internet"] = client.ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof(Internet));
 			PropertyBag["grouped"] = grouped;
 			PropertyBag["BalanceText"] = string.Empty;
 			PropertyBag["services"] = Service.FindAll();
@@ -893,7 +891,6 @@ where r.`Label`= :LabelIndex;")
 			PropertyBag["Houses"] = House.AllSort;
 			PropertyBag["ChHouse"] = client.PhysicalClient.HouseObj != null ? client.PhysicalClient.HouseObj.Id : 0;
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
-			PropertyBag["ChTariff"] = client.PhysicalClient.Tariff.Id;
 			PropertyBag["Statuss"] = Status.FindAllSort();
 			PropertyBag["ChStatus"] = client.Status != null ? client.Status.Id : Status.FindFirst().Id;
 			PropertyBag["naznach_text"] = ConnectGraph.Queryable.Count(c => c.Client.Id == filter.ClientCode) != 0
@@ -910,9 +907,8 @@ where r.`Label`= :LabelIndex;")
 			if (client.Status.Id != (uint)StatusType.BlockedAndNoConnected)
 				PropertyBag["EConnect"] = filter.EditingConnect;
 			else
-			{
 				PropertyBag["EConnect"] = 0;
-			}
+
 			PropertyBag["EditConnectInfoFlag"] = filter.EditConnectInfoFlag;
 			PropertyBag["SendSmsNotifocation"] = client.SendSmsNotifocation;
 			PropertyBag["isService"] = false;
@@ -945,7 +941,7 @@ where r.`Label`= :LabelIndex;")
 
 		public void ConnectPropertyBag(uint clientId)
 		{
-			var client = Client.FirstOrDefault(clientId);
+			var client = DbSession.Load<Client>(clientId);
 			PropertyBag["_client"] = client;
 			PropertyBag["ClientCode"] = clientId;
 			PropertyBag["Switches"] = NetworkSwitches.All(DbSession);
@@ -959,27 +955,21 @@ where r.`Label`= :LabelIndex;")
 			}
 			List<PackageSpeed> speeds;
 			var tariffs = Tariff.FindAll().Select(t => t.PackageId).ToList();
-			if (client.GetClientType() == ClientType.Phisical)
-			{
+			if (client.GetClientType() == ClientType.Phisical) {
 				speeds = PackageSpeed.Queryable.Where(p => tariffs.Contains(p.PackageId)).ToList();
 			}
-			else
-			{
+			else {
 				speeds = PackageSpeed.FindAll().OrderBy(s => s.Speed).ToList();
 			}
 			var clientEndPointId = Convert.ToUInt32(PropertyBag["EConnect"]);
+
+			int packageId;
 			if (clientEndPointId > 0)
-				PropertyBag["ChSpeed"] =
-					ClientEndpoints.Queryable.Where(c => c.Id == clientEndPointId).Select(c => c.PackageId).FirstOrDefault();
-			else {
-				if (client.GetClientType() == ClientType.Phisical) {
-					var tariff = client.PhysicalClient.Tariff;
-					PropertyBag["ChSpeed"] = tariff.PackageId;
-				}
-				else {
-					PropertyBag["ChSpeed"] = 0;
-				}
-			}
+				packageId =  ClientEndpoints.Queryable.Where(c => c.Id == clientEndPointId).Select(c => c.PackageId).FirstOrDefault();
+			else
+				packageId = client.Endpoints.Select(e => e.PackageId).FirstOrDefault();
+
+			PropertyBag["ChSpeed"] = packageId;
 			PropertyBag["Speeds"] = speeds;
 		}
 

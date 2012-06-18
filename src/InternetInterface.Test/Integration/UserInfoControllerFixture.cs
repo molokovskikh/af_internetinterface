@@ -47,7 +47,6 @@ namespace InternetInterface.Test.Integration
 			var statuses = session.Query<Status>().ToArray();
 			var worked = statuses.First(s => s.Type == StatusType.Worked);
 			var dissolved = statuses.First(s => s.Type == StatusType.Dissolved);
-			var tariff = session.Query<Tariff>().First();
 			var commutator = session.Query<NetworkSwitches>().First();
 
 			var client = ClientHelper.Client();
@@ -59,7 +58,7 @@ namespace InternetInterface.Test.Integration
 			session.Save(house);
 
 			session.Flush();
-			controller.EditInformation(client.PhysicalClient, client.Id, tariff.Id, dissolved.Id, null, house.Id, AppealType.All, null, new ClientFilter(), false);
+			controller.EditInformation(client.Id, dissolved.Id, null, house.Id, AppealType.All, null, new ClientFilter(), false);
 			CheckValidationError(client.PhysicalClient);
 
 			session.Flush();

@@ -8,9 +8,8 @@ using InternetInterface.Models.Universal;
 
 namespace InternetInterface.Services
 {
-	[ActiveRecord("Services", Schema = "Internet", Lazy = true, DiscriminatorColumn = "Name",
-		DiscriminatorType = "String", DiscriminatorValue = "service")]
-	public class Service : ValidActiveRecordLinqBase<Service>
+	[ActiveRecord("Services", Schema = "Internet", Lazy = true, DiscriminatorColumn = "Name", DiscriminatorType = "String")]
+	public abstract class Service : ValidActiveRecordLinqBase<Service>
 	{
 		[PrimaryKey]
 		public virtual uint Id { get; set; }

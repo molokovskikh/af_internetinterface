@@ -1,30 +1,28 @@
 ﻿<style type="text/css">
-		 .addMenuItem
+	.addMenuItem
 	 {
 		 width:20px;
 		 height:20px;
 		 background: url(${Siteroot}/images/plus__orange.png) no-repeat center top;
-		 /*background-color:Green;*/
 		 float:right;
-		 }
-		  .delMenuItem
-	 {
+	}
+	.delMenuItem
+	{
 		 width:20px;
 		 height:20px;
-		 /*background-color:Red;*/
 		 float:right;
 		 margin-right:90%;
 		 background: url(${Siteroot}/images/onebit_32.png) no-repeat center top;
-		 }
+	}
 	.error
 	{
 		color:Red;
 		font-size:small;
-		}
+	}
 	.ipPrefix
 	{
 		width:25px;
-		}
+	}
 </style>
 
 <div id="deletePointDialog" class="reveal-modal"> 
@@ -102,16 +100,12 @@
 		</tr>
 		<tr>
 		  <td><span class="description">Бригада </span></td>
-		  <%if _client.WhoConnected != null : %>
-		  <td>${_client.WhoConnected.Name}</td>
-		  <%else: %>
-		  <td></td>
-		  <%end %>
+		  <td>${?_client.WhoConnected.Name}</td>
 		</tr>
 		<%if ConnectInfo.ConnectSum != null : %>
 		<tr>
 			<td><span class="description">Стоимость подключения </span></td>
-			<td>${ConnectInfo.ConnectSum} руб.</td>
+			<td>${?ConnectInfo.ConnectSum.ToString("C")}</td>
 		</tr>
 		<%end %>
 		</tbody>

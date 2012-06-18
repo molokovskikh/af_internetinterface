@@ -1,7 +1,12 @@
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using Castle.ActiveRecord;
 using Castle.Components.Validator;
+using Common.Web.Ui.Helpers;
 using Common.Web.Ui.MonoRailExtentions;
+using NHibernate;
+using NHibernate.Linq;
 
 namespace InternetInterface.Models.Services
 {
@@ -34,5 +39,15 @@ namespace InternetInterface.Models.Services
 
 		[Property, ValidateRange(RangeValidationType.Decimal, 0, 10000), Description("Стоимость если подключена услуга \"Интернет\"")]
 		public virtual decimal CostPerMonthWithInternet { get; set; }
+
+		public static List<ChannelGroup> All(ISession dbSession)
+		{
+			return dbSession.Query<ChannelGroup>().OrderBy(g => g.Name).ToList();
+		}
+
+		public static List<ChannelGroup> All()
+		{
+			return ArHelper.WithSession(s => All(s));
+		}
 	}
 }

@@ -207,6 +207,8 @@
     <None Include="Views\Switches\MakeSwitch.brail" />
     <None Include="Views\Switches\OnLineClient.brail" />
     <None Include="Views\Switches\ShowSwitches.brail" />
+    <None Include="Views\Templates\Internet.brail" />
+    <None Include="Views\Templates\IpTv.brail" />
     <None Include="Views\UserInfo\AddInfo.brail" />
     <None Include="Views\UserInfo\AddPoint.brail" />
     <None Include="Views\UserInfo\Administration.brail" />

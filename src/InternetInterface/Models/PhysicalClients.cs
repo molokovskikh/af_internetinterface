@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using Castle.ActiveRecord;
 using Castle.Components.Validator;
 using Common.Tools;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Helpers;
+using InternetInterface.Models.Services;
 using InternetInterface.Models.Universal;
+using NHibernate;
 
 namespace InternetInterface.Models
 {
@@ -134,7 +138,7 @@ namespace InternetInterface.Models
 		[Property, UserValidateNonEmpty("Введите адрес регистрации"), Auditable("Адрес регистрации")]
 		public virtual string RegistrationAdress { get; set; }
 
-		[BelongsTo("Tariff", Cascade = CascadeEnum.SaveUpdate), Auditable("Тариф")]
+		[BelongsTo("Tariff", Cascade = CascadeEnum.SaveUpdate), Description("Тариф"), Auditable]
 		public virtual Tariff Tariff { get; set; }
 
 		[Property, ValidateNonEmpty("Введите сумму"), ValidateDecimal("Неверно введено число")]
@@ -167,6 +171,15 @@ namespace InternetInterface.Models
 		[OneToOne(PropertyRef = "PhysicalClient")]
 		public virtual Client Client { get; set; }
 
+		[ValidateSelf]
+		public virtual void Validate(ErrorSummary errors)
+		{
+			var internet = Client.ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof(Internet));
+			if (internet.ActivatedByUser) {
+				errors.RegisterErrorMessage("Tariff", "Нужно выбрать тариф");
+			}
+		}
+
 		public virtual string GetAdress()
 		{
 			return String.Format("{0} Подъезд {1} Этаж {2}",
@@ -197,7 +210,7 @@ namespace InternetInterface.Models
 		}
 
 
-		public static bool RegistrLogicClient(PhysicalClients client, uint tariffId, uint houseId,
+		public static bool RegistrLogicClient(PhysicalClients client, uint houseId,
 			ValidatorRunner validator)
 		{
 			if (validator.IsValid(client)) {
@@ -206,7 +219,6 @@ namespace InternetInterface.Models
 				client.Street = house.Street;
 				client.House = house.Number;
 				client.CaseHouse = house.Case;
-				client.Tariff = Tariff.Find(tariffId);
 				client.Password = CryptoPass.GetHashString(client.Password);
 				client.Save();
 				return true;

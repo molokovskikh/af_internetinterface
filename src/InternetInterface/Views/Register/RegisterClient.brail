@@ -3,64 +3,58 @@
 
 var cost = [];
 
-function ShowMinPrice()
-{
-$("#deldiv").remove();
-<%for i, Tariff in enumerate(Tariffs):%>
-	cost[${Tariff.Id}] = ${Tariff.Price};
-<%end %>
-$("#my-div").append('<div id="deldiv" style="color:green;"> Минимальная сумма к зачислению: '
-	+ cost[$('#ChTariff').val()] + ' + ' + $('#ConnectSumm').val() + ' = '
-+ (Number(cost[$('#ChTariff').val()]) + Number($('#ConnectSumm').val())) + '</div>');
+function ShowMinPrice() {
+
+	$("#deldiv").remove();
+
+	<% for i, Tariff in enumerate(Tariffs):%>
+		cost[${Tariff.Id}] = ${Tariff.Price};
+	<% end %>
+
+	var tariffCost = cost[$('#client_Tariff_Id').val()];
+	var connectCost = $('#ConnectSumm').val();
+	$("#my-div").append('<div id="deldiv" style="color:green;"> Минимальная сумма к зачислению: '
+		+ tariffCost + ' + ' + connectCost + ' = '
+		+ (Number(tariffCost) + Number(connectCost)) + '</div>');
 }
 
-function ChBalace()
-{
+function ChBalace() {
 	if (!("${PartnerAccessSet.AccesPartner("SSI")}" == "True"))
-	$('#BalanceText').val(Number(cost[$('#ChTariff').val()]) + Number($('#ConnectSumm').val()));
+		$('#BalanceText').val(Number(cost[$('#client_Tariff_Id').val()]) + Number($('#ConnectSumm').val()));
 }
-
-	$(function () { 
-	$('#ChTariff').change(function () {
-	ShowMinPrice();
-	ChBalace();
-		});
-	});
-
-		$(function () { 
-	$('#ConnectSumm').keyup(function () {
-	ShowMinPrice();
-	ChBalace();
-		});
-	});
-
-	$(document).ready(function() {
-	ShowMinPrice();
-	ChBalace();
-	});
-
-$().ready(function() {
-	$("#RegistrationForm").validate(
-	{
-	errorLabelContainer: $("#RegistrationForm div.errorjava")
-	});
-});
 
 $(function() {
-		$.validator.addMethod("BalanceText", function(value, element) {
-			if ("${PartnerAccessSet.AccesPartner("SSI")}" == "True")
-			{ return true; }
-			if (value.toString().length > 0) {
-				res = (value >= (Number(cost[$('#ChTariff').val()]) + Number($('#ConnectSumm').val())));
-				return res;
-			}
+	$('#client_Tariff_Id').change(function () {
+		ShowMinPrice();
+		ChBalace();
+	});
+
+	$('#ConnectSumm').keyup(function () {
+		ShowMinPrice();
+		ChBalace();
+	});
+
+	ShowMinPrice();
+	ChBalace();
+
+	$("#RegistrationForm").validate({
+		errorLabelContainer: $("#RegistrationForm div.errorjava")
+	});
+
+	$.validator.addMethod("BalanceText", function(value, element) {
+		if ("${PartnerAccessSet.AccesPartner("SSI")}" == "True")
 			return true;
-		}, function() { return "Должна быть введена сумма большая или равная "+ (Number(cost[$('#ChTariff').val()]) + Number($('#ConnectSumm').val())) + " рублей"});
-		});
+		if (value.toString().length > 0) {
+			res = (value >= (Number(cost[$('#client_Tariff_Id').val()]) + Number($('#ConnectSumm').val())));
+			return res;
+		}
+		return true;
+	}, function() { return "Должна быть введена сумма большая или равная "+ (Number(cost[$('#client_Tariff_Id').val()]) + Number($('#ConnectSumm').val())) + " рублей"});
+});
 </script>
 
 <style type="text/css">
-	#RegistrationForm label.error {  color: Red; }
+	#RegistrationForm label.error { color: Red; }
 </style>
 
 <div id="main">

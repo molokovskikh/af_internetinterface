@@ -629,7 +629,7 @@ namespace Billing.Test.Integration
 		{
 			Client client;
 			using (new SessionScope()) {
-				client = new Client {
+				client = new Client() {
 					LawyerPerson = new LawyerPerson {
 						Name = "testLawyerPerson",
 						Balance = -2000,

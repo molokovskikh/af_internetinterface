@@ -1,0 +1,10 @@
+﻿<div class="registration-sub-block">
+	<h3 class="form-like">!{iptv.Service.HumanName}</h3>
+	<div>
+		${app.Edit("iptv.ActivatedByUser")}
+	</div>
+	<div>
+		<label>Пакеты каналов</label>
+		${app.Edit("IpTv.Channels")}
+	</div>
+</div>

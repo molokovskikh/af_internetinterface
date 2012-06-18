@@ -3,7 +3,9 @@ using System.Linq;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Castle.Components.Validator;
+using Common.Tools;
 using InternetInterface.Models;
+using InternetInterface.Models.Services;
 
 namespace InternetInterface.Test.Helpers
 {
@@ -16,7 +18,7 @@ namespace InternetInterface.Test.Helpers
 				Balance = 1000,
 				Tariff = 100,
 			};
-			return new Client {
+			return new Client() {
 				LawyerPerson = person,
 				Disabled = false,
 				BeginWork = DateTime.Now,
@@ -26,6 +28,14 @@ namespace InternetInterface.Test.Helpers
 
 		public static void CreateClient(Func<PhysicalClients, bool> Ok)
 		{
+			Tariff tariff;
+			Internet internet;
+			IpTv iptv;
+			using (new SessionScope()) {
+				tariff = ActiveRecordLinqBase<Tariff>.Queryable.First();
+				internet = ActiveRecordLinqBase<Internet>.Queryable.First();
+				iptv = ActiveRecordLinqBase<IpTv>.Queryable.First();
+			}
 			var client =  new PhysicalClients {
 				Apartment = 1,
 				Balance = 100,
@@ -33,35 +43,48 @@ namespace InternetInterface.Test.Helpers
 				City = "VRN",
 				Entrance = 1,
 				Floor = 1,
-				HomePhoneNumber = "1111-22222",
+				HomePhoneNumber = "111-1222222",
 				House = 1,
 				Name = "testName",
-				PassportDate = DateTime.Now,
+				PassportDate = DateTime.Today,
 				PassportNumber = "123456",
 				PassportSeries = "1234",
 				Password = CryptoPass.GetHashString(CryptoPass.GeneratePassword()),
 				Patronymic = "testOtch",
-				PhoneNumber = "8-111-222-33-44",
+				PhoneNumber = "111-2223344",
 				RegistrationAdress = "vrnReg",
 				Street = "testStreet",
 				Surname = "testSurn",
-				Tariff = ActiveRecordBase<Tariff>.Find((uint)1),
+				Tariff = tariff,
 				WhoGivePassport = "guvd"
 			};
+			var internalClient = new Client {
+				PhysicalClient = client,
+				BeginWork = null,
+				Name = String.Format("{0} {1} {2}", client.Surname, client.Name, client.Patronymic),
+				Status = ActiveRecordBase<Status>.FindFirst()
+			};
+			internalClient.ClientServices.Add(new ClientService(internalClient, internet));
+			internalClient.ClientServices.Add(new ClientService(internalClient, iptv));
+			client.Client = internalClient;
 			var valid = new ValidatorRunner(new CachedValidationRegistry());
-			if (valid.IsValid(client))
-			{
+			if (valid.IsValid(client)) {
 				var pay = new Payment {
-					Client = Models.Client.Queryable.First(c => c.PhysicalClient == client),
+					Client = internalClient,
 					PaidOn = DateTime.Now,
 					RecievedOn = DateTime.Now,
 					Sum = 500
 				};
+				internalClient.SaveAndFlush();
 				client.SaveAndFlush();
 				pay.SaveAndFlush();
 				Ok(client);
 				client.DeleteAndFlush();
 				pay.DeleteAndFlush();
+			}
+			else {
+				throw new Exception(String.Format("Создали невалидного клиента {0}",
+					valid.GetErrorSummary(client).ErrorMessages.Implode()));
 			}
 		}
 
@@ -83,7 +106,7 @@ namespace InternetInterface.Test.Helpers
 				City = "bebsk",
 				Email = "test@test.ru",
 			};
-			var client = new Client {
+			var client = new Client() {
 				PhysicalClient = physicalClient,
 				BeginWork = null,
 				Name =

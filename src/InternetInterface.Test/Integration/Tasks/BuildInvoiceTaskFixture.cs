@@ -20,7 +20,7 @@ namespace InternetInterface.Test.Integration.Tasks
 			var messages = new List<MailMessage>();
 			var mailer = Integration.MailerFixture.Prepare(m => messages.Add(m));
 
-			var client = new Client {
+			var client = new Client() {
 				Status = Status.Find((uint)StatusType.Worked)
 			};
 			var lawyerPerson = new LawyerPerson {

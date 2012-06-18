@@ -43,7 +43,7 @@ namespace Billing.Test.Integration
 		{
 			var phisicalClient = CreatePhisicalClient(statusBlocked, balance);
 			phisicalClient.Save();
-			return new Client {
+			return new Client() {
 				Disabled = false,
 				Sale = 0,
 				DebtDays = 0,

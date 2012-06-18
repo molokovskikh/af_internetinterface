@@ -25,7 +25,7 @@ namespace Billing.Test.Integration
 					Tariff = 1000m,
 				};
 				lPerson.Save();
-				lawyerClient = new Client {
+				lawyerClient = new Client() {
 					Disabled = false,
 					Name = "TestLawyer",
 					ShowBalanceWarningPage = false,

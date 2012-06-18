@@ -14,12 +14,13 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void FindAdditionalStatus()
 		{
+			var client = Client.FindFirst();
+			var addStat = AdditionalStatus.FindAll();
+			client.Status = Status.Find((uint) StatusType.BlockedAndNoConnected);
+			client.AdditionalStatus = addStat.First();
+			client.Update();
+
 			using (var browser = Open("Search/SearchUsers.rails")) {
-				var client = Client.FindFirst();
-				var addStat = AdditionalStatus.FindAll();
-				client.Status = Status.Find((uint) StatusType.BlockedAndNoConnected);
-				client.AdditionalStatus = addStat.First();
-				client.Update();
 				browser.SelectList("addtionalStatus").SelectByValue(addStat.First().Id.ToString());
 				browser.Button(Find.ById("SearchButton")).Click();
 				Thread.Sleep(1000);
