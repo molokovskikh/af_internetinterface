@@ -10,12 +10,6 @@ using Castle.ActiveRecord.Linq;
 
 namespace InternetInterface.Models
 {
-	public interface INamed
-	{
-		uint Id { get; set; }
-		string Name { get; set; }
-	}
-
 	public class ChildActiveRecordLinqBase<T> : ActiveRecordLinqBase<T> where T : ActiveRecordBase, new()
 	{
 		public virtual string LogComment { get; set; }
