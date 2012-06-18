@@ -204,14 +204,15 @@ namespace InforoomInternet.Controllers
 			var clientW = lease != null ? lease.Endpoint.Client : point.Client;
 
 			if (IsPost) {
-				if (lease != null)
-				{
+				if (lease != null) {
 					SceHelper.Login(lease, Request.UserHostAddress);
 				}
 				else {
 					var ips = StaticIp.Queryable.Where(s => s.EndPoint == point).ToList();
 					foreach (var staticIp in ips) {
-						SceHelper.Action("login", staticIp.Mask != null ? staticIp.Ip + "/" + staticIp.Mask : staticIp.Ip, "Static_" + staticIp.Id, false, false, point.PackageId);
+						if (point.PackageId == null)
+							continue;
+						SceHelper.Action("login", staticIp.Mask != null ? staticIp.Ip + "/" + staticIp.Mask : staticIp.Ip, "Static_" + staticIp.Id, false, false, point.PackageId.Value);
 					}
 				}
 				clientW.ShowBalanceWarningPage = false;

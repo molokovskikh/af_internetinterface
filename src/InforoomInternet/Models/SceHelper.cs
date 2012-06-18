@@ -41,11 +41,16 @@ namespace InforoomInternet.Models
 			if (endpoint == null)
 				return;
 
+			Action(action, endpoint, ip);
+		}
+
+		public static void Action(string action, ClientEndpoints endpoint, string ip)
+		{
 			var packageId = endpoint.PackageId;
 			if (packageId == null)
 				return;
 
-			Action(action, ip, Convert.ToString(endpoint.Id), endpoint.Monitoring, endpoint.IsMultilease, packageId);
+			Action(action, ip, Convert.ToString(endpoint.Id), endpoint.Monitoring, endpoint.IsMultilease, packageId.Value);
 		}
 
 		public static void Login(Lease lease, string ip)

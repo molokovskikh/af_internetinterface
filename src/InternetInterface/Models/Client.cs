@@ -455,12 +455,21 @@ Id))
 			var price = AccountDiscounts(PhysicalClient.Tariff.Price);
 			var finalPrice = AccountDiscounts(PhysicalClient.Tariff.FinalPrice);
 
-			if ((PhysicalClient.Tariff.FinalPriceInterval == 0 || PhysicalClient.Tariff.FinalPrice == 0) )
+			if ((PhysicalClient.Tariff.FinalPriceInterval == 0 || PhysicalClient.Tariff.FinalPrice == 0))
 				return price;
 
 			if ((BeginWork != null && BeginWork.Value.AddMonths(PhysicalClient.Tariff.FinalPriceInterval) <= SystemTime.Now()))
 				return finalPrice;
 			return price;
+		}
+
+		public virtual decimal GetTariffPrice()
+		{
+			if (BeginWork == null)
+				return 0;
+			if (Disabled)
+				return 0;
+			return GetPriceForTariff();
 		}
 
 		private decimal AccountDiscounts(decimal price)
@@ -478,27 +487,6 @@ Id))
 				return blockingService.GetPrice() + services.Where(c => c.Service.ProcessEvenInBlock).Sum(c => c.GetPrice());
 
 			return services.Sum(c => c.GetPrice());
-		}
-
-		public virtual decimal GetTariffPrice()
-		{
-			var price = AccountDiscounts(PhysicalClient.Tariff.Price);
-			var finalPrice = AccountDiscounts(PhysicalClient.Tariff.FinalPrice);
-
-			if ((PhysicalClient.Tariff.FinalPriceInterval == 0 || PhysicalClient.Tariff.FinalPrice == 0) && !Disabled)
-				return price;
-
-			if (BeginWork != null && !Disabled) {
-				var beginWorkAdded = BeginWork.Value.AddMonths(PhysicalClient.Tariff.FinalPriceInterval);
-
-				if (beginWorkAdded > SystemTime.Now())
-					return price;
-
-				if (beginWorkAdded <= SystemTime.Now())
-					return finalPrice;
-			}
-
-			return 0;
 		}
 
 		public virtual decimal GetBalance()

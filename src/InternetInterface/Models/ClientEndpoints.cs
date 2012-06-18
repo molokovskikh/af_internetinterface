@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using Castle.ActiveRecord;
-using Castle.ActiveRecord.Framework;
-using Castle.ActiveRecord.Linq;
 using Common.Web.Ui.Helpers;
 using NHibernate.Criterion;
 
@@ -18,6 +16,10 @@ namespace InternetInterface.Models
 			Client = client;
 			Port = port;
 			Switch = @switch;
+
+			var physicalClient = client.PhysicalClient;
+			if (physicalClient != null)
+				physicalClient.UpdatePackageId(this);
 		}
 
 		[PrimaryKey]
@@ -45,7 +47,7 @@ namespace InternetInterface.Models
 		public virtual bool Monitoring { get; set; }
 
 		[Property, Auditable("PackageId")]
-		public virtual int PackageId { get; set; }
+		public virtual int? PackageId { get; set; }
 
 		[Property]
 		public virtual int? MaxLeaseCount { get; set; }

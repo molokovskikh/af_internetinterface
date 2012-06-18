@@ -169,19 +169,6 @@ namespace InternetInterface.Models
 				Apartment);
 		}
 
-		public virtual string HowManyToPay(bool change)
-		{
-			var format = change ? "({0})" : "{0}";
-			if (Tariff == null) {
-				return String.Empty;
-			}
-			else {
-				var pay = Tariff.Price - Convert.ToDecimal(Balance);
-				return String.Format(format, Convert.ToString(pay <= 0 ? 0 : pay));
-			}
-		}
-
-
 		public static bool RegistrLogicClient(PhysicalClient client, uint houseId,
 			ValidatorRunner validator)
 		{
@@ -233,6 +220,14 @@ namespace InternetInterface.Models
 				VirtualSum = virtualWriteoff,
 				Sale = Client.Sale
 			};
+		}
+
+		public virtual void UpdatePackageId(ClientEndpoints clientEndpoint)
+		{
+			if (Tariff != null)
+				clientEndpoint.PackageId = Tariff.PackageId;
+			else
+				clientEndpoint.PackageId = null;
 		}
 	}
 }

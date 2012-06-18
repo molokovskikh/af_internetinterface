@@ -477,7 +477,7 @@ namespace InternetInterface.Controllers
 						PackageSpeed.Queryable.Where(p => p.PackageId == ConnectInfo.PackageId).ToList().FirstOrDefault();
 					clientEntPoint.PackageId = packageSpeed.PackageId;
 					if (client.GetClientType() == ClientType.Phisical) {
-						clientEntPoint.PackageId = client.PhysicalClient.Tariff.PackageId;
+						client.PhysicalClient.UpdatePackageId(clientEntPoint);
 					}
 					if (string.IsNullOrEmpty(clientEntPoint.Ip) && !string.IsNullOrEmpty(ConnectInfo.static_IP))
 						new UserWriteOff {
@@ -838,8 +838,8 @@ where r.`Label`= :LabelIndex;")
 				client.Name = string.Format("{0} {1} {2}", updateClient.Surname, updateClient.Name,
 				                             updateClient.Patronymic);
 				var endPoints = ClientEndpoints.Queryable.Where(p => p.Client == client).ToList();
-				foreach (var clientEndpointse in endPoints) {
-					clientEndpointse.PackageId = updateClient.Tariff.PackageId;
+				foreach (var clientEndpoint in endPoints) {
+					updateClient.UpdatePackageId(clientEndpoint);
 				}
 				if (client.Status.Blocked) {
 					client.Disabled = true;
@@ -854,8 +854,6 @@ where r.`Label`= :LabelIndex;")
 					client.PhysicalClient.HouseObj = null;
 				}
 				client.Update();
-				PropertyBag["Editing"] = false;
-
 				Flash["EditFlag"] = "Данные изменены";
 				RedirectToUrl("../UserInfo/SearchUserInfo?filter.ClientCode=" + ClientID + "&filter.appealType=" +
 				              appealType);
@@ -963,7 +961,7 @@ where r.`Label`= :LabelIndex;")
 			}
 			var clientEndPointId = Convert.ToUInt32(PropertyBag["EConnect"]);
 
-			int packageId;
+			int? packageId;
 			if (clientEndPointId > 0)
 				packageId =  ClientEndpoints.Queryable.Where(c => c.Id == clientEndPointId).Select(c => c.PackageId).FirstOrDefault();
 			else

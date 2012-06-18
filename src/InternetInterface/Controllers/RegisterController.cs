@@ -111,13 +111,10 @@ namespace InternetInterface.Controllers
 				if (apartmentForClient != null)
 					apartmentForClient.Delete();
 				if (!string.IsNullOrEmpty(ConnectInfo.Port) && CategorieAccessSet.AccesPartner("DHCP")) {
-					var newCEP = new ClientEndpoints {
-						Client = client,
-						Port = Convert.ToInt32(ConnectInfo.Port),
-						Switch = DbSession.Load<NetworkSwitches>(ConnectInfo.Switch),
-						PackageId = phisClient.Tariff.PackageId
-					};
-					newCEP.SaveAndFlush();
+					var endpoint = new ClientEndpoints(client,
+						Convert.ToInt32(ConnectInfo.Port),
+						DbSession.Load<NetworkSwitches>(ConnectInfo.Switch));
+					endpoint.SaveAndFlush();
 					if (BrigadForConnect != 0) {
 						var brigad = Brigad.Find(BrigadForConnect);
 						client.WhoConnected = brigad;
