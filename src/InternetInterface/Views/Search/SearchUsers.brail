@@ -62,76 +62,32 @@
 	</table>
 	<fieldset style="padding: 0; margin: 0; text-align: left; width: 99%;">
 		<legend>Фильтры: </legend>
-		<table style="width:100%; height: 80px;" border="0" class="table">
-			<col style="width:50%" />
-			<col style="width:50%" />
+		<table border="0" class="table filter_front">
 			<thead>
 				<tr align="left">
-					<td style="padding: 5px;">Тариф<br />
-					<div>
-				   <select name="filter.tariff" id="ChTariff" style="width: 100%" >
-				   <option id="Option1" value="0"> Все </option>
-				   <%
-					for i, Tariff in enumerate(Tariffs): 
-					%>
-						<option id="Tarif${Tariff.Id}" value="${Tariff.Id}" ${"selected" if (Tariff.Id == ChTariff)}> ${Tariff.Name} </option>
-						<% end %>
-					</select>
-					</div>
-					</td>
-
-
-					<td style="padding: 5px;">Кем загистрирован<br />
-					<div>
-						  <select name="filter.whoregister" id="ChRegister" style="width: 100%" >
-						  <option id="Option2" value="0" > Все </option>
-						  <%
-						  for i, RigistrName in enumerate(WhoRegistered): 
-						  %>
-						  <option id="RgistrName${RigistrName.Id}" value="${RigistrName.Id}" ${"selected" if (RigistrName.Id == ChRegistr)}> ${RigistrName.Name} </option>
-						  <% end %>
-						  </select>
-					</div>
+					<td>Тариф<br />
+						${FormHelper.Select("filter.tariff", Tariffs, {"value" : "Id", "text" : "Name"})}
 					</td>
 				</tr>
 				<tr>
-				 <%if PartnerAccessSet.AccesPartner("SSI"): %>
-				<td style="padding: 5px;">Назначено на бригаду<br />
-					<div>
-				   <select name="filter.brigad" id="Select1" style="width: 100%" >
-				   <option id="Option3" value="0"> Все </option>
-				   <%
-					for i, Brigad in enumerate(Brigads): 
-					%>
-						<option id="Option4" value="${Brigad.Id}" ${"selected" if (Brigad.Id == ChBrigad)}> ${Brigad.Name} </option>
-						<% end %>
-					</select>
-					</div>
+					<td>
+						<span>Статус</span><br />
+						${FormHelper.Select("filter.statusType", Statuses, {"value" : "Id", "text" : "Name"})}
 					</td>
-					<%end %>
-				<td>
-					<input type="radio" id="Radio1" name="filter.connectedType.Type" value=AllConnected ${"checked" if filter.connectedType.IsAllConnected()} />
-					<label for="Autosearch">Все</label><br />
-					<input type="radio" id="Radio2" name="filter.connectedType.Type" value=NoConnected ${"checked" if filter.connectedType.IsNoConnected()} />
-					<label for="SearchByClientId">Не подключены</label><br />
-					<input type="radio" id="Radio3" name="filter.connectedType.Type" value=Connected ${"checked" if filter.connectedType.IsConnected()} />
-					<label for="SearchByUserId">Подключены</label><br />
-				</td>
-			   </tr>
-			   <tr>
-					<td style="padding: 5px;">Дополнительный статус<br />
-						  <div>
-						  <select name="filter.addtionalStatus" id="addtionalStatus" style="width: 100%" >
-						  <option id="Option0" value="0" > Все </option>
-						  <%
-						  for i, additionalStatus in enumerate(additionalStatuses): 
-						  %>
-						  <option id="Option${additionalStatus.Id}" value="${additionalStatus.Id}" ${"selected" if (additionalStatus.Id == ChAdditional)}> ${additionalStatus.Name} </option>
-						  <% end %>
-						  </select>
-					</div>
+					<td>Дополнительный статус<br />
+						${FormHelper.Select("filter.addtionalStatus", additionalStatuses, {"value" : "Id", "text" : "Name"})}
 					</td>
-			   </tr>
+				</tr>
+				<tr>
+				<%if PartnerAccessSet.AccesPartner("SSI"): %>
+					<td>Назначено на бригаду<br />
+						${FormHelper.Select("filter.brigad", Brigads, {"value" : "Id", "text" : "Name"})}
+					</td>
+				<%end %>
+					<td>Кем загистрирован<br />
+						${FormHelper.Select("filter.whoregister", WhoRegistered, {"value" : "Id", "text" : "Name"})}
+					</td>
+				</tr>
 			</thead>
 		</table>
 	</fieldset>
