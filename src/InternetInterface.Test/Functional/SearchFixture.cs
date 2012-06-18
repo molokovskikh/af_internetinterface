@@ -70,7 +70,7 @@ namespace InternetInterface.Test.Functional
 				Assert.That(browser.Text, Is.StringContaining("Баланс"));
 				Assert.That(browser.Text, Is.StringContaining("Логин"));
 				Assert.That(browser.Text, Is.StringContaining("ФИО"));
-				var phisCl = PhysicalClients.FindFirst();
+				var phisCl = PhysicalClient.FindFirst();
 				browser.Link(Find.ByText(phisCl.Surname + " " + phisCl.Name + " " + phisCl.Patronymic)).Click();
 				Thread.Sleep(400);
 				Assert.That(browser.Text, Is.StringContaining("Информация по клиенту"));

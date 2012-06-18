@@ -213,7 +213,7 @@ namespace InternetInterface.Controllers
 			SendParam(filter, filter.grouped, filter.appealType);
 			PropertyBag["Editing"] = filter.Editing;
 			PropertyBag["appealType"] = filter.appealType;
-			PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClients>(new PhysicalClients());
+			PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClient>(new PhysicalClient());
 			PropertyBag["Switches"] = NetworkSwitches.All(DbSession);
 		}
 
@@ -862,7 +862,7 @@ where r.`Label`= :LabelIndex;")
 			}
 			else {
 				updateClient.SetValidationErrors(Validator.GetErrorSummary(updateClient));
-				PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClients>(updateClient);
+				PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClient>(updateClient);
 				DbSession.Evict(updateClient);
 				RenderView("SearchUserInfo");
 				Flash["Editing"] = true;

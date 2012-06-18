@@ -137,7 +137,7 @@ namespace Billing.Test.Integration
 			WriteOff.DeleteAll();
 			Payment.DeleteAll();
 			Client.DeleteAll();
-			PhysicalClients.DeleteAll();
+			PhysicalClient.DeleteAll();
 			SystemTime.Reset();
 			PaymentsForAgent.DeleteAll();
 		}

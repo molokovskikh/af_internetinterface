@@ -55,11 +55,11 @@ namespace Billing.Test.Integration
 			};
 		}
 
-		public static PhysicalClients CreatePhisicalClient(bool statusBlocked, decimal balance)
+		public static PhysicalClient CreatePhisicalClient(bool statusBlocked, decimal balance)
 		{
 			var tariff = CreateTariff((int)balance);
 			tariff.Save();
-			return  new PhysicalClients
+			return  new PhysicalClient
 					{
 						Name = "TestPhisicalClient",
 						Balance = balance,

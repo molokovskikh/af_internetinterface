@@ -13,34 +13,6 @@ using NHibernate;
 
 namespace InternetInterface.Models
 {
-	public class BigEndianConverter
-	{
-		public static byte[] GetBytes(int value)
-		{
-			return new[] {
-				(byte)(value >> 24),
-				(byte)(value >> 16),
-				(byte)(value >> 8),
-				(byte)value,
-			};
-		}
-
-		public static byte[] GetBytes(uint value)
-		{
-			return GetBytes((int)value);
-		}
-
-		public static uint ToInt32(byte[] bytes)
-		{
-			return (uint)(bytes[0] << 24) + (uint)(bytes[1] << 16) + (uint)(bytes[2] << 8) + (uint)bytes[3];
-		}
-
-		public static ushort ToUInt16(byte[] bytes, int i)
-		{
-			return (ushort)((ushort)(bytes[i] << 8) + (ushort)bytes[i + 1]);
-		}
-	}
-
 	public class ClientConnectInfo
 	{
 		public string static_IP { get; set; }
@@ -82,7 +54,7 @@ namespace InternetInterface.Models
 
 
 	[ActiveRecord("PhysicalClients", Schema = "internet", Lazy = true), Auditable]
-	public class PhysicalClients : ValidActiveRecordLinqBase<PhysicalClients>
+	public class PhysicalClient : ValidActiveRecordLinqBase<PhysicalClient>
 	{
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
@@ -210,7 +182,7 @@ namespace InternetInterface.Models
 		}
 
 
-		public static bool RegistrLogicClient(PhysicalClients client, uint houseId,
+		public static bool RegistrLogicClient(PhysicalClient client, uint houseId,
 			ValidatorRunner validator)
 		{
 			if (validator.IsValid(client)) {

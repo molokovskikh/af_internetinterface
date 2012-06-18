@@ -297,7 +297,7 @@ namespace Billing.Test.Integration
 				};
 				domTariff.Save();
 
-				var physDom = new PhysicalClients {
+				var physDom = new PhysicalClient {
 					Name = "Александр",
 					Surname = "Барабановский",
 					Patronymic = "Тарасович",
@@ -398,7 +398,7 @@ namespace Billing.Test.Integration
 		public void OnTest()
 		{
 			Client unblockedClient;
-			PhysicalClients phisClient;
+			PhysicalClient phisClient;
 			using (new SessionScope()) {
 				unblockedClient = CreateClient();
 				unblockedClient.AutoUnblocked = false;
@@ -426,7 +426,7 @@ namespace Billing.Test.Integration
 				unblockedClient.Refresh();
 				Assert.IsTrue(unblockedClient.Disabled);
 				Assert.That(unblockedClient.PhysicalClient.Balance, Is.GreaterThan(0));
-				phisClient = ActiveRecordMediator<PhysicalClients>.FindByPrimaryKey(phisClient.Id);
+				phisClient = ActiveRecordMediator<PhysicalClient>.FindByPrimaryKey(phisClient.Id);
 				phisClient.Tariff.FinalPrice = phisClient.Tariff.Price + 1000;
 				phisClient.Tariff.FinalPriceInterval = 3;
 				phisClient.Update();
@@ -566,7 +566,7 @@ namespace Billing.Test.Integration
 				Name = "TestLawyer",
 				BeginWork = DateTime.Now.AddMonths(-1),
 				RatedPeriodDate = DateTime.Now,
-				PhysicalClient = new PhysicalClients {
+				PhysicalClient = new PhysicalClient {
 					Tariff = tariff,
 					Balance = 1000
 				}

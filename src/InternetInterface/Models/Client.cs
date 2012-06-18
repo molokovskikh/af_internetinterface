@@ -57,7 +57,7 @@ namespace InternetInterface.Models
 		public virtual ClientType Type { get; set; }
 
 		[BelongsTo("PhysicalClient", Lazy = FetchWhen.OnInvoke, Cascade = CascadeEnum.SaveUpdate), Auditable]
-		public virtual PhysicalClients PhysicalClient { get; set; }
+		public virtual PhysicalClient PhysicalClient { get; set; }
 
 		[Property]
 		public virtual DateTime? RatedPeriodDate { get; set; }
@@ -297,7 +297,6 @@ namespace InternetInterface.Models
 
 		public virtual ClientService FindService<T>()
 		{
-			//client.ClientServices.Select(c => c.Service).Contains(GetByType(typeof (DebtWork)))
 			return ClientServices.FirstOrDefault(c => c.Activated && NHibernateUtil.GetClass(c.Service) == typeof(T));
 		}
 

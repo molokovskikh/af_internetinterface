@@ -18,7 +18,7 @@ namespace InternetInterface.Test.Unit
 		public void Setup()
 		{
 			client = new Client();
-			client.PhysicalClient = new PhysicalClients();
+			client.PhysicalClient = new PhysicalClient();
 			client.PhysicalClient.Client = client;
 			client.PhysicalClient.Tariff = new Tariff("Тестовый тариф", 100);
 			client.Activate(new ClientService(client, new Internet(), true));

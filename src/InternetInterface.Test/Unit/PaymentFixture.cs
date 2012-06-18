@@ -9,13 +9,13 @@ namespace InternetInterface.Test.Unit
 	public class PaymentFixture
 	{
 		private Client client;
-		private PhysicalClients physicalClient;
+		private PhysicalClient physicalClient;
 
 		[SetUp]
 		public void Setup()
 		{
 			client = new Client() {
-				PhysicalClient = new PhysicalClients()
+				PhysicalClient = new PhysicalClient()
 			};
 			physicalClient = client.PhysicalClient;
 			physicalClient.Client = client;

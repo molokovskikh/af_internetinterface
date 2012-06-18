@@ -244,7 +244,7 @@ ORDER BY {3} Limit {1}, {2}", ":SearchText", CurrentPage * PageSize, PageSize, G
 		}
 
 
-		public void SearchUsers(string query, PhysicalClients sClients)
+		public void SearchUsers(string query, PhysicalClient sClients)
 		{
 			var filter = new SeachFilter {
 											 searchProperties = new UserSearchProperties {SearchBy = SearchUserBy.Auto},

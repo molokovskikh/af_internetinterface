@@ -26,7 +26,7 @@ namespace InternetInterface.Test.Helpers
 			};
 		}
 
-		public static void CreateClient(Func<PhysicalClients, bool> Ok)
+		public static void CreateClient(Func<PhysicalClient, bool> Ok)
 		{
 			Tariff tariff;
 			Internet internet;
@@ -36,7 +36,7 @@ namespace InternetInterface.Test.Helpers
 				internet = ActiveRecordLinqBase<Internet>.Queryable.First();
 				iptv = ActiveRecordLinqBase<IpTv>.Queryable.First();
 			}
-			var client =  new PhysicalClients {
+			var client =  new PhysicalClient {
 				Apartment = 1,
 				Balance = 100,
 				CaseHouse = "A",
@@ -90,7 +90,7 @@ namespace InternetInterface.Test.Helpers
 
 		public static Client Client()
 		{
-			var physicalClient = new PhysicalClients {
+			var physicalClient = new PhysicalClient {
 				Name = "Alexandr",
 				Surname = "Zolotarev",
 				Patronymic = "Alekseevich",

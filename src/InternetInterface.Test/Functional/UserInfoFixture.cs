@@ -15,7 +15,7 @@ namespace InternetInterface.Test.Functional
 	class UserInfoFixture : WatinFixture
 	{
 		public string format;
-		public PhysicalClients physicalClient;
+		public PhysicalClient physicalClient;
 		public Client client;
 		public ClientEndpoints endPoint;
 

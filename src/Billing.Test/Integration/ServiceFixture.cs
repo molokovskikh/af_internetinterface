@@ -172,7 +172,7 @@ namespace Billing.Test.Integration
 			const int countDays = 5;
 			var client = _client;
 
-			PhysicalClients physClient;
+			PhysicalClient physClient;
 			ClientService CServive;
 			
 			using (new SessionScope()) {
@@ -210,7 +210,7 @@ namespace Billing.Test.Integration
 			}
 			billing.OnMethod();
 			using (new SessionScope()) {
-				physClient = ActiveRecordMediator<PhysicalClients>.FindByPrimaryKey(physClient.Id);
+				physClient = ActiveRecordMediator<PhysicalClient>.FindByPrimaryKey(physClient.Id);
 				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
 				physClient.Balance = -10;
 				client.RatedPeriodDate = DateTime.Now;
@@ -230,7 +230,7 @@ namespace Billing.Test.Integration
 			SystemTime.Now = () => DateTime.Now.AddDays(countDays + 1);
 			billing.OnMethod();
 			using (new SessionScope()) {
-				physClient = ActiveRecordMediator<PhysicalClients>.FindByPrimaryKey(physClient.Id);
+				physClient = ActiveRecordMediator<PhysicalClient>.FindByPrimaryKey(physClient.Id);
 				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
 				Assert.That(WriteOff.FindAll().Count(), Is.EqualTo(countDays));
 				Assert.That(physClient.Balance, Is.LessThan(0m));
@@ -261,7 +261,7 @@ namespace Billing.Test.Integration
 			}
 			billing.OnMethod();
 			using (new SessionScope()) {
-				physClient = ActiveRecordMediator<PhysicalClients>.FindByPrimaryKey(physClient.Id);
+				physClient = ActiveRecordMediator<PhysicalClient>.FindByPrimaryKey(physClient.Id);
 				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
 				physClient.Balance = -10;
 				physClient.Update();
@@ -428,7 +428,7 @@ namespace Billing.Test.Integration
 		public void ActiveDeactive()
 		{
 			ClientService service;
-			PhysicalClients physClient;
+			PhysicalClient physClient;
 			const int countDays = 5;
 			using (new SessionScope()) {
 				physClient = _client.PhysicalClient;
@@ -450,7 +450,7 @@ namespace Billing.Test.Integration
 				Assert.IsTrue(_client.Disabled);
 				billing.OnMethod();
 				Assert.IsTrue(_client.Disabled);
-				physClient = ActiveRecordMediator<PhysicalClients>.FindByPrimaryKey(physClient.Id);
+				physClient = ActiveRecordMediator<PhysicalClient>.FindByPrimaryKey(physClient.Id);
 				physClient.Balance = _client.GetPriceForTariff();
 				physClient.Update();
 			}
@@ -551,7 +551,7 @@ namespace Billing.Test.Integration
 		{
 			Client client_Post;
 			Client client_simple;
-			PhysicalClients pclient_post;
+			PhysicalClient pclient_post;
 			using (new SessionScope()) {
 				client_Post = BaseBillingFixture.CreateAndSaveClient("testRated", false, 100);
 				client_Post.RatedPeriodDate = DateTime.Now;
@@ -577,7 +577,7 @@ namespace Billing.Test.Integration
 			}
 			billing.OnMethod();
 			using (new SessionScope()) {
-				pclient_post = ActiveRecordMediator<PhysicalClients>.FindByPrimaryKey(pclient_post.Id);
+				pclient_post = ActiveRecordMediator<PhysicalClient>.FindByPrimaryKey(pclient_post.Id);
 				client_Post = ActiveRecordMediator<Client>.FindByPrimaryKey(client_Post.Id);
 				pclient_post.Balance = -200m;
 				pclient_post.Update();

@@ -25,7 +25,7 @@ namespace InternetInterface.Controllers
 		{
 			SetARDataBinder();
 
-			var phisClient = new PhysicalClients();
+			var phisClient = new PhysicalClient();
 			var defaultServices = new Service[] {
 					DbSession.Query<Internet>().First(),
 					DbSession.Query<IpTv>().First(),
@@ -71,7 +71,7 @@ namespace InternetInterface.Controllers
 			if ((registerClient && string.IsNullOrEmpty(portException)) ||
 				(registerClient && string.IsNullOrEmpty(ConnectInfo.Port))) {
 
-				PhysicalClients.RegistrLogicClient(phisClient, house_id, Validator);
+				PhysicalClient.RegistrLogicClient(phisClient, house_id, Validator);
 
 				var havePayment = phisClient.Balance > 0;
 				client.Name = string.Format("{0} {1} {2}", phisClient.Surname, phisClient.Name, phisClient.Patronymic);
@@ -166,7 +166,7 @@ namespace InternetInterface.Controllers
 				if (!string.IsNullOrEmpty(portException))
 					ConnectInfo.Port = string.Empty;
 				PropertyBag["ConnectInfo"] = ConnectInfo;
-				PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClients>(phisClient);
+				PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClient>(phisClient);
 				PropertyBag["ChangeBy"] = changeProperties;
 			}
 		}
@@ -275,7 +275,7 @@ namespace InternetInterface.Controllers
 
 		public void RegisterClient()
 		{
-			var client = new PhysicalClients();
+			var client = new PhysicalClient();
 			SendRegisterParam(client);
 			PropertyBag["ChHouse"] = 0;
 			PropertyBag["Client"] = client;
@@ -293,7 +293,7 @@ namespace InternetInterface.Controllers
 			else {
 				_fio.Take(_fio.Length).ToArray().CopyTo(fio, 0);
 			}
-			var newPhisClient = new PhysicalClients {
+			var newPhisClient = new PhysicalClient {
 				Surname = fio[0],
 				Name = fio[1],
 				Patronymic = fio[2],
@@ -357,7 +357,7 @@ namespace InternetInterface.Controllers
 			return new { Name = string.Format("{0} {1} {2}", street, number, _case), house.Id};
 		}
 
-		public void SendRegisterParam(PhysicalClients client)
+		public void SendRegisterParam(PhysicalClient client)
 		{
 			var internalClient = new Client(ClientType.Phisical, new Service[] {
 				DbSession.Query<Internet>().First(),
@@ -374,7 +374,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["internet"] = client.Client.ClientServices.First(s => s.Service is Internet);
 
 			PropertyBag["ChBrigad"] = 0;
-			PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClients>(new PhysicalClients());
+			PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClient>(new PhysicalClient());
 
 			PropertyBag["Applying"] = "false";
 			PropertyBag["ChangeBy"] = new ChangeBalaceProperties { ChangeType = TypeChangeBalance.OtherSumm };

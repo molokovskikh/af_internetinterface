@@ -6,12 +6,12 @@ namespace InternetInterface.Test.Unit
 	[TestFixture]
 	public class PhysicalClientFixture
 	{
-		private PhysicalClients client;
+		private PhysicalClient client;
 
 		[SetUp]
 		public void Setup()
 		{
-			client = new PhysicalClients {
+			client = new PhysicalClient {
 				Street = "Студенческая",
 				House = 12,
 				CaseHouse = "а",

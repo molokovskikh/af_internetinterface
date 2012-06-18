@@ -19,7 +19,7 @@ namespace InternetInterface.Test.Unit
 		public void Auto_unblock_only_if_service_not_forbide_auto_unblocking()
 		{
 			var client = new Client();
-			client.PhysicalClient = new PhysicalClients();
+			client.PhysicalClient = new PhysicalClient();
 			client.PhysicalClient.Tariff = new Tariff("Тестовый тариф", 100);
 			client.Payments.Add(new Payment(client, 1000));
 			Assert.That(client.HavePaymentToStart(), Is.True);

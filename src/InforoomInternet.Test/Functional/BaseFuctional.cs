@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading;
 using Castle.ActiveRecord;
 using Common.Web.Ui.Helpers;
+using InternetInterface.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
@@ -78,7 +79,7 @@ namespace InforoomInternet.Test.Functional
 							RatedPeriodDate = DateTime.Now,
 							BeginWork = DateTime.Now,
 							PhysicalClient =
-								new PhysicalClients {
+								new PhysicalClient {
 									Balance = -200,
 									Tariff = new Tariff {
 											Name = "Тестовый",
@@ -234,7 +235,7 @@ namespace InforoomInternet.Test.Functional
 				ClientService.DeleteAll();
 			}
 			Client client;
-			PhysicalClients phisClient;
+			PhysicalClient phisClient;
 			string clientId;
 			using (var browser = Open("PrivateOffice/IndexOffice"))
 			{
