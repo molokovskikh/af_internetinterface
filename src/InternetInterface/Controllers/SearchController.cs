@@ -71,7 +71,7 @@ namespace InternetInterface.Controllers
 													  {"filter.whoregister", whoregister},
 													  {"filter.brigad", brigad},
 													  {"filter.addtionalStatus", addtionalStatus},
-													  {"filter.statusType.Id", statusType},
+													  {"filter.statusType", statusType},
 													  {"filter.SortBy", SortBy},
 													  {"filter.Direction", Direction},
 													  {"CurrentPage", CurrentPage}
