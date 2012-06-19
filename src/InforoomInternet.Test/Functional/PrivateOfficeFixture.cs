@@ -18,7 +18,7 @@ namespace InforoomInternet.Test.Functional
 			physicalClient = ClientHelper.PhysicalClient();
 			client = physicalClient.Client;
 			client.BeginWork = DateTime.Now;
-			physicalClient.Client.Endpoints.Add(new ClientEndpoints(physicalClient.Client, null, null));
+			physicalClient.Client.Endpoints.Add(new ClientEndpoint(physicalClient.Client, null, null));
 			session.Save(new Lease(physicalClient.Client.FirstPoint()));
 			session.Save(new Payment(client, 1000));
 

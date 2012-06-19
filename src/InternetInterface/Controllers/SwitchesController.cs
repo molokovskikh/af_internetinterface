@@ -24,7 +24,7 @@ namespace InternetInterface.Controllers
 		public void Delete(uint id)
 		{
 			var commutator = DbSession.Load<NetworkSwitches>(id);
-			if (DbSession.Query<ClientEndpoints>().Any(e => e.Switch == commutator)) {
+			if (DbSession.Query<ClientEndpoint>().Any(e => e.Switch == commutator)) {
 				Error("Коммутатор не может быть удален т.к. с ним работают клиенты");
 				RedirectToReferrer();
 			}
@@ -85,7 +85,7 @@ namespace InternetInterface.Controllers
 		{
 			var id = !string.IsNullOrEmpty(ids) ? UInt32.Parse(ids) : DbSession.Query<NetworkSwitches>().First().Id;
 			var commutator = DbSession.Get<NetworkSwitches>(id);
-			var diniedPorts = ClientEndpoints.Queryable.Where(c => c.Switch.Id == id).ToList().Select(c => new { c.Port, client = c.Client.Id}).ToList();
+			var diniedPorts = ClientEndpoint.Queryable.Where(c => c.Switch.Id == id).ToList().Select(c => new { c.Port, client = c.Client.Id}).ToList();
 			PropertyBag["commutator"] = commutator;
 			PropertyBag["port_client"] = diniedPorts.ToDictionary(d => d.Port, d => d.client);
 			PropertyBag["diniedPorts"] = diniedPorts.Select(p => p.Port).ToList();

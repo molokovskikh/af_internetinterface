@@ -44,7 +44,7 @@ namespace InforoomInternet.Models
 			Action(action, endpoint, ip);
 		}
 
-		public static void Action(string action, ClientEndpoints endpoint, string ip)
+		public static void Action(string action, ClientEndpoint endpoint, string ip)
 		{
 			var packageId = endpoint.PackageId;
 			if (packageId == null)

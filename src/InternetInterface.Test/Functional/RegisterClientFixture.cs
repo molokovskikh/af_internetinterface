@@ -53,7 +53,7 @@ namespace InternetInterface.Test.Functional
 			using (new SessionScope())
 			{
 				var sw = browser.SelectList("SelectSwitches").Options.Select(o => UInt32.Parse(o.Value)).ToList();
-				var diniedPorts = ClientEndpoints.Queryable.Where(c => c.Switch.Id == sw[1]).ToList().Select(c => c.Port).ToList();
+				var diniedPorts = ClientEndpoint.Queryable.Where(c => c.Switch.Id == sw[1]).ToList().Select(c => c.Port).ToList();
 				browser.SelectList("SelectSwitches").SelectByValue(sw[1].ToString());
 				browser.Eval(String.Format("$('#SelectSwitches').change()"));
 				var brow_accesed = browser.Elements.Count(e => e.ClassName == "access_port");

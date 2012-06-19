@@ -45,7 +45,7 @@ namespace InternetInterface.Models
 
 		public IList<StaticIp> GetStaticAdreses()
 		{
-			var endPoint = ClientEndpoints.TryFind((uint) endpointId);
+			var endPoint = ClientEndpoint.TryFind((uint) endpointId);
 			if (endPoint != null)
 				return endPoint.StaticIps;
 			return new List<StaticIp>();
@@ -225,7 +225,7 @@ namespace InternetInterface.Models
 			};
 		}
 
-		public virtual void UpdatePackageId(ClientEndpoints clientEndpoint)
+		public virtual void UpdatePackageId(ClientEndpoint clientEndpoint)
 		{
 			if (Tariff != null)
 				clientEndpoint.PackageId = Tariff.PackageId;

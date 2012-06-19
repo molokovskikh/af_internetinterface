@@ -446,8 +446,8 @@ namespace InternetInterface.Controllers
 			var client = Client.Find(ClientID);
 			bool brigadChangeFlag = client.WhoConnected == null;
 			var newFlag = false;
-			var clientEntPoint = new ClientEndpoints();
-			var clientsEndPoint = ClientEndpoints.Queryable.Where(c => c.Client == client && c.Id == EditConnect).ToArray();
+			var clientEntPoint = new ClientEndpoint();
+			var clientsEndPoint = ClientEndpoint.Queryable.Where(c => c.Client == client && c.Id == EditConnect).ToArray();
 			if (clientsEndPoint.Length != 0) {
 				clientEntPoint = clientsEndPoint[0];
 				InitializeHelper.InitializeModel(clientEntPoint);
@@ -839,7 +839,7 @@ where r.`Label`= :LabelIndex;")
 				client.SendSmsNotifocation = SendSmsNotifocation;
 				client.Name = string.Format("{0} {1} {2}", updateClient.Surname, updateClient.Name,
 				                             updateClient.Patronymic);
-				var endPoints = ClientEndpoints.Queryable.Where(p => p.Client == client).ToList();
+				var endPoints = ClientEndpoint.Queryable.Where(p => p.Client == client).ToList();
 				foreach (var clientEndpoint in endPoints) {
 					updateClient.UpdatePackageId(clientEndpoint);
 				}
@@ -965,7 +965,7 @@ where r.`Label`= :LabelIndex;")
 
 			int? packageId;
 			if (clientEndPointId > 0)
-				packageId =  ClientEndpoints.Queryable.Where(c => c.Id == clientEndPointId).Select(c => c.PackageId).FirstOrDefault();
+				packageId =  ClientEndpoint.Queryable.Where(c => c.Id == clientEndPointId).Select(c => c.PackageId).FirstOrDefault();
 			else
 				packageId = client.Endpoints.Select(e => e.PackageId).FirstOrDefault();
 
@@ -1202,12 +1202,12 @@ where r.`Label`= :LabelIndex;")
 		[AccessibleThrough(Verb.Post)]
 		public void DeleteEndPoint(uint endPointForDelete)
 		{
-			var endPoint = ClientEndpoints.FirstOrDefault(endPointForDelete);
+			var endPoint = ClientEndpoint.FirstOrDefault(endPointForDelete);
 
 			if (endPoint != null)
 			{
 				var client = endPoint.Client;
-				var endPointsForClient = ClientEndpoints.Queryable.Where(c => c.Client == client).ToList();
+				var endPointsForClient = ClientEndpoint.Queryable.Where(c => c.Client == client).ToList();
 				if (endPointsForClient.Count > 1)
 					endPoint.Delete();
 				else

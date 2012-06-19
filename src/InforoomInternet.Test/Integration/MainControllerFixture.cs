@@ -43,7 +43,7 @@ namespace InforoomInternet.Test.Integration
 		{
 			var client = ClientHelper.Client();
 			var commutator = new NetworkSwitches("Тестовый коммутатор", session.Query<Zone>().First());
-			var endpoint = new ClientEndpoints(client, 1, commutator);
+			var endpoint = new ClientEndpoint(client, 1, commutator);
 			var lease = new Lease {Endpoint = endpoint, Switch = commutator, Port = 1, Ip = (uint) new Random().Next()};
 
 			session.Save(commutator);

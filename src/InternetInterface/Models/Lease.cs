@@ -18,7 +18,7 @@ namespace InternetInterface.Models
 		public Lease()
 		{}
 
-		public Lease(ClientEndpoints endpoint)
+		public Lease(ClientEndpoint endpoint)
 		{
 			Endpoint = endpoint;
 		}
@@ -30,7 +30,7 @@ namespace InternetInterface.Models
 		public uint Ip { get; set; }
 
 		[BelongsTo(Cascade = CascadeEnum.SaveUpdate)]
-		public ClientEndpoints Endpoint { get; set; }
+		public ClientEndpoint Endpoint { get; set; }
 
 		[Property]
 		public int Port { get; set; }

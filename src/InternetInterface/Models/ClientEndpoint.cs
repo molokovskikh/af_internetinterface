@@ -6,12 +6,12 @@ using NHibernate.Criterion;
 namespace InternetInterface.Models
 {
 	[ActiveRecord("ClientEndpoints", Schema = "Internet", Lazy = true), Auditable]
-	public class ClientEndpoints : ChildActiveRecordLinqBase<ClientEndpoints>
+	public class ClientEndpoint : ChildActiveRecordLinqBase<ClientEndpoint>
 	{
-		public ClientEndpoints()
+		public ClientEndpoint()
 		{}
 
-		public ClientEndpoints(Client client, int? port, NetworkSwitches @switch)
+		public ClientEndpoint(Client client, int? port, NetworkSwitches @switch)
 		{
 			Client = client;
 			Port = port;
@@ -71,7 +71,7 @@ namespace InternetInterface.Models
 	{
 		public static bool isUnique(uint _Switch, int _Port)
 		{
-			if (ClientEndpoints.FindAll(DetachedCriteria.For(typeof(ClientEndpoints))
+			if (ClientEndpoint.FindAll(DetachedCriteria.For(typeof(ClientEndpoint))
 								.Add(Expression.Eq("Switch.Id", _Switch))
 								.Add(Expression.Eq("Port", _Port))).Length == 0)
 				return true;

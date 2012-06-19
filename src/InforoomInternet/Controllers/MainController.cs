@@ -162,7 +162,7 @@ namespace InforoomInternet.Controllers
 			if (lease == null)
 				lease = new Lease
 				{
-					Endpoint = new ClientEndpoints
+					Endpoint = new ClientEndpoint
 					{
 						Client = new Client() {
 							ShowBalanceWarningPage = true,
@@ -176,7 +176,7 @@ namespace InforoomInternet.Controllers
 				};
 #endif
 
-			ClientEndpoints point = null;
+			ClientEndpoint point = null;
 			if (lease != null)
 				point = lease.Endpoint;
 			else {

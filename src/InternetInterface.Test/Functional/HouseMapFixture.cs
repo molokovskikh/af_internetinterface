@@ -97,7 +97,7 @@ namespace InternetInterface.Test.Functional
 				var sw = browser2.SelectList("SelectSwitches").Options.Select(o => UInt32.Parse(o.Value)).ToList();
 				//using (new SessionScope())
 				{
-					var diniedPorts = ClientEndpoints.Queryable.Where(c => c.Switch.Id == sw[1]).ToList().Select(c => c.Port).ToList();
+					var diniedPorts = ClientEndpoint.Queryable.Where(c => c.Switch.Id == sw[1]).ToList().Select(c => c.Port).ToList();
 					browser2.SelectList("SelectSwitches").SelectByValue(sw[1].ToString());
 					browser2.TextField("Port").AppendText((diniedPorts.Max(p => p.Value) + 1).ToString());
 				}

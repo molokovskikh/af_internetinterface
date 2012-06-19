@@ -111,7 +111,7 @@ namespace InternetInterface.Controllers
 				if (apartmentForClient != null)
 					apartmentForClient.Delete();
 				if (!string.IsNullOrEmpty(ConnectInfo.Port) && CategorieAccessSet.AccesPartner("DHCP")) {
-					var endpoint = new ClientEndpoints(client,
+					var endpoint = new ClientEndpoint(client,
 						Convert.ToInt32(ConnectInfo.Port),
 						DbSession.Load<NetworkSwitches>(ConnectInfo.Switch));
 					endpoint.SaveAndFlush();
@@ -211,7 +211,7 @@ namespace InternetInterface.Controllers
 
 				if (!string.IsNullOrEmpty(info.Port))
 				{
-					new ClientEndpoints
+					new ClientEndpoint
 						{	
 							Client = client,
 							Port = Int32.Parse(info.Port),

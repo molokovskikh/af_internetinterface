@@ -51,7 +51,7 @@ namespace InternetInterface.Test.Integration
 
 			var client = ClientHelper.Client();
 			client.Status = worked;
-			var endpoint = new ClientEndpoints(client, 1, commutator);
+			var endpoint = new ClientEndpoint(client, 1, commutator);
 			client.Endpoints.Add(endpoint);
 			var house = new House("Студенческая", 12);
 			session.Save(client);
@@ -63,7 +63,7 @@ namespace InternetInterface.Test.Integration
 
 			session.Flush();
 			session.Clear();
-			endpoint = session.Get<ClientEndpoints>(endpoint.Id);
+			endpoint = session.Get<ClientEndpoint>(endpoint.Id);
 			Assert.That(endpoint, Is.EqualTo(null));
 		}
 

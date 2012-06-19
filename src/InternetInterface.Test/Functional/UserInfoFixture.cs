@@ -17,7 +17,7 @@ namespace InternetInterface.Test.Functional
 		public string format;
 		public PhysicalClient physicalClient;
 		public Client client;
-		public ClientEndpoints endPoint;
+		public ClientEndpoint endPoint;
 
 		public UserInfoFixture()
 		{
@@ -26,7 +26,7 @@ namespace InternetInterface.Test.Functional
 				physicalClient = client.PhysicalClient;
 
 				client.SaveAndFlush();
-				endPoint = new ClientEndpoints {
+				endPoint = new ClientEndpoint {
 					Client = client,
 				};
 				endPoint.SaveAndFlush();
