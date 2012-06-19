@@ -13,7 +13,7 @@ namespace InternetInterface.AllLogic
 {
 	public class GetClientsLogic
 	{
-		public static string GetWhere(UserSearchProperties sp, ConnectedTypeProperties ct, ClientTypeProperties clT,
+		public static string GetWhere(UserSearchProperties sp, uint ct, ClientTypeProperties clT,
 		                              uint whoregister, uint tariff, string searchText, uint brigad, uint addtionalStatus)
 		{
 			var _return = string.Empty;
@@ -30,8 +30,8 @@ namespace InternetInterface.AllLogic
 			if (addtionalStatus != 0) {
 				_return += " and C.AdditionalStatus = :addtionalStatus";
 			}
-			if ((ct.IsConnected()) || (ct.IsNoConnected())) {
-				_return += " and S.Connected = :Connected";
+			if (ct > 0) {
+				_return += " and S.Id = :statusType";
 			}
 			if (clT.IsPhysical()) {
 				_return += " and C.PhysicalClient is not null";

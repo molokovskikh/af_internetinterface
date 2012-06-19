@@ -1,9 +1,10 @@
 ﻿using System;
+using Castle.ActiveRecord;
 using Castle.Components.Validator;
 
 namespace InternetInterface.Models.Universal
 {
-	public class ValidActiveRecordLinqBase<T> : ChildActiveRecordLinqBase<T>
+	public class ValidActiveRecordLinqBase<T> : ChildActiveRecordLinqBase<T> where T : ActiveRecordBase, new()
 	{
 		private  ErrorSummary ValidationErrors;
 

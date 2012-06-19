@@ -32,7 +32,7 @@ namespace InternetInterface.Controllers
 	public class SeachFilter : IPaginable, ISortableContributor, SortableContributor
 	{
 		public UserSearchProperties searchProperties { get; set; }
-		public ConnectedTypeProperties connectedType { get; set; }
+		public uint statusType { get; set; }
 		public ClientTypeProperties clientTypeFilter { get; set; }
 		public uint tariff { get; set; }
 		public uint whoregister { get; set; }
@@ -71,7 +71,7 @@ namespace InternetInterface.Controllers
 													  {"filter.whoregister", whoregister},
 													  {"filter.brigad", brigad},
 													  {"filter.addtionalStatus", addtionalStatus},
-													  {"filter.connectedType.Type", connectedType.Type},
+													  {"filter.statusType", statusType},
 													  {"filter.SortBy", SortBy},
 													  {"filter.Direction", Direction},
 													  {"CurrentPage", CurrentPage}
@@ -102,10 +102,8 @@ namespace InternetInterface.Controllers
 				query.SetParameter("Brigad", brigad);
 			if (addtionalStatus != 0)
 				query.SetParameter("addtionalStatus", addtionalStatus);
-			if (connectedType.IsConnected())
-				query.SetParameter("Connected", true);
-			if (connectedType.IsNoConnected())
-				query.SetParameter("Connected", false);
+			if (statusType > 0)
+				query.SetParameter("statusType", statusType);
 		}
 
 		private string GetOrderField()
@@ -152,7 +150,7 @@ join internet.Status S on s.id = c.Status
 {0}
 group by c.id
 ORDER BY {3} Limit {1}, {2}",
-								GetClientsLogic.GetWhere(searchProperties, connectedType, clientTypeFilter, whoregister, tariff, searchText, brigad,
+								GetClientsLogic.GetWhere(searchProperties, statusType, clientTypeFilter, whoregister, tariff, searchText, brigad,
 										 addtionalStatus), CurrentPage * PageSize, PageSize, GetOrderField());
 						query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Client));
 						SetParameters(query);
@@ -233,14 +231,11 @@ ORDER BY {3} Limit {1}, {2}", ":SearchText", CurrentPage * PageSize, PageSize, G
 			PropertyBag["Direction"] = filter.Direction;
 			PropertyBag["SortBy"] = filter.SortBy;
 			PropertyBag["filter"] = filter;
-			PropertyBag["Tariffs"] = Tariff.FindAllSort();
-			PropertyBag["WhoRegistered"] = Partner.FindAllSort();
 			PropertyBag["ChTariff"] = filter.tariff;
 			PropertyBag["ChRegistr"] = filter.whoregister;
 			PropertyBag["ChBrigad"] = filter.brigad;
-			PropertyBag["additionalStatuses"] = AdditionalStatus.FindAll();
 			PropertyBag["ChAdditional"] = filter.addtionalStatus;
-			PropertyBag["Brigads"] = Brigad.FindAllSort();
+			AddIndispensableParameters();
 		}
 
 
@@ -248,25 +243,31 @@ ORDER BY {3} Limit {1}, {2}", ":SearchText", CurrentPage * PageSize, PageSize, G
 		{
 			var filter = new SeachFilter {
 											 searchProperties = new UserSearchProperties {SearchBy = SearchUserBy.Auto},
-											 connectedType = new ConnectedTypeProperties {Type = ConnectedType.AllConnected},
+											 statusType = 0,
 											 clientTypeFilter =
 												 new ClientTypeProperties {Type = ForSearchClientType.AllClients},
 										 };
 			PropertyBag["filter"] = filter;
-			PropertyBag["Tariffs"] = Tariff.FindAllSort();
-			PropertyBag["WhoRegistered"] = Partner.FindAllSort();
 			PropertyBag["SearchText"] = "";
 			PropertyBag["ChTariff"] = 0;
 			PropertyBag["ChRegistr"] = 0;
 			PropertyBag["ChBrigad"] = 0;
-			PropertyBag["Brigads"] = Brigad.FindAllSort();
 			PropertyBag["Connected"] = false;
-			PropertyBag["additionalStatuses"] = AdditionalStatus.FindAll();
 			PropertyBag["ChAdditional"] = 0;
 			if (sClients != null)
 			{
 				Flash["SClients"] = sClients;
 			}
+			AddIndispensableParameters();
+		}
+
+		private void AddIndispensableParameters()
+		{
+			PropertyBag["Statuses"] = Status.FindAllAdd();
+			PropertyBag["Brigads"] = Brigad.FindAllAdd();
+			PropertyBag["additionalStatuses"] = AdditionalStatus.FindAllAdd();
+			PropertyBag["Tariffs"] = Tariff.FindAllAdd();
+			PropertyBag["WhoRegistered"] = Partner.FindAllAdd();
 		}
 
 		public void Redirect([DataBind("filter")]ClientFilter filter)

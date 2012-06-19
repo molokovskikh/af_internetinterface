@@ -1,8 +1,9 @@
-﻿using InternetInterface.Models.Universal;
+﻿using Castle.ActiveRecord;
+using InternetInterface.Models.Universal;
 
 namespace InternetInterface.Helpers
 {
-	public class ValidBuilderHelper<T> where T : ValidActiveRecordLinqBase<T>
+	public class ValidBuilderHelper<T> where T : ValidActiveRecordLinqBase<T>, new()
 	{
 		public ValidBuilderHelper(T cl)
 		{

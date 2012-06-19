@@ -10,7 +10,7 @@ using Castle.ActiveRecord.Linq;
 
 namespace InternetInterface.Models
 {
-	public class ChildActiveRecordLinqBase<T> : ActiveRecordLinqBase<T>
+	public class ChildActiveRecordLinqBase<T> : ActiveRecordLinqBase<T> where T : ActiveRecordBase, new()
 	{
 		public virtual string LogComment { get; set; }
 
@@ -22,6 +22,24 @@ namespace InternetInterface.Models
 		public static T FirstOrDefault(uint id)
 		{
 			return (T) ActiveRecordMediator.FindByPrimaryKey(typeof (T), id);
+		}
+
+		/// <summary>
+		/// Применять только для маленьких коллекций, медленный код!!!
+		/// </summary>
+		/// <returns></returns>
+		public static IEnumerable<T> FindAllAdd()
+		{
+			var list = ActiveRecordMediator.FindAll(typeof (T)).Cast<T>().OrderBy(e => ((dynamic)e).Name).ToList();
+			if (list.Count > 0) {
+				var objl = new List<T> {new T()};
+				var obj = (dynamic)objl[0];
+				obj.Id = 0;
+				obj.Name = "Все";
+				objl.AddRange(list);
+				return objl;
+			}
+			return list;
 		}
 	}	
 }

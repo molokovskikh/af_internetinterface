@@ -31,9 +31,9 @@ namespace InforoomInternet
 		void Application_Start(object sender, EventArgs e)
 		{
 			try {
-				Initialize();
-
 				ActiveRecordStarter.EventListenerComponentRegistrationHook += RemoverListner.Make;
+
+				Initialize();
 
 				RoutingModuleEx.Engine.Add(new PatternRoute("/")
 					.DefaultForController().Is("Content")

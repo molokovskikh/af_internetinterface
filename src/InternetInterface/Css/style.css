@@ -496,3 +496,12 @@ div.backGround.table.td  {
 #serviceTableInClient th {
 	text-align:center;
 }
+
+table .filter_front {
+	width:100%;
+	height: 80px;
+}
+
+table .filter_front thead td{
+	padding: 5px;
+}
