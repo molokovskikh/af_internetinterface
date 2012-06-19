@@ -109,7 +109,7 @@ namespace Billing.Test.Integration
 			var iterationCount = 0;
 			while (!_client.Disabled) {
 				billing.Compute();
-				iterationCount ++;
+				iterationCount++;
 				using (new SessionScope())
 					_client.Refresh();
 			}

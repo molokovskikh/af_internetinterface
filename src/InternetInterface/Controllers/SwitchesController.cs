@@ -85,7 +85,11 @@ namespace InternetInterface.Controllers
 		{
 			var id = !string.IsNullOrEmpty(ids) ? UInt32.Parse(ids) : DbSession.Query<NetworkSwitches>().First().Id;
 			var commutator = DbSession.Get<NetworkSwitches>(id);
-			var diniedPorts = ClientEndpoint.Queryable.Where(c => c.Switch.Id == id).ToList().Select(c => new { c.Port, client = c.Client.Id}).ToList();
+
+			var diniedPorts = DbSession.Query<ClientEndpoint>()
+				.Where(c => c.Switch.Id == id)
+				.Select(c => new { c.Port, client = c.Client.Id})
+				.ToList();
 			PropertyBag["commutator"] = commutator;
 			PropertyBag["port_client"] = diniedPorts.ToDictionary(d => d.Port, d => d.client);
 			PropertyBag["diniedPorts"] = diniedPorts.Select(p => p.Port).ToList();
