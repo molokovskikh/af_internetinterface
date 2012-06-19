@@ -163,7 +163,6 @@
     <Compile Include="Unit\ClientFixture.cs" />
     <Compile Include="Unit\DataBinderFixture.cs" />
     <Compile Include="Unit\HouseFixture.cs" />
-    <Compile Include="Unit\Image.cs" />
     <Compile Include="Unit\GetClientsLogicFixture.cs" />
     <Compile Include="Unit\InternetFixture.cs" />
     <Compile Include="Unit\IpTvFixture.cs" />
