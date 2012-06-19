@@ -9,12 +9,12 @@ namespace InforoomInternet.Test.Integration
 	[TestFixture]
 	class PrivateOfficeTest : BaseControllerTest 
 	{
-		private PrivateOffice controller;
+		private PrivateOfficeController controller;
 
 		[SetUp]
 		public void Init()
 		{
-			controller = new PrivateOffice();
+			controller = new PrivateOfficeController();
 			PrepareController(controller);
 		}
 

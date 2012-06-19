@@ -249,7 +249,6 @@ namespace Billing.Test.Integration
 				};
 				client.ClientServices.Add(CServive);
 
-				Assert.That(CServive.LogComment, !Is.EqualTo(string.Empty));
 				client.Disabled = true;
 				client.Update();
 				new Payment {
@@ -294,21 +293,20 @@ namespace Billing.Test.Integration
 				client.RatedPeriodDate = SystemTime.Now();
 				client.Update();
 
-				var CServive = new ClientService {
+				var cServive = new ClientService {
 					Client = client,
 					BeginWorkDate = DateTime.Now,
 					EndWorkDate = SystemTime.Now().AddDays(countDays),
 					Service = Service.GetByType(typeof (DebtWork)),
 					Activator = InitializeContent.Partner
 				};
-				client.ClientServices.Add(CServive);
+				client.ClientServices.Add(cServive);
 
-				CServive.Refresh();
-				CServive.Activate();
-				Assert.That(CServive.Activated, Is.EqualTo(true));
-				Assert.IsFalse(CServive.Client.Disabled);
-				CServive.CompulsoryDeactivate();
-				Assert.IsTrue(CServive.Client.Disabled);
+				cServive.Activate();
+				Assert.That(cServive.Activated, Is.EqualTo(true));
+				Assert.IsFalse(cServive.Client.Disabled);
+				cServive.CompulsoryDeactivate();
+				Assert.IsTrue(cServive.Client.Disabled);
 
 				Assert.That(client.ClientServices, Is.Empty);
 			}
@@ -510,7 +508,7 @@ namespace Billing.Test.Integration
 				Client = client,
 				Service = ActiveRecordMediator<DebtWork>.FindFirst()
 			};
-			service.Save();
+			ActiveRecordMediator.Save(service);
 
 			client.Refresh();
 			Assert.IsFalse(client.CanBlock());
@@ -529,10 +527,10 @@ namespace Billing.Test.Integration
 			Assert.IsFalse(client.CanBlock());
 			SystemTime.Now = () => DateTime.Now.AddDays(2);
 			Assert.IsTrue(client.CanBlock());
-			new ClientService {
+			ActiveRecordMediator.Save(new ClientService {
 				Client = client,
 				Service = Service.GetByType(typeof (DebtWork))
-			}.Save();
+			});
 
 			client.Refresh();
 			Assert.IsFalse(client.CanBlock());
@@ -651,8 +649,7 @@ namespace Billing.Test.Integration
 					EndWorkDate = DateTime.Now.AddDays(2),
 					Service = Service.Type<WorkLawyer>()
 				};
-				cService.Save();
-				Assert.IsNull(cService.LogComment);
+				ActiveRecordMediator.Save(cService);
 			}
 			billing.OnMethod();
 			using (new SessionScope()) {

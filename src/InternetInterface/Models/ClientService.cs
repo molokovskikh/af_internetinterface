@@ -13,7 +13,7 @@ using NHibernate;
 namespace InternetInterface.Models
 {
 	[ActiveRecord("ClientServices", Schema = "Internet", Lazy = true)]
-	public class ClientService : ValidActiveRecordLinqBase<ClientService>
+	public class ClientService
 	{
 		public ClientService()
 		{
@@ -58,7 +58,7 @@ namespace InternetInterface.Models
 			Schema = "Internet",
 			Table = "AssignedChannels",
 			ColumnKey = "AssignedServiceId",
-			ColumnRef = "ChannelGroupId")]
+			ColumnRef = "ChannelGroupId"), Description("Пакеты каналов")]
 		public virtual IList<ChannelGroup> Channels { get; set; }
 
 		[BelongsTo]
@@ -73,18 +73,6 @@ namespace InternetInterface.Models
 				Client.ClientServices.Remove(Client.ClientServices.First(c => c.Id == Id));
 				Client.Save();
 			}
-		}
-
-		public override void Save()
-		{
-			if (Client.ClientServices != null)
-				if (Client.ClientServices.Select(c => c.Service).Contains(Service))
-				{
-					LogComment = "Невозможно использовать данную услугу";
-					return;
-				}
-			base.Save();
-			Client.Refresh();
 		}
 
 		public virtual void Activate()

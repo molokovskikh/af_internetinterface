@@ -24,9 +24,9 @@ namespace InternetInterface.Services
 			return builder.ToString();
 		}
 
-		public override bool CanActivate(ClientService cService)
+		public override bool CanActivate(ClientService assignedService)
 		{
-			return CanActivate(cService.Client);
+			return CanActivate(assignedService.Client);
 		}
 
 		public override bool CanActivate(Client client)
@@ -40,15 +40,15 @@ namespace InternetInterface.Services
 			return false;
 		}
 
-		public override void CompulsoryDeactivate(ClientService CService)
+		public override void CompulsoryDeactivate(ClientService assignedService)
 		{
-			var client = CService.Client;
+			var client = assignedService.Client;
 			var warning = client.LawyerPerson.NeedShowWarning();
 			client.ShowBalanceWarningPage = warning;
 			client.Disabled = warning;
 			client.Update();
-			CService.Activated = false;
-			CService.Update();
+			assignedService.Activated = false;
+			ActiveRecordMediator.Update(assignedService);
 		}
 
 		public override void Activate(ClientService assignedService)
@@ -60,7 +60,7 @@ namespace InternetInterface.Services
 				client.Save();
 				assignedService.Activated = true;
 				assignedService.EndWorkDate = assignedService.EndWorkDate.Value.Date;
-				assignedService.Update();
+				ActiveRecordMediator.Update(assignedService);
 			}
 		}
 
@@ -70,7 +70,7 @@ namespace InternetInterface.Services
 				(assignedService.EndWorkDate != null && (SystemTime.Now().Date >= assignedService.EndWorkDate.Value.Date)))
 			{
 				CompulsoryDeactivate(assignedService);
-				assignedService.Delete();
+				ActiveRecordMediator.Delete(assignedService);
 			}
 		}
 	}

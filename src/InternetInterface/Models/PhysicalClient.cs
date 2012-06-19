@@ -147,7 +147,7 @@ namespace InternetInterface.Models
 		public virtual void Validate(ErrorSummary errors)
 		{
 			var internet = Client.ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof(Internet));
-			if (internet.ActivatedByUser) {
+			if (internet.ActivatedByUser && Tariff == null) {
 				errors.RegisterErrorMessage("Tariff", "Нужно выбрать тариф");
 			}
 		}
@@ -188,6 +188,9 @@ namespace InternetInterface.Models
 		public virtual WriteOff WriteOff(decimal sum, bool writeoffVirtualFirst = true)
 		{
 			var writeoff = CalculateWriteoff(sum, writeoffVirtualFirst);
+
+			if (writeoff == null)
+				return null;
 
 			Balance -= writeoff.WriteOffSum;
 			VirtualBalance -= writeoff.VirtualSum;

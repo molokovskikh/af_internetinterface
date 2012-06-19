@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using Castle.ActiveRecord;
+using Castle.ActiveRecord.Framework;
 using Common.Tools;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.NHibernateExtentions;
@@ -160,6 +161,16 @@ namespace InternetInterface.Models
 			return Endpoints.FirstOrDefault();
 		}
 
+		//клиент может редактировать свои услуги если
+		//его баланс больше нуля и он не отключен
+		public virtual bool CanEditServicesFromPrivateOffice
+		{
+			get
+			{
+				return PhysicalClient.Balance > 0 && !Disabled;
+			}
+		}
+
 		public virtual bool HavePaymentToStart()
 		{
 			var forbiddenByService = ClientServices.Any(s => s.Service.BlockingAll && s.Activated);
@@ -176,14 +187,14 @@ namespace InternetInterface.Models
 			if (PhysicalClient != null) {
 				return PhysicalClient.GetAdress();
 			}
-			return string.Empty;
+			return String.Empty;
 		}
 
 		public virtual string GetCutAdress()
 		{
 			if (PhysicalClient != null)
 				return PhysicalClient.GetCutAdress();
-			return string.Empty;
+			return String.Empty;
 		}
 
 		public virtual string Contact
@@ -199,7 +210,7 @@ namespace InternetInterface.Models
 					if (contact != null)
 						return contact.HumanableNumber;
 				}
-				return string.Empty;
+				return String.Empty;
 			}
 		}
 
@@ -215,14 +226,14 @@ namespace InternetInterface.Models
 
 		public virtual string ForSearchContact(string query)
 		{
-			var result = string.Empty;
-			if (!string.IsNullOrEmpty(query)) {
+			var result = String.Empty;
+			if (!String.IsNullOrEmpty(query)) {
 				var contacts = Contacts.Where(c => c.Text.Contains(query));
 				foreach (var contact in contacts) {
 					result += TextHelper.SelectContact(query, contact.Text) + "<br/>";
 				}
 			}
-			if (string.IsNullOrEmpty(result)) {
+			if (String.IsNullOrEmpty(result)) {
 				return Contact;
 			}
 			return result;
@@ -248,10 +259,12 @@ namespace InternetInterface.Models
 
 		public virtual bool CanUsedPostponedPayment()
 		{
-			return PhysicalClient != null &&
-				!ClientServices.Select(c => c.Service).Contains(Service.GetByType(typeof(DebtWork))) && Disabled &&
-				PhysicalClient.Balance < 0 &&
-				AutoUnblocked && PaymentForTariff();
+			return PhysicalClient != null
+				&& !ClientServices.Select(c => c.Service).Contains(Service.GetByType(typeof(DebtWork)))
+				&& Disabled
+				&& PhysicalClient.Balance < 0
+				&& AutoUnblocked
+				&& PaymentForTariff();
 		}
 
 		public virtual bool NeedShowWarningForLawyer()
@@ -316,7 +329,7 @@ namespace InternetInterface.Models
 
 		public virtual List<Internetsessionslog> GetClientLeases()
 		{
-			return Internetsessionslog.Queryable.Where(l => l.EndpointId.Client == this).ToList();
+			return ActiveRecordLinqBase<Internetsessionslog>.Queryable.Where(l => l.EndpointId.Client == this).ToList();
 		}
 
 		public virtual Internetsessionslog GetFirstLease()
@@ -368,7 +381,7 @@ namespace InternetInterface.Models
 				gpoupKey = "concat(YEAR(WriteOffDate),'-',MONTH(WriteOffDate))";
 			if (groupedKey == "year")
 				gpoupKey = "YEAR(WriteOffDate)";
-			var query = session.CreateSQLQuery(string.Format(
+			var query = session.CreateSQLQuery(String.Format(
 @"SELECT 
 Id, 
 Sum(WriteOffSum) as WriteOffSum,
@@ -399,7 +412,7 @@ group by {0} order by WriteOffDate;", gpoupKey))
 			if ((PhysicalClient!= null && Status != null && Status.Connected) ||
 				(LawyerPerson != null && Status != null && Status.Connected))
 			{
-				var infos = session.CreateSQLQuery(string.Format(@"
+				var infos = session.CreateSQLQuery(String.Format(@"
 select
 inet_ntoa(CE.Ip) as static_IP,
 inet_ntoa(L.Ip) as Leased_IP,
@@ -429,12 +442,12 @@ Id))
 		public static Lease FindByIP(string ip)
 		{
 			var addressValue = BigEndianConverter.ToInt32(IPAddress.Parse(ip).GetAddressBytes());
-			return Lease.Queryable.FirstOrDefault(l => l.Ip == addressValue);
+			return ActiveRecordLinqBase<Lease>.Queryable.FirstOrDefault(l => l.Ip == addressValue);
 		}
 
 		public virtual bool OnLine()
 		{
-			if (Lease.Queryable.FirstOrDefault(l => l.Endpoint.Client == this) != null)
+			if (ActiveRecordLinqBase<Lease>.Queryable.FirstOrDefault(l => l.Endpoint.Client == this) != null)
 				return true;
 			return false;
 		}
@@ -521,6 +534,8 @@ Id))
 
 		public virtual void Activate(ClientService service)
 		{
+			if (ClientServices.Select(c => c.Service).Contains(service.Service))
+				throw new ServiceActiovationException("Невозможно использовать данную услугу");
 			ClientServices.Add(service);
 			service.Activate();
 		}
@@ -530,5 +545,21 @@ Id))
 			var costPerDay = price/GetInterval();
 			return PhysicalClient.CalculateWriteoff(costPerDay);
 		}
+
+		public virtual ClientService Internet
+		{
+			get { return ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof (Internet)); }
+		}
+
+		public virtual ClientService Iptv
+		{
+			get { return ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof (IpTv)); }
+		}
+	}
+
+	public class ServiceActiovationException : Exception
+	{
+		public ServiceActiovationException(string message) : base(message)
+		{}
 	}
 }

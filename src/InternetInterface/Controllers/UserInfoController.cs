@@ -360,44 +360,46 @@ namespace InternetInterface.Controllers
 			var servise = Service.Find(serviceId);
 			var client = Client.Find(clientId);
 			var dtn = DateTime.Now;
-			if (servise.InterfaceControl) { 
-			var clientService = new ClientService {
-				Client = client,
-				Service = servise,
-				BeginWorkDate =
-					startDate == null
-						? dtn
-						: new DateTime(startDate.Value.Year,
-						               startDate.Value.Month,
-						               startDate.Value.Day, dtn.Hour,
-						               dtn.Minute,
-						               dtn.Second),
-				EndWorkDate = endDate == null
-				              	? endDate
-				              	: new DateTime(endDate.Value.Year,
-				              	               endDate.Value.Month,
-				              	               endDate.Value.Day,
-				              	               dtn.Hour,
-				              	               dtn.Minute,
-				              	               dtn.Second),
-				Activator = InitializeContent.Partner
-			};
-			clientService.Save();
-			client.ClientServices.Add(clientService);
-			clientService.Activate();
-			if (string.IsNullOrEmpty(clientService.LogComment))
-				Appeals.CreareAppeal(
-					string.Format("Услуга \"{0}\" активирована на период с {1} по {2}", servise.HumanName,
-					              clientService.BeginWorkDate != null
-					              	? clientService.BeginWorkDate.Value.ToShortDateString()
-					              	: DateTime.Now.ToShortDateString(),
-					              clientService.EndWorkDate != null
-					              	? clientService.EndWorkDate.Value.ToShortDateString()
-					              	: string.Empty),
-					client,
-					AppealType.User);
-			else
-				PropertyBag["errorMessage"] = clientService.LogComment;
+			if (servise.InterfaceControl) {
+				var clientService = new ClientService {
+					Client = client,
+					Service = servise,
+					BeginWorkDate =
+						startDate == null
+							? dtn
+							: new DateTime(startDate.Value.Year,
+										   startDate.Value.Month,
+										   startDate.Value.Day, dtn.Hour,
+										   dtn.Minute,
+										   dtn.Second),
+					EndWorkDate = endDate == null
+						? endDate
+						: new DateTime(endDate.Value.Year,
+									   endDate.Value.Month,
+									   endDate.Value.Day,
+									   dtn.Hour,
+									   dtn.Minute,
+									   dtn.Second),
+					Activator = InitializeContent.Partner
+				};
+
+				try {
+					client.Activate(clientService);
+					DbSession.Save(clientService);
+					Appeals.CreareAppeal(
+						string.Format("Услуга \"{0}\" активирована на период с {1} по {2}", servise.HumanName,
+							clientService.BeginWorkDate != null
+								? clientService.BeginWorkDate.Value.ToShortDateString()
+								: DateTime.Now.ToShortDateString(),
+							clientService.EndWorkDate != null
+								? clientService.EndWorkDate.Value.ToShortDateString()
+								: string.Empty),
+						client,
+						AppealType.User);
+				}
+				catch (ServiceActiovationException e) {
+					PropertyBag["errorMessage"] = e.Message;
+				}
 			}
 			RedirectToUrl(client.Redirect());
 		}

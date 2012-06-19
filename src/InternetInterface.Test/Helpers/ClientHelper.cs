@@ -28,6 +28,31 @@ namespace InternetInterface.Test.Helpers
 
 		public static void CreateClient(Func<PhysicalClient, bool> Ok)
 		{
+			var client = PhysicalClient();
+			var internalClient = client.Client;
+			var valid = new ValidatorRunner(new CachedValidationRegistry());
+			if (valid.IsValid(client)) {
+				var pay = new Payment {
+					Client = internalClient,
+					PaidOn = DateTime.Now,
+					RecievedOn = DateTime.Now,
+					Sum = 500
+				};
+				internalClient.SaveAndFlush();
+				client.SaveAndFlush();
+				pay.SaveAndFlush();
+				Ok(client);
+				client.DeleteAndFlush();
+				pay.DeleteAndFlush();
+			}
+			else {
+				throw new Exception(String.Format("Создали невалидного клиента {0}",
+					valid.GetErrorSummary(client).ErrorMessages.Implode()));
+			}
+		}
+
+		public static PhysicalClient PhysicalClient()
+		{
 			Tariff tariff;
 			Internet internet;
 			IpTv iptv;
@@ -36,7 +61,7 @@ namespace InternetInterface.Test.Helpers
 				internet = ActiveRecordLinqBase<Internet>.Queryable.First();
 				iptv = ActiveRecordLinqBase<IpTv>.Queryable.First();
 			}
-			var client =  new PhysicalClient {
+			var client = new PhysicalClient {
 				Apartment = 1,
 				Balance = 100,
 				CaseHouse = "A",
@@ -67,25 +92,7 @@ namespace InternetInterface.Test.Helpers
 			internalClient.ClientServices.Add(new ClientService(internalClient, internet));
 			internalClient.ClientServices.Add(new ClientService(internalClient, iptv));
 			client.Client = internalClient;
-			var valid = new ValidatorRunner(new CachedValidationRegistry());
-			if (valid.IsValid(client)) {
-				var pay = new Payment {
-					Client = internalClient,
-					PaidOn = DateTime.Now,
-					RecievedOn = DateTime.Now,
-					Sum = 500
-				};
-				internalClient.SaveAndFlush();
-				client.SaveAndFlush();
-				pay.SaveAndFlush();
-				Ok(client);
-				client.DeleteAndFlush();
-				pay.DeleteAndFlush();
-			}
-			else {
-				throw new Exception(String.Format("Создали невалидного клиента {0}",
-					valid.GetErrorSummary(client).ErrorMessages.Implode()));
-			}
+			return client;
 		}
 
 		public static Client Client()

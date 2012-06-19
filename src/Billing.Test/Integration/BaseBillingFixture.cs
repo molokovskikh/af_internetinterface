@@ -4,8 +4,10 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using Castle.ActiveRecord;
+using Castle.ActiveRecord.Framework;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using InternetInterface.Models.Services;
 using NUnit.Framework;
 
 namespace Billing.Test.Integration
@@ -32,7 +34,7 @@ namespace Billing.Test.Integration
 		}
 	}
 
-	class BaseBillingFixture
+	public class BaseBillingFixture
 	{
 		[SetUp]
 		public void BaseSetup()
@@ -43,7 +45,7 @@ namespace Billing.Test.Integration
 		{
 			var phisicalClient = CreatePhisicalClient(statusBlocked, balance);
 			phisicalClient.Save();
-			return new Client() {
+			var client = new Client {
 				Disabled = false,
 				Sale = 0,
 				DebtDays = 0,
@@ -53,6 +55,8 @@ namespace Billing.Test.Integration
 				RatedPeriodDate = DateTime.Now,
 				YearCycleDate = DateTime.Now
 			};
+			client.ClientServices.Add(new ClientService(client, ActiveRecordLinqBase<Internet>.Queryable.First(), true));
+			return client;
 		}
 
 		public static PhysicalClient CreatePhisicalClient(bool statusBlocked, decimal balance)

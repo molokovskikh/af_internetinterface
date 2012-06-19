@@ -4,7 +4,7 @@
 		${app.Edit("iptv.ActivatedByUser")}
 	</div>
 	<div>
-		<label>Пакеты каналов</label>
+		${app.Label("IpTv.Channels")}
 		${app.Edit("IpTv.Channels")}
 	</div>
 </div>

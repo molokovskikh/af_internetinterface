@@ -85,6 +85,7 @@
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
       <HintPath>..\..\lib\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="mysql.data, Version=6.3.5.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\..\lib\mysql.data.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -116,6 +117,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Functional\PrivateOfficeFixture.cs" />
     <Compile Include="Functional\Setup.cs" />
     <Compile Include="Integration\MainControllerFixture.cs" />
     <Compile Include="Integration\PrivateOffice.cs" />
@@ -155,6 +157,14 @@
     <ProjectReference Include="..\InternetInterface\InternetInterface.csproj">
       <Project>{E2B03BC7-AACB-4A72-BBC7-DF4325912504}</Project>
       <Name>InternetInterface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Test.Support\Test.Support.Web\Test.Support.Web.csproj">
+      <Project>{12258B1D-35E8-45BA-9C1E-5F7B8ACD7D37}</Project>
+      <Name>Test.Support.Web</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Test.Support\Test.Support\Test.Support.csproj">
+      <Project>{A215E837-1208-49E3-AF93-A9612223122C}</Project>
+      <Name>Test.Support</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

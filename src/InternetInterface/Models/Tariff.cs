@@ -40,6 +40,9 @@ namespace InternetInterface.Models
 		public virtual bool Hidden { get; set; }
 
 		[Property]
+		public virtual bool CanUseForSelfConfigure { get; set; }
+
+		[Property]
 		public virtual int FinalPriceInterval { get; set; }
 
 		[Property]

@@ -1,6 +1,7 @@
 ﻿using System;
 using Castle.ActiveRecord;
 using Common.Tools;
+using Common.Web.Ui.Helpers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Services;
 using NUnit.Framework;
@@ -133,7 +134,11 @@ namespace Billing.Test.Integration
 			Request.DeleteAll();
 			SmsMessage.DeleteAll();
 			UserWriteOff.DeleteAll();
-			ClientService.DeleteAll();
+
+			ArHelper.WithSession(s => {
+				s.CreateSQLQuery("delete from Internet.ClientServices");
+			});
+
 			WriteOff.DeleteAll();
 			Payment.DeleteAll();
 			Client.DeleteAll();

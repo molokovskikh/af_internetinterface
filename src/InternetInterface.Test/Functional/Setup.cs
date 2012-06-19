@@ -11,6 +11,7 @@ using Common.MySql;
 using Common.Web.Ui.ActiveRecordExtentions;
 using InternetInterface.Models;
 using NUnit.Framework;
+using Test.Support.Web;
 using WatiN.Core;
 using log4net.Config;
 
@@ -23,19 +24,11 @@ namespace InternetInterface.Test.Functional
 
 		[SetUp]
 		public void SetupFixture()
-		{	
+		{
 			ConfigTest();
-
-			var port = Int32.Parse(ConfigurationManager.AppSettings["webPort"]);
-			var webDir = ConfigurationManager.AppSettings["webDirectory"];
-
-			_webServer = new Server(port, "/", Path.GetFullPath(webDir));
-			_webServer.Start();
-			Settings.Instance.AutoMoveMousePointerToTopLeft = false;
-			Settings.Instance.MakeNewIeInstanceVisible = false;
-
 			PrepareTestData();
-			SetupEnvironment(_webServer);
+
+			_webServer = WatinSetup.StartServer();
 		}
 
 		[TearDown]
@@ -82,17 +75,6 @@ namespace InternetInterface.Test.Functional
 				ActiveRecordInitialize.Init(ConnectionHelper.GetConnectionName(),
 					Assembly.Load("InternetInterface"),
 					Assembly.Load("InternetInterface.Test"));
-		}
-
-		public static void SetupEnvironment(Server server)
-		{
-			var method = server.GetType().GetMethod("GetHost", BindingFlags.Instance | BindingFlags.NonPublic);
-			method.Invoke(server, null);
-
-			var manager = ApplicationManager.GetApplicationManager();
-			var apps = manager.GetRunningApplications();
-			var domain = manager.GetAppDomain(apps.Single().ID);
-			domain.SetData("environment", "test");
 		}
 	}
 }

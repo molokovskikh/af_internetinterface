@@ -86,7 +86,7 @@ namespace InternetInterface.Services
 			return string.Empty;
 		}
 
-		public virtual bool CanDelete(ClientService CService)
+		public virtual bool CanDelete(ClientService assignedService)
 		{
 			return true;
 		}
@@ -106,7 +106,7 @@ namespace InternetInterface.Services
 			return true;
 		}
 
-		public virtual bool CanActivate(ClientService cService)
+		public virtual bool CanActivate(ClientService assignedService)
 		{
 			return true;
 		}

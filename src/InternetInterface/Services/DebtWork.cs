@@ -36,11 +36,11 @@ namespace InternetInterface.Services
 			return false;
 		}
 
-		public override bool CanActivate(ClientService service)
+		public override bool CanActivate(ClientService assignedService)
 		{
-			var client = service.Client;
+			var client = assignedService.Client;
 			var payTar = client.PaymentForTariff();
-			if (service.Activator != null)
+			if (assignedService.Activator != null)
 				payTar = true;
 			return payTar && CanActivate(client);
 		}
@@ -58,15 +58,15 @@ namespace InternetInterface.Services
 			return service.EndWorkDate.Value < SystemTime.Now();
 		}
 
-		public override bool CanDelete(ClientService CService)
+		public override bool CanDelete(ClientService assignedService)
 		{
-			if (CService.Activator != null)
+			if (assignedService.Activator != null)
 				return true;
 
 			var lastPayments = Payment.Queryable
-				.Where(p => p.Client == CService.Client && CService.BeginWorkDate.Value < p.PaidOn)
+				.Where(p => p.Client == assignedService.Client && assignedService.BeginWorkDate.Value < p.PaidOn)
 				.ToList().Sum(p => p.Sum);
-			var balance = CService.Client.PhysicalClient.Balance;
+			var balance = assignedService.Client.PhysicalClient.Balance;
 			if (balance > 0 &&
 				balance - lastPayments <= 0)
 				return true;
@@ -81,7 +81,7 @@ namespace InternetInterface.Services
 			client.Status = Status.Find((uint)StatusType.NoWorked);
 			client.Update();
 			service.Activated = false;
-			service.Update();
+			ActiveRecordMediator.Update(service);
 		}
 
 		public override bool Deactivate(ClientService assignedService)
@@ -104,7 +104,7 @@ namespace InternetInterface.Services
 				client.Status = Status.Find((uint) StatusType.Worked);
 				client.Update();
 				assignedService.Activated = true;
-				assignedService.Update();
+				ActiveRecordMediator.Update(assignedService);
 			}
 		}
 	}

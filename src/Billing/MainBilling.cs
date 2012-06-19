@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Castle.ActiveRecord;
+using Castle.ActiveRecord.Framework;
 using Common.MySql;
 using Common.Tools;
 using Common.Tools.Calendar;
@@ -10,6 +11,8 @@ using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using NHibernate;
+using NHibernate.Linq;
 using log4net;
 using log4net.Config;
 using NHibernate.Criterion;
@@ -108,12 +111,26 @@ namespace Billing
 			}
 		}
 
-		public void OnMethod()
+		public void WithTransaction(Action<ISession> action)
 		{
 			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
-				foreach (var cserv in ClientService.Queryable.Where(c => !c.Activated).ToList()) {
-					cserv.Activate();
-				}
+				ArHelper.WithSession(action);
+				transaction.VoteCommit();
+			}
+		}
+
+		public void ActivateServices(ISession session)
+		{
+			var services = session.Query<ClientService>().Where(s => !s.Activated);
+			foreach (var service in services)
+				service.Activate();
+		}
+
+		public void OnMethod()
+		{
+			WithTransaction(ActivateServices);
+
+			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
 				var newClients = Client.FindAll(DetachedCriteria.For(typeof (Client))
 			                                		.CreateAlias("PhysicalClient", "PC", JoinType.InnerJoin)
 			                                		.Add(Restrictions.Eq("PC.ConnectionPaid", false))
@@ -224,7 +241,7 @@ namespace Billing
 					}
 					client.Update();
 				}
-				foreach (var cserv in ClientService.FindAll()) {
+				foreach (var cserv in ActiveRecordMediator.FindAll(typeof(ClientService)).Cast<ClientService>()) {
 					cserv.Deactivate();
 				}
 				transaction.VoteCommit();
@@ -282,7 +299,7 @@ namespace Billing
 				settings.LastStartFail = errorCount > 0;
 				settings.Save();
 
-				ClientService.Queryable.ToList().Each(cs => cs.WriteOff());
+				ActiveRecordLinqBase<ClientService>.Queryable.ToList().Each(cs => cs.WriteOff());
 
 				transaction.VoteCommit();
 			}

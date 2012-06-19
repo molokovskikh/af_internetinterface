@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using InternetInterface.Models.Services;
 using InternetInterface.Services;
+using NHibernate;
 using NHibernate.Linq;
 
 namespace InforoomInternet.Controllers
@@ -15,7 +18,7 @@ namespace InforoomInternet.Controllers
 	[Filter(ExecuteWhen.BeforeAction, typeof(NHibernateFilter))]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AccessFilter))]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(BeforeFilter))]
-	public class PrivateOffice : BaseController
+	public class PrivateOfficeController : BaseController
 	{
 		public void AboutSale()
 		{
@@ -149,9 +152,49 @@ namespace InforoomInternet.Controllers
 		public void Services()
 		{
 			var clientId = Convert.ToUInt32(Session["LoginClient"]);
-			var client = Client.Find(clientId);
+			var client = DbSession.Load<Client>(clientId);
+
+			var internet = client.Internet;
+			var iptv = client.Iptv;
+
+			var tariffs = DbSession.Query<Tariff>().Where(t => t.CanUseForSelfConfigure).ToList()
+				.Concat(new [] {client.PhysicalClient.Tariff}.Where(t => t != null))
+				.Distinct()
+				.OrderBy(t => t.Name)
+				.ToList();
+
+			var channels = DbSession.Query<ChannelGroup>().Where(c => !c.Hidden).ToList()
+				.Concat(iptv.Channels)
+				.Distinct()
+				.OrderBy(c => c.Name)
+				.ToList();
+
+			PropertyBag["internet"] = internet;
+			PropertyBag["iptv"] = iptv;
+			PropertyBag["tariffs"] = tariffs;
+			PropertyBag["channels"] = channels;
 			PropertyBag["Client"] = client;
 			PropertyBag["VoluntaryBlockinService"] = new VoluntaryBlockin();
+
+			if (IsPost) {
+				if (!client.CanEditServicesFromPrivateOffice) {
+					Error("Услуги можно редактировать только когда баланс положительный и клиент активен");
+					RedirectToReferrer();
+					return;
+				}
+
+				SetARDataBinder(AutoLoadBehavior.NullIfInvalidKey);
+				BindObjectInstance(client, "client", "PhysicalClient.Tariff");
+				BindObjectInstance(internet, "internet", "ActivatedByUser");
+				//в ручную очищаем список каналов что бы биндинг мог их заполнить
+				iptv.Channels.Clear();
+				BindObjectInstance(iptv, "iptv", "ActivatedByUser,Channels");
+				if (IsValid(client.PhysicalClient)) {
+					DbSession.SaveOrUpdate(client);
+					Notify("Сохранено");
+					RedirectToReferrer();
+				}
+			}
 		}
 
 		private string TransformTelNum(string num)

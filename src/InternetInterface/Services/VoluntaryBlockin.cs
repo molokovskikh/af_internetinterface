@@ -40,10 +40,10 @@ namespace InternetInterface.Services
 			return false;
 		}
 
-		public override bool CanActivate(ClientService cService)
+		public override bool CanActivate(ClientService assignedService)
 		{
-			var begin = SystemTime.Now() > cService.BeginWorkDate.Value;
-			return  begin && CanActivate(cService.Client);
+			var begin = SystemTime.Now() > assignedService.BeginWorkDate.Value;
+			return  begin && CanActivate(assignedService.Client);
 		}
 
 		public override void Activate(ClientService assignedService)
@@ -79,7 +79,7 @@ namespace InternetInterface.Services
 				assignedService.Activated = true;
 				var evd = assignedService.EndWorkDate.Value;
 				assignedService.EndWorkDate = new DateTime(evd.Year, evd.Month, evd.Day);
-				assignedService.Update();
+				ActiveRecordMediator.Update(assignedService);
 
 				if (client.FreeBlockDays <= 0)
 					new UserWriteOff {
@@ -124,7 +124,7 @@ namespace InternetInterface.Services
 			}
 
 			service.Activated = false;
-			service.Update();
+			ActiveRecordMediator.Update(service);
 			client.Update();
 		}
 
