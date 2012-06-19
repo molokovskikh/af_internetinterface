@@ -203,25 +203,18 @@ namespace InternetInterface.Models.Access
 
 		private static string GetRulesName_accessDHCP()
 		{
-			_accessDHCP = new HashSet<string>
-								{
-									"ShowSwitches",
-									"MakeSwitch",
-									"EditSwitch",
-									"RegisterSwitch",
-									"OnLineClient",
-									"SaveSwitchForClient",
-									"LoadEditConnectMudule",
-									"GoZone",
-									"SiteMap",
-									"GetSubnet",
-									"GetStaticIp",
-									"FreePortForSwitch",
-									"AddEndPoint",
-									"DeleteEndPoint",
-									"AddPoint",
-									"PortInfo"
-								};
+			_accessDHCP = new HashSet<string> {
+				"RegisterSwitch",
+				"SaveSwitchForClient",
+				"LoadEditConnectMudule",
+				"SiteMap",
+				"GetSubnet",
+				"GetStaticIp",
+				"AddEndPoint",
+				"DeleteEndPoint",
+				"AddPoint",
+				"PortInfo"
+			};
 			return _accessDHCP.Contains(methodName) ? "DHCP" : string.Empty;
 		}
 

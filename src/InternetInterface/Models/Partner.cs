@@ -119,14 +119,22 @@ namespace InternetInterface.Models
 
 		public virtual IEnumerable<IPermission> Permissions()
 		{
-			if (AccesedPartner.Any(p => p.Match("SSI")))
-				return new IPermission[] {
-					new ControllerPermission(typeof(PaymentsController)),
-					new ControllerPermission(typeof(ChannelGroupsController)),
-					new ControllerPermission(typeof(InvoicesController)),
-					new ControllerPermission(typeof(ServicesController)),
-				};
-			return Enumerable.Empty<IPermission>();
+			var permissionMap = new Dictionary<string, IPermission[]> {
+				{"SSI", new IPermission[] {
+						new ControllerPermission(typeof(PaymentsController)),
+						new ControllerPermission(typeof(ChannelGroupsController)),
+						new ControllerPermission(typeof(InvoicesController)),
+						new ControllerPermission(typeof(ServicesController)),
+					}
+				},
+				{"DHCP", new IPermission[] {
+						new ControllerPermission(typeof(SwitchesController)),
+					}
+				}
+			};
+
+			var lookup = permissionMap.ToLookup(k => k.Key, k => k.Value);
+			return AccesedPartner.Select(p => lookup[p].SelectMany(i => i)).SelectMany(p => p);
 		}
 	}
 }
