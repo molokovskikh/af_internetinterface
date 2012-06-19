@@ -811,8 +811,8 @@ where r.`Label`= :LabelIndex;")
 			var updateClient = client.PhysicalClient;
 			var oldStatus = client.Status;
 
-			var iptv = client.ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof(IpTv));
-			var internet = client.ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof(Internet));
+			var iptv = client.Iptv;
+			var internet = client.Internet;
 
 			SetARDataBinder();
 			BindObjectInstance(iptv, "iptv", AutoLoadBehavior.NullIfInvalidKey);
@@ -880,8 +880,8 @@ where r.`Label`= :LabelIndex;")
 			var client = Client.Find(filter.ClientCode);
 
 			LoadBalanceData(grouped, client);
-			PropertyBag["iptv"] = client.ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof(IpTv));
-			PropertyBag["internet"] = client.ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof(Internet));
+			PropertyBag["iptv"] = client.Iptv;
+			PropertyBag["internet"] = client.Internet;
 			PropertyBag["grouped"] = grouped;
 			PropertyBag["BalanceText"] = string.Empty;
 			PropertyBag["services"] = Service.FindAll();

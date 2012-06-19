@@ -146,7 +146,7 @@ namespace InternetInterface.Models
 		[ValidateSelf]
 		public virtual void Validate(ErrorSummary errors)
 		{
-			var internet = Client.ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof(Internet));
+			var internet = Client.Internet;
 			if (internet.ActivatedByUser && Tariff == null) {
 				errors.RegisterErrorMessage("Tariff", "Нужно выбрать тариф");
 			}

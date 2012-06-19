@@ -39,8 +39,8 @@ namespace InternetInterface.Controllers
 			};
 			phisClient.Client = client;
 			client.PhysicalClient = phisClient;
-			var iptv = client.ClientServices.First(s => s.Service is IpTv);
-			var internet = client.ClientServices.First(s => s.Service is Internet);
+			var iptv = client.Iptv;
+			var internet = client.Internet;
 
 			BindObjectInstance(phisClient, "client", AutoLoadBehavior.Always);
 			BindObjectInstance(iptv, "iptv", AutoLoadBehavior.Always);
@@ -367,8 +367,8 @@ namespace InternetInterface.Controllers
 
 			PropertyBag["BalanceText"] = string.Empty;
 
-			PropertyBag["iptv"] = client.Client.ClientServices.First(s => s.Service is IpTv);
-			PropertyBag["internet"] = client.Client.ClientServices.First(s => s.Service is Internet);
+			PropertyBag["iptv"] = client.Client.Iptv;
+			PropertyBag["internet"] = client.Client.Internet;
 
 			PropertyBag["ChBrigad"] = 0;
 			PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClient>(new PhysicalClient());
