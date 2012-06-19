@@ -97,31 +97,7 @@ namespace InternetInterface.Test.Helpers
 
 		public static Client Client()
 		{
-			var physicalClient = new PhysicalClient {
-				Name = "Alexandr",
-				Surname = "Zolotarev",
-				Patronymic = "Alekseevich",
-				Street = "Stud",
-				House = 12,
-				Apartment = 1,
-				Entrance = 2,
-				Floor = 2,
-				PhoneNumber = "900-2008080",
-				Balance = 0,
-				Tariff = ActiveRecordLinqBase<Tariff>.Queryable.First(),
-				CaseHouse = "sdf",
-				City = "bebsk",
-				Email = "test@test.ru",
-			};
-			var client = new Client() {
-				PhysicalClient = physicalClient,
-				BeginWork = null,
-				Name =
-					String.Format("{0} {1} {2}", physicalClient.Surname, physicalClient.Name,
-						physicalClient.Patronymic),
-				Status = ActiveRecordBase<Status>.FindFirst()
-			};
-			return client;
+			return PhysicalClient().Client;
 		}
 	}
 }
