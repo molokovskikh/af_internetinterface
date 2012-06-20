@@ -32,5 +32,14 @@ namespace InternetInterface.Test.Unit
 			clientService.ActivatedByUser = false;
 			Assert.That(client.GetPrice(), Is.EqualTo(0));
 		}
+
+		[Test]
+		public void Deactivation()
+		{
+			clientService.Activate();
+			Assert.That(clientService.Activated, Is.True);
+			clientService.Deactivate();
+			Assert.That(clientService.Activated, Is.False);
+		}
 	}
 }

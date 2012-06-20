@@ -88,7 +88,7 @@ namespace InternetInterface.Test.Unit
 		public void Do_not_write_off_if_user_disabled_iptv()
 		{
 			var iptv = IpTv();
-			iptv.ActivatedByUser = false;
+			iptv.Channels.Clear();
 			Assert.That(client.GetPrice(), Is.EqualTo(100));
 		}
 
@@ -108,14 +108,14 @@ namespace InternetInterface.Test.Unit
 		{
 			Rent();
 			var iptv = IpTv();
-			iptv.ActivatedByUser = false;
+			iptv.Channels.Clear();
 
 			Assert.That(client.GetPrice(), Is.EqualTo(100));
 		}
 
 		private ClientService IpTv()
 		{
-			var clientService = new ClientService(client, new IpTv(), true) {Channels = {new ChannelGroup("Тестовый пакет", 300, 100)}};
+			var clientService = new ClientService(client, new IpTv()) {Channels = {new ChannelGroup("Тестовый пакет", 300, 100)}};
 			client.Activate(clientService);
 			return clientService;
 		}

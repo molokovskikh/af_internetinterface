@@ -7,12 +7,25 @@ namespace InternetInterface.Models.Services
 	[ActiveRecord(DiscriminatorValue = "Internet")]
 	public class Internet : Service
 	{
-		public override bool SupportUserActivation
+		public override bool CanDelete(ClientService assignedService)
 		{
-			get
-			{
-				return true;
-			}
+			return false;
+		}
+
+		public override bool CanDeactivate(ClientService assignedService)
+		{
+			if (!assignedService.ActivatedByUser
+				|| assignedService.Client.Disabled)
+				assignedService.Activated = false;
+			return false;
+		}
+
+		public override void Activate(ClientService assignedService)
+		{
+			if (assignedService.ActivatedByUser
+				&& !assignedService.Client.Disabled)
+				assignedService.Activated = true;
+			assignedService.Activated = true;
 		}
 
 		public override decimal GetPrice(ClientService assignedService)

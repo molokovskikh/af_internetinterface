@@ -40,6 +40,9 @@ namespace InternetInterface.Models.Services
 		[Property, ValidateRange(RangeValidationType.Decimal, 0, 10000), Description("Стоимость если подключена услуга \"Интернет\"")]
 		public virtual decimal CostPerMonthWithInternet { get; set; }
 
+		[Property, ValidateRange(RangeValidationType.Decimal, 0, 10000), Description("Стоимость подключения")]
+		public virtual decimal ActivationCost { get; set; }
+
 		public static List<ChannelGroup> All(ISession dbSession)
 		{
 			return dbSession.Query<ChannelGroup>().OrderBy(g => g.Name).ToList();

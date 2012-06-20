@@ -1,16 +1,13 @@
-п»їusing System;
+using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Xml;
 using System.Xml.Linq;
 using Castle.ActiveRecord;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 using NUnit.Framework;
 
-namespace InternetInterface.Test.Unit
+namespace InternetInterface.Test.Integration
 {
 	[TestFixture]
 	public class SmsFixture
@@ -44,16 +41,16 @@ namespace InternetInterface.Test.Unit
 				new SmsMessage() {
 					CreateDate = DateTime.Now,
 					ShouldBeSend = DateTime.Now.AddMinutes(5),
-					Text = "Р’Р°С€ Р±Р°Р»Р°РЅСЃ 100 СЂСѓР±Р»РµР№ (СЃРјСЃ СЃ Р·Р°РґРµСЂР¶РєРѕР№ 5 РјРёРЅСѓС‚)"
+					Text = "Ваш баланс 100 рублей (смс с задержкой 5 минут)"
 				},
 				new SmsMessage() {
 					CreateDate = DateTime.Now,
 					ShouldBeSend = DateTime.Now.AddMinutes(5),
-					Text = "Р’Р°С€ Р±Р°Р»Р°РЅСЃ 200 СЂСѓР±Р»РµР№ (СЃРјСЃ СЃ Р·Р°РґРµСЂР¶РєРѕР№ 5 РјРёРЅСѓС‚)"
+					Text = "Ваш баланс 200 рублей (смс с задержкой 5 минут)"
 				},
 				new SmsMessage() {
 					CreateDate = DateTime.Now,
-					Text = "РЎРјСЃ РѕС‚РїСЂР°РІР»РµРЅР° РЅРµРјРµРґР»РµРЅРЅРѕ"
+					Text = "Смс отправлена немедленно"
 				},
 				new SmsMessage() {
 					CreateDate = DateTime.Now,

@@ -152,6 +152,7 @@
     <Compile Include="Integration\MailerFixture.cs" />
     <Compile Include="Integration\PaymentFixture.cs" />
     <Compile Include="Integration\ServicesFixture.cs" />
+    <Compile Include="Integration\SmsFixture.cs" />
     <Compile Include="Integration\Tasks\BuildInvoiceTaskFixture.cs" />
     <Compile Include="Integration\Tasks\MailerFixture.cs" />
     <Compile Include="Integration\UserInfoControllerFixture.cs" />
@@ -169,7 +170,7 @@
     <Compile Include="Unit\PaymentFixture.cs" />
     <Compile Include="Unit\PhysicalClientFixture.cs" />
     <Compile Include="Unit\ServiceRequestFixture.cs" />
-    <Compile Include="Unit\SmsFixture.cs" />
+    <Compile Include="Unit\SetupFixture.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

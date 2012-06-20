@@ -64,7 +64,7 @@ namespace InternetInterface.Models
 		[BelongsTo]
 		public virtual Partner Activator { get; set; }
 
-		public virtual void DeleteFromClient()
+		private void DeleteFromClient()
 		{
 			if (Service.CanDelete(this)) {
 				//сторока ниже не работает, в тестt ServiceFixture.ActiveDeactive хотя должна, какой то бред

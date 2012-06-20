@@ -8,18 +8,25 @@ namespace InternetInterface.Models.Services
 	[ActiveRecord(DiscriminatorValue = "IpTv")]
 	public class IpTv : Service
 	{
-		public override bool SupportUserActivation
+		public override bool CanDelete(ClientService assignedService)
 		{
-			get
-			{
-				return true;
-			}
+			return false;
+		}
+
+		public override bool CanDeactivate(ClientService assignedService)
+		{
+			return assignedService.Client.Disabled;
+		}
+
+		public override void Activate(ClientService assignedService)
+		{
+			if (!assignedService.Client.Disabled)
+				base.Activate(assignedService);
 		}
 
 		public override decimal GetPrice(ClientService assignedService)
 		{
-			if (assignedService.Client.Disabled
-				|| !assignedService.ActivatedByUser)
+			if (assignedService.Client.Disabled)
 				return 0;
 
 			if (assignedService.Client.HaveService<Internet>())

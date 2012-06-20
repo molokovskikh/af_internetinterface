@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace InforoomInternet.Test.Integration
 {
 	[TestFixture]
-	class PrivateOfficeTest : BaseControllerTest 
+	public class PrivateOfficeFixture : BaseControllerTest
 	{
 		private PrivateOfficeController controller;
 
@@ -19,7 +19,7 @@ namespace InforoomInternet.Test.Integration
 		}
 
 		[Test]
-		public void ProvateOffice()
+		public void PrivateOffice()
 		{
 			using (new SessionScope())
 			{
@@ -27,6 +27,12 @@ namespace InforoomInternet.Test.Integration
 				Request.UserHostAddress = "192.168.200.1";
 				Assert.IsTrue(filter.Perform(ExecuteWhen.BeforeAction, controller.Context, controller, controller.ControllerContext));
 			}
+		}
+
+		[Test]
+		public void Write_off_for_channel_group_activation()
+		{
+			controller.Services();
 		}
 	}
 }

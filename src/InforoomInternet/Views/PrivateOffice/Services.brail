@@ -33,9 +33,6 @@
 			</div>
 			<h3>!{iptv.Service.HumanName}</h3>
 			<div>
-				${app.Edit("iptv.ActivatedByUser")}
-			</div>
-			<div>
 				${app.Label("iptv.Channels")}
 				<table>
 					<tr>
@@ -43,6 +40,7 @@
 						<th>Подключен</th>
 						<th>Стоимость</th>
 						<th>Стоимость если подключена услуга !{internet.Service.HumanName}</th>
+						<th>Стоимость подключения</th>
 					</tr>
 				<% for i, channel in enumerate(channels): %>
 					<tr>
@@ -52,6 +50,7 @@
 						</td>
 						<td>!{channel.CostPerMonth.ToString("C")}</td>
 						<td>!{channel.CostPerMonthWithInternet.ToString("C")}</td>
+						<td>!{channel.ActivationCost.ToString("C")}</td>
 					</tr>
 				<% end %>
 				</table>

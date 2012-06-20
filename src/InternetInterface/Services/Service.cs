@@ -36,14 +36,6 @@ namespace InternetInterface.Services
 			}
 		}
 
-		public virtual bool SupportUserActivation
-		{
-			get
-			{
-				return false;
-			}
-		}
-
 		public static Service GetByType(Type type)
 		{
 			return (Service)ActiveRecordMediator.FindFirst(type);
@@ -56,15 +48,13 @@ namespace InternetInterface.Services
 
 		public virtual void Activate(ClientService assignedService)
 		{
-			if (SupportUserActivation
-				&& assignedService.ActivatedByUser
-				&& !assignedService.Client.Disabled)
-				assignedService.Activated = true;
 			assignedService.Activated = true;
 		}
 
 		public virtual void CompulsoryDeactivate(ClientService assignedService)
-		{}
+		{
+			assignedService.Activated = false;
+		}
 
 		public virtual void PaymentClient(ClientService assignedService)
 		{}
@@ -81,10 +71,6 @@ namespace InternetInterface.Services
 
 		public virtual bool CanDeactivate(ClientService assignedService)
 		{
-			if (SupportUserActivation
-				&& (!assignedService.ActivatedByUser
-					|| assignedService.Client.Disabled))
-				assignedService.Activated = false;
 			return false;
 		}
 

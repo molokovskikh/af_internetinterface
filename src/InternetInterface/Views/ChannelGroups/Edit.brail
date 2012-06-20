@@ -20,5 +20,10 @@ ${FormHelper.FormTag("", {})}
 	${app.Edit("group.CostPerMonthWithInternet")}
 	${app.GetValidationError("group.CostPerMonthWithInternet")}
 </div>
+<div class=form-item>
+	${app.Label("group.ActivationCost")}
+	${app.Edit("group.ActivationCost")}
+	${app.GetValidationError("group.ActivationCost")}
+</div>
 ${FormHelper.Submit("Сохранить")}
 ${FormHelper.EndFormTag()}
