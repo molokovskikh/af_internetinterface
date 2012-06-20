@@ -63,22 +63,10 @@ namespace InternetInterface.Services
 			assignedService.Activated = true;
 		}
 
-		public virtual bool Deactivate(ClientService assignedService)
-		{
-			if (SupportUserActivation
-				&& (!assignedService.ActivatedByUser
-				|| assignedService.Client.Disabled))
-				assignedService.Activated = false;
-			return false;
-		}
-
-		public virtual void CompulsoryDeactivate(ClientService CService)
+		public virtual void CompulsoryDeactivate(ClientService assignedService)
 		{}
 
-		public virtual void EditClient(ClientService CService)
-		{}
-
-		public virtual void PaymentClient(ClientService CService)
+		public virtual void PaymentClient(ClientService assignedService)
 		{}
 
 		public virtual string GetParameters()
@@ -86,19 +74,28 @@ namespace InternetInterface.Services
 			return string.Empty;
 		}
 
+		public virtual decimal GetPrice(ClientService assignedService)
+		{
+			return Price;
+		}
+
+		public virtual bool CanDeactivate(ClientService assignedService)
+		{
+			if (SupportUserActivation
+				&& (!assignedService.ActivatedByUser
+					|| assignedService.Client.Disabled))
+				assignedService.Activated = false;
+			return false;
+		}
+
 		public virtual bool CanDelete(ClientService assignedService)
 		{
 			return true;
 		}
 
-		public virtual bool CanBlock(ClientService CService)
+		public virtual bool CanBlock(ClientService assignedService)
 		{
 			return true;
-		}
-
-		public virtual decimal GetPrice(ClientService assignedService)
-		{
-			return Price;
 		}
 
 		public virtual bool CanActivate(Client client)
@@ -118,12 +115,9 @@ namespace InternetInterface.Services
 
 		public virtual bool ActivatedForClient(Client client)
 		{
-			if (client.ClientServices != null)
-			{
-				var cs = client.ClientServices.FirstOrDefault(c => c.Service == this && c.Activated);
-				if (cs != null)
-					return true;
-			}
+			var cs = client.ClientServices.FirstOrDefault(c => c.Service == this && c.Activated);
+			if (cs != null)
+				return true;
 			return false;
 		}
 

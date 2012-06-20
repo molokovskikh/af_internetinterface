@@ -8,6 +8,7 @@ using Common.Tools;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Models;
 using NUnit.Framework;
+using Test.Support.log4net;
 
 namespace Billing.Test.Integration
 {
@@ -514,7 +515,6 @@ namespace Billing.Test.Integration
 			Interval interval;
 			decimal dayCount;
 			using (new SessionScope()) {
-				BaseBillingFixture.CreateAndSaveInternetSettings();
 				client = CreateClient();
 
 				client.PhysicalClient.Balance = client.PhysicalClient.Tariff.Price;
@@ -528,7 +528,7 @@ namespace Billing.Test.Integration
 				SetClientDate(interval, client);
 			}
 			using (new SessionScope()) {
-				client.Refresh();
+				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
 				Assert.That(Math.Round(Convert.ToDecimal(client.PhysicalClient.Balance), 2), Is.LessThan(0.00));
 			}
 		}

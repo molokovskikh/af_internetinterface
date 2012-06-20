@@ -397,7 +397,7 @@ namespace InternetInterface.Controllers
 						client,
 						AppealType.User);
 				}
-				catch (ServiceActiovationException e) {
+				catch (ServiceActivationException e) {
 					PropertyBag["errorMessage"] = e.Message;
 				}
 			}

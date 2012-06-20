@@ -64,7 +64,7 @@ namespace InternetInterface.Services
 						Client = client,
 						Date = DateTime.Now,
 						Sum = price/toDt,
-						Comment = string.Format("Абоненская плата за {0} из-за добровольной блокировки клиента",
+						Comment = string.Format("Абоненская плата за {0} из-за добровольной блокировки клиента123",
 							DateTime.Now.ToShortDateString())
 					}.Save();
 				}
@@ -79,7 +79,7 @@ namespace InternetInterface.Services
 				assignedService.Activated = true;
 				var evd = assignedService.EndWorkDate.Value;
 				assignedService.EndWorkDate = new DateTime(evd.Year, evd.Month, evd.Day);
-				ActiveRecordMediator.Update(assignedService);
+				ActiveRecordMediator.Save(assignedService);
 
 				if (client.FreeBlockDays <= 0)
 					new UserWriteOff {
@@ -93,50 +93,49 @@ namespace InternetInterface.Services
 			}
 		}
 
-		public override void CompulsoryDeactivate(ClientService service)
+		public override void CompulsoryDeactivate(ClientService assignedService)
 		{
-			var client = service.Client;
+			var client = assignedService.Client;
 			client.DebtDays = 0;
 			client.RatedPeriodDate = DateTime.Now;
-			client.Disabled = service.Client.PhysicalClient.Balance < 0;
-			client.ShowBalanceWarningPage = service.Client.PhysicalClient.Balance < 0;
+			client.Disabled = client.PhysicalClient.Balance < 0;
+			client.ShowBalanceWarningPage = client.PhysicalClient.Balance < 0;
 			client.AutoUnblocked = true;
 
-			if (service.Client.PhysicalClient.Balance > 0) {
+			if (assignedService.Client.PhysicalClient.Balance > 0) {
 				client.Disabled = false;
 				client.Status = Status.Find((uint)StatusType.Worked);
 			}
 
-			if (!client.PaidDay && service.Activated) {
-				service.Activated = false;
-				var toDt = client.GetInterval();
+			if (!client.PaidDay && assignedService.Activated) {
+				assignedService.Activated = false;
+
+				//что бы правильно вычислить стоимость нам нужно активировать
+				//услуги которые могут быть активированы после
+				//отключения добровольной блокировки
+				var forActivationCheck = client.ClientServices.Where(s => s.Service.Id != Id);
+				foreach (var clientService in forActivationCheck) {
+					clientService.Activate();
+				}
+				var daysInInterval = client.GetInterval();
 				var price = client.GetPrice();
-				if (price / toDt > 0) {
+				var sum = price/daysInInterval;
+				if (sum > 0) {
 					client.PaidDay = true;
-					new UserWriteOff {
-						Client = client,
-						Date = DateTime.Now,
-						Sum = price/toDt,
-						Comment =
-							string.Format("Абоненская плата за {0} из-за добровольной разблокировки клиента", DateTime.Now.ToShortDateString())
-					}.Save();
+					var comment = string.Format("Абоненская плата за {0} из-за добровольной разблокировки клиента", DateTime.Now.ToShortDateString());
+					ActiveRecordMediator.Save(new UserWriteOff(client, sum, comment));
 				}
 			}
 
-			service.Activated = false;
-			ActiveRecordMediator.Update(service);
-			client.Update();
+			assignedService.Activated = false;
+			ActiveRecordMediator.Update(assignedService);
+			ActiveRecordMediator.Update(client);
 		}
 
-		public override bool Deactivate(ClientService assignedService)
+		public override bool CanDeactivate(ClientService assignedService)
 		{
-			if ((assignedService.EndWorkDate == null && assignedService.Client.PhysicalClient.Balance < 0) ||
-				(assignedService.EndWorkDate != null && (SystemTime.Now().Date >= assignedService.EndWorkDate.Value)))
-			{
-				CompulsoryDeactivate(assignedService);
-				return true;
-			}
-			return false;
+			return (assignedService.EndWorkDate == null && assignedService.Client.PhysicalClient.Balance < 0)
+				|| (assignedService.EndWorkDate != null && SystemTime.Now().Date >= assignedService.EndWorkDate.Value);
 		}
 
 		//Если раскоментировать этот кусочек, будет введено ограничение - использовать услугу можно будет только после истичения 45 дней с момента последней активации.
@@ -160,9 +159,10 @@ namespace InternetInterface.Services
 		public override void WriteOff(ClientService assignedService)
 		{
 			var client = assignedService.Client;
-			if (assignedService.Activated && client.FreeBlockDays > 0 &&
-				assignedService.BeginWorkDate.Value.Date != SystemTime.Now().Date &&
-				assignedService.EndWorkDate.Value.Date != SystemTime.Now().Date) {
+			if (assignedService.Activated
+				&& client.FreeBlockDays > 0
+				&& assignedService.BeginWorkDate.Value.Date != SystemTime.Today()
+				&& assignedService.EndWorkDate.Value.Date != SystemTime.Today()) {
 				client.FreeBlockDays --;
 				client.Update();
 			}

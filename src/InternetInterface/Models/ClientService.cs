@@ -66,11 +66,12 @@ namespace InternetInterface.Models
 
 		public virtual void DeleteFromClient()
 		{
-			if (Service.CanDelete(this))
-			{
+			if (Service.CanDelete(this)) {
 				//сторока ниже не работает, в тестt ServiceFixture.ActiveDeactive хотя должна, какой то бред
-				//Client.ClientServices.Remove(this);
-				Client.ClientServices.Remove(Client.ClientServices.First(c => c.Id == Id));
+				if (Id == 0)
+					Client.ClientServices.Remove(this);
+				else
+					Client.ClientServices.Remove(Client.ClientServices.First(c => c.Id == Id));
 				Client.Save();
 			}
 		}
@@ -82,8 +83,12 @@ namespace InternetInterface.Models
 
 		public virtual void Deactivate()
 		{
-			if (Service.Deactivate(this))
+			if (Service.CanDeactivate(this)) {
 				DeleteFromClient();
+				//перед деактивацией, услугу нужно удалить из
+				//списка услуг клиента тк она может влиять на цену
+				Service.CompulsoryDeactivate(this);
+			}
 		}
 
 		public virtual void CompulsoryDeactivate()

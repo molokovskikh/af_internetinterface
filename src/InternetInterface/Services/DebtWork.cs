@@ -45,17 +45,17 @@ namespace InternetInterface.Services
 			return payTar && CanActivate(client);
 		}
 
-		public override void PaymentClient(ClientService service)
+		public override void PaymentClient(ClientService assignedService)
 		{
-			if (service.Client.PhysicalClient.Balance > 0)
-				service.Deactivate();
+			if (assignedService.Client.PhysicalClient.Balance > 0)
+				assignedService.Deactivate();
 		}
 
-		public override bool CanBlock(ClientService service)
+		public override bool CanBlock(ClientService assignedService)
 		{
-			if (service.EndWorkDate == null)
+			if (assignedService.EndWorkDate == null)
 				return false;
-			return service.EndWorkDate.Value < SystemTime.Now();
+			return assignedService.EndWorkDate.Value < SystemTime.Now();
 		}
 
 		public override bool CanDelete(ClientService assignedService)
@@ -73,31 +73,25 @@ namespace InternetInterface.Services
 			return false;
 		}
 
-		public override void CompulsoryDeactivate(ClientService service)
+		public override void CompulsoryDeactivate(ClientService assignedService)
 		{
-			var client = service.Client;
+			var client = assignedService.Client;
 			client.Disabled = true;
 			client.AutoUnblocked = true;
 			client.Status = Status.Find((uint)StatusType.NoWorked);
 			client.Update();
-			service.Activated = false;
-			ActiveRecordMediator.Update(service);
+			assignedService.Activated = false;
+			ActiveRecordMediator.Update(assignedService);
 		}
 
-		public override bool Deactivate(ClientService assignedService)
+		public override bool CanDeactivate(ClientService assignedService)
 		{
-			if (assignedService.Activated && assignedService.EndWorkDate.Value < SystemTime.Now())
-			{
-				CompulsoryDeactivate(assignedService);
-				return true;
-			}
-			return !assignedService.Activated;
+			return assignedService.Activated && assignedService.EndWorkDate.Value < SystemTime.Now();
 		}
 
 		public override void Activate(ClientService assignedService)
 		{
-			if ((!assignedService.Activated && CanActivate(assignedService)))
-			{
+			if ((!assignedService.Activated && CanActivate(assignedService))) {
 				var client = assignedService.Client;
 				client.Disabled = false;
 				client.RatedPeriodDate = SystemTime.Now();

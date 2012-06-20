@@ -150,6 +150,7 @@ namespace Billing.Test.Integration
 		public void SetClientDate(Interval rd, Client client)
 		{
 			using (new SessionScope()) {
+				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
 				client.RatedPeriodDate = rd.dtFrom;
 				client.Update();
 			}

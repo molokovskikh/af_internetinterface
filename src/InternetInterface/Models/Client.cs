@@ -302,7 +302,7 @@ namespace InternetInterface.Models
 
 		public virtual string ChangePhysicalClientPassword()
 		{
-			var pass =  CryptoPass.GeneratePassword();
+			var pass = CryptoPass.GeneratePassword();
 			PhysicalClient.Password = CryptoPass.GetHashString(pass);
 			PhysicalClient.Update();
 			return pass;
@@ -359,12 +359,9 @@ namespace InternetInterface.Models
 
 		public virtual bool CanBlock()
 		{
-			if (ClientServices != null) {
-				var cServ = ClientServices.FirstOrDefault(c => NHibernateUtil.GetClass(c.Service) == typeof (DebtWork));
-				if (cServ != null && !cServ.Service.CanBlock(cServ)) {
-					return false;
-				}
-			}
+			var cServ = ClientServices.FirstOrDefault(c => NHibernateUtil.GetClass(c.Service) == typeof (DebtWork));
+			if (cServ != null && !cServ.Service.CanBlock(cServ))
+				return false;
 
 			if (Disabled || PhysicalClient.Balance >= 0)
 				return false;
@@ -535,7 +532,7 @@ Id))
 		public virtual void Activate(ClientService service)
 		{
 			if (ClientServices.Select(c => c.Service).Contains(service.Service))
-				throw new ServiceActiovationException("Невозможно использовать данную услугу");
+				throw new ServiceActivationException("Невозможно использовать данную услугу");
 			ClientServices.Add(service);
 			service.Activate();
 		}
@@ -557,9 +554,9 @@ Id))
 		}
 	}
 
-	public class ServiceActiovationException : Exception
+	public class ServiceActivationException : Exception
 	{
-		public ServiceActiovationException(string message) : base(message)
+		public ServiceActivationException(string message) : base(message)
 		{}
 	}
 }
