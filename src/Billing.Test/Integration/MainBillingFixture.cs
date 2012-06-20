@@ -147,10 +147,9 @@ namespace Billing.Test.Integration
 			PaymentsForAgent.DeleteAll();
 		}
 
-		public void SetClientDate(Interval rd)
+		public void SetClientDate(Interval rd, Client client)
 		{
 			using (new SessionScope()) {
-				var client = Client.FindFirst();
 				client.RatedPeriodDate = rd.dtFrom;
 				client.Update();
 			}

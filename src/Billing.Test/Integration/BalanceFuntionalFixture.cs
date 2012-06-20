@@ -111,8 +111,6 @@ namespace Billing.Test.Integration
 		{
 			Client client;
 			using (new SessionScope()) {
-				PrepareTest();
-				SystemTime.Reset();
 				client = CreateClient();
 				client.Save();
 				var lawyerPerson = new LawyerPerson {
@@ -176,7 +174,7 @@ namespace Billing.Test.Integration
 			}
 			billing.Compute();
 			using (new SessionScope()) {
-				writeOff = WriteOff.Queryable.Where(w => w.Client == client).FirstOrDefault();
+				writeOff = WriteOff.Queryable.FirstOrDefault(w => w.Client == client);
 				Assert.That(writeOff, !Is.Null);
 				writeOff.Delete();
 				new Payment {
@@ -192,7 +190,7 @@ namespace Billing.Test.Integration
 			}
 			var ishBalance = 0m;
 			using (new SessionScope()) {
-				writeOff = WriteOff.Queryable.Where(w => w.Client == client).FirstOrDefault();
+				writeOff = WriteOff.Queryable.FirstOrDefault(w => w.Client == client);
 				client.Refresh();
 				ishBalance = client.PhysicalClient.Balance;
 				Assert.That(writeOff, Is.Null);
@@ -203,7 +201,7 @@ namespace Billing.Test.Integration
 			runTh.Start();
 			Thread.Sleep(5000);
 			using (new SessionScope()) {
-				writeOff = WriteOff.Queryable.Where(w => w.Client == client).FirstOrDefault();
+				writeOff = WriteOff.Queryable.FirstOrDefault(w => w.Client == client);
 				client.Refresh();
 				Assert.That(writeOff, !Is.Null);
 				Assert.That(client.PhysicalClient.Balance, Is.EqualTo(Math.Round(ishBalance + 100 - client.GetPrice()/client.GetInterval(), 2)));
@@ -337,10 +335,13 @@ namespace Billing.Test.Integration
 		public void FindDebt()
 		{
 			var count = 0;
-			var client = BaseBillingFixture.CreateAndSaveClient("testClient1", false, 500000);
-			client.Disabled = false;
-			client.RatedPeriodDate = new DateTime(2011, 6, 9, 15, 00, 9);
-			client.Save();
+			Client client;
+			using(new SessionScope()) {
+				client = BaseBillingFixture.CreateAndSaveClient("testClient1", false, 500000);
+				client.Disabled = false;
+				client.RatedPeriodDate = new DateTime(2011, 6, 9, 15, 00, 9);
+				client.Save();
+			}
 			var tarif = client.PhysicalClient.Tariff;
 			tarif.Price = 500;
 			tarif.Update();
@@ -468,7 +469,6 @@ namespace Billing.Test.Integration
 		[Test]
 		public void LawyerPersonTest()
 		{
-			PrepareTest();
 			LawyerPerson lPerson;
 			Client client;
 			using (new SessionScope()) {
@@ -515,7 +515,6 @@ namespace Billing.Test.Integration
 			decimal dayCount;
 			using (new SessionScope()) {
 				BaseBillingFixture.CreateAndSaveInternetSettings();
-				PrepareTest();
 				client = CreateClient();
 
 				client.PhysicalClient.Balance = client.PhysicalClient.Tariff.Price;
@@ -526,7 +525,7 @@ namespace Billing.Test.Integration
 			}
 			for (var i = 0; i < dayCount; i++) {
 				interval.dtTo = interval.dtTo.AddDays(1);
-				SetClientDate(interval);
+				SetClientDate(interval, client);
 			}
 			using (new SessionScope()) {
 				client.Refresh();
@@ -537,12 +536,6 @@ namespace Billing.Test.Integration
 		[Test]
 		public void RealTest()
 		{
-			SystemTime.Reset();
-			using (var t = new TransactionScope(OnDispose.Rollback)) {
-				InternetSettings.DeleteAll();
-				t.VoteCommit();
-				BaseBillingFixture.CreateAndSaveInternetSettings();
-			}
 			using (var t = new TransactionScope(OnDispose.Rollback)) {
 				var b = new MainBilling();
 				b.Run();
@@ -562,28 +555,25 @@ namespace Billing.Test.Integration
 				Name = "Complex_tariff",
 				Description = "Complex_tariff"
 			};
-			var client = new Client() {
-				Name = "TestLawyer",
-				BeginWork = DateTime.Now.AddMonths(-1),
-				RatedPeriodDate = DateTime.Now,
-				PhysicalClient = new PhysicalClient {
-					Tariff = tariff,
-					Balance = 1000
-				}
-			};
-			client.Save();
-			client.PhysicalClient.Save();
-			tariff.Save();
+
+			Client client;
+			using(new SessionScope()) {
+				client = BaseBillingFixture.CreateAndSaveClient("testClient1", false, 100);
+				client.PhysicalClient.Tariff = tariff;
+				client.BeginWork = DateTime.Now.AddMonths(-1);
+				client.RatedPeriodDate = DateTime.Now;
+
+				ActiveRecordMediator.Save(tariff);
+				ActiveRecordMediator.Save(client);
+			}
+
 			billing.Compute();
 			using (new SessionScope()) {
 				var writeOffs = WriteOff.Queryable.Where(w => w.Client == client).ToList();
 				Assert.That(writeOffs.Count, Is.EqualTo(1));
 				Assert.That(writeOffs[0].WriteOffSum, Is.GreaterThan(10));
-				WriteOff.DeleteAll();
-				Client.DeleteAll();
 			}
 		}
-
 
 		/// <summary>
 		/// Следить за состоянием client.DebtDays;
@@ -591,14 +581,9 @@ namespace Billing.Test.Integration
 		[Test]
 		public void IntervalTest()
 		{
-			BaseBillingFixture.CreateAndSaveInternetSettings();
-			foreach (var writeOff in WriteOff.FindAll()) {
-				writeOff.Delete();
-			}
-			foreach (var clientse in Client.FindAll()) {
-				clientse.Delete();
-			}
-			var client = CreateClient();
+			Client client;
+			using(new SessionScope())
+				client = CreateClient();
 
 			var dates = new List<List<Interval>> {
 				new List<Interval> {
@@ -642,10 +627,10 @@ namespace Billing.Test.Integration
 					client.Update();
 				}
 				for (int i = 0; i < date.Count - 1; i++) {
-					SetClientDate(date[i]);
+					SetClientDate(date[i], client);
 					using (new SessionScope()) {
 						client.Refresh();
-						Assert.That(date[i + 1].GetInterval(), Is.EqualTo(client.GetInterval()));
+						Assert.That(date[i + 1].GetInterval(), Is.EqualTo(client.GetInterval()), date[i + 1].ToString());
 					}
 				}
 			}

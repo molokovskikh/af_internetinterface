@@ -30,7 +30,6 @@ namespace Billing.Test.Integration
 			};
 
 			_client.Activate(service);
-
 			return service;
 		}
 
@@ -282,7 +281,6 @@ namespace Billing.Test.Integration
 		public void DebtWorkTestPartner()
 		{
 			using (new SessionScope()) {
-				PrepareTest();
 				var client = CreateClient();
 				const int countDays = 10;
 				var physClient = client.PhysicalClient;
@@ -320,7 +318,6 @@ namespace Billing.Test.Integration
 			ClientService service;
 			using (new SessionScope()) {
 
-				PrepareTest();
 				client = CreateClient();
 
 				client.AutoUnblocked = true;

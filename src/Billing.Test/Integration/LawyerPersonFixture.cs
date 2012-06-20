@@ -18,8 +18,6 @@ namespace Billing.Test.Integration
 		public void Up()
 		{
 			using (new SessionScope()) {
-				PrepareTest();
-
 				var lPerson = new LawyerPerson {
 					Balance = -2000,
 					Tariff = 1000m,
