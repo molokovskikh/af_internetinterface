@@ -63,11 +63,6 @@ namespace InforoomInternet
 
 		void Session_End(object sender, EventArgs e) { }
 
-		void Application_End(object sender, EventArgs e)
-		{
-			ClientData.StopClearing();
-		}
-
 		public void Configure(IMonoRailConfiguration configuration) {
 			configuration.ControllersConfig.AddAssembly("InforoomInternet");
 			configuration.ViewComponentsConfig.Assemblies = new[] {"InforoomInternet", "Common.Web.Ui"};

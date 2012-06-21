@@ -40,7 +40,12 @@ namespace InforoomInternet.Models
 
 		public RepeatableEntity(Action action, int delay)
 			: base(action, delay)
+		{}
+
+		public override void Start()
 		{
+			base.Start();
+			Thread.IsBackground = true;
 		}
 
 		public override void Error(Exception e)
