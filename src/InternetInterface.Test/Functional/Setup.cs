@@ -9,7 +9,9 @@ using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Common.MySql;
 using Common.Web.Ui.ActiveRecordExtentions;
+using Common.Web.Ui.Helpers;
 using InternetInterface.Models;
+using NHibernate.Linq;
 using NUnit.Framework;
 using Test.Support.Web;
 using WatiN.Core;
@@ -47,24 +49,29 @@ namespace InternetInterface.Test.Functional
 					partner.Save();
 				}
 
-				if (!ActiveRecordLinqBase<Tariff>.Queryable.Any())
-					new Tariff("Тариф для тестирования", 500).Save();
+				ArHelper.WithSession(session => {
+					if (!session.Query<Tariff>().Any())
+						session.Save(new Tariff("Тариф для тестирования", 500));
 
-				if (!ActiveRecordLinqBase<Brigad>.Queryable.Any()) {
-					new Brigad("Бригада для тестирования").Save();
-					new Partner {
-						Name = "Сервисный инженер для тестирования",
-						Login = "test_serviceman",
-						Categorie = UserCategorie.Queryable.First(c => c.ReductionName == "service")
-					}.Save();
-				}
+					if (!ActiveRecordLinqBase<Brigad>.Queryable.Any()) {
+						new Brigad("Бригада для тестирования").Save();
+						new Partner {
+							Name = "Сервисный инженер для тестирования",
+							Login = "test_serviceman",
+							Categorie = UserCategorie.Queryable.First(c => c.ReductionName == "service")
+						}.Save();
+					}
 
-				if (!ActiveRecordLinqBase<Zone>.Queryable.Any()) {
-					var zone = new Zone {
-						Name = "Тестовая зона"
-					};
-					ActiveRecordMediator.Save(zone);
-				}
+					if (!ActiveRecordLinqBase<Zone>.Queryable.Any()) {
+						var zone = new Zone {
+							Name = "Тестовая зона"
+						};
+						ActiveRecordMediator.Save(zone);
+					}
+
+					if (!session.Query<House>().Any())
+						session.Save(new House("Тестовая улица", 1));
+				});
 			}
 		}
 

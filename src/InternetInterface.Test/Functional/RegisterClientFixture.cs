@@ -18,8 +18,6 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void RegisterClientTest()
 		{
-			session.Save(new House("Тестовая улица", 1));
-
 			Open("Register/RegisterClient.rails");
 			Assert.That(browser.Text, Is.StringContaining("Форма регистрации"));
 			Assert.That(browser.Text, Is.StringContaining("Личная информация"));
