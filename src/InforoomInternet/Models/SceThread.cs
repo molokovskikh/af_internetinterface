@@ -91,7 +91,7 @@ namespace InforoomInternet.Models
 			_mutex.WaitOne();
 			try
 			{
-				return _info.Where(i => i.Client == client).FirstOrDefault();
+				return _info.FirstOrDefault(i => i.Client == client);
 			}
 			finally {
 				_mutex.ReleaseMutex();
@@ -103,7 +103,7 @@ namespace InforoomInternet.Models
 			_mutex.WaitOne();
 			try
 			{
-				var info = _info.Where(i => i.Client == client).FirstOrDefault();
+				var info = _info.FirstOrDefault(i => i.Client == client);
 				if (info == null)
 				{
 					_info.Add(new UnknownClientInfo
