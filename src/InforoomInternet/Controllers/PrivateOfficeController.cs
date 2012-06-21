@@ -183,12 +183,12 @@ namespace InforoomInternet.Controllers
 					return;
 				}
 
-				SetARDataBinder(AutoLoadBehavior.NullIfInvalidKey);
+				SetSmartBinder(AutoLoadBehavior.NullIfInvalidKey);
 				BindObjectInstance(client, "client", "PhysicalClient.Tariff");
 				BindObjectInstance(internet, "internet", "ActivatedByUser");
 				//в ручную очищаем список каналов что бы биндинг мог их заполнить
-				iptv.Channels.Clear();
-				BindObjectInstance(iptv, "iptv", "ActivatedByUser,Channels");
+				var updatedChannels = BindObject<List<ChannelGroup>>("iptv.Channels");
+				iptv.UpdateChannels(updatedChannels);
 				if (IsValid(client.PhysicalClient)) {
 					DbSession.SaveOrUpdate(client);
 					Notify("Сохранено");

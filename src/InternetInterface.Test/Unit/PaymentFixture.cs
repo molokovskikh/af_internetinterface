@@ -19,8 +19,6 @@ namespace InternetInterface.Test.Unit
 			};
 			physicalClient = client.PhysicalClient;
 			physicalClient.Client = client;
-
-			InitializeContent.GetAdministrator = () => new Partner();
 		}
 
 		[Test]

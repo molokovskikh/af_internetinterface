@@ -111,5 +111,19 @@ namespace InternetInterface.Models
 		{
 			Service.WriteOff(this);
 		}
+
+		public virtual void UpdateChannels(List<ChannelGroup> channelGroups)
+		{
+			foreach (var channelGroup in channelGroups.Except(Channels).ToArray()) {
+				Channels.Add(channelGroup);
+				Client.UserWriteOffs.Add(new UserWriteOff(Client,
+					channelGroup.ActivationCost,
+					String.Format("Подключение пакета каналов {0}", channelGroup.Name),
+					false));
+			}
+			foreach (var channelGroup in Channels.Except(channelGroups).ToArray()) {
+				Channels.Remove(channelGroup);
+			}
+		}
 	}
 }

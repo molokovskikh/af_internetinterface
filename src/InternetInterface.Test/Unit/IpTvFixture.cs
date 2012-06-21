@@ -113,6 +113,18 @@ namespace InternetInterface.Test.Unit
 			Assert.That(client.GetPrice(), Is.EqualTo(100));
 		}
 
+		[Test]
+		public void Writeoff_on_update_channels()
+		{
+			IpTv();
+
+			var channel = new ChannelGroup("Тестовый пакет", 300, 100) {ActivationCost = 30};
+			client.Iptv.UpdateChannels(new List<ChannelGroup> {channel});
+			Assert.That(client.UserWriteOffs.Count, Is.EqualTo(1));
+			Assert.That(client.UserWriteOffs[0].Sum, Is.EqualTo(30));
+			Assert.That(client.Iptv.Channels, Is.EquivalentTo(new []{ channel }));
+		}
+
 		private ClientService IpTv()
 		{
 			var clientService = new ClientService(client, new IpTv()) {Channels = {new ChannelGroup("Тестовый пакет", 300, 100)}};

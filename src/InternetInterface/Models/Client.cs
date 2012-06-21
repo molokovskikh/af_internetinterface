@@ -25,6 +25,7 @@ namespace InternetInterface.Models
 	{
 		public Client()
 		{
+			UserWriteOffs = new List<UserWriteOff>();
 			ClientServices = new List<ClientService>();
 			Payments = new List<Payment>();
 			Contacts = new List<Contact>();
@@ -144,7 +145,7 @@ namespace InternetInterface.Models
 		[HasMany(ColumnKey = "Client", OrderBy = "WriteOffDate", Lazy = true)]
 		public virtual IList<WriteOff> WriteOffs { get; set; }
 
-		[HasMany(ColumnKey = "Client", OrderBy = "Date", Lazy = true)]
+		[HasMany(ColumnKey = "Client", OrderBy = "Date", Lazy = true, Cascade = ManyRelationCascadeEnum.SaveUpdate)]
 		public virtual IList<UserWriteOff> UserWriteOffs { get; set; }
 
 		[HasMany(ColumnKey = "Client", OrderBy = "Date")]

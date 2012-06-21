@@ -17,8 +17,6 @@ namespace InternetInterface.Test.Unit
 			request.Contact = "950-5001055";
 			request.Client = new Client();
 			request.Performer = new Partner();
-
-			InitializeContent.GetAdministrator = () => new Partner();
 		}
 
 		[Test]

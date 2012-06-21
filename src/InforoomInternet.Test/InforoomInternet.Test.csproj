@@ -120,7 +120,7 @@
     <Compile Include="Functional\PrivateOfficeFixture.cs" />
     <Compile Include="Functional\Setup.cs" />
     <Compile Include="Integration\MainControllerFixture.cs" />
-    <Compile Include="Integration\PrivateOffice.cs" />
+    <Compile Include="Integration\PrivateOfficeControllerFixture.cs" />
     <Compile Include="Integration\SceFuxture.cs" />
     <Compile Include="Integration\TariffFixture.cs" />
     <Compile Include="Setup.cs" />
