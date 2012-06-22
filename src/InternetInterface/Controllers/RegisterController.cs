@@ -18,27 +18,25 @@ namespace InternetInterface.Controllers
 	public class RegisterController : BaseController
 	{
 		[AccessibleThrough(Verb.Post)]
-		public void RegisterClient([DataBind("ChangedBy")]ChangeBalaceProperties changeProperties,
-			string balanceText, uint status, uint BrigadForConnect,
+		public void RegisterClient(decimal balanceText, uint status, uint BrigadForConnect,
 			[DataBind("ConnectInfo")]ConnectInfo ConnectInfo, bool VisibleRegisteredInfo, uint house_id,
 			uint requestID)
 		{
 			SetARDataBinder();
 
 			var phisClient = new PhysicalClient();
+			phisClient.Balance = balanceText;
 			var defaultServices = new Service[] {
 					DbSession.Query<Internet>().First(),
 					DbSession.Query<IpTv>().First(),
 				};
-			var client = new Client(ClientType.Phisical, defaultServices) {
+			var client = new Client(phisClient, defaultServices) {
 				WhoRegistered = InitializeContent.Partner,
 				WhoRegisteredName = InitializeContent.Partner.Name,
 				Status = Status.Find((uint) StatusType.BlockedAndNoConnected),
 				PhysicalClient = phisClient,
 				Recipient = Recipient.Queryable.FirstOrDefault(r => r.INN == "3666152146")
 			};
-			phisClient.Client = client;
-			client.PhysicalClient = phisClient;
 			var iptv = client.Iptv;
 			var internet = client.Internet;
 
@@ -49,18 +47,9 @@ namespace InternetInterface.Controllers
 			PropertyBag["iptv"] = iptv;
 			PropertyBag["internet"] = internet;
 
-			//if (changeProperties.IsForTariff()) {
-			//    phisClient.Balance = Tariff.Find(tariff).Price;
-			//}
-			if (changeProperties.IsOtherSumm()) {
-				phisClient.Balance = Convert.ToDecimal(balanceText);
-			}
-			var password = CryptoPass.GeneratePassword();
-			phisClient.Password = password;
-			if (!CategorieAccessSet.AccesPartner("SSI")) {
-				phisClient.ConnectSum = 700;
+			phisClient.Password = CryptoPass.GeneratePassword();
+			if (!CategorieAccessSet.AccesPartner("SSI"))
 				status = 1;
-			}
 			if (!CategorieAccessSet.AccesPartner("DHCP")) {
 				ConnectInfo.Port = null;
 			}
@@ -126,7 +115,7 @@ namespace InternetInterface.Controllers
 				}
 				Flash["_client"] = client;
 				Flash["WhoConnected"] = client.WhoConnected;
-				Flash["Password"] = password;
+				Flash["Password"] = CryptoPass.GeneratePassword();
 				Flash["Client"] = phisClient;
 				Flash["AccountNumber"] = client.Id.ToString("00000");
 				Flash["ConnectSumm"] = phisClient.ConnectSum;
@@ -164,7 +153,6 @@ namespace InternetInterface.Controllers
 					ConnectInfo.Port = string.Empty;
 				PropertyBag["ConnectInfo"] = ConnectInfo;
 				PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClient>(phisClient);
-				PropertyBag["ChangeBy"] = changeProperties;
 			}
 		}
 
@@ -356,7 +344,7 @@ namespace InternetInterface.Controllers
 
 		public void SendRegisterParam(PhysicalClient client)
 		{
-			var internalClient = new Client(ClientType.Phisical, new Service[] {
+			var internalClient = new Client(client, new Service[] {
 				DbSession.Query<Internet>().First(),
 				DbSession.Query<IpTv>().First(),
 			});
@@ -374,7 +362,6 @@ namespace InternetInterface.Controllers
 			PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClient>(new PhysicalClient());
 
 			PropertyBag["Applying"] = "false";
-			PropertyBag["ChangeBy"] = new ChangeBalaceProperties { ChangeType = TypeChangeBalance.OtherSumm };
 			PropertyBag["BalanceText"] = 0;
 			PropertyBag["ConnectInfo"] = new ClientConnectInfo();
 		}
@@ -385,6 +372,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
 			PropertyBag["Statuss"] = Status.FindAllSort();
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
+			PropertyBag["channels"] = ChannelGroup.All(DbSession);
 			PropertyBag["Switches"] = NetworkSwitches.All(DbSession);
 		}
 

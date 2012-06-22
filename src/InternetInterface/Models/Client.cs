@@ -32,10 +32,15 @@ namespace InternetInterface.Models
 			Endpoints = new List<ClientEndpoint>();
 		}
 
-		public Client(ClientType type, IEnumerable<Service> defaultServices)
+		public Client(PhysicalClient client, IEnumerable<Service> defaultServices)
 			: this()
 		{
-			Type = type;
+			PhysicalClient = client;
+			PhysicalClient.Client = this;
+			if (!CategorieAccessSet.AccesPartner("SSI")) {
+				PhysicalClient.ConnectSum = 700;
+			}
+			Type = ClientType.Phisical;
 			SendSmsNotifocation = true;
 			FreeBlockDays = 28;
 			YearCycleDate = DateTime.Now;

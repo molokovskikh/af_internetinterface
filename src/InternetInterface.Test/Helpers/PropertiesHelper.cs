@@ -13,17 +13,6 @@ namespace InternetInterface.Test.Helpers
 		}
 	}
 
-	class ChangeBalacePropertiesHelper : ChangeBalaceProperties
-	{
-		public static ChangeBalaceProperties CreateUserSearchProperties()
-		{
-			return new ChangeBalaceProperties
-			{
-				ChangeType = TypeChangeBalance.ForTariff
-			};
-		}
-	}
-
 	class ConnectedTypePropertiesHelper : ConnectedTypeProperties
 	{
 		public static ConnectedTypeProperties CreateUserSearchProperties()

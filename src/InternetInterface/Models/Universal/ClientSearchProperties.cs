@@ -84,21 +84,6 @@ namespace InternetInterface.Models
 		}
 	}
 
-	public class ChangeBalaceProperties
-	{
-		public TypeChangeBalance ChangeType { get; set; }
-
-		public bool IsForTariff()
-		{
-			return ChangeType == TypeChangeBalance.ForTariff;
-		}
-
-		public bool IsOtherSumm()
-		{
-			return ChangeType == TypeChangeBalance.OtherSumm;
-		}
-	}
-
 	public class AppealTypeProperties
 	{
 		public AppealTypeProperties()

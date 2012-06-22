@@ -897,7 +897,6 @@ where r.`Label`= :LabelIndex;")
 			                              	? "Переназначить в график"
 			                              	: "Назначить в график";
 
-			PropertyBag["ChangeBy"] = new ChangeBalaceProperties { ChangeType = TypeChangeBalance.OtherSumm };
 			PropertyBag["UserInfo"] = true;
 			PropertyBag["CallLogs"] = UnresolvedCall.LastCalls;
 			PropertyBag["Contacts"] =

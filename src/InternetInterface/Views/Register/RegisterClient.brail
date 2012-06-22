@@ -1,56 +1,50 @@
-﻿
+﻿<% import System.Globalization %>
+
+${app.Asset("knockout-2.1.0.js")}
+${app.Asset("registration.js")}
+
 <script type="text/javascript">
 
-var cost = [];
-
-function ShowMinPrice() {
-
-	$("#deldiv").remove();
-
-	<% for i, Tariff in enumerate(Tariffs):%>
-		cost[${Tariff.Id}] = ${Tariff.Price};
-	<% end %>
-
-	var tariffCost = cost[$('#client_Tariff_Id').val()];
-	var connectCost = $('#ConnectSumm').val();
-	$("#my-div").append('<div id="deldiv" style="color:green;"> Минимальная сумма к зачислению: '
-		+ tariffCost + ' + ' + connectCost + ' = '
-		+ (Number(tariffCost) + Number(connectCost)) + '</div>');
-}
-
-function ChBalace() {
-	if (!("${PartnerAccessSet.AccesPartner("SSI")}" == "True"))
-		$('#BalanceText').val(Number(cost[$('#client_Tariff_Id').val()]) + Number($('#ConnectSumm').val()));
-}
-
 $(function() {
-	$('#client_Tariff_Id').change(function () {
-		ShowMinPrice();
-		ChBalace();
-	});
+	var viewModel = new AppViewModel();
+	viewModel.internetActivated(${internet.ActivatedByUser.ToString().ToLower()});
+	viewModel.tariff(${?client.Tariff.Id});
+	viewModel.connectSum(${client.ConnectSum.ToString(CultureInfo.InvariantCulture)});
+	viewModel.channels = [
+			<% for channel in channels: %>
+				{
+					id: ${channel.Id},
+					name: "${channel.Name}",
+					cost: ${channel.CostPerMonth.ToString(CultureInfo.InvariantCulture)},
+					costWithInternet: ${channel.CostPerMonthWithInternet.ToString(CultureInfo.InvariantCulture)},
+					activated: ko.observable(${iptv.Channels.Contains(channel).ToString().ToLower()}),
+					inputName: function (index) {
+						return 'iptv.Channels[' + index() + '].Id';
+					}
+				},
+			<% end %>
+		];
+	viewModel.tariffs = [
+			<% for tariff in tariffs: %>
+				{
+					id: ${tariff.Id},
+					name: "${tariff.Name}",
+					cost: ${tariff.Price.ToString(CultureInfo.InvariantCulture)}
+				},
+			<% end %>
+		];
+	ko.applyBindings(viewModel);
 
-	$('#ConnectSumm').keyup(function () {
-		ShowMinPrice();
-		ChBalace();
-	});
-
-	ShowMinPrice();
-	ChBalace();
-
-	$("#RegistrationForm").validate({
-		errorLabelContainer: $("#RegistrationForm div.errorjava")
-	});
+	$("#RegistrationForm").validate();
 
 	$.validator.addMethod("BalanceText", function(value, element) {
-		if ("${PartnerAccessSet.AccesPartner("SSI")}" == "True")
-			return true;
 		if (value.toString().length > 0) {
-			res = (value >= (Number(cost[$('#client_Tariff_Id').val()]) + Number($('#ConnectSumm').val())));
-			return res;
+			return value >= viewModel.minSum();
 		}
 		return true;
-	}, function() { return "Должна быть введена сумма большая или равная "+ (Number(cost[$('#client_Tariff_Id').val()]) + Number($('#ConnectSumm').val())) + " рублей"});
+	}, function() { return "Должна быть введена сумма большая или равная "+ viewModel.minSum() + " рублей"});
 });
+
 </script>
 
 <style type="text/css">
@@ -84,34 +78,23 @@ $(function() {
 			</td>
 			<td >
 				<%if PartnerAccessSet.AccesPartner("SSI"): %>
-				<input id="ConnectSumm" type="text" value="${Client.ConnectSum}" name="client.ConnectSum"/>
-				<%else: %>
-				<input id="ConnectSumm" type="hidden" name="client.ConnectSum" value=700 />
-				700руб
-				<%end %>
+					${app.Edit("client.ConnectSum", {"data-bind": "value: connectSum"})}
+				<% else: %>
+					${FormHelper.HiddenField("client.ConnectSum", {"data-bind": "value: connectSum"})}
+					!{client.ConnectSum.ToString("C")}
+				<% end %>
 			</td>
 			<td>${VB.GetBlock("ConnectSum")}</td>
 		</tr> 
 		<tr>
 			<td>
 				<div>
-				<%if PartnerAccessSet.AccesPartner("SSI"): %>
-					<%if IsDefined("UserInfo"): %>
-					<%if UserInfo: %>
-						<input type="radio" id="ForTariffChange" name="ChangedBy.ChangeType" value="ForTariff" ${"checked" if ChangeBy.IsForTariff()} />
-						<label for="Autosearch"><b>Внести сумму по тарифному плану (${Client.Tariff.Price} рублей)</b> </label><br />
-						<input type="radio" id="OtherSummChange" name="ChangedBy.ChangeType" value="OtherSumm" ${"checked" if ChangeBy.IsOtherSumm()} />
-					<%end %>
-					<%else: %>
-						<input type="hidden" name="ChangedBy.ChangeType" value="OtherSumm" />
-					<%end %>
-				<%end %>
 					<label for="Other_Balance"><b>Внести сумму на счет:</b> </label>
 					<input type="text" class="BalanceText" id="BalanceText"  name="BalanceText"  value="${BalanceText}" style="width: 50%; " />
-					<br />
-					<div class="errorjava"></div>
 				</div>
-				<div style="float:left;" id="my-div"></div>
+				<div style="color:green;">
+					Минимальная сумма к зачислению: <span data-bind="text: minSum"></span>
+				</div>
 			</td>
 		<div id="summary"></div>
 			<td  colspan="3">
@@ -126,7 +109,7 @@ $(function() {
 		<%if  PartnerAccessSet.AccesPartner("SSI"):%>
 		<tr>
 			<td colspan=2>
-				<label for="VisibleRegisteredInfo">Показывать наряд на подключение  </label>
+				<label for="VisibleRegisteredInfo">Показывать наряд на подключение</label>
 				<input type="checkbox" id="VisibleRegisteredInfo" name="VisibleRegisteredInfo" value=true />
 			</td>
 		</tr>
@@ -134,9 +117,7 @@ $(function() {
 		<tr>
 			<td  colspan="3">
 				<div class="actions">
-					<button type="submit" class="button" id="RegisterClientButton">
-					<img alt="Save" src="../Images/application_edit.png"> Зарегистрировать
-					</button>
+					<button type="submit" class="button save" id="RegisterClientButton">Зарегистрировать</button>
 				</div>
 			</td>
 		</tr>
