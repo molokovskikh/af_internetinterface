@@ -62,4 +62,4 @@ task @DeployPrinter:
 	Engine.Execute("WebDeploy")
 	Globals.Project = oldProject
 
-task @BeforeTest, [@RunMySql, @PrepareLocal]
+task @BeforeTest, [@InstallPackages, @RunMySql, @PrepareLocal]
