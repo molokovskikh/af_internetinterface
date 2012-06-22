@@ -677,5 +677,28 @@ namespace Billing.Test.Integration
 				Assert.That(client.ClientServices.Count, Is.EqualTo(0));
 			}
 		}
+
+		[Test]
+		public void Debt_work_and_payment()
+		{
+			using (new SessionScope()) {
+				_client.PhysicalClient.Balance = 1;
+				_client.Save();
+			}
+			billing.Compute();
+			using (new SessionScope()) {
+				_client.Refresh();
+				Assert.That(_client.Disabled, Is.True);
+				Activate(typeof(DebtWork));
+				new Payment(_client, 550).Save();
+			}
+			billing.On();
+			SystemTime.Now = () => DateTime.Now.AddDays(1);
+			billing.On();
+			using (new SessionScope()) {
+				var client = ActiveRecordMediator<Client>.FindByPrimaryKey(_client.Id);
+				Assert.That(client.Disabled, Is.False);
+			}
+		}
 	}
 }

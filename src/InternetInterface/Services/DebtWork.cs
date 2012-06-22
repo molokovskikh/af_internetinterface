@@ -48,7 +48,7 @@ namespace InternetInterface.Services
 		public override void PaymentClient(ClientService service)
 		{
 			if (service.Client.PhysicalClient.Balance > 0)
-				service.Diactivate();
+				service.CompulsoryDiactivate();
 		}
 
 		public override bool CanBlock(ClientService service)
