@@ -1,5 +1,5 @@
 $ ->
-	test "", ->
+	test "recalculate registration min sum", ->
 		model = new AppViewModel()
 		model.connectSum(300)
 		equal model.minSum(), 300
