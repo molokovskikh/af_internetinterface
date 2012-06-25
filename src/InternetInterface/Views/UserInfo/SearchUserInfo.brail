@@ -106,8 +106,8 @@
 		<tr>
 			<td><span class="description">Адрес подключения: </span>   ${Client.Street} ${Client.House}${Client.CaseHouse} ${Client.Apartment} Подъезд ${Client.Entrance} Этаж ${Client.Floor}</td>
 		</tr>
-		<%end %>
-		<%if PartnerAccessSet.AccesPartner("VP"): %>
+		<% end %>
+		<% if PartnerAccessSet.AccesPartner("VP"): %>
 		<tr>
 			<td>Паспортные данные: <br />
 												 <span class="description">Серия\Номер</span> ${Client.PassportSeries} \ ${Client.PassportNumber}<br />
@@ -115,26 +115,33 @@
 												 <span class="description">Адрес регистрации:</span> ${Client.RegistrationAdress}<br />
 												 <span class="description">Дата выдачи :</span> ${Client.PassportDate.ToShortDateString()}</td>
 		</tr>
-		<%end %>
-		<%if PartnerAccessSet.AccesPartner("SSI"): %>
+		<% end %>
+		<% if PartnerAccessSet.AccesPartner("SSI"): %>
 		<tr>
 			<td><span class="description">Дата регистрации:</span> ${_client.RegDate.ToShortDateString()}</td>
 		</tr>
-				
-		
-		<%if _client.WhoRegistered != null: %>
-			<tr>
-				<td><span class="description">Зарегистрировал:</span> ${_client.WhoRegistered.Name}</td>
-			</tr>
-		<%end %>
-		<%end %>
-		<%if Client.Tariff != null: %>
 		<tr>
-			 <td><span class="description">Тариф:</span> ${Client.Tariff.Name} (${_client.GetPriceForTariff().ToString("0.00")} рублей)</td>
+			<td><span class="description">Зарегистрировал:</span> ${?_client.WhoRegistered.Name}</td>
 		</tr>
-		 <%end %>
+		<% end %>
 
-		 <%if PartnerAccessSet.AccesPartner("SSI"): %>
+		<% if Client.Tariff != null and client.Client.Internet.ActivatedByUser: %>
+		<tr>
+			<td><span class="description">Тариф:</span>${Client.Tariff.Name} (${_client.GetPriceForTariff().ToString("C")})</td>
+		</tr>
+		<% end %>
+		<% if client.Client.Iptv.Channels.Count: %>
+		<tr>
+			<td>
+				<span class="description">!{client.Client.Iptv.Service.HumanName}:</span>
+				<% for channel in client.Client.Iptv.Channels: %>
+					!{channel.Name}<br>
+				<% end %>
+			</td>
+		</tr>
+		<% end %>
+
+		<% if PartnerAccessSet.AccesPartner("SSI"): %>
 		<tr>
 			<td><span class="description">Баланс:</span> ${Client.Balance}</td>
 		</tr>
@@ -144,18 +151,18 @@
 		<tr>
 			<td><span class="description">Бонусов:</span> ${Client.VirtualBalance.ToString("0.00")}</td>
 		</tr>
-		<%if _client.Status != null: %>
+		<% if _client.Status != null: %>
 			<tr>
 				<td><span class="description">Статус клиента:</span> ${_client.Status.Name}</td>
 			</tr>
-		<%end %>
+		<% end %>
 		<tr>
 			<td><span class="description">Смс рассылка</span>
-			<%if (_client.SendSmsNotifocation): %>
+			<% if (_client.SendSmsNotifocation): %>
 				Да
-				<%else: %>
+				<% else: %>
 				Нет
-				<%end %></td>
+				<% end %></td>
 		</tr>
 		<tr>
 			<td>
@@ -236,8 +243,8 @@
 			<tr>
 			<td >
 				<div class="actions">
-					<button type="submit" id="SaveButton" class="button">
-					<img alt="Save" src="../Images/application_edit.png"> Сохранить
+					<button type="submit" id="SaveButton" class="button save">
+						Сохранить
 					</button>
 				</div>
 			</td>

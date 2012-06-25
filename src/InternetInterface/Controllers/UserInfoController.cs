@@ -892,6 +892,7 @@ where r.`Label`= :LabelIndex;")
 			PropertyBag["ChHouse"] = client.PhysicalClient.HouseObj != null ? client.PhysicalClient.HouseObj.Id : 0;
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["Statuss"] = Status.FindAllSort();
+			PropertyBag["channels"] = ChannelGroup.All(DbSession);
 			PropertyBag["ChStatus"] = client.Status != null ? client.Status.Id : Status.FindFirst().Id;
 			PropertyBag["naznach_text"] = ConnectGraph.Queryable.Count(c => c.Client.Id == filter.ClientCode) != 0
 			                              	? "Переназначить в график"
