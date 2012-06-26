@@ -1,4 +1,4 @@
-insert into Internet.Services(Name, Price, HumanName)
-values ('Internet', 0, 'Internet'),
-('IpTv', 0, 'IpTv'),
-('IpTvBoxRent', 0, 'Аренда приставки');
+insert into Internet.Services(Name, Price, HumanName, InterfaceControl)
+values ('Internet', 0, 'Internet', 0),
+('IpTv', 0, 'IpTv', 0),
+('IpTvBoxRent', 0, 'Аренда приставки', 1);

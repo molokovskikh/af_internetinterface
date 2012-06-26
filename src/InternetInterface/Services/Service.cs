@@ -101,10 +101,7 @@ namespace InternetInterface.Services
 
 		public virtual bool ActivatedForClient(Client client)
 		{
-			var cs = client.ClientServices.FirstOrDefault(c => c.Service == this && c.Activated);
-			if (cs != null)
-				return true;
-			return false;
+			return client.ClientServices.Where(s => s.Activated).Any(s => s.Service.Id == Id);
 		}
 
 		public virtual void WriteOff(ClientService assignedService)
