@@ -189,15 +189,17 @@ namespace InforoomInternet.Controllers
 				BindObjectInstance(client, "client", "PhysicalClient.Tariff");
 				BindObjectInstance(internet, "internet", "ActivatedByUser");
 
-				client.PhysicalClient.WriteOffIfTariffChanged(rules);
-
-				//может не быть ни одного канала и тогда биндер сломается
-				if (Request.ObtainParamsNode(ParamStore.Params).GetChildNode("iptv") != null) {
-					var updatedChannels = BindObject<List<ChannelGroup>>("iptv.Channels");
-					iptv.UpdateChannels(updatedChannels);
-				}
-
 				if (IsValid(client.PhysicalClient)) {
+
+					client.PhysicalClient.UpdatePackageId();
+					client.PhysicalClient.WriteOffIfTariffChanged(rules);
+
+					//может не быть ни одного канала и тогда биндер сломается
+					if (Request.ObtainParamsNode(ParamStore.Params).GetChildNode("iptv") != null) {
+						var updatedChannels = BindObject<List<ChannelGroup>>("iptv.Channels");
+						iptv.UpdateChannels(updatedChannels);
+					}
+
 					DbSession.SaveOrUpdate(client);
 					Notify("Сохранено");
 					RedirectToReferrer();

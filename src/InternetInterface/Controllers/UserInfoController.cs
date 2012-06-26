@@ -839,10 +839,8 @@ where r.`Label`= :LabelIndex;")
 				client.SendSmsNotifocation = SendSmsNotifocation;
 				client.Name = string.Format("{0} {1} {2}", updateClient.Surname, updateClient.Name,
 				                             updateClient.Patronymic);
-				var endPoints = ClientEndpoint.Queryable.Where(p => p.Client == client).ToList();
-				foreach (var clientEndpoint in endPoints) {
-					updateClient.UpdatePackageId(clientEndpoint);
-				}
+				updateClient.UpdatePackageId();
+
 				if (client.Status.Blocked) {
 					client.Disabled = true;
 				}

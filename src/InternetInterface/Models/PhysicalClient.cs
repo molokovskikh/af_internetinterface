@@ -226,6 +226,11 @@ namespace InternetInterface.Models
 			};
 		}
 
+		public virtual void UpdatePackageId()
+		{
+			Client.Endpoints.Each(UpdatePackageId);
+		}
+
 		public virtual void UpdatePackageId(ClientEndpoint clientEndpoint)
 		{
 			if (Tariff != null)
