@@ -6,6 +6,7 @@ using Castle.ActiveRecord;
 using Castle.Components.Validator;
 using Common.Tools;
 using Common.Web.Ui.Helpers;
+using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Helpers;
 using InternetInterface.Models.Services;
 using InternetInterface.Models.Universal;
@@ -231,6 +232,26 @@ namespace InternetInterface.Models
 				clientEndpoint.PackageId = Tariff.PackageId;
 			else
 				clientEndpoint.PackageId = null;
+		}
+
+		public virtual void WriteOffIfTariffChanged(List<TariffChangeRule> rules)
+		{
+			if (!this.IsChanged(c => c.Tariff))
+				return;
+
+			if (Tariff == null)
+				return;
+
+			var oldTariff = this.OldValue(c => c.Tariff);
+			if (oldTariff == null)
+				return;
+
+			var rule = rules.FirstOrDefault(r => r.FromTariff == oldTariff && r.ToTariff == Tariff);
+			if (rule == null || rule.Price == 0)
+				return;
+
+			var comment = String.Format("Изменение тарифа, старый '{0}' новый '{1}'", oldTariff.Name, Tariff.Name);
+			Client.UserWriteOffs.Add(new UserWriteOff(Client, rule.Price, comment, false));
 		}
 	}
 }

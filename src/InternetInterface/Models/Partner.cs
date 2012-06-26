@@ -125,6 +125,7 @@ namespace InternetInterface.Models
 						new ControllerPermission(typeof(ChannelGroupsController)),
 						new ControllerPermission(typeof(InvoicesController)),
 						new ControllerPermission(typeof(ServicesController)),
+						new ControllerPermission(typeof(TariffsController)),
 					}
 				},
 				{"DHCP", new IPermission[] {

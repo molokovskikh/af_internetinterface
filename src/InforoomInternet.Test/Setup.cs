@@ -2,6 +2,7 @@
 using Castle.ActiveRecord;
 using Common.MySql;
 using Common.Web.Ui.ActiveRecordExtentions;
+using InternetInterface.Helpers;
 using NUnit.Framework;
 
 namespace InforoomInternet.Test
@@ -14,6 +15,8 @@ namespace InforoomInternet.Test
 		{
 			if (!ActiveRecordStarter.IsInitialized)
 			{
+				ActiveRecordStarter.EventListenerComponentRegistrationHook += RemoverListner.Make;
+
 				ActiveRecordInitialize.Init(
 					ConnectionHelper.GetConnectionName(),
 					Assembly.Load("InforoomInternet"),

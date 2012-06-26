@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Castle.Components.Binder;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Common.Web.Ui.Controllers;
@@ -153,6 +154,7 @@ namespace InforoomInternet.Controllers
 		{
 			var clientId = Convert.ToUInt32(Session["LoginClient"]);
 			var client = DbSession.Load<Client>(clientId);
+			var rules = DbSession.Query<TariffChangeRule>().ToList();
 
 			var internet = client.Internet;
 			var iptv = client.Iptv;
@@ -186,9 +188,15 @@ namespace InforoomInternet.Controllers
 				SetSmartBinder(AutoLoadBehavior.NullIfInvalidKey);
 				BindObjectInstance(client, "client", "PhysicalClient.Tariff");
 				BindObjectInstance(internet, "internet", "ActivatedByUser");
-				//в ручную очищаем список каналов что бы биндинг мог их заполнить
-				var updatedChannels = BindObject<List<ChannelGroup>>("iptv.Channels");
-				iptv.UpdateChannels(updatedChannels);
+
+				client.PhysicalClient.WriteOffIfTariffChanged(rules);
+
+				//может не быть ни одного канала и тогда биндер сломается
+				if (Request.ObtainParamsNode(ParamStore.Params).GetChildNode("iptv") != null) {
+					var updatedChannels = BindObject<List<ChannelGroup>>("iptv.Channels");
+					iptv.UpdateChannels(updatedChannels);
+				}
+
 				if (IsValid(client.PhysicalClient)) {
 					DbSession.SaveOrUpdate(client);
 					Notify("Сохранено");

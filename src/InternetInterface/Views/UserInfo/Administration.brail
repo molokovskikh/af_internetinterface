@@ -71,5 +71,10 @@
 				${app.LinkTo("Услуги", @Services, @Edit)}
 			</td>
 		</tr>
+		<tr>
+			<td>
+				${app.LinkTo("Стоимость изменения тарифов", @Tariffs, @ChangeRules)}
+			</td>
+		</tr>
 	</tbody>
 </table>

@@ -239,6 +239,7 @@
     <None Include="Views\Payments\СhangeSaleSettings.brail" />
     <None Include="Views\AgentInfo\EditAgentSettings.brail" />
     <Content Include="JavaScript\vaidServiceRequest.js" />
+    <None Include="Views\Tariffs\ChangeRules.brail" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -275,6 +276,7 @@
     <Compile Include="Controllers\ServiceRequestController.cs" />
     <Compile Include="Controllers\ServicesController.cs" />
     <Compile Include="Controllers\SwitchesController.cs" />
+    <Compile Include="Controllers\TariffsController.cs" />
     <Compile Include="Controllers\UserInfoController.cs" />
     <Compile Include="Errors\AccessDin.aspx.cs">
       <DependentUpon>AccessDin.aspx</DependentUpon>
@@ -357,6 +359,7 @@
     <Compile Include="Models\SmsMessage.cs" />
     <Compile Include="Models\StaticIp.cs" />
     <Compile Include="Models\Status.cs" />
+    <Compile Include="Models\TariffChangeRule.cs" />
     <Compile Include="Models\Universal\ChildActiveRecordLinqBase.cs" />
     <Compile Include="Models\Universal\ClientSearchProperties.cs" />
     <Compile Include="Models\Access\CategorieAccessSet.cs" />
