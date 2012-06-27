@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using InternetInterface.Models;
 using InternetInterface.Models.Services;
+using InternetInterface.Services;
 using NUnit.Framework;
 
 namespace Billing.Test.Integration
@@ -34,33 +36,39 @@ namespace Billing.Test.Integration
 	{
 		public static Client CreateAndSaveClient(string name, bool statusBlocked, decimal balance)
 		{
-			Internet internet;
-			IpTv iptv;
+			Service[] defaultServices;
 			using(new SessionScope()) {
-				internet = ActiveRecordLinqBase<Internet>.Queryable.First();
-				iptv = ActiveRecordLinqBase<IpTv>.Queryable.First();
+				defaultServices = DefaultServices().ToArray();
 			}
 
 			var phisicalClient = CreatePhisicalClient(statusBlocked, balance);
 			phisicalClient.Save();
-			var client = new Client {
+			var client = new Client(phisicalClient, defaultServices) {
 				Disabled = false,
 				Sale = 0,
 				DebtDays = 0,
+				FreeBlockDays = 0,
+				PercentBalance = 0,
 				Name = name,
-				PhysicalClient = phisicalClient,
 				BeginWork = DateTime.Now ,
 				RatedPeriodDate = DateTime.Now,
 				YearCycleDate = DateTime.Now
 			};
+			client.PhysicalClient.ConnectSum = 0;
+			client.Internet.ActivatedByUser = true;
 			//тк некоторые тесты не вызывают метод активации
-			client.ClientServices.Add(new ClientService(client, internet, true) {
-				Activated = true
-			});
-			client.ClientServices.Add(new ClientService(client, iptv) {
-				Activated = true
-			});
+			foreach (var service in client.ClientServices)
+				service.Activate();
+
 			return client;
+		}
+
+		public static IEnumerable<Service> DefaultServices()
+		{
+			return new Service[] {
+				ActiveRecordLinqBase<Internet>.Queryable.First(),
+				ActiveRecordLinqBase<IpTv>.Queryable.First(),
+			};
 		}
 
 		public static PhysicalClient CreatePhisicalClient(bool statusBlocked, decimal balance)

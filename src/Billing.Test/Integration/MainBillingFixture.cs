@@ -6,6 +6,8 @@ using Common.Tools;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Services;
+using NHibernate.Criterion;
+using NHibernate.SqlCommand;
 using NUnit.Framework;
 using InternetInterface.Models;
 
@@ -57,7 +59,14 @@ namespace Billing.Test.Integration
 
 		public static void PrepareTests()
 		{
-			InitializeContent.GetAdministrator = () => Partner.FindFirst();
+			InitializeContent.GetAdministrator = () => {
+				var partner = Partner.FindFirst();
+				partner.AccesedPartner = CategorieAccessSet.FindAll(DetachedCriteria.For(typeof(CategorieAccessSet))
+					.CreateAlias("AccessCat", "AC", JoinType.InnerJoin)
+					.Add(Restrictions.Eq("Categorie", partner.Categorie)))
+					.Select(c => c.AccessCat.ReduceName).ToList();
+				return partner;
+			};
 			InternetSettings.DeleteAll();
 
 			using(new SessionScope()) {

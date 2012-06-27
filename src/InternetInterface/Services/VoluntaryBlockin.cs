@@ -64,7 +64,7 @@ namespace InternetInterface.Services
 						Client = client,
 						Date = DateTime.Now,
 						Sum = price/toDt,
-						Comment = string.Format("Абоненская плата за {0} из-за добровольной блокировки клиента123",
+						Comment = string.Format("Абоненская плата за {0} из-за добровольной блокировки клиента",
 							DateTime.Now.ToShortDateString())
 					}.Save();
 				}

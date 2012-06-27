@@ -182,7 +182,7 @@ namespace InternetInterface.Models
 			var forbiddenByService = ClientServices.Any(s => s.Service.BlockingAll && s.Activated);
 			if (forbiddenByService)
 				return false;
-			var tariffSum = GetPrice();
+			var tariffSum = GetPriceIgnoreDisabled();
 			return Payments.Sum(s => s.Sum) >= tariffSum*PercentBalance;
 		}
 
@@ -256,7 +256,7 @@ namespace InternetInterface.Models
 
 		public virtual bool PaymentForTariff()
 		{
-			return Payments.Sum(p => p.Sum) >= GetPrice();
+			return Payments.Sum(p => p.Sum) >= GetPriceIgnoreDisabled();
 		}
 
 		public virtual bool CanUsedPostponedPayment()
@@ -523,26 +523,15 @@ Id))
 			return price;
 		}
 
-		public virtual decimal GetBalance()
+		public virtual decimal Balance
 		{
-			if (PhysicalClient != null)
-				return PhysicalClient.Balance;
-			if (LawyerPerson != null)
-				return LawyerPerson.Balance;
-			return 0m;
-		}
-
-		public virtual void SetBalance(decimal sum)
-		{
-			if (PhysicalClient != null)
+			get
 			{
-				PhysicalClient.Balance = sum;
-				PhysicalClient.Update();
-			}
-			if (LawyerPerson != null)
-			{
-				LawyerPerson.Balance = sum;
-				LawyerPerson.Update();
+				if (PhysicalClient != null)
+					return PhysicalClient.Balance;
+				if (LawyerPerson != null)
+					return LawyerPerson.Balance;
+				return 0m;
 			}
 		}
 

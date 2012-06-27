@@ -209,10 +209,8 @@ namespace Billing
 				transaction.VoteCommit();
 			}
 			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
-				var clients =
-					Client.Queryable.Where(
-						c => c.PhysicalClient != null && c.Disabled && c.AutoUnblocked).ToList().Where(
-							c => c.PhysicalClient.Balance >= c.GetPriceIgnoreDisabled()*c.PercentBalance).ToList();
+				var clients = Client.Queryable.Where(c => c.PhysicalClient != null && c.Disabled && c.AutoUnblocked).ToList();
+				clients = clients.Where(c => c.PhysicalClient.Balance >= c.GetPriceIgnoreDisabled()*c.PercentBalance).ToList();
 				var workStatus = Status.Find((uint) StatusType.Worked);
 				foreach (var client in clients) {
 					client.Status = workStatus;
@@ -378,8 +376,12 @@ namespace Billing
 				var sum = price/daysInInterval;
 
 				var writeOff = phisicalClient.WriteOff(sum);
-				if (writeOff != null)
+				if (writeOff != null) {
 					writeOff.Save();
+					//для отладки
+					//Console.WriteLine("Клиент {0} cписано {1}", client.Id, writeOff);
+				}
+
 
 				phisicalClient.Update();
 

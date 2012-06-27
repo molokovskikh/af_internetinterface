@@ -27,9 +27,12 @@ namespace InternetInterface.Models.Services
 			var client = assignedService.Client;
 			if (!client.Disabled
 				&& !assignedService.ActivatedByUser) {
-					var comment = string.Format("Абоненская плата за {0} из-за отключения услуги {1}", DateTime.Now.ToShortDateString(), HumanName);
-					var sum = client.GetPriceForTariff()/client.GetInterval();
-					client.UserWriteOffs.Add(new UserWriteOff(client, sum, comment, false));
+					//если null значит клиент не начал работать и не за что списывать
+					if (client.RatedPeriodDate != null) {
+						var comment = string.Format("Абоненская плата за {0} из-за отключения услуги {1}", DateTime.Now.ToShortDateString(), HumanName);
+						var sum = client.GetPriceForTariff()/client.GetInterval();
+						client.UserWriteOffs.Add(new UserWriteOff(client, sum, comment, false));
+					}
 			}
 			base.CompulsoryDeactivate(assignedService);
 		}

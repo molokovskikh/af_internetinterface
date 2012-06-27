@@ -181,23 +181,23 @@ namespace Billing.Test.Integration
 			const int countDays = 5;
 			var client = _client;
 
-			PhysicalClient physClient;
+			PhysicalClient physicalClient;
 			ClientService CServive;
 			
 			using (new SessionScope()) {
-				physClient = client.PhysicalClient;
-				physClient.Balance = -10m;
-				physClient.Update();
+				physicalClient = client.PhysicalClient;
+				physicalClient.Balance = -10m;
+				physicalClient.Update();
 				client.Disabled = true;
 				client.AutoUnblocked = true;
 				client.RatedPeriodDate = SystemTime.Now();
 				client.Update();
 
 				CServive = new ClientService {
-				    Client = client,
-				    BeginWorkDate = DateTime.Now,
-				    EndWorkDate = SystemTime.Now().AddDays(countDays),
-				    Service = Service.GetByType(typeof (DebtWork)),
+					Client = client,
+					BeginWorkDate = DateTime.Now,
+					EndWorkDate = SystemTime.Now().AddDays(countDays),
+					Service = Service.GetByType(typeof (DebtWork)),
 				};
 
 				client.ClientServices.Add(CServive);
@@ -209,8 +209,10 @@ namespace Billing.Test.Integration
 				SystemTime.Now = () => DateTime.Now.AddDays(i + 1);
 			}
 			using (new SessionScope()) {
+				//не должны ничего списать тк услуга DebtWork не была активирована тк клиент не внес платежей
+				//на сумму тарифа
 				client.Refresh();
-				Assert.That(physClient.Balance, Is.EqualTo(-10));
+				Assert.That(physicalClient.Balance, Is.EqualTo(-10));
 				new Payment {
 					Client = client,
 					Sum = client.PhysicalClient.Tariff.Price,
@@ -219,36 +221,36 @@ namespace Billing.Test.Integration
 			}
 			billing.OnMethod();
 			using (new SessionScope()) {
-				physClient = ActiveRecordMediator<PhysicalClient>.FindByPrimaryKey(physClient.Id);
+				physicalClient = ActiveRecordMediator<PhysicalClient>.FindByPrimaryKey(physicalClient.Id);
 				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
-				physClient.Balance = -10;
+				physicalClient.Balance = -10;
 				client.RatedPeriodDate = DateTime.Now;
 				client.Update();
-				physClient.Update();
+				physicalClient.Update();
 				client.Refresh();
 				SystemTime.Reset();
 				CServive = ActiveRecordMediator<ClientService>.FindByPrimaryKey(CServive.Id);
 				CServive.Activate();
 			}
-			for (int i = 0; i < countDays; i++) {
+			for (var i = 0; i < countDays; i++) {
 				billing.OnMethod();
 				billing.Compute();
-				int i1 = i;
+				var i1 = i;
 				SystemTime.Now = () => DateTime.Now.AddDays(i1 + 1);
 			}
 			SystemTime.Now = () => DateTime.Now.AddDays(countDays + 1);
 			billing.OnMethod();
 			using (new SessionScope()) {
-				physClient = ActiveRecordMediator<PhysicalClient>.FindByPrimaryKey(physClient.Id);
+				physicalClient = ActiveRecordMediator<PhysicalClient>.FindByPrimaryKey(physicalClient.Id);
 				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
 				Assert.That(WriteOff.FindAll().Count(), Is.EqualTo(countDays));
-				Assert.That(physClient.Balance, Is.LessThan(0m));
+				Assert.That(physicalClient.Balance, Is.LessThan(0m));
 				Assert.IsTrue(client.Disabled);
 				client.Disabled = false;
 				client.Update();
 
 				Assert.That(Math.Round(-client.GetPrice()/client.GetInterval()*countDays, 0) - 10,
-							Is.EqualTo(Math.Round(physClient.Balance, 0)));
+							Is.EqualTo(Math.Round(physicalClient.Balance, 0)));
 				Assert.That(client.RatedPeriodDate.Value.Date, Is.EqualTo(DateTime.Now.Date));
 				CServive = new ClientService {
 					Client = client,
@@ -269,10 +271,10 @@ namespace Billing.Test.Integration
 			}
 			billing.OnMethod();
 			using (new SessionScope()) {
-				physClient = ActiveRecordMediator<PhysicalClient>.FindByPrimaryKey(physClient.Id);
+				physicalClient = ActiveRecordMediator<PhysicalClient>.FindByPrimaryKey(physicalClient.Id);
 				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
-				physClient.Balance = -10;
-				physClient.Update();
+				physicalClient.Balance = -10;
+				physicalClient.Update();
 
 				CServive = new ClientService {
 					Client = client,

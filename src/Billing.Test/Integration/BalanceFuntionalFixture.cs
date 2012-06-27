@@ -7,6 +7,7 @@ using Castle.ActiveRecord;
 using Common.Tools;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Models;
+using InternetInterface.Services;
 using NUnit.Framework;
 using Test.Support.log4net;
 
@@ -128,7 +129,7 @@ namespace Billing.Test.Integration
 					Comment = string.Empty
 				}.Save();
 			}
-			billing.On();
+			billing.OnMethod();
 			using (new SessionScope()) {
 				client.Refresh();
 				Assert.That(client.LawyerPerson.Balance, Is.EqualTo(500m));
@@ -305,17 +306,10 @@ namespace Billing.Test.Integration
 					Balance = 0m,
 					Tariff = domTariff
 				};
-				physDom.Save();
-				domolinkClient = new Client() {
-					PhysicalClient = physDom,
+				domolinkClient = new Client(physDom, BaseBillingFixture.DefaultServices()) {
 					Disabled = true,
 					Type = ClientType.Phisical,
 					Name = "Александр Барабановский",
-					DebtDays = 0,
-					ShowBalanceWarningPage = false,
-					RegDate = DateTime.Now,
-					AutoUnblocked = false,
-					PercentBalance = 0m
 				};
 				domolinkClient.Save();
 				new Payment {
@@ -323,8 +317,8 @@ namespace Billing.Test.Integration
 					Sum = 5m
 				}.Save();
 			}
-			billing.On();
-			billing.On();
+			billing.OnMethod();
+			billing.OnMethod();
 			using (new SessionScope()) {
 				domolinkClient = Client.Find(domolinkClient.Id);
 				Assert.IsTrue(domolinkClient.AutoUnblocked);

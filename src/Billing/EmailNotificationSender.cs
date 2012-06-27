@@ -37,7 +37,7 @@ namespace Billing
 		public static bool SendLawyerPersonNotification(Client client)
 		{
 			var messageText = new StringBuilder();
-			messageText.AppendLine(string.Format("Клиент {0} имеет задолженность {1} руб.", client.Id.ToString("00000"), client.GetBalance()));
+			messageText.AppendLine(string.Format("Клиент {0} имеет задолженность {1} руб.", client.Id.ToString("00000"), client.Balance));
 			messageText.AppendLine(string.Format("Название - \"{0}\"", client.Name));
 			messageText.AppendLine(string.Format("Тариф - \"{0}\"", client.LawyerPerson.Tariff));
 			return Send(messageText, "Возникла задолженность клиента");

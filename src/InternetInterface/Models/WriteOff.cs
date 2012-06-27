@@ -83,7 +83,7 @@ namespace InternetInterface.Models
 
 		public override string ToString()
 		{
-			return WriteOffSum.ToString();
+			return String.Format("{0} - {1}", WriteOffDate, WriteOffSum);
 		}
 	}
 }

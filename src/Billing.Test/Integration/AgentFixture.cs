@@ -76,7 +76,7 @@ namespace Billing.Test.Integration
 				payment.Save();
 				_client.Payments.Add(payment);
 			}
-			billing.On();
+			billing.OnMethod();
 			billing.Compute();
 			billing.Compute();
 			using (new SessionScope()) {
