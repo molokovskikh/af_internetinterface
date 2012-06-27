@@ -45,7 +45,7 @@ namespace Billing.Test.Integration
 
 			using (new SessionScope()) {
 				billing = new MainBillingForTest();
-				PrepareTest();
+				CleanDb();
 				_client = CreateClient();
 				SaleSettings.DeleteAll();
 				new SaleSettings {
@@ -57,7 +57,7 @@ namespace Billing.Test.Integration
 			}
 		}
 
-		public static void PrepareTests()
+		public static void SeedDb()
 		{
 			InitializeContent.GetAdministrator = () => {
 				var partner = Partner.FindFirst();
@@ -70,10 +70,7 @@ namespace Billing.Test.Integration
 			InternetSettings.DeleteAll();
 
 			using(new SessionScope()) {
-				new Partner {
-					Login = "Test",
-				}.Save();
-			
+				new Partner("Test").Save();
 				if (!ActiveRecordLinqBase<Status>.Queryable.Any())
 					CreateStatuses();
 
@@ -117,7 +114,6 @@ namespace Billing.Test.Integration
 				ShortName = "Worked"
 			}.Save();
 
-
 			new Status {
 				Blocked = true,
 				Id = (uint) StatusType.BlockedAndConnected,
@@ -148,7 +144,7 @@ namespace Billing.Test.Integration
 			return client;
 		}
 
-		public static void PrepareTest()
+		public static void CleanDb()
 		{
 			Request.DeleteAll();
 			SmsMessage.DeleteAll();
@@ -164,6 +160,12 @@ namespace Billing.Test.Integration
 			PhysicalClient.DeleteAll();
 			SystemTime.Reset();
 			PaymentsForAgent.DeleteAll();
+		}
+
+		public static void CleanDbAfterTest()
+		{
+			Tariff.DeleteAll();
+			Partner.DeleteAll();
 		}
 
 		public void SetClientDate(Interval rd, Client client)

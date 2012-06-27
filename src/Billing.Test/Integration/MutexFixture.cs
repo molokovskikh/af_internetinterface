@@ -22,7 +22,7 @@ namespace Billing.Test.Integration
 		{
 			_billing = new MainBilling();
 			using (new SessionScope()) {
-				MainBillingFixture.PrepareTest();
+				MainBillingFixture.CleanDb();
 				new Payment().Save();
 			}
 		}

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using Castle.ActiveRecord;
+using Common.Tools;
 using InternetInterface.Controllers;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
@@ -18,6 +19,9 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void RegisterClientTest()
 		{
+			var commutator = new NetworkSwitches("Тестовый коммутатор", session.Query<Zone>().First());
+			session.Save(commutator);
+
 			Open("Register/RegisterClient.rails");
 			Assert.That(browser.Text, Is.StringContaining("Форма регистрации"));
 			Assert.That(browser.Text, Is.StringContaining("Личная информация"));
@@ -48,19 +52,17 @@ namespace InternetInterface.Test.Functional
 			browser.TextField(Find.ById("RegistrationAdress")).AppendText("TestRegistrationAdress");
 			browser.TextField(Find.ById("PassportDate")).AppendText("10.01.2002");
 			browser.TextField(Find.ById("client_ConnectSum")).AppendText("100");
-			using (new SessionScope())
-			{
-				var sw = browser.SelectList("SelectSwitches").Options.Select(o => UInt32.Parse(o.Value)).ToList();
-				var diniedPorts = ClientEndpoint.Queryable.Where(c => c.Switch.Id == sw[1]).ToList().Select(c => c.Port).ToList();
-				browser.SelectList("SelectSwitches").SelectByValue(sw[1].ToString());
-				browser.Eval(String.Format("$('#SelectSwitches').change()"));
-				var brow_accesed = browser.Elements.Count(e => e.ClassName == "access_port");
-				Assert.That(brow_accesed, Is.EqualTo(diniedPorts.Count));
-			}
+
+			browser.SelectList("SelectSwitches").Select("Тестовый коммутатор");
+			browser.Eval(String.Format("$('#SelectSwitches').change()"));
+			var occupiedPorts = browser.Elements.Count(e => e.ClassName == "access_port");
+			Assert.That(occupiedPorts, Is.EqualTo(0));
+
 			browser.ShowWindow(NativeMethods.WindowShowStyle.ShowNormal);
 			browser.CheckBox("VisibleRegisteredInfo").Checked = true;
 			browser.Button(Find.ById("RegisterClientButton")).Click();
-			Thread.Sleep(2000);
+
+			browser.WaitUntilContainsText("прописанный по адресу:", 2);
 			Assert.That(browser.Text, Is.StringContaining("прописанный по адресу:"));
 			Assert.That(browser.Text, Is.StringContaining("адрес подключения:"));
 			Assert.That(browser.Text, Is.StringContaining("принимаю подключение к услугам доступа"));
