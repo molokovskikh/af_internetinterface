@@ -47,7 +47,7 @@ namespace InternetInterface.Test.Functional
 			browser.TextField(Find.ById("WhoGivePassport")).AppendText("TestWhoGivePassport");
 			browser.TextField(Find.ById("RegistrationAdress")).AppendText("TestRegistrationAdress");
 			browser.TextField(Find.ById("PassportDate")).AppendText("10.01.2002");
-			browser.TextField(Find.ById("ConnectSumm")).AppendText("100");
+			browser.TextField(Find.ById("client_ConnectSum")).AppendText("100");
 			using (new SessionScope())
 			{
 				var sw = browser.SelectList("SelectSwitches").Options.Select(o => UInt32.Parse(o.Value)).ToList();

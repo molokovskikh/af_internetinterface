@@ -56,10 +56,12 @@ namespace InternetInterface.Test.Helpers
 			Tariff tariff;
 			Internet internet;
 			IpTv iptv;
+			Status status;
 			using (new SessionScope()) {
 				tariff = ActiveRecordLinqBase<Tariff>.Queryable.First();
 				internet = ActiveRecordLinqBase<Internet>.Queryable.First();
 				iptv = ActiveRecordLinqBase<IpTv>.Queryable.First();
+				status = ActiveRecordBase<Status>.Find((uint)StatusType.Worked);
 			}
 			var client = new PhysicalClient {
 				Apartment = 1,
@@ -87,7 +89,7 @@ namespace InternetInterface.Test.Helpers
 				PhysicalClient = client,
 				BeginWork = null,
 				Name = String.Format("{0} {1} {2}", client.Surname, client.Name, client.Patronymic),
-				Status = ActiveRecordBase<Status>.FindFirst()
+				Status = status
 			};
 			internalClient.ClientServices.Add(new ClientService(internalClient, internet));
 			internalClient.ClientServices.Add(new ClientService(internalClient, iptv));

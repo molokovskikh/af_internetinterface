@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using Castle.ActiveRecord;
+using Castle.ActiveRecord.Framework;
 using Common.Tools;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Controllers.Filter;
@@ -61,35 +63,8 @@ namespace Billing.Test.Integration
 
 			InitializeContent.GetAdministrator = () => Partner.FindFirst();
 
-			new Status {
-				Blocked = false,
-				Id = (uint)StatusType.Worked,
-				Name = "unblocked",
-				ShortName = "Worked"
-			}.Save();
-
-			
-			new Status {
-				Blocked = true,
-				Id = (uint)StatusType.BlockedAndConnected,
-				Name = "unblocked",
-				ShortName = "BlockedAndConnected"
-			}.Save();
-
-			new Status {
-				Blocked = true,
-				Id = (uint)StatusType.NoWorked,
-				Name = "testBlockedStatus",
-				ShortName = "NoWorked"
-			}.Save();
-
-			new Status {
-				ShortName = "VoluntaryBlocking",
-				Id = (uint)StatusType.VoluntaryBlocking,
-				Blocked = true,
-				Name = "VoluntaryBlocking",
-				Connected = true
-			}.Save();
+			if (!ActiveRecordLinqBase<Status>.Queryable.Any())
+				CreateStatuses();
 
 			new DebtWork {
 				BlockingAll = false,
@@ -120,6 +95,39 @@ namespace Billing.Test.Integration
 
 			InternetSettings.DeleteAll();
 			new InternetSettings{NextBillingDate = DateTime.Now}.Save();
+		}
+
+		private static void CreateStatuses()
+		{
+			new Status {
+				Blocked = false,
+				Id = (uint) StatusType.Worked,
+				Name = "unblocked",
+				ShortName = "Worked"
+			}.Save();
+
+
+			new Status {
+				Blocked = true,
+				Id = (uint) StatusType.BlockedAndConnected,
+				Name = "unblocked",
+				ShortName = "BlockedAndConnected"
+			}.Save();
+
+			new Status {
+				Blocked = true,
+				Id = (uint) StatusType.NoWorked,
+				Name = "testBlockedStatus",
+				ShortName = "NoWorked"
+			}.Save();
+
+			new Status {
+				ShortName = "VoluntaryBlocking",
+				Id = (uint) StatusType.VoluntaryBlocking,
+				Blocked = true,
+				Name = "VoluntaryBlocking",
+				Connected = true
+			}.Save();
 		}
 
 		public static Client CreateClient()

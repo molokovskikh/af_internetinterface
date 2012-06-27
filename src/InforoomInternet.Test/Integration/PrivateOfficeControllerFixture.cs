@@ -99,6 +99,7 @@ namespace InforoomInternet.Test.Integration
 		[Test]
 		public void Write_off_after_tariff_change()
 		{
+			var oldTariff = client.PhysicalClient.Tariff.Name;
 			var tarriff = new Tariff("Тариф для тестирования изменения тарифов", 500);
 			session.Save(new TariffChangeRule(client.PhysicalClient.Tariff, tarriff, 50));
 			session.Save(tarriff);
@@ -111,7 +112,7 @@ namespace InforoomInternet.Test.Integration
 			Assert.That(client.PhysicalClient.Tariff, Is.EqualTo(tarriff));
 			Assert.That(client.UserWriteOffs.Count, Is.EqualTo(1));
 			Assert.That(client.UserWriteOffs[0].Sum, Is.EqualTo(50));
-			Assert.That(client.UserWriteOffs[0].Comment, Is.EqualTo("Изменение тарифа, старый 'Тариф для тестирования' новый 'Тариф для тестирования изменения тарифов'"));
+			Assert.That(client.UserWriteOffs[0].Comment, Is.EqualTo(string.Format("Изменение тарифа, старый '{0}' новый 'Тариф для тестирования изменения тарифов'", oldTariff)));
 		}
 	}
 }

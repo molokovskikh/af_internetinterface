@@ -47,7 +47,8 @@ namespace InternetInterface.Test.Integration
 			var statuses = session.Query<Status>().ToArray();
 			var worked = statuses.First(s => s.Type == StatusType.Worked);
 			var dissolved = statuses.First(s => s.Type == StatusType.Dissolved);
-			var commutator = session.Query<NetworkSwitches>().First();
+			var commutator = new NetworkSwitches("Тестовый коммутатор", session.Query<Zone>().First());
+			session.Save(commutator);
 
 			var client = ClientHelper.Client();
 			client.Status = worked;
