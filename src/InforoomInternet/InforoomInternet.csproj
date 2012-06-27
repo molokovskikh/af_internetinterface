@@ -51,9 +51,6 @@
     <Reference Include="Castle.Core, Version=2.5.1.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\..\lib\Castle.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.DynamicProxy2">
-      <HintPath>..\..\lib\Castle.DynamicProxy2.dll</HintPath>
-    </Reference>
     <Reference Include="Castle.MonoRail.ActiveRecordSupport, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL" />
     <Reference Include="Castle.MonoRail.Framework, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\..\lib\Castle.MonoRail.Framework.dll</HintPath>
