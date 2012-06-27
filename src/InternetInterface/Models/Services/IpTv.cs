@@ -15,7 +15,7 @@ namespace InternetInterface.Models.Services
 
 		public override bool CanDeactivate(ClientService assignedService)
 		{
-			return assignedService.Client.Disabled;
+			return assignedService.Client.Disabled && assignedService.Activated;
 		}
 
 		public override void Activate(ClientService assignedService)

@@ -1,4 +1,5 @@
-﻿using Castle.ActiveRecord;
+﻿using System;
+using Castle.ActiveRecord;
 using Common.Tools;
 using InternetInterface.Services;
 
@@ -14,10 +15,23 @@ namespace InternetInterface.Models.Services
 
 		public override bool CanDeactivate(ClientService assignedService)
 		{
-			if (!assignedService.ActivatedByUser
-				|| assignedService.Client.Disabled)
-				assignedService.Activated = false;
-			return false;
+			return assignedService.Activated &&
+				(!assignedService.ActivatedByUser
+					|| assignedService.Client.Disabled);
+		}
+
+		//если клиент отключил себе интернет то нужно списать абонентскую плату
+		//за день что бы не было смысла отключать себе интернет на момент списания
+		public override void CompulsoryDeactivate(ClientService assignedService)
+		{
+			var client = assignedService.Client;
+			if (!client.Disabled
+				&& !assignedService.ActivatedByUser) {
+					var comment = string.Format("Абоненская плата за {0} из-за отключения услуги {1}", DateTime.Now.ToShortDateString(), HumanName);
+					var sum = client.GetPriceForTariff()/client.GetInterval();
+					client.UserWriteOffs.Add(new UserWriteOff(client, sum, comment, false));
+			}
+			base.CompulsoryDeactivate(assignedService);
 		}
 
 		public override void Activate(ClientService assignedService)

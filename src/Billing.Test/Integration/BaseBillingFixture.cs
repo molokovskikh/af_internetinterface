@@ -35,8 +35,11 @@ namespace Billing.Test.Integration
 		public static Client CreateAndSaveClient(string name, bool statusBlocked, decimal balance)
 		{
 			Internet internet;
-			using(new SessionScope())
+			IpTv iptv;
+			using(new SessionScope()) {
 				internet = ActiveRecordLinqBase<Internet>.Queryable.First();
+				iptv = ActiveRecordLinqBase<IpTv>.Queryable.First();
+			}
 
 			var phisicalClient = CreatePhisicalClient(statusBlocked, balance);
 			phisicalClient.Save();
@@ -52,6 +55,9 @@ namespace Billing.Test.Integration
 			};
 			//тк некоторые тесты не вызывают метод активации
 			client.ClientServices.Add(new ClientService(client, internet, true) {
+				Activated = true
+			});
+			client.ClientServices.Add(new ClientService(client, iptv) {
 				Activated = true
 			});
 			return client;

@@ -501,7 +501,7 @@ Id))
 			return services.Sum(c => c.GetPrice());
 		}
 
-		public decimal GetPriceIgnoreDisabled()
+		public virtual decimal GetPriceIgnoreDisabled()
 		{
 			decimal price = 0;
 			decimal iptvPrice = 0;
@@ -516,7 +516,8 @@ Id))
 
 			if (iptvPrice == 0) {
 				var service = FindService<IpTvBoxRent>();
-				price += service.GetPrice();
+				if (service != null)
+					price += service.GetPrice();
 			}
 
 			return price;

@@ -316,7 +316,7 @@ namespace Billing.Test.Integration
 				cServive.CompulsoryDeactivate();
 				Assert.IsTrue(cServive.Client.Disabled);
 
-				Assert.That(client.ClientServices.Count, Is.EqualTo(1), "должна остаться только услуга internet");
+				Assert.That(client.ClientServices.Count, Is.EqualTo(2), "должна остаться только услуга internet");
 			}
 		}
 
@@ -372,14 +372,14 @@ namespace Billing.Test.Integration
 			using (new SessionScope()) {
 				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
 				Assert.IsFalse(client.Disabled);
-				Assert.That(client.ClientServices.Count, Is.EqualTo(1), "должна остаться только услуга internet");
+				Assert.That(client.ClientServices.Count, Is.EqualTo(2), "должна остаться только услуга internet");
 			}
 			SystemTime.Now = () => service.EndWorkDate.Value.AddDays(46);
 			billing.OnMethod();
 
 			using (new SessionScope()) {
 				client.Refresh();
-				Assert.That(client.ClientServices.Count, Is.EqualTo(1), "должна остаться только услуга internet");
+				Assert.That(client.ClientServices.Count, Is.EqualTo(2), "должна остаться только услуга internet");
 				Assert.IsFalse(client.Disabled);
 			}
 
