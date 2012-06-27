@@ -71,7 +71,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void Show_switch_comment()
 		{
-			var commutator = new NetworkSwitches("Тестовый коммутатор", session.Query<Zone>().First()) {
+			var commutator = new NetworkSwitches("Тестовый коммутатор с комментарием", session.Query<Zone>().First()) {
 				Comment = "Тестовый комментарий к коммутатору"
 			};
 			session.Save(commutator);
