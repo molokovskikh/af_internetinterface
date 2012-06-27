@@ -57,44 +57,46 @@ namespace Billing.Test.Integration
 
 		public static void PrepareTests()
 		{
-			new Partner {
-				Login = "Test",
-			}.Save();
-
 			InitializeContent.GetAdministrator = () => Partner.FindFirst();
-
-			if (!ActiveRecordLinqBase<Status>.Queryable.Any())
-				CreateStatuses();
-
-			new DebtWork {
-				BlockingAll = false,
-				Price = 0,
-				HumanName = "DebtWork"
-			}.Save();
-
-			new AgentTariff {
-				ActionName = AgentActions.WorkedClient,
-				Sum = 250
-			}.Save();
-
-			new AgentTariff {
-				ActionName = AgentActions.AgentPayIndex,
-				Sum = 1.5m
-			}.Save();
-
-			new VoluntaryBlockin {
-				BlockingAll = true,
-				Price = 0,
-				HumanName = "VoluntaryBlockin"
-			}.Save();
-
-			new WorkLawyer {
-				InterfaceControl = true,
-				HumanName = "WorkLawyer"
-			}.Save();
-
 			InternetSettings.DeleteAll();
-			new InternetSettings{NextBillingDate = DateTime.Now}.Save();
+
+			using(new SessionScope()) {
+				new Partner {
+					Login = "Test",
+				}.Save();
+			
+				if (!ActiveRecordLinqBase<Status>.Queryable.Any())
+					CreateStatuses();
+
+				new DebtWork {
+					BlockingAll = false,
+					Price = 0,
+					HumanName = "DebtWork"
+				}.Save();
+
+				new AgentTariff {
+					ActionName = AgentActions.WorkedClient,
+					Sum = 250
+				}.Save();
+
+				new AgentTariff {
+					ActionName = AgentActions.AgentPayIndex,
+					Sum = 1.5m
+				}.Save();
+
+				new VoluntaryBlockin {
+					BlockingAll = true,
+					Price = 0,
+					HumanName = "VoluntaryBlockin"
+				}.Save();
+
+				new WorkLawyer {
+					InterfaceControl = true,
+					HumanName = "WorkLawyer"
+				}.Save();
+
+				new InternetSettings{NextBillingDate = DateTime.Now}.Save();
+			}
 		}
 
 		private static void CreateStatuses()
