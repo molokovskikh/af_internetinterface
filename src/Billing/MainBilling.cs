@@ -80,12 +80,7 @@ namespace Billing
 					errorFlag = settings.LastStartFail && (settings.NextBillingDate - now).TotalMinutes > 0;
 					normalFlag = (settings.NextBillingDate - now).TotalMinutes <= 0;
 					if (normalFlag) {
-						ArHelper.WithSession(s => s.CreateSQLQuery(@"
-	update internet.Clients c
-	set c.PaidDay = false;
-
-	update internet.InternetSettings s
-	set s.LastStartFail = true;").ExecuteUpdate());
+						Reset();
 
 						var billingTime = InternetSettings.FindFirst();
 						if (now.Hour < 22)
@@ -111,7 +106,19 @@ namespace Billing
 			}
 		}
 
-		public void WithTransaction(Action<ISession> action)
+		public static void Reset()
+		{
+			ArHelper.WithSession(
+				s => s.CreateSQLQuery(@"
+update internet.Clients c
+set c.PaidDay = false;
+
+update internet.InternetSettings s
+set s.LastStartFail = true;")
+					.ExecuteUpdate());
+		}
+
+		private void WithTransaction(Action<ISession> action)
 		{
 			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
 				ArHelper.WithSession(action);
@@ -119,7 +126,7 @@ namespace Billing
 			}
 		}
 
-		public void ActivateServices(ISession session)
+		private void ActivateServices(ISession session)
 		{
 			var services = session.Query<ClientService>().Where(s => !s.Activated);
 			foreach (var service in services)
