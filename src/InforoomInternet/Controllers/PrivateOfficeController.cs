@@ -90,19 +90,19 @@ namespace InforoomInternet.Controllers
 			{
 				Flash["message"] = "Услуга \"Обещанный платеж активирована\"";
 				var CService = new ClientService {
-									  BeginWorkDate = DateTime.Now,
-									  Client = client,
-									  EndWorkDate = DateTime.Now.AddDays(1),
-									  Service = Service.GetByType(typeof(DebtWork))
-								  };
+					BeginWorkDate = DateTime.Now,
+					Client = client,
+					EndWorkDate = DateTime.Now.AddDays(1),
+					Service = Service.GetByType(typeof(DebtWork))
+				};
 				client.ClientServices.Add(CService);
 				CService.Activate();
 				new Appeals {
-								Appeal = "Услуга \"Обещанный платеж активирована\"",
-								AppealType = AppealType.System,
-								Client = client,
-								Date = DateTime.Now
-							}.Save();
+					Appeal = "Услуга \"Обещанный платеж активирована\"",
+					AppealType = AppealType.System,
+					Client = client,
+					Date = DateTime.Now
+				}.Save();
 			}
 			RedirectToUrl("IndexOffice");
 		}

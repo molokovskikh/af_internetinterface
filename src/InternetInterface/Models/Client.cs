@@ -182,9 +182,7 @@ namespace InternetInterface.Models
 			var forbiddenByService = ClientServices.Any(s => s.Service.BlockingAll && s.Activated);
 			if (forbiddenByService)
 				return false;
-			var tariffSum = GetPriceForTariff();
-			if (Payments == null)
-				return false;
+			var tariffSum = GetPrice();
 			return Payments.Sum(s => s.Sum) >= tariffSum*PercentBalance;
 		}
 
@@ -258,9 +256,7 @@ namespace InternetInterface.Models
 
 		public virtual bool PaymentForTariff()
 		{
-			if (Payments != null)
-				return Payments.Sum(p => p.Sum) >= GetPriceForTariff();
-			return false;
+			return Payments.Sum(p => p.Sum) >= GetPrice();
 		}
 
 		public virtual bool CanUsedPostponedPayment()
@@ -457,7 +453,7 @@ Id))
 
 		public virtual decimal ToPay()
 		{
-			var toPay =  GetPriceForTariff() - PhysicalClient.Balance;
+			var toPay =  GetPriceIgnoreDisabled() - PhysicalClient.Balance;
 			return toPay < 10 ? 10 : toPay;
 		}
 
@@ -503,6 +499,27 @@ Id))
 				return blockingService.GetPrice() + services.Where(c => c.Service.ProcessEvenInBlock).Sum(c => c.GetPrice());
 
 			return services.Sum(c => c.GetPrice());
+		}
+
+		public decimal GetPriceIgnoreDisabled()
+		{
+			decimal price = 0;
+			decimal iptvPrice = 0;
+			if (Internet.ActivatedByUser)
+				iptvPrice += Iptv.Channels.Sum(c => c.CostPerMonthWithInternet);
+			else
+				iptvPrice += Iptv.Channels.Sum(c => c.CostPerMonth);
+			price += iptvPrice;
+
+			if (Internet.ActivatedByUser)
+				price += GetPriceForTariff();
+
+			if (iptvPrice == 0) {
+				var service = FindService<IpTvBoxRent>();
+				price += service.GetPrice();
+			}
+
+			return price;
 		}
 
 		public virtual decimal GetBalance()

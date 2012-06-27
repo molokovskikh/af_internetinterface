@@ -170,7 +170,7 @@ namespace Billing
 							updateClient.AutoUnblocked = true;
 						}
 						if (updateClient.RatedPeriodDate != null)
-							if (physicalClient.Balance >= updateClient.GetPriceForTariff()) {
+							if (physicalClient.Balance >= updateClient.GetPrice()) {
 								updateClient.ShowBalanceWarningPage = false;
 							}
 						if (updateClient.ClientServices != null)
@@ -212,7 +212,7 @@ namespace Billing
 				var clients =
 					Client.Queryable.Where(
 						c => c.PhysicalClient != null && c.Disabled && c.AutoUnblocked).ToList().Where(
-							c => c.PhysicalClient.Balance >= c.GetPriceForTariff()*c.PercentBalance).ToList();
+							c => c.PhysicalClient.Balance >= c.GetPriceIgnoreDisabled()*c.PercentBalance).ToList();
 				var workStatus = Status.Find((uint) StatusType.Worked);
 				foreach (var client in clients) {
 					client.Status = workStatus;

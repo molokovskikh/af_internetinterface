@@ -233,7 +233,7 @@ namespace InternetInterface.Models
 
 		public virtual void UpdatePackageId(ClientEndpoint clientEndpoint)
 		{
-			if (Tariff != null)
+			if (Tariff != null && Client.Internet.ActivatedByUser)
 				clientEndpoint.PackageId = Tariff.PackageId;
 			else
 				clientEndpoint.PackageId = null;
