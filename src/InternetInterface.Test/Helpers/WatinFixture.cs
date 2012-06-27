@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Configuration;
-using System.Reflection;
 using Castle.ActiveRecord;
-using Castle.ActiveRecord.Framework.Config;
 using Common.Tools.Calendar;
-using Common.Web.Ui.Helpers;
-using InternetInterface.Controllers.Filter;
-using InternetInterface.Models;
 using WatiN.Core.UtilityClasses;
-using WatiNCssSelectorExtensions;
-using log4net.Config;
 using NUnit.Framework;
 using WatiN.Core;
+using WatiN.CssSelectorExtensions;
 
 namespace InternetInterface.Test.Helpers
 {
