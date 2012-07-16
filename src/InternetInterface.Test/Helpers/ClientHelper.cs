@@ -24,9 +24,9 @@ namespace InternetInterface.Test.Helpers
 			};
 		}
 
-		public static void CreateClient(Func<PhysicalClients, bool> Ok)
+		public static void CreateClient(Func<Client, bool> Ok)
 		{
-			var client =  new PhysicalClients {
+			var physClient =  new PhysicalClients {
 				Apartment = 1,
 				Balance = 100,
 				CaseHouse = "A",
@@ -48,25 +48,27 @@ namespace InternetInterface.Test.Helpers
 				Tariff = ActiveRecordBase<Tariff>.Find((uint)1),
 				WhoGivePassport = "guvd"
 			};
-			var valid = new ValidatorRunner(new CachedValidationRegistry());
-			if (valid.IsValid(client))
-			{
-				var pay = new Payment {
-					Client = Models.Client.Queryable.First(c => c.PhysicalClient == client),
-					PaidOn = DateTime.Now,
-					RecievedOn = DateTime.Now,
-					Sum = 500
-				};
-				client.SaveAndFlush();
-				pay.SaveAndFlush();
-				Ok(client);
-				client.DeleteAndFlush();
-				pay.DeleteAndFlush();
-			}
+			physClient.Save();
+			var client = new Client {
+				PhysicalClient = physClient,
+				Name = "TestClient"
+			};
+			client.Save();
+			var pay = new Payment {
+				Client = client,
+				PaidOn = DateTime.Now,
+				RecievedOn = DateTime.Now,
+				Sum = 500
+			};
+			pay.Save();
+			Ok(client);
+			client.DeleteAndFlush();
+			pay.DeleteAndFlush();
 		}
 
 		public static Client Client()
 		{
+			var house = new House("testStreet", 1);
 			var physicalClient = new PhysicalClients {
 				Name = "Alexandr",
 				Surname = "Zolotarev",
@@ -82,13 +84,12 @@ namespace InternetInterface.Test.Helpers
 				CaseHouse = "sdf",
 				City = "bebsk",
 				Email = "test@test.ru",
+				HouseObj = house
 			};
 			var client = new Client {
 				PhysicalClient = physicalClient,
 				BeginWork = null,
-				Name =
-					String.Format("{0} {1} {2}", physicalClient.Surname, physicalClient.Name,
-						physicalClient.Patronymic),
+				Name = String.Format("{0} {1} {2}", physicalClient.Surname, physicalClient.Name, physicalClient.Patronymic),
 				Status = ActiveRecordBase<Status>.FindFirst()
 			};
 			return client;

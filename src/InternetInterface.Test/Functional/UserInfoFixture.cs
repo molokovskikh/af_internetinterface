@@ -8,33 +8,13 @@ using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 using WatiN.Core;
 using WatiN.Core.Native.Windows;
+using WatinFixture2 = Test.Support.Web.WatinFixture2;
 
 namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
-	class UserInfoFixture : WatinFixture
+	class UserInfoFixture : ClientFunctionalFixture
 	{
-		public string format;
-		public PhysicalClients physicalClient;
-		public Client client;
-		public ClientEndpoints endPoint;
-
-		public UserInfoFixture()
-		{
-			using (new SessionScope()) {
-				client = ClientHelper.Client();
-				physicalClient = client.PhysicalClient;
-
-				client.SaveAndFlush();
-				endPoint = new ClientEndpoints {
-					Client = client,
-				};
-				endPoint.SaveAndFlush();
-				format =
-					string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}&filter.EditingConnect=true&filter.Editing=true",
-					              client.Id);
-			}
-		}
 
 		public string tr(Func<string, string> func)
 		{
@@ -64,25 +44,25 @@ namespace InternetInterface.Test.Functional
 		{
 			using (new SessionScope())
 			{
-				client.Status = Status.Find((uint) StatusType.BlockedAndNoConnected);
-				client.Update();
+				Client.Status = Status.Find((uint) StatusType.BlockedAndNoConnected);
+				Client.Update();
 			}
-			using (var browser = Open(format))
+			using (var browser = Open(Format))
 			{
 				Assert.That(browser.SelectList("ChStatus").SelectedItem, Is.EqualTo("Заблокирован"));
 				browser.Button("SaveButton").Click();
 			}
 			using (new SessionScope())
 			{
-				client.Refresh();
-				Assert.That(client.Status.Type, Is.EqualTo(StatusType.BlockedAndNoConnected));
+				Client.Refresh();
+				Assert.That(Client.Status.Type, Is.EqualTo(StatusType.BlockedAndNoConnected));
 			}
 			using (new SessionScope())
 			{
-				client.Status = Status.Find((uint)StatusType.Worked);
-				client.Update();
+				Client.Status = Status.Find((uint)StatusType.Worked);
+				Client.Update();
 			}
-			using (var browser = Open(format))
+			using (var browser = Open(Format))
 			{
 				Assert.That(browser.SelectList("ChStatus").SelectedItem, Is.EqualTo("Подключен"));
 				browser.SelectList("ChStatus").Select("Заблокирован");
@@ -91,15 +71,15 @@ namespace InternetInterface.Test.Functional
 			}
 			using (new SessionScope())
 			{
-				client.Refresh();
-				Assert.That(client.Status.Type, Is.EqualTo(StatusType.NoWorked));
+				Client.Refresh();
+				Assert.That(Client.Status.Type, Is.EqualTo(StatusType.NoWorked));
 			}
 		}
 
 		[Test]
 		public void ReservTest()
 		{
-			using (var browser = Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", client.Id)))
+			using (var browser = Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", Client.Id)))
 			{
 				browser.Button("naznach_but").Click();
 				browser.RadioButton(Find.ByName("graph_button")).Checked = true;
@@ -129,7 +109,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void TelephoneTest()
 		{
-			using (var browser = Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}&filter.EditConnectInfoFlag=True", client.Id))) {
+			using (var browser = Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}&filter.EditConnectInfoFlag=True", Client.Id))) {
 				browser.Button(Find.ByName("callButton")).Click();
 				Assert.That(browser.Text, Is.StringContaining("Информация по клиенту"));
 				browser.Button("addContactButton").Click();
@@ -145,21 +125,21 @@ namespace InternetInterface.Test.Functional
 		{
 			using (new SessionScope())
 			{
-				client = Models.Client.Queryable.First(c => c.PhysicalClient != null && Brigad.FindAll().Contains(c.WhoConnected));
-				client.AdditionalStatus = null;
-				client.Status = Status.Find((uint)StatusType.BlockedAndNoConnected);
-				client.UpdateAndFlush();
-				format = string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", client.Id);
+				Client = Models.Client.Queryable.First(c => c.PhysicalClient != null && Brigad.FindAll().Contains(c.WhoConnected));
+				Client.AdditionalStatus = null;
+				Client.Status = Status.Find((uint)StatusType.BlockedAndNoConnected);
+				Client.UpdateAndFlush();
+				Format = string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", Client.Id);
 			}
-			using (var browser = Open(format))
+			using (var browser = Open(Format))
 			{
 				browser.Button("NotPhoned").Click();
 				browser.TextField("NotPhoned_textField").AppendText("Тестовое сообщение перезвонить");
 				browser.Button("NotPhoned_but").Click();
 				using (new SessionScope())
 				{
-					client.Refresh();
-					Assert.That(client.AdditionalStatus.Id, Is.EqualTo((uint)AdditionalStatusType.NotPhoned));
+					Client.Refresh();
+					Assert.That(Client.AdditionalStatus.Id, Is.EqualTo((uint)AdditionalStatusType.NotPhoned));
 					Assert.That(browser.Text, Is.StringContaining("Тестовое сообщение перезвонить"));
 					Assert.That(browser.Text, Is.StringContaining("Неудобно говорить"));
 				}
@@ -169,9 +149,9 @@ namespace InternetInterface.Test.Functional
 				Thread.Sleep(2000);
 				using (new SessionScope())
 				{
-					client.Refresh();
-					Assert.That(client.AdditionalStatus.Id, Is.EqualTo((uint)AdditionalStatusType.AppointedToTheGraph));
-					Assert.That(ConnectGraph.Queryable.Where(c => c.Client == client).Count(), Is.EqualTo(1));
+					Client.Refresh();
+					Assert.That(Client.AdditionalStatus.Id, Is.EqualTo((uint)AdditionalStatusType.AppointedToTheGraph));
+					Assert.That(ConnectGraph.Queryable.Where(c => c.Client == Client).Count(), Is.EqualTo(1));
 				}
 				browser.Button(Find.ById("Refused")).Click();
 				Thread.Sleep(1000);
@@ -180,8 +160,8 @@ namespace InternetInterface.Test.Functional
 				Thread.Sleep(2000);
 				using (new SessionScope())
 				{
-					client.Refresh();
-					Assert.That(client.AdditionalStatus.Id, Is.EqualTo((uint)AdditionalStatusType.Refused));
+					Client.Refresh();
+					Assert.That(Client.AdditionalStatus.Id, Is.EqualTo((uint)AdditionalStatusType.Refused));
 					Assert.That(browser.Text, Is.StringContaining("Тестовое сообщение отказ"));
 					Assert.That(browser.Text, Is.StringContaining("Перезвонит сам"));
 				}
@@ -191,7 +171,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void SaveSwitchForClientTest()
 		{
-			using (var browser = Open(format))
+			using (var browser = Open(Format))
 			{
 				var selectList = browser.SelectList(Find.ByName("ConnectInfo.Switch"));
 				selectList.SelectByValue(selectList.Options.First(o => o.Text == "Юго-Восточный 10 саt 2950").Value);
@@ -200,10 +180,10 @@ namespace InternetInterface.Test.Functional
 				Thread.Sleep(500);
 				using (new SessionScope())
 				{
-					endPoint.Refresh();
-					Assert.That(endPoint.Port, Is.EqualTo(10));
-					Assert.NotNull(endPoint.Switch);
-					Assert.That(endPoint.Switch.Name, Is.EqualTo("Юго-Восточный 10 саt  2950"));
+					EndPoint.Refresh();
+					Assert.That(EndPoint.Port, Is.EqualTo(10));
+					Assert.NotNull(EndPoint.Switch);
+					Assert.That(EndPoint.Switch.Name, Is.EqualTo("Юго-Восточный 10 саt  2950"));
 				}
 			}
 		}
@@ -233,7 +213,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void EditClientNameTest()
 		{
-			using (var browser = Open(format))
+			using (var browser = Open(Format))
 			{
 				browser.TextField("Surname").Clear();
 				browser.TextField("Surname").AppendText("Иванов");
@@ -246,8 +226,8 @@ namespace InternetInterface.Test.Functional
 			}
 			using (new SessionScope())
 			{
-				client.Refresh();
-				Assert.That(client.Name,
+				Client.Refresh();
+				Assert.That(Client.Name,
 							Is.EqualTo(string.Format("{0} {1} {2}", "Иванов",
 													 "Иван", "Иванович")));
 			}
@@ -285,7 +265,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void UserWriteOffsTest()
 		{
-			using (var browser = Open(format))
+			using (var browser = Open(Format))
 			{
 				browser.Button("userWriteOffButton").Click();
 				Assert.That(browser.Text, Is.StringContaining("Значение должно быть больше нуля"));

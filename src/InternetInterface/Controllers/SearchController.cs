@@ -34,6 +34,7 @@ namespace InternetInterface.Controllers
 		public UserSearchProperties searchProperties { get; set; }
 		public uint statusType { get; set; }
 		public ClientTypeProperties clientTypeFilter { get; set; }
+		public EnabledTypeProperties EnabledTypeProperties { get; set; }
 		public uint tariff { get; set; }
 		public uint whoregister { get; set; }
 		public uint brigad { get; set; }
@@ -64,22 +65,23 @@ namespace InternetInterface.Controllers
 		{
 			if (CategorieAccessSet.AccesPartner("SSI"))
 			return new Dictionary<string, object> {
-													  {"filter.searchText", searchText},
-													  {"filter.searchProperties.SearchBy", searchProperties.SearchBy},
-													  {"filter.clientTypeFilter.Type", clientTypeFilter.Type},
-													  {"filter.tariff", tariff},
-													  {"filter.whoregister", whoregister},
-													  {"filter.brigad", brigad},
-													  {"filter.addtionalStatus", addtionalStatus},
-													  {"filter.statusType", statusType},
-													  {"filter.SortBy", SortBy},
-													  {"filter.Direction", Direction},
-													  {"CurrentPage", CurrentPage}
-												  };
+				{"filter.searchText", searchText},
+				{"filter.searchProperties.SearchBy", searchProperties.SearchBy},
+				{"filter.clientTypeFilter.Type", clientTypeFilter.Type},
+				{"filter.EnabledTypeProperties.Type", EnabledTypeProperties.Type},
+				{"filter.tariff", tariff},
+				{"filter.whoregister", whoregister},
+				{"filter.brigad", brigad},
+				{"filter.addtionalStatus", addtionalStatus},
+				{"filter.statusType", statusType},
+				{"filter.SortBy", SortBy},
+				{"filter.Direction", Direction},
+				{"CurrentPage", CurrentPage}
+			};
 			return new Dictionary<string, object> {
-													  {"filter.searchText", searchText},
-													  {"CurrentPage", CurrentPage}
-												  };
+				{"filter.searchText", searchText},
+				{"CurrentPage", CurrentPage}
+			};
 		}
 
 		public string ToUrlQuery()
@@ -117,7 +119,7 @@ namespace InternetInterface.Controllers
 			if (SortBy == "RegDate")
 				return string.Format("{0} {1} ", "C.RegDate", Direction);
 			if (SortBy == "Tariff")
-				return string.Format("{0} {1} ", "if (c.PhysicalClient is null, l.Speed, p.Tariff)", Direction);
+				return string.Format("{0} {1} ", "if (c.PhysicalClient is null, l.Tariff, t.Price)", Direction);
 			if (SortBy == "Balance")
 				return string.Format("{0} {1} ", "if (c.PhysicalClient is null, l.Balance, p.Balance)", Direction);
 			if (SortBy == "Status")
@@ -129,6 +131,16 @@ namespace InternetInterface.Controllers
 
 		public IList<ClientInfo> Find()
 		{
+			var selectText = @"SELECT 
+c.*,
+co.Contact
+FROM internet.Clients c
+left join internet.PhysicalClients p on p.id = c.PhysicalClient
+left join internet.LawyerPerson l on l.id = c.LawyerPerson
+left join internet.Contacts co on co.Client = c.id
+left join internet.Tariffs t on t.Id = p.Tariff
+join internet.Status S on s.id = c.Status";
+
 			IList<Client> result = new List<Client>();
 			ArHelper.WithSession(session =>
 			{
@@ -142,16 +154,15 @@ namespace InternetInterface.Controllers
 					{
 						sqlStr =
 							String.Format(
-								@"SELECT c.*, co.Contact FROM internet.Clients c
-left join internet.PhysicalClients p on p.id = c.PhysicalClient
-left join internet.LawyerPerson l on l.id = c.LawyerPerson
-left join internet.Contacts co on co.Client = c.id
-join internet.Status S on s.id = c.Status
+@"{4}
 {0}
 group by c.id
 ORDER BY {3} Limit {1}, {2}",
-								GetClientsLogic.GetWhere(searchProperties, statusType, clientTypeFilter, whoregister, tariff, searchText, brigad,
-										 addtionalStatus), CurrentPage * PageSize, PageSize, GetOrderField());
+							GetClientsLogic.GetWhere(searchProperties, statusType, clientTypeFilter, EnabledTypeProperties, whoregister, tariff, searchText, brigad, addtionalStatus),
+							CurrentPage * PageSize,
+							PageSize,
+							GetOrderField(),
+							selectText);
 						query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Client));
 						SetParameters(query);
 						if (searchText != null)
@@ -159,14 +170,14 @@ ORDER BY {3} Limit {1}, {2}",
 					}
 					else
 					{
-						sqlStr = string.Format(@"SELECT c.*, co.Contact FROM internet.Clients c
-left join internet.PhysicalClients p on p.id = c.PhysicalClient
-left join internet.LawyerPerson l on l.id = c.LawyerPerson
-join internet.Status S on s.id = c.Status
-left join internet.Contacts co on co.Client = c.id
+						sqlStr = string.Format(@"{3}
 where C.id = :SearchText
 group by c.id
-ORDER BY {2} Limit {0}, {1}", CurrentPage * PageSize, PageSize, GetOrderField());
+ORDER BY {2} Limit {0}, {1}",
+							CurrentPage * PageSize,
+							PageSize,
+							GetOrderField(),
+							selectText);
 						query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Client));
 						if (searchText != null)
 							query.SetParameter("SearchText", searchText.ToLower());
@@ -174,14 +185,15 @@ ORDER BY {2} Limit {0}, {1}", CurrentPage * PageSize, PageSize, GetOrderField())
 				else
 				{
 					if (!string.IsNullOrEmpty(searchText))
-						sqlStr = string.Format(@"SELECT c.*, co.Contact FROM internet.Clients c
-left join internet.PhysicalClients p on p.id = c.PhysicalClient
-left join internet.LawyerPerson l on l.id = c.LawyerPerson
-join internet.Status S on s.id = c.Status
-left join internet.Contacts co on co.Client = c.id
+						sqlStr = string.Format(@"{4}
 WHERE LOWER(C.Name) like {0} or LOWER(C.Id) like {0} or LOWER(co.Contact) like {0}
 group by c.id
-ORDER BY {3} Limit {1}, {2}", ":SearchText", CurrentPage * PageSize, PageSize, GetOrderField());
+ORDER BY {3} Limit {1}, {2}", 
+							":SearchText",
+							CurrentPage * PageSize,
+							PageSize,
+							GetOrderField(),
+							selectText);
 					else
 					{
 						return new List<Client>();
@@ -242,10 +254,10 @@ ORDER BY {3} Limit {1}, {2}", ":SearchText", CurrentPage * PageSize, PageSize, G
 		public void SearchUsers(string query, PhysicalClients sClients)
 		{
 			var filter = new SeachFilter {
-											 searchProperties = new UserSearchProperties {SearchBy = SearchUserBy.Auto},
-											 statusType = 0,
-											 clientTypeFilter =
-												 new ClientTypeProperties {Type = ForSearchClientType.AllClients},
+											searchProperties = new UserSearchProperties {SearchBy = SearchUserBy.Auto},
+											EnabledTypeProperties = new EnabledTypeProperties {Type = EndbledType.All},
+											statusType = 0,
+											clientTypeFilter = new ClientTypeProperties {Type = ForSearchClientType.AllClients},
 										 };
 			PropertyBag["filter"] = filter;
 			PropertyBag["SearchText"] = "";

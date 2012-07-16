@@ -13,7 +13,7 @@ namespace InternetInterface.AllLogic
 {
 	public class GetClientsLogic
 	{
-		public static string GetWhere(UserSearchProperties sp, uint ct, ClientTypeProperties clT,
+		public static string GetWhere(UserSearchProperties sp, uint ct, ClientTypeProperties clT, EnabledTypeProperties enT,
 		                              uint whoregister, uint tariff, string searchText, uint brigad, uint addtionalStatus)
 		{
 			var _return = string.Empty;
@@ -39,6 +39,10 @@ namespace InternetInterface.AllLogic
 			if (clT.IsLawyer()) {
 				_return += " and C.LawyerPerson is not null";
 			}
+			if (enT.IsDisabled())
+				_return += " and c.Disabled";
+			if (enT.IsEnabled())
+				_return += " and c.Disabled = false";
 			if (searchText != null) {
 				if (sp.IsSearchAuto()) {
 					return

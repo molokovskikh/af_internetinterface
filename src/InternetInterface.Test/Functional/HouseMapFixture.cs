@@ -9,6 +9,7 @@ using InternetInterface.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
+using Test.Support.Web;
 using WatiN.Core;
 
 namespace InternetInterface.Test.Functional

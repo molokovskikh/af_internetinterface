@@ -5,6 +5,7 @@ using System.Text;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
+using Test.Support.Web;
 
 namespace InternetInterface.Test.Functional
 {

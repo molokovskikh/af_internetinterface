@@ -68,6 +68,14 @@
 					<td>Тариф<br />
 						${FormHelper.Select("filter.tariff", Tariffs, {"value" : "Id", "text" : "Name"})}
 					</td>
+					<td>
+						<input type="radio" id="DisabledAll" name="filter.EnabledTypeProperties.Type" value=All ${"checked" if filter.EnabledTypeProperties.IsAll()} />
+						<label for="AutoRadio4search">Все</label><br />
+						<input type="radio" id="DisabledFalse" name="filter.EnabledTypeProperties.Type" value=Enabled ${"checked" if filter.EnabledTypeProperties.IsEnabled()} />
+						<label for="Radio5">Включены</label><br />
+						<input type="radio" id="DisabledTrue" name="filter.EnabledTypeProperties.Type" value=Disabled ${"checked" if filter.EnabledTypeProperties.IsDisabled()} />
+						<label for="Radio6">Отключены</label><br />
+					</td>
 				</tr>
 				<tr>
 					<td>

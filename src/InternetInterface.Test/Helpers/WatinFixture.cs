@@ -15,7 +15,7 @@ using WatiN.Core;
 
 namespace InternetInterface.Test.Helpers
 {
-	[Obsolete("Устарел используй Test.Support.Web.WatinFixture2")]
+	/*[Obsolete("Устарел используй Test.Support.Web.WatinFixture2")]
 	public class WatinFixture2 : WatinFixture
 	{
 		public WatinFixture2()
@@ -30,7 +30,7 @@ namespace InternetInterface.Test.Helpers
 				scope.Flush();
 			browser.Refresh();
 		}
-	}
+	}*/
 
 	[TestFixture, Obsolete("Устарел используй Test.Support.Web.WatinFixture2")]
 	public class WatinFixture

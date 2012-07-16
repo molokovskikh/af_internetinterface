@@ -44,6 +44,16 @@ namespace InternetInterface.Models
 		AllConnected
 	}
 
+	public enum EndbledType
+	{
+		[Description("Подключенных")]
+		Enabled,
+		[Description("Не подключенных")]
+		Disabled,
+		[Description("Всех")]
+		All
+	}
+
 	public class ClientTypeProperties
 	{
 		public ForSearchClientType Type { get; set; }
@@ -81,6 +91,31 @@ namespace InternetInterface.Models
 		public bool IsAllConnected()
 		{
 			return Type == ConnectedType.AllConnected;
+		}
+	}
+
+	public class EnabledTypeProperties
+	{
+		public EnabledTypeProperties()
+		{
+			Type = EndbledType.All;
+		}
+
+		public EndbledType Type { get; set; }
+
+		public bool IsEnabled()
+		{
+			return Type == EndbledType.Enabled;
+		}
+
+		public bool IsDisabled()
+		{
+			return Type == EndbledType.Disabled;
+		}
+
+		public bool IsAll()
+		{
+			return Type == EndbledType.All;
 		}
 	}
 
