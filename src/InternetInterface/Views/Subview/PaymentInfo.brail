@@ -37,8 +37,9 @@ ${app.JS("validation.js")}
 		<% for i, item in enumerate(Payments): %>
 			<tr id="Row${i}" class="${app.Style(item)}">
 				<td>
-					<form class="backPayment" method=post action="${siteroot}/Payments/${item.Id}/Cancel">
+					<form class="backPayment" onsubmit="validateForm(this);" method=post action="${siteroot}/Payments/${item.Id}/Cancel">
 						<input type="submit" value="Отменить" />
+						<input type="hidden" class="hiddenCommentText" name="paymentReason" />
 					</form>
 				</td>
 				<td>${?item.Agent.Name}</td>
@@ -49,8 +50,8 @@ ${app.JS("validation.js")}
 		<% end %>
 			<tr>
 				<td>Причина:</td>
-				<td colspan=4> <input type=text name="paymentReason" id="paymentReason" /> <br />
-				<span class="error hidden" id="paymentReasonMessage">Введите комментарий</span>
+				<td colspan=4> <input type=text name="paymentReason" id="paymentReason" onkeypress="changeCommentText(this);" /> <br />
+				<span id="paymentReasonMessage"></span>
 				</td>
 			</tr>
 		</tbody>
