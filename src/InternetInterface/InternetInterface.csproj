@@ -231,7 +231,6 @@
     <None Include="Views\Payments\СhangeSaleSettings.brail" />
     <None Include="Views\AgentInfo\EditAgentSettings.brail" />
     <Content Include="JavaScript\vaidServiceRequest.js" />
-    <Content Include="JavaScript\validation.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
