@@ -505,3 +505,7 @@ table .filter_front {
 table .filter_front thead td{
 	padding: 5px;
 }
+
+.hidden {
+	display:none;
+}

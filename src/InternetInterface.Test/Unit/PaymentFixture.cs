@@ -32,10 +32,10 @@ namespace InternetInterface.Test.Unit
 			physicalClient.Balance += payment.Sum;
 			physicalClient.MoneyBalance += payment.Sum;
 
-			var message = payment.Cancel();
+			var message = payment.Cancel("Comment");
 			Assert.That(physicalClient.Balance, Is.EqualTo(0));
 			Assert.That(physicalClient.MoneyBalance, Is.EqualTo(0));
-			Assert.That(message.Appeal, Is.EqualTo("Удален платеж на сумму 1\u00A0000,00р."));
+			Assert.That(message.Appeal, Is.EqualTo("Удален платеж на сумму 1\u00A0000,00р. \r\n Комментарий: Comment"));
 		}
 
 		[Test]
@@ -48,7 +48,7 @@ namespace InternetInterface.Test.Unit
 			var payment = new Payment(client, 500) {
 				BillingAccount = true
 			};
-			payment.Cancel();
+			payment.Cancel(string.Empty);
 			Assert.That(physicalClient.Balance, Is.EqualTo(1000));
 			Assert.That(physicalClient.MoneyBalance, Is.EqualTo(500));
 			Assert.That(physicalClient.VirtualBalance, Is.EqualTo(500));
