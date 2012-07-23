@@ -361,13 +361,18 @@ namespace InternetInterface.Controllers
 			}
 		}
 
-		public void Cancel(uint id)
+		public void Cancel(uint id, string comment)
 		{
-			var payment = DbSession.Load<Payment>(id);
-			var message = payment.Cancel();
-			DbSession.Delete(payment);
-			DbSession.Save(message);
-			Notify("Отменено");
+			if (!string.IsNullOrEmpty(comment)) {
+				var payment = DbSession.Load<Payment>(id);
+				var message = payment.Cancel(comment);
+				DbSession.Delete(payment);
+				DbSession.Save(message);
+				Notify("Отменено");
+			}
+			else {
+				Error("Введите комментарий для отмены платежа");
+			}
 			RedirectToReferrer();
 		}
 	}

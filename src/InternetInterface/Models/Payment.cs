@@ -52,7 +52,7 @@ namespace InternetInterface.Models
 			get { return !BillingAccount; }
 		}
 
-		public virtual Appeals Cancel()
+		public virtual Appeals Cancel(string comment)
 		{
 			if (BillingAccount)
 			{
@@ -61,7 +61,7 @@ namespace InternetInterface.Models
 				else
 					Client.LawyerPerson.Balance -= Sum;
 			}
-			return new Appeals(String.Format("Удален платеж на сумму {0:C}", Sum), Client, AppealType.System);
+			return new Appeals(String.Format("Удален платеж на сумму {0:C} \r\n Комментарий: {1}", Sum, comment), Client, AppealType.System);
 		}
 	}
 }
