@@ -1,5 +1,4 @@
 ﻿${app.Asset("payments.css")}
-${app.Asset("validation.js")}
 ${app.JS("validation.js")}
 
 <script type="text/javascript">
