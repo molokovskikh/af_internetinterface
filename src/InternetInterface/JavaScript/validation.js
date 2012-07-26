@@ -3,30 +3,18 @@
 		errorLabelContainer: "#paymentReasonMessage",
 		ignore: "",
 		rules: {
-			paymentReason: {
+			comment: {
 				required: true
 			}
 		},
 		messages:
 			{
-				paymentReason: {
+				comment: {
 					required: "Введите комментарий"
 				}
 			}
 	});
 }
-
-function validateForm(form) {
-		var comment = $('#paymentReason').val();
-		if (comment != "") {
-			form.action += ("?comment=" + comment);
-			form.submit();
-			return true;
-		} else {
-			$('#paymentReasonMessage').css("display", "inline");
-			return false;
-	}
-	}
 
 function changeCommentText(field) {
 	$('.hiddenCommentText').val($(field).val());
