@@ -1,4 +1,8 @@
-﻿function BackPaymentValidation() {
+﻿function HtmlEncode(val) {
+	return $("<div/>").text(val).html();
+} 
+
+function BackPaymentValidation() {
 	$('.backPayment').validate({
 		errorLabelContainer: "#paymentReasonMessage",
 		ignore: "",
@@ -16,6 +20,7 @@
 	});
 }
 
-function changeCommentText(field) {
-	$('.hiddenCommentText').val($(field).val());
+function changeCommentText() {
+	var encoded = HtmlEncode($('#paymentReason').val());
+	$('.hiddenCommentText').val(encoded);
 }
