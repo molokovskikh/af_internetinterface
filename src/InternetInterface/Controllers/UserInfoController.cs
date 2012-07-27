@@ -5,6 +5,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
+using Castle.MonoRail.Framework.Helpers;
 using Common.Tools;
 using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
@@ -14,6 +15,7 @@ using InternetInterface.Filters;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Services;
+using TextHelper = InternetInterface.Helpers.TextHelper;
 
 namespace InternetInterface.Controllers
 {
@@ -200,6 +202,7 @@ namespace InternetInterface.Controllers
 
 	[Helper(typeof (PaginatorHelper))]
 	[Helper(typeof (TextHelper))]
+	[Helper(typeof (FormHelper))]
 	[Helper(typeof (BindingHelper))]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof (AuthenticationFilter))]
 	public class UserInfoController : BaseController
@@ -800,7 +803,7 @@ where r.`Label`= :LabelIndex;")
 		[AccessibleThrough(Verb.Post)]
 		public void EditInformation([DataBind("Client")] PhysicalClients client, uint ClientID, uint tariff, uint status,
 		                            string group, uint house_id, AppealType appealType, string comment,
-		                            [DataBind("filter")] ClientFilter filter, bool SendSmsNotifocation)
+		                            [DataBind("filter")] ClientFilter filter)
 		{
 			var _client = Client.Queryable.First(c => c.Id == ClientID);
 			var _status = Status.Find(status);
@@ -810,10 +813,11 @@ where r.`Label`= :LabelIndex;")
 			InitializeHelper.InitializeModel(_client);
 
 			BindObjectInstance(updateClient, ParamStore.Form, "Client");
+			BindObjectInstance(_client, ParamStore.Form, "_client");
 
 			if (oldStatus.ManualSet)
 				_client.Status = _status;
-			if (Validator.IsValid(updateClient))
+			if (IsValid(updateClient) & IsValid(_client))
 			{
 				if (updateClient.PassportDate != null)
 					updateClient.PassportDate = updateClient.PassportDate;
@@ -834,7 +838,6 @@ where r.`Label`= :LabelIndex;")
 				}
 
 				updateClient.Update();
-				_client.SendSmsNotifocation = SendSmsNotifocation;
 				_client.Name = string.Format("{0} {1} {2}", updateClient.Surname, updateClient.Name,
 				                             updateClient.Patronymic);
 				var endPoints = ClientEndpoints.Queryable.Where(p => p.Client == _client).ToList();

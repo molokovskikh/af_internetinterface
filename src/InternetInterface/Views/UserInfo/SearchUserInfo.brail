@@ -58,11 +58,11 @@
 <%if PartnerAccessSet.AccesPartner("SSI"): %>
 		<tr>
 			<td style="font-size:small;">
-				<form class="form login" method="post" action="${siteroot}/UserInfo/PassAndShowCard">
+				<form style="display:inline;" class="form login" method="post" action="${siteroot}/UserInfo/PassAndShowCard">
 					<input type="hidden" name="ClientID" value="${ClientCode}" />
 					<button type="submit" id="Button1" class="button"><img alt="Save" src="../Images/tick.png">Изменить пароль и показать карту</button>
 				</form>
-			</td>
+			<button type=button class="button" onclick="GoTo('http://redmine.analit.net/issues/${_client.RedmineTask}');"><img alt="Save" src="../Images/tick.png">Страница Redmine</img></button></td>
 		</tr>
 	</tbody>
 </table>

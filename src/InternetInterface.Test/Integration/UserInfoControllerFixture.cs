@@ -59,7 +59,7 @@ namespace InternetInterface.Test.Integration
 			session.Save(house);
 
 			session.Flush();
-			controller.EditInformation(client.PhysicalClient, client.Id, tariff.Id, dissolved.Id, null, house.Id, AppealType.All, null, new ClientFilter(), false);
+			controller.EditInformation(client.PhysicalClient, client.Id, tariff.Id, dissolved.Id, null, house.Id, AppealType.All, null, new ClientFilter());
 			CheckValidationError(client.PhysicalClient);
 
 			session.Flush();

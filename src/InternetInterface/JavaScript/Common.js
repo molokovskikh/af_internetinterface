@@ -73,3 +73,7 @@ function HideVisible(folder) {
 	$(folder).addClass("ShowHiden");
 	$(folder).siblings("div").addClass("hidden");
 }
+
+function GoTo(link) {
+	window.open(link, "_blank");
+}

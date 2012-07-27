@@ -243,7 +243,12 @@ $('#register_house').trigger('reveal:close');
 		</tr>
 		<tr>
 			<td>Отправлять СМС уведомления </td>
-			<td><input type=checkbox id="sendSmsNot" name="SendSmsNotifocation" ${"checked" if SendSmsNotifocation}/></td>
+			<td colspan=2>${FormHelper.CheckboxField("_client.SendSmsNotifocation")}</td>
+		</tr>
+		<tr>
+			<td>Задача в Redmine для клиента</td>
+			<td>${FormHelper.TextField("_client.RedmineTask")}</td>
+			<td>${app.GetValidationError("_client.RedmineTask")}</td>
 		</tr>
 		<%end %>
 		<%end %>

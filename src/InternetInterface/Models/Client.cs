@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using Castle.ActiveRecord;
+using Castle.Components.Validator;
 using Common.Tools;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.NHibernateExtentions;
@@ -121,6 +122,9 @@ namespace InternetInterface.Models
 
 		[OneToOne(PropertyRef = "Client")]
 		public virtual MessageForClient Message { get; set; }
+
+		[Property, ValidateInteger("Должно быть введено число")]
+		public virtual string RedmineTask { get; set; }
 
 		public virtual bool HavePaymentToStart()
 		{
