@@ -37,5 +37,21 @@ namespace InternetInterface.Test.Unit
 			Assert.That(client.VirtualBalance, Is.EqualTo(0));
 			Assert.That(client.MoneyBalance, Is.EqualTo(-500));
 		}
+
+		[Test]
+		public void First_write_virtual()
+		{
+			client.Balance = 1000;
+			client.MoneyBalance = 600;
+			client.VirtualBalance = 400;
+			client.WriteOff(300);
+			Assert.That(client.Balance, Is.EqualTo(700));
+			Assert.That(client.VirtualBalance, Is.EqualTo(100));
+			Assert.That(client.MoneyBalance, Is.EqualTo(600));
+			client.WriteOff(300);
+			Assert.That(client.Balance, Is.EqualTo(400));
+			Assert.That(client.VirtualBalance, Is.EqualTo(0));
+			Assert.That(client.MoneyBalance, Is.EqualTo(400));
+		}
 	}
 }
