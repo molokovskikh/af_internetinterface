@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Castle.ActiveRecord;
 using Castle.MonoRail.Framework;
 using InforoomInternet.Logic;
@@ -62,19 +63,21 @@ namespace InforoomInternet.Controllers
 		public bool Perform(ExecuteWhen exec, IEngineContext context, IController controller, IControllerContext controllerContext)
 		{
 			var ip = context.Request.UserHostAddress;
-#if DEBUG
-		    var lease = Lease.FindAll();
-#else
-			var lease = Lease.FindAllByProperty("Ip", Convert.ToUInt32(NetworkSwitches.SetProgramIp(ip)));
-#endif
-			if (lease.Length != 0)
+
+			Lease[] lease = null;
+
+			if (Regex.IsMatch(ip, NetworkSwitches.IPRegExp))
+				lease = Lease.FindAllByProperty("Ip", Convert.ToUInt32(NetworkSwitches.SetProgramIp(ip)));
+
+			if (lease != null && lease.Length != 0)
 			{
 				var clientsId = lease.Where(
 					l => l.Endpoint != null && l.Endpoint.Client != null && l.Endpoint.Client.PhysicalClient != null).
-					Select(l => l.Endpoint.Client.Id);
-				if (clientsId.Count() != 0)
+					Select(l => l.Endpoint.Client.Id).ToList();
+				if (clientsId.Any())
 				{
 					context.Session["LoginClient"] = clientsId.First();
+					context.Session["autoIn"] = true;
 					return true;
 				}
 			}

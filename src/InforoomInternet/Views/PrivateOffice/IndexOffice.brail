@@ -88,8 +88,13 @@ function GetLinkText(hide) {
 <%end %>
 <table style="width:auto;" class="headTable">
 <tr>
-	<td colspan=2>
+	<td>
 		<h2 style="padding-left:0px;">Ваш личный кабинет, ${PhysClientName}</h2>
+	</td>
+	<td align=right id="exitLinkTd">
+		<% if not IsDefined("autoIn"): %>
+			<a href="${siteroot}/Login/Exit" class="button" id="exitLink">Выйти</a>
+		<%end %>
 	</td>
 </tr>
 <tr>

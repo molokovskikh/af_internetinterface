@@ -59,6 +59,8 @@ namespace InforoomInternet.Controllers
 			else {
 				PropertyBag["fullMonth"] = null;
 			}
+			if (Context.Session["autoIn"] != null)
+				PropertyBag["autoIn"] = true;
 		}
 
 		public void PostponedPayment()

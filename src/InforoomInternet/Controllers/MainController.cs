@@ -154,7 +154,7 @@ namespace InforoomInternet.Controllers
 		{
 			var hostAdress = Request.UserHostAddress;
 #if DEBUG
-			hostAdress = "91.209.124.75";
+			hostAdress = "127.0.0.1";
 #endif
 
 			var lease = Client.FindByIP(hostAdress);

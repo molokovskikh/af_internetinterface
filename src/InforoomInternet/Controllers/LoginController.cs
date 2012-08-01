@@ -66,5 +66,11 @@ namespace InforoomInternet.Controllers
 				RedirectToUrl(@"..//Login/LoginPage");
 			}
 		}
+
+		public void Exit()
+		{
+			Session["LoginClient"] = null;
+			RedirectToSiteRoot();
+		}
 	}
 }

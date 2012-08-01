@@ -554,6 +554,18 @@ color: #f00; /* ÷вет активной ссылки */
   margin-right: 10px;
 }
 
+#exitLink {
+	padding : 4px 10px 4px 10px;
+	text-decoration: none;
+	display: inline;
+}
+
+#content #exitLinkTd
+{
+	padding: 0px;
+	padding-bottom: 15px;
+}
+
 /* Ѕаннер в правой колонке */
 #mini-banner a {
   background: url(../Content/Layouts/mini-banner.jpg) no-repeat center top;
