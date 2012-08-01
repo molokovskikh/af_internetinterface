@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Castle.ActiveRecord;
+using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
@@ -28,6 +29,8 @@ namespace InternetInterface.Test.Functional
 			using (new SessionScope())
 			{
 				lp = ClientHelper.CreateLaywerPerson();
+				lp.Sale = 5;
+				lp.StartNoBlock = DateTime.Now;
 				lp.Save();
 			}
 			using (var browser = Open("Search/Redirect?filter.ClientCode=" + lp.Id))
@@ -42,38 +45,31 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void ChangeStatus()
 		{
-			using (new SessionScope())
-			{
-				Client.Status = Status.Find((uint) StatusType.BlockedAndNoConnected);
-				Client.Update();
-			}
-			using (var browser = Open(Format))
-			{
-				Assert.That(browser.SelectList("ChStatus").SelectedItem, Is.EqualTo("Заблокирован"));
-				browser.Button("SaveButton").Click();
-			}
-			using (new SessionScope())
-			{
-				Client.Refresh();
-				Assert.That(Client.Status.Type, Is.EqualTo(StatusType.BlockedAndNoConnected));
-			}
-			using (new SessionScope())
-			{
-				Client.Status = Status.Find((uint)StatusType.Worked);
-				Client.Update();
-			}
-			using (var browser = Open(Format))
-			{
-				Assert.That(browser.SelectList("ChStatus").SelectedItem, Is.EqualTo("Подключен"));
-				browser.SelectList("ChStatus").Select("Заблокирован");
-				browser.Button("SaveButton").Click();
-				Assert.That(browser.Text, Is.StringContaining("Данные изменены"));
-			}
-			using (new SessionScope())
-			{
-				Client.Refresh();
-				Assert.That(Client.Status.Type, Is.EqualTo(StatusType.NoWorked));
-			}
+			InitializeContent.GetAdministrator = () => Partner.FindFirst();
+			Client.Status = Status.Find((uint) StatusType.BlockedAndNoConnected);
+			Client.Update();
+			browser = Open(Format);
+
+			Assert.That(browser.SelectList("ChStatus").SelectedItem, Is.EqualTo(" Заблокирован "));
+			browser.Button("SaveButton").Click();
+
+			Client.Refresh();
+			Assert.That(Client.Status.Type, Is.EqualTo(StatusType.BlockedAndNoConnected));
+
+			Client.Status = Status.Find((uint)StatusType.Worked);
+			Client.Update();
+
+			browser = Open(Format);
+
+			Assert.That(browser.SelectList("ChStatus").SelectedItem, Is.EqualTo(" Подключен "));
+			browser.SelectList("ChStatus").Select(" Заблокирован ");
+			browser.Button("SaveButton").Click();
+			Assert.That(browser.Text, Is.StringContaining("Данные изменены"));
+
+			Client.Refresh();
+			Assert.That(Client.Status.Type, Is.EqualTo(StatusType.NoWorked));
+			Assert.That(Client.Sale, Is.EqualTo(0));
+			Assert.That(Client.StartNoBlock, Is.Null);
 		}
 
 		[Test]

@@ -848,6 +848,8 @@ where r.`Label`= :LabelIndex;")
 				if (_client.Status.Blocked)
 				{
 					_client.Disabled = true;
+					_client.StartNoBlock = null;
+					_client.Sale = 0;
 				}
 				else
 				{
