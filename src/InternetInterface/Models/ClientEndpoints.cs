@@ -56,7 +56,7 @@ namespace InternetInterface.Models
 		[OneToOne]
 		public virtual PaymentForConnect PayForCon { get; set; }
 
-		[HasMany(ColumnKey = "EndPoint", OrderBy = "Ip", Lazy = true)]
+		[HasMany(ColumnKey = "EndPoint", OrderBy = "Ip", Lazy = true, Cascade = ManyRelationCascadeEnum.AllDeleteOrphan)]
 		public virtual IList<StaticIp> StaticIps { get; set; }
 
 		public virtual bool IsMultilease
