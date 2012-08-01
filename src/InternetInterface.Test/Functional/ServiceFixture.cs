@@ -53,5 +53,26 @@ namespace InternetInterface.Test.Functional
 			Assert.That(browser.Text, Is.StringContaining("Фильтр"));
 			Assert.That(browser.Text, Is.StringContaining("900-9090900"));
 		}
+
+		[Test]
+		public void Filter_test()
+		{
+			var request = new ServiceRequest {
+				Contact = "900-9090900",
+				Client = client
+			};
+			session.Save(request);
+			Flush();
+			Open("ServiceRequest/ViewRequests");
+
+			browser.TextField("filter_Text").AppendText("test_text");
+			Click("Применить");
+			AssertText("По вашему запросу ничего не найдено, либо вы не ввели информацию для поиска");
+			browser.TextField("filter_Text").Clear();
+			browser.TextField("filter_Text").AppendText(client.Id.ToString());
+			Click("Применить");
+			Assert.That(browser.Text, Is.StringContaining("Фильтр"));
+			Assert.That(browser.Text, Is.StringContaining("900-9090900"));
+		}
 	}
 }

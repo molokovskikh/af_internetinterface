@@ -27,6 +27,7 @@
 				</td>
 			</tr>
 			${app.FilterFor("filter.FreeFlag")}
+			${app.FilterFor("filter.Text")}
 			<tr>
 				<td colspan=100>
 					<button class="button" type=submit>Применить</button>
@@ -46,6 +47,7 @@
 			</tr>
 			<tr style="text-align:center;">
 				<th>${app.Sortable("ID заявки", "RequestId")}</th>
+				<th>${app.Sortable("ID клиента", "ClientId")}</th>
 				<th>${app.Sortable("Клиент", "ClientId")}</th>
 				<th>${app.Sortable("Краткое описание", "Description")}</th>
 				<th>${app.Sortable("Контакт", "Contact")}</th>
@@ -59,8 +61,9 @@
 			<tr>
 				<td><a href="${Siteroot}/ServiceRequest/ShowRequest?Id=${request.Id}">${request.Id}</a></td>
 				<%if isService: %>
-					<td>[${request.Client.Id}] ${request.Client.Name}</td>
+					<td colspan=2>[${request.Client.Id}] ${request.Client.Name}</td>
 				<%else: %>
+					<td><a href="${Siteroot}/Search/Redirect?filter.ClientCode=${request.Client.Id}">${request.Client.Id}</a></td>
 					<td><a href="${Siteroot}/Search/Redirect?filter.ClientCode=${request.Client.Id}">${request.Client.Name}</a></td>
 				<%end %>
 				<td>${request.GetMinDiscription()}</td>

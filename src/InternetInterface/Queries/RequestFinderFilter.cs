@@ -7,6 +7,7 @@ using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using NHibernate;
 using NHibernate.Criterion;
+using NHibernate.SqlCommand;
 
 namespace InternetInterface.Queries
 {
@@ -18,6 +19,7 @@ namespace InternetInterface.Queries
 		public DatePeriod Period { get; set; }
 		public Client _Client { get; set; }
 		public int DateSelector { get; set; }
+		public string Text { get; set; }
 
 		[Description("Бесплатные")]
 		public bool FreeFlag { get; set; }
@@ -79,7 +81,17 @@ namespace InternetInterface.Queries
 				if (FreeFlag)
 					criteria.Add(Restrictions.Eq("Free", FreeFlag));
 			}
-
+			if (!string.IsNullOrEmpty(Text)) {
+				uint clientId = 0;
+				if (UInt32.TryParse(Text, out clientId)) {
+					criteria.CreateAlias("Client", "CL", JoinType.InnerJoin);
+					criteria.Add(Restrictions.Eq("CL.Id", clientId));
+				}
+				else {
+					criteria.Add(Restrictions.Like("Description", Text, MatchMode.Anywhere));
+				}
+			}
+			criteria.AddOrder(Order.Asc("Status"));
 			return criteria;
 		}
 
