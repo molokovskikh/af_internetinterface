@@ -17,6 +17,9 @@
 				${app.LinkTo("Счета", @Invoices, @Index, {"filter.SearchText": ClientCode, @attributes: {@class: "button ok"}})}
 				${app.LinkTo("Новый счет", @Invoices, @New, {"id": ClientCode, @attributes: {@class: "button ok"}})}
 				<a class="big-link" data-reveal-id="myModal_active" href="#" ><button type="button" class="button"><img alt="Save" src="../Images/tick.png">Управление услугами </button></a>
+				<%if _client.HaveRed(): %>
+					<button type=button class="button" onclick="GoTo('http://redmine.analit.net/issues/${_client.RedmineTask}');"><img alt="Save" src="../Images/tick.png">Страница Redmine</img></button></td>
+				<%end %>
 			</td>
 		</tr>
 	</tbody>

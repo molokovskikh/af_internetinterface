@@ -759,6 +759,7 @@ where r.`Label`= :LabelIndex;")
 			InitializeHelper.InitializeModel(_client);
 			InitializeHelper.InitializeModel(updateClient);
 			BindObjectInstance(updateClient, ParamStore.Form, "LegalPerson");
+			BindObjectInstance(_client, ParamStore.Form, "_client");
 
 			if (IsValid(updateClient))
 			{
