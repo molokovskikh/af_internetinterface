@@ -186,6 +186,16 @@
 				<td><span class="description">Дата подключения:</span> ${CloseDate}</td>
 		</tr>
 		<%end %>
+		<%if _client.RatedPeriodDate != null: %>
+		<tr>
+			<td><span class="description">Дата начала расчетного периода:</span> ${_client.RatedPeriodDate.ToShortDateString()}</td>
+		</tr>
+		<%end %>
+		<%if _client.StartNoBlock != null : %>
+		<tr>
+			<td><span class="description">Дата начала программы скидок:</span> ${_client.StartNoBlock.ToShortDateString()}</td>
+		</tr>
+		<%end %>
 		<%end %>
 <%if PartnerAccessSet.AccesPartner("ECI"): %>
 		<tr>

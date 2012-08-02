@@ -90,7 +90,9 @@ namespace InternetInterface.Test.Helpers
 				PhysicalClient = physicalClient,
 				BeginWork = null,
 				Name = String.Format("{0} {1} {2}", physicalClient.Surname, physicalClient.Name, physicalClient.Patronymic),
-				Status = ActiveRecordBase<Status>.FindFirst()
+				Status = ActiveRecordBase<Status>.FindFirst(),
+				RatedPeriodDate = DateTime.Now,
+				StartNoBlock = DateTime.Now.AddMonths(-1)
 			};
 			return client;
 		}

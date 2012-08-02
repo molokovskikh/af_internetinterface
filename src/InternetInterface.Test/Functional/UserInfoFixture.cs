@@ -16,10 +16,12 @@ namespace InternetInterface.Test.Functional
 	[TestFixture]
 	class UserInfoFixture : ClientFunctionalFixture
 	{
-
-		public string tr(Func<string, string> func)
+		[Test]
+		public void Base_view_test()
 		{
-			return func("");
+			Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", Client.Id));
+			AssertText(string.Format("Дата начала расчетного периода: {0}", DateTime.Now.ToShortDateString()));
+			AssertText(string.Format("Дата начала программы скидок: {0}", DateTime.Now.AddMonths(-1).ToShortDateString()));
 		}
 
 		[Test]
