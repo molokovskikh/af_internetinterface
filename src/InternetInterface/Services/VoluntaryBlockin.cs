@@ -134,7 +134,7 @@ namespace InternetInterface.Services
 
 		public override bool Diactivate(ClientService CService)
 		{
-			if ((CService.EndWorkDate == null && CService.Client.PhysicalClient.Balance < 0) ||
+			if ((CService.Client.PhysicalClient.Balance < 0) ||
 				(CService.EndWorkDate != null && (SystemTime.Now().Date >= CService.EndWorkDate.Value)))
 			{
 				CompulsoryDiactivate(CService);
@@ -158,6 +158,10 @@ namespace InternetInterface.Services
 
 			if (CService.Client.FreeBlockDays > 0)
 				return 0;
+
+			if (CService.Client.PhysicalClient.Balance < 0)
+				return 0;
+
 			return CService.Client.GetInterval()*3m;
 		}
 

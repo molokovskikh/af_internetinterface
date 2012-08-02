@@ -316,6 +316,32 @@ namespace Billing.Test.Integration
 		}
 
 		[Test]
+		public void Voluntary_blocking_and_minimum_balance()
+		{
+			using (new SessionScope()) {
+				PrepareTest();
+				_client = CreateClient();
+				_client.PhysicalClient.Balance = 5m;
+				_client.AutoUnblocked = true;
+				_client.FreeBlockDays = 0;
+				_client.Save();
+			}
+			using (new SessionScope()) {
+				Activate(typeof(VoluntaryBlockin), DateTime.Now.AddDays(7));
+			}
+			for (int i = 0; i < 5; i++) {
+				billing.OnMethod();
+				billing.Compute();
+			}
+			using (new SessionScope()) {
+				_client = Client.Find(_client.Id);
+				Assert.IsTrue(_client.Disabled);
+				Assert.IsEmpty(_client.ClientServices.ToList());
+				Assert.That(_client.PhysicalClient.Balance, Is.EqualTo(-1));
+			}
+		}
+
+		[Test]
 		public void VoluntaryBlockinTest()
 		{
 			int countDays = 10;
