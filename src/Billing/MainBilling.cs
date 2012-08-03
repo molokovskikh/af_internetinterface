@@ -160,8 +160,7 @@ namespace Billing
 							foreach (var clientService in updateClient.ClientServices.ToList()) {
 								_log.DebugFormat("До выполнения метода PaymentClient было сервисов: {0}, по клиенту {1}", updateClient.ClientServices.Count, updateClient.Id);
 								clientService.PaymentClient();
-								updateClient.Refresh();
-								_log.DebugFormat("До выполнения метода PaymentClient было сервисов: {0}, по клиенту {1}", updateClient.ClientServices.Count, updateClient.Id);
+								_log.DebugFormat("После выполнения PaymentClient было сервисов: {0}, по клиенту {1}", updateClient.ClientServices.Count, updateClient.Id);
 							}
 						updateClient.Update();
 					}

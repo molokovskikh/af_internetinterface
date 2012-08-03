@@ -349,6 +349,8 @@ namespace Billing.Test.Integration
 				_client = CreateClient();
 				_client.PhysicalClient.Balance = -5m;
 				_client.AutoUnblocked = true;
+				_client.Disabled = true;
+				_client.PercentBalance = 0.8m;
 				_client.Save();
 			}
 			using (new SessionScope()) {
@@ -359,6 +361,7 @@ namespace Billing.Test.Integration
 			using (new SessionScope()) {
 				_client = Client.Find(_client.Id);
 				Assert.IsFalse(_client.Disabled);
+				new Payment(_client, 100).Save();
 			}
 			SystemTime.Now = () => DateTime.Now.AddDays(1);
 			billing.OnMethod();
@@ -374,6 +377,8 @@ namespace Billing.Test.Integration
 				_client = CreateClient();
 				_client.PhysicalClient.Balance = -5m;
 				_client.AutoUnblocked = true;
+				_client.Disabled = true;
+				_client.PercentBalance = 0.8m;
 				_client.Save();
 				Activate(typeof(DebtWork));
 			}

@@ -28,10 +28,8 @@ namespace InternetInterface.Services
 		{
 			if (client.PhysicalClient != null)
 			{
-				var balance = client.PhysicalClient.Balance < 0;
-				var conVol =
-					!client.ClientServices.Select(c => c.Service).Contains(GetByType(typeof (VoluntaryBlockin)));
-				return balance && conVol && client.StartWork();
+				var conVol = !client.ClientServices.Select(c => c.Service).Contains(GetByType(typeof (VoluntaryBlockin)));
+				return conVol && client.StartWork();
 			}
 			return false;
 		}
@@ -47,7 +45,7 @@ namespace InternetInterface.Services
 
 		public override void PaymentClient(ClientService service)
 		{
-			if (service.Client.PhysicalClient.Balance > 0)
+			if (!service.Client.CanDisabled())
 				service.CompulsoryDiactivate();
 		}
 
@@ -77,7 +75,7 @@ namespace InternetInterface.Services
 		public override void CompulsoryDiactivate(ClientService service)
 		{
 			var client = service.Client;
-			client.Disabled = client.PhysicalClient.Balance < 0;
+			client.Disabled = client.CanDisabled();
 			client.AutoUnblocked = true;
 			client.Status = Status.Find((uint)StatusType.NoWorked);
 			client.Update();

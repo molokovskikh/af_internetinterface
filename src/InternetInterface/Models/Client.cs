@@ -126,6 +126,11 @@ namespace InternetInterface.Models
 		[Property, ValidateInteger("Должно быть введено число")]
 		public virtual string RedmineTask { get; set; }
 
+		public virtual bool CanDisabled()
+		{
+			return PhysicalClient.Balance < GetPriceForTariff()*PercentBalance;
+		}
+
 		public virtual bool HaveRed()
 		{
 			return !string.IsNullOrEmpty(RedmineTask);
