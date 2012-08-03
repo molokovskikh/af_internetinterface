@@ -342,6 +342,56 @@ namespace Billing.Test.Integration
 		}
 
 		[Test]
+		public void Debt_work_and_payment_whith_payment()
+		{
+			using (new SessionScope()) {
+				PrepareTest();
+				_client = CreateClient();
+				_client.PhysicalClient.Balance = -5m;
+				_client.AutoUnblocked = true;
+				_client.Save();
+			}
+			using (new SessionScope()) {
+				Activate(typeof(DebtWork));
+			}
+			billing.OnMethod();
+			billing.Compute();
+			using (new SessionScope()) {
+				_client = Client.Find(_client.Id);
+				Assert.IsFalse(_client.Disabled);
+			}
+			SystemTime.Now = () => DateTime.Now.AddDays(1);
+			billing.OnMethod();
+			billing.Compute();
+			using (new SessionScope()) {
+				_client = Client.Find(_client.Id);
+				Assert.IsTrue(_client.Disabled);
+				Assert.IsEmpty(_client.ClientServices.ToList());
+				_client.PhysicalClient.Balance = -5m;
+				_client.Save();
+			}
+			using (new SessionScope()) {
+				_client = CreateClient();
+				_client.PhysicalClient.Balance = -5m;
+				_client.AutoUnblocked = true;
+				_client.Save();
+				Activate(typeof(DebtWork));
+			}
+			using (new SessionScope()) {
+				_client = Client.Find(_client.Id);
+				Assert.IsFalse(_client.Disabled);
+				new Payment(_client, _client.GetPriceForTariff()).Save();
+			}
+			SystemTime.Now = () => DateTime.Now.AddDays(1);
+			billing.OnMethod();
+			billing.Compute();
+			using (new SessionScope()) {
+				_client = Client.Find(_client.Id);
+				Assert.IsFalse(_client.Disabled);
+			}
+		}
+
+		[Test]
 		public void VoluntaryBlockinTest()
 		{
 			int countDays = 10;

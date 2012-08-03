@@ -77,7 +77,7 @@ namespace InternetInterface.Services
 		public override void CompulsoryDiactivate(ClientService service)
 		{
 			var client = service.Client;
-			client.Disabled = true;
+			client.Disabled = client.PhysicalClient.Balance < 0;
 			client.AutoUnblocked = true;
 			client.Status = Status.Find((uint)StatusType.NoWorked);
 			client.Update();

@@ -157,9 +157,11 @@ namespace Billing
 								updateClient.ShowBalanceWarningPage = false;
 							}
 						if (updateClient.ClientServices != null)
-							for (var i = updateClient.ClientServices.Count - 1; i > -1; i--) {
-								var cserv = updateClient.ClientServices[i];
-								cserv.PaymentClient();
+							foreach (var clientService in updateClient.ClientServices.ToList()) {
+								_log.DebugFormat("До выполнения метода PaymentClient было сервисов: {0}, по клиенту {1}", updateClient.ClientServices.Count, updateClient.Id);
+								clientService.PaymentClient();
+								updateClient.Refresh();
+								_log.DebugFormat("До выполнения метода PaymentClient было сервисов: {0}, по клиенту {1}", updateClient.ClientServices.Count, updateClient.Id);
 							}
 						updateClient.Update();
 					}
