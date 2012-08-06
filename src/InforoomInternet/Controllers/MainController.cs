@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Castle.MonoRail.Framework;
 using Common.Tools;
@@ -264,6 +265,10 @@ namespace InforoomInternet.Controllers
 #if DEBUG
 			hostAdress = NetworkSwitches.GetNormalIp(Lease.FindFirst().Ip);
 #endif
+			if (Regex.IsMatch(hostAdress, NetworkSwitches.IPRegExp) && !Client.Our(hostAdress)) {
+				RedirectToSiteRoot();
+				return;
+			}
 
 			var lease = Client.FindByIP(hostAdress);
 			if (lease == null || lease.Endpoint == null || lease.Endpoint.Client == null) {

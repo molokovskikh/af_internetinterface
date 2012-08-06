@@ -10,6 +10,7 @@ using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Helpers;
 using InternetInterface.Services;
 using NHibernate;
+using NHibernate.Linq;
 
 namespace InternetInterface.Models
 {
@@ -129,6 +130,12 @@ namespace InternetInterface.Models
 		public virtual bool CanDisabled()
 		{
 			return PhysicalClient.Balance < GetPriceForTariff()*PercentBalance;
+		}
+
+		public static bool Our(string ip)
+		{
+			var mashineAddress = Convert.ToInt64(NetworkSwitches.SetProgramIp(ip));
+			return ArHelper.WithSession(s => s.Query<IpPool>().Count(p => p.Begin <= mashineAddress && p.End >= mashineAddress) > 0);
 		}
 
 		public virtual bool HaveRed()
