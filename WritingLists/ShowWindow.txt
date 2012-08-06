@@ -1,1 +1,1 @@
-D:\Projects\InternetInterface\src\InternetInterface.Test\Functional\RegisterClientFixture.cs
+\src\InternetInterface.Test\Functional\RegisterClientFixture.cs
