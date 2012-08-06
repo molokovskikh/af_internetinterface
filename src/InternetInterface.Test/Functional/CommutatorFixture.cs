@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using InternetInterface.Models;
 using NHibernate.Linq;
 using NUnit.Framework;
@@ -17,7 +18,7 @@ namespace InternetInterface.Test.Functional
 			AssertText("Редактирование коммутатора");
 			Click("Удалить");
 			AssertText("Удалено");
-
+			Console.WriteLine();
 			session.Clear();
 			commutator = session.Get<NetworkSwitches>(commutator.Id);
 			Assert.That(commutator, Is.Null);
