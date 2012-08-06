@@ -1,2 +1,1 @@
 D:\Projects\InternetInterface\src\InternetInterface.Test\Functional\RegisterClientFixture.cs
-D:\Projects\InternetInterface\src\InternetInterface.Test\Functional\SearchFixture.cs

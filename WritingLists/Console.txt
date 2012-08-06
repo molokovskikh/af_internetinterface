@@ -4,5 +4,6 @@ D:\Projects\InternetInterface\src\Billing.Test\Integration\ServiceFixture.cs
 D:\Projects\InternetInterface\src\Common.Tools\Common.Tools\ObjectExtentions.cs
 D:\Projects\InternetInterface\src\Common.Tools\Common.Tools.Test\DbfFixture.cs
 D:\Projects\InternetInterface\src\Common.Tools\Common.Tools.Test\ReleatableCommandFixture.cs
+D:\Projects\InternetInterface\src\InternetInterface.Test\Functional\CommutatorFixture.cs
 D:\Projects\InternetInterface\src\Test.Support\Test.Support\log4net\EventFilter.cs
 D:\Projects\InternetInterface\src\Test.Support\Test.Support.Web\WatinSetup.cs
