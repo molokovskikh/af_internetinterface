@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Castle.ActiveRecord;
+using Castle.ActiveRecord.Framework;
 using Common.MySql;
 using Common.Tools;
 using Common.Tools.Calendar;
@@ -10,6 +11,8 @@ using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using NHibernate;
+using NHibernate.Linq;
 using log4net;
 using log4net.Config;
 using NHibernate.Criterion;
@@ -77,12 +80,7 @@ namespace Billing
 					errorFlag = settings.LastStartFail && (settings.NextBillingDate - now).TotalMinutes > 0;
 					normalFlag = (settings.NextBillingDate - now).TotalMinutes <= 0;
 					if (normalFlag) {
-						ArHelper.WithSession(s => s.CreateSQLQuery(@"
-	update internet.Clients c
-	set c.PaidDay = false;
-
-	update internet.InternetSettings s
-	set s.LastStartFail = true;").ExecuteUpdate());
+						Reset();
 
 						var billingTime = InternetSettings.FindFirst();
 						if (now.Hour < 22)
@@ -108,12 +106,38 @@ namespace Billing
 			}
 		}
 
-		public void OnMethod()
+		public static void Reset()
+		{
+			ArHelper.WithSession(
+				s => s.CreateSQLQuery(@"
+update internet.Clients c
+set c.PaidDay = false;
+
+update internet.InternetSettings s
+set s.LastStartFail = true;")
+					.ExecuteUpdate());
+		}
+
+		private void WithTransaction(Action<ISession> action)
 		{
 			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
-				foreach (var cserv in ClientService.Queryable.Where(c => !c.Activated).ToList()) {
-					cserv.Activate();
-				}
+				ArHelper.WithSession(action);
+				transaction.VoteCommit();
+			}
+		}
+
+		private void ActivateServices(ISession session)
+		{
+			var services = session.Query<ClientService>().Where(s => !s.Activated);
+			foreach (var service in services)
+				service.Activate();
+		}
+
+		public void OnMethod()
+		{
+			WithTransaction(ActivateServices);
+
+			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
 				var newClients = Client.FindAll(DetachedCriteria.For(typeof (Client))
 			                                		.CreateAlias("PhysicalClient", "PC", JoinType.InnerJoin)
 			                                		.Add(Restrictions.Eq("PC.ConnectionPaid", false))
@@ -153,7 +177,7 @@ namespace Billing
 							updateClient.AutoUnblocked = true;
 						}
 						if (updateClient.RatedPeriodDate != null)
-							if (physicalClient.Balance >= updateClient.GetPriceForTariff()) {
+							if (physicalClient.Balance >= updateClient.GetPrice()) {
 								updateClient.ShowBalanceWarningPage = false;
 							}
 						if (updateClient.ClientServices != null)
@@ -193,10 +217,8 @@ namespace Billing
 				transaction.VoteCommit();
 			}
 			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
-				var clients =
-					Client.Queryable.Where(
-						c => c.PhysicalClient != null && c.Disabled && c.AutoUnblocked).ToList().Where(
-							c => c.PhysicalClient.Balance >= c.GetPriceForTariff()*c.PercentBalance).ToList();
+				var clients = Client.Queryable.Where(c => c.PhysicalClient != null && c.Disabled && c.AutoUnblocked).ToList();
+				clients = clients.Where(c => c.PhysicalClient.Balance >= c.GetPriceIgnoreDisabled()*c.PercentBalance).ToList();
 				var workStatus = Status.Find((uint) StatusType.Worked);
 				foreach (var client in clients) {
 					client.Status = workStatus;
@@ -225,8 +247,8 @@ namespace Billing
 					}
 					client.Update();
 				}
-				foreach (var cserv in ClientService.FindAll()) {
-					cserv.Diactivate();
+				foreach (var cserv in ActiveRecordMediator.FindAll(typeof(ClientService)).Cast<ClientService>()) {
+					cserv.Deactivate();
 				}
 				transaction.VoteCommit();
 			}
@@ -283,7 +305,7 @@ namespace Billing
 				settings.LastStartFail = errorCount > 0;
 				settings.Save();
 
-				ClientService.Queryable.ToList().Each(cs => cs.WriteOff());
+				ActiveRecordLinqBase<ClientService>.Queryable.ToList().Each(cs => cs.WriteOff());
 
 				transaction.VoteCommit();
 			}
@@ -317,9 +339,10 @@ namespace Billing
 		{
 			var phisicalClient = client.PhysicalClient;
 			var balance = phisicalClient.Balance;
-			if ((balance >= 0) &&
-				(!client.Disabled) &&
-					(client.RatedPeriodDate != DateTime.MinValue) && (client.RatedPeriodDate != null)) {
+			if (balance >= 0
+				&& !client.Disabled
+				&& client.RatedPeriodDate != DateTime.MinValue
+				&& client.RatedPeriodDate != null) {
 				var dtNow = SystemTime.Now();
 
 				if ((client.RatedPeriodDate.Value.AddMonths(1).Date - dtNow.Date).Days == -client.DebtDays) {
@@ -335,7 +358,6 @@ namespace Billing
 				else {
 					if ((client.RatedPeriodDate.Value.AddMonths(1).Date - dtNow.Date).TotalDays < -client.DebtDays) {
 						client.RatedPeriodDate = dtNow.AddDays(client.DebtDays);
-						;
 						client.DebtDays = 0;
 					}
 				}
@@ -350,44 +372,50 @@ namespace Billing
 				if (sale >= _saleSettings.MinSale)
 					client.Sale = sale;
 			}
-			if (client.GetPrice() > 0 && !client.PaidDay) {
-				if (client.RatedPeriodDate != DateTime.MinValue && client.RatedPeriodDate != null) {
-					if (client.StartNoBlock == null)
-						client.StartNoBlock = SystemTime.Now();
-					var daysInInterval = client.GetInterval();
-					var price = client.GetPrice();
-					var sum = price/daysInInterval;
+			if (client.GetPrice() > 0 && !client.PaidDay
+				&& client.RatedPeriodDate != DateTime.MinValue
+				&& client.RatedPeriodDate != null) {
 
-					var writeOff = phisicalClient.WriteOff(sum);
-					if (writeOff != null)
-						writeOff.Save();
+				if (client.StartNoBlock == null)
+					client.StartNoBlock = SystemTime.Now();
 
-					phisicalClient.Update();
+				var daysInInterval = client.GetInterval();
+				var price = client.GetPrice();
+				var sum = price/daysInInterval;
 
-					var bufBal = phisicalClient.Balance;
-					var minimumBalance = bufBal - sum < 0;
-					if (minimumBalance) {
-						client.ShowBalanceWarningPage = true;
-						if (client.SendSmsNotifocation) {
-							if (phisicalClient.Balance > 0) {
-								var message = string.Format("Ваш баланс {0} руб. Завтра доступ в сеть будет заблокирован.",
-									client.PhysicalClient.Balance.ToString("0.00"));
-								var now = SystemTime.Now();
-								DateTime shouldBeSendDate;
-								if (now.Hour < 22)
-									shouldBeSendDate = new DateTime(now.Year, now.Month, now.Day, 12, 0, 0);
-								else {
-									shouldBeSendDate = SystemTime.Now().Date.AddDays(1).AddHours(12);
-								}
-								var smsMessage = new SmsMessage(client, message, shouldBeSendDate);
-								smsMessage.Save();
-								Messages.Add(smsMessage);
+				var writeOff = phisicalClient.WriteOff(sum);
+				if (writeOff != null) {
+					writeOff.Save();
+					//для отладки
+					//Console.WriteLine("Клиент {0} cписано {1}", client.Id, writeOff);
+				}
+
+
+				phisicalClient.Update();
+
+				var bufBal = phisicalClient.Balance;
+				var minimumBalance = bufBal - sum < 0;
+				if (minimumBalance) {
+					client.ShowBalanceWarningPage = true;
+					if (client.SendSmsNotifocation) {
+						if (phisicalClient.Balance > 0) {
+							var message = string.Format("Ваш баланс {0} руб. Завтра доступ в сеть будет заблокирован.",
+								client.PhysicalClient.Balance.ToString("0.00"));
+							var now = SystemTime.Now();
+							DateTime shouldBeSendDate;
+							if (now.Hour < 22)
+								shouldBeSendDate = new DateTime(now.Year, now.Month, now.Day, 12, 0, 0);
+							else {
+								shouldBeSendDate = SystemTime.Now().Date.AddDays(1).AddHours(12);
 							}
+							var smsMessage = new SmsMessage(client, message, shouldBeSendDate);
+							smsMessage.Save();
+							Messages.Add(smsMessage);
 						}
 					}
-					else {
-						client.ShowBalanceWarningPage = false;
-					}
+				}
+				else {
+					client.ShowBalanceWarningPage = false;
 				}
 			}
 			if (client.CanBlock()) {

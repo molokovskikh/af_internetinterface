@@ -7,8 +7,11 @@ using Castle.Components.Validator;
 using Castle.MonoRail.Framework;
 using Common.Tools;
 using Common.Web.Ui.Models.Security;
+using InternetInterface.Controllers;
 using InternetInterface.Helpers;
 using InternetInterface.Models.Universal;
+using NHibernate.Criterion;
+using NHibernate.SqlCommand;
 
 namespace InternetInterface.Models
 {
@@ -109,16 +112,30 @@ namespace InternetInterface.Models
 			return Name;
 		}
 
-		public virtual bool HavePermissionTo(IControllerContext controllerContext)
+		public virtual bool HavePermissionTo(string controller, string action)
 		{
-			return Permissions().Any(p => p.Match(controllerContext));
+			return Permissions().Any(p => p.Match(controller, action));
 		}
 
 		public virtual IEnumerable<IPermission> Permissions()
 		{
-			if (AccesedPartner.Any(p => p.Match("SSI")))
-				return new IPermission[] { new ControllerActionPermission("Payments", "Cancel") };
-			return Enumerable.Empty<IPermission>();
+			var permissionMap = new Dictionary<string, IPermission[]> {
+				{"SSI", new IPermission[] {
+						new ControllerPermission(typeof(PaymentsController)),
+						new ControllerPermission(typeof(ChannelGroupsController)),
+						new ControllerPermission(typeof(InvoicesController)),
+						new ControllerPermission(typeof(ServicesController)),
+						new ControllerPermission(typeof(TariffsController)),
+					}
+				},
+				{"DHCP", new IPermission[] {
+						new ControllerPermission(typeof(SwitchesController)),
+					}
+				}
+			};
+
+			var lookup = permissionMap.ToLookup(k => k.Key, k => k.Value);
+			return AccesedPartner.Select(p => lookup[p].SelectMany(i => i)).SelectMany(p => p);
 		}
 	}
 }

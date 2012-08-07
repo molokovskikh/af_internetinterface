@@ -1,0 +1,29 @@
+﻿<% if channels.Count: %>
+<div class="registration-sub-block">
+	<h3 class="form-like">!{iptv.Service.HumanName}</h3>
+	<div>
+		${app.Label("IpTv.Channels")}
+		<table class=table>
+			<tr>
+				<th>Название</th>
+				<th>Подключен</th>
+				<th>Стоимость</th>
+				<th>Стоимость если подключена услуга !{internet.Service.HumanName}</th>
+			</tr>
+		<% for i, channel in enumerate(channels): %>
+			<tbody>
+				<tr>
+					<td>!{channel.Name}</td>
+					<td>
+						<input data-bind="checked: getChannel(${channel.Id}).activated" type=checkbox name="iptv.Channels[${i}].Id" value=${channel.Id} ${"checked" if iptv.Channels.Contains(channel)} />
+					</td>
+					<td>!{channel.CostPerMonth.ToString("C")}</td>
+					<td>!{channel.CostPerMonthWithInternet.ToString("C")}</td>
+				</tr>
+			</tbody>
+		<% end %>
+		</table>
+
+	</div>
+</div>
+<% end %>

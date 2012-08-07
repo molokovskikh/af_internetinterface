@@ -22,6 +22,6 @@ namespace InternetInterface.Models
 		public virtual Partner Partner { get; set; }
 
 		[BelongsTo]
-		public virtual ClientEndpoints EndPoint { get; set; }
+		public virtual ClientEndpoint EndPoint { get; set; }
 	}
 }

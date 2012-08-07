@@ -60,7 +60,7 @@
 				<%end %>
 			<%end %>
 			<%if item.PhysicalClient != null:  %>
-			<td>${item.PhysicalClient.Tariff.Name}</td>
+			<td>${?item.PhysicalClient.Tariff.Name}</td>
 			<%else: %>
 				<% if item.LawyerPerson.Tariff != null:%>
 				<td>${item.LawyerPerson.Tariff} руб.</td>

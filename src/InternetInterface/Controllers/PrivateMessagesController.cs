@@ -45,7 +45,7 @@ namespace InternetInterface.Controllers
 		{
 			var @switch = DbSession.Load<NetworkSwitches>(switchId);
 			PropertyBag["switch"] = @switch;
-			var messages = ClientEndpoints.FindAll(DetachedCriteria.For(typeof(ClientEndpoints))
+			var messages = ClientEndpoint.FindAll(DetachedCriteria.For(typeof(ClientEndpoint))
 				.CreateAlias("Client", "c", JoinType.InnerJoin)
 				.CreateAlias("c.Message", "m", JoinType.InnerJoin)
 				.Add(Expression.Eq("Switch", @switch))).Select(e => e.Client.Message).ToList();
@@ -59,7 +59,7 @@ namespace InternetInterface.Controllers
 					.FirstOrDefault();
 			PropertyBag["PrivateMessage"] = message;
 			if (IsPost) {
-				var clients = ClientEndpoints.Queryable.Where(e => e.Switch == @switch).Select(e => e.Client).ToList();
+				var clients = ClientEndpoint.Queryable.Where(e => e.Switch == @switch).Select(e => e.Client).ToList();
 				var applyCount = 0;
 				var errorClients = new List<uint>();
 				foreach (var client in clients) {

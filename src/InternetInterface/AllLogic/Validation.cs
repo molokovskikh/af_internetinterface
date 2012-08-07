@@ -20,7 +20,7 @@ namespace InternetInterface.AllLogic
 			{
 				if (res > 48 || res < 1)
 					return "Порт должен быть в пределах о 1 до 48";
-				if (ClientEndpoints.Queryable.Where(e => e.Port == res && e.Switch.Id == info.Switch).Count() == 0)
+				if (ClientEndpoint.Queryable.Where(e => e.Port == res && e.Switch.Id == info.Switch).Count() == 0)
 					return string.Empty;
 				else
 				{

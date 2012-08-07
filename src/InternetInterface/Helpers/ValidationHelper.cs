@@ -23,9 +23,17 @@ namespace InternetInterface.Helpers
 	{
 		public override bool IsValid(object instance, object fieldValue)
 		{
-			if (InitializeContent.Partner.Categorie.ReductionName == "Office")
+			//если редактирование производится в личном кабинете
+			//то делать проверки не имеет смысла тк даже если они не пройдут
+			//человек ничего сделать не сможет
+			var partner = InitializeContent.GetAdministrator();
+			if (partner == null)
 				return true;
-			if (InitializeContent.Partner.Categorie.ReductionName == "Diller")
+
+			if (partner.Categorie.ReductionName == "Office")
+				return true;
+
+			if (partner.Categorie.ReductionName == "Diller")
 			{
 				if (string.IsNullOrEmpty((string)fieldValue))
 					return false;

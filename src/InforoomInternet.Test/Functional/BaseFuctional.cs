@@ -4,27 +4,25 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using Castle.ActiveRecord;
-using Common.Web.Ui.Helpers;
-using InforoomInternet.Test.ForTest;
 using InternetInterface;
+using InternetInterface.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 using Test.Support.Web;
 using WatiN.Core;
-using WatiN.Core.Native.Windows;
 
 namespace InforoomInternet.Test.Functional
 {
-	[TestFixture]
-	internal class BaseFunctional : WatinFixture2
+	[TestFixture, Ignore("Чинить")]
+	public class BaseFunctional : WatinFixture2
 	{
 		private Client _client;
 
 		[SetUp]
 		public void SetUp()
 		{
-			_client = TestData.ClientAndPhysical();
+			_client = ClientHelper.PhysicalClient().Client;
 			_client.PhysicalClient.Password = CryptoPass.GetHashString("1234");
 			session.Save(_client);
 			browser = Open("/PrivateOffice/IndexOffice");
@@ -62,7 +60,7 @@ namespace InforoomInternet.Test.Functional
 			Flush();
 			new Lease {
 				Ip = mashineIp,
-				Endpoint = new ClientEndpoints {
+				Endpoint = new ClientEndpoint {
 					Client = new Client {
 						Disabled = false,
 						LawyerPerson =
@@ -91,13 +89,13 @@ namespace InforoomInternet.Test.Functional
 			using (new SessionScope()) {
 				leaseC = new Lease {
 					Ip = mashineIp,
-					Endpoint = new ClientEndpoints {
+					Endpoint = new ClientEndpoint {
 						Client = new Client {
 							Disabled = false,
 							RatedPeriodDate = DateTime.Now,
 							BeginWork = DateTime.Now,
 							PhysicalClient =
-								new PhysicalClients {
+								new PhysicalClient {
 									Balance = -200,
 									Tariff = new Tariff {
 											Name = "Тестовый",
@@ -218,74 +216,6 @@ namespace InforoomInternet.Test.Functional
 			{
 				browser.GoTo(imagesUri);
 				Assert.That(browser.Text, Is.Not.StringContaining("Description: HTTP 404"));
-			}
-		}
-
-		[Test, Ignore("Чинить")]
-		public void PrivateOfficeTest()
-		{
-			using (new SessionScope())
-			{
-				ClientService.DeleteAll();
-			}
-			Client client;
-			PhysicalClients phisClient;
-			string clientId;
-			using (var browser = Open("PrivateOffice/IndexOffice"))
-			{
-				using (new SessionScope())
-				{
-					clientId = browser.Element("clientId").GetAttributeValue("value");
-					client = Client.Find(Convert.ToUInt32(clientId));
-					phisClient = client.PhysicalClient;
-					Assert.That(browser.Text, Is.StringContaining("Ваш личный кабинет"));
-					Assert.That(browser.Text,
-								Is.StringContaining("Номер лицевого счета для оплаты через терминалы " +
-													client.Id.ToString("00000")));
-					Assert.That(browser.Text,
-								Is.StringContaining(
-									WriteOff.Queryable.Where(w => w.Client == client).First().WriteOffSum.ToString()));
-
-					phisClient.Balance = -100;
-					phisClient.UpdateAndFlush();
-					client.Disabled = true;
-					client.AutoUnblocked = true;
-					client.UpdateAndFlush();
-					foreach (var payment in Payment.Queryable.Where(p => p.Client == client).ToList())
-					{
-						payment.Delete();
-					}
-
-				}
-			}
-			using (new SessionScope())
-			{
-				client.Refresh();
-				Assert.IsFalse(client.PaymentForTariff());
-				new Payment {
-								Client = client,
-								Sum = client.GetPriceForTariff()*2,
-							}.Save();
-				client.ClientServices.Clear();
-				client.AutoUnblocked = true;
-				client.Disabled = true;
-				client.ClientServices.Clear();
-				client.Save();
-				ArHelper.WithSession(s => {
-					s.Save(new MessageForClient {
-						Text = "test_message_for_client",
-						Client = client
-					});
-				});
-			}
-			using (var browser = Open("PrivateOffice/IndexOffice"))
-			using (new SessionScope())
-			{
-				browser.Element("podrob").Click();
-				browser.Button("PostponedBut").Click();
-				Assert.That(browser.Text, Is.StringContaining("test_message_for_client"));
-				Assert.That(browser.Text, Is.StringContaining("Ваш личный кабинет"));
-				Assert.That(browser.Text, Is.StringContaining("Услуга \"Обещанный платеж активирована\""));
 			}
 		}
 

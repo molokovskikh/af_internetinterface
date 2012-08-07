@@ -57,7 +57,7 @@ namespace InternetInterface.Test.Integration
         {
             using (new SessionScope())
             {
-                var pclient = PhysicalClients.FindFirst();
+                var pclient = PhysicalClient.FindFirst();
                 InitializeHelper.InitializeModel(pclient);
                 Assert.IsTrue(NHibernateUtil.IsInitialized(pclient.Tariff));
             }

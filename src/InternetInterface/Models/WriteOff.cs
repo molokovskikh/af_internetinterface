@@ -80,5 +80,10 @@ namespace InternetInterface.Models
 		{
 			return Queryable.Where(w => w.Client == client).ToList();
 		}
+
+		public override string ToString()
+		{
+			return String.Format("{0} - {1}", WriteOffDate, WriteOffSum);
+		}
 	}
 }

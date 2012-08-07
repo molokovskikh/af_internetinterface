@@ -40,7 +40,12 @@ namespace InforoomInternet.Models
 
 		public RepeatableEntity(Action action, int delay)
 			: base(action, delay)
+		{}
+
+		public override void Start()
 		{
+			base.Start();
+			Thread.IsBackground = true;
 		}
 
 		public override void Error(Exception e)
@@ -53,12 +58,16 @@ namespace InforoomInternet.Models
 	{
 		private static List<UnknownClientInfo> _info = new List<UnknownClientInfo>();
 		private static Mutex _mutex = new Mutex();
+#if !DEBUG
 		private static int _clearInterval = int.Parse(ConfigurationManager.AppSettings["clearInterval"]);
 		private static RepeatableEntity _clearCommand = new RepeatableEntity(ClearList, _clearInterval);
+#endif
 
 		static ClientData()
 		{
+#if !DEBUG
 			_clearCommand.Start();
+#endif
 		}
 
 		private static void ClearList()
@@ -68,7 +77,9 @@ namespace InforoomInternet.Models
 
 		public static void StopClearing()
 		{
+#if !DEBUG
 			_clearCommand.Stop();
+#endif
 		}
 
 		public static UnknownClientStatus Get(uint client)
@@ -91,7 +102,7 @@ namespace InforoomInternet.Models
 			_mutex.WaitOne();
 			try
 			{
-				return _info.Where(i => i.Client == client).FirstOrDefault();
+				return _info.FirstOrDefault(i => i.Client == client);
 			}
 			finally {
 				_mutex.ReleaseMutex();
@@ -103,7 +114,7 @@ namespace InforoomInternet.Models
 			_mutex.WaitOne();
 			try
 			{
-				var info = _info.Where(i => i.Client == client).FirstOrDefault();
+				var info = _info.FirstOrDefault(i => i.Client == client);
 				if (info == null)
 				{
 					_info.Add(new UnknownClientInfo

@@ -9,8 +9,12 @@ using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Common.MySql;
 using Common.Web.Ui.ActiveRecordExtentions;
+using Common.Web.Ui.Helpers;
+using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
+using NHibernate.Linq;
 using NUnit.Framework;
+using Test.Support.Web;
 using WatiN.Core;
 using log4net.Config;
 
@@ -23,19 +27,12 @@ namespace InternetInterface.Test.Functional
 
 		[SetUp]
 		public void SetupFixture()
-		{	
+		{
 			ConfigTest();
-
-			var port = Int32.Parse(ConfigurationManager.AppSettings["webPort"]);
-			var webDir = ConfigurationManager.AppSettings["webDirectory"];
-
-			_webServer = new Server(port, "/", Path.GetFullPath(webDir));
-			_webServer.Start();
-			Settings.Instance.AutoMoveMousePointerToTopLeft = false;
-			Settings.Instance.MakeNewIeInstanceVisible = false;
-
 			PrepareTestData();
-			SetupEnvironment(_webServer);
+
+			InitializeContent.GetAdministrator = () => Partner.FindFirst();
+			_webServer = WatinSetup.StartServer();
 		}
 
 		[TearDown]
@@ -54,24 +51,29 @@ namespace InternetInterface.Test.Functional
 					partner.Save();
 				}
 
-				if (!ActiveRecordLinqBase<Tariff>.Queryable.Any())
-					new Tariff("Тариф для тестирования", 500).Save();
+				ArHelper.WithSession(session => {
+					if (!session.Query<Tariff>().Any())
+						session.Save(new Tariff("Тариф для тестирования", 500));
 
-				if (!ActiveRecordLinqBase<Brigad>.Queryable.Any()) {
-					new Brigad("Бригада для тестирования").Save();
-					new Partner {
-						Name = "Сервисный инженер для тестирования",
-						Login = "test_serviceman",
-						Categorie = UserCategorie.Queryable.First(c => c.ReductionName == "service")
-					}.Save();
-				}
+					if (!ActiveRecordLinqBase<Brigad>.Queryable.Any()) {
+						new Brigad("Бригада для тестирования").Save();
+						new Partner {
+							Name = "Сервисный инженер для тестирования",
+							Login = "test_serviceman",
+							Categorie = UserCategorie.Queryable.First(c => c.ReductionName == "service")
+						}.Save();
+					}
 
-				if (!ActiveRecordLinqBase<Zone>.Queryable.Any()) {
-					var zone = new Zone {
-						Name = "Тестовая зона"
-					};
-					ActiveRecordMediator.Save(zone);
-				}
+					if (!ActiveRecordLinqBase<Zone>.Queryable.Any()) {
+						var zone = new Zone {
+							Name = "Тестовая зона"
+						};
+						ActiveRecordMediator.Save(zone);
+					}
+
+					if (!session.Query<House>().Any())
+						session.Save(new House("Тестовая улица", 1));
+				});
 			}
 		}
 
@@ -82,17 +84,6 @@ namespace InternetInterface.Test.Functional
 				ActiveRecordInitialize.Init(ConnectionHelper.GetConnectionName(),
 					Assembly.Load("InternetInterface"),
 					Assembly.Load("InternetInterface.Test"));
-		}
-
-		public static void SetupEnvironment(Server server)
-		{
-			var method = server.GetType().GetMethod("GetHost", BindingFlags.Instance | BindingFlags.NonPublic);
-			method.Invoke(server, null);
-
-			var manager = ApplicationManager.GetApplicationManager();
-			var apps = manager.GetRunningApplications();
-			var domain = manager.GetAppDomain(apps.Single().ID);
-			domain.SetData("environment", "test");
 		}
 	}
 }

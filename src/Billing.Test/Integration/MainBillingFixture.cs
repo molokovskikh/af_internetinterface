@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Linq;
 using Castle.ActiveRecord;
+using Castle.ActiveRecord.Framework;
 using Common.Tools;
+using Common.Web.Ui.Helpers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Services;
+using NHibernate.Criterion;
+using NHibernate.SqlCommand;
 using NUnit.Framework;
 using InternetInterface.Models;
 
@@ -40,7 +45,7 @@ namespace Billing.Test.Integration
 
 			using (new SessionScope()) {
 				billing = new MainBillingForTest();
-				PrepareTest();
+				CleanDb();
 				_client = CreateClient();
 				SaleSettings.DeleteAll();
 				new SaleSettings {
@@ -52,73 +57,84 @@ namespace Billing.Test.Integration
 			}
 		}
 
-		public static void PrepareTests()
+		public static void SeedDb()
 		{
-			new Partner {
-				Login = "Test",
-			}.Save();
+			InitializeContent.GetAdministrator = () => {
+				var partner = Partner.FindFirst();
+				partner.AccesedPartner = CategorieAccessSet.FindAll(DetachedCriteria.For(typeof(CategorieAccessSet))
+					.CreateAlias("AccessCat", "AC", JoinType.InnerJoin)
+					.Add(Restrictions.Eq("Categorie", partner.Categorie)))
+					.Select(c => c.AccessCat.ReduceName).ToList();
+				return partner;
+			};
+			InternetSettings.DeleteAll();
 
-			InitializeContent.GetAdministrator = () => Partner.FindFirst();
+			using(new SessionScope()) {
+				new Partner("Test").Save();
+				if (!ActiveRecordLinqBase<Status>.Queryable.Any())
+					CreateStatuses();
 
+				new DebtWork {
+					BlockingAll = false,
+					Price = 0,
+					HumanName = "DebtWork"
+				}.Save();
+
+				new AgentTariff {
+					ActionName = AgentActions.WorkedClient,
+					Sum = 250
+				}.Save();
+
+				new AgentTariff {
+					ActionName = AgentActions.AgentPayIndex,
+					Sum = 1.5m
+				}.Save();
+
+				new VoluntaryBlockin {
+					BlockingAll = true,
+					Price = 0,
+					HumanName = "VoluntaryBlockin"
+				}.Save();
+
+				new WorkLawyer {
+					InterfaceControl = true,
+					HumanName = "WorkLawyer"
+				}.Save();
+
+				new InternetSettings{NextBillingDate = DateTime.Now}.Save();
+			}
+		}
+
+		private static void CreateStatuses()
+		{
 			new Status {
 				Blocked = false,
-				Id = (uint)StatusType.Worked,
+				Id = (uint) StatusType.Worked,
 				Name = "unblocked",
 				ShortName = "Worked"
 			}.Save();
 
-			
 			new Status {
 				Blocked = true,
-				Id = (uint)StatusType.BlockedAndConnected,
+				Id = (uint) StatusType.BlockedAndConnected,
 				Name = "unblocked",
 				ShortName = "BlockedAndConnected"
 			}.Save();
 
 			new Status {
 				Blocked = true,
-				Id = (uint)StatusType.NoWorked,
+				Id = (uint) StatusType.NoWorked,
 				Name = "testBlockedStatus",
 				ShortName = "NoWorked"
 			}.Save();
 
 			new Status {
 				ShortName = "VoluntaryBlocking",
-				Id = (uint)StatusType.VoluntaryBlocking,
+				Id = (uint) StatusType.VoluntaryBlocking,
 				Blocked = true,
 				Name = "VoluntaryBlocking",
 				Connected = true
 			}.Save();
-
-			new DebtWork {
-				BlockingAll = false,
-				Price = 0,
-				HumanName = "DebtWork"
-			}.Save();
-
-			new AgentTariff {
-				ActionName = AgentActions.WorkedClient,
-				Sum = 250
-			}.Save();
-
-			new AgentTariff {
-				ActionName = AgentActions.AgentPayIndex,
-				Sum = 1.5m
-			}.Save();
-
-			new VoluntaryBlockin {
-				BlockingAll = true,
-				Price = 0,
-				HumanName = "VoluntaryBlockin"
-			}.Save();
-
-			new WorkLawyer {
-				InterfaceControl = true,
-				HumanName = "WorkLawyer"
-			}.Save();
-
-			InternetSettings.DeleteAll();
-			new InternetSettings{NextBillingDate = DateTime.Now}.Save();
 		}
 
 		public static Client CreateClient()
@@ -128,24 +144,34 @@ namespace Billing.Test.Integration
 			return client;
 		}
 
-		public static void PrepareTest()
+		public static void CleanDb()
 		{
 			Request.DeleteAll();
 			SmsMessage.DeleteAll();
 			UserWriteOff.DeleteAll();
-			ClientService.DeleteAll();
+
+			ArHelper.WithSession(s => {
+				s.CreateSQLQuery("delete from Internet.ClientServices");
+			});
+
 			WriteOff.DeleteAll();
 			Payment.DeleteAll();
 			Client.DeleteAll();
-			PhysicalClients.DeleteAll();
+			PhysicalClient.DeleteAll();
 			SystemTime.Reset();
 			PaymentsForAgent.DeleteAll();
 		}
 
-		public void SetClientDate(Interval rd)
+		public static void CleanDbAfterTest()
+		{
+			Tariff.DeleteAll();
+			Partner.DeleteAll();
+		}
+
+		public void SetClientDate(Interval rd, Client client)
 		{
 			using (new SessionScope()) {
-				var client = Client.FindFirst();
+				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
 				client.RatedPeriodDate = rd.dtFrom;
 				client.Update();
 			}

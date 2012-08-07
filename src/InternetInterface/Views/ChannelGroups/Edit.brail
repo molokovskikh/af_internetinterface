@@ -1,0 +1,29 @@
+﻿${app.Asset("alt-form.css")}
+
+${FormHelper.FormTag("", {})}
+<div class=form-item>
+	${app.Label("group.Name")}
+	${app.Edit("group.Name")}
+	${app.GetValidationError("group.Name")}
+</div>
+<div class=form-item>
+	${app.Edit("group.Hidden")}
+	${app.GetValidationError("group.Hidden")}
+</div>
+<div class=form-item>
+	${app.Label("group.CostPerMonth")}
+	${app.Edit("group.CostPerMonth")}
+	${app.GetValidationError("group.CostPerMonth")}
+</div>
+<div class=form-item>
+	${app.Label("group.CostPerMonthWithInternet")}
+	${app.Edit("group.CostPerMonthWithInternet")}
+	${app.GetValidationError("group.CostPerMonthWithInternet")}
+</div>
+<div class=form-item>
+	${app.Label("group.ActivationCost")}
+	${app.Edit("group.ActivationCost")}
+	${app.GetValidationError("group.ActivationCost")}
+</div>
+${FormHelper.Submit("Сохранить")}
+${FormHelper.EndFormTag()}

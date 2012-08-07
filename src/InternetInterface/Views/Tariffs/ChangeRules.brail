@@ -1,0 +1,37 @@
+﻿<% import InternetInterface.Models %>
+
+<h1>Правила изменения тарифов</h1>
+
+${FormHelper.FormTag("", {})}
+<table class=table>
+	<tr>
+		<td></td>
+		<th colspan=1000>
+			Текущий тариф
+		</th>
+	</tr>
+	<tr>
+		<th class=alt>Желаемый тариф</th>
+		<% for column in columns: %>
+			<th>
+				!{column.Name}
+			</th>
+		<% end %>
+	</tr>
+	<% for row in rows: %>
+	<tr>
+		<th class=alt>!{row.Name}</th>
+		<% for column in columns: %>
+			<td>
+				<% i = TariffChangeRule.IndexOfRule(rules, column, row) %>
+				<% if i > -1: %>
+					${FormHelper.HiddenField("rules[${i}].Id")}
+					${app.Edit("rules[${i}].Price")}
+				<% end %>
+			</td>
+		<% end %>
+	</tr>
+	<% end %>
+</table>
+${FormHelper.Submit("Сохранить")}
+${FormHelper.EndFormTag()}

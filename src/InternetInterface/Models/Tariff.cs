@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
 using Common.Tools;
@@ -38,10 +40,18 @@ namespace InternetInterface.Models
 		public virtual bool Hidden { get; set; }
 
 		[Property]
+		public virtual bool CanUseForSelfConfigure { get; set; }
+
+		[Property]
 		public virtual int FinalPriceInterval { get; set; }
 
 		[Property]
 		public virtual decimal FinalPrice { get; set; }
+
+		public static IList<Tariff> All()
+		{
+			return FindAllSort();
+		}
 
 		public virtual string GetFullName()
 		{

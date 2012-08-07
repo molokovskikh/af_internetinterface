@@ -122,8 +122,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="WatiN.Core, Version=2.1.0.1196, Culture=neutral, PublicKeyToken=db7cfd3acb5ad44e, processorArchitecture=MSIL" />
-    <Reference Include="WatiNCssSelectorExtensions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\WatiNCssSelectorExtensions.dll</HintPath>
+    <Reference Include="WatiN.CssSelectorExtensions">
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -133,6 +132,7 @@
     <Compile Include="Functional\HouseMapFixture.cs" />
     <Compile Include="Functional\InvoiceFixture.cs" />
     <Compile Include="Functional\PaymentFixture.cs" />
+    <Compile Include="Functional\PhysicalClientFixture.cs" />
     <Compile Include="Functional\PrivateMessageFixture.cs" />
     <Compile Include="Functional\RegisterClientFixture.cs" />
     <Compile Include="Functional\RegisterPartnerFixrure.cs" />
@@ -146,12 +146,12 @@
     <Compile Include="Helpers\ClientHelper.cs" />
     <Compile Include="Helpers\PartnerHelper.cs" />
     <Compile Include="Helpers\PropertiesHelper.cs" />
-    <Compile Include="Helpers\WatinFixture.cs" />
     <Compile Include="Integration\ContactFixture.cs" />
     <Compile Include="Integration\HouseMapFixture.cs" />
     <Compile Include="Integration\MailerFixture.cs" />
     <Compile Include="Integration\PaymentFixture.cs" />
     <Compile Include="Integration\ServicesFixture.cs" />
+    <Compile Include="Integration\SmsFixture.cs" />
     <Compile Include="Integration\Tasks\BuildInvoiceTaskFixture.cs" />
     <Compile Include="Integration\Tasks\MailerFixture.cs" />
     <Compile Include="Integration\UserInfoControllerFixture.cs" />
@@ -163,13 +163,13 @@
     <Compile Include="Unit\ClientFixture.cs" />
     <Compile Include="Unit\DataBinderFixture.cs" />
     <Compile Include="Unit\HouseFixture.cs" />
-    <Compile Include="Unit\Image.cs" />
     <Compile Include="Unit\GetClientsLogicFixture.cs" />
-    <Compile Include="Unit\OnLineClientFixture.cs" />
+    <Compile Include="Unit\InternetFixture.cs" />
+    <Compile Include="Unit\IpTvFixture.cs" />
     <Compile Include="Unit\PaymentFixture.cs" />
     <Compile Include="Unit\PhysicalClientFixture.cs" />
     <Compile Include="Unit\ServiceRequestFixture.cs" />
-    <Compile Include="Unit\SmsFixture.cs" />
+    <Compile Include="Unit\SetupFixture.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

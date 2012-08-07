@@ -1,0 +1,9 @@
+﻿${app.Asset("alt-form.css")}
+${FormHelper.FormTag("", {})}
+	<h3>${rent.HumanName}</h3>
+	<div class="form-item">
+		<label>Цена</label>
+		${app.Edit("rent.Price")}
+	</div>
+${FormHelper.Submit("Сохранить")}
+${FormHelper.EndFormTag()}

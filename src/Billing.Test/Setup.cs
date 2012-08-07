@@ -11,13 +11,15 @@ namespace Billing.Test
 		public void SetupFixture()
 		{
 			MainBilling.InitActiveRecord();
-			MainBillingFixture.PrepareTests();
+			MainBillingFixture.SeedDb();
 		}
 
 		[TearDown]
 		public void Teardown()
 		{
 			SystemTime.Reset();
+			//очищаем за собой что бы тесты в internetinterface могли создать данные для себя
+			MainBillingFixture.CleanDbAfterTest();
 		}
 	}
 }

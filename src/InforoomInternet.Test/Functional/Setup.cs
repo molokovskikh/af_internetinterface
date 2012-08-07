@@ -4,6 +4,7 @@ using System.Text;
 using CassiniDev;
 using NUnit.Framework;
 using System.Configuration;
+using Test.Support.Web;
 using WatiN.Core;
 using log4net;
 
@@ -17,13 +18,8 @@ namespace InforoomInternet.Test.Functional
 		[SetUp]
 		public void SetupFixture()
 		{
-			var port = int.Parse(ConfigurationManager.AppSettings["webPort"]);
-			var webDir = ConfigurationManager.AppSettings["webDirectory"];
-
-			_webServer = new Server(port, "/", Path.GetFullPath(webDir));
-			_webServer.Start();
-			Settings.Instance.AutoMoveMousePointerToTopLeft = false;
-			Settings.Instance.MakeNewIeInstanceVisible = false;
+			_webServer = WatinSetup.StartServer();
+			InternetInterface.Test.Functional.Setup.PrepareTestData();
 		}
 
 		[TearDown]

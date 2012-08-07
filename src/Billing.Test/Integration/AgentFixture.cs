@@ -58,6 +58,8 @@ namespace Billing.Test.Integration
 					Tariff = Tariff.FindFirst()
 				};
 				request.Save();
+			}
+			using (new SessionScope()) {
 				_client.BeginWork = DateTime.Now;
 				_client.Request = request;
 				_client.Save();
@@ -74,7 +76,7 @@ namespace Billing.Test.Integration
 				payment.Save();
 				_client.Payments.Add(payment);
 			}
-			billing.On();
+			billing.OnMethod();
 			billing.Compute();
 			billing.Compute();
 			using (new SessionScope()) {

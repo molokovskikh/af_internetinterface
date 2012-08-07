@@ -34,76 +34,69 @@ namespace InternetInterface.Services
 			return false;
 		}
 
-		public override bool CanActivate(ClientService service)
+		public override bool CanActivate(ClientService assignedService)
 		{
-			var client = service.Client;
+			var client = assignedService.Client;
 			var payTar = client.PaymentForTariff();
-			if (service.Activator != null)
+			if (assignedService.Activator != null)
 				payTar = true;
 			return payTar && CanActivate(client);
 		}
 
-		public override void PaymentClient(ClientService service)
+		public override void PaymentClient(ClientService assignedService)
 		{
-			if (!service.Client.CanDisabled())
-				service.CompulsoryDiactivate();
+			if (assignedService.Client.CanDisabled())
+				assignedService.Deactivate();
 		}
 
-		public override bool CanBlock(ClientService service)
+		public override bool CanBlock(ClientService assignedService)
 		{
-			if (service.EndWorkDate == null)
+			if (assignedService.EndWorkDate == null)
 				return false;
-			return service.EndWorkDate.Value < SystemTime.Now();
+			return assignedService.EndWorkDate.Value < SystemTime.Now();
 		}
 
-		public override bool CanDelete(ClientService CService)
+		public override bool CanDelete(ClientService assignedService)
 		{
-			if (CService.Activator != null)
+			if (assignedService.Activator != null)
 				return true;
 
-			var lastPayments =
-				Payment.Queryable.Where(
-					p => p.Client == CService.Client && CService.BeginWorkDate.Value < p.PaidOn).
-					ToList().Sum(p => p.Sum);
-			var balance = CService.Client.PhysicalClient.Balance;
+			var lastPayments = Payment.Queryable
+				.Where(p => p.Client == assignedService.Client && assignedService.BeginWorkDate.Value < p.PaidOn)
+				.ToList().Sum(p => p.Sum);
+			var balance = assignedService.Client.PhysicalClient.Balance;
 			if (balance > 0 &&
 				balance - lastPayments <= 0)
 				return true;
 			return false;
 		}
 
-		public override void CompulsoryDiactivate(ClientService service)
+		public override void CompulsoryDeactivate(ClientService assignedService)
 		{
-			var client = service.Client;
+			var client = assignedService.Client;
 			client.Disabled = client.CanDisabled();
 			client.AutoUnblocked = true;
 			client.Status = Status.Find((uint)StatusType.NoWorked);
 			client.Update();
-			service.Activated = false;
-			service.Update();
+			assignedService.Activated = false;
+			ActiveRecordMediator.Update(assignedService);
 		}
 
-		public override bool Diactivate(ClientService service)
+		public override bool CanDeactivate(ClientService assignedService)
 		{
-			if (service.Activated && service.EndWorkDate.Value < SystemTime.Now())
-			{
-				CompulsoryDiactivate(service);
-				return true;
-			}
-			return !service.Activated;
+			return assignedService.Activated && assignedService.EndWorkDate.Value < SystemTime.Now();
 		}
 
-		public override void Activate(ClientService service)
+		public override void Activate(ClientService assignedService)
 		{
-			if ((!service.Activated && CanActivate(service)))
-			{
-				var client = service.Client;
+			if ((!assignedService.Activated && CanActivate(assignedService))) {
+				var client = assignedService.Client;
 				client.Disabled = false;
 				client.RatedPeriodDate = SystemTime.Now();
 				client.Status = Status.Find((uint) StatusType.Worked);
 				client.Update();
-				service.Activated = true;
-				service.Update();
+				assignedService.Activated = true;
+				ActiveRecordMediator.Update(assignedService);
 			}
 		}
 	}

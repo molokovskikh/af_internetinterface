@@ -35,7 +35,7 @@
 									${service.GetParameters()}
 								</tbody>
 							</table>
-							<button class="button" style="margin-top:15px;" value="Назначить"><img alt="Save" src="${Siteroot}/Images/application_edit.png"> Активировать </button>
+							<button class="button save" style="margin-top:15px;" value="Назначить">Активировать</button>
 						</form>
 					</div>
 				<%else: %>
@@ -45,7 +45,7 @@
 							<form method=post action="${siteroot}/UserInfo/DiactivateService">
 								<input type="hidden" name="clientId" value="${ClientCode}" />
 								<input type="hidden" name="serviceId" value="${service.Id}" />
-								<button class="button" style="margin-top:15px;" value="Назначить"><img alt="Save" src="${Siteroot}/Images/application_edit.png"> Деактивировать </button>
+								<button class="button save" style="margin-top:15px;" value="Назначить">Деактивировать</button>
 							</form>
 						</div>
 					<%else: %>

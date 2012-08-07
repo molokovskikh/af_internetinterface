@@ -98,6 +98,9 @@
   <ItemGroup>
     <Content Include="Assets\Javascripts\application.js" />
     <Content Include="Assets\Javascripts\messages_ru.js" />
+    <Content Include="Assets\Javascripts\registration.js" />
+    <Content Include="Assets\Stylesheets\alt-form.css" />
+    <Content Include="Assets\Stylesheets\client.css" />
     <Content Include="Assets\Stylesheets\payments.css" />
     <Content Include="Assets\Stylesheets\service-requests.css" />
     <Content Include="Css\asc.gif" />
@@ -145,6 +148,8 @@
     <None Include="Views\AgentInfo\SummaryInformation.brail" />
     <None Include="Views\Brigads\MakeBrigad.brail" />
     <None Include="Views\Brigads\ShowBrigad.brail" />
+    <None Include="Views\ChannelGroups\Index.brail" />
+    <None Include="Views\ChannelGroups\Edit.brail" />
     <None Include="Views\Invoices\Edit.brail" />
     <None Include="Views\Invoices\Index.brail" />
     <None Include="Views\Invoices\InvoiceBody.brail" />
@@ -185,6 +190,7 @@
     <None Include="Views\Rescues\404.brail" />
     <None Include="Views\ServiceRequest\ShowRequest.brail" />
     <None Include="Views\ServiceRequest\ViewRequests.brail" />
+    <None Include="Views\Services\Edit.brail" />
     <None Include="Views\Shared\EditorTemplates\Contact.brail" />
     <None Include="Views\Sms\SmsIndex.brail" />
     <None Include="Views\Subview\AppealsInfo.brail" />
@@ -203,6 +209,8 @@
     <None Include="Views\Switches\MakeSwitch.brail" />
     <None Include="Views\Switches\OnLineClient.brail" />
     <None Include="Views\Switches\ShowSwitches.brail" />
+    <None Include="Views\Templates\Internet.brail" />
+    <None Include="Views\Templates\IpTv.brail" />
     <None Include="Views\UserInfo\AddInfo.brail" />
     <None Include="Views\UserInfo\AddPoint.brail" />
     <None Include="Views\UserInfo\Administration.brail" />
@@ -232,6 +240,7 @@
     <None Include="Views\AgentInfo\EditAgentSettings.brail" />
     <Content Include="JavaScript\vaidServiceRequest.js" />
     <Content Include="JavaScript\validation.js" />
+    <None Include="Views\Tariffs\ChangeRules.brail" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -251,6 +260,7 @@
     <Compile Include="Components\ContactTypeList.cs" />
     <Compile Include="Controllers\AgentInfoController.cs" />
     <Compile Include="Controllers\BrigadsController.cs" />
+    <Compile Include="Controllers\ChannelGroupsController.cs" />
     <Compile Include="Controllers\InvoicesController.cs" />
     <Compile Include="Controllers\PrivateMessagesController.cs" />
     <Compile Include="Controllers\ExitPartner.cs" />
@@ -265,7 +275,9 @@
     <Compile Include="Controllers\RegisterController.cs" />
     <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Controllers\ServiceRequestController.cs" />
+    <Compile Include="Controllers\ServicesController.cs" />
     <Compile Include="Controllers\SwitchesController.cs" />
+    <Compile Include="Controllers\TariffsController.cs" />
     <Compile Include="Controllers\UserInfoController.cs" />
     <Compile Include="Errors\AccessDin.aspx.cs">
       <DependentUpon>AccessDin.aspx</DependentUpon>
@@ -284,6 +296,7 @@
     <Compile Include="Filters\AppealFilter.cs" />
     <Compile Include="Helpers\ActiveDirectoryHelper.cs" />
     <Compile Include="Helpers\AppHelperInterface.cs" />
+    <Compile Include="Helpers\BigEndianConverter.cs" />
     <Compile Include="Helpers\DateHelper.cs" />
     <Compile Include="Helpers\ExceptionHelper.cs" />
     <Compile Include="Helpers\IpHelper.cs" />
@@ -311,7 +324,7 @@
     <Compile Include="Models\BankPayment.cs" />
     <Compile Include="Models\Brigad.cs" />
     <Compile Include="Models\BypassHouse.cs" />
-    <Compile Include="Models\ClientEndpoints.cs" />
+    <Compile Include="Models\ClientEndpoint.cs" />
     <Compile Include="Models\Client.cs" />
     <Compile Include="Models\ClientService.cs" />
     <Compile Include="Models\ConnectGraph.cs" />
@@ -340,9 +353,14 @@
     <Compile Include="Models\SendedLease.cs" />
     <Compile Include="Models\ServiceRequest.cs" />
     <Compile Include="Models\ServiceInteration.cs" />
+    <Compile Include="Models\Services\Internet.cs" />
+    <Compile Include="Models\Services\IpTv.cs" />
+    <Compile Include="Models\Services\IpTvBoxRent.cs" />
+    <Compile Include="Models\Services\ChannelGroup.cs" />
     <Compile Include="Models\SmsMessage.cs" />
     <Compile Include="Models\StaticIp.cs" />
     <Compile Include="Models\Status.cs" />
+    <Compile Include="Models\TariffChangeRule.cs" />
     <Compile Include="Models\Universal\ChildActiveRecordLinqBase.cs" />
     <Compile Include="Models\Universal\ClientSearchProperties.cs" />
     <Compile Include="Models\Access\CategorieAccessSet.cs" />
@@ -354,7 +372,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Partner.cs" />
-    <Compile Include="Models\PhysicalClients.cs" />
+    <Compile Include="Models\PhysicalClient.cs" />
     <Compile Include="Models\UnresolvedCalls.cs" />
     <Compile Include="Models\UserCategorie.cs" />
     <Compile Include="Models\UserWriteOff.cs" />
