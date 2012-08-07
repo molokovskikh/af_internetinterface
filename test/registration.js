@@ -1,6 +1,6 @@
 (function() {
   $(function() {
-    return test("", function() {
+    return test("recalculate registration min sum", function() {
       var model;
       model = new AppViewModel();
       model.connectSum(300);
