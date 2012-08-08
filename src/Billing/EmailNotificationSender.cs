@@ -17,7 +17,7 @@ namespace Billing
 			try {
 				var mailToAdress = "internet@ivrn.net";
 #if DEBUG
-				mailToAdress = "a.zolotarev@analit.net";
+				mailToAdress = "kvasovtest@analit.net";
 #endif
 				var message = new MailMessage();
 				message.To.Add(mailToAdress);

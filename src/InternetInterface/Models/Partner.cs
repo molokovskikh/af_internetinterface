@@ -68,6 +68,11 @@ namespace InternetInterface.Models
 			return Categorie.ReductionName == reductionName;
 		}
 
+		public virtual bool IsDiller()
+		{
+			return CategorieIs("Diller");
+		}
+
 		public virtual decimal GetAgentPayment(Week interval)
 		{
 			return

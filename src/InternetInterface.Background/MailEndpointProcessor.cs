@@ -57,7 +57,7 @@ namespace InternetInterface.Background
 #if !DEBUG
 			var mailToAdress = "internet@ivrn.net";
 #else
-			var mailToAdress = "a.zolotarev@analit.net";
+			var mailToAdress = "kvasovtest@analit.net";
 #endif
 			var text = new StringBuilder();
 			foreach (var lease in nullLeases.Where(l => !sndingLease.Contains(l.Id))) {
@@ -80,7 +80,7 @@ namespace InternetInterface.Background
 #if !DEBUG
 			var mailToAdress = "internet@ivrn.net";
 #else
-			var mailToAdress = "a.zolotarev@analit.net";
+			var mailToAdress = "kvasovtest@analit.net";
 #endif
 			var guestLeases = Lease.Queryable.Where(l => l.Endpoint == null).ToList();
 			var sended_leases =

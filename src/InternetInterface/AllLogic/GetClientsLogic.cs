@@ -13,51 +13,64 @@ namespace InternetInterface.AllLogic
 {
 	public class GetClientsLogic
 	{
-		public static string GetWhere(UserSearchProperties sp, uint ct, ClientTypeProperties clT, EnabledTypeProperties enT,
-		                              uint whoregister, uint tariff, string searchText, uint brigad, uint addtionalStatus)
+		public static string GetWhere(
+			UserSearchProperties searchProperty,
+			uint statusType,
+			ClientTypeProperties clientTypeProperty,
+			EnabledTypeProperties enabledTypeProperty,
+			string searchText)
 		{
 			var _return = string.Empty;
-			if (whoregister != 0) {
-				_return += " and C.WhoRegistered = :whoregister or l.WhoRegistered = :whoregister";
-			}
-
-			if (tariff != 0) {
-				_return += " and P.Tariff = :tariff";
-			}
-			if (brigad != 0) {
-				_return += " and C.WhoConnected = :Brigad or l.WhoConnected = :Brigad";
-			}
-			if (addtionalStatus != 0) {
-				_return += " and C.AdditionalStatus = :addtionalStatus";
-			}
-			if (ct > 0) {
+			if (statusType > 0) {
 				_return += " and S.Id = :statusType";
 			}
-			if (clT.IsPhysical()) {
+			if (clientTypeProperty.IsPhysical()) {
 				_return += " and C.PhysicalClient is not null";
 			}
-			if (clT.IsLawyer()) {
+			if (clientTypeProperty.IsLawyer()) {
 				_return += " and C.LawyerPerson is not null";
 			}
-			if (enT.IsDisabled())
+			if (enabledTypeProperty.IsDisabled())
 				_return += " and c.Disabled";
-			if (enT.IsEnabled())
+			if (enabledTypeProperty.IsEnabled())
 				_return += " and c.Disabled = false";
 			if (searchText != null) {
-				if (sp.IsSearchAuto()) {
-					return
-						String.Format(
-							@"
-WHERE LOWER(C.Name) like {0} or C.id like :SearchText or LOWER(co.Contact) like {0}",
-							":SearchText") + _return;
+				if (!InitializeContent.Partner.IsDiller()) {
+					if (searchProperty.IsSearchAuto()) {
+						return
+							String.Format(
+								@"
+	WHERE
+	LOWER(C.Name) like {0} or
+	C.id like {0} or
+	LOWER(co.Contact) like {0} or
+	LOWER(h.Street) like {0} or
+	LOWER(l.ActualAdress) like {0} " ,
+								":SearchText") + _return;
+					}
+					if (searchProperty.IsSearchByFio()) {
+						return
+							String.Format(@"
+	WHERE LOWER(C.Name) like {0} ", ":SearchText") + _return;
+					}
+					if (searchProperty.IsSearchTelephone()) {
+						return String.Format(@"WHERE LOWER(co.Contact) like {0} ", ":SearchText") + _return;
+					}
+					if (searchProperty.IsSearchByAddress()) {
+						return String.Format(@"
+	WHERE LOWER(h.Street) like {0} or
+	LOWER(l.ActualAdress) like {0}", ":SearchText") + _return;
+					}
 				}
-				if (sp.IsSearchByFio()) {
-					return
-						String.Format(@"
-WHERE LOWER(C.Name) like {0} ", ":SearchText") + _return;
-				}
-				if (sp.IsSearchTelephone()) {
-					return String.Format(@"WHERE LOWER(co.Contact) like {0} ", ":SearchText") + _return;
+				else {
+					var id = 0u;
+					UInt32.TryParse(searchText, out id);
+					if (id > 0) {
+						return "WHERE c.Id = " + id;
+					}
+					else {
+						return "LOWER(C.Name) like :SearchText";
+					}
 				}
 			}
 			else {

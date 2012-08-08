@@ -27,6 +27,22 @@ namespace InternetInterface.Controllers
 
 		public Client client;
 		public bool OnLine;
+
+		public string Address
+		{
+			get {
+				if (client.IsPhysical())
+					return client.GetAdress();
+				else {
+					return client.LawyerPerson.ActualAdress;
+				}
+			}
+		}
+
+		public virtual string ForSearchAddress(string query)
+		{
+			return TextHelper.SelectQuery(query, Address);
+		}
 	}
 
 	public class SeachFilter : IPaginable, ISortableContributor, SortableContributor
@@ -35,11 +51,7 @@ namespace InternetInterface.Controllers
 		public uint statusType { get; set; }
 		public ClientTypeProperties clientTypeFilter { get; set; }
 		public EnabledTypeProperties EnabledTypeProperties { get; set; }
-		public uint tariff { get; set; }
-		public uint whoregister { get; set; }
-		public uint brigad { get; set; }
 		public string searchText { get; set; }
-		public uint addtionalStatus { get; set; }
 		public string SortBy { get; set; }
 		public string Direction { get; set; }
 
@@ -69,10 +81,6 @@ namespace InternetInterface.Controllers
 				{"filter.searchProperties.SearchBy", searchProperties.SearchBy},
 				{"filter.clientTypeFilter.Type", clientTypeFilter.Type},
 				{"filter.EnabledTypeProperties.Type", EnabledTypeProperties.Type},
-				{"filter.tariff", tariff},
-				{"filter.whoregister", whoregister},
-				{"filter.brigad", brigad},
-				{"filter.addtionalStatus", addtionalStatus},
 				{"filter.statusType", statusType},
 				{"filter.SortBy", SortBy},
 				{"filter.Direction", Direction},
@@ -96,20 +104,12 @@ namespace InternetInterface.Controllers
 
 		private void SetParameters(IQuery query)
 		{
-			if (whoregister != 0)
-				query.SetParameter("whoregister", whoregister);
-			if (tariff != 0)
-				query.SetParameter("tariff", tariff);
-			if (brigad != 0)
-				query.SetParameter("Brigad", brigad);
-			if (addtionalStatus != 0)
-				query.SetParameter("addtionalStatus", addtionalStatus);
 			if (statusType > 0)
 				query.SetParameter("statusType", statusType);
 		}
 
 		private string GetOrderField()
-		{        
+		{
 			if (SortBy == "Name")
 				return string.Format("{0} {1} ", "C.Name", Direction);
 			if (SortBy == "Id")
@@ -139,6 +139,7 @@ left join internet.PhysicalClients p on p.id = c.PhysicalClient
 left join internet.LawyerPerson l on l.id = c.LawyerPerson
 left join internet.Contacts co on co.Client = c.id
 left join internet.Tariffs t on t.Id = p.Tariff
+left join internet.houses h on h.Id = p.HouseObj
 join internet.Status S on s.id = c.Status";
 
 			IList<Client> result = new List<Client>();
@@ -158,7 +159,7 @@ join internet.Status S on s.id = c.Status";
 {0}
 group by c.id
 ORDER BY {3} Limit {1}, {2}",
-							GetClientsLogic.GetWhere(searchProperties, statusType, clientTypeFilter, EnabledTypeProperties, whoregister, tariff, searchText, brigad, addtionalStatus),
+							GetClientsLogic.GetWhere(searchProperties, statusType, clientTypeFilter, EnabledTypeProperties, searchText),
 							CurrentPage * PageSize,
 							PageSize,
 							GetOrderField(),
@@ -243,10 +244,6 @@ ORDER BY {3} Limit {1}, {2}",
 			PropertyBag["Direction"] = filter.Direction;
 			PropertyBag["SortBy"] = filter.SortBy;
 			PropertyBag["filter"] = filter;
-			PropertyBag["ChTariff"] = filter.tariff;
-			PropertyBag["ChRegistr"] = filter.whoregister;
-			PropertyBag["ChBrigad"] = filter.brigad;
-			PropertyBag["ChAdditional"] = filter.addtionalStatus;
 			AddIndispensableParameters();
 		}
 

@@ -32,7 +32,7 @@ namespace InternetInterface.Models
 			From = "internet@ivrn.net";
 			To = invoice.Client.Contacts.Where(c => c.Type == ContactType.Email).Implode(c => c.Text);
 #if DEBUG
-			To = "a.zolotarev@analit.net";
+			To = "kvasovtest@analit.net";
 #endif
 			Subject = String.Format("Счет за {0}", invoice.Period);
 

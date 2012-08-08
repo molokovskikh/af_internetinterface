@@ -59,7 +59,7 @@ namespace InforoomInternet.Controllers
 			var mailToAdress = "internet@ivrn.net";
 #if DEBUG
 			var lease = Lease.FindAll();
-			mailToAdress = "a.zolotarev@analit.net";
+			mailToAdress = "kvasovtest@analit.net";
 #else
 			var lease = Lease.FindAllByProperty("Ip", Convert.ToUInt32(NetworkSwitches.SetProgramIp(ip)));
 #endif
@@ -352,7 +352,7 @@ namespace InforoomInternet.Controllers
 			var mailToAdress = "internet@ivrn.net";
 			var messageText = new StringBuilder();
 #if DEBUG
-			mailToAdress = "a.zolotarev@analit.net";
+			mailToAdress = "kvasovtest@analit.net";
 #endif
 			if (client == null)
 				messageText.AppendLine(string.Format("Пришел запрос на страницу WarningPackageId от стороннего клиента (IP: {0})", Request.UserHostAddress));

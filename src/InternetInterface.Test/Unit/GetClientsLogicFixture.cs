@@ -13,7 +13,7 @@ namespace InternetInterface.Test.Unit
 		{
 			var query = GetClientsLogic.GetWhere(UserSearchPropertiesHelper.CreateUserSearchProperties(),
 			                                     0, ClientTypeHelper.CreateUserSearchProperties(), new EnabledTypeProperties(), 
-			                                     0, 0, "Test", 0,0);
+			                                      "Test");
 			Assert.That(query, Is.StringContaining(@"WHERE LOWER(P.Name) like :SearchText or LOWER(P.Surname) like :SearchText
 or LOWER(P.Patronymic) like :SearchText or LOWER(P.City) like :SearchText 
 or LOWER(P.PassportSeries) like :SearchText

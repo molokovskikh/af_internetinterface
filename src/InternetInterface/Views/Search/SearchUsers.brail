@@ -47,6 +47,8 @@
 				<label for="Autosearch">По номеру счета</label><br />
 				<input type="radio" id="SearchByClientId" name="filter.searchProperties.SearchBy" value=ByFio ${"checked" if filter.searchProperties.IsSearchByFio()} />
 				<label for="SearchByClientId">Имя</label><br />
+				<input type="radio" id="SearchByAddress" name="filter.searchProperties.SearchBy" value=ByAddress ${"checked" if filter.searchProperties.IsSearchByAddress()} />
+				<label for="SearchByAddress">Адресу</label><br />
 				<input type="radio" id="Radio7" name="filter.searchProperties.SearchBy" value=TelNum ${"checked" if filter.searchProperties.IsSearchTelephone()} />
 				<label for="SearchByClientId">Контактная информация</label><br />
 			</td>
@@ -65,8 +67,9 @@
 		<table border="0" class="table filter_front">
 			<thead>
 				<tr align="left">
-					<td>Тариф<br />
-						${FormHelper.Select("filter.tariff", Tariffs, {"value" : "Id", "text" : "Name"})}
+					<td>
+						<span>Статус</span><br />
+						${FormHelper.Select("filter.statusType", Statuses, {"value" : "Id", "text" : "Name"})}
 					</td>
 					<td>
 						<input type="radio" id="DisabledAll" name="filter.EnabledTypeProperties.Type" value=All ${"checked" if filter.EnabledTypeProperties.IsAll()} />
@@ -75,25 +78,6 @@
 						<label for="Radio5">Включены</label><br />
 						<input type="radio" id="DisabledTrue" name="filter.EnabledTypeProperties.Type" value=Disabled ${"checked" if filter.EnabledTypeProperties.IsDisabled()} />
 						<label for="Radio6">Отключены</label><br />
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<span>Статус</span><br />
-						${FormHelper.Select("filter.statusType", Statuses, {"value" : "Id", "text" : "Name"})}
-					</td>
-					<td>Дополнительный статус<br />
-						${FormHelper.Select("filter.addtionalStatus", additionalStatuses, {"value" : "Id", "text" : "Name"})}
-					</td>
-				</tr>
-				<tr>
-				<%if PartnerAccessSet.AccesPartner("SSI"): %>
-					<td>Назначено на бригаду<br />
-						${FormHelper.Select("filter.brigad", Brigads, {"value" : "Id", "text" : "Name"})}
-					</td>
-				<%end %>
-					<td>Кем загистрирован<br />
-						${FormHelper.Select("filter.whoregister", WhoRegistered, {"value" : "Id", "text" : "Name"})}
 					</td>
 				</tr>
 			</thead>

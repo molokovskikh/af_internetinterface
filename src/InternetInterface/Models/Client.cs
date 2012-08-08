@@ -207,6 +207,11 @@ namespace InternetInterface.Models
 			return Payments.Sum(s => s.Sum) >= tariffSum*PercentBalance;
 		}
 
+		public virtual bool IsPhysical()
+		{
+			return PhysicalClient != null;
+		}
+
 		public virtual string GetAdress()
 		{
 			if (PhysicalClient != null) {

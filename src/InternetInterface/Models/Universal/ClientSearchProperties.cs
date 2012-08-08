@@ -9,7 +9,7 @@ namespace InternetInterface.Models
 		[Description("ФИО")]
 		ByFio,
 		[Description("Паспортные данные")]
-		ByPassportSet,
+		ByAddress,
 		[Description("Номер счета")]
 		SearchAccount,
 		[Description("Номер телефона")]
@@ -165,9 +165,9 @@ namespace InternetInterface.Models
 			return SearchBy == SearchUserBy.ByFio;
 		}
 
-		public bool IsSearchByPassportSet()
+		public bool IsSearchByAddress()
 		{
-			return SearchBy == SearchUserBy.ByPassportSet;
+			return SearchBy == SearchUserBy.ByAddress;
 		}
 
 		public bool IsSearchAccount()

@@ -503,12 +503,14 @@ div.backGround.table.td  {
 }
 
 table .filter_front {
-	width:100%;
+	width:96%;
 	height: 80px;
+	margin: 10px;
 }
 
 table .filter_front thead td{
 	padding: 5px;
+	width: 50%;
 }
 
 .hidden {
