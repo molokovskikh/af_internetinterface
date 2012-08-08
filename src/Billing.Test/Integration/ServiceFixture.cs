@@ -343,7 +343,7 @@ namespace Billing.Test.Integration
 				_client = Client.Find(_client.Id);
 				Assert.IsTrue(_client.Disabled);
 				AssertThatContainsOnlyMandatoryServices();
-				Assert.That(_client.PhysicalClient.Balance, Is.EqualTo(-1), _client.UserWriteOffs.Implode());
+				Assert.That(_client.PhysicalClient.Balance, Is.EqualTo(-64.03m), _client.UserWriteOffs.Implode());
 			}
 		}
 

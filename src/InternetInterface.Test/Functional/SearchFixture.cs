@@ -41,7 +41,7 @@ namespace InternetInterface.Test.Functional
 			disabledClient.Disabled = true;
 			session.Save(disabledClient);
 
-			Refresh();
+			Open("Search/SearchUsers.rails");
 			browser.RadioButton("DisabledFalse").Checked = true;
 			browser.Button("SearchButton").Click();
 			AssertText(Client.Name);

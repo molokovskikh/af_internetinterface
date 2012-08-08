@@ -18,7 +18,6 @@ namespace InternetInterface.Test.Functional
 			AssertText("Редактирование коммутатора");
 			Click("Удалить");
 			AssertText("Удалено");
-			Console.WriteLine();
 			session.Clear();
 			commutator = session.Get<NetworkSwitches>(commutator.Id);
 			Assert.That(commutator, Is.Null);
