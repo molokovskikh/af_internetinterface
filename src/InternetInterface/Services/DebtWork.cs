@@ -77,7 +77,8 @@ namespace InternetInterface.Services
 			var client = service.Client;
 			client.Disabled = client.CanDisabled();
 			client.AutoUnblocked = true;
-			client.Status = Status.Find((uint)StatusType.NoWorked);
+			var status = client.Disabled ? Status.Find((uint)StatusType.NoWorked) : Status.Find((uint)StatusType.Worked);
+			client.Status = status;
 			client.Update();
 			service.Activated = false;
 			service.Update();

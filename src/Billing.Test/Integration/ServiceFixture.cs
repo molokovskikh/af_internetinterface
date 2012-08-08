@@ -779,6 +779,7 @@ namespace Billing.Test.Integration
 			using (new SessionScope()) {
 				var client = ActiveRecordMediator<Client>.FindByPrimaryKey(_client.Id);
 				Assert.That(client.Disabled, Is.False);
+				Assert.That(client.Status.Id, Is.EqualTo((uint)StatusType.Worked));
 			}
 		}
 	}
