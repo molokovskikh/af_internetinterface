@@ -1,1 +1,0 @@
-\src\InternetInterface.Test\Functional\RegisterClientFixture.cs

@@ -19,7 +19,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void RegisterClientTest()
 		{
-			var commutator = new NetworkSwitches("Тестовый коммутатор", session.Query<Zone>().First());
+			var commutator = new NetworkSwitches("Тестовый коммутатор для регистрации клиента", session.Query<Zone>().First());
 			session.Save(commutator);
 
 			Open("Register/RegisterClient.rails");
@@ -53,12 +53,11 @@ namespace InternetInterface.Test.Functional
 			browser.TextField(Find.ById("PassportDate")).AppendText("10.01.2002");
 			browser.TextField(Find.ById("client_ConnectSum")).AppendText("100");
 
-			browser.SelectList("SelectSwitches").Select("Тестовый коммутатор");
+			browser.SelectList("SelectSwitches").Select("Тестовый коммутатор для регистрации клиента");
 			browser.Eval(String.Format("$('#SelectSwitches').change()"));
 			var occupiedPorts = browser.Elements.Count(e => e.ClassName == "access_port");
 			Assert.That(occupiedPorts, Is.EqualTo(0));
 
-			browser.ShowWindow(NativeMethods.WindowShowStyle.ShowNormal);
 			browser.CheckBox("VisibleRegisteredInfo").Checked = true;
 			browser.Button(Find.ById("RegisterClientButton")).Click();
 
