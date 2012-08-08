@@ -60,10 +60,6 @@ namespace InternetInterface.Test.Functional
 			Assert.That(browser.Text, Is.StringContaining("Все"));
 			Css("#SearchText").TypeText(Client.Id.ToString());
 			browser.Button(Find.ById("SearchButton")).Click();
-			Assert.That(browser.Text, Is.StringContaining("Номер счета"));
-			Assert.That(browser.Text, Is.StringContaining("Баланс"));
-			Assert.That(browser.Text, Is.StringContaining("ФИО"));
-			browser.Link(Find.ByText(Client.Id.ToString("00000"))).Click();
 			Assert.That(browser.Text, Is.StringContaining("Информация по клиенту"));
 		}
 
