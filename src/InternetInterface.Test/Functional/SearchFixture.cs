@@ -57,13 +57,10 @@ namespace InternetInterface.Test.Functional
 			Assert.That(browser.Text, Is.StringContaining("Поиск пользователей"));
 			Assert.That(browser.Text, Is.StringContaining("Введите текст для поиска:"));
 			Assert.That(browser.Text, Is.StringContaining("Автоматически"));
-			Assert.That(browser.Text, Is.StringContaining("Тариф"));
 			Assert.That(browser.Text, Is.StringContaining("Все"));
-			Assert.That(browser.Text, Is.StringContaining("Назначено на бригаду"));
 			Css("#SearchText").TypeText(Client.Id.ToString());
 			browser.Button(Find.ById("SearchButton")).Click();
 			Assert.That(browser.Text, Is.StringContaining("Номер счета"));
-			Assert.That(browser.Text, Is.StringContaining("Тариф"));
 			Assert.That(browser.Text, Is.StringContaining("Баланс"));
 			Assert.That(browser.Text, Is.StringContaining("ФИО"));
 			browser.Link(Find.ByText(Client.Id.ToString("00000"))).Click();
