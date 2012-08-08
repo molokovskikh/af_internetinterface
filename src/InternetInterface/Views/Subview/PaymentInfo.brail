@@ -11,9 +11,6 @@ ${app.JS("validation.js")}
 <span id="itogo">Всего: ${paymentsSum.ToString("C")}</span>
 
 <div id="PaymentTable" style="display:none">
-
-
-<%if PartnerAccessSet.AccesPartner("SSI"): %>
 <div style="clear:both;">
 	<% if (Payments.Count == 0): %>
 		<div class="flash">
@@ -64,8 +61,6 @@ ${app.JS("validation.js")}
 			<td>Платеж не обработан</td>
 		</tr>
 	</table>
-
 	<% end %>
 </div>
-<%end %>
 </div>

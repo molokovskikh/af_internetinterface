@@ -298,6 +298,7 @@
     <Compile Include="Helpers\AppHelperInterface.cs" />
     <Compile Include="Helpers\BigEndianConverter.cs" />
     <Compile Include="Helpers\DateHelper.cs" />
+    <Compile Include="Helpers\EmailHelper.cs" />
     <Compile Include="Helpers\ExceptionHelper.cs" />
     <Compile Include="Helpers\IpHelper.cs" />
     <Compile Include="Helpers\Listner.cs" />

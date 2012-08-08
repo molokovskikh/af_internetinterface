@@ -1,4 +1,7 @@
-﻿using InternetInterface.AllLogic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using InternetInterface.AllLogic;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
@@ -8,17 +11,20 @@ namespace InternetInterface.Test.Unit
 	[TestFixture, Ignore("Чинить")]
 	public class GetClientsLogicFixture
 	{
-		[Test]
-		public void GetWhereTest()
+		private static bool ResultAssert(Func<IList<Client>> result)
 		{
-			var query = GetClientsLogic.GetWhere(UserSearchPropertiesHelper.CreateUserSearchProperties(),
-			                                     0, ClientTypeHelper.CreateUserSearchProperties(), new EnabledTypeProperties(), 
-			                                      "Test");
-			Assert.That(query, Is.StringContaining(@"WHERE LOWER(P.Name) like :SearchText or LOWER(P.Surname) like :SearchText
-or LOWER(P.Patronymic) like :SearchText or LOWER(P.City) like :SearchText 
-or LOWER(P.PassportSeries) like :SearchText
-or LOWER(P.PassportNumber) like :SearchText or LOWER(P.WhoGivePassport) like :SearchText
-or LOWER(P.RegistrationAdress) like :SearchText"));
+			var _result = result();
+			if (result != null)
+			{
+				if (_result.Count != 0)
+				{
+					if (!_result.First().Status.Connected)
+						return true;
+					if (result.Method.Name == "<GetClientsTest>b__0")
+						return true;
+				}
+			}
+			return true;
 		}
 	}
 }

@@ -28,6 +28,7 @@
 						<input type="text" class="BalanceText" id="BalanceText"  name="BalanceText" value="${BalanceText}"/>
 					</td>
 				</tr>
+				<%if PartnerAccessSet.AccesPartner("SSI"): %>
 				<tr>
 					<td>
 						<label for="virtualPayment">Зачислить как бонус</label>
@@ -36,6 +37,7 @@
 						<input id="virtualPayment" type=checkbox name="virtualPayment" value="true"/>
 					</td>
 				</tr>
+				<%end %>
 				<tr>
 					<td colspan=100>
 						<button type="submit" id="ChangeBalanceButton" class="button ok">

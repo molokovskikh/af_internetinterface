@@ -271,7 +271,6 @@
 					"ConnectInfo": item,
 					"EditingConnect" : EConnect == item.endpointId})
 end %>
-
 <% OutputSubView("""\Subview\PaymentInfo""") %>
 <br />
 <% OutputSubView("""\Subview\WriteOffInfo""") %>
@@ -282,8 +281,12 @@ end %>
 </div>
 </div>
 <div style="width:49%; float:right; padding-top:5px;">
-<% OutputSubView("""\Subview\ContactInfo""") %>
-<% OutputSubView("""\Subview\AppealsInfo""") %>
-<% OutputSubView("""\Subview\CallsHistory""") %>
-<% OutputSubView("""\Subview\ServiceControl""") %>
+<%if PartnerAccessSet.AccesPartner("SSI"):
+	OutputSubView("""\Subview\ContactInfo""")
+end
+	OutputSubView("""\Subview\AppealsInfo""")
+if PartnerAccessSet.AccesPartner("SSI"):
+	OutputSubView("""\Subview\CallsHistory""")
+	OutputSubView("""\Subview\ServiceControl""")
+end %>
 </div>

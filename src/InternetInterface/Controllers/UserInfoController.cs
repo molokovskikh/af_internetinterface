@@ -928,7 +928,8 @@ where r.`Label`= :LabelIndex;")
 				Payment.Queryable.Where(p => p.Client.Id == client.Id).Where(p => p.Sum > 0).OrderBy(t => t.PaidOn).ToList();
 			var writeoffSum = WriteOff.Queryable.Where(p => p.Client.Id == client.Id).ToList().Sum(s => s.WriteOffSum);
 			var userWriteoffSum = Models.UserWriteOff.Queryable.Where(w => w.Client.Id == client.Id).ToList().Sum(w => w.Sum);
-
+			if (InitializeContent.Partner.IsDiller())
+				payments = payments.Where(p => p.Agent != null && p.Agent.Partner == InitializeContent.Partner).OrderByDescending(t => t.PaidOn).Take(5).OrderBy(t => t.PaidOn).ToList();
 			PropertyBag["Payments"] = payments;
 			PropertyBag["paymentsSum"] = payments.Sum(p => p.Sum);
 			PropertyBag["writeOffSum"] = writeoffSum + userWriteoffSum;
@@ -993,6 +994,9 @@ where r.`Label`= :LabelIndex;")
 		[AccessibleThrough(Verb.Post)]
 		public void ChangeBalance(uint clientId, string balanceText, bool virtualPayment)
 		{
+			if (InitializeContent.Partner.IsDiller())
+				virtualPayment = false;
+
 			var clientToch = Client.Find(clientId);
 			decimal tryBalance;
 			if (decimal.TryParse(balanceText, out tryBalance) && tryBalance > 0)

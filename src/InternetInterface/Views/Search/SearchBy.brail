@@ -48,8 +48,8 @@
 				<td>
 					${itemInfo.ForSearchAddress(filter.searchText)}
 				</td>
+				<td>${item.ForSearchContact(filter.searchText)}</td>
 			<%end %>
-			<td>${item.ForSearchContact(filter.searchText)}</td>
 			<%if CategorieAccessSet.AccesPartner("SSI"): %>
 				<%if item.PhysicalClient != null: %>
 				<td>${item.RegDate}</td>
@@ -84,8 +84,8 @@
 				<%end %>
 			<%end %>
 		</tr>
-	<% end %>   
-	  <tr>
+	<% end %>
+	<tr>
 		<td colspan=8>
 		<div class="Paginator">
 			 ${PaginatorHelper.ShowPaginator()}

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using InternetInterface.Controllers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
@@ -13,70 +14,69 @@ namespace InternetInterface.AllLogic
 {
 	public class GetClientsLogic
 	{
-		public static string GetWhere(
-			UserSearchProperties searchProperty,
-			uint statusType,
-			ClientTypeProperties clientTypeProperty,
-			EnabledTypeProperties enabledTypeProperty,
-			string searchText)
+		public static string GetWhere(SeachFilter filter)
 		{
 			var _return = string.Empty;
-			if (statusType > 0) {
-				_return += " and S.Id = :statusType";
-			}
-			if (clientTypeProperty.IsPhysical()) {
-				_return += " and C.PhysicalClient is not null";
-			}
-			if (clientTypeProperty.IsLawyer()) {
-				_return += " and C.LawyerPerson is not null";
-			}
-			if (enabledTypeProperty.IsDisabled())
-				_return += " and c.Disabled";
-			if (enabledTypeProperty.IsEnabled())
-				_return += " and c.Disabled = false";
-			if (searchText != null) {
-				if (!InitializeContent.Partner.IsDiller()) {
-					if (searchProperty.IsSearchAuto()) {
+			if (!InitializeContent.Partner.IsDiller()) {
+				if (filter.statusType > 0)
+					_return += " and S.Id = :statusType";
+
+				if (filter.clientTypeFilter.IsPhysical())
+					_return += " and C.PhysicalClient is not null";
+
+				if (filter.clientTypeFilter.IsLawyer())
+					_return += " and C.LawyerPerson is not null";
+
+				if (filter.EnabledTypeProperties.IsDisabled())
+					_return += " and c.Disabled";
+
+				if (filter.EnabledTypeProperties.IsEnabled())
+					_return += " and c.Disabled = false";
+
+				if (!string.IsNullOrEmpty(filter.searchText)) {
+					if (filter.searchProperties.IsSearchAuto()) {
 						return
 							String.Format(
 								@"
 	WHERE
-	LOWER(C.Name) like {0} or
+	(LOWER(C.Name) like {0} or
 	C.id like {0} or
 	LOWER(co.Contact) like {0} or
 	LOWER(h.Street) like {0} or
-	LOWER(l.ActualAdress) like {0} " ,
+	LOWER(l.ActualAdress) like {0} )" ,
 								":SearchText") + _return;
 					}
-					if (searchProperty.IsSearchByFio()) {
+					if (filter.searchProperties.IsSearchAccount()) {
+						var id = 0u;
+						UInt32.TryParse(filter.searchText, out id);
+						if (id > 0)
+							return string.Format("where C.id = {0}", id);
+					}
+					if (filter.searchProperties.IsSearchByFio()) {
 						return
 							String.Format(@"
-	WHERE LOWER(C.Name) like {0} ", ":SearchText") + _return;
+	WHERE (LOWER(C.Name) like {0} )", ":SearchText") + _return;
 					}
-					if (searchProperty.IsSearchTelephone()) {
+					if (filter.searchProperties.IsSearchTelephone()) {
 						return String.Format(@"WHERE LOWER(co.Contact) like {0} ", ":SearchText") + _return;
 					}
-					if (searchProperty.IsSearchByAddress()) {
+					if (filter.searchProperties.IsSearchByAddress()) {
 						return String.Format(@"
-	WHERE LOWER(h.Street) like {0} or
-	LOWER(l.ActualAdress) like {0}", ":SearchText") + _return;
-					}
-				}
-				else {
-					var id = 0u;
-					UInt32.TryParse(searchText, out id);
-					if (id > 0) {
-						return "WHERE c.Id = " + id;
-					}
-					else {
-						return "LOWER(C.Name) like :SearchText";
+	WHERE (LOWER(h.Street) like {0} or
+	LOWER(l.ActualAdress) like {0})", ":SearchText") + _return;
 					}
 				}
 			}
 			else {
-				if (_return != string.Empty)
-					return "WHERE" + _return.Remove(0, 4);
-				return _return;
+				var id = 0u;
+				UInt32.TryParse(filter.searchText, out id);
+				if (id > 0) {
+					return string.Format("WHERE (c.Id = {0}) and (C.PhysicalClient is not null)", id);
+				}
+				else {
+					if (!string.IsNullOrEmpty(filter.searchText))
+						return "WHERE (LOWER(C.Name) like :SearchText) and (C.PhysicalClient is not null)";
+				}
 			}
 			return string.Empty;
 		}

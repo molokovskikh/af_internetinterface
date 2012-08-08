@@ -17,6 +17,7 @@ using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
 using InternetInterface.AllLogic;
 using InternetInterface.Controllers.Filter;
+using InternetInterface.Helpers;
 using InternetInterface.Models;
 using NHibernate;
 
@@ -369,6 +370,13 @@ namespace InternetInterface.Controllers
 				DbSession.Delete(payment);
 				DbSession.Save(message);
 				Notify("Отменено");
+				EmailHelper.Send("internet@ivrn.net", "Уведомление об отмене платежа", string.Format(@"
+Отменено платеж №{0}
+Клиент: №{1} - {2}
+Сумма: {3}
+Оператор: {4}
+Комментарий: {5}
+", payment.Id, payment.Client.Id, payment.Client.Name, payment.Sum.ToString("#.00"), InitializeContent.Partner.Name, comment));
 			}
 			else {
 				Error("Введите комментарий для отмены платежа");

@@ -131,6 +131,9 @@ namespace InternetInterface.Controllers
 
 		public IList<ClientInfo> Find()
 		{
+			if (InitializeContent.Partner.IsDiller() && string.IsNullOrEmpty(searchText))
+				return new List<ClientInfo>();
+
 			var selectText = @"SELECT 
 c.*,
 co.Contact
@@ -150,73 +153,35 @@ join internet.Status S on s.id = c.Status";
 				searchProperties.SearchText = searchText;
 				var sqlStr = string.Empty;
 				IQuery query = null;
-				if (CategorieAccessSet.AccesPartner("SSI"))
-					if (!searchProperties.IsSearchAccount())
-					{
-						sqlStr =
-							String.Format(
-@"{4}
-{0}
+				var limitPart = InitializeContent.Partner.IsDiller() ? "Limit 5 " : string.Format("Limit {0}, {1}", CurrentPage * PageSize, PageSize);
+				var wherePart = GetClientsLogic.GetWhere(this);
+
+				sqlStr = String.Format(
+@"{0}
+{1}
 group by c.id
-ORDER BY {3} Limit {1}, {2}",
-							GetClientsLogic.GetWhere(searchProperties, statusType, clientTypeFilter, EnabledTypeProperties, searchText),
-							CurrentPage * PageSize,
-							PageSize,
-							GetOrderField(),
-							selectText);
-						query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Client));
-						SetParameters(query);
-						if (searchText != null)
-							query.SetParameter("SearchText", "%" + searchText.ToLower() + "%");
-					}
-					else
-					{
-						sqlStr = string.Format(@"{3}
-where C.id = :SearchText
-group by c.id
-ORDER BY {2} Limit {0}, {1}",
-							CurrentPage * PageSize,
-							PageSize,
-							GetOrderField(),
-							selectText);
-						query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Client));
-						if (searchText != null)
-							query.SetParameter("SearchText", searchText.ToLower());
-					}
-				else
-				{
-					if (!string.IsNullOrEmpty(searchText))
-						sqlStr = string.Format(@"{4}
-WHERE LOWER(C.Name) like {0} or LOWER(C.Id) like {0} or LOWER(co.Contact) like {0}
-group by c.id
-ORDER BY {3} Limit {1}, {2}", 
-							":SearchText",
-							CurrentPage * PageSize,
-							PageSize,
-							GetOrderField(),
-							selectText);
-					else
-					{
-						return new List<Client>();
-					}
-					query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Client));
-					if (!string.IsNullOrEmpty(searchText))
-						query.SetParameter("SearchText", "%" + searchText.ToLower() + "%");
-				}
+ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
+				query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Client));
+				SetParameters(query);
+				if (searchText != null && wherePart.Contains(":SearchText"))
+					query.SetParameter("SearchText", "%" + searchText.ToLower() + "%");
+
 				result = query.List<Client>();
 
-				var newSql = sqlStr.Replace("c.*", "count(*)");
-				newSql = newSql.Replace(", co.Contact", string.Empty);
-				var limitPosition = newSql.IndexOf("Limit");
-				newSql = newSql.Remove(limitPosition);
-				newSql = string.Format("select count(*) from ({0}) as t1;", newSql);
-				var countQuery = session.CreateSQLQuery(newSql);
-				if (!string.IsNullOrEmpty(searchText))
-					countQuery.SetParameter("SearchText", "%" + searchText.ToLower() + "%");
-				if (CategorieAccessSet.AccesPartner("SSI"))
-					if (!searchProperties.IsSearchAccount())
-						SetParameters(countQuery);
-				_lastRowsCount = Convert.ToInt32(countQuery.UniqueResult());
+				if (!InitializeContent.Partner.IsDiller()) {
+					var newSql = sqlStr.Replace("c.*", "count(*)");
+					newSql = newSql.Replace(", co.Contact", string.Empty);
+					var limitPosition = newSql.IndexOf("Limit");
+					newSql = newSql.Remove(limitPosition);
+					newSql = string.Format("select count(*) from ({0}) as t1;", newSql);
+					var countQuery = session.CreateSQLQuery(newSql);
+					if (!string.IsNullOrEmpty(searchText))
+						countQuery.SetParameter("SearchText", "%" + searchText.ToLower() + "%");
+					if (CategorieAccessSet.AccesPartner("SSI"))
+						if (!searchProperties.IsSearchAccount())
+							SetParameters(countQuery);
+					_lastRowsCount = Convert.ToInt32(countQuery.UniqueResult());
+				}
 
 				return result;
 			});
@@ -251,11 +216,11 @@ ORDER BY {3} Limit {1}, {2}",
 		public void SearchUsers(string query, PhysicalClient sClients)
 		{
 			var filter = new SeachFilter {
-											searchProperties = new UserSearchProperties {SearchBy = SearchUserBy.Auto},
-											EnabledTypeProperties = new EnabledTypeProperties {Type = EndbledType.All},
-											statusType = 0,
-											clientTypeFilter = new ClientTypeProperties {Type = ForSearchClientType.AllClients},
-										 };
+				searchProperties = new UserSearchProperties {SearchBy = SearchUserBy.Auto},
+				EnabledTypeProperties = new EnabledTypeProperties {Type = EndbledType.All},
+				statusType = 0,
+				clientTypeFilter = new ClientTypeProperties {Type = ForSearchClientType.AllClients},
+			};
 			PropertyBag["filter"] = filter;
 			PropertyBag["SearchText"] = "";
 			PropertyBag["ChTariff"] = 0;
