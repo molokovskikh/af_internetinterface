@@ -1,9 +1,0 @@
-\lib\MonoRail.Debugger.Toolbar\src\Test\Global.asax.cs
-\src\BananceChanger\Program.cs
-\src\Billing.Test\Integration\ServiceFixture.cs
-\src\Common.Tools\Common.Tools\ObjectExtentions.cs
-\src\Common.Tools\Common.Tools.Test\DbfFixture.cs
-\src\Common.Tools\Common.Tools.Test\ReleatableCommandFixture.cs
-\src\InternetInterface.Test\Functional\CommutatorFixture.cs
-\src\Test.Support\Test.Support\log4net\EventFilter.cs
-\src\Test.Support\Test.Support.Web\WatinSetup.cs
