@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Common.Tools;
 using Common.Web.Ui.Controllers;
@@ -7,6 +8,9 @@ using InternetInterface.AllLogic;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using InternetInterface.Models.Services;
+using InternetInterface.Services;
+using NHibernate.Linq;
 
 namespace InternetInterface.Controllers
 {
@@ -14,26 +18,38 @@ namespace InternetInterface.Controllers
 	public class RegisterController : BaseController
 	{
 		[AccessibleThrough(Verb.Post)]
-		public void RegisterClient([DataBind("ChangedBy")]ChangeBalaceProperties changeProperties,
-			[DataBind("client")]PhysicalClients phisClient, string balanceText, uint tariff, uint status, uint BrigadForConnect,
+		public void RegisterClient(decimal balanceText, uint status, uint BrigadForConnect,
 			[DataBind("ConnectInfo")]ConnectInfo ConnectInfo, bool VisibleRegisteredInfo, uint house_id,
 			uint requestID)
 		{
-			PropertyBag["Tariffs"] = Tariff.FindAllSort();
-			PropertyBag["Statuss"] = Status.FindAllSort();
-			PropertyBag["Brigads"] = Brigad.FindAllSort();
-			if (changeProperties.IsForTariff()) {
-				phisClient.Balance = Tariff.Find(tariff).Price;
-			}
-			if (changeProperties.IsOtherSumm()) {
-				phisClient.Balance = Convert.ToDecimal(balanceText);
-			}
-			var Password = CryptoPass.GeneratePassword();
-			phisClient.Password = Password;
-			if (!CategorieAccessSet.AccesPartner("SSI")) {
-				phisClient.ConnectSum = 700;
+			SetARDataBinder();
+
+			var phisClient = new PhysicalClient();
+			phisClient.Balance = balanceText;
+			var defaultServices = new Service[] {
+					DbSession.Query<Internet>().First(),
+					DbSession.Query<IpTv>().First(),
+				};
+			var client = new Client(phisClient, defaultServices) {
+				WhoRegistered = InitializeContent.Partner,
+				WhoRegisteredName = InitializeContent.Partner.Name,
+				Status = Status.Find((uint) StatusType.BlockedAndNoConnected),
+				PhysicalClient = phisClient,
+				Recipient = Recipient.Queryable.FirstOrDefault(r => r.INN == "3666152146")
+			};
+			var iptv = client.Iptv;
+			var internet = client.Internet;
+
+			BindObjectInstance(phisClient, "client", AutoLoadBehavior.Always);
+			BindObjectInstance(iptv, "iptv", AutoLoadBehavior.Always);
+			BindObjectInstance(internet, "internet", AutoLoadBehavior.Always);
+
+			PropertyBag["iptv"] = iptv;
+			PropertyBag["internet"] = internet;
+
+			phisClient.Password = CryptoPass.GeneratePassword();
+			if (!CategorieAccessSet.AccesPartner("SSI"))
 				status = 1;
-			}
 			if (!CategorieAccessSet.AccesPartner("DHCP")) {
 				ConnectInfo.Port = null;
 			}
@@ -42,33 +58,15 @@ namespace InternetInterface.Controllers
 			var registerClient = Validator.IsValid(phisClient);
 
 			if ((registerClient && string.IsNullOrEmpty(portException)) ||
-			    (registerClient && string.IsNullOrEmpty(ConnectInfo.Port))) {
+				(registerClient && string.IsNullOrEmpty(ConnectInfo.Port))) {
 
-				PhysicalClients.RegistrLogicClient(phisClient, tariff, house_id, Validator);
+				PhysicalClient.RegistrLogicClient(phisClient, house_id, Validator);
 
 				var havePayment = phisClient.Balance > 0;
+				client.Name = string.Format("{0} {1} {2}", phisClient.Surname, phisClient.Name, phisClient.Patronymic);
+				client.AutoUnblocked = havePayment;
+				client.Disabled = !havePayment;
 
-				var client = new Client {
-					AutoUnblocked = havePayment,
-					Disabled = !havePayment,
-					PercentBalance = 0.8m,
-					RegDate = DateTime.Now,
-					WhoRegistered = InitializeContent.Partner,
-					WhoRegisteredName = InitializeContent.Partner.Name,
-					Status = Status.Find((uint) StatusType.BlockedAndNoConnected),
-
-					YearCycleDate = DateTime.Now,
-					FreeBlockDays = 28,
-
-					Name =
-						string.Format("{0} {1} {2}", phisClient.Surname, phisClient.Name,
-						              phisClient.Patronymic),
-					PhysicalClient = phisClient,
-					Type = ClientType.Phisical,
-					BeginWork = null,
-					SendSmsNotifocation = true,
-					Recipient = Recipient.Queryable.FirstOrDefault(r => r.INN == "3666152146")
-				};
 				client.SaveAndFlush();
 
 				if (!string.IsNullOrEmpty(phisClient.PhoneNumber)) {
@@ -102,13 +100,10 @@ namespace InternetInterface.Controllers
 				if (apartmentForClient != null)
 					apartmentForClient.Delete();
 				if (!string.IsNullOrEmpty(ConnectInfo.Port) && CategorieAccessSet.AccesPartner("DHCP")) {
-					var newCEP = new ClientEndpoints {
-						Client = client,
-						Port = Convert.ToInt32(ConnectInfo.Port),
-						Switch = DbSession.Load<NetworkSwitches>(ConnectInfo.Switch),
-						PackageId = phisClient.Tariff.PackageId
-					};
-					newCEP.SaveAndFlush();
+					var endpoint = new ClientEndpoint(client,
+						Convert.ToInt32(ConnectInfo.Port),
+						DbSession.Load<NetworkSwitches>(ConnectInfo.Switch));
+					endpoint.SaveAndFlush();
 					if (BrigadForConnect != 0) {
 						var brigad = Brigad.Find(BrigadForConnect);
 						client.WhoConnected = brigad;
@@ -120,7 +115,7 @@ namespace InternetInterface.Controllers
 				}
 				Flash["_client"] = client;
 				Flash["WhoConnected"] = client.WhoConnected;
-				Flash["Password"] = Password;
+				Flash["Password"] = CryptoPass.GeneratePassword();
 				Flash["Client"] = phisClient;
 				Flash["AccountNumber"] = client.Id.ToString("00000");
 				Flash["ConnectSumm"] = phisClient.ConnectSum;
@@ -136,30 +131,28 @@ namespace InternetInterface.Controllers
 				}
 				if (InitializeContent.Partner.Categorie.ReductionName == "Office")
 					if (VisibleRegisteredInfo)
-						RedirectToUrl("..//UserInfo/ClientRegisteredInfo.rails");
+						RedirectToUrl("../UserInfo/ClientRegisteredInfo.rails");
 					else {
 						RedirectToUrl("../UserInfo/SearchUserInfo.rails?filter.ClientCode=" + client.Id);
 					}
 				if (InitializeContent.Partner.Categorie.ReductionName == "Diller")
-					RedirectToUrl("..//UserInfo/ClientRegisteredInfoFromDiller.rails");
+					RedirectToUrl("../UserInfo/ClientRegisteredInfoFromDiller.rails");
 			}
 			else {
+				EditorValues();
+
 				PropertyBag["Client"] = phisClient;
 				PropertyBag["BalanceText"] = balanceText;
 				PropertyBag["ChHouse"] = house_id;
-				PropertyBag["Houses"] = House.FindAll().OrderBy(h => h.Street);
 				PropertyBag["Applying"] = "false";
 				PropertyBag["PortError"] = portException;
 				PropertyBag["ChStatus"] = status;
-				PropertyBag["ChTariff"] = tariff;
 				PropertyBag["ChBrigad"] = BrigadForConnect;
 				phisClient.SetValidationErrors(Validator.GetErrorSummary(phisClient));
 				if (!string.IsNullOrEmpty(portException))
 					ConnectInfo.Port = string.Empty;
 				PropertyBag["ConnectInfo"] = ConnectInfo;
-				PropertyBag["Switches"] = NetworkSwitches.All(DbSession);
-				PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClients>(phisClient);
-				PropertyBag["ChangeBy"] = changeProperties;
+				PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClient>(phisClient);
 			}
 		}
 
@@ -185,18 +178,17 @@ namespace InternetInterface.Controllers
 			if (IsValid(person) && string.IsNullOrEmpty(connectErrors))
 			{
 				person.SaveAndFlush();
-				var client = new Client
-								{
-									Recipient =  Recipient.Queryable.FirstOrDefault(r => r.INN == "3666152146"),
-									WhoRegistered = InitializeContent.Partner,
-									WhoRegisteredName = InitializeContent.Partner.Name,
-									RegDate = DateTime.Now,
-									Status = Status.Find((uint) StatusType.BlockedAndNoConnected),
-									Disabled = person.Tariff == null,
-									LawyerPerson = person,
-									Name = person.ShortName,
-									Type = ClientType.Legal,
-								};
+				var client = new Client {
+					Recipient =  Recipient.Queryable.FirstOrDefault(r => r.INN == "3666152146"),
+					WhoRegistered = InitializeContent.Partner,
+					WhoRegisteredName = InitializeContent.Partner.Name,
+					RegDate = DateTime.Now,
+					Status = Status.Find((uint) StatusType.BlockedAndNoConnected),
+					Disabled = person.Tariff == null,
+					LawyerPerson = person,
+					Name = person.ShortName,
+					Type = ClientType.Legal,
+				};
 				client.SaveAndFlush();
 
 				if (!string.IsNullOrEmpty(person.Telephone))
@@ -207,7 +199,7 @@ namespace InternetInterface.Controllers
 
 				if (!string.IsNullOrEmpty(info.Port))
 				{
-					new ClientEndpoints
+					new ClientEndpoint
 						{	
 							Client = client,
 							Port = Int32.Parse(info.Port),
@@ -268,10 +260,10 @@ namespace InternetInterface.Controllers
 
 		public void RegisterClient()
 		{
-			SendRegisterParam();
+			var client = new PhysicalClient();
+			SendRegisterParam(client);
 			PropertyBag["ChHouse"] = 0;
-			PropertyBag["Client"] = new PhysicalClients();
-			PropertyBag["ChTariff"] = Tariff.FindFirst().Id;
+			PropertyBag["Client"] = client;
 		}
 
 		public void RegisterClient(uint requestID)
@@ -286,8 +278,7 @@ namespace InternetInterface.Controllers
 			else {
 				_fio.Take(_fio.Length).ToArray().CopyTo(fio, 0);
 			}
-			var newPhisClient = new PhysicalClients
-			{
+			var newPhisClient = new PhysicalClient {
 				Surname = fio[0],
 				Name = fio[1],
 				Patronymic = fio[2],
@@ -306,7 +297,6 @@ namespace InternetInterface.Controllers
 			if (request.ApplicantPhoneNumber.FirstOrDefault() == '4')
 				newPhisClient.HomePhoneNumber = UsersParsers.MobileTelephoneParcer(request.ApplicantPhoneNumber);
 			PropertyBag["Client"] = newPhisClient;
-			PropertyBag["ChTariff"] = request.Tariff.Id;
 			PropertyBag["requestID"] = requestID;
 			if (newPhisClient.House != null)
 			{
@@ -328,7 +318,7 @@ namespace InternetInterface.Controllers
 				PropertyBag["ChHouse"] = 0;
 				PropertyBag["Message"] = Message.Error("Не удалось сопоставить адрес из заявки ! Будте внимательны при заполнении адреса клиента !");
 			}
-			SendRegisterParam();
+			SendRegisterParam(newPhisClient);
 		}
 
 		[return : JSONReturnBinder]
@@ -349,29 +339,45 @@ namespace InternetInterface.Controllers
 					house.Case = _case;
 				house.Save();
 			}
-			return new { Name = string.Format("{0} {1} {2}", street, number, _case), Id = house.Id};
+			return new { Name = string.Format("{0} {1} {2}", street, number, _case), house.Id};
 		}
 
-		public void SendRegisterParam()
+		public void SendRegisterParam(PhysicalClient client)
 		{
-			PropertyBag["Houses"] = House.AllSort;
+			var internalClient = new Client(client, new Service[] {
+				DbSession.Query<Internet>().First(),
+				DbSession.Query<IpTv>().First(),
+			});
+
+			client.Client = internalClient;
+
+			EditorValues();
+
 			PropertyBag["BalanceText"] = string.Empty;
-			PropertyBag["Tariffs"] = Tariff.FindAllSort();
-			PropertyBag["Brigads"] = Brigad.FindAllSort();
-			PropertyBag["ChStatus"] = Status.FindFirst().Id;
+
+			PropertyBag["iptv"] = client.Client.Iptv;
+			PropertyBag["internet"] = client.Client.Internet;
+
 			PropertyBag["ChBrigad"] = 0;
-			PropertyBag["Statuss"] = Status.FindAllSort();
-			PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClients>(new PhysicalClients());
+			PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClient>(new PhysicalClient());
 
 			PropertyBag["Applying"] = "false";
-			PropertyBag["ChangeBy"] = new ChangeBalaceProperties { ChangeType = TypeChangeBalance.OtherSumm };
 			PropertyBag["BalanceText"] = 0;
 			PropertyBag["ConnectInfo"] = new ClientConnectInfo();
+		}
+
+		private void EditorValues()
+		{
+			PropertyBag["Houses"] = House.AllSort;
+			PropertyBag["Brigads"] = Brigad.FindAllSort();
+			PropertyBag["Statuss"] = Status.FindAllSort();
+			PropertyBag["Tariffs"] = Tariff.FindAllSort();
+			PropertyBag["channels"] = ChannelGroup.All(DbSession);
 			PropertyBag["Switches"] = NetworkSwitches.All(DbSession);
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void EditPartner([DataBind("Partner")]Partner partner, int PartnerKey)
+		public void EditPartner([DataBind("Partner")] Partner partner, int PartnerKey)
 		{
 			var part = Partner.Find((uint) PartnerKey);
 			var edit = false;
@@ -436,10 +442,9 @@ namespace InternetInterface.Controllers
 
 		public void RegisterPartner(int catType)
 		{
-			PropertyBag["Partner"] = new Partner
-										{
-											Categorie =  new UserCategorie()
-										};
+			PropertyBag["Partner"] = new Partner {
+				Categorie =  new UserCategorie()
+			};
 			PropertyBag["catType"] = catType;
 			PropertyBag["VB"] = new ValidBuilderHelper<Partner>(new Partner());
 			PropertyBag["Editing"] = false;
@@ -448,14 +453,14 @@ namespace InternetInterface.Controllers
 
 		public void RegisterRequest(uint house, int apartment)
 		{
-			var _house = House.Find(house);
+			var houseEntity = House.Find(house);
 			PropertyBag["tariffs"] = Tariff.FindAll();
 			PropertyBag["Request"] = new Request {
-													  Street = _house.Street,
-													  CaseHouse = _house.Case,
-													  House = _house.Number,
-													  Apartment = apartment
-												  };
+				Street = houseEntity.Street,
+				CaseHouse = houseEntity.Case,
+				House = houseEntity.Number,
+				Apartment = apartment
+			};
 			PropertyBag["houseNumber"] = house;
 		}
 

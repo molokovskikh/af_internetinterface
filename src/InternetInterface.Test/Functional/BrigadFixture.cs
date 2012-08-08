@@ -7,24 +7,22 @@ using WatiN.Core;
 namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
-	class BrigadFixture : WatinFixture
+	public class BrigadFixture : global::Test.Support.Web.WatinFixture2
 	{
 		[Test, Ignore]
 		public void BrigadTest()
 		{
-			using (var browser = Open("Brigads/ShowBrigad.rails"))
+			Open("Brigads/ShowBrigad.rails");
+			Assert.That(browser.Text, Is.StringContaining("ID"));
+			Assert.That(browser.Text, Is.StringContaining("Имя"));
+			browser.Button(Find.ById("RegisterBrigad")).Click();
+			Thread.Sleep(2000);
+			browser.TextField(Find.ById("Name")).AppendText("TestBrigad");
+			browser.Button(Find.ById("RegisterBrigadButton")).Click();
+			Thread.Sleep(2000);
+			foreach (var brigad in Brigad.FindAllByProperty("Name", "TestBrigad"))
 			{
-				Assert.That(browser.Text, Is.StringContaining("ID"));
-				Assert.That(browser.Text, Is.StringContaining("Имя"));
-				browser.Button(Find.ById("RegisterBrigad")).Click();
-				Thread.Sleep(2000);
-				browser.TextField(Find.ById("Name")).AppendText("TestBrigad");
-				browser.Button(Find.ById("RegisterBrigadButton")).Click();
-				Thread.Sleep(2000);
-				foreach (var brigad in Brigad.FindAllByProperty("Name", "TestBrigad"))
-				{
-					brigad.DeleteAndFlush();
-				} 
+				brigad.DeleteAndFlush();
 			}
 		}
 	}

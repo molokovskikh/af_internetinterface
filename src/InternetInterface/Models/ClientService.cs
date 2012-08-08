@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Web;
 using Castle.ActiveRecord;
+using InternetInterface.Models.Services;
 using InternetInterface.Models.Universal;
 using InternetInterface.Services;
 using NHibernate;
@@ -11,15 +13,24 @@ using NHibernate;
 namespace InternetInterface.Models
 {
 	[ActiveRecord("ClientServices", Schema = "Internet", Lazy = true)]
-	public class ClientService : ValidActiveRecordLinqBase<ClientService>
+	public class ClientService
 	{
 		public ClientService()
-		{}
+		{
+			Channels = new List<ChannelGroup>();
+		}
 
 		public ClientService(Client client, Service service)
+			: this()
 		{
 			Client = client;
 			Service = service;
+		}
+
+		public ClientService(Client client, Service service, bool activatedByUser)
+			: this(client, service)
+		{
+			ActivatedByUser = activatedByUser;
 		}
 
 		[PrimaryKey]
@@ -40,30 +51,29 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool Activated { get; set; }
 
+		[Property, Description("Подключить")]
+		public virtual bool ActivatedByUser { get; set; }
+
+		[HasAndBelongsToMany(
+			Schema = "Internet",
+			Table = "AssignedChannels",
+			ColumnKey = "AssignedServiceId",
+			ColumnRef = "ChannelGroupId"), Description("Пакеты каналов")]
+		public virtual IList<ChannelGroup> Channels { get; set; }
+
 		[BelongsTo]
 		public virtual Partner Activator { get; set; }
 
-		public virtual void DeleteFromClient()
+		private void DeleteFromClient()
 		{
-			if (Service.CanDelete(this))
-			{
+			if (Service.CanDelete(this)) {
 				//сторока ниже не работает, в тестt ServiceFixture.ActiveDeactive хотя должна, какой то бред
-				//Client.ClientServices.Remove(this);
-				Client.ClientServices.Remove(Client.ClientServices.First(c => c.Id == Id));
+				if (Id == 0)
+					Client.ClientServices.Remove(this);
+				else
+					Client.ClientServices.Remove(Client.ClientServices.First(c => c.Id == Id));
 				Client.Save();
 			}
-		}
-
-		public override void Save()
-		{
-			if (Client.ClientServices != null)
-				if (Client.ClientServices.Select(c => c.Service).Contains(Service))
-				{
-					LogComment = "Невозможно использовать данную услугу";
-					return;
-				}
-			base.Save();
-			Client.Refresh();
 		}
 
 		public virtual void Activate()
@@ -71,15 +81,19 @@ namespace InternetInterface.Models
 			Service.Activate(this);
 		}
 
-		public virtual void Diactivate()
+		public virtual void Deactivate()
 		{
-			if (Service.Diactivate(this))
+			if (Service.CanDeactivate(this)) {
 				DeleteFromClient();
+				//перед деактивацией, услугу нужно удалить из
+				//списка услуг клиента тк она может влиять на цену
+				Service.CompulsoryDeactivate(this);
+			}
 		}
 
-		public virtual void CompulsoryDiactivate()
+		public virtual void CompulsoryDeactivate()
 		{
-			Service.CompulsoryDiactivate(this);
+			Service.CompulsoryDeactivate(this);
 			DeleteFromClient();
 		}
 
@@ -96,6 +110,20 @@ namespace InternetInterface.Models
 		public virtual void WriteOff()
 		{
 			Service.WriteOff(this);
+		}
+
+		public virtual void UpdateChannels(List<ChannelGroup> channelGroups)
+		{
+			foreach (var channelGroup in channelGroups.Except(Channels).ToArray()) {
+				Channels.Add(channelGroup);
+				Client.UserWriteOffs.Add(new UserWriteOff(Client,
+					channelGroup.ActivationCost,
+					String.Format("Подключение пакета каналов {0}", channelGroup.Name),
+					false));
+			}
+			foreach (var channelGroup in Channels.Except(channelGroups).ToArray()) {
+				Channels.Remove(channelGroup);
+			}
 		}
 	}
 }

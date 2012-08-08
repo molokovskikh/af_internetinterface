@@ -1,0 +1,18 @@
+﻿${app.LinkTo("Добавить", @ChannelGroups, @New)}
+
+<table class=table>
+	<thead>
+		<tr>
+			<th></th>
+			<th>Название</th>
+		</tr>
+	</thead>
+	<tbody>
+		<% for group in groups: %>
+		<tr>
+			<td>${app.LinkTo(group, "Редактировать", @Edit)}</td>
+			<td>!{group.Name}</td>
+		</tr>
+		<% end %>
+	</tbody>
+</table>

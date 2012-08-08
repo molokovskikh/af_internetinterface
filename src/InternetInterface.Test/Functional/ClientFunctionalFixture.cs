@@ -13,10 +13,10 @@ namespace InternetInterface.Test.Functional
 	[TestFixture]
 	public class ClientFunctionalFixture : WatinFixture2
 	{
-		public string Format;
-		public PhysicalClients PhysicalClient;
+		public string ClientUrl;
+		public PhysicalClient PhysicalClient;
 		public Client Client;
-		public ClientEndpoints EndPoint;
+		public ClientEndpoint EndPoint;
 
 		[SetUp]
 		public void FixtureSetup()
@@ -25,11 +25,11 @@ namespace InternetInterface.Test.Functional
 			PhysicalClient = Client.PhysicalClient;
 
 			session.Save(Client);
-			EndPoint = new ClientEndpoints {
+			EndPoint = new ClientEndpoint {
 				Client = Client,
 			};
 			session.Save(EndPoint);
-			Format = string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}&filter.EditingConnect=true&filter.Editing=true", Client.Id);
+			ClientUrl = string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}&filter.EditingConnect=true&filter.Editing=true", Client.Id);
 		}
 	}
 }

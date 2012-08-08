@@ -104,12 +104,14 @@ namespace Billing.Test.Integration
 		{
 			using (new SessionScope()) {
 				_client.PhysicalClient.Balance = 100;
-				_client.Update();
+				_client.PhysicalClient.MoneyBalance = 100;
+				_client.PhysicalClient.VirtualBalance = 0;
+				_client.PhysicalClient.Save();
 			}
 			var iterationCount = 0;
 			while (!_client.Disabled) {
 				billing.Compute();
-				iterationCount ++;
+				iterationCount++;
 				using (new SessionScope())
 					_client.Refresh();
 			}
@@ -118,7 +120,7 @@ namespace Billing.Test.Integration
 				_client.Refresh();
 			Assert.IsNull(_client.StartNoBlock);
 			billing.Compute();
-			using (new SessionScope()) { 
+			using (new SessionScope()) {
 				_client.Refresh();
 				Assert.IsNull(_client.StartNoBlock);
 				var writeOffs = WriteOff.Queryable.ToList();

@@ -8,8 +8,7 @@ using InternetInterface.Models.Universal;
 
 namespace InternetInterface.Services
 {
-	[ActiveRecord("Services", Schema = "Internet", Lazy = true, DiscriminatorColumn = "Name",
-		DiscriminatorType = "String", DiscriminatorValue = "service")]
+	[ActiveRecord("Services", Schema = "Internet", Lazy = true, DiscriminatorColumn = "Name", DiscriminatorType = "String")]
 	public class Service : ValidActiveRecordLinqBase<Service>
 	{
 		[PrimaryKey]
@@ -27,6 +26,16 @@ namespace InternetInterface.Services
 		[Property]
 		public virtual bool InterfaceControl { get; set; }
 
+		//говорит о том что нужно вызывать GetPrice, даже если активирована блокирующая услуга
+		//"добровольная блокировка"
+		public virtual bool ProcessEvenInBlock
+		{
+			get
+			{
+				return false;
+			}
+		}
+
 		public static Service GetByType(Type type)
 		{
 			return (Service)ActiveRecordMediator.FindFirst(type);
@@ -37,22 +46,17 @@ namespace InternetInterface.Services
 			return ActiveRecordMediator<T>.FindFirst();
 		}
 
-
-		public virtual void Activate(ClientService CService)
-		{}
-
-		public virtual bool Diactivate(ClientService CService)
+		public virtual void Activate(ClientService assignedService)
 		{
-			return false;
+			assignedService.Activated = true;
 		}
 
-		public virtual void CompulsoryDiactivate(ClientService CService)
-		{}
+		public virtual void CompulsoryDeactivate(ClientService assignedService)
+		{
+			assignedService.Activated = false;
+		}
 
-		public virtual void EditClient(ClientService CService)
-		{}
-
-		public virtual void PaymentClient(ClientService CService)
+		public virtual void PaymentClient(ClientService assignedService)
 		{}
 
 		public virtual string GetParameters()
@@ -60,19 +64,24 @@ namespace InternetInterface.Services
 			return string.Empty;
 		}
 
-		public virtual bool CanDelete(ClientService CService)
-		{
-			return true;
-		}
-
-		public virtual bool CanBlock(ClientService CService)
-		{
-			return true;
-		}
-
-		public virtual decimal GetPrice(ClientService CService)
+		public virtual decimal GetPrice(ClientService assignedService)
 		{
 			return Price;
+		}
+
+		public virtual bool CanDeactivate(ClientService assignedService)
+		{
+			return false;
+		}
+
+		public virtual bool CanDelete(ClientService assignedService)
+		{
+			return true;
+		}
+
+		public virtual bool CanBlock(ClientService assignedService)
+		{
+			return true;
 		}
 
 		public virtual bool CanActivate(Client client)
@@ -80,7 +89,7 @@ namespace InternetInterface.Services
 			return true;
 		}
 
-		public virtual bool CanActivate(ClientService cService)
+		public virtual bool CanActivate(ClientService assignedService)
 		{
 			return true;
 		}
@@ -90,19 +99,12 @@ namespace InternetInterface.Services
 			return CanActivate(client) && !client.ClientServices.Select(c => c.Service.Id).Contains(Id);
 		}
 
-
 		public virtual bool ActivatedForClient(Client client)
 		{
-			if (client.ClientServices != null)
-			{
-				var cs = client.ClientServices.FirstOrDefault(c => c.Service == this && c.Activated);
-				if (cs != null)
-					return true;
-			}
-			return false;
+			return client.ClientServices.Where(s => s.Activated).Any(s => s.Service.Id == Id);
 		}
 
-		public virtual void WriteOff(ClientService cService)
+		public virtual void WriteOff(ClientService assignedService)
 		{}
 	}
 }

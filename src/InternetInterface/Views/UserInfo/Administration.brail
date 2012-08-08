@@ -31,10 +31,12 @@
 		<tr><td><a href = "${Siteroot}/Brigads/ShowBrigad.rails" ><span class="MA"><div class=menudiv>Бригады</div></span></a>
 		<span class="comment_text">Просмотр и создание бригад. Бригады осуществляют физическое подключение абонентов, на них составляется расписание и разначаются заявки.</span></td></tr>
 		<%end %>
-		<%if PartnerAccessSet.AccesPartner("DHCP"): %>
-		<tr><td><a href = "${Siteroot}/Switches/ShowSwitches.rails" ><span class="MA"><div class=menudiv>Коммутаторы</div></span></a>
-		<span class="comment_text">Просмотр и редактирование коммутаторов</span></td></tr>
-		<%end %>
+		<tr>
+			<td>
+				${app.LinkTo("Коммутаторы", @Switches, @ShowSwitches)}
+				<br><span class="comment_text">Просмотр и редактирование коммутаторов</span>
+			</td>
+		</tr>
 		<%if PartnerAccessSet.AccesPartner("SSI"): %>
 		<tr><td><a href = "${Siteroot}/UserInfo/PartnersPreview.rails?catType=5" ><span class="MA"><div class=menudiv>Агенты</div></span></a>
 		<span class="comment_text">Просмотр и редактирование списка агентов, осуществляющих обход домов</span></td></tr>
@@ -51,9 +53,28 @@
 		<tr><td><a href = "${Siteroot}/Payments/СhangeSaleSettings" ><span class="MA"><div class=menudiv>Редактировать настрйки скидок</div></span></a>
 		<span class="comment_text">Здесь можно выставить настройки системы скидок</span></td></tr>
 		<%end %>
-		<%if PartnerAccessSet.AccesPartner("SSI"): %>
-		<tr><td><a href = "${Siteroot}/AgentInfo/EditAgentSettings" ><span class="MA"><div class=menudiv>Редактировать настройки агентов</div></span></a>
-		<span class="comment_text">Здесь можно выставить настройки компенсации агетов и др.</span></td></tr>
-		<%end %>
+		<% if PartnerAccessSet.AccesPartner("SSI"): %>
+		<tr>
+			<td>
+				<a href = "${Siteroot}/AgentInfo/EditAgentSettings" ><span class="MA"><div class=menudiv>Редактировать настройки агентов</div></span></a>
+				<span class="comment_text">Здесь можно выставить настройки компенсации агетов и др.</span>
+			</td>
+		</tr>
+		<% end %>
+		<tr>
+			<td>
+				${app.LinkTo("Пакеты каналов", @ChannelGroups, @Index)}
+			</td>
+		</tr>
+		<tr>
+			<td>
+				${app.LinkTo("Услуги", @Services, @Edit)}
+			</td>
+		</tr>
+		<tr>
+			<td>
+				${app.LinkTo("Стоимость изменения тарифов", @Tariffs, @ChangeRules)}
+			</td>
+		</tr>
 	</tbody>
 </table>

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
-using System.Web;
-using InternetInterface.Models;
-using InternetInterface.Test.Helpers;
+﻿using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 using WatiN.Core;
-using WatiN.Core.Native.Windows;
 
 namespace InternetInterface.Test.Functional
 {
@@ -14,9 +8,9 @@ namespace InternetInterface.Test.Functional
 	internal class SearchFixture : ClientFunctionalFixture
 	{
 		[SetUp]
-		public void ThisSetup()
+		public void Setup()
 		{
-			browser = Open("Search/SearchUsers.rails");
+			Open("Search/SearchUsers.rails");
 		}
 
 		[Test]
@@ -46,6 +40,8 @@ namespace InternetInterface.Test.Functional
 			disabledClient.Name = "disabledClient";
 			disabledClient.Disabled = true;
 			session.Save(disabledClient);
+
+			Refresh();
 			browser.RadioButton("DisabledFalse").Checked = true;
 			browser.Button("SearchButton").Click();
 			AssertText(Client.Name);
@@ -64,6 +60,7 @@ namespace InternetInterface.Test.Functional
 			Assert.That(browser.Text, Is.StringContaining("Тариф"));
 			Assert.That(browser.Text, Is.StringContaining("Все"));
 			Assert.That(browser.Text, Is.StringContaining("Назначено на бригаду"));
+			Css("#SearchText").TypeText(Client.Id.ToString());
 			browser.Button(Find.ById("SearchButton")).Click();
 			Assert.That(browser.Text, Is.StringContaining("Номер счета"));
 			Assert.That(browser.Text, Is.StringContaining("Тариф"));
@@ -76,20 +73,19 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void ClientInfoTest()
 		{
-			using (browser = Open(Format)) {
-				Assert.That(browser.Text, Is.StringContaining("Город"));
-				Assert.That(browser.Text, Is.StringContaining("Паспортные данные"));
-				Assert.That(browser.Text, Is.StringContaining("Тариф"));
-				Assert.That(browser.Text, Is.StringContaining("Платежи"));
-				Assert.That(browser.Text, Is.StringContaining("Регистрационные данные"));
-				Assert.That(browser.Text, Is.StringContaining("Паспортные данные"));
-				Assert.That(browser.Text, Is.StringContaining("Личная информация"));
-				browser.Button(Find.ById("SaveButton")).Click();
-				Assert.That(browser.Text, Is.StringContaining("Данные изменены"));
-				browser.TextField("BalanceText").AppendText("1000");
-				browser.Button(Find.ById("ChangeBalanceButton")).Click();
-				Assert.That(browser.Text, Is.StringContaining("Платеж ожидает обработки"));
-			}
+			Open(ClientUrl);
+			Assert.That(browser.Text, Is.StringContaining("Город"));
+			Assert.That(browser.Text, Is.StringContaining("Паспортные данные"));
+			Assert.That(browser.Text, Is.StringContaining("Тариф"));
+			Assert.That(browser.Text, Is.StringContaining("Платежи"));
+			Assert.That(browser.Text, Is.StringContaining("Регистрационные данные"));
+			Assert.That(browser.Text, Is.StringContaining("Паспортные данные"));
+			Assert.That(browser.Text, Is.StringContaining("Личная информация"));
+			browser.Button(Find.ById("SaveButton")).Click();
+			Assert.That(browser.Text, Is.StringContaining("Данные изменены"));
+			browser.TextField("BalanceText").AppendText("1000");
+			browser.Button(Find.ById("ChangeBalanceButton")).Click();
+			Assert.That(browser.Text, Is.StringContaining("Платеж ожидает обработки"));
 		}
 	}
 }

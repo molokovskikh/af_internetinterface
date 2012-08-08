@@ -31,3 +31,11 @@ $.validator.addMethod(
 		function (value, element, regexp) {
 			return (this.optional(element) || DecimalValCheck(element)) && regexp;
 		}, "Должно быть введено число");
+
+$.validator.addMethod("range",
+	function (value, element, param) {
+		//заменяем , на точку что бы приведения срабатывали
+		if (value)
+			value = value.replace(",", ".");
+		return this.optional(element) || (value >= param[0] && value <= param[1]);
+	}, "Введите телефон в формате ***-*******");

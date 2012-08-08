@@ -47,24 +47,24 @@ namespace InternetInterface.Test.Integration
 			var statuses = session.Query<Status>().ToArray();
 			var worked = statuses.First(s => s.Type == StatusType.Worked);
 			var dissolved = statuses.First(s => s.Type == StatusType.Dissolved);
-			var tariff = session.Query<Tariff>().First();
-			var commutator = session.Query<NetworkSwitches>().First();
+			var commutator = new NetworkSwitches("Тестовый коммутатор", session.Query<Zone>().First());
+			session.Save(commutator);
 
 			var client = ClientHelper.Client();
 			client.Status = worked;
-			var endpoint = new ClientEndpoints(client, 1, commutator);
+			var endpoint = new ClientEndpoint(client, 1, commutator);
 			client.Endpoints.Add(endpoint);
 			var house = new House("Студенческая", 12);
 			session.Save(client);
 			session.Save(house);
 
 			session.Flush();
-			controller.EditInformation(client.PhysicalClient, client.Id, tariff.Id, dissolved.Id, null, house.Id, AppealType.All, null, new ClientFilter());
+			controller.EditInformation(client.Id, dissolved.Id, null, house.Id, AppealType.All, null, new ClientFilter());
 			CheckValidationError(client.PhysicalClient);
 
 			session.Flush();
 			session.Clear();
-			endpoint = session.Get<ClientEndpoints>(endpoint.Id);
+			endpoint = session.Get<ClientEndpoint>(endpoint.Id);
 			Assert.That(endpoint, Is.EqualTo(null));
 		}
 

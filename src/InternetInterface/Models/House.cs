@@ -78,7 +78,7 @@ namespace InternetInterface.Models
 
 		public virtual int GetSubscriberCount()
 		{
-			return PhysicalClients.Queryable.Where(p => p.HouseObj == this).Count();
+			return PhysicalClient.Queryable.Where(p => p.HouseObj == this).Count();
 		}
 
 		public virtual BypassHouse GetLastBypass()
@@ -97,7 +97,7 @@ namespace InternetInterface.Models
 		{
 			if (ApartmentCount == 0)
 				return 1;
-			return (double)(PhysicalClients.Queryable.Where(p => p.HouseObj == this).Count()) / ApartmentCount * 100;
+			return (double)(PhysicalClient.Queryable.Where(p => p.HouseObj == this).Count()) / ApartmentCount * 100;
 		}
 
 		public override string ToString()

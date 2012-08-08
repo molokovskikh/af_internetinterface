@@ -35,7 +35,7 @@ namespace InternetInterface.Controllers
 
 		public void PortInfo(uint endPoint)
 		{
-			var point = ClientEndpoints.Find(endPoint);
+			var point = ClientEndpoint.Find(endPoint);
 			PropertyBag["point"] = point;
 			PropertyBag["lease"] = Lease.Queryable.Where(l => l.Endpoint == point).FirstOrDefault();
 

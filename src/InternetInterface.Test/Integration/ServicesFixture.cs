@@ -27,7 +27,7 @@ namespace InternetInterface.Test.Integration
 		[Test]
 		public void QueryTest()
 		{
-			var messages = ClientEndpoints.FindAll(DetachedCriteria.For(typeof(ClientEndpoints))
+			var messages = ClientEndpoint.FindAll(DetachedCriteria.For(typeof(ClientEndpoint))
 				.CreateAlias("Client", "c", JoinType.InnerJoin)
 				.CreateAlias("c.Message", "m", JoinType.InnerJoin)
 				.Add(Expression.Eq("Switch.Id", 136u))).Select(e => e.Client.Message).ToList();

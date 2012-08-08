@@ -7,7 +7,9 @@ using Castle.ActiveRecord;
 using Common.Tools;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
+using InternetInterface.Models.Services;
 using InternetInterface.Services;
+using NHibernate;
 using NHibernate.Impl;
 using NUnit.Framework;
 using Test.Support.log4net;
@@ -29,9 +31,7 @@ namespace Billing.Test.Integration
 				Activator = InitializeContent.Partner
 			};
 
-			_client.ClientServices.Add(service);
-			service.Activate();
-
+			_client.Activate(service);
 			return service;
 		}
 
@@ -64,7 +64,9 @@ namespace Billing.Test.Integration
 		[Test]
 		public void Do_not_deactivate_voluntary_blocking_on_payment()
 		{
-			Activate(typeof(VoluntaryBlockin));
+			using (new SessionScope())
+				Activate(typeof(VoluntaryBlockin));
+
 			new Payment(_client, 500).Save();
 
 			billing.OnMethod();
@@ -88,9 +90,13 @@ namespace Billing.Test.Integration
 				Assert.That(_client.FreeBlockDays, Is.EqualTo(MainBilling.FreeDaysVoluntaryBlockin));
 				WriteOff.DeleteAll();
 
-				service = Activate(typeof (VoluntaryBlockin), DateTime.Now.AddDays(100));
+				Activate(typeof (VoluntaryBlockin), DateTime.Now.AddDays(100));
+			}
+			using (new SessionScope()) {
+				_client = ActiveRecordMediator<Client>.FindByPrimaryKey(_client.Id);
+				service = _client.FindService<VoluntaryBlockin>();
 				Assert.That(_client.FreeBlockDays, Is.EqualTo(MainBilling.FreeDaysVoluntaryBlockin));
-				service.CompulsoryDiactivate();
+				service.CompulsoryDeactivate();
 				Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(1));
 			}
 			billing.Compute();
@@ -104,8 +110,7 @@ namespace Billing.Test.Integration
 					EndWorkDate = DateTime.Now.AddDays(100),
 					Service = Service.GetByType(typeof (VoluntaryBlockin))
 				};
-				_client.ClientServices.Add(service);
-				service.Activate();
+				_client.Activate(service);
 			}
 
 			Thread.Sleep(500);
@@ -115,21 +120,21 @@ namespace Billing.Test.Integration
 			}
 
 			using (new SessionScope()) {
+				Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(2), UserWriteOff.Queryable.Implode());
 				_client = ActiveRecordMediator<Client>.FindByPrimaryKey(_client.Id);
 				service = ActiveRecordMediator<ClientService>.FindByPrimaryKey(service.Id);
 				Assert.That(_client.FreeBlockDays, Is.EqualTo(0));
 
 				Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(0));
 
-				service.CompulsoryDiactivate();
+				service.CompulsoryDeactivate();
 				service = new ClientService {
 					Client = _client,
 					BeginWorkDate = DateTime.Now,
 					EndWorkDate = DateTime.Now.AddDays(100),
 					Service = Service.GetByType(typeof (VoluntaryBlockin))
 				};
-				_client.ClientServices.Add(service);
-				service.Activate();
+				_client.Activate(service);
 			}
 			billing.Compute();
 			using (new SessionScope())
@@ -137,15 +142,18 @@ namespace Billing.Test.Integration
 			billing.Compute();
 			using (new SessionScope()) {
 				Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(1));
-				Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(4));
+				Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(4), UserWriteOff.Queryable.Implode());
 
-				service.CompulsoryDiactivate();
+				service.CompulsoryDeactivate();
 			}
 			billing.Compute();
 			using (new SessionScope()) {
 				Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(1));
 				_client = ActiveRecordMediator<Client>.FindByPrimaryKey(_client.Id);
-				_client.ClientServices.Clear();
+				var forRemove = _client.ClientServices.Where(s => NHibernateUtil.GetClass(s.Service) != typeof (Internet)).ToList();
+				foreach (var assignedService in forRemove) {
+					_client.ClientServices.Remove(assignedService);
+				}
 
 				SystemTime.Reset();
 				UserWriteOff.DeleteAll();
@@ -173,23 +181,23 @@ namespace Billing.Test.Integration
 			const int countDays = 5;
 			var client = _client;
 
-			PhysicalClients physClient;
+			PhysicalClient physicalClient;
 			ClientService CServive;
 			
 			using (new SessionScope()) {
-				physClient = client.PhysicalClient;
-				physClient.Balance = -10m;
-				physClient.Update();
+				physicalClient = client.PhysicalClient;
+				physicalClient.Balance = -10m;
+				physicalClient.Update();
 				client.Disabled = true;
 				client.AutoUnblocked = true;
 				client.RatedPeriodDate = SystemTime.Now();
 				client.Update();
 
 				CServive = new ClientService {
-				    Client = client,
-				    BeginWorkDate = DateTime.Now,
-				    EndWorkDate = SystemTime.Now().AddDays(countDays),
-				    Service = Service.GetByType(typeof (DebtWork)),
+					Client = client,
+					BeginWorkDate = DateTime.Now,
+					EndWorkDate = SystemTime.Now().AddDays(countDays),
+					Service = Service.GetByType(typeof (DebtWork)),
 				};
 
 				client.ClientServices.Add(CServive);
@@ -201,8 +209,10 @@ namespace Billing.Test.Integration
 				SystemTime.Now = () => DateTime.Now.AddDays(i + 1);
 			}
 			using (new SessionScope()) {
+				//не должны ничего списать тк услуга DebtWork не была активирована тк клиент не внес платежей
+				//на сумму тарифа
 				client.Refresh();
-				Assert.That(physClient.Balance, Is.EqualTo(-10));
+				Assert.That(physicalClient.Balance, Is.EqualTo(-10));
 				new Payment {
 					Client = client,
 					Sum = client.PhysicalClient.Tariff.Price,
@@ -211,36 +221,36 @@ namespace Billing.Test.Integration
 			}
 			billing.OnMethod();
 			using (new SessionScope()) {
-				physClient = ActiveRecordMediator<PhysicalClients>.FindByPrimaryKey(physClient.Id);
+				physicalClient = ActiveRecordMediator<PhysicalClient>.FindByPrimaryKey(physicalClient.Id);
 				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
-				physClient.Balance = -10;
+				physicalClient.Balance = -10;
 				client.RatedPeriodDate = DateTime.Now;
 				client.Update();
-				physClient.Update();
+				physicalClient.Update();
 				client.Refresh();
 				SystemTime.Reset();
 				CServive = ActiveRecordMediator<ClientService>.FindByPrimaryKey(CServive.Id);
 				CServive.Activate();
 			}
-			for (int i = 0; i < countDays; i++) {
+			for (var i = 0; i < countDays; i++) {
 				billing.OnMethod();
 				billing.Compute();
-				int i1 = i;
+				var i1 = i;
 				SystemTime.Now = () => DateTime.Now.AddDays(i1 + 1);
 			}
 			SystemTime.Now = () => DateTime.Now.AddDays(countDays + 1);
 			billing.OnMethod();
 			using (new SessionScope()) {
-				physClient = ActiveRecordMediator<PhysicalClients>.FindByPrimaryKey(physClient.Id);
+				physicalClient = ActiveRecordMediator<PhysicalClient>.FindByPrimaryKey(physicalClient.Id);
 				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
 				Assert.That(WriteOff.FindAll().Count(), Is.EqualTo(countDays));
-				Assert.That(physClient.Balance, Is.LessThan(0m));
+				Assert.That(physicalClient.Balance, Is.LessThan(0m));
 				Assert.IsTrue(client.Disabled);
 				client.Disabled = false;
 				client.Update();
 
 				Assert.That(Math.Round(-client.GetPrice()/client.GetInterval()*countDays, 0) - 10,
-							Is.EqualTo(Math.Round(physClient.Balance, 0)));
+							Is.EqualTo(Math.Round(physicalClient.Balance, 0)));
 				Assert.That(client.RatedPeriodDate.Value.Date, Is.EqualTo(DateTime.Now.Date));
 				CServive = new ClientService {
 					Client = client,
@@ -250,7 +260,6 @@ namespace Billing.Test.Integration
 				};
 				client.ClientServices.Add(CServive);
 
-				Assert.That(CServive.LogComment, !Is.EqualTo(string.Empty));
 				client.Disabled = true;
 				client.Update();
 				new Payment {
@@ -262,10 +271,10 @@ namespace Billing.Test.Integration
 			}
 			billing.OnMethod();
 			using (new SessionScope()) {
-				physClient = ActiveRecordMediator<PhysicalClients>.FindByPrimaryKey(physClient.Id);
+				physicalClient = ActiveRecordMediator<PhysicalClient>.FindByPrimaryKey(physicalClient.Id);
 				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
-				physClient.Balance = -10;
-				physClient.Update();
+				physicalClient.Balance = -10;
+				physicalClient.Update();
 
 				CServive = new ClientService {
 					Client = client,
@@ -284,7 +293,6 @@ namespace Billing.Test.Integration
 		public void DebtWorkTestPartner()
 		{
 			using (new SessionScope()) {
-				PrepareTest();
 				var client = CreateClient();
 				const int countDays = 10;
 				var physClient = client.PhysicalClient;
@@ -295,23 +303,22 @@ namespace Billing.Test.Integration
 				client.RatedPeriodDate = SystemTime.Now();
 				client.Update();
 
-				var CServive = new ClientService {
+				var cServive = new ClientService {
 					Client = client,
 					BeginWorkDate = DateTime.Now,
 					EndWorkDate = SystemTime.Now().AddDays(countDays),
 					Service = Service.GetByType(typeof (DebtWork)),
 					Activator = InitializeContent.Partner
 				};
-				client.ClientServices.Add(CServive);
+				client.ClientServices.Add(cServive);
 
-				CServive.Refresh();
-				CServive.Activate();
-				Assert.That(CServive.Activated, Is.EqualTo(true));
-				Assert.IsFalse(CServive.Client.Disabled);
-				CServive.CompulsoryDiactivate();
-				Assert.IsTrue(CServive.Client.Disabled);
+				cServive.Activate();
+				Assert.That(cServive.Activated, Is.EqualTo(true));
+				Assert.IsFalse(cServive.Client.Disabled);
+				cServive.CompulsoryDeactivate();
+				Assert.IsTrue(cServive.Client.Disabled);
 
-				Assert.That(client.ClientServices, Is.Empty);
+				Assert.That(client.ClientServices.Count, Is.EqualTo(2), "должна остаться только услуга internet");
 			}
 		}
 
@@ -319,7 +326,6 @@ namespace Billing.Test.Integration
 		public void Voluntary_blocking_and_minimum_balance()
 		{
 			using (new SessionScope()) {
-				PrepareTest();
 				_client = CreateClient();
 				_client.PhysicalClient.Balance = 5m;
 				_client.AutoUnblocked = true;
@@ -336,8 +342,8 @@ namespace Billing.Test.Integration
 			using (new SessionScope()) {
 				_client = Client.Find(_client.Id);
 				Assert.IsTrue(_client.Disabled);
-				Assert.IsEmpty(_client.ClientServices.ToList());
-				Assert.That(_client.PhysicalClient.Balance, Is.EqualTo(-1));
+				AssertThatContainsOnlyMandatoryServices();
+				Assert.That(_client.PhysicalClient.Balance, Is.EqualTo(-1), _client.UserWriteOffs.Implode());
 			}
 		}
 
@@ -345,7 +351,6 @@ namespace Billing.Test.Integration
 		public void Debt_work_and_payment_whith_payment()
 		{
 			using (new SessionScope()) {
-				PrepareTest();
 				_client = CreateClient();
 				_client.PhysicalClient.Balance = -5m;
 				_client.AutoUnblocked = true;
@@ -369,7 +374,7 @@ namespace Billing.Test.Integration
 			using (new SessionScope()) {
 				_client = Client.Find(_client.Id);
 				Assert.IsTrue(_client.Disabled);
-				Assert.IsEmpty(_client.ClientServices.ToList());
+				AssertThatContainsOnlyMandatoryServices();
 				_client.PhysicalClient.Balance = -5m;
 				_client.Save();
 			}
@@ -404,7 +409,6 @@ namespace Billing.Test.Integration
 			ClientService service;
 			using (new SessionScope()) {
 
-				PrepareTest();
 				client = CreateClient();
 
 				client.AutoUnblocked = true;
@@ -449,14 +453,14 @@ namespace Billing.Test.Integration
 			using (new SessionScope()) {
 				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
 				Assert.IsFalse(client.Disabled);
-				Assert.That(client.ClientServices, Is.Empty);
+				Assert.That(client.ClientServices.Count, Is.EqualTo(2), "должна остаться только услуга internet");
 			}
 			SystemTime.Now = () => service.EndWorkDate.Value.AddDays(46);
 			billing.OnMethod();
 
 			using (new SessionScope()) {
 				client.Refresh();
-				Assert.That(client.ClientServices, Is.Empty);
+				Assert.That(client.ClientServices.Count, Is.EqualTo(2), "должна остаться только услуга internet");
 				Assert.IsFalse(client.Disabled);
 			}
 
@@ -492,16 +496,16 @@ namespace Billing.Test.Integration
 				}
 			}
 			using (new SessionScope()) {
-				var firstdate = WriteOff.FindFirst().WriteOffDate;
-				Assert.That(
-					Math.Round(
-						Convert.ToDecimal(
-							((WriteOff.FindAll().Last().WriteOffDate - WriteOff.FindFirst().WriteOffDate).TotalDays + 1)*3),
-						2),
-					Is.EqualTo(Math.Round(
-						WriteOff.Queryable.Where(w => w.Client == client).ToList().Sum(w => w.WriteOffSum), 2)));
-				Assert.That(firstdate.Date, Is.EqualTo(DateTime.Now.AddDays(29).Date));
-				WriteOff.FindAll().Select(w => w.WriteOffSum).Each(c => Assert.That(c, Is.EqualTo(3m)));
+				var writeOffs = WriteOff.Queryable.Where(w => w.Client == client).ToList();
+				var sum = writeOffs.Sum(w => w.WriteOffSum);
+				var lastWriteoffAt = writeOffs.Max(w => w.WriteOffDate);
+				var firstWriteoffAt = writeOffs.Min(w => w.WriteOffDate);
+				var expectedSum = ((lastWriteoffAt - firstWriteoffAt).TotalDays + 1)*3;
+
+				Assert.That(Math.Round(Convert.ToDecimal(expectedSum), 2),
+					Is.EqualTo(Math.Round(sum, 2)));
+				Assert.That(firstWriteoffAt.Date, Is.EqualTo(DateTime.Now.AddDays(29).Date));
+				writeOffs.Select(w => w.WriteOffSum).Each(c => Assert.That(c, Is.EqualTo(3m)));
 			}
 		}
 
@@ -510,7 +514,7 @@ namespace Billing.Test.Integration
 		public void ActiveDeactive()
 		{
 			ClientService service;
-			PhysicalClients physClient;
+			PhysicalClient physClient;
 			const int countDays = 5;
 			using (new SessionScope()) {
 				physClient = _client.PhysicalClient;
@@ -528,11 +532,11 @@ namespace Billing.Test.Integration
 			using (new SessionScope()) {
 				_client.Refresh();
 				Assert.IsFalse(_client.Disabled);
-				service.CompulsoryDiactivate();
+				service.CompulsoryDeactivate();
 				Assert.IsTrue(_client.Disabled);
 				billing.OnMethod();
 				Assert.IsTrue(_client.Disabled);
-				physClient = ActiveRecordMediator<PhysicalClients>.FindByPrimaryKey(physClient.Id);
+				physClient = ActiveRecordMediator<PhysicalClient>.FindByPrimaryKey(physClient.Id);
 				physClient.Balance = _client.GetPriceForTariff();
 				physClient.Update();
 			}
@@ -558,14 +562,13 @@ namespace Billing.Test.Integration
 			using (new SessionScope()) {
 				service = ActiveRecordMediator<ClientService>.FindByPrimaryKey(service.Id);
 				Assert.That(WriteOff.FindAll().Last().WriteOffSum, Is.GreaterThan(3m));
-				service.CompulsoryDiactivate();
+				service.CompulsoryDeactivate();
 			}
 			billing.OnMethod();
 			billing.Compute();
 			using (new SessionScope()) {
 				_client = Client.Find(_client.Id);
 				var userWriteOffs = UserWriteOff.Queryable.ToList();
-				Console.WriteLine(userWriteOffs.Implode());
 				Assert.That(userWriteOffs.Count, Is.EqualTo(3), userWriteOffs.Implode());
 				Assert.That(userWriteOffs[0].Sum, Is.GreaterThan(5m));
 				Assert.That(userWriteOffs[0].Sum, Is.LessThan(25m));
@@ -592,7 +595,7 @@ namespace Billing.Test.Integration
 				Client = client,
 				Service = ActiveRecordMediator<DebtWork>.FindFirst()
 			};
-			service.Save();
+			ActiveRecordMediator.Save(service);
 
 			client.Refresh();
 			Assert.IsFalse(client.CanBlock());
@@ -611,10 +614,10 @@ namespace Billing.Test.Integration
 			Assert.IsFalse(client.CanBlock());
 			SystemTime.Now = () => DateTime.Now.AddDays(2);
 			Assert.IsTrue(client.CanBlock());
-			new ClientService {
+			ActiveRecordMediator.Save(new ClientService {
 				Client = client,
 				Service = Service.GetByType(typeof (DebtWork))
-			}.Save();
+			});
 
 			client.Refresh();
 			Assert.IsFalse(client.CanBlock());
@@ -633,7 +636,7 @@ namespace Billing.Test.Integration
 		{
 			Client client_Post;
 			Client client_simple;
-			PhysicalClients pclient_post;
+			PhysicalClient pclient_post;
 			using (new SessionScope()) {
 				client_Post = BaseBillingFixture.CreateAndSaveClient("testRated", false, 100);
 				client_Post.RatedPeriodDate = DateTime.Now;
@@ -659,7 +662,7 @@ namespace Billing.Test.Integration
 			}
 			billing.OnMethod();
 			using (new SessionScope()) {
-				pclient_post = ActiveRecordMediator<PhysicalClients>.FindByPrimaryKey(pclient_post.Id);
+				pclient_post = ActiveRecordMediator<PhysicalClient>.FindByPrimaryKey(pclient_post.Id);
 				client_Post = ActiveRecordMediator<Client>.FindByPrimaryKey(client_Post.Id);
 				pclient_post.Balance = -200m;
 				pclient_post.Update();
@@ -711,7 +714,7 @@ namespace Billing.Test.Integration
 		{
 			Client client;
 			using (new SessionScope()) {
-				client = new Client {
+				client = new Client() {
 					LawyerPerson = new LawyerPerson {
 						Name = "testLawyerPerson",
 						Balance = -2000,
@@ -733,8 +736,7 @@ namespace Billing.Test.Integration
 					EndWorkDate = DateTime.Now.AddDays(2),
 					Service = Service.Type<WorkLawyer>()
 				};
-				cService.Save();
-				Assert.IsNull(cService.LogComment);
+				ActiveRecordMediator.Save(cService);
 			}
 			billing.OnMethod();
 			using (new SessionScope()) {
@@ -781,6 +783,11 @@ namespace Billing.Test.Integration
 				Assert.That(client.Disabled, Is.False);
 				Assert.That(client.Status.Id, Is.EqualTo((uint)StatusType.Worked));
 			}
+		}
+
+		private void AssertThatContainsOnlyMandatoryServices()
+		{
+			Assert.That(_client.ClientServices.Count, Is.EqualTo(2), _client.ClientServices.Implode(c => c.Service));
 		}
 	}
 }

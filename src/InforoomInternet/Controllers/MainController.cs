@@ -163,10 +163,9 @@ namespace InforoomInternet.Controllers
 			if (lease == null)
 				lease = new Lease
 				{
-					Endpoint = new ClientEndpoints
+					Endpoint = new ClientEndpoint
 					{
-						Client = new Client
-						{
+						Client = new Client() {
 							ShowBalanceWarningPage = true,
 							RatedPeriodDate = DateTime.Now,
 							LawyerPerson = new LawyerPerson {
@@ -178,7 +177,7 @@ namespace InforoomInternet.Controllers
 				};
 #endif
 
-			ClientEndpoints point = null;
+			ClientEndpoint point = null;
 			if (lease != null)
 				point = lease.Endpoint;
 			else {
@@ -206,14 +205,15 @@ namespace InforoomInternet.Controllers
 			var clientW = lease != null ? lease.Endpoint.Client : point.Client;
 
 			if (IsPost) {
-				if (lease != null)
-				{
+				if (lease != null) {
 					SceHelper.Login(lease, Request.UserHostAddress);
 				}
 				else {
 					var ips = StaticIp.Queryable.Where(s => s.EndPoint == point).ToList();
 					foreach (var staticIp in ips) {
-						SceHelper.Action("login", staticIp.Mask != null ? staticIp.Ip + "/" + staticIp.Mask : staticIp.Ip, "Static_" + staticIp.Id, false, false, point.PackageId);
+						if (point.PackageId == null)
+							continue;
+						SceHelper.Action("login", staticIp.Mask != null ? staticIp.Ip + "/" + staticIp.Mask : staticIp.Ip, "Static_" + staticIp.Id, false, false, point.PackageId.Value);
 					}
 				}
 				clientW.ShowBalanceWarningPage = false;

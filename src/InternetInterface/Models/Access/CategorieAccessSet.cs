@@ -23,7 +23,6 @@ namespace InternetInterface.Models
 		[BelongsTo("AccessCat")]
 		public virtual AccessCategories AccessCat { get; set; }
 
-
 		public static Boolean AccesPartner(string reduseRulesName)
 		{
 			return InitializeContent.Partner.AccesedPartner.Contains(reduseRulesName);

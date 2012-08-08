@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Castle.Components.Validator;
+using Common.Web.Ui.MonoRailExtentions;
 using InternetInterface.Controllers.Filter;
 
 namespace InternetInterface.Models
@@ -15,18 +13,19 @@ namespace InternetInterface.Models
 		public UserWriteOff()
 		{}
 
-		public UserWriteOff(Client client, decimal sum, string comment)
-			: this(client)
+		public UserWriteOff(Client client, decimal sum, string comment, bool setRegistrator = true)
+			: this(client, setRegistrator)
 		{
 			Sum = sum;
 			Comment = comment;
 		}
 
-		public UserWriteOff(Client client)
+		public UserWriteOff(Client client, bool setRegistrator = true)
 		{
 			Client = client;
 			Date = DateTime.Now;
-			Registrator = InitializeContent.Partner;
+			if (setRegistrator)
+				Registrator = InitializeContent.Partner;
 		}
 
 		[PrimaryKey]

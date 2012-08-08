@@ -24,9 +24,9 @@ namespace InternetInterface.Services
 			return builder.ToString();
 		}
 
-		public override bool CanActivate(ClientService cService)
+		public override bool CanActivate(ClientService assignedService)
 		{
-			return CanActivate(cService.Client);
+			return CanActivate(assignedService.Client);
 		}
 
 		public override bool CanActivate(Client client)
@@ -40,37 +40,37 @@ namespace InternetInterface.Services
 			return false;
 		}
 
-		public override void CompulsoryDiactivate(ClientService CService)
+		public override void CompulsoryDeactivate(ClientService assignedService)
 		{
-			var client = CService.Client;
+			var client = assignedService.Client;
 			var warning = client.LawyerPerson.NeedShowWarning();
 			client.ShowBalanceWarningPage = warning;
 			client.Disabled = warning;
 			client.Update();
-			CService.Activated = false;
-			CService.Update();
+			assignedService.Activated = false;
+			ActiveRecordMediator.Update(assignedService);
 		}
 
-		public override void Activate(ClientService CService)
+		public override void Activate(ClientService assignedService)
 		{
-			if ((!CService.Activated && CanActivate(CService))) {
-				var client = CService.Client;
+			if ((!assignedService.Activated && CanActivate(assignedService))) {
+				var client = assignedService.Client;
 				client.ShowBalanceWarningPage = false;
 				client.Disabled = false;
 				client.Save();
-				CService.Activated = true;
-				CService.EndWorkDate = CService.EndWorkDate.Value.Date;
-				CService.Update();
+				assignedService.Activated = true;
+				assignedService.EndWorkDate = assignedService.EndWorkDate.Value.Date;
+				ActiveRecordMediator.Update(assignedService);
 			}
 		}
 
-		public override void WriteOff(ClientService cService)
+		public override void WriteOff(ClientService assignedService)
 		{
-			if ((cService.EndWorkDate == null) ||
-				(cService.EndWorkDate != null && (SystemTime.Now().Date >= cService.EndWorkDate.Value.Date)))
+			if ((assignedService.EndWorkDate == null) ||
+				(assignedService.EndWorkDate != null && (SystemTime.Now().Date >= assignedService.EndWorkDate.Value.Date)))
 			{
-				CompulsoryDiactivate(cService);
-				cService.Delete();
+				CompulsoryDeactivate(assignedService);
+				ActiveRecordMediator.Delete(assignedService);
 			}
 		}
 	}

@@ -251,7 +251,7 @@ ORDER BY {3} Limit {1}, {2}",
 		}
 
 
-		public void SearchUsers(string query, PhysicalClients sClients)
+		public void SearchUsers(string query, PhysicalClient sClients)
 		{
 			var filter = new SeachFilter {
 											searchProperties = new UserSearchProperties {SearchBy = SearchUserBy.Auto},

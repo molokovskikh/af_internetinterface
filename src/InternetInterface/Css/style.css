@@ -291,6 +291,11 @@ input.checkbox {
   padding:3px;
 }
 
+.table th.alt
+{
+  background: #f0efcf;
+}
+
 .menuItem th
 {
 	background-color:#dbeaf0;

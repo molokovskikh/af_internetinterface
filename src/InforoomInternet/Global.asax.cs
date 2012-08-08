@@ -8,6 +8,7 @@ using Castle.MonoRail.Framework.Internal;
 using Castle.MonoRail.Framework.Routing;
 using Castle.MonoRail.Views.Brail;
 using Common.Web.Ui.Helpers;
+using InforoomInternet.Models;
 using InternetInterface.Helpers;
 using log4net;
 
@@ -61,8 +62,6 @@ namespace InforoomInternet
 		void Application_AuthenticateRequest(object sender, EventArgs e) { }
 
 		void Session_End(object sender, EventArgs e) { }
-
-		void Application_End(object sender, EventArgs e) { }
 
 		public void Configure(IMonoRailConfiguration configuration) {
 			configuration.ControllersConfig.AddAssembly("InforoomInternet");

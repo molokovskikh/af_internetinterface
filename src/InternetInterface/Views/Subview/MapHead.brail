@@ -1,19 +1,18 @@
-﻿	<style type="text/css">
-		.MH
-		{
-			color: #1f3813;
-		}
+﻿<style type="text/css">
+	.MH
+	{
+		color: #1f3813;
+	}
 
-		.menudiv
-		{
-			padding: 4px 4px 4px 4px;
-		}
-		.wid
-		{
-			width:100%;
-		}
-
-	</style>
+	.menudiv
+	{
+		padding: 4px 4px 4px 4px;
+	}
+	.wid
+	{
+		width:100%;
+	}
+</style>
 <div class=wid>
 <table class="table" id="mapHead" style = "width:100%" >
 	<thead>
@@ -28,45 +27,45 @@
 		</th>
 		<tr valign="top"  class="menuItem">
 			<%if PartnerAccessSet.AccesPartner("RC"): %>
-			<th><a href = "../Register/RegisterClient" ><span class="MH"><div class=menudiv>Регистрация абонента</div></span></a></th>
+			<th><a href = "${siteroot}/Register/RegisterClient" ><span class="MH"><div class=menudiv>Регистрация абонента</div></span></a></th>
 			<%end %>
 			<%if PartnerAccessSet.AccesPartner("RC"): %>
-			<th><a href = "../Register/RegisterLegalPerson" ><span class="MH"><div class=menudiv>Регистрация ЮрЛица</div></span></a></th>
+			<th><a href = "${siteroot}/Register/RegisterLegalPerson" ><span class="MH"><div class=menudiv>Регистрация ЮрЛица</div></span></a></th>
 			<%end %>
 			<%if PartnerAccessSet.AccesPartner("VD"): %>
-			<th><a href = "../UserInfo/RequestView" ><span class="MH"><div class=menudiv>Заявки</div></span></a></th>
+			<th><a href = "${siteroot}/UserInfo/RequestView" ><span class="MH"><div class=menudiv>Заявки</div></span></a></th>
 			<%end %>
 			<%if PartnerAccessSet.AccesPartner("GCI"): %>
-			<th><a href = "../Search/SearchUsers" ><span class="MH"><div class=menudiv>Клиенты</div></span></a></th>
+			<th><a href = "${siteroot}/Search/SearchUsers" ><span class="MH"><div class=menudiv>Клиенты</div></span></a></th>
 			<%end %> 
 			<%if PartnerAccessSet.AccesPartner("DHCP"): %>
-			<th><a href = "../Switches/OnLineClient?Zone=4" ><span class="MH"><div class=menudiv>OnLine клиенты</div></span></a></th>
+			<th><a href = "${siteroot}/Switches/OnLineClient?Zone=4" ><span class="MH"><div class=menudiv>OnLine клиенты</div></span></a></th>
 			<%end %>
 			<%if PartnerAccessSet.AccesPartner("SSI"): %>
-			<th><a href = "../Payers/Filter" ><span class="MH"><div class=menudiv>Платежи по регистраторам</div></span></a></th>
+			<th><a href = "${siteroot}/Payers/Filter" ><span class="MH"><div class=menudiv>Платежи по регистраторам</div></span></a></th>
 			<%end %>
 			<%if (PartnerAccessSet.AccesPartner("SSI") or PartnerAccessSet.AccesPartner("PFA")): %>
-			<th><a href = "../Payers/AgentFilter" ><span class="MH"><div class=menudiv>Платежи</div></span></a></th>
+			<th><a href = "${siteroot}/Payers/AgentFilter" ><span class="MH"><div class=menudiv>Платежи</div></span></a></th>
 			<%end %>
 			<%if PartnerAccessSet.AccesPartner("SSI"): %>
-			<th><a href = "../UserInfo/RequestGraph" ><span class="MH"><div class=menudiv>График подключений</div></span></a></th>
+			<th><a href = "${siteroot}/UserInfo/RequestGraph" ><span class="MH"><div class=menudiv>График подключений</div></span></a></th>
 			<%end %>
 			<%if PartnerAccessSet.AccesPartner("HMA"): %>
-			<th><a href = "../HouseMap/FindHouse" ><span class="MH"><div class=menudiv>Карта дома</div></span></a></th>
+			<th><a href = "${siteroot}/HouseMap/FindHouse" ><span class="MH"><div class=menudiv>Карта дома</div></span></a></th>
 			<%end %>
 			<%if PartnerAccessSet.AccesPartner("SR"): %>
-			<th><a href = "../ServiceRequest/ViewRequests" ><span class="MH"><div class=menudiv>Сервисные заявки</div></span></a></th>
+			<th><a href = "${siteroot}/ServiceRequest/ViewRequests" ><span class="MH"><div class=menudiv>Сервисные заявки</div></span></a></th>
 			<%end %>
 			<%if PartnerAccessSet.AccesPartner("RP"): %>
-			<th><a href = "../UserInfo/Administration" ><span class="MH"><div class=menudiv>Администрирование</div></span></a></th>
+			<th><a href = "${siteroot}/UserInfo/Administration" ><span class="MH"><div class=menudiv>Администрирование</div></span></a></th>
 			<%end %>
 			<%if PartnerAccessSet.AccesPartner("AIV"): %>
-			<th><a href = "../AgentInfo/SummaryInformation" ><span class="MH"><div class=menudiv>Платежи</div></span></a></th>
+			<th><a href = "${siteroot}/AgentInfo/SummaryInformation" ><span class="MH"><div class=menudiv>Платежи</div></span></a></th>
 			<%end %>
 			<th align=right style="text-align:right;">
 				<form class="form" id="Exit" name="Exit" method="post" action="${siteroot}/ExitPartner/Yes" >
 				<button type="submit" class="button" style="float:none; display:inline;">
-				<img alt="Save" src="../Images/application_edit.png"> Выход
+				<img alt="Save" src="${siteroot}/Images/application_edit.png"> Выход
 				</button>
 				</form>
 			</th>
@@ -84,8 +83,6 @@
 			<%if PartnerAccessSet.AccesPartner("SSI"): %>
 			<th>
 				<a id="appeal_link" href="${Siteroot}/UserInfo/ShowAppeals">Обращения</a>
-				<br />
-				<br />
 			</th>
 			<%end %>
 			<%if PartnerAccessSet.AccesPartner("DHCP"): %>

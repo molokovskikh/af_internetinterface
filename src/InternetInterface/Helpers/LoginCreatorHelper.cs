@@ -66,7 +66,7 @@ namespace InternetInterface.Helpers
 				while (!unique)
 				{
 					RULogin += rnd.Next(indexing);
-					if (PhysicalClients.FindAllByProperty("Login", RULogin).Length == 0)
+					if (PhysicalClient.FindAllByProperty("Login", RULogin).Length == 0)
 					{
 						unique = true;
 					}

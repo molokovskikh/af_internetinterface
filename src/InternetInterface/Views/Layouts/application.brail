@@ -13,11 +13,12 @@
 	${app.Asset("application.js")}
 
 	${app.JS("Common.js",
-	"jquery.maskedinput-1.2.2.js",
-	"jquery.reveal.js",
-	"jquery.nyroModal.custom.js",
-	"jquery.ui.datepicker-ru.js",
-	"jquery.tablesorter.js")}
+		"jquery.maskedinput-1.2.2.js",
+		"jquery.reveal.js",
+		"jquery.nyroModal.custom.js",
+		"jquery.ui.datepicker-ru.js",
+		"jquery.tablesorter.js",
+		"DecimalValidate.js")}
 
 	${app.CSS("Style.css",
 		"base.css",
@@ -29,9 +30,9 @@
 		"jquery-ui-1.8.16.custom.css")}
 </head>
 <body>
-<div class="non-printable"> 
-	<% OutputSubView("""\Subview\MapHead""") %>
-</div> 
+	<div class="non-printable">
+		<% OutputSubView("""\Subview\MapHead""") %>
+	</div>
 	<% if IsDefined("Message"): %>
 	<div class="flash">
 		<% if Message isa string: %>

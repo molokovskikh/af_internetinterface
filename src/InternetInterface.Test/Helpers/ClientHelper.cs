@@ -3,7 +3,9 @@ using System.Linq;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Castle.Components.Validator;
+using Common.Tools;
 using InternetInterface.Models;
+using InternetInterface.Models.Services;
 
 namespace InternetInterface.Test.Helpers
 {
@@ -16,7 +18,7 @@ namespace InternetInterface.Test.Helpers
 				Balance = 1000,
 				Tariff = 100,
 			};
-			return new Client {
+			return new Client() {
 				LawyerPerson = person,
 				Disabled = false,
 				BeginWork = DateTime.Now,
@@ -26,75 +28,76 @@ namespace InternetInterface.Test.Helpers
 
 		public static void CreateClient(Func<Client, bool> Ok)
 		{
-			var physClient =  new PhysicalClients {
+			var client = PhysicalClient();
+			var internalClient = client.Client;
+			var valid = new ValidatorRunner(new CachedValidationRegistry());
+			if (valid.IsValid(client)) {
+				var pay = new Payment {
+					Client = internalClient,
+					PaidOn = DateTime.Now,
+					RecievedOn = DateTime.Now,
+					Sum = 500
+				};
+				internalClient.SaveAndFlush();
+				client.SaveAndFlush();
+				pay.SaveAndFlush();
+				Ok(internalClient);
+				client.DeleteAndFlush();
+				pay.DeleteAndFlush();
+			}
+			else {
+				throw new Exception(String.Format("Создали невалидного клиента {0}",
+					valid.GetErrorSummary(client).ErrorMessages.Implode()));
+			}
+		}
+
+		public static PhysicalClient PhysicalClient()
+		{
+			var tariff = ActiveRecordLinqBase<Tariff>.Queryable.First();
+			var internet = ActiveRecordLinqBase<Internet>.Queryable.First();
+			var iptv = ActiveRecordLinqBase<IpTv>.Queryable.First();
+			var status = ActiveRecordBase<Status>.Find((uint)StatusType.Worked);
+
+			var client = new PhysicalClient {
 				Apartment = 1,
 				Balance = 100,
 				CaseHouse = "A",
 				City = "VRN",
 				Entrance = 1,
 				Floor = 1,
-				HomePhoneNumber = "1111-22222",
+				HomePhoneNumber = "111-1222222",
 				House = 1,
 				Name = "testName",
-				PassportDate = DateTime.Now,
+				PassportDate = DateTime.Today,
 				PassportNumber = "123456",
 				PassportSeries = "1234",
 				Password = CryptoPass.GetHashString(CryptoPass.GeneratePassword()),
 				Patronymic = "testOtch",
-				PhoneNumber = "8-111-222-33-44",
+				PhoneNumber = "111-2223344",
 				RegistrationAdress = "vrnReg",
 				Street = "testStreet",
 				Surname = "testSurn",
-				Tariff = ActiveRecordBase<Tariff>.Find((uint)1),
+				Tariff = tariff,
 				WhoGivePassport = "guvd"
 			};
-			physClient.Save();
-			var client = new Client {
-				PhysicalClient = physClient,
-				Name = "TestClient"
+
+			var internalClient = new Client {
+				PhysicalClient = client,
+				BeginWork = null,
+				Name = String.Format("{0} {1} {2}", client.Surname, client.Name, client.Patronymic),
+				Status = status,
+				RatedPeriodDate = DateTime.Now,
+				StartNoBlock = DateTime.Now.AddMonths(-1)
 			};
-			client.Save();
-			var pay = new Payment {
-				Client = client,
-				PaidOn = DateTime.Now,
-				RecievedOn = DateTime.Now,
-				Sum = 500
-			};
-			pay.Save();
-			Ok(client);
-			client.DeleteAndFlush();
-			pay.DeleteAndFlush();
+			internalClient.ClientServices.Add(new ClientService(internalClient, internet));
+			internalClient.ClientServices.Add(new ClientService(internalClient, iptv));
+			client.Client = internalClient;
+			return client;
 		}
 
 		public static Client Client()
 		{
-			var house = new House("testStreet", 1);
-			var physicalClient = new PhysicalClients {
-				Name = "Alexandr",
-				Surname = "Zolotarev",
-				Patronymic = "Alekseevich",
-				Street = "Stud",
-				House = 12,
-				Apartment = 1,
-				Entrance = 2,
-				Floor = 2,
-				PhoneNumber = "900-2008080",
-				Balance = 0,
-				Tariff = ActiveRecordLinqBase<Tariff>.Queryable.First(),
-				CaseHouse = "sdf",
-				City = "bebsk",
-				Email = "test@test.ru",
-				HouseObj = house
-			};
-			var client = new Client {
-				PhysicalClient = physicalClient,
-				BeginWork = null,
-				Name = String.Format("{0} {1} {2}", physicalClient.Surname, physicalClient.Name, physicalClient.Patronymic),
-				Status = ActiveRecordBase<Status>.FindFirst(),
-				RatedPeriodDate = DateTime.Now,
-				StartNoBlock = DateTime.Now.AddMonths(-1)
-			};
-			return client;
+			return PhysicalClient().Client;
 		}
 	}
 }

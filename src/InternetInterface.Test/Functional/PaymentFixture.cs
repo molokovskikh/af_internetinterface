@@ -1,4 +1,5 @@
-﻿using InternetInterface.Models;
+﻿using System;
+using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 using WatiN.Core;
@@ -40,6 +41,7 @@ namespace InternetInterface.Test.Functional
 
 			Open("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", client.Id);
 			Click("Платежи");
+			Css("#paymentReason").TypeText("тест");
 			Click("#SearchResults", "Отменить");
 			AssertText("Отменено");
 
