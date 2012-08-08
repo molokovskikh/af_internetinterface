@@ -13,12 +13,12 @@
 	${app.Asset("application.js")}
 
 	${app.JS("Common.js",
-	"jquery.maskedinput-1.2.2.js"
-	"jquery.reveal.js",
-	"jquery.nyroModal.custom.js",
-	"jquery.ui.datepicker-ru.js",
-	"jquery.tablesorter.js",
-	"DecimalValidate.js")}
+		"jquery.maskedinput-1.2.2.js",
+		"jquery.reveal.js",
+		"jquery.nyroModal.custom.js",
+		"jquery.ui.datepicker-ru.js",
+		"jquery.tablesorter.js",
+		"DecimalValidate.js")}
 
 	${app.CSS("Style.css",
 		"base.css",
