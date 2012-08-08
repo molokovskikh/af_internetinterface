@@ -58,7 +58,7 @@ namespace InternetInterface.AllLogic
 	WHERE (LOWER(C.Name) like {0} )", ":SearchText") + _return;
 					}
 					if (filter.searchProperties.IsSearchTelephone()) {
-						return String.Format(@"WHERE LOWER(co.Contact) like {0} ", ":SearchText") + _return;
+						return String.Format(@"WHERE (LOWER(co.Contact) like {0})", ":SearchText") + _return;
 					}
 					if (filter.searchProperties.IsSearchByAddress()) {
 						return String.Format(@"
@@ -78,7 +78,7 @@ namespace InternetInterface.AllLogic
 						return "WHERE (LOWER(C.Name) like :SearchText) and (C.PhysicalClient is not null)";
 				}
 			}
-			return string.Empty;
+			return string.IsNullOrEmpty(_return) ? string.Empty : string.Format("WHERE {0}", _return.Remove(0, 4));
 		}
 	}
 }

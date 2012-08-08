@@ -163,7 +163,7 @@ group by c.id
 ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 				query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Client));
 				SetParameters(query);
-				if (searchText != null && wherePart.Contains(":SearchText"))
+				if (!string.IsNullOrEmpty(searchText) && wherePart.Contains(":SearchText"))
 					query.SetParameter("SearchText", "%" + searchText.ToLower() + "%");
 
 				result = query.List<Client>();
@@ -175,7 +175,7 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 					newSql = newSql.Remove(limitPosition);
 					newSql = string.Format("select count(*) from ({0}) as t1;", newSql);
 					var countQuery = session.CreateSQLQuery(newSql);
-					if (!string.IsNullOrEmpty(searchText))
+					if (!string.IsNullOrEmpty(searchText) && wherePart.Contains(":SearchText"))
 						countQuery.SetParameter("SearchText", "%" + searchText.ToLower() + "%");
 					if (CategorieAccessSet.AccesPartner("SSI"))
 						if (!searchProperties.IsSearchAccount())
@@ -205,7 +205,12 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 		[AccessibleThrough(Verb.Get)]
 		public void SearchBy([DataBind("filter")]SeachFilter filter)
 		{
-			PropertyBag["SClients"] = filter.Find();
+			var result = filter.Find();
+			if (result.Count == 1) {
+				RedirectToUrl(result[0].client.Redirect());
+				return;
+			}
+			PropertyBag["SClients"] = result;
 			PropertyBag["Direction"] = filter.Direction;
 			PropertyBag["SortBy"] = filter.SortBy;
 			PropertyBag["filter"] = filter;
