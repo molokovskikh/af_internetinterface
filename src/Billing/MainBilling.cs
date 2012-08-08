@@ -182,9 +182,7 @@ set s.LastStartFail = true;")
 							}
 						if (updateClient.ClientServices != null)
 							foreach (var clientService in updateClient.ClientServices.ToList()) {
-								_log.DebugFormat("До выполнения метода PaymentClient было сервисов: {0}, по клиенту {1}", updateClient.ClientServices.Count, updateClient.Id);
 								clientService.PaymentClient();
-								_log.DebugFormat("После выполнения PaymentClient было сервисов: {0}, по клиенту {1}", updateClient.ClientServices.Count, updateClient.Id);
 							}
 						updateClient.Update();
 					}
