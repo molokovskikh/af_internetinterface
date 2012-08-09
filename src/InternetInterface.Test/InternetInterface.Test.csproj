@@ -131,6 +131,7 @@
     <Compile Include="Functional\CommutatorFixture.cs" />
     <Compile Include="Functional\HouseMapFixture.cs" />
     <Compile Include="Functional\InvoiceFixture.cs" />
+    <Compile Include="Functional\LawyerPersonFixture.cs" />
     <Compile Include="Functional\PaymentFixture.cs" />
     <Compile Include="Functional\PhysicalClientFixture.cs" />
     <Compile Include="Functional\PrivateMessageFixture.cs" />
