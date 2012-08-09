@@ -129,8 +129,10 @@ set s.LastStartFail = true;")
 		private void ActivateServices(ISession session)
 		{
 			var services = session.Query<ClientService>().Where(s => !s.Activated);
-			foreach (var service in services)
+			foreach (var service in services) {
 				service.Activate();
+				session.SaveOrUpdate(service);
+			}
 		}
 
 		public void OnMethod()

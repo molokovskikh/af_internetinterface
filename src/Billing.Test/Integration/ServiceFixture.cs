@@ -541,6 +541,7 @@ namespace Billing.Test.Integration
 				physClient.Update();
 			}
 			billing.OnMethod();
+			billing.OnMethod();
 			using (new SessionScope()) {
 				_client.Refresh();
 				Assert.IsFalse(_client.Disabled);

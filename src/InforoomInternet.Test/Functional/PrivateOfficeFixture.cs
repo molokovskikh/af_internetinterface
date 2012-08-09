@@ -76,14 +76,14 @@ namespace InforoomInternet.Test.Functional
 		}
 
 		[Test]
-		public void Activate_internet()
+		public void Deactivate_internet()
 		{
 			Click("Управление услугами");
 			Css("#internet_ActivatedByUser").Click();
 			Click("Сохранить");
 
 			session.Refresh(client);
-			Assert.That(client.Internet.ActivatedByUser, Is.True);
+			Assert.That(client.Internet.ActivatedByUser, Is.False);
 		}
 	}
 }

@@ -37,8 +37,10 @@ namespace InternetInterface.Test.Unit
 		[Test]
 		public void Deactivation()
 		{
+			clientService.ActivatedByUser = true;
 			clientService.Activate();
 			Assert.That(clientService.Activated, Is.True);
+			clientService.ActivatedByUser = false;
 			clientService.Deactivate();
 			Assert.That(clientService.Activated, Is.False);
 		}
