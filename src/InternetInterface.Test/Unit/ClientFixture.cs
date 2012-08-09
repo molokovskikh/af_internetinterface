@@ -1,4 +1,5 @@
-﻿using InternetInterface.Models;
+﻿using System.ComponentModel;
+using InternetInterface.Models;
 using InternetInterface.Models.Services;
 using InternetInterface.Services;
 using NUnit.Framework;
@@ -42,6 +43,13 @@ namespace InternetInterface.Test.Unit
 		{
 			var price = client.GetPriceIgnoreDisabled();
 			Assert.That(price, Is.EqualTo(100));
+		}
+
+		[Test]
+		public void Activete_internet_by_default()
+		{
+			client = new Client(new PhysicalClient(), new Service[] {new Internet()});
+			Assert.That(client.ClientServices[0].ActivatedByUser, Is.True);
 		}
 	}
 }
