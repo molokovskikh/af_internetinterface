@@ -126,6 +126,7 @@
     <Content Include="Css\jquery-ui-1.8.13.custom.css" />
     <Content Include="Css\jquery-ui-1.8.16.custom.css" />
     <Content Include="Css\modal-gloss.png" />
+    <Content Include="Css\Modal.css" />
     <Content Include="Css\reveal.css" />
     <Content Include="Css\style.css" />
     <Content Include="Css\tablesorter.css" />

@@ -1,0 +1,53 @@
+﻿.turn-me-into-datepicker {
+	float: left;
+	margin:10px;
+}
+
+.jCalendar
+{
+	font-size:10px;
+}
+
+.hasDatepicker
+{
+	float:none;
+}
+
+a.dp-choose-date
+{
+	float: left;
+	width: 16px;
+	height: 16px;
+	padding: 0;
+	margin: 5px 3px 0;
+	display: block;
+	text-indent: -2000px;
+	overflow: hidden;
+	background: url(../Images/calendar.png) no-repeat;
+}
+
+a.dp-choose-date.dp-disabled
+{
+	background-position: 0 -20px;
+	cursor: default;
+}
+
+input.dp-applied
+{
+	width: 140px;
+	float: left;
+	margin-left:15px;
+}
+
+#back
+{
+	width:500px;
+	height:300px;
+	background-color:White;
+	border-width:1px;
+}
+
+#modalTable
+{
+		min-width:0px;
+}
