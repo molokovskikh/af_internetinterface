@@ -17,7 +17,6 @@ namespace InternetInterface.Test.Functional
 			browser.TextField("sms_text").AppendText("test sms");
 			browser.Button("send_but").Click();
 			Assert.That(browser.Text, Is.StringContaining("Сообщение передано для отправки"));
-			browser.ShowWindow(NativeMethods.WindowShowStyle.ShowNormal);
 		}
 	}
 }
