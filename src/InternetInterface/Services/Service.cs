@@ -26,6 +26,14 @@ namespace InternetInterface.Services
 		[Property]
 		public virtual bool InterfaceControl { get; set; }
 
+		public virtual bool SupportUserAcivation
+		{
+			get
+			{
+				return false;
+			}
+		}
+
 		//говорит о том что нужно вызывать GetPrice, даже если активирована блокирующая услуга
 		//"добровольная блокировка"
 		public virtual bool ProcessEvenInBlock

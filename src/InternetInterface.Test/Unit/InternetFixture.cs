@@ -19,6 +19,7 @@ namespace InternetInterface.Test.Unit
 			client.PhysicalClient.Client = client;
 			client.PhysicalClient.Tariff = new Tariff("Тестовый тариф", 100);
 			clientService = new ClientService(client, new Internet());
+			clientService.ActivatedByUser = false;
 			client.Activate(clientService);
 			client.PhysicalClient.Balance = 1000;
 			client.PhysicalClient.MoneyBalance = 1000;
@@ -40,6 +41,21 @@ namespace InternetInterface.Test.Unit
 			Assert.That(clientService.Activated, Is.True);
 			clientService.Deactivate();
 			Assert.That(clientService.Activated, Is.False);
+		}
+
+		[Test]
+		public void Do_not_activete_user_deactivated_service()
+		{
+			clientService.ActivatedByUser = false;
+			clientService.Activate();
+			Assert.That(clientService.Activated, Is.False);
+
+			clientService.ActivatedByUser = true;
+			clientService.Activate();
+			Assert.That(clientService.Activated, Is.True);
+
+			clientService.Deactivate();
+			Assert.That(clientService.Activated, Is.True);
 		}
 	}
 }

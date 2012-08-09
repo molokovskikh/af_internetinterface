@@ -25,6 +25,8 @@ namespace InternetInterface.Models
 		{
 			Client = client;
 			Service = service;
+			if (service.SupportUserAcivation)
+				ActivatedByUser = true;
 		}
 
 		public ClientService(Client client, Service service, bool activatedByUser)

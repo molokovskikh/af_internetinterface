@@ -15,10 +15,6 @@ namespace InternetInterface.Test.Functional
 		public void Setup()
 		{
 			client = ClientHelper.Client();
-			var internet = session.Query<Internet>().First();
-			var iptv = session.Query<IpTv>().First();
-			client.ClientServices.Add(new ClientService(client, internet));
-			client.ClientServices.Add(new ClientService(client, iptv));
 			session.Save(client);
 		}
 

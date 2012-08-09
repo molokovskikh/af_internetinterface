@@ -48,7 +48,7 @@ namespace InternetInterface.Services
 			client.Disabled = warning;
 			client.Update();
 			assignedService.Activated = false;
-			ActiveRecordMediator.Update(assignedService);
+			ActiveRecordMediator.Save(assignedService);
 		}
 
 		public override void Activate(ClientService assignedService)
@@ -60,7 +60,7 @@ namespace InternetInterface.Services
 				client.Save();
 				assignedService.Activated = true;
 				assignedService.EndWorkDate = assignedService.EndWorkDate.Value.Date;
-				ActiveRecordMediator.Update(assignedService);
+				ActiveRecordMediator.Save(assignedService);
 			}
 		}
 
