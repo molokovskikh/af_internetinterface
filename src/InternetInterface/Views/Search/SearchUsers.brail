@@ -41,24 +41,10 @@
 			<td>
 			</td>
 			<td>
-				<input type="radio" id="Autosearch" name="filter.searchProperties.SearchBy" value=Auto ${"checked" if filter.searchProperties.IsSearchAuto()} />
-				<label for="Autosearch">Автоматически</label><br />
-				<input type="radio" id="SearchAccount" name="filter.searchProperties.SearchBy" value=SearchAccount ${"checked" if filter.searchProperties.IsSearchAccount()} />
-				<label for="Autosearch">По номеру счета</label><br />
-				<input type="radio" id="SearchByClientId" name="filter.searchProperties.SearchBy" value=ByFio ${"checked" if filter.searchProperties.IsSearchByFio()} />
-				<label for="SearchByClientId">Имя</label><br />
-				<input type="radio" id="SearchByAddress" name="filter.searchProperties.SearchBy" value=ByAddress ${"checked" if filter.searchProperties.IsSearchByAddress()} />
-				<label for="SearchByAddress">Адресу</label><br />
-				<input type="radio" id="Radio7" name="filter.searchProperties.SearchBy" value=TelNum ${"checked" if filter.searchProperties.IsSearchTelephone()} />
-				<label for="SearchByClientId">Контактная информация</label><br />
+				${app.Edit("filter.searchProperties.SearchBy", "RadioList")}
 			</td>
 			<td>
-				<input type="radio" id="Radio4" name="filter.clientTypeFilter.Type" value=AllClients ${"checked" if filter.clientTypeFilter.IsAll()} />
-				<label for="AutoRadio4search">Все</label><br />
-				<input type="radio" id="Radio5" name="filter.clientTypeFilter.Type" value=Physical ${"checked" if filter.clientTypeFilter.IsPhysical()} />
-				<label for="Radio5">Физические лица</label><br />
-				<input type="radio" id="Radio6" name="filter.clientTypeFilter.Type" value=Lawyer ${"checked" if filter.clientTypeFilter.IsLawyer()} />
-				<label for="Radio6">Юридические лица</label><br />
+				${app.Edit("filter.clientTypeFilter.Type", "RadioList")}
 			</td>
 		</tr>
 	</table>
@@ -72,12 +58,7 @@
 						${FormHelper.Select("filter.statusType", Statuses, {"value" : "Id", "text" : "Name"})}
 					</td>
 					<td>
-						<input type="radio" id="DisabledAll" name="filter.EnabledTypeProperties.Type" value=All ${"checked" if filter.EnabledTypeProperties.IsAll()} />
-						<label for="AutoRadio4search">Все</label><br />
-						<input type="radio" id="DisabledFalse" name="filter.EnabledTypeProperties.Type" value=Enabled ${"checked" if filter.EnabledTypeProperties.IsEnabled()} />
-						<label for="Radio5">Включены</label><br />
-						<input type="radio" id="DisabledTrue" name="filter.EnabledTypeProperties.Type" value=Disabled ${"checked" if filter.EnabledTypeProperties.IsDisabled()} />
-						<label for="Radio6">Отключены</label><br />
+						${app.Edit("filter.EnabledTypeProperties.Type", "RadioList")}
 					</td>
 				</tr>
 			</thead>
