@@ -28,9 +28,9 @@
 				<input id="endDate" type=text name="filter.endDate" value="${filter.endDate.ToShortDateString()}" />
 			</td>
 			<td>
-				  <input type="hidden" name="filter.ClientCode" value="${filter.ClientCode}" />
-				  <button type="submit" id="Button4" class="button">
-				  <img alt="Save" src="../Images/tick.png">Выбрать период</button>
+				<input type="hidden" name="filter.ClientCode" value="${filter.ClientCode}" />
+				<button type="submit" id="Button4" class="button">
+				<img alt="Save" src="../Images/tick.png">Выбрать период</button>
 			</td>
 		</tr>
 	</tbody>
@@ -42,13 +42,14 @@
 			<%lastLease = _client.GetLastLease() %>
 	<%if firstLease != null: %>
 		<tr>
-			<th colspan=4>Аренды -
+			<th colspan=5>Аренды -
 				Первая: ${firstLease.LeaseBegin}
 				Последняя: ${lastLease.LeaseBegin}
 			</th>
 		</tr>
 		<tr>
 			<th>Ip адрес</th>
+			<th>ID точки подключения</th>
 			<th>Mac адрес</th>
 			<th>Начало аренды</th>
 			<th>Конец аренды</th>
@@ -62,18 +63,11 @@
 	<tbody>
 	<% for i,item in enumerate(Leases): %>
 		<tr>
-			<td>
-				${item.GetNormalIp()}
-			</td>
-			<td>
-				${item.HwId}
-			</td>
-			<td>
-				${item.LeaseBegin}
-			</td>
-			<td>
-				${item.LeaseEnd}
-			</td>
+			<td>${item.GetNormalIp()}</td>
+			<td align=center class="small">${item.EndpointId.Id}</td>
+			<td>${item.HwId}</td>
+			<td>${item.LeaseBegin}</td>
+			<td>${item.LeaseEnd}</td>
 		</tr>
 	<%end %>
 		<tr>
