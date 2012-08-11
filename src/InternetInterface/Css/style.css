@@ -419,13 +419,12 @@ input.checkbox {
 /* flash-messages */
 .flash
 {
-	margin-top: 10px;
-	margin-bottom: 30px;
-	margin-left: 30%;
+	margin: 0 auto;
 	width: 30%;
 	height: 20px;
 	text-align: center;
 	font-size: 14px;
+	margin-top: 15px;
 	/*font-weight: bold;*/
 }
 
