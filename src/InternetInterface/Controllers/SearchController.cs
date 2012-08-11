@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Castle.ActiveRecord;
 using Castle.MonoRail.Framework;
+using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
 using InternetInterface.AllLogic;
 using InternetInterface.Controllers.Filter;
@@ -200,7 +201,7 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 	[Helper(typeof(PaginatorHelper)),
 	Helper(typeof(CategorieAccessSet)),]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
-	public class SearchController : SmartDispatcherController
+	public class SearchController : BaseController
 	{
 		[AccessibleThrough(Verb.Get)]
 		public void SearchBy([DataBind("filter")]SeachFilter filter)
@@ -247,6 +248,7 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 			PropertyBag["additionalStatuses"] = AdditionalStatus.FindAllAdd();
 			PropertyBag["Tariffs"] = Tariff.FindAllAdd();
 			PropertyBag["WhoRegistered"] = Partner.FindAllAdd();
+			PropertyBag["Stat"] = new Statistic(DbSession).GetStatistic();
 		}
 
 		public void Redirect([DataBind("filter")]ClientFilter filter)

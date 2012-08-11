@@ -520,3 +520,21 @@ table .filter_front thead td{
 .hidden {
 	display:none;
 }
+
+#statTable {
+	float:left;
+	background-color: white;
+	margin: 5px;
+	border: 1px double black;
+	padding: 10px;
+	color: #5a5b5b;
+	width: 500px;
+}
+
+#statTable span {
+	color: black;
+}
+
+#searchPositionTable {
+	margin-left: -400px;
+}

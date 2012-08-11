@@ -16,11 +16,27 @@
 
 <%if PartnerAccessSet.AccesPartner("GCI") or PartnerAccessSet.AccesPartner("SD"): %>
 <form id="SearchForm" name="SearchForm" action="${siteroot}/Search/SearchBy" 
-	style="width: 100%; ">
+	style="width: 100%;">
 <center>
-<table border="1" bgcolor="#FFFFFF" cellspacing="1" cellpadding="0">
+<table id="statTable">
+	<tbody>
+		<tr>
+			<td>
+				<fieldset style="padding-left:15px;">
+				<legend>Статистика</legend>
+				<p>On-Line клиенты: <span>${Stat.OnLineCount}</span></p>
+				<p>Уникальных клиентов за сутки: <span>${Stat.UniqueClient}</span></p>
+				<p>Количество зарегистрированных клиентов (Корпы/Физики): <span>${Stat.AllRegister} (${Stat.LawyerRegister}/${Stat.PhysicalRegister})</span></p>
+				<p>Количество клиентов в состоянии "Заблокирован"(Корпы/Физики): <span>${Stat.AllBlocked} (${Stat.BlockedLawyer}/${Stat.BlockedPhysical})</span></p>
+				<p>Количество клиентов "Заблокирован" и "Он-Лайн": <span>${Stat.BlockedOnLine}</span></p>
+				</fieldset>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<table id="searchPositionTable" border="1" bgcolor="#FFFFFF" cellspacing="1" cellpadding="0">
 <tr>
-	<td width="100%">
+	<td style="width:100%">
 	<table class="table" bgcolor="#FFFFFF">
 	<tr>
 	<td id="TableSize">
@@ -68,11 +84,10 @@
 	</td>
 	</tr>
 </table>
-	</td>
+</td>
 </tr>
 </table>
 </center>
-	</p>
 </form>
 <%end %>
 </div>

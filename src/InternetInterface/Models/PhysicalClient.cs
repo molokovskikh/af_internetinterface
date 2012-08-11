@@ -21,6 +21,7 @@ namespace InternetInterface.Models
 		public int Client { get; set; }
 
 		public int endpointId { get; set; }
+
 		public string Name { get; set; }
 
 		public string Switch { get; set; }
@@ -50,6 +51,11 @@ namespace InternetInterface.Models
 			if (endPoint != null)
 				return endPoint.StaticIps;
 			return new List<StaticIp>();
+		}
+
+		public virtual string ForSearchName(string query)
+		{
+			return TextHelper.SelectQuery(query, Name);
 		}
 	}
 

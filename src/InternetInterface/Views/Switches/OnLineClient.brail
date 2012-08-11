@@ -1,78 +1,74 @@
-﻿  <script type="text/javascript">
-
-
-$(document).ready(function () {
-    $("#Submit2").hide();
-    $("#on_line_clients").tablesorter({ widthFixed: true, widgets: ['zebra'] });
-    $("#Zones").change(function () {
-        $("#onform").submit();
-    });
-
-});
-  </script>
-
-  <style type="text/css">
-        #on_line_clients_head th
-        {
-            border:1px double black;
-            }
-  </style>
-
-<div id="main" style="width:100%;">
+﻿<div id="main" style="width:100%;">
 <div id="container">
-    <div id="block-tables" class="block">
-        <table class="table" id="on_line_clients" style="width:100%; " border="0" id="PartnerInfoTable">
-            <thead class="tablesorter_head" id="on_line_clients_head">
-            <tr>
-                <td colspan=5>
-                    <form id="onform" class="formConnect" method="post" action="${siteroot}/Switches/GoZone">
-                        <label for="Zones">Выберите зону для просмотра: </label>
-                        <select name="Zone" id="Zones" style="width: 200px;" >
-                                       <%
-                                        for j, Zone in enumerate(Zones): 
-                                        %>
-                                        <option id="Option${j}" value="${Zone.Id}" ${"selected" if (Zone.Id == thisZone)} > ${Zone.Name} </option>
-                                       <% end %>
-                       </select>
-                       <input id="Submit2" type="submit" value="Показать"  align="right" />
-                    </form>
-                </td>
-            </tr>
-            <tr>
-                <th style="width:130px;">Статический IP</th>
-                <th style="width:150px;">Арендованный IP</th>
-                <th >Дата аренды</th>
-                <th style="width:65px;">Клиент</th>
-                <th>Endpoint ID</th>
-                <th>Имя</th>
-                <th style="width:60px;">Свитч</th>
-                <th>Название свича</th>
-                <th>IP свича</th>
-                <th style="width:50px;">Порт</th>
-                <th style="width:90px;">PackageId</th>
-                <th style="width:90px;">Скорость</th>
-            </tr>
-            </thead>
-            <tbody>
-             <% for i,Client in enumerate(OnLineClients): %>
-                <tr>
-                    <td>${Client.static_IP}</td>
-                    <td>${Client.Leased_IP}</td>
-                    <td>${Client.LeaseBegin}</td>
-                    <td><a href="${Siteroot}/Search/Redirect?filter.ClientCode=${Client.Client}">${Client.Client.ToString("00000")}</a></td>
-                    <td>${Client.endpointId}</td>
-                    <td>${Client.Name}</td>
-                    <td>${Client.Switch}</td>
-                    <td><a href="${Siteroot}/Switches/MakeSwitch?Switch=${Client.Switch}">${Client.Swith_adr}</a></td>
-                    <td>${Client.swith_IP}</td>
-                    <td>${Client.Port}</td>
-                    <td>${Client.PackageId}</td>
-                    <td>${Client.GetNormalSpeed()} мб/с</td>
-                </tr>
-             <%end %>
-
-            </tbody>
-        </table>
-    </div>
+	<div id="Div1" class="block" style="margin: 0 auto; width: 500px;">
+		<form id="onform" class="formConnect" method="get">
+			<table class="table find_block">
+				<thead>
+					<tr><th colspan=2>Параментры фильтрации</th></tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Текст для поиска</td>
+						<td>${FormHelper.TextFieldValue("filter.SearchText", filter.SearchText, null)}</td>
+					</tr>
+					<tr>
+						<td>Выберите зону для просмотра:</td>
+						<td>${FormHelper.Select("filter.Zone", filter.Zone, Zones, {"value" : "Id", "text" : "Name"})}</td>
+					</tr>
+					<tr>
+						<td>Выберите коммутатор:</td>
+						<td>${FormHelper.Select("filter.Switch", filter.Switch, Switches, {"value" : "Id", "text" : "Name"})}</td>
+					</tr>
+					<tr>
+						<td colspan=2>${app.Edit("filter.ClientType", "RadioList")}</td>
+					</tr>
+					<tr>
+						<td colspan=2><input id="Submit2" type="submit" value="Показать"  align="right" /></td>
+					</tr>
+				</tbody>
+			</table>
+		</form>
+	</div>
+	<div id="block-tables" class="block">
+		<table class="table" id="on_line_clients" style="width:100%; " border="0" id="PartnerInfoTable">
+			<thead id="on_line_clients_head">
+			<tr>
+				<th style="width:130px;">${app.Sortable("Статический IP", "StaticIp")}</th>
+				<th style="width:150px;">${app.Sortable("Арендованный IP", "LeaseIp")}</th>
+				<th>${app.Sortable("Дата аренды", "LeaseDate")}</th>
+				<th style="width:65px;">${app.Sortable("Клиент", "Client")}</th>
+				<th>${app.Sortable("Endpoint ID", "Endpoint")}</th>
+				<th>${app.Sortable("Имя", "Name")}</th>
+				<th style="width:60px;">${app.Sortable("Свитч", "Switch")}</th>
+				<th>${app.Sortable("Название свича", "SwitchName")}</th>
+				<th>${app.Sortable("IP свича", "SwitchIp")}</th>
+				<th style="width:50px;">${app.Sortable("Порт", "Port")}</th>
+				<th style="width:90px;">${app.Sortable("PackageId", "PackageId")}</th>
+				<th style="width:90px;">${app.Sortable("Скорость", "Speed")}</th>
+			</tr>
+			</thead>
+			<tbody>
+			 <% for i,Client in enumerate(OnLineClients): %>
+				<tr>
+					<td>${Client.static_IP}</td>
+					<td>${Client.Leased_IP}</td>
+					<td>${Client.LeaseBegin}</td>
+					<td><a href="${Siteroot}/Search/Redirect?filter.ClientCode=${Client.Client}">${Client.Client.ToString("00000")}</a></td>
+					<td>${Client.endpointId}</td>
+					<td>${Client.ForSearchName(filter.SearchText)}</td>
+					<td>${Client.Switch}</td>
+					<td><a href="${Siteroot}/Switches/MakeSwitch?Switch=${Client.Switch}">${Client.Swith_adr}</a></td>
+					<td>${Client.swith_IP}</td>
+					<td>${Client.Port}</td>
+					<td>${Client.PackageId}</td>
+					<td>${Client.GetNormalSpeed()} мб/с</td>
+				</tr>
+			 <%end %>
+			<tr>
+				<td colspan=12>${PaginatorHelper.ShowPaginator()}</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
 </div>
 </div>

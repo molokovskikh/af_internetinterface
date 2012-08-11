@@ -39,7 +39,7 @@
 			<th><a href = "${siteroot}/Search/SearchUsers" ><span class="MH"><div class=menudiv>Клиенты</div></span></a></th>
 			<%end %> 
 			<%if PartnerAccessSet.AccesPartner("DHCP"): %>
-			<th><a href = "${siteroot}/Switches/OnLineClient?Zone=4" ><span class="MH"><div class=menudiv>OnLine клиенты</div></span></a></th>
+			<th><a href = "${siteroot}/Switches/OnLineClient?filter.Zone=4" ><span class="MH"><div class=menudiv>OnLine клиенты</div></span></a></th>
 			<%end %>
 			<%if PartnerAccessSet.AccesPartner("SSI"): %>
 			<th><a href = "${siteroot}/Payers/Filter" ><span class="MH"><div class=menudiv>Платежи по регистраторам</div></span></a></th>

@@ -132,6 +132,7 @@
     <Compile Include="Functional\HouseMapFixture.cs" />
     <Compile Include="Functional\InvoiceFixture.cs" />
     <Compile Include="Functional\LawyerPersonFixture.cs" />
+    <Compile Include="Functional\OnLineClients.cs" />
     <Compile Include="Functional\PaymentFixture.cs" />
     <Compile Include="Functional\PhysicalClientFixture.cs" />
     <Compile Include="Functional\PrivateMessageFixture.cs" />
@@ -150,6 +151,7 @@
     <Compile Include="Integration\ContactFixture.cs" />
     <Compile Include="Integration\HouseMapFixture.cs" />
     <Compile Include="Integration\MailerFixture.cs" />
+    <Compile Include="Integration\OnLineClientsFixture.cs" />
     <Compile Include="Integration\PaymentFixture.cs" />
     <Compile Include="Integration\ServicesFixture.cs" />
     <Compile Include="Integration\SmsFixture.cs" />

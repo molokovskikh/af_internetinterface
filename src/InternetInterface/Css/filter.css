@@ -26,3 +26,25 @@
 .form-table td {
 	padding: 3px;
 }
+
+
+#on_line_clients_head th
+{
+	border:1px double black;
+	}
+
+.find_block
+{
+	width:500px;
+	background-color: White;
+	border:4px double black;
+	}
+
+.find_block td
+{
+	width:50%;
+	}
+.find_block td select
+{
+	width:200px;
+	}
