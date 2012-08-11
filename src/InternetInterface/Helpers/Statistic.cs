@@ -41,7 +41,7 @@ where l.LeaseBegin >= :beginInterval and l.LeaseBegin <= :endInterval
 group by cp.Client;")
 	.SetParameter("beginInterval", DateTime.Now.AddDays(-1))
 	.SetParameter("endInterval", DateTime.Now)
-	.ToList<object>().Count;
+	.List<object>().Count;
 
 			PhysicalRegister = Convert.ToInt32(_session.CreateSQLQuery(@"
 select count(*) from internet.Clients c
