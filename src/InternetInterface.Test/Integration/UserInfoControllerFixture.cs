@@ -66,6 +66,7 @@ namespace InternetInterface.Test.Integration
 			session.Clear();
 			endpoint = session.Get<ClientEndpoint>(endpoint.Id);
 			Assert.That(endpoint, Is.EqualTo(null));
+			session.Clear();
 		}
 
 		private void CheckValidationError(object item)

@@ -40,6 +40,7 @@ namespace InternetInterface.Test.Integration
 			var context = new HttpContext(workerRequest);
 			context.User = new WindowsPrincipal(WindowsIdentity.GetCurrent());
 			context.Items[InitializeContent.AdministratorKey] = Partner.FindFirst();
+			InitializeContent.GetAdministrator = () => Partner.FindFirst();
 			HttpContext.Current = context;
 
 			session.CreateSQLQuery("delete from ServiceRequest").ExecuteUpdate();

@@ -42,11 +42,11 @@ namespace InternetInterface.Test.Functional
 			session.Save(disabledClient);
 
 			Open("Search/SearchUsers.rails");
-			browser.RadioButton("DisabledFalse").Checked = true;
+			browser.RadioButton("filter.EnabledTypeProperties.Type_0").Checked = true;
 			browser.Button("SearchButton").Click();
 			AssertText(Client.Name);
 			Assert.That(browser.Text, !Is.StringContaining(disabledClient.Name));
-			browser.RadioButton("DisabledTrue").Checked = true;
+			browser.RadioButton("filter.EnabledTypeProperties.Type_1").Checked = true;
 			browser.Button("SearchButton").Click();
 			Assert.That(browser.Text, Is.StringContaining(disabledClient.Name));
 		}
