@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using Castle.ActiveRecord;
 using Castle.Components.Validator;
+using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.MonoRailExtentions;
 using NHibernate;

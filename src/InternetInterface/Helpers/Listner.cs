@@ -7,6 +7,7 @@ using System.Web.Services.Description;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework.Internal.EventListener;
 using Common.Web.Ui.Helpers;
+using Common.Web.Ui.Models.Audit;
 using Common.Web.Ui.MonoRailExtentions;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;

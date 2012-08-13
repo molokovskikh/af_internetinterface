@@ -453,7 +453,6 @@ namespace InternetInterface.Controllers
 			var clientsEndPoint = ClientEndpoint.Queryable.Where(c => c.Client == client && c.Id == EditConnect).ToArray();
 			if (clientsEndPoint.Length != 0) {
 				clientEntPoint = clientsEndPoint[0];
-				InitializeHelper.InitializeModel(clientEntPoint);
 			}
 			else {
 				newFlag = true;
@@ -471,7 +470,7 @@ namespace InternetInterface.Controllers
 			var errorMessage = Validation.ValidationConnectInfo(ConnectInfo);
 			decimal _connectSum;
 			var validateSum =
-				!(!string.IsNullOrEmpty(ConnectSum) && (!decimal.TryParse(ConnectSum, out _connectSum) || _connectSum <= 0));
+				!(!string.IsNullOrEmpty(ConnectSum) && (!decimal.TryParse(ConnectSum, out _connectSum) || (_connectSum <= 0 && !client.IsPhysical())));
 			if (!validateSum)
 				errorMessage = "Введена невалидная сумма";
 			if ((ConnectInfo.static_IP != string.Empty) || (nullFlag)) {
@@ -498,7 +497,6 @@ namespace InternetInterface.Controllers
 					clientEntPoint.Switch = DbSession.Load<NetworkSwitches>(ConnectInfo.Switch);
 					clientEntPoint.Monitoring = ConnectInfo.Monitoring;
 					if (!newFlag) {
-						InitializeHelper.InitializeModel(clientEntPoint);
 						clientEntPoint.UpdateAndFlush();
 					}
 					else {
@@ -760,16 +758,12 @@ where r.`Label`= :LabelIndex;")
 			SetBinder(new DecimalValidateBinder {Validator = Validator});
 			var _client = Client.Queryable.First(c => c.Id == ClientID);
 			var updateClient = _client.LawyerPerson;
-			InitializeHelper.InitializeModel(_client);
-			InitializeHelper.InitializeModel(updateClient);
+
 			BindObjectInstance(updateClient, ParamStore.Form, "LegalPerson");
 			BindObjectInstance(_client, ParamStore.Form, "_client");
 
 			if (IsValid(updateClient))
 			{
-				InitializeHelper.InitializeModel(_client);
-				InitializeHelper.InitializeModel(updateClient);
-
 				if (!string.IsNullOrEmpty(comment))
 				{
 					_client.LogComment = comment;

@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using Common.Tools;
+using Common.Web.Ui.ActiveRecordExtentions;
 using InternetInterface.Models;
 using NHibernate.Criterion;
 

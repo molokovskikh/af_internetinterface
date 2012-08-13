@@ -2,6 +2,7 @@
 using Castle.ActiveRecord;
 using Castle.Components.Validator;
 using Common.Web.Ui.Helpers;
+using Common.Web.Ui.Models.Audit;
 
 namespace InternetInterface.Models
 {

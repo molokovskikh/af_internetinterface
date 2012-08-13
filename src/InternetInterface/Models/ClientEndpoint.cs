@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Castle.ActiveRecord;
 using Common.Web.Ui.Helpers;
+using Common.Web.Ui.Models.Audit;
 using NHibernate.Criterion;
 
 namespace InternetInterface.Models

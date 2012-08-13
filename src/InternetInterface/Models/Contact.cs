@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using Castle.ActiveRecord;
 using Common.Web.Ui.Helpers;
+using Common.Web.Ui.Models.Audit;
 using InternetInterface.Controllers.Filter;
 
 namespace InternetInterface.Models

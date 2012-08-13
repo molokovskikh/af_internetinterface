@@ -5,6 +5,7 @@ using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
 using Common.Tools;
 using Common.Web.Ui.Helpers;
+using Common.Web.Ui.Models.Audit;
 
 namespace InternetInterface.Models
 {

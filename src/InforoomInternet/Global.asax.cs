@@ -8,9 +8,11 @@ using Castle.MonoRail.Framework.Internal;
 using Castle.MonoRail.Framework.Routing;
 using Castle.MonoRail.Views.Brail;
 using Common.Web.Ui.Helpers;
+using Common.Web.Ui.MonoRailExtentions;
 using InforoomInternet.Models;
 using InternetInterface.Helpers;
 using log4net;
+using log4net.Repository.Hierarchy;
 
 namespace InforoomInternet
 {
