@@ -426,6 +426,12 @@ button.button:active, a.button:active {
 	color: red;
 }
 
+.table a.hardwareInfo {
+	display:inline;
+	float:none;
+	background-color:#cdf8bd;
+}
+
 .hardWareInfoBlock
 {
 	padding:15px;

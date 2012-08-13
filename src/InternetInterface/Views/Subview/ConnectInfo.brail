@@ -77,7 +77,7 @@
 			<span><a href="${SiteRoot}/Switches/MakeSwitch?Switch=${ConnectInfo.Switch}"> Свич</a> </span>
 		</td>
 		  <td>
-			<a class="button hardwareInfo" href="${siteroot}/Hardware/PortInfo?endPoint=${ConnectInfo.endpointId}" style="display:inline; float:none; background-color:#cdf8bd;">
+			<a class="button hardwareInfo" href="${siteroot}/Hardware/PortInfo?endPoint=${ConnectInfo.endpointId}">
 				${ConnectInfo.Swith_adr} (${ConnectInfo.swith_IP})
 			</a>
 		</td>
