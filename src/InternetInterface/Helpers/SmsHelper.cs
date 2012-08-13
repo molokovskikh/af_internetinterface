@@ -24,6 +24,14 @@ namespace InternetInterface.Helpers
 		private const string Login = "inforoom";
 		private const string Password = "analitFarmacia";
 		private const string Source = "inforoom";
+		public static List<string> Types = new List<string> {
+			"delivered",
+			"notDelivered",
+			"waiting",
+			"enqueued",
+			"cancel",
+			"onModer"
+		};
 
 		private static bool AcceptAllCertifications(object sender, System.Security.Cryptography.X509Certificates.X509Certificate certification, System.Security.Cryptography.X509Certificates.X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
 		{
@@ -35,7 +43,34 @@ namespace InternetInterface.Helpers
 			return Convert.ToInt64((DateTime.Now - DateTime.MinValue).TotalSeconds).ToString();
 		}
 
-		public static List<XDocument> SendServiceMessageNow(List<string> numbers)
+		protected virtual XDocument MakeRequest(XDocument document, string url)
+		{
+			XDocument resultDoc = new XDocument();
+			ServicePointManager.ServerCertificateValidationCallback = AcceptAllCertifications;
+
+			var request = (HttpWebRequest)WebRequest.Create(url);
+			document.Declaration = new XDeclaration("1.0", "utf-8", "true");
+			var data = Encoding.UTF8.GetBytes(document.ToString());
+
+			request.ContentType = "text/xml";
+			request.ContentLength = data.Length;
+			request.Method = "POST";
+#if !DEBUG
+			var outStream = request.GetRequestStream();
+
+			outStream.Write(data, 0, data.Length);
+			outStream.Close();
+
+			var responseStream = request.GetResponse().GetResponseStream();
+
+			var reader = new StreamReader(responseStream);
+			resultDoc = XDocument.Parse(reader.ReadToEnd());
+			responseStream.Close();
+#endif
+			return resultDoc;
+		}
+
+		public List<XDocument> SendServiceMessageNow(List<string> numbers)
 		{
 			var messages = numbers.Select(number => new SmsMessage {
 				CreateDate = DateTime.Now, PhoneNumber = number
@@ -43,7 +78,7 @@ namespace InternetInterface.Helpers
 			return SendMessages(messages);
 		}
 
-		public static XDocument SendMessage(string number, string text, DateTime? shouldBeSend = null)
+		public XDocument SendMessage(string number, string text, DateTime? shouldBeSend = null)
 		{
 			return SendMessage(new SmsMessage {
 				CreateDate = DateTime.Now,
@@ -53,7 +88,7 @@ namespace InternetInterface.Helpers
 			});
 		}
 
-		public static XDocument SendMessage(SmsMessage message)
+		public XDocument SendMessage(SmsMessage message)
 		{
 			return SendMessages(new List<SmsMessage> {message}).FirstOrDefault();
 		}
@@ -63,16 +98,73 @@ namespace InternetInterface.Helpers
 			SmsMessage.Queryable.Where(m => m.Client == client && !m.IsSended).ToList().ForEach(m => m.Delete());
 		}
 
-		public static List<XDocument> SendMessages(IList<SmsMessage> smses)
+		public string GetStatus(SmsMessage message)
+		{
+			var statuses = GetStatus(message.SMSID);
+			if (statuses.Keys.Contains("delivered") && statuses["delivered"].Contains(message.PhoneNumber.Replace("+", string.Empty))) {
+				return "Доставлено";
+			}
+			if (statuses.Keys.Contains("notDelivered") && statuses["notDelivered"].Contains(message.PhoneNumber.Replace("+", string.Empty))) {
+				return "Не доставлено";
+			}
+			if (statuses.Keys.Contains("waiting") && statuses["waiting"].Contains(message.PhoneNumber.Replace("+", string.Empty))) {
+				return "В ожидании";
+			}
+			if (statuses.Keys.Contains("enqueued") && statuses["enqueued"].Contains(message.PhoneNumber.Replace("+", string.Empty))) {
+				return "Отчет о доставке еще не сформирован";
+			}
+			if (statuses.Keys.Contains("cancel") && statuses["cancel"].Contains(message.PhoneNumber.Replace("+", string.Empty))) {
+				return "Отмена";
+			}
+			if (statuses.Keys.Contains("onModer") && statuses["onModer"].Contains(message.PhoneNumber.Replace("+", string.Empty))) {
+				return "Сообщение находятся на модерации";
+			}
+			return "Неизвестен";
+		}
+
+		public Dictionary<string, List<string>> GetStatus(string smsId)
+		{
+			var result = new Dictionary<string, List<string>>();
+
+			var document = new XDocument(
+				new XElement("data",
+					new XElement("login", Login),
+					new XElement("password", Password),
+					new XElement("smsid", smsId)
+					)
+				);
+
+			var url = @"https://lcab.sms-uslugi.ru/API/XML/report.php";
+
+			var data = MakeRequest(document, url);
+
+			var resultDocData = data.Element("data");
+			if (resultDocData != null) {
+				var serverRequest = Int32.Parse(resultDocData.Element("code").Value);
+				if (serverRequest == (int)SmsRequestType.ValidOperation) {
+					var detail = resultDocData.Element("detail");
+					foreach (var type in Types) {
+						var delivered = detail.Element(type);
+						if (delivered != null && delivered.HasElements) {
+							result.Add(type, new List<string>());
+							var delResult = result[type];
+							foreach (var number in delivered.Elements("number")) {
+								delResult.Add(number.Value);
+							}
+						}
+					}
+				}
+			}
+			return result;
+		}
+
+		public List<XDocument> SendMessages(IList<SmsMessage> smses)
 		{
 			var result = new List<XDocument>();
-
-			ServicePointManager.ServerCertificateValidationCallback = AcceptAllCertifications;
 
 			var groupedSmses = smses.Where(s => !s.IsSended).GroupBy(s => s.ShouldBeSend);
 
 			foreach (var groupedSms in groupedSmses) {
-				var request = (HttpWebRequest)WebRequest.Create(@"https://transport.sms-pager.com:7214/send.xml");
 				var document = new XDocument(
 					new XElement("data",
 					             new XElement("login", Login),
@@ -106,29 +198,16 @@ namespace InternetInterface.Helpers
 					}
 				}
 
-				document.Declaration = new XDeclaration("1.0", "utf-8", "true");
-				var data = Encoding.UTF8.GetBytes(document.ToString());
+				var resultDoc = MakeRequest(document, @"https://transport.sms-pager.com:7214/send.xml");
 
-				request.ContentType = "text/xml";
-				request.ContentLength = data.Length;
-				request.Method = "POST";
-
-				var outStream = request.GetRequestStream();
-
-				outStream.Write(data, 0, data.Length);
-				outStream.Close();
-
-				var responseStream = request.GetResponse().GetResponseStream();
-
-				var reader = new StreamReader(responseStream);
-				var resultDoc = XDocument.Parse(reader.ReadToEnd());
-				responseStream.Close();
 				var resultDocData = resultDoc.Element("data");
 				if (resultDocData != null) {
 					var serverRequest = Int32.Parse(resultDocData.Element("code").Value);
+					var smsId = resultDocData.Element("smsid").Value;
 					foreach (var smsMessage in groupedSms.Where(s => !string.IsNullOrEmpty(s.PhoneNumber))) {
 						smsMessage.IsSended = serverRequest == (int) SmsRequestType.ValidOperation;
 						smsMessage.ServerRequest = serverRequest;
+						smsMessage.SMSID = smsId;
 						smsMessage.Save();
 					}
 				}

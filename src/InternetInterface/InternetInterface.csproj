@@ -226,6 +226,7 @@
     <None Include="Views\Subview\DeleteLabel.brail" />
     <None Include="Views\Subview\ConnectInfo.brail" />
     <None Include="Views\UserInfo\Leases.brail" />
+    <Content Include="JavaScript\AjaxHelper.js" />
     <Content Include="JavaScript\Common.js" />
     <Content Include="JavaScript\DecimalValidate.js" />
     <Content Include="JavaScript\jquery.maskedinput-1.2.2.js" />

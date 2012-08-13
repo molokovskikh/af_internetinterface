@@ -1,4 +1,5 @@
-﻿using InternetInterface.Models;
+﻿using System.Threading;
+using InternetInterface.Models;
 using NUnit.Framework;
 using Test.Support.Web;
 using WatiN.Core.Native.Windows;
@@ -17,6 +18,9 @@ namespace InternetInterface.Test.Functional
 			browser.TextField("sms_text").AppendText("test sms");
 			browser.Button("send_but").Click();
 			Assert.That(browser.Text, Is.StringContaining("Сообщение передано для отправки"));
+			Click("Получить");
+			Thread.Sleep(1000);
+			AssertText("Неизвестен");
 		}
 	}
 }

@@ -1,4 +1,5 @@
-﻿<script language="javascript" type="text/javascript">
+﻿${app.JS("AjaxHelper.js")}
+<script language="javascript" type="text/javascript">
 	var MaxLength = 1400;
 	function preparemessage() {
 		document.forms.sendsms.smstext.value = document.forms.sendsms.sms_text.value;
@@ -69,7 +70,7 @@
 <table class="table">
 	<thead>
 		<tr>
-			<th colspan=10 style="text-align:center;">Sms сообщения пользователя <a href="${Siteroot}/Search/Redirect?filter.ClientCode=${client.Id}">${client.Name}</a></th>
+			<th colspan=11 style="text-align:center;">Sms сообщения пользователя <a href="${Siteroot}/Search/Redirect?filter.ClientCode=${client.Id}">${client.Name}</a></th>
 		</tr>
 		<tr>
 			<th>Id</th>
@@ -82,6 +83,7 @@
 			<th>Идентификатор партии</th>
 			<th>Ответ сервера</th>
 			<th>Регистратор</th>
+			<th>Статус</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -97,6 +99,10 @@
 				<td>${item.SMSID}</td>
 				<td style="text-align:center;">${"OK" if item.ServerRequest == 1}</td>
 				<td>${item.Registrator.Name if item.Registrator}</td>
+				<td>
+					<input type=hidden value=${item.Id} />
+					<button type=button onclick="GetSmsStatus(this, '${Siteroot}/Sms/GetSmsStatus')">Получить</button>
+				</td>
 			</tr>
 		<%end %>
 	</tbody>

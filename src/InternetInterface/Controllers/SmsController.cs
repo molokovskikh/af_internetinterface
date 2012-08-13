@@ -34,14 +34,20 @@ namespace InternetInterface.Controllers
 					PhoneNumber = "+7" + phoneNumber.Text,
 					Text = messageText
 				};
-#if !DEBUG
-				SmsHelper.SendMessage(message);
-#endif
+
+				new SmsHelper().SendMessage(message);
+
 				Flash["Message"] = Message.Notify("Сообщение передано для отправки");
 			} else {
 				Flash["Message"] = Message.Error("Введите текст сообщения");
 			}
 			RedirectToReferrer();
+		}
+
+		[return : JSONReturnBinder]
+		public string GetSmsStatus(uint smsId)
+		{
+			return new SmsHelper().GetStatus(DbSession.Get<SmsMessage>(smsId));
 		}
 	}
 }
