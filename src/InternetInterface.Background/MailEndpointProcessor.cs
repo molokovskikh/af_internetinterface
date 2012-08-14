@@ -38,9 +38,7 @@ namespace InternetInterface.Background
 		{
 			var messages = new List<SmsMessage>();
 			SmsMessage.Queryable.Where(m => !m.IsSended && m.PhoneNumber != null).ToList().ForEach(messages.Add);
-#if !DEBUG
-			SmsHelper.SendMessages(messages);
-#endif
+			new SmsHelper().SendMessages(messages);
 			var thisDateMax = InternetSettings.FindFirst();
 			thisDateMax.NextSmsSendDate = SystemTime.Now().AddDays(1).Date.AddHours(12);
 			thisDateMax.Update();

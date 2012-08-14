@@ -38,7 +38,7 @@ namespace InternetInterface.Controllers
 					var sms = request.GetSms();
 					if (sms != null) {
 #if !DEBUG
-						SmsHelper.SendMessage(sms);
+						new SmsHelper().SendMessage(sms);
 #endif
 					}
 
