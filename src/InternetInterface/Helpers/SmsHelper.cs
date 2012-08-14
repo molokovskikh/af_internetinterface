@@ -204,6 +204,7 @@ namespace InternetInterface.Helpers
 				if (resultDocData != null) {
 					var serverRequest = Int32.Parse(resultDocData.Element("code").Value);
 					var smsId = resultDocData.Element("smsid").Value;
+					_log.Debug(resultDocData);
 					foreach (var smsMessage in groupedSms.Where(s => !string.IsNullOrEmpty(s.PhoneNumber))) {
 						smsMessage.IsSended = serverRequest == (int) SmsRequestType.ValidOperation;
 						smsMessage.ServerRequest = serverRequest;
