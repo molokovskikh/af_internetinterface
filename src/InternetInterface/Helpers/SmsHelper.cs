@@ -203,8 +203,15 @@ namespace InternetInterface.Helpers
 				var resultDocData = resultDoc.Element("data");
 				if (resultDocData != null) {
 					var serverRequest = Int32.Parse(resultDocData.Element("code").Value);
+					if (serverRequest == (int) SmsRequestType.ValidOperation)
+					{
+						_log.Debug(document);
+						_log.Debug(resultDocData);
+					} else {
+						_log.Error(document);
+						_log.Error(resultDocData);
+					}
 					var smsId = resultDocData.Element("smsid").Value;
-					_log.Debug(resultDocData);
 					foreach (var smsMessage in groupedSms.Where(s => !string.IsNullOrEmpty(s.PhoneNumber))) {
 						smsMessage.IsSended = serverRequest == (int) SmsRequestType.ValidOperation;
 						smsMessage.ServerRequest = serverRequest;
