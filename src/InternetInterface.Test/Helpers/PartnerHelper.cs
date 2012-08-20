@@ -6,7 +6,7 @@ using InternetInterface.Models;
 
 namespace InternetInterface.Test.Helpers
 {
-	class PartnerHelper
+	internal class PartnerHelper
 	{
 		public static Partner CreatePartner()
 		{
@@ -22,14 +22,11 @@ namespace InternetInterface.Test.Helpers
 		public static List<CategorieAccessSet> CreatePartnerAccessSet(List<int> rights, Partner partner)
 		{
 			var resulr = new List<CategorieAccessSet>();
-			foreach (var right in rights)
-			{
-				if ((right == 4) && (!rights.Contains(1)))
-				{
+			foreach (var right in rights) {
+				if ((right == 4) && (!rights.Contains(1))) {
 					rights.Add(1);
 				}
-				var newAccess = new CategorieAccessSet
-				{
+				var newAccess = new CategorieAccessSet {
 					AccessCat = AccessCategories.Find(right),
 					Categorie = partner.Categorie
 				};

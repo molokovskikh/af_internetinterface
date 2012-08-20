@@ -13,10 +13,10 @@ namespace InternetInterface.Test.Unit
 		[SetUp]
 		public void Setup()
 		{
-			var provider = ((AbstractBytecodeProvider) NHibernate.Cfg.Environment.BytecodeProvider);
+			var provider = ((AbstractBytecodeProvider)NHibernate.Cfg.Environment.BytecodeProvider);
 			provider.SetProxyFactoryFactory(typeof(ProxyFactoryFactory).AssemblyQualifiedName);
 
-			InitializeContent.GetAdministrator = () => new Partner{AccesedPartner = new List<string>()};
+			InitializeContent.GetAdministrator = () => new Partner { AccesedPartner = new List<string>() };
 		}
 	}
 }

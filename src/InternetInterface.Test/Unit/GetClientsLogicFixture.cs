@@ -25,11 +25,10 @@ namespace InternetInterface.Test.Unit
 				}
 			};
 			InitializeContent.GetAdministrator = () => _thisPartner;
-			_filter = new SeachFilter
-			{
+			_filter = new SeachFilter {
 				clientTypeFilter = new ClientTypeProperties { Type = ForSearchClientType.AllClients },
 				searchProperties = new UserSearchProperties { SearchBy = SearchUserBy.Auto },
-				EnabledTypeProperties = new EnabledTypeProperties { Type = EndbledType.All}
+				EnabledTypeProperties = new EnabledTypeProperties { Type = EndbledType.All }
 			};
 		}
 

@@ -20,11 +20,11 @@ namespace InternetInterface.Components
 			var contactId = Convert.ToUInt32(ComponentParams["cintactId"].ToString());
 			var thisContact = Contact.Queryable.FirstOrDefault(c => c.Id == contactId);
 			var htmlCode = string.Format("<select {1} class=\"linkSelector\" name=\"{0}.Type\" >", name, idAttr);
-			foreach (var type in Enum.GetValues(typeof (ContactType))) {
+			foreach (var type in Enum.GetValues(typeof(ContactType))) {
 				htmlCode += string.Format("<option class={3} value=\"{0}\" {2}>{1}</option>", type,
-				                          Contact.GetReadbleCategorie((ContactType) type),
-				                          thisContact != null && thisContact.Type == (ContactType) type ? "selected" : string.Empty,
-				                          (int) type == (int) ContactType.Email ? "emailOption" : "telephoneOption");
+					Contact.GetReadbleCategorie((ContactType)type),
+					thisContact != null && thisContact.Type == (ContactType)type ? "selected" : string.Empty,
+					(int)type == (int)ContactType.Email ? "emailOption" : "telephoneOption");
 			}
 			htmlCode += "</select>";
 			RenderText(htmlCode);

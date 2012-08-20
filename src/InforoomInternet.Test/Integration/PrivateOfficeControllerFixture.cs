@@ -73,8 +73,7 @@ namespace InforoomInternet.Test.Integration
 		[Test]
 		public void PrivateOffice()
 		{
-			using (new SessionScope())
-			{
+			using (new SessionScope()) {
 				var filter = new AccessFilter();
 				Request.UserHostAddress = "192.168.200.1";
 				Assert.IsTrue(filter.Perform(ExecuteWhen.BeforeAction, controller.Context, controller, controller.ControllerContext));
@@ -84,7 +83,7 @@ namespace InforoomInternet.Test.Integration
 		[Test]
 		public void Write_off_for_channel_group_activation()
 		{
-			var channel = new ChannelGroup("Тестовый пакет каналов 1", 100, 10) {ActivationCost = 20};
+			var channel = new ChannelGroup("Тестовый пакет каналов 1", 100, 10) { ActivationCost = 20 };
 			session.Save(channel);
 
 			Request.Params.Add("iptv.Channels[0].Id", channel.Id.ToString());

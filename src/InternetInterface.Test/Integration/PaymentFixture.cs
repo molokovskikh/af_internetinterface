@@ -12,7 +12,7 @@ using Test.Support;
 namespace InternetInterface.Test.Integration
 {
 	[TestFixture, Ignore("Чинить")]
-	class PaymentFixture : IntegrationFixture
+	internal class PaymentFixture : IntegrationFixture
 	{
 		[Test]
 		public void Parse_payments()

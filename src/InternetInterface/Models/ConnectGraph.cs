@@ -7,7 +7,6 @@ using InternetInterface.Models.Universal;
 
 namespace InternetInterface.Models
 {
-
 	public class Intervals
 	{
 		public static List<string> GetIntervals()
@@ -29,7 +28,8 @@ namespace InternetInterface.Models
 	public class ConnectGraph : ValidActiveRecordLinqBase<ConnectGraph>
 	{
 		public ConnectGraph()
-		{}
+		{
+		}
 
 		public ConnectGraph(Client client, DateTime day, Brigad brigad)
 		{
@@ -53,5 +53,4 @@ namespace InternetInterface.Models
 		[BelongsTo]
 		public virtual Brigad Brigad { get; set; }
 	}
-
 }

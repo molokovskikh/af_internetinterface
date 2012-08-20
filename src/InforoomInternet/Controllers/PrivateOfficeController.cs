@@ -41,13 +41,11 @@ namespace InforoomInternet.Controllers
 			PropertyBag["PhysicalClient"] = client.PhysicalClient;
 			PropertyBag["Client"] = client;
 			var writeOffs = client.GetWriteOffs(DbSession, grouped).OrderByDescending(e => e.WriteOffDate).ToList();
-			if (client.RatedPeriodDate != null)
-			{
+			if (client.RatedPeriodDate != null) {
 				PropertyBag["VisibleWriteOffs"] = writeOffs.Where(w => w.WriteOffDate.Date >= client.RatedPeriodDate.Value.Date).ToList();
 				PropertyBag["HideWriteOffs"] = writeOffs.Where(w => w.WriteOffDate.Date < client.RatedPeriodDate.Value.Date).ToList();
 			}
-			else
-			{
+			else {
 				PropertyBag["VisibleWriteOffs"] = writeOffs.Take(10).ToList();
 				PropertyBag["HideWriteOffs"] = writeOffs.Skip(10).ToList();
 			}
@@ -55,7 +53,7 @@ namespace InforoomInternet.Controllers
 			PropertyBag["grouped"] = grouped;
 			var message = DbSession.Query<MessageForClient>().FirstOrDefault(m => m.Client == client && m.Enabled && m.EndDate > DateTime.Now && !m.Client.Disabled);
 			if (message != null)
-				PropertyBag["PrivateMessage"] =  AppealHelper.GetTransformedAppeal(message.Text);
+				PropertyBag["PrivateMessage"] = AppealHelper.GetTransformedAppeal(message.Text);
 			PropertyBag["Payments"] =
 				Payment.FindAllByProperty("Client", client).Where(p => p.Sum != 0).OrderByDescending(e => e.PaidOn).ToArray();
 			if (client.StartNoBlock != null)
@@ -88,8 +86,7 @@ namespace InforoomInternet.Controllers
 		{
 			var clientId = Convert.ToUInt32(Session["LoginClient"]);
 			var client = Client.Find(clientId);
-			if (client.CanUsedPostponedPayment())
-			{
+			if (client.CanUsedPostponedPayment()) {
 				Flash["message"] = "Услуга \"Обещанный платеж активирована\"";
 				var CService = new ClientService {
 					BeginWorkDate = DateTime.Now,
@@ -138,11 +135,11 @@ namespace InforoomInternet.Controllers
 		{
 			var clientId = Convert.ToUInt32(Session["LoginClient"]);
 			var client = Client.Find(clientId);
-			var cService = client.ClientServices.FirstOrDefault(c => c.Service.Id == Service.GetByType(typeof (VoluntaryBlockin)).Id);
+			var cService = client.ClientServices.FirstOrDefault(c => c.Service.Id == Service.GetByType(typeof(VoluntaryBlockin)).Id);
 			if (cService != null) {
 				cService.CompulsoryDeactivate();
 				Flash["message"] = "Услуга \"Работа в долг\" деактивирована";
-					new Appeals {
+				new Appeals {
 					Appeal = string.Format("Услуга \"добровольная блокировка\" деактивирована"),
 					AppealType = AppealType.System,
 					Client = client,
@@ -162,7 +159,7 @@ namespace InforoomInternet.Controllers
 			var iptv = client.Iptv;
 
 			var tariffs = DbSession.Query<Tariff>().Where(t => t.CanUseForSelfConfigure).ToList()
-				.Concat(new [] {client.PhysicalClient.Tariff}.Where(t => t != null))
+				.Concat(new[] { client.PhysicalClient.Tariff }.Where(t => t != null))
 				.Distinct()
 				.OrderBy(t => t.Name)
 				.ToList();
@@ -192,7 +189,6 @@ namespace InforoomInternet.Controllers
 				BindObjectInstance(internet, "internet", "ActivatedByUser");
 
 				if (IsValid(client.PhysicalClient)) {
-
 					client.PhysicalClient.UpdatePackageId();
 					client.PhysicalClient.WriteOffIfTariffChanged(rules);
 

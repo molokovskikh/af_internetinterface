@@ -20,8 +20,7 @@ namespace InternetInterface.Test.Functional
 			browser.TextField(Find.ById("Name")).AppendText("TestBrigad");
 			browser.Button(Find.ById("RegisterBrigadButton")).Click();
 			Thread.Sleep(2000);
-			foreach (var brigad in Brigad.FindAllByProperty("Name", "TestBrigad"))
-			{
+			foreach (var brigad in Brigad.FindAllByProperty("Name", "TestBrigad")) {
 				brigad.DeleteAndFlush();
 			}
 		}

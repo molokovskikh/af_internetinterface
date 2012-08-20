@@ -13,7 +13,7 @@ using NUnit.Framework;
 namespace InternetInterface.Test.Unit
 {
 	[TestFixture]
-	class ByteFixture
+	internal class ByteFixture
 	{
 		[Test]
 		public void ByteTest()
@@ -53,12 +53,12 @@ namespace InternetInterface.Test.Unit
 </send>");*/
 
 			var document = new XDocument(
-					new XElement("data",
-							new XElement("login", "inforoom"),
-							new XElement("password", "analitFarmacia"),
-							new XElement("action", "send"),
-							//new XElement("text", "Проверка рассылки SMS компании Inforoom (от Золотарева)"),
-							new XElement("source", "inforoom")/*,
+				new XElement("data",
+					new XElement("login", "inforoom"),
+					new XElement("password", "analitFarmacia"),
+					new XElement("action", "send"),
+					//new XElement("text", "Проверка рассылки SMS компании Inforoom (от Золотарева)"),
+					new XElement("source", "inforoom") /*,
 							new XElement("to", 
 									new XAttribute("number", "+79507738447")
 								),
@@ -67,9 +67,7 @@ namespace InternetInterface.Test.Unit
 								),
 							new XElement("to", 
 									new XAttribute("number", "+79103495077")
-								)*/
-						)
-				);
+								)*/));
 
 			var dataElement = document.Element("data");
 			if (dataElement != null)

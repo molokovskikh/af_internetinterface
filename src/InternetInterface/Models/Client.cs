@@ -103,7 +103,7 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual DateTime ConnectedDate { get; set; }
 
-		[Property]  
+		[Property]
 		public virtual bool AutoUnblocked { get; set; }
 
 		[BelongsTo, Auditable("Статус")]
@@ -171,7 +171,7 @@ namespace InternetInterface.Models
 
 		public virtual bool CanDisabled()
 		{
-			return PhysicalClient.Balance < GetPriceForTariff()*PercentBalance;
+			return PhysicalClient.Balance < GetPriceForTariff() * PercentBalance;
 		}
 
 		public static bool Our(string ip)
@@ -194,10 +194,7 @@ namespace InternetInterface.Models
 		//его баланс больше нуля и он не отключен
 		public virtual bool CanEditServicesFromPrivateOffice
 		{
-			get
-			{
-				return PhysicalClient.Balance > 0 && !Disabled;
-			}
+			get { return PhysicalClient.Balance > 0 && !Disabled; }
 		}
 
 		public virtual bool HavePaymentToStart()
@@ -206,7 +203,7 @@ namespace InternetInterface.Models
 			if (forbiddenByService)
 				return false;
 			var tariffSum = GetPriceIgnoreDisabled();
-			return Payments.Sum(s => s.Sum) >= tariffSum*PercentBalance;
+			return Payments.Sum(s => s.Sum) >= tariffSum * PercentBalance;
 		}
 
 		public virtual bool IsPhysical()
@@ -319,7 +316,7 @@ namespace InternetInterface.Models
 		public virtual bool HaveVoluntaryBlockin()
 		{
 			var clientServices = ClientServices.Select(s => s.Service.Id).ToList();
-			var volBlockService = Service.GetByType(typeof (VoluntaryBlockin));
+			var volBlockService = Service.GetByType(typeof(VoluntaryBlockin));
 			return clientServices.Any(s => s == volBlockService.Id);
 		}
 
@@ -389,7 +386,7 @@ namespace InternetInterface.Models
 
 		public virtual bool CanBlock()
 		{
-			var cServ = ClientServices.FirstOrDefault(c => NHibernateUtil.GetClass(c.Service) == typeof (DebtWork));
+			var cServ = ClientServices.FirstOrDefault(c => NHibernateUtil.GetClass(c.Service) == typeof(DebtWork));
 			if (cServ != null && !cServ.Service.CanBlock(cServ))
 				return false;
 
@@ -409,7 +406,7 @@ namespace InternetInterface.Models
 			if (groupedKey == "year")
 				gpoupKey = "YEAR(WriteOffDate)";
 			var query = session.CreateSQLQuery(String.Format(
-@"SELECT 
+				@"SELECT 
 Id, 
 Sum(WriteOffSum) as WriteOffSum,
 Sum(VirtualSum) as VirtualSum,
@@ -436,9 +433,8 @@ group by {0} order by WriteOffDate;", gpoupKey))
 
 		public virtual IList<ClientConnectInfo> GetConnectInfo(ISession session)
 		{
-			if ((PhysicalClient!= null && Status != null && Status.Connected) ||
-				(LawyerPerson != null && Status != null && Status.Connected))
-			{
+			if ((PhysicalClient != null && Status != null && Status.Connected) ||
+				(LawyerPerson != null && Status != null && Status.Connected)) {
 				var infos = session.CreateSQLQuery(String.Format(@"
 select
 inet_ntoa(CE.Ip) as static_IP,
@@ -459,8 +455,8 @@ left join internet.Leases L on L.Endpoint = CE.Id
 left join internet.PackageSpeed PS on PS.PackageId = CE.PackageId
 left join internet.PaymentForConnect pfc on pfc.EndPoint = CE.id
 where CE.Client = {0}",
-Id))
-.ToList<ClientConnectInfo>();
+					Id))
+					.ToList<ClientConnectInfo>();
 				return infos;
 			}
 			return new List<ClientConnectInfo>();
@@ -481,7 +477,7 @@ Id))
 
 		public virtual decimal ToPay()
 		{
-			var toPay =  GetPriceIgnoreDisabled() - PhysicalClient.Balance;
+			var toPay = GetPriceIgnoreDisabled() - PhysicalClient.Balance;
 			return toPay < 10 ? 10 : toPay;
 		}
 
@@ -580,24 +576,25 @@ Id))
 
 		public virtual WriteOff CalculatePerDayWriteOff(decimal price, bool writeoffVirtualFirst = true)
 		{
-			var costPerDay = price/GetInterval();
+			var costPerDay = price / GetInterval();
 			return PhysicalClient.CalculateWriteoff(costPerDay);
 		}
 
 		public virtual ClientService Internet
 		{
-			get { return ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof (Internet)); }
+			get { return ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof(Internet)); }
 		}
 
 		public virtual ClientService Iptv
 		{
-			get { return ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof (IpTv)); }
+			get { return ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof(IpTv)); }
 		}
 	}
 
 	public class ServiceActivationException : Exception
 	{
 		public ServiceActivationException(string message) : base(message)
-		{}
+		{
+		}
 	}
 }

@@ -32,7 +32,8 @@ namespace InternetInterface.Controllers
 
 		public string Address
 		{
-			get {
+			get
+			{
 				if (client.IsPhysical())
 					return client.GetAdress();
 				else {
@@ -64,7 +65,10 @@ namespace InternetInterface.Controllers
 			get { return _lastRowsCount; }
 		}
 
-		public int PageSize { get { return 30; } }
+		public int PageSize
+		{
+			get { return 30; }
+		}
 
 		public int CurrentPage { get; set; }
 
@@ -75,22 +79,22 @@ namespace InternetInterface.Controllers
 					.ToArray();
 		}
 
-		public Dictionary<string,object> GetParameters()
+		public Dictionary<string, object> GetParameters()
 		{
 			if (CategorieAccessSet.AccesPartner("SSI"))
+				return new Dictionary<string, object> {
+					{ "filter.searchText", searchText },
+					{ "filter.searchProperties.SearchBy", searchProperties.SearchBy },
+					{ "filter.clientTypeFilter.Type", clientTypeFilter.Type },
+					{ "filter.EnabledTypeProperties.Type", EnabledTypeProperties.Type },
+					{ "filter.statusType", statusType },
+					{ "filter.SortBy", SortBy },
+					{ "filter.Direction", Direction },
+					{ "CurrentPage", CurrentPage }
+				};
 			return new Dictionary<string, object> {
-				{"filter.searchText", searchText},
-				{"filter.searchProperties.SearchBy", searchProperties.SearchBy},
-				{"filter.clientTypeFilter.Type", clientTypeFilter.Type},
-				{"filter.EnabledTypeProperties.Type", EnabledTypeProperties.Type},
-				{"filter.statusType", statusType},
-				{"filter.SortBy", SortBy},
-				{"filter.Direction", Direction},
-				{"CurrentPage", CurrentPage}
-			};
-			return new Dictionary<string, object> {
-				{"filter.searchText", searchText},
-				{"CurrentPage", CurrentPage}
+				{ "filter.searchText", searchText },
+				{ "CurrentPage", CurrentPage }
 			};
 		}
 
@@ -148,8 +152,7 @@ left join internet.houses h on h.Id = p.HouseObj
 join internet.Status S on s.id = c.Status";
 
 			IList<Client> result = new List<Client>();
-			ArHelper.WithSession(session =>
-			{
+			ArHelper.WithSession(session => {
 				if (searchProperties == null)
 					searchProperties = new UserSearchProperties();
 				searchProperties.SearchText = searchText;
@@ -159,7 +162,7 @@ join internet.Status S on s.id = c.Status";
 				var wherePart = GetClientsLogic.GetWhere(this);
 
 				sqlStr = String.Format(
-@"{0}
+					@"{0}
 {1}
 group by c.id
 ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
@@ -191,8 +194,7 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 			var clientsInfo = result.Select(c => new ClientInfo(c)).ToList();
 			var onLineClients =
 				Lease.Queryable.Where(l => l.Endpoint.Client != null).Select(c => c.Endpoint.Client.Id).ToList();
-			foreach (var clientInfo in clientsInfo.Where(clientInfo => onLineClients.Contains(clientInfo.client.Id)))
-			{
+			foreach (var clientInfo in clientsInfo.Where(clientInfo => onLineClients.Contains(clientInfo.client.Id))) {
 				clientInfo.OnLine = true;
 			}
 			return clientsInfo.ToList();
@@ -200,12 +202,12 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 	}
 
 	[Helper(typeof(PaginatorHelper)),
-	Helper(typeof(CategorieAccessSet)),]
+	 Helper(typeof(CategorieAccessSet)),]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class SearchController : BaseController
 	{
 		[AccessibleThrough(Verb.Get)]
-		public void SearchBy([DataBind("filter")]SeachFilter filter)
+		public void SearchBy([DataBind("filter")] SeachFilter filter)
 		{
 			var result = filter.Find();
 			if (result.Count == 1) {
@@ -223,10 +225,10 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 		public void SearchUsers(string query, PhysicalClient sClients)
 		{
 			var filter = new SeachFilter {
-				searchProperties = new UserSearchProperties {SearchBy = SearchUserBy.Auto},
-				EnabledTypeProperties = new EnabledTypeProperties {Type = EndbledType.All},
+				searchProperties = new UserSearchProperties { SearchBy = SearchUserBy.Auto },
+				EnabledTypeProperties = new EnabledTypeProperties { Type = EndbledType.All },
 				statusType = 0,
-				clientTypeFilter = new ClientTypeProperties {Type = ForSearchClientType.AllClients},
+				clientTypeFilter = new ClientTypeProperties { Type = ForSearchClientType.AllClients },
 			};
 			PropertyBag["filter"] = filter;
 			PropertyBag["SearchText"] = "";
@@ -235,8 +237,7 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 			PropertyBag["ChBrigad"] = 0;
 			PropertyBag["Connected"] = false;
 			PropertyBag["ChAdditional"] = 0;
-			if (sClients != null)
-			{
+			if (sClients != null) {
 				Flash["SClients"] = sClients;
 			}
 			AddIndispensableParameters();
@@ -252,18 +253,16 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 			PropertyBag["Stat"] = new Statistic(DbSession).GetStatistic();
 		}
 
-		public void Redirect([DataBind("filter")]ClientFilter filter)
+		public void Redirect([DataBind("filter")] ClientFilter filter)
 		{
 			var builder = string.Empty;
 			foreach (string name in Request.QueryString)
 				builder += String.Format("{0}={1}&", name, Request.QueryString[name]);
 			builder = builder.Substring(0, builder.Length - 1);
-			if (Client.Find(filter.ClientCode).GetClientType() == ClientType.Phisical)
-			{
-				RedirectToUrl(string.Format("../UserInfo/SearchUserInfo.rails?{0}" , builder));
+			if (Client.Find(filter.ClientCode).GetClientType() == ClientType.Phisical) {
+				RedirectToUrl(string.Format("../UserInfo/SearchUserInfo.rails?{0}", builder));
 			}
-			else
-			{
+			else {
 				RedirectToUrl(string.Format("../UserInfo/LawyerPersonInfo.rails?{0}", builder));
 			}
 			CancelView();

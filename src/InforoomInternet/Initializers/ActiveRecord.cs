@@ -14,8 +14,8 @@ namespace InforoomInternet.Initializers
 	{
 		public ActiveRecord()
 		{
-			Assemblies = new [] { "InforoomInternet", "InternetInterface" };
-			AdditionalTypes = new[] {typeof(MenuField), typeof(SiteContent), typeof(SubMenuField)};
+			Assemblies = new[] { "InforoomInternet", "InternetInterface" };
+			AdditionalTypes = new[] { typeof(MenuField), typeof(SiteContent), typeof(SubMenuField) };
 		}
 
 		public override void Initialize(IConfigurationSource config)

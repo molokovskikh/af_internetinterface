@@ -33,13 +33,13 @@ namespace InternetInterface.Queries
 			SortDirection = "Desc";
 
 			SortKeyMap = new Dictionary<string, string> {
-				{"RequestId", "Id"},
-				{"ClientId", "Client.Id"},
-				{"Description", "Description"},
-				{"Contact", "Contact"},
-				{"RegDate", "RegDate"},
-				{"ClosedDate", "ClosedDate"},
-				{"Sum", "Sum"},
+				{ "RequestId", "Id" },
+				{ "ClientId", "Client.Id" },
+				{ "Description", "Description" },
+				{ "Contact", "Contact" },
+				{ "RegDate", "RegDate" },
+				{ "ClosedDate", "ClosedDate" },
+				{ "Sum", "Sum" },
 			};
 			var dtn = DateTime.Now;
 			Period = new DatePeriod(new DateTime(dtn.Year, dtn.Month, 1), dtn);
@@ -66,7 +66,7 @@ namespace InternetInterface.Queries
 				case 0:
 					dateSelectorField = "RegDate";
 					break;
-				case 1: 
+				case 1:
 					dateSelectorField = "PerformanceDate";
 					break;
 				case 2:

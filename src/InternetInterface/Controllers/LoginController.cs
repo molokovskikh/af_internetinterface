@@ -18,14 +18,12 @@ namespace InternetInterface.Controllers
 		[AccessibleThrough(Verb.Post)]
 		public void Sub(string login, string password)
 		{
-			if (ActiveDirectoryHelper.IsAuthenticated(login, password))
-			{
+			if (ActiveDirectoryHelper.IsAuthenticated(login, password)) {
 				FormsAuthentication.RedirectFromLoginPage(login, true);
 				Session.Add("Login", login);
 				RedirectToUrl(@"~/Map/SiteMap.rails");
 			}
-			else
-			{
+			else {
 				Flash["AccessDenied"] = ActiveDirectoryHelper.ErrorMessage;
 				RedirectToUrl(@"LoginPartner.rails");
 			}

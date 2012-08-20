@@ -21,7 +21,7 @@ namespace InternetInterface.Models
 
 		public static T FirstOrDefault(uint id)
 		{
-			return (T) ActiveRecordMediator.FindByPrimaryKey(typeof (T), id);
+			return (T)ActiveRecordMediator.FindByPrimaryKey(typeof(T), id);
 		}
 
 		/// <summary>
@@ -30,9 +30,9 @@ namespace InternetInterface.Models
 		/// <returns></returns>
 		public static IEnumerable<T> FindAllAdd()
 		{
-			var list = ActiveRecordMediator.FindAll(typeof (T)).Cast<T>().OrderBy(e => ((dynamic)e).Name).ToList();
+			var list = ActiveRecordMediator.FindAll(typeof(T)).Cast<T>().OrderBy(e => ((dynamic)e).Name).ToList();
 			if (list.Count > 0) {
-				var objl = new List<T> {new T()};
+				var objl = new List<T> { new T() };
 				var obj = (dynamic)objl[0];
 				obj.Id = 0;
 				obj.Name = "Все";
@@ -41,5 +41,5 @@ namespace InternetInterface.Models
 			}
 			return list;
 		}
-	}	
+	}
 }

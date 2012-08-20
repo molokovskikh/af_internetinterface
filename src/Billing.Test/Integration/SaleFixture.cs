@@ -31,7 +31,7 @@ namespace Billing.Test.Integration
 				billing.Compute();
 				var sale = 0m;
 				if (i > PerionCount)
-					sale = MinSale + (i - MinSale - 1)*SaleStep;
+					sale = MinSale + (i - MinSale - 1) * SaleStep;
 				if (sale > MaxSale)
 					sale = MaxSale;
 				using (new SessionScope()) {
@@ -48,11 +48,11 @@ namespace Billing.Test.Integration
 			billing.Compute();
 			using (new SessionScope()) {
 				_client.Refresh();
-				Assert.AreEqual(_client.Sale, SaleStep*MinSale);
+				Assert.AreEqual(_client.Sale, SaleStep * MinSale);
 				var writeOff = WriteOff.FindFirst();
 				var preSaleSum = _client.PhysicalClient.Tariff.Price / _client.GetInterval();
-				Assert.AreEqual(Math.Round(writeOff.WriteOffSum, 2), Math.Round(preSaleSum - preSaleSum*(SaleStep*MinSale / 100), 2));
-				Assert.AreEqual(writeOff.Sale, SaleStep*MinSale);
+				Assert.AreEqual(Math.Round(writeOff.WriteOffSum, 2), Math.Round(preSaleSum - preSaleSum * (SaleStep * MinSale / 100), 2));
+				Assert.AreEqual(writeOff.Sale, SaleStep * MinSale);
 			}
 		}
 
@@ -67,7 +67,7 @@ namespace Billing.Test.Integration
 			billing.Compute();
 			using (new SessionScope()) {
 				_client.Refresh();
-				Assert.AreEqual(_client.Sale, SaleStep*MinSale);
+				Assert.AreEqual(_client.Sale, SaleStep * MinSale);
 			}
 			while (!_client.Disabled) {
 				billing.Compute();
@@ -96,7 +96,7 @@ namespace Billing.Test.Integration
 			billing.Compute();
 			using (new SessionScope())
 				_client.Refresh();
-			Assert.AreEqual(_client.Sale, SaleStep*MinSale);
+			Assert.AreEqual(_client.Sale, SaleStep * MinSale);
 		}
 
 		[Test]
@@ -143,4 +143,4 @@ namespace Billing.Test.Integration
 			Assert.That(_client.StartNoBlock.Value.Date, Is.EqualTo(SystemTime.Now().Date));
 		}
 	}
-} 
+}

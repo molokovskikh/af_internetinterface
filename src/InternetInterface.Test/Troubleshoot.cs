@@ -7,6 +7,7 @@ namespace InternetInterface.Test
 	{
 		[Test]
 		public void test()
-		{}
+		{
+		}
 	}
 }

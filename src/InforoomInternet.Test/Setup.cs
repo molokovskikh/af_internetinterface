@@ -13,8 +13,7 @@ namespace InforoomInternet.Test
 		[SetUp]
 		public void SetupFixture()
 		{
-			if (!ActiveRecordStarter.IsInitialized)
-			{
+			if (!ActiveRecordStarter.IsInitialized) {
 				ActiveRecordStarter.EventListenerComponentRegistrationHook += RemoverListner.Make;
 
 				ActiveRecordInitialize.Init(

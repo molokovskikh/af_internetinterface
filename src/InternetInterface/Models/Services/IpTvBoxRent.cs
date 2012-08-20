@@ -13,7 +13,8 @@ namespace InternetInterface.Models.Services
 		}
 
 		public IpTvBoxRent()
-		{}
+		{
+		}
 
 		public override bool ProcessEvenInBlock
 		{

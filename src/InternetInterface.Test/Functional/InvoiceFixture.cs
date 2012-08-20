@@ -22,10 +22,10 @@ namespace InternetInterface.Test.Functional
 				Tariff = 10000,
 			};
 			client.LawyerPerson = lawyerPerson;
-			var writeOffSum = (lawyerPerson.Tariff/30).Value;
+			var writeOffSum = (lawyerPerson.Tariff / 30).Value;
 			var writeOff = new WriteOff(client, writeOffSum, DateTime.Today.AddMonths(-1));
 
-			var invoice = new Invoice(client, DateTime.Today.ToPeriod(), new [] {writeOff});
+			var invoice = new Invoice(client, DateTime.Today.ToPeriod(), new[] { writeOff });
 
 			session.Save(client);
 			session.Save(writeOff);

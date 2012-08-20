@@ -19,7 +19,7 @@ namespace InternetInterface.Helpers
 	{
 		public static void Make(EventListenerContributor target)
 		{
-			target.Remove(typeof (Listner));
+			target.Remove(typeof(Listner));
 		}
 	}
 
@@ -27,14 +27,13 @@ namespace InternetInterface.Helpers
 	{
 		public static void Make(EventListenerContributor target)
 		{
-			var config = target.Get(typeof (ValidEventListner));
+			var config = target.Get(typeof(ValidEventListner));
 			target.Add(config);
 		}
 	}
 
 	public class AuditablePropertyIp : AuditableProperty
 	{
-
 		public AuditablePropertyIp(PropertyInfo property, string name, object newValue, object oldValue)
 			: base(property, name, newValue, oldValue)
 		{
@@ -67,7 +66,6 @@ namespace InternetInterface.Helpers
 
 	public class AuditablePropertyInternet : AuditableProperty
 	{
-
 		public AuditablePropertyInternet(PropertyInfo property, string name, object newValue, object oldValue)
 			: base(property, name, newValue, oldValue)
 		{
@@ -97,9 +95,9 @@ namespace InternetInterface.Helpers
 	{
 		protected override AuditableProperty GetAuditableProperty(PropertyInfo property, string name, object newState, object oldState, object entity)
 		{
-			var attrs = property.GetCustomAttributes(typeof (Auditable), false);
+			var attrs = property.GetCustomAttributes(typeof(Auditable), false);
 			if (attrs.Length > 0 && ((Auditable)attrs.First()).Name == "Фиксированный IP")
-			return new AuditablePropertyIp(property, name, newState, oldState);
+				return new AuditablePropertyIp(property, name, newState, oldState);
 			return new AuditablePropertyInternet(property, name, newState, oldState);
 		}
 
@@ -108,7 +106,7 @@ namespace InternetInterface.Helpers
 			var session = @event.Session;
 			var entity = @event.Entity;
 			if (entity.GetType() == typeof(ServiceRequest)) {
-				var serviceRequest = (ServiceRequest) entity;
+				var serviceRequest = (ServiceRequest)entity;
 				session.Save(
 					new ServiceIteration {
 						Description = message,
@@ -123,7 +121,7 @@ namespace InternetInterface.Helpers
 				if (entity.GetType() == typeof(Client))
 					client = (Client)entity;
 
-				var clientProp = entity.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance).FirstOrDefault(p => p.PropertyType == typeof (Client));
+				var clientProp = entity.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance).FirstOrDefault(p => p.PropertyType == typeof(Client));
 				if (clientProp != null)
 					client = (Client)clientProp.GetValue(entity, null);
 

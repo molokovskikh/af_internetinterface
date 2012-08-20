@@ -53,13 +53,11 @@ namespace InternetInterface.Controllers
 
 		public void New()
 		{
-			if (IsPost)
-			{
+			if (IsPost) {
 				var payment = new BankPayment();
 				SetARDataBinder();
 				BindObjectInstance(payment, "payment", AutoLoadBehavior.OnlyNested);
-				if (!HasValidationError(payment))
-				{
+				if (!HasValidationError(payment)) {
 					payment.RegisterPayment();
 					payment.Save();
 					new Payment {
@@ -72,8 +70,7 @@ namespace InternetInterface.Controllers
 					RedirectToReferrer();
 					return;
 				}
-				else
-				{
+				else {
 					ArHelper.WithSession(s => ArHelper.Evict(s, new[] { payment }));
 					PropertyBag["Payment"] = payment;
 				}
@@ -88,31 +85,25 @@ namespace InternetInterface.Controllers
 
 		public void NotifyInforum()
 		{
-			foreach (var bankPayment in TempPayments())
-			{
-				if (bankPayment.Payer == null)
-				{
+			foreach (var bankPayment in TempPayments()) {
+				if (bankPayment.Payer == null) {
 					var mailToAdress = "internet@ivrn.net";
 					var messageText = new StringBuilder();
 					var type = NHibernateUtil.GetClass(bankPayment);
-					foreach (var propertyInfo in type.GetProperties(BindingFlags.Instance | BindingFlags.Public))
-					{
-						if (propertyInfo.GetCustomAttributes(typeof(PropertyAttribute), true).Length > 0)
-						{
+					foreach (var propertyInfo in type.GetProperties(BindingFlags.Instance | BindingFlags.Public)) {
+						if (propertyInfo.GetCustomAttributes(typeof(PropertyAttribute), true).Length > 0) {
 							var value = propertyInfo.GetValue(bankPayment, null);
 							var name = BindingHelper.GetDescription(propertyInfo);
 							if (!string.IsNullOrEmpty(name))
 								messageText.AppendLine(string.Format("{0} = {1}", name, value));
 						}
-						if (propertyInfo.GetCustomAttributes(typeof(NestedAttribute), true).Length > 0)
-						{
+						if (propertyInfo.GetCustomAttributes(typeof(NestedAttribute), true).Length > 0) {
 							var class_dicrioprion = BindingHelper.GetDescription(propertyInfo);
 							messageText.AppendLine();
 							messageText.AppendLine(class_dicrioprion);
 							var value_class = propertyInfo.GetValue(bankPayment, null);
 							var type_nested = NHibernateUtil.GetClass(value_class);
-							foreach (var nested_propertyInfo in type_nested.GetProperties(BindingFlags.Instance | BindingFlags.Public))
-							{
+							foreach (var nested_propertyInfo in type_nested.GetProperties(BindingFlags.Instance | BindingFlags.Public)) {
 								var value = nested_propertyInfo.GetValue(value_class, null);
 								var name = BindingHelper.GetDescription(nested_propertyInfo);
 								if (!string.IsNullOrEmpty(name))
@@ -136,43 +127,39 @@ namespace InternetInterface.Controllers
 		public void SavePayments()
 		{
 			var payments = TempPayments();
-			if (payments == null)
-			{
+			if (payments == null) {
 				Flash["Message"] = Message.Error("Время сесии истекло. Загрузите выписку повторно.");
 				RedirectToReferrer();
 			}
 
-			foreach (var payment in payments)
-			{
+			foreach (var payment in payments) {
 				//если зайти в два платежа и отредактировать их
 				//то получим двух плательщиков из разных сесей
 				//правим это
 				if (payment.Payer != null)
 					payment.Payer = ActiveRecordLinqBase<Client>.Queryable.FirstOrDefault(p => p.Id == payment.Payer.Id);
 
-				if (Validator.IsValid(payment))
-				{
+				if (Validator.IsValid(payment)) {
 					payment.RegisterPayment();
 					payment.Save();
 					if (payment.Payer != null)
-					new Payment {
-						Client = payment.Payer,
-						Sum = payment.Sum,
-						RecievedOn = payment.RegistredOn,
-						PaidOn = payment.PayedOn,
-						Agent = Agent.GetByInitPartner()
-					}.Save();
+						new Payment {
+							Client = payment.Payer,
+							Sum = payment.Sum,
+							RecievedOn = payment.RegistredOn,
+							PaidOn = payment.PayedOn,
+							Agent = Agent.GetByInitPartner()
+						}.Save();
 				}
-				else
-				{
+				else {
 					ArHelper.WithSession(s => ArHelper.Evict(s, new[] { payment }));
 				}
 			}
 
 			RedirectToAction("Index",
-				new Dictionary<string, string>{
-					{"filter.Period.Begin", payments.Min(p => p.PayedOn).ToShortDateString() },
-					{"filter.Period.End", payments.Max(p => p.PayedOn).ToShortDateString() }
+				new Dictionary<string, string> {
+					{ "filter.Period.Begin", payments.Min(p => p.PayedOn).ToShortDateString() },
+					{ "filter.Period.End", payments.Max(p => p.PayedOn).ToShortDateString() }
 				});
 		}
 
@@ -184,19 +171,16 @@ namespace InternetInterface.Controllers
 
 		public void ProcessPayments()
 		{
-			if (IsPost)
-			{
+			if (IsPost) {
 				var file = Request.Files["inputfile"] as HttpPostedFile;
-				if (file == null || file.ContentLength == 0)
-				{
+				if (file == null || file.ContentLength == 0) {
 					PropertyBag["Message"] = Message.Error("Нужно выбрать файл для загрузки");
 					return;
 				}
 				Session["payments"] = BankPayment.Parse(file.FileName, file.InputStream);
 				RedirectToReferrer();
 			}
-			else
-			{
+			else {
 				PropertyBag["payments"] = Session["payments"];
 			}
 		}
@@ -204,16 +188,14 @@ namespace InternetInterface.Controllers
 		public void EditTemp(uint id)
 		{
 			var payment = FindTempPayment(id);
-			if (IsPost)
-			{
+			if (IsPost) {
 				SetARDataBinder();
 				BindObjectInstance(payment, "payment", AutoLoadBehavior.NullIfInvalidKey);
 				payment.UpdateInn();
 				Flash["Message"] = Message.Notify("Сохранено");
 				RedirectToAction("ProcessPayments");
 			}
-			else
-			{
+			else {
 				PropertyBag["payment"] = payment;
 				PropertyBag["recipients"] = Recipient.Queryable.OrderBy(r => r.Name).ToList();
 				RenderView("Edit");
@@ -255,8 +237,7 @@ namespace InternetInterface.Controllers
 		public void Edit(uint id)
 		{
 			var payment = BankPayment.TryFind(id);
-			if (IsPost)
-			{
+			if (IsPost) {
 				var oldBalance = payment.Sum;
 				var oldPayer = payment.Payer;
 				var oldPayment = payment;
@@ -264,13 +245,10 @@ namespace InternetInterface.Controllers
 				BindObjectInstance(payment, "payment", AutoLoadBehavior.NullIfInvalidKey);
 				var newBalance = payment.Sum;
 				var newPayerFlag = oldPayer == null && payment.Payer != null;
-				if (!HasValidationError(payment))
-				{
-					if (oldPayer != null && payment.Payer == oldPayer)
-					{
+				if (!HasValidationError(payment)) {
+					if (oldPayer != null && payment.Payer == oldPayer) {
 						var client = payment.Payer;
-						if (newBalance - oldBalance < 0 && payment.Payer != null)
-						{
+						if (newBalance - oldBalance < 0 && payment.Payer != null) {
 							new UserWriteOff {
 								Registrator = InitializeContent.Partner,
 								Client = client,
@@ -279,8 +257,7 @@ namespace InternetInterface.Controllers
 								Comment = string.Format("Списание после редактирования банковского платежа (id = {0})", payment.Id)
 							}.Save();
 						}
-						if (newBalance - oldBalance > 0 && payment.Payer != null)
-						{
+						if (newBalance - oldBalance > 0 && payment.Payer != null) {
 							new Payment {
 								Agent = Agent.GetByInitPartner(),
 								Client = client,
@@ -292,7 +269,7 @@ namespace InternetInterface.Controllers
 						}
 					}
 					if (newPayerFlag) {
-							new Payment {
+						new Payment {
 							Agent = Agent.GetByInitPartner(),
 							Client = payment.Payer,
 							PaidOn = DateTime.Now,
@@ -301,8 +278,7 @@ namespace InternetInterface.Controllers
 							LogComment = string.Format("Зачисление после редактирования банковского платежа (id = {0}), назначен плательщик", payment.Id)
 						}.Save();
 					}
-					if (oldPayer != null && oldPayer != payment.Payer)
-					{
+					if (oldPayer != null && oldPayer != payment.Payer) {
 						new Payment {
 							Agent = Agent.GetByInitPartner(),
 							Client = payment.Payer,
@@ -324,9 +300,8 @@ namespace InternetInterface.Controllers
 					RedirectToReferrer();
 					return;
 				}
-				else
-				{
-					ArHelper.WithSession(s => ArHelper.Evict(s, new[] {payment}));
+				else {
+					ArHelper.WithSession(s => ArHelper.Evict(s, new[] { payment }));
 				}
 			}
 			PropertyBag["payment"] = payment;

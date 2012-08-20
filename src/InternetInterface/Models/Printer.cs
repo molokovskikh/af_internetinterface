@@ -35,5 +35,4 @@ namespace InternetInterface.Models
 				.ToList();
 		}
 	}
-
 }

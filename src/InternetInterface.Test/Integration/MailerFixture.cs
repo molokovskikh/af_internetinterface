@@ -54,8 +54,7 @@ namespace InternetInterface.Test.Integration
 		{
 			get
 			{
-				if (_message == null)
-				{
+				if (_message == null) {
 					mailer.Send();
 					Assert.That(_message, Is.Not.Null, "Ничего не отправили");
 				}
@@ -71,7 +70,7 @@ namespace InternetInterface.Test.Integration
 					Name = "ООО Рога и Копыта"
 				},
 				Contacts = {
-					new Contact {Type = ContactType.Email, Text = "test@analit.net"}
+					new Contact { Type = ContactType.Email, Text = "test@analit.net" }
 				}
 			};
 			var invoice = new Invoice(client, DateTime.Today.ToPeriod(), new List<WriteOff> {

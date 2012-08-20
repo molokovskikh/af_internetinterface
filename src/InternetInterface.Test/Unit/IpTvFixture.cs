@@ -26,7 +26,7 @@ namespace InternetInterface.Test.Unit
 			client.PhysicalClient.MoneyBalance = 1000;
 			client.BeginWork = new DateTime(2012, 06, 01);
 			client.RatedPeriodDate = new DateTime(2012, 06, 01);
-			client.Status = new Status{ShortName = "Worked"};
+			client.Status = new Status { ShortName = "Worked" };
 		}
 
 		[Test]
@@ -63,7 +63,7 @@ namespace InternetInterface.Test.Unit
 			Rent();
 			IpTv();
 
-			client.Activate(new ClientService(client, new VoluntaryBlockin{BlockingAll = true}) {BeginWorkDate = new DateTime(2012, 06, 01), Activated = true});
+			client.Activate(new ClientService(client, new VoluntaryBlockin { BlockingAll = true }) { BeginWorkDate = new DateTime(2012, 06, 01), Activated = true });
 			client.FreeBlockDays = 30;
 			Assert.That(client.GetPrice(), Is.EqualTo(0));
 			client.FreeBlockDays = 0;
@@ -118,16 +118,16 @@ namespace InternetInterface.Test.Unit
 		{
 			IpTv();
 
-			var channel = new ChannelGroup("Тестовый пакет", 300, 100) {ActivationCost = 30};
-			client.Iptv.UpdateChannels(new List<ChannelGroup> {channel});
+			var channel = new ChannelGroup("Тестовый пакет", 300, 100) { ActivationCost = 30 };
+			client.Iptv.UpdateChannels(new List<ChannelGroup> { channel });
 			Assert.That(client.UserWriteOffs.Count, Is.EqualTo(1));
 			Assert.That(client.UserWriteOffs[0].Sum, Is.EqualTo(30));
-			Assert.That(client.Iptv.Channels, Is.EquivalentTo(new []{ channel }));
+			Assert.That(client.Iptv.Channels, Is.EquivalentTo(new[] { channel }));
 		}
 
 		private ClientService IpTv()
 		{
-			var clientService = new ClientService(client, new IpTv()) {Channels = {new ChannelGroup("Тестовый пакет", 300, 100)}};
+			var clientService = new ClientService(client, new IpTv()) { Channels = { new ChannelGroup("Тестовый пакет", 300, 100) } };
 			client.Activate(clientService);
 			return clientService;
 		}

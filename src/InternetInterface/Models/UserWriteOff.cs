@@ -11,7 +11,8 @@ namespace InternetInterface.Models
 	public class UserWriteOff : ActiveRecordLinqBase<UserWriteOff>
 	{
 		public UserWriteOff()
-		{}
+		{
+		}
 
 		public UserWriteOff(Client client, decimal sum, string comment, bool setRegistrator = true)
 			: this(client, setRegistrator)

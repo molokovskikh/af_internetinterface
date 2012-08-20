@@ -43,7 +43,7 @@ namespace InternetInterface.AllLogic
 	C.id like {0} or
 	LOWER(co.Contact) like {0} or
 	LOWER(h.Street) like {0} or
-	LOWER(l.ActualAdress) like {0} )" ,
+	LOWER(l.ActualAdress) like {0} )",
 								":SearchText") + _return;
 					}
 					if (filter.searchProperties.IsSearchAccount()) {
@@ -73,10 +73,8 @@ namespace InternetInterface.AllLogic
 				if (id > 0) {
 					return string.Format("WHERE (c.Id = {0}) and (C.PhysicalClient is not null)", id);
 				}
-				else {
-					if (!string.IsNullOrEmpty(filter.searchText))
-						return "WHERE (LOWER(C.Name) like :SearchText) and (C.PhysicalClient is not null)";
-				}
+				else if (!string.IsNullOrEmpty(filter.searchText))
+					return "WHERE (LOWER(C.Name) like :SearchText) and (C.PhysicalClient is not null)";
 			}
 			return string.IsNullOrEmpty(_return) ? string.Empty : string.Format("WHERE {0}", _return.Remove(0, 4));
 		}

@@ -26,9 +26,8 @@ namespace InternetInterface.Services
 
 		public override bool CanActivate(Client client)
 		{
-			if (client.PhysicalClient != null)
-			{
-				var conVol = !client.ClientServices.Select(c => c.Service).Contains(GetByType(typeof (VoluntaryBlockin)));
+			if (client.PhysicalClient != null) {
+				var conVol = !client.ClientServices.Select(c => c.Service).Contains(GetByType(typeof(VoluntaryBlockin)));
 				return conVol && client.StartWork();
 			}
 			return false;
@@ -94,7 +93,7 @@ namespace InternetInterface.Services
 				var client = assignedService.Client;
 				client.Disabled = false;
 				client.RatedPeriodDate = SystemTime.Now();
-				client.Status = Status.Find((uint) StatusType.Worked);
+				client.Status = Status.Find((uint)StatusType.Worked);
 				client.Update();
 				assignedService.Activated = true;
 				ActiveRecordMediator.Update(assignedService);

@@ -17,7 +17,8 @@ namespace InternetInterface.Models
 	public class NetworkSwitches
 	{
 		public NetworkSwitches()
-		{}
+		{
+		}
 
 		public NetworkSwitches(string name, Zone zone)
 		{
@@ -74,8 +75,7 @@ namespace InternetInterface.Models
 		public static string SetProgramIp(string ip)
 		{
 			var valid = new Regex(IPRegExp);
-			if (!String.IsNullOrEmpty(ip) && valid.IsMatch(ip))
-			{
+			if (!String.IsNullOrEmpty(ip) && valid.IsMatch(ip)) {
 				var splited = ip.Split('.');
 				var fg = new byte[8];
 				fg[0] = Convert.ToByte(splited[3]);

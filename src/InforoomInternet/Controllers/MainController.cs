@@ -17,8 +17,8 @@ using InternetInterface.Models;
 namespace InforoomInternet.Controllers
 {
 	[Layout("Main")]
-	[Filter(ExecuteWhen.BeforeAction, typeof (NHibernateFilter))]
-	[Filter(ExecuteWhen.BeforeAction, typeof (BeforeFilter))]
+	[Filter(ExecuteWhen.BeforeAction, typeof(NHibernateFilter))]
+	[Filter(ExecuteWhen.BeforeAction, typeof(BeforeFilter))]
 	public class MainController : SmartDispatcherController
 	{
 		public void Index()
@@ -65,8 +65,8 @@ namespace InforoomInternet.Controllers
 			var lease = Lease.FindAllByProperty("Ip", Convert.ToUInt32(NetworkSwitches.SetProgramIp(ip)));
 #endif
 			var client = lease.Where(
-				l => l.Endpoint != null && l.Endpoint.Client != null && l.Endpoint.Client.PhysicalClient != null).
-				Select(l => l.Endpoint.Client).FirstOrDefault();
+				l => l.Endpoint != null && l.Endpoint.Client != null && l.Endpoint.Client.PhysicalClient != null)
+				.Select(l => l.Endpoint.Client).FirstOrDefault();
 			client = client ?? new Client();
 			PropertyBag["client"] = client;
 
@@ -105,7 +105,7 @@ namespace InforoomInternet.Controllers
 					message.Body = Text.ToString();
 					var smtp = new SmtpClient("box.analit.net");
 					smtp.Send(message);
-					RedirectToAction("MessageSended", new Dictionary<string, string> {{"clientName", clientName}});
+					RedirectToAction("MessageSended", new Dictionary<string, string> { { "clientName", clientName } });
 				}
 			}
 
@@ -163,10 +163,8 @@ namespace InforoomInternet.Controllers
 			var lease = Client.FindByIP(hostAdress);
 #if DEBUG
 			if (lease == null)
-				lease = new Lease
-				{
-					Endpoint = new ClientEndpoint
-					{
+				lease = new Lease {
+					Endpoint = new ClientEndpoint {
 						Client = new Client() {
 							ShowBalanceWarningPage = true,
 							RatedPeriodDate = DateTime.Now,
@@ -188,8 +186,7 @@ namespace InforoomInternet.Controllers
 				point = StaticIp.Queryable.ToList().Where(ip => {
 					if (ip.Ip == hostAdress)
 						return true;
-					if (ip.Mask != null)
-					{
+					if (ip.Mask != null) {
 						var subnet = SubnetMask.CreateByNetBitLength(ip.Mask.Value);
 						var sIp = new IPAddress(RangeFinder.reverseBytesArray(Convert.ToUInt32(NetworkSwitches.SetProgramIp(ip.Ip))));
 						if (thisIp.IsInSameSubnet(sIp, subnet))
@@ -360,7 +357,7 @@ namespace InforoomInternet.Controllers
 			else {
 				var lease = Lease.Queryable.FirstOrDefault(l => l.Endpoint.Client.Id == client.Value);
 				messageText.AppendLine(string.Format("Пришел запрос на страницу WarningPackageId от клиента {0}",
-				                                     client.Value.ToString("00000")));
+					client.Value.ToString("00000")));
 				if (lease.Endpoint.Switch != null) {
 					messageText.AppendLine("Свич: " + lease.Endpoint.Switch.Name);
 				}

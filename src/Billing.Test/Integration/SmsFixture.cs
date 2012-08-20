@@ -15,7 +15,7 @@ namespace Billing.Test.Integration
 		[SetUp]
 		public void PrepareClientAndBilling()
 		{
-			_client.PhysicalClient.Balance = _client.GetPrice()/_client.GetInterval() + 1;
+			_client.PhysicalClient.Balance = _client.GetPrice() / _client.GetInterval() + 1;
 			_client.SendSmsNotifocation = true;
 			_client.Update();
 		}
@@ -63,12 +63,12 @@ namespace Billing.Test.Integration
 			Assert.That(message.Text, Is.StringContaining(messageText));
 			Assert.IsNullOrEmpty(message.PhoneNumber);
 			var contact = new Contact {
-					Client = _client,
-					Date = DateTime.Now,
-					Text = "9507738447",
-					Type = ContactType.SmsSending
+				Client = _client,
+				Date = DateTime.Now,
+				Text = "9507738447",
+				Type = ContactType.SmsSending
 			};
-			_client.Contacts = new List<Contact> {contact};
+			_client.Contacts = new List<Contact> { contact };
 			contact.Save();
 			var dtnAd = DateTime.Now.AddDays(1);
 			var ShouldBeSend = new DateTime(dtnAd.Year, dtnAd.Month, dtnAd.Day, 12, 00, 00);
@@ -79,12 +79,12 @@ namespace Billing.Test.Integration
 		public void Real_Sms_Test()
 		{
 			var contact = new Contact {
-					Client = _client,
-					Date = DateTime.Now,
-					Text = "9507738447",
-					Type = ContactType.SmsSending
+				Client = _client,
+				Date = DateTime.Now,
+				Text = "9507738447",
+				Type = ContactType.SmsSending
 			};
-			_client.Contacts = new List<Contact> {contact};
+			_client.Contacts = new List<Contact> { contact };
 			contact.Save();
 			billing.Compute();
 			var message = billing.Messages.FirstOrDefault();

@@ -18,8 +18,7 @@ namespace InforoomInternet.Test.Integration
 		{
 			ActiveRecord.SetupFilters();
 
-			using(new SessionScope())
-			{
+			using (new SessionScope()) {
 				var tariff = new Tariff {
 					Name = "Vip тариф",
 					Price = 100,

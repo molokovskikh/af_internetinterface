@@ -14,13 +14,12 @@ namespace InternetInterface.Models
 		NoWorked = 7,
 		VoluntaryBlocking = 9,
 		Dissolved = 11
-	};
+	}
 
 
 	[ActiveRecord("Status", Schema = "internet", Lazy = true)]
 	public class Status : ValidActiveRecordLinqBase<Status>
 	{
-
 		[PrimaryKey(PrimaryKeyType.Assigned)]
 		public virtual uint Id { get; set; }
 

@@ -16,8 +16,17 @@ namespace InternetInterface.Helpers
 		public int UniqueClient { get; set; }
 		public int AllRegister { get; set; }
 		public int PhysicalRegister { get; set; }
-		public int LawyerRegister { get {return AllRegister - PhysicalRegister; } }
-		public int AllBlocked { get {return BlockedLawyer + BlockedPhysical;}}
+
+		public int LawyerRegister
+		{
+			get { return AllRegister - PhysicalRegister; }
+		}
+
+		public int AllBlocked
+		{
+			get { return BlockedLawyer + BlockedPhysical; }
+		}
+
 		public int BlockedPhysical { get; set; }
 		public int BlockedLawyer { get; set; }
 		public int BlockedOnLine { get; set; }
@@ -39,9 +48,9 @@ SELECT count(*) FROM logs.internetsessionslogs l
 join internet.ClientEndPoints cp on cp.id = l.EndpointId
 where l.LeaseBegin >= :beginInterval and l.LeaseBegin <= :endInterval
 group by cp.Client;")
-	.SetParameter("beginInterval", DateTime.Now.AddDays(-1))
-	.SetParameter("endInterval", DateTime.Now)
-	.List<object>().Count;
+				.SetParameter("beginInterval", DateTime.Now.AddDays(-1))
+				.SetParameter("endInterval", DateTime.Now)
+				.List<object>().Count;
 
 			PhysicalRegister = Convert.ToInt32(_session.CreateSQLQuery(@"
 select count(*) from internet.Clients c

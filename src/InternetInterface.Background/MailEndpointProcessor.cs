@@ -17,7 +17,6 @@ namespace InternetInterface.Background
 		public static void Process()
 		{
 			using (new SessionScope()) {
-
 				SendUnknowEndPoint();
 				SendNullTariffLawyerPerson();
 
@@ -47,11 +46,12 @@ namespace InternetInterface.Background
 
 		public static void SendNullTariffLawyerPerson()
 		{
-			var nullLeases = Lease.Queryable.Where(l => 
+			var nullLeases = Lease.Queryable.Where(l =>
 				l.Pool.IsGray &&
-				(l.Endpoint.Client.LawyerPerson.Tariff == null ||
-				l.Endpoint.Client.LawyerPerson.Tariff == 0)).ToList();
-			var sndingLease = SendedLease.Queryable.Where(s => s.SendDate >= DateTime.Now.Date ).Select(s => s.LeaseId).ToList();
+					(l.Endpoint.Client.LawyerPerson.Tariff == null ||
+						l.Endpoint.Client.LawyerPerson.Tariff == 0))
+				.ToList();
+			var sndingLease = SendedLease.Queryable.Where(s => s.SendDate >= DateTime.Now.Date).Select(s => s.LeaseId).ToList();
 			var smtp = new SmtpClient("box.analit.net");
 #if !DEBUG
 			var mailToAdress = "internet@ivrn.net";

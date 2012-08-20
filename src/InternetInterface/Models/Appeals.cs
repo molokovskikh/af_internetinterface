@@ -36,7 +36,7 @@ namespace InternetInterface.Models
 		public UniversalAppealType Type;
 		public AppealType AppealType;
 
-		public string Color 
+		public string Color
 		{
 			get
 			{
@@ -57,7 +57,8 @@ namespace InternetInterface.Models
 	public class Appeals : ValidActiveRecordLinqBase<Appeals>
 	{
 		public Appeals()
-		{}
+		{
+		}
 
 		public Appeals(string appeal, Client client, AppealType appealType)
 		{
@@ -113,13 +114,13 @@ namespace InternetInterface.Models
 					Partner = s.Registrator != null ? s.Registrator.Name : string.Empty,
 					Text = String.Format("Сервисная заявка №{0} ", s.Id) + s.GetDescription(),
 					Type = UniversalAppealType.Service,
-					SubFields = s.Iterations.Count > 0 ? 
-					new List<UniversalAppeal>(s.Iterations.Select(i => new UniversalAppeal {
-						Date = i.RegDate,
-						Partner = i.Performer != null ? i.Performer.Name : string.Empty,
-						Text = i.GetDescription(),
-						Type = UniversalAppealType.Service
-					})) : null
+					SubFields = s.Iterations.Count > 0 ?
+						new List<UniversalAppeal>(s.Iterations.Select(i => new UniversalAppeal {
+							Date = i.RegDate,
+							Partner = i.Performer != null ? i.Performer.Name : string.Empty,
+							Text = i.GetDescription(),
+							Type = UniversalAppealType.Service
+						})) : null
 				}).ToList();
 				appeals.AddRange(service);
 			}

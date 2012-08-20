@@ -48,7 +48,7 @@ namespace InternetInterface.Models
 
 		public IList<StaticIp> GetStaticAdreses()
 		{
-			var endPoint = ClientEndpoint.TryFind((uint) endpointId);
+			var endPoint = ClientEndpoint.TryFind((uint)endpointId);
 			if (endPoint != null)
 				return endPoint.StaticIps;
 			return new List<StaticIp>();
@@ -163,9 +163,9 @@ namespace InternetInterface.Models
 		public virtual string GetAdress()
 		{
 			return String.Format("{0} Подъезд {1} Этаж {2}",
-					GetCutAdress(),
-					Entrance,
-					Floor);
+				GetCutAdress(),
+				Entrance,
+				Floor);
 		}
 
 		public virtual string GetCutAdress()

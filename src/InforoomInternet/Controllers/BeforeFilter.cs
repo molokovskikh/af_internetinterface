@@ -24,12 +24,10 @@ namespace InforoomInternet.Controllers
 		{
 			var holder = ActiveRecordMediator.GetSessionFactoryHolder();
 			var session = holder.CreateSession(typeof(ActiveRecordBase));
-			try
-			{
+			try {
 				session.EnableFilter("HiddenTariffs");
 			}
-			finally
-			{
+			finally {
 				holder.ReleaseSession(session);
 			}
 			return true;
@@ -51,8 +49,9 @@ namespace InforoomInternet.Controllers
 			controllerContext.PropertyBag["ViewName"] = Path.GetFileNameWithoutExtension(context.Request.Uri.Segments.Last());
 			controllerContext.PropertyBag["LocalPath"] = Path.GetFileNameWithoutExtension(context.Request.Uri.LocalPath);
 			controllerContext.PropertyBag["loadInternetModules"] = !Lease.IsGray(context.Request.UserHostAddress);
-			if (context.Session["LoginPartner"] == null)
-			{ context.Session["LoginPartner"] = context.CurrentUser.Identity.Name; }
+			if (context.Session["LoginPartner"] == null) {
+				context.Session["LoginPartner"] = context.CurrentUser.Identity.Name;
+			}
 			controllerContext.PropertyBag["AccessEditLink"] = LoginLogic.IsAccessiblePartner(context.Session["LoginPartner"]);
 			return true;
 		}
@@ -69,20 +68,17 @@ namespace InforoomInternet.Controllers
 			if (Regex.IsMatch(ip, NetworkSwitches.IPRegExp))
 				lease = Lease.FindAllByProperty("Ip", Convert.ToUInt32(NetworkSwitches.SetProgramIp(ip)));
 
-			if (lease != null && lease.Length != 0)
-			{
+			if (lease != null && lease.Length != 0) {
 				var clientsId = lease.Where(
-					l => l.Endpoint != null && l.Endpoint.Client != null && l.Endpoint.Client.PhysicalClient != null).
-					Select(l => l.Endpoint.Client.Id).ToList();
-				if (clientsId.Any())
-				{
+					l => l.Endpoint != null && l.Endpoint.Client != null && l.Endpoint.Client.PhysicalClient != null)
+					.Select(l => l.Endpoint.Client.Id).ToList();
+				if (clientsId.Any()) {
 					context.Session["LoginClient"] = clientsId.First();
 					context.Session["autoIn"] = true;
 					return true;
 				}
 			}
-			if ((context.Session["LoginClient"] == null) || (Client.Find(Convert.ToUInt32(context.Session["Login"])) == null))
-			{
+			if ((context.Session["LoginClient"] == null) || (Client.Find(Convert.ToUInt32(context.Session["Login"])) == null)) {
 				context.Response.RedirectToUrl(@"..//Login/LoginPage");
 				return false;
 			}

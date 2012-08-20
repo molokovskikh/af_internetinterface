@@ -7,7 +7,8 @@ namespace InternetInterface.Helpers
 	public class UserValidateNonEmpty : AbstractValidationAttribute
 	{
 		public UserValidateNonEmpty(string errorMessage) : base(errorMessage)
-		{}
+		{
+		}
 
 		public override IValidator Build()
 		{
@@ -33,8 +34,7 @@ namespace InternetInterface.Helpers
 			if (partner.Categorie.ReductionName == "Office")
 				return true;
 
-			if (partner.Categorie.ReductionName == "Diller")
-			{
+			if (partner.Categorie.ReductionName == "Diller") {
 				if (string.IsNullOrEmpty((string)fieldValue))
 					return false;
 			}

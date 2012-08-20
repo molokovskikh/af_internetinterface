@@ -18,10 +18,12 @@ namespace InternetInterface.Models
 	public class Mailer : BaseMailer
 	{
 		public Mailer(IEmailSender sender) : base(sender)
-		{}
+		{
+		}
 
 		public Mailer()
-		{}
+		{
+		}
 
 		public Mailer Invoice(Invoice invoice)
 		{

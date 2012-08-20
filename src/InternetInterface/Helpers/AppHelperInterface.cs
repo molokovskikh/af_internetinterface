@@ -33,26 +33,24 @@ namespace InternetInterface.Helpers
 		public void RegisterEditor()
 		{
 			Editors.Add(typeof(Period), (name, value, options) => {
-				var period = (Period) value;
+				var period = (Period)value;
 				if (period == null)
 					return null;
 
 				return "<label style='padding:2px'>Год</label>"
 					+ GetEdit(name + ".Year", typeof(int), period.Year, options)
-					+ "<label style='padding:2px'>Месяц</label>"
-					+ GetEdit(name + ".Interval", typeof(Interval), period.Interval, options);
+						+ "<label style='padding:2px'>Месяц</label>"
+							+ GetEdit(name + ".Interval", typeof(Interval), period.Interval, options);
 			});
 		}
 
 		protected override string GetBuiltinEdit(string name, Type valueType, object value, object options, PropertyInfo property)
 		{
-			if (name.EndsWith(".Year"))
-			{
+			if (name.EndsWith(".Year")) {
 				if (valueType == typeof(int))
 					return helper.Select(name, Period.Years);
-				else if (valueType == typeof(int?))
-				{
-					var items = new[] {"Все"}.Concat(Period.Years.Select(y => y.ToString())).ToArray();
+				else if (valueType == typeof(int?)) {
+					var items = new[] { "Все" }.Concat(Period.Years.Select(y => y.ToString())).ToArray();
 					return helper.Select(name, items);
 				}
 			}
@@ -61,8 +59,7 @@ namespace InternetInterface.Helpers
 
 		public override string GetQuerystring(string key, string direction)
 		{
-			if (uriParams.Contains("SortBy") && uriParams.Contains("Direction"))
-			{
+			if (uriParams.Contains("SortBy") && uriParams.Contains("Direction")) {
 				var sortByPos = uriParams.IndexOf("SortBy");
 				var newxtAndPos = uriParams.IndexOf('&', sortByPos);
 				uriParams = uriParams.Remove(sortByPos - 8, newxtAndPos - sortByPos + 8);
@@ -72,11 +69,9 @@ namespace InternetInterface.Helpers
 					newxtAndPos = uriParams.Length;
 				uriParams = uriParams.Remove(DirectionPos - 8, newxtAndPos - DirectionPos + 8);
 			}
-			if ((ControllerContext.PropertyBag["filter"] is ISortableContributor))
-			{
+			if ((ControllerContext.PropertyBag["filter"] is ISortableContributor)) {
 				var sortableContributor = ControllerContext.PropertyBag["filter"] as ISortableContributor;
-				if (sortableContributor != null)
-				{
+				if (sortableContributor != null) {
 					var curpage =
 						sortableContributor.GetParameters()["CurrentPage"];
 					uriParams += "&filter.CurrentPage=" + curpage;

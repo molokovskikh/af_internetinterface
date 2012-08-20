@@ -27,7 +27,7 @@ namespace InternetInterface.Test.Integration
 		public void SetUp()
 		{
 			Filter = new OnLineFilter();
-			InitializeContent.GetAdministrator = () => new Partner{AccesedPartner = new List<string>()};
+			InitializeContent.GetAdministrator = () => new Partner { AccesedPartner = new List<string>() };
 			PhusicalClient = new PhysicalClient {
 				Name = "Test",
 				Surname = "Physical",
@@ -43,13 +43,13 @@ namespace InternetInterface.Test.Integration
 				LawyerPerson = LawyerPerson
 			};
 			session.Save(Client);
-			Zone = new Zone {Name = "TestZone"};
+			Zone = new Zone { Name = "TestZone" };
 			session.Save(Zone);
 			Switch = new NetworkSwitches("TestCommutator", Zone);
 			session.Save(Switch);
 			Endpoint = new ClientEndpoint(Client, 10, Switch);
 			session.Save(Endpoint);
-			Lease = new Lease(Endpoint){Switch = Switch};
+			Lease = new Lease(Endpoint) { Switch = Switch };
 			session.Save(Lease);
 			Flush();
 		}

@@ -7,8 +7,8 @@ namespace InternetInterface.Initializers
 	{
 		public ActiveRecord()
 		{
-			Assemblies = new [] { "InternetInterface" };
-			AdditionalTypes = new[] {typeof (ValidEventListner)};
+			Assemblies = new[] { "InternetInterface" };
+			AdditionalTypes = new[] { typeof(ValidEventListner) };
 		}
 	}
 }

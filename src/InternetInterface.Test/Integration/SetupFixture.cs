@@ -14,7 +14,7 @@ using NUnit.Framework;
 namespace InternetInterface.Test.Integration
 {
 	[SetUpFixture]
-	class SetupFixture
+	internal class SetupFixture
 	{
 		[SetUp]
 		public void Setup()

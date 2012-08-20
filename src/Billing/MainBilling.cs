@@ -24,7 +24,7 @@ namespace Billing
 	{
 		public const int FreeDaysVoluntaryBlockin = 28;
 
-		private readonly ILog _log = LogManager.GetLogger(typeof (MainBilling));
+		private readonly ILog _log = LogManager.GetLogger(typeof(MainBilling));
 
 		private Mutex _mutex = new Mutex();
 		private SaleSettings _saleSettings;
@@ -38,7 +38,7 @@ namespace Billing
 				InitActiveRecord();
 			}
 			catch (Exception ex) {
-				_log.Error("Ошибка к конструкторе" ,ex);
+				_log.Error("Ошибка к конструкторе", ex);
 			}
 		}
 
@@ -46,14 +46,13 @@ namespace Billing
 		{
 			if (!ActiveRecordStarter.IsInitialized) {
 				ActiveRecordStarter.EventListenerComponentRegistrationHook += RemoverListner.Make;
-				ActiveRecordInitialize.Init(ConnectionHelper.GetConnectionName(), new[] {typeof (Client).Assembly});
+				ActiveRecordInitialize.Init(ConnectionHelper.GetConnectionName(), new[] { typeof(Client).Assembly });
 			}
 		}
 
 		public void On()
 		{
-			try
-			{
+			try {
 				_mutex.WaitOne();
 
 				OnMethod();
@@ -61,16 +60,14 @@ namespace Billing
 			catch (Exception ex) {
 				_log.Error("Ошибка в методе OnMethod", ex);
 			}
-			finally 
-			{ 
+			finally {
 				_mutex.ReleaseMutex();
 			}
 		}
 
 		public void Run()
 		{
-			try
-			{
+			try {
 				_mutex.WaitOne();
 				var now = SystemTime.Now();
 				bool errorFlag;
@@ -83,8 +80,7 @@ namespace Billing
 						Reset();
 
 						var billingTime = InternetSettings.FindFirst();
-						if (now.Hour < 22)
-						{
+						if (now.Hour < 22) {
 							billingTime.NextBillingDate = new DateTime(now.Year, now.Month, now.Day, 22, 0, 0);
 						}
 						else {
@@ -100,8 +96,7 @@ namespace Billing
 			catch (Exception ex) {
 				_log.Error("Ошибка в методе Compute", ex);
 			}
-			finally 
-			{ 
+			finally {
 				_mutex.ReleaseMutex();
 			}
 		}
@@ -140,11 +135,11 @@ set s.LastStartFail = true;")
 			WithTransaction(ActivateServices);
 
 			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
-				var newClients = Client.FindAll(DetachedCriteria.For(typeof (Client))
-			                                		.CreateAlias("PhysicalClient", "PC", JoinType.InnerJoin)
-			                                		.Add(Restrictions.Eq("PC.ConnectionPaid", false))
-			                                		.Add(Restrictions.IsNotNull("BeginWork"))
-			                                		.Add(Restrictions.IsNotNull("PhysicalClient")));
+				var newClients = Client.FindAll(DetachedCriteria.For(typeof(Client))
+					.CreateAlias("PhysicalClient", "PC", JoinType.InnerJoin)
+					.Add(Restrictions.Eq("PC.ConnectionPaid", false))
+					.Add(Restrictions.IsNotNull("BeginWork"))
+					.Add(Restrictions.IsNotNull("PhysicalClient")));
 				foreach (var newClient in newClients) {
 					var client = newClient.PhysicalClient;
 					client.ConnectionPaid = true;
@@ -158,7 +153,7 @@ set s.LastStartFail = true;")
 				transaction.VoteCommit();
 			}
 			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
-				var newPayments = Payment.FindAll(DetachedCriteria.For(typeof (Payment)).Add(Restrictions.Eq("BillingAccount", false)));
+				var newPayments = Payment.FindAll(DetachedCriteria.For(typeof(Payment)).Add(Restrictions.Eq("BillingAccount", false)));
 				foreach (var newPayment in newPayments) {
 					var updateClient = newPayment.Client;
 					var physicalClient = updateClient.PhysicalClient;
@@ -218,8 +213,8 @@ set s.LastStartFail = true;")
 			}
 			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
 				var clients = Client.Queryable.Where(c => c.PhysicalClient != null && c.Disabled && c.AutoUnblocked).ToList();
-				clients = clients.Where(c => c.PhysicalClient.Balance >= c.GetPriceIgnoreDisabled()*c.PercentBalance).ToList();
-				var workStatus = Status.Find((uint) StatusType.Worked);
+				clients = clients.Where(c => c.PhysicalClient.Balance >= c.GetPriceIgnoreDisabled() * c.PercentBalance).ToList();
+				var workStatus = Status.Find((uint)StatusType.Worked);
 				foreach (var client in clients) {
 					client.Status = workStatus;
 					client.RatedPeriodDate = null;
@@ -234,10 +229,10 @@ set s.LastStartFail = true;")
 					if (client.NeedShowWarningForLawyer()) {
 						if (client.WhenShowWarning == null ||
 							(SystemTime.Now() - client.WhenShowWarning.Value).TotalHours >= 3) {
-								client.ShowBalanceWarningPage = true;
-								client.WhenShowWarning = SystemTime.Now();
-								if (!client.SendEmailNotification)
-									client.SendEmailNotification = EmailNotificationSender.SendLawyerPersonNotification(client);
+							client.ShowBalanceWarningPage = true;
+							client.WhenShowWarning = SystemTime.Now();
+							if (!client.SendEmailNotification)
+								client.SendEmailNotification = EmailNotificationSender.SendLawyerPersonNotification(client);
 						}
 					}
 					else {
@@ -258,13 +253,12 @@ set s.LastStartFail = true;")
 		{
 			int errorCount = 0;
 			using (new SessionScope()) {
-
 				var settings = ActiveRecordMediator<InternetSettings>.FindFirst();
 				settings.LastStartFail = true;
 				settings.Save();
 
 				Messages = new List<SmsMessage>();
-				_saleSettings  = SaleSettings.FindFirst();
+				_saleSettings = SaleSettings.FindFirst();
 			}
 
 			ProcessAll(WriteOffFromPhysicalClient,
@@ -278,13 +272,14 @@ set s.LastStartFail = true;")
 			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
 				var agentSettings = AgentTariff.GetPriceForAction(AgentActions.AgentPayIndex);
 				var needToAgentSum = AgentTariff.GetPriceForAction(AgentActions.WorkedClient);
-				var bonusesClients = Client.Queryable.Where(c => 
-					c.Request != null && 
-					!c.Request.PaidBonus && 
-					c.Request.Registrator != null &&
-					c.BeginWork != null).ToList();
+				var bonusesClients = Client.Queryable.Where(c =>
+					c.Request != null &&
+						!c.Request.PaidBonus &&
+						c.Request.Registrator != null &&
+						c.BeginWork != null)
+					.ToList();
 				foreach (var client in bonusesClients) {
-					if (client.Payments.Sum(p => p.Sum) >= needToAgentSum * agentSettings) { 
+					if (client.Payments.Sum(p => p.Sum) >= needToAgentSum * agentSettings) {
 						var request = client.Request;
 						request.PaidBonus = true;
 						request.Update();
@@ -300,7 +295,6 @@ set s.LastStartFail = true;")
 				transaction.VoteCommit();
 			}
 			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
-
 				var settings = ActiveRecordMediator<InternetSettings>.FindFirst();
 				settings.LastStartFail = errorCount > 0;
 				settings.Save();
@@ -355,18 +349,16 @@ set s.LastStartFail = true;")
 						client.RatedPeriodDate = client.RatedPeriodDate.Value.AddDays(-1);
 					}
 				}
-				else {
-					if ((client.RatedPeriodDate.Value.AddMonths(1).Date - dtNow.Date).TotalDays < -client.DebtDays) {
-						client.RatedPeriodDate = dtNow.AddDays(client.DebtDays);
-						client.DebtDays = 0;
-					}
+				else if ((client.RatedPeriodDate.Value.AddMonths(1).Date - dtNow.Date).TotalDays < -client.DebtDays) {
+					client.RatedPeriodDate = dtNow.AddDays(client.DebtDays);
+					client.DebtDays = 0;
 				}
 			}
 			if (client.StartNoBlock != null) {
 				decimal sale = 0;
 				var monthOnStart = SystemTime.Now().TotalMonth(client.StartNoBlock.Value);
 				if (monthOnStart >= _saleSettings.PeriodCount)
-					sale = _saleSettings.MinSale + (monthOnStart - _saleSettings.PeriodCount)*_saleSettings.SaleStep;
+					sale = _saleSettings.MinSale + (monthOnStart - _saleSettings.PeriodCount) * _saleSettings.SaleStep;
 				if (sale > _saleSettings.MaxSale)
 					sale = _saleSettings.MaxSale;
 				if (sale >= _saleSettings.MinSale)
@@ -375,13 +367,12 @@ set s.LastStartFail = true;")
 			if (client.GetPrice() > 0 && !client.PaidDay
 				&& client.RatedPeriodDate != DateTime.MinValue
 				&& client.RatedPeriodDate != null) {
-
 				if (client.StartNoBlock == null)
 					client.StartNoBlock = SystemTime.Now();
 
 				var daysInInterval = client.GetInterval();
 				var price = client.GetPrice();
-				var sum = price/daysInInterval;
+				var sum = price / daysInInterval;
 
 				var writeOff = phisicalClient.WriteOff(sum);
 				if (writeOff != null) {
@@ -422,7 +413,7 @@ set s.LastStartFail = true;")
 				client.Disabled = true;
 				client.Sale = 0;
 				client.StartNoBlock = null;
-				client.Status = Status.Find((uint) StatusType.NoWorked);
+				client.Status = Status.Find((uint)StatusType.NoWorked);
 			}
 			if (client.YearCycleDate == null || (SystemTime.Now().Date >= client.YearCycleDate.Value.AddYears(1).Date)) {
 				client.FreeBlockDays = FreeDaysVoluntaryBlockin;
@@ -439,13 +430,13 @@ set s.LastStartFail = true;")
 			var now = SystemTime.Now();
 			var daysInMonth = DateTime.DaysInMonth(now.Year, now.Month);
 			var tariff = person.Tariff.Value;
-			var sum = tariff/daysInMonth;
+			var sum = tariff / daysInMonth;
 			if (sum == 0)
 				return;
 
 			//если это последний день месяца то нам нужно учесть накопивщуюся ошибку округления
 			if (now.Date == now.Date.LastDayOfMonth()) {
-				sum += tariff - Math.Round(tariff/daysInMonth, 2) * daysInMonth;
+				sum += tariff - Math.Round(tariff / daysInMonth, 2) * daysInMonth;
 			}
 
 			person.Balance -= sum;

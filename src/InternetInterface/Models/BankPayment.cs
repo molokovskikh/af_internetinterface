@@ -138,7 +138,7 @@ namespace InternetInterface.Models
 
 		//все что выше получается из выписки
 		//дата занесения платежа
-		[BelongsTo(Column = "PayerId", Cascade = CascadeEnum.SaveUpdate)/*, ValidateNonEmpty("Обязательно укажите плательщика")*/]
+		[BelongsTo(Column = "PayerId", Cascade = CascadeEnum.SaveUpdate) /*, ValidateNonEmpty("Обязательно укажите плательщика")*/]
 		public virtual Client Payer { get; set; }
 
 		[BelongsTo(Column = "RecipientId")]
@@ -164,27 +164,23 @@ namespace InternetInterface.Models
 				return "";
 
 			var payers = GetPayerForInn(PayerClient.Inn);
-			if (payers.Count == 0)
-			{
+			if (payers.Count == 0) {
 				return String.Format("Не удалось найти ни одного платильщика с ИНН {0}", PayerClient.Inn);
 			}
-			else if (payers.Count == 1)
-			{
+			else if (payers.Count == 1) {
 				Payer = payers.Single();
 				return "";
 			}
-			else
-			{
+			else {
 				return String.Format("Найдено более одного плательщика с ИНН {0}, плательщики с таким ИНН {1}",
-									 PayerClient.Inn,
-									 payers.Implode(p => p.Name));
+					PayerClient.Inn,
+					payers.Implode(p => p.Name));
 			}
 		}
 
 		public static List<BankPayment> Parse(string file)
 		{
-			using (var stream = File.OpenRead(file))
-			{
+			using (var stream = File.OpenRead(file)) {
 				return Parse(file, stream);
 			}
 		}
@@ -209,23 +205,21 @@ namespace InternetInterface.Models
 		{
 			var recipients = Recipient.Queryable.ToList();
 			var ignoredInns = IgnoredInn.Queryable.ToList();
-			foreach (var payment in payments)
-			{
+			foreach (var payment in payments) {
 				payment.Recipient =
 					recipients.FirstOrDefault(r => r.BankAccountNumber == payment.RecipientClient.AccountCode);
 				if (payment.Recipient == null)
 					continue;
 
 				var inn = payment.PayerClient.Inn;
-				if (!ignoredInns.Any(i => String.Equals(i.Inn, inn, StringComparison.InvariantCultureIgnoreCase)))
-				{
+				if (!ignoredInns.Any(i => String.Equals(i.Inn, inn, StringComparison.InvariantCultureIgnoreCase))) {
 					var payer = ActiveRecordLinq.AsQueryable<Client>().FirstOrDefault(p => p.LawyerPerson.INN == inn);
 					payment.Payer = payer;
 				}
 
 				if (payment.IsDuplicate())
 					continue;
-				
+
 				yield return payment;
 			}
 		}
@@ -235,10 +229,8 @@ namespace InternetInterface.Models
 			var reader = new StreamReader(file, Encoding.GetEncoding(1251));
 			string line;
 			var payments = new List<BankPayment>();
-			while ((line = reader.ReadLine()) != null)
-			{
-				if (line.Equals("СекцияДокумент=Платежное поручение", StringComparison.CurrentCultureIgnoreCase))
-				{
+			while ((line = reader.ReadLine()) != null) {
+				if (line.Equals("СекцияДокумент=Платежное поручение", StringComparison.CurrentCultureIgnoreCase)) {
 					var payment = ParsePayment(reader);
 					payments.Add(payment);
 				}
@@ -254,8 +246,7 @@ namespace InternetInterface.Models
 			payment.PayerBank = new BankInfo();
 			payment.RecipientBank = new BankInfo();
 			payment.RecipientClient = new BankClient();
-			while ((line = reader.ReadLine()) != null)
-			{
+			while ((line = reader.ReadLine()) != null) {
 				if (line.Equals("КонецДокумента", StringComparison.CurrentCultureIgnoreCase))
 					break;
 
@@ -266,68 +257,52 @@ namespace InternetInterface.Models
 					continue;
 				var label = parts[0];
 				var value = parts[1];
-				if (label.Equals("ДатаПоступило", StringComparison.CurrentCultureIgnoreCase))
-				{
+				if (label.Equals("ДатаПоступило", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.PayedOn = DateTime.ParseExact(value, "dd.MM.yyyy", CultureInfo.CurrentCulture);
 				}
-				else if (label.Equals("Сумма", StringComparison.CurrentCultureIgnoreCase))
-				{
+				else if (label.Equals("Сумма", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.Sum = decimal.Parse(value, CultureInfo.InvariantCulture);
 				}
-				else if (label.Equals("НазначениеПлатежа", StringComparison.CurrentCultureIgnoreCase))
-				{
+				else if (label.Equals("НазначениеПлатежа", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.Comment = value;
 				}
-				else if (label.Equals("Номер", StringComparison.CurrentCultureIgnoreCase))
-				{
+				else if (label.Equals("Номер", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.DocumentNumber = value;
 				}
-				else if (label.Equals("ПлательщикСчет", StringComparison.CurrentCultureIgnoreCase))
-				{
+				else if (label.Equals("ПлательщикСчет", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.PayerClient.AccountCode = value;
 				}
-				else if (label.Equals("Плательщик1", StringComparison.CurrentCultureIgnoreCase))
-				{
+				else if (label.Equals("Плательщик1", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.PayerClient.Name = value;
 				}
-				else if (label.Equals("ПлательщикИНН", StringComparison.CurrentCultureIgnoreCase))
-				{
+				else if (label.Equals("ПлательщикИНН", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.PayerClient.Inn = value;
 				}
-				else if (label.Equals("ПлательщикБИК", StringComparison.CurrentCultureIgnoreCase))
-				{
+				else if (label.Equals("ПлательщикБИК", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.PayerBank.Bic = value;
 				}
-				else if (label.Equals("ПлательщикБанк1", StringComparison.CurrentCultureIgnoreCase))
-				{
+				else if (label.Equals("ПлательщикБанк1", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.PayerBank.Description = value;
 				}
-				else if (label.Equals("ПлательщикКорсчет", StringComparison.CurrentCultureIgnoreCase))
-				{
+				else if (label.Equals("ПлательщикКорсчет", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.PayerBank.AccountCode = value;
 				}
-				else if (label.Equals("ПолучательСчет", StringComparison.CurrentCultureIgnoreCase))
-				{
+				else if (label.Equals("ПолучательСчет", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.RecipientClient.AccountCode = value;
 				}
-				else if (label.Equals("Получатель1", StringComparison.CurrentCultureIgnoreCase))
-				{
+				else if (label.Equals("Получатель1", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.RecipientClient.Name = value;
 				}
-				else if (label.Equals("ПолучательИНН", StringComparison.CurrentCultureIgnoreCase))
-				{
+				else if (label.Equals("ПолучательИНН", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.RecipientClient.Inn = value;
 				}
-				else if (label.Equals("ПолучательБИК", StringComparison.CurrentCultureIgnoreCase))
-				{
+				else if (label.Equals("ПолучательБИК", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.RecipientBank.Bic = value;
 				}
-				else if (label.Equals("ПолучательБанк1", StringComparison.CurrentCultureIgnoreCase))
-				{
+				else if (label.Equals("ПолучательБанк1", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.RecipientBank.Description = value;
 				}
-				else if (label.Equals("ПолучательКорсчет", StringComparison.CurrentCultureIgnoreCase))
-				{
+				else if (label.Equals("ПолучательКорсчет", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.RecipientBank.AccountCode = value;
 				}
 			}
@@ -338,8 +313,7 @@ namespace InternetInterface.Models
 		{
 			var doc = XDocument.Load(file);
 			var payments = new List<BankPayment>();
-			foreach (var node in doc.XPathSelectElements("//payment"))
-			{
+			foreach (var node in doc.XPathSelectElements("//payment")) {
 				var documentNumber = node.XPathSelectElement("NDoc").Value;
 				var dateNode = node.XPathSelectElement("SendDate");
 				if (dateNode == null)
@@ -359,27 +333,22 @@ namespace InternetInterface.Models
 					RegistredOn = DateTime.Now,
 					Sum = Decimal.Parse(sum, CultureInfo.InvariantCulture),
 					Comment = comment,
-
 					PayerBank = new BankInfo(
 						node.XPathSelectElement("BankPayer/Description").Value,
 						node.XPathSelectElement("BankPayer/BIC").Value,
-						bankAccountantCode
-						),
+						bankAccountantCode),
 					PayerClient = new BankClient(
 						node.XPathSelectElement("Payer/Name").Value,
 						null,
-						node.XPathSelectElement("Payer/AccountCode").Value
-						),
+						node.XPathSelectElement("Payer/AccountCode").Value),
 					RecipientBank = new BankInfo(
 						node.XPathSelectElement("BankRecipient/Description").Value,
 						node.XPathSelectElement("BankRecipient/BIC").Value,
-						node.XPathSelectElement("BankRecipient/AccountCode").Value
-						),
+						node.XPathSelectElement("BankRecipient/AccountCode").Value),
 					RecipientClient = new BankClient(
 						node.XPathSelectElement("Recepient/Client/Name").Value,
 						node.XPathSelectElement("Recepient/Client/INN").Value,
-						node.XPathSelectElement("Recepient/Client/AccountCode").Value
-						),
+						node.XPathSelectElement("Recepient/Client/AccountCode").Value),
 				};
 				var element = node.XPathSelectElement("Payer/INN");
 				if (element != null)
@@ -440,8 +409,7 @@ namespace InternetInterface.Models
 		[ValidateSelf]
 		public void Validate(ErrorSummary summary)
 		{
-			if (Payer != null)
-			{
+			if (Payer != null) {
 				if (Recipient.Id != Payer.Recipient.Id)
 					summary.RegisterErrorMessage(
 						"Recipient",
@@ -455,9 +423,9 @@ namespace InternetInterface.Models
 				return false;
 
 			return Queryable.FirstOrDefault(p => p.Payer == Payer
-					&& p.PayedOn == PayedOn
-					&& p.Sum == Sum
-					&& p.DocumentNumber == DocumentNumber) != null;
+				&& p.PayedOn == PayedOn
+				&& p.Sum == Sum
+				&& p.DocumentNumber == DocumentNumber) != null;
 		}
 
 		public void DoUpdate()
@@ -473,8 +441,7 @@ namespace InternetInterface.Models
 			if (Payer != null
 				&& Payer.LawyerPerson != null
 				&& PayerClient != null
-				&& !String.IsNullOrEmpty(PayerClient.Inn))
-			{
+				&& !String.IsNullOrEmpty(PayerClient.Inn)) {
 				Payer.LawyerPerson.INN = PayerClient.Inn;
 				//Payer.Save();
 			}

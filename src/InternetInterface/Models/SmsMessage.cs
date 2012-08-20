@@ -22,8 +22,8 @@ namespace InternetInterface.Models
 			if (client.Contacts != null) {
 				var contact =
 					client.Contacts.Where(
-						c => c.Type == ContactType.SmsSending && !string.IsNullOrEmpty(c.Text) && Regex.IsMatch(c.Text, @"^(9)\d{9}")).
-						FirstOrDefault();
+						c => c.Type == ContactType.SmsSending && !string.IsNullOrEmpty(c.Text) && Regex.IsMatch(c.Text, @"^(9)\d{9}"))
+						.FirstOrDefault();
 				PhoneNumber = contact != null ? "+7" + contact.Text : null;
 			}
 			Client = client;

@@ -16,16 +16,16 @@ namespace InternetInterface.Background
 {
 	public class Waiter : RepeatableCommand
 	{
-		private static ILog log = LogManager.GetLogger(typeof (Waiter));
+		private static ILog log = LogManager.GetLogger(typeof(Waiter));
 		private List<ActiveRecordJob> jobs = new List<ActiveRecordJob>();
 
 		public Waiter()
 		{
-			Delay = (int) TimeSpan.FromHours(1).TotalMilliseconds;
+			Delay = (int)TimeSpan.FromHours(1).TotalMilliseconds;
 			Action = () => {
 				SendProcessor.Process();
 
-				using(new SessionScope())
+				using (new SessionScope())
 					jobs.Each(j => j.Run());
 			};
 		}
@@ -53,4 +53,3 @@ namespace InternetInterface.Background
 		}
 	}
 }
-

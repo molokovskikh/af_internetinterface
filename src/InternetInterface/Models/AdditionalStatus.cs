@@ -12,7 +12,7 @@ namespace InternetInterface.Models
 		Refused = 1,
 		NotPhoned = 3,
 		AppointedToTheGraph = 5,
-	};
+	}
 
 
 	[ActiveRecord("AdditionalStatus", Schema = "internet", Lazy = true)]

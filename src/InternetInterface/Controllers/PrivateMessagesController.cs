@@ -31,7 +31,7 @@ namespace InternetInterface.Controllers
 			message = message ?? new MessageForClient();
 			PropertyBag["PrivateMessage"] = message;
 			PropertyBag["client"] = client;
-			if (IsPost) { 
+			if (IsPost) {
 				BindObjectInstance(message, "PrivateMessage", AutoLoadBehavior.NewInstanceIfInvalidKey);
 				if (IsValid(message)) {
 					message.Registrator = InitializeContent.Partner;
@@ -53,7 +53,7 @@ namespace InternetInterface.Controllers
 			if (messages.Count > 0)
 				message = messages
 					.GroupBy(k => k.Text)
-					.Select(g => new { count = g.Count(), message = g.FirstOrDefault()})
+					.Select(g => new { count = g.Count(), message = g.FirstOrDefault() })
 					.OrderByDescending(o => o.count)
 					.Select(s => s.message)
 					.FirstOrDefault();
@@ -64,12 +64,12 @@ namespace InternetInterface.Controllers
 				var errorClients = new List<uint>();
 				foreach (var client in clients) {
 					var toSave = client.Message;
-					toSave = toSave ?? new MessageForClient {Client = client};
+					toSave = toSave ?? new MessageForClient { Client = client };
 					toSave.Registrator = InitializeContent.Partner;
 					BindObjectInstance(toSave, "PrivateMessage", AutoLoadBehavior.OnlyNested);
 					if (IsValid(message)) {
 						DbSession.Save(toSave);
-						applyCount ++;
+						applyCount++;
 					}
 					else {
 						errorClients.Add(client.Id);

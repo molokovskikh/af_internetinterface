@@ -8,7 +8,8 @@ namespace InternetInterface.Models
 	public class TariffChangeRule
 	{
 		public TariffChangeRule()
-		{}
+		{
+		}
 
 		public TariffChangeRule(Tariff fromTariff, Tariff toTariff, decimal price)
 		{

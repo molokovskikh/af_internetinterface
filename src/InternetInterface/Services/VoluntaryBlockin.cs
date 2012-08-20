@@ -10,6 +10,7 @@ using InternetInterface.Models;
 namespace InternetInterface.Services
 {
 	/*Если раскоментировать строчку, будет отображать ещё и дату активации*/
+
 	[ActiveRecord(DiscriminatorValue = "VoluntaryBlockin")]
 	public class VoluntaryBlockin : Service
 	{
@@ -31,8 +32,7 @@ namespace InternetInterface.Services
 
 		public override bool CanActivate(Client client)
 		{
-			if (client.PhysicalClient != null)
-			{
+			if (client.PhysicalClient != null) {
 				var balance = client.PhysicalClient.Balance >= 0;
 				var debtWork = !client.HaveService<DebtWork>();
 				return balance && debtWork && client.StartWork();
@@ -43,13 +43,12 @@ namespace InternetInterface.Services
 		public override bool CanActivate(ClientService assignedService)
 		{
 			var begin = SystemTime.Now() > assignedService.BeginWorkDate.Value;
-			return  begin && CanActivate(assignedService.Client);
+			return begin && CanActivate(assignedService.Client);
 		}
 
 		public override void Activate(ClientService assignedService)
 		{
-			if (CanActivate(assignedService) && !assignedService.Activated)
-			{
+			if (CanActivate(assignedService) && !assignedService.Activated) {
 				var client = assignedService.Client;
 
 				client.RatedPeriodDate = DateTime.Now;
@@ -63,7 +62,7 @@ namespace InternetInterface.Services
 					new UserWriteOff {
 						Client = client,
 						Date = DateTime.Now,
-						Sum = price/toDt,
+						Sum = price / toDt,
 						Comment = string.Format("Абоненская плата за {0} из-за добровольной блокировки клиента",
 							DateTime.Now.ToShortDateString())
 					}.Save();
@@ -88,7 +87,7 @@ namespace InternetInterface.Services
 						Date = DateTime.Now,
 						Comment =
 							string.Format("Платеж за активацию услуги добровольная блокировка с {0} по {1}",
-							assignedService.BeginWorkDate.Value.ToShortDateString(), assignedService.EndWorkDate.Value.ToShortDateString())
+								assignedService.BeginWorkDate.Value.ToShortDateString(), assignedService.EndWorkDate.Value.ToShortDateString())
 					}.Save();
 			}
 		}
@@ -119,7 +118,7 @@ namespace InternetInterface.Services
 				}
 				var daysInInterval = client.GetInterval();
 				var price = client.GetPrice();
-				var sum = price/daysInInterval;
+				var sum = price / daysInInterval;
 				if (sum > 0) {
 					client.PaidDay = true;
 					var comment = string.Format("Абоненская плата за {0} из-за добровольной разблокировки клиента", DateTime.Now.ToShortDateString());
@@ -157,7 +156,7 @@ namespace InternetInterface.Services
 			if (assignedService.Client.PhysicalClient.Balance < 0)
 				return 0;
 
-			return assignedService.Client.GetInterval()*3m;
+			return assignedService.Client.GetInterval() * 3m;
 		}
 
 		public override void WriteOff(ClientService assignedService)
@@ -167,7 +166,7 @@ namespace InternetInterface.Services
 				&& client.FreeBlockDays > 0
 				&& assignedService.BeginWorkDate.Value.Date != SystemTime.Today()
 				&& assignedService.EndWorkDate.Value.Date != SystemTime.Today()) {
-				client.FreeBlockDays --;
+				client.FreeBlockDays--;
 				client.Update();
 			}
 		}

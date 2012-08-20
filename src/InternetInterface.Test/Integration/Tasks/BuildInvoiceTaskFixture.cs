@@ -28,7 +28,7 @@ namespace InternetInterface.Test.Integration.Tasks
 				Tariff = 10000,
 			};
 			client.LawyerPerson = lawyerPerson;
-			var writeOffSum = (lawyerPerson.Tariff/30).Value;
+			var writeOffSum = (lawyerPerson.Tariff / 30).Value;
 			var writeOff = new WriteOff(client, writeOffSum, DateTime.Today.AddMonths(-1));
 
 			session.Save(client);

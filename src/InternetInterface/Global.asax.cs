@@ -31,7 +31,7 @@ namespace InternetInterface
 			Logger.SmtpHost = "box.analit.net";
 		}
 
-		void Application_Start(object sender, EventArgs e)
+		private void Application_Start(object sender, EventArgs e)
 		{
 			ConfigReader.LoadSettings(Config);
 			Initialize();

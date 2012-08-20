@@ -11,7 +11,7 @@ using WatiN.Core;
 namespace InternetInterface.Test.Functional
 {
 	[TestFixture, Ignore("Чинить")]
-	class RequestViewFixture : global::Test.Support.Web.WatinFixture2
+	internal class RequestViewFixture : global::Test.Support.Web.WatinFixture2
 	{
 		[Test]
 		public void ViewTest()
@@ -19,17 +19,15 @@ namespace InternetInterface.Test.Functional
 			Open("UserInfo/RequestView.rails");
 			Assert.That(browser.Text, Is.StringContaining("Email"));
 			Assert.That(browser.Text, Is.StringContaining("Адрес"));
-			var checkCount =  browser.Table(Find.ById("clientTable")).TableRows.Count;
+			var checkCount = browser.Table(Find.ById("clientTable")).TableRows.Count;
 			var checkedList = new List<int>();
 			var checkIndexGenerator = new Random();
-			for (int i = 1; i < checkCount; i++)
-			{
+			for (int i = 1; i < checkCount; i++) {
 				if (checkIndexGenerator.Next(8) == 3)
-				checkedList.Add(checkIndexGenerator.Next(checkCount));
+					checkedList.Add(checkIndexGenerator.Next(checkCount));
 			}
-			foreach (var i in checkedList)
-			{
-				browser.CheckBox(Find.ByName("LabelList["+i+"]")).Checked = true;
+			foreach (var i in checkedList) {
+				browser.CheckBox(Find.ByName("LabelList[" + i + "]")).Checked = true;
 			}
 			var Labels = Models.Label.FindAll();
 			var rSelector = new Random();
@@ -37,8 +35,7 @@ namespace InternetInterface.Test.Functional
 			browser.SelectList(Find.ById("labelch")).SelectByValue(selectedlabel);
 			browser.Button(Find.ById("SetlabelButton")).Click();
 			Thread.Sleep(400);
-			foreach (var i in checkedList)
-			{
+			foreach (var i in checkedList) {
 				browser.CheckBox(Find.ById("LabelDemandCheck" + i)).Checked = true;
 			}
 			browser.SelectList(Find.ById("labelch")).SelectByValue("0");
@@ -46,8 +43,7 @@ namespace InternetInterface.Test.Functional
 			browser.TextField(Find.ById("LabelName")).AppendText("TestLabel");
 			browser.Button(Find.ById("CreateLabelButton")).Click();
 			var deleteLabel = Models.Label.FindAllByProperty("Name", "TestLabel");
-			foreach (var label in deleteLabel)
-			{
+			foreach (var label in deleteLabel) {
 				browser.SelectList(Find.ById("deletelabelch")).SelectByValue(label.Id.ToString());
 				browser.Button(Find.ById("DeleteLabelButton")).Click();
 				Thread.Sleep(400);

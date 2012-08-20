@@ -12,7 +12,7 @@ namespace Billing.Test.Integration
 	[TestFixture]
 	public class LawyerPersonFixture : MainBillingFixture
 	{
-		Client lawyerClient;
+		private Client lawyerClient;
 
 		[SetUp]
 		public void Up()
@@ -72,7 +72,7 @@ namespace Billing.Test.Integration
 		[Test]
 		public void Make_last_write_off_round_for_tariff()
 		{
-			for(var i = 1; i <= 30; i++) {
+			for (var i = 1; i <= 30; i++) {
 				SystemTime.Now = () => new DateTime(2012, 4, i);
 				billing.Compute();
 			}

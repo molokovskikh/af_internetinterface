@@ -8,25 +8,20 @@ using InternetInterface.Models;
 
 namespace InternetInterface.Helpers
 {
-	public class IpHelper: AbstractHelper
+	public class IpHelper : AbstractHelper
 	{
 		public static string GetNormalIp(string IP)
 		{
-			if (!string.IsNullOrEmpty(IP))
-			{
+			if (!string.IsNullOrEmpty(IP)) {
 				var splited = IP.Split('.');
 				var valid = new Regex(NetworkSwitches.IPRegExp);
 				long intIp;
-				if (((splited.Length == 1) && long.TryParse(splited.First(), out intIp)))
-				{
+				if (((splited.Length == 1) && long.TryParse(splited.First(), out intIp))) {
 					var normalip = BitConverter.GetBytes(intIp);
 					return string.Format("{0}.{1}.{2}.{3}", normalip[3], normalip[2], normalip[1], normalip[0]);
 				}
-				else
-				{
-					if (valid.IsMatch(IP))
-						return IP;
-				}
+				else if (valid.IsMatch(IP))
+					return IP;
 			}
 			return string.Empty;
 		}

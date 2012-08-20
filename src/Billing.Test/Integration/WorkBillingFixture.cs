@@ -42,7 +42,7 @@ namespace Billing.Test.Integration
 				var settings = ActiveRecordMediator<InternetSettings>.FindFirst();
 				Assert.False(settings.LastStartFail);
 				var dn = DateTime.Now;
-				Assert.That(settings.NextBillingDate, Is.EqualTo(new DateTime(dn.Year, dn.Month, dn.Day, 22, 0 ,0)));
+				Assert.That(settings.NextBillingDate, Is.EqualTo(new DateTime(dn.Year, dn.Month, dn.Day, 22, 0, 0)));
 				var failClient = ActiveRecordMediator<Client>.FindByPrimaryKey(clientId);
 				Assert.IsTrue(failClient.PaidDay);
 			}

@@ -40,7 +40,8 @@ namespace InforoomInternet.Models
 
 		public RepeatableEntity(Action action, int delay)
 			: base(action, delay)
-		{}
+		{
+		}
 
 		public override void Start()
 		{
@@ -65,6 +66,7 @@ namespace InforoomInternet.Models
 
 		static ClientData()
 		{
+			int a = 1; // для stylecop
 #if !DEBUG
 			_clearCommand.Start();
 #endif
@@ -85,8 +87,7 @@ namespace InforoomInternet.Models
 		public static UnknownClientStatus Get(uint client)
 		{
 			_mutex.WaitOne();
-			try
-			{
+			try {
 				var info = GetInfo(client);
 				if (info == null)
 					return UnknownClientStatus.NoInfo;
@@ -100,8 +101,7 @@ namespace InforoomInternet.Models
 		public static UnknownClientInfo GetInfo(uint client)
 		{
 			_mutex.WaitOne();
-			try
-			{
+			try {
 				return _info.FirstOrDefault(i => i.Client == client);
 			}
 			finally {
@@ -112,21 +112,17 @@ namespace InforoomInternet.Models
 		public static void Set(uint client, UnknownClientStatus status, int? iteration)
 		{
 			_mutex.WaitOne();
-			try
-			{
+			try {
 				var info = _info.FirstOrDefault(i => i.Client == client);
-				if (info == null)
-				{
-					_info.Add(new UnknownClientInfo
-					{
+				if (info == null) {
+					_info.Add(new UnknownClientInfo {
 						Client = client,
 						Status = status,
 						UpdateDate = DateTime.Now,
 						Interation = iteration
 					});
 				}
-				else
-				{
+				else {
 					info.Status = status;
 					info.UpdateDate = DateTime.Now;
 					info.Interation = iteration;
@@ -179,8 +175,7 @@ namespace InforoomInternet.Models
 		{
 			_client = _lease.Endpoint.Client.Id;
 			for (int i = 0; i < IterationCount; i++) {
-				try
-				{
+				try {
 #if DEBUG
 					Thread.Sleep(40);
 					if (i < 70)

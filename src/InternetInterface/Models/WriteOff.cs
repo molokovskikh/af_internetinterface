@@ -11,24 +11,24 @@ namespace InternetInterface.Models
 {
 	public class BaseWriteOff
 	{
-		public  uint Id { get; set; }
+		public uint Id { get; set; }
 
-		public  decimal WriteOffSum { get; set; }
+		public decimal WriteOffSum { get; set; }
 
-		public  DateTime WriteOffDate { get; set; }
+		public DateTime WriteOffDate { get; set; }
 
-		public  uint Client { get; set; }
+		public uint Client { get; set; }
 
-		public decimal VirtualSum { get; set;}
+		public decimal VirtualSum { get; set; }
 
-		public decimal MoneySum { get; set;}
+		public decimal MoneySum { get; set; }
 
 
 		public virtual string GetDate(string grouped)
 		{
 			if (grouped == "month")
 				return string.Format("{0}.{1}", WriteOffDate.Month.ToString("00"), WriteOffDate.Year);
-			if (grouped == "year") 
+			if (grouped == "year")
 				return string.Format("{0}", WriteOffDate.Year);
 			return string.Format("{0}.{1}.{2}", WriteOffDate.Day.ToString("00"), WriteOffDate.Month.ToString("00"), WriteOffDate.Year);
 		}
@@ -39,7 +39,8 @@ namespace InternetInterface.Models
 	public class WriteOff : ActiveRecordLinqBase<WriteOff>
 	{
 		public WriteOff()
-		{}
+		{
+		}
 
 		public WriteOff(Client client, decimal writeOffSum, DateTime date)
 		{
@@ -50,7 +51,8 @@ namespace InternetInterface.Models
 
 		public WriteOff(Client client, decimal writeOffSum)
 			: this(client, writeOffSum, SystemTime.Now())
-		{}
+		{
+		}
 
 		[PrimaryKey]
 		public virtual uint Id { get; set; }

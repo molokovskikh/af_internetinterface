@@ -1,5 +1,4 @@
-﻿
-namespace InternetInterface.Helpers
+﻿namespace InternetInterface.Helpers
 {
 	public class UsersParsers
 	{
@@ -15,8 +14,7 @@ namespace InternetInterface.Helpers
 
 		public static string HomeTelephoneParser(string number)
 		{
-			if (number.Length == 5)
-			{
+			if (number.Length == 5) {
 				return "473-54" + number;
 			}
 			return number;

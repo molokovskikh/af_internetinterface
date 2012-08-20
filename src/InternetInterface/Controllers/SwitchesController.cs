@@ -17,12 +17,9 @@ namespace InternetInterface.Controllers
 {
 	public enum ClientTypeAll
 	{
-		[Description("Физические лица")]
-		Physical,
-		[Description("Юридические лица")]
-		Lawyer,
-		[Description("Все")]
-		All
+		[Description("Физические лица")] Physical,
+		[Description("Юридические лица")] Lawyer,
+		[Description("Все")] All
 	}
 
 	public class OnLineFilter : IPaginable, ISortableContributor, SortableContributor
@@ -41,20 +38,23 @@ namespace InternetInterface.Controllers
 			get { return _lastRowsCount; }
 		}
 
-		public int PageSize { get { return 30; } }
+		public int PageSize
+		{
+			get { return 30; }
+		}
 
 		public int CurrentPage { get; set; }
 
 		public Dictionary<string, object> GetParameters()
 		{
 			return new Dictionary<string, object> {
-				{"filter.SearchText", SearchText},
-				{"filter.Switch", Switch},
-				{"filter.Zone", Zone},
-				{"filter.ClientType", ClientType},
-				{"filter.SortBy", SortBy},
-				{"filter.Direction", Direction},
-				{"CurrentPage", CurrentPage}
+				{ "filter.SearchText", SearchText },
+				{ "filter.Switch", Switch },
+				{ "filter.Zone", Zone },
+				{ "filter.ClientType", ClientType },
+				{ "filter.SortBy", SortBy },
+				{ "filter.Direction", Direction },
+				{ "CurrentPage", CurrentPage }
 			};
 		}
 
@@ -138,7 +138,7 @@ left join internet.Clients C on CE.Client = C.Id
 left join internet.PackageSpeed PS on PS.PackageId = CE.PackageId";
 
 			var sqlStr = String.Format(
-@"{0}
+				@"{0}
 {1}
 group by l.id
 ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
@@ -213,8 +213,7 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 				DbSession.SaveOrUpdate(@switch);
 				RedirectToUrl("~/Switches/ShowSwitches.rails");
 			}
-			else
-			{
+			else {
 				PropertyBag["Switch"] = @switch;
 				RenderView("MakeSwitch");
 			}
@@ -227,8 +226,7 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 				DbSession.SaveOrUpdate(@switch);
 				RedirectToUrl("~/Switches/ShowSwitches.rails");
 			}
-			else
-			{
+			else {
 				PropertyBag["Switch"] = @switch;
 				RenderView("MakeSwitch");
 			}
@@ -241,7 +239,7 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 
 			var diniedPorts = DbSession.Query<ClientEndpoint>()
 				.Where(c => c.Switch.Id == id)
-				.Select(c => new { c.Port, client = c.Client.Id})
+				.Select(c => new { c.Port, client = c.Client.Id })
 				.ToList();
 			PropertyBag["commutator"] = commutator;
 			PropertyBag["port_client"] = diniedPorts.ToDictionary(d => d.Port, d => d.client);
@@ -249,12 +247,12 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 			CancelLayout();
 		}
 
-		public void OnLineClient([DataBind("filter")]OnLineFilter filter)
+		public void OnLineClient([DataBind("filter")] OnLineFilter filter)
 		{
 			PropertyBag["OnLineClients"] = filter.Find(DbSession);
 			PropertyBag["Zones"] = Zone.FindAllSort();
 			var switches = NetworkSwitches.All(DbSession);
-			switches.Add(new NetworkSwitches(){Name = "Все"});
+			switches.Add(new NetworkSwitches() { Name = "Все" });
 			PropertyBag["Switches"] = switches;
 			PropertyBag["filter"] = filter;
 			PropertyBag["SortBy"] = filter.SortBy;

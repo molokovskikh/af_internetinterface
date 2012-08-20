@@ -48,7 +48,7 @@ namespace InternetInterface.Test.Unit
 		[Test]
 		public void Activete_internet_by_default()
 		{
-			client = new Client(new PhysicalClient(), new Service[] {new Internet()});
+			client = new Client(new PhysicalClient(), new Service[] { new Internet() });
 			Assert.That(client.ClientServices[0].ActivatedByUser, Is.True);
 		}
 	}

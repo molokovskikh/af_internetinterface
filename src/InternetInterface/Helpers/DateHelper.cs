@@ -44,7 +44,6 @@ namespace InternetInterface.Helpers
 		{
 			return _endDate.ToShortDateString();
 		}
-
 	}
 
 	public static class DateHelper

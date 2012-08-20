@@ -206,7 +206,7 @@ namespace Billing.Test.Integration
 				writeOff = WriteOff.Queryable.FirstOrDefault(w => w.Client == client);
 				client.Refresh();
 				Assert.That(writeOff, !Is.Null);
-				Assert.That(client.PhysicalClient.Balance, Is.EqualTo(Math.Round(ishBalance + 100 - client.GetPrice()/client.GetInterval(), 2)));
+				Assert.That(client.PhysicalClient.Balance, Is.EqualTo(Math.Round(ishBalance + 100 - client.GetPrice() / client.GetInterval(), 2)));
 			}
 			onTh.Join();
 			onTh.Join();
@@ -277,7 +277,7 @@ namespace Billing.Test.Integration
 			using (new SessionScope()) {
 				client.Refresh();
 				Assert.That(client.DebtDays, Is.EqualTo(0));
-				Assert.That(((DateTime) client.RatedPeriodDate).Date, Is.EqualTo(new DateTime(2011, 6, 15)));
+				Assert.That(((DateTime)client.RatedPeriodDate).Date, Is.EqualTo(new DateTime(2011, 6, 15)));
 			}
 		}
 
@@ -331,7 +331,7 @@ namespace Billing.Test.Integration
 		{
 			var count = 0;
 			Client client;
-			using(new SessionScope()) {
+			using (new SessionScope()) {
 				client = BaseBillingFixture.CreateAndSaveClient("testClient1", false, 500000);
 				client.Disabled = false;
 				client.RatedPeriodDate = new DateTime(2011, 6, 9, 15, 00, 9);
@@ -358,8 +358,8 @@ namespace Billing.Test.Integration
 				client.BeginWork = DateTime.Now;
 				client.RatedPeriodDate = DateTime.Now;
 				client.Save();
-				var partBalance = client.GetPrice()/client.GetInterval();
-				client.PhysicalClient.Balance = partBalance*2 - 1;
+				var partBalance = client.GetPrice() / client.GetInterval();
+				client.PhysicalClient.Balance = partBalance * 2 - 1;
 				client.Update();
 			}
 			billing.Compute();
@@ -400,7 +400,7 @@ namespace Billing.Test.Integration
 				unblockedClient.AutoUnblocked = false;
 				unblockedClient.Disabled = true;
 				unblockedClient.PercentBalance = 0.8m;
-				unblockedClient.Status = Status.Find((uint) StatusType.BlockedAndConnected);
+				unblockedClient.Status = Status.Find((uint)StatusType.BlockedAndConnected);
 				unblockedClient.Update();
 				phisClient = unblockedClient.PhysicalClient;
 			}
@@ -414,7 +414,7 @@ namespace Billing.Test.Integration
 				}.Save();
 				new Payment {
 					Client = unblockedClient,
-					Sum = unblockedClient.GetPriceForTariff()/2
+					Sum = unblockedClient.GetPriceForTariff() / 2
 				}.Save();
 			}
 			billing.OnMethod();
@@ -480,7 +480,7 @@ namespace Billing.Test.Integration
 				};
 				client.Save();
 			}
-			for (int i = 0; i < DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)*2; i++) {
+			for (int i = 0; i < DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month) * 2; i++) {
 				billing.Compute();
 			}
 			using (new SessionScope()) {
@@ -551,7 +551,7 @@ namespace Billing.Test.Integration
 			};
 
 			Client client;
-			using(new SessionScope()) {
+			using (new SessionScope()) {
 				client = BaseBillingFixture.CreateAndSaveClient("testClient1", false, 100);
 				client.PhysicalClient.Tariff = tariff;
 				client.BeginWork = DateTime.Now.AddMonths(-1);
@@ -576,7 +576,7 @@ namespace Billing.Test.Integration
 		public void IntervalTest()
 		{
 			Client client;
-			using(new SessionScope())
+			using (new SessionScope())
 				client = CreateClient();
 
 			var dates = new List<List<Interval>> {

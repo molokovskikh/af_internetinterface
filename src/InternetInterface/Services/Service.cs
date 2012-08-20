@@ -28,20 +28,14 @@ namespace InternetInterface.Services
 
 		public virtual bool SupportUserAcivation
 		{
-			get
-			{
-				return false;
-			}
+			get { return false; }
 		}
 
 		//говорит о том что нужно вызывать GetPrice, даже если активирована блокирующая услуга
 		//"добровольная блокировка"
 		public virtual bool ProcessEvenInBlock
 		{
-			get
-			{
-				return false;
-			}
+			get { return false; }
 		}
 
 		public static Service GetByType(Type type)
@@ -65,7 +59,8 @@ namespace InternetInterface.Services
 		}
 
 		public virtual void PaymentClient(ClientService assignedService)
-		{}
+		{
+		}
 
 		public virtual string GetParameters()
 		{
@@ -113,6 +108,7 @@ namespace InternetInterface.Services
 		}
 
 		public virtual void WriteOff(ClientService assignedService)
-		{}
+		{
+		}
 	}
 }

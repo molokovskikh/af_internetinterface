@@ -30,18 +30,15 @@ namespace InternetInterface.Controllers
 			PropertyBag["brigadid"] = brigad;
 			PropertyBag["Editing"] = true;
 			PropertyBag["VB"] = new ValidBuilderHelper<Brigad>(new Brigad());
-
 		}
 
-		public void RegisterBrigad([DataBind("Brigad")]Brigad brigad)
+		public void RegisterBrigad([DataBind("Brigad")] Brigad brigad)
 		{
-			if (Validator.IsValid(brigad))
-			{
+			if (Validator.IsValid(brigad)) {
 				brigad.SaveAndFlush();
 				RedirectToUrl("../Brigads/ShowBrigad.rails");
 			}
-			else
-			{
+			else {
 				RenderView("MakeBrigad");
 				Flash["Editing"] = false;
 				brigad.SetValidationErrors(Validator.GetErrorSummary(brigad));
@@ -50,17 +47,15 @@ namespace InternetInterface.Controllers
 			}
 		}
 
-		public void EditBrigad([DataBind("Brigad")]Brigad brigad, uint brigadid)
+		public void EditBrigad([DataBind("Brigad")] Brigad brigad, uint brigadid)
 		{
-			if (Validator.IsValid(brigad))
-			{
+			if (Validator.IsValid(brigad)) {
 				var edbrigad = Brigad.Find(brigadid);
 				BindObjectInstance(edbrigad, ParamStore.Form, "Brigad");
 				edbrigad.UpdateAndFlush();
 				RedirectToUrl("../Brigads/ShowBrigad.rails");
 			}
-			else
-			{
+			else {
 				brigad.SetValidationErrors(Validator.GetErrorSummary(brigad));
 				brigad.Id = brigadid;
 				PropertyBag["Editing"] = true;

@@ -32,12 +32,13 @@ namespace Billing.Test.Integration
 				_client.BeginWork = DateTime.Now;
 				_client.Request = request;
 				_client.Save();
-					var bonusesClients = Client.Queryable.Where(c => 
-						c.Request != null && 
-						!c.Request.PaidBonus && 
+				var bonusesClients = Client.Queryable.Where(c =>
+					c.Request != null &&
+						!c.Request.PaidBonus &&
 						c.Request.Registrator != null &&
-						c.BeginWork != null).ToList();
-					Assert.That(bonusesClients.Count, Is.GreaterThan(0));
+						c.BeginWork != null)
+					.ToList();
+				Assert.That(bonusesClients.Count, Is.GreaterThan(0));
 			}
 		}
 

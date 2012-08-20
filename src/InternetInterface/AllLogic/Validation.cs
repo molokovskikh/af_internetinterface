@@ -16,19 +16,16 @@ namespace InternetInterface.AllLogic
 			if (string.IsNullOrEmpty(info.Port))
 				return string.Empty;
 			int res;
-			if (Int32.TryParse(info.Port, out res))
-			{
+			if (Int32.TryParse(info.Port, out res)) {
 				if (res > 48 || res < 1)
 					return "Порт должен быть в пределах о 1 до 48";
 				if (ClientEndpoint.Queryable.Where(e => e.Port == res && e.Switch.Id == info.Switch).Count() == 0)
 					return string.Empty;
-				else
-				{
+				else {
 					return "Такая пара порт/свитч уже существует";
 				}
 			}
-			else
-			{
+			else {
 				return "Вы ввели некорректное значение порта";
 			}
 		}
@@ -40,7 +37,7 @@ namespace InternetInterface.AllLogic
 		{
 			dynamic child = node.GetChildNode(prop.Name);
 			if (child != null) {
-				if (child.GetType() != typeof (LeafNode))
+				if (child.GetType() != typeof(LeafNode))
 					return;
 				var validators = Validator.GetValidators(instance.GetType(), prop);
 				var decValidator = validators.OfType<DecimalValidator>().FirstOrDefault();

@@ -29,9 +29,9 @@ namespace InternetInterface.Controllers
 			var binder = new DoNotRecreateCollectionBinder();
 			binder.AutoLoad = AutoLoadBehavior.NewInstanceIfInvalidKey;
 			typeof(ARDataBinder).GetField("expectCollPropertiesList", BindingFlags.Instance | BindingFlags.NonPublic)
-				.SetValue(binder, new [] { "root." + expect });
+				.SetValue(binder, new[] { "root." + expect });
 
-			typeof (SmartDispatcherController)
+			typeof(SmartDispatcherController)
 				.GetField("binder", BindingFlags.NonPublic | BindingFlags.Instance)
 				.SetValue(controller, binder);
 		}
@@ -52,12 +52,12 @@ namespace InternetInterface.Controllers
 			SortBy = "Date";
 			SortDirection = "desc";
 			SortKeyMap = new Dictionary<string, string> {
-				{"Id", "Id"},
-				{"ClientId", "c.Id"},
-				{"Date", "Date"},
-				{"Sum", "Sum"},
-				{"Period", "Period"},
-				{"PayerName", "PayerName"}
+				{ "Id", "Id" },
+				{ "ClientId", "c.Id" },
+				{ "Date", "Date" },
+				{ "Sum", "Sum" },
+				{ "Period", "Period" },
+				{ "PayerName", "PayerName" }
 			};
 		}
 
@@ -65,8 +65,7 @@ namespace InternetInterface.Controllers
 		{
 			var criteria = DetachedCriteria.For<Invoice>()
 				.CreateAlias("Client", "c");
-			if (!string.IsNullOrEmpty(SearchText))
-			{
+			if (!string.IsNullOrEmpty(SearchText)) {
 				uint id;
 				if (uint.TryParse(SearchText, out id))
 					criteria.Add(Expression.Eq("c.Id", id));
@@ -156,7 +155,7 @@ namespace InternetInterface.Controllers
 					invoice.CalculateSum();
 					DbSession.SaveOrUpdate(invoice);
 					Notify("Сохранено");
-					RedirectToAction("Edit", new {id = invoice.Id});
+					RedirectToAction("Edit", new { id = invoice.Id });
 				}
 			}
 		}

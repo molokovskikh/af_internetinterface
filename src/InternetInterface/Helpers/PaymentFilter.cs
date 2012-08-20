@@ -15,23 +15,23 @@ namespace Common.Web.Ui.Helpers
 		public Recipient Recipient { get; set; }
 		public DatePeriod Period { get; set; }
 		public string SearchText { get; set; }
+
 		[Description("Показывать только неопознанные:")]
 		public bool ShowOnlyUnknown { get; set; }
 
 		public PaymentFilter()
 		{
-			Period = new DatePeriod
-			{
+			Period = new DatePeriod {
 				Begin = DateTime.Today,
 				End = DateTime.Today
 			};
 
 			SortKeyMap = new Dictionary<string, string> {
-				{"Recipient", "Recipient"},
-				{"PayedOn", "PayedOn"},
-				{"Payer", "Payer"},
-				{"Sum", "Sum"},
-				{"RegistredOn", "RegistredOn"}
+				{ "Recipient", "Recipient" },
+				{ "PayedOn", "PayedOn" },
+				{ "Payer", "Payer" },
+				{ "Sum", "Sum" },
+				{ "RegistredOn", "RegistredOn" }
 			};
 		}
 
@@ -51,8 +51,7 @@ namespace Common.Web.Ui.Helpers
 			if (ShowOnlyUnknown)
 				criteria.Add(Expression.IsNull("Payer"));
 
-			if (!String.IsNullOrWhiteSpace(SearchText))
-			{
+			if (!String.IsNullOrWhiteSpace(SearchText)) {
 				criteria.CreateAlias("Payer", "p");
 				criteria.Add(Expression.Like("p.Name", SearchText));
 			}
@@ -61,7 +60,8 @@ namespace Common.Web.Ui.Helpers
 
 			return ArHelper.WithSession(s =>
 				criteria.GetExecutableCriteria(s)
-					.List<BankPayment>()).ToList();
+					.List<BankPayment>())
+				.ToList();
 		}
 
 		public string GetUri()

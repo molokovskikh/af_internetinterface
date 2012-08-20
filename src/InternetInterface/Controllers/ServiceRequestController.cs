@@ -7,6 +7,7 @@ using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using InternetInterface.Queries;
 using System.Linq;
+
 #if !DEBUG
 using InternetInterface.Helpers;
 #endif
@@ -25,7 +26,7 @@ namespace InternetInterface.Controllers
 		public void RegisterServiceRequest(uint clientCode)
 		{
 			var client = Client.Find(clientCode);
-			var request = new ServiceRequest{Registrator = InitializeContent.Partner};
+			var request = new ServiceRequest { Registrator = InitializeContent.Partner };
 			PropertyBag["client"] = client;
 			PropertyBag["request"] = request;
 			PropertyBag["ingeners"] = Partner.GetServiceIngeners();
@@ -60,7 +61,7 @@ namespace InternetInterface.Controllers
 		{
 			var request = DbSession.Load<ServiceRequest>(id);
 			var isService = InitializeContent.Partner.CategorieIs("Service");
-			PropertyBag["Request"] = ((isService && request.Performer == InitializeContent.Partner) || ! isService) ? request : null;
+			PropertyBag["Request"] = ((isService && request.Performer == InitializeContent.Partner) || !isService) ? request : null;
 			PropertyBag["Edit"] = edit;
 			PropertyBag["IsService"] = InitializeContent.Partner.CategorieIs("Service");
 			if (edit) {

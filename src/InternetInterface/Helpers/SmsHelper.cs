@@ -20,10 +20,11 @@ namespace InternetInterface.Helpers
 
 	public class SmsHelper
 	{
-		private static readonly ILog _log = LogManager.GetLogger(typeof (SmsHelper));
+		private static readonly ILog _log = LogManager.GetLogger(typeof(SmsHelper));
 		private const string Login = "inforoom";
 		private const string Password = "analitFarmacia";
 		private const string Source = "inforoom";
+
 		public static List<string> Types = new List<string> {
 			"delivered",
 			"notDelivered",
@@ -90,7 +91,7 @@ namespace InternetInterface.Helpers
 
 		public XDocument SendMessage(SmsMessage message)
 		{
-			return SendMessages(new List<SmsMessage> {message}).FirstOrDefault();
+			return SendMessages(new List<SmsMessage> { message }).FirstOrDefault();
 		}
 
 		public static void DeleteNoSendingMessages(Client client)
@@ -130,9 +131,7 @@ namespace InternetInterface.Helpers
 				new XElement("data",
 					new XElement("login", Login),
 					new XElement("password", Password),
-					new XElement("smsid", smsId)
-					)
-				);
+					new XElement("smsid", smsId)));
 
 			var url = @"https://lcab.sms-uslugi.ru/API/XML/report.php";
 
@@ -167,13 +166,11 @@ namespace InternetInterface.Helpers
 			foreach (var groupedSms in groupedSmses) {
 				var document = new XDocument(
 					new XElement("data",
-					             new XElement("login", Login),
-					             new XElement("password", Password),
-					             new XElement("action", "send"),
-					             new XElement("source", Source),
-								 new XElement("text", "Уважаемый абонент, компания Инфорум предлагает передовые услуги в сфере телекомуникаций (подроблее http://ivrn.net)")
-						)
-					);
+						new XElement("login", Login),
+						new XElement("password", Password),
+						new XElement("action", "send"),
+						new XElement("source", Source),
+						new XElement("text", "Уважаемый абонент, компания Инфорум предлагает передовые услуги в сфере телекомуникаций (подроблее http://ivrn.net)")));
 
 				var dataElement = document.Element("data");
 				if (dataElement != null) {
@@ -203,17 +200,17 @@ namespace InternetInterface.Helpers
 				var resultDocData = resultDoc.Element("data");
 				if (resultDocData != null) {
 					var serverRequest = Int32.Parse(resultDocData.Element("code").Value);
-					if (serverRequest == (int) SmsRequestType.ValidOperation)
-					{
+					if (serverRequest == (int)SmsRequestType.ValidOperation) {
 						_log.Debug(document);
 						_log.Debug(resultDocData);
-					} else {
+					}
+					else {
 						_log.Error(document);
 						_log.Error(resultDocData);
 					}
 					var smsId = resultDocData.Element("smsid").Value;
 					foreach (var smsMessage in groupedSms.Where(s => !string.IsNullOrEmpty(s.PhoneNumber))) {
-						smsMessage.IsSended = serverRequest == (int) SmsRequestType.ValidOperation;
+						smsMessage.IsSended = serverRequest == (int)SmsRequestType.ValidOperation;
 						smsMessage.ServerRequest = serverRequest;
 						smsMessage.SMSID = smsId;
 						smsMessage.Save();

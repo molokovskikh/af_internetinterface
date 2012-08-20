@@ -27,7 +27,7 @@ namespace InternetInterface.Models
 		public virtual string GetBorderColor()
 		{
 			var oColor = ColorTranslator.FromHtml(Color);
-			
+
 			var fNewHue = oColor.GetHue() + 10;
 			var fNewSaturation = oColor.GetSaturation() + 2F;
 			var fNewBrightness = oColor.GetBrightness() + 2F;
@@ -64,12 +64,11 @@ namespace InternetInterface.Models
 			byte r = (byte)(color >> 16);
 			byte g = (byte)(color >> 8);
 			byte b = (byte)(color >> 0);
-			return new MyColor
-					{
-						R = r,
-						B = b,
-						G = g
-					};
+			return new MyColor {
+				R = r,
+				B = b,
+				G = g
+			};
 		}
 
 		public class MyColor
@@ -86,30 +85,28 @@ namespace InternetInterface.Models
 			var color = new MyColor();
 
 
-			if (H < 0) H = (240 - H)%240;
-			else H = H%240;
+			if (H < 0) H = (240 - H) % 240;
+			else H = H % 240;
 
-			if (H < 80) color.R = Math.Min(255, 255*(80 - H)/40);
-			else if (H > 160) color.R = Math.Min(255, 255*(H - 160)/40);
+			if (H < 80) color.R = Math.Min(255, 255 * (80 - H) / 40);
+			else if (H > 160) color.R = Math.Min(255, 255 * (H - 160) / 40);
 
-			if (H < 160) color.G = Math.Min(255, 255*(80 - Math.Abs(H - 80))/40);
-			if (H > 80) color.B = Math.Min(255, 255*(80 - Math.Abs(H - 160))/40);
+			if (H < 160) color.G = Math.Min(255, 255 * (80 - Math.Abs(H - 80)) / 40);
+			if (H > 80) color.B = Math.Min(255, 255 * (80 - Math.Abs(H - 160)) / 40);
 
-			if (S < 240)
-			{
+			if (S < 240) {
 				color = UIntToColor(Convert.ToUInt32(ColorToUInt(color) * ((float)(S / 240))));
-				OffsetSaturation = 128*(240 - S)/240;
+				OffsetSaturation = 128 * (240 - S) / 240;
 				color.R += OffsetSaturation;
 				color.G += OffsetSaturation;
 				color.B += OffsetSaturation;
 			}
 
 			L = Math.Min(240, L);
-			color = UIntToColor(Convert.ToUInt32(ColorToUInt(color)*((120 - Math.Abs(L - 120))/120)));
+			color = UIntToColor(Convert.ToUInt32(ColorToUInt(color) * ((120 - Math.Abs(L - 120)) / 120)));
 
-			if (L > 120)
-			{
-				OffsetLightness = 256*(L - 120)/120;
+			if (L > 120) {
+				OffsetLightness = 256 * (L - 120) / 120;
 				color.R += OffsetLightness;
 				color.G += OffsetLightness;
 				color.B += OffsetLightness;
@@ -117,7 +114,5 @@ namespace InternetInterface.Models
 
 			return color;
 		}
-
-
 	}
 }

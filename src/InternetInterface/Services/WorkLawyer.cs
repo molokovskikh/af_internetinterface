@@ -67,8 +67,7 @@ namespace InternetInterface.Services
 		public override void WriteOff(ClientService assignedService)
 		{
 			if ((assignedService.EndWorkDate == null) ||
-				(assignedService.EndWorkDate != null && (SystemTime.Now().Date >= assignedService.EndWorkDate.Value.Date)))
-			{
+				(assignedService.EndWorkDate != null && (SystemTime.Now().Date >= assignedService.EndWorkDate.Value.Date))) {
 				CompulsoryDeactivate(assignedService);
 				ActiveRecordMediator.Delete(assignedService);
 			}

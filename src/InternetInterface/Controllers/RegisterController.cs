@@ -19,7 +19,7 @@ namespace InternetInterface.Controllers
 	{
 		[AccessibleThrough(Verb.Post)]
 		public void RegisterClient(decimal balanceText, uint status, uint BrigadForConnect,
-			[DataBind("ConnectInfo")]ConnectInfo ConnectInfo, bool VisibleRegisteredInfo, uint house_id,
+			[DataBind("ConnectInfo")] ConnectInfo ConnectInfo, bool VisibleRegisteredInfo, uint house_id,
 			uint requestID)
 		{
 			SetARDataBinder();
@@ -27,13 +27,13 @@ namespace InternetInterface.Controllers
 			var phisClient = new PhysicalClient();
 			phisClient.Balance = balanceText;
 			var defaultServices = new Service[] {
-					DbSession.Query<Internet>().First(),
-					DbSession.Query<IpTv>().First(),
-				};
+				DbSession.Query<Internet>().First(),
+				DbSession.Query<IpTv>().First(),
+			};
 			var client = new Client(phisClient, defaultServices) {
 				WhoRegistered = InitializeContent.Partner,
 				WhoRegisteredName = InitializeContent.Partner.Name,
-				Status = Status.Find((uint) StatusType.BlockedAndNoConnected),
+				Status = Status.Find((uint)StatusType.BlockedAndNoConnected),
 				PhysicalClient = phisClient,
 				Recipient = Recipient.Queryable.FirstOrDefault(r => r.INN == "3666152146")
 			};
@@ -59,7 +59,6 @@ namespace InternetInterface.Controllers
 
 			if ((registerClient && string.IsNullOrEmpty(portException)) ||
 				(registerClient && string.IsNullOrEmpty(ConnectInfo.Port))) {
-
 				PhysicalClient.RegistrLogicClient(phisClient, house_id, Validator);
 
 				var havePayment = phisClient.Balance > 0;
@@ -71,9 +70,9 @@ namespace InternetInterface.Controllers
 
 				if (!string.IsNullOrEmpty(phisClient.PhoneNumber)) {
 					Contact.SaveNew(client, phisClient.PhoneNumber.Replace("-", string.Empty), "Указан при регистрации",
-					                ContactType.MobilePhone);
+						ContactType.MobilePhone);
 					Contact.SaveNew(client, phisClient.PhoneNumber.Replace("-", string.Empty), "Указан при регистрации",
-					                ContactType.SmsSending);
+						ContactType.SmsSending);
 				}
 
 				if (!string.IsNullOrEmpty(phisClient.HomePhoneNumber))
@@ -110,7 +109,7 @@ namespace InternetInterface.Controllers
 						client.WhoConnectedName = brigad.Name;
 					}
 					client.ConnectedDate = DateTime.Now;
-					client.Status = Status.Find((uint) StatusType.BlockedAndConnected);
+					client.Status = Status.Find((uint)StatusType.BlockedAndConnected);
 					client.UpdateAndFlush();
 				}
 				Flash["_client"] = client;
@@ -169,21 +168,20 @@ namespace InternetInterface.Controllers
 			PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(new LawyerPerson());
 		}
 
-		public void RegisterLegalPerson(int speed, [DataBind("ConnectInfo")]ConnectInfo info, uint brigadForConnect)
+		public void RegisterLegalPerson(int speed, [DataBind("ConnectInfo")] ConnectInfo info, uint brigadForConnect)
 		{
-			SetBinder(new DecimalValidateBinder {Validator = Validator});
+			SetBinder(new DecimalValidateBinder { Validator = Validator });
 			var person = new LawyerPerson();
 			BindObjectInstance(person, ParamStore.Form, "LegalPerson");
 			var connectErrors = Validation.ValidationConnectInfo(info);
-			if (IsValid(person) && string.IsNullOrEmpty(connectErrors))
-			{
+			if (IsValid(person) && string.IsNullOrEmpty(connectErrors)) {
 				person.SaveAndFlush();
 				var client = new Client {
-					Recipient =  Recipient.Queryable.FirstOrDefault(r => r.INN == "3666152146"),
+					Recipient = Recipient.Queryable.FirstOrDefault(r => r.INN == "3666152146"),
 					WhoRegistered = InitializeContent.Partner,
 					WhoRegisteredName = InitializeContent.Partner.Name,
 					RegDate = DateTime.Now,
-					Status = Status.Find((uint) StatusType.BlockedAndNoConnected),
+					Status = Status.Find((uint)StatusType.BlockedAndNoConnected),
 					Disabled = person.Tariff == null,
 					LawyerPerson = person,
 					Name = person.ShortName,
@@ -197,28 +195,23 @@ namespace InternetInterface.Controllers
 				if (!string.IsNullOrEmpty(person.Email))
 					Contact.SaveNew(client, person.Email, "Указан при регистрации", ContactType.Email);
 
-				if (!string.IsNullOrEmpty(info.Port))
-				{
-					new ClientEndpoint
-						{	
-							Client = client,
-							Port = Int32.Parse(info.Port),
-							Switch = DbSession.Load<NetworkSwitches>(info.Switch),
-							
-						}.SaveAndFlush();
-					var brigad =  Brigad.Find(brigadForConnect);
+				if (!string.IsNullOrEmpty(info.Port)) {
+					new ClientEndpoint {
+						Client = client,
+						Port = Int32.Parse(info.Port),
+						Switch = DbSession.Load<NetworkSwitches>(info.Switch),
+					}.SaveAndFlush();
+					var brigad = Brigad.Find(brigadForConnect);
 					client.WhoConnected = brigad;
 					client.WhoConnectedName = brigad.Name;
 					client.Status = Status.Find((uint)StatusType.Worked);
 					client.UpdateAndFlush();
-
 				}
 				RegisterLegalPerson();
 				PropertyBag["EditiongMessage"] = "Клиент успешно загистрирвоан";
 				RedirectToUrl("../UserInfo/LawyerPersonInfo.rails?filter.ClientCode=" + client.Id);
 			}
-			else
-			{
+			else {
 				PropertyBag["ClientCode"] = 0;
 				PropertyBag["Brigads"] = Brigad.FindAllSort();
 				PropertyBag["Switches"] = NetworkSwitches.All(DbSession);
@@ -235,11 +228,10 @@ namespace InternetInterface.Controllers
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void RegisterPartner([DataBind("Partner")]Partner partner)
+		public void RegisterPartner([DataBind("Partner")] Partner partner)
 		{
 			string Pass = CryptoPass.GeneratePassword();
-			if (Partner.RegistrLogicPartner(partner, Validator))
-			{
+			if (Partner.RegistrLogicPartner(partner, Validator)) {
 #if !DEBUG
 				if (ActiveDirectoryHelper.FindDirectoryEntry(partner.Login) == null)
 				ActiveDirectoryHelper.CreateUserInAD(partner.Login, Pass);
@@ -248,8 +240,7 @@ namespace InternetInterface.Controllers
 				Flash["PartnerPass"] = Pass;
 				RedirectToUrl("..//UserInfo/PartnerRegisteredInfo.rails");
 			}
-			else
-			{
+			else {
 				partner.SetValidationErrors(Validator.GetErrorSummary(partner));
 				PropertyBag["Partner"] = partner;
 				PropertyBag["catType"] = partner.Categorie.Id;
@@ -298,14 +289,14 @@ namespace InternetInterface.Controllers
 				newPhisClient.HomePhoneNumber = UsersParsers.MobileTelephoneParcer(request.ApplicantPhoneNumber);
 			PropertyBag["Client"] = newPhisClient;
 			PropertyBag["requestID"] = requestID;
-			if (newPhisClient.House != null)
-			{
+			if (newPhisClient.House != null) {
 				var houses =
 					House.Queryable.Where(
 						h =>
-						h.Street == newPhisClient.Street &&
-						h.Number == newPhisClient.House &&
-						h.Case == newPhisClient.CaseHouse).ToList();
+							h.Street == newPhisClient.Street &&
+								h.Number == newPhisClient.House &&
+								h.Case == newPhisClient.CaseHouse)
+						.ToList();
 				if (houses.Count != 0)
 					PropertyBag["ChHouse"] = houses.First().Id;
 				else {
@@ -313,15 +304,14 @@ namespace InternetInterface.Controllers
 					PropertyBag["Message"] = Message.Error("Не удалось сопоставить адрес из заявки ! Будте внимательны при заполнении адреса клиента !");
 				}
 			}
-			else
-			{
+			else {
 				PropertyBag["ChHouse"] = 0;
 				PropertyBag["Message"] = Message.Error("Не удалось сопоставить адрес из заявки ! Будте внимательны при заполнении адреса клиента !");
 			}
 			SendRegisterParam(newPhisClient);
 		}
 
-		[return : JSONReturnBinder]
+		[return: JSONReturnBinder]
 		public object RegisterHouse()
 		{
 			var street = Request.Form["Street"];
@@ -332,14 +322,13 @@ namespace InternetInterface.Controllers
 			var errors = string.Empty;
 			if (!Int32.TryParse(number, out res))
 				errors += "Неправильно введен номер дома" + res;
-			if (string.IsNullOrEmpty(errors))
-			{
-				house = new House {Street = street, Number = Int32.Parse(number)};
+			if (string.IsNullOrEmpty(errors)) {
+				house = new House { Street = street, Number = Int32.Parse(number) };
 				if (!string.IsNullOrEmpty(_case))
 					house.Case = _case;
 				house.Save();
 			}
-			return new { Name = string.Format("{0} {1} {2}", street, number, _case), house.Id};
+			return new { Name = string.Format("{0} {1} {2}", street, number, _case), house.Id };
 		}
 
 		public void SendRegisterParam(PhysicalClient client)
@@ -379,35 +368,30 @@ namespace InternetInterface.Controllers
 		[AccessibleThrough(Verb.Post)]
 		public void EditPartner([DataBind("Partner")] Partner partner, int PartnerKey)
 		{
-			var part = Partner.Find((uint) PartnerKey);
+			var part = Partner.Find((uint)PartnerKey);
 			var edit = false;
-			if (Partner.Find((uint)PartnerKey).Login == partner.Login)
-			{
+			if (Partner.Find((uint)PartnerKey).Login == partner.Login) {
 				Validator.IsValid(partner);
 				partner.SetValidationErrors(Validator.GetErrorSummary(partner));
 				var ve = partner.GetValidationErrors();
 				if (ve.ErrorsCount == 1)
-					if ((ve.ErrorMessages[0] == "Логин должен быть уникальный") || (ve.ErrorMessages[0] == "Login is currently in use. Please pick up a new Login."))
-				{
-					edit = true;
-				}
+					if ((ve.ErrorMessages[0] == "Логин должен быть уникальный") || (ve.ErrorMessages[0] == "Login is currently in use. Please pick up a new Login.")) {
+						edit = true;
+					}
 			}
-			if (Validator.IsValid(partner) || edit)
-			{
+			if (Validator.IsValid(partner) || edit) {
 				BindObjectInstance(part, ParamStore.Form, "Partner");
 				part.Categorie.Refresh();
 				part.UpdateAndFlush();
 				var agent = Agent.Queryable.Where(a => a.Partner == part).ToList().FirstOrDefault();
-				if (agent != null)
-				{
+				if (agent != null) {
 					agent.Name = partner.Name;
 					agent.Update();
 				}
 				Flash["EditiongMessage"] = "Изменения внесены успешно";
 				RedirectToUrl("../Register/RegisterPartner?PartnerKey=" + part.Id + "&catType=" + part.Categorie.Id);
 			}
-			else
-			{
+			else {
 				partner.SetValidationErrors(Validator.GetErrorSummary(partner));
 				RegisterPartnerSendParam((int)partner.Id);
 				RenderView("RegisterPartner");
@@ -426,16 +410,14 @@ namespace InternetInterface.Controllers
 
 		public void RegisterPartner(int PartnerKey, int catType)
 		{
-			var partner = Partner.Queryable.FirstOrDefault(p => p.Id == (uint) PartnerKey);
-			if (partner != null)
-			{
+			var partner = Partner.Queryable.FirstOrDefault(p => p.Id == (uint)PartnerKey);
+			if (partner != null) {
 				RegisterPartnerSendParam(PartnerKey);
 				PropertyBag["Partner"] = partner;
 				PropertyBag["catType"] = catType;
 				PropertyBag["PartnerKey"] = PartnerKey;
 			}
-			else
-			{
+			else {
 				RedirectToUrl("../Register/RegisterPartner");
 			}
 		}
@@ -443,7 +425,7 @@ namespace InternetInterface.Controllers
 		public void RegisterPartner(int catType)
 		{
 			PropertyBag["Partner"] = new Partner {
-				Categorie =  new UserCategorie()
+				Categorie = new UserCategorie()
 			};
 			PropertyBag["catType"] = catType;
 			PropertyBag["VB"] = new ValidBuilderHelper<Partner>(new Partner());
@@ -464,7 +446,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["houseNumber"] = house;
 		}
 
-		public void RegisterRequest([DataBind("Request")]Request request, uint houseNumber, uint tariff)
+		public void RegisterRequest([DataBind("Request")] Request request, uint houseNumber, uint tariff)
 		{
 			if (Validator.IsValid(request)) {
 				var phone = request.ApplicantPhoneNumber;
@@ -477,8 +459,7 @@ namespace InternetInterface.Controllers
 				request.Operator = InitializeContent.Partner;
 				request.Save();
 				var apartment = Apartment.Queryable.FirstOrDefault(a => a.House == House.Find(houseNumber) && a.Number == request.Apartment);
-				if (apartment == null)
-				{
+				if (apartment == null) {
 					apartment = new Apartment {
 						House = House.Find(houseNumber),
 						Number = request.Apartment != null ? request.Apartment.Value : 0,
@@ -491,5 +472,4 @@ namespace InternetInterface.Controllers
 			}
 		}
 	}
-
 }

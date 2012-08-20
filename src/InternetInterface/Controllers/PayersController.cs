@@ -26,18 +26,21 @@ namespace InternetInterface.Controllers
 			get { return _lastRowsCount; }
 		}
 
-		public int PageSize { get { return 20; } }
+		public int PageSize
+		{
+			get { return 20; }
+		}
 
 		public int CurrentPage { get; set; }
 
 		public string[] ToUrl()
 		{
 			return new[] {
-							 String.Format("filter.agent={0}", agent),
-							 String.Format("filter.startDate={0}", startDate),
-							 String.Format("filter.endDate={0}", endDate),
-							 String.Format("filter.year={0}", year)
-						 };
+				String.Format("filter.agent={0}", agent),
+				String.Format("filter.startDate={0}", startDate),
+				String.Format("filter.endDate={0}", endDate),
+				String.Format("filter.year={0}", year)
+			};
 		}
 
 		public string ToUrlQuery()
@@ -62,15 +65,14 @@ namespace InternetInterface.Controllers
 			var totalRes = agent > 0 ?
 				Payment.Queryable.Where(t => t.Agent.Id == agent).ToList() : Payment.FindAll().ToList();
 			totalRes = totalRes.Where(t => t.PaidOn >= startDate.Value &&
-										   t.PaidOn <= endDate.Value.AddHours(23).AddMinutes(59) && t.Sum != 0 &&
-										   t.Client.PhysicalClient != null).ToList();
+				t.PaidOn <= endDate.Value.AddHours(23).AddMinutes(59) && t.Sum != 0 &&
+				t.Client.PhysicalClient != null).ToList();
 			_lastRowsCount = totalRes.Count();
 			TotalSum = totalRes.Sum(h => h.Sum);
-			if (_lastRowsCount > 0)
-			{
+			if (_lastRowsCount > 0) {
 				var getCount = _lastRowsCount - PageSize * CurrentPage < PageSize ? _lastRowsCount - PageSize * CurrentPage : PageSize;
 				return
-					totalRes.GetRange(PageSize*CurrentPage, getCount);
+					totalRes.GetRange(PageSize * CurrentPage, getCount);
 			}
 			return new List<Payment>();
 		}
@@ -86,7 +88,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["registrId"] = Partner.FindFirst().Id;
 		}
 
-		public void AgentFilter([DataBind("filter")]AgentFilter filter)
+		public void AgentFilter([DataBind("filter")] AgentFilter filter)
 		{
 			var thisD = DateTime.Now;
 			if (filter.startDate == null)
@@ -106,7 +108,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Payers"] = Client.Queryable.Where(p => p.WhoRegistered.Id == registrator && p.PhysicalClient != null);
 		}
 
-		public void ShowAgent([DataBind("filter")]AgentFilter filter)
+		public void ShowAgent([DataBind("filter")] AgentFilter filter)
 		{
 			PropertyBag["agents"] = Agent.FindAll();
 			PropertyBag["agentId"] = filter.agent;
@@ -122,8 +124,7 @@ namespace InternetInterface.Controllers
 
 		public void NewPaymets()
 		{
-			if (IsPost)
-			{
+			if (IsPost) {
 				var file = Request.Files["inputfile"] as HttpPostedFile;
 				if (file == null || file.ContentLength == 0)
 					return;
@@ -131,8 +132,7 @@ namespace InternetInterface.Controllers
 				Session["payments"] = BankPayment.Parse(file.FileName, file.InputStream);
 				RedirectToReferrer();
 			}
-			else
-			{
+			else {
 				PropertyBag["payments"] = Session["payments"];
 				RedirectToUrl(@"../Payments/ProcessPayments");
 			}

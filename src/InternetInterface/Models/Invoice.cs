@@ -67,7 +67,7 @@ namespace InternetInterface.Models
 
 		public virtual string SumInWords()
 		{
-			return ViewHelper.InWords((float) Sum);
+			return ViewHelper.InWords((float)Sum);
 		}
 
 		public virtual void CalculateSum()
@@ -80,7 +80,8 @@ namespace InternetInterface.Models
 	public class InvoicePart
 	{
 		public InvoicePart()
-		{}
+		{
+		}
 
 		public InvoicePart(Invoice invoice, uint count, decimal cost, string name)
 		{

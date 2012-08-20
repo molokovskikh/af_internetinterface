@@ -18,11 +18,10 @@ namespace InforoomInternet.Controllers
 		{
 			if (!partner)
 				PropertyBag["AcceptName"] = "AcceptClient";
-			else
-			{
+			else {
 				if (LoginLogic.IsAccessiblePartner(Session["LoginPartner"]))
 					Redirecter.RedirectRoot(Context, this);
-					//RedirectToSiteRoot();
+				//RedirectToSiteRoot();
 				PropertyBag["AcceptName"] = "AcceptPartner";
 			}
 		}
@@ -30,16 +29,14 @@ namespace InforoomInternet.Controllers
 		[AccessibleThrough(Verb.Post)]
 		public void AcceptPartner(string Login, string Password)
 		{
-			if (ActiveDirectoryHelper.IsAuthenticated(Login, Password))
-			{
+			if (ActiveDirectoryHelper.IsAuthenticated(Login, Password)) {
 				_log.Info("Авторизация выполнена");
 				FormsAuthentication.RedirectFromLoginPage(Login, true);
 				Session["LoginPartner"] = Login;
 				//RedirectToSiteRoot();
 				Redirecter.RedirectRoot(Context, this);
 			}
-			else
-			{
+			else {
 				_log.Info("Авторизация отклонена");
 				RedirectToUrl(@"..//Login/LoginPage?partner=true");
 			}
@@ -48,21 +45,17 @@ namespace InforoomInternet.Controllers
 		[AccessibleThrough(Verb.Post)]
 		public void AcceptClient(string Login, string Password)
 		{
-			try
-			{
+			try {
 				var id = Convert.ToUInt32(Login);
-				if (LoginLogic.IsAccessibleClient(id, Password))
-				{
+				if (LoginLogic.IsAccessibleClient(id, Password)) {
 					Session["LoginClient"] = Login;
 					RedirectToUrl(@"..//PrivateOffice/IndexOffice");
 				}
-				else
-				{
+				else {
 					RedirectToUrl(@"..//Login/LoginPage");
 				}
 			}
-			catch (Exception ex)
-			{
+			catch (Exception ex) {
 				RedirectToUrl(@"..//Login/LoginPage");
 			}
 		}

@@ -31,7 +31,7 @@ namespace InforoomInternet
 			Logger.ExcludeExceptionTypes.Add(typeof(FileNotFoundException));
 		}
 
-		void Application_Start(object sender, EventArgs e)
+		private void Application_Start(object sender, EventArgs e)
 		{
 			try {
 				ActiveRecordStarter.EventListenerComponentRegistrationHook += RemoverListner.Make;
@@ -51,23 +51,31 @@ namespace InforoomInternet
 					.DefaultForController().Is("Content")
 					.DefaultForAction().Is("Реквизиты"));
 			}
-			catch (Exception ex)
-			{
+			catch (Exception ex) {
 				_log.Fatal("Ошибка при запуске страницы.", ex);
 			}
 		}
 
-		void Session_Start(object sender, EventArgs e) { }
+		private void Session_Start(object sender, EventArgs e)
+		{
+		}
 
-		void Application_BeginRequest(object sender, EventArgs e) { }
+		private void Application_BeginRequest(object sender, EventArgs e)
+		{
+		}
 
-		void Application_AuthenticateRequest(object sender, EventArgs e) { }
+		private void Application_AuthenticateRequest(object sender, EventArgs e)
+		{
+		}
 
-		void Session_End(object sender, EventArgs e) { }
+		private void Session_End(object sender, EventArgs e)
+		{
+		}
 
-		public void Configure(IMonoRailConfiguration configuration) {
+		public void Configure(IMonoRailConfiguration configuration)
+		{
 			configuration.ControllersConfig.AddAssembly("InforoomInternet");
-			configuration.ViewComponentsConfig.Assemblies = new[] {"InforoomInternet", "Common.Web.Ui"};
+			configuration.ViewComponentsConfig.Assemblies = new[] { "InforoomInternet", "Common.Web.Ui" };
 			configuration.ViewEngineConfig.ViewPathRoot = "Views";
 			configuration.ViewEngineConfig.AssemblySources.Add(new AssemblySourceInfo("Common.Web.Ui", "Common.Web.Ui.Views"));
 			configuration.UrlConfig.UseExtensions = false;

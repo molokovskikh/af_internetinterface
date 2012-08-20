@@ -31,7 +31,7 @@ namespace InternetInterface.Models
 		public static IList<CategorieAccessSet> GetAccessPartner()
 		{
 			return FindAll(DetachedCriteria.For(typeof(CategorieAccessSet))
-									.Add(Restrictions.Eq("Categorie", InitializeContent.Partner.Categorie)));
+				.Add(Restrictions.Eq("Categorie", InitializeContent.Partner.Categorie)));
 		}
 
 		public override void SaveAndFlush()

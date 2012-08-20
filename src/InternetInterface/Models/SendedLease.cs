@@ -7,10 +7,11 @@ using Castle.ActiveRecord;
 namespace InternetInterface.Models
 {
 	[ActiveRecord("SendedLeases", Schema = "Internet", Lazy = true)]
-	public class SendedLease: ChildActiveRecordLinqBase<SendedLease>
+	public class SendedLease : ChildActiveRecordLinqBase<SendedLease>
 	{
 		public SendedLease()
-		{}
+		{
+		}
 
 		public SendedLease(Lease lease)
 		{
@@ -28,7 +29,7 @@ namespace InternetInterface.Models
 
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
-	
+
 		[Property]
 		public virtual uint LeaseId { get; set; }
 
@@ -37,7 +38,7 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual DateTime LeaseBegin { get; set; }
-	
+
 		[Property]
 		public virtual DateTime LeaseEnd { get; set; }
 

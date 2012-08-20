@@ -10,7 +10,7 @@ namespace Billing
 {
 	public class EmailNotificationSender
 	{
-		private static readonly ILog _log = LogManager.GetLogger(typeof (EmailNotificationSender));
+		private static readonly ILog _log = LogManager.GetLogger(typeof(EmailNotificationSender));
 
 		public static bool Send(StringBuilder messageText, string subject)
 		{

@@ -10,7 +10,8 @@ namespace InternetInterface.Models
 	public class ClientEndpoint : ChildActiveRecordLinqBase<ClientEndpoint>
 	{
 		public ClientEndpoint()
-		{}
+		{
+		}
 
 		public ClientEndpoint(Client client, int? port, NetworkSwitches @switch)
 		{
@@ -73,8 +74,8 @@ namespace InternetInterface.Models
 		public static bool isUnique(uint _Switch, int _Port)
 		{
 			if (ClientEndpoint.FindAll(DetachedCriteria.For(typeof(ClientEndpoint))
-								.Add(Expression.Eq("Switch.Id", _Switch))
-								.Add(Expression.Eq("Port", _Port))).Length == 0)
+				.Add(Expression.Eq("Switch.Id", _Switch))
+				.Add(Expression.Eq("Port", _Port))).Length == 0)
 				return true;
 			return false;
 		}

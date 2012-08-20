@@ -33,23 +33,23 @@ namespace InternetInterface.Models
 		public static void CreatePayment(string action, string coment, Partner agent)
 		{
 			new PaymentsForAgent {
-									Agent = agent,
-									Comment = coment,
-									RegistrationDate = DateTime.Now,
-									Sum = AgentTariff.GetPriceForAction(action),
-									Action = AgentTariff.GetAction(action)
-								 }.Save();
+				Agent = agent,
+				Comment = coment,
+				RegistrationDate = DateTime.Now,
+				Sum = AgentTariff.GetPriceForAction(action),
+				Action = AgentTariff.GetAction(action)
+			}.Save();
 		}
 
 		public static void CreatePayment(Partner agent, string comment, decimal sum)
 		{
 			if (sum != 0)
-			new PaymentsForAgent {
-									Agent = agent,
-									RegistrationDate = DateTime.Now,
-									Sum = sum,
-									Comment = comment
-								 }.Save();
+				new PaymentsForAgent {
+					Agent = agent,
+					RegistrationDate = DateTime.Now,
+					Sum = sum,
+					Comment = comment
+				}.Save();
 		}
 	}
 }

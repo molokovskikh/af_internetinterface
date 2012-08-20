@@ -24,15 +24,13 @@ namespace InternetInterface.Test.Functional
 		public void ChangeBalanceLawyerPersonTest()
 		{
 			var lp = new Client();
-			using (new SessionScope())
-			{
+			using (new SessionScope()) {
 				lp = ClientHelper.CreateLaywerPerson();
 				lp.Sale = 5;
 				lp.StartNoBlock = DateTime.Now;
 				lp.Save();
 			}
-			using (var browser = Open("Search/Redirect?filter.ClientCode=" + lp.Id))
-			{
+			using (var browser = Open("Search/Redirect?filter.ClientCode=" + lp.Id)) {
 				browser.TextField("BalanceText").AppendText("1234");
 				browser.Button("ChangeBalanceButton").Click();
 				Assert.That(browser.Text, Is.StringContaining("1234"));
@@ -43,7 +41,7 @@ namespace InternetInterface.Test.Functional
 		[Test, Ignore("Чинить")]
 		public void ChangeStatus()
 		{
-			Client.Status = Status.Find((uint) StatusType.BlockedAndNoConnected);
+			Client.Status = Status.Find((uint)StatusType.BlockedAndNoConnected);
 			Client.Update();
 			browser = Open(ClientUrl);
 
@@ -72,8 +70,7 @@ namespace InternetInterface.Test.Functional
 		[Test, Ignore("Чинить")]
 		public void ReservTest()
 		{
-			using (var browser = Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", Client.Id)))
-			{
+			using (var browser = Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", Client.Id))) {
 				browser.Button("naznach_but").Click();
 				browser.RadioButton(Find.ByName("graph_button")).Checked = true;
 				browser.Button("reserv_but").Click();
@@ -89,8 +86,7 @@ namespace InternetInterface.Test.Functional
 				validClient = Models.Client.Queryable.FirstOrDefault(c => c.Status.Id == 5);
 			}
 			if (validClient != null)
-				using (var browser = Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", validClient.Id)))
-				{
+				using (var browser = Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", validClient.Id))) {
 					browser.Link(Find.ByClass("button hardwareInfo")).Click();
 					Assert.That(browser.Text, Is.StringContaining(validClient.Name));
 					Assert.That(browser.Text, Is.StringContaining("FastEthernet"));
@@ -116,21 +112,18 @@ namespace InternetInterface.Test.Functional
 		[Test, Ignore]
 		public void AdditionalStatusTest()
 		{
-			using (new SessionScope())
-			{
+			using (new SessionScope()) {
 				Client = Models.Client.Queryable.First(c => c.PhysicalClient != null && Brigad.FindAll().Contains(c.WhoConnected));
 				Client.AdditionalStatus = null;
 				Client.Status = Status.Find((uint)StatusType.BlockedAndNoConnected);
 				Client.UpdateAndFlush();
 				ClientUrl = string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", Client.Id);
 			}
-			using (var browser = Open(ClientUrl))
-			{
+			using (var browser = Open(ClientUrl)) {
 				browser.Button("NotPhoned").Click();
 				browser.TextField("NotPhoned_textField").AppendText("Тестовое сообщение перезвонить");
 				browser.Button("NotPhoned_but").Click();
-				using (new SessionScope())
-				{
+				using (new SessionScope()) {
 					Client.Refresh();
 					Assert.That(Client.AdditionalStatus.Id, Is.EqualTo((uint)AdditionalStatusType.NotPhoned));
 					Assert.That(browser.Text, Is.StringContaining("Тестовое сообщение перезвонить"));
@@ -140,8 +133,7 @@ namespace InternetInterface.Test.Functional
 				browser.RadioButton(Find.ByName("graph_button")).Checked = true;
 				browser.Button("naznach_but_1").Click();
 				Thread.Sleep(2000);
-				using (new SessionScope())
-				{
+				using (new SessionScope()) {
 					Client.Refresh();
 					Assert.That(Client.AdditionalStatus.Id, Is.EqualTo((uint)AdditionalStatusType.AppointedToTheGraph));
 					Assert.That(ConnectGraph.Queryable.Where(c => c.Client == Client).Count(), Is.EqualTo(1));
@@ -151,8 +143,7 @@ namespace InternetInterface.Test.Functional
 				browser.TextField("Refused_textField").AppendText("Тестовое сообщение отказ");
 				browser.Button("Refused_but").Click();
 				Thread.Sleep(2000);
-				using (new SessionScope())
-				{
+				using (new SessionScope()) {
 					Client.Refresh();
 					Assert.That(Client.AdditionalStatus.Id, Is.EqualTo((uint)AdditionalStatusType.Refused));
 					Assert.That(browser.Text, Is.StringContaining("Тестовое сообщение отказ"));
@@ -164,15 +155,13 @@ namespace InternetInterface.Test.Functional
 		[Test, Ignore("Чинить")]
 		public void SaveSwitchForClientTest()
 		{
-			using (var browser = Open(ClientUrl))
-			{
+			using (var browser = Open(ClientUrl)) {
 				var selectList = browser.SelectList(Find.ByName("ConnectInfo.Switch"));
 				selectList.SelectByValue(selectList.Options.First(o => o.Text == "Юго-Восточный 10 саt 2950").Value);
 				browser.TextField("Port").AppendText("10");
 				browser.Button("Submit2").Click();
 				Thread.Sleep(500);
-				using (new SessionScope())
-				{
+				using (new SessionScope()) {
 					EndPoint.Refresh();
 					Assert.That(EndPoint.Port, Is.EqualTo(10));
 					Assert.NotNull(EndPoint.Switch);
@@ -184,16 +173,15 @@ namespace InternetInterface.Test.Functional
 		[Test, Ignore("Чинить")]
 		public void StatisticTest()
 		{
-			using (new SessionScope())
-			{
+			using (new SessionScope()) {
 				var insStatClient =
-					Internetsessionslog.Queryable.Where(i => i.EndpointId.Client.PhysicalClient != null).ToList().
-						GroupBy(i => i.EndpointId).First(g => g.Count() > 20).Select(
-							e => e.EndpointId.Client.Id).First();
+					Internetsessionslog.Queryable.Where(i => i.EndpointId.Client.PhysicalClient != null).ToList()
+						.GroupBy(i => i.EndpointId).First(g => g.Count() > 20).Select(
+						e => e.EndpointId.Client.Id)
+						.First();
 				using (
 					var browser =
-						Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", insStatClient)))
-				{
+						Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", insStatClient))) {
 					browser.Button("Statistic").Click();
 					Assert.That(browser.Text, Is.StringContaining("Статистика работы клиента"));
 					Assert.That(browser.Text, Is.StringContaining("Первая"));
@@ -217,15 +205,14 @@ namespace InternetInterface.Test.Functional
 
 			Client.Refresh();
 			Assert.That(Client.Name,
-						Is.EqualTo(string.Format("{0} {1} {2}", "Иванов",
-													"Иван", "Иванович")));
+				Is.EqualTo(string.Format("{0} {1} {2}", "Иванов",
+					"Иван", "Иванович")));
 		}
 
 		[Test, Ignore("Чинить")]
 		public void UpdateTest()
 		{
-			using (var browser = Open("UserInfo/SearchUserInfo.rails?filter.ClientCode=173&filter.Editing=true"))
-			{
+			using (var browser = Open("UserInfo/SearchUserInfo.rails?filter.ClientCode=173&filter.Editing=true")) {
 				var tariffList = browser.SelectList("ChTariff");
 				browser.SelectList("ChTariff").SelectByValue(
 					tariffList.Options.First(s => s.Value != tariffList.SelectedOption.Value).Value);
@@ -240,8 +227,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void RequestGraphTest()
 		{
-			using (var browser = Open("UserInfo/RequestGraph.rails"))
-			{
+			using (var browser = Open("UserInfo/RequestGraph.rails")) {
 				Assert.That(browser.Text, Is.StringContaining("Настройки"));
 				browser.Button("naznach_but_1").Click();
 				Assert.That(browser.Text, Is.StringContaining("Настройки"));
@@ -253,8 +239,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void UserWriteOffsTest()
 		{
-			using (var browser = Open(ClientUrl))
-			{
+			using (var browser = Open(ClientUrl)) {
 				browser.Button("userWriteOffButton").Click();
 				Assert.That(browser.Text, Is.StringContaining("Значение должно быть больше нуля"));
 				Assert.That(browser.Text, Is.StringContaining("Введите комментарий"));

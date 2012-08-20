@@ -2,7 +2,7 @@
 
 namespace InternetInterface.Test.Helpers
 {
-	class UserSearchPropertiesHelper : UserSearchProperties
+	internal class UserSearchPropertiesHelper : UserSearchProperties
 	{
 		public static UserSearchProperties CreateUserSearchProperties()
 		{
@@ -13,23 +13,21 @@ namespace InternetInterface.Test.Helpers
 		}
 	}
 
-	class ConnectedTypePropertiesHelper : ConnectedTypeProperties
+	internal class ConnectedTypePropertiesHelper : ConnectedTypeProperties
 	{
 		public static ConnectedTypeProperties CreateUserSearchProperties()
 		{
-			return new ConnectedTypeProperties
-			{
+			return new ConnectedTypeProperties {
 				Type = ConnectedType.AllConnected
 			};
 		}
 	}
 
-	class ClientTypeHelper : ClientTypeProperties
+	internal class ClientTypeHelper : ClientTypeProperties
 	{
 		public static ClientTypeProperties CreateUserSearchProperties()
 		{
-			return new ClientTypeProperties
-			{
+			return new ClientTypeProperties {
 				Type = ForSearchClientType.AllClients
 			};
 		}

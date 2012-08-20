@@ -12,7 +12,8 @@ namespace InternetInterface.Models
 	public class House : ValidActiveRecordLinqBase<House>
 	{
 		public House()
-		{}
+		{
+		}
 
 		public House(string street, int number)
 		{
@@ -72,8 +73,8 @@ namespace InternetInterface.Models
 		public virtual uint GetClientWithApNumber(int num)
 		{
 			return
-				Client.Queryable.Where(c => c.PhysicalClient.HouseObj == this && c.PhysicalClient.Apartment == num).
-					ToList().Select(c => c.Id).FirstOrDefault();
+				Client.Queryable.Where(c => c.PhysicalClient.HouseObj == this && c.PhysicalClient.Apartment == num)
+					.ToList().Select(c => c.Id).FirstOrDefault();
 		}
 
 		public virtual int GetSubscriberCount()

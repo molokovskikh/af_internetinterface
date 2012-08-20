@@ -12,12 +12,9 @@ namespace InternetInterface.Models
 {
 	public enum ServiceRequestStatus
 	{
-		[Description("Новый")]
-		New = 1,
-		[Description("Закрыт")]
-		Close = 3,
-		[Description("Отменен")]
-		Cancel = 5
+		[Description("Новый")] New = 1,
+		[Description("Закрыт")] Close = 3,
+		[Description("Отменен")] Cancel = 5
 	}
 
 	[ActiveRecord("ServiceRequest", Schema = "internet", Lazy = true), Auditable]
@@ -38,20 +35,17 @@ namespace InternetInterface.Models
 		public virtual string Description { get; set; }
 
 		[Property,
-			ValidateNonEmpty,
-			ValidateRegExp(@"^\d{3}-\d{7}$", "Ошибка формата телефонного номера: мобильный телефн (***-*******)"),
-			Description("Контактный телефон"),
-			Auditable]
+		 ValidateNonEmpty,
+		 ValidateRegExp(@"^\d{3}-\d{7}$", "Ошибка формата телефонного номера: мобильный телефн (***-*******)"),
+		 Description("Контактный телефон"),
+		 Auditable]
 		public virtual string Contact { get; set; }
 
 		[Property, Auditable("Статус сервисной заявки")]
-		public virtual ServiceRequestStatus Status 
-		{ 
-			get
-			{
-				return _status;
-			}
-		
+		public virtual ServiceRequestStatus Status
+		{
+			get { return _status; }
+
 			set
 			{
 				if (value == ServiceRequestStatus.Close && value != _status) {
@@ -120,7 +114,7 @@ namespace InternetInterface.Models
 		public virtual string GetMinDiscription()
 		{
 			if (Description != null)
-				return  AppealHelper.GetTransformedAppeal(Description.Take(100).Implode(string.Empty)) + (Description.Length > 100 ? "..." : string.Empty);
+				return AppealHelper.GetTransformedAppeal(Description.Take(100).Implode(string.Empty)) + (Description.Length > 100 ? "..." : string.Empty);
 			return string.Empty;
 		}
 
@@ -144,7 +138,7 @@ namespace InternetInterface.Models
 
 		public static List<object> GetStatuses()
 		{
-			return new List<object>(Enum.GetValues(typeof(ServiceRequestStatus)).Cast<int>().Select(s => new {Id = s, Name = GetStatusName((ServiceRequestStatus)s)}));
+			return new List<object>(Enum.GetValues(typeof(ServiceRequestStatus)).Cast<int>().Select(s => new { Id = s, Name = GetStatusName((ServiceRequestStatus)s) }));
 		}
 
 		public virtual SmsMessage GetSms()

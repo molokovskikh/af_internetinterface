@@ -9,7 +9,7 @@ using NHibernate.Linq;
 
 namespace InternetInterface.Controllers
 {
-	[Filter(ExecuteWhen.BeforeAction, typeof (AuthenticationFilter))]
+	[Filter(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class TariffsController : BaseController
 	{
 		public void ChangeRules()

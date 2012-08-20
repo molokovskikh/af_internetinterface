@@ -103,7 +103,7 @@ namespace InternetInterface.Models
 
 		public virtual string GetValidationError(string field)
 		{
-			var errors =  GetValidateionErrors();
+			var errors = GetValidateionErrors();
 			return ((ArrayList)errors[GetType().GetProperty(field)])[0].ToString();
 		}
 

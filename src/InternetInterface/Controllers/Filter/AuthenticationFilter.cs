@@ -24,34 +24,29 @@ namespace InternetInterface.Controllers.Filter
 #if DEBUG
 			context.Session["Login"] = Environment.UserName;
 #endif
-			if (context.Session["Login"] == null)
-			{
+			if (context.Session["Login"] == null) {
 				context.Session["Login"] = context.CurrentUser.Identity.Name;
 			}
-			if (Partner.FindAllByProperty("Login", context.Session["Login"]).Length == 0)
-			{
+			if (Partner.FindAllByProperty("Login", context.Session["Login"]).Length == 0) {
 				context.Response.RedirectToUrl(@"..\\Login\LoginPartner.rails");
 				return false;
 			}
-			else
-			{
+			else {
 				var partner = Partner.GetPartnerForLogin(context.Session["login"].ToString());
 				partner.AccesedPartner = CategorieAccessSet.FindAll(DetachedCriteria.For(typeof(CategorieAccessSet))
-															.CreateAlias("AccessCat", "AC", JoinType.InnerJoin)
-															.Add(Restrictions.Eq("Categorie", partner.Categorie)))
-															.Select(c => c.AccessCat.ReduceName).ToList();
+					.CreateAlias("AccessCat", "AC", JoinType.InnerJoin)
+					.Add(Restrictions.Eq("Categorie", partner.Categorie)))
+					.Select(c => c.AccessCat.ReduceName).ToList();
 				context.Items.Add("Administrator", partner);
 				controllerContext.PropertyBag["PartnerAccessSet"] = new CategorieAccessSet();
 				controllerContext.PropertyBag["MapPartner"] = partner;
 				if (AccessRules.GetAccessName(controllerContext.Action).Count(CategorieAccessSet.AccesPartner) == 0
-					&& !partner.HavePermissionTo(controllerContext.Name, controllerContext.Action))
-				{
+					&& !partner.HavePermissionTo(controllerContext.Name, controllerContext.Action)) {
 					context.Response.RedirectToUrl(@"..\\Errors\AccessDin.aspx");
 					return false;
 				}
 				return true;
 			}
-			
 		}
 	}
 }

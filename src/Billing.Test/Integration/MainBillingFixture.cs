@@ -70,7 +70,7 @@ namespace Billing.Test.Integration
 			};
 			InternetSettings.DeleteAll();
 
-			using(new SessionScope()) {
+			using (new SessionScope()) {
 				new Partner("Test").Save();
 				if (!ActiveRecordLinqBase<Status>.Queryable.Any())
 					CreateStatuses();
@@ -102,7 +102,7 @@ namespace Billing.Test.Integration
 					HumanName = "WorkLawyer"
 				}.Save();
 
-				new InternetSettings{NextBillingDate = DateTime.Now}.Save();
+				new InternetSettings { NextBillingDate = DateTime.Now }.Save();
 			}
 		}
 
@@ -110,28 +110,28 @@ namespace Billing.Test.Integration
 		{
 			new Status {
 				Blocked = false,
-				Id = (uint) StatusType.Worked,
+				Id = (uint)StatusType.Worked,
 				Name = "unblocked",
 				ShortName = "Worked"
 			}.Save();
 
 			new Status {
 				Blocked = true,
-				Id = (uint) StatusType.BlockedAndConnected,
+				Id = (uint)StatusType.BlockedAndConnected,
 				Name = "unblocked",
 				ShortName = "BlockedAndConnected"
 			}.Save();
 
 			new Status {
 				Blocked = true,
-				Id = (uint) StatusType.NoWorked,
+				Id = (uint)StatusType.NoWorked,
 				Name = "testBlockedStatus",
 				ShortName = "NoWorked"
 			}.Save();
 
 			new Status {
 				ShortName = "VoluntaryBlocking",
-				Id = (uint) StatusType.VoluntaryBlocking,
+				Id = (uint)StatusType.VoluntaryBlocking,
 				Blocked = true,
 				Name = "VoluntaryBlocking",
 				Connected = true
@@ -151,9 +151,7 @@ namespace Billing.Test.Integration
 			SmsMessage.DeleteAll();
 			UserWriteOff.DeleteAll();
 
-			ArHelper.WithSession(s => {
-				s.CreateSQLQuery("delete from Internet.ClientServices");
-			});
+			ArHelper.WithSession(s => { s.CreateSQLQuery("delete from Internet.ClientServices"); });
 
 			WriteOff.DeleteAll();
 			Payment.DeleteAll();

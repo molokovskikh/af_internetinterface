@@ -98,10 +98,10 @@ namespace InforoomInternet.Test.Functional
 								new PhysicalClient {
 									Balance = -200,
 									Tariff = new Tariff {
-											Name = "Тестовый",
-											Price = 100,
-											Description = "Тестовый тариф"
-										}
+										Name = "Тестовый",
+										Price = 100,
+										Description = "Тестовый тариф"
+									}
 								}
 						}
 					}
@@ -114,7 +114,7 @@ namespace InforoomInternet.Test.Functional
 			}
 			browser = Open("Warning?host=google.com&url=");
 			Assert.That(browser.Text, Is.StringContaining("Продолжить"));
-			Assert.That(browser.Text, Is.StringContaining( "Ваша задолженность за оказанные услуги составляет 200,00 руб"));
+			Assert.That(browser.Text, Is.StringContaining("Ваша задолженность за оказанные услуги составляет 200,00 руб"));
 			browser.Button(Find.ById("ConButton")).Click();
 			Assert.That(browser.Text, Is.StringContaining("google"));
 
@@ -192,28 +192,26 @@ namespace InforoomInternet.Test.Functional
 			Assert.That(browser.Text, Is.StringContaining("Тарифы "));
 			Assert.That(browser.Text, Is.StringContaining("Порядок расчетов стр1."));
 			var imageIds = new List<string> {
-												"imd1",
-												"imd2",
-												"imd3",
-												"imd4",
-												"imd5",
-												"imt",
-												"imo1",
-												"imo2",
-												"imo3",
-												"imp1",
-												"imp2",
-												"impo1",
-												"impo2",
-												"impo3"
-											};
+				"imd1",
+				"imd2",
+				"imd3",
+				"imd4",
+				"imd5",
+				"imt",
+				"imo1",
+				"imo2",
+				"imo3",
+				"imp1",
+				"imp2",
+				"impo1",
+				"impo2",
+				"impo3"
+			};
 			var imagesUris = new List<string>();
-			foreach (var imageId in imageIds)
-			{
+			foreach (var imageId in imageIds) {
 				imagesUris.Add(browser.Image(imageId).Uri.AbsoluteUri);
 			}
-			foreach (var imagesUri in imagesUris)
-			{
+			foreach (var imagesUri in imagesUris) {
 				browser.GoTo(imagesUri);
 				Assert.That(browser.Text, Is.Not.StringContaining("Description: HTTP 404"));
 			}
@@ -224,8 +222,7 @@ namespace InforoomInternet.Test.Functional
 		{
 			browser = Open();
 			var links = browser.Div(Find.ByClass("middle")).Links.Select(l => l.Url.Split(new[] { '/' })[3] + "/" + l.Url.Split(new[] { '/' })[4]).ToList();
-			foreach (var link in links)
-			{
+			foreach (var link in links) {
 				browser = Open(link);
 				Assert.That(browser.Text, Is.StringContaining("Новости"));
 			}

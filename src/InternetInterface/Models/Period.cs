@@ -58,8 +58,8 @@ namespace InternetInterface.Models
 		{
 			if (ReferenceEquals(null, obj)) return false;
 			if (ReferenceEquals(this, obj)) return true;
-			if (obj.GetType() != typeof (Period)) return false;
-			return Equals((Period) obj);
+			if (obj.GetType() != typeof(Period)) return false;
+			return Equals((Period)obj);
 		}
 
 		public bool Equals(Period other)
@@ -71,9 +71,8 @@ namespace InternetInterface.Models
 
 		public override int GetHashCode()
 		{
-			unchecked
-			{
-				return (Year*397) ^ Interval.GetHashCode();
+			unchecked {
+				return (Year * 397) ^ Interval.GetHashCode();
 			}
 		}
 
@@ -111,7 +110,7 @@ namespace InternetInterface.Models
 			if (!int.TryParse(parts[0], out year))
 				return null;
 
-			var descriptions = BindingHelper.GetDescriptionsDictionary(typeof (Interval));
+			var descriptions = BindingHelper.GetDescriptionsDictionary(typeof(Interval));
 			var pair = descriptions.FirstOrDefault(p => String.Equals(p.Value, parts[1], StringComparison.CurrentCultureIgnoreCase));
 			if (pair.Key == null)
 				return null;
@@ -143,8 +142,7 @@ namespace InternetInterface.Models
 		public static DateTime GetPeriodBegin(this Period period)
 		{
 			int year = period.Year;
-			switch (period.Interval)
-			{
+			switch (period.Interval) {
 				case Interval.January:
 					return new DateTime(year, 1, 1);
 				case Interval.February:
@@ -189,8 +187,7 @@ namespace InternetInterface.Models
 
 		public static string GetPeriodName(this Period period)
 		{
-			switch (period.Interval)
-			{
+			switch (period.Interval) {
 				case Interval.January:
 					return "январе";
 				case Interval.February:
@@ -246,18 +243,16 @@ namespace InternetInterface.Models
 			var value = NHibernateUtil.String.NullSafeGet(rs, names);
 			if (value == null)
 				return null;
-			return new Period((string) value);
+			return new Period((string)value);
 		}
 
 		public void NullSafeSet(IDbCommand cmd, object value, int index)
 		{
-			if(value == null)
-			{
-				((IDataParameter) cmd.Parameters[index]).Value = DBNull.Value;
+			if (value == null) {
+				((IDataParameter)cmd.Parameters[index]).Value = DBNull.Value;
 			}
-			else
-			{
-				var ip = (Period) value;
+			else {
+				var ip = (Period)value;
 				((IDataParameter)cmd.Parameters[index]).Value = ip.ToSqlString();
 			}
 		}
@@ -284,7 +279,7 @@ namespace InternetInterface.Models
 
 		public SqlType[] SqlTypes
 		{
-			get { return new[] {new SqlType(DbType.StringFixedLength, 7), }; }
+			get { return new[] { new SqlType(DbType.StringFixedLength, 7), }; }
 		}
 
 		public Type ReturnedType

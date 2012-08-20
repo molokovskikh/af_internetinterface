@@ -6,12 +6,12 @@ using InternetInterface.Models.Universal;
 
 namespace InternetInterface.Models
 {
-
 	[ActiveRecord("Payments", Schema = "internet", Lazy = true)]
 	public class Payment : ValidActiveRecordLinqBase<Payment>
 	{
 		public Payment()
-		{}
+		{
+		}
 
 		public Payment(Client client, decimal sum)
 		{
@@ -32,9 +32,9 @@ namespace InternetInterface.Models
 		public virtual Client Client { get; set; }
 
 		[Property,
-			ValidateNonEmpty("Введите сумму"),
-			ValidateRange(1, 100000, "Сумма должна быть больше 0 и меньше 100 000 рублей"),
-			ValidateDecimal("Некорректно введено значение суммы")]
+		 ValidateNonEmpty("Введите сумму"),
+		 ValidateRange(1, 100000, "Сумма должна быть больше 0 и меньше 100 000 рублей"),
+		 ValidateDecimal("Некорректно введено значение суммы")]
 		public virtual decimal Sum { get; set; }
 
 		[BelongsTo("Agent")]
@@ -54,8 +54,7 @@ namespace InternetInterface.Models
 
 		public virtual Appeals Cancel(string comment)
 		{
-			if (BillingAccount)
-			{
+			if (BillingAccount) {
 				if (Client.PhysicalClient != null)
 					Client.PhysicalClient.WriteOff(Sum, Virtual);
 				else

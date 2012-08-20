@@ -18,8 +18,8 @@ namespace InternetInterface.Models
 		public virtual ClientEndpoint EndPoint { get; set; }
 
 		[Property]
-		public virtual string Ip { get; set; } 
-		
+		public virtual string Ip { get; set; }
+
 		[Property]
 		public virtual int? Mask { get; set; }
 

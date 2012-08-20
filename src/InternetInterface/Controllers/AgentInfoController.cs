@@ -12,14 +12,15 @@ using InternetInterface.Models;
 namespace InternetInterface.Controllers
 {
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
-	public class AgentInfoController : ARSmartDispatcherController 
+	public class AgentInfoController : ARSmartDispatcherController
 	{
 		private List<PaymentsForAgent> GetPayments(DateTime startDate, DateTime endDate)
 		{
 			return PaymentsForAgent.Queryable.Where(
 				p =>
-				p.Agent == InitializeContent.Partner && p.RegistrationDate >= startDate &&
-				p.RegistrationDate <= endDate).ToList();
+					p.Agent == InitializeContent.Partner && p.RegistrationDate >= startDate &&
+						p.RegistrationDate <= endDate)
+				.ToList();
 		}
 
 		public virtual void SummaryInformation()
@@ -48,7 +49,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["interval"] = interval;
 		}
 
-		public virtual void GroupInfo([DataBind("interval")]Week interval)
+		public virtual void GroupInfo([DataBind("interval")] Week interval)
 		{
 			var payments = PaymentsForAgent.Queryable.Where(p => p.RegistrationDate.Date >= interval.StartDate.Date && p.RegistrationDate.Date <= interval.EndDate.Date).ToList().GroupBy(p => p.Agent);
 			PropertyBag["payments"] = payments;
@@ -61,7 +62,7 @@ namespace InternetInterface.Controllers
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void SaveSettings([ARDataBind("agentSettings", AutoLoad = AutoLoadBehavior.NewInstanceIfInvalidKey)]AgentTariff[] tariffs)
+		public void SaveSettings([ARDataBind("agentSettings", AutoLoad = AutoLoadBehavior.NewInstanceIfInvalidKey)] AgentTariff[] tariffs)
 		{
 			foreach (var agentTariff in tariffs) {
 				agentTariff.Save();

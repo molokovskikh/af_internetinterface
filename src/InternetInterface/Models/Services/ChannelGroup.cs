@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Castle.ActiveRecord;
@@ -15,7 +15,8 @@ namespace InternetInterface.Models.Services
 	public class ChannelGroup
 	{
 		public ChannelGroup()
-		{}
+		{
+		}
 
 		public ChannelGroup(string name,
 			decimal costPerMonth,

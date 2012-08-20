@@ -37,7 +37,7 @@ namespace Billing.Test.Integration
 		public static Client CreateAndSaveClient(string name, bool statusBlocked, decimal balance)
 		{
 			Service[] defaultServices;
-			using(new SessionScope()) {
+			using (new SessionScope()) {
 				defaultServices = DefaultServices().ToArray();
 			}
 
@@ -50,7 +50,7 @@ namespace Billing.Test.Integration
 				FreeBlockDays = 0,
 				PercentBalance = 0,
 				Name = name,
-				BeginWork = DateTime.Now ,
+				BeginWork = DateTime.Now,
 				RatedPeriodDate = DateTime.Now,
 				YearCycleDate = DateTime.Now
 			};
@@ -95,7 +95,7 @@ namespace Billing.Test.Integration
 		{
 			new Payment {
 				BillingAccount = false,
-				Client = Client.Queryable.Count(c => c.Name== "testblockedClient") != 0 ? Client.Queryable.First(c => c.Name== "testblockedClient") : Client.FindFirst(),
+				Client = Client.Queryable.Count(c => c.Name == "testblockedClient") != 0 ? Client.Queryable.First(c => c.Name == "testblockedClient") : Client.FindFirst(),
 				PaidOn = DateTime.Now,
 				RecievedOn = DateTime.Now,
 				Sum = sum

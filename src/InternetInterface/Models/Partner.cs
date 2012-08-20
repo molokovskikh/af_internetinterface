@@ -19,7 +19,8 @@ namespace InternetInterface.Models
 	public class Partner : ValidActiveRecordLinqBase<Partner>
 	{
 		public Partner()
-		{}
+		{
+		}
 
 		public Partner(string login)
 		{
@@ -78,7 +79,7 @@ namespace InternetInterface.Models
 			return
 				Payments.Where(
 					p => p.RegistrationDate.Date >= interval.StartDate.Date && p.RegistrationDate.Date <= interval.EndDate.Date).Sum(
-						p => p.Sum);
+					p => p.Sum);
 		}
 
 		public static List<Partner> GetHouseMapAgents()
@@ -88,15 +89,14 @@ namespace InternetInterface.Models
 
 		public static List<Partner> GetServiceIngeners()
 		{
-			return Queryable.Where( p => p.Categorie.ReductionName == "Service").ToList();
+			return Queryable.Where(p => p.Categorie.ReductionName == "Service").ToList();
 		}
 
 		public override void SaveAndFlush()
 		{
 			base.SaveAndFlush();
 			var catAS = CategorieAccessSet.FindAllByProperty("Categorie", Categorie);
-			foreach (var categorieAccessSet in catAS)
-			{
+			foreach (var categorieAccessSet in catAS) {
 				categorieAccessSet.AccessCat.AcceptToOne(this);
 			}
 		}
@@ -125,7 +125,8 @@ namespace InternetInterface.Models
 		public virtual IEnumerable<IPermission> Permissions()
 		{
 			var permissionMap = new Dictionary<string, IPermission[]> {
-				{"SSI", new IPermission[] {
+				{
+					"SSI", new IPermission[] {
 						new ControllerPermission(typeof(PaymentsController)),
 						new ControllerPermission(typeof(ChannelGroupsController)),
 						new ControllerPermission(typeof(InvoicesController)),
@@ -134,12 +135,13 @@ namespace InternetInterface.Models
 						new ControllerActionPermission("Sms", "GetSmsStatus")
 					}
 				},
-				{"DHCP", new IPermission[] {
+				{
+					"DHCP", new IPermission[] {
 						new ControllerPermission(typeof(SwitchesController)),
 					}
 				},
-				{"CB", new IPermission[]
-					{
+				{
+					"CB", new IPermission[] {
 						new ControllerActionPermission("Payments", "Cancel")
 					}
 				}

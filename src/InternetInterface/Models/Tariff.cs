@@ -13,7 +13,8 @@ namespace InternetInterface.Models
 	public class Tariff : ChildActiveRecordLinqBase<Tariff>
 	{
 		public Tariff()
-		{}
+		{
+		}
 
 		public Tariff(string name, int price)
 		{

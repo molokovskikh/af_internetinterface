@@ -43,8 +43,7 @@ namespace InternetInterface.Test.Functional
 
 		public static void PrepareTestData()
 		{
-			using(new SessionScope()) {
-
+			using (new SessionScope()) {
 				var partner = ActiveRecordLinqBase<Partner>.Queryable.FirstOrDefault(p => p.Login == Environment.UserName);
 				if (partner == null) {
 					partner = new Partner(Environment.UserName);

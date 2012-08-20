@@ -33,18 +33,15 @@ namespace InternetInterface.Printer
 
 			XmlConfigurator.Configure();
 			var logger = LogManager.GetLogger(typeof(Program));
-			try
-			{
+			try {
 				var printer = args[1];
 				var name = args[0];
 				var ids = args[2].Split(',').Select(id => Convert.ToUInt32(id.Trim())).ToArray();
 
 				var brail = StandaloneInitializer.Init();
 				IEnumerable documents = null;
-				using(new SessionScope(FlushAction.Never))
-				{
-					if (name == "invoice")
-					{
+				using (new SessionScope(FlushAction.Never)) {
+					if (name == "invoice") {
 						ArHelper.WithSession(s => {
 							documents = s.Query<Invoice>().Where(a => ids.Contains(a.Id))
 								.OrderBy(a => a.PayerName)
@@ -54,8 +51,7 @@ namespace InternetInterface.Printer
 					Print(brail, printer, name, documents);
 				}
 			}
-			catch (Exception e)
-			{
+			catch (Exception e) {
 				logger.Error("Ошибка при печати", e);
 			}
 		}
@@ -72,14 +68,13 @@ namespace InternetInterface.Printer
 			using (new SessionScope(FlushAction.Never)) {
 				foreach (var document in documents) {
 					var file = Path.Combine(Path.GetTempPath(), Path.ChangeExtension(Path.GetRandomFileName(), ".html"));
-					try
-					{
+					try {
 						var arguments = new Dictionary<string, object> {
-							{singular, document},
-							{"doc", document},
+							{ singular, document },
+							{ "doc", document },
 							//тк chrome.printer не печатает у него media будет screen а не print
 							//что бы стили продолжели работать нужно их исправить
-							{"print", true}
+							{ "print", true }
 						};
 						RenderToFile(brail, plural, file, arguments);
 						ChromePrinter(printer, file);

@@ -23,11 +23,9 @@ namespace InternetInterface.Controllers
 		[AccessibleThrough(Verb.Post)]
 		public void SendSms(string messageText, uint clientId, uint phoneId)
 		{
-			if (!string.IsNullOrEmpty(messageText))
-			{
+			if (!string.IsNullOrEmpty(messageText)) {
 				var phoneNumber = Contact.Find(phoneId);
-				var message = new SmsMessage
-				{
+				var message = new SmsMessage {
 					Client = Client.Find(clientId),
 					CreateDate = DateTime.Now,
 					Registrator = InitializeContent.Partner,
@@ -38,13 +36,14 @@ namespace InternetInterface.Controllers
 				new SmsHelper().SendMessage(message);
 
 				Flash["Message"] = Message.Notify("Сообщение передано для отправки");
-			} else {
+			}
+			else {
 				Flash["Message"] = Message.Error("Введите текст сообщения");
 			}
 			RedirectToReferrer();
 		}
 
-		[return : JSONReturnBinder]
+		[return: JSONReturnBinder]
 		public string GetSmsStatus(uint smsId)
 		{
 			return new SmsHelper().GetStatus(DbSession.Get<SmsMessage>(smsId));

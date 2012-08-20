@@ -8,7 +8,7 @@ using WatiN.Core;
 namespace InternetInterface.Test.Functional
 {
 	[TestFixture, Ignore("Чинить")]
-	class RegisterPartnerFixrure : global::Test.Support.Web.WatinFixture2
+	internal class RegisterPartnerFixrure : global::Test.Support.Web.WatinFixture2
 	{
 		[Test]
 		public void TestRegistrPartner()
@@ -22,8 +22,7 @@ namespace InternetInterface.Test.Functional
 			Assert.That(browser.Text, Is.StringContaining("Логин"));
 			Assert.That(browser.Text, Is.StringContaining("Опции доступа"));
 			var AccessCats = AccessCategories.FindAll().Where(p => p.Id != 9);
-			foreach (var cat in AccessCats)
-			{
+			foreach (var cat in AccessCats) {
 				Assert.That(browser.Text, Is.StringContaining(cat.Name));
 			}
 			browser.TextField(Find.ById("FIO")).AppendText("TestFIO");
@@ -42,8 +41,7 @@ namespace InternetInterface.Test.Functional
 			Assert.That(browser.Text, Is.StringContaining("Номер телефона8-111-111-11-11"));
 			Assert.That(browser.Text, Is.StringContaining("Адрес earch"));
 			Assert.That(browser.Text, Is.StringContaining("ЛогинLogin" + loginPrefix));
-			foreach (var partner in Partner.FindAllByProperty("Login", "Login"+loginPrefix).ToList())
-			{
+			foreach (var partner in Partner.FindAllByProperty("Login", "Login" + loginPrefix).ToList()) {
 				partner.DeleteAndFlush();
 			}
 		}
