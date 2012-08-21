@@ -234,7 +234,7 @@ namespace InternetInterface.Controllers
 			if (Partner.RegistrLogicPartner(partner, Validator)) {
 #if !DEBUG
 				if (ActiveDirectoryHelper.FindDirectoryEntry(partner.Login) == null)
-				ActiveDirectoryHelper.CreateUserInAD(partner.Login, Pass);
+					ActiveDirectoryHelper.CreateUserInAD(partner.Login, Pass);
 #endif
 				Flash["Partner"] = partner;
 				Flash["PartnerPass"] = Pass;
