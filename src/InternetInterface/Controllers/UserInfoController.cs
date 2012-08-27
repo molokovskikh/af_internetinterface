@@ -11,10 +11,10 @@ using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
 using InternetInterface.AllLogic;
 using InternetInterface.Controllers.Filter;
-using InternetInterface.Filters;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Models.Services;
+using InternetInterface.Queries;
 using InternetInterface.Services;
 using TextHelper = InternetInterface.Helpers.TextHelper;
 using NHibernate;
@@ -95,112 +95,6 @@ namespace InternetInterface.Controllers
 	}
 
 
-	public class RequestFilter : IPaginable, ISortableContributor, SortableContributor
-	{
-		public string query { get; set; }
-		public DateTime? beginDate { get; set; }
-		public DateTime? endDate { get; set; }
-		public string SortBy { get; set; }
-		public string Direction { get; set; }
-		public uint? labelId { get; set; }
-		public bool Archive { get; set; }
-
-		private int _lastRowsCount;
-
-		public int RowsCount
-		{
-			get { return _lastRowsCount; }
-		}
-
-		public int PageSize
-		{
-			get { return 20; }
-		}
-
-		public int CurrentPage { get; set; }
-
-		public string[] ToUrl()
-		{
-			return
-				GetParameters().Where(p => p.Key != "CurrentPage").Select(p => string.Format("{0}={1}", p.Key, p.Value))
-					.ToArray();
-		}
-
-		public Dictionary<string, object> GetParameters()
-		{
-			return new Dictionary<string, object> {
-				{ "filter.query", query },
-				{ "filter.beginDate", beginDate },
-				{ "filter.endDate", endDate },
-				{ "filter.labelId", labelId },
-				{ "filter.Archive", Archive },
-				{ "filter.SortBy", SortBy },
-				{ "filter.Direction", Direction },
-				{ "CurrentPage", CurrentPage }
-			};
-		}
-
-		public string ToUrlQuery()
-		{
-			return string.Join("&", ToUrl());
-		}
-
-		public string GetUriToArchive()
-		{
-			Archive = !Archive;
-			var label = Archive ? "Показать архив" : "Показать заявки";
-			var a = string.Format("<a href=\"../UserInfo/RequestView?{0}\">{1}</a>", GetUri(), label);
-			Archive = !Archive;
-			return a;
-		}
-
-		public string GetUri()
-		{
-			return ToUrlQuery();
-		}
-
-		public List<Request> Find()
-		{
-			var thisD = DateTime.Now;
-			if (beginDate == null)
-				beginDate = new DateTime(thisD.Year, thisD.Month, 1);
-			if (endDate == null)
-				endDate = DateTime.Now;
-
-			Expression<Func<Request, bool>> predicate;
-			if (labelId != 0)
-				if (!string.IsNullOrEmpty(query))
-					predicate = i => (i.Street.Contains(query) || i.ApplicantPhoneNumber.Contains(query) || i.ApplicantName.Contains(query)) && i.ActionDate.Date >= beginDate.Value.Date && i.ActionDate.Date <= endDate.Value.Date && i.Label.Id == labelId && i.Archive == Archive;
-				else {
-					predicate = i => i.ActionDate.Date >= beginDate.Value.Date && i.ActionDate.Date <= endDate.Value.Date && i.Label.Id == labelId && i.Archive == Archive;
-				}
-			else {
-				if (!string.IsNullOrEmpty(query))
-					predicate =
-						i =>
-							(i.Street.Contains(query) || i.ApplicantPhoneNumber.Contains(query) || i.ApplicantName.Contains(query)) && i.ActionDate.Date >= beginDate.Value.Date &&
-								i.ActionDate.Date <= endDate.Value.Date &&
-									i.Archive == Archive;
-				else {
-					predicate =
-						i => i.ActionDate.Date >= beginDate.Value.Date && i.ActionDate.Date <= endDate.Value.Date && i.Archive == Archive;
-				}
-			}
-
-			_lastRowsCount = Request.Queryable.Where(predicate).Count();
-			if (_lastRowsCount > 0) {
-				var getCount = _lastRowsCount - PageSize * CurrentPage < PageSize ? _lastRowsCount - PageSize * CurrentPage : PageSize;
-				var result = Request.Queryable.Where(predicate).ToList();
-				if (!string.IsNullOrEmpty(SortBy))
-					result.Sort(new PropertyComparer<Request>(Direction == "asc" ? SortDirection.Asc : SortDirection.Desc, SortBy));
-				return result.Skip(PageSize * CurrentPage)
-					.Take(getCount)
-					.ToList();
-			}
-			return new List<Request>();
-		}
-	}
-
 	[Helper(typeof(PaginatorHelper))]
 	[Helper(typeof(TextHelper))]
 	[Helper(typeof(FormHelper))]
@@ -216,7 +110,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Editing"] = filter.Editing;
 			PropertyBag["appealType"] = filter.appealType;
 			PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClient>(new PhysicalClient());
-			PropertyBag["Switches"] = NetworkSwitches.All(DbSession);
+			PropertyBag["Switches"] = NetworkSwitch.All(DbSession);
 		}
 
 		public void Leases([DataBind("filter")] SessionFilter filter)
@@ -434,7 +328,7 @@ namespace InternetInterface.Controllers
 			var endPontId = UInt32.Parse(Request.Form["endPontId"]);
 			var lease = Lease.Queryable.FirstOrDefault(l => l.Endpoint.Id == endPontId);
 			if (lease != null)
-				return NetworkSwitches.GetNormalIp(Convert.ToUInt32(lease.Ip));
+				return NetworkSwitch.GetNormalIp(Convert.ToUInt32(lease.Ip));
 			return string.Empty;
 		}
 
@@ -462,7 +356,7 @@ namespace InternetInterface.Controllers
 				nullFlag = true;
 			}
 			else {
-				ConnectInfo.static_IP = NetworkSwitches.SetProgramIp(ConnectInfo.static_IP);
+				ConnectInfo.static_IP = NetworkSwitch.SetProgramIp(ConnectInfo.static_IP);
 			}
 			var errorMessage = Validation.ValidationConnectInfo(ConnectInfo);
 			decimal _connectSum;
@@ -484,13 +378,13 @@ namespace InternetInterface.Controllers
 							Client = client,
 							Date = DateTime.Now,
 							Sum = 200,
-							Comment = string.Format("Плата за фиксированный Ip адрес ({0})", NetworkSwitches.GetNormalIp(UInt32.Parse(ConnectInfo.static_IP))),
+							Comment = string.Format("Плата за фиксированный Ip адрес ({0})", NetworkSwitch.GetNormalIp(UInt32.Parse(ConnectInfo.static_IP))),
 							Registrator = InitializeContent.Partner
 						}.Save();
 					clientEntPoint.Client = client;
 					clientEntPoint.Ip = ConnectInfo.static_IP;
 					clientEntPoint.Port = Int32.Parse(ConnectInfo.Port);
-					clientEntPoint.Switch = DbSession.Load<NetworkSwitches>(ConnectInfo.Switch);
+					clientEntPoint.Switch = DbSession.Load<NetworkSwitch>(ConnectInfo.Switch);
 					clientEntPoint.Monitoring = ConnectInfo.Monitoring;
 					if (!newFlag) {
 						clientEntPoint.UpdateAndFlush();
@@ -518,7 +412,7 @@ namespace InternetInterface.Controllers
 
 					foreach (var s in staticAdress) {
 						if (!string.IsNullOrEmpty(s.Ip))
-							if (Regex.IsMatch(s.Ip, NetworkSwitches.IPRegExp)) {
+							if (Regex.IsMatch(s.Ip, NetworkSwitch.IPRegExp)) {
 								s.EndPoint = clientEntPoint;
 								s.Save();
 							}
@@ -931,7 +825,7 @@ where r.`Label`= :LabelIndex;")
 			var client = DbSession.Load<Client>(clientId);
 			PropertyBag["_client"] = client;
 			PropertyBag["ClientCode"] = clientId;
-			PropertyBag["Switches"] = NetworkSwitches.All(DbSession);
+			PropertyBag["Switches"] = NetworkSwitch.All(DbSession);
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
 			if (client.WhoConnected != null)
 				PropertyBag["ChBrigad"] = client.WhoConnected.Id;

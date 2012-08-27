@@ -42,7 +42,7 @@ namespace InforoomInternet.Test.Integration
 		public void Warning_package_id()
 		{
 			var client = ClientHelper.Client();
-			var commutator = new NetworkSwitches("Тестовый коммутатор", session.Query<Zone>().First());
+			var commutator = new NetworkSwitch("Тестовый коммутатор", session.Query<Zone>().First());
 			var endpoint = new ClientEndpoint(client, 1, commutator);
 			var lease = new Lease { Endpoint = endpoint, Switch = commutator, Port = 1, Ip = (uint)new Random().Next() };
 

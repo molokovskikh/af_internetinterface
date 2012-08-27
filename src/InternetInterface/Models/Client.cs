@@ -176,7 +176,7 @@ namespace InternetInterface.Models
 
 		public static bool Our(string ip)
 		{
-			var mashineAddress = Convert.ToInt64(NetworkSwitches.SetProgramIp(ip));
+			var mashineAddress = Convert.ToInt64(NetworkSwitch.SetProgramIp(ip));
 			return ArHelper.WithSession(s => s.Query<IpPool>().Count(p => p.Begin <= mashineAddress && p.End >= mashineAddress) > 0);
 		}
 

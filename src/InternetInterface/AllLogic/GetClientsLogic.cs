@@ -6,6 +6,7 @@ using InternetInterface.Controllers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using InternetInterface.Queries;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.SqlCommand;

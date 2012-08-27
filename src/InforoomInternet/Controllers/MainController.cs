@@ -181,14 +181,14 @@ namespace InforoomInternet.Controllers
 			if (lease != null)
 				point = lease.Endpoint;
 			else {
-				var thisIp = new IPAddress(RangeFinder.reverseBytesArray(Convert.ToUInt32(NetworkSwitches.SetProgramIp(hostAdress))));
+				var thisIp = new IPAddress(RangeFinder.reverseBytesArray(Convert.ToUInt32(NetworkSwitch.SetProgramIp(hostAdress))));
 
 				point = StaticIp.Queryable.ToList().Where(ip => {
 					if (ip.Ip == hostAdress)
 						return true;
 					if (ip.Mask != null) {
 						var subnet = SubnetMask.CreateByNetBitLength(ip.Mask.Value);
-						var sIp = new IPAddress(RangeFinder.reverseBytesArray(Convert.ToUInt32(NetworkSwitches.SetProgramIp(ip.Ip))));
+						var sIp = new IPAddress(RangeFinder.reverseBytesArray(Convert.ToUInt32(NetworkSwitch.SetProgramIp(ip.Ip))));
 						if (thisIp.IsInSameSubnet(sIp, subnet))
 							return true;
 					}
@@ -262,9 +262,9 @@ namespace InforoomInternet.Controllers
 		{
 			var hostAdress = Request.UserHostAddress;
 #if DEBUG
-			hostAdress = NetworkSwitches.GetNormalIp(Lease.FindFirst().Ip);
+			hostAdress = NetworkSwitch.GetNormalIp(Lease.FindFirst().Ip);
 #endif
-			if (Regex.IsMatch(hostAdress, NetworkSwitches.IPRegExp) && !Client.Our(hostAdress)) {
+			if (Regex.IsMatch(hostAdress, NetworkSwitch.IPRegExp) && !Client.Our(hostAdress)) {
 				RedirectToSiteRoot();
 				return;
 			}

@@ -1,14 +1,14 @@
-п»їusing System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using Common.Tools;
 using Common.Web.Ui.ActiveRecordExtentions;
+using Common.Web.Ui.Helpers;
 using InternetInterface.Models;
 using NHibernate.Criterion;
 
-namespace Common.Web.Ui.Helpers
+namespace InternetInterface.Queries
 {
 	public class PaymentFilter : Sortable, SortableContributor
 	{
@@ -16,7 +16,7 @@ namespace Common.Web.Ui.Helpers
 		public DatePeriod Period { get; set; }
 		public string SearchText { get; set; }
 
-		[Description("РџРѕРєР°Р·С‹РІР°С‚СЊ С‚РѕР»СЊРєРѕ РЅРµРѕРїРѕР·РЅР°РЅРЅС‹Рµ:")]
+		[Description("Показывать только неопознанные:")]
 		public bool ShowOnlyUnknown { get; set; }
 
 		public PaymentFilter()

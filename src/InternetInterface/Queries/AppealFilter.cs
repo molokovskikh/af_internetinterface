@@ -1,12 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using Common.Web.Ui.Helpers;
-using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 
-namespace InternetInterface.Filters
+namespace InternetInterface.Queries
 {
 	public class AppealFilter : Sortable, SortableContributor, IPaginable
 	{

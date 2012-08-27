@@ -14,7 +14,7 @@ namespace InternetInterface.Helpers
 		{
 			if (!string.IsNullOrEmpty(IP)) {
 				var splited = IP.Split('.');
-				var valid = new Regex(NetworkSwitches.IPRegExp);
+				var valid = new Regex(NetworkSwitch.IPRegExp);
 				long intIp;
 				if (((splited.Length == 1) && long.TryParse(splited.First(), out intIp))) {
 					var normalip = BitConverter.GetBytes(intIp);

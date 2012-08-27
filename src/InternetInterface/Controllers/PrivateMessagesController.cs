@@ -43,7 +43,7 @@ namespace InternetInterface.Controllers
 
 		public void ForSwitch(uint switchId)
 		{
-			var @switch = DbSession.Load<NetworkSwitches>(switchId);
+			var @switch = DbSession.Load<NetworkSwitch>(switchId);
 			PropertyBag["switch"] = @switch;
 			var messages = ClientEndpoint.FindAll(DetachedCriteria.For(typeof(ClientEndpoint))
 				.CreateAlias("Client", "c", JoinType.InnerJoin)

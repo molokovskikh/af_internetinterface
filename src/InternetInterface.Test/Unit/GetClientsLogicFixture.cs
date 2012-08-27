@@ -5,6 +5,7 @@ using InternetInterface.AllLogic;
 using InternetInterface.Controllers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
+using InternetInterface.Queries;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 

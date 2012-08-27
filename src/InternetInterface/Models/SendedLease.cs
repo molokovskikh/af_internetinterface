@@ -52,7 +52,7 @@ namespace InternetInterface.Models
 		public virtual int? Port { get; set; }
 
 		[BelongsTo("Switch")]
-		public virtual NetworkSwitches Switch { get; set; }
+		public virtual NetworkSwitch Switch { get; set; }
 
 		[Property]
 		public virtual DateTime SendDate { get; set; }

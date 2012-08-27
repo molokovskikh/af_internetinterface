@@ -65,8 +65,8 @@ namespace InforoomInternet.Controllers
 
 			Lease[] lease = null;
 
-			if (Regex.IsMatch(ip, NetworkSwitches.IPRegExp))
-				lease = Lease.FindAllByProperty("Ip", Convert.ToUInt32(NetworkSwitches.SetProgramIp(ip)));
+			if (Regex.IsMatch(ip, NetworkSwitch.IPRegExp))
+				lease = Lease.FindAllByProperty("Ip", Convert.ToUInt32(NetworkSwitch.SetProgramIp(ip)));
 
 			if (lease != null && lease.Length != 0) {
 				var clientsId = lease.Where(
