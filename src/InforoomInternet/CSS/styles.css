@@ -839,3 +839,12 @@ background-color: #FFBABA;
 {
 	display: inline;
 }
+
+.serviceInternetBox
+{
+	padding-bottom: 15px;
+}
+
+.serviceForm {
+	margin-left: 12px;
+}

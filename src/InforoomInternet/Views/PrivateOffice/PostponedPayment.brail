@@ -14,9 +14,7 @@
 		</tr>
 		<tr>
 			<td style="background:none">
-				<button type="submit" id="PostponedBut" class="button">
-					<img alt="Save" src="${siteroot}/Content/tick.png"> Разблокировать
-				</button>
+				<button type="submit" id="PostponedBut" class="button">Разблокировать</button>
 			</td>
 		</tr>
 	</tbody>
