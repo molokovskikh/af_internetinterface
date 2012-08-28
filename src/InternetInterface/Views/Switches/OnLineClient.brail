@@ -36,7 +36,7 @@
 		</form>
 	</div>
 
-	<% if ?staticIps.Count: %>
+	<% if ?staticIps and staticIps.Count: %>
 	<div class="block">
 		<h3>Статика</h3>
 		<table class="table">
