@@ -10,7 +10,7 @@
 
 <center>
 <form method=post action="">
-<table class="table" style="width:700px; border-style:solid; border-color:Black; border-width:1px;">
+<table class="table" style="width:700px;">
 	<thead>
 		<tr><th colspan="2">Настройки</th></tr>
 	</thead>
@@ -42,10 +42,10 @@
 <form method=post action="${siteroot}/UserInfo/CreateAndPrintGraph">
 <input type=hidden name="selectDate" value=${selectDate} />
 <input type=hidden name="Brig" value=${Brigad.Id} />
-<table class="table" style="width:700px; border-style:solid; border-color:Black; border-width:1px;">
+<table class="table" style="width:700px;">
 	<thead>
 		<tr>
-			<th colspan="3" style="text-align:center; border-style:solid; border-color:Black; border-width:1px;"> ${Brigad.Name} </th>
+			<th colspan="3" style="text-align:center;"> ${Brigad.Name} </th>
 		</tr>
 		<tr>
 			<th style="text-align:center; width:80px;">Время</th>

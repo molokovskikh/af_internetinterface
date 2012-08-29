@@ -47,9 +47,7 @@
 			
 	</style>
 	<script type="text/javascript">
-		Date.format = 'dd.mm.yyyy';
 		$(function () {
-			$('.graph_date').datepicker();
 			$('.monthDiv').css('background-color', '#D5E6D0');
 			$('#${colorId}').parent().css('background-color', '#7ec469');
 			$('.monthDiv').click(function () {

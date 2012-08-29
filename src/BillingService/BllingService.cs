@@ -42,8 +42,7 @@ namespace BillingService
 
 		protected override void OnStart(string[] args)
 		{
-			try
-			{
+			try {
 				billing = new MainBilling();
 
 				OnCommand = new RunCommand(billing.On, 600000);
@@ -52,21 +51,18 @@ namespace BillingService
 				computeCommand = new RunCommand(billing.Run, 180000);
 				computeCommand.Start();
 			}
-			catch (Exception e)
-			{
+			catch (Exception e) {
 				log.Error("Ошибка при запуске сервиса", e);
 			}
 		}
 
 		protected override void OnStop()
 		{
-			try
-			{
+			try {
 				OnCommand.Stop();
 				computeCommand.Stop();
 			}
-			catch (Exception e)
-			{
+			catch (Exception e) {
 				log.Error("Ошибка при остановке сервиса", e);
 			}
 		}

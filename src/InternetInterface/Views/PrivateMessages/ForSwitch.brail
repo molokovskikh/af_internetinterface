@@ -1,0 +1,10 @@
+﻿<form method=post>
+<div class="backGround" style="width:800px; border-bottom:none; padding-bottom:1px;">
+	<table class="table">
+		<thead>
+			<th colspan="2">Объявление на свитч <a href="${SiteRoot}/Switches/MakeSwitch?Switch=${switch.Id}"> ${switch.Name}</a></th>
+		</thead>
+	</table>
+</div>
+<% OutputSubView(@Message) %>
+</form>

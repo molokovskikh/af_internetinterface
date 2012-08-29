@@ -1,4 +1,6 @@
-﻿<%if Edit: %>
+﻿${app.Asset("service-requests.css")}
+
+<%if Edit: %>
 <script type="text/javascript" src="${Siteroot}/JavaScript/vaidServiceRequest.js"></script>
 <script type="text/javascript">
 	$(function () {
@@ -83,10 +85,11 @@
 	});
 </script>
 <%end %>
+
 <link type="text/css" rel=Stylesheet href="${Siteroot}/Css/validServiceRequest.css"/>
 
 <%if request != null: %>
-<div style="width:1200px; font-family:Verdana, sans-serif; color:#484848; font-size:12px;" class="backGround whereNewTable">
+<div style="width:1200px; color:#484848; font-size:12px;" class="backGround whereNewTable">
 <%if Edit: %>
 <form class="validateFormService" action="${Siteroot}/ServiceRequest/EditServiceRequest" method=post >
 <input type=hidden name="request.Id" value="${request.Id}" />
@@ -124,11 +127,7 @@
 			<td>${request.GetStatusName()}</td>
 			<%else: %>
 			<td>
-				<select name="request.Status">
-					<%for status in RequestStatuses: %>
-						<option value="${status.Id}" ${"selected" if (request.Status == status.Id)}>${status.Name}</option>
-					<%end %>
-				</select>
+				${app.Edit("request.Status", RequestStatuses)}
 			</td>
 			<%end %>
 			<td><b>Дата создания</b></td>
@@ -136,56 +135,41 @@
 		</tr>
 		<tr class=requestCutInfo>
 			<td><b>Телефон для связи</b></td>
-			<%if not Edit: %>
+			<% if not Edit: %>
 			<td>${request.Contact}</td>
-			<%else: %>
-			<td>
-				<input id="contact_text" type=text value="${request.Contact}" name="request.Contact" />
-			</td>
-			<%end %>
-			<td><b>Дата выполнения</b></td>
+			<% else: %>
+			<td>${app.Edit("request.Contact")}</td>
+			<% end %>
+			<td><b>Дата/время выполнения</b></td>
 			<%if not Edit: %>
-				<%if request.PerformanceDate != null: %>
-				<td>${request.PerformanceDate.ToShortDateString()}</td>
-				<%else: %><td></td><%end %>
-			<%else: %>
-				<%if request.PerformanceDate != null: %>
-					<td><input type=text value="${request.PerformanceDate.ToShortDateString()}" name="request.PerformanceDate" class="graph_date" class="dp-hover"></td>
-				<%else: %>
-					<td><input type=text name="request.PerformanceDate" class="graph_date" class="dp-hover"></td>
-				<%end %>
-			<%end %>
+				<td>${?request.PerformanceDate}</td>
+			<% else: %>
+				<td>
+					<input type=text value="${?request.PerformanceDate.ToShortDateString()}" name="request.PerformanceDate" class="graph_date" class="dp-hover">
+					${FormHelper.TextField("request.PerformanceTime", {@class: @time})}
+				</td>
+			<% end %>
 		</tr>
 		<tr class="requestCutInfo">
 			<td><b>Назначена</b></td>
-			<%if not Edit: %>
+			<% if not Edit: %>
 			<td>${request.Performer.Name}</td>
-			<%else: %>
+			<% else: %>
 			<td>
-				<select name="request.Performer.Id">
-					<%for ingener in ingeners: %>
-						<option value="${ingener.Id}" ${"selected" if (request.Performer.Id == ingener.Id)}>${ingener.Name}</option>
-					<%end %>
-				</select>
+				${app.Edit("request.Performer", ingeners)}
 			</td>
-			<%end %>
+			<% end %>
 			<td><b>Зарегистрировал</b></td>
 			<td>${request.Registrator.Name}</td>
 		</tr>
 		<tr class="requestCutInfo last">
 			<td><b>Сумма за оказанные услуги</b></td>
 			<%if not Edit: %>
-				<%if request.Sum != null: %>
-				<td>${request.Sum.ToString("0.00")} руб.</td>
-				<%else: %>
-				<td></td>
-				<%end %>
+				<td>${?request.Sum.ToString("C")}</td>
 			<%else: %>
-				<%if request.Sum != null: %>
-				<td><input id="sumField" type=text name="request.Sum" value="${request.Sum.ToString("0.00").Replace(",",".")}" /></td>
-				<%else: %>
-				<td><input id="sumField" type=text name="request.Sum" /></td>
-				<%end %>
+				<td>
+					<input id="sumField" type=text name="request.Sum" value="${?request.Sum.ToString("0.00").Replace(",",".")}" />
+				</td>
 			<%end %>
 			<td id="comment_sum"><b>Бесплатная</b></td>
 			<%if not Edit: 
@@ -200,12 +184,15 @@
 			<%end %>
 		</tr>
 		<tr>
-			<td colspan=4 style="padding:20px;"><b>Описание</b><br /><br />${request.GetDescription()}</td>
+			<td colspan=4 style="padding-top: 20px"><b>Описание</b></td>
 		</tr>
-		<%if Edit: %>
+		<tr>
+			<td colspan=4>${request.GetDescription()}</td>
+		</tr>
+		<% if Edit: %>
 		<tr><td colspan=4 id="errorContainer"></td></tr>
 		<tr><td colspan=4><button type=submit id="saveButton" class="button">Сохранить</button></td></tr>
-		<%end %>
+		<% end %>
 	</tbody>
 </table>
 <%if Edit: %>

@@ -1,7 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\ProjectLib.properties" Condition="Exists('..\ProjectLib.properties')" />
+  <ItemGroup>
+    <StyleCopAdditionalAddinPaths Include="..\..\lib\StyleCop">
+      <InProject>false</InProject>
+    </StyleCopAdditionalAddinPaths>
+  </ItemGroup>
   <PropertyGroup>
+    <StyleCopTreatErrorsAsWarnings>False</StyleCopTreatErrorsAsWarnings>
+    <StyleCopOverrideSettingsFile>..\..\lib\StyleCop\Settings.StyleCop</StyleCopOverrideSettingsFile>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
@@ -23,6 +30,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -52,7 +60,7 @@
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CassiniDev4-lib, Version=4.0.1.7, Culture=neutral, PublicKeyToken=f7f6e0b4240c7c27, processorArchitecture=x86" />
+    <Reference Include="CassiniDev-lib" />
     <Reference Include="Castle.ActiveRecord, Version=2.1.2.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Castle.ActiveRecord.dll</HintPath>
@@ -79,6 +87,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Castle.MonoRail.Views.Brail.dll</HintPath>
     </Reference>
+    <Reference Include="ExposedObject">
+      <HintPath>..\..\lib\ExposedObject.dll</HintPath>
+    </Reference>
     <Reference Include="Interop.SHDocVw">
       <HintPath>..\..\lib\Interop.SHDocVw.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
@@ -103,6 +114,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="Rhino.Mocks, Version=3.6.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -115,40 +129,57 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="WatiN.Core, Version=2.1.0.1196, Culture=neutral, PublicKeyToken=db7cfd3acb5ad44e, processorArchitecture=MSIL" />
-    <Reference Include="WatiNCssSelectorExtensions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\WatiNCssSelectorExtensions.dll</HintPath>
+    <Reference Include="WatiN.CssSelectorExtensions">
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Functional\BrigadFixture.cs" />
-    <Compile Include="Functional\CloseDemandFixture.cs" />
+    <Compile Include="Functional\ClientFunctionalFixture.cs" />
+    <Compile Include="Functional\CommutatorFixture.cs" />
     <Compile Include="Functional\HouseMapFixture.cs" />
+    <Compile Include="Functional\InvoiceFixture.cs" />
+    <Compile Include="Functional\LawyerPersonFixture.cs" />
+    <Compile Include="Functional\OnLineClients.cs" />
     <Compile Include="Functional\PaymentFixture.cs" />
+    <Compile Include="Functional\PhysicalClientFixture.cs" />
+    <Compile Include="Functional\PrivateMessageFixture.cs" />
     <Compile Include="Functional\RegisterClientFixture.cs" />
     <Compile Include="Functional\RegisterPartnerFixrure.cs" />
+    <Compile Include="Functional\RequestGraphFixture.cs" />
     <Compile Include="Functional\RequestViewFixture.cs" />
     <Compile Include="Functional\SearchFixture.cs" />
     <Compile Include="Functional\ServiceFixture.cs" />
     <Compile Include="Functional\Setup.cs" />
+    <Compile Include="Functional\SmsFixture.cs" />
     <Compile Include="Functional\UserInfoFixture.cs" />
-    <Compile Include="Helpers\ClientHelperFixture.cs" />
+    <Compile Include="Helpers\ClientHelper.cs" />
     <Compile Include="Helpers\PartnerHelper.cs" />
     <Compile Include="Helpers\PropertiesHelper.cs" />
-    <Compile Include="Helpers\WatinFixture.cs" />
+    <Compile Include="Integration\ContactFixture.cs" />
     <Compile Include="Integration\HouseMapFixture.cs" />
-    <Compile Include="Integration\IntegrationFixture.cs" />
+    <Compile Include="Integration\MailerFixture.cs" />
+    <Compile Include="Integration\OnLineClientsFixture.cs" />
     <Compile Include="Integration\PaymentFixture.cs" />
     <Compile Include="Integration\ServicesFixture.cs" />
+    <Compile Include="Integration\SmsFixture.cs" />
+    <Compile Include="Integration\Tasks\BuildInvoiceTaskFixture.cs" />
+    <Compile Include="Integration\Tasks\MailerFixture.cs" />
+    <Compile Include="Integration\UserInfoControllerFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Integration\SetupFixture.cs" />
+    <Compile Include="Troubleshoot.cs" />
+    <Compile Include="Unit\BuildInvoiceTaskFixture.cs" />
     <Compile Include="Unit\ByteFixture.cs" />
+    <Compile Include="Unit\ClientFixture.cs" />
     <Compile Include="Unit\DataBinderFixture.cs" />
     <Compile Include="Unit\HouseFixture.cs" />
-    <Compile Include="Unit\Image.cs" />
-    <Compile Include="Unit\LoginFixture.cs" />
     <Compile Include="Unit\GetClientsLogicFixture.cs" />
-    <Compile Include="Unit\OnLineClientFixture.cs" />
-    <Compile Include="Unit\SmsFixture.cs" />
+    <Compile Include="Unit\InternetFixture.cs" />
+    <Compile Include="Unit\IpTvFixture.cs" />
+    <Compile Include="Unit\PaymentFixture.cs" />
+    <Compile Include="Unit\PhysicalClientFixture.cs" />
+    <Compile Include="Unit\ServiceRequestFixture.cs" />
+    <Compile Include="Unit\SetupFixture.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -156,6 +187,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common.MySql\Common.MySql\Common.MySql.csproj">
+      <Project>{8A680813-C83B-497A-85E6-E8F07B7D7650}</Project>
+      <Name>Common.MySql</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common.Tools\Common.Tools\Common.Tools.csproj">
       <Project>{72AFCFE8-C9E9-45FA-9698-BEE896A517A3}</Project>
       <Name>Common.Tools</Name>
@@ -164,9 +199,17 @@
       <Project>{95E2C313-46FA-4B4B-9EFF-3228662908F4}</Project>
       <Name>Common.Web.Ui</Name>
     </ProjectReference>
+    <ProjectReference Include="..\InternetInterface.Background\InternetInterface.Background.csproj">
+      <Project>{3D0FEB94-663A-421F-B28E-621E365879D7}</Project>
+      <Name>InternetInterface.Background</Name>
+    </ProjectReference>
     <ProjectReference Include="..\InternetInterface\InternetInterface.csproj">
       <Project>{E2B03BC7-AACB-4A72-BBC7-DF4325912504}</Project>
       <Name>InternetInterface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Test.Support\Test.Support.Web\Test.Support.Web.csproj">
+      <Project>{12258B1D-35E8-45BA-9C1E-5F7B8ACD7D37}</Project>
+      <Name>Test.Support.Web</Name>
     </ProjectReference>
     <ProjectReference Include="..\Test.Support\Test.Support\Test.Support.csproj">
       <Project>{A215E837-1208-49E3-AF93-A9612223122C}</Project>
@@ -175,6 +218,7 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\..\packages\StyleCop.MSBuild.4.7.35.0\tools\StyleCop.Targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

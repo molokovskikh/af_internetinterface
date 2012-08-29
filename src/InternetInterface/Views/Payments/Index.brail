@@ -1,39 +1,21 @@
-﻿<script>
-	$(function () {
-		$('.date-pick').datepicker();
-	});
-</script>
-
-<div class=block style="border:1px double Black; width:700px; background-color:White; padding:10px; margin: 0 auto;">
-<table class="table">
-	<thead>
-		<tr>
-			<th>История платежей</th>
-		</tr>
-	</thead>
-	<tbody>
-		${app.BeginFormFor("filter")}
-		<tr>
-			<td>Период</td>
-			<td>
-				<label for="startDate">c</label>
-				<input type=text value="${filter.Period.Begin.ToShortDateString()}" name="filter.Period.Begin" id="startDate"  class="date-pick dp-applied">
-				<label for="EndDate">по</label>
-				<input type=text value="${filter.Period.End.ToShortDateString()}" name="filter.Period.End" id="EndDate"  class="date-pick dp-applied">
-			</td>
-		</tr>
-		<tr>
-			<td>${app.FilterFor("filter.Recipient")}</td>
-			<td>${app.FilterFor("filter.SearchText")}</td>
-			<td>${app.FilterFor("Показывать только неопознанные:", "filter.ShowOnlyUnknown")}</td>
-			<td>${app.EndFormFor("filter")}</td>
-		</tr>
-	</tbody>
-</table>
-</div>
+﻿${app.BeginFormFor("filter")}
+<h3>История платежей</h3>
+<tr>
+	<td>Период</td>
+	<td>
+		<label for="startDate">c</label>
+		<input type=text value="${filter.Period.Begin.ToShortDateString()}" name="filter.Period.Begin" id="startDate"  class="date-pick dp-applied">
+		<label for="EndDate">по</label>
+		<input type=text value="${filter.Period.End.ToShortDateString()}" name="filter.Period.End" id="EndDate"  class="date-pick dp-applied">
+	</td>
+</tr>
+${app.FilterFor("filter.Recipient")}
+${app.FilterFor("filter.SearchText")}
+${app.FilterFor("filter.ShowOnlyUnknown")}
+${app.EndFormFor("filter")}
 
 <div class=block style="font-size:14px;  margin:15px;">
-<b>	Всего платежей ${stat.Count} на сумму ${stat.Sum.ToString("C")}</b>
+<b>Всего платежей ${stat.Count} на сумму ${stat.Sum.ToString("C")}</b>
 </div>
 
 <table class=table style="border:1px double Black; background-color:White; padding:10px; margin:15px; margin-left:0px;">
@@ -55,7 +37,7 @@
 		<td>${payment.Recipient.Name}</td>
 		<td>${payment.PayedOn.ToShortDateString()}</td>
 		<%if payment.Payer != null: %>
-		<td><a href="../Search/Redirect?filter.ClientCode=${payment.Payer.client.Id}">${payment.Payer.Name}</a></td>
+		<td><a href="../Search/Redirect?filter.ClientCode=${payment.Payer.Id}">${payment.Payer.Name}</a></td>
 		<%else: %>
 		<td></td>
 		<%end %>

@@ -1,27 +1,75 @@
 ﻿<div class="servicePage">
-<% CanUsedPostponedPayment = Client.CanUsedPostponedPayment() %>
-<%if Client.CanUsedPostponedPayment(): %>
-<div>
-	<% OutputSubView("""\PrivateOffice\PostponedPayment""", { "Client" : Client })%>
-</div>
-<%end %>
-<% CanUsedVoluntaryBlockin = Client.CanUsedVoluntaryBlockin() %>
-<%if CanUsedVoluntaryBlockin: %>
-<div>
-	<% OutputSubView("""\PrivateOffice\VoluntaryBlockin""", { 
-	"VoluntaryBlockinService" : VoluntaryBlockinService,
-	"client" : Client })%>
-</div>
-<%else: 
-	if Client.HaveVoluntaryBlockin():
-		OutputSubView("""\PrivateOffice\DiactivateVoluntaryBlockin""")
-	end 
-end %>
-<%if not CanUsedPostponedPayment and not CanUsedVoluntaryBlockin and not Client.HaveVoluntaryBlockin(): %>
-<div class="error">
-	<p>
-		Вам не доступны услуги для активации
-	</p>
-</div>
-<%end %>
+	<% CanUsedPostponedPayment = Client.CanUsedPostponedPayment() %>
+	<%if Client.CanUsedPostponedPayment(): %>
+	<div>
+		<% OutputSubView("""\PrivateOffice\PostponedPayment""", { "Client" : Client })%>
+	</div>
+	<%end %>
+	<% CanUsedVoluntaryBlockin = Client.CanUsedVoluntaryBlockin() %>
+	<%if CanUsedVoluntaryBlockin: %>
+	<div>
+		<% OutputSubView("""\PrivateOffice\VoluntaryBlockin""", {
+		"VoluntaryBlockinService" : VoluntaryBlockinService,
+		"client" : Client })%>
+	</div>
+	<%else:
+		if Client.HaveVoluntaryBlockin():
+			OutputSubView("""\PrivateOffice\DiactivateVoluntaryBlockin""")
+		end
+	end %>
+
+	<% if client.CanEditServicesFromPrivateOffice: %>
+
+		${FormHelper.FormTag("", {@class: "serviceForm"})}
+			${FormHelper.HiddenField("client.PhysicalClient.Id")}
+			<h3>!{internet.Service.HumanName}</h3>
+			<div class="serviceInternetBox">
+				<div>
+					${app.Label("client.PhysicalClient.Tariff")}
+					${app.Edit("client.PhysicalClient.Tariff", {@emptyValue: "", @items: tariffs})}
+					${app.GetValidationError("client.PhysicalClient.Tariff")}
+				</div>
+				<% if channels.Count: %>
+					<h3>!{iptv.Service.HumanName}</h3>
+					<div>
+						${app.Label("iptv.Channels")}
+						<table>
+							<tr>
+								<th>Название</th>
+								<th>Подключен</th>
+								<th>Стоимость</th>
+								<th>Стоимость если подключена услуга !{internet.Service.HumanName}</th>
+								<th>Стоимость подключения</th>
+							</tr>
+						<% for i, channel in enumerate(channels): %>
+							<tr>
+								<td>!{channel.Name}</td>
+								<td>
+									<input type=checkbox name="iptv.Channels[${i}].Id" value=${channel.Id} ${"checked" if iptv.Channels.Contains(channel)} />
+								</td>
+								<td>!{channel.CostPerMonth.ToString("C")}</td>
+								<td>!{channel.CostPerMonthWithInternet.ToString("C")}</td>
+								<td>!{channel.ActivationCost.ToString("C")}</td>
+							</tr>
+						<% end %>
+						</table>
+						${app.GetValidationError("iptv.Channels")}
+					</div>
+				<% end %>
+			</div>
+			${FormHelper.Submit("Сохранить", {@class: "button"})}
+		${FormHelper.EndFormTag()}
+
+	<% else: %>
+
+		<% if not CanUsedPostponedPayment and not CanUsedVoluntaryBlockin and not Client.HaveVoluntaryBlockin(): %>
+		<div class="error">
+			<p>
+				Вам не доступны услуги для активации
+			</p>
+		</div>
+		<% end %>
+
+	<% end %>
+
 </div>

@@ -1,110 +1,48 @@
-﻿		<style type="text/css">
-		.turn-me-into-datepicker {
-			float: left;
-			margin:10px;
-			
-		}
-		
-		.jCalendar
-		{
-			font-size:10px;
-		}
-
-		.hasDatepicker
-		{
-			float:none;
-		}
-			
-		a.dp-choose-date 
-		{
-			float: left;
-			width: 16px;
-			height: 16px;
-			padding: 0;
-			margin: 5px 3px 0;
-			display: block;
-			text-indent: -2000px;
-			overflow: hidden;
-			background: url(../Images/calendar.png) no-repeat; 
-		}
-					
-		a.dp-choose-date.dp-disabled 
-		{
-			background-position: 0 -20px;
-			cursor: default;
-		}
-		
-		input.dp-applied 
-		{
-			width: 140px;
-			float: left;
-			margin-left:15px;
-		}
-			
-		#back   
-		{
-			width:500px;
-			height:300px;
-			background-color:White;
-			border-style:double;
-			border-width:1px;
-		 }
-		 
-		#modalTable
-		{
-			 min-width:0px;
-		}
-	</style>
-
+﻿${app.CSS("Modal.css")}
 	<script type="text/javascript">
-		/*Date.firstDayOfWeek = 0;
-		Date.format = 'dd.mm.yyyy';
-		$('.date-pick').datePicker({ startDate: '01/01/1996' }).val('${StartDate}').trigger('change');*/
-
-
-	    $(function () {
-	        $('#NoPhoneDate').datepicker({
-	            inline: true
-	        });
-	    });
+		$(function () {
+			$('#NoPhoneDate').datepicker({
+				inline: true
+			});
+		});
 	</script>
 <a class="close-reveal-modal">&#215;</a> 
 <div id="back">
-<table class="table" id="modalTable">
-	<thead>
-		<th colspan="3">Причина недозвона</th>
-	</thead>
-	<tbody>
-		<form class="form appeal" method="post" action="${siteroot}/UserInfo/NoPhoned">
-		<input type="hidden" name="ClientID" value="${ClientCode}" />
-			<tr>
-				<td>
-				<div  style="float:left;">
-					<select name="prichina">
-						<option value="Неудобно говорить">Неудобно говорить</option>
-						<option value="Думает">Думает</option>
-						<option value="Нет ответа">Нет ответа</option>
-						<option value="Другое">Другое</option>
-					</select>
-				</div>
-				<div>
-					<input type=text value="${StartDate}" name="NoPhoneDate" id="NoPhoneDate" class="date-pick dp-applied">
-				</div>
-				</td>
-			</tr>
-			<tr>
-				<td>
-				<label for="textField"><b>Введите комментарий :</b></label>
-				<textarea id="NotPhoned_textField" name="Appeal" rows="6" cols="55%"></textarea>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<button type="submit" id="NotPhoned_but" class="button">
-					<img alt="Save" src="../Images/tick.png">Зарегистрировать</button>
-				</td>
-			</tr>
-		</form>
-	</tbody>
-</table>
+<form class="form appeal" method="post" action="${siteroot}/UserInfo/NoPhoned">
+	<table class="table" id="modalTable">
+		<thead>
+			<th colspan="3">Причина недозвона</th>
+		</thead>
+		<tbody>
+			<input type="hidden" name="ClientID" value="${ClientCode}" />
+				<tr>
+					<td>
+					<div  style="float:left;">
+						<select name="prichina">
+							<option value="Неудобно говорить">Неудобно говорить</option>
+							<option value="Думает">Думает</option>
+							<option value="Нет ответа">Нет ответа</option>
+							<option value="Другое">Другое</option>
+						</select>
+					</div>
+					<div>
+						<input type=text value="${StartDate}" name="NoPhoneDate" id="NoPhoneDate" class="date-pick dp-applied">
+					</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+					<label for="textField"><b>Введите комментарий :</b></label>
+					<textarea id="NotPhoned_textField" name="Appeal" rows="6" cols="55%"></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<button type="submit" id="NotPhoned_but" class="button">
+						<img alt="Save" src="../Images/tick.png">Зарегистрировать</button>
+					</td>
+				</tr>
+		</tbody>
+	</table>
+</form>
 </div>

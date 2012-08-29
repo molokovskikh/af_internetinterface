@@ -13,7 +13,13 @@
 	<tbody>
 		<tr>
 			<td>
-				<a href="${Siteroot}/UserInfo/Leases?filter.ClientCode=${ClientCode}" class="button" style="background: #EEE url(../Images/tick.png) no-repeat; background-position: 5px 5px; padding-left:2em;">Показать статистику работы</a>
+				${app.LinkTo("Показать статистику работы", @UserInfo, @Leases, {"filter.ClientCode": ClientCode, @attributes: {@class: "button ok"}})}
+				${app.LinkTo("Счета", @Invoices, @Index, {"filter.SearchText": ClientCode, @attributes: {@class: "button ok"}})}
+				${app.LinkTo("Новый счет", @Invoices, @New, {"id": ClientCode, @attributes: {@class: "button ok"}})}
+				<a class="big-link" data-reveal-id="myModal_active" href="#" ><button type="button" class="button"><img alt="Save" src="../Images/tick.png">Управление услугами </button></a>
+				<%if _client.HaveRed(): %>
+					<button type=button class="button" onclick="GoTo('http://redmine.analit.net/issues/${_client.RedmineTask}');"><img alt="Save" src="../Images/tick.png">Страница Redmine</img></button></td>
+				<%end %>
 			</td>
 		</tr>
 	</tbody>
@@ -119,7 +125,6 @@
 				<button type="submit" id="SaveButton" class="button">
 				<img alt="Save" src="../Images/application_edit.png"> Сохранить
 				</button>
-						<!--    <input class="button" id="RegisterButton" type="submit" value="Зарегистрировать" /></td> -->
 			</div>
 		</td>
 		</tr>
@@ -150,4 +155,5 @@ end %>
 <% OutputSubView("""\Subview\ContactInfo""") %>
 <% OutputSubView("""\Subview\AppealsInfo""") %>
 <% OutputSubView("""\Subview\CallsHistory""") %>
+<% OutputSubView("""\Subview\ServiceControl""") %>
 </div>

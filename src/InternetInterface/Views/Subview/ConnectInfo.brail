@@ -1,30 +1,28 @@
 ﻿<style type="text/css">
-		 .addMenuItem
+	.addMenuItem
 	 {
 		 width:20px;
 		 height:20px;
 		 background: url(${Siteroot}/images/plus__orange.png) no-repeat center top;
-		 /*background-color:Green;*/
 		 float:right;
-		 }
-		  .delMenuItem
-	 {
+	}
+	.delMenuItem
+	{
 		 width:20px;
 		 height:20px;
-		 /*background-color:Red;*/
 		 float:right;
 		 margin-right:90%;
 		 background: url(${Siteroot}/images/onebit_32.png) no-repeat center top;
-		 }
+	}
 	.error
 	{
 		color:Red;
 		font-size:small;
-		}
+	}
 	.ipPrefix
 	{
 		width:25px;
-		}
+	}
 </style>
 
 <div id="deletePointDialog" class="reveal-modal"> 
@@ -76,10 +74,10 @@
 		</tr>
 		<tr>
 		  <td style="width:400px;">
-			<span class="description">Свич</span>
+			<span><a href="${SiteRoot}/Switches/MakeSwitch?Switch=${ConnectInfo.Switch}"> Свич</a> </span>
 		</td>
 		  <td>
-			<a class="button hardwareInfo" href="${siteroot}/Hardware/PortInfo?endPoint=${ConnectInfo.endpointId}" style="display:inline; float:none; background-color:#BDE5F8;">
+			<a class="button hardwareInfo" href="${siteroot}/Hardware/PortInfo?endPoint=${ConnectInfo.endpointId}">
 				${ConnectInfo.Swith_adr} (${ConnectInfo.swith_IP})
 			</a>
 		</td>
@@ -102,16 +100,12 @@
 		</tr>
 		<tr>
 		  <td><span class="description">Бригада </span></td>
-		  <%if _client.WhoConnected != null : %>
-		  <td>${_client.WhoConnected.Name}</td>
-		  <%else: %>
-		  <td></td>
-		  <%end %>
+		  <td>${?_client.WhoConnected.Name}</td>
 		</tr>
 		<%if ConnectInfo.ConnectSum != null : %>
 		<tr>
 			<td><span class="description">Стоимость подключения </span></td>
-			<td>${ConnectInfo.ConnectSum} руб.</td>
+			<td>${?ConnectInfo.ConnectSum.ToString("C")}</td>
 		</tr>
 		<%end %>
 		</tbody>
@@ -208,7 +202,7 @@
 		  <td colspan=2>
 			<select name="ConnectInfo.PackageId" style="width: 200px;">
 				<%for j, speed in enumerate(Speeds): %>
-					<option value="${speed.PackageId}" ${"selected" if (speed.PackageId == ChSpeed)}> ${speed}  PID(${speed.PackageId}) </option>
+					<option value="${speed.PackageId}" ${"selected" if (speed.PackageId == ChSpeed)}> ${speed}  PID(${speed.PackageId}) ${speed.Description} </option>
 				<%end %>
 		  </td>
 		</tr>
@@ -221,10 +215,10 @@
 		 <%if _client.WhoConnected == null: %>
 		  <td colspan=2><select name="BrigadForConnect" id="BrigadForConnect" style="width: 100%" >
 		  <% for j, Brigad in enumerate(Brigads): %>
-									<option id="OptionBrigad${j}" value="${Brigad.Id}" ${"selected" if (Brigad.Id == ChBrigad)} > ${Brigad.Name} </option>
-								   <% end %>
-		   </select>
-		  </td>
+				<option id="OptionBrigad${j}" value="${Brigad.Id}" ${"selected" if (Brigad.Id == ChBrigad)} > ${Brigad.Name} </option>
+		<% end %>
+		</select>
+		</td>
 		 <%else: %>
 		 <td colspan=2>
 			 ${_client.WhoConnected.Name}

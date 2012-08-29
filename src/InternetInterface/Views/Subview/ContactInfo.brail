@@ -1,62 +1,70 @@
-﻿<%if not EditConnectInfoFlag: %>
+﻿<% if not EditConnectInfoFlag: %>
+
 <form class="form login" method="post" action="${siteroot}/UserInfo/LoadContactEditModule">
-<input type="hidden" name="ClientID" value="${ClientCode}" />
-<input type="hidden" name="appealType" value="${appealType}" />
-<table class="table" style="text-align:center; background-color:White; border: 1px double gray;">
-	<thead>
-		<tr>
-			<th colspan=2>Список контактов клиента
-				<button type="submit"  class="editBut">
-				<img alt="Save" src="../Images/application_edit.png"> Редактировать
-				</button>
-			</th>
-		</tr>
-	</thead>
-	<% for i, contact in enumerate(Contacts): %>
-		<tr>
-			<td>${contact.ContactText}</td>
-			<td>${contact.Type}</td>
-		</tr>
-	<%end %>
-</table>
+	<input type="hidden" name="ClientID" value="${ClientCode}" />
+	<table class="table" style="text-align:center; background-color:White; border: 1px double gray;">
+		<thead>
+			<tr>
+				<th colspan=3>Список контактов клиента
+					<button type="submit" class="editBut button save">Редактировать</button>
+				</th>
+			</tr>
+			<tr>
+				<th>Контакт</th>
+				<th>Тип</th>
+				<th>ФИО</th>
+			</tr>
+		</thead>
+		<% for i, contact in enumerate(Contacts): %>
+			<tr>
+				<td>${contact.HumanableNumber}</td>
+				<td>${BindingHelper.GetDescription(contact.Type)}</td>
+				<td>${contact.ContactName}</td>
+			</tr>
+		<% end %>
+	</table>
 </form>
-<%else: %>
+
+<% else: %>
+
 <form class="form" id="telephoneForm" method="post" action="${siteroot}/UserInfo/SaveContacts">
-<input type="hidden" name="ClientID" value="${ClientCode}" />
-<input type="hidden" id="totalTelCount" value="${Contacts.Count}" />
-<table class="table" style="text-align:center; background-color:White; border: 1px double gray;">
-<thead>
-	<tr>
-		<th colspan=3>Редактивание списка контактов
-		<input id="SaveContactButton" type="submit" value="Сохранить"  align="right" /></th>
-	</tr>
-</thead>
-<tbody id="numbersButton">
-	<% for i, contact in enumerate(Contacts): %>
-		<tr>
-			<td>
-				<input type=hidden value="${contact.Id}" name="contact[${i}].Id" />
-				<input type=text class="telephoneField" value="${contact.ContactText}" name="contact[${i}].Text" />
-			</td>
-			<td class="toSelectList">
-				<% component ContactTypeList, { "componentId" : i, "cintactId" : contact.Id, "listId" : "selectList_" + i} %>
-			</td>
-			<td><a href="${siteroot}/UserInfo/DeleteContact?contactId=${contact.Id}">Удалить</a></td>
-		</tr>
-	<%end %>
-		<tr>
-			<td colspan=3>
-				<button type=button onclick="addNumber()" class="button" id="addContactButton">
-				<img alt="Save" src="../Images/tick.png">
-				Добавить контакт
-				</button>
-			</td>
-		</tr>
-</tbody>
-</table>
-<% component ContactTypeList, { "componentId" : 0, "cintactId" : 0, "listId" : "firstListSelector"} %>
+	<input type="hidden" name="ClientID" value="${ClientCode}" />
+	<input type="hidden" id="totalTelCount" value="${Contacts.Count}" />
+	<table class="table" style="text-align:center; background-color:White; border: 1px double gray;">
+		<thead>
+			<tr>
+				<th colspan=4>
+					Редактивание списка контактов
+					<input id="SaveContactButton" type="submit" value="Сохранить" align="right"/>
+				</th>
+			</tr>
+			<tr>
+				<th colspan=4>
+					<button type=button onclick="addNumber()" class="button ok" id="addContactButton">
+						Добавить контакт
+					</button>
+				</th>
+			</tr>
+			<tr>
+				<th>Контакт</th>
+				<th>Тип</th>
+				<th>ФИО</th>
+				<th></th>
+			</tr>
+		</thead>
+
+		<tbody id="numbersButton">
+			<% for i, contact in enumerate(Contacts): %>
+				${app.Edit("Contacts[${i}]")}
+			<% end %>
+		</tbody>
+
+	</table>
 </form>
-<%end %>
+
+<% component ContactTypeList, { "name" : "Contacts[0]", "cintactId" : 0, "id" : "firstListSelector"} %>
+
+<% end %>
 
 <script type="text/javascript">
 	$(function () {
@@ -89,8 +97,11 @@
 	function addNumber() {
 		var countTelephones = $("#totalTelCount").val();
 		var str = "<tr class='addedRow'><td>";
-		str += "<input class='telephoneField' type=text name='contact[" + countTelephones + "].Text' />";
-		str += "</td><td class='toSelectList'></td><td></td></tr>";
+		str += "<input class='telephoneField' type=text name='Contacts[" + countTelephones + "].Text' />";
+		str += "</td><td class='toSelectList'></td>";
+		str += "<td><input type=\"text\" id=\"Contacts_" + countTelephones + "_ContactName\" name=\"Contacts[" + countTelephones + "].ContactName\" value=\"\"></td>";
+		str += "<td></td>";
+		str += "</tr>";
 		$('#numbersButton').append(str);
 		var selectList = $('.linkSelector:first').clone();
 		selectList.css('display', 'inline-block');

@@ -11,15 +11,25 @@ namespace InternetInterface.Models
 	[ActiveRecord(Schema = "Internet", Table = "StaticIps")]
 	public class StaticIp : ActiveRecordLinqBase<StaticIp>
 	{
+		public StaticIp()
+		{
+		}
+
+		public StaticIp(ClientEndpoint endPoint, string ip)
+		{
+			EndPoint = endPoint;
+			Ip = ip;
+		}
+
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
 		[BelongsTo]
-		public virtual ClientEndpoints EndPoint { get; set; }
+		public virtual ClientEndpoint EndPoint { get; set; }
 
 		[Property]
-		public virtual string Ip { get; set; } 
-		
+		public virtual string Ip { get; set; }
+
 		[Property]
 		public virtual int? Mask { get; set; }
 

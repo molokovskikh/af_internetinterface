@@ -12,14 +12,14 @@ namespace InternetInterface.Models
 		BlockedAndConnected = 3,
 		Worked = 5,
 		NoWorked = 7,
-		VoluntaryBlocking = 9
-	};
+		VoluntaryBlocking = 9,
+		Dissolved = 11
+	}
 
 
 	[ActiveRecord("Status", Schema = "internet", Lazy = true)]
 	public class Status : ValidActiveRecordLinqBase<Status>
 	{
-
 		[PrimaryKey(PrimaryKeyType.Assigned)]
 		public virtual uint Id { get; set; }
 
@@ -61,6 +61,8 @@ namespace InternetInterface.Models
 					return StatusType.Worked;
 				if (ShortName == "NoWorked")
 					return StatusType.NoWorked;
+				if (ShortName == "Dissolved")
+					return StatusType.Dissolved;
 				return 0;
 			}
 		}

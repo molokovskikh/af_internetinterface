@@ -1,50 +1,51 @@
-﻿<%if IsDefined("sleepButton"): %>
-<script type="text/javascript">
-	$(function () {
-		$('#ChangeBalanceButton').attr("disabled", "disabled");
-		$('#changeBalanceForm').attr("disabled", "disabled");
-		$('#BalanceText').attr("disabled", "disabled");
-		$('#BalanceText').val("Подождите 3 секунды");
-		var timeout = window.setTimeout(function () {
-			$('#ChangeBalanceButton').removeAttr("disabled");
-			$('#changeBalanceForm').removeAttr("disabled");
-			$('#BalanceText').removeAttr("disabled");
-			$('#BalanceText').val("");
-		}, 3000);
-	});
-</script>
-<%end %>
-<table class="table">
-	<thead>
-		<th colspan=4>Пополнить баланс клиента</th>
-	</thead>
-	<tbody>
-		<tr>
-			<td colspan=2>
+﻿<form class="form login" id="changeBalanceForm" method="post" action="${siteroot}/UserInfo/ChangeBalance">
+	<input type="hidden" name="ClientID" value="${ClientCode}" />
+	<div class="form-sub-block">
+		<%if IsDefined("sleepButton"): %>
+		<script type="text/javascript">
+			$(function () {
+				$('#ChangeBalanceButton').attr("disabled", "disabled");
+				$('#changeBalanceForm').attr("disabled", "disabled");
+				$('#BalanceText').attr("disabled", "disabled");
+				$('#BalanceText').val("Подождите 3 секунды");
+				var timeout = window.setTimeout(function () {
+					$('#ChangeBalanceButton').removeAttr("disabled");
+					$('#changeBalanceForm').removeAttr("disabled");
+					$('#BalanceText').removeAttr("disabled");
+					$('#BalanceText').val("");
+				}, 3000);
+			});
+		</script>
+		<%end %>
+		<h3>Пополнить баланс клиента</h3>
+		<table class="form-table">
+			<tbody>
+				<tr>
+					<td>
+						<label for="Other_Balance"><b>Внести сумму на счет</b></label>
+					</td>
+					<td>
+						<input type="text" class="BalanceText" id="BalanceText"  name="BalanceText" value="${BalanceText}"/>
+					</td>
+				</tr>
 				<%if PartnerAccessSet.AccesPartner("SSI"): %>
-					<%if IsDefined("UserInfo"): %>
-						<%if UserInfo: %>
-							<input type="radio" id="ForTariffChange" name="ChangedBy.ChangeType" value="ForTariff" ${"checked" if ChangeBy.IsForTariff()} />
-							<label for="Autosearch"><b>Внести сумму по тарифному плану (${Client.Tariff.Price} рублей)</b> </label><br />
-							<input type="radio" id="OtherSummChange" name="ChangedBy.ChangeType" value="OtherSumm" ${"checked" if ChangeBy.IsOtherSumm()} />
-						<%else: %>
-							<input type="hidden" name="ChangedBy.ChangeType" value="OtherSumm" />
-						<%end %>
-					<%end %>
-					<%else: %>
-						<input type="hidden" name="ChangedBy.ChangeType" value="OtherSumm" />
+				<tr>
+					<td>
+						<label for="virtualPayment">Зачислить как бонус</label>
+					</td>
+					<td>
+						<input id="virtualPayment" type=checkbox name="virtualPayment" value="true"/>
+					</td>
+				</tr>
 				<%end %>
-				<label for="Other_Balance"><b>Внести сумму на счет:</b> </label>
-				<input type="text" style="width:200px; margin-left:100px;"  class="BalanceText" id="BalanceText"  name="BalanceText"  value="${BalanceText}" style="width: 50%; " />
-				<br />
-				<div class="errorjava">
-				</div>
-				<div style="float:left;" id="my-div"></div>
-			</td>
-			<td>
-				<button type="submit" id="ChangeBalanceButton" class="button">
-				<img alt="Save" src="../Images/tick.png"> Пополнить баланс</button>
-			</td>
-		</tr>
-	</tbody>
-</table>
+				<tr>
+					<td colspan=100>
+						<button type="submit" id="ChangeBalanceButton" class="button ok">
+							Пополнить баланс
+						</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</form>

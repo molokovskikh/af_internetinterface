@@ -13,11 +13,14 @@ using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Castle.MonoRail.Framework.Helpers;
 using Common.Tools;
+using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
 using InternetInterface.AllLogic;
 using InternetInterface.Controllers.Filter;
+using InternetInterface.Helpers;
 using InternetInterface.Models;
+using InternetInterface.Queries;
 using NHibernate;
 
 namespace InternetInterface.Controllers
@@ -51,70 +54,57 @@ namespace InternetInterface.Controllers
 
 		public void New()
 		{
-			Binder.Validator = Validator;
-			if (IsPost)
-			{
+			if (IsPost) {
 				var payment = new BankPayment();
+				SetARDataBinder();
 				BindObjectInstance(payment, "payment", AutoLoadBehavior.OnlyNested);
-				if (!HasValidationError(payment))
-				{
+				if (!HasValidationError(payment)) {
 					payment.RegisterPayment();
 					payment.Save();
 					new Payment {
-									Client =
-										Client.Queryable.FirstOrDefault(c => c.LawyerPerson != null && c.LawyerPerson == payment.Payer),
-									Sum = payment.Sum,
-									RecievedOn = payment.RegistredOn,
-									PaidOn = payment.PayedOn,
-									Agent = Agent.GetByInitPartner()
-								}.Save();
+						Client = payment.Payer,
+						Sum = payment.Sum,
+						RecievedOn = payment.RegistredOn,
+						PaidOn = payment.PayedOn,
+						Agent = Agent.GetByInitPartner()
+					}.Save();
 					RedirectToReferrer();
 					return;
 				}
-				else
-				{
+				else {
 					ArHelper.WithSession(s => ArHelper.Evict(s, new[] { payment }));
 					PropertyBag["Payment"] = payment;
 				}
 			}
-			//else
-			{
-				if (PropertyBag["Payment"] == null)
-					PropertyBag["Payment"] = new BankPayment();
-				PropertyBag["recipients"] = Recipient.Queryable.OrderBy(r => r.Name).ToList();
-				PropertyBag["payments"] = BankPayment.Queryable
-					.Where(p => p.RegistredOn >= DateTime.Today)
-					.OrderBy(p => p.RegistredOn).ToList();
-			}
+			if (PropertyBag["Payment"] == null)
+				PropertyBag["Payment"] = new BankPayment();
+			PropertyBag["recipients"] = Recipient.Queryable.OrderBy(r => r.Name).ToList();
+			PropertyBag["payments"] = BankPayment.Queryable
+				.Where(p => p.RegistredOn >= DateTime.Today)
+				.OrderBy(p => p.RegistredOn).ToList();
 		}
 
 		public void NotifyInforum()
 		{
-			foreach (var bankPayment in TempPayments())
-			{
-				if (bankPayment.Payer == null)
-				{
+			foreach (var bankPayment in TempPayments()) {
+				if (bankPayment.Payer == null) {
 					var mailToAdress = "internet@ivrn.net";
 					var messageText = new StringBuilder();
 					var type = NHibernateUtil.GetClass(bankPayment);
-					foreach (var propertyInfo in type.GetProperties(BindingFlags.Instance | BindingFlags.Public))
-					{
-						if (propertyInfo.GetCustomAttributes(typeof(PropertyAttribute), true).Length > 0)
-						{
+					foreach (var propertyInfo in type.GetProperties(BindingFlags.Instance | BindingFlags.Public)) {
+						if (propertyInfo.GetCustomAttributes(typeof(PropertyAttribute), true).Length > 0) {
 							var value = propertyInfo.GetValue(bankPayment, null);
 							var name = BindingHelper.GetDescription(propertyInfo);
 							if (!string.IsNullOrEmpty(name))
 								messageText.AppendLine(string.Format("{0} = {1}", name, value));
 						}
-						if (propertyInfo.GetCustomAttributes(typeof(NestedAttribute), true).Length > 0)
-						{
+						if (propertyInfo.GetCustomAttributes(typeof(NestedAttribute), true).Length > 0) {
 							var class_dicrioprion = BindingHelper.GetDescription(propertyInfo);
 							messageText.AppendLine();
 							messageText.AppendLine(class_dicrioprion);
 							var value_class = propertyInfo.GetValue(bankPayment, null);
 							var type_nested = NHibernateUtil.GetClass(value_class);
-							foreach (var nested_propertyInfo in type_nested.GetProperties(BindingFlags.Instance | BindingFlags.Public))
-							{
+							foreach (var nested_propertyInfo in type_nested.GetProperties(BindingFlags.Instance | BindingFlags.Public)) {
 								var value = nested_propertyInfo.GetValue(value_class, null);
 								var name = BindingHelper.GetDescription(nested_propertyInfo);
 								if (!string.IsNullOrEmpty(name))
@@ -137,46 +127,40 @@ namespace InternetInterface.Controllers
 
 		public void SavePayments()
 		{
-			//Binder.Validator = Validator;
 			var payments = TempPayments();
-			if (payments == null)
-			{
+			if (payments == null) {
 				Flash["Message"] = Message.Error("Время сесии истекло. Загрузите выписку повторно.");
 				RedirectToReferrer();
 			}
 
-			foreach (var payment in payments)
-			{
+			foreach (var payment in payments) {
 				//если зайти в два платежа и отредактировать их
 				//то получим двух плательщиков из разных сесей
 				//правим это
 				if (payment.Payer != null)
-					payment.Payer = ActiveRecordLinqBase<LawyerPerson>.Queryable.Where(p => p.Id == payment.Payer.Id).FirstOrDefault(); //IPayer.Find(payment.Payer.Id);
+					payment.Payer = ActiveRecordLinqBase<Client>.Queryable.FirstOrDefault(p => p.Id == payment.Payer.Id);
 
-				if (Validator.IsValid(payment))
-				{
+				if (Validator.IsValid(payment)) {
 					payment.RegisterPayment();
 					payment.Save();
 					if (payment.Payer != null)
-					new Payment {
-									Client =
-										Client.Queryable.FirstOrDefault(c => c.LawyerPerson != null && c.LawyerPerson == payment.Payer),
-									Sum = payment.Sum,
-									RecievedOn = payment.RegistredOn,
-									PaidOn = payment.PayedOn,
-									Agent = Agent.GetByInitPartner()
-								}.Save();
+						new Payment {
+							Client = payment.Payer,
+							Sum = payment.Sum,
+							RecievedOn = payment.RegistredOn,
+							PaidOn = payment.PayedOn,
+							Agent = Agent.GetByInitPartner()
+						}.Save();
 				}
-				else
-				{
+				else {
 					ArHelper.WithSession(s => ArHelper.Evict(s, new[] { payment }));
 				}
 			}
 
 			RedirectToAction("Index",
-				new Dictionary<string, string>{
-					{"filter.Period.Begin", payments.Min(p => p.PayedOn).ToShortDateString() },
-					{"filter.Period.End", payments.Max(p => p.PayedOn).ToShortDateString() }
+				new Dictionary<string, string> {
+					{ "filter.Period.Begin", payments.Min(p => p.PayedOn).ToShortDateString() },
+					{ "filter.Period.End", payments.Max(p => p.PayedOn).ToShortDateString() }
 				});
 		}
 
@@ -188,19 +172,16 @@ namespace InternetInterface.Controllers
 
 		public void ProcessPayments()
 		{
-			if (IsPost)
-			{
+			if (IsPost) {
 				var file = Request.Files["inputfile"] as HttpPostedFile;
-				if (file == null || file.ContentLength == 0)
-				{
+				if (file == null || file.ContentLength == 0) {
 					PropertyBag["Message"] = Message.Error("Нужно выбрать файл для загрузки");
 					return;
 				}
 				Session["payments"] = BankPayment.Parse(file.FileName, file.InputStream);
 				RedirectToReferrer();
 			}
-			else
-			{
+			else {
 				PropertyBag["payments"] = Session["payments"];
 			}
 		}
@@ -208,16 +189,14 @@ namespace InternetInterface.Controllers
 		public void EditTemp(uint id)
 		{
 			var payment = FindTempPayment(id);
-			if (IsPost)
-			{
+			if (IsPost) {
+				SetARDataBinder();
 				BindObjectInstance(payment, "payment", AutoLoadBehavior.NullIfInvalidKey);
 				payment.UpdateInn();
 				Flash["Message"] = Message.Notify("Сохранено");
 				RedirectToAction("ProcessPayments");
-				//RedirectToReferrer();
 			}
-			else
-			{
+			else {
 				PropertyBag["payment"] = payment;
 				PropertyBag["recipients"] = Recipient.Queryable.OrderBy(r => r.Name).ToList();
 				RenderView("Edit");
@@ -237,15 +216,14 @@ namespace InternetInterface.Controllers
 		public void Delete(uint id)
 		{
 			var payment = BankPayment.Find(id);
-			var client = Client.Queryable.FirstOrDefault(c => c.LawyerPerson == payment.Payer);
-			if (client != null)
-			new UserWriteOff {
-			                 	Client = client,
-								Sum = payment.Sum,
-								Date = DateTime.Now,
-								Comment = "Списание в связи с удалением баковского платежа",
-								Registrator = InitializeContent.Partner
-			                 }.Save();
+			if (payment.Payer != null)
+				new UserWriteOff {
+					Client = payment.Payer,
+					Sum = payment.Sum,
+					Date = DateTime.Now,
+					Comment = string.Format("Списание в связи с удалением баковского платежа (id = {0})", id),
+					Registrator = InitializeContent.Partner
+				}.Save();
 			payment.Delete();
 			RedirectToReferrer();
 		}
@@ -259,90 +237,76 @@ namespace InternetInterface.Controllers
 
 		public void Edit(uint id)
 		{
-			Binder.Validator = Validator;
 			var payment = BankPayment.TryFind(id);
-			if (IsPost)
-			{
+			if (IsPost) {
 				var oldBalance = payment.Sum;
 				var oldPayer = payment.Payer;
 				var oldPayment = payment;
+				SetARDataBinder();
 				BindObjectInstance(payment, "payment", AutoLoadBehavior.NullIfInvalidKey);
 				var newBalance = payment.Sum;
 				var newPayerFlag = oldPayer == null && payment.Payer != null;
-				if (!HasValidationError(payment))
-				{
-					if (oldPayer != null && payment.Payer == oldPayer)
-					{
-						var client = Client.Queryable.Where(c => c.LawyerPerson.Id == payment.Payer.Id).FirstOrDefault();
-						if (newBalance - oldBalance < 0 && payment.Payer != null)
-						{
+				if (!HasValidationError(payment)) {
+					if (oldPayer != null && payment.Payer == oldPayer) {
+						var client = payment.Payer;
+						if (newBalance - oldBalance < 0 && payment.Payer != null) {
 							new UserWriteOff {
-							                 	Client = client,
-							                 	Sum = oldBalance - newBalance,
-							                 	Date = DateTime.Now,
-							                 	Comment =
-							                 		string.Format("Списание после редактирования банковского платежа (id = {0})", payment.Id)
-							                 }.Save();
+								Registrator = InitializeContent.Partner,
+								Client = client,
+								Sum = oldBalance - newBalance,
+								Date = DateTime.Now,
+								Comment = string.Format("Списание после редактирования банковского платежа (id = {0})", payment.Id)
+							}.Save();
 						}
-						if (newBalance - oldBalance > 0 && payment.Payer != null)
-						{
+						if (newBalance - oldBalance > 0 && payment.Payer != null) {
 							new Payment {
-							            	Client = client,
-							            	PaidOn = DateTime.Now,
-							            	RecievedOn = DateTime.Now,
-							            	Sum = newBalance - oldBalance,
-							            	LogComment =
-							            		string.Format("Зачисление после редактирования банковского платежа (id = {0})", payment.Id)
-							            }.Save();
+								Agent = Agent.GetByInitPartner(),
+								Client = client,
+								PaidOn = DateTime.Now,
+								RecievedOn = DateTime.Now,
+								Sum = newBalance - oldBalance,
+								LogComment = string.Format("Зачисление после редактирования банковского платежа (id = {0})", payment.Id)
+							}.Save();
 						}
 					}
-					if (newPayerFlag)
-					{
+					if (newPayerFlag) {
 						new Payment {
-						            	Client = Client.Queryable.Where(c => c.LawyerPerson.Id == payment.Payer.Id).FirstOrDefault(),
-						            	PaidOn = DateTime.Now,
-						            	RecievedOn = DateTime.Now,
-						            	Sum = payment.Sum,
-						            	LogComment =
-						            		string.Format(
-						            			"Зачисление после редактирования банковского платежа (id = {0}), назначен плательщик", payment.Id)
-						            }.Save();
+							Agent = Agent.GetByInitPartner(),
+							Client = payment.Payer,
+							PaidOn = DateTime.Now,
+							RecievedOn = DateTime.Now,
+							Sum = payment.Sum,
+							LogComment = string.Format("Зачисление после редактирования банковского платежа (id = {0}), назначен плательщик", payment.Id)
+						}.Save();
 					}
-					if (oldPayer != null && oldPayer != payment.Payer)
-					{
+					if (oldPayer != null && oldPayer != payment.Payer) {
 						new Payment {
-						            	Client = Client.Queryable.Where(c => c.LawyerPerson.Id == payment.Payer.Id).FirstOrDefault(),
-						            	PaidOn = DateTime.Now,
-						            	RecievedOn = DateTime.Now,
-						            	Sum = payment.Sum,
-						            	LogComment =
-						            		string.Format("Зачисление после редактирования банковского платежа (id = {0})", payment.Id)
-						            }.Save();
+							Agent = Agent.GetByInitPartner(),
+							Client = payment.Payer,
+							PaidOn = DateTime.Now,
+							RecievedOn = DateTime.Now,
+							Sum = payment.Sum,
+							LogComment = string.Format("Зачисление после редактирования банковского платежа (id = {0})", payment.Id)
+						}.Save();
 						new UserWriteOff {
-						                 	Client = Client.Queryable.Where(c => c.LawyerPerson == oldPayer).FirstOrDefault(),
-						                 	Comment =
-						                 		string.Format("Списание после смены плательщика, при редактировании банковского платежа №{0}",
-						                 		              payment.Id),
-						                 	Date = DateTime.Now,
-						                 	Sum = oldPayment.Sum
-						                 }.Save();
+							Registrator = InitializeContent.Partner,
+							Client = oldPayer,
+							Comment = string.Format("Списание после смены плательщика, при редактировании банковского платежа №{0} \r\n Клиент стал: {1}", payment.Id, payment.Payer.Id),
+							Date = DateTime.Now,
+							Sum = oldPayment.Sum
+						}.Save();
 					}
 					payment.DoUpdate();
 					Flash["Message"] = Message.Notify("Сохранено");
 					RedirectToReferrer();
 					return;
 				}
-				else
-				{
-					ArHelper.WithSession(s => ArHelper.Evict(s, new[] {payment}));
-					//PropertyBag["Payment"] = payment;
+				else {
+					ArHelper.WithSession(s => ArHelper.Evict(s, new[] { payment }));
 				}
 			}
-			//else
-			{
-				PropertyBag["payment"] = payment;
-				PropertyBag["recipients"] = Recipient.Queryable.OrderBy(r => r.Name).ToList();
-			}
+			PropertyBag["payment"] = payment;
+			PropertyBag["recipients"] = Recipient.Queryable.OrderBy(r => r.Name).ToList();
 		}
 
 		[return: JSONReturnBinder]
@@ -352,24 +316,49 @@ namespace InternetInterface.Controllers
 			uint.TryParse(term, out id);
 			return ActiveRecordLinq
 				.AsQueryable<Client>()
-				.Where(p => p.LawyerPerson.Name.Contains(term) || p.Id == id)
+				.Where(p => p.Name.Contains(term) || p.Id == id)
 				.Take(20)
 				.ToList()
 				.Select(p => new {
-					id = p.LawyerPerson.Id,
-					label = String.Format("[{0}]. {1} ИНН {2}", p.Id, p.LawyerPerson.Name, p.LawyerPerson.INN)
+					id = p.Id,
+					label = String.Format("[{0}]. {1}", p.Id, p.Name)
 				});
 		}
 
 		public void СhangeSaleSettings()
 		{
 			var setting = SaleSettings.FindFirst();
+			PropertyBag["settings"] = setting;
+
 			if (IsPost) {
+				SetARDataBinder();
 				BindObjectInstance(setting, ParamStore.Form, "settings", AutoLoadBehavior.Always);
 				setting.Save();
-				PropertyBag["Message"] = Message.Notify("Настройки сохранены");
+				Notify("Настройки сохранены");
+				RedirectToReferrer();
 			}
-			PropertyBag["settings"] = setting;
+		}
+
+		public void Cancel(uint id, string comment)
+		{
+			if (!string.IsNullOrEmpty(comment)) {
+				var payment = DbSession.Load<Payment>(id);
+				var message = payment.Cancel(comment);
+				DbSession.Delete(payment);
+				DbSession.Save(message);
+				Notify("Отменено");
+				EmailHelper.Send("internet@ivrn.net", "Уведомление об отмене платежа", string.Format(@"
+Отменено платеж №{0}
+Клиент: №{1} - {2}
+Сумма: {3}
+Оператор: {4}
+Комментарий: {5}
+", payment.Id, payment.Client.Id, payment.Client.Name, payment.Sum.ToString("#.00"), InitializeContent.Partner.Name, comment));
+			}
+			else {
+				Error("Введите комментарий для отмены платежа");
+			}
+			RedirectToReferrer();
 		}
 	}
 }

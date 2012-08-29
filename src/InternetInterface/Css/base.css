@@ -360,10 +360,8 @@ ul.list li .item .avatar {
 
 /*  Inspired by http://particletree.com/features/rediscovering-the-button-element */
 
-a.button:link, a.button:visited, a.button:hover, a.button:active, button.button {
+a.button:link, a.button:visited, a.button:hover, a.button:active, button.button, input[type=submit] {
   color: #222;
-  display:block;
-  float:left;
   margin:0 7px 0 0;
   background-color: #eee;
   border:1px solid #bfbfbf;
@@ -426,6 +424,12 @@ button.button:active, a.button:active {
 .selectorQuery
 {
 	color: red;
+}
+
+.table a.hardwareInfo {
+	display:inline;
+	float:none;
+	background-color:#cdf8bd;
 }
 
 .hardWareInfoBlock

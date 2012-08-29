@@ -16,57 +16,76 @@ namespace Billing.Test.Integration
 		[Test]
 		public void Query_test()
 		{
-			QueryCatcher.Catch();
-			var request = new Request {
-				Registrator = InitializeContent.Partner,
-				RegDate = DateTime.Now,
-				PaidBonus = false,
-				Client = _client
-			};
-			request.Save();
-			_client.BeginWork = DateTime.Now;
-			_client.Request = request;
-			_client.Save();
-			var bonusesClients = Client.Queryable.Where(c => 
-				c.Request != null && 
-				!c.Request.PaidBonus && 
-				c.Request.Registrator != null &&
-				c.BeginWork != null).ToList();
-			Assert.That(bonusesClients.Count, Is.GreaterThan(0));
+			using (new SessionScope()) {
+				var request = new Request {
+					Registrator = InitializeContent.Partner,
+					RegDate = DateTime.Now,
+					PaidBonus = false,
+					Client = _client,
+					ApplicantName = string.Empty,
+					ApplicantPhoneNumber = string.Empty,
+					ApplicantEmail = string.Empty,
+					Street = string.Empty,
+					Tariff = Tariff.FindFirst()
+				};
+				request.Save();
+				_client.BeginWork = DateTime.Now;
+				_client.Request = request;
+				_client.Save();
+				var bonusesClients = Client.Queryable.Where(c =>
+					c.Request != null &&
+						!c.Request.PaidBonus &&
+						c.Request.Registrator != null &&
+						c.BeginWork != null)
+					.ToList();
+				Assert.That(bonusesClients.Count, Is.GreaterThan(0));
+			}
 		}
 
 		[Test]
 		public void Paid_bonus_for_agent()
 		{
-			var request = new Request {
-				Registrator = InitializeContent.Partner,
-				RegDate = DateTime.Now,
-				PaidBonus = false,
-				Client = _client
-			};
-			request.Save();
-			_client.BeginWork = DateTime.Now;
-			_client.Request = request;
-			_client.Save();
-			scope.Flush();
+			Request request;
+			using (new SessionScope()) {
+				request = new Request {
+					Registrator = InitializeContent.Partner,
+					RegDate = DateTime.Now,
+					PaidBonus = false,
+					Client = _client,
+					ApplicantName = string.Empty,
+					ApplicantPhoneNumber = string.Empty,
+					ApplicantEmail = string.Empty,
+					Street = string.Empty,
+					Tariff = Tariff.FindFirst()
+				};
+				request.Save();
+			}
+			using (new SessionScope()) {
+				_client.BeginWork = DateTime.Now;
+				_client.Request = request;
+				_client.Save();
+			}
 			billing.Compute();
 			billing.Compute();
-			scope.Flush();
-			request.Refresh();
-			Assert.IsFalse(request.PaidBonus);
-			var payment = new Payment {
-				Client = _client,
-				Sum = _client.GetPriceForTariff()
-			};
-			payment.Save();
-			_client.Payments.Add(payment);
-			billing.On();
+			using (new SessionScope()) {
+				request.Refresh();
+				Assert.IsFalse(request.PaidBonus);
+				var payment = new Payment {
+					Client = _client,
+					Sum = _client.GetPriceForTariff()
+				};
+				payment.Save();
+				_client.Payments.Add(payment);
+			}
+			billing.OnMethod();
 			billing.Compute();
 			billing.Compute();
-			request.Refresh();
-			Assert.IsTrue(request.PaidBonus);
-			var payments = PaymentsForAgent.Queryable.Where(p => p.Agent == InitializeContent.Partner).ToList();
-			Assert.That(payments.Count, Is.EqualTo(1));
+			using (new SessionScope()) {
+				request.Refresh();
+				Assert.IsTrue(request.PaidBonus);
+				var payments = PaymentsForAgent.Queryable.Where(p => p.Agent == InitializeContent.Partner).ToList();
+				Assert.That(payments.Count, Is.EqualTo(1));
+			}
 		}
 	}
 }

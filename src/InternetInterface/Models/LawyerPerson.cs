@@ -6,6 +6,8 @@ using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Castle.Components.Validator;
 using Common.Web.Ui.Helpers;
+using Common.Web.Ui.Models.Audit;
+using Common.Web.Ui.MonoRailExtentions;
 using InternetInterface.Models.Universal;
 
 namespace InternetInterface.Models
@@ -44,7 +46,7 @@ namespace InternetInterface.Models
 		[ValidateEmail("Ошибка воода Email (adr@dom.com)")]
 		public virtual string Email { get; set; }
 
-		[/*ValidateNonEmpty("Введите номер телефона"),*/ ValidateRegExp(@"^((\d{3})-(\d{7}))", "Ошибка фотмата телефонного номера (***-*******)")]
+		[ValidateRegExp(@"^((\d{3})-(\d{7}))", "Ошибка формата телефонного номера (***-*******)")]
 		public virtual string Telephone { get; set; }
 
 		[Property, Auditable("Контактное лицо")]
@@ -59,10 +61,12 @@ namespace InternetInterface.Models
 		[Property, Auditable("Почтовый адрес")]
 		public virtual string MailingAddress { get; set; }
 
-		[BelongsTo]
-		public virtual Recipient Recipient { get; set; }
-
 		[OneToOne(PropertyRef = "LawyerPerson")]
 		public virtual Client client { get; set; }
+
+		public virtual bool NeedShowWarning()
+		{
+			return Balance < -(Tariff * 1.9m);
+		}
 	}
 }

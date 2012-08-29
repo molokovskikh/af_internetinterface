@@ -1,7 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\ProjectLib.properties" Condition="Exists('..\ProjectLib.properties')" />
-  <PropertyGroup>
+	<ItemGroup>
+		<StyleCopAdditionalAddinPaths Include="..\..\lib\StyleCop">
+			<InProject>false</InProject>
+		</StyleCopAdditionalAddinPaths>
+	</ItemGroup>
+	<PropertyGroup>
+		<StyleCopTreatErrorsAsWarnings>False</StyleCopTreatErrorsAsWarnings>
+		<StyleCopOverrideSettingsFile>..\..\lib\StyleCop\Settings.StyleCop</StyleCopOverrideSettingsFile>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
@@ -53,7 +60,7 @@
     <Reference Include="Boo.Lang.Extensions, Version=2.0.9.3, Culture=neutral, PublicKeyToken=32c39770e9a21a67, processorArchitecture=MSIL">
       <HintPath>..\..\lib\Boo.Lang.Extensions.dll</HintPath>
     </Reference>
-    <Reference Include="CassiniDev4-lib, Version=4.0.1.7, Culture=neutral, PublicKeyToken=f7f6e0b4240c7c27, processorArchitecture=x86" />
+    <Reference Include="CassiniDev-lib" />
     <Reference Include="Castle.ActiveRecord, Version=3.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\..\lib\Castle.ActiveRecord.dll</HintPath>
     </Reference>
@@ -69,6 +76,7 @@
     <Reference Include="Castle.Core, Version=2.5.1.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\..\lib\Castle.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Castle.MonoRail.ActiveRecordSupport, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL" />
     <Reference Include="Castle.MonoRail.Framework, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\..\lib\Castle.MonoRail.Framework.dll</HintPath>
     </Reference>
@@ -84,8 +92,10 @@
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
       <HintPath>..\..\lib\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="mysql.data, Version=6.3.5.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\..\lib\mysql.data.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="NHibernate, Version=3.1.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -114,8 +124,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Functional\PrivateOfficeFixture.cs" />
     <Compile Include="Functional\Setup.cs" />
-    <Compile Include="Integration\PrivateOffice.cs" />
+    <Compile Include="Integration\MainControllerFixture.cs" />
+    <Compile Include="Integration\PrivateOfficeControllerFixture.cs" />
     <Compile Include="Integration\SceFuxture.cs" />
     <Compile Include="Integration\TariffFixture.cs" />
     <Compile Include="Setup.cs" />
@@ -129,10 +141,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common.Models\Common.Models\Common.Models.csproj">
-      <Project>{80C9F352-5EED-41B2-989A-6628BCAF4D36}</Project>
-      <Name>Common.Models</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Common.MySql\Common.MySql\Common.MySql.csproj">
       <Project>{8A680813-C83B-497A-85E6-E8F07B7D7650}</Project>
       <Name>Common.MySql</Name>
@@ -157,13 +165,15 @@
       <Project>{E2B03BC7-AACB-4A72-BBC7-DF4325912504}</Project>
       <Name>InternetInterface</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Test.Support\Test.Support.Web\Test.Support.Web.csproj">
+      <Project>{12258B1D-35E8-45BA-9C1E-5F7B8ACD7D37}</Project>
+      <Name>Test.Support.Web</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Test.Support\Test.Support\Test.Support.csproj">
+      <Project>{A215E837-1208-49E3-AF93-A9612223122C}</Project>
+      <Name>Test.Support</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+	<Import Project="..\..\packages\StyleCop.MSBuild.4.7.35.0\tools\StyleCop.Targets" />
 </Project>

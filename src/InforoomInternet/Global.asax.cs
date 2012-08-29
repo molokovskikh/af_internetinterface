@@ -1,24 +1,18 @@
 ﻿using System;
 using System.IO;
-using System.Text;
-using System.Web;
 using Castle.ActiveRecord;
-using Castle.ActiveRecord.Framework.Config;
 using System.Reflection;
 using Castle.MonoRail.Framework;
 using Castle.MonoRail.Framework.Configuration;
-using Castle.MonoRail.Framework.Container;
 using Castle.MonoRail.Framework.Internal;
-using Castle.MonoRail.Framework.JSGeneration;
-using Castle.MonoRail.Framework.JSGeneration.jQuery;
 using Castle.MonoRail.Framework.Routing;
-using Castle.MonoRail.Framework.Services;
 using Castle.MonoRail.Views.Brail;
 using Common.Web.Ui.Helpers;
-using InforoomInternet.Initializers;
+using Common.Web.Ui.MonoRailExtentions;
+using InforoomInternet.Models;
 using InternetInterface.Helpers;
 using log4net;
-using log4net.Config;
+using log4net.Repository.Hierarchy;
 
 namespace InforoomInternet
 {
@@ -29,21 +23,20 @@ namespace InforoomInternet
 		public Global()
 			: base(Assembly.Load("InforoomInternet"))
 		{
+			Logger = new HttpSessionLog(typeof(Global));
 			LibAssemblies.Add(Assembly.Load("Common.Web.Ui"));
-			//LibAssemblies.Add(Assembly.Load("InternetInterface"));
 			Logger.ErrorSubject = "Ошибка в IVRN";
 			Logger.SmtpHost = "box.analit.net";
 			Logger.ExcludeExceptionTypes.Add(typeof(ControllerNotFoundException));
 			Logger.ExcludeExceptionTypes.Add(typeof(FileNotFoundException));
 		}
 
-		void Application_Start(object sender, EventArgs e)
+		private void Application_Start(object sender, EventArgs e)
 		{
 			try {
-				XmlConfigurator.Configure();
-				GlobalContext.Properties["Version"] = Assembly.GetExecutingAssembly().GetName().Version;
 				ActiveRecordStarter.EventListenerComponentRegistrationHook += RemoverListner.Make;
-				new ActiveRecord().Initialize(ActiveRecordSectionHandler.Instance);
+
+				Initialize();
 
 				RoutingModuleEx.Engine.Add(new PatternRoute("/")
 					.DefaultForController().Is("Content")
@@ -58,25 +51,31 @@ namespace InforoomInternet
 					.DefaultForController().Is("Content")
 					.DefaultForAction().Is("Реквизиты"));
 			}
-			catch (Exception ex)
-			{
+			catch (Exception ex) {
 				_log.Fatal("Ошибка при запуске страницы.", ex);
 			}
 		}
 
-		void Session_Start(object sender, EventArgs e) { }
+		private void Session_Start(object sender, EventArgs e)
+		{
+		}
 
-		void Application_BeginRequest(object sender, EventArgs e) { }
+		private void Application_BeginRequest(object sender, EventArgs e)
+		{
+		}
 
-		void Application_AuthenticateRequest(object sender, EventArgs e) { }
+		private void Application_AuthenticateRequest(object sender, EventArgs e)
+		{
+		}
 
-		void Session_End(object sender, EventArgs e) { }
+		private void Session_End(object sender, EventArgs e)
+		{
+		}
 
-		void Application_End(object sender, EventArgs e) { }
-
-		public void Configure(IMonoRailConfiguration configuration) {
+		public void Configure(IMonoRailConfiguration configuration)
+		{
 			configuration.ControllersConfig.AddAssembly("InforoomInternet");
-			configuration.ViewComponentsConfig.Assemblies = new[] {"InforoomInternet", "Common.Web.Ui"};
+			configuration.ViewComponentsConfig.Assemblies = new[] { "InforoomInternet", "Common.Web.Ui" };
 			configuration.ViewEngineConfig.ViewPathRoot = "Views";
 			configuration.ViewEngineConfig.AssemblySources.Add(new AssemblySourceInfo("Common.Web.Ui", "Common.Web.Ui.Views"));
 			configuration.UrlConfig.UseExtensions = false;

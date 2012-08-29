@@ -1,39 +1,35 @@
-﻿#define BILLING_TEST
-
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Threading;
 using Castle.ActiveRecord;
+using Castle.ActiveRecord.Framework;
 using Common.Tools;
+using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Controllers.Filter;
+using InternetInterface.Services;
+using NHibernate.Criterion;
+using NHibernate.SqlCommand;
 using NUnit.Framework;
 using InternetInterface.Models;
 
-
 namespace Billing.Test.Integration
 {
-	[TestFixture]
-	public class IntegrationFixture
+	public class MainBillingForTest : MainBilling
 	{
-		protected ISessionScope scope;
-
-		[SetUp]
-		public void Setup()
+		public override void Compute()
 		{
-			scope = new SessionScope();
-		}
+			base.Compute();
 
-		[TearDown]
-		public void TearDown()
-		{
-			if (scope != null)
-				scope.Dispose();
+			using (new SessionScope()) {
+				foreach (var paidClient in Client.FindAll()) {
+					paidClient.PaidDay = false;
+					paidClient.Update();
+				}
+			}
 		}
 	}
 
-	public class MainBillingFixture : IntegrationFixture
+	public class MainBillingFixture
 	{
 		protected MainBilling billing;
 		protected Client _client;
@@ -46,106 +42,138 @@ namespace Billing.Test.Integration
 		[SetUp]
 		public void CreateBilling()
 		{
-			billing = new MainBilling();
-			PrepareTest();
-			_client = CreateClient();
-			SaleSettings.DeleteAll();
-			new SaleSettings {
-				MaxSale = MaxSale,
-				MinSale = MinSale,
-				PeriodCount = PerionCount,
-				SaleStep = SaleStep
-			}.Save();
+			SystemTime.Reset();
+
+			using (new SessionScope()) {
+				billing = new MainBillingForTest();
+				CleanDb();
+				_client = CreateClient();
+				SaleSettings.DeleteAll();
+				new SaleSettings {
+					MaxSale = MaxSale,
+					MinSale = MinSale,
+					PeriodCount = PerionCount,
+					SaleStep = SaleStep
+				}.Save();
+			}
 		}
 
-		public static void PrepareTests()
+		public static void SeedDb()
 		{
-			new Partner
-			{
-				Login = "Test",
-			}.Save();
+			InitializeContent.GetAdministrator = () => {
+				var partner = Partner.FindFirst();
+				partner.AccesedPartner = CategorieAccessSet.FindAll(DetachedCriteria.For(typeof(CategorieAccessSet))
+					.CreateAlias("AccessCat", "AC", JoinType.InnerJoin)
+					.Add(Restrictions.Eq("Categorie", partner.Categorie)))
+					.Select(c => c.AccessCat.ReduceName).ToList();
+				return partner;
+			};
+			InternetSettings.DeleteAll();
 
-			InitializeContent.GetAdministrator = () => Partner.FindFirst();
+			using (new SessionScope()) {
+				new Partner("Test").Save();
+				if (!ActiveRecordLinqBase<Status>.Queryable.Any())
+					CreateStatuses();
 
-			new Status
-			{
+				new DebtWork {
+					BlockingAll = false,
+					Price = 0,
+					HumanName = "DebtWork"
+				}.Save();
+
+				new AgentTariff {
+					ActionName = AgentActions.WorkedClient,
+					Sum = 250
+				}.Save();
+
+				new AgentTariff {
+					ActionName = AgentActions.AgentPayIndex,
+					Sum = 1.5m
+				}.Save();
+
+				new VoluntaryBlockin {
+					BlockingAll = true,
+					Price = 0,
+					HumanName = "VoluntaryBlockin"
+				}.Save();
+
+				new WorkLawyer {
+					InterfaceControl = true,
+					HumanName = "WorkLawyer"
+				}.Save();
+
+				new InternetSettings { NextBillingDate = DateTime.Now }.Save();
+			}
+		}
+
+		private static void CreateStatuses()
+		{
+			new Status {
 				Blocked = false,
 				Id = (uint)StatusType.Worked,
-				Name = "unblocked"
-			}.Save();
-
-			
-			new Status
-			{
-				Blocked = true,
-				Id = (uint)StatusType.BlockedAndConnected,
-				Name = "unblocked"
-			}.Save();
-
-			new Status
-			{
-				Blocked = true,
-				Id = (uint)StatusType.NoWorked,
-				Name = "testBlockedStatus"
+				Name = "unblocked",
+				ShortName = "Worked"
 			}.Save();
 
 			new Status {
-						   ShortName = "VoluntaryBlocking",
-						   Id = (uint)StatusType.VoluntaryBlocking,
-						   Blocked = true,
-						   Connected = true,
-					   }.Save();
-
-			new DebtWork
-			{
-				BlockingAll = false,
-				Price = 0
+				Blocked = true,
+				Id = (uint)StatusType.BlockedAndConnected,
+				Name = "unblocked",
+				ShortName = "BlockedAndConnected"
 			}.Save();
 
-			new AgentTariff {
-				ActionName = AgentActions.WorkedClient,
-				Sum = 250
+			new Status {
+				Blocked = true,
+				Id = (uint)StatusType.NoWorked,
+				Name = "testBlockedStatus",
+				ShortName = "NoWorked"
 			}.Save();
 
-			new AgentTariff {
-				ActionName = AgentActions.AgentPayIndex,
-				Sum = 1.5m
+			new Status {
+				ShortName = "VoluntaryBlocking",
+				Id = (uint)StatusType.VoluntaryBlocking,
+				Blocked = true,
+				Name = "VoluntaryBlocking",
+				Connected = true
 			}.Save();
-
-			new VoluntaryBlockin
-			{
-				BlockingAll = true,
-				Price = 0
-			}.Save();
-
-			new InternetSettings{NextBillingDate = DateTime.Now}.Save();
 		}
 
-		public Client CreateClient()
+		public static Client CreateClient()
 		{
 			var client = BaseBillingFixture.CreateAndSaveClient("testClient1", false, 590);
 			client.Save();
 			return client;
 		}
 
-		public static void PrepareTest()
+		public static void CleanDb()
 		{
 			Request.DeleteAll();
 			SmsMessage.DeleteAll();
 			UserWriteOff.DeleteAll();
-			ClientService.DeleteAll();
+
+			ArHelper.WithSession(s => { s.CreateSQLQuery("delete from Internet.ClientServices"); });
+
 			WriteOff.DeleteAll();
 			Payment.DeleteAll();
 			Client.DeleteAll();
-			PhysicalClients.DeleteAll();
+			PhysicalClient.DeleteAll();
 			SystemTime.Reset();
+			PaymentsForAgent.DeleteAll();
 		}
 
-		public void SetClientDate(Client client, Interval rd)
+		public static void CleanDbAfterTest()
 		{
-			client = Client.FindFirst();
-			client.RatedPeriodDate = rd.dtFrom;
-			client.Update();
+			Tariff.DeleteAll();
+			Partner.DeleteAll();
+		}
+
+		public void SetClientDate(Interval rd, Client client)
+		{
+			using (new SessionScope()) {
+				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
+				client.RatedPeriodDate = rd.dtFrom;
+				client.Update();
+			}
 			SystemTime.Now = () => rd.dtTo;
 			billing.Compute();
 		}

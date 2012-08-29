@@ -6,31 +6,44 @@ using System.Text.RegularExpressions;
 using System.Web;
 using Castle.ActiveRecord;
 using Common.Web.Ui.Helpers;
+using Common.Web.Ui.Models.Audit;
 using InternetInterface.Controllers.Filter;
 
 namespace InternetInterface.Models
 {
 	public enum ContactType
 	{
-		[Description("Мобильный номер")]
-		MobilePhone,
-		[Description("Домашний номер")]
-		HousePhone,
-		[Description("Связанный номер")]
-		ConnectedPhone,
-		[Description("EMail")]
-		Email,
-		[Description("Финансовые вопросы")]
-		FinancePhone,
-		[Description("Главный телефон")]
-		HeadPhone,
-		[Description("Телефон для смс рассылки")]
-		SmsSending
+		[Description("Мобильный номер")] MobilePhone,
+
+		[Description("Домашний номер")] HousePhone,
+
+		[Description("Связанный номер")] ConnectedPhone,
+
+		[Description("EMail")] Email,
+
+		[Description("Финансовые вопросы")] FinancePhone,
+
+		[Description("Главный телефон")] HeadPhone,
+
+		[Description("Телефон для смс рассылки")] SmsSending,
+
+		[Description("техническая информация")] TechPhone,
 	}
 
 	[ActiveRecord(Table = "Contacts", Schema = "Internet", Lazy = true), Auditable]
 	public class Contact : ChildActiveRecordLinqBase<Contact>
 	{
+		public Contact()
+		{
+		}
+
+		public Contact(Client client, ContactType type, string text)
+		{
+			Client = client;
+			Type = type;
+			Text = text;
+		}
+
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
@@ -46,39 +59,28 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string Comment { get; set; }
 
+		[Property, Description("ФИО")]
+		public virtual string ContactName { get; set; }
+
 		[BelongsTo]
 		public virtual Partner Registrator { get; set; }
 
 		[Property]
 		public virtual DateTime Date { get; set; }
 
-		public virtual string HumanableNumber()
+		public virtual string HumanableNumber
 		{
-			if (new Regex(@"^(\d{10})$").IsMatch(Text))
-				return string.Format("{0}-{1}", Text.Substring(0, 3), Text.Substring(3, 7));
-			return Text;
+			get
+			{
+				if (new Regex(@"^(\d{10})$").IsMatch(Text))
+					return string.Format("{0}-{1}", Text.Substring(0, 3), Text.Substring(3, 7));
+				return Text;
+			}
 		}
 
 		public static string GetReadbleCategorie(ContactType type)
 		{
-			switch (type) {
-				case ContactType.ConnectedPhone:
-					return "Связанный номер";
-				case ContactType.HousePhone:
-					return "Домашний номер";
-				case ContactType.MobilePhone:
-					return "Мобильный номер";
-				case ContactType.FinancePhone:
-					return "Финансовые вопросы";
-				case ContactType.Email:
-					return "EMail";
-				case ContactType.HeadPhone:
-					return "Главный телефон";
-				case ContactType.SmsSending:
-					return "Для СМС рассылки";
-				default: 
-				return "Номер без категории";
-			}
+			return BindingHelper.GetDescription(type);
 		}
 
 		public virtual string GetReadbleCategorie()

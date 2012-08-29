@@ -19,7 +19,7 @@ namespace InternetInterface.Models
 		AccessDHCP = 17,
 		EditClientInfo = 19,
 		ShowSecretData = 21
-	};
+	}
 
 	public class TwoRule
 	{
@@ -27,6 +27,7 @@ namespace InternetInterface.Models
 		{
 			set { Head = GetRule(value); }
 		}
+
 		public AccessCategoriesType CHIDLAccess
 		{
 			set { Child = GetRule(value); }
@@ -38,7 +39,7 @@ namespace InternetInterface.Models
 
 		private static AccessCategories GetRule(AccessCategoriesType rule)
 		{
-			return AccessCategories.Find((int) rule);
+			return AccessCategories.Find((int)rule);
 		}
 	}
 
@@ -58,29 +59,24 @@ namespace InternetInterface.Models
 			toAdd = new List<AccessCategories>();
 			toDelete = new List<AccessCategories>();
 			hasDelete = new List<int>();
-			accessDependence = new List<TwoRule>
-			                   	{
-			                   		new TwoRule
-			                   			{
-			                   				HEADAccess = AccessCategoriesType.GetClientInfo,
-			                   				CHIDLAccess = AccessCategoriesType.ShowSecretData,
-			                   			},
-									new TwoRule
-			                   			{
-			                   				HEADAccess = AccessCategoriesType.GetClientInfo,
-			                   				CHIDLAccess = AccessCategoriesType.EditClientInfo
-			                   			},
-									new TwoRule
-			                   			{
-			                   				HEADAccess = AccessCategoriesType.GetClientInfo,
-			                   				CHIDLAccess = AccessCategoriesType.SendDemand,
-			                   			},
-									new TwoRule
-			                   			{
-			                   				HEADAccess = AccessCategoriesType.GetClientInfo,
-			                   				CHIDLAccess = AccessCategoriesType.VisiblePassport
-			                   			}
-			                   	};
+			accessDependence = new List<TwoRule> {
+				new TwoRule {
+					HEADAccess = AccessCategoriesType.GetClientInfo,
+					CHIDLAccess = AccessCategoriesType.ShowSecretData,
+				},
+				new TwoRule {
+					HEADAccess = AccessCategoriesType.GetClientInfo,
+					CHIDLAccess = AccessCategoriesType.EditClientInfo
+				},
+				new TwoRule {
+					HEADAccess = AccessCategoriesType.GetClientInfo,
+					CHIDLAccess = AccessCategoriesType.SendDemand,
+				},
+				new TwoRule {
+					HEADAccess = AccessCategoriesType.GetClientInfo,
+					CHIDLAccess = AccessCategoriesType.VisiblePassport
+				}
+			};
 		}
 
 		/// <summary>
@@ -90,8 +86,7 @@ namespace InternetInterface.Models
 		/// <param name="field"></param>
 		private static void GenerateAddList(List<TwoRule> dictionary, AccessCategories field)
 		{
-			foreach (var dic in dictionary.Where(dic => dic.Child == field))
-			{
+			foreach (var dic in dictionary.Where(dic => dic.Child == field)) {
 				toAdd.Add(dic.Head);
 				GenerateAddList(dictionary, dic.Head);
 			}
@@ -104,8 +99,7 @@ namespace InternetInterface.Models
 		/// <param name="field"></param>
 		private static void GenerateDeleteList(List<TwoRule> dictionary, AccessCategories field)
 		{
-			foreach (var dic in dictionary.Where(dic => dic.Head == field))
-			{
+			foreach (var dic in dictionary.Where(dic => dic.Head == field)) {
 				toDelete.Add(dic.Child);
 				GenerateDeleteList(dictionary, dic.Child);
 			}
@@ -120,19 +114,15 @@ namespace InternetInterface.Models
 		public static void SetCrossAccess(List<int> oldAccessSet, List<int> newAccessSet, UserCategorie userCategorie)
 		{
 			SetAccessDependence();
-			foreach (var twoRule in accessDependence)
-			{
+			foreach (var twoRule in accessDependence) {
 				if (!(newAccessSet.Contains(twoRule.Head.Id)) &&
-					(oldAccessSet.Contains(twoRule.Head.Id)))
-				{
+					(oldAccessSet.Contains(twoRule.Head.Id))) {
 					GenerateDeleteList(accessDependence, twoRule.Head);
-					foreach (var todel in toDelete)
-					{
+					foreach (var todel in toDelete) {
 						var delSendDemWithoutGCI = CategorieAccessSet.FindAll(DetachedCriteria.For(typeof(CategorieAccessSet))
-																				.Add(Expression.Eq("Categorie", userCategorie))
-																				.Add(Expression.Eq("AccessCat",todel)));
-						foreach (var categorieAccessSet in delSendDemWithoutGCI)
-						{
+							.Add(Expression.Eq("Categorie", userCategorie))
+							.Add(Expression.Eq("AccessCat", todel)));
+						foreach (var categorieAccessSet in delSendDemWithoutGCI) {
 							hasDelete.Add(categorieAccessSet.AccessCat.Id);
 							categorieAccessSet.DeleteAndFlush();
 							//todel.DeleteTo(partner);
@@ -143,27 +133,21 @@ namespace InternetInterface.Models
 				toDelete.Clear();
 			}
 
-			foreach (var twoRule in accessDependence)
-			{
+			foreach (var twoRule in accessDependence) {
 				if ((newAccessSet.Contains(twoRule.Child.Id)) &&
-					(!oldAccessSet.Contains(twoRule.Child.Id)))
-				{
+					(!oldAccessSet.Contains(twoRule.Child.Id))) {
 					GenerateAddList(accessDependence, twoRule.Child);
-					if (hasDelete.Contains(twoRule.Child.Id))
-					{
+					if (hasDelete.Contains(twoRule.Child.Id)) {
 						toAdd.Add(twoRule.Child);
 					}
 					var partnerAccessSet = CategorieAccessSet.FindAll(DetachedCriteria.For(typeof(CategorieAccessSet))
-																		.Add(Expression.Eq("Categorie", userCategorie)));
-					foreach (var toadd in toAdd)
-					{
-						if (partnerAccessSet.Where(c => c.AccessCat == toadd).ToList().Count == 0)
-						{
-							var newRight = new CategorieAccessSet
-							               	{
-												AccessCat = toadd,
-												Categorie = userCategorie
-							               	};
+						.Add(Expression.Eq("Categorie", userCategorie)));
+					foreach (var toadd in toAdd) {
+						if (partnerAccessSet.Where(c => c.AccessCat == toadd).ToList().Count == 0) {
+							var newRight = new CategorieAccessSet {
+								AccessCat = toadd,
+								Categorie = userCategorie
+							};
 							newRight.SaveAndFlush();
 						}
 					}
@@ -182,17 +166,12 @@ namespace InternetInterface.Models
 		public static void SetCrossAccessForRegister(List<int> newRights, UserCategorie userCategorie)
 		{
 			SetAccessDependence();
-			foreach (var twoRule in accessDependence)
-			{
-				if (newRights.Contains(twoRule.Child.Id))
-				{
+			foreach (var twoRule in accessDependence) {
+				if (newRights.Contains(twoRule.Child.Id)) {
 					GenerateAddList(accessDependence, twoRule.Child);
-					foreach (var toadd in toAdd)
-					{
-						if (!newRights.Contains(toadd.Id))
-						{
-							var newRight = new CategorieAccessSet
-							{
+					foreach (var toadd in toAdd) {
+						if (!newRights.Contains(toadd.Id)) {
+							var newRight = new CategorieAccessSet {
 								AccessCat = toadd,
 								Categorie = userCategorie
 							};
@@ -222,30 +201,24 @@ namespace InternetInterface.Models
 		public virtual void AcceptTo(UserCategorie userCategorie)
 		{
 			var partners = Partner.FindAllByProperty("Categorie", userCategorie);
-			foreach (var partner in partners)
-			{
+			foreach (var partner in partners) {
 				AcceptToOne(partner);
 			}
 		}
 
 		public virtual void AcceptToOne(Partner partner)
 		{
-			if ((int)AccessCategoriesType.ChangeBalance == Id)
-			{
+			if ((int)AccessCategoriesType.ChangeBalance == Id) {
 				var findedAgents = FindAgentByPartner(partner);
-				if (findedAgents.Count == 0)
-				{
-					var newAgent = new Agent
-					               	{
-					               		Name = partner.Name,
-					               		Partner = partner
-					               	};
+				if (findedAgents.Count == 0) {
+					var newAgent = new Agent {
+						Name = partner.Name,
+						Partner = partner
+					};
 					newAgent.SaveAndFlush();
 				}
-				else
-				{
-					foreach (var findedAgent in findedAgents)
-					{
+				else {
+					foreach (var findedAgent in findedAgents) {
 						findedAgent.Partner = partner;
 						findedAgent.UpdateAndFlush();
 					}
@@ -259,14 +232,14 @@ namespace InternetInterface.Models
 
 		private static List<Brigad> FindBrigadsByPartner(Partner partner)
 		{
-			return Brigad.FindAll(DetachedCriteria.For(typeof (Brigad))
-			                      	.Add(Expression.Eq("PartnerID", partner))).ToList();
+			return Brigad.FindAll(DetachedCriteria.For(typeof(Brigad))
+				.Add(Expression.Eq("PartnerID", partner))).ToList();
 		}
 
 		private static List<Agent> FindAgentByPartner(Partner partner)
 		{
 			return Agent.FindAll(DetachedCriteria.For(typeof(Agent))
-									.Add(Expression.Eq("Partner", partner))).ToList();
+				.Add(Expression.Eq("Partner", partner))).ToList();
 		}
 	}
 }

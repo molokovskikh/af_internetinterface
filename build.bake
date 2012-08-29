@@ -6,25 +6,30 @@ import file from Tools.bake
 import file from Test.bake
 import file from Db.bake
 import file from AppSupport.bake
+import file from MySql.bake
+import file from Generate.bake
 import System.Linq.Enumerable
 
 Global(
 	Project : "InternetInterface",
-	HumanReadableName : "Интернет интерфейс"
+	HumanReadableName : "Интернет интерфейс",
+	Environment: @Local,
+	Port: 3308
 )
 
 task @default, [@Build, @BuildBackground]
 
-task @Build, [@BuildWebSite]
+task @Build, [@BuildWebSite, @BuildBackground, @BuildPrinter]
 
-Task @deploy, [@Production, @Build, @Migrate, @Backup, @WebDeploy, @SendDeployNotification]
-
+task @deploy, [@CheckScmChanges, @Production, @Build, @Migrate, @Backup, @WebDeploy, @DeployBackground, @DeployPrinter, @SendDeployNotification]
 
 task @DeployBackground, [@BuildBackground, @Production, @Migrate, @SendDeployNotification]:
+	oldProject = Globals.Project
 	Globals.Project = "InternetInterface.Background"
 	Globals.DeployTo = """\\fms\TopShelf\Services\""" + Globals.Project
 	Engine.Tasks.First({t| t.Name == "WebDeploy"}).Executed = false
 	Engine.Execute("WebDeploy")
+	Globals.Project = oldProject
 
 task @BuildBackground:
 	oldProject = Globals.Project
@@ -36,3 +41,25 @@ task @BuildBackground:
 	Cp("src/$project/app.release.config", "output/$project/$project.config")
 	Rm("output/$project/$project.*.config")
 	Globals.Project = oldProject
+
+task @BuildPrinter:
+	oldProject = Globals.Project
+	Globals.Project = "InternetInterface.Printer"
+	project = Globals.Project
+	Engine.Tasks.First({t| t.Name == "BuildApp"}).Executed = false
+	Engine.Execute("BuildApp")
+	Cp("src/$project/app.release.config", "output/$project/$project.exe.config", true)
+	Cp("lib/Chrome.Printer/*", "output/$project/", true)
+	Rm("output/$project/_PublishedWebsites", true)
+	Globals.Project = oldProject
+
+task @DeployPrinter:
+	oldProject = Globals.Project
+	Globals.Project = "InternetInterface.Printer"
+	project = Globals.Project
+	Globals.DeployTo = "\\\\adc.analit.net\\Inforoom\\Apps\\$project"
+	Engine.Tasks.First({t| t.Name == "WebDeploy"}).Executed = false
+	Engine.Execute("WebDeploy")
+	Globals.Project = oldProject
+
+task @BeforeTest, [@InstallPackages, @RunMySql, @PrepareLocal]

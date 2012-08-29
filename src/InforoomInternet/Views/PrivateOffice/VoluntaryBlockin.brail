@@ -36,9 +36,7 @@
 		</tr>
 		<tr>
 			<td>
-				<button type="submit" id="PostponedBut" class="button">
-					<img alt="Save" src="${siteroot}/Content/tick.png"> Активировать
-				</button>
+				<button type="submit" id="PostponedBut" class="button">Активировать</button>
 			</td>
 		</tr>
 	</tbody>

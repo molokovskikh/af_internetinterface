@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Net;
-using System.Text.RegularExpressions;
 using Castle.ActiveRecord;
-using Castle.ActiveRecord.Framework.Internal.EventListener;
-using Castle.ActiveRecord.Linq;
-using Castle.Components.DictionaryAdapter;
-using Common.Models.Helpers;
+using Castle.ActiveRecord.Framework;
+using Castle.Components.Validator;
 using Common.Tools;
+using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Helpers;
+using Common.Web.Ui.Models.Audit;
+using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Helpers;
+using InternetInterface.Models.Services;
+using InternetInterface.Services;
+using NHibernate;
+using NHibernate.Linq;
 
 namespace InternetInterface.Models
 {
@@ -26,8 +29,30 @@ namespace InternetInterface.Models
 	{
 		public Client()
 		{
+			UserWriteOffs = new List<UserWriteOff>();
 			ClientServices = new List<ClientService>();
 			Payments = new List<Payment>();
+			Contacts = new List<Contact>();
+			Endpoints = new List<ClientEndpoint>();
+		}
+
+		public Client(PhysicalClient client, IEnumerable<Service> defaultServices)
+			: this()
+		{
+			PhysicalClient = client;
+			PhysicalClient.Client = this;
+			if (!CategorieAccessSet.AccesPartner("SSI")) {
+				PhysicalClient.ConnectSum = 700;
+			}
+			Type = ClientType.Phisical;
+			SendSmsNotifocation = true;
+			FreeBlockDays = 28;
+			YearCycleDate = DateTime.Now;
+			RegDate = DateTime.Now;
+			PercentBalance = 0.8m;
+			foreach (var defaultService in defaultServices) {
+				ClientServices.Add(new ClientService(this, defaultService));
+			}
 		}
 
 		[PrimaryKey]
@@ -43,7 +68,7 @@ namespace InternetInterface.Models
 		public virtual ClientType Type { get; set; }
 
 		[BelongsTo("PhysicalClient", Lazy = FetchWhen.OnInvoke, Cascade = CascadeEnum.SaveUpdate), Auditable]
-		public virtual PhysicalClients PhysicalClient { get; set; }
+		public virtual PhysicalClient PhysicalClient { get; set; }
 
 		[Property]
 		public virtual DateTime? RatedPeriodDate { get; set; }
@@ -78,7 +103,7 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual DateTime ConnectedDate { get; set; }
 
-		[Property]  
+		[Property]
 		public virtual bool AutoUnblocked { get; set; }
 
 		[BelongsTo, Auditable("Статус")]
@@ -105,18 +130,85 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual DateTime? StartNoBlock { get; set; }
 
+		[Property]
+		public virtual DateTime? WhenShowWarning { get; set; }
+
+		[Property]
+		public virtual bool SendEmailNotification { get; set; }
+
 		[Property, Auditable("Смс рассылка")]
 		public virtual bool SendSmsNotifocation { get; set; }
 
 		[OneToOne(PropertyRef = "Client")]
 		public virtual Request Request { get; set; }
 
+		[BelongsTo]
+		public virtual Recipient Recipient { get; set; }
+
+		[OneToOne(PropertyRef = "Client")]
+		public virtual MessageForClient Message { get; set; }
+
+		[Property, ValidateInteger("Должно быть введено число")]
+		public virtual string RedmineTask { get; set; }
+
+		[HasMany(ColumnKey = "Client", OrderBy = "PaidOn", Lazy = true)]
+		public virtual IList<Payment> Payments { get; set; }
+
+		[HasMany(ColumnKey = "Client", OrderBy = "WriteOffDate", Lazy = true)]
+		public virtual IList<WriteOff> WriteOffs { get; set; }
+
+		[HasMany(ColumnKey = "Client", OrderBy = "Date", Lazy = true, Cascade = ManyRelationCascadeEnum.SaveUpdate)]
+		public virtual IList<UserWriteOff> UserWriteOffs { get; set; }
+
+		[HasMany(ColumnKey = "Client", OrderBy = "Date")]
+		public virtual IList<Contact> Contacts { get; set; }
+
+		[HasMany(ColumnKey = "Client", OrderBy = "Switch", Lazy = true, Cascade = ManyRelationCascadeEnum.AllDeleteOrphan)]
+		public virtual IList<ClientEndpoint> Endpoints { get; set; }
+
+		[HasMany(ColumnKey = "Client", Lazy = true, Cascade = ManyRelationCascadeEnum.AllDeleteOrphan)]
+		public virtual IList<ClientService> ClientServices { get; set; }
+
+		public virtual bool CanDisabled()
+		{
+			return PhysicalClient.Balance < GetPriceForTariff() * PercentBalance;
+		}
+
+		public static bool Our(string ip)
+		{
+			var mashineAddress = Convert.ToInt64(NetworkSwitch.SetProgramIp(ip));
+			return ArHelper.WithSession(s => s.Query<IpPool>().Count(p => p.Begin <= mashineAddress && p.End >= mashineAddress) > 0);
+		}
+
+		public virtual bool HaveRed()
+		{
+			return !string.IsNullOrEmpty(RedmineTask);
+		}
+
+		public virtual ClientEndpoint FirstPoint()
+		{
+			return Endpoints.FirstOrDefault();
+		}
+
+		//клиент может редактировать свои услуги если
+		//его баланс больше нуля и он не отключен
+		public virtual bool CanEditServicesFromPrivateOffice
+		{
+			get { return PhysicalClient.Balance > 0 && !Disabled; }
+		}
+
 		public virtual bool HavePaymentToStart()
 		{
-			var tariffSum = GetPriceForTariff();
-			if (Payments == null)
+			var forbiddenByService = ClientServices.Any(s => s.Service.BlockingAll && s.Activated);
+			if (forbiddenByService)
 				return false;
-			return Payments.Sum(s => s.Sum) >= tariffSum*PercentBalance;
+			var tariffSum = GetPriceIgnoreDisabled();
+			return Payments.Sum(s => s.Sum) >= tariffSum * PercentBalance;
+		}
+
+		public virtual bool IsPhysical()
+		{
+			return PhysicalClient != null;
 		}
 
 		public virtual string GetAdress()
@@ -124,14 +216,14 @@ namespace InternetInterface.Models
 			if (PhysicalClient != null) {
 				return PhysicalClient.GetAdress();
 			}
-			return string.Empty;
+			return String.Empty;
 		}
 
 		public virtual string GetCutAdress()
 		{
 			if (PhysicalClient != null)
 				return PhysicalClient.GetCutAdress();
-			return string.Empty;
+			return String.Empty;
 		}
 
 		public virtual string Contact
@@ -139,15 +231,15 @@ namespace InternetInterface.Models
 			get
 			{
 				if (Contacts != null) {
-					var contact = Contacts.Where(c => c.Type == ContactType.HeadPhone).FirstOrDefault();
+					var contact = Contacts.FirstOrDefault(c => c.Type == ContactType.HeadPhone);
 					if (contact != null) {
-						return contact.HumanableNumber();
+						return contact.HumanableNumber;
 					}
 					contact = Contacts.FirstOrDefault();
 					if (contact != null)
-						return contact.HumanableNumber();
+						return contact.HumanableNumber;
 				}
-				return string.Empty;
+				return String.Empty;
 			}
 		}
 
@@ -163,14 +255,14 @@ namespace InternetInterface.Models
 
 		public virtual string ForSearchContact(string query)
 		{
-			var result = string.Empty;
-			if (!string.IsNullOrEmpty(query)) {
+			var result = String.Empty;
+			if (!String.IsNullOrEmpty(query)) {
 				var contacts = Contacts.Where(c => c.Text.Contains(query));
 				foreach (var contact in contacts) {
 					result += TextHelper.SelectContact(query, contact.Text) + "<br/>";
 				}
 			}
-			if (string.IsNullOrEmpty(result)) {
+			if (String.IsNullOrEmpty(result)) {
 				return Contact;
 			}
 			return result;
@@ -189,29 +281,42 @@ namespace InternetInterface.Models
 
 		public virtual bool PaymentForTariff()
 		{
-			if (Payments != null)
-				return Payments.Sum(p => p.Sum) >= GetPriceForTariff();
-			return false;
+			return Payments.Sum(p => p.Sum) >= GetPriceIgnoreDisabled();
 		}
 
 		public virtual bool CanUsedPostponedPayment()
 		{
-			return PhysicalClient != null &&
-				!ClientServices.Select(c => c.Service).Contains(Service.GetByType(typeof(DebtWork))) && Disabled &&
-				PhysicalClient.Balance < 0 &&
-				AutoUnblocked && PaymentForTariff();
+			return PhysicalClient != null
+				&& !ClientServices.Select(c => c.Service).Contains(Service.GetByType(typeof(DebtWork)))
+				&& Disabled
+				&& PhysicalClient.Balance < 0
+				&& AutoUnblocked
+				&& PaymentForTariff();
+		}
+
+		public virtual bool NeedShowWarningForLawyer()
+		{
+			if (LawyerPerson == null)
+				return false;
+			var haveService = ClientServices.FirstOrDefault(cs => cs.Service.Id == Service.Type<WorkLawyer>().Id);
+			var needShowWarning = LawyerPerson.NeedShowWarning();
+			if (haveService != null && haveService.Activated)
+				return false;
+			if ((haveService != null && !haveService.Activated && needShowWarning) ||
+				(haveService == null && needShowWarning))
+				return true;
+			return needShowWarning;
 		}
 
 		public virtual bool CanUsedVoluntaryBlockin()
 		{
-
 			return new VoluntaryBlockin().CanActivate(this) && !HaveVoluntaryBlockin() && !Disabled;
 		}
 
 		public virtual bool HaveVoluntaryBlockin()
 		{
 			var clientServices = ClientServices.Select(s => s.Service.Id).ToList();
-			var volBlockService = Service.GetByType(typeof (VoluntaryBlockin));
+			var volBlockService = Service.GetByType(typeof(VoluntaryBlockin));
 			return clientServices.Any(s => s == volBlockService.Id);
 		}
 
@@ -222,41 +327,22 @@ namespace InternetInterface.Models
 			return Status.Additional.Contains(AdditionalStatus.Queryable.First(a => a.ShortName == aStatus));
 		}
 
-		[HasMany(ColumnKey = "Client", OrderBy = "PaidOn", Lazy = true)]
-		public virtual IList<Payment> Payments { get; set; }
-
-		[HasMany(ColumnKey = "Client", OrderBy = "WriteOffDate", Lazy = true)]
-		public virtual IList<WriteOff> WriteOffs { get; set; }
-
-		[HasMany(ColumnKey = "Client", OrderBy = "Date", Lazy = true)]
-		public virtual IList<UserWriteOff> UserWriteOffs { get; set; }
-
-		[HasMany(ColumnKey = "Client", OrderBy = "Date")]
-		public virtual IList<Contact> Contacts { get; set; }
-	
-		[HasMany(ColumnKey = "Client", OrderBy = "Switch", Lazy = true)]
-		public virtual IList<ClientEndpoints> Endpoints { get; set; }
-
-		public virtual ClientEndpoints FirstPoint()
-		{
-			return Endpoints.FirstOrDefault();
-		}
-
-		[HasMany(ColumnKey = "Client", Lazy = true, Cascade = ManyRelationCascadeEnum.All)]
-		public virtual IList<ClientService> ClientServices { get; set; }
-
-
 		public virtual string ChangePhysicalClientPassword()
 		{
-			var pass =  CryptoPass.GeneratePassword();
+			var pass = CryptoPass.GeneratePassword();
 			PhysicalClient.Password = CryptoPass.GetHashString(pass);
 			PhysicalClient.Update();
 			return pass;
 		}
 
-		public virtual bool HaveService(Service service)
+		public virtual ClientService FindService<T>()
 		{
-			return ClientServices.Select(c => c.Service).ToList().Contains(service);
+			return ClientServices.FirstOrDefault(c => c.Activated && NHibernateUtil.GetClass(c.Service) == typeof(T));
+		}
+
+		public virtual bool HaveService<T>()
+		{
+			return FindService<T>() != null;
 		}
 
 		public virtual ClientType GetClientType()
@@ -264,13 +350,13 @@ namespace InternetInterface.Models
 			if (PhysicalClient != null)
 				return ClientType.Phisical;
 			if (LawyerPerson != null)
-				return ClientType.Legal;    
+				return ClientType.Legal;
 			return ClientType.Phisical;
 		}
 
 		public virtual List<Internetsessionslog> GetClientLeases()
 		{
-			return Internetsessionslog.Queryable.Where(l => l.EndpointId.Client == this).ToList();
+			return ActiveRecordLinqBase<Internetsessionslog>.Queryable.Where(l => l.EndpointId.Client == this).ToList();
 		}
 
 		public virtual Internetsessionslog GetFirstLease()
@@ -281,6 +367,11 @@ namespace InternetInterface.Models
 		public virtual Internetsessionslog GetLastLease()
 		{
 			return GetClientLeases().LastOrDefault();
+		}
+
+		public virtual IList<UserWriteOff> GetUserWriteOffs()
+		{
+			return UserWriteOffs.OrderByDescending(u => u.Date).ToList();
 		}
 
 		public virtual bool StartWork()
@@ -295,25 +386,18 @@ namespace InternetInterface.Models
 
 		public virtual bool CanBlock()
 		{
-			if (ClientServices != null)
-			{
-				var CServ =
-					ClientServices.Where(c => c.Service.Id == Service.GetByType(typeof (DebtWork)).Id).FirstOrDefault();
-				if (CServ != null && !CServ.Service.CanBlock(CServ))
-				{
-					return false;
-				}
-			}
+			var cServ = ClientServices.FirstOrDefault(c => NHibernateUtil.GetClass(c.Service) == typeof(DebtWork));
+			if (cServ != null && !cServ.Service.CanBlock(cServ))
+				return false;
 
-			if ((Disabled) || (PhysicalClient.Balance >= 0))
+			if (Disabled || PhysicalClient.Balance >= 0)
 				return false;
 			return true;
 		}
 
 
-		public virtual IList<BaseWriteOff> GetWriteOffs(string groupedKey)
+		public virtual IList<BaseWriteOff> GetWriteOffs(ISession session, string groupedKey)
 		{
-			IList<BaseWriteOff> writeOffs = new List<BaseWriteOff>();
 			var gpoupKey = "concat(YEAR(WriteOffDate),'-',MONTH(WriteOffDate),'-',DAYOFMONTH(WriteOffDate))";
 			if (groupedKey == "day")
 				gpoupKey = "concat(YEAR(WriteOffDate),'-',MONTH(WriteOffDate),'-',DAYOFMONTH(WriteOffDate))";
@@ -321,40 +405,37 @@ namespace InternetInterface.Models
 				gpoupKey = "concat(YEAR(WriteOffDate),'-',MONTH(WriteOffDate))";
 			if (groupedKey == "year")
 				gpoupKey = "YEAR(WriteOffDate)";
-			ARSesssionHelper<BaseWriteOff>.QueryWithSession(session =>
-			{
-				var query =
-					session.CreateSQLQuery(string.Format(
-@"SELECT Id, Sum(WriteOffSum) as WriteOffSum, WriteOffDate, Client  FROM internet.WriteOff W
+			var query = session.CreateSQLQuery(String.Format(
+				@"SELECT 
+Id, 
+Sum(WriteOffSum) as WriteOffSum,
+Sum(VirtualSum) as VirtualSum,
+Sum(MoneySum) as MoneySum,
+WriteOffDate,
+Client
+FROM internet.WriteOff W
 where Client = :clientid and WriteOffSum > 0
 group by {0} order by WriteOffDate;", gpoupKey))
-				.SetParameter("clientid", Id)
-				.SetResultTransformer(
-					new AliasToPropertyTransformer(
-						typeof (BaseWriteOff)));
-				writeOffs = query.List<BaseWriteOff>();
-				return query.List<BaseWriteOff>();
-			});
-			return writeOffs;
+				.SetParameter("clientid", Id);
+			return query.ToList<BaseWriteOff>();
 		}
 
+		[Obsolete("Не исполдьзовать добавлено для обратной совместимости")]
 		public virtual ClientConnectInfo ConnectInfoFirst()
 		{
-			return GetConnectInfo().FirstOrDefault();
+			return ArHelper.WithSession(s => ConnectInfoFirst(s));
 		}
 
-		public virtual IList<ClientConnectInfo> GetConnectInfo()
+		public virtual ClientConnectInfo ConnectInfoFirst(ISession session)
 		{
-			if ((PhysicalClient!= null && Status != null && Status.Connected) ||
-				(LawyerPerson != null && Status != null && Status.Connected))
-			{
-				//var client = Clients.FindAllByProperty("PhysicalClient", this);
-					IList<ClientConnectInfo> ConnectInfo = new List<ClientConnectInfo>();
-					ARSesssionHelper<ClientConnectInfo>.QueryWithSession(session =>
-					{
-						var query =
-							session.CreateSQLQuery(string.Format(
-								@"
+			return GetConnectInfo(session).FirstOrDefault();
+		}
+
+		public virtual IList<ClientConnectInfo> GetConnectInfo(ISession session)
+		{
+			if ((PhysicalClient != null && Status != null && Status.Connected) ||
+				(LawyerPerson != null && Status != null && Status.Connected)) {
+				var infos = session.CreateSQLQuery(String.Format(@"
 select
 inet_ntoa(CE.Ip) as static_IP,
 inet_ntoa(L.Ip) as Leased_IP,
@@ -374,34 +455,29 @@ left join internet.Leases L on L.Endpoint = CE.Id
 left join internet.PackageSpeed PS on PS.PackageId = CE.PackageId
 left join internet.PaymentForConnect pfc on pfc.EndPoint = CE.id
 where CE.Client = {0}",
-Id)).SetResultTransformer(
-new AliasToPropertyTransformer(typeof(ClientConnectInfo)))
-.List<ClientConnectInfo>();
-						ConnectInfo = query;
-						return query;
-					});
-					if (ConnectInfo.Count != 0)
-						return ConnectInfo;
-				}
+					Id))
+					.ToList<ClientConnectInfo>();
+				return infos;
+			}
 			return new List<ClientConnectInfo>();
 		}
 
 		public static Lease FindByIP(string ip)
 		{
 			var addressValue = BigEndianConverter.ToInt32(IPAddress.Parse(ip).GetAddressBytes());
-			return Lease.Queryable.FirstOrDefault(l => l.Ip == addressValue);
+			return ActiveRecordLinqBase<Lease>.Queryable.FirstOrDefault(l => l.Ip == addressValue);
 		}
 
 		public virtual bool OnLine()
 		{
-			if (Lease.Queryable.Where(l => l.Endpoint.Client == this).FirstOrDefault() != null)
+			if (ActiveRecordLinqBase<Lease>.Queryable.FirstOrDefault(l => l.Endpoint.Client == this) != null)
 				return true;
 			return false;
 		}
 
 		public virtual decimal ToPay()
 		{
-			var toPay =  GetPriceForTariff() - PhysicalClient.Balance;
+			var toPay = GetPriceIgnoreDisabled() - PhysicalClient.Balance;
 			return toPay < 10 ? 10 : toPay;
 		}
 
@@ -415,12 +491,21 @@ new AliasToPropertyTransformer(typeof(ClientConnectInfo)))
 			var price = AccountDiscounts(PhysicalClient.Tariff.Price);
 			var finalPrice = AccountDiscounts(PhysicalClient.Tariff.FinalPrice);
 
-			if ((PhysicalClient.Tariff.FinalPriceInterval == 0 || PhysicalClient.Tariff.FinalPrice == 0) )
+			if ((PhysicalClient.Tariff.FinalPriceInterval == 0 || PhysicalClient.Tariff.FinalPrice == 0))
 				return price;
 
 			if ((BeginWork != null && BeginWork.Value.AddMonths(PhysicalClient.Tariff.FinalPriceInterval) <= SystemTime.Now()))
 				return finalPrice;
 			return price;
+		}
+
+		public virtual decimal GetTariffPrice()
+		{
+			if (BeginWork == null)
+				return 0;
+			if (Disabled)
+				return 0;
+			return GetPriceForTariff();
 		}
 
 		private decimal AccountDiscounts(decimal price)
@@ -432,64 +517,84 @@ new AliasToPropertyTransformer(typeof(ClientConnectInfo)))
 
 		public virtual decimal GetPrice()
 		{
-			var servisesPrice = 0m;
-			if (ClientServices != null)
-			{
-				var blockingService = ClientServices.Where(c => c.Service.BlockingAll && c.Activated).ToList().FirstOrDefault();
-				if (blockingService != null && !blockingService.Diactivated)
-					return blockingService.GetPrice();
+			var services = ClientServices.Where(c => c.Activated).ToArray();
+			var blockingService = services.FirstOrDefault(c => c.Service.BlockingAll);
+			if (blockingService != null)
+				return blockingService.GetPrice() + services.Where(c => c.Service.ProcessEvenInBlock).Sum(c => c.GetPrice());
 
-				servisesPrice = ClientServices.Where(c=> !c.Service.BlockingAll && c.Activated).Sum(c => c.GetPrice());
-			}
-
-			var price = AccountDiscounts(PhysicalClient.Tariff.Price);
-			var finalPrice = AccountDiscounts(PhysicalClient.Tariff.FinalPrice);
-
-			if ((PhysicalClient.Tariff.FinalPriceInterval == 0 || PhysicalClient.Tariff.FinalPrice == 0) && !Disabled)
-				return price + servisesPrice;
-
-			if ((BeginWork != null) && !Disabled)
-			{
-				var beginWorkAdded = BeginWork.Value.AddMonths(PhysicalClient.Tariff.FinalPriceInterval);
-
-				if (beginWorkAdded > SystemTime.Now())
-					return price + servisesPrice;
-
-				if (beginWorkAdded <= SystemTime.Now())
-					return finalPrice + servisesPrice;
-			}
-
-			return 0m;
+			return services.Sum(c => c.GetPrice());
 		}
 
-		public virtual decimal GetBalance()
+		public virtual decimal GetPriceIgnoreDisabled()
 		{
-			if (PhysicalClient != null)
-				return PhysicalClient.Balance;
-			if (LawyerPerson != null)
-				return LawyerPerson.Balance;
-			return 0m;
+			decimal price = 0;
+			decimal iptvPrice = 0;
+			if (Internet.ActivatedByUser)
+				iptvPrice += Iptv.Channels.Sum(c => c.CostPerMonthWithInternet);
+			else
+				iptvPrice += Iptv.Channels.Sum(c => c.CostPerMonth);
+			price += iptvPrice;
+
+			if (Internet.ActivatedByUser)
+				price += GetPriceForTariff();
+
+			if (iptvPrice == 0) {
+				var service = FindService<IpTvBoxRent>();
+				if (service != null)
+					price += service.GetPrice();
+			}
+
+			return price;
 		}
 
-		public virtual void SetBalance(decimal sum)
+		public virtual decimal Balance
 		{
-			if (PhysicalClient != null)
+			get
 			{
-				PhysicalClient.Balance = sum;
-				PhysicalClient.Update();
-			}
-			if (LawyerPerson != null)
-			{
-				LawyerPerson.Balance = sum;
-				LawyerPerson.Update();
+				if (PhysicalClient != null)
+					return PhysicalClient.Balance;
+				if (LawyerPerson != null)
+					return LawyerPerson.Balance;
+				return 0m;
 			}
 		}
 
 		public virtual string Redirect()
 		{
 			return GetClientType() == ClientType.Phisical
-			       	? "../UserInfo/SearchUserInfo.rails?filter.ClientCode=" + Id
-			       	: "../UserInfo/LawyerPersonInfo.rails?filter.ClientCode=" + Id;
+				? "../UserInfo/SearchUserInfo.rails?filter.ClientCode=" + Id
+				: "../UserInfo/LawyerPersonInfo.rails?filter.ClientCode=" + Id;
+		}
+
+		public virtual void Activate(ClientService service)
+		{
+			if (ClientServices.Select(c => c.Service).Contains(service.Service))
+				throw new ServiceActivationException("Невозможно использовать данную услугу");
+			ClientServices.Add(service);
+			service.Activate();
+		}
+
+		public virtual WriteOff CalculatePerDayWriteOff(decimal price, bool writeoffVirtualFirst = true)
+		{
+			var costPerDay = price / GetInterval();
+			return PhysicalClient.CalculateWriteoff(costPerDay);
+		}
+
+		public virtual ClientService Internet
+		{
+			get { return ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof(Internet)); }
+		}
+
+		public virtual ClientService Iptv
+		{
+			get { return ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof(IpTv)); }
+		}
+	}
+
+	public class ServiceActivationException : Exception
+	{
+		public ServiceActivationException(string message) : base(message)
+		{
 		}
 	}
 }

@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Billing;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework.Config;
 using Common.Tools;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using InternetInterface.Services;
 using Test.Support.Helpers;
 using Environment = NHibernate.Cfg.Environment;
 
@@ -16,7 +18,7 @@ namespace BananceChanger
 	{
 		static void Main(string[] args)
 		{
-			Init();
+			//Init();
 
 			//CreateWriteOffs();
 			//ZeroTarif();
@@ -26,7 +28,13 @@ namespace BananceChanger
 			//DonachislitKlientamUkogo();
 			//SmsHelper.SendMessage(string.Empty, "123");
 			//SendSmsIfNoSending();
-			DeleteWriteOffInNowDay();
+			//DeleteWriteOffInNowDay();
+			RunBilling();
+		}
+
+		public static void RunBilling()
+		{
+			new MainBilling().Run();
 		}
 
 		/*Удаляет списания за определенный день*/

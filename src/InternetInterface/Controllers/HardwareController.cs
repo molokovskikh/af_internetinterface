@@ -16,9 +16,9 @@ namespace InternetInterface.Controllers
 	[Helper(typeof(PaginatorHelper))]
 	[Helper(typeof(IpHelper))]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
-	public class	HardwareController : ARSmartDispatcherController
+	public class HardwareController : ARSmartDispatcherController
 	{
-		private readonly ILog _log = LogManager.GetLogger(typeof (HardwareController));
+		private readonly ILog _log = LogManager.GetLogger(typeof(HardwareController));
 
 		private string DelCommandAndHello(string info, string command)
 		{
@@ -30,12 +30,12 @@ namespace InternetInterface.Controllers
 		private string[] ResultInArray(string info, string command)
 		{
 			info = DelCommandAndHello(info, command);
-			return info.Replace("\r\n", string.Empty).Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
+			return info.Replace("\r\n", string.Empty).Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
 		}
 
 		public void PortInfo(uint endPoint)
 		{
-			var point = ClientEndpoints.Find(endPoint);
+			var point = ClientEndpoint.Find(endPoint);
 			PropertyBag["point"] = point;
 			PropertyBag["lease"] = Lease.Queryable.Where(l => l.Endpoint == point).FirstOrDefault();
 
@@ -64,16 +64,16 @@ namespace InternetInterface.Controllers
 				var terminalName = info.Substring(beginNameIndex, endNameIndex - beginNameIndex);
 				info = info.Remove(0, endNameIndex + command.Length + 3).Replace(terminalName + "#", string.Empty);
 
-				PropertyBag["Info"] = info.Split(new [] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries).Select(i=> 
+				PropertyBag["Info"] = info.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).Select(i =>
 					string.Format("<span style=\"margin-left:{0}px;\">", i.StartsWith("     ") ? 20 : 10) + i +
-					"</span>" +"<br/>").Implode(string.Empty);
+						"</span>" + "<br/>")
+					.Implode(string.Empty);
 
 				command = string.Format("sh int status | inc Fa0/{0}", port);
 				telnet.WriteLine(command);
 				var portIsActive = ResultInArray(telnet.Read(), command).Contains("connected");
 				//Проверяем, что порт активен
 				if (portIsActive) {
-
 					command = string.Format("show mac address-table interface fastEthernet 0/{0} | inc a0/{0}", port);
 					telnet.WriteLine(command);
 					var macInfo = ResultInArray(telnet.Read(), command);
@@ -105,8 +105,8 @@ namespace InternetInterface.Controllers
 					var counterInfo = telnet.Read();
 
 					PropertyBag["counterInfo"] =
-						DelCommandAndHello(counterInfo, command).TrimStart('\r', '\n').TrimEnd('\r', '\n').Split(new[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries).
-							Select(i => i.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries)).ToList();
+						DelCommandAndHello(counterInfo, command).TrimStart('\r', '\n').TrimEnd('\r', '\n').Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries)
+							.Select(i => i.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)).ToList();
 
 
 					command = string.Format("show interfaces fastEthernet 0/{0} counters errors", port);
@@ -114,8 +114,8 @@ namespace InternetInterface.Controllers
 					var errorCounterInfo = telnet.Read();
 
 					PropertyBag["errorCounterInfo"] =
-						DelCommandAndHello(errorCounterInfo, command).TrimStart('\r', '\n').TrimEnd('\r', '\n').Split(new[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries).
-							Select(i => i.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries)).ToList();
+						DelCommandAndHello(errorCounterInfo, command).TrimStart('\r', '\n').TrimEnd('\r', '\n').Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries)
+							.Select(i => i.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)).ToList();
 				}
 				else {
 					PropertyBag["Message"] = Message.Error("Соединение на порту отсутствует");

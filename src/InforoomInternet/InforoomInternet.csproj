@@ -1,7 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\ProjectLib.properties" Condition="Exists('..\ProjectLib.properties')" />
-  <PropertyGroup>
+	<ItemGroup>
+		<StyleCopAdditionalAddinPaths Include="..\..\lib\StyleCop">
+			<InProject>false</InProject>
+		</StyleCopAdditionalAddinPaths>
+	</ItemGroup>
+	<PropertyGroup>
+		<StyleCopTreatErrorsAsWarnings>False</StyleCopTreatErrorsAsWarnings>
+		<StyleCopOverrideSettingsFile>..\..\lib\StyleCop\Settings.StyleCop</StyleCopOverrideSettingsFile>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>
@@ -44,15 +51,14 @@
     <Reference Include="Castle.ActiveRecord.Web">
       <HintPath>..\..\lib\Castle.ActiveRecord.Web.dll</HintPath>
     </Reference>
+    <Reference Include="Castle.Components.Binder, Version=2.5.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL" />
     <Reference Include="Castle.Components.Validator, Version=2.5.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\..\lib\Castle.Components.Validator.dll</HintPath>
     </Reference>
     <Reference Include="Castle.Core, Version=2.5.1.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\..\lib\Castle.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.DynamicProxy2">
-      <HintPath>..\..\lib\Castle.DynamicProxy2.dll</HintPath>
-    </Reference>
+    <Reference Include="Castle.MonoRail.ActiveRecordSupport, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL" />
     <Reference Include="Castle.MonoRail.Framework, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\..\lib\Castle.MonoRail.Framework.dll</HintPath>
     </Reference>
@@ -68,8 +74,7 @@
     <Reference Include="Microsoft.CSharp">
       <Private>True</Private>
     </Reference>
-    <Reference Include="mysql.data, Version=6.3.5.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\mysql.data.dll</HintPath>
+    <Reference Include="mysql.data">
     </Reference>
     <Reference Include="NHibernate, Version=3.1.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <HintPath>..\..\lib\NHibernate.dll</HintPath>
@@ -446,10 +451,13 @@
     <None Include="Views\Main\Feedback.brail" />
     <None Include="Views\Main\MessageSended.brail" />
     <None Include="Views\Main\WarningPackageId.brail" />
+    <None Include="Views\Main\About.brail" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
+    <None Include="Views\PrivateOffice\AboutFriendAction.brail" />
     <None Include="Views\PrivateOffice\AboutSale.brail" />
+    <None Include="Views\PrivateOffice\BalanceInfo.brail" />
     <None Include="Views\PrivateOffice\DiactivateVoluntaryBlockin.brail" />
     <None Include="Views\PrivateOffice\Services.brail" />
     <None Include="Views\PrivateOffice\SmsNotification.brail" />
@@ -462,10 +470,11 @@
     <Compile Include="Controllers\EditorController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\MainController.cs" />
-    <Compile Include="Controllers\PrivateOffice.cs" />
+    <Compile Include="Controllers\PrivateOfficeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\AppHelper.cs" />
     <Compile Include="Initializers\ActiveRecord.cs" />
     <Compile Include="Logic\LoginLogic.cs" />
     <Compile Include="Models\Main.cs" />
@@ -496,6 +505,10 @@
     <None Include="Views\PrivateOffice\PostponedPayment.brail" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common.MySql\Common.MySql\Common.MySql.csproj">
+      <Project>{8A680813-C83B-497A-85E6-E8F07B7D7650}</Project>
+      <Name>Common.MySql</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common.Tools\Common.Tools\Common.Tools.csproj">
       <Project>{72AFCFE8-C9E9-45FA-9698-BEE896A517A3}</Project>
       <Name>Common.Tools</Name>
@@ -512,13 +525,14 @@
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
+	<Import Project="..\..\packages\StyleCop.MSBuild.4.7.35.0\tools\StyleCop.Targets" />
   <ProjectExtensions>
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>54040</DevelopmentServerPort>
+          <DevelopmentServerPort>60722</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

@@ -11,6 +11,16 @@ namespace InternetInterface.Models
 	[ActiveRecord("Houses", Schema = "internet", Lazy = true)]
 	public class House : ValidActiveRecordLinqBase<House>
 	{
+		public House()
+		{
+		}
+
+		public House(string street, int number)
+		{
+			Street = street;
+			Number = number;
+		}
+
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
@@ -63,13 +73,13 @@ namespace InternetInterface.Models
 		public virtual uint GetClientWithApNumber(int num)
 		{
 			return
-				Client.Queryable.Where(c => c.PhysicalClient.HouseObj == this && c.PhysicalClient.Apartment == num).
-					ToList().Select(c => c.Id).FirstOrDefault();
+				Client.Queryable.Where(c => c.PhysicalClient.HouseObj == this && c.PhysicalClient.Apartment == num)
+					.ToList().Select(c => c.Id).FirstOrDefault();
 		}
 
 		public virtual int GetSubscriberCount()
 		{
-			return PhysicalClients.Queryable.Where(p => p.HouseObj == this).Count();
+			return PhysicalClient.Queryable.Where(p => p.HouseObj == this).Count();
 		}
 
 		public virtual BypassHouse GetLastBypass()
@@ -88,7 +98,7 @@ namespace InternetInterface.Models
 		{
 			if (ApartmentCount == 0)
 				return 1;
-			return (double)(PhysicalClients.Queryable.Where(p => p.HouseObj == this).Count()) / ApartmentCount * 100;
+			return (double)(PhysicalClient.Queryable.Where(p => p.HouseObj == this).Count()) / ApartmentCount * 100;
 		}
 
 		public override string ToString()

@@ -23,7 +23,6 @@ namespace InternetInterface.Models
 		[BelongsTo("AccessCat")]
 		public virtual AccessCategories AccessCat { get; set; }
 
-
 		public static Boolean AccesPartner(string reduseRulesName)
 		{
 			return InitializeContent.Partner.AccesedPartner.Contains(reduseRulesName);
@@ -32,7 +31,7 @@ namespace InternetInterface.Models
 		public static IList<CategorieAccessSet> GetAccessPartner()
 		{
 			return FindAll(DetachedCriteria.For(typeof(CategorieAccessSet))
-									.Add(Restrictions.Eq("Categorie", InitializeContent.Partner.Categorie)));
+				.Add(Restrictions.Eq("Categorie", InitializeContent.Partner.Categorie)));
 		}
 
 		public override void SaveAndFlush()
@@ -47,5 +46,4 @@ namespace InternetInterface.Models
 			AccessCat.DeleteTo(Categorie);
 		}
 	}
-
 }

@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using InternetInterface.Controllers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using InternetInterface.Queries;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.SqlCommand;
@@ -13,55 +15,69 @@ namespace InternetInterface.AllLogic
 {
 	public class GetClientsLogic
 	{
-		public static string GetWhere(UserSearchProperties sp, ConnectedTypeProperties ct, ClientTypeProperties clT,
-		                              uint whoregister, uint tariff, string searchText, uint brigad, uint addtionalStatus)
+		public static string GetWhere(SeachFilter filter)
 		{
 			var _return = string.Empty;
-			if (whoregister != 0) {
-				_return += " and C.WhoRegistered = :whoregister or l.WhoRegistered = :whoregister";
-			}
+			if (!InitializeContent.Partner.IsDiller()) {
+				if (filter.statusType > 0)
+					_return += " and S.Id = :statusType";
 
-			if (tariff != 0) {
-				_return += " and P.Tariff = :tariff";
-			}
-			if (brigad != 0) {
-				_return += " and C.WhoConnected = :Brigad or l.WhoConnected = :Brigad";
-			}
-			if (addtionalStatus != 0) {
-				_return += " and C.AdditionalStatus = :addtionalStatus";
-			}
-			if ((ct.IsConnected()) || (ct.IsNoConnected())) {
-				_return += " and S.Connected = :Connected";
-			}
-			if (clT.IsPhysical()) {
-				_return += " and C.PhysicalClient is not null";
-			}
-			if (clT.IsLawyer()) {
-				_return += " and C.LawyerPerson is not null";
-			}
-			if (searchText != null) {
-				if (sp.IsSearchAuto()) {
-					return
-						String.Format(
-							@"
-WHERE LOWER(C.Name) like {0} or C.id like :SearchText or LOWER(co.Contact) like {0}",
-							":SearchText") + _return;
-				}
-				if (sp.IsSearchByFio()) {
-					return
-						String.Format(@"
-WHERE LOWER(C.Name) like {0} ", ":SearchText") + _return;
-				}
-				if (sp.IsSearchTelephone()) {
-					return String.Format(@"WHERE LOWER(co.Contact) like {0} ", ":SearchText") + _return;
+				if (filter.clientTypeFilter.IsPhysical())
+					_return += " and C.PhysicalClient is not null";
+
+				if (filter.clientTypeFilter.IsLawyer())
+					_return += " and C.LawyerPerson is not null";
+
+				if (filter.EnabledTypeProperties.IsDisabled())
+					_return += " and c.Disabled";
+
+				if (filter.EnabledTypeProperties.IsEnabled())
+					_return += " and c.Disabled = false";
+
+				if (!string.IsNullOrEmpty(filter.searchText)) {
+					if (filter.searchProperties.IsSearchAuto()) {
+						return
+							String.Format(
+								@"
+	WHERE
+	(LOWER(C.Name) like {0} or
+	C.id like {0} or
+	LOWER(co.Contact) like {0} or
+	LOWER(h.Street) like {0} or
+	LOWER(l.ActualAdress) like {0} )",
+								":SearchText") + _return;
+					}
+					if (filter.searchProperties.IsSearchAccount()) {
+						var id = 0u;
+						UInt32.TryParse(filter.searchText, out id);
+						if (id > 0)
+							return string.Format("where C.id = {0}", id);
+					}
+					if (filter.searchProperties.IsSearchByFio()) {
+						return
+							String.Format(@"
+	WHERE (LOWER(C.Name) like {0} )", ":SearchText") + _return;
+					}
+					if (filter.searchProperties.IsSearchTelephone()) {
+						return String.Format(@"WHERE (LOWER(co.Contact) like {0})", ":SearchText") + _return;
+					}
+					if (filter.searchProperties.IsSearchByAddress()) {
+						return String.Format(@"
+	WHERE (LOWER(h.Street) like {0} or
+	LOWER(l.ActualAdress) like {0})", ":SearchText") + _return;
+					}
 				}
 			}
 			else {
-				if (_return != string.Empty)
-					return "WHERE" + _return.Remove(0, 4);
-				return _return;
+				var id = 0u;
+				UInt32.TryParse(filter.searchText, out id);
+				if (id > 0) {
+					return string.Format("WHERE (c.Id = {0}) and (C.PhysicalClient is not null)", id);
+				}
+				else if (!string.IsNullOrEmpty(filter.searchText))
+					return "WHERE (LOWER(C.Name) like :SearchText) and (C.PhysicalClient is not null)";
 			}
-			return string.Empty;
+			return string.IsNullOrEmpty(_return) ? string.Empty : string.Format("WHERE {0}", _return.Remove(0, 4));
 		}
 	}
 }

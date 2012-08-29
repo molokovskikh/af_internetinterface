@@ -17,3 +17,6 @@
 		<%end %>
 	</tbody>
 </table>
+<p>
+	!{?commutator.Comment}
+</p>

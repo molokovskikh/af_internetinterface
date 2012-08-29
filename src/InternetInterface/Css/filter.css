@@ -1,0 +1,49 @@
+﻿.filter
+{
+	border:1px double Black;
+	width:700px;
+	background-color:White;
+	padding:10px;
+	margin: 0 auto;
+	margin-bottom: 20px;
+}
+	
+.filter h3, .form-sub-block h3
+{
+	border: 1px double #9A9999;
+	background: #cee8ce;
+	color: #4c4647;
+	font-weight: bold;
+	font-size: 100%;
+	padding: 10px;
+	margin: 0 0 15px 0;
+}
+
+.form-table {
+	margin-bottom: 15px;
+}
+
+.form-table td {
+	padding: 3px;
+}
+
+
+#on_line_clients_head th
+{
+	border:1px double black;
+	}
+
+.find_block
+{
+	width:500px;
+	background-color: White;
+	}
+
+.find_block td
+{
+	width:50%;
+	}
+.find_block td select
+{
+	width:200px;
+	}

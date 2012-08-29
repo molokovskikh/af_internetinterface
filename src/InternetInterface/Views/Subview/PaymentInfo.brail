@@ -1,43 +1,66 @@
-﻿<button type="button"  class="editBut slide" onclick="$('#PaymentTable').slideToggle('slow');"> Показать платежи клиента
-</button>
-<div id="PaymentTable" style="display:none">
-<%if PartnerAccessSet.AccesPartner("SSI"): %>
-<div style="clear:both;">
-<%if (Payments.Count == 0): %>
-				  <div class="flash">
-					 <div class="message error">
-					   <p>Платежи отсутствуют</p>
-					 </div>
-				  </div>
-<%else: %>
-<table class="table"  style="width: 100%; font-size: small;" align="left">
-	<thead>
-		<tr valign="top">
-			<th>Платеж зарегистрировал</th>
-			<th>Дата оплаты клиентом</th>
-			<th>Дата регистрации платежа</th>
-			<th>Сумма</th>
-		</tr>
-	</thead>
+﻿${app.Asset("payments.css")}
+${app.JS("validation.js")}
 
-	<tbody id="SearchResults" class="HighLightCurrentRow">
-	<% for i,item in enumerate(Payments): %>
-	<%if item.Sum != 0: %>
-		<tr id="Row${i}" style="background-color:${"#facada" if not item.BillingAccount};">
-		<%if item.Agent != null: %>
-			<td>${item.Agent.Name}</td>   
-			<%else: %>
-			<td></td>
-			<%end %>
-			<td>${item.PaidOn}</td>
-			<td>${item.RecievedOn}</td>
-			<td>${item.Sum.ToString(".00")}</td>
+<script type="text/javascript">
+	$(function () {
+		BackPaymentValidation();
+	});
+</script>
+
+<button type="button"  class="editBut slide" onclick="$('#PaymentTable').slideToggle('slow');">Платежи</button>
+<span id="itogo">Всего: ${paymentsSum.ToString("C")}</span>
+
+<div id="PaymentTable" style="display:none">
+<div style="clear:both;">
+	<% if (Payments.Count == 0): %>
+		<div class="flash">
+			<div class="message error">
+				<p>Платежи отсутствуют</p>
+			</div>
+		</div>
+	<% else: %>
+	<table class="table" style="width: 100%; font-size: small;" align="left">
+		<thead>
+			<tr>
+				<th></th>
+				<th>Платеж зарегистрировал</th>
+				<th>Дата оплаты клиентом</th>
+				<th>Дата регистрации платежа</th>
+				<th>Сумма</th>
+			</tr>
+		</thead>
+		<tbody id="SearchResults" class="HighLightCurrentRow">
+		<% for i, item in enumerate(Payments): %>
+			<tr id="Row${i}" class="${app.Style(item)}">
+				<td>
+					<form class="backPayment" method=post action="${siteroot}/Payments/${item.Id}/Cancel">
+						<input type="submit" class="cancelButton" onclick="changeCommentText();" value="Отменить" />
+						<input type="hidden" class="hiddenCommentText" name="comment" />
+					</form>
+				</td>
+				<td>${?item.Agent.Name}</td>
+				<td>${item.PaidOn}</td>
+				<td>${item.RecievedOn}</td>
+				<td>${item.Sum.ToString(".00")}</td>
+			</tr>
+		<% end %>
+			<tr>
+				<td>Причина:</td>
+				<td colspan=4> <input type=text name="paymentReason" id="paymentReason" on="changeCommentText(this);" /> <br />
+				<span id="paymentReasonMessage"></span>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<table class="table legend"">
+		<tr>
+			<td><div class="legend-mark virtual"></div></td>
+			<td>Бонусный платеж</td>
+			<td><div class="legend-mark not-processed"></div></td>
+			<td>Платеж не обработан</td>
 		</tr>
-		<%end %>
+	</table>
 	<% end %>
-	</tbody> 
-</table>
-<%end %>
 </div>
-<%end %>
 </div>

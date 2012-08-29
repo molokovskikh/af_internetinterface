@@ -1,11 +1,8 @@
-﻿
-
-using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Reflection;
 using Castle.ActiveRecord;
-using Castle.ActiveRecord.Framework.Config;
-using InforoomInternet.Initializers;
-using NHibernate.Cfg;
+using Common.MySql;
+using Common.Web.Ui.ActiveRecordExtentions;
+using InternetInterface.Helpers;
 using NUnit.Framework;
 
 namespace InforoomInternet.Test
@@ -16,29 +13,14 @@ namespace InforoomInternet.Test
 		[SetUp]
 		public void SetupFixture()
 		{
-			if (!ActiveRecordStarter.IsInitialized)
-			{
-				var configuration = new InPlaceConfigurationSource();
-				configuration.PluralizeTableNames = true;
-				configuration.Add(typeof(ActiveRecordBase),
-					new Dictionary<string, string> {
-						{Environment.Dialect, "NHibernate.Dialect.MySQLDialect"},
-						{Environment.ConnectionDriver, "NHibernate.Driver.MySqlDataDriver"},
-						{Environment.ConnectionProvider, "NHibernate.Connection.DriverConnectionProvider"},
-						{Environment.ConnectionStringName, "DB"},
-						{Environment.ProxyFactoryFactoryClass, "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle" },
-						{Environment.Hbm2ddlKeyWords, "none"},
-						//{Environment.ShowSql, "true"}
-					});
-				ActiveRecordStarter.Initialize(
-					new[] {
-						Assembly.Load("InforoomInternet"),
-						Assembly.Load("InforoomInternet.Test"),
-						Assembly.Load("InternetInterface")
-					},
-					configuration);
-				//ActiveRecord.SetupFilters();
-				//ActiveRecordStarter.UpdateSchema();
+			if (!ActiveRecordStarter.IsInitialized) {
+				ActiveRecordStarter.EventListenerComponentRegistrationHook += RemoverListner.Make;
+
+				ActiveRecordInitialize.Init(
+					ConnectionHelper.GetConnectionName(),
+					Assembly.Load("InforoomInternet"),
+					Assembly.Load("InforoomInternet.Test"),
+					Assembly.Load("InternetInterface"));
 			}
 		}
 	}

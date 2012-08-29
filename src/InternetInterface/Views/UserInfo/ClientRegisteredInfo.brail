@@ -243,7 +243,7 @@ div.WordSection1
   <%end %>
   <%end %>
   Тарифный план: <i style='mso-bidi-font-style:
-  normal'><u>${Client.Tariff.Name}<b style='mso-bidi-font-weight:normal'><o:p></o:p></b></u></i></p>
+  normal'><u>${?Client.Tariff.Name}<b style='mso-bidi-font-weight:normal'><o:p></o:p></b></u></i></p>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
   justify;line-height:normal'>Дополнительные услуги: </p>
   <table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0
@@ -438,7 +438,7 @@ div.WordSection1
   подключения: <i style='mso-bidi-font-style:normal'><u>г. ${Client.City} ул. ${Client.Street} д. ${Client.House} ${Client.CaseHouse} кв. ${Client.Apartment}</u></i></p>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
   justify;line-height:normal'>Тарифный план: <i style='mso-bidi-font-style:
-  normal'><u>${Client.Tariff.Name}<b style='mso-bidi-font-weight:normal'><o:p></o:p></b></u></i></p>
+  normal'><u>${?Client.Tariff.Name}<b style='mso-bidi-font-weight:normal'><o:p></o:p></b></u></i></p>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
   justify;line-height:normal'>Лицевой счет № <i style='mso-bidi-font-style:
   normal'><u>${AccountNumber}<b style='mso-bidi-font-weight:

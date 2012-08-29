@@ -23,7 +23,7 @@ namespace InternetInterface.Models
 		[
 			Property,
 			ValidateNonEmpty("Введите номер телефона"),
-			ValidateRegExp(@"^(([0-9]{1})-([0-9]{3})-([0-9]{3})-([0-9]{2})-([0-9]{2}))", "Ошибка фотмата телефонного номера: мобильный телефн (8-***-***-**-**))")
+			ValidateRegExp(@"^(([0-9]{1})-([0-9]{3})-([0-9]{3})-([0-9]{2})-([0-9]{2}))", "Ошибка формата телефонного номера: мобильный телефн (8-***-***-**-**))")
 		]
 		public virtual string ApplicantPhoneNumber { get; set; }
 
@@ -109,7 +109,7 @@ namespace InternetInterface.Models
 
 		public virtual string GetValidationError(string field)
 		{
-			var errors =  GetValidateionErrors();
+			var errors = GetValidateionErrors();
 			return ((ArrayList)errors[GetType().GetProperty(field)])[0].ToString();
 		}
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Web;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
@@ -8,6 +9,7 @@ using Common.Web.Ui.Helpers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models.Universal;
 using NHibernate;
+using NHibernate.Linq;
 
 namespace InternetInterface.Models
 {
@@ -19,46 +21,54 @@ namespace InternetInterface.Models
 		FeedBack = 5
 	}
 
-
-	public static class HiberWorker
+	public enum UniversalAppealType
 	{
-		private static ISession _currentSession;
-		private static ISessionFactoryHolder _holder;
+		Appeal,
+		Service
+	}
 
-		private static ISession CurrentSession
+	public class UniversalAppeal
+	{
+		public string Text;
+		public DateTime Date;
+		public string Partner;
+		public List<UniversalAppeal> SubFields;
+		public UniversalAppealType Type;
+		public AppealType AppealType;
+
+		public string Color
 		{
 			get
 			{
-				if (_currentSession == null) {
-					_holder = ActiveRecordMediator.GetSessionFactoryHolder();
-					_currentSession = _holder.CreateSession(typeof (ActiveRecordBase));
-				}
-				return _currentSession;
+				if (Type == UniversalAppealType.Service)
+					return "#C8E8CB";
+				if (AppealType == AppealType.User)
+					return "#f5efdf";
+				if (AppealType == AppealType.System)
+					return "#e3e7f7";
+				if (AppealType == AppealType.FeedBack)
+					return "#FCD9D9";
+				return string.Empty;
 			}
-		}
-
-		private static T Do<T>(Func<ISession, T> action)
-		{
-			T result;
-			try {
-				result = action(CurrentSession);
-			}
-			finally {
-				_holder.ReleaseSession(_currentSession);
-			}
-			return result;
-		}
-
-		public static T GetObject<T>(object id)
-		{
-			return Do(s => s.Get<T>(id));
 		}
 	}
 
-
-	[ActiveRecord("Appeals", Schema = "internet", Lazy = true)]
+	[ActiveRecord(Schema = "internet", Lazy = true)]
 	public class Appeals : ValidActiveRecordLinqBase<Appeals>
 	{
+		public Appeals()
+		{
+		}
+
+		public Appeals(string appeal, Client client, AppealType appealType)
+		{
+			Appeal = appeal;
+			Client = client;
+			AppealType = appealType;
+			Date = DateTime.Now;
+			Partner = InitializeContent.Partner;
+		}
+
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
@@ -82,24 +92,52 @@ namespace InternetInterface.Models
 			return AppealHelper.GetTransformedAppeal(Appeal);
 		}
 
+		public static List<UniversalAppeal> GetAllAppeal(ISession session, Client client, AppealType Type)
+		{
+			Expression<Func<Appeals, bool>> predicate;
+			if (Type == AppealType.All)
+				predicate = a => a.Client == client;
+			else {
+				predicate = a => a.Client == client && a.AppealType == Type;
+			}
+			var appeals = Queryable.Where(predicate).ToList().Select(a => new UniversalAppeal {
+				Date = a.Date,
+				Partner = a.Partner != null ? a.Partner.Name : string.Empty,
+				Text = a.GetTransformedAppeal(),
+				Type = UniversalAppealType.Appeal,
+				AppealType = a.AppealType
+			}).ToList();
+			if (Type == AppealType.All) {
+				var serviceRequests = session.Query<ServiceRequest>().Where(s => s.Client == client);
+				var service = serviceRequests.ToList().Select(s => new UniversalAppeal {
+					Date = s.RegDate,
+					Partner = s.Registrator != null ? s.Registrator.Name : string.Empty,
+					Text = String.Format("Сервисная заявка №{0} ", s.Id) + s.GetDescription(),
+					Type = UniversalAppealType.Service,
+					SubFields = s.Iterations.Count > 0 ?
+						new List<UniversalAppeal>(s.Iterations.Select(i => new UniversalAppeal {
+							Date = i.RegDate,
+							Partner = i.Performer != null ? i.Performer.Name : string.Empty,
+							Text = i.GetDescription(),
+							Type = UniversalAppealType.Service
+						})) : null
+				}).ToList();
+				appeals.AddRange(service);
+			}
+			return appeals.OrderByDescending(a => a.Date).ToList();
+		}
+
 		public static void CreareAppeal(string message, Client client, AppealType type)
 		{
-			new Appeals
-			{
-				Appeal = message,
-				Client = client,
-				AppealType = type,
-				Date = DateTime.Now,
-				Partner = InitializeContent.Partner
-			}.Save();
+			new Appeals(message, client, type).Save();
 		}
 
 		public virtual string Type()
 		{
 			var type = string.Empty;
-			if (AppealType == Models.AppealType.User)
+			if (AppealType == AppealType.User)
 				type = "Пользовательское";
-			if (AppealType == Models.AppealType.System)
+			if (AppealType == AppealType.System)
 				type = "Системное";
 			return type;
 		}

@@ -45,13 +45,11 @@
 			<td><a href="../Search/Redirect?filter.ClientCode=${item.Id}">${item.ForSearchId(filter.searchText)}</a></td>
 			<td> ${item.ForSearchName(filter.searchText)}</td>
 			<%if CategorieAccessSet.AccesPartner("SSI"): %>
-				<%if item.PhysicalClient != null: %>
-				<td>ул. ${item.PhysicalClient.Street} д. ${item.PhysicalClient.House} корп. ${item.PhysicalClient.CaseHouse} кв. ${item.PhysicalClient.Apartment} Подъезд ${item.PhysicalClient.Entrance} Этаж ${item.PhysicalClient.Floor}</td>
-				<%else : %>
-				<td>${item.LawyerPerson.ActualAdress}</td>
-				<%end %>
+				<td>
+					${itemInfo.ForSearchAddress(filter.searchText)}
+				</td>
+				<td>${item.ForSearchContact(filter.searchText)}</td>
 			<%end %>
-			<td>${item.ForSearchContact(filter.searchText)}</td>
 			<%if CategorieAccessSet.AccesPartner("SSI"): %>
 				<%if item.PhysicalClient != null: %>
 				<td>${item.RegDate}</td>
@@ -60,7 +58,7 @@
 				<%end %>
 			<%end %>
 			<%if item.PhysicalClient != null:  %>
-			<td>${item.PhysicalClient.Tariff.Name}</td>
+			<td>${?item.PhysicalClient.Tariff.Name}</td>
 			<%else: %>
 				<% if item.LawyerPerson.Tariff != null:%>
 				<td>${item.LawyerPerson.Tariff} руб.</td>
@@ -86,8 +84,8 @@
 				<%end %>
 			<%end %>
 		</tr>
-	<% end %>   
-	  <tr>
+	<% end %>
+	<tr>
 		<td colspan=8>
 		<div class="Paginator">
 			 ${PaginatorHelper.ShowPaginator()}

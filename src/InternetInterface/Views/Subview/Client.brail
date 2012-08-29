@@ -1,16 +1,38 @@
-﻿<script type="text/javascript">
+﻿${app.Asset("client.css")}
+
+<script type="text/javascript">
 function registerHouse() {
-var req = {};
-req.Street = $('#house_Street').val();
-req.Number = $('#house_Number').val();
-req.Case = $('#house_Case').val();
-$.post("../Register/RegisterHouse", req, function (data) {
-alert("Зарегистрировано");
-$('#houses_select').append($('<option value="' + data.Id + '">' + data.Name + '</option>'));
-$('#register_house').trigger('reveal:close');
-});
+	var req = {};
+	req.Street = $('#house_Street').val();
+	req.Number = $('#house_Number').val();
+	req.Case = $('#house_Case').val();
+	$.post("../Register/RegisterHouse", req, function (data) {
+		alert("Зарегистрировано");
+		$('#houses_select').append($('<option value="' + data.Id + '">' + data.Name + '</option>'));
+		$('#register_house').trigger('reveal:close');
+	});
 }
+
+$(function () {
+	$('#clientEditForm').validate({
+		errorElement: "div",
+		errorLabelContainer: "#errorContainerComment"
+	});
+	$('#ChStatus').change(function () {
+		if ($('#ChStatus option:selected').attr("id") == "Dissolved") {
+			$('#comment').rules("add", { required: true,
+				messages: {
+					required: "Введите комментарий"
+				}
+			});
+		}
+		else {
+			$('#comment').rules("remove", "required");
+		}
+	});
+});
 </script>
+
 <table class="table" style="width:100%; " border="0" id="EditTable"> 
 <tr>
 	<th colspan="3">
@@ -85,25 +107,11 @@ $('#register_house').trigger('reveal:close');
 	</td>
 </tr>
 <%end %>
-<tr>
-	<td >
-		Канал продаж</td>
-	<td>
-		<select name="client.WhenceAbout">
-			<option value="Контактный центр" ${"selected" if client.WhenceAbout == "Контактный центр"}>Контактный центр</option>
-			<option value="Агенты" ${"selected" if client.WhenceAbout == "Агенты"}>Агенты</option>
-			<option value="Офис продаж" ${"selected" if client.WhenceAbout == "Офис продаж"}>Офис продаж</option>
-			<option value="Сайт" ${"selected" if client.WhenceAbout == "Сайт"}>Сайт</option>
-			<option value="Диллер" ${"selected" if client.WhenceAbout == "Диллер"}>Диллер</option>
-			<option value="Другое" ${"selected" if client.WhenceAbout == "Другое"}>Другое</option>
-		</select>
-	 </td>
-</tr>
 </table>
 <table class="table" border="0" id="AdressTable" style="margin-bottom: 15px;"> 
 <thead>
 <th colspan=14>Адрес</th>
-</thead>                         
+</thead>
 <tbody>
 <tr>
 	<td style="width:200px;">
@@ -214,6 +222,14 @@ $('#register_house').trigger('reveal:close');
 		</tr>
 	</tbody>
 </table>
+
+<% OutputSubView("/Templates/IpTv") %>
+<% OutputSubView("/Templates/Internet") %>
+
+<% if PartnerAccessSet.AccesPartner("SSI")\
+	and IsDefined("Editing")\
+	and Editing: %>
+
 <table class="table">
 	<thead>
 		<tr>
@@ -223,44 +239,32 @@ $('#register_house').trigger('reveal:close');
 	<tbody>
 		<tr>
 			<td>
-				<b>Тариф</b>
-			</td>
-			<td colspan=2>
-				<select name="tariff" id="ChTariff" style="width: 95%;">
-				<%for i, Tariff in enumerate(Tariffs): %>
-					<option id="Tarif${Tariff.Id}" value="${Tariff.Id}" ${"selected" if (Tariff.Id == ChTariff)}> ${Tariff.GetFullName()} </option>
-				<% end %>
-				</select>
-			</td>
-		</tr>
-		<%if PartnerAccessSet.AccesPartner("SSI"): %>
-		<%if IsDefined("Editing"): %>
-		<%if Editing: %>
-		<tr>
-			<td>
 				Статус
 			</td>
 			<td>
 				<select name="status" id="ChStatus" style="width: 95%;">
-				<%for i, Status in enumerate(Statuss): %>
-					<%if Status.ManualSet: %>
-						<option id="Status${Status.Id}" value="${Status.Id}" ${"selected" if (Status.Id == ChStatus)}> ${Status.Name} </option>
+				<% for i, Status in enumerate(Statuss): %>
+					<% if Status.ManualSet: %>
+						<option id="${Status.ShortName}" value="${Status.Id}" ${"selected" if (Status.Id == ChStatus)}> ${Status.Name} </option>
 					<% end %>
-				<%end %>
+				<% end %>
 				</select>
 			</td>
 			<td>
 				<%if IsDefined("statusCanChanged"): 
-					output  WriteMessageError(statusCanChanged)
+					output WriteMessageError(statusCanChanged)
 				end %>
 			</td>
 		</tr>
 		<tr>
 			<td>Отправлять СМС уведомления </td>
-			<td><input type=checkbox id="sendSmsNot" name="SendSmsNotifocation" ${"checked" if SendSmsNotifocation}/></td>
+			<td colspan=2>${FormHelper.CheckboxField("_client.SendSmsNotifocation")}</td>
 		</tr>
-		<%end %>
-		<%end %>
-		<%end %>
+		<tr>
+			<td>Задача в Redmine для клиента</td>
+			<td>${FormHelper.TextField("_client.RedmineTask")}</td>
+			<td>${app.GetValidationError("_client.RedmineTask")}</td>
+		</tr>
 	</tbody>
 </table>
+<% end %>

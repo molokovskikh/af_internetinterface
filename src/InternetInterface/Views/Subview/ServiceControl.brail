@@ -1,0 +1,64 @@
+﻿<script type="text/javascript">
+	$(function () {
+		$(".accordion").accordion({
+			collapsible: true,
+			autoHeight: false
+		});
+		$('.date-pick').datepicker().change(function () {
+			$('.startDate_local').val($(this).val());
+		});
+	});
+</script>
+<div id="myModal_active" class="reveal-modal"> 
+	<table class="table">
+		<thead>
+			<tr>
+				<th colspan=2>
+					Назначить услуги
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+		<tr>
+			<td>
+			<div class="accordion" style="font-size:1em;">
+			<% for i, service in enumerate(services): %>
+			<%if service.InterfaceControl: %>
+				<% if service.CanActivateInWeb(_client): %>
+					<h4><a href="#"> ${service.HumanName} </a></h4>
+					<div>
+						<form method=post action="${siteroot}/UserInfo/ActivateService">
+							<input type="hidden" name="clientId" value="${ClientCode}" />
+							<input type="hidden" name="serviceId" value="${service.Id}" />
+							<table>
+								<tbody>
+									${service.GetParameters()}
+								</tbody>
+							</table>
+							<button class="button save" style="margin-top:15px;" value="Назначить">Активировать</button>
+						</form>
+					</div>
+				<%else: %>
+					<%if service.ActivatedForClient(_client): %>
+						<h4><a href="#"> ${service.HumanName} </a> </h4>
+						<div>
+							<form method=post action="${siteroot}/UserInfo/DiactivateService">
+								<input type="hidden" name="clientId" value="${ClientCode}" />
+								<input type="hidden" name="serviceId" value="${service.Id}" />
+								<button class="button save" style="margin-top:15px;" value="Назначить">Деактивировать</button>
+							</form>
+						</div>
+					<%else: %>
+						<h4><a href="#"> ${service.HumanName} </a> </h4>
+						<div>Активация услуги  невозможна</div>
+					<%end %>
+				<%end %>
+			<%end %>
+			<%end %>
+			</div>
+			</td>
+			</tr>
+		</tbody>
+	</table>
+<a class="close-reveal-modal">х</a>
+</div> 

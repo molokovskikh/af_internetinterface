@@ -1,56 +1,41 @@
 ﻿using System.ComponentModel;
 
-
 namespace InternetInterface.Models
 {
-	/*public enum AppealInPropType
-	{
-		[Description("Пользовательские")]
-		User,
-		[Description("Системные")]
-		System,
-	}*/
-
 	public enum SearchUserBy
 	{
-		[Description("Автоматически")]
-		Auto,
-		[Description("ФИО")]
-		ByFio,
-		[Description("Паспортные данные")]
-		ByPassportSet,
-		[Description("Номер счета")]
-		SearchAccount,
-		[Description("Номер телефона")]
-		TelNum
+		[Description("Автоматически")] Auto,
+		[Description("ФИО")] ByFio,
+		[Description("Паспортные данные")] ByAddress,
+		[Description("Номер счета")] SearchAccount,
+		[Description("Номер телефона")] TelNum
 	}
 
 	public enum TypeChangeBalance
 	{
-		[Description("Согласно тарифу")]
-		ForTariff,
-		[Description("Другая сумма")]   
-		OtherSumm,
+		[Description("Согласно тарифу")] ForTariff,
+		[Description("Другая сумма")] OtherSumm,
 	}
 
 	public enum ForSearchClientType
 	{
-		[Description("Физические лица")]
-		Physical,
-		[Description("Юридические лица")]
-		Lawyer,
-		[Description("Все")]
-		AllClients
+		[Description("Физические лица")] Physical,
+		[Description("Юридические лица")] Lawyer,
+		[Description("Все")] AllClients
 	}
 
 	public enum ConnectedType
 	{
-		[Description("Подключенных")]
-		Connected,
-		[Description("Не подключенных")]
-		NoConnected,
-		[Description("Всех")]
-		AllConnected
+		[Description("Подключенных")] Connected,
+		[Description("Не подключенных")] NoConnected,
+		[Description("Всех")] AllConnected
+	}
+
+	public enum EndbledType
+	{
+		[Description("Подключенных")] Enabled,
+		[Description("Не подключенных")] Disabled,
+		[Description("Всех")] All
 	}
 
 	public class ClientTypeProperties
@@ -93,18 +78,28 @@ namespace InternetInterface.Models
 		}
 	}
 
-	public class ChangeBalaceProperties
+	public class EnabledTypeProperties
 	{
-		public TypeChangeBalance ChangeType { get; set; }
-
-		public bool IsForTariff()
+		public EnabledTypeProperties()
 		{
-			return ChangeType == TypeChangeBalance.ForTariff;
+			Type = EndbledType.All;
 		}
 
-		public bool IsOtherSumm()
+		public EndbledType Type { get; set; }
+
+		public bool IsEnabled()
 		{
-			return ChangeType == TypeChangeBalance.OtherSumm;
+			return Type == EndbledType.Enabled;
+		}
+
+		public bool IsDisabled()
+		{
+			return Type == EndbledType.Disabled;
+		}
+
+		public bool IsAll()
+		{
+			return Type == EndbledType.All;
 		}
 	}
 
@@ -146,7 +141,7 @@ namespace InternetInterface.Models
 
 		public bool IsSearchAuto()
 		{
-			return SearchBy == SearchUserBy.Auto;  
+			return SearchBy == SearchUserBy.Auto;
 		}
 
 		public bool IsSearchByFio()
@@ -154,9 +149,9 @@ namespace InternetInterface.Models
 			return SearchBy == SearchUserBy.ByFio;
 		}
 
-		public bool IsSearchByPassportSet()
+		public bool IsSearchByAddress()
 		{
-			return SearchBy == SearchUserBy.ByPassportSet;
+			return SearchBy == SearchUserBy.ByAddress;
 		}
 
 		public bool IsSearchAccount()

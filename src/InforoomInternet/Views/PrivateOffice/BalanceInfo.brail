@@ -1,0 +1,8 @@
+﻿<h2>Подробная информация о балансе</h2>
+<div class="text">
+	<p>
+		<h3>Ваш баланс составляет ${client.Balance}. </h3>
+		<h3>Из этой суммы ${client.VirtualBalance.ToString("0.00")} бонусов. </h3>
+		<h3>И ${client.MoneyBalance.ToString("0.00")} руб. денежных средств. </h3>
+	</p>
+</div>

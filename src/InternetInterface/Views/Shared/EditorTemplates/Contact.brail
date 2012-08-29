@@ -1,0 +1,13 @@
+﻿<tr>
+	<td>
+		<input type=hidden value="${model.Value.Id}" name="${model.Target}.Id" />
+		<input type=text class="telephoneField" value="${model.Value.HumanableNumber}" name="${model.Target}.Text" />
+	</td>
+	<td class="toSelectList">
+		<% component ContactTypeList, { "name" : model.Target, "cintactId" : model.Value.Id} %>
+	</td>
+	<td>
+		${app.Edit("${model.Target}.ContactName")}
+	</td>
+	<td><a href="${siteroot}/UserInfo/DeleteContact?contactId=${model.Value.Id}">Удалить</a></td>
+</tr>

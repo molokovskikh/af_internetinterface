@@ -1,25 +1,12 @@
-﻿<style type="text/css">
-	#back   
-	{
-		width:500px;
-		height:300px;
-		background-color:White;
-		border-style:double;
-		border-width:1px;
-		 }
-		 #modalTable
-		 {
-			 min-width:0px;
-			 }
-</style>
+﻿${app.CSS("Modal.css")}
 <a class="close-reveal-modal">&#215;</a> 
 <div id="back">
+<form class="form appeal" method="post" action="${siteroot}/UserInfo/Refused">
 <table class="table" id="modalTable">
 	<thead>
 		<th colspan="3">Причина отказа</th>
 	</thead>
 	<tbody>
-		<form class="form appeal" method="post" action="${siteroot}/UserInfo/Refused">
 		<input type="hidden" name="ClientID" value="${ClientCode}" />
 			<tr>
 				<td>
@@ -44,7 +31,7 @@
 					<img alt="Save" src="../Images/tick.png">Зарегистрировать</button>
 				</td>
 			</tr>
-		</form>
 	</tbody>
 </table>
+</form>
 </div>

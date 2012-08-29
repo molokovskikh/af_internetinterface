@@ -1,10 +1,4 @@
-﻿<script type="text/javascript">
-	Date.format = 'dd.mm.yyyy';
-	$(function () {
-		$('.date_field').datepicker();
-	});
-</script>
-<div style="width:600px; margin: 0 auto; ">
+﻿<div style="width:600px; margin: 0 auto; ">
 <form action="${Siteroot}\UserInfo\ShowAppeals" method=get>
 <table style="border: 1px solid #AAA; background-color:White;" class="table">
 	<thead>

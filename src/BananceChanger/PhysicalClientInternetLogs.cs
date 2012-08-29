@@ -18,7 +18,7 @@ namespace BananceChanger
 		public virtual DateTime LogTime { get; set; }
 
 		[BelongsTo]
-		public virtual PhysicalClients ClientId { get; set; }
+		public virtual PhysicalClient ClientId { get; set; }
 
 		[Property]
 		public virtual string OperatorName { get; set; }

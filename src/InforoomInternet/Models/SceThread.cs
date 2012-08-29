@@ -43,6 +43,12 @@ namespace InforoomInternet.Models
 		{
 		}
 
+		public override void Start()
+		{
+			base.Start();
+			Thread.IsBackground = true;
+		}
+
 		public override void Error(Exception e)
 		{
 			_log.Error(e.Message);
@@ -53,12 +59,17 @@ namespace InforoomInternet.Models
 	{
 		private static List<UnknownClientInfo> _info = new List<UnknownClientInfo>();
 		private static Mutex _mutex = new Mutex();
+#if !DEBUG
 		private static int _clearInterval = int.Parse(ConfigurationManager.AppSettings["clearInterval"]);
 		private static RepeatableEntity _clearCommand = new RepeatableEntity(ClearList, _clearInterval);
+#endif
 
 		static ClientData()
 		{
+			int a = 1; // для stylecop
+#if !DEBUG
 			_clearCommand.Start();
+#endif
 		}
 
 		private static void ClearList()
@@ -68,14 +79,15 @@ namespace InforoomInternet.Models
 
 		public static void StopClearing()
 		{
+#if !DEBUG
 			_clearCommand.Stop();
+#endif
 		}
 
 		public static UnknownClientStatus Get(uint client)
 		{
 			_mutex.WaitOne();
-			try
-			{
+			try {
 				var info = GetInfo(client);
 				if (info == null)
 					return UnknownClientStatus.NoInfo;
@@ -89,9 +101,8 @@ namespace InforoomInternet.Models
 		public static UnknownClientInfo GetInfo(uint client)
 		{
 			_mutex.WaitOne();
-			try
-			{
-				return _info.Where(i => i.Client == client).FirstOrDefault();
+			try {
+				return _info.FirstOrDefault(i => i.Client == client);
 			}
 			finally {
 				_mutex.ReleaseMutex();
@@ -101,21 +112,17 @@ namespace InforoomInternet.Models
 		public static void Set(uint client, UnknownClientStatus status, int? iteration)
 		{
 			_mutex.WaitOne();
-			try
-			{
-				var info = _info.Where(i => i.Client == client).FirstOrDefault();
-				if (info == null)
-				{
-					_info.Add(new UnknownClientInfo
-					{
+			try {
+				var info = _info.FirstOrDefault(i => i.Client == client);
+				if (info == null) {
+					_info.Add(new UnknownClientInfo {
 						Client = client,
 						Status = status,
 						UpdateDate = DateTime.Now,
 						Interation = iteration
 					});
 				}
-				else
-				{
+				else {
 					info.Status = status;
 					info.UpdateDate = DateTime.Now;
 					info.Interation = iteration;
@@ -168,10 +175,8 @@ namespace InforoomInternet.Models
 		{
 			_client = _lease.Endpoint.Client.Id;
 			for (int i = 0; i < IterationCount; i++) {
-				try
-				{
+				try {
 #if DEBUG
-					//Thread.Sleep(800);
 					Thread.Sleep(40);
 					if (i < 70)
 						throw new Exception();

@@ -1,4 +1,4 @@
-a:link, a:visited { color: #07b; text-decoration: none; }
+a:link, a:visited { color: #0a5d01; text-decoration: none; }
 a, a:hover, a:active { color: #d30; }
 h1, h2, h3 {color: #444}
 
@@ -284,16 +284,21 @@ input.checkbox {
 
 .table th 
 {
-  border: 1px double #9a9999;
-  background: #cfe5f0;
+  border: 1px double #0a5d01;
+  background: #cee8ce;
   color: #625a5b;
   font-weight:normal;
   padding:3px;
 }
 
+.table th.alt
+{
+  background: #f0efcf;
+}
+
 .menuItem th
 {
-	background-color:#dbeaf0;
+	background-color:#dbf0dc;
 	}
 			
 .menuItem th:hover
@@ -304,7 +309,7 @@ input.checkbox {
 	
 .submenu th
 {
-	border-color:#7dbcd7;
+	border-color:#0a5d01;
 	padding-top:0px;
 	padding-bottom:0px;
 	}
@@ -312,7 +317,7 @@ input.checkbox {
 .editBut
 {
 	padding:3px 10px 3px 7px;
-	background-color: #dbeaf0;
+	background-color: #cee8ce;
 	border:1px solid #bfbfbf;
 	cursor:pointer;
 	line-height: 1.3em;
@@ -321,8 +326,7 @@ input.checkbox {
 		
 .EmptyData
 {
-	border: 1px solid #7dbcd7;
-	background-color: #dbeaf0;
+	background-color: #cee8ce;
 	text-align: center;
 	font-size: 14px;
 	font-weight: bold;
@@ -344,8 +348,9 @@ input.checkbox {
 
 #itogo
 {
-	color:#004f70;
+	color:#1f5800;
 	font-size:16px;
+	font-weight: bold;
 }
 
 .table th a.toggle {
@@ -363,7 +368,12 @@ input.checkbox {
 }
 
 .table td {
-  border-bottom: 1px solid #AAA;
+  border: 1px solid #AAA;
+  border-collapse: collapse;
+}
+
+.table td.small {
+	width: 50px;
 }
 
 /* forms */
@@ -409,13 +419,13 @@ input.checkbox {
 /* flash-messages */
 .flash
 {
-	margin-top: 10px;
-	margin-bottom: 30px;
-	margin-left: 30%;
+	margin: 0 auto;
 	width: 30%;
 	height: 20px;
 	text-align: center;
 	font-size: 14px;
+	margin-top: 15px;
+	margin-bottom: 25px;
 	/*font-weight: bold;*/
 }
 
@@ -443,7 +453,7 @@ input.checkbox {
   padding: 10px;
 }
 .flash .warning {
-  border: 1px solid #fffaaa;
+  border: 1px solid #dfd537;
   background-color: #ffffcc;
 }
 .flash .notice {
@@ -494,4 +504,37 @@ div.backGround.table.td  {
 
 #serviceTableInClient th {
 	text-align:center;
+}
+
+table .filter_front {
+	width:96%;
+	height: 80px;
+	margin: 10px;
+}
+
+table .filter_front thead td{
+	padding: 5px;
+	width: 50%;
+}
+
+.hidden {
+	display:none;
+}
+
+#statTable {
+	float:left;
+	background-color: white;
+	margin: 5px;
+	border: 1px double black;
+	padding: 10px;
+	color: #5a5b5b;
+	width: 500px;
+}
+
+#statTable span {
+	color: black;
+}
+
+#searchPositionTable {
+	margin-left: -400px;
 }

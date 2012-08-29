@@ -14,58 +14,10 @@ using Castle.ActiveRecord.Framework;
 using Castle.Components.Validator;
 using Common.Tools;
 using Common.Web.Ui.Helpers;
+using Common.Web.Ui.MonoRailExtentions;
 
 namespace InternetInterface.Models
 {
-	public class GreaterThanZeroValidator : AbstractValidator
-	{
-		public GreaterThanZeroValidator()
-		{
-			ErrorMessage = "Значение должно быть больше нуля";
-		}
-
-		public override void ApplyBrowserValidation(BrowserValidationConfiguration config,
-			InputElementType inputType,
-			IBrowserValidationGenerator generator,
-			IDictionary attributes,
-			string target)
-		{
-			base.ApplyBrowserValidation(config, inputType, generator, attributes, target);
-			generator.SetDigitsOnly(target, BuildErrorMessage());
-		}
-
-		public override bool IsValid(object instance, object fieldValue)
-		{
-			if (fieldValue != null && !(fieldValue.ToString() == ""))
-			{
-				decimal num;
-				if (!decimal.TryParse(fieldValue.ToString(), out num))
-					return false;
-
-				return num > 0;
-			}
-			return true;
-		}
-
-		public override bool SupportsBrowserValidation
-		{
-			get
-			{
-				return true;
-			}
-		}
-	}
-
-	public class ValidateGreaterThanZero : AbstractValidationAttribute
-	{
-		public override IValidator Build()
-		{
-			var validator = new GreaterThanZeroValidator();
-			ConfigureValidatorMessage(validator);
-			return validator;
-		}
-	}
-
 	[ActiveRecord(Schema = "Billing", Table = "Recipients")]
 	public class Recipient : ActiveRecordLinqBase<Recipient>
 	{
@@ -132,25 +84,17 @@ namespace InternetInterface.Models
 		public string Inn { get; set; }
 	}
 
-	/*public interface IPayer
-	{
-		uint Id { get; set; }
-		Recipient Recipient { get; set; }
-		string INN { get; set; }
-		string Name { get; set; }
-	}*/
-
 	[ActiveRecord("BankPayments", Schema = "Internet")]
-	public class BankPayment : ActiveRecordLinqBase<BankPayment> //: BalanceUpdater<Payment>
+	public class BankPayment : ActiveRecordLinqBase<BankPayment>
 	{
-		public BankPayment(LawyerPerson payer, DateTime payedOn, decimal sum)
+		public BankPayment(Client payer, DateTime payedOn, decimal sum)
 			: this(payer)
 		{
 			Sum = sum;
 			PayedOn = payedOn;
 		}
 
-		public BankPayment(LawyerPerson payer)
+		public BankPayment(Client payer)
 			: this()
 		{
 			Payer = payer;
@@ -194,8 +138,8 @@ namespace InternetInterface.Models
 
 		//все что выше получается из выписки
 		//дата занесения платежа
-		[BelongsTo(Column = "PayerId", Cascade = CascadeEnum.SaveUpdate)/*, ValidateNonEmpty("Обязательно укажите плательщика")*/]
-		public virtual LawyerPerson Payer { get; set; }
+		[BelongsTo(Column = "PayerId", Cascade = CascadeEnum.SaveUpdate) /*, ValidateNonEmpty("Обязательно укажите плательщика")*/]
+		public virtual Client Payer { get; set; }
 
 		[BelongsTo(Column = "RecipientId")]
 		public virtual Recipient Recipient { get; set; }
@@ -205,15 +149,6 @@ namespace InternetInterface.Models
 
 		[Property, Description("Комментарий оператора")]
 		public string OperatorComment { get; set; }
-
-		/*[BelongsTo(Cascade = CascadeEnum.All)]
-		public Advertising Ad { get; set; }*/
-
-		/*[Property]
-		public bool ForAd { get; set; }
-
-		[Property, ValidateDecimal]
-		public decimal? AdSum { get; set; }*/
 
 		public bool UpdatePayerInn { get; set; }
 
@@ -228,36 +163,31 @@ namespace InternetInterface.Models
 				|| PayerClient == null)
 				return "";
 
-			//var payers = ActiveRecordLinq.AsQueryable<IPayer>().Where(p => p.INN == PayerClient.Inn).ToList();
 			var payers = GetPayerForInn(PayerClient.Inn);
-			if (payers.Count == 0)
-			{
+			if (payers.Count == 0) {
 				return String.Format("Не удалось найти ни одного платильщика с ИНН {0}", PayerClient.Inn);
 			}
-			else if (payers.Count == 1)
-			{
+			else if (payers.Count == 1) {
 				Payer = payers.Single();
 				return "";
 			}
-			else
-			{
+			else {
 				return String.Format("Найдено более одного плательщика с ИНН {0}, плательщики с таким ИНН {1}",
-									 PayerClient.Inn,
-									 payers.Implode(p => p.Name));
+					PayerClient.Inn,
+					payers.Implode(p => p.Name));
 			}
 		}
 
 		public static List<BankPayment> Parse(string file)
 		{
-			using (var stream = File.OpenRead(file))
-			{
+			using (var stream = File.OpenRead(file)) {
 				return Parse(file, stream);
 			}
 		}
 
-		public virtual List<LawyerPerson> GetPayerForInn(string INN)
+		public virtual List<Client> GetPayerForInn(string INN)
 		{
-			return ActiveRecordLinq.AsQueryable<LawyerPerson>().Where(p => p.INN == INN).ToList();
+			return ActiveRecordLinq.AsQueryable<Client>().Where(p => p.LawyerPerson.INN == INN).ToList();
 		}
 
 		public static List<BankPayment> Parse(string file, Stream stream)
@@ -275,17 +205,15 @@ namespace InternetInterface.Models
 		{
 			var recipients = Recipient.Queryable.ToList();
 			var ignoredInns = IgnoredInn.Queryable.ToList();
-			foreach (var payment in payments)
-			{
+			foreach (var payment in payments) {
 				payment.Recipient =
 					recipients.FirstOrDefault(r => r.BankAccountNumber == payment.RecipientClient.AccountCode);
 				if (payment.Recipient == null)
 					continue;
 
 				var inn = payment.PayerClient.Inn;
-				if (!ignoredInns.Any(i => String.Equals(i.Inn, inn, StringComparison.InvariantCultureIgnoreCase)))
-				{
-					var payer = ActiveRecordLinq.AsQueryable<LawyerPerson>().FirstOrDefault(p => p.INN == inn);
+				if (!ignoredInns.Any(i => String.Equals(i.Inn, inn, StringComparison.InvariantCultureIgnoreCase))) {
+					var payer = ActiveRecordLinq.AsQueryable<Client>().FirstOrDefault(p => p.LawyerPerson.INN == inn);
 					payment.Payer = payer;
 				}
 
@@ -301,10 +229,8 @@ namespace InternetInterface.Models
 			var reader = new StreamReader(file, Encoding.GetEncoding(1251));
 			string line;
 			var payments = new List<BankPayment>();
-			while ((line = reader.ReadLine()) != null)
-			{
-				if (line.Equals("СекцияДокумент=Платежное поручение", StringComparison.CurrentCultureIgnoreCase))
-				{
+			while ((line = reader.ReadLine()) != null) {
+				if (line.Equals("СекцияДокумент=Платежное поручение", StringComparison.CurrentCultureIgnoreCase)) {
 					var payment = ParsePayment(reader);
 					payments.Add(payment);
 				}
@@ -320,8 +246,7 @@ namespace InternetInterface.Models
 			payment.PayerBank = new BankInfo();
 			payment.RecipientBank = new BankInfo();
 			payment.RecipientClient = new BankClient();
-			while ((line = reader.ReadLine()) != null)
-			{
+			while ((line = reader.ReadLine()) != null) {
 				if (line.Equals("КонецДокумента", StringComparison.CurrentCultureIgnoreCase))
 					break;
 
@@ -332,68 +257,52 @@ namespace InternetInterface.Models
 					continue;
 				var label = parts[0];
 				var value = parts[1];
-				if (label.Equals("ДатаПоступило", StringComparison.CurrentCultureIgnoreCase))
-				{
+				if (label.Equals("ДатаПоступило", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.PayedOn = DateTime.ParseExact(value, "dd.MM.yyyy", CultureInfo.CurrentCulture);
 				}
-				else if (label.Equals("Сумма", StringComparison.CurrentCultureIgnoreCase))
-				{
+				else if (label.Equals("Сумма", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.Sum = decimal.Parse(value, CultureInfo.InvariantCulture);
 				}
-				else if (label.Equals("НазначениеПлатежа", StringComparison.CurrentCultureIgnoreCase))
-				{
+				else if (label.Equals("НазначениеПлатежа", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.Comment = value;
 				}
-				else if (label.Equals("Номер", StringComparison.CurrentCultureIgnoreCase))
-				{
+				else if (label.Equals("Номер", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.DocumentNumber = value;
 				}
-				else if (label.Equals("ПлательщикСчет", StringComparison.CurrentCultureIgnoreCase))
-				{
+				else if (label.Equals("ПлательщикСчет", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.PayerClient.AccountCode = value;
 				}
-				else if (label.Equals("Плательщик1", StringComparison.CurrentCultureIgnoreCase))
-				{
+				else if (label.Equals("Плательщик1", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.PayerClient.Name = value;
 				}
-				else if (label.Equals("ПлательщикИНН", StringComparison.CurrentCultureIgnoreCase))
-				{
+				else if (label.Equals("ПлательщикИНН", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.PayerClient.Inn = value;
 				}
-				else if (label.Equals("ПлательщикБИК", StringComparison.CurrentCultureIgnoreCase))
-				{
+				else if (label.Equals("ПлательщикБИК", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.PayerBank.Bic = value;
 				}
-				else if (label.Equals("ПлательщикБанк1", StringComparison.CurrentCultureIgnoreCase))
-				{
+				else if (label.Equals("ПлательщикБанк1", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.PayerBank.Description = value;
 				}
-				else if (label.Equals("ПлательщикКорсчет", StringComparison.CurrentCultureIgnoreCase))
-				{
+				else if (label.Equals("ПлательщикКорсчет", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.PayerBank.AccountCode = value;
 				}
-				else if (label.Equals("ПолучательСчет", StringComparison.CurrentCultureIgnoreCase))
-				{
+				else if (label.Equals("ПолучательСчет", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.RecipientClient.AccountCode = value;
 				}
-				else if (label.Equals("Получатель1", StringComparison.CurrentCultureIgnoreCase))
-				{
+				else if (label.Equals("Получатель1", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.RecipientClient.Name = value;
 				}
-				else if (label.Equals("ПолучательИНН", StringComparison.CurrentCultureIgnoreCase))
-				{
+				else if (label.Equals("ПолучательИНН", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.RecipientClient.Inn = value;
 				}
-				else if (label.Equals("ПолучательБИК", StringComparison.CurrentCultureIgnoreCase))
-				{
+				else if (label.Equals("ПолучательБИК", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.RecipientBank.Bic = value;
 				}
-				else if (label.Equals("ПолучательБанк1", StringComparison.CurrentCultureIgnoreCase))
-				{
+				else if (label.Equals("ПолучательБанк1", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.RecipientBank.Description = value;
 				}
-				else if (label.Equals("ПолучательКорсчет", StringComparison.CurrentCultureIgnoreCase))
-				{
+				else if (label.Equals("ПолучательКорсчет", StringComparison.CurrentCultureIgnoreCase)) {
 					payment.RecipientBank.AccountCode = value;
 				}
 			}
@@ -404,8 +313,7 @@ namespace InternetInterface.Models
 		{
 			var doc = XDocument.Load(file);
 			var payments = new List<BankPayment>();
-			foreach (var node in doc.XPathSelectElements("//payment"))
-			{
+			foreach (var node in doc.XPathSelectElements("//payment")) {
 				var documentNumber = node.XPathSelectElement("NDoc").Value;
 				var dateNode = node.XPathSelectElement("SendDate");
 				if (dateNode == null)
@@ -419,34 +327,29 @@ namespace InternetInterface.Models
 					bankAccountantCode = node.XPathSelectElement("BankPayer/AccountCode").Value;
 
 				var payment = new BankPayment {
-												  DocumentNumber = documentNumber,
-												  PayedOn =
-													  DateTime.Parse(dateNode.Value, CultureInfo.GetCultureInfo("ru-RU")),
-												  RegistredOn = DateTime.Now,
-												  Sum = Decimal.Parse(sum, CultureInfo.InvariantCulture),
-												  Comment = comment,
-
-												  PayerBank = new BankInfo(
-													  node.XPathSelectElement("BankPayer/Description").Value,
-													  node.XPathSelectElement("BankPayer/BIC").Value,
-													  bankAccountantCode
-													  ),
-												  PayerClient = new BankClient(
-													  node.XPathSelectElement("Payer/Name").Value,
-													  null,
-													  node.XPathSelectElement("Payer/AccountCode").Value
-													  ),
-												  RecipientBank = new BankInfo(
-													  node.XPathSelectElement("BankRecipient/Description").Value,
-													  node.XPathSelectElement("BankRecipient/BIC").Value,
-													  node.XPathSelectElement("BankRecipient/AccountCode").Value
-													  ),
-												  RecipientClient = new BankClient(
-													  node.XPathSelectElement("Recepient/Client/Name").Value,
-													  node.XPathSelectElement("Recepient/Client/INN").Value,
-													  node.XPathSelectElement("Recepient/Client/AccountCode").Value
-													  ),
-											  };
+					DocumentNumber = documentNumber,
+					PayedOn =
+						DateTime.Parse(dateNode.Value, CultureInfo.GetCultureInfo("ru-RU")),
+					RegistredOn = DateTime.Now,
+					Sum = Decimal.Parse(sum, CultureInfo.InvariantCulture),
+					Comment = comment,
+					PayerBank = new BankInfo(
+						node.XPathSelectElement("BankPayer/Description").Value,
+						node.XPathSelectElement("BankPayer/BIC").Value,
+						bankAccountantCode),
+					PayerClient = new BankClient(
+						node.XPathSelectElement("Payer/Name").Value,
+						null,
+						node.XPathSelectElement("Payer/AccountCode").Value),
+					RecipientBank = new BankInfo(
+						node.XPathSelectElement("BankRecipient/Description").Value,
+						node.XPathSelectElement("BankRecipient/BIC").Value,
+						node.XPathSelectElement("BankRecipient/AccountCode").Value),
+					RecipientClient = new BankClient(
+						node.XPathSelectElement("Recepient/Client/Name").Value,
+						node.XPathSelectElement("Recepient/Client/INN").Value,
+						node.XPathSelectElement("Recepient/Client/AccountCode").Value),
+				};
 				var element = node.XPathSelectElement("Payer/INN");
 				if (element != null)
 					payment.PayerClient.Inn = element.Value;
@@ -506,19 +409,12 @@ namespace InternetInterface.Models
 		[ValidateSelf]
 		public void Validate(ErrorSummary summary)
 		{
-			if (Payer != null)
-			{
+			if (Payer != null) {
 				if (Recipient.Id != Payer.Recipient.Id)
 					summary.RegisterErrorMessage(
 						"Recipient",
 						"Получатель платежей плательщика должен соответствовать получателю платежей выбранном в платеже");
 			}
-			/*else
-			{
-				summary.RegisterErrorMessage(
-					"Recipient",
-					"Не выбран плательщик");
-			}*/
 		}
 
 		private bool IsDuplicate()
@@ -527,9 +423,9 @@ namespace InternetInterface.Models
 				return false;
 
 			return Queryable.FirstOrDefault(p => p.Payer == Payer
-					&& p.PayedOn == PayedOn
-					&& p.Sum == Sum
-					&& p.DocumentNumber == DocumentNumber) != null;
+				&& p.PayedOn == PayedOn
+				&& p.Sum == Sum
+				&& p.DocumentNumber == DocumentNumber) != null;
 		}
 
 		public void DoUpdate()
@@ -543,10 +439,10 @@ namespace InternetInterface.Models
 				return;
 
 			if (Payer != null
+				&& Payer.LawyerPerson != null
 				&& PayerClient != null
-				&& !String.IsNullOrEmpty(PayerClient.Inn))
-			{
-				Payer.INN = PayerClient.Inn;
+				&& !String.IsNullOrEmpty(PayerClient.Inn)) {
+				Payer.LawyerPerson.INN = PayerClient.Inn;
 				//Payer.Save();
 			}
 		}

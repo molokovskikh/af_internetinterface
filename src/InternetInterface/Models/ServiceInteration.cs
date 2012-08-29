@@ -9,7 +9,7 @@ using InternetInterface.Controllers.Filter;
 
 namespace InternetInterface.Models
 {
-	[ActiveRecord("ServiceIterations" ,Schema = "internet", Lazy = true)]
+	[ActiveRecord("ServiceIterations", Schema = "internet", Lazy = true)]
 	public class ServiceIteration : ActiveRecordLinqBase<ServiceIteration>
 	{
 		public ServiceIteration()

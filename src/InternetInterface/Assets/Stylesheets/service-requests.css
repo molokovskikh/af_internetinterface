@@ -1,0 +1,10 @@
+input.time {
+	width: 6em;
+}
+input.graph_date {
+	width: 6em;
+}
+.table td
+{
+	border: none;
+}

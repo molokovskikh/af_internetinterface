@@ -39,12 +39,10 @@ namespace InternetInterface.Models
 
 		public virtual Request GetRequestForThis()
 		{
-			/*var notNullReq = Request.Queryable.Where(
-				r => r.House != string.Empty && r.Apartment != string.Empty).ToList();*/
-			return Request.Queryable.Where(r =>
-									r.Street == House.Street && r.House == House.Number &&
-									r.CaseHouse == House.Case && r.Apartment == Number &&
-									r.Registrator != null).FirstOrDefault();
+			return Request.Queryable.FirstOrDefault(r => r.Street == House.Street
+				&& r.House == House.Number
+				&& r.CaseHouse == House.Case && r.Apartment == Number
+				&& r.Registrator != null);
 		}
 	}
 }

@@ -16,5 +16,9 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string Name { get; set; }
 
+		public static IList<Zone> All()
+		{
+			return FindAllSort();
+		}
 	}
 }

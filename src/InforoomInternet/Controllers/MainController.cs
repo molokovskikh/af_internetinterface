@@ -1,25 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Castle.MonoRail.Framework;
+using Common.Tools;
+using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.Models.Editor;
-using InforoomInternet.Logic;
 using InforoomInternet.Models;
 using InternetInterface.Models;
-using NHibernate;
-
-//using Tariff = InforoomInternet.Models.Tariff;
 
 namespace InforoomInternet.Controllers
 {
-	[Filter(ExecuteWhen.BeforeAction, typeof (NHibernateFilter))]
-	[Filter(ExecuteWhen.BeforeAction, typeof (BeforeFilter))]
+	[Layout("Main")]
+	[Filter(ExecuteWhen.BeforeAction, typeof(NHibernateFilter))]
+	[Filter(ExecuteWhen.BeforeAction, typeof(BeforeFilter))]
 	public class MainController : SmartDispatcherController
 	{
 		public void Index()
@@ -60,14 +59,14 @@ namespace InforoomInternet.Controllers
 			var ip = Request.UserHostAddress;
 			var mailToAdress = "internet@ivrn.net";
 #if DEBUG
-			var lease = /*new List<Lease>(); */ Lease.FindAll();
-			mailToAdress = "a.zolotarev@analit.net";
+			var lease = Lease.FindAll();
+			mailToAdress = "kvasovtest@analit.net";
 #else
 			var lease = Lease.FindAllByProperty("Ip", Convert.ToUInt32(NetworkSwitches.SetProgramIp(ip)));
 #endif
 			var client = lease.Where(
-				l => l.Endpoint != null && l.Endpoint.Client != null && l.Endpoint.Client.PhysicalClient != null).
-				Select(l => l.Endpoint.Client).FirstOrDefault();
+				l => l.Endpoint != null && l.Endpoint.Client != null && l.Endpoint.Client.PhysicalClient != null)
+				.Select(l => l.Endpoint.Client).FirstOrDefault();
 			client = client ?? new Client();
 			PropertyBag["client"] = client;
 
@@ -106,7 +105,7 @@ namespace InforoomInternet.Controllers
 					message.Body = Text.ToString();
 					var smtp = new SmtpClient("box.analit.net");
 					smtp.Send(message);
-					RedirectToAction("MessageSended", new Dictionary<string, string> {{"clientName", clientName}});
+					RedirectToAction("MessageSended", new Dictionary<string, string> { { "clientName", clientName } });
 				}
 			}
 
@@ -140,8 +139,8 @@ namespace InforoomInternet.Controllers
 				request.RegDate = DateTime.Now;
 				request.ActionDate = DateTime.Now;
 				if (AccessFilter.Authorized(Context)) {
-						var clientId = Convert.ToUInt32(Session["LoginClient"]);
-						var client = Client.Find(clientId);
+					var clientId = Convert.ToUInt32(Session["LoginClient"]);
+					var client = Client.Find(clientId);
 					request.FriendThisClient = client;
 				}
 				var phoneNumber = request.ApplicantPhoneNumber.Substring(2, request.ApplicantPhoneNumber.Length - 2).Replace("-", string.Empty);
@@ -161,35 +160,67 @@ namespace InforoomInternet.Controllers
 		public void Warning()
 		{
 			var hostAdress = Request.UserHostAddress;
+#if DEBUG
+			hostAdress = "127.0.0.1";
+#endif
+
 			var lease = Client.FindByIP(hostAdress);
 #if DEBUG
 			if (lease == null)
 				lease = new Lease {
-					Endpoint = new ClientEndpoints {
-						Client = new Client {
-							Disabled = true,
+					Endpoint = new ClientEndpoint {
+						Client = new Client() {
 							ShowBalanceWarningPage = true,
 							RatedPeriodDate = DateTime.Now,
-							PhysicalClient = new PhysicalClients {
-								Balance = 150,
-								Tariff = new Tariff {
-									Price = 500
-								}
+							LawyerPerson = new LawyerPerson {
+								Balance = -20000,
+								Tariff = 10000
 							}
 						}
 					}
 				};
 #endif
-			if (lease == null) {
+
+			ClientEndpoint point = null;
+			if (lease != null)
+				point = lease.Endpoint;
+			else {
+				var thisIp = new IPAddress(RangeFinder.reverseBytesArray(Convert.ToUInt32(NetworkSwitch.SetProgramIp(hostAdress))));
+
+				point = StaticIp.Queryable.ToList().Where(ip => {
+					if (ip.Ip == hostAdress)
+						return true;
+					if (ip.Mask != null) {
+						var subnet = SubnetMask.CreateByNetBitLength(ip.Mask.Value);
+						var sIp = new IPAddress(RangeFinder.reverseBytesArray(Convert.ToUInt32(NetworkSwitch.SetProgramIp(ip.Ip))));
+						if (thisIp.IsInSameSubnet(sIp, subnet))
+							return true;
+					}
+					return false;
+				}).Select(s => s.EndPoint).FirstOrDefault();
+			}
+
+			if (point == null) {
 				Redirecter.RedirectRoot(Context, this);
 				return;
 			}
 
+			var clientW = lease != null ? lease.Endpoint.Client : point.Client;
+
 			if (IsPost) {
-				SceHelper.Login(lease, Request.UserHostAddress);
-				var client_w = lease.Endpoint.Client;
-				client_w.ShowBalanceWarningPage = false;
-				client_w.Update();
+				if (lease != null) {
+					SceHelper.Login(lease, Request.UserHostAddress);
+				}
+				else {
+					var ips = StaticIp.Queryable.Where(s => s.EndPoint == point).ToList();
+					foreach (var staticIp in ips) {
+						if (point.PackageId == null)
+							continue;
+						SceHelper.Action("login", staticIp.Mask != null ? staticIp.Ip + "/" + staticIp.Mask : staticIp.Ip, "Static_" + staticIp.Id, false, false, point.PackageId.Value);
+					}
+				}
+				clientW.ShowBalanceWarningPage = false;
+				clientW.Update();
 				var url = Request.Form["referer"];
 				if (String.IsNullOrEmpty(url))
 					Redirecter.RedirectRoot(Context, this);
@@ -204,12 +235,12 @@ namespace InforoomInternet.Controllers
 				PropertyBag["referer"] = host + rUrl;
 			else PropertyBag["referer"] = string.Empty;
 
-			var pclient = lease.Endpoint.Client.PhysicalClient;
-			var client = lease.Endpoint.Client;
+			var pclient = clientW.PhysicalClient;
+			var client = clientW;
 
 			PropertyBag["Client"] = client;
 
-			if (lease.Endpoint.Client.PhysicalClient == null) {
+			if (clientW.PhysicalClient == null) {
 				PropertyBag["LClient"] = client.LawyerPerson;
 				RenderView("WarningLawyer");
 				return;
@@ -235,8 +266,12 @@ namespace InforoomInternet.Controllers
 		{
 			var hostAdress = Request.UserHostAddress;
 #if DEBUG
-			hostAdress = NetworkSwitches.GetNormalIp(Lease.FindFirst().Ip);
+			hostAdress = NetworkSwitch.GetNormalIp(Lease.FindFirst().Ip);
 #endif
+			if (Regex.IsMatch(hostAdress, NetworkSwitch.IPRegExp) && !Client.Our(hostAdress)) {
+				RedirectToSiteRoot();
+				return;
+			}
 
 			var lease = Client.FindByIP(hostAdress);
 			if (lease == null || lease.Endpoint == null || lease.Endpoint.Client == null) {
@@ -244,7 +279,6 @@ namespace InforoomInternet.Controllers
 			}
 			else {
 				if (ClientData.Get(lease.Endpoint.Client.Id) == UnknownClientStatus.NoInfo) {
-					InitializeHelper.InithializeAllStructure(lease);
 					var sceWorker = new SceThread(lease, hostAdress);
 					sceWorker.Go();
 				}
@@ -254,7 +288,8 @@ namespace InforoomInternet.Controllers
 				var rUrl = Request["url"];
 				if (!string.IsNullOrEmpty(host))
 					PropertyBag["referer"] = host + rUrl;
-				else PropertyBag["referer"] = string.Empty;
+				else
+					PropertyBag["referer"] = string.Empty;
 			}
 		}
 
@@ -319,14 +354,14 @@ namespace InforoomInternet.Controllers
 			var mailToAdress = "internet@ivrn.net";
 			var messageText = new StringBuilder();
 #if DEBUG
-			mailToAdress = "a.zolotarev@analit.net";
+			mailToAdress = "kvasovtest@analit.net";
 #endif
 			if (client == null)
 				messageText.AppendLine(string.Format("Пришел запрос на страницу WarningPackageId от стороннего клиента (IP: {0})", Request.UserHostAddress));
 			else {
-				var lease = Lease.Queryable.Where(l => l.Endpoint.Client.Id == client.Value).FirstOrDefault();
+				var lease = Lease.Queryable.FirstOrDefault(l => l.Endpoint.Client.Id == client.Value);
 				messageText.AppendLine(string.Format("Пришел запрос на страницу WarningPackageId от клиента {0}",
-				                                     client.Value.ToString("00000")));
+					client.Value.ToString("00000")));
 				if (lease.Endpoint.Switch != null) {
 					messageText.AppendLine("Свич: " + lease.Endpoint.Switch.Name);
 				}

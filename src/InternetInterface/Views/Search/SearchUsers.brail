@@ -16,11 +16,33 @@
 
 <%if PartnerAccessSet.AccesPartner("GCI") or PartnerAccessSet.AccesPartner("SD"): %>
 <form id="SearchForm" name="SearchForm" action="${siteroot}/Search/SearchBy" 
-	style="width: 100%; ">
+	style="width: 100%;">
 <center>
-<table border="1" bgcolor="#FFFFFF" cellspacing="1" cellpadding="0">
+<%if PartnerAccessSet.AccesPartner("SSI"):  %>
+<table id="statTable">
+	<tbody>
+		<tr>
+			<td>
+				<fieldset style="padding-left:15px;">
+				<legend>Статистика</legend>
+				<p>On-Line клиенты: <span>${Stat.OnLineCount}</span></p>
+				<p>Уникальных клиентов за сутки: <span>${Stat.UniqueClient}</span></p>
+				<p>Количество зарегистрированных клиентов (Корпы/Физики): <span>${Stat.AllRegister} (${Stat.LawyerRegister}/${Stat.PhysicalRegister})</span></p>
+				<p>Количество клиентов в состоянии "Заблокирован"(Корпы/Физики): <span>${Stat.AllBlocked} (${Stat.BlockedLawyer}/${Stat.BlockedPhysical})</span></p>
+				<p>Количество клиентов "Заблокирован" и "Он-Лайн": <span>${Stat.BlockedOnLine}</span></p>
+				</fieldset>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<%end %>
+<table
+<%if PartnerAccessSet.AccesPartner("SSI"):  %>
+	id="searchPositionTable"
+<%end %>
+border="1" bgcolor="#FFFFFF" cellspacing="1" cellpadding="0">
 <tr>
-	<td width="100%">
+	<td style="width:100%">
 	<table class="table" bgcolor="#FFFFFF">
 	<tr>
 	<td id="TableSize">
@@ -41,97 +63,26 @@
 			<td>
 			</td>
 			<td>
-				<input type="radio" id="Autosearch" name="filter.searchProperties.SearchBy" value=Auto ${"checked" if filter.searchProperties.IsSearchAuto()} />
-				<label for="Autosearch">Автоматически</label><br />
-				<input type="radio" id="SearchAccount" name="filter.searchProperties.SearchBy" value=SearchAccount ${"checked" if filter.searchProperties.IsSearchAccount()} />
-				<label for="Autosearch">По номеру счета</label><br />
-				<input type="radio" id="SearchByClientId" name="filter.searchProperties.SearchBy" value=ByFio ${"checked" if filter.searchProperties.IsSearchByFio()} />
-				<label for="SearchByClientId">Имя</label><br />
-				<input type="radio" id="Radio7" name="filter.searchProperties.SearchBy" value=TelNum ${"checked" if filter.searchProperties.IsSearchTelephone()} />
-				<label for="SearchByClientId">Контактная информация</label><br />
+				${app.Edit("filter.searchProperties.SearchBy", "RadioList")}
 			</td>
 			<td>
-				<input type="radio" id="Radio4" name="filter.clientTypeFilter.Type" value=AllClients ${"checked" if filter.clientTypeFilter.IsAll()} />
-				<label for="AutoRadio4search">Все</label><br />
-				<input type="radio" id="Radio5" name="filter.clientTypeFilter.Type" value=Physical ${"checked" if filter.clientTypeFilter.IsPhysical()} />
-				<label for="Radio5">Физические лица</label><br />
-				<input type="radio" id="Radio6" name="filter.clientTypeFilter.Type" value=Lawyer ${"checked" if filter.clientTypeFilter.IsLawyer()} />
-				<label for="Radio6">Юридические лица</label><br />
+				${app.Edit("filter.clientTypeFilter.Type", "RadioList")}
 			</td>
 		</tr>
 	</table>
 	<fieldset style="padding: 0; margin: 0; text-align: left; width: 99%;">
 		<legend>Фильтры: </legend>
-		<table style="width:100%; height: 80px;" border="0" class="table">
-			<col style="width:50%" />
-			<col style="width:50%" />
+		<table border="0" class="table filter_front">
 			<thead>
 				<tr align="left">
-					<td style="padding: 5px;">Тариф<br />
-					<div>
-				   <select name="filter.tariff" id="ChTariff" style="width: 100%" >
-				   <option id="Option1" value="0"> Все </option>
-				   <%
-					for i, Tariff in enumerate(Tariffs): 
-					%>
-						<option id="Tarif${Tariff.Id}" value="${Tariff.Id}" ${"selected" if (Tariff.Id == ChTariff)}> ${Tariff.Name} </option>
-						<% end %>
-					</select>
-					</div>
+					<td>
+						<span>Статус</span><br />
+						${FormHelper.Select("filter.statusType", Statuses, {"value" : "Id", "text" : "Name"})}
 					</td>
-
-
-					<td style="padding: 5px;">Кем загистрирован<br />
-					<div>
-						  <select name="filter.whoregister" id="ChRegister" style="width: 100%" >
-						  <option id="Option2" value="0" > Все </option>
-						  <%
-						  for i, RigistrName in enumerate(WhoRegistered): 
-						  %>
-						  <option id="RgistrName${RigistrName.Id}" value="${RigistrName.Id}" ${"selected" if (RigistrName.Id == ChRegistr)}> ${RigistrName.Name} </option>
-						  <% end %>
-						  </select>
-					</div>
+					<td>
+						${app.Edit("filter.EnabledTypeProperties.Type", "RadioList")}
 					</td>
 				</tr>
-				<tr>
-				 <%if PartnerAccessSet.AccesPartner("SSI"): %>
-				<td style="padding: 5px;">Назначено на бригаду<br />
-					<div>
-				   <select name="filter.brigad" id="Select1" style="width: 100%" >
-				   <option id="Option3" value="0"> Все </option>
-				   <%
-					for i, Brigad in enumerate(Brigads): 
-					%>
-						<option id="Option4" value="${Brigad.Id}" ${"selected" if (Brigad.Id == ChBrigad)}> ${Brigad.Name} </option>
-						<% end %>
-					</select>
-					</div>
-					</td>
-					<%end %>
-				<td>
-					<input type="radio" id="Radio1" name="filter.connectedType.Type" value=AllConnected ${"checked" if filter.connectedType.IsAllConnected()} />
-					<label for="Autosearch">Все</label><br />
-					<input type="radio" id="Radio2" name="filter.connectedType.Type" value=NoConnected ${"checked" if filter.connectedType.IsNoConnected()} />
-					<label for="SearchByClientId">Не подключены</label><br />
-					<input type="radio" id="Radio3" name="filter.connectedType.Type" value=Connected ${"checked" if filter.connectedType.IsConnected()} />
-					<label for="SearchByUserId">Подключены</label><br />
-				</td>
-			   </tr>
-			   <tr>
-					<td style="padding: 5px;">Дополнительный статус<br />
-						  <div>
-						  <select name="filter.addtionalStatus" id="addtionalStatus" style="width: 100%" >
-						  <option id="Option0" value="0" > Все </option>
-						  <%
-						  for i, additionalStatus in enumerate(additionalStatuses): 
-						  %>
-						  <option id="Option${additionalStatus.Id}" value="${additionalStatus.Id}" ${"selected" if (additionalStatus.Id == ChAdditional)}> ${additionalStatus.Name} </option>
-						  <% end %>
-						  </select>
-					</div>
-					</td>
-			   </tr>
 			</thead>
 		</table>
 	</fieldset>
@@ -139,11 +90,10 @@
 	</td>
 	</tr>
 </table>
-	</td>
+</td>
 </tr>
 </table>
 </center>
-	</p>
 </form>
 <%end %>
 </div>

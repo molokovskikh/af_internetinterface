@@ -11,6 +11,15 @@ namespace InternetInterface.Models
 	[ActiveRecord("ConnectBrigads", Schema = "Internet", Lazy = true)]
 	public class Brigad : ValidActiveRecordLinqBase<Brigad>
 	{
+		public Brigad()
+		{
+		}
+
+		public Brigad(string name)
+		{
+			Name = name;
+		}
+
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
@@ -26,7 +35,5 @@ namespace InternetInterface.Models
 				ConnectGraph.Queryable.Where(c => c.Brigad == this && c.Day.Date == selectDate.Date && c.IntervalId == (uint)intervalNum).ToList();
 			return graphs.Count != 0 ? graphs.First().Client : null;
 		}
-
 	}
-
 }

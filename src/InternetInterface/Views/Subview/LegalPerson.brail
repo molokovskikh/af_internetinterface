@@ -74,10 +74,18 @@
 	</td>
 	<td>
 		<input id="ContactPerson" type="text" value="${LegalPerson.ContactPerson}" name="LegalPerson.ContactPerson"/></td>
-		<td>
+		</td>
 		<td>
 		${VB.GetBlock("ContactPerson")}
 		</td>
+</tr>
+<tr>
+	<tr>
+		<td>Задача в Redmine для клиента</td>
+		<td>${FormHelper.TextField("_client.RedmineTask")}</td>
+		<td>${app.GetValidationError("_client.RedmineTask")}</td>
+	</tr>
+</tr>
 <tr>
 	<td >
 		Абонентская плата</td>

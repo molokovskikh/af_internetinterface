@@ -3346,12 +3346,6 @@
             	<c>true</c> if the value is accepted (has passed the validation test)
             </returns>
         </member>
-        <member name="M:Castle.Components.Validator.NotSameValueValidator.BuildErrorMessage">
-            <summary>
-            Builds the error message.
-            </summary>
-            <returns></returns>
-        </member>
         <member name="P:Castle.Components.Validator.NotSameValueValidator.SupportsBrowserValidation">
             <summary>
             Gets a value indicating whether this validator supports browser validation.
@@ -3634,12 +3628,6 @@
             <param name="generator">The generator.</param>
             <param name="attributes">The attributes.</param>
             <param name="target">The target.</param>
-        </member>
-        <member name="M:Castle.Components.Validator.SetValidator.BuildErrorMessage">
-            <summary>
-            Builds the error message.
-            </summary>
-            <returns></returns>
         </member>
         <member name="P:Castle.Components.Validator.SetValidator.Set">
             <summary>

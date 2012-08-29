@@ -15,26 +15,29 @@ else: %>
 
 	<% if PClient.Balance < 0: %>
 	<p class="error">
-	Ваша задолженность за оказанные услуги составляет ${System.Math.Abs(PClient.Balance)} руб.<br>
-	Для возобновления доступа в интернет Вам необходимо погасить задолженность и внести абонентскую плату за полный месяц (не менее ${Client.ToPay()} руб. )<br>
+	Ваша задолженность за оказанные услуги составляет ${System.Math.Abs(PClient.Balance)} руб. <br>
+	Для возобновления доступа в интернет Вам необходимо погасить задолженность и внести абонентскую плату за полный месяц (не менее ${Client.ToPay().ToString("0.00")} руб. )<br>
 	</p>
 	<% else: %>
 		<%if minPrice and not Client.Disabled : %>
 		<p class="warning">
-		Ваш баланс составляет ${PClient.Balance} руб.<br>
+		Ваш баланс составляет ${PClient.Balance}<a href="${Siteroot}/PrivateOffice/BalanceInfo" style="text-decoration:none;">*</a> .<br>
 		При непоступлении оплаты, доступ в сеть будет заблокирован в течение суток. <br>
-		В случае блокировки, для возобновления доступа в интернет, Вам необходимо будет погасить задолженность и внести абонентскую плату за полный месяц (не менее ${Client.ToPay()} руб. )
+		В случае блокировки, для возобновления доступа в интернет, Вам необходимо будет погасить задолженность и внести абонентскую плату за полный месяц (не менее ${Client.ToPay().ToString("0.00")} руб. )
 		</p>
 		<%else: %>
 			<%if Client.Disabled: %>
 			<p class="error">
-			Доступ в интернет заблокирован за неуплату. Сумма на вашем лицевом счете недостаточна для разблокировки (${PClient.Balance} руб.)<br>
-			Для возобновления доступа в интернет Вам необходимо внести абонентскую плату за полный месяц (не менее ${Client.ToPay()} руб. ) <br>
+			Доступ в интернет заблокирован за неуплату. Сумма на вашем лицевом счете недостаточна для разблокировки (${PClient.Balance}<a href="${Siteroot}/PrivateOffice/BalanceInfo" style="text-decoration:none;">*</a>.)<br>
+			Для возобновления доступа в интернет Вам необходимо внести абонентскую плату за полный месяц (не менее ${Client.ToPay().ToString("0.00")} руб. ) <br>
 			</p>
 			<% else: %>
 			<p class="info">
-			Баланс составляет ${PClient.Balance} руб.
+			Баланс составляет ${PClient.Balance}.<a href="${Siteroot}/PrivateOffice/BalanceInfo" style="text-decoration:none;">*</a>
 			</p>
+				<%if IsDefined("PrivateMessage"): %>
+					<p class="warning">${PrivateMessage}</p>
+				<% end %>
 			<% end %>
 		<% end %>
 	<% end %>

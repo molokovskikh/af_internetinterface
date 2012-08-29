@@ -13,7 +13,16 @@ namespace InternetInterface.Models
 	public class Lease : ActiveRecordLinqBase<Lease>
 	{
 		private const string IPRegExp =
-	@"\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b";
+			@"\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b";
+
+		public Lease()
+		{
+		}
+
+		public Lease(ClientEndpoint endpoint)
+		{
+			Endpoint = endpoint;
+		}
 
 		[PrimaryKey]
 		public uint Id { get; set; }
@@ -22,13 +31,13 @@ namespace InternetInterface.Models
 		public uint Ip { get; set; }
 
 		[BelongsTo(Cascade = CascadeEnum.SaveUpdate)]
-		public ClientEndpoints Endpoint { get; set; }
+		public ClientEndpoint Endpoint { get; set; }
 
 		[Property]
 		public int Port { get; set; }
 
 		[BelongsTo]
-		public NetworkSwitches Switch { get; set; }
+		public NetworkSwitch Switch { get; set; }
 
 		[Property]
 		public DateTime LeaseBegin { get; set; }
@@ -39,11 +48,8 @@ namespace InternetInterface.Models
 		[Property]
 		public string LeasedTo { get; set; }
 
-		[Property]
-		public virtual uint? Pool { get; set; }
-
-		[Property]
-		public virtual int Module { get; set; }
+		[BelongsTo]
+		public virtual IpPool Pool { get; set; }
 
 		public string GetIp()
 		{
@@ -74,7 +80,7 @@ namespace InternetInterface.Models
 		{
 			if (string.IsNullOrEmpty(ip))
 				return true;
-			var programIp = NetworkSwitches.SetProgramIp(ip);
+			var programIp = NetworkSwitch.SetProgramIp(ip);
 			if (string.IsNullOrEmpty(programIp))
 				return true;
 			return IsGray(uint.Parse(programIp));
@@ -82,7 +88,7 @@ namespace InternetInterface.Models
 
 		public static bool IsGray(uint ip)
 		{
-			var grayPools = IpPool.Queryable.Where( i => i.IsGray ).ToList();
+			var grayPools = IpPool.Queryable.Where(i => i.IsGray).ToList();
 			return grayPools.Any(grayPool => grayPool.Begin <= ip && grayPool.End >= ip);
 		}
 	}

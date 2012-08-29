@@ -17,7 +17,7 @@ namespace InternetInterface.Models
 		public static string AgentPayIndex
 		{
 			get { return "AgentPayIndex"; }
-		} 
+		}
 	}
 
 	[ActiveRecord("AgentTariffs", Schema = "Internet", Lazy = true)]
@@ -31,7 +31,7 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual decimal Sum { get; set; }
-		
+
 		[Property]
 		public virtual string Description { get; set; }
 

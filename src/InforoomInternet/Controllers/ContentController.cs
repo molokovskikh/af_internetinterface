@@ -17,8 +17,7 @@ namespace InforoomInternet.Controllers
 		public override void Contextualize(IEngineContext engineContext, IControllerContext context)
 		{
 			base.Contextualize(engineContext, context);
-			foreach (var ivrnContent in SiteContent.FindAll())
-			{
+			foreach (var ivrnContent in SiteContent.FindAll()) {
 				DynamicActions[ivrnContent.ViewName] = new DynamicAction(IsAcces(), Lease.IsGray(engineContext.Request.UserHostAddress));
 			}
 		}

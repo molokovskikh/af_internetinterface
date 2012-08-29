@@ -1,0 +1,18 @@
+﻿<div id=page_holder>
+	<div style="font-weight:bold">
+		<p>Исполнитель: ${invoice.Recipient.FullName}</p>
+		<p>Адрес: ${invoice.Recipient.Address}</p>
+	</div>
+	<% OutputSubView("InvoiceBody") %>
+	<div>
+		<p>
+			Руководитель предприятия______________________________________(${invoice.Recipient.Boss})
+		</p>
+		<% if invoice.Recipient.Accountant: %>
+		<p>
+			Главный бухгалтер____________________________________________(${invoice.Recipient.Accountant})
+		</p>
+		<% end %>
+	</div>
+	<% OutputSubView("MailAddressSubView") %>
+</div>

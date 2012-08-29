@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Mail;
 using System.Text;
 using Castle.ActiveRecord;
+using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Helpers;
 using Common.Tools;
 using InternetInterface.Helpers;
@@ -17,6 +18,7 @@ namespace InternetInterface.Background
 		{
 			using (new SessionScope()) {
 				SendUnknowEndPoint();
+				SendNullTariffLawyerPerson();
 
 				var thisDateMax = InternetSettings.FindFirst().NextSmsSendDate;
 				var now = SystemTime.Now();
@@ -35,13 +37,40 @@ namespace InternetInterface.Background
 		{
 			var messages = new List<SmsMessage>();
 			SmsMessage.Queryable.Where(m => !m.IsSended && m.PhoneNumber != null).ToList().ForEach(messages.Add);
-#if !DEBUG
-			SmsHelper.SendMessages(messages);
-#endif
-			var thisDateMax = InternetSettings.FindFirst();	
+			new SmsHelper().SendMessages(messages);
+			var thisDateMax = InternetSettings.FindFirst();
 			thisDateMax.NextSmsSendDate = SystemTime.Now().AddDays(1).Date.AddHours(12);
 			thisDateMax.Update();
 			return messages;
+		}
+
+		public static void SendNullTariffLawyerPerson()
+		{
+			var nullLeases = Lease.Queryable.Where(l =>
+				l.Pool.IsGray &&
+					(l.Endpoint.Client.LawyerPerson.Tariff == null ||
+						l.Endpoint.Client.LawyerPerson.Tariff == 0))
+				.ToList();
+			var sndingLease = SendedLease.Queryable.Where(s => s.SendDate >= DateTime.Now.Date).Select(s => s.LeaseId).ToList();
+			var smtp = new SmtpClient("box.analit.net");
+#if !DEBUG
+			var mailToAdress = "internet@ivrn.net";
+#else
+			var mailToAdress = "kvasovtest@analit.net";
+#endif
+			var text = new StringBuilder();
+			foreach (var lease in nullLeases.Where(l => !sndingLease.Contains(l.Id))) {
+				new SendedLease(lease).Save();
+				text.AppendLine("Обнаружена активность отключенного юр. лица");
+				text.AppendLine(string.Format("\"{0}\" пытается выйти в интернет, но из-за незаданной абонентской платы, получает серый Ip {1} .", lease.Endpoint.Client.Name, IpHelper.GetNormalIp(lease.Ip.ToString())));
+				text.AppendLine("Ответственным лицам необходимо обратить внимание: счет №" + lease.Endpoint.Client.Id);
+				var message = new MailMessage();
+				message.To.Add(mailToAdress);
+				message.Subject = "Подозрительный клиент";
+				message.From = new MailAddress("service@analit.net");
+				message.Body = text.ToString();
+				smtp.Send(message);
+			}
 		}
 
 		public static void SendUnknowEndPoint()
@@ -50,7 +79,7 @@ namespace InternetInterface.Background
 #if !DEBUG
 			var mailToAdress = "internet@ivrn.net";
 #else
-			var mailToAdress = "a.zolotarev@analit.net";
+			var mailToAdress = "kvasovtest@analit.net";
 #endif
 			var guestLeases = Lease.Queryable.Where(l => l.Endpoint == null).ToList();
 			var sended_leases =
@@ -71,7 +100,6 @@ where sl.LeaseId in ({0})", guestLeases.Select(g => g.Id).Implode());
 					LeaseBegin = gl.LeaseBegin,
 					LeaseEnd = gl.LeaseEnd,
 					LeasedTo = gl.LeasedTo,
-					Module = gl.Module,
 					Port = gl.Port,
 					Switch = gl.Switch,
 					Pool = gl.Pool,
