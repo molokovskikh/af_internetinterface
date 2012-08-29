@@ -840,7 +840,7 @@ where r.`Label`= :LabelIndex;")
 				speeds = PackageSpeed.Queryable.Where(p => tariffs.Contains(p.PackageId)).ToList();
 			}
 			else {
-				speeds = PackageSpeed.FindAll().OrderBy(s => s.Speed).ToList();
+				speeds = PackageSpeed.Queryable.Where(p => !tariffs.Contains(p.PackageId)).OrderBy(s => s.Speed).ToList();
 			}
 			var clientEndPointId = Convert.ToUInt32(PropertyBag["EConnect"]);
 
