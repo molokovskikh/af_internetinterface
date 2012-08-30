@@ -83,7 +83,6 @@ namespace InforoomInternet.Controllers
 				}
 			}
 			if ((context.Session["LoginClient"] == null) || (Client.Find(Convert.ToUInt32(context.Session["Login"])) == null)) {
-				context.Response.RedirectToUrl(@"..//Login/LoginPage");
 				return false;
 			}
 			return true;
