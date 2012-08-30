@@ -14,10 +14,11 @@ namespace InforoomInternet.Logic
 	{
 		public static bool IsAccessibleClient(uint id, string password)
 		{
-			return Client.FindAll(DetachedCriteria.For(typeof(Client))
-				.CreateAlias("PhysicalClient", "PC", JoinType.InnerJoin)
-				.Add(Restrictions.Eq("Id", id))
-				.Add(Restrictions.Eq("PC.Password", CryptoPass.GetHashString(password)))).Length != 0;
+			return Client.Queryable.Count(c => 
+				c.Id == id &&
+					c.PhysicalClient != null &&
+					c.PhysicalClient.Password == CryptoPass.GetHashString(password))
+				> 0;
 		}
 
 		public static bool IsAccessiblePartner(object name)

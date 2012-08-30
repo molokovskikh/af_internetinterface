@@ -303,7 +303,7 @@ set s.LastStartFail = true;")
 					if (friendBonusRequest.Client.HavePaymentToStart()) {
 						new Payment {
 							Client = friendBonusRequest.FriendThisClient,
-							Sum = friendBonusRequest.Client.GetPriceForTariff(),
+							Sum = 250m,
 							PaidOn = SystemTime.Now(),
 							RecievedOn = SystemTime.Now(),
 							Virtual = true

@@ -42,7 +42,7 @@ namespace InforoomInternet.Controllers
 
 		public void Ok()
 		{
-			if (Flash["request"] == null)
+			if (Flash["application"] == null)
 				RedirectToSiteRoot();
 		}
 
@@ -133,7 +133,7 @@ namespace InforoomInternet.Controllers
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void Send([DataBind("request")] Request request)
+		public void Send([DataBind("application")] Request request)
 		{
 			if (Validator.IsValid(request)) {
 				request.RegDate = DateTime.Now;
@@ -146,13 +146,13 @@ namespace InforoomInternet.Controllers
 				var phoneNumber = request.ApplicantPhoneNumber.Substring(2, request.ApplicantPhoneNumber.Length - 2).Replace("-", string.Empty);
 				request.ApplicantPhoneNumber = phoneNumber;
 				request.Save();
-				Flash["request"] = request;
+				Flash["application"] = request;
 				RedirectToAction("Ok");
 			}
 			else {
 				var all = Tariff.FindAll();
 				PropertyBag["tariffs"] = all;
-				PropertyBag["request"] = request;
+				PropertyBag["application"] = request;
 				RenderView("Zayavka");
 			}
 		}
