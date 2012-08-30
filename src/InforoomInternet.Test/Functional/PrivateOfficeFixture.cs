@@ -77,7 +77,7 @@ namespace InforoomInternet.Test.Functional
 			AssertText("500");
 		}
 
-		[Test]
+		[Test, Ignore("Функционал временно отключен")]
 		public void Deactivate_internet()
 		{
 			Click("Управление услугами");
