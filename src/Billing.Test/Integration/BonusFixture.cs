@@ -9,7 +9,7 @@ using Test.Support.log4net;
 
 namespace Billing.Test.Integration
 {
-	[TestFixture]
+	[TestFixture, Ignore("Временно, для дебага")]
 	public class BonusFixture : MainBillingFixture
 	{
 		[Test]
