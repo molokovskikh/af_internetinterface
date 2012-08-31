@@ -82,7 +82,8 @@
 			<%end %>
 			<%if PartnerAccessSet.AccesPartner("SSI"): %>
 			<th>
-				<a id="appeal_link" href="${Siteroot}/UserInfo/ShowAppeals">Обращения</a>
+				<a id="appeal_link" href="${Siteroot}/UserInfo/ShowAppeals">Обращения</a><br />
+				<a id="appeal_link" href="${Siteroot}/Brigads/ReportOnWork">Подключения</a>
 			</th>
 			<%end %>
 			<%if PartnerAccessSet.AccesPartner("DHCP"): %>

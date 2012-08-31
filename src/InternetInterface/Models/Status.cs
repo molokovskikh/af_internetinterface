@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using Castle.ActiveRecord;
 using Castle.Components.Validator;
 using InternetInterface.Models.Universal;
+using NHibernate;
 
 namespace InternetInterface.Models
 {
@@ -45,6 +47,11 @@ namespace InternetInterface.Models
 			if (Id == (uint)StatusType.BlockedAndNoConnected)
 				return false;
 			return true;
+		}
+
+		public static Status Get(StatusType type, ISession session)
+		{
+			return session.QueryOver<Status>().List().FirstOrDefault(status => status.Type == type);
 		}
 
 		public virtual StatusType Type

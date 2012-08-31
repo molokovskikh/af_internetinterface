@@ -1,4 +1,4 @@
-﻿<% OutputSubView("SearchUsers") %>
+﻿
 <div id="main" style="width: 100%;">
 <% if (SClients.Count == 0): %>
 <div class="flash">
