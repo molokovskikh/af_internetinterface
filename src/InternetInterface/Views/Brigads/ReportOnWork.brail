@@ -1,4 +1,4 @@
-﻿<div id="main" style="width:100%;">
+﻿<div id="main" class="fullWidth">
 <div id="container">
 	<div id="box" class="block">
 		<form id="onform" class="formConnect" method="get">
