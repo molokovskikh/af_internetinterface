@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Web;
 using System.Web.Services.Description;
@@ -11,12 +12,21 @@ using BankPayment = InternetInterface.Models.BankPayment;
 
 namespace InternetInterface.Controllers
 {
+	public enum VirtualType
+	{
+		[Description("Небонусные")] nobonus = 0,
+		[Description("Бонусные")] bonus = 1,
+		[Description("Все")] all = 2
+	}
 	public class AgentFilter : IPaginable
 	{
 		public uint agent { get; set; }
 		public DateTime? startDate { get; set; }
 		public DateTime? endDate { get; set; }
 		public string year { get; set; }
+
+		[Description("Бонусные")]
+		public VirtualType Virtual { get; set; }
 
 		public int _lastRowsCount;
 		public decimal TotalSum;
@@ -32,6 +42,11 @@ namespace InternetInterface.Controllers
 		}
 
 		public int CurrentPage { get; set; }
+
+		public AgentFilter()
+		{
+			Virtual = VirtualType.all;
+		}
 
 		public string[] ToUrl()
 		{
@@ -67,6 +82,9 @@ namespace InternetInterface.Controllers
 			totalRes = totalRes.Where(t => t.PaidOn >= startDate.Value &&
 				t.PaidOn <= endDate.Value.AddHours(23).AddMinutes(59) && t.Sum != 0 &&
 				t.Client.PhysicalClient != null).ToList();
+			if(Virtual != VirtualType.all) {
+				totalRes = totalRes.Where(t => t.Virtual == (Virtual == VirtualType.bonus)).ToList();
+			}
 			_lastRowsCount = totalRes.Count();
 			TotalSum = totalRes.Sum(h => h.Sum);
 			if (_lastRowsCount > 0) {

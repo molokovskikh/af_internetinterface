@@ -82,6 +82,7 @@ namespace InternetInterface.Test.Functional
 			if (!ActiveRecordStarter.IsInitialized)
 				ActiveRecordInitialize.Init(ConnectionHelper.GetConnectionName(),
 					Assembly.Load("InternetInterface"),
+					Assembly.Load("Test.Support"),
 					Assembly.Load("InternetInterface.Test"));
 		}
 	}

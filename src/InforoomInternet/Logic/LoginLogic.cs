@@ -14,7 +14,7 @@ namespace InforoomInternet.Logic
 	{
 		public static bool IsAccessibleClient(uint id, string password)
 		{
-			return Client.Queryable.Count(c => 
+			return Client.Queryable.Count(c =>
 				c.Id == id &&
 					c.PhysicalClient != null &&
 					c.PhysicalClient.Password == CryptoPass.GetHashString(password))

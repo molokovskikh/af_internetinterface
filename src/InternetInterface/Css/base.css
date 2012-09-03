@@ -477,6 +477,12 @@ button.button:active, a.button:active {
 	min-width:1300px;
 }
 
+.filterItem
+{
+	margin-top:10px;
+	float:none;
+}
+
 .inlineForm {
 	display: inline;
 }
