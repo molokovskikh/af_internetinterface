@@ -539,6 +539,6 @@ table .filter_front thead td{
 	margin-left: -400px;
 }
 
-.fullWidth {
+#main.fullWidth {
 	width: 100%;
 }

@@ -24,5 +24,14 @@ namespace InternetInterface.Test.Functional
 				brigad.DeleteAndFlush();
 			}
 		}
+
+		[Test]
+		public void ReportOnWork()
+		{
+			Open("Brigads/ReportOnWork");
+			AssertText("Параментры фильтрации");
+			Click("Показать");
+			AssertText("Параментры фильтрации");
+		}
 	}
 }

@@ -8,20 +8,20 @@
 				</thead>
 				<tbody>
 					<tr>
-						<td>Бригада по подключению</td>
+						<td>Бригада</td>
 						<td>${App.Edit("filter.Brigad")}</td>
 					</tr>
 					<tr>
-						<td>Выберите зону для просмотра:</td>
+						<td>Интервал назначенных подключений:</td>
 						<td>
 							с
-							<input type=text name="filter.Period.Begin" value="${filter.Period.Begin.ToShortDateString()}" class="graph_date">
+							<input type=text name="filter.Period.Begin" value="${filter.Period.Begin.ToShortDateString()}" class="graph_date"> <br /> <br />
 							по
 							<input type=text name="filter.Period.End" value="${filter.Period.End.ToShortDateString()}" class="graph_date">
 						</td>
 					</tr>
 					<tr>
-						<td>Статус подключения:</td>
+						<td>Статус:</td>
 						<td>
 							${App.Edit("filter.State", "RadioList")}
 						</td>
