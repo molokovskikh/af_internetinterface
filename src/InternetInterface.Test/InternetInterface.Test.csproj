@@ -102,6 +102,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\MySql.Data.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Newtonsoft.Json.4.5.8\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="NHibernate, Version=2.1.2.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\NHibernate.dll</HintPath>
@@ -130,6 +134,9 @@
     <Reference Include="System.Xml" />
     <Reference Include="WatiN.Core, Version=2.1.0.1196, Culture=neutral, PublicKeyToken=db7cfd3acb5ad44e, processorArchitecture=MSIL" />
     <Reference Include="WatiN.CssSelectorExtensions">
+    </Reference>
+    <Reference Include="WebDriver">
+      <HintPath>..\..\packages\Selenium.WebDriver.2.25.1\lib\net40\WebDriver.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

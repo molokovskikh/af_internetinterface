@@ -235,7 +235,7 @@
 
 				<form class="inlineForm" method="post" action="${siteroot}/UserInfo/RemakeVirginityClient">
 				<input type="hidden" name="clientId" value="${ClientCode}" />
-				<button type="submit"  class="editBut">Сбросить</button>
+				<button type="submit"  class="editBut" id="clearGraphButton">Сбросить</button>
 				</form>
 			</td>
 		</tr>

@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{50951817-6414-4D95-B0F1-9DBA2B300601}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>InternetInterface.Selenium.Test</RootNamespace>
+    <AssemblyName>InternetInterface.Selenium.Test</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Castle.ActiveRecord">
+      <HintPath>..\InternetInterface\bin\Castle.ActiveRecord.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\packages\Newtonsoft.Json.4.5.8\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate">
+      <HintPath>..\InternetInterface\bin\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\..\packages\NUnit.2.5.10.11092\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WebDriver">
+      <HintPath>..\..\packages\Selenium.WebDriver.2.25.1\lib\net40\WebDriver.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Fixtures\InternetSeleniumFixture.cs" />
+    <Compile Include="SeleniumFixture.cs" />
+    <Compile Include="Setup.cs" />
+    <Compile Include="Fixtures\UserInfoFixture.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common.Web.UI\Common.Web.Ui\Common.Web.Ui.csproj">
+      <Project>{95E2C313-46FA-4B4B-9EFF-3228662908F4}</Project>
+      <Name>Common.Web.Ui</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\InternetInterface.Test\InternetInterface.Test.csproj">
+      <Project>{559B7BA4-1758-4D03-ABF9-856D21C0D0D7}</Project>
+      <Name>InternetInterface.Test</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\InternetInterface\InternetInterface.csproj">
+      <Project>{E2B03BC7-AACB-4A72-BBC7-DF4325912504}</Project>
+      <Name>InternetInterface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Test.Support\Test.Support.Web\Test.Support.Web.csproj">
+      <Project>{12258B1D-35E8-45BA-9C1E-5F7B8ACD7D37}</Project>
+      <Name>Test.Support.Web</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Test.Support\Test.Support\Test.Support.csproj">
+      <Project>{A215E837-1208-49E3-AF93-A9612223122C}</Project>
+      <Name>Test.Support</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

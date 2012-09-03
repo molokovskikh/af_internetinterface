@@ -5,6 +5,7 @@ using Castle.ActiveRecord;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
+using OpenQA.Selenium;
 using WatiN.Core;
 
 namespace InternetInterface.Test.Functional
