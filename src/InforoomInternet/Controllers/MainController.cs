@@ -62,7 +62,7 @@ namespace InforoomInternet.Controllers
 			var lease = Lease.FindAll();
 			mailToAdress = "kvasovtest@analit.net";
 #else
-			var lease = Lease.FindAllByProperty("Ip", Convert.ToUInt32(NetworkSwitches.SetProgramIp(ip)));
+			var lease = Lease.FindAllByProperty("Ip", Convert.ToUInt32(NetworkSwitch.SetProgramIp(ip)));
 #endif
 			var client = lease.Where(
 				l => l.Endpoint != null && l.Endpoint.Client != null && l.Endpoint.Client.PhysicalClient != null)
