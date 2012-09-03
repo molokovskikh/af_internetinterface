@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.ComponentModel;
 using System.Linq;
 using System.Collections.Generic;
 using Castle.ActiveRecord;
@@ -10,11 +10,17 @@ namespace InternetInterface.Models
 {
 	public enum StatusType
 	{
+		[Description("Зарегистрирован")]
 		BlockedAndNoConnected = 1,
+		[Description("Не подключен")]
 		BlockedAndConnected = 3,
+		[Description("Подключен")]
 		Worked = 5,
+		[Description("Заблокирован")]
 		NoWorked = 7,
+		[Description("Добровольная блокировка")]
 		VoluntaryBlocking = 9,
+		[Description("Расторгнут")]
 		Dissolved = 11
 	}
 

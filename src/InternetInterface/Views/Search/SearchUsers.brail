@@ -4,7 +4,9 @@
 			jQuery("#SearchText").focus();
 		}
 	);
-
+	function LoadExcel(control) {
+		window.location.href = "${siteroot}/Export/GetClients?" + $("#SearchForm").serialize();
+	}
 </script>
 
 <style type="text/css">
@@ -87,6 +89,15 @@ border="1" bgcolor="#FFFFFF" cellspacing="1" cellpadding="0">
 		</table>
 	</fieldset>
 	<%end %>
+	<table>
+		<tbody>
+			<tr>
+				<td style="width:47%; padding:0 4px 0 4px;">
+					<a href="#" onclick="LoadExcel(this);"><img src="../Images/Excel.png" alt="" style="border-style: none;"/>&nbsp;Выгрузить статистику клиентам в Excel</a>
+				</td>
+			</tr>
+		</tbody>
+	</table>
 	</td>
 	</tr>
 </table>

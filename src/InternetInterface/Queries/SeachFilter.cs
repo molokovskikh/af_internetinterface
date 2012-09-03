@@ -20,6 +20,7 @@ namespace InternetInterface.Queries
 		public string searchText { get; set; }
 		public string SortBy { get; set; }
 		public string Direction { get; set; }
+		public bool ExportInExcel { get; set; }
 
 		private int _lastRowsCount;
 
@@ -122,6 +123,8 @@ join internet.Status S on s.id = c.Status";
 				var sqlStr = string.Empty;
 				IQuery query = null;
 				var limitPart = InitializeContent.Partner.IsDiller() ? "Limit 5 " : string.Format("Limit {0}, {1}", CurrentPage * PageSize, PageSize);
+				if (ExportInExcel)
+					limitPart = string.Empty;
 				var wherePart = GetClientsLogic.GetWhere(this);
 
 				sqlStr = String.Format(
@@ -139,8 +142,10 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 				if (!InitializeContent.Partner.IsDiller()) {
 					var newSql = sqlStr.Replace("c.*", "count(*)");
 					newSql = newSql.Replace(", co.Contact", string.Empty);
-					var limitPosition = newSql.IndexOf("Limit");
-					newSql = newSql.Remove(limitPosition);
+					if (!ExportInExcel) {
+						var limitPosition = newSql.IndexOf("Limit");
+						newSql = newSql.Remove(limitPosition);
+					}
 					newSql = string.Format("select count(*) from ({0}) as t1;", newSql);
 					var countQuery = session.CreateSQLQuery(newSql);
 					if (!string.IsNullOrEmpty(searchText) && wherePart.Contains(":SearchText"))

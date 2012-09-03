@@ -253,13 +253,14 @@ namespace InternetInterface.Models
 			return TextHelper.SelectQuery(query, Name);
 		}
 
-		public virtual string ForSearchContact(string query)
+		public virtual string ForSearchContactAction(string query, Action<Contact> doContact)
 		{
 			var result = String.Empty;
 			if (!String.IsNullOrEmpty(query)) {
 				var contacts = Contacts.Where(c => c.Text.Contains(query));
 				foreach (var contact in contacts) {
-					result += TextHelper.SelectContact(query, contact.Text) + "<br/>";
+					doContact(contact);
+					//result += TextHelper.SelectContact(query, contact.Text) + "<br/>";
 				}
 			}
 			if (String.IsNullOrEmpty(result)) {
@@ -267,6 +268,48 @@ namespace InternetInterface.Models
 			}
 			return result;
 		}
+
+		public virtual string ForSearchContact(string query)
+		{
+			var result = string.Empty;
+			ForSearchContactAction(query, contact => {
+				result += TextHelper.SelectContact(query, contact.Text) + "<br/>";
+			});
+			return result;
+		}
+
+		public virtual string ForSearchContactNoLight(string query)
+		{
+			var result = string.Empty;
+			ForSearchContactAction(query, contact => {
+				result += (contact.Text + "/r/n");
+			});
+			return result;
+		}
+
+		public virtual string GetTariffName()
+		{
+			if (IsPhysical())
+				return PhysicalClient.Tariff.Name;
+			if (LawyerPerson.Tariff != null)
+				return string.Format("{0} руб.", LawyerPerson.Tariff.Value);
+			return "Тариф не задан";
+		}
+
+		/*public virtual string ForSearchContactNoLight(string query)
+		{
+			var result = String.Empty;
+			if (!String.IsNullOrEmpty(query)) {
+				var contacts = Contacts.Where(c => c.Text.Contains(query));
+				foreach (var contact in contacts) {
+					result += (contact.Text + "/r/n");
+				}
+			}
+			if (String.IsNullOrEmpty(result)) {
+				return Contact;
+			}
+			return result;
+		}*/
 
 		public virtual bool StatusCanChange()
 		{

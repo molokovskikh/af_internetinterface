@@ -69,6 +69,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Castle.MonoRail.Views.Brail.dll</HintPath>
     </Reference>
+    <Reference Include="ExcelLibrary">
+      <HintPath>..\..\lib\ExcelLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\log4net.dll</HintPath>
@@ -270,6 +273,7 @@
     <Compile Include="Controllers\AgentInfoController.cs" />
     <Compile Include="Controllers\BrigadsController.cs" />
     <Compile Include="Controllers\ChannelGroupsController.cs" />
+    <Compile Include="Controllers\ExportController.cs" />
     <Compile Include="Controllers\InvoicesController.cs" />
     <Compile Include="Controllers\PrivateMessagesController.cs" />
     <Compile Include="Controllers\ExitPartner.cs" />
@@ -308,6 +312,7 @@
     <Compile Include="Helpers\DateHelper.cs" />
     <Compile Include="Helpers\EmailHelper.cs" />
     <Compile Include="Helpers\ExceptionHelper.cs" />
+    <Compile Include="Helpers\ExportModel.cs" />
     <Compile Include="Helpers\IpHelper.cs" />
     <Compile Include="Helpers\Listner.cs" />
     <Compile Include="Helpers\LoginCreatorHelper.cs" />
@@ -431,6 +436,10 @@
     <ProjectReference Include="..\Common.Tools\Common.Tools\Common.Tools.csproj">
       <Project>{72AFCFE8-C9E9-45FA-9698-BEE896A517A3}</Project>
       <Name>Common.Tools</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common.Web.UI\Common.Web.Ui.Excel\Common.Web.Ui.Excel.csproj">
+      <Project>{D6853570-4238-430A-ADFE-3CAACE172954}</Project>
+      <Name>Common.Web.Ui.Excel</Name>
     </ProjectReference>
     <ProjectReference Include="..\Common.Web.UI\Common.Web.Ui\Common.Web.Ui.csproj">
       <Project>{95E2C313-46FA-4B4B-9EFF-3228662908F4}</Project>
