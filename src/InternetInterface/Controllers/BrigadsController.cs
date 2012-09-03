@@ -3,14 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Castle.MonoRail.Framework;
+using Common.Web.Ui.Controllers;
+using Common.Web.Ui.Helpers;
+using Common.Web.Ui.MonoRailExtentions;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using InternetInterface.Queries;
 
 namespace InternetInterface.Controllers
 {
+	[Helper(typeof(PaginatorHelper)),
+	 Helper(typeof(CategorieAccessSet)),]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
-	public class BrigadsController : SmartDispatcherController
+	public class BrigadsController : BaseController
 	{
 		public void ShowBrigad()
 		{
@@ -63,6 +69,13 @@ namespace InternetInterface.Controllers
 				Flash["Brigad"] = brigad;
 				RenderView("MakeBrigad");
 			}
+		}
+
+		public void ReportOnWork([SmartBinder("filter")] BrigadFilter filter)
+		{
+			//PropertyBag["brigads"] = DbSession.QueryOver<Brigad>().List();
+			PropertyBag["filter"] = filter;
+			PropertyBag["SClients"] = filter.Find(DbSession);
 		}
 	}
 }

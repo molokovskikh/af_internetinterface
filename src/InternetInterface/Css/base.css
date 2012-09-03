@@ -482,3 +482,7 @@ button.button:active, a.button:active {
 	margin-top:10px;
 	float:none;
 }
+
+.inlineForm {
+	display: inline;
+}

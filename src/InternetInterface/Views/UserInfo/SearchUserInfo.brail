@@ -228,9 +228,14 @@
 <%if PartnerAccessSet.AccesPartner("DHCP"): %>
 		<tr>
 			<td>
-				<form method="post" action="${siteroot}/UserInfo/AddEndPoint">
+				<form class="inlineForm" method="post" action="${siteroot}/UserInfo/AddEndPoint">
 				<input type="hidden" name="clientId" value="${ClientCode}" />
 				<button type="submit"  class="editBut">Добавить точку подключения</button>
+				</form>
+
+				<form class="inlineForm" method="post" action="${siteroot}/UserInfo/RemakeVirginityClient">
+				<input type="hidden" name="clientId" value="${ClientCode}" />
+				<button type="submit"  class="editBut">Сбросить</button>
 				</form>
 			</td>
 		</tr>

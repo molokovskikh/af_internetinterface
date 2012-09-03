@@ -61,6 +61,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Direction"] = filter.Direction;
 			PropertyBag["SortBy"] = filter.SortBy;
 			PropertyBag["filter"] = filter;
+			PropertyBag["forClientSearch"] = true;
 			AddIndispensableParameters();
 		}
 

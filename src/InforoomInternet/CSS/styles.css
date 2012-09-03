@@ -848,3 +848,14 @@ background-color: #FFBABA;
 .serviceForm {
 	margin-left: 12px;
 }
+
+.bonus_link {
+	font-size: 17px;
+	text-decoration: none;
+}
+
+.description_bunos_link {
+	color: #AAA;
+	padding-left: 10px;
+	line-height: 200%;
+}

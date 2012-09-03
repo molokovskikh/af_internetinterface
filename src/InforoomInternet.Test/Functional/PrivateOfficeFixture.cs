@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Linq;
 using InternetInterface;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
+using WatiN.Core;
 
 namespace InforoomInternet.Test.Functional
 {
@@ -75,7 +77,7 @@ namespace InforoomInternet.Test.Functional
 			AssertText("500");
 		}
 
-		[Test]
+		[Test, Ignore("Функционал временно отключен")]
 		public void Deactivate_internet()
 		{
 			Click("Управление услугами");
@@ -84,6 +86,39 @@ namespace InforoomInternet.Test.Functional
 
 			session.Refresh(client);
 			Assert.That(client.Internet.ActivatedByUser, Is.False);
+		}
+
+		[Test]
+		public void Friend_bunus_base_view_test()
+		{
+			Click("Бонусные программы");
+			AssertText("Ваши друзья до сих пор пользуются интернетом с низкой скоростью?");
+			Assert.IsNotNull(browser.Link(Find.ByText("Оптоволоконного Интернета")));
+			Assert.IsNotNull(browser.Link(Find.ByText("оформите заявку")));
+			Click("Подключи друга");
+			AssertText("Подключи друга и получи 250 рублей на свой лицевой счёт!");
+			Click("оформите заявку");
+			AssertText("Заполнение данной заявки означает принятие участие в акции \"подключи друга\".");
+		}
+
+		[Test]
+		public void Freind_bonus_create_test()
+		{
+			Open("Main/zayavka");
+			AssertText("Заполнение данной заявки означает принятие участие в акции \"подключи друга\".");
+			browser.TextField("fio").AppendText("testFio");
+			browser.TextField("phone_").AppendText("8-900-900-90-90");
+			browser.TextField("City").AppendText("Воронеж");
+			browser.TextField("residence").AppendText("Студенческая");
+			browser.TextField("House").AppendText("12");
+			browser.TextField("CaseHouse").AppendText("а");
+			browser.TextField("Apartment").AppendText("1");
+			browser.TextField("Entrance").AppendText("2");
+			browser.TextField("Floor").AppendText("1");
+			Click("Отправить");
+			AssertText("Спасибо, Ваша заявка принята. Номер заявки");
+			var requests = session.QueryOver<Request>().Where(r => r.FriendThisClient == client).List();
+			Assert.That(requests.Count, Is.EqualTo(1));
 		}
 	}
 }

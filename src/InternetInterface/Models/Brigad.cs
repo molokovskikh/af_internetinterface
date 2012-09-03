@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
 using Castle.Components.Validator;
+using Common.Web.Ui.ActiveRecordExtentions;
 using InternetInterface.Models.Universal;
 using System.Linq;
 
@@ -34,6 +35,11 @@ namespace InternetInterface.Models
 			var graphs =
 				ConnectGraph.Queryable.Where(c => c.Brigad == this && c.Day.Date == selectDate.Date && c.IntervalId == (uint)intervalNum).ToList();
 			return graphs.Count != 0 ? graphs.First().Client : null;
+		}
+
+		public static List<Brigad> All()
+		{
+			return (List<Brigad>)ArHelper.WithSession(s => s.QueryOver<Brigad>().List());
 		}
 	}
 }
