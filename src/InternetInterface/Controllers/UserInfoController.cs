@@ -989,9 +989,10 @@ where r.`Label`= :LabelIndex;")
 			if (Request.Form["graph_button"] != null) {
 				var client = Client.Find(Convert.ToUInt32(Request.Form["clientId"]));
 				var but_id = Request.Form["graph_button"].Split('_');
-				foreach (var graph in ConnectGraph.Queryable.Where(c => c.Client == client).ToList()) {
-					graph.Delete();
-				}
+				if (client.BeginWork == null)
+					foreach (var graph in ConnectGraph.Queryable.Where(c => c.Client == client).ToList()) {
+						graph.Delete();
+					}
 				var briad = Brigad.Find(Convert.ToUInt32(but_id[1]));
 				var interval = Convert.ToUInt32(but_id[0]);
 				new ConnectGraph {
@@ -1032,6 +1033,25 @@ where r.`Label`= :LabelIndex;")
 				Day = DateTime.Parse(Request.Form["graph_date"])
 			}.Save();
 			return "Время зарезервировано";
+		}
+
+		[return: JSONReturnBinder]
+		public bool DeleteGraph()
+		{
+			var date = DateTime.Parse(Request.Form["date"]);
+			var client = Client.Find(Convert.ToUInt32(Request.Form["clientId"]));
+			var briad = Brigad.Find(Convert.ToUInt32(Request.Form["brigad"]));
+			var interval = uint.Parse(Request.Form["interval"]);
+			var graph = DbSession.QueryOver<ConnectGraph>().Where(c => c.Client == client && c.Day == date && c.IntervalId == interval && c.Brigad == briad).List().FirstOrDefault();
+			if (graph != null) {
+				DbSession.Delete(graph);
+				Appeals.CreareAppeal(string.Format("Удалено назначение в граффик, \r\n Брагада: {0} \r\n Дата: {1} \r\n Время: {2}",
+					briad.Name,
+					date.ToShortDateString(),
+					Intervals.GetIntervals()[(int)interval]), client, AppealType.User);
+				return true;
+			}
+			return false;
 		}
 
 		public void Administration()
@@ -1087,6 +1107,17 @@ where r.`Label`= :LabelIndex;")
 				else
 					Flash["Message"] = Message.Error("Последняя точка подключения не может быть удалена!");
 			}
+			RedirectToReferrer();
+		}
+
+		[AccessibleThrough(Verb.Post)]
+		public void RemakeVirginityClient(uint clientId)
+		{
+			var client = DbSession.Get<Client>(clientId);
+			client.Status = Status.Get(StatusType.BlockedAndConnected, DbSession);
+			client.BeginWork = null;
+			client.RatedPeriodDate = null;
+			DbSession.SaveOrUpdate(client);
 			RedirectToReferrer();
 		}
 	}

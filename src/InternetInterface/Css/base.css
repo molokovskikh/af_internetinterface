@@ -476,3 +476,7 @@ button.button:active, a.button:active {
 	height:700px;
 	min-width:1300px;
 }
+
+.inlineForm {
+	display: inline;
+}

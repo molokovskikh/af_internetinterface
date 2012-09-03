@@ -538,3 +538,7 @@ table .filter_front thead td{
 #searchPositionTable {
 	margin-left: -400px;
 }
+
+#main.fullWidth {
+	width: 100%;
+}

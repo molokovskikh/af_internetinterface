@@ -66,6 +66,7 @@
   <ItemGroup>
     <Compile Include="Integration\AgentFixture.cs" />
     <Compile Include="Integration\BalanceFuntionalFixture.cs" />
+    <Compile Include="Integration\BonusFixture.cs" />
     <Compile Include="Integration\LawyerPersonFixture.cs" />
     <Compile Include="Integration\MutexFixture.cs" />
     <Compile Include="Integration\SaleFixture.cs" />

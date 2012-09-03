@@ -253,5 +253,9 @@ namespace InforoomInternet.Controllers
 				client.Save();
 			}
 		}
+
+		public void BonusProgram()
+		{
+		}
 	}
 }

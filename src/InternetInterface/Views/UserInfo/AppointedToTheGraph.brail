@@ -91,11 +91,16 @@
 					$('#tr_' + i).append(tds);
 				}
 				$(data.graphs).each(function () {
-					$('#tdi_' + this.IntervalId + '_' + this.brigadId).empty();
-					if (this.clientId != 0)
-						$('#tdi_' + this.IntervalId + '_' + this.brigadId).append('<a class="graph_link" href="../Search/Redirect?filter.ClientCode=' + this.clientId + '">' + this.clientId + '</a>');
+					var currentTd = $('#tdi_' + this.IntervalId + '_' + this.brigadId);
+					currentTd.empty();
+					if (this.clientId != 0) {
+						currentTd.append('<a class="graph_link" href="../Search/Redirect?filter.ClientCode=' + this.clientId + '">' + this.clientId + '</a>');
+						currentTd.append('<a href="#" onclick="Delete(this);" value=""> <img class="deletePointControl" src="../images/onebit_32.png"> </a>');
+						currentTd.append('<input type=hidden class="intervalValue" value="' + this.IntervalId + '">')
+						currentTd.append('<input type=hidden class="brigadValue" value="' + this.brigadId + '">')
+					}
 					else
-						$('#tdi_' + this.IntervalId + '_' + this.brigadId).append('Резерв');
+						currentTd.append('Резерв');
 				});
 			});
 
@@ -121,7 +126,18 @@
 				 appended_field.empty();
 				 appended_field.append('Резерв');
 			  });
-		 }
+			}
+
+			function Delete(elem) {
+				var req = {};
+				req.interval = $(elem).parent().children('input.intervalValue:first').val();
+				req.brigad = $(elem).parent().children('input.brigadValue:first').val();
+				req.clientId = $('#clientId').val();
+				req.date = $('#graph_date').val();
+				$.post("DeleteGraph", req, function (data) {
+					window.location.href = '../Search/Redirect?filter.ClientCode=${ClientCode}';
+				});
+			}
 
 		 function Save() {
 			 var req = {};
@@ -132,19 +148,6 @@
 			 $.post("SaveGraph", req, function (data) {
 				 if (data) {
 					 alert("Заявка включена в рассписание");
-					 $('.graph_link').each(function () {
-						 var client_id = $(this).attr('href').split('=')[1];
-						 if (client_id == req.clientId) {
-							 var clear_field = $(this).parent();
-							 clear_field.empty();
-							 clear_field.append('<input type="radio" name="graph_button" value="' + clear_field.attr('id') + '">');
-						 }
-					 });
-					 var appended_field = check_field.parent();
-					 appended_field.empty();
-					 appended_field.append('<a class="graph_link" href="../Search/Redirect?filter.ClientCode=' + req.clientId + '">' + req.clientId + '</a>');
-					 $('#naznach_but_1').text('Переназначить');
-					 $('#naznach_but').text('Переназначить');
 					 window.location.href = '../Search/Redirect?filter.ClientCode=${ClientCode}';
 				 }
 				 else {
