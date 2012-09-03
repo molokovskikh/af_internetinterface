@@ -115,6 +115,7 @@ function GetLinkText(hide) {
 			<a href="${Siteroot}/PrivateOffice/Services">Управление услугами</a> <br />
 			<a href="${Siteroot}/PrivateOffice/SmsNotification" >Смс уведомления</a> <br />
 			<a href="${Siteroot}/PrivateOffice/AboutSale" >Программа скидок</a>
+			<a href="${Siteroot}/PrivateOffice/BonusProgram" >Бонусные программы</a>
 		</div>
 	</td>
 </tr>

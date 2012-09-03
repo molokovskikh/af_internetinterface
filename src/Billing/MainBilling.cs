@@ -292,6 +292,27 @@ set s.LastStartFail = true;")
 						}.Save();
 					}
 				}
+
+				var friendBonusRequests = Request.Queryable.Where(r =>
+					r.Client != null &&
+						r.FriendThisClient != null &&
+						!r.PaidFriendBonus &&
+						r.Client.BeginWork != null)
+					.ToList();
+				foreach (var friendBonusRequest in friendBonusRequests) {
+					if (friendBonusRequest.Client.HavePaymentToStart()) {
+						new Payment {
+							Client = friendBonusRequest.FriendThisClient,
+							Sum = 250m,
+							PaidOn = SystemTime.Now(),
+							RecievedOn = SystemTime.Now(),
+							Virtual = true
+						}.Save();
+						friendBonusRequest.PaidFriendBonus = true;
+						friendBonusRequest.Update();
+					}
+				}
+
 				transaction.VoteCommit();
 			}
 			using (var transaction = new TransactionScope(OnDispose.Rollback)) {

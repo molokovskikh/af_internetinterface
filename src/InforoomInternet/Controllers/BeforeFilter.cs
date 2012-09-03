@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -49,9 +50,12 @@ namespace InforoomInternet.Controllers
 			controllerContext.PropertyBag["ViewName"] = Path.GetFileNameWithoutExtension(context.Request.Uri.Segments.Last());
 			controllerContext.PropertyBag["LocalPath"] = Path.GetFileNameWithoutExtension(context.Request.Uri.LocalPath);
 			controllerContext.PropertyBag["loadInternetModules"] = !Lease.IsGray(context.Request.UserHostAddress);
+
+			controllerContext.PropertyBag["authorized"] = AccessFilter.Authorized(context);
 			if (context.Session["LoginPartner"] == null) {
 				context.Session["LoginPartner"] = context.CurrentUser.Identity.Name;
 			}
+
 			controllerContext.PropertyBag["AccessEditLink"] = LoginLogic.IsAccessiblePartner(context.Session["LoginPartner"]);
 			return true;
 		}
@@ -59,7 +63,7 @@ namespace InforoomInternet.Controllers
 
 	public class AccessFilter : IFilter
 	{
-		public bool Perform(ExecuteWhen exec, IEngineContext context, IController controller, IControllerContext controllerContext)
+		public static bool Authorized(IEngineContext context)
 		{
 			var ip = context.Request.UserHostAddress;
 
@@ -79,10 +83,17 @@ namespace InforoomInternet.Controllers
 				}
 			}
 			if ((context.Session["LoginClient"] == null) || (Client.Find(Convert.ToUInt32(context.Session["Login"])) == null)) {
-				context.Response.RedirectToUrl(@"..//Login/LoginPage");
 				return false;
 			}
 			return true;
+		}
+
+		public bool Perform(ExecuteWhen exec, IEngineContext context, IController controller, IControllerContext controllerContext)
+		{
+			var authorized = Authorized(context);
+			if (!authorized)
+				context.Response.RedirectToUrl(@"..//Login/LoginPage");
+			return authorized;
 		}
 	}
 }

@@ -93,6 +93,12 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool PaidBonus { get; set; }
 
+		[BelongsTo]
+		public virtual Client FriendThisClient { get; set; }
+
+		[Property]
+		public virtual bool PaidFriendBonus { get; set; }
+
 
 		public virtual IDictionary GetValidateionErrors()
 		{

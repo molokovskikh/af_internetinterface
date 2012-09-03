@@ -56,6 +56,7 @@ namespace InforoomInternet.Controllers
 				}
 			}
 			catch (Exception ex) {
+				_log.Error("Ошибка авторизации", ex);
 				RedirectToUrl(@"..//Login/LoginPage");
 			}
 		}

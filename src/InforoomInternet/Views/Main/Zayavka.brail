@@ -2,11 +2,15 @@
 <link href="${siteroot}/CSS/jquery.autocomplete.css" type="text/css" rel="stylesheet" />
 
 <script type="text/javascript" src="${siteroot}/JavaScript/jquery.autocomplete.js"></script>
-
-
 <div id="wrapper_in">
 	<div id="wrapper_inner">
 		<form method="post" action="send" id="zakazform">
+		<%if authorized: %>
+		<p></p>
+		<p class="info" style="padding:10px; margin-top:10px;">
+			Заполнение данной заявки означает принятие участие в акции "подключи друга".
+		</p>
+		<%end %>
 		<p>
 			<label for="fio">Ф.И.О.</label>
 			<input type="text" id="fio" name="application.ApplicantName" value="${application.ApplicantName if IsDefined( "application" )}" size="45" />
