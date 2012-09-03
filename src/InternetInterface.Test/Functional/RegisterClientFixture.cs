@@ -66,6 +66,9 @@ namespace InternetInterface.Test.Functional
 			Assert.That(browser.Text, Is.StringContaining("прописанный по адресу:"));
 			Assert.That(browser.Text, Is.StringContaining("адрес подключения:"));
 			Assert.That(browser.Text, Is.StringContaining("принимаю подключение к услугам доступа"));
+
+			Assert.That(browser.Text, Is.Not.Contains("(4732) 606-000"));
+			AssertText("(473) 22-999-87");
 		}
 
 		[Test]
