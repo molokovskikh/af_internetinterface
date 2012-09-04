@@ -79,6 +79,7 @@ namespace InternetInterface.Services
 			client.Status = status;
 			client.Update();
 			assignedService.Activated = false;
+			assignedService.Diactivated = true;
 			ActiveRecordMediator.Update(assignedService);
 		}
 
@@ -89,7 +90,7 @@ namespace InternetInterface.Services
 
 		public override void Activate(ClientService assignedService)
 		{
-			if ((!assignedService.Activated && CanActivate(assignedService))) {
+			if ((!assignedService.Activated && !assignedService.Diactivated && CanActivate(assignedService))) {
 				var client = assignedService.Client;
 				client.Disabled = false;
 				client.RatedPeriodDate = SystemTime.Now();

@@ -53,6 +53,9 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool Activated { get; set; }
 
+		[Property]
+		public virtual bool Diactivated { get; set; }
+
 		[Property, Description("Подключить")]
 		public virtual bool ActivatedByUser { get; set; }
 

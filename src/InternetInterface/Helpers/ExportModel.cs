@@ -60,10 +60,11 @@ namespace InternetInterface.Helpers
 			FormatClientsStatisticXls(ws);
 
 			wb.Worksheets.Add(ws);
-			MemoryStream ms = new MemoryStream();
-			wb.Save(ms);
-
-			return ms.ToArray();
+			using (var ms = new MemoryStream()) {
+				wb.Save(ms);
+				return ms.ToArray();
+			}
+			return new byte[0];
 		}
 
 		private static void FormatClientsStatisticXls(Worksheet ws)
@@ -86,8 +87,6 @@ namespace InternetInterface.Helpers
 			ws.Cells.ColumnWidth[5] = 4000;
 			ws.Cells.ColumnWidth[6] = 3000;
 			ws.Cells.ColumnWidth[7] = 4000;
-			ws.Cells.ColumnWidth[8] = 3000;
-			ws.Cells.ColumnWidth[9] = 4000;
 
 			ws.Cells.Rows[headerRow].Height = 514;
 		}

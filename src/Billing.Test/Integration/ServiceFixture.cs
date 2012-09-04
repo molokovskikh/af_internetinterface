@@ -793,5 +793,22 @@ namespace Billing.Test.Integration
 		{
 			Assert.That(_client.ClientServices.Count, Is.EqualTo(2), _client.ClientServices.Implode(c => c.Service));
 		}
+
+		[Test]
+		public void DebtWorkActivateDiactivate()
+		{
+			using (new SessionScope()) {
+				_client.Disabled = true;
+				_client.PhysicalClient.Balance = -5m;
+				_client.Save();
+				var service = Activate(typeof(DebtWork));
+				Assert.IsFalse(_client.Disabled);
+				SystemTime.Now = () => DateTime.Now.AddDays(2);
+				service.Deactivate();
+				Assert.IsTrue(_client.Disabled);
+				service.Activate();
+				Assert.IsTrue(_client.Disabled);
+			}
+		}
 	}
 }

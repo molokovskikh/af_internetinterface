@@ -1,4 +1,5 @@
-﻿using InternetInterface.Test.Helpers;
+﻿using System.Threading;
+using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 using WatiN.Core;
 using WatiN.Core.Native.Windows;
@@ -86,6 +87,15 @@ namespace InternetInterface.Test.Functional
 			browser.TextField("BalanceText").AppendText("1000");
 			browser.Button(Find.ById("ChangeBalanceButton")).Click();
 			Assert.That(browser.Text, Is.StringContaining("Платеж ожидает обработки"));
+		}
+
+		[Test]
+		public void OutOfMemoryExcelExportTest()
+		{
+			browser.RadioButton("filter.clientTypeFilter.Type_1").Checked = true;
+			Click("Выгрузить статистику клиентам в Excel");
+			Click("Поиск");
+			AssertText("Поиск пользователей");
 		}
 	}
 }
