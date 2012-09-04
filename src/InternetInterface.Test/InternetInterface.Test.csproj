@@ -162,6 +162,7 @@
     <Compile Include="Helpers\ClientHelper.cs" />
     <Compile Include="Helpers\PartnerHelper.cs" />
     <Compile Include="Helpers\PropertiesHelper.cs" />
+    <Compile Include="Integration\AgentFilterFixture.cs" />
     <Compile Include="Integration\ContactFixture.cs" />
     <Compile Include="Integration\HouseMapFixture.cs" />
     <Compile Include="Integration\MailerFixture.cs" />

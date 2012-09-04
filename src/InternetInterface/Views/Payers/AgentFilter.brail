@@ -30,7 +30,7 @@
 		#tabs
 		{
 			width:1000px;
-			height:350px;
+			height:370px;
 			background-color:White;
 			border: 1px double black;
 		}
@@ -134,6 +134,13 @@
 							</div>
 						</td>
 					</tr>
+	<tr>
+		<td>
+			<b>${app.Label("filter.Virtual")}</b>
+			<div>${app.Edit("filter.Virtual", {@class: @filterItem})}</div>
+			<p>
+		</td>
+	</tr>
 					<tr>
 						<td>
 								<button id="showBut" type=submit class="button showpay">Показать</button>

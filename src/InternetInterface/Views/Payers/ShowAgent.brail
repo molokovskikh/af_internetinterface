@@ -19,6 +19,7 @@
                 <th>ФИО</th>
                 <th>Сумма</th>
                 <th>Дата</th>
+				<th>Бонусный</th>
             </tr>
         </thead>
         <tbody>
@@ -28,10 +29,15 @@
                     <td>${item.Client.Name}</td>
                     <td>${item.Sum.ToString("0.00")}</td>
                     <td>${item.PaidOn}</td>
+					<td><% if item.Virtual: %>
+					Да
+					<% else: %>
+					Нет
+					<% end %></td>
                 </tr>
             <%end %>
                 <tr>
-                    <td colspan=4>
+                    <td colspan=5>
                         <div class="Paginator">
                             ${PaginatorHelper.ShowPaginator()}
                         </div>
