@@ -1,0 +1,38 @@
+﻿<div id="main" class="fullWidth">
+<div id="container">
+	<div id="box" class="block">
+		<form id="onform" class="formConnect" method="get">
+			<table class="table find_block">
+				<thead>
+					<tr><th colspan=2>Параментры фильтрации</th></tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Бригада</td>
+						<td>${App.Edit("filter.Brigad")}</td>
+					</tr>
+					<tr>
+						<td>Интервал назначенных подключений:</td>
+						<td>
+							с
+							<input type=text name="filter.Period.Begin" value="${filter.Period.Begin.ToShortDateString()}" class="graph_date"> <br /> <br />
+							по
+							<input type=text name="filter.Period.End" value="${filter.Period.End.ToShortDateString()}" class="graph_date">
+						</td>
+					</tr>
+					<tr>
+						<td>Статус:</td>
+						<td>
+							${App.Edit("filter.State", "RadioList")}
+						</td>
+					</tr>
+					<tr>
+						<td colspan=2><input type="submit" value="Показать"/></td>
+					</tr>
+				</tbody>
+			</table>
+		</form>
+	</div>
+<% OutputSubView("""\Search\SearchBy""") %>
+</div>
+</div>

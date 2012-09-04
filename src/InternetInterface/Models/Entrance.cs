@@ -26,7 +26,7 @@ namespace InternetInterface.Models
 		public virtual bool Cable { get; set; }
 
 		[BelongsTo]
-		public virtual NetworkSwitches Switch { get; set; }
+		public virtual NetworkSwitch Switch { get; set; }
 
 		public virtual bool WasConnected()
 		{

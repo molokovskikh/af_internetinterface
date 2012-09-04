@@ -425,6 +425,7 @@ input.checkbox {
 	text-align: center;
 	font-size: 14px;
 	margin-top: 15px;
+	margin-bottom: 25px;
 	/*font-weight: bold;*/
 }
 
@@ -536,4 +537,8 @@ table .filter_front thead td{
 
 #searchPositionTable {
 	margin-left: -400px;
+}
+
+#main.fullWidth {
+	width: 100%;
 }

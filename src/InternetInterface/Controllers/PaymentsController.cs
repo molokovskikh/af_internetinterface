@@ -20,6 +20,7 @@ using InternetInterface.AllLogic;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using InternetInterface.Queries;
 using NHibernate;
 
 namespace InternetInterface.Controllers

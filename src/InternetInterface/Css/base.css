@@ -476,3 +476,13 @@ button.button:active, a.button:active {
 	height:700px;
 	min-width:1300px;
 }
+
+.filterItem
+{
+	margin-top:10px;
+	float:none;
+}
+
+.inlineForm {
+	display: inline;
+}

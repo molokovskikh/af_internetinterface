@@ -12,7 +12,7 @@ namespace InforoomInternet.Test.Unit
 		[Test]
 		public void IpRangeTest()
 		{
-			var ip = new IPAddress(RangeFinder.reverseBytesArray(Convert.ToUInt32(NetworkSwitches.SetProgramIp("91.219.6.220"))));
+			var ip = new IPAddress(RangeFinder.reverseBytesArray(Convert.ToUInt32(NetworkSwitch.SetProgramIp("91.219.6.220"))));
 			var host = SubnetMask.CreateByNetBitLength(29);
 
 			var netw = ip.GetNetworkAddress(host);

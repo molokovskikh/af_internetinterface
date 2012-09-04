@@ -32,7 +32,7 @@ namespace InternetInterface.Controllers
 		public void NetworkSwitches(int id)
 		{
 			PropertyBag["id"] = id;
-			PropertyBag["Switches"] = Models.NetworkSwitches.All(DbSession);
+			PropertyBag["Switches"] = Models.NetworkSwitch.All(DbSession);
 			CancelLayout();
 		}
 
@@ -63,7 +63,7 @@ namespace InternetInterface.Controllers
 		{
 			PropertyBag["house"] = Models.House.Find(House);
 			PropertyBag["Entrances"] = Entrance.Queryable.Where(e => e.House.Id == House).ToList();
-			PropertyBag["Switches"] = Models.NetworkSwitches.All(DbSession);
+			PropertyBag["Switches"] = Models.NetworkSwitch.All(DbSession);
 		}
 
 		[AccessibleThrough(Verb.Post)]
@@ -76,7 +76,7 @@ namespace InternetInterface.Controllers
 			var enCount = 0;
 			foreach (var enterance in enterances) {
 				enCount++;
-				var networkSwitche = DbSession.Get<NetworkSwitches>(enterance.Switch.Id);
+				var networkSwitche = DbSession.Get<NetworkSwitch>(enterance.Switch.Id);
 				new Entrance {
 					Cable = enterance.Cable,
 					House = house,
@@ -252,7 +252,7 @@ namespace InternetInterface.Controllers
 					House = house,
 					Number = i + 1,
 					Strut = Convert.ToBoolean(Strut[i]),
-					Switch = Convert.ToInt32(NetSwitch[i]) > 0 ? DbSession.Load<NetworkSwitches>(Convert.ToUInt32(NetSwitch[i])) : null
+					Switch = Convert.ToInt32(NetSwitch[i]) > 0 ? DbSession.Load<NetworkSwitch>(Convert.ToUInt32(NetSwitch[i])) : null
 				}.Save();
 			}
 			return true;

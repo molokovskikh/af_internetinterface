@@ -101,7 +101,7 @@ namespace InternetInterface.Controllers
 				if (!string.IsNullOrEmpty(ConnectInfo.Port) && CategorieAccessSet.AccesPartner("DHCP")) {
 					var endpoint = new ClientEndpoint(client,
 						Convert.ToInt32(ConnectInfo.Port),
-						DbSession.Load<NetworkSwitches>(ConnectInfo.Switch));
+						DbSession.Load<NetworkSwitch>(ConnectInfo.Switch));
 					endpoint.SaveAndFlush();
 					if (BrigadForConnect != 0) {
 						var brigad = Brigad.Find(BrigadForConnect);
@@ -160,7 +160,7 @@ namespace InternetInterface.Controllers
 		{
 			PropertyBag["ClientCode"] = 0;
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
-			PropertyBag["Switches"] = NetworkSwitches.All(DbSession);
+			PropertyBag["Switches"] = NetworkSwitch.All(DbSession);
 			PropertyBag["ChBrigad"] = Brigad.FindFirst().Id;
 			PropertyBag["ConnectInfo"] = new ConnectInfo();
 			PropertyBag["Editing"] = false;
@@ -199,7 +199,7 @@ namespace InternetInterface.Controllers
 					new ClientEndpoint {
 						Client = client,
 						Port = Int32.Parse(info.Port),
-						Switch = DbSession.Load<NetworkSwitches>(info.Switch),
+						Switch = DbSession.Load<NetworkSwitch>(info.Switch),
 					}.SaveAndFlush();
 					var brigad = Brigad.Find(brigadForConnect);
 					client.WhoConnected = brigad;
@@ -214,7 +214,7 @@ namespace InternetInterface.Controllers
 			else {
 				PropertyBag["ClientCode"] = 0;
 				PropertyBag["Brigads"] = Brigad.FindAllSort();
-				PropertyBag["Switches"] = NetworkSwitches.All(DbSession);
+				PropertyBag["Switches"] = NetworkSwitch.All(DbSession);
 				PropertyBag["ChBrigad"] = brigadForConnect;
 				if (!string.IsNullOrEmpty(connectErrors))
 					info.Port = string.Empty;
@@ -362,7 +362,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Statuss"] = Status.FindAllSort();
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["channels"] = ChannelGroup.All(DbSession);
-			PropertyBag["Switches"] = NetworkSwitches.All(DbSession);
+			PropertyBag["Switches"] = NetworkSwitch.All(DbSession);
 		}
 
 		[AccessibleThrough(Verb.Post)]

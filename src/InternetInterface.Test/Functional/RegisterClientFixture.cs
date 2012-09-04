@@ -19,7 +19,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void RegisterClientTest()
 		{
-			var commutator = new NetworkSwitches("Тестовый коммутатор для регистрации клиента", session.Query<Zone>().First());
+			var commutator = new NetworkSwitch("Тестовый коммутатор для регистрации клиента", session.Query<Zone>().First());
 			session.Save(commutator);
 
 			Open("Register/RegisterClient.rails");
@@ -66,12 +66,15 @@ namespace InternetInterface.Test.Functional
 			Assert.That(browser.Text, Is.StringContaining("прописанный по адресу:"));
 			Assert.That(browser.Text, Is.StringContaining("адрес подключения:"));
 			Assert.That(browser.Text, Is.StringContaining("принимаю подключение к услугам доступа"));
+
+			Assert.That(browser.Text, Is.Not.Contains("(4732) 606-000"));
+			AssertText("(473) 22-999-87");
 		}
 
 		[Test]
 		public void Show_switch_comment()
 		{
-			var commutator = new NetworkSwitches("Тестовый коммутатор с комментарием", session.Query<Zone>().First()) {
+			var commutator = new NetworkSwitch("Тестовый коммутатор с комментарием", session.Query<Zone>().First()) {
 				Comment = "Тестовый комментарий к коммутатору"
 			};
 			session.Save(commutator);

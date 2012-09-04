@@ -37,7 +37,7 @@ namespace InternetInterface.Models
 		public int Port { get; set; }
 
 		[BelongsTo]
-		public NetworkSwitches Switch { get; set; }
+		public NetworkSwitch Switch { get; set; }
 
 		[Property]
 		public DateTime LeaseBegin { get; set; }
@@ -80,7 +80,7 @@ namespace InternetInterface.Models
 		{
 			if (string.IsNullOrEmpty(ip))
 				return true;
-			var programIp = NetworkSwitches.SetProgramIp(ip);
+			var programIp = NetworkSwitch.SetProgramIp(ip);
 			if (string.IsNullOrEmpty(programIp))
 				return true;
 			return IsGray(uint.Parse(programIp));

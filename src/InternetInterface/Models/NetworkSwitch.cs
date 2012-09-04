@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
 using Castle.Components.Validator;
+using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Helpers;
 using InternetInterface.Models.Universal;
@@ -14,13 +15,13 @@ using NHibernate.Linq;
 namespace InternetInterface.Models
 {
 	[ActiveRecord("NetworkSwitches", Schema = "Internet", Lazy = true)]
-	public class NetworkSwitches
+	public class NetworkSwitch
 	{
-		public NetworkSwitches()
+		public NetworkSwitch()
 		{
 		}
 
-		public NetworkSwitches(string name, Zone zone)
+		public NetworkSwitch(string name, Zone zone)
 		{
 			Name = name;
 			Zone = zone;
@@ -87,9 +88,14 @@ namespace InternetInterface.Models
 			return String.Empty;
 		}
 
-		public static List<NetworkSwitches> All(ISession session)
+		public static List<NetworkSwitch> All()
 		{
-			return session.Query<NetworkSwitches>().Where(s => s.Name != null && s.Name != "").OrderBy(s => s.Name).ToList();
+			return ArHelper.WithSession(s => All(s));
+		}
+
+		public static List<NetworkSwitch> All(ISession session)
+		{
+			return session.Query<NetworkSwitch>().Where(s => s.Name != null && s.Name != "").OrderBy(s => s.Name).ToList();
 		}
 	}
 }

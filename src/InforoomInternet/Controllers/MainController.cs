@@ -62,7 +62,7 @@ namespace InforoomInternet.Controllers
 			var lease = Lease.FindAll();
 			mailToAdress = "kvasovtest@analit.net";
 #else
-			var lease = Lease.FindAllByProperty("Ip", Convert.ToUInt32(NetworkSwitches.SetProgramIp(ip)));
+			var lease = Lease.FindAllByProperty("Ip", Convert.ToUInt32(NetworkSwitch.SetProgramIp(ip)));
 #endif
 			var client = lease.Where(
 				l => l.Endpoint != null && l.Endpoint.Client != null && l.Endpoint.Client.PhysicalClient != null)
@@ -133,22 +133,26 @@ namespace InforoomInternet.Controllers
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void Send([DataBind("application")] Request application)
+		public void Send([DataBind("application")] Request request)
 		{
-			if (Validator.IsValid(application)) {
-				application.RegDate = DateTime.Now;
-				application.ActionDate = DateTime.Now;
-				var phoneNumber = application.ApplicantPhoneNumber.Substring(2, application.ApplicantPhoneNumber.Length - 2).Replace(
-					"-", string.Empty);
-				application.ApplicantPhoneNumber = phoneNumber;
-				application.Save();
-				Flash["application"] = application;
+			if (Validator.IsValid(request)) {
+				request.RegDate = DateTime.Now;
+				request.ActionDate = DateTime.Now;
+				if (AccessFilter.Authorized(Context)) {
+					var clientId = Convert.ToUInt32(Session["LoginClient"]);
+					var client = Client.Find(clientId);
+					request.FriendThisClient = client;
+				}
+				var phoneNumber = request.ApplicantPhoneNumber.Substring(2, request.ApplicantPhoneNumber.Length - 2).Replace("-", string.Empty);
+				request.ApplicantPhoneNumber = phoneNumber;
+				request.Save();
+				Flash["application"] = request;
 				RedirectToAction("Ok");
 			}
 			else {
 				var all = Tariff.FindAll();
 				PropertyBag["tariffs"] = all;
-				PropertyBag["application"] = application;
+				PropertyBag["application"] = request;
 				RenderView("Zayavka");
 			}
 		}
@@ -181,14 +185,14 @@ namespace InforoomInternet.Controllers
 			if (lease != null)
 				point = lease.Endpoint;
 			else {
-				var thisIp = new IPAddress(RangeFinder.reverseBytesArray(Convert.ToUInt32(NetworkSwitches.SetProgramIp(hostAdress))));
+				var thisIp = new IPAddress(RangeFinder.reverseBytesArray(Convert.ToUInt32(NetworkSwitch.SetProgramIp(hostAdress))));
 
 				point = StaticIp.Queryable.ToList().Where(ip => {
 					if (ip.Ip == hostAdress)
 						return true;
 					if (ip.Mask != null) {
 						var subnet = SubnetMask.CreateByNetBitLength(ip.Mask.Value);
-						var sIp = new IPAddress(RangeFinder.reverseBytesArray(Convert.ToUInt32(NetworkSwitches.SetProgramIp(ip.Ip))));
+						var sIp = new IPAddress(RangeFinder.reverseBytesArray(Convert.ToUInt32(NetworkSwitch.SetProgramIp(ip.Ip))));
 						if (thisIp.IsInSameSubnet(sIp, subnet))
 							return true;
 					}
@@ -262,9 +266,9 @@ namespace InforoomInternet.Controllers
 		{
 			var hostAdress = Request.UserHostAddress;
 #if DEBUG
-			hostAdress = NetworkSwitches.GetNormalIp(Lease.FindFirst().Ip);
+			hostAdress = NetworkSwitch.GetNormalIp(Lease.FindFirst().Ip);
 #endif
-			if (Regex.IsMatch(hostAdress, NetworkSwitches.IPRegExp) && !Client.Our(hostAdress)) {
+			if (Regex.IsMatch(hostAdress, NetworkSwitch.IPRegExp) && !Client.Our(hostAdress)) {
 				RedirectToSiteRoot();
 				return;
 			}

@@ -325,12 +325,16 @@ namespace Billing.Test.Integration
 		[Test]
 		public void Voluntary_blocking_and_minimum_balance()
 		{
+			decimal sum;
 			using (new SessionScope()) {
 				_client = CreateClient();
 				_client.PhysicalClient.Balance = 5m;
 				_client.AutoUnblocked = true;
 				_client.FreeBlockDays = 0;
 				_client.Save();
+				var daysInInterval = _client.GetInterval();
+				var price = _client.GetPrice();
+				sum = price / daysInInterval;
 			}
 			using (new SessionScope()) {
 				Activate(typeof(VoluntaryBlockin), DateTime.Now.AddDays(7));
@@ -343,7 +347,7 @@ namespace Billing.Test.Integration
 				_client = Client.Find(_client.Id);
 				Assert.IsTrue(_client.Disabled);
 				AssertThatContainsOnlyMandatoryServices();
-				Assert.That(_client.PhysicalClient.Balance, Is.EqualTo(-64.03m), _client.UserWriteOffs.Implode());
+				Assert.That(_client.PhysicalClient.Balance, Is.EqualTo(Math.Round(-50 - sum + 5, 2)), _client.UserWriteOffs.Implode());
 			}
 		}
 

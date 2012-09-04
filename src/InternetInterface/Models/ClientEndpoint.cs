@@ -11,9 +11,11 @@ namespace InternetInterface.Models
 	{
 		public ClientEndpoint()
 		{
+			StaticIps = new List<StaticIp>();
 		}
 
-		public ClientEndpoint(Client client, int? port, NetworkSwitches @switch)
+		public ClientEndpoint(Client client, int? port, NetworkSwitch @switch)
+			: this()
 		{
 			Client = client;
 			Port = port;
@@ -43,7 +45,7 @@ namespace InternetInterface.Models
 		public virtual int? Port { get; set; }
 
 		[BelongsTo("Switch"), Auditable("Свитч")]
-		public virtual NetworkSwitches Switch { get; set; }
+		public virtual NetworkSwitch Switch { get; set; }
 
 		[Property, Auditable("Мониторинг")]
 		public virtual bool Monitoring { get; set; }

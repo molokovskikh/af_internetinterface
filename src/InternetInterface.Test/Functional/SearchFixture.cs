@@ -1,6 +1,7 @@
 ﻿using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 using WatiN.Core;
+using WatiN.Core.Native.Windows;
 
 namespace InternetInterface.Test.Functional
 {
