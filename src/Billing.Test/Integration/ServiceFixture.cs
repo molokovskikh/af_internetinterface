@@ -218,6 +218,7 @@ namespace Billing.Test.Integration
 					Sum = client.PhysicalClient.Tariff.Price,
 					PaidOn = DateTime.Now.AddDays(-1)
 				}.Save();
+				SystemTime.Reset();
 			}
 			billing.OnMethod();
 			using (new SessionScope()) {
@@ -227,7 +228,7 @@ namespace Billing.Test.Integration
 				client.RatedPeriodDate = DateTime.Now;
 				client.Update();
 				physicalClient.Update();
-				client.Refresh();
+				//client.Refresh();
 				SystemTime.Reset();
 				CServive = ActiveRecordMediator<ClientService>.FindByPrimaryKey(CServive.Id);
 				CServive.Activate();

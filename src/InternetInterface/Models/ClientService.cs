@@ -83,7 +83,8 @@ namespace InternetInterface.Models
 
 		public virtual void Activate()
 		{
-			Service.Activate(this);
+			if (Service.CanActivate(this))
+				Service.Activate(this);
 		}
 
 		public virtual void Deactivate()
