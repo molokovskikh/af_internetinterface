@@ -5,7 +5,7 @@
 		}
 	);
 	function LoadExcel(control) {
-		window.location.href = "${siteroot}/Export/GetClients?" + $("#SearchForm").serialize();
+		window.location.href = "${siteroot}/Export/GetClientsInExcel?" + $("#SearchForm").serialize();
 	}
 </script>
 
@@ -88,7 +88,6 @@ border="1" bgcolor="#FFFFFF" cellspacing="1" cellpadding="0">
 			</thead>
 		</table>
 	</fieldset>
-	<%end %>
 	<table class="fullWidth">
 		<tbody>
 			<tr>
@@ -98,6 +97,7 @@ border="1" bgcolor="#FFFFFF" cellspacing="1" cellpadding="0">
 			</tr>
 		</tbody>
 	</table>
+	<%end %>
 	</td>
 	</tr>
 </table>
