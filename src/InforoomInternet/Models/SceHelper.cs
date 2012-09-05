@@ -26,7 +26,9 @@ namespace InforoomInternet.Models
 					monitoring ? 1 : 0,
 					IsMultilease.ToString().ToLower(),
 					ip);
+				_log.DebugFormat("Применение настроек для sce {0}", command);
 				RunCommand(command);
+				_log.DebugFormat("Применены настройки для sce {0}", command);
 			}
 			catch (Exception e) {
 				_log.Error(String.Format("ошибка при применении настрок для sce, ip {0}", ip), e);
