@@ -29,7 +29,7 @@ namespace InforoomInternet.Models
 				RunCommand(command);
 			}
 			catch (Exception e) {
-				_log.Error(String.Format("ошибка при применении настрок для sce, ip {0}", ip), e);
+				_log.Error(String.Format("РѕС€РёР±РєР° РїСЂРё РїСЂРёРјРµРЅРµРЅРёРё РЅР°СЃС‚СЂРѕРє РґР»СЏ sce, ip {0}", ip), e);
 			}
 		}
 
@@ -80,7 +80,7 @@ namespace InforoomInternet.Models
 			process.BeginOutputReadLine();
 			process.WaitForExit();
 			if (process.ExitCode != 0) {
-				_log.ErrorFormat("ошибка при применении настрок для sce, {0} {1}", error, output);
+				_log.ErrorFormat("РѕС€РёР±РєР° РїСЂРё РїСЂРёРјРµРЅРµРЅРёРё РЅР°СЃС‚СЂРѕРє РґР»СЏ sce, РєРѕРјРјР°РЅРґР° {2}, {0} {1}", error, output, command);
 			}
 		}
 	}
