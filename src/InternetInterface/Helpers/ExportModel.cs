@@ -19,31 +19,34 @@ namespace InternetInterface.Helpers
 
 			Workbook wb = new Workbook();
 			Worksheet ws = new Worksheet("Статистика по клиентам");
-			int row = 6;
+			int row = 7;
 			int colShift = 0;
 
 			ws.Merge(0, 0, 0, 9);
 			ExcelHelper.WriteHeader1(ws, 0, 0, "Статистика по клиентам", false, true);
 
 			ws.Merge(1, 1, 1, 2);
-			ExcelHelper.Write(ws, 1, 0, "Искать по:", false);
-			//string regionName;
-			ExcelHelper.Write(ws, 1, 1, filter.searchProperties.SearchBy.GetDescription(), false);
+			ExcelHelper.Write(ws, 1, 0, "Строка поиска:", false);
+			ExcelHelper.Write(ws, 1, 1, filter.searchText, false);
 
 			ws.Merge(2, 1, 2, 2);
-			ExcelHelper.Write(ws, 2, 0, "Тип клиента:", false);
-			ExcelHelper.Write(ws, 2, 1, filter.clientTypeFilter.Type.GetDescription(), false);
+			ExcelHelper.Write(ws, 2, 0, "Искать по:", false);
+			ExcelHelper.Write(ws, 2, 1, filter.searchProperties.SearchBy.GetDescription(), false);
 
 			ws.Merge(3, 1, 3, 2);
-			ExcelHelper.Write(ws, 3, 0, "Статус:", false);
-			if (filter.statusType > 0)
-				ExcelHelper.Write(ws, 3, 1, ((StatusType)filter.statusType).GetDescription(), false);
-			else
-				ExcelHelper.Write(ws, 3, 1, "Все", false);
+			ExcelHelper.Write(ws, 3, 0, "Тип клиента:", false);
+			ExcelHelper.Write(ws, 3, 1, filter.clientTypeFilter.Type.GetDescription(), false);
 
 			ws.Merge(4, 1, 4, 2);
-			ExcelHelper.Write(ws, 4, 0, "Активность:", false);
-			ExcelHelper.Write(ws, 4, 1, filter.EnabledTypeProperties.Type.GetDescription(), false);
+			ExcelHelper.Write(ws, 4, 0, "Статус:", false);
+			if (filter.statusType > 0)
+				ExcelHelper.Write(ws, 4, 1, ((StatusType)filter.statusType).GetDescription(), false);
+			else
+				ExcelHelper.Write(ws, 4, 1, "Все", false);
+
+			ws.Merge(5, 1, 5, 2);
+			ExcelHelper.Write(ws, 5, 0, "Активность:", false);
+			ExcelHelper.Write(ws, 5, 1, filter.EnabledTypeProperties.Type.GetDescription(), false);
 
 			foreach (var item in clients) {
 				ExcelHelper.Write(ws, row, colShift + 0, item.client.Id, true);
@@ -69,7 +72,7 @@ namespace InternetInterface.Helpers
 
 		private static void FormatClientsStatisticXls(Worksheet ws)
 		{
-			int headerRow = 6;
+			int headerRow = 7;
 			ExcelHelper.WriteHeader1(ws, headerRow, 0, "Номер счета", true, true);
 			ExcelHelper.WriteHeader1(ws, headerRow, 1, "ФИО", true, true);
 			ExcelHelper.WriteHeader1(ws, headerRow, 2, "Адрес подключения", true, true);

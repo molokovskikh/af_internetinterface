@@ -89,11 +89,11 @@ border="1" bgcolor="#FFFFFF" cellspacing="1" cellpadding="0">
 		</table>
 	</fieldset>
 	<%end %>
-	<table>
+	<table class="fullWidth">
 		<tbody>
 			<tr>
-				<td>
-					<a href="#" onclick="LoadExcel(this);">Выгрузить статистику клиентам в Excel</a>
+				<td colspan=2>
+					<a href="#" onclick="LoadExcel(this);">Выгрузить статистику по клиентам в Excel</a>
 				</td>
 			</tr>
 		</tbody>

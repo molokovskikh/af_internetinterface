@@ -486,3 +486,7 @@ button.button:active, a.button:active {
 .inlineForm {
 	display: inline;
 }
+
+.fullWidth {
+	width: 100%;
+}
