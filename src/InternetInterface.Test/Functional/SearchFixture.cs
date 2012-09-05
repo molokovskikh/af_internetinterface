@@ -93,7 +93,7 @@ namespace InternetInterface.Test.Functional
 		public void OutOfMemoryExcelExportTest()
 		{
 			browser.RadioButton("filter.clientTypeFilter.Type_1").Checked = true;
-			Click("Выгрузить статистику клиентам в Excel");
+			Click("Выгрузить статистику по клиентам в Excel");
 			Click("Поиск");
 			AssertText("Поиск пользователей");
 		}
