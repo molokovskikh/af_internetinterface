@@ -229,7 +229,8 @@ namespace InternetInterface.Models
 				WriteOffSum = sum,
 				MoneySum = moneyWriteoff,
 				VirtualSum = virtualWriteoff,
-				Sale = Client.Sale
+				Sale = Client.Sale,
+				BeforeWriteOffBalance = Client.Balance
 			};
 		}
 

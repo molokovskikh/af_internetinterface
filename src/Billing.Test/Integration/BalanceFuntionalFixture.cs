@@ -16,6 +16,19 @@ namespace Billing.Test.Integration
 	public class BalanceFuntionalFixture : MainBillingFixture
 	{
 		[Test]
+		public void Before_write_off_balance_test()
+		{
+			var oldBalance = _client.Balance;
+			billing.Compute();
+			_client.Refresh();
+			using (new SessionScope()) {
+				_client = ActiveRecordMediator<Client>.FindByPrimaryKey(_client.Id);
+				var writeOff = _client.WriteOffs.First();
+				Assert.That(writeOff.BeforeWriteOffBalance, Is.EqualTo(oldBalance));
+			}
+		}
+
+		[Test]
 		public void PastRatedPeriodDate()
 		{
 			using (new SessionScope()) {

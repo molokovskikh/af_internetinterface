@@ -30,6 +30,7 @@
 			<th>Полная сумма</th>
 			<th>Физических денег</th>
 			<th>Бонусов</th>
+			<th>Баланс перед списанием</th>
 		</tr>
 	</thead>
 	<% groupYear = IsDefined("filter.grouped") and filter.grouped == """year""" %>
@@ -61,6 +62,7 @@
 				<td>${item.WriteOffSum}</td>
 				<td>${item.MoneySum.ToString("0.00")}</td>
 				<td>${item.VirtualSum.ToString("0.00")}</td>
+				<td>${item.BeforeWriteOffBalance.ToString("0.00")}</td>
 			</tr>
 		<%end %>
 	<% end %>

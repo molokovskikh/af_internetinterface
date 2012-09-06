@@ -78,6 +78,9 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string Comment { get; set; }
 
+		[Property]
+		public virtual decimal BeforeWriteOffBalance { get; set; }
+
 		public static IList<WriteOff> ForClient(Client client)
 		{
 			return Queryable.Where(w => w.Client == client).ToList();
