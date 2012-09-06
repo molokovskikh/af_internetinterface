@@ -62,7 +62,7 @@
 				<td>${item.WriteOffSum}</td>
 				<td>${item.MoneySum.ToString("0.00")}</td>
 				<td>${item.VirtualSum.ToString("0.00")}</td>
-				<td>${item.BeforeWriteOffBalance.ToString("0.00")}</td>
+				<td>${item.GeBeforeWriteOffBalance(grouped)}</td>
 			</tr>
 		<%end %>
 	<% end %>

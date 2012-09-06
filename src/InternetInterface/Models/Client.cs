@@ -455,7 +455,8 @@ Sum(WriteOffSum) as WriteOffSum,
 Sum(VirtualSum) as VirtualSum,
 Sum(MoneySum) as MoneySum,
 WriteOffDate,
-Client
+Client,
+BeforeWriteOffBalance
 FROM internet.WriteOff W
 where Client = :clientid and WriteOffSum > 0
 group by {0} order by WriteOffDate;", gpoupKey))

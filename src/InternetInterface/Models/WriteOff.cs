@@ -23,6 +23,16 @@ namespace InternetInterface.Models
 
 		public decimal MoneySum { get; set; }
 
+		public decimal? BeforeWriteOffBalance { get; set; }
+
+		public string GeBeforeWriteOffBalance(string grouped)
+		{
+			if ((grouped == "month") || (grouped == "year"))
+				return "Нет данных";
+			if (!BeforeWriteOffBalance.HasValue || BeforeWriteOffBalance == 0)
+				return "Нет данных";
+			return BeforeWriteOffBalance.Value.ToString("0.00");
+		}
 
 		public virtual string GetDate(string grouped)
 		{
@@ -79,7 +89,7 @@ namespace InternetInterface.Models
 		public virtual string Comment { get; set; }
 
 		[Property]
-		public virtual decimal BeforeWriteOffBalance { get; set; }
+		public virtual decimal? BeforeWriteOffBalance { get; set; }
 
 		public static IList<WriteOff> ForClient(Client client)
 		{
