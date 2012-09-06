@@ -58,7 +58,7 @@
 					</tr>
 			</tbody>
 		</table>
-		<div style="margin:0 auto; width:200px;">
+		<div class="legendDiv">
 			<table>
 				<tr>
 					<td><div class="deleted legend"></div></td>
