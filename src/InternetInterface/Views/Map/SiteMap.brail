@@ -1,4 +1,5 @@
-﻿<% if Bookmarks.Count > 0: %>
+﻿<%if PartnerAccessSet.AccesPartner("SSI"): %>
+<% if Bookmarks.Count > 0: %>
 <table class="table result_table">
 	<thead>
 		<tr>
@@ -13,4 +14,5 @@
 		<%end %>
 	</tbody>
 </table>
+<% end %>
 <% end %>
