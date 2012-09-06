@@ -8,3 +8,6 @@ obj
 _ReShar*/
 *.log
 *.cache
+UpgradeLog.XML
+UpgradeLog.htm
+_UpgradeReport_Files/

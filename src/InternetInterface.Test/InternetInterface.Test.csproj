@@ -147,6 +147,7 @@
     <Compile Include="Functional\InvoiceFixture.cs" />
     <Compile Include="Functional\LawyerPersonFixture.cs" />
     <Compile Include="Functional\OnLineClients.cs" />
+    <Compile Include="Functional\PartnerFixture.cs" />
     <Compile Include="Functional\PaymentFixture.cs" />
     <Compile Include="Functional\PhysicalClientFixture.cs" />
     <Compile Include="Functional\PrivateMessageFixture.cs" />

@@ -1,0 +1,71 @@
+﻿<div id="main" class="fullWidth bookmarks">
+<div id="container">
+	<div id="box" class="block">
+		<form id="onform" class="formConnect" method="get">
+			<table class="table find_block">
+				<thead>
+					<tr><th colspan=2>Параментры фильтрации</th></tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Интервал просмотра:</td>
+						<td>
+							с
+							<input type=text name="Period.Begin" value="${Period.Begin.ToShortDateString()}" class="graph_date"> <br /> <br />
+							по
+							<input type=text name="Period.End" value="${Period.End.ToShortDateString()}" class="graph_date">
+						</td>
+					</tr>
+					<tr>
+						<td colspan=2><input type="submit" value="Показать"/></td>
+					</tr>
+				</tbody>
+			</table>
+		</form>
+	</div>
+	<div>
+		<table class="table result_table">
+			<thead>
+				<tr>
+					<th>Номер закладки</th>
+					<th>Дата</th>
+					<th>Текст</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<% for i, bookmark in enumerate(Bookmarks): %>
+					<tr class="${app.Style(bookmark)}">
+						<td class="first"><a href="${SiteRoot}/Map/Bookmark?id=${bookmark.Id}">${bookmark.Id}</a></td>
+						<td>${bookmark.Date.ToShortDateString()}</td>
+						<td>${bookmark.GetTransformed()}</td>
+						<td>
+							<% if (not bookmark.Deleted): %>
+							<form method="post" action="DeleteBookmark">
+								<input type="hidden" value="${bookmark.Id}" name="Id" />
+								<button type="submit" class="button">Удалить</button>
+							</form>
+							<%end%>
+						</td>
+					</tr>
+				<%end %>
+					<tr>
+						<td colspan=4>
+							<form action="Bookmark">
+								<button class="button">Добавить закладку</button>
+							</form>
+						</td>
+					</tr>
+			</tbody>
+		</table>
+		<div style="margin:0 auto; width:200px;">
+			<table>
+				<tr>
+					<td><div class="deleted legend"></div></td>
+					<td class="legendLabel">- закладка удалена</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
+</div>
