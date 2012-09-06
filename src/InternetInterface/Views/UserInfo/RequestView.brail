@@ -1,83 +1,9 @@
-﻿<style type="text/css">
-		
-		
-#content 
-{
-width:75%;
-/*z-index:1;*/
-border-right:#ddd 1px solid;
-position:absolute;
-}
-
-#sidebar {
-float:right;
-width:14%;
-z-index:9;
-display:block;
-}
-
-.fontgit
-{
-	font-family: Verdana;
-	font-size: small;
-	font-weight: normal;
-}
-div.scroller 
-{
-	min-width:1250;
-	width:expression(document.body.clientWidth < 1250? "1250px": "auto" );
-}
-
-.table_us
-{
-	margin-bottom : 15px;
-	border-collapse :collapse;
-	background-color:#fff;
-}
-
-.table_us TD
-{
-	padding-right:10px;
-	padding-top:10px;
-	padding-left:5px;
-	padding-bottom:0px;
-	font-size:x-small;
-	border-bottom:#aaa 1px solid;
-	border-top:#aaa 1px solid;
-}
-
-.table_us TH
-{
-	padding-right:2px;
-	padding-top:2px;
-	padding-left:2px;
-	padding-bottom:2px;
-	text-align:inherit;
-	font-weight:normal;
-	background:#576c82;
-	color:#fff;
-	font-weight:bold;
-}
-
-	#on_line_clients_head th
-		{
-			border:1px double black;
-		}
-#searchTable
-{
-	width:600px;
-	height:200px;
-	border: 1px double Black;
-	background-color:White;
-	}
-</style>
-</head>
+﻿${app.CSS("RequestCss.css")}
 
 <body class="body_cl">
 
 <div class=scroller>
-<div id="main" style="width:100%; float:none;">
-		 <div id="content">
+<div>
 		<center>
 		<form method=get>
 		<table class="table" id="searchTable">
@@ -115,6 +41,76 @@ div.scroller
 		</table>
 		</form>
 		</center>
+
+
+			<div id="sidebar">
+			<table class="table" style="width:170px;" >
+				<thead>
+					<tr>
+						<th>${filter.GetUriToArchive()}</th>
+					</tr>
+				</thead>
+			 </table>
+			 <table class="table" style="width:170px; font-size:16px;">
+			 <thead>
+			 <th colspan=2 style="font-size=16px;">Метки</th>
+			 </thead>
+			 <tbody>
+			 <tr><td colspan=2><a href="../UserInfo/RequestView.rails?filter.labelId=0&filter.Archive=${filter.Archive}&filter.beginDate=${filter.beginDate.ToShortDateString()}&filter.endDate=${filter.endDate.ToShortDateString()}&filter.query=${filter.query}">Все</a></td></tr>
+			 <tr><td colspan=2><a href="../UserInfo/RequestView.rails?filter.labelId=0&filter.Archive=${filter.Archive}&filter.beginDate=${filter.beginDate.ToShortDateString()}&filter.endDate=${filter.endDate.ToShortDateString()}&filter.query=${filter.query}">Нет</a></td></tr>
+					<% for i, Label in enumerate(Labels): %>
+					<tr>
+					<td style="width:20px;">
+						<div class='message error' style=" width:20px; height:20px; background-color:${Label.Color}; border: 1px solid; border-color: ${Label.GetBorderColor()}; " align="left"></div>
+					</td>
+					<td>
+						<a href="../UserInfo/RequestView.rails?filter.labelId=${Label.Id}&filter.Archive=${filter.Archive}&filter.beginDate=${filter.beginDate.ToShortDateString()}&filter.endDate=${filter.endDate.ToShortDateString()}&filter.query=${filter.query}">${Label.Name}</a>
+					</td>
+					</tr>
+					<% end %>
+				</tbody>
+				</table>
+
+			<form id="Form1" name="RequestViewForm" method=post action="${siteroot}/UserInfo/CreateLabel">
+			<table class="table" style="width:170px;" >
+				<thead>
+					<th>Создать метку</th>
+				</thead>
+				<tbody>
+				<% OutputSubView("""\Subview\CreateEditLabel""") %>
+					<tr>
+						<td><button id="CreateLabelButton" type="submit" class="button" align="right" >Создать метку</button></td>
+					</tr>
+				</tbody>
+			 </table>
+			 </form>
+			 <form id="Form2" name="RequestViewForm" method=post action="${siteroot}/UserInfo/DeleteLabel">
+			  <table class="table" style="width:170px;" >
+				<thead>
+					<th>Удалить метку</th>
+				</thead>
+				<tbody>
+				<% OutputSubView("""\Subview\DeleteLabel""") %>
+				<tr><td><button id="DeleteLabelButton" type="submit" align="right" class="button" >Удалить метку</button></td></tr>
+				</tbody>
+			   </table>
+			 </form>
+			 <form id="Form3" name="RequestViewForm" method=post action="${siteroot}/UserInfo/EditLabel">
+			  <table class="table" style="width:170px;" >
+				<thead >
+					<th >Редактировать</th>
+				</thead>
+				<tbody>
+				<% OutputSubView("""\Subview\DeleteLabel""") %>
+				<% OutputSubView("""\Subview\CreateEditLabel""") %>
+				<tr><td><button id="Submit2" type="submit" class="button"  align="right">Редактировать</button></td></tr>
+				</tbody>
+			   </table>
+			 </form>
+			 </div>
+
+		 <div id="content">
+
 		<form id="SearchForm" name="SearchForm" method=post action="${siteroot}/UserInfo/SetLabel">
 			<% if (Clients.Count == 0):
 			output WriteMessageError("Нет заявок на подключение")
@@ -179,10 +175,10 @@ div.scroller
 						</div>
 					</div>
 					</td>
-				<%else: %>
+				<% else: %>
 				<td style="width:180px;">
 				</td>
-				<%end %>
+				<% end %>
 					<%if Client.RegDate.ToShortDateString() != "01.01.0001": %>
 					<td>
 						${Client.RegDate.ToShortDateString()}
@@ -198,101 +194,31 @@ div.scroller
 				<%i++ %>
 				</tr>
 			<%end %>
-			<%end %>
+				<tr>
+					<td colspan=2>
+						<select name="labelch" id="labelch" style="width: 100%" >
+							<option id="Option2" value = 0 style="background-color: White"> Нет </option>
+						<% for i, Label in enumerate(Labels): %>
+							<option id="Option1" value=${Label.Id} style="background-color: ${Label.Color}"> ${Label.Name} </option>
+						<% end %>
+						</select>
+					</td>
+					<td colspan=8>
+						<button  name="SetlabelButton"  id="SetlabelButton" type="submit" class="button"  align="right" >Установить метки </button>
+					</td>
+				</tr>
 				<tr>
 					<td colspan=10>
 					<div class="Paginator">
 						 ${PaginatorHelper.ShowPaginator()}
 					</div>
 					</td>
-				</tr> 
+				</tr>
+			<%end %>
 			</tbody>
 			</table>
 			 </div>
-
-			 <div id="sidebar">
-			 <table class="table" style="width:170px;" >
-				<thead>
-					<tr>
-						<th>${filter.GetUriToArchive()}</th>
-					</tr>
-				</thead>
-			 </table>
-			 <table class="table" style="width:170px; font-size:16px;">
-			 <thead>
-			 <th colspan=2 style="font-size=16px;">Метки</th>
-			 </thead>
-			 <tbody>
-			 <tr><td colspan=2><a href="../UserInfo/RequestView.rails?filter.labelId=0&filter.Archive=${filter.Archive}&filter.beginDate=${filter.beginDate.ToShortDateString()}&filter.endDate=${filter.endDate.ToShortDateString()}&filter.query=${filter.query}">Все</a></td></tr>
-			 <tr><td colspan=2><a href="../UserInfo/RequestView.rails?filter.labelId=0&filter.Archive=${filter.Archive}&filter.beginDate=${filter.beginDate.ToShortDateString()}&filter.endDate=${filter.endDate.ToShortDateString()}&filter.query=${filter.query}">Нет</a></td></tr>
-					<% for i, Label in enumerate(Labels): %>
-					<tr>
-					<td style="width:20px;">
-						<div class='message error' style=" width:20px; height:20px; background-color:${Label.Color}; border: 1px solid; border-color: ${Label.GetBorderColor()}; " align="left">
-					 </div>
-					 </td>
-					 <td>
-					  <a href="../UserInfo/RequestView.rails?filter.labelId=${Label.Id}&filter.Archive=${filter.Archive}&filter.beginDate=${filter.beginDate.ToShortDateString()}&filter.endDate=${filter.endDate.ToShortDateString()}&filter.query=${filter.query}">${Label.Name}</a>
-					 </td>
-					</tr>
-					<% end %>
-				<tr>
-					<td colspan=2>
-							 <select name="labelch" id="labelch" style="width: 100%" >
-							 <option id="Option2" value = 0 style="background-color: White"> Нет </option>
-							 <% for i, Label in enumerate(Labels): %>
-							 <option id="Option1" value=${Label.Id} style="background-color: ${Label.Color}"> ${Label.Name} </option>
-							 <% end %>
-							 
-					</td>
-				</tr>
-				<tr>
-					<td colspan=2>
-					<button  name="SetlabelButton"  id="SetlabelButton" type="submit" class="button"  align="right" >Установить метки </button>
-					</td>
-				 </tr>
-				</tbody>
-				</table>
-
-			   <form id="Form1" name="RequestViewForm" method=post action="${siteroot}/UserInfo/CreateLabel">
-			  <table class="table" style="width:170px;" >
-				<thead>
-					<th>Создать метку</th>
-				</thead>
-				<tbody>
-				<% OutputSubView("""\Subview\CreateEditLabel""") %>
-					<tr>
-						<td><button id="CreateLabelButton" type="submit" class="button" align="right" >Создать метку</button></td>
-					</tr>
-				</tbody>
-			 </table>
-			 </form>
-			 <form id="Form2" name="RequestViewForm" method=post action="${siteroot}/UserInfo/DeleteLabel">
-			  <table class="table" style="width:170px;" >
-				<thead>
-					<th>Удалить метку</th>
-				</thead>
-				<tbody>
-				<% OutputSubView("""\Subview\DeleteLabel""") %>
-				<tr><td><button id="DeleteLabelButton" type="submit" align="right" class="button" >Удалить метку</button></td></tr>
-				</tbody>
-			   </table>
-			 </form>
-			 <form id="Form3" name="RequestViewForm" method=post action="${siteroot}/UserInfo/EditLabel">
-			  <table class="table" style="width:170px;" >
-				<thead >
-					<th >Редактировать</th>
-				</thead>
-				<tbody>
-				<% OutputSubView("""\Subview\DeleteLabel""") %>
-				<% OutputSubView("""\Subview\CreateEditLabel""") %>
-				<tr><td><button id="Submit2" type="submit" class="button"  align="right">Редактировать</button></td></tr>
-				</tbody>
-			   </table>
-			 </form>
-			 </div>
-						  </form>
-			 </div>
-			 </div>
+			</form>
+		</div>
+	</div>
 </body>
-</html>
