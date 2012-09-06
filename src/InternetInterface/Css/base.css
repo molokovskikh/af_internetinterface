@@ -490,3 +490,40 @@ button.button:active, a.button:active {
 .fullWidth {
 	width: 100%;
 }
+
+ table.result_table {
+	background-color: white;
+	width: 50%;
+	margin: 0 auto;
+}
+
+ table.result_table tr td.first {
+	text-align: center;
+	font-size: 16px;
+}
+
+.table500 {
+	width: 500px;
+}
+
+.bookmarks .deleted {
+	background-color: #FCD0D0;
+}
+
+.legend {
+	width:25px;
+	height:25px;
+	border: 1px double #AAA;
+	margin-top: 25px;
+	text-align: center;
+}
+
+.legendLabel {
+	padding-top: 25px;
+	padding-left: 5px;
+}
+
+.legendDiv {
+	margin:0 auto;
+	width:200px;
+}

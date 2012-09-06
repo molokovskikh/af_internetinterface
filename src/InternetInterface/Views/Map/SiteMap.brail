@@ -1,1 +1,16 @@
-﻿
+﻿<% if Bookmarks.Count > 0: %>
+<table class="table result_table">
+	<thead>
+		<tr>
+			<th>Сегодняшние заметки</th>
+		</tr>
+	</thead>
+	<tbody>
+		<% for i, bookmark in enumerate(Bookmarks): %>
+			<tr>
+				<td>${bookmark.GetTransformed()}</td>
+			</tr>
+		<%end %>
+	</tbody>
+</table>
+<% end %>

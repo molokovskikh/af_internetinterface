@@ -1,0 +1,19 @@
+﻿<form method="post">
+	<input type="hidden" name="bookmark.Id" value="${bookmark.Id}" />
+	<table class="table table500">
+		<tbody>
+			<tr>
+				<td><input type=text name="bookmark.Date" value="${bookmark.Date.ToShortDateString()}" class="graph_date"></td>
+			</tr>
+			<tr>
+				<td>
+					${FormHelper.TextAreaValue("bookmark.Text", bookmark.Text, {"rows" : "10", "cols" : "45"})}
+					${app.GetValidationError("bookmark.Text")}
+				</td>
+			</tr>
+			<tr>
+				<td><button class="button">Сохранить</button></td>
+			</tr>
+		</tbody>
+	</table>
+</form>
