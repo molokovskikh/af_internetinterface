@@ -53,7 +53,7 @@ namespace InforoomInternet.Controllers
 #if DEBUG
 						userHostAddress = "192.168.0.1";
 #endif
-						DbSession.SaveOrUpdate(client.CreateAutoEndPont(userHostAddress));
+						client.CreateAutoEndPont(userHostAddress, DbSession);
 					}
 					RedirectToUrl(@"..//PrivateOffice/IndexOffice");
 				}
