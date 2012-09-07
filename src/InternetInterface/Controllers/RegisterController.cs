@@ -18,9 +18,7 @@ namespace InternetInterface.Controllers
 	public class RegisterController : BaseController
 	{
 		[AccessibleThrough(Verb.Post)]
-		public void RegisterClient(decimal balanceText, uint status, uint BrigadForConnect,
-			[DataBind("ConnectInfo")] ConnectInfo ConnectInfo, bool VisibleRegisteredInfo, uint house_id,
-			uint requestID)
+		public void RegisterClient(decimal balanceText, uint status, uint BrigadForConnect, bool VisibleRegisteredInfo, uint house_id, uint requestID)
 		{
 			SetARDataBinder();
 
@@ -50,15 +48,10 @@ namespace InternetInterface.Controllers
 			phisClient.Password = CryptoPass.GeneratePassword();
 			if (!CategorieAccessSet.AccesPartner("SSI"))
 				status = 1;
-			if (!CategorieAccessSet.AccesPartner("DHCP")) {
-				ConnectInfo.Port = null;
-			}
-			var portException = Validation.ValidationConnectInfo(ConnectInfo);
 
 			var registerClient = Validator.IsValid(phisClient);
 
-			if ((registerClient && string.IsNullOrEmpty(portException)) ||
-				(registerClient && string.IsNullOrEmpty(ConnectInfo.Port))) {
+			if (registerClient) {
 				PhysicalClient.RegistrLogicClient(phisClient, house_id, Validator);
 
 				var havePayment = phisClient.Balance > 0;
@@ -69,10 +62,8 @@ namespace InternetInterface.Controllers
 				client.SaveAndFlush();
 
 				if (!string.IsNullOrEmpty(phisClient.PhoneNumber)) {
-					Contact.SaveNew(client, phisClient.PhoneNumber.Replace("-", string.Empty), "Указан при регистрации",
-						ContactType.MobilePhone);
-					Contact.SaveNew(client, phisClient.PhoneNumber.Replace("-", string.Empty), "Указан при регистрации",
-						ContactType.SmsSending);
+					Contact.SaveNew(client, phisClient.PhoneNumber.Replace("-", string.Empty), "Указан при регистрации", ContactType.MobilePhone);
+					Contact.SaveNew(client, phisClient.PhoneNumber.Replace("-", string.Empty), "Указан при регистрации", ContactType.SmsSending);
 				}
 
 				if (!string.IsNullOrEmpty(phisClient.HomePhoneNumber))
@@ -98,20 +89,7 @@ namespace InternetInterface.Controllers
 					Apartment.Queryable.FirstOrDefault(a => a.House == phisClient.HouseObj && a.Number == phisClient.Apartment);
 				if (apartmentForClient != null)
 					apartmentForClient.Delete();
-				if (!string.IsNullOrEmpty(ConnectInfo.Port) && CategorieAccessSet.AccesPartner("DHCP")) {
-					var endpoint = new ClientEndpoint(client,
-						Convert.ToInt32(ConnectInfo.Port),
-						DbSession.Load<NetworkSwitch>(ConnectInfo.Switch));
-					endpoint.SaveAndFlush();
-					if (BrigadForConnect != 0) {
-						var brigad = Brigad.Find(BrigadForConnect);
-						client.WhoConnected = brigad;
-						client.WhoConnectedName = brigad.Name;
-					}
-					client.ConnectedDate = DateTime.Now;
-					client.Status = Status.Find((uint)StatusType.BlockedAndConnected);
-					client.UpdateAndFlush();
-				}
+
 				Flash["_client"] = client;
 				Flash["WhoConnected"] = client.WhoConnected;
 				Flash["Password"] = CryptoPass.GeneratePassword();
@@ -144,13 +122,10 @@ namespace InternetInterface.Controllers
 				PropertyBag["BalanceText"] = balanceText;
 				PropertyBag["ChHouse"] = house_id;
 				PropertyBag["Applying"] = "false";
-				PropertyBag["PortError"] = portException;
 				PropertyBag["ChStatus"] = status;
 				PropertyBag["ChBrigad"] = BrigadForConnect;
 				phisClient.SetValidationErrors(Validator.GetErrorSummary(phisClient));
-				if (!string.IsNullOrEmpty(portException))
-					ConnectInfo.Port = string.Empty;
-				PropertyBag["ConnectInfo"] = ConnectInfo;
+
 				PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClient>(phisClient);
 			}
 		}
