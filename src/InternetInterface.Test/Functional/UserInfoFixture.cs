@@ -7,6 +7,7 @@ using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using WatiN.Core;
+using WatiN.Core.Native.Windows;
 
 namespace InternetInterface.Test.Functional
 {
@@ -249,6 +250,23 @@ namespace InternetInterface.Test.Functional
 				browser.Button("userWriteOffButton").Click();
 				Assert.That(browser.Text, Is.StringContaining("Списание ожидает обработки"));
 			}
+		}
+
+		[Test]
+		public void Reset_client()
+		{
+			var brigad = new Brigad("test");
+			session.Save(brigad);
+			Open(ClientUrl);
+			Click("Сохранить");
+			browser.ShowWindow(NativeMethods.WindowShowStyle.Maximize);
+			Click("Сбросить");
+			AssertText("Назначить в график");
+			Click("Назначить в график");
+			browser.RadioButton(Find.ByName("graph_button")).Checked = true;
+			Click("Назначить");
+			AssertText("Информация по клиенту");
+			AssertText("Сбросить");
 		}
 	}
 }

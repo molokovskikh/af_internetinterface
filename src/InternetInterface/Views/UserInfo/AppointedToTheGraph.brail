@@ -108,6 +108,7 @@
 
 
 		 $(function () {
+			writeMessage("");
 			 $('#graph_date').datepicker({
 				 inline: true
 			 }).change(function () { fillData(); });
@@ -121,7 +122,7 @@
 			 req.graph_button = check_field.val();
 			 req.graph_date = $('#graph_date').val();
 			 $.post("ReservGraph", req, function (data) {
-				 alert(data);
+				 writeMessage(data, "notice");
 				 var appended_field = check_field.parent();
 				 appended_field.empty();
 				 appended_field.append('Резерв');
@@ -147,19 +148,30 @@
 			 req.graph_date = $('#graph_date').val();
 			 $.post("SaveGraph", req, function (data) {
 				 if (data) {
-					 alert("Заявка включена в рассписание");
+					 writeMessage("Заявка включена в рассписание", "notice");
 					 window.location.href = '../Search/Redirect?filter.ClientCode=${ClientCode}';
 				 }
 				 else {
-					 alert("Не выбран интервал времени");
+					 writeMessage("Не выбран интервал времени", "error");
 				 }
 			 });
 		 }
 
-
+		function writeMessage(text, clazz)	{
+			$('#message_graph_block').css('display', 'none');
+			$('#message_graph').empty();
+			if (text != ""){
+				$('#message_graph_block').css('display', 'block');
+				$('#message_graph').attr('class', 'message ' + clazz);
+				$('#message_graph').append(text);
+			}
+		}
 	</script>
 
 <a class="close-reveal-modal">&#215;</a> 
+<div class="flash" id="message_graph_block">
+	<div id="message_graph"></div>
+</div>
 <div id="back">
 <table class="table" id="modalTable">
 	<thead>
