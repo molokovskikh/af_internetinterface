@@ -259,7 +259,6 @@ namespace InternetInterface.Test.Functional
 			session.Save(brigad);
 			Open(ClientUrl);
 			Click("Сохранить");
-			browser.ShowWindow(NativeMethods.WindowShowStyle.Maximize);
 			Click("Сбросить");
 			AssertText("Назначить в график");
 			Click("Назначить в график");
