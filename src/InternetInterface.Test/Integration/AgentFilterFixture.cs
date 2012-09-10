@@ -44,19 +44,19 @@ namespace InternetInterface.Test.Integration
 			};
 			session.Save(payment);
 
-			var af = new AgentFilter();
-			af.Virtual = VirtualType.bonus;
-			var res = af.Find();
-			Assert.That(res.Count(t => !t.Virtual), Is.EqualTo(0));
+			var agentFilter = new AgentFilter();
+			agentFilter.Virtual = VirtualType.Bonus;
+			var filteredPayments = agentFilter.Find();
+			Assert.That(filteredPayments.Count(t => !t.Virtual), Is.EqualTo(0));
 
-			af.Virtual = VirtualType.nobonus;
-			res = af.Find();
-			Assert.That(res.Count(t => t.Virtual), Is.EqualTo(0));
+			agentFilter.Virtual = VirtualType.NoBonus;
+			filteredPayments = agentFilter.Find();
+			Assert.That(filteredPayments.Count(t => t.Virtual), Is.EqualTo(0));
 
-			af.Virtual = VirtualType.all;
-			res = af.Find();
-			Assert.That(res.Count(t => t.Virtual), Is.Not.EqualTo(0));
-			Assert.That(res.Count(t => !t.Virtual), Is.Not.EqualTo(0));
+			agentFilter.Virtual = null;
+			filteredPayments = agentFilter.Find();
+			Assert.That(filteredPayments.Count(t => t.Virtual), Is.Not.EqualTo(0));
+			Assert.That(filteredPayments.Count(t => !t.Virtual), Is.Not.EqualTo(0));
 		}
 	}
 }

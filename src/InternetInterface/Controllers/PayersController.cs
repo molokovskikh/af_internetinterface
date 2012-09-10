@@ -14,9 +14,8 @@ namespace InternetInterface.Controllers
 {
 	public enum VirtualType
 	{
-		[Description("Небонусные")] nobonus = 0,
-		[Description("Бонусные")] bonus = 1,
-		[Description("Все")] all = 2
+		[Description("Небонусные")] NoBonus = 0,
+		[Description("Бонусные")] Bonus = 1
 	}
 	public class AgentFilter : IPaginable
 	{
@@ -26,7 +25,7 @@ namespace InternetInterface.Controllers
 		public string year { get; set; }
 
 		[Description("Бонусные")]
-		public VirtualType Virtual { get; set; }
+		public VirtualType? Virtual { get; set; }
 
 		public int _lastRowsCount;
 		public decimal TotalSum;
@@ -45,7 +44,7 @@ namespace InternetInterface.Controllers
 
 		public AgentFilter()
 		{
-			Virtual = VirtualType.all;
+			Virtual = null;
 		}
 
 		public string[] ToUrl()
@@ -82,8 +81,8 @@ namespace InternetInterface.Controllers
 			totalRes = totalRes.Where(t => t.PaidOn >= startDate.Value &&
 				t.PaidOn <= endDate.Value.AddHours(23).AddMinutes(59) && t.Sum != 0 &&
 				t.Client.PhysicalClient != null).ToList();
-			if(Virtual != VirtualType.all) {
-				totalRes = totalRes.Where(t => t.Virtual == (Virtual == VirtualType.bonus)).ToList();
+			if(Virtual != null) {
+				totalRes = totalRes.Where(t => t.Virtual == (Virtual == VirtualType.Bonus)).ToList();
 			}
 			_lastRowsCount = totalRes.Count();
 			TotalSum = totalRes.Sum(h => h.Sum);
