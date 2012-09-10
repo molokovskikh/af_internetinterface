@@ -7,8 +7,10 @@ using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Castle.MonoRail.Framework.Helpers;
 using Common.Tools;
+using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
+using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.AllLogic;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
@@ -16,6 +18,7 @@ using InternetInterface.Models;
 using InternetInterface.Models.Services;
 using InternetInterface.Queries;
 using InternetInterface.Services;
+using NHibernate.Linq;
 using TextHelper = InternetInterface.Helpers.TextHelper;
 using NHibernate;
 
@@ -29,6 +32,25 @@ namespace InternetInterface.Controllers
 		public bool Editing { get; set; }
 		public bool EditConnectInfoFlag { get; set; }
 		public int EditingConnect { get; set; }
+	}
+
+	public class SessionResult
+	{
+		public SessionResult(Internetsessionslog lease)
+		{
+			Lease = lease;
+			Date = lease.LeaseBegin;
+		}
+
+		public SessionResult(Appeals appeal)
+		{
+			Appeal = appeal;
+			Date = appeal.Date;
+		}
+
+		public DateTime Date { get; set; }
+		public Internetsessionslog Lease { get; set; }
+		public Appeals Appeal { get; set; }
 	}
 
 	public class SessionFilter : IPaginable
@@ -70,8 +92,9 @@ namespace InternetInterface.Controllers
 			return ToUrlQuery();
 		}
 
-		public List<Internetsessionslog> Find()
+		public List<SessionResult> Find(ISession session)
 		{
+			var result = new List<SessionResult>();
 			var thisD = DateTime.Now;
 			if (beginDate == null)
 				beginDate = new DateTime(thisD.Year, thisD.Month, 1);
@@ -85,12 +108,14 @@ namespace InternetInterface.Controllers
 			_lastRowsCount = Internetsessionslog.Queryable.Where(predicate).Count();
 			if (_lastRowsCount > 0) {
 				var getCount = _lastRowsCount - PageSize * CurrentPage < PageSize ? _lastRowsCount - PageSize * CurrentPage : PageSize;
-				return Internetsessionslog.Queryable.Where(predicate)
+				result = Internetsessionslog.Queryable.Where(predicate)
 					.Skip(PageSize * CurrentPage)
 					.Take(getCount)
-					.ToList();
+					.ToList().Select(i => new SessionResult(i)).ToList();
 			}
-			return new List<Internetsessionslog>();
+			var appeal = session.Query<Appeals>().Where(a => a.Client.Id == ClientCode && a.AppealType == AppealType.Statistic).ToList().Select(a => new SessionResult(a)).ToList();
+			result.AddRange(appeal);
+			return result.OrderBy(r => r.Date).ToList();
 		}
 	}
 
@@ -117,7 +142,7 @@ namespace InternetInterface.Controllers
 		{
 			PropertyBag["_client"] = Client.Find(filter.ClientCode);
 			PropertyBag["filter"] = filter;
-			PropertyBag["Leases"] = filter.Find();
+			PropertyBag["Leases"] = filter.Find(DbSession);
 		}
 
 		public void LawyerPersonInfo([DataBind("filter")] ClientFilter filter)
@@ -188,7 +213,7 @@ namespace InternetInterface.Controllers
 				message += "Услуга \"Обещанный платеж активирована\"";
 				new Appeals {
 					Appeal = "Услуга \"Обещанный платеж активирована\"",
-					AppealType = AppealType.System,
+					AppealType = AppealType.Statistic,
 					Client = client,
 					Date = DateTime.Now,
 					Partner = InitializeContent.Partner
@@ -291,7 +316,7 @@ namespace InternetInterface.Controllers
 								? clientService.EndWorkDate.Value.ToShortDateString()
 								: string.Empty),
 						client,
-						AppealType.User);
+						AppealType.Statistic);
 				}
 				catch (ServiceActivationException e) {
 					PropertyBag["errorMessage"] = e.Message;
@@ -309,7 +334,7 @@ namespace InternetInterface.Controllers
 					client.ClientServices.FirstOrDefault(c => c.Service.Id == serviceId && c.Activated);
 				if (cservice != null) {
 					cservice.CompulsoryDeactivate();
-					Appeals.CreareAppeal(string.Format("Услуга \"{0}\" деактивирована", servise.HumanName), client, AppealType.User);
+					Appeals.CreareAppeal(string.Format("Услуга \"{0}\" деактивирована", servise.HumanName), client, AppealType.Statistic);
 				}
 			}
 			RedirectToUrl(client.Redirect());
@@ -655,7 +680,13 @@ where r.`Label`= :LabelIndex;")
 
 				updateClient.Update();
 
-				_client.Disabled = updateClient.Tariff == null;
+				if (updateClient.IsChanged(c => c.Tariff)) {
+					_client.Disabled = updateClient.Tariff == null;
+					if (_client.IsChanged(c => c.Disabled)) {
+						var message = _client.Disabled ? "Клиент включен оператором, тариф назначен" : "Клиент отключен оператором, тариф удален";
+						Appeals.CreareAppeal(message, _client, AppealType.Statistic);
+					}
+				}
 				_client.Name = updateClient.ShortName;
 				_client.Update();
 
@@ -719,19 +750,27 @@ where r.`Label`= :LabelIndex;")
 				client.Name = string.Format("{0} {1} {2}", updateClient.Surname, updateClient.Name, updateClient.Patronymic);
 				updateClient.UpdatePackageId();
 
-				if (client.Status.Blocked) {
-					client.Disabled = true;
-					client.StartNoBlock = null;
-					client.Sale = 0;
-				}
-				else {
-					client.AutoUnblocked = true;
-					client.Disabled = false;
-					client.ShowBalanceWarningPage = false;
-				}
-				if (client.Status.Type == StatusType.Dissolved) {
-					client.Endpoints.Clear();
-					client.PhysicalClient.HouseObj = null;
+				if (client.IsChanged(s => s.Status)) {
+					if (client.Status.Type == StatusType.NoWorked) {
+						client.Disabled = true;
+						client.StartNoBlock = null;
+						client.Sale = 0;
+						if (client.IsChanged(c => c.Disabled))
+							Appeals.CreareAppeal("Оператором клиент был заблокирован", client, AppealType.Statistic);
+					}
+					else {
+						client.AutoUnblocked = true;
+						client.Disabled = false;
+						client.ShowBalanceWarningPage = false;
+						if (client.IsChanged(c => c.Disabled))
+							Appeals.CreareAppeal("Оператором клиент был разблокирован", client, AppealType.Statistic);
+						if (client.IsChanged(c => c.ShowBalanceWarningPage))
+							Appeals.CreareAppeal("Оператором отключена страница Warning", client, AppealType.Statistic);
+					}
+					if (client.Status.Type == StatusType.Dissolved) {
+						client.Endpoints.Clear();
+						client.PhysicalClient.HouseObj = null;
+					}
 				}
 
 				DbSession.SaveOrUpdate(updateClient);

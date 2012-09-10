@@ -9,6 +9,7 @@ using Common.Tools;
 using Common.Tools.Calendar;
 using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Helpers;
+using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 using NHibernate;
@@ -176,6 +177,7 @@ set s.LastStartFail = true;")
 						if (updateClient.RatedPeriodDate != null)
 							if (physicalClient.Balance >= updateClient.GetPrice()) {
 								updateClient.ShowBalanceWarningPage = false;
+								Appeals.CreareAppeal("Отключена страница Warning, клиент внес платеж", updateClient, AppealType.Statistic, false);
 							}
 						if (updateClient.ClientServices != null)
 							foreach (var clientService in updateClient.ClientServices.ToList()) {
@@ -223,6 +225,10 @@ set s.LastStartFail = true;")
 					client.Disabled = false;
 					client.UpdateAndFlush();
 					SmsHelper.DeleteNoSendingMessages(client);
+					if (client.IsChanged(c => c.ShowBalanceWarningPage))
+						Appeals.CreareAppeal("Отключена страница Warning, клиент разблокирован", client, AppealType.Statistic, false);
+					if (client.IsChanged(c => c.Disabled))
+						Appeals.CreareAppeal("Клиент разблокирован", client, AppealType.Statistic, false);
 				}
 				var lawyerPersons = Client.Queryable.Where(c => c.LawyerPerson != null);
 				foreach (var client in lawyerPersons) {
@@ -233,12 +239,16 @@ set s.LastStartFail = true;")
 							client.WhenShowWarning = SystemTime.Now();
 							if (!client.SendEmailNotification)
 								client.SendEmailNotification = EmailNotificationSender.SendLawyerPersonNotification(client);
+							if (client.IsChanged(c => c.ShowBalanceWarningPage))
+								Appeals.CreareAppeal("Включена страница Warning, клиент имеент низкой баланс", client, AppealType.Statistic, false);
 						}
 					}
 					else {
 						client.ShowBalanceWarningPage = false;
 						client.SendEmailNotification = false;
 						client.WhenShowWarning = null;
+						if (client.IsChanged(c => c.ShowBalanceWarningPage))
+							Appeals.CreareAppeal("Отключена страница Warning", client, AppealType.Statistic, false);
 					}
 					client.Update();
 				}
@@ -409,6 +419,8 @@ set s.LastStartFail = true;")
 				var minimumBalance = bufBal - sum < 0;
 				if (minimumBalance) {
 					client.ShowBalanceWarningPage = true;
+					if (client.IsChanged(c => c.ShowBalanceWarningPage))
+						Appeals.CreareAppeal("Включена страница Warning, клиент имеент низкой баланс", client, AppealType.Statistic, false);
 					if (client.SendSmsNotifocation) {
 						if (phisicalClient.Balance > 0) {
 							var message = string.Format("Ваш баланс {0} руб. Завтра доступ в сеть будет заблокирован.",
@@ -428,6 +440,8 @@ set s.LastStartFail = true;")
 				}
 				else {
 					client.ShowBalanceWarningPage = false;
+					if (client.IsChanged(c => c.ShowBalanceWarningPage))
+						Appeals.CreareAppeal("Отключена страница Warning", client, AppealType.Statistic, false);
 				}
 			}
 			if (client.CanBlock()) {
@@ -435,6 +449,8 @@ set s.LastStartFail = true;")
 				client.Sale = 0;
 				client.StartNoBlock = null;
 				client.Status = Status.Find((uint)StatusType.NoWorked);
+				if (client.IsChanged(c => c.Disabled))
+					Appeals.CreareAppeal("Клиент был заблокирован", client, AppealType.Statistic, false);
 			}
 			if (client.YearCycleDate == null || (SystemTime.Now().Date >= client.YearCycleDate.Value.AddYears(1).Date)) {
 				client.FreeBlockDays = FreeDaysVoluntaryBlockin;

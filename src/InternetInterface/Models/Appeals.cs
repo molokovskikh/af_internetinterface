@@ -18,7 +18,8 @@ namespace InternetInterface.Models
 		All = 0,
 		User = 1,
 		System = 3,
-		FeedBack = 5
+		FeedBack = 5,
+		Statistic = 7
 	}
 
 	public enum UniversalAppealType
@@ -58,15 +59,16 @@ namespace InternetInterface.Models
 	{
 		public Appeals()
 		{
+			Date = DateTime.Now;
 		}
 
-		public Appeals(string appeal, Client client, AppealType appealType)
+		public Appeals(string appeal, Client client, AppealType appealType, bool usePartner) : this()
 		{
 			Appeal = appeal;
 			Client = client;
 			AppealType = appealType;
-			Date = DateTime.Now;
-			Partner = InitializeContent.Partner;
+			if (usePartner)
+				Partner = InitializeContent.Partner;
 		}
 
 		[PrimaryKey]
@@ -127,9 +129,12 @@ namespace InternetInterface.Models
 			return appeals.OrderByDescending(a => a.Date).ToList();
 		}
 
-		public static void CreareAppeal(string message, Client client, AppealType type)
+		public static Appeals CreareAppeal(string message, Client client, AppealType type, bool usePartner = true)
 		{
-			new Appeals(message, client, type).Save();
+			message += string.Format(". Баланс {0}.", client.Balance.ToString("0.00"));
+			var appeal = new Appeals(message, client, type, usePartner);
+			ActiveRecordMediator.Save(appeal);
+			return appeal;
 		}
 
 		public virtual string Type()

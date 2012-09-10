@@ -60,7 +60,7 @@ namespace InternetInterface.Models
 				else
 					Client.LawyerPerson.Balance -= Sum;
 			}
-			return new Appeals(String.Format("Удален платеж на сумму {0:C} \r\n Комментарий: {1}", Sum, comment), Client, AppealType.System);
+			return Appeals.CreareAppeal(String.Format("Удален платеж на сумму {0:C} \r\n Комментарий: {1}", Sum, comment), Client, AppealType.System);
 		}
 	}
 }
