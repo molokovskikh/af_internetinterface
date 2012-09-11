@@ -481,10 +481,27 @@ Sum(VirtualSum) as VirtualSum,
 Sum(MoneySum) as MoneySum,
 WriteOffDate,
 Client,
-BeforeWriteOffBalance
+BeforeWriteOffBalance,
+`Comment`
 FROM internet.WriteOff W
 where Client = :clientid and WriteOffSum > 0
-group by {0} order by WriteOffDate;", gpoupKey))
+group by {0}
+
+UNION 
+
+select
+0 as Id,
+sum(`sum`) as WriteOffSum,
+0.0 as VirtualSum,
+0.0 as MoneySum,
+`date` as WriteOffDate,
+Client,
+0.0 as BeforeWriteOffBalance,
+`Comment`
+from internet.UserWriteOffs uw
+where uw.client = :clientid
+group by {0}
+;", gpoupKey))
 				.SetParameter("clientid", Id);
 			return query.ToList<BaseWriteOff>();
 		}

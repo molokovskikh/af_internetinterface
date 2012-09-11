@@ -228,7 +228,6 @@
     <None Include="Views\Subview\ConnectMenu.brail" />
     <None Include="Views\Subview\ContactInfo.brail" />
     <None Include="Views\Subview\CreateEditLabel.brail" />
-    <None Include="Views\Subview\UserWriteOffs.brail" />
     <None Include="Views\Switches\FreePortForSwitch.brail" />
     <None Include="Views\Subview\House.brail" />
     <None Include="Views\Subview\LegalPerson.brail" />

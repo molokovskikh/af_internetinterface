@@ -5,6 +5,7 @@ using System.Web;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Common.Tools;
+using Common.Web.Ui.Helpers;
 using InternetInterface.Helpers;
 
 namespace InternetInterface.Models
@@ -24,6 +25,14 @@ namespace InternetInterface.Models
 		public decimal MoneySum { get; set; }
 
 		public decimal? BeforeWriteOffBalance { get; set; }
+
+		public string Comment { get; set; }
+
+		[Style]
+		public bool Commented
+		{
+			get { return !string.IsNullOrEmpty(Comment); }
+		}
 
 		public string GeBeforeWriteOffBalance(string grouped)
 		{

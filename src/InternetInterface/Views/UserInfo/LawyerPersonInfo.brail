@@ -143,7 +143,6 @@ end %>
 <br />
 
 <% OutputSubView("""\Subview\WriteOffInfo""") %>
-<% OutputSubView("""\Subview\UserWriteOffs""") %>
 <% OutputSubView("""\Subview\ChangeBalanceInfo""") %>
 
 </div>
