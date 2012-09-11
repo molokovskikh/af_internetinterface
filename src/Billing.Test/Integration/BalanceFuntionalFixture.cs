@@ -337,6 +337,7 @@ namespace Billing.Test.Integration
 				Assert.IsTrue(domolinkClient.AutoUnblocked);
 				Assert.IsFalse(domolinkClient.Disabled);
 			}
+			Assert_statistic_appeal();
 		}
 
 		[Test]
@@ -376,6 +377,7 @@ namespace Billing.Test.Integration
 				client.Update();
 			}
 			billing.Compute();
+			Assert_statistic_appeal();
 			using (new SessionScope()) {
 				client.Refresh();
 				Assert.IsTrue(client.ShowBalanceWarningPage);
@@ -397,6 +399,7 @@ namespace Billing.Test.Integration
 				}.Save();
 			}
 			billing.OnMethod();
+			Assert_statistic_appeal();
 			using (new SessionScope()) {
 				client.Refresh();
 				Assert.IsFalse(client.ShowBalanceWarningPage);
@@ -445,6 +448,7 @@ namespace Billing.Test.Integration
 				}.Save();
 			}
 			billing.OnMethod();
+			Assert_statistic_appeal();
 			using (new SessionScope()) {
 				unblockedClient.Refresh();
 				Assert.IsFalse(unblockedClient.Disabled);
@@ -468,6 +472,7 @@ namespace Billing.Test.Integration
 				}.Save();
 			}
 			billing.OnMethod();
+			Assert_statistic_appeal();
 			using (new SessionScope()) {
 				unblockedClient.Refresh();
 				Assert.IsFalse(unblockedClient.Disabled);
@@ -507,12 +512,15 @@ namespace Billing.Test.Integration
 				lPerson.Balance += 1000;
 				lPerson.Update();
 			}
+			//3 Так как 2 не к этому клиенту
+			Assert_statistic_appeal(3);
 			Assert.IsTrue(client.ShowBalanceWarningPage);
 			billing.OnMethod();
 			using (new SessionScope()) {
 				client.Refresh();
 			}
 			Assert.IsTrue(!client.ShowBalanceWarningPage);
+			Assert_statistic_appeal();
 		}
 
 		[Test]

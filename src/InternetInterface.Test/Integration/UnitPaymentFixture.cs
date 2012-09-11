@@ -2,11 +2,12 @@
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
+using Test.Support;
 
-namespace InternetInterface.Test.Unit
+namespace InternetInterface.Test.Integration
 {
 	[TestFixture]
-	public class PaymentFixture
+	public class UnitPaymentFixture : IntegrationFixture
 	{
 		private Client client;
 		private PhysicalClient physicalClient;
@@ -19,6 +20,7 @@ namespace InternetInterface.Test.Unit
 			};
 			physicalClient = client.PhysicalClient;
 			physicalClient.Client = client;
+			session.Save(client);
 		}
 
 		[Test]
@@ -33,7 +35,7 @@ namespace InternetInterface.Test.Unit
 			var message = payment.Cancel("Comment");
 			Assert.That(physicalClient.Balance, Is.EqualTo(0));
 			Assert.That(physicalClient.MoneyBalance, Is.EqualTo(0));
-			Assert.That(message.Appeal, Is.EqualTo("Удален платеж на сумму 1\u00A0000,00р. \r\n Комментарий: Comment"));
+			Assert.That(message.Appeal, Is.EqualTo("Удален платеж на сумму 1\u00A0000,00р. \r\n Комментарий: Comment. Баланс 0,00."));
 		}
 
 		[Test]

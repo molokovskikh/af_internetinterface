@@ -177,7 +177,8 @@ set s.LastStartFail = true;")
 						if (updateClient.RatedPeriodDate != null)
 							if (physicalClient.Balance >= updateClient.GetPrice()) {
 								updateClient.ShowBalanceWarningPage = false;
-								Appeals.CreareAppeal("Отключена страница Warning, клиент внес платеж", updateClient, AppealType.Statistic, false);
+								if (updateClient.IsChanged(c => c.ShowBalanceWarningPage))
+									Appeals.CreareAppeal("Отключена страница Warning, клиент внес платеж", updateClient, AppealType.Statistic, false);
 							}
 						if (updateClient.ClientServices != null)
 							foreach (var clientService in updateClient.ClientServices.ToList()) {
@@ -223,12 +224,12 @@ set s.LastStartFail = true;")
 					client.DebtDays = 0;
 					client.ShowBalanceWarningPage = false;
 					client.Disabled = false;
-					client.UpdateAndFlush();
-					SmsHelper.DeleteNoSendingMessages(client);
 					if (client.IsChanged(c => c.ShowBalanceWarningPage))
 						Appeals.CreareAppeal("Отключена страница Warning, клиент разблокирован", client, AppealType.Statistic, false);
 					if (client.IsChanged(c => c.Disabled))
 						Appeals.CreareAppeal("Клиент разблокирован", client, AppealType.Statistic, false);
+					client.UpdateAndFlush();
+					SmsHelper.DeleteNoSendingMessages(client);
 				}
 				var lawyerPersons = Client.Queryable.Where(c => c.LawyerPerson != null);
 				foreach (var client in lawyerPersons) {

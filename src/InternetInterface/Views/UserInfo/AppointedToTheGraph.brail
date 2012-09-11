@@ -121,7 +121,6 @@
 			 req.graph_button = check_field.val();
 			 req.graph_date = $('#graph_date').val();
 			 $.post("ReservGraph", req, function (data) {
-				 alert(data);
 				 var appended_field = check_field.parent();
 				 appended_field.empty();
 				 appended_field.append('Резерв');
@@ -147,11 +146,9 @@
 			 req.graph_date = $('#graph_date').val();
 			 $.post("SaveGraph", req, function (data) {
 				 if (data) {
-					 alert("Заявка включена в рассписание");
 					 window.location.href = '../Search/Redirect?filter.ClientCode=${ClientCode}';
 				 }
 				 else {
-					 alert("Не выбран интервал времени");
 				 }
 			 });
 		 }

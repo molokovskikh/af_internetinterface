@@ -8,6 +8,7 @@ using Common.Web.Ui.Helpers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Services;
 using NHibernate.Criterion;
+using NHibernate.Linq;
 using NHibernate.SqlCommand;
 using NUnit.Framework;
 using InternetInterface.Models;
@@ -159,6 +160,7 @@ namespace Billing.Test.Integration
 			PhysicalClient.DeleteAll();
 			SystemTime.Reset();
 			PaymentsForAgent.DeleteAll();
+			Appeals.DeleteAll();
 		}
 
 		public static void CleanDbAfterTest()
@@ -176,6 +178,17 @@ namespace Billing.Test.Integration
 			}
 			SystemTime.Now = () => rd.dtTo;
 			billing.Compute();
+		}
+
+		public void Assert_statistic_appeal(int appealCount = 1)
+		{
+			using (new SessionScope()) {
+				ArHelper.WithSession(s => {
+					var appeals = s.Query<Appeals>().Where(a => a.AppealType == AppealType.Statistic).ToList();
+					Assert.That(appeals.Count, Is.EqualTo(appealCount));
+					s.CreateSQLQuery("delete from Internet.appeals").ExecuteUpdate();
+				});
+			}
 		}
 	}
 }

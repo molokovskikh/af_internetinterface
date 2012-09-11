@@ -42,6 +42,7 @@ namespace Billing.Test.Integration
 				Assert.IsFalse(lawyerClient.SendEmailNotification);
 			}
 			billing.OnMethod();
+			Assert_statistic_appeal();
 			using (new SessionScope()) {
 				lawyerClient.Refresh();
 				Assert.IsNotNull(lawyerClient.WhenShowWarning);
@@ -62,6 +63,7 @@ namespace Billing.Test.Integration
 				SystemTime.Now = () => DateTime.Now.AddHours(3);
 			}
 			billing.OnMethod();
+			Assert_statistic_appeal();
 			using (new SessionScope()) {
 				lawyerClient.Refresh();
 				Assert.IsTrue(lawyerClient.ShowBalanceWarningPage);
