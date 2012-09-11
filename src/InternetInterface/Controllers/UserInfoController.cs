@@ -105,14 +105,15 @@ namespace InternetInterface.Controllers
 					&& (i.LeaseEnd.Value.Date <= endDate.Value.Date
 						|| i.LeaseEnd == null);
 
+			var appeal = session.Query<Appeals>().Where(a => a.Client.Id == ClientCode && a.AppealType == AppealType.Statistic).ToList().Select(a => new SessionResult(a)).ToList();
 			_lastRowsCount = Internetsessionslog.Queryable.Where(predicate).Count();
+			_lastRowsCount += appeal.Count;
 			int getCount = 0;
 			if (_lastRowsCount > 0) {
 				getCount = _lastRowsCount - PageSize * CurrentPage < PageSize ? _lastRowsCount - PageSize * CurrentPage : PageSize;
 				result = Internetsessionslog.Queryable.Where(predicate)
 					.ToList().Select(i => new SessionResult(i)).ToList();
 			}
-			var appeal = session.Query<Appeals>().Where(a => a.Client.Id == ClientCode && a.AppealType == AppealType.Statistic).ToList().Select(a => new SessionResult(a)).ToList();
 			result.AddRange(appeal);
 			return result.OrderBy(r => r.Date).Skip(PageSize * CurrentPage)
 				.Take(getCount).ToList();
