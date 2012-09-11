@@ -249,11 +249,8 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void Reset_client()
 		{
-			var status = Status.Get(StatusType.BlockedAndConnected, session);
-			status.Additional.Add(session.Get<AdditionalStatus>(5u));
 			var brigad = new Brigad("test");
 			session.Save(brigad);
-			session.SaveOrUpdate(status);
 			Open(ClientUrl);
 			Click("Сохранить");
 			Click("Сбросить");
