@@ -106,16 +106,16 @@ namespace InternetInterface.Controllers
 						|| i.LeaseEnd == null);
 
 			_lastRowsCount = Internetsessionslog.Queryable.Where(predicate).Count();
+			int getCount = 0;
 			if (_lastRowsCount > 0) {
-				var getCount = _lastRowsCount - PageSize * CurrentPage < PageSize ? _lastRowsCount - PageSize * CurrentPage : PageSize;
+				getCount = _lastRowsCount - PageSize * CurrentPage < PageSize ? _lastRowsCount - PageSize * CurrentPage : PageSize;
 				result = Internetsessionslog.Queryable.Where(predicate)
-					.Skip(PageSize * CurrentPage)
-					.Take(getCount)
 					.ToList().Select(i => new SessionResult(i)).ToList();
 			}
 			var appeal = session.Query<Appeals>().Where(a => a.Client.Id == ClientCode && a.AppealType == AppealType.Statistic).ToList().Select(a => new SessionResult(a)).ToList();
 			result.AddRange(appeal);
-			return result.OrderBy(r => r.Date).ToList();
+			return result.OrderBy(r => r.Date).Skip(PageSize * CurrentPage)
+				.Take(getCount).ToList();
 		}
 	}
 
