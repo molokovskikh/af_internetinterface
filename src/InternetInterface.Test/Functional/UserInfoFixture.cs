@@ -245,5 +245,24 @@ namespace InternetInterface.Test.Functional
 				Assert.That(browser.Text, Is.StringContaining("Списание ожидает обработки"));
 			}
 		}
+
+		[Test]
+		public void Reset_client()
+		{
+			var status = Status.Get(StatusType.BlockedAndConnected, session);
+			status.Additional.Add(session.Get<AdditionalStatus>(5u));
+			var brigad = new Brigad("test");
+			session.Save(brigad);
+			session.SaveOrUpdate(status);
+			Open(ClientUrl);
+			Click("Сохранить");
+			Click("Сбросить");
+			AssertText("Назначить в график");
+			Click("Назначить в график");
+			browser.RadioButton(Find.ByName("graph_button")).Checked = true;
+			Click("Назначить");
+			AssertText("Информация по клиенту");
+			AssertText("Сбросить");
+		}
 	}
 }

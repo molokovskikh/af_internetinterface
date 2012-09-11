@@ -103,7 +103,7 @@ $(function() {
 		</tr>
 	</tbody>
 </table>
-<% OutputSubView("""\Subview\ConnectMenu""") %>
+
 <table>
 	<tbody>
 		<%if  PartnerAccessSet.AccesPartner("SSI"):%>

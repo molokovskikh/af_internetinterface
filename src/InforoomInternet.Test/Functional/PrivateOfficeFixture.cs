@@ -39,6 +39,35 @@ namespace InforoomInternet.Test.Functional
 		}
 
 		[Test]
+		public void Create_end_point_if_client_dont_have()
+		{
+			var _switch = new NetworkSwitch();
+			session.Save(_switch);
+			client.Endpoints.Clear();
+			session.SaveOrUpdate(client);
+			Css("#exitLink").Click();
+			var lease = new Lease {
+				Ip = Convert.ToUInt32(NetworkSwitch.SetProgramIp("192.168.0.1")),
+				Switch = _switch,
+				Port = 1
+			};
+			session.Save(lease);
+			Flush();
+			Open("PrivateOffice/IndexOffice");
+			browser.TextField("Login").AppendText(client.Id.ToString());
+			browser.TextField("Password").AppendText("1234");
+			browser.Button("LogBut").Click();
+			client.Refresh();
+			Assert.AreEqual(client.Endpoints.Count, 1);
+			Assert.That(client.Endpoints.First().Switch, Is.EqualTo(_switch));
+			Assert.That(client.Endpoints.First().Port, Is.EqualTo(1));
+			session.Refresh(_switch);
+			session.Refresh(lease);
+			Assert.That(_switch.Name, Is.StringContaining("testStreet"));
+			Assert.That(lease.Endpoint, Is.EqualTo(client.Endpoints.First()));
+		}
+
+		[Test]
 		public void Activate_work_in_debt()
 		{
 			client.AutoUnblocked = true;

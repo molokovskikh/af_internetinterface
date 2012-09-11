@@ -174,6 +174,31 @@ namespace InternetInterface.Models
 			return PhysicalClient.Balance < GetPriceForTariff() * PercentBalance;
 		}
 
+		public virtual bool NoEndPoint()
+		{
+			return Endpoints.Count == 0;
+		}
+
+		public virtual void CreateAutoEndPont(string ip, ISession session)
+		{
+			var lease = Lease.FindAllByProperty("Ip", Convert.ToUInt32(NetworkSwitch.SetProgramIp(ip))).FirstOrDefault();
+			if (lease == null)
+				throw new Exception(string.Format("Клиент {0} пришел а аренды для него нет", Id));
+			if (string.IsNullOrEmpty(lease.Switch.Name)) {
+				var _switch = lease.Switch;
+				_switch.Name = PhysicalClient.GetCutAdress();
+				session.Save(_switch);
+			}
+			var newPoint = new ClientEndpoint(this, lease.Port, lease.Switch);
+			lease.Endpoint = newPoint;
+			session.Save(lease);
+			if (!Status.Connected) {
+				Status = Status.Get(StatusType.Worked, session);
+				session.SaveOrUpdate(this);
+			}
+			session.Save(newPoint);
+		}
+
 		public static bool Our(string ip)
 		{
 			var mashineAddress = Convert.ToInt64(NetworkSwitch.SetProgramIp(ip));

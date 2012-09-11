@@ -12,13 +12,12 @@ namespace InforoomInternet.Logic
 {
 	public class LoginLogic
 	{
-		public static bool IsAccessibleClient(uint id, string password)
+		public static Client IsAccessibleClient(uint id, string password)
 		{
-			return Client.Queryable.Count(c =>
+			return Client.Queryable.FirstOrDefault(c =>
 				c.Id == id &&
 					c.PhysicalClient != null &&
-					c.PhysicalClient.Password == CryptoPass.GetHashString(password))
-				> 0;
+					c.PhysicalClient.Password == CryptoPass.GetHashString(password));
 		}
 
 		public static bool IsAccessiblePartner(object name)

@@ -54,11 +54,6 @@ namespace InternetInterface.Test.Functional
 			Css("#client_ConnectSum").AppendText("100");
 			Css("#client_Tariff_Id").Select("Тариф для тестирования");
 
-			browser.SelectList("SelectSwitches").Select("Тестовый коммутатор для регистрации клиента");
-			browser.Eval(String.Format("$('#SelectSwitches').change()"));
-			var occupiedPorts = browser.Elements.Count(e => e.ClassName == "access_port");
-			Assert.That(occupiedPorts, Is.EqualTo(0));
-
 			browser.CheckBox("VisibleRegisteredInfo").Checked = true;
 			browser.Button(Find.ById("RegisterClientButton")).Click();
 
@@ -71,7 +66,7 @@ namespace InternetInterface.Test.Functional
 			AssertText("(473) 22-999-87");
 		}
 
-		[Test]
+		[Test, Ignore("Отключен функционал выбора свича при регистрации")]
 		public void Show_switch_comment()
 		{
 			var commutator = new NetworkSwitch("Тестовый коммутатор с комментарием", session.Query<Zone>().First()) {
