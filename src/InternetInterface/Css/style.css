@@ -542,3 +542,11 @@ table .filter_front thead td{
 #main.fullWidth {
 	width: 100%;
 }
+
+div.commented, .commented {
+	background-color: #F5EFDF;
+}
+
+.comment_td {
+	width: 150px;
+}

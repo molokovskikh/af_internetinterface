@@ -64,7 +64,7 @@
 				<td>${item.MoneySum.ToString("0.00")}</td>
 				<td>${item.VirtualSum.ToString("0.00")}</td>
 				<td>${item.GeBeforeWriteOffBalance(grouped)}</td>
-				<td>${item.Comment}</td>
+				<td class="comment_td">${item.Comment}</td>
 			</tr>
 		<%end %>
 	<% end %>
@@ -74,6 +74,14 @@
 	<%if not groupYear: %>
 	</div>
 	<%end %>
+		<div class="legendDiv">
+			<table>
+				<tr>
+					<td><div class="commented legend"></div></td>
+					<td class="legendLabel">- пользовательское списание</td>
+				</tr>
+			</table>
+		</div>
 </table>
 </div>
 <%end %>

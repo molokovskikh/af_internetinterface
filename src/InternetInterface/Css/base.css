@@ -510,7 +510,7 @@ button.button:active, a.button:active {
 	background-color: #FCD0D0;
 }
 
-.legend {
+div.legend {
 	width:25px;
 	height:25px;
 	border: 1px double #AAA;

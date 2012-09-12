@@ -98,7 +98,7 @@ namespace InforoomInternet.Controllers
 				CService.Activate();
 				new Appeals {
 					Appeal = "Услуга \"Обещанный платеж активирована\"",
-					AppealType = AppealType.System,
+					AppealType = AppealType.Statistic,
 					Client = client,
 					Date = DateTime.Now
 				}.Save();
@@ -138,7 +138,7 @@ namespace InforoomInternet.Controllers
 			var cService = client.ClientServices.FirstOrDefault(c => c.Service.Id == Service.GetByType(typeof(VoluntaryBlockin)).Id);
 			if (cService != null) {
 				cService.CompulsoryDeactivate();
-				Flash["message"] = "Услуга \"Работа в долг\" деактивирована";
+				Flash["message"] = "Услуга \"Добровольная блокировка\" деактивирована";
 				new Appeals {
 					Appeal = string.Format("Услуга \"добровольная блокировка\" деактивирована"),
 					AppealType = AppealType.Statistic,
