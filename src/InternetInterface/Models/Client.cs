@@ -464,7 +464,7 @@ namespace InternetInterface.Models
 		}
 
 
-		public virtual IList<BaseWriteOff> GetWriteOffs(ISession session, string groupedKey)
+		public virtual IList<BaseWriteOff> GetWriteOffs(ISession session, string groupedKey, bool forIvrn = false)
 		{
 			var gpoupKey = "concat(YEAR(WriteOffDate),'-',MONTH(WriteOffDate),'-',DAYOFMONTH(WriteOffDate))";
 			if (groupedKey == "day")
@@ -473,8 +473,7 @@ namespace InternetInterface.Models
 				gpoupKey = "concat(YEAR(WriteOffDate),'-',MONTH(WriteOffDate))";
 			if (groupedKey == "year")
 				gpoupKey = "YEAR(WriteOffDate)";
-			var query = session.CreateSQLQuery(String.Format(
-				@"SELECT 
+			var textQuery = !forIvrn ? @"SELECT 
 Id, 
 Sum(WriteOffSum) as WriteOffSum,
 Sum(VirtualSum) as VirtualSum,
@@ -501,7 +500,21 @@ Client,
 from internet.UserWriteOffs uw
 where uw.client = :clientid
 group by {0}
-;", gpoupKey))
+;" :
+@"SELECT 
+Id, 
+Sum(WriteOffSum) as WriteOffSum,
+Sum(VirtualSum) as VirtualSum,
+Sum(MoneySum) as MoneySum,
+WriteOffDate,
+Client,
+BeforeWriteOffBalance,
+`Comment`
+FROM internet.WriteOff W
+where Client = :clientid and WriteOffSum > 0
+group by {0}
+;";
+			var query = session.CreateSQLQuery(String.Format(textQuery, gpoupKey))
 				.SetParameter("clientid", Id);
 			return query.ToList<BaseWriteOff>();
 		}

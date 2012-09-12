@@ -40,7 +40,7 @@ namespace InforoomInternet.Controllers
 			PropertyBag["PhysClientName"] = string.Format("{0} {1}", client.PhysicalClient.Name, client.PhysicalClient.Patronymic);
 			PropertyBag["PhysicalClient"] = client.PhysicalClient;
 			PropertyBag["Client"] = client;
-			var writeOffs = client.GetWriteOffs(DbSession, grouped).OrderByDescending(e => e.WriteOffDate).ToList();
+			var writeOffs = client.GetWriteOffs(DbSession, grouped, true).OrderByDescending(e => e.WriteOffDate).ToList();
 			if (client.RatedPeriodDate != null) {
 				PropertyBag["VisibleWriteOffs"] = writeOffs.Where(w => w.WriteOffDate.Date >= client.RatedPeriodDate.Value.Date).ToList();
 				PropertyBag["HideWriteOffs"] = writeOffs.Where(w => w.WriteOffDate.Date < client.RatedPeriodDate.Value.Date).ToList();
