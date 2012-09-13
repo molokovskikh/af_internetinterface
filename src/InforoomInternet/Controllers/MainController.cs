@@ -216,7 +216,7 @@ namespace InforoomInternet.Controllers
 					foreach (var staticIp in ips) {
 						if (point.PackageId == null)
 							continue;
-						SceHelper.Action("login", staticIp.Mask != null ? staticIp.Ip + "/" + staticIp.Mask : staticIp.Ip, "Static_" + staticIp.Id, false, false, point.PackageId.Value);
+						SceHelper.Action("login", staticIp.Mask != null ? staticIp.Ip + "/" + staticIp.Mask : staticIp.Ip, "Static_" + staticIp.Id, false, false, point.PackageId.Value, staticIp.EndPoint);
 					}
 				}
 				clientW.ShowBalanceWarningPage = false;

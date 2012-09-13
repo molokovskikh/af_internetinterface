@@ -62,6 +62,14 @@ namespace InternetInterface.Models
 		[OneToOne]
 		public virtual PaymentForConnect PayForCon { get; set; }
 
+		[Property]
+		public virtual int? ActualPackageId { get; set; }
+
+		public void UpdateActualPackageId(int? packageId)
+		{
+			ActualPackageId = packageId;
+		}
+
 		[HasMany(ColumnKey = "EndPoint", OrderBy = "Ip", Lazy = true, Cascade = ManyRelationCascadeEnum.AllDeleteOrphan)]
 		public virtual IList<StaticIp> StaticIps { get; set; }
 
