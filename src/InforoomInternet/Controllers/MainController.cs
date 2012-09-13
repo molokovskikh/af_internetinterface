@@ -9,6 +9,7 @@ using System.Threading;
 using Castle.MonoRail.Framework;
 using Common.Tools;
 using Common.Web.Ui.ActiveRecordExtentions;
+using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.Models.Editor;
 using InforoomInternet.Models;
@@ -19,7 +20,7 @@ namespace InforoomInternet.Controllers
 	[Layout("Main")]
 	[Filter(ExecuteWhen.BeforeAction, typeof(NHibernateFilter))]
 	[Filter(ExecuteWhen.BeforeAction, typeof(BeforeFilter))]
-	public class MainController : SmartDispatcherController
+	public class MainController : BaseController
 	{
 		public void Index()
 		{
@@ -208,17 +209,23 @@ namespace InforoomInternet.Controllers
 			var clientW = lease != null ? lease.Endpoint.Client : point.Client;
 
 			if (IsPost) {
+				int? actualPackageId = null;
 				if (lease != null) {
-					SceHelper.Login(lease, Request.UserHostAddress);
+					actualPackageId = SceHelper.Login(lease, Request.UserHostAddress);
+					lease.Endpoint.UpdateActualPackageId(actualPackageId);
+					DbSession.SaveOrUpdate(lease.Endpoint);
 				}
 				else {
 					var ips = StaticIp.Queryable.Where(s => s.EndPoint == point).ToList();
 					foreach (var staticIp in ips) {
 						if (point.PackageId == null)
 							continue;
-						SceHelper.Action("login", staticIp.Mask != null ? staticIp.Ip + "/" + staticIp.Mask : staticIp.Ip, "Static_" + staticIp.Id, false, false, point.PackageId.Value, staticIp.EndPoint);
+						actualPackageId = SceHelper.Action("login", staticIp.Mask != null ? staticIp.Ip + "/" + staticIp.Mask : staticIp.Ip, "Static_" + staticIp.Id, false, false, point.PackageId.Value);
+						point.UpdateActualPackageId(actualPackageId);
+						DbSession.SaveOrUpdate(point);
 					}
 				}
+
 				clientW.ShowBalanceWarningPage = false;
 				clientW.Update();
 				var url = Request.Form["referer"];

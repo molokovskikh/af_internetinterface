@@ -22,6 +22,7 @@ namespace InternetInterface.Models
 		public int Client { get; set; }
 
 		public int endpointId { get; set; }
+		public int? ActualPackageId { get; set; }
 
 		public string Name { get; set; }
 

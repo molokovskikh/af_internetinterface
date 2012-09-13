@@ -65,7 +65,7 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual int? ActualPackageId { get; set; }
 
-		public void UpdateActualPackageId(int? packageId)
+		public virtual void UpdateActualPackageId(int? packageId)
 		{
 			ActualPackageId = packageId;
 		}

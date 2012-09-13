@@ -42,13 +42,13 @@ namespace InforoomInternet.Models
 			return null;
 		}
 
-		public static void Action(string action, Lease lease, string ip)
+		public static int? Action(string action, Lease lease, string ip)
 		{
 			var endpoint = lease.Endpoint;
 			if (endpoint == null)
-				return;
+				return null;
 
-			Action(action, endpoint, ip);
+			return Action(action, endpoint, ip);
 		}
 
 		public static int? Action(string action, ClientEndpoint endpoint, string ip)
@@ -60,9 +60,9 @@ namespace InforoomInternet.Models
 			return Action(action, ip, Convert.ToString(endpoint.Id), endpoint.Monitoring, endpoint.IsMultilease, packageId.Value);
 		}
 
-		public static void Login(Lease lease, string ip)
+		public static int? Login(Lease lease, string ip)
 		{
-			Action("login", lease, ip);
+			return Action("login", lease, ip);
 		}
 
 		public static void Logout(Lease lease, string ip)

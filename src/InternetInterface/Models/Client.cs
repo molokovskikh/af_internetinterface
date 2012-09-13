@@ -546,6 +546,7 @@ CE.Port,
 PS.Speed,
 CE.Monitoring,
 CE.Id as endpointId,
+CE.ActualPackageId,
 pfc.`Sum` as ConnectSum
 from internet.ClientEndpoints CE
 left join internet.NetworkSwitches NS on NS.Id = CE.Switch
