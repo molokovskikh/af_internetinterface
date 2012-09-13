@@ -1,6 +1,6 @@
 ﻿<div class="info">
 	<span style="font-size:14px; margin-right:50px;">Услуга добровольная блокировка активирована</span>
-	<form method="post" action="DiactivateVoluntaryBlockin" style="display:inline;">
+	<form method="post" action="${Siteroot}/PrivateOffice/DiactivateVoluntaryBlockin" style="display:inline;">
 		<button type="submit" id="PostponedButDeactive" class="button">
 			Деактивировать
 		</button>

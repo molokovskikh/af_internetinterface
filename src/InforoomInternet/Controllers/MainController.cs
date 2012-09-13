@@ -9,17 +9,19 @@ using System.Threading;
 using Castle.MonoRail.Framework;
 using Common.Tools;
 using Common.Web.Ui.ActiveRecordExtentions;
+using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.Models.Editor;
 using InforoomInternet.Models;
 using InternetInterface.Models;
+using NHibernate.Linq;
 
 namespace InforoomInternet.Controllers
 {
 	[Layout("Main")]
 	[Filter(ExecuteWhen.BeforeAction, typeof(NHibernateFilter))]
 	[Filter(ExecuteWhen.BeforeAction, typeof(BeforeFilter))]
-	public class MainController : SmartDispatcherController
+	public class MainController : BaseController
 	{
 		public void Index()
 		{
@@ -266,7 +268,9 @@ namespace InforoomInternet.Controllers
 		{
 			var hostAdress = Request.UserHostAddress;
 #if DEBUG
-			hostAdress = NetworkSwitch.GetNormalIp(Lease.FindFirst().Ip);
+			//hostAdress = NetworkSwitch.GetNormalIp(DbSession.Query<Lease>().Where(l => l.Endpoint.Client.PhysicalClient != null).ToList().First().Ip);
+			//hostAdress = NetworkSwitch.GetNormalIp(DbSession.Query<Lease>().Where(l => l.Endpoint == null).ToList().First().Ip);
+			hostAdress = NetworkSwitch.GetNormalIp(DbSession.Query<Lease>().ToList().First().Ip);
 #endif
 			if (Regex.IsMatch(hostAdress, NetworkSwitch.IPRegExp) && !Client.Our(hostAdress)) {
 				RedirectToSiteRoot();
@@ -278,12 +282,18 @@ namespace InforoomInternet.Controllers
 				SendMessage(null);
 			}
 			else {
-				if (ClientData.Get(lease.Endpoint.Client.Id) == UnknownClientStatus.NoInfo) {
+				if (!lease.Endpoint.Client.IsPhysical()) {
+					RedirectToSiteRoot();
+					return;
+				}
+
+				if ((ClientData.Get(lease.Endpoint.Client.Id) == UnknownClientStatus.NoInfo) && !lease.Pool.IsGray) {
 					var sceWorker = new SceThread(lease, hostAdress);
 					sceWorker.Go();
 				}
 
-				PropertyBag["client"] = lease.Endpoint.Client.Id;
+				PropertyBag["Client"] = lease.Endpoint.Client;
+				PropertyBag["connectIterations"] = !lease.Pool.IsGray;
 				var host = Request["host"];
 				var rUrl = Request["url"];
 				if (!string.IsNullOrEmpty(host))
@@ -327,8 +337,9 @@ namespace InforoomInternet.Controllers
 					return new ReturnInFormInfo {
 						Iteration = 100,
 						Message = @"
-К сожалению, услуга доступа интернет Вам временно заблокирована. </br>
-Если Вы считаете это ошибочным, пожалуйста, свяжитесь с нами по телефону </br> (473)22-999-87 или сообщите по адресу internet@ivrn.net. Спасибо.",
+К сожалению, услуга доступа интернет Вам недоступна. </br>
+Чтобы пользоваться услугами интернет необходимо оставить заявку на подлючение, либо авторизоваться, если вы уже подключены.
+Если Вы считаете это сообщение ошибочным, пожалуйста, свяжитесь с нами по телефону </br> (473)22-999-87 или сообщите по адресу internet@ivrn.net. Спасибо",
 						WaitingInfo = false,
 						Status = info.Status
 					};

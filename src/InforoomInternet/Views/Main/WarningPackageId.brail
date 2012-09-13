@@ -1,4 +1,4 @@
-﻿<%if  IsDefined("client"): %>
+﻿<%if  IsDefined("connectIterations") and connectIterations: %>
 	<script>
 		$(function () {
 			ajaxFunc();
@@ -6,7 +6,7 @@
 
 		function ajaxFunc() {
 			$.ajax({
-				url: 'GetClientStatus?client=${client}',
+				url: 'GetClientStatus?client=${client.Id}',
 				success: function (data) {
 					$("#progressbar").progressbar({
 						value: data.Iteration
@@ -33,7 +33,7 @@
 	<div id="progressbar" style="width:50%; margin:0 auto;"></div>
 	<h3><div id="info" style="padding:15px;"></div></h3>
 	<form method=post action="RenewClientConect" id="repeatForm" style="display:none;">
-	<input type=hidden value="${client}" name="client" />
+	<input type=hidden value="${client.Id}" name="client" />
 	<button style="margin-left:15px;" type=submit class="button">Повторить</button>
 	</form>
 
@@ -42,6 +42,15 @@
 	<button style="margin-left:15px;" type=submit class="button">Продолжить работу</button>
 	</form>
 <%else: %>
-	<h3><div id="nonClientMessage" style="padding:15px;">К сожалению, услуга доступа интернет Вам временно заблокирована. </br>
-	Если Вы считаете это ошибочным, пожалуйста, свяжитесь с нами по телефону </br> (473)22-999-87 или сообщите по адресу internet@ivrn.net. Спасибо.</div></h3>
+<%if IsDefined("client"):%>
+<% OutputSubView("""\Subview\WarningText""") %>
+<%end end%>
+<%if not IsDefined("client"):%>
+	<h3>
+		<div id="nonClientMessage" style="padding:15px;">
+			<p>К сожалению, услуга доступа интернет Вам недоступна.</p>
+			<p>Чтобы пользоваться услугами интернет необходимо оставить заявку на подлючение, либо авторизоваться, если вы уже подключены.</p>
+			<p>Если Вы считаете это сообщение ошибочным, пожалуйста, свяжитесь с нами по телефону </br> (473)22-999-87 или сообщите по адресу internet@ivrn.net. Спасибо.</p>
+		</div>
+	</h3>
 <%end %>
