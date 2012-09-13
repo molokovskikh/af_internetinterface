@@ -48,7 +48,7 @@ namespace InforoomInternet.Test.Integration
 
 			session.Save(commutator);
 			session.Save(lease);
-
+			controller.DbSession = session;
 			controller.WarningPackageId();
 		}
 	}
