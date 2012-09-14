@@ -82,7 +82,6 @@ namespace InforoomInternet.Test.Integration
 			((IMockRequest)controller.Request).HttpMethod = "POST";
 			controller.Warning();
 
-			//session.Refresh(lease.Endpoint);
 			Assert.IsNotNull(lease.Endpoint.ActualPackageId);
 			Assert.AreEqual(lease.Endpoint.ActualPackageId.Value, 15);
 		}
