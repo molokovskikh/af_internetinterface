@@ -131,6 +131,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Functional\BaseFunctionalFixture.cs" />
     <Compile Include="Functional\PrivateOfficeFixture.cs" />
     <Compile Include="Functional\Setup.cs" />
     <Compile Include="Functional\WarningPackageIdFixture.cs" />
@@ -149,6 +150,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Billing\Billing.csproj">
+      <Project>{a30eb5bc-959b-4031-8d90-51f045af3e6d}</Project>
+      <Name>Billing</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common.MySql\Common.MySql\Common.MySql.csproj">
       <Project>{8A680813-C83B-497A-85E6-E8F07B7D7650}</Project>
       <Name>Common.MySql</Name>

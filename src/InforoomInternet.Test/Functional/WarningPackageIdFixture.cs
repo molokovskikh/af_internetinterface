@@ -13,44 +13,8 @@ using WatiN.Core.Native.Windows;
 namespace InforoomInternet.Test.Functional
 {
 	[TestFixture]
-	public class WarningPackageIdFixture : WatinFixture2
+	public class WarningPackageIdFixture : BaseFunctionalFixture
 	{
-		private Lease _lease;
-		private ClientEndpoint _clientEndpoint;
-		private Client _client;
-		private IpPool _pool;
-		private PhysicalClient _physicalClient;
-		private Internet _internet;
-		private IpTv _ipTv;
-		private Tariff _tariff;
-
-		[SetUp]
-		public void SetUp()
-		{
-			_pool = new IpPool { IsGray = true };
-			_physicalClient = new PhysicalClient();
-			_client = new Client();
-			_client.PhysicalClient = _physicalClient;
-			_clientEndpoint = new ClientEndpoint();
-			_clientEndpoint.Client = _client;
-			_lease = new Lease(_clientEndpoint);
-			_lease.Pool = _pool;
-			_internet = new Internet { HumanName = "internet" };
-			_ipTv = new IpTv { HumanName = "iptv" };
-			_tariff = new Tariff("testTariff", 100);
-			session.SaveMany(_internet, _ipTv, _tariff);
-			_client.ClientServices.Add(new ClientService(_client, _internet));
-			_client.ClientServices.Add(new ClientService(_client, _ipTv));
-			_physicalClient.Tariff = _tariff;
-			session.SaveMany(_pool, _physicalClient, _client, _clientEndpoint, _lease);
-		}
-
-		[TearDown]
-		public void TearDown()
-		{
-			session.DeleteMany(_lease, _clientEndpoint, _client, _physicalClient, _pool, _tariff, _ipTv, _internet);
-		}
-
 		[Test]
 		public void No_start_work()
 		{
@@ -61,10 +25,10 @@ namespace InforoomInternet.Test.Functional
 		[Test]
 		public void Block_greathet_zero()
 		{
-			_physicalClient.Balance = 10;
-			_client.Disabled = true;
-			_client.BeginWork = DateTime.Now;
-			session.SaveOrUpdate(_client);
+			PhysicalClient.Balance = 10;
+			Client.Disabled = true;
+			Client.BeginWork = DateTime.Now;
+			session.SaveOrUpdate(Client);
 			Open("Main/WarningPackageId");
 			AssertText("Доступ в интернет заблокирован за неуплату. Сумма на вашем лицевом счете недостаточна для разблокировки");
 		}
@@ -72,10 +36,10 @@ namespace InforoomInternet.Test.Functional
 		[Test]
 		public void Block_leases_zero()
 		{
-			_physicalClient.Balance = -10;
-			_client.Disabled = true;
-			_client.BeginWork = DateTime.Now;
-			session.SaveOrUpdate(_client);
+			PhysicalClient.Balance = -10;
+			Client.Disabled = true;
+			Client.BeginWork = DateTime.Now;
+			session.SaveOrUpdate(Client);
 			Open("Main/WarningPackageId");
 			AssertText("Ваша задолженность за оказанные услуги составляет");
 		}
@@ -83,8 +47,8 @@ namespace InforoomInternet.Test.Functional
 		[Test]
 		public void Access_connect_if_white_pool_unknown()
 		{
-			_pool.IsGray = false;
-			session.SaveOrUpdate(_pool);
+			Pool.IsGray = false;
+			session.SaveOrUpdate(Pool);
 			Open("Main/WarningPackageId");
 			Thread.Sleep(1000);
 			AssertText("Ждите, идет подключение к интернет");
@@ -93,10 +57,10 @@ namespace InforoomInternet.Test.Functional
 		[Test]
 		public void No_client_test()
 		{
-			_lease.Endpoint = null;
-			session.SaveOrUpdate(_lease);
+			Lease.Endpoint = null;
+			session.SaveOrUpdate(Lease);
 			Open("Main/WarningPackageId");
-			AssertText("Чтобы пользоваться услугами интернет необходимо оставить заявку на подлючение, либо авторизоваться, если вы уже подключены.");
+			AssertText("Чтобы пользоваться услугами интернет необходимо оставить заявку на подлючение, либо авторизоваться в личном кабинете, если вы уже подключены.");
 		}
 	}
 }

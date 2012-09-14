@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Linq;
+using Billing;
 using InternetInterface;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 using WatiN.Core;
+using WatiN.Core.Native.Windows;
 
 namespace InforoomInternet.Test.Functional
 {
@@ -106,15 +108,26 @@ namespace InforoomInternet.Test.Functional
 			AssertText("500");
 		}
 
-		[Test, Ignore("Функционал временно отключен")]
+		[Test]
 		public void Deactivate_internet()
 		{
+			var billing = new MainBilling();
+
+			billing.OnMethod();
+			session.CreateSQLQuery("delete from internet.Appeals;").ExecuteUpdate();
+
 			Click("Управление услугами");
 			Css("#internet_ActivatedByUser").Click();
 			Click("Сохранить");
 
 			session.Refresh(client);
 			Assert.That(client.Internet.ActivatedByUser, Is.False);
+
+			billing.OnMethod();
+
+			var appeals = Appeals.GetAllAppeal(session, client, AppealType.System);
+			Assert.AreEqual(appeals.Count, 1);
+			Assert.That(appeals[0].Text, Is.StringContaining("Отключена услуна Internet"));
 		}
 
 		[Test]

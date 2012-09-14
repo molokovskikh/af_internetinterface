@@ -40,13 +40,16 @@ namespace InternetInterface.Models.Services
 				}
 			}
 			base.CompulsoryDeactivate(assignedService);
+			Appeals.CreareAppeal("Отключена услуна Internet", assignedService.Client, AppealType.System, false);
 		}
 
 		public override void Activate(ClientService assignedService)
 		{
 			if (assignedService.ActivatedByUser
-				&& !assignedService.Client.Disabled)
+				&& !assignedService.Client.Disabled) {
 				base.Activate(assignedService);
+				Appeals.CreareAppeal("Включена услуна Internet", assignedService.Client, AppealType.System, false);
+			}
 		}
 
 		public override decimal GetPrice(ClientService assignedService)
