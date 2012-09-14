@@ -53,7 +53,7 @@ border="1" bgcolor="#FFFFFF" cellspacing="1" cellpadding="0">
 			<tr>
 			<td>
 			<p style="text-align: left; margin-left: 32px;" >Введите текст для поиска:<br />
-			<input type="text" id="SearchText"  name="filter.searchText"  value="${filter.searchText}" style="width: 80%; " />
+			<input type="text" id="SearchText"  name="filter.SearchText"  value="${filter.SearchText}" style="width: 80%; " />
 			<input id="SearchButton" type="submit" value="Поиск"  align="right" /> <br /> </p>
 			</td>
 			</tr>

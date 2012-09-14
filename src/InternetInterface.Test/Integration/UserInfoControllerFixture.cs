@@ -14,12 +14,9 @@ using NUnit.Framework;
 namespace InternetInterface.Test.Integration
 {
 	[TestFixture]
-	public class UserInfoControllerFixture : BaseControllerTest
+	public class UserInfoControllerFixture : SessionControllerFixture
 	{
 		private UserInfoController controller;
-		private ISession session;
-		private SessionScope scope;
-		private ISessionFactoryHolder sessionHolder;
 
 		[SetUp]
 		public void Setup()
@@ -27,19 +24,9 @@ namespace InternetInterface.Test.Integration
 			controller = new UserInfoController();
 			PrepareController(controller);
 
-			scope = new SessionScope();
-			sessionHolder = ActiveRecordMediator.GetSessionFactoryHolder();
-			session = sessionHolder.CreateSession(typeof(ActiveRecordBase));
-
 			controller.DbSession = session;
 		}
 
-		[TearDown]
-		public void TearDown()
-		{
-			sessionHolder.ReleaseSession(session);
-			scope.Dispose();
-		}
 
 		[Test]
 		public void Delete_all_endpoint_on_client_dissolve()

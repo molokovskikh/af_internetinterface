@@ -27,8 +27,8 @@ namespace InternetInterface.Test.Unit
 			};
 			InitializeContent.GetAdministrator = () => _thisPartner;
 			_filter = new SeachFilter {
-				clientTypeFilter = new ClientTypeProperties { Type = ForSearchClientType.AllClients },
-				searchProperties = new UserSearchProperties { SearchBy = SearchUserBy.Auto },
+				ClientTypeFilter = new ClientTypeProperties { Type = ForSearchClientType.AllClients },
+				SearchProperties = new UserSearchProperties { SearchBy = SearchUserBy.Auto },
 				EnabledTypeProperties = new EnabledTypeProperties { Type = EndbledType.All }
 			};
 		}
@@ -37,7 +37,7 @@ namespace InternetInterface.Test.Unit
 		public void Get_where_diller_id()
 		{
 			_thisPartner.Categorie.ReductionName = "Diller";
-			_filter.searchText = "5";
+			_filter.SearchText = "5";
 			var result = GetClientsLogic.GetWhere(_filter);
 			Assert.That(result, Is.EqualTo("WHERE (c.Id = 5) and (C.PhysicalClient is not null)"));
 		}
@@ -46,7 +46,7 @@ namespace InternetInterface.Test.Unit
 		public void Get_where_diller_name()
 		{
 			_thisPartner.Categorie.ReductionName = "Diller";
-			_filter.searchText = "testText";
+			_filter.SearchText = "testText";
 			var result = GetClientsLogic.GetWhere(_filter);
 			Assert.That(result, Is.EqualTo("WHERE (LOWER(C.Name) like :SearchText) and (C.PhysicalClient is not null)"));
 		}
@@ -61,7 +61,7 @@ namespace InternetInterface.Test.Unit
 		[Test]
 		public void Get_where_office_text()
 		{
-			_filter.searchText = "testText";
+			_filter.SearchText = "testText";
 			var result = GetClientsLogic.GetWhere(_filter);
 			Assert.That(result, Is.EqualTo(@"
 	WHERE
@@ -75,7 +75,7 @@ namespace InternetInterface.Test.Unit
 		[Test]
 		public void Get_where_office_statusType()
 		{
-			_filter.statusType = 1;
+			_filter.StatusType = 1;
 			var result = GetClientsLogic.GetWhere(_filter);
 			Assert.That(result, Is.EqualTo("WHERE  S.Id = :statusType"));
 		}
@@ -83,7 +83,7 @@ namespace InternetInterface.Test.Unit
 		[Test]
 		public void Get_where_office_clientTypeFilter_Physical()
 		{
-			_filter.clientTypeFilter.Type = ForSearchClientType.Physical;
+			_filter.ClientTypeFilter.Type = ForSearchClientType.Physical;
 			var result = GetClientsLogic.GetWhere(_filter);
 			Assert.That(result, Is.EqualTo("WHERE  C.PhysicalClient is not null"));
 		}
@@ -91,7 +91,7 @@ namespace InternetInterface.Test.Unit
 		[Test]
 		public void Get_where_office_clientTypeFilter_Lawyer()
 		{
-			_filter.clientTypeFilter.Type = ForSearchClientType.Lawyer;
+			_filter.ClientTypeFilter.Type = ForSearchClientType.Lawyer;
 			var result = GetClientsLogic.GetWhere(_filter);
 			Assert.That(result, Is.EqualTo("WHERE  C.LawyerPerson is not null"));
 		}
@@ -115,8 +115,8 @@ namespace InternetInterface.Test.Unit
 		[Test]
 		public void Get_where_office_searchProperties_IsSearchAccount()
 		{
-			_filter.searchText = "5";
-			_filter.searchProperties.SearchBy = SearchUserBy.SearchAccount;
+			_filter.SearchText = "5";
+			_filter.SearchProperties.SearchBy = SearchUserBy.SearchAccount;
 			var result = GetClientsLogic.GetWhere(_filter);
 			Assert.That(result, Is.EqualTo("where C.id = 5"));
 		}
@@ -124,8 +124,8 @@ namespace InternetInterface.Test.Unit
 		[Test]
 		public void Get_where_office_searchProperties_IsSearchByFio()
 		{
-			_filter.searchText = "5";
-			_filter.searchProperties.SearchBy = SearchUserBy.ByFio;
+			_filter.SearchText = "5";
+			_filter.SearchProperties.SearchBy = SearchUserBy.ByFio;
 			var result = GetClientsLogic.GetWhere(_filter);
 			Assert.That(result, Is.EqualTo(@"
 	WHERE (LOWER(C.Name) like :SearchText )"));
@@ -134,8 +134,8 @@ namespace InternetInterface.Test.Unit
 		[Test]
 		public void Get_where_office_searchProperties_IsSearchTelephone()
 		{
-			_filter.searchText = "5";
-			_filter.searchProperties.SearchBy = SearchUserBy.TelNum;
+			_filter.SearchText = "5";
+			_filter.SearchProperties.SearchBy = SearchUserBy.TelNum;
 			var result = GetClientsLogic.GetWhere(_filter);
 			Assert.That(result, Is.EqualTo("WHERE (LOWER(co.Contact) like :SearchText)"));
 		}
@@ -143,8 +143,8 @@ namespace InternetInterface.Test.Unit
 		[Test]
 		public void Get_where_office_searchProperties_IsSearchByAddress()
 		{
-			_filter.searchText = "5";
-			_filter.searchProperties.SearchBy = SearchUserBy.ByAddress;
+			_filter.SearchText = "5";
+			_filter.SearchProperties.SearchBy = SearchUserBy.ByAddress;
 			var result = GetClientsLogic.GetWhere(_filter);
 			Assert.That(result, Is.EqualTo(String.Format(@"
 	WHERE (LOWER(h.Street) like {0} or

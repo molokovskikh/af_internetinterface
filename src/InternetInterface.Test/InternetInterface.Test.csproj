@@ -87,6 +87,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Castle.MonoRail.Views.Brail.dll</HintPath>
     </Reference>
+    <Reference Include="ExcelLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\ExcelLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="ExposedObject">
       <HintPath>..\..\lib\ExposedObject.dll</HintPath>
     </Reference>
@@ -165,11 +169,13 @@
     <Compile Include="Helpers\PropertiesHelper.cs" />
     <Compile Include="Integration\AgentFilterFixture.cs" />
     <Compile Include="Integration\ContactFixture.cs" />
+    <Compile Include="Integration\ExportControllerFixture.cs" />
     <Compile Include="Integration\HouseMapFixture.cs" />
     <Compile Include="Integration\MailerFixture.cs" />
     <Compile Include="Integration\OnLineClientsFixture.cs" />
     <Compile Include="Integration\PaymentFixture.cs" />
     <Compile Include="Integration\ServicesFixture.cs" />
+    <Compile Include="Integration\SessionControllerFixture.cs" />
     <Compile Include="Integration\SmsFixture.cs" />
     <Compile Include="Integration\Tasks\BuildInvoiceTaskFixture.cs" />
     <Compile Include="Integration\Tasks\MailerFixture.cs" />

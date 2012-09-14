@@ -19,13 +19,13 @@ namespace InternetInterface.AllLogic
 		{
 			var _return = string.Empty;
 			if (!InitializeContent.Partner.IsDiller()) {
-				if (filter.statusType > 0)
+				if (filter.StatusType > 0)
 					_return += " and S.Id = :statusType";
 
-				if (filter.clientTypeFilter.IsPhysical())
+				if (filter.ClientTypeFilter.IsPhysical())
 					_return += " and C.PhysicalClient is not null";
 
-				if (filter.clientTypeFilter.IsLawyer())
+				if (filter.ClientTypeFilter.IsLawyer())
 					_return += " and C.LawyerPerson is not null";
 
 				if (filter.EnabledTypeProperties.IsDisabled())
@@ -34,8 +34,8 @@ namespace InternetInterface.AllLogic
 				if (filter.EnabledTypeProperties.IsEnabled())
 					_return += " and c.Disabled = false";
 
-				if (!string.IsNullOrEmpty(filter.searchText)) {
-					if (filter.searchProperties.IsSearchAuto()) {
+				if (!string.IsNullOrEmpty(filter.SearchText)) {
+					if (filter.SearchProperties.IsSearchAuto()) {
 						return
 							String.Format(
 								@"
@@ -47,21 +47,21 @@ namespace InternetInterface.AllLogic
 	LOWER(l.ActualAdress) like {0} )",
 								":SearchText") + _return;
 					}
-					if (filter.searchProperties.IsSearchAccount()) {
+					if (filter.SearchProperties.IsSearchAccount()) {
 						var id = 0u;
-						UInt32.TryParse(filter.searchText, out id);
+						UInt32.TryParse(filter.SearchText, out id);
 						if (id > 0)
 							return string.Format("where C.id = {0}", id);
 					}
-					if (filter.searchProperties.IsSearchByFio()) {
+					if (filter.SearchProperties.IsSearchByFio()) {
 						return
 							String.Format(@"
 	WHERE (LOWER(C.Name) like {0} )", ":SearchText") + _return;
 					}
-					if (filter.searchProperties.IsSearchTelephone()) {
+					if (filter.SearchProperties.IsSearchTelephone()) {
 						return String.Format(@"WHERE (LOWER(co.Contact) like {0})", ":SearchText") + _return;
 					}
-					if (filter.searchProperties.IsSearchByAddress()) {
+					if (filter.SearchProperties.IsSearchByAddress()) {
 						return String.Format(@"
 	WHERE (LOWER(h.Street) like {0} or
 	LOWER(l.ActualAdress) like {0})", ":SearchText") + _return;
@@ -70,11 +70,11 @@ namespace InternetInterface.AllLogic
 			}
 			else {
 				var id = 0u;
-				UInt32.TryParse(filter.searchText, out id);
+				UInt32.TryParse(filter.SearchText, out id);
 				if (id > 0) {
 					return string.Format("WHERE (c.Id = {0}) and (C.PhysicalClient is not null)", id);
 				}
-				else if (!string.IsNullOrEmpty(filter.searchText))
+				else if (!string.IsNullOrEmpty(filter.SearchText))
 					return "WHERE (LOWER(C.Name) like :SearchText) and (C.PhysicalClient is not null)";
 			}
 			return string.IsNullOrEmpty(_return) ? string.Empty : string.Format("WHERE {0}", _return.Remove(0, 4));

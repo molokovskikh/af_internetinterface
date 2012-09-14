@@ -44,13 +44,13 @@
 	<%else: %>
 		<tr class="${item.Name}" style="background-color:#f5efdf;">
 	<%end %>
-			<td><a href="../Search/Redirect?filter.ClientCode=${item.Id}">${item.ForSearchId(filter.searchText)}</a></td>
-			<td> ${item.ForSearchName(filter.searchText)}</td>
+			<td><a href="../Search/Redirect?filter.ClientCode=${item.Id}">${item.ForSearchId(filter.SearchText)}</a></td>
+			<td> ${item.ForSearchName(filter.SearchText)}</td>
 			<%if CategorieAccessSet.AccesPartner("SSI"): %>
 				<td>
-					${itemInfo.ForSearchAddress(filter.searchText)}
+					${itemInfo.ForSearchAddress(filter.SearchText)}
 				</td>
-				<td>${item.ForSearchContact(filter.searchText)}</td>
+				<td>${item.ForSearchContact(filter.SearchText)}</td>
 			<%end %>
 			<%if CategorieAccessSet.AccesPartner("SSI"): %>
 				<%if item.PhysicalClient != null: %>

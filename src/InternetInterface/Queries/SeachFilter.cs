@@ -13,11 +13,18 @@ namespace InternetInterface.Queries
 {
 	public class SeachFilter : IPaginable, ISortableContributor, SortableContributor
 	{
-		public UserSearchProperties searchProperties { get; set; }
-		public uint statusType { get; set; }
-		public ClientTypeProperties clientTypeFilter { get; set; }
+		public SeachFilter()
+		{
+			SearchProperties = new UserSearchProperties { SearchBy = SearchUserBy.Auto };
+			ClientTypeFilter = new ClientTypeProperties { Type = ForSearchClientType.AllClients };
+			EnabledTypeProperties = new EnabledTypeProperties { Type = EndbledType.All };
+		}
+
+		public UserSearchProperties SearchProperties { get; set; }
+		public uint StatusType { get; set; }
+		public ClientTypeProperties ClientTypeFilter { get; set; }
 		public EnabledTypeProperties EnabledTypeProperties { get; set; }
-		public string searchText { get; set; }
+		public string SearchText { get; set; }
 		public string SortBy { get; set; }
 		public string Direction { get; set; }
 		public bool ExportInExcel { get; set; }
@@ -47,17 +54,17 @@ namespace InternetInterface.Queries
 		{
 			if (CategorieAccessSet.AccesPartner("SSI"))
 				return new Dictionary<string, object> {
-					{ "filter.searchText", searchText },
-					{ "filter.searchProperties.SearchBy", searchProperties.SearchBy },
-					{ "filter.clientTypeFilter.Type", clientTypeFilter.Type },
+					{ "filter.SearchText", SearchText },
+					{ "filter.SearchProperties.SearchBy", SearchProperties.SearchBy },
+					{ "filter.ClientTypeFilter.Type", ClientTypeFilter.Type },
 					{ "filter.EnabledTypeProperties.Type", EnabledTypeProperties.Type },
-					{ "filter.statusType", statusType },
+					{ "filter.StatusType", StatusType },
 					{ "filter.SortBy", SortBy },
 					{ "filter.Direction", Direction },
 					{ "CurrentPage", CurrentPage }
 				};
 			return new Dictionary<string, object> {
-				{ "filter.searchText", searchText },
+				{ "filter.searchText", SearchText },
 				{ "CurrentPage", CurrentPage }
 			};
 		}
@@ -74,8 +81,8 @@ namespace InternetInterface.Queries
 
 		private void SetParameters(IQuery query)
 		{
-			if (statusType > 0)
-				query.SetParameter("statusType", statusType);
+			if (StatusType > 0)
+				query.SetParameter("statusType", StatusType);
 		}
 
 		private string GetOrderField()
@@ -101,7 +108,7 @@ namespace InternetInterface.Queries
 
 		public IList<ClientInfo> Find()
 		{
-			if (InitializeContent.Partner.IsDiller() && string.IsNullOrEmpty(searchText))
+			if (InitializeContent.Partner.IsDiller() && string.IsNullOrEmpty(SearchText))
 				return new List<ClientInfo>();
 
 			var selectText = @"SELECT
@@ -117,9 +124,9 @@ join internet.Status S on s.id = c.Status";
 
 			IList<Client> result = new List<Client>();
 			ArHelper.WithSession(session => {
-				if (searchProperties == null)
-					searchProperties = new UserSearchProperties();
-				searchProperties.SearchText = searchText;
+				if (SearchProperties == null)
+					SearchProperties = new UserSearchProperties();
+				SearchProperties.SearchText = SearchText;
 				var sqlStr = string.Empty;
 				IQuery query = null;
 				var limitPart = InitializeContent.Partner.IsDiller() ? "Limit 5 " : string.Format("Limit {0}, {1}", CurrentPage * PageSize, PageSize);
@@ -134,8 +141,8 @@ group by c.id
 ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 				query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Client));
 				SetParameters(query);
-				if (!string.IsNullOrEmpty(searchText) && wherePart.Contains(":SearchText"))
-					query.SetParameter("SearchText", "%" + searchText.ToLower() + "%");
+				if (!string.IsNullOrEmpty(SearchText) && wherePart.Contains(":SearchText"))
+					query.SetParameter("SearchText", "%" + SearchText.ToLower() + "%");
 
 				result = query.List<Client>();
 
@@ -148,10 +155,10 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 					}
 					newSql = string.Format("select count(*) from ({0}) as t1;", newSql);
 					var countQuery = session.CreateSQLQuery(newSql);
-					if (!string.IsNullOrEmpty(searchText) && wherePart.Contains(":SearchText"))
-						countQuery.SetParameter("SearchText", "%" + searchText.ToLower() + "%");
+					if (!string.IsNullOrEmpty(SearchText) && wherePart.Contains(":SearchText"))
+						countQuery.SetParameter("SearchText", "%" + SearchText.ToLower() + "%");
 					if (CategorieAccessSet.AccesPartner("SSI"))
-						if (!searchProperties.IsSearchAccount())
+						if (!SearchProperties.IsSearchAccount())
 							SetParameters(countQuery);
 					_lastRowsCount = Convert.ToInt32(countQuery.UniqueResult());
 				}
