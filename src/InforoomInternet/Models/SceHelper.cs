@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using Castle.ActiveRecord;
 using InternetInterface.Models;
 using log4net;
 
@@ -15,8 +16,9 @@ namespace InforoomInternet.Models
 		public static string SceHelperPath = @"U:\Apps\dhcp\com.sce.helper\com.sce.helper.jar";
 		public static string JavaPath = @"java";
 
-		public static void Action(string action, string ip, string subscriberId, bool monitoring, bool IsMultilease, int packageId)
+		public static int? Action(string action, string ip, string subscriberId, bool monitoring, bool IsMultilease, int packageId)
 		{
+			var noError = true;
 			try {
 				var command = String.Format("-jar \"{0}\" {1} {2} {3} {4} {5} {6}",
 					SceHelperPath,
@@ -32,30 +34,35 @@ namespace InforoomInternet.Models
 			}
 			catch (Exception e) {
 				_log.Error(String.Format("ошибка при применении настрок для sce, ip {0}", ip), e);
+				noError = false;
 			}
+			if (noError) {
+				return packageId;
+			}
+			return null;
 		}
 
-		public static void Action(string action, Lease lease, string ip)
+		public static int? Action(string action, Lease lease, string ip)
 		{
 			var endpoint = lease.Endpoint;
 			if (endpoint == null)
-				return;
+				return null;
 
-			Action(action, endpoint, ip);
+			return Action(action, endpoint, ip);
 		}
 
-		public static void Action(string action, ClientEndpoint endpoint, string ip)
+		public static int? Action(string action, ClientEndpoint endpoint, string ip)
 		{
 			var packageId = endpoint.PackageId;
 			if (packageId == null)
-				return;
+				return null;
 
-			Action(action, ip, Convert.ToString(endpoint.Id), endpoint.Monitoring, endpoint.IsMultilease, packageId.Value);
+			return Action(action, ip, Convert.ToString(endpoint.Id), endpoint.Monitoring, endpoint.IsMultilease, packageId.Value);
 		}
 
-		public static void Login(Lease lease, string ip)
+		public static int? Login(Lease lease, string ip)
 		{
-			Action("login", lease, ip);
+			return Action("login", lease, ip);
 		}
 
 		public static void Logout(Lease lease, string ip)
@@ -74,7 +81,7 @@ namespace InforoomInternet.Models
 				RedirectStandardError = true,
 				RedirectStandardOutput = true
 			};
-
+#if !DEBUG
 			var process = Process.Start(startInfo);
 			process.OutputDataReceived += (sender, args) => { output += args.Data + "\r\n"; };
 			process.ErrorDataReceived += (sender, args) => { error += args.Data + "\r\n"; };
@@ -84,6 +91,7 @@ namespace InforoomInternet.Models
 			if (process.ExitCode != 0) {
 				_log.ErrorFormat("ошибка при применении настрок для sce, комманда {2}, {0} {1}", error, output, command);
 			}
+#endif
 		}
 	}
 }

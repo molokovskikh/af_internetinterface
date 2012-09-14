@@ -753,6 +753,7 @@ where r.`Label`= :LabelIndex;")
 
 				if (client.IsChanged(s => s.Status)) {
 					if (client.Status.Type == StatusType.NoWorked) {
+						client.AutoUnblocked = false;
 						client.Disabled = true;
 						client.StartNoBlock = null;
 						client.Sale = 0;

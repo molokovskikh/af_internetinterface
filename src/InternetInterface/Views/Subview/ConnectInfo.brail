@@ -90,6 +90,12 @@
 		  <td><span class="description">Скорость </span></td>
 		  <td>${ConnectInfo.GetNormalSpeed()}</td>
 		</tr>
+		<%if ConnectInfo.ActualPackageId != null:%>
+		<tr>
+		  <td><span class="description">Актуальный PackageId </span></td>
+		  <td>${ConnectInfo.ActualPackageId}</td>
+		</tr>
+		<%end%>
 		 <tr>
 		  <td><span class="description">Мониторинг </span></td>
 		  <td><%if (ConnectInfo.Monitoring): %>

@@ -210,17 +210,27 @@ namespace InforoomInternet.Controllers
 			var clientW = lease != null ? lease.Endpoint.Client : point.Client;
 
 			if (IsPost) {
+				int? actualPackageId = null;
 				if (lease != null) {
-					SceHelper.Login(lease, Request.UserHostAddress);
+					actualPackageId = SceHelper.Login(lease, Request.UserHostAddress);
+					if (actualPackageId != null) {
+						lease.Endpoint.UpdateActualPackageId(actualPackageId);
+						DbSession.SaveOrUpdate(lease.Endpoint);
+					}
 				}
 				else {
 					var ips = StaticIp.Queryable.Where(s => s.EndPoint == point).ToList();
 					foreach (var staticIp in ips) {
 						if (point.PackageId == null)
 							continue;
-						SceHelper.Action("login", staticIp.Mask != null ? staticIp.Ip + "/" + staticIp.Mask : staticIp.Ip, "Static_" + staticIp.Id, false, false, point.PackageId.Value);
+						actualPackageId = SceHelper.Action("login", staticIp.Mask != null ? staticIp.Ip + "/" + staticIp.Mask : staticIp.Ip, "Static_" + staticIp.Id, false, false, point.PackageId.Value);
+						if (actualPackageId != null) {
+							point.UpdateActualPackageId(actualPackageId);
+							DbSession.SaveOrUpdate(point);
+						}
 					}
 				}
+
 				clientW.ShowBalanceWarningPage = false;
 				clientW.Update();
 				var url = Request.Form["referer"];
