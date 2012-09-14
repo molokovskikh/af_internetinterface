@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
+using Castle.MonoRail.Framework.Test;
 using Castle.MonoRail.TestSupport;
+using Common.Web.Ui.NHibernateExtentions;
 using InforoomInternet.Controllers;
+using InternetInterface.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NHibernate;
@@ -20,6 +24,11 @@ namespace InforoomInternet.Test.Integration
 		private ISessionFactoryHolder sessionHolder;
 		private ISession session;
 
+		private Client client;
+		private NetworkSwitch networkSwitch;
+		private ClientEndpoint endpoint;
+		private Lease lease;
+
 		[SetUp]
 		public void Setup()
 		{
@@ -29,11 +38,21 @@ namespace InforoomInternet.Test.Integration
 			scope = new SessionScope();
 			sessionHolder = ActiveRecordMediator.GetSessionFactoryHolder();
 			session = sessionHolder.CreateSession(typeof(ActiveRecordBase));
+
+			client = ClientHelper.Client();
+			networkSwitch = new NetworkSwitch("Тестовый коммутатор", session.Query<Zone>().First());
+			endpoint = new ClientEndpoint(client, 1, networkSwitch);
+			lease = new Lease { Endpoint = endpoint, Switch = networkSwitch, Port = 1, Ip = (uint)new Random().Next() };
+
+			session.SaveMany(client, networkSwitch, endpoint, lease);
+
+			controller.DbSession = session;
 		}
 
 		[TearDown]
 		public void TearDown()
 		{
+			session.DeleteMany(client, networkSwitch, endpoint, lease);
 			sessionHolder.ReleaseSession(session);
 			scope.Dispose();
 		}
@@ -41,15 +60,31 @@ namespace InforoomInternet.Test.Integration
 		[Test]
 		public void Warning_package_id()
 		{
-			var client = ClientHelper.Client();
-			var commutator = new NetworkSwitch("Тестовый коммутатор", session.Query<Zone>().First());
-			var endpoint = new ClientEndpoint(client, 1, commutator);
-			var lease = new Lease { Endpoint = endpoint, Switch = commutator, Port = 1, Ip = (uint)new Random().Next() };
+			client = ClientHelper.Client();
+			networkSwitch = new NetworkSwitch("Тестовый коммутатор", session.Query<Zone>().First());
+			endpoint = new ClientEndpoint(client, 1, networkSwitch);
+			lease = new Lease { Endpoint = endpoint, Switch = networkSwitch, Port = 1, Ip = (uint)new Random().Next() };
 
-			session.Save(commutator);
+			session.Save(networkSwitch);
 			session.Save(lease);
 
 			controller.WarningPackageId();
+		}
+
+		[Test]
+		public void Watning_actual_package_id()
+		{
+			var addressValue = BigEndianConverter.ToInt32(IPAddress.Parse("127.0.0.1").GetAddressBytes());
+			lease.Ip = addressValue;
+			lease.Endpoint.PackageId = 15;
+			session.SaveOrUpdate(lease);
+
+			((IMockRequest)controller.Request).HttpMethod = "POST";
+			controller.Warning();
+
+			//session.Refresh(lease.Endpoint);
+			Assert.IsNotNull(lease.Endpoint.ActualPackageId);
+			Assert.AreEqual(lease.Endpoint.ActualPackageId.Value, 15);
 		}
 	}
 }

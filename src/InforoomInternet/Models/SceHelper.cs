@@ -81,7 +81,7 @@ namespace InforoomInternet.Models
 				RedirectStandardError = true,
 				RedirectStandardOutput = true
 			};
-
+#if !DEBUG
 			var process = Process.Start(startInfo);
 			process.OutputDataReceived += (sender, args) => { output += args.Data + "\r\n"; };
 			process.ErrorDataReceived += (sender, args) => { error += args.Data + "\r\n"; };
@@ -91,6 +91,7 @@ namespace InforoomInternet.Models
 			if (process.ExitCode != 0) {
 				_log.ErrorFormat("ошибка при применении настрок для sce, комманда {2}, {0} {1}", error, output, command);
 			}
+#endif
 		}
 	}
 }
