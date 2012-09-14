@@ -13,9 +13,9 @@ else: %>
 	</p>
 	<% end %>
 
-	<% if PClient.Balance < 0: %>
+	<% if Client.Balance < 0: %>
 	<p class="error">
-	Ваша задолженность за оказанные услуги составляет ${System.Math.Abs(PClient.Balance)} руб. <br>
+	Ваша задолженность за оказанные услуги составляет ${System.Math.Abs(Client.Balance)} руб. <br>
 	Для возобновления доступа в интернет Вам необходимо погасить задолженность и внести абонентскую плату за полный месяц (не менее ${Client.ToPay().ToString("0.00")} руб. )<br>
 	</p>
 	<% else: %>
@@ -28,12 +28,12 @@ else: %>
 		<%else: %>
 			<%if Client.Disabled: %>
 			<p class="error">
-			Доступ в интернет заблокирован за неуплату. Сумма на вашем лицевом счете недостаточна для разблокировки (${PClient.Balance}<a href="${Siteroot}/PrivateOffice/BalanceInfo" style="text-decoration:none;">*</a>.)<br>
+			Доступ в интернет заблокирован за неуплату. Сумма на вашем лицевом счете недостаточна для разблокировки (${Client.Balance}<a href="${Siteroot}/PrivateOffice/BalanceInfo" style="text-decoration:none;">*</a>.)<br>
 			Для возобновления доступа в интернет Вам необходимо внести абонентскую плату за полный месяц (не менее ${Client.ToPay().ToString("0.00")} руб. ) <br>
 			</p>
 			<% else: %>
 			<p class="info">
-			Баланс составляет ${PClient.Balance}.<a href="${Siteroot}/PrivateOffice/BalanceInfo" style="text-decoration:none;">*</a>
+			Баланс составляет ${Client.Balance}.<a href="${Siteroot}/PrivateOffice/BalanceInfo" style="text-decoration:none;">*</a>
 			</p>
 				<%if IsDefined("PrivateMessage"): %>
 					<p class="warning">${PrivateMessage}</p>

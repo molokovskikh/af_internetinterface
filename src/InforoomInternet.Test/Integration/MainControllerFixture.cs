@@ -67,7 +67,7 @@ namespace InforoomInternet.Test.Integration
 
 			session.Save(networkSwitch);
 			session.Save(lease);
-
+			controller.DbSession = session;
 			controller.WarningPackageId();
 		}
 

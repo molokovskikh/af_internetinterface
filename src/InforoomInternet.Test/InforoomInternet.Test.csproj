@@ -133,6 +133,7 @@
   <ItemGroup>
     <Compile Include="Functional\PrivateOfficeFixture.cs" />
     <Compile Include="Functional\Setup.cs" />
+    <Compile Include="Functional\WarningPackageIdFixture.cs" />
     <Compile Include="Integration\MainControllerFixture.cs" />
     <Compile Include="Integration\PrivateOfficeControllerFixture.cs" />
     <Compile Include="Integration\SceFuxture.cs" />
