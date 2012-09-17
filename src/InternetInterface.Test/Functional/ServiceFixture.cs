@@ -6,6 +6,7 @@ using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NHibernate.Linq;
 using NUnit.Framework;
+using WatiN.Core.Native.Windows;
 
 namespace InternetInterface.Test.Functional
 {
@@ -31,8 +32,9 @@ namespace InternetInterface.Test.Functional
 			Css("input[name=\"request.Contact\"]").Value = "900-9090900";
 			Css("input[name=\"request.PerformanceDate\"]").Value = "21.05.2012";
 			Css("input[name=\"request.PerformanceTime\"]").Value = "10:00";
+			browser.CaptureWebPageToFile("before_save.jpg");
 			Click("Сохранить");
-
+			browser.CaptureWebPageToFile("before_Assert.jpg");
 			Assert.That(browser.Text, Is.StringContaining("Информация по клиенту"));
 
 			var request = session.Query<ServiceRequest>().Where(r => r.Client == client).ToArray().Last();
