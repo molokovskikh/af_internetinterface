@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using InternetInterface.Models;
@@ -32,9 +33,9 @@ namespace InternetInterface.Test.Functional
 			Css("input[name=\"request.Contact\"]").Value = "900-9090900";
 			Css("input[name=\"request.PerformanceDate\"]").Value = "21.05.2012";
 			Css("input[name=\"request.PerformanceTime\"]").Value = "10:00";
-			browser.CaptureWebPageToFile("before_save.jpg");
+			File.WriteAllText("before_save.html", browser.Html);
 			Click("Сохранить");
-			browser.CaptureWebPageToFile("before_Assert.jpg");
+			File.WriteAllText("before_Assert.html", browser.Html);
 			Assert.That(browser.Text, Is.StringContaining("Информация по клиенту"));
 
 			var request = session.Query<ServiceRequest>().Where(r => r.Client == client).ToArray().Last();
