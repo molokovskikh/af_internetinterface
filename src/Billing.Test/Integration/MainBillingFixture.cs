@@ -166,7 +166,6 @@ namespace Billing.Test.Integration
 		public static void CleanDbAfterTest()
 		{
 			Tariff.DeleteAll();
-			Partner.DeleteAll();
 		}
 
 		public void SetClientDate(Interval rd, Client client)
