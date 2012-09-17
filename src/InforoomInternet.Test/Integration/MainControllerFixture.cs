@@ -39,6 +39,7 @@ namespace InforoomInternet.Test.Integration
 			sessionHolder = ActiveRecordMediator.GetSessionFactoryHolder();
 			session = sessionHolder.CreateSession(typeof(ActiveRecordBase));
 
+			session.Delete("from Lease");
 			client = ClientHelper.Client();
 			networkSwitch = new NetworkSwitch("Тестовый коммутатор", session.Query<Zone>().First());
 			endpoint = new ClientEndpoint(client, 1, networkSwitch);
