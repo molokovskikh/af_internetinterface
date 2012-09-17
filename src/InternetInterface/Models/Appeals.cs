@@ -133,7 +133,8 @@ namespace InternetInterface.Models
 		{
 			message += string.Format(". Баланс {0}.", client.Balance.ToString("0.00"));
 			var appeal = new Appeals(message, client, type, usePartner);
-			ActiveRecordMediator.Save(appeal);
+			client.Appeals.Add(appeal);
+			//ActiveRecordMediator.Save(appeal);
 			return appeal;
 		}
 

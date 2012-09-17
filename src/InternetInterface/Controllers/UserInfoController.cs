@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Collections.Generic;
+using Castle.ActiveRecord;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Castle.MonoRail.Framework.Helpers;
@@ -308,7 +309,7 @@ namespace InternetInterface.Controllers
 				try {
 					client.Activate(clientService);
 					DbSession.Save(clientService);
-					Appeals.CreareAppeal(
+					var appeal = Appeals.CreareAppeal(
 						string.Format("Услуга \"{0}\" активирована на период с {1} по {2}", servise.HumanName,
 							clientService.BeginWorkDate != null
 								? clientService.BeginWorkDate.Value.ToShortDateString()
@@ -318,6 +319,7 @@ namespace InternetInterface.Controllers
 								: string.Empty),
 						client,
 						AppealType.Statistic);
+					DbSession.SaveOrUpdate(appeal);
 				}
 				catch (ServiceActivationException e) {
 					PropertyBag["errorMessage"] = e.Message;
@@ -335,7 +337,8 @@ namespace InternetInterface.Controllers
 					client.ClientServices.FirstOrDefault(c => c.Service.Id == serviceId && c.Activated);
 				if (cservice != null) {
 					cservice.CompulsoryDeactivate();
-					Appeals.CreareAppeal(string.Format("Услуга \"{0}\" деактивирована", servise.HumanName), client, AppealType.Statistic);
+					var appeal = Appeals.CreareAppeal(string.Format("Услуга \"{0}\" деактивирована", servise.HumanName), client, AppealType.Statistic);
+					ActiveRecordMediator.Save(appeal);
 				}
 			}
 			RedirectToUrl(client.Redirect());
@@ -1086,10 +1089,11 @@ where r.`Label`= :LabelIndex;")
 			var graph = DbSession.QueryOver<ConnectGraph>().Where(c => c.Client == client && c.Day == date && c.IntervalId == interval && c.Brigad == briad).List().FirstOrDefault();
 			if (graph != null) {
 				DbSession.Delete(graph);
-				Appeals.CreareAppeal(string.Format("Удалено назначение в граффик, \r\n Брагада: {0} \r\n Дата: {1} \r\n Время: {2}",
+				var appeal = Appeals.CreareAppeal(string.Format("Удалено назначение в граффик, \r\n Брагада: {0} \r\n Дата: {1} \r\n Время: {2}",
 					briad.Name,
 					date.ToShortDateString(),
 					Intervals.GetIntervals()[(int)interval]), client, AppealType.User);
+				DbSession.Save(appeal);
 				return true;
 			}
 			return false;

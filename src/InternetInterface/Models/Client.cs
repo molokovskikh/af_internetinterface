@@ -34,6 +34,7 @@ namespace InternetInterface.Models
 			Payments = new List<Payment>();
 			Contacts = new List<Contact>();
 			Endpoints = new List<ClientEndpoint>();
+			Appeals = new List<Appeals>();
 		}
 
 		public Client(PhysicalClient client, IEnumerable<Service> defaultServices)
@@ -168,6 +169,9 @@ namespace InternetInterface.Models
 
 		[HasMany(ColumnKey = "Client", Lazy = true, Cascade = ManyRelationCascadeEnum.AllDeleteOrphan)]
 		public virtual IList<ClientService> ClientServices { get; set; }
+
+		[HasMany(ColumnKey = "Client", OrderBy = "Date", Lazy = true, Cascade = ManyRelationCascadeEnum.SaveUpdate)]
+		public virtual IList<Appeals> Appeals { get; set; }
 
 		public virtual bool CanDisabled()
 		{

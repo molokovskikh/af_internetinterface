@@ -40,9 +40,7 @@ namespace InternetInterface.Models.Services
 				}
 			}
 			base.CompulsoryDeactivate(assignedService);
-#if !DEBUG
 			Appeals.CreareAppeal("Отключена услуна Internet", assignedService.Client, AppealType.System, false);
-#endif
 		}
 
 		public override void Activate(ClientService assignedService)
@@ -50,9 +48,7 @@ namespace InternetInterface.Models.Services
 			if (assignedService.ActivatedByUser
 				&& !assignedService.Client.Disabled) {
 				base.Activate(assignedService);
-#if !DEBUG
 				Appeals.CreareAppeal("Включена услуна Internet", assignedService.Client, AppealType.System, false);
-#endif
 			}
 		}
 
