@@ -213,10 +213,8 @@ namespace InforoomInternet.Controllers
 				int? actualPackageId = null;
 				if (lease != null) {
 					actualPackageId = SceHelper.Login(lease, Request.UserHostAddress);
-					if (actualPackageId != null) {
-						lease.Endpoint.UpdateActualPackageId(actualPackageId);
-						DbSession.SaveOrUpdate(lease.Endpoint);
-					}
+					lease.Endpoint.UpdateActualPackageId(actualPackageId);
+					DbSession.SaveOrUpdate(lease.Endpoint);
 				}
 				else {
 					var ips = StaticIp.Queryable.Where(s => s.EndPoint == point).ToList();
@@ -224,10 +222,8 @@ namespace InforoomInternet.Controllers
 						if (point.PackageId == null)
 							continue;
 						actualPackageId = SceHelper.Action("login", staticIp.Mask != null ? staticIp.Ip + "/" + staticIp.Mask : staticIp.Ip, "Static_" + staticIp.Id, false, false, point.PackageId.Value);
-						if (actualPackageId != null) {
-							point.UpdateActualPackageId(actualPackageId);
-							DbSession.SaveOrUpdate(point);
-						}
+						point.UpdateActualPackageId(actualPackageId);
+						DbSession.SaveOrUpdate(point);
 					}
 				}
 

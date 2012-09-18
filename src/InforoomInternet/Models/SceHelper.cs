@@ -37,7 +37,10 @@ namespace InforoomInternet.Models
 				noError = false;
 			}
 			if (noError) {
-				return packageId;
+				if (action == "login")
+					return packageId;
+				if (action == "logout")
+					return null;
 			}
 			return null;
 		}
