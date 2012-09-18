@@ -191,6 +191,8 @@ set s.LastStartFail = true;")
 						lawyerClient.UpdateAndFlush();
 						newPayment.BillingAccount = true;
 						newPayment.UpdateAndFlush();
+						updateClient.Disabled = false;
+						updateClient.Update();
 					}
 				}
 				transaction.VoteCommit();

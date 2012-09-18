@@ -83,5 +83,27 @@ namespace Billing.Test.Integration
 				Assert.That(writeOffs.Sum(w => w.WriteOffSum), Is.EqualTo(1000));
 			}
 		}
+
+		[Test]
+		public void Lawyer_person_payment_disable()
+		{
+			var balance = lawyerClient.Balance;
+			using (new SessionScope()) {
+				lawyerClient.Disabled = true;
+				ActiveRecordMediator.Save(lawyerClient);
+			}
+			billing.OnMethod();
+			using (new SessionScope()) {
+				lawyerClient.Refresh();
+				Assert.IsTrue(lawyerClient.Disabled);
+				ActiveRecordMediator.Save(new Payment(lawyerClient, 100));
+			}
+			billing.OnMethod();
+			using (new SessionScope()) {
+				lawyerClient.Refresh();
+				Assert.False(lawyerClient.Disabled);
+				Assert.AreEqual(balance + 100, lawyerClient.Balance);
+			}
+		}
 	}
 }
