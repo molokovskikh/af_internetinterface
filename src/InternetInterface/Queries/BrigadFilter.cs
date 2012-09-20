@@ -23,7 +23,7 @@ namespace InternetInterface.Queries
 
 	public class BrigadFilter : PaginableSortable
 	{
-		public string searchText { get; set; }
+		public string SearchText { get; set; }
 		public Brigad Brigad { get; set; }
 		public DatePeriod Period { get; set; }
 		public ClientState State { get; set; }
