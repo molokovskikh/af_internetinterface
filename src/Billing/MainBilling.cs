@@ -423,8 +423,9 @@ set s.LastStartFail = true;")
 				//Отсылаем смс если клиенту осталось работать 2 дня или меньше
 				if (client.SendSmsNotifocation && (bufBal - sum * 2 < 0)) {
 					if (phisicalClient.Balance > 0) {
-						var message = string.Format("Ваш баланс {0} руб. Завтра доступ в сеть будет заблокирован.",
-							client.PhysicalClient.Balance.ToString("0.00"));
+						var message = string.Format("Ваш баланс {0} руб. {1} доступ в сеть будет заблокирован.",
+							client.PhysicalClient.Balance.ToString("0.00"),
+							bufBal - sum < 0 ? "Завтра" : "Послезавтра");
 						var now = SystemTime.Now();
 						DateTime shouldBeSendDate;
 						if (now.Hour < 22)
