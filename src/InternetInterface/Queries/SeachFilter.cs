@@ -13,7 +13,7 @@ using NHibernate;
 
 namespace InternetInterface.Queries
 {
-	public class SeachFilter : IPaginable, ISortableContributor, IUrlContributor//SortableContributor
+	public class SeachFilter : IPaginable, ISortableContributor, IUrlContributor
 	{
 		public SeachFilter()
 		{
