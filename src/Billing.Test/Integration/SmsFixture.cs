@@ -116,5 +116,26 @@ namespace Billing.Test.Integration
 				}
 			}
 		}
+
+		[Test]
+		public void Two_day_send_sms()
+		{
+			var messages = new List<SmsMessage>();
+			var sum = _client.GetPrice() / _client.GetInterval();
+			_client.PhysicalClient.Balance = sum * 3 + 1;
+			_client.PhysicalClient.Update();
+			billing.Compute();
+			messages.AddRange(billing.Messages);
+			Assert.AreEqual(messages.Count, 0);
+			billing.Compute();
+			messages.AddRange(billing.Messages);
+			Assert.AreEqual(messages.Count, 1);
+			billing.Compute();
+			messages.AddRange(billing.Messages);
+			Assert.AreEqual(messages.Count, 2);
+			billing.Compute();
+			messages.AddRange(billing.Messages);
+			Assert.AreEqual(messages.Count, 2);
+		}
 	}
 }
