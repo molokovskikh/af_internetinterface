@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using Castle.ActiveRecord;
 using Common.Tools;
+using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Services;
@@ -20,12 +21,11 @@ namespace Billing.Test.Integration
 		{
 			var oldBalance = _client.Balance;
 			billing.Compute();
-			_client.Refresh();
-			using (new SessionScope()) {
-				_client = ActiveRecordMediator<Client>.FindByPrimaryKey(_client.Id);
+			ArHelper.WithSession(s => {
+				_client = s.Get<Client>(_client.Id);
 				var writeOff = _client.WriteOffs.First();
 				Assert.That(writeOff.BeforeWriteOffBalance, Is.EqualTo(oldBalance));
-			}
+			});
 		}
 
 		[Test]
