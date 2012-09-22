@@ -168,6 +168,7 @@
     <Compile Include="Helpers\PartnerHelper.cs" />
     <Compile Include="Helpers\PropertiesHelper.cs" />
     <Compile Include="Integration\AgentFilterFixture.cs" />
+    <Compile Include="Integration\ClientFixture.cs" />
     <Compile Include="Integration\ContactFixture.cs" />
     <Compile Include="Integration\ExportControllerFixture.cs" />
     <Compile Include="Integration\HouseMapFixture.cs" />
@@ -223,7 +224,7 @@
       <Name>InternetInterface</Name>
     </ProjectReference>
     <ProjectReference Include="..\Test.Support\Test.Support.Web\Test.Support.Web.csproj">
-      <Project>{12258B1D-35E8-45BA-9C1E-5F7B8ACD7D37}</Project>
+      <Project>{12258b1d-35e8-45ba-9c1e-5f7b8acd7d37}</Project>
       <Name>Test.Support.Web</Name>
     </ProjectReference>
     <ProjectReference Include="..\Test.Support\Test.Support\Test.Support.csproj">
