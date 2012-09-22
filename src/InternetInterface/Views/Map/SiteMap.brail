@@ -7,7 +7,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		<% for i, bookmark in enumerate(Bookmarks): %>
+		<% for bookmark in Bookmarks: %>
 			<tr>
 				<td>${bookmark.GetTransformed()}</td>
 			</tr>

@@ -34,7 +34,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<% for i, bookmark in enumerate(Bookmarks): %>
+				<% for bookmark in Bookmarks: %>
 					<tr class="${app.Style(bookmark)}">
 						<td class="first"><a href="${SiteRoot}/Map/Bookmark?id=${bookmark.Id}">${bookmark.Id}</a></td>
 						<td>${bookmark.Date.ToShortDateString()}</td>
