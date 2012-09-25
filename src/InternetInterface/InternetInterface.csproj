@@ -439,7 +439,9 @@
     <None Include="Views\UserInfo\PartnerRegisteredInfo.brail" />
     <None Include="Views\UserInfo\RequestView.brail" />
     <None Include="Views\UserInfo\SearchUserInfo.brail" />
-    <None Include="Views\Search\SearchUsers.brail" />
+    <None Include="Views\Search\SearchUsers.brail">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\lib\MonoRail.Debugger.Toolbar\src\MonoRail.Debugger.Toolbar\MonoRail.Debugger.Toolbar.csproj">

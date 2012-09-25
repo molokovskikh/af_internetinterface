@@ -13,7 +13,7 @@ using NHibernate;
 
 namespace InternetInterface.Queries
 {
-	public class SeachFilter : IPaginable, ISortableContributor, IUrlContributor
+	public class SeachFilter : Sortable, IPaginable
 	{
 		public SeachFilter()
 		{
@@ -175,26 +175,6 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 				clientInfo.OnLine = true;
 			}
 			return clientsInfo.ToList();
-		}
-
-		public IDictionary GetQueryString()
-		{
-			return PublicPropertiesToUrlParts("filter");
-		}
-		public Dictionary<string, object> PublicPropertiesToUrlParts(string filter)
-		{
-			var parts = new Dictionary<string, object>();
-			foreach (var property in GetType().GetProperties()) {
-				var methodInfo = property.GetSetMethod();
-				if (methodInfo == null || !methodInfo.IsPublic)
-					continue;
-
-				var value = property.GetValue(this, null);
-				if (value == null)
-					continue;
-				parts.Add(filter + "." + property.Name, value);
-			}
-			return parts;
 		}
 	}
 }
