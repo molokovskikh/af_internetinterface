@@ -33,7 +33,7 @@
 			<th>${App.LinkTo("Платежи", @Payers, @AgentFilter)}</th>
 			<%end %>
 			<%if PartnerAccessSet.AccesPartner("SSI"): %>
-			<th>${App.LinkTo("График подключений", @Payers, @RequestGraph)}</th>
+			<th>${App.LinkTo("График подключений", @UserInfo, @RequestGraph)}</th>
 			<%end %>
 			<%if PartnerAccessSet.AccesPartner("HMA"): %>
 			<th>${App.LinkTo("Карта дома", @HouseMap, @FindHouse)}</th>
