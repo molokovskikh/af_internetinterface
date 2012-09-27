@@ -27,9 +27,9 @@ namespace InternetInterface.Test.Unit
 			};
 			InitializeContent.GetAdministrator = () => _thisPartner;
 			_filter = new SeachFilter {
-				ClientTypeFilter = new ClientTypeProperties { Type = ForSearchClientType.AllClients },
-				SearchProperties = new UserSearchProperties { SearchBy = SearchUserBy.Auto },
-				EnabledTypeProperties = new EnabledTypeProperties { Type = EndbledType.All }
+				ClientTypeFilter = ForSearchClientType.AllClients,
+				SearchProperties = SearchUserBy.Auto,
+				EnabledTypeProperties = EndbledType.All
 			};
 		}
 
@@ -83,7 +83,7 @@ namespace InternetInterface.Test.Unit
 		[Test]
 		public void Get_where_office_clientTypeFilter_Physical()
 		{
-			_filter.ClientTypeFilter.Type = ForSearchClientType.Physical;
+			_filter.ClientTypeFilter = ForSearchClientType.Physical;
 			var result = GetClientsLogic.GetWhere(_filter);
 			Assert.That(result, Is.EqualTo("WHERE  C.PhysicalClient is not null"));
 		}
@@ -91,7 +91,7 @@ namespace InternetInterface.Test.Unit
 		[Test]
 		public void Get_where_office_clientTypeFilter_Lawyer()
 		{
-			_filter.ClientTypeFilter.Type = ForSearchClientType.Lawyer;
+			_filter.ClientTypeFilter = ForSearchClientType.Lawyer;
 			var result = GetClientsLogic.GetWhere(_filter);
 			Assert.That(result, Is.EqualTo("WHERE  C.LawyerPerson is not null"));
 		}
@@ -99,7 +99,7 @@ namespace InternetInterface.Test.Unit
 		[Test]
 		public void Get_where_office_EnabledTypeProperties_enabled()
 		{
-			_filter.EnabledTypeProperties.Type = EndbledType.Enabled;
+			_filter.EnabledTypeProperties = EndbledType.Enabled;
 			var result = GetClientsLogic.GetWhere(_filter);
 			Assert.That(result, Is.EqualTo("WHERE  c.Disabled = false"));
 		}
@@ -107,7 +107,7 @@ namespace InternetInterface.Test.Unit
 		[Test]
 		public void Get_where_office_EnabledTypeProperties_disabled()
 		{
-			_filter.EnabledTypeProperties.Type = EndbledType.Disabled;
+			_filter.EnabledTypeProperties = EndbledType.Disabled;
 			var result = GetClientsLogic.GetWhere(_filter);
 			Assert.That(result, Is.EqualTo("WHERE  c.Disabled"));
 		}
@@ -116,7 +116,7 @@ namespace InternetInterface.Test.Unit
 		public void Get_where_office_searchProperties_IsSearchAccount()
 		{
 			_filter.SearchText = "5";
-			_filter.SearchProperties.SearchBy = SearchUserBy.SearchAccount;
+			_filter.SearchProperties = SearchUserBy.SearchAccount;
 			var result = GetClientsLogic.GetWhere(_filter);
 			Assert.That(result, Is.EqualTo("where C.id = 5"));
 		}
@@ -125,7 +125,7 @@ namespace InternetInterface.Test.Unit
 		public void Get_where_office_searchProperties_IsSearchByFio()
 		{
 			_filter.SearchText = "5";
-			_filter.SearchProperties.SearchBy = SearchUserBy.ByFio;
+			_filter.SearchProperties = SearchUserBy.ByFio;
 			var result = GetClientsLogic.GetWhere(_filter);
 			Assert.That(result, Is.EqualTo(@"
 	WHERE (LOWER(C.Name) like :SearchText )"));
@@ -135,7 +135,7 @@ namespace InternetInterface.Test.Unit
 		public void Get_where_office_searchProperties_IsSearchTelephone()
 		{
 			_filter.SearchText = "5";
-			_filter.SearchProperties.SearchBy = SearchUserBy.TelNum;
+			_filter.SearchProperties = SearchUserBy.TelNum;
 			var result = GetClientsLogic.GetWhere(_filter);
 			Assert.That(result, Is.EqualTo("WHERE (LOWER(co.Contact) like :SearchText)"));
 		}
@@ -144,11 +144,24 @@ namespace InternetInterface.Test.Unit
 		public void Get_where_office_searchProperties_IsSearchByAddress()
 		{
 			_filter.SearchText = "5";
-			_filter.SearchProperties.SearchBy = SearchUserBy.ByAddress;
+			_filter.SearchProperties = SearchUserBy.ByAddress;
 			var result = GetClientsLogic.GetWhere(_filter);
 			Assert.That(result, Is.EqualTo(String.Format(@"
 	WHERE (LOWER(h.Street) like {0} or
 	LOWER(l.ActualAdress) like {0})", ":SearchText")));
+		}
+
+		[Test]
+		public void GetQueryStringTest()
+		{
+			_filter.ClientTypeFilter = ForSearchClientType.Lawyer;
+			_filter.SearchProperties = SearchUserBy.SearchAccount;
+			_filter.EnabledTypeProperties = EndbledType.Enabled;
+
+			var query = _filter.GetQueryString();
+			Assert.That(query["filter.ClientTypeFilter"], Is.EqualTo(_filter.ClientTypeFilter));
+			Assert.That(query["filter.SearchProperties"], Is.EqualTo(_filter.SearchProperties));
+			Assert.That(query["filter.EnabledTypeProperties"], Is.EqualTo(_filter.EnabledTypeProperties));
 		}
 	}
 }

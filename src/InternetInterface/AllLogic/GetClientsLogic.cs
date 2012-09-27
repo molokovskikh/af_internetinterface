@@ -22,20 +22,20 @@ namespace InternetInterface.AllLogic
 				if (filter.StatusType > 0)
 					_return += " and S.Id = :statusType";
 
-				if (filter.ClientTypeFilter.IsPhysical())
+				if (filter.ClientTypeFilter == ForSearchClientType.Physical)
 					_return += " and C.PhysicalClient is not null";
 
-				if (filter.ClientTypeFilter.IsLawyer())
+				if (filter.ClientTypeFilter == ForSearchClientType.Lawyer)
 					_return += " and C.LawyerPerson is not null";
 
-				if (filter.EnabledTypeProperties.IsDisabled())
+				if (filter.EnabledTypeProperties == EndbledType.Disabled)
 					_return += " and c.Disabled";
 
-				if (filter.EnabledTypeProperties.IsEnabled())
+				if (filter.EnabledTypeProperties == EndbledType.Enabled)
 					_return += " and c.Disabled = false";
 
 				if (!string.IsNullOrEmpty(filter.SearchText)) {
-					if (filter.SearchProperties.IsSearchAuto()) {
+					if (filter.SearchProperties == SearchUserBy.Auto) {
 						return
 							String.Format(
 								@"
@@ -47,21 +47,21 @@ namespace InternetInterface.AllLogic
 	LOWER(l.ActualAdress) like {0} )",
 								":SearchText") + _return;
 					}
-					if (filter.SearchProperties.IsSearchAccount()) {
+					if (filter.SearchProperties == SearchUserBy.SearchAccount) {
 						var id = 0u;
 						UInt32.TryParse(filter.SearchText, out id);
 						if (id > 0)
 							return string.Format("where C.id = {0}", id);
 					}
-					if (filter.SearchProperties.IsSearchByFio()) {
+					if (filter.SearchProperties == SearchUserBy.ByFio) {
 						return
 							String.Format(@"
 	WHERE (LOWER(C.Name) like {0} )", ":SearchText") + _return;
 					}
-					if (filter.SearchProperties.IsSearchTelephone()) {
+					if (filter.SearchProperties == SearchUserBy.TelNum) {
 						return String.Format(@"WHERE (LOWER(co.Contact) like {0})", ":SearchText") + _return;
 					}
-					if (filter.SearchProperties.IsSearchByAddress()) {
+					if (filter.SearchProperties == SearchUserBy.ByAddress) {
 						return String.Format(@"
 	WHERE (LOWER(h.Street) like {0} or
 	LOWER(l.ActualAdress) like {0})", ":SearchText") + _return;

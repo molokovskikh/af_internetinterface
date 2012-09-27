@@ -69,10 +69,10 @@ namespace InternetInterface.Controllers
 		public void SearchUsers(string query, PhysicalClient sClients)
 		{
 			var filter = new SeachFilter {
-				SearchProperties = new UserSearchProperties { SearchBy = SearchUserBy.Auto },
-				EnabledTypeProperties = new EnabledTypeProperties { Type = EndbledType.All },
+				SearchProperties = SearchUserBy.Auto,
+				EnabledTypeProperties = EndbledType.All,
 				StatusType = 0,
-				ClientTypeFilter = new ClientTypeProperties { Type = ForSearchClientType.AllClients },
+				ClientTypeFilter = ForSearchClientType.AllClients,
 			};
 			PropertyBag["filter"] = filter;
 			PropertyBag["SearchText"] = "";

@@ -44,11 +44,11 @@ namespace InternetInterface.Test.Functional
 			session.Save(disabledClient);
 
 			Open("Search/SearchUsers.rails");
-			browser.RadioButton("filter.EnabledTypeProperties.Type_0").Checked = true;
+			browser.RadioButton("filter.EnabledTypeProperties_0").Checked = true;
 			browser.Button("SearchButton").Click();
 			AssertText(Client.Name);
 			Assert.That(browser.Text, !Is.StringContaining(disabledClient.Name));
-			browser.RadioButton("filter.EnabledTypeProperties.Type_1").Checked = true;
+			browser.RadioButton("filter.EnabledTypeProperties_1").Checked = true;
 			browser.Button("SearchButton").Click();
 			Assert.That(browser.Text, Is.StringContaining(disabledClient.Name));
 		}
@@ -92,7 +92,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void OutOfMemoryExcelExportTest()
 		{
-			browser.RadioButton("filter.clientTypeFilter.Type_1").Checked = true;
+			browser.RadioButton("filter.clientTypeFilter_1").Checked = true;
 			Click("Выгрузить статистику по клиентам в Excel");
 			Click("Поиск");
 			AssertText("Поиск пользователей");

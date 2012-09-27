@@ -17,15 +17,15 @@ namespace InternetInterface.Queries
 	{
 		public SeachFilter()
 		{
-			SearchProperties = new UserSearchProperties { SearchBy = SearchUserBy.Auto };
-			ClientTypeFilter = new ClientTypeProperties { Type = ForSearchClientType.AllClients };
-			EnabledTypeProperties = new EnabledTypeProperties { Type = EndbledType.All };
+			SearchProperties = SearchUserBy.Auto;
+			ClientTypeFilter = ForSearchClientType.AllClients;
+			EnabledTypeProperties = EndbledType.All;
 		}
 
-		public UserSearchProperties SearchProperties { get; set; }
+		public SearchUserBy SearchProperties { get; set; }
 		public uint StatusType { get; set; }
-		public ClientTypeProperties ClientTypeFilter { get; set; }
-		public EnabledTypeProperties EnabledTypeProperties { get; set; }
+		public ForSearchClientType ClientTypeFilter { get; set; }
+		public EndbledType EnabledTypeProperties { get; set; }
 		public string SearchText { get; set; }
 		public string SortBy { get; set; }
 		public string Direction { get; set; }
@@ -57,9 +57,9 @@ namespace InternetInterface.Queries
 			if (CategorieAccessSet.AccesPartner("SSI"))
 				return new Dictionary<string, object> {
 					{ "filter.SearchText", SearchText },
-					{ "filter.SearchProperties.SearchBy", SearchProperties.SearchBy },
-					{ "filter.ClientTypeFilter.Type", ClientTypeFilter.Type },
-					{ "filter.EnabledTypeProperties.Type", EnabledTypeProperties.Type },
+					{ "filter.SearchProperties", SearchProperties },
+					{ "filter.ClientTypeFilter", ClientTypeFilter },
+					{ "filter.EnabledTypeProperties", EnabledTypeProperties },
 					{ "filter.StatusType", StatusType },
 					{ "filter.SortBy", SortBy },
 					{ "filter.Direction", Direction },
@@ -126,9 +126,6 @@ join internet.Status S on s.id = c.Status";
 
 			IList<Client> result = new List<Client>();
 			ArHelper.WithSession(session => {
-				if (SearchProperties == null)
-					SearchProperties = new UserSearchProperties();
-				SearchProperties.SearchText = SearchText;
 				var sqlStr = string.Empty;
 				IQuery query = null;
 				var limitPart = InitializeContent.Partner.IsDiller() ? "Limit 5 " : string.Format("Limit {0}, {1}", CurrentPage * PageSize, PageSize);
@@ -160,7 +157,7 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 					if (!string.IsNullOrEmpty(SearchText) && wherePart.Contains(":SearchText"))
 						countQuery.SetParameter("SearchText", "%" + SearchText.ToLower() + "%");
 					if (CategorieAccessSet.AccesPartner("SSI"))
-						if (!SearchProperties.IsSearchAccount())
+						if (SearchProperties != SearchUserBy.SearchAccount)
 							SetParameters(countQuery);
 					_lastRowsCount = Convert.ToInt32(countQuery.UniqueResult());
 				}
