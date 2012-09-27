@@ -9,6 +9,16 @@ namespace InternetInterface.Models
 	[ActiveRecord("PaymentForConnect", Schema = "internet", Lazy = true)]
 	public class PaymentForConnect : ChildActiveRecordLinqBase<PaymentForConnect>
 	{
+		public PaymentForConnect()
+		{
+		}
+
+		public PaymentForConnect(decimal sum, ClientEndpoint point)
+		{
+			Sum = sum;
+			EndPoint = point;
+		}
+
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
@@ -23,5 +33,8 @@ namespace InternetInterface.Models
 
 		[BelongsTo]
 		public virtual ClientEndpoint EndPoint { get; set; }
+
+		[Property]
+		public virtual bool Paid { get; set; }
 	}
 }

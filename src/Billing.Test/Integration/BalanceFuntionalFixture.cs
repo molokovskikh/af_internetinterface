@@ -183,7 +183,7 @@ namespace Billing.Test.Integration
 			using (new SessionScope()) {
 				Client.DeleteAll();
 				client = CreateClient();
-				client.PhysicalClient.ConnectionPaid = true;
+				//client.PhysicalClient.ConnectionPaid = true;
 				client.RatedPeriodDate = SystemTime.Now();
 				client.Update();
 			}

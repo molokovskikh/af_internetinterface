@@ -135,24 +135,14 @@ set s.LastStartFail = true;")
 		{
 			WithTransaction(ActivateServices);
 
-			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
-				var newClients = Client.FindAll(DetachedCriteria.For(typeof(Client))
-					.CreateAlias("PhysicalClient", "PC", JoinType.InnerJoin)
-					.Add(Restrictions.Eq("PC.ConnectionPaid", false))
-					.Add(Restrictions.IsNotNull("BeginWork"))
-					.Add(Restrictions.IsNotNull("PhysicalClient")));
-				foreach (var newClient in newClients) {
-					var client = newClient.PhysicalClient;
-					client.ConnectionPaid = true;
-					var writeOff = client.WriteOff(client.ConnectSum);
-					client.UpdateAndFlush();
-					newClient.UpdateAndFlush();
-
-					if (writeOff != null)
-						writeOff.Save();
+			WithTransaction(session => {
+				var newEndPointForConnect = session.Query<ClientEndpoint>().Where(c => !c.PayForCon.Paid && c.Client.BeginWork != null).ToList();
+				foreach (var clientEndpoint in newEndPointForConnect) {
+					var writeOff = new UserWriteOff(clientEndpoint.Client, clientEndpoint.PayForCon.Sum, "Плата за подключение");
+					session.SaveOrUpdate(writeOff);
 				}
-				transaction.VoteCommit();
-			}
+			});
+
 			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
 				var newPayments = Payment.FindAll(DetachedCriteria.For(typeof(Payment)).Add(Restrictions.Eq("BillingAccount", false)));
 				foreach (var newPayment in newPayments) {

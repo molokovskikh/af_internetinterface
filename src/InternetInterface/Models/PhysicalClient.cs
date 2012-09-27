@@ -137,9 +137,6 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string Password { get; set; }
 
-		[Property]
-		public virtual bool ConnectionPaid { get; set; }
-
 		[BelongsTo(Cascade = CascadeEnum.SaveUpdate), Auditable("Дом")]
 		public virtual House HouseObj { get; set; }
 
