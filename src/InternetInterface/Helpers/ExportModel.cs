@@ -31,11 +31,11 @@ namespace InternetInterface.Helpers
 
 			ws.Merge(2, 1, 2, 2);
 			ExcelHelper.Write(ws, 2, 0, "Искать по:", false);
-			ExcelHelper.Write(ws, 2, 1, filter.SearchProperties.SearchBy.GetDescription(), false);
+			ExcelHelper.Write(ws, 2, 1, filter.SearchProperties.GetDescription(), false);
 
 			ws.Merge(3, 1, 3, 2);
 			ExcelHelper.Write(ws, 3, 0, "Тип клиента:", false);
-			ExcelHelper.Write(ws, 3, 1, filter.ClientTypeFilter.Type.GetDescription(), false);
+			ExcelHelper.Write(ws, 3, 1, filter.ClientTypeFilter.GetDescription(), false);
 
 			ws.Merge(4, 1, 4, 2);
 			ExcelHelper.Write(ws, 4, 0, "Статус:", false);
@@ -46,7 +46,7 @@ namespace InternetInterface.Helpers
 
 			ws.Merge(5, 1, 5, 2);
 			ExcelHelper.Write(ws, 5, 0, "Активность:", false);
-			ExcelHelper.Write(ws, 5, 1, filter.EnabledTypeProperties.Type.GetDescription(), false);
+			ExcelHelper.Write(ws, 5, 1, filter.EnabledTypeProperties.GetDescription(), false);
 
 			foreach (var item in clients) {
 				ExcelHelper.Write(ws, row, colShift + 0, item.client.Id, true);

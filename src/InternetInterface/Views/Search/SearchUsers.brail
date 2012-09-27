@@ -65,10 +65,10 @@ border="1" bgcolor="#FFFFFF" cellspacing="1" cellpadding="0">
 			<td>
 			</td>
 			<td>
-				${app.Edit("filter.searchProperties.SearchBy", "RadioList")}
+				${app.Edit("filter.searchProperties", "RadioList")}
 			</td>
 			<td>
-				${app.Edit("filter.clientTypeFilter.Type", "RadioList")}
+				${app.Edit("filter.clientTypeFilter", "RadioList")}
 			</td>
 		</tr>
 	</table>
@@ -82,7 +82,7 @@ border="1" bgcolor="#FFFFFF" cellspacing="1" cellpadding="0">
 						${FormHelper.Select("filter.statusType", Statuses, {"value" : "Id", "text" : "Name"})}
 					</td>
 					<td>
-						${app.Edit("filter.EnabledTypeProperties.Type", "RadioList")}
+						${app.Edit("filter.EnabledTypeProperties", "RadioList")}
 					</td>
 				</tr>
 			</thead>
