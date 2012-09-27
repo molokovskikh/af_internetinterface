@@ -59,7 +59,7 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual uint? Pool { get; set; }
 
-		[OneToOne]
+		[OneToOne(PropertyRef = "EndPoint")]
 		public virtual PaymentForConnect PayForCon { get; set; }
 
 		[Property]
