@@ -358,11 +358,13 @@ namespace InternetInterface.Models
 
 		public virtual bool CanUsedPostponedPayment()
 		{
+			var services = ClientServices.Select(c => c.Service.Id).ToList();
+			var debtWork = Service.GetByType(typeof(DebtWork));
 			return PhysicalClient != null
-				&& !ClientServices.Select(c => c.Service).Contains(Service.GetByType(typeof(DebtWork)))
-				&& Disabled
+				&& !services.Contains(debtWork.Id)
+				/*&& Disabled
 				&& PhysicalClient.Balance < 0
-				&& AutoUnblocked
+				&& AutoUnblocked*/
 				&& PaymentForTariff();
 		}
 

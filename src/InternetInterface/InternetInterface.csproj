@@ -419,6 +419,7 @@
     <Compile Include="Queries\RequestFinderFilter.cs" />
     <Compile Include="Queries\SeachFilter.cs" />
     <Compile Include="Services\DebtWork.cs" />
+    <Compile Include="Services\DebtWorkInfo.cs" />
     <Compile Include="Services\Service.cs" />
     <Compile Include="Services\VoluntaryBlockin.cs" />
     <Compile Include="Services\WorkLawyer.cs" />

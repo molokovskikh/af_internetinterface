@@ -69,6 +69,9 @@ namespace InternetInterface.Models
 		[BelongsTo]
 		public virtual Partner Activator { get; set; }
 
+		[OneToOne(PropertyRef = "Service", Cascade = CascadeEnum.All)]
+		public virtual DebtWorkInfo DebtInfo { get; set; }
+
 		private void DeleteFromClient()
 		{
 			if (Service.CanDelete(this)) {

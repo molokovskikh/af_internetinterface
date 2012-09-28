@@ -182,6 +182,7 @@ set s.LastStartFail = true;")
 						lawyerClient.Balance += Convert.ToDecimal(newPayment.Sum);
 						lawyerClient.UpdateAndFlush();
 						newPayment.BillingAccount = true;
+						newPayment.RecievedOn = SystemTime.Now();
 						newPayment.UpdateAndFlush();
 						updateClient.Disabled = false;
 						updateClient.Update();

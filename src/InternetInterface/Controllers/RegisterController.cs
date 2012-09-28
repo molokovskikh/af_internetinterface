@@ -80,7 +80,6 @@ namespace InternetInterface.Controllers
 						BillingAccount = true,
 						Client = client,
 						PaidOn = DateTime.Now,
-						RecievedOn = DateTime.Now,
 						Sum = phisClient.Balance
 					};
 					payment.SaveAndFlush();

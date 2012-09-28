@@ -1,26 +1,5 @@
-﻿<script type="text/javascript">
-	$(function () {
-		$('#startDate').datepicker({
-			inline: true,
-			minDate: 0,
-			showOn: "button",
-			buttonImage: "../Content/calendar.gif",
-			buttonImageOnly: true,
-			buttonText : "Дата начата периода"
-		});
-		$('#endDate').datepicker({
-			inline: true,
-			minDate: +1,
-			showOn: "button",
-			buttonImage: "../Content/calendar.gif",
-			buttonImageOnly: true,
-			buttonText: "Дата конца периода"
-		});
-	});
-</script>
-
-<form method=post action="VoluntaryBlockinActivate">
-<table id="serviceTable" style="width:100%;">
+﻿<form method=post action="VoluntaryBlockinActivate">
+<table class="serviceTable" style="width:100%;">
 	<tbody>
 		<tr class="caption">
 			<td colspan=2 style="text-align:center; font-size:14px;">Вам доступна услуга Добровольная Блокировка</td>

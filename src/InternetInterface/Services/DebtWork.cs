@@ -80,6 +80,8 @@ namespace InternetInterface.Services
 			client.Update();
 			assignedService.Activated = false;
 			assignedService.Diactivated = true;
+			var writeOff = new UserWriteOff(client, assignedService.DebtInfo.Sum, "Списание при отключении обещаного платежа");
+			writeOff.Save();
 			ActiveRecordMediator.Update(assignedService);
 		}
 
@@ -97,7 +99,14 @@ namespace InternetInterface.Services
 				client.Status = Status.Find((uint)StatusType.Worked);
 				client.Update();
 				assignedService.Activated = true;
-				ActiveRecordMediator.Update(assignedService);
+				if (assignedService.DebtInfo == null) {
+					var oneDaySum = assignedService.Client.GetPrice() / assignedService.Client.GetInterval();
+					var debtInfo = new DebtWorkInfo(assignedService, oneDaySum);
+					assignedService.DebtInfo = debtInfo;
+				}
+				var payment = new Payment(assignedService.Client, assignedService.DebtInfo.Sum, true);
+				ActiveRecordMediator.Save(payment);
+				ActiveRecordMediator.Save(assignedService);
 			}
 		}
 	}

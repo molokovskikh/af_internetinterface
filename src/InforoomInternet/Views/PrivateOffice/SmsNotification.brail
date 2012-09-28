@@ -30,7 +30,7 @@
 </script>
 <div id="messageBox"></div>
 <form method=post id="telephoneForm">
-	<table id="serviceTable" style="width:100%;">
+	<table class="serviceTable" style="width:100%;">
 		<tbody>
 			<tr class="caption">
 				<td>Настройка СМС уведомлений</td>

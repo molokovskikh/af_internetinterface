@@ -263,7 +263,6 @@ namespace InternetInterface.Controllers
 								Agent = Agent.GetByInitPartner(),
 								Client = client,
 								PaidOn = DateTime.Now,
-								RecievedOn = DateTime.Now,
 								Sum = newBalance - oldBalance,
 								LogComment = string.Format("Зачисление после редактирования банковского платежа (id = {0})", payment.Id)
 							}.Save();
@@ -274,7 +273,6 @@ namespace InternetInterface.Controllers
 							Agent = Agent.GetByInitPartner(),
 							Client = payment.Payer,
 							PaidOn = DateTime.Now,
-							RecievedOn = DateTime.Now,
 							Sum = payment.Sum,
 							LogComment = string.Format("Зачисление после редактирования банковского платежа (id = {0}), назначен плательщик", payment.Id)
 						}.Save();
@@ -284,7 +282,6 @@ namespace InternetInterface.Controllers
 							Agent = Agent.GetByInitPartner(),
 							Client = payment.Payer,
 							PaidOn = DateTime.Now,
-							RecievedOn = DateTime.Now,
 							Sum = payment.Sum,
 							LogComment = string.Format("Зачисление после редактирования банковского платежа (id = {0})", payment.Id)
 						}.Save();
