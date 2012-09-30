@@ -82,18 +82,26 @@ namespace InforoomInternet.Controllers
 			PropertyBag["message"] = message;
 		}
 
-		public void PostponedPaymentActivate()
+		[AccessibleThrough(Verb.Post)]
+		public void PostponedPaymentActivate(DateTime endDate, decimal debtWorkSum)
 		{
+			if (endDate.Date > DateTime.Now.Date.AddDays(3)) {
+				Flash["message"] = "Вы не можете установить дату отсрочки платежа более, чем на 3 дня.";
+				RedirectToUrl("Services");
+				return;
+			}
 			var clientId = Convert.ToUInt32(Session["LoginClient"]);
 			var client = Client.Find(clientId);
+			var dtn = DateTime.Now;
 			if (client.CanUsedPostponedPayment()) {
 				Flash["message"] = "Услуга \"Обещанный платеж активирована\"";
 				var CService = new ClientService {
-					BeginWorkDate = DateTime.Now,
+					BeginWorkDate = dtn,
 					Client = client,
-					EndWorkDate = DateTime.Now.AddDays(1),
+					EndWorkDate = endDate.AddHours(dtn.Hour).AddMinutes(dtn.Minute).AddSeconds(dtn.Second),
 					Service = Service.GetByType(typeof(DebtWork))
 				};
+				CService.DebtInfo = new DebtWorkInfo(CService, debtWorkSum);
 				client.ClientServices.Add(CService);
 				CService.Activate();
 				new Appeals {
