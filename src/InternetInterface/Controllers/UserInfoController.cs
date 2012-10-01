@@ -278,7 +278,7 @@ namespace InternetInterface.Controllers
 			RedirectToUrl("../Search/Redirect.rails?filter.ClientCode=" + ClientID + "&filter.EditConnectInfoFlag=" + true);
 		}
 
-		public void ActivateService(uint clientId, uint serviceId, DateTime? startDate, DateTime? endDate)
+		public void ActivateService(uint clientId, uint serviceId, DateTime? startDate, DateTime? endDate, decimal? debtWorkSum)
 		{
 			var servise = Service.Find(serviceId);
 			var client = Client.Find(clientId);
@@ -305,7 +305,8 @@ namespace InternetInterface.Controllers
 							dtn.Second),
 					Activator = InitializeContent.Partner
 				};
-
+				if (NHibernateUtil.GetClass(servise) == typeof(DebtWork) && debtWorkSum != null)
+					clientService.DebtInfo = new DebtWorkInfo(clientService, debtWorkSum.Value);
 				try {
 					client.Activate(clientService);
 					DbSession.Save(clientService);
@@ -687,7 +688,7 @@ where r.`Label`= :LabelIndex;")
 				if (updateClient.IsChanged(c => c.Tariff)) {
 					_client.Disabled = updateClient.Tariff == null;
 					if (_client.IsChanged(c => c.Disabled)) {
-						var message = _client.Disabled ? "Клиент включен оператором, тариф назначен" : "Клиент отключен оператором, тариф удален";
+						var message = !_client.Disabled ? "Клиент включен оператором, тариф назначен" : "Клиент отключен оператором, тариф удален";
 						Appeals.CreareAppeal(message, _client, AppealType.Statistic);
 					}
 				}

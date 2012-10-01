@@ -20,8 +20,7 @@
 	end %>
 
 	<% if client.CanEditServicesFromPrivateOffice: %>
-
-		${FormHelper.FormTag("", {@class: "serviceForm"})}
+		<form class="serviceForm" method=post>
 			${FormHelper.HiddenField("client.PhysicalClient.Id")}
 			<h3>!{internet.Service.HumanName}</h3>
 			<div class="serviceInternetBox">
@@ -62,7 +61,7 @@
 				<% end %>
 			</div>
 			${FormHelper.Submit("Сохранить", {@class: "button"})}
-		${FormHelper.EndFormTag()}
+		</form>
 
 	<% else: %>
 

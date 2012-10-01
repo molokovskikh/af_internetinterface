@@ -778,7 +778,14 @@ background-color: #FEEFB3;
 .error {
 color: #D8000C;
 background-color: #FFBABA;
+}
 
+label.errorInService {
+	color: #D8000C;
+	background-color: #FFBABA;
+	padding: 3px;
+	border: 1px solid #D8000C;
+	margin-left: 5px;
 }
 
 .button

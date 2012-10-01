@@ -173,6 +173,11 @@ namespace InternetInterface.Models
 		[HasMany(ColumnKey = "Client", OrderBy = "Date", Lazy = true, Cascade = ManyRelationCascadeEnum.SaveUpdate)]
 		public virtual IList<Appeals> Appeals { get; set; }
 
+		public virtual decimal WriteOff
+		{
+			get { return GetPrice() / GetInterval(); }
+		}
+
 		public virtual bool CanDisabled()
 		{
 			return PhysicalClient.Balance < GetPriceForTariff() * PercentBalance;

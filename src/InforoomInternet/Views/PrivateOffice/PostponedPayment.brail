@@ -1,5 +1,12 @@
-﻿<%if Client.CanUsedPostponedPayment(): %>
-<form method=post action="PostponedPaymentActivate">
+﻿<%import System%>
+${app.JS("ValidateDebtVorkForm.js")}
+<script type="text/javascript">
+	$(function(){
+		addDedtWorkValidation("${Client.WriteOff.ToString("0.00").Replace(",", ".")}");
+	});
+</script>
+<%if Client.CanUsedPostponedPayment(): %>
+<form method=post action="PostponedPaymentActivate" id="PostponedPaymentActivate">
 <table class="serviceTable">
 	<tbody>
 		<tr class="caption" style="text-align:center; font-size:14px;">
@@ -15,7 +22,7 @@
 		<tr>
 			<td>
 				<label for="endDate"> Конец периода </label>
-				<input type=text  name="endDate" class="endDateDebt">
+				<input type=text  name="endDate" class="endDateDebt" value="${DateTime.Now.AddDays(1).ToShortDateString()}">
 			</td>
 		</tr>
 		<tr>
@@ -26,14 +33,13 @@
 		</tr>
 		<tr>
 			<td style="background:none">
-				<button type="submit" id="PostponedBut" class="button">Разблокировать</button>
+				<button type="submit" id="PostponedBut" class="button">Активировать</button>
 			</td>
 		</tr>
 	</tbody>
 </table>
 </form>
-<%else: %>
+<%end %>
 <%if IsDefined("message"): %>
 <h2>${message}</h2>
-<%end %>
 <%end %>

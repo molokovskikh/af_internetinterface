@@ -85,13 +85,29 @@ namespace InforoomInternet.Controllers
 		[AccessibleThrough(Verb.Post)]
 		public void PostponedPaymentActivate(DateTime endDate, decimal debtWorkSum)
 		{
-			if (endDate.Date > DateTime.Now.Date.AddDays(3)) {
-				Flash["message"] = "Вы не можете установить дату отсрочки платежа более, чем на 3 дня.";
-				RedirectToUrl("Services");
-				return;
-			}
 			var clientId = Convert.ToUInt32(Session["LoginClient"]);
 			var client = Client.Find(clientId);
+			var haveError = false;
+			if (endDate.Date > DateTime.Now.Date.AddDays(3) || endDate.Date < DateTime.Now.Date) {
+				Flash["message"] = "Вы не можете установить дату отсрочки платежа более, чем на 3 дня.";
+				haveError = true;
+			}
+			if (endDate.Date == DateTime.MinValue) {
+				Flash["message"] = "Должна быть выставлена дата отсрочки платежа";
+				haveError = true;
+			}
+			var minPayment = client.GetPrice() / client.GetInterval();
+			if ((debtWorkSum < minPayment) || (debtWorkSum > 10000)) {
+				if (haveError)
+					Flash["message"] += "<br/>";
+				Flash["message"] += string.Format("Сумма обещанного платежа не может менее {0} и более 10000 руб.", minPayment.ToString("0.00"));
+				haveError = true;
+			}
+			if (haveError) {
+				RedirectToReferrer();
+				//RedirectToUrl("Services");
+				return;
+			}
 			var dtn = DateTime.Now;
 			if (client.CanUsedPostponedPayment()) {
 				Flash["message"] = "Услуга \"Обещанный платеж активирована\"";
