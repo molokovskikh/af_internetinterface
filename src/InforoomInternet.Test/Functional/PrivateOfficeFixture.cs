@@ -131,6 +131,19 @@ namespace InforoomInternet.Test.Functional
 		}
 
 		[Test]
+		public void Diactivete_and_activete_witch_null_tariff()
+		{
+			Click("Управление услугами");
+			Css("#internet_ActivatedByUser").Click();
+			Click("Сохранить");
+			browser.SelectList("client_PhysicalClient_Tariff_Id").SelectByValue(string.Empty);
+			Click("Сохранить");
+			Css("#internet_ActivatedByUser").Checked = true;
+			Click("Сохранить");
+			AssertText("Нужно выбрать тариф");
+		}
+
+		[Test]
 		public void Friend_bunus_base_view_test()
 		{
 			Click("Бонусные программы");
