@@ -185,8 +185,8 @@ namespace InforoomInternet.Controllers
 				}
 
 				SetSmartBinder(AutoLoadBehavior.NullIfInvalidKey);
-				BindObjectInstance(client, "client", "PhysicalClient.Tariff");
 				BindObjectInstance(internet, "internet", "ActivatedByUser");
+				BindObjectInstance(client, "client", "PhysicalClient.Tariff");
 
 				if (IsValid(client.PhysicalClient)) {
 					client.PhysicalClient.UpdatePackageId();
