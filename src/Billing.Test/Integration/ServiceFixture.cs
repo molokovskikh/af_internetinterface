@@ -19,6 +19,12 @@ namespace Billing.Test.Integration
 {
 	public class ServiceFixture : MainBillingFixture
 	{
+		[SetUp]
+		public void SetUp()
+		{
+			SystemTime.Reset();
+		}
+
 		private ClientService Activate(Type type, DateTime? endDate = null)
 		{
 			if (endDate == null)
@@ -179,7 +185,7 @@ namespace Billing.Test.Integration
 		[Test]
 		public void DebtWorkTest()
 		{
-			const int countDays = 5;
+			const int countDays = 3;
 			var client = _client;
 
 			PhysicalClient physicalClient;
@@ -277,7 +283,7 @@ namespace Billing.Test.Integration
 				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
 				physicalClient.Balance = -10;
 				physicalClient.Update();
-
+				SystemTime.Reset();
 				CServive = new ClientService {
 					Client = client,
 					BeginWorkDate = DateTime.Now,
@@ -285,7 +291,6 @@ namespace Billing.Test.Integration
 					Service = Service.GetByType(typeof(DebtWork)),
 				};
 				client.ClientServices.Add(CServive);
-
 				CServive.Activate();
 				Assert.That(CServive.Activated, Is.EqualTo(true));
 			}
@@ -296,7 +301,7 @@ namespace Billing.Test.Integration
 		{
 			using (new SessionScope()) {
 				var client = CreateClient();
-				const int countDays = 10;
+				const int countDays = 3;
 				var physClient = client.PhysicalClient;
 				physClient.Balance = -10m;
 				physClient.Update();
@@ -520,7 +525,7 @@ namespace Billing.Test.Integration
 		{
 			ClientService service;
 			PhysicalClient physClient;
-			const int countDays = 5;
+			const int countDays = 3;
 			using (new SessionScope()) {
 				physClient = _client.PhysicalClient;
 				physClient.Balance = -10m;
