@@ -324,7 +324,7 @@ namespace InternetInterface.Models
 		public virtual string GetTariffName()
 		{
 			if (IsPhysical())
-				return PhysicalClient.Tariff.Name;
+				return PhysicalClient.Tariff != null ? PhysicalClient.Tariff.Name : string.Empty;
 			if (LawyerPerson.Tariff != null)
 				return string.Format("{0} руб.", LawyerPerson.Tariff.Value);
 			return "Тариф не задан";
