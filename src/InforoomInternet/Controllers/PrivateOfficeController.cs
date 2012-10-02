@@ -226,6 +226,10 @@ namespace InforoomInternet.Controllers
 					Notify("Сохранено");
 					RedirectToReferrer();
 				}
+				else {
+					DbSession.Evict(internet);
+					DbSession.Refresh(client);
+				}
 			}
 		}
 

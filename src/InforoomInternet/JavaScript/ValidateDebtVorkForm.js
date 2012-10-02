@@ -7,8 +7,7 @@
 				max: 10000
 			},
 			endDate : {
-				required: true,
-				date : true
+				required: true
 			}
 		},
 		messages: {
@@ -18,8 +17,7 @@
 				max: jQuery.format("Сумма должна быть не более {0}")
 			},
 			endDate: {
-				required: "Введите дату",
-				date: "Неправильный формат даты"
+				required: "Введите дату"
 			}
 		},
 		errorClass: "errorInService"
