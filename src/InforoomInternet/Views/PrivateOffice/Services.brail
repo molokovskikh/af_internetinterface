@@ -1,5 +1,4 @@
-﻿<script type="text/javascript" src="${siteroot}/javascript/Date.js"></script>
-<div class="servicePage">
+﻿<div class="servicePage">
 	<% CanUsedPostponedPayment = Client.CanUsedPostponedPayment() %>
 	<%if Client.CanUsedPostponedPayment(): %>
 	<div>

@@ -13,12 +13,10 @@ namespace InternetInterface.Models
 		{
 		}
 
-		public Payment(Client client, decimal sum, bool virt = false)
+		public Payment(Client client, decimal sum)
 		{
 			Client = client;
 			Sum = sum;
-			Virtual = virt;
-			PaidOn = DateTime.Now;
 		}
 
 		[PrimaryKey]

@@ -24,7 +24,7 @@ namespace InternetInterface.Services
 					DateTime.Now.ToShortDateString()));*/
 			builder.Append(
 				string.Format(
-					"<td><label for=\"endDate\" id=\"endDateLabel\"> Заблокировать до  </label><input type=text  name=\"endDate\" value=\"{0}\" class=\"endDate\"></td>",
+					"<td><label for=\"endDate\" id=\"endDateLabel\"> Заблокировать до  </label><input type=text  name=\"endDate\" value=\"{0}\"  id=\"endDate\" class=\"date-pick dp-applied\"></td>",
 					DateTime.Now.AddDays(1).ToShortDateString()));
 			builder.Append("</tr>");
 			return builder.ToString();

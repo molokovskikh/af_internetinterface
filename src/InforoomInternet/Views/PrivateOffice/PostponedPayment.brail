@@ -1,6 +1,6 @@
 ﻿<%if Client.CanUsedPostponedPayment(): %>
 <form method=post action="PostponedPaymentActivate">
-<table class="serviceTable">
+<table>
 	<tbody>
 		<tr class="caption" style="text-align:center; font-size:14px;">
 			<td>Вам доступна услуга обещанный платеж</td>
@@ -10,18 +10,6 @@
 				<span style="font-size:small; ">
 					Услуга "Обещанный платеж" открывает доступ к Интернет, сроком на одни сутки, при отрицательном балансе. Услуга предоставляется однократно. Повторное использование возможно после внесения платежа, покрывающего задолженность.
 				</span>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<label for="endDate"> Конец периода </label>
-				<input type=text  name="endDate" class="endDateDebt">
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<label for="debtWorkSum"> Сумма, которую вы хотите зачислить </label>
-				<input type="text" id="debtWorkSum" name="debtWorkSum">
 			</td>
 		</tr>
 		<tr>

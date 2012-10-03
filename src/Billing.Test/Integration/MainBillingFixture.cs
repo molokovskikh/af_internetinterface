@@ -152,8 +152,7 @@ namespace Billing.Test.Integration
 			SmsMessage.DeleteAll();
 			UserWriteOff.DeleteAll();
 
-			ArHelper.WithSession(s => { s.CreateSQLQuery("delete from Internet.DebtWorkInfos").ExecuteUpdate(); });
-			ArHelper.WithSession(s => { s.CreateSQLQuery("delete from Internet.ClientServices").ExecuteUpdate(); });
+			ArHelper.WithSession(s => { s.CreateSQLQuery("delete from Internet.ClientServices"); });
 
 			WriteOff.DeleteAll();
 			Payment.DeleteAll();

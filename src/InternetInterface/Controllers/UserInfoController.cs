@@ -923,6 +923,7 @@ where r.`Label`= :LabelIndex;")
 						Client = clientToch,
 						Agent = Agent.GetByInitPartner(),
 						PaidOn = DateTime.Now,
+						RecievedOn = DateTime.Now,
 						Sum = tryBalance,
 						BillingAccount = false,
 						Virtual = virtualPayment
