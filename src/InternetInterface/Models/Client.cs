@@ -173,11 +173,6 @@ namespace InternetInterface.Models
 		[HasMany(ColumnKey = "Client", OrderBy = "Date", Lazy = true, Cascade = ManyRelationCascadeEnum.SaveUpdate)]
 		public virtual IList<Appeals> Appeals { get; set; }
 
-		public virtual decimal WriteOff
-		{
-			get { return GetPrice() / GetInterval(); }
-		}
-
 		public virtual bool CanDisabled()
 		{
 			return PhysicalClient.Balance < GetPriceForTariff() * PercentBalance;
@@ -324,7 +319,7 @@ namespace InternetInterface.Models
 		public virtual string GetTariffName()
 		{
 			if (IsPhysical())
-				return PhysicalClient.Tariff != null ? PhysicalClient.Tariff.Name : string.Empty;
+				return PhysicalClient.Tariff.Name;
 			if (LawyerPerson.Tariff != null)
 				return string.Format("{0} руб.", LawyerPerson.Tariff.Value);
 			return "Тариф не задан";
@@ -365,11 +360,11 @@ namespace InternetInterface.Models
 		{
 			var services = ClientServices.Select(c => c.Service.Id).ToList();
 			var debtWork = Service.GetByType(typeof(DebtWork));
-			var internet = ClientServices.FirstOrDefault(c => Service.GetByType(typeof(Internet)).Id == c.Service.Id);
-			if (internet == null || !internet.ActivatedByUser)
-				return false;
 			return PhysicalClient != null
 				&& !services.Contains(debtWork.Id)
+				/*&& Disabled
+				&& PhysicalClient.Balance < 0
+				&& AutoUnblocked*/
 				&& PaymentForTariff();
 		}
 

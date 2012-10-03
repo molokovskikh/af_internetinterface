@@ -79,8 +79,7 @@ namespace InforoomInternet.Test.Functional
 
 			Refresh();
 			Click("Подробнее...");
-			browser.TextField("debtWorkSum").AppendText("100");
-			Click("Активировать");
+			Click("Разблокировать");
 
 			AssertText("Ваш личный кабинет");
 			AssertText("Услуга \"Обещанный платеж активирована\"");

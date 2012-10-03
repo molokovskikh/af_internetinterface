@@ -18,10 +18,7 @@ namespace InternetInterface.Services
 			builder.Append("<tr>");
 			builder.Append(
 				string.Format(
-					"<td><label for=\"endDate\"> Конец периода </label><input type=text  name=\"endDate\" id=\"endDate\" value=\"{0}\" class=\"date-pick dp-applied\"></td><td>" +
-						"<label for=\"debtWorkSum\"> Сумма, которую вы хотите зачислить </label>" +
-						"<input type=\"text\" id=\"debtWorkSum\" name=\"debtWorkSum\">" +
-						"</td>",
+					"<td><label for=\"endDate\"> Конец периода </label><input type=text  name=\"endDate\" id=\"endDate\" value=\"{0}\" class=\"date-pick dp-applied\"></td>",
 					DateTime.Now.AddDays(1).ToShortDateString()));
 			builder.Append("</tr>");
 			return builder.ToString();
@@ -38,12 +35,11 @@ namespace InternetInterface.Services
 
 		public override bool CanActivate(ClientService assignedService)
 		{
-			var treeDays = assignedService.EndWorkDate > DateTime.Now.AddDays(3);
 			var client = assignedService.Client;
 			var payTar = client.PaymentForTariff();
 			if (assignedService.Activator != null)
 				payTar = true;
-			return payTar && CanActivate(client) && !treeDays;
+			return payTar && CanActivate(client);
 		}
 
 		public override void PaymentClient(ClientService assignedService)

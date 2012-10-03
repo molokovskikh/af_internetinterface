@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading;
 using Castle.ActiveRecord;
 using Common.Tools;
-using Common.Web.Ui.ActiveRecordExtentions;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using InternetInterface.Models.Services;
@@ -19,12 +18,6 @@ namespace Billing.Test.Integration
 {
 	public class ServiceFixture : MainBillingFixture
 	{
-		[SetUp]
-		public void SetUp()
-		{
-			SystemTime.Reset();
-		}
-
 		private ClientService Activate(Type type, DateTime? endDate = null)
 		{
 			if (endDate == null)
@@ -185,7 +178,7 @@ namespace Billing.Test.Integration
 		[Test]
 		public void DebtWorkTest()
 		{
-			const int countDays = 3;
+			const int countDays = 5;
 			var client = _client;
 
 			PhysicalClient physicalClient;
@@ -283,7 +276,7 @@ namespace Billing.Test.Integration
 				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
 				physicalClient.Balance = -10;
 				physicalClient.Update();
-				SystemTime.Reset();
+
 				CServive = new ClientService {
 					Client = client,
 					BeginWorkDate = DateTime.Now,
@@ -291,6 +284,7 @@ namespace Billing.Test.Integration
 					Service = Service.GetByType(typeof(DebtWork)),
 				};
 				client.ClientServices.Add(CServive);
+
 				CServive.Activate();
 				Assert.That(CServive.Activated, Is.EqualTo(true));
 			}
@@ -301,7 +295,7 @@ namespace Billing.Test.Integration
 		{
 			using (new SessionScope()) {
 				var client = CreateClient();
-				const int countDays = 3;
+				const int countDays = 10;
 				var physClient = client.PhysicalClient;
 				physClient.Balance = -10m;
 				physClient.Update();
@@ -525,7 +519,7 @@ namespace Billing.Test.Integration
 		{
 			ClientService service;
 			PhysicalClient physClient;
-			const int countDays = 3;
+			const int countDays = 5;
 			using (new SessionScope()) {
 				physClient = _client.PhysicalClient;
 				physClient.Balance = -10m;
@@ -817,43 +811,6 @@ namespace Billing.Test.Integration
 				Assert.IsTrue(_client.Disabled);
 				service.Activate();
 				Assert.IsTrue(_client.Disabled);
-			}
-		}
-
-		[Test]
-		public void New_debt_work_system()
-		{
-			var debtPayment = 300m;
-			var balance = _client.Balance;
-			using (new SessionScope()) {
-				var service = new ClientService {
-					Client = _client,
-					BeginWorkDate = DateTime.Now,
-					EndWorkDate = DateTime.Now.AddDays(3),
-					Service = Service.GetByType(typeof(DebtWork)),
-					Activator = InitializeContent.Partner
-				};
-				service.DebtInfo = new DebtWorkInfo(service, 300);
-				ArHelper.WithSession(s => s.Save(service));
-				_client.Disabled = true;
-				_client.Save();
-			}
-			billing.OnMethod();
-			using (new SessionScope()) {
-				_client.Refresh();
-				Assert.IsFalse(_client.Disabled);
-				Assert.AreEqual(_client.Balance, debtPayment + balance);
-			}
-			SystemTime.Now = () => DateTime.Now.AddDays(3);
-			billing.OnMethod();
-			using (new SessionScope()) {
-				_client.Refresh();
-				Assert.AreEqual(_client.Balance, balance + debtPayment);
-			}
-			billing.OnMethod();
-			using (new SessionScope()) {
-				_client.Refresh();
-				Assert.AreEqual(_client.Balance, balance);
 			}
 		}
 	}

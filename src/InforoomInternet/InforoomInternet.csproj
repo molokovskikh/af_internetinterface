@@ -468,7 +468,6 @@
     <None Include="Views\Main\MessageSended.brail" />
     <None Include="Views\Main\WarningPackageId.brail" />
     <None Include="Views\Main\About.brail" />
-    <Content Include="JavaScript\ValidateDebtVorkForm.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
