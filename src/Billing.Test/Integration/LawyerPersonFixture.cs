@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Castle.ActiveRecord;
+using Castle.ActiveRecord.Framework;
 using Common.Tools;
 using InternetInterface.Models;
 using NUnit.Framework;
@@ -103,6 +104,20 @@ namespace Billing.Test.Integration
 				lawyerClient.Refresh();
 				Assert.False(lawyerClient.Disabled);
 				Assert.AreEqual(balance + 100, lawyerClient.Balance);
+			}
+		}
+
+		[Test]
+		public void Disable_write_Off()
+		{
+			using (new SessionScope()) {
+				lawyerClient.Disabled = true;
+				ActiveRecordMediator.Save(lawyerClient);
+			}
+			billing.Compute();
+			using (new SessionScope()) {
+				var writeOffs = ActiveRecordLinq.AsQueryable<WriteOff>().Where(w => w.Client == lawyerClient).ToList();
+				Assert.AreEqual(writeOffs.Count, 1);
 			}
 		}
 	}

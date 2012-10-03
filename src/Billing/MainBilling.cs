@@ -458,8 +458,6 @@ set s.LastStartFail = true;")
 		private static void WriteOffFromLawyerPerson(Client client)
 		{
 			var person = client.LawyerPerson;
-			if (client.Disabled)
-				return;
 
 			var now = SystemTime.Now();
 			var daysInMonth = DateTime.DaysInMonth(now.Year, now.Month);
