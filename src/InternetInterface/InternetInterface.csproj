@@ -329,6 +329,7 @@
     <Compile Include="Helpers\EmailHelper.cs" />
     <Compile Include="Helpers\ExceptionHelper.cs" />
     <Compile Include="Helpers\ExportModel.cs" />
+    <Compile Include="Helpers\InsertListner.cs" />
     <Compile Include="Helpers\IpHelper.cs" />
     <Compile Include="Helpers\Listner.cs" />
     <Compile Include="Helpers\LoginCreatorHelper.cs" />
@@ -342,6 +343,7 @@
     <Compile Include="Helpers\ValidBuilderHelper.cs" />
     <Compile Include="Initializers\ActiveRecord.cs" />
     <Compile Include="Initializers\Development.cs" />
+    <Compile Include="Mails\LawyerUserWriteOffNotice.cs" />
     <Compile Include="Models\Access\AccessCategories.cs" />
     <Compile Include="Models\Access\AccessRules.cs" />
     <Compile Include="Models\AdditionalStatus.cs" />
