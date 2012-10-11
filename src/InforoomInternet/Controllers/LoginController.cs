@@ -48,13 +48,13 @@ namespace InforoomInternet.Controllers
 				var client = LoginLogic.IsAccessibleClient(Convert.ToUInt32(Login), Password);
 				if (client != null) {
 					Session["LoginClient"] = Login;
-					if (client.NoEndPoint()) {
+					/*if (client.NoEndPoint()) {
 						var userHostAddress = Request.UserHostAddress;
 #if DEBUG
 						userHostAddress = "192.168.0.1";
 #endif
 						client.CreateAutoEndPont(userHostAddress, DbSession);
-					}
+					}*/
 					RedirectToUrl(@"..//PrivateOffice/IndexOffice");
 				}
 				else {

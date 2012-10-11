@@ -9,6 +9,10 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>4.0</OldToolsVersion>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
   </PropertyGroup>
   <Import Project="..\ProjectLib.properties" Condition="Exists('..\ProjectLib.properties')" />
   <ItemGroup>
@@ -471,6 +475,7 @@
     <None Include="Views\PrivateOffice\BalanceInfo.brail" />
     <None Include="Views\PrivateOffice\BonusProgram.brail" />
     <None Include="Views\PrivateOffice\DiactivateVoluntaryBlockin.brail" />
+    <Content Include="Views\PrivateOffice\FirstVisit.brail" />
     <None Include="Views\PrivateOffice\Services.brail" />
     <None Include="Views\PrivateOffice\SmsNotification.brail" />
     <None Include="Views\PrivateOffice\VoluntaryBlockin.brail" />

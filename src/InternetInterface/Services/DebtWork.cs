@@ -36,10 +36,7 @@ namespace InternetInterface.Services
 		public override bool CanActivate(ClientService assignedService)
 		{
 			var client = assignedService.Client;
-			var payTar = client.PaymentForTariff();
-			if (assignedService.Activator != null)
-				payTar = true;
-			return payTar && CanActivate(client);
+			return client.Disabled && client.Balance < 0 && CanActivate(client);
 		}
 
 		public override void PaymentClient(ClientService assignedService)
@@ -91,6 +88,10 @@ namespace InternetInterface.Services
 		public override void Activate(ClientService assignedService)
 		{
 			if ((!assignedService.Activated && !assignedService.Diactivated && CanActivate(assignedService))) {
+				if (assignedService.EndWorkDate > SystemTime.Now().AddDays(3)) {
+					var userWriteOff = new UserWriteOff(assignedService.Client, 50, "Активация обещанного платежа на 10 дней", false);
+					ActiveRecordMediator.Save(userWriteOff);
+				}
 				var client = assignedService.Client;
 				client.Disabled = false;
 				client.RatedPeriodDate = SystemTime.Now();

@@ -64,6 +64,11 @@ namespace InforoomInternet.Controllers
 			}
 			if (Context.Session["autoIn"] != null)
 				PropertyBag["autoIn"] = true;
+
+			if (client.NoEndPoint()) {
+				PropertyBag["clientAddress"] = client.GetAdress();
+				RenderView("FirstVisit");
+			}
 		}
 
 		public void PostponedPayment()
@@ -83,16 +88,17 @@ namespace InforoomInternet.Controllers
 			PropertyBag["message"] = message;
 		}
 
-		public void PostponedPaymentActivate()
+		public void PostponedPaymentActivate(int daysCount)
 		{
 			var clientId = Convert.ToUInt32(Session["LoginClient"]);
 			var client = Client.Find(clientId);
-			if (client.CanUsedPostponedPayment()) {
+			var validDayCount = (daysCount == 3) || (daysCount == 10);
+			if (client.CanUsedPostponedPayment() & validDayCount) {
 				Flash["message"] = "Услуга \"Обещанный платеж активирована\"";
 				var CService = new ClientService {
 					BeginWorkDate = DateTime.Now,
 					Client = client,
-					EndWorkDate = DateTime.Now.AddDays(1),
+					EndWorkDate = DateTime.Now.AddDays(daysCount),
 					Service = Service.GetByType(typeof(DebtWork))
 				};
 				client.ClientServices.Add(CService);

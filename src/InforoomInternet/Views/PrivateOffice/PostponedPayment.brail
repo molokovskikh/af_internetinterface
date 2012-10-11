@@ -1,5 +1,4 @@
 ﻿<%if Client.CanUsedPostponedPayment(): %>
-<form method=post action="PostponedPaymentActivate">
 <table>
 	<tbody>
 		<tr class="caption" style="text-align:center; font-size:14px;">
@@ -14,12 +13,22 @@
 		</tr>
 		<tr>
 			<td style="background:none">
-				<button type="submit" id="PostponedBut" class="button">Разблокировать</button>
+				<form method=post action="PostponedPaymentActivate">
+					<button type="submit" id="PostponedBut" class="button">Разблокировать на 3 дня</button>
+					<input type=hidden value="3" name="daysCount" />
+				</form>
+			</td>
+		</tr>
+		<tr>
+			<td style="background:none">
+				<form method=post action="PostponedPaymentActivate">
+					<button type="submit" id="PostponedBut" class="button">Разблокировать на 10 дней</button>
+					<input type=hidden value="10" name="daysCount" />
+				</form>
 			</td>
 		</tr>
 	</tbody>
 </table>
-</form>
 <%else: %>
 <%if IsDefined("message"): %>
 <h2>${message}</h2>

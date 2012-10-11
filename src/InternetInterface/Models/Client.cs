@@ -362,8 +362,7 @@ namespace InternetInterface.Models
 				&& !ClientServices.Select(c => c.Service).Contains(Service.GetByType(typeof(DebtWork)))
 				&& Disabled
 				&& PhysicalClient.Balance < 0
-				&& AutoUnblocked
-				&& PaymentForTariff();
+				&& AutoUnblocked;
 		}
 
 		public virtual bool NeedShowWarningForLawyer()
