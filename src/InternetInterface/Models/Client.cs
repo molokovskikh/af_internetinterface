@@ -137,6 +137,9 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool SendEmailNotification { get; set; }
 
+		[Property]
+		public virtual bool FirstLunch { get; set; }
+
 		[Property, Auditable("Смс рассылка")]
 		public virtual bool SendSmsNotifocation { get; set; }
 
@@ -361,7 +364,7 @@ namespace InternetInterface.Models
 			return PhysicalClient != null
 				&& !ClientServices.Select(c => c.Service).Contains(Service.GetByType(typeof(DebtWork)))
 				&& Disabled
-				&& PhysicalClient.Balance < 0
+				&& PhysicalClient.Balance <= 0
 				&& AutoUnblocked;
 		}
 

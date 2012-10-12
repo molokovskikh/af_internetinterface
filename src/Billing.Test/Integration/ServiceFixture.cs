@@ -574,12 +574,13 @@ namespace Billing.Test.Integration
 			using (new SessionScope()) {
 				_client = Client.Find(_client.Id);
 				var userWriteOffs = UserWriteOff.Queryable.ToList();
-				Assert.That(userWriteOffs.Count, Is.EqualTo(3), userWriteOffs.Implode());
-				Assert.That(userWriteOffs[0].Sum, Is.GreaterThan(5m));
-				Assert.That(userWriteOffs[0].Sum, Is.LessThan(25m));
-				Assert.That(userWriteOffs[1].Sum, Is.EqualTo(50m));
-				Assert.That(userWriteOffs[2].Sum, Is.GreaterThan(5m));
-				Assert.That(userWriteOffs[2].Sum, Is.LessThan(25m));
+				Assert.That(userWriteOffs.Count, Is.EqualTo(4), userWriteOffs.Implode());
+				Assert.That(userWriteOffs[0].Sum, Is.EqualTo(50m));
+				Assert.That(userWriteOffs[1].Sum, Is.GreaterThan(5m));
+				Assert.That(userWriteOffs[1].Sum, Is.LessThan(25m));
+				Assert.That(userWriteOffs[2].Sum, Is.EqualTo(50m));
+				Assert.That(userWriteOffs[3].Sum, Is.GreaterThan(5m));
+				Assert.That(userWriteOffs[3].Sum, Is.LessThan(25m));
 				Assert.IsFalse(_client.Disabled);
 			}
 			billing.OnMethod();

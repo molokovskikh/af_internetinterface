@@ -158,6 +158,17 @@ namespace InternetInterface.Models
 			}
 		}
 
+		public virtual string PassportDateForClient
+		{
+			get
+			{
+				if ((PassportDate != null) && PassportDate != DateTime.MinValue) {
+					return PassportDate.ToShortDateString();
+				}
+				return string.Empty;
+			}
+		}
+
 		public virtual string GetAdress()
 		{
 			return String.Format("{0} Подъезд {1} Этаж {2}",

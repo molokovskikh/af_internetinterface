@@ -22,6 +22,7 @@ namespace InforoomInternet.Test.Functional
 
 			physicalClient = ClientHelper.PhysicalClient();
 			client = physicalClient.Client;
+			client.FirstLunch = true;
 			client.BeginWork = DateTime.Now;
 			physicalClient.Client.Endpoints.Add(new ClientEndpoint(physicalClient.Client, null, null));
 			session.Save(new Payment(client, 1000));
@@ -174,6 +175,57 @@ namespace InforoomInternet.Test.Functional
 			AssertText("Спасибо, Ваша заявка принята. Номер заявки");
 			var requests = session.QueryOver<Request>().Where(r => r.FriendThisClient == client).List();
 			Assert.That(requests.Count, Is.EqualTo(1));
+		}
+
+		[Test]
+		public void Fist_lunch_test()
+		{
+			client.FirstLunch = false;
+			session.SaveOrUpdate(client);
+			Flush();
+			Open("PrivateOffice/IndexOffice");
+			AssertText("Это Ваше первое посещение личного кабинета, просим подтвердить свои данные");
+		}
+
+		[Test]
+		public void First_lunch_passport_data_no_valid_test()
+		{
+			client.FirstLunch = false;
+			session.SaveOrUpdate(client);
+			Flush();
+			Open("PrivateOffice/IndexOffice");
+			browser.TextField("PhysicalClient_PassportSeries").AppendText("abcd");
+			browser.TextField("PhysicalClient_PassportNumber").AppendText("abcd");
+			browser.TextField("PhysicalClient_Surname").Clear();
+			browser.TextField("PhysicalClient_Name").Clear();
+			browser.TextField("PhysicalClient_Patronymic").Clear();
+			Click("Подтвердить");
+			AssertText("Введите фамилию");
+			AssertText("Введите имя");
+			AssertText("Введите отчество");
+			AssertText("Неправильный формат серии паспорта (4 цифры)");
+			AssertText("Неправильный формат номера паспорта (6 цифр)");
+		}
+
+		[Test]
+		public void First_lunch_passport_data_valid_test()
+		{
+			client.FirstLunch = false;
+			session.SaveOrUpdate(client);
+			Flush();
+			Open("PrivateOffice/IndexOffice");
+			browser.TextField("PhysicalClient_PassportSeries").Value = "1234";
+			browser.TextField("PhysicalClient_PassportNumber").Value = "123456";
+			browser.TextField("PhysicalClient_Surname").AppendText("testovoi");
+			browser.TextField("PhysicalClient_Name").AppendText("test");
+			browser.TextField("PhysicalClient_Patronymic").AppendText("testovich");
+			Click("Подтвердить");
+			AssertText("Спасибо, теперь вы можете продолжить работу");
+
+			session.Refresh(client);
+			Assert.IsTrue(client.AutoUnblocked);
+			Assert.IsTrue(client.Disabled);
+			Assert.IsTrue(client.FirstLunch);
 		}
 	}
 }

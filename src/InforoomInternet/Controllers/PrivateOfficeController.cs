@@ -38,6 +38,12 @@ namespace InforoomInternet.Controllers
 		{
 			var clientId = Convert.ToUInt32(Session["LoginClient"]);
 			var client = Client.Find(clientId);
+
+			if (!client.FirstLunch) {
+				RedirectToAction("FirstVisit");
+				return;
+			}
+
 			PropertyBag["PhysClientName"] = string.Format("{0} {1}", client.PhysicalClient.Name, client.PhysicalClient.Patronymic);
 			PropertyBag["PhysicalClient"] = client.PhysicalClient;
 			PropertyBag["Client"] = client;
@@ -64,11 +70,53 @@ namespace InforoomInternet.Controllers
 			}
 			if (Context.Session["autoIn"] != null)
 				PropertyBag["autoIn"] = true;
+		}
 
-			if (client.NoEndPoint()) {
-				PropertyBag["clientAddress"] = client.GetAdress();
-				RenderView("FirstVisit");
+		public void FirstVisit()
+		{
+			var clientId = Convert.ToUInt32(Session["LoginClient"]);
+			var client = Client.Find(clientId);
+			PropertyBag["client"] = client;
+			PropertyBag["PhysicalClient"] = client.PhysicalClient;
+		}
+
+		public void FirstVisit(uint physicalClientId)
+		{
+			var clientId = Convert.ToUInt32(Session["LoginClient"]);
+			var client = Client.Find(clientId);
+			SetSmartBinder(AutoLoadBehavior.Always);
+			var physicalClient = DbSession.Get<PhysicalClient>(physicalClientId);
+			BindObjectInstance(physicalClient, "PhysicalClient");
+			if (IsPost && IsValid(physicalClient)) {
+				DbSession.Save(physicalClient);
+				if (client.NoEndPoint()) {
+					var userHostAddress = Request.UserHostAddress;
+#if DEBUG
+					userHostAddress = "192.168.0.1";
+					var programIP = Convert.ToUInt32(NetworkSwitch.SetProgramIp(userHostAddress));
+					if (DbSession.Query<Lease>().FirstOrDefault(l => l.Ip == programIP) == null) {
+						var lease = new Lease {
+							Ip = programIP,
+							Switch = DbSession.Query<NetworkSwitch>().First()
+						};
+						DbSession.Save(lease);
+					}
+#endif
+					client.CreateAutoEndPont(userHostAddress, DbSession);
+				}
+				client.FirstLunch = true;
+				client.Disabled = true;
+				client.AutoUnblocked = true;
+				DbSession.SaveOrUpdate(client);
+				Flash["message"] = "Спасибо, теперь вы можете продолжить работу";
+				RedirectToAction("IndexOffice");
 			}
+			else {
+				DbSession.Evict(physicalClient);
+				DbSession.Evict(client);
+			}
+			FirstVisit();
+			PropertyBag["PhysicalClient"] = physicalClient;
 		}
 
 		public void PostponedPayment()

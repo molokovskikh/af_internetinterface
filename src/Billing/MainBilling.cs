@@ -210,7 +210,7 @@ set s.LastStartFail = true;")
 			}
 			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
 				var clients = Client.Queryable.Where(c => c.PhysicalClient != null && c.Disabled && c.AutoUnblocked).ToList();
-				clients = clients.Where(c => c.PhysicalClient.Balance >= c.GetPriceIgnoreDisabled() * c.PercentBalance).ToList();
+				clients = clients.Where(c => c.PhysicalClient.Balance > c.GetPriceIgnoreDisabled() * c.PercentBalance).ToList();
 				var workStatus = Status.Find((uint)StatusType.Worked);
 				foreach (var client in clients) {
 					client.Status = workStatus;
