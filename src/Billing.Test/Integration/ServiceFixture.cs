@@ -178,7 +178,7 @@ namespace Billing.Test.Integration
 		[Test]
 		public void DebtWorkTest()
 		{
-			const int countDays = 5;
+			const int countDays = 10;
 			var client = _client;
 
 			PhysicalClient physicalClient;
@@ -203,7 +203,7 @@ namespace Billing.Test.Integration
 				client.ClientServices.Add(CServive);
 				CServive.Activate();
 			}
-			for (int i = 0; i < countDays; i++) {
+			/*for (int i = 0; i < countDays; i++) {
 				billing.OnMethod();
 				billing.Compute();
 				SystemTime.Now = () => DateTime.Now.AddDays(i + 1);
@@ -232,7 +232,7 @@ namespace Billing.Test.Integration
 				SystemTime.Reset();
 				CServive = ActiveRecordMediator<ClientService>.FindByPrimaryKey(CServive.Id);
 				CServive.Activate();
-			}
+			}*/
 			for (var i = 0; i < countDays; i++) {
 				billing.OnMethod();
 				billing.Compute();
@@ -249,8 +249,8 @@ namespace Billing.Test.Integration
 				Assert.IsTrue(client.Disabled);
 				client.Disabled = false;
 				client.Update();
-
-				Assert.That(Math.Round(-client.GetPrice() / client.GetInterval() * countDays, 0) - 10,
+				//-50 из-за того, что платеж за 10 дней
+				Assert.That(Math.Round(-client.GetPrice() / client.GetInterval() * countDays, 0) - 10 - 50,
 					Is.EqualTo(Math.Round(physicalClient.Balance, 0)));
 				Assert.That(client.RatedPeriodDate.Value.Date, Is.EqualTo(DateTime.Now.Date));
 				CServive = new ClientService {
@@ -284,6 +284,8 @@ namespace Billing.Test.Integration
 					Service = Service.GetByType(typeof(DebtWork)),
 				};
 				client.ClientServices.Add(CServive);
+				client.Disabled = true;
+				ActiveRecordMediator.Save(client);
 
 				CServive.Activate();
 				Assert.That(CServive.Activated, Is.EqualTo(true));
@@ -670,6 +672,8 @@ namespace Billing.Test.Integration
 			using (new SessionScope()) {
 				pclient_post = ActiveRecordMediator<PhysicalClient>.FindByPrimaryKey(pclient_post.Id);
 				client_Post = ActiveRecordMediator<Client>.FindByPrimaryKey(client_Post.Id);
+				client_Post.Disabled = true;
+				ActiveRecordMediator.Save(client_Post);
 				pclient_post.Balance = -200m;
 				pclient_post.Update();
 

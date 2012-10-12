@@ -47,6 +47,7 @@ namespace InforoomInternet.Test.Functional
 			var _switch = new NetworkSwitch();
 			session.Save(_switch);
 			client.Endpoints.Clear();
+			client.FirstLunch = false;
 			session.SaveOrUpdate(client);
 			Css("#exitLink").Click();
 			var lease = new Lease {
@@ -60,6 +61,7 @@ namespace InforoomInternet.Test.Functional
 			browser.TextField("Login").AppendText(client.Id.ToString());
 			browser.TextField("Password").AppendText("1234");
 			browser.Button("LogBut").Click();
+			Click("Подтвердить");
 			client.Refresh();
 			Assert.AreEqual(client.Endpoints.Count, 1);
 			Assert.That(client.Endpoints.First().Switch, Is.EqualTo(_switch));
@@ -80,7 +82,7 @@ namespace InforoomInternet.Test.Functional
 
 			Refresh();
 			Click("Подробнее...");
-			Click("Разблокировать");
+			Click("Активировать на 3 дня");
 
 			AssertText("Ваш личный кабинет");
 			AssertText("Услуга \"Обещанный платеж активирована\"");
