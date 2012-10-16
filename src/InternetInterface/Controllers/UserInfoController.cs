@@ -764,13 +764,15 @@ where r.`Label`= :LabelIndex;")
 							Appeals.CreareAppeal("Оператором клиент был заблокирован", client, AppealType.Statistic);
 					}
 					else {
-						client.AutoUnblocked = true;
-						client.Disabled = false;
-						client.ShowBalanceWarningPage = false;
-						if (client.IsChanged(c => c.Disabled))
-							Appeals.CreareAppeal("Оператором клиент был разблокирован", client, AppealType.Statistic);
-						if (client.IsChanged(c => c.ShowBalanceWarningPage))
-							Appeals.CreareAppeal("Оператором отключена страница Warning", client, AppealType.Statistic);
+						if (client.Status.Type != StatusType.Dissolved) {
+							client.AutoUnblocked = true;
+							client.Disabled = false;
+							client.ShowBalanceWarningPage = false;
+							if (client.IsChanged(c => c.Disabled))
+								Appeals.CreareAppeal("Оператором клиент был разблокирован", client, AppealType.Statistic);
+							if (client.IsChanged(c => c.ShowBalanceWarningPage))
+								Appeals.CreareAppeal("Оператором отключена страница Warning", client, AppealType.Statistic);
+						}
 					}
 					if (client.Status.Type == StatusType.Dissolved) {
 						client.Endpoints.Clear();

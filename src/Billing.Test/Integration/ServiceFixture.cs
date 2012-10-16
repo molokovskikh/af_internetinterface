@@ -205,36 +205,6 @@ namespace Billing.Test.Integration
 				client.ClientServices.Add(CServive);
 				CServive.Activate();
 			}
-			/*for (int i = 0; i < countDays; i++) {
-				billing.OnMethod();
-				billing.Compute();
-				SystemTime.Now = () => DateTime.Now.AddDays(i + 1);
-			}
-			using (new SessionScope()) {
-				//не должны ничего списать тк услуга DebtWork не была активирована тк клиент не внес платежей
-				//на сумму тарифа
-				client.Refresh();
-				Assert.That(physicalClient.Balance, Is.EqualTo(-10));
-				new Payment {
-					Client = client,
-					Sum = client.PhysicalClient.Tariff.Price,
-					PaidOn = DateTime.Now.AddDays(-1)
-				}.Save();
-				SystemTime.Reset();
-			}
-			billing.OnMethod();
-			using (new SessionScope()) {
-				physicalClient = ActiveRecordMediator<PhysicalClient>.FindByPrimaryKey(physicalClient.Id);
-				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
-				physicalClient.Balance = -10;
-				client.RatedPeriodDate = DateTime.Now;
-				client.Update();
-				physicalClient.Update();
-				//client.Refresh();
-				SystemTime.Reset();
-				CServive = ActiveRecordMediator<ClientService>.FindByPrimaryKey(CServive.Id);
-				CServive.Activate();
-			}*/
 			for (var i = 0; i < countDays; i++) {
 				billing.OnMethod();
 				billing.Compute();
