@@ -15,6 +15,7 @@ namespace InternetInterface.Models
 
 		public Payment(Client client, decimal sum)
 		{
+			PaidOn = DateTime.Now;
 			Client = client;
 			Sum = sum;
 		}

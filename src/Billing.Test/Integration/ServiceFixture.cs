@@ -27,8 +27,8 @@ namespace Billing.Test.Integration
 				Client = _client,
 				BeginWorkDate = DateTime.Now,
 				EndWorkDate = endDate.Value,
-				Service = Service.GetByType(type),
-				Activator = InitializeContent.Partner
+				Service = Service.GetByType(type)
+				//Activator = InitializeContent.Partner
 			};
 
 			_client.Activate(service);
@@ -71,8 +71,10 @@ namespace Billing.Test.Integration
 
 			billing.OnMethod();
 
-			_client.Refresh();
-			Assert.That(_client.Disabled, Is.True);
+			using (new SessionScope()) {
+				_client = ActiveRecordMediator<Client>.FindByPrimaryKey(_client.Id);
+				Assert.That(_client.Disabled, Is.True);
+			}
 		}
 
 		//Если не поперло, запусти 3 раза отдельно
@@ -381,9 +383,6 @@ namespace Billing.Test.Integration
 			using (new SessionScope()) {
 				_client = Client.Find(_client.Id);
 				Assert.IsTrue(_client.Disabled);
-				AssertThatContainsOnlyMandatoryServices();
-				_client.PhysicalClient.Balance = -5m;
-				_client.Save();
 			}
 			using (new SessionScope()) {
 				_client = CreateClient();
@@ -814,6 +813,52 @@ namespace Billing.Test.Integration
 				Assert.IsTrue(_client.Disabled);
 				service.Activate();
 				Assert.IsTrue(_client.Disabled);
+			}
+		}
+
+		[Test]
+		public void Debt_work_payment()
+		{
+			using (new SessionScope()) {
+				_client.Disabled = true;
+				_client.PhysicalClient.Balance = -5m;
+				_client.Save();
+				Activate(typeof(DebtWork));
+				ActiveRecordMediator.Save(new Payment(_client, _client.GetPriceForTariff() + 50));
+				Assert.IsTrue(_client.ClientServices.Select(c => c.Service).Contains(Service.Type<DebtWork>()));
+			}
+			billing.OnMethod();
+			using (new SessionScope()) {
+				var client = ActiveRecordMediator<Client>.FindByPrimaryKey(_client.Id);
+				Assert.IsFalse(client.ClientServices.Select(c => c.Service).Contains(Service.Type<DebtWork>()));
+			}
+		}
+
+		[Test]
+		public void Debt_Work_diactivate_and_delete()
+		{
+			using (new SessionScope()) {
+				_client.Disabled = true;
+				_client.PhysicalClient.Balance = -5m;
+				_client.Save();
+				Activate(typeof(DebtWork));
+				Assert.IsTrue(_client.ClientServices.Select(c => c.Service).Contains(Service.Type<DebtWork>()));
+			}
+			SystemTime.Now = () => DateTime.Now.AddDays(2);
+			billing.OnMethod();
+			using (new SessionScope()) {
+				var client = ActiveRecordMediator<Client>.FindByPrimaryKey(_client.Id);
+				var service = client.ClientServices.FirstOrDefault(s => s.Service.Id == Service.Type<DebtWork>().Id);
+				Assert.IsNotNull(service);
+				Assert.IsTrue(service.Diactivated);
+				Assert.False(service.Activated);
+				ActiveRecordMediator.Save(new Payment(_client, _client.GetPriceForTariff() + 50));
+			}
+			billing.OnMethod();
+			using (new SessionScope()) {
+				var client = ActiveRecordMediator<Client>.FindByPrimaryKey(_client.Id);
+				var service = client.ClientServices.FirstOrDefault(s => s.Service.Id == Service.Type<DebtWork>().Id);
+				Assert.IsNull(service);
 			}
 		}
 	}

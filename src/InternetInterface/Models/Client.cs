@@ -361,8 +361,9 @@ namespace InternetInterface.Models
 
 		public virtual bool CanUsedPostponedPayment()
 		{
+			var haveDebtWork = !ClientServices.Select(c => c.Service.Id).Contains(Service.Type<DebtWork>().Id);
 			return PhysicalClient != null
-				&& !ClientServices.Select(c => c.Service).Contains(Service.GetByType(typeof(DebtWork)))
+				&& haveDebtWork
 				&& Disabled
 				&& PhysicalClient.Balance <= 0
 				&& AutoUnblocked;

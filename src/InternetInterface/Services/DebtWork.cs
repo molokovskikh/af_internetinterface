@@ -41,8 +41,8 @@ namespace InternetInterface.Services
 
 		public override void PaymentClient(ClientService assignedService)
 		{
-			if (assignedService.Client.CanDisabled())
-				assignedService.Deactivate();
+			if (!assignedService.Client.CanDisabled())
+				assignedService.CompulsoryDeactivate();
 		}
 
 		public override bool CanBlock(ClientService assignedService)
@@ -58,7 +58,7 @@ namespace InternetInterface.Services
 				return true;
 
 			var lastPayments = Payment.Queryable
-				.Where(p => p.Client == assignedService.Client && assignedService.BeginWorkDate.Value < p.PaidOn)
+				.Where(p => p.Client == assignedService.Client && assignedService.BeginWorkDate.Value <= p.PaidOn)
 				.ToList().Sum(p => p.Sum);
 			var balance = assignedService.Client.PhysicalClient.Balance;
 			if (balance > 0 &&
