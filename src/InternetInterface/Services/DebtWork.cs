@@ -28,7 +28,7 @@ namespace InternetInterface.Services
 		{
 			if (client.PhysicalClient != null) {
 				var conVol = !client.ClientServices.Select(c => c.Service).Contains(GetByType(typeof(VoluntaryBlockin)));
-				return conVol && client.StartWork();
+				return conVol;
 			}
 			return false;
 		}
@@ -36,7 +36,7 @@ namespace InternetInterface.Services
 		public override bool CanActivate(ClientService assignedService)
 		{
 			var client = assignedService.Client;
-			return client.Disabled && client.Balance < 0 && CanActivate(client);
+			return client.Disabled && client.Balance <= 0 && CanActivate(client);
 		}
 
 		public override void PaymentClient(ClientService assignedService)

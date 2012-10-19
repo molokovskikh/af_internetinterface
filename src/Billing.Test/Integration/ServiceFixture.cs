@@ -831,5 +831,23 @@ namespace Billing.Test.Integration
 				Assert.IsNull(service);
 			}
 		}
+
+		[Test]
+		public void New_client_debt_work()
+		{
+			using (new SessionScope()) {
+				_client = CreateClient();
+				_client.Disabled = true;
+				_client.BeginWork = null;
+				_client.PhysicalClient.Balance = 0;
+				ActiveRecordMediator.Save(_client);
+				Activate(typeof(DebtWork), DateTime.Now.AddDays(3));
+			}
+			billing.OnMethod();
+			using (new SessionScope()) {
+				var client = ActiveRecordMediator<Client>.FindByPrimaryKey(_client.Id);
+				Assert.IsFalse(client.Disabled);
+			}
+		}
 	}
 }
