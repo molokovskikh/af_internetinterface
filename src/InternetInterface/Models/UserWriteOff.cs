@@ -2,6 +2,7 @@
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Castle.Components.Validator;
+using Castle.Core.Smtp;
 using Common.Web.Ui.MonoRailExtentions;
 using InternetInterface.Controllers.Filter;
 
@@ -54,5 +55,7 @@ namespace InternetInterface.Models
 		{
 			return String.Format("{0} - {1:C}", Comment, Sum);
 		}
+
+		public virtual IEmailSender Sender { get; set; }
 	}
 }

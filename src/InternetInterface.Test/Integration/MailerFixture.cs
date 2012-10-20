@@ -24,6 +24,12 @@ namespace InternetInterface.Test.Integration
 	[TestFixture]
 	public class EmailFixture : IntegrationFixture
 	{
+		[SetUp]
+		public void SetUp()
+		{
+			BaseMailer.ViewEngineManager = ForTest.GetViewManager();
+		}
+
 		[Test]
 		public void Lawyer_person_user_write_off_sender()
 		{
@@ -37,10 +43,10 @@ namespace InternetInterface.Test.Integration
 					sended = true;
 					return true;
 				}));
-			Email.Sender = sender;
 
 			var client = ClientHelper.CreateLaywerPerson();
 			var writeOff = new UserWriteOff(client, 500, "testComment");
+			writeOff.Sender = sender;
 			session.Save(client);
 			session.Save(writeOff);
 

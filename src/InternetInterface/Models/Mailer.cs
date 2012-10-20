@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
+using System.Text;
 using Castle.Core.Smtp;
 using Castle.MonoRail.Framework;
 using Common.Tools;
@@ -39,6 +41,22 @@ namespace InternetInterface.Models
 			Subject = String.Format("Счет за {0}", invoice.Period);
 
 			PropertyBag["invoice"] = invoice;
+
+			return this;
+		}
+
+		public Mailer UserWriteOff(UserWriteOff writeOff)
+		{
+			Template = "UserWriteOff";
+			From = "internet@ivrn.net";
+			To = "InternetBilling@analit.net";
+			Subject = "Списание для Юр.Лица.";
+#if DEBUG
+			To = "kvasovtest@analit.net";
+#endif
+			var registrator = writeOff.Registrator != null ? writeOff.Registrator.Name : string.Empty;
+			PropertyBag["registrator"] = registrator;
+			PropertyBag["writeOff"] = writeOff;
 
 			return this;
 		}
