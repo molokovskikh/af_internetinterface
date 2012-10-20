@@ -21,49 +21,49 @@ ${FormHelper.HiddenField("physicalClientId", PhysicalClient.Id, null)}
 	<tr>
 		<td>Фамилия</td>
 		<td>
-			${FormHelper.TextFieldValue("PhysicalClient.Surname", PhysicalClient.Surname, { @class : @big_input })}
+			${app.Edit("PhysicalClient.Surname", { @class : @big_input })}
 			${app.GetValidationError("PhysicalClient.Surname")}
 		</td>
 	</tr>
 	<tr>
 		<td>Имя</td>
 		<td>
-			${FormHelper.TextFieldValue("PhysicalClient.Name", PhysicalClient.Name, { @class : @big_input })}
+			${app.Edit("PhysicalClient.Name", { @class : @big_input })}
 			${app.GetValidationError("PhysicalClient.Name")}
 		</td>
 	</tr>
 	<tr>
 		<td>Отчество</td>
 		<td>
-			${FormHelper.TextFieldValue("PhysicalClient.Patronymic", PhysicalClient.Patronymic, { @class : @big_input })}
+			${app.Edit("PhysicalClient.Patronymic", { @class : @big_input })}
 			${app.GetValidationError("PhysicalClient.Patronymic")}
 		</td>
 	</tr>
 	<tr>
 		<td>Серия</td>
 		<td>
-			${FormHelper.TextFieldValue("PhysicalClient.PassportSeries", PhysicalClient.PassportSeries, null)}
+			${app.Edit("PhysicalClient.PassportSeries")}
 			${app.GetValidationError("PhysicalClient.PassportSeries")}
 		</td>
 	</tr>
 	<tr>
 		<td>Номер</td>
 		<td>
-			${FormHelper.TextFieldValue("PhysicalClient.PassportNumber", PhysicalClient.PassportNumber, null)}
+			${app.Edit("PhysicalClient.PassportNumber")}
 			${app.GetValidationError("PhysicalClient.PassportNumber")}
 		</td>
 	</tr>
 	<tr>
 		<td>Дата выдачи</td>
 		<td>
-			${FormHelper.TextFieldValue("PhysicalClient.PassportDate", PhysicalClient.PassportDateForClient, null)}
+			${app.Edit("PhysicalClient.PassportDate", { @class:@validateDate})}
 			${app.GetValidationError("PhysicalClient.PassportDate")}
 		</td>
 	</tr>
 	<tr>
 		<td>Кем выдан</td>
 		<td>
-			${FormHelper.TextFieldValue("PhysicalClient.WhoGivePassport", PhysicalClient.WhoGivePassport, { @class : @big_input })}
+			${app.Edit("PhysicalClient.WhoGivePassport", { @class : @big_input })}
 			${app.GetValidationError("PhysicalClient.WhoGivePassport")}
 		</td>
 	</tr>

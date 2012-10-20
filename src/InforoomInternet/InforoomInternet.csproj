@@ -447,6 +447,7 @@
     <Content Include="CSS\main.css" />
     <Content Include="CSS\styles.css" />
     <Content Include="Global.asax" />
+    <Content Include="JavaScript\DateValidate.js" />
     <Content Include="JavaScript\jquery-1.4.2.min.js" />
     <Content Include="JavaScript\jquery.autocomplete.js" />
     <Content Include="JavaScript\lightbox\builder.js" />

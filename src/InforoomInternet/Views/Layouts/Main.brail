@@ -10,6 +10,7 @@
 <script type="text/javascript" src="${siteroot}/assets/javascripts/jquery-ui-1.8.16.min.js"></script>
 <script type="text/javascript" src="${siteroot}/javascript/jquery.validate.js"></script>
 <script type="text/javascript" src="${siteroot}/javascript/jquery.ui.datepicker-ru.js"></script>
+<script type="text/javascript" src="${siteroot}/javascript/DateValidate.js"></script>
 
 <link rel="stylesheet" href="${siteroot}/CSS/styles.css" type="text/css" />
 <link rel="stylesheet" href="${siteroot}/assets/Stylesheets/themes/base/jquery.ui.progressbar.css" type="text/css" />

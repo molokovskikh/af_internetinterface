@@ -778,7 +778,7 @@ background-color: #FEEFB3;
 .error {
 color: #D8000C;
 background-color: #FFBABA;
-
+	margin-left: 5px;
 }
 
 .button
@@ -866,4 +866,8 @@ background-color: #FFBABA;
 
 .fullWidth {
 	width: 100%;
+}
+
+.headTable {
+	border-spacing: 0px;
 }
