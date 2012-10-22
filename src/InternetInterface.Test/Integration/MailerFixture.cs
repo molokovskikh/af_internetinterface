@@ -24,12 +24,6 @@ namespace InternetInterface.Test.Integration
 	[TestFixture]
 	public class EmailFixture : IntegrationFixture
 	{
-		[SetUp]
-		public void SetUp()
-		{
-			BaseMailer.ViewEngineManager = ForTest.GetViewManager();
-		}
-
 		[Test]
 		public void Lawyer_person_user_write_off_sender()
 		{

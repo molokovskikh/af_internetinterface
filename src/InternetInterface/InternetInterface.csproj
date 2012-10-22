@@ -184,7 +184,6 @@
     <None Include="Views\Layouts\print.brail" />
     <None Include="Views\Mail\Invoice.brail" />
     <Content Include="Views\Map\Bookmark.brail" />
-    <Content Include="Views\Mail\UserWriteOff.brail" />
     <None Include="Views\Map\ShowBookmarks.brail" />
     <None Include="Views\PrivateMessages\ForClient.brail" />
     <None Include="Views\PrivateMessages\ForSwitch.brail" />

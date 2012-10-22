@@ -1,5 +1,0 @@
-﻿Зарегистрировано разовое списание для Юр.Лица.
-Клиент: ${writeOff.Client.Id.ToString("00000")} - ${writeOff.Client.LawyerPerson.Name} (${writeOff.Client.Name})
-Списание: Сумма - ${writeOff.Sum.ToString("0.00")}
-Комментарий: ${writeOff.Comment}
-Оператор: ${registrator}

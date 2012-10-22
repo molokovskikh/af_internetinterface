@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Net.Mail;
 using System.Text;
 using Castle.Core.Smtp;
 using Castle.MonoRail.Framework;
@@ -43,6 +44,15 @@ namespace InternetInterface.Models
 			PropertyBag["invoice"] = invoice;
 
 			return this;
+		}
+
+		public void SendText(string from, string to, string subject, string body)
+		{
+			var mailMessage = new MailMessage(from, to, subject, body);
+#if DEBUG
+			mailMessage = new MailMessage(from, "kvasovtest@analit.net", subject, body);
+#endif
+			Sender.Send(mailMessage);
 		}
 
 		public Mailer UserWriteOff(UserWriteOff writeOff)

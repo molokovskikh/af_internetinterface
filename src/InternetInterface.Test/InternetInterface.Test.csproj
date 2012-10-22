@@ -144,7 +144,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ForTest.cs" />
     <Compile Include="Functional\BrigadFixture.cs" />
     <Compile Include="Functional\ClientFunctionalFixture.cs" />
     <Compile Include="Functional\CommutatorFixture.cs" />
