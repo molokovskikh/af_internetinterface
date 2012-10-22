@@ -9,19 +9,13 @@ namespace InforoomInternet.Helpers
 	{
 		public AppHelper()
 		{
-			Editors.Add(typeof(DateTime), (name, value, options) => {
-				var dateTime = (DateTime)value;
+			Editors.Add(typeof(DateTime?), (name, value, options) => {
+				var dateTime = (DateTime?)value;
 
-				if (dateTime == null || dateTime == DateTime.MinValue) {
-					var clazz = string.Empty;
-					if (options != null) {
-						var opt = options as IDictionary;
-						clazz = GetAttributes(opt);
-					}
-					return string.Format("<input name=\"{0}\" id=\"{1}\" {2}/>", name, name.Replace('.', '_'), clazz);
-				}
+				if (dateTime == null)
+					return GetEdit(name, typeof(int), string.Empty, options);
 
-				return GetEdit(name, typeof(int), dateTime.ToShortDateString(), options);
+				return GetEdit(name, typeof(int), dateTime.Value.ToShortDateString(), options);
 			});
 		}
 
