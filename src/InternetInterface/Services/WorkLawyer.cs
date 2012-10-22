@@ -69,6 +69,8 @@ namespace InternetInterface.Services
 			if ((assignedService.EndWorkDate == null) ||
 				(assignedService.EndWorkDate != null && (SystemTime.Now().Date >= assignedService.EndWorkDate.Value.Date))) {
 				CompulsoryDeactivate(assignedService);
+				assignedService.Client.ClientServices.Remove(assignedService);
+				ActiveRecordMediator.Save(assignedService.Client);
 				ActiveRecordMediator.Delete(assignedService);
 			}
 		}

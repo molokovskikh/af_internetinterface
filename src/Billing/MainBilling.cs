@@ -321,11 +321,10 @@ set s.LastStartFail = true;")
 				transaction.VoteCommit();
 			}
 			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
+
 				var settings = ActiveRecordMediator<InternetSettings>.FindFirst();
 				settings.LastStartFail = errorCount > 0;
 				settings.Save();
-
-				ActiveRecordLinqBase<ClientService>.Queryable.ToList().Each(cs => cs.WriteOff());
 
 				transaction.VoteCommit();
 			}
@@ -343,6 +342,9 @@ set s.LastStartFail = true;")
 					using (var transaction = new TransactionScope(OnDispose.Rollback)) {
 						var client = ActiveRecordMediator<Client>.FindByPrimaryKey(id);
 						action(client);
+						foreach (var clientService in client.ClientServices.ToList()) {
+							clientService.WriteOff();
+						}
 						client.PaidDay = true;
 						client.Update();
 						transaction.VoteCommit();
