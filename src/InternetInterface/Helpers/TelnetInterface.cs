@@ -34,150 +34,150 @@ namespace InternetInterface.Helpers
 	public enum TelnetOption : byte
 	{
 		/// <summary>
-		/// Двоичный обмен
+		/// Р”РІРѕРёС‡РЅС‹Р№ РѕР±РјРµРЅ
 		/// </summary>
 		BinaryTransmission = 0x00,
 
 		/// <summary>
-		/// Эхо
+		/// Р­С…Рѕ
 		/// </summary>
 		Echo = 0x01,
 
 		/// <summary>
-		/// Повторное соединение
+		/// РџРѕРІС‚РѕСЂРЅРѕРµ СЃРѕРµРґРёРЅРµРЅРёРµ
 		/// </summary>
 		Reconnection = 0x02,
 
 		/// <summary>
-		/// Подавление буферизации ввода
+		/// РџРѕРґР°РІР»РµРЅРёРµ Р±СѓС„РµСЂРёР·Р°С†РёРё РІРІРѕРґР°
 		/// </summary>
 		SuppressGoAhead = 0x03,
 
 		/// <summary>
-		/// Диалог о размере сообщения
+		/// Р”РёР°Р»РѕРі Рѕ СЂР°Р·РјРµСЂРµ СЃРѕРѕР±С‰РµРЅРёСЏ
 		/// </summary>
 		ApproxMessageSizeNegotiation = 0x04,
 
 		/// <summary>
-		/// Статус
+		/// РЎС‚Р°С‚СѓСЃ
 		/// </summary>
 		Status = 0x05,
 
 		/// <summary>
-		/// Временная метка
+		/// Р’СЂРµРјРµРЅРЅР°СЏ РјРµС‚РєР°
 		/// </summary>
 		TimingMark = 0x06,
 
 		/// <summary>
-		/// Удаленный доступ и отклик
+		/// РЈРґР°Р»РµРЅРЅС‹Р№ РґРѕСЃС‚СѓРї Рё РѕС‚РєР»РёРє
 		/// </summary>
 		RemoteControlledTransAndEcho = 0x07,
 
 		/// <summary>
-		/// Длина выходной строки
+		/// Р”Р»РёРЅР° РІС‹С…РѕРґРЅРѕР№ СЃС‚СЂРѕРєРё
 		/// </summary>
 		OutputLineWidth = 0x08,
 
 		/// <summary>
-		/// Размер выходной страницы
+		/// Р Р°Р·РјРµСЂ РІС‹С…РѕРґРЅРѕР№ СЃС‚СЂР°РЅРёС†С‹
 		/// </summary>
 		OutputPageSize = 0x09,
 
 		/// <summary>
-		/// Режим вывода символов <возврат каретки>
+		/// Р РµР¶РёРј РІС‹РІРѕРґР° СЃРёРјРІРѕР»РѕРІ <РІРѕР·РІСЂР°С‚ РєР°СЂРµС‚РєРё>
 		/// </summary>
 		OutputCarriageReturnDisposition = 0x0A,
 
 		/// <summary>
-		/// Вывод горизонтальной табуляции
+		/// Р’С‹РІРѕРґ РіРѕСЂРёР·РѕРЅС‚Р°Р»СЊРЅРѕР№ С‚Р°Р±СѓР»СЏС†РёРё
 		/// </summary>
 		OutputHorizontalTabStops = 0x0B,
 
 		/// <summary>
-		/// Установка положения табуляции при выводе
+		/// РЈСЃС‚Р°РЅРѕРІРєР° РїРѕР»РѕР¶РµРЅРёСЏ С‚Р°Р±СѓР»СЏС†РёРё РїСЂРё РІС‹РІРѕРґРµ
 		/// </summary>
 		OutputHorizontalTabDisposition = 0x0C,
 
 		/// <summary>
-		/// Режим вывода команды смены страницы
+		/// Р РµР¶РёРј РІС‹РІРѕРґР° РєРѕРјР°РЅРґС‹ СЃРјРµРЅС‹ СЃС‚СЂР°РЅРёС†С‹
 		/// </summary>
 		OutputFormfeedDisposition = 0x0D,
 
 		/// <summary>
-		/// Вывод вертикальной табуляции
+		/// Р’С‹РІРѕРґ РІРµСЂС‚РёРєР°Р»СЊРЅРѕР№ С‚Р°Р±СѓР»СЏС†РёРё
 		/// </summary>
 		OutputVerticalTabstops = 0x0E,
 
 		/// <summary>
-		/// Определяет положение вертикальной табуляции
+		/// РћРїСЂРµРґРµР»СЏРµС‚ РїРѕР»РѕР¶РµРЅРёРµ РІРµСЂС‚РёРєР°Р»СЊРЅРѕР№ С‚Р°Р±СѓР»СЏС†РёРё
 		/// </summary>
 		OutputVerticalTabDisposition = 0x0F,
 
 		/// <summary>
-		/// Режим вывода символа "перевод строки"
+		/// Р РµР¶РёРј РІС‹РІРѕРґР° СЃРёРјРІРѕР»Р° "РїРµСЂРµРІРѕРґ СЃС‚СЂРѕРєРё"
 		/// </summary>
 		OutputLinefeedDisposition = 0x10,
 
 		/// <summary>
-		/// Расширенный набор кодов ASCII
+		/// Р Р°СЃС€РёСЂРµРЅРЅС‹Р№ РЅР°Р±РѕСЂ РєРѕРґРѕРІ ASCII
 		/// </summary>
 		ExtendedASCII = 0x11,
 
 		/// <summary>
-		/// Возврат (logout)
+		/// Р’РѕР·РІСЂР°С‚ (logout)
 		/// </summary>
 		Logout = 0x12,
 
 		/// <summary>
-		/// Байт-макро
+		/// Р‘Р°Р№С‚-РјР°РєСЂРѕ
 		/// </summary>
 		ByteMacro = 0x13,
 
 		/// <summary>
-		/// Терминал ввода данных
+		/// РўРµСЂРјРёРЅР°Р» РІРІРѕРґР° РґР°РЅРЅС‹С…
 		/// </summary>
 		DataEntryTerminal = 0x14,
 		SUPDUP = 0x15,
 		SUPDUPOutput = 0x16,
 
 		/// <summary>
-		/// Место отправления
+		/// РњРµСЃС‚Рѕ РѕС‚РїСЂР°РІР»РµРЅРёСЏ
 		/// </summary>
 		SendLocation = 0x17,
 
 		/// <summary>
-		/// Тип терминала
+		/// РўРёРї С‚РµСЂРјРёРЅР°Р»Р°
 		/// </summary>
 		TerminalType = 0x18,
 
 		/// <summary>
-		/// Конец записи
+		/// РљРѕРЅРµС† Р·Р°РїРёСЃРё
 		/// </summary>
 		EndOfRecord = 0x19,
 
 		/// <summary>
-		/// Tacacs- идентификация пользователя
+		/// Tacacs- РёРґРµРЅС‚РёС„РёРєР°С†РёСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
 		/// </summary>
 		TACACSUserIdentification = 0x1A,
 
 		/// <summary>
-		/// Пометка вывода
+		/// РџРѕРјРµС‚РєР° РІС‹РІРѕРґР°
 		/// </summary>
 		OutputMarking = 0x1B,
 
 		/// <summary>
-		/// Код положения терминала
+		/// РљРѕРґ РїРѕР»РѕР¶РµРЅРёСЏ С‚РµСЂРјРёРЅР°Р»Р°
 		/// </summary>
 		TerminalLocationNumber = 0x1C,
 
 		/// <summary>
-		/// Режим 3270
+		/// Р РµР¶РёРј 3270
 		/// </summary>
 		Telnet3270Regime = 0x1D,
 		X3PAD = 0x1E,
 
 		/// <summary>
-		/// Размер окна
+		/// Р Р°Р·РјРµСЂ РѕРєРЅР°
 		/// </summary>
 		NegotiateAboutWindowSize = 0x1F,
 		TerminalSpeed = 0x20,
@@ -305,7 +305,7 @@ namespace InternetInterface.Helpers
 				s = Read();
 			}
 			if (!loggined || !passwored) {
-				throw new Exception("Не могу авторизоваться");
+				throw new Exception("РќРµ РјРѕРіСѓ Р°РІС‚РѕСЂРёР·РѕРІР°С‚СЊСЃСЏ");
 			}
 
 			TimeOutMs = oldTimeOutMs;

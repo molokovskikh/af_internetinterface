@@ -61,7 +61,7 @@ namespace InternetInterface.Queries
 		public string GetUriToArchive()
 		{
 			Archive = !Archive;
-			var label = Archive ? "Показать архив" : "Показать заявки";
+			var label = Archive ? "РџРѕРєР°Р·Р°С‚СЊ Р°СЂС…РёРІ" : "РџРѕРєР°Р·Р°С‚СЊ Р·Р°СЏРІРєРё";
 			var a = string.Format("<a href=\"../UserInfo/RequestView?{0}\">{1}</a>", GetUri(), label);
 			Archive = !Archive;
 			return a;
