@@ -10,7 +10,7 @@ using NUnit.Framework;
 
 namespace InforoomInternet.Test.Integration
 {
-	[TestFixture, Ignore("×èíèòü")]
+	[TestFixture, Ignore("Ð§Ð¸Ð½Ð¸Ñ‚ÑŒ")]
 	public class TariffFixture
 	{
 		[Test]
@@ -20,9 +20,9 @@ namespace InforoomInternet.Test.Integration
 
 			using (new SessionScope()) {
 				var tariff = new Tariff {
-					Name = "Vip òàðèô",
+					Name = "Vip Ñ‚Ð°Ñ€Ð¸Ñ„",
 					Price = 100,
-					Description = "Vip òàðèô",
+					Description = "Vip Ñ‚Ð°Ñ€Ð¸Ñ„",
 					Hidden = true,
 				};
 				tariff.Save();
@@ -33,7 +33,7 @@ namespace InforoomInternet.Test.Integration
 				holder.ReleaseSession(session);
 
 				var tariffs = Tariff.Queryable.ToList();
-				Assert.That(tariffs.FirstOrDefault(t => t.Name == "Vip òàðèô"), Is.Null, tariffs.Implode());
+				Assert.That(tariffs.FirstOrDefault(t => t.Name == "Vip Ñ‚Ð°Ñ€Ð¸Ñ„"), Is.Null, tariffs.Implode());
 			}
 		}
 	}

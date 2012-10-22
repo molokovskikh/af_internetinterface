@@ -13,7 +13,7 @@ namespace InternetInterface.Queries
 {
 	public class RequestFinderFilter : PaginableSortable
 	{
-		[Description("Статус")]
+		[Description("РЎС‚Р°С‚СѓСЃ")]
 		public ServiceRequestStatus? Status { get; set; }
 
 		public DatePeriod Period { get; set; }
@@ -21,7 +21,7 @@ namespace InternetInterface.Queries
 		public int DateSelector { get; set; }
 		public string Text { get; set; }
 
-		[Description("Бесплатные")]
+		[Description("Р‘РµСЃРїР»Р°С‚РЅС‹Рµ")]
 		public bool FreeFlag { get; set; }
 
 		public bool IsService;
