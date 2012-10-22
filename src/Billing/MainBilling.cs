@@ -321,7 +321,6 @@ set s.LastStartFail = true;")
 				transaction.VoteCommit();
 			}
 			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
-
 				var settings = ActiveRecordMediator<InternetSettings>.FindFirst();
 				settings.LastStartFail = errorCount > 0;
 				settings.Save();
