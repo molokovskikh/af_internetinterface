@@ -4,6 +4,8 @@ using InternetInterface.Models.Services;
 using InternetInterface.Test.Helpers;
 using NHibernate.Linq;
 using NUnit.Framework;
+using WatiN.Core;
+using WatiN.Core.Native.Windows;
 
 namespace InternetInterface.Test.Functional
 {
@@ -36,7 +38,12 @@ namespace InternetInterface.Test.Functional
 			Open("UserInfo/SearchUserInfo.rails?filter.ClientCode=" + client.Id);
 			Click("Управление услугами");
 			Click("Аренда приставки");
-			Click("Активировать");
+			browser.ShowWindow(NativeMethods.WindowShowStyle.Maximize);
+			var el = browser.Elements.First(e => 
+				e.Parent != null
+					&& e.OuterHtml != null
+					&& e.OuterHtml == "<input name=\"serviceId\" value=\"9\" type=\"hidden\">");
+			((Form)el.Parent).Submit();
 			AssertText("Услуга \"Аренда приставки\" активирована");
 			Click("Управление услугами");
 			Click("Аренда приставки");

@@ -15,7 +15,7 @@ namespace InforoomInternet.Helpers
 				if (dateTime == null)
 					return GetEdit(name, typeof(int), string.Empty, options);
 
-				return GetEdit(name, typeof(int), dateTime.Value.ToShortDateString(), options);
+				return helper.TextFieldValue(name, dateTime.Value.ToShortDateString(), options as IDictionary);
 			});
 		}
 

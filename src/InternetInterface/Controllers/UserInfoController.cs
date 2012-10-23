@@ -320,9 +320,10 @@ namespace InternetInterface.Controllers
 						client,
 						AppealType.Statistic);
 					DbSession.SaveOrUpdate(appeal);
+					Flash["Message"] = Message.Notify(appeal.Appeal);
 				}
 				catch (ServiceActivationException e) {
-					PropertyBag["errorMessage"] = e.Message;
+					Flash["errorMessage"] = e.Message;
 				}
 			}
 			RedirectToUrl(client.Redirect());
