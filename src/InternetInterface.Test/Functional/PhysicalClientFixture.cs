@@ -38,7 +38,6 @@ namespace InternetInterface.Test.Functional
 			Open("UserInfo/SearchUserInfo.rails?filter.ClientCode=" + client.Id);
 			Click("Управление услугами");
 			Click("Аренда приставки");
-			browser.ShowWindow(NativeMethods.WindowShowStyle.Maximize);
 			var el = browser.Elements.First(e => 
 				e.Parent != null
 					&& e.OuterHtml != null
