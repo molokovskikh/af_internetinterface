@@ -116,7 +116,7 @@
 												 <span class="description">Кем выдан: </span> ${Client.WhoGivePassport}<br />
 												 <span class="description">Адрес регистрации:</span> ${Client.RegistrationAdress}<br />
 												 <%if client.PassportDate != null: %>
-												 <span class="description">Дата выдачи :</span> ${Client.PassportDate.Value.ToShortDateString()}</td>
+												 <span class="description">Дата выдачи :</span> ${Client.PassportDate.ToShortDateString()}</td>
 												 <%else:%>
 													<span class="description">Дата выдачи :</span></td>
 												<%end%>

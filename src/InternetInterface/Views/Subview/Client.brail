@@ -192,7 +192,7 @@ $(function () {
 			<%end %>
 			<td >
 				<%if client.PassportDate != null: %>
-					<input id="PassportDate" type="text" value="${client.PassportDate.Value.ToShortDateString()}" name="client.PassportDate"/>
+					<input id="PassportDate" type="text" value="${client.PassportDate.ToShortDateString()}" name="client.PassportDate"/>
 				<%else:%>
 					<input id="PassportDate" type="text" name="client.PassportDate"/></td>
 				<%end%>

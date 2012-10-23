@@ -782,8 +782,7 @@ where r.`Label`= :LabelIndex;")
 				DbSession.SaveOrUpdate(updateClient);
 				DbSession.SaveOrUpdate(client);
 				Flash["EditFlag"] = "Данные изменены";
-				RedirectToUrl("../UserInfo/SearchUserInfo?filter.ClientCode=" + ClientID + "&filter.appealType=" +
-					appealType);
+				RedirectToUrl("../UserInfo/SearchUserInfo?filter.ClientCode=" + ClientID + "&filter.appealType=" + appealType);
 			}
 			else {
 				updateClient.SetValidationErrors(Validator.GetErrorSummary(updateClient));

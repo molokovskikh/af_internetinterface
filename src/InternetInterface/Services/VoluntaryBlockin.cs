@@ -69,7 +69,6 @@ namespace InternetInterface.Services
 				}
 
 				client.Disabled = true;
-				client.ShowBalanceWarningPage = true;
 				client.AutoUnblocked = false;
 				client.DebtDays = 0;
 				client.Status = Status.Find((uint)StatusType.VoluntaryBlocking);
