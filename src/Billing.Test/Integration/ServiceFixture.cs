@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using Castle.ActiveRecord;
+using Castle.ActiveRecord.Framework.Scopes;
 using Common.Tools;
+using Common.Web.Ui.ActiveRecordExtentions;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using InternetInterface.Models.Services;
@@ -20,6 +22,8 @@ namespace Billing.Test.Integration
 	{
 		private ClientService Activate(Type type, DateTime? endDate = null)
 		{
+			_client = ActiveRecordMediator<Client>.FindByPrimaryKey(_client.Id);
+
 			if (endDate == null)
 				endDate = DateTime.Now.AddDays(1);
 
@@ -32,6 +36,9 @@ namespace Billing.Test.Integration
 			};
 
 			_client.Activate(service);
+
+			ActiveRecordMediator.Save(_client);
+
 			return service;
 		}
 
@@ -46,6 +53,7 @@ namespace Billing.Test.Integration
 
 				Activate(typeof(VoluntaryBlockin));
 
+				_client = ActiveRecordMediator<Client>.FindByPrimaryKey(_client.Id);
 				Assert.IsTrue(_client.PaidDay);
 			}
 
@@ -77,9 +85,8 @@ namespace Billing.Test.Integration
 			}
 		}
 
-		//Если не поперло, запусти 3 раза отдельно
 		[Test]
-		public void VoluntaryBlockingTest2()
+		public void Free_days_test_vol_block()
 		{
 			ClientService service;
 			using (new SessionScope()) {
@@ -90,8 +97,7 @@ namespace Billing.Test.Integration
 			using (new SessionScope()) {
 				_client = ActiveRecordMediator<Client>.FindByPrimaryKey(_client.Id);
 				Assert.That(_client.FreeBlockDays, Is.EqualTo(MainBilling.FreeDaysVoluntaryBlockin));
-				WriteOff.DeleteAll();
-
+				ArHelper.WithSession(s => { s.CreateSQLQuery("delete from Internet.WriteOff").ExecuteUpdate(); });
 				Activate(typeof(VoluntaryBlockin), DateTime.Now.AddDays(100));
 			}
 			using (new SessionScope()) {
@@ -104,39 +110,40 @@ namespace Billing.Test.Integration
 			billing.Compute();
 			using (new SessionScope()) {
 				_client = ActiveRecordMediator<Client>.FindByPrimaryKey(_client.Id);
-				Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(0));
+				var writeOffs = ActiveRecordMediator.FindAll(typeof(WriteOff)).Cast<WriteOff>().ToList();
+				Assert.That(writeOffs.Count, Is.EqualTo(0), writeOffs.Implode());
 				Assert.That(_client.FreeBlockDays, Is.EqualTo(MainBilling.FreeDaysVoluntaryBlockin));
-				service = new ClientService {
-					Client = _client,
-					BeginWorkDate = DateTime.Now,
-					EndWorkDate = DateTime.Now.AddDays(100),
-					Service = Service.GetByType(typeof(VoluntaryBlockin))
-				};
-				_client.Activate(service);
+			}
+		}
+
+		[Test]
+		public void Decrement_freedays_vol_block()
+		{
+			using (new SessionScope()) {
+				_client.FreeBlockDays = MainBilling.FreeDaysVoluntaryBlockin;
+				ActiveRecordMediator.Save(_client);
+				Activate(typeof(VoluntaryBlockin), DateTime.Now.AddDays(100));
 			}
 
-			Thread.Sleep(500);
 			for (int i = 0; i < MainBilling.FreeDaysVoluntaryBlockin + 1; i++) {
 				SystemTime.Now = () => DateTime.Now.AddDays(i);
 				billing.Compute();
 			}
 
 			using (new SessionScope()) {
-				Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(2), UserWriteOff.Queryable.Implode());
+				Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(1), UserWriteOff.Queryable.Implode());
 				_client = ActiveRecordMediator<Client>.FindByPrimaryKey(_client.Id);
-				service = ActiveRecordMediator<ClientService>.FindByPrimaryKey(service.Id);
 				Assert.That(_client.FreeBlockDays, Is.EqualTo(0));
-
 				Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(0));
+			}
+		}
 
-				service.CompulsoryDeactivate();
-				service = new ClientService {
-					Client = _client,
-					BeginWorkDate = DateTime.Now,
-					EndWorkDate = DateTime.Now.AddDays(100),
-					Service = Service.GetByType(typeof(VoluntaryBlockin))
-				};
-				_client.Activate(service);
+		[Test]
+		public void If_free_block_days_zero()
+		{
+			ClientService service;
+			using (new SessionScope()) {
+				service = Activate(typeof(VoluntaryBlockin), DateTime.Now.AddDays(100));
 			}
 			billing.Compute();
 			using (new SessionScope())
@@ -144,25 +151,33 @@ namespace Billing.Test.Integration
 			billing.Compute();
 			using (new SessionScope()) {
 				Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(1));
-				Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(4), UserWriteOff.Queryable.Implode());
+				Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(2), UserWriteOff.Queryable.Implode());
 
+				service = ActiveRecordMediator<ClientService>.FindByPrimaryKey(service.Id);
 				service.CompulsoryDeactivate();
 			}
 			billing.Compute();
 			using (new SessionScope()) {
 				Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(1));
+			}
+		}
+
+		//Если не поперло, запусти 3 раза отдельно
+		[Test]
+		public void VoluntaryBlockingTest2()
+		{
+			using (new SessionScope()) {
 				_client = ActiveRecordMediator<Client>.FindByPrimaryKey(_client.Id);
 				var forRemove = _client.ClientServices.Where(s => NHibernateUtil.GetClass(s.Service) != typeof(Internet)).ToList();
 				foreach (var assignedService in forRemove) {
 					_client.ClientServices.Remove(assignedService);
 				}
-
+				ActiveRecordMediator.Save(_client);
+			}
+			using (new SessionScope()) {
 				SystemTime.Reset();
-				UserWriteOff.DeleteAll();
-				WriteOff.DeleteAll();
-
 				Activate(typeof(VoluntaryBlockin), DateTime.Now.AddDays(4));
-				Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(2));
+				Assert.That(ActiveRecordMediator<UserWriteOff>.FindAll().Length, Is.EqualTo(2));
 			}
 			for (int i = 0; i < 5; i++) {
 				SystemTime.Now = () => DateTime.Now.AddDays(i);
@@ -406,7 +421,8 @@ namespace Billing.Test.Integration
 			using (new SessionScope()) {
 				client.Refresh();
 				Assert.IsFalse(client.Disabled);
-				WriteOff.DeleteAll();
+				//WriteOff.DeleteAll();
+				ArHelper.WithSession(s => { s.CreateSQLQuery("delete from Internet.WriteOff").ExecuteUpdate(); });
 				SystemTime.Now = () => DateTime.Now.AddDays(2);
 			}
 			billing.OnMethod();
@@ -458,7 +474,8 @@ namespace Billing.Test.Integration
 				client.FreeBlockDays = MainBilling.FreeDaysVoluntaryBlockin;
 				client.Update();
 				balance = client.PhysicalClient.Balance;
-				WriteOff.DeleteAll();
+				//WriteOff.DeleteAll();
+				ArHelper.WithSession(s => { s.CreateSQLQuery("delete from Internet.WriteOff").ExecuteUpdate(); });
 			}
 			while (balance > 0) {
 				billing.OnMethod();

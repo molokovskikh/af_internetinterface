@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Common.Tools;
@@ -22,10 +23,7 @@ namespace Billing.Test.Integration
 			base.Compute();
 
 			using (new SessionScope()) {
-				foreach (var paidClient in Client.FindAll()) {
-					paidClient.PaidDay = false;
-					paidClient.Update();
-				}
+				ArHelper.WithSession(s => s.CreateSQLQuery("update internet.Clients set PaidDay = false;").ExecuteUpdate());
 			}
 		}
 	}
@@ -49,7 +47,10 @@ namespace Billing.Test.Integration
 				billing = new MainBillingForTest();
 				CleanDb();
 				_client = CreateClient();
-				SaleSettings.DeleteAll();
+				//SaleSettings.DeleteAll();
+				ArHelper.WithSession(s => {
+					s.CreateSQLQuery("delete from Internet.SaleSettings").ExecuteUpdate();
+				});
 				new SaleSettings {
 					MaxSale = MaxSale,
 					MinSale = MinSale,
@@ -69,7 +70,11 @@ namespace Billing.Test.Integration
 					.Select(c => c.AccessCat.ReduceName).ToList();
 				return partner;
 			};
-			InternetSettings.DeleteAll();
+
+			ArHelper.WithSession(s => {
+				s.CreateSQLQuery("delete from Internet.InternetSettings").ExecuteUpdate();
+			});
+			//InternetSettings.DeleteAll();
 
 			using (new SessionScope()) {
 				new Partner("Test").Save();
@@ -148,24 +153,28 @@ namespace Billing.Test.Integration
 
 		public static void CleanDb()
 		{
-			Request.DeleteAll();
-			SmsMessage.DeleteAll();
-			UserWriteOff.DeleteAll();
-
-			ArHelper.WithSession(s => { s.CreateSQLQuery("delete from Internet.ClientServices").ExecuteUpdate(); });
-
-			WriteOff.DeleteAll();
-			Payment.DeleteAll();
-			Client.DeleteAll();
-			PhysicalClient.DeleteAll();
-			SystemTime.Reset();
-			PaymentsForAgent.DeleteAll();
-			Appeals.DeleteAll();
+			ArHelper.WithSession(s => {
+				s.CreateSQLQuery(
+					@"delete from Internet.ClientServices;
+				delete from Internet.Requests;
+				delete from Internet.SmsMessages;
+				delete from Internet.UserWriteOffs;
+				delete from Internet.WriteOff;
+				delete from Internet.Payments;
+				delete from Internet.Clients;
+				delete from Internet.PhysicalClients;
+				delete from Internet.PaymentsForAgent;
+				delete from Internet.Appeals;
+				delete from Internet.LawyerPerson;").ExecuteUpdate();
+			});
 		}
 
 		public static void CleanDbAfterTest()
 		{
-			Tariff.DeleteAll();
+			ArHelper.WithSession(s => {
+				s.CreateSQLQuery("delete from Internet.Tariffs").ExecuteUpdate();
+			});
+			//Tariff.DeleteAll();
 		}
 
 		public void SetClientDate(Interval rd, Client client)

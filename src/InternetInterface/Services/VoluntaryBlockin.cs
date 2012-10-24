@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using Castle.ActiveRecord;
+using Castle.ActiveRecord.Framework.Scopes;
 using Common.Tools;
 using InternetInterface.Models;
 
@@ -42,7 +43,7 @@ namespace InternetInterface.Services
 
 		public override bool CanActivate(ClientService assignedService)
 		{
-			var begin = SystemTime.Now() > assignedService.BeginWorkDate.Value;
+			var begin = SystemTime.Now() >= assignedService.BeginWorkDate.Value;
 			return begin && CanActivate(assignedService.Client);
 		}
 
@@ -59,13 +60,14 @@ namespace InternetInterface.Services
 					client.PaidDay = true;
 					var toDt = client.GetInterval();
 					var price = client.GetPrice();
-					new UserWriteOff {
+					var comment = string.Format("Абоненская плата за {0} из-за добровольной блокировки клиента", DateTime.Now.ToShortDateString());
+					var writeOff = new UserWriteOff {
 						Client = client,
 						Date = DateTime.Now,
 						Sum = price / toDt,
-						Comment = string.Format("Абоненская плата за {0} из-за добровольной блокировки клиента",
-							DateTime.Now.ToShortDateString())
-					}.Save();
+						Comment = comment
+					};
+					ActiveRecordMediator.Save(writeOff);
 				}
 
 				client.Disabled = true;
@@ -79,15 +81,17 @@ namespace InternetInterface.Services
 				assignedService.EndWorkDate = new DateTime(evd.Year, evd.Month, evd.Day);
 				ActiveRecordMediator.Save(assignedService);
 
-				if (client.FreeBlockDays <= 0)
-					new UserWriteOff {
+				if (client.FreeBlockDays <= 0) {
+					var comment = string.Format("Платеж за активацию услуги добровольная блокировка с {0} по {1}",
+						assignedService.BeginWorkDate.Value.ToShortDateString(), assignedService.EndWorkDate.Value.ToShortDateString());
+					var writeOff = new UserWriteOff {
 						Client = client,
 						Sum = 50m,
 						Date = DateTime.Now,
-						Comment =
-							string.Format("Платеж за активацию услуги добровольная блокировка с {0} по {1}",
-								assignedService.BeginWorkDate.Value.ToShortDateString(), assignedService.EndWorkDate.Value.ToShortDateString())
-					}.Save();
+						Comment = comment
+					};
+					ActiveRecordMediator.Save(writeOff);
+				}
 			}
 		}
 
