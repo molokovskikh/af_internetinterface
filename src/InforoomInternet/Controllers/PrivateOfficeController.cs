@@ -83,7 +83,7 @@ namespace InforoomInternet.Controllers
 		public void FirstVisit(uint physicalClientId)
 		{
 			var clientId = Convert.ToUInt32(Session["LoginClient"]);
-			var client = Client.Find(clientId);
+			var client = DbSession.Get<Client>(clientId);
 			SetSmartBinder(AutoLoadBehavior.Always);
 			var physicalClient = DbSession.Get<PhysicalClient>(physicalClientId);
 			BindObjectInstance(physicalClient, "PhysicalClient");
