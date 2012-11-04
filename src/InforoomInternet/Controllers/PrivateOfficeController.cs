@@ -75,7 +75,7 @@ namespace InforoomInternet.Controllers
 		public void FirstVisit()
 		{
 			var clientId = Convert.ToUInt32(Session["LoginClient"]);
-			var client = Client.Find(clientId);
+			var client = DbSession.Get<Client>(clientId);
 			PropertyBag["client"] = client;
 			PropertyBag["PhysicalClient"] = client.PhysicalClient;
 		}
