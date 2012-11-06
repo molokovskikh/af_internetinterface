@@ -683,6 +683,9 @@ where CE.Client = {0}",
 
 		public virtual WriteOff CalculatePerDayWriteOff(decimal price, bool writeoffVirtualFirst = true)
 		{
+			if (price == 0)
+				return null;
+
 			var costPerDay = price / GetInterval();
 			return PhysicalClient.CalculateWriteoff(costPerDay);
 		}

@@ -153,6 +153,9 @@ namespace InternetInterface.Services
 			if (assignedService.BeginWorkDate == null)
 				return 0;
 
+			if (assignedService.Client.RatedPeriodDate == null)
+				return 0;
+
 			if (assignedService.Client.FreeBlockDays > 0)
 				return 0;
 

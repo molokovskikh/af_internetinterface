@@ -866,5 +866,24 @@ namespace Billing.Test.Integration
 				Assert.IsFalse(client.Disabled);
 			}
 		}
+
+		[Test(Description = "проверяю, что не выдается инсключение при данных условиях")]
+		public void Tv_box_and_no_rated_date()
+		{
+			using (new SessionScope()) {
+				Activate(typeof(VoluntaryBlockin), DateTime.Now.AddDays(100));
+				var clientService = new ClientService(_client, Service.GetByType(typeof(IpTvBoxRent)));
+				_client.Activate(clientService);
+				_client.PaidDay = false;
+				_client.RatedPeriodDate = null;
+				ActiveRecordMediator.Save(_client);
+			}
+			billing.OnMethod();
+			billing.Compute();
+			using (new SessionScope()) {
+				var settings = ActiveRecordMediator<InternetSettings>.FindFirst();
+				Assert.IsFalse(settings.LastStartFail);
+			}
+		}
 	}
 }
