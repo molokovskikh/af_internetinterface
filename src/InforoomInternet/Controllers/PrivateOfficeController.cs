@@ -7,6 +7,7 @@ using Castle.MonoRail.Framework;
 using Common.Tools.Calendar;
 using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
+using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Models.Services;
@@ -105,7 +106,9 @@ namespace InforoomInternet.Controllers
 					client.CreateAutoEndPont(userHostAddress, DbSession);
 				}
 				client.FirstLunch = true;
-				client.Disabled = true;
+				client.Disabled = client.Balance <= 0;
+				if (client.IsChanged(c => c.Disabled))
+					Appeals.CreareAppeal("Клиент был заблокирован из личного кабинета при посещении первой страницы", client, AppealType.Statistic);
 				client.AutoUnblocked = true;
 				DbSession.SaveOrUpdate(client);
 				Flash["message"] = "Спасибо, теперь вы можете продолжить работу";
