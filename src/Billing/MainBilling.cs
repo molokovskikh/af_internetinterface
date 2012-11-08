@@ -167,7 +167,7 @@ set s.LastStartFail = true;")
 							updateClient.AutoUnblocked = true;
 						}
 						if (updateClient.RatedPeriodDate != null)
-							if (physicalClient.Balance >= updateClient.GetPrice()) {
+							if (physicalClient.Balance >= updateClient.GetPriceIgnoreDisabled() * updateClient.PercentBalance) {
 								updateClient.ShowBalanceWarningPage = false;
 								if (updateClient.IsChanged(c => c.ShowBalanceWarningPage))
 									Appeals.CreareAppeal("Отключена страница Warning, клиент внес платеж", updateClient, AppealType.Statistic, false);

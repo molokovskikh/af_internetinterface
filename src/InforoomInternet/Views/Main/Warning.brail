@@ -1,4 +1,4 @@
-﻿<h1 style="color:Red; text-align:center;">Внимание!</h1>
+﻿<h1 style="color:#FF5F5F; text-align:center; font-family:Arial;">Внимание!</h1>
 
 <% OutputSubView("""\Subview\WarningText""") %>
 
@@ -10,7 +10,7 @@
 <p>
 	<form method=post>
 		<input name=referer type=hidden value="!{referer}" >
-		<input type=submit id="ConButton" value="Продолжить">
+		<input type=submit class="button" id="ConButton" value="Продолжить">
 	</form>
 </p>
 <% end %>

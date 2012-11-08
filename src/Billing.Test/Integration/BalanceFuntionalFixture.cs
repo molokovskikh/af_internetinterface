@@ -371,6 +371,7 @@ namespace Billing.Test.Integration
 				client = BaseBillingFixture.CreateAndSaveClient("ShowClient", false, 300);
 				client.BeginWork = DateTime.Now;
 				client.RatedPeriodDate = DateTime.Now;
+				client.PercentBalance = 0.8m;
 				client.Save();
 				var partBalance = client.GetPrice() / client.GetInterval();
 				client.PhysicalClient.Balance = partBalance * 2 - 1;
