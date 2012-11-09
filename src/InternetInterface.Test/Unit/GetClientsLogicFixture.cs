@@ -69,7 +69,8 @@ namespace InternetInterface.Test.Unit
 	C.id like :SearchText or
 	LOWER(co.Contact) like :SearchText or
 	LOWER(h.Street) like :SearchText or
-	LOWER(l.ActualAdress) like :SearchText )"), result);
+	LOWER(l.ActualAdress) like :SearchText )"),
+				result);
 		}
 
 		[Test]

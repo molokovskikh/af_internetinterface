@@ -41,7 +41,8 @@ namespace InternetInterface.Helpers
 			OnLineCount = _session.CreateSQLQuery(@"
 SELECT count(*) FROM internet.leases l
 join internet.ClientEndPoints cp on cp.id = l.Endpoint
-group by cp.Client;").List<object>().Count;
+group by cp.Client;")
+				.List<object>().Count;
 
 			UniqueClient = _session.CreateSQLQuery(@"
 SELECT count(*) FROM logs.internetsessionslogs l
@@ -55,28 +56,33 @@ group by cp.Client;")
 			PhysicalRegister = Convert.ToInt32(_session.CreateSQLQuery(@"
 select count(*) from internet.Clients c
 where c.PhysicalClient is not null;
-").UniqueResult());
+")
+				.UniqueResult());
 
 			AllRegister = Convert.ToInt32(_session.CreateSQLQuery(@"
 select count(*) from internet.Clients c;
-").UniqueResult());
+")
+				.UniqueResult());
 
 			BlockedPhysical = Convert.ToInt32(_session.CreateSQLQuery(@"
 select count(*) from internet.Clients c
 where c.Disabled and c.PhysicalClient is not null;
-").UniqueResult());
+")
+				.UniqueResult());
 
 			BlockedLawyer = Convert.ToInt32(_session.CreateSQLQuery(@"
 select count(*) from internet.Clients c
 where c.Disabled and c.LawyerPerson is not null;
-").UniqueResult());
+")
+				.UniqueResult());
 
 			BlockedOnLine = _session.CreateSQLQuery(@"
 SELECT count(*) FROM internet.leases l
 join internet.ClientEndPoints cp on cp.id = l.Endpoint
 join internet.Clients c on c.id = cp.Client
 where c.Disabled
-group by cp.Client;").List<object>().Count;
+group by cp.Client;")
+				.List<object>().Count;
 			return this;
 		}
 	}

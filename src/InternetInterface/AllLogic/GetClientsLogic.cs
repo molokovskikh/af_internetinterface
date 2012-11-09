@@ -56,7 +56,8 @@ namespace InternetInterface.AllLogic
 					if (filter.SearchProperties == SearchUserBy.ByFio) {
 						return
 							String.Format(@"
-	WHERE (LOWER(C.Name) like {0} )", ":SearchText") + _return;
+	WHERE (LOWER(C.Name) like {0} )", ":SearchText")
+								+ _return;
 					}
 					if (filter.SearchProperties == SearchUserBy.TelNum) {
 						return String.Format(@"WHERE (LOWER(co.Contact) like {0})", ":SearchText") + _return;
@@ -64,7 +65,8 @@ namespace InternetInterface.AllLogic
 					if (filter.SearchProperties == SearchUserBy.ByAddress) {
 						return String.Format(@"
 	WHERE (LOWER(h.Street) like {0} or
-	LOWER(l.ActualAdress) like {0})", ":SearchText") + _return;
+	LOWER(l.ActualAdress) like {0})", ":SearchText")
+							+ _return;
 					}
 				}
 			}

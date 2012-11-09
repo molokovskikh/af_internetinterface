@@ -22,7 +22,7 @@ namespace InternetInterface.Selenium.Test
 				scope.Commit();
 			}
 
-			uri =  WatinFixture2.GetUri(uri);
+			uri = WatinFixture2.GetUri(uri);
 
 			if (Browser == null) {
 				Browser = new ChromeDriver("../../../../lib/");

@@ -92,11 +92,9 @@ namespace InternetInterface.Test.Functional
 				browser2.Link("request_to_reg_" + requests.First().Id).Click();
 				var sw = browser2.SelectList("SelectSwitches").Options.Select(o => UInt32.Parse(o.Value)).ToList();
 				//using (new SessionScope())
-				{
 				var diniedPorts = ClientEndpoint.Queryable.Where(c => c.Switch.Id == sw[1]).ToList().Select(c => c.Port).ToList();
 				browser2.SelectList("SelectSwitches").SelectByValue(sw[1].ToString());
 				browser2.TextField("Port").AppendText((diniedPorts.Max(p => p.Value) + 1).ToString());
-				}
 				browser2.SelectList("BrigadForConnect").SelectByValue(Brigad.FindFirst().Id.ToString());
 				browser2.Button("RegisterClientButton").Click();
 				Assert.That(browser2.Text, Is.StringContaining("Информация по клиенту"), "Не осуществлена регистрация клиента");
