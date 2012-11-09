@@ -101,8 +101,9 @@ namespace InternetInterface.Helpers
 			return new AuditablePropertyInternet(property, name, newState, oldState);
 		}
 
-		protected override void Log(PostUpdateEvent @event, string message, bool isHtml)
+		protected override void Log(PostUpdateEvent @event, IEnumerable<AuditableProperty> properties, bool isHtml)
 		{
+			var message = BuildMessage(properties);
 			var session = @event.Session;
 			var entity = @event.Entity;
 			if (entity.GetType() == typeof(ServiceRequest)) {
