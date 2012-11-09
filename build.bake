@@ -14,7 +14,6 @@ Global(
 	Project : "InternetInterface",
 	HumanReadableName : "Интернет интерфейс",
 	Environment: @Local,
-	Port: 3308
 )
 
 task @default, [@Build, @BuildBackground]
@@ -62,4 +61,4 @@ task @DeployPrinter:
 	Engine.Execute("WebDeploy")
 	Globals.Project = oldProject
 
-task @BeforeTest, [@InstallPackages, @RunMySql, @PrepareLocal]
+task @BeforeTest, [@InstallPackages, @PrepareLocal]
