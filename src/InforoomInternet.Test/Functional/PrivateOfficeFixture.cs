@@ -226,7 +226,6 @@ namespace InforoomInternet.Test.Functional
 
 			session.Refresh(client);
 			Assert.IsTrue(client.AutoUnblocked);
-			Assert.IsTrue(client.Disabled);
 			Assert.IsTrue(client.FirstLunch);
 		}
 	}
