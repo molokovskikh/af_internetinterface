@@ -61,4 +61,3 @@ task @DeployPrinter:
 	Engine.Execute("WebDeploy")
 	Globals.Project = oldProject
 
-task @BeforeTest, [@InstallPackages, @PrepareLocal]
