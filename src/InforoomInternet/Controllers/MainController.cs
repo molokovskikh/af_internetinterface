@@ -181,7 +181,6 @@ namespace InforoomInternet.Controllers
 						}
 					}
 				};
-			lease = DbSession.Query<Lease>().First(l => l.Endpoint.Client.PhysicalClient != null);
 #endif
 
 			ClientEndpoint point = null;
