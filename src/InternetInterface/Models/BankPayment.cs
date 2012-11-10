@@ -150,6 +150,9 @@ namespace InternetInterface.Models
 		[Property, Description("Комментарий оператора")]
 		public string OperatorComment { get; set; }
 
+		[OneToOne(PropertyRef = "BankPayment")]
+		public virtual Payment Payment { get; set; }
+
 		public bool UpdatePayerInn { get; set; }
 
 		public void RegisterPayment()

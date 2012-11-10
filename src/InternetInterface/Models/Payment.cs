@@ -47,6 +47,9 @@ namespace InternetInterface.Models
 		[Property, Style]
 		public virtual bool Virtual { get; set; }
 
+		[BelongsTo]
+		public virtual BankPayment BankPayment { get; set; }
+
 		[Style]
 		public virtual bool NotProcessed
 		{

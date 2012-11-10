@@ -50,7 +50,7 @@
 			</td>
 			<td>
 				<input type=hidden id="payment_payer_id" value="${Payment.Payer.Id if Payment.Payer != null }" name=Payment.Payer.Id>
-				<input type=text id=payer value="${Payment.Payer.ShortName if Payment.Payer != null }" class="required">
+				<input type=text id=payer value="${Payment.Payer.Name if Payment.Payer != null }" class="required">
 				<%if IsDefined("Payment"): %>
 					<br />
 					${app.GetValidationError(Payment, "Payer")}

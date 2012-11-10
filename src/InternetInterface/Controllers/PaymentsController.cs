@@ -66,7 +66,8 @@ namespace InternetInterface.Controllers
 						Sum = payment.Sum,
 						RecievedOn = payment.RegistredOn,
 						PaidOn = payment.PayedOn,
-						Agent = Agent.GetByInitPartner()
+						Agent = Agent.GetByInitPartner(),
+						BankPayment = payment
 					}.Save();
 					RedirectToReferrer();
 					return;
@@ -131,6 +132,7 @@ namespace InternetInterface.Controllers
 			if (payments == null) {
 				Flash["Message"] = Message.Error("Время сесии истекло. Загрузите выписку повторно.");
 				RedirectToReferrer();
+				return;
 			}
 
 			foreach (var payment in payments) {
@@ -149,7 +151,8 @@ namespace InternetInterface.Controllers
 							Sum = payment.Sum,
 							RecievedOn = payment.RegistredOn,
 							PaidOn = payment.PayedOn,
-							Agent = Agent.GetByInitPartner()
+							Agent = Agent.GetByInitPartner(),
+							BankPayment = payment
 						}.Save();
 				}
 				else {
@@ -286,15 +289,22 @@ namespace InternetInterface.Controllers
 							PaidOn = DateTime.Now,
 							RecievedOn = DateTime.Now,
 							Sum = payment.Sum,
-							LogComment = string.Format("Зачисление после редактирования банковского платежа (id = {0})", payment.Id)
+							LogComment = string.Format("Зачисление после редактирования банковского платежа (id = {0})", payment.Id),
+							BankPayment = payment
 						}.Save();
-						new UserWriteOff {
-							Registrator = InitializeContent.Partner,
-							Client = oldPayer,
-							Comment = string.Format("Списание после смены плательщика, при редактировании банковского платежа №{0} \r\n Клиент стал: {1}", payment.Id, payment.Payer.Id),
-							Date = DateTime.Now,
-							Sum = oldPayment.Sum
-						}.Save();
+						if (oldPayment.Payment != null) {
+							Cancel(oldPayment.Payment.Id, string.Format("Изменение плательщика в банковском платеже {0} с '{1}' на '{2}'", oldPayment.Id, oldPayer.Name, payment.Payer.Name));
+						}
+						else {
+							new UserWriteOff {
+								Registrator = InitializeContent.Partner,
+								Client = oldPayer,
+								Comment = string.Format("Списание после смены плательщика, при редактировании банковского платежа №{0} \r\n Клиент стал: {1}", payment.Id, payment.Payer.Id),
+								Date = DateTime.Now,
+								Sum = oldPayment.Sum
+							}.Save();
+							DbSession.Save(new Appeals(string.Format("После смены плательщика в платеже {0} было создано пользовательское списание, так как не был найден привязанный к банковскому платежу физический платеж для отмены", oldPayment.Id), oldPayer, AppealType.System, true));
+						}
 					}
 					payment.DoUpdate();
 					Flash["Message"] = Message.Notify("Сохранено");
