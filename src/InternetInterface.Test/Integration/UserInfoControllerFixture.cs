@@ -52,6 +52,9 @@ namespace InternetInterface.Test.Integration
 			session.Flush();
 			session.Clear();
 			endpoint = session.Get<ClientEndpoint>(endpoint.Id);
+			client = session.Get<Client>(client.Id);
+			Assert.True(client.Disabled);
+			Assert.False(client.AutoUnblocked);
 			Assert.That(endpoint, Is.EqualTo(null));
 			session.Clear();
 		}

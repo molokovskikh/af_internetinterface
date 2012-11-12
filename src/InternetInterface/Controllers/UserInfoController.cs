@@ -777,6 +777,8 @@ where r.`Label`= :LabelIndex;")
 					if (client.Status.Type == StatusType.Dissolved) {
 						client.Endpoints.Clear();
 						client.PhysicalClient.HouseObj = null;
+						client.Disabled = true;
+						client.AutoUnblocked = false;
 					}
 				}
 
