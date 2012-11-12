@@ -34,7 +34,6 @@ else: %>
 			<% else: %>
 			<p class="info">
 			Баланс составляет ${Client.Balance}.<a href="${Siteroot}/PrivateOffice/BalanceInfo" style="text-decoration:none;">*</a> </br>
-			Данной суммы недостаточно для разблокировки, необходимо внести ещё не менее ${Client.ToPay().ToString("0.00")} руб.
 			</p>
 				<%if IsDefined("PrivateMessage"): %>
 					<p class="warning">${PrivateMessage}</p>
