@@ -5,7 +5,7 @@
 				<tbody>
 					<tr>
 						<td>
-							<fieldset style="padding-left:15px;">
+							<fieldset class="statisticField">
 							<legend>Статистика подключений</legend>
 								<p>Всего: <span>${filter.RowsCount}</span></p>
 								<p>Не состоявшихся: <span>${NoConnected}</span></p>

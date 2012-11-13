@@ -554,3 +554,7 @@ div.commented, .commented {
 #reportOnWorkFilter {
 	margin-left: 50%;
 }
+
+.statisticField {
+	padding-left:15px;
+}

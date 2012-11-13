@@ -25,7 +25,7 @@
 	<tbody>
 		<tr>
 			<td>
-				<fieldset style="padding-left:15px;">
+				<fieldset class="statisticField">
 				<legend>Статистика</legend>
 				<p>On-Line клиенты: <span>${Stat.OnLineCount}</span></p>
 				<p>Уникальных клиентов за сутки: <span>${Stat.UniqueClient}</span></p>
