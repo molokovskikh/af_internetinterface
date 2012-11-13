@@ -31,6 +31,7 @@ namespace InternetInterface.Queries
 		public BrigadFilter()
 		{
 			Period = new DatePeriod(DateTime.Now.AddDays(-7), DateTime.Now);
+			State = ClientState.All;
 		}
 
 		public IList<ClientInfo> Find(ISession session)

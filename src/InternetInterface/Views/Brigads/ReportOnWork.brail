@@ -1,8 +1,20 @@
 ﻿<div id="main" class="fullWidth">
 <div id="container">
-	<div id="box" class="block">
 		<form id="onform" class="formConnect" method="get">
-			<table class="table find_block">
+			<table id="statTable">
+				<tbody>
+					<tr>
+						<td>
+							<fieldset style="padding-left:15px;">
+							<legend>Статистика подключений</legend>
+								<p>Всего: <span>${filter.RowsCount}</span></p>
+								<p>Не состоявшихся: <span>${NoConnected}</span></p>
+							</fieldset>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<table class="table find_block" id="reportOnWorkFilter">
 				<thead>
 					<tr><th colspan=2>Параментры фильтрации</th></tr>
 				</thead>
@@ -34,5 +46,4 @@
 		</form>
 	</div>
 <% OutputSubView("""\Search\SearchBy""") %>
-</div>
 </div>

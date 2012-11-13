@@ -528,7 +528,7 @@ table .filter_front thead td{
 	border: 1px double black;
 	padding: 10px;
 	color: #5a5b5b;
-	width: 500px;
+	width: 480px;
 }
 
 #statTable span {
@@ -549,4 +549,8 @@ div.commented, .commented {
 
 .comment_td {
 	width: 150px;
+}
+
+#reportOnWorkFilter {
+	margin-left: 50%;
 }
