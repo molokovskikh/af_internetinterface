@@ -228,27 +228,26 @@ namespace Billing.Test.Integration
 		[Test]
 		public void MaxDebtTest()
 		{
-			var dayInMonth = DateTime.DaysInMonth(SystemTime.Now().AddDays(-15).Year, SystemTime.Now().AddDays(-15).Month);
+			var dayCount = SystemTime.Now().Day != 15 ? 15 : 14;
+			var dayInMonth = DateTime.DaysInMonth(SystemTime.Now().AddDays(-dayCount).Year, SystemTime.Now().AddDays(-dayCount).Month);
 			Client client;
 			using (new SessionScope()) {
 				client = CreateClient();
 				client.Disabled = false;
 				SystemTime.Reset();
-				client.RatedPeriodDate = SystemTime.Now().AddDays(-15);
+				client.RatedPeriodDate = SystemTime.Now().AddDays(-dayCount);
 				client.Update();
 			}
 			billing.Compute();
 			using (new SessionScope()) {
-				var spisD0 = WriteOff.Queryable.FirstOrDefault(w => w.Client == client);
-				client.Refresh();
+				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
 				Assert.That(dayInMonth, Is.EqualTo(client.GetInterval()));
 				client.DebtDays = 29;
 				client.Update();
 			}
 			billing.Compute();
 			using (new SessionScope()) {
-				var slisD29 = WriteOff.Queryable.Where(w => w.Client == client).ToList().LastOrDefault();
-				client.Refresh();
+				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
 				Assert.That(dayInMonth + 29, Is.EqualTo(client.GetInterval()));
 			}
 		}
