@@ -1,0 +1,12 @@
+﻿.EvenRow {
+	background-color: #F6F6F6;
+}
+
+.OddRow {
+	background-color: #EEF8FF;
+}
+
+.recipientBox {
+	width: 300px;
+	text-align: center;
+}

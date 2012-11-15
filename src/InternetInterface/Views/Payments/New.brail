@@ -96,7 +96,11 @@
 		</td>
 		<td>${payment.Recipient.Name}</td>
 		<td>${payment.PayedOn}</td>
-		<td>${app.LinkTo(payment.Payer)}</td>
+		<%if payment.Payer.IsPhysical():%>
+			<td>${UrlHelper.Link(payment.Payer.Name, {@controller : @UserInfo, @action : @SearchUserInfo, @querystring: { "filter.ClientCode" : payment.Payer.Id}})}</td>
+		<%else:%>
+			<td>${UrlHelper.Link(payment.Payer.Name, {@controller : @UserInfo, @action : @LawyerPersonInfo, @querystring: { "filter.ClientCode" : payment.Payer.Id}})}</td>
+		<%end%>
 		<td>${payment.Sum}</td>
 		<td>${payment.RegistredOn}</td>
 	</tr>

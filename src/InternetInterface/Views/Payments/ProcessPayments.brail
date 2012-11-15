@@ -52,7 +52,7 @@
 			<a href="${siteroot}/Payments/EditTemp?id=${payment.GetHashCode()}">Редактировать</a>
 			<a href="${siteroot}/Payments/DeleteTemp?id=${payment.GetHashCode()}">Удалить</a>
 		</td>
-		<td>${payment.Recipient.Name}</td>
+		<td class="recipientBox">${payment.Recipient.Name} ${app.GetValidationError(payment, "Recipient")}</td>
 		<td>${payment.PayedOn.ToShortDateString()}</td>
 		<td>${payment.PayerClient.Inn}</td>
 		<td>${app.LinkTo(payment.Payer)}</td>

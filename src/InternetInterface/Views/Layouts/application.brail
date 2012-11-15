@@ -11,6 +11,7 @@
 	${app.Asset("editable.js")}
 	${app.Asset("checkbox.all.js")}
 	${app.Asset("application.js")}
+	${app.Asset("User.css")}
 
 	${app.JS("Common.js",
 		"jquery.maskedinput-1.2.2.js",

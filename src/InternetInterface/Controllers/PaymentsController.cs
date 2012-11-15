@@ -135,7 +135,8 @@ namespace InternetInterface.Controllers
 				return;
 			}
 
-			foreach (var payment in payments) {
+			var noError = true;
+			foreach (var payment in payments.ToList()) {
 				//если зайти в два платежа и отредактировать их
 				//то получим двух плательщиков из разных сесей
 				//правим это
@@ -154,17 +155,22 @@ namespace InternetInterface.Controllers
 							Agent = Agent.GetByInitPartner(),
 							BankPayment = payment
 						}.Save();
+					payments.Remove(payment);
 				}
 				else {
 					ArHelper.WithSession(s => ArHelper.Evict(s, new[] { payment }));
+					noError = false;
 				}
 			}
 
-			RedirectToAction("Index",
-				new Dictionary<string, string> {
-					{ "filter.Period.Begin", payments.Min(p => p.PayedOn).ToShortDateString() },
-					{ "filter.Period.End", payments.Max(p => p.PayedOn).ToShortDateString() }
-				});
+			if (noError)
+				RedirectToAction("Index",
+					new Dictionary<string, string> {
+						{ "filter.Period.Begin", payments.Min(p => p.PayedOn).ToShortDateString() },
+						{ "filter.Period.End", payments.Max(p => p.PayedOn).ToShortDateString() }
+					});
+			else
+				RedirectToAction("ProcessPayments");
 		}
 
 		public void CancelPayments()
@@ -185,7 +191,10 @@ namespace InternetInterface.Controllers
 				RedirectToReferrer();
 			}
 			else {
-				PropertyBag["payments"] = Session["payments"];
+				var payments = TempPayments();
+				if (payments != null)
+					payments.Each(p => IsValid(p));
+				PropertyBag["payments"] = payments;
 			}
 		}
 
@@ -195,15 +204,16 @@ namespace InternetInterface.Controllers
 			if (IsPost) {
 				SetARDataBinder();
 				BindObjectInstance(payment, "payment", AutoLoadBehavior.NullIfInvalidKey);
-				payment.UpdateInn();
-				Flash["Message"] = Message.Notify("Сохранено");
-				RedirectToAction("ProcessPayments");
+				if (IsValid(payment)) {
+					payment.UpdateInn();
+					Flash["Message"] = Message.Notify("Сохранено");
+					RedirectToAction("ProcessPayments");
+					return;
+				}
 			}
-			else {
-				PropertyBag["payment"] = payment;
-				PropertyBag["recipients"] = Recipient.Queryable.OrderBy(r => r.Name).ToList();
-				RenderView("Edit");
-			}
+			PropertyBag["payment"] = payment;
+			PropertyBag["recipients"] = Recipient.Queryable.OrderBy(r => r.Name).ToList();
+			RenderView("Edit");
 		}
 
 		private BankPayment FindTempPayment(uint id)

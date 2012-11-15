@@ -52,6 +52,24 @@ namespace InternetInterface.Test.Functional
 		}
 
 		[Test]
+		public void only_inforoom_test()
+		{
+			var recipient = new Recipient { Name = "testRecipient" };
+			var client = ClientHelper.Client();
+			client.Recipient = recipient;
+			var bankPayment = new BankPayment(client, DateTime.Now, 300) { Recipient = recipient };
+			var newClient = ClientHelper.Client();
+			newClient.Recipient = recipient;
+			var payment = new Payment(client, 300) { BankPayment = bankPayment };
+			Save(client, newClient, bankPayment, payment, recipient);
+
+			Open("Payments/Edit?id=" + bankPayment.Id);
+			Click("Сохранить");
+
+			AssertText("Получатель платежей может быт только Инфорум");
+		}
+
+		[Test]
 		public void Change_payer_bank_payment()
 		{
 			var recipient = new Recipient { Name = "testRecipient" };
