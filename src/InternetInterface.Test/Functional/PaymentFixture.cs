@@ -72,7 +72,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void Change_payer_bank_payment()
 		{
-			var recipient = new Recipient { Name = "testRecipient" };
+			var recipient = new Recipient { Name = "testRecipient", BankAccountNumber = "40702810602000758601" };
 			var client = ClientHelper.Client();
 			client.Recipient = recipient;
 			var bankPayment = new BankPayment(client, DateTime.Now, 300) { Recipient = recipient };
