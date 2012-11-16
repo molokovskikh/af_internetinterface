@@ -135,7 +135,6 @@ namespace InternetInterface.Controllers
 				return;
 			}
 
-			var noError = true;
 			foreach (var payment in payments.ToList()) {
 				//если зайти в два платежа и отредактировать их
 				//то получим двух плательщиков из разных сесей
@@ -155,22 +154,17 @@ namespace InternetInterface.Controllers
 							Agent = Agent.GetByInitPartner(),
 							BankPayment = payment
 						}.Save();
-					payments.Remove(payment);
 				}
 				else {
 					ArHelper.WithSession(s => ArHelper.Evict(s, new[] { payment }));
-					noError = false;
 				}
 			}
 
-			if (noError)
-				RedirectToAction("Index",
-					new Dictionary<string, string> {
-						{ "filter.Period.Begin", payments.Min(p => p.PayedOn).ToShortDateString() },
-						{ "filter.Period.End", payments.Max(p => p.PayedOn).ToShortDateString() }
-					});
-			else
-				RedirectToAction("ProcessPayments");
+			RedirectToAction("Index",
+				new Dictionary<string, string> {
+					{ "filter.Period.Begin", payments.Min(p => p.PayedOn).ToShortDateString() },
+					{ "filter.Period.End", payments.Max(p => p.PayedOn).ToShortDateString() }
+				});
 		}
 
 		public void CancelPayments()
@@ -187,7 +181,21 @@ namespace InternetInterface.Controllers
 					PropertyBag["Message"] = Message.Error("Нужно выбрать файл для загрузки");
 					return;
 				}
-				Session["payments"] = BankPayment.Parse(file.FileName, file.InputStream);
+				var payments = BankPayment.Parse(file.FileName, file.InputStream);
+				if (payments.All(p => IsValid(p)))
+					Session["payments"] = payments;
+				else {
+					var errors = payments.Select(p => {
+						IsValid(p);
+						var summary = Validator.GetErrorSummary(p);
+						if (summary != null && summary.HasError) {
+							return new { Client = p.PayerClient, Errors = summary.ErrorMessages.ToList() };
+						}
+						return null;
+					}).Where(e => e != null).ToList();
+					PropertyBag["errors"] = errors;
+					return;
+				}
 				RedirectToReferrer();
 			}
 			else {

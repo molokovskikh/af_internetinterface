@@ -36,7 +36,7 @@
 </div>
 </center>
 <table class=table>
-	<% if IsDefined("payments") and payments and payments.Count: %>
+<% if IsDefined("payments") and payments and payments.Count: %>
 	<tr>
 		<th></th>
 		<th>${app.Sortable("Получатель", "recipient")}</th>
@@ -71,5 +71,24 @@
 			<% output  WriteMessageNotice(notify_message) %>
 		</td>
 	</tr>
-	<%end %>
+<%else: %>
 </table>
+	<%if IsDefined("errors"):%>
+		<div class="flash">
+			<div class="message error" id="paymentErrorBlock">
+				Выписка не может быть загружена из-за ошибок. (<a href="javascript:" onclick="$('#paymentWarningBlock').slideDown(200);">показать</a>)
+			</div>
+		</div>
+		<div class="flash" id="paymentWarningBlock">
+			<div class="message warning">
+				<% for i, error in enumerate(errors): %>
+					Платеж для Клиента: "${error.Client.Name}" содержит следующиеошибки: </br>
+					<% for i, messages in enumerate(error.Errors): %>
+						<b>${messages}</b></br>
+					<%end%>
+					</br>
+				<%end%>
+			</div>
+		</div>
+	<%end%>
+<%end%>

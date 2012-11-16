@@ -10,3 +10,20 @@
 	width: 300px;
 	text-align: center;
 }
+
+#paymentWarningBlock {
+	text-align: left;
+	width: 100%;
+	display: none;
+}
+
+#paymentWarningBlock div {
+	text-align: left;
+	padding: 10px 10px 10px 10px;
+	margin: 5px 5px 5px 5px;
+}
+
+#paymentErrorBlock {
+	padding: 10px 10px 10px 10px;
+	font-size: 16px;
+}
