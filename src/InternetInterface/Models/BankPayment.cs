@@ -419,7 +419,7 @@ namespace InternetInterface.Models
 						string.Format("Получатель платежей '{0}' плательщика должен соответствовать получателю платежей выбранном в платеже", Payer.Recipient.Name));
 			}
 			if (Recipient.BankAccountNumber != "40702810602000758601")
-				summary.RegisterErrorMessage("Recipient", "Получатель платежей может быт только Инфорум");
+				summary.RegisterErrorMessage("Recipient", "Получатель платежей может быть только Инфорум");
 		}
 
 		private bool IsDuplicate()

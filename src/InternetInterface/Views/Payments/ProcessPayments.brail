@@ -82,7 +82,7 @@
 		<div class="flash" id="paymentWarningBlock">
 			<div class="message warning">
 				<% for i, error in enumerate(errors): %>
-					Платеж для Клиента: "${error.Client.Name}" содержит следующиеошибки: </br>
+					Платеж для Клиента: "${error.Client.Name}" содержит следующие ошибки: </br>
 					<% for i, messages in enumerate(error.Errors): %>
 						<b>${messages}</b></br>
 					<%end%>

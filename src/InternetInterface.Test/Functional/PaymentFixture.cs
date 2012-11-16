@@ -66,7 +66,7 @@ namespace InternetInterface.Test.Functional
 			Open("Payments/Edit?id=" + bankPayment.Id);
 			Click("Сохранить");
 
-			AssertText("Получатель платежей может быт только Инфорум");
+			AssertText("Получатель платежей может быть только Инфорум");
 		}
 
 		[Test]
