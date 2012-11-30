@@ -35,11 +35,6 @@ else: %>
 			<p class="info">
 			Баланс составляет ${Client.Balance}.<a href="${Siteroot}/PrivateOffice/BalanceInfo" style="text-decoration:none;">*</a> </br>
 			</p>
-			<%if Client.ShowWarningBecauseNoPassport() :%>
-				<p class="warning">
-					${app.GetViewText(@BecauseNoPassport)}
-				</p>
-			<%end%>
 				<%if IsDefined("PrivateMessage"): %>
 					<p class="warning">${PrivateMessage}</p>
 				<% end %>

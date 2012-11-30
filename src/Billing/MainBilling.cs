@@ -412,6 +412,7 @@ set s.LastStartFail = true;")
 				phisicalClient.Update();
 
 				var bufBal = phisicalClient.Balance;
+				var minimumBalance = bufBal - sum < 0;
 				//Отсылаем смс если клиенту осталось работать 2 дня или меньше
 				if (client.SendSmsNotifocation && (bufBal - sum * 2 < 0)) {
 					if (phisicalClient.Balance > 0) {
@@ -430,7 +431,7 @@ set s.LastStartFail = true;")
 						Messages.Add(smsMessage);
 					}
 				}
-				if (client.NeedShowWarning(sum)) {
+				if (minimumBalance) {
 					client.ShowBalanceWarningPage = true;
 					if (client.IsChanged(c => c.ShowBalanceWarningPage))
 						Appeals.CreareAppeal("Включена страница Warning, клиент имеент низкой баланс", client, AppealType.Statistic, false);

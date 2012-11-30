@@ -80,7 +80,6 @@ namespace Billing.Test.Integration
 				Name = "TestPhisicalClient",
 				Balance = balance,
 				Tariff = tariff,
-				PassportNumber = "123456"
 			};
 		}
 

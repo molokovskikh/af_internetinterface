@@ -258,26 +258,6 @@ namespace InternetInterface.Models
 			return String.Empty;
 		}
 
-		public virtual bool NeedShowWarning(decimal sumForWriteOff)
-		{
-			return (Balance - sumForWriteOff < 0) || ShowWarningBecauseNoPassport();
-		}
-
-		public virtual bool ShowWarningBecauseNoPassport()
-		{
-			if (!IsPhysical())
-				return false;
-
-			if (BeginWork == null)
-				return false;
-
-			var dontHavePassportData = string.IsNullOrEmpty(PhysicalClient.PassportNumber);
-			var goodMoney = Balance > 0;
-			var date = SystemTime.Now() > BeginWork.Value.AddDays(7);
-
-			return dontHavePassportData && goodMoney && date;
-		}
-
 		public virtual string Contact
 		{
 			get
