@@ -558,3 +558,7 @@ div.commented, .commented {
 .statisticField {
 	padding-left:15px;
 }
+
+.inlineStyle {
+	display: inline;
+}

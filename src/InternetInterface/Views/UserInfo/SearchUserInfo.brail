@@ -58,7 +58,7 @@
 <%if PartnerAccessSet.AccesPartner("SSI"): %>
 		<tr>
 			<td style="font-size:small;">
-				<form style="display:inline;" class="form login" method="post" action="${siteroot}/UserInfo/PassAndShowCard">
+				<form class="form login inlineStyle" method="post" action="${siteroot}/UserInfo/PassAndShowCard">
 					<input type="hidden" name="ClientID" value="${ClientCode}" />
 					<button type="submit" id="Button1" class="button ok">Изменить пароль и показать карту</button>
 				</form>
