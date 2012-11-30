@@ -492,6 +492,7 @@
     <Compile Include="Models\Main.cs" />
     <Compile Include="Models\SceHelper.cs" />
     <Compile Include="Models\SceThread.cs" />
+    <Compile Include="Models\ViewText.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="Content\tiny_mce\tiny_mce_09EFA8059243DF3F46253936C4603EF6.gz" />
     <None Include="Content\tiny_mce\tiny_mce_4490A91EECF6B6B85D1DC70190EE1A2E.gz" />
@@ -538,17 +539,17 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
-	<Import Project="..\..\packages\StyleCop.MSBuild.4.7.35.0\tools\StyleCop.Targets" />
-	<PropertyGroup>
-		<StyleCopTreatErrorsAsWarnings>False</StyleCopTreatErrorsAsWarnings>
-		<StyleCopOverrideSettingsFile>..\..\packages\StyleCopAddOn.1.0.4\Settings.StyleCop</StyleCopOverrideSettingsFile>
-	</PropertyGroup>
-	<ItemGroup>
-		<StyleCopAdditionalAddinPaths Include="..\..\packages\StyleCopAddOn.1.0.4\lib\4.0">
-			<InProject>false</InProject>
-		</StyleCopAdditionalAddinPaths>
-	</ItemGroup>
-	<ProjectExtensions>
+  <Import Project="..\..\packages\StyleCop.MSBuild.4.7.35.0\tools\StyleCop.Targets" />
+  <PropertyGroup>
+    <StyleCopTreatErrorsAsWarnings>False</StyleCopTreatErrorsAsWarnings>
+    <StyleCopOverrideSettingsFile>..\..\packages\StyleCopAddOn.1.0.4\Settings.StyleCop</StyleCopOverrideSettingsFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <StyleCopAdditionalAddinPaths Include="..\..\packages\StyleCopAddOn.1.0.4\lib\4.0">
+      <InProject>false</InProject>
+    </StyleCopAdditionalAddinPaths>
+  </ItemGroup>
+  <ProjectExtensions>
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
