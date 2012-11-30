@@ -36,13 +36,13 @@ namespace Billing.Test.Integration
 		}
 
 		[Test]
-		public void No_show_warning_if_balance_less_than_zero()
+		public void Show_warning_if_balance_less_than_zero()
 		{
 			_client.BeginWork = DateTime.Now.AddDays(-8);
 			_client.PhysicalClient.PassportNumber = null;
 			_client.PhysicalClient.Balance = -5;
 
-			Assert_warning_page(false);
+			Assert_warning_page(true);
 		}
 
 		[Test]

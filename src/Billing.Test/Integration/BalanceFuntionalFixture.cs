@@ -498,14 +498,18 @@ namespace Billing.Test.Integration
 				};
 				client.Save();
 			}
-			for (int i = 0; i < DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month) * 2; i++) {
+			SystemTime.Reset();
+			var sn = SystemTime.Now();
+			var days = DateTime.DaysInMonth(sn.Year, sn.Month) + DateTime.DaysInMonth(sn.AddMonths(1).Year, sn.AddMonths(1).Month);
+			var beginData = new DateTime(sn.Year, sn.Month, 1);
+			for (int i = 0; i < days; i++) {
+				SystemTime.Now = () => beginData.AddDays(i);
 				billing.Compute();
 			}
 			using (new SessionScope()) {
 				lPerson.Refresh();
 			}
-			Assert.That(-19999m, Is.GreaterThan(lPerson.Balance));
-			Assert.That(-20000m, Is.LessThan(lPerson.Balance));
+			Assert.That(-20000m, Is.EqualTo(lPerson.Balance));
 			billing.OnMethod();
 			using (new SessionScope()) {
 				client.Refresh();
