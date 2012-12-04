@@ -433,7 +433,11 @@ set s.LastStartFail = true;")
 				if (client.NeedShowWarning(sum)) {
 					client.ShowBalanceWarningPage = true;
 					if (client.IsChanged(c => c.ShowBalanceWarningPage))
-						Appeals.CreareAppeal("Включена страница Warning, клиент имеент низкой баланс", client, AppealType.Statistic, false);
+						if (client.ShowWarningBecauseNoPassport())
+							Appeals.CreareAppeal("Включена страница Warning, клиент не имеет паспортных данных", client, AppealType.Statistic, false);
+						else {
+							Appeals.CreareAppeal("Включена страница Warning, клиент имеент низкий баланс", client, AppealType.Statistic, false);
+						}
 				}
 				else {
 					client.ShowBalanceWarningPage = false;
