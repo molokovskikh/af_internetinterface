@@ -74,9 +74,7 @@ namespace InternetInterface.Controllers
 		public void ReportOnWork([SmartBinder("filter")] BrigadFilter filter)
 		{
 			PropertyBag["filter"] = filter;
-			var result = filter.Find(DbSession);
-			PropertyBag["SClients"] = result;
-			PropertyBag["NoConnected"] = result.Count(c => c.client.BeginWork == null);
+			PropertyBag["SClients"] = filter.Find(DbSession);
 		}
 	}
 }

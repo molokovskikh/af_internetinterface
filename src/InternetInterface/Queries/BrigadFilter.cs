@@ -27,6 +27,7 @@ namespace InternetInterface.Queries
 		public Brigad Brigad { get; set; }
 		public DatePeriod Period { get; set; }
 		public ClientState State { get; set; }
+		public int NoConnected { get; set; }
 
 		public BrigadFilter()
 		{
@@ -49,13 +50,9 @@ namespace InternetInterface.Queries
 
 			RowsCount = query.Count();
 
-			if (CurrentPage > 0) {
-				var skiped = query.Skip(CurrentPage * PageSize);
-				return skiped.Take(PageSize).ToList().Select(c => new ClientInfo(c.Client)).ToList();
-			}
-			else {
-				return query.Take(PageSize).ToList().Select(c => new ClientInfo(c.Client)).ToList();
-			}
+			NoConnected = query.Count(c => c.Client.BeginWork == null);
+
+			return query.Skip(CurrentPage * PageSize).Take(PageSize).ToList().Select(c => new ClientInfo(c.Client)).ToList();
 		}
 	}
 }

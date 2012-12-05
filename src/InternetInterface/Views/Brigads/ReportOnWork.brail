@@ -8,7 +8,7 @@
 							<fieldset class="statisticField">
 							<legend>Статистика подключений</legend>
 								<p>Всего: <span>${filter.RowsCount}</span></p>
-								<p>Не состоявшихся: <span>${NoConnected}</span></p>
+								<p>Не состоявшихся: <span>${filter.NoConnected}</span></p>
 							</fieldset>
 						</td>
 					</tr>
