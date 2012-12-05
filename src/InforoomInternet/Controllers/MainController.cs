@@ -226,9 +226,10 @@ namespace InforoomInternet.Controllers
 						DbSession.SaveOrUpdate(point);
 					}
 				}
-
-				clientW.ShowBalanceWarningPage = false;
-				Appeals.CreareAppeal("Отключена страница Warning, клиент отключил со страницы", clientW, AppealType.Statistic, false);
+				if (clientW.ShowBalanceWarningPage) {
+					clientW.ShowBalanceWarningPage = false;
+					Appeals.CreareAppeal("Отключена страница Warning, клиент отключил со страницы", clientW, AppealType.Statistic, false);
+				}
 				clientW.Update();
 				var url = Request.Form["referer"];
 				if (String.IsNullOrEmpty(url))
