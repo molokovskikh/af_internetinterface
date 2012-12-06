@@ -106,7 +106,12 @@ namespace InternetInterface.Controllers
 					&& (i.LeaseEnd.Value.Date <= endDate.Value.Date
 						|| i.LeaseEnd == null);
 
-			var appeal = session.Query<Appeals>().Where(a => a.Client.Id == ClientCode && a.AppealType == AppealType.Statistic).ToList().Select(a => new SessionResult(a)).ToList();
+			var appeal = session.Query<Appeals>().Where(a => 
+				a.Client.Id == ClientCode &&
+					a.AppealType == AppealType.Statistic &&
+					a.Date.Date >= beginDate.Value.Date &&
+					a.Date.Date <= endDate.Value.Date)
+				.ToList().Select(a => new SessionResult(a)).ToList();
 			_lastRowsCount = Internetsessionslog.Queryable.Where(predicate).Count();
 			_lastRowsCount += appeal.Count;
 			int getCount = 0;
@@ -683,19 +688,18 @@ where r.`Label`= :LabelIndex;")
 					updateClient.LogComment = comment;
 				}
 
-				updateClient.Update();
-
 				if (updateClient.IsChanged(c => c.Tariff)) {
 					_client.Disabled = updateClient.Tariff == null;
 					if (_client.IsChanged(c => c.Disabled)) {
-						var message = _client.Disabled ? "Клиент включен оператором, тариф назначен" : "Клиент отключен оператором, тариф удален";
+						var message = !_client.Disabled ? "Клиент включен оператором, тариф назначен" : "Клиент отключен оператором, тариф удален";
 						Appeals.CreareAppeal(message, _client, AppealType.Statistic);
 					}
 				}
 				_client.Name = updateClient.ShortName;
 				_client.Update();
+				updateClient.Update();
 
-				RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID + "&filter.appealType=" + appealType);
+				RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID);
 			}
 			else {
 				updateClient.SetValidationErrors(Validator.GetErrorSummary(updateClient));

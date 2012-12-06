@@ -29,7 +29,6 @@
 		<form class="form login" method="post" action="${siteroot}/UserInfo/LoadEditMudule">
 	<input type="hidden" name="ClientID" value="${ClientCode}" />
 	<input type="hidden" name="EditFlag" value="${Editing}" />
-	<input type="hidden" name="appealType" value="${appealType}" />
 	<table class="table" style="width: 100%;" align="left">
 	<thead>
 			<%if IsDefined("EditFlag"):
