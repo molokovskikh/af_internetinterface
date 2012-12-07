@@ -235,7 +235,7 @@ set s.LastStartFail = true;")
 							if (!client.SendEmailNotification)
 								client.SendEmailNotification = EmailNotificationSender.SendLawyerPersonNotification(client);
 							if (client.IsChanged(c => c.ShowBalanceWarningPage))
-								Appeals.CreareAppeal("Включена страница Warning, клиент имеент низкой баланс", client, AppealType.Statistic, false);
+								Appeals.CreareAppeal("Включена страница Warning, клиент имеет низкий баланс", client, AppealType.Statistic, false);
 						}
 					}
 					else {
@@ -436,7 +436,7 @@ set s.LastStartFail = true;")
 						if (client.ShowWarningBecauseNoPassport())
 							Appeals.CreareAppeal("Включена страница Warning, клиент не имеет паспортных данных", client, AppealType.Statistic, false);
 						else {
-							Appeals.CreareAppeal("Включена страница Warning, клиент имеент низкий баланс", client, AppealType.Statistic, false);
+							Appeals.CreareAppeal("Включена страница Warning, клиент имеет низкий баланс", client, AppealType.Statistic, false);
 						}
 				}
 				else {
