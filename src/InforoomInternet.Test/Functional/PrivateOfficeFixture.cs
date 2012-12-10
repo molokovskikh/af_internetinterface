@@ -130,7 +130,7 @@ namespace InforoomInternet.Test.Functional
 
 			var appeals = Appeals.GetAllAppeal(session, client, AppealType.System);
 			Assert.AreEqual(appeals.Count, 1);
-			Assert.That(appeals[0].Text, Is.StringContaining("Отключена услуна Internet"));
+			Assert.That(appeals[0].Text, Is.StringContaining("Отключена услуга Internet"));
 		}
 
 		[Test]
