@@ -40,6 +40,8 @@ namespace BananceChanger
 			new MainBilling().Run();
 		}
 
+
+		//Возращаем деньги клиентам, которые работали вчера, но у всех должны быть закончены сессии
 		public static void OneDayPayment()
 		{
 			using (var transaction = new TransactionScope(OnDispose.Rollback)) {

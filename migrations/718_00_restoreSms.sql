@@ -1,5 +1,5 @@
 ﻿DROP TEMPORARY TABLE IF EXISTS `internet`.`RESTOREDsms`;
-CREATE TABLE  `internet`.`RESTOREDsms` (
+CREATE TEMPORARY TABLE  `internet`.`RESTOREDsms` (
   `CreateDate` datetime DEFAULT NULL,
   `SendToOperatorDate` datetime DEFAULT NULL,
   `ShouldBeSend` datetime DEFAULT NULL,
