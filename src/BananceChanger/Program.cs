@@ -6,9 +6,11 @@ using Billing;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework.Config;
 using Common.Tools;
+using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Services;
+using NHibernate.Linq;
 using Test.Support.Helpers;
 using Environment = NHibernate.Cfg.Environment;
 
@@ -18,7 +20,7 @@ namespace BananceChanger
 	{
 		static void Main(string[] args)
 		{
-			//Init();
+			Init();
 
 			//CreateWriteOffs();
 			//ZeroTarif();
@@ -29,12 +31,63 @@ namespace BananceChanger
 			//SmsHelper.SendMessage(string.Empty, "123");
 			//SendSmsIfNoSending();
 			//DeleteWriteOffInNowDay();
-			RunBilling();
+			//RunBilling();
+			SendSmsIfNoSending();
 		}
 
 		public static void RunBilling()
 		{
 			new MainBilling().Run();
+		}
+
+		public static void OneDayPayment()
+		{
+			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
+				var sessionHolder = ActiveRecordMediator.GetSessionFactoryHolder();
+				var session = sessionHolder.CreateSession(typeof(ActiveRecordBase));
+				//День за который возвращаем деньги
+				var day = new DateTime(2012, 12, 17);
+				var messages = new List<SmsMessage>();
+
+				var workedClients = session.CreateSQLQuery(@"SELECT cp.Client FROM `logs`.internetsessionslogs i
+join internet.ClientEndPoints cp on i.EndpointId = cp.id
+where leaseend > '2012-12-17 13:30:00'
+and (i.Ip < 3232286721 or i.ip > 3232288255)
+group by client;").List<uint>();
+
+				var writeOffs = session.Query<WriteOff>().Where(w => w.WriteOffDate.Date >= day.Date && workedClients.Contains(w.Client.Id) && w.Client.PhysicalClient != null).ToList();
+				Console.WriteLine("{0} Client", writeOffs.Count);
+				foreach (var writeOff in writeOffs) {
+					var client = writeOff.Client;
+					var payment = new Payment(client, writeOff.WriteOffSum) { Virtual = true };
+					if (client.Disabled) {
+						client.Disabled = client.Balance + writeOff.WriteOffSum < 0;
+						var statusType = client.Disabled ? StatusType.NoWorked : StatusType.Worked;
+						client.Status = Status.Find((uint)statusType);
+					}
+					var debtWork = client.FindService<DebtWork>();
+					if (debtWork != null && debtWork.EndWorkDate != null) {
+						debtWork.Activated = true;
+						debtWork.Diactivated = false;
+						debtWork.EndWorkDate = debtWork.EndWorkDate.Value.AddDays(1);
+						session.Save(debtWork);
+						Console.WriteLine("Client {0} prolongate debtwork", writeOff.Client.Id);
+					}
+					session.Save(payment);
+					session.Save(client);
+					messages.Add(new SmsMessage(client, string.Format("На Ваш счет начислено {0}", writeOff.WriteOffSum.ToString("C"))));
+				}
+				try {
+					new SmsHelper().SendMessages(messages);
+				}
+				catch (Exception ex) {
+					Console.WriteLine(ex.Message);
+				}
+				Console.WriteLine("SmsSended complete");
+				transaction.VoteCommit();
+				Console.WriteLine("Operation complete");
+				Console.ReadLine();
+			}
 		}
 
 		/*Удаляет списания за определенный день*/
@@ -55,10 +108,10 @@ namespace BananceChanger
 
 		public static void SendSmsIfNoSending()
 		{
-			var createDate = new DateTime(2012, 1, 30);
+			var createDate = new DateTime(2012, 12, 18);
 			using (new SessionScope()) {
-				var smses = SmsMessage.Queryable.Where(s => s.CreateDate.Date >= createDate).ToList();
-				SmsHelper.SendMessages(smses);
+				var smses = SmsMessage.Queryable.Where(s => s.CreateDate.Date >= createDate && !s.IsSended).ToList();
+				new SmsHelper().SendMessages(smses);
 				//SmsHelper.SendMessage("+79507738447", "123456");
 			}
 		}
@@ -188,7 +241,7 @@ namespace BananceChanger
 					}
 					var service = client.ClientServices.FirstOrDefault(s => s.Service.GetType() == typeof(DebtWork));
 					if (service != null) {
-						service.Delete();
+						//service.Delete();
 						Console.WriteLine(string.Format("Для клиента {0} удалена услуга обещанный платеж", client.Id.ToString("00000")));
 					}
 				}
@@ -543,7 +596,7 @@ namespace BananceChanger
 		private static void Init()
 		{
 			var configuration = new InPlaceConfigurationSource();
-			//configuration.PluralizeTableNames = true;
+			configuration.PluralizeTableNames = true;
 			configuration.Add(typeof(ActiveRecordBase),
 				new Dictionary<string, string>
 				{
