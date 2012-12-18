@@ -188,7 +188,7 @@ namespace InternetInterface.Models
 
 		public virtual void CreateAutoEndPont(string ip, ISession session)
 		{
-			var lease = Lease.FindAllByProperty("Ip", Convert.ToUInt32(NetworkSwitch.SetProgramIp(ip))).FirstOrDefault();
+			var lease = session.Query<Lease>().FirstOrDefault(l => l.Ip == Convert.ToUInt32(NetworkSwitch.SetProgramIp(ip)));
 			if (lease == null)
 				throw new Exception(string.Format("Клиент {0} пришел а аренды для него нет", Id));
 			if (string.IsNullOrEmpty(lease.Switch.Name)) {

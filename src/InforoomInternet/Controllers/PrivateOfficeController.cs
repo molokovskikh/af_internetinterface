@@ -81,24 +81,28 @@ namespace InforoomInternet.Controllers
 			PropertyBag["PhysicalClient"] = client.PhysicalClient;
 		}
 
+		[AccessibleThrough(Verb.Post)]
 		public void FirstVisit(uint physicalClientId)
 		{
 			var clientId = Convert.ToUInt32(Session["LoginClient"]);
 			var client = DbSession.Get<Client>(clientId);
 			SetSmartBinder(AutoLoadBehavior.Always);
-			var physicalClient = DbSession.Get<PhysicalClient>(physicalClientId);
+			var physicalClient = client.PhysicalClient;
 			BindObjectInstance(physicalClient, "PhysicalClient");
 			if (IsPost && IsValid(physicalClient)) {
 				DbSession.Save(physicalClient);
-				if (client.NoEndPoint()) {
-					var userHostAddress = Request.UserHostAddress;
+				var userHostAddress = Request.UserHostAddress;
 #if DEBUG
-					userHostAddress = "192.168.0.1";
+				userHostAddress = "192.168.0.1";
+#endif
+				if (client.NoEndPoint() && !ClientEndpoint.HavePoint(DbSession, userHostAddress)) {
+#if DEBUG
 					var programIP = Convert.ToUInt32(NetworkSwitch.SetProgramIp(userHostAddress));
 					if (DbSession.Query<Lease>().FirstOrDefault(l => l.Ip == programIP) == null) {
 						var lease = new Lease {
 							Ip = programIP,
-							Switch = DbSession.Query<NetworkSwitch>().First()
+							Switch = DbSession.Query<NetworkSwitch>().First(),
+							Port = 5
 						};
 						DbSession.Save(lease);
 					}

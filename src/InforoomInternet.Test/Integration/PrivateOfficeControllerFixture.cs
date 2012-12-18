@@ -1,4 +1,6 @@
-﻿using Castle.ActiveRecord;
+﻿using System;
+using System.Linq;
+using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Castle.MonoRail.Framework;
 using Castle.MonoRail.Framework.Routing;
@@ -11,6 +13,7 @@ using InternetInterface.Models;
 using InternetInterface.Models.Services;
 using InternetInterface.Test.Helpers;
 using NHibernate;
+using NHibernate.Linq;
 using NUnit.Framework;
 
 namespace InforoomInternet.Test.Integration
@@ -112,6 +115,34 @@ namespace InforoomInternet.Test.Integration
 			Assert.That(client.UserWriteOffs.Count, Is.EqualTo(1));
 			Assert.That(client.UserWriteOffs[0].Sum, Is.EqualTo(50));
 			Assert.That(client.UserWriteOffs[0].Comment, Is.EqualTo(string.Format("Изменение тарифа, старый '{0}' новый 'Тариф для тестирования изменения тарифов'", oldTariff)));
+		}
+
+		[Test]
+		public void First_visit_if_have_endpoint()
+		{
+			var networkSwitch = new NetworkSwitch { Name = "testFirstVisit" };
+			var lease = new Lease { Port = 5, Ip = 3232235521, Switch = networkSwitch };
+			var endpoint = new ClientEndpoint(client, 5, networkSwitch);
+			session.Save(networkSwitch);
+			session.Save(lease);
+			session.Save(endpoint);
+
+			((StubRequest)Request).HttpMethod = "POST";
+			controller.FirstVisit(client.PhysicalClient.Id);
+
+			client = session.Get<Client>(client.Id);
+			Assert.AreEqual(client.Endpoints.Count, 0);
+
+			session.Delete(endpoint);
+			session.Flush();
+
+			((StubRequest)Request).HttpMethod = "POST";
+			controller.FirstVisit(client.PhysicalClient.Id);
+			var id = client.Id;
+			TearDown();
+			Init();
+			var client2 = session.Query<Client>().First(c => c.Id == id);
+			Assert.AreEqual(client2.Endpoints.Count, 1);
 		}
 	}
 }
