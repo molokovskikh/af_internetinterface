@@ -160,6 +160,8 @@ namespace InternetInterface.Controllers
 				}
 			}
 
+			Session["payments"] = null;
+
 			RedirectToAction("Index",
 				new Dictionary<string, string> {
 					{ "filter.Period.Begin", payments.Min(p => p.PayedOn).ToShortDateString() },

@@ -32,7 +32,7 @@ namespace BananceChanger
 			//SendSmsIfNoSending();
 			//DeleteWriteOffInNowDay();
 			//RunBilling();
-			SendSmsIfNoSending();
+			//SendSmsIfNoSending();
 		}
 
 		public static void RunBilling()
