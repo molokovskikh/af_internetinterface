@@ -14,7 +14,9 @@ namespace InternetInterface.AllLogic
 		public static string ValidationConnectInfo(ConnectInfo info)
 		{
 			if (string.IsNullOrEmpty(info.Port))
-				return string.Empty;
+				return "Введите порт";
+			if (info.Switch == 0)
+				return "Выберете свич";
 			int res;
 			if (Int32.TryParse(info.Port, out res)) {
 				if (res > 48 || res < 1)
