@@ -393,7 +393,7 @@ namespace InternetInterface.Controllers
 			else {
 				ConnectInfo.static_IP = NetworkSwitch.SetProgramIp(ConnectInfo.static_IP);
 			}
-			var errorMessage = Validation.ValidationConnectInfo(ConnectInfo);
+			var errorMessage = Validation.ValidationConnectInfo(ConnectInfo, false);
 			decimal _connectSum;
 			var validateSum =
 				!(!string.IsNullOrEmpty(ConnectSum) && (!decimal.TryParse(ConnectSum, out _connectSum) || (_connectSum <= 0 && !client.IsPhysical())));

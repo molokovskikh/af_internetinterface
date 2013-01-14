@@ -148,7 +148,7 @@ namespace InternetInterface.Controllers
 			SetBinder(new DecimalValidateBinder { Validator = Validator });
 			var person = new LawyerPerson();
 			BindObjectInstance(person, ParamStore.Form, "LegalPerson");
-			var connectErrors = Validation.ValidationConnectInfo(info);
+			var connectErrors = Validation.ValidationConnectInfo(info, true);
 			if (IsValid(person) && string.IsNullOrEmpty(connectErrors)) {
 				person.SaveAndFlush();
 				var client = new Client {

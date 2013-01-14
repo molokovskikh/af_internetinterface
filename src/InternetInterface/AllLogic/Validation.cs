@@ -11,11 +11,11 @@ namespace InternetInterface.AllLogic
 {
 	public class Validation
 	{
-		public static string ValidationConnectInfo(ConnectInfo info)
+		public static string ValidationConnectInfo(ConnectInfo info, bool register)
 		{
-			if (string.IsNullOrEmpty(info.Port))
+			if (string.IsNullOrEmpty(info.Port) && !register)
 				return "Введите порт";
-			if (info.Switch == 0)
+			if (info.Switch == 0 && !register)
 				return "Выберете свич";
 			int res;
 			if (Int32.TryParse(info.Port, out res)) {
@@ -28,7 +28,7 @@ namespace InternetInterface.AllLogic
 				}
 			}
 			else {
-				return "Вы ввели некорректное значение порта";
+				return string.Empty;
 			}
 		}
 	}
