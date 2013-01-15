@@ -35,7 +35,7 @@ namespace InternetInterface.Services
 			if (person != null) {
 				if (person.Tariff == null)
 					return false;
-				return person.NeedShowWarning();
+				return true;
 			}
 			return false;
 		}
