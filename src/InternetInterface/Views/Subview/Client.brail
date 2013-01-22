@@ -108,7 +108,7 @@ $(function () {
 </tr>
 <%end %>
 </table>
-<% if EditAddress != true: %>
+<% if not IsDefined("EditAddress") or EditAddress != true: %>
 <table class="table" border="0" id="AdressTable" style="margin-bottom: 15px;"> 
 <thead>
 <th colspan=14>Адрес</th>
