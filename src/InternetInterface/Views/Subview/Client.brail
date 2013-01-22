@@ -108,6 +108,7 @@ $(function () {
 </tr>
 <%end %>
 </table>
+<% if EditAddress != true: %>
 <table class="table" border="0" id="AdressTable" style="margin-bottom: 15px;"> 
 <thead>
 <th colspan=14>Адрес</th>
@@ -119,6 +120,7 @@ $(function () {
 	</td>
 	<td style="width:200px;">
 		<select name="house_id" id="houses_select">
+		<option value="0"  ${"selected" if (0 == ChHouse)} >!!!</option>
 		<% for i, house_sel in enumerate(Houses): %>
 			<option value="${house_sel.Id}"  ${"selected" if (house_sel.Id == ChHouse)} >${house_sel.Street} ${house_sel.Number} ${house_sel.Case}</option>
 		<%end %>
@@ -152,7 +154,7 @@ $(function () {
 </tr>
 </tbody>
 </table>
-
+<% end %>
 <table class="table"> 
 	<thead>
 		<tr>

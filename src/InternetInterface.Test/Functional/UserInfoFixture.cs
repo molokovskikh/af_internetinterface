@@ -112,6 +112,17 @@ namespace InternetInterface.Test.Functional
 			}
 		}
 
+		[Test]
+		public void NotEditAddressForRefused()
+		{
+			Client.AdditionalStatus = session.QueryOver<AdditionalStatus>()
+				.Where(s => s.ShortName == "Refused")
+				.SingleOrDefault();
+			session.Save(Client);
+			Open(ClientUrl);
+			Assert.That(browser.Text, Is.Not.Contains("Дом "));
+		}
+
 		[Test, Ignore]
 		public void AdditionalStatusTest()
 		{

@@ -818,6 +818,7 @@ where r.`Label`= :LabelIndex;")
 			PropertyBag["services"] = Service.FindAll();
 			PropertyBag["Appeals"] = Appeals.GetAllAppeal(DbSession, client, appealType);
 			PropertyBag["Client"] = client.PhysicalClient;
+			PropertyBag["EditAddress"] = client.AdditionalStatus == null ? false : client.AdditionalStatus.ShortName == "Refused";
 
 			PropertyBag["Houses"] = House.AllSort;
 			PropertyBag["ChHouse"] = client.PhysicalClient.HouseObj != null ? client.PhysicalClient.HouseObj.Id : 0;
