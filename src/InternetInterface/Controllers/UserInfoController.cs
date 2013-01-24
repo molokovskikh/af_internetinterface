@@ -547,7 +547,7 @@ namespace InternetInterface.Controllers
 			if (labelForDel != null && labelForDel.Deleted) {
 				labelForDel.DeleteAndFlush();
 				DbSession.CreateSQLQuery(
-					@"update internet.Request R 
+					@"update internet.Requests R 
 set r.`Label` = null,
 r.`ActionDate` = :ActDate,
 r.`Operator` = :Oper 
