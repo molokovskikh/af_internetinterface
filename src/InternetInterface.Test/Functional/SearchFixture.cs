@@ -65,7 +65,7 @@ namespace InternetInterface.Test.Functional
 			Assert.That(browser.Text, Is.StringContaining("Уникальных клиентов за сутки"));
 			Assert.That(browser.Text, Is.StringContaining("Количество зарегистрированных клиентов"));
 			Assert.That(browser.Text, Is.StringContaining("Количество клиентов \"Заблокирован\" и \"Он-Лайн\""));
-			Assert.That(browser.Text, Is.StringContaining("Количество клиентов в состоянии \"Заблокирован\""));
+			Assert.That(browser.Text, Is.StringContaining("Количество клиентов \"Заблокирован\""));
 			Css("#SearchText").TypeText(Client.Id.ToString());
 			browser.Button(Find.ById("SearchButton")).Click();
 			Assert.That(browser.Text, Is.StringContaining("Информация по клиенту"));

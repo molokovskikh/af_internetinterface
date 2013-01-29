@@ -1,4 +1,4 @@
-﻿.filter
+﻿\.filter
 {
 	border:1px double Black;
 	width:700px;
@@ -47,3 +47,38 @@
 {
 	width:200px;
 	}
+	
+.table td .FindInputFields {
+	padding-left: 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+.addressInput {
+	margin-bottom: 5px;
+}
+
+#InputCity {
+	margin-left: 18px;
+}
+
+#InputAdress {
+	margin-left: 17px;
+}
+
+#InputHouse {
+	width: 50px;
+}
+
+#InputCaseHouse {
+	width: 50px;
+}
+
+#InputApartment {
+	width: 50px;
+}
+
+#SearchButton {
+	float: right;
+	/*margin-top: -80px;*/
+}

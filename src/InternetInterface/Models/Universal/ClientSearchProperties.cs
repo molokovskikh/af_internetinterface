@@ -6,9 +6,10 @@ namespace InternetInterface.Models
 	{
 		[Description("Автоматически")] Auto,
 		[Description("ФИО")] ByFio,
-		[Description("Паспортные данные")] ByAddress,
+		[Description("Паспортные данные")] ByPassport,
 		[Description("Номер счета")] SearchAccount,
-		[Description("Номер телефона")] TelNum
+		[Description("Номер телефона")] TelNum,
+		[Description("Адрес")] Address
 	}
 
 	public enum TypeChangeBalance
@@ -151,7 +152,7 @@ namespace InternetInterface.Models
 
 		public bool IsSearchByAddress()
 		{
-			return SearchBy == SearchUserBy.ByAddress;
+			return SearchBy == SearchUserBy.ByPassport;
 		}
 
 		public bool IsSearchAccount()

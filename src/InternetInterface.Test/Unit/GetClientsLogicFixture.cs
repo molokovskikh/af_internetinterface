@@ -145,11 +145,69 @@ namespace InternetInterface.Test.Unit
 		public void Get_where_office_searchProperties_IsSearchByAddress()
 		{
 			_filter.SearchText = "5";
-			_filter.SearchProperties = SearchUserBy.ByAddress;
+			_filter.SearchProperties = SearchUserBy.ByPassport;
 			var result = GetClientsLogic.GetWhere(_filter);
 			Assert.That(result, Is.EqualTo(String.Format(@"
-	WHERE (LOWER(h.Street) like {0} or
+	WHERE (LOWER(p.PassportSeries) like {0} or LOWER(p.PassportNumber)  like {0} or
 	LOWER(l.ActualAdress) like {0})", ":SearchText")));
+		}
+
+		[Test]
+		public void Get_where_if_adress_find_city()
+		{
+			_filter.SearchProperties = SearchUserBy.Address;
+			_filter.City = "testCity";
+			var where = GetClientsLogic.GetWhere(_filter);
+			Assert.AreEqual(where, @"where(LOWER(p.City) like :City or LOWER(l.ActualAdress) like :City)");
+		}
+
+		[Test]
+		public void Get_where_if_adress_find_street()
+		{
+			_filter.SearchProperties = SearchUserBy.Address;
+			_filter.Street = "Street";
+			var where = GetClientsLogic.GetWhere(_filter);
+			Assert.AreEqual(where, @"where(LOWER(h.Street) like :Street or LOWER(l.ActualAdress) like :Street)");
+		}
+
+		[Test]
+		public void Get_where_if_adress_find_house()
+		{
+			_filter.SearchProperties = SearchUserBy.Address;
+			_filter.House = "5";
+			var where = GetClientsLogic.GetWhere(_filter);
+			Assert.AreEqual(where, @"where(p.House = :House)");
+		}
+
+		[Test]
+		public void Get_where_if_adress_find_case_house()
+		{
+			_filter.SearchProperties = SearchUserBy.Address;
+			_filter.CaseHouse = "testCase";
+			var where = GetClientsLogic.GetWhere(_filter);
+			Assert.AreEqual(where, @"where(LOWER(p.CaseHouse) like :CaseHouse or LOWER(l.ActualAdress) like :CaseHouse)");
+		}
+
+		[Test]
+		public void Get_where_if_adress_find_apartment()
+		{
+			_filter.SearchProperties = SearchUserBy.Address;
+			_filter.Apartment = "5";
+			var where = GetClientsLogic.GetWhere(_filter);
+			Assert.AreEqual(where, @"where(p.Apartment = :Apartment)");
+		}
+
+		[Test]
+		public void Get_where_if_adress_find_all()
+		{
+			_filter.SearchProperties = SearchUserBy.Address;
+			_filter.City = "testCity";
+			_filter.Street = "testStreet";
+			_filter.House = "testHouse";
+			_filter.CaseHouse = "testCaseCouse";
+			_filter.Apartment = "restApartment";
+			var where = GetClientsLogic.GetWhere(_filter);
+			Assert.AreEqual(where, @"where(LOWER(p.City) like :City or LOWER(l.ActualAdress) like :City) and (LOWER(h.Street) like :Street or LOWER(l.ActualAdress) like :Street) and (p.House = :House) and (LOWER(p.CaseHouse) like :CaseHouse or LOWER(l.ActualAdress) like :CaseHouse) and (p.Apartment = :Apartment)");
 		}
 
 		[Test]

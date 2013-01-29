@@ -115,6 +115,7 @@
   <ItemGroup>
     <Content Include="Assets\Javascripts\application.js" />
     <Content Include="Assets\Javascripts\registration.js" />
+    <Content Include="Assets\Javascripts\userSearch.js" />
     <Content Include="Assets\Stylesheets\alt-form.css" />
     <Content Include="Assets\Stylesheets\client.css" />
     <Content Include="Assets\Stylesheets\payments.css" />
