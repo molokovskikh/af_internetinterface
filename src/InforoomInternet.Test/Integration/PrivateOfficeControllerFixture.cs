@@ -143,6 +143,8 @@ namespace InforoomInternet.Test.Integration
 			Init();
 			var client2 = session.Query<Client>().First(c => c.Id == id);
 			Assert.AreEqual(client2.Endpoints.Count, 1);
+			var paymentForConnect = session.Query<PaymentForConnect>().Where(p => p.EndPoint == client2.Endpoints[0]).FirstOrDefault();
+			Assert.AreEqual(paymentForConnect.Sum, 555);
 		}
 	}
 }
