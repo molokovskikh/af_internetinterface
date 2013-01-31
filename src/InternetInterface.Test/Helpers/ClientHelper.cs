@@ -78,7 +78,8 @@ namespace InternetInterface.Test.Helpers
 				Street = "testStreet",
 				Surname = "testSurn",
 				Tariff = tariff,
-				WhoGivePassport = "guvd"
+				WhoGivePassport = "guvd",
+				ConnectSum = 555
 			};
 
 			var internalClient = new Client {
