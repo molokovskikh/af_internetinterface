@@ -12,8 +12,7 @@ ALTER TABLE `internet`.`houses` ADD COLUMN `RegionId` INTEGER UNSIGNED AFTER `Co
     ON UPDATE RESTRICT;
 
 
-ALTER TABLE `internet`.`lawyerperson` MODIFY COLUMN `Id` INTEGER UNSIGNED NOT NULL,
- ADD COLUMN `RegionId` INTEGER UNSIGNED AFTER `MailingAddress`,
+ALTER TABLE `internet`.`lawyerperson` ADD COLUMN `RegionId` INTEGER UNSIGNED AFTER `MailingAddress`,
  ADD CONSTRAINT `FK_lawyerperson_regios` FOREIGN KEY `FK_lawyerperson_regios` (`RegionId`)
     REFERENCES `regions` (`Id`)
     ON DELETE RESTRICT
