@@ -71,5 +71,10 @@
 				${app.LinkTo("Стоимость изменения тарифов", @Tariffs, @ChangeRules)}
 			</td>
 		</tr>
+			<tr>
+				<td>
+					${app.LinkTo("Редактирование справочника регионов", @UserInfo, @ShowRegions)}
+				</td>
+			</tr>
 	</tbody>
 </table>

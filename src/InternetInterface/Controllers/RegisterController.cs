@@ -128,6 +128,7 @@ namespace InternetInterface.Controllers
 
 				PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClient>(phisClient);
 			}
+			PropertyBag["RegionList"] = RegionHouse.All();
 		}
 
 
@@ -141,6 +142,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Editing"] = false;
 			PropertyBag["LegalPerson"] = new LawyerPerson();
 			PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(new LawyerPerson());
+			PropertyBag["RegionList"] = RegionHouse.All();
 		}
 
 		public void RegisterLegalPerson(int speed, [DataBind("ConnectInfo")] ConnectInfo info, uint brigadForConnect)
@@ -200,6 +202,7 @@ namespace InternetInterface.Controllers
 				person.SetValidationErrors(Validator.GetErrorSummary(person));
 				PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(person);
 			}
+			PropertyBag["RegionList"] = RegionHouse.All();
 		}
 
 		[AccessibleThrough(Verb.Post)]
@@ -292,6 +295,7 @@ namespace InternetInterface.Controllers
 			var street = Request.Form["Street"];
 			var number = Request.Form["Number"];
 			var _case = Request.Form["Case"];
+			var region = Request.Form["RegionId"];
 			int res;
 			var house = new House();
 			var errors = string.Empty;
@@ -301,6 +305,7 @@ namespace InternetInterface.Controllers
 				house = new House { Street = street, Number = Int32.Parse(number) };
 				if (!string.IsNullOrEmpty(_case))
 					house.Case = _case;
+				house.Region = DbSession.Load<RegionHouse>(Convert.ToUInt32(region));
 				house.Save();
 			}
 			return new { Name = string.Format("{0} {1} {2}", street, number, _case), house.Id };
@@ -328,6 +333,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Applying"] = "false";
 			PropertyBag["BalanceText"] = 0;
 			PropertyBag["ConnectInfo"] = new ClientConnectInfo();
+			PropertyBag["RegionList"] = DbSession.Query<RegionHouse>().ToList();
 		}
 
 		private void EditorValues()

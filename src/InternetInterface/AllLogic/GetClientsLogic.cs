@@ -34,6 +34,10 @@ namespace InternetInterface.AllLogic
 				if (filter.EnabledTypeProperties == EndbledType.Enabled)
 					_return += " and c.Disabled = false";
 
+				if(filter.Region != null && filter.Region > 0) {
+					_return += " and (h.RegionId = :regionid or l.RegionId = :regionid)";
+				}
+
 				if (!string.IsNullOrEmpty(filter.SearchText)) {
 					if (filter.SearchProperties == SearchUserBy.Auto) {
 						return

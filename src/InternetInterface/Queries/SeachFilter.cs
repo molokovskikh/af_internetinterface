@@ -30,6 +30,7 @@ namespace InternetInterface.Queries
 		public string SortBy { get; set; }
 		public string Direction { get; set; }
 		public bool ExportInExcel { get; set; }
+		public uint Region { get; set; }
 
 		private int _lastRowsCount;
 
@@ -85,6 +86,9 @@ namespace InternetInterface.Queries
 		{
 			if (StatusType > 0)
 				query.SetParameter("statusType", StatusType);
+			if(Region != null && Region > 0) {
+				query.SetParameter("regionid", Region);
+			}
 		}
 
 		private string GetOrderField()

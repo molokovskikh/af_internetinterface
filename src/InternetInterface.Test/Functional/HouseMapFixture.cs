@@ -7,16 +7,88 @@ using Castle.ActiveRecord;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
-using InternetInterface.Test.Helpers;
+using NHibernate.Linq;
 using NUnit.Framework;
 using Test.Support.Web;
 using WatiN.Core;
+using WatiN.Core.DialogHandlers;
+using WatiN.Core.Native.Windows;
+using UseDialogOnce = InternetInterface.Test.Helpers.UseDialogOnce;
 
 namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
 	internal class HouseMapFixture : WatinFixture2
 	{
+		private RegionHouse _region;
+		[SetUp]
+		public void SetUp()
+		{
+			var regionName = "Регион для теста" + DateTime.Now;
+			_region = new RegionHouse {
+				Name = regionName
+			};
+			Save(_region);
+		}
+		[Test(Description = "Тестирует изменение региона для дома")]
+		public void EditHouse()
+		{
+			var region = new RegionHouse {
+				Name = "Новый регион" + DateTime.Now
+			};
+			Save(region);
+			var entrance = new Entrance();
+			session.Save(entrance);
+			var streetName = "улица" + DateTime.Now;
+			var house = new House {
+				Region = _region,
+				Street = streetName,
+				Case = "1",
+				Number = 1,
+				Entrances = new List<Entrance> {
+					entrance
+				}
+			};
+			Save(house);
+			Flush();
+			using (browser = Open(String.Format("HouseMap/ViewHouseInfo?House={0}", house.Id))) {
+				Click(" Редактировать ");
+				browser.SelectList("house_Region_Id").SelectByValue(region.Id.ToString());
+				Click("Сохранить");
+				AssertText("Выберете дом:");
+			}
+			session.Clear();
+			var saved = session.Load<House>(house.Id);
+			Assert.That(saved.Region.Id, Is.EqualTo(region.Id));
+		}
+
+
+		[Test(Description = "Проверяем сохранение")]
+		public void RegisterHouse()
+		{
+			var streetName = "улица" + DateTime.Now;
+			using (browser = Open("HouseMap/FindHouse.rails")) {
+				Click("Создать дом");
+				browser.TextField("house_Street").Value = streetName;
+				browser.TextField("house_Number").Value = "1";
+				browser.TextField("house_Case").Value = "1";
+				browser.SelectList("house_Region_Id").SelectByValue(_region.Id.ToString());
+
+				var alertDialogHandler = new AlertDialogHandler();
+				using (new UseDialogOnce(browser.DialogWatcher, alertDialogHandler)) {
+					Click("Зарегистрировать");
+					alertDialogHandler.WaitUntilExists();
+					alertDialogHandler.OKButton.Click();
+					browser.WaitForComplete();
+				}
+				Assert.That(browser.Text, Is.StringContaining("Выберете дом:"));
+				Assert.That(browser.SelectList("SelectHouse").SelectedItem, Is.StringContaining(streetName));
+			}
+			var saved = session.Query<House>().First(h => h.Street == streetName);
+			Assert.That(saved, Is.Not.Null);
+			Assert.That(saved.Region.Id, Is.EqualTo(_region.Id));
+		}
+
 		[Test, Ignore("Чинить")]
 		public void HouseMap()
 		{
@@ -77,7 +149,7 @@ namespace InternetInterface.Test.Functional
 			var requests = new List<Request>();
 			Partner partner = null;
 			//using (new SessionScope())
-			{
+			//{
 			requests = Request.Queryable.Where(
 				r =>
 					r.Street == house.Street && r.CaseHouse == house.Case && r.House == house.Number && r.Apartment == apartment)
@@ -86,7 +158,7 @@ namespace InternetInterface.Test.Functional
 			partner = Partner.Queryable.FirstOrDefault(p => p.Login == Environment.UserName);
 			partner.Categorie.Id = 3;
 			partner.Update();
-			}
+			//}
 			var clientCode = string.Empty;
 			using (var browser2 = Open("UserInfo/RequestView.rails")) {
 				browser2.Link("request_to_reg_" + requests.First().Id).Click();
@@ -101,7 +173,7 @@ namespace InternetInterface.Test.Functional
 				clientCode = browser2.Url.Split(new char[] { '?' }).Last().Split(new char[] { '=' }).Last();
 			}
 			//using (new SessionScope())
-			{
+			//{
 			var payments =
 				PaymentsForAgent.Queryable.Where(
 					p => p.Comment.Contains(clientCode) || p.Comment.Contains(requests.First().Id.ToString())).ToList();
@@ -131,7 +203,7 @@ namespace InternetInterface.Test.Functional
 
 			Thread.Sleep(2000);
 			//Assert.That(for_bonuses.Sum(f => f.VirtualBonus), Is.GreaterThanOrEqualTo(500m));
-			}
+			//}
 		}
 
 		/*[Test]

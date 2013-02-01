@@ -62,6 +62,9 @@ namespace InternetInterface.Models
 		[HasMany(ColumnKey = "House", OrderBy = "BypassDate", Lazy = true)]
 		public virtual IList<BypassHouse> Bypass { get; set; }
 
+		[BelongsTo("RegionId"), ValidateNonEmpty]
+		public virtual RegionHouse Region { get; set; }
+
 		public virtual Apartment GetApartmentWithNumber(int num)
 		{
 			var apartment = Apartments.Where(a => a.Number == num).ToList();

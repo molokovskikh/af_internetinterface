@@ -74,6 +74,7 @@ namespace InternetInterface.Models.Access
 			if (GetRulesName_smsRule() != string.Empty) {
 				result.Add(GetRulesName_smsRule());
 			}
+
 			return result;
 		}
 

@@ -40,6 +40,17 @@
 	</td>
 </tr>
 <tr>
+	<td>
+		Регион
+	</td>
+	<td>
+		${FormHelper.Select("LegalPerson.Region", RegionList, {"value" : "Id", "text" : "Name"})}
+	</td>
+	<td>
+		${VB.GetBlock("Region")}
+	</td>
+</tr>
+<tr>
 	<td >
 		ИНН</td>
 	<td>

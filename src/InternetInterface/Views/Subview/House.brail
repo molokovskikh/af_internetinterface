@@ -24,5 +24,13 @@
                 ${FormHelper.TextField("house.Case")}
             </td>
         </tr>
+			<tr>
+				<td>
+					Регион
+				</td>
+				<td>
+					${FormHelper.Select("house.Region.Id", RegionList, {"value" : "Id", "text" : "Name"})}
+				</td>
+			</tr>
     </tbody>
 </table>

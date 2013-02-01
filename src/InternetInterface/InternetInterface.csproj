@@ -115,6 +115,7 @@
   <ItemGroup>
     <Content Include="Assets\Javascripts\application.js" />
     <Content Include="Assets\Javascripts\registration.js" />
+    <Content Include="Assets\Javascripts\ShowRegions.js" />
     <Content Include="Assets\Stylesheets\alt-form.css" />
     <Content Include="Assets\Stylesheets\client.css" />
     <Content Include="Assets\Stylesheets\payments.css" />
@@ -237,6 +238,7 @@
     <None Include="Views\UserInfo\Administration.brail" />
     <None Include="Views\UserInfo\AppointedToTheGraph.brail" />
     <None Include="Views\UserInfo\ClientRegisteredInfoFromDiller.brail" />
+    <Content Include="Views\UserInfo\EditRegion.brail" />
     <None Include="Views\UserInfo\CreateAndPrintGraph.brail" />
     <None Include="Views\UserInfo\RequestOne.brail" />
     <None Include="Views\UserInfo\RequestGraph.brail" />
@@ -274,6 +276,7 @@
       <SubType>Designer</SubType>
     </Content>
     <None Include="Views\UserInfo\ShowAppeals.brail" />
+    <Content Include="Views\UserInfo\ShowRegions.brail" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AllLogic\ColorWork.cs" />
@@ -373,6 +376,7 @@
     <Compile Include="Models\PaymentsForAgent.cs" />
     <Compile Include="Models\Period.cs" />
     <Compile Include="Models\Printer.cs" />
+    <Compile Include="Models\RegionHouse.cs" />
     <Compile Include="Models\Request.cs" />
     <Compile Include="Models\RequestMessage.cs" />
     <Compile Include="Models\SaleSettings.cs" />
@@ -433,7 +437,9 @@
     <None Include="Views\Subview\Payment.brail" />
     <None Include="Views\UserInfo\PartnerRegisteredInfo.brail" />
     <None Include="Views\UserInfo\RequestView.brail" />
-    <None Include="Views\UserInfo\SearchUserInfo.brail" />
+    <None Include="Views\UserInfo\SearchUserInfo.brail">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Views\Search\SearchUsers.brail">
       <SubType>Designer</SubType>
     </None>

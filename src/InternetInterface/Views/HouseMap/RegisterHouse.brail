@@ -1,19 +1,20 @@
 ﻿<script type="text/javascript">
-    function registerHouse() {
-            var req = {};
-            req.Street = $('#house_Street').val();
-            req.Number = $('#house_Number').val();
-            req.Case = $('#house_Case').val();
-            $.post("Register", req, function (data) {
-                if (data.houseId > 0) {
-                    window.location.href = '${SiteRoot}/HouseMap/ViewHouseInfo?House=' + data.houseId;
-                    alert("Зарегистрировано");
-                } else {
-                    alert(data.errorMessage);
-                }
-            });
-        //}
-    }
+	function registerHouse() {
+	var req = {};
+	req.Street = $('#house_Street').val();
+	req.Number = $('#house_Number').val();
+	req.Case = $('#house_Case').val();
+	req.RegionId = $('#house_Region_Id').val();
+	$.post("Register", req, function (data) {
+	if (data.houseId > 0) {
+	window.location.href = '${SiteRoot}/HouseMap/ViewHouseInfo?House=' + data.houseId;
+	alert("Зарегистрировано");
+	} else {
+	alert(data.errorMessage);
+	}
+	});
+	//}
+	}
 </script>
 <% OutputSubView("""\Subview\House""") %>
 <button class="button" onclick=registerHouse()><img alt="Save" src="${Siteroot}/Images/application_edit.png">Зарегистрировать</button>

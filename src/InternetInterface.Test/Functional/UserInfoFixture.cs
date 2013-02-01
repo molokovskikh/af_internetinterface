@@ -4,10 +4,13 @@ using System.Threading;
 using Castle.ActiveRecord;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
+using NHibernate.Linq;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using WatiN.Core;
+using WatiN.Core.DialogHandlers;
 using WatiN.Core.Native.Windows;
+using UseDialogOnce = InternetInterface.Test.Helpers.UseDialogOnce;
 
 namespace InternetInterface.Test.Functional
 {
@@ -271,6 +274,35 @@ namespace InternetInterface.Test.Functional
 			Click("Назначить");
 			AssertText("Информация по клиенту");
 			AssertText("Сбросить");
+		}
+
+		[Test(Description = "Тестирует добавление адреса при редактировании абонента")]
+		public void AddAddress()
+		{
+			var region = new RegionHouse {
+				Name = "Новый регион" + DateTime.Now
+			};
+			Save(region);
+			Open(ClientUrl);
+			Click("Создать новый");
+			var streetName = "улица" + DateTime.Now;
+			browser.TextField("house_Street").Value = streetName;
+			browser.TextField("house_Number").Value = "1";
+			browser.TextField("house_Case").Value = "1";
+			browser.SelectList("house_Region_Id").SelectByValue(region.Id.ToString());
+			var alertDialogHandler = new AlertDialogHandler();
+			using (new UseDialogOnce(browser.DialogWatcher, alertDialogHandler)) {
+				browser.Link(Find.ByText("Зарегистрировать")).Click();
+				alertDialogHandler.WaitUntilExists();
+				alertDialogHandler.OKButton.Click();
+				browser.WaitForComplete();
+			}
+			AssertText("Личная информация");
+			Assert.IsTrue(browser.SelectList("houses_select")
+				.AllContents
+				.Contains(String.Format("{0} {1} {2}", streetName, 1, 1)));
+			var house = session.Query<House>().First(h => h.Street == streetName);
+			Assert.That(house.Region.Name, Is.EqualTo(region.Name));
 		}
 	}
 }

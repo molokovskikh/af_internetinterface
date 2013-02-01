@@ -90,6 +90,7 @@ namespace InternetInterface.Controllers
 		private void AddIndispensableParameters()
 		{
 			PropertyBag["Statuses"] = Status.FindAllAdd();
+			PropertyBag["RegionList"] = RegionHouse.FindAllAdd();
 			PropertyBag["Brigads"] = Brigad.FindAllAdd();
 			PropertyBag["additionalStatuses"] = AdditionalStatus.FindAllAdd();
 			PropertyBag["Tariffs"] = Tariff.FindAllAdd();

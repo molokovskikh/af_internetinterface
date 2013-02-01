@@ -41,6 +41,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Houses"] = House.FindAll().OrderBy(h => h.Street);
 			PropertyBag["SelectedHouse"] = House.FindFirst().Id;
 			PropertyBag["agents"] = Partner.GetHouseMapAgents();
+			PropertyBag["RegionList"] = DbSession.Query<RegionHouse>().ToList();
 			FindHouse();
 		}
 
@@ -64,6 +65,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["house"] = Models.House.Find(House);
 			PropertyBag["Entrances"] = Entrance.Queryable.Where(e => e.House.Id == House).ToList();
 			PropertyBag["Switches"] = Models.NetworkSwitch.All(DbSession);
+			PropertyBag["RegionList"] = DbSession.Query<RegionHouse>().ToList();
 		}
 
 		[AccessibleThrough(Verb.Post)]
@@ -105,6 +107,7 @@ namespace InternetInterface.Controllers
 					OptionName = "Меньше"
 				}
 			};
+			PropertyBag["RegionList"] = RegionHouse.All();
 		}
 
 		public void HouseFindResult(string adress, int SubscriberCount, int PenetrationPercent, int PassCount,
@@ -149,6 +152,7 @@ namespace InternetInterface.Controllers
 			var result = query.List<House>();
 			PropertyBag["Houses"] = result;
 			PropertyBag["agents"] = Partner.GetHouseMapAgents();
+			PropertyBag["RegionList"] = DbSession.Query<RegionHouse>().ToList();
 			FindHouse();
 		}
 
@@ -160,6 +164,7 @@ namespace InternetInterface.Controllers
 			var street = Request.Form["Street"];
 			var number = Request.Form["Number"];
 			var _case = Request.Form["Case"];
+			var region = Request.Form["RegionId"];
 			int res;
 			if (!Int32.TryParse(number, out res)) {
 				returnObj.errorMessage += "Неправильно введен номер дома";
@@ -170,6 +175,7 @@ namespace InternetInterface.Controllers
 			}
 			if (string.IsNullOrEmpty(returnObj.errorMessage)) {
 				var newHouse = new House { Street = street, Number = Int32.Parse(number), Case = _case };
+				newHouse.Region = DbSession.Load<RegionHouse>(Convert.ToUInt32(region));
 				newHouse.Save();
 				returnObj.houseId = (int)newHouse.Id;
 				return returnObj;

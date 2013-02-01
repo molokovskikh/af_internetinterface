@@ -1,0 +1,10 @@
+﻿${app.Asset("alt-form.css")}
+
+${FormHelper.FormTag("", {})}
+<div class="form-item">
+	${app.Label("Region.Name")}
+	${app.Edit("Region.Name")}
+	${app.GetValidationError("Region.Name")}
+</div>
+${FormHelper.Submit("Сохранить")}
+${FormHelper.EndFormTag()}

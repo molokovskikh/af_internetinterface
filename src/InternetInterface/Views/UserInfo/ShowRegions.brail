@@ -1,0 +1,37 @@
+﻿${app.Asset("ShowRegions.js")}
+<a href="#" class="big-link" data-reveal-id="register_region" >Добавить</a>
+<table id="RegionTable" class="table">
+	<thead>
+		<tr>
+			<th>
+			</th>
+			<th>
+				Наименование
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		<% for i, regionHouse in enumerate(Regions):  %>
+			<tr>
+				<td>${app.LinkTo("Редактировать", @UserInfo, @EditRegion, {@id: regionHouse.Id})}</td>
+				<td>!{regionHouse.Name}</td>
+			</tr>
+		<% end %>
+	</tbody>
+</table>
+
+<div id="register_region" class="reveal-modal">
+<table class="table">
+	<tbody>
+		<tr>
+			<td>
+				Название
+			</td>
+			<td>
+				${FormHelper.TextField("regionHouse.Name")}
+			</td>
+		</tr>
+	</tbody>
+</table>
+	<a href="#" onclick=registerRegion()><img alt="Save" src="${Siteroot}/Images/application_edit.png">Зарегистрировать</a>
+</div>

@@ -6,6 +6,7 @@ function registerHouse() {
 	req.Street = $('#house_Street').val();
 	req.Number = $('#house_Number').val();
 	req.Case = $('#house_Case').val();
+	req.RegionId = $('#house_Region_Id').val();
 	$.post("../Register/RegisterHouse", req, function (data) {
 		alert("Зарегистрировано");
 		$('#houses_select').append($('<option value="' + data.Id + '">' + data.Name + '</option>'));

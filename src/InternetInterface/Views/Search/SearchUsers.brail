@@ -80,6 +80,8 @@ border="1" bgcolor="#FFFFFF" cellspacing="1" cellpadding="0">
 					<td>
 						<span>Статус</span><br />
 						${FormHelper.Select("filter.statusType", Statuses, {"value" : "Id", "text" : "Name"})}
+						<br /><span>Регион</span><br />
+						${FormHelper.Select("filter.Region", RegionList, {"value" : "Id", "text" : "Name"})}
 					</td>
 					<td>
 						${app.Edit("filter.EnabledTypeProperties", "RadioList")}

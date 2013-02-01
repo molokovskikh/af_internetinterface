@@ -138,7 +138,10 @@ namespace InternetInterface.Models
 						new ControllerActionPermission("Sms", "GetSmsStatus"),
 						new ControllerActionPermission("UserInfo", "RemakeVirginityClient"),
 						new ControllerActionPermission("UserInfo", "DeleteGraph"),
-						new ControllerActionPermission("Brigads", "ReportOnWork")
+						new ControllerActionPermission("Brigads", "ReportOnWork"),
+						new ControllerActionPermission("UserInfo", "ShowRegions"),
+						new ControllerActionPermission("UserInfo", "EditRegion"),
+						new ControllerActionPermission("UserInfo", "RegisterRegion")
 					}
 				},
 				{

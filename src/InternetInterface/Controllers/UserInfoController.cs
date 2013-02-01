@@ -143,6 +143,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["appealType"] = filter.appealType;
 			PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClient>(new PhysicalClient());
 			PropertyBag["Switches"] = NetworkSwitch.All(DbSession);
+			PropertyBag["RegionList"] = DbSession.Query<RegionHouse>().ToList();
 		}
 
 		public void Leases([DataBind("filter")] SessionFilter filter)
@@ -195,6 +196,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Contacts"] =
 				Contact.Queryable.Where(c => c.Client.Id == filter.ClientCode).OrderByDescending(c => c.Type).ToList();
 			PropertyBag["EditConnectInfoFlag"] = filter.EditConnectInfoFlag;
+			PropertyBag["RegionList"] = RegionHouse.All();
 			SendConnectInfo(client);
 			ConnectPropertyBag(filter.ClientCode);
 			SendUserWriteOff();
@@ -1172,6 +1174,35 @@ where r.`Label`= :LabelIndex;")
 			client.RatedPeriodDate = null;
 			DbSession.SaveOrUpdate(client);
 			RedirectToReferrer();
+		}
+
+		public void ShowRegions()
+		{
+			PropertyBag["Regions"] = DbSession.Query<RegionHouse>().ToList();
+		}
+
+		public void EditRegion(uint id)
+		{
+			var region = DbSession.Load<RegionHouse>(id);
+			PropertyBag["Region"] = region;
+			if (IsPost) {
+				BindObjectInstance(region, "Region");
+				if (IsValid(region)) {
+					DbSession.SaveOrUpdate(region);
+					Notify("Сохранено");
+					RedirectToAction("ShowRegions");
+				}
+			}
+		}
+
+		[return: JSONReturnBinder]
+		public object RegisterRegion()
+		{
+			var regionName = Request.Form["RegionName"];
+			var region = new RegionHouse();
+			region.Name = regionName;
+			DbSession.Save(region);
+			return new { region.Id, regionName };
 		}
 	}
 }
