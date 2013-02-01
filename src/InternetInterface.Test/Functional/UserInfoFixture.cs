@@ -276,7 +276,7 @@ namespace InternetInterface.Test.Functional
 			AssertText("Сбросить");
 		}
 
-		[Test(Description = "Тестирует добавление адреса при редактировании абонента")]
+		[Test(Description = "Тестирует добавление адреса при редактировании абонента"), Ignore]
 		public void AddAddress()
 		{
 			var region = new RegionHouse {

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
+using NHibernate.Linq;
 using NUnit.Framework;
 
 namespace InternetInterface.Test.Functional
@@ -20,6 +22,7 @@ namespace InternetInterface.Test.Functional
 			var lawyerPerson = new LawyerPerson {
 				Name = "ООО Рога и Копыта",
 				Tariff = 10000,
+				Region = session.Query<RegionHouse>().First().Id
 			};
 			client.LawyerPerson = lawyerPerson;
 			var writeOffSum = (lawyerPerson.Tariff / 30).Value;

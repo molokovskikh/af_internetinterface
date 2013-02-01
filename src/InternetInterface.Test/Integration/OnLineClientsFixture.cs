@@ -9,6 +9,7 @@ using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using InternetInterface.Queries;
 using InternetInterface.Services;
+using NHibernate.Linq;
 using NUnit.Framework;
 using Test.Support;
 using Test.Support.log4net;
@@ -39,7 +40,8 @@ namespace InternetInterface.Test.Integration
 			};
 			session.Save(PhusicalClient);
 			LawyerPerson = new LawyerPerson {
-				Name = "Test Lawyer Person"
+				Name = "Test Lawyer Person",
+				Region = session.Query<RegionHouse>().First().Id
 			};
 			session.Save(LawyerPerson);
 			Client = new Client(PhusicalClient, new List<Service>()) {

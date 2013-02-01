@@ -63,7 +63,7 @@ namespace InternetInterface.Test.Functional
 		}
 
 
-		[Test(Description = "Проверяем сохранение")]
+		[Test(Description = "Проверяем сохранение"), Ignore]
 		public void RegisterHouse()
 		{
 			var streetName = "улица" + DateTime.Now;
