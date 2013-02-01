@@ -490,6 +490,7 @@ namespace Billing.Test.Integration
 				lPerson = new LawyerPerson {
 					Balance = 0,
 					Tariff = 10000m,
+					Region = ArHelper.WithSession(s => s.Query<RegionHouse>().FirstOrDefault().Id)
 				};
 				lPerson.Save();
 				client = new Client() {

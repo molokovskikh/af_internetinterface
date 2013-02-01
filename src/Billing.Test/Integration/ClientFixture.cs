@@ -5,6 +5,7 @@ using System.Text;
 using Castle.ActiveRecord;
 using Common.Web.Ui.ActiveRecordExtentions;
 using InternetInterface.Models;
+using NHibernate.Linq;
 using NUnit.Framework;
 
 namespace Billing.Test.Integration
@@ -58,6 +59,7 @@ namespace Billing.Test.Integration
 				ArHelper.WithSession(s => {
 					Assert.IsNotNull(_client.BeginWork);
 					var lawPerson = new LawyerPerson();
+					lawPerson.Region = s.Query<RegionHouse>().FirstOrDefault().Id;
 					s.Save(lawPerson);
 					_client.PhysicalClient = null;
 					_client.LawyerPerson = lawPerson;

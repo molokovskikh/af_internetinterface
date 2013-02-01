@@ -13,6 +13,7 @@ using InternetInterface.Models.Services;
 using InternetInterface.Services;
 using NHibernate;
 using NHibernate.Impl;
+using NHibernate.Linq;
 using NUnit.Framework;
 using Test.Support.log4net;
 
@@ -715,7 +716,7 @@ namespace Billing.Test.Integration
 						Name = "testLawyerPerson",
 						Balance = -2000,
 						Tariff = 1000,
-						Region = ArHelper.WithSession(s => s.QueryOver<RegionHouse>().SingleOrDefault().Id)
+						Region = ArHelper.WithSession(s => s.Query<RegionHouse>().FirstOrDefault().Id)
 					}
 				};
 				client.Save();
