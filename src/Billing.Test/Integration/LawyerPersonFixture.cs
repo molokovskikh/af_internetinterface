@@ -5,6 +5,7 @@ using System.Text;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Common.Tools;
+using Common.Web.Ui.ActiveRecordExtentions;
 using InternetInterface.Models;
 using NUnit.Framework;
 
@@ -22,6 +23,7 @@ namespace Billing.Test.Integration
 				var lPerson = new LawyerPerson {
 					Balance = -2000,
 					Tariff = 1000m,
+					Region = ArHelper.WithSession(s => s.QueryOver<RegionHouse>().SingleOrDefault().Id)
 				};
 				lPerson.Save();
 				lawyerClient = new Client() {

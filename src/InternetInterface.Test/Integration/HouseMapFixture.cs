@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace InternetInterface.Test.Integration
 {
 	[TestFixture]
-	internal class HouseMapFixture : BaseControllerTest
+	internal class HouseMapFixture : ControllerFixture
 	{
 		public HouseMapFixture()
 		{
@@ -29,6 +29,7 @@ namespace InternetInterface.Test.Integration
 			using (new SessionScope()) {
 				var mapController = new HouseMapController();
 				PrepareController(mapController);
+				mapController.DbSession = session;
 				mapController.ViewHouseInfo();
 			}
 		}

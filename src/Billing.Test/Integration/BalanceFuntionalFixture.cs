@@ -9,6 +9,7 @@ using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Services;
+using NHibernate.Linq;
 using NUnit.Framework;
 using Test.Support.log4net;
 
@@ -129,7 +130,8 @@ namespace Billing.Test.Integration
 				client = CreateClient();
 				client.Save();
 				var lawyerPerson = new LawyerPerson {
-					Balance = 1000
+					Balance = 1000,
+					Region = ArHelper.WithSession(s => s.Query<RegionHouse>().First().Id)
 				};
 				lawyerPerson.Save();
 				client.PhysicalClient = null;

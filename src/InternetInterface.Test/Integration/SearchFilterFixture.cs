@@ -45,7 +45,7 @@ namespace InternetInterface.Test.Integration
 			var filter = new SeachFilter {
 				Region = _region.Id
 			};
-			var result = filter.Find();
+			var result = filter.Find(true);
 			Assert.That(result.Count(r => r.client.Id == client.Id), Is.EqualTo(1));
 		}
 
@@ -60,7 +60,7 @@ namespace InternetInterface.Test.Integration
 			var filter = new SeachFilter {
 				Region = _region.Id
 			};
-			var result = filter.Find();
+			var result = filter.Find(true);
 			Assert.That(result.Count(r => r.client.Id == client.Id), Is.EqualTo(1));
 		}
 	}

@@ -112,9 +112,9 @@ namespace InternetInterface.Queries
 			return string.Format("{0} {1} ", "C.Name", "ASC");
 		}
 
-		public IList<ClientInfo> Find()
+		public IList<ClientInfo> Find(bool forTest = false)
 		{
-			if (InitializeContent.Partner.IsDiller() && string.IsNullOrEmpty(SearchText))
+			if (!forTest && InitializeContent.Partner.IsDiller() && string.IsNullOrEmpty(SearchText))
 				return new List<ClientInfo>();
 
 			var selectText = @"SELECT
