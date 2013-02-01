@@ -17,6 +17,7 @@ namespace InternetInterface.Test.Helpers
 				Name = "TestClient",
 				Balance = 1000,
 				Tariff = 100,
+				Region = 1
 			};
 			return new Client() {
 				LawyerPerson = person,
