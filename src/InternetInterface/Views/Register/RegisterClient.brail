@@ -1,52 +1,5 @@
 ﻿<% import System.Globalization %>
 
-${app.Asset("knockout-2.1.0.js")}
-${app.Asset("registration.js")}
-
-<script type="text/javascript">
-
-$(function() {
-	var viewModel = new AppViewModel();
-	viewModel.internetActivated(${internet.ActivatedByUser.ToString().ToLower()});
-	viewModel.tariff(${?client.Tariff.Id});
-	viewModel.connectSum(${client.ConnectSum.ToString(CultureInfo.InvariantCulture)});
-	viewModel.channels = [
-			<% for channel in channels: %>
-				{
-					id: ${channel.Id},
-					name: "${channel.Name}",
-					cost: ${channel.CostPerMonth.ToString(CultureInfo.InvariantCulture)},
-					costWithInternet: ${channel.CostPerMonthWithInternet.ToString(CultureInfo.InvariantCulture)},
-					activated: ko.observable(${iptv.Channels.Contains(channel).ToString().ToLower()}),
-					inputName: function (index) {
-						return 'iptv.Channels[' + index() + '].Id';
-					}
-				},
-			<% end %>
-		];
-	viewModel.tariffs = [
-			<% for tariff in tariffs: %>
-				{
-					id: ${tariff.Id},
-					name: "${tariff.Name}",
-					cost: ${tariff.Price.ToString(CultureInfo.InvariantCulture)}
-				},
-			<% end %>
-		];
-	ko.applyBindings(viewModel);
-
-	$("#RegistrationForm").validate();
-
-	$.validator.addMethod("BalanceText", function(value, element) {
-		if (value.toString().length > 0) {
-			return value >= viewModel.minSum();
-		}
-		return true;
-	}, function() { return "Должна быть введена сумма большая или равная "+ viewModel.minSum() + " рублей"});
-});
-
-</script>
-
 <style type="text/css">
 	#RegistrationForm label.error { color: Red; }
 </style>
@@ -86,21 +39,6 @@ $(function() {
 			</td>
 			<td>${VB.GetBlock("ConnectSum")}</td>
 		</tr> 
-		<tr>
-			<td>
-				<div>
-					<label for="Other_Balance"><b>Внести сумму на счет:</b> </label>
-					<input type="text" class="BalanceText" id="BalanceText"  name="BalanceText"  value="${BalanceText}" style="width: 50%; " />
-				</div>
-				<div style="color:green;">
-					Минимальная сумма к зачислению: <span data-bind="text: minSum"></span>
-				</div>
-			</td>
-		<div id="summary"></div>
-			<td  colspan="3">
-				${VB.GetBlock("Balance")}
-			</td>
-		</tr>
 	</tbody>
 </table>
 

@@ -1,7 +1,13 @@
-﻿<script type="text/javascript">
+﻿${app.Asset("userSearch.js")}
+
+<script type="text/javascript">
 	jQuery(document).ready(
 		function() {
 			jQuery("#SearchText").focus();
+			ShowFindEditor();
+			$('.filter_searchProperties').click(function () {
+				ShowFindEditor();
+			});
 		}
 	);
 	function LoadExcel(control) {
@@ -30,7 +36,7 @@
 				<p>On-Line клиенты: <span>${Stat.OnLineCount}</span></p>
 				<p>Уникальных клиентов за сутки: <span>${Stat.UniqueClient}</span></p>
 				<p>Количество зарегистрированных клиентов (Корпы/Физики): <span>${Stat.AllRegister} (${Stat.LawyerRegister}/${Stat.PhysicalRegister})</span></p>
-				<p>Количество клиентов в состоянии "Заблокирован"(Корпы/Физики): <span>${Stat.AllBlocked} (${Stat.BlockedLawyer}/${Stat.BlockedPhysical})</span></p>
+				<p>Количество клиентов "Заблокирован"(Корпы/Физики): <span>${Stat.AllBlocked} (${Stat.BlockedLawyer}/${Stat.BlockedPhysical})</span></p>
 				<p>Количество клиентов "Заблокирован" и "Он-Лайн": <span>${Stat.BlockedOnLine}</span></p>
 				</fieldset>
 			</td>
@@ -51,11 +57,25 @@ border="1" bgcolor="#FFFFFF" cellspacing="1" cellpadding="0">
 		<table  class="table" width="100%">
 			<th align="center">Поиск пользователей</th>
 			<tr>
-			<td>
-			<p style="text-align: left; margin-left: 32px;" >Введите текст для поиска:<br />
-			<input type="text" id="SearchText"  name="filter.SearchText"  value="${filter.SearchText}" style="width: 80%; " />
-			<input id="SearchButton" type="submit" value="Поиск"  align="right" /> <br /> </p>
-			</td>
+				<td class="FindInputFields" id="AllFindT">
+					Введите текст для поиска:<br />
+					<input type="text" id="SearchText" name="filter.SearchText"  value="${filter.SearchText}" style="width: 80%; " />
+					<input id="SearchButton" type="submit" value="Поиск"  align="right" />
+				</td>
+				<td  class="FindInputFields" id="AddressField">
+					Введите адрес клиента:<br />
+					<label for="InputCity">Город: </label>
+					<input type="text" class="addressInput" id="InputCity"  name="filter.City"  value="${filter.City}" /> </br>
+					<label for="InputSearchText">Улица: </label>
+					<input type="text" class="addressInput" id="InputAdress"  name="filter.Street"  value="${filter.Street}" />
+					<label for="InputHouse">Дом: </label>
+					<input type="text" class="addressInput" id="InputHouse"  name="filter.House"  value="${filter.House}" />
+					<label for="InputCaseHouse">Корпус: </label>
+					<input type="text" class="addressInput" id="InputCaseHouse"  name="filter.CaseHouse"  value="${filter.CaseHouse}" /> </br>
+					<label for="InputApartment">Квартира: </label>
+					<input type="text" class="addressInput" id="InputApartment"  name="filter.Apartment"  value="${filter.Apartment}" /> </br>
+					<input id="SearchButton" type="submit" value="Поиск"  align="right" />
+				</td>
 			</tr>
 		</table>
   <%if MapPartner.Categorie.ReductionName != "Diller": %>

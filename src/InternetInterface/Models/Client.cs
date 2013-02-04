@@ -42,9 +42,6 @@ namespace InternetInterface.Models
 		{
 			PhysicalClient = client;
 			PhysicalClient.Client = this;
-			if (!CategorieAccessSet.AccesPartner("SSI")) {
-				PhysicalClient.ConnectSum = 700;
-			}
 			Type = ClientType.Phisical;
 			SendSmsNotifocation = true;
 			FreeBlockDays = 28;
@@ -197,6 +194,13 @@ namespace InternetInterface.Models
 				session.Save(_switch);
 			}
 			var newPoint = new ClientEndpoint(this, lease.Port, lease.Switch);
+			var paymentForConnect = new PaymentForConnect {
+				Sum = PhysicalClient.ConnectSum,
+				EndPoint = newPoint,
+				RegDate = DateTime.Now
+			};
+			session.Save(paymentForConnect);
+			newPoint.PayForCon = paymentForConnect;
 			lease.Endpoint = newPoint;
 			session.Save(lease);
 			if (!Status.Connected) {

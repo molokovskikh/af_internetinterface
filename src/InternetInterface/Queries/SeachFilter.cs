@@ -32,6 +32,12 @@ namespace InternetInterface.Queries
 		public bool ExportInExcel { get; set; }
 		public uint Region { get; set; }
 
+		public string City { get; set; }
+		public string Street { get; set; }
+		public string House { get; set; }
+		public string CaseHouse { get; set; }
+		public string Apartment { get; set; }
+
 		private int _lastRowsCount;
 
 		public int RowsCount
@@ -82,13 +88,29 @@ namespace InternetInterface.Queries
 			return ToUrlQuery();
 		}
 
-		private void SetParameters(IQuery query)
+		private void SetParameters(IQuery query, string wherePart)
 		{
 			if (StatusType > 0)
 				query.SetParameter("statusType", StatusType);
+
 			if(Region != null && Region > 0) {
 				query.SetParameter("regionid", Region);
 			}
+
+			if (SearchProperties == SearchUserBy.Address) {
+				if (!string.IsNullOrEmpty(City))
+					query.SetParameter("City", "%" + City.ToLower() + "%");
+				if (!string.IsNullOrEmpty(Street))
+					query.SetParameter("Street", "%" + Street.ToLower() + "%");
+				if (!string.IsNullOrEmpty(House))
+					query.SetParameter("House", House.ToLower());
+				if (!string.IsNullOrEmpty(CaseHouse))
+					query.SetParameter("CaseHouse", "%" + CaseHouse.ToLower() + "%");
+				if (!string.IsNullOrEmpty(Apartment))
+					query.SetParameter("Apartment", Apartment.ToLower());
+			}
+			else if (!string.IsNullOrEmpty(SearchText) && wherePart.Contains(":SearchText"))
+				query.SetParameter("SearchText", "%" + SearchText.ToLower() + "%");
 		}
 
 		private string GetOrderField()
@@ -143,9 +165,7 @@ join internet.Status S on s.id = c.Status";
 group by c.id
 ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 				query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Client));
-				SetParameters(query);
-				if (!string.IsNullOrEmpty(SearchText) && wherePart.Contains(":SearchText"))
-					query.SetParameter("SearchText", "%" + SearchText.ToLower() + "%");
+				SetParameters(query, wherePart);
 
 				result = query.List<Client>();
 
@@ -162,7 +182,7 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 						countQuery.SetParameter("SearchText", "%" + SearchText.ToLower() + "%");
 					if (CategorieAccessSet.AccesPartner("SSI"))
 						if (SearchProperties != SearchUserBy.SearchAccount)
-							SetParameters(countQuery);
+							SetParameters(countQuery, wherePart);
 					_lastRowsCount = Convert.ToInt32(countQuery.UniqueResult());
 				}
 

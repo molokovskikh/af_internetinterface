@@ -38,40 +38,79 @@ namespace InternetInterface.AllLogic
 					_return += " and (h.RegionId = :regionid or l.RegionId = :regionid)";
 				}
 
-				if (!string.IsNullOrEmpty(filter.SearchText)) {
-					if (filter.SearchProperties == SearchUserBy.Auto) {
-						return
-							String.Format(
-								@"
+				if (filter.SearchProperties != SearchUserBy.Address) {
+					if (!string.IsNullOrEmpty(filter.SearchText)) {
+						if (filter.SearchProperties == SearchUserBy.Auto) {
+							return
+								String.Format(
+									@"
 	WHERE
 	(LOWER(C.Name) like {0} or
 	C.id like {0} or
 	LOWER(co.Contact) like {0} or
 	LOWER(h.Street) like {0} or
 	LOWER(l.ActualAdress) like {0} )",
-								":SearchText") + _return;
-					}
-					if (filter.SearchProperties == SearchUserBy.SearchAccount) {
-						var id = 0u;
-						UInt32.TryParse(filter.SearchText, out id);
-						if (id > 0)
-							return string.Format("where C.id = {0}", id);
-					}
-					if (filter.SearchProperties == SearchUserBy.ByFio) {
-						return
-							String.Format(@"
+									":SearchText") + _return;
+						}
+						if (filter.SearchProperties == SearchUserBy.SearchAccount) {
+							var id = 0u;
+							UInt32.TryParse(filter.SearchText, out id);
+							if (id > 0)
+								return string.Format("where C.id = {0}", id);
+						}
+						if (filter.SearchProperties == SearchUserBy.ByFio) {
+							return
+								String.Format(@"
 	WHERE (LOWER(C.Name) like {0} )", ":SearchText")
-								+ _return;
-					}
-					if (filter.SearchProperties == SearchUserBy.TelNum) {
-						return String.Format(@"WHERE (LOWER(co.Contact) like {0})", ":SearchText") + _return;
-					}
-					if (filter.SearchProperties == SearchUserBy.ByAddress) {
-						return String.Format(@"
-	WHERE (LOWER(h.Street) like {0} or
+									+ _return;
+						}
+						if (filter.SearchProperties == SearchUserBy.TelNum) {
+							return String.Format(@"WHERE (LOWER(co.Contact) like {0})", ":SearchText") + _return;
+						}
+						if (filter.SearchProperties == SearchUserBy.ByPassport) {
+							return String.Format(@"
+	WHERE (LOWER(p.PassportSeries) like {0} or LOWER(p.PassportNumber)  like {0} or
 	LOWER(l.ActualAdress) like {0})", ":SearchText")
-							+ _return;
+								+ _return;
+						}
 					}
+				}
+				else {
+					var where = "where";
+					var whereCount = 0;
+					if (!string.IsNullOrEmpty(filter.City)) {
+						where += "(LOWER(p.City) like :City or LOWER(l.ActualAdress) like :City)";
+						whereCount++;
+					}
+					if (!string.IsNullOrEmpty(filter.Street)) {
+						if (whereCount > 0)
+							where += " and ";
+						where += "(LOWER(h.Street) like :Street or LOWER(l.ActualAdress) like :Street)";
+						whereCount++;
+					}
+					if (!string.IsNullOrEmpty(filter.House)) {
+						if (whereCount > 0)
+							where += " and ";
+						where += "(p.House = :House)";
+						whereCount++;
+					}
+					if (!string.IsNullOrEmpty(filter.CaseHouse)) {
+						if (whereCount > 0)
+							where += " and ";
+						where += "(LOWER(p.CaseHouse) like :CaseHouse or LOWER(l.ActualAdress) like :CaseHouse)";
+						whereCount++;
+					}
+					if (!string.IsNullOrEmpty(filter.Apartment)) {
+						if (whereCount > 0)
+							where += " and ";
+						where += "(p.Apartment = :Apartment)";
+						whereCount++;
+					}
+
+					if (whereCount == 0)
+						where += "(1 = 1)";
+
+					return where + _return;
 				}
 			}
 			else {

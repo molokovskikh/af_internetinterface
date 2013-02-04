@@ -869,8 +869,10 @@ where r.`Label`= :LabelIndex;")
 		public void SendConnectInfo(Client client)
 		{
 			var connectInfo = client.GetConnectInfo(DbSession);
-			if (connectInfo.Count == 0)
-				connectInfo.Add(new ClientConnectInfo());
+			if (connectInfo.Count == 0) {
+				var connectSum = client.IsPhysical() ? client.PhysicalClient.ConnectSum : 0;
+				connectInfo.Add(new ClientConnectInfo { ConnectSum = connectSum });
+			}
 			PropertyBag["ClientConnectInf"] = connectInfo;
 		}
 
