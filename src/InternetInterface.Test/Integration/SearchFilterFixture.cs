@@ -19,10 +19,12 @@ namespace InternetInterface.Test.Integration
 		[SetUp]
 		public void SetUp()
 		{
+			InitializeContent.GetAdministrator = () => Partner.FindFirst();
 			if (InitializeContent.Partner.AccesedPartner == null) {
 				InitializeContent.Partner.AccesedPartner = new List<string>();
 				InitializeContent.Partner.AccesedPartner.Add("SSI");
 			}
+			Save(InitializeContent.Partner);
 			_region = new RegionHouse {
 				Name = "Тестовый регион1"
 			};
