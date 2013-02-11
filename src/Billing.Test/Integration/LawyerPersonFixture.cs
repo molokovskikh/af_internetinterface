@@ -24,7 +24,16 @@ namespace Billing.Test.Integration
 				var lPerson = new LawyerPerson {
 					Balance = -2000,
 					Tariff = 1000m,
-					Region = ArHelper.WithSession(s => s.Query<RegionHouse>().FirstOrDefault().Id)
+					Region = ArHelper.WithSession(s => {
+				var region = s.Query<RegionHouse>().FirstOrDefault(r => r.Name == "Воронеж");
+				if (region == null) {
+					region = new RegionHouse {
+						Name = "Воронеж"
+					};
+					s.Save(region);
+				}
+				return region.Id;
+			})
 				};
 				lPerson.Save();
 				lawyerClient = new Client() {

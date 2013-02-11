@@ -131,7 +131,16 @@ namespace Billing.Test.Integration
 				client.Save();
 				var lawyerPerson = new LawyerPerson {
 					Balance = 1000,
-					Region = ArHelper.WithSession(s => s.Query<RegionHouse>().First().Id)
+					Region = ArHelper.WithSession(s => {
+				var region = s.Query<RegionHouse>().FirstOrDefault(r => r.Name == "Воронеж");
+				if (region == null) {
+					region = new RegionHouse {
+						Name = "Воронеж"
+					};
+					s.Save(region);
+				}
+				return region.Id;
+			})
 				};
 				lawyerPerson.Save();
 				client.PhysicalClient = null;
@@ -490,7 +499,16 @@ namespace Billing.Test.Integration
 				lPerson = new LawyerPerson {
 					Balance = 0,
 					Tariff = 10000m,
-					Region = ArHelper.WithSession(s => s.Query<RegionHouse>().FirstOrDefault().Id)
+					Region = ArHelper.WithSession(s => {
+				var region = s.Query<RegionHouse>().FirstOrDefault(r => r.Name == "Воронеж");
+				if (region == null) {
+					region = new RegionHouse {
+						Name = "Воронеж"
+					};
+					s.Save(region);
+				}
+				return region.Id;
+			})
 				};
 				lPerson.Save();
 				client = new Client() {

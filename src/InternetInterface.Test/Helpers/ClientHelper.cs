@@ -4,8 +4,10 @@ using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Castle.Components.Validator;
 using Common.Tools;
+using Common.Web.Ui.ActiveRecordExtentions;
 using InternetInterface.Models;
 using InternetInterface.Models.Services;
+using NHibernate.Linq;
 
 namespace InternetInterface.Test.Helpers
 {
@@ -17,7 +19,7 @@ namespace InternetInterface.Test.Helpers
 				Name = "TestClient",
 				Balance = 1000,
 				Tariff = 100,
-				Region = 1
+				Region = GetRegionId()
 			};
 			return new Client() {
 				LawyerPerson = person,
@@ -100,6 +102,20 @@ namespace InternetInterface.Test.Helpers
 		public static Client Client()
 		{
 			return PhysicalClient().Client;
+		}
+
+		public static uint GetRegionId()
+		{
+			return ArHelper.WithSession(s => {
+				var region = s.Query<RegionHouse>().FirstOrDefault(r => r.Name == "Воронеж");
+				if (region == null) {
+					region = new RegionHouse {
+						Name = "Воронеж"
+					};
+					s.Save(region);
+				}
+				return region.Id;
+			});
 		}
 	}
 }
