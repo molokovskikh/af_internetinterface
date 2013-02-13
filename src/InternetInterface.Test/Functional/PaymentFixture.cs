@@ -34,6 +34,20 @@ namespace InternetInterface.Test.Functional
 		}
 
 		[Test]
+		public void PaymentCommentTest()
+		{
+			var client = ClientHelper.Client();
+			Save(client);
+			Open("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", client.Id);
+			browser.TextField("BalanceText").AppendText("100");
+			browser.TextField("CommentText").AppendText("testComment");
+			browser.Button("ChangeBalanceButton").Click();
+			AssertText("Платеж ожидает обработки");
+			Click("Платежи");
+			AssertText("testComment");
+		}
+
+		[Test]
 		public void Cancel_client_payment()
 		{
 			var client = ClientHelper.Client();

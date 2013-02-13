@@ -28,6 +28,12 @@
 						<input type="text" class="BalanceText" id="BalanceText"  name="BalanceText" value="${BalanceText}"/>
 					</td>
 				</tr>
+				<tr>
+					<td>Комментарий к платежу</td>
+					<td>
+						<input type="text" class="CommentText" id="CommentText"  name="CommentText"/>
+					</td>
+				</tr>
 				<%if PartnerAccessSet.AccesPartner("SSI"): %>
 				<tr>
 					<td>

@@ -311,7 +311,8 @@ set s.LastStartFail = true;")
 							Sum = 250m,
 							PaidOn = SystemTime.Now(),
 							RecievedOn = SystemTime.Now(),
-							Virtual = true
+							Virtual = true,
+							Comment = string.Format("Подключи друга {0}", friendBonusRequest.FriendThisClient.Id)
 						}.Save();
 						friendBonusRequest.PaidFriendBonus = true;
 						friendBonusRequest.Update();

@@ -922,7 +922,7 @@ where r.`Label`= :LabelIndex;")
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void ChangeBalance(uint clientId, string balanceText, bool virtualPayment)
+		public void ChangeBalance(uint clientId, string balanceText, bool virtualPayment, string CommentText)
 		{
 			if (InitializeContent.Partner.IsDiller())
 				virtualPayment = false;
@@ -938,7 +938,8 @@ where r.`Label`= :LabelIndex;")
 						RecievedOn = DateTime.Now,
 						Sum = tryBalance,
 						BillingAccount = false,
-						Virtual = virtualPayment
+						Virtual = virtualPayment,
+						Comment = CommentText
 					}.Save();
 					Flash["Message"] = Message.Notify("Платеж ожидает обработки");
 					Flash["sleepButton"] = true;

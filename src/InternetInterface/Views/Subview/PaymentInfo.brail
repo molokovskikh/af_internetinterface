@@ -27,6 +27,7 @@ ${app.JS("validation.js")}
 				<th>Дата оплаты клиентом</th>
 				<th>Дата регистрации платежа</th>
 				<th>Сумма</th>
+				<th>Комментарий</th>
 			</tr>
 		</thead>
 		<tbody id="SearchResults" class="HighLightCurrentRow">
@@ -42,6 +43,7 @@ ${app.JS("validation.js")}
 				<td>${item.PaidOn}</td>
 				<td>${item.RecievedOn}</td>
 				<td>${item.Sum.ToString(".00")}</td>
+				<td class="paymentCommentTD">${item.Comment}</td>
 			</tr>
 		<% end %>
 			<tr>

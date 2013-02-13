@@ -562,3 +562,12 @@ div.commented, .commented {
 .inlineStyle {
 	display: inline;
 }
+
+.paymentCommentTD
+{
+	width: 150px;
+}
+
+.CommentText {
+	width: 300px;
+}

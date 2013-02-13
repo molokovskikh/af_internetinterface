@@ -50,6 +50,9 @@ namespace InternetInterface.Models
 		[BelongsTo]
 		public virtual BankPayment BankPayment { get; set; }
 
+		[Property]
+		public virtual string Comment { get; set; }
+
 		[Style]
 		public virtual bool NotProcessed
 		{
