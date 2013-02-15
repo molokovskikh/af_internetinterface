@@ -60,6 +60,7 @@ namespace Billing.Test.Integration
 				payment = Payment.Queryable.Where(p => p.Client == friend_client).ToList();
 				Assert.That(payment.Count, Is.EqualTo(1));
 				Assert.That(payment[0].Sum, Is.EqualTo(250m));
+				Assert.That(payment[0].Comment, Is.StringContaining("Подключи друга"));
 				Assert.IsTrue(payment[0].Virtual);
 			}
 		}
