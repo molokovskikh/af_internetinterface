@@ -65,5 +65,30 @@ namespace InternetInterface.Test.Integration
 			if (errors != null && errors.ErrorsCount > 0)
 				Assert.Fail(errors.ErrorMessages.Select((s, i) => Tuple.Create(errors.InvalidProperties[i], s)).Implode());
 		}
+
+		[Test]
+		public void Delete_payment_test()
+		{
+			var recipient = new Recipient { Name = "testRecipient", BankAccountNumber = "40702810602000758601" };
+			var client = ClientHelper.Client();
+			client.Recipient = recipient;
+			var payment = new Payment(client, 333);
+			session.Save(payment);
+			var bankPayment = new BankPayment(client, DateTime.Now, 333) { Recipient = recipient, Payment = payment };
+			session.Save(recipient);
+			session.Save(client);
+			session.Save(bankPayment);
+
+			var paymentsController = new PaymentsController();
+			PrepareController(paymentsController);
+			paymentsController.DbSession = session;
+			paymentsController.Delete(bankPayment.Id);
+
+			session.Flush();
+
+			client = session.Get<Client>(client.Id);
+			Assert.IsTrue(client.Appeals.Any(a => a.Appeal.Contains("Был удален банковский платеж от ")));
+			Assert.IsFalse(client.Payments.Any(p => p.Sum == 333));
+		}
 	}
 }

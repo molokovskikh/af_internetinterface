@@ -239,15 +239,10 @@ namespace InternetInterface.Controllers
 		public void Delete(uint id)
 		{
 			var payment = BankPayment.Find(id);
-			if (payment.Payer != null)
-				new UserWriteOff {
-					Client = payment.Payer,
-					Sum = payment.Sum,
-					Date = DateTime.Now,
-					Comment = string.Format("Списание в связи с удалением баковского платежа (id = {0})", id),
-					Registrator = InitializeContent.Partner
-				}.Save();
-			payment.Delete();
+			if (payment.Payment != null) {
+				Cancel(payment.Payment.Id, string.Format("Был удален банковский платеж от {0} на сумму {1}. Комментарий: {2}", payment.PayedOn.ToShortDateString(), payment.Sum, payment.Comment));
+			}
+			DbSession.Delete(payment);
 			RedirectToReferrer();
 		}
 

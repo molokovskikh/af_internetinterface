@@ -10,6 +10,24 @@ namespace InternetInterface.Test.Functional
 	[TestFixture]
 	public class PaymentFixture : global::Test.Support.Web.WatinFixture2
 	{
+		private Client client;
+		private Client newClient;
+		private BankPayment bankPayment;
+		private Payment payment;
+
+		[SetUp]
+		public void SetUp()
+		{
+			var recipient = new Recipient { Name = "testRecipient", BankAccountNumber = "40702810602000758601" };
+			client = ClientHelper.Client();
+			client.Recipient = recipient;
+			bankPayment = new BankPayment(client, DateTime.Now, 300) { Recipient = recipient };
+			newClient = ClientHelper.Client();
+			newClient.Recipient = recipient;
+			payment = new Payment(client, 300) { BankPayment = bankPayment };
+			Save(client, newClient, bankPayment, payment, recipient);
+		}
+
 		[Test]
 		public void ProcessPaymentTest()
 		{
@@ -68,14 +86,10 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void only_inforoom_test()
 		{
-			var recipient = new Recipient { Name = "testRecipient" };
-			var client = ClientHelper.Client();
-			client.Recipient = recipient;
-			var bankPayment = new BankPayment(client, DateTime.Now, 300) { Recipient = recipient };
-			var newClient = ClientHelper.Client();
-			newClient.Recipient = recipient;
-			var payment = new Payment(client, 300) { BankPayment = bankPayment };
-			Save(client, newClient, bankPayment, payment, recipient);
+			var recipient = client.Recipient;
+			recipient.BankAccountNumber = string.Empty;
+			Save(recipient);
+			Close();
 
 			Open("Payments/Edit?id=" + bankPayment.Id);
 			Click("Сохранить");
@@ -86,14 +100,6 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void Change_payer_bank_payment()
 		{
-			var recipient = new Recipient { Name = "testRecipient", BankAccountNumber = "40702810602000758601" };
-			var client = ClientHelper.Client();
-			client.Recipient = recipient;
-			var bankPayment = new BankPayment(client, DateTime.Now, 300) { Recipient = recipient };
-			var newClient = ClientHelper.Client();
-			newClient.Recipient = recipient;
-			var payment = new Payment(client, 300) { BankPayment = bankPayment };
-			Save(client, newClient, bankPayment, payment, recipient);
 			var paymentId = payment.Id;
 
 			Open("Payments/Edit?id=" + bankPayment.Id);

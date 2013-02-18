@@ -5,7 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Castle.ActiveRecord.Framework;
+using InternetInterface.Controllers;
 using InternetInterface.Models;
+using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 using Test.Support;
 
