@@ -23,6 +23,7 @@ namespace InternetInterface.Test.Integration
 		[Test]
 		public void VirtualTest()
 		{
+			session.CreateSQLQuery("delete from internet.Payments;").ExecuteUpdate();
 			if(InitializeContent.Partner.AccesedPartner == null) {
 				InitializeContent.Partner.AccesedPartner = new List<string>();
 				InitializeContent.Partner.AccesedPartner.Add("SSI");

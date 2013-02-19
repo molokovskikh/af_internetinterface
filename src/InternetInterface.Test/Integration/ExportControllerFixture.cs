@@ -33,6 +33,7 @@ namespace InternetInterface.Test.Integration
 		[Test]
 		public void GetClientsInExcelTest()
 		{
+			Response.Output = new StringWriter(new StringBuilder());
 			Controller.GetClientsInExcel(new SeachFilter());
 			Assert.That(Response.OutputStream.Length, Is.GreaterThan(0));
 			Response.OutputStream.Seek(0, SeekOrigin.Begin);
