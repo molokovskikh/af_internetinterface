@@ -193,8 +193,8 @@
 			</tr>
 			<tr>
 				<td>
-					<button id="naznach_but_1" class="button" onclick="Save()" value="Назначить">Назначить </button>
-					<button id="reserv_but" class="button" onclick="Reserv()" value="Назначить">Зарезервировать </button>
+					<button id="naznach_but_1" class="button" onclick="Save();" value="Назначить">Назначить </button>
+					<button id="reserv_but" class="button" onclick="Reserv();" value="Назначить">Зарезервировать </button>
 				</td>
 			</tr>
 	</tbody>
