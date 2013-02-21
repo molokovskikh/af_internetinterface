@@ -404,9 +404,6 @@ namespace InternetInterface.Controllers
 			if ((ConnectInfo.static_IP != string.Empty) || (nullFlag)) {
 				if (validateSum && string.IsNullOrEmpty(errorMessage) || validateSum &&
 					(oldSwitch != null && ConnectInfo.Switch == oldSwitch.Id && ConnectInfo.Port == olpPort.ToString())) {
-					var packageSpeed =
-						PackageSpeed.Queryable.Where(p => p.PackageId == ConnectInfo.PackageId).ToList().FirstOrDefault();
-					clientEntPoint.PackageId = packageSpeed.PackageId;
 					if (client.GetClientType() == ClientType.Phisical) {
 						client.PhysicalClient.UpdatePackageId(clientEntPoint);
 					}
