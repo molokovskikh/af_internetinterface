@@ -407,6 +407,10 @@ namespace InternetInterface.Controllers
 					if (client.GetClientType() == ClientType.Phisical) {
 						client.PhysicalClient.UpdatePackageId(clientEntPoint);
 					}
+					else {
+						var packageSpeed = DbSession.Query<PackageSpeed>().Where(p => p.PackageId == ConnectInfo.PackageId).ToList().FirstOrDefault();
+						clientEntPoint.PackageId = packageSpeed.PackageId;
+					}
 					if (string.IsNullOrEmpty(clientEntPoint.Ip) && !string.IsNullOrEmpty(ConnectInfo.static_IP))
 						new UserWriteOff {
 							Client = client,
