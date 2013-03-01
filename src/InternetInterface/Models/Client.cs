@@ -224,7 +224,9 @@ namespace InternetInterface.Models
 				if (!deniedPorts.Contains(i))
 					result += string.Format("{0}, ", i);
 			}
-			return result;
+			if (!string.IsNullOrEmpty(result))
+				return result.Remove(result.Length - 2, 2);
+			return string.Empty;
 		}
 
 		public virtual bool HaveRed()
