@@ -216,6 +216,17 @@ namespace InternetInterface.Models
 			return ArHelper.WithSession(s => s.Query<IpPool>().Count(p => p.Begin <= mashineAddress && p.End >= mashineAddress) > 0);
 		}
 
+		public virtual string GetFreePorts()
+		{
+			var result = string.Empty;
+			var deniedPorts = Endpoints[0].Switch.Endpoints.Select(e => e.Port);
+			for (int i = 1; i <= Endpoints[0].Switch.TotalPorts; i++) {
+				if (!deniedPorts.Contains(i))
+					result += string.Format("{0}, ", i);
+			}
+			return result;
+		}
+
 		public virtual bool HaveRed()
 		{
 			return !string.IsNullOrEmpty(RedmineTask);

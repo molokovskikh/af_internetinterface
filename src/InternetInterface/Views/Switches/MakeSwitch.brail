@@ -53,6 +53,13 @@
 							</td>
 						</tr>
 						<tr>
+							<td >Всего портов</td>
+							<td colspan = 2>${FormHelper.TextFieldValue("Switch.TotalPorts", Switch.TotalPorts)}</td>
+							<td>
+								${app.GetValidationError("Switch.TotalPorts")}
+							</td>
+						</tr>
+						<tr>
 							<td >Зона</td>
 							<td colspan=2>
 								${app.Edit("Switch.Zone")}

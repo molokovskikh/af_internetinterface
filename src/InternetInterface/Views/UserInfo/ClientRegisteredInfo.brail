@@ -293,7 +293,7 @@ div.WordSection1
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
   justify;line-height:normal'>
   <![if !vml]><span style='mso-ignore:vglayout'>
-  <table cellpadding=0 cellspacing=0 align=left style="height: 101px">
+  <table cellpadding=0 cellspacing=0 align=left style="height: 70px; margin-top: -12px;">
    <tr>
 	<td width=532 class="style2"></td>
    </tr>
@@ -312,7 +312,7 @@ div.WordSection1
   normal'><i style='mso-bidi-font-style:normal'>Просим Вас оценить качество
   подключения по десятибалльной шкале <o:p></o:p></i></p>
 	   </td>
-	<td width=175 height=75 bgcolor=white style='border:.75pt solid black;
+	<td width=175 height=50 bgcolor=white style='border:.75pt solid black;
 	vertical-align:top;background:white'><![endif]><![if !mso]><span
 	style='position:absolute;mso-ignore:vglayout;left:0pt;z-index:7'>
 	<table cellpadding=0 cellspacing=0 width="100%">
@@ -352,11 +352,11 @@ div.WordSection1
   style='mso-ansi-language:EN-US'>UTP</span> 2</b><b style='mso-bidi-font-weight:
   normal'><span lang=EN-US style='mso-ansi-language:EN-US'>x</span>2</b> начальная
   метка 
-  <![if !vml]><img width=114 height=30
+  <![if !vml]><img width=114 height=20
   src="../Images/image003.gif" v:shapes="_x0000_s1033"><![endif]>
   <span
   style='mso-spacerun:yes'> </span>конечная метка 
-  <![if !vml]><img width=114 height=30
+  <![if !vml]><img width=114 height=20
   src="../Images/image003.gif" v:shapes="_x0000_s1032"><![endif]>
   </p>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
@@ -364,16 +364,19 @@ div.WordSection1
   style='mso-bidi-font-weight:normal'><span lang=EN-US style='mso-ansi-language:
   EN-US'>RJ</span>-45</b> - <b
   style='mso-bidi-font-weight:normal'>
-  <![if !vml]><img width=51 height=22
+  <![if !vml]><img width=51 height=20
   src="../Images/image004.gif" v:shapes="_x0000_s1031"><![endif]></b>
   <span
   style='mso-spacerun:yes'> </span>шт. <b style='mso-bidi-font-weight:normal'>скоба
   с гвоздем</b> - 
   <b style='mso-bidi-font-weight:normal'>
-  <![if !vml]><img width=51 height=22
+  <![if !vml]><img width=51 height=20
   src="../Images/image004.gif" v:shapes="_x0000_s1030"><![endif]></b>
   <span
-  style='mso-spacerun:yes'>  </span>шт.</p>
+  style='mso-spacerun:yes'>  </span>шт.
+  <br/>
+  <span>Свободные порты: ${_client.GetFreePorts()}</span>
+  </p>
   <p class=MsoNormal align=right style='margin-bottom:0cm;margin-bottom:.0001pt;
   text-align:right;line-height:normal'>Работы выполнил 
    <%if WhoConnected == null: %>
@@ -550,9 +553,6 @@ div.WordSection1
 </table>
 <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
 justify;line-height:normal'><span lang=EN-US style='mso-ansi-language:EN-US'><o:p>&nbsp;</o:p></span></p>
-
 </div>
-
 </body>
-
 </html>

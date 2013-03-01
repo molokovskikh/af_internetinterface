@@ -53,6 +53,12 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string Comment { get; set; }
 
+		[HasMany]
+		public virtual IList<ClientEndpoint> Endpoints { get; set; }
+
+		[Property, ValidateInteger("Введите число")]
+		public virtual int TotalPorts { get; set; }
+
 		public override string ToString()
 		{
 			return Name + String.Format(" ({0})", GetNormalIp());
