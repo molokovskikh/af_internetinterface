@@ -5,7 +5,7 @@
 		function() {
 			jQuery("#SearchText").focus();
 			ShowFindEditor();
-			$('.filter_searchProperties').click(function () {
+			$('#SearchPropertiesTd input[type=radio]').click(function () {
 				ShowFindEditor();
 			});
 		}
@@ -84,7 +84,7 @@ border="1" bgcolor="#FFFFFF" cellspacing="1" cellpadding="0">
 		<tr>
 			<td>
 			</td>
-			<td>
+			<td id="SearchPropertiesTd">
 				${app.Edit("filter.searchProperties", "RadioList")}
 			</td>
 			<td>
