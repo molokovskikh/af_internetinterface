@@ -7,6 +7,7 @@ using Castle.ActiveRecord.Linq;
 using Castle.Components.Validator;
 using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Helpers;
+using Common.Web.Ui.MonoRailExtentions;
 using InternetInterface.Helpers;
 using InternetInterface.Models.Universal;
 using NHibernate;
@@ -56,7 +57,7 @@ namespace InternetInterface.Models
 		[HasMany]
 		public virtual IList<ClientEndpoint> Endpoints { get; set; }
 
-		[Property, ValidateInteger("Введите число")]
+		[Property, ValidateInteger("Введите число"), ValidateGreaterThanZero]
 		public virtual int TotalPorts { get; set; }
 
 		public override string ToString()

@@ -20,7 +20,9 @@ namespace InternetInterface.Test.Functional
 		public void RegisterClientTest()
 		{
 			var commutator = new NetworkSwitch("Тестовый коммутатор для регистрации клиента", session.Query<Zone>().First());
-			session.Save(commutator);
+			var tariff = new Tariff("Тариф для тестирования", 111);
+			Save(commutator, tariff);
+			Close();
 
 			Open("Register/RegisterClient.rails");
 			Assert.That(browser.Text, Is.StringContaining("Форма регистрации"));

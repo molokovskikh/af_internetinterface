@@ -374,8 +374,13 @@ div.WordSection1
   src="../Images/image004.gif" v:shapes="_x0000_s1030"><![endif]></b>
   <span
   style='mso-spacerun:yes'>  </span>шт.
+  <%
+  freePorts = _client.GetFreePorts()
+  if (freePorts != ""):
+  %>
   <br/>
-  <span>Свободные порты: ${_client.GetFreePorts()}</span>
+  <span>Свободные порты: ${freePorts}</span>
+  <%end%>
   </p>
   <p class=MsoNormal align=right style='margin-bottom:0cm;margin-bottom:.0001pt;
   text-align:right;line-height:normal'>Работы выполнил 
