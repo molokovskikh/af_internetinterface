@@ -265,9 +265,20 @@ namespace InternetInterface.Test.Functional
 		{
 			var brigad = new Brigad("test");
 			session.Save(brigad);
+			var connectGraph = new ConnectGraph(Client, DateTime.Now, brigad);
+			session.Save(connectGraph);
+			Close();
+
 			Open(ClientUrl);
 			Click("Сохранить");
+			Assert.IsNotNull(session.Get<Client>(Client.Id).ConnectGraph);
 			Click("Сбросить");
+
+			Close();
+
+			Open(ClientUrl);
+			Assert.IsNull(session.Get<Client>(Client.Id).ConnectGraph);
+			Click("Сохранить");
 			AssertText("Назначить в график");
 			Click("Назначить в график");
 			browser.RadioButton(Find.ByName("graph_button")).Checked = true;

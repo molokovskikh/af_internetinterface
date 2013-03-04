@@ -148,6 +148,9 @@ namespace InternetInterface.Models
 
 		[OneToOne(PropertyRef = "Client")]
 		public virtual MessageForClient Message { get; set; }
+	
+		[OneToOne(PropertyRef = "Client")]
+		public virtual ConnectGraph ConnectGraph { get; set; }
 
 		[Property, ValidateInteger("Должно быть введено число")]
 		public virtual string RedmineTask { get; set; }

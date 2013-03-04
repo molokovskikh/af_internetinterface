@@ -1176,6 +1176,7 @@ where r.`Label`= :LabelIndex;")
 			client.Status = Status.Get(StatusType.BlockedAndConnected, DbSession);
 			client.BeginWork = null;
 			client.RatedPeriodDate = null;
+			DbSession.Delete(client.ConnectGraph);
 			DbSession.SaveOrUpdate(client);
 			RedirectToReferrer();
 		}
