@@ -81,7 +81,6 @@ namespace InternetInterface.Test.Functional
 			Close();
 
 			Open("Register/RegisterClient");
-			browser.ShowWindow(NativeMethods.WindowShowStyle.Maximize);
 			browser.SelectList("regionSelector").SelectByValue(testRegion1.Id.ToString());
 			browser.WaitUntilContainsText("testStreetFirst", 5);
 			Assert.That(browser.Html, Is.StringContaining("testStreetFirst"));
