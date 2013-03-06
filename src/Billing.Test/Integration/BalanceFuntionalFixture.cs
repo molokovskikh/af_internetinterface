@@ -491,64 +491,6 @@ namespace Billing.Test.Integration
 		}
 
 		[Test]
-		public void LawyerPersonTest()
-		{
-			LawyerPerson lPerson;
-			Client client;
-			using (new SessionScope()) {
-				lPerson = new LawyerPerson {
-					Balance = 0,
-					Tariff = 10000m,
-					Region = ArHelper.WithSession(s => {
-				var region = s.Query<RegionHouse>().FirstOrDefault(r => r.Name == "Воронеж");
-				if (region == null) {
-					region = new RegionHouse {
-						Name = "Воронеж"
-					};
-					s.Save(region);
-				}
-				return region.Id;
-			})
-				};
-				lPerson.Save();
-				client = new Client() {
-					Disabled = false,
-					Name = "TestLawyer",
-					ShowBalanceWarningPage = false,
-					LawyerPerson = lPerson
-				};
-				client.Save();
-			}
-			SystemTime.Reset();
-			var sn = SystemTime.Now();
-			var days = DateTime.DaysInMonth(sn.Year, sn.Month) + DateTime.DaysInMonth(sn.AddMonths(1).Year, sn.AddMonths(1).Month);
-			var beginData = new DateTime(sn.Year, sn.Month, 1);
-			for (int i = 0; i < days; i++) {
-				SystemTime.Now = () => beginData.AddDays(i);
-				billing.Compute();
-			}
-			using (new SessionScope()) {
-				lPerson.Refresh();
-			}
-			Assert.That(-20000m, Is.EqualTo(lPerson.Balance));
-			billing.OnMethod();
-			using (new SessionScope()) {
-				client.Refresh();
-				lPerson.Balance += 1000;
-				lPerson.Update();
-			}
-			//3 Так как 2 не к этому клиенту
-			Assert_statistic_appeal(3);
-			Assert.IsTrue(client.ShowBalanceWarningPage);
-			billing.OnMethod();
-			using (new SessionScope()) {
-				client.Refresh();
-			}
-			Assert.IsTrue(!client.ShowBalanceWarningPage);
-			Assert_statistic_appeal();
-		}
-
-		[Test]
 		public void Write_off()
 		{
 			Client client;

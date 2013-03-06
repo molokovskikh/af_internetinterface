@@ -205,7 +205,16 @@
 		</tr>
 		<tr>
 		  <td>Скорость</td>
+		  <%if _client.IsPhysical(): %>
 		  <td>${ConnectInfo.GetNormalSpeed()}</td>
+		  <%else:%>
+			<td colspan=2>
+			<select name="ConnectInfo.PackageId" style="width: 200px;">
+				<%for j, speed in enumerate(Speeds): %>
+					<option value="${speed.PackageId}" ${"selected" if (speed.PackageId == ChSpeed)}> ${speed}  PID(${speed.PackageId}) ${speed.Description} </option>
+				<%end %>
+		  </td>
+		  <%end%>
 		</tr>
 		<tr>
 		  <td>Мониторинг</td>

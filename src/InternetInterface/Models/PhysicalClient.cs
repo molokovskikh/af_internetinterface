@@ -15,8 +15,15 @@ using NHibernate;
 
 namespace InternetInterface.Models
 {
+	public class ClientOrderInfo
+	{
+		public Orders Order { get; set; }
+		public ClientConnectInfo ClientConnectInfo { get; set; }
+	}
+
 	public class ClientConnectInfo
 	{
+		//public Orders Order { get; set; }
 		public string static_IP { get; set; }
 		public string Leased_IP { get; set; }
 		public int Client { get; set; }

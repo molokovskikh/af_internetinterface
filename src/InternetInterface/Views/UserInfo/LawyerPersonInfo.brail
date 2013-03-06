@@ -20,7 +20,8 @@
 				<%if _client.HaveRed(): %>
 					<button type=button class="button" onclick="GoTo('http://redmine.analit.net/issues/${_client.RedmineTask}');"><img alt="Save" src="../Images/tick.png">Страница Redmine</img></button></td>
 				<%end %>
-			</td>
+					${app.LinkTo("Архив заказов", @UserInfo, @OrdersArchive, {"clientCode": ClientCode, @attributes: {@class: "button ok"}})}
+					</td>
 		</tr>
 	</tbody>
 </table>
@@ -99,7 +100,7 @@
 			<td>
 				<form method="post" action="${siteroot}/UserInfo/AddEndPoint">
 				<input type="hidden" name="clientId" value="${ClientCode}" />
-				<button type="submit"  class="editBut">Добавить точку подключения</button>
+				<button type="submit"  class="editBut">Добавить заказ</button>
 				</form>
 			</td>
 		</tr>
@@ -132,10 +133,10 @@
 	<%end %>
 <br />
 
-<% for i,item in enumerate(ClientConnectInf):
- OutputSubView("""\Subview\ConnectInfo""", {
-					"ConnectInfo": item,
-					"EditingConnect" : EConnect == item.endpointId})
+		<% for i,item in enumerate(ClientOrdersInfo):
+ OutputSubView("""\Subview\OrderInfo""", {
+					"OrderInfo": item,
+					"EditingConnect" : EConnect == item.Order.Id})
 end %>
 <% OutputSubView("""\Subview\PaymentInfo""") %>
 

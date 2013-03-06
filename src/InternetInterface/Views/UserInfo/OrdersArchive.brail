@@ -1,0 +1,12 @@
+﻿${app.Asset("orders.css")}
+<div class="archiveOrdersDiv">
+	<% if OrdersInfo.Count == 0:%>
+		На данный момент у клиента отсутствуют заказы в архиве
+		<% else: %>
+	<% for i,item in enumerate(OrdersInfo):
+ OutputSubView("""\Subview\OrderInfo""", {
+					"OrderInfo": item,
+					"EditingConnect" : false})
+end %>
+		<% end %>
+</style>

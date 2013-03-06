@@ -467,13 +467,41 @@ set s.LastStartFail = true;")
 			var now = SystemTime.Now();
 			var daysInMonth = DateTime.DaysInMonth(now.Year, now.Month);
 			var tariff = person.Tariff.Value;
-			var sum = tariff / daysInMonth;
-			if (sum == 0)
-				return;
-
+			//var sum = tariff / daysInMonth;
+			//if (sum == 0)
+			//	return;
+			decimal sum = 0;
 			//если это последний день месяца то нам нужно учесть накопивщуюся ошибку округления
-			if (now.Date == now.Date.LastDayOfMonth()) {
-				sum += tariff - Math.Round(tariff / daysInMonth, 2) * daysInMonth;
+			//if (now.Date == now.Date.LastDayOfMonth()) {
+			//	sum += tariff - Math.Round(tariff / daysInMonth, 2) * daysInMonth;
+			//}
+
+			//если это день активации заказа, то списываем плату за разовые услуги и за периодические пропорционально оставшимся дням месяца
+			var activateOrders = client.Orders.Where(o => o.BeginDate.Value.Date == now.Date);
+			if (activateOrders.Any()) {
+				var periodicService = activateOrders.SelectMany(s => s.OrderServices)
+					.Where(s => s.IsPeriodic);
+				var notPeriodicService = activateOrders.SelectMany(s => s.OrderServices)
+					.Where(s => !s.IsPeriodic);
+				sum += notPeriodicService.Sum(s => s.Cost);
+				sum += periodicService.Sum(s => s.Cost) / daysInMonth * (daysInMonth - now.Day);
+			}
+
+			//если это день деактивации заказа, то нужно вернуть сумму за оставшееся число дней в месяце за периодические услуги
+			var disableOrders = client.Orders.Where(o => o.EndDate.Value.Date == now.Date);
+			if(disableOrders.Any()) {
+				var periodicService = disableOrders.SelectMany(s => s.OrderServices)
+					.Where(s => s.IsPeriodic);
+				sum -= periodicService.Sum(s => s.Cost) / daysInMonth * (daysInMonth - now.Day);
+			}
+
+
+			//если это первый день месяца, то списываем плату за периодические услуги активных заказов
+			if (now.Date == now.Date.FirstDayOfMonth()) {
+				var orderServices = client.Orders.Where(o => o.OrderStatus == OrderStatus.Enabled)
+					.SelectMany(s => s.OrderServices)
+					.Where(s => s.IsPeriodic);
+				sum += orderServices.Sum(s => s.Cost);
 			}
 
 			person.Balance -= sum;

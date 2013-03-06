@@ -178,7 +178,10 @@ namespace InternetInterface.Controllers
 				PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(new LawyerPerson());
 
 			PropertyBag["Editing"] = filter.Editing;
-			PropertyBag["ConnectInfo"] = client.GetConnectInfo(DbSession);
+			//var connectInfo = client.GetConnectInfo(DbSession);
+			//PropertyBag["ConnectInfo"] = connectInfo;
+			var ordersInfo = client.GetOrderInfo(DbSession);
+			PropertyBag["OrdersInfo"] = ordersInfo;
 
 			LoadBalanceData(filter.grouped, client);
 
@@ -372,19 +375,29 @@ namespace InternetInterface.Controllers
 		public void SaveSwitchForClient(uint ClientID, [DataBind("ConnectInfo")] ConnectInfo ConnectInfo,
 			uint BrigadForConnect,
 			[ARDataBind("staticAdress", AutoLoad = AutoLoadBehavior.NewInstanceIfInvalidKey)] StaticIp[] staticAdress,
-			uint EditConnect, string ConnectSum)
+			uint EditConnect, string ConnectSum,
+			[DataBind("order")] Orders Order, bool withoutEndPoint)
 		{
 			var client = Client.Find(ClientID);
 			bool brigadChangeFlag = client.WhoConnected == null;
 			var newFlag = false;
 			var clientEntPoint = new ClientEndpoint();
-			var clientsEndPoint = ClientEndpoint.Queryable.Where(c => c.Client == client && c.Id == EditConnect).ToArray();
-			if (clientsEndPoint.Length != 0) {
-				clientEntPoint = clientsEndPoint[0];
+			var existingOrder = DbSession.Query<Orders>().FirstOrDefault(o => o.Id == EditConnect);
+			if (existingOrder != null) {
+				if(existingOrder.EndPoint != null)
+					clientEntPoint = existingOrder.EndPoint;
 			}
 			else {
 				newFlag = true;
 			}
+
+			//var clientsEndPoint = ClientEndpoint.Queryable.Where(c => c.Client == client && c.Id == EditConnect).ToArray();
+			//if (clientsEndPoint.Length != 0) {
+			//	clientEntPoint = clientsEndPoint[0];
+			//}
+			//else {
+			//	newFlag = true;
+			//}
 			var olpPort = clientEntPoint.Port;
 			var oldSwitch = clientEntPoint.Switch;
 			var nullFlag = false;
@@ -401,82 +414,130 @@ namespace InternetInterface.Controllers
 				!(!string.IsNullOrEmpty(ConnectSum) && (!decimal.TryParse(ConnectSum, out _connectSum) || (_connectSum <= 0 && !client.IsPhysical())));
 			if (!validateSum)
 				errorMessage = "Введена невалидная сумма";
-			if ((ConnectInfo.static_IP != string.Empty) || (nullFlag)) {
-				if (validateSum && string.IsNullOrEmpty(errorMessage) || validateSum &&
-					(oldSwitch != null && ConnectInfo.Switch == oldSwitch.Id && ConnectInfo.Port == olpPort.ToString())) {
-					if (client.GetClientType() == ClientType.Phisical) {
-						client.PhysicalClient.UpdatePackageId(clientEntPoint);
-					}
-					if (string.IsNullOrEmpty(clientEntPoint.Ip) && !string.IsNullOrEmpty(ConnectInfo.static_IP))
-						new UserWriteOff {
-							Client = client,
-							Date = DateTime.Now,
-							Sum = 200,
-							Comment = string.Format("Плата за фиксированный Ip адрес ({0})", NetworkSwitch.GetNormalIp(UInt32.Parse(ConnectInfo.static_IP))),
-							Registrator = InitializeContent.Partner
-						}.Save();
-					clientEntPoint.Client = client;
-					clientEntPoint.Ip = ConnectInfo.static_IP;
-					clientEntPoint.Port = Int32.Parse(ConnectInfo.Port);
-					clientEntPoint.Switch = DbSession.Load<NetworkSwitch>(ConnectInfo.Switch);
-					clientEntPoint.Monitoring = ConnectInfo.Monitoring;
-					if (!newFlag) {
-						clientEntPoint.UpdateAndFlush();
-					}
-					else {
-						clientEntPoint.SaveAndFlush();
-						if (client.AdditionalStatus != null && client.AdditionalStatus.ShortName == "Refused") {
-							client.AdditionalStatus = null;
-							client.Update();
+
+			bool savedEndpoint = false;
+			if(!withoutEndPoint) {
+				if ((ConnectInfo.static_IP != string.Empty) || (nullFlag)) {
+					if (validateSum && string.IsNullOrEmpty(errorMessage) || validateSum &&
+						(oldSwitch != null && ConnectInfo.Switch == oldSwitch.Id && ConnectInfo.Port == olpPort.ToString())) {
+						if (client.GetClientType() == ClientType.Phisical) {
+							client.PhysicalClient.UpdatePackageId(clientEntPoint);
 						}
-					}
-					if (brigadChangeFlag) {
-						var brigad = Brigad.Find(BrigadForConnect);
-						client.WhoConnected = brigad;
-						client.WhoConnectedName = brigad.Name;
-					}
-					client.ConnectedDate = DateTime.Now;
-					if (client.Status.Id == (uint)StatusType.BlockedAndNoConnected)
-						client.Status = Status.Find((uint)StatusType.BlockedAndConnected);
-					client.Update();
-
-					StaticIp.Queryable.Where(s => s.EndPoint == clientEntPoint).ToList().Where(
-						s => !staticAdress.Select(f => f.Id).Contains(s.Id)).ToList()
-						.ForEach(s => s.Delete());
-
-					foreach (var s in staticAdress) {
-						if (!string.IsNullOrEmpty(s.Ip))
-							if (Regex.IsMatch(s.Ip, NetworkSwitch.IPRegExp)) {
-								s.EndPoint = clientEntPoint;
-								s.Save();
-							}
-					}
-
-					var connectSum = 0m;
-					if (!string.IsNullOrEmpty(ConnectSum) && decimal.TryParse(ConnectSum, out connectSum) && connectSum > 0) {
-						var payments = PaymentForConnect.Queryable.Where(p => p.EndPoint == clientEntPoint).ToList();
-						if (payments.Count() == 0)
-							new PaymentForConnect {
-								Sum = connectSum,
-								Partner = InitializeContent.Partner,
-								EndPoint = clientEntPoint,
-								RegDate = DateTime.Now
+						if (string.IsNullOrEmpty(clientEntPoint.Ip) && !string.IsNullOrEmpty(ConnectInfo.static_IP))
+							new UserWriteOff {
+								Client = client,
+								Date = DateTime.Now,
+								Sum = 200,
+								Comment = string.Format("Плата за фиксированный Ip адрес ({0})", NetworkSwitch.GetNormalIp(UInt32.Parse(ConnectInfo.static_IP))),
+								Registrator = InitializeContent.Partner
 							}.Save();
-						else {
-							var payment = payments.First();
-							payment.Sum = connectSum;
-							payment.Update();
+						clientEntPoint.Client = client;
+						clientEntPoint.Ip = ConnectInfo.static_IP;
+						clientEntPoint.Port = Int32.Parse(ConnectInfo.Port);
+						clientEntPoint.Switch = DbSession.Load<NetworkSwitch>(ConnectInfo.Switch);
+						clientEntPoint.Monitoring = ConnectInfo.Monitoring;
+						if (!newFlag) {
+							clientEntPoint.UpdateAndFlush();
 						}
-					}
+						else {
+							clientEntPoint.SaveAndFlush();
+							if (client.AdditionalStatus != null && client.AdditionalStatus.ShortName == "Refused") {
+								client.AdditionalStatus = null;
+								client.Update();
+							}
+							Order.EndPoint = clientEntPoint;
+							//Order.Client = client;
+							//DbSession.Save(Order);
+						}
+						if (brigadChangeFlag) {
+							var brigad = Brigad.Find(BrigadForConnect);
+							client.WhoConnected = brigad;
+							client.WhoConnectedName = brigad.Name;
+						}
+						client.ConnectedDate = DateTime.Now;
+						if (client.Status.Id == (uint)StatusType.BlockedAndNoConnected)
+							client.Status = Status.Find((uint)StatusType.BlockedAndConnected);
+						client.Update();
 
-					RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID);
-					return;
+						StaticIp.Queryable.Where(s => s.EndPoint == clientEntPoint).ToList().Where(
+							s => !staticAdress.Select(f => f.Id).Contains(s.Id)).ToList()
+							.ForEach(s => s.Delete());
+
+						foreach (var s in staticAdress) {
+							if (!string.IsNullOrEmpty(s.Ip))
+								if (Regex.IsMatch(s.Ip, NetworkSwitch.IPRegExp)) {
+									s.EndPoint = clientEntPoint;
+									s.Save();
+								}
+						}
+
+						var connectSum = 0m;
+						if (!string.IsNullOrEmpty(ConnectSum) && decimal.TryParse(ConnectSum, out connectSum) && connectSum > 0) {
+							var payments = PaymentForConnect.Queryable.Where(p => p.EndPoint == clientEntPoint).ToList();
+							if (payments.Count() == 0)
+								new PaymentForConnect {
+									Sum = connectSum,
+									Partner = InitializeContent.Partner,
+									EndPoint = clientEntPoint,
+									RegDate = DateTime.Now
+								}.Save();
+							else {
+								var payment = payments.First();
+								payment.Sum = connectSum;
+								payment.Update();
+							}
+						}
+						savedEndpoint = true;
+						//RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID);
+						//return;
+					}
+				}
+				else {
+					errorMessage = string.Empty;
+					errorMessage += "Ошибка ввода IP адреса";
 				}
 			}
-			else {
-				errorMessage = string.Empty;
-				errorMessage += "Ошибка ввода IP адреса";
+
+			if (savedEndpoint || withoutEndPoint) {
+				if (existingOrder == null) {
+					existingOrder = Order;
+				}
+				else {
+					existingOrder.BeginDate = Order.BeginDate;
+					existingOrder.EndDate = Order.EndDate;
+					existingOrder.Number = Order.Number;
+				}
+				if (existingOrder.Client == null)
+					existingOrder.Client = client;
+				if(existingOrder.OrderServices == null)
+					existingOrder.OrderServices = new List<OrderService>();
+				DbSession.SaveOrUpdate(existingOrder);
+				if(Order.OrderServices == null)
+					Order.OrderServices = new List<OrderService>();
+
+				foreach (var orderService in existingOrder.OrderServices) {
+					if(Order.OrderServices.All(s => s.Id != orderService.Id)) {
+						DbSession.Delete(orderService);
+					}
+				}
+
+				foreach (var orderService in Order.OrderServices) {
+					if(orderService.Id > 0) {
+						var service = existingOrder.OrderServices.First(s => s.Id == orderService.Id);
+						service.Description = orderService.Description;
+						service.IsPeriodic = orderService.IsPeriodic;
+						service.Cost = orderService.Cost;
+						DbSession.Update(service);
+					}
+					else {
+						orderService.Order = existingOrder;
+						DbSession.Save(orderService);
+					}
+				}
+				RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID);
+				return;
 			}
+
 			PropertyBag["Editing"] = true;
 			PropertyBag["ChBrigad"] = BrigadForConnect;
 			Flash["errorMessage"] = errorMessage;
@@ -865,12 +926,25 @@ where r.`Label`= :LabelIndex;")
 
 		public void SendConnectInfo(Client client)
 		{
-			var connectInfo = client.GetConnectInfo(DbSession);
-			if (connectInfo.Count == 0) {
-				var connectSum = client.IsPhysical() ? client.PhysicalClient.ConnectSum : 0;
-				connectInfo.Add(new ClientConnectInfo { ConnectSum = connectSum });
+			if (client.LawyerPerson != null) {
+				var orderInfo = client.GetOrderInfo(DbSession);
+				if (orderInfo.Count == 0) {
+					var connectSum = client.IsPhysical() ? client.PhysicalClient.ConnectSum : 0;
+					orderInfo.Add(new ClientOrderInfo {
+						Order = new Orders() { Number = Orders.GetNextNumber(DbSession) },
+						ClientConnectInfo = new ClientConnectInfo { ConnectSum = connectSum }
+					});
+				}
+				PropertyBag["ClientOrdersInfo"] = orderInfo;
 			}
-			PropertyBag["ClientConnectInf"] = connectInfo;
+			else {
+				var connectInfo = client.GetConnectInfo(DbSession);
+				if (connectInfo.Count == 0) {
+					var connectSum = client.IsPhysical() ? client.PhysicalClient.ConnectSum : 0;
+					connectInfo.Add(new ClientConnectInfo { ConnectSum = connectSum });
+				}
+				PropertyBag["ClientConnectInf"] = connectInfo;
+			}
 		}
 
 		public void ConnectPropertyBag(uint clientId)
@@ -1145,7 +1219,16 @@ where r.`Label`= :LabelIndex;")
 
 		public void AddPoint(uint clientId)
 		{
-			PropertyBag["connectInfo"] = new ClientConnectInfo();
+			//PropertyBag["connectInfo"] = new ClientConnectInfo() { Order = new Orders() };
+			//var orders = DbSession.Query<Orders>().ToList();
+			//uint number = 1;
+			//if(orders.Count > 0)
+			//	number = orders.Max(o => o.Number) + 1;
+			PropertyBag["OrderInfo"] = new ClientOrderInfo {
+				Order = new Orders() { Number = Orders.GetNextNumber(DbSession) },
+				ClientConnectInfo = new ClientConnectInfo()
+			};
+			//PropertyBag["order"] = new Orders();
 			ConnectPropertyBag(clientId);
 		}
 
@@ -1157,7 +1240,7 @@ where r.`Label`= :LabelIndex;")
 			if (endPoint != null) {
 				var client = endPoint.Client;
 				var endPointsForClient = ClientEndpoint.Queryable.Where(c => c.Client == client).ToList();
-				if (endPointsForClient.Count > 1)
+				if (endPointsForClient.Count > 1 || client.LawyerPerson != null)
 					endPoint.Delete();
 				else
 					Flash["Message"] = Message.Error("Последняя точка подключения не может быть удалена!");
@@ -1203,6 +1286,48 @@ where r.`Label`= :LabelIndex;")
 			region.Name = regionName;
 			DbSession.Save(region);
 			return new { region.Id, regionName };
+		}
+
+		public void AddOrderService(uint orderId)
+		{
+			var order = DbSession.Load<Orders>(orderId);
+			PropertyBag["OrderService"] = new OrderService();
+			PropertyBag["orderId"] = orderId;
+			PropertyBag["PageDescription"] = "Добавление новой услуги";
+			RenderView("EditOrderService");
+		}
+
+		public void SaveOrderService(uint orderId, [DataBind("OrderService")] OrderService orderService)
+		{
+			if(orderService.Order == null) {
+				orderService.Order = DbSession.Load<Orders>(orderId);
+			}
+			DbSession.SaveOrUpdate(orderService);
+			RedirectToUrl("../Search/Redirect?filter.ClientCode=" + orderService.Order.Client.Id);
+		}
+
+		public void EditOrderService(uint orderServiceId)
+		{
+			var orderService = DbSession.Load<OrderService>(orderServiceId);
+			PropertyBag["OrderService"] = orderService;
+			PropertyBag["orderId"] = orderService.Order.Id;
+			PropertyBag["PageDescription"] = "Редактирование услуги";
+			RenderView("EditOrderService");
+		}
+
+		public void CloseOrder(uint orderId)
+		{
+			var order = DbSession.Load<Orders>(orderId);
+			order.Disabled = true;
+			DbSession.Save(order);
+			RedirectToUrl(order.Client.Redirect());
+		}
+
+		public void OrdersArchive(uint clientCode)
+		{
+			var client = DbSession.Load<Client>(clientCode);
+			var ordersInfo = client.GetOrderInfo(DbSession, true);
+			PropertyBag["OrdersInfo"] = ordersInfo;
 		}
 	}
 }

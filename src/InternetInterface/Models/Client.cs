@@ -173,6 +173,9 @@ namespace InternetInterface.Models
 		[HasMany(ColumnKey = "Client", OrderBy = "Date", Lazy = true, Cascade = ManyRelationCascadeEnum.SaveUpdate)]
 		public virtual IList<Appeals> Appeals { get; set; }
 
+		[HasMany(ColumnKey = "ClientId", Lazy = true)]
+		public virtual IList<Orders> Orders { get; set; }
+
 		public virtual bool CanDisabled()
 		{
 			return PhysicalClient.Balance < GetPriceForTariff() * PercentBalance;
@@ -561,6 +564,69 @@ group by {0}
 			return GetConnectInfo(session).FirstOrDefault();
 		}
 
+		public virtual IList<Orders> GetOrders(ISession session, bool disabled = false)
+		{
+			return session.Query<Orders>().Where(o => o.Client == this && o.Disabled == disabled).ToList();
+		}
+
+		public virtual IList<ClientOrderInfo> GetOrderInfo(ISession session, bool disabled = false)
+		{
+			var result = new List<ClientOrderInfo>();
+			var orders = GetOrders(session, disabled);
+			foreach (var order in orders) {
+				var orderInfo = new ClientOrderInfo {
+					Order = order
+				};
+				if(order.EndPoint != null) {
+					orderInfo.ClientConnectInfo = GetSingleConnectInfo(session, order.EndPoint.Id);
+				}
+				else {
+					orderInfo.ClientConnectInfo = new ClientConnectInfo();
+				}
+				result.Add(orderInfo);
+			}
+			return result;
+		}
+
+		private ClientConnectInfo GetSingleConnectInfo(ISession session, uint endpointId)
+		{
+			if ((PhysicalClient != null && Status != null && Status.Connected) ||
+				(LawyerPerson != null && Status != null && Status.Connected)) {
+				var infos = session.CreateSQLQuery(String.Format(@"
+select
+inet_ntoa(CE.Ip) as static_IP,
+inet_ntoa(L.Ip) as Leased_IP,
+CE.Client,
+Ce.Switch,
+NS.Name as Swith_adr,
+inet_ntoa(NS.ip) as swith_IP,
+CE.Port,
+PS.Speed,
+CE.Monitoring,
+CE.Id as endpointId,
+CE.ActualPackageId,
+pfc.`Sum` as ConnectSum
+from internet.ClientEndpoints CE
+left join internet.NetworkSwitches NS on NS.Id = CE.Switch
+#join internet.Clients C on CE.Client = C.Id
+left join internet.Leases L on L.Endpoint = CE.Id
+left join internet.PackageSpeed PS on PS.PackageId = CE.PackageId
+left join internet.PaymentForConnect pfc on pfc.EndPoint = CE.id
+where CE.Id = {0}",
+					endpointId))
+					.ToList<ClientConnectInfo>();
+				//foreach (var info in infos) {
+				//	info.Order = session.Query<Orders>().FirstOrDefault(o => o.Client == this && o.EndPoint.Id == info.endpointId);
+				//	if (info.Order == null)
+				//		info.Order = new Orders();
+				//}
+				if(infos.Count > 0)
+					return infos.First();
+				return null;
+			}
+			return null;
+		}
+
 		public virtual IList<ClientConnectInfo> GetConnectInfo(ISession session)
 		{
 			if ((PhysicalClient != null && Status != null && Status.Connected) ||
@@ -588,6 +654,11 @@ left join internet.PaymentForConnect pfc on pfc.EndPoint = CE.id
 where CE.Client = {0}",
 					Id))
 					.ToList<ClientConnectInfo>();
+				//foreach (var info in infos) {
+				//	info.Order = session.Query<Orders>().FirstOrDefault(o => o.Client == this && o.EndPoint.Id == info.endpointId);
+				//	if (info.Order == null)
+				//		info.Order = new Orders();
+				//}
 				return infos;
 			}
 			return new List<ClientConnectInfo>();

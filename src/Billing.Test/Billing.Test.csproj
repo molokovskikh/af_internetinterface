@@ -62,6 +62,7 @@
     <Compile Include="Integration\BonusFixture.cs" />
     <Compile Include="Integration\ClientFixture.cs" />
     <Compile Include="Integration\LawyerPersonFixture.cs" />
+    <Compile Include="Integration\BillingOrdersFixture.cs" />
     <Compile Include="Integration\MutexFixture.cs" />
     <Compile Include="Integration\OtherFixture.cs" />
     <Compile Include="Integration\SaleFixture.cs" />

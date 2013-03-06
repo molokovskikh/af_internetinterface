@@ -114,10 +114,15 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Javascripts\application.js" />
+    <Content Include="Assets\Javascripts\calendar-ru_win_.js" />
+    <Content Include="Assets\Javascripts\calendar-setup.js" />
+    <Content Include="Assets\Javascripts\calendar.js" />
     <Content Include="Assets\Javascripts\ShowRegions.js" />
     <Content Include="Assets\Javascripts\userSearch.js" />
     <Content Include="Assets\Stylesheets\alt-form.css" />
+    <Content Include="Assets\Stylesheets\calendar-blue.css" />
     <Content Include="Assets\Stylesheets\client.css" />
+    <Content Include="Assets\Stylesheets\orders.css" />
     <Content Include="Assets\Stylesheets\payments.css" />
     <Content Include="Assets\Stylesheets\service-requests.css" />
     <Content Include="Assets\Stylesheets\User.css" />
@@ -156,6 +161,7 @@
     <Content Include="Global.asax" />
     <Content Include="Images\application_edit.png" />
     <Content Include="Images\bg.gif" />
+    <Content Include="Images\calendar.gif" />
     <Content Include="Images\image001.jpg" />
     <Content Include="Images\image002.jpg" />
     <Content Include="Images\image003.gif" />
@@ -220,8 +226,12 @@
     <None Include="Views\Subview\CallsHistory.brail" />
     <None Include="Views\Subview\ChangeBalanceInfo.brail" />
     <None Include="Views\Subview\Client.brail" />
+    <Content Include="Views\Subview\ConnectInfo.brail" />
     <None Include="Views\Subview\ConnectMenu.brail" />
     <None Include="Views\Subview\ContactInfo.brail" />
+    <Content Include="Views\Subview\OrderInfo.brail">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Views\Subview\CreateEditLabel.brail" />
     <None Include="Views\Switches\FreePortForSwitch.brail" />
     <None Include="Views\Subview\House.brail" />
@@ -234,11 +244,16 @@
     <None Include="Views\Templates\Internet.brail" />
     <None Include="Views\Templates\IpTv.brail" />
     <None Include="Views\UserInfo\AddInfo.brail" />
-    <None Include="Views\UserInfo\AddPoint.brail" />
+    <None Include="Views\UserInfo\AddPoint.brail">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Views\UserInfo\Administration.brail" />
     <None Include="Views\UserInfo\AppointedToTheGraph.brail" />
     <None Include="Views\UserInfo\ClientRegisteredInfoFromDiller.brail" />
     <Content Include="Views\UserInfo\EditRegion.brail" />
+    <Content Include="Views\UserInfo\OrdersArchive.brail">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Views\UserInfo\CreateAndPrintGraph.brail" />
     <None Include="Views\UserInfo\RequestOne.brail" />
     <None Include="Views\UserInfo\RequestGraph.brail" />
@@ -247,7 +262,6 @@
     <None Include="Views\UserInfo\PartnersPreview.brail" />
     <None Include="Views\UserInfo\ClientRegisteredInfo.brail" />
     <None Include="Views\Subview\DeleteLabel.brail" />
-    <None Include="Views\Subview\ConnectInfo.brail" />
     <None Include="Views\UserInfo\Leases.brail" />
     <Content Include="JavaScript\AjaxHelper.js" />
     <Content Include="JavaScript\Common.js" />
@@ -371,6 +385,8 @@
     <Compile Include="Models\MessageForClient.cs" />
     <Compile Include="Models\NetworkSwitch.cs" />
     <Compile Include="Models\OnLineClient.cs" />
+    <Compile Include="Models\Orders.cs" />
+    <Compile Include="Models\OrderService.cs" />
     <Compile Include="Models\PackageSpeed.cs" />
     <Compile Include="Models\PaymentForConnect.cs" />
     <Compile Include="Models\PaymentsForAgent.cs" />

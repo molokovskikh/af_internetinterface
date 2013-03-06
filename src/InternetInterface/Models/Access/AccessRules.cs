@@ -266,7 +266,12 @@ namespace InternetInterface.Models.Access
 				"BindPhone",
 				"LoadContactEditModule",
 				"SaveContacts",
-				"DeleteContact"
+				"DeleteContact",
+				"AddOrderService",
+				"SaveOrderService",
+				"EditOrderService",
+				"CloseOrder",
+				"OrdersArchive"
 			};
 			return _visibleDemand.Contains(methodName) ? "ECI" : string.Empty;
 		}

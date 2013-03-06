@@ -84,7 +84,7 @@ namespace Billing.Test.Integration
 			}
 		}
 
-		[Test]
+		[Test, Ignore("Потерял актуальность в связи с изменением тарификации для юр. лиц")]
 		public void Make_last_write_off_round_for_tariff()
 		{
 			for (var i = 1; i <= 30; i++) {

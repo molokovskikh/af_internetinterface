@@ -1,0 +1,698 @@
+﻿<style type="text/css">
+	.addMenuItem
+	{
+	width:20px;
+	height:20px;
+	background: url(${Siteroot}/images/plus__orange.png) no-repeat center top;
+	float:right;
+	}
+	.delMenuItem
+	{
+	width:20px;
+	height:20px;
+	float:right;
+	margin-right:90%;
+	background: url(${Siteroot}/images/onebit_32.png) no-repeat center top;
+	}
+	.error
+	{
+	color:Red;
+	font-size:small;
+	}
+	.ipPrefix
+	{
+	width:25px;
+	}
+
+	.CalendarInput
+	{
+	background:  transparent url(../images/calendar.gif) no-repeat scroll center center;
+	width: 25px;
+	height: 19px;
+	}
+</style>
+${app.Asset("calendar-blue.css")}
+${app.Asset("calendar.setup.js")}
+${app.Asset("calendar.js")}
+${app.Asset("calendar-ru_win_.js")}
+${app.Asset("calendar-setup.js")}
+<div id="deletePointDialog" class="reveal-modal">
+<form class="formConnect" method="post" action="${siteroot}/UserInfo/DeleteEndPoint">
+<input type="hidden" name="endPointForDelete" id="endPointForDelete"/>
+<p>Вы собираетесь удалить точку подключения, если клиент уже работает на этой точке, он  будет отключен ! </p>
+<p>Вы уверены, что хотите удалить данную точку подключения ?</p>
+<button type="submit"  class="editBut">Удалить</button>
+</form>
+<a class="close-reveal-modal">x</a>
+</div>
+
+<div id="closeOrderDialog" class="reveal-modal">
+	<form class="formConnect" method="post" action="${siteroot}/UserInfo/CloseOrder">
+		<input type="hidden" name="orderId" id="closedOrderId"/>
+		<p>Вы уверены, что хотите закрыть данный заказ?</p>
+		<button type="submit"  class="editBut">Закрыть</button>
+	</form>
+	<a class="close-reveal-modal">x</a>
+</div>
+
+<div style="clear:both;">
+<%if PartnerAccessSet.AccesPartner("DHCP"): %>
+
+	<%if not EditingConnect: %>
+
+	<table  style="width: 100%;"><tbody><tr><td>
+	<table class="table" style="width: 100%;" align="left">
+	<thead>
+		<tr>
+		<th style="border-right-width:0px; width:400px;">Информация о заказе (заказ № ${OrderInfo.Order.Number})
+		<%if PartnerAccessSet.AccesPartner("DHCP") and OrderInfo.Order.OrderStatus==0: %>
+			<form class="formConnect" method="post" action="${siteroot}/UserInfo/LoadEditConnectMudule" style="display:inline;">
+			<input type="hidden" name="ClientID" value="${ClientCode}" />
+			<input type="hidden" name="EditConnectFlag" value="${OrderInfo.Order.Id}" />
+			<button type="submit"  class="editBut" id="EditButton${OrderInfo.Order.Id}">
+			<img alt="Save" src="../Images/application_edit.png"> Редактировать
+			</button>
+			</form>
+		 <%end %>
+		</th>
+		<th style="border-left-width:0px; text-align:right; width:400px;">
+			<% if OrderInfo.Order.OrderStatus != 2:%>
+			<a href="#" class="big-link" data-reveal-id="closeOrderDialog">
+				<input type="hidden" value="${OrderInfo.Order.Id}" class="closeOrderControl"/>
+				<button class="editBut closeOrderControl" id="closeOrderButton${OrderInfo.Order.Id}">
+					<img src="${Siteroot}/Images/application_edit.png"> Закрыть
+				</button>
+				<!--<img class="closeOrderControl" src="../images/application_edit.png" /> Закрыть-->
+			</a>
+				<% else: %>
+					<% if OrderInfo.Order.EndPoint != null:%>
+			<a href="#" class="big-link" data-reveal-id="deletePointDialog" >
+				<input type="hidden" value="${OrderInfo.ClientConnectInfo.endpointId}" />
+			<img class="deletePointControl" src="../images/onebit_32.png" />
+			</a>
+						<% end %>
+			<% end %>
+		</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td colspan="3">
+				<input type="hidden" value="${OrderInfo.Order.Id}" />
+				<strong>Информация о заказе:</strong>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Номер заказа
+			</td>
+			<td colspan="2">
+				${OrderInfo.Order.Number}
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Дата начала
+			</td>
+			<td colspan="2">
+				${OrderInfo.Order.BeginDate.ToString("dd.MM.yyyy")}
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Дата окончания
+			</td>
+			<td colspan="2">
+				${OrderInfo.Order.EndDate.ToString("dd.MM.yyyy")}
+			</td>
+		</tr>
+
+		<tr>
+			<td colspan="3">
+				<strong>
+					<a id="showServicesLink${OrderInfo.Order.Id}" class="icon icon-add" name="2" href="javascript:"
+							onclick="showOrderServices(${OrderInfo.Order.Id}, 'Подключенные услуги(${OrderInfo.Order.OrderServices.Count}):')">
+						<Подключенные услуги(${OrderInfo.Order.OrderServices.Count}):</a>
+				</strong>
+			</td>
+		</tr>
+		<td colspan="3">
+			<table id='OrderServiceTable${OrderInfo.Order.Id}' style="display: none;">
+				<tr>
+					<th>
+						Описание
+					</th>
+					<th>
+						Стоимость
+					</th>
+					<th>
+						Периодичность
+					</th>
+				</tr>
+		<% if OrderInfo.Order.OrderServices != null and OrderInfo.Order.OrderServices.Count > 0: %>
+				<% for i, item in enumerate(OrderInfo.Order.OrderServices): %>
+				<tr>
+					<td>
+						${item.Description}
+					</td>
+					<td>
+						${item.Cost}
+					</td>
+					<td>
+						${item.GetPeriodic()}
+					</td>
+				</tr>
+				<% end %>
+		<% end %>
+						</table>
+		</td>
+			<% if OrderInfo.Order.EndPoint != null: %>
+		<tr>
+			<td colspan="3">
+				<input type="hidden" value="${OrderInfo.ClientConnectInfo.endpointId}" />
+				<strong>Информация о точке подключения:</strong>
+			</td>
+		</tr>
+		<tr>
+		<tr>
+		  <td><span class="description">Фиксированный </span></td>
+		  <td>${OrderInfo.ClientConnectInfo.static_IP}</td>
+		</tr>
+		<tr>
+		  <td><span class="description">Арендованный IP </span></td>
+		  <td>${OrderInfo.ClientConnectInfo.Leased_IP}</td>
+		</tr>
+		<tr>
+		  <td style="width:400px;">
+			<span><a href="${SiteRoot}/Switches/MakeSwitch?Switch=${OrderInfo.ClientConnectInfo.Switch}"> Свич</a> </span>
+		</td>
+		  <td>
+			<a class="button hardwareInfo" href="${siteroot}/Hardware/PortInfo?endPoint=${OrderInfo.ClientConnectInfo.endpointId}">
+				${OrderInfo.ClientConnectInfo.Swith_adr} (${OrderInfo.ClientConnectInfo.swith_IP})
+			</a>
+		</td>
+		</tr>
+		<tr>
+		  <td><span class="description">Порт </span></td>
+		  <td>${OrderInfo.ClientConnectInfo.Port}</td>
+		</tr>
+		<tr>
+		  <td><span class="description">Скорость </span></td>
+		  <td>${OrderInfo.ClientConnectInfo.GetNormalSpeed()}</td>
+		</tr>
+		<%if OrderInfo.ClientConnectInfo.ActualPackageId != null:%>
+		<tr>
+		  <td><span class="description">Актуальный PackageId </span></td>
+		  <td>${OrderInfo.ClientConnectInfo.ActualPackageId}</td>
+		</tr>
+		<%end%>
+		 <tr>
+		  <td><span class="description">Мониторинг </span></td>
+		  <td><%if (OrderInfo.ClientConnectInfo.Monitoring): %>
+				Да
+				<%else: %>
+				Нет
+				<%end %></td>
+		</tr>
+		<tr>
+		  <td><span class="description">Бригада </span></td>
+		  <td>${?_client.WhoConnected.Name}</td>
+		</tr>
+		<%if OrderInfo.ClientConnectInfo.ConnectSum != null : %>
+		<tr>
+			<td><span class="description">Стоимость подключения </span></td>
+			<td>${?OrderInfo.ClientConnectInfo.ConnectSum.ToString("C")}</td>
+		</tr>
+		<%end %>
+			<% end %>
+		</tbody>
+	</table>
+	</td></tr></tbody></table>
+	<%if PartnerAccessSet.AccesPartner("DHCP"): %>
+<%staticIps = OrderInfo.ClientConnectInfo.GetStaticAdreses() %>
+<%if staticIps.Count != 0: %>
+	<table class="table" align="left">
+		<thead>
+			<tr>
+				<th colspan=2 style="text-align:center;">Статические адреса клиента</th>
+			</tr>
+			<tr>
+				<th>IP адрес / маска</th>
+				<th>Маска</th>
+			</tr>
+		</thead>
+		<tbody>
+			<% for i,item in enumerate(staticIps): %>
+				<tr>
+					<td>${item.Ip} ${"/" if item.Mask != null} ${item.Mask}</td>
+					<td>${item.GetSubnet()}</td>
+				</tr>
+			<%end %>
+		</tbody>
+	</table>
+<%end %>
+<%end %>
+	<%else: %>
+<script type="text/javascript">
+	function GetStaticIp() {
+	var req = {};
+	req.endPontId = ${OrderInfo.ClientConnectInfo.endpointId};
+	$.post("GetStaticIp", req, function (data) {
+	if (data){
+	$('#static_IP_hiden').val(data);
+	$('#staticIdLabel').text(data);
+	} else {
+	$('#staticIdLabel').text("Ошибка, не удалось получить IP адрес");
+	$('#staticIdLabel').css("color", "Red");
+	}
+	});
+	}
+
+	function DeleteStaticIp() {
+	if ($('#static_IP_hiden').val()){
+	$('#static_IP_hiden').val("");
+	$('#staticIdLabel').text("Удалено");
+	}
+	}
+</script>
+	<form class="formConnect" id="formConnect" method="post" action="${siteroot}/UserInfo/SaveSwitchForClient">
+	<input type="hidden" name="ClientID" value="${ClientCode}" />
+	<input type="hidden" name="EditConnect" value="${OrderInfo.Order.Id}" />
+		<input type="hidden" name="Order.Id" value="${OrderInfo.Order.Id}" />
+	<table id="editConnectTable" class="table" style="width: 100%;">
+	<thead>
+		<th colspan = 3 > Информация по подключению
+		<%if PartnerAccessSet.AccesPartner("DHCP"): %>
+		 <input id="Submit2" type="submit" value="Сохранить"  align="right" />
+		 <%end %>
+		</th>
+	</thead>
+		<tbody>
+			<tr>
+				<td colspan="3">
+					<strong>Информация о заказе:</strong>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Номер заказа
+				</td>
+				<td colspan="2">
+					<input type="text" name="order.Number" value="${OrderInfo.Order.Number}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Дата начала
+				</td>
+				<td colspan="2">
+					<input type="text" id="order_BeginDate" name="order.BeginDate" value="${OrderInfo.Order.BeginDate}" class="validate-date input-date valid">
+						<input type="button" class="CalendarInput" id="CalendarInput0">
+						</td>
+			</tr>
+			<tr>
+				<td>
+					Дата окончания
+				</td>
+				<td colspan="2">
+					<input type="text" id="order_EndDate" name="order.EndDate" value="${OrderInfo.Order.EndDate}" class="validate-date input-date valid">
+						<input type="button" class="CalendarInput" id="CalendarInput1">
+						</td>
+			</tr>
+
+			<td colspan="3">
+				<strong>
+							Подключенные услуги:
+				</strong>
+				<table id='OrderServiceTable${OrderInfo.Order.Id}'>
+					<tr>
+						<th>
+							Описание
+						</th>
+						<th>
+							Стоимость
+						</th>
+						<th>
+							Периодичность
+						</th>
+					</tr>
+					<% if OrderInfo.Order.OrderServices != null and OrderInfo.Order.OrderServices.Count > 0: %>
+
+					<% for i, item in enumerate(OrderInfo.Order.OrderServices): %>
+					<tr id='orderService${item.Id}'>
+						<td>
+							<input type='text' name='order.OrderServices[${i}].Description' value='${item.Description}'>
+								<!--${app.LinkTo(item.Description, @UserInfo, @EditOrderService, {@orderServiceId: item.Id})}-->
+							</td>
+						<td>
+							<input type='text' name='order.OrderServices[${i}].Cost' value='${item.Cost}'>
+								<!--${item.Cost}-->
+							</td>
+						<td>
+							<input type='checkbox' name='order.OrderServices[${i}].IsPeriodic' ${"checked" if (item.IsPeriodic)}>
+								<!--${item.GetPeriodic()}-->
+							</td>
+						<td>
+							<a href='#' onclick="deleteOrderService('orderService${item.Id}')">Удалить</a>
+						</td>
+					</tr>
+					<% end %>
+					<% end %>
+				</table>
+				<a id="addOrderServiceLink" class="icon icon-add" name="2" href="javascript:"
+										onclick="addOrderService(${OrderInfo.Order.Id})">Добавить</a>
+			</td>
+			</tr>
+			<% if OrderInfo.Order.Id == 0 or OrderInfo.Order.EndPoint == null: %>
+			<tr>
+				<td colspan="3">
+					<input type='checkbox' name='withoutEndpoint' onclick='changeVisibleEndpoint(this)' <% if OrderInfo.Order.EndPoint == null and OrderInfo.Order.Id > 0: %>checked<% end %> >
+						<strong>Не использовать точку подключения</strong>
+				</td>
+			</tr>
+			<% end %>
+		</tbody>
+		</table>
+
+		<table class="table" id="endpointTable" <% if OrderInfo.Order.EndPoint == null and OrderInfo.Order.Id > 0: %> style="display: none;" <% end %>>
+				</thead>
+		<tr>
+			<td colspan="3">
+				<strong>Информация о точке подключения:</strong>
+			</td>
+		</tr>
+				</thead>
+			<tbody>
+		<tr>
+		  <td>Фиксированный IP</td>
+		  <td colspan=2>
+				<input type="button" onclick="DeleteStaticIp()" value="Удалить" style="width: 100px; " />
+				<input type="button" onclick="GetStaticIp()" id="static_IP" value="Назначить" style="width: 100px; " />
+				<input type="hidden" id="static_IP_hiden" name="ConnectInfo.static_IP"  value="${OrderInfo.ClientConnectInfo.static_IP}" />
+				<label id="staticIdLabel" style="font-weight:bold;">${OrderInfo.ClientConnectInfo.static_IP}</label>
+		  </td>
+		</tr>
+		<tr>
+		  <td>Арендованный IP</td>
+		  <td colspan=2>${OrderInfo.ClientConnectInfo.Leased_IP}</td>
+		</tr>
+		<tr>
+		  <td>Свич</td>
+		  <td style="width:200px;"><select name="ConnectInfo.Switch" id="SelectSwitches" style="width: 100%">
+									<option value="0">Нет</option>
+								   <%for j, Switch in enumerate(Switches): %>
+									<option id="Option${j}" value="${Switch.Id}" ${"selected" if (Switch.Id.ToString() == OrderInfo.ClientConnectInfo.Switch)} > ${Switch.Name} </option>
+								   <% end %>
+			</select></td>
+			<td id="switch_info"></td>
+		</tr>
+		<tr>
+		  <td>Порт</td>
+		  <td colspan=2><input type="text" id="Port"  name="ConnectInfo.Port"  value="${OrderInfo.ClientConnectInfo.Port}" style="width: 50%; " /></td>
+		</tr>
+		<tr>
+		  <td>Скорость</td>
+		  <td>${OrderInfo.ClientConnectInfo.GetNormalSpeed()}</td>
+		</tr>
+		<tr>
+		  <td>Мониторинг</td>
+		  <td colspan=2><input type="checkbox" id="Monitoring" name="ConnectInfo.Monitoring" value=true  ${"checked" if (OrderInfo.ClientConnectInfo.Monitoring)}/> </td>
+		</tr>
+		<tr>
+		 <td>Бригада по подключению</td>
+		 <%if _client.WhoConnected == null: %>
+		  <td colspan=2><select name="BrigadForConnect" id="BrigadForConnect" style="width: 100%" >
+		  <% for j, Brigad in enumerate(Brigads): %>
+				<option id="OptionBrigad${j}" value="${Brigad.Id}" ${"selected" if (Brigad.Id == ChBrigad)} > ${Brigad.Name} </option>
+		<% end %>
+		</select>
+		</td>
+		 <%else: %>
+		 <td colspan=2>
+			 ${_client.WhoConnected.Name}
+		 </td>
+		 <%end %>
+		 </tr>
+		 <tr>
+			<td>Сумма за подключение</td>
+			<td>
+				<input type=text name="ConnectSum" value="${OrderInfo.ClientConnectInfo.ConnectSum}"/>
+			</td>
+		 </tr>
+		<tr>
+		<td colspan=3>
+	<button type="button"  class="editBut" onclick="$('#staticAdreses').slideToggle('slow');"> Редактировать статические адреса
+	</button>
+	<div id="staticAdreses" style="display:none; padding:10px;">
+		<table class="table">
+		<thead>
+			<tr>
+				<th style="width:1px; border-right:0px double black;"></th>
+				<th colspan=2 style=" border-left:0px double black;">IP адрес / маска</th>
+				<th>Маска</th>
+				<th style="text-align:center;"></th>
+			</tr>
+		</thead>
+		<tbody id="adresesBlock">
+			<% for i,item in enumerate(OrderInfo.ClientConnectInfo.GetStaticAdreses()): %>
+			<tr>
+				<td class="indexes" style="width:1px;">
+					<input type=hidden value=${i} />
+					<input type=hidden name="staticAdress[${i}].Id" value=${item.Id} />
+				</td>
+				<td class="ipinp_td" style="width:150px;">
+					<input type=text class="ipinp" id="ipinp" value="${item.Ip}" name="staticAdress[${i}].Ip"/>
+				</td>
+				<td class="ipPrefix_td">
+				   <input type=text class="ipPrefix" value="${item.Mask}" name="staticAdress[${i}].Mask"/>
+				</td>
+				<td class="subnet_mask">
+					<label>${item.GetSubnet()}</label>
+				</td>
+				<td>
+					<div class=delMenuItem id="delMenuItem_${i}"></div>
+				</td>
+			</tr>
+			<%end %>
+		</tbody>
+		</table>
+		<button type="button"  class="editBut" onclick="addNewAdress()"> Добавить новый адрес
+	</button>
+	</div>
+	</td>
+	</tr>
+	</tbody>
+	</table>
+	</form>
+	<%end %>
+<%end %>
+</div>
+<script type="text/javascript">
+	$(document).ready(function () {
+	setupCalendar();
+
+	$('.closeOrderControl').click(function () {
+	var orderId = $(this).parent().children('input:first').val();
+	$('#closedOrderId').val(orderId);
+	});
+
+
+	$('.deletePointControl').click(function () {
+	var endPointId = $(this).parent().children('input:first').val();
+	$('#endPointForDelete').val(endPointId);
+	});
+
+	$('.delMenuItem').click(function () {
+	delMenu(this);
+	});
+
+	if ('${EditingConnect}' == 'True'){
+	if ('${OrderInfo.ClientConnectInfo.Switch}' == '')
+	RenderSwitchInfo('0');
+	else
+	RenderSwitchInfo('${OrderInfo.ClientConnectInfo.Switch}');}
+
+	$('#SelectSwitches').change(function () {
+	RenderSwitchInfo($(this).val());
+	$('.added_port').click(function () {
+	SetPortLick(this);
+	});
+	});
+
+	$('.added_port').click(function () {
+	SetPortLick(this);
+	});
+
+	$("#formConnect").validate({
+	submitHandler: function (form) {
+	var correckMask = true;
+	$('.ipPrefix').each(function () {
+	if ($(this).val() != '')
+	if (Number($(this).val()) < 24) {
+							correckMask = false;
+						}
+				});
+				if (!correckMask) {
+					if (confirm('Одна из масок содержит более 256 адресов, продолжить ?')) {
+						form.submit();
+					}
+				}
+				else
+				{ form.submit(); }
+			}
+		});
+
+		$.validator.addMethod(
+		"regex",
+		function (value, element, regexp) {
+			var re = new RegExp(regexp);
+			return this.optional(element) || re.test(value);
+		},
+		"Формат ввода IP адреса: ***.***.***.***"
+		);
+
+		$('.ipinp').each(function () {
+			SetValid(this);
+		});
+		$('.ipPrefix').each(function () {
+			SetValidMask(this);
+			VisualSubnet(this);
+		});
+
+
+	});
+
+	function SetPortLick(clicked) {
+		var port = clicked.innerText;
+		$('#Port').val(port);
+	}
+
+	function RenderSwitchInfo(swit) {
+		var text = $.ajax({
+			url: '../Switches/FreePortForSwitch?ids=' + swit,
+			async: false
+		}).responseText;
+		$('#switch_info').empty();
+		$('#switch_info').append(text);
+	}
+
+	function SetValid(elem) {
+		$(elem).rules("add", { required: true, regex: "^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$",
+			messages: {
+				required : "Поле не может быть пустым"
+			}
+		})
+	}
+
+	function SetValidGate(elem) {
+		$(elem).rules("add", { regex: "^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$" })
+	}
+
+	function SetValidMask(elem) {
+		$(elem).rules("add", {digits:true, max: 30 , min : 8,
+			messages: {
+				digits: "Введите число",
+				max: "Маска не может быть больше 30",
+				min: "Маска не может быть меньше 8"
+			}
+		})
+	}
+
+	function delMenu(clickDiv) {
+		$(clickDiv).parent().parent().remove();
+	}
+
+	function VisualSubnet(field) {
+		$(field).keyup(function () {
+			var label = $(this).parent().parent().children('.subnet_mask:first').children('label:first');
+			var req = {};
+			req.mask = $(this).val();
+			$.post("GetSubnet", req, function (data) {
+				label.text(data);
+			});
+		});
+	}
+
+	function addNewAdress() {
+		var lastIndex = Number($('#adresesBlock').children('tr:last').children('.indexes:last').children('input:first').val()) + 1;
+		if (isNaN(lastIndex))
+			lastIndex = 0;
+		var elementAdress = "<tr>";
+		elementAdress += "<td  class='indexes' style='width:1px;'><input type=hidden value=" + lastIndex + " /> </td>";
+		elementAdress += "<td class='ipinp_td' style='width:150px;'>";
+		elementAdress += "<input type=text class='ipinp' id='staticAdress_" + lastIndex + "' name='staticAdress[" + lastIndex + "].Ip'/>";
+		elementAdress += "</td>";
+		elementAdress += "<td class='ipPrefix_td'>";
+		elementAdress += "<input type=text class='ipPrefix' id='staticPrefix_" + lastIndex + "' name='staticAdress[" + lastIndex + "].Mask'/>";
+		elementAdress += "</td>";
+		elementAdress += "<td class='subnet_mask'>";
+		elementAdress += "<label></label>";
+		elementAdress += "</td>";
+		elementAdress += "<td>";
+		elementAdress += "<div class=delMenuItem id='delMenuItem_" + lastIndex + "'></div>";
+		elementAdress += "</td>";
+		elementAdress += "</tr>";
+		$('#adresesBlock').append(elementAdress);
+		$('#delMenuItem_' + lastIndex).click(function () {
+		delMenu(this);
+		});
+		SetValid($('#staticAdress_' + lastIndex));
+		SetValidMask($('#staticPrefix_' + lastIndex))
+		VisualSubnet($('#staticPrefix_' + lastIndex));
+		}
+
+		function addOrderService(orderId) {
+		var index = getIndex(0, "#addOrderServiceLink");
+		var id = "orderService" + index;
+		var name = "order.OrderServices[" + index + "]";
+		var html = "<tr id='" + id + "'>" +
+			"<td>" +
+				"<input type='text' name='" + name + ".Description' value=''>" +
+		"</td>" +
+			"<td>" +
+				"<input type='text' name='" + name + ".Cost' value='' class='valid'>" +
+		"</td>" +
+			"<td>" +
+				"<input type='checkbox' name='" + name + ".IsPeriodic'>" +
+		"</td>" +
+			"<td>" +
+				"<a href='#' onclick=deleteOrderService('" + id +"')>Удалить</a>" +
+		"</td>" +
+			"</tr>";
+		jQuery("#OrderServiceTable"+orderId).append(html);
+		}
+
+		function deleteOrderService(serviceId){
+		$('#' + serviceId).remove();
+		}
+		function getIndex(begin, selector) {
+		var index = parseInt(jQuery(selector).data('index'));
+		if (!index)
+		index = begin;
+		jQuery(selector).data('index', ++index);
+		return index;
+		}
+
+		function changeVisibleEndpoint(check){
+		if(check.checked){
+		$('#endpointTable').hide()
+		}
+		else{
+		$('#endpointTable').show()
+		}
+		}
+
+		function showOrderServices(orderId, linkText){
+		var tableName = 'OrderServiceTable' + orderId;
+		var linkName = 'showServicesLink' + orderId;
+		if($('#'+tableName).is(':visible'))
+		{
+		$('#'+tableName).hide();
+		$('#'+linkName).text('<' + linkText);
+			}
+			else{
+			$('#'+tableName).show();
+			$('#'+linkName).text('^' + linkText);
+			}
+			}
+		</script>

@@ -1,6 +1,9 @@
 ﻿<div style="width:850px; margin: 0px auto;">
-<% OutputSubView("""\Subview\ConnectInfo""", {
-					"ConnectInfo": connectInfo,
+<%if IsDefined("errorMessage"):
+			  output  WriteMessageError(errorMessage)
+		   end%>
+<% OutputSubView("""\Subview\OrderInfo""", {
+					"OrderInfo": OrderInfo,
 					"EditingConnect" : true }) %>
 </div>
 <style type="text/css">
