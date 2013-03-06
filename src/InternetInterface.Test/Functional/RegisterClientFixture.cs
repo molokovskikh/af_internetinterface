@@ -42,7 +42,6 @@ namespace InternetInterface.Test.Functional
 			Css("#Surname").AppendText("TestSurname");
 			Css("#Name").AppendText("TestName");
 			Css("#Patronymic").AppendText("TestPatronymic");
-			Css("#City").AppendText("TestCity");
 			Css("#Apartment").AppendText("5");
 			Css("#Entrance").AppendText("5");
 			Css("#Floor").AppendText("1");
@@ -65,6 +64,32 @@ namespace InternetInterface.Test.Functional
 
 			Assert.That(browser.Text, Is.Not.Contains("(4732) 606-000"));
 			AssertText("(473) 22-999-87");
+		}
+
+		[Test]
+		public void City_house_selector_test()
+		{
+			session.CreateSQLQuery("delete from internet.houses;").ExecuteUpdate();
+			var testRegion1 = new RegionHouse { Name = "testRegionFirst" };
+			var testRegion2 = new RegionHouse { Name = "testRegionLast" };
+			session.Save(testRegion1);
+			session.Save(testRegion2);
+			var house1 = new House("testStreetFirst", 1) { Region = testRegion1 };
+			var house2 = new House("testStreetlast", 2) { Region = testRegion2 };
+			session.Save(house1);
+			session.Save(house2);
+			Close();
+
+			Open("Register/RegisterClient");
+			browser.ShowWindow(NativeMethods.WindowShowStyle.Maximize);
+			browser.SelectList("regionSelector").SelectByValue(testRegion1.Id.ToString());
+			browser.WaitUntilContainsText("testStreetFirst", 5);
+			Assert.That(browser.Html, Is.StringContaining("testStreetFirst"));
+			Assert.That(browser.Html, !Is.StringContaining("testStreetlast"));
+			browser.SelectList("regionSelector").SelectByValue(testRegion2.Id.ToString());
+			browser.WaitUntilContainsText("testStreetlast", 5);
+			Assert.That(browser.Html, Is.StringContaining("testStreetlast"));
+			Assert.That(browser.Html, !Is.StringContaining("testStreetFirst"));
 		}
 
 		[Test, Ignore("Отключен функционал выбора свича при регистрации")]

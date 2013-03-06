@@ -1,4 +1,5 @@
 ﻿${app.Asset("client.css")}
+${app.Asset("Register.js")}
 
 <script type="text/javascript">
 function registerHouse() {
@@ -13,6 +14,8 @@ function registerHouse() {
 		$('#register_house').trigger('reveal:close');
 	});
 }
+
+var regions = [];
 
 $(function () {
 	$('#clientEditForm').validate({
@@ -31,6 +34,16 @@ $(function () {
 			$('#comment').rules("remove", "required");
 		}
 	});
+
+	<% for i, region in enumerate(Regions): %>
+		regions[${region.Id}] = "${region.Name}";
+	<%end%>
+
+	<%if (ChHouse.Id > 0):%>
+		SelectHouse('${ChHouse.Region.Id}', '${ChHouse.Id}');
+	<%else:%>
+		SelectHouse('2', '0');
+	<%end%>
 });
 </script>
 
@@ -44,7 +57,7 @@ $(function () {
 	<td > <input id="Surname" type="text" value="${Client.Surname}" name="client.Surname"  /> </td>
 	<td>
 		${VB.GetBlock("Surname")}
-		</td>
+	</td>
 </tr>
 <tr>
 	<td><b>
@@ -71,13 +84,6 @@ $(function () {
 	<td>
 		${VB.GetBlock("DateOfBirth")}
 	</td>
-</tr>
-<tr >
-	<td>
-		Город</td>
-	<td >
-		<input id="City" type="text" value="${client.City}" name="client.City"/></td>
-	<td></td>
 </tr>
 <%if not IsDefined("Editing"): %>
 <tr>
@@ -116,21 +122,28 @@ $(function () {
 </thead>
 <tbody>
 <tr>
+	<td>Город</td>
+	<td>
+		<select id="regionSelector" onchange="SelectHouse(this, ${ChHouse.Id});">
+			<% for i, region in enumerate(Regions): %>
+				<option value="${region.Id}" ${"selected" if ((ChHouse.Id > 0)and(region.Id == ChHouse.Region.Id))}>${region.Name}</option>
+			<%end%>
+		</select>
+		<%if ChHouse.Id > 0:%>
+			<input type="hidden" id="hiddenRegion" value="${ChHouse.Region.Name}" name="client.City"/>
+		<%end%>
+	</td>
+</tr>
+<tr>
 	<td style="width:200px;">
 		<b>Дом </b> (<a href="#" class="big-link" data-reveal-id="register_house" >Создать новый</a>)
 	</td>
-	<td style="width:200px;">
-		<select name="house_id" id="houses_select">
-		<% for i, house_sel in enumerate(Houses): %>
-			<option value="${house_sel.Id}"  ${"selected" if (house_sel.Id == ChHouse)} >${house_sel.Street} ${house_sel.Number} ${house_sel.Case}</option>
-		<%end %>
-		</select>
-	</td>
+	<td id="SelectHouseTD"></td>
 	<td>
-<div id="register_house"class="reveal-modal"> 
-	<% OutputSubView("""\Subview\House""") %>
-	<a href="#" onclick=registerHouse()><img alt="Save" src="${Siteroot}/Images/application_edit.png">Зарегистрировать</a>
-</div>
+		<div id="register_house"class="reveal-modal">
+			<% OutputSubView("""\Subview\House""") %>
+			<a href="#" onclick="registerHouse();"><img alt="Save" src="${Siteroot}/Images/application_edit.png">Зарегистрировать</a>
+		</div>
 	</td>
 	<td style="width:100px;">
 		<b> Квартира </b> </td> <td> <input id="Apartment" type="text" style="width:50px" value="${client.Apartment}" name="client.Apartment"/></td>

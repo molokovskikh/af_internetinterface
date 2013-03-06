@@ -114,6 +114,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Javascripts\application.js" />
+    <Content Include="Assets\Javascripts\Register.js" />
     <Content Include="Assets\Javascripts\ShowRegions.js" />
     <Content Include="Assets\Javascripts\userSearch.js" />
     <Content Include="Assets\Stylesheets\alt-form.css" />
@@ -208,6 +209,7 @@
     <None Include="Views\Payments\Index.brail" />
     <None Include="Views\Payments\New.brail" />
     <None Include="Views\Payments\ProcessPayments.brail" />
+    <Content Include="Views\Register\HouseSelect.brail" />
     <None Include="Views\Register\RegisterLegalPerson.brail" />
     <None Include="Views\Register\RegisterRequest.brail" />
     <None Include="Views\Rescues\404.brail" />

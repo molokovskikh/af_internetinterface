@@ -823,8 +823,8 @@ where r.`Label`= :LabelIndex;")
 			PropertyBag["Client"] = client.PhysicalClient;
 			PropertyBag["EditAddress"] = client.AdditionalStatus == null ? false : client.AdditionalStatus.ShortName == "Refused";
 
-			PropertyBag["Houses"] = House.AllSort;
-			PropertyBag["ChHouse"] = client.PhysicalClient.HouseObj != null ? client.PhysicalClient.HouseObj.Id : 0;
+			PropertyBag["Regions"] = DbSession.Query<RegionHouse>().ToList();
+			PropertyBag["ChHouse"] = client.PhysicalClient.HouseObj ?? new House();
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["Statuss"] = Status.FindAllSort();
 			PropertyBag["channels"] = ChannelGroup.All(DbSession);

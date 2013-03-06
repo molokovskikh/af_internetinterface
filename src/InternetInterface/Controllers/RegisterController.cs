@@ -120,7 +120,7 @@ namespace InternetInterface.Controllers
 
 				PropertyBag["Client"] = phisClient;
 				PropertyBag["BalanceText"] = balanceText;
-				PropertyBag["ChHouse"] = house_id;
+				PropertyBag["ChHouse"] = DbSession.Get<House>(house_id);
 				PropertyBag["Applying"] = "false";
 				PropertyBag["ChStatus"] = status;
 				PropertyBag["ChBrigad"] = BrigadForConnect;
@@ -231,7 +231,7 @@ namespace InternetInterface.Controllers
 		{
 			var client = new PhysicalClient();
 			SendRegisterParam(client);
-			PropertyBag["ChHouse"] = 0;
+			PropertyBag["ChHouse"] = new House();
 			PropertyBag["Client"] = client;
 		}
 
@@ -276,14 +276,14 @@ namespace InternetInterface.Controllers
 								h.Case == newPhisClient.CaseHouse)
 						.ToList();
 				if (houses.Count != 0)
-					PropertyBag["ChHouse"] = houses.First().Id;
+					PropertyBag["ChHouse"] = houses.First();
 				else {
-					PropertyBag["ChHouse"] = 0;
+					PropertyBag["ChHouse"] = new House();
 					PropertyBag["Message"] = Message.Error("Не удалось сопоставить адрес из заявки ! Будте внимательны при заполнении адреса клиента !");
 				}
 			}
 			else {
-				PropertyBag["ChHouse"] = 0;
+				PropertyBag["ChHouse"] = new House();
 				PropertyBag["Message"] = Message.Error("Не удалось сопоставить адрес из заявки ! Будте внимательны при заполнении адреса клиента !");
 			}
 			SendRegisterParam(newPhisClient);
@@ -338,7 +338,8 @@ namespace InternetInterface.Controllers
 
 		private void EditorValues()
 		{
-			PropertyBag["Houses"] = House.AllSort;
+			//PropertyBag["Houses"] = House.AllSort;
+			PropertyBag["Regions"] = DbSession.Query<RegionHouse>().ToList();
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
 			PropertyBag["Statuss"] = Status.FindAllSort();
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
@@ -451,6 +452,14 @@ namespace InternetInterface.Controllers
 				apartment.Update();
 				RedirectToUrl("../HouseMap/ViewHouseInfo.rails?House=" + houseNumber);
 			}
+		}
+
+		public void HouseSelect(uint regionCode, uint chHouse)
+		{
+			CancelLayout();
+			var houses = DbSession.Query<House>().Where(h => h.Region.Id == regionCode).ToList();
+			PropertyBag["ChHouse"] = DbSession.Get<House>(chHouse) ?? new House();
+			PropertyBag["Houses"] = houses;
 		}
 	}
 }
