@@ -22,6 +22,11 @@ namespace InternetInterface.Test.Functional
 			var commutator = new NetworkSwitch("Тестовый коммутатор для регистрации клиента", session.Query<Zone>().First());
 			var tariff = new Tariff("Тариф для тестирования", 111);
 			Save(commutator, tariff);
+			session.CreateSQLQuery("delete from internet.houses;").ExecuteUpdate();
+			var testRegion1 = new RegionHouse { Name = "testRegionFirst" };
+			session.Save(testRegion1);
+			var house1 = new House("testStreetFirst", 1) { Region = testRegion1 };
+			session.Save(house1);
 			Close();
 
 			Open("Register/RegisterClient.rails");
@@ -53,10 +58,12 @@ namespace InternetInterface.Test.Functional
 			Css("#PassportDate").AppendText("10.01.2002");
 			Css("#client_ConnectSum").AppendText("100");
 			Css("#client_Tariff_Id").Select("Тариф для тестирования");
+			browser.SelectList("regionSelector").SelectByValue(testRegion1.Id.ToString());
+			browser.Eval("$('#regionSelector').change()");
+			browser.WaitUntilContainsText("testStreetFirst", 5);
 
 			browser.CheckBox("VisibleRegisteredInfo").Checked = true;
 			browser.Button(Find.ById("RegisterClientButton")).Click();
-
 			browser.WaitUntilContainsText("прописанный по адресу:", 2);
 			Assert.That(browser.Text, Is.StringContaining("прописанный по адресу:"));
 			Assert.That(browser.Text, Is.StringContaining("адрес подключения:"));
