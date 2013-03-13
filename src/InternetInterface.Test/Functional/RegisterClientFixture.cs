@@ -20,7 +20,14 @@ namespace InternetInterface.Test.Functional
 		public void RegisterClientTest()
 		{
 			var commutator = new NetworkSwitch("Тестовый коммутатор для регистрации клиента", session.Query<Zone>().First());
-			session.Save(commutator);
+			var tariff = new Tariff("Тариф для тестирования", 111);
+			Save(commutator, tariff);
+			session.CreateSQLQuery("delete from internet.houses;").ExecuteUpdate();
+			var testRegion1 = new RegionHouse { Name = "testRegionFirst" };
+			session.Save(testRegion1);
+			var house1 = new House("testStreetFirst", 1) { Region = testRegion1 };
+			session.Save(house1);
+			Close();
 
 			Open("Register/RegisterClient.rails");
 			Assert.That(browser.Text, Is.StringContaining("Форма регистрации"));
@@ -40,7 +47,6 @@ namespace InternetInterface.Test.Functional
 			Css("#Surname").AppendText("TestSurname");
 			Css("#Name").AppendText("TestName");
 			Css("#Patronymic").AppendText("TestPatronymic");
-			Css("#City").AppendText("TestCity");
 			Css("#Apartment").AppendText("5");
 			Css("#Entrance").AppendText("5");
 			Css("#Floor").AppendText("1");
@@ -52,10 +58,12 @@ namespace InternetInterface.Test.Functional
 			Css("#PassportDate").AppendText("10.01.2002");
 			Css("#client_ConnectSum").AppendText("100");
 			Css("#client_Tariff_Id").Select("Тариф для тестирования");
+			browser.SelectList("regionSelector").SelectByValue(testRegion1.Id.ToString());
+			browser.Eval("$('#regionSelector').change()");
+			browser.WaitUntilContainsText("testStreetFirst", 5);
 
 			browser.CheckBox("VisibleRegisteredInfo").Checked = true;
 			browser.Button(Find.ById("RegisterClientButton")).Click();
-
 			browser.WaitUntilContainsText("прописанный по адресу:", 2);
 			Assert.That(browser.Text, Is.StringContaining("прописанный по адресу:"));
 			Assert.That(browser.Text, Is.StringContaining("адрес подключения:"));
@@ -63,6 +71,31 @@ namespace InternetInterface.Test.Functional
 
 			Assert.That(browser.Text, Is.Not.Contains("(4732) 606-000"));
 			AssertText("(473) 22-999-87");
+		}
+
+		[Test]
+		public void City_house_selector_test()
+		{
+			session.CreateSQLQuery("delete from internet.houses;").ExecuteUpdate();
+			var testRegion1 = new RegionHouse { Name = "testRegionFirst" };
+			var testRegion2 = new RegionHouse { Name = "testRegionLast" };
+			session.Save(testRegion1);
+			session.Save(testRegion2);
+			var house1 = new House("testStreetFirst", 1) { Region = testRegion1 };
+			var house2 = new House("testStreetlast", 2) { Region = testRegion2 };
+			session.Save(house1);
+			session.Save(house2);
+			Close();
+
+			Open("Register/RegisterClient");
+			browser.SelectList("regionSelector").SelectByValue(testRegion1.Id.ToString());
+			browser.WaitUntilContainsText("testStreetFirst", 5);
+			Assert.That(browser.Html, Is.StringContaining("testStreetFirst"));
+			Assert.That(browser.Html, !Is.StringContaining("testStreetlast"));
+			browser.SelectList("regionSelector").SelectByValue(testRegion2.Id.ToString());
+			browser.WaitUntilContainsText("testStreetlast", 5);
+			Assert.That(browser.Html, Is.StringContaining("testStreetlast"));
+			Assert.That(browser.Html, !Is.StringContaining("testStreetFirst"));
 		}
 
 		[Test, Ignore("Отключен функционал выбора свича при регистрации")]

@@ -1,0 +1,5 @@
+﻿<select name="house_id" id="houses_select">
+<% for i, house_sel in enumerate(Houses): %>
+	<option value="${house_sel.Id}"  ${"selected" if (house_sel.Id == ChHouse.Id)} >${house_sel.Street} ${house_sel.Number} ${house_sel.Case}</option>
+<%end %>
+</select>

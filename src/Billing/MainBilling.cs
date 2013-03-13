@@ -454,7 +454,7 @@ set s.LastStartFail = true;")
 				if (client.IsChanged(c => c.Disabled))
 					Appeals.CreareAppeal("Клиент был заблокирован", client, AppealType.Statistic, false);
 			}
-			if (client.YearCycleDate == null || (SystemTime.Now().Date >= client.YearCycleDate.Value.AddYears(1).Date)) {
+			if ((client.YearCycleDate == null && client.BeginWork != null) || (SystemTime.Now().Date >= client.YearCycleDate.Value.AddYears(1).Date)) {
 				client.FreeBlockDays = FreeDaysVoluntaryBlockin;
 				client.YearCycleDate = SystemTime.Now();
 			}

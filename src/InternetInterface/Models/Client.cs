@@ -149,6 +149,9 @@ namespace InternetInterface.Models
 		[OneToOne(PropertyRef = "Client")]
 		public virtual MessageForClient Message { get; set; }
 
+		[OneToOne(PropertyRef = "Client")]
+		public virtual ConnectGraph ConnectGraph { get; set; }
+
 		[Property, ValidateInteger("Должно быть введено число")]
 		public virtual string RedmineTask { get; set; }
 
@@ -217,6 +220,21 @@ namespace InternetInterface.Models
 		{
 			var mashineAddress = Convert.ToInt64(NetworkSwitch.SetProgramIp(ip));
 			return ArHelper.WithSession(s => s.Query<IpPool>().Count(p => p.Begin <= mashineAddress && p.End >= mashineAddress) > 0);
+		}
+
+		public virtual string GetFreePorts()
+		{
+			var result = string.Empty;
+			if (Endpoints.Count == 0)
+				return string.Empty;
+			var deniedPorts = Endpoints[0].Switch.Endpoints.Select(e => e.Port);
+			for (int i = 1; i <= Endpoints[0].Switch.TotalPorts; i++) {
+				if (!deniedPorts.Contains(i))
+					result += string.Format("{0}, ", i);
+			}
+			if (!string.IsNullOrEmpty(result))
+				return result.Remove(result.Length - 2, 2);
+			return string.Empty;
 		}
 
 		public virtual bool HaveRed()

@@ -27,7 +27,7 @@ namespace InternetInterface.Controllers
 		public void ShowSwitches()
 		{
 			var switches = DbSession.CreateSQLQuery(
-				@"SELECT NS.id, NS.Mac, inet_ntoa(NS.IP) as Ip, NS.Name, NS.Zone, NS.PortCount, NS.Comment FROM internet.NetworkSwitches NS")
+				@"SELECT NS.id, NS.Mac, inet_ntoa(NS.IP) as Ip, NS.Name, NS.Zone, NS.PortCount, NS.Comment, NS.TotalPorts FROM internet.NetworkSwitches NS")
 				.AddEntity(typeof(NetworkSwitch)).List<NetworkSwitch>();
 			PropertyBag["Switches"] = switches;
 		}

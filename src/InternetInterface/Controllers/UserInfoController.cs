@@ -412,6 +412,10 @@ namespace InternetInterface.Controllers
 						if (client.GetClientType() == ClientType.Phisical) {
 							client.PhysicalClient.UpdatePackageId(clientEntPoint);
 						}
+						else {
+							var packageSpeed = DbSession.Query<PackageSpeed>().Where(p => p.PackageId == ConnectInfo.PackageId).ToList().FirstOrDefault();
+							clientEntPoint.PackageId = packageSpeed.PackageId;
+						}
 						if (string.IsNullOrEmpty(clientEntPoint.Ip) && !string.IsNullOrEmpty(ConnectInfo.static_IP))
 							new UserWriteOff {
 								Client = client,
@@ -911,8 +915,8 @@ where r.`Label`= :LabelIndex;")
 			PropertyBag["Client"] = client.PhysicalClient;
 			PropertyBag["EditAddress"] = client.AdditionalStatus == null ? false : client.AdditionalStatus.ShortName == "Refused";
 
-			PropertyBag["Houses"] = House.AllSort;
-			PropertyBag["ChHouse"] = client.PhysicalClient.HouseObj != null ? client.PhysicalClient.HouseObj.Id : 0;
+			PropertyBag["Regions"] = DbSession.Query<RegionHouse>().ToList();
+			PropertyBag["ChHouse"] = client.PhysicalClient.HouseObj ?? new House();
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["Statuss"] = Status.FindAllSort();
 			PropertyBag["channels"] = ChannelGroup.All(DbSession);
@@ -1280,6 +1284,7 @@ where r.`Label`= :LabelIndex;")
 			client.Status = Status.Get(StatusType.BlockedAndConnected, DbSession);
 			client.BeginWork = null;
 			client.RatedPeriodDate = null;
+			DbSession.Delete(client.ConnectGraph);
 			DbSession.SaveOrUpdate(client);
 			RedirectToReferrer();
 		}

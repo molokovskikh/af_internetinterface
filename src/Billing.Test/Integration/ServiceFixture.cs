@@ -87,6 +87,28 @@ namespace Billing.Test.Integration
 		}
 
 		[Test]
+		public void Year_circle_date()
+		{
+			using (new SessionScope()) {
+				_client.YearCycleDate = null;
+				_client.BeginWork = null;
+				ActiveRecordMediator.Save(_client);
+			}
+			billing.Compute();
+			using (new SessionScope()) {
+				_client = ActiveRecordMediator<Client>.FindByPrimaryKey(_client.Id);
+				Assert.IsNull(_client.YearCycleDate);
+				_client.BeginWork = DateTime.Now;
+				ActiveRecordMediator.Save(_client);
+			}
+			billing.Compute();
+			using (new SessionScope()) {
+				_client = ActiveRecordMediator<Client>.FindByPrimaryKey(_client.Id);
+				Assert.IsNotNull(_client.YearCycleDate);
+			}
+		}
+
+		[Test]
 		public void Free_days_test_vol_block()
 		{
 			ClientService service;

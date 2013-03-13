@@ -142,7 +142,8 @@ namespace InternetInterface.Models.Access
 				"RegisterClient",
 				"SiteMap",
 				"ClientRegisteredInfoFromDiller",
-				"RegisterLegalPerson"
+				"RegisterLegalPerson",
+				"HouseSelect"
 			};
 			return _registerClient.Contains(methodName) ? "RC" : string.Empty;
 		}

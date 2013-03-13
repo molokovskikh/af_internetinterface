@@ -1,5 +1,5 @@
 ﻿function ShowFindEditor() {
-	var selectedFindType = $('.filter_searchProperties:checked').val();
+	var selectedFindType = $('#SearchPropertiesTd input[type=radio]:checked').val();
 	if (selectedFindType == 5) {
 		$("#AddressField").show();
 		$("#AllFindT").hide();
