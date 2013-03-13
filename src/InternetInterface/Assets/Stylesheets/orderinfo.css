@@ -1,0 +1,105 @@
+﻿.addMenuItem
+	{
+	width:20px;
+	height:20px;
+	background: url(${Siteroot}/images/plus__orange.png) no-repeat center top;
+	float:right;
+	}
+	.delMenuItem
+	{
+	width:20px;
+	height:20px;
+	float:right;
+	margin-right:90%;
+	background: url(${Siteroot}/images/onebit_32.png) no-repeat center top;
+	}
+	.error
+	{
+	color:Red;
+	font-size:small;
+	}
+	.ipPrefix
+	{
+	width:25px;
+	}
+
+	.CalendarInput
+	{
+	background:  transparent url(../images/calendar.gif) no-repeat scroll center center;
+	width: 25px;
+	height: 19px;
+	}
+
+div.clearBoth {
+	clear: both;
+}
+
+
+.width100 {
+	width: 100%;
+}
+
+.width100px {
+	width: 100px;
+}
+
+.width200px {
+	width:200px;
+}
+
+.width50 {
+	width: 50%;
+}
+
+.width1px {
+	width:1px;
+}
+
+.width150px {
+	width:150px;
+}
+
+.orderInfo {
+	border-right-width:0px;
+	width:400px;
+}
+
+.closeOrder {
+	border-left-width:0px;
+	text-align:right;
+	width:400px;
+}
+
+.displayInline {
+	display: inline;
+}
+
+.noDisplay {
+	display: none;
+}
+
+.width400px {
+	width: 400px;
+}
+
+.centerText {
+	text-align:center;
+}
+
+.boldFont {
+	font-weight:bold;
+}
+
+.staticAddress {
+	display:none;
+	padding:10px;
+}
+
+.rightBorder {
+	width:1px;
+	border-right:0px double black;
+}
+
+.leftBorder {
+	border-left:0px double black;
+}

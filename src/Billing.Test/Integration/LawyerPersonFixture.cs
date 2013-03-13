@@ -126,6 +126,7 @@ namespace Billing.Test.Integration
 				lawyerClient.Disabled = true;
 				ActiveRecordMediator.Save(lawyerClient);
 			}
+			MainBilling.MagicDate = SystemTime.Now().AddMonths(2);
 			billing.Compute();
 			using (new SessionScope()) {
 				var writeOffs = ActiveRecordLinq.AsQueryable<WriteOff>().Where(w => w.Client == lawyerClient).ToList();

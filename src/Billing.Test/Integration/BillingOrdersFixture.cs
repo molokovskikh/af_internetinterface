@@ -116,9 +116,10 @@ namespace Billing.Test.Integration
 			};
 			session.Save(service);
 			Close();
+			MainBilling.MagicDate = SystemTime.Now().AddMonths(-2);
 			billing.Compute();
 			var writeOff = session.Query<WriteOff>().Where(w => w.Client == lawyerClient).ToArray();
-			Assert.That(writeOff.Sum(w => w.WriteOffSum), Is.EqualTo(123));
+			Assert.That(writeOff.Sum(w => w.WriteOffSum), Is.EqualTo(133));
 		}
 
 		[Test(Description = "Проверяет корректное списание периодических услуг в первый день месяца")]
@@ -136,6 +137,7 @@ namespace Billing.Test.Integration
 			};
 			session.Save(service);
 			Close();
+			MainBilling.MagicDate = SystemTime.Now().AddMonths(-2);
 			billing.Compute();
 			var writeOff = session.Query<WriteOff>().Where(w => w.Client == lawyerClient).ToArray();
 			Assert.That(writeOff.Sum(w => w.WriteOffSum), Is.EqualTo(100));
@@ -155,6 +157,7 @@ namespace Billing.Test.Integration
 			};
 			session.Save(service);
 			Close();
+			MainBilling.MagicDate = SystemTime.Now().AddMonths(-2);
 			for (var i = 1; i <= 30; i++) {
 				SystemTime.Now = () => new DateTime(2012, 4, i);
 				billing.Compute();
@@ -176,6 +179,7 @@ namespace Billing.Test.Integration
 			};
 			session.Save(service);
 			Close();
+			MainBilling.MagicDate = SystemTime.Now().AddMonths(-2);
 			billing.Compute();
 			var writeOff = session.Query<WriteOff>().Where(w => w.Client == lawyerClient).ToArray();
 			Assert.That(writeOff.Sum(w => w.WriteOffSum), Is.EqualTo(-100));
@@ -185,8 +189,6 @@ namespace Billing.Test.Integration
 		public void LawyerPersonTest()
 		{
 			LawyerPerson lPerson;
-			//Client lawyerClient;
-			//using (new SessionScope()) {
 			var region = session.Query<RegionHouse>().FirstOrDefault(r => r.Name == "Воронеж");
 			if (region == null) {
 				region = new RegionHouse {
@@ -201,7 +203,6 @@ namespace Billing.Test.Integration
 			};
 			session.Save(lPerson);
 
-			//lPerson.Save();
 			lawyerClient = new Client() {
 				Disabled = false,
 				Name = "TestLawyer",
@@ -209,7 +210,6 @@ namespace Billing.Test.Integration
 				LawyerPerson = lPerson
 			};
 			session.Save(lawyerClient);
-			//client.Save();
 			SystemTime.Now = () => new DateTime(2013, 4, 1);
 			var order = new Orders {
 				Client = lawyerClient,
@@ -224,9 +224,7 @@ namespace Billing.Test.Integration
 				Order = order
 			};
 			session.Save(orderSerive);
-			//}
 			Close();
-			//SystemTime.Reset();
 			var sn = SystemTime.Now();
 			var days = DateTime.DaysInMonth(sn.Year, sn.Month) + DateTime.DaysInMonth(sn.AddMonths(1).Year, sn.AddMonths(1).Month);
 			var beginData = new DateTime(sn.Year, sn.Month, 1);
@@ -235,19 +233,11 @@ namespace Billing.Test.Integration
 				billing.Compute();
 			}
 			session.Refresh(lPerson);
-			//using (new SessionScope()) {
-			//	lPerson.Refresh();
-			//}
 			Assert.That(-20000m, Is.EqualTo(lPerson.Balance));
 			billing.OnMethod();
 			lPerson.Balance += 1000;
 			session.Update(lPerson);
 			session.Flush();
-			//using (new SessionScope()) {
-			//	client.Refresh();
-			//	lPerson.Balance += 1000;
-			//	lPerson.Update();
-			//}
 			//3 Так как 2 не к этому клиенту
 			Assert_statistic_appeal();
 			session.Clear();
@@ -256,9 +246,6 @@ namespace Billing.Test.Integration
 
 			billing.OnMethod();
 			session.Refresh(lawyerClient);
-			//using (new SessionScope()) {
-			//	client.Refresh();
-			//}
 			Assert.IsTrue(!lawyerClient.ShowBalanceWarningPage);
 			Assert_statistic_appeal();
 		}
@@ -268,13 +255,6 @@ namespace Billing.Test.Integration
 			var appeals = session.Query<Appeals>().Where(a => a.AppealType == AppealType.Statistic).ToList();
 			Assert.That(appeals.Count, Is.EqualTo(appealCount));
 			session.CreateSQLQuery("delete from Internet.appeals").ExecuteUpdate();
-			//using (new SessionScope()) {
-			//	ArHelper.WithSession(s => {
-			//		var appeals = s.Query<Appeals>().Where(a => a.AppealType == AppealType.Statistic).ToList();
-			//		Assert.That(appeals.Count, Is.EqualTo(appealCount));
-			//		s.CreateSQLQuery("delete from Internet.appeals").ExecuteUpdate();
-			//	});
-			//}
 		}
 	}
 }

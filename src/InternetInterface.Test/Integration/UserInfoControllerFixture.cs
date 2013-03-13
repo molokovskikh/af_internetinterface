@@ -58,13 +58,13 @@ namespace InternetInterface.Test.Integration
 			session.Flush();
 			var act = session.Query<Act>().FirstOrDefault(a => a.Client == client);
 			Assert.That(act.Sum, Is.EqualTo(50));
-			Assert.That(act.Parts[0].Name, Is.EqualTo("Разовая"));
+			Assert.That(act.Parts[0].Name, Is.EqualTo("Разовая по заказу №" + order.Number));
 			Assert.That(act.Parts[0].Cost, Is.EqualTo(50));
 			var invoice = session.Query<Invoice>().FirstOrDefault(a => a.Client == client);
 			Assert.That(invoice.Sum, Is.EqualTo(110));
-			Assert.That(invoice.Parts[0].Name, Is.EqualTo("Периодичная"));
+			Assert.That(invoice.Parts[0].Name, Is.EqualTo("Периодичная по заказу №" + order.Number));
 			Assert.That(invoice.Parts[0].Cost, Is.EqualTo(100));
-			Assert.That(invoice.Parts[1].Name, Is.EqualTo("Периодичная"));
+			Assert.That(invoice.Parts[1].Name, Is.EqualTo("Периодичная по заказу №" + order.Number));
 			Assert.That(invoice.Parts[1].Cost, Is.EqualTo(10));
 		}
 

@@ -117,11 +117,13 @@
     <Content Include="Assets\Javascripts\calendar-ru_win_.js" />
     <Content Include="Assets\Javascripts\calendar-setup.js" />
     <Content Include="Assets\Javascripts\calendar.js" />
+    <Content Include="Assets\Javascripts\OrderService.js" />
     <Content Include="Assets\Javascripts\ShowRegions.js" />
     <Content Include="Assets\Javascripts\userSearch.js" />
     <Content Include="Assets\Stylesheets\alt-form.css" />
     <Content Include="Assets\Stylesheets\calendar-blue.css" />
     <Content Include="Assets\Stylesheets\client.css" />
+    <Content Include="Assets\Stylesheets\orderinfo.css" />
     <Content Include="Assets\Stylesheets\orders.css" />
     <Content Include="Assets\Stylesheets\payments.css" />
     <Content Include="Assets\Stylesheets\printact.css" />

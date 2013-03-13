@@ -134,6 +134,10 @@ namespace InternetInterface.Controllers
 
 		public void RegisterLegalPerson()
 		{
+			PropertyBag["OrderInfo"] = new ClientOrderInfo {
+				Order = new Orders() { Number = Orders.GetNextNumber(DbSession) },
+				ClientConnectInfo = new ClientConnectInfo()
+			};
 			PropertyBag["ClientCode"] = 0;
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
 			PropertyBag["Switches"] = NetworkSwitch.All(DbSession);
@@ -145,12 +149,14 @@ namespace InternetInterface.Controllers
 			PropertyBag["RegionList"] = RegionHouse.All();
 		}
 
-		public void RegisterLegalPerson(int speed, [DataBind("ConnectInfo")] ConnectInfo info, uint brigadForConnect)
+		public void RegisterLegalPerson(int speed, [DataBind("ConnectInfo")] ConnectInfo info, uint brigadForConnect, [DataBind("order")] Orders Order)
 		{
 			SetBinder(new DecimalValidateBinder { Validator = Validator });
 			var person = new LawyerPerson();
 			BindObjectInstance(person, ParamStore.Form, "LegalPerson");
 			var connectErrors = Validation.ValidationConnectInfo(info, true);
+			if (!string.IsNullOrEmpty(info.Port) && Order.OrderServices == null)
+				connectErrors = "Невозможно создать подключение, не создавая услуг в заказе";
 			if (IsValid(person) && string.IsNullOrEmpty(connectErrors)) {
 				person.SaveAndFlush();
 				var client = new Client {
@@ -159,7 +165,8 @@ namespace InternetInterface.Controllers
 					WhoRegisteredName = InitializeContent.Partner.Name,
 					RegDate = DateTime.Now,
 					Status = Status.Find((uint)StatusType.BlockedAndNoConnected),
-					Disabled = person.Tariff == null,
+					//Disabled = person.Tariff == null,
+					Disabled = Order.OrderServices == null,
 					LawyerPerson = person,
 					Name = person.ShortName,
 					Type = ClientType.Legal,
@@ -172,23 +179,71 @@ namespace InternetInterface.Controllers
 				if (!string.IsNullOrEmpty(person.Email))
 					Contact.SaveNew(client, person.Email, "Указан при регистрации", ContactType.Email);
 
+				ClientEndpoint endPoint = null;
 				if (!string.IsNullOrEmpty(info.Port)) {
-					new ClientEndpoint {
+					endPoint = new ClientEndpoint {
 						Client = client,
 						Port = Int32.Parse(info.Port),
 						Switch = DbSession.Load<NetworkSwitch>(info.Switch),
-					}.SaveAndFlush();
+					};
+					endPoint.SaveAndFlush();
 					var brigad = Brigad.Find(brigadForConnect);
 					client.WhoConnected = brigad;
 					client.WhoConnectedName = brigad.Name;
 					client.Status = Status.Find((uint)StatusType.Worked);
 					client.UpdateAndFlush();
 				}
+				if (Order.OrderServices != null) {
+					Order.Client = client;
+					Order.EndPoint = endPoint;
+					DbSession.Save(Order);
+					// создаем новый акт
+					Act act = null;
+					if (Order.OrderServices.Any(o => !o.IsPeriodic)) {
+						act = new Act(client);
+						DbSession.Save(act);
+					}
+					// создаем новый счет
+					Invoice invoice = null;
+					if (Order.OrderServices.Any(o => o.IsPeriodic)) {
+						invoice = new Invoice(client);
+						DbSession.Save(invoice);
+					}
+					// создаем новый договор
+					var contract = new Contract(Order);
+					DbSession.Save(contract);
+					foreach (var orderService in Order.OrderServices) {
+						orderService.Order = Order;
+						DbSession.Save(orderService);
+						if (!orderService.IsPeriodic) {
+							var partAct = new ActPart(act) {
+								Count = 1,
+								Cost = orderService.Cost,
+								Name = orderService.Description + " по заказу №" + orderService.Order.Number,
+								OrderService = orderService
+							};
+							DbSession.Save(partAct);
+						}
+						else {
+							var daysInMonth = DateTime.DaysInMonth(Order.BeginDate.Value.Year, Order.BeginDate.Value.Month);
+							var partInvoice = new InvoicePart(invoice,
+								1,
+								orderService.Cost / daysInMonth * (daysInMonth - Order.BeginDate.Value.Day),
+								orderService.Description + " по заказу №" + orderService.Order.Number);
+							partInvoice.OrderService = orderService;
+							DbSession.Save(partInvoice);
+						}
+					}
+				}
 				RegisterLegalPerson();
 				PropertyBag["EditiongMessage"] = "Клиент успешно загистрирвоан";
 				RedirectToUrl("../UserInfo/LawyerPersonInfo.rails?filter.ClientCode=" + client.Id);
 			}
 			else {
+				PropertyBag["OrderInfo"] = new ClientOrderInfo {
+					Order = Order,
+					ClientConnectInfo = new ClientConnectInfo()
+				};
 				PropertyBag["ClientCode"] = 0;
 				PropertyBag["Brigads"] = Brigad.FindAllSort();
 				PropertyBag["Switches"] = NetworkSwitch.All(DbSession);

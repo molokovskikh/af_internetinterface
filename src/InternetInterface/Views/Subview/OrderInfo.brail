@@ -1,36 +1,4 @@
-﻿<style type="text/css">
-	.addMenuItem
-	{
-	width:20px;
-	height:20px;
-	background: url(${Siteroot}/images/plus__orange.png) no-repeat center top;
-	float:right;
-	}
-	.delMenuItem
-	{
-	width:20px;
-	height:20px;
-	float:right;
-	margin-right:90%;
-	background: url(${Siteroot}/images/onebit_32.png) no-repeat center top;
-	}
-	.error
-	{
-	color:Red;
-	font-size:small;
-	}
-	.ipPrefix
-	{
-	width:25px;
-	}
-
-	.CalendarInput
-	{
-	background:  transparent url(../images/calendar.gif) no-repeat scroll center center;
-	width: 25px;
-	height: 19px;
-	}
-</style>
+﻿${app.Asset("orderinfo.css")}
 ${app.Asset("calendar-blue.css")}
 ${app.Asset("calendar.setup.js")}
 ${app.Asset("calendar.js")}
@@ -55,18 +23,18 @@ ${app.Asset("calendar-setup.js")}
 	<a class="close-reveal-modal">x</a>
 </div>
 
-<div style="clear:both;">
+<div class="clearBoth;">
 <%if PartnerAccessSet.AccesPartner("DHCP"): %>
 
 	<%if not EditingConnect: %>
 
-	<table  style="width: 100%;"><tbody><tr><td>
-	<table class="table" style="width: 100%;" align="left">
+	<table  class="width100;"><tbody><tr><td>
+	<table class="table width100" align="left">
 	<thead>
 		<tr>
-		<th style="border-right-width:0px; width:400px;">Информация о заказе (заказ № ${OrderInfo.Order.Number})
+		<th class="orderInfo">Информация о заказе (заказ № ${OrderInfo.Order.Number})
 		<%if PartnerAccessSet.AccesPartner("DHCP") and OrderInfo.Order.OrderStatus==0: %>
-			<form class="formConnect" method="post" action="${siteroot}/UserInfo/LoadEditConnectMudule" style="display:inline;">
+			<form class="formConnect" method="post" action="${siteroot}/UserInfo/LoadEditConnectMudule" class="displayInline">
 			<input type="hidden" name="ClientID" value="${ClientCode}" />
 			<input type="hidden" name="EditConnectFlag" value="${OrderInfo.Order.Id}" />
 			<button type="submit"  class="editBut" id="EditButton${OrderInfo.Order.Id}">
@@ -75,7 +43,7 @@ ${app.Asset("calendar-setup.js")}
 			</form>
 		 <%end %>
 		</th>
-		<th style="border-left-width:0px; text-align:right; width:400px;">
+		<th class="closeOrder">
 			<% if OrderInfo.Order.OrderStatus != 2:%>
 			<a href="#" class="big-link" data-reveal-id="closeOrderDialog">
 				<input type="hidden" value="${OrderInfo.Order.Id}" class="closeOrderControl"/>
@@ -137,7 +105,7 @@ ${app.Asset("calendar-setup.js")}
 			</td>
 		</tr>
 		<td colspan="3">
-			<table id='OrderServiceTable${OrderInfo.Order.Id}' style="display: none;">
+			<table id='OrderServiceTable${OrderInfo.Order.Id}' class="noDisplay">
 				<tr>
 					<th>
 						Описание
@@ -183,7 +151,7 @@ ${app.Asset("calendar-setup.js")}
 		  <td>${OrderInfo.ClientConnectInfo.Leased_IP}</td>
 		</tr>
 		<tr>
-		  <td style="width:400px;">
+		  <td class="width400px">
 			<span><a href="${SiteRoot}/Switches/MakeSwitch?Switch=${OrderInfo.ClientConnectInfo.Switch}"> Свич</a> </span>
 		</td>
 		  <td>
@@ -234,7 +202,7 @@ ${app.Asset("calendar-setup.js")}
 	<table class="table" align="left">
 		<thead>
 			<tr>
-				<th colspan=2 style="text-align:center;">Статические адреса клиента</th>
+				<th colspan=2 class="centerText">Статические адреса клиента</th>
 			</tr>
 			<tr>
 				<th>IP адрес / маска</th>
@@ -279,7 +247,7 @@ ${app.Asset("calendar-setup.js")}
 	<input type="hidden" name="ClientID" value="${ClientCode}" />
 	<input type="hidden" name="EditConnect" value="${OrderInfo.Order.Id}" />
 		<input type="hidden" name="Order.Id" value="${OrderInfo.Order.Id}" />
-	<table id="editConnectTable" class="table" style="width: 100%;">
+	<table id="editConnectTable" class="table" class="width100;">
 	<thead>
 		<th colspan = 3 > Информация по подключению
 		<%if PartnerAccessSet.AccesPartner("DHCP"): %>
@@ -342,15 +310,12 @@ ${app.Asset("calendar-setup.js")}
 					<tr id='orderService${item.Id}'>
 						<td>
 							<input type='text' name='order.OrderServices[${i}].Description' value='${item.Description}'>
-								<!--${app.LinkTo(item.Description, @UserInfo, @EditOrderService, {@orderServiceId: item.Id})}-->
 							</td>
 						<td>
 							<input type='text' name='order.OrderServices[${i}].Cost' value='${item.Cost}'>
-								<!--${item.Cost}-->
-							</td>
+						</td>
 						<td>
 							<input type='checkbox' name='order.OrderServices[${i}].IsPeriodic' ${"checked" if (item.IsPeriodic)}>
-								<!--${item.GetPeriodic()}-->
 							</td>
 						<td>
 							<a href='#' onclick="deleteOrderService('orderService${item.Id}')">Удалить</a>
@@ -374,7 +339,7 @@ ${app.Asset("calendar-setup.js")}
 		</tbody>
 		</table>
 
-		<table class="table" id="endpointTable" <% if OrderInfo.Order.EndPoint == null and OrderInfo.Order.Id > 0: %> style="display: none;" <% end %>>
+		<table class="table" id="endpointTable" <% if OrderInfo.Order.EndPoint == null and OrderInfo.Order.Id > 0: %> class="noDisplay" <% end %>>
 				</thead>
 		<tr>
 			<td colspan="3">
@@ -386,10 +351,10 @@ ${app.Asset("calendar-setup.js")}
 		<tr>
 		  <td>Фиксированный IP</td>
 		  <td colspan=2>
-				<input type="button" onclick="DeleteStaticIp()" value="Удалить" style="width: 100px; " />
-				<input type="button" onclick="GetStaticIp()" id="static_IP" value="Назначить" style="width: 100px; " />
+				<input type="button" onclick="DeleteStaticIp()" value="Удалить" class="width100px" />
+				<input type="button" onclick="GetStaticIp()" id="static_IP" value="Назначить" class="width100px" />
 				<input type="hidden" id="static_IP_hiden" name="ConnectInfo.static_IP"  value="${OrderInfo.ClientConnectInfo.static_IP}" />
-				<label id="staticIdLabel" style="font-weight:bold;">${OrderInfo.ClientConnectInfo.static_IP}</label>
+				<label id="staticIdLabel" class="boldFont">${OrderInfo.ClientConnectInfo.static_IP}</label>
 		  </td>
 		</tr>
 		<tr>
@@ -398,7 +363,7 @@ ${app.Asset("calendar-setup.js")}
 		</tr>
 		<tr>
 		  <td>Свич</td>
-		  <td style="width:200px;"><select name="ConnectInfo.Switch" id="SelectSwitches" style="width: 100%">
+		  <td class="width200px"><select name="ConnectInfo.Switch" id="SelectSwitches" class="width100">
 									<option value="0">Нет</option>
 								   <%for j, Switch in enumerate(Switches): %>
 									<option id="Option${j}" value="${Switch.Id}" ${"selected" if (Switch.Id.ToString() == OrderInfo.ClientConnectInfo.Switch)} > ${Switch.Name} </option>
@@ -408,7 +373,7 @@ ${app.Asset("calendar-setup.js")}
 		</tr>
 		<tr>
 		  <td>Порт</td>
-		  <td colspan=2><input type="text" id="Port"  name="ConnectInfo.Port"  value="${OrderInfo.ClientConnectInfo.Port}" style="width: 50%; " /></td>
+		  <td colspan=2><input type="text" id="Port"  name="ConnectInfo.Port"  value="${OrderInfo.ClientConnectInfo.Port}" class="width50" /></td>
 		</tr>
 		<tr>
 		  <td>Скорость</td>
@@ -421,7 +386,7 @@ ${app.Asset("calendar-setup.js")}
 		<tr>
 		 <td>Бригада по подключению</td>
 		 <%if _client.WhoConnected == null: %>
-		  <td colspan=2><select name="BrigadForConnect" id="BrigadForConnect" style="width: 100%" >
+		  <td colspan=2><select name="BrigadForConnect" id="BrigadForConnect" class="width100" >
 		  <% for j, Brigad in enumerate(Brigads): %>
 				<option id="OptionBrigad${j}" value="${Brigad.Id}" ${"selected" if (Brigad.Id == ChBrigad)} > ${Brigad.Name} </option>
 		<% end %>
@@ -443,24 +408,24 @@ ${app.Asset("calendar-setup.js")}
 		<td colspan=3>
 	<button type="button"  class="editBut" onclick="$('#staticAdreses').slideToggle('slow');"> Редактировать статические адреса
 	</button>
-	<div id="staticAdreses" style="display:none; padding:10px;">
+	<div id="staticAdreses" class="staticAddress">
 		<table class="table">
 		<thead>
 			<tr>
-				<th style="width:1px; border-right:0px double black;"></th>
-				<th colspan=2 style=" border-left:0px double black;">IP адрес / маска</th>
+				<th class="rightBorder"></th>
+				<th colspan=2 class="leftBorder">IP адрес / маска</th>
 				<th>Маска</th>
-				<th style="text-align:center;"></th>
+				<th class="centerText"></th>
 			</tr>
 		</thead>
 		<tbody id="adresesBlock">
 			<% for i,item in enumerate(OrderInfo.ClientConnectInfo.GetStaticAdreses()): %>
 			<tr>
-				<td class="indexes" style="width:1px;">
+				<td class="indexes" class="width1px">
 					<input type=hidden value=${i} />
 					<input type=hidden name="staticAdress[${i}].Id" value=${item.Id} />
 				</td>
-				<td class="ipinp_td" style="width:150px;">
+				<td class="ipinp_td" class="width150px">
 					<input type=text class="ipinp" id="ipinp" value="${item.Ip}" name="staticAdress[${i}].Ip"/>
 				</td>
 				<td class="ipPrefix_td">
@@ -489,8 +454,6 @@ ${app.Asset("calendar-setup.js")}
 </div>
 <script type="text/javascript">
 	$(document).ready(function () {
-	setupCalendar();
-
 	$('.closeOrderControl').click(function () {
 	var orderId = $(this).parent().children('input:first').val();
 	$('#closedOrderId').val(orderId);
@@ -641,38 +604,6 @@ ${app.Asset("calendar-setup.js")}
 		VisualSubnet($('#staticPrefix_' + lastIndex));
 		}
 
-		function addOrderService(orderId) {
-		var index = getIndex(0, "#addOrderServiceLink");
-		var id = "orderService" + index;
-		var name = "order.OrderServices[" + index + "]";
-		var html = "<tr id='" + id + "'>" +
-			"<td>" +
-				"<input type='text' name='" + name + ".Description' value=''>" +
-		"</td>" +
-			"<td>" +
-				"<input type='text' name='" + name + ".Cost' value='' class='valid'>" +
-		"</td>" +
-			"<td>" +
-				"<input type='checkbox' name='" + name + ".IsPeriodic'>" +
-		"</td>" +
-			"<td>" +
-				"<a href='#' onclick=deleteOrderService('" + id +"')>Удалить</a>" +
-		"</td>" +
-			"</tr>";
-		jQuery("#OrderServiceTable"+orderId).append(html);
-		}
-
-		function deleteOrderService(serviceId){
-		$('#' + serviceId).remove();
-		}
-		function getIndex(begin, selector) {
-		var index = parseInt(jQuery(selector).data('index'));
-		if (!index)
-		index = begin;
-		jQuery(selector).data('index', ++index);
-		return index;
-		}
-
 		function changeVisibleEndpoint(check){
 		if(check.checked){
 		$('#endpointTable').hide()
@@ -696,3 +627,4 @@ ${app.Asset("calendar-setup.js")}
 			}
 			}
 		</script>
+${app.Asset("OrderService.js")}

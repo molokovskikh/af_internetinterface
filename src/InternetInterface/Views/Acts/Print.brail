@@ -1,31 +1,6 @@
-﻿<style>
-div.rightAlign {
-	text-align: right;
-	width: 100%;
-}
-
-div.rightFloatAlign {
-	text-align: right;
-	width: 50%;
-	float: left;
-}
-
-div.leftFloatAlign {
-	text-align: left;
-	width: 50%;
-	float: left;
-}
-
-td.width50{
-	width: 25%;
-}
-
-table.footer td{
-padding-left: 10px;
-}
-</style>
+﻿${app.Asset("printact.css")}
 <div id=page_holder>
-<div style="width: 50%; horiz-align: left; margin-left: 50%;">
+<div class="rightHead">
 Общество с ограниченной ответственностью «Инфорум»<br/>
 	394036, г. Воронеж, ул. Студенческая, д. 12а<br/>
 	тел./факс. (473) 22-999-87<br/>
@@ -44,7 +19,7 @@ ${act.ActDate.ToLongDateString()}<p>
 </div>
 <br/>
 <div>
-Настоящим подтверждается, что в соответствии с Договором № ${act.Client.Id}  от ${act.Client.RegDate.ToLongDateString()} между ООО «Инфорум» («Исполнитель») и ${act.Client.Name} («Заказчик»), Исполнитель сдал, а Заказчик принял подключение к Услуге доступа к сети Интернет<% if act.Order != null: %>, указанной в Заказе № ${act.Order.Number}<% end %>.
+Настоящим подтверждается, что в соответствии с Договором № ${act.Client.Id}  от ${act.Client.RegDate.ToLongDateString()} между ООО «Инфорум» («Исполнитель») и ${act.Client.Name} («Заказчик»), Исполнитель сдал, а Заказчик принял подключение к Услуге доступа к сети Интернет.
 <div>
 <p>
 <table>
@@ -52,7 +27,7 @@ ${act.ActDate.ToLongDateString()}<p>
 		<th>№</th>
 		<th>Наименование работы (услуги)</th>
 		<th>Ед. изм.</th>
-		<th style="width:1%">Количество</th>
+		<th class="width1">Количество</th>
 		<th>Цена</th>
 		<th>Сумма</th>
 	</tr>
@@ -62,8 +37,8 @@ ${act.ActDate.ToLongDateString()}<p>
 		<td>${bill.Name}</td>
 		<td>услуга</td>
 		<td>${bill.Count}</td>
-		<td style="width:10%">${bill.Cost.ToString("0.00")}</td>
-		<td style="width:10%">${bill.Sum.ToString("0.00")}</td>
+		<td class="width10">${bill.Cost.ToString("0.00")}</td>
+		<td class="width10">${bill.Sum.ToString("0.00")}</td>
 	</tr>
 	<% end %>
 	<tr class="result">
@@ -83,8 +58,8 @@ ${act.ActDate.ToLongDateString()}<p>
 <div>
 <p>Всего оказано услуг на сумму: ${act.SumInWords()}, в т.ч.: НДС - Ноль рублей 00 копеек (УСН,  гл.26.2 НК РФ).<p>
 Вышеперечисленные услуги выполнены полностью и в срок. Заказчик претензий по объему, качеству и срокам оказания услуг не имеет.<p>
-<% if act.Order != null: %>
-Дата начала предоставления Услуг по Заказу №${act.Order.Number}: ${act.Order.BeginDate.ToLongDateString()}
+<% for i, bill in enumerate(act.Orders): %>
+Дата начала предоставления Услуг по Заказу №${bill.Number}: ${bill.BeginDate.ToLongDateString()}<br/>
 <% end %>
 </div>
 <p><p>

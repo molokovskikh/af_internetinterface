@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Web;
 using Castle.ActiveRecord;
+using Castle.Components.Validator;
+using Common.Web.Ui.MonoRailExtentions;
 
 namespace InternetInterface.Models
 {
@@ -19,7 +21,7 @@ namespace InternetInterface.Models
 		[Property, Description("Описание")]
 		public virtual string Description { get; set; }
 
-		[Property, Description("Стоимость")]
+		[Property, Description("Стоимость"), ValidateDecimal("Ошибка ввода суммы"), ValidateGreaterThanZero,]
 		public virtual decimal Cost { get; set; }
 
 		[Property, Description("Услуга периодичная")]

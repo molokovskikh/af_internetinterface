@@ -149,6 +149,7 @@
     <Compile Include="Functional\PhysicalClientFixture.cs" />
     <Compile Include="Functional\PrivateMessageFixture.cs" />
     <Compile Include="Functional\RegisterClientFixture.cs" />
+    <Compile Include="Functional\RegisterLawyerFixture.cs" />
     <Compile Include="Functional\RegisterPartnerFixrure.cs" />
     <Compile Include="Functional\RequestGraphFixture.cs" />
     <Compile Include="Functional\RequestViewFixture.cs" />

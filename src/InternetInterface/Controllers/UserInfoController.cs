@@ -178,8 +178,6 @@ namespace InternetInterface.Controllers
 				PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(new LawyerPerson());
 
 			PropertyBag["Editing"] = filter.Editing;
-			//var connectInfo = client.GetConnectInfo(DbSession);
-			//PropertyBag["ConnectInfo"] = connectInfo;
 			var ordersInfo = client.GetOrderInfo(DbSession);
 			PropertyBag["OrdersInfo"] = ordersInfo;
 
@@ -188,11 +186,9 @@ namespace InternetInterface.Controllers
 			PropertyBag["BalanceText"] = string.Empty;
 			PropertyBag["Appeals"] = Appeals.GetAllAppeal(DbSession, client, filter.appealType);
 
-			if (client.Status.Connected)
-				PropertyBag["EConnect"] = filter.EditingConnect;
-			else
-				PropertyBag["EConnect"] = 0;
-			if (client.LawyerPerson.Tariff == null)
+			PropertyBag["EConnect"] = filter.EditingConnect;
+
+			if((client.Orders == null || client.Orders.All(o => o.OrderServices == null)) && client.LawyerPerson.Tariff == null)
 				PropertyBag["Message"] = Message.Error("Не задана абонентская плата для клиента ! Клиент отключен !");
 
 			PropertyBag["CallLogs"] = UnresolvedCall.LastCalls;
@@ -391,13 +387,6 @@ namespace InternetInterface.Controllers
 				newFlag = true;
 			}
 
-			//var clientsEndPoint = ClientEndpoint.Queryable.Where(c => c.Client == client && c.Id == EditConnect).ToArray();
-			//if (clientsEndPoint.Length != 0) {
-			//	clientEntPoint = clientsEndPoint[0];
-			//}
-			//else {
-			//	newFlag = true;
-			//}
 			var olpPort = clientEntPoint.Port;
 			var oldSwitch = clientEntPoint.Switch;
 			var nullFlag = false;
@@ -446,8 +435,6 @@ namespace InternetInterface.Controllers
 								client.Update();
 							}
 							Order.EndPoint = clientEntPoint;
-							//Order.Client = client;
-							//DbSession.Save(Order);
 						}
 						if (brigadChangeFlag) {
 							var brigad = Brigad.Find(BrigadForConnect);
@@ -488,8 +475,6 @@ namespace InternetInterface.Controllers
 							}
 						}
 						savedEndpoint = true;
-						//RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID);
-						//return;
 					}
 				}
 				else {
@@ -513,16 +498,6 @@ namespace InternetInterface.Controllers
 					existingOrder.OrderServices = new List<OrderService>();
 				DbSession.SaveOrUpdate(existingOrder);
 
-				// создаем новый акт
-				var act = new Act(client, existingOrder);
-				DbSession.Save(act);
-				// создаем новый счет
-				var invoice = new Invoice(client);
-				DbSession.Save(invoice);
-				// создаем новый договор
-				var contract = new Contract(existingOrder);
-				DbSession.Save(contract);
-
 				if(Order.OrderServices == null)
 					Order.OrderServices = new List<OrderService>();
 
@@ -531,6 +506,22 @@ namespace InternetInterface.Controllers
 						DbSession.Delete(orderService);
 					}
 				}
+
+				// создаем новый акт
+				Act act = null;
+				if(Order.OrderServices.Any(o => !o.IsPeriodic)) {
+					act = new Act(client /*, existingOrder*/);
+					DbSession.Save(act);
+				}
+				// создаем новый счет
+				Invoice invoice = null;
+				if(Order.OrderServices.Any(o => o.IsPeriodic)) {
+					invoice = new Invoice(client);
+					DbSession.Save(invoice);
+				}
+				// создаем новый договор
+				var contract = new Contract(existingOrder);
+				DbSession.Save(contract);
 
 				foreach (var orderService in Order.OrderServices) {
 					if(orderService.Id > 0) {
@@ -549,7 +540,8 @@ namespace InternetInterface.Controllers
 						var partAct = new ActPart(act) {
 							Count = 1,
 							Cost = orderService.Cost,
-							Name = orderService.Description
+							Name = orderService.Description + " по заказу №" + orderService.Order.Number,
+							OrderService = orderService
 						};
 						DbSession.Save(partAct);
 					}
@@ -558,16 +550,21 @@ namespace InternetInterface.Controllers
 						var partInvoice = new InvoicePart(invoice,
 							1,
 							orderService.Cost / daysInMonth * (daysInMonth - Order.BeginDate.Value.Day),
-							orderService.Description);
+							orderService.Description + " по заказу №" + orderService.Order.Number);
+						partInvoice.OrderService = orderService;
 						DbSession.Save(partInvoice);
 					}
 				}
-				DbSession.Refresh(act);
-				DbSession.Refresh(invoice);
-				act.CalculateSum();
-				invoice.CalculateSum();
-				DbSession.Save(act);
-				DbSession.Save(invoice);
+				if(act != null) {
+					DbSession.Refresh(act);
+					act.CalculateSum();
+					DbSession.Save(act);
+				}
+				if(invoice != null) {
+					DbSession.Refresh(invoice);
+					invoice.CalculateSum();
+					DbSession.Save(invoice);
+				}
 				RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID);
 				return;
 			}
@@ -1253,16 +1250,10 @@ where r.`Label`= :LabelIndex;")
 
 		public void AddPoint(uint clientId)
 		{
-			//PropertyBag["connectInfo"] = new ClientConnectInfo() { Order = new Orders() };
-			//var orders = DbSession.Query<Orders>().ToList();
-			//uint number = 1;
-			//if(orders.Count > 0)
-			//	number = orders.Max(o => o.Number) + 1;
 			PropertyBag["OrderInfo"] = new ClientOrderInfo {
 				Order = new Orders() { Number = Orders.GetNextNumber(DbSession) },
 				ClientConnectInfo = new ClientConnectInfo()
 			};
-			//PropertyBag["order"] = new Orders();
 			ConnectPropertyBag(clientId);
 		}
 

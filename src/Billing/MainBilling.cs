@@ -459,7 +459,7 @@ set s.LastStartFail = true;")
 				client.YearCycleDate = SystemTime.Now();
 			}
 		}
-		private static DateTime _magicDate = new DateTime(2013, 4, 1);
+		public static DateTime MagicDate = new DateTime(2013, 4, 1);
 
 		private static void WriteOffFromLawyerPerson(Client client)
 		{
@@ -469,7 +469,7 @@ set s.LastStartFail = true;")
 			var daysInMonth = DateTime.DaysInMonth(now.Year, now.Month);
 			var tariff = person.Tariff.Value;
 			decimal sum = 0;
-			if (now < _magicDate) {
+			if (now < MagicDate) {
 				sum = tariff / daysInMonth;
 				if (sum == 0)
 					return;
@@ -493,14 +493,14 @@ set s.LastStartFail = true;")
 					var notPeriodicService = activateOrders.SelectMany(s => s.OrderServices)
 						.Where(s => !s.IsPeriodic);
 					sum += notPeriodicService.Sum(s => s.Cost);
-					sum += periodicService.Sum(s => s.Cost) / daysInMonth * (daysInMonth - now.Day - 1);
+					sum += periodicService.Sum(s => s.Cost) / daysInMonth * (daysInMonth - now.Day + 1);
 					foreach (var orderService in notPeriodicService) {
 						writeOffs.Add(new WriteOff(client, orderService.Cost) {
 							Comment = orderService.Description + " по заказу №" + orderService.Order.Number
 						});
 					}
 					foreach (var orderService in periodicService) {
-						writeOffs.Add(new WriteOff(client, orderService.Cost / daysInMonth * (daysInMonth - now.Day - 1)) {
+						writeOffs.Add(new WriteOff(client, orderService.Cost / daysInMonth * (daysInMonth - now.Day + 1)) {
 							Comment = orderService.Description + " по заказу №" + orderService.Order.Number
 						});
 					}
@@ -509,9 +509,9 @@ set s.LastStartFail = true;")
 					//если это день деактивации заказа, то нужно вернуть сумму за оставшееся число дней в месяце за периодические услуги
 					var periodicService = disableOrders.SelectMany(s => s.OrderServices)
 						.Where(s => s.IsPeriodic);
-					sum -= periodicService.Sum(s => s.Cost) / daysInMonth * (daysInMonth - now.Day - 1);
+					sum -= periodicService.Sum(s => s.Cost) / daysInMonth * (daysInMonth - now.Day);
 					foreach (var orderService in periodicService) {
-						writeOffs.Add(new WriteOff(client, orderService.Cost / daysInMonth * (daysInMonth - now.Day - 1)) {
+						writeOffs.Add(new WriteOff(client, -orderService.Cost / daysInMonth * (daysInMonth - now.Day)) {
 							Comment = orderService.Description + " по заказу №" + orderService.Order.Number
 						});
 					}

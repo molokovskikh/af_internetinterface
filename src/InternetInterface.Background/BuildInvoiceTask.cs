@@ -16,11 +16,13 @@ namespace InternetInterface.Background
 		public BuildInvoiceTask(Mailer mailer)
 		{
 			_mailer = mailer;
+			NotSend = false;
 			Plan(PlanPeriod.Month, 1.Day());
 			Action = () => WithSession(Process);
 		}
 
 		public DateTime MagicDate = new DateTime(2013, 4, 1);
+		public bool NotSend { get; set; }
 
 		public void Process(ISession session)
 		{
@@ -34,7 +36,7 @@ namespace InternetInterface.Background
 				.Where(c => session.Query<WriteOff>().Any(w => w.Client == c && w.WriteOffDate >= begin && w.WriteOffDate < end))
 				.ToList();
 
-			if(DateTime.Today <= MagicDate) {
+			if (DateTime.Today <= MagicDate) {
 				foreach (var client in clients) {
 					var writeOffs = session.Query<WriteOff>().Where(w => w.Client == client && w.WriteOffDate >= begin && w.WriteOffDate < end).ToList();
 
@@ -46,17 +48,22 @@ namespace InternetInterface.Background
 					_mailer.Clear();
 				}
 			}
-			if(DateTime.Today >= MagicDate) {
+			if (DateTime.Today >= MagicDate) {
+				clients = session.Query<Client>()
+					.Where(c => c.LawyerPerson != null)
+					.ToList();
 				foreach (var client in clients) {
-					var orders = session.Query<Orders>().Where(o => o.Client == client && o.OrderStatus == OrderStatus.Enabled);
+					var orders = session.Query<Orders>().Where(o => o.Client == client).ToList();
+					orders = orders.Where(o => o.OrderStatus == OrderStatus.Enabled && o.OrderServices != null).ToList();
 					var invoice = new Invoice(client, period, orders);
 					session.Save(invoice);
-
-					_mailer.Invoice(invoice, ContactType.ActEmail);
-					_mailer.Send();
-					_mailer.Clear();
+					if (!NotSend) {
+						_mailer.Invoice(invoice, ContactType.ActEmail);
+						_mailer.Send();
+						_mailer.Clear();
+					}
 					//создаем акты по счетам в предыдущем месяце
-					if(DateTime.Today > MagicDate) {
+					if (DateTime.Today > MagicDate) {
 						var invoices = session.Query<Invoice>()
 							.Where(i => i.Client.LawyerPerson != null)
 							.Where(i => i.Date >= begin && i.Date <= end)
@@ -64,9 +71,11 @@ namespace InternetInterface.Background
 						var acts = Act.Build(invoices, DateTime.Today);
 						foreach (var act in acts) {
 							session.Save(act);
-							_mailer.Act(act);
-							_mailer.Send();
-							_mailer.Clear();
+							if (!NotSend) {
+								_mailer.Act(act);
+								_mailer.Send();
+								_mailer.Clear();
+							}
 						}
 					}
 				}

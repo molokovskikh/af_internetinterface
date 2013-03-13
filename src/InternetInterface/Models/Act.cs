@@ -22,7 +22,6 @@ namespace InternetInterface.Models
 		public Act(string payerName, DateTime date)
 			: this()
 		{
-			//SetPayer(payerName);
 			PayerName = payerName;
 			ActDate = date;
 			Period = date.ToPeriod();
@@ -38,51 +37,28 @@ namespace InternetInterface.Models
 			Client = client;
 		}
 
-		public Act(Client client, Orders order) : this(client)
-		{
-			Order = order;
-		}
-
 		public Act(DateTime actDate, params Invoice[] invoices)
 		{
 			Period = invoices.Select(i => i.Period).Distinct().Single();
 			Recipient = invoices.Select(i => i.Recipient).Distinct().Single();
 			PayerName = invoices.Select(i => i.PayerName).Distinct().Single();
 			Customer = invoices.Select(i => i.Customer).Distinct().Single();
+			Client = invoices.Select(i => i.Client).Distinct().Single();
 
 			ActDate = actDate;
 			var invoiceParts = invoices.SelectMany(i => i.Parts);
-			//if (Payer.InvoiceSettings.DoNotGroupParts) {
 			Parts = invoiceParts
 				.Select(p => new ActPart(p.Name, (int)p.Count, p.Cost) {
 					OrderService = p.OrderService
 				})
 				.ToList();
-			//}
-			//else {
-			//	Parts = invoiceParts
-			//		.GroupBy(p => new { p.Name, p.Cost })
-			//		.Select(g => new ActPart(g.Key.Name, g.Sum(i => i.Count), g.Key.Cost))
-			//		.ToList();
-			//}
 			CalculateSum();
-
-			//foreach (var part in invoiceParts.Where(p => p.Ad != null))
-			//	part.Ad.Act = this;
 
 			foreach (var invoice in invoices)
 				invoice.Act = this;
 
 			CreatedOn = DateTime.Now;
 		}
-
-		//public void SetPayer(string payer)
-		//{
-		//	Payer = payer;
-		//	Recipient = payer.Recipient;
-		//	PayerName = payer.Name;
-		//	Customer = payer.Customer;
-		//}
 
 		[PrimaryKey]
 		public uint Id { get; set; }
@@ -117,14 +93,12 @@ namespace InternetInterface.Models
 		[BelongsTo]
 		public virtual Client Client { get; set; }
 
-		[BelongsTo(Column = "OrderId")]
-		public virtual Orders Order { get; set; }
 
 		public static IEnumerable<Act> Build(List<Invoice> invoices, DateTime documentDate)
 		{
 			return invoices
 				.Where(i => i.Act == null)
-				.GroupBy(i => new { i.PayerName, i.Customer, i.Recipient })
+				.GroupBy(i => new { i.PayerName, i.Customer, i.Recipient, i.Client })
 				.Select(g => new Act(documentDate, g.ToArray()))
 				.ToList();
 		}
@@ -137,6 +111,17 @@ namespace InternetInterface.Models
 		public virtual string SumInWords()
 		{
 			return ViewHelper.InWords((float)Sum);
+		}
+
+		public IList<Orders> Orders
+		{
+			get
+			{
+				if (Parts == null)
+					return new List<Orders>();
+				var group = Parts.Select(p => p.OrderService).GroupBy(o => o.Order);
+				return group.Select(g => g.Key).ToList();
+			}
 		}
 	}
 

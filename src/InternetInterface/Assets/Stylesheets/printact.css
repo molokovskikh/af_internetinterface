@@ -5,3 +5,42 @@
 .noborder {
 	border: solid 0px;
 }
+
+div.rightAlign {
+	text-align: right;
+	width: 100%;
+}
+
+div.rightFloatAlign {
+	text-align: right;
+	width: 50%;
+	float: left;
+}
+
+div.leftFloatAlign {
+	text-align: left;
+	width: 50%;
+	float: left;
+}
+
+td.width50{
+	width: 25%;
+}
+
+td.width1{
+	width: 1%;
+}
+
+td.width10{
+	width: 10%;
+}
+
+table.footer td{
+padding-left: 10px;
+}
+
+div.rightHead {
+	width: 50%;
+	horiz-align: left;
+	margin-left: 50%;
+}

@@ -44,9 +44,7 @@ namespace InternetInterface.Test.Functional
 			var commutator = new NetworkSwitch("Тестовый коммутатор", session.Query<Zone>().First());
 			session.Save(commutator);
 			Open(client.Redirect());
-			browser.ShowWindow(NativeMethods.WindowShowStyle.Maximize);
 			Click("Добавить заказ");
-			browser.ShowWindow(NativeMethods.WindowShowStyle.Maximize);
 			browser.SelectList("SelectSwitches").SelectByValue(commutator.Id.ToString());
 			browser.TextField("Port").AppendText("1");
 			browser.TextField(Find.ByName("ConnectSum")).AppendText("100");
@@ -68,13 +66,11 @@ namespace InternetInterface.Test.Functional
 		public void AddOrderWithoutEndPointTest()
 		{
 			Open(client.Redirect());
-			browser.ShowWindow(NativeMethods.WindowShowStyle.Maximize);
 			Click("Добавить заказ");
 			browser.TextField(Find.ByName("order.Number")).TypeText("99");
 			browser.CheckBox(Find.ByName("withoutEndpoint")).Checked = true;
 			AddOrderService();
 
-			browser.ShowWindow(NativeMethods.WindowShowStyle.Maximize);
 			Click("Сохранить");
 			var order = session.QueryOver<Orders>().Where(o => o.Client == client).SingleOrDefault();
 			Assert.That(order.EndPoint, Is.Null);
@@ -118,9 +114,7 @@ namespace InternetInterface.Test.Functional
 			browser.Button("EditButton" + order.Id).Click();
 			browser.TextField(Find.ByName("order.Number")).TypeText("99");
 			browser.CheckBox(Find.ByName("order.OrderServices[0].IsPeriodic")).Checked = false;
-			browser.ShowWindow(NativeMethods.WindowShowStyle.ShowMaximized);
 			Click("Сохранить");
-			browser.ShowWindow(NativeMethods.WindowShowStyle.ShowMaximized);
 			session.Clear();
 			var savedOrder = session.QueryOver<Orders>().Where(o => o.Client == client).SingleOrDefault();
 			Assert.That(savedOrder.Number, Is.EqualTo(99));
@@ -151,11 +145,8 @@ namespace InternetInterface.Test.Functional
 			session.Save(order);
 			Open(client.Redirect());
 			AssertText("заказ № " + order.Number);
-			browser.ShowWindow(NativeMethods.WindowShowStyle.ShowMaximized);
 			browser.Button("closeOrderButton" + order.Id).Click();
-			browser.ShowWindow(NativeMethods.WindowShowStyle.ShowMaximized);
 			browser.WaitUntilContainsText("Вы уверены");
-			browser.ShowWindow(NativeMethods.WindowShowStyle.ShowMaximized);
 			Click("Закрыть");
 			session.Clear();
 			var savedOrder = session.QueryOver<Orders>().Where(o => o.Client == client).SingleOrDefault();
@@ -183,11 +174,8 @@ namespace InternetInterface.Test.Functional
 			AssertText("заказ № " + order.Number);
 			AssertText("<Подключенные услуги(3)");
 			browser.Button("EditButton" + order.Id).Click();
-			browser.ShowWindow(NativeMethods.WindowShowStyle.ShowMaximized);
 			browser.Link(Find.ByText("Удалить")).Click();
-			browser.ShowWindow(NativeMethods.WindowShowStyle.ShowMaximized);
 			Click("Сохранить");
-			browser.ShowWindow(NativeMethods.WindowShowStyle.ShowMaximized);
 			session.Clear();
 			var savedOrder = session.QueryOver<Orders>().Where(o => o.Client == client).SingleOrDefault();
 			Assert.That(savedOrder.OrderServices.Count, Is.EqualTo(2));

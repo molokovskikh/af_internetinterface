@@ -82,7 +82,7 @@ namespace InternetInterface.Models
 #if DEBUG
 			To = "kvasovtest@analit.net";
 #endif
-			Subject = String.Format("Счет за {0}", act.Period);
+			Subject = String.Format("Акт за {0}", act.Period);
 
 			PropertyBag["act"] = act;
 

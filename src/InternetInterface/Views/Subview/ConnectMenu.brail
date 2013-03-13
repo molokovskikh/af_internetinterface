@@ -23,7 +23,97 @@
 		});
 	}
 </script>
+<style>
+	.CalendarInput
+	{
+	background:  transparent url(../images/calendar.gif) no-repeat scroll center center;
+	width: 25px;
+	height: 19px;
+	}
+</style>
+
+${app.Asset("calendar-blue.css")}
+${app.Asset("calendar.setup.js")}
+${app.Asset("calendar.js")}
+${app.Asset("calendar-ru_win_.js")}
+${app.Asset("calendar-setup.js")}
 <%if PartnerAccessSet.AccesPartner("DHCP"): %>
+	<table id="editConnectTable" class="table" style="width: 100%;">
+		<thead>
+			<th colspan = "3" >
+				Данные заказа
+		</th>
+		</thead>
+		<tbody>
+			<tr>
+				<td>
+					Номер заказа
+				</td>
+				<td colspan="2">
+					<input type="text" name="order.Number" value="${OrderInfo.Order.Number}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Дата начала
+				</td>
+				<td colspan="2">
+					<input type="text" id="order_BeginDate" name="order.BeginDate" value="${OrderInfo.Order.BeginDate}" class="validate-date input-date valid">
+						<input type="button" class="CalendarInput" id="CalendarInput0">
+						</td>
+			</tr>
+			<tr>
+				<td>
+					Дата окончания
+				</td>
+				<td colspan="2">
+					<input type="text" id="order_EndDate" name="order.EndDate" value="${OrderInfo.Order.EndDate}" class="validate-date input-date valid">
+						<input type="button" class="CalendarInput" id="CalendarInput1">
+						</td>
+			</tr>
+
+			<td colspan="3">
+				<strong>
+					Подключенные услуги:
+				</strong>
+				<table id='OrderServiceTable${OrderInfo.Order.Id}'>
+					<tr>
+						<th>
+							Описание
+						</th>
+						<th>
+							Стоимость
+						</th>
+						<th>
+							Периодичность
+						</th>
+					</tr>
+					<% if OrderInfo.Order.OrderServices != null and OrderInfo.Order.OrderServices.Count > 0: %>
+
+					<% for i, item in enumerate(OrderInfo.Order.OrderServices): %>
+					<tr id='orderService${item.Id}'>
+						<td>
+							<input type='text' name='order.OrderServices[${i}].Description' value='${item.Description}'>
+							</td>
+						<td>
+							<input type='text' name='order.OrderServices[${i}].Cost' value='${item.Cost}'>
+						</td>
+						<td>
+							<input type='checkbox' name='order.OrderServices[${i}].IsPeriodic' ${"checked" if (item.IsPeriodic)}>
+							</td>
+						<td>
+							<a href='#' onclick="deleteOrderService('orderService${item.Id}')">Удалить</a>
+						</td>
+					</tr>
+					<% end %>
+					<% end %>
+				</table>
+				<a id="addOrderServiceLink" class="icon icon-add" name="2" href="javascript:"
+										onclick="addOrderService(${OrderInfo.Order.Id})">Добавить</a>
+			</td>
+			</tr>
+		</tbody>
+	</table>
 <table class="table">
 	<thead>
 		<tr>
@@ -65,3 +155,4 @@
 	</tbody>
 </table>
 <%end %>
+	${app.Asset("OrderService.js")}
