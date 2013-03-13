@@ -28,6 +28,8 @@ namespace InternetInterface.Models
 		[Description("Телефон для смс рассылки")] SmsSending,
 
 		[Description("техническая информация")] TechPhone,
+
+		[Description("EMail для рассылки счетов/актов")] ActEmail
 	}
 
 	[ActiveRecord(Table = "Contacts", Schema = "Internet", Lazy = true), Auditable]

@@ -1,0 +1,139 @@
+﻿<style>
+div.rightAlign {
+	text-align: right;
+	width: 100%;
+}
+
+div.rightFloatAlign {
+	text-align: right;
+	width: 50%;
+	float: left;
+}
+
+div.leftFloatAlign {
+	text-align: left;
+	width: 50%;
+	float: left;
+}
+
+td.width50{
+	width: 25%;
+}
+
+table.footer td{
+padding-left: 10px;
+}
+</style>
+<div id=page_holder>
+<div style="width: 50%; horiz-align: left; margin-left: 50%;">
+Общество с ограниченной ответственностью «Инфорум»<br/>
+	394036, г. Воронеж, ул. Студенческая, д. 12а<br/>
+	тел./факс. (473) 22-999-87<br/>
+	e-mail: <a href="mailto:internet@analit.net">internet@analit.net</a>
+</div>
+<div class="rightAlign">
+<p/>
+<strong>${act.Id}</strong>
+</div>
+<h3>Акт приемки услуги по подключению</h3>
+<div class="leftFloatAlign">
+г. Воронеж
+</div>
+<div class="rightFloatAlign">
+${act.ActDate.ToLongDateString()}<p>
+</div>
+<br/>
+<div>
+Настоящим подтверждается, что в соответствии с Договором № ${act.Client.Id}  от ${act.Client.RegDate.ToLongDateString()} между ООО «Инфорум» («Исполнитель») и ${act.Client.Name} («Заказчик»), Исполнитель сдал, а Заказчик принял подключение к Услуге доступа к сети Интернет<% if act.Order != null: %>, указанной в Заказе № ${act.Order.Number}<% end %>.
+<div>
+<p>
+<table>
+<tr>
+		<th>№</th>
+		<th>Наименование работы (услуги)</th>
+		<th>Ед. изм.</th>
+		<th style="width:1%">Количество</th>
+		<th>Цена</th>
+		<th>Сумма</th>
+	</tr>
+	<% for i, bill in enumerate(act.Parts): %>
+	<tr>
+		<td>${i + 1}</td>
+		<td>${bill.Name}</td>
+		<td>услуга</td>
+		<td>${bill.Count}</td>
+		<td style="width:10%">${bill.Cost.ToString("0.00")}</td>
+		<td style="width:10%">${bill.Sum.ToString("0.00")}</td>
+	</tr>
+	<% end %>
+	<tr class="result">
+		<td class="result-label" colspan="5">Итого:</td>
+		<td>${act.Sum.ToString("0.00")}</td>
+	</tr>
+	<tr class="result">
+		<td class="result-label" colspan="5">Без налога (НДС):</td>
+		<td>-</td>
+	</tr>
+	<tr class="result">
+		<td class="result-label" colspan="5">Всего (с учетом НДС):</td>
+		<td>${act.Sum.ToString("0.00")}</td>
+	</tr>
+</table>
+
+<div>
+<p>Всего оказано услуг на сумму: ${act.SumInWords()}, в т.ч.: НДС - Ноль рублей 00 копеек (УСН,  гл.26.2 НК РФ).<p>
+Вышеперечисленные услуги выполнены полностью и в срок. Заказчик претензий по объему, качеству и срокам оказания услуг не имеет.<p>
+<% if act.Order != null: %>
+Дата начала предоставления Услуг по Заказу №${act.Order.Number}: ${act.Order.BeginDate.ToLongDateString()}
+<% end %>
+</div>
+<p><p>
+<table class="footer">
+	<tr>
+		<td colspan="2">
+		<strong>
+			ООО "Инфорум"
+		</strong>
+		</td>
+		<td colspan="2">
+		<strong>
+			${act.Client.Name}
+		</strong>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			Менеджер проектов
+		</td>
+		<td colspan="2">
+		</td>
+	</tr>
+	<tr>
+		<td class="width50">
+		</td>
+		<td class="width50">
+			Роднищев А.Ю.
+		</td>
+		<td class="width50">
+		</td>
+		<td class="width50">
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+		<p>
+		</td>
+		<td colspan="2">
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			мп
+		</td>
+		<td colspan="2">
+			мп
+		</td>
+	</tr>
+<table>
+
+</div>

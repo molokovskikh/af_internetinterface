@@ -512,6 +512,17 @@ namespace InternetInterface.Controllers
 				if(existingOrder.OrderServices == null)
 					existingOrder.OrderServices = new List<OrderService>();
 				DbSession.SaveOrUpdate(existingOrder);
+
+				// создаем новый акт
+				var act = new Act(client, existingOrder);
+				DbSession.Save(act);
+				// создаем новый счет
+				var invoice = new Invoice(client);
+				DbSession.Save(invoice);
+				// создаем новый договор
+				var contract = new Contract(existingOrder);
+				DbSession.Save(contract);
+
 				if(Order.OrderServices == null)
 					Order.OrderServices = new List<OrderService>();
 
@@ -533,7 +544,30 @@ namespace InternetInterface.Controllers
 						orderService.Order = existingOrder;
 						DbSession.Save(orderService);
 					}
+					// при сохранении заказа сохраняем начисления для разовых услуг в акте и для периодических в счете
+					if(!orderService.IsPeriodic) {
+						var partAct = new ActPart(act) {
+							Count = 1,
+							Cost = orderService.Cost,
+							Name = orderService.Description
+						};
+						DbSession.Save(partAct);
+					}
+					else {
+						var daysInMonth = DateTime.DaysInMonth(Order.BeginDate.Value.Year, Order.BeginDate.Value.Month);
+						var partInvoice = new InvoicePart(invoice,
+							1,
+							orderService.Cost / daysInMonth * (daysInMonth - Order.BeginDate.Value.Day),
+							orderService.Description);
+						DbSession.Save(partInvoice);
+					}
 				}
+				DbSession.Refresh(act);
+				DbSession.Refresh(invoice);
+				act.CalculateSum();
+				invoice.CalculateSum();
+				DbSession.Save(act);
+				DbSession.Save(invoice);
 				RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID);
 				return;
 			}

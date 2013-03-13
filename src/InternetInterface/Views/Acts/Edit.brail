@@ -1,0 +1,80 @@
+﻿<script>
+	$(function () {
+		$("form.accountant-friendly").validate();
+		$("#bills").data("template", cloneRowTemplate);
+	});
+</script>
+
+<% if act.Id: %>
+<h2>Редактирование акта №${act.Id}</h2>
+<% else: %>
+<h2>Формирование дополнительного акта</h2>
+<% end %>
+
+<form class="accountant-friendly" method=post>
+
+	<div class=block>
+		<table>
+		<tr>
+			<td>Плательщик:</td>
+			<td>
+				${app.LinkTo(act.PayerName, @Search, @Redirect, {"filter.ClientCode": act.Client.Id})}
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label>Дата:</label>
+			</td>
+			<td>
+				<input type=text name="act.ActDate" class="required validate-date input-date graph_date" value="${act.ActDate.ToShortDateString()}">
+				${app.GetValidationError(act, "ActDate")}
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label>Период:</label>
+			</td>
+			<td>
+				${app.Edit("act.Period")}
+				${app.GetValidationError("act.Period")}
+			</td>
+		</tr>
+		</table>
+	</div>
+
+	<div class=block>
+
+		<table id=bills class="table editable">
+			<thead>
+				<tr>
+					<th><a href="javascript:" class=add>Добавить</a></th>
+					<th>Услуга</th>
+					<th>Стоимость</th>
+					<th>Количество</th>
+				</tr>
+			</thead>
+			<% for i, part in enumerate(act.Parts): %>
+			<tr>
+				<td>
+					<a href="javascript:" class=delete>Удалить</a>
+				</td>
+				<td>
+					${FormHelper.HiddenField("act.parts[${i}].Id", part.Id)}
+					<textarea name="act.parts[${i}].name" cols=30 rows=2 class="required">${part.Name}</textarea>
+					${app.GetValidationError(part, "Name")}
+				</td>
+				<td>
+					<input name="act.parts[${i}].cost" type=text class="required validate-cost" value="${part.Cost.ToString("#.##")}">
+					${app.GetValidationError(part, "Cost")}
+				</td>
+				<td>
+					<input type=text name="act.parts[${i}].count" class="required validate-count" value="${part.Count}">
+					${app.GetValidationError(part, "Count")}
+				</td>
+			</tr>
+			<% end %>
+		</table>
+	</div>
+
+	<input type=submit value=Сохранить>
+</form>

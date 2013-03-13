@@ -112,7 +112,7 @@ namespace InternetInterface.Controllers
 
 			if (Form["email"] != null) {
 				foreach (var invoice in invoices)
-					this.Mailer().Invoice(invoice).Send();
+					this.Mailer().Invoice(invoice, ContactType.ActEmail).Send();
 
 				Notify("Отправлено");
 			}

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
@@ -27,6 +28,45 @@ namespace InternetInterface.Test.Integration
 			controller.DbSession = session;
 		}
 
+		[Test(Description = "Проверяет корректное создание акта и счета при создании или редактировании заказа")]
+		public void CreateActAndInvoiceTest()
+		{
+			var client = ClientHelper.CreateLaywerPerson();
+			session.Save(client);
+			SystemTime.Now = () => new DateTime(2013, 4, 20);
+			var order = new Orders();
+			var orderService = new OrderService {
+				Cost = 50,
+				Description = "Разовая",
+				IsPeriodic = false
+			};
+			order.OrderServices = new List<OrderService> { orderService };
+			orderService = new OrderService {
+				Cost = 300,
+				Description = "Периодичная",
+				IsPeriodic = true
+			};
+			order.OrderServices.Add(orderService);
+			orderService = new OrderService {
+				Cost = 30,
+				Description = "Периодичная",
+				IsPeriodic = true
+			};
+			order.OrderServices.Add(orderService);
+
+			controller.SaveSwitchForClient(client.Id, new ConnectInfo(), 0, new StaticIp[0], 0, "100", order, true);
+			session.Flush();
+			var act = session.Query<Act>().FirstOrDefault(a => a.Client == client);
+			Assert.That(act.Sum, Is.EqualTo(50));
+			Assert.That(act.Parts[0].Name, Is.EqualTo("Разовая"));
+			Assert.That(act.Parts[0].Cost, Is.EqualTo(50));
+			var invoice = session.Query<Invoice>().FirstOrDefault(a => a.Client == client);
+			Assert.That(invoice.Sum, Is.EqualTo(110));
+			Assert.That(invoice.Parts[0].Name, Is.EqualTo("Периодичная"));
+			Assert.That(invoice.Parts[0].Cost, Is.EqualTo(100));
+			Assert.That(invoice.Parts[1].Name, Is.EqualTo("Периодичная"));
+			Assert.That(invoice.Parts[1].Cost, Is.EqualTo(10));
+		}
 
 		[Test]
 		public void Delete_all_endpoint_on_client_dissolve()

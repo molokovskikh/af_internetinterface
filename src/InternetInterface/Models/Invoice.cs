@@ -38,6 +38,18 @@ namespace InternetInterface.Models
 			CalculateSum();
 		}
 
+		public Invoice(Client client, Period period, IEnumerable<Orders> orders) : this(client)
+		{
+			Period = period;
+			foreach (var orderService in orders
+				.SelectMany(order => order.OrderServices.Where(s => s.IsPeriodic))) {
+				Parts.Add(new InvoicePart(this, 1, orderService.Cost, orderService.Description + " по заказу №" + orderService.Order.Number) {
+					OrderService = orderService
+				});
+			}
+			CalculateSum();
+		}
+
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
@@ -64,6 +76,9 @@ namespace InternetInterface.Models
 
 		[HasMany(Cascade = ManyRelationCascadeEnum.AllDeleteOrphan)]
 		public virtual IList<InvoicePart> Parts { get; set; }
+
+		[BelongsTo(Lazy = FetchWhen.OnInvoke)]
+		public virtual Act Act { get; set; }
 
 		public virtual string SumInWords()
 		{
@@ -110,5 +125,8 @@ namespace InternetInterface.Models
 
 		[BelongsTo]
 		public virtual Invoice Invoice { get; set; }
+
+		[BelongsTo]
+		public virtual OrderService OrderService { get; set; }
 	}
 }

@@ -48,6 +48,21 @@ namespace InternetInterface.Printer
 								.ToArray();
 						});
 					}
+					else if(name == "act") {
+						ArHelper.WithSession(s => {
+							documents = s.Query<Act>().Where(a => ids.Contains(a.Id))
+								.OrderBy(a => a.PayerName)
+								.ToArray();
+						});
+					}
+					else if(name == "contract") {
+						ArHelper.WithSession(s => {
+							documents = s.Query<Contract>().Where(a => ids.Contains(a.Id))
+								.OrderBy(a => a.Customer)
+								.ToArray();
+						});
+					}
+
 					Print(brail, printer, name, documents);
 				}
 			}

@@ -28,14 +28,14 @@ namespace InternetInterface.Models
 		{
 		}
 
-		public Mailer Invoice(Invoice invoice)
+		public Mailer Invoice(Invoice invoice, ContactType type = ContactType.Email)
 		{
 			Layout = "Print";
 			Template = "Invoice";
 			IsBodyHtml = true;
 
 			From = "internet@ivrn.net";
-			To = invoice.Client.Contacts.Where(c => c.Type == ContactType.Email).Implode(c => c.Text);
+			To = invoice.Client.Contacts.Where(c => c.Type == type).Implode(c => c.Text);
 #if DEBUG
 			To = "kvasovtest@analit.net";
 #endif
@@ -67,6 +67,24 @@ namespace InternetInterface.Models
 			var registrator = writeOff.Registrator != null ? writeOff.Registrator.Name : string.Empty;
 			PropertyBag["registrator"] = registrator;
 			PropertyBag["writeOff"] = writeOff;
+
+			return this;
+		}
+
+		public Mailer Act(Act act)
+		{
+			Layout = "Print";
+			Template = "Act";
+			IsBodyHtml = true;
+
+			From = "internet@ivrn.net";
+			To = act.Client.Contacts.Where(c => c.Type == ContactType.ActEmail).Implode(c => c.Text);
+#if DEBUG
+			To = "kvasovtest@analit.net";
+#endif
+			Subject = String.Format("Счет за {0}", act.Period);
+
+			PropertyBag["act"] = act;
 
 			return this;
 		}

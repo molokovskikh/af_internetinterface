@@ -131,6 +131,8 @@ namespace InternetInterface.Models
 						new ControllerPermission(typeof(PaymentsController)),
 						new ControllerPermission(typeof(ChannelGroupsController)),
 						new ControllerPermission(typeof(InvoicesController)),
+						new ControllerPermission(typeof(ActsController)),
+						new ControllerPermission(typeof(ContractsController)),
 						new ControllerPermission(typeof(ServicesController)),
 						new ControllerPermission(typeof(TariffsController)),
 						new ControllerPermission(typeof(ExportController)),

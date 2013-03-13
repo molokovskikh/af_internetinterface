@@ -1,0 +1,48 @@
+﻿${app.BeginFormFor("filter")}
+<h3>Акты</h3>
+${app.FilterFor("filter.Year")}
+${app.FilterFor("filter.Interval")}
+${app.FilterFor("filter.SearchText")}
+${app.EndFormFor("filter")}
+
+<form method=post action=Process>
+	<div class=block>
+		<input type=submit value="Удалить" name="delete">
+		<input type=submit value="Отправить по e-mail" name="email">
+		${FormHelper.Select("printer", printers)}
+		<input type=submit value="Напечатать" name="print">
+	</div>
+
+	<table class="table">
+		<% if acts.Count: %>
+		<tr>
+			<th><input type=checkbox class=all></th>
+			<th></th>
+			<th>${app.Sortable("№", "Id")}</th>
+			<th>${app.Sortable("Номер", "ClientId")}</th>
+			<th>${app.Sortable("Плательщик", "PayerName")}</th>
+			<th>${app.Sortable("Сумма", "Sum")}</th>
+			<th>${app.Sortable("За период", "Period")}</th>
+			<th>${app.Sortable("Дата", "ActDate")}</th>
+		</tr>
+		<% for act in acts: %>
+		<tr>
+			<td><input type=checkbox value="${act.Id}" name="acts[${act.Id}].Id"></td>
+			<td>${app.LinkTo(act, "Редактировать", @Edit)}</td>
+			<td>${app.LinkTo(act, act.Id.ToString(), @Print)}</td>
+			<td>
+				${app.LinkTo(act.Client.Id.ToString(), @Search, @Redirect, {"filter.ClientCode": act.Client.Id})}
+			</td>
+			<td>${act.PayerName}</td>
+			<td>${act.Sum.ToString("C")}</td>
+			<td>${act.Period}</td>
+			<td>${act.ActDate.ToShortDateString()}</td>
+		</tr>
+		<% end %>
+		<% else: %>
+		<tr class="EmptyData">
+			<td>По вашему запросу ничего не найдено</td>
+		</tr>
+		<% end %>
+	</table>
+</form>

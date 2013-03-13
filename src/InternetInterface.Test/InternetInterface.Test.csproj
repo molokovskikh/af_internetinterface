@@ -162,6 +162,7 @@
     <Compile Include="Helpers\PartnerHelper.cs" />
     <Compile Include="Helpers\PropertiesHelper.cs" />
     <Compile Include="Helpers\UseDialogOnce.cs" />
+    <Compile Include="Integration\ActsFilterFixture.cs" />
     <Compile Include="Integration\AgentFilterFixture.cs" />
     <Compile Include="Integration\ClientFixture.cs" />
     <Compile Include="Integration\ContactFixture.cs" />

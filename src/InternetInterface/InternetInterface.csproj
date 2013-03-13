@@ -124,6 +124,7 @@
     <Content Include="Assets\Stylesheets\client.css" />
     <Content Include="Assets\Stylesheets\orders.css" />
     <Content Include="Assets\Stylesheets\payments.css" />
+    <Content Include="Assets\Stylesheets\printact.css" />
     <Content Include="Assets\Stylesheets\service-requests.css" />
     <Content Include="Assets\Stylesheets\User.css" />
     <Content Include="Css\asc.gif" />
@@ -169,6 +170,9 @@
     <Content Include="Images\image005.gif" />
     <Content Include="Images\key.png" />
     <Content Include="Images\tick.png" />
+    <Content Include="Views\Acts\Index.brail" />
+    <Content Include="Views\Acts\Edit.brail" />
+    <Content Include="Views\Acts\Print.brail" />
     <None Include="Views\AgentInfo\GroupInfo.brail" />
     <None Include="Views\AgentInfo\PaymentBlock.brail" />
     <None Include="Views\AgentInfo\SummaryInformation.brail" />
@@ -177,6 +181,11 @@
     <None Include="Views\Brigads\ShowBrigad.brail" />
     <None Include="Views\ChannelGroups\Index.brail" />
     <None Include="Views\ChannelGroups\Edit.brail" />
+    <Content Include="Views\Contracts\Index.brail" />
+    <Content Include="Views\Contracts\Print.brail">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Views\Contracts\PrintFooter.brail" />
     <None Include="Views\Invoices\Edit.brail" />
     <None Include="Views\Invoices\Index.brail" />
     <None Include="Views\Invoices\InvoiceBody.brail" />
@@ -185,6 +194,7 @@
     <None Include="Views\Layouts\print.brail" />
     <None Include="Views\Mail\Invoice.brail" />
     <Content Include="Views\Map\Bookmark.brail" />
+    <Content Include="Views\Mail\Act.brail" />
     <None Include="Views\Map\ShowBookmarks.brail" />
     <None Include="Views\PrivateMessages\ForClient.brail" />
     <None Include="Views\PrivateMessages\ForSwitch.brail" />
@@ -297,10 +307,14 @@
     <Compile Include="AllLogic\GetClientsLogic.cs" />
     <Compile Include="AllLogic\Validation.cs" />
     <Compile Include="Components\ContactTypeList.cs" />
+    <Compile Include="Controllers\ActsController.cs" />
     <Compile Include="Controllers\AgentInfoController.cs" />
     <Compile Include="Controllers\BrigadsController.cs" />
     <Compile Include="Controllers\ChannelGroupsController.cs" />
+    <Compile Include="Controllers\ContractsController.cs" />
     <Compile Include="Controllers\ExportController.cs" />
+    <Compile Include="Controllers\Filter\ActsFilter.cs" />
+    <Compile Include="Controllers\Filter\ContractFilter.cs" />
     <Compile Include="Controllers\InvoicesController.cs" />
     <Compile Include="Controllers\PrivateMessagesController.cs" />
     <Compile Include="Controllers\ExitPartner.cs" />
@@ -356,6 +370,7 @@
     <Compile Include="Mails\LawyerUserWriteOffNotice.cs" />
     <Compile Include="Models\Access\AccessCategories.cs" />
     <Compile Include="Models\Access\AccessRules.cs" />
+    <Compile Include="Models\Act.cs" />
     <Compile Include="Models\AdditionalStatus.cs" />
     <Compile Include="Models\Agents.cs" />
     <Compile Include="Models\AgentTariff.cs" />
@@ -372,6 +387,7 @@
     <Compile Include="Models\ClientService.cs" />
     <Compile Include="Models\ConnectGraph.cs" />
     <Compile Include="Models\Contact.cs" />
+    <Compile Include="Models\Contract.cs" />
     <Compile Include="Models\Entrance.cs" />
     <Compile Include="Models\House.cs" />
     <Compile Include="Models\Internetsessionslog.cs" />
