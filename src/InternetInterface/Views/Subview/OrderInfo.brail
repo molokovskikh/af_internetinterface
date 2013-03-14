@@ -91,7 +91,9 @@ ${app.Asset("calendar-setup.js")}
 				Дата окончания
 			</td>
 			<td colspan="2">
+			<% if OrderInfo.Order.EndDate != null:%>
 				${OrderInfo.Order.EndDate.ToString("dd.MM.yyyy")}
+			<% end %>
 			</td>
 		</tr>
 

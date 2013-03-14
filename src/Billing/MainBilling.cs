@@ -486,7 +486,7 @@ set s.LastStartFail = true;")
 				var writeOffs = new List<WriteOff>();
 				//если это день активации заказа, то списываем плату за разовые услуги и за периодические пропорционально оставшимся дням месяца
 				var activateOrders = client.Orders.Where(o => o.BeginDate.Value.Date == now.Date);
-				var disableOrders = client.Orders.Where(o => o.EndDate.Value.Date == now.Date);
+				var disableOrders = client.Orders.Where(o => o.EndDate != null && o.EndDate.Value.Date == now.Date);
 				if (activateOrders.Any()) {
 					var periodicService = activateOrders.SelectMany(s => s.OrderServices)
 						.Where(s => s.IsPeriodic);
