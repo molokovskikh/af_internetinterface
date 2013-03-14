@@ -1,34 +1,30 @@
-﻿.addMenuItem
-	{
-	width:20px;
-	height:20px;
+﻿.addMenuItem {
+	width: 20px;
+	height: 20px;
 	background: url(${Siteroot}/images/plus__orange.png) no-repeat center top;
-	float:right;
-	}
-	.delMenuItem
-	{
-	width:20px;
-	height:20px;
-	float:right;
-	margin-right:90%;
-	background: url(${Siteroot}/images/onebit_32.png) no-repeat center top;
-	}
-	.error
-	{
-	color:Red;
-	font-size:small;
-	}
-	.ipPrefix
-	{
-	width:25px;
-	}
+	float: right;
+}
 
-	.CalendarInput
-	{
-	background:  transparent url(../images/calendar.gif) no-repeat scroll center center;
+.delMenuItem {
+	width: 20px;
+	height: 20px;
+	float: right;
+	margin-right: 90%;
+	background: url(${Siteroot}/images/onebit_32.png) no-repeat center top;
+}
+
+.error {
+	color: Red;
+	font-size: small;
+}
+
+.ipPrefix { width: 25px; }
+
+.CalendarInput {
+	background: transparent url(../../images/calendar.gif) no-repeat scroll center center;
 	width: 25px;
 	height: 19px;
-	}
+}
 
 div.clearBoth {
 	clear: both;
@@ -65,8 +61,8 @@ div.clearBoth {
 }
 
 .closeOrder {
-	border-left-width:0px;
-	text-align:right;
+	border-left-width:0px!important;
+	text-align:right!important;
 	width:400px;
 }
 

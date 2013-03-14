@@ -339,7 +339,7 @@ ${app.Asset("calendar-setup.js")}
 		</tbody>
 		</table>
 
-		<table class="table" id="endpointTable" <% if OrderInfo.Order.EndPoint == null and OrderInfo.Order.Id > 0: %> class="noDisplay" <% end %>>
+		<table class="table <% if OrderInfo.Order.EndPoint == null and OrderInfo.Order.Id > 0: %> noDisplay <% end %>" id="endpointTable">
 				</thead>
 		<tr>
 			<td colspan="3">
@@ -377,7 +377,16 @@ ${app.Asset("calendar-setup.js")}
 		</tr>
 		<tr>
 		  <td>Скорость</td>
+		  <%if _client.IsPhysical(): %>
 		  <td>${OrderInfo.ClientConnectInfo.GetNormalSpeed()}</td>
+		  <%else:%>
+			<td colspan=2>
+			<select name="ConnectInfo.PackageId" style="width: 200px;">
+				<%for j, speed in enumerate(Speeds): %>
+					<option value="${speed.PackageId}" ${"selected" if (speed.PackageId == ChSpeed)}> ${speed}  PID(${speed.PackageId}) ${speed.Description} </option>
+				<%end %>
+		  </td>
+		  <%end%>
 		</tr>
 		<tr>
 		  <td>Мониторинг</td>
