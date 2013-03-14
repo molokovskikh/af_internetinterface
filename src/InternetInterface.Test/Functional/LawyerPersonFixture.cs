@@ -51,7 +51,6 @@ namespace InternetInterface.Test.Functional
 			Open(client.Redirect());
 			Click("Добавить заказ");
 			browser.SelectList("SelectSwitches").SelectByValue(commutator.Id.ToString());
-			browser.SelectList(Find.ByName("ConnectInfo.PackageId")).SelectByValue(package.PackageId.ToString());
 			browser.TextField("Port").AppendText("1");
 			browser.TextField(Find.ByName("ConnectSum")).AppendText("100");
 			browser.TextField(Find.ByName("order.Number")).TypeText("99");
