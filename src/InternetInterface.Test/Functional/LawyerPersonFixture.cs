@@ -41,11 +41,17 @@ namespace InternetInterface.Test.Functional
 		[Test(Description = "Проверяет создание нового заказа с точкой подключения")]
 		public void AddOrderWithEndPointTest()
 		{
+			var package = new PackageSpeed {
+				Description = "10мб",
+				Speed = 10
+			};
+			session.Save(package);
 			var commutator = new NetworkSwitch("Тестовый коммутатор", session.Query<Zone>().First());
 			session.Save(commutator);
 			Open(client.Redirect());
 			Click("Добавить заказ");
 			browser.SelectList("SelectSwitches").SelectByValue(commutator.Id.ToString());
+			browser.SelectList(Find.ByName("ConnectInfo.PackageId")).SelectByValue(package.PackageId.ToString());
 			browser.TextField("Port").AppendText("1");
 			browser.TextField(Find.ByName("ConnectSum")).AppendText("100");
 			browser.TextField(Find.ByName("order.Number")).TypeText("99");
