@@ -50,5 +50,17 @@ namespace InternetInterface.Test.Functional
 			browser.Button("RegisterLegalButton").Click();
 			AssertText("Информация по клиенту " + name);
 		}
+
+		[Test(Description = "Проверяет обязательность поля с датой начала для заказа")]
+		public void RegisterLegalPersonWithoutBeginDateTest()
+		{
+			Open("Register/RegisterLegalPerson.rails");
+			var name = "Тестовый клиент" + DateTime.Now;
+			browser.TextField("LegalPerson_Name").AppendText(name);
+			browser.TextField("LegalPerson_ShortName").AppendText(name);
+			browser.TextField("order_BeginDate").Value = "";
+			browser.Button("RegisterLegalButton").Click();
+			AssertText("Это поле необходимо заполнить");
+		}
 	}
 }

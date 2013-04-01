@@ -1,4 +1,4 @@
-﻿
+﻿${app.Asset("registerlawperson.js")}
 <input type="hidden" name="hiddenClient" value="${LegalPerson}" />
 <div id="main">
 <div id="container" >

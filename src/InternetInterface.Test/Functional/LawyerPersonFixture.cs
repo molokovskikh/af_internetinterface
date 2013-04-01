@@ -86,6 +86,19 @@ namespace InternetInterface.Test.Functional
 			Assert.That(order.OrderServices[0].Cost, Is.EqualTo(1000));
 		}
 
+		[Test(Description = "Проверяет обязательность заполнения поля с датой начала заказа")]
+		public void AddOrderWithNullBeginDateTest()
+		{
+			Open(client.Redirect());
+			Click("Добавить заказ");
+			browser.TextField(Find.ByName("order.Number")).TypeText("99");
+			browser.TextField("order_BeginDate").Value = "";
+			browser.CheckBox(Find.ByName("withoutEndpoint")).Checked = true;
+			AddOrderService();
+			Click("Сохранить");
+			AssertText("Это поле необходимо заполнить.");
+		}
+
 		private void AddOrderService()
 		{
 			Click("Добавить");

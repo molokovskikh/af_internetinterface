@@ -276,7 +276,7 @@ ${app.Asset("calendar-setup.js")}
 					Дата начала
 				</td>
 				<td colspan="2">
-					<input type="text" id="order_BeginDate" name="order.BeginDate" value="${OrderInfo.Order.BeginDate}" class="validate-date input-date valid">
+					<input type="text" id="order_BeginDate" name="order.BeginDate" value="${OrderInfo.Order.BeginDate}" class="required validate-date input-date valid">
 						<input type="button" class="CalendarInput" id="CalendarInput0">
 						</td>
 			</tr>
