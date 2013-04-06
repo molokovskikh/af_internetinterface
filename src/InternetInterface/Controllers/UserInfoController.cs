@@ -379,12 +379,21 @@ namespace InternetInterface.Controllers
 			var newFlag = false;
 			var clientEntPoint = new ClientEndpoint();
 			var existingOrder = DbSession.Query<Orders>().FirstOrDefault(o => o.Id == EditConnect);
-			if (existingOrder != null) {
-				if(existingOrder.EndPoint != null)
-					clientEntPoint = existingOrder.EndPoint;
+			if (!client.IsPhysical()) {
+				if (existingOrder != null) {
+					if (existingOrder.EndPoint != null)
+						clientEntPoint = existingOrder.EndPoint;
+				}
+				else {
+					newFlag = true;
+				}
 			}
 			else {
-				newFlag = true;
+				var endPoint = DbSession.Get<ClientEndpoint>(EditConnect);
+				if (endPoint != null)
+					clientEntPoint = endPoint;
+				else
+					newFlag = true;
 			}
 
 			var olpPort = clientEntPoint.Port;
@@ -430,7 +439,7 @@ namespace InternetInterface.Controllers
 						clientEntPoint.Switch = DbSession.Load<NetworkSwitch>(ConnectInfo.Switch);
 						clientEntPoint.Monitoring = ConnectInfo.Monitoring;
 						if (!newFlag) {
-							clientEntPoint.UpdateAndFlush();
+							DbSession.SaveOrUpdate(clientEntPoint);
 						}
 						else {
 							clientEntPoint.SaveAndFlush();
@@ -1285,7 +1294,8 @@ where r.`Label`= :LabelIndex;")
 			client.Status = Status.Get(StatusType.BlockedAndConnected, DbSession);
 			client.BeginWork = null;
 			client.RatedPeriodDate = null;
-			DbSession.Delete(client.ConnectGraph);
+			if (client.ConnectGraph != null)
+				DbSession.Delete(client.ConnectGraph);
 			DbSession.SaveOrUpdate(client);
 			RedirectToReferrer();
 		}

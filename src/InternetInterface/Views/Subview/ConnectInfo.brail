@@ -1,4 +1,5 @@
-﻿<style type="text/css">
+﻿${app.Asset("EditingConnect.js")}
+<style type="text/css">
 	.addMenuItem
 	 {
 		 width:20px;
