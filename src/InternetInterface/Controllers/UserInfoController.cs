@@ -939,6 +939,7 @@ where r.`Label`= :LabelIndex;")
 			PropertyBag["EditConnectInfoFlag"] = filter.EditConnectInfoFlag;
 			PropertyBag["SendSmsNotifocation"] = client.SendSmsNotifocation;
 			PropertyBag["isService"] = false;
+			PropertyBag["RegionList"] = DbSession.Query<RegionHouse>().ToList();
 			ConnectPropertyBag(filter.ClientCode);
 			SendConnectInfo(client);
 			SendUserWriteOff();
