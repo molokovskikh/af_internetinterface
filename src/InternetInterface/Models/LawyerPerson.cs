@@ -69,7 +69,7 @@ namespace InternetInterface.Models
 
 		public virtual bool NeedShowWarning()
 		{
-			return Balance < -(Tariff * 1.9m);
+			return Balance < -(Tariff * 2.9m);
 		}
 	}
 }
