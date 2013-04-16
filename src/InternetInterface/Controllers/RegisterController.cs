@@ -45,7 +45,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["iptv"] = iptv;
 			PropertyBag["internet"] = internet;
 
-			phisClient.Password = CryptoPass.GeneratePassword();
+			phisClient.Password = CryptoPass.GeneratePassword(client.Id);
 			if (!CategorieAccessSet.AccesPartner("SSI"))
 				status = 1;
 
@@ -92,7 +92,7 @@ namespace InternetInterface.Controllers
 
 				Flash["_client"] = client;
 				Flash["WhoConnected"] = client.WhoConnected;
-				Flash["Password"] = CryptoPass.GeneratePassword();
+				Flash["Password"] = CryptoPass.GeneratePassword(client.Id);
 				Flash["Client"] = phisClient;
 				Flash["AccountNumber"] = client.Id.ToString("00000");
 				Flash["ConnectSumm"] = phisClient.ConnectSum;
@@ -263,7 +263,7 @@ namespace InternetInterface.Controllers
 		[AccessibleThrough(Verb.Post)]
 		public void RegisterPartner([DataBind("Partner")] Partner partner)
 		{
-			string Pass = CryptoPass.GeneratePassword();
+			string Pass = CryptoPass.GeneratePassword(partner.Id);
 			if (Partner.RegistrLogicPartner(partner, Validator)) {
 #if !DEBUG
 				if (ActiveDirectoryHelper.FindDirectoryEntry(partner.Login) == null)

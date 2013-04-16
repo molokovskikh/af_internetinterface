@@ -449,7 +449,7 @@ namespace InternetInterface.Models
 
 		public virtual string ChangePhysicalClientPassword()
 		{
-			var pass = CryptoPass.GeneratePassword();
+			var pass = CryptoPass.GeneratePassword(Id);
 			PhysicalClient.Password = CryptoPass.GetHashString(pass);
 			PhysicalClient.Update();
 			return pass;

@@ -19,11 +19,11 @@ namespace InternetInterface
 			return hash;
 		}
 
-		public static string GeneratePassword()
+		public static string GeneratePassword(uint clientId)
 		{
 			var availableChars = "23456789qwertyupasdfghjkzxcvbnmQWERTYUPASDFGHJKLZXCVBNM";
 			var password = String.Empty;
-			var random = new Random();
+			var random = new Random((int)clientId);
 			while (password.Length < 8)
 				password += availableChars[random.Next(0, availableChars.Length - 1)];
 			return password;
