@@ -176,13 +176,11 @@
     <Compile Include="Integration\ServicesFixture.cs" />
     <Compile Include="Integration\SessionControllerFixture.cs" />
     <Compile Include="Integration\SmsFixture.cs" />
-    <Compile Include="Integration\Tasks\BuildInvoiceTaskFixture.cs" />
     <Compile Include="Integration\Tasks\MailerFixture.cs" />
     <Compile Include="Integration\UserInfoControllerFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Integration\SetupFixture.cs" />
     <Compile Include="Troubleshoot.cs" />
-    <Compile Include="Unit\BuildInvoiceTaskFixture.cs" />
     <Compile Include="Unit\ByteFixture.cs" />
     <Compile Include="Unit\ClientFixture.cs" />
     <Compile Include="Unit\DataBinderFixture.cs" />

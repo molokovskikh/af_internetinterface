@@ -82,9 +82,6 @@
 				${App.LinkTo("Загрузить платежи", @Payments, @ProcessPayments)} <br />
 				${App.LinkTo("Банковские выписки", @Payments, @Index)} <br />
 				${App.LinkTo("Новый платеж", @Payments, @New)} <br />
-				${app.LinkTo("Счета", "Invoices", "Index")} <br />
-				${app.LinkTo("Акты", "Acts", "Index")}<br/>
-				${app.LinkTo("Договоры", "Contracts", "Index")}
 			</th>
 			<%end %>
 			<%if PartnerAccessSet.AccesPartner("SSI"): %>

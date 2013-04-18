@@ -67,12 +67,12 @@ namespace InternetInterface.Controllers
 				Notify("Удалено");
 			}
 
-			if (Form["email"] != null) {
+			/*if (Form["email"] != null) {
 				foreach (var act in acts)
 					this.Mailer().Act(act).Send();
 
 				Notify("Отправлено");
-			}
+			}*/
 
 			if (Form["print"] != null) {
 				var printer = Form["printer"];

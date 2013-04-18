@@ -1,4 +1,4 @@
-﻿setupCalendar();
+﻿//setupCalendar();
 
 function addOrderService(orderId) {
 	var index = getIndex(0, "#addOrderServiceLink");

@@ -54,7 +54,7 @@
 			<img alt="Save" src="../Images/application_edit.png"> Редактировать
 			</button>
 			</form>
-		 <%end %>
+		<%end %>
 		</th>
 		<th style="border-left-width:0px; text-align:right; width:400px;">
 			<a href="#" class="big-link" data-reveal-id="deletePointDialog" > 
@@ -191,13 +191,15 @@
 		  <td colspan=2>${ConnectInfo.Leased_IP}</td>
 		</tr>
 		<tr>
-		  <td>Свич</td>
-		  <td style="width:200px;"><select name="ConnectInfo.Switch" id="SelectSwitches" style="width: 100%">
-									<option value="0">Нет</option>
-								   <%for j, Switch in enumerate(Switches): %>
-									<option id="Option${j}" value="${Switch.Id}" ${"selected" if (Switch.Id.ToString() == ConnectInfo.Switch)} > ${Switch.Name} </option>
-								   <% end %>
-			</select></td>
+			<td>Свич</td>
+			<td style="width:200px;">
+				<select name="ConnectInfo.Switch" id="SelectSwitches" style="width: 100%">
+					<option value="0">Нет</option>
+					<%for j, Switch in enumerate(Switches): %>
+						<option id="Option${j}" value="${Switch.Id}" ${"selected" if (Switch.Id.ToString() == ConnectInfo.Switch)} > ${Switch.Name} </option>
+					<% end %>
+				</select>
+			</td>
 			<td id="switch_info"></td>
 		</tr>
 		<tr>

@@ -8,7 +8,7 @@ using NUnit.Framework;
 
 namespace InternetInterface.Test.Functional
 {
-	[TestFixture]
+	[TestFixture, Ignore("Отключет функционал")]
 	public class InvoiceFixture : global::Test.Support.Web.WatinFixture2
 	{
 		private Client client;
@@ -35,7 +35,7 @@ namespace InternetInterface.Test.Functional
 			session.Save(invoice);
 		}
 
-		[Test]
+		[Test, Ignore("Отключет функционал")]
 		public void View_invoices()
 		{
 			Open("Map/SiteMap.rails");
@@ -43,7 +43,7 @@ namespace InternetInterface.Test.Functional
 			AssertText("Счета");
 		}
 
-		[Test]
+		[Test, Ignore("Отключет функционал")]
 		public void Edit_invoice()
 		{
 			Open("Invoices/Index");

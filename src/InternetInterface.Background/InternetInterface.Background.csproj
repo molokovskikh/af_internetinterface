@@ -61,7 +61,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bootstraper.cs" />
-    <Compile Include="BuildInvoiceTask.cs" />
     <Compile Include="MailEndpointProcessor.cs" />
     <Compile Include="Waiter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -110,12 +110,12 @@ namespace InternetInterface.Controllers
 				Notify("Удалено");
 			}
 
-			if (Form["email"] != null) {
+			/*if (Form["email"] != null) {
 				foreach (var invoice in invoices)
 					this.Mailer().Invoice(invoice, ContactType.ActEmail).Send();
 
 				Notify("Отправлено");
-			}
+			}*/
 
 			if (Form["print"] != null) {
 				var printer = Form["printer"];

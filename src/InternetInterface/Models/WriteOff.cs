@@ -109,5 +109,17 @@ namespace InternetInterface.Models
 		{
 			return String.Format("{0} - {1}", WriteOffDate, WriteOffSum);
 		}
+
+		public virtual Appeals Cancel()
+		{
+			if (Client.PhysicalClient != null) {
+				Client.PhysicalClient.MoneyBalance += MoneySum;
+				Client.PhysicalClient.VirtualBalance += VirtualSum;
+				Client.PhysicalClient.Balance += WriteOffSum;
+			}
+			else
+				Client.LawyerPerson.Balance += WriteOffSum;
+			return Appeals.CreareAppeal(String.Format("Удален платеж на сумму {0:C}", WriteOffSum), Client, AppealType.System);
+		}
 	}
 }

@@ -28,7 +28,7 @@ namespace InternetInterface.Test.Integration
 			controller.DbSession = session;
 		}
 
-		[Test(Description = "Проверяет корректное создание акта и счета при создании или редактировании заказа")]
+		[Test(Description = "Проверяет корректное создание акта и счета при создании или редактировании заказа"), Ignore("Отключет функционал")]
 		public void CreateActAndInvoiceTest()
 		{
 			var client = ClientHelper.CreateLaywerPerson();

@@ -41,28 +41,8 @@ namespace InternetInterface.Printer
 				var brail = StandaloneInitializer.Init();
 				IEnumerable documents = null;
 				using (new SessionScope(FlushAction.Never)) {
-					if (name == "invoice") {
-						ArHelper.WithSession(s => {
-							documents = s.Query<Invoice>().Where(a => ids.Contains(a.Id))
-								.OrderBy(a => a.PayerName)
-								.ToArray();
-						});
-					}
-					else if(name == "act") {
-						ArHelper.WithSession(s => {
-							documents = s.Query<Act>().Where(a => ids.Contains(a.Id))
-								.OrderBy(a => a.PayerName)
-								.ToArray();
-						});
-					}
-					else if(name == "contract") {
-						ArHelper.WithSession(s => {
-							documents = s.Query<Contract>().Where(a => ids.Contains(a.Id))
-								.OrderBy(a => a.Customer)
-								.ToArray();
-						});
-					}
-
+					if (documents == null)
+						return;
 					Print(brail, printer, name, documents);
 				}
 			}

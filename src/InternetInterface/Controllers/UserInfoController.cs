@@ -520,22 +520,6 @@ namespace InternetInterface.Controllers
 					}
 				}
 
-				// создаем новый акт
-				Act act = null;
-				if(Order.OrderServices.Any(o => !o.IsPeriodic)) {
-					act = new Act(client /*, existingOrder*/);
-					DbSession.Save(act);
-				}
-				// создаем новый счет
-				Invoice invoice = null;
-				if(Order.OrderServices.Any(o => o.IsPeriodic)) {
-					invoice = new Invoice(client);
-					DbSession.Save(invoice);
-				}
-				// создаем новый договор
-				var contract = new Contract(existingOrder);
-				DbSession.Save(contract);
-
 				foreach (var orderService in Order.OrderServices) {
 					if(orderService.Id > 0) {
 						var service = existingOrder.OrderServices.First(s => s.Id == orderService.Id);
@@ -548,35 +532,6 @@ namespace InternetInterface.Controllers
 						orderService.Order = existingOrder;
 						DbSession.Save(orderService);
 					}
-					// при сохранении заказа сохраняем начисления для разовых услуг в акте и для периодических в счете
-					if(!orderService.IsPeriodic) {
-						var partAct = new ActPart(act) {
-							Count = 1,
-							Cost = orderService.Cost,
-							Name = orderService.Description + " по заказу №" + orderService.Order.Number,
-							OrderService = orderService
-						};
-						DbSession.Save(partAct);
-					}
-					else {
-						var daysInMonth = DateTime.DaysInMonth(Order.BeginDate.Value.Year, Order.BeginDate.Value.Month);
-						var partInvoice = new InvoicePart(invoice,
-							1,
-							orderService.Cost / daysInMonth * (daysInMonth - Order.BeginDate.Value.Day),
-							orderService.Description + " по заказу №" + orderService.Order.Number);
-						partInvoice.OrderService = orderService;
-						DbSession.Save(partInvoice);
-					}
-				}
-				if(act != null) {
-					DbSession.Refresh(act);
-					act.CalculateSum();
-					DbSession.Save(act);
-				}
-				if(invoice != null) {
-					DbSession.Refresh(invoice);
-					invoice.CalculateSum();
-					DbSession.Save(invoice);
 				}
 				RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID);
 				return;
@@ -909,7 +864,6 @@ where r.`Label`= :LabelIndex;")
 			}
 		}
 
-
 		private void SendParam(ClientFilter filter, string grouped, AppealType appealType)
 		{
 			var client = Client.Find(filter.ClientCode);
@@ -976,7 +930,7 @@ where r.`Label`= :LabelIndex;")
 				if (orderInfo.Count == 0) {
 					var connectSum = client.IsPhysical() ? client.PhysicalClient.ConnectSum : 0;
 					orderInfo.Add(new ClientOrderInfo {
-						Order = new Orders() { Number = Orders.GetNextNumber(DbSession) },
+						Order = new Orders() { Number = Orders.GetNextNumber(DbSession, client.Id) },
 						ClientConnectInfo = new ClientConnectInfo { ConnectSum = connectSum }
 					});
 				}
@@ -1008,17 +962,22 @@ where r.`Label`= :LabelIndex;")
 			}
 			List<PackageSpeed> speeds;
 			var tariffs = Tariff.FindAll().Select(t => t.PackageId).ToList();
+			var clientEndPointId = 0u;
+			var eConnect = Convert.ToUInt32(PropertyBag["EConnect"]);
 			if (client.GetClientType() == ClientType.Phisical) {
-				speeds = PackageSpeed.Queryable.Where(p => tariffs.Contains(p.PackageId)).ToList();
+				speeds = DbSession.Query<PackageSpeed>().Where(p => tariffs.Contains(p.PackageId)).ToList();
+				clientEndPointId = eConnect;
 			}
 			else {
-				speeds = PackageSpeed.Queryable.Where(p => !tariffs.Contains(p.PackageId)).OrderBy(s => s.Speed).ToList();
+				speeds = DbSession.Query<PackageSpeed>().Where(p => !tariffs.Contains(p.PackageId)).OrderBy(s => s.Speed).ToList();
+				var order = DbSession.Get<Orders>(eConnect);
+				if (order != null && order.EndPoint != null)
+					clientEndPointId = order.EndPoint.Id;
 			}
-			var clientEndPointId = Convert.ToUInt32(PropertyBag["EConnect"]);
 
 			int? packageId;
 			if (clientEndPointId > 0)
-				packageId = ClientEndpoint.Queryable.Where(c => c.Id == clientEndPointId).Select(c => c.PackageId).FirstOrDefault();
+				packageId = DbSession.Get<ClientEndpoint>(clientEndPointId).PackageId;
 			else
 				packageId = client.Endpoints.Select(e => e.PackageId).FirstOrDefault();
 
@@ -1265,7 +1224,7 @@ where r.`Label`= :LabelIndex;")
 		public void AddPoint(uint clientId)
 		{
 			PropertyBag["OrderInfo"] = new ClientOrderInfo {
-				Order = new Orders() { Number = Orders.GetNextNumber(DbSession) },
+				Order = new Orders() { Number = Orders.GetNextNumber(DbSession, clientId) },
 				ClientConnectInfo = new ClientConnectInfo()
 			};
 			ConnectPropertyBag(clientId);
@@ -1356,9 +1315,10 @@ where r.`Label`= :LabelIndex;")
 			RenderView("EditOrderService");
 		}
 
-		public void CloseOrder(uint orderId)
+		public void CloseOrder(uint orderId, DateTime orderCloseDate)
 		{
 			var order = DbSession.Load<Orders>(orderId);
+			order.EndDate = orderCloseDate;
 			order.Disabled = true;
 			DbSession.Save(order);
 			RedirectToUrl(order.Client.Redirect());
@@ -1369,6 +1329,22 @@ where r.`Label`= :LabelIndex;")
 			var client = DbSession.Load<Client>(clientCode);
 			var ordersInfo = client.GetOrderInfo(DbSession, true);
 			PropertyBag["OrdersInfo"] = ordersInfo;
+		}
+
+		public void DeleteWriteOff(uint id)
+		{
+			var writeOff = DbSession.Get<WriteOff>(id);
+			var message = writeOff.Cancel();
+			DbSession.Delete(writeOff);
+			DbSession.Save(message);
+			Notify("Удалено");
+			EmailHelper.Send("internet@ivrn.net", "Уведомление об удалении списания", string.Format(@"
+Отменено платеж №{0}
+Клиент: №{1} - {2}
+Сумма: {3}
+Оператор: {4}
+", writeOff.Id, writeOff.Client.Id, writeOff.Client.Name, writeOff.WriteOffSum.ToString("#.00"), InitializeContent.Partner.Name));
+			RedirectToReferrer();
 		}
 	}
 }

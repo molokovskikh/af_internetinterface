@@ -1,9 +1,5 @@
 ﻿${app.Asset("orderinfo.css")}
-${app.Asset("calendar-blue.css")}
-${app.Asset("calendar.setup.js")}
-${app.Asset("calendar.js")}
-${app.Asset("calendar-ru_win_.js")}
-${app.Asset("calendar-setup.js")}
+${app.Asset("EditingConnect.js")}
 <div id="deletePointDialog" class="reveal-modal">
 <form class="formConnect" method="post" action="${siteroot}/UserInfo/DeleteEndPoint">
 <input type="hidden" name="endPointForDelete" id="endPointForDelete"/>
@@ -15,9 +11,11 @@ ${app.Asset("calendar-setup.js")}
 </div>
 
 <div id="closeOrderDialog" class="reveal-modal">
-	<form class="formConnect" method="post" action="${siteroot}/UserInfo/CloseOrder">
+	<form id='closeOrderForm' method="post" action="${siteroot}/UserInfo/CloseOrder">
 		<input type="hidden" name="orderId" id="closedOrderId"/>
 		<p>Вы уверены, что хотите закрыть данный заказ?</p>
+		Введиле дату окончинаия:
+		<input type="text" name="OrderCloseDate" id="EndDate" class="graph_date"> <br/>
 		<button type="submit"  class="editBut">Закрыть</button>
 	</form>
 	<a class="close-reveal-modal">x</a>
@@ -33,7 +31,7 @@ ${app.Asset("calendar-setup.js")}
 	<thead>
 		<tr>
 		<th class="orderInfo">Информация о заказе (заказ № ${OrderInfo.Order.Number})
-		<%if PartnerAccessSet.AccesPartner("DHCP") and OrderInfo.Order.OrderStatus==0: %>
+		<%if PartnerAccessSet.AccesPartner("DHCP") and OrderInfo.Order.CanEdit(): %>
 			<form class="formConnect" method="post" action="${siteroot}/UserInfo/LoadEditConnectMudule" class="displayInline">
 			<input type="hidden" name="ClientID" value="${ClientCode}" />
 			<input type="hidden" name="EditConnectFlag" value="${OrderInfo.Order.Id}" />
@@ -50,7 +48,6 @@ ${app.Asset("calendar-setup.js")}
 				<button class="editBut closeOrderControl" id="closeOrderButton${OrderInfo.Order.Id}">
 					<img src="${Siteroot}/Images/application_edit.png"> Закрыть
 				</button>
-				<!--<img class="closeOrderControl" src="../images/application_edit.png" /> Закрыть-->
 			</a>
 				<% else: %>
 					<% if OrderInfo.Order.EndPoint != null:%>
@@ -228,21 +225,21 @@ ${app.Asset("calendar-setup.js")}
 	var req = {};
 	req.endPontId = ${OrderInfo.ClientConnectInfo.endpointId};
 	$.post("GetStaticIp", req, function (data) {
-	if (data){
-	$('#static_IP_hiden').val(data);
-	$('#staticIdLabel').text(data);
-	} else {
-	$('#staticIdLabel').text("Ошибка, не удалось получить IP адрес");
-	$('#staticIdLabel').css("color", "Red");
-	}
-	});
+		if (data){
+			$('#static_IP_hiden').val(data);
+			$('#staticIdLabel').text(data);
+		} else {
+			$('#staticIdLabel').text("Ошибка, не удалось получить IP адрес");
+			$('#staticIdLabel').css("color", "Red");
+		}
+		});
 	}
 
 	function DeleteStaticIp() {
-	if ($('#static_IP_hiden').val()){
-	$('#static_IP_hiden').val("");
-	$('#staticIdLabel').text("Удалено");
-	}
+		if ($('#static_IP_hiden').val()){
+			$('#static_IP_hiden').val("");
+			$('#staticIdLabel').text("Удалено");
+		}
 	}
 </script>
 	<form class="formConnect" id="formConnect" method="post" action="${siteroot}/UserInfo/SaveSwitchForClient">
@@ -276,18 +273,16 @@ ${app.Asset("calendar-setup.js")}
 					Дата начала
 				</td>
 				<td colspan="2">
-					<input type="text" id="order_BeginDate" name="order.BeginDate" value="${OrderInfo.Order.BeginDate}" class="required validate-date input-date valid">
-						<input type="button" class="CalendarInput" id="CalendarInput0">
-						</td>
+					<input type="text" id="order_BeginDate" name="order.BeginDate" value="${OrderInfo.Order.BeginDate.ToShortDateString()}" class="required validate-date graph_date valid">
+				</td>
 			</tr>
 			<tr>
 				<td>
 					Дата окончания
 				</td>
 				<td colspan="2">
-					<input type="text" id="order_EndDate" name="order.EndDate" value="${OrderInfo.Order.EndDate}" class="validate-date input-date valid">
-						<input type="button" class="CalendarInput" id="CalendarInput1">
-						</td>
+					<input type="text" id="order_EndDate" name="order.EndDate" value="${OrderInfo.Order.EndDate}" class="validate-date graph_date valid">
+				</td>
 			</tr>
 
 			<td colspan="3">
@@ -307,27 +302,25 @@ ${app.Asset("calendar-setup.js")}
 						</th>
 					</tr>
 					<% if OrderInfo.Order.OrderServices != null and OrderInfo.Order.OrderServices.Count > 0: %>
-
-					<% for i, item in enumerate(OrderInfo.Order.OrderServices): %>
-					<tr id='orderService${item.Id}'>
-						<td>
-							<input type='text' name='order.OrderServices[${i}].Description' value='${item.Description}'>
+						<% for i, item in enumerate(OrderInfo.Order.OrderServices): %>
+						<tr id='orderService${item.Id}'>
+							<td>
+								<input type='text' name='order.OrderServices[${i}].Description' value='${item.Description}'>
+								</td>
+							<td>
+								<input type='text' name='order.OrderServices[${i}].Cost' value='${item.Cost}'>
 							</td>
-						<td>
-							<input type='text' name='order.OrderServices[${i}].Cost' value='${item.Cost}'>
-						</td>
-						<td>
-							<input type='checkbox' name='order.OrderServices[${i}].IsPeriodic' ${"checked" if (item.IsPeriodic)}>
+							<td>
+								<input type='checkbox' name='order.OrderServices[${i}].IsPeriodic' ${"checked" if (item.IsPeriodic)}>
+								</td>
+							<td>
+								<a href='#' onclick="deleteOrderService('orderService${item.Id}')">Удалить</a>
 							</td>
-						<td>
-							<a href='#' onclick="deleteOrderService('orderService${item.Id}')">Удалить</a>
-						</td>
-					</tr>
-					<% end %>
+						</tr>
+						<% end %>
 					<% end %>
 				</table>
-				<a id="addOrderServiceLink" class="icon icon-add" name="2" href="javascript:"
-										onclick="addOrderService(${OrderInfo.Order.Id})">Добавить</a>
+				<a id="addOrderServiceLink" class="icon icon-add" name="2" href="javascript:" onclick="addOrderService(${OrderInfo.Order.Id})">Добавить</a>
 			</td>
 			</tr>
 			<% if OrderInfo.Order.Id == 0 or OrderInfo.Order.EndPoint == null: %>
@@ -342,14 +335,14 @@ ${app.Asset("calendar-setup.js")}
 		</table>
 
 		<table class="table <% if OrderInfo.Order.EndPoint == null and OrderInfo.Order.Id > 0: %> noDisplay <% end %>" id="endpointTable">
-				</thead>
-		<tr>
-			<td colspan="3">
-				<strong>Информация о точке подключения:</strong>
-			</td>
-		</tr>
-				</thead>
-			<tbody>
+			<thead>
+				<tr>
+					<td colspan="3">
+						<strong>Информация о точке подключения:</strong>
+					</td>
+				</tr>
+			</thead>
+		<tbody>
 		<tr>
 		  <td>Фиксированный IP</td>
 		  <td colspan=2>
@@ -365,12 +358,14 @@ ${app.Asset("calendar-setup.js")}
 		</tr>
 		<tr>
 		  <td>Свич</td>
-		  <td class="width200px"><select name="ConnectInfo.Switch" id="SelectSwitches" class="width100">
-									<option value="0">Нет</option>
-								   <%for j, Switch in enumerate(Switches): %>
-									<option id="Option${j}" value="${Switch.Id}" ${"selected" if (Switch.Id.ToString() == OrderInfo.ClientConnectInfo.Switch)} > ${Switch.Name} </option>
-								   <% end %>
-			</select></td>
+		  <td class="width200px">
+			  <select name="ConnectInfo.Switch" id="SelectSwitches" class="width100">
+					<option value="0">Нет</option>
+				   <%for j, Switch in enumerate(Switches): %>
+					<option id="Option${j}" value="${Switch.Id}" ${"selected" if (Switch.Id.ToString() == OrderInfo.ClientConnectInfo.Switch)} > ${Switch.Name} </option>
+				   <% end %>
+				</select>
+			</td>
 			<td id="switch_info"></td>
 		</tr>
 		<tr>

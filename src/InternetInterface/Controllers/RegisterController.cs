@@ -136,7 +136,7 @@ namespace InternetInterface.Controllers
 		public void RegisterLegalPerson()
 		{
 			PropertyBag["OrderInfo"] = new ClientOrderInfo {
-				Order = new Orders() { Number = Orders.GetNextNumber(DbSession) },
+				Order = new Orders() { Number = Orders.GetNextNumber(DbSession, 0) },
 				ClientConnectInfo = new ClientConnectInfo()
 			};
 			PropertyBag["ClientCode"] = 0;
@@ -193,48 +193,6 @@ namespace InternetInterface.Controllers
 					client.WhoConnectedName = brigad.Name;
 					client.Status = Status.Find((uint)StatusType.Worked);
 					client.UpdateAndFlush();
-				}
-				if (Order.OrderServices != null) {
-					Order.Client = client;
-					Order.EndPoint = endPoint;
-					DbSession.Save(Order);
-					// создаем новый акт
-					Act act = null;
-					if (Order.OrderServices.Any(o => !o.IsPeriodic)) {
-						act = new Act(client);
-						DbSession.Save(act);
-					}
-					// создаем новый счет
-					Invoice invoice = null;
-					if (Order.OrderServices.Any(o => o.IsPeriodic)) {
-						invoice = new Invoice(client);
-						DbSession.Save(invoice);
-					}
-					// создаем новый договор
-					var contract = new Contract(Order);
-					DbSession.Save(contract);
-					foreach (var orderService in Order.OrderServices) {
-						orderService.Order = Order;
-						DbSession.Save(orderService);
-						if (!orderService.IsPeriodic) {
-							var partAct = new ActPart(act) {
-								Count = 1,
-								Cost = orderService.Cost,
-								Name = orderService.Description + " по заказу №" + orderService.Order.Number,
-								OrderService = orderService
-							};
-							DbSession.Save(partAct);
-						}
-						else {
-							var daysInMonth = DateTime.DaysInMonth(Order.BeginDate.Value.Year, Order.BeginDate.Value.Month);
-							var partInvoice = new InvoicePart(invoice,
-								1,
-								orderService.Cost / daysInMonth * (daysInMonth - Order.BeginDate.Value.Day),
-								orderService.Description + " по заказу №" + orderService.Order.Number);
-							partInvoice.OrderService = orderService;
-							DbSession.Save(partInvoice);
-						}
-					}
 				}
 				RegisterLegalPerson();
 				PropertyBag["EditiongMessage"] = "Клиент успешно загистрирвоан";

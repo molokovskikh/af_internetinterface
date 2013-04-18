@@ -13,7 +13,7 @@ namespace InternetInterface.Test.Functional
 	[TestFixture]
 	public class RegisterLawyerFixture : WatinFixture2
 	{
-		[Test(Description = "Проверяет создание юр. лица с заказом и точкой подключения")]
+		[Test(Description = "Проверяет создание юр. лица с заказом и точкой подключения"), Ignore("Отключен функционал")]
 		public void RegisterLegalPersonTest()
 		{
 			var commutator = new NetworkSwitch("Тестовый коммутатор для регистрации клиента", session.Query<Zone>().First());

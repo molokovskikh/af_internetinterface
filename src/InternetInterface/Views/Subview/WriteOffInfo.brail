@@ -65,6 +65,9 @@
 				<td>${item.VirtualSum.ToString("0.00")}</td>
 				<td>${item.GeBeforeWriteOffBalance(grouped)}</td>
 				<td class="comment_td">${item.Comment}</td>
+				<td>
+					<input type="button" class="cancelButton" onclick="DeleteWriteOff('${siteroot}/UserInfo/${item.Id}/DeleteWriteOff', 'Сумма: ${item.WriteOffSum}, от ${item.GetDate(grouped)}')" value="Удалить" />
+				</td>
 			</tr>
 		<%end %>
 	<% end %>

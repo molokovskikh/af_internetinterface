@@ -117,10 +117,13 @@
     <Content Include="Assets\Javascripts\calendar-ru_win_.js" />
     <Content Include="Assets\Javascripts\calendar-setup.js" />
     <Content Include="Assets\Javascripts\calendar.js" />
+    <Content Include="Assets\Javascripts\Common.js" />
+    <Content Include="Assets\Javascripts\EditingConnect.js" />
     <Content Include="Assets\Javascripts\OrderService.js" />
     <Content Include="Assets\Javascripts\Register.js" />
     <Content Include="Assets\Javascripts\registerlawperson.js" />
     <Content Include="Assets\Javascripts\ShowRegions.js" />
+    <Content Include="Assets\Javascripts\UserInfo.js" />
     <Content Include="Assets\Javascripts\userSearch.js" />
     <Content Include="Assets\Stylesheets\alt-form.css" />
     <Content Include="Assets\Stylesheets\calendar-blue.css" />

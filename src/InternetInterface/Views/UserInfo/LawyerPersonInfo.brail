@@ -1,4 +1,5 @@
-﻿<div style="width:50%; float:left;">
+﻿${app.Asset("UserInfo.js")}
+<div style="width:50%; float:left;">
 <div id="main" style="width: 100%;">
 <div id="container">
 <div id="block-tables" class="block">

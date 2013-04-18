@@ -72,12 +72,21 @@ namespace InternetInterface.Models
 			}
 		}
 
-		public static uint GetNextNumber(ISession session)
+		public virtual bool CanEdit()
 		{
-			var orders = session.Query<Orders>().ToList();
+			var nextMonth = BeginDate.Value.AddMonths(1).Month;
+			var controlDate = new DateTime(BeginDate.Value.Year, nextMonth, 5);
+			if (DateTime.Now.Date <= controlDate)
+				return true;
+			return false;
+		}
+
+		public static uint GetNextNumber(ISession session, uint clientId)
+		{
+			var orders = session.Query<Orders>().Where(o => o.Client.Id == clientId).Max(o => (int)o.Number);
 			uint number = 1;
-			if(orders.Count > 0)
-				number = orders.Max(o => o.Number) + 1;
+			if(orders > 0)
+				number = (uint)orders + 1;
 			return number;
 		}
 	}

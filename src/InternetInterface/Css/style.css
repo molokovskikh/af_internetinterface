@@ -571,3 +571,7 @@ div.commented, .commented {
 .CommentText {
 	width: 300px;
 }
+
+#EndDate {
+	margin-bottom: 10px;
+}

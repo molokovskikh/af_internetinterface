@@ -95,28 +95,5 @@ namespace InternetInterface.Test.Integration
 				return _message;
 			}
 		}
-
-		[Test]
-		public void Mail_invoice()
-		{
-			var client = new Client() {
-				LawyerPerson = new LawyerPerson {
-					Name = "ООО Рога и Копыта"
-				},
-				Contacts = {
-					new Contact { Type = ContactType.Email, Text = "test@analit.net" }
-				}
-			};
-			var invoice = new Invoice(client, DateTime.Today.ToPeriod(), new List<WriteOff> {
-				new WriteOff(client, 500)
-			});
-
-			mailer.Invoice(invoice);
-
-			Assert.That(message.To.ToString(), Is.EqualTo("test@analit.net"));
-			Assert.That(message.From.ToString(), Is.EqualTo("internet@ivrn.net"));
-			Assert.That(message.Subject, Is.StringContaining("Счет за "));
-			Assert.That(message.Body, Is.StringContaining("Примите счет"));
-		}
 	}
 }
