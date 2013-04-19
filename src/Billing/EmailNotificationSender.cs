@@ -42,5 +42,14 @@ namespace Billing
 			messageText.AppendLine(string.Format("Тариф - \"{0}\"", client.LawyerPerson.Tariff));
 			return Send(messageText, "Возникла задолженность клиента");
 		}
+
+		public static bool SendCloseServiceAndNoWriteOff(OrderService service, Client client)
+		{
+			var messageText = new StringBuilder();
+			messageText.AppendLine(string.Format("У клиента {0} был закрыл заказ №{1}.", client.Id.ToString("00000"), service.Order.Id));
+			messageText.AppendLine(string.Format("Списание по услуге - \"{0}\" ({1})", service.Description, service.Id));
+			messageText.AppendLine("За текущий месяц не найдено, корректировка не произведена");
+			return Send(messageText, "Не произведена корректировка списаний клиента");
+		}
 	}
 }
