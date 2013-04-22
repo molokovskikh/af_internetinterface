@@ -126,7 +126,6 @@ namespace Billing.Test.Integration
 			using (new SessionScope()) {
 				var order = new Orders() { BeginDate = DateTime.Now, Client = lawyerClient, OrderServices = new List<OrderService>() };
 				var service = new OrderService() { Cost = 100, Description = "testService", Order = order };
-				//ActiveRecordMediator.Save(order);
 				order.OrderServices.Add(service);
 				lawyerClient.Disabled = true;
 				lawyerClient.Orders.Add(order);
@@ -134,7 +133,6 @@ namespace Billing.Test.Integration
 				ActiveRecordMediator.Save(order);
 				ActiveRecordMediator.Save(lawyerClient);
 			}
-			//MainBilling.MagicDate = SystemTime.Now().AddMonths(2);
 			billing.Compute();
 			using (new SessionScope()) {
 				var writeOffs = ActiveRecordLinq.AsQueryable<WriteOff>().Where(w => w.Client == lawyerClient).ToList();
