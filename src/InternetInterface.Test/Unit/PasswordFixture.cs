@@ -14,7 +14,7 @@ namespace InternetInterface.Test.Unit
 		{
 			var passwords = new List<string>();
 			for (int i = 0; i < 5; i++) {
-				passwords.Add(CryptoPass.GeneratePassword((uint)i * 1000));
+				passwords.Add(CryptoPass.GeneratePassword());
 			}
 			Assert.AreEqual(passwords.GroupBy(g => g).Count(), 5);
 		}

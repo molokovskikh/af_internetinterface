@@ -606,7 +606,7 @@ namespace InternetInterface.Controllers
 			if (CategorieAccessSet.AccesPartner("SSI")) {
 				var _client = Client.Find(ClientID);
 				var client = _client.PhysicalClient;
-				var Password = CryptoPass.GeneratePassword(ClientID);
+				var Password = CryptoPass.GeneratePassword();
 				client.Password = CryptoPass.GetHashString(Password);
 				client.UpdateAndFlush();
 				PropertyBag["WhoConnected"] = _client.WhoConnected;
