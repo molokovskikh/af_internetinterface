@@ -226,14 +226,14 @@ namespace Billing.Test.Integration
 			session.Save(orderSerive);
 			Close();
 			var sn = SystemTime.Now();
-			var days = DateTime.DaysInMonth(sn.Year, sn.Month) + DateTime.DaysInMonth(sn.AddMonths(1).Year, sn.AddMonths(1).Month);
+			var days = DateTime.DaysInMonth(sn.Year, sn.Month) + DateTime.DaysInMonth(sn.AddMonths(1).Year, sn.AddMonths(1).Month) + DateTime.DaysInMonth(sn.AddMonths(2).Year, sn.AddMonths(2).Month);
 			var beginData = new DateTime(sn.Year, sn.Month, 1);
 			for (int i = 0; i < days; i++) {
 				SystemTime.Now = () => beginData.AddDays(i);
 				billing.Compute();
 			}
 			session.Refresh(lPerson);
-			Assert.That(-20000m, Is.EqualTo(lPerson.Balance));
+			Assert.That(-30000m, Is.EqualTo(lPerson.Balance));
 			billing.OnMethod();
 			lPerson.Balance += 1000;
 			session.Update(lPerson);

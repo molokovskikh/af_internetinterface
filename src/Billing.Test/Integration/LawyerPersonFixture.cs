@@ -22,7 +22,7 @@ namespace Billing.Test.Integration
 		{
 			using (new SessionScope()) {
 				var lPerson = new LawyerPerson {
-					Balance = -2000,
+					Balance = -3000,
 					Tariff = 1000m,
 					Region = ArHelper.WithSession(s => {
 				var region = s.Query<RegionHouse>().FirstOrDefault(r => r.Name == "Воронеж");
@@ -42,6 +42,7 @@ namespace Billing.Test.Integration
 					ShowBalanceWarningPage = false,
 					LawyerPerson = lPerson
 				};
+				lawyerClient.Orders = new List<Orders>();
 				lawyerClient.Save();
 			}
 		}
@@ -123,7 +124,13 @@ namespace Billing.Test.Integration
 		public void Disable_write_Off()
 		{
 			using (new SessionScope()) {
+				var order = new Orders() { BeginDate = DateTime.Now, Client = lawyerClient, OrderServices = new List<OrderService>() };
+				var service = new OrderService() { Cost = 100, Description = "testService", Order = order };
+				order.OrderServices.Add(service);
 				lawyerClient.Disabled = true;
+				lawyerClient.Orders.Add(order);
+				ActiveRecordMediator.Save(service);
+				ActiveRecordMediator.Save(order);
 				ActiveRecordMediator.Save(lawyerClient);
 			}
 			MainBilling.MagicDate = SystemTime.Now().AddMonths(2);
