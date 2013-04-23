@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using Castle.MonoRail.Framework.Helpers;
 using Common.Tools.Calendar;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.NHibernateExtentions;
@@ -14,11 +15,33 @@ namespace InternetInterface.Queries
 {
 	public class WriteOffsItem : BaseItemForTable
 	{
+		private string _clientId;
+		private string _name;
+		public bool ExportInExcel;
+
 		[Display(Name = "Код клиента", Order = 0)]
-		public string ClientId { get; set; }
+		public string ClientId
+		{
+			get
+			{
+				if (!ExportInExcel)
+					return Link(_clientId, "UserInfo", "SearchUserInfo", new System.Tuple<string, object>("filter.ClientCode", _clientId));
+				return _clientId;
+			}
+			set { _clientId = value; }
+		}
 
 		[Display(Name = "Клиент", Order = 1)]
-		public string Name { get; set; }
+		public string Name
+		{
+			get
+			{
+				if (!ExportInExcel)
+					return Link(_name, "UserInfo", "SearchUserInfo", new System.Tuple<string, object>("filter.ClientCode", _clientId));
+				return _name;
+			}
+			set { _name = value; }
+		}
 
 		[Display(Name = "Регион", Order = 2)]
 		public string Region { get; set; }
@@ -31,6 +54,12 @@ namespace InternetInterface.Queries
 
 		[Display(Name = "Комментарий", Order = 5)]
 		public string Comment { get; set; }
+
+		public void Prepare(bool forExcel, UrlHelper helper)
+		{
+			ExportInExcel = forExcel;
+			UrlHelper = helper;
+		}
 	}
 
 	public class WriteOffsFilter : PaginableSortable
@@ -41,6 +70,7 @@ namespace InternetInterface.Queries
 		public DateTime EndDate { get; set; }
 		public ForSearchClientType ClientType { get; set; }
 		public string Name { get; set; }
+		public UrlHelper UrlHelper { get; set; }
 
 		public bool ExportInExcel { get; set; }
 
@@ -114,7 +144,9 @@ and w.WriteOffDate <= :EndDate";
 
 			var query = SetParameters(Session.CreateSQLQuery(string.Format(sql, selectPart)));
 
-			return query.ToList<WriteOffsItem>().Cast<BaseItemForTable>().ToList();
+			var result = query.ToList<WriteOffsItem>();
+			result.ForEach(e => e.Prepare(ExportInExcel, UrlHelper));
+			return result.Cast<BaseItemForTable>().ToList();
 		}
 
 		private IQuery SetParameters(IQuery query)

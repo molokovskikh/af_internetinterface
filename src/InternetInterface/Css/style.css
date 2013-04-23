@@ -1,4 +1,4 @@
-a:link, a:visited { color: #0a5d01; text-decoration: none; }
+a:link, a:visited { color: #484848; text-decoration: none; }
 a, a:hover, a:active { color: #d30; }
 h1, h2, h3 {color: #444}
 
@@ -284,8 +284,8 @@ input.checkbox {
 
 .table th 
 {
-  border: 1px double #0a5d01;
-  background: #cee8ce;
+  border: 1px double #484848;
+  background: #e1e3e2;
   color: #625a5b;
   font-weight:normal;
   padding:3px;
@@ -298,7 +298,7 @@ input.checkbox {
 
 .menuItem th
 {
-	background-color:#dbf0dc;
+	background-color:#e7ebe9;
 	}
 			
 .menuItem th:hover
@@ -309,7 +309,7 @@ input.checkbox {
 	
 .submenu th
 {
-	border-color:#0a5d01;
+	border-color:#484848;
 	padding-top:0px;
 	padding-bottom:0px;
 	}
@@ -317,7 +317,7 @@ input.checkbox {
 .editBut
 {
 	padding:3px 10px 3px 7px;
-	background-color: #cee8ce;
+	background-color: #e1e3e2;
 	border:1px solid #bfbfbf;
 	cursor:pointer;
 	line-height: 1.3em;
@@ -326,7 +326,7 @@ input.checkbox {
 		
 .EmptyData
 {
-	background-color: #cee8ce;
+	background-color: #e1e3e2;
 	text-align: center;
 	font-size: 14px;
 	font-weight: bold;

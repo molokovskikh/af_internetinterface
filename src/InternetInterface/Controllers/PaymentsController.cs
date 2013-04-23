@@ -393,6 +393,7 @@ namespace InternetInterface.Controllers
 		public void ShowWriteOffs([DataBind("filter")]WriteOffsFilter filter)
 		{
 			filter.Session = DbSession;
+			filter.UrlHelper = new UrlHelper(Context);
 			PropertyBag["writeOffs"] = filter.Find();
 			PropertyBag["filter"] = filter;
 			PropertyBag["regions"] = DbSession.Query<RegionHouse>().ToList();
@@ -400,8 +401,8 @@ namespace InternetInterface.Controllers
 
 		public void ExcelShowWriteOffs()
 		{
-			var filter = new WriteOffsFilter();
-			filter.Session = DbSession;
+			var urlHelper = new UrlHelper(Context);
+			var filter = new WriteOffsFilter { Session = DbSession, UrlHelper = urlHelper };
 			SetARDataBinder(AutoLoadBehavior.NullIfInvalidKey);
 			BindObjectInstance(filter, IsPost ? ParamStore.Form : ParamStore.QueryString, "filter", AutoLoadBehavior.NullIfInvalidKey);
 			this.RenderFile(string.Format("Выгрузка списаний ({0}).xls", DateTime.Now.ToShortDateString()), ExportModel.GetWriteOffsExcel(filter));
