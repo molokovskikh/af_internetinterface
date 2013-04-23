@@ -18,36 +18,36 @@ namespace Billing.Test.Integration
 		{
 			using (new TransactionScope(OnDispose.Commit)) {
 				ArHelper.WithSession(s => {
-					_client.BeginWork = null;
-					s.SaveOrUpdate(_client);
-					var clientEndPoint = new ClientEndpoint { Client = _client };
+					client.BeginWork = null;
+					s.SaveOrUpdate(client);
+					var clientEndPoint = new ClientEndpoint { Client = client };
 					var paymentForConnect = new PaymentForConnect(500, clientEndPoint);
-					_client.PhysicalClient.Balance = 200;
+					client.PhysicalClient.Balance = 200;
 					s.Save(clientEndPoint);
 					s.Save(paymentForConnect);
-					s.SaveOrUpdate(_client.PhysicalClient);
+					s.SaveOrUpdate(client.PhysicalClient);
 				});
 			}
 			billing.OnMethod();
 			using (new TransactionScope(OnDispose.Commit)) {
 				ArHelper.WithSession(s => {
-					_client = s.Get<Client>(_client.Id);
-					Assert.IsNull(_client.BeginWork);
-					Assert.AreEqual(_client.Balance, 200);
-					_client.BeginWork = DateTime.Now;
-					s.SaveOrUpdate(_client);
+					client = s.Get<Client>(client.Id);
+					Assert.IsNull(client.BeginWork);
+					Assert.AreEqual(client.Balance, 200);
+					client.BeginWork = DateTime.Now;
+					s.SaveOrUpdate(client);
 				});
 			}
 			billing.OnMethod();
 			using (new TransactionScope(OnDispose.Commit)) {
 				ArHelper.WithSession(s => {
-					_client = s.Get<Client>(_client.Id);
-					Assert.IsNotNull(_client.BeginWork);
-					Assert.AreEqual(_client.Balance, -300);
-					var userWtiteOffs = _client.UserWriteOffs.First();
+					client = s.Get<Client>(client.Id);
+					Assert.IsNotNull(client.BeginWork);
+					Assert.AreEqual(client.Balance, -300);
+					var userWtiteOffs = client.UserWriteOffs.First();
 					Assert.AreEqual(userWtiteOffs.Sum, 500);
 					Assert.AreEqual(userWtiteOffs.Comment, "Плата за подключение");
-					Assert.AreEqual(_client.UserWriteOffs.Count, 1);
+					Assert.AreEqual(client.UserWriteOffs.Count, 1);
 				});
 			}
 		}
@@ -57,14 +57,14 @@ namespace Billing.Test.Integration
 		{
 			using (new TransactionScope(OnDispose.Commit)) {
 				ArHelper.WithSession(s => {
-					Assert.IsNotNull(_client.BeginWork);
+					Assert.IsNotNull(client.BeginWork);
 					var lawPerson = new LawyerPerson();
 					lawPerson.Region = s.Query<RegionHouse>().FirstOrDefault();
 					s.Save(lawPerson);
-					_client.PhysicalClient = null;
-					_client.LawyerPerson = lawPerson;
-					s.SaveOrUpdate(_client);
-					var clientEndPoint = new ClientEndpoint { Client = _client };
+					client.PhysicalClient = null;
+					client.LawyerPerson = lawPerson;
+					s.SaveOrUpdate(client);
+					var clientEndPoint = new ClientEndpoint { Client = client };
 					var paymentForConnect = new PaymentForConnect(500, clientEndPoint);
 					s.Save(clientEndPoint);
 					s.Save(paymentForConnect);
@@ -73,8 +73,8 @@ namespace Billing.Test.Integration
 			billing.OnMethod();
 			using (new TransactionScope(OnDispose.Commit)) {
 				ArHelper.WithSession(s => {
-					_client = s.Get<Client>(_client.Id);
-					Assert.AreEqual(_client.UserWriteOffs.Count, 0);
+					client = s.Get<Client>(client.Id);
+					Assert.AreEqual(client.UserWriteOffs.Count, 0);
 				});
 			}
 		}

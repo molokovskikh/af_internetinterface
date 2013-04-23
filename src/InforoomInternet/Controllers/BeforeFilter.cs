@@ -12,9 +12,9 @@ namespace InforoomInternet.Controllers
 {
 	public class Redirecter
 	{
-		public static void RedirectRoot(IEngineContext context, Controller controller)
+		public static void RedirectRoot(Controller controller)
 		{
-			controller.RedirectToUrl(context.ApplicationPath + "/");
+			controller.RedirectToUrl(controller.Context.ApplicationPath + "/");
 		}
 	}
 
@@ -73,11 +73,13 @@ namespace InforoomInternet.Controllers
 				lease = Lease.FindAllByProperty("Ip", Convert.ToUInt32(NetworkSwitch.SetProgramIp(ip)));
 
 			if (lease != null && lease.Length != 0) {
-				var clientsId = lease.Where(
-					l => l.Endpoint != null && l.Endpoint.Client != null && l.Endpoint.Client.PhysicalClient != null)
-					.Select(l => l.Endpoint.Client.Id).ToList();
-				if (clientsId.Any()) {
-					context.Session["LoginClient"] = clientsId.First();
+				var client = lease.Where(l => l.Endpoint != null
+					&& l.Endpoint.Client != null
+					&& l.Endpoint.Client.PhysicalClient != null)
+					.Select(l => l.Endpoint.Client)
+					.FirstOrDefault();
+				if (client != null) {
+					context.Session["LoginClient"] = client.Id;
 					context.Session["autoIn"] = true;
 					return true;
 				}

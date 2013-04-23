@@ -15,9 +15,9 @@ namespace Billing.Test.Integration
 		[SetUp]
 		public void PrepareClientAndBilling()
 		{
-			_client.PhysicalClient.Balance = _client.GetPrice() / _client.GetInterval() + 1;
-			_client.SendSmsNotifocation = true;
-			_client.Update();
+			client.PhysicalClient.Balance = client.GetPrice() / client.GetInterval() + 1;
+			client.SendSmsNotifocation = true;
+			client.Update();
 		}
 
 		[Test]
@@ -26,7 +26,7 @@ namespace Billing.Test.Integration
 			SystemTime.Now = () => new DateTime(2012, 3, 31, 22, 3, 0);
 			billing.Compute();
 			using (new SessionScope()) {
-				var sms = SmsMessage.Queryable.Where(m => m.Client == _client);
+				var sms = SmsMessage.Queryable.Where(m => m.Client == client);
 				foreach (var smsMessage in sms) {
 					Assert.That(smsMessage.ShouldBeSend, Is.EqualTo(new DateTime(2012, 4, 1, 12, 00, 00)));
 					return;
@@ -40,15 +40,15 @@ namespace Billing.Test.Integration
 		{
 			billing.Compute();
 			using (new SessionScope()) {
-				Assert.That(SmsMessage.Queryable.Count(m => m.Client == _client), Is.EqualTo(1));
+				Assert.That(SmsMessage.Queryable.Count(m => m.Client == client), Is.EqualTo(1));
 				new Payment {
-					Client = _client,
+					Client = client,
 					Sum = 100
 				}.Save();
 			}
 			billing.OnMethod();
 			using (new SessionScope())
-				Assert.That(SmsMessage.Queryable.Count(m => m.Client == _client), Is.EqualTo(0));
+				Assert.That(SmsMessage.Queryable.Count(m => m.Client == client), Is.EqualTo(0));
 		}
 
 		[Test]
@@ -62,14 +62,9 @@ namespace Billing.Test.Integration
 				string.Format("Ваш баланс 1,00 руб. Завтра доступ в сеть будет заблокирован.");
 			Assert.That(message.Text, Is.StringContaining(messageText));
 			Assert.IsNullOrEmpty(message.PhoneNumber);
-			var contact = new Contact {
-				Client = _client,
-				Date = DateTime.Now,
-				Text = "9507738447",
-				Type = ContactType.SmsSending
-			};
-			_client.Contacts = new List<Contact> { contact };
-			contact.Save();
+			var contact = new Contact(client, ContactType.SmsSending, "9507738447");
+			client.Contacts = new List<Contact> { contact };
+			ActiveRecordMediator.Save(contact);
 			var dtnAd = DateTime.Now.AddDays(1);
 			var ShouldBeSend = new DateTime(dtnAd.Year, dtnAd.Month, dtnAd.Day, 12, 00, 00);
 			Assert.That(message.ShouldBeSend, Is.EqualTo(ShouldBeSend));
@@ -78,20 +73,14 @@ namespace Billing.Test.Integration
 		[Test]
 		public void Real_Sms_Test()
 		{
-			var contact = new Contact {
-				Client = _client,
-				Date = DateTime.Now,
-				Text = "9507738447",
-				Type = ContactType.SmsSending
-			};
-			_client.Contacts = new List<Contact> { contact };
-			contact.Save();
+			var contact = new Contact(client, ContactType.SmsSending, "9507738447");
+			client.Contacts = new List<Contact> { contact };
+			ActiveRecordMediator.Save(contact);
 			billing.Compute();
 			var message = billing.Messages.FirstOrDefault();
 			if (message != null) {
 				message.ShouldBeSend = null;
 			}
-			//SmsHelper.SendMessage(message);
 		}
 
 		[Test]
@@ -101,7 +90,7 @@ namespace Billing.Test.Integration
 			SystemTime.Now = () => DateTime.Now.Date.AddHours(15);
 			billing.Compute();
 			using (new SessionScope()) {
-				sms = SmsMessage.Queryable.Where(m => m.Client == _client);
+				sms = SmsMessage.Queryable.Where(m => m.Client == client);
 				foreach (var smsMessage in sms) {
 					Assert.That(smsMessage.ShouldBeSend, Is.EqualTo(DateTime.Now.Date.AddHours(12)));
 				}
@@ -110,7 +99,7 @@ namespace Billing.Test.Integration
 			}
 			billing.Compute();
 			using (new SessionScope()) {
-				sms = SmsMessage.Queryable.Where(m => m.Client == _client);
+				sms = SmsMessage.Queryable.Where(m => m.Client == client);
 				foreach (var smsMessage in sms) {
 					Assert.That(smsMessage.ShouldBeSend, Is.EqualTo(DateTime.Now.Date.AddDays(1).AddHours(12)));
 				}
@@ -121,9 +110,9 @@ namespace Billing.Test.Integration
 		public void Two_day_send_sms()
 		{
 			var messages = new List<SmsMessage>();
-			var sum = _client.GetPrice() / _client.GetInterval();
-			_client.PhysicalClient.Balance = sum * 3 + 1;
-			_client.PhysicalClient.Update();
+			var sum = client.GetPrice() / client.GetInterval();
+			client.PhysicalClient.Balance = sum * 3 + 1;
+			client.PhysicalClient.Update();
 			billing.Compute();
 			messages.AddRange(billing.Messages);
 			Assert.AreEqual(messages.Count, 0);

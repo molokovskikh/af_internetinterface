@@ -356,13 +356,13 @@ namespace InternetInterface.Controllers
 
 		public void СhangeSaleSettings()
 		{
-			var setting = SaleSettings.FindFirst();
+			var setting = DbSession.Query<SaleSettings>().First();
 			PropertyBag["settings"] = setting;
 
 			if (IsPost) {
 				SetARDataBinder();
 				BindObjectInstance(setting, ParamStore.Form, "settings", AutoLoadBehavior.Always);
-				setting.Save();
+				DbSession.Save(setting);
 				Notify("Настройки сохранены");
 				RedirectToReferrer();
 			}

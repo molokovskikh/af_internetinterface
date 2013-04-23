@@ -10,6 +10,7 @@ using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.Models.Audit;
 using Common.Web.Ui.NHibernateExtentions;
+using InternetInterface.Controllers;
 using InternetInterface.Helpers;
 using InternetInterface.Models.Services;
 using InternetInterface.Services;
@@ -37,9 +38,13 @@ namespace InternetInterface.Models
 			Appeals = new List<Appeals>();
 		}
 
-		public Client(PhysicalClient client, IEnumerable<Service> defaultServices)
+		public Client(PhysicalClient client, Settings settings, Partner registrator = null)
 			: this()
 		{
+			if (registrator != null) {
+				WhoRegistered = registrator;
+				WhoRegisteredName = registrator.Name;
+			}
 			PhysicalClient = client;
 			PhysicalClient.Client = this;
 			Type = ClientType.Phisical;
@@ -48,7 +53,9 @@ namespace InternetInterface.Models
 			YearCycleDate = DateTime.Now;
 			RegDate = DateTime.Now;
 			PercentBalance = 0.8m;
-			foreach (var defaultService in defaultServices) {
+			Status = settings.DefaultStatus;
+			Recipient = settings.DefaultRecipient;
+			foreach (var defaultService in settings.DefaultServices) {
 				ClientServices.Add(new ClientService(this, defaultService));
 			}
 		}
@@ -189,31 +196,38 @@ namespace InternetInterface.Models
 			return Endpoints.Count == 0;
 		}
 
-		public virtual void CreateAutoEndPont(string ip, ISession session)
+		public virtual void CreateAutoEndPont(IPAddress ip, ISession session)
 		{
-			var lease = session.Query<Lease>().FirstOrDefault(l => l.Ip == Convert.ToUInt32(NetworkSwitch.SetProgramIp(ip)));
+			var lease = session.Query<Lease>().FirstOrDefault(l => l.Ip == ip);
 			if (lease == null)
 				throw new Exception(string.Format("Клиент {0} пришел а аренды для него нет", Id));
-			if (string.IsNullOrEmpty(lease.Switch.Name)) {
-				var _switch = lease.Switch;
-				_switch.Name = PhysicalClient.GetCutAdress();
-				session.Save(_switch);
-			}
+
+			var endpoint = CreateAutoEndpoint(lease, Status.Get(StatusType.Worked, session));
+
+			session.Save(lease.Switch);
+			session.Save(endpoint.PayForCon);
+			session.Save(endpoint);
+			session.Save(lease);
+			session.Save(this);
+		}
+
+		public virtual ClientEndpoint CreateAutoEndpoint(Lease lease, Status worked)
+		{
+			if (string.IsNullOrEmpty(lease.Switch.Name))
+				lease.Switch.Name = PhysicalClient.GetShortAdress();
+
 			var newPoint = new ClientEndpoint(this, lease.Port, lease.Switch);
-			var paymentForConnect = new PaymentForConnect {
-				Sum = PhysicalClient.ConnectSum,
-				EndPoint = newPoint,
-				RegDate = DateTime.Now
-			};
-			session.Save(paymentForConnect);
+			var paymentForConnect = new PaymentForConnect(PhysicalClient.ConnectSum, newPoint);
 			newPoint.PayForCon = paymentForConnect;
 			lease.Endpoint = newPoint;
-			session.Save(lease);
+
 			if (!Status.Connected) {
-				Status = Status.Get(StatusType.Worked, session);
-				session.SaveOrUpdate(this);
+				Status = worked;
+				FirstLunch = true;
+				Disabled = false;
+				AutoUnblocked = true;
 			}
-			session.Save(newPoint);
+			return newPoint;
 		}
 
 		public static bool Our(string ip)
@@ -279,7 +293,7 @@ namespace InternetInterface.Models
 		public virtual string GetCutAdress()
 		{
 			if (PhysicalClient != null)
-				return PhysicalClient.GetCutAdress();
+				return PhysicalClient.GetShortAdress();
 			return String.Empty;
 		}
 
@@ -337,7 +351,6 @@ namespace InternetInterface.Models
 				var contacts = Contacts.Where(c => c.Text.Contains(query));
 				foreach (var contact in contacts) {
 					doContact(contact);
-					//result += TextHelper.SelectContact(query, contact.Text) + "<br/>";
 				}
 			}
 			if (String.IsNullOrEmpty(result)) {
@@ -372,22 +385,6 @@ namespace InternetInterface.Models
 				return string.Format("{0} руб.", LawyerPerson.Tariff.Value);
 			return "Тариф не задан";
 		}
-
-		/*public virtual string ForSearchContactNoLight(string query)
-		{
-			var result = String.Empty;
-			if (!String.IsNullOrEmpty(query)) {
-				var contacts = Contacts.Where(c => c.Text.Contains(query));
-				foreach (var contact in contacts) {
-					result += (contact.Text + "/r/n");
-				}
-			}
-			if (String.IsNullOrEmpty(result)) {
-				return Contact;
-			}
-			return result;
-		}*/
-
 		public virtual bool StatusCanChange()
 		{
 			if (PhysicalClient != null)
@@ -449,7 +446,7 @@ namespace InternetInterface.Models
 
 		public virtual string ChangePhysicalClientPassword()
 		{
-			var pass = CryptoPass.GeneratePassword(Id);
+			var pass = CryptoPass.GeneratePassword();
 			PhysicalClient.Password = CryptoPass.GetHashString(pass);
 			PhysicalClient.Update();
 			return pass;
@@ -523,8 +520,8 @@ namespace InternetInterface.Models
 				gpoupKey = "concat(YEAR(WriteOffDate),'-',MONTH(WriteOffDate))";
 			if (groupedKey == "year")
 				gpoupKey = "YEAR(WriteOffDate)";
-			var textQuery = !forIvrn ? @"SELECT 
-Id, 
+			var textQuery = !forIvrn ? @"SELECT
+Id,
 Sum(WriteOffSum) as WriteOffSum,
 Sum(VirtualSum) as VirtualSum,
 Sum(MoneySum) as MoneySum,
@@ -536,7 +533,7 @@ FROM internet.WriteOff W
 where Client = :clientid and WriteOffSum > 0
 group by {0}
 
-UNION 
+UNION
 
 select
 0 as Id,
@@ -551,8 +548,8 @@ from internet.UserWriteOffs uw
 where uw.client = :clientid
 group by {0}
 ;" :
-@"SELECT 
-Id, 
+@"SELECT
+Id,
 Sum(WriteOffSum) as WriteOffSum,
 Sum(VirtualSum) as VirtualSum,
 Sum(MoneySum) as MoneySum,
@@ -633,8 +630,7 @@ left join internet.NetworkSwitches NS on NS.Id = CE.Switch
 left join internet.Leases L on L.Endpoint = CE.Id
 left join internet.PackageSpeed PS on PS.PackageId = CE.PackageId
 left join internet.PaymentForConnect pfc on pfc.EndPoint = CE.id
-where CE.Client = {0}",
-					Id))
+where CE.Client = {0}", Id))
 					.ToList<ClientConnectInfo>();
 				return infos;
 			}
@@ -643,8 +639,8 @@ where CE.Client = {0}",
 
 		public static Lease FindByIP(string ip)
 		{
-			var addressValue = BigEndianConverter.ToInt32(IPAddress.Parse(ip).GetAddressBytes());
-			return ActiveRecordLinqBase<Lease>.Queryable.FirstOrDefault(l => l.Ip == addressValue);
+			var address = IPAddress.Parse(ip);
+			return ActiveRecordLinqBase<Lease>.Queryable.FirstOrDefault(l => l.Ip == address);
 		}
 
 		public virtual bool OnLine()
@@ -770,6 +766,75 @@ where CE.Client = {0}",
 		public virtual ClientService Iptv
 		{
 			get { return ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof(IpTv)); }
+		}
+
+		public virtual void RegistreContacts(Partner registrator)
+		{
+			if (!string.IsNullOrEmpty(PhysicalClient.PhoneNumber)) {
+				var phone = PhysicalClient.PhoneNumber.Replace("-", string.Empty);
+				var contact = new Contact(registrator, this, ContactType.MobilePhone, phone) {
+					Comment = "Указан при регистрации",
+				};
+				Contacts.Add(contact);
+				contact = new Contact(registrator, this, ContactType.SmsSending, phone) {
+					Comment = "Указан при регистрации",
+				};
+				Contacts.Add(contact);
+			}
+
+			if (!string.IsNullOrEmpty(PhysicalClient.HomePhoneNumber)) {
+				var phone = PhysicalClient.HomePhoneNumber.Replace("-", string.Empty);
+				var contact = new Contact(registrator, this, ContactType.HousePhone, phone) {
+					Comment = "Указан при регистрации",
+				};
+				Contacts.Add(contact);
+			}
+
+			if (!string.IsNullOrEmpty(PhysicalClient.Email)) {
+				var contact = new Contact(registrator, this, ContactType.Email, PhysicalClient.Email) {
+					Comment = "Указан при регистрации",
+				};
+				Contacts.Add(contact);
+			}
+		}
+
+		public virtual bool AfterRegistration(Agent agent, Partner registrator)
+		{
+			var havePayment = PhysicalClient.Balance > 0;
+			Name = string.Format("{0} {1} {2}", PhysicalClient.Surname, PhysicalClient.Name, PhysicalClient.Patronymic);
+			AutoUnblocked = havePayment;
+			Disabled = !havePayment;
+
+			RegistreContacts(registrator);
+
+			if (havePayment) {
+				var payment = new Payment(this, PhysicalClient.Balance) {
+					Agent = agent,
+					BillingAccount = true,
+					RecievedOn = DateTime.Now,
+				};
+				Payments.Add(payment);
+			}
+
+			return havePayment;
+		}
+
+		public virtual string GeneragePassword()
+		{
+			var password = CryptoPass.GeneratePassword();
+			PhysicalClient.Password = CryptoPass.GetHashString(password);
+			return password;
+		}
+
+		public virtual void SelfRegistration(Lease lease, Status worked)
+		{
+			AfterRegistration(null, null);
+			CreateAutoEndpoint(lease, worked);
+			BeginWork = DateTime.Now;
+			RatedPeriodDate = DateTime.Now;
+			var payment = PhysicalClient.CalculateSelfRegistrationPayment();
+			if (payment.Sum > 0)
+				Payments.Add(payment);
 		}
 	}
 

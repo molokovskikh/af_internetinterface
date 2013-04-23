@@ -20,11 +20,11 @@ namespace Billing.Test.Integration
 		[Test]
 		public void Before_write_off_balance_test()
 		{
-			var oldBalance = _client.Balance;
+			var oldBalance = client.Balance;
 			billing.Compute();
 			ArHelper.WithSession(s => {
-				_client = s.Get<Client>(_client.Id);
-				var writeOff = _client.WriteOffs.First();
+				client = s.Get<Client>(client.Id);
+				var writeOff = client.WriteOffs.First();
 				Assert.That(writeOff.BeforeWriteOffBalance, Is.EqualTo(oldBalance));
 			});
 		}
@@ -33,45 +33,45 @@ namespace Billing.Test.Integration
 		public void PastRatedPeriodDate()
 		{
 			using (new SessionScope()) {
-				_client.RatedPeriodDate = DateTime.Now.AddMonths(-1);
-				_client.Update();
+				client.RatedPeriodDate = DateTime.Now.AddMonths(-1);
+				client.Update();
 			}
 			billing.Compute();
 			using (new SessionScope()) {
-				_client.Refresh();
-				Assert.That(_client.RatedPeriodDate.Value.Date, Is.EqualTo(DateTime.Now.Date));
-				_client.RatedPeriodDate = DateTime.Now.AddMonths(-3).AddDays(-5);
-				_client.Update();
+				client.Refresh();
+				Assert.That(client.RatedPeriodDate.Value.Date, Is.EqualTo(DateTime.Now.Date));
+				client.RatedPeriodDate = DateTime.Now.AddMonths(-3).AddDays(-5);
+				client.Update();
 			}
 			billing.Compute();
 			using (new SessionScope()) {
-				_client.Refresh();
-				Assert.That(_client.RatedPeriodDate.Value.Date, Is.EqualTo(DateTime.Now.Date));
+				client.Refresh();
+				Assert.That(client.RatedPeriodDate.Value.Date, Is.EqualTo(DateTime.Now.Date));
 				var rpd = new DateTime(2012, 1, 31, 22, 10, 11);
-				_client.RatedPeriodDate = rpd;
-				_client.StartNoBlock = rpd;
+				client.RatedPeriodDate = rpd;
+				client.StartNoBlock = rpd;
 				SystemTime.Now = () => new DateTime(2012, 2, 29, 22, 10, 10);
-				_client.Update();
+				client.Update();
 			}
 			billing.Compute();
 			using (new SessionScope()) {
-				_client.Refresh();
-				Assert.That(_client.RatedPeriodDate.Value.Date, Is.EqualTo(new DateTime(2012, 2, 29)));
-				Assert.That(_client.DebtDays, Is.EqualTo(2));
+				client.Refresh();
+				Assert.That(client.RatedPeriodDate.Value.Date, Is.EqualTo(new DateTime(2012, 2, 29)));
+				Assert.That(client.DebtDays, Is.EqualTo(2));
 				SystemTime.Now = () => new DateTime(2012, 3, 30, 22, 10, 10);
 			}
 			billing.Compute();
 			using (new SessionScope()) {
-				_client.Refresh();
-				Assert.That(_client.RatedPeriodDate.Value.Date, Is.EqualTo(new DateTime(2012, 2, 29)));
-				Assert.That(_client.DebtDays, Is.EqualTo(2));
+				client.Refresh();
+				Assert.That(client.RatedPeriodDate.Value.Date, Is.EqualTo(new DateTime(2012, 2, 29)));
+				Assert.That(client.DebtDays, Is.EqualTo(2));
 				SystemTime.Now = () => new DateTime(2012, 3, 31, 22, 10, 10);
 			}
 			billing.Compute();
 			using (new SessionScope()) {
-				_client.Refresh();
-				Assert.That(_client.RatedPeriodDate.Value.Date, Is.EqualTo(new DateTime(2012, 3, 31)));
-				Assert.That(_client.DebtDays, Is.EqualTo(0));
+				client.Refresh();
+				Assert.That(client.RatedPeriodDate.Value.Date, Is.EqualTo(new DateTime(2012, 3, 31)));
+				Assert.That(client.DebtDays, Is.EqualTo(0));
 			}
 		}
 
@@ -329,7 +329,7 @@ namespace Billing.Test.Integration
 					Balance = 0m,
 					Tariff = domTariff
 				};
-				domolinkClient = new Client(physDom, BaseBillingFixture.DefaultServices()) {
+				domolinkClient = new Client(physDom, BaseBillingFixture.Settings()) {
 					Disabled = true,
 					Type = ClientType.Phisical,
 					Name = "Александр Барабановский",

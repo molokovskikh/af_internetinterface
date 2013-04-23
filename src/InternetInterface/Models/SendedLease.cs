@@ -19,7 +19,7 @@ namespace InternetInterface.Models
 			LeasedTo = lease.LeasedTo;
 			LeaseBegin = lease.LeaseBegin;
 			LeaseEnd = lease.LeaseEnd;
-			Ip = lease.Ip;
+			Ip = (uint)lease.Ip.Address;
 			Pool = lease.Pool;
 			Switch = lease.Switch;
 			SendDate = DateTime.Now;

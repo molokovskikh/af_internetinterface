@@ -6,6 +6,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Common.Tools;
 using Common.Web.Ui.ActiveRecordExtentions;
@@ -13,6 +14,7 @@ using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.Models.Editor;
 using InforoomInternet.Models;
+using InternetInterface.Controllers;
 using InternetInterface.Models;
 using NHibernate.Linq;
 
@@ -92,20 +94,17 @@ namespace InforoomInternet.Controllers
 					}.Save();
 					if (userClient != null) {
 						contactInfo = contactInfo.Replace("-", string.Empty);
-						if (userClient.Contacts != null && !userClient.Contacts.Select(c => c.Text).Contains(contactInfo))
-							new Contact {
-								Client = userClient,
-								Date = DateTime.Now,
-								Text = contactInfo,
-								Type = ContactType.ConnectedPhone
-							}.Save();
+						if (userClient.Contacts != null && !userClient.Contacts.Select(c => c.Text).Contains(contactInfo)) {
+							var contact = new Contact(userClient, ContactType.ConnectedPhone, contactInfo);
+							DbSession.Save(contact);
+						}
 					}
 					var message = new MailMessage();
 					message.To.Add(mailToAdress);
 					message.Subject = "Принято новое обращение клиента";
 					message.From = new MailAddress("internet@ivrn.net");
 					message.Body = Text.ToString();
-					var smtp = new SmtpClient("box.analit.net");
+					var smtp = new SmtpClient();
 					smtp.Send(message);
 					RedirectToAction("MessageSended", new Dictionary<string, string> { { "clientName", clientName } });
 				}
@@ -114,22 +113,15 @@ namespace InforoomInternet.Controllers
 			ArHelper.WithSession(s => s.Evict(client));
 		}
 
-		public void Assist()
+		public void Assist(string q)
 		{
-			if (Request != null)
-				if (Request.Headers["X-Requested-With"] != null)
-					if (Request.Headers["X-Requested-With"].Equals("XMLHttpRequest")) {
-						var queryString = Request.QueryString.Get("q");
-						if (!String.IsNullOrEmpty(queryString)) {
-							Street.GetStreetList(queryString, Response.Output);
-						}
-						else {
-							return;
-						}
-					}
-					else {
-						return;
-					}
+			if (string.IsNullOrEmpty(q))
+				return;
+
+			if (Request == null || Request.Headers["X-Requested-With"] != "XMLHttpRequest")
+				return;
+
+			Street.GetStreetList(q, Response.Output);
 			CancelLayout();
 			CancelView();
 		}
@@ -159,19 +151,69 @@ namespace InforoomInternet.Controllers
 			}
 		}
 
+		public void SelfRegistration(string referer)
+		{
+			SetARDataBinder(AutoLoadBehavior.NullIfInvalidKey);
+
+			var lease = Client.FindByIP(GetHost());
+
+			if (!lease.CanSelfRegister()) {
+				Redirecter.RedirectRoot(this);
+			}
+
+			var physicalClient = new PhysicalClient {
+				Apartment = 0,
+				Entrance = 0,
+				Floor = 0,
+			};
+			physicalClient.ExternalClientIdRequired = true;
+			var settings = new Settings(DbSession);
+			var client = new Client(physicalClient, settings);
+
+			//тарифы для самостоятельной регистрации всего скорее будут скрыты
+			//тк самостоятельная регистрация предназначена для перевода абонентов
+			DbSession.DisableFilter("HiddenTariffs");
+			PropertyBag["tariffs"] = DbSession.Query<Tariff>().Where(t => t.CanUseForSelfRegistration)
+				.OrderBy(t => t.Name)
+				.ToList();
+			PropertyBag["physicalClient"] = physicalClient;
+			PropertyBag["referer"] = referer;
+
+			if (IsPost) {
+				BindObjectInstance(physicalClient, "physicalClient", "ExternalClientId, Surname, Name, Patronymic, PhoneNumber, Tariff");
+				if (IsValid(physicalClient)) {
+					client.SelfRegistration(lease, Status.Get(StatusType.Worked, DbSession));
+
+					foreach (var contact in client.Contacts)
+						DbSession.Save(contact);
+
+					foreach (var payment in client.Payments)
+						DbSession.Save(payment);
+
+					DbSession.Save(client);
+					DbSession.Flush();
+
+					SceHelper.Login(lease, lease.Ip.ToString());
+
+					Flash["password"] = client.GeneragePassword();
+					Redirect("PrivateOffice", "Complete");
+				}
+			}
+		}
+
 		public void Warning()
 		{
-			var hostAdress = Request.UserHostAddress;
-#if DEBUG
-			hostAdress = "127.0.0.1";
-#endif
+			var referer = "";
+			if (!string.IsNullOrEmpty(Request["host"]))
+				PropertyBag["referer"] = Request["host"] + Request["url"];
 
+			var hostAdress = GetHost();
 			var lease = Client.FindByIP(hostAdress);
 #if DEBUG
 			if (lease == null)
 				lease = new Lease {
 					Endpoint = new ClientEndpoint {
-						Client = new Client() {
+						Client = new Client {
 							ShowBalanceWarningPage = true,
 							RatedPeriodDate = DateTime.Now,
 							LawyerPerson = new LawyerPerson {
@@ -202,15 +244,20 @@ namespace InforoomInternet.Controllers
 				}).Select(s => s.EndPoint).FirstOrDefault();
 			}
 
-			if (point == null) {
-				Redirecter.RedirectRoot(Context, this);
+			if (lease != null && lease.CanSelfRegister()) {
+				RedirectToAction("SelfRegistration", new { referer });
 				return;
 			}
 
-			var clientW = lease != null ? lease.Endpoint.Client : point.Client;
+			if (point == null) {
+				Redirecter.RedirectRoot(this);
+				return;
+			}
+
+			var client = point.Client;
 
 			if (IsPost) {
-				int? actualPackageId = null;
+				int? actualPackageId;
 				if (lease != null) {
 					actualPackageId = SceHelper.Login(lease, Request.UserHostAddress);
 					lease.Endpoint.UpdateActualPackageId(actualPackageId);
@@ -226,37 +273,33 @@ namespace InforoomInternet.Controllers
 						DbSession.SaveOrUpdate(point);
 					}
 				}
-				if (clientW.ShowBalanceWarningPage) {
-					clientW.ShowBalanceWarningPage = false;
-					Appeals.CreareAppeal("Отключена страница Warning, клиент отключил со страницы", clientW, AppealType.Statistic, false);
+				if (client.ShowBalanceWarningPage) {
+					client.ShowBalanceWarningPage = false;
+					Appeals.CreareAppeal("Отключена страница Warning, клиент отключил со страницы", client, AppealType.Statistic, false);
 				}
-				clientW.Update();
-				var url = Request.Form["referer"];
-				if (String.IsNullOrEmpty(url))
-					Redirecter.RedirectRoot(Context, this);
-				else
-					RedirectToUrl(string.Format("http://{0}", url));
+				client.Update();
+				GoToReferer();
 				return;
 			}
 
-			var host = Request["host"];
-			var rUrl = Request["url"];
-			if (!string.IsNullOrEmpty(host))
-				PropertyBag["referer"] = host + rUrl;
-			else PropertyBag["referer"] = string.Empty;
-
-			var pclient = clientW.PhysicalClient;
-			var client = clientW;
-
+			PropertyBag["referer"] = referer;
 			PropertyBag["Client"] = client;
-
-			if (clientW.PhysicalClient == null) {
+			if (client.PhysicalClient == null) {
 				PropertyBag["LClient"] = client.LawyerPerson;
 				RenderView("WarningLawyer");
-				return;
 			}
+			else {
+				PropertyBag["PClient"] = client.PhysicalClient;
+			}
+		}
 
-			PropertyBag["PClient"] = pclient;
+		private string GetHost()
+		{
+			var hostAdress = Request.UserHostAddress;
+#if DEBUG
+			hostAdress = "127.0.0.1";
+#endif
+			return hostAdress;
 		}
 
 		private void SetEdatableAttribute(bool edit, string viewName)
@@ -271,14 +314,11 @@ namespace InforoomInternet.Controllers
 			}
 		}
 
-
 		public void WarningPackageId()
 		{
 			var hostAdress = Request.UserHostAddress;
 #if DEBUG
-			//hostAdress = NetworkSwitch.GetNormalIp(DbSession.Query<Lease>().Where(l => l.Endpoint.Client.PhysicalClient != null).ToList().First().Ip);
-			//hostAdress = NetworkSwitch.GetNormalIp(DbSession.Query<Lease>().Where(l => l.Endpoint == null).ToList().First().Ip);
-			hostAdress = NetworkSwitch.GetNormalIp(DbSession.Query<Lease>().ToList().First().Ip);
+			hostAdress = DbSession.Query<Lease>().ToList().First().Ip.ToString();
 #endif
 			if (Regex.IsMatch(hostAdress, NetworkSwitch.IPRegExp) && !Client.Our(hostAdress)) {
 				RedirectToSiteRoot();
@@ -315,10 +355,9 @@ namespace InforoomInternet.Controllers
 		{
 			var url = Request.Form["referer"];
 			if (String.IsNullOrEmpty(url))
-				Redirecter.RedirectRoot(Context, this);
+				Redirecter.RedirectRoot(this);
 			else
 				RedirectToUrl(string.Format("http://{0}", url));
-			return;
 		}
 
 		public void RenewClientConect(uint client)
@@ -399,7 +438,7 @@ namespace InforoomInternet.Controllers
 			message.Subject = "Преадресация на страницу WarningPackageId";
 			message.From = new MailAddress("service@analit.net");
 			message.Body = messageText.ToString();
-			var smtp = new SmtpClient("box.analit.net");
+			var smtp = new SmtpClient();
 			smtp.Send(message);
 		}
 	}

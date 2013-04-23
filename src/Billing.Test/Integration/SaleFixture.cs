@@ -15,10 +15,10 @@ namespace Billing.Test.Integration
 		public void SetupThis()
 		{
 			using (new SessionScope()) {
-				_client.PhysicalClient.Balance = 100000;
-				_client.RatedPeriodDate = DateTime.Now;
-				_client.StartNoBlock = DateTime.Now;
-				_client.Update();
+				client.PhysicalClient.Balance = 100000;
+				client.RatedPeriodDate = DateTime.Now;
+				client.StartNoBlock = DateTime.Now;
+				client.Update();
 				SystemTime.Reset();
 			}
 		}
@@ -35,8 +35,8 @@ namespace Billing.Test.Integration
 				if (sale > MaxSale)
 					sale = MaxSale;
 				using (new SessionScope()) {
-					_client.Refresh();
-					Assert.AreEqual(sale, _client.Sale);
+					client.Refresh();
+					Assert.AreEqual(sale, client.Sale);
 				}
 			}
 		}
@@ -47,10 +47,10 @@ namespace Billing.Test.Integration
 			SystemTime.Now = () => DateTime.Now.AddMonths(4).AddDays(-5);
 			billing.Compute();
 			using (new SessionScope()) {
-				_client.Refresh();
-				Assert.AreEqual(_client.Sale, SaleStep * MinSale);
+				client.Refresh();
+				Assert.AreEqual(client.Sale, SaleStep * MinSale);
 				var writeOff = WriteOff.FindFirst();
-				var preSaleSum = _client.PhysicalClient.Tariff.Price / _client.GetInterval();
+				var preSaleSum = client.PhysicalClient.Tariff.Price / client.GetInterval();
 				Assert.AreEqual(Math.Round(writeOff.WriteOffSum, 2), Math.Round(preSaleSum - preSaleSum * (SaleStep * MinSale / 100), 2));
 				Assert.AreEqual(writeOff.Sale, SaleStep * MinSale);
 			}
@@ -61,86 +61,86 @@ namespace Billing.Test.Integration
 		{
 			SystemTime.Now = () => DateTime.Now.AddMonths(4).AddDays(-5);
 			using (new SessionScope()) {
-				_client.PhysicalClient.Balance = 100;
-				_client.Update();
+				client.PhysicalClient.Balance = 100;
+				client.Update();
 			}
 			billing.Compute();
 			using (new SessionScope()) {
-				_client.Refresh();
-				Assert.AreEqual(_client.Sale, SaleStep * MinSale);
+				client.Refresh();
+				Assert.AreEqual(client.Sale, SaleStep * MinSale);
 			}
-			while (!_client.Disabled) {
+			while (!client.Disabled) {
 				billing.Compute();
 				billing.OnMethod();
 				using (new SessionScope())
-					_client.Refresh();
+					client.Refresh();
 			}
-			Assert.AreEqual(_client.Sale, 0);
+			Assert.AreEqual(client.Sale, 0);
 			new Payment {
-				Client = _client,
+				Client = client,
 				Sum = 1000
 			}.Save();
 			billing.OnMethod();
 			billing.Compute();
 			using (new SessionScope()) {
-				_client.Refresh();
-				Assert.AreEqual(_client.Sale, 0);
-				_client.StartNoBlock = SystemTime.Now();
-				_client.Update();
+				client.Refresh();
+				Assert.AreEqual(client.Sale, 0);
+				client.StartNoBlock = SystemTime.Now();
+				client.Update();
 			}
 			billing.Compute();
 			using (new SessionScope())
-				_client.Refresh();
-			Assert.AreEqual(_client.Sale, 0);
+				client.Refresh();
+			Assert.AreEqual(client.Sale, 0);
 			SystemTime.Now = () => DateTime.Now.AddMonths(8).AddDays(-10);
 			billing.Compute();
 			using (new SessionScope())
-				_client.Refresh();
-			Assert.AreEqual(_client.Sale, SaleStep * MinSale);
+				client.Refresh();
+			Assert.AreEqual(client.Sale, SaleStep * MinSale);
 		}
 
 		[Test]
 		public void Set_start_date()
 		{
 			using (new SessionScope()) {
-				_client.PhysicalClient.Balance = 100;
-				_client.PhysicalClient.MoneyBalance = 100;
-				_client.PhysicalClient.VirtualBalance = 0;
-				_client.PhysicalClient.Save();
+				client.PhysicalClient.Balance = 100;
+				client.PhysicalClient.MoneyBalance = 100;
+				client.PhysicalClient.VirtualBalance = 0;
+				client.PhysicalClient.Save();
 			}
 			var iterationCount = 0;
-			while (!_client.Disabled) {
+			while (!client.Disabled) {
 				billing.Compute();
 				iterationCount++;
 				using (new SessionScope())
-					_client.Refresh();
+					client.Refresh();
 			}
 			Assert.Greater(iterationCount, 1);
 			using (new SessionScope())
-				_client.Refresh();
-			Assert.IsNull(_client.StartNoBlock);
+				client.Refresh();
+			Assert.IsNull(client.StartNoBlock);
 			billing.Compute();
 			using (new SessionScope()) {
-				_client.Refresh();
-				Assert.IsNull(_client.StartNoBlock);
+				client.Refresh();
+				Assert.IsNull(client.StartNoBlock);
 				var writeOffs = WriteOff.Queryable.ToList();
 				Assert.That(writeOffs.Sum(off => off.Sale), Is.EqualTo(0));
 				Assert.Greater(writeOffs.Count, 0);
 				new Payment {
-					Sum = _client.GetPriceForTariff(),
-					Client = _client
+					Sum = client.GetPriceForTariff(),
+					Client = client
 				}.Save();
 			}
 			billing.OnMethod();
 			using (new SessionScope()) {
-				_client.Refresh();
-				_client.RatedPeriodDate = DateTime.Now;
-				_client.Update();
+				client.Refresh();
+				client.RatedPeriodDate = DateTime.Now;
+				client.Update();
 			}
 			billing.Compute();
 			using (new SessionScope())
-				_client.Refresh();
-			Assert.That(_client.StartNoBlock.Value.Date, Is.EqualTo(SystemTime.Now().Date));
+				client.Refresh();
+			Assert.That(client.StartNoBlock.Value.Date, Is.EqualTo(SystemTime.Now().Date));
 		}
 	}
 }

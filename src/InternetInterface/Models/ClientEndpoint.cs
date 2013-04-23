@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using Castle.ActiveRecord;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.Models.Audit;
@@ -82,16 +83,16 @@ namespace InternetInterface.Models
 			get { return Pool != null || (MaxLeaseCount != null && MaxLeaseCount > 1); }
 		}
 
-		public static ClientEndpoint GetForIp(string ip, ISession session)
+		public static ClientEndpoint GetForIp(IPAddress ip, ISession session)
 		{
-			var lease = session.Query<Lease>().FirstOrDefault(l => l.Ip == Convert.ToUInt32(NetworkSwitch.SetProgramIp(ip)));
+			var lease = session.Query<Lease>().FirstOrDefault(l => l.Ip == ip);
 			if (lease != null) {
 				return session.Query<ClientEndpoint>().FirstOrDefault(e => e.Port == lease.Port && e.Switch == lease.Switch);
 			}
 			return null;
 		}
 
-		public static bool HavePoint(ISession session, string ip)
+		public static bool HavePoint(ISession session, IPAddress ip)
 		{
 			return GetForIp(ip, session) != null;
 		}

@@ -44,7 +44,7 @@ namespace InternetInterface.Test.Integration
 				Region = session.Query<RegionHouse>().First()
 			};
 			session.Save(LawyerPerson);
-			Client = new Client(PhusicalClient, new List<Service>()) {
+			Client = new Client(PhusicalClient, new Settings()) {
 				Name = "TestClientOnLine",
 				LawyerPerson = LawyerPerson
 			};
@@ -55,7 +55,10 @@ namespace InternetInterface.Test.Integration
 			session.Save(Switch);
 			Endpoint = new ClientEndpoint(Client, 10, Switch);
 			session.Save(Endpoint);
-			Lease = new Lease(Endpoint) { Switch = Switch };
+			Lease = new Lease(Endpoint) {
+				Ip = IPAddress.Loopback,
+				Switch = Switch
+			};
 			session.Save(Lease);
 			Flush();
 		}
@@ -109,8 +112,7 @@ namespace InternetInterface.Test.Integration
 		[Test]
 		public void Search_by_ip()
 		{
-			var bytes = IPAddress.Parse("10.0.50.1").GetAddressBytes().Reverse().ToArray();
-			Lease.Ip = BitConverter.ToUInt32(bytes, 0);
+			Lease.Ip = IPAddress.Parse("10.0.50.1");
 			session.SaveOrUpdate(Lease);
 			Flush();
 

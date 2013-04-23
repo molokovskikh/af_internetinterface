@@ -17,8 +17,7 @@ namespace InternetInterface.Components
 				idAttr = String.Format("id=\"{0}\"", id);
 
 			var name = ComponentParams["name"].ToString();
-			var contactId = Convert.ToUInt32(ComponentParams["cintactId"].ToString());
-			var thisContact = Contact.Queryable.FirstOrDefault(c => c.Id == contactId);
+			var thisContact = ComponentParams["contact"] as Contact;
 			var htmlCode = string.Format("<select {1} class=\"linkSelector\" name=\"{0}.Type\" >", name, idAttr);
 			foreach (var type in Enum.GetValues(typeof(ContactType))) {
 				htmlCode += string.Format("<option class={3} value=\"{0}\" {2}>{1}</option>", type,

@@ -1,0 +1,56 @@
+﻿<style>
+	label.error
+	{
+		display: block;
+		clear: both;
+		margin-left: 0;
+	}
+</style>
+${FormHelper.FormTag("", {})}
+${FormHelper.HiddenField("referer")}
+<table class="headTable fullWidth">
+	<tr>
+		<td>Номер абонента</td>
+		<td>
+			${app.Edit("physicalClient.ExternalClientId")}
+			${app.GetValidationError("physicalClient.ExternalClientId")}
+		</td>
+	</tr>
+	<tr>
+		<td>Фамилия</td>
+		<td>
+			${app.Edit("physicalClient.Surname", { @class : @big_input })}
+			${app.GetValidationError("physicalClient.Surname")}
+		</td>
+	</tr>
+	<tr>
+		<td>Имя</td>
+		<td>
+			${app.Edit("physicalClient.Name", { @class : @big_input })}
+			${app.GetValidationError("physicalClient.Name")}
+		</td>
+	</tr>
+	<tr>
+		<td>Отчество</td>
+		<td>
+			${app.Edit("physicalClient.Patronymic", { @class : @big_input })}
+			${app.GetValidationError("physicalClient.Patronymic")}
+		</td>
+	</tr>
+	<tr>
+		<td>Контактный телефон</td>
+		<td>
+			${app.Edit("physicalClient.PhoneNumber")}
+			${app.GetValidationError("physicalClient.PhoneNumber")}
+		</td>
+	</tr>
+	<tr>
+		<td>Тариф</td>
+		<td>
+			${app.Edit("physicalClient.Tariff", {@emptyValue: "--Выберите--", @items: tariffs})}
+			${app.GetValidationError("physicalClient.Tariff")}
+		</td>
+	</tr>
+</table>
+${FormHelper.Submit("Продолжить")}
+${FormHelper.EndFormTag()}

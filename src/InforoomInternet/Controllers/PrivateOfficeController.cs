@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using Castle.Components.Binder;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
@@ -25,7 +26,7 @@ namespace InforoomInternet.Controllers
 	{
 		public void AboutSale()
 		{
-			PropertyBag["saleSettings"] = SaleSettings.FindFirst();
+			PropertyBag["saleSettings"] = DbSession.Query<SaleSettings>().First();
 		}
 
 		public void BalanceInfo()
@@ -95,25 +96,25 @@ namespace InforoomInternet.Controllers
 #if DEBUG
 				userHostAddress = "192.168.0.1";
 #endif
-				if (client.NoEndPoint() && !ClientEndpoint.HavePoint(DbSession, userHostAddress)) {
+				var address = IPAddress.Parse(userHostAddress);
+				if (client.NoEndPoint() && !ClientEndpoint.HavePoint(DbSession, address)) {
 #if DEBUG
-					var programIP = Convert.ToUInt32(NetworkSwitch.SetProgramIp(userHostAddress));
-					if (DbSession.Query<Lease>().FirstOrDefault(l => l.Ip == programIP) == null) {
+					if (DbSession.Query<Lease>().FirstOrDefault(l => l.Ip == address) == null) {
 						var lease = new Lease {
-							Ip = programIP,
+							Ip = address,
 							Switch = DbSession.Query<NetworkSwitch>().First(),
 							Port = 5
 						};
 						DbSession.Save(lease);
 					}
 #endif
-					client.CreateAutoEndPont(userHostAddress, DbSession);
+					client.CreateAutoEndPont(address, DbSession);
 				}
 				client.FirstLunch = true;
 				client.Disabled = client.Balance <= 0;
+				client.AutoUnblocked = true;
 				if (client.IsChanged(c => c.Disabled))
 					Appeals.CreareAppeal("Клиент был заблокирован из личного кабинета при посещении первой страницы", client, AppealType.Statistic);
-				client.AutoUnblocked = true;
 				DbSession.SaveOrUpdate(client);
 				Flash["message"] = "Спасибо, теперь вы можете продолжить работу";
 				RedirectToAction("IndexOffice");
@@ -289,16 +290,13 @@ namespace InforoomInternet.Controllers
 					var smsNotContact = client.Contacts.FirstOrDefault(c => c.Type == ContactType.SmsSending);
 					if (smsNotContact != null) {
 						smsNotContact.Text = telNum;
-						smsNotContact.Save();
+						DbSession.Save(smsNotContact);
 					}
 					else {
-						new Contact {
-							Client = client,
-							Text = telNum,
-							Date = DateTime.Now,
-							Type = ContactType.SmsSending,
-							Comment = "Пользователь создал из личного кабинета"
-						}.Save();
+						var contact = new Contact(client, ContactType.SmsSending, telNum) {
+							Comment = "Пользователь создал из личного кабинета",
+						};
+						DbSession.Save(contact);
 					}
 				}
 				PropertyBag["telephoneNum"] = telephoneInput;
@@ -318,6 +316,25 @@ namespace InforoomInternet.Controllers
 
 		public void BonusProgram()
 		{
+		}
+
+		public void Complete(string referer)
+		{
+			PropertyBag["LoginClient"] = Session["LoginClient"];
+			PropertyBag["referer"] = referer;
+			if (!IsPost && Flash["password"] == null)
+				Redirecter.RedirectRoot(this);
+
+			if (IsPost)
+				GoToReferer(referer);
+		}
+
+		public void GoToReferer(string referer)
+		{
+			if (String.IsNullOrEmpty(referer))
+				Redirecter.RedirectRoot(this);
+			else
+				RedirectToUrl(string.Format("http://{0}", referer));
 		}
 	}
 }

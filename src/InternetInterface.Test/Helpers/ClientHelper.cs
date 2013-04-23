@@ -74,7 +74,7 @@ namespace InternetInterface.Test.Helpers
 				PassportDate = DateTime.Today,
 				PassportNumber = "123456",
 				PassportSeries = "1234",
-				Password = CryptoPass.GetHashString(CryptoPass.GeneratePassword(0)),
+				Password = CryptoPass.GetHashString(CryptoPass.GeneratePassword()),
 				Patronymic = "testOtch",
 				PhoneNumber = "111-2223344",
 				RegistrationAdress = "vrnReg",

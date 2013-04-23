@@ -1,4 +1,5 @@
-﻿using InternetInterface.Models;
+﻿using InternetInterface.Controllers;
+using InternetInterface.Models;
 using NUnit.Framework;
 
 namespace InternetInterface.Test.Unit
@@ -16,14 +17,19 @@ namespace InternetInterface.Test.Unit
 				House = 12,
 				CaseHouse = "а",
 				Apartment = 100,
-				Client = new Client()
+			};
+			var baseClient = new Client(client, Settings.UnitTestSettings());
+			client.Client.PhysicalClient = client;
+			client.Client.Status = new Status {
+				Blocked = true,
+				Connected = false
 			};
 		}
 
 		[Test]
 		public void Get_cut_address()
 		{
-			Assert.That(client.GetCutAdress(), Is.EqualTo("ул. Студенческая д. 12 Корп а кв. 100"));
+			Assert.That(client.GetShortAdress(), Is.EqualTo("ул. Студенческая д. 12 Корп а кв. 100"));
 		}
 
 		[Test]
@@ -52,6 +58,18 @@ namespace InternetInterface.Test.Unit
 			Assert.That(client.Balance, Is.EqualTo(400));
 			Assert.That(client.VirtualBalance, Is.EqualTo(0));
 			Assert.That(client.MoneyBalance, Is.EqualTo(400));
+		}
+
+		[Test]
+		public void Self_registration()
+		{
+			var lease = new Lease {
+				Switch = new NetworkSwitch()
+			};
+			client.Tariff = new Tariff("Test", 100);
+			client.Client.SelfRegistration(lease, new Status { Connected = true });
+			Assert.That(client.Client.Payments.Count, Is.EqualTo(1));
+			Assert.That(client.Client.Payments[0].Sum, Is.GreaterThan(0));
 		}
 	}
 }

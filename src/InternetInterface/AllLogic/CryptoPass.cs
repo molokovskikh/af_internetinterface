@@ -19,14 +19,29 @@ namespace InternetInterface
 			return hash;
 		}
 
-		public static string GeneratePassword(uint clientId)
+		public static string GeneratePassword()
 		{
 			var availableChars = "23456789qwertyupasdfghjkzxcvbnmQWERTYUPASDFGHJKLZXCVBNM";
 			var password = String.Empty;
-			var random = new Random((int)clientId);
 			while (password.Length < 8)
-				password += availableChars[random.Next(0, availableChars.Length - 1)];
+				password += availableChars[RollDice(availableChars.Length - 1)];
 			return password;
+		}
+
+		public static int RollDice(int numberSides)
+		{
+			var rngCsp = new RNGCryptoServiceProvider();
+			var randomNumber = new byte[1];
+			do {
+				rngCsp.GetBytes(randomNumber);
+			} while (!IsFairRoll(randomNumber[0], numberSides));
+			return ((randomNumber[0] % numberSides) + 1);
+		}
+
+		private static bool IsFairRoll(byte roll, int numSides)
+		{
+			var fullSetsOfValues = Byte.MaxValue / numSides;
+			return roll < numSides * fullSetsOfValues;
 		}
 	}
 }
