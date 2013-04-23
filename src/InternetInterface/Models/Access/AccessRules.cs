@@ -243,6 +243,7 @@ namespace InternetInterface.Models.Access
 				"SaveSettings",
 				"ForClient",
 				"ForSwitch",
+				"ShowWriteOffs"
 			};
 			return _visibleDemand.Contains(methodName) ? "SSI" : string.Empty;
 		}

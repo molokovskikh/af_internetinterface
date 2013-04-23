@@ -68,7 +68,8 @@
 			<%if PartnerAccessSet.AccesPartner("SSI"): %>
 			<th>
 				${App.LinkTo("Обращения", @UserInfo, @ShowAppeals)} <br/>
-				${App.LinkTo("Подключения", @Brigads, @ReportOnWork)}
+				${App.LinkTo("Подключения", @Brigads, @ReportOnWork)} <br/>
+				${App.LinkTo("Списания", @Payments, @ShowWriteOffs)}
 			</th>
 			<%end %>
 			<%if PartnerAccessSet.AccesPartner("DHCP"): %>

@@ -38,6 +38,7 @@ namespace InternetInterface.Controllers
 	}
 
 	[Helper(typeof(ViewHelper))]
+	[Helper(typeof(TableHelper), "tableHelper")]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter)), System.Runtime.InteropServices.GuidAttribute("5382FACE-DB49-4A02-9E2E-0A512B0D2E49")]
 	public class PaymentsController : BaseController
 	{
@@ -386,9 +387,11 @@ namespace InternetInterface.Controllers
 			RedirectToReferrer();
 		}
 
-		public void ShowWriteOffs()
+		public void ShowWriteOffs([DataBind("filter")]WriteOffsFilter filter)
 		{
-
+			filter.Session = DbSession;
+			PropertyBag["writeOffs"] = filter.Find();
+			PropertyBag["filter"] = filter;
 		}
 	}
 }

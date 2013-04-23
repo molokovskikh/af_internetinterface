@@ -36,8 +36,10 @@
 </head>
 
 <body>
+<%if loadInternetModules: %>
 ${app.Asset("YandexMetric.js")}
 <noscript><div><img src="//mc.yandex.ru/watch/20220604" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<%end %>
 <div id="wrapper">
 	<div class="left">
 		<a href="${siteroot}/" id="logo">&nbsp;</a>

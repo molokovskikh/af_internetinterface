@@ -1,1 +1,26 @@
-﻿
+﻿<table>
+	<tbody>
+		<tr>
+			<td>Имя клиента</td>
+			<td>${FormHelper.TextFieldValue("filter.Name", ${filter.Name})}</td>
+		</tr>
+		<tr>
+			<td>Начало периода</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>Конец периода</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>Регион работы</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>Тип клиента</td>
+			<td></td>
+		</tr>
+	</tbody>
+</table>
+
+${tableHelper.ViewResult(writeOffs, filter, app)}
