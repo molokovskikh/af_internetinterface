@@ -32,7 +32,7 @@ namespace Billing.Test.Integration
 			var lPerson = new LawyerPerson {
 				Balance = 2000,
 				Tariff = 300m,
-				Region = region.Id
+				Region = region
 			};
 			var a = session.Save(lPerson);
 			lawyerClient = new Client() {
@@ -199,7 +199,7 @@ namespace Billing.Test.Integration
 			lPerson = new LawyerPerson {
 				Balance = 0,
 				Tariff = 10000m,
-				Region = region.Id
+				Region = region
 			};
 			session.Save(lPerson);
 

@@ -139,7 +139,7 @@ namespace Billing.Test.Integration
 					};
 					s.Save(region);
 				}
-				return region.Id;
+				return region;
 			})
 				};
 				lawyerPerson.Save();

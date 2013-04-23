@@ -104,7 +104,7 @@ namespace InternetInterface.Test.Helpers
 			return PhysicalClient().Client;
 		}
 
-		public static uint GetRegionId()
+		public static RegionHouse GetRegionId()
 		{
 			return ArHelper.WithSession(s => {
 				var region = s.Query<RegionHouse>().FirstOrDefault(r => r.Name == "Воронеж");
@@ -114,7 +114,7 @@ namespace InternetInterface.Test.Helpers
 					};
 					s.Save(region);
 				}
-				return region.Id;
+				return region;
 			});
 		}
 	}

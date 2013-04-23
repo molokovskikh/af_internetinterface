@@ -17,3 +17,7 @@ tr.not-processed, .not-processed {
 .legend-mark {
 	width:25px; height:25px; border:1 solid black;
 }
+
+#writeOffsBlock {
+	margin: 15px;
+}

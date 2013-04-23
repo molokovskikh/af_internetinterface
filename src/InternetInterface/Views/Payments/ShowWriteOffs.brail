@@ -1,26 +1,47 @@
-﻿<table>
+﻿${app.Asset("payments.css")}
+${app.BeginFormFor("filter")}
+${FormHelper.HiddenField("filter.SortBy")}
+${FormHelper.HiddenField("filter.SortDirection")}
+<table class="CenterBlock FilterTable">
 	<tbody>
 		<tr>
 			<td>Имя клиента</td>
-			<td>${FormHelper.TextFieldValue("filter.Name", ${filter.Name})}</td>
+			<td>${FormHelper.TextFieldValue("filter.Name", filter.Name)}</td>
 		</tr>
 		<tr>
 			<td>Начало периода</td>
-			<td></td>
+			<td>
+				<input type="text" class="date_field" name="filter.BeginDate" value="${filter.BeginDate.ToShortDateString()}"/>
+			</td>
 		</tr>
 		<tr>
 			<td>Конец периода</td>
-			<td></td>
+			<td>
+				<input type="text" class="date_field" name="filter.EndDate" value="${filter.EndDate.ToShortDateString()}"/>
+			</td>
 		</tr>
 		<tr>
 			<td>Регион работы</td>
-			<td></td>
+			<td>
+				<select name="filter.Region">
+				<option>Все</option>
+				<% for i,region in enumerate(regions): %>
+					<option value="${region.Id}" ${"selected" if region.Id == filter.Region}>${region.Name}</option>
+				<%end%>
+			</td>
 		</tr>
 		<tr>
 			<td>Тип клиента</td>
-			<td></td>
+			<td>
+				${app.Edit("filter.ClientType")}
+			</td>
+		</tr>
+		<tr>
+			<td>${app.ExportLink("Выгрузить в Ехсel", "ExcelShowWriteOffs", filter)}</td>
+			${app.EndFormFor("filter")}
 		</tr>
 	</tbody>
 </table>
-
+<div id="writeOffsBlock">
 ${tableHelper.ViewResult(writeOffs, filter, app)}
+<div>

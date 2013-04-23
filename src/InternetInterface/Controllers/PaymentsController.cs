@@ -16,12 +16,14 @@ using Common.Tools;
 using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
+using Common.Web.Ui.MonoRailExtentions;
 using InternetInterface.AllLogic;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Queries;
 using NHibernate;
+using NHibernate.Linq;
 
 namespace InternetInterface.Controllers
 {
@@ -39,6 +41,7 @@ namespace InternetInterface.Controllers
 
 	[Helper(typeof(ViewHelper))]
 	[Helper(typeof(TableHelper), "tableHelper")]
+	[Helper(typeof(PaginatorHelper), "paginator")]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter)), System.Runtime.InteropServices.GuidAttribute("5382FACE-DB49-4A02-9E2E-0A512B0D2E49")]
 	public class PaymentsController : BaseController
 	{
@@ -392,6 +395,16 @@ namespace InternetInterface.Controllers
 			filter.Session = DbSession;
 			PropertyBag["writeOffs"] = filter.Find();
 			PropertyBag["filter"] = filter;
+			PropertyBag["regions"] = DbSession.Query<RegionHouse>().ToList();
+		}
+
+		public void ExcelShowWriteOffs()
+		{
+			var filter = new WriteOffsFilter();
+			filter.Session = DbSession;
+			SetARDataBinder(AutoLoadBehavior.NullIfInvalidKey);
+			BindObjectInstance(filter, IsPost ? ParamStore.Form : ParamStore.QueryString, "filter", AutoLoadBehavior.NullIfInvalidKey);
+			this.RenderFile("Выгрузка списаний.xls", ExportModel.GetWriteOffs(filter));
 		}
 	}
 }

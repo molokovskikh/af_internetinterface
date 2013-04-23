@@ -64,8 +64,8 @@ namespace InternetInterface.Models
 		[OneToOne(PropertyRef = "LawyerPerson")]
 		public virtual Client client { get; set; }
 
-		[Property("RegionId")]
-		public virtual uint Region { get; set; }
+		[BelongsTo("RegionId")]
+		public virtual RegionHouse Region { get; set; }
 
 		public virtual bool NeedShowWarning()
 		{

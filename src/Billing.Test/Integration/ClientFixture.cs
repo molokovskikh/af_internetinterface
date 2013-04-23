@@ -59,7 +59,7 @@ namespace Billing.Test.Integration
 				ArHelper.WithSession(s => {
 					Assert.IsNotNull(_client.BeginWork);
 					var lawPerson = new LawyerPerson();
-					lawPerson.Region = s.Query<RegionHouse>().FirstOrDefault().Id;
+					lawPerson.Region = s.Query<RegionHouse>().FirstOrDefault();
 					s.Save(lawPerson);
 					_client.PhysicalClient = null;
 					_client.LawyerPerson = lawPerson;

@@ -1,0 +1,83 @@
+tbody tr.SelectedRow
+{
+	background-color: #B5B5B5;
+}
+
+/*
+вес селектора должен быть больше чем .DataTable tbody tr:nth-child(odd)
+что бы он перекрыл цвет строки
+*/
+tr.SelectedRow.EvenRow,
+tr.SelectedRow.OddRow,
+.DataTable tbody tr.SelectedRow.EvenRow,
+.DataTable tbody tr.SelectedRow.OddRow
+{
+	background-color: #B5B5B5;
+}
+
+.DataTable
+{
+	background-color: #EBEBEB;
+	border: solid 1px #DADADA;
+	width: 100%
+}
+
+.DataTable thead, tr th {
+	text-align: left;
+}
+
+.DataTable .EvenRow, tr.even
+{
+	background-color: #F6F6F6;
+}
+
+.DataTable .OddRow, tr.odd
+{
+	background-color: #EEF8FF;
+}
+
+.DataTable .EmptyData
+{
+	text-align:center;
+	background-color: #F6F6F6;
+}
+
+.EmptyData
+{
+	text-align:center;
+	background-color: #F6F6F6;
+	border: solid 1px #DADADA;
+}
+
+th a.sort
+{
+	background-position: 100% 50%;
+	background-repeat: no-repeat;
+	padding-right: 10px;
+}
+th a.sort.asc
+{
+	background-image: url("../Images/arrow-down-blue.gif");
+}
+th a.sort.desc
+{
+	background-image: url("../Images/arrow-down-blue-reversed.gif");
+}
+
+.DataTable tbody tr:nth-child(even)
+{
+	background-color: #EEF8FF;
+}
+
+.DataTable tbody tr:nth-child(odd)
+{
+	background-color: #F6F6F6;
+}
+
+.currency {
+	text-align:right;
+}
+
+table td.minTd {
+	width: 150px;
+}

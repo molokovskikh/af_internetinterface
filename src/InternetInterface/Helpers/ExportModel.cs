@@ -93,5 +93,74 @@ namespace InternetInterface.Helpers
 
 			ws.Cells.Rows[headerRow].Height = 514;
 		}
+
+		public static byte[] GetWriteOffs(WriteOffsFilter filter)
+		{
+			filter.ExportInExcel = true;
+			var writeOffs = filter.Find().Cast<WriteOffsItem>();
+
+			Workbook wb = new Workbook();
+			Worksheet ws = new Worksheet("Выгрузка списаний");
+			int row = 8;
+			int colShift = 0;
+
+			ws.Merge(0, 0, 0, 9);
+			ExcelHelper.WriteHeader1(ws, 0, 0, "Выгрузка списаний", false, true);
+
+			ws.Merge(1, 1, 1, 2);
+			ExcelHelper.Write(ws, 1, 0, "Строка поиска:", false);
+			ExcelHelper.Write(ws, 1, 1, filter.Name, false);
+
+			ws.Merge(2, 1, 2, 2);
+			ExcelHelper.Write(ws, 2, 0, "Искать по:", false);
+			ExcelHelper.Write(ws, 2, 1, filter.ClientType.GetDescription(), false);
+
+			ws.Merge(3, 1, 3, 2);
+			ExcelHelper.Write(ws, 3, 0, "Регион:", false);
+			var region = filter.Session.Get<RegionHouse>(filter.Region);
+			ExcelHelper.Write(ws, 3, 1, region.Name, false);
+
+			ws.Merge(4, 1, 4, 2);
+			ExcelHelper.Write(ws, 4, 0, "Интервал дат:", false);
+			ExcelHelper.Write(ws, 4, 1, string.Format("C {0} по {1}", filter.BeginDate.ToShortDateString(), filter.EndDate.ToShortDateString()), false);
+
+			foreach (var item in writeOffs) {
+				ExcelHelper.Write(ws, row, colShift + 0, item.ClientId, true);
+				ExcelHelper.Write(ws, row, colShift + 1, item.Name, true);
+				ExcelHelper.Write(ws, row, colShift + 2, item.Region, true);
+				ExcelHelper.Write(ws, row, colShift + 3, item.Sum, true);
+				ExcelHelper.Write(ws, row, colShift + 4, item.Date, true);
+				ExcelHelper.Write(ws, row, colShift + 5, item.Comment, true);
+
+				row++;
+			}
+			FormatWriteOffsStatisticXls(ws);
+
+			wb.Worksheets.Add(ws);
+			using (var ms = new MemoryStream()) {
+				wb.Save(ms);
+				return ms.ToArray();
+			}
+		}
+
+		private static void FormatWriteOffsStatisticXls(Worksheet ws)
+		{
+			int headerRow = 7;
+			ExcelHelper.WriteHeader1(ws, headerRow, 0, "Код клиента", true, true);
+			ExcelHelper.WriteHeader1(ws, headerRow, 1, "Клиент", true, true);
+			ExcelHelper.WriteHeader1(ws, headerRow, 2, "Регион", true, true);
+			ExcelHelper.WriteHeader1(ws, headerRow, 3, "Сумма", true, true);
+			ExcelHelper.WriteHeader1(ws, headerRow, 4, "Дата", true, true);
+			ExcelHelper.WriteHeader1(ws, headerRow, 5, "Комментарий", true, true);
+
+			ws.Cells.ColumnWidth[0] = 4000;
+			ws.Cells.ColumnWidth[1] = 15000;
+			ws.Cells.ColumnWidth[2] = 6000;
+			ws.Cells.ColumnWidth[3] = 4000;
+			ws.Cells.ColumnWidth[4] = 6000;
+			ws.Cells.ColumnWidth[5] = 10000;
+
+			ws.Cells.Rows[headerRow].Height = 514;
+		}
 	}
 }

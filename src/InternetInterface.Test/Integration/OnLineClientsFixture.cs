@@ -41,7 +41,7 @@ namespace InternetInterface.Test.Integration
 			session.Save(PhusicalClient);
 			LawyerPerson = new LawyerPerson {
 				Name = "Test Lawyer Person",
-				Region = session.Query<RegionHouse>().First().Id
+				Region = session.Query<RegionHouse>().First()
 			};
 			session.Save(LawyerPerson);
 			Client = new Client(PhusicalClient, new List<Service>()) {

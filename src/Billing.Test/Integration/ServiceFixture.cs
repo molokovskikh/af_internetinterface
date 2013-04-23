@@ -738,7 +738,7 @@ namespace Billing.Test.Integration
 						Name = "testLawyerPerson",
 						Balance = -3000,
 						Tariff = 1000,
-						Region = ArHelper.WithSession(s => s.Query<RegionHouse>().FirstOrDefault().Id)
+						Region = ArHelper.WithSession(s => s.Query<RegionHouse>().FirstOrDefault())
 					}
 				};
 				client.Save();

@@ -13,6 +13,7 @@
 	${app.Asset("application.js")}
 	${app.Asset("Common.js")}
 	${app.Asset("User.css")}
+	${app.Asset("Table.css")}
 
 	${app.JS("Common.js",
 		"jquery.maskedinput-1.2.2.js",
