@@ -26,7 +26,6 @@ namespace InforoomInternet
 			Logger = new HttpSessionLog(typeof(Global));
 			LibAssemblies.Add(Assembly.Load("Common.Web.Ui"));
 			Logger.ErrorSubject = "Ошибка в IVRN";
-			Logger.SmtpHost = "box.analit.net";
 			Logger.ExcludeExceptionTypes.Add(typeof(ControllerNotFoundException));
 			Logger.ExcludeExceptionTypes.Add(typeof(FileNotFoundException));
 		}

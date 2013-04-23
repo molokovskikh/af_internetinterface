@@ -106,7 +106,7 @@ namespace InternetInterface.Controllers
 					&& (i.LeaseEnd.Value.Date <= endDate.Value.Date
 						|| i.LeaseEnd == null);
 
-			var appeal = session.Query<Appeals>().Where(a => 
+			var appeal = session.Query<Appeals>().Where(a =>
 				a.Client.Id == ClientCode &&
 					a.AppealType == AppealType.Statistic &&
 					a.Date.Date >= beginDate.Value.Date &&
@@ -192,8 +192,7 @@ namespace InternetInterface.Controllers
 				PropertyBag["Message"] = Message.Error("Не задана абонентская плата для клиента ! Клиент отключен !");
 
 			PropertyBag["CallLogs"] = UnresolvedCall.LastCalls;
-			PropertyBag["Contacts"] =
-				Contact.Queryable.Where(c => c.Client.Id == filter.ClientCode).OrderByDescending(c => c.Type).ToList();
+			PropertyBag["Contacts"] = client.Contacts.OrderBy(c => c.Type).ToList();
 			PropertyBag["EditConnectInfoFlag"] = filter.EditConnectInfoFlag;
 			PropertyBag["RegionList"] = RegionHouse.All();
 			SendConnectInfo(client);
@@ -238,21 +237,18 @@ namespace InternetInterface.Controllers
 			var phone = UnresolvedCall.Find(phoneId);
 			if (phone != null && client != null) {
 				var number = phone.PhoneNumber;
-				new Contact {
-					Client = client,
-					Text = number,
-					Type = ContactType.ConnectedPhone,
-					Registrator = InitializeContent.Partner,
-					Date = DateTime.Now
-				}.Save();
+				var registrator = InitializeContent.Partner;
+				var contact = new Contact(registrator, client, ContactType.ConnectedPhone, number);
+				DbSession.Save(contact);
 				phone.Delete();
-				new Appeals {
+				var appeal = new Appeals {
 					Client = client,
 					Date = DateTime.Now,
 					AppealType = AppealType.System,
-					Partner = InitializeContent.Partner,
+					Partner = registrator,
 					Appeal = string.Format("Номер {0} был привязян к данному клиенту", number)
-				}.Save();
+				};
+				DbSession.Save(appeal);
 			}
 			RedirectToReferrer();
 		}
@@ -268,14 +264,15 @@ namespace InternetInterface.Controllers
 				contact.Client = client;
 				contact.Registrator = InitializeContent.Partner;
 				contact.Date = DateTime.Now;
-				contact.Save();
+				DbSession.Save(contact);
 			}
 			RedirectToUrl("../Search/Redirect.rails?filter.ClientCode=" + ClientID);
 		}
 
 		public void DeleteContact(uint contactId)
 		{
-			Contact.Find(contactId).Delete();
+			var contact = DbSession.Load<Contact>(contactId);
+			DbSession.Delete(contact);
 			RedirectToReferrer();
 		}
 
@@ -651,10 +648,10 @@ namespace InternetInterface.Controllers
 			if (labelForDel != null && labelForDel.Deleted) {
 				labelForDel.DeleteAndFlush();
 				DbSession.CreateSQLQuery(
-					@"update internet.Requests R 
+					@"update internet.Requests R
 set r.`Label` = null,
 r.`ActionDate` = :ActDate,
-r.`Operator` = :Oper 
+r.`Operator` = :Oper
 where r.`Label`= :LabelIndex;")
 					.SetParameter("LabelIndex", deletelabelch)
 					.SetParameter("ActDate", DateTime.Now)
@@ -849,10 +846,7 @@ where r.`Label`= :LabelIndex;")
 			if (Validator.IsValid(updateClient)) {
 				var house = DbSession.Get<House>(house_id);
 				if (house != null) {
-					updateClient.HouseObj = house;
-					updateClient.Street = house.Street;
-					updateClient.House = house.Number;
-					updateClient.CaseHouse = house.Case;
+					updateClient.UpdateHouse(house);
 				}
 
 				if (!string.IsNullOrEmpty(comment)) {
@@ -872,8 +866,7 @@ where r.`Label`= :LabelIndex;")
 						if (client.IsChanged(c => c.Disabled))
 							Appeals.CreareAppeal("Оператором клиент был заблокирован", client, AppealType.Statistic);
 					}
-					else
-						if (client.Status.Type != StatusType.Dissolved) {
+					else if (client.Status.Type != StatusType.Dissolved) {
 						client.AutoUnblocked = true;
 						client.Disabled = false;
 						client.ShowBalanceWarningPage = false;
@@ -881,7 +874,7 @@ where r.`Label`= :LabelIndex;")
 							Appeals.CreareAppeal("Оператором клиент был разблокирован", client, AppealType.Statistic);
 						if (client.IsChanged(c => c.ShowBalanceWarningPage))
 							Appeals.CreareAppeal("Оператором отключена страница Warning", client, AppealType.Statistic);
-						}
+					}
 					if (client.Status.Type == StatusType.Dissolved) {
 						client.Endpoints.Clear();
 						client.PhysicalClient.HouseObj = null;
@@ -936,9 +929,7 @@ where r.`Label`= :LabelIndex;")
 
 			PropertyBag["UserInfo"] = true;
 			PropertyBag["CallLogs"] = UnresolvedCall.LastCalls;
-			PropertyBag["Contacts"] =
-				Contact.Queryable.Where(c => c.Client.Id == filter.ClientCode)
-					.OrderByDescending(c => c.Type).ToList();
+			PropertyBag["Contacts"] = client.Contacts.OrderBy(c => c.Type).ToList();
 
 			if (client.Status.Id != (uint)StatusType.BlockedAndNoConnected)
 				PropertyBag["EConnect"] = filter.EditingConnect;

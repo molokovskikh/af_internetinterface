@@ -21,7 +21,7 @@ namespace Billing.Test.Integration
 					Registrator = InitializeContent.Partner,
 					RegDate = DateTime.Now,
 					PaidBonus = false,
-					Client = _client,
+					Client = client,
 					ApplicantName = string.Empty,
 					ApplicantPhoneNumber = string.Empty,
 					ApplicantEmail = string.Empty,
@@ -29,9 +29,9 @@ namespace Billing.Test.Integration
 					Tariff = Tariff.FindFirst()
 				};
 				request.Save();
-				_client.BeginWork = DateTime.Now;
-				_client.Request = request;
-				_client.Save();
+				client.BeginWork = DateTime.Now;
+				client.Request = request;
+				client.Save();
 				var bonusesClients = Client.Queryable.Where(c =>
 					c.Request != null &&
 						!c.Request.PaidBonus &&
@@ -51,7 +51,7 @@ namespace Billing.Test.Integration
 					Registrator = InitializeContent.Partner,
 					RegDate = DateTime.Now,
 					PaidBonus = false,
-					Client = _client,
+					Client = client,
 					ApplicantName = string.Empty,
 					ApplicantPhoneNumber = string.Empty,
 					ApplicantEmail = string.Empty,
@@ -61,9 +61,9 @@ namespace Billing.Test.Integration
 				request.Save();
 			}
 			using (new SessionScope()) {
-				_client.BeginWork = DateTime.Now;
-				_client.Request = request;
-				_client.Save();
+				client.BeginWork = DateTime.Now;
+				client.Request = request;
+				client.Save();
 			}
 			billing.Compute();
 			billing.Compute();
@@ -71,11 +71,11 @@ namespace Billing.Test.Integration
 				request.Refresh();
 				Assert.IsFalse(request.PaidBonus);
 				var payment = new Payment {
-					Client = _client,
-					Sum = _client.GetPriceForTariff()
+					Client = client,
+					Sum = client.GetPriceForTariff()
 				};
 				payment.Save();
-				_client.Payments.Add(payment);
+				client.Payments.Add(payment);
 			}
 			billing.OnMethod();
 			billing.Compute();

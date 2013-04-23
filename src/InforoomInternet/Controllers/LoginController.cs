@@ -13,15 +13,13 @@ namespace InforoomInternet.Controllers
 	[Filter(ExecuteWhen.BeforeAction, typeof(NHibernateFilter))]
 	public class LoginController : BaseController
 	{
-		private static readonly ILog _log = LogManager.GetLogger(typeof(LoginController));
-
 		public void LoginPage(bool partner)
 		{
 			if (!partner)
 				PropertyBag["AcceptName"] = "AcceptClient";
 			else {
 				if (LoginLogic.IsAccessiblePartner(Session["LoginPartner"]))
-					Redirecter.RedirectRoot(Context, this);
+					Redirecter.RedirectRoot(this);
 				PropertyBag["AcceptName"] = "AcceptPartner";
 			}
 		}
@@ -30,13 +28,13 @@ namespace InforoomInternet.Controllers
 		public void AcceptPartner(string Login, string Password)
 		{
 			if (ActiveDirectoryHelper.IsAuthenticated(Login, Password)) {
-				_log.Info("Авторизация выполнена");
+				Logger.Info("Авторизация выполнена");
 				FormsAuthentication.RedirectFromLoginPage(Login, true);
 				Session["LoginPartner"] = Login;
-				Redirecter.RedirectRoot(Context, this);
+				Redirecter.RedirectRoot(this);
 			}
 			else {
-				_log.Info("Авторизация отклонена");
+				Logger.Info("Авторизация отклонена");
 				RedirectToUrl(@"..//Login/LoginPage?partner=true");
 			}
 		}
@@ -55,7 +53,7 @@ namespace InforoomInternet.Controllers
 				}
 			}
 			catch (Exception ex) {
-				_log.Error("Ошибка авторизации", ex);
+				Logger.Error("Ошибка авторизации", ex);
 				RedirectToUrl(@"..//Login/LoginPage");
 			}
 		}

@@ -1,17 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net.Mail;
-using System.Reflection;
 using Castle.Core.Smtp;
-using Castle.MonoRail.Framework;
-using Castle.MonoRail.Framework.Configuration;
-using Castle.MonoRail.Framework.Internal;
-using Castle.MonoRail.Framework.Services;
-using Castle.MonoRail.Views.Brail;
-using Common.Web.Ui.Helpers;
-using Common.Web.Ui.MonoRailExtentions;
-using IgorO.ExposedObjectProject;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
@@ -99,14 +89,12 @@ namespace InternetInterface.Test.Integration
 		[Test]
 		public void Mail_invoice()
 		{
-			var client = new Client() {
+			var client = new Client {
 				LawyerPerson = new LawyerPerson {
 					Name = "ООО Рога и Копыта"
 				},
-				Contacts = {
-					new Contact { Type = ContactType.Email, Text = "test@analit.net" }
-				}
 			};
+			client.Contacts.Add(new Contact(client, ContactType.Email, "test@analit.net"));
 			var invoice = new Invoice(client, DateTime.Today.ToPeriod(), new List<WriteOff> {
 				new WriteOff(client, 500)
 			});

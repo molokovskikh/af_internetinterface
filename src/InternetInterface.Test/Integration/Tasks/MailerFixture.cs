@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using InternetInterface.Background;
@@ -58,7 +59,7 @@ namespace InternetInterface.Test.Integration.Tasks
 					Port = 5,
 					Pool = IpPool.FindFirst(),
 					Switch = ActiveRecordLinqBase<NetworkSwitch>.FindFirst(),
-					Ip = 3541660034
+					Ip = new IPAddress(3541660034)
 				};
 				unknownLease.Save();
 			}

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Castle.MonoRail.Framework;
@@ -121,7 +122,7 @@ namespace InforoomInternet.Test.Integration
 		public void First_visit_if_have_endpoint()
 		{
 			var networkSwitch = new NetworkSwitch { Name = "testFirstVisit" };
-			var lease = new Lease { Port = 5, Ip = 3232235521, Switch = networkSwitch };
+			var lease = new Lease { Port = 5, Ip = IPAddress.Parse("192.168.0.25"), Switch = networkSwitch };
 			var endpoint = new ClientEndpoint(client, 5, networkSwitch);
 			session.Save(networkSwitch);
 			session.Save(lease);

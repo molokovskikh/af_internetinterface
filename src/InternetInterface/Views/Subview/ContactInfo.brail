@@ -62,7 +62,7 @@
 	</table>
 </form>
 
-<% component ContactTypeList, { "name" : "Contacts[0]", "cintactId" : 0, "id" : "firstListSelector"} %>
+<% component ContactTypeList, { "name" : "Contacts[0]", "id" : "firstListSelector"} %>
 
 <% end %>
 

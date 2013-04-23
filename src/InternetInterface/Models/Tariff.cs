@@ -50,6 +50,9 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual decimal FinalPrice { get; set; }
 
+		[Property]
+		public virtual bool CanUseForSelfRegistration { get; set; }
+
 		public static IList<Tariff> All()
 		{
 			return FindAllSort();

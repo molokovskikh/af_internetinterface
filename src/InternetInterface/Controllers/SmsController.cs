@@ -24,7 +24,7 @@ namespace InternetInterface.Controllers
 		public void SendSms(string messageText, uint clientId, uint phoneId)
 		{
 			if (!string.IsNullOrEmpty(messageText)) {
-				var phoneNumber = Contact.Find(phoneId);
+				var phoneNumber = DbSession.Load<Contact>(phoneId);
 				var message = new SmsMessage {
 					Client = Client.Find(clientId),
 					CreateDate = DateTime.Now,

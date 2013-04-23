@@ -32,7 +32,7 @@ namespace Billing.Test.Integration
 				Assert.IsTrue(settings.LastStartFail);
 				var failClient = ActiveRecordMediator<Client>.FindByPrimaryKey(clientId);
 				Assert.IsFalse(failClient.PaidDay);
-				Assert.IsTrue(ActiveRecordMediator<Client>.FindByPrimaryKey(_client.Id).PaidDay);
+				Assert.IsTrue(ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id).PaidDay);
 				failClient.PhysicalClient.Tariff = ActiveRecordMediator<Tariff>.FindFirst();
 				failClient.Save();
 			}

@@ -23,11 +23,11 @@ namespace Billing.Test.Integration
 				tariff.Save();
 				friend_client = new Client();
 				friend_client.Save();
-				_client.BeginWork = DateTime.Now;
-				_client.PercentBalance = 0.8m;
-				_client.Save();
+				client.BeginWork = DateTime.Now;
+				client.PercentBalance = 0.8m;
+				client.Save();
 				request = new Request {
-					Client = _client,
+					Client = client,
 					FriendThisClient = friend_client,
 					ApplicantName = "testRequest",
 					ApplicantPhoneNumber = "8-900-900-90-90",
@@ -42,8 +42,8 @@ namespace Billing.Test.Integration
 				Assert.That(payment.Count, Is.EqualTo(0));
 				Assert.IsFalse(request.PaidFriendBonus);
 				new Payment {
-					Client = _client,
-					Sum = _client.GetPriceForTariff()
+					Client = client,
+					Sum = client.GetPriceForTariff()
 				}.Save();
 			}
 			billing.On();
