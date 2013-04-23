@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
+using Common.Web.Ui.ActiveRecordExtentions;
+using InternetInterface.Controllers;
 using InternetInterface.Models;
 using InternetInterface.Models.Services;
 using InternetInterface.Services;
@@ -36,15 +38,15 @@ namespace Billing.Test.Integration
 	{
 		public static Client CreateAndSaveClient(string name, bool statusBlocked, decimal balance)
 		{
-			Service[] defaultServices;
+			Settings settings;
 			using (new SessionScope()) {
-				defaultServices = DefaultServices().ToArray();
+				settings = Settings();
 			}
 
 			var phisicalClient = CreatePhisicalClient(statusBlocked, balance);
 			phisicalClient.Save();
 
-			var client = new Client(phisicalClient, defaultServices) {
+			var client = new Client(phisicalClient, settings) {
 				Disabled = false,
 				Sale = 0,
 				DebtDays = 0,
@@ -64,12 +66,9 @@ namespace Billing.Test.Integration
 			return client;
 		}
 
-		public static IEnumerable<Service> DefaultServices()
+		public static Settings Settings()
 		{
-			return new Service[] {
-				ActiveRecordLinqBase<Internet>.Queryable.First(),
-				ActiveRecordLinqBase<IpTv>.Queryable.First(),
-			};
+			return ArHelper.WithSession(s => new Settings(s));
 		}
 
 		public static PhysicalClient CreatePhisicalClient(bool statusBlocked, decimal balance)

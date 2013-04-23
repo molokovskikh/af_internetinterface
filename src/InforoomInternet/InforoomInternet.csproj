@@ -456,6 +456,7 @@
     <Content Include="JavaScript\lightbox\prevlabel.gif" />
     <Content Include="JavaScript\lightbox\prototype.js" />
     <Content Include="JavaScript\lightbox\scriptaculous.js" />
+    <Content Include="Views\Main\SelfRegistration.brail" />
     <None Include="Views\BonusPrograms\ConnectFriend.brail" />
     <None Include="Views\Main\Feedback.brail" />
     <None Include="Views\Main\MessageSended.brail" />
@@ -468,6 +469,7 @@
     <None Include="Views\PrivateOffice\AboutSale.brail" />
     <None Include="Views\PrivateOffice\BalanceInfo.brail" />
     <None Include="Views\PrivateOffice\BonusProgram.brail" />
+    <Content Include="Views\PrivateOffice\Complete.brail" />
     <None Include="Views\PrivateOffice\DiactivateVoluntaryBlockin.brail" />
     <Content Include="Views\PrivateOffice\FirstVisit.brail" />
     <None Include="Views\PrivateOffice\Services.brail" />

@@ -16,6 +16,9 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string Name { get; set; }
 
+		[Property]
+		public virtual bool IsSelfRegistrationEnabled { get; set; }
+
 		public static IList<Zone> All()
 		{
 			return FindAllSort();

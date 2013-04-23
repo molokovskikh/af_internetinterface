@@ -28,7 +28,7 @@ namespace InternetInterface.Test.Integration
 				InitializeContent.Partner.AccesedPartner = new List<string>();
 				InitializeContent.Partner.AccesedPartner.Add("SSI");
 			}
-			var client = new Client(new PhysicalClient(), new List<Service>());
+			var client = new Client(new PhysicalClient(), new Settings());
 			session.Save(client);
 			Payment payment = new Payment {
 				Client = client,

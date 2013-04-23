@@ -1,0 +1,14 @@
+﻿${FormHelper.FormTag("", {})}
+${FormHelper.HiddenField("referer")}
+<table class="headTable fullWidth">
+	<tr>
+		<td>Номер абонента</td>
+		<td>!{LoginClient}</td>
+	</tr>
+	<tr>
+		<td>Пароль</td>
+		<td>!{password}</td>
+	</tr>
+</table>
+${FormHelper.Submit("Продолжить")}
+${FormHelper.EndFormTag()}

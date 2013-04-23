@@ -152,13 +152,7 @@ set s.LastStartFail = true;")
 					var physicalClient = updateClient.PhysicalClient;
 					var lawyerClient = updateClient.LawyerPerson;
 					if (physicalClient != null) {
-						if (newPayment.Virtual)
-							physicalClient.VirtualBalance += newPayment.Sum;
-						else {
-							physicalClient.MoneyBalance += newPayment.Sum;
-						}
-
-						physicalClient.Balance += Convert.ToDecimal(newPayment.Sum);
+						physicalClient.AccountPayment(newPayment);
 						physicalClient.Update();
 						newPayment.BillingAccount = true;
 						newPayment.Update();
@@ -258,12 +252,14 @@ set s.LastStartFail = true;")
 		{
 			int errorCount = 0;
 			using (new SessionScope()) {
-				var settings = ActiveRecordMediator<InternetSettings>.FindFirst();
-				settings.LastStartFail = true;
-				settings.Save();
+				ArHelper.WithSession(s => {
+					var settings = s.Query<InternetSettings>().First();
+					settings.LastStartFail = true;
+					s.Save(settings);
 
-				Messages = new List<SmsMessage>();
-				_saleSettings = SaleSettings.FindFirst();
+					Messages = new List<SmsMessage>();
+					_saleSettings = s.Query<SaleSettings>().First();
+				});
 			}
 
 			ProcessAll(WriteOffFromPhysicalClient,

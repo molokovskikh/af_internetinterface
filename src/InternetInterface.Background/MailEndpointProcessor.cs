@@ -94,17 +94,7 @@ where sl.LeaseId in ({0})", guestLeases.Select(g => g.Id).Implode());
 					});
 			var text = new StringBuilder();
 			foreach (var gl in guestLeases.Where(g => !sended_leases.Contains(g.Id))) {
-				new SendedLease {
-					LeaseId = gl.Id,
-					Ip = gl.Ip,
-					LeaseBegin = gl.LeaseBegin,
-					LeaseEnd = gl.LeaseEnd,
-					LeasedTo = gl.LeasedTo,
-					Port = gl.Port,
-					Switch = gl.Switch,
-					Pool = gl.Pool,
-					SendDate = DateTime.Now
-				}.Save();
+				new SendedLease(gl).Save();
 				text.AppendLine("Клиент:");
 				if (gl.Switch != null)
 					text.AppendLine(string.Format("Свитч: {0} ({1})", gl.Switch.Name, gl.Switch.GetNormalIp()));

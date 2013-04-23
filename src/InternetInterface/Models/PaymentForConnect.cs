@@ -17,6 +17,7 @@ namespace InternetInterface.Models
 		{
 			Sum = sum;
 			EndPoint = point;
+			RegDate = DateTime.Now;
 		}
 
 		[PrimaryKey]

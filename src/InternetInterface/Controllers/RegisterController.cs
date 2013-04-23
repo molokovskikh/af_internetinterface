@@ -10,10 +10,44 @@ using InternetInterface.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Models.Services;
 using InternetInterface.Services;
+using NHibernate;
 using NHibernate.Linq;
 
 namespace InternetInterface.Controllers
 {
+	public class Settings
+	{
+		public Status DefaultStatus;
+		public Recipient DefaultRecipient;
+		public Service[] DefaultServices;
+
+		public Settings()
+		{
+			DefaultServices = new Service[0];
+		}
+
+		public Settings(ISession session)
+		{
+			DefaultStatus = session.Load<Status>((uint)StatusType.BlockedAndNoConnected);
+			DefaultRecipient = session.Query<Recipient>().FirstOrDefault(r => r.INN == "3666152146");
+			DefaultServices = new Service[] {
+				session.Query<Internet>().First(),
+				session.Query<IpTv>().First(),
+			};
+		}
+
+		public static Settings UnitTestSettings()
+		{
+			var settings = new Settings {
+				DefaultServices = new Service[] {
+					new Internet(),
+					new IpTv(),
+				}
+			};
+			return settings;
+		}
+	}
+
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class RegisterController : BaseController
 	{
@@ -22,116 +56,87 @@ namespace InternetInterface.Controllers
 		{
 			SetARDataBinder();
 
-			var phisClient = new PhysicalClient();
-			phisClient.Balance = balanceText;
-			var defaultServices = new Service[] {
-				DbSession.Query<Internet>().First(),
-				DbSession.Query<IpTv>().First(),
+			var registrator = InitializeContent.Partner;
+			var agent = DbSession.Query<Agent>().FirstOrDefault(a => a.Partner == registrator);
+			var settings = new Settings(DbSession);
+
+			var physicalClient = new PhysicalClient {
+				Balance = balanceText
 			};
-			var client = new Client(phisClient, defaultServices) {
-				WhoRegistered = InitializeContent.Partner,
-				WhoRegisteredName = InitializeContent.Partner.Name,
-				Status = Status.Find((uint)StatusType.BlockedAndNoConnected),
-				PhysicalClient = phisClient,
-				Recipient = Recipient.Queryable.FirstOrDefault(r => r.INN == "3666152146")
-			};
+			var client = new Client(physicalClient, settings, registrator);
 			var iptv = client.Iptv;
 			var internet = client.Internet;
 
-			BindObjectInstance(phisClient, "client", AutoLoadBehavior.Always);
+			BindObjectInstance(physicalClient, "client", AutoLoadBehavior.Always);
 			BindObjectInstance(iptv, "iptv", AutoLoadBehavior.Always);
 			BindObjectInstance(internet, "internet", AutoLoadBehavior.Always);
 
 			PropertyBag["iptv"] = iptv;
 			PropertyBag["internet"] = internet;
 
-			var password = CryptoPass.GeneratePassword();
-			phisClient.Password = password;
-			if (!CategorieAccessSet.AccesPartner("SSI"))
-				status = 1;
+			if (Validator.IsValid(physicalClient) && Validator.IsValid(client)) {
+				client.PhysicalClient.UpdateHouse(DbSession.Load<House>(house_id));
+				client.AfterRegistration(agent, registrator);
+				foreach (var payment in client.Payments)
+					DbSession.Save(payment);
 
-			var registerClient = Validator.IsValid(phisClient);
+				foreach (var contact in client.Contacts)
+					DbSession.Save(contact);
 
-			if (registerClient) {
-				PhysicalClient.RegistrLogicClient(phisClient, house_id, Validator);
+				DbSession.Save(client);
+				DbSession.Flush();
 
-				var havePayment = phisClient.Balance > 0;
-				client.Name = string.Format("{0} {1} {2}", phisClient.Surname, phisClient.Name, phisClient.Patronymic);
-				client.AutoUnblocked = havePayment;
-				client.Disabled = !havePayment;
+				//перед генерацией пароля нужно все сохранить тк для
+				var password = client.GeneragePassword();
 
-				client.SaveAndFlush();
-
-				if (!string.IsNullOrEmpty(phisClient.PhoneNumber)) {
-					Contact.SaveNew(client, phisClient.PhoneNumber.Replace("-", string.Empty), "Указан при регистрации", ContactType.MobilePhone);
-					Contact.SaveNew(client, phisClient.PhoneNumber.Replace("-", string.Empty), "Указан при регистрации", ContactType.SmsSending);
-				}
-
-				if (!string.IsNullOrEmpty(phisClient.HomePhoneNumber))
-					Contact.SaveNew(client, phisClient.HomePhoneNumber.Replace("-", string.Empty), "Указан при регистрации", ContactType.HousePhone);
-
-				if (!string.IsNullOrEmpty(phisClient.Email))
-					Contact.SaveNew(client, phisClient.Email, "Указан при регистрации", ContactType.Email);
-
-
-				if (havePayment) {
-					var payment = new Payment {
-						Agent =
-							Agent.FindAllByProperty("Partner", InitializeContent.Partner).First(),
-						BillingAccount = true,
-						Client = client,
-						PaidOn = DateTime.Now,
-						RecievedOn = DateTime.Now,
-						Sum = phisClient.Balance
-					};
-					payment.SaveAndFlush();
-				}
 				var apartmentForClient =
-					Apartment.Queryable.FirstOrDefault(a => a.House == phisClient.HouseObj && a.Number == phisClient.Apartment);
+					Apartment.Queryable.FirstOrDefault(a => a.House == physicalClient.HouseObj && a.Number == physicalClient.Apartment);
 				if (apartmentForClient != null)
 					apartmentForClient.Delete();
 
 				Flash["_client"] = client;
 				Flash["WhoConnected"] = client.WhoConnected;
 				Flash["Password"] = password;
-				Flash["Client"] = phisClient;
+				Flash["Client"] = physicalClient;
 				Flash["AccountNumber"] = client.Id.ToString("00000");
-				Flash["ConnectSumm"] = phisClient.ConnectSum;
+				Flash["ConnectSumm"] = physicalClient.ConnectSum;
 				Flash["ConnectInfo"] = client.GetConnectInfo(DbSession).FirstOrDefault();
 				foreach (var requestse in Models.Request.FindAllByProperty("Id", requestID)) {
 					if (requestse.Registrator != null) {
-						phisClient.Update();
+						physicalClient.Update();
 					}
 					requestse.Label = Label.Queryable.FirstOrDefault(l => l.ShortComment == "Registered");
 					requestse.Archive = true;
 					requestse.Client = client;
 					requestse.Update();
 				}
-				if (InitializeContent.Partner.Categorie.ReductionName == "Office")
+				if (registrator.Categorie.ReductionName == "Office")
 					if (VisibleRegisteredInfo)
 						RedirectToUrl("../UserInfo/ClientRegisteredInfo.rails");
 					else {
 						RedirectToUrl("../UserInfo/SearchUserInfo.rails?filter.ClientCode=" + client.Id);
 					}
-				if (InitializeContent.Partner.Categorie.ReductionName == "Diller")
+				if (registrator.Categorie.ReductionName == "Diller")
 					RedirectToUrl("../UserInfo/ClientRegisteredInfoFromDiller.rails");
 			}
 			else {
 				EditorValues();
 
-				PropertyBag["Client"] = phisClient;
+				if (!CategorieAccessSet.AccesPartner("SSI"))
+					status = 1;
+
+				PropertyBag["Client"] = physicalClient;
 				PropertyBag["BalanceText"] = balanceText;
 				PropertyBag["ChHouse"] = DbSession.Get<House>(house_id);
 				PropertyBag["Applying"] = "false";
 				PropertyBag["ChStatus"] = status;
 				PropertyBag["ChBrigad"] = BrigadForConnect;
-				phisClient.SetValidationErrors(Validator.GetErrorSummary(phisClient));
+				physicalClient.SetValidationErrors(Validator.GetErrorSummary(physicalClient));
 
-				PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClient>(phisClient);
+				PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClient>(physicalClient);
 			}
 			PropertyBag["RegionList"] = RegionHouse.All();
 		}
-
 
 		public void RegisterLegalPerson()
 		{
@@ -166,7 +171,6 @@ namespace InternetInterface.Controllers
 					WhoRegisteredName = InitializeContent.Partner.Name,
 					RegDate = DateTime.Now,
 					Status = Status.Find((uint)StatusType.BlockedAndNoConnected),
-					//Disabled = person.Tariff == null,
 					Disabled = Order.OrderServices == null,
 					LawyerPerson = person,
 					Name = person.ShortName,
@@ -174,11 +178,20 @@ namespace InternetInterface.Controllers
 				};
 				client.SaveAndFlush();
 
-				if (!string.IsNullOrEmpty(person.Telephone))
-					Contact.SaveNew(client, person.Telephone, "Указан при регистрации", ContactType.MobilePhone);
+				if (!string.IsNullOrEmpty(person.Telephone)) {
+					client.Contacts.Add(new Contact(client, ContactType.MobilePhone, person.Telephone) {
+						Comment = "Указан при регистрации"
+					});
+				}
+				if (!string.IsNullOrEmpty(person.Email)) {
+					client.Contacts.Add(new Contact(client, ContactType.Email, person.Email) {
+						Comment = "Указан при регистрации"
+					});
+				}
 
-				if (!string.IsNullOrEmpty(person.Email))
-					Contact.SaveNew(client, person.Email, "Указан при регистрации", ContactType.Email);
+				foreach (var contact in client.Contacts) {
+					DbSession.Save(contact);
+				}
 
 				ClientEndpoint endPoint = null;
 				if (!string.IsNullOrEmpty(info.Port)) {
@@ -369,10 +382,9 @@ namespace InternetInterface.Controllers
 
 		public void SendRegisterParam(PhysicalClient client)
 		{
-			var internalClient = new Client(client, new Service[] {
-				DbSession.Query<Internet>().First(),
-				DbSession.Query<IpTv>().First(),
-			});
+			var registrator = InitializeContent.Partner;
+			var settings = new Settings(DbSession);
+			var internalClient = new Client(client, settings, registrator);
 
 			client.Client = internalClient;
 

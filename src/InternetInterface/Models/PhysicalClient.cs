@@ -5,6 +5,7 @@ using System.Linq;
 using Castle.ActiveRecord;
 using Castle.Components.Validator;
 using Common.Tools;
+using Common.Tools.Calendar;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.Models.Audit;
 using Common.Web.Ui.NHibernateExtentions;
@@ -23,7 +24,6 @@ namespace InternetInterface.Models
 
 	public class ClientConnectInfo
 	{
-		//public Orders Order { get; set; }
 		public string static_IP { get; set; }
 		public string Leased_IP { get; set; }
 		public int Client { get; set; }
@@ -105,7 +105,7 @@ namespace InternetInterface.Models
 		[Property, ValidateNonEmpty("Введите номер этажа"), ValidateInteger("Должно быть введено число"), Auditable("Этаж")]
 		public virtual int? Floor { get; set; }
 
-		[ValidateRegExp(@"^((\d{3})-(\d{7}))", "Ошибка формата телефонного номера: мобильный телефн (***-*******)")]
+		[ValidateRegExp(@"^((\d{3})-(\d{7}))", "Ошибка формата телефонного номера: мобильный телефон (***-*******)")]
 		public virtual string PhoneNumber { get; set; }
 
 		[ValidateRegExp(@"^((\d{3})-(\d{7}))", "Ошибка формата телефонного номера (***-*******)")]
@@ -153,6 +153,12 @@ namespace InternetInterface.Models
 		[Property, ValidateNonEmpty("Введите сумму"), ValidateDecimal("Непрвильно введено значение суммы")]
 		public virtual decimal ConnectSum { get; set; }
 
+		[Property, ValidateIsUnique("Абонент с таким номером уже зарегистрирован")]
+		public virtual int? ExternalClientId { get; set; }
+
+		//внешний номер договора обязателен только если клиент регистрируется самостоятельно
+		public virtual bool ExternalClientIdRequired { get; set; }
+
 		[OneToOne(PropertyRef = "PhysicalClient")]
 		public virtual Client Client { get; set; }
 
@@ -163,18 +169,25 @@ namespace InternetInterface.Models
 			if (internet.ActivatedByUser && Tariff == null) {
 				errors.RegisterErrorMessage("Tariff", "Нужно выбрать тариф");
 			}
+
+			if (ExternalClientIdRequired && ExternalClientId == null) {
+				errors.RegisterErrorMessage("ExternalClientId", "Нужно указать номер абонента");
+			}
 		}
 
 		public virtual string GetAdress()
 		{
 			return String.Format("{0} Подъезд {1} Этаж {2}",
-				GetCutAdress(),
+				GetShortAdress(),
 				Entrance,
 				Floor);
 		}
 
-		public virtual string GetCutAdress()
+		public virtual string GetShortAdress()
 		{
+			if (String.IsNullOrEmpty(Street))
+				return "";
+
 			return String.Format("ул. {0} д. {1}{2} кв. {3}",
 				Street,
 				House,
@@ -182,20 +195,12 @@ namespace InternetInterface.Models
 				Apartment);
 		}
 
-		public static bool RegistrLogicClient(PhysicalClient client, uint houseId,
-			ValidatorRunner validator)
+		public virtual void UpdateHouse(House house)
 		{
-			if (validator.IsValid(client)) {
-				var house = ActiveRecordBase<House>.Find(houseId);
-				client.HouseObj = house;
-				client.Street = house.Street;
-				client.House = house.Number;
-				client.CaseHouse = house.Case;
-				client.Password = CryptoPass.GetHashString(client.Password);
-				client.Save();
-				return true;
-			}
-			return false;
+			HouseObj = house;
+			Street = house.Street;
+			House = house.Number;
+			CaseHouse = house.Case;
 		}
 
 		public virtual WriteOff WriteOff(decimal sum, bool writeoffVirtualFirst = true)
@@ -270,6 +275,31 @@ namespace InternetInterface.Models
 
 			var comment = String.Format("Изменение тарифа, старый '{0}' новый '{1}'", oldTariff.Name, Tariff.Name);
 			Client.UserWriteOffs.Add(new UserWriteOff(Client, rule.Price, comment, false));
+		}
+
+		public virtual void AccountPayment(Payment newPayment)
+		{
+			if (newPayment.Virtual)
+				VirtualBalance += newPayment.Sum;
+			else {
+				MoneyBalance += newPayment.Sum;
+			}
+
+			Balance += Convert.ToDecimal(newPayment.Sum);
+		}
+
+		public virtual Payment CalculateSelfRegistrationPayment()
+		{
+			var begin = DateTime.Today;
+			var end = begin.AddMonths(1).FirstDayOfMonth().AddDays(14);
+			var days = (end - begin).Days;
+			var dayInMonth = (DateTime.Today.LastDayOfMonth() - DateTime.Today.FirstDayOfMonth()).Days + 1;
+			var sum = Client.GetPriceIgnoreDisabled() / dayInMonth * days;
+			var payment = new Payment(Client, sum) {
+				Virtual = true,
+				Comment = "Бонус при самостоятельной регистрации"
+			};
+			return payment;
 		}
 	}
 }

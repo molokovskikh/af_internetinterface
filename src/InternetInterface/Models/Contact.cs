@@ -33,10 +33,16 @@ namespace InternetInterface.Models
 	}
 
 	[ActiveRecord(Table = "Contacts", Schema = "Internet", Lazy = true), Auditable]
-	public class Contact : ChildActiveRecordLinqBase<Contact>
+	public class Contact
 	{
 		public Contact()
 		{
+		}
+
+		public Contact(Partner registrator, Client client, ContactType type, string text)
+			: this(client, type, text)
+		{
+			Registrator = registrator;
 		}
 
 		public Contact(Client client, ContactType type, string text)
@@ -44,6 +50,7 @@ namespace InternetInterface.Models
 			Client = client;
 			Type = type;
 			Text = text;
+			Date = DateTime.Now;
 		}
 
 		[PrimaryKey]
@@ -88,18 +95,6 @@ namespace InternetInterface.Models
 		public virtual string GetReadbleCategorie()
 		{
 			return GetReadbleCategorie(Type);
-		}
-
-		public static void SaveNew(Client client, string contact, string comment, ContactType type)
-		{
-			new Contact {
-				Date = DateTime.Now,
-				Registrator = InitializeContent.Partner,
-				Client = client,
-				Text = contact,
-				Comment = comment,
-				Type = type
-			}.Save();
 		}
 	}
 }

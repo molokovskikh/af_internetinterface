@@ -43,7 +43,7 @@ namespace InforoomInternet.Test.Integration
 			client = ClientHelper.Client();
 			networkSwitch = new NetworkSwitch("Тестовый коммутатор", session.Query<Zone>().First());
 			endpoint = new ClientEndpoint(client, 1, networkSwitch);
-			lease = new Lease { Endpoint = endpoint, Switch = networkSwitch, Port = 1, Ip = (uint)new Random().Next() };
+			lease = new Lease { Endpoint = endpoint, Switch = networkSwitch, Port = 1, Ip = IPAddress.Loopback };
 
 			session.SaveMany(client, networkSwitch, endpoint, lease);
 
@@ -64,7 +64,7 @@ namespace InforoomInternet.Test.Integration
 			client = ClientHelper.Client();
 			networkSwitch = new NetworkSwitch("Тестовый коммутатор", session.Query<Zone>().First());
 			endpoint = new ClientEndpoint(client, 1, networkSwitch);
-			lease = new Lease { Endpoint = endpoint, Switch = networkSwitch, Port = 1, Ip = (uint)new Random().Next() };
+			lease = new Lease { Endpoint = endpoint, Switch = networkSwitch, Port = 1, Ip = IPAddress.Loopback };
 
 			session.Save(networkSwitch);
 			session.Save(lease);
@@ -75,8 +75,7 @@ namespace InforoomInternet.Test.Integration
 		[Test]
 		public void Watning_actual_package_id()
 		{
-			var addressValue = BigEndianConverter.ToInt32(IPAddress.Parse("127.0.0.1").GetAddressBytes());
-			lease.Ip = addressValue;
+			lease.Ip = IPAddress.Loopback;
 			lease.Endpoint.PackageId = 15;
 			session.SaveOrUpdate(lease);
 

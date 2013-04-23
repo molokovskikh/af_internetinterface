@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using Billing;
 using InternetInterface;
 using InternetInterface.Models;
@@ -51,7 +52,7 @@ namespace InforoomInternet.Test.Functional
 			session.SaveOrUpdate(client);
 			Css("#exitLink").Click();
 			var lease = new Lease {
-				Ip = Convert.ToUInt32(NetworkSwitch.SetProgramIp("192.168.0.1")),
+				Ip = IPAddress.Parse("192.168.0.1"),
 				Switch = _switch,
 				Port = 1
 			};

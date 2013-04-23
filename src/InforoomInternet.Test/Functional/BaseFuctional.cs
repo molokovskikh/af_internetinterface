@@ -52,14 +52,11 @@ namespace InforoomInternet.Test.Functional
 		[Test, Ignore("Чинить")]
 		public void WarningTest()
 		{
-			var mashineIp = BigEndianConverter.ToInt32(
-				IPAddress.Parse("127.0.0.1").GetAddressBytes());
-
-			foreach (var lease in Lease.Queryable.Where(l => l.Ip == mashineIp).ToList())
+			foreach (var lease in Lease.Queryable.Where(l => l.Ip == IPAddress.Loopback).ToList())
 				lease.Delete();
 			Flush();
 			new Lease {
-				Ip = mashineIp,
+				Ip = IPAddress.Loopback,
 				Endpoint = new ClientEndpoint {
 					Client = new Client {
 						Disabled = false,
@@ -82,13 +79,13 @@ namespace InforoomInternet.Test.Functional
 			browser.Button(Find.ById("ConButton")).Click();
 			Assert.That(browser.Text, Is.StringContaining("Тарифы"));
 			using (new SessionScope()) {
-				foreach (var lease in Lease.Queryable.Where(l => l.Ip == mashineIp).ToList())
+				foreach (var lease in Lease.Queryable.Where(l => l.Ip == IPAddress.Loopback).ToList())
 					lease.Delete();
 			}
 			Lease leaseC;
 			using (new SessionScope()) {
 				leaseC = new Lease {
-					Ip = mashineIp,
+					Ip = IPAddress.Loopback,
 					Endpoint = new ClientEndpoint {
 						Client = new Client {
 							Disabled = false,

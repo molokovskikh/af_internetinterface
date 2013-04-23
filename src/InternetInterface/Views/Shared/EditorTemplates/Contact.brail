@@ -4,7 +4,7 @@
 		<input type=text class="telephoneField" value="${model.Value.HumanableNumber}" name="${model.Target}.Text" />
 	</td>
 	<td class="toSelectList">
-		<% component ContactTypeList, { "name" : model.Target, "cintactId" : model.Value.Id} %>
+		<% component ContactTypeList, { "name" : model.Target, "contact" : model.Value} %>
 	</td>
 	<td>
 		${app.Edit("${model.Target}.ContactName")}

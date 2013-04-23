@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using InternetInterface.Controllers;
 using InternetInterface.Models;
 using InternetInterface.Models.Services;
 using InternetInterface.Services;
@@ -48,7 +49,8 @@ namespace InternetInterface.Test.Unit
 		[Test]
 		public void Activete_internet_by_default()
 		{
-			client = new Client(new PhysicalClient(), new Service[] { new Internet() });
+			var settings = Settings.UnitTestSettings();
+			client = new Client(new PhysicalClient(), settings);
 			Assert.That(client.ClientServices[0].ActivatedByUser, Is.True);
 		}
 	}

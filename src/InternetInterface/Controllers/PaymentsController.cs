@@ -22,6 +22,7 @@ using InternetInterface.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Queries;
 using NHibernate;
+using NHibernate.Linq;
 
 namespace InternetInterface.Controllers
 {
@@ -352,13 +353,13 @@ namespace InternetInterface.Controllers
 
 		public void СhangeSaleSettings()
 		{
-			var setting = SaleSettings.FindFirst();
+			var setting = DbSession.Query<SaleSettings>().First();
 			PropertyBag["settings"] = setting;
 
 			if (IsPost) {
 				SetARDataBinder();
 				BindObjectInstance(setting, ParamStore.Form, "settings", AutoLoadBehavior.Always);
-				setting.Save();
+				DbSession.Save(setting);
 				Notify("Настройки сохранены");
 				RedirectToReferrer();
 			}

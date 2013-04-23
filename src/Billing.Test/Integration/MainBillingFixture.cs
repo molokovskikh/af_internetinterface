@@ -8,6 +8,7 @@ using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Services;
+using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Linq;
 using NHibernate.SqlCommand;
@@ -30,8 +31,11 @@ namespace Billing.Test.Integration
 
 	public class MainBillingFixture
 	{
+		protected SessionScope scope;
 		protected MainBilling billing;
-		protected Client _client;
+		protected Client client;
+		protected ISession session;
+		private ISessionFactoryHolder sessionHolder;
 
 		protected const int MaxSale = 15;
 		protected const int MinSale = 3;
@@ -44,20 +48,38 @@ namespace Billing.Test.Integration
 			SystemTime.Reset();
 
 			using (new SessionScope()) {
-				billing = new MainBillingForTest();
-				CleanDb();
-				_client = CreateClient();
-				//SaleSettings.DeleteAll();
 				ArHelper.WithSession(s => {
+					billing = new MainBillingForTest();
+					CleanDb();
+					client = CreateClient();
+
 					s.CreateSQLQuery("delete from Internet.SaleSettings").ExecuteUpdate();
+					var settings = new SaleSettings {
+						MaxSale = MaxSale,
+						MinSale = MinSale,
+						PeriodCount = PerionCount,
+						SaleStep = SaleStep
+					};
+					s.Save(settings);
 				});
-				new SaleSettings {
-					MaxSale = MaxSale,
-					MinSale = MinSale,
-					PeriodCount = PerionCount,
-					SaleStep = SaleStep
-				}.Save();
 			}
+		}
+
+		[TearDown]
+		public void Teardown()
+		{
+			if (session != null)
+				sessionHolder.ReleaseSession(session);
+
+			if (scope != null)
+				scope.Dispose();
+		}
+
+		public void InitSession()
+		{
+			scope = new SessionScope();
+			sessionHolder = ActiveRecordMediator.GetSessionFactoryHolder();
+			session = sessionHolder.CreateSession(typeof(ActiveRecordBase));
 		}
 
 		public static void SeedDb()
@@ -74,7 +96,6 @@ namespace Billing.Test.Integration
 			ArHelper.WithSession(s => {
 				s.CreateSQLQuery("delete from Internet.InternetSettings").ExecuteUpdate();
 			});
-			//InternetSettings.DeleteAll();
 
 			using (new SessionScope()) {
 				new Partner("Test").Save();
@@ -174,7 +195,6 @@ namespace Billing.Test.Integration
 			ArHelper.WithSession(s => {
 				s.CreateSQLQuery("delete from Internet.Tariffs").ExecuteUpdate();
 			});
-			//Tariff.DeleteAll();
 		}
 
 		public void SetClientDate(Interval rd, Client client)
