@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using Castle.ActiveRecord;
 using Castle.MonoRail.Framework;
+using Common.Web.Ui.ActiveRecordExtentions;
 using InforoomInternet.Logic;
 using InternetInterface.Models;
+using NHibernate.Linq;
 
 namespace InforoomInternet.Controllers
 {
@@ -17,7 +20,6 @@ namespace InforoomInternet.Controllers
 			controller.RedirectToUrl(controller.Context.ApplicationPath + "/");
 		}
 	}
-
 
 	public class NHibernateFilter : IFilter
 	{
@@ -65,29 +67,29 @@ namespace InforoomInternet.Controllers
 	{
 		public static bool Authorized(IEngineContext context)
 		{
-			var ip = context.Request.UserHostAddress;
+			return ArHelper.WithSession(s => {
+				var ip = context.Request.UserHostAddress;
+				var address = IPAddress.Parse(ip);
 
-			Lease[] lease = null;
+				var leases = s.Query<Lease>().Where(l => l.Ip == address).ToList();
 
-			if (Regex.IsMatch(ip, NetworkSwitch.IPRegExp))
-				lease = Lease.FindAllByProperty("Ip", Convert.ToUInt32(NetworkSwitch.SetProgramIp(ip)));
-
-			if (lease != null && lease.Length != 0) {
-				var client = lease.Where(l => l.Endpoint != null
-					&& l.Endpoint.Client != null
-					&& l.Endpoint.Client.PhysicalClient != null)
-					.Select(l => l.Endpoint.Client)
-					.FirstOrDefault();
-				if (client != null) {
-					context.Session["LoginClient"] = client.Id;
-					context.Session["autoIn"] = true;
-					return true;
+				if (leases.Count != 0) {
+					var client = leases.Where(l => l.Endpoint != null
+						&& l.Endpoint.Client != null
+						&& l.Endpoint.Client.PhysicalClient != null)
+						.Select(l => l.Endpoint.Client)
+						.FirstOrDefault();
+					if (client != null) {
+						context.Session["LoginClient"] = client.Id;
+						context.Session["autoIn"] = true;
+						return true;
+					}
 				}
-			}
-			if ((context.Session["LoginClient"] == null) || (Client.Find(Convert.ToUInt32(context.Session["Login"])) == null)) {
-				return false;
-			}
-			return true;
+				if ((context.Session["LoginClient"] == null) || (Client.Find(Convert.ToUInt32(context.Session["Login"])) == null)) {
+					return false;
+				}
+				return true;
+			});
 		}
 
 		public bool Perform(ExecuteWhen exec, IEngineContext context, IController controller, IControllerContext controllerContext)

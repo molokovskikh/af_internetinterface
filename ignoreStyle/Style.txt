@@ -167,3 +167,4 @@
 \src\InternetInterface\Views\UserInfo\RequestView.brail
 \src\InternetInterface\Views\UserInfo\SearchUserInfo.brail
 \src\InternetInterface\Views\UserInfo\ShowAppeals.brail
+\src\Common.Web.UI\Common.Web.Ui\Views\SubViews\Regions.brail

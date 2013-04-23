@@ -230,10 +230,10 @@ namespace InternetInterface.Models
 			return newPoint;
 		}
 
-		public static bool Our(string ip)
+		public static bool Our(IPAddress ip, ISession session)
 		{
-			var mashineAddress = Convert.ToInt64(NetworkSwitch.SetProgramIp(ip));
-			return ArHelper.WithSession(s => s.Query<IpPool>().Count(p => p.Begin <= mashineAddress && p.End >= mashineAddress) > 0);
+			var address = ip.Address;
+			return session.Query<IpPool>().Count(p => p.Begin <= address && p.End >= address) > 0;
 		}
 
 		public virtual string GetFreePorts()
@@ -635,12 +635,6 @@ where CE.Client = {0}", Id))
 				return infos;
 			}
 			return new List<ClientConnectInfo>();
-		}
-
-		public static Lease FindByIP(string ip)
-		{
-			var address = IPAddress.Parse(ip);
-			return ActiveRecordLinqBase<Lease>.Queryable.FirstOrDefault(l => l.Ip == address);
 		}
 
 		public virtual bool OnLine()

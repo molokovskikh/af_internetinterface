@@ -119,7 +119,7 @@ namespace InternetInterface.Models
 			if (obj == null)
 				return null;
 
-			return new IPAddress(BigEndianConverter.GetBytes((int)obj));
+			return new IPAddress(BigEndianConverter.GetBytes((uint)obj));
 		}
 
 		public void NullSafeSet(IDbCommand cmd, object value, int index)
