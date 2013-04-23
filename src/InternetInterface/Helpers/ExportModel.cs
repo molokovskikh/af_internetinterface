@@ -7,6 +7,8 @@ using Common.Web.Ui.Excel;
 using ExcelLibrary.SpreadSheet;
 using InternetInterface.Models;
 using InternetInterface.Queries;
+using NPOI.HSSF.UserModel;
+using NPOI.SS.Util;
 
 namespace InternetInterface.Helpers
 {
@@ -94,73 +96,66 @@ namespace InternetInterface.Helpers
 			ws.Cells.Rows[headerRow].Height = 514;
 		}
 
-		public static byte[] GetWriteOffs(WriteOffsFilter filter)
+		public static byte[] GetWriteOffsExcel(WriteOffsFilter filter)
 		{
-			filter.ExportInExcel = true;
-			var writeOffs = filter.Find().Cast<WriteOffsItem>();
+			var book = new HSSFWorkbook();
 
-			Workbook wb = new Workbook();
-			Worksheet ws = new Worksheet("Выгрузка списаний");
-			int row = 8;
-			int colShift = 0;
+			var sheet = book.CreateSheet("Выгрузка списаний клиентов за период");
 
-			ws.Merge(0, 0, 0, 9);
-			ExcelHelper.WriteHeader1(ws, 0, 0, "Выгрузка списаний", false, true);
-
-			ws.Merge(1, 1, 1, 2);
-			ExcelHelper.Write(ws, 1, 0, "Строка поиска:", false);
-			ExcelHelper.Write(ws, 1, 1, filter.Name, false);
-
-			ws.Merge(2, 1, 2, 2);
-			ExcelHelper.Write(ws, 2, 0, "Искать по:", false);
-			ExcelHelper.Write(ws, 2, 1, filter.ClientType.GetDescription(), false);
-
-			ws.Merge(3, 1, 3, 2);
-			ExcelHelper.Write(ws, 3, 0, "Регион:", false);
+			var row = 0;
+			var headerStyle = NPOIExcelHelper.GetHeaderStype(book);
+			var dataStyle = NPOIExcelHelper.GetDataStyle(book);
+			var sheetRow = sheet.CreateRow(row++);
+			NPOIExcelHelper.FillNewCell(sheetRow, 0, "Выгрузка списаний клиентов за период", headerStyle);
+			sheetRow = sheet.CreateRow(row++);
+			NPOIExcelHelper.FillNewCell(sheetRow, 0, String.Format("Период: с {0} по {1}",
+				filter.BeginDate.ToString("dd.MM.yyyy"),
+				filter.EndDate.ToString("dd.MM.yyyy")),
+				book.CreateCellStyle());
+			sheetRow = sheet.CreateRow(row++);
+			NPOIExcelHelper.FillNewCell(sheetRow, 0, String.Format("Тип клиентов: {0}", filter.ClientType.GetDescription()), book.CreateCellStyle());
+			sheetRow = sheet.CreateRow(row++);
 			var region = filter.Session.Get<RegionHouse>(filter.Region);
-			ExcelHelper.Write(ws, 3, 1, region.Name, false);
+			NPOIExcelHelper.FillNewCell(sheetRow, 0, String.Format("Регион: {0}", region == null ? "Все" : region.Name), book.CreateCellStyle());
+			sheetRow = sheet.CreateRow(row++);
+			NPOIExcelHelper.FillNewCell(sheetRow, 0, String.Format("Клиент: {0}", filter.Name), book.CreateCellStyle());
+			sheet.CreateRow(row++);
+			var tableHeaderRow = row;
+			sheetRow = sheet.CreateRow(row++);
+			NPOIExcelHelper.FillNewCell(sheetRow, 0, "Код клиента", headerStyle);
+			NPOIExcelHelper.FillNewCell(sheetRow, 1, "Наименование клиента", headerStyle);
+			NPOIExcelHelper.FillNewCell(sheetRow, 2, "Регион", headerStyle);
+			NPOIExcelHelper.FillNewCell(sheetRow, 3, "Сумма", headerStyle);
+			NPOIExcelHelper.FillNewCell(sheetRow, 4, "Дата", headerStyle);
+			NPOIExcelHelper.FillNewCell(sheetRow, 5, "Комментарий", headerStyle);
 
-			ws.Merge(4, 1, 4, 2);
-			ExcelHelper.Write(ws, 4, 0, "Интервал дат:", false);
-			ExcelHelper.Write(ws, 4, 1, string.Format("C {0} по {1}", filter.BeginDate.ToShortDateString(), filter.EndDate.ToShortDateString()), false);
-
-			foreach (var item in writeOffs) {
-				ExcelHelper.Write(ws, row, colShift + 0, item.ClientId, true);
-				ExcelHelper.Write(ws, row, colShift + 1, item.Name, true);
-				ExcelHelper.Write(ws, row, colShift + 2, item.Region, true);
-				ExcelHelper.Write(ws, row, colShift + 3, item.Sum, true);
-				ExcelHelper.Write(ws, row, colShift + 4, item.Date, true);
-				ExcelHelper.Write(ws, row, colShift + 5, item.Comment, true);
-
-				row++;
+			var items = filter.ToExcel().Cast<WriteOffsItem>();
+			foreach (var item in items) {
+				sheetRow = sheet.CreateRow(row++);
+				NPOIExcelHelper.FillNewCell(sheetRow, 0, item.ClientId, dataStyle);
+				NPOIExcelHelper.FillNewCell(sheetRow, 1, item.Name, dataStyle);
+				NPOIExcelHelper.FillNewCell(sheetRow, 2, item.Region, dataStyle);
+				NPOIExcelHelper.FillNewCell(sheetRow, 3, item.Sum, dataStyle);
+				NPOIExcelHelper.FillNewCell(sheetRow, 4, item.Date, dataStyle);
+				NPOIExcelHelper.FillNewCell(sheetRow, 5, item.Comment, dataStyle);
 			}
-			FormatWriteOffsStatisticXls(ws);
 
-			wb.Worksheets.Add(ws);
-			using (var ms = new MemoryStream()) {
-				wb.Save(ms);
-				return ms.ToArray();
+			// добавляем автофильтр
+			sheet.SetAutoFilter(new CellRangeAddress(tableHeaderRow, row, 0, 5));
+
+			sheet.AddMergedRegion(new CellRangeAddress(0, 0, 0, 5));
+
+			// устанавливаем ширину столбцов
+			for (int i = 0; i < 6; i++) {
+				sheet.SetColumnWidth(i, sheet.GetColumnWidth(i) * 2);
 			}
-		}
 
-		private static void FormatWriteOffsStatisticXls(Worksheet ws)
-		{
-			int headerRow = 7;
-			ExcelHelper.WriteHeader1(ws, headerRow, 0, "Код клиента", true, true);
-			ExcelHelper.WriteHeader1(ws, headerRow, 1, "Клиент", true, true);
-			ExcelHelper.WriteHeader1(ws, headerRow, 2, "Регион", true, true);
-			ExcelHelper.WriteHeader1(ws, headerRow, 3, "Сумма", true, true);
-			ExcelHelper.WriteHeader1(ws, headerRow, 4, "Дата", true, true);
-			ExcelHelper.WriteHeader1(ws, headerRow, 5, "Комментарий", true, true);
+			sheet.SetColumnWidth(1, sheet.GetColumnWidth(1) * 3);
+			sheet.SetColumnWidth(5, sheet.GetColumnWidth(5) * 3);
 
-			ws.Cells.ColumnWidth[0] = 4000;
-			ws.Cells.ColumnWidth[1] = 15000;
-			ws.Cells.ColumnWidth[2] = 6000;
-			ws.Cells.ColumnWidth[3] = 4000;
-			ws.Cells.ColumnWidth[4] = 6000;
-			ws.Cells.ColumnWidth[5] = 10000;
-
-			ws.Cells.Rows[headerRow].Height = 514;
+			var buffer = new MemoryStream();
+			book.Write(buffer);
+			return buffer.ToArray();
 		}
 	}
 }

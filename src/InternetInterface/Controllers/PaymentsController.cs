@@ -404,7 +404,7 @@ namespace InternetInterface.Controllers
 			filter.Session = DbSession;
 			SetARDataBinder(AutoLoadBehavior.NullIfInvalidKey);
 			BindObjectInstance(filter, IsPost ? ParamStore.Form : ParamStore.QueryString, "filter", AutoLoadBehavior.NullIfInvalidKey);
-			this.RenderFile("Выгрузка списаний.xls", ExportModel.GetWriteOffs(filter));
+			this.RenderFile(string.Format("Выгрузка списаний ({0}).xls", DateTime.Now.ToShortDateString()), ExportModel.GetWriteOffsExcel(filter));
 		}
 	}
 }

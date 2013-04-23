@@ -61,6 +61,12 @@ namespace InternetInterface.Queries
 			};
 		}
 
+		public IList<BaseItemForTable> ToExcel()
+		{
+			ExportInExcel = true;
+			return Find();
+		}
+
 		public IList<BaseItemForTable> Find()
 		{
 			var countPart = "count(w.Id)";
