@@ -25,6 +25,21 @@ namespace InforoomInternet.Controllers
 	[Filter(ExecuteWhen.BeforeAction, typeof(BeforeFilter))]
 	public class MainController : BaseController
 	{
+		private string GetHost()
+		{
+			var hostAdress = Request.UserHostAddress;
+#if DEBUG
+			hostAdress = "127.0.0.1";
+#endif
+			return hostAdress;
+		}
+
+		private Lease FindLease()
+		{
+			var ip = IPAddress.Parse(GetHost());
+			return DbSession.Query<Lease>().FirstOrDefault(l => l.Ip == ip);
+		}
+
 		public void Index()
 		{
 			PropertyBag["tariffs"] = Tariff.FindAll();
@@ -63,14 +78,10 @@ namespace InforoomInternet.Controllers
 			var ip = Request.UserHostAddress;
 			var mailToAdress = "internet@ivrn.net";
 #if DEBUG
-			var lease = Lease.FindAll();
 			mailToAdress = "kvasovtest@analit.net";
-#else
-			var lease = Lease.FindAllByProperty("Ip", Convert.ToUInt32(NetworkSwitch.SetProgramIp(ip)));
 #endif
-			var client = lease.Where(
-				l => l.Endpoint != null && l.Endpoint.Client != null && l.Endpoint.Client.PhysicalClient != null)
-				.Select(l => l.Endpoint.Client).FirstOrDefault();
+			var lease = FindLease();
+			var client = lease.Endpoint != null ? lease.Endpoint.Client : null;
 			client = client ?? new Client();
 			PropertyBag["client"] = client;
 
@@ -110,7 +121,7 @@ namespace InforoomInternet.Controllers
 				}
 			}
 
-			ArHelper.WithSession(s => s.Evict(client));
+			DbSession.Evict(client);
 		}
 
 		public void Assist(string q)
@@ -155,8 +166,7 @@ namespace InforoomInternet.Controllers
 		{
 			SetARDataBinder(AutoLoadBehavior.NullIfInvalidKey);
 
-			var lease = Client.FindByIP(GetHost());
-
+			var lease = FindLease();
 			if (!lease.CanSelfRegister()) {
 				Redirecter.RedirectRoot(this);
 			}
@@ -196,7 +206,7 @@ namespace InforoomInternet.Controllers
 					SceHelper.Login(lease, lease.Ip.ToString());
 
 					Flash["password"] = client.GeneragePassword();
-					Redirect("PrivateOffice", "Complete");
+					Redirect("PrivateOffice", "Complete", new { referer });
 				}
 			}
 		}
@@ -207,8 +217,8 @@ namespace InforoomInternet.Controllers
 			if (!string.IsNullOrEmpty(Request["host"]))
 				PropertyBag["referer"] = Request["host"] + Request["url"];
 
-			var hostAdress = GetHost();
-			var lease = Client.FindByIP(hostAdress);
+			var hostAdress = IPAddress.Parse(GetHost());
+			var lease = FindLease();
 #if DEBUG
 			if (lease == null)
 				lease = new Lease {
@@ -229,15 +239,13 @@ namespace InforoomInternet.Controllers
 			if (lease != null)
 				point = lease.Endpoint;
 			else {
-				var thisIp = new IPAddress(RangeFinder.reverseBytesArray(Convert.ToUInt32(NetworkSwitch.SetProgramIp(hostAdress))));
-
 				point = StaticIp.Queryable.ToList().Where(ip => {
-					if (ip.Ip == hostAdress)
+					if (ip.Ip == hostAdress.ToString())
 						return true;
 					if (ip.Mask != null) {
 						var subnet = SubnetMask.CreateByNetBitLength(ip.Mask.Value);
 						var sIp = new IPAddress(RangeFinder.reverseBytesArray(Convert.ToUInt32(NetworkSwitch.SetProgramIp(ip.Ip))));
-						if (thisIp.IsInSameSubnet(sIp, subnet))
+						if (hostAdress.IsInSameSubnet(sIp, subnet))
 							return true;
 					}
 					return false;
@@ -293,15 +301,6 @@ namespace InforoomInternet.Controllers
 			}
 		}
 
-		private string GetHost()
-		{
-			var hostAdress = Request.UserHostAddress;
-#if DEBUG
-			hostAdress = "127.0.0.1";
-#endif
-			return hostAdress;
-		}
-
 		private void SetEdatableAttribute(bool edit, string viewName)
 		{
 			PropertyBag["Content"] = SiteContent.FindAllByProperty("ViewName", viewName).First().Content;
@@ -316,16 +315,16 @@ namespace InforoomInternet.Controllers
 
 		public void WarningPackageId()
 		{
-			var hostAdress = Request.UserHostAddress;
+			var hostAdress = IPAddress.Parse(Request.UserHostAddress);
 #if DEBUG
-			hostAdress = DbSession.Query<Lease>().ToList().First().Ip.ToString();
+			hostAdress = DbSession.Query<Lease>().ToList().First().Ip;
 #endif
-			if (Regex.IsMatch(hostAdress, NetworkSwitch.IPRegExp) && !Client.Our(hostAdress)) {
+			if (!Client.Our(hostAdress, DbSession)) {
 				RedirectToSiteRoot();
 				return;
 			}
 
-			var lease = Client.FindByIP(hostAdress);
+			var lease = FindLease();
 			if (lease == null || lease.Endpoint == null || lease.Endpoint.Client == null) {
 				SendMessage(null);
 			}
@@ -336,7 +335,7 @@ namespace InforoomInternet.Controllers
 				}
 
 				if ((ClientData.Get(lease.Endpoint.Client.Id) == UnknownClientStatus.NoInfo) && !lease.Pool.IsGray) {
-					var sceWorker = new SceThread(lease, hostAdress);
+					var sceWorker = new SceThread(lease, hostAdress.ToString());
 					sceWorker.Go();
 				}
 

@@ -5,7 +5,7 @@ using Castle.MonoRail.Framework.Internal;
 using Castle.MonoRail.Framework.Services;
 using Castle.MonoRail.Views.Brail;
 using Common.Web.Ui.MonoRailExtentions;
-using IgorO.ExposedObjectProject;
+using ExposedObject;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
@@ -39,7 +39,7 @@ namespace InternetInterface.Test.Integration
 
 			var manager = new DefaultViewEngineManager();
 			manager.Service(provider);
-			var options = ExposedObject.From(manager).viewEnginesFastLookup[0].Options;
+			var options = Exposed.From(manager).viewEnginesFastLookup[0].Options;
 			var namespaces = options.NamespacesToImport;
 			namespaces.Add("Boo.Lang.Builtins");
 			return manager;

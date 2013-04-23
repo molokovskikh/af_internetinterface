@@ -20,13 +20,12 @@ namespace InternetInterface
 
 	public class Global : WebApplication, IMonoRailConfigurationEvents
 	{
-		private static readonly ILog _log = LogManager.GetLogger(typeof(Global));
-
 		public static AppConfig Config = new AppConfig();
 
 		public Global()
 			: base(Assembly.Load("InternetInterface"))
 		{
+			FixMonorailConponentBug = false;
 			Logger.ErrorSubject = "[Internet] Ошибка в Интернет интерфейсе";
 			Logger.SmtpHost = "box.analit.net";
 		}

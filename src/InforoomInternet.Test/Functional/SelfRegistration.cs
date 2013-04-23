@@ -37,7 +37,6 @@ namespace InforoomInternet.Test.Functional
 			Css("#physicalClient_Tariff_Id").Select("Тестовый тариф для самостоятельной регистрации");
 			Click("Продолжить");
 			AssertText("Пароль");
-			Console.WriteLine(browser.Text);
 		}
 	}
 }
