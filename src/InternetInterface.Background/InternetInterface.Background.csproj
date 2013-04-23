@@ -35,7 +35,7 @@
     <Reference Include="Castle.ActiveRecord">
       <HintPath>..\..\lib\Castle.ActiveRecord.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.MonoRail.Framework, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+    <Reference Include="Castle.MonoRail.Framework">
       <HintPath>..\..\lib\Castle.MonoRail.Framework.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
