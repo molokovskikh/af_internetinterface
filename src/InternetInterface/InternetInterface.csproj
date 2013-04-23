@@ -203,6 +203,7 @@
     <Content Include="Views\Map\Bookmark.brail" />
     <Content Include="Views\Mail\Act.brail" />
     <None Include="Views\Map\ShowBookmarks.brail" />
+    <Content Include="Views\Payments\ShowWriteOffs.brail" />
     <None Include="Views\PrivateMessages\ForClient.brail" />
     <None Include="Views\PrivateMessages\ForSwitch.brail" />
     <None Include="Views\PrivateMessages\Message.brail" />
@@ -457,6 +458,7 @@
     <Compile Include="Queries\RequestFilter.cs" />
     <Compile Include="Queries\RequestFinderFilter.cs" />
     <Compile Include="Queries\SeachFilter.cs" />
+    <Compile Include="Queries\WriteOffsFilter.cs" />
     <Compile Include="Services\DebtWork.cs" />
     <Compile Include="Services\Service.cs" />
     <Compile Include="Services\VoluntaryBlockin.cs" />

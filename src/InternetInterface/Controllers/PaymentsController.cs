@@ -385,5 +385,10 @@ namespace InternetInterface.Controllers
 			}
 			RedirectToReferrer();
 		}
+
+		public void ShowWriteOffs()
+		{
+
+		}
 	}
 }

@@ -19,6 +19,8 @@ namespace InternetInterface.Queries
 		public IList<BaseItemForTable> Find()
 		{
 			var firstDataQuery = Session.Query<WriteOff>().Where(w => w.WriteOffDate >= BeginDate.Date && w.WriteOffDate <= EndDate.Date);
+			if (Region != null)
+				firstDataQuery = firstDataQuery.Where(w => w.Client.PhysicalClient.HouseObj.Region == Region || w.Client.LawyerPerson)
 		}
 	}
 }
