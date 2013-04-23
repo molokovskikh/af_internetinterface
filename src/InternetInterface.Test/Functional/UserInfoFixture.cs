@@ -79,6 +79,7 @@ namespace InternetInterface.Test.Functional
 			session.SaveOrUpdate(Client);
 			using (var browser = Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", Client.Id))) {
 				browser.Button("naznach_but").Click();
+				Thread.Sleep(500);
 				browser.RadioButton(Find.ByName("graph_button")).Checked = true;
 				browser.Button("reserv_but").Click();
 				Assert.IsTrue(browser.Text.Contains("Резерв"));
