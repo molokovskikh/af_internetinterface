@@ -19,6 +19,12 @@ namespace InternetInterface.Models
 			StaticIps = new List<StaticIp>();
 		}
 
+		public ClientEndpoint(Lease lease)
+			: this(lease.Endpoint.Client, lease.Port, lease.Switch)
+		{
+			Module = lease.Module;
+		}
+
 		public ClientEndpoint(Client client, int? port, NetworkSwitch @switch)
 			: this()
 		{
