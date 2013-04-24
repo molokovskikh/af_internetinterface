@@ -88,7 +88,7 @@ namespace InternetInterface.Printer
 							{ singular, document },
 							{ "doc", document },
 							//тк chrome.printer не печатает у него media будет screen а не print
-							//что бы стили продолжели работать нужно их исправить
+							//что бы стили продолжили работать нужно их исправить
 							{ "print", true }
 						};
 						RenderToFile(brail, plural, file, arguments);

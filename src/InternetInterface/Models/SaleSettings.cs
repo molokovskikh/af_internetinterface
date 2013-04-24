@@ -14,16 +14,16 @@ namespace InternetInterface.Models
 		[PrimaryKey]
 		public uint Id { get; set; }
 
-		[Property, ValidateNonEmpty("Поле не должно быть пустым"), ValidateInteger("Должнно быть введено число")]
+		[Property, ValidateNonEmpty("Поле не должно быть пустым"), ValidateInteger("Должно быть введено число")]
 		public int PeriodCount { get; set; }
 
-		[Property, ValidateNonEmpty("Поле не должно быть пустым"), ValidateInteger("Должнно быть введено число")]
+		[Property, ValidateNonEmpty("Поле не должно быть пустым"), ValidateInteger("Должно быть введено число")]
 		public int MinSale { get; set; }
 
-		[Property, ValidateNonEmpty("Поле не должно быть пустым"), ValidateInteger("Должнно быть введено число")]
+		[Property, ValidateNonEmpty("Поле не должно быть пустым"), ValidateInteger("Должно быть введено число")]
 		public int MaxSale { get; set; }
 
-		[Property, ValidateNonEmpty("Поле не должно быть пустым"), ValidateDecimal("Должнно быть введено число"), ValidateRange("0.5", "5", errorMessage: "Значение выходит за разрешенный интервал")]
+		[Property, ValidateNonEmpty("Поле не должно быть пустым"), ValidateDecimal("Должно быть введено число"), ValidateRange("0.5", "5", errorMessage: "Значение выходит за разрешенный интервал")]
 		public decimal SaleStep { get; set; }
 	}
 }

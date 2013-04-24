@@ -24,7 +24,7 @@ namespace InternetInterface.Test.Functional
 			Click("Закладки");
 			Click("Добавить закладку");
 			Click("Сохранить");
-			AssertText("Введите такст закладки");
+			AssertText("Введите текст закладки");
 			browser.TextField("bookmark_Text").AppendText("текст тестовой закладки");
 			Click("Сохранить");
 			AssertText("Сохранено");

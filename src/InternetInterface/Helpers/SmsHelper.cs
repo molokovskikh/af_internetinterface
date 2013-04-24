@@ -170,7 +170,7 @@ namespace InternetInterface.Helpers
 						new XElement("password", Password),
 						new XElement("action", "send"),
 						new XElement("source", Source),
-						new XElement("text", "Уважаемый абонент, компания Инфорум предлагает передовые услуги в сфере телекомуникаций (подроблее http://ivrn.net)")));
+						new XElement("text", "Уважаемый абонент, компания Инфорум предлагает передовые услуги в сфере телекоммуникаций (подробнее http://ivrn.net)")));
 
 				var dataElement = document.Element("data");
 				if (dataElement != null) {
@@ -189,7 +189,7 @@ namespace InternetInterface.Helpers
 						else {
 							_log.Error(
 								string.Format(
-									"Не было отправлено сообщение для клиента {0} Из-за того, что небыл найден номер для отправки. Текст: {1}",
+									"Не было отправлено сообщение для клиента {0} Из-за того, что не был найден номер для отправки. Текст: {1}",
 									smsMessage.Client != null ? smsMessage.Client.Id.ToString(CultureInfo.InvariantCulture) : "<Не удалось определить клиента>", smsMessage.Text));
 						}
 					}

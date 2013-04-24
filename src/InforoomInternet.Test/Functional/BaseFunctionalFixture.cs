@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Models;
@@ -25,13 +26,18 @@ namespace InforoomInternet.Test.Functional
 		[SetUp]
 		public void SetUp()
 		{
-			Pool = new IpPool { IsGray = true };
+			Pool = new IpPool {
+				IsGray = true,
+				Begin = (uint)IPAddress.Parse("192.168.1.1").Address,
+				End = (uint)IPAddress.Parse("192.168.1.100").Address,
+			};
 			PhysicalClient = new PhysicalClient();
 			Client = new Client();
 			Client.PhysicalClient = PhysicalClient;
 			ClientEndpoint = new ClientEndpoint();
 			ClientEndpoint.Client = Client;
 			Lease = new Lease(ClientEndpoint);
+			Lease.Ip = IPAddress.Parse("192.168.1.1");
 			Lease.Pool = Pool;
 			Internet = new Internet { HumanName = "internet" };
 			IpTv = new IpTv { HumanName = "iptv" };

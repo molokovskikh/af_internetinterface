@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
@@ -25,19 +26,18 @@ namespace InforoomInternet.Controllers
 	[Filter(ExecuteWhen.BeforeAction, typeof(BeforeFilter))]
 	public class MainController : BaseController
 	{
-		private string GetHost()
+		private IPAddress GetHost()
 		{
 			var hostAdress = Request.UserHostAddress;
 #if DEBUG
-			hostAdress = "127.0.0.1";
+			hostAdress = ConfigurationManager.AppSettings["DebugHost"] ?? "127.0.0.1";
 #endif
-			return hostAdress;
+			return IPAddress.Parse(hostAdress);
 		}
 
 		private Lease FindLease()
 		{
-			var ip = IPAddress.Parse(GetHost());
-			return DbSession.Query<Lease>().FirstOrDefault(l => l.Ip == ip);
+			return DbSession.Query<Lease>().FirstOrDefault(l => l.Ip == GetHost());
 		}
 
 		public void Index()
@@ -217,7 +217,7 @@ namespace InforoomInternet.Controllers
 			if (!string.IsNullOrEmpty(Request["host"]))
 				PropertyBag["referer"] = Request["host"] + Request["url"];
 
-			var hostAdress = IPAddress.Parse(GetHost());
+			var hostAdress = GetHost();
 			var lease = FindLease();
 #if DEBUG
 			if (lease == null)
@@ -315,11 +315,8 @@ namespace InforoomInternet.Controllers
 
 		public void WarningPackageId()
 		{
-			var hostAdress = IPAddress.Parse(Request.UserHostAddress);
-#if DEBUG
-			hostAdress = DbSession.Query<Lease>().ToList().First().Ip;
-#endif
-			if (!Client.Our(hostAdress, DbSession)) {
+			var ipAddress = GetHost();
+			if (!Client.Our(ipAddress, DbSession)) {
 				RedirectToSiteRoot();
 				return;
 			}
@@ -335,7 +332,7 @@ namespace InforoomInternet.Controllers
 				}
 
 				if ((ClientData.Get(lease.Endpoint.Client.Id) == UnknownClientStatus.NoInfo) && !lease.Pool.IsGray) {
-					var sceWorker = new SceThread(lease, hostAdress.ToString());
+					var sceWorker = new SceThread(lease, ipAddress.ToString());
 					sceWorker.Go();
 				}
 
@@ -384,7 +381,7 @@ namespace InforoomInternet.Controllers
 						Iteration = 100,
 						Message = @"
 К сожалению, услуга доступа интернет Вам недоступна. </br>
-Чтобы пользоваться услугами интернет необходимо оставить заявку на подлючение, либо авторизоваться, если вы уже подключены.
+Чтобы пользоваться услугами интернет необходимо оставить заявку на подключение, либо авторизоваться, если вы уже подключены.
 Если Вы считаете это сообщение ошибочным, пожалуйста, свяжитесь с нами по телефону </br> (473)22-999-87 или сообщите по адресу internet@ivrn.net. Спасибо",
 						WaitingInfo = false,
 						Status = info.Status
@@ -420,10 +417,10 @@ namespace InforoomInternet.Controllers
 				messageText.AppendLine(string.Format("Пришел запрос на страницу WarningPackageId от клиента {0}",
 					client.Value.ToString("00000")));
 				if (lease.Endpoint.Switch != null) {
-					messageText.AppendLine("Свич: " + lease.Endpoint.Switch.Name);
+					messageText.AppendLine("Коммутатор: " + lease.Endpoint.Switch.Name);
 				}
 				else {
-					messageText.AppendLine("Свич неопределен");
+					messageText.AppendLine("Коммутатор неопределен");
 				}
 				if (lease.Endpoint.Port != null) {
 					messageText.AppendLine("Порт: " + lease.Endpoint.Port);

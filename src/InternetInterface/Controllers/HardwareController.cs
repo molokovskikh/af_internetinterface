@@ -50,7 +50,7 @@ namespace InternetInterface.Controllers
 				telnet.Login("ii", "analit", 100);
 				var port = point.Port.ToString();
 #endif
-				//Грязный хук, чтобы поиск осущесвтлять по нужному порту
+				//Грязный хак, чтобы поиск осуществлять по нужному порту
 				if (port.Length == 1)
 					port += ' ';
 

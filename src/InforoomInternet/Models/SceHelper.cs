@@ -33,7 +33,7 @@ namespace InforoomInternet.Models
 				_log.DebugFormat("Применены настройки для sce {0}", command);
 			}
 			catch (Exception e) {
-				_log.Error(String.Format("ошибка при применении настрок для sce, ip {0}", ip), e);
+				_log.Error(String.Format("ошибка при применении настроек для sce, ip {0}", ip), e);
 				noError = false;
 			}
 			if (noError) {
@@ -92,7 +92,7 @@ namespace InforoomInternet.Models
 			process.BeginOutputReadLine();
 			process.WaitForExit();
 			if (process.ExitCode != 0) {
-				_log.ErrorFormat("ошибка при применении настрок для sce, комманда {2}, {0} {1}", error, output, command);
+				_log.ErrorFormat("ошибка при применении настроек для sce, команда {2}, {0} {1}", error, output, command);
 			}
 #endif
 		}

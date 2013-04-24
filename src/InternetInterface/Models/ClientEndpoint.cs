@@ -49,7 +49,7 @@ namespace InternetInterface.Models
 		[Property, Auditable("Порт")]
 		public virtual int? Port { get; set; }
 
-		[BelongsTo("Switch"), Auditable("Свитч")]
+		[BelongsTo("Switch"), Auditable("Коммутатор")]
 		public virtual NetworkSwitch Switch { get; set; }
 
 		[Property, Auditable("Мониторинг")]

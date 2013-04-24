@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
+using Common.Tools;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 using NUnit.Framework;
@@ -24,12 +26,12 @@ namespace InforoomInternet.Test.Functional
 			session.Save(zone);
 			session.Save(networkSwitch);
 			Lease.Switch = networkSwitch;
-			Lease.Ip = IPAddress.Loopback;
+			Lease.Ip = IPAddress.Parse("192.168.1.1");
 			Lease.Endpoint = null;
 
 			Open("Main/Warning");
 			AssertText("Номер абонента");
-			Css("#physicalClient_ExternalClientId").TypeText("4684");
+			Css("#physicalClient_ExternalClientId").TypeText(Generator.Random().First());
 			Css("#physicalClient_Surname").TypeText("Иванов");
 			Css("#physicalClient_Name").TypeText("Иван");
 			Css("#physicalClient_Patronymic").TypeText("Иванович");

@@ -72,7 +72,7 @@ namespace InternetInterface.Models
 		private void DeleteFromClient()
 		{
 			if (Service.CanDelete(this)) {
-				//сторока ниже не работает, в тестt ServiceFixture.ActiveDeactive хотя должна, какой то бред
+				//строка ниже не работает, в тестt ServiceFixture.ActiveDeactive хотя должна, какой то бред
 				if (Id == 0)
 					Client.ClientServices.Remove(this);
 				else

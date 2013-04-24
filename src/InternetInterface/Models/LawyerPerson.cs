@@ -43,7 +43,7 @@ namespace InternetInterface.Models
 		[Property, Auditable("ИНН")]
 		public virtual string INN { get; set; }
 
-		[ValidateEmail("Ошибка воода Email (adr@dom.com)")]
+		[ValidateEmail("Ошибка ввода Email (adr@dom.com)")]
 		public virtual string Email { get; set; }
 
 		[ValidateRegExp(@"^((\d{3})-(\d{7}))", "Ошибка формата телефонного номера (***-*******)")]

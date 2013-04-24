@@ -11,7 +11,7 @@ namespace InternetInterface.Controllers
 	public class LoginController : SmartDispatcherController
 	{
 		/// <summary>
-		/// Метод выполняется по нажати. на кнопку "Войти"
+		/// Метод выполняется по нажатии. на кнопку "Войти"
 		/// </summary>
 		/// <param name="login"></param>
 		/// <param name="password"></param>

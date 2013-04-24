@@ -568,7 +568,7 @@ group by {0}
 			return query.ToList<BaseWriteOff>();
 		}
 
-		[Obsolete("Не исполдьзовать добавлено для обратной совместимости")]
+		[Obsolete("Не использовать добавлено для обратной совместимости")]
 		public virtual ClientConnectInfo ConnectInfoFirst()
 		{
 			return ArHelper.WithSession(s => ConnectInfoFirst(s));

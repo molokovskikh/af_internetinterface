@@ -46,7 +46,7 @@ namespace InforoomInternet
 					.DefaultForController().Is("Main")
 					.DefaultForAction().Is("Warning"));
 
-				//Эта страница находится гуглом по запросу воронеж ООО Инфорум
+				//Эта страница находится гуглом по запросу Воронеж ООО Инфорум
 				RoutingModuleEx.Engine.Add(new PatternRoute("/Main/requisite")
 					.DefaultForController().Is("Content")
 					.DefaultForAction().Is("Реквизиты"));

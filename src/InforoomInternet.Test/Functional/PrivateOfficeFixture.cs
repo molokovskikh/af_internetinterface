@@ -19,6 +19,9 @@ namespace InforoomInternet.Test.Functional
 		[SetUp]
 		public void Setup()
 		{
+			//нужно очищать cookie перед каждым тестом
+			//если этого не делать браузер будет помнить что вход произвел клиент из предыдущего теста
+			clearCookies = true;
 			session.CreateSQLQuery("delete from Leases").ExecuteUpdate();
 
 			physicalClient = ClientHelper.PhysicalClient();
@@ -57,7 +60,7 @@ namespace InforoomInternet.Test.Functional
 				Port = 1
 			};
 			session.Save(lease);
-			Flush();
+
 			Open("PrivateOffice/IndexOffice");
 			browser.TextField("Login").AppendText(client.Id.ToString());
 			browser.TextField("Password").AppendText("1234");
@@ -185,7 +188,7 @@ namespace InforoomInternet.Test.Functional
 		{
 			client.FirstLunch = false;
 			session.SaveOrUpdate(client);
-			Flush();
+
 			Open("PrivateOffice/IndexOffice");
 			AssertText("Это Ваше первое посещение личного кабинета, просим подтвердить свои данные");
 		}
@@ -195,7 +198,7 @@ namespace InforoomInternet.Test.Functional
 		{
 			client.FirstLunch = false;
 			session.SaveOrUpdate(client);
-			Flush();
+
 			Open("PrivateOffice/IndexOffice");
 			browser.TextField("PhysicalClient_PassportSeries").AppendText("abcd");
 			browser.TextField("PhysicalClient_PassportNumber").AppendText("abcd");
@@ -215,7 +218,7 @@ namespace InforoomInternet.Test.Functional
 		{
 			client.FirstLunch = false;
 			session.SaveOrUpdate(client);
-			Flush();
+
 			Open("PrivateOffice/IndexOffice");
 			browser.TextField("PhysicalClient_PassportSeries").Value = "1234";
 			browser.TextField("PhysicalClient_PassportNumber").Value = "123456";

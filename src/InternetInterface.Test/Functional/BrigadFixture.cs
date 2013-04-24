@@ -29,12 +29,12 @@ namespace InternetInterface.Test.Functional
 		public void ReportOnWork()
 		{
 			Open("Brigads/ReportOnWork");
-			AssertText("Параментры фильтрации");
+			AssertText("Параметры фильтрации");
 			AssertText("Статистика подключений");
 			AssertText("Всего");
 			AssertText("Не состоявшихся");
 			Click("Показать");
-			AssertText("Параментры фильтрации");
+			AssertText("Параметры фильтрации");
 		}
 	}
 }

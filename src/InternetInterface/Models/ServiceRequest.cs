@@ -36,7 +36,7 @@ namespace InternetInterface.Models
 
 		[Property,
 		 ValidateNonEmpty,
-		 ValidateRegExp(@"^\d{3}-\d{7}$", "Ошибка формата телефонного номера: мобильный телефн (***-*******)"),
+		 ValidateRegExp(@"^\d{3}-\d{7}$", "Ошибка формата телефонного номера: мобильный телефон (***-*******)"),
 		 Description("Контактный телефон"),
 		 Auditable]
 		public virtual string Contact { get; set; }

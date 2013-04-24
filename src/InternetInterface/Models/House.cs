@@ -33,7 +33,7 @@ namespace InternetInterface.Models
 		[Property("CaseHouse")]
 		public virtual string Case { get; set; }
 
-		[Property, ValidateNonEmpty("Ввкдите количество квартир"), ValidateInteger("Это поле должно быть число")]
+		[Property, ValidateNonEmpty("Введите количество квартир"), ValidateInteger("Это поле должно быть число")]
 		public virtual int ApartmentCount { get; set; }
 
 		[Property]

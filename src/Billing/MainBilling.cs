@@ -470,7 +470,7 @@ set s.LastStartFail = true;")
 				if (sum == 0)
 					return;
 
-				//если это последний день месяца то нам нужно учесть накопивщуюся ошибку округления
+				//если это последний день месяца то нам нужно учесть накопившуюся ошибку округления
 				if (now.Date == now.Date.LastDayOfMonth()) {
 					sum += tariff - Math.Round(tariff / daysInMonth, 2) * daysInMonth;
 				}

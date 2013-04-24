@@ -348,12 +348,12 @@ namespace InternetInterface.Controllers
 					PropertyBag["ChHouse"] = houses.First();
 				else {
 					PropertyBag["ChHouse"] = new House();
-					PropertyBag["Message"] = Message.Error("Не удалось сопоставить адрес из заявки ! Будте внимательны при заполнении адреса клиента !");
+					PropertyBag["Message"] = Message.Error("Не удалось сопоставить адрес из заявки ! Будет внимательны при заполнении адреса клиента !");
 				}
 			}
 			else {
 				PropertyBag["ChHouse"] = new House();
-				PropertyBag["Message"] = Message.Error("Не удалось сопоставить адрес из заявки ! Будте внимательны при заполнении адреса клиента !");
+				PropertyBag["Message"] = Message.Error("Не удалось сопоставить адрес из заявки ! Будет внимательны при заполнении адреса клиента !");
 			}
 			SendRegisterParam(newPhisClient);
 		}

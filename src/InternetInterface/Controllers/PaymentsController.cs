@@ -131,7 +131,7 @@ namespace InternetInterface.Controllers
 		{
 			var payments = TempPayments();
 			if (payments == null) {
-				Flash["Message"] = Message.Error("Время сесии истекло. Загрузите выписку повторно.");
+				Flash["Message"] = Message.Error("Время сессии истекло. Загрузите выписку повторно.");
 				RedirectToReferrer();
 				return;
 			}

@@ -58,7 +58,7 @@ namespace InternetInterface.Test.Integration.Tasks
 			session.Save(client);
 		}
 
-		[Test(Description = "Проверяем корректностьсоздания счета")]
+		[Test(Description = "Проверяем корректность создания счета")]
 		public void BuildInvoiceTest()
 		{
 			var order = new Orders {

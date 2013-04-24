@@ -206,14 +206,14 @@ namespace InternetInterface.Controllers
 			var pclient = client.PhysicalClient;
 			var message = string.Empty;
 			if (client.ClientServices.Select(c => c.Service).Contains(Service.GetByType(typeof(DebtWork))))
-				message += "Повторное использование услуги \"Обещаный платеж невозможно\"";
+				message += "Повторное использование услуги \"Обещанный платеж невозможно\"";
 			if (pclient.Balance > 0 && string.IsNullOrEmpty(message))
-				message += "Воспользоваться устугой возможно только при отрицательном балансе";
+				message += "Воспользоваться услугой возможно только при отрицательном балансе";
 			if ((!client.Disabled || !client.AutoUnblocked) && string.IsNullOrEmpty(message))
 				message += "Услуга \"Обещанный платеж\" недоступна";
 			if (!client.PaymentForTariff())
 				message +=
-					"Воспользоваться услугой возможно если все платежи клиента первышают его абонентскую плату за месяц";
+					"Воспользоваться услугой возможно если все платежи клиента превышают его абонентскую плату за месяц";
 			if (client.CanUsedPostponedPayment()) {
 				client.Disabled = false;
 				client.Update();
@@ -246,7 +246,7 @@ namespace InternetInterface.Controllers
 					Date = DateTime.Now,
 					AppealType = AppealType.System,
 					Partner = registrator,
-					Appeal = string.Format("Номер {0} был привязян к данному клиенту", number)
+					Appeal = string.Format("Номер {0} был привязан к данному клиенту", number)
 				};
 				DbSession.Save(appeal);
 			}
@@ -1172,7 +1172,7 @@ where r.`Label`= :LabelIndex;")
 					Date = DateTime.Now,
 					Partner = InitializeContent.Partner,
 					Appeal =
-						string.Format("Назначен в график, \r\n Брагада: {0} \r\n Дата: {1} \r\n Время: {2}",
+						string.Format("Назначен в график, \r\n Бригада: {0} \r\n Дата: {1} \r\n Время: {2}",
 							briad.Name,
 							DateTime.Parse(Request.Form["graph_date"]).ToShortDateString(),
 							Intervals.GetIntervals()[(int)interval]),
@@ -1209,7 +1209,7 @@ where r.`Label`= :LabelIndex;")
 			var graph = DbSession.QueryOver<ConnectGraph>().Where(c => c.Client == client && c.Day == date && c.IntervalId == interval && c.Brigad == briad).List().FirstOrDefault();
 			if (graph != null) {
 				DbSession.Delete(graph);
-				var appeal = Appeals.CreareAppeal(string.Format("Удалено назначение в граффик, \r\n Брагада: {0} \r\n Дата: {1} \r\n Время: {2}",
+				var appeal = Appeals.CreareAppeal(string.Format("Удалено назначение в график, \r\n Бригада: {0} \r\n Дата: {1} \r\n Время: {2}",
 					briad.Name,
 					date.ToShortDateString(),
 					Intervals.GetIntervals()[(int)interval]), client, AppealType.User);

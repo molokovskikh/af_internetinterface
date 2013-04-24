@@ -21,7 +21,7 @@ namespace InternetInterface.Models
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
-		[Property, ValidateNonEmpty("Введите такст закладки")]
+		[Property, ValidateNonEmpty("Введите текст закладки")]
 		public virtual string Text { get; set; }
 
 		[Property]

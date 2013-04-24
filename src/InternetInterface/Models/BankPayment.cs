@@ -111,7 +111,7 @@ namespace InternetInterface.Models
 		public uint Id { get; set; }
 
 		//информация ниже получается из выписки
-		//фактическа дата платежа когда он прошел через банк
+		//фактическая дата платежа когда он прошел через банк
 		[Property, ValidateNonEmpty, Description("Дата платежа")]
 		public DateTime PayedOn { get; set; }
 
@@ -168,7 +168,7 @@ namespace InternetInterface.Models
 
 			var payers = GetPayerForInn(PayerClient.Inn);
 			if (payers.Count == 0) {
-				return String.Format("Не удалось найти ни одного платильщика с ИНН {0}", PayerClient.Inn);
+				return String.Format("Не удалось найти ни одного плательщика с ИНН {0}", PayerClient.Inn);
 			}
 			else if (payers.Count == 1) {
 				Payer = payers.Single();
@@ -324,7 +324,7 @@ namespace InternetInterface.Models
 				var sum = node.XPathSelectElement("Summa").Value;
 				var comment = node.XPathSelectElement("AssignPayment").Value;
 
-				//если платеж из банка россии (ЦБ) то у него нет корсчета
+				//если платеж из банка России (ЦБ) то у него нет корсчета
 				var bankAccountantCode = "";
 				if (node.XPathSelectElement("BankPayer/AccountCode") != null)
 					bankAccountantCode = node.XPathSelectElement("BankPayer/AccountCode").Value;

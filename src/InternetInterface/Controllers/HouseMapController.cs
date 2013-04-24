@@ -171,7 +171,7 @@ namespace InternetInterface.Controllers
 			}
 			if (string.IsNullOrEmpty(returnObj.errorMessage)) {
 				if (House.Queryable.Any(h => h.Street == street && h.Number == Int32.Parse(number) && h.Case == _case))
-					returnObj.errorMessage += "Дом с таким одресом уже существует";
+					returnObj.errorMessage += "Дом с таким адресом уже существует";
 			}
 			if (string.IsNullOrEmpty(returnObj.errorMessage)) {
 				var newHouse = new House { Street = street, Number = Int32.Parse(number), Case = _case };

@@ -122,7 +122,7 @@ ${app.Asset("calendar-setup.js")}
 	</thead>
 	<tbody>
 	<tr>
-		<td>Свич</td>
+		<td>Коммутатор</td>
 		<td>
 			<select name="ConnectInfo.Switch" id="SelectSwitches" style="width: 100%" >
 				<option id="Option2" value="0" > </option>

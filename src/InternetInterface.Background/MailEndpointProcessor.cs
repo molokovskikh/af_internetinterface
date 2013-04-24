@@ -97,9 +97,9 @@ where sl.LeaseId in ({0})", guestLeases.Select(g => g.Id).Implode());
 				new SendedLease(gl).Save();
 				text.AppendLine("Клиент:");
 				if (gl.Switch != null)
-					text.AppendLine(string.Format("Свитч: {0} ({1})", gl.Switch.Name, gl.Switch.GetNormalIp()));
+					text.AppendLine(string.Format("Коммутатор: {0} ({1})", gl.Switch.Name, gl.Switch.GetNormalIp()));
 				else
-					text.AppendLine("Свитч не определен");
+					text.AppendLine("Коммутатор не определен");
 				text.AppendLine("Порт: " + gl.Port);
 				text.AppendLine("MAC: " + gl.LeasedTo);
 				text.AppendLine("---------------------------------");
@@ -107,7 +107,7 @@ where sl.LeaseId in ({0})", guestLeases.Select(g => g.Id).Implode());
 			if (!string.IsNullOrEmpty(text.ToString())) {
 				var message = new MailMessage();
 				message.To.Add(mailToAdress);
-				message.Subject = "Неизвесный клиент";
+				message.Subject = "Неизвестный клиент";
 				message.From = new MailAddress("service@analit.net");
 				message.Body = text.ToString();
 				smtp.Send(message);
