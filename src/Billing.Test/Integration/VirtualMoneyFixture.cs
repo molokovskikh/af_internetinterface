@@ -42,7 +42,8 @@ namespace Billing.Test.Integration
 			billing.Compute();
 
 			using (new SessionScope()) {
-				var writeOff = WriteOff.ForClient(client).FirstOrDefault();
+				session.Refresh(client);
+				var writeOff = client.WriteOffs.FirstOrDefault();
 				Assert.That(writeOff.WriteOffSum, Is.EqualTo(Decimal.Round(writeOff.VirtualSum, 2)));
 				client.Refresh();
 				Assert.That(client.PhysicalClient.VirtualBalance, Is.EqualTo(Decimal.Round(5, 2)));
@@ -52,7 +53,8 @@ namespace Billing.Test.Integration
 			billing.Compute();
 
 			using (new SessionScope()) {
-				var writeOff = WriteOff.ForClient(client).Last();
+				session.Refresh(client);
+				var writeOff = client.WriteOffs.Last();
 				Assert.That(writeOff.WriteOffSum, Is.EqualTo(Decimal.Round(paySum, 2)));
 				Assert.That(writeOff.VirtualSum, Is.EqualTo(Decimal.Round(5, 5)));
 				Assert.That(writeOff.MoneySum, Is.EqualTo(Decimal.Round(paySum - 5, 5)));
@@ -64,7 +66,8 @@ namespace Billing.Test.Integration
 			billing.Compute();
 
 			using (new SessionScope()) {
-				var writeOff = WriteOff.ForClient(client).Last();
+				session.Refresh(client);
+				var writeOff = client.WriteOffs.Last();
 				Assert.That(writeOff.WriteOffSum, Is.EqualTo(Decimal.Round(paySum, 2)));
 				Assert.That(writeOff.VirtualSum, Is.EqualTo(Decimal.Round(0, 5)));
 				Assert.That(writeOff.MoneySum, Is.EqualTo(Decimal.Round(paySum, 5)));

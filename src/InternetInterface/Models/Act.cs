@@ -11,7 +11,7 @@ using Common.Web.Ui.MonoRailExtentions;
 namespace InternetInterface.Models
 {
 	[ActiveRecord(Schema = "internet")]
-	public class Act : ActiveRecordLinqBase<Act>
+	public class Act
 	{
 		public Act()
 		{

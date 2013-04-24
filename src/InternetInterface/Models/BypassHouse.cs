@@ -8,7 +8,7 @@ using Castle.ActiveRecord.Framework;
 namespace InternetInterface.Models
 {
 	[ActiveRecord("BypassHouses", Schema = "internet", Lazy = true)]
-	public class BypassHouse : ActiveRecordLinqBase<BypassHouse>
+	public class BypassHouse
 	{
 		[PrimaryKey]
 		public virtual uint Id { get; set; }

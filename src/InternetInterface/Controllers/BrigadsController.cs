@@ -32,7 +32,7 @@ namespace InternetInterface.Controllers
 
 		public void MakeBrigad(uint brigad)
 		{
-			PropertyBag["Brigad"] = Brigad.Find(brigad);
+			PropertyBag["Brigad"] = DbSession.Load<Brigad>(brigad);
 			PropertyBag["brigadid"] = brigad;
 			PropertyBag["Editing"] = true;
 			PropertyBag["VB"] = new ValidBuilderHelper<Brigad>(new Brigad());
@@ -56,7 +56,7 @@ namespace InternetInterface.Controllers
 		public void EditBrigad([DataBind("Brigad")] Brigad brigad, uint brigadid)
 		{
 			if (Validator.IsValid(brigad)) {
-				var edbrigad = Brigad.Find(brigadid);
+				var edbrigad = DbSession.Load<Brigad>(brigadid);
 				BindObjectInstance(edbrigad, ParamStore.Form, "Brigad");
 				edbrigad.UpdateAndFlush();
 				RedirectToUrl("../Brigads/ShowBrigad.rails");

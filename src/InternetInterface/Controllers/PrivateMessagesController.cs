@@ -59,7 +59,7 @@ namespace InternetInterface.Controllers
 					.FirstOrDefault();
 			PropertyBag["PrivateMessage"] = message;
 			if (IsPost) {
-				var clients = ClientEndpoint.Queryable.Where(e => e.Switch == @switch).Select(e => e.Client).ToList();
+				var clients = DbSession.Query<ClientEndpoint>().Where(e => e.Switch == @switch).Select(e => e.Client).ToList();
 				var applyCount = 0;
 				var errorClients = new List<uint>();
 				foreach (var client in clients) {

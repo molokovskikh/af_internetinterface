@@ -5,10 +5,12 @@ using System.Web;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Common.Tools;
+using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using NHibernate.Linq;
 using log4net;
 
 namespace InternetInterface.Controllers
@@ -16,8 +18,13 @@ namespace InternetInterface.Controllers
 	[Helper(typeof(PaginatorHelper))]
 	[Helper(typeof(IpHelper))]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
-	public class HardwareController : ARSmartDispatcherController
+	public class HardwareController : BaseController
 	{
+		public HardwareController()
+		{
+			SetARDataBinder();
+		}
+
 		private string DelCommandAndHello(string info, string command)
 		{
 			info = info.Replace(command, string.Empty);
@@ -33,9 +40,9 @@ namespace InternetInterface.Controllers
 
 		public void PortInfo(uint endPoint)
 		{
-			var point = ClientEndpoint.Find(endPoint);
+			var point = DbSession.Load<ClientEndpoint>(endPoint);
 			PropertyBag["point"] = point;
-			PropertyBag["lease"] = Lease.Queryable.Where(l => l.Endpoint == point).FirstOrDefault();
+			PropertyBag["lease"] = DbSession.Query<Lease>().Where(l => l.Endpoint == point).FirstOrDefault();
 
 			try {
 #if DEBUG

@@ -100,11 +100,6 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual decimal? BeforeWriteOffBalance { get; set; }
 
-		public static IList<WriteOff> ForClient(Client client)
-		{
-			return Queryable.Where(w => w.Client == client).ToList();
-		}
-
 		public override string ToString()
 		{
 			return String.Format("{0} - {1}", WriteOffDate, WriteOffSum);

@@ -25,7 +25,7 @@ namespace InternetInterface.Controllers
 
 		public void RegisterServiceRequest(uint clientCode)
 		{
-			var client = Client.Find(clientCode);
+			var client = DbSession.Load<Client>(clientCode);
 			var request = new ServiceRequest { Registrator = InitializeContent.Partner };
 			PropertyBag["client"] = client;
 			PropertyBag["request"] = request;
@@ -76,7 +76,7 @@ namespace InternetInterface.Controllers
 			var iteration = new ServiceIteration();
 			BindObjectInstance(iteration, "iteration", AutoLoadBehavior.NewInstanceIfInvalidKey);
 			if (iteration.Request != null)
-				iteration.Save();
+				DbSession.Save(iteration);
 			RedirectToReferrer();
 		}
 
@@ -98,10 +98,11 @@ namespace InternetInterface.Controllers
 		{
 			commentText = string.Format("Заявка стала бесплатной, поскольку: {0}", commentText);
 			var request = DbSession.Load<ServiceRequest>(requestId);
-			new ServiceIteration {
+			var interaction = new ServiceIteration {
 				Request = request,
 				Description = commentText
-			}.Save();
+			};
+			DbSession.Save(interaction);
 			CancelView();
 			CancelLayout();
 		}

@@ -11,7 +11,7 @@ using NHibernate.Criterion;
 namespace InternetInterface.Models
 {
 	[ActiveRecord("UnresolvedPhone", Schema = "telephony")]
-	public class UnresolvedCall : ActiveRecordLinqBase<UnresolvedCall>
+	public class UnresolvedCall
 	{
 		[PrimaryKey("id")]
 		public virtual ulong Id { get; set; }

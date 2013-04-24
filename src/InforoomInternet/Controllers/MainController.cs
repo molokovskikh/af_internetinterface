@@ -239,7 +239,8 @@ namespace InforoomInternet.Controllers
 			if (lease != null)
 				point = lease.Endpoint;
 			else {
-				point = StaticIp.Queryable.ToList().Where(ip => {
+				var ips = DbSession.Query<StaticIp>().ToList();
+				point = ips.Where(ip => {
 					if (ip.Ip == hostAdress.ToString())
 						return true;
 					if (ip.Mask != null) {
@@ -271,7 +272,7 @@ namespace InforoomInternet.Controllers
 					DbSession.SaveOrUpdate(lease.Endpoint);
 				}
 				else {
-					var ips = StaticIp.Queryable.Where(s => s.EndPoint == point).ToList();
+					var ips = DbSession.Query<StaticIp>().Where(s => s.EndPoint == point).ToList();
 					foreach (var staticIp in ips) {
 						if (point.PackageId == null)
 							continue;

@@ -6,18 +6,25 @@ using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Common.Tools;
 using Common.Tools.Calendar;
+using Common.Web.Ui.Controllers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using NHibernate.Linq;
 
 namespace InternetInterface.Controllers
 {
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
-	public class AgentInfoController : ARSmartDispatcherController
+	public class AgentInfoController : BaseController
 	{
+		public AgentInfoController()
+		{
+			SetARDataBinder();
+		}
+
 		private List<PaymentsForAgent> GetPayments(DateTime startDate, DateTime endDate)
 		{
-			return PaymentsForAgent.Queryable.Where(
+			return DbSession.Query<PaymentsForAgent>().Where(
 				p =>
 					p.Agent == InitializeContent.Partner && p.RegistrationDate >= startDate &&
 						p.RegistrationDate <= endDate)
@@ -45,14 +52,14 @@ namespace InternetInterface.Controllers
 			var endDate = DateTime.Now;
 			var startDate = new DateTime(endDate.Year, endDate.Month, 1);
 			var interval = new Week(startDate, endDate);
-			var payments = PaymentsForAgent.Queryable.Where(p => p.RegistrationDate.Date >= startDate.Date && p.RegistrationDate.Date <= endDate.Date).ToList().GroupBy(p => p.Agent);
+			var payments = DbSession.Query<PaymentsForAgent>().Where(p => p.RegistrationDate.Date >= startDate.Date && p.RegistrationDate.Date <= endDate.Date).ToList().GroupBy(p => p.Agent);
 			PropertyBag["payments"] = payments;
 			PropertyBag["interval"] = interval;
 		}
 
 		public virtual void GroupInfo([DataBind("interval")] Week interval)
 		{
-			var payments = PaymentsForAgent.Queryable.Where(p => p.RegistrationDate.Date >= interval.StartDate.Date && p.RegistrationDate.Date <= interval.EndDate.Date).ToList().GroupBy(p => p.Agent);
+			var payments = DbSession.Query<PaymentsForAgent>().Where(p => p.RegistrationDate.Date >= interval.StartDate.Date && p.RegistrationDate.Date <= interval.EndDate.Date).ToList().GroupBy(p => p.Agent);
 			PropertyBag["payments"] = payments;
 			PropertyBag["interval"] = interval;
 		}
@@ -66,7 +73,7 @@ namespace InternetInterface.Controllers
 		public void SaveSettings([ARDataBind("agentSettings", AutoLoad = AutoLoadBehavior.NewInstanceIfInvalidKey)] AgentTariff[] tariffs)
 		{
 			foreach (var agentTariff in tariffs) {
-				agentTariff.Save();
+				DbSession.Save(agentTariff);
 			}
 			Flash["Message"] = Message.Notify("Сохранено");
 			RedirectToReferrer();

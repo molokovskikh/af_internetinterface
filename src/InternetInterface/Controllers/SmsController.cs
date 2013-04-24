@@ -8,6 +8,7 @@ using Common.Web.Ui.Controllers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using NHibernate.Linq;
 
 namespace InternetInterface.Controllers
 {
@@ -16,8 +17,8 @@ namespace InternetInterface.Controllers
 	{
 		public void SmsIndex(uint clientId)
 		{
-			PropertyBag["messages"] = SmsMessage.Queryable.Where(s => s.Client != null && s.Client.Id == clientId).OrderByDescending(s => s.CreateDate).ToList();
-			PropertyBag["client"] = Client.Find(clientId);
+			PropertyBag["messages"] = DbSession.Query<SmsMessage>().Where(s => s.Client != null && s.Client.Id == clientId).OrderByDescending(s => s.CreateDate).ToList();
+			PropertyBag["client"] = DbSession.Load<Client>(clientId);
 		}
 
 		[AccessibleThrough(Verb.Post)]
@@ -26,7 +27,7 @@ namespace InternetInterface.Controllers
 			if (!string.IsNullOrEmpty(messageText)) {
 				var phoneNumber = DbSession.Load<Contact>(phoneId);
 				var message = new SmsMessage {
-					Client = Client.Find(clientId),
+					Client = DbSession.Load<Client>(clientId),
 					CreateDate = DateTime.Now,
 					Registrator = InitializeContent.Partner,
 					PhoneNumber = "+7" + phoneNumber.Text,

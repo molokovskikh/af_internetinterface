@@ -9,7 +9,7 @@ using Common.Tools;
 namespace InternetInterface.Models
 {
 	[ActiveRecord(Schema = "internet")]
-	public class Contract : ActiveRecordLinqBase<Contract>
+	public class Contract
 	{
 		public Contract()
 		{

@@ -61,7 +61,7 @@ namespace InternetInterface.Controllers
 				BindObjectInstance(payment, "payment", AutoLoadBehavior.OnlyNested);
 				if (!HasValidationError(payment)) {
 					payment.RegisterPayment();
-					payment.Save();
+					DbSession.Save(payment);
 					new Payment {
 						Client = payment.Payer,
 						Sum = payment.Sum,
@@ -80,8 +80,8 @@ namespace InternetInterface.Controllers
 			}
 			if (PropertyBag["Payment"] == null)
 				PropertyBag["Payment"] = new BankPayment();
-			PropertyBag["recipients"] = Recipient.Queryable.OrderBy(r => r.Name).ToList();
-			PropertyBag["payments"] = BankPayment.Queryable
+			PropertyBag["recipients"] = DbSession.Query<Recipient>().OrderBy(r => r.Name).ToList();
+			PropertyBag["payments"] = DbSession.Query<BankPayment>()
 				.Where(p => p.RegistredOn >= DateTime.Today)
 				.OrderBy(p => p.RegistredOn).ToList();
 		}
@@ -145,7 +145,7 @@ namespace InternetInterface.Controllers
 
 				if (Validator.IsValid(payment)) {
 					payment.RegisterPayment();
-					payment.Save();
+					DbSession.Save(payment);
 					if (payment.Payer != null)
 						new Payment {
 							Client = payment.Payer,
@@ -223,7 +223,7 @@ namespace InternetInterface.Controllers
 				}
 			}
 			PropertyBag["payment"] = payment;
-			PropertyBag["recipients"] = Recipient.Queryable.OrderBy(r => r.Name).ToList();
+			PropertyBag["recipients"] = DbSession.Query<Recipient>().OrderBy(r => r.Name).ToList();
 			RenderView("Edit");
 		}
 
@@ -239,7 +239,7 @@ namespace InternetInterface.Controllers
 
 		public void Delete(uint id)
 		{
-			var payment = BankPayment.Find(id);
+			var payment = DbSession.Load<BankPayment>(id);
 			if (payment.Payment != null) {
 				Cancel(payment.Payment.Id, string.Format("Был удален банковский платеж от {0} на сумму {1}. Комментарий: {2}", payment.PayedOn.ToShortDateString(), payment.Sum, payment.Comment));
 			}
@@ -322,17 +322,17 @@ namespace InternetInterface.Controllers
 							DbSession.Save(new Appeals(string.Format("После смены плательщика в платеже {0} было создано пользовательское списание, так как не был найден привязанный к банковскому платежу физический платеж для отмены", oldPayment.Id), oldPayer, AppealType.System, true));
 						}
 					}
-					payment.DoUpdate();
+					DbSession.Save(payment);
 					Flash["Message"] = Message.Notify("Сохранено");
 					RedirectToReferrer();
 					return;
 				}
 				else {
-					ArHelper.WithSession(s => ArHelper.Evict(s, new[] { payment }));
+					DbSession.Evict(payment);
 				}
 			}
 			PropertyBag["payment"] = payment;
-			PropertyBag["recipients"] = Recipient.Queryable.OrderBy(r => r.Name).ToList();
+			PropertyBag["recipients"] = DbSession.Query<Recipient>().OrderBy(r => r.Name).ToList();
 		}
 
 		[return: JSONReturnBinder]
