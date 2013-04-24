@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
@@ -39,8 +40,9 @@ namespace InternetInterface.Models
 		[Property, ValidateRegExp(MACRegExp, "Ошибка ввода MAC (**-**-**-**-**)"), ValidateIsUnique("Такой МАС уже существует")]
 		public virtual string Mac { get; set; }
 
-		[Property, ValidateRegExp(IPRegExp, "Ошибка формата IP адреса (max 255.255.255.255))")]
-		public virtual string IP { get; set; }
+		[Property(ColumnType = "InternetInterface.Models.IPUserType, InternetInterface"),
+			ValidateRegExp(IPRegExp, "Ошибка формата IP адреса (max 255.255.255.255))")]
+		public virtual IPAddress IP { get; set; }
 
 		[Property]
 		public virtual string Name { get; set; }
@@ -62,37 +64,12 @@ namespace InternetInterface.Models
 
 		public override string ToString()
 		{
-			return Name + String.Format(" ({0})", GetNormalIp());
+			return Name + String.Format(" ({0})", IP);
 		}
 
 		public virtual string GetCommentForWeb()
 		{
 			return AppealHelper.GetTransformedAppeal(Comment);
-		}
-
-		public virtual string GetNormalIp()
-		{
-			return IpHelper.GetNormalIp(IP);
-		}
-
-		public static string GetNormalIp(uint ip)
-		{
-			return IpHelper.GetNormalIp(ip.ToString());
-		}
-
-		public static string SetProgramIp(string ip)
-		{
-			var valid = new Regex(IPRegExp);
-			if (!String.IsNullOrEmpty(ip) && valid.IsMatch(ip)) {
-				var splited = ip.Split('.');
-				var fg = new byte[8];
-				fg[0] = Convert.ToByte(splited[3]);
-				fg[1] = Convert.ToByte(splited[2]);
-				fg[2] = Convert.ToByte(splited[1]);
-				fg[3] = Convert.ToByte(splited[0]);
-				return BitConverter.ToInt64(fg, 0).ToString();
-			}
-			return String.Empty;
 		}
 
 		public static List<NetworkSwitch> All()

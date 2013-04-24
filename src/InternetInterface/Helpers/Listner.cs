@@ -32,38 +32,6 @@ namespace InternetInterface.Helpers
 		}
 	}
 
-	public class AuditablePropertyIp : AuditableProperty
-	{
-		public AuditablePropertyIp(PropertyInfo property, string name, object newValue, object oldValue)
-			: base(property, name, newValue, oldValue)
-		{
-		}
-
-		protected override void Convert(PropertyInfo property, object newValue, object oldValue)
-		{
-			if (oldValue == null) {
-				OldValue = "";
-			}
-			else {
-				OldValue = AsString(oldValue);
-			}
-
-			if (newValue == null) {
-				NewValue = "";
-			}
-			else {
-				NewValue = AsString(newValue);
-			}
-			Message = String.Format("Изменено '{0}' было '{1}' стало '{2}'", Name, OldValue, NewValue);
-		}
-
-		public string AsString(object value)
-		{
-			return IpHelper.GetNormalIp(value.ToString());
-		}
-	}
-
-
 	public class AuditablePropertyInternet : AuditableProperty
 	{
 		public AuditablePropertyInternet(PropertyInfo property, string name, object newValue, object oldValue)
@@ -95,9 +63,6 @@ namespace InternetInterface.Helpers
 	{
 		protected override AuditableProperty GetAuditableProperty(PropertyInfo property, string name, object newState, object oldState, object entity)
 		{
-			var attrs = property.GetCustomAttributes(typeof(Auditable), false);
-			if (attrs.Length > 0 && ((Auditable)attrs.First()).Name == "Фиксированный IP")
-				return new AuditablePropertyIp(property, name, newState, oldState);
 			return new AuditablePropertyInternet(property, name, newState, oldState);
 		}
 

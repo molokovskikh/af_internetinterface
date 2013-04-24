@@ -32,7 +32,7 @@ namespace InternetInterface.Controllers
 		public void NetworkSwitches(int id)
 		{
 			PropertyBag["id"] = id;
-			PropertyBag["Switches"] = Models.NetworkSwitch.All(DbSession);
+			PropertyBag["Switches"] = NetworkSwitch.All(DbSession);
 			CancelLayout();
 		}
 
@@ -64,7 +64,7 @@ namespace InternetInterface.Controllers
 		{
 			PropertyBag["house"] = Models.House.Find(House);
 			PropertyBag["Entrances"] = Entrance.Queryable.Where(e => e.House.Id == House).ToList();
-			PropertyBag["Switches"] = Models.NetworkSwitch.All(DbSession);
+			PropertyBag["Switches"] = NetworkSwitch.All(DbSession);
 			PropertyBag["RegionList"] = DbSession.Query<RegionHouse>().ToList();
 		}
 

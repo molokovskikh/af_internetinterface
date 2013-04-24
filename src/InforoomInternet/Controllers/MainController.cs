@@ -244,8 +244,7 @@ namespace InforoomInternet.Controllers
 						return true;
 					if (ip.Mask != null) {
 						var subnet = SubnetMask.CreateByNetBitLength(ip.Mask.Value);
-						var sIp = new IPAddress(RangeFinder.reverseBytesArray(Convert.ToUInt32(NetworkSwitch.SetProgramIp(ip.Ip))));
-						if (hostAdress.IsInSameSubnet(sIp, subnet))
+						if (hostAdress.IsInSameSubnet(IPAddress.Parse(ip.Ip), subnet))
 							return true;
 					}
 					return false;

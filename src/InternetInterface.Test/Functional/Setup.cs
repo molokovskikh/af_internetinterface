@@ -54,7 +54,7 @@ namespace InternetInterface.Test.Functional
 					if (!session.Query<Tariff>().Any())
 						session.Save(new Tariff("Тариф для тестирования", 500));
 
-					if (!ActiveRecordLinqBase<Brigad>.Queryable.Any()) {
+					if (!session.Query<Brigad>().Any()) {
 						new Brigad("Бригада для тестирования").Save();
 						new Partner {
 							Name = "Сервисный инженер для тестирования",
@@ -64,10 +64,8 @@ namespace InternetInterface.Test.Functional
 					}
 
 					if (!ActiveRecordLinqBase<Zone>.Queryable.Any()) {
-						var zone = new Zone {
-							Name = "Тестовая зона"
-						};
-						ActiveRecordMediator.Save(zone);
+						var zone = new Zone("Тестовая зона");
+						session.Save(zone);
 					}
 
 					if (!session.Query<House>().Any())

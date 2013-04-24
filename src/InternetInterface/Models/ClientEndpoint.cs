@@ -37,8 +37,8 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool Disabled { get; set; }
 
-		[Property, Auditable("Фиксированный IP")]
-		public virtual string Ip { get; set; }
+		[Property(ColumnType = "InternetInterface.Models.IPUserType, InternetInterface"), Auditable("Фиксированный IP")]
+		public virtual IPAddress Ip { get; set; }
 
 		[BelongsTo(Cascade = CascadeEnum.SaveUpdate), Auditable]
 		public virtual Client Client { get; set; }

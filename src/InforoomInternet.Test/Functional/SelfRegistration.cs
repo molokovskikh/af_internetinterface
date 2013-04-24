@@ -18,7 +18,7 @@ namespace InforoomInternet.Test.Functional
 				Hidden = true,
 				CanUseForSelfRegistration = true,
 			};
-			var zone = new Zone {
+			var zone = new Zone("Тестовая зона") {
 				IsSelfRegistrationEnabled = true
 			};
 			var networkSwitch = new NetworkSwitch("Тестовый коммутатор", zone);
@@ -31,7 +31,7 @@ namespace InforoomInternet.Test.Functional
 
 			Open("Main/Warning");
 			AssertText("Номер абонента");
-			Css("#physicalClient_ExternalClientId").TypeText(Generator.Random().First());
+			Css("#physicalClient_ExternalClientId").TypeText(Generator.Random().First().ToString());
 			Css("#physicalClient_Surname").TypeText("Иванов");
 			Css("#physicalClient_Name").TypeText("Иван");
 			Css("#physicalClient_Patronymic").TypeText("Иванович");

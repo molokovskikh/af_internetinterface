@@ -34,10 +34,17 @@ namespace InforoomInternet.Test.Functional
 			session.Save(client);
 
 			Open("PrivateOffice/IndexOffice");
-			var exit = Css("#exitLink");
-			if (exit != null) {
-				exit.Click();
-				Open("PrivateOffice/IndexOffice");
+			if (Css("#Login") == null) {
+				var exit = Css("#exitLink");
+				if (exit != null) {
+					exit.Click();
+					Open("PrivateOffice/IndexOffice");
+				}
+				else {
+					Click("Подтвердить");
+					Click("Выйти");
+					Open("PrivateOffice/IndexOffice");
+				}
 			}
 			browser.TextField("Login").AppendText(client.Id.ToString());
 			browser.TextField("Password").AppendText("1234");

@@ -361,6 +361,7 @@
     <Compile Include="Helpers\ExceptionHelper.cs" />
     <Compile Include="Helpers\ExportModel.cs" />
     <Compile Include="Helpers\InsertListner.cs" />
+    <Compile Include="Helpers\IPAddressConverter.cs" />
     <Compile Include="Helpers\IpHelper.cs" />
     <Compile Include="Helpers\Listner.cs" />
     <Compile Include="Helpers\LoginCreatorHelper.cs" />

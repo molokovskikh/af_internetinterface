@@ -39,7 +39,7 @@
 						<tr>
 							<td >IP адрес</td>
 							<td colspan = 2>
-								<input class="swichInput" id="Ip" type="text" value="${Switch.GetNormalIp()}" name="Switch.IP" />
+								<input class="swichInput" id="Ip" type="text" value="${Switch.IP}" name="Switch.IP" />
 							</td>
 							<td>
 								${app.GetValidationError("Switch.IP")}

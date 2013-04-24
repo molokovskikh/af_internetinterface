@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Collections.Generic;
@@ -361,7 +362,7 @@ namespace InternetInterface.Controllers
 			var endPontId = UInt32.Parse(Request.Form["endPontId"]);
 			var lease = Lease.Queryable.FirstOrDefault(l => l.Endpoint.Id == endPontId);
 			if (lease != null)
-				return NetworkSwitch.GetNormalIp(Convert.ToUInt32(lease.Ip));
+				return lease.Ip.ToString();
 			return string.Empty;
 		}
 
@@ -400,9 +401,6 @@ namespace InternetInterface.Controllers
 				clientEntPoint.Ip = null;
 				nullFlag = true;
 			}
-			else {
-				ConnectInfo.static_IP = NetworkSwitch.SetProgramIp(ConnectInfo.static_IP);
-			}
 			var errorMessage = Validation.ValidationConnectInfo(ConnectInfo, false);
 			decimal _connectSum;
 			var validateSum =
@@ -422,16 +420,18 @@ namespace InternetInterface.Controllers
 							var packageSpeed = DbSession.Query<PackageSpeed>().Where(p => p.PackageId == ConnectInfo.PackageId).ToList().FirstOrDefault();
 							clientEntPoint.PackageId = packageSpeed.PackageId;
 						}
-						if (string.IsNullOrEmpty(clientEntPoint.Ip) && !string.IsNullOrEmpty(ConnectInfo.static_IP))
+						if (clientEntPoint.Ip == null && !string.IsNullOrEmpty(ConnectInfo.static_IP))
 							new UserWriteOff {
 								Client = client,
 								Date = DateTime.Now,
 								Sum = 200,
-								Comment = string.Format("Плата за фиксированный Ip адрес ({0})", NetworkSwitch.GetNormalIp(UInt32.Parse(ConnectInfo.static_IP))),
+								Comment = string.Format("Плата за фиксированный Ip адрес ({0})", ConnectInfo.static_IP),
 								Registrator = InitializeContent.Partner
 							}.Save();
 						clientEntPoint.Client = client;
-						clientEntPoint.Ip = ConnectInfo.static_IP;
+						IPAddress address;
+						IPAddress.TryParse(ConnectInfo.static_IP, out address);
+						clientEntPoint.Ip = address;
 						clientEntPoint.Port = Int32.Parse(ConnectInfo.Port);
 						clientEntPoint.Switch = DbSession.Load<NetworkSwitch>(ConnectInfo.Switch);
 						clientEntPoint.Monitoring = ConnectInfo.Monitoring;

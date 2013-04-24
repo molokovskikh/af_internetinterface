@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Castle.Components.Validator;
@@ -234,6 +235,9 @@ namespace InternetInterface.Models
 
 		public static bool Our(IPAddress ip, ISession session)
 		{
+			if (ip.AddressFamily != AddressFamily.InterNetwork)
+				return false;
+
 			var address = ip.Address;
 			return session.Query<IpPool>().Count(p => p.Begin <= address && p.End >= address) > 0;
 		}

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
+using System.Net;
 using System.Reflection;
 using Castle.MonoRail.Framework;
 using Castle.MonoRail.Framework.Configuration;
@@ -9,6 +11,7 @@ using Castle.MonoRail.Framework.Views.Aspx;
 using Castle.MonoRail.Views.Brail;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.MonoRailExtentions;
+using InternetInterface.Helpers;
 using log4net;
 
 namespace InternetInterface
@@ -32,6 +35,7 @@ namespace InternetInterface
 
 		private void Application_Start(object sender, EventArgs e)
 		{
+			TypeDescriptor.AddProvider(new IPAddressTypeDescriptorProvider(), typeof(IPAddress));
 			ConfigReader.LoadSettings(Config);
 			Initialize();
 
