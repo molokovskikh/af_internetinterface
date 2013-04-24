@@ -305,7 +305,7 @@ group by client;").List<uint>();
 				}
 				transaction.VoteCommit();
 			}
-			Console.WriteLine("Всего клиентов обработано: {0} общая сумма корроектировки : {1}", totalCount, totalSum);
+			Console.WriteLine("Всего клиентов обработано: {0} общая сумма корректировки : {1}", totalCount, totalSum);
 			Console.WriteLine("Клиенты не обработаны: " + unClient.Implode(" "));
 			Console.ReadLine();
 		}

@@ -263,7 +263,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Views\UserInfo\Administration.brail" />
-    <None Include="Views\UserInfo\AppointedToTheGraph.brail" />
+    <None Include="Views\UserInfo\AppointedToTheGraph.brail">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Views\UserInfo\ClientRegisteredInfoFromDiller.brail" />
     <Content Include="Views\UserInfo\EditRegion.brail" />
     <Content Include="Views\UserInfo\OrdersArchive.brail">

@@ -21,7 +21,6 @@ namespace InforoomInternet.Test.Functional
 		{
 			//нужно очищать cookie перед каждым тестом
 			//если этого не делать браузер будет помнить что вход произвел клиент из предыдущего теста
-			clearCookies = true;
 			session.CreateSQLQuery("delete from Leases").ExecuteUpdate();
 
 			physicalClient = ClientHelper.PhysicalClient();
