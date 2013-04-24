@@ -8,7 +8,7 @@ namespace InternetInterface.Helpers
 {
 	public class IPAddressTypeDescriptorProvider : TypeDescriptionProvider
 	{
-		public override ICustomTypeDescriptor GetTypeDescriptor(System.Type objectType, object instance)
+		public override ICustomTypeDescriptor GetTypeDescriptor(Type objectType, object instance)
 		{
 			return new IPAddressDescriptor();
 		}
@@ -24,7 +24,7 @@ namespace InternetInterface.Helpers
 
 	public class IPAddressConverter : TypeConverter
 	{
-		public override bool CanConvertFrom(ITypeDescriptorContext context, System.Type sourceType)
+		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
 		{
 			return typeof(string) == sourceType;
 		}
@@ -32,7 +32,10 @@ namespace InternetInterface.Helpers
 		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
 			IPAddress address;
-			IPAddress.TryParse(value as string, out address);
+			var ipString = value as string;
+			if (ipString == null)
+				return null;
+			IPAddress.TryParse(ipString, out address);
 			return address;
 		}
 	}

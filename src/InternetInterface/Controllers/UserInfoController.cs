@@ -430,8 +430,10 @@ namespace InternetInterface.Controllers
 							}.Save();
 						clientEntPoint.Client = client;
 						IPAddress address;
-						IPAddress.TryParse(ConnectInfo.static_IP, out address);
-						clientEntPoint.Ip = address;
+						if (ConnectInfo.static_IP != null && IPAddress.TryParse(ConnectInfo.static_IP, out address))
+							clientEntPoint.Ip = address;
+						else
+							clientEntPoint.Ip = null;
 						clientEntPoint.Port = Int32.Parse(ConnectInfo.Port);
 						clientEntPoint.Switch = DbSession.Load<NetworkSwitch>(ConnectInfo.Switch);
 						clientEntPoint.Monitoring = ConnectInfo.Monitoring;
