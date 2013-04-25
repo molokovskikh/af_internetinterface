@@ -370,7 +370,7 @@ namespace InternetInterface.Controllers
 			uint BrigadForConnect,
 			[ARDataBind("staticAdress", AutoLoad = AutoLoadBehavior.NewInstanceIfInvalidKey)] StaticIp[] staticAdress,
 			uint EditConnect, string ConnectSum,
-			[DataBind("order")] Orders Order, bool withoutEndPoint)
+			[DataBind("order")] Orders Order, bool withoutEndPoint, uint currentEndPoint)
 		{
 			var client = DbSession.Load<Client>(ClientID);
 			bool brigadChangeFlag = client.WhoConnected == null;
@@ -409,7 +409,7 @@ namespace InternetInterface.Controllers
 				errorMessage = "Введена невалидная сумма";
 
 			bool savedEndpoint = false;
-			if(!withoutEndPoint) {
+			if(!withoutEndPoint && currentEndPoint == 0) {
 				if ((ConnectInfo.static_IP != string.Empty) || (nullFlag)) {
 					if (validateSum && string.IsNullOrEmpty(errorMessage) || validateSum &&
 						(oldSwitch != null && ConnectInfo.Switch == oldSwitch.Id && ConnectInfo.Port == olpPort.ToString())) {
@@ -495,7 +495,7 @@ namespace InternetInterface.Controllers
 				}
 			}
 
-			if (savedEndpoint || withoutEndPoint) {
+			if (savedEndpoint || withoutEndPoint || currentEndPoint > 0) {
 				if (existingOrder == null) {
 					existingOrder = Order;
 				}
@@ -503,6 +503,9 @@ namespace InternetInterface.Controllers
 					existingOrder.BeginDate = Order.BeginDate;
 					existingOrder.EndDate = Order.EndDate;
 					existingOrder.Number = Order.Number;
+				}
+				if (currentEndPoint > 0) {
+					existingOrder.EndPoint = DbSession.Get<ClientEndpoint>(currentEndPoint);
 				}
 				if (existingOrder.Client == null)
 					existingOrder.Client = client;

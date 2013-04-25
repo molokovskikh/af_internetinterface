@@ -26,8 +26,7 @@ ${app.Asset("EditingConnect.js")}
 
 	<%if not EditingConnect: %>
 
-	<table  class="width100;"><tbody><tr><td>
-	<table class="table width100" align="left">
+	<table class="table" align="left">
 	<thead>
 		<tr>
 		<th class="orderInfo">Информация о заказе (заказ № ${OrderInfo.Order.Number})
@@ -137,7 +136,7 @@ ${app.Asset("EditingConnect.js")}
 		<tr>
 			<td colspan="3">
 				<input type="hidden" value="${OrderInfo.ClientConnectInfo.endpointId}" />
-				<strong>Информация о точке подключения:</strong>
+				<strong>Информация о точке подключения (№ ${OrderInfo.ClientConnectInfo.endpointId}):</strong>
 			</td>
 		</tr>
 		<tr>
@@ -185,7 +184,7 @@ ${app.Asset("EditingConnect.js")}
 		  <td><span class="description">Бригада </span></td>
 		  <td>${?_client.WhoConnected.Name}</td>
 		</tr>
-		<%if OrderInfo.ClientConnectInfo.ConnectSum != null : %>
+		<%if OrderInfo.ClientConnectInfo.ConnectSum > 0 : %>
 		<tr>
 			<td><span class="description">Стоимость подключения </span></td>
 			<td>${?OrderInfo.ClientConnectInfo.ConnectSum.ToString("C")}</td>
@@ -194,7 +193,7 @@ ${app.Asset("EditingConnect.js")}
 			<% end %>
 		</tbody>
 	</table>
-	</td></tr></tbody></table>
+
 	<%if PartnerAccessSet.AccesPartner("DHCP"): %>
 <%staticIps = OrderInfo.ClientConnectInfo.GetStaticAdreses() %>
 <%if staticIps.Count != 0: %>
@@ -246,7 +245,7 @@ ${app.Asset("EditingConnect.js")}
 	<input type="hidden" name="ClientID" value="${ClientCode}" />
 	<input type="hidden" name="EditConnect" value="${OrderInfo.Order.Id}" />
 		<input type="hidden" name="Order.Id" value="${OrderInfo.Order.Id}" />
-	<table id="editConnectTable" class="table" class="width100;">
+	<table id="editConnectTable" class="table">
 	<thead>
 		<th colspan = 3 > Информация по подключению
 		<%if PartnerAccessSet.AccesPartner("DHCP"): %>
@@ -281,7 +280,7 @@ ${app.Asset("EditingConnect.js")}
 					Дата окончания
 				</td>
 				<td colspan="2">
-					<input type="text" id="order_EndDate" name="order.EndDate" value="${OrderInfo.Order.EndDate}" class="validate-date graph_date valid">
+					<input type="text" id="order_EndDate" name="order.EndDate" value="${OrderInfo.Order.EndDate.ToShortDateString()}" class="validate-date graph_date valid">
 				</td>
 			</tr>
 
@@ -325,9 +324,20 @@ ${app.Asset("EditingConnect.js")}
 			</tr>
 			<% if OrderInfo.Order.Id == 0 or OrderInfo.Order.EndPoint == null: %>
 			<tr>
-				<td colspan="3">
+				<td>
 					<input type='checkbox' name='withoutEndpoint' onclick='changeVisibleEndpoint(this)' <% if OrderInfo.Order.EndPoint == null and OrderInfo.Order.Id > 0: %>checked<% end %> >
-						<strong>Не использовать точку подключения</strong>
+					<strong>Не использовать точку подключения</strong>
+				</td>
+				<td>
+					<strong>Использовать существующую</strong>
+					<select name="currentEndPoint">
+					<option value="0">Нет</option>
+					<% for i, item in enumerate(_client.Orders): %>
+					<%if item.EndPoint != null:%>
+						<option value="${item.EndPoint.Id}">${item.EndPoint.Id}</option>
+					<%end%>
+					<%end%>
+					</select>
 				</td>
 			</tr>
 			<% end %>
@@ -338,7 +348,7 @@ ${app.Asset("EditingConnect.js")}
 			<thead>
 				<tr>
 					<td colspan="3">
-						<strong>Информация о точке подключения:</strong>
+						<strong>Информация о точке подключения (№ ${?OrderInfo.Order.EndPoint.Id}):</strong>
 					</td>
 				</tr>
 			</thead>
@@ -404,12 +414,14 @@ ${app.Asset("EditingConnect.js")}
 		 </td>
 		 <%end %>
 		 </tr>
+		 <%if OrderInfo.ClientConnectInfo.ConnectSum > 0:%>
 		 <tr>
 			<td>Сумма за подключение</td>
 			<td>
-				<input type=text name="ConnectSum" value="${OrderInfo.ClientConnectInfo.ConnectSum}"/>
+				${OrderInfo.ClientConnectInfo.ConnectSum}
 			</td>
 		 </tr>
+		 <%end%>
 		<tr>
 		<td colspan=3>
 	<button type="button"  class="editBut" onclick="$('#staticAdreses').slideToggle('slow');"> Редактировать статические адреса

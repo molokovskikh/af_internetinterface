@@ -54,7 +54,7 @@ namespace InternetInterface.Test.Integration
 			};
 			order.OrderServices.Add(orderService);
 
-			controller.SaveSwitchForClient(client.Id, new ConnectInfo(), 0, new StaticIp[0], 0, "100", order, true);
+			controller.SaveSwitchForClient(client.Id, new ConnectInfo(), 0, new StaticIp[0], 0, "100", order, true, 0);
 			session.Flush();
 			var act = session.Query<Act>().FirstOrDefault(a => a.Client == client);
 			Assert.That(act.Sum, Is.EqualTo(50));
