@@ -40,7 +40,7 @@ namespace InternetInterface.Models
 		[Property, ValidateRegExp(MACRegExp, "Ошибка ввода MAC (**-**-**-**-**)"), ValidateIsUnique("Такой МАС уже существует")]
 		public virtual string Mac { get; set; }
 
-		[Property(ColumnType = "InternetInterface.Models.IPUserType, InternetInterface"),
+		[Property(ColumnType = "InternetInterface.Helpers.IPUserType, InternetInterface"),
 			ValidateRegExp(IPRegExp, "Ошибка формата IP адреса (max 255.255.255.255))")]
 		public virtual IPAddress IP { get; set; }
 

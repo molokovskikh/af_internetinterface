@@ -25,7 +25,7 @@ namespace InternetInterface.Models
 		[PrimaryKey]
 		public uint Id { get; set; }
 
-		[Property("`ip`", ColumnType = "InternetInterface.Models.IPUserType, InternetInterface")]
+		[Property("`ip`", ColumnType = "InternetInterface.Helpers.IPUserType, InternetInterface")]
 		public IPAddress Ip { get; set; }
 
 		[BelongsTo(Cascade = CascadeEnum.SaveUpdate)]
