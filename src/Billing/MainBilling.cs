@@ -462,7 +462,6 @@ set s.LastStartFail = true;")
 
 			var now = SystemTime.Now();
 			var daysInMonth = DateTime.DaysInMonth(now.Year, now.Month);
-			var tariff = person.Tariff.Value;
 			decimal sum = 0;
 			var writeOffs = new List<WriteOff>();
 			//если это день активации заказа, то списываем плату за разовые услуги и за периодические пропорционально оставшимся дням месяца

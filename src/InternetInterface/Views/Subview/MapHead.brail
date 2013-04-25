@@ -1,15 +1,6 @@
-﻿<div class=wid>
+﻿<div class="wid">
 <table class="table" id="mapHead" style = "width:100%" >
 	<thead>
-		<th colspan = "12" align="center"> 
-		<div class=fiodiv>
-		<%if MapPartner.Categorie.ReductionName != "Office": %>
-			Интерфейс для партнера: ${MapPartner.Name}
-			<%else: %>
-			Интерфейс ${App.LinkTo(MapPartner.Name, @Map, @SiteMap)}</a>
-			<%end %>
-		</div>
-		</th>
 		<tr valign="top"  class="menuItem">
 			<%if PartnerAccessSet.AccesPartner("RC"): %>
 			<th>${App.LinkTo("Регистрация абонента", @Register, @RegisterClient)}</th>

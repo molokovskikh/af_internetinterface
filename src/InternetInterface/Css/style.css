@@ -282,13 +282,10 @@ input.checkbox {
 
 /* tables */
 
-.table th 
+.table th
 {
-  border: 1px double #484848;
-  background: #e1e3e2;
-  color: #625a5b;
-  font-weight:normal;
-  padding:3px;
+	font-weight: normal;
+	padding: 3px;
 }
 
 .table th.alt
@@ -303,15 +300,15 @@ input.checkbox {
 			
 .menuItem th:hover
 {
-	/*background-color:#7dbcd7;*/
+	-webkit-box-shadow: 0 1px 0 white;
+	border-bottom-right-radius: 10px;
 	font-weight: bold;
 	}
 	
 .submenu th
 {
-	border-color:#484848;
-	padding-top:0px;
-	padding-bottom:0px;
+	border: none;
+	border-bottom: 2px solid #AAA;
 	}
 	
 .editBut
@@ -365,11 +362,6 @@ input.checkbox {
 .table th.first {
   width: 30px;
   text-align: center;
-}
-
-.table td {
-  border: 1px solid #AAA;
-  border-collapse: collapse;
 }
 
 .table td.small {
