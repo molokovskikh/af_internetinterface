@@ -25,7 +25,7 @@ namespace InternetInterface.Queries
 			get
 			{
 				if (!ExportInExcel)
-					return Link(_clientId, "UserInfo", "SearchUserInfo", new System.Tuple<string, object>("filter.ClientCode", _clientId));
+					return string.Format("<a href='../Search/Redirect?filter.ClientCode={0}'>{0}</a>", _clientId);
 				return _clientId;
 			}
 			set { _clientId = value; }
@@ -37,7 +37,7 @@ namespace InternetInterface.Queries
 			get
 			{
 				if (!ExportInExcel)
-					return Link(_name, "UserInfo", "SearchUserInfo", new System.Tuple<string, object>("filter.ClientCode", _clientId));
+					return string.Format("<a href='../Search/Redirect?filter.ClientCode={0}'>{1}</a>", _clientId, _name);
 				return _name;
 			}
 			set { _name = value; }
