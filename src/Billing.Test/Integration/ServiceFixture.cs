@@ -891,7 +891,7 @@ namespace Billing.Test.Integration
 			}
 		}
 
-		[Test(Description = "проверяю, что не выдается инсключение при данных условиях")]
+		[Test(Description = "проверяю, что не выдается исключение при данных условиях")]
 		public void Tv_box_and_no_rated_date()
 		{
 			using (new SessionScope()) {

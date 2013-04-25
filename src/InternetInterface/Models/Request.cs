@@ -23,11 +23,11 @@ namespace InternetInterface.Models
 		[
 			Property,
 			ValidateNonEmpty("Введите номер телефона"),
-			ValidateRegExp(@"^(([0-9]{1})-([0-9]{3})-([0-9]{3})-([0-9]{2})-([0-9]{2}))", "Ошибка формата телефонного номера: мобильный телефн (8-***-***-**-**))")
+			ValidateRegExp(@"^(([0-9]{1})-([0-9]{3})-([0-9]{3})-([0-9]{2})-([0-9]{2}))", "Ошибка формата телефонного номера: мобильный телефон (8-***-***-**-**))")
 		]
 		public virtual string ApplicantPhoneNumber { get; set; }
 
-		[Property, ValidateEmail("Ошибка вооба Email (должно быть adr@domen.com)")]
+		[Property, ValidateEmail("Ошибка ввода Email (должно быть adr@domen.com)")]
 		public virtual string ApplicantEmail { get; set; }
 
 		[Property]

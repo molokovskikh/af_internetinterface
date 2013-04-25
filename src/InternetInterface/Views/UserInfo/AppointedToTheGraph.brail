@@ -175,7 +175,7 @@
 <div id="back">
 <table class="table" id="modalTable">
 	<thead>
-		<th colspan="3">Назначить в граффик</th>
+		<th colspan="3">Назначить в график</th>
 	</thead>
 	<tbody>
 		<input type="hidden" id="clientId" name="ClientID" value="${ClientCode}" />

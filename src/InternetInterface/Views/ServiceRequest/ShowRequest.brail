@@ -118,7 +118,7 @@
 			<%endPoint = request.Client.FirstPoint() %>
 			<%if endPoint != null: %>
 			<td><b>Подключен</b></td>
-			<td>${endPoint.Switch.Name} (${endPoint.Switch.GetNormalIp()}) <b>Порт </b> ${endPoint.Port}</td>
+			<td>${endPoint.Switch.Name} (${endPoint.Switch.IP}) <b>Порт </b> ${endPoint.Port}</td>
 			<%end %>
 		</tr>
 		<tr class="requestCutInfo">

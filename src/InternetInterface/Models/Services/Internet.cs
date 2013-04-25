@@ -34,7 +34,7 @@ namespace InternetInterface.Models.Services
 				&& !assignedService.ActivatedByUser) {
 				//если null значит клиент не начал работать и не за что списывать
 				if (client.RatedPeriodDate != null) {
-					var comment = string.Format("Абоненская плата за {0} из-за отключения услуги {1}", DateTime.Now.ToShortDateString(), HumanName);
+					var comment = string.Format("Абонентская плата за {0} из-за отключения услуги {1}", DateTime.Now.ToShortDateString(), HumanName);
 					var sum = client.GetPriceForTariff() / client.GetInterval();
 					client.UserWriteOffs.Add(new UserWriteOff(client, sum, comment, false));
 				}

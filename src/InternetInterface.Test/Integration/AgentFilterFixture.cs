@@ -1,20 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using Castle.ActiveRecord;
-using Castle.ActiveRecord.Framework;
-using Castle.MonoRail.TestSupport;
 using InternetInterface.Controllers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
-using InternetInterface.Services;
-using NHibernate;
-using NHibernate.Linq;
+using InternetInterface.Queries;
 using Test.Support;
 using NUnit.Framework;
-
 
 namespace InternetInterface.Test.Integration
 {
@@ -47,15 +39,15 @@ namespace InternetInterface.Test.Integration
 
 			var agentFilter = new AgentFilter();
 			agentFilter.Virtual = VirtualType.Bonus;
-			var filteredPayments = agentFilter.Find();
+			var filteredPayments = agentFilter.Find(session);
 			Assert.That(filteredPayments.Count(t => !t.Virtual), Is.EqualTo(0));
 
 			agentFilter.Virtual = VirtualType.NoBonus;
-			filteredPayments = agentFilter.Find();
+			filteredPayments = agentFilter.Find(session);
 			Assert.That(filteredPayments.Count(t => t.Virtual), Is.EqualTo(0));
 
 			agentFilter.Virtual = null;
-			filteredPayments = agentFilter.Find();
+			filteredPayments = agentFilter.Find(session);
 			Assert.That(filteredPayments.Count(t => t.Virtual), Is.Not.EqualTo(0));
 			Assert.That(filteredPayments.Count(t => !t.Virtual), Is.Not.EqualTo(0));
 		}

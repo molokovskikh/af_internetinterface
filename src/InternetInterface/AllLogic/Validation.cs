@@ -16,7 +16,7 @@ namespace InternetInterface.AllLogic
 			if (string.IsNullOrEmpty(info.Port) && !register)
 				return "Введите порт";
 			if (info.Switch == 0 && !register)
-				return "Выберете свич";
+				return "Выберете коммутатор";
 			int res;
 			if (Int32.TryParse(info.Port, out res)) {
 				if (res > 48 || res < 1)
@@ -24,7 +24,7 @@ namespace InternetInterface.AllLogic
 				if (ClientEndpoint.Queryable.Where(e => e.Port == res && e.Switch.Id == info.Switch).Count() == 0)
 					return string.Empty;
 				else {
-					return "Такая пара порт/свитч уже существует";
+					return "Такая пара порт/коммутатор уже существует";
 				}
 			}
 			else {

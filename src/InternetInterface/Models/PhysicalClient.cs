@@ -111,7 +111,7 @@ namespace InternetInterface.Models
 		[ValidateRegExp(@"^((\d{3})-(\d{7}))", "Ошибка формата телефонного номера (***-*******)")]
 		public virtual string HomePhoneNumber { get; set; }
 
-		[Property, ValidateRegExp(@"^(\d{4})?$", "Неправильный формат серии паспорта (4 цифры)"), UserValidateNonEmpty("Поле не должно быть пустым"), Auditable("Серия наспорта")]
+		[Property, ValidateRegExp(@"^(\d{4})?$", "Неправильный формат серии паспорта (4 цифры)"), UserValidateNonEmpty("Поле не должно быть пустым"), Auditable("Серия паспорта")]
 		public virtual string PassportSeries { get; set; }
 
 		[Property, ValidateRegExp(@"^(\d{6})?$", "Неправильный формат номера паспорта (6 цифр)"), UserValidateNonEmpty("Поле не должно быть пустым"), Auditable("Номер паспорта")]
@@ -150,7 +150,7 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual DateTime DateOfBirth { get; set; }
 
-		[Property, ValidateNonEmpty("Введите сумму"), ValidateDecimal("Непрвильно введено значение суммы")]
+		[Property, ValidateNonEmpty("Введите сумму"), ValidateDecimal("Неправильно введено значение суммы")]
 		public virtual decimal ConnectSum { get; set; }
 
 		[Property, ValidateIsUnique("Абонент с таким номером уже зарегистрирован")]

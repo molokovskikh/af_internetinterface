@@ -10,8 +10,6 @@ using InternetInterface.Models;
 
 namespace InternetInterface.Services
 {
-	/*Если раскоментировать строчку, будет отображать ещё и дату активации*/
-
 	[ActiveRecord(DiscriminatorValue = "VoluntaryBlockin")]
 	public class VoluntaryBlockin : Service
 	{
@@ -19,10 +17,6 @@ namespace InternetInterface.Services
 		{
 			var builder = new StringBuilder();
 			builder.Append("<tr>");
-			/*builder.Append(
-				string.Format(
-					"<td><label for=\"startDate\" >Активировать с </label><input type=text value=\"{0}\" name=\"startDate\" id=\"startDate\" class=\"date-pick dp-applied\"> </td>",
-					DateTime.Now.ToShortDateString()));*/
 			builder.Append(
 				string.Format(
 					"<td><label for=\"endDate\" id=\"endDateLabel\"> Заблокировать до  </label><input type=text  name=\"endDate\" value=\"{0}\"  id=\"endDate\" class=\"date-pick dp-applied\"></td>",
@@ -60,7 +54,7 @@ namespace InternetInterface.Services
 					client.PaidDay = true;
 					var toDt = client.GetInterval();
 					var price = client.GetPrice();
-					var comment = string.Format("Абоненская плата за {0} из-за добровольной блокировки клиента", DateTime.Now.ToShortDateString());
+					var comment = string.Format("Абонентская плата за {0} из-за добровольной блокировки клиента", DateTime.Now.ToShortDateString());
 					var writeOff = new UserWriteOff {
 						Client = client,
 						Date = DateTime.Now,
@@ -124,7 +118,7 @@ namespace InternetInterface.Services
 				var sum = price / daysInInterval;
 				if (sum > 0) {
 					client.PaidDay = true;
-					var comment = string.Format("Абоненская плата за {0} из-за добровольной разблокировки клиента", DateTime.Now.ToShortDateString());
+					var comment = string.Format("Абонентская плата за {0} из-за добровольной разблокировки клиента", DateTime.Now.ToShortDateString());
 					ActiveRecordMediator.Save(new UserWriteOff(client, sum, comment));
 				}
 			}
@@ -139,14 +133,6 @@ namespace InternetInterface.Services
 			return assignedService.Client.PhysicalClient.Balance < 0
 				|| (assignedService.EndWorkDate != null && SystemTime.Now().Date >= assignedService.EndWorkDate.Value);
 		}
-
-		//Если раскоментировать этот кусочек, будет введено ограничение - использовать услугу можно будет только после истичения 45 дней с момента последней активации.
-		/*public override bool CanDelete(ClientService CService)
-		{
-			if (CService.EndWorkDate == null)
-				return true;
-			return (SystemTime.Now().Date - CService.EndWorkDate.Value.Date).Days > 45;
-		}*/
 
 		public override decimal GetPrice(ClientService assignedService)
 		{

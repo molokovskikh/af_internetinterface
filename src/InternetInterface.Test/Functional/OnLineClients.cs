@@ -19,7 +19,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void Base_view_test()
 		{
-			AssertText("Параментры фильтрации");
+			AssertText("Параметры фильтрации");
 			AssertText("Текст для поиска");
 			AssertText("Выберите зону для просмотра");
 			AssertText("Выберите коммутатор");
@@ -27,7 +27,7 @@ namespace InternetInterface.Test.Functional
 			AssertText("Юридические лица");
 			AssertText("Все");
 			Click("Показать");
-			AssertText("Параментры фильтрации");
+			AssertText("Параметры фильтрации");
 		}
 	}
 }

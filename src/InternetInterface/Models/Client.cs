@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Castle.Components.Validator;
@@ -216,7 +217,9 @@ namespace InternetInterface.Models
 			if (string.IsNullOrEmpty(lease.Switch.Name))
 				lease.Switch.Name = PhysicalClient.GetShortAdress();
 
-			var newPoint = new ClientEndpoint(this, lease.Port, lease.Switch);
+			var newPoint = new ClientEndpoint(this, lease.Port, lease.Switch) {
+				Module = lease.Module
+			};
 			var paymentForConnect = new PaymentForConnect(PhysicalClient.ConnectSum, newPoint);
 			newPoint.PayForCon = paymentForConnect;
 			lease.Endpoint = newPoint;
@@ -232,6 +235,9 @@ namespace InternetInterface.Models
 
 		public static bool Our(IPAddress ip, ISession session)
 		{
+			if (ip.AddressFamily != AddressFamily.InterNetwork)
+				return false;
+
 			var address = ip.Address;
 			return session.Query<IpPool>().Count(p => p.Begin <= address && p.End >= address) > 0;
 		}
@@ -566,7 +572,7 @@ group by {0}
 			return query.ToList<BaseWriteOff>();
 		}
 
-		[Obsolete("Не исполдьзовать добавлено для обратной совместимости")]
+		[Obsolete("Не использовать добавлено для обратной совместимости")]
 		public virtual ClientConnectInfo ConnectInfoFirst()
 		{
 			return ArHelper.WithSession(s => ConnectInfoFirst(s));

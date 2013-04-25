@@ -90,9 +90,9 @@ namespace InternetInterface.Controllers
 				var password = client.GeneragePassword();
 
 				var apartmentForClient =
-					Apartment.Queryable.FirstOrDefault(a => a.House == physicalClient.HouseObj && a.Number == physicalClient.Apartment);
+					DbSession.Query<Apartment>().FirstOrDefault(a => a.House == physicalClient.HouseObj && a.Number == physicalClient.Apartment);
 				if (apartmentForClient != null)
-					apartmentForClient.Delete();
+					DbSession.Delete(apartmentForClient);
 
 				Flash["_client"] = client;
 				Flash["WhoConnected"] = client.WhoConnected;
@@ -103,12 +103,12 @@ namespace InternetInterface.Controllers
 				Flash["ConnectInfo"] = client.GetConnectInfo(DbSession).FirstOrDefault();
 				foreach (var requestse in Models.Request.FindAllByProperty("Id", requestID)) {
 					if (requestse.Registrator != null) {
-						physicalClient.Update();
+						DbSession.Save(physicalClient);
 					}
-					requestse.Label = Label.Queryable.FirstOrDefault(l => l.ShortComment == "Registered");
+					requestse.Label = DbSession.Query<Label>().FirstOrDefault(l => l.ShortComment == "Registered");
 					requestse.Archive = true;
 					requestse.Client = client;
-					requestse.Update();
+					DbSession.Save(requestse);
 				}
 				if (registrator.Categorie.ReductionName == "Office")
 					if (VisibleRegisteredInfo)
@@ -166,7 +166,7 @@ namespace InternetInterface.Controllers
 			if (IsValid(person) && string.IsNullOrEmpty(connectErrors)) {
 				person.SaveAndFlush();
 				var client = new Client {
-					Recipient = Recipient.Queryable.FirstOrDefault(r => r.INN == "3666152146"),
+					Recipient = DbSession.Query<Recipient>().FirstOrDefault(r => r.INN == "3666152146"),
 					WhoRegistered = InitializeContent.Partner,
 					WhoRegisteredName = InitializeContent.Partner.Name,
 					RegDate = DateTime.Now,
@@ -201,7 +201,7 @@ namespace InternetInterface.Controllers
 						Switch = DbSession.Load<NetworkSwitch>(info.Switch),
 					};
 					endPoint.SaveAndFlush();
-					var brigad = Brigad.Find(brigadForConnect);
+					var brigad = DbSession.Load<Brigad>(brigadForConnect);
 					client.WhoConnected = brigad;
 					client.WhoConnectedName = brigad.Name;
 					client.Status = Status.Find((uint)StatusType.Worked);
@@ -264,7 +264,7 @@ namespace InternetInterface.Controllers
 
 		public void RegisterClient(uint requestID)
 		{
-			var request = Models.Request.Find(requestID);
+			var request = DbSession.Load<Request>(requestID);
 			var fio = new string[3];
 			var _fio =
 				request.ApplicantName.Split(' ').Select(s => s.Replace(" ", string.Empty)).Where(s => !string.IsNullOrEmpty(s)).ToArray();
@@ -296,7 +296,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["requestID"] = requestID;
 			if (newPhisClient.House != null) {
 				var houses =
-					House.Queryable.Where(
+					DbSession.Query<House>().Where(
 						h =>
 							h.Street == newPhisClient.Street &&
 								h.Number == newPhisClient.House &&
@@ -306,12 +306,12 @@ namespace InternetInterface.Controllers
 					PropertyBag["ChHouse"] = houses.First();
 				else {
 					PropertyBag["ChHouse"] = new House();
-					PropertyBag["Message"] = Message.Error("Не удалось сопоставить адрес из заявки ! Будте внимательны при заполнении адреса клиента !");
+					PropertyBag["Message"] = Message.Error("Не удалось сопоставить адрес из заявки ! Будет внимательны при заполнении адреса клиента !");
 				}
 			}
 			else {
 				PropertyBag["ChHouse"] = new House();
-				PropertyBag["Message"] = Message.Error("Не удалось сопоставить адрес из заявки ! Будте внимательны при заполнении адреса клиента !");
+				PropertyBag["Message"] = Message.Error("Не удалось сопоставить адрес из заявки ! Будет внимательны при заполнении адреса клиента !");
 			}
 			SendRegisterParam(newPhisClient);
 		}
@@ -333,7 +333,7 @@ namespace InternetInterface.Controllers
 				if (!string.IsNullOrEmpty(_case))
 					house.Case = _case;
 				house.Region = DbSession.Load<RegionHouse>(Convert.ToUInt32(region));
-				house.Save();
+				DbSession.Save(house);
 			}
 			return new { Name = string.Format("{0} {1} {2}", street, number, _case), house.Id };
 		}
@@ -391,10 +391,10 @@ namespace InternetInterface.Controllers
 				BindObjectInstance(part, ParamStore.Form, "Partner");
 				part.Categorie.Refresh();
 				part.UpdateAndFlush();
-				var agent = Agent.Queryable.Where(a => a.Partner == part).ToList().FirstOrDefault();
+				var agent = DbSession.Query<Agent>().Where(a => a.Partner == part).ToList().FirstOrDefault();
 				if (agent != null) {
 					agent.Name = partner.Name;
-					agent.Update();
+					DbSession.Save(agent);
 				}
 				Flash["EditiongMessage"] = "Изменения внесены успешно";
 				RedirectToUrl("../Register/RegisterPartner?PartnerKey=" + part.Id + "&catType=" + part.Categorie.Id);
@@ -418,7 +418,7 @@ namespace InternetInterface.Controllers
 
 		public void RegisterPartner(int PartnerKey, int catType)
 		{
-			var partner = Partner.Queryable.FirstOrDefault(p => p.Id == (uint)PartnerKey);
+			var partner = DbSession.Query<Partner>().FirstOrDefault(p => p.Id == (uint)PartnerKey);
 			if (partner != null) {
 				RegisterPartnerSendParam(PartnerKey);
 				PropertyBag["Partner"] = partner;
@@ -443,7 +443,7 @@ namespace InternetInterface.Controllers
 
 		public void RegisterRequest(uint house, int apartment)
 		{
-			var houseEntity = House.Find(house);
+			var houseEntity = DbSession.Load<House>(house);
 			PropertyBag["tariffs"] = Tariff.FindAll();
 			PropertyBag["Request"] = new Request {
 				Street = houseEntity.Street,
@@ -460,22 +460,22 @@ namespace InternetInterface.Controllers
 				var phone = request.ApplicantPhoneNumber;
 				phone = phone.Remove(0, 2);
 				request.ApplicantPhoneNumber = phone.Replace("-", string.Empty);
-				request.Tariff = Tariff.Find(tariff);
+				request.Tariff = DbSession.Load<Tariff>(tariff);
 				request.Registrator = InitializeContent.Partner;
 				request.ActionDate = DateTime.Now;
 				request.RegDate = DateTime.Now;
 				request.Operator = InitializeContent.Partner;
-				request.Save();
-				var apartment = Apartment.Queryable.FirstOrDefault(a => a.House == House.Find(houseNumber) && a.Number == request.Apartment);
+				DbSession.Save(request);
+				var apartment = DbSession.Query<Apartment>().FirstOrDefault(a => a.House == DbSession.Load<House>(houseNumber) && a.Number == request.Apartment);
 				if (apartment == null) {
 					apartment = new Apartment {
-						House = House.Find(houseNumber),
+						House = DbSession.Load<House>(houseNumber),
 						Number = request.Apartment != null ? request.Apartment.Value : 0,
 					};
-					apartment.Save();
+					DbSession.Save(apartment);
 				}
-				apartment.Status = ApartmentStatus.Queryable.FirstOrDefault(aps => aps.ShortName == "Request");
-				apartment.Update();
+				apartment.Status = DbSession.Query<ApartmentStatus>().FirstOrDefault(aps => aps.ShortName == "Request");
+				DbSession.Save(apartment);
 				RedirectToUrl("../HouseMap/ViewHouseInfo.rails?House=" + houseNumber);
 			}
 		}

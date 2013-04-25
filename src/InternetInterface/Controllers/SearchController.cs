@@ -104,7 +104,7 @@ namespace InternetInterface.Controllers
 			foreach (string name in Request.QueryString)
 				builder += String.Format("{0}={1}&", name, Request.QueryString[name]);
 			builder = builder.Substring(0, builder.Length - 1);
-			if (Client.Find(filter.ClientCode).GetClientType() == ClientType.Phisical) {
+			if (DbSession.Load<Client>(filter.ClientCode).GetClientType() == ClientType.Phisical) {
 				RedirectToUrl(string.Format("../UserInfo/SearchUserInfo.rails?{0}", builder));
 			}
 			else {

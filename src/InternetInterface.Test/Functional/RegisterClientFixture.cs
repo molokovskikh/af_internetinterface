@@ -98,7 +98,7 @@ namespace InternetInterface.Test.Functional
 			Assert.That(browser.Html, !Is.StringContaining("testStreetFirst"));
 		}
 
-		[Test, Ignore("Отключен функционал выбора свича при регистрации")]
+		[Test, Ignore("Отключен функционал выбора коммутатора при регистрации")]
 		public void Show_switch_comment()
 		{
 			var commutator = new NetworkSwitch("Тестовый коммутатор с комментарием", session.Query<Zone>().First()) {

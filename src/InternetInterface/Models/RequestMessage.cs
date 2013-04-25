@@ -8,7 +8,7 @@ using Common.Web.Ui.Helpers;
 namespace InternetInterface.Models
 {
 	[ActiveRecord("RequestMessages", Schema = "Internet", Lazy = true)]
-	public class RequestMessage : ChildActiveRecordLinqBase<RequestMessage>
+	public class RequestMessage
 	{
 		[PrimaryKey]
 		public virtual uint Id { get; set; }

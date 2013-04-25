@@ -8,7 +8,7 @@ using Castle.ActiveRecord.Framework;
 namespace InternetInterface.Models
 {
 	[ActiveRecord("PackageSpeed", Schema = "internet", Lazy = true)]
-	public class PackageSpeed : ActiveRecordLinqBase<PackageSpeed>
+	public class PackageSpeed
 	{
 		[PrimaryKey]
 		public virtual int Id { get; set; }

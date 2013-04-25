@@ -136,6 +136,7 @@
     <Compile Include="Setup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Unit\ActivePackageId.cs" />
+    <Compile Include="Unit\IPTypeConverter.cs" />
     <Compile Include="Unit\LoginTest.cs" />
     <Compile Include="Functional\BaseFuctional.cs" />
   </ItemGroup>

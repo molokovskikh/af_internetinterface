@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Collections.Generic;
@@ -112,12 +113,12 @@ namespace InternetInterface.Controllers
 					a.Date.Date >= beginDate.Value.Date &&
 					a.Date.Date <= endDate.Value.Date)
 				.ToList().Select(a => new SessionResult(a)).ToList();
-			_lastRowsCount = Internetsessionslog.Queryable.Where(predicate).Count();
+			_lastRowsCount = session.Query<Internetsessionslog>().Where(predicate).Count();
 			_lastRowsCount += appeal.Count;
 			int getCount = 0;
 			if (_lastRowsCount > 0) {
 				getCount = _lastRowsCount - PageSize * CurrentPage < PageSize ? _lastRowsCount - PageSize * CurrentPage : PageSize;
-				result = Internetsessionslog.Queryable.Where(predicate)
+				result = session.Query<Internetsessionslog>().Where(predicate)
 					.ToList().Select(i => new SessionResult(i)).ToList();
 			}
 			result.AddRange(appeal);
@@ -136,7 +137,7 @@ namespace InternetInterface.Controllers
 	{
 		public void SearchUserInfo([DataBind("filter")] ClientFilter filter, [DataBind("userWO")] UserWriteOff writeOff)
 		{
-			var client = Client.Find(filter.ClientCode);
+			var client = DbSession.Load<Client>(filter.ClientCode);
 			PropertyBag["filter"] = filter;
 			SendParam(filter, filter.grouped, filter.appealType);
 			PropertyBag["Editing"] = filter.Editing;
@@ -148,14 +149,14 @@ namespace InternetInterface.Controllers
 
 		public void Leases([DataBind("filter")] SessionFilter filter)
 		{
-			PropertyBag["_client"] = Client.Find(filter.ClientCode);
+			PropertyBag["_client"] = DbSession.Load<Client>(filter.ClientCode);
 			PropertyBag["filter"] = filter;
 			PropertyBag["Leases"] = filter.Find(DbSession);
 		}
 
 		public void LawyerPersonInfo([DataBind("filter")] ClientFilter filter)
 		{
-			var client = Client.Find(filter.ClientCode);
+			var client = DbSession.Load<Client>(filter.ClientCode);
 
 			if (client.Status != null)
 				PropertyBag["ChStatus"] = client.Status.Id;
@@ -167,9 +168,9 @@ namespace InternetInterface.Controllers
 			PropertyBag["Statuss"] = Status.FindAllSort();
 			PropertyBag["services"] = Service.FindAll();
 
-			var packagesForTariff = Tariff.Queryable.Select(t => t.PackageId).ToList();
+			var packagesForTariff = DbSession.Query<Tariff>().Select(t => t.PackageId).ToList();
 			PropertyBag["Speeds"] =
-				PackageSpeed.Queryable.Where(p => !packagesForTariff.Contains(p.PackageId)).OrderBy(p => p.PackageId);
+				DbSession.Query<PackageSpeed>().Where(p => !packagesForTariff.Contains(p.PackageId)).OrderBy(p => p.PackageId);
 
 			PropertyBag["Client"] = client.LawyerPerson;
 			PropertyBag["UserInfo"] = false;
@@ -202,21 +203,21 @@ namespace InternetInterface.Controllers
 
 		public void PostponedPayment(uint ClientID)
 		{
-			var client = Client.Find(ClientID);
+			var client = DbSession.Load<Client>(ClientID);
 			var pclient = client.PhysicalClient;
 			var message = string.Empty;
 			if (client.ClientServices.Select(c => c.Service).Contains(Service.GetByType(typeof(DebtWork))))
-				message += "Повторное использование услуги \"Обещаный платеж невозможно\"";
+				message += "Повторное использование услуги \"Обещанный платеж невозможно\"";
 			if (pclient.Balance > 0 && string.IsNullOrEmpty(message))
-				message += "Воспользоваться устугой возможно только при отрицательном балансе";
+				message += "Воспользоваться услугой возможно только при отрицательном балансе";
 			if ((!client.Disabled || !client.AutoUnblocked) && string.IsNullOrEmpty(message))
 				message += "Услуга \"Обещанный платеж\" недоступна";
 			if (!client.PaymentForTariff())
 				message +=
-					"Воспользоваться услугой возможно если все платежи клиента первышают его абонентскую плату за месяц";
+					"Воспользоваться услугой возможно если все платежи клиента превышают его абонентскую плату за месяц";
 			if (client.CanUsedPostponedPayment()) {
 				client.Disabled = false;
-				client.Update();
+				DbSession.Save(client);
 				message += "Услуга \"Обещанный платеж активирована\"";
 				new Appeals {
 					Appeal = "Услуга \"Обещанный платеж активирована\"",
@@ -233,20 +234,20 @@ namespace InternetInterface.Controllers
 		[AccessibleThrough(Verb.Post)]
 		public void BindPhone(uint clientCode, ulong phoneId)
 		{
-			var client = Client.Find(clientCode);
-			var phone = UnresolvedCall.Find(phoneId);
+			var client = DbSession.Load<Client>(clientCode);
+			var phone = DbSession.Load<UnresolvedCall>(phoneId);
 			if (phone != null && client != null) {
 				var number = phone.PhoneNumber;
 				var registrator = InitializeContent.Partner;
 				var contact = new Contact(registrator, client, ContactType.ConnectedPhone, number);
 				DbSession.Save(contact);
-				phone.Delete();
+				DbSession.Delete(phone);
 				var appeal = new Appeals {
 					Client = client,
 					Date = DateTime.Now,
 					AppealType = AppealType.System,
 					Partner = registrator,
-					Appeal = string.Format("Номер {0} был привязян к данному клиенту", number)
+					Appeal = string.Format("Номер {0} был привязан к данному клиенту", number)
 				};
 				DbSession.Save(appeal);
 			}
@@ -256,7 +257,7 @@ namespace InternetInterface.Controllers
 		[AccessibleThrough(Verb.Post)]
 		public void SaveContacts([ARDataBind("Contacts", AutoLoad = AutoLoadBehavior.NewInstanceIfInvalidKey)] Contact[] contacts, uint ClientID)
 		{
-			var client = Client.Find(ClientID);
+			var client = DbSession.Load<Client>(ClientID);
 			var telephoneRegex = new Regex(@"^(\d{10})$");
 			foreach (var contact in contacts) {
 				var replaseContact = contact.Text.Replace("-", string.Empty);
@@ -283,8 +284,8 @@ namespace InternetInterface.Controllers
 
 		public void ActivateService(uint clientId, uint serviceId, DateTime? startDate, DateTime? endDate)
 		{
-			var servise = Service.Find(serviceId);
-			var client = Client.Find(clientId);
+			var servise = DbSession.Load<Service>(serviceId);
+			var client = DbSession.Load<Client>(clientId);
 			var dtn = DateTime.Now;
 			if (servise.InterfaceControl) {
 				var clientService = new ClientService {
@@ -334,8 +335,8 @@ namespace InternetInterface.Controllers
 
 		public void DiactivateService(uint clientId, uint serviceId)
 		{
-			var servise = Service.Find(serviceId);
-			var client = Client.Find(clientId);
+			var servise = DbSession.Load<Service>(serviceId);
+			var client = DbSession.Load<Client>(clientId);
 			if (client.ClientServices != null) {
 				var cservice =
 					client.ClientServices.FirstOrDefault(c => c.Service.Id == serviceId && c.Activated);
@@ -359,9 +360,9 @@ namespace InternetInterface.Controllers
 		public string GetStaticIp()
 		{
 			var endPontId = UInt32.Parse(Request.Form["endPontId"]);
-			var lease = Lease.Queryable.FirstOrDefault(l => l.Endpoint.Id == endPontId);
+			var lease = DbSession.Query<Lease>().FirstOrDefault(l => l.Endpoint.Id == endPontId);
 			if (lease != null)
-				return NetworkSwitch.GetNormalIp(Convert.ToUInt32(lease.Ip));
+				return lease.Ip.ToString();
 			return string.Empty;
 		}
 
@@ -371,7 +372,7 @@ namespace InternetInterface.Controllers
 			uint EditConnect, string ConnectSum,
 			[DataBind("order")] Orders Order, bool withoutEndPoint)
 		{
-			var client = Client.Find(ClientID);
+			var client = DbSession.Load<Client>(ClientID);
 			bool brigadChangeFlag = client.WhoConnected == null;
 			var newFlag = false;
 			var clientEntPoint = new ClientEndpoint();
@@ -400,9 +401,6 @@ namespace InternetInterface.Controllers
 				clientEntPoint.Ip = null;
 				nullFlag = true;
 			}
-			else {
-				ConnectInfo.static_IP = NetworkSwitch.SetProgramIp(ConnectInfo.static_IP);
-			}
 			var errorMessage = Validation.ValidationConnectInfo(ConnectInfo, false);
 			decimal _connectSum;
 			var validateSum =
@@ -422,16 +420,20 @@ namespace InternetInterface.Controllers
 							var packageSpeed = DbSession.Query<PackageSpeed>().Where(p => p.PackageId == ConnectInfo.PackageId).ToList().FirstOrDefault();
 							clientEntPoint.PackageId = packageSpeed.PackageId;
 						}
-						if (string.IsNullOrEmpty(clientEntPoint.Ip) && !string.IsNullOrEmpty(ConnectInfo.static_IP))
+						if (clientEntPoint.Ip == null && !string.IsNullOrEmpty(ConnectInfo.static_IP))
 							new UserWriteOff {
 								Client = client,
 								Date = DateTime.Now,
 								Sum = 200,
-								Comment = string.Format("Плата за фиксированный Ip адрес ({0})", NetworkSwitch.GetNormalIp(UInt32.Parse(ConnectInfo.static_IP))),
+								Comment = string.Format("Плата за фиксированный Ip адрес ({0})", ConnectInfo.static_IP),
 								Registrator = InitializeContent.Partner
 							}.Save();
 						clientEntPoint.Client = client;
-						clientEntPoint.Ip = ConnectInfo.static_IP;
+						IPAddress address;
+						if (ConnectInfo.static_IP != null && IPAddress.TryParse(ConnectInfo.static_IP, out address))
+							clientEntPoint.Ip = address;
+						else
+							clientEntPoint.Ip = null;
 						clientEntPoint.Port = Int32.Parse(ConnectInfo.Port);
 						clientEntPoint.Switch = DbSession.Load<NetworkSwitch>(ConnectInfo.Switch);
 						clientEntPoint.Monitoring = ConnectInfo.Monitoring;
@@ -442,35 +444,35 @@ namespace InternetInterface.Controllers
 							clientEntPoint.SaveAndFlush();
 							if (client.AdditionalStatus != null && client.AdditionalStatus.ShortName == "Refused") {
 								client.AdditionalStatus = null;
-								client.Update();
+								DbSession.Save(client);
 							}
 							Order.EndPoint = clientEntPoint;
 						}
 						if (brigadChangeFlag) {
-							var brigad = Brigad.Find(BrigadForConnect);
+							var brigad = DbSession.Load<Brigad>(BrigadForConnect);
 							client.WhoConnected = brigad;
 							client.WhoConnectedName = brigad.Name;
 						}
 						client.ConnectedDate = DateTime.Now;
 						if (client.Status.Id == (uint)StatusType.BlockedAndNoConnected)
 							client.Status = Status.Find((uint)StatusType.BlockedAndConnected);
-						client.Update();
+						DbSession.Save(client);
 
-						StaticIp.Queryable.Where(s => s.EndPoint == clientEntPoint).ToList().Where(
+						DbSession.Query<StaticIp>().Where(s => s.EndPoint == clientEntPoint).ToList().Where(
 							s => !staticAdress.Select(f => f.Id).Contains(s.Id)).ToList()
-							.ForEach(s => s.Delete());
+							.ForEach(s => DbSession.Delete(s));
 
 						foreach (var s in staticAdress) {
 							if (!string.IsNullOrEmpty(s.Ip))
 								if (Regex.IsMatch(s.Ip, NetworkSwitch.IPRegExp)) {
 									s.EndPoint = clientEntPoint;
-									s.Save();
+									DbSession.Save(s);
 								}
 						}
 
 						var connectSum = 0m;
 						if (!string.IsNullOrEmpty(ConnectSum) && decimal.TryParse(ConnectSum, out connectSum) && connectSum > 0) {
-							var payments = PaymentForConnect.Queryable.Where(p => p.EndPoint == clientEntPoint).ToList();
+							var payments = DbSession.Query<PaymentForConnect>().Where(p => p.EndPoint == clientEntPoint).ToList();
 							if (payments.Count() == 0)
 								new PaymentForConnect {
 									Sum = connectSum,
@@ -481,7 +483,7 @@ namespace InternetInterface.Controllers
 							else {
 								var payment = payments.First();
 								payment.Sum = connectSum;
-								payment.Update();
+								DbSession.Save(payment);
 							}
 						}
 						savedEndpoint = true;
@@ -547,7 +549,7 @@ namespace InternetInterface.Controllers
 					Appeal = Appeal,
 					Date = DateTime.Now,
 					Partner = InitializeContent.Partner,
-					Client = Client.Find(ClientID),
+					Client = DbSession.Load<Client>(ClientID),
 					AppealType = AppealType.User
 				}.SaveAndFlush();
 			RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID);
@@ -556,7 +558,7 @@ namespace InternetInterface.Controllers
 		public void PassAndShowCard(uint ClientID)
 		{
 			if (CategorieAccessSet.AccesPartner("SSI")) {
-				var _client = Client.Find(ClientID);
+				var _client = DbSession.Load<Client>(ClientID);
 				var client = _client.PhysicalClient;
 				var Password = CryptoPass.GeneratePassword();
 				client.Password = CryptoPass.GetHashString(Password);
@@ -585,7 +587,7 @@ namespace InternetInterface.Controllers
 
 		public void EditLabel(uint deletelabelch, string LabelName, string labelcolor)
 		{
-			var labelForEdit = Label.Find(deletelabelch);
+			var labelForEdit = DbSession.Load<Label>(deletelabelch);
 			if (labelForEdit != null && labelForEdit.Deleted) {
 				if (LabelName != null)
 					labelForEdit.Name = LabelName;
@@ -599,7 +601,7 @@ namespace InternetInterface.Controllers
 
 		public void DeleteLabel(uint deletelabelch)
 		{
-			var labelForDel = Label.Find(deletelabelch);
+			var labelForDel = DbSession.Load<Label>(deletelabelch);
 			if (labelForDel != null && labelForDel.Deleted) {
 				labelForDel.DeleteAndFlush();
 				DbSession.CreateSQLQuery(
@@ -630,27 +632,29 @@ where r.`Label`= :LabelIndex;")
 
 		public void RequestOne(uint id)
 		{
-			PropertyBag["Request"] = Models.Request.Find(id);
-			PropertyBag["Messages"] = RequestMessage.Queryable.Where(r => r.Request.Id == id).ToList();
+			PropertyBag["Request"] = DbSession.Load<Request>(id);
+			PropertyBag["Messages"] = DbSession.Query<RequestMessage>().Where(r => r.Request.Id == id).ToList();
 		}
 
 		public void CreateRequestComment(uint requestId, string comment)
 		{
-			if (!string.IsNullOrEmpty(comment))
-				new RequestMessage {
+			if (!string.IsNullOrEmpty(comment)) {
+				var message = new RequestMessage {
 					Date = DateTime.Now,
 					Registrator = InitializeContent.Partner,
 					Comment = comment,
-					Request = Models.Request.Find(requestId)
-				}.Save();
+					Request = DbSession.Load<Request>(requestId)
+				};
+				DbSession.Save(message);
+			}
 			RedirectToReferrer();
 		}
 
 		public void RequestInArchive(uint id, bool action)
 		{
-			var request = Models.Request.Find(id);
+			var request = DbSession.Load<Request>(id);
 			request.Archive = action;
-			request.Update();
+			DbSession.Save(request);
 			RedirectToReferrer();
 		}
 
@@ -680,9 +684,9 @@ where r.`Label`= :LabelIndex;")
 		[AccessibleThrough(Verb.Post)]
 		public void SetLabel([DataBind("LabelList")] List<uint> labelList, uint labelch)
 		{
-			var _label = Label.Find(labelch);
+			var _label = DbSession.Load<Label>(labelch);
 			foreach (var label in labelList) {
-				var request = Models.Request.Find(label);
+				var request = DbSession.Load<Request>(label);
 				if ((request.Label == null) ||
 					(request.Label.ShortComment != "Refused" && request.Label.ShortComment != "Registered")) {
 					request.Label = _label;
@@ -732,7 +736,7 @@ where r.`Label`= :LabelIndex;")
 		public void EditLawyerPerson(uint ClientID, int Speed, string grouped, AppealType appealType, string comment)
 		{
 			SetBinder(new DecimalValidateBinder { Validator = Validator });
-			var _client = Client.Queryable.First(c => c.Id == ClientID);
+			var _client = DbSession.Query<Client>().First(c => c.Id == ClientID);
 			var updateClient = _client.LawyerPerson;
 
 			BindObjectInstance(updateClient, ParamStore.Form, "LegalPerson");
@@ -752,8 +756,8 @@ where r.`Label`= :LabelIndex;")
 					}
 				}
 				_client.Name = updateClient.ShortName;
-				_client.Update();
-				updateClient.Update();
+				DbSession.Save(_client);
+				DbSession.Save(updateClient);
 
 				RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID);
 			}
@@ -782,7 +786,7 @@ where r.`Label`= :LabelIndex;")
 			[DataBind("filter")] ClientFilter filter)
 		{
 			var client = DbSession.Load<Client>(ClientID);
-			var statusEntity = Status.Find(status);
+			var statusEntity = DbSession.Load<Status>(status);
 			var updateClient = client.PhysicalClient;
 			var oldStatus = client.Status;
 
@@ -859,7 +863,7 @@ where r.`Label`= :LabelIndex;")
 
 		private void SendParam(ClientFilter filter, string grouped, AppealType appealType)
 		{
-			var client = Client.Find(filter.ClientCode);
+			var client = DbSession.Load<Client>(filter.ClientCode);
 
 			LoadBalanceData(grouped, client);
 			PropertyBag["iptv"] = client.Iptv;
@@ -877,7 +881,7 @@ where r.`Label`= :LabelIndex;")
 			PropertyBag["Statuss"] = Status.FindAllSort();
 			PropertyBag["channels"] = ChannelGroup.All(DbSession);
 			PropertyBag["ChStatus"] = client.Status != null ? client.Status.Id : Status.FindFirst().Id;
-			PropertyBag["naznach_text"] = ConnectGraph.Queryable.Count(c => c.Client.Id == filter.ClientCode) != 0
+			PropertyBag["naznach_text"] = DbSession.Query<ConnectGraph>().Count(c => c.Client.Id == filter.ClientCode) != 0
 				? "Переназначить в график"
 				: "Назначить в график";
 
@@ -902,9 +906,9 @@ where r.`Label`= :LabelIndex;")
 		private void LoadBalanceData(string grouped, Client client)
 		{
 			var payments =
-				Payment.Queryable.Where(p => p.Client.Id == client.Id).Where(p => p.Sum > 0).OrderBy(t => t.PaidOn).ToList();
-			var writeoffSum = WriteOff.Queryable.Where(p => p.Client.Id == client.Id).ToList().Sum(s => s.WriteOffSum);
-			var userWriteoffSum = Models.UserWriteOff.Queryable.Where(w => w.Client.Id == client.Id).ToList().Sum(w => w.Sum);
+				DbSession.Query<Payment>().Where(p => p.Client.Id == client.Id).Where(p => p.Sum > 0).OrderBy(t => t.PaidOn).ToList();
+			var writeoffSum = DbSession.Query<WriteOff>().Where(p => p.Client.Id == client.Id).ToList().Sum(s => s.WriteOffSum);
+			var userWriteoffSum = DbSession.Query<UserWriteOff>().Where(w => w.Client.Id == client.Id).ToList().Sum(w => w.Sum);
 			if (InitializeContent.Partner.IsDiller())
 				payments = payments.Where(p => p.Agent != null && p.Agent.Partner == InitializeContent.Partner).OrderByDescending(t => t.PaidOn).Take(5).OrderBy(t => t.PaidOn).ToList();
 			PropertyBag["Payments"] = payments;
@@ -993,7 +997,7 @@ where r.`Label`= :LabelIndex;")
 			if (InitializeContent.Partner.IsDiller())
 				virtualPayment = false;
 
-			var clientToch = Client.Find(clientId);
+			var clientToch = DbSession.Load<Client>(clientId);
 			decimal tryBalance;
 			if (decimal.TryParse(balanceText, out tryBalance) && tryBalance > 0) {
 				if (clientToch.LawyerPerson == null) {
@@ -1023,11 +1027,11 @@ where r.`Label`= :LabelIndex;")
 		[AccessibleThrough(Verb.Post)]
 		public void UserWriteOff(uint ClientID)
 		{
-			var client = Client.Find(ClientID);
+			var client = DbSession.Load<Client>(ClientID);
 			var writeOff = new UserWriteOff(client);
 			BindObjectInstance(writeOff, "userWO");
 			if (!HasValidationError(writeOff)) {
-				writeOff.Save();
+				DbSession.Save(writeOff);
 				Flash["Message"] = Message.Notify("Списание ожидает обработки");
 			}
 			else
@@ -1044,13 +1048,13 @@ where r.`Label`= :LabelIndex;")
 
 		public void Refused(uint ClientID, string prichina, string Appeal)
 		{
-			var client = Client.Find(ClientID);
+			var client = DbSession.Load<Client>(ClientID);
 			client.AdditionalStatus = AdditionalStatus.Find((uint)AdditionalStatusType.Refused);
 			client.Endpoints.Clear();
 			client.PhysicalClient.HouseObj = null;
-			client.Update();
-			foreach (var graph in ConnectGraph.Queryable.Where(c => c.Client == client)) {
-				graph.Delete();
+			DbSession.Save(client);
+			foreach (var graph in DbSession.Query<ConnectGraph>().Where(c => c.Client == client)) {
+				DbSession.Delete(graph);
 			}
 			CreateAppeal("Причина отказа:  " + prichina + " \r\n Комментарий: \r\n " + Appeal, ClientID);
 			LayoutName = "NoMap";
@@ -1068,7 +1072,7 @@ where r.`Label`= :LabelIndex;")
 
 		public void NoPhoned(uint ClientID, string NoPhoneDate, string Appeal, string prichina)
 		{
-			var client = Client.Find(ClientID);
+			var client = DbSession.Load<Client>(ClientID);
 			client.AdditionalStatus = AdditionalStatus.Find((uint)AdditionalStatusType.NotPhoned);
 			DateTime _noPhoneDate;
 			if (DateTime.TryParse(NoPhoneDate, out _noPhoneDate)) {
@@ -1078,7 +1082,7 @@ where r.`Label`= :LabelIndex;")
 							" \r\n Комментарий: \r\n " + Appeal,
 					Date = DateTime.Now,
 					Partner = InitializeContent.Partner,
-					Client = Client.Find(ClientID),
+					Client = DbSession.Load<Client>(ClientID),
 					AppealType = AppealType.User
 				}.SaveAndFlush();
 			}
@@ -1100,7 +1104,7 @@ where r.`Label`= :LabelIndex;")
 			return new {
 				brigads = Brigad.FindAll().Select(b => new { b.Id, b.Name }).ToArray(),
 				graphs =
-					ConnectGraph.Queryable.Where(c => c.Day.Date == selDate).Select(
+					DbSession.Query<ConnectGraph>().Where(c => c.Day.Date == selDate).Select(
 						g => new { brigadId = g.Brigad.Id, clientId = g.Client != null ? g.Client.Id : 0, g.IntervalId }).ToArray(),
 				intervals = Intervals.GetIntervals()
 			};
@@ -1110,13 +1114,13 @@ where r.`Label`= :LabelIndex;")
 		public bool SaveGraph()
 		{
 			if (Request.Form["graph_button"] != null) {
-				var client = Client.Find(Convert.ToUInt32(Request.Form["clientId"]));
+				var client = DbSession.Load<Client>(Convert.ToUInt32(Request.Form["clientId"]));
 				var but_id = Request.Form["graph_button"].Split('_');
 				if (client.BeginWork == null)
-					foreach (var graph in ConnectGraph.Queryable.Where(c => c.Client == client).ToList()) {
-						graph.Delete();
+					foreach (var graph in DbSession.Query<ConnectGraph>().Where(c => c.Client == client).ToList()) {
+						DbSession.Delete(graph);
 					}
-				var briad = Brigad.Find(Convert.ToUInt32(but_id[1]));
+				var briad = DbSession.Load<Brigad>(Convert.ToUInt32(but_id[1]));
 				var interval = Convert.ToUInt32(but_id[0]);
 				new ConnectGraph {
 					IntervalId = interval,
@@ -1125,13 +1129,13 @@ where r.`Label`= :LabelIndex;")
 					Day = DateTime.Parse(Request.Form["graph_date"]),
 				}.Save();
 				client.AdditionalStatus = AdditionalStatus.Find((uint)AdditionalStatusType.AppointedToTheGraph);
-				client.Update();
+				DbSession.Save(client);
 				new Appeals {
 					Client = client,
 					Date = DateTime.Now,
 					Partner = InitializeContent.Partner,
 					Appeal =
-						string.Format("Назначен в график, \r\n Брагада: {0} \r\n Дата: {1} \r\n Время: {2}",
+						string.Format("Назначен в график, \r\n Бригада: {0} \r\n Дата: {1} \r\n Время: {2}",
 							briad.Name,
 							DateTime.Parse(Request.Form["graph_date"]).ToShortDateString(),
 							Intervals.GetIntervals()[(int)interval]),
@@ -1148,7 +1152,7 @@ where r.`Label`= :LabelIndex;")
 		public string ReservGraph()
 		{
 			var but_id = Request.Form["graph_button"].Split('_');
-			var briad = Brigad.Find(Convert.ToUInt32(but_id[1]));
+			var briad = DbSession.Load<Brigad>(Convert.ToUInt32(but_id[1]));
 			var interval = Convert.ToUInt32(but_id[0]);
 			new ConnectGraph {
 				Brigad = briad,
@@ -1162,13 +1166,13 @@ where r.`Label`= :LabelIndex;")
 		public bool DeleteGraph()
 		{
 			var date = DateTime.Parse(Request.Form["date"]);
-			var client = Client.Find(Convert.ToUInt32(Request.Form["clientId"]));
-			var briad = Brigad.Find(Convert.ToUInt32(Request.Form["brigad"]));
+			var client = DbSession.Load<Client>(Convert.ToUInt32(Request.Form["clientId"]));
+			var briad = DbSession.Load<Brigad>(Convert.ToUInt32(Request.Form["brigad"]));
 			var interval = uint.Parse(Request.Form["interval"]);
 			var graph = DbSession.QueryOver<ConnectGraph>().Where(c => c.Client == client && c.Day == date && c.IntervalId == interval && c.Brigad == briad).List().FirstOrDefault();
 			if (graph != null) {
 				DbSession.Delete(graph);
-				var appeal = Appeals.CreareAppeal(string.Format("Удалено назначение в граффик, \r\n Брагада: {0} \r\n Дата: {1} \r\n Время: {2}",
+				var appeal = Appeals.CreareAppeal(string.Format("Удалено назначение в график, \r\n Бригада: {0} \r\n Дата: {1} \r\n Время: {2}",
 					briad.Name,
 					date.ToShortDateString(),
 					Intervals.GetIntervals()[(int)interval]), client, AppealType.User);
@@ -1185,7 +1189,7 @@ where r.`Label`= :LabelIndex;")
 		public void RequestGraph(DateTime selectDate, uint brig)
 		{
 			PropertyBag["selectDate"] = selectDate != DateTime.MinValue ? selectDate : DateTime.Now;
-			PropertyBag["Brigad"] = brig != 0 ? Brigad.Find(brig) : Brigad.FindFirst();
+			PropertyBag["Brigad"] = brig != 0 ? DbSession.Load<Brigad>(brig) : Brigad.FindFirst();
 			PropertyBag["Brigads"] = Brigad.FindAll();
 			PropertyBag["Intervals"] = Intervals.GetIntervals();
 		}
@@ -1193,10 +1197,10 @@ where r.`Label`= :LabelIndex;")
 		public void CreateAndPrintGraph(uint Brig, DateTime selectDate)
 		{
 			PropertyBag["Clients"] =
-				ConnectGraph.Queryable.Where(c => c.Brigad.Id == Brig && c.Day.Date == selectDate.Date).Select(
+				DbSession.Query<ConnectGraph>().Where(c => c.Brigad.Id == Brig && c.Day.Date == selectDate.Date).Select(
 					s => s.Client).Where(c => c != null).ToList();
 			PropertyBag["selectDate"] = selectDate;
-			PropertyBag["Brigad"] = Brigad.Find(Brig);
+			PropertyBag["Brigad"] = DbSession.Load<Brigad>(Brig);
 			PropertyBag["Intervals"] = Intervals.GetIntervals();
 		}
 
@@ -1228,9 +1232,9 @@ where r.`Label`= :LabelIndex;")
 
 			if (endPoint != null) {
 				var client = endPoint.Client;
-				var endPointsForClient = ClientEndpoint.Queryable.Where(c => c.Client == client).ToList();
+				var endPointsForClient = DbSession.Query<ClientEndpoint>().Where(c => c.Client == client).ToList();
 				if (endPointsForClient.Count > 1 || client.LawyerPerson != null)
-					endPoint.Delete();
+					DbSession.Delete(endPoint);
 				else
 					Flash["Message"] = Message.Error("Последняя точка подключения не может быть удалена!");
 			}

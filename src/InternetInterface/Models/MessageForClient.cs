@@ -28,7 +28,7 @@ namespace InternetInterface.Models
 		[Property, Auditable("Показывать")]
 		public virtual bool Enabled { get; set; }
 
-		[Property, Auditable("Дата отключения"), ValidateDate("Неравильный формат даты")]
+		[Property, Auditable("Дата отключения"), ValidateDate("Неправильный формат даты")]
 		public virtual DateTime EndDate { get; set; }
 
 		[Property]

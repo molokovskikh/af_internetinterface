@@ -9,7 +9,7 @@ using Common.Tools;
 namespace InternetInterface.Models
 {
 	[ActiveRecord(Schema = "Internet", Table = "StaticIps")]
-	public class StaticIp : ActiveRecordLinqBase<StaticIp>
+	public class StaticIp
 	{
 		public StaticIp()
 		{

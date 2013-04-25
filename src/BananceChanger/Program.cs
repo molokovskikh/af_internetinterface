@@ -41,7 +41,7 @@ namespace BananceChanger
 		}
 
 
-		//Возращаем деньги клиентам, которые работали вчера, но у всех должны быть закончены сессии
+		//Возвращаем деньги клиентам, которые работали вчера, но у всех должны быть закончены сессии
 		public static void OneDayPayment()
 		{
 			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
@@ -118,7 +118,7 @@ group by client;").List<uint>();
 			}
 		}
 
-		//Предыдущий метод не включит и не заплатит денег клиентас, которые были отключены и сейчас отключены тоже, здесь мы доделываем это
+		//Предыдущий метод не включит и не заплатит денег клиента, которые были отключены и сейчас отключены тоже, здесь мы доделываем это
 		public static void DonachislitKlientamUkogo()
 		{
 			using (var transaction = new TransactionScope()) {
@@ -305,7 +305,7 @@ group by client;").List<uint>();
 				}
 				transaction.VoteCommit();
 			}
-			Console.WriteLine(string.Format("Всего клиентов обработано: {0} общая сумма корроектировки : {1}", totalCount, totalSum));
+			Console.WriteLine("Всего клиентов обработано: {0} общая сумма корректировки : {1}", totalCount, totalSum);
 			Console.WriteLine("Клиенты не обработаны: " + unClient.Implode(" "));
 			Console.ReadLine();
 		}

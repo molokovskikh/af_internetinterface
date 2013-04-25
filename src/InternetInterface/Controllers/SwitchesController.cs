@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
+using Castle.Components.Binder;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Common.Web.Ui.Controllers;
@@ -9,6 +12,7 @@ using Common.Web.Ui.MonoRailExtentions;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using InternetInterface.Queries;
+using InternetInterface.Helpers;
 using NHibernate.Linq;
 
 namespace InternetInterface.Controllers
@@ -24,12 +28,14 @@ namespace InternetInterface.Controllers
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class SwitchesController : BaseController
 	{
+		public SwitchesController()
+		{
+			SetARDataBinder(AutoLoadBehavior.NewRootInstanceIfInvalidKey);
+		}
+
 		public void ShowSwitches()
 		{
-			var switches = DbSession.CreateSQLQuery(
-				@"SELECT NS.id, NS.Mac, inet_ntoa(NS.IP) as Ip, NS.Name, NS.Zone, NS.PortCount, NS.Comment, NS.TotalPorts FROM internet.NetworkSwitches NS")
-				.AddEntity(typeof(NetworkSwitch)).List<NetworkSwitch>();
-			PropertyBag["Switches"] = switches;
+			PropertyBag["Switches"] = DbSession.Query<NetworkSwitch>().OrderBy(s => s.Name).ToList();
 		}
 
 		public void Delete(uint id)
@@ -53,17 +59,15 @@ namespace InternetInterface.Controllers
 
 		public void MakeSwitch()
 		{
-			PropertyBag["Switch"] = new NetworkSwitch {
-				Zone = new Zone()
-			};
+			PropertyBag["Switch"] = new NetworkSwitch();
 			PropertyBag["Editing"] = false;
 		}
 
-		public void RegisterSwitch([ARDataBind("Switch", AutoLoadBehavior.NewRootInstanceIfInvalidKey)] NetworkSwitch @switch)
+		public void RegisterSwitch()
 		{
+			var @switch = BindObject<NetworkSwitch>("Switch");
 			if (IsValid(@switch)) {
-				@switch.IP = NetworkSwitch.SetProgramIp(@switch.IP);
-				DbSession.SaveOrUpdate(@switch);
+				DbSession.Save(@switch);
 				RedirectToUrl("~/Switches/ShowSwitches.rails");
 			}
 			else {
@@ -72,11 +76,11 @@ namespace InternetInterface.Controllers
 			}
 		}
 
-		public void EditSwitch([ARDataBind("Switch", AutoLoad = AutoLoadBehavior.Always)] NetworkSwitch @switch)
+		public void EditSwitch()
 		{
+			var @switch = BindObject<NetworkSwitch>("Switch");
 			if (IsValid(@switch)) {
-				@switch.IP = NetworkSwitch.SetProgramIp(@switch.IP);
-				DbSession.SaveOrUpdate(@switch);
+				DbSession.Save(@switch);
 				RedirectToUrl("~/Switches/ShowSwitches.rails");
 			}
 			else {

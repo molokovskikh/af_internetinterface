@@ -24,7 +24,7 @@
 				<td colspan=2 style="background-color:#f7d7d7;">
 				<%end %>
 					Арендованный IP
-					<b>${lease.GetIp()}</b>
+					<b>${lease.Ip}</b>
 					<%if IsDefined("IPResult"): %>
 						<span> // IP на порту коммутатора: <b>${IPResult}</b></span>
 					<%else: %>

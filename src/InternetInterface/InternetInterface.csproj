@@ -271,7 +271,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Views\UserInfo\Administration.brail" />
-    <None Include="Views\UserInfo\AppointedToTheGraph.brail" />
+    <None Include="Views\UserInfo\AppointedToTheGraph.brail">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Views\UserInfo\ClientRegisteredInfoFromDiller.brail" />
     <Content Include="Views\UserInfo\EditRegion.brail" />
     <Content Include="Views\UserInfo\OrdersArchive.brail">
@@ -367,7 +369,9 @@
     <Compile Include="Helpers\ExceptionHelper.cs" />
     <Compile Include="Helpers\ExportModel.cs" />
     <Compile Include="Helpers\InsertListner.cs" />
+    <Compile Include="Helpers\IPAddressConverter.cs" />
     <Compile Include="Helpers\IpHelper.cs" />
+    <Compile Include="Helpers\IPUserType.cs" />
     <Compile Include="Helpers\Listner.cs" />
     <Compile Include="Helpers\LoginCreatorHelper.cs" />
     <Compile Include="Helpers\SmsHelper.cs" />
@@ -455,6 +459,7 @@
     <Compile Include="Models\Zone.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Controllers\SmsController.cs" />
+    <Compile Include="Queries\AgentFilter.cs" />
     <Compile Include="Queries\AppealFilter.cs" />
     <Compile Include="Queries\BrigadFilter.cs" />
     <Compile Include="Queries\OnLineFilter.cs" />

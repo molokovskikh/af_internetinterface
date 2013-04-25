@@ -75,7 +75,7 @@
 		</tr>
 		<tr>
 		  <td style="width:400px;">
-			<span><a href="${SiteRoot}/Switches/MakeSwitch?Switch=${ConnectInfo.Switch}"> Свич</a> </span>
+			<span><a href="${SiteRoot}/Switches/MakeSwitch?Switch=${ConnectInfo.Switch}"> Коммутатор</a> </span>
 		</td>
 		  <td>
 			<a class="button hardwareInfo" href="${siteroot}/Hardware/PortInfo?endPoint=${ConnectInfo.endpointId}">
@@ -191,12 +191,12 @@
 		  <td colspan=2>${ConnectInfo.Leased_IP}</td>
 		</tr>
 		<tr>
-			<td>Свич</td>
+			<td>Коммутатор</td>
 			<td style="width:200px;">
 				<select name="ConnectInfo.Switch" id="SelectSwitches" style="width: 100%">
 					<option value="0">Нет</option>
-					<%for j, Switch in enumerate(Switches): %>
-						<option id="Option${j}" value="${Switch.Id}" ${"selected" if (Switch.Id.ToString() == ConnectInfo.Switch)} > ${Switch.Name} </option>
+				   <%for j, Switch in enumerate(Switches): %>
+					<option id="Option${j}" value="${Switch.Id}" ${"selected" if (Switch.Id.ToString() == ConnectInfo.Switch)} > ${Switch.Name} </option>
 					<% end %>
 				</select>
 			</td>

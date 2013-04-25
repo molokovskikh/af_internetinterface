@@ -8,7 +8,7 @@ using Castle.ActiveRecord.Framework;
 namespace InternetInterface.Models
 {
 	[ActiveRecord("ApartmentHistory", Schema = "Internet", Lazy = true)]
-	public class ApartmentHistory : ActiveRecordLinqBase<ApartmentHistory>
+	public class ApartmentHistory
 	{
 		[PrimaryKey]
 		public virtual uint Id { get; set; }

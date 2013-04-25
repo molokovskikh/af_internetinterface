@@ -61,13 +61,6 @@ namespace InforoomInternet.Test.Integration
 		[Test]
 		public void Warning_package_id()
 		{
-			client = ClientHelper.Client();
-			networkSwitch = new NetworkSwitch("Тестовый коммутатор", session.Query<Zone>().First());
-			endpoint = new ClientEndpoint(client, 1, networkSwitch);
-			lease = new Lease { Endpoint = endpoint, Switch = networkSwitch, Port = 1, Ip = IPAddress.Loopback };
-
-			session.Save(networkSwitch);
-			session.Save(lease);
 			controller.DbSession = session;
 			controller.WarningPackageId();
 		}

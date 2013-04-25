@@ -151,7 +151,7 @@ ${app.Asset("EditingConnect.js")}
 		</tr>
 		<tr>
 		  <td class="width400px">
-			<span><a href="${SiteRoot}/Switches/MakeSwitch?Switch=${OrderInfo.ClientConnectInfo.Switch}"> Свич</a> </span>
+			<span><a href="${SiteRoot}/Switches/MakeSwitch?Switch=${OrderInfo.ClientConnectInfo.Switch}"> Коммутатор</a> </span>
 		</td>
 		  <td>
 			<a class="button hardwareInfo" href="${siteroot}/Hardware/PortInfo?endPoint=${OrderInfo.ClientConnectInfo.endpointId}">
@@ -357,13 +357,13 @@ ${app.Asset("EditingConnect.js")}
 		  <td colspan=2>${OrderInfo.ClientConnectInfo.Leased_IP}</td>
 		</tr>
 		<tr>
-		  <td>Свич</td>
-		  <td class="width200px">
-			  <select name="ConnectInfo.Switch" id="SelectSwitches" class="width100">
+			<td>Коммутатор</td>
+			<td class="width200px">
+				<select name="ConnectInfo.Switch" id="SelectSwitches" class="width100">
 					<option value="0">Нет</option>
-				   <%for j, Switch in enumerate(Switches): %>
+					<%for j, Switch in enumerate(Switches): %>
 					<option id="Option${j}" value="${Switch.Id}" ${"selected" if (Switch.Id.ToString() == OrderInfo.ClientConnectInfo.Switch)} > ${Switch.Name} </option>
-				   <% end %>
+					<% end %>
 				</select>
 			</td>
 			<td id="switch_info"></td>

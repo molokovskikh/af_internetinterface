@@ -49,7 +49,7 @@ namespace InternetInterface.Test.Integration
 				LawyerPerson = LawyerPerson
 			};
 			session.Save(Client);
-			Zone = new Zone { Name = "TestZone" };
+			Zone = new Zone("TestZone");
 			session.Save(Zone);
 			Switch = new NetworkSwitch("TestCommutator", Zone);
 			session.Save(Switch);

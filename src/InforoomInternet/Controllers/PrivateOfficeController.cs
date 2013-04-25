@@ -134,9 +134,9 @@ namespace InforoomInternet.Controllers
 			PropertyBag["Client"] = client;
 			var message = string.Empty;
 			if (client.ClientServices.Select(c => c.Service).Contains(Service.GetByType(typeof(DebtWork))))
-				message += "Повторное использование услуги \"Обещаный платеж\" невозможно";
+				message += "Повторное использование услуги \"Обещанный платеж\" невозможно";
 			if (!client.Disabled && string.IsNullOrEmpty(message))
-				message += "Воспользоваться устугой возможно только при отрицательном балансе";
+				message += "Воспользоваться услугой возможно только при отрицательном балансе";
 			if ((!client.Disabled || !client.AutoUnblocked) && string.IsNullOrEmpty(message))
 				message += "Услуга \"Обещанный платеж\" недоступна";
 			if (!client.PaymentForTariff())

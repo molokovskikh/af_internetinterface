@@ -4,7 +4,7 @@
 		<form id="onform" class="formConnect" method="get">
 			<table class="table find_block">
 				<thead>
-					<tr><th colspan=2>Параментры фильтрации</th></tr>
+					<tr><th colspan=2>Параметры фильтрации</th></tr>
 				</thead>
 				<tbody>
 					<tr>

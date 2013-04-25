@@ -5,10 +5,12 @@ using System.Web;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Common.Tools;
+using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using NHibernate.Linq;
 using log4net;
 
 namespace InternetInterface.Controllers
@@ -16,9 +18,12 @@ namespace InternetInterface.Controllers
 	[Helper(typeof(PaginatorHelper))]
 	[Helper(typeof(IpHelper))]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
-	public class HardwareController : ARSmartDispatcherController
+	public class HardwareController : BaseController
 	{
-		private readonly ILog _log = LogManager.GetLogger(typeof(HardwareController));
+		public HardwareController()
+		{
+			SetARDataBinder();
+		}
 
 		private string DelCommandAndHello(string info, string command)
 		{
@@ -35,9 +40,9 @@ namespace InternetInterface.Controllers
 
 		public void PortInfo(uint endPoint)
 		{
-			var point = ClientEndpoint.Find(endPoint);
+			var point = DbSession.Load<ClientEndpoint>(endPoint);
 			PropertyBag["point"] = point;
-			PropertyBag["lease"] = Lease.Queryable.Where(l => l.Endpoint == point).FirstOrDefault();
+			PropertyBag["lease"] = DbSession.Query<Lease>().Where(l => l.Endpoint == point).FirstOrDefault();
 
 			try {
 #if DEBUG
@@ -46,11 +51,11 @@ namespace InternetInterface.Controllers
 				telnet.Login("ii", "ii", 100);
 				var port = 3.ToString();
 #else
-				var telnet = new TelnetConnection(point.Switch.GetNormalIp(), 23);
+				var telnet = new TelnetConnection(point.Switch.IP.ToString(), 23);
 				telnet.Login("ii", "analit", 100);
 				var port = point.Port.ToString();
 #endif
-				//Грязный хук, чтобы поиск осущесвтлять по нужному порту
+				//Грязный хак, чтобы поиск осуществлять по нужному порту
 				if (port.Length == 1)
 					port += ' ';
 
@@ -124,7 +129,7 @@ namespace InternetInterface.Controllers
 			}
 			catch (Exception e) {
 				PropertyBag["Message"] = Message.Error("Ошибка подключения к коммутатору");
-				_log.Error(string.Format("Коммутатор {0} Порт {1}", point.Switch.GetNormalIp(), point.Port.ToString()), e);
+				Logger.Error(string.Format("Коммутатор {0} Порт {1}", point.Switch.IP, point.Port.ToString()), e);
 			}
 		}
 	}

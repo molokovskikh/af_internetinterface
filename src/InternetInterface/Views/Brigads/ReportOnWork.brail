@@ -16,7 +16,7 @@
 			</table>
 			<table class="table find_block" id="reportOnWorkFilter">
 				<thead>
-					<tr><th colspan=2>Параментры фильтрации</th></tr>
+					<tr><th colspan=2>Параметры фильтрации</th></tr>
 				</thead>
 				<tbody>
 					<tr>

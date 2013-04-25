@@ -19,7 +19,7 @@ namespace InternetInterface.Test.Integration
 		[Test]
 		public void Parse_payments()
 		{
-			var existsPayment = BankPayment.Queryable.FirstOrDefault(p => p.Comment == "Оплата за мониторинг оптового фармрынка за январь по счету №161 от 11.01..2011г Cумма 800-00,без налога (НДС).");
+			var existsPayment = BankPayment.Queryable.FirstOrDefault(p => p.Comment == "Оплата за мониторинг оптового фармрынка за январь по счету №161 от 11.01..2011г Сумма 800-00,без налога (НДС).");
 			if (existsPayment != null)
 				existsPayment.DeleteAndFlush();
 
@@ -29,7 +29,7 @@ namespace InternetInterface.Test.Integration
 			var payment = payments.First();
 			Assert.That(payment.Sum, Is.EqualTo(800));
 			Assert.That(payment.PayedOn, Is.EqualTo(DateTime.Parse("11.01.2011")));
-			Assert.That(payment.Comment, Is.EqualTo("Оплата за мониторинг оптового фармрынка за январь по счету №161 от 11.01..2011г Cумма 800-00,без налога (НДС)."));
+			Assert.That(payment.Comment, Is.EqualTo("Оплата за мониторинг оптового фармрынка за январь по счету №161 от 11.01..2011г Сумма 800-00,без налога (НДС)."));
 
 			Assert.That(payment.PayerClient.Name, Is.EqualTo("ЗАО ТРИОМЕД"));
 			Assert.That(payment.PayerBank.Description, Is.EqualTo("ФИЛИАЛ ОРУ ОАО \"МИНБ\""));
@@ -38,7 +38,7 @@ namespace InternetInterface.Test.Integration
 			Assert.That(payment.RecipientBank.Description, Is.EqualTo("ВОРОНЕЖСКИЙ Ф-Л ОАО \"ПРОМСВЯЗЬБАНК\" г ВОРОНЕЖ"));
 			Assert.That(payment.Sum, Is.EqualTo(800));
 			Assert.That(payment.PayedOn, Is.EqualTo(DateTime.Parse("11.01.2011")));
-			Assert.That(payment.Comment, Is.EqualTo("Оплата за мониторинг оптового фармрынка за январь по счету №161 от 11.01..2011г Cумма 800-00,без налога (НДС)."));
+			Assert.That(payment.Comment, Is.EqualTo("Оплата за мониторинг оптового фармрынка за январь по счету №161 от 11.01..2011г Сумма 800-00,без налога (НДС)."));
 		}
 
 		[Test]
