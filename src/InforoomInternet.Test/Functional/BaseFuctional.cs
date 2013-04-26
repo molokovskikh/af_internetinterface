@@ -38,17 +38,6 @@ namespace InforoomInternet.Test.Functional
 			browser.Link("exitLink").Click();
 		}
 
-		[Test]
-		public void FeedBackTest()
-		{
-			browser = Open("/Main/Feedback");
-			browser.TextField("appealText").AppendText("TestAppeal");
-			browser.TextField("clientName").AppendText("TestFio");
-			browser.TextField("contactInfo").AppendText("TestAppeal@app.net");
-			browser.Button("saveFeedback").Click();
-			Assert.That(browser.Text, Is.StringContaining("Спасибо, Ваша заявка принята."));
-		}
-
 		[Test, Ignore("Чинить")]
 		public void WarningTest()
 		{

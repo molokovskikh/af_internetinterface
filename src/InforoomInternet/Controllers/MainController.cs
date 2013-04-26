@@ -81,7 +81,7 @@ namespace InforoomInternet.Controllers
 			mailToAdress = "kvasovtest@analit.net";
 #endif
 			var lease = FindLease();
-			var client = lease.Endpoint != null ? lease.Endpoint.Client : null;
+			var client = lease != null && lease.Endpoint != null ? lease.Endpoint.Client : null;
 			client = client ?? new Client();
 			PropertyBag["client"] = client;
 
