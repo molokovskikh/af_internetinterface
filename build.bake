@@ -19,7 +19,7 @@ task @default, [@Build, @BuildBackground]
 
 task @Build, [@BuildWebSite, @BuildBackground, @BuildPrinter]
 
-task @deploy, [@CheckScmChanges, @Production, @Build, @Migrate, @Backup, @WebDeploy, @DeployBackground, @DeployPrinter, @SendDeployNotification]
+task @deploy, [@DeployPipeline, @DeployPrinter]
 
 task @DeployBackground, [@BuildBackground, @Production, @Migrate, @SendDeployNotification]:
 	oldProject = Globals.Project

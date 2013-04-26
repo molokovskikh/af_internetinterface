@@ -1,15 +1,13 @@
-import file from Migration.bake
-import file from Deploy.bake
-import file from WebSiteSupport.bake
-import file from Tools.bake
+import file from Web.bake
 
 Global(
 	HumanReadableName : "Сайт интернет провайдера",
 	Project : @InforoomInternet,
 	DeployAlias : @IVrn
 )
+
 task @default, [@Build]
 
 task @Build, [@BuildWebSite]
 
-task @deploy, [@CheckScmChanges, @BuildWebSite, @Production, @Migrate, @Backup, @WebDeploy, @SendDeployNotification]
+task @deploy, [@DeployPipeline]
