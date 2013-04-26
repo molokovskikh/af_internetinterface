@@ -1,11 +1,4 @@
-﻿<style>
-	label.error
-	{
-		display: block;
-		clear: both;
-		margin-left: 0;
-	}
-</style>
+﻿${app.Asset("alt.validation.error.css")}
 ${FormHelper.FormTag("", {})}
 ${FormHelper.HiddenField("referer")}
 <table class="headTable fullWidth">

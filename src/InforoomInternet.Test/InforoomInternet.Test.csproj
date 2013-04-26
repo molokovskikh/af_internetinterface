@@ -125,6 +125,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Functional\BaseFunctionalFixture.cs" />
+    <Compile Include="Functional\MainFixture.cs" />
     <Compile Include="Functional\PrivateOfficeFixture.cs" />
     <Compile Include="Functional\SelfRegistration.cs" />
     <Compile Include="Functional\Setup.cs" />

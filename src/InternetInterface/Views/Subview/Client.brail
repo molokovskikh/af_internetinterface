@@ -47,7 +47,7 @@ $(function () {
 });
 </script>
 
-<table class="table" style="width:100%; " border="0" id="EditTable"> 
+<table class="table" style="width:100%; " border="0" id="EditTable">
 <tr>
 	<th colspan="3">
 		Личная информация</th>
@@ -105,7 +105,7 @@ $(function () {
 	</td>
 </tr>
 <tr>
-	<td > 
+	<td >
 		Email</td>
 	<td>
 		<input id="Email" type="text" value="${client.Email}" name="client.Email"/></td>
@@ -114,9 +114,19 @@ $(function () {
 	</td>
 </tr>
 <%end %>
+<tr>
+	<td>
+		${app.Label("client.ExternalClientId")}
+	</td>
+	<td>
+		${app.Edit("client.ExternalClientId")}
+	<td>
+		${app.GetValidationError("client.ExternalClientId")}
+	</td>
+</tr>
 </table>
 <% if not IsDefined("EditAddress") or EditAddress != true: %>
-<table class="table" border="0" id="AdressTable" style="margin-bottom: 15px;"> 
+<table class="table" border="0" id="AdressTable" style="margin-bottom: 15px;">
 <thead>
 <th colspan=14>Адрес</th>
 </thead>
@@ -168,7 +178,7 @@ $(function () {
 </tbody>
 </table>
 <% end %>
-<table class="table"> 
+<table class="table">
 	<thead>
 		<tr>
 			<th colspan="3">Паспортные данные</th>
@@ -271,7 +281,7 @@ $(function () {
 				</select>
 			</td>
 			<td>
-				<%if IsDefined("statusCanChanged"): 
+				<%if IsDefined("statusCanChanged"):
 					output WriteMessageError(statusCanChanged)
 				end %>
 			</td>

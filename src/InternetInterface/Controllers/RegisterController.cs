@@ -87,6 +87,7 @@ namespace InternetInterface.Controllers
 				DbSession.Flush();
 
 				//перед генерацией пароля нужно все сохранить тк для
+				physicalClient.AfterSave();
 				var password = client.GeneragePassword();
 
 				var apartmentForClient = DbSession.Query<Apartment>().FirstOrDefault(a => a.House == physicalClient.HouseObj && a.Number == physicalClient.Apartment);

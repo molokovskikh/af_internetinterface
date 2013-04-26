@@ -81,8 +81,9 @@ namespace InternetInterface.Test.Integration
 			client.Status = worked;
 			var endpoint = new ClientEndpoint(client, 1, commutator);
 			client.Endpoints.Add(endpoint);
-			var house = new House("Студенческая", 12);
+			var house = new House("Студенческая", 12, new RegionHouse("Тестовый регион"));
 			session.Save(client);
+			session.Save(house.Region);
 			session.Save(house);
 
 			session.Flush();

@@ -69,7 +69,7 @@ namespace InternetInterface.Test.Functional
 					}
 
 					if (!session.Query<House>().Any())
-						session.Save(new House("Тестовая улица", 1));
+						session.Save(new House("Тестовая улица", 1, new RegionHouse("Тестовый регион")));
 				});
 			}
 		}
