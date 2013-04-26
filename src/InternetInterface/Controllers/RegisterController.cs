@@ -89,13 +89,11 @@ namespace InternetInterface.Controllers
 				//перед генерацией пароля нужно все сохранить тк для
 				var password = client.GeneragePassword();
 
-				var apartmentForClient =
-					DbSession.Query<Apartment>().FirstOrDefault(a => a.House == physicalClient.HouseObj && a.Number == physicalClient.Apartment);
+				var apartmentForClient = DbSession.Query<Apartment>().FirstOrDefault(a => a.House == physicalClient.HouseObj && a.Number == physicalClient.Apartment);
 				if (apartmentForClient != null)
 					DbSession.Delete(apartmentForClient);
 
 				Flash["_client"] = client;
-				Flash["WhoConnected"] = client.WhoConnected;
 				Flash["Password"] = password;
 				Flash["Client"] = physicalClient;
 				Flash["AccountNumber"] = client.Id.ToString("00000");
@@ -200,12 +198,12 @@ namespace InternetInterface.Controllers
 						Port = Int32.Parse(info.Port),
 						Switch = DbSession.Load<NetworkSwitch>(info.Switch),
 					};
-					endPoint.SaveAndFlush();
 					var brigad = DbSession.Load<Brigad>(brigadForConnect);
-					client.WhoConnected = brigad;
-					client.WhoConnectedName = brigad.Name;
+					endPoint.WhoConnected = brigad;
+					endPoint.WhoConnectedName = brigad.Name;
+					DbSession.Save(endPoint);
 					client.Status = Status.Find((uint)StatusType.Worked);
-					client.UpdateAndFlush();
+					DbSession.Save(client);
 				}
 				RegisterLegalPerson();
 				PropertyBag["EditiongMessage"] = "Клиент успешно загистрирвоан";

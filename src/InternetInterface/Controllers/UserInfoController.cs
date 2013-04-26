@@ -372,8 +372,8 @@ namespace InternetInterface.Controllers
 			uint EditConnect, string ConnectSum,
 			[DataBind("order")] Orders Order, bool withoutEndPoint, uint currentEndPoint)
 		{
+			var needNewServiceForStaticIp = false;
 			var client = DbSession.Load<Client>(ClientID);
-			bool brigadChangeFlag = client.WhoConnected == null;
 			var newFlag = false;
 			var clientEntPoint = new ClientEndpoint();
 			var existingOrder = DbSession.Query<Orders>().FirstOrDefault(o => o.Id == EditConnect);
@@ -421,13 +421,18 @@ namespace InternetInterface.Controllers
 							clientEntPoint.PackageId = packageSpeed.PackageId;
 						}
 						if (clientEntPoint.Ip == null && !string.IsNullOrEmpty(ConnectInfo.static_IP))
-							new UserWriteOff {
-								Client = client,
-								Date = DateTime.Now,
-								Sum = 200,
-								Comment = string.Format("Плата за фиксированный Ip адрес ({0})", ConnectInfo.static_IP),
-								Registrator = InitializeContent.Partner
-							}.Save();
+							if (client.IsPhysical()) {
+								new UserWriteOff {
+									Client = client,
+									Date = DateTime.Now,
+									Sum = 200,
+									Comment = string.Format("Плата за фиксированный Ip адрес ({0})", ConnectInfo.static_IP),
+									Registrator = InitializeContent.Partner
+								}.Save();
+							}
+							else {
+								needNewServiceForStaticIp = true;
+							}
 						clientEntPoint.Client = client;
 						IPAddress address;
 						if (ConnectInfo.static_IP != null && IPAddress.TryParse(ConnectInfo.static_IP, out address))
@@ -448,10 +453,10 @@ namespace InternetInterface.Controllers
 							}
 							Order.EndPoint = clientEntPoint;
 						}
-						if (brigadChangeFlag) {
+						if (newFlag) {
 							var brigad = DbSession.Load<Brigad>(BrigadForConnect);
-							client.WhoConnected = brigad;
-							client.WhoConnectedName = brigad.Name;
+							clientEntPoint.WhoConnected = brigad;
+							clientEntPoint.WhoConnectedName = brigad.Name;
 						}
 						client.ConnectedDate = DateTime.Now;
 						if (client.Status.Id == (uint)StatusType.BlockedAndNoConnected)
@@ -522,6 +527,16 @@ namespace InternetInterface.Controllers
 					}
 				}
 
+				if (needNewServiceForStaticIp) {
+					var staticIpService = new OrderService {
+						Cost = 200,
+						Order = existingOrder,
+						Description = string.Format("Плата за фиксированный Ip адрес ({0})", ConnectInfo.static_IP)
+					};
+					DbSession.Save(staticIpService);
+					existingOrder.OrderServices.Add(staticIpService);
+				}
+
 				foreach (var orderService in Order.OrderServices) {
 					if(orderService.Id > 0) {
 						var service = existingOrder.OrderServices.First(s => s.Id == orderService.Id);
@@ -561,17 +576,19 @@ namespace InternetInterface.Controllers
 		public void PassAndShowCard(uint ClientID)
 		{
 			if (CategorieAccessSet.AccesPartner("SSI")) {
-				var _client = DbSession.Load<Client>(ClientID);
-				var client = _client.PhysicalClient;
-				var Password = CryptoPass.GeneratePassword();
-				client.Password = CryptoPass.GetHashString(Password);
-				client.UpdateAndFlush();
-				PropertyBag["WhoConnected"] = _client.WhoConnected;
-				PropertyBag["Client"] = client;
-				PropertyBag["_client"] = _client;
-				PropertyBag["Password"] = Password;
-				PropertyBag["AccountNumber"] = _client.Id.ToString("00000");
-				PropertyBag["ConnectInfo"] = _client.GetConnectInfo(DbSession).FirstOrDefault();
+				var client = DbSession.Load<Client>(ClientID);
+				var physicalClient = client.PhysicalClient;
+				var password = CryptoPass.GeneratePassword();
+				physicalClient.Password = CryptoPass.GetHashString(password);
+				physicalClient.UpdateAndFlush();
+				var endPoint = client.Endpoints.FirstOrDefault();
+				if (endPoint != null)
+					PropertyBag["WhoConnected"] = endPoint.WhoConnected;
+				PropertyBag["Client"] = physicalClient;
+				PropertyBag["_client"] = client;
+				PropertyBag["Password"] = password;
+				PropertyBag["AccountNumber"] = client.Id.ToString("00000");
+				PropertyBag["ConnectInfo"] = client.GetConnectInfo(DbSession).FirstOrDefault();
 				RenderView("ClientRegisteredInfo");
 			}
 		}
@@ -951,8 +968,9 @@ where r.`Label`= :LabelIndex;")
 			PropertyBag["ClientCode"] = clientId;
 			PropertyBag["Switches"] = NetworkSwitch.All(DbSession);
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
-			if (client.WhoConnected != null)
-				PropertyBag["ChBrigad"] = client.WhoConnected.Id;
+			var endPoint = client.Endpoints.FirstOrDefault();
+			if (endPoint != null && endPoint.WhoConnected != null)
+				PropertyBag["ChBrigad"] = endPoint.WhoConnected.Id;
 			else {
 				var brigad = Brigad.FindFirst();
 				if (brigad != null)

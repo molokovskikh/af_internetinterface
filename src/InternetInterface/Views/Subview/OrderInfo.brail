@@ -402,12 +402,13 @@ ${app.Asset("EditingConnect.js")}
 		<tr>
 		 <td>Бригада по подключению</td>
 		 <%if _client.WhoConnected == null: %>
-		  <td colspan=2><select name="BrigadForConnect" id="BrigadForConnect" class="width100" >
-		  <% for j, Brigad in enumerate(Brigads): %>
-				<option id="OptionBrigad${j}" value="${Brigad.Id}" ${"selected" if (Brigad.Id == ChBrigad)} > ${Brigad.Name} </option>
-		<% end %>
-		</select>
-		</td>
+			<td colspan=2>
+				<select name="BrigadForConnect" id="BrigadForConnect" class="width100" >
+				<% for j, Brigad in enumerate(Brigads): %>
+					<option id="OptionBrigad${j}" value="${Brigad.Id}" ${"selected" if (Brigad.Id == ChBrigad)} > ${Brigad.Name} </option>
+				<% end %>
+				</select>
+			</td>
 		 <%else: %>
 		 <td colspan=2>
 			 ${_client.WhoConnected.Name}

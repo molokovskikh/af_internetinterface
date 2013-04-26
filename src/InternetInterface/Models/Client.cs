@@ -100,12 +100,6 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string WhoRegisteredName { get; set; }
 
-		[BelongsTo("WhoConnected", Lazy = FetchWhen.OnInvoke)]
-		public virtual Brigad WhoConnected { get; set; }
-
-		[Property]
-		public virtual string WhoConnectedName { get; set; }
-
 		[Property]
 		public virtual DateTime ConnectedDate { get; set; }
 
