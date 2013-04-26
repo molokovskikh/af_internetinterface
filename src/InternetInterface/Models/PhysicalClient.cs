@@ -236,9 +236,9 @@ namespace InternetInterface.Models
 			return new WriteOff {
 				Client = Client,
 				WriteOffDate = SystemTime.Now(),
-				WriteOffSum = sum,
-				MoneySum = moneyWriteoff,
-				VirtualSum = virtualWriteoff,
+				WriteOffSum = Math.Round(sum, 2),
+				MoneySum = Math.Round(moneyWriteoff, 2),
+				VirtualSum = Math.Round(virtualWriteoff, 2),
 				Sale = Client.Sale,
 				BeforeWriteOffBalance = Client.Balance
 			};
