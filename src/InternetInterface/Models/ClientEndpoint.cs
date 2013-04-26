@@ -64,11 +64,8 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual uint? Pool { get; set; }
 
-		[BelongsTo("WhoConnected", Lazy = FetchWhen.OnInvoke)]
+		[BelongsTo(Lazy = FetchWhen.OnInvoke)]
 		public virtual Brigad WhoConnected { get; set; }
-
-		[Property]
-		public virtual string WhoConnectedName { get; set; }
 
 		[OneToOne(PropertyRef = "EndPoint")]
 		public virtual PaymentForConnect PayForCon { get; set; }

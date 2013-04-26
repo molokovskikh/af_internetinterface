@@ -32,6 +32,7 @@
 			<th>Бонусов</th>
 			<th>Баланс перед списанием</th>
 			<th>Комментарий</th>
+			<th>Удаление</th>
 		</tr>
 	</thead>
 	<% groupYear = IsDefined("filter.grouped") and filter.grouped == """year""" %>
@@ -58,14 +59,14 @@
 			<tbody>
 			<%firstMonth =  item.WriteOffDate%>
 		<%end %>
-			<tr id="Tr${i}" class="${app.Style(item)}">
+			<tr id="Tr${i}" class="${app.Style(item)} WriteOffBale">
 				<td>${item.GetDate(grouped)}</td>
 				<td>${item.WriteOffSum}</td>
 				<td>${item.MoneySum.ToString("0.00")}</td>
 				<td>${item.VirtualSum.ToString("0.00")}</td>
 				<td>${item.GeBeforeWriteOffBalance(grouped)}</td>
 				<td class="comment_td">${item.Comment}</td>
-				<td>
+				<td class="deletingField">
 					<input type="button" class="cancelButton" onclick="DeleteWriteOff('${siteroot}/UserInfo/${item.Id}/DeleteWriteOff', 'Сумма: ${item.WriteOffSum}, от ${item.GetDate(grouped)}')" value="Удалить" />
 				</td>
 			</tr>

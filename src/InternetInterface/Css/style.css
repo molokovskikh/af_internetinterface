@@ -50,7 +50,6 @@ input.checkbox {
 }
 
 #main {
-  background: #EBEBEB;
   width: 73%;
 }
 
@@ -77,6 +76,14 @@ input.checkbox {
   padding: 5px 5px 5px 15px;
   font-size:18px;
   color: #456;
+}
+
+.WriteOffBale td {
+	width: 100px;
+}
+
+.WriteOffBale td.deletingField {
+	width: 40px;
 }
 
 .main_container {
@@ -538,7 +545,7 @@ div.commented, .commented {
 	background-color: #F5EFDF;
 }
 
-.comment_td {
+.table tbody tr td.comment_td {
 	width: 150px;
 }
 

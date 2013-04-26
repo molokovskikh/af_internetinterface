@@ -623,13 +623,15 @@ PS.Speed,
 CE.Monitoring,
 CE.Id as endpointId,
 CE.ActualPackageId,
-pfc.`Sum` as ConnectSum
+pfc.`Sum` as ConnectSum,
+cb.Name as WhoConnected
 from internet.ClientEndpoints CE
 left join internet.NetworkSwitches NS on NS.Id = CE.Switch
 #join internet.Clients C on CE.Client = C.Id
 left join internet.Leases L on L.Endpoint = CE.Id
 left join internet.PackageSpeed PS on PS.PackageId = CE.PackageId
 left join internet.PaymentForConnect pfc on pfc.EndPoint = CE.id
+left join internet.ConnectBrigads cb on cb.Id = ce.WhoConnected
 where CE.Client = {0}", Id))
 					.ToList<ClientConnectInfo>();
 				return infos;

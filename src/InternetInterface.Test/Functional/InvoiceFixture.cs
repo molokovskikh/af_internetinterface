@@ -21,7 +21,6 @@ namespace InternetInterface.Test.Functional
 			};
 			var lawyerPerson = new LawyerPerson {
 				Name = "ООО Рога и Копыта",
-				Tariff = 10000,
 				Region = session.Query<RegionHouse>().First()
 			};
 			client.LawyerPerson = lawyerPerson;

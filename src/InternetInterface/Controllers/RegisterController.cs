@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
@@ -174,8 +175,12 @@ namespace InternetInterface.Controllers
 					LawyerPerson = person,
 					Name = person.ShortName,
 					Type = ClientType.Legal,
+					Orders = new List<Orders>()
 				};
-				client.SaveAndFlush();
+				client.Orders.Add(Order);
+				DbSession.Save(client);
+				Order.Client = client;
+				//DbSession.Save(Order);
 
 				if (!string.IsNullOrEmpty(person.Telephone)) {
 					client.Contacts.Add(new Contact(client, ContactType.MobilePhone, person.Telephone) {
@@ -201,8 +206,9 @@ namespace InternetInterface.Controllers
 					};
 					var brigad = DbSession.Load<Brigad>(brigadForConnect);
 					endPoint.WhoConnected = brigad;
-					endPoint.WhoConnectedName = brigad.Name;
 					DbSession.Save(endPoint);
+					Order.EndPoint = endPoint;
+					DbSession.Save(Order);
 					client.Status = Status.Find((uint)StatusType.Worked);
 					DbSession.Save(client);
 				}

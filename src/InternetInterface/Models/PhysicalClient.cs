@@ -42,6 +42,7 @@ namespace InternetInterface.Models
 		public string Port { get; set; }
 		public string Speed { get; set; }
 		public bool Monitoring { get; set; }
+		public string WhoConnected { get; set; }
 
 		public decimal ConnectSum { get; set; }
 

@@ -63,14 +63,9 @@ div.scroller
 	font-weight:bold;
 }
 
-	#on_line_clients_head th
-		{
-			border:1px double black;
-		}
 #searchTable
 {
-	width:600px;
-	height:200px;
-	border: 1px double Black;
-	background-color:White;
-	}
+	width: 600px;
+	height: 200px;
+	background-color: White;
+}

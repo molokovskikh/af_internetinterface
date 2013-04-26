@@ -52,7 +52,6 @@ namespace InforoomInternet.Test.Functional
 						LawyerPerson =
 							new LawyerPerson {
 								Balance = -100,
-								Tariff = 1000,
 							}
 					}
 				}

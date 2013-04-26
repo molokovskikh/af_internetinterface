@@ -18,7 +18,6 @@ namespace InternetInterface.Test.Helpers
 			var person = new LawyerPerson {
 				Name = "TestClient",
 				Balance = 1000,
-				Tariff = 100,
 				Region = GetRegionId()
 			};
 			return new Client() {

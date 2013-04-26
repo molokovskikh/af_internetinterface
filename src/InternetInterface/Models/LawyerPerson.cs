@@ -52,8 +52,9 @@ namespace InternetInterface.Models
 		[Property, Auditable("Контактное лицо")]
 		public virtual string ContactPerson { get; set; }
 
-		[Property, ValidateDecimal("Ошибка ввода суммы"), ValidateGreaterThanZero, Auditable("Абон. плата")]
-		public virtual decimal? Tariff { get; set; }
+		public virtual decimal? Tariff {
+			get { return client.Orders.SelectMany(o => o.OrderServices).Where(s => s.IsPeriodic).Sum(s => s.Cost); }
+		}
 
 		[Property]
 		public virtual decimal Balance { get; set; }

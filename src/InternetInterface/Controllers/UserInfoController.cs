@@ -189,7 +189,7 @@ namespace InternetInterface.Controllers
 
 			PropertyBag["EConnect"] = filter.EditingConnect;
 
-			if((client.Orders == null || client.Orders.All(o => o.OrderServices == null)) && client.LawyerPerson.Tariff == null)
+			if((client.Orders == null || client.Orders.All(o => o.OrderServices == null)))
 				PropertyBag["Message"] = Message.Error("Не задана абонентская плата для клиента ! Клиент отключен !");
 
 			PropertyBag["CallLogs"] = UnresolvedCall.LastCalls;
@@ -453,10 +453,15 @@ namespace InternetInterface.Controllers
 							}
 							Order.EndPoint = clientEntPoint;
 						}
-						if (newFlag) {
-							var brigad = DbSession.Load<Brigad>(BrigadForConnect);
-							clientEntPoint.WhoConnected = brigad;
-							clientEntPoint.WhoConnectedName = brigad.Name;
+						if (newFlag || clientEntPoint.WhoConnected == null) {
+							if (client.IsPhysical()) {
+								var graph = client.ConnectGraph;
+								clientEntPoint.WhoConnected = graph.Brigad;
+							}
+							else {
+								var brigad = DbSession.Get<Brigad>(BrigadForConnect);
+								clientEntPoint.WhoConnected = brigad;
+							}
 						}
 						client.ConnectedDate = DateTime.Now;
 						if (client.Status.Id == (uint)StatusType.BlockedAndNoConnected)
@@ -521,8 +526,9 @@ namespace InternetInterface.Controllers
 				if(Order.OrderServices == null)
 					Order.OrderServices = new List<OrderService>();
 
-				foreach (var orderService in existingOrder.OrderServices) {
+				foreach (var orderService in existingOrder.OrderServices.ToList()) {
 					if(Order.OrderServices.All(s => s.Id != orderService.Id)) {
+						existingOrder.OrderServices.Remove(orderService);
 						DbSession.Delete(orderService);
 					}
 				}
@@ -547,9 +553,11 @@ namespace InternetInterface.Controllers
 					}
 					else {
 						orderService.Order = existingOrder;
+						existingOrder.OrderServices.Add(orderService);
 						DbSession.Save(orderService);
 					}
 				}
+				DbSession.Save(existingOrder);
 				RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID);
 				return;
 			}
@@ -768,13 +776,6 @@ where r.`Label`= :LabelIndex;")
 					updateClient.LogComment = comment;
 				}
 
-				if (updateClient.IsChanged(c => c.Tariff)) {
-					_client.Disabled = updateClient.Tariff == null;
-					if (_client.IsChanged(c => c.Disabled)) {
-						var message = !_client.Disabled ? "Клиент включен оператором, тариф назначен" : "Клиент отключен оператором, тариф удален";
-						Appeals.CreareAppeal(message, _client, AppealType.Statistic);
-					}
-				}
 				_client.Name = updateClient.ShortName;
 				DbSession.Save(_client);
 				DbSession.Save(updateClient);
@@ -1150,6 +1151,10 @@ where r.`Label`= :LabelIndex;")
 					Day = DateTime.Parse(Request.Form["graph_date"]),
 				}.Save();
 				client.AdditionalStatus = AdditionalStatus.Find((uint)AdditionalStatusType.AppointedToTheGraph);
+				foreach (var clientEndpoint in client.Endpoints) {
+					clientEndpoint.WhoConnected = briad;
+					DbSession.Save(clientEndpoint);
+				}
 				DbSession.Save(client);
 				new Appeals {
 					Client = client,
@@ -1355,7 +1360,7 @@ where r.`Label`= :LabelIndex;")
 			DbSession.Save(message);
 			Notify("Удалено");
 			EmailHelper.Send("internet@ivrn.net", "Уведомление об удалении списания", string.Format(@"
-Отменено платеж №{0}
+Отменено списание №{0}
 Клиент: №{1} - {2}
 Сумма: {3}
 Оператор: {4}

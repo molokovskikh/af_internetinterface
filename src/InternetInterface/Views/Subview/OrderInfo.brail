@@ -182,7 +182,7 @@ ${app.Asset("EditingConnect.js")}
 		</tr>
 		<tr>
 		  <td><span class="description">Бригада </span></td>
-		  <td>${?_client.WhoConnected.Name}</td>
+		  <td>${?OrderInfo.ClientConnectInfo.WhoConnected}</td>
 		</tr>
 		<%if OrderInfo.ClientConnectInfo.ConnectSum > 0 : %>
 		<tr>
@@ -280,7 +280,7 @@ ${app.Asset("EditingConnect.js")}
 					Дата окончания
 				</td>
 				<td colspan="2">
-					<input type="text" id="order_EndDate" name="order.EndDate" value="${OrderInfo.Order.EndDate.ToShortDateString()}" class="validate-date graph_date valid">
+					<input type="text" id="order_EndDate" name="order.EndDate" value="${?OrderInfo.Order.EndDate.ToShortDateString()}" class="validate-date graph_date valid">
 				</td>
 			</tr>
 
@@ -401,7 +401,7 @@ ${app.Asset("EditingConnect.js")}
 		</tr>
 		<tr>
 		 <td>Бригада по подключению</td>
-		 <%if _client.WhoConnected == null: %>
+		 <%if OrderInfo.ClientConnectInfo.WhoConnected == null: %>
 			<td colspan=2>
 				<select name="BrigadForConnect" id="BrigadForConnect" class="width100" >
 				<% for j, Brigad in enumerate(Brigads): %>
@@ -411,7 +411,7 @@ ${app.Asset("EditingConnect.js")}
 			</td>
 		 <%else: %>
 		 <td colspan=2>
-			 ${_client.WhoConnected.Name}
+			 ${OrderInfo.ClientConnectInfo.WhoConnected}
 		 </td>
 		 <%end %>
 		 </tr>

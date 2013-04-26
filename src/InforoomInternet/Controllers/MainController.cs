@@ -228,7 +228,6 @@ namespace InforoomInternet.Controllers
 							RatedPeriodDate = DateTime.Now,
 							LawyerPerson = new LawyerPerson {
 								Balance = -20000,
-								Tariff = 10000
 							}
 						}
 					}

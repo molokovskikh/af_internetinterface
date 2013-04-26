@@ -80,7 +80,7 @@
 		<%end %>
 		<%end %>
 		<tr>
-			<td><span class="description">Абонентская плата:</span> ${Client.Tariff}</td>
+			<td><span class="description">Абонентская плата:</span> ${Client.Tariff.ToString("C")}</td>
 		</tr>
 		 <%if PartnerAccessSet.AccesPartner("SSI"): %>
 		<tr>

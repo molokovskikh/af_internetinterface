@@ -23,7 +23,6 @@ namespace Billing.Test.Integration
 			using (new SessionScope()) {
 				var lPerson = new LawyerPerson {
 					Balance = -3000,
-					Tariff = 1000m,
 					Region = ArHelper.WithSession(s => {
 				var region = s.Query<RegionHouse>().FirstOrDefault(r => r.Name == "Воронеж");
 				if (region == null) {

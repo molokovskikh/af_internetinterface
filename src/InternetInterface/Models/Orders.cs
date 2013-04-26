@@ -44,7 +44,7 @@ namespace InternetInterface.Models
 		[BelongsTo]
 		public virtual ClientEndpoint EndPoint { get; set; }
 
-		[HasMany(ColumnKey = "OrderId", Lazy = true)]
+		[HasMany(ColumnKey = "OrderId", Lazy = true, Cascade = ManyRelationCascadeEnum.SaveUpdate)]
 		public virtual IList<OrderService> OrderServices { get; set; }
 
 		[BelongsTo(Column = "ClientId")]
@@ -83,10 +83,13 @@ namespace InternetInterface.Models
 
 		public static uint GetNextNumber(ISession session, uint clientId)
 		{
-			var orders = session.Query<Orders>().Where(o => o.Client.Id == clientId).Max(o => (int)o.Number);
+			var order = 0;
+			var client = session.Get<Client>(clientId);
+			if (client != null && client.Orders.Count > 0)
+				order = client.Orders.Max(o => (int)o.Number);
 			uint number = 1;
-			if(orders > 0)
-				number = (uint)orders + 1;
+			if (order > 0)
+				number = (uint)order + 1;
 			return number;
 		}
 	}

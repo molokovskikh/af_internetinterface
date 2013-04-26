@@ -1,4 +1,5 @@
-﻿<script type="text/javascript">
+﻿${app.Asset("UserInfo.js")}
+<script type="text/javascript">
 	$(function () {
 		$('.button_mod').click(function () {
 			loadData(this);
