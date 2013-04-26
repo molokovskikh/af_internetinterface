@@ -24,9 +24,9 @@
 		$('#myModal').append(html);
 	}
 </script>
-<div id="myModal" class="reveal-modal"> 
+<div id="myModal" class="reveal-modal">
 <a class="close-reveal-modal">x</a>
-</div> 
+</div>
 
 <div style="width:50%; float:left;">
 <div id="main" style="width: 100%;">
@@ -208,71 +208,71 @@
 		</tr>
 		<%end %>
 		<%end %>
-<%if PartnerAccessSet.AccesPartner("ECI"): %>
-		<tr>
-			<td>
-				<% if _client.AdditionalCanUsed("Refused"): %>
-					<a href="#" class="big-link" data-reveal-id="myModal"> 
-						<button id="Refused" name="../UserInfo/AddInfo.rails?ClientCode=${ClientCode}" class="button_mod">Отказ</button>
-					</a>
-				<%end %>
-				<% if _client.AdditionalCanUsed("NotPhoned"): %>
-					<a href="#" class="big-link" data-reveal-id="myModal"> 
-						<button id="NotPhoned" name="../UserInfo/NoPhoned.rails?ClientCode=${ClientCode}" class="button_mod">Недозвон</button>
-					</a>
-				<%end %>
-				<% if _client.AdditionalCanUsed("AppointedToTheGraph"): %>
-					<a href="#" class="big-link" data-reveal-id="myModal" > 
-						<button id="naznach_but" name="../UserInfo/AppointedToTheGraph.rails?ClientCode=${ClientCode}" class="button_mod2" >${naznach_text}</button>
-					</a>
-				<%end %>
-			 </td>
-		</tr>
-<%end %>
-<%if PartnerAccessSet.AccesPartner("DHCP"): %>
-		<tr>
-			<td>
-				<form class="inlineForm" method="post" action="${siteroot}/UserInfo/AddEndPoint">
-				<input type="hidden" name="clientId" value="${ClientCode}" />
-				<button type="submit"  class="editBut">Добавить точку подключения</button>
-				</form>
+	<%if PartnerAccessSet.AccesPartner("ECI"): %>
+			<tr>
+				<td>
+					<% if _client.AdditionalCanUsed("Refused"): %>
+						<a href="#" class="big-link" data-reveal-id="myModal">
+							<button id="Refused" name="../UserInfo/AddInfo.rails?ClientCode=${ClientCode}" class="button_mod">Отказ</button>
+						</a>
+					<%end %>
+					<% if _client.AdditionalCanUsed("NotPhoned"): %>
+						<a href="#" class="big-link" data-reveal-id="myModal">
+							<button id="NotPhoned" name="../UserInfo/NoPhoned.rails?ClientCode=${ClientCode}" class="button_mod">Недозвон</button>
+						</a>
+					<%end %>
+					<% if _client.AdditionalCanUsed("AppointedToTheGraph"): %>
+						<a href="#" class="big-link" data-reveal-id="myModal" >
+							<button id="naznach_but" name="../UserInfo/AppointedToTheGraph.rails?ClientCode=${ClientCode}" class="button_mod2" >${naznach_text}</button>
+						</a>
+					<%end %>
+				 </td>
+			</tr>
+	<%end %>
+	<%if PartnerAccessSet.AccesPartner("DHCP"): %>
+			<tr>
+				<td>
+					<form class="inlineForm" method="post" action="${siteroot}/UserInfo/AddEndPoint">
+					<input type="hidden" name="clientId" value="${ClientCode}" />
+					<button type="submit"  class="editBut">Добавить точку подключения</button>
+					</form>
 
-				<form class="inlineForm" method="post" action="${siteroot}/UserInfo/RemakeVirginityClient">
-				<input type="hidden" name="clientId" value="${ClientCode}" />
-				<button type="submit"  class="editBut" id="clearGraphButton">Сбросить</button>
-				</form>
-			</td>
-		</tr>
-<%end %>
+					<form class="inlineForm" method="post" action="${siteroot}/UserInfo/RemakeVirginityClient">
+					<input type="hidden" name="clientId" value="${ClientCode}" />
+					<button type="submit"  class="editBut" id="clearGraphButton">Сбросить</button>
+					</form>
+				</td>
+			</tr>
+	<%end %>
 	</tbody>
 </table>
 <%else:%>
-<form class="form edit" id="clientEditForm" method="post" action="${siteroot}/UserInfo/EditInformation">
-<input type="hidden" name="ClientID" value="${ClientCode}" />
-<input type=hidden name="appealType" value="${appealType}" />
+	<form class="form edit" id="clientEditForm" method="post" action="${siteroot}/UserInfo/EditInformation">
+	<input type="hidden" name="ClientID" value="${ClientCode}" />
+	<input type=hidden name="appealType" value="${appealType}" />
 
-<% OutputSubView("""\Subview\Client""") %>
-	<table>
-		<tbody>
-			<tr>
-				<td colspan=4>
-					<label for="comment"><b>Введите Комментарий :</b></label> <br />
-					<textarea id="comment" name="comment" rows="5" cols="100%"></textarea>
-					<div style="" id="errorContainerComment"> </div>
+		<% OutputSubView("""\Subview\Client""") %>
+		<table>
+			<tbody>
+				<tr>
+					<td colspan=4>
+						<label for="comment"><b>Введите Комментарий :</b></label> <br />
+						<textarea id="comment" name="comment" rows="5" cols="100%"></textarea>
+						<div style="" id="errorContainerComment"> </div>
+					</td>
+				</tr>
+				<tr>
+				<td >
+					<div class="actions">
+						<button type="submit" id="SaveButton" class="button save">
+							Сохранить
+						</button>
+					</div>
 				</td>
-			</tr>
-			<tr>
-			<td >
-				<div class="actions">
-					<button type="submit" id="SaveButton" class="button save">
-						Сохранить
-					</button>
-				</div>
-			</td>
-			</tr>
-		</tbody>
-	</table>
-</form>
+				</tr>
+			</tbody>
+		</table>
+	</form>
 <%end %>
 <br />
 <% for i,item in enumerate(ClientConnectInf):

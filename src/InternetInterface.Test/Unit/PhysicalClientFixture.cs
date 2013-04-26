@@ -71,5 +71,14 @@ namespace InternetInterface.Test.Unit
 			Assert.That(client.Client.Payments.Count, Is.EqualTo(1));
 			Assert.That(client.Client.Payments[0].Sum, Is.GreaterThan(0));
 		}
+
+		[Test]
+		public void Copy_client_id_if_external_client_id_mandatory()
+		{
+			client.Client.Id = 100;
+			client.HouseObj = new House("Ленина", 1, new RegionHouse("Белгород") { IsExternalClientIdMandatory = true });
+			client.AfterSave();
+			Assert.AreEqual(100, client.ExternalClientId);
+		}
 	}
 }

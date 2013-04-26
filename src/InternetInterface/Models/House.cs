@@ -15,10 +15,11 @@ namespace InternetInterface.Models
 		{
 		}
 
-		public House(string street, int number)
+		public House(string street, int number, RegionHouse region)
 		{
 			Street = street;
 			Number = number;
+			Region = region;
 		}
 
 		[PrimaryKey]

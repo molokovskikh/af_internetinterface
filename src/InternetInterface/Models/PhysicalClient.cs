@@ -153,7 +153,7 @@ namespace InternetInterface.Models
 		[Property, ValidateNonEmpty("Введите сумму"), ValidateDecimal("Неправильно введено значение суммы")]
 		public virtual decimal ConnectSum { get; set; }
 
-		[Property, ValidateIsUnique("Абонент с таким номером уже зарегистрирован")]
+		[Property, Description("Номер абонента Ситилайн"), ValidateIsUnique("Абонент с таким номером уже зарегистрирован")]
 		public virtual int? ExternalClientId { get; set; }
 
 		//внешний номер договора обязателен только если клиент регистрируется самостоятельно
@@ -300,6 +300,18 @@ namespace InternetInterface.Models
 				Comment = "Бонус при самостоятельной регистрации"
 			};
 			return payment;
+		}
+
+		public virtual void AfterSave()
+		{
+			if (HouseObj == null)
+				return;
+
+			if (HouseObj.Region != null
+				&& HouseObj.Region.IsExternalClientIdMandatory
+				&& ExternalClientId == null) {
+				ExternalClientId = (int?)Client.Id;
+			}
 		}
 	}
 }

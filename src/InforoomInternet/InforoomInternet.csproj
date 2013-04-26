@@ -106,6 +106,8 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\Stylesheets\alt.validation.error.css" />
+    <Content Include="Assets\Javascripts\YandexMetric.js" />
     <Content Include="Content\error_button_small.png" />
     <Content Include="Content\error_small.png" />
     <Content Include="Content\autocomplete_indicator.png" />
@@ -456,7 +458,9 @@
     <Content Include="JavaScript\lightbox\prevlabel.gif" />
     <Content Include="JavaScript\lightbox\prototype.js" />
     <Content Include="JavaScript\lightbox\scriptaculous.js" />
-    <Content Include="Views\Main\SelfRegistration.brail" />
+    <Content Include="Views\Main\SelfRegistration.brail">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Views\BonusPrograms\ConnectFriend.brail" />
     <None Include="Views\Main\Feedback.brail" />
     <None Include="Views\Main\MessageSended.brail" />

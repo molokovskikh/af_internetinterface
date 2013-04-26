@@ -25,7 +25,7 @@ namespace InternetInterface.Test.Functional
 			session.CreateSQLQuery("delete from internet.houses;").ExecuteUpdate();
 			var testRegion1 = new RegionHouse { Name = "testRegionFirst" };
 			session.Save(testRegion1);
-			var house1 = new House("testStreetFirst", 1) { Region = testRegion1 };
+			var house1 = new House("testStreetFirst", 1, testRegion1);
 			session.Save(house1);
 			Close();
 
@@ -81,8 +81,8 @@ namespace InternetInterface.Test.Functional
 			var testRegion2 = new RegionHouse { Name = "testRegionLast" };
 			session.Save(testRegion1);
 			session.Save(testRegion2);
-			var house1 = new House("testStreetFirst", 1) { Region = testRegion1 };
-			var house2 = new House("testStreetlast", 2) { Region = testRegion2 };
+			var house1 = new House("testStreetFirst", 1, testRegion1);
+			var house2 = new House("testStreetlast", 2, testRegion2);
 			session.Save(house1);
 			session.Save(house2);
 			Close();
