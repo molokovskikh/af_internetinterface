@@ -53,7 +53,7 @@ namespace InternetInterface.Models
 		public virtual string ContactPerson { get; set; }
 
 		public virtual decimal? Tariff {
-			get { return client.Orders.SelectMany(o => o.OrderServices).Where(s => s.IsPeriodic).Sum(s => s.Cost); }
+			get { return client.Orders.Where(o => !o.Disabled).SelectMany(o => o.OrderServices).Where(s => s.IsPeriodic).Sum(s => s.Cost); }
 		}
 
 		[Property]
