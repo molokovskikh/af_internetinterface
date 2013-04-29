@@ -13,7 +13,7 @@
 
 <link rel="stylesheet" href="${siteroot}/CSS/styles.css" type="text/css" />
 <link rel="stylesheet" href="${siteroot}/assets/Stylesheets/themes/base/jquery.ui.progressbar.css" type="text/css" />
-<link rel="stylesheet" href="${siteroot}/assets/Stylesheets/themes/base/jquery-ui-1.8.16.custom.css" type="text/css" />
+${app.Asset("jquery-ui-1.8.16.custom.css")}
 
 <%if loadInternetModules: %>
 <script type="text/javascript" src="http://userapi.com/js/api/openapi.js?45"></script>
