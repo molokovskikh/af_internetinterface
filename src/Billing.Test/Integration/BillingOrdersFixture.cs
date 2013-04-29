@@ -115,7 +115,6 @@ namespace Billing.Test.Integration
 			};
 			session.Save(service);
 			Close();
-			//MainBilling.MagicDate = SystemTime.Now().AddMonths(-2);
 			billing.Compute();
 			var writeOff = session.Query<WriteOff>().Where(w => w.Client == lawyerClient).ToArray();
 			Assert.That(writeOff.Sum(w => w.WriteOffSum), Is.EqualTo(133));
@@ -136,7 +135,6 @@ namespace Billing.Test.Integration
 			};
 			session.Save(service);
 			Close();
-			//MainBilling.MagicDate = SystemTime.Now().AddMonths(-2);
 			billing.Compute();
 			var writeOff = session.Query<WriteOff>().Where(w => w.Client == lawyerClient).ToArray();
 			Assert.That(writeOff.Sum(w => w.WriteOffSum), Is.EqualTo(100));
@@ -156,7 +154,6 @@ namespace Billing.Test.Integration
 			};
 			session.Save(service);
 			Close();
-			//MainBilling.MagicDate = SystemTime.Now().AddMonths(-2);
 			for (var i = 1; i <= 30; i++) {
 				SystemTime.Now = () => new DateTime(2012, 4, i);
 				billing.Compute();
