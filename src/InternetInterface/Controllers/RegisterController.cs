@@ -221,6 +221,9 @@ namespace InternetInterface.Controllers
 					client.Status = Status.Find((uint)StatusType.Worked);
 					DbSession.Save(client);
 				}
+				else
+					if (!DoNotCreateOrder)
+					DbSession.Save(order);
 				RegisterLegalPerson();
 				PropertyBag["EditiongMessage"] = "Клиент успешно загистрирвоан";
 				RedirectToUrl("../UserInfo/LawyerPersonInfo.rails?filter.ClientCode=" + client.Id);
