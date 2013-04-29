@@ -113,12 +113,12 @@ namespace InternetInterface.Models
 			return ViewHelper.InWords((float)Sum);
 		}
 
-		public IList<Orders> Orders
+		public IList<Order> Orders
 		{
 			get
 			{
 				if (Parts == null)
-					return new List<Orders>();
+					return new List<Order>();
 				var group = Parts.Select(p => p.OrderService).GroupBy(o => o.Order);
 				return group.Select(g => g.Key).ToList();
 			}

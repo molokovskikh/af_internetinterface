@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
+using Castle.Core.Smtp;
 using Castle.MonoRail.TestSupport;
 using Common.Tools;
+using Common.Web.Ui.MonoRailExtentions;
 using InternetInterface.Controllers;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NHibernate;
 using NHibernate.Linq;
 using NUnit.Framework;
+using Rhino.Mocks;
 
 namespace InternetInterface.Test.Integration
 {
@@ -18,6 +22,9 @@ namespace InternetInterface.Test.Integration
 	public class UserInfoControllerFixture : SessionControllerFixture
 	{
 		private UserInfoController controller;
+		private bool _sended;
+		private MailMessage _message;
+		private IEmailSender _sender;
 
 		[SetUp]
 		public void Setup()
@@ -26,6 +33,17 @@ namespace InternetInterface.Test.Integration
 			PrepareController(controller);
 
 			controller.DbSession = session;
+
+			_sender = MockRepository.GenerateStub<IEmailSender>();
+			_sender.Stub(s => s.Send(_message)).IgnoreArguments()
+				.Repeat.Any()
+				.Callback(new Delegates.Function<bool, MailMessage>(m => {
+					_message = m;
+					_sended = true;
+					return true;
+				}));
+
+			BaseMailerExtention.SenderForTest = _sender;
 		}
 
 		[Test(Description = "Проверяет корректное создание акта и счета при создании или редактировании заказа"), Ignore("Отключет функционал")]
@@ -34,7 +52,7 @@ namespace InternetInterface.Test.Integration
 			var client = ClientHelper.CreateLaywerPerson();
 			session.Save(client);
 			SystemTime.Now = () => new DateTime(2013, 4, 20);
-			var order = new Orders();
+			var order = new Order();
 			var orderService = new OrderService {
 				Cost = 50,
 				Description = "Разовая",
@@ -130,6 +148,47 @@ namespace InternetInterface.Test.Integration
 			client = session.Get<Client>(client.Id);
 			Assert.IsTrue(client.Appeals.Any(a => a.Appeal.Contains("Был удален банковский платеж от ")));
 			Assert.IsFalse(client.Payments.Any(p => p.Sum == 333));
+		}
+
+		[Test]
+		public void Delete_write_off_physical_client_test()
+		{
+			var client = ClientHelper.Client();
+			var writeOff = new WriteOff(client, 300) { VirtualSum = 150, MoneySum = 150 };
+			client.PhysicalClient.Balance = 0;
+			session.Save(client);
+			session.Save(writeOff);
+
+			controller.DeleteWriteOff(writeOff.Id);
+
+			Assert.IsTrue(_sended);
+			Assert.That(_message.Subject, Is.EqualTo("Уведомление об удалении списания"));
+			Assert.That(_message.Body, Is.StringContaining("Отменено списание №"));
+			Assert.That(_message.Body, Is.StringContaining("Клиент: №"));
+			Assert.That(_message.Body, Is.StringContaining("Сумма:"));
+			Assert.That(_message.Body, Is.StringContaining("Оператор:"));
+			Assert.AreEqual(client.Balance, 300);
+			Assert.AreEqual(client.PhysicalClient.MoneyBalance, 150);
+			Assert.AreEqual(client.PhysicalClient.VirtualBalance, 150);
+			session.Refresh(client);
+			Assert.That(client.Appeals.First().Appeal, Is.StringContaining("Удалено списание на сумму"));
+		}
+
+		[Test]
+		public void Delete_write_off_lawyer_person_test()
+		{
+			var client = ClientHelper.CreateLaywerPerson();
+			client.LawyerPerson.Balance = 0;
+			var writeOff = new WriteOff(client, 300);
+			session.Save(client);
+			session.Save(writeOff);
+
+			controller.DeleteWriteOff(writeOff.Id);
+
+			Assert.IsTrue(_sended);
+			Assert.AreEqual(client.Balance, 300);
+			session.Refresh(client);
+			Assert.That(client.Appeals.First().Appeal, Is.StringContaining("Удалено списание на сумму"));
 		}
 	}
 }

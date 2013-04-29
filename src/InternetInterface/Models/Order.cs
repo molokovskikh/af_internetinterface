@@ -20,10 +20,10 @@ namespace InternetInterface.Models
 	/// <summary>
 	/// Заказ
 	/// </summary>
-	[ActiveRecord(Schema = "Internet", Lazy = true)]
-	public class Orders
+	[ActiveRecord(Schema = "Internet", Table = "Orders", Lazy = true)]
+	public class Order
 	{
-		public Orders()
+		public Order()
 		{
 			BeginDate = SystemTime.Now();
 			EndDate = SystemTime.Now();
@@ -76,7 +76,7 @@ namespace InternetInterface.Models
 		{
 			var nextMonth = BeginDate.Value.AddMonths(1).Month;
 			var controlDate = new DateTime(BeginDate.Value.Year, nextMonth, 5);
-			if (DateTime.Now.Date <= controlDate)
+			if (SystemTime.Now().Date <= controlDate)
 				return true;
 			return false;
 		}

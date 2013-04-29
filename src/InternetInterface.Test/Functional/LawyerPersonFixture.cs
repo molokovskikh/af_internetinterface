@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Common.Tools;
@@ -52,13 +53,11 @@ namespace InternetInterface.Test.Functional
 			Click("Добавить заказ");
 			browser.SelectList("SelectSwitches").SelectByValue(commutator.Id.ToString());
 			browser.TextField("Port").AppendText("1");
-			browser.TextField(Find.ByName("ConnectSum")).AppendText("100");
 			browser.TextField(Find.ByName("order.Number")).TypeText("99");
 			AddOrderService();
 			Click("Сохранить");
-			var order = session.QueryOver<Orders>().Where(o => o.Client == client).SingleOrDefault();
+			var order = session.QueryOver<Order>().Where(o => o.Client == client).SingleOrDefault();
 			Assert.That(order.EndPoint.Port, Is.EqualTo(1));
-			Assert.That(order.EndPoint.PayForCon.Sum, Is.EqualTo(100));
 			Assert.That(order.Number, Is.EqualTo(99));
 			Assert.That(order.OrderServices.Count, Is.EqualTo(1));
 			Assert.That(order.OrderServices[0].IsPeriodic, Is.True);
@@ -77,7 +76,7 @@ namespace InternetInterface.Test.Functional
 			AddOrderService();
 
 			Click("Сохранить");
-			var order = session.QueryOver<Orders>().Where(o => o.Client == client).SingleOrDefault();
+			var order = session.QueryOver<Order>().Where(o => o.Client == client).SingleOrDefault();
 			Assert.That(order.EndPoint, Is.Null);
 			Assert.That(order.Number, Is.EqualTo(99));
 			Assert.That(order.OrderServices.Count, Is.EqualTo(1));
@@ -110,7 +109,7 @@ namespace InternetInterface.Test.Functional
 		[Test(Description = "Проверяет редактирование заказа")]
 		public void EditOrderTest()
 		{
-			var order = new Orders {
+			var order = new Order {
 				BeginDate = SystemTime.Now().AddDays(1),
 				EndDate = SystemTime.Now().AddDays(10),
 				Client = client,
@@ -134,7 +133,7 @@ namespace InternetInterface.Test.Functional
 			browser.CheckBox(Find.ByName("order.OrderServices[0].IsPeriodic")).Checked = false;
 			Click("Сохранить");
 			session.Clear();
-			var savedOrder = session.QueryOver<Orders>().Where(o => o.Client == client).SingleOrDefault();
+			var savedOrder = session.QueryOver<Order>().Where(o => o.Client == client).SingleOrDefault();
 			Assert.That(savedOrder.Number, Is.EqualTo(99));
 			Assert.That(savedOrder.EndPoint, Is.Null);
 			Assert.That(savedOrder.OrderServices[0].IsPeriodic, Is.False);
@@ -143,8 +142,9 @@ namespace InternetInterface.Test.Functional
 		[Test(Description = "Проверяет, что кнопка редактирования недоступна для не нового заказа")]
 		public void EditDisableForNotNewOrder()
 		{
-			var order = new Orders {
-				Client = client
+			var order = new Order {
+				Client = client,
+				BeginDate = DateTime.Now.AddMonths(-2)
 			};
 			session.Save(order);
 			Open(client.Redirect());
@@ -156,7 +156,7 @@ namespace InternetInterface.Test.Functional
 		[Test(Description = "Проверяет закрытие заказа")]
 		public void CloseOrderTest()
 		{
-			var order = new Orders {
+			var order = new Order {
 				Client = client,
 				EndDate = SystemTime.Now().AddDays(7)
 			};
@@ -167,14 +167,14 @@ namespace InternetInterface.Test.Functional
 			browser.WaitUntilContainsText("Вы уверены");
 			Click("Закрыть");
 			session.Clear();
-			var savedOrder = session.QueryOver<Orders>().Where(o => o.Client == client).SingleOrDefault();
+			var savedOrder = session.QueryOver<Order>().Where(o => o.Client == client).SingleOrDefault();
 			Assert.That(savedOrder.Disabled, Is.True);
 		}
 
 		[Test(Description = "Проверяет корректное удаление услуги")]
 		public void DeleteOrderServiceTest()
 		{
-			var order = new Orders {
+			var order = new Order {
 				Client = client,
 				BeginDate = SystemTime.Now().AddDays(1),
 				EndDate = SystemTime.Now().AddDays(7)
@@ -195,21 +195,21 @@ namespace InternetInterface.Test.Functional
 			browser.Link(Find.ByText("Удалить")).Click();
 			Click("Сохранить");
 			session.Clear();
-			var savedOrder = session.QueryOver<Orders>().Where(o => o.Client == client).SingleOrDefault();
+			var savedOrder = session.QueryOver<Order>().Where(o => o.Client == client).SingleOrDefault();
 			Assert.That(savedOrder.OrderServices.Count, Is.EqualTo(2));
 		}
 
 		[Test(Description = "Проверяет отображение заказа в архиве")]
 		public void ArchiveOrderTest()
 		{
-			var order = new Orders {
+			var order = new Order {
 				Client = client,
 				EndDate = SystemTime.Now().AddDays(7),
 				Disabled = true,
 				Number = 666
 			};
 			session.Save(order);
-			order = new Orders {
+			order = new Order {
 				Client = client,
 				BeginDate = SystemTime.Now().AddDays(-7),
 				EndDate = SystemTime.Now().AddDays(-1),

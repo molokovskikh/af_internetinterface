@@ -7,6 +7,7 @@ using NHibernate.Linq;
 using NUnit.Framework;
 using Test.Support.Web;
 using WatiN.Core;
+using WatiN.Core.Native.Windows;
 
 namespace InternetInterface.Test.Functional
 {
@@ -47,6 +48,7 @@ namespace InternetInterface.Test.Functional
 			var name = "Тестовый клиент" + DateTime.Now;
 			browser.TextField("LegalPerson_Name").AppendText(name);
 			browser.TextField("LegalPerson_ShortName").AppendText(name);
+			browser.ShowWindow(NativeMethods.WindowShowStyle.Maximize);
 			browser.Button("RegisterLegalButton").Click();
 			AssertText("Информация по клиенту " + name);
 		}

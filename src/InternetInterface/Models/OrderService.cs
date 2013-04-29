@@ -28,7 +28,7 @@ namespace InternetInterface.Models
 		public virtual bool IsPeriodic { get; set; }
 
 		[BelongsTo(Column = "OrderId")]
-		public virtual Orders Order { get; set; }
+		public virtual Order Order { get; set; }
 
 		public virtual string GetPeriodic()
 		{

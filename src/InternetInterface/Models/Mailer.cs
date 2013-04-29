@@ -10,14 +10,6 @@ using Common.Web.Ui.MonoRailExtentions;
 
 namespace InternetInterface.Models
 {
-	public static class MailerExtension
-	{
-		public static Mailer Mailer(this SmartDispatcherController controller)
-		{
-			return controller.Mailer<Mailer>();
-		}
-	}
-
 	public class Mailer : BaseMailer
 	{
 		public Mailer(IEmailSender sender) : base(sender)

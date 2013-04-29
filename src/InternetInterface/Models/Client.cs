@@ -179,7 +179,16 @@ namespace InternetInterface.Models
 		public virtual IList<Appeals> Appeals { get; set; }
 
 		[HasMany(ColumnKey = "ClientId", Lazy = true)]
-		public virtual IList<Orders> Orders { get; set; }
+		public virtual IList<Order> Orders { get; set; }
+
+		public virtual Brigad WhoConnected {
+			get
+			{
+				if (Endpoints.Count > 0)
+					return Endpoints.First().WhoConnected;
+				return null;
+			}
+		}
 
 		public virtual bool CanDisabled()
 		{
@@ -577,9 +586,9 @@ group by {0}
 			return GetConnectInfo(session).FirstOrDefault();
 		}
 
-		public virtual IList<Orders> GetOrders(ISession session, bool disabled = false)
+		public virtual IList<Order> GetOrders(ISession session, bool disabled = false)
 		{
-			return session.Query<Orders>().Where(o => o.Client == this && o.Disabled == disabled).ToList();
+			return session.Query<Order>().Where(o => o.Client == this && o.Disabled == disabled).ToList();
 		}
 
 		public virtual IList<ClientOrderInfo> GetOrderInfo(ISession session, bool disabled = false)

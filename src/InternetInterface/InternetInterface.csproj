@@ -418,7 +418,7 @@
     <Compile Include="Models\MessageForClient.cs" />
     <Compile Include="Models\NetworkSwitch.cs" />
     <Compile Include="Models\OnLineClient.cs" />
-    <Compile Include="Models\Orders.cs" />
+    <Compile Include="Models\Order.cs" />
     <Compile Include="Models\OrderService.cs" />
     <Compile Include="Models\PackageSpeed.cs" />
     <Compile Include="Models\PaymentForConnect.cs" />

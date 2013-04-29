@@ -12,6 +12,7 @@ using Common.Tools;
 using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
+using Common.Web.Ui.MonoRailExtentions;
 using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.AllLogic;
 using InternetInterface.Controllers.Filter;
@@ -370,13 +371,13 @@ namespace InternetInterface.Controllers
 			uint BrigadForConnect,
 			[ARDataBind("staticAdress", AutoLoad = AutoLoadBehavior.NewInstanceIfInvalidKey)] StaticIp[] staticAdress,
 			uint EditConnect, string ConnectSum,
-			[DataBind("order")] Orders Order, bool withoutEndPoint, uint currentEndPoint)
+			[DataBind("order")] Order Order, bool withoutEndPoint, uint currentEndPoint)
 		{
 			var needNewServiceForStaticIp = false;
 			var client = DbSession.Load<Client>(ClientID);
 			var newFlag = false;
 			var clientEntPoint = new ClientEndpoint();
-			var existingOrder = DbSession.Query<Orders>().FirstOrDefault(o => o.Id == EditConnect);
+			var existingOrder = DbSession.Query<Order>().FirstOrDefault(o => o.Id == EditConnect);
 			if (!client.IsPhysical()) {
 				if (existingOrder != null) {
 					if (existingOrder.EndPoint != null)
@@ -454,9 +455,8 @@ namespace InternetInterface.Controllers
 							Order.EndPoint = clientEntPoint;
 						}
 						if (newFlag || clientEntPoint.WhoConnected == null) {
-							if (client.IsPhysical()) {
-								var graph = client.ConnectGraph;
-								clientEntPoint.WhoConnected = graph.Brigad;
+							if (client.IsPhysical() && client.ConnectGraph != null) {
+								clientEntPoint.WhoConnected = client.ConnectGraph.Brigad;
 							}
 							else {
 								var brigad = DbSession.Get<Brigad>(BrigadForConnect);
@@ -946,7 +946,7 @@ where r.`Label`= :LabelIndex;")
 				if (orderInfo.Count == 0) {
 					var connectSum = client.IsPhysical() ? client.PhysicalClient.ConnectSum : 0;
 					orderInfo.Add(new ClientOrderInfo {
-						Order = new Orders() { Number = Orders.GetNextNumber(DbSession, client.Id) },
+						Order = new Order() { Number = Order.GetNextNumber(DbSession, client.Id) },
 						ClientConnectInfo = new ClientConnectInfo { ConnectSum = connectSum }
 					});
 				}
@@ -987,7 +987,7 @@ where r.`Label`= :LabelIndex;")
 			}
 			else {
 				speeds = DbSession.Query<PackageSpeed>().Where(p => !tariffs.Contains(p.PackageId)).OrderBy(s => s.Speed).ToList();
-				var order = DbSession.Get<Orders>(eConnect);
+				var order = DbSession.Get<Order>(eConnect);
 				if (order != null && order.EndPoint != null)
 					clientEndPointId = order.EndPoint.Id;
 			}
@@ -1245,7 +1245,7 @@ where r.`Label`= :LabelIndex;")
 		public void AddPoint(uint clientId)
 		{
 			PropertyBag["OrderInfo"] = new ClientOrderInfo {
-				Order = new Orders() { Number = Orders.GetNextNumber(DbSession, clientId) },
+				Order = new Order() { Number = Order.GetNextNumber(DbSession, clientId) },
 				ClientConnectInfo = new ClientConnectInfo()
 			};
 			ConnectPropertyBag(clientId);
@@ -1311,7 +1311,7 @@ where r.`Label`= :LabelIndex;")
 
 		public void AddOrderService(uint orderId)
 		{
-			var order = DbSession.Load<Orders>(orderId);
+			var order = DbSession.Load<Order>(orderId);
 			PropertyBag["OrderService"] = new OrderService();
 			PropertyBag["orderId"] = orderId;
 			PropertyBag["PageDescription"] = "Добавление новой услуги";
@@ -1321,7 +1321,7 @@ where r.`Label`= :LabelIndex;")
 		public void SaveOrderService(uint orderId, [DataBind("OrderService")] OrderService orderService)
 		{
 			if(orderService.Order == null) {
-				orderService.Order = DbSession.Load<Orders>(orderId);
+				orderService.Order = DbSession.Load<Order>(orderId);
 			}
 			DbSession.SaveOrUpdate(orderService);
 			RedirectToUrl("../Search/Redirect?filter.ClientCode=" + orderService.Order.Client.Id);
@@ -1338,7 +1338,7 @@ where r.`Label`= :LabelIndex;")
 
 		public void CloseOrder(uint orderId, DateTime orderCloseDate)
 		{
-			var order = DbSession.Load<Orders>(orderId);
+			var order = DbSession.Load<Order>(orderId);
 			order.EndDate = orderCloseDate;
 			order.Disabled = true;
 			DbSession.Save(order);
@@ -1359,7 +1359,8 @@ where r.`Label`= :LabelIndex;")
 			DbSession.Delete(writeOff);
 			DbSession.Save(message);
 			Notify("Удалено");
-			EmailHelper.Send("internet@ivrn.net", "Уведомление об удалении списания", string.Format(@"
+			var mailer = this.Mailer<Mailer>();
+			mailer.SendText("internet@ivrn.net", "internet@ivrn.net", "Уведомление об удалении списания", string.Format(@"
 Отменено списание №{0}
 Клиент: №{1} - {2}
 Сумма: {3}

@@ -16,7 +16,7 @@ namespace Billing.Test.Integration
 	public class BillingOrdersFixture : IntegrationFixture
 	{
 		private Client lawyerClient;
-		private Orders order;
+		private Order order;
 
 		[SetUp]
 		public void SetUp()
@@ -42,7 +42,7 @@ namespace Billing.Test.Integration
 			};
 			session.Save(lawyerClient);
 			SystemTime.Now = () => new DateTime(2012, 4, 20);
-			order = new Orders {
+			order = new Order {
 				Client = lawyerClient,
 				Number = 1
 			};
@@ -206,7 +206,7 @@ namespace Billing.Test.Integration
 			};
 			session.Save(lawyerClient);
 			SystemTime.Now = () => new DateTime(2013, 4, 1);
-			var order = new Orders {
+			var order = new Order {
 				Client = lawyerClient,
 				BeginDate = SystemTime.Now().AddDays(-1),
 				EndDate = SystemTime.Now().AddYears(1),

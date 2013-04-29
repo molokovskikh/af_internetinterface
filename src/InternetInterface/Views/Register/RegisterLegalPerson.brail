@@ -27,9 +27,16 @@
 							</tr>
 							<tr> <td colspan="3">
 							<% OutputSubView("""\Subview\LegalPerson""") %>
-							</td> </tr> <tr> <td colspan="3">
-							<% OutputSubView("""\Subview\ConnectMenu""") %>
 							</td> </tr>
+							<tr>
+								<td><b>Не создавать заказ</b>
+								<input type="checkbox" name="DoNotCreateOrder" value="true" id="DoNotCreateOrder" ${"checked" if DoNotCreateOrder}/></td>
+							</tr>
+							<tr>
+								<td colspan="3">
+									<% OutputSubView("""\Subview\ConnectMenu""") %>
+								</td>
+							</tr>
 							<tr>
 								<td colspan="3">
 								<div class="actions">

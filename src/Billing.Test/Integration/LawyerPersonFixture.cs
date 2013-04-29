@@ -41,7 +41,7 @@ namespace Billing.Test.Integration
 					ShowBalanceWarningPage = false,
 					LawyerPerson = lPerson
 				};
-				lawyerClient.Orders = new List<Orders>();
+				lawyerClient.Orders = new List<Order>();
 				lawyerClient.Save();
 			}
 		}
@@ -123,7 +123,7 @@ namespace Billing.Test.Integration
 		public void Disable_write_Off()
 		{
 			using (new SessionScope()) {
-				var order = new Orders() { BeginDate = DateTime.Now, Client = lawyerClient, OrderServices = new List<OrderService>() };
+				var order = new Order() { BeginDate = DateTime.Now, Client = lawyerClient, OrderServices = new List<OrderService>() };
 				var service = new OrderService() { Cost = 100, Description = "testService", Order = order };
 				order.OrderServices.Add(service);
 				lawyerClient.Disabled = true;

@@ -38,7 +38,7 @@ namespace InternetInterface.Models
 			CalculateSum();
 		}
 
-		public Invoice(Client client, Period period, IEnumerable<Orders> orders) : this(client)
+		public Invoice(Client client, Period period, IEnumerable<Order> orders) : this(client)
 		{
 			Period = period;
 			foreach (var orderService in orders

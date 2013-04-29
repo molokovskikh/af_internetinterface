@@ -16,7 +16,7 @@ namespace InternetInterface.Models
 
 		public static IList<T> FindAllSort()
 		{
-			return FindAll(DetachedCriteria.For(typeof(T)).AddOrder(Order.Asc("Name")));
+			return FindAll(DetachedCriteria.For(typeof(T)).AddOrder(NHibernate.Criterion.Order.Asc("Name")));
 		}
 
 		public static T FirstOrDefault(uint id)

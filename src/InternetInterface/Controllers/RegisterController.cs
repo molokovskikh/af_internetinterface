@@ -100,6 +100,10 @@ namespace InternetInterface.Controllers
 				Flash["Client"] = physicalClient;
 				Flash["AccountNumber"] = client.Id.ToString("00000");
 				Flash["ConnectSumm"] = physicalClient.ConnectSum;
+				if (client.Endpoints.Count > 0)
+					Flash["WhoConnected"] = client.Endpoints.First().WhoConnected;
+				else
+					Flash["WhoConnected"] = null;
 				Flash["ConnectInfo"] = client.GetConnectInfo(DbSession).FirstOrDefault();
 				foreach (var requestse in Models.Request.FindAllByProperty("Id", requestID)) {
 					if (requestse.Registrator != null) {
@@ -141,7 +145,7 @@ namespace InternetInterface.Controllers
 		public void RegisterLegalPerson()
 		{
 			PropertyBag["OrderInfo"] = new ClientOrderInfo {
-				Order = new Orders() { Number = Orders.GetNextNumber(DbSession, 0) },
+				Order = new Order() { Number = Order.GetNextNumber(DbSession, 0) },
 				ClientConnectInfo = new ClientConnectInfo()
 			};
 			PropertyBag["ClientCode"] = 0;
@@ -153,15 +157,16 @@ namespace InternetInterface.Controllers
 			PropertyBag["LegalPerson"] = new LawyerPerson();
 			PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(new LawyerPerson());
 			PropertyBag["RegionList"] = RegionHouse.All();
+			PropertyBag["DoNotCreateOrder"] = false;
 		}
 
-		public void RegisterLegalPerson(int speed, [DataBind("ConnectInfo")] ConnectInfo info, uint brigadForConnect, [DataBind("order")] Orders Order)
+		public void RegisterLegalPerson(int speed, [DataBind("ConnectInfo")] ConnectInfo info, uint brigadForConnect, [DataBind("order")] Order order, bool DoNotCreateOrder)
 		{
 			SetBinder(new DecimalValidateBinder { Validator = Validator });
 			var person = new LawyerPerson();
 			BindObjectInstance(person, ParamStore.Form, "LegalPerson");
 			var connectErrors = Validation.ValidationConnectInfo(info, true);
-			if (!string.IsNullOrEmpty(info.Port) && Order.OrderServices == null)
+			if (!string.IsNullOrEmpty(info.Port) && order.OrderServices == null && !DoNotCreateOrder)
 				connectErrors = "Невозможно создать подключение, не создавая услуг в заказе";
 			if (IsValid(person) && string.IsNullOrEmpty(connectErrors)) {
 				person.SaveAndFlush();
@@ -171,16 +176,20 @@ namespace InternetInterface.Controllers
 					WhoRegisteredName = InitializeContent.Partner.Name,
 					RegDate = DateTime.Now,
 					Status = Status.Find((uint)StatusType.BlockedAndNoConnected),
-					Disabled = Order.OrderServices == null,
+					Disabled = order.OrderServices == null,
 					LawyerPerson = person,
 					Name = person.ShortName,
 					Type = ClientType.Legal,
-					Orders = new List<Orders>()
+					Orders = new List<Order>()
 				};
-				client.Orders.Add(Order);
-				DbSession.Save(client);
-				Order.Client = client;
-				//DbSession.Save(Order);
+				if (!DoNotCreateOrder) {
+					client.Orders.Add(order);
+					DbSession.Save(client);
+					order.Client = client;
+				}
+				else {
+					DbSession.Save(client);
+				}
 
 				if (!string.IsNullOrEmpty(person.Telephone)) {
 					client.Contacts.Add(new Contact(client, ContactType.MobilePhone, person.Telephone) {
@@ -198,7 +207,7 @@ namespace InternetInterface.Controllers
 				}
 
 				ClientEndpoint endPoint = null;
-				if (!string.IsNullOrEmpty(info.Port)) {
+				if (!string.IsNullOrEmpty(info.Port) && !DoNotCreateOrder) {
 					endPoint = new ClientEndpoint {
 						Client = client,
 						Port = Int32.Parse(info.Port),
@@ -207,8 +216,8 @@ namespace InternetInterface.Controllers
 					var brigad = DbSession.Load<Brigad>(brigadForConnect);
 					endPoint.WhoConnected = brigad;
 					DbSession.Save(endPoint);
-					Order.EndPoint = endPoint;
-					DbSession.Save(Order);
+					order.EndPoint = endPoint;
+					DbSession.Save(order);
 					client.Status = Status.Find((uint)StatusType.Worked);
 					DbSession.Save(client);
 				}
@@ -218,7 +227,7 @@ namespace InternetInterface.Controllers
 			}
 			else {
 				PropertyBag["OrderInfo"] = new ClientOrderInfo {
-					Order = Order,
+					Order = order,
 					ClientConnectInfo = new ClientConnectInfo()
 				};
 				PropertyBag["ClientCode"] = 0;
@@ -231,6 +240,7 @@ namespace InternetInterface.Controllers
 				PropertyBag["PortError"] = connectErrors;
 				PropertyBag["Editing"] = false;
 				PropertyBag["LegalPerson"] = person;
+				PropertyBag["DoNotCreateOrder"] = DoNotCreateOrder;
 				person.SetValidationErrors(Validator.GetErrorSummary(person));
 				PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(person);
 			}
@@ -369,7 +379,6 @@ namespace InternetInterface.Controllers
 
 		private void EditorValues()
 		{
-			//PropertyBag["Houses"] = House.AllSort;
 			PropertyBag["Regions"] = DbSession.Query<RegionHouse>().ToList();
 			PropertyBag["Brigads"] = Brigad.FindAllSort();
 			PropertyBag["Statuss"] = Status.FindAllSort();
@@ -488,7 +497,7 @@ namespace InternetInterface.Controllers
 		public void HouseSelect(uint regionCode, uint chHouse)
 		{
 			CancelLayout();
-			var houses = DbSession.Query<House>().Where(h => h.Region.Id == regionCode).ToList();
+			var houses = DbSession.Query<House>().Where(h => h.Region.Id == regionCode).OrderBy(h => h.Street).ToList();
 			PropertyBag["ChHouse"] = DbSession.Get<House>(chHouse) ?? new House();
 			PropertyBag["Houses"] = houses;
 		}

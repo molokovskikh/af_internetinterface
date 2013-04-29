@@ -25,7 +25,7 @@ namespace InternetInterface.Models
 			{
 				var criteria = DetachedCriteria.For<UnresolvedCall>()
 					//.SetProjection(Projections.Group<UnresolvedCall>(l => l.PhoneNumber))
-					.AddOrder(Order.Desc("Id"))
+					.AddOrder(NHibernate.Criterion.Order.Desc("Id"))
 					.SetMaxResults(5);
 
 				return ArHelper.WithSession(s => criteria.GetExecutableCriteria(s).List<UnresolvedCall>().ToArray());

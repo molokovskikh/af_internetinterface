@@ -18,7 +18,7 @@ namespace InternetInterface.Models
 {
 	public class ClientOrderInfo
 	{
-		public Orders Order { get; set; }
+		public Order Order { get; set; }
 		public ClientConnectInfo ClientConnectInfo { get; set; }
 	}
 

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -8,6 +8,7 @@ using InternetInterface.Models;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.SqlCommand;
+using Order = NHibernate.Criterion.Order;
 
 namespace InternetInterface.Queries
 {

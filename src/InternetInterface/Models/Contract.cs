@@ -16,7 +16,7 @@ namespace InternetInterface.Models
 			Date = SystemTime.Now();
 		}
 
-		public Contract(Orders order) : this()
+		public Contract(Order order) : this()
 		{
 			Order = order;
 			Customer = order.Client.Name;
@@ -29,7 +29,7 @@ namespace InternetInterface.Models
 		public DateTime Date { get; set; }
 
 		[BelongsTo(Column = "OrderId")]
-		public virtual Orders Order { get; set; }
+		public virtual Order Order { get; set; }
 
 		[Property]
 		public string Customer { get; set; }
