@@ -44,32 +44,35 @@ namespace InternetInterface.Test.Functional
 		public static void PrepareTestData()
 		{
 			using (new SessionScope()) {
-				var partner = ActiveRecordLinqBase<Partner>.Queryable.FirstOrDefault(p => p.Login == Environment.UserName);
-				if (partner == null) {
-					partner = new Partner(Environment.UserName);
-					partner.Save();
-				}
-
 				ArHelper.WithSession(session => {
+					var self = session.Query<Partner>().FirstOrDefault(p => p.Login == Environment.UserName);
+					if (self == null) {
+						self = new Partner(Environment.UserName);
+						session.Save(self);
+					}
 					if (!session.Query<Tariff>().Any())
 						session.Save(new Tariff("Тариф для тестирования", 500));
 
 					if (!session.Query<Brigad>().Any()) {
-						new Brigad("Бригада для тестирования").Save();
-						new Partner {
+						session.Save(new Brigad("Бригада для тестирования"));
+						var partner = new Partner {
 							Name = "Сервисный инженер для тестирования",
 							Login = "test_serviceman",
 							Categorie = UserCategorie.Queryable.First(c => c.ReductionName == "service")
-						}.Save();
+						};
+						session.Save(partner);
 					}
 
-					if (!ActiveRecordLinqBase<Zone>.Queryable.Any()) {
+					if (!session.Query<Zone>().Any()) {
 						var zone = new Zone("Тестовая зона");
 						session.Save(zone);
 					}
 
-					if (!session.Query<House>().Any())
-						session.Save(new House("Тестовая улица", 1, new RegionHouse("Тестовый регион")));
+					if (!session.Query<House>().Any()) {
+						var region = new RegionHouse("Тестовый регион");
+						session.Save(region);
+						session.Save(new House("Тестовая улица", 1, region));
+					}
 				});
 			}
 		}
