@@ -19,11 +19,5 @@ namespace InternetInterface.Test.Unit
 			}
 			Assert.AreEqual(passwords.GroupBy(g => g).Count(), 5);
 		}
-
-		[Test]
-		public void Test()
-		{
-			Console.WriteLine(File.ReadAllText("c:/1.txt"));
-		}
 	}
 }
