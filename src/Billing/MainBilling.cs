@@ -503,8 +503,8 @@ set s.LastStartFail = true;")
 					if (disableOrder.EndPoint != null) {
 						disableOrder.EndPoint.Delete();
 					}
-					var services = disableOrder.OrderServices.Select(s => s.Description).Implode();
-					Appeals.CreareAppeal(string.Format("Деактивирован заказ {0}, услуги {1}", disableOrder.Id, services), client, AppealType.System).Save();
+					var services = disableOrder.OrderServices.ToList();
+					Appeals.CreareAppeal(string.Format("Деактивирован заказ {0}, услуги {1}", disableOrder.Id, services.Select(s => string.Format("[{0}] - '{1}'", s.Id, s.Description)).Implode()), client, AppealType.System).Save();
 				}
 			}
 			else if (now.Date == now.Date.FirstDayOfMonth()) {

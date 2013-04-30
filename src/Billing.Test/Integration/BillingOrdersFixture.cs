@@ -182,6 +182,46 @@ namespace Billing.Test.Integration
 		}
 
 		[Test]
+		public void Activate_diactivate_test()
+		{
+			var endpoint = new ClientEndpoint { Client = lawyerClient };
+			lawyerClient.Endpoints.Add(endpoint);
+			session.Save(endpoint);
+			order.EndPoint = endpoint;
+			var periodic = new OrderService {
+				Cost = 3000,
+				IsPeriodic = true,
+				Order = order
+			};
+			session.Save(periodic);
+			var noPeriodic = new OrderService {
+				Cost = 200,
+				Order = order
+			};
+			session.Save(noPeriodic);
+			SystemTime.Reset();
+			order.BeginDate = DateTime.Now;
+			order.EndDate = DateTime.Now.AddMonths(1);
+			order.OrderServices = new List<OrderService> { noPeriodic, periodic };
+			session.Save(order);
+			session.Save(lawyerClient);
+			var dayCount = 0;
+			Close();
+			while (SystemTime.Now().Date <= DateTime.Now.AddMonths(1).Date) {
+				billing.Compute();
+				SystemTime.Now = () => DateTime.Now.AddDays(dayCount);
+				dayCount++;
+			}
+			var writeOffs = session.Query<WriteOff>().Where(w => w.Client.Id == lawyerClient.Id).ToList();
+			var daysInThisMonth = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
+			var daysInNextNonth = DateTime.DaysInMonth(DateTime.Now.AddMonths(1).Year, DateTime.Now.AddMonths(1).Month);
+			Assert.AreEqual(writeOffs.Sum(w => w.WriteOffSum), Math.Round(200 + 3000 / daysInThisMonth * (daysInThisMonth - DateTime.Now.Day + 1) + 3000 - (decimal)3000 / daysInNextNonth * (daysInNextNonth - DateTime.Now.AddMonths(1).Day), 2));
+			lawyerClient = session.Get<Client>(lawyerClient.Id);
+			Assert.That(lawyerClient.Appeals.First().Appeal, Is.StringContaining("Деактивирован заказ"));
+			Assert.AreEqual(lawyerClient.Endpoints.Count, 0);
+		}
+
+		[Test]
 		public void LawyerPersonTest()
 		{
 			LawyerPerson lPerson;
