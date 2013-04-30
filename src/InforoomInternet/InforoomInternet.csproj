@@ -186,8 +186,10 @@
     <Content Include="Content\Offer\ПравилаОказанияУслуг2.jpg" />
     <Content Include="Content\Offer\ПравилаОказанияУслуг3.jpg" />
     <Content Include="Content\Offer\Тарифы.jpg" />
+    <Content Include="crossdomain.xml" />
     <Content Include="CSS\main.css" />
     <Content Include="CSS\styles.css" />
+    <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="JavaScript\DateValidate.js" />
     <Content Include="JavaScript\jquery-1.4.2.min.js" />
@@ -205,6 +207,7 @@
     <Content Include="JavaScript\lightbox\prevlabel.gif" />
     <Content Include="JavaScript\lightbox\prototype.js" />
     <Content Include="JavaScript\lightbox\scriptaculous.js" />
+    <Content Include="robots.txt" />
     <Content Include="Views\Main\SelfRegistration.brail">
       <SubType>Designer</SubType>
     </Content>
