@@ -215,7 +215,7 @@ namespace Billing.Test.Integration
 			var writeOffs = session.Query<WriteOff>().Where(w => w.Client.Id == lawyerClient.Id).ToList();
 			var daysInThisMonth = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
 			var daysInNextNonth = DateTime.DaysInMonth(DateTime.Now.AddMonths(1).Year, DateTime.Now.AddMonths(1).Month);
-			Assert.AreEqual(writeOffs.Sum(w => w.WriteOffSum), Math.Round(200 + 3000 / daysInThisMonth * (daysInThisMonth - DateTime.Now.Day + 1) + 3000 - (decimal)3000 / daysInNextNonth * (daysInNextNonth - DateTime.Now.AddMonths(1).Day), 2));
+			Assert.AreEqual(writeOffs.Sum(w => w.WriteOffSum), Math.Round(200 + (decimal)3000 / daysInThisMonth * (daysInThisMonth - DateTime.Now.Day + 1) + 3000 - (decimal)3000 / daysInNextNonth * (daysInNextNonth - DateTime.Now.AddMonths(1).Day), 2));
 			lawyerClient = session.Get<Client>(lawyerClient.Id);
 			Assert.That(lawyerClient.Appeals.First().Appeal, Is.StringContaining("Деактивирован заказ"));
 			Assert.AreEqual(lawyerClient.Endpoints.Count, 0);
