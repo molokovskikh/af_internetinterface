@@ -82,6 +82,7 @@ namespace InternetInterface.Test.Functional
 				Thread.Sleep(500);
 				browser.RadioButton(Find.ByName("graph_button")).Checked = true;
 				browser.Button("reserv_but").Click();
+				Thread.Sleep(500);
 				Assert.IsTrue(browser.Text.Contains("Резерв"));
 			}
 		}
