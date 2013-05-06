@@ -57,11 +57,11 @@ th a.sort
 }
 th a.sort.asc
 {
-	background-image: url("../Images/arrow-down-blue.gif");
+	background-image: url("../../Images/arrow-down-blue.gif");
 }
 th a.sort.desc
 {
-	background-image: url("../Images/arrow-down-blue-reversed.gif");
+	background-image: url("../../Images/arrow-down-blue-reversed.gif");
 }
 
 .DataTable tbody tr:nth-child(even)
