@@ -53,7 +53,8 @@ namespace InternetInterface.Helpers
 		{
 			var auditableProperty = new AuditablePropertyInternet(property, name, newState, oldState);
 			if (entity.GetType() == typeof(OrderService)) {
-				auditableProperty.Message = auditableProperty.Message.Insert(16, ((OrderService)entity).Description);
+				if (!string.IsNullOrEmpty(((OrderService)entity).Description))
+					auditableProperty.Message = auditableProperty.Message.Insert(16, ((OrderService)entity).Description);
 			}
 			return auditableProperty;
 		}
