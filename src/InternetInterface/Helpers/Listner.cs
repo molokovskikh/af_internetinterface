@@ -41,20 +41,8 @@ namespace InternetInterface.Helpers
 
 		protected override void Convert(PropertyInfo property, object newValue, object oldValue)
 		{
-			if (oldValue == null) {
-				OldValue = "";
-			}
-			else {
-				OldValue = AsString(property, oldValue);
-			}
-
-			if (newValue == null) {
-				NewValue = "";
-			}
-			else {
-				NewValue = AsString(property, newValue);
-			}
-			Message = String.Format("Изменено '{0}' было '{1}' стало '{2}'", Name, OldValue, NewValue);
+			base.Convert(property, newValue, oldValue);
+			Message = Message.Replace("$$$", string.Empty);
 		}
 	}
 
@@ -63,7 +51,12 @@ namespace InternetInterface.Helpers
 	{
 		protected override AuditableProperty GetAuditableProperty(PropertyInfo property, string name, object newState, object oldState, object entity)
 		{
-			return new AuditablePropertyInternet(property, name, newState, oldState);
+			var auditableProperty = new AuditablePropertyInternet(property, name, newState, oldState);
+			if (entity.GetType() == typeof(OrderService)) {
+				if (!string.IsNullOrEmpty(((OrderService)entity).Description))
+					auditableProperty.Message = auditableProperty.Message.Insert(16, ((OrderService)entity).Description);
+			}
+			return auditableProperty;
 		}
 
 		protected override void Log(PostUpdateEvent @event, IEnumerable<AuditableProperty> properties, bool isHtml)
@@ -86,6 +79,9 @@ namespace InternetInterface.Helpers
 				Client client = null;
 				if (entity.GetType() == typeof(Client))
 					client = (Client)entity;
+
+				if (entity.GetType() == typeof(OrderService))
+					client = ((OrderService)entity).Order.Client;
 
 				var clientProp = entity.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance).FirstOrDefault(p => p.PropertyType == typeof(Client));
 				if (clientProp != null)

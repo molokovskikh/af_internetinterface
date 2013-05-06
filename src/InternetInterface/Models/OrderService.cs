@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using Castle.ActiveRecord;
 using Castle.Components.Validator;
+using Common.Web.Ui.Models.Audit;
 using Common.Web.Ui.MonoRailExtentions;
 
 namespace InternetInterface.Models
@@ -12,19 +13,19 @@ namespace InternetInterface.Models
 	/// <summary>
 	/// Услуга
 	/// </summary>
-	[ActiveRecord("OrderServices", Schema = "Internet", Lazy = true)]
+	[ActiveRecord("OrderServices", Schema = "Internet", Lazy = true), Auditable]
 	public class OrderService
 	{
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
-		[Property, Description("Описание")]
+		[Property, Description("Описание"), Auditable("Описание")]
 		public virtual string Description { get; set; }
 
-		[Property, Description("Стоимость"), ValidateDecimal("Ошибка ввода суммы"), ValidateGreaterThanZero,]
+		[Property, Description("Стоимость"), Auditable("Стоимость услуги"), ValidateDecimal("Ошибка ввода суммы"), ValidateGreaterThanZero]
 		public virtual decimal Cost { get; set; }
 
-		[Property, Description("Услуга периодичная")]
+		[Property, Description("Услуга периодичная"), Auditable("Периодичность")]
 		public virtual bool IsPeriodic { get; set; }
 
 		[BelongsTo(Column = "OrderId")]

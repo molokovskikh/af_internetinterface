@@ -304,8 +304,9 @@ ${app.Asset("EditingConnect.js")}
 						<% for i, item in enumerate(OrderInfo.Order.OrderServices): %>
 						<tr id='orderService${item.Id}'>
 							<td>
+								<input type='text' name='order.OrderServices[${i}].Id' value='${item.Id}'>
 								<input type='text' name='order.OrderServices[${i}].Description' value='${item.Description}'>
-								</td>
+							</td>
 							<td>
 								<input type='text' name='order.OrderServices[${i}].Cost' value='${item.Cost}'>
 							</td>
