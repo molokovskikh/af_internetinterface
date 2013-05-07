@@ -1,5 +1,7 @@
 ﻿${app.Asset("orderinfo.css")}
-${app.Asset("EditingConnect.js")}
+<%if filter.EditingConnect: %>
+	${app.Asset("EditingConnect.js")}
+<%end%>
 <div id="deletePointDialog" class="reveal-modal">
 <form class="formConnect" method="post" action="${siteroot}/UserInfo/DeleteEndPoint">
 <input type="hidden" name="endPointForDelete" id="endPointForDelete"/>
