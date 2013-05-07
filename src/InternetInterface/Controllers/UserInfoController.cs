@@ -592,6 +592,9 @@ namespace InternetInterface.Controllers
 				var endPoint = client.Endpoints.FirstOrDefault();
 				if (endPoint != null)
 					PropertyBag["WhoConnected"] = endPoint.WhoConnected;
+				else {
+					PropertyBag["WhoConnected"] = null;
+				}
 				PropertyBag["Client"] = physicalClient;
 				PropertyBag["_client"] = client;
 				PropertyBag["Password"] = password;

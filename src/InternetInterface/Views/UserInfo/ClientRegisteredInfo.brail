@@ -390,8 +390,8 @@ div.WordSection1
   src="../Images/image005.gif" v:shapes="_x0000_s1029"><![endif]></b>
 <span
   style='mso-spacerun:yes'> </span><i style='mso-bidi-font-style:normal'>
-  <%else: %>
-  ${WhoConnected.Name}
+	<%else: %>
+		${WhoConnected.Name}
 	<%end %></i></p>
   </td>
  </tr>
