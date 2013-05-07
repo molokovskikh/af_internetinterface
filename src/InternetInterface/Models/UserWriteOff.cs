@@ -9,7 +9,7 @@ using InternetInterface.Controllers.Filter;
 namespace InternetInterface.Models
 {
 	[ActiveRecord("UserWriteOffs", Schema = "internet", Lazy = true)]
-	public class UserWriteOff : ActiveRecordLinqBase<UserWriteOff>
+	public class UserWriteOff : ActiveRecordLinqBase<UserWriteOff>, IWriteOff
 	{
 		public UserWriteOff()
 		{
@@ -57,5 +57,16 @@ namespace InternetInterface.Models
 		}
 
 		public virtual IEmailSender Sender { get; set; }
+
+		public virtual Appeals Cancel()
+		{
+			if (Client.PhysicalClient != null) {
+				Client.PhysicalClient.MoneyBalance += Sum;
+				Client.PhysicalClient.Balance += Sum;
+			}
+			else
+				Client.LawyerPerson.Balance += Sum;
+			return Appeals.CreareAppeal(String.Format("Удалено списание на сумму {0:C}", Sum), Client, AppealType.System);
+		}
 	}
 }

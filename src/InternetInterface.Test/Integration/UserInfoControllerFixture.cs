@@ -159,7 +159,7 @@ namespace InternetInterface.Test.Integration
 			session.Save(client);
 			session.Save(writeOff);
 
-			controller.DeleteWriteOff(writeOff.Id);
+			controller.DeleteWriteOff(writeOff.Id, false);
 
 			Assert.IsTrue(_sended);
 			Assert.That(_message.Subject, Is.EqualTo("Уведомление об удалении списания"));
@@ -183,7 +183,7 @@ namespace InternetInterface.Test.Integration
 			session.Save(client);
 			session.Save(writeOff);
 
-			controller.DeleteWriteOff(writeOff.Id);
+			controller.DeleteWriteOff(writeOff.Id, false);
 
 			Assert.IsTrue(_sended);
 			Assert.AreEqual(client.Balance, 300);

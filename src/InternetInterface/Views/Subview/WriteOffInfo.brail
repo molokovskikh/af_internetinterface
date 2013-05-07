@@ -53,7 +53,7 @@
 			</tbody>
 			</table>
 			</div>
-			<h4><a href="#"> ${item.WriteOffDate.Month}.${item.WriteOffDate.Year}</a> </h4>
+			<h4><a href="#"> ${item.WriteOffDate.Month}.${item.WriteOffDate.Year}</a></h4>
 			<div>
 			<table class="table">
 			<tbody>
@@ -67,7 +67,9 @@
 				<td>${item.GeBeforeWriteOffBalance(grouped)}</td>
 				<td class="comment_td">${item.Comment}</td>
 				<td class="deletingField">
-					<input type="button" class="cancelButton" onclick="DeleteWriteOff('${siteroot}/UserInfo/${item.Id}/DeleteWriteOff', 'Сумма: ${item.WriteOffSum}, от ${item.GetDate(grouped)}')" value="Удалить" />
+					<%if (filter.grouped == null) :%>
+						<input type="button" class="cancelButton" onclick="DeleteWriteOff('${siteroot}/UserInfo/${item.Id}/DeleteWriteOff?UserWriteOff=${item.UserWriteOff}', 'Сумма: ${item.WriteOffSum}, от ${item.GetDate(grouped)}')" value="Удалить" />
+					<%end%>
 				</td>
 			</tr>
 		<%end %>

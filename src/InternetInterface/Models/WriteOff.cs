@@ -10,6 +10,14 @@ using InternetInterface.Helpers;
 
 namespace InternetInterface.Models
 {
+	public interface IWriteOff
+	{
+		uint Id { get; set; }
+		Client Client { get; set; }
+		Appeals Cancel();
+		decimal Sum { get; }
+	}
+
 	public class BaseWriteOff
 	{
 		public uint Id { get; set; }
@@ -27,6 +35,8 @@ namespace InternetInterface.Models
 		public decimal? BeforeWriteOffBalance { get; set; }
 
 		public string Comment { get; set; }
+
+		public bool UserWriteOff { get; set; }
 
 		[Style]
 		public bool Commented
@@ -55,7 +65,7 @@ namespace InternetInterface.Models
 
 
 	[ActiveRecord("WriteOff", Schema = "internet", Lazy = true)]
-	public class WriteOff : ActiveRecordLinqBase<WriteOff>
+	public class WriteOff : ActiveRecordLinqBase<WriteOff>, IWriteOff
 	{
 		public WriteOff()
 		{
@@ -123,6 +133,11 @@ namespace InternetInterface.Models
 			else
 				Client.LawyerPerson.Balance += WriteOffSum;
 			return Appeals.CreareAppeal(String.Format("Удалено списание на сумму {0:C}", WriteOffSum), Client, AppealType.System);
+		}
+
+		public virtual decimal Sum
+		{
+			get { return WriteOffSum; }
 		}
 	}
 }

@@ -1355,9 +1355,13 @@ where r.`Label`= :LabelIndex;")
 			PropertyBag["OrdersInfo"] = ordersInfo;
 		}
 
-		public void DeleteWriteOff(uint id)
+		public void DeleteWriteOff(uint id, bool userWriteOff)
 		{
-			var writeOff = DbSession.Get<WriteOff>(id);
+			IWriteOff writeOff;
+			if (!userWriteOff)
+				writeOff = DbSession.Get<WriteOff>(id);
+			else
+				writeOff = DbSession.Get<UserWriteOff>(id);
 			var message = writeOff.Cancel();
 			DbSession.Delete(writeOff);
 			DbSession.Save(message);
@@ -1368,7 +1372,7 @@ where r.`Label`= :LabelIndex;")
 Клиент: №{1} - {2}
 Сумма: {3}
 Оператор: {4}
-", writeOff.Id, writeOff.Client.Id, writeOff.Client.Name, writeOff.WriteOffSum.ToString("#.00"), InitializeContent.Partner.Name));
+", writeOff.Id, writeOff.Client.Id, writeOff.Client.Name, writeOff.Sum.ToString("#.00"), InitializeContent.Partner.Name));
 			RedirectToReferrer();
 		}
 	}

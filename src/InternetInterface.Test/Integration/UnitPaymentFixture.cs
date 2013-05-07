@@ -1,8 +1,10 @@
-﻿using InternetInterface.Controllers.Filter;
+﻿using System.Linq;
+using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 using Test.Support;
+using Test.Support.log4net;
 
 namespace InternetInterface.Test.Integration
 {
@@ -21,6 +23,17 @@ namespace InternetInterface.Test.Integration
 			physicalClient = client.PhysicalClient;
 			physicalClient.Client = client;
 			session.Save(client);
+		}
+
+		[Test]
+		public void Test()
+		{
+			QueryCatcher.Catch();
+			var nullLeases = Lease.Queryable.Where(l =>
+				l.Pool.IsGray &&
+					(l.Endpoint.Client.LawyerPerson != null &&
+						l.Endpoint.Client.Disabled))
+				.ToList();
 		}
 
 		[Test]

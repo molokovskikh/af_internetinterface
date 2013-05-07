@@ -537,7 +537,8 @@ Sum(MoneySum) as MoneySum,
 WriteOffDate,
 Client,
 BeforeWriteOffBalance,
-`Comment`
+`Comment`,
+false as UserWriteOff
 FROM internet.WriteOff W
 where Client = :clientid and WriteOffSum > 0
 group by {0}
@@ -545,14 +546,15 @@ group by {0}
 UNION
 
 select
-0 as Id,
+uw.Id as Id,
 sum(`sum`) as WriteOffSum,
 0.0 as VirtualSum,
 0.0 as MoneySum,
 `date` as WriteOffDate,
 Client,
 0.0 as BeforeWriteOffBalance,
-`Comment`
+`Comment`,
+true as UserWriteOff
 from internet.UserWriteOffs uw
 where uw.client = :clientid
 group by {0}
@@ -565,7 +567,8 @@ Sum(MoneySum) as MoneySum,
 WriteOffDate,
 Client,
 BeforeWriteOffBalance,
-`Comment`
+`Comment`,
+false as UserWriteOff
 FROM internet.WriteOff W
 where Client = :clientid and WriteOffSum > 0
 group by {0}
