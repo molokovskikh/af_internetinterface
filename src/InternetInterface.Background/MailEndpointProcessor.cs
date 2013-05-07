@@ -48,7 +48,7 @@ namespace InternetInterface.Background
 		{
 			var nullLeases = Lease.Queryable.Where(l =>
 				l.Pool.IsGray &&
-					(l.Endpoint.Client.LawyerPerson != null ||
+					(l.Endpoint.Client.LawyerPerson != null &&
 						l.Endpoint.Client.Disabled))
 				.ToList();
 			var sndingLease = SendedLease.Queryable.Where(s => s.SendDate >= DateTime.Now.Date).Select(s => s.LeaseId).ToList();
