@@ -1,4 +1,5 @@
 import file from Web.bake
+import file from Deploy.bake
 
 Global(
 	HumanReadableName : "Сайт интернет провайдера",
@@ -10,4 +11,4 @@ task @default, [@Build]
 
 task @Build, [@BuildWebSite]
 
-task @deploy, [@DeployPipeline]
+task @deploy, [@DeployPipeline, @CopyTiny]
