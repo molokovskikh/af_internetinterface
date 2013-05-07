@@ -1,5 +1,5 @@
 ﻿${app.Asset("orderinfo.css")}
-<%if filter.EditingConnect: %>
+<%if not IsDefined("filter") or filter.EditingConnect: %>
 	${app.Asset("EditingConnect.js")}
 <%end%>
 <div id="deletePointDialog" class="reveal-modal">
