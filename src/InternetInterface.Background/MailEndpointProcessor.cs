@@ -19,6 +19,7 @@ namespace InternetInterface.Background
 			using (new SessionScope()) {
 				SendUnknowEndPoint();
 				SendNullTariffLawyerPerson();
+				DeleteFixIpIfClientLongDisable();
 
 				var thisDateMax = InternetSettings.FindFirst().NextSmsSendDate;
 				var now = SystemTime.Now();
@@ -35,13 +36,25 @@ namespace InternetInterface.Background
 
 		public static List<SmsMessage> SendSmsNotification()
 		{
-			var messages = new List<SmsMessage>();
-			SmsMessage.Queryable.Where(m => !m.IsSended && m.PhoneNumber != null).ToList().ForEach(messages.Add);
+			var messages = SmsMessage.Queryable.Where(m => !m.IsSended && m.PhoneNumber != null).ToList();
 			new SmsHelper().SendMessages(messages);
 			var thisDateMax = InternetSettings.FindFirst();
 			thisDateMax.NextSmsSendDate = SystemTime.Now().AddDays(1).Date.AddHours(12);
 			thisDateMax.Update();
 			return messages;
+		}
+
+		public static void DeleteFixIpIfClientLongDisable()
+		{
+			var clientWhoDeleteStatic = Client.Queryable.Where(c => c.Disabled && c.BlockDate != null && c.BlockDate <= SystemTime.Now().AddDays(-61)).ToList();
+			foreach (var client in clientWhoDeleteStatic) {
+				foreach (var clientEndpoint in client.Endpoints) {
+					clientEndpoint.Ip = null;
+					ActiveRecordMediator.Save(clientEndpoint);
+				}
+				client.BlockDate = null;
+				ActiveRecordMediator.Save(client);
+			}
 		}
 
 		public static void SendNullTariffLawyerPerson()
