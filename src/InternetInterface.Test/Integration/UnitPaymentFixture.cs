@@ -26,17 +26,6 @@ namespace InternetInterface.Test.Integration
 		}
 
 		[Test]
-		public void Test()
-		{
-			QueryCatcher.Catch();
-			var nullLeases = Lease.Queryable.Where(l =>
-				l.Pool.IsGray &&
-					(l.Endpoint.Client.LawyerPerson != null &&
-						l.Endpoint.Client.Disabled))
-				.ToList();
-		}
-
-		[Test]
 		public void Cancel_payment()
 		{
 			var payment = new Payment(client, 1000) {
