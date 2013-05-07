@@ -64,7 +64,9 @@
 			</th>
 			<%end %>
 			<%if PartnerAccessSet.AccesPartner("DHCP"): %>
-			<th></th>
+			<th>
+				${App.LinkTo("Статистика", @UserInfo, @Statistic)}
+			</th>
 			<%end %>
 			<%if PartnerAccessSet.AccesPartner("SSI"): %>
 			<th></th>

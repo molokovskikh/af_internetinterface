@@ -1,0 +1,19 @@
+﻿<%if PartnerAccessSet.AccesPartner("SSI"):  %>
+<table id="statTable">
+	<tbody>
+		<tr>
+			<td>
+				<fieldset class="statisticField">
+				<legend>Статистика</legend>
+				<p>On-Line клиенты: <span>${Stat.OnLineCount}</span></p>
+				<p>Уникальных клиентов за сутки: <span>${Stat.UniqueClient}</span></p>
+				<p>Количество зарегистрированных клиентов (Корпы/Физики): <span>${Stat.AllRegister} (${Stat.LawyerRegister}/${Stat.PhysicalRegister})</span></p>
+				<p>Количество клиентов "Заблокирован"(Корпы/Физики): <span>${Stat.AllBlocked} (${Stat.BlockedLawyer}/${Stat.BlockedPhysical})</span></p>
+				<p>Количество клиентов "Заблокирован" и "Он-Лайн": <span>${Stat.BlockedOnLine}</span></p>
+				<p>Расторгнутых: <span>${Stat.Dissolved}</span></p>
+				</fieldset>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<%end %>

@@ -1375,5 +1375,10 @@ where r.`Label`= :LabelIndex;")
 ", writeOff.Id, writeOff.Client.Id, writeOff.Client.Name, writeOff.Sum.ToString("#.00"), InitializeContent.Partner.Name));
 			RedirectToReferrer();
 		}
+
+		public void Statistic()
+		{
+			PropertyBag["Stat"] = new Statistic(DbSession).GetStatistic();
+		}
 	}
 }

@@ -244,7 +244,8 @@ namespace InternetInterface.Models.Access
 				"ForClient",
 				"ForSwitch",
 				"ShowWriteOffs",
-				"ExcelShowWriteOffs"
+				"ExcelShowWriteOffs",
+				"Statistic"
 			};
 			return _visibleDemand.Contains(methodName) ? "SSI" : string.Empty;
 		}

@@ -95,7 +95,6 @@ namespace InternetInterface.Controllers
 			PropertyBag["additionalStatuses"] = AdditionalStatus.FindAllAdd();
 			PropertyBag["Tariffs"] = Tariff.FindAllAdd();
 			PropertyBag["WhoRegistered"] = Partner.FindAllAdd();
-			PropertyBag["Stat"] = new Statistic(DbSession).GetStatistic();
 		}
 
 		public void Redirect([DataBind("filter")] ClientFilter filter)

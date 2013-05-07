@@ -30,6 +30,7 @@ namespace InternetInterface.Helpers
 		public int BlockedPhysical { get; set; }
 		public int BlockedLawyer { get; set; }
 		public int BlockedOnLine { get; set; }
+		public int Dissolved { get; set; }
 
 		public Statistic(ISession session)
 		{
@@ -66,13 +67,19 @@ select count(*) from internet.Clients c;
 
 			BlockedPhysical = Convert.ToInt32(_session.CreateSQLQuery(@"
 select count(*) from internet.Clients c
-where c.Disabled and c.PhysicalClient is not null;
+where c.Disabled and c.PhysicalClient is not null and c.Status <> 10;
 ")
 				.UniqueResult());
 
 			BlockedLawyer = Convert.ToInt32(_session.CreateSQLQuery(@"
 select count(*) from internet.Clients c
-where c.Disabled and c.LawyerPerson is not null;
+where c.Disabled and c.LawyerPerson is not null and c.Status <> 10;
+")
+				.UniqueResult());
+
+			Dissolved = Convert.ToInt32(_session.CreateSQLQuery(@"
+select count(*) from internet.Clients c
+where c.Status = 10;
 ")
 				.UniqueResult());
 

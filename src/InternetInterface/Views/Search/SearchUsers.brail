@@ -26,29 +26,7 @@
 <form id="SearchForm" name="SearchForm" action="${siteroot}/Search/SearchBy" 
 	style="width: 100%;">
 <center>
-<%if PartnerAccessSet.AccesPartner("SSI"):  %>
-<table id="statTable">
-	<tbody>
-		<tr>
-			<td>
-				<fieldset class="statisticField">
-				<legend>Статистика</legend>
-				<p>On-Line клиенты: <span>${Stat.OnLineCount}</span></p>
-				<p>Уникальных клиентов за сутки: <span>${Stat.UniqueClient}</span></p>
-				<p>Количество зарегистрированных клиентов (Корпы/Физики): <span>${Stat.AllRegister} (${Stat.LawyerRegister}/${Stat.PhysicalRegister})</span></p>
-				<p>Количество клиентов "Заблокирован"(Корпы/Физики): <span>${Stat.AllBlocked} (${Stat.BlockedLawyer}/${Stat.BlockedPhysical})</span></p>
-				<p>Количество клиентов "Заблокирован" и "Он-Лайн": <span>${Stat.BlockedOnLine}</span></p>
-				</fieldset>
-			</td>
-		</tr>
-	</tbody>
-</table>
-<%end %>
-<table
-<%if PartnerAccessSet.AccesPartner("SSI"):  %>
-	id="searchPositionTable"
-<%end %>
-border="1" bgcolor="#FFFFFF" cellspacing="1" cellpadding="0">
+<table>
 <tr>
 	<td style="width:100%">
 	<table class="table" bgcolor="#FFFFFF">
