@@ -64,8 +64,23 @@ namespace InternetInterface.Models
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
+		private bool _disabled;
+
 		[Property]
-		public virtual bool Disabled { get; set; }
+		public virtual bool Disabled
+		{
+			get { return _disabled; }
+			set
+			{
+				if (_disabled != value) {
+					if (value)
+						BlockDate = SystemTime.Now();
+					else
+						BlockDate = null;
+				}
+				_disabled = value;
+			}
+		}
 
 		[Property]
 		public virtual string Name { get; set; }
@@ -132,6 +147,9 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual DateTime? WhenShowWarning { get; set; }
+
+		[Property]
+		public virtual DateTime? BlockDate { get; set; }
 
 		[Property]
 		public virtual bool SendEmailNotification { get; set; }

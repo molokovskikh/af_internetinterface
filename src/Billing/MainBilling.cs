@@ -315,6 +315,15 @@ set s.LastStartFail = true;")
 					}
 				}
 
+				var clientWhoDeleteStatic = Client.Queryable.Where(c => c.Disabled && c.BlockDate != null && c.BlockDate < SystemTime.Now().AddDays(-61)).ToList();
+				foreach (var client in clientWhoDeleteStatic) {
+					foreach (var clientEndpoint in client.Endpoints) {
+						clientEndpoint.Ip = null;
+						ActiveRecordMediator.Save(clientEndpoint);
+					}
+					client.BlockDate = null;
+					ActiveRecordMediator.Save(client);
+				}
 				transaction.VoteCommit();
 			}
 			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
