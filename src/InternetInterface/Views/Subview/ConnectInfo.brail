@@ -1,4 +1,6 @@
-﻿${app.Asset("EditingConnect.js")}
+﻿<%if not IsDefined("filter") or filter.EditingConnect: %>
+	${app.Asset("EditingConnect.js")}
+<%end%>
 <style type="text/css">
 	.addMenuItem
 	 {
