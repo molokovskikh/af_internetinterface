@@ -87,7 +87,7 @@ namespace InternetInterface.Test.Integration.Tasks
 			}
 		}
 
-		[Test, Ignore("Чинить")]
+		[Test]
 		public void BaseTest()
 		{
 			Lease unknownLease;

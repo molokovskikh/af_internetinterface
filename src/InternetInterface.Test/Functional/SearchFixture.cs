@@ -60,15 +60,21 @@ namespace InternetInterface.Test.Functional
 			Assert.That(browser.Text, Is.StringContaining("Введите текст для поиска:"));
 			Assert.That(browser.Text, Is.StringContaining("Автоматически"));
 			Assert.That(browser.Text, Is.StringContaining("Все"));
+			Css("#SearchText").TypeText(Client.Id.ToString());
+			browser.Button(Find.ById("SearchButton")).Click();
+			Assert.That(browser.Text, Is.StringContaining("Информация по клиенту"));
+		}
+
+		[Test]
+		public void StatisticTest()
+		{
+			Open("UserInfo/Statistic");
 			Assert.That(browser.Text, Is.StringContaining("Статистика"));
 			Assert.That(browser.Text, Is.StringContaining("On-Line клиенты"));
 			Assert.That(browser.Text, Is.StringContaining("Уникальных клиентов за сутки"));
 			Assert.That(browser.Text, Is.StringContaining("Количество зарегистрированных клиентов"));
 			Assert.That(browser.Text, Is.StringContaining("Количество клиентов \"Заблокирован\" и \"Он-Лайн\""));
 			Assert.That(browser.Text, Is.StringContaining("Количество клиентов \"Заблокирован\""));
-			Css("#SearchText").TypeText(Client.Id.ToString());
-			browser.Button(Find.ById("SearchButton")).Click();
-			Assert.That(browser.Text, Is.StringContaining("Информация по клиенту"));
 		}
 
 		[Test]
