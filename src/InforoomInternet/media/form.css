@@ -6,7 +6,7 @@ label {
 }
 
 input[type="text"], select {
-	background: url('../images/bg_input_text.png') repeat-x top left #fefefe;
+	background: url('bg_input_text.png') repeat-x top left #fefefe;
 	border: solid 1px #c7ced2;
 	margin: 0;
 	color: #5a6468;
@@ -22,7 +22,7 @@ select {
 }
 
 textarea {
-	background: url('../images/bg_input_text.png') repeat-x top left #fefefe;
+	background: url('bg_input_text.png') repeat-x top left #fefefe;
 }
 
 input[type="text"]:focus {

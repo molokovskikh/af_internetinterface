@@ -41,8 +41,8 @@
 	<link rel="stylesheet" href="/media/news_style.css" type="text/css" />
 
 	<script src="${siteroot}/media/modernizr-1.7.min.js"></script>
-	${app.Asset("jquery-1.6.4.js")}
-	${app.Asset("jquery.validate.js")}
+	${app.Asset("jquery-1.6.4.min.js")}
+	${app.Asset("jquery.validate.min.js")}
 </head>
 <body>
 	<div class="container">
