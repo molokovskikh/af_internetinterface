@@ -1,8 +1,8 @@
 #old_browser_banner tbody tr td{
-	background: #32424f url("/media/old_browsers/images/textura.gif");
+	background: #32424f url("/media/textura.gif");
 }
 #old_browser_banner{
-	background: #32424f url("/media/old_browsers/images/textura.gif");
+	background: #32424f url("/media/textura.gif");
 	color: #e5e5e5;
 	font-size: 12pt;
 	min-width: 950px;
