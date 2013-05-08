@@ -542,16 +542,24 @@ namespace InternetInterface.Models
 
 		public virtual IList<BaseWriteOff> GetWriteOffs(ISession session, string groupedKey, bool forIvrn = false)
 		{
-			var gpoupKey = "WriteOffDate";
+			var gpoupKey = string.Empty;
+			if (groupedKey == "day")
+				gpoupKey = "WriteOffDate";
 			if (groupedKey == "month")
 				gpoupKey = "concat(YEAR(WriteOffDate),'-',MONTH(WriteOffDate))";
 			if (groupedKey == "year")
 				gpoupKey = "YEAR(WriteOffDate)";
+			if (!string.IsNullOrEmpty(gpoupKey))
+				gpoupKey = "group by " + gpoupKey;
+			var sumKey = string.Empty;
+			if (!string.IsNullOrEmpty(gpoupKey))
+				sumKey = "Sum";
+
 			var textQuery = !forIvrn ? @"SELECT
 Id,
-Sum(WriteOffSum) as WriteOffSum,
-Sum(VirtualSum) as VirtualSum,
-Sum(MoneySum) as MoneySum,
+{1}(WriteOffSum) as WriteOffSum,
+{1}(VirtualSum) as VirtualSum,
+{1}(MoneySum) as MoneySum,
 WriteOffDate,
 Client,
 BeforeWriteOffBalance,
@@ -559,13 +567,13 @@ BeforeWriteOffBalance,
 false as UserWriteOff
 FROM internet.WriteOff W
 where Client = :clientid and WriteOffSum > 0
-group by {0}
+{0}
 
 UNION
 
 select
 uw.Id as Id,
-sum(`sum`) as WriteOffSum,
+{1}(`sum`) as WriteOffSum,
 0.0 as VirtualSum,
 0.0 as MoneySum,
 `date` as WriteOffDate,
@@ -575,13 +583,13 @@ Client,
 true as UserWriteOff
 from internet.UserWriteOffs uw
 where uw.client = :clientid
-group by {0}
+{0}
 ;" :
 @"SELECT
 Id,
-Sum(WriteOffSum) as WriteOffSum,
-Sum(VirtualSum) as VirtualSum,
-Sum(MoneySum) as MoneySum,
+{1}(WriteOffSum) as WriteOffSum,
+{1}(VirtualSum) as VirtualSum,
+{1}(MoneySum) as MoneySum,
 WriteOffDate,
 Client,
 BeforeWriteOffBalance,
@@ -589,9 +597,9 @@ BeforeWriteOffBalance,
 false as UserWriteOff
 FROM internet.WriteOff W
 where Client = :clientid and WriteOffSum > 0
-group by {0}
+{0}
 ;";
-			var query = session.CreateSQLQuery(String.Format(textQuery, gpoupKey))
+			var query = session.CreateSQLQuery(String.Format(textQuery, gpoupKey, sumKey))
 				.SetParameter("clientid", Id);
 			return query.ToList<BaseWriteOff>();
 		}
