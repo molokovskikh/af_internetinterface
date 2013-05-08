@@ -181,6 +181,37 @@ namespace Billing.Test.Integration
 			Assert.That(writeOff.Sum(w => w.WriteOffSum), Is.EqualTo(200));
 		}
 
+		[Test(Description = "Проверяет, что в один и тот же день можно и активировать и деактивировать заказы")]
+		public void Activate_diactivate_one_day_test()
+		{
+			order.EndDate = SystemTime.Now().AddDays(30);
+			var serviceForFirstOrder = new OrderService {
+				Cost = 200,
+				Order = order,
+				IsPeriodic = true
+			};
+			session.Save(serviceForFirstOrder);
+			session.Save(order);
+			var order2 = new Order {
+				Client = lawyerClient,
+				BeginDate = order.BeginDate.Value.AddDays(-30),
+				EndDate = order.BeginDate
+			};
+			session.Save(order2);
+			var orderService = new OrderService {
+				Order = order2,
+				IsPeriodic = true,
+				Cost = 300
+			};
+			session.Save(orderService);
+			var writeOff = new WriteOff(lawyerClient, 300) { Service = orderService };
+			session.Save(writeOff);
+			Close();
+			billing.Compute();
+			var writeOffs = session.Query<WriteOff>().Where(w => w.Client == lawyerClient).ToList();
+			Assert.AreEqual(writeOffs.Count, 2);
+		}
+
 		[Test]
 		public void Activate_diactivate_test()
 		{

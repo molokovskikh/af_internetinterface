@@ -464,8 +464,8 @@ set s.LastStartFail = true;")
 			decimal sum = 0;
 			var writeOffs = new List<WriteOff>();
 			//если это день активации заказа, то списываем плату за разовые услуги и за периодические пропорционально оставшимся дням месяца
-			var activateOrders = client.Orders.Where(o => o.BeginDate.Value.Date == now.Date);
-			var disableOrders = client.Orders.Where(o => o.EndDate != null && o.EndDate.Value.Date == now.Date);
+			var activateOrders = client.Orders.Where(o => o.BeginDate.Value.Date == now.Date).ToList();
+			var disableOrders = client.Orders.Where(o => o.EndDate != null && o.EndDate.Value.Date == now.Date).ToList();
 			if (activateOrders.Any()) {
 				var periodicService = activateOrders.SelectMany(s => s.OrderServices).Where(s => s.IsPeriodic);
 				var notPeriodicService = activateOrders.SelectMany(s => s.OrderServices).Where(s => !s.IsPeriodic);
@@ -484,7 +484,7 @@ set s.LastStartFail = true;")
 					});
 				}
 			}
-			else if (disableOrders.Any()) {
+			if (disableOrders.Any()) {
 				//если это день деактивации заказа, то нужно вернуть сумму за оставшееся число дней в месяце за периодические услуги
 				var periodicService = disableOrders.SelectMany(s => s.OrderServices).Where(s => s.IsPeriodic);
 				sum -= periodicService.Sum(s => s.Cost) / daysInMonth * (daysInMonth - now.Day);

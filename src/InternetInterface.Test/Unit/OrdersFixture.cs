@@ -14,6 +14,7 @@ namespace InternetInterface.Test.Unit
 		[Test(Description = "Проверяет, что заказ остается редактируемым до 5-го числа след месяца")]
 		public void Can_edit_test()
 		{
+			SystemTime.Reset();
 			var order = new Order {
 				BeginDate = DateTime.Now
 			};
