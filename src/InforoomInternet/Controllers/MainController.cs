@@ -169,7 +169,7 @@ namespace InforoomInternet.Controllers
 			SetARDataBinder(AutoLoadBehavior.NullIfInvalidKey);
 
 			var lease = FindLease();
-			if (!lease.CanSelfRegister()) {
+			if (lease == null || !lease.CanSelfRegister()) {
 				this.RedirectRoot();
 			}
 
@@ -217,11 +217,12 @@ namespace InforoomInternet.Controllers
 		public void Complete()
 		{
 			var lease = FindLease();
+			if (!IsPost && (Flash["password"] == null || lease == null))
+				this.RedirectRoot();
+
 			var origin = Request.Form["origin"] ?? Request.QueryString["origin"];
 			PropertyBag["origin"] = origin;
 			PropertyBag["LoginClient"] = lease.Endpoint.Client.Id;
-			if (!IsPost && Flash["password"] == null)
-				this.RedirectRoot();
 
 			if (IsPost)
 				GoToReferer("origin");
