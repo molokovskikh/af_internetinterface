@@ -317,24 +317,5 @@ namespace InforoomInternet.Controllers
 		public void BonusProgram()
 		{
 		}
-
-		public void Complete(string referer)
-		{
-			PropertyBag["LoginClient"] = Session["LoginClient"];
-			PropertyBag["referer"] = referer;
-			if (!IsPost && Flash["password"] == null)
-				Redirecter.RedirectRoot(this);
-
-			if (IsPost)
-				GoToReferer(referer);
-		}
-
-		public void GoToReferer(string referer)
-		{
-			if (String.IsNullOrEmpty(referer))
-				Redirecter.RedirectRoot(this);
-			else
-				RedirectToUrl(string.Format("http://{0}", referer));
-		}
 	}
 }

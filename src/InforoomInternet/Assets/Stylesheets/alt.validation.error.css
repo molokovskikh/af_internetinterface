@@ -1,4 +1,8 @@
-﻿.error {
+﻿form label {
+	display: block;
+}
+
+.error {
 	margin-left: 0;
 }
 

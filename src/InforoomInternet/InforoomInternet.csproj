@@ -207,11 +207,30 @@
     <Content Include="JavaScript\lightbox\prevlabel.gif" />
     <Content Include="JavaScript\lightbox\prototype.js" />
     <Content Include="JavaScript\lightbox\scriptaculous.js" />
+    <Content Include="media\bg_btn_send.png" />
+    <Content Include="media\cityline.ie.css" />
+    <Content Include="media\favicon.ico" />
+    <Content Include="media\form.css" />
+    <Content Include="media\forms.css" />
+    <Content Include="media\icons_phone.png" />
+    <Content Include="media\ie.css" />
+    <Content Include="media\index.css" />
+    <Content Include="media\liquid.css" />
+    <Content Include="media\logo_ct.png" />
+    <Content Include="media\menu.css" />
+    <Content Include="media\modernizr-1.7.min.js" />
+    <Content Include="media\news_style.css" />
+    <Content Include="media\print.css" />
+    <Content Include="media\reset.css" />
+    <Content Include="media\screen.css" />
+    <Content Include="media\screen.ie.css" />
+    <Content Include="media\typography.css" />
     <Content Include="robots.txt" />
     <Content Include="Views\Main\SelfRegistration.brail">
       <SubType>Designer</SubType>
     </Content>
     <None Include="Views\BonusPrograms\ConnectFriend.brail" />
+    <Content Include="Views\Layouts\cityline.brail" />
     <None Include="Views\Main\Feedback.brail" />
     <None Include="Views\Main\MessageSended.brail" />
     <None Include="Views\Main\WarningPackageId.brail" />
@@ -223,7 +242,7 @@
     <None Include="Views\PrivateOffice\AboutSale.brail" />
     <None Include="Views\PrivateOffice\BalanceInfo.brail" />
     <None Include="Views\PrivateOffice\BonusProgram.brail" />
-    <Content Include="Views\PrivateOffice\Complete.brail" />
+    <Content Include="Views\Main\Complete.brail" />
     <None Include="Views\PrivateOffice\DiactivateVoluntaryBlockin.brail" />
     <Content Include="Views\PrivateOffice\FirstVisit.brail" />
     <None Include="Views\PrivateOffice\Services.brail" />

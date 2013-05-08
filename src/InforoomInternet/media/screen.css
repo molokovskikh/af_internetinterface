@@ -1,0 +1,465 @@
+body {
+	background: url('/media/newcityline/images/bg_page.jpg') #3e474c;
+	min-width: 930px;
+}
+/*
+ * Ограничение по ширине
+ */
+#header, #menu,  #extras, #footer, #main, #diagram {
+	margin: 0 auto 0.786em;
+	max-width: 1190px;
+	width: 100%;
+	border-radius: 10px;
+	margin-bottom: 10px;
+}
+
+/*
+ * Шапка
+ */
+#header {
+	background-color: #283035;
+	padding-top: 27px;
+	padding-bottom: 45px;
+	margin-top: 10px;
+}
+
+/* слоган */
+#slogan {
+	line-height: 1em;
+	margin-top: 22px;
+}
+
+#slogan em, #slogan strong {
+	display: block;
+	line-height: 0.929em;
+}
+
+#slogan em {
+	font-style: normal;
+	color: #fdb913;
+	font-size: 1.643em;
+	padding-left: 1px;
+}
+
+#slogan strong {
+	font-size: 2.714em;
+	color: #fff;
+	text-transform: uppercase;
+}
+
+/* иконки навигации */
+#icons {
+	text-align: center;
+	margin-bottom: 10px;
+	float: right;
+	width: 200px;
+}
+
+#icons a{
+	margin-right: 30px;
+	text-decoration: none;
+}
+
+/* вход в личный кабинет */
+#loggin {
+	background: url('/media/newcityline/images/bg_green.png') #90906f;
+	padding: 5px 40px 5px 5px;
+	border-radius: 40px;
+	color: #c1c49f;
+	text-decoration: none;
+	font-size: 0.785em;
+	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+	line-height: 1.273;
+	width: 185px;
+	float: right;
+}
+
+#loggin img {
+	margin-right: 0.909em;
+}
+
+#loggin em {
+	font-style: normal;
+	font-size: 1.363em;
+	display: block;
+	color: #fff;
+	margin-top: 0.545em;
+}
+
+/* диаграмма */
+#diagram {
+	background: #2e353b;
+	padding-top: 0.714em;
+	padding-bottom: 2.285em;
+
+}
+
+/*
+ * Хлебные крошки
+ */
+#breadcrumb { margin-bottom: 1em; }
+
+#breadcrumb, #breadcrumb a { text-shadow: none; }
+
+#breadcrumb img { margin: 0 7px 1px 9px; }
+
+/*
+ * Extras
+ */
+#extras {
+	background: url('/media/newcityline/images/bg_gray.png') #5a6468;
+	padding: 1.467em 0;
+	font-size: 1.072em;
+	color: #879096;
+}
+
+/* Сабменю */
+#submenu a {
+	color: #fff;
+	white-space: nowrap;
+}
+
+#submenu a:hover {
+	color: #fdb913;
+}
+
+#submenu span {
+	margin: 0 0.6em;
+}
+
+/*
+ * Подвал
+ */
+#footer {
+	background: #283035;
+	padding: 10px 0;
+	margin-bottom: 20px;
+}
+
+#copyright {
+	font-size: 0.786em;
+	line-height: 1.182em;
+	color: #aaa;
+	margin-top: 0.455em;
+}
+
+#copyright a {
+	color: #aaa;
+}
+
+#phone {
+	background: url('./icons_phone.png') no-repeat center left;
+	font-family: "Bliss Pro", "Myriad Pro", Tahoma, sans-serif;
+	font-size: 2.071em;
+	color: #c8d0d8;
+	line-height: 0.8em;
+	margin-top: 0.275em;
+	color: #fdb913;
+	white-space: nowrap;
+}
+
+#phone em {
+	font-style: normal;
+	margin-left: 30px;
+	margin-right: 5px;
+	font-size: 0.413em;
+	float: left;
+	color: #fdb913;
+	padding-top: 2px;
+}
+
+/* excentrics */
+#excentrics {
+	position: relative;
+	height: 40px;
+}
+
+#excentrics > a {
+	background: url('/media/newcityline/images/logo_exc.png') no-repeat 0px -46px;
+	text-decoration: none;
+	width: 113px;
+	height: 40px;
+	display: block;
+	position: absolute;
+	right: 18.897%;
+}
+
+#excentrics > a:hover { background-position: 0px 0px; }
+
+#excentrics > a > img {
+	width: 100%;
+	height: 100%;
+}
+
+/*
+ * Основное содержимое
+ */
+#main {
+	margin-bottom: 0.786em;
+	background: #e8ebed;
+	padding-top: 3.286em;
+	padding-bottom: 3.286em;
+	text-shadow: none;
+}
+
+/* sidebar */
+.sidebar {
+	margin-top: 4.05em;
+}
+
+/* блоки с текстом */
+.block_yellow {
+	background: #fff200;
+	color: #838665;
+}
+
+.block_white {
+	background-color: #fff;
+	color: #757d83;
+}
+
+.bottom_color_line {
+	background-image: url('/media/newcityline/images/line_color.png');
+	background-position: bottom left;
+	background-repeat: repeat-x;
+	padding-bottom: 1.2em !important;
+}
+
+.block_color {
+	border-radius: 10px;
+	font-style: italic;
+	font-family: Georgia, serif;
+	font-size: 1.071em;
+	margin-bottom: 0.714em;
+	padding-bottom: 1px;
+}
+
+.block_color > div {
+	margin: 0 1.267em 0.67em 2em;
+	padding-top: 1.33em;
+	padding-bottom: 0.67em;
+}
+
+/* Цветной блок с ссылкой */
+.block_color_link {
+	background: url('/media/newcityline/images/bg_color_button.png') #66c3d5;
+	border-radius: 40px;
+	font-size: 0.714em;
+	text-transform: uppercase;
+	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+	color: #fff;
+	text-align: center;
+	display: block;
+	margin-bottom: 1em;
+	text-decoration: none;
+}
+
+.block_color_link:hover { color: #fff; }
+
+.block_color_link > span {
+	padding: 1em 3em;
+	display: block;
+}
+
+.block_color_link h5 {
+	font-size: 2.2em;
+	color: #fff;
+	margin: 0;
+	line-height: 1em;
+	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+/* большие кнопки */
+.button_green {
+	background: url('/media/newcityline/images/bg_green_button.png') #90906f;
+	padding: 7px 0 12px;
+	border-radius: 40px;
+	color: #fff;
+	text-decoration: none;
+	font-size: 0.714em;
+	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+	line-height: 1.273;
+	width: 100%;
+	float: right;
+	text-transform: uppercase;
+	margin-bottom: 14px;
+	text-align: center;
+}
+.button_green:hover {
+	color: #fff;
+}
+
+.button_green em {
+	font-style: normal;
+	font-size: 2.2em;
+	display: block;
+	color: #fff;
+}
+
+
+.button_green_gray, .button_green_dark {
+	padding: 5px 0;
+	border-radius: 40px;
+	font-size: 0.785em;
+	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+	line-height: 1.273;
+	width: 100%;
+	float: right;
+	margin-bottom: 14px;
+}
+
+.button_green_gray {
+	background: #838665;
+	color: #c1c49f;
+	text-decoration: none;
+}
+
+.button_green_dark {
+	background: #434a43;
+	color: #929892;
+	text-decoration: none;
+}
+
+.button_green_gray:hover {
+	color: #c1c49f;
+	background-color: #8b8e6b;
+}
+
+.button_green_dark:hover {
+	color: #929892;
+	background-color: #4c534c;
+}
+
+.button_green_gray em, .button_green_dark em {
+	font-style: normal;
+	font-size: 1.36em;
+	display: block;
+	color: #fff;
+	margin-top: 0.545em;
+}
+
+.button_green_gray img, .button_green_dark img {
+	margin-right: 0.909em;
+	margin-left: 5px;
+}
+
+/* тарифные планы */
+.tariff {
+	font-size: 1.071em;
+	color: #757d83;
+	background: #fff;
+	border-radius: 10px;
+	margin-bottom: 5px;
+	box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.2);
+	padding: 0.667em 1.4em;
+	clear: both;
+	line-height: 4.73em;
+}
+
+.tariff:hover {
+	background: #f5f5f5;
+	cursor: pointer;
+}
+
+.t_plan {
+	font-size: 1.33em;
+	float: left;
+	width: 30%;
+	line-height: 1em;
+	margin-top: 23px;
+}
+
+.speed {
+	float: left;
+	width: 27%;
+}
+
+.round {
+	margin-right: 0.667em;
+	background-repeat: no-repeat;
+	width: 4.8em;
+	height: 4.8em;
+	float: left;
+	text-align: center;
+	color: #fff;
+}
+
+.cost { float: left; }
+
+/* ссылки на физ/юр лица */
+ul.tariff_link {
+	margin: 0 0 1.428em 0;
+	padding: 0;
+}
+
+ul.tariff_link li{
+	float: left;
+	list-style-image: none !important;
+	margin-right: 20px;
+	margin: 0;
+}
+
+.tariff_link a {
+	text-decoration: none;
+	border-bottom: dashed 1px #309dcf;
+	padding-bottom: 2px;
+	color: #309dcf;
+	margin: 0.642em 1.4em;
+	display: block;
+}
+
+.tariff_link a:hover {
+	border: none;
+}
+
+.dialog_claud {
+	background: url('../images/angle_blue_down.png') 20% bottom no-repeat;
+	padding-bottom: 0.571em;
+}
+
+.dialog_claud span {
+	background: #84d3e1;
+	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+	border-radius: 5px;
+	color: #fff;
+	display: block;
+	padding: 0.642em 1.4em;
+}
+
+/* белый текстовый блок */
+.text_block_white {
+	border-radius: 10px;
+	background: #fff;
+	padding: 15px 30px;
+}
+
+/* информационные блоки */
+.block_info {
+	background-color: #f9faef;
+	padding: 2em 1em 2em 9.23em;
+	border-radius: 10px;
+	min-height: 37px;
+	color: #838665;
+}
+
+.green_icon {
+	background-image: url('../images/icons_att_green.png');
+	background-position: 20px center;
+	background-repeat: no-repeat;
+}
+
+/* ссылка со стрелочкой */
+.arrow_down {
+	background: url('../images/arrown_down_link.png') no-repeat right center;
+	padding-right: 12px;
+}
+
+.arrow_up{
+	background: url('../images/arrown_up_link.png') no-repeat right center;
+	padding-right: 12px;
+}
+
+.dashed_link {
+	text-decoration: none;
+	border-bottom: dashed 1px;
+}

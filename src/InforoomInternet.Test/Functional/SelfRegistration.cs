@@ -29,7 +29,7 @@ namespace InforoomInternet.Test.Functional
 			Lease.Ip = IPAddress.Parse("192.168.1.1");
 			Lease.Endpoint = null;
 
-			Open("Main/Warning");
+			Open("Main/Warning?host=ya.ru&url=/");
 			AssertText("Номер абонента");
 			Css("#physicalClient_ExternalClientId").TypeText(Generator.Random().First().ToString());
 			Css("#physicalClient_Surname").TypeText("Иванов");
@@ -39,6 +39,8 @@ namespace InforoomInternet.Test.Functional
 			Css("#physicalClient_Tariff_Id").Select("Тестовый тариф для самостоятельной регистрации");
 			Click("Продолжить");
 			AssertText("Пароль");
+			Click("Продолжить");
+			Assert.AreEqual("http://ya.ru/", browser.Url);
 		}
 	}
 }

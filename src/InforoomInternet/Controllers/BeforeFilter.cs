@@ -13,9 +13,9 @@ using NHibernate.Linq;
 
 namespace InforoomInternet.Controllers
 {
-	public class Redirecter
+	public static class Redirecter
 	{
-		public static void RedirectRoot(Controller controller)
+		public static void RedirectRoot(this Controller controller)
 		{
 			controller.RedirectToUrl(controller.Context.ApplicationPath + "/");
 		}

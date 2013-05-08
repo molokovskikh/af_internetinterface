@@ -19,7 +19,7 @@ namespace InforoomInternet.Controllers
 				PropertyBag["AcceptName"] = "AcceptClient";
 			else {
 				if (LoginLogic.IsAccessiblePartner(Session["LoginPartner"]))
-					Redirecter.RedirectRoot(this);
+					this.RedirectRoot();
 				PropertyBag["AcceptName"] = "AcceptPartner";
 			}
 		}
@@ -31,7 +31,7 @@ namespace InforoomInternet.Controllers
 				Logger.Info("Авторизация выполнена");
 				FormsAuthentication.RedirectFromLoginPage(Login, true);
 				Session["LoginPartner"] = Login;
-				Redirecter.RedirectRoot(this);
+				this.RedirectRoot();
 			}
 			else {
 				Logger.Info("Авторизация отклонена");

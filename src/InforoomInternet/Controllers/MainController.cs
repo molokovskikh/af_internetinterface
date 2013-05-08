@@ -162,13 +162,15 @@ namespace InforoomInternet.Controllers
 			}
 		}
 
-		public void SelfRegistration(string referer)
+		[Layout("cityline")]
+		public void SelfRegistration()
 		{
+			var origin = Request.Form["origin"] ?? Request.QueryString["origin"];
 			SetARDataBinder(AutoLoadBehavior.NullIfInvalidKey);
 
 			var lease = FindLease();
 			if (!lease.CanSelfRegister()) {
-				Redirecter.RedirectRoot(this);
+				this.RedirectRoot();
 			}
 
 			var physicalClient = new PhysicalClient {
@@ -186,8 +188,8 @@ namespace InforoomInternet.Controllers
 			PropertyBag["tariffs"] = DbSession.Query<Tariff>().Where(t => t.CanUseForSelfRegistration)
 				.OrderBy(t => t.Name)
 				.ToList();
+			PropertyBag["origin"] = origin;
 			PropertyBag["physicalClient"] = physicalClient;
-			PropertyBag["referer"] = referer;
 
 			if (IsPost) {
 				BindObjectInstance(physicalClient, "physicalClient", "ExternalClientId, Surname, Name, Patronymic, PhoneNumber, Tariff");
@@ -206,16 +208,32 @@ namespace InforoomInternet.Controllers
 					SceHelper.Login(lease, lease.Ip.ToString());
 
 					Flash["password"] = client.GeneragePassword();
-					Redirect("PrivateOffice", "Complete", new { referer });
+					RedirectToAction("Complete", new { origin });
 				}
 			}
 		}
 
+		[Layout("cityline")]
+		public void Complete()
+		{
+			var lease = FindLease();
+			var origin = Request.Form["origin"] ?? Request.QueryString["origin"];
+			PropertyBag["origin"] = origin;
+			PropertyBag["LoginClient"] = lease.Endpoint.Client.Id;
+			if (!IsPost && Flash["password"] == null)
+				this.RedirectRoot();
+
+			if (IsPost)
+				GoToReferer("origin");
+		}
+
 		public void Warning()
 		{
-			var referer = "";
-			if (!string.IsNullOrEmpty(Request["host"]))
-				PropertyBag["referer"] = Request["host"] + Request["url"];
+			var origin = "";
+			if (!string.IsNullOrEmpty(Request["host"])) {
+				origin = Request["host"] + Request["url"];
+				PropertyBag["referer"] = origin;
+			}
 
 			var hostAdress = GetHost();
 			var lease = FindLease();
@@ -252,12 +270,12 @@ namespace InforoomInternet.Controllers
 			}
 
 			if (lease != null && lease.CanSelfRegister()) {
-				RedirectToAction("SelfRegistration", new { referer });
+				RedirectToAction("SelfRegistration", new { origin });
 				return;
 			}
 
 			if (point == null) {
-				Redirecter.RedirectRoot(this);
+				this.RedirectRoot();
 				return;
 			}
 
@@ -289,7 +307,6 @@ namespace InforoomInternet.Controllers
 				return;
 			}
 
-			PropertyBag["referer"] = referer;
 			PropertyBag["Client"] = client;
 			if (client.PhysicalClient == null) {
 				PropertyBag["LClient"] = client.LawyerPerson;
@@ -346,11 +363,11 @@ namespace InforoomInternet.Controllers
 			}
 		}
 
-		public void GoToReferer()
+		public void GoToReferer(string name = "referer")
 		{
-			var url = Request.Form["referer"];
+			var url = Request.Form[name];
 			if (String.IsNullOrEmpty(url))
-				Redirecter.RedirectRoot(this);
+				this.RedirectRoot();
 			else
 				RedirectToUrl(string.Format("http://{0}", url));
 		}
