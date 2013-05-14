@@ -503,7 +503,7 @@ set s.LastStartFail = true;")
 						disableOrder.EndPoint.Delete();
 					}
 					var services = disableOrder.OrderServices.ToList();
-					Appeals.CreareAppeal(string.Format("Деактивирован заказ {0}, услуги {1}", disableOrder.Id, services.Select(s => string.Format("[{0}] - '{1}'", s.Id, s.Description)).Implode()), client, AppealType.System).Save();
+					Appeals.CreareAppeal(string.Format("Деактивирован заказ {0}, услуги {1}", disableOrder.Id, services.Select(s => string.Format("[{0}] - '{1}'", s.Id, s.Description)).Implode()), client, AppealType.System, false).Save();
 				}
 			}
 			else if (now.Date == now.Date.FirstDayOfMonth()) {
