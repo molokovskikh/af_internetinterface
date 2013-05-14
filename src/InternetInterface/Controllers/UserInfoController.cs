@@ -1376,9 +1376,11 @@ where r.`Label`= :LabelIndex;")
 			RedirectToReferrer();
 		}
 
-		public void Statistic()
+		public void Statistic(uint region)
 		{
-			PropertyBag["Stat"] = new Statistic(DbSession).GetStatistic();
+			PropertyBag["regionSet"] = region;
+			PropertyBag["Regions"] = DbSession.Query<RegionHouse>().ToList();
+			PropertyBag["Stat"] = new Statistic(DbSession, region).GetStatistic();
 		}
 	}
 }

@@ -28,7 +28,7 @@
 			 <% for i,Switch in enumerate(Switches): %>
 				<tr>
 					<td>${Switch.Id}</td>
-				<%if (Switch.Name != null): %>
+				<%if (Switch.Name != null) and (Switch.Name != ""): %>
 					<td><a href="../Switches/MakeSwitch?Switch=${Switch.Id}"> ${Switch.Name}</a></td>
 					<%else:%>
 					<td><a href="../Switches/MakeSwitch?Switch=${Switch.Id}"> (Редактировать)</a></td>

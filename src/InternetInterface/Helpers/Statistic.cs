@@ -17,10 +17,9 @@ namespace InternetInterface.Helpers
 		public int AllRegister { get; set; }
 		public int PhysicalRegister { get; set; }
 
-		public int LawyerRegister
-		{
-			get { return AllRegister - PhysicalRegister; }
-		}
+		private uint _region;
+
+		public int LawyerRegister { get; set; }
 
 		public int AllBlocked
 		{
@@ -32,63 +31,110 @@ namespace InternetInterface.Helpers
 		public int BlockedOnLine { get; set; }
 		public int Dissolved { get; set; }
 
-		public Statistic(ISession session)
+		public Statistic(ISession session, uint region)
 		{
 			_session = session;
+			_region = region;
+		}
+
+		private string SetRegion()
+		{
+			if (_region > 0)
+				return string.Format(" and h.RegionId = {0} or lp.RegionId = {0}", _region);
+			return string.Empty;
 		}
 
 		public Statistic GetStatistic()
 		{
-			OnLineCount = _session.CreateSQLQuery(@"
+			var region = SetRegion();
+
+			OnLineCount = _session.CreateSQLQuery(string.Format(@"
 SELECT count(*) FROM internet.leases l
 join internet.ClientEndPoints cp on cp.id = l.Endpoint
-group by cp.Client;")
+left join internet.Clients c on c.id = cp.client
+left join internet.PhysicalClients pc on pc.id = c.PhysicalClient
+left join internet.Houses h on h.id = pc.HouseObj
+left join internet.LawyerPerson lp on lp.id = c.LawyerPerson
+where 1 = 1 {0}
+group by cp.Client;", region))
 				.List<object>().Count;
 
-			UniqueClient = _session.CreateSQLQuery(@"
+			UniqueClient = _session.CreateSQLQuery(string.Format(@"
 SELECT count(*) FROM logs.internetsessionslogs l
 join internet.ClientEndPoints cp on cp.id = l.EndpointId
-where l.LeaseBegin >= :beginInterval and l.LeaseBegin <= :endInterval
-group by cp.Client;")
+left join internet.Clients c on c.id = cp.client
+left join internet.PhysicalClients pc on pc.id = c.PhysicalClient
+left join internet.Houses h on h.id = pc.HouseObj
+left join internet.LawyerPerson lp on lp.id = c.LawyerPerson
+where l.LeaseBegin >= :beginInterval and l.LeaseBegin <= :endInterval {0}
+group by cp.Client;", region))
 				.SetParameter("beginInterval", DateTime.Now.AddDays(-1))
 				.SetParameter("endInterval", DateTime.Now)
 				.List<object>().Count;
 
-			PhysicalRegister = Convert.ToInt32(_session.CreateSQLQuery(@"
+			PhysicalRegister = Convert.ToInt32(_session.CreateSQLQuery(string.Format(@"
 select count(*) from internet.Clients c
-where c.PhysicalClient is not null;
-")
+join internet.PhysicalClients pc on pc.id = c.PhysicalClient
+left join internet.Houses h on h.id = pc.HouseObj
+left join internet.LawyerPerson lp on lp.id = c.LawyerPerson
+where 1 = 1 {0};
+", region))
 				.UniqueResult());
 
-			AllRegister = Convert.ToInt32(_session.CreateSQLQuery(@"
-select count(*) from internet.Clients c;
-")
-				.UniqueResult());
-
-			BlockedPhysical = Convert.ToInt32(_session.CreateSQLQuery(@"
+			LawyerRegister = Convert.ToInt32(_session.CreateSQLQuery(string.Format(@"
 select count(*) from internet.Clients c
-where c.Disabled and c.PhysicalClient is not null and c.Status <> 10;
-")
+left join internet.PhysicalClients pc on pc.id = c.PhysicalClient
+left join internet.Houses h on h.id = pc.HouseObj
+join internet.LawyerPerson lp on lp.id = c.LawyerPerson
+where 1 = 1 {0};
+", region))
 				.UniqueResult());
 
-			BlockedLawyer = Convert.ToInt32(_session.CreateSQLQuery(@"
+			AllRegister = Convert.ToInt32(_session.CreateSQLQuery(string.Format(@"
 select count(*) from internet.Clients c
-where c.Disabled and c.LawyerPerson is not null and c.Status <> 10;
-")
+left join internet.PhysicalClients pc on pc.id = c.PhysicalClient
+left join internet.Houses h on h.id = pc.HouseObj
+left join internet.LawyerPerson lp on lp.id = c.LawyerPerson
+where 1 = 1 {0}
+", region))
 				.UniqueResult());
 
-			Dissolved = Convert.ToInt32(_session.CreateSQLQuery(@"
+			BlockedPhysical = Convert.ToInt32(_session.CreateSQLQuery(string.Format(@"
 select count(*) from internet.Clients c
-where c.Status = 10;
-")
+join internet.PhysicalClients pc on pc.id = c.PhysicalClient
+left join internet.Houses h on h.id = pc.HouseObj
+left join internet.LawyerPerson lp on lp.id = c.LawyerPerson
+where c.Disabled and c.Status <> 10 {0};
+", region))
 				.UniqueResult());
 
-			BlockedOnLine = _session.CreateSQLQuery(@"
+			BlockedLawyer = Convert.ToInt32(_session.CreateSQLQuery(string.Format(@"
+select count(*) from internet.Clients c
+left join internet.PhysicalClients pc on pc.id = c.PhysicalClient
+left join internet.Houses h on h.id = pc.HouseObj
+join internet.LawyerPerson lp on lp.id = c.LawyerPerson
+where c.Disabled and c.Status <> 10 {0};
+", region))
+				.UniqueResult());
+
+			Dissolved = Convert.ToInt32(_session.CreateSQLQuery(string.Format(@"
+select count(*) from internet.Clients c
+left join internet.PhysicalClients pc on pc.id = c.PhysicalClient
+left join internet.Houses h on h.id = pc.HouseObj
+left join internet.LawyerPerson lp on lp.id = c.LawyerPerson
+where c.Status = 10 {0};
+", region))
+				.UniqueResult());
+
+			BlockedOnLine = _session.CreateSQLQuery(string.Format(@"
 SELECT count(*) FROM internet.leases l
 join internet.ClientEndPoints cp on cp.id = l.Endpoint
 join internet.Clients c on c.id = cp.Client
-where c.Disabled
-group by cp.Client;")
+left join internet.PhysicalClients pc on pc.id = c.PhysicalClient
+left join internet.Houses h on h.id = pc.HouseObj
+left join internet.LawyerPerson lp on lp.id = c.LawyerPerson
+where c.Disabled {0}
+group by cp.Client;", region))
 				.List<object>().Count;
 			return this;
 		}
