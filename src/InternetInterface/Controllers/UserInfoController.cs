@@ -382,6 +382,8 @@ namespace InternetInterface.Controllers
 				if (existingOrder != null) {
 					if (existingOrder.EndPoint != null)
 						clientEntPoint = existingOrder.EndPoint;
+					else if (!withoutEndPoint && currentEndPoint == 0)
+						newFlag = true;
 				}
 				else {
 					newFlag = true;
@@ -452,7 +454,10 @@ namespace InternetInterface.Controllers
 								client.AdditionalStatus = null;
 								DbSession.Save(client);
 							}
-							Order.EndPoint = clientEntPoint;
+							if (existingOrder == null)
+								Order.EndPoint = clientEntPoint;
+							else
+								existingOrder.EndPoint = clientEntPoint;
 						}
 						if (newFlag || clientEntPoint.WhoConnected == null) {
 							if (client.IsPhysical() && client.ConnectGraph != null) {
