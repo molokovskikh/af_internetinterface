@@ -106,7 +106,7 @@ namespace InternetInterface.Models
 		[Property, ValidateNonEmpty("Введите номер этажа"), ValidateInteger("Должно быть введено число"), Auditable("Этаж")]
 		public virtual int? Floor { get; set; }
 
-		[ValidateRegExp(@"^((\d{3})-(\d{7}))", "Ошибка формата телефонного номера: мобильный телефон (***-*******)")]
+		[ValidateRegExp(@"^((\d{3})-(\d{7}))", "Ошибка формата телефонного номера: мобильный телефон (000-0000000)")]
 		public virtual string PhoneNumber { get; set; }
 
 		[ValidateRegExp(@"^((\d{3})-(\d{7}))", "Ошибка формата телефонного номера (***-*******)")]

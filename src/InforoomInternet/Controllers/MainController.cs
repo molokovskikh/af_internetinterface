@@ -186,7 +186,9 @@ namespace InforoomInternet.Controllers
 			//тк самостоятельная регистрация предназначена для перевода абонентов
 			DbSession.DisableFilter("HiddenTariffs");
 			PropertyBag["tariffs"] = DbSession.Query<Tariff>().Where(t => t.CanUseForSelfRegistration)
-				.OrderBy(t => t.Name)
+				.OrderBy(t => t.Price)
+				.ToList()
+				.Select(t => new Tariff { Id = t.Id, Name = string.Format("{0} - {1}руб", t.Name, t.Price) })
 				.ToList();
 			PropertyBag["origin"] = origin;
 			PropertyBag["physicalClient"] = physicalClient;
