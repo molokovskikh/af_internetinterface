@@ -36,7 +36,7 @@ namespace InforoomInternet.Test.Functional
 			Css("#physicalClient_Name").TypeText("Иван");
 			Css("#physicalClient_Patronymic").TypeText("Иванович");
 			Css("#physicalClient_PhoneNumber").TypeText("473-2606000");
-			Css("#physicalClient_Tariff_Id").Select("Тестовый тариф для самостоятельной регистрации");
+			Css("#physicalClient_Tariff_Id").Select("Тестовый тариф для самостоятельной регистрации - 100руб");
 			Click("Продолжить");
 			AssertText("Пароль");
 			Click("Продолжить");

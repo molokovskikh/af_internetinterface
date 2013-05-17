@@ -47,6 +47,7 @@ namespace InternetInterface.AllLogic
 	WHERE
 	(LOWER(C.Name) like {0} or
 	C.id like {0} or
+	p.ExternalClientId like {0} or
 	LOWER(co.Contact) like {0} or
 	LOWER(h.Street) like {0} or
 	LOWER(l.ActualAdress) like {0} )",
@@ -57,6 +58,12 @@ namespace InternetInterface.AllLogic
 							UInt32.TryParse(filter.SearchText, out id);
 							if (id > 0)
 								return string.Format("where C.id = {0}", id);
+						}
+						if (filter.SearchProperties == SearchUserBy.OuterClientCode) {
+							var id = 0u;
+							UInt32.TryParse(filter.SearchText, out id);
+							if (id > 0)
+								return string.Format("where p.ExternalClientId = {0}", id);
 						}
 						if (filter.SearchProperties == SearchUserBy.ByFio) {
 							return

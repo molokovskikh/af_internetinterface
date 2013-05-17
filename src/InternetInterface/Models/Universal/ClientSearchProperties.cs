@@ -8,6 +8,7 @@ namespace InternetInterface.Models
 		[Description("ФИО")] ByFio,
 		[Description("Паспортные данные")] ByPassport,
 		[Description("Номер счета")] SearchAccount,
+		[Description("Внешний код клиента")] OuterClientCode,
 		[Description("Номер телефона")] TelNum,
 		[Description("Адрес")] Address
 	}
@@ -158,6 +159,11 @@ namespace InternetInterface.Models
 		public bool IsSearchAccount()
 		{
 			return SearchBy == SearchUserBy.SearchAccount;
+		}
+
+		public bool IsSearchOuterClientCode()
+		{
+			return SearchBy == SearchUserBy.OuterClientCode;
 		}
 
 		public bool IsSearchTelephone()

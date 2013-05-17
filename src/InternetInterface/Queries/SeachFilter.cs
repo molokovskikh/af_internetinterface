@@ -181,7 +181,7 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 					if (!string.IsNullOrEmpty(SearchText) && wherePart.Contains(":SearchText"))
 						countQuery.SetParameter("SearchText", "%" + SearchText.ToLower() + "%");
 					if (CategorieAccessSet.AccesPartner("SSI"))
-						if (SearchProperties != SearchUserBy.SearchAccount)
+						if (SearchProperties != SearchUserBy.SearchAccount && SearchProperties != SearchUserBy.OuterClientCode)
 							SetParameters(countQuery, wherePart);
 					_lastRowsCount = Convert.ToInt32(countQuery.UniqueResult());
 				}
