@@ -646,8 +646,7 @@ where Client = :clientid and WriteOffSum > 0
 
 		public virtual IList<ClientConnectInfo> GetConnectInfo(ISession session)
 		{
-			if ((PhysicalClient != null && Status != null && Status.Connected) ||
-				(LawyerPerson != null && Status != null && Status.Connected)) {
+			if ((PhysicalClient != null) || (LawyerPerson != null)) {
 				var infos = session.CreateSQLQuery(String.Format(@"
 select
 inet_ntoa(CE.Ip) as static_IP,
