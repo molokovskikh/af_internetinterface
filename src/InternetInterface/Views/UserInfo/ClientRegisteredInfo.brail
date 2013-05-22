@@ -227,7 +227,7 @@ div.WordSection1
   со следующими параметрами:</p>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
   justify;line-height:normal'>адрес подключения: <i style='mso-bidi-font-style:
-  normal'><u>г. ${Client.City} ул. ${Client.Street} д. ${Client.House} ${Client.CaseHouse} кв. ${Client.Apartment} этаж ${Client.Entrance}</u></i></p>
+  normal'><u>г. ${Client.City} ул. ${Client.Street} д. ${Client.House} ${Client.CaseHouse} кв. ${Client.Apartment} этаж ${Client.Floor}</u></i></p>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
   justify;line-height:normal'>
     Счет: <i style='mso-bidi-font-style:

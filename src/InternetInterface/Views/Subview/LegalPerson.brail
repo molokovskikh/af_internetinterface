@@ -44,7 +44,7 @@
 		Регион
 	</td>
 	<td>
-		${FormHelper.Select("LegalPerson.Region", RegionList, {"value" : "Id", "text" : "Name"})}
+		${FormHelper.Select("LegalPerson.Region.Id", RegionList, {"value" : "Id", "text" : "Name"})}
 	</td>
 	<td>
 		${VB.GetBlock("Region")}
