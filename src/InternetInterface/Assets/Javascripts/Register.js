@@ -3,7 +3,7 @@
 	if (regionCode == undefined) {
 		regionCode = item;
 	}
-	$('#hiddenRegion').val(regions[regionCode]);
+	$('#clientCityName').val(regions[regionCode]);
 	$.ajax({
 		url: "../Register/HouseSelect",
 		type: "GET",

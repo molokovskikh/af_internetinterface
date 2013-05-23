@@ -134,14 +134,12 @@ $(function () {
 <tr>
 	<td>Город</td>
 	<td>
+		<input type="hidden" name="client.City" id="clientCityName" />
 		<select id="regionSelector" onchange="SelectHouse(this, ${ChHouse.Id});">
 			<% for i, region in enumerate(Regions): %>
 				<option value="${region.Id}" ${"selected" if ((ChHouse.Id > 0)and(region.Id == ChHouse.Region.Id))}>${region.Name}</option>
 			<%end%>
 		</select>
-		<%if ChHouse.Id > 0:%>
-			<input type="hidden" id="hiddenRegion" value="${ChHouse.Region.Name}" name="client.City"/>
-		<%end%>
 	</td>
 </tr>
 <tr>
