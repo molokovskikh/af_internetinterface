@@ -60,10 +60,11 @@ namespace InternetInterface.Controllers
 			PropertyBag["ForPrint"] = true;
 		}
 
-		public void EditHouse(uint House)
+		[AccessibleThrough(Verb.Post)]
+		public void EditHouse(uint houseId)
 		{
-			PropertyBag["house"] = DbSession.Load<House>(House);
-			PropertyBag["Entrances"] = DbSession.Query<Entrance>().Where(e => e.House.Id == House).ToList();
+			PropertyBag["house"] = DbSession.Load<House>(houseId);
+			PropertyBag["Entrances"] = DbSession.Query<Entrance>().Where(e => e.House.Id == houseId).ToList();
 			PropertyBag["Switches"] = NetworkSwitch.All(DbSession);
 			PropertyBag["RegionList"] = DbSession.Query<RegionHouse>().ToList();
 		}
