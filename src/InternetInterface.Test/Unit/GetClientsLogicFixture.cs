@@ -67,6 +67,7 @@ namespace InternetInterface.Test.Unit
 	WHERE
 	(LOWER(C.Name) like :SearchText or
 	C.id like :SearchText or
+	p.ExternalClientId like :SearchText or
 	LOWER(co.Contact) like :SearchText or
 	LOWER(h.Street) like :SearchText or
 	LOWER(l.ActualAdress) like :SearchText )"),
