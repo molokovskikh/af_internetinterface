@@ -10,6 +10,7 @@ using Common.Tools;
 using Common.Web.Ui.MonoRailExtentions;
 using InternetInterface.Controllers;
 using InternetInterface.Models;
+using InternetInterface.Queries;
 using InternetInterface.Test.Helpers;
 using NHibernate;
 using NHibernate.Linq;
@@ -189,6 +190,19 @@ namespace InternetInterface.Test.Integration
 			Assert.AreEqual(client.Balance, 300);
 			session.Refresh(client);
 			Assert.That(client.Appeals.First().Appeal, Is.StringContaining("Удалено списание на сумму"));
+		}
+
+		[Test]
+		public void Find_request_for_number()
+		{
+			var name = Generator.Name();
+			var tariff = new Tariff("test", 100);
+			session.Save(tariff);
+			var request = new Request { ApplicantName = name, ApplicantPhoneNumber = "900-9090900", Street = "123", Tariff = tariff };
+			session.Save(request);
+			var filter = new RequestFilter { query = request.Id.ToString() };
+			var result = filter.Find();
+			Assert.AreEqual(result[0].ApplicantName, name);
 		}
 	}
 }
