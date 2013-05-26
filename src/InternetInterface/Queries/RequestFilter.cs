@@ -100,6 +100,10 @@ namespace InternetInterface.Queries
 				}
 			}
 
+			var outId = 0u;
+			if (UInt32.TryParse(query, out outId))
+				predicate = i => i.Id == outId;
+
 			_lastRowsCount = Request.Queryable.Where(predicate).Count();
 			if (_lastRowsCount > 0) {
 				var getCount = _lastRowsCount - PageSize * CurrentPage < PageSize ? _lastRowsCount - PageSize * CurrentPage : PageSize;

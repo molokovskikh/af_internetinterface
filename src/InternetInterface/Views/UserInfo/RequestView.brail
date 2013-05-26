@@ -28,7 +28,7 @@
 				</tr>
 				<tr>
 					<td style="width:200px;">
-						<label for="streetText">Поиск по адресу / телефону / ФИО: </label>
+						<label for="streetText">Введите Адрес / Телефон / ФИО / Номер заявки: </label>
 					</td>
 					<td>
 						<input id="streetText" type="text" value="${filter.query}" name="filter.query" />
