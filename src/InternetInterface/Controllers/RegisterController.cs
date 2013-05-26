@@ -337,6 +337,7 @@ namespace InternetInterface.Controllers
 		[return: JSONReturnBinder]
 		public object RegisterHouse()
 		{
+			CancelView();
 			var street = Request.Form["Street"];
 			var number = Request.Form["Number"];
 			var _case = Request.Form["Case"];
@@ -345,15 +346,16 @@ namespace InternetInterface.Controllers
 			var house = new House();
 			var errors = string.Empty;
 			if (!Int32.TryParse(number, out res))
-				errors += "Неправильно введен номер дома" + res;
+				errors += string.Format("Неправильно введен номер дома '{0}'", number);
 			if (string.IsNullOrEmpty(errors)) {
 				house = new House { Street = street, Number = Int32.Parse(number) };
 				if (!string.IsNullOrEmpty(_case))
 					house.Case = _case;
 				house.Region = DbSession.Load<RegionHouse>(Convert.ToUInt32(region));
 				DbSession.Save(house);
+				return new { Name = string.Format("{0} {1} {2}", street, number, _case), house.Id, IsError = false };
 			}
-			return new { Name = string.Format("{0} {1} {2}", street, number, _case), house.Id };
+			return new { Name = errors, IsError = true, Id = -1 };
 		}
 
 		public void SendRegisterParam(PhysicalClient client)

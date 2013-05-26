@@ -9,9 +9,12 @@ function registerHouse() {
 	req.Case = $('#house_Case').val();
 	req.RegionId = $('#house_Region_Id').val();
 	$.post("../Register/RegisterHouse", req, function (data) {
-		alert("Зарегистрировано");
-		$('#houses_select').append($('<option value="' + data.Id + '">' + data.Name + '</option>'));
-		$('#register_house').trigger('reveal:close');
+		if (data.Id > 0) {
+			$('#houses_select').append($('<option value="' + data.Id + '">' + data.Name + '</option>'));
+			$('#register_house').trigger('reveal:close');
+		}else{
+			$('#houseErrorMessageSpan').text(data.Name);
+		}
 	});
 }
 
@@ -150,6 +153,7 @@ $(function () {
 	<td>
 		<div id="register_house"class="reveal-modal">
 			<% OutputSubView("""\Subview\House""") %>
+			<span id="houseErrorMessageSpan"></span><br/>
 			<a href="#" onclick="registerHouse();"><img alt="Save" src="${Siteroot}/Images/application_edit.png">Зарегистрировать</a>
 		</div>
 	</td>

@@ -12,3 +12,8 @@
 {
 	margin-bottom: 15px;
 }
+
+#houseErrorMessageSpan {
+	color: red;
+	font-weight: bold;
+}
