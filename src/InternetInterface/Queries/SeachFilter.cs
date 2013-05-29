@@ -90,10 +90,10 @@ namespace InternetInterface.Queries
 
 		private void SetParameters(IQuery query, string wherePart)
 		{
-			if (StatusType > 0)
+			if (StatusType > 0 && SearchProperties != SearchUserBy.OuterClientCode)
 				query.SetParameter("statusType", StatusType);
 
-			if(Region != null && Region > 0) {
+			if(Region != null && Region > 0 && SearchProperties != SearchUserBy.OuterClientCode) {
 				query.SetParameter("regionid", Region);
 			}
 
