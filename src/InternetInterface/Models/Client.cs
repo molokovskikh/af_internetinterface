@@ -238,9 +238,7 @@ namespace InternetInterface.Models
 			if (string.IsNullOrEmpty(lease.Switch.Name))
 				lease.Switch.Name = PhysicalClient.GetShortAdress();
 
-			var newPoint = new ClientEndpoint(this, lease.Port, lease.Switch) {
-				Module = lease.Module
-			};
+			var newPoint = new ClientEndpoint(this, lease.Port, lease.Switch);
 			var paymentForConnect = new PaymentForConnect(PhysicalClient.ConnectSum, newPoint);
 			newPoint.PayForCon = paymentForConnect;
 			lease.Endpoint = newPoint;
