@@ -21,9 +21,14 @@ namespace InternetInterface.Helpers
 	public class SmsHelper
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof(SmsHelper));
+
+		private const string Uri = @"https://transport.sms-pager.com:7214/send.xml";
 		private const string Login = "inforoom";
 		private const string Password = "analitFarmacia";
 		private const string Source = "inforoom";
+
+		//для тестов
+		public bool SaveSms = true;
 
 		public static List<string> Types = new List<string> {
 			"delivered",
@@ -184,7 +189,8 @@ namespace InternetInterface.Helpers
 							dataElement.Add(new XElement("to", new XAttribute("number", smsMessage.PhoneNumber), smsMessage.Text));
 							smsMessage.SendToOperatorDate = DateTime.Now;
 							smsMessage.SMSID = smsId;
-							smsMessage.Save();
+							if (SaveSms)
+								smsMessage.Save();
 						}
 						else {
 							_log.Error(
@@ -195,12 +201,13 @@ namespace InternetInterface.Helpers
 					}
 				}
 
-				var resultDoc = MakeRequest(document, @"https://transport.sms-pager.com:7214/send.xml");
+				var resultDoc = MakeRequest(document, Uri);
 
 				var resultDocData = resultDoc.Element("data");
 				if (resultDocData != null) {
 					var serverRequest = Int32.Parse(resultDocData.Element("code").Value);
-					if (serverRequest == (int)SmsRequestType.ValidOperation) {
+					var isSended = serverRequest == (int)SmsRequestType.ValidOperation;
+					if (isSended) {
 						_log.Debug(document);
 						_log.Debug(resultDocData);
 					}
@@ -208,12 +215,13 @@ namespace InternetInterface.Helpers
 						_log.Error(document);
 						_log.Error(resultDocData);
 					}
-					var smsId = resultDocData.Element("smsid").Value;
 					foreach (var smsMessage in groupedSms.Where(s => !string.IsNullOrEmpty(s.PhoneNumber))) {
-						smsMessage.IsSended = serverRequest == (int)SmsRequestType.ValidOperation;
+						smsMessage.IsSended = isSended;
+						smsMessage.IsFaulted = !isSended;
 						smsMessage.ServerRequest = serverRequest;
-						smsMessage.SMSID = smsId;
-						smsMessage.Save();
+						smsMessage.SMSID = (string)resultDocData.Element("smsid");
+						if (SaveSms)
+							smsMessage.Save();
 					}
 				}
 				result.Add(resultDoc);

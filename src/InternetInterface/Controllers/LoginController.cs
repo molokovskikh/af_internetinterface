@@ -2,19 +2,18 @@
 using System.Web;
 using System.Web.Security;
 using Castle.MonoRail.Framework;
+using Common.Web.Ui.Controllers;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 
 
 namespace InternetInterface.Controllers
 {
-	public class LoginController : SmartDispatcherController
+	public class LoginController : BaseController
 	{
 		/// <summary>
 		/// Метод выполняется по нажатии. на кнопку "Войти"
 		/// </summary>
-		/// <param name="login"></param>
-		/// <param name="password"></param>
 		[AccessibleThrough(Verb.Post)]
 		public void Sub(string login, string password)
 		{
@@ -24,7 +23,7 @@ namespace InternetInterface.Controllers
 				RedirectToUrl(@"~/Map/SiteMap.rails");
 			}
 			else {
-				Flash["AccessDenied"] = ActiveDirectoryHelper.ErrorMessage;
+				Error(ActiveDirectoryHelper.ErrorMessage);
 				RedirectToUrl(@"LoginPartner.rails");
 			}
 		}

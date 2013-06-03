@@ -328,7 +328,7 @@ namespace InternetInterface.Controllers
 					Flash["Message"] = Message.Notify(appeal.Appeal);
 				}
 				catch (ServiceActivationException e) {
-					Flash["errorMessage"] = e.Message;
+					Error(e.Message);
 				}
 			}
 			RedirectToUrl(client.Redirect());
@@ -569,7 +569,7 @@ namespace InternetInterface.Controllers
 
 			PropertyBag["Editing"] = true;
 			PropertyBag["ChBrigad"] = BrigadForConnect;
-			Flash["errorMessage"] = errorMessage;
+			Error(errorMessage);
 			RedirectToReferrer();
 		}
 
@@ -873,7 +873,7 @@ where r.`Label`= :LabelIndex;")
 
 				DbSession.SaveOrUpdate(updateClient);
 				DbSession.SaveOrUpdate(client);
-				Flash["EditFlag"] = "Данные изменены";
+				Notify("Данные изменены");
 				RedirectToUrl("../UserInfo/SearchUserInfo?filter.ClientCode=" + ClientID + "&filter.appealType=" + appealType);
 			}
 			else {

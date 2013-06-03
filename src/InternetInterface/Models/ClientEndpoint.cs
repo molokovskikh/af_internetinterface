@@ -43,9 +43,6 @@ namespace InternetInterface.Models
 		[BelongsTo(Cascade = CascadeEnum.SaveUpdate), Auditable]
 		public virtual Client Client { get; set; }
 
-		[Property]
-		public virtual int Module { get; set; }
-
 		[Property, Auditable("Порт")]
 		public virtual int? Port { get; set; }
 

@@ -1,11 +1,5 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Net.Mail;
-using System.Text;
+﻿using System.Net.Mail;
 using Castle.Core.Smtp;
-using Castle.MonoRail.Framework;
-using Common.Tools;
 using Common.Web.Ui.MonoRailExtentions;
 
 namespace InternetInterface.Models
@@ -14,14 +8,26 @@ namespace InternetInterface.Models
 	{
 		public Mailer(IEmailSender sender) : base(sender)
 		{
+			Init();
 		}
 
 		public Mailer()
 		{
+			Init();
+		}
+
+		private void Init()
+		{
+			From = "internet@ivrn.net";
+			To = "internet@ivrn.net";
 		}
 
 		public void SendText(string from, string to, string subject, string body)
 		{
+			To = to;
+			From = from;
+			Subject = subject;
+
 			var mailMessage = new MailMessage(from, to, subject, body);
 #if DEBUG
 			mailMessage = new MailMessage(from, "kvasovtest@analit.net", subject, body);
@@ -29,15 +35,20 @@ namespace InternetInterface.Models
 			Sender.Send(mailMessage);
 		}
 
+		public Mailer SmsSendUnavailable(ServiceRequest request)
+		{
+			Template = "SmsSendUnavailable";
+			Subject = "Отправка смс";
+			PropertyBag["request"] = request;
+
+			return this;
+		}
+
 		public Mailer UserWriteOff(UserWriteOff writeOff)
 		{
 			Template = "UserWriteOff";
-			From = "internet@ivrn.net";
 			To = "InternetBilling@analit.net";
 			Subject = "Списание для Юр.Лица.";
-#if DEBUG
-			To = "kvasovtest@analit.net";
-#endif
 			var registrator = writeOff.Registrator != null ? writeOff.Registrator.Name : string.Empty;
 			PropertyBag["registrator"] = registrator;
 			PropertyBag["writeOff"] = writeOff;

@@ -34,9 +34,6 @@ namespace InternetInterface.Models
 		[Property]
 		public int Port { get; set; }
 
-		[Property]
-		public byte Module { get; set; }
-
 		[BelongsTo]
 		public NetworkSwitch Switch { get; set; }
 

@@ -3,6 +3,7 @@ using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
+using Common.Web.Ui.MonoRailExtentions;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using InternetInterface.Queries;
@@ -14,9 +15,24 @@ using InternetInterface.Helpers;
 
 namespace InternetInterface.Controllers
 {
+	public class InternateInterfaceController : BaseController
+	{
+		protected void RedirectTo(Client client)
+		{
+			string uri;
+			if (client.GetClientType() == ClientType.Phisical) {
+				uri = "~/UserInfo/SearchUserInfo.rails?filter.ClientCode={0}";
+			}
+			else {
+				uri = "~/UserInfo/LawyerPersonInfo.rails?filter.ClientCode={0}";
+			}
+			RedirectToUrl(string.Format(uri, client.Id));
+		}
+	}
+
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	[Helper(typeof(PaginatorHelper))]
-	public class ServiceRequestController : BaseController
+	public class ServiceRequestController : InternateInterfaceController
 	{
 		public ServiceRequestController()
 		{
@@ -37,14 +53,23 @@ namespace InternetInterface.Controllers
 				if (IsValid(request)) {
 					DbSession.Save(request);
 					var sms = request.GetSms();
+					var isOk = true;
 					if (sms != null) {
 #if !DEBUG
 						new SmsHelper().SendMessage(sms);
 #endif
+						if (sms.IsFaulted) {
+							isOk = false;
+							Error("В данный момент отправка SMS инженеру невозможна. Необходимо передать информацию устно.");
+							//данные должны быть в базе тк в письме будет писаться номер заявки
+							DbSession.Flush();
+							this.Mailer<Mailer>().SmsSendUnavailable(request).Send();
+						}
 					}
 
-					Notify("Сохранено");
-					RedirectToUrl("~/Search/Redirect?filter.ClientCode=" + client.Id);
+					if (isOk)
+						Notify("Сохранено");
+					RedirectTo(client);
 				}
 			}
 		}

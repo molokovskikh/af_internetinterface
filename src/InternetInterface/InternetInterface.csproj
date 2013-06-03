@@ -205,6 +205,7 @@
     <None Include="Views\Mail\Invoice.brail" />
     <Content Include="Views\Map\Bookmark.brail" />
     <Content Include="Views\Mail\Act.brail" />
+    <Content Include="Views\Mail\SmsSendUnavailable.brail" />
     <None Include="Views\Map\ShowBookmarks.brail" />
     <Content Include="Views\Payments\ShowWriteOffs.brail" />
     <None Include="Views\PrivateMessages\ForClient.brail" />
@@ -417,7 +418,6 @@
     <Compile Include="Models\Mailer.cs" />
     <Compile Include="Models\MessageForClient.cs" />
     <Compile Include="Models\NetworkSwitch.cs" />
-    <Compile Include="Models\OnLineClient.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\OrderService.cs" />
     <Compile Include="Models\PackageSpeed.cs" />

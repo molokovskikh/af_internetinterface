@@ -24,6 +24,19 @@
 <title>Интернет интерфейс</title>
 </head>
 <body>
+	<% if IsDefined("Message"): %>
+	<div class="flash">
+		<% if Message isa string: %>
+		<div class="notice">
+			${Message}
+		</div>
+		<% else: %>
+		<div class="${Message.GetClass()}">
+			${Message}
+		</div>
+		<% end %>
+	</div>
+	<% end %>
 ${ChildOutput}
 </body>
 </html>
