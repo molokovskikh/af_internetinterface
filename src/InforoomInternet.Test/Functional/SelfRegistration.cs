@@ -30,7 +30,7 @@ namespace InforoomInternet.Test.Functional
 			Lease.Endpoint = null;
 
 			Open("Main/Warning?host=ya.ru&url=/");
-			AssertText("Номер абонента");
+			AssertText("Номер лицевого счета");
 			Css("#physicalClient_ExternalClientId").TypeText(Generator.Random().First().ToString());
 			Css("#physicalClient_Surname").TypeText("Иванов");
 			Css("#physicalClient_Name").TypeText("Иван");
