@@ -81,5 +81,21 @@ namespace InternetInterface.Test.Integration
 			Assert.That(Helper.GetStatus(new SmsMessage() { PhoneNumber = "79010000004" }), Is.EqualTo("Отмена"));
 			Assert.That(Helper.GetStatus(new SmsMessage() { PhoneNumber = "79010000005" }), Is.EqualTo("Сообщение находятся на модерации"));
 		}
+
+		[Test]
+		public void Set_send_status()
+		{
+			var dada = "<data>"
+				+ "<code>900</code>"
+				+ "<descr>Временная ошибка</descr>"
+				+ "</data>";
+			Helper = new FakeSmsHelper(XDocument.Parse(dada));
+			Helper.SaveSms = false;
+			var sms = new SmsMessage(new Client(), "test") {
+				PhoneNumber = "473-2606000"
+			};
+			Helper.SendMessage(sms);
+			Assert.IsTrue(sms.IsFaulted);
+		}
 	}
 }

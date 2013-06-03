@@ -9,14 +9,8 @@
 	</div>
 </div>
 <% else: %>
-		<%if IsDefined("PornNumError"):
-			   output WriteMessageError(PornNumError)
-		end %>
 <div id="block-tables" class="block">
 <div class="content">
-		<%if IsDefined("DemandAccept"):
-			  output  WriteMessageError(DemandAccept)
-		end %>
 <table class="table"  style="width: 100%; font-size: small;">
 	<thead>
 		<tr valign="top">

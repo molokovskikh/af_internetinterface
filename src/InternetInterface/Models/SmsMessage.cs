@@ -21,9 +21,7 @@ namespace InternetInterface.Models
 		{
 			if (client.Contacts != null) {
 				var contact =
-					client.Contacts.Where(
-						c => c.Type == ContactType.SmsSending && !string.IsNullOrEmpty(c.Text) && Regex.IsMatch(c.Text, @"^(9)\d{9}"))
-						.FirstOrDefault();
+					client.Contacts.FirstOrDefault(c => c.Type == ContactType.SmsSending && !string.IsNullOrEmpty(c.Text) && Regex.IsMatch(c.Text, @"^(9)\d{9}"));
 				PhoneNumber = contact != null ? "+7" + contact.Text : null;
 			}
 			Client = client;
@@ -67,6 +65,8 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual int ServerRequest { get; set; }
+
+		public virtual bool IsFaulted { get; set; }
 
 		[BelongsTo]
 		public virtual Partner Registrator { get; set; }
