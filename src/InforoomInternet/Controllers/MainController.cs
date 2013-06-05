@@ -240,8 +240,8 @@ namespace InforoomInternet.Controllers
 			var origin = "";
 			if (!string.IsNullOrEmpty(Request["host"])) {
 				origin = Request["host"] + Request["url"];
-				PropertyBag["referer"] = origin;
 			}
+			PropertyBag["referer"] = origin;
 
 			var hostAdress = GetHost();
 			var lease = FindLease();

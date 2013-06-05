@@ -100,5 +100,13 @@ namespace InforoomInternet.Test.Integration
 			Assert.IsTrue(Response.WasRedirected);
 			Assert.AreEqual("http://localhost", Response.RedirectedTo);
 		}
+
+		[Test]
+		public void Show_warning_page_without_referer()
+		{
+			Request.QueryString["n"] = "91.235.90.57@Anonymous";
+			controller.Warning();
+			Assert.AreEqual("", ControllerContext.PropertyBag["referer"]);
+		}
 	}
 }
