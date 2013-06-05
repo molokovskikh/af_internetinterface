@@ -56,15 +56,23 @@
 			 <th colspan=2 style="font-size=16px;">Метки</th>
 			 </thead>
 			 <tbody>
-			 <tr><td colspan=2><a href="../UserInfo/RequestView.rails?filter.labelId=0&filter.Archive=${filter.Archive}&filter.beginDate=${filter.beginDate.ToShortDateString()}&filter.endDate=${filter.endDate.ToShortDateString()}&filter.query=${filter.query}">Все</a></td></tr>
-			 <tr><td colspan=2><a href="../UserInfo/RequestView.rails?filter.labelId=0&filter.Archive=${filter.Archive}&filter.beginDate=${filter.beginDate.ToShortDateString()}&filter.endDate=${filter.endDate.ToShortDateString()}&filter.query=${filter.query}">Нет</a></td></tr>
+			 <tr>
+				<td colspan=2>
+					${UrlHelper.Link(@Все, {@controller : @UserInfo, @action : @RequestView, @querystring: { "filter.labelId" : 0, "filter.Archive" : filter.Archive, "filter.beginDate" : filter.beginDate.ToShortDateString(), "filter.endDate" : filter.endDate.ToShortDateString(), "filter.query" : filter.query} })}
+				</td>
+			</tr>
+			<tr>
+				<td colspan=2>
+					${UrlHelper.Link(@Нет, {@controller : @UserInfo, @action : @RequestView, @querystring: { "filter.labelId" : 0, "filter.Archive" : filter.Archive, "filter.beginDate" : filter.beginDate.ToShortDateString(), "filter.endDate" : filter.endDate.ToShortDateString(), "filter.query" : filter.query} })}
+				</td>
+			</tr>
 					<% for i, Label in enumerate(Labels): %>
 					<tr>
 					<td style="width:20px;">
 						<div class='message error' style=" width:20px; height:20px; background-color:${Label.Color}; border: 1px solid; border-color: ${Label.GetBorderColor()}; " align="left"></div>
 					</td>
 					<td>
-						<a href="../UserInfo/RequestView.rails?filter.labelId=${Label.Id}&filter.Archive=${filter.Archive}&filter.beginDate=${filter.beginDate.ToShortDateString()}&filter.endDate=${filter.endDate.ToShortDateString()}&filter.query=${filter.query}">${Label.Name}</a>
+						${UrlHelper.Link(Label.Name, {@controller : @UserInfo, @action : @RequestView, @querystring: { "filter.labelId" : Label.Id, "filter.Archive" : filter.Archive, "filter.beginDate" : filter.beginDate.ToShortDateString(), "filter.endDate" : filter.endDate.ToShortDateString(), "filter.query" : filter.query} })}
 					</td>
 					</tr>
 					<% end %>
