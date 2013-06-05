@@ -55,6 +55,7 @@ namespace InternetInterface.Test.Functional
 
 			Client.Refresh();
 			Assert.That(Client.Status.Type, Is.EqualTo(StatusType.BlockedAndNoConnected));
+			AssertText("Статус не был изменен, т.к. нельзя изменить статус 'Зарегистрирован' вручную. Остальные данные были сохранены.");
 
 			Client.Status = Status.Find((uint)StatusType.Worked);
 			Client.Update();

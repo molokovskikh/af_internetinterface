@@ -814,6 +814,7 @@ where r.`Label`= :LabelIndex;")
 			string group, uint house_id, AppealType appealType, string comment,
 			[DataBind("filter")] ClientFilter filter)
 		{
+			Message message = null;
 			var client = DbSession.Load<Client>(ClientID);
 			var statusEntity = DbSession.Load<Status>(status);
 			var updateClient = client.PhysicalClient;
@@ -828,10 +829,13 @@ where r.`Label`= :LabelIndex;")
 			BindObjectInstance(updateClient, ParamStore.Form, "Client", AutoLoadBehavior.NullIfInvalidKey);
 			BindObjectInstance(client, ParamStore.Form, "_client");
 
-			if (oldStatus.ManualSet)
-				client.Status = statusEntity;
-
 			if (Validator.IsValid(updateClient)) {
+				if (oldStatus.ManualSet)
+					client.Status = statusEntity;
+				else
+					if (client.Status.Id != statusEntity.Id)
+					message = Message.Warning(string.Format("Статус не был изменен, т.к. нельзя изменить статус '{0}' вручную. Остальные данные были сохранены.", client.Status.Name));
+
 				var house = DbSession.Get<House>(house_id);
 				if (house != null) {
 					updateClient.UpdateHouse(house);
@@ -873,7 +877,9 @@ where r.`Label`= :LabelIndex;")
 
 				DbSession.SaveOrUpdate(updateClient);
 				DbSession.SaveOrUpdate(client);
-				Notify("Данные изменены");
+				if (message == null)
+					message = Message.Notify("Данные изменены");
+				Flash["Message"] = message;
 				RedirectToUrl("../UserInfo/SearchUserInfo?filter.ClientCode=" + ClientID + "&filter.appealType=" + appealType);
 			}
 			else {
