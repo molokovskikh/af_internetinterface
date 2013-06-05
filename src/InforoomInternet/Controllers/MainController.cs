@@ -171,6 +171,7 @@ namespace InforoomInternet.Controllers
 			var lease = FindLease();
 			if (lease == null || !lease.CanSelfRegister()) {
 				this.RedirectRoot();
+				return;
 			}
 
 			var physicalClient = new PhysicalClient {
@@ -218,16 +219,20 @@ namespace InforoomInternet.Controllers
 		[Layout("cityline")]
 		public void Complete()
 		{
+			if (IsPost) {
+				GoToReferer("origin");
+				return;
+			}
+
 			var lease = FindLease();
-			if (!IsPost && (Flash["password"] == null || lease == null))
+			if (Flash["password"] == null || lease == null) {
 				this.RedirectRoot();
+				return;
+			}
 
 			var origin = Request.Form["origin"] ?? Request.QueryString["origin"];
 			PropertyBag["origin"] = origin;
 			PropertyBag["LoginClient"] = lease.Endpoint.Client.Id;
-
-			if (IsPost)
-				GoToReferer("origin");
 		}
 
 		public void Warning()
@@ -235,8 +240,8 @@ namespace InforoomInternet.Controllers
 			var origin = "";
 			if (!string.IsNullOrEmpty(Request["host"])) {
 				origin = Request["host"] + Request["url"];
-				PropertyBag["referer"] = origin;
 			}
+			PropertyBag["referer"] = origin;
 
 			var hostAdress = GetHost();
 			var lease = FindLease();
