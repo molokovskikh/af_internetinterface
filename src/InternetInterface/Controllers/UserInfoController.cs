@@ -829,11 +829,11 @@ where r.`Label`= :LabelIndex;")
 			BindObjectInstance(updateClient, ParamStore.Form, "Client", AutoLoadBehavior.NullIfInvalidKey);
 			BindObjectInstance(client, ParamStore.Form, "_client");
 
+			if (oldStatus.ManualSet)
+				client.Status = statusEntity;
+
 			if (Validator.IsValid(updateClient)) {
-				if (oldStatus.ManualSet)
-					client.Status = statusEntity;
-				else
-					if (client.Status.Id != statusEntity.Id)
+				if (!oldStatus.ManualSet && client.Status.Id != statusEntity.Id)
 					message = Message.Warning(string.Format("Статус не был изменен, т.к. нельзя изменить статус '{0}' вручную. Остальные данные были сохранены.", client.Status.Name));
 
 				var house = DbSession.Get<House>(house_id);
