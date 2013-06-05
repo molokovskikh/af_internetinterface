@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using Castle.ActiveRecord;
@@ -28,6 +29,7 @@ namespace InforoomInternet.Test.Integration
 		private NetworkSwitch networkSwitch;
 		private ClientEndpoint endpoint;
 		private Lease lease;
+		private List<object> deleteOnTeardown;
 
 		[SetUp]
 		public void Setup()
@@ -45,7 +47,10 @@ namespace InforoomInternet.Test.Integration
 			endpoint = new ClientEndpoint(client, 1, networkSwitch);
 			lease = new Lease { Endpoint = endpoint, Switch = networkSwitch, Port = 1, Ip = IPAddress.Loopback };
 
-			session.SaveMany(client, networkSwitch, endpoint, lease);
+			deleteOnTeardown = new List<object> {
+				client, networkSwitch, endpoint, lease
+			};
+			session.SaveMany(deleteOnTeardown.ToArray());
 
 			controller.DbSession = session;
 		}
@@ -53,7 +58,7 @@ namespace InforoomInternet.Test.Integration
 		[TearDown]
 		public void TearDown()
 		{
-			session.DeleteMany(client, networkSwitch, endpoint, lease);
+			session.DeleteMany(deleteOnTeardown.ToArray());
 			sessionHolder.ReleaseSession(session);
 			scope.Dispose();
 		}
@@ -72,11 +77,28 @@ namespace InforoomInternet.Test.Integration
 			lease.Endpoint.PackageId = 15;
 			session.SaveOrUpdate(lease);
 
-			((IMockRequest)controller.Request).HttpMethod = "POST";
+			Request.HttpMethod = "POST";
 			controller.Warning();
 
 			Assert.IsNotNull(lease.Endpoint.ActualPackageId);
 			Assert.AreEqual(lease.Endpoint.ActualPackageId.Value, 15);
+		}
+
+		//пока человек медитирует на страницу
+		//его компьютер получает новую аренду
+		//но запрос отправляет со старого адреса
+		//тк время жизни для серых аренд мало все это проиходит пока человек думает
+		[Test(Description = "Симулируется ситуацию когда ivrn и dhcp конкурируют, dhcp удаляет аренду по клиент медитирует на страницу")]
+		public void Complete_after_long_wait()
+		{
+			deleteOnTeardown.Remove(lease);
+			session.Delete(lease);
+			Request.HttpMethod = "POST";
+			Request.Form["origin"] = "localhost";
+			controller.Complete();
+
+			Assert.IsTrue(Response.WasRedirected);
+			Assert.AreEqual("http://localhost", Response.RedirectedTo);
 		}
 	}
 }
