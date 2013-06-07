@@ -173,8 +173,8 @@
     <Compile Include="Integration\OnLineClientsFixture.cs" />
     <Compile Include="Integration\PaymentFixture.cs" />
     <Compile Include="Integration\SearchFilterFixture.cs" />
+    <Compile Include="Integration\ServiceRequestControllerFixture.cs" />
     <Compile Include="Integration\ServicesFixture.cs" />
-    <Compile Include="Integration\SessionControllerFixture.cs" />
     <Compile Include="Integration\SmsFixture.cs" />
     <Compile Include="Integration\Tasks\MailerFixture.cs" />
     <Compile Include="Integration\UserInfoControllerFixture.cs" />

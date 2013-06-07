@@ -9,13 +9,14 @@ using InternetInterface.Controllers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using InternetInterface.Queries;
+using InternetInterface.Test.Helpers;
 using NHibernate.Linq;
 using NUnit.Framework;
 
 namespace InternetInterface.Test.Integration
 {
 	[TestFixture]
-	public class ExportControllerFixture : SessionControllerFixture
+	public class ExportControllerFixture : ControllerFixture
 	{
 		protected ExportController Controller;
 

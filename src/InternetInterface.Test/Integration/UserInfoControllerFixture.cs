@@ -20,31 +20,15 @@ using Rhino.Mocks;
 namespace InternetInterface.Test.Integration
 {
 	[TestFixture]
-	public class UserInfoControllerFixture : SessionControllerFixture
+	public class UserInfoControllerFixture : ControllerFixture
 	{
 		private UserInfoController controller;
-		private bool _sended;
-		private MailMessage _message;
-		private IEmailSender _sender;
 
 		[SetUp]
 		public void Setup()
 		{
 			controller = new UserInfoController();
 			PrepareController(controller);
-
-			controller.DbSession = session;
-
-			_sender = MockRepository.GenerateStub<IEmailSender>();
-			_sender.Stub(s => s.Send(_message)).IgnoreArguments()
-				.Repeat.Any()
-				.Callback(new Delegates.Function<bool, MailMessage>(m => {
-					_message = m;
-					_sended = true;
-					return true;
-				}));
-
-			BaseMailerExtention.SenderForTest = _sender;
 		}
 
 		[Test(Description = "Проверяет корректное создание акта и счета при создании или редактировании заказа"), Ignore("Отключет функционал")]
@@ -162,7 +146,7 @@ namespace InternetInterface.Test.Integration
 
 			controller.DeleteWriteOff(writeOff.Id, false);
 
-			Assert.IsTrue(_sended);
+			Assert.IsTrue(sended);
 			Assert.That(_message.Subject, Is.EqualTo("Уведомление об удалении списания"));
 			Assert.That(_message.Body, Is.StringContaining("Отменено списание №"));
 			Assert.That(_message.Body, Is.StringContaining("Клиент: №"));
@@ -186,7 +170,7 @@ namespace InternetInterface.Test.Integration
 
 			controller.DeleteWriteOff(writeOff.Id, false);
 
-			Assert.IsTrue(_sended);
+			Assert.IsTrue(sended);
 			Assert.AreEqual(client.Balance, 300);
 			session.Refresh(client);
 			Assert.That(client.Appeals.First().Appeal, Is.StringContaining("Удалено списание на сумму"));

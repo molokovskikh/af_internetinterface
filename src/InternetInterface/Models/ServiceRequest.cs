@@ -7,6 +7,8 @@ using Castle.Components.Validator;
 using Common.Tools;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.Models.Audit;
+using Common.Web.Ui.NHibernateExtentions;
+using NHibernate;
 
 namespace InternetInterface.Models
 {
@@ -55,6 +57,7 @@ namespace InternetInterface.Models
 						Writeoff = new UserWriteOff(Client, Sum.Value, comment);
 					}
 				}
+
 				_status = value;
 			}
 		}
@@ -106,6 +109,8 @@ namespace InternetInterface.Models
 
 		public virtual UserWriteOff Writeoff { get; set; }
 
+		public virtual SmsMessage Sms { get; set; }
+
 		public virtual string GetDescription()
 		{
 			return AppealHelper.GetTransformedAppeal(Description);
@@ -136,19 +141,13 @@ namespace InternetInterface.Models
 			return string.Empty;
 		}
 
-		public static List<object> GetStatuses()
-		{
-			return new List<object>(Enum.GetValues(typeof(ServiceRequestStatus)).Cast<int>().Select(s => new { Id = s, Name = GetStatusName((ServiceRequestStatus)s) }));
-		}
-
 		public virtual SmsMessage GetSms()
 		{
 			if (Performer == null)
 				return null;
 			var endPoint = Client.Endpoints.FirstOrDefault();
 			var port = endPoint != null ? endPoint.Port.ToString() : string.Empty;
-			var sms = new SmsMessage {
-				PhoneNumber = "+7" + Performer.TelNum,
+			var sms = new SmsMessage(Performer.TelNum) {
 				Text = "$"
 			};
 
@@ -159,6 +158,18 @@ namespace InternetInterface.Models
 				"+7-" + Contact.Replace("-", string.Empty), port, Client.Id);
 
 			return sms;
+		}
+
+		public virtual SmsMessage GetEditSms(ISession session)
+		{
+			if (Status == ServiceRequestStatus.Cancel && session.IsChanged(this, r => r.Status)) {
+				if (Performer != null) {
+					Sms = new SmsMessage(Performer.TelNum);
+					Sms.Text = String.Format("сч. {0} заявка отменена", Client.Id);
+					return Sms;
+				}
+			}
+			return null;
 		}
 	}
 }
