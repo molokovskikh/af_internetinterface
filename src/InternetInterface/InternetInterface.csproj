@@ -196,6 +196,9 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Views\Contracts\PrintFooter.brail" />
+    <Content Include="Views\Hardware\PortInfo.brail" />
+    <Content Include="Views\Hardware\PortInfoLinksys.brail" />
+    <Content Include="Views\Hardware\ClientInfoView.brail" />
     <None Include="Views\Invoices\Edit.brail" />
     <None Include="Views\Invoices\Index.brail" />
     <None Include="Views\Invoices\InvoiceBody.brail" />
@@ -212,7 +215,7 @@
     <None Include="Views\PrivateMessages\ForSwitch.brail" />
     <None Include="Views\PrivateMessages\Message.brail" />
     <None Include="Views\CommonScripts\WriteMessage.brail" />
-    <None Include="Views\Hardware\PortInfo.brail" />
+    <None Include="Views\Hardware\PortInfoCatalyst.brail" />
     <None Include="Views\HouseAgent\Agent.brail" />
     <None Include="Views\HouseAgent\ShowAgents.brail" />
     <None Include="Views\HouseMap\BasicHouseInfo.brail" />
@@ -321,6 +324,7 @@
   <ItemGroup>
     <Compile Include="AllLogic\ColorWork.cs" />
     <Compile Include="AllLogic\GetClientsLogic.cs" />
+    <Compile Include="AllLogic\HardwareHelper.cs" />
     <Compile Include="AllLogic\Validation.cs" />
     <Compile Include="Components\ContactTypeList.cs" />
     <Compile Include="Controllers\ActsController.cs" />
@@ -385,6 +389,7 @@
     <Compile Include="Helpers\ValidBuilderHelper.cs" />
     <Compile Include="Initializers\ActiveRecord.cs" />
     <Compile Include="Initializers\Development.cs" />
+    <Compile Include="Interfaces\IPortInfo.cs" />
     <Compile Include="Mails\LawyerUserWriteOffNotice.cs" />
     <Compile Include="Models\Access\AccessCategories.cs" />
     <Compile Include="Models\Access\AccessRules.cs" />
@@ -400,6 +405,7 @@
     <Compile Include="Models\Bookmark.cs" />
     <Compile Include="Models\Brigad.cs" />
     <Compile Include="Models\BypassHouse.cs" />
+    <Compile Include="Models\CatalystCommutateurInfo.cs" />
     <Compile Include="Models\ClientEndpoint.cs" />
     <Compile Include="Models\Client.cs" />
     <Compile Include="Models\ClientService.cs" />
@@ -415,6 +421,7 @@
     <Compile Include="Models\Label.cs" />
     <Compile Include="Models\LawyerPerson.cs" />
     <Compile Include="Models\Lease.cs" />
+    <Compile Include="Models\LinksysCommutateurInfo.cs" />
     <Compile Include="Models\Mailer.cs" />
     <Compile Include="Models\MessageForClient.cs" />
     <Compile Include="Models\NetworkSwitch.cs" />

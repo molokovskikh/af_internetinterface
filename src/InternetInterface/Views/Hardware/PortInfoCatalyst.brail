@@ -1,0 +1,77 @@
+﻿<div class="backGroundBlock">
+<div  style="float:left; padding-left:30px;">
+
+		<% OutputSubView("ClientInfoView") %>
+
+		<%if IsDefined("counterInfo"): %>
+		<div class="hardWareInfoBlock" style="width:600px;">
+		<% for i in [0 , 2]: %>
+				<table class="table">
+					<thead>
+						<tr>
+							<th>${counterInfo[i][0]}</th>
+							<th>${counterInfo[i][1]}</th>
+							<th>${counterInfo[i][2]}</th>
+							<th>${counterInfo[i][3]}</th>
+							<th>${counterInfo[i][4]}</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>${counterInfo[i+1][0]}</td>
+							<td>${counterInfo[i+1][1]}</td>
+							<td>${counterInfo[i+1][2]}</td>
+							<td>${counterInfo[i+1][3]}</td>
+							<td>${counterInfo[i+1][4]}</td>
+						</tr>
+					</tbody>
+				</table>
+		<%end %>
+		</div>
+	<%end %>
+	<%if IsDefined("errorCounterInfo"): %>
+		<div class="hardWareInfoBlock" style="width:600px;">
+		<% for i in [0 , 2]: %>
+				<table class="table">
+					<thead>
+						<tr>
+							<th>${errorCounterInfo[i][0]}</th>
+							<th>${errorCounterInfo[i][1]}</th>
+							<th>${errorCounterInfo[i][2]}</th>
+							<th>${errorCounterInfo[i][3]}</th>
+							<th>${errorCounterInfo[i][4]}</th>
+							<th>${errorCounterInfo[i][5]}</th>
+							<%if i == 2: %>
+								<th>${errorCounterInfo[i][6]}</th>
+								<th>${errorCounterInfo[i][7]}</th>
+							<%end %>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>${errorCounterInfo[i+1][0]}</td>
+							<td>${errorCounterInfo[i+1][1]}</td>
+							<td>${errorCounterInfo[i+1][2]}</td>
+							<td>${errorCounterInfo[i+1][3]}</td>
+							<td>${errorCounterInfo[i+1][4]}</td>
+							<td>${errorCounterInfo[i+1][5]}</td>
+							<%if i == 2: %>
+								<td>${errorCounterInfo[i+1][6]}</td>
+								<td>${errorCounterInfo[i+1][7]}</td>
+							<%end %>
+						</tr>
+					</tbody>
+				</table>
+		<%end %>
+		</div>
+	<%end %>
+
+</div>
+<div style="margin-left:700px; width:600px;">
+	<%if IsDefined("Info"): %>
+	<div class="switchInfoBlock">
+		${Info}
+	</div>
+	<%end %>
+</div>
+</div>

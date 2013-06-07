@@ -292,13 +292,14 @@ namespace InternetInterface.Helpers
 			Thread.Sleep(500);
 			bool loggined = false, passwored = false;
 			while (!string.IsNullOrEmpty(s) && !(loggined && passwored)) {
-				if (s.Replace(" ", string.Empty).Trim().Contains("Username")) {
+				var line = s.Replace(" ", string.Empty).Trim();
+				if (line.ToLower().Contains("username")) {
 					WriteLine(Username);
 					loggined = true;
 				}
 
 
-				if (s.Replace(" ", string.Empty).Trim().Contains("Password")) {
+				if (line.ToLower().Contains("password")) {
 					WriteLine(Password);
 					passwored = true;
 				}

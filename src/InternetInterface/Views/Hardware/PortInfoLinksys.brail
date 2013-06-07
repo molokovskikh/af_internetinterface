@@ -1,0 +1,45 @@
+﻿<div class="backGroundBlock">
+<div  style="float:left; padding-left:30px;">
+	<% OutputSubView("ClientInfoView") %>
+
+		<%if IsDefined("countersLines"): %>
+		<div class="hardWareInfoBlock" style="width:600px;">
+		<table class="table">
+		<tbody>
+			<% for i, countersLine in enumerate(countersLines): %>
+				<tr>
+					<% for i, item in enumerate(countersLine): %>
+					<td>${item}</td>
+					<%end%>
+				</tr>
+			<%end %>
+		</tbody>
+		</table>
+		</div>
+		<%end %>
+</div>
+<div style="margin-left:700px; width:600px;">
+		<%if IsDefined("interfaceLines"): %>
+		<div class="hardWareInfoBlock" style="width:600px;">
+		<table class="table">
+		<tbody>
+			<% for i, interfaceLine in enumerate(interfaceLines): %>
+				<tr>
+					<% for i, item in enumerate(interfaceLine): %>
+					<td>${item}</td>
+					<%end%>
+				</tr>
+			<%end %>
+		</tbody>
+		</table>
+		</div>
+		<%end %>
+		<%if IsDefined("interfaceCounters"): %>
+		<div class="hardWareInfoBlock" id="interfaceCountersBlock">
+			<% for i, interfaceCounter in enumerate(interfaceCounters): %>
+				<p>${interfaceCounter}</p>
+			<%end%>
+		<div>
+		<%end %>
+</div>
+</div>

@@ -514,12 +514,21 @@ button.button:active, a.button:active {
 {
 	padding:15px;
 	background-color:#BDE5F8;
-	width:400px;
+	width:600px;
 	border: 1px double #00529B;
 	font-weight:bold;
 	margin-bottom: 20px;
 	font-family:Courier;
 	text-align: center;
+}
+
+#interfaceCountersBlock {
+	text-align: left;
+	background-color: white;
+}
+
+#interfaceCountersBlock p {
+	margin: 0px;
 }
 
 .hardWareInfoBlock th

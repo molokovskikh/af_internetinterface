@@ -1,0 +1,74 @@
+﻿<div class="switchInfoClient">
+	<table class="table" style="width:600px; font-family:Courier;">
+		<tbody>
+		<tr>
+			<td style="width:100px;">Клиент</td>
+			<td><a href="${Siteroot}/Search/Redirect?filter.ClientCode=${point.Client.Id}">${point.Client.Name}</a></td>
+		</tr>
+		<tr>
+			<td>Коммутатор:</td><td><b> ${point.Switch}</b></td>
+		</tr>
+		<tr>
+			<td>Порт: </td><td><b>${point.Port}</b></td>
+		</tr>
+		<%if lease != null: %>
+		<tr>
+			<td colspan=2 style="text-align:center;">Информация из аренды <br /> (Дата начала: ${lease.LeaseBegin} Дата конца: ${lease.LeaseEnd})</td>
+		</tr>
+		<tr>
+			<%if IsDefined("IPResult"): %>
+			<td colspan=2 style="background-color:${"#f7d7d7" if not lease.CompareIp(IPResult)}">
+			<%else: %>
+			<td colspan=2 style="background-color:#f7d7d7;">
+			<%end %>
+				Арендованный IP
+				<b>${lease.Ip}</b>
+				<%if IsDefined("IPResult"): %>
+					<span> // IP на порту коммутатора: <b>${IPResult}</b></span>
+				<%else: %>
+					<b> // Не удалось определить IP на порту коммутатора</b>
+				<%end %>
+			</td>
+		</tr>
+		<tr>
+			<%if IsDefined("MACResult"): %>
+			<td colspan=2 style="background-color:${"#f7d7d7" if not lease.CompareMac(MACResult)}">
+			<%else: %>
+			<td colspan=2 style="background-color:#f7d7d7;">
+			<%end %>
+				МАС адрес <b>${lease.GetMac()} </b>
+				<%if IsDefined("MACResult"): %>
+				<span> // MAC на порту коммутатора: <b> ${MACResult} </b></span>
+				<%else: %>
+					<b> // Не удалось определить MAC на порту коммутатора</b>
+				<%end %>
+			</td>
+		</tr>
+		<%else: %>
+		<tr>
+			<td colspan=2 style="background-color:#f7d7d7; text-align:center; font-weight:bold; font-size:14px;">Сессия DHCP не зерегистрирована</td>
+		</tr>
+		<%if IsDefined("IPResult"): %>
+		<tr>
+			<td>IP на порту коммутатора</td>
+			<td>${IPResult}</td>
+		</tr>
+		<%else: %>
+		<tr>
+			<td colspan=2 style="background-color:#f7d7d7; text-align:center;"><b>Не удалось определить IP на порту коммутатора</b></td>
+		</tr>
+		<%end %>
+		<%if IsDefined("MACResult"): %>
+		<tr>
+			<td>MAC на порту коммутатора</td>
+			<td>${MACResult}</td>
+		</tr>
+		<%else: %>
+		<tr>
+			<td colspan=2 style="background-color:#f7d7d7; text-align:center;"><b>Не удалось определить MAC на порту коммутатора</b></td>
+		</tr>
+		<%end %>
+		<%end %>
+		</tbody>
+	</table>
+</div>

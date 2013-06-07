@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -16,6 +17,16 @@ using NHibernate.Linq;
 
 namespace InternetInterface.Models
 {
+	public enum SwitchType
+	{
+		[Description("Неизвестный")]
+		Unknown = 0,
+		[Description("Каталист")]
+		Catalyst = 1,
+		[Description("Линксис")]
+		Linksys = 2,
+	}
+
 	[ActiveRecord("NetworkSwitches", Schema = "Internet", Lazy = true)]
 	public class NetworkSwitch
 	{
@@ -61,6 +72,9 @@ namespace InternetInterface.Models
 
 		[Property, ValidateInteger("Введите число"), ValidateGreaterThanZero]
 		public virtual int TotalPorts { get; set; }
+
+		[Property]
+		public virtual SwitchType Type { get; set; }
 
 		public override string ToString()
 		{

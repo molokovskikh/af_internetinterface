@@ -68,6 +68,14 @@
 							<td></td>
 						</tr>
 						<tr>
+							<td >Тип</td>
+							<td colspan=2>
+								${app.Edit("Switch.Type")}
+								${app.GetValidationError("Switch.Type")}
+							</td>
+							<td></td>
+						</tr>
+						<tr>
 							<td style="width:150px;">
 								<label for="textField">Введите комментарий</label>
 							</td>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Castle.Components.Binder;
@@ -39,6 +40,12 @@ namespace InternetInterface.Test.Unit
 			args["lawyerPerson.Tariff"] = "600";
 			instance = binder.BindObject(typeof(LawyerPerson), "lawyerPerson", builder.BuildSourceNode(args));
 			Assert.IsFalse(binder.GetValidationSummary(instance).HasError);
+		}
+
+		[Test]
+		public void test()
+		{
+			Console.WriteLine(File.ReadAllText("c:/1.txt"));
 		}
 	}
 }
