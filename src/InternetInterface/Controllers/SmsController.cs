@@ -26,7 +26,7 @@ namespace InternetInterface.Controllers
 		{
 			if (!string.IsNullOrEmpty(messageText)) {
 				var phoneNumber = DbSession.Load<Contact>(phoneId);
-				var message = new SmsMessage {
+				var message = new SmsMessage() {
 					Client = DbSession.Load<Client>(clientId),
 					CreateDate = DateTime.Now,
 					Registrator = InitializeContent.Partner,

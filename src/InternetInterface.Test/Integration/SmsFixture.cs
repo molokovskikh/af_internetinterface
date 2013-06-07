@@ -13,14 +13,17 @@ namespace InternetInterface.Test.Integration
 	public class FakeSmsHelper : SmsHelper
 	{
 		public XDocument Response { get; set; }
+		public List<XDocument> Requests { get; set; }
 
 		public FakeSmsHelper(XDocument response)
 		{
 			Response = response;
+			Requests = new List<XDocument>();
 		}
 
 		protected override XDocument MakeRequest(XDocument document, string url)
 		{
+			Requests.Add(document);
 			return Response;
 		}
 	}

@@ -17,6 +17,15 @@ namespace InternetInterface.Models
 			CreateDate = DateTime.Now;
 		}
 
+		public SmsMessage(string phone)
+			: this()
+		{
+			PhoneNumber = phone;
+			if (!PhoneNumber.StartsWith("+7")) {
+				PhoneNumber = "+7" + PhoneNumber;
+			}
+		}
+
 		public SmsMessage(Client client, string text, DateTime? shouldBeSend = null)
 		{
 			if (client.Contacts != null) {

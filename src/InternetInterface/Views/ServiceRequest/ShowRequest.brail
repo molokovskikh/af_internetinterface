@@ -127,7 +127,7 @@
 			<td>${request.GetStatusName()}</td>
 			<%else: %>
 			<td>
-				${app.Edit("request.Status", RequestStatuses)}
+				${app.Edit("request.Status")}
 			</td>
 			<%end %>
 			<td><b>Дата создания</b></td>

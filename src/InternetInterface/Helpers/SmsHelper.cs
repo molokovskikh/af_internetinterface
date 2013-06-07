@@ -78,7 +78,7 @@ namespace InternetInterface.Helpers
 
 		public List<XDocument> SendServiceMessageNow(List<string> numbers)
 		{
-			var messages = numbers.Select(number => new SmsMessage {
+			var messages = numbers.Select(number => new SmsMessage() {
 				CreateDate = DateTime.Now, PhoneNumber = number
 			}).ToList();
 			return SendMessages(messages);
@@ -86,7 +86,7 @@ namespace InternetInterface.Helpers
 
 		public XDocument SendMessage(string number, string text, DateTime? shouldBeSend = null)
 		{
-			return SendMessage(new SmsMessage {
+			return SendMessage(new SmsMessage() {
 				CreateDate = DateTime.Now,
 				PhoneNumber = number,
 				ShouldBeSend = shouldBeSend,
