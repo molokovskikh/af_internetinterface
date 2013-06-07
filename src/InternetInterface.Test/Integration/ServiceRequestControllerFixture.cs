@@ -29,8 +29,13 @@ namespace InternetInterface.Test.Integration
 			var client = ClientHelper.Client();
 			session.Save(client);
 
+			var performer = Partner.GetServiceIngeners().First();
+			if (String.IsNullOrEmpty(performer.TelNum)) {
+				performer.TelNum = "473-2606000";
+				session.Save(performer);
+			}
 			var request = new ServiceRequest {
-				Performer = Partner.GetServiceIngeners().First(),
+				Performer = performer,
 				Registrator = InitializeContent.Partner,
 				Client = client,
 				Contact = "473-2606000"

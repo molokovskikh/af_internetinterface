@@ -28,7 +28,7 @@ namespace InternetInterface.Test.Integration
 		public void Setup()
 		{
 			controller = new UserInfoController();
-			PrepareController(controller);
+			Prepare(controller);
 		}
 
 		[Test(Description = "Проверяет корректное создание акта и счета при создании или редактировании заказа"), Ignore("Отключет функционал")]
