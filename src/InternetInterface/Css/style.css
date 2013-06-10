@@ -602,3 +602,13 @@ div.commented, .commented {
 	margin-left:700px;
 	width:600px;
 }
+
+.portLinksys {
+	float:left;
+	padding-left:30px;
+}
+
+.interfaceLines {
+	margin-left:700px;
+	width:600px;
+}

@@ -1,9 +1,9 @@
 ﻿<div class="backGroundBlock">
-<div  style="float:left; padding-left:30px;">
+<div class="portLinksys">
 	<% OutputSubView("ClientInfoView") %>
 
 		<%if IsDefined("countersLines"): %>
-		<div class="hardWareInfoBlock" style="width:600px;">
+		<div class="hardWareInfoBlock width600">
 		<table class="table">
 		<tbody>
 			<% for i, countersLine in enumerate(countersLines): %>
@@ -18,9 +18,9 @@
 		</div>
 		<%end %>
 </div>
-<div style="margin-left:700px; width:600px;">
+<div class="interfaceLines">
 		<%if IsDefined("interfaceLines"): %>
-		<div class="hardWareInfoBlock" style="width:600px;">
+		<div class="hardWareInfoBlock width600">
 		<table class="table">
 		<tbody>
 			<% for i, interfaceLine in enumerate(interfaceLines): %>
