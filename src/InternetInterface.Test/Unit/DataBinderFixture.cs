@@ -41,11 +41,5 @@ namespace InternetInterface.Test.Unit
 			instance = binder.BindObject(typeof(LawyerPerson), "lawyerPerson", builder.BuildSourceNode(args));
 			Assert.IsFalse(binder.GetValidationSummary(instance).HasError);
 		}
-
-		[Test]
-		public void test()
-		{
-			Console.WriteLine(File.ReadAllText("c:/1.txt"));
-		}
 	}
 }
