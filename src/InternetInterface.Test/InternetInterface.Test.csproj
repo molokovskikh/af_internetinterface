@@ -189,6 +189,7 @@
     <Compile Include="Unit\InternetFixture.cs" />
     <Compile Include="Unit\IpTvFixture.cs" />
     <Compile Include="Integration\UnitPaymentFixture.cs" />
+    <Compile Include="Unit\LinksysCommutateurInfoFixture.cs" />
     <Compile Include="Unit\OrdersFixture.cs" />
     <Compile Include="Unit\PasswordFixture.cs" />
     <Compile Include="Unit\PhysicalClientFixture.cs" />

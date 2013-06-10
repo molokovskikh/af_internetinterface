@@ -1,8 +1,8 @@
 ﻿<div class="switchInfoClient">
-	<table class="table" style="width:600px; font-family:Courier;">
+	<table class="table">
 		<tbody>
 		<tr>
-			<td style="width:100px;">Клиент</td>
+			<td class="portInfoClient">Клиент</td>
 			<td><a href="${Siteroot}/Search/Redirect?filter.ClientCode=${point.Client.Id}">${point.Client.Name}</a></td>
 		</tr>
 		<tr>
@@ -13,13 +13,13 @@
 		</tr>
 		<%if lease != null: %>
 		<tr>
-			<td colspan=2 style="text-align:center;">Информация из аренды <br /> (Дата начала: ${lease.LeaseBegin} Дата конца: ${lease.LeaseEnd})</td>
+			<td colspan=2 class="textLeft">Информация из аренды <br /> (Дата начала: ${lease.LeaseBegin} Дата конца: ${lease.LeaseEnd})</td>
 		</tr>
 		<tr>
 			<%if IsDefined("IPResult"): %>
-			<td colspan=2 style="background-color:${"#f7d7d7" if not lease.CompareIp(IPResult)}">
+			<td colspan=2 class="${"commutateurFalse" if not lease.CompareIp(IPResult)} textCenter">
 			<%else: %>
-			<td colspan=2 style="background-color:#f7d7d7;">
+			<td colspan=2 class="commutateurFalse textCenter">
 			<%end %>
 				Арендованный IP
 				<b>${lease.Ip}</b>
@@ -32,9 +32,9 @@
 		</tr>
 		<tr>
 			<%if IsDefined("MACResult"): %>
-			<td colspan=2 style="background-color:${"#f7d7d7" if not lease.CompareMac(MACResult)}">
+			<td colspan=2 class="${"commutateurFalse" if not lease.CompareMac(MACResult)} textCenter">
 			<%else: %>
-			<td colspan=2 style="background-color:#f7d7d7;">
+			<td colspan=2 class="commutateurFalse textCenter">
 			<%end %>
 				МАС адрес <b>${lease.GetMac()} </b>
 				<%if IsDefined("MACResult"): %>
@@ -46,7 +46,7 @@
 		</tr>
 		<%else: %>
 		<tr>
-			<td colspan=2 style="background-color:#f7d7d7; text-align:center; font-weight:bold; font-size:14px;">Сессия DHCP не зерегистрирована</td>
+			<td colspan=2 class="noSessionDhcp">Сессия DHCP не зерегистрирована</td>
 		</tr>
 		<%if IsDefined("IPResult"): %>
 		<tr>
@@ -55,7 +55,7 @@
 		</tr>
 		<%else: %>
 		<tr>
-			<td colspan=2 style="background-color:#f7d7d7; text-align:center;"><b>Не удалось определить IP на порту коммутатора</b></td>
+			<td colspan=2 class="commutateurFalse textCenter"><b>Не удалось определить IP на порту коммутатора</b></td>
 		</tr>
 		<%end %>
 		<%if IsDefined("MACResult"): %>
@@ -65,7 +65,7 @@
 		</tr>
 		<%else: %>
 		<tr>
-			<td colspan=2 style="background-color:#f7d7d7; text-align:center;"><b>Не удалось определить MAC на порту коммутатора</b></td>
+			<td colspan=2 class="commutateurFalse textCenter"><b>Не удалось определить MAC на порту коммутатора</b></td>
 		</tr>
 		<%end %>
 		<%end %>

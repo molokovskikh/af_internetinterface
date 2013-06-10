@@ -1,10 +1,10 @@
 ﻿<div class="backGroundBlock">
-<div  style="float:left; padding-left:30px;">
+<div id="floatedInfo">
 
 		<% OutputSubView("ClientInfoView") %>
 
 		<%if IsDefined("counterInfo"): %>
-		<div class="hardWareInfoBlock" style="width:600px;">
+		<div class="hardWareInfoBlock width600">
 		<% for i in [0 , 2]: %>
 				<table class="table">
 					<thead>
@@ -30,7 +30,7 @@
 		</div>
 	<%end %>
 	<%if IsDefined("errorCounterInfo"): %>
-		<div class="hardWareInfoBlock" style="width:600px;">
+		<div class="hardWareInfoBlock width600">
 		<% for i in [0 , 2]: %>
 				<table class="table">
 					<thead>
@@ -67,7 +67,7 @@
 	<%end %>
 
 </div>
-<div style="margin-left:700px; width:600px;">
+<div id="portInfoBlock">
 	<%if IsDefined("Info"): %>
 	<div class="switchInfoBlock">
 		${Info}

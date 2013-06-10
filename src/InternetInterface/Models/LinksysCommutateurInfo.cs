@@ -41,22 +41,15 @@ namespace InternetInterface.Models
 				telnet.WriteLine(command);
 				Thread.Sleep(500);
 				var interfaces = HardwareHelper.DelCommandAndHello(telnet.Read(), command);
-				var commandIndex = interfaces.LastIndexOf('>');
-				interfaces = interfaces.Substring(commandIndex + 4, interfaces.Length - commandIndex - 4);
-				var interfaceForView = interfaces.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Select(i => i.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)).ToList();
-				var firstLine = new List<string> { string.Empty, string.Empty, string.Empty, string.Empty, string.Empty };
-				firstLine.AddRange(interfaceForView[0].ToList());
-				interfaceForView[0] = firstLine.ToArray();
-				propertyBag["interfaceLines"] = interfaceForView;
+				GetInterfacesInfo(interfaces, propertyBag);
+
 
 				command = string.Format("show interfaces counters FastEthernet {0}", port);
 				telnet.WriteLine(command);
 				Thread.Sleep(1000);
 				var counters = HardwareHelper.DelCommandAndHello(telnet.Read(), command);
 				var countersForView = counters.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
-				var countersToTable = countersForView.GetRange(1, 6);
-				var countersToTableForView = countersToTable.Select(i => i.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)).ToList();
-				propertyBag["countersLines"] = countersToTableForView;
+				GetCountersInfo(counters, propertyBag);
 
 				command = string.Format(" ");
 				telnet.WriteLine(command);
@@ -73,18 +66,43 @@ namespace InternetInterface.Models
 				telnet.WriteLine(command);
 				Thread.Sleep(500);
 				var macInfo = HardwareHelper.ResultInArray(telnet.Read(), command);
-				if (macInfo.Length > 20) {
-					propertyBag["IPResult"] = macInfo[21];
-					propertyBag["MACResult"] = macInfo[20].Split(':').Select(i => i.ToUpper()).Implode("-");
-				}
-				else {
-					propertyBag["Message"] = Message.Error("Соединение на порту отсутствует");
-				}
+				GetSnoopingInfo(macInfo, propertyBag);
+
 				telnet.WriteLine("exit");
 			}
 			catch (Exception ex) {
 				propertyBag["Message"] = Message.Error("Ошибка подключения к коммутатору");
 				logger.Error(string.Format("Коммутатор {0} Порт {1}", point.Switch.IP, point.Port.ToString()), ex);
+			}
+		}
+
+		protected void GetInterfacesInfo(string interfaces, IDictionary propertyBag)
+		{
+			var commandIndex = interfaces.LastIndexOf('>');
+			interfaces = interfaces.Substring(commandIndex + 4, interfaces.Length - commandIndex - 4);
+			var interfaceForView = interfaces.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Select(i => i.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)).ToList();
+			var firstLine = new List<string> { string.Empty, string.Empty, string.Empty, string.Empty, string.Empty };
+			firstLine.AddRange(interfaceForView[0].ToList());
+			interfaceForView[0] = firstLine.ToArray();
+			propertyBag["interfaceLines"] = interfaceForView;
+		}
+
+		protected void GetCountersInfo(string counters, IDictionary propertyBag)
+		{
+			var countersForView = counters.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
+			var countersToTable = countersForView.GetRange(1, 6);
+			var countersToTableForView = countersToTable.Select(i => i.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)).ToList();
+			propertyBag["countersLines"] = countersToTableForView;
+		}
+
+		protected void GetSnoopingInfo(string[] macInfo, IDictionary propertyBag)
+		{
+			if (macInfo.Length > 20) {
+				propertyBag["IPResult"] = macInfo[21];
+				propertyBag["MACResult"] = macInfo[20].Split(':').Select(i => i.ToUpper()).Implode("-");
+			}
+			else {
+				propertyBag["Message"] = Message.Error("Соединение на порту отсутствует");
 			}
 		}
 

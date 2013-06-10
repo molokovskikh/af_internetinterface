@@ -553,6 +553,7 @@ button.button:active, a.button:active {
 	margin-bottom:20px;
 	padding:15px;
 	width:600px;
+	font-family:Courier;
 }
 
 .backGroundBlock

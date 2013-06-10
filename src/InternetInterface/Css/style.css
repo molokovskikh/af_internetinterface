@@ -565,3 +565,40 @@ div.commented, .commented {
 #EndDate {
 	margin-bottom: 10px;
 }
+
+.commutateurFalse {
+	background-color: #f7d7d7;
+}
+
+.textCenter {
+	text-align: center;
+}
+
+.textLeft {
+	text-align: left;
+}
+
+.noSessionDhcp {
+	background-color:#f7d7d7;
+	text-align:center;
+	font-weight:bold;
+	font-size:14px;
+}
+
+.portInfoClient {
+	width:100px;
+}
+
+.width600 {
+	width: 600px;
+}
+
+#floatedInfo {
+	float:left;
+	padding-left:30px;
+}
+
+#portInfoBlock {
+	margin-left:700px;
+	width:600px;
+}
