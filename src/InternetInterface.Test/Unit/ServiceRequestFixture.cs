@@ -16,7 +16,9 @@ namespace InternetInterface.Test.Unit
 			request = new ServiceRequest();
 			request.Contact = "950-5001055";
 			request.Client = new Client();
-			request.Performer = new Partner();
+			request.Performer = new Partner {
+				TelNum = "473-2606000"
+			};
 		}
 
 		[Test]

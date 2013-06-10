@@ -143,8 +143,9 @@ namespace InternetInterface.Models
 
 		public virtual SmsMessage GetSms()
 		{
-			if (Performer == null)
+			if (!ShouldSendSms())
 				return null;
+
 			var endPoint = Client.Endpoints.FirstOrDefault();
 			var port = endPoint != null ? endPoint.Port.ToString() : string.Empty;
 			var sms = new SmsMessage(Performer.TelNum) {
@@ -162,14 +163,24 @@ namespace InternetInterface.Models
 
 		public virtual SmsMessage GetEditSms(ISession session)
 		{
+			if (!ShouldSendSms())
+				return null;
+
 			if (Status == ServiceRequestStatus.Cancel && session.IsChanged(this, r => r.Status)) {
-				if (Performer != null) {
-					Sms = new SmsMessage(Performer.TelNum);
-					Sms.Text = String.Format("сч. {0} заявка отменена", Client.Id);
-					return Sms;
-				}
+				Sms = new SmsMessage(Performer.TelNum);
+				Sms.Text = String.Format("сч. {0} заявка отменена", Client.Id);
+				return Sms;
 			}
 			return null;
+		}
+
+		private bool ShouldSendSms()
+		{
+			if (Performer == null)
+				return false;
+			if (String.IsNullOrEmpty(Performer.TelNum))
+				return false;
+			return true;
 		}
 	}
 }
