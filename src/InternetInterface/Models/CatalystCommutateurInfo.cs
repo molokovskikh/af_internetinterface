@@ -59,7 +59,7 @@ namespace InternetInterface.Models
 				var portIsActive = HardwareHelper.ResultInArray(telnet.Read(), command).Contains("connected");
 				//Проверяем, что порт активен
 				if (portIsActive) {
-					command = string.Format("show mac address-t	able interface fastEthernet 0/{0} | inc a0/{0}", port);
+					command = string.Format("show mac address-table interface fastEthernet 0/{0} | inc a0/{0}", port);
 					telnet.WriteLine(command);
 					var macInfo = HardwareHelper.ResultInArray(telnet.Read(), command);
 					if (macInfo.Length > 0) {
