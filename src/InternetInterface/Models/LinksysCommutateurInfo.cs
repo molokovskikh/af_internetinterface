@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Threading;
 using System.Web;
@@ -21,15 +22,17 @@ namespace InternetInterface.Models
 			var point = session.Load<ClientEndpoint>(endPointId);
 			propertyBag["point"] = point;
 			propertyBag["lease"] = session.Query<Lease>().FirstOrDefault(l => l.Endpoint == point);
+			var login = ConfigurationManager.AppSettings["linksysLogin"];
+			var password = ConfigurationManager.AppSettings["linksysPassword"];
 
 			try {
 #if DEBUG
 				var telnet = new TelnetConnection("172.16.2.112", 23);
-				telnet.Login("ii", "Analit11", 100);
+				telnet.Login(login, password, 100);
 				var port = 1.ToString();
 #else
 				var telnet = new TelnetConnection(point.Switch.IP.ToString(), 23);
-				telnet.Login("ii", "analit", 100);
+				telnet.Login(login, password, 100);
 				var port = point.Port.ToString();
 #endif
 				telnet.WriteLine("terminal length 0");
@@ -60,7 +63,7 @@ namespace InternetInterface.Models
 				Thread.Sleep(500);
 				var transmittedPauseFramesText = telnet.Read();
 				var interfaceCountersItems = countersForView.GetRange(7, countersForView.Count - 7);
-				var transmittedText = "Transmitted Pause Frames: ";
+				const string transmittedText = "Transmitted Pause Frames: ";
 				var transmittedIndex = transmittedPauseFramesText.IndexOf(transmittedText);
 				var nextTransSpace = transmittedPauseFramesText.IndexOf("\r\n", transmittedIndex + transmittedText.Length);
 				interfaceCountersItems.Add(transmittedPauseFramesText.Substring(transmittedIndex, nextTransSpace - transmittedIndex));

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net.Mail;
 using System.Text;
@@ -65,7 +66,7 @@ namespace InternetInterface.Background
 						l.Endpoint.Client.Disabled))
 				.ToList();
 			var sndingLease = SendedLease.Queryable.Where(s => s.SendDate >= DateTime.Now.Date).Select(s => s.LeaseId).ToList();
-			var smtp = new SmtpClient("box.analit.net");
+			var smtp = new SmtpClient();
 #if !DEBUG
 			var mailToAdress = "internet@ivrn.net";
 #else
@@ -88,7 +89,7 @@ namespace InternetInterface.Background
 
 		public static void SendUnknowEndPoint()
 		{
-			var smtp = new SmtpClient("box.analit.net");
+			var smtp = new SmtpClient();
 #if !DEBUG
 			var mailToAdress = "internet@ivrn.net";
 #else

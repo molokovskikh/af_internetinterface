@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 using Castle.Core.Logging;
@@ -20,16 +21,18 @@ namespace InternetInterface.Models
 			var point = session.Load<ClientEndpoint>(endPointId);
 			propertyBag["point"] = point;
 			propertyBag["lease"] = session.Query<Lease>().FirstOrDefault(l => l.Endpoint == point);
+			var login = ConfigurationManager.AppSettings["catalystLogin"];
+			var password = ConfigurationManager.AppSettings["catalystPassword"];
 
 			try {
 #if DEBUG
 				var telnet = new TelnetConnection("91.209.124.59", 23);
 				//var telnet = new TelnetConnection("172.16.1.114", 23);
-				telnet.Login("ii", "ii", 100);
+				telnet.Login(login, password, 100);
 				var port = 3.ToString();
 #else
 				var telnet = new TelnetConnection(point.Switch.IP.ToString(), 23);
-				telnet.Login("ii", "analit", 100);
+				telnet.Login(login, password, 100);
 				var port = point.Port.ToString();
 #endif
 				//Грязный хак, чтобы поиск осуществлять по нужному порту
