@@ -4,7 +4,7 @@ h1, h2, h3 {color: #444}
 
 body {
   color: #333;
-  font: normal 12px/1.5em "Lucida Grande", "Helvetica Neue", Arial, sans-serif;
+  font: normal 12px/1.5em "Helvetica Neue";
 }
 
 hr {
@@ -601,6 +601,7 @@ div.commented, .commented {
 #portInfoBlock {
 	margin-left:700px;
 	width:600px;
+	padding: 15px;
 }
 
 .portLinksys {

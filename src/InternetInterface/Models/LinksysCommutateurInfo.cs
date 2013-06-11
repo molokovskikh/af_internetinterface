@@ -84,7 +84,7 @@ namespace InternetInterface.Models
 			var firstLine = new List<string> { string.Empty, string.Empty, string.Empty, string.Empty, string.Empty };
 			firstLine.AddRange(interfaceForView[0].ToList());
 			interfaceForView[0] = firstLine.ToArray();
-			propertyBag["interfaceLines"] = interfaceForView;
+			propertyBag["interfaceLines"] = DeleteEmptyLines(interfaceForView);
 		}
 
 		protected void GetCountersInfo(string counters, IDictionary propertyBag)

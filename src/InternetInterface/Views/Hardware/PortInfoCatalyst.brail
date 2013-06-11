@@ -5,7 +5,7 @@
 
 		<%if IsDefined("counterInfo"): %>
 		<div class="hardWareInfoBlock width600">
-		<h3>Трафик, счетчики пакетов</h3>
+		<h3>Трафик, счетчики пакетов на порту</h3>
 		<% for i in [0 , 2]: %>
 				<table class="table" id="countersTable">
 					<thead>

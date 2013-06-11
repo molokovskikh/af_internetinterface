@@ -17,9 +17,9 @@
 		</tr>
 		<tr>
 			<%if IsDefined("IPResult"): %>
-			<td colspan=2 class="${"commutateurFalse" if not lease.CompareIp(IPResult)} textCenter">
+			<td colspan=2 class="${"commutateurFalse" if not lease.CompareIp(IPResult)}">
 			<%else: %>
-			<td colspan=2 class="commutateurFalse textCenter">
+			<td colspan=2 class="commutateurFalse">
 			<%end %>
 				Арендованный IP
 				<b>${lease.Ip}</b>
@@ -32,9 +32,9 @@
 		</tr>
 		<tr>
 			<%if IsDefined("MACResult"): %>
-			<td colspan=2 class="${"commutateurFalse" if not lease.CompareMac(MACResult)} textCenter">
+			<td colspan=2 class="${"commutateurFalse" if not lease.CompareMac(MACResult)}">
 			<%else: %>
-			<td colspan=2 class="commutateurFalse textCenter">
+			<td colspan=2 class="commutateurFalse">
 			<%end %>
 				МАС адрес <b>${lease.GetMac()} </b>
 				<%if IsDefined("MACResult"): %>

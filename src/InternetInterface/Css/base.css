@@ -513,9 +513,7 @@ button.button:active, a.button:active {
 .hardWareInfoBlock
 {
 	margin-top: 10px;
-	font-weight:bold;
 	margin-bottom: 20px;
-	font-family:Courier;
 	text-align: center;
 }
 
@@ -529,7 +527,6 @@ button.button:active, a.button:active {
 }
 
 .backGroundBlock h3 {
-	font-family: Courier;
 	text-align: center;
 	color: #666;
 }
@@ -553,22 +550,15 @@ button.button:active, a.button:active {
 
 .switchInfoBlock
 {
-	background-color:#d7d4d4;
-	border:1px double Black;
-	color:Black;
-	padding:15px;
+	border:1px double #c1c3c4;
 	width:600px;
-	font-family:Courier;
+	padding: 15px;
 }
 
 .switchInfoClient
 {
-	background-color:#dbeaf0;
-	border:1px double #7dbcd7;
 	margin-bottom:20px;
-	padding:15px;
 	width:600px;
-	font-family:Courier;
 }
 
 .backGroundBlock
