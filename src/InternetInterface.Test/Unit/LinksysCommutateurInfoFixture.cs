@@ -50,7 +50,7 @@ Port     Type         Duplex  Speed Neg      ctrl State       Pressure Mode
 fa1      100M-Copper    --      --     --     --  Down           --     --    ";
 			_info.GetInterfacesInfoTest(test, propertyBag);
 			var info = ((List<string[]>)propertyBag["interfaceLines"]);
-			Assert.AreEqual(info.Count, 4);
+			Assert.AreEqual(info.Count, 2);
 			Assert.IsTrue(info.All(i => i.Length == 9));
 		}
 
