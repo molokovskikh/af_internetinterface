@@ -512,19 +512,34 @@ button.button:active, a.button:active {
 
 .hardWareInfoBlock
 {
-	padding:15px;
-	background-color:#BDE5F8;
-	width:600px;
-	border: 1px double #00529B;
+	margin-top: 10px;
 	font-weight:bold;
 	margin-bottom: 20px;
 	font-family:Courier;
 	text-align: center;
 }
 
+.russianInfo table tbody th, #countersTable thead tr th {
+	width: 100px;
+	margin-bottom: 10px;
+}
+
+#portActiveBlock {
+	margin-top: -39px;
+}
+
+.backGroundBlock h3 {
+	font-family: Courier;
+	text-align: center;
+	color: #666;
+}
+
 #interfaceCountersBlock {
+	margin-top: 10px;
 	text-align: left;
 	background-color: white;
+	border: 1px double #c1c3c4;
+	padding: 15px;
 }
 
 #interfaceCountersBlock p {
@@ -563,6 +578,7 @@ button.button:active, a.button:active {
 	padding-top:10px;
 	height:700px;
 	min-width:1300px;
+	margin-top: 40px;
 }
 
 .filterItem

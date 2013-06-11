@@ -1,33 +1,21 @@
 ﻿<div class="backGroundBlock">
 <div class="portLinksys">
+	<h3>Информация о клиенте</h3>
 	<% OutputSubView("ClientInfoView") %>
 
 		<%if IsDefined("countersLines"): %>
-		<div class="hardWareInfoBlock width600">
+		<div class="hardWareInfoBlock russianInfo">
+		<h3>Трафик, счетчики пакетов</h3>
 		<table class="table">
 		<tbody>
 			<% for i, countersLine in enumerate(countersLines): %>
 				<tr>
-					<% for i, item in enumerate(countersLine): %>
-					<td>${item}</td>
-					<%end%>
-				</tr>
-			<%end %>
-		</tbody>
-		</table>
-		</div>
-		<%end %>
-</div>
-<div class="interfaceLines">
-		<%if IsDefined("interfaceLines"): %>
-		<div class="hardWareInfoBlock width600">
-		<table class="table">
-		<tbody>
-			<% for i, interfaceLine in enumerate(interfaceLines): %>
-				<tr>
-					<% for i, item in enumerate(interfaceLine): %>
-					<td>${item}</td>
-					<%end%>
+					<% for j, item in enumerate(countersLine): %>
+					<%if (i % 2 > 0):%>
+						<td>${item}</td>
+					<%else:%>
+						<th>${item}</th>
+					<%end end%>
 				</tr>
 			<%end %>
 		</tbody>
@@ -35,11 +23,33 @@
 		</div>
 		<%end %>
 		<%if IsDefined("interfaceCounters"): %>
+		<h3>Статистика ошибок порта</h3>
 		<div class="hardWareInfoBlock" id="interfaceCountersBlock">
 			<% for i, interfaceCounter in enumerate(interfaceCounters): %>
 				<p>${interfaceCounter}</p>
 			<%end%>
-		<div>
+		</div>
+		<%end %>
+</div>
+<div class="interfaceLines" id="portActiveBlock">
+		<%if IsDefined("interfaceLines"): %>
+		<h3>Информация об активности порта</h3>
+		<div class="hardWareInfoBlock width600">
+		<table class="table">
+		<tbody>
+			<% for i, interfaceLine in enumerate(interfaceLines): %>
+				<tr>
+					<% for j, item in enumerate(interfaceLine): %>
+					<%if i < 2 :%>
+					<th>${item}</th>
+					<%else:%>
+					<td>${item}</td>
+					<%end end%>
+				</tr>
+			<%end %>
+		</tbody>
+		</table>
+		</div>
 		<%end %>
 </div>
 </div>

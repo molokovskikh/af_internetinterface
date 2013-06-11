@@ -26,10 +26,10 @@ namespace InternetInterface.Models
 
 			try {
 #if DEBUG
-				var telnet = new TelnetConnection("91.209.124.59", 23);
+				var telnet = new TelnetConnection("172.16.1.112", 23);
 				//var telnet = new TelnetConnection("172.16.1.114", 23);
 				telnet.Login(login, password, 100);
-				var port = 3.ToString();
+				var port = 2.ToString();
 #else
 				var telnet = new TelnetConnection(point.Switch.IP.ToString(), 23);
 				telnet.Login(login, password, 100);
@@ -91,7 +91,7 @@ namespace InternetInterface.Models
 
 					propertyBag["counterInfo"] =
 						HardwareHelper.DelCommandAndHello(counterInfo, command).TrimStart('\r', '\n').TrimEnd('\r', '\n').Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries)
-							.Select(i => i.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)).ToList();
+							.Select(i => i.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)).Select(stringse => stringse.Select(s => HardwareHelper.GetFieldName(s.Trim())).ToArray()).ToList();
 
 
 					command = string.Format("show interfaces fastEthernet 0/{0} counters errors", port);

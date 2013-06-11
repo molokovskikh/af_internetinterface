@@ -92,7 +92,8 @@ namespace InternetInterface.Models
 			var countersForView = counters.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
 			var countersToTable = countersForView.GetRange(1, 6);
 			var countersToTableForView = countersToTable.Select(i => i.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)).ToList();
-			propertyBag["countersLines"] = countersToTableForView;
+			var mashineLines = DeleteEmptyLines(countersToTableForView);
+			propertyBag["countersLines"] = RenameTable(mashineLines);
 		}
 
 		protected void GetSnoopingInfo(string[] macInfo, IDictionary propertyBag)
@@ -104,6 +105,20 @@ namespace InternetInterface.Models
 			else {
 				propertyBag["Message"] = Message.Error("Соединение на порту отсутствует");
 			}
+		}
+
+		private IEnumerable<string[]> DeleteEmptyLines(IEnumerable<string[]> data)
+		{
+			foreach (var stringse in data) {
+				if (stringse.All(s => s.Contains("-")))
+					continue;
+				yield return stringse;
+			}
+		}
+
+		private IEnumerable<string[]> RenameTable(IEnumerable<string[]> data)
+		{
+			return data.Select(stringse => stringse.Select(s => HardwareHelper.GetFieldName(s.Trim())).ToArray()).ToList();
 		}
 
 		public string ViewName

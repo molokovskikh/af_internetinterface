@@ -32,5 +32,31 @@ namespace InternetInterface.AllLogic
 			info = DelCommandAndHello(info, command);
 			return info.Replace("\r\n", string.Empty).Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
 		}
+
+		public static string GetFieldName(string mashineName)
+		{
+			switch (mashineName) {
+				case "Port":
+					return "Порт";
+				case "InUcastPkts":
+					return "Получено пакетов";
+				case "InMcastPkts":
+					return "Получено мультикаст пакетов";
+				case "InBcastPkts":
+					return "Получено широковещательных пакетов";
+				case "InOctets":
+					return "Принято байт";
+				case "OutUcastPkts":
+					return "Отправлено пакетов";
+				case "OutMcastPkts":
+					return "Отправлено мультикаст пакетов";
+				case "OutBcastPkts":
+					return "Отправлено широковещательных пакетов";
+				case "OutOctets":
+					return "Отправлено байт";
+				default:
+					return mashineName;
+			}
+		}
 	}
 }

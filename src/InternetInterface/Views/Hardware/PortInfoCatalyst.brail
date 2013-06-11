@@ -1,12 +1,13 @@
 ﻿<div class="backGroundBlock">
 <div id="floatedInfo">
-
+		<h3>Информация о клиенте</h3>
 		<% OutputSubView("ClientInfoView") %>
 
 		<%if IsDefined("counterInfo"): %>
 		<div class="hardWareInfoBlock width600">
+		<h3>Трафик, счетчики пакетов</h3>
 		<% for i in [0 , 2]: %>
-				<table class="table">
+				<table class="table" id="countersTable">
 					<thead>
 						<tr>
 							<th>${counterInfo[i][0]}</th>
@@ -31,6 +32,7 @@
 	<%end %>
 	<%if IsDefined("errorCounterInfo"): %>
 		<div class="hardWareInfoBlock width600">
+		<h3>Статистика ошибок порта</h3>
 		<% for i in [0 , 2]: %>
 				<table class="table">
 					<thead>
@@ -69,6 +71,7 @@
 </div>
 <div id="portInfoBlock">
 	<%if IsDefined("Info"): %>
+	<h3>Информация об активности порта</h3>
 	<div class="switchInfoBlock">
 		${Info}
 	</div>

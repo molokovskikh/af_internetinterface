@@ -590,7 +590,7 @@ div.commented, .commented {
 }
 
 .width600 {
-	width: 600px;
+	width: 630px;
 }
 
 #floatedInfo {
@@ -606,6 +606,7 @@ div.commented, .commented {
 .portLinksys {
 	float:left;
 	padding-left:30px;
+	margin-top: -39px;
 }
 
 .interfaceLines {
