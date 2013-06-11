@@ -83,7 +83,7 @@ Symbol Errors: 0
 Received Pause Frames: 0";
 			_info.GetCountersInfoTest(test, propertyBag);
 			var info = ((List<string[]>)propertyBag["countersLines"]);
-			Assert.AreEqual(info.Count, 6);
+			Assert.AreEqual(info.Count, 4);
 			Assert.IsTrue(info.All(i => i.Length == 5));
 		}
 

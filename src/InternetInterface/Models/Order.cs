@@ -20,7 +20,7 @@ namespace InternetInterface.Models
 	/// <summary>
 	/// Заказ
 	/// </summary>
-	[ActiveRecord(Schema = "Internet", Table = "Orders", Lazy = true)]
+	[ActiveRecord(Schema = "Internet", Table = "Orders", Lazy = true), Auditable]
 	public class Order
 	{
 		public Order()
@@ -32,13 +32,13 @@ namespace InternetInterface.Models
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
-		[Property, Description("Номер заказа")]
+		[Property, Description("Номер заказа"), Auditable("Номер заказа")]
 		public virtual uint Number { get; set; }
 
-		[Property]
+		[Property, Auditable("Дата активации заказа")]
 		public virtual DateTime? BeginDate { get; set; }
 
-		[Property]
+		[Property, Auditable("Дата окончания заказа")]
 		public virtual DateTime? EndDate { get; set; }
 
 		[BelongsTo]
@@ -50,7 +50,7 @@ namespace InternetInterface.Models
 		[BelongsTo(Column = "ClientId")]
 		public virtual Client Client { get; set; }
 
-		[Property]
+		[Property, Auditable("Деактивирован")]
 		public virtual bool Disabled { get; set; }
 
 		/// <summary>

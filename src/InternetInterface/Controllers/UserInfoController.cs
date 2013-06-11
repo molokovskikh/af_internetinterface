@@ -1000,7 +1000,7 @@ where r.`Label`= :LabelIndex;")
 				clientEndPointId = eConnect;
 			}
 			else {
-				speeds = DbSession.Query<PackageSpeed>().Where(p => !tariffs.Contains(p.PackageId)).OrderBy(s => s.Speed).ToList();
+				speeds = DbSession.Query<PackageSpeed>().OrderBy(s => s.Speed).ToList();
 				var order = DbSession.Get<Order>(eConnect);
 				if (order != null && order.EndPoint != null)
 					clientEndPointId = order.EndPoint.Id;
