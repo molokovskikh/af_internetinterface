@@ -29,7 +29,7 @@ namespace InternetInterface.Models
 #if DEBUG
 				var telnet = new TelnetConnection("172.16.2.112", 23);
 				telnet.Login(login, password, 100);
-				var port = 1.ToString();
+				var port = 3.ToString();
 #else
 				var telnet = new TelnetConnection(point.Switch.IP.ToString(), 23);
 				telnet.Login(login, password, 100);
@@ -84,7 +84,15 @@ namespace InternetInterface.Models
 			var firstLine = new List<string> { string.Empty, string.Empty, string.Empty, string.Empty, string.Empty };
 			firstLine.AddRange(interfaceForView[0].ToList());
 			interfaceForView[0] = firstLine.ToArray();
-			propertyBag["interfaceLines"] = DeleteEmptyLines(interfaceForView);
+			var result = new List<string[]>();
+			var line = new List<string>();
+			var updatedData = DeleteEmptyLines(interfaceForView).ToList();
+			for (int i = 0; i < updatedData[0].Length; i++) {
+				line.Add(updatedData[0][i] + " " + updatedData[1][i]);
+			}
+			result.Add(line.ToArray());
+			result.Add(updatedData[2]);
+			propertyBag["interfaceLines"] = result;
 		}
 
 		protected void GetCountersInfo(string counters, IDictionary propertyBag)

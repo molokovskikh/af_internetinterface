@@ -36,18 +36,18 @@
 		<h3>Информация об активности порта</h3>
 		<div class="hardWareInfoBlock width600">
 		<table class="table">
-		<tbody>
+		<thead>
 			<% for i, interfaceLine in enumerate(interfaceLines): %>
 				<tr>
 					<% for j, item in enumerate(interfaceLine): %>
-					<%if i < 2 :%>
+					<%if i < 1 :%>
 					<th>${item}</th>
 					<%else:%>
 					<td>${item}</td>
 					<%end end%>
 				</tr>
 			<%end %>
-		</tbody>
+		</thead>
 		</table>
 		</div>
 		<%end %>
