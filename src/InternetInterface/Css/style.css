@@ -63,10 +63,6 @@ input.checkbox {
 }
 
 #main .block .content {
-  border-left: 1px solid #ddd;
-  border-top: 1px solid #ddd;
-  border-bottom: 1px solid #ccc;
-  border-right: 1px solid #ccc;
   background: #fff;
 }
 
