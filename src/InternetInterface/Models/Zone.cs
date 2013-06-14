@@ -34,5 +34,10 @@ namespace InternetInterface.Models
 		{
 			return ArHelper.WithSession(s => s.Query<Zone>().OrderBy(z => z.Name).ToList());
 		}
+
+		public override string ToString()
+		{
+			return Name;
+		}
 	}
 }
