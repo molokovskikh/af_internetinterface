@@ -15,7 +15,7 @@ task @default, [@Build, @BuildBackground]
 
 task @Build, [@BuildWebSite, @BuildBackground, @BuildPrinter]
 
-task @deploy, [@DeployPipeline, @DeployPrinter]
+task @deploy, [@DeployPipeline, @DeployPrinter, @DeployBackground]
 
 task @DeployBackground, [@BuildBackground, @Production, @Migrate, @SendDeployNotification]:
 	oldProject = Globals.Project
