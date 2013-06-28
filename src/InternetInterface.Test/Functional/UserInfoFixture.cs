@@ -74,6 +74,17 @@ namespace InternetInterface.Test.Functional
 		}
 
 		[Test]
+		public void CheckedTest()
+		{
+			Open(ClientUrl);
+			browser.CheckBox("client_Checked").Checked = true;
+			Click("Сохранить");
+			Close();
+			Client = session.Get<Client>(Client.Id);
+			Assert.IsTrue(Client.PhysicalClient.Checked);
+		}
+
+		[Test]
 		public void ReservTest()
 		{
 			Client.Status = Status.Find((uint)StatusType.BlockedAndNoConnected);

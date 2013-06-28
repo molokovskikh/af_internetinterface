@@ -123,8 +123,15 @@ $(function () {
 	</td>
 	<td>
 		${app.Edit("client.ExternalClientId")}
+	</td>
 	<td>
 		${app.GetValidationError("client.ExternalClientId")}
+	</td>
+</tr>
+<tr>
+	<td>Проверен</td>
+	<td>
+		${app.Edit("client.Checked")}
 	</td>
 </tr>
 </table>

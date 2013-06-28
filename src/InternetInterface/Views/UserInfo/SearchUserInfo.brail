@@ -208,6 +208,11 @@
 			<td><span class="description">Дата начала программы скидок:</span> ${_client.StartNoBlock.ToShortDateString()}</td>
 		</tr>
 		<%end %>
+		<tr>
+			<td><span class="description">Проверен: </span>
+			<% if (_client.PhysicalClient.Checked): %> Да <% else: %> Нет <% end %>
+			</td>
+		</tr>
 		<%end %>
 	<%if PartnerAccessSet.AccesPartner("ECI"): %>
 			<tr>

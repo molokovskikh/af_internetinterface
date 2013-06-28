@@ -157,6 +157,9 @@ namespace InternetInterface.Models
 		[Property, Description("Номер абонента Ситилайн"), ValidateIsUnique("Абонент с таким номером уже зарегистрирован")]
 		public virtual int? ExternalClientId { get; set; }
 
+		[Property, Auditable("Проверен")]
+		public virtual bool Checked { get; set; }
+
 		//внешний номер договора обязателен только если клиент регистрируется самостоятельно
 		public virtual bool ExternalClientIdRequired { get; set; }
 
