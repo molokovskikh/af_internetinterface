@@ -110,8 +110,10 @@ where sl.LeaseId in ({0})", guestLeases.Select(g => g.Id).Implode());
 			foreach (var gl in guestLeases.Where(g => !sended_leases.Contains(g.Id))) {
 				new SendedLease(gl).Save();
 				text.AppendLine("Клиент:");
-				if (gl.Switch != null)
+				if (gl.Switch != null) {
 					text.AppendLine(string.Format("Коммутатор: {0} ({1})", gl.Switch.Name, gl.Switch.IP));
+					text.AppendLine("Зона: " + gl.Switch.Zone);
+				}
 				else
 					text.AppendLine("Коммутатор не определен");
 				text.AppendLine("Порт: " + gl.Port);
