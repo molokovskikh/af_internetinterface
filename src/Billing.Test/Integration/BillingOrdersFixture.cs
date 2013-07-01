@@ -213,7 +213,18 @@ namespace Billing.Test.Integration
 		}
 
 		[Test]
-		public void Activate_diactivate_test()
+		public void Activate_diactivate_test_allDays()
+		{
+			ActivateDiactivate(DateTime.Now);
+		}
+
+		[Test]
+		public void Activate_diactivate_test_FirstDay()
+		{
+			ActivateDiactivate(new DateTime(2013, 07, 01));
+		}
+
+		private void ActivateDiactivate(DateTime now)
 		{
 			var endpoint = new ClientEndpoint { Client = lawyerClient };
 			lawyerClient.Endpoints.Add(endpoint);
@@ -231,22 +242,22 @@ namespace Billing.Test.Integration
 			};
 			session.Save(noPeriodic);
 			SystemTime.Reset();
-			order.BeginDate = DateTime.Now;
-			order.EndDate = DateTime.Now.AddMonths(1);
+			order.BeginDate = now;
+			order.EndDate = now.AddMonths(1);
 			order.OrderServices = new List<OrderService> { noPeriodic, periodic };
 			session.Save(order);
 			session.Save(lawyerClient);
 			var dayCount = 0;
 			Close();
-			while (SystemTime.Now().Date <= DateTime.Now.AddMonths(1).Date) {
+			while (SystemTime.Now().Date <= now.AddMonths(1).Date) {
 				billing.Compute();
-				SystemTime.Now = () => DateTime.Now.AddDays(dayCount);
+				SystemTime.Now = () => now.AddDays(dayCount);
 				dayCount++;
 			}
 			var writeOffs = session.Query<WriteOff>().Where(w => w.Client.Id == lawyerClient.Id).ToList();
-			var daysInThisMonth = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
-			var daysInNextNonth = DateTime.DaysInMonth(DateTime.Now.AddMonths(1).Year, DateTime.Now.AddMonths(1).Month);
-			Assert.AreEqual(writeOffs.Sum(w => w.WriteOffSum), Math.Round(200 + (decimal)3000 / daysInThisMonth * (daysInThisMonth - DateTime.Now.Day + 1) + 3000 - (decimal)3000 / daysInNextNonth * (daysInNextNonth - DateTime.Now.AddMonths(1).Day), 2));
+			var daysInThisMonth = DateTime.DaysInMonth(now.Year, now.Month);
+			var daysInNextNonth = DateTime.DaysInMonth(now.AddMonths(1).Year, now.AddMonths(1).Month);
+			Assert.AreEqual(writeOffs.Sum(w => w.WriteOffSum), Math.Round(200 + (decimal)3000 / daysInThisMonth * (daysInThisMonth - now.Day + 1) + 3000 - (decimal)3000 / daysInNextNonth * (daysInNextNonth - now.AddMonths(1).Day), 2));
 			lawyerClient = session.Get<Client>(lawyerClient.Id);
 			Assert.That(lawyerClient.Appeals.First().Appeal, Is.StringContaining("Деактивирован заказ"));
 			Assert.AreEqual(lawyerClient.Endpoints.Count, 0);
