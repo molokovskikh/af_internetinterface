@@ -106,6 +106,10 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="apple-touch-icon-114x114-precomposed.png" />
+    <Content Include="apple-touch-icon-144x144-precomposed.png" />
+    <Content Include="apple-touch-icon-72x72-precomposed.png" />
+    <Content Include="apple-touch-icon-precomposed.png" />
     <Content Include="Assets\Stylesheets\alt.validation.error.css" />
     <Content Include="Assets\Javascripts\YandexMetric.js" />
     <Content Include="Content\error_button_small.png" />
@@ -191,6 +195,20 @@
     <Content Include="CSS\styles.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
+    <Content Include="Icon%402x.png" />
+    <Content Include="Icon-72%402x.png" />
+    <Content Include="Icon-72.png" />
+    <Content Include="Icon-Small%402x.png" />
+    <Content Include="Icon-Small-20%402x.png" />
+    <Content Include="Icon-Small-20.png" />
+    <Content Include="Icon-Small-30%402x.png" />
+    <Content Include="Icon-Small-30.png" />
+    <Content Include="Icon-Small-50%402x.png" />
+    <Content Include="Icon-Small-50.png" />
+    <Content Include="Icon-Small.png" />
+    <Content Include="Icon.png" />
+    <Content Include="iTunesArtwork%402x.png" />
+    <Content Include="iTunesArtwork.png" />
     <Content Include="JavaScript\DateValidate.js" />
     <Content Include="JavaScript\jquery-1.4.2.min.js" />
     <Content Include="JavaScript\jquery.autocomplete.js" />
