@@ -175,6 +175,7 @@ namespace InternetInterface.Helpers
 						new XElement("password", Password),
 						new XElement("action", "send"),
 						new XElement("source", Source),
+						new XElement("onlydelivery", "1"),
 						new XElement("text", "Уважаемый абонент, компания Инфорум предлагает передовые услуги в сфере телекоммуникаций (подробнее http://ivrn.net)")));
 
 				var dataElement = document.Element("data");

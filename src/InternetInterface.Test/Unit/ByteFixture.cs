@@ -57,6 +57,7 @@ namespace InternetInterface.Test.Unit
 					new XElement("login", "inforoom"),
 					new XElement("password", "analitFarmacia"),
 					new XElement("action", "send"),
+					new XElement("onlydelivery", "1"),
 					//new XElement("text", "Проверка рассылки SMS компании Inforoom (от Золотарева)"),
 					new XElement("source", "inforoom") /*,
 							new XElement("to", 
@@ -71,7 +72,7 @@ namespace InternetInterface.Test.Unit
 
 			var dataElement = document.Element("data");
 			if (dataElement != null)
-				dataElement.Add(new XElement("to", new XAttribute("number", "+79507738447"), "Проверка рассылки SMS компании Inforoom (от Золотарева)"));
+				dataElement.Add(new XElement("to", new XAttribute("number", "+9802410759"), "Проверка рассылки SMS компании Inforoom (от Золотарева)"));
 
 			document.Declaration = new XDeclaration("1.0", "utf-8", "true");
 
