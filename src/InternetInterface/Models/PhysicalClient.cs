@@ -294,9 +294,8 @@ namespace InternetInterface.Models
 
 		public virtual Payment CalculateSelfRegistrationPayment()
 		{
-			var begin = DateTime.Today;
-			var end = begin.AddMonths(1).FirstDayOfMonth().AddDays(14);
-			var days = (end - begin).Days;
+			//По требованию #18207 Было сделано 3 дня
+			const int days = 3;
 			var dayInMonth = (DateTime.Today.LastDayOfMonth() - DateTime.Today.FirstDayOfMonth()).Days + 1;
 			var sum = Client.GetPriceIgnoreDisabled() / dayInMonth * days;
 			var payment = new Payment(Client, sum) {
