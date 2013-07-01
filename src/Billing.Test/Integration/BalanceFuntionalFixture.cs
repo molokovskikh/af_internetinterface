@@ -169,7 +169,7 @@ namespace Billing.Test.Integration
 				client.RatedPeriodDate = DateTime.Now;
 				client.Update();
 				var time = InternetSettings.FindFirst();
-				time.NextBillingDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day - 1, 22, 00, 00);
+				time.NextBillingDate = DateTime.Now.AddDays(-1).Date.AddHours(22);
 				time.Update();
 				SystemTime.Reset();
 			}

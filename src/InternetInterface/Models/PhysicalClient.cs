@@ -297,7 +297,7 @@ namespace InternetInterface.Models
 			//По требованию #18207 Было сделано 3 дня
 			const int days = 3;
 			var dayInMonth = (DateTime.Today.LastDayOfMonth() - DateTime.Today.FirstDayOfMonth()).Days + 1;
-			var sum = Client.GetPriceIgnoreDisabled() / dayInMonth * days;
+			var sum = (Client.GetPriceIgnoreDisabled() / dayInMonth) * days;
 			var payment = new Payment(Client, sum) {
 				Virtual = true,
 				Comment = "Бонус при самостоятельной регистрации"
