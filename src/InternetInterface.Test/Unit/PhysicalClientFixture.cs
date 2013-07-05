@@ -52,12 +52,12 @@ namespace InternetInterface.Test.Unit
 			client.VirtualBalance = 400;
 			client.WriteOff(300);
 			Assert.That(client.Balance, Is.EqualTo(700));
-			Assert.That(client.VirtualBalance, Is.EqualTo(100));
-			Assert.That(client.MoneyBalance, Is.EqualTo(600));
-			client.WriteOff(300);
-			Assert.That(client.Balance, Is.EqualTo(400));
-			Assert.That(client.VirtualBalance, Is.EqualTo(0));
-			Assert.That(client.MoneyBalance, Is.EqualTo(400));
+			Assert.That(client.VirtualBalance, Is.EqualTo(400));
+			Assert.That(client.MoneyBalance, Is.EqualTo(300));
+			client.WriteOff(400);
+			Assert.That(client.Balance, Is.EqualTo(300));
+			Assert.That(client.VirtualBalance, Is.EqualTo(300));
+			Assert.That(client.MoneyBalance, Is.EqualTo(0));
 		}
 
 		[Test]
