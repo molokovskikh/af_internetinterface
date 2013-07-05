@@ -207,7 +207,7 @@ namespace InternetInterface.Models
 			CaseHouse = house.Case;
 		}
 
-		public virtual WriteOff WriteOff(decimal sum, bool writeoffVirtualFirst = true)
+		public virtual WriteOff WriteOff(decimal sum, bool writeoffVirtualFirst = false)
 		{
 			var writeoff = CalculateWriteoff(sum, writeoffVirtualFirst);
 
@@ -221,7 +221,7 @@ namespace InternetInterface.Models
 			return writeoff;
 		}
 
-		public virtual WriteOff CalculateWriteoff(decimal sum, bool writeoffVirtualFirst = true)
+		public virtual WriteOff CalculateWriteoff(decimal sum, bool writeoffVirtualFirst = false)
 		{
 			if (sum <= 0)
 				return null;

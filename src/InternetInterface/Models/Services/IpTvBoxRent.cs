@@ -35,7 +35,7 @@ namespace InternetInterface.Models.Services
 			if (!IsRentForFree(assignedService))
 				return;
 
-			var writeOff = assignedService.Client.CalculatePerDayWriteOff(base.GetPrice(assignedService), false);
+			var writeOff = assignedService.Client.CalculatePerDayWriteOff(base.GetPrice(assignedService));
 			if (writeOff == null)
 				return;
 			var client = assignedService.Client.PhysicalClient;

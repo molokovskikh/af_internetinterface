@@ -780,7 +780,7 @@ where CE.Client = {0}", Id))
 			service.Activate();
 		}
 
-		public virtual WriteOff CalculatePerDayWriteOff(decimal price, bool writeoffVirtualFirst = true)
+		public virtual WriteOff CalculatePerDayWriteOff(decimal price, bool writeoffVirtualFirst = false)
 		{
 			if (price == 0)
 				return null;

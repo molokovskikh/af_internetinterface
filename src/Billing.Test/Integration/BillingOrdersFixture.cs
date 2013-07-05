@@ -226,41 +226,47 @@ namespace Billing.Test.Integration
 
 		private void ActivateDiactivate(DateTime now)
 		{
-			var endpoint = new ClientEndpoint { Client = lawyerClient };
-			lawyerClient.Endpoints.Add(endpoint);
-			session.Save(endpoint);
-			order.EndPoint = endpoint;
-			var periodic = new OrderService {
-				Cost = 3000,
-				IsPeriodic = true,
-				Order = order
-			};
-			session.Save(periodic);
-			var noPeriodic = new OrderService {
-				Cost = 200,
-				Order = order
-			};
-			session.Save(noPeriodic);
-			SystemTime.Reset();
-			order.BeginDate = now;
-			order.EndDate = now.AddMonths(1);
-			order.OrderServices = new List<OrderService> { noPeriodic, periodic };
-			session.Save(order);
-			session.Save(lawyerClient);
-			var dayCount = 0;
-			Close();
-			while (SystemTime.Now().Date <= now.AddMonths(1).Date) {
-				billing.Compute();
-				SystemTime.Now = () => now.AddDays(dayCount);
-				dayCount++;
+			try {
+				SystemTime.Reset();
+				SystemTime.Now = () => now;
+				var endpoint = new ClientEndpoint { Client = lawyerClient };
+				lawyerClient.Endpoints.Add(endpoint);
+				session.Save(endpoint);
+				order.EndPoint = endpoint;
+				var periodic = new OrderService {
+					Cost = 3000,
+					IsPeriodic = true,
+					Order = order
+				};
+				session.Save(periodic);
+				var noPeriodic = new OrderService {
+					Cost = 200,
+					Order = order
+				};
+				session.Save(noPeriodic);
+				order.BeginDate = now;
+				order.EndDate = now.AddMonths(1);
+				order.OrderServices = new List<OrderService> { noPeriodic, periodic };
+				session.Save(order);
+				session.Save(lawyerClient);
+				var dayCount = 0;
+				Close();
+				while (SystemTime.Now().Date <= now.AddMonths(1).Date) {
+					billing.Compute();
+					SystemTime.Now = () => now.AddDays(dayCount);
+					dayCount++;
+				}
+				var writeOffs = session.Query<WriteOff>().Where(w => w.Client.Id == lawyerClient.Id).ToList();
+				var daysInThisMonth = DateTime.DaysInMonth(now.Year, now.Month);
+				var daysInNextNonth = DateTime.DaysInMonth(now.AddMonths(1).Year, now.AddMonths(1).Month);
+				Assert.AreEqual(writeOffs.Sum(w => w.WriteOffSum), Math.Round(200 + (decimal)3000 / daysInThisMonth * (daysInThisMonth - now.Day + 1) + 3000 - (decimal)3000 / daysInNextNonth * (daysInNextNonth - now.AddMonths(1).Day), 2));
+				lawyerClient = session.Get<Client>(lawyerClient.Id);
+				Assert.That(lawyerClient.Appeals.First().Appeal, Is.StringContaining("Деактивирован заказ"));
+				Assert.AreEqual(lawyerClient.Endpoints.Count, 0);
 			}
-			var writeOffs = session.Query<WriteOff>().Where(w => w.Client.Id == lawyerClient.Id).ToList();
-			var daysInThisMonth = DateTime.DaysInMonth(now.Year, now.Month);
-			var daysInNextNonth = DateTime.DaysInMonth(now.AddMonths(1).Year, now.AddMonths(1).Month);
-			Assert.AreEqual(writeOffs.Sum(w => w.WriteOffSum), Math.Round(200 + (decimal)3000 / daysInThisMonth * (daysInThisMonth - now.Day + 1) + 3000 - (decimal)3000 / daysInNextNonth * (daysInNextNonth - now.AddMonths(1).Day), 2));
-			lawyerClient = session.Get<Client>(lawyerClient.Id);
-			Assert.That(lawyerClient.Appeals.First().Appeal, Is.StringContaining("Деактивирован заказ"));
-			Assert.AreEqual(lawyerClient.Endpoints.Count, 0);
+			finally {
+				SystemTime.Reset();
+			}
 		}
 
 		[Test]
