@@ -61,6 +61,7 @@ namespace InternetInterface.Models
 		public Mailer PaymentMoved(Payment payment, PaymentMoveAction action)
 		{
 			Template = "PaymentMoved";
+			To = "InternetBilling@analit.net";
 			Subject = "Перемещен платеж";
 			PropertyBag["payment"] = payment;
 			PropertyBag["action"] = action;
