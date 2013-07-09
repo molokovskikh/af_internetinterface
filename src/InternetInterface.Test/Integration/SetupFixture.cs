@@ -31,7 +31,6 @@ namespace InternetInterface.Test.Integration
 		{
 			var config = new MonoRailConfiguration();
 			config.ViewEngineConfig.ViewEngines.Add(new ViewEngineInfo(typeof(BooViewEngine), false));
-			Console.WriteLine(Path.GetFullPath(Path.Combine(@"..\..\..\..\InternetInterface", "Views")));
 			config.ViewEngineConfig.ViewPathRoot = Path.Combine(@"..\..\..\InternetInterface", "Views");
 
 			var provider = new FakeServiceProvider();
