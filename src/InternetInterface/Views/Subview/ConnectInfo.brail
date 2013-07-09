@@ -2,21 +2,6 @@
 	${app.Asset("EditingConnect.js")}
 <%end%>
 <style type="text/css">
-	.addMenuItem
-	 {
-		 width:20px;
-		 height:20px;
-		 background: url(${Siteroot}/images/plus__orange.png) no-repeat center top;
-		 float:right;
-	}
-	.delMenuItem
-	{
-		 width:20px;
-		 height:20px;
-		 float:right;
-		 margin-right:90%;
-		 background: url(${Siteroot}/images/onebit_32.png) no-repeat center top;
-	}
 	.error
 	{
 		color:Red;

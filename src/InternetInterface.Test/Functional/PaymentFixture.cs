@@ -97,6 +97,7 @@ namespace InternetInterface.Test.Functional
 			browser.Eval("$(\".term\").change();");
 			Click(".ui-dialog", "Найти");
 			WaitForCss(".ui-dialog .search-editor-v2 select");
+			browser.Eval("$(\".ui-dialog .search-editor-v2 select\").change();");
 
 			Click(".ui-dialog", "Сохранить");
 			AssertText("Перемещен");
