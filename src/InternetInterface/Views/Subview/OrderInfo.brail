@@ -251,8 +251,8 @@
 	<thead>
 		<th colspan = 3 > Информация по подключению
 		<%if PartnerAccessSet.AccesPartner("DHCP"): %>
-		 <input id="Submit2" type="submit" value="Сохранить"  align="right" />
-		 <%end %>
+			<input id="Submit2" type="submit" value="Сохранить"  align="right" />
+		<%end %>
 		</th>
 	</thead>
 		<tbody>

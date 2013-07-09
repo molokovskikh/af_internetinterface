@@ -76,11 +76,13 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void CheckedTest()
 		{
+			Console.WriteLine(ClientUrl);
 			Open(ClientUrl);
 			browser.CheckBox("client_Checked").Checked = true;
-			Click("Сохранить");
-			Close();
-			Client = session.Get<Client>(Client.Id);
+			Click("#clientEditForm", "Сохранить");
+			AssertText("Данные изменены");
+
+			session.Refresh(Client.PhysicalClient);
 			Assert.IsTrue(Client.PhysicalClient.Checked);
 		}
 
@@ -281,18 +283,17 @@ namespace InternetInterface.Test.Functional
 			session.Save(brigad);
 			var connectGraph = new ConnectGraph(Client, DateTime.Now, brigad);
 			session.Save(connectGraph);
-			Close();
 
 			Open(ClientUrl);
-			Click("Сохранить");
-			Assert.IsNotNull(session.Get<Client>(Client.Id).ConnectGraph);
+			Click("#clientEditForm", "Сохранить");
+			session.Refresh(Client);
+			Assert.IsNotNull(Client.ConnectGraph);
 			Click("Сбросить");
 
-			Close();
-
 			Open(ClientUrl);
-			Assert.IsNull(session.Get<Client>(Client.Id).ConnectGraph);
-			Click("Сохранить");
+			session.Refresh(Client);
+			Assert.IsNull(Client.ConnectGraph);
+			Click("#clientEditForm", "Сохранить");
 			AssertText("Назначить в график");
 			Click("Назначить в график");
 			browser.RadioButton(Find.ByName("graph_button")).Checked = true;

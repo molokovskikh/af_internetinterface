@@ -3,10 +3,3 @@
 						"OrderInfo": OrderInfo,
 						"EditingConnect" : true }) %>
 </div>
-
-<style type="text/css">
-	#editConnectTable
-	{
-		border:1px double Black;
-	}
-</style>
