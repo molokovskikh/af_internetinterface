@@ -76,7 +76,6 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void CheckedTest()
 		{
-			Console.WriteLine(ClientUrl);
 			Open(ClientUrl);
 			browser.CheckBox("client_Checked").Checked = true;
 			Click("#clientEditForm", "Сохранить");
