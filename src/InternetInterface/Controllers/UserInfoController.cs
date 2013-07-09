@@ -901,6 +901,7 @@ where r.`Label`= :LabelIndex;")
 			var client = DbSession.Load<Client>(filter.ClientCode);
 
 			LoadBalanceData(grouped, client);
+			PropertyBag["action"] = new PaymentMoveAction();
 			PropertyBag["iptv"] = client.Iptv;
 			PropertyBag["internet"] = client.Internet;
 			PropertyBag["grouped"] = grouped;

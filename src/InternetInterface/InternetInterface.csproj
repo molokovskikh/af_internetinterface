@@ -122,6 +122,7 @@
     <Content Include="Assets\Javascripts\calendar-setup.js" />
     <Content Include="Assets\Javascripts\calendar.js" />
     <Content Include="Assets\Javascripts\Common.js" />
+    <Content Include="Assets\Javascripts\dialog.action.js" />
     <Content Include="Assets\Javascripts\OrderService.js" />
     <Content Include="Assets\Javascripts\Register.js" />
     <Content Include="Assets\Javascripts\registerlawperson.js" />
@@ -140,7 +141,7 @@
     <Content Include="Css\asc.gif" />
     <Content Include="Css\base.css" />
     <Content Include="Css\bg.gif" />
-    <Content Include="Css\button.css" />
+    <Content Include="Assets\Stylesheets\button.css" />
     <Content Include="Css\datePicker.css" />
     <Content Include="Css\desc.gif" />
     <Content Include="Css\filter.css" />
@@ -209,6 +210,7 @@
     <Content Include="Views\Map\Bookmark.brail" />
     <Content Include="Views\Mail\Act.brail" />
     <Content Include="Views\Mail\SmsSendUnavailable.brail" />
+    <Content Include="Views\Mail\PaymentMoved.brail" />
     <None Include="Views\Map\ShowBookmarks.brail" />
     <Content Include="Views\Payments\ShowWriteOffs.brail" />
     <None Include="Views\PrivateMessages\ForClient.brail" />
@@ -247,6 +249,7 @@
     <None Include="Views\ServiceRequest\ViewRequests.brail" />
     <None Include="Views\Services\Edit.brail" />
     <None Include="Views\Shared\EditorTemplates\Contact.brail" />
+    <Content Include="Views\Shared\EditorTemplates\PaymentMoveAction.brail" />
     <None Include="Views\Sms\SmsIndex.brail" />
     <None Include="Views\Subview\AppealsInfo.brail" />
     <None Include="Views\Subview\CallsHistory.brail" />
@@ -331,6 +334,7 @@
     <Compile Include="Controllers\AgentInfoController.cs" />
     <Compile Include="Controllers\BrigadsController.cs" />
     <Compile Include="Controllers\ChannelGroupsController.cs" />
+    <Compile Include="Controllers\ClientsController.cs" />
     <Compile Include="Controllers\ContractsController.cs" />
     <Compile Include="Controllers\ExportController.cs" />
     <Compile Include="Controllers\Filter\ActsFilter.cs" />

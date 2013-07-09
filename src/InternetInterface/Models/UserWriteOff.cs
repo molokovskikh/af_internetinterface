@@ -66,7 +66,7 @@ namespace InternetInterface.Models
 			}
 			else
 				Client.LawyerPerson.Balance += Sum;
-			return Appeals.CreareAppeal(String.Format("Удалено списание на сумму {0:C}", Sum), Client, AppealType.System);
+			return Appeals.CreareAppeal(String.Format("Удалено списание на сумму {0:C}", Sum), Client);
 		}
 	}
 }

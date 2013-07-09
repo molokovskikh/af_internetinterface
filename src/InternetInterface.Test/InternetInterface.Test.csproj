@@ -160,6 +160,7 @@
     <Compile Include="Functional\UserInfoFixture.cs" />
     <Compile Include="Helpers\ClientHelper.cs" />
     <Compile Include="Helpers\ControllerFixture.cs" />
+    <Compile Include="Helpers\DataMother.cs" />
     <Compile Include="Helpers\PartnerHelper.cs" />
     <Compile Include="Helpers\PropertiesHelper.cs" />
     <Compile Include="Helpers\UseDialogOnce.cs" />
@@ -172,6 +173,7 @@
     <Compile Include="Integration\MailerFixture.cs" />
     <Compile Include="Integration\OnLineClientsFixture.cs" />
     <Compile Include="Integration\PaymentFixture.cs" />
+    <Compile Include="Integration\PaymentsControllerFixture.cs" />
     <Compile Include="Integration\SearchFilterFixture.cs" />
     <Compile Include="Integration\ServiceRequestControllerFixture.cs" />
     <Compile Include="Integration\ServicesFixture.cs" />

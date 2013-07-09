@@ -11,6 +11,10 @@
 	text-align: center;
 }
 
+.noDisplay {
+	display: none;
+}
+
 #paymentWarningBlock {
 	text-align: left;
 	width: 100%;

@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Mail;
 using System.Reflection;
-using System.ComponentModel;
 using System.Text;
 using System.Web;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
-using Castle.ActiveRecord.Linq;
+using Castle.Components.Validator;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Castle.MonoRail.Framework.Helpers;
@@ -17,7 +17,6 @@ using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.MonoRailExtentions;
-using InternetInterface.AllLogic;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
@@ -27,6 +26,30 @@ using NHibernate.Linq;
 
 namespace InternetInterface.Controllers
 {
+	public class PaymentMoveAction
+	{
+		[Display(Description = "Комментарий"), ValidateNonEmpty]
+		public string Comment { get; set; }
+
+		[Display(Description = "Клиент"), ValidateNonEmpty]
+		public Client Destination { get; set; }
+
+		public void Apply(Payment payment)
+		{
+			if (payment.BillingAccount)
+				payment.Client.WriteOff(payment.Sum, payment.Virtual);
+			var message = String.Format("Платеж на сумму {0:C} перемещен клиенту {1}\r\nКомментарий: {2}",
+				payment.Sum,
+				Destination,
+				Comment);
+			payment.Client.Payments.Remove(payment);
+			payment.Client.Appeals.Add(Appeals.CreareAppeal(message, payment.Client));
+			payment.Client = Destination;
+			payment.BillingAccount = false;
+			Destination.Payments.Add(payment);
+		}
+	}
+
 	public class PaymentStatistics
 	{
 		public PaymentStatistics(List<BankPayment> payments)
@@ -378,14 +401,35 @@ namespace InternetInterface.Controllers
 				Notify("Отменено");
 				EmailHelper.Send("internet@ivrn.net", "Уведомление об отмене платежа", string.Format(@"
 Отменено платеж №{0}
-Клиент: №{1} - {2}
-Сумма: {3}
-Оператор: {4}
-Комментарий: {5}
-", payment.Id, payment.Client.Id, payment.Client.Name, payment.Sum.ToString("#.00"), InitializeContent.Partner.Name, comment));
+Клиент: №{1}
+Сумма: {2:C}
+Оператор: {3}
+Комментарий: {4}
+", payment.Id, payment.Client, payment.Sum, InitializeContent.Partner.Name, comment));
 			}
 			else {
 				Error("Введите комментарий для отмены платежа");
+			}
+			RedirectToReferrer();
+		}
+
+		public void Move(uint id)
+		{
+			SetSmartBinder(AutoLoadBehavior.NullIfInvalidKey);
+			var payment = DbSession.Load<Payment>(id);
+			var action = BindObject<PaymentMoveAction>("action");
+			if (IsValid(action)) {
+				action.Apply(payment);
+				DbSession.Delete(payment);
+				this.Mailer<Mailer>().PaymentMoved(payment, action).Send();
+				Notify("Перемещен");
+			}
+			else {
+				var summary = Validator.GetErrorSummary(action);
+				var error = summary.InvalidProperties.Implode(p => String.Format("{0} - {1}",
+					BindingHelper.GetDescription(typeof(PaymentMoveAction), p),
+					summary.GetErrorsForProperty(p).Implode()), "<br>");
+				Error(error);
 			}
 			RedirectToReferrer();
 		}

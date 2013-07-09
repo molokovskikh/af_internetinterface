@@ -132,7 +132,7 @@ namespace InternetInterface.Models
 			}
 			else
 				Client.LawyerPerson.Balance += WriteOffSum;
-			return Appeals.CreareAppeal(String.Format("Удалено списание на сумму {0:C}", WriteOffSum), Client, AppealType.System);
+			return Appeals.CreareAppeal(String.Format("Удалено списание на сумму {0:C}", WriteOffSum), Client);
 		}
 
 		public virtual decimal Sum

@@ -84,6 +84,25 @@ namespace InternetInterface.Test.Functional
 		}
 
 		[Test]
+		public void Move_payment()
+		{
+			var destination = ClientHelper.Client();
+			session.Save(destination);
+
+			Open("UserInfo/SearchUserInfo.rails?filter.ClientCode=" + client.Id);
+			Click("Платежи");
+			Click("#SearchResults", "Переместить");
+			Css("#action_Comment").TypeText("тестовое перемещение");
+			Css(".ui-dialog .term").TypeText(destination.Id.ToString());
+			browser.Eval("$(\".term\").change();");
+			Click(".ui-dialog", "Найти");
+			WaitForCss(".ui-dialog .search-editor-v2 select");
+
+			Click(".ui-dialog", "Сохранить");
+			AssertText("Перемещен");
+		}
+
+		[Test]
 		public void only_inforoom_test()
 		{
 			var recipient = client.Recipient;

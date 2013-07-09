@@ -23,14 +23,6 @@
 		});
 	}
 </script>
-<style>
-	.CalendarInput
-	{
-	background:  transparent url(../images/calendar.gif) no-repeat scroll center center;
-	width: 25px;
-	height: 19px;
-	}
-</style>
 
 ${app.Asset("calendar-blue.css")}
 ${app.Asset("calendar.setup.js")}

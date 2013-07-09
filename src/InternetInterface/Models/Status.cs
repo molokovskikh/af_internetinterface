@@ -24,7 +24,6 @@ namespace InternetInterface.Models
 		Dissolved = 11
 	}
 
-
 	[ActiveRecord("Status", Schema = "internet", Lazy = true)]
 	public class Status : ValidActiveRecordLinqBase<Status>
 	{

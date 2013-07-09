@@ -1,0 +1,19 @@
+﻿${app.Asset("search.editor.v2.js")}
+${app.Asset("knockout-2.1.0.js")}
+${app.Asset("underscore.js")}
+
+<% OutputSubView("/Shared/JsTemplates/search.editor.v2") %>
+
+${app.Form("", {@class: "div-form"})}
+	<div class="form-item">
+		${app.Label(model.Target + ".Comment")}
+		${app.Edit(model.Target + ".Comment")}
+	</div>
+	<div class="form-item">
+		${app.SearchEditV2(model.Target + ".Destination", {
+			"data-search-editor" : "client",
+			"data-search-title" : "Выберете клиента"
+		})}
+	</div>
+	${FormHelper.Submit("Сохранить")}
+${app.End()}

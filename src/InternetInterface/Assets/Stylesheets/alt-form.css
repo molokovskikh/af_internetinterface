@@ -1,12 +1,28 @@
-﻿label {
+﻿form.div-form label {
 	display: block;
 	clear: both;
 }
 
-.form-item {
+form.div-form .form-item {
 	padding-bottom: 10px;
 }
 
-form {
+form.div-form {
 	padding: 5px;
+}
+
+form.div-form label.error {
+	display: block;
+	clear: both;
+}
+
+form span.message {
+	display: block;
+	clear: both;
+}
+
+form span.message.error {
+	display: block;
+	clear: both;
+	color: red;
 }

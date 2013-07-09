@@ -14,6 +14,7 @@
 	${app.Asset("Common.js")}
 	${app.Asset("User.css")}
 	${app.Asset("Table.css")}
+	${app.Asset("alt-form.css")}
 
 	${app.JS("Common.js",
 		"jquery.maskedinput-1.2.2.js",
@@ -29,8 +30,21 @@
 		"tablesorter.css",
 		"reveal.css",
 		"filter.css",
-		"button.css",
 		"jquery-ui-1.8.16.custom.css")}
+	<!-- порядок применения стилей важен button.css должен быть перед base.css а то кнопки будут выглядеть криво -->
+	${app.Asset("button.css")}
+
+	<script>
+		$(function () {
+			window.siteroot = "${siteroot}";
+			$.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+				var root = "${siteroot}";
+				var url = options.url;
+				if (url[0] == "/" && root != "" && url.indexOf(root) != 0)
+					options.url = root + options.url;
+			});
+		});
+	</script>
 </head>
 <body>
 	<div class="non-printable">

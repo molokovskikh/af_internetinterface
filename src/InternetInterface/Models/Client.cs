@@ -867,6 +867,19 @@ where CE.Client = {0}", Id))
 			if (payment.Sum > 0)
 				Payments.Add(payment);
 		}
+
+		public virtual void WriteOff(decimal sum, bool isVirtual)
+		{
+			if (PhysicalClient != null)
+				PhysicalClient.WriteOff(sum, isVirtual);
+			else
+				LawyerPerson.Balance -= sum;
+		}
+
+		public override string ToString()
+		{
+			return String.Format("№{0} - {1}", Id, Name);
+		}
 	}
 
 	public class ServiceActivationException : Exception

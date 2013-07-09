@@ -1,4 +1,5 @@
-﻿${app.Asset("payments.css")}
+﻿${app.Asset("dialog.action.js")}
+${app.Asset("payments.css")}
 ${app.JS("validation.js")}
 
 <script type="text/javascript">
@@ -9,6 +10,10 @@ ${app.JS("validation.js")}
 
 <button type="button"  class="editBut slide" onclick="$('#PaymentTable').slideToggle('slow');">Платежи</button>
 <span id="itogo">Всего: ${paymentsSum.ToString("C")}</span>
+
+<div id="move_payment_action" class="noDisplay">
+	${app.Edit("action")}
+</div>
 
 <div id="PaymentTable" style="display:none">
 <div style="clear:both;">
@@ -38,6 +43,7 @@ ${app.JS("validation.js")}
 						<input type="submit" class="cancelButton" onclick="changeCommentText();" value="Отменить" />
 						<input type="hidden" class="hiddenCommentText" name="comment" />
 					</form>
+					<input type="button" data-dialog-action="move_payment_action" data-url="${siteroot}/Payments/${item.Id}/Move" value="Переместить" />
 				</td>
 				<td>${?item.Agent.Name}</td>
 				<td>${item.PaidOn}</td>

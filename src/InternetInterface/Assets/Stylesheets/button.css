@@ -1,0 +1,28 @@
+﻿a.button.ok, button.button.ok {
+	background: #EEE url(../../Images/tick.png) no-repeat; background-position: 5px 5px; padding-left:2em;
+}
+
+button.button.save {
+	background: #EEE url(../../Images/application_edit.png) no-repeat; background-position: 5px 5px; padding-left:2em;
+}
+
+.CalendarInput {
+	background: transparent url(../../images/calendar.gif) no-repeat scroll center center;
+	width: 25px;
+	height: 19px;
+}
+
+.addMenuItem {
+	width: 20px;
+	height: 20px;
+	background: url(../../images/plus__orange.png) no-repeat center top;
+	float: right;
+}
+
+.delMenuItem {
+	width: 20px;
+	height: 20px;
+	float: right;
+	margin-right: 90%;
+	background: url(../../images/onebit_32.png) no-repeat center top;
+}

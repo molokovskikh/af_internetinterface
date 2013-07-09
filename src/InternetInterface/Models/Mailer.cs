@@ -1,6 +1,8 @@
 ﻿using System.Net.Mail;
 using Castle.Core.Smtp;
 using Common.Web.Ui.MonoRailExtentions;
+using InternetInterface.Controllers;
+using InternetInterface.Controllers.Filter;
 
 namespace InternetInterface.Models
 {
@@ -53,6 +55,16 @@ namespace InternetInterface.Models
 			PropertyBag["registrator"] = registrator;
 			PropertyBag["writeOff"] = writeOff;
 
+			return this;
+		}
+
+		public Mailer PaymentMoved(Payment payment, PaymentMoveAction action)
+		{
+			Template = "PaymentMoved";
+			Subject = "Перемещен платеж";
+			PropertyBag["payment"] = payment;
+			PropertyBag["action"] = action;
+			PropertyBag["currentUser"] = InitializeContent.Partner;
 			return this;
 		}
 	}

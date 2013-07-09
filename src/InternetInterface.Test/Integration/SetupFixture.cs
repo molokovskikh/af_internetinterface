@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Castle.MonoRail.Framework;
 using Castle.MonoRail.Framework.Configuration;
 using Castle.MonoRail.Framework.Internal;
@@ -30,7 +31,8 @@ namespace InternetInterface.Test.Integration
 		{
 			var config = new MonoRailConfiguration();
 			config.ViewEngineConfig.ViewEngines.Add(new ViewEngineInfo(typeof(BooViewEngine), false));
-			config.ViewEngineConfig.ViewPathRoot = Path.Combine(@"..\..\..\..\InternetInterface", "Views");
+			Console.WriteLine(Path.GetFullPath(Path.Combine(@"..\..\..\..\InternetInterface", "Views")));
+			config.ViewEngineConfig.ViewPathRoot = Path.Combine(@"..\..\..\InternetInterface", "Views");
 
 			var provider = new FakeServiceProvider();
 			var loader = new FileAssemblyViewSourceLoader(config.ViewEngineConfig.ViewPathRoot);

@@ -20,6 +20,16 @@ namespace InternetInterface.Models
 			Sum = sum;
 		}
 
+		public Payment(Client client, Payment payment)
+			: this(client, payment.Sum)
+		{
+			RecievedOn = payment.RecievedOn;
+			Virtual = payment.Virtual;
+			Agent = payment.Agent;
+			BankPayment = payment.BankPayment;
+			Comment = payment.Comment;
+		}
+
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
@@ -61,12 +71,9 @@ namespace InternetInterface.Models
 
 		public virtual Appeals Cancel(string comment)
 		{
-			if (BillingAccount) {
-				if (Client.PhysicalClient != null)
-					Client.PhysicalClient.WriteOff(Sum, Virtual);
-				else
-					Client.LawyerPerson.Balance -= Sum;
-			}
+			if (BillingAccount)
+				Client.WriteOff(Sum, Virtual);
+
 			return Appeals.CreareAppeal(String.Format("Удален платеж на сумму {0:C} \r\n Комментарий: {1}", Sum, comment), Client, AppealType.System);
 		}
 	}

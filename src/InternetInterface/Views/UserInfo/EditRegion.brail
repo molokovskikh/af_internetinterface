@@ -1,6 +1,4 @@
-﻿${app.Asset("alt-form.css")}
-
-${FormHelper.FormTag("", {})}
+﻿${FormHelper.FormTag("", {@class: "div-form"})}
 <div class="form-item">
 	${app.Label("Region.Name")}
 	${app.Edit("Region.Name")}
