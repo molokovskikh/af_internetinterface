@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
@@ -101,6 +102,11 @@ namespace InternetInterface.Test.Functional
 
 			Click(".ui-dialog", "Сохранить");
 			AssertText("Перемещен");
+
+			session.Refresh(client);
+			session.Refresh(destination);
+			Assert.AreEqual(0, client.Payments.Sum(p => p.Sum));
+			Assert.AreEqual(300, destination.Payments.Sum(p => p.Sum));
 		}
 
 		[Test]

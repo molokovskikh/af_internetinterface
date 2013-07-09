@@ -2,6 +2,7 @@
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
+using Test.Support.log4net;
 
 namespace InternetInterface.Test.Integration
 {
@@ -31,7 +32,9 @@ namespace InternetInterface.Test.Integration
 			Request.Params["action.Comment"] = "test";
 			Request.Params["action.Destination.Id"] = destination.Id.ToString();
 			controller.Move(payment.Id);
+			session.Flush();
 
+			session.Refresh(destination);
 			Assert.AreEqual(1, destination.Payments.Count);
 			Assert.AreEqual(100, destination.Payments[0].Sum);
 		}

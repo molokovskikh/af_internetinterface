@@ -420,7 +420,6 @@ namespace InternetInterface.Controllers
 			var action = BindObject<PaymentMoveAction>("action");
 			if (IsValid(action)) {
 				action.Apply(payment);
-				DbSession.Delete(payment);
 				this.Mailer<Mailer>().PaymentMoved(payment, action).Send();
 				Notify("Перемещен");
 			}
