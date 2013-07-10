@@ -15,9 +15,9 @@
 		<tr>
 			<td>
 				${app.LinkTo("Показать статистику работы", @UserInfo, @Leases, {"filter.ClientCode": ClientCode, @attributes: {@class: "button ok"}})}
-				<a class="big-link" data-reveal-id="myModal_active" href="#" ><button type="button" class="button"><img alt="Save" src="../Images/tick.png">Управление услугами </button></a>
+				<a class="big-link" data-reveal-id="myModal_active" href="#" ><button type="button" class="button ok">Управление услугами </button></a>
 				<%if _client.HaveRed(): %>
-					<button type=button class="button" onclick="GoTo('http://redmine.analit.net/issues/${_client.RedmineTask}');"><img alt="Save" src="../Images/tick.png">Страница Redmine</img></button></td>
+					<button type=button class="button ok" onclick="GoTo('http://redmine.analit.net/issues/${_client.RedmineTask}');">Страница Redmine</button></td>
 				<%end %>
 				${app.LinkTo("Архив заказов", @UserInfo, @OrdersArchive, {"clientCode": ClientCode, @attributes: {@class: "button ok"}})}
 			</td>
@@ -42,9 +42,7 @@
 		   end%>
 		<th>Информация по клиенту   ${Client.ShortName}  ${"(Он-Лайн)" if _client.OnLine()}
 		<%if PartnerAccessSet.AccesPartner("ECI"): %>
-			<button type="submit"  class="editBut">
-			<img alt="Save" src="../Images/application_edit.png"> Редактировать
-			</button>
+			<button type="submit"  class="button save">Редактировать</button>
 		 <%end %>
 		</th>
 	</thead>
@@ -59,7 +57,7 @@
 		</tr>
 		<tr>
 			<td><span class="description">Фактический адрес: </span> ${Client.ActualAdress} </td>
-		</tr>		
+		</tr>
 		<tr>
 			<td><span class="description">Почтовый адрес: </span> ${Client.MailingAddress} </td>
 		</tr>
@@ -71,8 +69,8 @@
 		<tr>
 			<td><span class="description">Дата регистрации:</span> ${_client.RegDate}</td>
 		</tr>
-				
-		
+
+
 		<%if _client.WhoRegistered != null: %>
 			<tr>
 				<td><span class="description">Зарегистрировал:</span> ${_client.WhoRegistered.Name}</td>
@@ -110,7 +108,7 @@
 	<form class="form edit" method="post" action="${siteroot}/UserInfo/EditLawyerPerson">
 	<input type="hidden" name="ClientID" value="${ClientCode}" />
 	<input type=hidden name="appealType" value="${appealType}" />
-	<table class="table" style="width:100%; " border="0" id="EditTable"> 
+	<table class="table" style="width:100%; " border="0" id="EditTable">
    <% OutputSubView("""\Subview\LegalPerson""") %>
 	   <tr>
 		<td colspan=4>
@@ -121,9 +119,7 @@
 		<tr>
 		<td >
 			<div class="actions">
-				<button type="submit" id="SaveButton" class="button">
-				<img alt="Save" src="../Images/application_edit.png"> Сохранить
-				</button>
+				<button type="submit" id="SaveButton" class="button save">Сохранить</button>
 			</div>
 		</td>
 		</tr>

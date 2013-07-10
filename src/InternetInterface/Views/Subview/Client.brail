@@ -161,7 +161,7 @@ $(function () {
 		<div id="register_house"class="reveal-modal">
 			<% OutputSubView("""\Subview\House""") %>
 			<span id="houseErrorMessageSpan"></span><br/>
-			<a href="#" onclick="registerHouse();"><img alt="Save" src="${Siteroot}/Images/application_edit.png">Зарегистрировать</a>
+			<a href="#" onclick="registerHouse();" class="button save">Зарегистрировать</a>
 		</div>
 	</td>
 	<td style="width:100px;">

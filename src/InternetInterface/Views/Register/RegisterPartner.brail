@@ -15,7 +15,7 @@
 	<%end %>
 <%end %>
 <input type="hidden" name="Partner.Categorie.Id" value=${catType} />
-<table class="table" style="width:100%; " border="0" id="RegTable"> 
+<table class="table" style="width:100%; " border="0" id="RegTable">
 	<tr>
 		<%if IsDefined("Editing"): %>
 		<%if (not Editing): %>
@@ -28,8 +28,7 @@
 	<% OutputSubView("""\Subview\Partner""") %>
 	<tr>
 		<td colspan="3">
-			<button type="submit" id="RegisterPartnerButton" class="button" >
-			<img alt="Save" src="../Images/application_edit.png">
+			<button type="submit" id="RegisterPartnerButton" class="button save" >
 			<%if IsDefined("Editing"): %>
 			<%if (not Editing): %>
 				Зарегистрировать

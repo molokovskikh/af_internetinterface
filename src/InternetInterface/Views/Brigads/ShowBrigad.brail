@@ -6,8 +6,7 @@
                 <tr>
                     <td>
                        <form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Brigads/MakeBrigad" >
-                       <button type="submit" id="RegisterBrigad" class="button" >
-                       <img alt="Save" src="../Images/application_edit.png">
+                       <button type="submit" id="RegisterBrigad" class="button save" >
                            Зарегистрирвоать бригаду
                        </button>
                        </form>
@@ -33,7 +32,7 @@
              <%end %>
             </tbody>
         </table>
-        
+
     </div>
 </div>
 </div>

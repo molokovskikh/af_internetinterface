@@ -13,8 +13,7 @@
 	</tr>
 	<tr>
 		<td>
-			<button type="submit" id="Button2" class="button">
-			<img alt="Save" src="../Images/tick.png">Зарегистрировать</button>
+			<button type="submit" id="Button2" class="button ok">Зарегистрировать</button>
 	</form>
 	<%if PartnerAccessSet.AccesPartner("SSI"): %>
 			<a href="${Siteroot}/Search/Redirect?filter.ClientCode=${ClientCode}&filter.appealType=1" class="button" style="background-color:${"#cdc6c6" if appealType == 1};">Пользовательские</a>

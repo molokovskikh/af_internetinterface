@@ -33,5 +33,5 @@
 		</tr>
 	</tbody>
 </table>
-	<a href="#" onclick=registerRegion()><img alt="Save" src="${Siteroot}/Images/application_edit.png">Зарегистрировать</a>
+	<a href="#" onclick=registerRegion() class="button save">Зарегистрировать</a>
 </div>

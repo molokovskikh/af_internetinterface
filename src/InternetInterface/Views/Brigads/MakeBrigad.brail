@@ -39,8 +39,7 @@
                 </tr>
                 <tr>
                        <td colspan = 3>
-                       <button type="submit" id="RegisterBrigadButton" class="button" >
-                       <img alt="Save" src="../Images/application_edit.png">
+                       <button type="submit" id="RegisterBrigadButton" class="button save" >
                                                  <%if IsDefined("Editing"): %>
                                                  <%if (not Editing): %>
                                                  Зарегистрировать

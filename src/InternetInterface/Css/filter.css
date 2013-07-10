@@ -1,4 +1,4 @@
-﻿\.filter
+﻿.filter
 {
 	border:1px double Black;
 	width:700px;
@@ -7,7 +7,7 @@
 	margin: 0 auto;
 	margin-bottom: 20px;
 }
-	
+
 .filter h3, .form-sub-block h3
 {
 	border: 1px double #9A9999;

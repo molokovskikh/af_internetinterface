@@ -59,8 +59,7 @@
 	</tr>
 	<tr>
 		<td>
-			<button type="submit" id="send_but" class="button">
-			<img alt="Save" src="../Images/tick.png">Отправить</button>
+			<button type="submit" id="send_but" class="button ok">Отправить</button>
 		</td>
 	</tr>
 	</form>

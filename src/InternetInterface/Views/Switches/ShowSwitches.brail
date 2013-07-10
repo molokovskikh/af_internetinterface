@@ -6,23 +6,24 @@
 				<tr>
 					<td>
 						<form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Switches/MakeSwitch" >
-					   <button type="submit" id="RegisterPartnerButton" class="button" >
-					   <img alt="Save" src="../Images/application_edit.png">
-						   Зарегистрирвоать коммутатор
-					   </button>
-					   </form>
+							<button type="submit" id="RegisterPartnerButton" class="button save" >
+								Зарегистрирвоать коммутатор
+							</button>
+						</form>
 					</td>
 				</tr>
 			</tbody>
 		</table>
 		<table class="table" style="width:100%; " border="0" id="PartnerInfoTable">
 			<thead>
-				<th>ID</th>
-				<th>Название</th>
-				<th>IP адрес</th>
-				<th>MAC адрес</th>
-				<th>Зона</th>
-				<th>Комментарий</th>
+				<tr>
+					<th>ID</th>
+					<th>Название</th>
+					<th>IP адрес</th>
+					<th>MAC адрес</th>
+					<th>Зона</th>
+					<th>Комментарий</th>
+				</tr>
 			</thead>
 			<tbody>
 			 <% for i,Switch in enumerate(Switches): %>
@@ -41,7 +42,7 @@
 			 <%end %>
 			</tbody>
 		</table>
-		
+
 	</div>
 </div>
 </div>

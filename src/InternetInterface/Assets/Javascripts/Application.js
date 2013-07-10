@@ -7,9 +7,15 @@
 	window.searchEditors = { client: { url: "/clients/search" } };
 	registerCheckboxAll();
 	registerEditable();
-	
+
 	Date.format = 'dd.mm.yyyy';
 	$('.graph_date').datepicker();
 	$('.date-pick').datepicker({ changeYear: true });
 	$('.date_field').datepicker();
+	$('#startDate').datepicker({
+		inline: true
+	});
+	$('#endDate').datepicker({
+		inline: true
+	});
 });

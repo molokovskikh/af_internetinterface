@@ -6,11 +6,8 @@
 				<tr>
 					<td>
 						<form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Register/RegisterPartner" >
-						<input type="hidden" name="catType" value=${catType} />
-						<button type="submit" id="RegisterPartnerButton" class="button" >
-						<img alt="Save" src="../Images/application_edit.png">
-							Зарегистрировать партнера
-						</button>
+							<input type="hidden" name="catType" value=${catType} />
+							<button type="submit" id="RegisterPartnerButton" class="button save" >Зарегистрировать партнера</button>
 						</form>
 					</td>
 				</tr>
@@ -46,7 +43,7 @@
 			 <%end %>
 			</tbody>
 		</table>
-		
+
 	</div>
 </div>
 </div>

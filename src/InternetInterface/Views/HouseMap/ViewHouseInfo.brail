@@ -1,112 +1,95 @@
-﻿	<script type="text/javascript">
-		$(function () {
-			$('#myModal').trigger('reveal:close');
-			$('#myModal_1').trigger('reveal:close');
-			var tmp = new Array();
-			var tmp2 = new Array();
-			var param = new Array();
+﻿<script type="text/javascript">
+	$(function () {
+		$('#myModal').trigger('reveal:close');
+		$('#myModal_1').trigger('reveal:close');
+		var tmp = new Array();
+		var tmp2 = new Array();
+		var param = new Array();
 
-			var get = location.search;
-			if (get != '') {
-				tmp = (get.substr(1)).split('&');
-				for (var i = 0; i < tmp.length; i++) {
-					tmp2 = tmp[i].split('=');
-					param[tmp2[0]] = tmp2[1];
-				}
+		var get = location.search;
+		if (get != '') {
+			tmp = (get.substr(1)).split('&');
+			for (var i = 0; i < tmp.length; i++) {
+				tmp2 = tmp[i].split('=');
+				param[tmp2[0]] = tmp2[1];
 			}
-			if (param['House'] != undefined) {
-				ViewInfo(param['House']);
-				$('#SelectHouse').val(param['House']);
-			}
+		}
+		if (param['House'] != undefined) {
+			ViewInfo(param['House']);
+			$('#SelectHouse').val(param['House']);
+		}
 
-			$('#SelectHouse').change(function () {
+		$('#SelectHouse').change(function () {
 
-				ViewInfo($('#SelectHouse').val());
+			ViewInfo($('#SelectHouse').val());
 
-			});
-
-			$('.button').click(function () {
-
-				//loadData(this);
-
-				$('#myModal').css('left', '50%');
-				$('#myModal').width(500);
-
-				$('#myModal_1').css('left', '40%');
-				$('#myModal_1').width(800);
-
-				$('#myModal').reveal({
-					animation: 'Pop',                   //fade, fadeAndPop, none
-					animationspeed: 0,                       //how fast animtions are
-					closeonbackgroundclick: true,              //if you click background will modal close?
-					dismissmodalclass: 'close-reveal-modal'    //the class of a button or element that will close an open modal
-				});
-			});
-
-			$("#myModal").css({ opacity: 0.0 });
-			$("#myModal_1").css({ opacity: 0.0 });
 		});
 
-		function ViewInfo(House) {
-			var html = $.ajax({
-				url: '../HouseMap/BasicHouseInfo?id=' + House,
-				async: false
-			}).responseText;
-			$('#BasicInfo').css('display', 'block');
-			$('#BasicInfo').empty();
-			$('#BasicInfo').append(html);
-		}
-	</script>
-	<style type="text/css">
-		.house_selector_div
-		{
-				width:600px;
-				height:100px;
-				background-color:White;
-				text-align:left;
-				border: 1px solid black;
-				padding: 10px;
-				margin:10px;
-			}
-	</style>
-			<div id="myModal"class="reveal-modal"> 
-				<% OutputSubView("""\HouseMap\RegisterHouse""") %>
-			<a class="close-reveal-modal">х</a>
-			</div> 
+		$('.button').click(function () {
 
-			<div id="myModal_1"  class="reveal-modal"> 
-				<% OutputSubView("""\HouseMap\FindHouse""") %>
-			<a class="close-reveal-modal">х</a>
-			</div> 
+			//loadData(this);
 
-	<center>
-	<div class="house_selector_div">
-	 <form action="${Siteroot}/HouseMap/EditHouse" method=post>
-	<span>Выберете дом: </span>
-	<select name="houseId" id="SelectHouse" style="width: 100%" >
-	<% for i, House in enumerate(Houses): %>
-		<option id="Option${i}" value="${House.Id}" ${"selected" if (House.Id == SelectedHouse)} >${House.Street} ${House.Number} ${House.Case}</option>
-	<% end %>
-	</select>
-	<a href="#" class="big-link" data-reveal-id="myModal" > 
-	<button class="button" style="margin-top:15px;" value="Назначить"><img alt="Save" src="${Siteroot}/Images/application_edit.png"> Создать дом </button>
-	</a>
+			$('#myModal').css('left', '50%');
+			$('#myModal').width(500);
 
-	<button type=submit class="button" style="margin-top:15px; height:25px;"><img alt="Save" src="${Siteroot}/Images/application_edit.png"> Редактировать </button>
+			$('#myModal_1').css('left', '40%');
+			$('#myModal_1').width(800);
 
-	<a href="#" class="big-link" data-reveal-id="myModal_1" > 
-	<button class="button" style="margin-top:15px;" value="Назначить"><img alt="Save" src="${Siteroot}/Images/application_edit.png"> Найти </button>
-	</a>
+			$('#myModal').reveal({
+				animation: 'Pop',                   //fade, fadeAndPop, none
+				animationspeed: 0,                       //how fast animtions are
+				closeonbackgroundclick: true,              //if you click background will modal close?
+				dismissmodalclass: 'close-reveal-modal'    //the class of a button or element that will close an open modal
+			});
+		});
 
-	<a class="big-link" data-reveal-id="myModal_Pass" href="#" >
-	<button class="button" style="margin-top:15px;" value="Назначить"><img alt="Save" src="${Siteroot}/Images/application_edit.png"> Назначить проход </button>
-	</a>
+		$("#myModal").css({ opacity: 0.0 });
+		$("#myModal_1").css({ opacity: 0.0 });
+	});
 
-	</form> 
-	</div>
-	<div id="BasicInfo" class="house_selector_div" style="display:none; width:1000px; min-height:250px; height:auto;">
-	
-	</div>
-	</center>
+	function ViewInfo(House) {
+		var html = $.ajax({
+			url: '../HouseMap/BasicHouseInfo?id=' + House,
+			async: false
+		}).responseText;
+		$('#BasicInfo').css('display', 'block');
+		$('#BasicInfo').empty();
+		$('#BasicInfo').append(html);
+	}
+</script>
+<div id="myModal" class="reveal-modal">
+	<% OutputSubView("""\HouseMap\RegisterHouse""") %>
+	<a class="close-reveal-modal">х</a>
+</div>
 
-	<% OutputSubView("""\HouseMap\PassView""") %>
+<div id="myModal_1" class="reveal-modal">
+	<% OutputSubView("""\HouseMap\FindHouse""") %>
+	<a class="close-reveal-modal">х</a>
+</div>
+
+<div class="house_selector_div">
+	<form action="${Siteroot}/HouseMap/EditHouse" method=post>
+		<span>Выберете дом: </span>
+		<select name="houseId" id="SelectHouse" style="width: 100%" >
+		<% for i, House in enumerate(Houses): %>
+			<option id="Option${i}" value="${House.Id}" ${"selected" if (House.Id == SelectedHouse)} >${House.Street} ${House.Number} ${House.Case}</option>
+		<% end %>
+		</select>
+		<div class="action-bar">
+			<a href="#" class="big-link button save" data-reveal-id="myModal">
+				Создать дом
+			</a>
+			<button type=submit class="button save">Редактировать</button>
+			<a href="#" class="big-link button save" data-reveal-id="myModal_1" >
+				Найти
+			</a>
+			<a class="big-link button save" data-reveal-id="myModal_Pass" href="#" >
+				Назначить проход
+			</a>
+		</div>
+	</form>
+</div>
+<div id="BasicInfo" class="house_selector_div centred1000px">
+</div>
+
+<% OutputSubView("""\HouseMap\PassView""") %>

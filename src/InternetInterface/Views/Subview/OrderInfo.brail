@@ -36,9 +36,7 @@
 			<form class="formConnect" method="post" action="${siteroot}/UserInfo/LoadEditConnectMudule" class="displayInline">
 			<input type="hidden" name="ClientID" value="${ClientCode}" />
 			<input type="hidden" name="EditConnectFlag" value="${OrderInfo.Order.Id}" />
-			<button type="submit"  class="editBut" id="EditButton${OrderInfo.Order.Id}">
-			<img alt="Save" src="../Images/application_edit.png"> Редактировать
-			</button>
+			<button type="submit" class="button save" id="EditButton${OrderInfo.Order.Id}">Редактировать</button>
 			</form>
 		 <%end %>
 		</th>
@@ -46,9 +44,7 @@
 			<% if OrderInfo.Order.OrderStatus != 2:%>
 			<a href="#" class="big-link" data-reveal-id="closeOrderDialog">
 				<input type="hidden" value="${OrderInfo.Order.Id}" class="closeOrderControl"/>
-				<button class="editBut closeOrderControl" id="closeOrderButton${OrderInfo.Order.Id}">
-					<img src="${Siteroot}/Images/application_edit.png"> Закрыть
-				</button>
+				<button class="button closeOrderControl save" id="closeOrderButton${OrderInfo.Order.Id}">Закрыть</button>
 			</a>
 				<% else: %>
 					<% if OrderInfo.Order.EndPoint != null:%>
@@ -152,10 +148,10 @@
 		</tr>
 		<tr>
 		  <td class="width400px">
-			<span><a href="${SiteRoot}/Switches/MakeSwitch?Switch=${OrderInfo.ClientConnectInfo.Switch}"> Коммутатор</a> </span>
+			<a href="${SiteRoot}/Switches/MakeSwitch?Switch=${OrderInfo.ClientConnectInfo.Switch}"> Коммутатор</a>
 		</td>
 		  <td>
-			<a class="button hardwareInfo" href="${siteroot}/Hardware/PortInfo?endPoint=${OrderInfo.ClientConnectInfo.endpointId}">
+			<a href="${siteroot}/Hardware/PortInfo?endPoint=${OrderInfo.ClientConnectInfo.endpointId}">
 				${OrderInfo.ClientConnectInfo.Swith_adr} (${OrderInfo.ClientConnectInfo.swith_IP})
 			</a>
 		</td>

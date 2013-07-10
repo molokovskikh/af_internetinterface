@@ -1,13 +1,6 @@
 ﻿<script type="text/javascript">
     $(function () {
 
-        $('#startDate').datepicker({
-            inline: true
-        });
-        $('#endDate').datepicker({
-            inline: true
-        });
-
         $("#findForm").validate({
             rules: {
                 SubscriberCount: {
@@ -51,22 +44,20 @@
         border-color:Black;
         background-color:White;
         }
-        
+
             .error
     {
         color:Red;
-        /*font-size:12px;
-        font-style:oblique;*/
         }
 </style>
 <center>
 <div id="round">
 <table class="table">
     <tbody>
-        <tr> 
+        <tr>
             <td>
-                    <a href="#" class="big-link" data-reveal-id="myModal" > 
-                    <button class="button" value="Назначить"><img alt="Save" src="${Siteroot}/Images/application_edit.png"> Создать дом </button>
+                    <a href="#" class="big-link" data-reveal-id="myModal" >
+                    <button class="button save" value="Назначить">Создать дом</button>
                     </a>
             </td>
         </tr>
@@ -119,7 +110,7 @@
 </div>
 </center>
 
-<div id="myModal"class="reveal-modal"> 
+<div id="myModal"class="reveal-modal">
     <% OutputSubView("""\HouseMap\RegisterHouse""") %>
 <a class="close-reveal-modal">х</a>
-</div> 
+</div>

@@ -13,7 +13,7 @@
 			<%end %>
 			<%if PartnerAccessSet.AccesPartner("GCI"): %>
 			<th>${App.LinkTo("Клиенты", @Search, @SearchUsers)}</th>
-			<%end %> 
+			<%end %>
 			<%if PartnerAccessSet.AccesPartner("DHCP"): %>
 			<th>${App.LinkTo("OnLine клиенты", @Switches, @OnLineClient, {"filter.Zone" : "4"})}</th>
 			<%end %>
@@ -40,9 +40,7 @@
 			<%end %>
 			<th align=right style="text-align:right;">
 				<form class="form" id="Exit" name="Exit" method="post" action="${siteroot}/ExitPartner/Yes" >
-				<button type="submit" class="button" style="float:none; display:inline;">
-				<img alt="Save" src="${siteroot}/Images/application_edit.png"> Выход
-				</button>
+					<button type="submit" class="button save" style="float:none; display:inline;">Выход</button>
 				</form>
 			</th>
 		</tr>

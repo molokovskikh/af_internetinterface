@@ -3,10 +3,9 @@
         <tr>
             <td>
                 <a style="color:White;" href="${Siteroot}/HouseAgent/Agent">
-                <button type="button" id="RegisterPartnerButton" class="button" >
-                       <img alt="Save" src="../Images/application_edit.png">
+                <button type="button" id="RegisterPartnerButton" class="button save" >
                        Зарегистрирвоать агента
-                       </button></a>    
+                       </button></a>
             </td>
         </tr>
     </tbody>

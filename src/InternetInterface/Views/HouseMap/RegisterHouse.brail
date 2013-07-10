@@ -15,4 +15,4 @@
 	}
 </script>
 <% OutputSubView("""\Subview\House""") %>
-<button class="button" onclick=registerHouse()><img alt="Save" src="${Siteroot}/Images/application_edit.png">Зарегистрировать</button>
+<button class="button save" onclick=registerHouse()>Зарегистрировать</button>

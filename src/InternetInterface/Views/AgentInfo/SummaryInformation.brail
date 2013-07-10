@@ -1,14 +1,4 @@
-﻿<script type="text/javascript">
-	$(function () {
-		$('#startDate').datepicker({
-			inline: true
-		});
-		$('#endDate').datepicker({
-			inline: true
-		});
-	});
-</script>
-<style type="text/css">
+﻿<style type="text/css">
 	#payments_table thead tr th
 	{
 		text-align:center;

@@ -1,5 +1,5 @@
 ﻿${app.CSS("Modal.css")}
-<a class="close-reveal-modal">&#215;</a> 
+<a class="close-reveal-modal">&#215;</a>
 <div id="back">
 <form class="form appeal" method="post" action="${siteroot}/UserInfo/Refused">
 <table class="table" id="modalTable">
@@ -27,8 +27,7 @@
 			</tr>
 			<tr>
 				<td>
-					<button type="submit" id="Refused_but" class="button">
-					<img alt="Save" src="../Images/tick.png">Зарегистрировать</button>
+					<button type="submit" id="Refused_but" class="button ok">Зарегистрировать</button>
 				</td>
 			</tr>
 	</tbody>

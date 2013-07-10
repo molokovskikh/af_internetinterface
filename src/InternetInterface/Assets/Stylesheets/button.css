@@ -2,8 +2,12 @@
 	background: #EEE url(../../Images/tick.png) no-repeat; background-position: 5px 5px; padding-left:2em;
 }
 
-button.button.save {
+a.button.save, button.button.save {
 	background: #EEE url(../../Images/application_edit.png) no-repeat; background-position: 5px 5px; padding-left:2em;
+}
+a.button {
+	display: block;
+	float: left;
 }
 
 .CalendarInput {

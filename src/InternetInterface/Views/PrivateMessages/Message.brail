@@ -19,8 +19,7 @@
 		</tr>
 		<tr>
 			<td colspan=3>
-				<button type="submit" id="send_but" class="button">
-				<img alt="Save" src="../Images/tick.png">Сохранить</button>
+				<button type="submit" id="send_but" class="button ok">Сохранить</button>
 			</td>
 		</tr>
 	</tbody>
