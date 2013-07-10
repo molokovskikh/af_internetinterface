@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq.Expressions;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Linq;
@@ -23,7 +22,6 @@ using InternetInterface.Queries;
 using InternetInterface.Services;
 using NHibernate.Linq;
 using TextHelper = InternetInterface.Helpers.TextHelper;
-using NHibernate;
 
 namespace InternetInterface.Controllers
 {
@@ -56,78 +54,6 @@ namespace InternetInterface.Controllers
 		public Appeals Appeal { get; set; }
 	}
 
-	public class SessionFilter : IPaginable
-	{
-		public uint ClientCode { get; set; }
-		public DateTime? beginDate { get; set; }
-		public DateTime? endDate { get; set; }
-
-		private int _lastRowsCount;
-
-		public int RowsCount
-		{
-			get { return _lastRowsCount; }
-		}
-
-		public int PageSize
-		{
-			get { return 20; }
-		}
-
-		public int CurrentPage { get; set; }
-
-		public string[] ToUrl()
-		{
-			return new[] {
-				String.Format("filter.ClientCode={0}", ClientCode),
-				String.Format("filter.beginDate={0}", beginDate),
-				String.Format("filter.endDate={0}", endDate)
-			};
-		}
-
-		public string ToUrlQuery()
-		{
-			return string.Join("&", ToUrl());
-		}
-
-		public string GetUri()
-		{
-			return ToUrlQuery();
-		}
-
-		public List<SessionResult> Find(ISession session)
-		{
-			var result = new List<SessionResult>();
-			var thisD = DateTime.Now;
-			if (beginDate == null)
-				beginDate = new DateTime(thisD.Year, thisD.Month, 1);
-			if (endDate == null)
-				endDate = DateTime.Now;
-			Expression<Func<Internetsessionslog, bool>> predicate = i =>
-				i.EndpointId.Client.Id == ClientCode && i.LeaseBegin.Date >= beginDate.Value.Date
-					&& (i.LeaseEnd.Value.Date <= endDate.Value.Date
-						|| i.LeaseEnd == null);
-
-			var appeal = session.Query<Appeals>().Where(a =>
-				a.Client.Id == ClientCode &&
-					a.AppealType == AppealType.Statistic &&
-					a.Date.Date >= beginDate.Value.Date &&
-					a.Date.Date <= endDate.Value.Date)
-				.ToList().Select(a => new SessionResult(a)).ToList();
-			_lastRowsCount = session.Query<Internetsessionslog>().Where(predicate).Count();
-			_lastRowsCount += appeal.Count;
-			int getCount = 0;
-			if (_lastRowsCount > 0) {
-				getCount = _lastRowsCount - PageSize * CurrentPage < PageSize ? _lastRowsCount - PageSize * CurrentPage : PageSize;
-				result = session.Query<Internetsessionslog>().Where(predicate)
-					.ToList().Select(i => new SessionResult(i)).ToList();
-			}
-			result.AddRange(appeal);
-			return result.OrderBy(r => r.Date).Skip(PageSize * CurrentPage)
-				.Take(getCount).ToList();
-		}
-	}
-
 
 	[Helper(typeof(PaginatorHelper))]
 	[Helper(typeof(TextHelper))]
@@ -148,7 +74,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["RegionList"] = DbSession.Query<RegionHouse>().ToList();
 		}
 
-		public void Leases([DataBind("filter")] SessionFilter filter)
+		public void Leases([DataBind("filter")] LeaseLogFilter filter)
 		{
 			PropertyBag["_client"] = DbSession.Load<Client>(filter.ClientCode);
 			PropertyBag["filter"] = filter;

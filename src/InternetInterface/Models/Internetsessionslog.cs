@@ -11,7 +11,7 @@ namespace InternetInterface.Models
 	[ActiveRecord("Internetsessionslogs", Schema = "Logs", Lazy = true)]
 	public class Internetsessionslog : ActiveRecordLinqBase<Internetsessionslog>
 	{
-		[PrimaryKey]
+		[PrimaryKey(Generator = PrimaryKeyType.Assigned)]
 		public virtual uint Id { get; set; }
 
 		[BelongsTo]

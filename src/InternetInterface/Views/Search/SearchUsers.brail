@@ -57,46 +57,39 @@
 			</tr>
 		</table>
   <%if MapPartner.Categorie.ReductionName != "Diller": %>
-	<table style="width: 100%;"  class="table">
-		<tr><td style="text-align: left;">Искать по:</td><td></td><td></td></tr>
-		<tr>
-			<td>
-			</td>
-			<td id="SearchPropertiesTd">
-				${app.Edit("filter.searchProperties", "RadioList")}
-			</td>
-			<td>
-				${app.Edit("filter.clientTypeFilter", "RadioList")}
-			</td>
-		</tr>
-	</table>
-	<fieldset style="padding: 0; margin: 0; text-align: left; width: 99%;">
-		<legend>Фильтры: </legend>
-		<table border="0" class="table filter_front">
-			<thead>
-				<tr align="left">
-					<td>
-						<span>Статус</span><br />
-						${FormHelper.Select("filter.statusType", Statuses, {"value" : "Id", "text" : "Name"})}
-						<br /><span>Регион</span><br />
-						${FormHelper.Select("filter.Region", RegionList, {"value" : "Id", "text" : "Name"})}
-					</td>
-					<td>
-						${app.Edit("filter.EnabledTypeProperties", "RadioList")}
-					</td>
-				</tr>
-			</thead>
-		</table>
-	</fieldset>
-	<table class="fullWidth">
-		<tbody>
+		<table style="width: 100%;"  class="table">
+			<tr><td style="text-align: left;">Искать по:</td><td></td><td></td></tr>
 			<tr>
-				<td colspan=2>
-					<a href="#" onclick="LoadExcel(this);">Выгрузить статистику по клиентам в Excel</a>
+				<td>
+				</td>
+				<td id="SearchPropertiesTd">
+					${app.Edit("filter.searchProperties", "RadioList")}
+				</td>
+				<td>
+					${app.Edit("filter.clientTypeFilter", "RadioList")}
 				</td>
 			</tr>
-		</tbody>
-	</table>
+		</table>
+		<fieldset style="padding: 0; margin: 0; text-align: left; width: 99%;">
+			<legend>Фильтры: </legend>
+			<table border="0" class="table filter_front">
+				<thead>
+					<tr align="left">
+						<td>
+							<span>Статус</span><br />
+							${FormHelper.Select("filter.statusType", Statuses, {"value" : "Id", "text" : "Name"})}
+							<br /><span>Регион</span><br />
+							${FormHelper.Select("filter.Region", RegionList, {"value" : "Id", "text" : "Name"})}
+						</td>
+						<td>
+							${app.Edit("filter.EnabledTypeProperties", "RadioList")}
+						</td>
+					</tr>
+				</thead>
+			</table>
+		</fieldset>
+
+		<a href="#" onclick="LoadExcel(this);">Выгрузить статистику по клиентам в Excel</a>
 	<%end %>
 	</td>
 	</tr>

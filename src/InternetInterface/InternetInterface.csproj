@@ -473,6 +473,7 @@
     <Compile Include="Queries\AgentFilter.cs" />
     <Compile Include="Queries\AppealFilter.cs" />
     <Compile Include="Queries\BrigadFilter.cs" />
+    <Compile Include="Queries\LeaseLogFilter.cs" />
     <Compile Include="Queries\OnLineFilter.cs" />
     <Compile Include="Queries\PaymentFilter.cs" />
     <Compile Include="Queries\RequestFilter.cs" />

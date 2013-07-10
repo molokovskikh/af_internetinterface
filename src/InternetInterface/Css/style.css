@@ -311,18 +311,9 @@ input.checkbox {
 {
 	border: none;
 	border-bottom: 2px solid #AAA;
-	}
-	
-.editBut
-{
-	padding:3px 10px 3px 7px;
-	background-color: #e1e3e2;
-	border:1px solid #bfbfbf;
-	cursor:pointer;
-	line-height: 1.3em;
-	font-weight:bold;
-	}
-		
+}
+
+
 .EmptyData
 {
 	background-color: #e1e3e2;
