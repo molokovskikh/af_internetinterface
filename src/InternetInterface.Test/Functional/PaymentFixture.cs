@@ -92,8 +92,9 @@ namespace InternetInterface.Test.Functional
 
 			Open("UserInfo/SearchUserInfo.rails?filter.ClientCode=" + client.Id);
 			Click("Платежи");
+
 			Click("#SearchResults", "Переместить");
-			Css("#action_Comment").TypeText("тестовое перемещение");
+			Css(".ui-dialog #action_Comment").TypeText("тестовое перемещение");
 			Css(".ui-dialog .term").TypeText(destination.Id.ToString());
 			browser.Eval("$(\".term\").change();");
 			Click(".ui-dialog", "Найти");
@@ -101,6 +102,7 @@ namespace InternetInterface.Test.Functional
 			browser.Eval("$(\".ui-dialog .search-editor-v2 select\").change();");
 
 			Click(".ui-dialog", "Сохранить");
+			Assert.That(browser.Html, Is.StringContaining("Перемещен"));
 			AssertText("Перемещен");
 
 			session.Refresh(client);
