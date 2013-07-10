@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
@@ -91,6 +92,7 @@ namespace InternetInterface.Test.Functional
 			session.Save(destination);
 
 			Open("UserInfo/SearchUserInfo.rails?filter.ClientCode=" + client.Id);
+			AttachError();
 			Click("Платежи");
 
 			Click("#SearchResults", "Переместить");
@@ -99,9 +101,11 @@ namespace InternetInterface.Test.Functional
 			browser.Eval("$(\".term\").change();");
 			Click(".ui-dialog", "Найти");
 			WaitForCss(".ui-dialog .search-editor-v2 select");
-			browser.Eval("$(\".ui-dialog .search-editor-v2 select\").change();");
+			var selectedValue = Css(".ui-dialog .search-editor-v2 select").SelectedOption.Value;
+			Assert.AreEqual(destination.Id.ToString(), selectedValue);
 
 			Click(".ui-dialog", "Сохранить");
+			Assert.IsEmpty("", GetError());
 			Assert.That(browser.Html, Is.StringContaining("Перемещен"));
 			AssertText("Перемещен");
 
@@ -109,6 +113,16 @@ namespace InternetInterface.Test.Functional
 			session.Refresh(destination);
 			Assert.AreEqual(0, client.Payments.Sum(p => p.Sum));
 			Assert.AreEqual(300, destination.Payments.Sum(p => p.Sum));
+		}
+
+		private string GetError()
+		{
+			return browser.Eval("window.errors");
+		}
+
+		private void AttachError()
+		{
+			browser.Eval("window.errors = []; window.onerror = function(errorMsg, url, lineNumber) { window.errors.push({e: errorMsg, u: url, l: lineNumber}) };");
 		}
 
 		[Test]
