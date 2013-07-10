@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Castle.MonoRail.Framework;
 using Castle.MonoRail.Framework.Configuration;
@@ -23,7 +24,12 @@ namespace InternetInterface.Test.Integration
 			Functional.Setup.ConfigTest();
 
 			Functional.Setup.PrepareTestData();
-			InitializeContent.GetAdministrator = () => Partner.FindFirst();
+			InitializeContent.GetAdministrator = () => {
+				var partner = Partner.FindFirst();
+				partner.AccesedPartner = new List<string>();
+				partner.AccesedPartner.Add("SSI");
+				return partner;
+			};
 			BaseMailer.ViewEngineManager = GetViewManager();
 		}
 

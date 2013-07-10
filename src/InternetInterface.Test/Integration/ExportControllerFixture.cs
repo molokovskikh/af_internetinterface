@@ -25,11 +25,7 @@ namespace InternetInterface.Test.Integration
 		{
 			Controller = new ExportController();
 			PrepareController(Controller);
-			var partner = session.Query<Partner>().First();
-			partner.AccesedPartner = new List<string>();
-			InitializeContent.GetAdministrator = () => partner;
 		}
-
 
 		[Test]
 		public void GetClientsInExcelTest()

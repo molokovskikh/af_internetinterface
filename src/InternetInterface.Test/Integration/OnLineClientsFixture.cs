@@ -32,7 +32,6 @@ namespace InternetInterface.Test.Integration
 		public void SetUp()
 		{
 			Filter = new OnLineFilter();
-			InitializeContent.GetAdministrator = () => new Partner { AccesedPartner = new List<string>() };
 			PhusicalClient = new PhysicalClient {
 				Name = "Test",
 				Surname = "Physical",
