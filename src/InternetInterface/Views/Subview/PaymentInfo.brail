@@ -8,7 +8,7 @@ ${app.JS("validation.js")}
 	});
 </script>
 
-<button type="button"  class="editBut slide" onclick="$('#PaymentTable').slideToggle('slow');">Платежи</button>
+<button id="show_payments" type="button" class="editBut slide" onclick="$('#PaymentTable').slideToggle('slow');">Платежи</button>
 <span id="itogo">Всего: ${paymentsSum.ToString("C")}</span>
 
 <div id="move_payment_action" class="noDisplay">

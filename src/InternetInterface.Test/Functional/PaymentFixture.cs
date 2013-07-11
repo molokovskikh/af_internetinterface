@@ -86,46 +86,6 @@ namespace InternetInterface.Test.Functional
 		}
 
 		[Test]
-		public void Move_payment()
-		{
-			var destination = ClientHelper.Client();
-			session.Save(destination);
-
-			Open("UserInfo/SearchUserInfo.rails?filter.ClientCode=" + client.Id);
-			AttachError();
-			Click("Платежи");
-
-			Click("#SearchResults", "Переместить");
-			Css(".ui-dialog #action_Comment").TypeText("тестовое перемещение");
-			Css(".ui-dialog .term").TypeText(destination.Id.ToString());
-			browser.Eval("$(\".term\").change();");
-			Click(".ui-dialog", "Найти");
-			WaitForCss(".ui-dialog .search-editor-v2 select");
-			var selectedValue = Css(".ui-dialog .search-editor-v2 select").SelectedOption.Value;
-			Assert.AreEqual(destination.Id.ToString(), selectedValue);
-
-			Click(".ui-dialog", "Сохранить");
-			Assert.IsEmpty("", GetError());
-			Assert.That(browser.Html, Is.StringContaining("Перемещен"));
-			AssertText("Перемещен");
-
-			session.Refresh(client);
-			session.Refresh(destination);
-			Assert.AreEqual(0, client.Payments.Sum(p => p.Sum));
-			Assert.AreEqual(300, destination.Payments.Sum(p => p.Sum));
-		}
-
-		private string GetError()
-		{
-			return browser.Eval("window.errors");
-		}
-
-		private void AttachError()
-		{
-			browser.Eval("window.errors = []; window.onerror = function(errorMsg, url, lineNumber) { window.errors.push({e: errorMsg, u: url, l: lineNumber}) };");
-		}
-
-		[Test]
 		public void only_inforoom_test()
 		{
 			var recipient = client.Recipient;
