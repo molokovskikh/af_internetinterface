@@ -487,9 +487,7 @@
     <None Include="Views\Subview\ServiceControl.brail" />
     <None Include="Views\Register\RegisterPartner.brail" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="Views\Login\LoginPartner.brail" />
     <None Include="Views\Map\SiteMap.brail" />

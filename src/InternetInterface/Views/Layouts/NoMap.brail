@@ -20,7 +20,8 @@
 		"datePicker.css",
 		"tablesorter.css",
 		"reveal.css",
-		"jquery-ui-1.8.16.custom.css")}
+		"jquery-ui-1.8.16.custom.css")}
+	${app.Asset("button.css")}
 <title>Интернет интерфейс</title>
 </head>
 <body>

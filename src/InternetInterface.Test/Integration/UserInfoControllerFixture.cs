@@ -147,11 +147,11 @@ namespace InternetInterface.Test.Integration
 			controller.DeleteWriteOff(writeOff.Id, false);
 
 			Assert.IsTrue(sended);
-			Assert.That(_message.Subject, Is.EqualTo("Уведомление об удалении списания"));
-			Assert.That(_message.Body, Is.StringContaining("Отменено списание №"));
-			Assert.That(_message.Body, Is.StringContaining("Клиент: №"));
-			Assert.That(_message.Body, Is.StringContaining("Сумма:"));
-			Assert.That(_message.Body, Is.StringContaining("Оператор:"));
+			Assert.That(email.Subject, Is.EqualTo("Уведомление об удалении списания"));
+			Assert.That(email.Body, Is.StringContaining("Отменено списание №"));
+			Assert.That(email.Body, Is.StringContaining("Клиент: №"));
+			Assert.That(email.Body, Is.StringContaining("Сумма:"));
+			Assert.That(email.Body, Is.StringContaining("Оператор:"));
 			Assert.AreEqual(client.Balance, 300);
 			Assert.AreEqual(client.PhysicalClient.MoneyBalance, 150);
 			Assert.AreEqual(client.PhysicalClient.VirtualBalance, 150);

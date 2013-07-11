@@ -1,5 +1,5 @@
 ﻿Перемещен платеж №${payment.Id}
-От клиент: ${payment.Client}
+От клиент: ${source}
 К клиенту: ${action.Destination}
 Сумма: ${payment.Sum.ToString("C")}
 Оператор: ${currentUser.Name}

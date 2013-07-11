@@ -21,6 +21,7 @@ namespace InternetInterface.Test.Functional
 	internal class HouseMapFixture : WatinFixture2
 	{
 		private RegionHouse _region;
+
 		[SetUp]
 		public void SetUp()
 		{
@@ -30,6 +31,7 @@ namespace InternetInterface.Test.Functional
 			};
 			Save(_region);
 		}
+
 		[Test(Description = "Тестирует изменение региона для дома")]
 		public void EditHouse()
 		{
@@ -51,12 +53,12 @@ namespace InternetInterface.Test.Functional
 			};
 			Save(house);
 			Flush();
-			using (browser = Open(String.Format("HouseMap/ViewHouseInfo?House={0}", house.Id))) {
-				Click(" Редактировать ");
-				browser.SelectList("house_Region_Id").SelectByValue(region.Id.ToString());
-				Click("Сохранить");
-				AssertText("Выберете дом:");
-			}
+			Open(String.Format("HouseMap/ViewHouseInfo?House={0}", house.Id));
+			Click("Редактировать");
+			browser.SelectList("house_Region_Id").SelectByValue(region.Id.ToString());
+			Click("Сохранить");
+			AssertText("Выберете дом:");
+
 			session.Clear();
 			var saved = session.Load<House>(house.Id);
 			Assert.That(saved.Region.Id, Is.EqualTo(region.Id));
@@ -67,23 +69,22 @@ namespace InternetInterface.Test.Functional
 		public void RegisterHouse()
 		{
 			var streetName = "улица" + DateTime.Now;
-			using (browser = Open("HouseMap/FindHouse.rails")) {
-				Click("Создать дом");
-				browser.TextField("house_Street").Value = streetName;
-				browser.TextField("house_Number").Value = "1";
-				browser.TextField("house_Case").Value = "1";
-				browser.SelectList("house_Region_Id").SelectByValue(_region.Id.ToString());
+			Open("HouseMap/FindHouse.rails");
+			Click("Создать дом");
+			browser.TextField("house_Street").Value = streetName;
+			browser.TextField("house_Number").Value = "1";
+			browser.TextField("house_Case").Value = "1";
+			browser.SelectList("house_Region_Id").SelectByValue(_region.Id.ToString());
 
-				var alertDialogHandler = new AlertDialogHandler();
-				using (new UseDialogOnce(browser.DialogWatcher, alertDialogHandler)) {
-					Click("Зарегистрировать");
-					alertDialogHandler.WaitUntilExists();
-					alertDialogHandler.OKButton.Click();
-					browser.WaitForComplete();
-				}
-				Assert.That(browser.Text, Is.StringContaining("Выберете дом:"));
-				Assert.That(browser.SelectList("SelectHouse").SelectedItem, Is.StringContaining(streetName));
+			var alertDialogHandler = new AlertDialogHandler();
+			using (new UseDialogOnce(browser.DialogWatcher, alertDialogHandler)) {
+				Click("Зарегистрировать");
+				alertDialogHandler.WaitUntilExists();
+				alertDialogHandler.OKButton.Click();
+				browser.WaitForComplete();
 			}
+			Assert.That(browser.Text, Is.StringContaining("Выберете дом:"));
+			Assert.That(browser.SelectList("SelectHouse").SelectedItem, Is.StringContaining(streetName));
 			var saved = session.Query<House>().First(h => h.Street == streetName);
 			Assert.That(saved, Is.Not.Null);
 			Assert.That(saved.Region.Id, Is.EqualTo(_region.Id));
@@ -148,8 +149,6 @@ namespace InternetInterface.Test.Functional
 
 			var requests = new List<Request>();
 			Partner partner = null;
-			//using (new SessionScope())
-			//{
 			requests = Request.Queryable.Where(
 				r =>
 					r.Street == house.Street && r.CaseHouse == house.Case && r.House == house.Number && r.Apartment == apartment)
@@ -158,12 +157,10 @@ namespace InternetInterface.Test.Functional
 			partner = Partner.Queryable.FirstOrDefault(p => p.Login == Environment.UserName);
 			partner.Categorie.Id = 3;
 			partner.Update();
-			//}
 			var clientCode = string.Empty;
 			using (var browser2 = Open("UserInfo/RequestView.rails")) {
 				browser2.Link("request_to_reg_" + requests.First().Id).Click();
 				var sw = browser2.SelectList("SelectSwitches").Options.Select(o => UInt32.Parse(o.Value)).ToList();
-				//using (new SessionScope())
 				var diniedPorts = ClientEndpoint.Queryable.Where(c => c.Switch.Id == sw[1]).ToList().Select(c => c.Port).ToList();
 				browser2.SelectList("SelectSwitches").SelectByValue(sw[1].ToString());
 				browser2.TextField("Port").AppendText((diniedPorts.Max(p => p.Value) + 1).ToString());
@@ -172,8 +169,6 @@ namespace InternetInterface.Test.Functional
 				Assert.That(browser2.Text, Is.StringContaining("Информация по клиенту"), "Не осуществлена регистрация клиента");
 				clientCode = browser2.Url.Split(new char[] { '?' }).Last().Split(new char[] { '=' }).Last();
 			}
-			//using (new SessionScope())
-			//{
 			var payments =
 				PaymentsForAgent.Queryable.Where(
 					p => p.Comment.Contains(clientCode) || p.Comment.Contains(requests.First().Id.ToString())).ToList();

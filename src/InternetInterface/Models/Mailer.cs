@@ -58,12 +58,13 @@ namespace InternetInterface.Models
 			return this;
 		}
 
-		public Mailer PaymentMoved(Payment payment, PaymentMoveAction action)
+		public Mailer PaymentMoved(Payment payment, Client source, PaymentMoveAction action)
 		{
 			Template = "PaymentMoved";
 			To = "InternetBilling@analit.net";
 			Subject = "Перемещен платеж";
 			PropertyBag["payment"] = payment;
+			PropertyBag["source"] = source;
 			PropertyBag["action"] = action;
 			PropertyBag["currentUser"] = InitializeContent.Partner;
 			return this;

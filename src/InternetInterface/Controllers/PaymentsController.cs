@@ -417,10 +417,11 @@ namespace InternetInterface.Controllers
 		{
 			SetSmartBinder(AutoLoadBehavior.NullIfInvalidKey);
 			var payment = DbSession.Load<Payment>(id);
+			var source = payment.Client;
 			var action = BindObject<PaymentMoveAction>("action");
 			if (IsValid(action)) {
 				action.Apply(payment);
-				this.Mailer<Mailer>().PaymentMoved(payment, action).Send();
+				this.Mailer<Mailer>().PaymentMoved(payment, source, action).Send();
 				Notify("Перемещен");
 			}
 			else {

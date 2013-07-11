@@ -31,7 +31,8 @@ namespace InternetInterface.Test.Helpers
 		protected ISession session;
 		private string referer = "http://www.ivrn.net/";
 		private ISessionFactoryHolder sessionHolder;
-		protected MailMessage _message;
+		protected List<MailMessage> emails;
+		protected MailMessage email;
 		protected IEmailSender _sender;
 		protected bool sended;
 		protected XDocument smsResponse;
@@ -42,11 +43,14 @@ namespace InternetInterface.Test.Helpers
 		{
 			Open();
 
+			emails = new List<MailMessage>();
+			email = null;
 			_sender = MockRepository.GenerateStub<IEmailSender>();
-			_sender.Stub(s => s.Send(_message)).IgnoreArguments()
+			_sender.Stub(s => s.Send(email)).IgnoreArguments()
 				.Repeat.Any()
 				.Callback(new Delegates.Function<bool, MailMessage>(m => {
-					_message = m;
+					emails.Add(m);
+					email = m;
 					sended = true;
 					return true;
 				}));

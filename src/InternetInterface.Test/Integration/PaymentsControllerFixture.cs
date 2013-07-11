@@ -1,4 +1,5 @@
-﻿using InternetInterface.Controllers;
+﻿using System;
+using InternetInterface.Controllers;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
@@ -24,9 +25,9 @@ namespace InternetInterface.Test.Integration
 		{
 			var destination = data.PhysicalClient();
 			session.Save(destination);
-			var client = data.PhysicalClient();
-			session.Save(client);
-			var payment = new Payment(client, 100);
+			var source = data.PhysicalClient();
+			session.Save(source);
+			var payment = new Payment(source, 100);
 			session.Save(payment);
 
 			Request.Params["action.Comment"] = "test";
@@ -37,6 +38,8 @@ namespace InternetInterface.Test.Integration
 			session.Refresh(destination);
 			Assert.AreEqual(1, destination.Payments.Count);
 			Assert.AreEqual(100, destination.Payments[0].Sum);
+			Assert.That(email.Body, Is.StringContaining(String.Format("От клиент: {0}", source)));
+			Assert.That(email.Body, Is.StringContaining(String.Format("К клиенту: {0}", destination)));
 		}
 	}
 }
