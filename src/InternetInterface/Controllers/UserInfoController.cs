@@ -646,7 +646,7 @@ where r.`Label`= :LabelIndex;")
 		[AccessibleThrough(Verb.Post)]
 		public void SetLabel([DataBind("LabelList")] List<uint> labelList, uint labelch)
 		{
-			var _label = DbSession.Load<Label>(labelch);
+			var _label = DbSession.Get<Label>(labelch);
 			foreach (var label in labelList) {
 				var request = DbSession.Load<Request>(label);
 				if ((request.Label == null) ||
@@ -654,9 +654,10 @@ where r.`Label`= :LabelIndex;")
 					request.Label = _label;
 					request.ActionDate = DateTime.Now;
 					request.Operator = InitializeContent.Partner;
-					if (_label.ShortComment == "Refused" || _label.ShortComment == "Deleted" || _label.ShortComment == "Registered") {
-						request.Archive = true;
-					}
+					if (_label != null)
+						if (_label.ShortComment == "Refused" || _label.ShortComment == "Deleted" || _label.ShortComment == "Registered") {
+							request.Archive = true;
+						}
 					request.UpdateAndFlush();
 				}
 			}
