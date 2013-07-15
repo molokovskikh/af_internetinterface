@@ -22,15 +22,15 @@ namespace InternetInterface.Background
 
 		public Waiter()
 		{
+			var tasks = new Task[] {
+				new DeleteFixIpIfClientLongDisable(),
+				new SendNullTariffLawyerPerson(),
+				new SendUnknowEndPoint(),
+				new SendSmsNotification()
+			};
+
 			Delay = (int)TimeSpan.FromHours(1).TotalMilliseconds;
 			Action = () => {
-				var tasks = new Task[] {
-					new DeleteFixIpIfClientLongDisable(),
-					new SendNullTariffLawyerPerson(),
-					new SendUnknowEndPoint(),
-					new SendSmsNotification()
-				};
-
 				DoTask(tasks);
 
 				using (new SessionScope())
