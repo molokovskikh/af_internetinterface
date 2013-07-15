@@ -18,11 +18,7 @@ namespace InternetInterface.Helpers
 			if (assembly == null)
 				assembly = Assembly.GetEntryAssembly();
 
-			ActiveRecordStarter.Initialize(
-				new[] {
-					Assembly.Load("InternetInterface"),
-				},
-				ActiveRecordSectionHandler.Instance, typeof(JobLog));
+			ActiveRecordStarter.Initialize(new[] { Assembly.Load("InternetInterface") }, ActiveRecordSectionHandler.Instance, typeof(JobLog));
 
 			return InitMailer(assembly);
 		}

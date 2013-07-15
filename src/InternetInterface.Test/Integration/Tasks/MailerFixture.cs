@@ -14,6 +14,17 @@ using Test.Support.log4net;
 
 namespace InternetInterface.Test.Integration.Tasks
 {
+	public class SendSmsNotificationTest : SendSmsNotification
+	{
+		public IList<SmsMessage> SendSmsAr()
+		{
+			return ArHelper.WithSession(s => {
+				Session = s;
+				return SendSms();
+			});
+		}
+	}
+
 	[TestFixture]
 	public class MailerFixture
 	{
@@ -38,17 +49,15 @@ namespace InternetInterface.Test.Integration.Tasks
 				foreach (var smsMessage in messages) {
 					smsMessage.Save();
 				}
-				var sededMessages = SendProcessor.SendSmsNotification();
-				Assert.That(sededMessages.Count, Is.EqualTo(2));
 			}
+			var sededMessages = new SendSmsNotificationTest().SendSmsAr();
+			Assert.That(sededMessages.Count, Is.EqualTo(2));
 		}
 
 		[Test]
 		public void LawyerTest()
 		{
-			using (new SessionScope()) {
-				SendProcessor.SendNullTariffLawyerPerson();
-			}
+			new SendNullTariffLawyerPerson().Execute();
 		}
 
 		[Test]
@@ -69,7 +78,11 @@ namespace InternetInterface.Test.Integration.Tasks
 				ActiveRecordMediator.Save(client.PhysicalClient);
 				endPoint.Ip = new IPAddress(1541080065);
 				ActiveRecordMediator.Save(endPoint);
-				SendProcessor.DeleteFixIpIfClientLongDisable();
+			}
+
+			new DeleteFixIpIfClientLongDisable().Execute();
+
+			using (new SessionScope()) {
 				ArHelper.WithSession(s => {
 					client = s.Get<Client>(client.Id);
 					Assert.AreEqual(client.Disabled, true);
@@ -77,7 +90,11 @@ namespace InternetInterface.Test.Integration.Tasks
 					Assert.AreEqual(client.BlockDate.Value.Date, DateTime.Now.Date);
 				});
 				SystemTime.Now = () => DateTime.Now.AddDays(61);
-				SendProcessor.DeleteFixIpIfClientLongDisable();
+			}
+
+			new DeleteFixIpIfClientLongDisable().Execute();
+
+			using (new SessionScope()) {
 				ArHelper.WithSession(s => {
 					client = s.Get<Client>(client.Id);
 					Assert.AreEqual(client.Disabled, true);
@@ -104,14 +121,14 @@ namespace InternetInterface.Test.Integration.Tasks
 				unknownLease.Save();
 			}
 
-			SendProcessor.Process();
+			new SendUnknowEndPoint().Execute();
 
 			using (new SessionScope()) {
 				var sendedLease = SendedLease.Queryable.FirstOrDefault(s => s.LeaseId == unknownLease.Id);
 				Assert.IsNotNull(sendedLease);
 			}
 
-			SendProcessor.Process();
+			new SendUnknowEndPoint().Execute();
 
 			using (new SessionScope()) {
 				var sendedLease = SendedLease.Queryable.Where(s => s.LeaseId == unknownLease.Id).ToList();

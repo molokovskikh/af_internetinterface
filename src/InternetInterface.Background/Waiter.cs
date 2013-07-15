@@ -7,6 +7,7 @@ using System.Text;
 using Billing;
 using Castle.ActiveRecord;
 using Common.Tools;
+using Common.Web.Ui.Helpers;
 using Common.Web.Ui.Models.Jobs;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
@@ -23,26 +24,31 @@ namespace InternetInterface.Background
 		{
 			Delay = (int)TimeSpan.FromHours(1).TotalMilliseconds;
 			Action = () => {
-				SendProcessor.Process();
+				var tasks = new Task[] {
+					new DeleteFixIpIfClientLongDisable(),
+					new SendNullTariffLawyerPerson(),
+					new SendUnknowEndPoint(),
+					new SendSmsNotification()
+				};
+
+				DoTask(tasks);
 
 				using (new SessionScope())
 					jobs.Each(j => j.Run());
 			};
 		}
 
+		private void DoTask(Task[] tasks)
+		{
+			foreach (var task in tasks) {
+				task.Execute();
+			}
+		}
+
 		public void DoStart()
 		{
-			StandaloneInitializer.Init(typeof(SendProcessor).Assembly);
-
-			//заблокировал формирование счетов, может быть вернемся ц нему позже
-			//using(new SessionScope())
-			//{
-			//    var mailer = new Mailer {
-			//        SiteRoot = ConfigurationManager.AppSettings["SiteRoot"]
-			//    };
-			//    var job = new ActiveRecordJob(new BuildInvoiceTask(mailer)) {Name = "InternetInvoce"};
-			//    jobs.Add(job);
-			//}
+			ActiveRecordStarter.EventListenerComponentRegistrationHook += RemoverListner.Make;
+			StandaloneInitializer.Init(typeof(Waiter).Assembly);
 
 			Start();
 		}

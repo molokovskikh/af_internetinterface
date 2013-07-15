@@ -61,7 +61,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bootstraper.cs" />
-    <Compile Include="MailEndpointProcessor.cs" />
+    <Compile Include="DeleteFixIpIfClientLongDisable.cs" />
+    <Compile Include="SendNullTariffLawyerPerson.cs" />
+    <Compile Include="SendSmsNotification.cs" />
+    <Compile Include="SendUnknowEndPoint.cs" />
     <Compile Include="Waiter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
