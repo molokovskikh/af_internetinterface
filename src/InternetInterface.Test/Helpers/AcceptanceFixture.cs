@@ -1,8 +1,8 @@
 ﻿using InternetInterface.Models;
-using InternetInterface.Test.Helpers;
 using NUnit.Framework;
+using Test.Support.Selenium;
 
-namespace InternetInterface.Selenium.Test.Fixtures
+namespace InternetInterface.Test.Helpers
 {
 	public class AcceptanceFixture : SeleniumFixture
 	{

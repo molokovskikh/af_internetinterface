@@ -4,7 +4,7 @@ using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 
-namespace InternetInterface.Selenium.Test.Fixtures
+namespace InternetInterface.Test.Functional.Selenium
 {
 	[TestFixture]
 	public class PaymentFixture : AcceptanceFixture

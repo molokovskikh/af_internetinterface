@@ -14,6 +14,7 @@ using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using NHibernate.Linq;
 using NUnit.Framework;
+using Test.Support.Selenium;
 using Test.Support.Web;
 using WatiN.Core;
 using log4net.Config;
@@ -28,6 +29,7 @@ namespace InternetInterface.Test.Functional
 		[SetUp]
 		public void SetupFixture()
 		{
+			SeleniumFixture.GlobalSetup();
 			ConfigTest();
 			PrepareTestData();
 
@@ -38,6 +40,7 @@ namespace InternetInterface.Test.Functional
 		[TearDown]
 		public void TeardownFixture()
 		{
+			SeleniumFixture.GlobalTearDown();
 			_webServer.ShutDown();
 		}
 

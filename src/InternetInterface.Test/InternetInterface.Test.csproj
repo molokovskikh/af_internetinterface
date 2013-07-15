@@ -154,10 +154,12 @@
     <Compile Include="Functional\RequestGraphFixture.cs" />
     <Compile Include="Functional\RequestViewFixture.cs" />
     <Compile Include="Functional\SearchFixture.cs" />
+    <Compile Include="Functional\Selenium\PaymentFixture.cs" />
     <Compile Include="Functional\ServiceFixture.cs" />
     <Compile Include="Functional\Setup.cs" />
     <Compile Include="Functional\SmsFixture.cs" />
     <Compile Include="Functional\UserInfoFixture.cs" />
+    <Compile Include="Helpers\AcceptanceFixture.cs" />
     <Compile Include="Helpers\ClientHelper.cs" />
     <Compile Include="Helpers\ControllerFixture.cs" />
     <Compile Include="Helpers\DataMother.cs" />
@@ -224,6 +226,10 @@
     <ProjectReference Include="..\InternetInterface\InternetInterface.csproj">
       <Project>{E2B03BC7-AACB-4A72-BBC7-DF4325912504}</Project>
       <Name>InternetInterface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Test.Support\Test.Support.Selenium\Test.Support.Selenium.csproj">
+      <Project>{E37375CE-ADBA-47C9-9FA1-D7C5C704CD89}</Project>
+      <Name>Test.Support.Selenium</Name>
     </ProjectReference>
     <ProjectReference Include="..\Test.Support\Test.Support.Web\Test.Support.Web.csproj">
       <Project>{12258b1d-35e8-45ba-9c1e-5f7b8acd7d37}</Project>
