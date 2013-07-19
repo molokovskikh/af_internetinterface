@@ -828,7 +828,6 @@ where r.`Label`= :LabelIndex;")
 			var client = DbSession.Load<Client>(filter.ClientCode);
 
 			LoadBalanceData(grouped, client);
-			PropertyBag["action"] = new PaymentMoveAction();
 			PropertyBag["iptv"] = client.Iptv;
 			PropertyBag["internet"] = client.Internet;
 			PropertyBag["grouped"] = grouped;
@@ -877,6 +876,7 @@ where r.`Label`= :LabelIndex;")
 			PropertyBag["Payments"] = payments;
 			PropertyBag["paymentsSum"] = payments.Sum(p => p.Sum);
 			PropertyBag["writeOffSum"] = writeoffSum + userWriteoffSum;
+			PropertyBag["action"] = new PaymentMoveAction();
 
 			PropertyBag["WriteOffs"] = client.GetWriteOffs(DbSession, grouped).OrderByDescending(w => w.WriteOffDate).ToList();
 		}

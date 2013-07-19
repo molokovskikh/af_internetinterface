@@ -1,4 +1,5 @@
-﻿using InternetInterface.Models;
+﻿using System;
+using InternetInterface.Models;
 using NUnit.Framework;
 using Test.Support.Selenium;
 
@@ -22,6 +23,17 @@ namespace InternetInterface.Test.Helpers
 			};
 			session.Save(endpoint);
 			defaultUrl = string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}&filter.EditingConnect=true&filter.Editing={1}", client.Id, false);
+		}
+
+		protected BankPayment SavePayment(Client payer)
+		{
+			var recipient = new Recipient { Name = "testRecipient", BankAccountNumber = "40702810602000758601" };
+			session.Save(recipient);
+			payer.Recipient = recipient;
+			var bankPayment = new BankPayment(payer, DateTime.Now, 300) { Recipient = recipient };
+			var payment = new Payment(payer, 300) { BankPayment = bankPayment };
+			bankPayment.Payment = payment;
+			return bankPayment;
 		}
 	}
 }
