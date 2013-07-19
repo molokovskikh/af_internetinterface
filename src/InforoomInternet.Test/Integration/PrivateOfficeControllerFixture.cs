@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using Castle.ActiveRecord;
@@ -82,6 +83,66 @@ namespace InforoomInternet.Test.Integration
 				Request.UserHostAddress = "192.168.200.1";
 				Assert.IsTrue(filter.Perform(ExecuteWhen.BeforeAction, controller.Context, controller, controller.ControllerContext));
 			}
+		}
+
+		[Test]
+		public void FirstVisitIfRequestOutAddress()
+		{
+			client.FirstLunch = false;
+			session.Save(client);
+			session.Flush();
+			var addresses = GenerateIp();
+			Request.UserHostAddress = addresses.First();
+			var ipAdress = IPAddress.Parse(addresses.First());
+			controller.Context.Session["LoginClient"] = client.Id;
+			controller.IndexOffice(string.Empty);
+			Assert.IsFalse(controller.Context.Response.WasRedirected);
+			var ipPool = new IpPool {
+				Begin = Convert.ToUInt32(ipAdress.Address - 1),
+				End = Convert.ToUInt32(ipAdress.Address + 1)
+			};
+			var switchNew = new NetworkSwitch("test", session.Query<Zone>().First());
+			session.Save(switchNew);
+			session.Save(ipPool);
+			var endPoint = new ClientEndpoint(client, 2, switchNew);
+			session.Save(endPoint);
+			var lease = new Lease(endPoint) {
+				Pool = ipPool,
+				Ip = ipAdress
+			};
+			session.Save(lease);
+			session.Flush();
+
+			Request.UserHostAddress = addresses.Last();
+			client.FirstLunch = false;
+			session.Save(client);
+			session.Flush();
+			controller.IndexOffice(string.Empty);
+			Assert.IsFalse(controller.Context.Response.WasRedirected);
+
+			Request.UserHostAddress = addresses.Last();
+			client.FirstLunch = false;
+			session.Save(client);
+			ipPool.End = Convert.ToUInt32(ipAdress.Address + 100000000);
+			session.Save(ipPool);
+			session.Flush();
+			controller.IndexOffice(string.Empty);
+			Assert.IsTrue(controller.Context.Response.WasRedirected);
+
+			Request.UserHostAddress = addresses.First();
+			client.FirstLunch = false;
+			ipPool.End = Convert.ToUInt32(ipAdress.Address + 1);
+			session.Save(ipPool);
+			session.Save(client);
+			session.Flush();
+			controller.IndexOffice(string.Empty);
+			Assert.IsTrue(controller.Context.Response.WasRedirected);
+		}
+
+		private List<string> GenerateIp()
+		{
+			var part = new Random().Next(250);
+			return new List<string> { string.Format("{0}.{0}.{0}.{0}", part), string.Format("{0}.{0}.{0}.{1}", part, part + 5) };
 		}
 
 		[Test]

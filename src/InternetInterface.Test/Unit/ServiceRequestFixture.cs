@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using NUnit.Framework;
@@ -37,6 +38,21 @@ namespace InternetInterface.Test.Unit
 			Assert.That(request.Writeoff, Is.Not.Null);
 			Assert.That(request.Writeoff.Sum, Is.EqualTo(200));
 			Assert.That(request.Writeoff.Comment, Is.StringContaining("Оказание доп"));
+		}
+
+		[Test]
+		public void test2()
+		{
+			var count = 1;
+			var InsertCount = 2;
+			Assert.That(count, Is.EqualTo(InsertCount),
+				"Неожидаемое количество " + " вставленных записейё уц уц  ewkl ejwj ejwkee");
+		}
+
+		[Test]
+		public void test()
+		{
+			Console.WriteLine(File.ReadAllText("c:/2.txt"));
 		}
 	}
 }

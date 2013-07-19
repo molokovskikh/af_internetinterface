@@ -41,9 +41,14 @@ namespace InforoomInternet.Controllers
 			var clientId = Convert.ToUInt32(Session["LoginClient"]);
 			var client = Client.Find(clientId);
 
-			if (!client.FirstLunch) {
+			if (client.NeedShowFirstLunchPage(Request, DbSession)) {
 				RedirectToAction("FirstVisit");
 				return;
+			}
+			else
+				if (!client.FirstLunch) {
+				client.FirstLunch = true;
+				DbSession.Save(client);
 			}
 
 			PropertyBag["PhysClientName"] = string.Format("{0} {1}", client.PhysicalClient.Name, client.PhysicalClient.Patronymic);

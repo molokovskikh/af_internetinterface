@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Castle.Components.Validator;
+using Castle.MonoRail.Framework;
 using Common.Tools;
 using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Helpers;
@@ -206,6 +207,20 @@ namespace InternetInterface.Models
 					return Endpoints.First().WhoConnected;
 				return null;
 			}
+		}
+
+		public virtual bool NeedShowFirstLunchPage(IRequest request, ISession session)
+		{
+			if (FirstLunch)
+				return false;
+
+			var ip = IPAddress.Parse(request.UserHostAddress);
+			var lease = session.Query<Lease>().FirstOrDefault(l => l.Ip == ip);
+			if (lease != null)
+				return true;
+			else if (Our(ip, session))
+				return true;
+			return false;
 		}
 
 		public virtual bool CanDisabled()
