@@ -48,11 +48,5 @@ namespace InternetInterface.Test.Unit
 			Assert.That(count, Is.EqualTo(InsertCount),
 				"Неожидаемое количество " + " вставленных записейё уц уц  ewkl ejwj ejwkee");
 		}
-
-		[Test]
-		public void test()
-		{
-			Console.WriteLine(File.ReadAllText("c:/2.txt"));
-		}
 	}
 }
