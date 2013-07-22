@@ -5,6 +5,7 @@ using Billing;
 using InternetInterface;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
+using NHibernate.Linq;
 using NUnit.Framework;
 using WatiN.Core;
 using WatiN.Core.Native.Windows;
@@ -22,6 +23,16 @@ namespace InforoomInternet.Test.Functional
 			//нужно очищать cookie перед каждым тестом
 			//если этого не делать браузер будет помнить что вход произвел клиент из предыдущего теста
 			session.CreateSQLQuery("delete from Leases").ExecuteUpdate();
+
+			var ipAddress = IPAddress.Parse("127.0.0.1");
+			var pool = session.Query<IpPool>().FirstOrDefault(i => i.Begin == ipAddress.Address);
+			if (pool == null) {
+				pool = new IpPool {
+					Begin = Convert.ToUInt32(ipAddress.Address),
+					End = Convert.ToUInt32(ipAddress.Address + 100000)
+				};
+				session.Save(pool);
+			}
 
 			physicalClient = ClientHelper.PhysicalClient();
 			client = physicalClient.Client;
