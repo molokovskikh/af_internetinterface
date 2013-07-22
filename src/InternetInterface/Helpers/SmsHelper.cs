@@ -15,7 +15,8 @@ namespace InternetInterface.Helpers
 {
 	public enum SmsRequestType
 	{
-		ValidOperation = 1
+		ValidOperation = 1,
+		NoRecipients = 510
 	}
 
 	public class SmsHelper
@@ -166,7 +167,7 @@ namespace InternetInterface.Helpers
 		{
 			var result = new List<XDocument>();
 
-			var groupedSmses = smses.Where(s => !s.IsSended).GroupBy(s => s.ShouldBeSend);
+			var groupedSmses = smses.Where(s => !s.IsSended && CanSended(s)).GroupBy(s => s.ShouldBeSend);
 
 			foreach (var groupedSms in groupedSmses) {
 				var document = new XDocument(
@@ -229,6 +230,16 @@ namespace InternetInterface.Helpers
 			}
 
 			return result;
+		}
+
+		private bool CanSended(SmsMessage message)
+		{
+			switch (message.ServerRequest) {
+				case (int)SmsRequestType.NoRecipients:
+					return false;
+				default:
+					return true;
+			}
 		}
 	}
 }
