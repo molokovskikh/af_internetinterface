@@ -45,7 +45,14 @@ namespace InforoomInternet.Test.Integration
 			client = ClientHelper.Client();
 			networkSwitch = new NetworkSwitch("Тестовый коммутатор", session.Query<Zone>().First());
 			endpoint = new ClientEndpoint(client, 1, networkSwitch);
-			lease = new Lease { Endpoint = endpoint, Switch = networkSwitch, Port = 1, Ip = IPAddress.Loopback };
+			var pool = session.Query<IpPool>().First();
+			lease = new Lease {
+				Endpoint = endpoint,
+				Switch = networkSwitch,
+				Port = 1,
+				Ip = IPAddress.Loopback,
+				Pool = pool
+			};
 
 			deleteOnTeardown = new List<object> {
 				client, networkSwitch, endpoint, lease
