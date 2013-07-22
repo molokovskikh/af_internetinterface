@@ -39,14 +39,5 @@ namespace InternetInterface.Test.Unit
 			Assert.That(request.Writeoff.Sum, Is.EqualTo(200));
 			Assert.That(request.Writeoff.Comment, Is.StringContaining("Оказание доп"));
 		}
-
-		[Test]
-		public void test2()
-		{
-			var count = 1;
-			var InsertCount = 2;
-			Assert.That(count, Is.EqualTo(InsertCount),
-				"Неожидаемое количество " + " вставленных записейё уц уц  ewkl ejwj ejwkee");
-		}
 	}
 }
