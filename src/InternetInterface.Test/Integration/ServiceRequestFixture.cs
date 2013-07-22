@@ -2,24 +2,28 @@
 using System.IO;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
+using InternetInterface.Test.Helpers;
 using NUnit.Framework;
+using Test.Support;
 
-namespace InternetInterface.Test.Unit
+namespace InternetInterface.Test.Integration
 {
 	[TestFixture]
-	public class ServiceRequestFixture
+	public class ServiceRequestFixture : IntegrationFixture
 	{
 		private ServiceRequest request;
 
 		[SetUp]
 		public void Setup()
 		{
-			request = new ServiceRequest();
-			request.Contact = "950-5001055";
-			request.Client = new Client();
-			request.Performer = new Partner {
-				TelNum = "473-2606000"
+			var client = ClientHelper.Client();
+			session.Save(client);
+			request = new ServiceRequest {
+				Contact = "950-5001055",
+				Client = client,
+				Performer = InitializeContent.Partner
 			};
+			session.Save(request);
 		}
 
 		[Test]
@@ -35,9 +39,10 @@ namespace InternetInterface.Test.Unit
 		{
 			request.Sum = 200;
 			request.Status = ServiceRequestStatus.Close;
-			Assert.That(request.Writeoff, Is.Not.Null);
-			Assert.That(request.Writeoff.Sum, Is.EqualTo(200));
-			Assert.That(request.Writeoff.Comment, Is.StringContaining("Оказание доп"));
+			var writeOff = request.GetWriteOff(session);
+			Assert.That(writeOff, Is.Not.Null);
+			Assert.That(writeOff.Sum, Is.EqualTo(200));
+			Assert.That(writeOff.Comment, Is.StringContaining("Оказание доп"));
 		}
 	}
 }

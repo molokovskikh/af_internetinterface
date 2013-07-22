@@ -52,10 +52,6 @@ namespace InternetInterface.Models
 			{
 				if (value == ServiceRequestStatus.Close && value != _status) {
 					ClosedDate = DateTime.Now;
-					if (Sum != null && Sum > 0) {
-						var comment = String.Format("Оказание дополнительных услуг, заявка №{0}", Id);
-						Writeoff = new UserWriteOff(Client, Sum.Value, comment);
-					}
 				}
 
 				_status = value;
@@ -107,8 +103,6 @@ namespace InternetInterface.Models
 		[HasMany(ColumnKey = "Request", OrderBy = "RegDate", Lazy = true)]
 		public virtual IList<ServiceIteration> Iterations { get; set; }
 
-		public virtual UserWriteOff Writeoff { get; set; }
-
 		public virtual SmsMessage Sms { get; set; }
 
 		public virtual string GetDescription()
@@ -139,6 +133,19 @@ namespace InternetInterface.Models
 					return "Отменен";
 			}
 			return string.Empty;
+		}
+
+		public virtual UserWriteOff GetWriteOff(ISession session)
+		{
+			if (Status == ServiceRequestStatus.Close
+				&& session.IsChanged(this, r => r.Status)) {
+				if (Sum != null
+					&& Sum > 0) {
+					var comment = String.Format("Оказание дополнительных услуг, заявка №{0}", Id);
+					return new UserWriteOff(Client, Sum.Value, comment);
+				}
+			}
+			return null;
 		}
 
 		public virtual SmsMessage GetSms()

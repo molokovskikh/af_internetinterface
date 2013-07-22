@@ -102,9 +102,10 @@ namespace InternetInterface.Controllers
 		public void EditServiceRequest([ARDataBind("Request", AutoLoadBehavior.NullIfInvalidKey)] ServiceRequest request)
 		{
 			if (request != null) {
+				var writeOff = request.GetWriteOff(DbSession);
 				DbSession.Save(request);
-				if (request.Writeoff != null)
-					DbSession.Save(request.Writeoff);
+				if (writeOff != null)
+					DbSession.Save(writeOff);
 
 				if (SendSms(request.GetEditSms(DbSession), request))
 					Notify("Сохранено");
