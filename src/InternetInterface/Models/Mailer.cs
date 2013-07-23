@@ -1,4 +1,5 @@
-﻿using System.Net.Mail;
+﻿using System.Configuration;
+using System.Net.Mail;
 using Castle.Core.Smtp;
 using Common.Web.Ui.MonoRailExtentions;
 using InternetInterface.Controllers;
@@ -16,6 +17,7 @@ namespace InternetInterface.Models
 		public Mailer()
 		{
 			Init();
+			Sender = new FolderSender(ConfigurationManager.AppSettings["SmtpServer"]);
 		}
 
 		private void Init()
@@ -35,6 +37,25 @@ namespace InternetInterface.Models
 			mailMessage = new MailMessage(from, "kvasovtest@analit.net", subject, body);
 #endif
 			Sender.Send(mailMessage);
+		}
+
+		public void SendText(string from, string[] toEmails, string subject, string body)
+		{
+			From = from;
+			Subject = subject;
+#if DEBUG
+			toEmails = new string[1] { "kvasovtest@analit.net" };
+#endif
+			foreach (var email in toEmails) {
+				//To = email;
+				var mailMessage = new MailMessage(from, email, subject, body);
+				Sender.Send(mailMessage);
+			}
+		}
+
+		public void SendText(MailMessage message)
+		{
+			Sender.Send(message);
 		}
 
 		public Mailer SmsSendUnavailable(ServiceRequest request)

@@ -5,10 +5,12 @@ using Castle.Components.Validator;
 using Castle.Core.Smtp;
 using Common.Web.Ui.MonoRailExtentions;
 using InternetInterface.Controllers.Filter;
+using InternetInterface.Helpers;
+using InternetInterface.Mails;
 
 namespace InternetInterface.Models
 {
-	[ActiveRecord("UserWriteOffs", Schema = "internet", Lazy = true)]
+	[ActiveRecord("UserWriteOffs", Schema = "internet", Lazy = true), LogInsert(typeof(LawyerUserWriteOffNotice))]
 	public class UserWriteOff : ActiveRecordLinqBase<UserWriteOff>, IWriteOff
 	{
 		public UserWriteOff()

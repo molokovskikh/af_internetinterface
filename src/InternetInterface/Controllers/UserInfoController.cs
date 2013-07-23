@@ -1285,6 +1285,10 @@ where r.`Label`= :LabelIndex;")
 			order.Disabled = true;
 			DbSession.Save(order);
 			RedirectToUrl(order.Client.Redirect());
+			var message = MessageOrderHelper.GenerateText(order, "закрытие");
+			MessageOrderHelper.SendMail("Уведомление о закрытии заказа", message);
+			var appeal = new Appeals(message, order.Client, AppealType.System, true);
+			DbSession.Save(appeal);
 		}
 
 		public void OrdersArchive(uint clientCode)

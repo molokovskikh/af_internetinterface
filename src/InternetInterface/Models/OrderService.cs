@@ -7,6 +7,7 @@ using Castle.ActiveRecord;
 using Castle.Components.Validator;
 using Common.Web.Ui.Models.Audit;
 using Common.Web.Ui.MonoRailExtentions;
+using InternetInterface.Helpers;
 
 namespace InternetInterface.Models
 {
@@ -19,13 +20,13 @@ namespace InternetInterface.Models
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
-		[Property, Description("Описание"), Auditable("Описание")]
+		[Property, Description("Описание"), Auditable("Описание"), SendEmailAboutOrder]
 		public virtual string Description { get; set; }
 
-		[Property, Description("Стоимость"), Auditable("Стоимость услуги"), ValidateDecimal("Ошибка ввода суммы"), ValidateGreaterThanZero]
+		[Property, Description("Стоимость"), Auditable("Стоимость услуги"), ValidateDecimal("Ошибка ввода суммы"), ValidateGreaterThanZero, SendEmailAboutOrder]
 		public virtual decimal Cost { get; set; }
 
-		[Property, Description("Услуга периодичная"), Auditable("Периодичность")]
+		[Property, Description("Услуга периодичная"), Auditable("Периодичность"), SendEmailAboutOrder]
 		public virtual bool IsPeriodic { get; set; }
 
 		[BelongsTo(Column = "OrderId")]
