@@ -6,6 +6,7 @@ using System.Web;
 using Castle.ActiveRecord;
 using Common.Tools;
 using Common.Web.Ui.Models.Audit;
+using InternetInterface.Helpers;
 using NHibernate;
 using NHibernate.Linq;
 
@@ -20,7 +21,7 @@ namespace InternetInterface.Models
 	/// <summary>
 	/// Заказ
 	/// </summary>
-	[ActiveRecord(Schema = "Internet", Table = "Orders", Lazy = true), Auditable]
+	[ActiveRecord(Schema = "Internet", Table = "Orders", Lazy = true), Auditable, LogInsert(typeof(LogOrderInsert))]
 	public class Order
 	{
 		public Order()
@@ -32,13 +33,13 @@ namespace InternetInterface.Models
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
-		[Property, Description("Номер заказа"), Auditable("Номер заказа")]
+		[Property, Description("Номер заказа"), Auditable("Номер заказа"), SendEmailAboutOrder]
 		public virtual uint Number { get; set; }
 
-		[Property, Auditable("Дата активации заказа")]
+		[Property, Auditable("Дата активации заказа"), Description("Дата активации заказа"), SendEmailAboutOrder]
 		public virtual DateTime? BeginDate { get; set; }
 
-		[Property, Auditable("Дата окончания заказа")]
+		[Property, Auditable("Дата окончания заказа"), Description("Дата окончания заказа"), SendEmailAboutOrder]
 		public virtual DateTime? EndDate { get; set; }
 
 		[BelongsTo]
@@ -50,7 +51,7 @@ namespace InternetInterface.Models
 		[BelongsTo(Column = "ClientId")]
 		public virtual Client Client { get; set; }
 
-		[Property, Auditable("Деактивирован")]
+		[Property]
 		public virtual bool Disabled { get; set; }
 
 		/// <summary>

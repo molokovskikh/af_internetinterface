@@ -38,10 +38,7 @@ namespace InternetInterface.Test.Functional
 			Open("UserInfo/SearchUserInfo.rails?filter.ClientCode=" + client.Id);
 			Click("Управление услугами");
 			Click("Аренда приставки");
-			var el = browser.Elements.First(e => 
-				e.Parent != null
-					&& e.OuterHtml != null
-					&& e.OuterHtml == "<input name=\"serviceId\" value=\"9\" type=\"hidden\">");
+			var el = Css("input[value='9']");
 			((Form)el.Parent).Submit();
 			AssertText("Услуга \"Аренда приставки\" активирована");
 			Click("Управление услугами");

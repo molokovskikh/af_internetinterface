@@ -169,6 +169,7 @@
     <Compile Include="Helpers\UseDialogOnce.cs" />
     <Compile Include="Integration\ActsFilterFixture.cs" />
     <Compile Include="Integration\AgentFilterFixture.cs" />
+    <Compile Include="Integration\MailAboutOrderFixture.cs" />
     <Compile Include="Integration\ClientFixture.cs" />
     <Compile Include="Integration\ContactFixture.cs" />
     <Compile Include="Integration\ExportControllerFixture.cs" />
