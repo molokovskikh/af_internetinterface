@@ -19,7 +19,7 @@ namespace InternetInterface.Background
 						l.Endpoint.Client.Disabled))
 				.ToList();
 			var sndingLease = Session.Query<SendedLease>().Where(s => s.SendDate >= DateTime.Now.Date).Select(s => s.LeaseId).ToList();
-			var smtp = new SmtpClient();
+			var smtp = new Mailer();
 #if !DEBUG
 			var mailToAdress = "internet@ivrn.net";
 #else
@@ -36,7 +36,7 @@ namespace InternetInterface.Background
 				message.Subject = "Подозрительный клиент";
 				message.From = new MailAddress("service@analit.net");
 				message.Body = text.ToString();
-				smtp.Send(message);
+				smtp.SendText(message);
 			}
 		}
 	}

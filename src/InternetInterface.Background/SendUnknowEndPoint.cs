@@ -15,7 +15,7 @@ namespace InternetInterface.Background
 	{
 		protected override void Process()
 		{
-			var smtp = new SmtpClient();
+			var smtp = new Mailer();
 #if !DEBUG
 			var mailToAdress = "internet@ivrn.net";
 #else
@@ -52,7 +52,7 @@ where sl.LeaseId in ({0})", guestLeases.Select(g => g.Id).Implode());
 				message.Subject = "Неизвестный клиент";
 				message.From = new MailAddress("service@analit.net");
 				message.Body = text.ToString();
-				smtp.Send(message);
+				smtp.SendText(message);
 			}
 		}
 	}
