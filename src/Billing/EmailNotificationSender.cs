@@ -24,8 +24,8 @@ namespace Billing
 				message.Subject = subject;
 				message.From = new MailAddress("service@analit.net");
 				message.Body = messageText.ToString();
-				var smtp = new SmtpClient("box.analit.net");
-				smtp.Send(message);
+				var smtp = new Mailer();
+				smtp.SendText(message);
 				return true;
 			}
 			catch (Exception ex) {

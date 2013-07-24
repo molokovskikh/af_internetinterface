@@ -261,7 +261,7 @@ namespace Billing.Test.Integration
 			var nextMonthSum = Math.Round((decimal)3000 / daysInNextNonth * (daysInNextNonth - now.AddMonths(1).Day), 2);
 			Assert.AreEqual(writeOffs.Sum(w => w.WriteOffSum), Math.Round(200 + 3000 + thisMonthSum - nextMonthSum, 2));
 			lawyerClient = session.Get<Client>(lawyerClient.Id);
-			Assert.That(lawyerClient.Appeals.First().Appeal, Is.StringContaining("Деактивирован заказ"));
+			Assert.That(lawyerClient.Appeals.Last().Appeal, Is.StringContaining("Деактивирован заказ"));
 			Assert.AreEqual(lawyerClient.Endpoints.Count, 0);
 		}
 

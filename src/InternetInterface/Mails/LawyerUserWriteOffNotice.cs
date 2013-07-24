@@ -4,14 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using Common.Web.Ui.Helpers;
+using InternetInterface.Helpers;
 using InternetInterface.Models;
 
 namespace InternetInterface.Mails
 {
-	public class LawyerUserWriteOffNotice
+	public class LawyerUserWriteOffNotice : ILogInterface
 	{
-		public static void Send(UserWriteOff writeOff)
+		public void Log(object entity)
 		{
+			var writeOff = (UserWriteOff)entity;
+			if (writeOff.Client.IsPhysical()) return;
 			Mailer mailer;
 			if (writeOff.Sender != null)
 				mailer = new Mailer(writeOff.Sender);

@@ -41,7 +41,8 @@ namespace InternetInterface.Test.Functional
 			var el = browser.Elements.First(e => 
 				e.Parent != null
 					&& e.OuterHtml != null
-					&& e.OuterHtml == "<input name=\"serviceId\" value=\"9\" type=\"hidden\">");
+					&& e.GetAttributeValue("value") == "9"
+					&& e.GetAttributeValue("name") == "serviceId");
 			((Form)el.Parent).Submit();
 			AssertText("Услуга \"Аренда приставки\" активирована");
 			Click("Управление услугами");

@@ -127,7 +127,6 @@ namespace Billing.Test.Integration
 				var service = new OrderService() { Cost = 100, Description = "testService", Order = order };
 				order.OrderServices.Add(service);
 				lawyerClient.Disabled = true;
-				lawyerClient.Orders.Add(order);
 				ActiveRecordMediator.Save(service);
 				ActiveRecordMediator.Save(order);
 				ActiveRecordMediator.Save(lawyerClient);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
 using System.Web;
+using InternetInterface.Models;
 
 namespace InternetInterface.Helpers
 {
@@ -10,11 +11,11 @@ namespace InternetInterface.Helpers
 	{
 		public static void Send(string to, string subject, string message)
 		{
-			var mailer = new SmtpClient("box.analit.net");
+			var mailer = new Mailer();
 #if DEBUG
 			to = "kvasovtest@analit.net";
 #endif
-			mailer.Send("internet@ivrn.net", to, subject, message);
+			mailer.SendText("internet@ivrn.net", to, subject, message);
 		}
 	}
 }

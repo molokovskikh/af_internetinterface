@@ -115,8 +115,8 @@ namespace InforoomInternet.Controllers
 					message.Subject = "Принято новое обращение клиента";
 					message.From = new MailAddress("internet@ivrn.net");
 					message.Body = Text.ToString();
-					var smtp = new SmtpClient();
-					smtp.Send(message);
+					var smtp = new Mailer();
+					smtp.SendText(message);
 					RedirectToAction("MessageSended", new Dictionary<string, string> { { "clientName", clientName } });
 				}
 			}
@@ -458,8 +458,8 @@ namespace InforoomInternet.Controllers
 			message.Subject = "Преадресация на страницу WarningPackageId";
 			message.From = new MailAddress("service@analit.net");
 			message.Body = messageText.ToString();
-			var smtp = new SmtpClient();
-			smtp.Send(message);
+			var smtp = new Mailer();
+			smtp.SendText(message);
 		}
 	}
 }

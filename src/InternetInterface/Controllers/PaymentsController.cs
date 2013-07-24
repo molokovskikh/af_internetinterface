@@ -145,8 +145,8 @@ namespace InternetInterface.Controllers
 					message.Subject = "Получен нераспознаный платеж";
 					message.From = new MailAddress("service@analit.net");
 					message.Body = messageText.ToString();
-					var smtp = new SmtpClient("box.analit.net");
-					smtp.Send(message);
+					var smtp = new Mailer();
+					smtp.SendText(message);
 				}
 			}
 			Flash["notify_message"] = "Письма отправлены";
