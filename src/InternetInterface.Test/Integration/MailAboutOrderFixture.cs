@@ -24,6 +24,7 @@ namespace InternetInterface.Test.Integration
 		private UserInfoController controller;
 		private Client client;
 		private Order order;
+		private OrderService orderService;
 
 		[SetUp]
 		public void Setup()
@@ -33,8 +34,17 @@ namespace InternetInterface.Test.Integration
 			MessageOrderHelper.Sender = _sender;
 			client = ClientHelper.CreateLaywerPerson();
 			session.Save(client);
-			order = new Order { Client = client };
+			order = new Order{Client = client};
+			orderService = new OrderService {
+				Cost = 100,
+				Description = "Тестовая услуга"
+			};
+			order.OrderServices = new List<OrderService>();
+			order.OrderServices.Add(orderService);
+			session.Save(orderService);
 			session.Save(order);
+			orderService.Order = order;
+			session.Update(orderService);
 			controller.SaveSwitchForClient(client.Id, new ConnectInfo(), 0, new StaticIp[0], 0, "100", order, true, 0);
 			session.Flush();
 		}
@@ -67,6 +77,35 @@ namespace InternetInterface.Test.Integration
 			session.Flush();
 			session.Refresh(client);
 			Assert.That(client.Appeals[1].Appeal, Is.StringContaining("Зарегистрировано закрытие заказа для Юр.Лица"));
+		}
+
+		[Test(Description = "Проверяет, создалось ли обращение и письмо при создании услуги")]
+		public void InsertServiceOrderSender()
+		{
+			orderService = new OrderService {
+				Order = order,
+				Cost = 200,
+				Description = "Тестовая услуга2"
+			};
+			order.OrderServices.Add(orderService);
+			session.Save(orderService);
+			session.Update(order);
+			Assert.That(email.Body, Is.StringContaining("Зарегистрировано внесение изменений заказа для Юр.Лица"));
+			session.Flush();
+			session.Refresh(client);
+			Assert.That(client.Appeals.Last().Appeal, Is.StringContaining("Зарегистрировано внесение изменений заказа для Юр.Лица"));
+		}
+
+		[Test(Description = "Проверяет, создалось ли обращение и письмо при удалении услуги")]
+		public void DeleteServiceOrderSender()
+		{
+			order.OrderServices.Remove(orderService);
+			session.Delete(orderService);
+			session.Update(order);
+			session.Flush();
+			session.Refresh(client);
+			Assert.That(email.Body, Is.StringContaining("Зарегистрировано внесение изменений заказа для Юр.Лица"));
+			Assert.That(client.Appeals.Last().Appeal, Is.StringContaining("Зарегистрировано внесение изменений заказа для Юр.Лица"));
 		}
 	}
 }

@@ -1286,6 +1286,7 @@ where r.`Label`= :LabelIndex;")
 			DbSession.Save(order);
 			RedirectToUrl(order.Client.Redirect());
 			var message = MessageOrderHelper.GenerateText(order, "закрытие");
+			message += MessageOrderHelper.GenerateTextService(order);
 			MessageOrderHelper.SendMail("Уведомление о закрытии заказа", message);
 			var appeal = new Appeals(message, order.Client, AppealType.System, true);
 			DbSession.Save(appeal);

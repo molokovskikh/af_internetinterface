@@ -46,5 +46,16 @@ namespace InternetInterface.Test.Functional
 			Click("Деактивировать");
 			AssertText("Услуга \"Аренда приставки\" деактивирована");
 		}
+
+		[Test]
+		public void NoOrderForPhysicalClient()
+		{
+			Open("UserInfo/SearchUserInfo.rails?filter.ClientCode=" + client.Id);
+			Css("#Port").AppendText("1");
+			var el = Css("#Submit2");
+			el.Click();
+			var order = session.Get<Order>(client.Id);
+			Assert.Null(order);
+		}
 	}
 }
