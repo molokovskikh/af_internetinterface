@@ -80,5 +80,28 @@ namespace Billing.Test.Integration
 				});
 			}
 		}
+
+		[Test]
+		public void VirtualPaymentAndUnBlockClient()
+		{
+			InitSession();
+
+			client.PhysicalClient.Balance = -30;
+			client.PhysicalClient.MoneyBalance = -30;
+			client.PhysicalClient.VirtualBalance = -30;
+			session.Update(client.PhysicalClient);
+			client.PhysicalClient.Tariff.Price = 1000;
+			session.Update(client.PhysicalClient.Tariff);
+			client.Disabled = true;
+			client.PercentBalance = 0.8m;
+			session.Update(client);
+			var payment = new Payment(client, 100) {
+				Virtual = true
+			};
+			session.Save(payment);
+			billing.OnMethod();
+			session.Refresh(client);
+			Assert.IsFalse(client.Disabled);
+		}
 	}
 }

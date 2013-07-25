@@ -283,13 +283,15 @@ namespace InternetInterface.Models
 
 		public virtual void AccountPayment(Payment newPayment)
 		{
-			if (newPayment.Virtual)
+			Balance += Convert.ToDecimal(newPayment.Sum);
+			if (newPayment.Virtual) {
 				VirtualBalance += newPayment.Sum;
+				if (Balance > 0 && Client.Disabled)
+					Client.On();
+			}
 			else {
 				MoneyBalance += newPayment.Sum;
 			}
-
-			Balance += Convert.ToDecimal(newPayment.Sum);
 		}
 
 		public virtual Payment CalculateSelfRegistrationPayment()

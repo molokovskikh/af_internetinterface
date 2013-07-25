@@ -746,6 +746,15 @@ where CE.Client = {0}", Id))
 			return services.Sum(c => c.GetPrice());
 		}
 
+		public virtual void On()
+		{
+			Status = Status.Find((uint)StatusType.Worked);
+			RatedPeriodDate = null;
+			DebtDays = 0;
+			ShowBalanceWarningPage = false;
+			Disabled = false;
+		}
+
 		public virtual decimal GetPriceIgnoreDisabled()
 		{
 			decimal price = 0;

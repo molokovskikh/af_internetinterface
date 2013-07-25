@@ -205,13 +205,8 @@ set s.LastStartFail = true;")
 			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
 				var clients = Client.Queryable.Where(c => c.PhysicalClient != null && c.Disabled && c.AutoUnblocked).ToList();
 				clients = clients.Where(c => c.PhysicalClient.Balance > c.GetPriceIgnoreDisabled() * c.PercentBalance).ToList();
-				var workStatus = Status.Find((uint)StatusType.Worked);
 				foreach (var client in clients) {
-					client.Status = workStatus;
-					client.RatedPeriodDate = null;
-					client.DebtDays = 0;
-					client.ShowBalanceWarningPage = false;
-					client.Disabled = false;
+					client.On();
 					if (client.IsChanged(c => c.ShowBalanceWarningPage))
 						Appeals.CreareAppeal("Отключена страница Warning, клиент разблокирован", client, AppealType.Statistic, false);
 					if (client.IsChanged(c => c.Disabled))
