@@ -12,4 +12,4 @@
 	url = ssh://git.analit.net/var/www/git/Test.Support
 [submodule "src/Common.Web.UI"]
 	path = src/Common.Web.UI
-	url = ssh://git.analit.net/kvasovtest/common-web-ui.git
+	url = ssh://git.analit.net/var/www/git/Common.Web.UI
