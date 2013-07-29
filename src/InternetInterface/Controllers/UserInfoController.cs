@@ -303,6 +303,7 @@ namespace InternetInterface.Controllers
 			var client = DbSession.Load<Client>(ClientID);
 			var newFlag = false;
 			var clientEntPoint = new ClientEndpoint();
+
 			var existingOrder = DbSession.Query<Order>().FirstOrDefault(o => o.Id == EditConnect);
 			if (!client.IsPhysical()) {
 				if (existingOrder != null) {
@@ -380,10 +381,11 @@ namespace InternetInterface.Controllers
 								client.AdditionalStatus = null;
 								DbSession.Save(client);
 							}
-							if (existingOrder == null)
-								Order.EndPoint = clientEntPoint;
-							else
-								existingOrder.EndPoint = clientEntPoint;
+							if (!client.IsPhysical())
+								if (existingOrder == null)
+									Order.EndPoint = clientEntPoint;
+								else
+									existingOrder.EndPoint = clientEntPoint;
 						}
 						if (newFlag || clientEntPoint.WhoConnected == null) {
 							if (client.IsPhysical() && client.ConnectGraph != null) {
@@ -436,7 +438,7 @@ namespace InternetInterface.Controllers
 				}
 			}
 
-			if (savedEndpoint || withoutEndPoint || currentEndPoint > 0) {
+			if ((savedEndpoint || withoutEndPoint || currentEndPoint > 0) && !client.IsPhysical()) {
 				if (existingOrder == null) {
 					existingOrder = Order;
 				}
@@ -1286,6 +1288,7 @@ where r.`Label`= :LabelIndex;")
 			DbSession.Save(order);
 			RedirectToUrl(order.Client.Redirect());
 			var message = MessageOrderHelper.GenerateText(order, "закрытие");
+			message += MessageOrderHelper.GenerateTextService(order);
 			MessageOrderHelper.SendMail("Уведомление о закрытии заказа", message);
 			var appeal = new Appeals(message, order.Client, AppealType.System, true);
 			DbSession.Save(appeal);

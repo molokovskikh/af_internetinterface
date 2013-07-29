@@ -14,7 +14,7 @@ namespace InternetInterface.Models
 	/// <summary>
 	/// Услуга
 	/// </summary>
-	[ActiveRecord("OrderServices", Schema = "Internet", Lazy = true), Auditable]
+	[ActiveRecord("OrderServices", Schema = "Internet", Lazy = true), Auditable, LogDelete(typeof(LogDeleteOrderService)), LogInsert(typeof(LogInsertOrderService))]
 	public class OrderService
 	{
 		[PrimaryKey]

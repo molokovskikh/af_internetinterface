@@ -11,6 +11,7 @@ using Common.Web.Ui.Models.Audit;
 using Common.Web.Ui.MonoRailExtentions;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
+using NHibernate;
 using NHibernate.Event;
 
 namespace InternetInterface.Helpers

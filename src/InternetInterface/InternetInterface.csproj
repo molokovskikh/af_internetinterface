@@ -373,6 +373,7 @@
     <Compile Include="Helpers\ActiveDirectoryHelper.cs" />
     <Compile Include="Helpers\AppHelperInterface.cs" />
     <Compile Include="Helpers\BigEndianConverter.cs" />
+    <Compile Include="Helpers\DeleteListner.cs" />
     <Compile Include="Helpers\MailAboutOrder.cs" />
     <Compile Include="Helpers\EmailHelper.cs" />
     <Compile Include="Helpers\ExceptionHelper.cs" />
