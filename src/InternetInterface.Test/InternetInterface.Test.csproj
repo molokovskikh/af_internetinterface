@@ -156,6 +156,7 @@
     <Compile Include="Functional\SearchFixture.cs" />
     <Compile Include="Functional\Selenium\LawyerPersonFixture.cs" />
     <Compile Include="Functional\Selenium\PaymentFixture.cs" />
+    <Compile Include="Functional\Selenium\PhysicalClientFixture.cs" />
     <Compile Include="Functional\ServiceFixture.cs" />
     <Compile Include="Functional\Setup.cs" />
     <Compile Include="Functional\SmsFixture.cs" />
