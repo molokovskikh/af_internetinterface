@@ -231,6 +231,7 @@ namespace Billing.Test.Integration
 				client.Disabled = true;
 				client.AutoUnblocked = true;
 				client.RatedPeriodDate = SystemTime.Now();
+				client.StartNoBlock = SystemTime.Now();
 				client.Update();
 
 				CServive = new ClientService {
@@ -257,6 +258,7 @@ namespace Billing.Test.Integration
 				Assert.That(WriteOff.FindAll().Count(), Is.EqualTo(countDays));
 				Assert.That(physicalClient.Balance, Is.LessThan(0m));
 				Assert.IsTrue(client.Disabled);
+				Assert.IsNull(client.StartNoBlock);
 				client.Disabled = false;
 				client.Update();
 				//-50 из-за того, что платеж за 10 дней
