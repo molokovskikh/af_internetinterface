@@ -206,7 +206,7 @@ set s.LastStartFail = true;")
 				var clients = Client.Queryable.Where(c => c.PhysicalClient != null && c.Disabled && c.AutoUnblocked).ToList();
 				clients = clients.Where(c => c.PhysicalClient.Balance > c.GetPriceIgnoreDisabled() * c.PercentBalance).ToList();
 				foreach (var client in clients) {
-					client.On();
+					client.Enable();
 					if (client.IsChanged(c => c.ShowBalanceWarningPage))
 						Appeals.CreareAppeal("Отключена страница Warning, клиент разблокирован", client, AppealType.Statistic, false);
 					if (client.IsChanged(c => c.Disabled))

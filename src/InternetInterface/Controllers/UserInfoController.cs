@@ -804,6 +804,9 @@ where r.`Label`= :LabelIndex;")
 					}
 				}
 
+				if (!client.NeedShowWarning())
+					client.ShowBalanceWarningPage = false;
+
 				DbSession.SaveOrUpdate(updateClient);
 				DbSession.SaveOrUpdate(client);
 				if (message == null)
