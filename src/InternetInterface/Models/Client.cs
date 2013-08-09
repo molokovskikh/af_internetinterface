@@ -339,6 +339,9 @@ namespace InternetInterface.Models
 
 		public virtual bool NeedShowWarning()
 		{
+			if (!RatedPeriodDate.HasValue)
+				return true;
+
 			return NeedShowWarning(GetSumForRegularWriteOff());
 		}
 
