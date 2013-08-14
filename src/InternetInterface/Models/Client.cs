@@ -337,6 +337,14 @@ namespace InternetInterface.Models
 			return String.Empty;
 		}
 
+		public virtual bool NeedShowWarning()
+		{
+			if (!RatedPeriodDate.HasValue)
+				return true;
+
+			return NeedShowWarning(GetSumForRegularWriteOff());
+		}
+
 		public virtual bool NeedShowWarning(decimal sumForWriteOff)
 		{
 			return (Balance - sumForWriteOff < 0) || ShowWarningBecauseNoPassport();
@@ -539,6 +547,13 @@ namespace InternetInterface.Models
 		public virtual decimal GetInterval()
 		{
 			return (((DateTime)RatedPeriodDate).AddMonths(1) - (DateTime)RatedPeriodDate).Days + DebtDays;
+		}
+
+		public virtual decimal GetSumForRegularWriteOff()
+		{
+			var daysInInterval = GetInterval();
+			var price = GetPrice();
+			return price / daysInInterval;
 		}
 
 		public virtual bool CanBlock()
@@ -746,7 +761,7 @@ where CE.Client = {0}", Id))
 			return services.Sum(c => c.GetPrice());
 		}
 
-		public virtual void On()
+		public virtual void Enable()
 		{
 			Status = Status.Find((uint)StatusType.Worked);
 			RatedPeriodDate = null;

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using InternetInterface.Controllers;
 using InternetInterface.Models;
 using InternetInterface.Models.Services;
@@ -52,6 +53,17 @@ namespace InternetInterface.Test.Unit
 			var settings = Settings.UnitTestSettings();
 			client = new Client(new PhysicalClient(), settings);
 			Assert.That(client.ClientServices[0].ActivatedByUser, Is.True);
+		}
+
+		[Test]
+		public void ShowWarningTest()
+		{
+			client.PhysicalClient.Balance = 300;
+			client.RatedPeriodDate = DateTime.Now.AddMonths(-1);
+			client.BeginWork = DateTime.Now.AddDays(-8);
+			Assert.IsTrue(client.NeedShowWarning());
+			client.PhysicalClient.PassportNumber = "123456";
+			Assert.IsFalse(client.NeedShowWarning());
 		}
 	}
 }

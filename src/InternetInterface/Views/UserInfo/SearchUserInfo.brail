@@ -134,7 +134,7 @@
 
 		<% if Client.Tariff != null and client.Client.Internet.ActivatedByUser: %>
 		<tr>
-			<td><span class="description">Тариф:</span>${Client.Tariff.Name} (${_client.GetPriceForTariff().ToString("C")})</td>
+			<td><span class="description">Тариф:</span><b>${Client.Tariff.Name} (${_client.GetPriceForTariff().ToString("C")})<b></td>
 		</tr>
 		<% end %>
 		<% if client.Client.Iptv.Channels.Count: %>

@@ -287,7 +287,7 @@ namespace InternetInterface.Models
 			if (newPayment.Virtual) {
 				VirtualBalance += newPayment.Sum;
 				if (Balance > 0 && Client.Disabled)
-					Client.On();
+					Client.Enable();
 			}
 			else {
 				MoneyBalance += newPayment.Sum;
