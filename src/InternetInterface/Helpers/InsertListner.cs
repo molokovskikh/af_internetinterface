@@ -17,7 +17,8 @@ namespace InternetInterface.Helpers
 		public void OnPostInsert(PostInsertEvent @event)
 		{
 			var type = @event.Persister.GetMappedClass(EntityMode.Poco);
-			if (IsLogged(type)) Log(@event, type);
+			if (IsLogged(type))
+				Log(@event, type);
 		}
 
 		public void Log(PostInsertEvent @event, Type type)

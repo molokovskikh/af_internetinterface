@@ -14,7 +14,8 @@ namespace InternetInterface.Mails
 		public void Log(object entity)
 		{
 			var writeOff = (UserWriteOff)entity;
-			if (writeOff.Client.IsPhysical()) return;
+			if (writeOff.Client.IsPhysical())
+				return;
 			Mailer mailer;
 			if (writeOff.Sender != null)
 				mailer = new Mailer(writeOff.Sender);
@@ -22,10 +23,13 @@ namespace InternetInterface.Mails
 				mailer = new Mailer();
 			var messageText = new StringBuilder();
 			messageText.AppendLine("Зарегистрировано разовое списание для Юр.Лица.");
-			messageText.AppendFormat("Клиент: {0} - {1} ({2})\r\n", writeOff.Client.Id.ToString("00000"), writeOff.Client.LawyerPerson.Name, writeOff.Client.Name);
+			messageText.AppendFormat("Клиент: {0} - {1} ({2})\r\n", writeOff.Client.Id.ToString("00000"),
+				writeOff.Client.LawyerPerson.Name, writeOff.Client.Name);
 			var registrator = writeOff.Registrator != null ? writeOff.Registrator.Name : string.Empty;
-			messageText.AppendFormat("Списание: Сумма - {0} \r\nКомментарий: {1} \r\nОператор: {2}", writeOff.Sum.ToString("0.00"), writeOff.Comment, registrator);
-			mailer.SendText("internet@ivrn.net", "InternetBilling@analit.net", "Списание для Юр.Лица.", messageText.ToString());
+			messageText.AppendFormat("Списание: Сумма - {0} \r\nКомментарий: {1} \r\nОператор: {2}",
+				writeOff.Sum.ToString("0.00"), writeOff.Comment, registrator);
+			mailer.SendText("internet@ivrn.net", "InternetBilling@analit.net",
+				"Списание для Юр.Лица.", messageText.ToString());
 		}
 	}
 }
