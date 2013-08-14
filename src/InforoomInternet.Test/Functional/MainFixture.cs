@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using Test.Support.Web;
+using WatiN.Core.Native.Windows;
 
 namespace InforoomInternet.Test.Functional
 {
@@ -14,6 +15,13 @@ namespace InforoomInternet.Test.Functional
 			Css("#contactInfo").AppendText("TestAppeal@app.net");
 			Css("#saveFeedback").Click();
 			AssertText("Спасибо, Ваша заявка принята.");
+		}
+
+		[Test]
+		public void Check404()
+		{
+			Open("/nosuchpage");
+			AssertText("Адрес введен неправильно");
 		}
 	}
 }
