@@ -16,12 +16,5 @@ namespace InforoomInternet.Test.Functional
 			Css("#saveFeedback").Click();
 			AssertText("Спасибо, Ваша заявка принята.");
 		}
-
-		[Test]
-		public void Check404()
-		{
-			Open("/nosuchpage");
-			AssertText("Адрес введен неправильно");
-		}
 	}
 }
