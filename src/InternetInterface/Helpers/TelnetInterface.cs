@@ -320,14 +320,16 @@ namespace InternetInterface.Helpers
 
 		public void Write(string cmd)
 		{
-			if (!tcpSocket.Connected) return;
+			if (!tcpSocket.Connected)
+				return;
 			byte[] buf = System.Text.Encoding.ASCII.GetBytes(cmd.Replace("\0xFF", "\0xFF\0xFF"));
 			tcpSocket.GetStream().Write(buf, 0, buf.Length);
 		}
 
 		public string Read()
 		{
-			if (!tcpSocket.Connected) return null;
+			if (!tcpSocket.Connected)
+				return null;
 			StringBuilder sb = new StringBuilder();
 			do {
 				ParseTelnet(sb);
@@ -351,7 +353,8 @@ namespace InternetInterface.Helpers
 					case (int)Verbs.IAC:
 						// interpret as command
 						int inputverb = tcpSocket.GetStream().ReadByte();
-						if (inputverb == -1) break;
+						if (inputverb == -1)
+							break;
 						switch (inputverb) {
 							case (int)Verbs.IAC:
 								//literal IAC = 255 escaped, so append char 255 to string
@@ -363,7 +366,8 @@ namespace InternetInterface.Helpers
 							case (int)Verbs.WONT:
 								// reply to all commands with "WONT", unless it is SGA (suppres go ahead)
 								int inputoption = tcpSocket.GetStream().ReadByte();
-								if (inputoption == -1) break;
+								if (inputoption == -1)
+									break;
 								tcpSocket.GetStream().WriteByte((byte)Verbs.IAC);
 								if (inputoption == (int)Options.SGA)
 									tcpSocket.GetStream().WriteByte(inputverb == (int)Verbs.DO ? (byte)Verbs.WILL : (byte)Verbs.DO);

@@ -53,9 +53,12 @@ namespace InternetInterface.Models
 
 		private long ColorToUInt(MyColor color)
 		{
-			if (color.R > 255) color.R = 255;
-			if (color.G > 255) color.G = 255;
-			if (color.B > 255) color.B = 255;
+			if (color.R > 255)
+				color.R = 255;
+			if (color.G > 255)
+				color.G = 255;
+			if (color.B > 255)
+				color.B = 255;
 			return ((Convert.ToByte(color.R) << 16) | (Convert.ToByte(color.G) << 8) | (Convert.ToByte(color.B) << 0));
 		}
 
@@ -85,14 +88,20 @@ namespace InternetInterface.Models
 			var color = new MyColor();
 
 
-			if (H < 0) H = (240 - H) % 240;
-			else H = H % 240;
+			if (H < 0)
+				H = (240 - H) % 240;
+			else
+				H = H % 240;
 
-			if (H < 80) color.R = Math.Min(255, 255 * (80 - H) / 40);
-			else if (H > 160) color.R = Math.Min(255, 255 * (H - 160) / 40);
+			if (H < 80)
+				color.R = Math.Min(255, 255 * (80 - H) / 40);
+			else if (H > 160)
+				color.R = Math.Min(255, 255 * (H - 160) / 40);
 
-			if (H < 160) color.G = Math.Min(255, 255 * (80 - Math.Abs(H - 80)) / 40);
-			if (H > 80) color.B = Math.Min(255, 255 * (80 - Math.Abs(H - 160)) / 40);
+			if (H < 160)
+				color.G = Math.Min(255, 255 * (80 - Math.Abs(H - 80)) / 40);
+			if (H > 80)
+				color.B = Math.Min(255, 255 * (80 - Math.Abs(H - 160)) / 40);
 
 			if (S < 240) {
 				color = UIntToColor(Convert.ToUInt32(ColorToUInt(color) * ((float)(S / 240))));

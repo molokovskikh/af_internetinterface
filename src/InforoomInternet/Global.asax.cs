@@ -1,11 +1,15 @@
 ﻿using System;
 using System.IO;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Routing;
 using Castle.ActiveRecord;
 using System.Reflection;
 using Castle.MonoRail.Framework;
 using Castle.MonoRail.Framework.Configuration;
 using Castle.MonoRail.Framework.Internal;
 using Castle.MonoRail.Framework.Routing;
+using Castle.MonoRail.Framework.Services;
 using Castle.MonoRail.Views.Brail;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.MonoRailExtentions;
@@ -37,6 +41,8 @@ namespace InforoomInternet
 				ActiveRecordStarter.EventListenerComponentRegistrationHook += RemoverListner.Make;
 
 				Initialize();
+
+				MixedRouteHandler.ConfigRoute();
 
 				RoutingModuleEx.Engine.Add(new PatternRoute("/")
 					.DefaultForController().Is("Content")

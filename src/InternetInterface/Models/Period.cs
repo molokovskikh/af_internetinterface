@@ -56,16 +56,21 @@ namespace InternetInterface.Models
 
 		public override bool Equals(object obj)
 		{
-			if (ReferenceEquals(null, obj)) return false;
-			if (ReferenceEquals(this, obj)) return true;
-			if (obj.GetType() != typeof(Period)) return false;
+			if (ReferenceEquals(null, obj))
+				return false;
+			if (ReferenceEquals(this, obj))
+				return true;
+			if (obj.GetType() != typeof(Period))
+				return false;
 			return Equals((Period)obj);
 		}
 
 		public bool Equals(Period other)
 		{
-			if (ReferenceEquals(null, other)) return false;
-			if (ReferenceEquals(this, other)) return true;
+			if (ReferenceEquals(null, other))
+				return false;
+			if (ReferenceEquals(this, other))
+				return true;
 			return other.Year == Year && Equals(other.Interval, Interval);
 		}
 

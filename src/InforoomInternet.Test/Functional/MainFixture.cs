@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using Test.Support.Web;
+using WatiN.Core.Native.Windows;
 
 namespace InforoomInternet.Test.Functional
 {
