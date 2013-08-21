@@ -42,8 +42,6 @@ namespace InforoomInternet
 
 				Initialize();
 
-				MixedRouteHandler.ConfigRoute();
-
 				RoutingModuleEx.Engine.Add(new PatternRoute("/")
 					.DefaultForController().Is("Content")
 					.DefaultForAction().Is("Новости"));

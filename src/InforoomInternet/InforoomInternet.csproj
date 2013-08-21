@@ -303,7 +303,9 @@
     <None Include="Views\Main\Warning.brail" />
     <None Include="Views\Main\WarningLawyer.brail" />
     <None Include="Views\Main\Zayavka.brail" />
-    <None Include="Views\Main\Index.brail" />
+    <None Include="Views\Main\Index.brail">
+      <SubType>Designer</SubType>
+    </None>
     <Content Include="Web.release.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>
