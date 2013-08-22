@@ -4,6 +4,7 @@ using System.Text;
 using CassiniDev;
 using NUnit.Framework;
 using System.Configuration;
+using Test.Support.Selenium;
 using Test.Support.Web;
 using WatiN.Core;
 using log4net;
@@ -18,6 +19,7 @@ namespace InforoomInternet.Test.Functional
 		[SetUp]
 		public void SetupFixture()
 		{
+			SeleniumFixture.GlobalSetup();
 			_webServer = WatinSetup.StartServer();
 			InternetInterface.Test.Functional.Setup.PrepareTestData();
 		}
@@ -25,6 +27,7 @@ namespace InforoomInternet.Test.Functional
 		[TearDown]
 		public void TeardownFixture()
 		{
+			SeleniumFixture.GlobalTearDown();
 			_webServer.ShutDown();
 		}
 	}
