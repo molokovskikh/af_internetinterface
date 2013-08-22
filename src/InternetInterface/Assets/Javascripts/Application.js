@@ -15,6 +15,9 @@
 	$('#startDate').datepicker({
 		inline: true
 	});
+	$('#beginDate').datepicker({
+		inline: true
+	});
 	$('#endDate').datepicker({
 		inline: true
 	});

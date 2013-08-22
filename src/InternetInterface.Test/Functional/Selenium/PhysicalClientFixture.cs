@@ -20,5 +20,12 @@ namespace InternetInterface.Test.Functional.Selenium
 			var order = session.Get<Order>(client.Id);
 			Assert.Null(order);
 		}
+
+		[Test]
+		public void Calendar_in_begin_date()
+		{
+			ClickLink("Статистика работы");
+			Assert.NotNull(Css("input.hasDatepicker#beginDate"));
+		}
 	}
 }
