@@ -122,13 +122,11 @@
     <Reference Include="WatiNCssSelectorExtensions">
       <HintPath>..\..\lib\WatiNCssSelectorExtensions.dll</HintPath>
     </Reference>
-    <Reference Include="WebDriver, Version=2.33.0.0, Culture=neutral, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Functional\BaseFunctionalFixture.cs" />
     <Compile Include="Functional\MainFixture.cs" />
     <Compile Include="Functional\PrivateOfficeFixture.cs" />
-    <Compile Include="Functional\Selenium\Error404Fixture.cs" />
     <Compile Include="Functional\SelfRegistration.cs" />
     <Compile Include="Functional\Setup.cs" />
     <Compile Include="Functional\WarningPackageIdFixture.cs" />
@@ -176,10 +174,6 @@
     <ProjectReference Include="..\InternetInterface\InternetInterface.csproj">
       <Project>{E2B03BC7-AACB-4A72-BBC7-DF4325912504}</Project>
       <Name>InternetInterface</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Test.Support\Test.Support.Selenium\Test.Support.Selenium.csproj">
-      <Project>{E37375CE-ADBA-47C9-9FA1-D7C5C704CD89}</Project>
-      <Name>Test.Support.Selenium</Name>
     </ProjectReference>
     <ProjectReference Include="..\Test.Support\Test.Support.Web\Test.Support.Web.csproj">
       <Project>{12258B1D-35E8-45BA-9C1E-5F7B8ACD7D37}</Project>

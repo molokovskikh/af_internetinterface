@@ -197,6 +197,7 @@
     <Content Include="crossdomain.xml" />
     <Content Include="CSS\main.css" />
     <Content Include="CSS\styles.css" />
+    <Content Include="Errors\Err404.htm" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Icon%402x.png" />
@@ -277,7 +278,6 @@
     <Compile Include="Controllers\BonusProgramsController.cs" />
     <Compile Include="Controllers\ContentController.cs" />
     <Compile Include="Controllers\EditorController.cs" />
-    <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\PrivateOfficeController.cs" />
@@ -349,7 +349,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>64328</DevelopmentServerPort>
+          <DevelopmentServerPort>63203</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

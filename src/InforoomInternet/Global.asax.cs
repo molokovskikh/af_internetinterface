@@ -22,6 +22,43 @@ namespace InforoomInternet
 {
 	public class Global : WebApplication, IMonoRailConfigurationEvents
 	{
+		public class MixedRouteHandler : IRouteHandler
+		{
+			public IHttpHandler GetHttpHandler(RequestContext requestContext)
+			{
+				IHttpHandler hander = null;
+				try {
+					hander = new MonoRailHttpHandlerFactory().GetHandler(HttpContext.Current, null, null, null);
+				}
+				catch (UrlTokenizerException) {
+				}
+
+				if (hander is MonoRailHttpHandlerFactory.NotFoundHandler)
+					hander = null;
+
+				if (hander == null)
+					hander = new MvcHandler(requestContext);
+				return hander;
+			}
+
+			public static void ConfigRoute()
+			{
+				var routes = RouteTable.Routes;
+				routes.Add(new Route("{resource}.axd/{*pathInfo}", new StopRoutingHandler()));
+
+				var route = new Route("{controller}/{action}/{id}", new MixedRouteHandler()) {
+					Defaults = new RouteValueDictionary {
+						{ "controller", "Home" },
+						{ "action", "Index" },
+						{ "id", new object() }
+					},
+					DataTokens = new RouteValueDictionary()
+				};
+
+
+				routes.Add(route);
+			}
+		}
 		private static readonly ILog _log = LogManager.GetLogger(typeof(Global));
 
 		public Global()
