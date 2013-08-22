@@ -25,9 +25,8 @@ namespace InternetInterface.Test.Functional.Selenium
 		{
 			var payment = SavePayment(laywerPerson);
 			Save(payment, payment.Payment);
-
 			Css("#show_payments").Click();
-
+			WaitForVisibleCss("#SearchResults");
 			ClickButton("#SearchResults", "Переместить");
 			Css(".ui-dialog #action_Comment").SendKeys("тестовое перемещение");
 			Css(".ui-dialog .term").SendKeys(client.Id.ToString());

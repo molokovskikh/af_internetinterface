@@ -26,7 +26,7 @@ namespace InternetInterface.Test.Functional.Selenium
 		public void Move_payment()
 		{
 			Css("#show_payments").Click();
-
+			WaitForVisibleCss("#SearchResults");
 			ClickButton("#SearchResults", "Переместить");
 			Css(".ui-dialog #action_Comment").SendKeys("тестовое перемещение");
 			Css(".ui-dialog .term").SendKeys(newClient.Id.ToString());
