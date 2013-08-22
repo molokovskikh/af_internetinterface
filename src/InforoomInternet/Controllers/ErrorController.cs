@@ -7,7 +7,7 @@ using Common.Web.Ui.Controllers;
 
 namespace InforoomInternet.Controllers
 {
-	[Layout("Main")]
+	[Layout("blank")]
 	[Filter(ExecuteWhen.BeforeAction, typeof(NHibernateFilter))]
 	[Filter(ExecuteWhen.BeforeAction, typeof(BeforeFilter))]
 	public class ErrorController : BaseController

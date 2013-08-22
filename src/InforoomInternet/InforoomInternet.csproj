@@ -253,6 +253,7 @@
     </Content>
     <None Include="Views\BonusPrograms\ConnectFriend.brail" />
     <Content Include="Views\Layouts\cityline.brail" />
+    <Content Include="Views\Layouts\blank.brail" />
     <None Include="Views\Main\Feedback.brail" />
     <None Include="Views\Main\MessageSended.brail" />
     <None Include="Views\Main\WarningPackageId.brail" />
