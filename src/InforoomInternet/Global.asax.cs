@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Web;
-using System.Web.Mvc;
 using System.Web.Routing;
 using Castle.ActiveRecord;
 using System.Reflection;
@@ -31,8 +31,6 @@ namespace InforoomInternet
 			Logger = new HttpSessionLog(typeof(Global));
 			LibAssemblies.Add(Assembly.Load("Common.Web.Ui"));
 			Logger.ErrorSubject = "Ошибка в IVRN";
-			Logger.ExcludeExceptionTypes.Add(typeof(ControllerNotFoundException));
-			Logger.ExcludeExceptionTypes.Add(typeof(FileNotFoundException));
 		}
 
 		private void Application_Start(object sender, EventArgs e)
@@ -81,6 +79,7 @@ namespace InforoomInternet
 		public void Configure(IMonoRailConfiguration configuration)
 		{
 			configuration.ControllersConfig.AddAssembly("InforoomInternet");
+			configuration.ControllersConfig.AddAssembly("Common.Web.Ui");
 			configuration.ViewComponentsConfig.Assemblies = new[] { "InforoomInternet", "Common.Web.Ui" };
 			configuration.ViewEngineConfig.ViewPathRoot = "Views";
 			configuration.ViewEngineConfig.AssemblySources.Add(new AssemblySourceInfo("Common.Web.Ui", "Common.Web.Ui.Views"));

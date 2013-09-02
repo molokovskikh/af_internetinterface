@@ -399,7 +399,7 @@ namespace InternetInterface.Controllers
 				DbSession.Delete(payment);
 				DbSession.Save(message);
 				Notify("Отменено");
-				EmailHelper.Send("internet@ivrn.net", "Уведомление об отмене платежа", string.Format(@"
+				InternetInterface.Helpers.EmailHelper.Send("internet@ivrn.net", "Уведомление об отмене платежа", string.Format(@"
 Отменено платеж №{0}
 Клиент: №{1}
 Сумма: {2:C}
