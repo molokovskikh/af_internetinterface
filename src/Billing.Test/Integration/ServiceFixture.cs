@@ -517,10 +517,9 @@ namespace Billing.Test.Integration
 				var sum = writeOffs.Sum(w => w.WriteOffSum);
 				var lastWriteoffAt = writeOffs.Max(w => w.WriteOffDate);
 				var firstWriteoffAt = writeOffs.Min(w => w.WriteOffDate);
-				var expectedSum = ((lastWriteoffAt - firstWriteoffAt).TotalDays + 1) * 3;
+				var expectedSum = ((lastWriteoffAt - firstWriteoffAt).Days + 1) * 3;
 
-				Assert.That(Math.Round(Convert.ToDecimal(expectedSum), 2),
-					Is.EqualTo(Math.Round(sum, 2)));
+				Assert.That(expectedSum, Is.EqualTo(Math.Round(sum)));
 				Assert.That(firstWriteoffAt.Date, Is.EqualTo(DateTime.Now.AddDays(29).Date));
 				writeOffs.Select(w => w.WriteOffSum).Each(c => Assert.That(c, Is.EqualTo(3m)));
 			}

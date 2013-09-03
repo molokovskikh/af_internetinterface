@@ -100,10 +100,6 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Microsoft.AspNet.Mvc.4.0.30506.0\lib\net40\System.Web.Mvc.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
@@ -253,7 +249,6 @@
     </Content>
     <None Include="Views\BonusPrograms\ConnectFriend.brail" />
     <Content Include="Views\Layouts\cityline.brail" />
-    <Content Include="Views\Layouts\blank.brail" />
     <None Include="Views\Main\Feedback.brail" />
     <None Include="Views\Main\MessageSended.brail" />
     <None Include="Views\Main\WarningPackageId.brail" />
@@ -278,7 +273,6 @@
     <Compile Include="Controllers\BonusProgramsController.cs" />
     <Compile Include="Controllers\ContentController.cs" />
     <Compile Include="Controllers\EditorController.cs" />
-    <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\PrivateOfficeController.cs" />
