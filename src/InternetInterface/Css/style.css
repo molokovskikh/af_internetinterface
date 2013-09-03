@@ -601,3 +601,8 @@ div.commented, .commented {
 	margin-left:700px;
 	width:600px;
 }
+
+.search_query {
+	width : 300px;
+	margin-left : 50px;
+}

@@ -3,69 +3,41 @@ using System.Collections.Generic;
 using System.Linq;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Models;
-
+using System.Web;
 namespace InternetInterface.Queries
 {
-	public class AppealFilter : Sortable, SortableContributor, IPaginable
+	public class AppealFilter : PaginableSortable
 	{
-		public string query { get; set; }
-		public DateTime? startDate { get; set; }
-		public DateTime? endDate { get; set; }
-		public AppealTypeProperties appealType { get; set; }
-
-		public int _lastRowsCount;
-
-		public int RowsCount
+		public AppealFilter()
 		{
-			get { return _lastRowsCount; }
+			AppealType = AppealType.All;
+			PageSize = 20;
 		}
 
-		public int PageSize
-		{
-			get { return 20; }
-		}
 
-		public int CurrentPage { get; set; }
-
-		public string[] ToUrl()
-		{
-			return new[] {
-				String.Format("filter.appealType.appealType={0}", appealType.appealType),
-				String.Format("filter.startDate={0}", startDate),
-				String.Format("filter.endDate={0}", endDate),
-				String.Format("filter.query={0}", query)
-			};
-		}
-
-		public string ToUrlQuery()
-		{
-			return string.Join("&", ToUrl());
-		}
-
-		public string GetUri()
-		{
-			return ToUrlQuery();
-		}
+		public string Query { get; set; }
+		public DateTime? StartDate { get; set; }
+		public DateTime? EndDate { get; set; }
+		public AppealType AppealType { get; set; }
 
 		public List<Appeals> Find()
 		{
 			var thisD = DateTime.Now;
-			if (startDate == null)
-				startDate = new DateTime(thisD.Year, thisD.Month, 1);
-			if (endDate == null)
-				endDate = DateTime.Now;
-			if (appealType == null)
-				appealType = new AppealTypeProperties();
+			if (StartDate == null)
+				StartDate = new DateTime(thisD.Year, thisD.Month, 1);
+			if (EndDate == null)
+				EndDate = DateTime.Now;
+
 			var totalRes =
-				Appeals.Queryable.Where(a => a.Date.Date >= startDate.Value.Date && a.Date.Date <= endDate.Value.Date)
+				Appeals.Queryable.Where(a => a.Date.Date >= StartDate.Value.Date && a.Date.Date <= EndDate.Value.Date)
 					.OrderByDescending(o => o.Date).ToList();
-			if (appealType.appealType != AppealType.All)
-				totalRes = totalRes.Where(a => a.AppealType == appealType.appealType).ToList();
-			if (!string.IsNullOrEmpty(query))
-				totalRes = totalRes.Where(t => t.Appeal.ToLower().Contains(query.ToLower())).ToList();
-			_lastRowsCount = totalRes.Count();
-			if (_lastRowsCount > 0) {
-				var getCount = _lastRowsCount - PageSize * CurrentPage < PageSize ? _lastRowsCount - PageSize * CurrentPage : PageSize;
+			if (AppealType != AppealType.All)
+				totalRes = totalRes.Where(a => a.AppealType == AppealType).ToList();
+			if (!string.IsNullOrEmpty(Query))
+				totalRes = totalRes.Where(t => t.Appeal.ToLower().Contains(Query.ToLower())).ToList();
+			RowsCount = totalRes.Count();
+			if (RowsCount > 0) {
+				var getCount = RowsCount - PageSize * CurrentPage < PageSize ? RowsCount - PageSize * CurrentPage : PageSize;
 				return
 					totalRes.GetRange(PageSize * CurrentPage, getCount);
 			}

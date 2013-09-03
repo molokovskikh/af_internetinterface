@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Web;
@@ -15,11 +16,11 @@ namespace InternetInterface.Models
 {
 	public enum AppealType
 	{
-		All = 0,
-		User = 1,
-		System = 3,
-		FeedBack = 5,
-		Statistic = 7
+		[Description("Все")] All = 0,
+		[Description("Пользовательские")] User = 1,
+		[Description("Системные")] System = 3,
+		[Description("Внешние")] FeedBack = 5,
+		[Description("Статистические")] Statistic = 7
 	}
 
 	public enum UniversalAppealType
