@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -399,7 +399,8 @@ namespace InternetInterface.Controllers
 				DbSession.Delete(payment);
 				DbSession.Save(message);
 				Notify("Отменено");
-				InternetInterface.Helpers.EmailHelper.Send("internet@ivrn.net", "Уведомление об отмене платежа", string.Format(@"
+				InternetInterface.Helpers.EmailHelper.Send("internet@ivrn.net", "Уведомление об отмене платежа",
+					string.Format(@"
 Отменено платеж №{0}
 Клиент: №{1}
 Сумма: {2:C}
