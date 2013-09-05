@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using Castle.Components.Binder;
 using Castle.Components.Validator;
+using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using InternetInterface.Models;
 
@@ -33,7 +34,7 @@ namespace InternetInterface.AllLogic
 		}
 	}
 
-	public class DecimalValidateBinder : DataBinder
+	public class DecimalValidateBinder : ARDataBinder
 	{
 		protected override void BeforeBindingProperty(object instance, System.Reflection.PropertyInfo prop, string prefix, CompositeNode node)
 		{
