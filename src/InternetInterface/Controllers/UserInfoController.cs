@@ -726,14 +726,14 @@ where r.`Label`= :LabelIndex;")
 				RenderView("LawyerPersonInfo");
 				PropertyBag["LegalPerson"] = updateClient;
 				PropertyBag["grouped"] = grouped;
-				var fil = new ClientFilter {
+				var filter = new ClientFilter {
 					ClientCode = ClientID,
 					grouped = grouped,
 					appealType = appealType,
 					Editing = true,
 					EditingConnect = 0
 				};
-				LawyerPersonInfo(fil);
+				LawyerPersonInfo(filter);
 			}
 		}
 
