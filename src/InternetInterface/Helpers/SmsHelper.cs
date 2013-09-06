@@ -13,13 +13,19 @@ using log4net;
 
 namespace InternetInterface.Helpers
 {
+	public interface ISendMessage
+	{
+		XDocument SendMessage(SmsMessage message);
+		List<XDocument> SendMessages(IList<SmsMessage> smses);
+	}
+
 	public enum SmsRequestType
 	{
 		ValidOperation = 1,
 		NoRecipients = 510
 	}
 
-	public class SmsHelper
+	public class SmsHelper : ISendMessage
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof(SmsHelper));
 

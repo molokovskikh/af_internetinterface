@@ -29,7 +29,7 @@ namespace InternetInterface.Models
 		public virtual bool Enabled { get; set; }
 
 		[Property, Auditable("Дата отключения"), ValidateDate("Неправильный формат даты")]
-		public virtual DateTime EndDate { get; set; }
+		public virtual DateTime? EndDate { get; set; }
 
 		[Property]
 		public virtual DateTime RegDate { get; set; }

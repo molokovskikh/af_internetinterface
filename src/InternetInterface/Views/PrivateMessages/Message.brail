@@ -18,8 +18,11 @@
 			<td colspan=2>${FormHelper.CheckboxField("PrivateMessage.Enabled")}</td>
 		</tr>
 		<tr>
-			<td colspan=3>
-				<button type="submit" id="send_but" class="button ok">Сохранить</button>
+			<td>
+				<button type="submit" id="send_but" class="button ok" name="simpleMessageButton">Сохранить</button>
+			</td>
+			<td colspan=2>
+				<button type="submit" id="send_but" class="button ok" name="smsMessageButton">Отправить СМС сообщения</button>
 			</td>
 		</tr>
 	</tbody>
