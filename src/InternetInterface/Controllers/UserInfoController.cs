@@ -490,6 +490,10 @@ namespace InternetInterface.Controllers
 						DbSession.Save(orderService);
 					}
 				}
+				if (client.Disabled
+					&& client.Orders.Count > 0)
+					client.Disabled = false;
+				DbSession.Save(client);
 				DbSession.Save(existingOrder);
 				RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID);
 				return;
