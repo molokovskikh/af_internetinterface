@@ -13,9 +13,9 @@ Global(
 
 task @default, [@Build, @BuildBackground]
 
-task @Build, [@BuildWebSite, @BuildBackground, @BuildPrinter]
+task @Build, [@BuildWebSite, @BuildBackground]
 
-task @deploy, [@DeployPipeline, @DeployPrinter, @DeployBackground]
+task @deploy, [@DeployPipeline, @DeployBackground]
 
 task @DeployBackground, [@BuildBackground, @Production, @Migrate, @SendDeployNotification]:
 	oldProject = Globals.Project
