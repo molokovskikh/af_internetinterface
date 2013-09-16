@@ -64,7 +64,7 @@ a.button {
 }
 
 .CalendarInput {
-	background: transparent url(../../Css/Images/x_office_calendar.png) no-repeat scroll center center;
+	background: transparent url(../Images/x_office_calendar.png) no-repeat scroll center center;
 	width: 22px;
 	height: 22px;
 }

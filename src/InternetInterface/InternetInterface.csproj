@@ -160,7 +160,7 @@
     <Content Include="Css\images\ui-icons_454545_256x240.png" />
     <Content Include="Css\images\ui-icons_888888_256x240.png" />
     <Content Include="Css\images\ui-icons_cd0a0a_256x240.png" />
-    <Content Include="Css\images\x_office_calendar.png" />
+    <Content Include="Assets\Images\x_office_calendar.png" />
     <Content Include="Css\jquery-ui-1.8.16.custom.css" />
     <Content Include="Css\modal-gloss.png" />
     <Content Include="Css\Modal.css" />
