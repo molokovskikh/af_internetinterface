@@ -145,8 +145,6 @@
     <Content Include="Css\datePicker.css" />
     <Content Include="Css\desc.gif" />
     <Content Include="Css\filter.css" />
-    <Content Include="Css\images\calendar.gif" />
-    <Content Include="Css\images\ical.png" />
     <Content Include="Css\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Css\images\ui-bg_flat_75_ffffff_40x100.png" />
     <Content Include="Css\images\ui-bg_glass_55_fbf9ee_1x400.png" />
