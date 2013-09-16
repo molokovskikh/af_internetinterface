@@ -11,7 +11,9 @@
 	Date.format = 'dd.mm.yyyy';
 	$('.graph_date').datepicker();
 	$('.date-pick').datepicker({ changeYear: true });
-	$('.date_field').datepicker();
+	$('.date_field').datepicker({
+		inline: true
+	});
 	$('#startDate').datepicker({
 		inline: true
 	});
@@ -20,5 +22,9 @@
 	});
 	$('#endDate').datepicker({
 		inline: true
+	});
+	$('.CalendarInput').click(function () {
+		var a = $(this).prev('input');
+		$(this).prev('input').datepicker('show');
 	});
 });
