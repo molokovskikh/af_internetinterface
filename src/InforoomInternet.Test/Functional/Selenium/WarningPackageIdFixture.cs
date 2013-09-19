@@ -1,20 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using Common.Web.Ui.NHibernateExtentions;
-using InternetInterface.Models;
-using InternetInterface.Models.Services;
-using NUnit.Framework;
-using Test.Support.Web;
-using WatiN.Core.Native.Windows;
+﻿using NUnit.Framework;
+using System;
+using log4net;
+using System.Reflection;
 
-namespace InforoomInternet.Test.Functional
+namespace InforoomInternet.Test.Functional.Selenium
 {
-	[TestFixture, Ignore("Тесты перенесены в Selenium")]
-	public class WarningPackageIdFixture : BaseFunctionalFixture
+	[TestFixture]
+	class WarningPackageIdFixture : BaseFunctionalFixture
 	{
+		[Test]
+		public void Access_connect_if_white_pool_unknown()
+		{
+			Pool.IsGray = false;
+			session.Save(Pool);
+			Open("Main/WarningPackageId");
+			AssertText("Ждите, идет подключение к интернет");
+		}
+
 		[Test]
 		public void No_start_work()
 		{
@@ -28,7 +30,7 @@ namespace InforoomInternet.Test.Functional
 			PhysicalClient.Balance = 10;
 			Client.Disabled = true;
 			Client.BeginWork = DateTime.Now;
-			session.SaveOrUpdate(Client);
+			session.Save(Client);
 			Open("Main/WarningPackageId");
 			AssertText("Доступ в интернет заблокирован за неуплату. Сумма на вашем лицевом счете недостаточна для разблокировки");
 		}
@@ -39,26 +41,16 @@ namespace InforoomInternet.Test.Functional
 			PhysicalClient.Balance = -10;
 			Client.Disabled = true;
 			Client.BeginWork = DateTime.Now;
-			session.SaveOrUpdate(Client);
+			session.Save(Client);
 			Open("Main/WarningPackageId");
 			AssertText("Ваша задолженность за оказанные услуги составляет");
-		}
-
-		[Test]
-		public void Access_connect_if_white_pool_unknown()
-		{
-			Pool.IsGray = false;
-			session.SaveOrUpdate(Pool);
-			Open("Main/WarningPackageId");
-			Thread.Sleep(1000);
-			AssertText("Ждите, идет подключение к интернет");
 		}
 
 		[Test]
 		public void No_client_test()
 		{
 			Lease.Endpoint = null;
-			session.SaveOrUpdate(Lease);
+			session.Save(Lease);
 			Open("Main/WarningPackageId");
 			AssertText("Чтобы пользоваться услугами интернет необходимо оставить заявку на подключение, либо авторизоваться в личном кабинете, если вы уже подключены.");
 		}

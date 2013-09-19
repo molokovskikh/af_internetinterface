@@ -6,7 +6,7 @@ using WatiN.Core.Native.Windows;
 
 namespace InternetInterface.Test.Functional
 {
-	[TestFixture]
+	[TestFixture, Ignore("Тесты перенесены в Selenium")]
 	internal class SearchFixture : ClientFunctionalFixture
 	{
 		[SetUp]

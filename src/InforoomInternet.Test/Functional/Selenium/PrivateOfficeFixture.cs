@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using Billing;
@@ -7,13 +8,13 @@ using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NHibernate.Linq;
 using NUnit.Framework;
-using WatiN.Core;
-using WatiN.Core.Native.Windows;
+using Test.Support.Selenium;
+using OpenQA.Selenium;
 
-namespace InforoomInternet.Test.Functional
+namespace InforoomInternet.Test.Functional.Selenium
 {
-	[TestFixture, Ignore("Тесты перенесены в Selenium")]
-	public class PrivateOfficeFixture : global::Test.Support.Web.WatinFixture2
+	[TestFixture]
+	public class PrivateOfficeFixture : SeleniumFixture
 	{
 		private Client client;
 		private PhysicalClient physicalClient;
@@ -46,10 +47,10 @@ namespace InforoomInternet.Test.Functional
 			session.Save(client);
 
 			Open("PrivateOffice/IndexOffice");
-			if (Css("#Login") == null) {
-				var exit = Css("#exitLink");
-				if (exit != null) {
-					exit.Click();
+
+			if (!IsPresent("#Login")) {
+				if (IsPresent("#exitLink")) {
+					Css("#exitLink").Click();
 					Open("PrivateOffice/IndexOffice");
 				}
 				else {
@@ -58,9 +59,23 @@ namespace InforoomInternet.Test.Functional
 					Open("PrivateOffice/IndexOffice");
 				}
 			}
-			browser.TextField("Login").AppendText(client.Id.ToString());
-			browser.TextField("Password").AppendText("1234");
-			browser.Button("LogBut").Click();
+			browser.FindElementByName("Login").SendKeys(client.Id.ToString());
+			browser.FindElementByName("Password").SendKeys("1234");
+			Css("#LogBut").Click();
+		}
+
+		[Test]
+		public void Show_message()
+		{
+			session.Save(new MessageForClient {
+				Text = "test_message_for_client",
+				Client = client
+			});
+
+			Refresh();
+
+			WaitForText("test_message_for_client");
+			AssertText("test_message_for_client");
 		}
 
 		[Test]
@@ -70,7 +85,7 @@ namespace InforoomInternet.Test.Functional
 			session.Save(_switch);
 			client.Endpoints.Clear();
 			client.FirstLunch = false;
-			session.SaveOrUpdate(client);
+			session.Save(client);
 			Css("#exitLink").Click();
 			var lease = new Lease {
 				Ip = IPAddress.Parse("192.168.0.1"),
@@ -80,10 +95,12 @@ namespace InforoomInternet.Test.Functional
 			session.Save(lease);
 
 			Open("PrivateOffice/IndexOffice");
-			browser.TextField("Login").AppendText(client.Id.ToString());
-			browser.TextField("Password").AppendText("1234");
-			browser.Button("LogBut").Click();
+			browser.FindElementByName("Login").SendKeys(client.Id.ToString());
+			browser.FindElementByName("Password").SendKeys("1234");
+			Css("#LogBut").Click();
+
 			Click("Подтвердить");
+
 			client.Refresh();
 			Assert.AreEqual(client.Endpoints.Count, 1);
 			Assert.That(client.Endpoints.First().Switch, Is.EqualTo(_switch));
@@ -103,6 +120,7 @@ namespace InforoomInternet.Test.Functional
 			session.Save(physicalClient);
 
 			Refresh();
+
 			Click("Подробнее...");
 			Click("Активировать на 3 дня");
 
@@ -111,29 +129,16 @@ namespace InforoomInternet.Test.Functional
 		}
 
 		[Test]
-		public void Show_message()
-		{
-			session.Save(new MessageForClient {
-				Text = "test_message_for_client",
-				Client = client
-			});
-
-			Refresh();
-			AssertText("test_message_for_client");
-		}
-
-		[Test]
 		public void PrivateOfficeTest()
 		{
 			session.Save(physicalClient.WriteOff(500));
 			Refresh();
-
 			AssertText("Ваш личный кабинет");
 			AssertText("Номер лицевого счета для оплаты " + client.Id.ToString("00000"));
 			AssertText("500");
 		}
 
-		[Test]
+		[Test, Ignore("возможность включения/отключения интернета убрана из личного кабинета пользователя")]
 		public void Deactivate_internet()
 		{
 			var billing = new MainBilling();
@@ -155,13 +160,13 @@ namespace InforoomInternet.Test.Functional
 			Assert.That(appeals[0].Text, Is.StringContaining("Отключена услуга Internet"));
 		}
 
-		[Test]
+		[Test, Ignore("возможность включения/отключения интернета убрана из личного кабинета пользователя")]
 		public void Diactivete_and_activete_witch_null_tariff()
 		{
 			Click("Управление услугами");
 			Css("#internet_ActivatedByUser").Click();
 			Click("Сохранить");
-			browser.SelectList("client_PhysicalClient_Tariff_Id").SelectByValue(string.Empty);
+			Css("#client_PhysicalClient_Tariff_Id").SelectByValue(string.Empty);
 			Click("Сохранить");
 			Css("#internet_ActivatedByUser").Checked = true;
 			Click("Сохранить");
@@ -173,8 +178,10 @@ namespace InforoomInternet.Test.Functional
 		{
 			Click("Бонусные программы");
 			AssertText("Ваши друзья до сих пор пользуются интернетом с низкой скоростью?");
-			Assert.IsNotNull(browser.Link(Find.ByText("Оптоволоконного Интернета")));
-			Assert.IsNotNull(browser.Link(Find.ByText("оформите заявку")));
+
+			AssertText("Оптоволоконного Интернета");
+			AssertText("оформите заявку");
+
 			Click("Подключи друга");
 			AssertText("Подключи друга и получи 250 рублей на свой лицевой счёт!");
 			Click("оформите заявку");
@@ -186,15 +193,15 @@ namespace InforoomInternet.Test.Functional
 		{
 			Open("Main/zayavka");
 			AssertText("Заполнение данной заявки означает принятие участие в акции \"подключи друга\".");
-			browser.TextField("fio").AppendText("testFio");
-			browser.TextField("phone_").AppendText("8-900-900-90-90");
-			browser.TextField("City").AppendText("Воронеж");
-			browser.TextField("residence").AppendText("Студенческая");
-			browser.TextField("House").AppendText("12");
-			browser.TextField("CaseHouse").AppendText("а");
-			browser.TextField("Apartment").AppendText("1");
-			browser.TextField("Entrance").AppendText("2");
-			browser.TextField("Floor").AppendText("1");
+			browser.FindElementById("fio").SendKeys("testFio");
+			browser.FindElementById("phone_").SendKeys("8-900-900-90-90");
+			browser.FindElementById("City").SendKeys("Воронеж");
+			browser.FindElementById("residence").SendKeys("Студенческая");
+			browser.FindElementById("House").SendKeys("12");
+			browser.FindElementById("CaseHouse").SendKeys("а");
+			browser.FindElementById("Apartment").SendKeys("1");
+			browser.FindElementById("Entrance").SendKeys("2");
+			browser.FindElementById("Floor").SendKeys("1");
 			Click("Отправить");
 			AssertText("Спасибо, Ваша заявка принята. Номер заявки");
 			var requests = session.QueryOver<Request>().Where(r => r.FriendThisClient == client).List();
@@ -205,7 +212,7 @@ namespace InforoomInternet.Test.Functional
 		public void Fist_lunch_test()
 		{
 			client.FirstLunch = false;
-			session.SaveOrUpdate(client);
+			session.Save(client);
 
 			Open("PrivateOffice/IndexOffice");
 			AssertText("Это Ваше первое посещение личного кабинета, просим подтвердить свои данные");
@@ -215,14 +222,16 @@ namespace InforoomInternet.Test.Functional
 		public void First_lunch_passport_data_no_valid_test()
 		{
 			client.FirstLunch = false;
-			session.SaveOrUpdate(client);
+			session.Save(client);
 
 			Open("PrivateOffice/IndexOffice");
-			browser.TextField("PhysicalClient_PassportSeries").AppendText("abcd");
-			browser.TextField("PhysicalClient_PassportNumber").AppendText("abcd");
-			browser.TextField("PhysicalClient_Surname").Clear();
-			browser.TextField("PhysicalClient_Name").Clear();
-			browser.TextField("PhysicalClient_Patronymic").Clear();
+			Css("#PhysicalClient_PassportSeries").Clear();
+			Css("#PhysicalClient_PassportSeries").SendKeys("abcd");
+			Css("#PhysicalClient_PassportNumber").Clear();
+			Css("#PhysicalClient_PassportNumber").SendKeys("abcd");
+			Css("#PhysicalClient_Surname").Clear();
+			Css("#PhysicalClient_Name").Clear();
+			Css("#PhysicalClient_Patronymic").Clear();
 			Click("Подтвердить");
 			AssertText("Введите фамилию");
 			AssertText("Введите имя");
@@ -235,20 +244,69 @@ namespace InforoomInternet.Test.Functional
 		public void First_lunch_passport_data_valid_test()
 		{
 			client.FirstLunch = false;
-			session.SaveOrUpdate(client);
+			session.Save(client);
 
 			Open("PrivateOffice/IndexOffice");
-			browser.TextField("PhysicalClient_PassportSeries").Value = "1234";
-			browser.TextField("PhysicalClient_PassportNumber").Value = "123456";
-			browser.TextField("PhysicalClient_Surname").AppendText("testovoi");
-			browser.TextField("PhysicalClient_Name").AppendText("test");
-			browser.TextField("PhysicalClient_Patronymic").AppendText("testovich");
+
+			Css("#PhysicalClient_PassportSeries").Clear();
+			Css("#PhysicalClient_PassportSeries").SendKeys("1234");
+			Css("#PhysicalClient_PassportNumber").Clear();
+			Css("#PhysicalClient_PassportNumber").SendKeys("123456");
+
+			Css("#PhysicalClient_Surname").Clear();
+			Css("#PhysicalClient_Surname").SendKeys("testovoi");
+
+			Css("#PhysicalClient_Name").Clear();
+			Css("#PhysicalClient_Name").SendKeys("test");
+
+			Css("#PhysicalClient_Patronymic").Clear();
+			Css("#PhysicalClient_Patronymic").SendKeys("testovich");
+
 			Click("Подтвердить");
 			AssertText("Спасибо, теперь вы можете продолжить работу");
 
 			session.Refresh(client);
 			Assert.IsTrue(client.AutoUnblocked);
 			Assert.IsTrue(client.FirstLunch);
+		}
+
+		[Test, Ignore("Нужны тарифы-регионы")]
+		public void Tariffs_are_not_bound_to_region_valid_test()
+		{
+			Open("PrivateOffice/IndexOffice");
+			var region = new RegionHouse("TEST-REGION");
+			session.Save(region);
+			physicalClient.HouseObj = new House("st. testing", 2, region);
+
+			Open("PrivateOffice/Services");
+			session.Delete(region);
+
+			var select = browser.FindElementByName("client.PhysicalClient.Tariff.Id");
+			Assert.That(select.FindElements(By.XPath("//option")).Count, Is.EqualTo(1));
+		}
+
+		[Test, Ignore("Нужны тарифы-регионы")]
+		public void Tariffs_are_bound_to_region_valid_test()
+		{
+			/*Open("PrivateOffice/IndexOffice");
+			var region = new RegionHouse("TEST-REGION");
+			var tariffs = new Tariff[3];
+			for (var i = 0; i < 3; i++) {
+				tariffs[i] = new Tariff("tariff" + i, 100);
+				tariffs[i].CanUseForSelfConfigure = true;
+
+				session.Save(tariffs[i]);
+				region.Tariffs.Add(tariffs[i]);
+			}
+			session.Save(region);
+			physicalClient.HouseObj = new House("st. testing", 2, region);
+			Open("PrivateOffice/Services");
+			session.Delete(region);
+			foreach (Tariff t in tariffs) {
+				session.Delete(t);
+			}
+			var select = browser.FindElementByName("client.PhysicalClient.Tariff.Id");
+			Assert.That(select.FindElements(By.XPath("//option")).Count, Is.EqualTo(tariffs.Length + 1));*/
 		}
 	}
 }

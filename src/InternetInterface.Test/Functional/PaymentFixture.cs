@@ -9,7 +9,7 @@ using WatiN.Core.Native.Windows;
 
 namespace InternetInterface.Test.Functional
 {
-	[TestFixture]
+	[TestFixture, Ignore("Тесты перенесены в Selenium")]
 	public class PaymentFixture : global::Test.Support.Web.WatinFixture2
 	{
 		private Client client;

@@ -4,13 +4,12 @@ using System.Linq;
 using System.Text;
 using InternetInterface.Models;
 using NUnit.Framework;
-using Test.Support.Web;
-using WatiN.Core;
+using Test.Support.Selenium;
 
-namespace InternetInterface.Test.Functional
+namespace InternetInterface.Test.Functional.Selenium
 {
-	[TestFixture, Ignore("Тесты перенесены в Selenium")]
-	public class PartnerFixture : WatinFixture2
+	[TestFixture]
+	public class PartnerFixture : SeleniumFixture
 	{
 		[SetUp]
 		public void SetUp()
@@ -25,7 +24,7 @@ namespace InternetInterface.Test.Functional
 			Click("Добавить закладку");
 			Click("Сохранить");
 			AssertText("Введите текст закладки");
-			browser.TextField("bookmark_Text").AppendText("текст тестовой закладки");
+			browser.FindElementById("bookmark_Text").SendKeys("текст тестовой закладки");
 			Click("Сохранить");
 			AssertText("Сохранено");
 			Open("Map/SiteMap");
@@ -39,11 +38,11 @@ namespace InternetInterface.Test.Functional
 				Date = DateTime.Now.AddDays(5),
 				Text = "Тест удаленой закладки"
 			};
-			session.SaveOrUpdate(bookmark);
-			Flush();
+			session.Save(bookmark);
+
 			Click("Закладки");
-			browser.TextField(Find.ByName("Period.Begin")).AppendText(DateTime.Now.AddDays(4).ToShortDateString());
-			browser.TextField(Find.ByName("Period.End")).AppendText(DateTime.Now.AddDays(6).ToShortDateString());
+			browser.FindElementByName("Period.Begin").SendKeys(DateTime.Now.AddDays(4).ToShortDateString());
+			browser.FindElementByName("Period.End").SendKeys(DateTime.Now.AddDays(6).ToShortDateString());
 			Click("Показать");
 			Click("Удалить");
 			AssertText("Удалено");

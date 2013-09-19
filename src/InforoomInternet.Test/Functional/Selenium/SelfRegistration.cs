@@ -1,15 +1,13 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using Common.Tools;
-using InternetInterface.Helpers;
 using InternetInterface.Models;
 using NUnit.Framework;
 
-namespace InforoomInternet.Test.Functional
+namespace InforoomInternet.Test.Functional.Selenium
 {
-	[TestFixture, Ignore("Тесты перенесены в Selenium")]
-	public class SelfRegistration : BaseFunctionalFixture
+	[TestFixture]
+	class SelfRegistration : BaseFunctionalFixture
 	{
 		[Test]
 		public void Self_registration()
@@ -31,12 +29,12 @@ namespace InforoomInternet.Test.Functional
 
 			Open("Main/Warning?host=ya.ru&url=/");
 			AssertText("Номер лицевого счета");
-			Css("#physicalClient_ExternalClientId").TypeText(Generator.Random().First().ToString());
-			Css("#physicalClient_Surname").TypeText("Иванов");
-			Css("#physicalClient_Name").TypeText("Иван");
-			Css("#physicalClient_Patronymic").TypeText("Иванович");
-			Css("#physicalClient_PhoneNumber").TypeText("473-2606000");
-			Css("#physicalClient_Tariff_Id").Select("Тестовый тариф для самостоятельной регистрации - 100руб");
+			Css("#physicalClient_ExternalClientId").SendKeys(Generator.Random().First().ToString());
+			Css("#physicalClient_Surname").SendKeys("Иванов");
+			Css("#physicalClient_Name").SendKeys("Иван");
+			Css("#physicalClient_Patronymic").SendKeys("Иванович");
+			Css("#physicalClient_PhoneNumber").SendKeys("473-2606000");
+			Css("#physicalClient_Tariff_Id").SelectByValue(tariff.Id.ToString());
 			Click("Продолжить");
 			AssertText("Пароль");
 			Click("Продолжить");

@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NUnit.Framework;
-using Test.Support.Web;
+﻿using NUnit.Framework;
+using Test.Support.Selenium;
 
-namespace InternetInterface.Test.Functional
+namespace InternetInterface.Test.Functional.Selenium
 {
-	[TestFixture, Ignore("Тесты перенесены в Selenium")]
-	public class OnLineClients : WatinFixture2
+	[TestFixture]
+	public class OnLineClients : SeleniumFixture
 	{
 		[SetUp]
 		public void SetUp()

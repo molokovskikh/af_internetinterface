@@ -13,6 +13,7 @@ using WatiN.Core.Native.Windows;
 
 namespace InternetInterface.Test.Functional
 {
+	[TestFixture, Ignore("Тесты перенесены в Selenium")]
 	public class LawyerPersonFixture : WatinFixture2
 	{
 		private Client client;

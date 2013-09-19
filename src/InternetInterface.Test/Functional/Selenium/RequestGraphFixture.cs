@@ -1,15 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NHibernate.Linq;
 using NUnit.Framework;
-using WatinFixture2 = Test.Support.Web.WatinFixture2;
+using Test.Support.Selenium;
 
-namespace InternetInterface.Test.Functional
+namespace InternetInterface.Test.Functional.Selenium
 {
-	[TestFixture, Ignore("Тесты перенесены в Selenium")]
-	public class RequestGraphFixture : WatinFixture2
+	[TestFixture]
+	class RequestGraphFixture : SeleniumFixture
 	{
 		[Test]
 		public void View_client_in_request_graph()
