@@ -17,8 +17,6 @@ ${app.Asset("jquery-ui-1.8.16.custom.css")}
 
 <%if loadInternetModules: %>
 <script type="text/javascript" src="http://userapi.com/js/api/openapi.js?45"></script>
-<script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>
-
 <script type="text/javascript">
 	window.___gcfg = { lang: 'ru' };
 
@@ -36,10 +34,6 @@ ${app.Asset("jquery-ui-1.8.16.custom.css")}
 </head>
 
 <body>
-<%if loadInternetModules: %>
-${app.Asset("YandexMetric.js")}
-<noscript><div><img src="//mc.yandex.ru/watch/20220604" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<%end %>
 <div id="wrapper">
 	<div class="left">
 		<a href="${siteroot}/" id="logo">&nbsp;</a>
