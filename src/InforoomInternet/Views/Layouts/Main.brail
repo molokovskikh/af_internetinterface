@@ -16,19 +16,8 @@
 ${app.Asset("jquery-ui-1.8.16.custom.css")}
 
 <%if loadInternetModules: %>
-<script type="text/javascript" src="http://userapi.com/js/api/openapi.js?45"></script>
 <script type="text/javascript">
 	window.___gcfg = { lang: 'ru' };
-
-	(function () {
-		var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-		po.src = 'https://apis.google.com/js/plusone.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-	})();
-
-	VK.init({ apiId: 2702610, onlyWidgets: true });
-
-	VK.Widgets.Like("vk_like", { type: "button", verb: 1 });
 </script>
 <%end %>
 </head>

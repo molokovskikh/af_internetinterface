@@ -18,7 +18,3 @@
 		</table>
 	</p>
 </div>
-<%if loadInternetModules: %>
-<div style="display:inline;" id="vk_like"></div>
-<g:plusone></g:plusone>
-<%end %>
