@@ -44,20 +44,6 @@ namespace InternetInterface.Test.Functional
 		}
 
 		[Test]
-		public void ServiceRequestClickable()
-		{
-			var service = new ServiceRequest {
-				Client = client,
-				Description = "TEST"
-			};
-			session.Save(service);
-			Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", client.Id));
-
-			ClickLink(String.Format("Перейти к заявке"));
-			Assert.That(browser.Url.Contains(String.Format("/ShowRequest?id={0}", service.Id)));
-		}
-
-		[Test]
 		public void ViewRequests()
 		{
 			var request = new ServiceRequest {
