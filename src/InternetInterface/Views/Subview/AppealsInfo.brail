@@ -25,6 +25,8 @@
 	</tr>
 	</tbody>
 </table>
+
+
 <%if Appeals.Count > 0: %>
 <table class="table" style="background-color:#FFFFFF">
 <thead>
@@ -35,14 +37,22 @@
 <tbody>
 	<% for i,item in enumerate(Appeals): %>
 		<tr style="background-color:${item.Color};">
-			<td>${item.Text}</td>
+			<%if item.Type.ToString() == 'Service': %>
+			<td>
+				${app.LinkTo("Перейти к заявке", @ServiceRequest, @ShowRequest, {@id: item.Id})} ${item.Text}
+			</td>
+			<%else: %>
+				<td>${item.Text}</td>
+			<%end %>
 			<td>${item.Date}</td>
 			<td>${item.Partner}</td>
 		</tr>
 		<%if item.SubFields != null: %>
 			<% for j,subItem in enumerate(item.SubFields): %>
 				<tr style="background-color:#C8E8CB;">
-					<td style="padding-left:40px;">${subItem.Text}</td>
+					<td style="padding-left:40px;">
+						${app.LinkTo("Перейти к заявке", @ServiceRequest, @ShowRequest, {@id: item.Id})} ${subItem.Text}
+					</td>
 					<td>${subItem.Date}</td>
 					<td>${subItem.Partner}</td>
 				</tr>

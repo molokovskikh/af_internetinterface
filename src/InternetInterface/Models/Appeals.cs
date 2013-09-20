@@ -31,6 +31,7 @@ namespace InternetInterface.Models
 
 	public class UniversalAppeal
 	{
+		public uint Id;
 		public string Text;
 		public DateTime Date;
 		public string Partner;
@@ -113,12 +114,14 @@ namespace InternetInterface.Models
 			if (Type == AppealType.All) {
 				var serviceRequests = session.Query<ServiceRequest>().Where(s => s.Client == client);
 				var service = serviceRequests.ToList().Select(s => new UniversalAppeal {
+					Id = s.Id,
 					Date = s.RegDate,
 					Partner = s.Registrator != null ? s.Registrator.Name : string.Empty,
 					Text = String.Format("Сервисная заявка №{0} ", s.Id) + s.GetDescription(),
 					Type = UniversalAppealType.Service,
 					SubFields = s.Iterations.Count > 0 ?
 						new List<UniversalAppeal>(s.Iterations.Select(i => new UniversalAppeal {
+							Id = s.Id,
 							Date = i.RegDate,
 							Partner = i.Performer != null ? i.Performer.Name : string.Empty,
 							Text = i.GetDescription(),
