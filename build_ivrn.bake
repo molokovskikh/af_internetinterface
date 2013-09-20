@@ -4,7 +4,8 @@ import file from Deploy.bake
 Global(
 	HumanReadableName : "Сайт интернет провайдера",
 	Project : @InforoomInternet,
-	DeployAlias : @IVrn
+	DeployAlias : @IVrn,
+	JenkinsProject: @InternetInterface
 )
 
 task @default, [@Build]
