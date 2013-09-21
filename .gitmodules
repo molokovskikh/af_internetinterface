@@ -1,15 +1,15 @@
 [submodule "lib/MonoRail.Debugger.Toolbar"]
 	path = lib/MonoRail.Debugger.Toolbar
-	url = ssh://git.analit.net/var/www/git/MonoRail.Debugger.Toolbar
+	url = git@git.analit.net:root/monorail-debugger-toolbar
 [submodule "src/Common.Tools"]
 	path = src/Common.Tools
-	url = ssh://git.analit.net/var/www/git/Common.Tools
+	url = git@git.analit.net:root/common-tools
 [submodule "src/Common.MySql"]
 	path = src/Common.MySql
-	url = ssh://git.analit.net/var/www/git/Common.MySql
+	url = git@git.analit.net:root/common-mysql
 [submodule "src/Test.Support"]
 	path = src/Test.Support
-	url = ssh://git.analit.net/var/www/git/Test.Support
+	url = git@git.analit.net:root/test-support
 [submodule "src/Common.Web.UI"]
 	path = src/Common.Web.UI
-	url = ssh://git.analit.net/var/www/git/Common.Web.UI
+	url = git@git.analit.net:root/common-web-ui
