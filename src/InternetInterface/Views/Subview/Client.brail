@@ -83,7 +83,7 @@ $(function () {
 	<td>
 		Дата рождения</td>
 	<td >
-		<input id="DateOfBirth" type="text" value="${client.DateOfBirth.ToShortDateString()}" name="client.DateOfBirth"/></td>
+		<input id="DateOfBirth" type="text" value="${?client.DateOfBirth.ToShortDateString()}" name="client.DateOfBirth"/></td>
 	<td>
 		${VB.GetBlock("DateOfBirth")}
 	</td>

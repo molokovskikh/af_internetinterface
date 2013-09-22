@@ -149,7 +149,7 @@ namespace InternetInterface.Models
 		public virtual House HouseObj { get; set; }
 
 		[Property]
-		public virtual DateTime DateOfBirth { get; set; }
+		public virtual DateTime? DateOfBirth { get; set; }
 
 		[Property, ValidateNonEmpty("Введите сумму"), ValidateDecimal("Неправильно введено значение суммы")]
 		public virtual decimal ConnectSum { get; set; }
