@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using InternetInterface.Models;
 using NHibernate.Linq;
 using NUnit.Framework;
-using Test.Support.Web;
-using WatiN.Core;
-using WatiN.Core.Native.Windows;
+using Test.Support.Selenium;
 
-namespace InternetInterface.Test.Functional
+namespace InternetInterface.Test.Functional.Selenium
 {
-	[TestFixture, Ignore("Тесты перенесены в Selenium")]
-	public class RegisterLawyerFixture : WatinFixture2
+	[TestFixture]
+	class RegisterLawyerFixture : SeleniumFixture
 	{
 		[Test(Description = "Проверяет создание юр. лица с заказом и точкой подключения"), Ignore("Отключен функционал")]
 		public void RegisterLegalPersonTest()
@@ -21,16 +17,22 @@ namespace InternetInterface.Test.Functional
 			session.Save(commutator);
 			Open("Register/RegisterLegalPerson.rails");
 			var name = "Тестовый клиент" + DateTime.Now;
-			browser.TextField("LegalPerson_Name").AppendText(name);
-			browser.TextField("LegalPerson_ShortName").AppendText(name);
-			browser.TextField(Find.ByName("order.Number")).TypeText("99");
+			browser.FindElementByName("LegalPerson_Name").Clear();
+			browser.FindElementByName("LegalPerson_Name").SendKeys(name);
+			browser.FindElementByName("LegalPerson_ShortName").Clear();
+			browser.FindElementByName("LegalPerson_ShortName").SendKeys(name);
+			browser.FindElementByName("order.Number").Clear();
+			browser.FindElementByName("order.Number").SendKeys("99");
 			Click("Добавить");
-			browser.TextField(Find.ByName("order.OrderServices[1].Description")).AppendText("Тестовый заказ");
-			browser.TextField(Find.ByName("order.OrderServices[1].Cost")).AppendText("1000");
-			browser.CheckBox(Find.ByName("order.OrderServices[1].IsPeriodic")).Checked = true;
-			browser.SelectList("SelectSwitches").SelectByValue(commutator.Id.ToString());
-			browser.TextField("Port").AppendText("1");
-			browser.Button("RegisterLegalButton").Click();
+			browser.FindElementByName("order.OrderServices[1].Description").SendKeys("Тестовый заказ");
+			browser.FindElementByName("order.OrderServices[1].Cost").SendKeys("1000");
+
+			var checkbox = browser.FindElementByName("order.OrderServices[1].IsPeriodic");
+			if(!checkbox.Selected)
+				checkbox.Click();
+			Css("#SelectSwitches").SelectByValue(commutator.Id.ToString());
+			browser.FindElementByName("Port").SendKeys("1");
+			Css("#RegisterLegalButton").Click();
 			AssertText("Информация по клиенту " + name);
 			var legalPerson = session.Query<LawyerPerson>().FirstOrDefault(l => l.Name == name);
 			Assert.That(legalPerson, Is.Not.Null);
@@ -46,9 +48,9 @@ namespace InternetInterface.Test.Functional
 		{
 			Open("Register/RegisterLegalPerson.rails");
 			var name = "Тестовый клиент" + DateTime.Now;
-			browser.TextField("LegalPerson_Name").AppendText(name);
-			browser.TextField("LegalPerson_ShortName").AppendText(name);
-			browser.Button("RegisterLegalButton").Click();
+			browser.FindElementById("LegalPerson_Name").SendKeys(name);
+			browser.FindElementById("LegalPerson_ShortName").SendKeys(name);
+			Css("#RegisterLegalButton").Click();
 			AssertText("Информация по клиенту " + name);
 		}
 
@@ -57,10 +59,10 @@ namespace InternetInterface.Test.Functional
 		{
 			Open("Register/RegisterLegalPerson.rails");
 			var name = "Тестовый клиент" + DateTime.Now;
-			browser.TextField("LegalPerson_Name").AppendText(name);
-			browser.TextField("LegalPerson_ShortName").AppendText(name);
-			browser.TextField("order_BeginDate").Value = "";
-			browser.Button("RegisterLegalButton").Click();
+			browser.FindElementById("LegalPerson_Name").SendKeys(name);
+			browser.FindElementById("LegalPerson_ShortName").SendKeys(name);
+			browser.FindElementById("order_BeginDate").Clear();
+			Css("#RegisterLegalButton").Click();
 			AssertText("Это поле необходимо заполнить");
 		}
 	}

@@ -1,10 +1,11 @@
 ﻿using InternetInterface.Test.Helpers;
 using NUnit.Framework;
+using Test.Support.Selenium;
 
-namespace InternetInterface.Test.Functional
+namespace InternetInterface.Test.Functional.Selenium
 {
-	[TestFixture, Ignore("Тесты перенесены в Selenium")]
-	public class PrivateMessageFixture : global::Test.Support.Web.WatinFixture2
+	[TestFixture]
+	public class PrivateMessageFixture : SeleniumFixture
 	{
 		[Test]
 		public void Create_private_message()
@@ -13,7 +14,7 @@ namespace InternetInterface.Test.Functional
 			session.Save(client);
 			Open("/PrivateMessages/ForClient?clientId={0}", client.Id);
 			AssertText("Объявление для");
-			Css("textarea[name=\"PrivateMessage.Text\"]").Value = "Тестовое сообщение";
+			Css("textarea[name=\"PrivateMessage.Text\"]").SendKeys("Тестовое сообщение");
 			Click("Сохранить");
 			AssertText("Сохранено");
 		}

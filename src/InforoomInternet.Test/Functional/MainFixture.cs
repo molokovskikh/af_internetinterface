@@ -4,6 +4,7 @@ using WatiN.Core.Native.Windows;
 
 namespace InforoomInternet.Test.Functional
 {
+	[TestFixture, Ignore("Тесты перенесены в Selenium")]
 	public class MainFixture : WatinFixture2
 	{
 		[Test]

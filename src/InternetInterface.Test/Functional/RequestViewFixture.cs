@@ -10,7 +10,7 @@ using WatiN.Core;
 
 namespace InternetInterface.Test.Functional
 {
-	[TestFixture, Ignore("Чинить")]
+	[TestFixture, Ignore("Странный тест - что он проверяет?")]
 	internal class RequestViewFixture : global::Test.Support.Web.WatinFixture2
 	{
 		[Test]

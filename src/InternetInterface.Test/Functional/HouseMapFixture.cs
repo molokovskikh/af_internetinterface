@@ -17,7 +17,7 @@ using UseDialogOnce = InternetInterface.Test.Helpers.UseDialogOnce;
 
 namespace InternetInterface.Test.Functional
 {
-	[TestFixture]
+	[TestFixture, Ignore("Тесты перенесены в Selenium")]
 	internal class HouseMapFixture : WatinFixture2
 	{
 		private RegionHouse _region;

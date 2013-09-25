@@ -3,11 +3,12 @@ using System.Linq;
 using InternetInterface.Models;
 using NHibernate.Linq;
 using NUnit.Framework;
+using Test.Support.Selenium;
 
-namespace InternetInterface.Test.Functional
+namespace InternetInterface.Test.Functional.Selenium
 {
-	[TestFixture, Ignore("Тесты перенесены в Selenium")]
-	public class CommutatorFixture : global::Test.Support.Web.WatinFixture2
+	[TestFixture]
+	public class CommutatorFixture : SeleniumFixture
 	{
 		[Test, Ignore("Не работает на сервере")]
 		public void Delete_commutator()

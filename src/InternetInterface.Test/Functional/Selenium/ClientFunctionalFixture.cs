@@ -1,20 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Castle.ActiveRecord;
-using Common.Web.Ui.ActiveRecordExtentions;
-using InternetInterface.Models;
+﻿using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
+using InternetInterface.Models;
 using NUnit.Framework;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-using Test.Support.Web;
+using Test.Support.Selenium;
 
-namespace InternetInterface.Test.Functional
+namespace InternetInterface.Test.Functional.Selenium
 {
-	[TestFixture, Ignore("Тесты перенесены в Selenium")]
-	public class ClientFunctionalFixture : WatinFixture2
+	[TestFixture]
+	public class ClientFunctionalFixture : SeleniumFixture
 	{
 		public string ClientUrl;
 		public PhysicalClient PhysicalClient;
@@ -26,7 +19,6 @@ namespace InternetInterface.Test.Functional
 		{
 			Client = ClientHelper.Client();
 			PhysicalClient = Client.PhysicalClient;
-
 			session.Save(Client);
 			EndPoint = new ClientEndpoint {
 				Client = Client,

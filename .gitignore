@@ -1,4 +1,5 @@
 packages/
+bower_components/
 build/
 bin
 output

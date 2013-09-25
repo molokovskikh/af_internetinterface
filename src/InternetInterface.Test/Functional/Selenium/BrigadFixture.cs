@@ -2,27 +2,27 @@
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
-using WatiN.Core;
+using Test.Support.Selenium;
 
-namespace InternetInterface.Test.Functional
+namespace InternetInterface.Test.Functional.Selenium
 {
-	[TestFixture, Ignore("Тесты перенесены в Selenium")]
-	public class BrigadFixture : global::Test.Support.Web.WatinFixture2
+	[TestFixture]
+	public class BrigadFixture : SeleniumFixture
 	{
-		[Test, Ignore]
+		[Test, Ignore("Был в игноре в watin")]
 		public void BrigadTest()
 		{
 			Open("Brigads/ShowBrigad.rails");
-			Assert.That(browser.Text, Is.StringContaining("ID"));
-			Assert.That(browser.Text, Is.StringContaining("Имя"));
-			browser.Button(Find.ById("RegisterBrigad")).Click();
-			Thread.Sleep(2000);
-			browser.TextField(Find.ById("Name")).AppendText("TestBrigad");
-			browser.Button(Find.ById("RegisterBrigadButton")).Click();
-			Thread.Sleep(2000);
+			AssertText("ID");
+			AssertText("Имя");
+			Css("#RegisterBrigad").Click();
+			WaitForCss("#Name");
+			Css("#Name").SendKeys("TestBrigad");
+			Css("#RegisterBrigadButton").Click();
 			foreach (var brigad in Brigad.FindAllByProperty("Name", "TestBrigad")) {
-				brigad.DeleteAndFlush();
+				session.Delete(brigad);
 			}
+			session.Flush();
 		}
 
 		[Test]

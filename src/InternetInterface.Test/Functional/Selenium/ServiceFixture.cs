@@ -7,12 +7,11 @@ using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NHibernate.Linq;
 using NUnit.Framework;
-using WatiN.Core.Native.Windows;
+using Test.Support.Selenium;
 
-namespace InternetInterface.Test.Functional
+namespace InternetInterface.Test.Functional.Selenium
 {
-	[TestFixture, Ignore("Тесты перенесены в Selenium")]
-	public class ServiceFixture : global::Test.Support.Web.WatinFixture2
+	class ServiceFixture : SeleniumFixture
 	{
 		private Client client;
 
@@ -20,7 +19,7 @@ namespace InternetInterface.Test.Functional
 		public void Setup()
 		{
 			client = ClientHelper.Client();
-			Save(client);
+			session.Save(client);
 		}
 
 		[Test]
@@ -29,14 +28,12 @@ namespace InternetInterface.Test.Functional
 			Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", client.Id));
 			Click("Сервисная заявка");
 
-			Css("textarea[name=\"request.Description\"]").Value = "test";
-			Css("input[name=\"request.Contact\"]").Value = "900-9090900";
-			Css("input[name=\"request.PerformanceDate\"]").Value = "21.05.2012";
-			Css("input[name=\"request.PerformanceTime\"]").Value = "10:00";
-			File.WriteAllText("before_save.html", browser.Html);
+			Css("textarea[name=\"request.Description\"]").SendKeys("test");
+			Css("input[name=\"request.Contact\"]").SendKeys("900-9090900");
+			Css("input[name=\"request.PerformanceDate\"]").SendKeys("21.05.2012");
+			Css("input[name=\"request.PerformanceTime\"]").SendKeys("10:00");
 			Click("Сохранить");
-			File.WriteAllText("before_Assert.html", browser.Html);
-			Assert.That(browser.Text, Is.StringContaining("Информация по клиенту"));
+			AssertText("Информация по клиенту");
 
 			var request = session.Query<ServiceRequest>().Where(r => r.Client == client).ToArray().Last();
 			Assert.That(request.PerformanceDate.ToString(), Is.EqualTo("21.05.2012 10:00:00"));
@@ -53,8 +50,8 @@ namespace InternetInterface.Test.Functional
 			session.Save(request);
 
 			Open("ServiceRequest/ViewRequests");
-			Assert.That(browser.Text, Is.StringContaining("Фильтр"));
-			Assert.That(browser.Text, Is.StringContaining("900-9090900"));
+			AssertText("Фильтр");
+			AssertText("900-9090900");
 		}
 
 		[Test]
@@ -65,17 +62,16 @@ namespace InternetInterface.Test.Functional
 				Client = client
 			};
 			session.Save(request);
-			Flush();
 			Open("ServiceRequest/ViewRequests");
 
-			browser.TextField("filter_Text").AppendText("test_text");
+			browser.FindElementById("filter_Text").SendKeys("test_text");
 			Click("Применить");
 			AssertText("По вашему запросу ничего не найдено, либо вы не ввели информацию для поиска");
-			browser.TextField("filter_Text").Clear();
-			browser.TextField("filter_Text").AppendText(client.Id.ToString());
+			browser.FindElementById("filter_Text").Clear();
+			browser.FindElementById("filter_Text").SendKeys(client.Id.ToString());
 			Click("Применить");
-			Assert.That(browser.Text, Is.StringContaining("Фильтр"));
-			Assert.That(browser.Text, Is.StringContaining("900-9090900"));
+			AssertText("Фильтр");
+			AssertText("900-9090900");
 		}
 	}
 }

@@ -14,7 +14,7 @@ using UseDialogOnce = InternetInterface.Test.Helpers.UseDialogOnce;
 
 namespace InternetInterface.Test.Functional
 {
-	[TestFixture]
+	[TestFixture, Ignore("Работающие тесты перенесены в Selenium, изначально заигноренные остались тут")]
 	public class UserInfoFixture : ClientFunctionalFixture
 	{
 		[Test]

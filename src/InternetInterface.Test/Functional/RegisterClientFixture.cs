@@ -13,7 +13,7 @@ using WatiN.Core.Native.Windows;
 
 namespace InternetInterface.Test.Functional
 {
-	[TestFixture]
+	[TestFixture, Ignore("Тесты перенесены в Selenium")]
 	public class RegisterClientFixture : global::Test.Support.Web.WatinFixture2
 	{
 		[Test]
