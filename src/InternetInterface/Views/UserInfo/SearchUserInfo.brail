@@ -101,7 +101,7 @@
 		</tr>
 		<% if PartnerAccessSet.AccesPartner("SSI"): %>
 		<tr>
-			<td><span class="description">Дата рождения: </span> ${Client.DateOfBirth.ToShortDateString()}</td>
+			<td><span class="description">Дата рождения: </span> ${?Client.DateOfBirth.ToShortDateString()}</td>
 		</tr>
 		<tr>
 			<td><span class="description">Город: </span> ${Client.City}</td>

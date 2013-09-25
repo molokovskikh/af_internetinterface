@@ -24,11 +24,6 @@
 	}
 </script>
 
-${app.Asset("calendar-blue.css")}
-${app.Asset("calendar.setup.js")}
-${app.Asset("calendar.js")}
-${app.Asset("calendar-ru_win_.js")}
-${app.Asset("calendar-setup.js")}
 <%if PartnerAccessSet.AccesPartner("DHCP"): %>
 	<table id="editConnectTable" class="table" style="width: 100%;">
 		<thead>
@@ -50,7 +45,7 @@ ${app.Asset("calendar-setup.js")}
 					Дата начала
 				</td>
 				<td colspan="2">
-					<input type="text" id="order_BeginDate" name="order.BeginDate" value="${OrderInfo.Order.BeginDate}" class="required validate-date input-date valid">
+					<input type="text" id="order_BeginDate" name="order.BeginDate" value="${OrderInfo.Order.BeginDate}" class="required input-date date_field valid">
 						<input type="button" class="CalendarInput" id="CalendarInput0">
 						</td>
 			</tr>
@@ -59,7 +54,7 @@ ${app.Asset("calendar-setup.js")}
 					Дата окончания
 				</td>
 				<td colspan="2">
-					<input type="text" id="order_EndDate" name="order.EndDate" value="${OrderInfo.Order.EndDate}" class="validate-date input-date valid">
+					<input type="text" id="order_EndDate" name="order.EndDate" value="${OrderInfo.Order.EndDate}" class="required input-date date_field valid">
 						<input type="button" class="CalendarInput" id="CalendarInput1">
 						</td>
 			</tr>
