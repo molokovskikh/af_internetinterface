@@ -40,6 +40,20 @@ namespace InternetInterface.Test.Functional.Selenium
 			Assert.That(request.PerformanceTime.ToString(), Is.EqualTo("10:00:00"));
 		}
 
+		[Test, Description("Проверка работоспособности ссылки - сервисной заявки")]
+		public void ServiceRequestLinkCheck()
+		{
+			var service = new ServiceRequest {
+				Client = client
+			};
+			session.Save(service);
+			Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", client.Id));
+
+			ClickLink(service.Id.ToString());
+
+			Assert.That(browser.Url.Contains(service.Id.ToString()), Is.True);
+		}
+
 		[Test]
 		public void ViewRequests()
 		{

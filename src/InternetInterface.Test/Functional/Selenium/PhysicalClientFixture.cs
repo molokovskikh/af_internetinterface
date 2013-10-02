@@ -49,7 +49,6 @@ namespace InternetInterface.Test.Functional.Selenium
 			Click("Аренда приставки");
 			var el = browser.FindElementByCssSelector("input[value='9']");
 			el.FindElement(By.XPath("..")).Submit();
-			//((Form)el.Parent).Submit();
 			AssertText("Услуга \"Аренда приставки\" активирована");
 			Click("Управление услугами");
 			Click("Аренда приставки");
