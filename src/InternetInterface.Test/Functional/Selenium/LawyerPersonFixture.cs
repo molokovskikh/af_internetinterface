@@ -5,6 +5,7 @@ using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NHibernate.Linq;
 using NUnit.Framework;
+using OpenQA.Selenium;
 
 namespace InternetInterface.Test.Functional.Selenium
 {
@@ -189,6 +190,54 @@ namespace InternetInterface.Test.Functional.Selenium
 			Click("Архив заказов");
 			AssertText("заказ № 666");
 			AssertText("заказ № 777");
+		}
+
+		[Test(Description = "Проверяет закрытие заказа"), Ignore("Non Clicable - наверное проблемы с версткой")]
+		public void CloseOrderTest()
+		{
+			var order = new Order {
+				Client = laywerPerson,
+				EndDate = SystemTime.Now().AddDays(7)
+			};
+			session.Save(order);
+			Open(laywerPerson.Redirect());
+			AssertText("заказ № " + order.Number);
+			browser.Manage().Window.Maximize();
+			Css("#closeOrderButton" + order.Id).Click();
+			//WaitForText("Вы уверены");
+			Click("Закрыть");
+			session.Clear();
+			var savedOrder = session.QueryOver<Order>().Where(o => o.Client == laywerPerson).SingleOrDefault();
+			Assert.That(savedOrder.Disabled, Is.True);
+		}
+
+		[Test(Description = "Проверяет корректное удаление услуги")]
+		public void DeleteOrderServiceTest()
+		{
+			var order = new Order {
+				Client = laywerPerson,
+				BeginDate = SystemTime.Now().AddDays(1),
+				EndDate = SystemTime.Now().AddDays(7)
+			};
+			session.Save(order);
+			for(int i = 1; i < 4; i++) {
+				var orderService = new OrderService {
+					Order = order,
+					Description = "Услуга" + i,
+					Cost = i
+				};
+				session.Save(orderService);
+			}
+			Open(laywerPerson.Redirect());
+			AssertText("заказ № " + order.Number);
+			AssertText("<Подключенные услуги(3)");
+			Css("#EditButton" + order.Id).Click();
+			browser.Manage().Window.Maximize();
+			ClickLink("Удалить");
+			Click("Сохранить");
+			session.Clear();
+			var savedOrder = session.QueryOver<Order>().Where(o => o.Client == laywerPerson).SingleOrDefault();
+			Assert.That(savedOrder.OrderServices.Count, Is.EqualTo(2));
 		}
 	}
 }
