@@ -7,7 +7,7 @@ using WatiN.Core;
 
 namespace InternetInterface.Test.Functional
 {
-	[TestFixture, Ignore("Тесты перенесены в Selenium")]
+	[TestFixture, Ignore("Тест не работает - чинить!")]
 	internal class RegisterPartnerFixrure : global::Test.Support.Web.WatinFixture2
 	{
 		[Test]
