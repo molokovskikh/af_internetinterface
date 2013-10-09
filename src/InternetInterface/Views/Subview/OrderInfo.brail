@@ -42,10 +42,9 @@
 		</th>
 		<th class="closeOrder">
 			<% if OrderInfo.Order.OrderStatus != 2:%>
-			<a href="#" class="big-link" data-reveal-id="closeOrderDialog">
-				<input type="hidden" value="${OrderInfo.Order.Id}" class="closeOrderControl"/>
-				<button class="button closeOrderControl save" id="closeOrderButton${OrderInfo.Order.Id}">Закрыть</button>
-			</a>
+			<button data-reveal-id="closeOrderDialog" class="button closeOrderControl save big-link" id="closeOrderButton${OrderInfo.Order.Id}">Закрыть</button>
+			<input type="hidden" value="${OrderInfo.Order.Id}" class="closeOrderControl"/>
+
 				<% else: %>
 					<% if OrderInfo.Order.EndPoint != null:%>
 			<a href="#" class="big-link" data-reveal-id="deletePointDialog" >
