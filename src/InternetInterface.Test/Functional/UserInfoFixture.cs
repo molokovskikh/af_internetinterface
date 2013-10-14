@@ -1,16 +1,9 @@
 ﻿using System;
-using System.Linq;
-using System.Threading;
-using Castle.ActiveRecord;
 using InternetInterface.Models;
-using InternetInterface.Test.Helpers;
-using NHibernate.Linq;
 using NUnit.Framework;
 using OpenQA.Selenium;
-using UseDialogOnce = InternetInterface.Test.Helpers.UseDialogOnce;
-using Test.Support.Selenium;
 
-namespace InternetInterface.Test.Functional.Selenium
+namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
 	class UserInfoFixture : ClientFunctionalFixture

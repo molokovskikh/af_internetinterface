@@ -5,7 +5,7 @@ using InternetInterface.Models.Services;
 using NUnit.Framework;
 using Test.Support.Selenium;
 
-namespace InforoomInternet.Test.Functional.Selenium
+namespace InforoomInternet.Test.Functional
 {
 	[TestFixture]
 	class BaseFunctionalFixture : SeleniumFixture

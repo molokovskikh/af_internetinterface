@@ -1,9 +1,7 @@
-﻿using InternetInterface.Models;
-using InternetInterface.Test.Helpers;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Test.Support.Selenium;
 
-namespace InforoomInternet.Test.Functional.Selenium
+namespace InforoomInternet.Test.Functional
 {
 	[TestFixture]
 	class Error404Fixture : SeleniumFixture

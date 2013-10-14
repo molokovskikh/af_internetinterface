@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using NUnit.Framework;
 using Test.Support.Selenium;
-using NUnit.Framework;
-using Test.Support.Web;
 
-namespace InforoomInternet.Test.Functional.Selenium
+namespace InforoomInternet.Test.Functional
 {
 	[TestFixture]
 	class MainFixture : SeleniumFixture

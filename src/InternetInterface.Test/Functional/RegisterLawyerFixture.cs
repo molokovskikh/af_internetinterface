@@ -5,7 +5,7 @@ using NHibernate.Linq;
 using NUnit.Framework;
 using Test.Support.Selenium;
 
-namespace InternetInterface.Test.Functional.Selenium
+namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
 	class RegisterLawyerFixture : SeleniumFixture

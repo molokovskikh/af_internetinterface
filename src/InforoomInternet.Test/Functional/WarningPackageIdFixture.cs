@@ -1,9 +1,7 @@
-﻿using NUnit.Framework;
-using System;
-using log4net;
-using System.Reflection;
+﻿using System;
+using NUnit.Framework;
 
-namespace InforoomInternet.Test.Functional.Selenium
+namespace InforoomInternet.Test.Functional
 {
 	[TestFixture]
 	class WarningPackageIdFixture : BaseFunctionalFixture

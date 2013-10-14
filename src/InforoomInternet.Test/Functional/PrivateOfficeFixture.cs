@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using Billing;
@@ -8,10 +7,10 @@ using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NHibernate.Linq;
 using NUnit.Framework;
-using Test.Support.Selenium;
 using OpenQA.Selenium;
+using Test.Support.Selenium;
 
-namespace InforoomInternet.Test.Functional.Selenium
+namespace InforoomInternet.Test.Functional
 {
 	[TestFixture]
 	public class PrivateOfficeFixture : SeleniumFixture

@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NHibernate.Linq;
 using NUnit.Framework;
 using Test.Support.Selenium;
 
-namespace InternetInterface.Test.Functional.Selenium
+namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
 	class RequestGraphFixture : SeleniumFixture

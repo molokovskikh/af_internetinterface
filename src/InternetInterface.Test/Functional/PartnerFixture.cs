@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using InternetInterface.Models;
 using NUnit.Framework;
 using Test.Support.Selenium;
 
-namespace InternetInterface.Test.Functional.Selenium
+namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
 	public class PartnerFixture : SeleniumFixture

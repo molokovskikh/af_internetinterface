@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using InternetInterface.Models;
+﻿using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 using OpenQA.Selenium;
 
-namespace InternetInterface.Test.Functional.Selenium
+namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
 	class PhysicalClientFixture : AcceptanceFixture

@@ -5,9 +5,8 @@ using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NHibernate.Linq;
 using NUnit.Framework;
-using OpenQA.Selenium;
 
-namespace InternetInterface.Test.Functional.Selenium
+namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
 	public class LawyerPersonFixture : AcceptanceFixture

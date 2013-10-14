@@ -4,7 +4,7 @@ using Common.Tools;
 using InternetInterface.Models;
 using NUnit.Framework;
 
-namespace InforoomInternet.Test.Functional.Selenium
+namespace InforoomInternet.Test.Functional
 {
 	[TestFixture]
 	class SelfRegistration : BaseFunctionalFixture

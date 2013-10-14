@@ -1,11 +1,9 @@
-﻿using System;
-using System.Linq;
-using Common.Web.Ui.NHibernateExtentions;
+﻿using System.Linq;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 
-namespace InternetInterface.Test.Functional.Selenium
+namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
 	public class PaymentFixture : AcceptanceFixture

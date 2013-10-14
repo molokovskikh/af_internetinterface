@@ -125,12 +125,12 @@
     <Reference Include="WebDriver, Version=2.33.0.0, Culture=neutral, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Functional\Selenium\BaseFunctionalFixture.cs" />
-    <Compile Include="Functional\Selenium\Error404Fixture.cs" />
-    <Compile Include="Functional\Selenium\MainFixture.cs" />
-    <Compile Include="Functional\Selenium\PrivateOfficeFixture.cs" />
-    <Compile Include="Functional\Selenium\SelfRegistration.cs" />
-    <Compile Include="Functional\Selenium\WarningPackageIdFixture.cs" />
+    <Compile Include="Functional\BaseFunctionalFixture.cs" />
+    <Compile Include="Functional\Error404Fixture.cs" />
+    <Compile Include="Functional\MainFixture.cs" />
+    <Compile Include="Functional\PrivateOfficeFixture.cs" />
+    <Compile Include="Functional\SelfRegistration.cs" />
+    <Compile Include="Functional\WarningPackageIdFixture.cs" />
     <Compile Include="Functional\Setup.cs" />
     <Compile Include="Integration\MainControllerFixture.cs" />
     <Compile Include="Integration\PrivateOfficeControllerFixture.cs" />

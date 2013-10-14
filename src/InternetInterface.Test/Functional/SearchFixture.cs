@@ -1,8 +1,7 @@
-﻿using System.Threading;
-using InternetInterface.Test.Helpers;
+﻿using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 
-namespace InternetInterface.Test.Functional.Selenium
+namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
 	class SearchFixture : ClientFunctionalFixture

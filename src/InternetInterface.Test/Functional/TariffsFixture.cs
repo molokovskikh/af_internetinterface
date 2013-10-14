@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using InternetInterface.Models;
-using InternetInterface.Test.Helpers;
 using NHibernate.Linq;
 using NUnit.Framework;
 using Test.Support.Selenium;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Remote;
 
-namespace InternetInterface.Test.Functional.Selenium
+namespace InternetInterface.Test.Functional
 {
 	[TestFixture, Ignore("Тесты имеют смысл только в случае наличия связи тарифы-регионы")]
 	class TariffsFixture : SeleniumFixture

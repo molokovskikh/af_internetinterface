@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using Test.Support.Selenium;
 
-namespace InternetInterface.Test.Functional.Selenium
+namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
 	public class OnLineClients : SeleniumFixture

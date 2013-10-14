@@ -1,10 +1,9 @@
 ﻿using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
-using InternetInterface.Models;
 using NUnit.Framework;
 using Test.Support.Selenium;
 
-namespace InternetInterface.Test.Functional.Selenium
+namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
 	public class ClientFunctionalFixture : SeleniumFixture

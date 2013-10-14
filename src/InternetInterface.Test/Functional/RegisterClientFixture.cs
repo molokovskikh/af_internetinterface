@@ -1,11 +1,10 @@
 ﻿using System.Linq;
-using System.Threading;
 using InternetInterface.Models;
 using NHibernate.Linq;
 using NUnit.Framework;
 using Test.Support.Selenium;
 
-namespace InternetInterface.Test.Functional.Selenium
+namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
 	class RegisterClientFixture : SeleniumFixture
