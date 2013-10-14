@@ -23,8 +23,6 @@ namespace InternetInterface.Controllers
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class HouseMapController : BaseController
 	{
-		private static readonly ILog _log = LogManager.GetLogger(typeof(HouseMapController));
-
 		public void HouseEdit()
 		{
 		}
@@ -305,12 +303,11 @@ namespace InternetInterface.Controllers
 				}
 			}
 			catch (Exception ex) {
-				_log.Error(string.Format("Возникла ошибка GetApartment, номер квартиры: {0}, номер дома: {1}, оператор: {2}",
-					Request.Form["apartment_num"], Request.Form["House"], InitializeContent.Partner.Name));
+				Logger.Error(string.Format("Возникла ошибка GetApartment, номер квартиры: {0}, номер дома: {1}, оператор: {2}",
+					Request.Form["apartment_num"], Request.Form["House"], InitializeContent.Partner.Name), ex);
 			}
 			return new { status = 0 };
 		}
-
 
 		[return: JSONReturnBinder]
 		public List<HistoryInfo> LoadApartmentHistory()

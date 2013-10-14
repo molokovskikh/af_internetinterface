@@ -18,20 +18,12 @@ namespace InternetInterface.Test.Integration
 	[TestFixture]
 	internal class HouseMapFixture : ControllerFixture
 	{
-		public HouseMapFixture()
-		{
-			Setup.ConfigTest();
-		}
-
 		[Test]
 		public void ViewTest()
 		{
-			using (new SessionScope()) {
-				var mapController = new HouseMapController();
-				PrepareController(mapController);
-				mapController.DbSession = session;
-				mapController.ViewHouseInfo();
-			}
+			var mapController = new HouseMapController();
+			Prepare(mapController);
+			mapController.ViewHouseInfo();
 		}
 	}
 }
