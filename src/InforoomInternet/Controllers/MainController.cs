@@ -123,17 +123,21 @@ namespace InforoomInternet.Controllers
 			DbSession.Evict(client);
 		}
 
-		public void Assist(string q)
+		[return: JSONReturnBinder]
+		public object Assist(string term)
 		{
-			if (string.IsNullOrEmpty(q))
-				return;
+			if (string.IsNullOrEmpty(term))
+				return new object[0];
 
 			if (Request == null || Request.Headers["X-Requested-With"] != "XMLHttpRequest")
-				return;
+				return new object[0];
 
-			Street.GetStreetList(q, Response.Output);
-			CancelLayout();
-			CancelView();
+			var subs = term.Split(' ');
+
+			return subs.SelectMany(s => DbSession.Query<Street>().Where(x => x.Name.Contains(s)))
+				.Distinct()
+				.Select(s => s.Name)
+				.ToList();
 		}
 
 		[AccessibleThrough(Verb.Post)]

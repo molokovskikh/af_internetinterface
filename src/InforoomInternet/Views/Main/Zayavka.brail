@@ -102,19 +102,6 @@
 			<span class="example">Возможность самостоятельной прокладки кабеля до оборудования провайдера,<br />как правило, расположенного на чердаке или техническом этаже. <br> При самостоятельном подключении плата за подключение не взимается.</span>
 		</p>
 		<p id="last"><input id="appbut" type="submit" value="Отправить" /></p>
-<script type="text/javascript">
-	$(function () {
-		$("#residence").autocomplete("assist", {
-			delay: 100,
-			minChars: 2,
-			selectFirst: true,
-			matchSubset: 1,
-			cacheLength: 10,
-			selectOnly: true,
-			maxItemsToShow: 10
-		});
-	});
-</script>
 		</form>
 	</div>
 </div>
