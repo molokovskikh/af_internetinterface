@@ -3,13 +3,11 @@ using System.Linq;
 using Castle.MonoRail.Framework;
 using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
-using InforoomInternet.Logic;
 using InforoomInternet.Models;
 using InternetInterface.Helpers;
 
 namespace InforoomInternet.Controllers
 {
-	[Layout("Main")]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(BeforeFilter))]
 	[Filter(ExecuteWhen.BeforeAction, typeof(NHibernateFilter))]
 	[Filter(ExecuteWhen.BeforeAction, typeof(EditAccessFilter))]

@@ -11,7 +11,13 @@
 	${app.Asset("jquery-ui-i18n.min.js")}
 	${app.Asset("jquery.validate.min.js")}
 	${app.Asset("calendar.setup.jquery.js")}
+	${app.Asset("colorbox/jquery.colorbox-min.js")}
+	${app.Asset("colorbox/i18n/jquery.colorbox-ru.js")}
 
+	${app.Asset("app.js")}
+
+	${app.Asset("app.css")}
+	${app.Asset("colorbox.css")}
 	${app.Asset("styles.css")}
 	${app.Asset("main.css")}
 	${app.Asset("themes/base/jquery.ui.all.css")}

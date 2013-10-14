@@ -5,7 +5,7 @@ using System.Web;
 using Castle.MonoRail.Framework;
 using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Models.Editor;
-using InforoomInternet.Logic;
+using InforoomInternet.Helpers;
 using InternetInterface.Models;
 
 namespace InforoomInternet.Controllers
@@ -24,7 +24,7 @@ namespace InforoomInternet.Controllers
 
 		public override bool IsAcces()
 		{
-			return LoginLogic.IsAccessiblePartner(Session["LoginPartner"]);
+			return LoginHelper.IsAccessiblePartner(Session["LoginPartner"]);
 		}
 	}
 }

@@ -1,9 +1,4 @@
-﻿<link rel="stylesheet" href="${siteroot}/JavaScript/lightbox/lightbox.css" type="text/css" media="screen" />
-<script src="${siteroot}/JavaScript/lightbox/prototype.js" type="text/javascript"></script>
-<script src="${siteroot}/JavaScript/lightbox/scriptaculous.js?load=effects,builder" type="text/javascript"></script>
-<script src="${siteroot}/JavaScript/lightbox/lightbox.js" type="text/javascript"></script>
-
-<div>
+﻿<div>
 	<div class="text">
 	<h2>Мы - ООО "Инфорум".</h2>
 	<p>Чем мы занимаемся? - Предоставляем высокоскоростной доступ в Интернет по волоконно-оптическому каналу.</p>
@@ -28,7 +23,7 @@
 	</div>
 	<center>
 	<div>
-		<a id="dog" href="${siteroot}/Content/office.jpg" rel="lightbox[roadtrip]"><img id="imd1" src="${siteroot}/Content/office_mini.jpg" width="600" height="100%" alt="" /></a>
+		<a id="dog" href="${siteroot}/Content/office.jpg" rel="lightbox[roadtrip]" class="colorbox"><img id="imd1" src="${siteroot}/Content/office_mini.jpg" width="600" height="100%" alt="" /></a>
 		<br />
 		Наш офис
 	</div>

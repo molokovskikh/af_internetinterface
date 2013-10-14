@@ -111,6 +111,12 @@
     <Content Include="apple-touch-icon-72x72-precomposed.png" />
     <Content Include="apple-touch-icon-precomposed.png" />
     <Content Include="apple-touch-icon.png" />
+    <Content Include="Assets\Images\border.png" />
+    <Content Include="Assets\Images\controls.png" />
+    <Content Include="Assets\Images\loading.gif" />
+    <Content Include="Assets\Images\loading_background.png" />
+    <Content Include="Assets\Images\overlay.png" />
+    <Content Include="Assets\Javascripts\app.js" />
     <Content Include="Assets\Stylesheets\alt.validation.error.css" />
     <Content Include="Assets\Images\calendar.gif" />
     <Content Include="Assets\Images\down_arrow.png" />
@@ -169,6 +175,8 @@
     <Content Include="Assets\Images\Layouts\video.png" />
     <Content Include="Assets\Images\Layouts\wrapper.png" />
     <Content Include="Assets\Images\messagebox_critical.png" />
+    <Content Include="Assets\Stylesheets\app.css" />
+    <Content Include="Assets\Stylesheets\colorbox.css" />
     <Content Include="Content\OfferMini\d1.jpg" />
     <Content Include="Content\OfferMini\d2.jpg" />
     <Content Include="Content\OfferMini\d3.jpg" />
@@ -197,8 +205,8 @@
     <Content Include="Content\Offer\ПравилаОказанияУслуг2.jpg" />
     <Content Include="Content\Offer\ПравилаОказанияУслуг3.jpg" />
     <Content Include="Content\Offer\Тарифы.jpg" />
-    <Content Include="Assets\Images\office.jpg" />
-    <Content Include="Assets\Images\office_mini.jpg" />
+    <Content Include="Content\office.jpg" />
+    <Content Include="Content\office_mini.jpg" />
     <Content Include="Assets\Images\onebit_32.png" />
     <Content Include="Assets\Images\plus__orange.png" />
     <Content Include="Assets\Images\tick.png" />
@@ -223,19 +231,6 @@
     <Content Include="Icon.png" />
     <Content Include="iTunesArtwork%402x.png" />
     <Content Include="iTunesArtwork.png" />
-    <Content Include="JavaScript\lightbox\builder.js" />
-    <Content Include="JavaScript\lightbox\bullet.gif" />
-    <Content Include="JavaScript\lightbox\close.gif" />
-    <Content Include="JavaScript\lightbox\closelabel.gif" />
-    <Content Include="JavaScript\lightbox\download-icon.gif" />
-    <Content Include="JavaScript\lightbox\effects.js" />
-    <Content Include="JavaScript\lightbox\lightbox.css" />
-    <Content Include="JavaScript\lightbox\lightbox.js" />
-    <Content Include="JavaScript\lightbox\loading.gif" />
-    <Content Include="JavaScript\lightbox\nextlabel.gif" />
-    <Content Include="JavaScript\lightbox\prevlabel.gif" />
-    <Content Include="JavaScript\lightbox\prototype.js" />
-    <Content Include="JavaScript\lightbox\scriptaculous.js" />
     <Content Include="media\bg_btn_send.png" />
     <Content Include="media\bg_input_text.png" />
     <Content Include="media\bg_page.jpg" />
@@ -293,14 +288,14 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\AppHelper.cs" />
+    <Compile Include="Helpers\LoginHelper.cs" />
     <Compile Include="Initializers\ActiveRecord.cs" />
-    <Compile Include="Logic\LoginLogic.cs" />
     <Compile Include="Models\Main.cs" />
     <Compile Include="Models\SceHelper.cs" />
     <Compile Include="Models\SceThread.cs" />
     <Compile Include="Models\ViewText.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <None Include="Views\Layouts\Main.brail" />
+    <None Include="Views\Layouts\App.brail" />
     <None Include="Views\Main\Assist.brail" />
     <None Include="Views\Main\HowPay.brail" />
     <None Include="Views\Login\LoginPage.brail" />

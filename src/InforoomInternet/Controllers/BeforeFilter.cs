@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 using Castle.ActiveRecord;
 using Castle.MonoRail.Framework;
 using Common.Web.Ui.ActiveRecordExtentions;
-using InforoomInternet.Logic;
+using InforoomInternet.Helpers;
 using InternetInterface.Models;
 using NHibernate.Linq;
 
@@ -41,7 +41,7 @@ namespace InforoomInternet.Controllers
 	{
 		public bool Perform(ExecuteWhen exec, IEngineContext context, IController controller, IControllerContext controllerContext)
 		{
-			return LoginLogic.IsAccessiblePartner(context.Session["LoginPartner"]);
+			return LoginHelper.IsAccessiblePartner(context.Session["LoginPartner"]);
 		}
 	}
 
@@ -57,7 +57,7 @@ namespace InforoomInternet.Controllers
 				context.Session["LoginPartner"] = context.CurrentUser.Identity.Name;
 			}
 
-			controllerContext.PropertyBag["AccessEditLink"] = LoginLogic.IsAccessiblePartner(context.Session["LoginPartner"]);
+			controllerContext.PropertyBag["AccessEditLink"] = LoginHelper.IsAccessiblePartner(context.Session["LoginPartner"]);
 			return true;
 		}
 	}
