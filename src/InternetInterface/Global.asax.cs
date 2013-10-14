@@ -28,6 +28,7 @@ namespace InternetInterface
 		public Global()
 			: base(Assembly.Load("InternetInterface"))
 		{
+			LibAssemblies.Add(Assembly.Load("Common.Web.Ui"));
 			Logger.ErrorSubject = "[Internet] Ошибка в Интернет интерфейсе";
 		}
 
