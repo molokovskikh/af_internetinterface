@@ -137,23 +137,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Functional\BrigadFixture.cs" />
-    <Compile Include="Functional\ClientFunctionalFixture.cs" />
-    <Compile Include="Functional\CommutatorFixture.cs" />
-    <Compile Include="Functional\HouseMapFixture.cs" />
-    <Compile Include="Functional\InvoiceFixture.cs" />
-    <Compile Include="Functional\LawyerPersonFixture.cs" />
-    <Compile Include="Functional\OnLineClients.cs" />
-    <Compile Include="Functional\PartnerFixture.cs" />
-    <Compile Include="Functional\PaymentFixture.cs" />
-    <Compile Include="Functional\PhysicalClientFixture.cs" />
-    <Compile Include="Functional\PrivateMessageFixture.cs" />
-    <Compile Include="Functional\RegisterClientFixture.cs" />
-    <Compile Include="Functional\RegisterLawyerFixture.cs" />
-    <Compile Include="Functional\RegisterPartnerFixrure.cs" />
-    <Compile Include="Functional\RequestGraphFixture.cs" />
-    <Compile Include="Functional\RequestViewFixture.cs" />
-    <Compile Include="Functional\SearchFixture.cs" />
     <Compile Include="Functional\Selenium\BrigadFixture.cs" />
     <Compile Include="Functional\Selenium\ClientFunctionalFixture.cs" />
     <Compile Include="Functional\Selenium\CommutatorFixture.cs" />
@@ -172,10 +155,7 @@
     <Compile Include="Functional\Selenium\ServiceFixture.cs" />
     <Compile Include="Functional\Selenium\TariffsFixture.cs" />
     <Compile Include="Functional\Selenium\UserInfoFixture.cs" />
-    <Compile Include="Functional\ServiceFixture.cs" />
     <Compile Include="Functional\Setup.cs" />
-    <Compile Include="Functional\SmsFixture.cs" />
-    <Compile Include="Functional\UserInfoFixture.cs" />
     <Compile Include="Helpers\AcceptanceFixture.cs" />
     <Compile Include="Helpers\ClientHelper.cs" />
     <Compile Include="Helpers\ControllerFixture.cs" />
