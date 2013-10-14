@@ -14,7 +14,7 @@ namespace InforoomInternet.Test
 		public void SetupFixture()
 		{
 			if (!ActiveRecordStarter.IsInitialized) {
-				ActiveRecordStarter.EventListenerComponentRegistrationHook += RemoverListner.Make;
+				ActiveRecordStarter.EventListenerComponentRegistrationHook += AuditListener.RemoveAuditListener;
 
 				ActiveRecordInitialize.Init(
 					ConnectionHelper.GetConnectionName(),

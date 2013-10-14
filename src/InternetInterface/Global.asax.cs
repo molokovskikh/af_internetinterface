@@ -21,16 +21,14 @@ namespace InternetInterface
 		public string PrinterPath { get; set; }
 	}
 
-	public class Global : WebApplication, IMonoRailConfigurationEvents
+	public class Global : WebApplication
 	{
 		public static AppConfig Config = new AppConfig();
 
 		public Global()
 			: base(Assembly.Load("InternetInterface"))
 		{
-			FixMonorailConponentBug = false;
 			Logger.ErrorSubject = "[Internet] Ошибка в Интернет интерфейсе";
-			Logger.SmtpHost = "box.analit.net";
 		}
 
 		private void Application_Start(object sender, EventArgs e)
@@ -45,23 +43,6 @@ namespace InternetInterface
 			RoutingModuleEx.Engine.Add(new PatternRoute("/<controller>/<action>"));
 			RoutingModuleEx.Engine.Add(new PatternRoute("/<controller>/<id>/<action>")
 				.Restrict("id").ValidInteger);
-		}
-
-		public void Configure(IMonoRailConfiguration configuration)
-		{
-			configuration.ControllersConfig.AddAssembly("InternetInterface");
-			configuration.ViewComponentsConfig.Assemblies = new[] {
-				"InternetInterface",
-				"Common.Web.Ui"
-			};
-			configuration.ViewEngineConfig.ViewPathRoot = "Views";
-			configuration.ViewEngineConfig.ViewEngines.Add(new ViewEngineInfo(typeof(BooViewEngine), false));
-			configuration.ViewEngineConfig.ViewEngines.Add(new ViewEngineInfo(typeof(WebFormsViewEngine), false));
-			configuration.ViewEngineConfig.AssemblySources.Add(new AssemblySourceInfo("Common.Web.Ui", "Common.Web.Ui.Views"));
-			configuration.ViewEngineConfig.VirtualPathRoot = configuration.ViewEngineConfig.ViewPathRoot;
-			configuration.ViewEngineConfig.ViewPathRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configuration.ViewEngineConfig.ViewPathRoot);
-
-			base.Configure(configuration);
 		}
 	}
 }

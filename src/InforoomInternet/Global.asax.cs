@@ -20,23 +20,20 @@ using log4net.Repository.Hierarchy;
 
 namespace InforoomInternet
 {
-	public class Global : WebApplication, IMonoRailConfigurationEvents
+	public class Global : WebApplication
 	{
-		private static readonly ILog _log = LogManager.GetLogger(typeof(Global));
-
 		public Global()
 			: base(Assembly.Load("InforoomInternet"))
 		{
-			FixMonorailConponentBug = false;
-			Logger = new HttpSessionLog(typeof(Global));
 			LibAssemblies.Add(Assembly.Load("Common.Web.Ui"));
+			LibAssemblies.Add(Assembly.Load("InforoomInternet"));
 			Logger.ErrorSubject = "Ошибка в IVRN";
 		}
 
 		private void Application_Start(object sender, EventArgs e)
 		{
 			try {
-				ActiveRecordStarter.EventListenerComponentRegistrationHook += RemoverListner.Make;
+				ActiveRecordStarter.EventListenerComponentRegistrationHook += AuditListener.RemoveAuditListener;
 
 				Initialize();
 
@@ -56,39 +53,8 @@ namespace InforoomInternet
 					.DefaultForAction().Is("Реквизиты"));
 			}
 			catch (Exception ex) {
-				_log.Fatal("Ошибка при запуске страницы.", ex);
+				Log.Fatal("Ошибка при запуске страницы.", ex);
 			}
-		}
-
-		private void Session_Start(object sender, EventArgs e)
-		{
-		}
-
-		private void Application_BeginRequest(object sender, EventArgs e)
-		{
-		}
-
-		private void Application_AuthenticateRequest(object sender, EventArgs e)
-		{
-		}
-
-		private void Session_End(object sender, EventArgs e)
-		{
-		}
-
-		public void Configure(IMonoRailConfiguration configuration)
-		{
-			configuration.ControllersConfig.AddAssembly("InforoomInternet");
-			configuration.ControllersConfig.AddAssembly("Common.Web.Ui");
-			configuration.ViewComponentsConfig.Assemblies = new[] { "InforoomInternet", "Common.Web.Ui" };
-			configuration.ViewEngineConfig.ViewPathRoot = "Views";
-			configuration.ViewEngineConfig.AssemblySources.Add(new AssemblySourceInfo("Common.Web.Ui", "Common.Web.Ui.Views"));
-			configuration.UrlConfig.UseExtensions = false;
-			configuration.ViewEngineConfig.ViewEngines.Add(new ViewEngineInfo(typeof(BooViewEngine), false));
-			configuration.ViewEngineConfig.VirtualPathRoot = configuration.ViewEngineConfig.ViewPathRoot;
-			configuration.ViewEngineConfig.ViewPathRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configuration.ViewEngineConfig.ViewPathRoot);
-
-			base.Configure(configuration);
 		}
 	}
 }

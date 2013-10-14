@@ -22,11 +22,6 @@ namespace InforoomInternet.Helpers
 			});
 		}
 
-		public override bool HavePermission(string controller, string action)
-		{
-			return false;
-		}
-
 		public string GetViewText(string descriptionIdentificator)
 		{
 			if (!(Controller is BaseController))

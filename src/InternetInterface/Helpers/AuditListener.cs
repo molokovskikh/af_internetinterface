@@ -16,23 +16,6 @@ using NHibernate.Event;
 
 namespace InternetInterface.Helpers
 {
-	public class RemoverListner
-	{
-		public static void Make(EventListenerContributor target)
-		{
-			target.Remove(typeof(Listner));
-		}
-	}
-
-	public class AddValidEventListner
-	{
-		public static void Make(EventListenerContributor target)
-		{
-			var config = target.Get(typeof(ValidEventListner));
-			target.Add(config);
-		}
-	}
-
 	public class AuditablePropertyInternet : AuditableProperty
 	{
 		public AuditablePropertyInternet(PropertyInfo property, string name, object newValue, object oldValue)
@@ -48,14 +31,14 @@ namespace InternetInterface.Helpers
 	}
 
 	[EventListener]
-	public class Listner : BaseAuditListener
+	public class AuditListener : BaseAuditListener
 	{
 		protected override AuditableProperty GetAuditableProperty(PropertyInfo property, string name, object newState, object oldState, object entity)
 		{
 			var auditableProperty = new AuditablePropertyInternet(property, name, newState, oldState);
 			if (entity.GetType() == typeof(OrderService)) {
-				if (!string.IsNullOrEmpty(((OrderService)entity).Description))
-					auditableProperty.Message = string.Format("Услуга '{0}' {1}", ((OrderService)entity).Description, auditableProperty.Message);
+				if (!String.IsNullOrEmpty(((OrderService)entity).Description))
+					auditableProperty.Message = String.Format("Услуга '{0}' {1}", ((OrderService)entity).Description, auditableProperty.Message);
 			}
 			return auditableProperty;
 		}
@@ -89,7 +72,7 @@ namespace InternetInterface.Helpers
 					client = (Client)clientProp.GetValue(entity, null);
 
 				if (client != null) {
-					message = string.IsNullOrEmpty(client.LogComment) ? message : string.Format("{0} \r\n Комментарий: \r\n {1}", message, client.LogComment);
+					message = String.IsNullOrEmpty(client.LogComment) ? message : String.Format("{0} \r\n Комментарий: \r\n {1}", message, client.LogComment);
 					appeal = new Appeals {
 						Appeal = message,
 						Client = client,
@@ -102,6 +85,11 @@ namespace InternetInterface.Helpers
 
 			if (appeal != null)
 				session.Save(appeal);
+		}
+
+		public static void RemoveAuditListener(EventListenerContributor target)
+		{
+			target.Remove(typeof(AuditListener));
 		}
 	}
 }

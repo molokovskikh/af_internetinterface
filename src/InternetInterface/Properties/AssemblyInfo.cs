@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 
 [assembly: AssemblyTitle("InternetInterface")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Интернет интерфейс")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Microsoft")]
 [assembly: AssemblyProduct("InternetInterface")]

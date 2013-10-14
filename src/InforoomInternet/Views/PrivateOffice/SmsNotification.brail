@@ -29,7 +29,7 @@
 	});
 </script>
 <div id="messageBox"></div>
-<form method=post id="telephoneForm">
+<form method="post" id="telephoneForm">
 	<table id="serviceTable" style="width:100%;">
 		<tbody>
 			<tr class="caption">
@@ -44,13 +44,12 @@
 			<tr>
 				<td>
 					<label for="sendSmsNot">Отправлять уведомления</label>
-					<input type=checkbox id="sendSmsNot" name="SendSmsNotifocation" ${"checked" if SendSmsNotifocation}/>
+					<input type="checkbox" id="sendSmsNot" name="SendSmsNotifocation" ${"checked" if SendSmsNotifocation}/>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					<button type=submit class="button" >
-						<img src="${siteroot}/Content/tick.png" />
+					<button type="submit" class="button ok" >
 						Сохранить
 					</button>
 				</td>

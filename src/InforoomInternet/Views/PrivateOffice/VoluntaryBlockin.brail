@@ -3,18 +3,12 @@
 		$('#startDate').datepicker({
 			inline: true,
 			minDate: 0,
-			showOn: "button",
-			buttonImage: "../Content/calendar.gif",
-			buttonImageOnly: true,
-			buttonText : "Дата начата периода"
+			showOn: "button"
 		});
 		$('#endDate').datepicker({
 			inline: true,
 			minDate: +1,
-			showOn: "button",
-			buttonImage: "../Content/calendar.gif",
-			buttonImageOnly: true,
-			buttonText: "Дата конца периода"
+			showOn: "button"
 		});
 	});
 </script>

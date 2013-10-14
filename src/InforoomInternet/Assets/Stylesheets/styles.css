@@ -1,6 +1,6 @@
-/* Основные элементы */
+/* РћСЃРЅРѕРІРЅС‹Рµ СЌР»РµРјРµРЅС‚С‹ */
 body {
-  background: White url(../Content/Layouts/wrapper.png) repeat-x top;
+  background: White url(../Images/Layouts/wrapper.png) repeat-x top;
   color: Black;
   font-family: Tahoma, Arial, Helvetica, sans-serif;
   font-size: 12px;
@@ -23,14 +23,14 @@ a {
 }
 
 #mail_link:link {
-	color: #0000d0; /* Цвет ссылок */
+	color: #0000d0; /* Р¦РІРµС‚ СЃСЃС‹Р»РѕРє */
    }
 #mail_link:visited {
-	color: #900060; /* Цвет посещенных ссылок */
+	color: #900060; /* Р¦РІРµС‚ РїРѕСЃРµС‰РµРЅРЅС‹С… СЃСЃС‹Р»РѕРє */
    }
 #mail_link:active {
-color: #f00; /* Цвет активной ссылки */ 
-   } 
+color: #f00; /* Р¦РІРµС‚ Р°РєС‚РёРІРЅРѕР№ СЃСЃС‹Р»РєРё */
+   }
 
 
 .center {
@@ -48,15 +48,15 @@ color: #f00; /* Цвет активной ссылки */
   float: right;
 }
 
-/* Обёртка */
+/* РћР±С‘СЂС‚РєР° */
 #wrapper {
   width: 975px;
   margin: 0px auto;
 }
 
-/* Логотип */
+/* Р›РѕРіРѕС‚РёРї */
 #logo {
-  background: url(../Content/Layouts/logo.png) no-repeat top center;
+  background: url(../Images/Layouts/logo.png) no-repeat top center;
   display: block;
   width: 151px;
   height: 42px;
@@ -64,13 +64,13 @@ color: #f00; /* Цвет активной ссылки */
   margin-top: 20px;
 }
 
-/* Шапка */
+/* РЁР°РїРєР° */
 #header {
   height: 95px;
-  background: url(../Content/Layouts/header-banner.jpg) no-repeat center top;
+  background: url(../Images/Layouts/header-banner.jpg) no-repeat center top;
 }
 
-/* Значки навигации */
+/* Р—РЅР°С‡РєРё РЅР°РІРёРіР°С†РёРё */
 #icons a {
   display: block;
   width: 16px;
@@ -81,24 +81,24 @@ color: #f00; /* Цвет активной ссылки */
 }
 
 #icons a.home {
-  background: url(../Content/Layouts/icon-home.png) no-repeat center;
+  background: url(../Images/Layouts/icon-home.png) no-repeat center;
 }
 
 #icons a.mail {
-  background: url(../Content/Layouts/icon-mail.png) no-repeat center;
+  background: url(../Images/Layouts/icon-mail.png) no-repeat center;
 }
 
 #icons a.search {
-  background: url(../Content/Layouts/icon-search.png) no-repeat center;
+  background: url(../Images/Layouts/icon-search.png) no-repeat center;
 }
 
 #icons a.login {
-  background: url(../Content/Layouts/login.png) no-repeat center;
+  background: url(../Images/Layouts/login.png) no-repeat center;
 }
 
-/* Главное меню */
+/* Р“Р»Р°РІРЅРѕРµ РјРµРЅСЋ */
 #menu {
-  background: #4d7da2 url(../Content/Layouts/menu-bottom.png) repeat-x center bottom;
+  background: #4d7da2 url(../Images/Layouts/menu-bottom.png) repeat-x center bottom;
   width: 650px;
   position: absolute;
   top: -16px;
@@ -107,7 +107,7 @@ color: #f00; /* Цвет активной ссылки */
 }
 
 #menu .top {
-  background: #4d7da2 url(../Content/Layouts/menu-top.png) repeat-x center top;
+  background: #4d7da2 url(../Images/Layouts/menu-top.png) repeat-x center top;
   line-height: 10px;
 }
 
@@ -123,7 +123,7 @@ color: #f00; /* Цвет активной ссылки */
 }
 
 #menu ul.main {
-  background: #4d7ea3 url(../Content/Layouts/menu-bg.png) no-repeat center top;
+  background: #4d7ea3 url(../Images/Layouts/menu-bg.png) no-repeat center top;
   width: 636px;
   height: 42px;
   margin-top: -5px;
@@ -134,7 +134,7 @@ color: #f00; /* Цвет активной ссылки */
   float: left;
   position: relative;
   text-align: center;
-  background: url(../Content/Layouts/menu-line.png) no-repeat 1px 0px;
+  background: url(../Images/Layouts/menu-line.png) no-repeat 1px 0px;
   z-index: 1;
 }
 
@@ -143,7 +143,7 @@ color: #f00; /* Цвет активной ссылки */
 }
 
 #menu a.one-line {
-  line-height: 28px; /* Если текст помещается на одной строке */
+  line-height: 28px; /* Р•СЃР»Рё С‚РµРєСЃС‚ РїРѕРјРµС‰Р°РµС‚СЃСЏ РЅР° РѕРґРЅРѕР№ СЃС‚СЂРѕРєРµ */
 }
 
 #menu a.menu-item {
@@ -154,7 +154,7 @@ color: #f00; /* Цвет активной ссылки */
 }
 
 #menu a.active {
-  background: #D6D6D6 url(../Content/Layouts/active.png) no-repeat center left;
+  background: #D6D6D6 url(../Images/Layouts/active.png) no-repeat center left;
   position: absolute;
   left: 0px;
   top: 0px;
@@ -178,7 +178,7 @@ color: #f00; /* Цвет активной ссылки */
 }
 
 *:first-child+html #menu ul.sub {
-  height: 31px; /* Для ие7 */
+  height: 31px; /* Р”Р»СЏ РёРµ7 */
 }
 
 #menu ul.sub a {
@@ -189,9 +189,9 @@ color: #f00; /* Цвет активной ссылки */
   color: #DA6700;
 }
 
-/* Контейнер */
+/* РљРѕРЅС‚РµР№РЅРµСЂ */
 #container {
-  background: #4d7da2 url(../Content/Layouts/container-top.png) no-repeat top center;
+  background: #4d7da2 url(../Images/Layouts/container-top.png) no-repeat top center;
   padding: 10px 10px 0px;
   position: relative;
   margin-top: -18px;
@@ -205,12 +205,12 @@ color: #f00; /* Цвет активной ссылки */
 }
 
 #container .center .big-banner {
-  background: url(../Content/Layouts/big-banner.jpg) no-repeat top center;
+  background: url(../Images/Layouts/big-banner.jpg) no-repeat top center;
   height: 332px;
 }
 
 #container-bottom {
-  background: #4d7da2 url(../Content/Layouts/container-bottom.png) no-repeat bottom center;
+  background: #4d7da2 url(../Images/Layouts/container-bottom.png) no-repeat bottom center;
   height: 10px;
   line-height: 10px;
 }
@@ -257,14 +257,14 @@ color: #f00; /* Цвет активной ссылки */
 }
 
 #content tr.caption td.left {
-  background: #4d7da2 url(../Content/Layouts/td-left.png) no-repeat top left;
+  background: #4d7da2 url(../Images/Layouts/td-left.png) no-repeat top left;
   /*width: 90%;*/
   float:none;
 }
 
 #content tr.caption td.right {
-  background: #4d7da2 url(../Content/Layouts/td-right.png) no-repeat top right;
-  /*width: 90%;*/   
+  background: #4d7da2 url(../Images/Layouts/td-right.png) no-repeat top right;
+  /*width: 90%;*/
   float:none;
 }
 
@@ -280,13 +280,13 @@ color: #f00; /* Цвет активной ссылки */
 }
 
 #content p.list {
-  background: url(../Content/Layouts/p-list.png) no-repeat left 2px;
+  background: url(../Images/Layouts/p-list.png) no-repeat left 2px;
   padding-left: 10px;
 }
 
-/* Подвал */
+/* РџРѕРґРІР°Р» */
 #footer {
-  background: #4e80a7 url(../Content/Layouts/footer.png) no-repeat top center;
+  background: #4e80a7 url(../Images/Layouts/footer.png) no-repeat top center;
   margin-top: 10px;
   font-size: 10px;
   color: #b9e5fe;
@@ -326,7 +326,7 @@ color: #f00; /* Цвет активной ссылки */
 }
 
 #footer li.bottom-line {
-  background: url(../Content/Layouts/footer-menu.png) no-repeat right center;
+  background: url(../Images/Layouts/footer-menu.png) no-repeat right center;
 }
 
 #footer ul {
@@ -334,7 +334,7 @@ color: #f00; /* Цвет активной ссылки */
 }
 
 #footer .cable {
-  background: url(../Content/Layouts/cable.png) no-repeat top center;
+  background: url(../Images/Layouts/cable.png) no-repeat top center;
   width: 80px;
   height: 70px;
   position: absolute;
@@ -342,7 +342,7 @@ color: #f00; /* Цвет активной ссылки */
   bottom: 20px;
 }
 
-/* Телефон */
+/* РўРµР»РµС„РѕРЅ */
 #phone {
   text-align: center;
   font-size: 26px;
@@ -353,14 +353,14 @@ color: #f00; /* Цвет активной ссылки */
 #phone small {
   font-size: 18px;
   color: #d6d6d6;
-  background: url(../Content/Layouts/phone.png) no-repeat left 5px;
+  background: url(../Images/Layouts/phone.png) no-repeat left 5px;
   padding-left: 20px;
 }
 
-/* Новости */
+/* РќРѕРІРѕСЃС‚Рё */
 #news {
-  background: url(../Content/Layouts/news.png) no-repeat 20px top;
-  display:none; /* ВЫКЛЮЧАТЕЛЬ НОВОСТЕЙ */
+  background: url(../Images/Layouts/news.png) no-repeat 20px top;
+  display:none; /* Р’Р«РљР›Р®Р§РђРўР•Р›Р¬ РќРћР’РћРЎРўР•Р™ */
 }
 
 #news .news-border {
@@ -370,7 +370,7 @@ color: #f00; /* Цвет активной ссылки */
 }
 
 #news .news-rss {
-  background: url(../Content/Layouts/news-rss.png) no-repeat top center;
+  background: url(../Images/Layouts/news-rss.png) no-repeat top center;
   height: 14px;
   width: 14px;
   display: block;
@@ -380,7 +380,7 @@ color: #f00; /* Цвет активной ссылки */
 #news small {
   color: #898989;
   font-size: 8px;
-  background: Gainsboro url(../Content/Layouts/news-date.png) repeat-x top center;
+  background: Gainsboro url(../Images/Layouts/news-date.png) repeat-x top center;
   line-height: 10px;
   padding: 0px 7px;
 }
@@ -391,7 +391,7 @@ color: #f00; /* Цвет активной ссылки */
   margin-top: 3px;
   margin-bottom: 10px;
   padding: 5px;
-  background: White url(../Content/Layouts/news-content.png) no-repeat right bottom;
+  background: White url(../Images/Layouts/news-content.png) no-repeat right bottom;
 }
 
 #news h4 {
@@ -420,7 +420,7 @@ color: #f00; /* Цвет активной ссылки */
   clear: both;
 }
 
-/* Контакты */
+/* РљРѕРЅС‚Р°РєС‚С‹ */
 #contacts {
   color: White;
   font-size: 11px;
@@ -436,13 +436,13 @@ color: #f00; /* Цвет активной ссылки */
   margin-bottom: 5px;
 }
 
-/* Голосование */
+/* Р“РѕР»РѕСЃРѕРІР°РЅРёРµ */
 #poll {
-  background: #F5F5F5 url(../Content/Layouts/poll.png) no-repeat bottom center;
+  background: #F5F5F5 url(../Images/Layouts/poll.png) no-repeat bottom center;
 }
 
 #poll h3 {
-  background: #5c9acc url(../Content/Layouts/poll-header.png) no-repeat top center;
+  background: #5c9acc url(../Images/Layouts/poll-header.png) no-repeat top center;
   line-height: 23px;
   font-size: 12px;
   text-align: center;
@@ -465,7 +465,7 @@ color: #f00; /* Цвет активной ссылки */
 }
 
 *:first-child+html #poll input.radio {
-  height: 12px; /* Для ие7 */
+  height: 12px; /* Р”Р»СЏ РёРµ7 */
 }
 
 #poll label {
@@ -473,11 +473,11 @@ color: #f00; /* Цвет активной ссылки */
 }
 
 *:first-child+html #poll label {
-  font-size: 11px; /* Для ие7 */
+  font-size: 11px; /* Р”Р»СЏ РёРµ7 */
 }
 
 #poll input.button {
-  background: #5c9acc url(../Content/Layouts/poll-button.png) no-repeat top center;
+  background: #5c9acc url(../Images/Layouts/poll-button.png) no-repeat top center;
   font-size: 11px;
   margin: 5px 0px 0px -10px;
   border: none;
@@ -497,9 +497,9 @@ color: #f00; /* Цвет активной ссылки */
   text-align: center;
 }
 
-/* Тест */
+/* РўРµСЃС‚ */
 #test {
-  background: url(../Content/Layouts/test.png) no-repeat top center;
+  background: url(../Images/Layouts/test.png) no-repeat top center;
   margin-top: 20px;
   padding-top: 40px;
   text-align: center;
@@ -517,7 +517,7 @@ color: #f00; /* Цвет активной ссылки */
   display: block;
   text-transform: uppercase;
   text-decoration: none;
-  background: #bbbaba url(../Content/Layouts/test-link.png) no-repeat top center;
+  background: #bbbaba url(../Images/Layouts/test-link.png) no-repeat top center;
   line-height: 18px;
   margin: 5px 0px;
 }
@@ -528,7 +528,7 @@ color: #f00; /* Цвет активной ссылки */
   text-decoration: underline;
 }
 
-/* Кнопки */
+/* РљРЅРѕРїРєРё */
 .button-orange, .button-blue {
   font-size: 18px;
   text-decoration: none;
@@ -540,7 +540,7 @@ color: #f00; /* Цвет активной ссылки */
 }
 
 .button-orange {
-  background: #ff7200 url(../Content/Layouts/button-orange.png) no-repeat top center;
+  background: #ff7200 url(../Images/Layouts/button-orange.png) no-repeat top center;
   margin-bottom: 30px;
   margin-left: 10px;
 	position: relative;
@@ -548,7 +548,7 @@ color: #f00; /* Цвет активной ссылки */
 }
 
 .button-blue {
-  background: #4d7ea3 url(../Content/Layouts/button-blue.png) no-repeat top center;
+  background: #4d7ea3 url(../Images/Layouts/button-blue.png) no-repeat top center;
   margin-bottom: 20px;
   /*display:none;*/
   margin-right: 10px;
@@ -566,36 +566,36 @@ color: #f00; /* Цвет активной ссылки */
 	padding-bottom: 15px;
 }
 
-/* Баннер в правой колонке */
+/* Р‘Р°РЅРЅРµСЂ РІ РїСЂР°РІРѕР№ РєРѕР»РѕРЅРєРµ */
 #mini-banner a {
-  background: url(../Content/Layouts/mini-banner.jpg) no-repeat center top;
+  background: url(../Images/Layouts/mini-banner.jpg) no-repeat center top;
   height: 122px;
   display: block;
   margin-top: 10px;
   text-decoration: none;
 }
 
-/* Баннер в правой колонке */
+/* Р‘Р°РЅРЅРµСЂ РІ РїСЂР°РІРѕР№ РєРѕР»РѕРЅРєРµ */
 #banner-right a {
-  background: url(../Content/Layouts/banner-right.jpg) no-repeat center top;
+  background: url(../Images/Layouts/banner-right.jpg) no-repeat center top;
   height: 266px;
   display: block;
   margin-top: 10px;
   text-decoration: none;
 }
 
-/* Баннер в левой колонке */
+/* Р‘Р°РЅРЅРµСЂ РІ Р»РµРІРѕР№ РєРѕР»РѕРЅРєРµ */
 #banner-left a {
-  background: url(../Content/Layouts/banner-left.jpg) no-repeat center top;
+  background: url(../Images/Layouts/banner-left.jpg) no-repeat center top;
   height: 266px;
   display: block;
   margin-top: 10px;
   text-decoration: none;
 }
 
-/* Баннеры на главной внизу */
+/* Р‘Р°РЅРЅРµСЂС‹ РЅР° РіР»Р°РІРЅРѕР№ РІРЅРёР·Сѓ */
 .bottom-banner1 {
-  background: url(../Content/Layouts/bottom-banner1.jpg) no-repeat left top;
+  background: url(../Images/Layouts/bottom-banner1.jpg) no-repeat left top;
   float: left;
   height: 124px;
   width: 290px;
@@ -604,7 +604,7 @@ color: #f00; /* Цвет активной ссылки */
 }
 
 .bottom-banner2 {
-  background: url(../Content/Layouts/bottom-banner2.jpg) no-repeat right top;
+  background: url(../Images/Layouts/bottom-banner2.jpg) no-repeat right top;
   float: right;
   height: 124px;
   width: 290px;
@@ -612,7 +612,7 @@ color: #f00; /* Цвет активной ссылки */
   display: block;
 }
 
-/* Навигация */
+/* РќР°РІРёРіР°С†РёСЏ */
 .nav {
   margin: 0px 30px;
   height: 100px;
@@ -631,28 +631,28 @@ color: #f00; /* Цвет активной ссылки */
 }
 
 .nav a.calc {
-  background: url(../Content/Layouts/calc.png) no-repeat top center;
+  background: url(../Images/Layouts/calc.png) no-repeat top center;
 }
 
 .nav a.ask {
-  background: url(../Content/Layouts/ask.png) no-repeat top center;
+  background: url(../Images/Layouts/ask.png) no-repeat top center;
 }
 
 .nav a.forum {
-  background: url(../Content/Layouts/forum.png) no-repeat top center;
+  background: url(../Images/Layouts/forum.png) no-repeat top center;
 }
 
 .nav a.video {
-  background: url(../Content/Layouts/video.png) no-repeat top center;
+  background: url(../Images/Layouts/video.png) no-repeat top center;
 
 }
 
-/* Поиск */
+/* РџРѕРёСЃРє */
 #search {
-  background: #FFFFFF url(../Content/Layouts/search.png) no-repeat top center;
+  background: #FFFFFF url(../Images/Layouts/search.png) no-repeat top center;
   height: 17px;
   margin-top: 30px;
-  display:none; /* ВЫКЛЮЧАТЕЛЬ ПОИСКА*/
+  display:none; /* Р’Р«РљР›Р®Р§РђРўР•Р›Р¬ РџРћРРЎРљРђ*/
 }
 
 #search input {
@@ -676,7 +676,7 @@ color: #f00; /* Цвет активной ссылки */
   cursor: pointer;
 }
 
-/* Линии */
+/* Р›РёРЅРёРё */
 .line-home-left {
   margin-right: -10px;
   margin-top: 20px;
@@ -690,7 +690,7 @@ color: #f00; /* Цвет активной ссылки */
 }
 
 *:first-child+html .line-home-right {
-  margin-top: 84px; /* Для ие7 */
+  margin-top: 84px; /* Р”Р»СЏ РёРµ7 */
 }
 
 .line-left {

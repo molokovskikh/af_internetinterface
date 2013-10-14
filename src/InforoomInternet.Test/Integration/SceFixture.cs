@@ -13,7 +13,7 @@ using NUnit.Framework;
 namespace InforoomInternet.Test.Integration
 {
 	[TestFixture, Ignore("Чинить")]
-	public class SceFuxture
+	public class SceFixture
 	{
 		[Test]
 		public void ThreadTest()

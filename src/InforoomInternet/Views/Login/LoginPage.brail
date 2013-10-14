@@ -61,9 +61,7 @@
 	<tr>
 		<td colspan=2>
 			<div class="blockBut">
-				<button type="submit" id="LogBut" class="button">
-					<img alt="Save" src="${siteroot}/Content/key.png"> Войти
-				</button>
+				<button type="submit" id="LogBut" class="button">Войти</button>
 			</div>
 		</td>
 	</tr>

@@ -118,11 +118,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Javascripts\application.js" />
-    <Content Include="Assets\Javascripts\calendar-ru_win_.js" />
-    <Content Include="Assets\Javascripts\calendar-setup.js" />
-    <Content Include="Assets\Javascripts\calendar.js" />
     <Content Include="Assets\Javascripts\Common.js" />
     <Content Include="Assets\Javascripts\dialog.action.js" />
+    <Content Include="Assets\Javascripts\EditingConnect.js" />
     <Content Include="Assets\Javascripts\OrderService.js" />
     <Content Include="Assets\Javascripts\Register.js" />
     <Content Include="Assets\Javascripts\registerlawperson.js" />
@@ -137,29 +135,15 @@
     <Content Include="Assets\Stylesheets\payments.css" />
     <Content Include="Assets\Stylesheets\printact.css" />
     <Content Include="Assets\Stylesheets\service-requests.css" />
+    <Content Include="Assets\Stylesheets\Table.css" />
     <Content Include="Assets\Stylesheets\User.css" />
     <Content Include="Css\asc.gif" />
     <Content Include="Css\base.css" />
     <Content Include="Css\bg.gif" />
     <Content Include="Assets\Stylesheets\button.css" />
-    <Content Include="Css\datePicker.css" />
     <Content Include="Css\desc.gif" />
     <Content Include="Css\filter.css" />
-    <Content Include="Css\images\ui-bg_flat_0_aaaaaa_40x100.png" />
-    <Content Include="Css\images\ui-bg_flat_75_ffffff_40x100.png" />
-    <Content Include="Css\images\ui-bg_glass_55_fbf9ee_1x400.png" />
-    <Content Include="Css\images\ui-bg_glass_65_ffffff_1x400.png" />
-    <Content Include="Css\images\ui-bg_glass_75_dadada_1x400.png" />
-    <Content Include="Css\images\ui-bg_glass_75_e6e6e6_1x400.png" />
-    <Content Include="Css\images\ui-bg_glass_95_fef1ec_1x400.png" />
-    <Content Include="Css\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
-    <Content Include="Css\images\ui-icons_222222_256x240.png" />
-    <Content Include="Css\images\ui-icons_2e83ff_256x240.png" />
-    <Content Include="Css\images\ui-icons_454545_256x240.png" />
-    <Content Include="Css\images\ui-icons_888888_256x240.png" />
-    <Content Include="Css\images\ui-icons_cd0a0a_256x240.png" />
     <Content Include="Assets\Images\x_office_calendar.png" />
-    <Content Include="Css\jquery-ui-1.8.16.custom.css" />
     <Content Include="Css\modal-gloss.png" />
     <Content Include="Css\Modal.css" />
     <Content Include="Css\RequestCss.css" />
@@ -301,7 +285,6 @@
     <Content Include="JavaScript\jquery.nyroModal.custom.js" />
     <Content Include="JavaScript\jquery.reveal.js" />
     <Content Include="JavaScript\jquery.tablesorter.js" />
-    <Content Include="JavaScript\jquery.ui.datepicker-ru.js" />
     <None Include="Views\Subview\StaticIps.brail" />
     <None Include="Views\ServiceRequest\RegisterServiceRequest.brail" />
     <None Include="Views\Subview\ServiceRequestRow.brail" />
@@ -383,7 +366,7 @@
     <Compile Include="Helpers\IPAddressConverter.cs" />
     <Compile Include="Helpers\IpHelper.cs" />
     <Compile Include="Helpers\IPUserType.cs" />
-    <Compile Include="Helpers\Listner.cs" />
+    <Compile Include="Helpers\AuditListener.cs" />
     <Compile Include="Helpers\LoginCreatorHelper.cs" />
     <Compile Include="Helpers\SmsHelper.cs" />
     <Compile Include="Helpers\StandaloneInitializer.cs" />

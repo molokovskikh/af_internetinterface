@@ -46,7 +46,7 @@ namespace Billing
 		public static void InitActiveRecord()
 		{
 			if (!ActiveRecordStarter.IsInitialized) {
-				ActiveRecordStarter.EventListenerComponentRegistrationHook += RemoverListner.Make;
+				ActiveRecordStarter.EventListenerComponentRegistrationHook += AuditListener.RemoveAuditListener;
 				ActiveRecordInitialize.Init(ConnectionHelper.GetConnectionName(), new[] { typeof(Client).Assembly });
 			}
 		}

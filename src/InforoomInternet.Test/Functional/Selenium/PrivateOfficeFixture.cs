@@ -189,7 +189,7 @@ namespace InforoomInternet.Test.Functional.Selenium
 		}
 
 		[Test]
-		public void Freind_bonus_create_test()
+		public void Friend_bonus_create_test()
 		{
 			Open("Main/zayavka");
 			AssertText("Заполнение данной заявки означает принятие участие в акции \"подключи друга\".");

@@ -724,6 +724,9 @@ where CE.Client = {0}", Id))
 
 		public virtual decimal GetPriceForTariff()
 		{
+			if (PhysicalClient.Tariff == null)
+				throw new Exception(String.Format("Для клиента {0} не задан тариф проверь настройки", Id));
+
 			var price = AccountDiscounts(PhysicalClient.Tariff.Price);
 			var finalPrice = AccountDiscounts(PhysicalClient.Tariff.FinalPrice);
 

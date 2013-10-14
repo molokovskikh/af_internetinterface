@@ -55,10 +55,9 @@ namespace InternetInterface.Queries
 		[Display(Name = "Комментарий", Order = 5)]
 		public string Comment { get; set; }
 
-		public void Prepare(bool forExcel, UrlHelper helper)
+		public void Prepare(bool forExcel)
 		{
 			ExportInExcel = forExcel;
-			UrlHelper = helper;
 		}
 	}
 
@@ -145,7 +144,7 @@ and w.WriteOffDate <= :EndDate";
 			var query = SetParameters(Session.CreateSQLQuery(string.Format(sql, selectPart)));
 
 			var result = query.ToList<WriteOffsItem>();
-			result.ForEach(e => e.Prepare(ExportInExcel, UrlHelper));
+			result.ForEach(e => e.Prepare(ExportInExcel));
 			return result.Cast<BaseItemForTable>().ToList();
 		}
 

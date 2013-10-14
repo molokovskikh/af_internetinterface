@@ -51,7 +51,6 @@ namespace InforoomInternet.Controllers
 		{
 			controllerContext.PropertyBag["ViewName"] = Path.GetFileNameWithoutExtension(context.Request.Uri.Segments.Last());
 			controllerContext.PropertyBag["LocalPath"] = Path.GetFileNameWithoutExtension(context.Request.Uri.LocalPath);
-			controllerContext.PropertyBag["loadInternetModules"] = !Lease.IsGray(context.Request.UserHostAddress);
 
 			controllerContext.PropertyBag["authorized"] = AccessFilter.Authorized(context);
 			if (context.Session["LoginPartner"] == null) {

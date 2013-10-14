@@ -25,11 +25,8 @@
 			<h3>!{internet.Service.HumanName}</h3>
 			<div class="serviceInternetBox">
 				<div>
-					${app.Edit("internet.ActivatedByUser")}
-				</div>
-				<div>
 					${app.Label("client.PhysicalClient.Tariff")}
-					${app.Edit("client.PhysicalClient.Tariff", {@emptyValue: "", @items: tariffs})}
+					${app.Edit("client.PhysicalClient.Tariff", tariffs)}
 					${app.GetValidationError("client.PhysicalClient.Tariff")}
 				</div>
 				<% if channels.Count: %>

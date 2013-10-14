@@ -1,43 +1,32 @@
 ﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	${app.Asset("jquery-1.6.4.js")}
-	${app.Asset("jquery-ui-1.8.16.js")}
-	${app.Asset("jquery.validate.js")}
+	<title>Интернет интерфейс</title>
+	${app.Asset("jquery-1.6.4.min.js")}
+	${app.Asset("jquery-ui-1.10.3.min.js")}
+	${app.Asset("jquery-ui-i18n.min.js")}
+	${app.Asset("jquery.validate.min.js")}
+
 	${app.Asset("editable.js")}
 	${app.Asset("checkbox.all.js")}
 	${app.Asset("application.js")}
 
 	${app.JS("Common.js",
-	"jquery.maskedinput-1.2.2.js",
-	"jquery.reveal.js",
-	"jquery.nyroModal.custom.js",
-	"jquery.ui.datepicker-ru.js",
-	"jquery.tablesorter.js")}
+		"jquery.maskedinput-1.2.2.js",
+		"jquery.reveal.js",
+		"jquery.nyroModal.custom.js",
+		"jquery.tablesorter.js")}
 
 	${app.CSS("Style.css",
 		"base.css",
-		"datePicker.css",
 		"tablesorter.css",
-		"reveal.css",
-		"jquery-ui-1.8.16.custom.css")}
+		"reveal.css")}
 	${app.Asset("button.css")}
-<title>Интернет интерфейс</title>
+
+	<% OutputSubView("/Subviews/DefaultJs") %>
 </head>
 <body>
-	<% if IsDefined("Message"): %>
-	<div class="flash">
-		<% if Message isa string: %>
-		<div class="notice">
-			${Message}
-		</div>
-		<% else: %>
-		<div class="${Message.GetClass()}">
-			${Message}
-		</div>
-		<% end %>
-	</div>
-	<% end %>
-${ChildOutput}
+	<% OutputSubView("/Subviews/Message") %>
+	${ChildOutput}
 </body>
 </html>

@@ -139,7 +139,7 @@
     <Compile Include="Functional\WarningPackageIdFixture.cs" />
     <Compile Include="Integration\MainControllerFixture.cs" />
     <Compile Include="Integration\PrivateOfficeControllerFixture.cs" />
-    <Compile Include="Integration\SceFuxture.cs" />
+    <Compile Include="Integration\SceFixture.cs" />
     <Compile Include="Integration\TariffFixture.cs" />
     <Compile Include="Setup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

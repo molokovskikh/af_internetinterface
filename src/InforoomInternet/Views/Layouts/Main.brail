@@ -3,25 +3,20 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
 <head>
-  <title>Инфорум</title>
-  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<title>Инфорум</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 
-<script type="text/javascript" src="${siteroot}/assets/javascripts/jquery-1.6.4.min.js"></script>
-<script type="text/javascript" src="${siteroot}/assets/javascripts/jquery-ui-1.8.16.min.js"></script>
-<script type="text/javascript" src="${siteroot}/javascript/jquery.validate.js"></script>
-<script type="text/javascript" src="${siteroot}/javascript/jquery.ui.datepicker-ru.js"></script>
+	${app.Asset("jquery-1.6.4.min.js")}
+	${app.Asset("jquery-ui-1.10.3.min.js")}
+	${app.Asset("jquery-ui-i18n.min.js")}
+	${app.Asset("jquery.validate.min.js")}
+	${app.Asset("calendar.setup.jquery.js")}
 
-<link rel="stylesheet" href="${siteroot}/CSS/styles.css" type="text/css" />
-<link rel="stylesheet" href="${siteroot}/assets/Stylesheets/themes/base/jquery.ui.progressbar.css" type="text/css" />
-${app.Asset("jquery-ui-1.8.16.custom.css")}
-
-<%if loadInternetModules: %>
-<script type="text/javascript">
-	window.___gcfg = { lang: 'ru' };
-</script>
-<%end %>
+	${app.Asset("styles.css")}
+	${app.Asset("main.css")}
+	${app.Asset("themes/base/jquery.ui.all.css")}
+	<% OutputSubView("/Subviews/DefaultJs") %>
 </head>
-
 <body>
 <div id="wrapper">
 	<div class="left">

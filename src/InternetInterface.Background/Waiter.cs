@@ -47,7 +47,7 @@ namespace InternetInterface.Background
 
 		public void DoStart()
 		{
-			ActiveRecordStarter.EventListenerComponentRegistrationHook += RemoverListner.Make;
+			ActiveRecordStarter.EventListenerComponentRegistrationHook += AuditListener.RemoveAuditListener;
 			StandaloneInitializer.Init(typeof(Waiter).Assembly);
 
 			Start();
