@@ -26,7 +26,6 @@ namespace InforoomInternet
 			: base(Assembly.Load("InforoomInternet"))
 		{
 			LibAssemblies.Add(Assembly.Load("Common.Web.Ui"));
-			LibAssemblies.Add(Assembly.Load("InforoomInternet"));
 			Logger.ErrorSubject = "Ошибка в IVRN";
 		}
 
