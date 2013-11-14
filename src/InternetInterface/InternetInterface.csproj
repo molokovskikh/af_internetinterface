@@ -219,7 +219,6 @@
     <None Include="Views\Payers\AgentFilter.brail" />
     <None Include="Views\Payers\Filter.brail" />
     <None Include="Views\Payers\Show.brail" />
-    <None Include="Views\Payers\ShowAgent.brail" />
     <None Include="Views\Payments\Edit.brail" />
     <None Include="Views\Payments\Index.brail" />
     <None Include="Views\Payments\New.brail" />

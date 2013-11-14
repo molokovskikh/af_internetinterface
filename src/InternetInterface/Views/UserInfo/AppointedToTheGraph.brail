@@ -1,16 +1,5 @@
 ﻿
 		<style type="text/css">
-		.turn-me-into-datepicker {
-			float: left;
-			margin:10px;
-			
-		}
-		
-		.jCalendar
-		{
-			font-size:10px;
-		}
-
 		.hasDatepicker
 		{
 			margin-top:10px;

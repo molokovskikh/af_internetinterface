@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Web;
@@ -6,6 +7,7 @@ using System.Web.Services.Description;
 using Castle.MonoRail.Framework;
 using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
+using Common.Web.Ui.MonoRailExtentions;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using InternetInterface.Queries;
@@ -14,12 +16,6 @@ using BankPayment = InternetInterface.Models.BankPayment;
 
 namespace InternetInterface.Controllers
 {
-	public enum VirtualType
-	{
-		[Description("Небонусные")] NoBonus = 0,
-		[Description("Бонусные")] Bonus = 1
-	}
-
 	[Helper(typeof(PaginatorHelper))]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class PayersController : BaseController
@@ -30,17 +26,14 @@ namespace InternetInterface.Controllers
 			PropertyBag["registrId"] = Partner.FindFirst().Id;
 		}
 
-		public void AgentFilter([DataBind("filter")] AgentFilter filter)
+		public void AgentFilter([SmartBinder("filter")] AgentFilter filter)
 		{
-			var thisD = DateTime.Now;
-			if (filter.startDate == null)
-				filter.startDate = new DateTime(thisD.Year, thisD.Month, 1);
-			if (filter.endDate == null)
-				filter.endDate = DateTime.Now;
+			filter.CurrentAgent = Agent.GetByInitPartner();
+			filter.CurrentPartner = InitializeContent.Partner;
+
 			PropertyBag["filter"] = filter;
-			PropertyBag["agents"] = Agent.FindAll();
-			PropertyBag["agentId"] = filter.agent;
-			PropertyBag["colorId"] = 0;
+			if (IsPost)
+				PropertyBag["Payments"] = filter.Find(DbSession);
 		}
 
 		public void Show(uint registrator)
@@ -48,20 +41,6 @@ namespace InternetInterface.Controllers
 			PropertyBag["Registrators"] = Partner.FindAll();
 			PropertyBag["registrId"] = registrator;
 			PropertyBag["Payers"] = DbSession.Query<Client>().Where(p => p.WhoRegistered.Id == registrator && p.PhysicalClient != null);
-		}
-
-		public void ShowAgent([DataBind("filter")] AgentFilter filter)
-		{
-			PropertyBag["agents"] = Agent.FindAll();
-			PropertyBag["agentId"] = filter.agent;
-			var payments = filter.Find(DbSession);
-			PropertyBag["filter"] = filter;
-			PropertyBag["Payments"] = payments;
-			PropertyBag["TotalSumm"] = filter.TotalSum;
-			if (filter.startDate.Value.Month == filter.endDate.Value.Month)
-				PropertyBag["colorId"] = filter.startDate.Value.Month;
-			else
-				PropertyBag["colorId"] = 0;
 		}
 
 		public void NewPaymets()

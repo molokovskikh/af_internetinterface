@@ -2,89 +2,92 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using Common.Tools.Calendar;
 using Common.Web.Ui.Helpers;
+using ExcelLibrary.BinaryFileFormat;
 using InternetInterface.Controllers;
 using InternetInterface.Models;
 using NHibernate;
+using NHibernate.Criterion;
 using NHibernate.Linq;
 
 namespace InternetInterface.Queries
 {
-	public class AgentFilter : IPaginable
+	public enum VirtualType
 	{
-		public uint agent { get; set; }
-		public DateTime? startDate { get; set; }
-		public DateTime? endDate { get; set; }
-		public string year { get; set; }
+		[Description("Небонусные")] NoBonus = 0,
+		[Description("Бонусные")] Bonus = 1
+	}
 
-		[Description("��������")]
-		public VirtualType? Virtual { get; set; }
-
-		public int _lastRowsCount;
+	public class AgentFilter : PaginableSortable
+	{
 		public decimal TotalSum;
-
-		public int RowsCount
-		{
-			get { return _lastRowsCount; }
-		}
-
-		public int PageSize
-		{
-			get { return 20; }
-		}
-
-		public int CurrentPage { get; set; }
+		public Agent CurrentAgent;
+		public Partner CurrentPartner;
 
 		public AgentFilter()
 		{
-			Virtual = null;
-		}
-
-		public string[] ToUrl()
-		{
-			return new[] {
-				String.Format("filter.agent={0}", agent),
-				String.Format("filter.startDate={0}", startDate),
-				String.Format("filter.endDate={0}", endDate),
-				String.Format("filter.year={0}", year)
+			Year = DateTime.Today.Year.ToString();
+			Begin = DateTime.Today.FirstDayOfMonth();
+			End = DateTime.Today;
+			SortKeyMap = new Dictionary<string, string> {
+				{ "PaidOn", "PaidOn" },
 			};
 		}
 
-		public string ToUrlQuery()
+		public Agent Agent { get; set; }
+		public DateTime Begin { get; set; }
+		public DateTime End { get; set; }
+		public string Year { get; set; }
+
+		public int Month
 		{
-			return string.Join("&", ToUrl());
+			get
+			{
+				if (Begin.Month == End.Month)
+					return Begin.Month;
+				return 0;
+			}
 		}
 
-		public string GetUri()
+		public string[] Years
 		{
-			return ToUrlQuery();
+			get
+			{
+				return Enumerable.Range(2010, DateTime.Now.Year - 2010 + 1)
+					.Select(i => i.ToString())
+					.ToArray();
+			}
 		}
 
-		public List<Payment> Find(ISession session)
+		[Description("Бонусные")]
+		public VirtualType? Virtual { get; set; }
+
+		public IList<Payment> Find(ISession session)
 		{
-			var thisD = DateTime.Now;
-			if (startDate == null)
-				startDate = new DateTime(thisD.Year, thisD.Month, 1);
-			if (endDate == null)
-				endDate = DateTime.Now;
-			if (!CategorieAccessSet.AccesPartner("SSI"))
-				agent = Agent.GetByInitPartner().Id;
-			var totalRes = agent > 0 ?
-				session.Query<Payment>().Where(t => t.Agent.Id == agent).ToList() : Payment.FindAll().ToList();
-			totalRes = totalRes.Where(t => t.PaidOn >= startDate.Value &&
-				t.PaidOn <= endDate.Value.AddHours(23).AddMinutes(59) && t.Sum != 0 &&
-				t.Client.PhysicalClient != null).ToList();
-			if(Virtual != null) {
-				totalRes = totalRes.Where(t => t.Virtual == (Virtual == VirtualType.Bonus)).ToList();
+			if (!CurrentPartner.AccesedPartner.Contains("SSI"))
+				Agent = CurrentAgent;
+
+			var begin = Begin;
+			var end = End.AddDays(1);
+
+			var query = DetachedCriteria.For<Payment>()
+				.Add(Expression.Where<Payment>(p => p.PaidOn >= begin && p.PaidOn <= end));
+
+			if (Agent != null) {
+				query.Add(Expression.Where<Payment>(p => p.Agent == Agent));
 			}
-			_lastRowsCount = totalRes.Count();
-			TotalSum = totalRes.Sum(h => h.Sum);
-			if (_lastRowsCount > 0) {
-				var getCount = _lastRowsCount - PageSize * CurrentPage < PageSize ? _lastRowsCount - PageSize * CurrentPage : PageSize;
-				return
-					totalRes.GetRange(PageSize * CurrentPage, getCount);
+
+			if (Virtual != null) {
+				query.Add(Expression.Where<Payment>(p => p.Virtual == (Virtual == VirtualType.Bonus)));
 			}
-			return new List<Payment>();
+
+			TotalSum = CriteriaTransformer.Clone(query)
+				.SetProjection(Projections.Sum<Payment>(p => p.Sum))
+				.GetExecutableCriteria(session)
+				.UniqueResult<decimal?>() ?? 0;
+
+			return Find<Payment>(session, query).ToList();
 		}
 	}
 }

@@ -1,14 +1,4 @@
-﻿.turn-me-into-datepicker {
-	float: left;
-	margin:10px;
-}
-
-.jCalendar
-{
-	font-size:10px;
-}
-
-.hasDatepicker
+﻿.hasDatepicker
 {
 	float:none;
 }

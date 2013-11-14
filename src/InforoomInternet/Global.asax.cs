@@ -32,6 +32,8 @@ namespace InforoomInternet
 		private void Application_Start(object sender, EventArgs e)
 		{
 			try {
+				InstallBundle("jquery.calendar.support");
+
 				ActiveRecordStarter.EventListenerComponentRegistrationHook += AuditListener.RemoveAuditListener;
 
 				Initialize();

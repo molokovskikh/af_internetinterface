@@ -11,20 +11,8 @@
 	Date.format = 'dd.mm.yyyy';
 	$('.graph_date').datepicker();
 	$('.date-pick').datepicker({ changeYear: true });
-	$('.date_field').datepicker({
-		inline: true
-	});
-	$('#startDate').datepicker({
-		inline: true
-	});
-	$('#beginDate').datepicker({
-		inline: true
-	});
-	$('#endDate').datepicker({
-		inline: true
-	});
-	$('.CalendarInput').click(function () {
-		var a = $(this).prev('input');
-		$(this).prev('input').datepicker('show');
-	});
+	$('.date_field').datepicker();
+	$('#startDate').datepicker();
+	$('#beginDate').datepicker();
+	$('#endDate').datepicker();
 });

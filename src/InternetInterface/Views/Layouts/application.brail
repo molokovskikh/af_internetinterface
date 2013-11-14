@@ -9,7 +9,6 @@
 	${app.Asset("jquery-ui-i18n.min.js")}
 	${app.Asset("jquery.validate.min.js")}
 
-	${app.Asset("calendar.setup.jquery.js")}
 	${app.Asset("editable.js")}
 	${app.Asset("checkbox.all.js")}
 	${app.Asset("application.js")}

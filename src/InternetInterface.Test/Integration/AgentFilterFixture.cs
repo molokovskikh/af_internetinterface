@@ -7,6 +7,7 @@ using InternetInterface.Models;
 using InternetInterface.Queries;
 using Test.Support;
 using NUnit.Framework;
+using Test.Support.log4net;
 
 namespace InternetInterface.Test.Integration
 {
@@ -26,19 +27,21 @@ namespace InternetInterface.Test.Integration
 				Client = client,
 				Sum = 100,
 				Virtual = false,
-				PaidOn = DateTime.Now
+				PaidOn = DateTime.Now,
 			};
 			session.Save(payment);
 			payment = new Payment {
 				Client = client,
 				Sum = 200,
 				Virtual = true,
-				PaidOn = DateTime.Now
+				PaidOn = DateTime.Now,
 			};
 			session.Save(payment);
 
 			var agentFilter = new AgentFilter();
 			agentFilter.Virtual = VirtualType.Bonus;
+			agentFilter.CurrentPartner = InitializeContent.Partner;
+
 			var filteredPayments = agentFilter.Find(session);
 			Assert.That(filteredPayments.Count(t => !t.Virtual), Is.EqualTo(0));
 
