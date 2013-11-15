@@ -9,13 +9,13 @@ namespace InforoomInternet.Test.Functional
 		[SetUp]
 		public void Setup()
 		{
-			defaultUrl = "/nosuchpage";
+			defaultUrl = "/nosuchpage?error_fixture";
 		}
 
 		[Test]
 		public void Check404()
 		{
-			AssertText("Адрес введен неправильно");
+			AssertText("Страница не найдена");
 		}
 	}
 }
