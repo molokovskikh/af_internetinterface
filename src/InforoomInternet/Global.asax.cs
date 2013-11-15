@@ -33,6 +33,7 @@ namespace InforoomInternet
 		{
 			try {
 				InstallBundle("jquery.calendar.support");
+				InstallBundle("jquery.validate");
 
 				ActiveRecordStarter.EventListenerComponentRegistrationHook += AuditListener.RemoveAuditListener;
 

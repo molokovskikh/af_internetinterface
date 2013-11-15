@@ -35,6 +35,7 @@ namespace InternetInterface
 		private void Application_Start(object sender, EventArgs e)
 		{
 			InstallBundle("jquery.calendar.support");
+			InstallBundle("jquery.validate");
 
 			TypeDescriptor.AddProvider(new IPAddressTypeDescriptorProvider(), typeof(IPAddress));
 			ConfigReader.LoadSettings(Config);
