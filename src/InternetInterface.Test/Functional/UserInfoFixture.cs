@@ -65,7 +65,7 @@ namespace InternetInterface.Test.Functional
 		}
 
 		[Test]
-		public void ReservTest()
+		public void Make_reservation()
 		{
 			Client.Status = Status.Find((uint)StatusType.BlockedAndNoConnected);
 			session.Save(Client);
@@ -73,6 +73,7 @@ namespace InternetInterface.Test.Functional
 
 			Css("#naznach_but").Click();
 
+			WaitReveal();
 			WaitClickable("[name=\"graph_button\"]");
 			Css("[name=\"graph_button\"]").Click();
 
@@ -167,6 +168,7 @@ namespace InternetInterface.Test.Functional
 			WaitForText("Назначить в график");
 			Css("#naznach_but").Click();
 
+			WaitReveal();
 			WaitClickable("[name=\"graph_button\"]");
 			Css("[name=\"graph_button\"]").Click();
 
@@ -175,6 +177,15 @@ namespace InternetInterface.Test.Functional
 			AssertText("Информация по клиенту");
 			WaitForText("Сбросить");
 			AssertText("Сбросить");
+		}
+
+		private void WaitReveal()
+		{
+			Console.WriteLine(DateTime.Now.ToString("ss.fff"));
+			WaitAnimation(".reveal-modal-bg");
+			Console.WriteLine(DateTime.Now.ToString("ss.fff"));
+			WaitAnimation("#myModal");
+			Console.WriteLine(DateTime.Now.ToString("ss.fff"));
 		}
 	}
 }
