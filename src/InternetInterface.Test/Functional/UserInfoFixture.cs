@@ -181,11 +181,8 @@ namespace InternetInterface.Test.Functional
 
 		private void WaitReveal()
 		{
-			Console.WriteLine(DateTime.Now.ToString("ss.fff"));
 			WaitAnimation(".reveal-modal-bg");
-			Console.WriteLine(DateTime.Now.ToString("ss.fff"));
 			WaitAnimation("#myModal");
-			Console.WriteLine(DateTime.Now.ToString("ss.fff"));
 		}
 	}
 }
