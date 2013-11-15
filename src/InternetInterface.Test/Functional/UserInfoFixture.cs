@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using InternetInterface.Models;
 using NUnit.Framework;
 using OpenQA.Selenium;
@@ -72,11 +73,8 @@ namespace InternetInterface.Test.Functional
 
 			Css("#naznach_but").Click();
 
-			WaitForElementByLocator(By.Name("graph_button"));
-			var radio = browser.FindElementByName("graph_button");
-
-			var executor = (IJavaScriptExecutor)browser;
-			executor.ExecuteScript("arguments[0].click();", radio);
+			WaitClickable("[name=\"graph_button\"]");
+			Css("[name=\"graph_button\"]").Click();
 
 			Css("#reserv_but").Click();
 			WaitForText("Резерв");
@@ -169,13 +167,11 @@ namespace InternetInterface.Test.Functional
 			WaitForText("Назначить в график");
 			Css("#naznach_but").Click();
 
-			WaitForElementByLocator(By.Name("graph_button"));
+			WaitClickable("[name=\"graph_button\"]");
+			Css("[name=\"graph_button\"]").Click();
 
-			var radio = browser.FindElementByName("graph_button");
-			var executor = (IJavaScriptExecutor)browser;
-			executor.ExecuteScript("arguments[0].click();", radio);
 			Css("#naznach_but_1").Click();
-			WaitForElementByLocator(By.XPath("//*[contains(text(),'Информация по клиенту')]"));
+			SafeWaitText("Информация по клиенту");
 			AssertText("Информация по клиенту");
 			WaitForText("Сбросить");
 			AssertText("Сбросить");
