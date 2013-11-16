@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using NHibernate.ByteCode.Castle;
@@ -13,9 +14,7 @@ namespace InternetInterface.Test.Unit
 		[SetUp]
 		public void Setup()
 		{
-			var provider = ((AbstractBytecodeProvider)NHibernate.Cfg.Environment.BytecodeProvider);
-			provider.SetProxyFactoryFactory(typeof(ProxyFactoryFactory).AssemblyQualifiedName);
-
+			NHibernateHelper.InitProxy();
 			InitializeContent.GetAdministrator = () => new Partner { AccesedPartner = new List<string>() };
 		}
 	}
