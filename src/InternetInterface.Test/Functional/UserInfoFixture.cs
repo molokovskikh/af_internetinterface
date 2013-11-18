@@ -74,8 +74,7 @@ namespace InternetInterface.Test.Functional
 			Css("#naznach_but").Click();
 
 			WaitReveal();
-			WaitClickable("[name=\"graph_button\"]");
-			Css("[name=\"graph_button\"]").Click();
+			SafeClick("[name=\"graph_button\"]");
 
 			Css("#reserv_but").Click();
 			WaitForText("Резерв");
@@ -169,14 +168,21 @@ namespace InternetInterface.Test.Functional
 			Css("#naznach_but").Click();
 
 			WaitReveal();
-			WaitClickable("[name=\"graph_button\"]");
-			Css("[name=\"graph_button\"]").Click();
+			SafeClick("[name=\"graph_button\"]");
 
 			Css("#naznach_but_1").Click();
 			SafeWaitText("Информация по клиенту");
 			AssertText("Информация по клиенту");
 			WaitForText("Сбросить");
 			AssertText("Сбросить");
+		}
+
+		private void SafeClick(string css)
+		{
+			WaitClickable(css);
+			var element = browser.FindElementByCssSelector(css);
+			browser.ExecuteScript(String.Format("window.scrollTo({0},{1})", element.Location.X, element.Location.Y));
+			element.Click();
 		}
 
 		private void WaitReveal()
