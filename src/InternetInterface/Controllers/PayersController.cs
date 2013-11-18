@@ -12,6 +12,7 @@ using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using InternetInterface.Queries;
 using NHibernate.Linq;
+using NHibernate.Util;
 using BankPayment = InternetInterface.Models.BankPayment;
 
 namespace InternetInterface.Controllers
@@ -26,13 +27,13 @@ namespace InternetInterface.Controllers
 			PropertyBag["registrId"] = Partner.FindFirst().Id;
 		}
 
-		public void AgentFilter([SmartBinder("filter")] AgentFilter filter)
+		public void AgentFilter([SmartBinder] AgentFilter filter)
 		{
 			filter.CurrentAgent = Agent.GetByInitPartner();
 			filter.CurrentPartner = InitializeContent.Partner;
 
 			PropertyBag["filter"] = filter;
-			if (IsPost)
+			if (IsPost && Request.QueryString.AllKeys.Any(k => k.StartsWith("filter")))
 				PropertyBag["Payments"] = filter.Find(DbSession);
 		}
 

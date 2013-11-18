@@ -104,10 +104,10 @@
 
 <center>
 	<span class="info_paym">Всего ${filter.RowsCount} платежей</span>
-	<span class="info_paym">на сумму ${filter.TotalSum.ToString("C")} рублей</span>
+	<span class="info_paym">на сумму ${filter.TotalSum.ToString("C")}</span>
 </center>
 
-<table class="table" style="width: 100%; font-style:oblique">
+<table class="table">
 	<thead>
 		<tr valign="top">
 			<th>Номер счета</th>
