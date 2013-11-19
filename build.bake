@@ -18,6 +18,8 @@ task @Build, [@BuildWebSite, @BuildBackground, @BuildPrinter]
 task @deploy, [@DeployPipeline, @DeployPrinter, @DeployBackground]
 
 task @DeployBackground, [@BuildBackground, @Production, @Migrate, @SendDeployNotification]:
+	return if Globals.Environment != @Production
+
 	oldProject = Globals.Project
 	Globals.Project = "InternetInterface.Background"
 	Globals.DeployTo = """\\fms\TopShelf\Services\""" + Globals.Project
@@ -48,6 +50,8 @@ task @BuildPrinter:
 	Globals.Project = oldProject
 
 task @DeployPrinter:
+	return if Globals.Environment != @Production
+
 	oldProject = Globals.Project
 	Globals.Project = "InternetInterface.Printer"
 	project = Globals.Project

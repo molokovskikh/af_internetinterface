@@ -33,7 +33,7 @@ namespace InternetInterface.Controllers
 			filter.CurrentPartner = InitializeContent.Partner;
 
 			PropertyBag["filter"] = filter;
-			if (IsPost && Request.QueryString.AllKeys.Any(k => k.StartsWith("filter")))
+			if (Request.QueryString.AllKeys.Any(k => k.StartsWith("filter")))
 				PropertyBag["Payments"] = filter.Find(DbSession);
 		}
 

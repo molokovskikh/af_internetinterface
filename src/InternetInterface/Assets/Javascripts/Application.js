@@ -15,4 +15,12 @@
 	$('#startDate').datepicker();
 	$('#beginDate').datepicker();
 	$('#endDate').datepicker();
+
+	$(".accordion").accordion({
+		collapsible: true,
+		heightStyle: "content"
+	});
+	$('.date-pick').datepicker().change(function () {
+		$('.startDate_local').val($(this).val());
+	});
 });

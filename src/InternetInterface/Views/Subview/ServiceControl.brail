@@ -1,15 +1,4 @@
-﻿<script type="text/javascript">
-	$(function () {
-		$(".accordion").accordion({
-			collapsible: true,
-			autoHeight: false
-		});
-		$('.date-pick').datepicker().change(function () {
-			$('.startDate_local').val($(this).val());
-		});
-	});
-</script>
-<div id="myModal_active" class="reveal-modal"> 
+﻿<div id="myModal_active" class="reveal-modal">
 	<table class="table">
 		<thead>
 			<tr>
