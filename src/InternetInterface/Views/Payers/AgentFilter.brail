@@ -8,14 +8,6 @@
 		float:left;
 		text-align:center;
 	}
-
-	.info_paym
-	{
-		font-size:16px;
-		font-style:inherit;
-		font-weight:bold;
-		color:Green;
-	}
 </style>
 
 <script type="text/javascript">
@@ -103,8 +95,8 @@
 <% if IsDefined("Payments"): %>
 
 <center>
-	<span class="info_paym">Всего ${filter.RowsCount} платежей</span>
-	<span class="info_paym">на сумму ${filter.TotalSum.ToString("C")}</span>
+	<span class="itogo">Всего ${filter.RowsCount} платежей</span>
+	<span class="itogo">на сумму ${filter.TotalSum.ToString("C")}</span>
 </center>
 
 <table class="table">

@@ -2,8 +2,6 @@
 using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
-using NHibernate.ByteCode.Castle;
-using NHibernate.Bytecode;
 using NUnit.Framework;
 
 namespace InternetInterface.Test.Unit
