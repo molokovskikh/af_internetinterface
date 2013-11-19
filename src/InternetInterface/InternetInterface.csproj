@@ -304,6 +304,7 @@
     <None Include="Views\UserInfo\ShowAppeals.brail" />
     <Content Include="Views\UserInfo\ShowRegions.brail" />
     <Content Include="Views\UserInfo\Statistic.brail" />
+    <None Include="Web.test.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AllLogic\ColorWork.cs" />
