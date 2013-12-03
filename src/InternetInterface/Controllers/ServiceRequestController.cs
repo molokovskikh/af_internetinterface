@@ -54,15 +54,15 @@ namespace InternetInterface.Controllers
 			var request = new ServiceRequest { Registrator = Partner };
 			PropertyBag["client"] = client;
 			PropertyBag["request"] = request;
-			PropertyBag["ingeners"] = Partner.GetServiceIngeners();
+			PropertyBag["ingeners"] = Partner.GetServiceEngineers();
 			PropertyBag["requests"] = new RequestFinderFilter(client).Find(DbSession);
 			if (IsPost) {
 				BindObjectInstance(request, "Request", AutoLoadBehavior.NewInstanceIfInvalidKey);
 
 				if (IsValid(request)) {
 					DbSession.Save(request);
-					var sms = request.GetSms();
-					if (SendSms(sms, request))
+					var sms = request.GetNewSms();
+					if (SendSms(request, sms))
 						Notify("Сохранено");
 					RedirectTo(client);
 				}
@@ -84,7 +84,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Edit"] = edit;
 			PropertyBag["IsService"] = Partner.CategorieIs("Service");
 			if (edit) {
-				PropertyBag["ingeners"] = Partner.GetServiceIngeners();
+				PropertyBag["ingeners"] = Partner.GetServiceEngineers();
 			}
 		}
 
@@ -107,7 +107,7 @@ namespace InternetInterface.Controllers
 				if (writeOff != null)
 					DbSession.Save(writeOff);
 
-				if (SendSms(request.GetEditSms(DbSession), request))
+				if (SendSms(request, request.GetEditSms(DbSession)))
 					Notify("Сохранено");
 
 				RedirectToUrl("../ServiceRequest/ShowRequest?Id=" + request.Id);
@@ -129,18 +129,27 @@ namespace InternetInterface.Controllers
 			CancelLayout();
 		}
 
-		private bool SendSms(SmsMessage sms, ServiceRequest request)
+		private bool SendSms(ServiceRequest request, IEnumerable<SmsMessage> messages)
 		{
-			if (sms == null)
+			if (messages == null)
 				return true;
 
-			SmsHelper.SendMessage(sms);
-			if (sms.IsFaulted) {
+			foreach (var message in messages) {
+				SendSms(request, message);
+			}
+			return !messages.Any(m => m.IsFaulted);
+		}
+
+		private bool SendSms(ServiceRequest request, SmsMessage message)
+		{
+			if (message == null)
+				return true;
+			SmsHelper.SendMessage(message);
+			if (message.IsFaulted) {
 				Error("В данный момент отправка SMS инженеру невозможна. Необходимо передать информацию устно.");
 				this.Mailer<Mailer>().SmsSendUnavailable(request).Send();
-				return false;
 			}
-			return true;
+			return message.IsFaulted;
 		}
 	}
 }

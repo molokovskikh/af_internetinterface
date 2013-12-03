@@ -29,7 +29,7 @@ namespace InternetInterface.Test.Integration
 			var client = ClientHelper.Client();
 			session.Save(client);
 
-			var performer = Partner.GetServiceIngeners().First();
+			var performer = Partner.GetServiceEngineers().First();
 			if (String.IsNullOrEmpty(performer.TelNum)) {
 				performer.TelNum = "473-2606000";
 				session.Save(performer);

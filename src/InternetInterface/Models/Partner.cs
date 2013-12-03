@@ -88,7 +88,7 @@ namespace InternetInterface.Models
 			return Queryable.Where(p => p.Categorie.ReductionName == "Agent").ToList();
 		}
 
-		public static List<Partner> GetServiceIngeners()
+		public static List<Partner> GetServiceEngineers()
 		{
 			return Queryable.Where(p => p.Categorie.ReductionName == "Service").ToList();
 		}

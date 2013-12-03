@@ -103,8 +103,6 @@ namespace InternetInterface.Models
 		[HasMany(ColumnKey = "Request", OrderBy = "RegDate", Lazy = true)]
 		public virtual IList<ServiceIteration> Iterations { get; set; }
 
-		public virtual SmsMessage Sms { get; set; }
-
 		public virtual string GetDescription()
 		{
 			return AppealHelper.GetTransformedAppeal(Description);
@@ -148,9 +146,26 @@ namespace InternetInterface.Models
 			return null;
 		}
 
-		public virtual SmsMessage GetSms()
+		public virtual List<SmsMessage> GetEditSms(ISession session)
 		{
-			if (!ShouldSendSms())
+			var messages = new List<SmsMessage>();
+			if (Status == ServiceRequestStatus.New && session.IsChanged(this, r => r.Performer)) {
+				messages.AddRange(new[] {
+					GetCancelSms(session.OldValue(this, r => r.Performer)),
+					GetNewSms()
+				});
+			}
+
+			if (Status == ServiceRequestStatus.Cancel && session.IsChanged(this, r => r.Status)) {
+				messages.Add(GetCancelSms(Performer));
+			}
+
+			return messages.Where(m => m != null).ToList();
+		}
+
+		public virtual SmsMessage GetNewSms()
+		{
+			if (!ShouldSendSms(Performer))
 				return null;
 
 			var endPoint = Client.Endpoints.FirstOrDefault();
@@ -168,24 +183,20 @@ namespace InternetInterface.Models
 			return sms;
 		}
 
-		public virtual SmsMessage GetEditSms(ISession session)
+		private SmsMessage GetCancelSms(Partner performer)
 		{
-			if (!ShouldSendSms())
+			if (performer == null)
 				return null;
-
-			if (Status == ServiceRequestStatus.Cancel && session.IsChanged(this, r => r.Status)) {
-				Sms = new SmsMessage(Performer.TelNum);
-				Sms.Text = String.Format("сч. {0} заявка отменена", Client.Id);
-				return Sms;
-			}
-			return null;
+			var sms = new SmsMessage(performer.TelNum);
+			sms.Text = String.Format("сч. {0} заявка отменена", Client.Id);
+			return sms;
 		}
 
-		private bool ShouldSendSms()
+		private bool ShouldSendSms(Partner performer)
 		{
-			if (Performer == null)
+			if (performer == null)
 				return false;
-			if (String.IsNullOrEmpty(Performer.TelNum))
+			if (String.IsNullOrEmpty(performer.TelNum))
 				return false;
 			return true;
 		}
