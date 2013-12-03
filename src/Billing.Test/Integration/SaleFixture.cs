@@ -19,7 +19,6 @@ namespace Billing.Test.Integration
 				client.RatedPeriodDate = DateTime.Now;
 				client.StartNoBlock = DateTime.Now;
 				client.Update();
-				SystemTime.Reset();
 			}
 		}
 
@@ -69,12 +68,10 @@ namespace Billing.Test.Integration
 				client.Refresh();
 				Assert.AreEqual(client.Sale, SaleStep * MinSale);
 			}
-			while (!client.Disabled) {
+			Wait(client, () => client.Disabled, () => {
 				billing.Compute();
 				billing.OnMethod();
-				using (new SessionScope())
-					client.Refresh();
-			}
+			});
 			Assert.AreEqual(client.Sale, 0);
 			new Payment {
 				Client = client,
@@ -108,13 +105,7 @@ namespace Billing.Test.Integration
 				client.PhysicalClient.VirtualBalance = 0;
 				client.PhysicalClient.Save();
 			}
-			var iterationCount = 0;
-			while (!client.Disabled) {
-				billing.Compute();
-				iterationCount++;
-				using (new SessionScope())
-					client.Refresh();
-			}
+			var iterationCount = Wait(client, () => client.Disabled, () => billing.Compute());
 			Assert.Greater(iterationCount, 1);
 			using (new SessionScope())
 				client.Refresh();

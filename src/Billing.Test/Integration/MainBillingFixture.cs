@@ -218,5 +218,21 @@ namespace Billing.Test.Integration
 				});
 			}
 		}
+
+		protected int Wait<T>(T entity, Func<bool> condition, Action action) where T : ActiveRecordBase
+		{
+			var timeout = TimeSpan.FromSeconds(30);
+			var begin = DateTime.Now;
+			var i = 0;
+			while (!condition()) {
+				if (DateTime.Now - begin > timeout)
+					throw new Exception("Не удалось дождаться выполения условия");
+				action();
+				using (new SessionScope())
+					entity.Refresh();
+				i++;
+			}
+			return i;
+		}
 	}
 }

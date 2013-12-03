@@ -309,7 +309,9 @@
     <None Include="Views\Main\Index.brail" />
     <Content Include="Web.release.config">
     </Content>
-    <None Include="Views\PrivateOffice\IndexOffice.brail" />
+    <None Include="Views\PrivateOffice\IndexOffice.brail">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Views\PrivateOffice\PostponedPayment.brail" />
   </ItemGroup>
   <ItemGroup>
