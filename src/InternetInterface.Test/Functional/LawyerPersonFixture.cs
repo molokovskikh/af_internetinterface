@@ -133,7 +133,6 @@ namespace InternetInterface.Test.Functional
 			};
 			session.Save(orderService);
 			Open(laywerPerson.Redirect());
-			Console.WriteLine(laywerPerson.Redirect());
 
 			AssertText("заказ № 1");
 			Click("<Подключенные услуги(1):");
