@@ -14,11 +14,6 @@ namespace InternetInterface.Controllers.Filter
 		/// <summary>
 		/// Фильтр разграничения доступа к методам контроллеров
 		/// </summary>
-		/// <param name="exec"></param>
-		/// <param name="context"></param>
-		/// <param name="controller"></param>
-		/// <param name="controllerContext"></param>
-		/// <returns></returns>
 		public bool Perform(ExecuteWhen exec, IEngineContext context, IController controller, IControllerContext controllerContext)
 		{
 #if DEBUG
@@ -31,22 +26,21 @@ namespace InternetInterface.Controllers.Filter
 				context.Response.RedirectToUrl(@"..\\Login\LoginPartner.rails");
 				return false;
 			}
-			else {
-				var partner = Partner.GetPartnerForLogin(context.Session["login"].ToString());
-				partner.AccesedPartner = CategorieAccessSet.FindAll(DetachedCriteria.For(typeof(CategorieAccessSet))
-					.CreateAlias("AccessCat", "AC", JoinType.InnerJoin)
-					.Add(Restrictions.Eq("Categorie", partner.Categorie)))
-					.Select(c => c.AccessCat.ReduceName).ToList();
-				context.Items.Add("Administrator", partner);
-				controllerContext.PropertyBag["PartnerAccessSet"] = new CategorieAccessSet();
-				controllerContext.PropertyBag["MapPartner"] = partner;
-				if (AccessRules.GetAccessName(controllerContext.Action).Count(CategorieAccessSet.AccesPartner) == 0
-					&& !partner.HavePermissionTo(controllerContext.Name, controllerContext.Action)) {
-					context.Response.RedirectToUrl(@"..\\Errors\AccessDin.aspx");
-					return false;
-				}
-				return true;
+
+			var partner = Partner.GetPartnerForLogin(context.Session["login"].ToString());
+			partner.AccesedPartner = CategorieAccessSet.FindAll(DetachedCriteria.For(typeof(CategorieAccessSet))
+				.CreateAlias("AccessCat", "AC", JoinType.InnerJoin)
+				.Add(Restrictions.Eq("Categorie", partner.Categorie)))
+				.Select(c => c.AccessCat.ReduceName).ToList();
+			context.Items.Add("Administrator", partner);
+			controllerContext.PropertyBag["PartnerAccessSet"] = new CategorieAccessSet();
+			controllerContext.PropertyBag["MapPartner"] = partner;
+			if (AccessRules.GetAccessName(controllerContext.Action).Count(CategorieAccessSet.AccesPartner) == 0
+				&& !partner.HavePermissionTo(controllerContext.Name, controllerContext.Action)) {
+				context.Response.RedirectToUrl(@"..\\Errors\AccessDin.aspx");
+				return false;
 			}
+			return true;
 		}
 	}
 }

@@ -75,11 +75,9 @@ namespace InternetInterface.Models
 
 		public virtual bool CanEdit()
 		{
-			var nextMonth = BeginDate.Value.AddMonths(1).Month;
-			var controlDate = new DateTime(BeginDate.Value.Year, nextMonth, 5);
-			if (SystemTime.Now().Date <= controlDate)
-				return true;
-			return false;
+			var nextMonth = BeginDate.Value.AddMonths(1);
+			var controlDate = new DateTime(nextMonth.Year, nextMonth.Month, 5);
+			return SystemTime.Now().Date <= controlDate;
 		}
 
 		public static uint GetNextNumber(ISession session, uint clientId)

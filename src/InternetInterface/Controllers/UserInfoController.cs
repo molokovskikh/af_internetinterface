@@ -57,7 +57,6 @@ namespace InternetInterface.Controllers
 
 	[Helper(typeof(PaginatorHelper))]
 	[Helper(typeof(TextHelper))]
-	[Helper(typeof(FormHelper))]
 	[Helper(typeof(BindingHelper))]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class UserInfoController : BaseController
@@ -270,7 +269,7 @@ namespace InternetInterface.Controllers
 				if (cservice != null) {
 					cservice.CompulsoryDeactivate();
 					var appeal = Appeals.CreareAppeal(string.Format("Услуга \"{0}\" деактивирована", servise.HumanName), client, AppealType.Statistic);
-					ActiveRecordMediator.Save(appeal);
+					DbSession.Save(appeal);
 				}
 			}
 			RedirectToUrl(client.Redirect());
