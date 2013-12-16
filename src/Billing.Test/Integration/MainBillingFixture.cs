@@ -88,7 +88,7 @@ namespace Billing.Test.Integration
 				var partner = Partner.FindFirst();
 				partner.AccesedPartner = CategorieAccessSet.FindAll(DetachedCriteria.For(typeof(CategorieAccessSet))
 					.CreateAlias("AccessCat", "AC", JoinType.InnerJoin)
-					.Add(Restrictions.Eq("Categorie", partner.Categorie)))
+					.Add(Restrictions.Eq("Categorie", partner.Role)))
 					.Select(c => c.AccessCat.ReduceName).ToList();
 				return partner;
 			};

@@ -24,10 +24,16 @@ namespace InternetInterface.Models
 		}
 
 		public Partner(string login)
+			: this(UserRole.Find(3u))
 		{
 			Login = login;
 			Name = login;
-			Categorie = UserCategorie.Find(3u);
+		}
+
+		public Partner(UserRole role)
+		{
+			Role = role;
+			RegDate = DateTime.Now;
 		}
 
 		[PrimaryKey]
@@ -52,13 +58,36 @@ namespace InternetInterface.Models
 		public virtual string Login { get; set; }
 
 		[BelongsTo("Categorie", Lazy = FetchWhen.OnInvoke, Cascade = CascadeEnum.SaveUpdate)]
-		public virtual UserCategorie Categorie { get; set; }
+		public virtual UserRole Role { get; set; }
 
 		[HasMany(ColumnKey = "Agent", OrderBy = "RegistrationDate", Lazy = true)]
 		public virtual IList<PaymentsForAgent> Payments { get; set; }
 
 		public virtual IList<string> AccesedPartner { get; set; }
 
+		public virtual TimeSpan WorkEnd
+		{
+			get
+			{
+				return new TimeSpan(19, 0, 0);
+			}
+		}
+
+		public virtual TimeSpan WorkStep
+		{
+			get
+			{
+				return new TimeSpan(0, 30, 0);
+			}
+		}
+
+		public virtual TimeSpan WorkBegin
+		{
+			get
+			{
+				return new TimeSpan(9, 0, 0);
+			}
+		}
 
 		public static Partner GetPartnerForLogin(string login)
 		{
@@ -67,7 +96,7 @@ namespace InternetInterface.Models
 
 		public virtual bool CategorieIs(string reductionName)
 		{
-			return Categorie.ReductionName == reductionName;
+			return Role.ReductionName == reductionName;
 		}
 
 		public virtual bool IsDiller()
@@ -85,18 +114,18 @@ namespace InternetInterface.Models
 
 		public static List<Partner> GetHouseMapAgents()
 		{
-			return Queryable.Where(p => p.Categorie.ReductionName == "Agent").ToList();
+			return Queryable.Where(p => p.Role.ReductionName == "Agent").ToList();
 		}
 
 		public static List<Partner> GetServiceEngineers()
 		{
-			return Queryable.Where(p => p.Categorie.ReductionName == "Service").ToList();
+			return Queryable.Where(p => p.Role.ReductionName == "Service").ToList();
 		}
 
 		public override void SaveAndFlush()
 		{
 			base.SaveAndFlush();
-			var catAS = CategorieAccessSet.FindAllByProperty("Categorie", Categorie);
+			var catAS = CategorieAccessSet.FindAllByProperty("Categorie", Role);
 			foreach (var categorieAccessSet in catAS) {
 				categorieAccessSet.AccessCat.AcceptToOne(this);
 			}
@@ -105,7 +134,7 @@ namespace InternetInterface.Models
 		public static bool RegistrLogicPartner(Partner partner, ValidatorRunner validator)
 		{
 			if (validator.IsValid(partner)) {
-				partner.Categorie.Refresh();
+				partner.Role.Refresh();
 				partner.RegDate = DateTime.Now;
 				partner.SaveAndFlush();
 				return true;
@@ -154,6 +183,16 @@ namespace InternetInterface.Models
 				{
 					"CB", new IPermission[] {
 						new ControllerActionPermission("Payments", "Cancel")
+					}
+				},
+				{
+					"ASR", new IPermission[] {
+						new ControllerPermission(typeof(MapController)),
+					}
+				},
+				{
+					"RP", new IPermission[] {
+						new ControllerPermission(typeof(PartnersController)),
 					}
 				}
 			};

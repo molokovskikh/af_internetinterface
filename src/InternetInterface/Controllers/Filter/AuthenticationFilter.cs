@@ -30,7 +30,7 @@ namespace InternetInterface.Controllers.Filter
 			var partner = Partner.GetPartnerForLogin(context.Session["login"].ToString());
 			partner.AccesedPartner = CategorieAccessSet.FindAll(DetachedCriteria.For(typeof(CategorieAccessSet))
 				.CreateAlias("AccessCat", "AC", JoinType.InnerJoin)
-				.Add(Restrictions.Eq("Categorie", partner.Categorie)))
+				.Add(Restrictions.Eq("Categorie", partner.Role)))
 				.Select(c => c.AccessCat.ReduceName).ToList();
 			context.Items.Add("Administrator", partner);
 			controllerContext.PropertyBag["PartnerAccessSet"] = new CategorieAccessSet();

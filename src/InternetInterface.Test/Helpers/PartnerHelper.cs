@@ -28,7 +28,7 @@ namespace InternetInterface.Test.Helpers
 				}
 				var newAccess = new CategorieAccessSet {
 					AccessCat = AccessCategories.Find(right),
-					Categorie = partner.Categorie
+					Categorie = partner.Role
 				};
 				resulr.Add(newAccess);
 			}

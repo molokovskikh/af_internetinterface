@@ -1,0 +1,57 @@
+﻿<tr>
+	<td>
+		Фамилия Имя Отчество
+	</td>
+	<td>
+		${app.Edit("Partner.Name")}
+	</td>
+	<td>
+		${app.Error("Partner.Name")}
+	</td>
+</tr>
+<% if Partner.Role.HasExAttrs: %>
+<tr>
+	<td>
+		EMail
+	</td>
+	<td>
+		${app.Edit("Partner.Email")}
+	</td>
+	<td>
+		${app.Error("Partner.Email")}
+	</td>
+</tr>
+<tr>
+	<td>
+		Номер телефона
+	</td>
+	<td>
+		${app.Edit("Partner.TelNum")}
+	</td>
+	<td>
+		${app.Error("Partner.TelNum")}
+	</td>
+</tr>
+<tr>
+	<td>
+		Адрес
+	</td>
+	<td>
+		${app.Edit("Partner.Adress")}
+	</td>
+	<td>
+		${app.Error("Partner.Adress")}
+	</td>
+</tr>
+<% end %>
+<tr>
+	<td>
+		Логин
+	</td>
+	<td>
+		${app.Edit("Partner.Login")}
+	</td>
+	<td>
+		${app.Error("Partner.Login")}
+	</td>
+</tr>

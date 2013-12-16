@@ -10,10 +10,10 @@ using InternetInterface.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Queries;
 using System.Linq;
-
 #if !DEBUG
 using InternetInterface.Helpers;
 #endif
+using NHibernate.Linq;
 
 namespace InternetInterface.Controllers
 {
@@ -46,6 +46,20 @@ namespace InternetInterface.Controllers
 		public ServiceRequestController()
 		{
 			SetBinder(new ARDataBinder());
+		}
+
+		public void Timetable(DateTime date, uint id)
+		{
+			CancelLayout();
+			var partner = DbSession.Load<Partner>(id);
+			var begin = date.Date;
+			var end = date.Date.AddDays(1);
+			var requests = DbSession.Query<ServiceRequest>().Where(r => r.PerformanceDate >= begin
+				&& r.PerformanceDate < end
+				&& r.Performer == partner
+				&& r.Status == ServiceRequestStatus.New)
+				.ToList();
+			PropertyBag["timetable"] = Timeunit.FromRequests(date, partner, requests);
 		}
 
 		public void RegisterServiceRequest(uint clientCode)

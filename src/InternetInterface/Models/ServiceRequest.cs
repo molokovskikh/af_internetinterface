@@ -22,13 +22,20 @@ namespace InternetInterface.Models
 	[ActiveRecord("ServiceRequest", Schema = "internet", Lazy = true), Auditable]
 	public class ServiceRequest
 	{
+		private ServiceRequestStatus _status;
+
 		public ServiceRequest()
 		{
 			RegDate = DateTime.Now;
 			Status = ServiceRequestStatus.New;
+			Iterations = new List<ServiceIteration>();
 		}
 
-		private ServiceRequestStatus _status;
+		public ServiceRequest(Partner partner, DateTime performanceDate)
+		{
+			Performer = partner;
+			PerformanceDate = performanceDate;
+		}
 
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
@@ -37,10 +44,10 @@ namespace InternetInterface.Models
 		public virtual string Description { get; set; }
 
 		[Property,
-		 ValidateNonEmpty,
-		 ValidateRegExp(@"^\d{3}-\d{7}$", "Ошибка формата телефонного номера: мобильный телефон (***-*******)"),
-		 Description("Контактный телефон"),
-		 Auditable]
+			ValidateNonEmpty,
+			ValidateRegExp(@"^\d{3}-\d{7}$", "Ошибка формата телефонного номера: мобильный телефон (***-*******)"),
+			Description("Контактный телефон"),
+			Auditable]
 		public virtual string Contact { get; set; }
 
 		[Property, Auditable("Статус сервисной заявки")]

@@ -124,10 +124,12 @@
     <Content Include="Assets\Javascripts\OrderService.js" />
     <Content Include="Assets\Javascripts\Register.js" />
     <Content Include="Assets\Javascripts\registerlawperson.js" />
+    <Content Include="Assets\Javascripts\service-request.js" />
     <Content Include="Assets\Javascripts\ShowRegions.js" />
     <Content Include="Assets\Javascripts\UserInfo.js" />
     <Content Include="Assets\Javascripts\userSearch.js" />
     <Content Include="Assets\Stylesheets\alt-form.css" />
+    <Content Include="Assets\Stylesheets\application.css" />
     <Content Include="Assets\Stylesheets\client.css" />
     <Content Include="Assets\Stylesheets\orderinfo.css" />
     <Content Include="Assets\Stylesheets\orders.css" />
@@ -196,6 +198,8 @@
     <Content Include="Views\Mail\PaymentMoved.brail" />
     <None Include="Views\Map\ShowBookmarks.brail" />
     <Content Include="Views\Payments\ShowWriteOffs.brail" />
+    <Content Include="Views\Partners\New.brail" />
+    <Content Include="Views\Partners\Edit.brail" />
     <None Include="Views\PrivateMessages\ForClient.brail" />
     <None Include="Views\PrivateMessages\ForSwitch.brail" />
     <None Include="Views\PrivateMessages\Message.brail" />
@@ -228,6 +232,7 @@
     <None Include="Views\Register\RegisterRequest.brail" />
     <None Include="Views\Rescues\404.brail" />
     <None Include="Views\ServiceRequest\ShowRequest.brail" />
+    <Content Include="Views\ServiceRequest\Timetable.brail" />
     <None Include="Views\ServiceRequest\ViewRequests.brail" />
     <None Include="Views\Services\Edit.brail" />
     <None Include="Views\Shared\EditorTemplates\Contact.brail" />
@@ -272,7 +277,7 @@
     <None Include="Views\UserInfo\RequestGraph.brail" />
     <None Include="Views\UserInfo\LawyerPersonInfo.brail" />
     <None Include="Views\UserInfo\NoPhoned.brail" />
-    <None Include="Views\UserInfo\PartnersPreview.brail" />
+    <None Include="Views\Partners\Index.brail" />
     <None Include="Views\UserInfo\ClientRegisteredInfo.brail" />
     <None Include="Views\Subview\DeleteLabel.brail" />
     <None Include="Views\UserInfo\Leases.brail" />
@@ -288,7 +293,7 @@
     <None Include="Views\Subview\ServiceRequestRow.brail" />
     <None Include="Views\Payments\СhangeSaleSettings.brail" />
     <None Include="Views\AgentInfo\EditAgentSettings.brail" />
-    <Content Include="JavaScript\vaidServiceRequest.js" />
+    <Content Include="Assets\Javascripts\vaidServiceRequest.js" />
     <Content Include="JavaScript\validation.js" />
     <None Include="Views\Tariffs\ChangeRules.brail" />
     <Content Include="Web.config">
@@ -322,6 +327,7 @@
     <Compile Include="Controllers\Filter\ActsFilter.cs" />
     <Compile Include="Controllers\Filter\ContractFilter.cs" />
     <Compile Include="Controllers\InvoicesController.cs" />
+    <Compile Include="Controllers\PartnersController.cs" />
     <Compile Include="Controllers\PrivateMessagesController.cs" />
     <Compile Include="Controllers\ExitPartner.cs" />
     <Compile Include="Controllers\Filter\AuthenticationFilter.cs" />
@@ -435,6 +441,7 @@
     <Compile Include="Models\StaticIp.cs" />
     <Compile Include="Models\Status.cs" />
     <Compile Include="Models\TariffChangeRule.cs" />
+    <Compile Include="Models\Timeunit.cs" />
     <Compile Include="Models\Universal\ChildActiveRecordLinqBase.cs" />
     <Compile Include="Models\Universal\ClientSearchProperties.cs" />
     <Compile Include="Models\Access\CategorieAccessSet.cs" />
@@ -448,7 +455,7 @@
     <Compile Include="Models\Partner.cs" />
     <Compile Include="Models\PhysicalClient.cs" />
     <Compile Include="Models\UnresolvedCalls.cs" />
-    <Compile Include="Models\UserCategorie.cs" />
+    <Compile Include="Models\UserRole.cs" />
     <Compile Include="Models\UserWriteOff.cs" />
     <Compile Include="Models\WriteOff.cs" />
     <Compile Include="Models\Zone.cs" />
@@ -469,7 +476,6 @@
     <Compile Include="Services\VoluntaryBlockin.cs" />
     <Compile Include="Services\WorkLawyer.cs" />
     <None Include="Views\Subview\ServiceControl.brail" />
-    <None Include="Views\Register\RegisterPartner.brail" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -478,9 +484,9 @@
     <None Include="Views\Register\RegisterClient.brail" />
     <None Include="Views\Search\SearchBy.brail" />
     <None Include="Views\Subview\MapHead.brail" />
-    <None Include="Views\Subview\Partner.brail" />
+    <None Include="Views\Partners\Partner.brail" />
     <None Include="Views\Subview\Payment.brail" />
-    <None Include="Views\UserInfo\PartnerRegisteredInfo.brail" />
+    <None Include="Views\Partners\Report.brail" />
     <None Include="Views\UserInfo\RequestView.brail" />
     <None Include="Views\UserInfo\SearchUserInfo.brail">
       <SubType>Designer</SubType>

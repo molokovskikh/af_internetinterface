@@ -1,7 +1,7 @@
 ﻿${app.Asset("service-requests.css")}
+${app.Asset("vaidServiceRequest.js")}
 
 <%if Edit: %>
-<script type="text/javascript" src="${Siteroot}/JavaScript/vaidServiceRequest.js"></script>
 <script type="text/javascript">
 	$(function () {
 		var checkFlag = false;

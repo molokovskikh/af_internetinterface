@@ -114,13 +114,13 @@ namespace InternetInterface.Controllers
 					requestse.Client = client;
 					DbSession.Save(requestse);
 				}
-				if (registrator.Categorie.ReductionName == "Office")
+				if (registrator.Role.ReductionName == "Office")
 					if (VisibleRegisteredInfo)
 						RedirectToUrl("../UserInfo/ClientRegisteredInfo.rails");
 					else {
 						RedirectToUrl("../UserInfo/SearchUserInfo.rails?filter.ClientCode=" + client.Id);
 					}
-				if (registrator.Categorie.ReductionName == "Diller")
+				if (registrator.Role.ReductionName == "Diller")
 					RedirectToUrl("../UserInfo/ClientRegisteredInfoFromDiller.rails");
 			}
 			else {
@@ -250,28 +250,6 @@ namespace InternetInterface.Controllers
 			PropertyBag["RegionList"] = RegionHouse.All();
 		}
 
-		[AccessibleThrough(Verb.Post)]
-		public void RegisterPartner([DataBind("Partner")] Partner partner)
-		{
-			string Pass = CryptoPass.GeneratePassword();
-			if (Partner.RegistrLogicPartner(partner, Validator)) {
-#if !DEBUG
-				if (ActiveDirectoryHelper.FindDirectoryEntry(partner.Login) == null)
-					ActiveDirectoryHelper.CreateUserInAD(partner.Login, Pass);
-#endif
-				Flash["Partner"] = partner;
-				Flash["PartnerPass"] = Pass;
-				RedirectToUrl("..//UserInfo/PartnerRegisteredInfo.rails");
-			}
-			else {
-				partner.SetValidationErrors(Validator.GetErrorSummary(partner));
-				PropertyBag["Partner"] = partner;
-				PropertyBag["catType"] = partner.Categorie.Id;
-				PropertyBag["Editing"] = false;
-				PropertyBag["VB"] = new ValidBuilderHelper<Partner>(partner);
-			}
-		}
-
 		public void RegisterClient()
 		{
 			var client = new PhysicalClient();
@@ -390,74 +368,6 @@ namespace InternetInterface.Controllers
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["channels"] = ChannelGroup.All(DbSession);
 			PropertyBag["Switches"] = NetworkSwitch.All(DbSession);
-		}
-
-		[AccessibleThrough(Verb.Post)]
-		public void EditPartner([DataBind("Partner")] Partner partner, int PartnerKey)
-		{
-			var part = Partner.Find((uint)PartnerKey);
-			var edit = false;
-			if (Partner.Find((uint)PartnerKey).Login == partner.Login) {
-				Validator.IsValid(partner);
-				partner.SetValidationErrors(Validator.GetErrorSummary(partner));
-				var ve = partner.GetValidationErrors();
-				if (ve.ErrorsCount == 1)
-					if ((ve.ErrorMessages[0] == "Логин должен быть уникальный") || (ve.ErrorMessages[0] == "Login is currently in use. Please pick up a new Login.")) {
-						edit = true;
-					}
-			}
-			if (Validator.IsValid(partner) || edit) {
-				BindObjectInstance(part, ParamStore.Form, "Partner");
-				part.Categorie.Refresh();
-				part.UpdateAndFlush();
-				var agent = DbSession.Query<Agent>().Where(a => a.Partner == part).ToList().FirstOrDefault();
-				if (agent != null) {
-					agent.Name = partner.Name;
-					DbSession.Save(agent);
-				}
-				Flash["EditiongMessage"] = "Изменения внесены успешно";
-				RedirectToUrl("../Register/RegisterPartner?PartnerKey=" + part.Id + "&catType=" + part.Categorie.Id);
-			}
-			else {
-				partner.SetValidationErrors(Validator.GetErrorSummary(partner));
-				RegisterPartnerSendParam((int)partner.Id);
-				RenderView("RegisterPartner");
-				Flash["Partner"] = partner;
-				Flash["catType"] = partner.Categorie.Id;
-				PropertyBag["VB"] = new ValidBuilderHelper<Partner>(partner);
-			}
-		}
-
-		public void RegisterPartnerSendParam(int PartnerKey)
-		{
-			PropertyBag["VB"] = new ValidBuilderHelper<Partner>(new Partner());
-			PropertyBag["Applying"] = "false";
-			PropertyBag["Editing"] = true;
-		}
-
-		public void RegisterPartner(int PartnerKey, int catType)
-		{
-			var partner = DbSession.Query<Partner>().FirstOrDefault(p => p.Id == (uint)PartnerKey);
-			if (partner != null) {
-				RegisterPartnerSendParam(PartnerKey);
-				PropertyBag["Partner"] = partner;
-				PropertyBag["catType"] = catType;
-				PropertyBag["PartnerKey"] = PartnerKey;
-			}
-			else {
-				RedirectToUrl("../Register/RegisterPartner");
-			}
-		}
-
-		public void RegisterPartner(int catType)
-		{
-			PropertyBag["Partner"] = new Partner {
-				Categorie = new UserCategorie()
-			};
-			PropertyBag["catType"] = catType;
-			PropertyBag["VB"] = new ValidBuilderHelper<Partner>(new Partner());
-			PropertyBag["Editing"] = false;
-			PropertyBag["catType"] = catType;
 		}
 
 		public void RegisterRequest(uint house, int apartment)

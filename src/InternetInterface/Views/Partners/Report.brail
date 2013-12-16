@@ -1,0 +1,31 @@
+﻿<div class="borderless-content">
+	<h1>Информация для партнера: !{Partner.Name}</h1>
+	<table>
+		<% if Partner.Role.HasExAttrs: %>
+		<tr>
+			<td>EMail</td>
+			<td>!{Partner.Email} </td>
+		</tr>
+		<tr>
+			<td>Номер телефона</td>
+			<td>!{Partner.TelNum}</td>
+		</tr>
+		<tr>
+			<td>Адрес </td>
+			<td>!{Partner.Adress}</td>
+		</tr>
+		<% end %>
+		<tr>
+			<td>Дата регистрации</td>
+			<td>!{Partner.RegDate}</td>
+		</tr>
+		<tr>
+			<td>Логин</td>
+			<td>!{Partner.Login}</td>
+		</tr>
+		<tr>
+			<td>Пароль</td>
+			<td>!{?PartnerPass}</td>
+		</tr>
+	</table>
+</div>

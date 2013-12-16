@@ -588,7 +588,7 @@ where r.`Label`= :LabelIndex;")
 		public void RequestView([DataBind("filter")] RequestFilter filter)
 		{
 			var requests = filter.Find();
-			PropertyBag["Clients"] = InitializeContent.Partner.Categorie.ReductionName == "Agent"
+			PropertyBag["Clients"] = InitializeContent.Partner.Role.ReductionName == "Agent"
 				? requests.Where(r => r.Registrator == InitializeContent.Partner).ToList()
 				: requests.ToList();
 			PropertyBag["filter"] = filter;
@@ -686,18 +686,6 @@ where r.`Label`= :LabelIndex;")
 
 		public void ClientRegisteredInfoFromDiller()
 		{
-		}
-
-		public void PartnerRegisteredInfo(int hiddenPartnerId, string hiddenPass)
-		{
-			if (Flash["Partner"] == null) {
-				RedirectToUrl("../Register/RegisterPartner.rails");
-			}
-		}
-
-		public void PartnersPreview(uint catType)
-		{
-			PropertyBag["Partners"] = Partner.FindAllSort().Where(p => p.Categorie.Id == catType).ToList();
 		}
 
 		[AccessibleThrough(Verb.Post)]

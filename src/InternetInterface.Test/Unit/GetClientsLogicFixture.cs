@@ -21,7 +21,7 @@ namespace InternetInterface.Test.Unit
 		public void Setup()
 		{
 			_thisPartner = new Partner {
-				Categorie = new UserCategorie {
+				Role = new UserRole {
 					ReductionName = "Office"
 				}
 			};
@@ -36,7 +36,7 @@ namespace InternetInterface.Test.Unit
 		[Test]
 		public void Get_where_diller_id()
 		{
-			_thisPartner.Categorie.ReductionName = "Diller";
+			_thisPartner.Role.ReductionName = "Diller";
 			_filter.SearchText = "5";
 			var result = GetClientsLogic.GetWhere(_filter);
 			Assert.That(result, Is.EqualTo("WHERE (c.Id = 5) and (C.PhysicalClient is not null)"));
@@ -45,7 +45,7 @@ namespace InternetInterface.Test.Unit
 		[Test]
 		public void Get_where_diller_name()
 		{
-			_thisPartner.Categorie.ReductionName = "Diller";
+			_thisPartner.Role.ReductionName = "Diller";
 			_filter.SearchText = "testText";
 			var result = GetClientsLogic.GetWhere(_filter);
 			Assert.That(result, Is.EqualTo("WHERE (LOWER(C.Name) like :SearchText) and (C.PhysicalClient is not null)"));

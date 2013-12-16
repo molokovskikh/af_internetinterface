@@ -56,7 +56,7 @@
 				</td>
 			</tr>
 		</table>
-  <%if MapPartner.Categorie.ReductionName != "Diller": %>
+  <%if MapPartner.Role.ReductionName != "Diller": %>
 		<table style="width: 100%;"  class="table">
 			<tr><td style="text-align: left;">Искать по:</td><td></td><td></td></tr>
 			<tr>

@@ -45,6 +45,9 @@ namespace InternetInterface
 				.DefaultForController().Is("Login")
 				.DefaultForAction().Is("LoginPartner"));
 			RoutingModuleEx.Engine.Add(new PatternRoute("/<controller>/<action>"));
+			RoutingModuleEx.Engine.Add(new PatternRoute("/ServiceRequests/<id>/<action>")
+				.DefaultForController().Is("ServiceRequest")
+				.Restrict("id").ValidInteger);
 			RoutingModuleEx.Engine.Add(new PatternRoute("/<controller>/<id>/<action>")
 				.Restrict("id").ValidInteger);
 		}

@@ -23,6 +23,7 @@
 		"jquery.tablesorter.js",
 		"DecimalValidate.js")}
 
+	${app.Asset("application.css")}
 	${app.Asset("themes/base/jquery.ui.all.css")}
 	${app.CSS("Style.css",
 		"base.css",

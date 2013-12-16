@@ -31,10 +31,10 @@ namespace InternetInterface.Helpers
 			if (partner == null)
 				return true;
 
-			if (partner.Categorie.ReductionName == "Office")
+			if (partner.Role.ReductionName == "Office")
 				return true;
 
-			if (partner.Categorie.ReductionName == "Diller") {
+			if (partner.Role.ReductionName == "Diller") {
 				if (string.IsNullOrEmpty((string)fieldValue))
 					return false;
 			}

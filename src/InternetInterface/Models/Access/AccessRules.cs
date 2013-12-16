@@ -12,7 +12,6 @@ namespace InternetInterface.Models.Access
 		private static HashSet<string> _getClientInfo;
 		private static HashSet<string> _registerClient;
 		private static HashSet<string> _manageBrigads;
-		//private static HashSet<string> _closeDemand;
 		private static HashSet<string> _registerPartner;
 		private static HashSet<string> _changeBalance;
 		private static HashSet<string> _accessDHCP;
@@ -67,9 +66,6 @@ namespace InternetInterface.Models.Access
 			}
 			if (GetRulesName_serviceRequest() != string.Empty) {
 				result.Add(GetRulesName_serviceRequest());
-			}
-			if (GetRulesName_adminServiceRequest() != string.Empty) {
-				result.Add(GetRulesName_adminServiceRequest());
 			}
 			if (GetRulesName_smsRule() != string.Empty) {
 				result.Add(GetRulesName_smsRule());
@@ -162,12 +158,7 @@ namespace InternetInterface.Models.Access
 		private static string GetRulesName_registerPartner()
 		{
 			_registerPartner = new HashSet<string> {
-				"RegisterPartner",
 				"SiteMap",
-				"PartnerRegisteredInfo",
-				"PartnersPreview",
-				"EditPartner",
-				"RegisterPartnerI",
 				"Administration"
 			};
 			return _registerPartner.Contains(methodName) ? "RP" : string.Empty;
@@ -292,18 +283,6 @@ namespace InternetInterface.Models.Access
 				"AddServiceComment"
 			};
 			return _serviceRequest.Contains(methodName) ? "SR" : string.Empty;
-		}
-
-		private static string GetRulesName_adminServiceRequest()
-		{
-			_adminServiceRequest = new HashSet<string> {
-				"RegisterServiceRequest",
-				"ShowRequest",
-				"AddIteration",
-				"EditServiceRequest",
-				"AddServiceComment"
-			};
-			return _adminServiceRequest.Contains(methodName) ? "ASR" : string.Empty;
 		}
 
 		private static string GetRulesName_smsRule()

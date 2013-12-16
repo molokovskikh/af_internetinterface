@@ -1,0 +1,16 @@
+﻿<div class="borderless-content">
+	<h1>Регистрация партнера</h1>
+	<form method="post">
+		${FormHelper.HiddenField("Partner.Id")}
+		${FormHelper.HiddenField("Partner.Role.Id")}
+
+		<table class="form-table">
+			<% OutputSubView("Partner") %>
+			<tr>
+				<td colspan="100">
+					<button type="submit" id="RegisterPartnerButton" class="button save">Сохранить</button>
+				</td>
+			</tr>
+		</table>
+	</form>
+</div>

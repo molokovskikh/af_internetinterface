@@ -199,6 +199,7 @@
     <Compile Include="Unit\PhysicalClientFixture.cs" />
     <Compile Include="Integration\ServiceRequestFixture.cs" />
     <Compile Include="Unit\SetupFixture.cs" />
+    <Compile Include="Unit\TimeunitFixture.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

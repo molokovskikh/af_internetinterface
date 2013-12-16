@@ -1,0 +1,12 @@
+﻿<div>
+	<% for unit in timetable: %>
+	<div>
+		<input type="radio" name="request.PerformanceTime" value="${unit.Begin}" ${"disabled" if unit.Busy}>
+			!{unit.Begin.ToString("hh\\:mm")} - !{unit.End.ToString("hh\\:mm")}
+			<% if unit.Request: %>
+				- занят заявкой ${app.LinkTo(unit.Request, "№ ${unit.Request.Id}", "ShowRequest")}
+			<% end %>
+		</input>
+	</div>
+	<% end %>
+</div>

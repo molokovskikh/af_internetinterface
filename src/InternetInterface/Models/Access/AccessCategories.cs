@@ -11,7 +11,6 @@ namespace InternetInterface.Models
 		GetClientInfo = 1,
 		RegisterClient = 3,
 		SendDemand = 5,
-		//CloseDemand = 7,
 		RegisterPartner = 9,
 		ChangeBalance = 11,
 		VisiblePassport = 13,
@@ -111,7 +110,7 @@ namespace InternetInterface.Models
 		/// <param name="oldAccessSet"></param>
 		/// <param name="newAccessSet"></param>
 		/// <param name="partner"></param>
-		public static void SetCrossAccess(List<int> oldAccessSet, List<int> newAccessSet, UserCategorie userCategorie)
+		public static void SetCrossAccess(List<int> oldAccessSet, List<int> newAccessSet, UserRole userCategorie)
 		{
 			SetAccessDependence();
 			foreach (var twoRule in accessDependence) {
@@ -163,7 +162,7 @@ namespace InternetInterface.Models
 		/// </summary>
 		/// <param name="newRights"></param>
 		/// <param name="userCategorie"></param>
-		public static void SetCrossAccessForRegister(List<int> newRights, UserCategorie userCategorie)
+		public static void SetCrossAccessForRegister(List<int> newRights, UserRole userCategorie)
 		{
 			SetAccessDependence();
 			foreach (var twoRule in accessDependence) {
@@ -198,7 +197,7 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string ReduceName { get; set; }
 
-		public virtual void AcceptTo(UserCategorie userCategorie)
+		public virtual void AcceptTo(UserRole userCategorie)
 		{
 			var partners = Partner.FindAllByProperty("Categorie", userCategorie);
 			foreach (var partner in partners) {
@@ -226,14 +225,8 @@ namespace InternetInterface.Models
 			}
 		}
 
-		public virtual void DeleteTo(UserCategorie userCategorie)
+		public virtual void DeleteTo(UserRole userCategorie)
 		{
-		}
-
-		private static List<Brigad> FindBrigadsByPartner(Partner partner)
-		{
-			return Brigad.FindAll(DetachedCriteria.For(typeof(Brigad))
-				.Add(Expression.Eq("PartnerID", partner))).ToList();
 		}
 
 		private static List<Agent> FindAgentByPartner(Partner partner)

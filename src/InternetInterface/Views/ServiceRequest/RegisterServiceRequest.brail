@@ -1,106 +1,108 @@
 ﻿${app.Asset("service-requests.css")}
+${app.Asset("service-requests.js")}
+${app.Asset("vaidServiceRequest.js")}
 
-<script type="text/javascript" src="${Siteroot}/JavaScript/vaidServiceRequest.js"></script>
-
-<script type="text/javascript">
-	$(function () {
-		$('.contact_link').click(function () {
-			$('#request_Contact').val(this.innerText);
-		});
-	})
-</script>
-
-<div style="width:750px;" class="backGround">
-${FormHelper.FormTag("", {@class: @validateFormService})}
-	<table class="table">
-		<thead>
-			<tr>
-				<th colspan=2>
-					Регистрация сервисной заявки <a href="${SiteRoot}/UserInfo/SearchUserInfo?filter.ClientCode=${client.Id}"> ${client.Name}</a>
-				</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td colspan=2>
-					<input type="hidden" name="request.Client.Id" value="${client.Id}" />
-					${app.Label("request.Description")}
-					${FormHelper.TextArea("request.Description", {@rows: 8, @cols: "90%"})}
-				</td>
-			</tr>
-			<tr>
-				<td>
-					${app.Label("request.Contact")}
-				</td>
-				<td>
-					${app.Edit("request.Contact")}
-					<a href="#" style="margin-left:15px;" onclick="$('#contacts').slideToggle('slow');">Существующие</a>
-					<div id="contacts" style="display:none; background-color:#d7d9d9; border: 1px double #bfbfbf; margin-top:7px; width:250px;">
-						<table>
-							<tbody>
-								<% for contact in client.Contacts: %>
-								<tr>
-									<td>
-										<a href="#" class="contact_link"><b> ${contact.HumanableNumber} </b></a>
-									</td>
-									<td>
-										${contact.GetReadbleCategorie()}
-									</td>
-								</tr>
-								<% end %>
-							</tbody>
-						</table>
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					Назначить на инженера
-				</td>
-				<td>
-					${app.Edit("request.Performer", ingeners)}
-				</td>
-			</tr>
-			<tr>
-				<td>Дата/время выполнения</td>
-				<td>
-					<input type=text value="${?request.PerformanceDate.ToShortDateString()}" name="request.PerformanceDate" class="graph_date" class="dp-hover">
-					${FormHelper.TextField("request.PerformanceTime", {@class: @time})}
-				</td>
-			</tr>
-			<tr>
-				<td colspan=2><button id="register_button" type=submit class="button">Сохранить</button></td>
-			</tr>
-		</tbody>
-	</table>
-${FormHelper.EndFormTag()}
-</div>
-
-<div class="backGround">
-	<table class="table">
-		<thead>
-			<tr>
-				<th>ID заявки</th>
-				<th>Клиент</th>
-				<th>Краткое описание</th>
-				<th>Контакт</th>
-				<th>Создана</th>
-				<th>Закрыта</th>
-				<th>Стоимость</th>
-			</tr>
-		</thead>
-		<tbody>
-			<%for request in requests: %>
+<div class="borderless-content">
+	<div class="borderless-content-subblock">
+	${FormHelper.FormTag("", {@class: @validateFormService})}
+		<table class="table" style="width: 750px">
+			<thead>
 				<tr>
-					<td><a href="${Siteroot}/ServiceRequest/ShowRequest?Id=${request.Id}">${request.Id}</a></td>
-					<td><a href="${Siteroot}/Search/Redirect?filter.ClientCode=${request.Client.Id}">${request.Client.Name}</a></td>
-					<td>${request.GetMinDiscription()}</td>
-					<td>${request.Contact}</td>
-					<td>${request.RegDate}</td>
-					<td>${request.ClosedDate}</td>
-					<td>${?request.Sum.ToString("C")}</td>
+					<th colspan=2>
+						Регистрация сервисной заявки <a href="${SiteRoot}/UserInfo/SearchUserInfo?filter.ClientCode=${client.Id}"> ${client.Name}</a>
+					</th>
 				</tr>
-			<%end %>
-		</tbody>
-	</table>
+			</thead>
+			<tbody>
+				<tr>
+					<td colspan=2>
+						<input type="hidden" name="request.Client.Id" value="${client.Id}" />
+						${app.Label("request.Description")}<br>
+						${FormHelper.TextArea("request.Description", {@rows: 8, @cols: "90%"})}
+					</td>
+				</tr>
+				<tr>
+					<td>
+						${app.Label("request.Contact")}
+					</td>
+					<td>
+						${app.Edit("request.Contact")}
+						<a href="#" style="margin-left:15px;" onclick="$('#contacts').slideToggle('slow');">Существующие</a>
+						<div id="contacts" style="display:none; background-color:#d7d9d9; border: 1px double #bfbfbf; margin-top:7px; width:250px;">
+							<table>
+								<tbody>
+									<% for contact in client.Contacts: %>
+									<tr>
+										<td>
+											<a href="#" class="contact_link"><b> ${contact.HumanableNumber} </b></a>
+										</td>
+										<td>
+											${contact.GetReadbleCategorie()}
+										</td>
+									</tr>
+									<% end %>
+								</tbody>
+							</table>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Назначить на инженера
+					</td>
+					<td>
+						${app.Edit("request.Performer", ingeners)}
+					</td>
+				</tr>
+				<tr>
+					<td>Дата выполнения</td>
+					<td>
+						${app.Edit("request.PerformanceDate")}
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Время выполнения
+					</td>
+					<td id="timetable">
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<button id="register_button" type="submit" class="button">Сохранить</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	${FormHelper.EndFormTag()}
+	</div>
+
+	<div>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>ID заявки</th>
+					<th>Клиент</th>
+					<th>Краткое описание</th>
+					<th>Контакт</th>
+					<th>Создана</th>
+					<th>Закрыта</th>
+					<th>Стоимость</th>
+				</tr>
+			</thead>
+			<tbody>
+				<% for request in requests: %>
+					<tr>
+						<td><a href="${Siteroot}/ServiceRequest/ShowRequest?Id=${request.Id}">${request.Id}</a></td>
+						<td><a href="${Siteroot}/Search/Redirect?filter.ClientCode=${request.Client.Id}">${request.Client.Name}</a></td>
+						<td>${request.GetMinDiscription()}</td>
+						<td>${request.Contact}</td>
+						<td>${request.RegDate}</td>
+						<td>${request.ClosedDate}</td>
+						<td>${?request.Sum.ToString("C")}</td>
+					</tr>
+				<% end %>
+			</tbody>
+		</table>
+	</div>
 </div>

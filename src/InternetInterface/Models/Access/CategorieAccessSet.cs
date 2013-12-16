@@ -18,7 +18,7 @@ namespace InternetInterface.Models
 		public virtual uint Id { get; set; }
 
 		[BelongsTo("Categorie")]
-		public virtual UserCategorie Categorie { get; set; }
+		public virtual UserRole Categorie { get; set; }
 
 		[BelongsTo("AccessCat")]
 		public virtual AccessCategories AccessCat { get; set; }
@@ -31,7 +31,7 @@ namespace InternetInterface.Models
 		public static IList<CategorieAccessSet> GetAccessPartner()
 		{
 			return FindAll(DetachedCriteria.For(typeof(CategorieAccessSet))
-				.Add(Restrictions.Eq("Categorie", InitializeContent.Partner.Categorie)));
+				.Add(Restrictions.Eq("Categorie", InitializeContent.Partner.Role)));
 		}
 
 		public override void SaveAndFlush()

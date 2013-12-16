@@ -24,7 +24,7 @@ namespace InternetInterface.Test.Integration
 
 			engineer1 = new Partner(Guid.NewGuid().ToString()) {
 				TelNum = "980-8791258",
-				Categorie = session.Query<UserCategorie>().First(c => c.ReductionName == "Service")
+				Role = session.Query<UserRole>().First(c => c.ReductionName == "Service")
 			};
 			session.Save(engineer1);
 
@@ -67,7 +67,7 @@ namespace InternetInterface.Test.Integration
 		{
 			var engineer2 = new Partner(Guid.NewGuid().ToString()) {
 				TelNum = "920-1564189",
-				Categorie = session.Query<UserCategorie>().First(c => c.ReductionName == "Service")
+				Role = session.Query<UserRole>().First(c => c.ReductionName == "Service")
 			};
 			session.Save(engineer2);
 

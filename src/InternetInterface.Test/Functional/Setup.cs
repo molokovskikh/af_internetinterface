@@ -61,7 +61,7 @@ namespace InternetInterface.Test.Functional
 						var partner = new Partner {
 							Name = "Сервисный инженер для тестирования",
 							Login = "test_serviceman",
-							Categorie = UserCategorie.Queryable.First(c => c.ReductionName == "service")
+							Role = UserRole.Queryable.First(c => c.ReductionName == "service")
 						};
 						session.Save(partner);
 					}

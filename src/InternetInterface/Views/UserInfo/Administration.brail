@@ -1,57 +1,83 @@
-﻿	<style type="text/css">
-		.MA .menudiv
-		{
-			border: 0px;
-			padding-left:0px;
-		}
-		.comment_text
-		{
-			color:Gray;
-			font-size:small;
-			}
-	</style>
+﻿<style type="text/css">
+	.MA .menudiv
+	{
+		border: 0px;
+		padding-left:0px;
+	}
+	.comment_text
+	{
+		color:Gray;
+		font-size:small;
+	}
+</style>
 <table class="table" style="width:400px">
 	<tbody>
-		<%if PartnerAccessSet.AccesPartner("RP"): %>
-		<tr><td>
-		<a href = "${Siteroot}/UserInfo/PartnersPreview.rails?catType=1" ><span class="MA"><div class=menudiv>Диллеры</div></span></a>
-		<span class="comment_text">Просмотр и регистрация диллеров (Диллер - сотрудник сторонней, партнерской организации, осуществляющий работу с клиентами)</span></td></tr>
-		<%end %>
-		<%if PartnerAccessSet.AccesPartner("RP"): %>
-		<tr><td>
-		<a href = "${Siteroot}/UserInfo/PartnersPreview.rails?catType=3" ><span class="MA"><div class=menudiv>Сотрудники </div></span></a>
-		<span class="comment_text">Просмотр и регистрация сотрудников АК "Инфорум"</span></td></tr>
-		<%end %>
-		<%if PartnerAccessSet.AccesPartner("RP"): %>
-		<tr><td><a href = "${Siteroot}/Brigads/ShowBrigad.rails" ><span class="MA"><div class=menudiv>Бригады</div></span></a>
-		<span class="comment_text">Просмотр и создание бригад. Бригады осуществляют физическое подключение абонентов, на них составляется расписание и разначаются заявки.</span></td></tr>
-		<%end %>
+		<% if PartnerAccessSet.AccesPartner("RP"): %>
+		<tr>
+			<td>
+				<a href="${siteroot}/Partners/Index?roleId=1"><span class="MA"><div class="menudiv">Диллеры</div></span></a>
+				<span class="comment_text">Просмотр и регистрация диллеров (Диллер - сотрудник сторонней, партнерской организации, осуществляющий работу с клиентами)</span>
+			</td>
+		</tr>
+		<% end %>
+		<% if PartnerAccessSet.AccesPartner("RP"): %>
+		<tr>
+			<td>
+				<a href="${siteroot}/Partners/Index?roleId=3"><span class="MA"><div class="menudiv">Сотрудники </div></span></a>
+				<span class="comment_text">Просмотр и регистрация сотрудников АК "Инфорум"</span>
+			</td>
+		</tr>
+		<% end %>
+		<% if PartnerAccessSet.AccesPartner("RP"): %>
+		<tr>
+			<td>
+				<a href="${Siteroot}/Brigads/ShowBrigad"><span class="MA"><div class="menudiv">Бригады</div></span></a>
+				<span class="comment_text">Просмотр и создание бригад. Бригады осуществляют физическое подключение абонентов, на них составляется расписание и разначаются заявки.</span>
+			</td>
+		</tr>
+		<% end %>
 		<tr>
 			<td>
 				${app.LinkTo("Коммутаторы", @Switches, @ShowSwitches)}
 				<br><span class="comment_text">Просмотр и редактирование коммутаторов</span>
 			</td>
 		</tr>
-		<%if PartnerAccessSet.AccesPartner("SSI"): %>
-		<tr><td><a href = "${Siteroot}/UserInfo/PartnersPreview.rails?catType=5" ><span class="MA"><div class=menudiv>Агенты</div></span></a>
-		<span class="comment_text">Просмотр и редактирование списка агентов, осуществляющих обход домов</span></td></tr>
-		<%end %>
-		<%if PartnerAccessSet.AccesPartner("SSI"): %>
-		<tr><td><a href = "${Siteroot}/AgentInfo/GroupInfo.rails" ><span class="MA"><div class=menudiv>Работа агентов</div></span></a>
-		<span class="comment_text">Просмотр выплат по агентам, осушествляющим работу с населением</span></td></tr>
-		<%end %>
-		<%if PartnerAccessSet.AccesPartner("SR"): %>
-		<tr><td><a href = "${Siteroot}/UserInfo/PartnersPreview.rails?catType=7" ><span class="MA"><div class=menudiv>Сервисные инженеры</div></span></a>
-		<span class="comment_text">Просмотр и редактирование списка сервисных инженеров, устраняющих поломки клиента</span></td></tr>
-		<%end %>
-		<%if PartnerAccessSet.AccesPartner("SSI"): %>
-		<tr><td><a href = "${Siteroot}/Payments/СhangeSaleSettings" ><span class="MA"><div class=menudiv>Редактировать настрйки скидок</div></span></a>
-		<span class="comment_text">Здесь можно выставить настройки системы скидок</span></td></tr>
-		<%end %>
 		<% if PartnerAccessSet.AccesPartner("SSI"): %>
 		<tr>
 			<td>
-				<a href = "${Siteroot}/AgentInfo/EditAgentSettings" ><span class="MA"><div class=menudiv>Редактировать настройки агентов</div></span></a>
+				<a href="${siteroot}/Partners/Index?roleId=5"><span class="MA"><div class="menudiv">Агенты</div></span></a>
+				<span class="comment_text">Просмотр и редактирование списка агентов, осуществляющих обход домов</span>
+			</td>
+		</tr>
+		<% end %>
+		<% if PartnerAccessSet.AccesPartner("SSI"): %>
+		<tr>
+			<td>
+				<a href="${Siteroot}/AgentInfo/GroupInfo"><span class="MA"><div class="menudiv">Работа агентов</div></span></a>
+				<span class="comment_text">Просмотр выплат по агентам, осушествляющим работу с населением</span>
+			</td>
+		</tr>
+		<% end %>
+		<% if PartnerAccessSet.AccesPartner("SR"): %>
+		<tr>
+			<td>
+				<a href="${siteroot}/Partners/Index?roleId=7"><span class="MA"><div class="menudiv">Сервисные инженеры</div></span></a>
+				<span class="comment_text">Просмотр и редактирование списка сервисных инженеров, устраняющих поломки клиента</span>
+			</td>
+		</tr>
+		<% end %>
+		<% if PartnerAccessSet.AccesPartner("SSI"): %>
+		<tr>
+			<td>
+				<a href="${Siteroot}/Payments/СhangeSaleSettings"><span class="MA"><div class="menudiv">Редактировать настрйки скидок</div></span></a>
+				<span class="comment_text">Здесь можно выставить настройки системы скидок</span>
+			</td>
+		</tr>
+		<% end %>
+		<% if PartnerAccessSet.AccesPartner("SSI"): %>
+		<tr>
+			<td>
+				<a href="${Siteroot}/AgentInfo/EditAgentSettings"><span class="MA"><div class="menudiv">Редактировать настройки агентов</div></span></a>
 				<span class="comment_text">Здесь можно выставить настройки компенсации агетов и др.</span>
 			</td>
 		</tr>
@@ -71,10 +97,10 @@
 				${app.LinkTo("Стоимость изменения тарифов", @Tariffs, @ChangeRules)}
 			</td>
 		</tr>
-			<tr>
-				<td>
-					${app.LinkTo("Редактирование справочника регионов", @UserInfo, @ShowRegions)}
-				</td>
-			</tr>
+		<tr>
+			<td>
+				${app.LinkTo("Редактирование справочника регионов", @UserInfo, @ShowRegions)}
+			</td>
+		</tr>
 	</tbody>
 </table>

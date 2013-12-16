@@ -229,6 +229,15 @@ namespace InternetInterface.Models
 		{
 			return new Period(dateTime);
 		}
+
+		public static IEnumerable<DateTime> Step(this DateTime begin, TimeSpan step)
+		{
+			var last = begin;
+			while (true) {
+				yield return last;
+				last = last.Add(step);
+			}
+		}
 	}
 
 	public class PeriodUserType : IUserType
