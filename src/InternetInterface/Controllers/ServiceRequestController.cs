@@ -48,24 +48,29 @@ namespace InternetInterface.Controllers
 			SetBinder(new ARDataBinder());
 		}
 
-		public void Timetable(DateTime date, uint id)
+		public void Timetable(DateTime? date, uint? id)
 		{
 			CancelLayout();
-			var partner = DbSession.Load<Partner>(id);
-			var begin = date.Date;
-			var end = date.Date.AddDays(1);
+			if (date == null || id == null) {
+				PropertyBag["timetable"] = Enumerable.Empty<Timeunit>().ToList();
+				return;
+			}
+
+			var partner = DbSession.Load<Partner>(id.Value);
+			var begin = date.Value.Date;
+			var end = date.Value.Date.AddDays(1);
 			var requests = DbSession.Query<ServiceRequest>().Where(r => r.PerformanceDate >= begin
 				&& r.PerformanceDate < end
 				&& r.Performer == partner
 				&& r.Status == ServiceRequestStatus.New)
 				.ToList();
-			PropertyBag["timetable"] = Timeunit.FromRequests(date, partner, requests);
+			PropertyBag["timetable"] = Timeunit.FromRequests(date.Value, partner, requests);
 		}
 
 		public void RegisterServiceRequest(uint clientCode)
 		{
 			var client = DbSession.Load<Client>(clientCode);
-			var request = new ServiceRequest { Registrator = Partner };
+			var request = new ServiceRequest(Partner);
 			PropertyBag["client"] = client;
 			PropertyBag["request"] = request;
 			PropertyBag["ingeners"] = Partner.GetServiceEngineers();

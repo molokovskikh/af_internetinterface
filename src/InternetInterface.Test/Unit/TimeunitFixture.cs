@@ -17,10 +17,11 @@ namespace InternetInterface.Test.Unit
 		public void Build_time_table()
 		{
 			var partner = new Partner();
+			var registrator = new Partner();
 			var date = new DateTime(2013, 12, 16);
 			var requests = new List<ServiceRequest> {
-				new ServiceRequest(partner, new DateTime(2013, 12, 16, 10, 00, 00)),
-				new ServiceRequest(partner, new DateTime(2013, 12, 16, 17, 00, 00))
+				new ServiceRequest(registrator, partner, new DateTime(2013, 12, 16, 10, 00, 00)),
+				new ServiceRequest(registrator, partner, new DateTime(2013, 12, 16, 17, 00, 00))
 			};
 			var table = Timeunit.FromRequests(date, partner, requests);
 			Assert.AreEqual(20, table.Count, table.Implode());
@@ -32,12 +33,6 @@ namespace InternetInterface.Test.Unit
 			Assert.IsTrue(table[2].Busy, table[2].ToString());
 			Assert.IsTrue(table[16].Busy, table[15].ToString());
 			Assert.AreEqual(requests[0], table[2].Request);
-		}
-
-		[Test]
-		public void format()
-		{
-			Console.WriteLine(new TimeSpan(0, 19, 0, 0).ToString(@"hh\:mm\:ss", CultureInfo.CurrentCulture));
 		}
 	}
 }

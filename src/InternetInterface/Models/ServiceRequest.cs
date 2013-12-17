@@ -31,10 +31,18 @@ namespace InternetInterface.Models
 			Iterations = new List<ServiceIteration>();
 		}
 
-		public ServiceRequest(Partner partner, DateTime performanceDate)
+		public ServiceRequest(Partner registrator, Partner performer, DateTime performanceDate)
+			: this(registrator)
 		{
-			Performer = partner;
+			Performer = performer;
 			PerformanceDate = performanceDate;
+		}
+
+		public ServiceRequest(Partner registrator)
+			: this()
+		{
+			Registrator = registrator;
+			PerformanceDate = DateTime.Today.AddDays(1);
 		}
 
 		[PrimaryKey]

@@ -19,6 +19,10 @@ namespace InternetInterface.Models
 	[ActiveRecord("Partners", Schema = "internet", Lazy = true)]
 	public class Partner : ValidActiveRecordLinqBase<Partner>
 	{
+		public static TimeSpan DefaultWorkBegin = new TimeSpan(9, 0, 0);
+		public static TimeSpan DefaultWorkEnd = new TimeSpan(19, 0, 0);
+		public static TimeSpan DefaultWorkStep = new TimeSpan(0, 30, 0);
+
 		public Partner()
 		{
 		}
@@ -34,6 +38,11 @@ namespace InternetInterface.Models
 		{
 			Role = role;
 			RegDate = DateTime.Now;
+			if (role.ReductionName == "Service") {
+				WorkBegin = DefaultWorkBegin;
+				WorkEnd = DefaultWorkEnd;
+				WorkStep = DefaultWorkStep;
+			}
 		}
 
 		[PrimaryKey]
@@ -57,7 +66,16 @@ namespace InternetInterface.Models
 		[Property, ValidateNonEmpty("Введите логин"), ValidateIsUnique("Логин должен быть уникальный")]
 		public virtual string Login { get; set; }
 
-		[BelongsTo("Categorie", Lazy = FetchWhen.OnInvoke, Cascade = CascadeEnum.SaveUpdate)]
+		[Property]
+		public virtual TimeSpan? WorkBegin { get; set; }
+
+		[Property]
+		public virtual TimeSpan? WorkEnd { get; set; }
+
+		[Property]
+		public virtual TimeSpan? WorkStep { get; set; }
+
+		[BelongsTo("Categorie", Lazy = FetchWhen.OnInvoke, Cascade = CascadeEnum.SaveUpdate), ValidateNonEmpty]
 		public virtual UserRole Role { get; set; }
 
 		[HasMany(ColumnKey = "Agent", OrderBy = "RegistrationDate", Lazy = true)]
@@ -65,27 +83,18 @@ namespace InternetInterface.Models
 
 		public virtual IList<string> AccesedPartner { get; set; }
 
-		public virtual TimeSpan WorkEnd
+		public virtual void ValidateSelf(ErrorSummary errors)
 		{
-			get
-			{
-				return new TimeSpan(19, 0, 0);
-			}
-		}
-
-		public virtual TimeSpan WorkStep
-		{
-			get
-			{
-				return new TimeSpan(0, 30, 0);
-			}
-		}
-
-		public virtual TimeSpan WorkBegin
-		{
-			get
-			{
-				return new TimeSpan(9, 0, 0);
+			if (Role != null && Role.ReductionName == "Service") {
+				if (WorkBegin == null) {
+					errors.RegisterErrorMessage("WorkBegin", "Поле должно быть заполено");
+				}
+				if (WorkEnd == null) {
+					errors.RegisterErrorMessage("WorkEnd", "Поле должно быть заполено");
+				}
+				if (WorkStep == null) {
+					errors.RegisterErrorMessage("WorkStep", "Поле должно быть заполено");
+				}
 			}
 		}
 
@@ -187,7 +196,7 @@ namespace InternetInterface.Models
 				},
 				{
 					"ASR", new IPermission[] {
-						new ControllerPermission(typeof(MapController)),
+						new ControllerPermission(typeof(ServiceRequestController)),
 					}
 				},
 				{

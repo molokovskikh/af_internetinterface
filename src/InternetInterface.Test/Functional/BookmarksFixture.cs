@@ -6,7 +6,7 @@ using Test.Support.Selenium;
 namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
-	public class PartnerFixture : SeleniumFixture
+	public class BookmarksFixture : SeleniumFixture
 	{
 		[SetUp]
 		public void SetUp()
@@ -15,7 +15,7 @@ namespace InternetInterface.Test.Functional
 		}
 
 		[Test]
-		public void Base_bookmarks_test()
+		public void Create_bookmark()
 		{
 			Click("Закладки");
 			Click("Добавить закладку");
@@ -29,7 +29,7 @@ namespace InternetInterface.Test.Functional
 		}
 
 		[Test]
-		public void Delete_bookmarks_test()
+		public void Delete_bookmark()
 		{
 			var bookmark = new Bookmark {
 				Date = DateTime.Now.AddDays(5),

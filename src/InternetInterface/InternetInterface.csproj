@@ -124,7 +124,7 @@
     <Content Include="Assets\Javascripts\OrderService.js" />
     <Content Include="Assets\Javascripts\Register.js" />
     <Content Include="Assets\Javascripts\registerlawperson.js" />
-    <Content Include="Assets\Javascripts\service-request.js" />
+    <Content Include="Assets\Javascripts\service-requests.js" />
     <Content Include="Assets\Javascripts\ShowRegions.js" />
     <Content Include="Assets\Javascripts\UserInfo.js" />
     <Content Include="Assets\Javascripts\userSearch.js" />

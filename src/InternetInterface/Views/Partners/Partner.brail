@@ -44,6 +44,41 @@
 	</td>
 </tr>
 <% end %>
+<% if Partner.Role.ReductionName == "Service": %>
+<tr>
+	<td>
+		Время начала приема сервисных заявок
+	</td>
+	<td>
+		${app.Edit("Partner.WorkBegin")}
+	</td>
+	<td>
+		${app.Error("Partner.WorkBegin")}
+	</td>
+</tr>
+<tr>
+	<td>
+		Время окончания приема сервисных заявок
+	</td>
+	<td>
+		${app.Edit("Partner.WorkEnd")}
+	</td>
+	<td>
+		${app.Error("Partner.WorkEnd")}
+	</td>
+</tr>
+<tr>
+	<td>
+		Интервал приема сервисных заявок
+	</td>
+	<td>
+		${app.Edit("Partner.WorkStep")}
+	</td>
+	<td>
+		${app.Error("Partner.WorkStep")}
+	</td>
+</tr>
+<% end %>
 <tr>
 	<td>
 		Логин

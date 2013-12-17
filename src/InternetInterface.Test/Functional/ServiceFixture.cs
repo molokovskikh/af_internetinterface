@@ -1,33 +1,50 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Threading;
+using Common.Tools.Calendar;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NHibernate.Linq;
 using NUnit.Framework;
+using OpenQA.Selenium.Remote;
+using OpenQA.Selenium.Support.UI;
 using Test.Support.Selenium;
 
 namespace InternetInterface.Test.Functional
 {
-	class ServiceFixture : SeleniumFixture
+	public class ServiceFixture : SeleniumFixture
 	{
-		private Client client;
+		Client client;
+		Partner registrator;
+		Partner performer;
 
 		[SetUp]
 		public void Setup()
 		{
+			performer = new Partner(session.Query<UserRole>().First(c => c.ReductionName == "service")) {
+				Name = Guid.NewGuid().ToString(),
+				Login = Guid.NewGuid().ToString(),
+			};
+			session.Save(performer);
+			registrator = session.Query<Partner>().First(p => p.Login == Environment.UserName);
 			client = ClientHelper.Client();
 			session.Save(client);
 		}
 
 		[Test]
-		public void BaseFunctional()
+		public void Create_request()
 		{
-			Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", client.Id));
+			Open("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", client.Id);
 			Click("Сервисная заявка");
 
 			Css("textarea[name=\"request.Description\"]").SendKeys("test");
 			Css("input[name=\"request.Contact\"]").SendKeys("900-9090900");
 			Css("input[name=\"request.PerformanceDate\"]").SendKeys("21.05.2012");
-			Css("input[name=\"request.PerformanceTime\"]").SendKeys("10:00");
+			WaitForCss("input[name=\"request.PerformanceTime\"]");
+			Eval("$('.input-date').datepicker('hide')");
+			WaitForHiddenCss("#ui-datepicker-div");
+
+			Css("input[name=\"request.PerformanceTime\"][value=\"10:00:00\"]").Click();
 			Click("Сохранить");
 			AssertText("Информация по клиенту");
 
@@ -36,27 +53,34 @@ namespace InternetInterface.Test.Functional
 			Assert.That(request.PerformanceTime.ToString(), Is.EqualTo("10:00:00"));
 		}
 
+		[Test]
+		public void Disable_occupied_timeunit()
+		{
+			var request = CreateRequest();
+			session.Save(request);
+
+			Open("ServiceRequest/RegisterServiceRequest?ClientCode={0}", client.Id);
+			Css("#request_Performer_Id").SelectByText(performer.Name);
+			WaitForCss("input[name=\"request.PerformanceTime\"]");
+			Assert.AreEqual("true", Css("input[name=\"request.PerformanceTime\"][value=\"12:30:00\"]").GetAttribute("disabled"));
+		}
+
 		[Test, Description("Проверка работоспособности ссылки - сервисной заявки")]
 		public void ServiceRequestLinkCheck()
 		{
-			var service = new ServiceRequest {
-				Client = client
-			};
-			session.Save(service);
-			Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", client.Id));
+			var request = CreateRequest();
+			session.Save(request);
+			Open("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", client.Id);
 
-			ClickLink(service.Id.ToString());
+			ClickLink(request.Id.ToString());
 
-			Assert.That(browser.Url.Contains(service.Id.ToString()), Is.True);
+			Assert.That(browser.Url.Contains(request.Id.ToString()), Is.True);
 		}
 
 		[Test]
 		public void ViewRequests()
 		{
-			var request = new ServiceRequest {
-				Contact = "900-9090900",
-				Client = client
-			};
+			var request = CreateRequest();
 			session.Save(request);
 
 			Open("ServiceRequest/ViewRequests");
@@ -67,10 +91,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void Filter_test()
 		{
-			var request = new ServiceRequest {
-				Contact = "900-9090900",
-				Client = client
-			};
+			var request = CreateRequest();
 			session.Save(request);
 			Open("ServiceRequest/ViewRequests");
 
@@ -82,6 +103,22 @@ namespace InternetInterface.Test.Functional
 			Click("Применить");
 			AssertText("Фильтр");
 			AssertText("900-9090900");
+		}
+
+		protected void WaitForHiddenCss(string css)
+		{
+			var wait = new WebDriverWait(browser, 2.Second());
+			wait.Until(d => !((RemoteWebDriver)d).FindElementByCssSelector(css).Displayed);
+		}
+
+		private ServiceRequest CreateRequest()
+		{
+			var request = new ServiceRequest(registrator, performer, DateTime.Today.AddDays(1).Add(new TimeSpan(12, 30, 0))) {
+				Client = client,
+				Contact = "900-9090900",
+				Description = "test"
+			};
+			return request;
 		}
 	}
 }

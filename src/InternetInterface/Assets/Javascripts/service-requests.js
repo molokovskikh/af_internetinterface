@@ -4,6 +4,7 @@
 	});
 
 	function update(date, performer) {
+		$("#timetable").html("");
 		$.ajax({
 			type: "GET",
 			url: "/ServiceRequest/Timetable",
@@ -17,4 +18,5 @@
 	$("#request_PerformanceDate,#request_Performer_Id").change(function () {
 		update($("#request_PerformanceDate").val(), $("#request_Performer_Id").val());
 	});
+	$("#request_PerformanceDate").change();
 });

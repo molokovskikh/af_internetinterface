@@ -21,10 +21,11 @@ namespace InternetInterface.Models
 
 		public static List<Timeunit> FromRequests(DateTime date, Partner partner, List<ServiceRequest> requests)
 		{
-			var begin = date.Add(partner.WorkBegin);
-			var end = date.Add(partner.WorkEnd);
-			return begin.Step(partner.WorkStep).TakeWhile(t => t < end)
-				.Select(d => new Timeunit(d, partner.WorkStep, requests))
+			var begin = date.Add(partner.WorkBegin ?? Partner.DefaultWorkBegin);
+			var end = date.Add(partner.WorkEnd ?? Partner.DefaultWorkEnd);
+			var step = partner.WorkStep ?? Partner.DefaultWorkStep;
+			return begin.Step(step).TakeWhile(t => t < end)
+				.Select(d => new Timeunit(d, step, requests))
 				.ToList();
 		}
 

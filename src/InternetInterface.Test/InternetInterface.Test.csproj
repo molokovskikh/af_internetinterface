@@ -132,9 +132,8 @@
     <Reference Include="WatiN.Core" />
     <Reference Include="WatiN.CssSelectorExtensions">
     </Reference>
-    <Reference Include="WebDriver">
-      <HintPath>..\..\packages\Selenium.WebDriver.2.25.1\lib\net40\WebDriver.dll</HintPath>
-    </Reference>
+    <Reference Include="WebDriver, Version=2.33.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="WebDriver.Support, Version=2.33.0.0, Culture=neutral, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Functional\BrigadFixture.cs" />
@@ -144,7 +143,8 @@
     <Compile Include="Functional\InvoiceFixture.cs" />
     <Compile Include="Functional\LawyerPersonFixture.cs" />
     <Compile Include="Functional\OnLineClients.cs" />
-    <Compile Include="Functional\PartnerFixture.cs" />
+    <Compile Include="Functional\BookmarksFixture.cs" />
+    <Compile Include="Functional\PartnersFixture.cs" />
     <Compile Include="Functional\PaymentFixture.cs" />
     <Compile Include="Functional\PhysicalClientFixture.cs" />
     <Compile Include="Functional\PrivateMessageFixture.cs" />
@@ -205,6 +205,7 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common.MySql\Common.MySql\Common.MySql.csproj">

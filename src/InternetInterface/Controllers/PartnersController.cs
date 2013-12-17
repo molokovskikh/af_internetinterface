@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.SymbolStore;
 using System.Linq;
 using Castle.MonoRail.ActiveRecordSupport;
@@ -32,8 +33,15 @@ namespace InternetInterface.Controllers
 
 		public void New(uint roleId)
 		{
-			var role = DbSession.Load<UserRole>(roleId);
-			var partner = new Partner(role);
+			Partner partner;
+			if (roleId == 0) {
+				partner = new Partner();
+				partner.RegDate = DateTime.Now;
+			}
+			else {
+				var role = DbSession.Load<UserRole>(roleId);
+				partner = new Partner(role);
+			}
 			PropertyBag["Partner"] = partner;
 			if (IsPost && Form.Keys.Cast<string>().Any(k => k.StartsWith("Partner."))) {
 				BindObjectInstance(partner, ParamStore.Form, "Partner");
@@ -45,6 +53,7 @@ namespace InternetInterface.Controllers
 						Flash["PartnerPass"] = password;
 					}
 #endif
+					DbSession.Save(partner);
 					RedirectToAction("Report", new { partner.Id });
 				}
 			}
