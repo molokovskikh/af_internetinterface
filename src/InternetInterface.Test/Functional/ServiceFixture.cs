@@ -37,6 +37,7 @@ namespace InternetInterface.Test.Functional
 			Open("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", client.Id);
 			Click("Сервисная заявка");
 
+			Css("#request_Performer_Id").SelectByText(performer.Name);
 			Css("textarea[name=\"request.Description\"]").SendKeys("test");
 			Css("input[name=\"request.Contact\"]").SendKeys("900-9090900");
 			Css("input[name=\"request.PerformanceDate\"]").SendKeys("21.05.2012");
