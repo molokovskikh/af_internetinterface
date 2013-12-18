@@ -41,9 +41,10 @@ namespace InternetInterface.Test.Functional
 			Css("textarea[name=\"request.Description\"]").SendKeys("test");
 			Css("input[name=\"request.Contact\"]").SendKeys("900-9090900");
 			Css("input[name=\"request.PerformanceDate\"]").SendKeys("21.05.2012");
-			WaitForCss("input[name=\"request.PerformanceTime\"]");
 			Eval("$('.input-date').datepicker('hide')");
 			WaitForHiddenCss("#ui-datepicker-div");
+
+			WaitAjax();
 
 			Css("input[name=\"request.PerformanceTime\"][value=\"10:00:00\"]").Click();
 			Click("Сохранить");
@@ -62,7 +63,7 @@ namespace InternetInterface.Test.Functional
 
 			Open("ServiceRequest/RegisterServiceRequest?ClientCode={0}", client.Id);
 			Css("#request_Performer_Id").SelectByText(performer.Name);
-			WaitForCss("input[name=\"request.PerformanceTime\"]");
+			WaitAjax();
 			Assert.AreEqual("true", Css("input[name=\"request.PerformanceTime\"][value=\"12:30:00\"]").GetAttribute("disabled"));
 		}
 
@@ -104,6 +105,16 @@ namespace InternetInterface.Test.Functional
 			Click("Применить");
 			AssertText("Фильтр");
 			AssertText("900-9090900");
+		}
+
+		private void WaitAjax()
+		{
+			Wait().Until(d => Convert.ToInt32(Eval("return $.active")) == 0);
+		}
+
+		private WebDriverWait Wait()
+		{
+			return new WebDriverWait(browser, 5.Second());
 		}
 
 		protected void WaitForHiddenCss(string css)
