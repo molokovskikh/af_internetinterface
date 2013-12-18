@@ -3,18 +3,13 @@
 		$('#request_Contact').val(this.innerText);
 	});
 
-	var pendingRequest;
 	function update(date, performer) {
-		if (pendingRequest)
-			pendingRequest.abort();
-		pendingRequest = $.ajax({
+		$.ajax({
 			url: "/ServiceRequest/Timetable",
 			data: { date: date, id: performer },
 			success: function (data) {
 				$("#timetable").html(data);
 			}
-		}).always(function () {
-			pendingRequest = null;
 		});
 	}
 
