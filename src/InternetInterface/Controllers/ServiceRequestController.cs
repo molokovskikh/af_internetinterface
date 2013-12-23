@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
+using Common.MySql;
 using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.MonoRailExtentions;
@@ -46,7 +47,7 @@ namespace InternetInterface.Controllers
 	{
 		public ServiceRequestController()
 		{
-			SetBinder(new ARDataBinder());
+			SetARDataBinder(AutoLoadBehavior.NullIfInvalidKey);
 		}
 
 		public void Timetable(DateTime? date, uint? id)
@@ -71,10 +72,11 @@ namespace InternetInterface.Controllers
 		public void RegisterServiceRequest(uint clientCode)
 		{
 			var client = DbSession.Load<Client>(clientCode);
-			var request = new ServiceRequest(Partner);
-			PropertyBag["client"] = client;
+			var request = new ServiceRequest(Partner) {
+				Client = client
+			};
 			PropertyBag["request"] = request;
-			PropertyBag["ingeners"] = Partner.GetServiceEngineers();
+			PropertyBag["ingeners"] = Partner.GetServiceEngineers(DbSession);
 			PropertyBag["requests"] = new RequestFinderFilter(client).Find(DbSession);
 			if (IsPost) {
 				BindObjectInstance(request, "Request", AutoLoadBehavior.NewInstanceIfInvalidKey);
@@ -89,9 +91,10 @@ namespace InternetInterface.Controllers
 			}
 		}
 
-		public void ViewRequests([DataBind("filter")] RequestFinderFilter filter)
+		public void ViewRequests([SmartBinder("filter")] RequestFinderFilter filter)
 		{
 			PropertyBag["requests"] = filter.Find(DbSession);
+			PropertyBag["engineers"] = Partner.GetServiceEngineers(DbSession);
 			PropertyBag["filter"] = filter;
 			PropertyBag["IsService"] = filter.IsService;
 		}
@@ -103,9 +106,8 @@ namespace InternetInterface.Controllers
 			PropertyBag["Request"] = ((isService && request.Performer == Partner) || !isService) ? request : null;
 			PropertyBag["Edit"] = edit;
 			PropertyBag["IsService"] = Partner.CategorieIs("Service");
-			if (edit) {
-				PropertyBag["ingeners"] = Partner.GetServiceEngineers();
-			}
+			PropertyBag["ingeners"] = Partner.GetServiceEngineers(DbSession);
+			PropertyBag["iteration"] = new ServiceIteration(request);
 		}
 
 		[AccessibleThrough(Verb.Post)]

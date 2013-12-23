@@ -213,7 +213,17 @@ body {
 	font-size: 12px;
 }
 
-.table th
+.non-greedy-table
+{
+	border-spacing: 0;
+	border: 1px solid #ccc;
+	border-collapse: collapse;
+	color: #5c5b5b;
+	margin-bottom: 5px;
+	font-size: 12px;
+}
+
+.table th, .non-greedy-table th
 {
 	font-weight: bold;
 	border: 1px solid #ccc;
@@ -223,43 +233,38 @@ body {
 	text-align: center;
 }
 
-.table tr:first-child th:first-child
+.table tr:first-child th:first-child, .non-greedy-table tr:first-child th:first-child
 {
 	-moz-border-radius-topleft: 3px;
 	-webkit-border-top-left-radius: 3px;
 	border-top-left-radius: 3px;
 }
 
-.table tr:first-child th:last-child
+.table tr:first-child th:last-child, .non-greedy-table tr:first-child th:last-child
 {
 	-moz-border-radius-topright: 3px;
 	-webkit-border-top-right-radius: 3px;
 	border-top-right-radius: 3px;
 }
 
-#mapHead thead tr th {
-	background-color: #f1efef;
-}
-
-.table th.first {
+.table th.first, .non-greedy-table th.first {
   width: 30px;
 }
 
-.table th.last {
+.table th.last, .non-greedy-table th.last {
   width: 200px;
 }
 
-.table .checkbox {
+.table .checkbox, .non-greedy-table .checkbox {
   margin-left: 10px;
 }
 
-.table td
-{
+.table td, .non-greedy-table td {
 	padding: 3px;
 	border: 1px solid #e0e0e0;
 }
 
-.table a:link
+.table a:link, .non-greedy-table a:link
 {
 	color: #474e99;
 	font-weight: bold;
@@ -267,15 +272,21 @@ body {
 }
 
 .table a:active,
-.table a:hover
+.table a:hover,
+.non-greedy-table a:hover,
+.non-greedy-table a:hover
 {
 	color: #bd5a35;
 	text-decoration: underline;
 }
 
-.table td.last
+.table td.last, .non-greedy-table td.last
 {
 	text-align: right;
+}
+
+#mapHead thead tr th {
+	background-color: #f1efef;
 }
 
 /* forms */

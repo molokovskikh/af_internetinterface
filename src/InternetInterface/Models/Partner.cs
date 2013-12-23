@@ -11,7 +11,9 @@ using Common.Web.Ui.Models.Security;
 using InternetInterface.Controllers;
 using InternetInterface.Helpers;
 using InternetInterface.Models.Universal;
+using NHibernate;
 using NHibernate.Criterion;
+using NHibernate.Linq;
 using NHibernate.SqlCommand;
 
 namespace InternetInterface.Models
@@ -121,14 +123,14 @@ namespace InternetInterface.Models
 					p => p.Sum);
 		}
 
-		public static List<Partner> GetHouseMapAgents()
+		public static List<Partner> GetHouseMapAgents(ISession session)
 		{
-			return Queryable.Where(p => p.Role.ReductionName == "Agent").ToList();
+			return session.Query<Partner>().Where(p => p.Role.ReductionName == "Agent").OrderBy(p => p.Name).ToList();
 		}
 
-		public static List<Partner> GetServiceEngineers()
+		public static List<Partner> GetServiceEngineers(ISession session)
 		{
-			return Queryable.Where(p => p.Role.ReductionName == "Service").ToList();
+			return session.Query<Partner>().Where(p => p.Role.ReductionName == "Service").OrderBy(p => p.Name).ToList();
 		}
 
 		public override void SaveAndFlush()

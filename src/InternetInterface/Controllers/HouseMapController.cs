@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
+using Common.MySql;
 using Common.Web.Ui.Controllers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
@@ -38,7 +39,7 @@ namespace InternetInterface.Controllers
 		{
 			PropertyBag["Houses"] = House.FindAll().OrderBy(h => h.Street);
 			PropertyBag["SelectedHouse"] = House.FindFirst().Id;
-			PropertyBag["agents"] = Partner.GetHouseMapAgents();
+			PropertyBag["agents"] = Partner.GetHouseMapAgents(DbSession);
 			PropertyBag["RegionList"] = DbSession.Query<RegionHouse>().ToList();
 			FindHouse();
 		}
@@ -150,7 +151,7 @@ namespace InternetInterface.Controllers
 			}
 			var result = query.List<House>();
 			PropertyBag["Houses"] = result;
-			PropertyBag["agents"] = Partner.GetHouseMapAgents();
+			PropertyBag["agents"] = Partner.GetHouseMapAgents(DbSession);
 			PropertyBag["RegionList"] = DbSession.Query<RegionHouse>().ToList();
 			FindHouse();
 		}

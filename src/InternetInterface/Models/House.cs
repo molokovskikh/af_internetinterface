@@ -43,17 +43,6 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual int PassCount { get; set; }
 
-		//[Property]
-		public virtual int CompetitorCount
-		{
-			get { return Apartments.Where(a => !string.IsNullOrEmpty(a.LastInternet) && (a.Status == null || a.Status.ShortName != "request")).Count(); }
-		}
-
-		public static List<House> AllSort
-		{
-			get { return FindAll().OrderBy(h => h.Street).ToList(); }
-		}
-
 		[HasMany(ColumnKey = "House", OrderBy = "Number", Lazy = true)]
 		public virtual IList<Apartment> Apartments { get; set; }
 
@@ -65,6 +54,17 @@ namespace InternetInterface.Models
 
 		[BelongsTo("RegionId"), ValidateNonEmpty]
 		public virtual RegionHouse Region { get; set; }
+
+
+		public virtual int CompetitorCount
+		{
+			get { return Apartments.Where(a => !string.IsNullOrEmpty(a.LastInternet) && (a.Status == null || a.Status.ShortName != "request")).Count(); }
+		}
+
+		public static List<House> AllSort
+		{
+			get { return FindAll().OrderBy(h => h.Street).ToList(); }
+		}
 
 		public virtual Apartment GetApartmentWithNumber(int num)
 		{

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
+using Castle.Components.Validator;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Controllers.Filter;
 
@@ -18,10 +19,16 @@ namespace InternetInterface.Models
 			Performer = InitializeContent.Partner;
 		}
 
+		public ServiceIteration(ServiceRequest request)
+			: this()
+		{
+			Request = request;
+		}
+
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
-		[Property]
+		[Property, ValidateNonEmpty]
 		public virtual string Description { get; set; }
 
 		[Property]

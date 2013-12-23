@@ -1,10 +1,31 @@
 input.time {
 	width: 6em;
 }
+
 input.graph_date {
 	width: 6em;
 }
-.table td
+
+.witch_padding_date .graph_date
 {
-	border: none;
+	margin-left:10px;
+	margin-right:10px;
+}
+
+.empty-result {
+	width: 90%;
+}
+
+.request-details {
+	width:1200px;
+	color:#484848;
+	font-size:12px;
+}
+
+.request-details-table {
+	background-color: #FFD;
+}
+
+.request-details-table td {
+	border: 0;
 }

@@ -34,17 +34,18 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void Create_request()
 		{
-			Open("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", client.Id);
+			Open("UserInfo/SearchUserInfo?filter.ClientCode={0}", client.Id);
 			Click("Сервисная заявка");
 
 			Css("#request_Performer_Id").SelectByText(performer.Name);
 			Css("textarea[name=\"request.Description\"]").SendKeys("test");
-			Css("input[name=\"request.Contact\"]").SendKeys("900-9090900");
 			Css("input[name=\"request.PerformanceDate\"]").SendKeys("21.05.2012");
+			Css("input[name=\"request.Contact\"]").SendKeys("900-9090900");
+
 			Eval("$('.input-date').datepicker('hide')");
 			WaitForHiddenCss("#ui-datepicker-div");
 
-			WaitAjax();
+			WaitAjax("date=21.05.2012&id=" + performer.Id);
 
 			Css("input[name=\"request.PerformanceTime\"][value=\"10:00:00\"]").Click();
 			Click("Сохранить");
@@ -63,7 +64,7 @@ namespace InternetInterface.Test.Functional
 
 			Open("ServiceRequest/RegisterServiceRequest?ClientCode={0}", client.Id);
 			Css("#request_Performer_Id").SelectByText(performer.Name);
-			WaitAjax();
+			WaitAjax("id=" + performer.Id);
 			Assert.AreEqual("true", Css("input[name=\"request.PerformanceTime\"][value=\"12:30:00\"]").GetAttribute("disabled"));
 		}
 
@@ -107,9 +108,10 @@ namespace InternetInterface.Test.Functional
 			AssertText("900-9090900");
 		}
 
-		private void WaitAjax()
+		private void WaitAjax(string querystring)
 		{
-			Wait().Until(d => Convert.ToInt32(Eval("return $.active")) == 0);
+			new WebDriverWait(new SystemClock(), browser, 5.Second(), TimeSpan.FromMilliseconds(100))
+				.Until(d => (Eval("return $('#timetable').data('url')") ?? "").ToString().EndsWith(querystring));
 		}
 
 		private WebDriverWait Wait()

@@ -1,24 +1,24 @@
 ﻿${app.Asset("service-requests.css")}
 ${app.Asset("service-requests.js")}
-${app.Asset("vaidServiceRequest.js")}
 
 <div class="borderless-content">
 	<div class="borderless-content-subblock">
-	${FormHelper.FormTag("", {@class: @validateFormService})}
+	${FormHelper.FormTag("", {})}
+		${FormHelper.HiddenField("request.Client.Id")}
 		<table class="table" style="width: 750px">
 			<thead>
 				<tr>
 					<th colspan=2>
-						Регистрация сервисной заявки <a href="${SiteRoot}/UserInfo/SearchUserInfo?filter.ClientCode=${client.Id}"> ${client.Name}</a>
+						Регистрация сервисной заявки <a href="${SiteRoot}/UserInfo/SearchUserInfo?filter.ClientCode=${request.Client.Id}"> ${request.Client.Name}</a>
 					</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr>
 					<td colspan=2>
-						<input type="hidden" name="request.Client.Id" value="${client.Id}" />
 						${app.Label("request.Description")}<br>
 						${FormHelper.TextArea("request.Description", {@rows: 8, @cols: "90%"})}
+						${app.Error("request.Description")}
 					</td>
 				</tr>
 				<tr>
@@ -31,7 +31,7 @@ ${app.Asset("vaidServiceRequest.js")}
 						<div id="contacts" style="display:none; background-color:#d7d9d9; border: 1px double #bfbfbf; margin-top:7px; width:250px;">
 							<table>
 								<tbody>
-									<% for contact in client.Contacts: %>
+									<% for contact in request.Client.Contacts: %>
 									<tr>
 										<td>
 											<a href="#" class="contact_link"><b> ${contact.HumanableNumber} </b></a>

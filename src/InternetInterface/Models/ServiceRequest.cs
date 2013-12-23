@@ -65,8 +65,14 @@ namespace InternetInterface.Models
 
 			set
 			{
-				if (value == ServiceRequestStatus.Close && value != _status) {
+				if (value == _status)
+					return;
+
+				if (value == ServiceRequestStatus.Close) {
 					ClosedDate = DateTime.Now;
+				}
+				if (value == ServiceRequestStatus.Cancel) {
+					CancelDate = DateTime.Now;
 				}
 
 				_status = value;
@@ -81,6 +87,9 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual DateTime? ClosedDate { get; set; }
+
+		[Property]
+		public virtual DateTime? CancelDate { get; set; }
 
 		[Property, Auditable("Дата выполнения заявки")]
 		public virtual DateTime? PerformanceDate { get; set; }

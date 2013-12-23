@@ -151,7 +151,6 @@
     <Content Include="Css\reveal.css" />
     <Content Include="Css\style.css" />
     <Content Include="Css\tablesorter.css" />
-    <Content Include="Css\validServiceRequest.css" />
     <Content Include="Errors\AccessDin.aspx" />
     <Content Include="Errors\NotFound.aspx" />
     <Content Include="favicon.ico" />
@@ -293,7 +292,6 @@
     <None Include="Views\Subview\ServiceRequestRow.brail" />
     <None Include="Views\Payments\СhangeSaleSettings.brail" />
     <None Include="Views\AgentInfo\EditAgentSettings.brail" />
-    <Content Include="Assets\Javascripts\vaidServiceRequest.js" />
     <Content Include="JavaScript\validation.js" />
     <None Include="Views\Tariffs\ChangeRules.brail" />
     <Content Include="Web.config">

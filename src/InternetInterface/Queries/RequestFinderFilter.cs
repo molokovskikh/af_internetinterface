@@ -5,6 +5,7 @@ using System.Linq;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
+using InternetInterface.Services;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.SqlCommand;
@@ -25,6 +26,12 @@ namespace InternetInterface.Queries
 		[Description("Бесплатные")]
 		public bool FreeFlag { get; set; }
 
+		[Description("Назначено")]
+		public Partner Partner { get; set; }
+
+		[Description("Регион")]
+		public RegionHouse Region { get; set; }
+
 		public bool IsService;
 
 		public RequestFinderFilter()
@@ -40,7 +47,10 @@ namespace InternetInterface.Queries
 				{ "Contact", "Contact" },
 				{ "RegDate", "RegDate" },
 				{ "ClosedDate", "ClosedDate" },
+				{ "CancelDate", "CancelDate" },
 				{ "Sum", "Sum" },
+				{ "Performer", "Performer" },
+				{ "PerformanceDate", "PerformanceDate" },
 			};
 			var dtn = DateTime.Now;
 			Period = new DatePeriod(new DateTime(dtn.Year, dtn.Month, 1), dtn);
@@ -56,7 +66,8 @@ namespace InternetInterface.Queries
 
 		public DetachedCriteria GetCriteria()
 		{
-			var criteria = DetachedCriteria.For<ServiceRequest>();
+			var criteria = DetachedCriteria.For<ServiceRequest>()
+				.CreateAlias("Client", "CL", JoinType.InnerJoin);
 			if (IsService)
 				criteria.Add(Expression.Eq("Performer", InitializeContent.Partner));
 			if (_Client != null)
@@ -82,10 +93,17 @@ namespace InternetInterface.Queries
 				if (FreeFlag)
 					criteria.Add(Restrictions.Eq("Free", FreeFlag));
 			}
+			if (Partner != null) {
+				criteria.Add(Expression.Where<ServiceRequest>(r => r.Performer == Partner));
+			}
+			if (Region != null) {
+				criteria.CreateAlias("CL.PhysicalClient", "p")
+					.CreateAlias("p.HouseObj", "h");
+				criteria.Add(Expression.Eq("h.Region", Region));
+			}
 			if (!string.IsNullOrEmpty(Text)) {
 				uint clientId = 0;
 				if (UInt32.TryParse(Text, out clientId)) {
-					criteria.CreateAlias("Client", "CL", JoinType.InnerJoin);
 					criteria.Add(Restrictions.Eq("CL.Id", clientId));
 				}
 				else {
