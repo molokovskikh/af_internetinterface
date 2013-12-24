@@ -10,23 +10,13 @@ using InternetInterface.Background;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
+using Test.Support;
 using Test.Support.log4net;
 
 namespace InternetInterface.Test.Integration.Tasks
 {
-	public class SendSmsNotificationTest : SendSmsNotification
-	{
-		public IList<SmsMessage> SendSmsAr()
-		{
-			return ArHelper.WithSession(s => {
-				Session = s;
-				return SendSms();
-			});
-		}
-	}
-
 	[TestFixture]
-	public class MailerFixture
+	public class MailerFixture : IntegrationFixture
 	{
 		[Test]
 		public void SmsTest()
@@ -45,96 +35,76 @@ namespace InternetInterface.Test.Integration.Tasks
 					PhoneNumber = "123456789"
 				}
 			};
-			using (new SessionScope()) {
-				foreach (var smsMessage in messages) {
-					smsMessage.Save();
-				}
+			foreach (var smsMessage in messages) {
+				smsMessage.Save();
 			}
-			var sededMessages = new SendSmsNotificationTest().SendSmsAr();
+			var sededMessages = new SendSmsNotification(session).SendSms();
 			Assert.That(sededMessages.Count, Is.EqualTo(2));
 		}
 
 		[Test]
 		public void LawyerTest()
 		{
-			new SendNullTariffLawyerPerson().Execute();
+			new SendNullTariffLawyerPerson(session).Execute();
 		}
 
 		[Test]
 		public void StaticIpFixture()
 		{
-			Client client;
-			using (new SessionScope()) {
-				client = ClientHelper.Client();
-				ActiveRecordMediator.Save(client);
-				var networkSwitch = new NetworkSwitch();
-				ActiveRecordMediator.Save(networkSwitch);
-				var endPoint = new ClientEndpoint(client, 10, networkSwitch);
-				client.Endpoints.Add(endPoint);
-				ActiveRecordMediator.Save(endPoint);
-				client.PhysicalClient.Balance = 0;
-				client.Disabled = true;
-				ActiveRecordMediator.Save(client);
-				ActiveRecordMediator.Save(client.PhysicalClient);
-				endPoint.Ip = new IPAddress(1541080065);
-				ActiveRecordMediator.Save(endPoint);
-			}
+			var client = ClientHelper.Client();
+			ActiveRecordMediator.Save(client);
+			var networkSwitch = new NetworkSwitch();
+			ActiveRecordMediator.Save(networkSwitch);
+			var endPoint = new ClientEndpoint(client, 10, networkSwitch);
+			client.Endpoints.Add(endPoint);
+			ActiveRecordMediator.Save(endPoint);
+			client.PhysicalClient.Balance = 0;
+			client.Disabled = true;
+			ActiveRecordMediator.Save(client);
+			ActiveRecordMediator.Save(client.PhysicalClient);
+			endPoint.Ip = new IPAddress(1541080065);
+			ActiveRecordMediator.Save(endPoint);
 
-			new DeleteFixIpIfClientLongDisable().Execute();
+			new DeleteFixIpIfClientLongDisable(session).Execute();
 
-			using (new SessionScope()) {
-				ArHelper.WithSession(s => {
-					client = s.Get<Client>(client.Id);
-					Assert.AreEqual(client.Disabled, true);
-					Assert.IsTrue(client.Endpoints[0].Ip.Equals(new IPAddress(1541080065)));
-					Assert.AreEqual(client.BlockDate.Value.Date, DateTime.Now.Date);
-				});
-				SystemTime.Now = () => DateTime.Now.AddDays(61);
-			}
+			client = session.Get<Client>(client.Id);
+			Assert.AreEqual(client.Disabled, true);
+			Assert.IsTrue(client.Endpoints[0].Ip.Equals(new IPAddress(1541080065)));
+			Assert.AreEqual(client.BlockDate.Value.Date, DateTime.Now.Date);
+			SystemTime.Now = () => DateTime.Now.AddDays(61);
 
-			new DeleteFixIpIfClientLongDisable().Execute();
+			new DeleteFixIpIfClientLongDisable(session).Execute();
 
-			using (new SessionScope()) {
-				ArHelper.WithSession(s => {
-					client = s.Get<Client>(client.Id);
-					Assert.AreEqual(client.Disabled, true);
-					Assert.IsNull(client.Endpoints[0].Ip);
-					Assert.IsNull(client.BlockDate);
-				});
-			}
+			client = session.Get<Client>(client.Id);
+			Assert.AreEqual(client.Disabled, true);
+			Assert.IsNull(client.Endpoints[0].Ip);
+			Assert.IsNull(client.BlockDate);
 		}
 
 		[Test]
 		public void BaseTest()
 		{
-			Lease unknownLease;
-			using (new SessionScope()) {
-				unknownLease = new Lease {
-					LeaseBegin = DateTime.Now,
-					LeaseEnd = DateTime.Now.AddHours(5),
-					LeasedTo = "14-D6-4D-38-07-2F-00-00-00-00-00-00-00-00-00-00",
-					Port = 5,
-					Pool = IpPool.FindFirst(),
-					Switch = ActiveRecordLinqBase<NetworkSwitch>.FindFirst(),
-					Ip = new IPAddress(3541660034)
-				};
-				unknownLease.Save();
-			}
+			var unknownLease = new Lease {
+				LeaseBegin = DateTime.Now,
+				LeaseEnd = DateTime.Now.AddHours(5),
+				LeasedTo = "14-D6-4D-38-07-2F-00-00-00-00-00-00-00-00-00-00",
+				Port = 5,
+				Pool = IpPool.FindFirst(),
+				Switch = ActiveRecordLinqBase<NetworkSwitch>.FindFirst(),
+				Ip = new IPAddress(3541660034)
+			};
+			unknownLease.Save();
 
-			new SendUnknowEndPoint().Execute();
+			new SendUnknowEndPoint(session).Execute();
 
-			using (new SessionScope()) {
-				var sendedLease = SendedLease.Queryable.FirstOrDefault(s => s.LeaseId == unknownLease.Id);
-				Assert.IsNotNull(sendedLease);
-			}
+			var sendedLease = SendedLease.Queryable.FirstOrDefault(s => s.LeaseId == unknownLease.Id);
+			Assert.IsNotNull(sendedLease);
 
-			new SendUnknowEndPoint().Execute();
+			new SendUnknowEndPoint(session).Execute();
 
-			using (new SessionScope()) {
-				var sendedLease = SendedLease.Queryable.Where(s => s.LeaseId == unknownLease.Id).ToList();
-				Assert.LessOrEqual(1, sendedLease.Count);
-				unknownLease.Delete();
-			}
+			var sendedLeases = SendedLease.Queryable.Where(s => s.LeaseId == unknownLease.Id).ToList();
+			Assert.LessOrEqual(1, sendedLeases.Count);
+			unknownLease.Delete();
 		}
 	}
 }

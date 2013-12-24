@@ -5,12 +5,21 @@ using System.Net.Mail;
 using System.Text;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Models;
+using NHibernate;
 using NHibernate.Linq;
 
 namespace InternetInterface.Background
 {
 	public class SendNullTariffLawyerPerson : Task
 	{
+		public SendNullTariffLawyerPerson()
+		{
+		}
+
+		public SendNullTariffLawyerPerson(ISession session) : base(session)
+		{
+		}
+
 		protected override void Process()
 		{
 			var nullLeases = Session.Query<Lease>().Where(l =>

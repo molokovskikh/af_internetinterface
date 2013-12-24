@@ -6,12 +6,21 @@ using Common.Tools;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using NHibernate;
 using NHibernate.Linq;
 
 namespace InternetInterface.Background
 {
 	public class SendSmsNotification : Task
 	{
+		public SendSmsNotification()
+		{
+		}
+
+		public SendSmsNotification(ISession session) : base(session)
+		{
+		}
+
 		protected override void Process()
 		{
 			var thisDateMax = Session.Query<InternetSettings>().First();

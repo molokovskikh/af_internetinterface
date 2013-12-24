@@ -48,6 +48,10 @@ namespace InternetInterface.Test.Functional
 		{
 			using (new SessionScope()) {
 				ArHelper.WithSession(session => {
+					var settings = session.Query<InternetSettings>().FirstOrDefault();
+					if (settings == null)
+						session.Save(new InternetSettings());
+
 					var self = session.Query<Partner>().FirstOrDefault(p => p.Login == Environment.UserName);
 					if (self == null) {
 						self = new Partner(Environment.UserName);

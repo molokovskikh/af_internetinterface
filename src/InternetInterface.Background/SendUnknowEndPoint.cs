@@ -7,12 +7,21 @@ using Common.Tools;
 using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Models;
+using NHibernate;
 using NHibernate.Linq;
 
 namespace InternetInterface.Background
 {
 	public class SendUnknowEndPoint : Task
 	{
+		public SendUnknowEndPoint()
+		{
+		}
+
+		public SendUnknowEndPoint(ISession session) : base(session)
+		{
+		}
+
 		protected override void Process()
 		{
 			var smtp = new Mailer();
