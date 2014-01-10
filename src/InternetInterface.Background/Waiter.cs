@@ -29,7 +29,7 @@ namespace InternetInterface.Background
 				new SendSmsNotification()
 			};
 
-			Delay = (int)TimeSpan.FromHours(1).TotalMilliseconds;
+			Delay = TimeSpan.FromHours(1);
 			Action = () => {
 				DoTask(tasks);
 
