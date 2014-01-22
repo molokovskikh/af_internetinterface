@@ -15,7 +15,9 @@ namespace BillingService
 		public ProjectInstaller()
 		{
 			Installers.AddRange(new Installer[] {
-				new ServiceProcessInstaller(),
+				new ServiceProcessInstaller {
+					Account = ServiceAccount.NetworkService
+				},
 				new ServiceInstaller {
 					DisplayName = "Биллинг доступа в интернет",
 					ServiceName = "BillingInternetService",
