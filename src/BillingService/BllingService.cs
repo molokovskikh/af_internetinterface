@@ -13,26 +13,9 @@ using log4net;
 
 namespace BillingService
 {
-	public class RunCommand : RepeatableCommand
-	{
-		private static readonly ILog _log = LogManager.GetLogger(typeof(RunCommand));
-
-		public RunCommand(Action action, int delay)
-			: base(action, delay)
-		{
-		}
-
-		public override void Error(Exception e)
-		{
-			_log.Error(e.Message);
-		}
-	}
-
 	public partial class BllingService : ServiceBase
 	{
-		private RunCommand computeCommand;
-		private RunCommand OnCommand;
-		private static MainBilling billing;
+		private List<RepeatableCommand> commands = new List<RepeatableCommand>();
 		private ILog log = LogManager.GetLogger(typeof(BllingService));
 
 		public BllingService()
@@ -43,13 +26,12 @@ namespace BillingService
 		protected override void OnStart(string[] args)
 		{
 			try {
-				billing = new MainBilling();
+				var billing = new MainBilling();
 
-				OnCommand = new RunCommand(billing.On, 600000);
-				OnCommand.Start();
+				commands.Add(new RepeatableCommand(billing.On, 600000));
+				commands.Add(new RepeatableCommand(billing.Run, 180000));
 
-				computeCommand = new RunCommand(billing.Run, 180000);
-				computeCommand.Start();
+				commands.Each(c => c.Start());
 			}
 			catch (Exception e) {
 				log.Error("Ошибка при запуске сервиса", e);
@@ -59,8 +41,7 @@ namespace BillingService
 		protected override void OnStop()
 		{
 			try {
-				OnCommand.Stop();
-				computeCommand.Stop();
+				RepeatableCommand.StopAll(commands);
 			}
 			catch (Exception e) {
 				log.Error("Ошибка при остановке сервиса", e);
