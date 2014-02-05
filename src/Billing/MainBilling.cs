@@ -468,10 +468,7 @@ set s.LastStartFail = true;")
 				sum += notPeriodicService.Sum(s => s.Cost);
 				sum += periodicService.Sum(s => s.Cost) / daysInMonth * (daysInMonth - now.Day + 1);
 				foreach (var orderService in notPeriodicService) {
-					writeOffs.Add(new WriteOff(client, orderService.Cost) {
-						Comment = orderService.Description + " по заказу №" + orderService.Order.Number,
-						Service = orderService
-					});
+					writeOffs.Add(new WriteOff(client, orderService));
 				}
 				foreach (var orderService in periodicService) {
 					writeOffs.Add(new WriteOff(client, orderService.Cost / daysInMonth * (daysInMonth - now.Day + 1)) {
@@ -486,10 +483,7 @@ set s.LastStartFail = true;")
 				var orderServices = client.Orders.Where(o => o.OrderStatus == OrderStatus.Enabled).SelectMany(s => s.OrderServices).Where(s => s.IsPeriodic);
 				sum += orderServices.Sum(s => s.Cost);
 				foreach (var orderService in orderServices) {
-					writeOffs.Add(new WriteOff(client, orderService.Cost) {
-						Comment = orderService.Description + " по заказу №" + orderService.Order.Number,
-						Service = orderService
-					});
+					writeOffs.Add(new WriteOff(client, orderService));
 				}
 			}
 			if (disableOrders.Any()) {

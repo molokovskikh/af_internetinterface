@@ -166,7 +166,7 @@ namespace InternetInterface.Controllers
 			var person = new LawyerPerson();
 			BindObjectInstance(person, ParamStore.Form, "LegalPerson");
 			var connectErrors = Validation.ValidationConnectInfo(info, true);
-			if (!string.IsNullOrEmpty(info.Port) && order.OrderServices == null && !DoNotCreateOrder)
+			if (!string.IsNullOrEmpty(info.Port) && order.OrderServices.Count == 0 && !DoNotCreateOrder)
 				connectErrors = "Невозможно создать подключение, не создавая услуг в заказе";
 			if (IsValid(person) && string.IsNullOrEmpty(connectErrors)) {
 				person.SaveAndFlush();
@@ -176,7 +176,7 @@ namespace InternetInterface.Controllers
 					WhoRegisteredName = InitializeContent.Partner.Name,
 					RegDate = DateTime.Now,
 					Status = Status.Find((uint)StatusType.BlockedAndNoConnected),
-					Disabled = order.OrderServices == null,
+					Disabled = order.OrderServices.Count == 0,
 					LawyerPerson = person,
 					Name = person.ShortName,
 					Type = ClientType.Legal,

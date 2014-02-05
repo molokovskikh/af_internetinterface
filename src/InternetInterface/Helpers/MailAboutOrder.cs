@@ -124,9 +124,7 @@ namespace InternetInterface.Helpers
 
 		public static string GenerateText(Order order, string operationType)
 		{
-			decimal sum = 0;
-			if (order.OrderServices != null)
-				sum = order.OrderServices.Sum(x => x.Cost);
+			var sum = order.OrderServices.Sum(x => x.Cost);
 			var message = new StringBuilder();
 			message.AppendLine(string.Format("Зарегистрировано {0} заказа для Юр.Лица", operationType));
 			message.AppendLine(string.Format("Клиент: {0}-{1}", order.Client.Id.ToString("D5"), order.Client.Name));
@@ -139,12 +137,11 @@ namespace InternetInterface.Helpers
 		public static string GenerateTextService(Order order)
 		{
 			var listOfServices = String.Empty;
-			if (order.OrderServices != null)
-				foreach (OrderService oneOrder in order.OrderServices) {
+			foreach (var oneOrder in order.OrderServices) {
 					listOfServices += String.Format(@"
 Описание услуги: {0}
 Услуга: {1}", oneOrder.Description, oneOrder.GetPeriodic());
-				}
+			}
 			return listOfServices;
 		}
 

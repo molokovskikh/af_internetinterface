@@ -115,7 +115,7 @@ namespace InternetInterface.Controllers
 
 			PropertyBag["EConnect"] = filter.EditingConnect;
 
-			if((client.Orders == null || client.Orders.All(o => o.OrderServices == null)))
+			if((client.Orders == null || client.Orders.All(o => o.OrderServices.Count == 0)))
 				PropertyBag["Message"] = Message.Error("Не задана абонентская плата для клиента ! Клиент отключен !");
 
 			PropertyBag["CallLogs"] = UnresolvedCall.LastCalls;
@@ -451,13 +451,7 @@ namespace InternetInterface.Controllers
 				}
 				if (existingOrder.Client == null)
 					existingOrder.Client = client;
-				if(existingOrder.OrderServices == null)
-					existingOrder.OrderServices = new List<OrderService>();
 				DbSession.SaveOrUpdate(existingOrder);
-
-				if(Order.OrderServices == null)
-					Order.OrderServices = new List<OrderService>();
-
 				foreach (var orderService in existingOrder.OrderServices.ToList()) {
 					if(Order.OrderServices.All(s => s.Id != orderService.Id)) {
 						existingOrder.OrderServices.Remove(orderService);

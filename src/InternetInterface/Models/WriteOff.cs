@@ -83,6 +83,13 @@ namespace InternetInterface.Models
 		{
 		}
 
+		public WriteOff(Client client, OrderService service)
+			: this(client, service.Cost)
+		{
+			Comment = service.Description + " по заказу №" + service.Order.Number;
+			Service = service;
+		}
+
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 

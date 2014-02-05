@@ -28,6 +28,7 @@ namespace InternetInterface.Models
 		{
 			BeginDate = SystemTime.Now();
 			EndDate = SystemTime.Now();
+			OrderServices = new List<OrderService>();
 		}
 
 		[PrimaryKey]
