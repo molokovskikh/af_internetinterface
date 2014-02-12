@@ -84,7 +84,7 @@ namespace InternetInterface.Models
 		}
 
 		public WriteOff(Client client, OrderService service)
-			: this(client, service.Cost)
+			: this(client, service.SumToWriteOff)
 		{
 			Comment = service.Description + " по заказу №" + service.Order.Number;
 			Service = service;
@@ -139,7 +139,7 @@ namespace InternetInterface.Models
 			}
 			else
 				Client.LawyerPerson.Balance += WriteOffSum;
-			return Appeals.CreareAppeal(String.Format("Удалено списание на сумму {0:C}", WriteOffSum), Client);
+			return Client.CreareAppeal(String.Format("Удалено списание на сумму {0:C}", WriteOffSum));
 		}
 
 		public virtual decimal Sum

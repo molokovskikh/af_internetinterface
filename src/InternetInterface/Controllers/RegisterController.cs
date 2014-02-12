@@ -145,7 +145,7 @@ namespace InternetInterface.Controllers
 		public void RegisterLegalPerson()
 		{
 			PropertyBag["OrderInfo"] = new ClientOrderInfo {
-				Order = new Order() { Number = Order.GetNextNumber(DbSession, 0) },
+				Order = new Order(),
 				ClientConnectInfo = new ClientConnectInfo()
 			};
 			PropertyBag["ClientCode"] = 0;
@@ -170,17 +170,10 @@ namespace InternetInterface.Controllers
 				connectErrors = "Невозможно создать подключение, не создавая услуг в заказе";
 			if (IsValid(person) && string.IsNullOrEmpty(connectErrors)) {
 				person.SaveAndFlush();
-				var client = new Client {
+				var client = new Client(person, InitializeContent.Partner) {
 					Recipient = DbSession.Query<Recipient>().FirstOrDefault(r => r.INN == "3666152146"),
-					WhoRegistered = InitializeContent.Partner,
-					WhoRegisteredName = InitializeContent.Partner.Name,
-					RegDate = DateTime.Now,
 					Status = Status.Find((uint)StatusType.BlockedAndNoConnected),
 					Disabled = order.OrderServices.Count == 0,
-					LawyerPerson = person,
-					Name = person.ShortName,
-					Type = ClientType.Legal,
-					Orders = new List<Order>()
 				};
 				if (!DoNotCreateOrder) {
 					client.Orders.Add(order);

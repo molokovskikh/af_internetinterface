@@ -38,6 +38,7 @@ namespace InternetInterface.Models
 			Contacts = new List<Contact>();
 			Endpoints = new List<ClientEndpoint>();
 			Appeals = new List<Appeals>();
+			Orders = new List<Order>();
 		}
 
 		public Client(PhysicalClient client, Settings settings, Partner registrator = null)
@@ -66,6 +67,17 @@ namespace InternetInterface.Models
 		public virtual uint Id { get; set; }
 
 		private bool _disabled;
+
+		public Client(LawyerPerson person, Partner partner)
+			: this()
+		{
+			WhoRegistered = partner;
+			WhoRegisteredName = partner.Name;
+			RegDate = DateTime.Now;
+			LawyerPerson = person;
+			Name = person.ShortName;
+			Type = ClientType.Legal;
+		}
 
 		[Property]
 		public virtual bool Disabled
@@ -567,7 +579,6 @@ namespace InternetInterface.Models
 			return true;
 		}
 
-
 		public virtual IList<BaseWriteOff> GetWriteOffs(ISession session, string groupedKey, bool forIvrn = false)
 		{
 			var gpoupKey = string.Empty;
@@ -643,33 +654,23 @@ where Client = :clientid and WriteOffSum > 0
 			return GetConnectInfo(session).FirstOrDefault();
 		}
 
-		public virtual IList<Order> GetOrders(ISession session, bool disabled = false)
-		{
-			return session.Query<Order>().Where(o => o.Client == this && o.Disabled == disabled).ToList();
-		}
-
 		public virtual IList<ClientOrderInfo> GetOrderInfo(ISession session, bool disabled = false)
 		{
 			var result = new List<ClientOrderInfo>();
-			var orders = GetOrders(session, disabled);
+			var orders = Orders.Where(o => o.IsDeactivated == disabled).ToList();
+			var endpointInfos = GetConnectInfo(session);
+
 			foreach (var order in orders) {
 				var orderInfo = new ClientOrderInfo {
 					Order = order
 				};
-				if(order.EndPoint != null) {
-					orderInfo.ClientConnectInfo = GetSingleConnectInfo(session, order.EndPoint.Id);
-				}
-				else {
+				if(order.EndPoint != null)
+					orderInfo.ClientConnectInfo = endpointInfos.FirstOrDefault(i => i.endpointId == order.EndPoint.Id);
+				if (orderInfo.ClientConnectInfo == null)
 					orderInfo.ClientConnectInfo = new ClientConnectInfo();
-				}
 				result.Add(orderInfo);
 			}
 			return result;
-		}
-
-		private ClientConnectInfo GetSingleConnectInfo(ISession session, uint endpointId)
-		{
-			return GetConnectInfo(session).FirstOrDefault(i => i.endpointId == endpointId);
 		}
 
 		public virtual IList<ClientConnectInfo> GetConnectInfo(ISession session)
@@ -921,6 +922,14 @@ where CE.Client = {0}", Id))
 		public override string ToString()
 		{
 			return String.Format("№{0} - {1}", Id, Name);
+		}
+
+		public virtual Appeals CreareAppeal(string message, AppealType type = AppealType.System, bool usePartner = true)
+		{
+			message += string.Format(". Баланс {0}.", Balance.ToString("0.00"));
+			var appeal = new Appeals(message, this, type, usePartner);
+			Appeals.Add(appeal);
+			return appeal;
 		}
 	}
 

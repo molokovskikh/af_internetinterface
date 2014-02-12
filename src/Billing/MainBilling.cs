@@ -164,7 +164,7 @@ set s.LastStartFail = true;")
 							if (physicalClient.Balance >= updateClient.GetPriceIgnoreDisabled() * updateClient.PercentBalance) {
 								updateClient.ShowBalanceWarningPage = false;
 								if (updateClient.IsChanged(c => c.ShowBalanceWarningPage))
-									Appeals.CreareAppeal("Отключена страница Warning, клиент внес платеж", updateClient, AppealType.Statistic, false);
+									updateClient.CreareAppeal("Отключена страница Warning, клиент внес платеж", AppealType.Statistic, false);
 							}
 						if (updateClient.ClientServices != null)
 							foreach (var clientService in updateClient.ClientServices.ToList()) {
@@ -208,9 +208,9 @@ set s.LastStartFail = true;")
 				foreach (var client in clients) {
 					client.Enable();
 					if (client.IsChanged(c => c.ShowBalanceWarningPage))
-						Appeals.CreareAppeal("Отключена страница Warning, клиент разблокирован", client, AppealType.Statistic, false);
+						client.CreareAppeal("Отключена страница Warning, клиент разблокирован", AppealType.Statistic, false);
 					if (client.IsChanged(c => c.Disabled))
-						Appeals.CreareAppeal("Клиент разблокирован", client, AppealType.Statistic, false);
+						client.CreareAppeal("Клиент разблокирован", AppealType.Statistic, false);
 					client.UpdateAndFlush();
 					SmsHelper.DeleteNoSendingMessages(client);
 				}
@@ -224,7 +224,7 @@ set s.LastStartFail = true;")
 							if (!client.SendEmailNotification)
 								client.SendEmailNotification = EmailNotificationSender.SendLawyerPersonNotification(client);
 							if (client.IsChanged(c => c.ShowBalanceWarningPage))
-								Appeals.CreareAppeal("Включена страница Warning, клиент имеет низкий баланс", client, AppealType.Statistic, false);
+								client.CreareAppeal("Включена страница Warning, клиент имеет низкий баланс", AppealType.Statistic, false);
 						}
 					}
 					else {
@@ -232,7 +232,7 @@ set s.LastStartFail = true;")
 						client.SendEmailNotification = false;
 						client.WhenShowWarning = null;
 						if (client.IsChanged(c => c.ShowBalanceWarningPage))
-							Appeals.CreareAppeal("Отключена страница Warning", client, AppealType.Statistic, false);
+							client.CreareAppeal("Отключена страница Warning", AppealType.Statistic, false);
 					}
 					client.Update();
 				}
@@ -425,15 +425,15 @@ set s.LastStartFail = true;")
 					client.ShowBalanceWarningPage = true;
 					if (client.IsChanged(c => c.ShowBalanceWarningPage))
 						if (client.ShowWarningBecauseNoPassport())
-							Appeals.CreareAppeal("Включена страница Warning, клиент не имеет паспортных данных", client, AppealType.Statistic, false);
+							client.CreareAppeal("Включена страница Warning, клиент не имеет паспортных данных", AppealType.Statistic, false);
 						else {
-							Appeals.CreareAppeal("Включена страница Warning, клиент имеет низкий баланс", client, AppealType.Statistic, false);
+							client.CreareAppeal("Включена страница Warning, клиент имеет низкий баланс", AppealType.Statistic, false);
 						}
 				}
 				else {
 					client.ShowBalanceWarningPage = false;
 					if (client.IsChanged(c => c.ShowBalanceWarningPage))
-						Appeals.CreareAppeal("Отключена страница Warning", client, AppealType.Statistic, false);
+						client.CreareAppeal("Отключена страница Warning", AppealType.Statistic, false);
 				}
 			}
 			if (client.CanBlock()) {
@@ -442,7 +442,7 @@ set s.LastStartFail = true;")
 				client.StartNoBlock = null;
 				client.Status = Status.Find((uint)StatusType.NoWorked);
 				if (client.IsChanged(c => c.Disabled))
-					Appeals.CreareAppeal("Клиент был заблокирован", client, AppealType.Statistic, false);
+					client.CreareAppeal("Клиент был заблокирован", AppealType.Statistic, false);
 			}
 			if ((client.YearCycleDate == null && client.BeginWork != null) || (SystemTime.Now().Date >= client.YearCycleDate.Value.AddYears(1).Date)) {
 				client.FreeBlockDays = FreeDaysVoluntaryBlockin;
@@ -453,68 +453,16 @@ set s.LastStartFail = true;")
 		private static void WriteOffFromLawyerPerson(Client client)
 		{
 			var person = client.LawyerPerson;
-
-			var now = SystemTime.Now();
-			var daysInMonth = DateTime.DaysInMonth(now.Year, now.Month);
-			decimal sum = 0;
-			var writeOffs = new List<WriteOff>();
-			//если это день активации заказа, то списываем плату за разовые услуги и за периодические пропорционально оставшимся дням месяца
-			var activateOrders = client.Orders.Where(o => o.BeginDate.Value.Date == now.Date).ToList();
-			var disableOrders = client.Orders.Where(o => o.EndDate != null && o.EndDate.Value.Date == now.Date).ToList();
-			var activateDiactivate = false;
-			if (activateOrders.Any()) {
-				var periodicService = activateOrders.SelectMany(s => s.OrderServices).Where(s => s.IsPeriodic);
-				var notPeriodicService = activateOrders.SelectMany(s => s.OrderServices).Where(s => !s.IsPeriodic);
-				sum += notPeriodicService.Sum(s => s.Cost);
-				sum += periodicService.Sum(s => s.Cost) / daysInMonth * (daysInMonth - now.Day + 1);
-				foreach (var orderService in notPeriodicService) {
-					writeOffs.Add(new WriteOff(client, orderService));
-				}
-				foreach (var orderService in periodicService) {
-					writeOffs.Add(new WriteOff(client, orderService.Cost / daysInMonth * (daysInMonth - now.Day + 1)) {
-						Comment = orderService.Description + " по заказу №" + orderService.Order.Number,
-						Service = orderService
-					});
-				}
-				activateDiactivate = true;
-			}
-			if (now.Date == now.Date.FirstDayOfMonth() && !activateDiactivate) {
-				//если это первый день месяца, то списываем плату за периодические услуги активных заказов
-				var orderServices = client.Orders.Where(o => o.OrderStatus == OrderStatus.Enabled).SelectMany(s => s.OrderServices).Where(s => s.IsPeriodic);
-				sum += orderServices.Sum(s => s.Cost);
-				foreach (var orderService in orderServices) {
-					writeOffs.Add(new WriteOff(client, orderService));
-				}
-			}
-			if (disableOrders.Any()) {
-				//если это день деактивации заказа, то нужно вернуть сумму за оставшееся число дней в месяце за периодические услуги
-				var periodicService = disableOrders.SelectMany(s => s.OrderServices).Where(s => s.IsPeriodic);
-				sum -= periodicService.Sum(s => s.Cost) / daysInMonth * (daysInMonth - now.Day);
-				foreach (var orderService in periodicService) {
-					List<WriteOff> writeOffForCorrect;
-					if (now.Date == now.Date.FirstDayOfMonth())
-						writeOffForCorrect = writeOffs.Where(w => w.Client == client && w.Service.Id == orderService.Id).ToList();
-					else
-						writeOffForCorrect = WriteOff.Queryable.Where(w => w.Client == client && w.Service.Id == orderService.Id && w.WriteOffDate >= now.Date.FirstDayOfMonth().Date).ToList();
-					foreach (var writeOff in writeOffForCorrect) {
-						writeOff.WriteOffSum -= orderService.Cost / daysInMonth * (daysInMonth - now.Day);
-						writeOff.Save();
-					}
-					if (writeOffForCorrect.Count == 0) {
-						EmailNotificationSender.SendCloseServiceAndNoWriteOff(orderService, client);
-					}
-				}
-				foreach (var disableOrder in disableOrders) {
-					if (disableOrder.EndPoint != null) {
-						disableOrder.EndPoint.Delete();
-					}
-					var services = disableOrder.OrderServices.ToList();
-					Appeals.CreareAppeal(string.Format("Деактивирован заказ {0}, услуги {1}", disableOrder.Id, services.Select(s => string.Format("[{0}] - '{1}'", s.Id, s.Description)).Implode()), client, AppealType.System, false).Save();
-				}
-			}
-			person.Balance -= sum;
+			var writeoffs = client.LawyerPerson.Calculate(SystemTime.Today());
+			person.Balance -= writeoffs.Sum(w => w.Sum);
 			person.UpdateAndFlush();
-			foreach (var writeOff in writeOffs) {
+
+			var toCleanup = client.Orders.Where(o => o.IsDeactivated && o.EndPoint != null);
+			foreach (var order in toCleanup) {
+				order.EndPoint.Delete();
+			}
+
+			foreach (var writeOff in writeoffs) {
 				writeOff.SaveAndFlush();
 			}
 		}

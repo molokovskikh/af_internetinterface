@@ -118,7 +118,7 @@ namespace InforoomInternet.Controllers
 				client.Disabled = client.Balance <= 0;
 				client.AutoUnblocked = true;
 				if (client.IsChanged(c => c.Disabled))
-					Appeals.CreareAppeal("Клиент был заблокирован из личного кабинета при посещении первой страницы", client, AppealType.Statistic);
+					client.CreareAppeal("Клиент был заблокирован из личного кабинета при посещении первой страницы", AppealType.Statistic);
 				DbSession.SaveOrUpdate(client);
 				Flash["message"] = "Спасибо, теперь вы можете продолжить работу";
 				RedirectToAction("IndexOffice");

@@ -115,7 +115,7 @@ namespace InternetInterface.Controllers
 
 			PropertyBag["EConnect"] = filter.EditingConnect;
 
-			if((client.Orders == null || client.Orders.All(o => o.OrderServices.Count == 0)))
+			if(client.Orders.All(o => o.OrderServices.Count == 0))
 				PropertyBag["Message"] = Message.Error("Не задана абонентская плата для клиента ! Клиент отключен !");
 
 			PropertyBag["CallLogs"] = UnresolvedCall.LastCalls;
@@ -239,7 +239,7 @@ namespace InternetInterface.Controllers
 				try {
 					client.Activate(clientService);
 					DbSession.Save(clientService);
-					var appeal = Appeals.CreareAppeal(
+					var appeal = client.CreareAppeal(
 						string.Format("Услуга \"{0}\" активирована на период с {1} по {2}", servise.HumanName,
 							clientService.BeginWorkDate != null
 								? clientService.BeginWorkDate.Value.ToShortDateString()
@@ -247,7 +247,6 @@ namespace InternetInterface.Controllers
 							clientService.EndWorkDate != null
 								? clientService.EndWorkDate.Value.ToShortDateString()
 								: string.Empty),
-						client,
 						AppealType.Statistic);
 					DbSession.SaveOrUpdate(appeal);
 					Flash["Message"] = Message.Notify(appeal.Appeal);
@@ -268,7 +267,7 @@ namespace InternetInterface.Controllers
 					client.ClientServices.FirstOrDefault(c => c.Service.Id == serviceId && c.Activated);
 				if (cservice != null) {
 					cservice.CompulsoryDeactivate();
-					var appeal = Appeals.CreareAppeal(string.Format("Услуга \"{0}\" деактивирована", servise.HumanName), client, AppealType.Statistic);
+					var appeal = client.CreareAppeal(string.Format("Услуга \"{0}\" деактивирована", servise.HumanName), AppealType.Statistic);
 					DbSession.Save(appeal);
 				}
 			}
@@ -770,16 +769,16 @@ where r.`Label`= :LabelIndex;")
 						client.StartNoBlock = null;
 						client.Sale = 0;
 						if (client.IsChanged(c => c.Disabled))
-							Appeals.CreareAppeal("Оператором клиент был заблокирован", client, AppealType.Statistic);
+							client.CreareAppeal("Оператором клиент был заблокирован", AppealType.Statistic);
 					}
 					else if (client.Status.Type != StatusType.Dissolved) {
 						client.AutoUnblocked = true;
 						client.Disabled = false;
 						client.ShowBalanceWarningPage = false;
 						if (client.IsChanged(c => c.Disabled))
-							Appeals.CreareAppeal("Оператором клиент был разблокирован", client, AppealType.Statistic);
+							client.CreareAppeal("Оператором клиент был разблокирован", AppealType.Statistic);
 						if (client.IsChanged(c => c.ShowBalanceWarningPage))
-							Appeals.CreareAppeal("Оператором отключена страница Warning", client, AppealType.Statistic);
+							client.CreareAppeal("Оператором отключена страница Warning", AppealType.Statistic);
 					}
 					if (client.Status.Type == StatusType.Dissolved) {
 						client.Endpoints.Clear();
@@ -1130,10 +1129,10 @@ where r.`Label`= :LabelIndex;")
 			var graph = DbSession.QueryOver<ConnectGraph>().Where(c => c.Client == client && c.Day == date && c.IntervalId == interval && c.Brigad == briad).List().FirstOrDefault();
 			if (graph != null) {
 				DbSession.Delete(graph);
-				var appeal = Appeals.CreareAppeal(string.Format("Удалено назначение в график, \r\n Бригада: {0} \r\n Дата: {1} \r\n Время: {2}",
+				var appeal = client.CreareAppeal(string.Format("Удалено назначение в график, \r\n Бригада: {0} \r\n Дата: {1} \r\n Время: {2}",
 					briad.Name,
 					date.ToShortDateString(),
-					Intervals.GetIntervals()[(int)interval]), client, AppealType.User);
+					Intervals.GetIntervals()[(int)interval]), AppealType.User);
 				DbSession.Save(appeal);
 				return true;
 			}
@@ -1177,7 +1176,7 @@ where r.`Label`= :LabelIndex;")
 		public void AddPoint(uint clientId)
 		{
 			PropertyBag["OrderInfo"] = new ClientOrderInfo {
-				Order = new Order() { Number = Order.GetNextNumber(DbSession, clientId) },
+				Order = new Order { Number = Order.GetNextNumber(DbSession, clientId) },
 				ClientConnectInfo = new ClientConnectInfo()
 			};
 			ConnectPropertyBag(clientId);

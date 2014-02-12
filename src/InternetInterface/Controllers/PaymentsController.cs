@@ -43,7 +43,7 @@ namespace InternetInterface.Controllers
 				Destination,
 				Comment);
 			payment.Client.Payments.Remove(payment);
-			payment.Client.Appeals.Add(Appeals.CreareAppeal(message, payment.Client));
+			payment.Client.Appeals.Add(payment.Client.CreareAppeal(message));
 			payment.Client = Destination;
 			payment.BillingAccount = false;
 			Destination.Payments.Add(payment);

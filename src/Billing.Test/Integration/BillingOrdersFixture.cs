@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Castle.ActiveRecord;
 using Common.Tools;
+using Common.Tools.Calendar;
 using Common.Web.Ui.ActiveRecordExtentions;
 using InternetInterface.Models;
 using NHibernate.Linq;
@@ -33,7 +34,7 @@ namespace Billing.Test.Integration
 				Balance = 2000,
 				Region = region
 			};
-			var a = session.Save(lPerson);
+			session.Save(lPerson);
 			lawyerClient = new Client() {
 				Disabled = false,
 				Name = "TestLawyer",
@@ -44,7 +45,6 @@ namespace Billing.Test.Integration
 			SystemTime.Now = () => new DateTime(2012, 4, 20);
 			order = new Order {
 				Client = lawyerClient,
-				Number = 1
 			};
 			session.Save(order);
 			session.Flush();
@@ -93,49 +93,26 @@ namespace Billing.Test.Integration
 		public void WriteOffInActivateOrderTest()
 		{
 			order.EndDate = SystemTime.Now().AddDays(30);
-			var service = new OrderService {
-				Cost = 10,
-				Description = "1",
-				IsPeriodic = false,
-				Order = order
-			};
-			session.Save(service);
-			service = new OrderService {
-				Cost = 13,
-				Description = "2",
-				IsPeriodic = false,
-				Order = order
-			};
-			session.Save(service);
-			service = new OrderService {
-				Cost = 300,
-				Description = "3",
-				IsPeriodic = true,
-				Order = order
-			};
-			session.Save(service);
-			Close();
-			billing.Compute();
+			order.OrderServices.Add(new OrderService(order, 10, false));
+			order.OrderServices.Add(new OrderService(order, 13, false));
+			order.OrderServices.Add(new OrderService(order, 300, isPeriodic: true));
+			session.Save(order);
+
+			Compute();
 			var writeOff = session.Query<WriteOff>().Where(w => w.Client == lawyerClient).ToArray();
-			Assert.That(writeOff.Sum(w => w.WriteOffSum), Is.EqualTo(133));
+			Assert.That(writeOff.Sum(w => w.WriteOffSum), Is.EqualTo(23));
 		}
 
-		[Test(Description = "Проверяет корректное списание периодических услуг в первый день месяца")]
+		[Test(Description = "Проверяет корректное списание периодических услуг в последний день месяца")]
 		public void WriteOffMonthPeriodicTest()
 		{
-			SystemTime.Now = () => new DateTime(2012, 4, 1);
-			order.BeginDate = SystemTime.Now().AddDays(-20);
+			SystemTime.Now = () => new DateTime(2012, 4, 30);
+			order.BeginDate = SystemTime.Now().AddDays(-40);
 			order.EndDate = SystemTime.Now().AddDays(20);
-			session.SaveOrUpdate(order);
-			var service = new OrderService {
-				Cost = 100,
-				Description = "1",
-				IsPeriodic = true,
-				Order = order
-			};
-			session.Save(service);
-			Close();
-			billing.Compute();
+			order.OrderServices.Add(new OrderService(order, 100, isPeriodic: true));
+			session.Save(order);
+
+			Compute();
 			var writeOff = session.Query<WriteOff>().Where(w => w.Client == lawyerClient).ToArray();
 			Assert.That(writeOff.Sum(w => w.WriteOffSum), Is.EqualTo(100));
 		}
@@ -145,38 +122,28 @@ namespace Billing.Test.Integration
 		{
 			order.BeginDate = SystemTime.Now().AddDays(-40);
 			order.EndDate = SystemTime.Now().AddDays(40);
-			session.SaveOrUpdate(order);
-			var service = new OrderService {
-				Cost = 100,
-				Description = "1",
-				IsPeriodic = true,
-				Order = order
-			};
-			session.Save(service);
-			Close();
+			order.OrderServices.Add(new OrderService(order, 100, isPeriodic: true));
+			session.Save(order);
+
 			for (var i = 1; i <= 30; i++) {
 				SystemTime.Now = () => new DateTime(2012, 4, i);
-				billing.Compute();
+				Compute();
 			}
 			var writeOff = session.Query<WriteOff>().Where(w => w.Client == lawyerClient).ToArray();
 			Assert.That(writeOff.Sum(w => w.WriteOffSum), Is.EqualTo(100));
 		}
 
-		[Test(Description = "Проверяет корректность возврата денег за неиспользованные услуги при деактивации заказа")]
+		[Test(Description = "Проверяем списание при активации и деактивации в одном месяце")]
 		public void MoneyBackAfterDeactivateOrderTest()
 		{
-			order.BeginDate = SystemTime.Now().AddDays(-40);
-			session.SaveOrUpdate(order);
-			var service = new OrderService {
-				Cost = 300,
-				Description = "1",
-				IsPeriodic = true,
-				Order = order
-			};
-			session.Save(service);
-			session.Save(new WriteOff(lawyerClient, 300) { Service = service });
-			Close();
-			billing.Compute();
+			order.BeginDate = new DateTime(2012, 4, 1);
+			order.EndDate = new DateTime(2012, 4, 20);
+			var service = new OrderService(order, 300, true);
+			order.OrderServices.Add(service);
+			session.Save(order);
+
+			SystemTime.Now = () => new DateTime(2012, 4, 30);
+			Compute();
 			var writeOff = session.Query<WriteOff>().Where(w => w.Client == lawyerClient && w.Service == service).ToArray();
 			Assert.That(writeOff.Sum(w => w.WriteOffSum), Is.EqualTo(200));
 		}
@@ -206,16 +173,22 @@ namespace Billing.Test.Integration
 			session.Save(orderService);
 			var writeOff = new WriteOff(lawyerClient, 300) { Service = orderService };
 			session.Save(writeOff);
-			Close();
-			billing.Compute();
+
+			Compute();
 			var writeOffs = session.Query<WriteOff>().Where(w => w.Client == lawyerClient).ToList();
 			Assert.AreEqual(writeOffs.Count, 2);
+		}
+
+		private void Compute()
+		{
+			Close();
+			billing.Compute();
 		}
 
 		[Test]
 		public void Activate_diactivate_test_allDays()
 		{
-			ActivateDiactivate(DateTime.Now);
+			ActivateDiactivate(DateTime.Today);
 		}
 
 		[Test]
@@ -224,45 +197,36 @@ namespace Billing.Test.Integration
 			ActivateDiactivate(new DateTime(2013, 07, 01));
 		}
 
-		private void ActivateDiactivate(DateTime now)
+		private void ActivateDiactivate(DateTime begin)
 		{
-			SystemTime.Now = () => now;
 			var endpoint = new ClientEndpoint { Client = lawyerClient };
 			lawyerClient.Endpoints.Add(endpoint);
 			session.Save(endpoint);
+
+			order.BeginDate = begin;
+			order.EndDate = begin.AddMonths(1);
 			order.EndPoint = endpoint;
-			var periodic = new OrderService {
-				Cost = 3000,
-				IsPeriodic = true,
-				Order = order
-			};
-			session.Save(periodic);
-			var noPeriodic = new OrderService {
-				Cost = 200,
-				Order = order
-			};
-			session.Save(noPeriodic);
-			order.BeginDate = now;
-			order.EndDate = now.AddMonths(1);
-			order.OrderServices = new List<OrderService> { noPeriodic, periodic };
+			order.OrderServices.Add(new OrderService(order, 3000, isPeriodic: true));
+			order.OrderServices.Add(new OrderService(order, 200, isPeriodic: false));
+
 			session.Save(order);
 			session.Save(lawyerClient);
-			var dayCount = 0;
-			Close();
-			while (SystemTime.Now().Date <= now.AddMonths(1).Date) {
-				billing.Compute();
-				SystemTime.Now = () => now.AddDays(dayCount);
-				dayCount++;
+
+			var end = begin.AddMonths(1).LastDayOfMonth();
+			foreach (var current in begin.DaysTo(end)) {
+				SystemTime.Now = () => current;
+				Compute();
 			}
 			var writeOffs = session.Query<WriteOff>().Where(w => w.Client.Id == lawyerClient.Id).ToList();
-			var daysInThisMonth = DateTime.DaysInMonth(now.Year, now.Month);
-			var daysInNextNonth = DateTime.DaysInMonth(now.AddMonths(1).Year, now.AddMonths(1).Month);
-			var thisMonthSum = Math.Round((decimal)3000 / daysInThisMonth * (daysInThisMonth - now.Day + 1), 2);
-			var nextMonthSum = Math.Round((decimal)3000 / daysInNextNonth * (daysInNextNonth - now.AddMonths(1).Day), 2);
-			Assert.AreEqual(writeOffs.Sum(w => w.WriteOffSum), Math.Round(200 + 3000 + thisMonthSum - nextMonthSum, 2));
+			var daysInThisMonth = begin.DaysInMonth();
+			var daysInNextNonth = end.DaysInMonth();
+			var thisMonthSum = Math.Round((decimal)3000 / daysInThisMonth * (daysInThisMonth - begin.Day + 1), 2);
+			var nextMonthSum = Math.Round((decimal)3000 / daysInNextNonth * order.EndDate.Value.Day, 2);
+			var sum = Math.Round(200 + thisMonthSum + nextMonthSum, 2);
+			Assert.AreEqual(sum, writeOffs.Sum(w => w.WriteOffSum));
 			lawyerClient = session.Get<Client>(lawyerClient.Id);
 			Assert.That(lawyerClient.Appeals.Last().Appeal, Is.StringContaining("Деактивирован заказ"));
-			Assert.AreEqual(lawyerClient.Endpoints.Count, 0);
+			Assert.AreEqual(0, lawyerClient.Endpoints.Count);
 		}
 
 		[Test]
@@ -305,7 +269,7 @@ namespace Billing.Test.Integration
 			session.Save(orderSerive);
 			Close();
 			var sn = SystemTime.Now();
-			var days = DateTime.DaysInMonth(sn.Year, sn.Month) + DateTime.DaysInMonth(sn.AddMonths(1).Year, sn.AddMonths(1).Month) + DateTime.DaysInMonth(sn.AddMonths(2).Year, sn.AddMonths(2).Month);
+			var days = sn.DaysInMonth() + sn.AddMonths(1).DaysInMonth() + sn.AddMonths(2).DaysInMonth();
 			var beginData = new DateTime(sn.Year, sn.Month, 1);
 			for (int i = 0; i < days; i++) {
 				SystemTime.Now = () => beginData.AddDays(i);

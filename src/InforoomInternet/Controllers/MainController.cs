@@ -311,7 +311,7 @@ namespace InforoomInternet.Controllers
 				}
 				if (client.ShowBalanceWarningPage) {
 					client.ShowBalanceWarningPage = false;
-					Appeals.CreareAppeal("Отключена страница Warning, клиент отключил со страницы", client, AppealType.Statistic, false);
+					client.CreareAppeal("Отключена страница Warning, клиент отключил со страницы", AppealType.Statistic, false);
 				}
 				client.Update();
 				GoToReferer();

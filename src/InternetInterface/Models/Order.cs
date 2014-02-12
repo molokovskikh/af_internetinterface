@@ -26,8 +26,8 @@ namespace InternetInterface.Models
 	{
 		public Order()
 		{
+			Number = 1;
 			BeginDate = SystemTime.Now();
-			EndDate = SystemTime.Now();
 			OrderServices = new List<OrderService>();
 		}
 
@@ -52,8 +52,17 @@ namespace InternetInterface.Models
 		[BelongsTo(Column = "ClientId")]
 		public virtual Client Client { get; set; }
 
+		//состояние заказа, выставленное пользователем
 		[Property]
 		public virtual bool Disabled { get; set; }
+
+		//обработана ли активация заказ, устанавливает биллинг нужен для учета списаний не периодических услуг
+		[Property]
+		public virtual bool IsActivated { get; set; }
+
+		//обработана ли деактивация заказа, устанавливает биллинг нужен для учета списаний переодических услуг
+		[Property]
+		public virtual bool IsDeactivated { get; set; }
 
 		/// <summary>
 		/// Статус заказа
@@ -65,12 +74,20 @@ namespace InternetInterface.Models
 				if(Disabled)
 					return OrderStatus.Disabled;
 				if (BeginDate.Value.Date <= SystemTime.Now().Date) {
-					if (EndDate == null || EndDate.Value.Date >= SystemTime.Now().Date) {
+					if (EndDate == null || EndDate.Value.Date > SystemTime.Now().Date) {
 						return OrderStatus.Enabled;
 					}
 					return OrderStatus.Disabled;
 				}
 				return OrderStatus.New;
+			}
+		}
+
+		public virtual string Description
+		{
+			get
+			{
+				return string.Format("{0}, услуги {1}", Id, OrderServices.Implode());
 			}
 		}
 
@@ -83,14 +100,10 @@ namespace InternetInterface.Models
 
 		public static uint GetNextNumber(ISession session, uint clientId)
 		{
-			var order = 0;
 			var client = session.Get<Client>(clientId);
 			if (client != null && client.Orders.Count > 0)
-				order = client.Orders.Max(o => (int)o.Number);
-			uint number = 1;
-			if (order > 0)
-				number = (uint)order + 1;
-			return number;
+				return client.Orders.Max(o => o.Number) + 1;
+			return 1;
 		}
 	}
 }

@@ -8,6 +8,7 @@ using Common.Tools.Calendar;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.MonoRailExtentions;
 using NHibernate;
+using NHibernate.Context;
 using NHibernate.SqlTypes;
 using NHibernate.UserTypes;
 
@@ -237,6 +238,20 @@ namespace InternetInterface.Models
 				yield return last;
 				last = last.Add(step);
 			}
+		}
+
+		public static int DaysInMonth(this DateTime date)
+		{
+			return DateTime.DaysInMonth(date.Year, date.Month);
+		}
+
+		public static IEnumerable<DateTime> DaysTo(this DateTime date, DateTime end)
+		{
+			var current = date;
+			do {
+				yield return current;
+				current = current.AddDays(1);
+			} while (current <= end);
 		}
 	}
 

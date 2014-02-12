@@ -133,14 +133,6 @@ namespace InternetInterface.Models
 			return appeals.OrderByDescending(a => a.Date).ToList();
 		}
 
-		public static Appeals CreareAppeal(string message, Client client, AppealType type = AppealType.System, bool usePartner = true)
-		{
-			message += string.Format(". Баланс {0}.", client.Balance.ToString("0.00"));
-			var appeal = new Appeals(message, client, type, usePartner);
-			client.Appeals.Add(appeal);
-			return appeal;
-		}
-
 		public virtual string Type()
 		{
 			var type = string.Empty;
