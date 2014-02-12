@@ -122,10 +122,10 @@ namespace InternetInterface.Test.Functional
 			var paymentId = bankPayment.Payment.Id;
 
 			Open("Payments/Edit?id=" + bankPayment.Id);
-			RunJavaScript("return $('#payment_payer_id').val('" + newClient.Id.ToString() + "');");
+			RunJavaScript("return $('#payment_payer_id').val('" + newClient.Id + "');");
 			Click("Сохранить");
-			Close();
 
+			session.Clear();
 			Assert.IsNull(session.Get<Payment>(paymentId));
 		}
 	}

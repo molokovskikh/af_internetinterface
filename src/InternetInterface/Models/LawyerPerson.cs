@@ -28,6 +28,15 @@ namespace InternetInterface.Models
 	[ActiveRecord(Schema = "Internet", Table = "LawyerPerson", Lazy = true), Auditable]
 	public class LawyerPerson : ValidActiveRecordLinqBase<LawyerPerson>
 	{
+		public LawyerPerson()
+		{
+		}
+
+		public LawyerPerson(RegionHouse region)
+		{
+			Region = region;
+		}
+
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 

@@ -181,7 +181,10 @@ namespace Billing.Test.Integration
 
 		private void Compute()
 		{
-			Close();
+			session.Flush();
+			if (session.Transaction.IsActive)
+				session.Transaction.Commit();
+			session.Clear();
 			billing.Compute();
 		}
 
@@ -232,24 +235,11 @@ namespace Billing.Test.Integration
 		[Test]
 		public void LawyerPersonTest()
 		{
-			LawyerPerson lPerson;
-			var region = session.Query<RegionHouse>().FirstOrDefault(r => r.Name == "Воронеж");
-			if (region == null) {
-				region = new RegionHouse {
-					Name = "Воронеж"
-				};
-				session.Save(region);
-			}
-			lPerson = new LawyerPerson {
-				Balance = 0,
-				Region = region
-			};
+			var region = session.Query<RegionHouse>().First(r => r.Name == "Воронеж");
+			var lPerson = new LawyerPerson(region);
 			session.Save(lPerson);
-
 			lawyerClient = new Client() {
-				Disabled = false,
 				Name = "TestLawyer",
-				ShowBalanceWarningPage = false,
 				LawyerPerson = lPerson
 			};
 			session.Save(lawyerClient);
@@ -258,16 +248,12 @@ namespace Billing.Test.Integration
 				Client = lawyerClient,
 				BeginDate = SystemTime.Now().AddDays(-1),
 				EndDate = SystemTime.Now().AddYears(1),
-				Number = 1,
 			};
+			order.OrderServices.Add(new OrderService(order, 10000, isPeriodic: true));
+
 			session.Save(order);
-			var orderSerive = new OrderService {
-				Cost = 10000,
-				IsPeriodic = true,
-				Order = order
-			};
-			session.Save(orderSerive);
-			Close();
+			FlushAndCommit();
+
 			var sn = SystemTime.Now();
 			var days = sn.DaysInMonth() + sn.AddMonths(1).DaysInMonth() + sn.AddMonths(2).DaysInMonth();
 			var beginData = new DateTime(sn.Year, sn.Month, 1);
@@ -275,21 +261,27 @@ namespace Billing.Test.Integration
 				SystemTime.Now = () => beginData.AddDays(i);
 				billing.Compute();
 			}
-			session.Refresh(lPerson);
-			Assert.That(-30000m, Is.EqualTo(lPerson.Balance));
+
+			session.Clear();
+			lPerson = session.Get<LawyerPerson>(lPerson.Id);
+			Assert.That(-30000m, Is.EqualTo(lPerson.Balance), lPerson.Id.ToString());
 			billing.OnMethod();
-			lPerson.Balance += 1000;
+			lPerson.Balance += 15000;
 			session.Update(lPerson);
 			session.Flush();
 			//3 Так как 2 не к этому клиенту
 			Assert_statistic_appeal();
+
 			session.Clear();
-			session.Refresh(lawyerClient);
+			lawyerClient = session.Get<Client>(lawyerClient.Id);
 			Assert.IsTrue(lawyerClient.ShowBalanceWarningPage);
 
 			billing.OnMethod();
-			session.Refresh(lawyerClient);
-			Assert.IsTrue(!lawyerClient.ShowBalanceWarningPage);
+
+			session.Clear();
+			lawyerClient = session.Get<Client>(lawyerClient.Id);
+			Assert.IsFalse(lawyerClient.ShowBalanceWarningPage);
+
 			Assert_statistic_appeal();
 		}
 

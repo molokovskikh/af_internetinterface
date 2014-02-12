@@ -54,7 +54,7 @@
 					Дата окончания
 				</td>
 				<td colspan="2">
-					<input type="text" id="order_EndDate" name="order.EndDate" value="${OrderInfo.Order.EndDate}" class="required input-date date_field valid">
+					<input type="text" id="order_EndDate" name="order.EndDate" value="${OrderInfo.Order.EndDate}" class="input-date date_field valid">
 						<input type="button" class="CalendarInput" id="CalendarInput1">
 						</td>
 			</tr>

@@ -7,7 +7,7 @@ using OpenQA.Selenium;
 namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
-	class UserInfoFixture : ClientFunctionalFixture
+	public class UserInfoFixture : ClientFunctionalFixture
 	{
 		[Test]
 		public void Base_view_test()

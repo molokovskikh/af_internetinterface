@@ -174,7 +174,8 @@ namespace InternetInterface.Test.Functional
 				Client = laywerPerson,
 				EndDate = SystemTime.Now().AddDays(7),
 				Disabled = true,
-				Number = 666
+				Number = 666,
+				IsDeactivated = true
 			};
 			session.Save(order);
 			order = new Order {
@@ -182,7 +183,8 @@ namespace InternetInterface.Test.Functional
 				BeginDate = SystemTime.Now().AddDays(-7),
 				EndDate = SystemTime.Now().AddDays(-1),
 				Disabled = true,
-				Number = 777
+				Number = 777,
+				IsDeactivated = true
 			};
 			session.Save(order);
 			Open(laywerPerson.Redirect());
