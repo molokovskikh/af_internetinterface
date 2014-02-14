@@ -457,11 +457,6 @@ set s.LastStartFail = true;")
 			person.Balance -= writeoffs.Sum(w => w.Sum);
 			person.UpdateAndFlush();
 
-			var toCleanup = client.Orders.Where(o => o.IsDeactivated && o.EndPoint != null);
-			foreach (var order in toCleanup) {
-				order.EndPoint.Delete();
-			}
-
 			foreach (var writeOff in writeoffs) {
 				writeOff.SaveAndFlush();
 			}

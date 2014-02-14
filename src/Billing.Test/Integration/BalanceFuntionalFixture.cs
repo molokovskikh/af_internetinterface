@@ -240,7 +240,7 @@ namespace Billing.Test.Integration
 		public void MaxDebtTest()
 		{
 			var dayCount = SystemTime.Now().Day != 15 ? 15 : 14;
-			var dayInMonth = DateTime.DaysInMonth(SystemTime.Now().AddDays(-dayCount).Year, SystemTime.Now().AddDays(-dayCount).Month);
+			var dayInMonth = SystemTime.Now().AddDays(-dayCount).DaysInMonth();
 			Client client;
 			using (new SessionScope()) {
 				client = CreateClient();

@@ -8,7 +8,10 @@ import System.Linq.Enumerable
 
 Global(
 	Project : "InternetInterface",
-	HumanReadableName : "Интернет интерфейс"
+	HumanReadableName : "Интернет интерфейс",
+	Config: {
+		"db:generate:log": {@Sufix : "Internet"}
+	}
 )
 
 task @default, [@Build, @BuildBackground]

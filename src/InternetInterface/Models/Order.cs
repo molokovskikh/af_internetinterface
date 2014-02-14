@@ -24,6 +24,12 @@ namespace InternetInterface.Models
 	[ActiveRecord(Schema = "Internet", Table = "Orders", Lazy = true), Auditable, LogInsert(typeof(LogOrderInsert))]
 	public class Order
 	{
+		public Order(LawyerPerson client)
+			: this()
+		{
+			Client = client.client;
+		}
+
 		public Order()
 		{
 			Number = 1;

@@ -11,6 +11,7 @@ using Common.Tools.Calendar;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.Models.Audit;
 using Common.Web.Ui.MonoRailExtentions;
+using ExcelLibrary.BinaryFileFormat;
 using InternetInterface.Models.Universal;
 
 namespace InternetInterface.Models
@@ -109,6 +110,12 @@ namespace InternetInterface.Models
 			toDeactivate.Each(o => {
 				o.IsDeactivated = true;
 				client.CreareAppeal(String.Format("Деактивирован заказ {0}", o.Description), usePartner: false);
+				var endpoint = o.EndPoint;
+				if (endpoint != null) {
+					o.EndPoint = null;
+					if (!client.Orders.Select(x => x.EndPoint).Contains(endpoint))
+						client.Endpoints.Remove(endpoint);
+				}
 			});
 
 			var toActivate = client.Orders.Where(o => !o.IsActivated && o.OrderStatus == OrderStatus.Enabled).ToArray();
