@@ -1,6 +1,8 @@
+using System.Net;
+
 namespace InternetInterface.Helpers
 {
-	public class BigEndianConverter
+	public static class BigEndianConverter
 	{
 		public static byte[] GetBytes(int value)
 		{
@@ -25,6 +27,11 @@ namespace InternetInterface.Helpers
 		public static ushort ToUInt16(byte[] bytes, int i)
 		{
 			return (ushort)((ushort)(bytes[i] << 8) + (ushort)bytes[i + 1]);
+		}
+
+		public static uint ToBigEndian(this IPAddress ip)
+		{
+			return ToInt32(ip.GetAddressBytes());
 		}
 	}
 }

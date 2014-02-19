@@ -24,6 +24,7 @@ namespace InternetInterface.Background
 		{
 			var clientWhoDeleteStatic = Session.Query<Client>().Where(c => c.Disabled && c.BlockDate != null && c.BlockDate <= SystemTime.Now().AddDays(-61)).ToList();
 			foreach (var client in clientWhoDeleteStatic) {
+				Cancellation.ThrowIfCancellationRequested();
 				foreach (var clientEndpoint in client.Endpoints) {
 					clientEndpoint.Ip = null;
 					Session.Save(clientEndpoint);

@@ -12,9 +12,11 @@ namespace InternetInterface.Models
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
+		//будь бдителен адреса хранятся в bigendian формате
 		[Property]
 		public virtual uint Begin { get; set; }
 
+		//будь бдителен адреса хранятся в bigendian формате
 		[Property]
 		public virtual uint End { get; set; }
 

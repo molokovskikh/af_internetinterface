@@ -14,7 +14,7 @@ namespace InternetInterface.Background
 		{
 			XmlConfigurator.Configure();
 			cfg.HowToBuildService(n => new Waiter());
-			cfg.WhenStarted(s => s.DoStart());
+			cfg.WhenStarted(s => s.Start());
 			cfg.WhenStopped(s => s.Stop());
 		}
 	}

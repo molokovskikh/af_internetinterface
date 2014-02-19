@@ -9,6 +9,7 @@ using Common.Web.Ui.ActiveRecordExtentions;
 using InternetInterface.Background;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
+using NHibernate.Linq;
 using NUnit.Framework;
 using Test.Support;
 using Test.Support.log4net;
@@ -97,12 +98,12 @@ namespace InternetInterface.Test.Integration.Tasks
 
 			new SendUnknowEndPoint(session).Execute();
 
-			var sendedLease = SendedLease.Queryable.FirstOrDefault(s => s.LeaseId == unknownLease.Id);
+			var sendedLease = session.Query<SendedLease>().FirstOrDefault(s => s.LeaseId == unknownLease.Id);
 			Assert.IsNotNull(sendedLease);
 
 			new SendUnknowEndPoint(session).Execute();
 
-			var sendedLeases = SendedLease.Queryable.Where(s => s.LeaseId == unknownLease.Id).ToList();
+			var sendedLeases = session.Query<SendedLease>().Where(s => s.LeaseId == unknownLease.Id).ToList();
 			Assert.LessOrEqual(1, sendedLeases.Count);
 			unknownLease.Delete();
 		}

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using Billing;
 using InternetInterface;
+using InternetInterface.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NHibernate.Linq;
@@ -29,8 +30,8 @@ namespace InforoomInternet.Test.Functional
 			var pool = session.Query<IpPool>().FirstOrDefault(i => i.Begin == ipAddress.Address);
 			if (pool == null) {
 				pool = new IpPool {
-					Begin = Convert.ToUInt32(ipAddress.Address),
-					End = Convert.ToUInt32(ipAddress.Address + 100000)
+					Begin = ipAddress.ToBigEndian(),
+					End = ipAddress.ToBigEndian() + 100000
 				};
 				session.Save(pool);
 			}

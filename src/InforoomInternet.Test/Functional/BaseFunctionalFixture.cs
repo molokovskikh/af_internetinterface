@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Common.Web.Ui.NHibernateExtentions;
+using InternetInterface.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Models.Services;
 using NUnit.Framework;
@@ -24,8 +25,8 @@ namespace InforoomInternet.Test.Functional
 		{
 			Pool = new IpPool {
 				IsGray = true,
-				Begin = (uint)IPAddress.Parse("192.168.1.1").Address,
-				End = (uint)IPAddress.Parse("192.168.1.100").Address,
+				Begin = IPAddress.Parse("192.168.1.1").ToBigEndian(),
+				End = IPAddress.Parse("192.168.1.100").ToBigEndian(),
 			};
 			PhysicalClient = new PhysicalClient();
 			Client = new Client();

@@ -11,6 +11,7 @@ using Castle.MonoRail.Framework.Test;
 using Castle.MonoRail.TestSupport;
 using InforoomInternet.Controllers;
 using InternetInterface.Controllers.Filter;
+using InternetInterface.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Models.Services;
 using InternetInterface.Test.Helpers;
@@ -98,8 +99,8 @@ namespace InforoomInternet.Test.Integration
 			controller.IndexOffice(string.Empty);
 			Assert.IsFalse(controller.Context.Response.WasRedirected);
 			var ipPool = new IpPool {
-				Begin = Convert.ToUInt32(ipAdress.Address - 1),
-				End = Convert.ToUInt32(ipAdress.Address + 1)
+				Begin = ipAdress.ToBigEndian() - 1,
+				End = ipAdress.ToBigEndian() + 1
 			};
 			var switchNew = new NetworkSwitch("test", session.Query<Zone>().First());
 			session.Save(switchNew);
@@ -123,7 +124,7 @@ namespace InforoomInternet.Test.Integration
 			Request.UserHostAddress = addresses.Last();
 			client.FirstLunch = false;
 			session.Save(client);
-			ipPool.End = Convert.ToUInt32(ipAdress.Address + 100000000);
+			ipPool.End = ipAdress.ToBigEndian() + 100000000;
 			session.Save(ipPool);
 			session.Flush();
 			controller.IndexOffice(string.Empty);
@@ -131,7 +132,7 @@ namespace InforoomInternet.Test.Integration
 
 			Request.UserHostAddress = addresses.First();
 			client.FirstLunch = false;
-			ipPool.End = Convert.ToUInt32(ipAdress.Address + 1);
+			ipPool.End = ipAdress.ToBigEndian() + 1;
 			session.Save(ipPool);
 			session.Save(client);
 			session.Flush();

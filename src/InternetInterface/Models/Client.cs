@@ -284,7 +284,7 @@ namespace InternetInterface.Models
 			if (ip.AddressFamily != AddressFamily.InterNetwork)
 				return false;
 
-			var address = ip.Address;
+			var address = ip.ToBigEndian();
 			return session.Query<IpPool>().Count(p => p.Begin <= address && p.End >= address) > 0;
 		}
 

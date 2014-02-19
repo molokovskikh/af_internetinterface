@@ -18,7 +18,7 @@ namespace InforoomInternet.Controllers
 		{
 			base.Contextualize(engineContext, context);
 			foreach (var ivrnContent in SiteContent.FindAll()) {
-				DynamicActions[ivrnContent.ViewName] = new DynamicAction(IsAcces(), Lease.IsGray(engineContext.Request.UserHostAddress));
+				DynamicActions[ivrnContent.ViewName] = new DynamicAction(IsAcces());
 			}
 		}
 

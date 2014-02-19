@@ -64,29 +64,6 @@ namespace InternetInterface.Models
 			return GetMac().Equals(mac);
 		}
 
-		public virtual bool IsGray()
-		{
-			return IsGray(Ip);
-		}
-
-		public static bool IsGray(string ip)
-		{
-			IPAddress address;
-			if (IPAddress.TryParse(ip, out address))
-				return IsGray(address);
-			return false;
-		}
-
-		public static bool IsGray(IPAddress ip)
-		{
-			if (ip.AddressFamily != AddressFamily.InterNetwork)
-				return false;
-
-			var value = (uint)ip.Address;
-			var grayPools = IpPool.Queryable.Where(i => i.IsGray).ToList();
-			return grayPools.Any(grayPool => grayPool.Begin <= value && grayPool.End >= value);
-		}
-
 		public bool CanSelfRegister()
 		{
 			return Endpoint == null && Switch != null && Switch.Zone.IsSelfRegistrationEnabled;
