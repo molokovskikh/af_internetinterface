@@ -19,7 +19,7 @@ namespace InternetInterface.Background
 				new SendUnknowEndPoint(),
 				new SendSmsNotification()
 			};
-			tasks.Each(t => t.Token = Cancellation);
+			tasks.Each(t => t.Cancellation = Cancellation);
 
 			Delay = TimeSpan.FromHours(1);
 			Action = () => tasks.Each(t => t.Execute());
