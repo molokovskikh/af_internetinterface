@@ -159,7 +159,8 @@ namespace InternetInterface.Test.Functional
 		{
 			var order = new Order {
 				Client = laywerPerson,
-				BeginDate = DateTime.Now.AddMonths(-2)
+				BeginDate = DateTime.Now.AddMonths(-2),
+				IsActivated = true
 			};
 			session.Save(order);
 			Open(laywerPerson.Redirect());
