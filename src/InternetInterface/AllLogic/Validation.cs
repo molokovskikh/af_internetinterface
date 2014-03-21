@@ -12,7 +12,7 @@ namespace InternetInterface.AllLogic
 {
 	public class Validation
 	{
-		public static string ValidationConnectInfo(ConnectInfo info, bool register)
+		public static string ValidationConnectInfo(ConnectInfo info, bool register, uint endpointId = 0)
 		{
 			if (string.IsNullOrEmpty(info.Port) && !register)
 				return "Введите порт";
@@ -22,15 +22,10 @@ namespace InternetInterface.AllLogic
 			if (Int32.TryParse(info.Port, out res)) {
 				if (res > 48 || res < 1)
 					return "Порт должен быть в пределах о 1 до 48";
-				if (ClientEndpoint.Queryable.Where(e => e.Port == res && e.Switch.Id == info.Switch).Count() == 0)
-					return string.Empty;
-				else {
+				if (ClientEndpoint.Queryable.Any(e => e.Port == res && e.Switch.Id == info.Switch && e.Id != endpointId))
 					return "Такая пара порт/коммутатор уже существует";
-				}
 			}
-			else {
-				return string.Empty;
-			}
+			return string.Empty;
 		}
 	}
 

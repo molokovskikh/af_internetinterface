@@ -12,6 +12,7 @@ using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.Models.Audit;
 using Common.Web.Ui.NHibernateExtentions;
+using ExcelLibrary.BinaryFileFormat;
 using InternetInterface.Controllers;
 using InternetInterface.Helpers;
 using InternetInterface.Models.Services;
@@ -30,6 +31,8 @@ namespace InternetInterface.Models
 	[ActiveRecord("Clients", Schema = "Internet", Lazy = true), Auditable]
 	public class Client : ChildActiveRecordLinqBase<Client>
 	{
+		private bool _disabled;
+
 		public Client()
 		{
 			UserWriteOffs = new List<UserWriteOff>();
@@ -63,11 +66,6 @@ namespace InternetInterface.Models
 			}
 		}
 
-		[PrimaryKey]
-		public virtual uint Id { get; set; }
-
-		private bool _disabled;
-
 		public Client(LawyerPerson person, Partner partner)
 			: this()
 		{
@@ -78,6 +76,9 @@ namespace InternetInterface.Models
 			Name = person.ShortName;
 			Type = ClientType.Legal;
 		}
+
+		[PrimaryKey]
+		public virtual uint Id { get; set; }
 
 		[Property]
 		public virtual bool Disabled
@@ -247,15 +248,17 @@ namespace InternetInterface.Models
 
 		public virtual void CreateAutoEndPont(IPAddress ip, ISession session)
 		{
+			var settings = new Settings(session);
 			var lease = session.Query<Lease>().FirstOrDefault(l => l.Ip == ip);
 			if (lease == null)
 				throw new Exception(string.Format("Клиент {0} пришел а аренды для него нет", Id));
 
+
 			var endpoint = CreateAutoEndpoint(lease, Status.Get(StatusType.Worked, session));
+			AddEndpoint(endpoint, settings);
 
 			session.Save(lease.Switch);
 			session.Save(endpoint.PayForCon);
-			session.Save(endpoint);
 			session.Save(lease);
 			session.Save(this);
 		}
@@ -565,7 +568,7 @@ namespace InternetInterface.Models
 		{
 			var daysInInterval = GetInterval();
 			var price = GetPrice();
-			return price / daysInInterval;
+			return Math.Round(price / daysInInterval, 2);
 		}
 
 		public virtual bool CanBlock()
@@ -720,7 +723,7 @@ where CE.Client = {0}", Id))
 
 		public virtual bool MinimumBalance()
 		{
-			return PhysicalClient.Balance - GetPrice() / GetInterval() < 0;
+			return PhysicalClient.Balance - GetSumForRegularWriteOff() < 0;
 		}
 
 		public virtual decimal GetPriceForTariff()
@@ -821,6 +824,27 @@ where CE.Client = {0}", Id))
 				throw new ServiceActivationException("Невозможно использовать данную услугу");
 			ClientServices.Add(service);
 			service.Activate();
+		}
+
+		private bool TryActivate(Service service, ClientEndpoint endpoint = null)
+		{
+			if (ClientServices.Any(s => s.Endpoint == endpoint && s.Service == service))
+				return false;
+			var clientService = new ClientService(this, service) {
+				Endpoint = endpoint
+			};
+			ClientServices.Add(clientService);
+			clientService.Activate();
+			return true;
+		}
+
+		private bool TryDeactivate(Service service, ClientEndpoint endpoint = null)
+		{
+			var clientService = ClientServices.FirstOrDefault(s => s.Endpoint == endpoint && s.Service == service);
+			if (clientService == null)
+				return false;
+			clientService.CompulsoryDeactivate();
+			return true;
 		}
 
 		public virtual WriteOff CalculatePerDayWriteOff(decimal price, bool writeoffVirtualFirst = false)
@@ -930,6 +954,40 @@ where CE.Client = {0}", Id))
 			var appeal = new Appeals(message, this, type, usePartner);
 			Appeals.Add(appeal);
 			return appeal;
+		}
+
+		public virtual bool RemoveEndpoint(ClientEndpoint endpoint)
+		{
+			if (Endpoints.Count > 1 || LawyerPerson != null) {
+				ClientServices.RemoveEach(ClientServices.Where(s => s.Endpoint == endpoint));
+				return Endpoints.Remove(endpoint);
+			}
+			return false;
+		}
+
+		public virtual void AddEndpoint(ClientEndpoint endpoint, Settings settings)
+		{
+			Endpoints.Add(endpoint);
+			SyncServices(settings);
+		}
+
+		/// <summary>
+		/// синхронизирует состояние услуг и состояние точки подключения
+		/// </summary>
+		public virtual void SyncServices(Settings settings)
+		{
+			var service = settings.Services.OfType<PinnedIp>().FirstOrDefault();
+			if (service == null)
+				return;
+
+			foreach (var endpoint in Endpoints) {
+				if (endpoint.Ip != null) {
+					TryActivate(service, endpoint);
+				}
+				else {
+					TryDeactivate(service, endpoint);
+				}
+			}
 		}
 	}
 

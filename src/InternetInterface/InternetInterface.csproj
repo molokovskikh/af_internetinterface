@@ -437,6 +437,7 @@
     <Compile Include="Models\Services\IpTv.cs" />
     <Compile Include="Models\Services\IpTvBoxRent.cs" />
     <Compile Include="Models\Services\ChannelGroup.cs" />
+    <Compile Include="Models\Services\PinnedIp.cs" />
     <Compile Include="Models\SmsMessage.cs" />
     <Compile Include="Models\StaticIp.cs" />
     <Compile Include="Models\Status.cs" />

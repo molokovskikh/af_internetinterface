@@ -298,6 +298,7 @@ namespace InternetInterface.Controllers
 			[DataBind("order")] Order Order, bool withoutEndPoint, uint currentEndPoint)
 		{
 			var needNewServiceForStaticIp = false;
+			var settings = new Settings(DbSession);
 			var client = DbSession.Load<Client>(ClientID);
 			var newFlag = false;
 			var clientEntPoint = new ClientEndpoint();
@@ -329,7 +330,7 @@ namespace InternetInterface.Controllers
 				clientEntPoint.Ip = null;
 				nullFlag = true;
 			}
-			var errorMessage = Validation.ValidationConnectInfo(ConnectInfo, false);
+			var errorMessage = Validation.ValidationConnectInfo(ConnectInfo, false, clientEntPoint.Id);
 			decimal _connectSum;
 			var validateSum =
 				!(!string.IsNullOrEmpty(ConnectSum) && (!decimal.TryParse(ConnectSum, out _connectSum) || (_connectSum <= 0 && !client.IsPhysical())));
@@ -370,14 +371,10 @@ namespace InternetInterface.Controllers
 						clientEntPoint.Port = Int32.Parse(ConnectInfo.Port);
 						clientEntPoint.Switch = DbSession.Load<NetworkSwitch>(ConnectInfo.Switch);
 						clientEntPoint.Monitoring = ConnectInfo.Monitoring;
-						if (!newFlag) {
-							DbSession.SaveOrUpdate(clientEntPoint);
-						}
-						else {
-							clientEntPoint.SaveAndFlush();
+						if (newFlag) {
+							client.AddEndpoint(clientEntPoint, settings);
 							if (client.AdditionalStatus != null && client.AdditionalStatus.ShortName == "Refused") {
 								client.AdditionalStatus = null;
-								DbSession.Save(client);
 							}
 							if (!client.IsPhysical())
 								if (existingOrder == null)
@@ -397,6 +394,7 @@ namespace InternetInterface.Controllers
 						client.ConnectedDate = DateTime.Now;
 						if (client.Status.Id == (uint)StatusType.BlockedAndNoConnected)
 							client.Status = Status.Find((uint)StatusType.BlockedAndConnected);
+						client.SyncServices(settings);
 						DbSession.Save(client);
 
 						DbSession.Query<StaticIp>().Where(s => s.EndPoint == clientEntPoint).ToList().Where(
@@ -1185,15 +1183,13 @@ where r.`Label`= :LabelIndex;")
 		[AccessibleThrough(Verb.Post)]
 		public void DeleteEndPoint(uint endPointForDelete)
 		{
-			var endPoint = ClientEndpoint.FirstOrDefault(endPointForDelete);
-
+			var endPoint = DbSession.Get<ClientEndpoint>(endPointForDelete);
 			if (endPoint != null) {
 				var client = endPoint.Client;
-				var endPointsForClient = DbSession.Query<ClientEndpoint>().Where(c => c.Client == client).ToList();
-				if (endPointsForClient.Count > 1 || client.LawyerPerson != null)
-					DbSession.Delete(endPoint);
+				if (client.RemoveEndpoint(endPoint))
+					DbSession.Save(endPoint);
 				else
-					Flash["Message"] = Message.Error("Последняя точка подключения не может быть удалена!");
+					Error("Последняя точка подключения не может быть удалена!");
 			}
 			RedirectToReferrer();
 		}

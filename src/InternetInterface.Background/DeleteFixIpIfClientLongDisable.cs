@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Common.Tools;
 using Common.Web.Ui.Helpers;
+using InternetInterface.Controllers;
 using InternetInterface.Models;
 using NHibernate;
 using NHibernate.Linq;
@@ -22,14 +23,15 @@ namespace InternetInterface.Background
 
 		protected override void Process()
 		{
+			var settings = new Settings(Session);
 			var clientWhoDeleteStatic = Session.Query<Client>().Where(c => c.Disabled && c.BlockDate != null && c.BlockDate <= SystemTime.Now().AddDays(-61)).ToList();
 			foreach (var client in clientWhoDeleteStatic) {
 				Cancellation.ThrowIfCancellationRequested();
-				foreach (var clientEndpoint in client.Endpoints) {
+
+				foreach (var clientEndpoint in client.Endpoints)
 					clientEndpoint.Ip = null;
-					Session.Save(clientEndpoint);
-				}
 				client.BlockDate = null;
+				client.SyncServices(settings);
 				Session.Save(client);
 			}
 		}

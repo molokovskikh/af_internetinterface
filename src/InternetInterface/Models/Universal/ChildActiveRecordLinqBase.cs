@@ -19,11 +19,6 @@ namespace InternetInterface.Models
 			return FindAll(DetachedCriteria.For(typeof(T)).AddOrder(NHibernate.Criterion.Order.Asc("Name")));
 		}
 
-		public static T FirstOrDefault(uint id)
-		{
-			return (T)ActiveRecordMediator.FindByPrimaryKey(typeof(T), id);
-		}
-
 		/// <summary>
 		/// Применять только для маленьких коллекций, медленный код!!!
 		/// </summary>

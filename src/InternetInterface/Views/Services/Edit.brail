@@ -1,8 +1,15 @@
-﻿${FormHelper.FormTag("", {@class: "div-form"})}
-	<h3>${rent.HumanName}</h3>
-	<div class="form-item">
-		<label>Цена</label>
-		${app.Edit("rent.Price")}
+﻿<% if services.Count: %>
+${FormHelper.FormTag("", {@class: "div-form"})}
+	<% for i, service in enumerate(services): %>
+	<div>
+		${FormHelper.HiddenField("services[${i}].Id")}
+		<h3>!{service.HumanName}</h3>
+		<div class="form-item">
+			<label>Цена</label>
+			${app.Edit("services[${i}].Price")}
+		</div>
 	</div>
+	<% end %>
 ${FormHelper.Submit("Сохранить")}
 ${FormHelper.EndFormTag()}
+<% end %>

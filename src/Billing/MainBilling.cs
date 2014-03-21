@@ -382,21 +382,15 @@ set s.LastStartFail = true;")
 				if (sale >= _saleSettings.MinSale)
 					client.Sale = sale;
 			}
-			if (client.GetPrice() > 0 && !client.PaidDay
+			if (!client.PaidDay
 				&& client.RatedPeriodDate != DateTime.MinValue
 				&& client.RatedPeriodDate != null) {
 				if (client.StartNoBlock == null)
 					client.StartNoBlock = SystemTime.Now();
 
-				var daysInInterval = client.GetInterval();
-				var price = client.GetPrice();
-				var sum = price / daysInInterval;
-
-				var writeOff = phisicalClient.WriteOff(sum);
+				var writeOff = phisicalClient.WriteOff(client.GetSumForRegularWriteOff());
 				if (writeOff != null) {
 					writeOff.Save();
-					//для отладки
-					//Console.WriteLine("Клиент {0} cписано {1}", client.Id, writeOff);
 				}
 
 
@@ -404,11 +398,11 @@ set s.LastStartFail = true;")
 
 				var bufBal = phisicalClient.Balance;
 				//Отсылаем смс если клиенту осталось работать 2 дня или меньше
-				if (client.SendSmsNotifocation && (bufBal - sum * 2 < 0)) {
+				if (client.SendSmsNotifocation && (bufBal - client.GetSumForRegularWriteOff() * 2 < 0)) {
 					if (phisicalClient.Balance > 0) {
 						var message = string.Format("Ваш баланс {0} руб. {1} доступ в сеть будет заблокирован.",
 							client.PhysicalClient.Balance.ToString("0.00"),
-							bufBal - sum < 0 ? "Завтра" : "Послезавтра");
+							bufBal - client.GetSumForRegularWriteOff() < 0 ? "Завтра" : "Послезавтра");
 						var now = SystemTime.Now();
 						DateTime shouldBeSendDate;
 						if (now.Hour < 22)
@@ -421,7 +415,7 @@ set s.LastStartFail = true;")
 						Messages.Add(smsMessage);
 					}
 				}
-				if (client.NeedShowWarning(sum)) {
+				if (client.NeedShowWarning(client.GetSumForRegularWriteOff())) {
 					client.ShowBalanceWarningPage = true;
 					if (client.IsChanged(c => c.ShowBalanceWarningPage))
 						if (client.ShowWarningBecauseNoPassport())

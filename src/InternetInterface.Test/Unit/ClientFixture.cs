@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Net;
+using Common.Tools;
 using InternetInterface.Controllers;
 using InternetInterface.Models;
 using InternetInterface.Models.Services;
@@ -20,15 +22,14 @@ namespace InternetInterface.Test.Unit
 	public class ClientFixture
 	{
 		private Client client;
+		private Settings settings;
 
 		[SetUp]
 		public void Setup()
 		{
-			client = new Client();
-			client.PhysicalClient = new PhysicalClient();
+			settings = Settings.UnitTestSettings();
+			client = new Client(new PhysicalClient(), settings);
 			client.PhysicalClient.Tariff = new Tariff("Тестовый тариф", 100);
-			client.Activate(new ClientService(client, new Internet(), true));
-			client.Activate(new ClientService(client, new IpTv()));
 		}
 
 		[Test]
@@ -50,7 +51,6 @@ namespace InternetInterface.Test.Unit
 		[Test]
 		public void Activete_internet_by_default()
 		{
-			var settings = Settings.UnitTestSettings();
 			client = new Client(new PhysicalClient(), settings);
 			Assert.That(client.ClientServices[0].ActivatedByUser, Is.True);
 		}
@@ -64,6 +64,24 @@ namespace InternetInterface.Test.Unit
 			Assert.IsTrue(client.NeedShowWarning());
 			client.PhysicalClient.PassportNumber = "123456";
 			Assert.IsFalse(client.NeedShowWarning());
+		}
+
+		[Test]
+		public void Write_off_for_static_ip()
+		{
+			client.BeginWork = DateTime.Now;
+			var clientEndpoint = new ClientEndpoint(client, 1, new NetworkSwitch("тест", new Zone("тест"))) {
+				Ip = IPAddress.Parse("91.209.124.67")
+			};
+			client.AddEndpoint(clientEndpoint, settings);
+			client.ClientServices.Each(s => s.Activate());
+
+			var price = client.GetPrice();
+			//тариф + плата за фиксированный адрес
+			Assert.AreEqual(100 + 30, price);
+
+			client.FindService<PinnedIp>().IsFree = true;
+			Assert.AreEqual(100, client.GetPrice());
 		}
 	}
 }

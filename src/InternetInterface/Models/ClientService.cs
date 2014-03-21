@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Web;
 using Castle.ActiveRecord;
@@ -59,6 +60,9 @@ namespace InternetInterface.Models
 		[Property, Description("Подключить")]
 		public virtual bool ActivatedByUser { get; set; }
 
+		[Property]
+		public virtual bool IsFree { get; set; }
+
 		[HasAndBelongsToMany(
 			Schema = "Internet",
 			Table = "AssignedChannels",
@@ -68,6 +72,13 @@ namespace InternetInterface.Models
 
 		[BelongsTo]
 		public virtual Partner Activator { get; set; }
+
+		/// <summary>
+		/// если эта услуга привязана к точке подключения
+		/// например как фиксированный ip адрес мы должны удалить ее вместе с точкой подключения
+		/// </summary>
+		[BelongsTo]
+		public virtual ClientEndpoint Endpoint { get; set; }
 
 		private void DeleteFromClient()
 		{
@@ -105,6 +116,8 @@ namespace InternetInterface.Models
 
 		public virtual decimal GetPrice()
 		{
+			if (IsFree)
+				return 0;
 			return Service.GetPrice(this);
 		}
 

@@ -26,6 +26,12 @@ namespace InternetInterface.Services
 		[Property]
 		public virtual bool InterfaceControl { get; set; }
 
+		/// <summary>
+		/// стоимость услуги может редактироваться в разделе администрирование
+		/// </summary>
+		[Property]
+		public virtual bool Configurable { get; set; }
+
 		public virtual bool SupportUserAcivation
 		{
 			get { return false; }

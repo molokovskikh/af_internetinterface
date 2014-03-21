@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using Billing;
 using InternetInterface;
+using InternetInterface.Controllers;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
@@ -25,6 +26,7 @@ namespace InforoomInternet.Test.Functional
 			//нужно очищать cookie перед каждым тестом
 			//если этого не делать браузер будет помнить что вход произвел клиент из предыдущего теста
 			session.CreateSQLQuery("delete from Leases").ExecuteUpdate();
+			var settings = new Settings(session);
 
 			var ipAddress = IPAddress.Parse("127.0.0.1");
 			var pool = session.Query<IpPool>().FirstOrDefault(i => i.Begin == ipAddress.Address);
@@ -40,7 +42,7 @@ namespace InforoomInternet.Test.Functional
 			client = physicalClient.Client;
 			client.FirstLunch = true;
 			client.BeginWork = DateTime.Now;
-			physicalClient.Client.Endpoints.Add(new ClientEndpoint(physicalClient.Client, null, null));
+			physicalClient.Client.AddEndpoint(new ClientEndpoint(physicalClient.Client, null, null), settings);
 			session.Save(new Payment(client, 1000));
 
 			physicalClient.Password = CryptoPass.GetHashString("1234");

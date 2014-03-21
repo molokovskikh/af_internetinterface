@@ -20,7 +20,8 @@ namespace InternetInterface.Controllers
 	{
 		public Status DefaultStatus;
 		public Recipient DefaultRecipient;
-		public Service[] DefaultServices;
+		public Service[] DefaultServices = new Service[0];
+		public Service[] Services = new Service[0];
 
 		public Settings()
 		{
@@ -35,6 +36,7 @@ namespace InternetInterface.Controllers
 				session.Query<Internet>().First(),
 				session.Query<IpTv>().First(),
 			};
+			Services = session.Query<Service>().ToArray();
 		}
 
 		public static Settings UnitTestSettings()
@@ -43,6 +45,11 @@ namespace InternetInterface.Controllers
 				DefaultServices = new Service[] {
 					new Internet(),
 					new IpTv(),
+				},
+				Services = new[] {
+					new PinnedIp {
+						Price = 30,
+					}
 				}
 			};
 			return settings;
@@ -162,6 +169,7 @@ namespace InternetInterface.Controllers
 
 		public void RegisterLegalPerson(int speed, [DataBind("ConnectInfo")] ConnectInfo info, uint brigadForConnect, [DataBind("order")] Order order, bool DoNotCreateOrder)
 		{
+			var settings = new Settings(DbSession);
 			SetBinder(new DecimalValidateBinder { Validator = Validator });
 			var person = new LawyerPerson();
 			BindObjectInstance(person, ParamStore.Form, "LegalPerson");
@@ -199,16 +207,11 @@ namespace InternetInterface.Controllers
 					DbSession.Save(contact);
 				}
 
-				ClientEndpoint endPoint = null;
 				if (!string.IsNullOrEmpty(info.Port) && !DoNotCreateOrder) {
-					endPoint = new ClientEndpoint {
-						Client = client,
-						Port = Int32.Parse(info.Port),
-						Switch = DbSession.Load<NetworkSwitch>(info.Switch),
+					var endPoint = new ClientEndpoint(client, Int32.Parse(info.Port), DbSession.Load<NetworkSwitch>(info.Switch)) {
+						WhoConnected = DbSession.Load<Brigad>(brigadForConnect)
 					};
-					var brigad = DbSession.Load<Brigad>(brigadForConnect);
-					endPoint.WhoConnected = brigad;
-					DbSession.Save(endPoint);
+					client.AddEndpoint(endPoint, settings);
 					order.EndPoint = endPoint;
 					DbSession.Save(order);
 					client.Status = Status.Find((uint)StatusType.Worked);

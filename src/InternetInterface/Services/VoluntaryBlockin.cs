@@ -52,13 +52,11 @@ namespace InternetInterface.Services
 				var now = SystemTime.Now();
 				if (!client.PaidDay && now.Hour < 22 && assignedService.BeginWorkDate.Value.Date == now.Date) {
 					client.PaidDay = true;
-					var toDt = client.GetInterval();
-					var price = client.GetPrice();
 					var comment = string.Format("Абонентская плата за {0} из-за добровольной блокировки клиента", DateTime.Now.ToShortDateString());
 					var writeOff = new UserWriteOff {
 						Client = client,
 						Date = DateTime.Now,
-						Sum = price / toDt,
+						Sum = client.GetSumForRegularWriteOff(),
 						Comment = comment
 					};
 					ActiveRecordMediator.Save(writeOff);
@@ -113,9 +111,7 @@ namespace InternetInterface.Services
 				foreach (var clientService in forActivationCheck) {
 					clientService.Activate();
 				}
-				var daysInInterval = client.GetInterval();
-				var price = client.GetPrice();
-				var sum = price / daysInInterval;
+				var sum = client.GetSumForRegularWriteOff();
 				if (sum > 0) {
 					client.PaidDay = true;
 					var comment = string.Format("Абонентская плата за {0} из-за добровольной разблокировки клиента", DateTime.Now.ToShortDateString());
