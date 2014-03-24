@@ -18,12 +18,9 @@ using NUnit.Framework;
 namespace InforoomInternet.Test.Integration
 {
 	[TestFixture]
-	public class MainControllerFixture : BaseControllerTest
+	public class MainControllerFixture : ControllerFixture
 	{
 		private MainController controller;
-		private SessionScope scope;
-		private ISessionFactoryHolder sessionHolder;
-		private ISession session;
 
 		private Client client;
 		private NetworkSwitch networkSwitch;
@@ -36,10 +33,6 @@ namespace InforoomInternet.Test.Integration
 		{
 			controller = new MainController();
 			PrepareController(controller);
-
-			scope = new SessionScope();
-			sessionHolder = ActiveRecordMediator.GetSessionFactoryHolder();
-			session = sessionHolder.CreateSession(typeof(ActiveRecordBase));
 
 			session.Delete("from Lease");
 			client = ClientHelper.Client();
@@ -60,14 +53,6 @@ namespace InforoomInternet.Test.Integration
 			session.SaveMany(deleteOnTeardown.ToArray());
 
 			controller.DbSession = session;
-		}
-
-		[TearDown]
-		public void TearDown()
-		{
-			session.DeleteMany(deleteOnTeardown.ToArray());
-			sessionHolder.ReleaseSession(session);
-			scope.Dispose();
 		}
 
 		[Test]

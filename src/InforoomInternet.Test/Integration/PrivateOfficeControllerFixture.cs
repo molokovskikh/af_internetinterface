@@ -9,6 +9,7 @@ using Castle.MonoRail.Framework.Routing;
 using Castle.MonoRail.Framework.Services;
 using Castle.MonoRail.Framework.Test;
 using Castle.MonoRail.TestSupport;
+using Common.Web.Ui.NHibernateExtentions;
 using InforoomInternet.Controllers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
@@ -22,38 +23,17 @@ using NUnit.Framework;
 namespace InforoomInternet.Test.Integration
 {
 	[TestFixture]
-	public class PrivateOfficeControllerFixture : BaseControllerTest
+	public class PrivateOfficeControllerFixture : ControllerFixture
 	{
 		private PrivateOfficeController controller;
-
-		private SessionScope scope;
-		private ISessionFactoryHolder sessionHolder;
-		private ISession session;
 
 		private PhysicalClient physicalClient;
 		private Client client;
 
-		private string referer;
-
-		protected override IMockResponse BuildResponse(UrlInfo info)
-		{
-			return new StubResponse(
-				info,
-				new DefaultUrlBuilder(),
-				new StubServerUtility(),
-				new RouteMatch(),
-				referer);
-		}
-
 		[SetUp]
 		public void Init()
 		{
-			referer = "http://www.ivrn.net/";
 			InitializeContent.GetAdministrator = () => null;
-
-			scope = new SessionScope();
-			sessionHolder = ActiveRecordMediator.GetSessionFactoryHolder();
-			session = sessionHolder.CreateSession(typeof(ActiveRecordBase));
 
 			controller = new PrivateOfficeController();
 			controller.DbSession = session;
@@ -66,24 +46,12 @@ namespace InforoomInternet.Test.Integration
 			Context.Session["LoginClient"] = client.Id;
 		}
 
-		[TearDown]
-		public void TearDown()
-		{
-			if (sessionHolder != null && session != null)
-				sessionHolder.ReleaseSession(session);
-
-			if (scope != null)
-				scope.Dispose();
-		}
-
 		[Test]
 		public void PrivateOffice()
 		{
-			using (new SessionScope()) {
-				var filter = new AccessFilter();
-				Request.UserHostAddress = "192.168.200.1";
-				Assert.IsTrue(filter.Perform(ExecuteWhen.BeforeAction, controller.Context, controller, controller.ControllerContext));
-			}
+			var filter = new AccessFilter();
+			Request.UserHostAddress = "192.168.200.1";
+			Assert.IsTrue(filter.Perform(ExecuteWhen.BeforeAction, controller.Context, controller, controller.ControllerContext));
 		}
 
 		[Test]
@@ -153,7 +121,7 @@ namespace InforoomInternet.Test.Integration
 			session.Save(channel);
 
 			Request.Params.Add("iptv.Channels[0].Id", channel.Id.ToString());
-			((StubRequest)Request).HttpMethod = "POST";
+			Request.HttpMethod = "POST";
 			controller.Services();
 
 			Assert.That(client.Iptv.Channels.Count, Is.EqualTo(1));
@@ -171,7 +139,7 @@ namespace InforoomInternet.Test.Integration
 
 			Request.Params.Add("client.PhysicalClient.Id", client.PhysicalClient.Id.ToString());
 			Request.Params.Add("client.PhysicalClient.Tariff.Id", tarriff.Id.ToString());
-			((StubRequest)Request).HttpMethod = "POST";
+			Request.HttpMethod = "POST";
 			controller.Services();
 
 			Assert.That(client.PhysicalClient.Tariff, Is.EqualTo(tarriff));
@@ -183,14 +151,17 @@ namespace InforoomInternet.Test.Integration
 		[Test]
 		public void First_visit_if_have_endpoint()
 		{
+			session.DeleteMany(session.Query<Lease>().Where(l => l.Ip == IPAddress.Parse("192.168.0.1")).ToArray());
+			session.Flush();
+
 			var networkSwitch = new NetworkSwitch { Name = "testFirstVisit" };
-			var lease = new Lease { Port = 5, Ip = IPAddress.Parse("192.168.0.25"), Switch = networkSwitch };
+			var lease = new Lease { Port = 5, Ip = IPAddress.Parse("192.168.0.1"), Switch = networkSwitch };
 			var endpoint = new ClientEndpoint(client, 5, networkSwitch);
 			session.Save(networkSwitch);
 			session.Save(lease);
 			session.Save(endpoint);
 
-			((StubRequest)Request).HttpMethod = "POST";
+			Request.HttpMethod = "POST";
 			controller.FirstVisit(client.PhysicalClient.Id);
 
 			client = session.Get<Client>(client.Id);
@@ -199,14 +170,15 @@ namespace InforoomInternet.Test.Integration
 			session.Delete(endpoint);
 			session.Flush();
 
-			((StubRequest)Request).HttpMethod = "POST";
+			Request.HttpMethod = "POST";
 			controller.FirstVisit(client.PhysicalClient.Id);
 			var id = client.Id;
-			TearDown();
-			Init();
-			var client2 = session.Query<Client>().First(c => c.Id == id);
-			Assert.AreEqual(client2.Endpoints.Count, 1);
-			var paymentForConnect = session.Query<PaymentForConnect>().Where(p => p.EndPoint == client2.Endpoints[0]).FirstOrDefault();
+			session.Flush();
+			session.Clear();
+
+			client = session.Query<Client>().First(c => c.Id == id);
+			Assert.AreEqual(client.Endpoints.Count, 1, client.Id.ToString());
+			var paymentForConnect = session.Query<PaymentForConnect>().FirstOrDefault(p => p.EndPoint == client.Endpoints[0]);
 			Assert.AreEqual(paymentForConnect.Sum, 555);
 		}
 	}

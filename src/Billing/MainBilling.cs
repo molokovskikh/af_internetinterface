@@ -382,7 +382,10 @@ set s.LastStartFail = true;")
 				if (sale >= _saleSettings.MinSale)
 					client.Sale = sale;
 			}
-			if (!client.PaidDay
+
+
+			if (client.GetSumForRegularWriteOff() > 0
+				&& !client.PaidDay
 				&& client.RatedPeriodDate != DateTime.MinValue
 				&& client.RatedPeriodDate != null) {
 				if (client.StartNoBlock == null)

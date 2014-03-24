@@ -113,7 +113,7 @@ namespace Billing.Test.Integration
 			billing.Compute();
 			using (new SessionScope()) {
 				client.Refresh();
-				Assert.IsNull(client.StartNoBlock);
+				Assert.IsNull(client.StartNoBlock, client.Id.ToString());
 				var writeOffs = WriteOff.Queryable.ToList();
 				Assert.That(writeOffs.Sum(off => off.Sale), Is.EqualTo(0));
 				Assert.Greater(writeOffs.Count, 0);
