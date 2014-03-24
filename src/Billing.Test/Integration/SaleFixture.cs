@@ -93,7 +93,7 @@ namespace Billing.Test.Integration
 			billing.Compute();
 			using (new SessionScope())
 				client.Refresh();
-			Assert.AreEqual(client.Sale, SaleStep * MinSale);
+			Assert.AreEqual(client.Sale, SaleStep * MinSale, client.Id.ToString());
 		}
 
 		[Test]

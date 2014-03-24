@@ -353,8 +353,7 @@ set s.LastStartFail = true;")
 			var balance = phisicalClient.Balance;
 			if (balance >= 0
 				&& !client.Disabled
-				&& client.RatedPeriodDate != DateTime.MinValue
-				&& client.RatedPeriodDate != null) {
+				&& client.RatedPeriodDate.GetValueOrDefault() != DateTime.MinValue) {
 				var dtNow = SystemTime.Now();
 
 				if ((client.RatedPeriodDate.Value.AddMonths(1).Date - dtNow.Date).Days == -client.DebtDays) {
@@ -384,10 +383,9 @@ set s.LastStartFail = true;")
 			}
 
 
-			if (client.GetSumForRegularWriteOff() > 0
-				&& !client.PaidDay
-				&& client.RatedPeriodDate != DateTime.MinValue
-				&& client.RatedPeriodDate != null) {
+			if (!client.PaidDay
+				&& client.RatedPeriodDate.GetValueOrDefault() != DateTime.MinValue
+				&& client.GetSumForRegularWriteOff() > 0) {
 				if (client.StartNoBlock == null)
 					client.StartNoBlock = SystemTime.Now();
 

@@ -32,13 +32,17 @@ namespace InforoomInternet.Test.Integration
 		public void Setup()
 		{
 			controller = new MainController();
-			PrepareController(controller);
+			Prepare(controller);
 
 			session.Delete("from Lease");
 			client = ClientHelper.Client();
 			networkSwitch = new NetworkSwitch("Тестовый коммутатор", session.Query<Zone>().First());
 			endpoint = new ClientEndpoint(client, 1, networkSwitch);
-			var pool = session.Query<IpPool>().First();
+			var pool = new IpPool {
+				IsGray = true,
+				Begin = IPAddress.Parse("192.168.1.1").ToBigEndian(),
+				End = IPAddress.Parse("192.168.1.100").ToBigEndian(),
+			};
 			lease = new Lease {
 				Endpoint = endpoint,
 				Switch = networkSwitch,
@@ -48,11 +52,15 @@ namespace InforoomInternet.Test.Integration
 			};
 
 			deleteOnTeardown = new List<object> {
-				client, networkSwitch, endpoint, lease
+				client, networkSwitch, endpoint, lease, pool
 			};
 			session.SaveMany(deleteOnTeardown.ToArray());
+		}
 
-			controller.DbSession = session;
+		[TearDown]
+		public void Teardown()
+		{
+			session.DeleteMany(deleteOnTeardown.ToArray());
 		}
 
 		[Test]

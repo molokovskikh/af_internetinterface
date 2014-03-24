@@ -36,8 +36,7 @@ namespace InforoomInternet.Test.Integration
 			InitializeContent.GetAdministrator = () => null;
 
 			controller = new PrivateOfficeController();
-			controller.DbSession = session;
-			PrepareController(controller);
+			Prepare(controller);
 
 			physicalClient = ClientHelper.PhysicalClient();
 			client = physicalClient.Client;
