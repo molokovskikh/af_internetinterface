@@ -96,11 +96,15 @@
 		</td>
 		<td>${payment.Recipient.Name}</td>
 		<td>${payment.PayedOn}</td>
-		<%if payment.Payer.IsPhysical():%>
-			<td>${UrlHelper.Link(payment.Payer.Name, {@controller : @UserInfo, @action : @SearchUserInfo, @querystring: { "filter.ClientCode" : payment.Payer.Id}})}</td>
-		<%else:%>
-			<td>${UrlHelper.Link(payment.Payer.Name, {@controller : @UserInfo, @action : @LawyerPersonInfo, @querystring: { "filter.ClientCode" : payment.Payer.Id}})}</td>
-		<%end%>
+		<td>
+		<% if payment.Payer: %>
+			<% if payment.Payer.IsPhysical(): %>
+				${UrlHelper.Link(payment.Payer.Name, {@controller : @UserInfo, @action : @SearchUserInfo, @querystring: { "filter.ClientCode" : payment.Payer.Id}})}</td>
+			<% else:%>
+					${UrlHelper.Link(payment.Payer.Name, {@controller : @UserInfo, @action : @LawyerPersonInfo, @querystring: { "filter.ClientCode" : payment.Payer.Id}})}
+			<% end %>
+		<% end %>
+		</td>
 		<td>${payment.Sum}</td>
 		<td>${payment.RegistredOn}</td>
 	</tr>

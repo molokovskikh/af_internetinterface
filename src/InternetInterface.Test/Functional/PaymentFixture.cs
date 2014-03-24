@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
@@ -127,6 +128,21 @@ namespace InternetInterface.Test.Functional
 
 			session.Clear();
 			Assert.IsNull(session.Get<Payment>(paymentId));
+		}
+
+		[Test]
+		public void New_payment_without_payer()
+		{
+			var unknownpayment = new BankPayment {
+				Recipient = bankPayment.Recipient,
+				Sum = 400,
+				PayedOn = DateTime.Now,
+				RegistredOn = DateTime.Now
+			};
+			session.Save(unknownpayment);
+
+			Open("Payments/New");
+			AssertText("Новый платеж");
 		}
 	}
 }

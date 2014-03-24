@@ -976,6 +976,8 @@ where CE.Client = {0}", Id))
 		/// </summary>
 		public virtual void SyncServices(Settings settings)
 		{
+			if (!IsPhysical())
+				return;
 			var service = settings.Services.OfType<PinnedIp>().FirstOrDefault();
 			if (service == null)
 				return;
