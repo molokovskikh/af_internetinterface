@@ -353,11 +353,6 @@ namespace InforoomInternet.Controllers
 				SendMessage(null);
 			}
 			else {
-				if (!lease.Endpoint.Client.IsPhysical()) {
-					RedirectToSiteRoot();
-					return;
-				}
-
 				if ((ClientData.Get(lease.Endpoint.Client.Id) == UnknownClientStatus.NoInfo) && !lease.Pool.IsGray) {
 					var sceWorker = new SceThread(lease, ipAddress.ToString());
 					sceWorker.Go();
