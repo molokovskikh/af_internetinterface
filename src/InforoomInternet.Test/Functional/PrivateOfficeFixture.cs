@@ -19,6 +19,7 @@ namespace InforoomInternet.Test.Functional
 	{
 		private Client client;
 		private PhysicalClient physicalClient;
+		private IPAddress ipAddress;
 
 		[SetUp]
 		public void Setup()
@@ -28,12 +29,12 @@ namespace InforoomInternet.Test.Functional
 			session.CreateSQLQuery("delete from Leases").ExecuteUpdate();
 			var settings = new Settings(session);
 
-			var ipAddress = IPAddress.Parse("127.0.0.1");
-			var pool = session.Query<IpPool>().FirstOrDefault(i => i.Begin == ipAddress.Address);
+			ipAddress = IPAddress.Parse("192.168.1.1");
+			var pool = session.Query<IpPool>().FirstOrDefault(i => i.Begin == ipAddress.ToBigEndian());
 			if (pool == null) {
 				pool = new IpPool {
-					Begin = ipAddress.ToBigEndian(),
-					End = ipAddress.ToBigEndian() + 100000
+					Begin = IPAddress.Parse("192.168.1.1").ToBigEndian(),
+					End = IPAddress.Parse("192.168.1.100").ToBigEndian(),
 				};
 				session.Save(pool);
 			}
@@ -83,19 +84,19 @@ namespace InforoomInternet.Test.Functional
 		[Test]
 		public void Create_end_point_if_client_dont_have()
 		{
-			var _switch = new NetworkSwitch();
-			session.Save(_switch);
+			var networkSwitch = new NetworkSwitch();
+			session.Save(networkSwitch);
 			client.Endpoints.Clear();
 			client.FirstLunch = false;
 			session.Save(client);
-			Css("#exitLink").Click();
 			var lease = new Lease {
-				Ip = IPAddress.Parse("192.168.0.1"),
-				Switch = _switch,
+				Ip = ipAddress,
+				Switch = networkSwitch,
 				Port = 1
 			};
 			session.Save(lease);
 
+			Css("#exitLink").Click();
 			Open("PrivateOffice/IndexOffice");
 			browser.FindElementByName("Login").SendKeys(client.Id.ToString());
 			browser.FindElementByName("Password").SendKeys("1234");
@@ -105,11 +106,11 @@ namespace InforoomInternet.Test.Functional
 
 			client.Refresh();
 			Assert.AreEqual(client.Endpoints.Count, 1);
-			Assert.That(client.Endpoints.First().Switch, Is.EqualTo(_switch));
+			Assert.That(client.Endpoints.First().Switch, Is.EqualTo(networkSwitch));
 			Assert.That(client.Endpoints.First().Port, Is.EqualTo(1));
-			session.Refresh(_switch);
+			session.Refresh(networkSwitch);
 			session.Refresh(lease);
-			Assert.That(_switch.Name, Is.StringContaining("testStreet"));
+			Assert.That(networkSwitch.Name, Is.StringContaining("testStreet"));
 			Assert.That(lease.Endpoint, Is.EqualTo(client.Endpoints.First()));
 		}
 
@@ -127,7 +128,7 @@ namespace InforoomInternet.Test.Functional
 			Click("Активировать на 3 дня");
 
 			AssertText("Ваш личный кабинет");
-			AssertText("Услуга \"Обещанный платеж активирована\"");
+			AssertText("Услуга \"Обещанный платеж\" активирована");
 		}
 
 		[Test]

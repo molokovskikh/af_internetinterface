@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace InforoomInternet.Test.Functional
 {
 	[TestFixture]
-	public class WarningPackageIdFixture : BaseFunctionalFixture
+	public class WarningFixture : BaseFunctionalFixture
 	{
 		[Test]
 		public void No_start_work()

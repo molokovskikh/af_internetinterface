@@ -213,7 +213,8 @@ namespace InternetInterface.Models
 		[HasMany(ColumnKey = "ClientId", Lazy = true)]
 		public virtual IList<Order> Orders { get; set; }
 
-		public virtual Brigad WhoConnected {
+		public virtual Brigad WhoConnected
+		{
 			get
 			{
 				if (Endpoints.Count > 0)
@@ -222,12 +223,11 @@ namespace InternetInterface.Models
 			}
 		}
 
-		public virtual bool NeedShowFirstLunchPage(IRequest request, ISession session)
+		public virtual bool NeedShowFirstLunchPage(IPAddress ip, ISession session)
 		{
 			if (FirstLunch)
 				return false;
 
-			var ip = IPAddress.Parse(request.UserHostAddress);
 			var lease = session.Query<Lease>().FirstOrDefault(l => l.Ip == ip);
 			if (lease != null)
 				return true;
@@ -958,17 +958,6 @@ where CE.Client = {0}", Id))
 			var password = CryptoPass.GeneratePassword();
 			PhysicalClient.Password = CryptoPass.GetHashString(password);
 			return password;
-		}
-
-		public virtual void SelfRegistration(Lease lease, Status worked)
-		{
-			AfterRegistration(null, null);
-			CreateAutoEndpoint(lease, worked);
-			BeginWork = DateTime.Now;
-			RatedPeriodDate = DateTime.Now;
-			var payment = PhysicalClient.CalculateSelfRegistrationPayment();
-			if (payment.Sum > 0)
-				Payments.Add(payment);
 		}
 
 		public virtual void WriteOff(decimal sum, bool isVirtual)

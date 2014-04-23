@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using Castle.Components.Binder;
@@ -24,6 +25,16 @@ namespace InforoomInternet.Controllers
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(BeforeFilter))]
 	public class PrivateOfficeController : BaseController
 	{
+		private IPAddress GetHost()
+		{
+			var hostAdress = Request.UserHostAddress;
+#if DEBUG
+			if (ConfigurationManager.AppSettings["DebugHost"] != null)
+				hostAdress = ConfigurationManager.AppSettings["DebugHost"];
+#endif
+			return IPAddress.Parse(hostAdress);
+		}
+
 		public void AboutSale()
 		{
 			PropertyBag["saleSettings"] = DbSession.Query<SaleSettings>().First();
@@ -37,7 +48,7 @@ namespace InforoomInternet.Controllers
 		public void IndexOffice(string grouped)
 		{
 			var client = LoadClient();
-			if (client.NeedShowFirstLunchPage(Request, DbSession)) {
+			if (client.NeedShowFirstLunchPage(GetHost(), DbSession)) {
 				RedirectToAction("FirstVisit");
 				return;
 			}
@@ -90,22 +101,8 @@ namespace InforoomInternet.Controllers
 			BindObjectInstance(physicalClient, "PhysicalClient");
 			if (IsPost && IsValid(physicalClient)) {
 				DbSession.Save(physicalClient);
-				var userHostAddress = Request.UserHostAddress;
-#if DEBUG
-				userHostAddress = "192.168.0.1";
-#endif
-				var address = IPAddress.Parse(userHostAddress);
+				var address = GetHost();
 				if (client.NoEndPoint() && !ClientEndpoint.HavePoint(DbSession, address)) {
-#if DEBUG
-					if (DbSession.Query<Lease>().FirstOrDefault(l => l.Ip == address) == null) {
-						var lease = new Lease {
-							Ip = address,
-							Switch = DbSession.Query<NetworkSwitch>().First(),
-							Port = 5
-						};
-						DbSession.Save(lease);
-					}
-#endif
 					client.CreateAutoEndPont(address, DbSession);
 				}
 				client.FirstLunch = true;
@@ -114,7 +111,7 @@ namespace InforoomInternet.Controllers
 				if (client.IsChanged(c => c.Disabled))
 					client.CreareAppeal("Клиент был заблокирован из личного кабинета при посещении первой страницы", AppealType.Statistic);
 				DbSession.Save(client);
-				Flash["message"] = "Спасибо, теперь вы можете продолжить работу";
+				Notify("Спасибо, теперь вы можете продолжить работу");
 				RedirectToAction("IndexOffice");
 			}
 			else {

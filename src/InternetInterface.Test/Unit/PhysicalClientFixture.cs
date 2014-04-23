@@ -61,18 +61,6 @@ namespace InternetInterface.Test.Unit
 		}
 
 		[Test]
-		public void Self_registration()
-		{
-			var lease = new Lease {
-				Switch = new NetworkSwitch()
-			};
-			client.Tariff = new Tariff("Test", 100);
-			client.Client.SelfRegistration(lease, new Status { Connected = true });
-			Assert.That(client.Client.Payments.Count, Is.EqualTo(1));
-			Assert.That(client.Client.Payments[0].Sum, Is.GreaterThan(0));
-		}
-
-		[Test]
 		public void Copy_client_id_if_external_client_id_mandatory()
 		{
 			client.Client.Id = 100;

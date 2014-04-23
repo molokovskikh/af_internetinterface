@@ -763,7 +763,7 @@ background-position: 10px center;
 #content .info {
 color: #00529B;
 background-color: #E2F3FC;
-	padding: 7px 7px 7px 7	px;
+	padding: 7px 7px 7px 7px;
 }
 .success {
 color: #4F8A10;
@@ -773,11 +773,12 @@ background-color: #DFF2BF;
 .warning {
 color: #9F6000;
 background-color: #FEEFB3;
-
 }
 .error {
-color: #D8000C;
-background-color: #FFBABA;
+	color: #D8000C;
+	background-color: #FFBABA;
+}
+label.error {
 	margin-left: 5px;
 }
 
