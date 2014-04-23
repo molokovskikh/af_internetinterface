@@ -43,5 +43,5 @@ ${FormHelper.HiddenField("filter.SortDirection")}
 	</tbody>
 </table>
 <div id="writeOffsBlock">
-${tableHelper.ViewResult(writeOffs, filter, app)}
+${tableHelper.ViewResult(writeOffs, filter)}
 <div>

@@ -11,9 +11,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>InternetInterface.Test</RootNamespace>
     <AssemblyName>InternetInterface.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -24,6 +25,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -32,6 +34,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -41,6 +44,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -51,6 +55,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CassiniDev-lib" />
@@ -87,6 +92,9 @@
     <Reference Include="ExposedObject">
       <HintPath>..\..\lib\ExposedObject.dll</HintPath>
     </Reference>
+    <Reference Include="Headless">
+      <HintPath>..\..\packages\Headless.1.0.103\lib\NET45\Headless.dll</HintPath>
+    </Reference>
     <Reference Include="Interop.SHDocVw">
       <HintPath>..\..\lib\Interop.SHDocVw.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
@@ -117,6 +125,9 @@
     </Reference>
     <Reference Include="Rhino.Mocks">
       <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="SgmlReaderDll">
+      <HintPath>..\..\packages\SgmlReader.1.8.11\lib\4.0\SgmlReaderDll.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -153,9 +164,9 @@
     <Compile Include="Functional\RequestGraphFixture.cs" />
     <Compile Include="Functional\SearchFixture.cs" />
     <Compile Include="Functional\ServiceFixture.cs" />
-    <Compile Include="Functional\TariffsFixture.cs" />
     <Compile Include="Functional\UserInfoFixture.cs" />
     <Compile Include="Functional\Setup.cs" />
+    <Compile Include="Functional\WriteoffFixture.cs" />
     <Compile Include="Helpers\AcceptanceFixture.cs" />
     <Compile Include="Helpers\ClientHelper.cs" />
     <Compile Include="Helpers\ControllerFixture.cs" />
