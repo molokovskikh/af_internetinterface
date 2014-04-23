@@ -33,7 +33,7 @@ namespace InforoomInternet.Test.Integration
 		[SetUp]
 		public void Init()
 		{
-			InitializeContent.GetAdministrator = () => null;
+			InitializeContent.GetPartner = () => null;
 
 			controller = new PrivateOfficeController();
 			Prepare(controller);

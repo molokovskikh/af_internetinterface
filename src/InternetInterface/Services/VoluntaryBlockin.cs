@@ -109,7 +109,7 @@ namespace InternetInterface.Services
 				//отключения добровольной блокировки
 				var forActivationCheck = client.ClientServices.Where(s => s.Service.Id != Id);
 				foreach (var clientService in forActivationCheck) {
-					clientService.Activate();
+					clientService.TryActivate();
 				}
 				var sum = client.GetSumForRegularWriteOff();
 				if (sum > 0) {

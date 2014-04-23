@@ -61,7 +61,7 @@ namespace Billing.Test.Integration
 			client.Internet.ActivatedByUser = true;
 			//тк некоторые тесты не вызывают метод активации
 			foreach (var service in client.ClientServices)
-				service.Activate();
+				service.TryActivate();
 
 			return client;
 		}

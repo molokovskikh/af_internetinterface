@@ -13,7 +13,7 @@ namespace InternetInterface.Test.Unit
 		public void Setup()
 		{
 			NHibernateHelper.InitProxy();
-			InitializeContent.GetAdministrator = () => new Partner { AccesedPartner = new List<string>() };
+			InitializeContent.GetPartner = () => new Partner { AccesedPartner = new List<string>() };
 		}
 	}
 }

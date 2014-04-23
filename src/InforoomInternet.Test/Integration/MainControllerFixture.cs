@@ -8,6 +8,7 @@ using Castle.MonoRail.Framework.Test;
 using Castle.MonoRail.TestSupport;
 using Common.Web.Ui.NHibernateExtentions;
 using InforoomInternet.Controllers;
+using InternetInterface.Controllers;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
@@ -35,9 +36,12 @@ namespace InforoomInternet.Test.Integration
 			Prepare(controller);
 
 			session.Delete("from Lease");
+
+			var settings = new Settings(session);
 			client = ClientHelper.Client();
 			networkSwitch = new NetworkSwitch("Тестовый коммутатор", session.Query<Zone>().First());
 			endpoint = new ClientEndpoint(client, 1, networkSwitch);
+			client.AddEndpoint(endpoint, settings);
 			var pool = new IpPool {
 				IsGray = true,
 				Begin = IPAddress.Parse("192.168.1.1").ToBigEndian(),
@@ -47,7 +51,7 @@ namespace InforoomInternet.Test.Integration
 				Endpoint = endpoint,
 				Switch = networkSwitch,
 				Port = 1,
-				Ip = IPAddress.Loopback,
+				Ip = IPAddress.Parse("192.168.1.2"),
 				Pool = pool
 			};
 
@@ -64,46 +68,21 @@ namespace InforoomInternet.Test.Integration
 		}
 
 		[Test]
-		public void Warning_package_id()
-		{
-			controller.DbSession = session;
-			controller.WarningPackageId();
-		}
-
-		[Test]
 		public void Watning_actual_package_id()
 		{
-			lease.Ip = IPAddress.Loopback;
 			lease.Endpoint.PackageId = 15;
-			session.SaveOrUpdate(lease);
 
+			Request.UserHostAddress = "192.168.1.2";
 			Request.HttpMethod = "POST";
 			controller.Warning();
 
-			Assert.IsNotNull(lease.Endpoint.ActualPackageId);
-			Assert.AreEqual(lease.Endpoint.ActualPackageId.Value, 15);
-		}
-
-		//пока человек медитирует на страницу
-		//его компьютер получает новую аренду
-		//но запрос отправляет со старого адреса
-		//тк время жизни для серых аренд мало все это проиходит пока человек думает
-		[Test(Description = "Симулируется ситуацию когда ivrn и dhcp конкурируют, dhcp удаляет аренду по клиент медитирует на страницу")]
-		public void Complete_after_long_wait()
-		{
-			deleteOnTeardown.Remove(lease);
-			session.Delete(lease);
-			Request.HttpMethod = "POST";
-			Request.Form["origin"] = "localhost";
-			controller.Complete();
-
-			Assert.IsTrue(Response.WasRedirected);
-			Assert.AreEqual("http://localhost", Response.RedirectedTo);
+			Assert.AreEqual(lease.Endpoint.ActualPackageId, 15);
 		}
 
 		[Test]
 		public void Show_warning_page_without_referer()
 		{
+			Request.UserHostAddress = "192.168.1.2";
 			Request.QueryString["n"] = "91.235.90.57@Anonymous";
 			controller.Warning();
 			Assert.AreEqual("", ControllerContext.PropertyBag["referer"]);

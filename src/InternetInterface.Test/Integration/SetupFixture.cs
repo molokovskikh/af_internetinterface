@@ -24,7 +24,7 @@ namespace InternetInterface.Test.Integration
 			Functional.Setup.ConfigTest();
 
 			Functional.Setup.PrepareTestData();
-			InitializeContent.GetAdministrator = () => {
+			InitializeContent.GetPartner = () => {
 				var partner = Partner.FindFirst();
 				partner.AccesedPartner = new List<string>();
 				partner.AccesedPartner.Add("SSI");

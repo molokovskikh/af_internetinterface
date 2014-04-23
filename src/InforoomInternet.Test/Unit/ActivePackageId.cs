@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using InforoomInternet.Models;
+using InternetInterface.Helpers;
 using InternetInterface.Models;
 using NUnit.Framework;
 
@@ -22,8 +23,8 @@ namespace InforoomInternet.Test.Unit
 		[Test]
 		public void Sce_update_package_id_test()
 		{
-			var activeIdOne = SceHelper.Action("login", "192.168.0.1", "testId", false, false, 10);
-			var activeIdTwo = SceHelper.Action("login", new Lease { Endpoint = new ClientEndpoint { PackageId = 10 } }, "192.168.0.1");
+			var activeIdOne = SceHelper.Action("login", "testId", false, false, 10, "192.168.0.1");
+			var activeIdTwo = SceHelper.Action("login", new ClientEndpoint { PackageId = 10, Client = new Client() }, "192.168.0.1");
 			Assert.AreEqual(activeIdOne, 10);
 			Assert.AreEqual(activeIdTwo, 10);
 		}

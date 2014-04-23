@@ -10,7 +10,8 @@ Global(
 	Project : "InternetInterface",
 	HumanReadableName : "Интернет интерфейс",
 	Config: {
-		"db:generate:log": {@Sufix : "Internet"}
+		"db:generate:log": {@Sufix : "Internet"},
+		"db:seed": {@Profile: "Internet"}
 	}
 )
 

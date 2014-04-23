@@ -271,44 +271,5 @@ namespace InforoomInternet.Test.Functional
 			Assert.IsTrue(client.AutoUnblocked);
 			Assert.IsTrue(client.FirstLunch);
 		}
-
-		[Test, Ignore("Нужны тарифы-регионы")]
-		public void Tariffs_are_not_bound_to_region_valid_test()
-		{
-			Open("PrivateOffice/IndexOffice");
-			var region = new RegionHouse("TEST-REGION");
-			session.Save(region);
-			physicalClient.HouseObj = new House("st. testing", 2, region);
-
-			Open("PrivateOffice/Services");
-			session.Delete(region);
-
-			var select = browser.FindElementByName("client.PhysicalClient.Tariff.Id");
-			Assert.That(select.FindElements(By.XPath("//option")).Count, Is.EqualTo(1));
-		}
-
-		[Test, Ignore("Нужны тарифы-регионы")]
-		public void Tariffs_are_bound_to_region_valid_test()
-		{
-			/*Open("PrivateOffice/IndexOffice");
-			var region = new RegionHouse("TEST-REGION");
-			var tariffs = new Tariff[3];
-			for (var i = 0; i < 3; i++) {
-				tariffs[i] = new Tariff("tariff" + i, 100);
-				tariffs[i].CanUseForSelfConfigure = true;
-
-				session.Save(tariffs[i]);
-				region.Tariffs.Add(tariffs[i]);
-			}
-			session.Save(region);
-			physicalClient.HouseObj = new House("st. testing", 2, region);
-			Open("PrivateOffice/Services");
-			session.Delete(region);
-			foreach (Tariff t in tariffs) {
-				session.Delete(t);
-			}
-			var select = browser.FindElementByName("client.PhysicalClient.Tariff.Id");
-			Assert.That(select.FindElements(By.XPath("//option")).Count, Is.EqualTo(tariffs.Length + 1));*/
-		}
 	}
 }

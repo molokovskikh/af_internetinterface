@@ -16,7 +16,9 @@ using Common.Web.Ui.Helpers;
 using Common.Web.Ui.Models.Editor;
 using InforoomInternet.Models;
 using InternetInterface.Controllers;
+using InternetInterface.Helpers;
 using InternetInterface.Models;
+using NHibernate;
 using NHibernate.Linq;
 
 namespace InforoomInternet.Controllers
@@ -29,7 +31,8 @@ namespace InforoomInternet.Controllers
 		{
 			var hostAdress = Request.UserHostAddress;
 #if DEBUG
-			hostAdress = ConfigurationManager.AppSettings["DebugHost"] ?? "127.0.0.1";
+			if (ConfigurationManager.AppSettings["DebugHost"] != null)
+				hostAdress = ConfigurationManager.AppSettings["DebugHost"];
 #endif
 			return IPAddress.Parse(hostAdress);
 		}
@@ -95,7 +98,7 @@ namespace InforoomInternet.Controllers
 				Text.AppendLine("Номер счета: " + clientId);
 				Text.AppendLine("Текст обращения: \r\n" + appealText);
 				if (!string.IsNullOrEmpty(clientName) && !string.IsNullOrEmpty(contactInfo) && !string.IsNullOrEmpty(appealText)) {
-					var userClient = Client.Queryable.Where(c => c.Id == clientId).FirstOrDefault();
+					var userClient = DbSession.Get<Client>(clientId);
 					new Appeals {
 						Client = userClient,
 						Date = DateTime.Now,
@@ -165,172 +168,67 @@ namespace InforoomInternet.Controllers
 			}
 		}
 
-		[Layout("cityline")]
-		public void SelfRegistration()
-		{
-			var origin = Request.Form["origin"] ?? Request.QueryString["origin"];
-			SetARDataBinder(AutoLoadBehavior.NullIfInvalidKey);
-
-			var lease = FindLease();
-			if (lease == null || !lease.CanSelfRegister()) {
-				this.RedirectRoot();
-				return;
-			}
-
-			var physicalClient = new PhysicalClient {
-				Apartment = 0,
-				Entrance = 0,
-				Floor = 0,
-			};
-			physicalClient.ExternalClientIdRequired = true;
-			var settings = new Settings(DbSession);
-			var client = new Client(physicalClient, settings);
-
-			//тарифы для самостоятельной регистрации всего скорее будут скрыты
-			//тк самостоятельная регистрация предназначена для перевода абонентов
-			DbSession.DisableFilter("HiddenTariffs");
-			PropertyBag["tariffs"] = DbSession.Query<Tariff>().Where(t => t.CanUseForSelfRegistration)
-				.OrderBy(t => t.Price)
-				.ToList()
-				.Select(t => new Tariff { Id = t.Id, Name = string.Format("{0} - {1}руб", t.Name, t.Price) })
-				.ToList();
-			PropertyBag["origin"] = origin;
-			PropertyBag["physicalClient"] = physicalClient;
-
-			if (IsPost) {
-				BindObjectInstance(physicalClient, "physicalClient", "ExternalClientId, Surname, Name, Patronymic, PhoneNumber, Tariff");
-				if (IsValid(physicalClient)) {
-					client.SelfRegistration(lease, Status.Get(StatusType.Worked, DbSession));
-
-					foreach (var contact in client.Contacts)
-						DbSession.Save(contact);
-
-					foreach (var payment in client.Payments)
-						DbSession.Save(payment);
-
-					DbSession.Save(client);
-					DbSession.Flush();
-
-					SceHelper.Login(lease, lease.Ip.ToString());
-
-					Flash["password"] = client.GeneragePassword();
-					RedirectToAction("Complete", new { origin });
-				}
-			}
-		}
-
-		[Layout("cityline")]
-		public void Complete()
-		{
-			if (IsPost) {
-				GoToReferer("origin");
-				return;
-			}
-
-			var lease = FindLease();
-			if (Flash["password"] == null || lease == null) {
-				this.RedirectRoot();
-				return;
-			}
-
-			var origin = Request.Form["origin"] ?? Request.QueryString["origin"];
-			PropertyBag["origin"] = origin;
-			PropertyBag["LoginClient"] = lease.Endpoint.Client.Id;
-		}
-
 		public void Warning()
 		{
+			var ipAddress = GetHost();
+			if (!Client.Our(ipAddress, DbSession)) {
+				RedirectToSiteRoot();
+				return;
+			}
+
 			var origin = "";
 			if (!string.IsNullOrEmpty(Request["host"])) {
 				origin = Request["host"] + Request["url"];
 			}
 			PropertyBag["referer"] = origin;
 
-			var hostAdress = GetHost();
 			var lease = FindLease();
-#if DEBUG
-			if (lease == null)
-				lease = new Lease {
-					Endpoint = new ClientEndpoint {
-						Client = new Client {
-							ShowBalanceWarningPage = true,
-							RatedPeriodDate = DateTime.Now,
-							LawyerPerson = new LawyerPerson {
-								Balance = -20000,
-							}
-						}
-					}
-				};
-#endif
 
-			ClientEndpoint point = null;
+			ClientEndpoint endpoint;
 			if (lease != null)
-				point = lease.Endpoint;
+				endpoint = lease.Endpoint;
 			else {
 				var ips = DbSession.Query<StaticIp>().ToList();
-				point = ips.Where(ip => {
-					if (ip.Ip == hostAdress.ToString())
+				endpoint = ips.Where(ip => {
+					if (ip.Ip == ipAddress.ToString())
 						return true;
 					if (ip.Mask != null) {
 						var subnet = SubnetMask.CreateByNetBitLength(ip.Mask.Value);
-						if (hostAdress.IsInSameSubnet(IPAddress.Parse(ip.Ip), subnet))
+						if (ipAddress.IsInSameSubnet(IPAddress.Parse(ip.Ip), subnet))
 							return true;
 					}
 					return false;
 				}).Select(s => s.EndPoint).FirstOrDefault();
 			}
 
-			if (lease != null && lease.CanSelfRegister()) {
-				RedirectToAction("SelfRegistration", new { origin });
-				return;
-			}
-
-			if (point == null) {
+			if (endpoint == null) {
 				this.RedirectRoot();
 				return;
 			}
 
-			var client = point.Client;
+			var client = endpoint.Client;
 
 			if (IsPost) {
-				int? actualPackageId;
-				if (lease != null) {
-					actualPackageId = SceHelper.Login(lease, Request.UserHostAddress);
-					lease.Endpoint.UpdateActualPackageId(actualPackageId);
-					DbSession.SaveOrUpdate(lease.Endpoint);
-				}
-				else {
-					var ips = DbSession.Query<StaticIp>().Where(s => s.EndPoint == point).ToList();
-					foreach (var staticIp in ips) {
-						if (point.PackageId == null)
-							continue;
-						actualPackageId = SceHelper.Action("login", staticIp.Mask != null ? staticIp.Ip + "/" + staticIp.Mask : staticIp.Ip, "Static_" + staticIp.Id, false, false, point.PackageId.Value);
-						point.UpdateActualPackageId(actualPackageId);
-						DbSession.SaveOrUpdate(point);
-					}
-				}
+				if (client.Disabled)
+					RedirectToSiteRoot();
+
 				if (client.ShowBalanceWarningPage) {
 					client.ShowBalanceWarningPage = false;
-					client.CreareAppeal("Отключена страница Warning, клиент отключил со страницы", AppealType.Statistic, false);
+					client.CreareAppeal("Отключена страница Warning, клиент отключил со страницы", AppealType.Statistic);
 				}
-				client.Update();
+
+				SceHelper.UpdatePackageId(DbSession, endpoint.Client);
+				DbSession.Save(client);
 				GoToReferer();
 				return;
 			}
 
 			PropertyBag["Client"] = client;
-			if (client.PhysicalClient == null) {
-				PropertyBag["LClient"] = client.LawyerPerson;
-				RenderView("WarningLawyer");
-			}
-			else {
-				PropertyBag["PClient"] = client.PhysicalClient;
-			}
 		}
 
 		private void SetEdatableAttribute(bool edit, string viewName)
 		{
-			PropertyBag["Content"] = SiteContent.FindAllByProperty("ViewName", viewName).First().Content;
+			PropertyBag["Content"] = DbSession.Query<SiteContent>().First(c => c.ViewName == viewName).Content;
 			if (edit) {
 				LayoutName = "TinyMCE";
 				PropertyBag["ShowEditLink"] = false;
@@ -339,36 +237,6 @@ namespace InforoomInternet.Controllers
 				PropertyBag["ShowEditLink"] = true;
 			}
 		}
-
-		public void WarningPackageId()
-		{
-			var ipAddress = GetHost();
-			if (!Client.Our(ipAddress, DbSession)) {
-				RedirectToSiteRoot();
-				return;
-			}
-
-			var lease = FindLease();
-			if (lease == null || lease.Endpoint == null || lease.Endpoint.Client == null) {
-				SendMessage(null);
-			}
-			else {
-				if ((ClientData.Get(lease.Endpoint.Client.Id) == UnknownClientStatus.NoInfo) && !lease.Pool.IsGray) {
-					var sceWorker = new SceThread(lease, ipAddress.ToString());
-					sceWorker.Go();
-				}
-
-				PropertyBag["Client"] = lease.Endpoint.Client;
-				PropertyBag["connectIterations"] = !lease.Pool.IsGray;
-				var host = Request["host"];
-				var rUrl = Request["url"];
-				if (!string.IsNullOrEmpty(host))
-					PropertyBag["referer"] = host + rUrl;
-				else
-					PropertyBag["referer"] = string.Empty;
-			}
-		}
-
 		public void GoToReferer(string name = "referer")
 		{
 			var url = Request.Form[name];
@@ -376,88 +244,6 @@ namespace InforoomInternet.Controllers
 				this.RedirectRoot();
 			else
 				RedirectToUrl(string.Format("http://{0}", url));
-		}
-
-		public void RenewClientConect(uint client)
-		{
-			ClientData.Set(client, UnknownClientStatus.NoInfo);
-			RedirectToReferrer();
-		}
-
-		[return: JSONReturnBinder]
-		public ReturnInFormInfo GetClientStatus(uint client)
-		{
-			Thread.Sleep(300);
-			var info = ClientData.GetInfo(client);
-			if (info != null) {
-				if (info.Status == UnknownClientStatus.InProcess)
-					return new ReturnInFormInfo {
-						Iteration = info.Interation.Value,
-						Message = "Ждите, идет подключение к интернет",
-						WaitingInfo = true,
-						Status = info.Status
-					};
-				if (info.Status == UnknownClientStatus.Error) {
-					SendMessage(client);
-					return new ReturnInFormInfo {
-						Iteration = 100,
-						Message = @"
-К сожалению, услуга доступа интернет Вам недоступна. </br>
-Чтобы пользоваться услугами интернет необходимо оставить заявку на подключение, либо авторизоваться, если вы уже подключены.
-Если Вы считаете это сообщение ошибочным, пожалуйста, свяжитесь с нами по телефону </br> (473)22-999-87 или сообщите по адресу internet@ivrn.net. Спасибо",
-						WaitingInfo = false,
-						Status = info.Status
-					};
-				}
-				if (info.Status == UnknownClientStatus.Connected)
-					return new ReturnInFormInfo {
-						Iteration = 100,
-						Message = "Подключение успешно. Вы можете продолжить работу.",
-						WaitingInfo = false,
-						Status = info.Status
-					};
-			}
-			return new ReturnInFormInfo {
-				Iteration = 0,
-				Message = "Нет информации о процессе подключения.",
-				WaitingInfo = false,
-				Status = UnknownClientStatus.NoInfo
-			};
-		}
-
-		private void SendMessage(uint? client)
-		{
-			var mailToAdress = "internet@ivrn.net";
-			var messageText = new StringBuilder();
-#if DEBUG
-			mailToAdress = "kvasovtest@analit.net";
-#endif
-			if (client == null)
-				messageText.AppendLine(string.Format("Пришел запрос на страницу WarningPackageId от стороннего клиента (IP: {0})", Request.UserHostAddress));
-			else {
-				var lease = Lease.Queryable.FirstOrDefault(l => l.Endpoint.Client.Id == client.Value);
-				messageText.AppendLine(string.Format("Пришел запрос на страницу WarningPackageId от клиента {0}",
-					client.Value.ToString("00000")));
-				if (lease.Endpoint.Switch != null) {
-					messageText.AppendLine("Коммутатор: " + lease.Endpoint.Switch.Name);
-				}
-				else {
-					messageText.AppendLine("Коммутатор неопределен");
-				}
-				if (lease.Endpoint.Port != null) {
-					messageText.AppendLine("Порт: " + lease.Endpoint.Port);
-				}
-				else {
-					messageText.AppendLine("Порт неопределен");
-				}
-			}
-			var message = new MailMessage();
-			message.To.Add(mailToAdress);
-			message.Subject = "Преадресация на страницу WarningPackageId";
-			message.From = new MailAddress("service@analit.net");
-			message.Body = messageText.ToString();
-			var smtp = new Mailer();
-			smtp.SendText(message);
 		}
 	}
 }

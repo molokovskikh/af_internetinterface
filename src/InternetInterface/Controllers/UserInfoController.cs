@@ -7,6 +7,7 @@ using Castle.ActiveRecord;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Castle.MonoRail.Framework.Helpers;
+using Common.MySql;
 using Common.Tools;
 using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Controllers;
@@ -127,36 +128,6 @@ namespace InternetInterface.Controllers
 			SendUserWriteOff();
 		}
 
-		public void PostponedPayment(uint ClientID)
-		{
-			var client = DbSession.Load<Client>(ClientID);
-			var pclient = client.PhysicalClient;
-			var message = string.Empty;
-			if (client.ClientServices.Select(c => c.Service).Contains(Service.GetByType(typeof(DebtWork))))
-				message += "Повторное использование услуги \"Обещанный платеж невозможно\"";
-			if (pclient.Balance > 0 && string.IsNullOrEmpty(message))
-				message += "Воспользоваться услугой возможно только при отрицательном балансе";
-			if ((!client.Disabled || !client.AutoUnblocked) && string.IsNullOrEmpty(message))
-				message += "Услуга \"Обещанный платеж\" недоступна";
-			if (!client.PaymentForTariff())
-				message +=
-					"Воспользоваться услугой возможно если все платежи клиента превышают его абонентскую плату за месяц";
-			if (client.CanUsedPostponedPayment()) {
-				client.Disabled = false;
-				DbSession.Save(client);
-				message += "Услуга \"Обещанный платеж активирована\"";
-				new Appeals {
-					Appeal = "Услуга \"Обещанный платеж активирована\"",
-					AppealType = AppealType.Statistic,
-					Client = client,
-					Date = DateTime.Now,
-					Partner = InitializeContent.Partner
-				}.Save();
-			}
-			Flash["Applying"] = message;
-			RedirectToUrl("../UserInfo/SearchUserInfo.rails?filter.ClientCode=" + ClientID);
-		}
-
 		[AccessibleThrough(Verb.Post)]
 		public void BindPhone(uint clientCode, ulong phoneId)
 		{
@@ -237,19 +208,10 @@ namespace InternetInterface.Controllers
 				};
 
 				try {
-					client.Activate(clientService);
-					DbSession.Save(clientService);
-					var appeal = client.CreareAppeal(
-						string.Format("Услуга \"{0}\" активирована на период с {1} по {2}", servise.HumanName,
-							clientService.BeginWorkDate != null
-								? clientService.BeginWorkDate.Value.ToShortDateString()
-								: DateTime.Now.ToShortDateString(),
-							clientService.EndWorkDate != null
-								? clientService.EndWorkDate.Value.ToShortDateString()
-								: string.Empty),
-						AppealType.Statistic);
-					DbSession.SaveOrUpdate(appeal);
-					Flash["Message"] = Message.Notify(appeal.Appeal);
+					Notify(client.Activate(clientService));
+					if (client.IsNeedRecofiguration)
+						SceHelper.UpdatePackageId(DbSession, client);
+					DbSession.Save(client);
 				}
 				catch (ServiceActivationException e) {
 					Error(e.Message);
@@ -260,16 +222,12 @@ namespace InternetInterface.Controllers
 
 		public void DiactivateService(uint clientId, uint serviceId)
 		{
-			var servise = DbSession.Load<Service>(serviceId);
 			var client = DbSession.Load<Client>(clientId);
-			if (client.ClientServices != null) {
-				var cservice =
-					client.ClientServices.FirstOrDefault(c => c.Service.Id == serviceId && c.Activated);
-				if (cservice != null) {
-					cservice.CompulsoryDeactivate();
-					var appeal = client.CreareAppeal(string.Format("Услуга \"{0}\" деактивирована", servise.HumanName), AppealType.Statistic);
-					DbSession.Save(appeal);
-				}
+			var cservice = client.ClientServices.FirstOrDefault(c => c.Service.Id == serviceId && c.Activated);
+			if (cservice != null) {
+				Notify(client.Deactivate(cservice));
+				if (client.IsNeedRecofiguration)
+					SceHelper.UpdatePackageId(DbSession, client);
 			}
 			RedirectToUrl(client.Redirect());
 		}
@@ -1273,7 +1231,7 @@ where r.`Label`= :LabelIndex;")
 			var message = MessageOrderHelper.GenerateText(order, "закрытие");
 			message += MessageOrderHelper.GenerateTextService(order);
 			MessageOrderHelper.SendMail("Уведомление о закрытии заказа", message);
-			var appeal = new Appeals(message, order.Client, AppealType.System, true);
+			var appeal = new Appeals(message, order.Client, AppealType.System);
 			DbSession.Save(appeal);
 		}
 

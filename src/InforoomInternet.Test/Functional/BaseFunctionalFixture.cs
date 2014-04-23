@@ -9,7 +9,7 @@ using Test.Support.Selenium;
 namespace InforoomInternet.Test.Functional
 {
 	[TestFixture]
-	class BaseFunctionalFixture : SeleniumFixture
+	public class BaseFunctionalFixture : SeleniumFixture
 	{
 		protected Lease Lease;
 		protected ClientEndpoint ClientEndpoint;

@@ -38,77 +38,6 @@ namespace InforoomInternet.Test.Functional
 			browser.Link("exitLink").Click();
 		}
 
-		[Test, Ignore("Чинить")]
-		public void WarningTest()
-		{
-			foreach (var lease in Lease.Queryable.Where(l => l.Ip == IPAddress.Loopback).ToList())
-				lease.Delete();
-			Flush();
-			new Lease {
-				Ip = IPAddress.Loopback,
-				Endpoint = new ClientEndpoint {
-					Client = new Client {
-						Disabled = false,
-						LawyerPerson =
-							new LawyerPerson {
-								Balance = -100,
-							}
-					}
-				}
-			}.Save();
-			Flush();
-			browser = Open("Warning?host=google.com&url=");
-			Assert.That(browser.Text, Is.StringContaining("Продолжить"));
-			Assert.That(browser.Text, Is.StringContaining("Ваша задолженность за оказанные услуги по доступу в интернет составляет 100,00 руб."));
-			browser.Button(Find.ById("ConButton")).Click();
-			Assert.That(browser.Text, Is.StringContaining("google"));
-			browser = Open("Warning");
-			Assert.That(browser.Text, Is.StringContaining("Продолжить"));
-			browser.Button(Find.ById("ConButton")).Click();
-			Assert.That(browser.Text, Is.StringContaining("Тарифы"));
-			using (new SessionScope()) {
-				foreach (var lease in Lease.Queryable.Where(l => l.Ip == IPAddress.Loopback).ToList())
-					lease.Delete();
-			}
-			Lease leaseC;
-			using (new SessionScope()) {
-				leaseC = new Lease {
-					Ip = IPAddress.Loopback,
-					Endpoint = new ClientEndpoint {
-						Client = new Client {
-							Disabled = false,
-							RatedPeriodDate = DateTime.Now,
-							BeginWork = DateTime.Now,
-							PhysicalClient =
-								new PhysicalClient {
-									Balance = -200,
-									Tariff = new Tariff {
-										Name = "Тестовый",
-										Price = 100,
-										Description = "Тестовый тариф"
-									}
-								}
-						}
-					}
-				};
-				leaseC.Save();
-				new Payment {
-					Client = leaseC.Endpoint.Client,
-					Sum = 300
-				}.Save();
-			}
-			browser = Open("Warning?host=google.com&url=");
-			Assert.That(browser.Text, Is.StringContaining("Продолжить"));
-			Assert.That(browser.Text, Is.StringContaining("Ваша задолженность за оказанные услуги составляет 200,00 руб"));
-			browser.Button(Find.ById("ConButton")).Click();
-			Assert.That(browser.Text, Is.StringContaining("google"));
-
-			browser = Open("Warning");
-			Assert.That(browser.Text, Is.StringContaining("Продолжить"));
-			browser.Button(Find.ById("ConButton")).Click();
-			Assert.That(browser.Text, Is.StringContaining("Тарифы"));
-		}
-
 		[Test]
 		public void MainTest()
 		{
@@ -129,15 +58,6 @@ namespace InforoomInternet.Test.Functional
 			Assert.That(browser.Text, Is.StringContaining("Телефон"));
 			Assert.That(browser.Text, Is.StringContaining("Расчетный"));
 			Assert.That(browser.Text, Is.StringContaining("Директор"));
-		}
-
-		[Test]
-		public void WarningPackageIdTest()
-		{
-			browser = Open("Main/WarningPackageId");
-			//Ждем чтобы JavaScript получил данные
-			Thread.Sleep(500);
-			Assert.That(browser.Text, Is.StringContaining("Ждите, идет подключение к интернет"));
 		}
 
 		[Test]

@@ -25,7 +25,7 @@ namespace InternetInterface.Test.Unit
 					ReductionName = "Office"
 				}
 			};
-			InitializeContent.GetAdministrator = () => _thisPartner;
+			InitializeContent.GetPartner = () => _thisPartner;
 			_filter = new SeachFilter {
 				ClientTypeFilter = ForSearchClientType.AllClients,
 				SearchProperties = SearchUserBy.Auto,

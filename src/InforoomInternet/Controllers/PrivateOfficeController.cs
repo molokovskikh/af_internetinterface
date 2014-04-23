@@ -9,6 +9,7 @@ using Common.Tools.Calendar;
 using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.NHibernateExtentions;
+using InforoomInternet.Models;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Models.Services;
@@ -30,22 +31,17 @@ namespace InforoomInternet.Controllers
 
 		public void BalanceInfo()
 		{
-			var clientId = Convert.ToUInt32(Session["LoginClient"]);
-			var client = Client.Find(clientId).PhysicalClient;
-			PropertyBag["client"] = client;
+			PropertyBag["client"] = LoadClient();
 		}
 
 		public void IndexOffice(string grouped)
 		{
-			var clientId = Convert.ToUInt32(Session["LoginClient"]);
-			var client = Client.Find(clientId);
-
+			var client = LoadClient();
 			if (client.NeedShowFirstLunchPage(Request, DbSession)) {
 				RedirectToAction("FirstVisit");
 				return;
 			}
-			else
-				if (!client.FirstLunch) {
+			if (!client.FirstLunch) {
 				client.FirstLunch = true;
 				DbSession.Save(client);
 			}
@@ -80,8 +76,7 @@ namespace InforoomInternet.Controllers
 
 		public void FirstVisit()
 		{
-			var clientId = Convert.ToUInt32(Session["LoginClient"]);
-			var client = DbSession.Get<Client>(clientId);
+			var client = LoadClient();
 			PropertyBag["client"] = client;
 			PropertyBag["PhysicalClient"] = client.PhysicalClient;
 		}
@@ -89,8 +84,7 @@ namespace InforoomInternet.Controllers
 		[AccessibleThrough(Verb.Post)]
 		public void FirstVisit(uint physicalClientId)
 		{
-			var clientId = Convert.ToUInt32(Session["LoginClient"]);
-			var client = DbSession.Get<Client>(clientId);
+			var client = LoadClient();
 			SetSmartBinder(AutoLoadBehavior.Always);
 			var physicalClient = client.PhysicalClient;
 			BindObjectInstance(physicalClient, "PhysicalClient");
@@ -119,7 +113,7 @@ namespace InforoomInternet.Controllers
 				client.AutoUnblocked = true;
 				if (client.IsChanged(c => c.Disabled))
 					client.CreareAppeal("Клиент был заблокирован из личного кабинета при посещении первой страницы", AppealType.Statistic);
-				DbSession.SaveOrUpdate(client);
+				DbSession.Save(client);
 				Flash["message"] = "Спасибо, теперь вы можете продолжить работу";
 				RedirectToAction("IndexOffice");
 			}
@@ -133,8 +127,7 @@ namespace InforoomInternet.Controllers
 
 		public void PostponedPayment()
 		{
-			var clientId = Convert.ToUInt32(Session["LoginClient"]);
-			var client = Client.Find(clientId);
+			var client = LoadClient();
 			PropertyBag["Client"] = client;
 			var message = string.Empty;
 			if (client.ClientServices.Select(c => c.Service).Contains(Service.GetByType(typeof(DebtWork))))
@@ -150,25 +143,18 @@ namespace InforoomInternet.Controllers
 
 		public void PostponedPaymentActivate(int daysCount)
 		{
-			var clientId = Convert.ToUInt32(Session["LoginClient"]);
-			var client = Client.Find(clientId);
+			var client = LoadClient();
 			var validDayCount = (daysCount == 3) || (daysCount == 10);
 			if (client.CanUsedPostponedPayment() & validDayCount) {
-				Flash["message"] = "Услуга \"Обещанный платеж активирована\"";
-				var CService = new ClientService {
-					BeginWorkDate = DateTime.Now,
+				var service = new ClientService {
 					Client = client,
+					BeginWorkDate = DateTime.Now,
 					EndWorkDate = DateTime.Now.AddDays(daysCount),
 					Service = Service.GetByType(typeof(DebtWork))
 				};
-				client.ClientServices.Add(CService);
-				CService.Activate();
-				new Appeals {
-					Appeal = "Услуга \"Обещанный платеж активирована\"",
-					AppealType = AppealType.Statistic,
-					Client = client,
-					Date = DateTime.Now
-				}.Save();
+				Notify(client.Activate(service));
+				if (client.IsNeedRecofiguration)
+					SceHelper.UpdatePackageId(DbSession, client);
 			}
 			RedirectToUrl("IndexOffice");
 		}
@@ -176,23 +162,17 @@ namespace InforoomInternet.Controllers
 		[AccessibleThrough(Verb.Post)]
 		public void VoluntaryBlockinActivate(DateTime endDate)
 		{
-			var clientId = Convert.ToUInt32(Session["LoginClient"]);
-			var client = Client.Find(clientId);
+			var client = LoadClient();
 			if (client.CanUsedVoluntaryBlockin()) {
-				var cService = new ClientService {
+				var service = new ClientService {
 					BeginWorkDate = DateTime.Now,
 					EndWorkDate = endDate,
 					Client = client,
 					Service = Service.GetByType(typeof(VoluntaryBlockin))
 				};
-				client.ClientServices.Add(cService);
-				cService.Activate();
-				new Appeals {
-					Appeal = string.Format("Услуга \"добровольная блокировка\" активирована на период с {0} по {1}", DateTime.Now.ToShortDateString(), endDate.ToShortDateString()),
-					AppealType = AppealType.Statistic,
-					Client = client,
-					Date = DateTime.Now
-				}.Save();
+				Notify(client.Activate(service));
+				if (client.IsNeedRecofiguration)
+					SceHelper.UpdatePackageId(DbSession, client);
 			}
 			RedirectToUrl("IndexOffice");
 		}
@@ -200,26 +180,19 @@ namespace InforoomInternet.Controllers
 		[AccessibleThrough(Verb.Post)]
 		public void DiactivateVoluntaryBlockin()
 		{
-			var clientId = Convert.ToUInt32(Session["LoginClient"]);
-			var client = Client.Find(clientId);
-			var cService = client.ClientServices.FirstOrDefault(c => c.Service.Id == Service.GetByType(typeof(VoluntaryBlockin)).Id);
-			if (cService != null) {
-				cService.CompulsoryDeactivate();
-				Flash["message"] = "Услуга \"Добровольная блокировка\" деактивирована";
-				new Appeals {
-					Appeal = string.Format("Услуга \"добровольная блокировка\" деактивирована"),
-					AppealType = AppealType.Statistic,
-					Client = client,
-					Date = DateTime.Now
-				}.Save();
+			var client = LoadClient();
+			var service = client.FindService<VoluntaryBlockin>();
+			if (service != null) {
+				Notify(client.Deactivate(service));
+				if (client.IsNeedRecofiguration)
+					SceHelper.UpdatePackageId(DbSession, client);
 			}
 			RedirectToUrl("IndexOffice");
 		}
 
 		public void Services()
 		{
-			var clientId = Convert.ToUInt32(Session["LoginClient"]);
-			var client = DbSession.Load<Client>(clientId);
+			var client = LoadClient();
 			var rules = DbSession.Query<TariffChangeRule>().ToList();
 
 			var internet = client.Internet;
@@ -265,22 +238,16 @@ namespace InforoomInternet.Controllers
 						iptv.UpdateChannels(updatedChannels);
 					}
 
-					DbSession.SaveOrUpdate(client);
+					DbSession.Save(client);
 					Notify("Сохранено");
 					RedirectToReferrer();
 				}
 			}
 		}
 
-		private string TransformTelNum(string num)
-		{
-			return "8-" + num.Substring(0, 3) + "-" + num.Substring(3, 3) + "-" + num.Substring(6, 2) + "-" + num.Substring(8, 2);
-		}
-
 		public void SmsNotification(string telephoneInput, bool SendSmsNotifocation)
 		{
-			var clientId = Convert.ToUInt32(Session["LoginClient"]);
-			var client = Client.Find(clientId);
+			var client = LoadClient();
 			PropertyBag["telephoneNum"] = string.Empty;
 			PropertyBag["SendSmsNotifocation"] = client.SendSmsNotifocation;
 			if (client.Contacts != null) {
@@ -305,21 +272,29 @@ namespace InforoomInternet.Controllers
 				}
 				PropertyBag["telephoneNum"] = telephoneInput;
 				if (client.SendSmsNotifocation != SendSmsNotifocation) {
-					new Appeals {
-						Client = client,
-						Date = DateTime.Now,
-						AppealType = AppealType.System,
-						Appeal = SendSmsNotifocation ? "Пользователь подписался на sms рассылку" : "Пользователь отписался от sms рассылки"
-					}.Save();
+					var message = SendSmsNotifocation ? "Пользователь подписался на sms рассылку" : "Пользователь отписался от sms рассылки";
+					DbSession.Save(new Appeals(message, client, AppealType.System));
 					client.SendSmsNotifocation = SendSmsNotifocation;
 				}
 				PropertyBag["SendSmsNotifocation"] = SendSmsNotifocation;
-				client.Save();
+				DbSession.Save(client);
 			}
 		}
 
 		public void BonusProgram()
 		{
+		}
+
+		private string TransformTelNum(string num)
+		{
+			return "8-" + num.Substring(0, 3) + "-" + num.Substring(3, 3) + "-" + num.Substring(6, 2) + "-" + num.Substring(8, 2);
+		}
+
+		private Client LoadClient()
+		{
+			var clientId = Convert.ToUInt32(Session["LoginClient"]);
+			var client = DbSession.Load<Client>(clientId);
+			return client;
 		}
 	}
 }

@@ -466,9 +466,8 @@ namespace InternetInterface.Models
 
 		public virtual bool CanUsedPostponedPayment()
 		{
-			var haveDebtWork = !ClientServices.Select(c => c.Service.Id).Contains(Service.Type<DebtWork>().Id);
 			return PhysicalClient != null
-				&& haveDebtWork
+				&& !HaveService<DebtWork>()
 				&& Disabled
 				&& PhysicalClient.Balance <= 0
 				&& AutoUnblocked;
@@ -818,12 +817,46 @@ where CE.Client = {0}", Id))
 				: "../UserInfo/LawyerPersonInfo.rails?filter.ClientCode=" + Id;
 		}
 
-		public virtual void Activate(ClientService service)
+		/// <summary>
+		/// Активация услуги может привести к тому что нужно перенастроить sce
+		/// после вызова нужно сделать проверку
+		/// if (client.IsNeedRecofiguration)
+		/// 	SceHelper.UpdatePackageId(DbSession, client);
+		/// </summary>
+		public virtual string Activate(ClientService service)
 		{
 			if (ClientServices.Select(c => c.Service).Contains(service.Service))
-				throw new ServiceActivationException("Невозможно использовать данную услугу");
+				throw new ServiceActivationException(String.Format("Невозможно активировать услугу {0}", service.Service.HumanName));
 			ClientServices.Add(service);
-			service.Activate();
+			if (!service.TryActivate()) {
+				ClientServices.Remove(service);
+				throw new ServiceActivationException(String.Format("Невозможно активировать услугу {0}", service.Service.HumanName));
+			}
+			var message = string.Format("Услуга \"{0}\" активирована на период с {1} по {2}", service.Service.HumanName,
+				service.BeginWorkDate != null
+					? service.BeginWorkDate.Value.ToShortDateString()
+					: DateTime.Now.ToShortDateString(),
+				service.EndWorkDate != null
+					? service.EndWorkDate.Value.ToShortDateString()
+					: string.Empty);
+			CreareAppeal(message, AppealType.Statistic);
+			IsNeedRecofiguration = NHibernateUtil.GetClass(service.Service) == typeof(DebtWork);
+			return message;
+		}
+
+		/// <summary>
+		/// Деактивация услуги может привести к тому что нужно перенастроить sce
+		/// после вызова нужно сделать проверку
+		/// if (client.IsNeedRecofiguration)
+		/// 	SceHelper.UpdatePackageId(DbSession, client);
+		/// </summary>
+		public virtual string Deactivate(ClientService service)
+		{
+			service.CompulsoryDeactivate();
+			var message = String.Format("Услуга \"{0}\" деактивирована", service.Service.HumanName);
+			CreareAppeal(message, AppealType.Statistic);
+			IsNeedRecofiguration = NHibernateUtil.GetClass(service.Service) == typeof(VoluntaryBlockin);
+			return message;
 		}
 
 		private bool TryActivate(Service service, ClientEndpoint endpoint = null)
@@ -834,8 +867,7 @@ where CE.Client = {0}", Id))
 				Endpoint = endpoint
 			};
 			ClientServices.Add(clientService);
-			clientService.Activate();
-			return true;
+			return clientService.TryActivate();
 		}
 
 		private bool TryDeactivate(Service service, ClientEndpoint endpoint = null)
@@ -865,6 +897,10 @@ where CE.Client = {0}", Id))
 		{
 			get { return ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof(IpTv)); }
 		}
+
+		//флаг устанавливается в случае если нужно изменить настройки sce
+		//например если была активирована услуга обещаный платеж
+		public virtual bool IsNeedRecofiguration { get; set; }
 
 		public virtual void RegistreContacts(Partner registrator)
 		{
@@ -948,10 +984,10 @@ where CE.Client = {0}", Id))
 			return String.Format("№{0} - {1}", Id, Name);
 		}
 
-		public virtual Appeals CreareAppeal(string message, AppealType type = AppealType.System, bool usePartner = true)
+		public virtual Appeals CreareAppeal(string message, AppealType type = AppealType.System)
 		{
 			message += string.Format(". Баланс {0}.", Balance.ToString("0.00"));
-			var appeal = new Appeals(message, this, type, usePartner);
+			var appeal = new Appeals(message, this, type);
 			Appeals.Add(appeal);
 			return appeal;
 		}

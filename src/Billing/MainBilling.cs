@@ -126,7 +126,7 @@ set s.LastStartFail = true;")
 		{
 			var services = session.Query<ClientService>().Where(s => !s.Activated);
 			foreach (var service in services) {
-				service.Activate();
+				service.TryActivate();
 				session.SaveOrUpdate(service);
 			}
 		}
@@ -164,7 +164,7 @@ set s.LastStartFail = true;")
 							if (physicalClient.Balance >= updateClient.GetPriceIgnoreDisabled() * updateClient.PercentBalance) {
 								updateClient.ShowBalanceWarningPage = false;
 								if (updateClient.IsChanged(c => c.ShowBalanceWarningPage))
-									updateClient.CreareAppeal("Отключена страница Warning, клиент внес платеж", AppealType.Statistic, false);
+									updateClient.CreareAppeal("Отключена страница Warning, клиент внес платеж", AppealType.Statistic);
 							}
 						if (updateClient.ClientServices != null)
 							foreach (var clientService in updateClient.ClientServices.ToList()) {
@@ -208,9 +208,9 @@ set s.LastStartFail = true;")
 				foreach (var client in clients) {
 					client.Enable();
 					if (client.IsChanged(c => c.ShowBalanceWarningPage))
-						client.CreareAppeal("Отключена страница Warning, клиент разблокирован", AppealType.Statistic, false);
+						client.CreareAppeal("Отключена страница Warning, клиент разблокирован", AppealType.Statistic);
 					if (client.IsChanged(c => c.Disabled))
-						client.CreareAppeal("Клиент разблокирован", AppealType.Statistic, false);
+						client.CreareAppeal("Клиент разблокирован", AppealType.Statistic);
 					client.UpdateAndFlush();
 					SmsHelper.DeleteNoSendingMessages(client);
 				}
@@ -224,7 +224,7 @@ set s.LastStartFail = true;")
 							if (!client.SendEmailNotification)
 								client.SendEmailNotification = EmailNotificationSender.SendLawyerPersonNotification(client);
 							if (client.IsChanged(c => c.ShowBalanceWarningPage))
-								client.CreareAppeal("Включена страница Warning, клиент имеет низкий баланс", AppealType.Statistic, false);
+								client.CreareAppeal("Включена страница Warning, клиент имеет низкий баланс", AppealType.Statistic);
 						}
 					}
 					else {
@@ -232,7 +232,7 @@ set s.LastStartFail = true;")
 						client.SendEmailNotification = false;
 						client.WhenShowWarning = null;
 						if (client.IsChanged(c => c.ShowBalanceWarningPage))
-							client.CreareAppeal("Отключена страница Warning", AppealType.Statistic, false);
+							client.CreareAppeal("Отключена страница Warning", AppealType.Statistic);
 					}
 					client.Update();
 				}
@@ -420,15 +420,15 @@ set s.LastStartFail = true;")
 					client.ShowBalanceWarningPage = true;
 					if (client.IsChanged(c => c.ShowBalanceWarningPage))
 						if (client.ShowWarningBecauseNoPassport())
-							client.CreareAppeal("Включена страница Warning, клиент не имеет паспортных данных", AppealType.Statistic, false);
+							client.CreareAppeal("Включена страница Warning, клиент не имеет паспортных данных", AppealType.Statistic);
 						else {
-							client.CreareAppeal("Включена страница Warning, клиент имеет низкий баланс", AppealType.Statistic, false);
+							client.CreareAppeal("Включена страница Warning, клиент имеет низкий баланс", AppealType.Statistic);
 						}
 				}
 				else {
 					client.ShowBalanceWarningPage = false;
 					if (client.IsChanged(c => c.ShowBalanceWarningPage))
-						client.CreareAppeal("Отключена страница Warning", AppealType.Statistic, false);
+						client.CreareAppeal("Отключена страница Warning", AppealType.Statistic);
 				}
 			}
 			if (client.CanBlock()) {
@@ -437,7 +437,7 @@ set s.LastStartFail = true;")
 				client.StartNoBlock = null;
 				client.Status = Status.Find((uint)StatusType.NoWorked);
 				if (client.IsChanged(c => c.Disabled))
-					client.CreareAppeal("Клиент был заблокирован", AppealType.Statistic, false);
+					client.CreareAppeal("Клиент был заблокирован", AppealType.Statistic);
 			}
 			if ((client.YearCycleDate == null && client.BeginWork != null) || (SystemTime.Now().Date >= client.YearCycleDate.Value.AddYears(1).Date)) {
 				client.FreeBlockDays = FreeDaysVoluntaryBlockin;

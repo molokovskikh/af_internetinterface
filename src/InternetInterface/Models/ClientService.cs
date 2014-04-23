@@ -92,10 +92,13 @@ namespace InternetInterface.Models
 			}
 		}
 
-		public virtual void Activate()
+		public virtual bool TryActivate()
 		{
-			if (Service.CanActivate(this))
+			if (Service.CanActivate(this)) {
 				Service.Activate(this);
+				return true;
+			}
+			return false;
 		}
 
 		public virtual void Deactivate()

@@ -4,21 +4,13 @@ using NUnit.Framework;
 namespace InforoomInternet.Test.Functional
 {
 	[TestFixture]
-	class WarningPackageIdFixture : BaseFunctionalFixture
+	public class WarningPackageIdFixture : BaseFunctionalFixture
 	{
-		[Test]
-		public void Access_connect_if_white_pool_unknown()
-		{
-			Pool.IsGray = false;
-			session.Save(Pool);
-			Open("Main/WarningPackageId");
-			AssertText("Ждите, идет подключение к интернет");
-		}
-
 		[Test]
 		public void No_start_work()
 		{
-			Open("Main/WarningPackageId");
+			Client.Disabled = true;
+			Open("Main/Warning");
 			AssertText("Для начала работы внесите первый платеж.");
 		}
 
@@ -29,7 +21,7 @@ namespace InforoomInternet.Test.Functional
 			Client.Disabled = true;
 			Client.BeginWork = DateTime.Now;
 			session.Save(Client);
-			Open("Main/WarningPackageId");
+			Open("Main/Warning");
 			AssertText("Доступ в интернет заблокирован за неуплату. Сумма на вашем лицевом счете недостаточна для разблокировки");
 		}
 
@@ -40,17 +32,8 @@ namespace InforoomInternet.Test.Functional
 			Client.Disabled = true;
 			Client.BeginWork = DateTime.Now;
 			session.Save(Client);
-			Open("Main/WarningPackageId");
+			Open("Main/Warning");
 			AssertText("Ваша задолженность за оказанные услуги составляет");
-		}
-
-		[Test]
-		public void No_client_test()
-		{
-			Lease.Endpoint = null;
-			session.Save(Lease);
-			Open("Main/WarningPackageId");
-			AssertText("Чтобы пользоваться услугами интернет необходимо оставить заявку на подключение, либо авторизоваться в личном кабинете, если вы уже подключены.");
 		}
 	}
 }

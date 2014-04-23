@@ -74,7 +74,7 @@ namespace InternetInterface.Test.Unit
 				Ip = IPAddress.Parse("91.209.124.67")
 			};
 			client.AddEndpoint(clientEndpoint, settings);
-			client.ClientServices.Each(s => s.Activate());
+			client.ClientServices.Each(s => s.TryActivate());
 
 			var price = client.GetPrice();
 			//тариф + плата за фиксированный адрес

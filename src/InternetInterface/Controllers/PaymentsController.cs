@@ -345,7 +345,7 @@ namespace InternetInterface.Controllers
 								Date = DateTime.Now,
 								Sum = oldPayment.Sum
 							}.Save();
-							DbSession.Save(new Appeals(string.Format("После смены плательщика в платеже {0} было создано пользовательское списание, так как не был найден привязанный к банковскому платежу физический платеж для отмены", oldPayment.Id), oldPayer, AppealType.System, true));
+							DbSession.Save(new Appeals(string.Format("После смены плательщика в платеже {0} было создано пользовательское списание, так как не был найден привязанный к банковскому платежу физический платеж для отмены", oldPayment.Id), oldPayer, AppealType.System));
 						}
 					}
 					DbSession.Save(payment);

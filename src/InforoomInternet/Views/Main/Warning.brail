@@ -1,16 +1,18 @@
 ﻿<h1 style="color:#FF5F5F; text-align:center; font-family:Arial;">Внимание!</h1>
 
-<% OutputSubView("""\Subview\WarningText""") %>
+<% if client.PhysicalClient: %>
+	<% OutputSubView("/Subviews/WarnPhysical") %>
+<% elif client.LawyerPerson: %>
+	<% OutputSubView("/Subviews/WarnLawyer") %>
+<% end %>
 
-<P class="info">Номер лицевого счета для оплаты: ${Client.Id.ToString("00000")}</P>
+<p class="info">Номер лицевого счета для оплаты: ${Client.Id.ToString("00000")}</p>
 <% if not Client.Disabled: %>
-<p>
-Для продолжения роботы в интернет нажмите кнопку "Продолжить".
-</p>
-<p>
-	<form method=post>
-		<input name=referer type=hidden value="!{referer}" >
-		<input type=submit class="button" id="ConButton" value="Продолжить">
+	<p>
+		Для продолжения роботы в интернет нажмите кнопку "Продолжить".
+	</p>
+	<form method="post">
+		<input name="referer" type="hidden" value="!{referer}" >
+		<input type="submit" class="button" id="ConButton" value="Продолжить">
 	</form>
-</p>
 <% end %>

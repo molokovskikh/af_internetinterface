@@ -33,7 +33,7 @@ namespace InternetInterface.Test.Functional
 			ConfigTest();
 			PrepareTestData();
 
-			InitializeContent.GetAdministrator = () => Partner.FindFirst();
+			InitializeContent.GetPartner = () => Partner.FindFirst();
 			_webServer = WatinSetup.StartServer();
 		}
 

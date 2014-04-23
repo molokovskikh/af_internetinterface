@@ -27,7 +27,7 @@ namespace InternetInterface.Helpers
 			//если редактирование производится в личном кабинете
 			//то делать проверки не имеет смысла тк даже если они не пройдут
 			//человек ничего сделать не сможет
-			var partner = InitializeContent.GetAdministrator();
+			var partner = InitializeContent.GetPartner();
 			if (partner == null)
 				return true;
 

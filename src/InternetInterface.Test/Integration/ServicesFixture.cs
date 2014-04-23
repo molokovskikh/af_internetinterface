@@ -39,7 +39,7 @@ namespace InternetInterface.Test.Integration
 			var workerRequest = new SimpleWorkerRequest("", "", "", "http://test", new StreamWriter(new MemoryStream()));
 			var context = new HttpContext(workerRequest);
 			context.User = new WindowsPrincipal(WindowsIdentity.GetCurrent());
-			context.Items[InitializeContent.AdministratorKey] = InitializeContent.GetAdministrator();
+			context.Items["Administrator"] = InitializeContent.GetPartner();
 			HttpContext.Current = context;
 
 			session.CreateSQLQuery("delete from ServiceRequest").ExecuteUpdate();

@@ -100,9 +100,10 @@ function GetLinkText(hide) {
 <tr>
 	<td style="width:400px; padding-bottom:0px;">
 		<div style="font-size:13px;">
-			<% OutputSubView("""\Subview\WarningText""", {
-							"PClient": PhysicalClient,
-							"referer" : ""} ) %>
+			<% OutputSubView("/Subviews/WarnPhysical") %>
+			<% if IsDefined("PrivateMessage"): %>
+				<p class="warning">${PrivateMessage}</p>
+			<% end %>
 		</div>
 		<br />
 		<%if Client.CanUsedPostponedPayment(): %>

@@ -39,5 +39,10 @@ namespace InternetInterface.Models
 				return SubnetMask.CreateByNetBitLength(Mask.Value).ToString();
 			return string.Empty;
 		}
+
+		public virtual string Address()
+		{
+			return Mask != null ? Ip + "/" + Mask : Ip;
+		}
 	}
 }

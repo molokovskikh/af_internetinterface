@@ -109,7 +109,7 @@ namespace InternetInterface.Models
 				.Select(s => new WriteOff(client, s)));
 			toDeactivate.Each(o => {
 				o.IsDeactivated = true;
-				client.CreareAppeal(String.Format("Деактивирован заказ {0}", o.Description), usePartner: false);
+				client.CreareAppeal(String.Format("Деактивирован заказ {0}", o.Description));
 				var endpoint = o.EndPoint;
 				if (endpoint != null) {
 					o.EndPoint = null;

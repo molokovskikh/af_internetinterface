@@ -64,13 +64,12 @@ namespace InternetInterface.Models
 			Date = DateTime.Now;
 		}
 
-		public Appeals(string appeal, Client client, AppealType appealType, bool usePartner) : this()
+		public Appeals(string appeal, Client client, AppealType appealType) : this()
 		{
 			Appeal = appeal;
 			Client = client;
 			AppealType = appealType;
-			if (usePartner)
-				Partner = InitializeContent.Partner;
+			Partner = InitializeContent.TryGetPartner();
 		}
 
 		[PrimaryKey]

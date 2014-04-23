@@ -26,17 +26,15 @@ namespace InternetInterface.Services
 
 		public override bool CanActivate(Client client)
 		{
-			if (client.PhysicalClient != null) {
-				var conVol = !client.ClientServices.Select(c => c.Service).Contains(GetByType(typeof(VoluntaryBlockin)));
-				return conVol;
-			}
+			if (client.PhysicalClient != null)
+				return !client.ClientServices.Select(c => c.Service).Contains(GetByType(typeof(VoluntaryBlockin)));
 			return false;
 		}
 
 		public override bool CanActivate(ClientService assignedService)
 		{
 			var client = assignedService.Client;
-			return client.Disabled && client.Balance <= 0 && CanActivate(client);
+			return client.AutoUnblocked && client.Disabled && client.Balance <= 0 && CanActivate(client);
 		}
 
 		public override void PaymentClient(ClientService assignedService)

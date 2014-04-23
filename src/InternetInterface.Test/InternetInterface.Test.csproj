@@ -245,13 +245,13 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\..\packages\StyleCop.MSBuild.4.7.35.0\tools\StyleCop.Targets" />
+  <Import Project="$(StylecopPath)\build\StyleCop.MSBuild.Targets" />
   <PropertyGroup>
     <StyleCopTreatErrorsAsWarnings>False</StyleCopTreatErrorsAsWarnings>
-    <StyleCopOverrideSettingsFile>..\..\packages\StyleCopAddOn.1.0.4\Settings.StyleCop</StyleCopOverrideSettingsFile>
+    <StyleCopOverrideSettingsFile>$(StylecopAddonPath)\Settings.StyleCop</StyleCopOverrideSettingsFile>
   </PropertyGroup>
   <ItemGroup>
-    <StyleCopAdditionalAddinPaths Include="..\..\packages\StyleCopAddOn.1.0.4\lib\4.0">
+    <StyleCopAdditionalAddinPaths Include="$(StylecopAddonPath)\lib\4.0">
       <InProject>false</InProject>
     </StyleCopAdditionalAddinPaths>
   </ItemGroup>

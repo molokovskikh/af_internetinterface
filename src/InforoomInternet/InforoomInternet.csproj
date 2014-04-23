@@ -231,35 +231,10 @@
     <Content Include="Icon.png" />
     <Content Include="iTunesArtwork%402x.png" />
     <Content Include="iTunesArtwork.png" />
-    <Content Include="media\bg_btn_send.png" />
-    <Content Include="media\bg_input_text.png" />
-    <Content Include="media\bg_page.jpg" />
-    <Content Include="media\cityline.ie.css" />
-    <Content Include="media\favicon.ico" />
-    <Content Include="media\form.css" />
-    <Content Include="media\forms.css" />
-    <Content Include="media\icons_phone.png" />
-    <Content Include="media\ie.css" />
-    <Content Include="media\index.css" />
-    <Content Include="media\liquid.css" />
-    <Content Include="media\logo_ct.png" />
-    <Content Include="media\menu.css" />
-    <Content Include="media\modernizr-1.7.min.js" />
-    <Content Include="media\news_style.css" />
-    <Content Include="media\print.css" />
-    <Content Include="media\reset.css" />
-    <Content Include="media\screen.css" />
-    <Content Include="media\screen.ie.css" />
-    <Content Include="media\textura.gif" />
-    <Content Include="media\typography.css" />
     <Content Include="robots.txt" />
-    <Content Include="Views\Main\SelfRegistration.brail">
-    </Content>
     <None Include="Views\BonusPrograms\ConnectFriend.brail" />
-    <Content Include="Views\Layouts\cityline.brail" />
     <None Include="Views\Main\Feedback.brail" />
     <None Include="Views\Main\MessageSended.brail" />
-    <None Include="Views\Main\WarningPackageId.brail" />
     <None Include="Views\Main\About.brail" />
     <Content Include="Web.config">
     </Content>
@@ -273,7 +248,7 @@
     <None Include="Views\PrivateOffice\Services.brail" />
     <None Include="Views\PrivateOffice\SmsNotification.brail" />
     <None Include="Views\PrivateOffice\VoluntaryBlockin.brail" />
-    <None Include="Views\Subview\WarningText.brail" />
+    <Content Include="Views\Subviews\WarnPhysical.brail" />
     <None Include="Web.test.config" />
   </ItemGroup>
   <ItemGroup>
@@ -290,13 +265,10 @@
     <Compile Include="Helpers\AppHelper.cs" />
     <Compile Include="Helpers\LoginHelper.cs" />
     <Compile Include="Initializers\ActiveRecord.cs" />
-    <Compile Include="Models\Main.cs" />
-    <Compile Include="Models\SceHelper.cs" />
-    <Compile Include="Models\SceThread.cs" />
+    <Compile Include="Models\Street.cs" />
     <Compile Include="Models\ViewText.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="Views\Layouts\App.brail" />
-    <None Include="Views\Main\Assist.brail" />
     <None Include="Views\Main\HowPay.brail" />
     <None Include="Views\Login\LoginPage.brail" />
     <None Include="Views\Main\OfferContract.brail" />
@@ -304,7 +276,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Views\Main\Warning.brail" />
-    <None Include="Views\Main\WarningLawyer.brail" />
+    <None Include="Views\Subviews\WarnLawyer.brail" />
     <None Include="Views\Main\Zayavka.brail" />
     <None Include="Views\Main\Index.brail" />
     <Content Include="Web.release.config">
@@ -336,13 +308,13 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
-  <Import Project="..\..\packages\StyleCop.MSBuild.4.7.35.0\tools\StyleCop.Targets" />
+  <Import Project="$(StylecopPath)\build\StyleCop.MSBuild.Targets" />
   <PropertyGroup>
     <StyleCopTreatErrorsAsWarnings>False</StyleCopTreatErrorsAsWarnings>
-    <StyleCopOverrideSettingsFile>..\..\packages\StyleCopAddOn.1.0.4\Settings.StyleCop</StyleCopOverrideSettingsFile>
+    <StyleCopOverrideSettingsFile>$(StylecopAddonPath)\Settings.StyleCop</StyleCopOverrideSettingsFile>
   </PropertyGroup>
   <ItemGroup>
-    <StyleCopAdditionalAddinPaths Include="..\..\packages\StyleCopAddOn.1.0.4\lib\4.0">
+    <StyleCopAdditionalAddinPaths Include="$(StylecopAddonPath)\lib\4.0">
       <InProject>false</InProject>
     </StyleCopAdditionalAddinPaths>
   </ItemGroup>

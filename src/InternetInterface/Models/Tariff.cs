@@ -50,7 +50,7 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual decimal FinalPrice { get; set; }
 
-		[Property]
+		[Property, Obsolete("Подготовка к удалению")]
 		public virtual bool CanUseForSelfRegistration { get; set; }
 
 		public static IList<Tariff> All()

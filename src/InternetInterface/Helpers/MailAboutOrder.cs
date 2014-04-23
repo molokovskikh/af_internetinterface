@@ -54,7 +54,7 @@ namespace InternetInterface.Helpers
 Описание услуги: {0}
 Услуга: {1}", orderService.Description, orderService.GetPeriodic());
 			MessageOrderHelper.SendMail("Уведомление о внесении изменений в заказ", message);
-			var appeal = new Appeals(message, order.Client, AppealType.System, true);
+			var appeal = new Appeals(message, order.Client, AppealType.System);
 			ArHelper.WithSession(s => s.Save(appeal));
 		}
 	}
@@ -71,7 +71,7 @@ namespace InternetInterface.Helpers
 			message += "Добавлена услуга";
 			message += MessageOrderHelper.GenerateTextService(order);
 			MessageOrderHelper.SendMail("Уведомление о внесении изменений в заказ", message);
-			var appeal = new Appeals(message, order.Client, AppealType.System, true);
+			var appeal = new Appeals(message, order.Client, AppealType.System);
 			ArHelper.WithSession(s => s.Save(appeal));
 		}
 	}
@@ -89,7 +89,7 @@ namespace InternetInterface.Helpers
 			var message = MessageOrderHelper.GenerateText(order, "создание")
 				+ MessageOrderHelper.GenerateTextService(order);
 			MessageOrderHelper.SendMail("Уведомление о создании заказа", message);
-			var appeal = new Appeals(message, order.Client, AppealType.System, true);
+			var appeal = new Appeals(message, order.Client, AppealType.System);
 			ArHelper.WithSession(s => s.Save(appeal));
 		}
 	}
