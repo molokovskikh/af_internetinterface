@@ -150,18 +150,20 @@ namespace InforoomInternet.Test.Integration
 		[Test]
 		public void First_visit_if_have_endpoint()
 		{
-			session.DeleteMany(session.Query<Lease>().Where(l => l.Ip == IPAddress.Parse("192.168.0.1")).ToArray());
+			session.DeleteMany(session.Query<Lease>().Where(l => l.Ip == IPAddress.Parse("192.168.1.1")).ToArray());
 			session.Flush();
 
 			var networkSwitch = new NetworkSwitch { Name = "testFirstVisit" };
-			var lease = new Lease { Port = 5, Ip = IPAddress.Parse("192.168.0.1"), Switch = networkSwitch };
+			var lease = new Lease { Port = 5, Ip = IPAddress.Parse("192.168.1.1"), Switch = networkSwitch };
 			var endpoint = new ClientEndpoint(client, 5, networkSwitch);
 			session.Save(networkSwitch);
 			session.Save(lease);
 			session.Save(endpoint);
 
 			Request.HttpMethod = "POST";
-			controller.FirstVisit(client.PhysicalClient.Id);
+			Context.Session["LoginClient"] = client.Id;
+			Request.UserHostAddress = "192.168.1.1";
+			controller.FirstVisit();
 
 			client = session.Get<Client>(client.Id);
 			Assert.AreEqual(client.Endpoints.Count, 0);
@@ -170,7 +172,9 @@ namespace InforoomInternet.Test.Integration
 			session.Flush();
 
 			Request.HttpMethod = "POST";
-			controller.FirstVisit(client.PhysicalClient.Id);
+			Context.Session["LoginClient"] = client.Id;
+			Request.UserHostAddress = "192.168.1.1";
+			controller.FirstVisit();
 			var id = client.Id;
 			session.Flush();
 			session.Clear();

@@ -90,36 +90,24 @@ namespace InforoomInternet.Controllers
 			var client = LoadClient();
 			PropertyBag["client"] = client;
 			PropertyBag["PhysicalClient"] = client.PhysicalClient;
-		}
-
-		[AccessibleThrough(Verb.Post)]
-		public void FirstVisit(uint physicalClientId)
-		{
-			var client = LoadClient();
-			SetSmartBinder(AutoLoadBehavior.Always);
-			var physicalClient = client.PhysicalClient;
-			BindObjectInstance(physicalClient, "PhysicalClient");
-			if (IsPost && IsValid(physicalClient)) {
-				DbSession.Save(physicalClient);
-				var address = GetHost();
-				if (client.NoEndPoint() && !ClientEndpoint.HavePoint(DbSession, address)) {
-					client.CreateAutoEndPont(address, DbSession);
+			if (IsPost) {
+				SetSmartBinder(AutoLoadBehavior.Always);
+				BindObjectInstance(client.PhysicalClient, "PhysicalClient");
+				if (IsValid(client.PhysicalClient)) {
+					var address = GetHost();
+					if (client.NoEndPoint() && !ClientEndpoint.HavePoint(DbSession, address)) {
+						client.CreateAutoEndPont(address, DbSession);
+					}
+					client.FirstLunch = true;
+					client.Disabled = client.Balance <= 0;
+					client.AutoUnblocked = true;
+					if (client.IsChanged(c => c.Disabled))
+						client.CreareAppeal("Клиент был заблокирован из личного кабинета при посещении первой страницы", AppealType.Statistic);
+					DbSession.Save(client);
+					Notify("Спасибо, теперь вы можете продолжить работу");
+					RedirectToAction("IndexOffice");
 				}
-				client.FirstLunch = true;
-				client.Disabled = client.Balance <= 0;
-				client.AutoUnblocked = true;
-				if (client.IsChanged(c => c.Disabled))
-					client.CreareAppeal("Клиент был заблокирован из личного кабинета при посещении первой страницы", AppealType.Statistic);
-				DbSession.Save(client);
-				Notify("Спасибо, теперь вы можете продолжить работу");
-				RedirectToAction("IndexOffice");
 			}
-			else {
-				DbSession.Evict(physicalClient);
-				DbSession.Evict(client);
-			}
-			FirstVisit();
-			PropertyBag["PhysicalClient"] = physicalClient;
 		}
 
 		public void PostponedPayment()
