@@ -1,4 +1,9 @@
-﻿using InternetInterface.Test.Helpers;
+﻿using System;
+using System.IO;
+using System.Threading;
+using Common.Tools.Calendar;
+using Common.Tools.Helpers;
+using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 
 namespace InternetInterface.Test.Functional
@@ -101,10 +106,13 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void OutOfMemoryExcelExportTest()
 		{
+			File.Delete("Клиенты.xls");
 			var radio1 = browser.FindElementById("filter_clientTypeFilter_1");
 			if(!radio1.Selected)
 				radio1.Click();
 			Click("Выгрузить статистику по клиентам в Excel");
+			WaitHelper.WaitOrFail(20.Second(), () => File.Exists("Клиенты.xls"), String.Format("не удалось дождаться файла {0}", Path.GetFullPath("Клиенты.xls")));
+			Assert.IsTrue(File.Exists("Клиенты.xls"));
 			Click("Поиск");
 			AssertText("Поиск пользователей");
 		}
