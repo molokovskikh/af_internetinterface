@@ -110,8 +110,12 @@ namespace InternetInterface.Test.Functional
 
 		private void WaitAjax(string querystring)
 		{
-			new WebDriverWait(new SystemClock(), browser, 5.Second(), TimeSpan.FromMilliseconds(100))
-				.Until(d => (Eval("return $('#timetable').data('url')") ?? "").ToString().EndsWith(querystring));
+			var wait = new WebDriverWait(new SystemClock(), browser, 5.Second(), TimeSpan.FromMilliseconds(100));
+			wait.Until(d => {
+				var text = (Eval("return $('#timetable').data('url')") ?? "").ToString();
+				wait.Message = String.Format("Не удалось дождаться состояния #timetable ждем '{0}' текущее {1}", querystring, text);
+				return text.EndsWith(querystring);
+			});
 		}
 
 		private WebDriverWait Wait()
