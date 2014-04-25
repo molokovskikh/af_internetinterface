@@ -80,6 +80,16 @@ namespace InforoomInternet.Test.Integration
 		}
 
 		[Test]
+		public void Show_warning_for_static()
+		{
+			session.Save(new StaticIp(endpoint, "91.209.124.50"));
+			Request.UserHostAddress = "91.209.124.50";
+			controller.Warning();
+			Assert.IsFalse(Response.WasRedirected);
+			Assert.AreEqual(controller.PropertyBag["client"], client);
+		}
+
+		[Test]
 		public void Show_warning_page_without_referer()
 		{
 			Request.UserHostAddress = "192.168.1.2";

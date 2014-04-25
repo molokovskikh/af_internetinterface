@@ -171,11 +171,6 @@ namespace InforoomInternet.Controllers
 		public void Warning()
 		{
 			var ipAddress = GetHost();
-			if (!Client.Our(ipAddress, DbSession)) {
-				RedirectToSiteRoot();
-				return;
-			}
-
 			var origin = "";
 			if (!string.IsNullOrEmpty(Request["host"])) {
 				origin = Request["host"] + Request["url"];
@@ -183,7 +178,6 @@ namespace InforoomInternet.Controllers
 			PropertyBag["referer"] = origin;
 
 			var lease = FindLease();
-
 			ClientEndpoint endpoint;
 			if (lease != null)
 				endpoint = lease.Endpoint;
@@ -201,7 +195,7 @@ namespace InforoomInternet.Controllers
 				}).Select(s => s.EndPoint).FirstOrDefault();
 			}
 
-			if (endpoint == null) {
+			if (endpoint == null || endpoint.Client == null) {
 				this.RedirectRoot();
 				return;
 			}
