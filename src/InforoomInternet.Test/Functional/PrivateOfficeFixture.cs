@@ -138,7 +138,15 @@ namespace InforoomInternet.Test.Functional
 			Refresh();
 			AssertText("Ваш личный кабинет");
 			AssertText("Номер лицевого счета для оплаты " + client.Id.ToString("00000"));
+			AssertText("Баланс составляет -400,00");
 			AssertText("500");
+		}
+
+		[Test]
+		public void Show_balance_info()
+		{
+			Css(".balance-info").Click();
+			AssertText("Подробная информация о балансе");
 		}
 
 		[Test, Ignore("возможность включения/отключения интернета убрана из личного кабинета пользователя")]

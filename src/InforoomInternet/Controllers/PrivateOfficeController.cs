@@ -42,7 +42,7 @@ namespace InforoomInternet.Controllers
 
 		public void BalanceInfo()
 		{
-			PropertyBag["client"] = LoadClient();
+			PropertyBag["client"] = LoadClient().PhysicalClient;
 		}
 
 		public void IndexOffice(string grouped)

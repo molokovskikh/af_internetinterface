@@ -107,7 +107,6 @@ function GetLinkText(hide) {
 		</div>
 		<br />
 		<%if Client.CanUsedPostponedPayment(): %>
-
 		<p style="color:#8d8d8e;">Доступ в интернет заблокирован, Вы можете воспольваться услугой "Обещанный платеж" <a id="podrob" href="PostponedPayment">Подробнее...</a></p>
 		<%end %>
 	</td>
@@ -123,6 +122,7 @@ function GetLinkText(hide) {
 <tr>
 	<td>
 		<h3>Номер лицевого счета для оплаты <b> ${Client.Id.ToString("00000")} </b></h3>
+		<h3>Баланс составляет ${Client.Balance.ToString("0.00")}.<a class="balance-info" href="${Siteroot}/PrivateOffice/BalanceInfo" style="text-decoration:none;">*</a></h3>
 		<%if fullMonth != null: %>
 		<h3>Вы работаете ${fullMonth} полных месяцев подряд, ваша скидка составляет: ${Client.Sale.ToString("0")}% <a style="font-size:10px;" href="AboutSale">(подробнее)</a></h3>
 		<%else: %>

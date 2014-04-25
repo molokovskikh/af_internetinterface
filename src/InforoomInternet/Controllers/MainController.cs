@@ -201,7 +201,6 @@ namespace InforoomInternet.Controllers
 			}
 
 			var client = endpoint.Client;
-
 			if (IsPost) {
 				if (client.Disabled)
 					RedirectToSiteRoot();
