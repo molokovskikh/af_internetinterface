@@ -95,8 +95,9 @@ namespace InforoomInternet.Controllers
 				BindObjectInstance(client.PhysicalClient, "PhysicalClient");
 				if (IsValid(client.PhysicalClient)) {
 					var address = GetHost();
-					if (client.NoEndPoint() && !ClientEndpoint.HavePoint(DbSession, address)) {
-						client.CreateAutoEndPont(address, DbSession);
+					var lease = DbSession.Query<Lease>().FirstOrDefault(l => l.Ip == address);
+					if (client.NoEndPoint() && lease != null) {
+						client.CreateAutoEndPont(address, lease, DbSession);
 					}
 					client.FirstLunch = true;
 					client.Disabled = client.Balance <= 0;

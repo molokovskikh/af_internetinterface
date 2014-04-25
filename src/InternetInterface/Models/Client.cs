@@ -227,11 +227,8 @@ namespace InternetInterface.Models
 		{
 			if (FirstLunch)
 				return false;
-
 			var lease = session.Query<Lease>().FirstOrDefault(l => l.Ip == ip);
 			if (lease != null)
-				return true;
-			else if (Our(ip, session))
 				return true;
 			return false;
 		}
@@ -246,14 +243,9 @@ namespace InternetInterface.Models
 			return Endpoints.Count == 0;
 		}
 
-		public virtual void CreateAutoEndPont(IPAddress ip, ISession session)
+		public virtual void CreateAutoEndPont(IPAddress ip, Lease lease, ISession session)
 		{
 			var settings = new Settings(session);
-			var lease = session.Query<Lease>().FirstOrDefault(l => l.Ip == ip);
-			if (lease == null)
-				throw new Exception(string.Format("Клиент {0} пришел а аренды для него нет", Id));
-
-
 			var endpoint = CreateAutoEndpoint(lease, Status.Get(StatusType.Worked, session));
 			AddEndpoint(endpoint, settings);
 
@@ -280,15 +272,6 @@ namespace InternetInterface.Models
 				AutoUnblocked = true;
 			}
 			return newPoint;
-		}
-
-		public static bool Our(IPAddress ip, ISession session)
-		{
-			if (ip.AddressFamily != AddressFamily.InterNetwork)
-				return false;
-
-			var address = ip.ToBigEndian();
-			return session.Query<IpPool>().Count(p => p.Begin <= address && p.End >= address) > 0;
 		}
 
 		public virtual string GetFreePorts()
