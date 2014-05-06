@@ -299,7 +299,7 @@ namespace Billing.Test.Integration
 				ActiveRecordMediator.Save(client);
 
 				CServive.TryActivate();
-				Assert.That(CServive.Activated, Is.EqualTo(true));
+				Assert.That(CServive.IsActivated, Is.EqualTo(true));
 			}
 		}
 
@@ -327,7 +327,8 @@ namespace Billing.Test.Integration
 				client.ClientServices.Add(cServive);
 
 				cServive.TryActivate();
-				Assert.That(cServive.Activated, Is.EqualTo(true));
+				client.SaveAndFlush();
+				Assert.That(cServive.IsActivated, Is.EqualTo(true));
 				Assert.IsFalse(cServive.Client.Disabled);
 				cServive.ForceDeactivate();
 				Assert.IsTrue(cServive.Client.Disabled);

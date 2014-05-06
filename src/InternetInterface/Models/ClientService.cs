@@ -51,11 +51,11 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual DateTime? EndWorkDate { get; set; }
 
-		[Property]
-		public virtual bool Activated { get; set; }
+		[Property("Activated")]
+		public virtual bool IsActivated { get; set; }
 
-		[Property]
-		public virtual bool Diactivated { get; set; }
+		[Property("Diactivated")]
+		public virtual bool IsDeactivated { get; set; }
 
 		[Property, Description("Подключить")]
 		public virtual bool ActivatedByUser { get; set; }
@@ -146,6 +146,11 @@ namespace InternetInterface.Models
 			foreach (var channelGroup in Channels.Except(channelGroups).ToArray()) {
 				Channels.Remove(channelGroup);
 			}
+		}
+
+		public virtual bool IsService(Service service)
+		{
+			return NHibernateUtil.GetClass(Service) == NHibernateUtil.GetClass(service);
 		}
 	}
 }

@@ -57,7 +57,7 @@ namespace InternetInterface.Test.Integration
 
 			SystemTime.Now = () => DateTime.Now.AddDays(2);
 			client.ClientServices.Each(s => s.TryDeactivate());
-			Assert.IsTrue(clientService.Diactivated);
+			Assert.IsTrue(clientService.IsDeactivated);
 			Assert.IsTrue(client.Disabled);
 
 			Assert.IsFalse(client.CanUseDebtWork());

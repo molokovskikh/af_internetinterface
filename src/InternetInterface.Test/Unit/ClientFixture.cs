@@ -37,7 +37,7 @@ namespace InternetInterface.Test.Unit
 		{
 			client.Payments.Add(new Payment(client, 1000));
 			Assert.That(client.HavePaymentToStart(), Is.True);
-			client.ClientServices.Add(new ClientService(client, new TestService()) { Activated = true });
+			client.ClientServices.Add(new ClientService(client, new TestService()) { IsActivated = true });
 			Assert.That(client.HavePaymentToStart(), Is.False);
 		}
 

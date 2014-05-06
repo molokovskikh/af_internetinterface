@@ -63,7 +63,7 @@ namespace InternetInterface.Test.Unit
 			Rent();
 			IpTv();
 
-			client.Activate(new ClientService(client, new VoluntaryBlockin { BlockingAll = true }) { BeginWorkDate = new DateTime(2012, 06, 01), Activated = true });
+			client.Activate(new ClientService(client, new VoluntaryBlockin { BlockingAll = true }) { BeginWorkDate = new DateTime(2012, 06, 01), IsActivated = true });
 			client.FreeBlockDays = 30;
 			Assert.That(client.GetPrice(), Is.EqualTo(0));
 			client.FreeBlockDays = 0;

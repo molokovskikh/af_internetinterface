@@ -56,12 +56,12 @@ namespace InternetInterface.Services
 
 		public virtual void Activate(ClientService assignedService)
 		{
-			assignedService.Activated = true;
+			assignedService.IsActivated = true;
 		}
 
 		public virtual void ForceDeactivate(ClientService assignedService)
 		{
-			assignedService.Activated = false;
+			assignedService.IsActivated = false;
 		}
 
 		public virtual void PaymentClient(ClientService assignedService)
@@ -110,7 +110,7 @@ namespace InternetInterface.Services
 
 		public virtual bool ActivatedForClient(Client client)
 		{
-			return client.ClientServices.Where(s => s.Activated).Any(s => s.Service.Id == Id);
+			return client.ClientServices.Where(s => s.IsActivated).Any(s => s.Service.Id == Id);
 		}
 
 		public virtual void WriteOff(ClientService assignedService)

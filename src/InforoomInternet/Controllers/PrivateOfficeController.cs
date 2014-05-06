@@ -99,8 +99,8 @@ namespace InforoomInternet.Controllers
 					if (client.NoEndPoint() && lease != null) {
 						client.CreateAutoEndPont(address, lease, DbSession);
 					}
+					client.UpdateStatus();
 					client.FirstLaunch = true;
-					client.Disabled = client.Balance <= 0;
 					client.AutoUnblocked = true;
 					if (client.IsChanged(c => c.Disabled))
 						client.CreareAppeal("Клиент был заблокирован из личного кабинета при посещении первой страницы", AppealType.Statistic);

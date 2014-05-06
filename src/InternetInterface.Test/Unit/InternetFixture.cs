@@ -39,10 +39,10 @@ namespace InternetInterface.Test.Unit
 		{
 			clientService.ActivatedByUser = true;
 			clientService.TryActivate();
-			Assert.That(clientService.Activated, Is.True);
+			Assert.That(clientService.IsActivated, Is.True);
 			clientService.ActivatedByUser = false;
 			clientService.TryDeactivate();
-			Assert.That(clientService.Activated, Is.False);
+			Assert.That(clientService.IsActivated, Is.False);
 		}
 
 		[Test]
@@ -50,14 +50,14 @@ namespace InternetInterface.Test.Unit
 		{
 			clientService.ActivatedByUser = false;
 			clientService.TryActivate();
-			Assert.That(clientService.Activated, Is.False);
+			Assert.That(clientService.IsActivated, Is.False);
 
 			clientService.ActivatedByUser = true;
 			clientService.TryActivate();
-			Assert.That(clientService.Activated, Is.True);
+			Assert.That(clientService.IsActivated, Is.True);
 
 			clientService.TryDeactivate();
-			Assert.That(clientService.Activated, Is.True);
+			Assert.That(clientService.IsActivated, Is.True);
 		}
 	}
 }

@@ -25,25 +25,36 @@ namespace InternetInterface.Services
 			return builder.ToString();
 		}
 
-		public override bool CanActivate(Client client)
+		private static bool InternalCanActivate(Client client)
 		{
 			return client.PhysicalClient != null
 				&& client.PhysicalClient.Balance >= 0
 				&& !client.Disabled
 				&& !client.HaveActiveService<DebtWork>()
-				&& !client.HaveService<VoluntaryBlockin>()
 				&& client.StartWork();
 		}
 
+		public override bool CanActivate(Client client)
+		{
+			return InternalCanActivate(client) && !client.HaveService<VoluntaryBlockin>();
+		}
+
+		//будь бдителен два вызова CanActivate похожи но не идентичные
+		//CanActivate(Client client) - происхоидт если нужно узнать может ли услуга быть активирована
+		//CanActivate(ClientService assignedService) - проиходит когда услуга активируется
+		//разница в проверке дублей когда услуга активируется она уже будет в списке ClientService
 		public override bool CanActivate(ClientService assignedService)
 		{
 			return SystemTime.Now() >= assignedService.BeginWorkDate.Value
-				&& base.CanActivate(assignedService.Client);
+				&& InternalCanActivate(assignedService.Client)
+				&& !assignedService.Client.ClientServices
+					.Except(new[] { assignedService })
+					.Any(s => s.IsService(assignedService.Service));
 		}
 
 		public override void Activate(ClientService assignedService)
 		{
-			if (CanActivate(assignedService) && !assignedService.Activated) {
+			if (CanActivate(assignedService) && !assignedService.IsActivated) {
 				var client = assignedService.Client;
 
 				client.RatedPeriodDate = DateTime.Now;
@@ -68,7 +79,7 @@ namespace InternetInterface.Services
 				client.Status = Status.Find((uint)StatusType.VoluntaryBlocking);
 				client.Update();
 
-				assignedService.Activated = true;
+				assignedService.IsActivated = true;
 				var evd = assignedService.EndWorkDate.Value;
 				assignedService.EndWorkDate = new DateTime(evd.Year, evd.Month, evd.Day);
 				ActiveRecordMediator.Save(assignedService);
@@ -101,8 +112,8 @@ namespace InternetInterface.Services
 				client.Status = Status.Find((uint)StatusType.Worked);
 			}
 
-			if (!client.PaidDay && assignedService.Activated) {
-				assignedService.Activated = false;
+			if (!client.PaidDay && assignedService.IsActivated) {
+				assignedService.IsActivated = false;
 
 				//что бы правильно вычислить стоимость нам нужно активировать
 				//услуги которые могут быть активированы после
@@ -119,7 +130,7 @@ namespace InternetInterface.Services
 				}
 			}
 
-			assignedService.Activated = false;
+			assignedService.IsActivated = false;
 			ActiveRecordMediator.Update(assignedService);
 			ActiveRecordMediator.Update(client);
 		}
@@ -150,7 +161,7 @@ namespace InternetInterface.Services
 		public override void WriteOff(ClientService assignedService)
 		{
 			var client = assignedService.Client;
-			if (assignedService.Activated
+			if (assignedService.IsActivated
 				&& client.FreeBlockDays > 0
 				&& assignedService.BeginWorkDate.Value.Date != SystemTime.Today()
 				&& assignedService.EndWorkDate.Value.Date != SystemTime.Today()) {

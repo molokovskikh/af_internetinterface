@@ -308,7 +308,7 @@ namespace InternetInterface.Models
 
 		public virtual bool HavePaymentToStart()
 		{
-			var forbiddenByService = ClientServices.Any(s => s.Service.BlockingAll && s.Activated);
+			var forbiddenByService = ClientServices.Any(s => s.Service.BlockingAll && s.IsActivated);
 			if (forbiddenByService)
 				return false;
 			var tariffSum = GetPriceIgnoreDisabled();
@@ -463,9 +463,9 @@ namespace InternetInterface.Models
 				return false;
 			var haveService = ClientServices.FirstOrDefault(cs => cs.Service.Id == Service.Type<WorkLawyer>().Id);
 			var needShowWarning = LawyerPerson.NeedShowWarning();
-			if (haveService != null && haveService.Activated)
+			if (haveService != null && haveService.IsActivated)
 				return false;
-			if ((haveService != null && !haveService.Activated && needShowWarning) ||
+			if ((haveService != null && !haveService.IsActivated && needShowWarning) ||
 				(haveService == null && needShowWarning))
 				return true;
 			return needShowWarning;
@@ -493,7 +493,7 @@ namespace InternetInterface.Models
 
 		public virtual ClientService FindActiveService<T>()
 		{
-			return ClientServices.FirstOrDefault(c => c.Activated && NHibernateUtil.GetClass(c.Service) == typeof(T));
+			return ClientServices.FirstOrDefault(c => c.IsActivated && NHibernateUtil.GetClass(c.Service) == typeof(T));
 		}
 
 		public virtual bool HaveActiveService<T>()
@@ -741,7 +741,7 @@ where CE.Client = {0}", Id))
 
 		public virtual decimal GetPrice()
 		{
-			var services = ClientServices.Where(c => c.Activated).ToArray();
+			var services = ClientServices.Where(c => c.IsActivated).ToArray();
 			var blockingService = services.FirstOrDefault(c => c.Service.BlockingAll);
 			if (blockingService != null)
 				return blockingService.GetPrice() + services.Where(c => c.Service.ProcessEvenInBlock).Sum(c => c.GetPrice());

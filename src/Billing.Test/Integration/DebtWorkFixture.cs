@@ -50,8 +50,8 @@ namespace Billing.Test.Integration
 			session.Refresh(client);
 			service = client.ClientServices.FirstOrDefault(s => s.Service.Id == Service.Type<DebtWork>().Id);
 			Assert.IsNotNull(service);
-			Assert.IsTrue(service.Diactivated);
-			Assert.False(service.Activated);
+			Assert.IsTrue(service.IsDeactivated);
+			Assert.False(service.IsActivated);
 
 			session.Save(new Payment(client, client.GetPriceForTariff() + 50));
 			billing.OnMethod();

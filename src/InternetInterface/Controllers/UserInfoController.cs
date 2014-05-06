@@ -223,7 +223,7 @@ namespace InternetInterface.Controllers
 		public void DiactivateService(uint clientId, uint serviceId)
 		{
 			var client = DbSession.Load<Client>(clientId);
-			var cservice = client.ClientServices.FirstOrDefault(c => c.Service.Id == serviceId && c.Activated);
+			var cservice = client.ClientServices.FirstOrDefault(c => c.Service.Id == serviceId && c.IsActivated);
 			if (cservice != null) {
 				Notify(client.Deactivate(cservice));
 				if (client.IsNeedRecofiguration)

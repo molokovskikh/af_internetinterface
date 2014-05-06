@@ -36,18 +36,18 @@ namespace InternetInterface.Services
 			client.ShowBalanceWarningPage = warning;
 			client.Disabled = warning;
 			client.Update();
-			assignedService.Activated = false;
+			assignedService.IsActivated = false;
 			ActiveRecordMediator.Save(assignedService);
 		}
 
 		public override void Activate(ClientService assignedService)
 		{
-			if ((!assignedService.Activated && CanActivate(assignedService))) {
+			if ((!assignedService.IsActivated && CanActivate(assignedService))) {
 				var client = assignedService.Client;
 				client.ShowBalanceWarningPage = false;
 				client.Disabled = false;
 				client.Save();
-				assignedService.Activated = true;
+				assignedService.IsActivated = true;
 				assignedService.EndWorkDate = assignedService.EndWorkDate.Value.Date;
 				ActiveRecordMediator.Save(assignedService);
 			}

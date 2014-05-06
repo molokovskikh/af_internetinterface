@@ -20,7 +20,7 @@ namespace InternetInterface.Models.Services
 
 		public override bool CanDeactivate(ClientService assignedService)
 		{
-			return assignedService.Activated &&
+			return assignedService.IsActivated &&
 				(!assignedService.ActivatedByUser
 					|| assignedService.Client.Disabled);
 		}

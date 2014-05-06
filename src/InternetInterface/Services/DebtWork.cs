@@ -24,15 +24,30 @@ namespace InternetInterface.Services
 			return builder.ToString();
 		}
 
-		public override bool CanActivate(Client client)
+		private static bool InternalCanActivate(Client client)
 		{
 			return client.PhysicalClient != null
 				&& client.Disabled
 				&& client.Balance <= 0
 				&& !client.HaveService<VoluntaryBlockin>()
-				&& !client.HaveService<DebtWork>()
-				&& client.StartWork()
 				&& client.AutoUnblocked;
+		}
+
+		public override bool CanActivate(Client client)
+		{
+			return InternalCanActivate(client) && !client.HaveService<DebtWork>();
+		}
+
+		//будь бдителен два вызова CanActivate похожи но не идентичные
+		//CanActivate(Client client) - происхоидт если нужно узнать может ли услуга быть активирована
+		//CanActivate(ClientService assignedService) - проиходит когда услуга активируется
+		//разница в проверке дублей когда услуга активируется она уже будет в списке ClientService
+		public override bool CanActivate(ClientService assignedService)
+		{
+			return InternalCanActivate(assignedService.Client)
+				&& !assignedService.Client.ClientServices
+					.Except(new[] { assignedService })
+					.Any(s => s.IsService(assignedService.Service));
 		}
 
 		public override void PaymentClient(ClientService assignedService)
@@ -68,19 +83,19 @@ namespace InternetInterface.Services
 			var client = assignedService.Client;
 			client.UpdateStatus();
 			client.Update();
-			assignedService.Activated = false;
-			assignedService.Diactivated = true;
+			assignedService.IsActivated = false;
+			assignedService.IsDeactivated = true;
 			ActiveRecordMediator.Update(assignedService);
 		}
 
 		public override bool CanDeactivate(ClientService assignedService)
 		{
-			return assignedService.Activated && assignedService.EndWorkDate.Value < SystemTime.Now();
+			return assignedService.IsActivated && assignedService.EndWorkDate.Value < SystemTime.Now();
 		}
 
 		public override void Activate(ClientService assignedService)
 		{
-			if ((!assignedService.Activated && !assignedService.Diactivated && CanActivate(assignedService))) {
+			if ((!assignedService.IsActivated && !assignedService.IsDeactivated && CanActivate(assignedService))) {
 				if (assignedService.EndWorkDate > SystemTime.Now().AddDays(3)) {
 					var userWriteOff = new UserWriteOff(assignedService.Client, 50, "Активация обещанного платежа на 10 дней", false);
 					ActiveRecordMediator.Save(userWriteOff);
@@ -90,7 +105,7 @@ namespace InternetInterface.Services
 				client.RatedPeriodDate = SystemTime.Now();
 				client.Status = Status.Find((uint)StatusType.Worked);
 				client.Update();
-				assignedService.Activated = true;
+				assignedService.IsActivated = true;
 			}
 		}
 	}
