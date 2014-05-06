@@ -27,18 +27,18 @@ namespace InternetInterface.Services
 
 		public override bool CanActivate(Client client)
 		{
-			if (client.PhysicalClient != null) {
-				var balance = client.PhysicalClient.Balance >= 0;
-				var debtWork = !client.HaveService<DebtWork>();
-				return balance && debtWork && client.StartWork();
-			}
-			return false;
+			return client.PhysicalClient != null
+				&& client.PhysicalClient.Balance >= 0
+				&& !client.Disabled
+				&& !client.HaveActiveService<DebtWork>()
+				&& !client.HaveService<VoluntaryBlockin>()
+				&& client.StartWork();
 		}
 
 		public override bool CanActivate(ClientService assignedService)
 		{
-			var begin = SystemTime.Now() >= assignedService.BeginWorkDate.Value;
-			return begin && CanActivate(assignedService.Client);
+			return SystemTime.Now() >= assignedService.BeginWorkDate.Value
+				&& base.CanActivate(assignedService.Client);
 		}
 
 		public override void Activate(ClientService assignedService)
@@ -87,7 +87,7 @@ namespace InternetInterface.Services
 			}
 		}
 
-		public override void CompulsoryDeactivate(ClientService assignedService)
+		public override void ForceDeactivate(ClientService assignedService)
 		{
 			var client = assignedService.Client;
 			client.DebtDays = 0;

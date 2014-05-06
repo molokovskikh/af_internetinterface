@@ -24,7 +24,7 @@ namespace Billing.Test.Integration
 			client.Activate(service);
 			Assert.IsFalse(client.Disabled);
 			SystemTime.Now = () => DateTime.Now.AddDays(2);
-			service.Deactivate();
+			service.TryDeactivate();
 			Assert.IsTrue(client.Disabled);
 			service.TryActivate();
 			Assert.IsTrue(client.Disabled);

@@ -106,7 +106,7 @@ function GetLinkText(hide) {
 			<% end %>
 		</div>
 		<br />
-		<%if Client.CanUsedPostponedPayment(): %>
+		<%if Client.CanUseDebtWork(): %>
 		<p style="color:#8d8d8e;">Доступ в интернет заблокирован, Вы можете воспольваться услугой "Обещанный платеж" <a id="podrob" href="PostponedPayment">Подробнее...</a></p>
 		<%end %>
 	</td>

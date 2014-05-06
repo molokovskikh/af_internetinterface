@@ -122,8 +122,6 @@ namespace InforoomInternet.Controllers
 					RedirectToAction("MessageSended", new Dictionary<string, string> { { "clientName", clientName } });
 				}
 			}
-
-			DbSession.Evict(client);
 		}
 
 		[return: JSONReturnBinder]

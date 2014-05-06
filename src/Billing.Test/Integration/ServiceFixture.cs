@@ -124,9 +124,9 @@ namespace Billing.Test.Integration
 			}
 			using (new SessionScope()) {
 				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
-				service = client.FindService<VoluntaryBlockin>();
+				service = client.FindActiveService<VoluntaryBlockin>();
 				Assert.That(client.FreeBlockDays, Is.EqualTo(MainBilling.FreeDaysVoluntaryBlockin));
-				service.CompulsoryDeactivate();
+				service.ForceDeactivate();
 				Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(1));
 			}
 			billing.Compute();
@@ -176,7 +176,7 @@ namespace Billing.Test.Integration
 				Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(2), UserWriteOff.Queryable.Implode());
 
 				service = ActiveRecordMediator<ClientService>.FindByPrimaryKey(service.Id);
-				service.CompulsoryDeactivate();
+				service.ForceDeactivate();
 			}
 			billing.Compute();
 			using (new SessionScope()) {
@@ -329,7 +329,7 @@ namespace Billing.Test.Integration
 				cServive.TryActivate();
 				Assert.That(cServive.Activated, Is.EqualTo(true));
 				Assert.IsFalse(cServive.Client.Disabled);
-				cServive.CompulsoryDeactivate();
+				cServive.ForceDeactivate();
 				Assert.IsTrue(cServive.Client.Disabled);
 
 				Assert.That(client.ClientServices.Count, Is.EqualTo(2), "должна остаться только услуга internet");
@@ -546,7 +546,7 @@ namespace Billing.Test.Integration
 			using (new SessionScope()) {
 				client.Refresh();
 				Assert.IsFalse(client.Disabled);
-				service.CompulsoryDeactivate();
+				service.ForceDeactivate();
 				Assert.IsTrue(client.Disabled);
 				billing.OnMethod();
 				Assert.IsTrue(client.Disabled);
@@ -577,7 +577,7 @@ namespace Billing.Test.Integration
 			using (new SessionScope()) {
 				service = ActiveRecordMediator<ClientService>.FindByPrimaryKey(service.Id);
 				Assert.That(WriteOff.FindAll().Last().WriteOffSum, Is.GreaterThan(3m));
-				service.CompulsoryDeactivate();
+				service.ForceDeactivate();
 			}
 			billing.OnMethod();
 			billing.Compute();

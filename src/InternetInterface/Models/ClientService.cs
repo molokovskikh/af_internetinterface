@@ -101,20 +101,30 @@ namespace InternetInterface.Models
 			return false;
 		}
 
-		public virtual void Deactivate()
+		public virtual void TryDeactivate()
 		{
 			if (Service.CanDeactivate(this)) {
 				DeleteFromClient();
 				//перед деактивацией, услугу нужно удалить из
 				//списка услуг клиента тк она может влиять на цену
-				Service.CompulsoryDeactivate(this);
+				Service.ForceDeactivate(this);
 			}
 		}
 
-		public virtual void CompulsoryDeactivate()
+		public virtual void ForceDeactivate()
 		{
-			Service.CompulsoryDeactivate(this);
+			Service.ForceDeactivate(this);
 			DeleteFromClient();
+		}
+
+		public virtual void PaymentProcessed()
+		{
+			Service.PaymentClient(this);
+		}
+
+		public virtual void WriteOffProcessed()
+		{
+			Service.WriteOff(this);
 		}
 
 		public virtual decimal GetPrice()
@@ -122,16 +132,6 @@ namespace InternetInterface.Models
 			if (IsFree)
 				return 0;
 			return Service.GetPrice(this);
-		}
-
-		public virtual void PaymentClient()
-		{
-			Service.PaymentClient(this);
-		}
-
-		public virtual void WriteOff()
-		{
-			Service.WriteOff(this);
 		}
 
 		public virtual void UpdateChannels(List<ChannelGroup> channelGroups)

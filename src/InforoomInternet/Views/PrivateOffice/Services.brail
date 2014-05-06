@@ -1,25 +1,27 @@
 ﻿<div class="servicePage">
-	<% CanUsedPostponedPayment = Client.CanUsedPostponedPayment() %>
-	<%if Client.CanUsedPostponedPayment(): %>
+	<% haveService = false %>
+
+	<% if Client.CanUseDebtWork(): %>
 	<div>
-		<% OutputSubView("""\PrivateOffice\PostponedPayment""", { "Client" : Client })%>
+		<% haveService = true %>
+		<% OutputSubView("/PrivateOffice/PostponedPayment", { "Client" : Client }) %>
 	</div>
-	<%end %>
-	<% CanUsedVoluntaryBlockin = Client.CanUsedVoluntaryBlockin() %>
-	<%if CanUsedVoluntaryBlockin: %>
-	<div>
-		<% OutputSubView("""\PrivateOffice\VoluntaryBlockin""", {
-		"VoluntaryBlockinService" : VoluntaryBlockinService,
-		"client" : Client })%>
-	</div>
-	<%else:
-		if Client.HaveVoluntaryBlockin():
-			OutputSubView("""\PrivateOffice\DiactivateVoluntaryBlockin""")
-		end
-	end %>
+	<% end %>
+
+	<% if client.CanUsedVoluntaryBlockin(): %>
+		<% haveService = true %>
+		<div>
+			<% OutputSubView("/PrivateOffice/VoluntaryBlockin", {
+				"VoluntaryBlockinService" : VoluntaryBlockinService,
+				"client" : Client })%>
+		</div>
+	<% elif Client.HaveVoluntaryBlockin(): %>
+		<% haveService = true %>
+		<% OutputSubView("/PrivateOffice/DiactivateVoluntaryBlockin") %>
+	<% end %>
 
 	<% if client.CanEditServicesFromPrivateOffice: %>
-
+		<% haveService = true %>
 		${FormHelper.FormTag("", {@class: "serviceForm"})}
 			${FormHelper.HiddenField("client.PhysicalClient.Id")}
 			<h3>!{internet.Service.HumanName}</h3>
@@ -59,17 +61,13 @@
 			</div>
 			${FormHelper.Submit("Сохранить", {@class: "button"})}
 		${FormHelper.EndFormTag()}
-
-	<% else: %>
-
-		<% if not CanUsedPostponedPayment and not CanUsedVoluntaryBlockin and not Client.HaveVoluntaryBlockin(): %>
-		<div class="error">
-			<p>
-				Вам не доступны услуги для активации
-			</p>
-		</div>
-		<% end %>
-
 	<% end %>
 
+	<% unless haveService: %>
+	<div class="error">
+		<p>
+			Вам не доступны услуги для активации
+		</p>
+	</div>
+	<% end %>
 </div>

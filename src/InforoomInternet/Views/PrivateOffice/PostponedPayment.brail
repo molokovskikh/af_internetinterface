@@ -1,4 +1,4 @@
-﻿<%if Client.CanUsedPostponedPayment(): %>
+﻿<%if Client.CanUseDebtWork(): %>
 <table>
 	<tbody>
 		<tr class="caption" style="text-align:center; font-size:14px;">

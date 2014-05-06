@@ -447,13 +447,14 @@ namespace InternetInterface.Models
 			return Payments.Sum(p => p.Sum) >= GetPriceIgnoreDisabled();
 		}
 
-		public virtual bool CanUsedPostponedPayment()
+		public virtual bool CanUseDebtWork()
 		{
-			return PhysicalClient != null
-				&& !HaveService<DebtWork>()
-				&& Disabled
-				&& PhysicalClient.Balance <= 0
-				&& AutoUnblocked;
+			return Service.Type<DebtWork>().CanActivate(this);
+		}
+
+		public virtual bool CanUsedVoluntaryBlockin()
+		{
+			return Service.Type<DebtWork>().CanActivate(this);
 		}
 
 		public virtual bool NeedShowWarningForLawyer()
@@ -470,16 +471,9 @@ namespace InternetInterface.Models
 			return needShowWarning;
 		}
 
-		public virtual bool CanUsedVoluntaryBlockin()
-		{
-			return new VoluntaryBlockin().CanActivate(this) && !HaveVoluntaryBlockin() && !Disabled;
-		}
-
 		public virtual bool HaveVoluntaryBlockin()
 		{
-			var clientServices = ClientServices.Select(s => s.Service.Id).ToList();
-			var volBlockService = Service.GetByType(typeof(VoluntaryBlockin));
-			return clientServices.Any(s => s == volBlockService.Id);
+			return HaveService<VoluntaryBlockin>();
 		}
 
 		public virtual bool AdditionalCanUsed(string aStatus)
@@ -497,14 +491,19 @@ namespace InternetInterface.Models
 			return pass;
 		}
 
-		public virtual ClientService FindService<T>()
+		public virtual ClientService FindActiveService<T>()
 		{
 			return ClientServices.FirstOrDefault(c => c.Activated && NHibernateUtil.GetClass(c.Service) == typeof(T));
 		}
 
+		public virtual bool HaveActiveService<T>()
+		{
+			return FindActiveService<T>() != null;
+		}
+
 		public virtual bool HaveService<T>()
 		{
-			return FindService<T>() != null;
+			return ClientServices.Any(c => NHibernateUtil.GetClass(c.Service) == typeof(T));
 		}
 
 		public virtual ClientType GetClientType()
@@ -773,7 +772,7 @@ where CE.Client = {0}", Id))
 				price += GetPriceForTariff();
 
 			if (iptvPrice == 0) {
-				var service = FindService<IpTvBoxRent>();
+				var service = FindActiveService<IpTvBoxRent>();
 				if (service != null)
 					price += service.GetPrice();
 			}
@@ -806,24 +805,22 @@ where CE.Client = {0}", Id))
 		/// if (client.IsNeedRecofiguration)
 		/// 	SceHelper.UpdatePackageId(DbSession, client);
 		/// </summary>
-		public virtual string Activate(ClientService service)
+		public virtual string Activate(ClientService clientService)
 		{
-			if (ClientServices.Select(c => c.Service).Contains(service.Service))
-				throw new ServiceActivationException(String.Format("Невозможно активировать услугу {0}", service.Service.HumanName));
-			ClientServices.Add(service);
-			if (!service.TryActivate()) {
-				ClientServices.Remove(service);
-				throw new ServiceActivationException(String.Format("Невозможно активировать услугу {0}", service.Service.HumanName));
-			}
-			var message = string.Format("Услуга \"{0}\" активирована на период с {1} по {2}", service.Service.HumanName,
-				service.BeginWorkDate != null
-					? service.BeginWorkDate.Value.ToShortDateString()
+			if (ClientServices.Any(c => NHibernateUtil.GetClass(c.Service) == NHibernateUtil.GetClass(clientService.Service))
+				|| !clientService.TryActivate())
+				throw new ServiceActivationException(String.Format("Невозможно активировать услугу \"{0}\"", clientService.Service.HumanName));
+
+			ClientServices.Add(clientService);
+			var message = string.Format("Услуга \"{0}\" активирована на период с {1} по {2}", clientService.Service.HumanName,
+				clientService.BeginWorkDate != null
+					? clientService.BeginWorkDate.Value.ToShortDateString()
 					: DateTime.Now.ToShortDateString(),
-				service.EndWorkDate != null
-					? service.EndWorkDate.Value.ToShortDateString()
+				clientService.EndWorkDate != null
+					? clientService.EndWorkDate.Value.ToShortDateString()
 					: string.Empty);
 			CreareAppeal(message, AppealType.Statistic);
-			IsNeedRecofiguration = NHibernateUtil.GetClass(service.Service) == typeof(DebtWork);
+			IsNeedRecofiguration = NHibernateUtil.GetClass(clientService.Service) == typeof(DebtWork);
 			return message;
 		}
 
@@ -835,7 +832,7 @@ where CE.Client = {0}", Id))
 		/// </summary>
 		public virtual string Deactivate(ClientService service)
 		{
-			service.CompulsoryDeactivate();
+			service.ForceDeactivate();
 			var message = String.Format("Услуга \"{0}\" деактивирована", service.Service.HumanName);
 			CreareAppeal(message, AppealType.Statistic);
 			IsNeedRecofiguration = NHibernateUtil.GetClass(service.Service) == typeof(VoluntaryBlockin);
@@ -858,7 +855,7 @@ where CE.Client = {0}", Id))
 			var clientService = ClientServices.FirstOrDefault(s => s.Endpoint == endpoint && s.Service == service);
 			if (clientService == null)
 				return false;
-			clientService.CompulsoryDeactivate();
+			clientService.ForceDeactivate();
 			return true;
 		}
 
@@ -997,6 +994,17 @@ where CE.Client = {0}", Id))
 				else {
 					TryDeactivate(service, endpoint);
 				}
+			}
+		}
+
+		public virtual void UpdateStatus()
+		{
+			var expectedDisabled = CanDisabled();
+			if (expectedDisabled != Disabled) {
+				Disabled = expectedDisabled;
+				AutoUnblocked = true;
+				StartNoBlock = null;
+				Status = Disabled ? Status.Find((uint)StatusType.NoWorked) : Status.Find((uint)StatusType.Worked);
 			}
 		}
 	}

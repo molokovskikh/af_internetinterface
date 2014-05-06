@@ -24,23 +24,12 @@ namespace InternetInterface.Services
 			return builder.ToString();
 		}
 
-		public override bool CanActivate(ClientService assignedService)
-		{
-			return CanActivate(assignedService.Client);
-		}
-
 		public override bool CanActivate(Client client)
 		{
-			var person = client.LawyerPerson;
-			if (person != null) {
-				if (person.Tariff == null)
-					return false;
-				return true;
-			}
-			return false;
+			return client.LawyerPerson != null && client.LawyerPerson.Tariff != null;
 		}
 
-		public override void CompulsoryDeactivate(ClientService assignedService)
+		public override void ForceDeactivate(ClientService assignedService)
 		{
 			var client = assignedService.Client;
 			var warning = client.LawyerPerson.NeedShowWarning();
@@ -68,7 +57,7 @@ namespace InternetInterface.Services
 		{
 			if ((assignedService.EndWorkDate == null) ||
 				(assignedService.EndWorkDate != null && (SystemTime.Now().Date >= assignedService.EndWorkDate.Value.Date))) {
-				CompulsoryDeactivate(assignedService);
+				ForceDeactivate(assignedService);
 				assignedService.Client.ClientServices.Remove(assignedService);
 				ActiveRecordMediator.Save(assignedService.Client);
 				ActiveRecordMediator.Delete(assignedService);

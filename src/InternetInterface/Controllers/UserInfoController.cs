@@ -813,7 +813,7 @@ where r.`Label`= :LabelIndex;")
 		private void LoadBalanceData(string grouped, Client client)
 		{
 			var payments =
-				DbSession.Query<Payment>().Where(p => p.Client.Id == client.Id).Where(p => p.Sum > 0).OrderBy(t => t.PaidOn).ToList();
+				DbSession.Query<Payment>().Where(p => p.Client.Id == client.Id).Where(p => p.Sum > 0).OrderByDescending(t => t.PaidOn).ToList();
 			var writeoffSum = DbSession.Query<WriteOff>().Where(p => p.Client.Id == client.Id).ToList().Sum(s => s.WriteOffSum);
 			var userWriteoffSum = DbSession.Query<UserWriteOff>().Where(w => w.Client.Id == client.Id).ToList().Sum(w => w.Sum);
 			if (InitializeContent.Partner.IsDiller())

@@ -26,21 +26,19 @@ namespace InternetInterface.Services
 
 		public override bool CanActivate(Client client)
 		{
-			if (client.PhysicalClient != null)
-				return !client.ClientServices.Select(c => c.Service).Contains(GetByType(typeof(VoluntaryBlockin)));
-			return false;
-		}
-
-		public override bool CanActivate(ClientService assignedService)
-		{
-			var client = assignedService.Client;
-			return client.AutoUnblocked && client.Disabled && client.Balance <= 0 && CanActivate(client);
+			return client.PhysicalClient != null
+				&& client.Disabled
+				&& client.Balance <= 0
+				&& !client.HaveService<VoluntaryBlockin>()
+				&& !client.HaveService<DebtWork>()
+				&& client.StartWork()
+				&& client.AutoUnblocked;
 		}
 
 		public override void PaymentClient(ClientService assignedService)
 		{
 			if (!assignedService.Client.CanDisabled())
-				assignedService.CompulsoryDeactivate();
+				assignedService.ForceDeactivate();
 		}
 
 		public override bool CanBlock(ClientService assignedService)
@@ -65,14 +63,10 @@ namespace InternetInterface.Services
 			return false;
 		}
 
-		public override void CompulsoryDeactivate(ClientService assignedService)
+		public override void ForceDeactivate(ClientService assignedService)
 		{
 			var client = assignedService.Client;
-			client.Disabled = client.CanDisabled();
-			client.AutoUnblocked = true;
-			client.StartNoBlock = null;
-			var status = client.Disabled ? Status.Find((uint)StatusType.NoWorked) : Status.Find((uint)StatusType.Worked);
-			client.Status = status;
+			client.UpdateStatus();
 			client.Update();
 			assignedService.Activated = false;
 			assignedService.Diactivated = true;
@@ -97,7 +91,6 @@ namespace InternetInterface.Services
 				client.Status = Status.Find((uint)StatusType.Worked);
 				client.Update();
 				assignedService.Activated = true;
-				ActiveRecordMediator.Update(assignedService);
 			}
 		}
 	}

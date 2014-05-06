@@ -77,7 +77,7 @@ namespace InternetInterface.Test.Unit
 			rent.Service.Price = 300;
 			IpTv();
 
-			rent.WriteOff();
+			rent.WriteOffProcessed();
 
 			Assert.That(client.PhysicalClient.Balance, Is.EqualTo(1000));
 			Assert.That(client.PhysicalClient.MoneyBalance, Is.EqualTo(990));
@@ -99,7 +99,7 @@ namespace InternetInterface.Test.Unit
 			var iptv = IpTv();
 			client.PhysicalClient.WriteOff(1500);
 			client.Disabled = true;
-			iptv.Deactivate();
+			iptv.TryDeactivate();
 			Assert.That(client.GetPrice(), Is.EqualTo(100));
 		}
 

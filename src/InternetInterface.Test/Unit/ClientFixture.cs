@@ -80,7 +80,7 @@ namespace InternetInterface.Test.Unit
 			//тариф + плата за фиксированный адрес
 			Assert.AreEqual(100 + 30, price);
 
-			client.FindService<PinnedIp>().IsFree = true;
+			client.FindActiveService<PinnedIp>().IsFree = true;
 			Assert.AreEqual(100, client.GetPrice());
 		}
 	}

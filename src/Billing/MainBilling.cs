@@ -168,7 +168,7 @@ set s.LastStartFail = true;")
 							}
 						if (updateClient.ClientServices != null)
 							foreach (var clientService in updateClient.ClientServices.ToList()) {
-								clientService.PaymentClient();
+								clientService.PaymentProcessed();
 							}
 						updateClient.Update();
 					}
@@ -237,7 +237,7 @@ set s.LastStartFail = true;")
 					client.Update();
 				}
 				foreach (var cserv in ActiveRecordMediator.FindAll(typeof(ClientService)).Cast<ClientService>()) {
-					cserv.Deactivate();
+					cserv.TryDeactivate();
 				}
 				transaction.VoteCommit();
 			}
@@ -333,7 +333,7 @@ set s.LastStartFail = true;")
 						var client = ActiveRecordMediator<Client>.FindByPrimaryKey(id);
 						action(client);
 						foreach (var clientService in client.ClientServices.ToList()) {
-							clientService.WriteOff();
+							clientService.WriteOffProcessed();
 						}
 						client.PaidDay = true;
 						client.Update();

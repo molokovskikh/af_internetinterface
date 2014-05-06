@@ -46,11 +46,11 @@ namespace InternetInterface.Models.Services
 		private static bool IsRentForFree(ClientService assignedService)
 		{
 			var client = assignedService.Client;
-			var blocking = client.FindService<VoluntaryBlockin>();
+			var blocking = client.FindActiveService<VoluntaryBlockin>();
 			var blockedForFree = blocking != null && blocking.GetPrice() == 0;
 			if (blockedForFree)
 				return true;
-			if (blocking == null && client.HaveService<IpTv>())
+			if (blocking == null && client.HaveActiveService<IpTv>())
 				return true;
 			return false;
 		}

@@ -27,7 +27,7 @@ namespace InternetInterface.Models.Services
 
 		//если клиент отключил себе интернет то нужно списать абонентскую плату
 		//за день что бы не было смысла отключать себе интернет на момент списания
-		public override void CompulsoryDeactivate(ClientService assignedService)
+		public override void ForceDeactivate(ClientService assignedService)
 		{
 			var client = assignedService.Client;
 			if (!client.Disabled
@@ -39,8 +39,8 @@ namespace InternetInterface.Models.Services
 					client.UserWriteOffs.Add(new UserWriteOff(client, sum, comment, false));
 				}
 			}
-			base.CompulsoryDeactivate(assignedService);
-			assignedService.Client.CreareAppeal("Отключена услуга Internet");
+			base.ForceDeactivate(assignedService);
+			assignedService.Client.CreareAppeal(String.Format("Включена услуга \"{0}\"", HumanName));
 		}
 
 		public override void Activate(ClientService assignedService)
@@ -48,7 +48,7 @@ namespace InternetInterface.Models.Services
 			if (assignedService.ActivatedByUser
 				&& !assignedService.Client.Disabled) {
 				base.Activate(assignedService);
-				assignedService.Client.CreareAppeal("Включена услуга Internet");
+				assignedService.Client.CreareAppeal(String.Format("Включена услуга \"{0}\"", HumanName));
 			}
 		}
 

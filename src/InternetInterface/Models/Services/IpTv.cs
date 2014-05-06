@@ -29,7 +29,7 @@ namespace InternetInterface.Models.Services
 			if (assignedService.Client.Disabled)
 				return 0;
 
-			if (assignedService.Client.HaveService<Internet>())
+			if (assignedService.Client.HaveActiveService<Internet>())
 				return assignedService.Channels.Sum(c => c.CostPerMonthWithInternet);
 
 			return assignedService.Channels.Sum(c => c.CostPerMonth);

@@ -131,12 +131,10 @@ namespace InforoomInternet.Controllers
 		{
 			var client = LoadClient();
 			var validDayCount = (daysCount == 3) || (daysCount == 10);
-			if (client.CanUsedPostponedPayment() & validDayCount) {
-				var service = new ClientService {
-					Client = client,
+			if (client.CanUseDebtWork() & validDayCount) {
+				var service = new ClientService(client, Service.GetByType(typeof(DebtWork))) {
 					BeginWorkDate = DateTime.Now,
 					EndWorkDate = DateTime.Now.AddDays(daysCount),
-					Service = Service.GetByType(typeof(DebtWork))
 				};
 				Notify(client.Activate(service));
 				if (client.IsNeedRecofiguration)
@@ -150,11 +148,9 @@ namespace InforoomInternet.Controllers
 		{
 			var client = LoadClient();
 			if (client.CanUsedVoluntaryBlockin()) {
-				var service = new ClientService {
+				var service = new ClientService(client, Service.GetByType(typeof(VoluntaryBlockin))) {
 					BeginWorkDate = DateTime.Now,
 					EndWorkDate = endDate,
-					Client = client,
-					Service = Service.GetByType(typeof(VoluntaryBlockin))
 				};
 				Notify(client.Activate(service));
 				if (client.IsNeedRecofiguration)
@@ -167,7 +163,7 @@ namespace InforoomInternet.Controllers
 		public void DiactivateVoluntaryBlockin()
 		{
 			var client = LoadClient();
-			var service = client.FindService<VoluntaryBlockin>();
+			var service = client.FindActiveService<VoluntaryBlockin>();
 			if (service != null) {
 				Notify(client.Deactivate(service));
 				if (client.IsNeedRecofiguration)

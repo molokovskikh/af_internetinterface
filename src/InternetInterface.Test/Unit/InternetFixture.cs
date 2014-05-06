@@ -41,7 +41,7 @@ namespace InternetInterface.Test.Unit
 			clientService.TryActivate();
 			Assert.That(clientService.Activated, Is.True);
 			clientService.ActivatedByUser = false;
-			clientService.Deactivate();
+			clientService.TryDeactivate();
 			Assert.That(clientService.Activated, Is.False);
 		}
 
@@ -56,7 +56,7 @@ namespace InternetInterface.Test.Unit
 			clientService.TryActivate();
 			Assert.That(clientService.Activated, Is.True);
 
-			clientService.Deactivate();
+			clientService.TryDeactivate();
 			Assert.That(clientService.Activated, Is.True);
 		}
 	}

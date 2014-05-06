@@ -59,7 +59,7 @@ namespace InternetInterface.Services
 			assignedService.Activated = true;
 		}
 
-		public virtual void CompulsoryDeactivate(ClientService assignedService)
+		public virtual void ForceDeactivate(ClientService assignedService)
 		{
 			assignedService.Activated = false;
 		}
@@ -100,7 +100,7 @@ namespace InternetInterface.Services
 
 		public virtual bool CanActivate(ClientService assignedService)
 		{
-			return true;
+			return CanActivate(assignedService.Client);
 		}
 
 		public virtual bool CanActivateInWeb(Client client)
