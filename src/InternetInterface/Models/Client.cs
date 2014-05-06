@@ -454,7 +454,7 @@ namespace InternetInterface.Models
 
 		public virtual bool CanUsedVoluntaryBlockin()
 		{
-			return Service.Type<DebtWork>().CanActivate(this);
+			return Service.Type<VoluntaryBlockin>().CanActivate(this);
 		}
 
 		public virtual bool NeedShowWarningForLawyer()
