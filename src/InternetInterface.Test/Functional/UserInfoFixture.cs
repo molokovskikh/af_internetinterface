@@ -64,7 +64,7 @@ namespace InternetInterface.Test.Functional
 			Assert.IsTrue(Client.PhysicalClient.Checked);
 		}
 
-		[Test]
+		[Test, Ignore("Нестабильный")]
 		public void Make_reservation()
 		{
 			Client.Status = Status.Find((uint)StatusType.BlockedAndNoConnected);
