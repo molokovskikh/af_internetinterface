@@ -168,8 +168,8 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool SendEmailNotification { get; set; }
 
-		[Property]
-		public virtual bool FirstLunch { get; set; }
+		[Property("FirstLunch")]
+		public virtual bool FirstLaunch { get; set; }
 
 		[Property, Auditable("Смс рассылка")]
 		public virtual bool SendSmsNotifocation { get; set; }
@@ -223,9 +223,9 @@ namespace InternetInterface.Models
 			}
 		}
 
-		public virtual bool NeedShowFirstLunchPage(IPAddress ip, ISession session)
+		public virtual bool NeedShowFirstLaunchPage(IPAddress ip, ISession session)
 		{
-			if (FirstLunch)
+			if (FirstLaunch)
 				return false;
 			var lease = session.Query<Lease>().FirstOrDefault(l => l.Ip == ip);
 			if (lease != null)
@@ -267,7 +267,7 @@ namespace InternetInterface.Models
 
 			if (!Status.Connected) {
 				Status = worked;
-				FirstLunch = true;
+				FirstLaunch = true;
 				Disabled = false;
 				AutoUnblocked = true;
 			}

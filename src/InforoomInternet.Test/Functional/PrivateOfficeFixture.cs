@@ -41,7 +41,7 @@ namespace InforoomInternet.Test.Functional
 
 			physicalClient = ClientHelper.PhysicalClient();
 			client = physicalClient.Client;
-			client.FirstLunch = true;
+			client.FirstLaunch = true;
 			client.BeginWork = DateTime.Now;
 			physicalClient.Client.AddEndpoint(new ClientEndpoint(physicalClient.Client, null, null), settings);
 			session.Save(new Payment(client, 1000));
@@ -84,17 +84,10 @@ namespace InforoomInternet.Test.Functional
 		[Test]
 		public void Create_end_point_if_client_dont_have()
 		{
-			var networkSwitch = new NetworkSwitch();
-			session.Save(networkSwitch);
 			client.Endpoints.Clear();
-			client.FirstLunch = false;
+			client.FirstLaunch = false;
 			session.Save(client);
-			var lease = new Lease {
-				Ip = ipAddress,
-				Switch = networkSwitch,
-				Port = 1
-			};
-			session.Save(lease);
+			var lease = CreateLease();
 
 			Css("#exitLink").Click();
 			Open("PrivateOffice/IndexOffice");
@@ -106,12 +99,25 @@ namespace InforoomInternet.Test.Functional
 
 			client.Refresh();
 			Assert.AreEqual(client.Endpoints.Count, 1);
-			Assert.That(client.Endpoints.First().Switch, Is.EqualTo(networkSwitch));
+			Assert.That(client.Endpoints.First().Switch, Is.EqualTo(lease.Switch));
 			Assert.That(client.Endpoints.First().Port, Is.EqualTo(1));
-			session.Refresh(networkSwitch);
+			session.Refresh(lease.Switch);
 			session.Refresh(lease);
-			Assert.That(networkSwitch.Name, Is.StringContaining("testStreet"));
+			Assert.That(lease.Switch.Name, Is.StringContaining("testStreet"));
 			Assert.That(lease.Endpoint, Is.EqualTo(client.Endpoints.First()));
+		}
+
+		private Lease CreateLease()
+		{
+			var networkSwitch = new NetworkSwitch();
+			session.Save(networkSwitch);
+			var lease = new Lease {
+				Ip = ipAddress,
+				Switch = networkSwitch,
+				Port = 1
+			};
+			session.Save(lease);
+			return lease;
 		}
 
 		[Test]
@@ -220,9 +226,10 @@ namespace InforoomInternet.Test.Functional
 		}
 
 		[Test]
-		public void Fist_lunch_test()
+		public void Fist_launch_test()
 		{
-			client.FirstLunch = false;
+			CreateLease();
+			client.FirstLaunch = false;
 			session.Save(client);
 
 			Open("PrivateOffice/IndexOffice");
@@ -230,9 +237,10 @@ namespace InforoomInternet.Test.Functional
 		}
 
 		[Test]
-		public void First_lunch_passport_data_no_valid_test()
+		public void First_launch_passport_data_no_valid_test()
 		{
-			client.FirstLunch = false;
+			CreateLease();
+			client.FirstLaunch = false;
 			session.Save(client);
 
 			Open("PrivateOffice/IndexOffice");
@@ -252,9 +260,10 @@ namespace InforoomInternet.Test.Functional
 		}
 
 		[Test]
-		public void First_lunch_passport_data_valid_test()
+		public void First_launch_passport_data_valid_test()
 		{
-			client.FirstLunch = false;
+			CreateLease();
+			client.FirstLaunch = false;
 			session.Save(client);
 
 			Open("PrivateOffice/IndexOffice");
@@ -278,7 +287,7 @@ namespace InforoomInternet.Test.Functional
 
 			session.Refresh(client);
 			Assert.IsTrue(client.AutoUnblocked);
-			Assert.IsTrue(client.FirstLunch);
+			Assert.IsTrue(client.FirstLaunch);
 		}
 	}
 }

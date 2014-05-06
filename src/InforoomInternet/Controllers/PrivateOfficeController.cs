@@ -48,12 +48,12 @@ namespace InforoomInternet.Controllers
 		public void IndexOffice(string grouped)
 		{
 			var client = LoadClient();
-			if (client.NeedShowFirstLunchPage(GetHost(), DbSession)) {
+			if (client.NeedShowFirstLaunchPage(GetHost(), DbSession)) {
 				RedirectToAction("FirstVisit");
 				return;
 			}
-			if (!client.FirstLunch) {
-				client.FirstLunch = true;
+			if (!client.FirstLaunch) {
+				client.FirstLaunch = true;
 				DbSession.Save(client);
 			}
 
@@ -99,7 +99,7 @@ namespace InforoomInternet.Controllers
 					if (client.NoEndPoint() && lease != null) {
 						client.CreateAutoEndPont(address, lease, DbSession);
 					}
-					client.FirstLunch = true;
+					client.FirstLaunch = true;
 					client.Disabled = client.Balance <= 0;
 					client.AutoUnblocked = true;
 					if (client.IsChanged(c => c.Disabled))

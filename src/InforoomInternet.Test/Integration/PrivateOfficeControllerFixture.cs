@@ -11,6 +11,7 @@ using Castle.MonoRail.Framework.Test;
 using Castle.MonoRail.TestSupport;
 using Common.Web.Ui.NHibernateExtentions;
 using InforoomInternet.Controllers;
+using InternetInterface.Controllers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
@@ -56,7 +57,7 @@ namespace InforoomInternet.Test.Integration
 		[Test]
 		public void FirstVisitIfRequestOutAddress()
 		{
-			client.FirstLunch = false;
+			client.FirstLaunch = false;
 			session.Save(client);
 			session.Flush();
 			var addresses = GenerateIp();
@@ -82,29 +83,11 @@ namespace InforoomInternet.Test.Integration
 			session.Flush();
 
 			Request.UserHostAddress = addresses.Last();
-			client.FirstLunch = false;
+			client.FirstLaunch = false;
 			session.Save(client);
 			session.Flush();
 			controller.IndexOffice(string.Empty);
 			Assert.IsFalse(controller.Context.Response.WasRedirected);
-
-			Request.UserHostAddress = addresses.Last();
-			client.FirstLunch = false;
-			session.Save(client);
-			ipPool.End = ipAdress.ToBigEndian() + 100000000;
-			session.Save(ipPool);
-			session.Flush();
-			controller.IndexOffice(string.Empty);
-			Assert.IsTrue(controller.Context.Response.WasRedirected);
-
-			Request.UserHostAddress = addresses.First();
-			client.FirstLunch = false;
-			ipPool.End = ipAdress.ToBigEndian() + 1;
-			session.Save(ipPool);
-			session.Save(client);
-			session.Flush();
-			controller.IndexOffice(string.Empty);
-			Assert.IsTrue(controller.Context.Response.WasRedirected);
 		}
 
 		private List<string> GenerateIp()
@@ -152,34 +135,41 @@ namespace InforoomInternet.Test.Integration
 		{
 			session.DeleteMany(session.Query<Lease>().Where(l => l.Ip == IPAddress.Parse("192.168.1.1")).ToArray());
 			session.Flush();
-
 			var networkSwitch = new NetworkSwitch { Name = "testFirstVisit" };
 			var lease = new Lease { Port = 5, Ip = IPAddress.Parse("192.168.1.1"), Switch = networkSwitch };
+
 			var endpoint = new ClientEndpoint(client, 5, networkSwitch);
+			client.AddEndpoint(endpoint, new Settings(session));
+
 			session.Save(networkSwitch);
 			session.Save(lease);
 			session.Save(endpoint);
 
 			Request.HttpMethod = "POST";
 			Context.Session["LoginClient"] = client.Id;
-			Request.UserHostAddress = "192.168.1.1";
+			Request.UserHostAddress = lease.Ip.ToString();
 			controller.FirstVisit();
 
 			client = session.Get<Client>(client.Id);
-			Assert.AreEqual(client.Endpoints.Count, 0);
+			Assert.AreEqual(client.Endpoints.Count, 1);
+		}
 
-			session.Delete(endpoint);
+		[Test]
+		public void Create_endpoint_on_first_visit()
+		{
+			session.DeleteMany(session.Query<Lease>().Where(l => l.Ip == IPAddress.Parse("192.168.1.1")).ToArray());
 			session.Flush();
+			var networkSwitch = new NetworkSwitch { Name = "testFirstVisit" };
+			var lease = new Lease { Port = 5, Ip = IPAddress.Parse("192.168.1.1"), Switch = networkSwitch };
+			session.Save(networkSwitch);
+			session.Save(lease);
 
 			Request.HttpMethod = "POST";
 			Context.Session["LoginClient"] = client.Id;
-			Request.UserHostAddress = "192.168.1.1";
-			controller.FirstVisit();
-			var id = client.Id;
-			session.Flush();
-			session.Clear();
+			Request.UserHostAddress = lease.Ip.ToString();
 
-			client = session.Query<Client>().First(c => c.Id == id);
+			controller.FirstVisit();
+
 			Assert.AreEqual(client.Endpoints.Count, 1, client.Id.ToString());
 			var paymentForConnect = session.Query<PaymentForConnect>().FirstOrDefault(p => p.EndPoint == client.Endpoints[0]);
 			Assert.AreEqual(paymentForConnect.Sum, 555);
