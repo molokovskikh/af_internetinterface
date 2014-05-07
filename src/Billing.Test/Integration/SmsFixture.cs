@@ -16,7 +16,7 @@ namespace Billing.Test.Integration
 		public void PrepareClientAndBilling()
 		{
 			client.PhysicalClient.Balance = client.GetPrice() / client.GetInterval() + 1;
-			client.SendSmsNotifocation = true;
+			client.SendSmsNotification = true;
 			client.Update();
 		}
 
@@ -52,22 +52,22 @@ namespace Billing.Test.Integration
 		}
 
 		[Test]
-		public void Generated_sms_for_simple_Client()
+		public void Generated_sms_for_simple_сlient()
 		{
 			SystemTime.Now = () => DateTime.Now.Date.AddHours(22).AddMinutes(1);
 			billing.Compute();
 			var message = billing.Messages.FirstOrDefault();
 			Assert.IsNotNull(message);
 			var messageText =
-				string.Format("Ваш баланс 1,00 руб. Завтра доступ в сеть будет заблокирован.");
+				string.Format("Ваш баланс 1,00р. {0:d} доступ в сеть будет заблокирован.", DateTime.Now.Date.AddDays(1));
 			Assert.That(message.Text, Is.StringContaining(messageText));
 			Assert.IsNullOrEmpty(message.PhoneNumber);
 			var contact = new Contact(client, ContactType.SmsSending, "9507738447");
 			client.Contacts = new List<Contact> { contact };
 			ActiveRecordMediator.Save(contact);
 			var dtnAd = DateTime.Now.AddDays(1);
-			var ShouldBeSend = new DateTime(dtnAd.Year, dtnAd.Month, dtnAd.Day, 12, 00, 00);
-			Assert.That(message.ShouldBeSend, Is.EqualTo(ShouldBeSend));
+			var shouldBeSend = new DateTime(dtnAd.Year, dtnAd.Month, dtnAd.Day, 12, 00, 00);
+			Assert.That(message.ShouldBeSend, Is.EqualTo(shouldBeSend));
 		}
 
 		[Test]

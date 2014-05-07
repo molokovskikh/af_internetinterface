@@ -54,7 +54,7 @@ namespace InternetInterface.Models
 			PhysicalClient = client;
 			PhysicalClient.Client = this;
 			Type = ClientType.Phisical;
-			SendSmsNotifocation = true;
+			SendSmsNotification = true;
 			FreeBlockDays = 28;
 			YearCycleDate = DateTime.Now;
 			RegDate = DateTime.Now;
@@ -171,8 +171,8 @@ namespace InternetInterface.Models
 		[Property("FirstLunch")]
 		public virtual bool FirstLaunch { get; set; }
 
-		[Property, Auditable("Смс рассылка")]
-		public virtual bool SendSmsNotifocation { get; set; }
+		[Property("SendSmsNotifocation"), Auditable("Смс рассылка")]
+		public virtual bool SendSmsNotification { get; set; }
 
 		[OneToOne(PropertyRef = "Client")]
 		public virtual Request Request { get; set; }
@@ -1006,6 +1006,20 @@ where CE.Client = {0}", Id))
 				StartNoBlock = null;
 				Status = Disabled ? Status.Find((uint)StatusType.NoWorked) : Status.Find((uint)StatusType.Worked);
 			}
+		}
+
+		public virtual bool ShouldNotifyOnLowBalance()
+		{
+			return !Disabled && Balance > 0 && SendSmsNotification && GetPossibleBlockDate() <= SystemTime.Today().AddDays(2);
+		}
+
+		public virtual DateTime GetPossibleBlockDate()
+		{
+			var sum = GetSumForRegularWriteOff();
+			if (sum == 0)
+				return DateTime.MaxValue;
+			// + 1 тк предпологается что текущий уже оплачен
+			return SystemTime.Today().AddDays((int)(Balance / sum) + 1).Date;
 		}
 	}
 

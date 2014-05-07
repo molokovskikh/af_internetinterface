@@ -227,11 +227,11 @@ namespace InforoomInternet.Controllers
 			}
 		}
 
-		public void SmsNotification(string telephoneInput, bool SendSmsNotifocation)
+		public void SmsNotification(string telephoneInput, bool sendSmsNotification)
 		{
 			var client = LoadClient();
 			PropertyBag["telephoneNum"] = string.Empty;
-			PropertyBag["SendSmsNotifocation"] = client.SendSmsNotifocation;
+			PropertyBag["sendSmsNotification"] = client.SendSmsNotification;
 			if (client.Contacts != null) {
 				var smsNotContact = client.Contacts.FirstOrDefault(c => c.Type == ContactType.SmsSending);
 				if (smsNotContact != null)
@@ -253,18 +253,14 @@ namespace InforoomInternet.Controllers
 					}
 				}
 				PropertyBag["telephoneNum"] = telephoneInput;
-				if (client.SendSmsNotifocation != SendSmsNotifocation) {
-					var message = SendSmsNotifocation ? "Пользователь подписался на sms рассылку" : "Пользователь отписался от sms рассылки";
+				if (client.SendSmsNotification != sendSmsNotification) {
+					var message = sendSmsNotification ? "Пользователь подписался на sms рассылку" : "Пользователь отписался от sms рассылки";
 					DbSession.Save(new Appeals(message, client, AppealType.System));
-					client.SendSmsNotifocation = SendSmsNotifocation;
+					client.SendSmsNotification = sendSmsNotification;
 				}
-				PropertyBag["SendSmsNotifocation"] = SendSmsNotifocation;
+				PropertyBag["sendSmsNotification"] = sendSmsNotification;
 				DbSession.Save(client);
 			}
-		}
-
-		public void BonusProgram()
-		{
 		}
 
 		private string TransformTelNum(string num)
@@ -274,9 +270,7 @@ namespace InforoomInternet.Controllers
 
 		private Client LoadClient()
 		{
-			var clientId = Convert.ToUInt32(Session["LoginClient"]);
-			var client = DbSession.Load<Client>(clientId);
-			return client;
+			return DbSession.Load<Client>(Convert.ToUInt32(Session["LoginClient"]));
 		}
 	}
 }

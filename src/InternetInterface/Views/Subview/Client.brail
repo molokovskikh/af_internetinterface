@@ -297,7 +297,7 @@ $(function () {
 		</tr>
 		<tr>
 			<td>Отправлять СМС уведомления </td>
-			<td colspan=2>${FormHelper.CheckboxField("_client.SendSmsNotifocation")}</td>
+			<td colspan=2>${FormHelper.CheckboxField("_client.SendSmsNotification")}</td>
 		</tr>
 		<tr>
 			<td>Задача в Redmine для клиента</td>

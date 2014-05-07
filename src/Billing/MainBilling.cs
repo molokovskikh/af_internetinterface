@@ -394,27 +394,23 @@ set s.LastStartFail = true;")
 					writeOff.Save();
 				}
 
-
 				phisicalClient.Update();
 
-				var bufBal = phisicalClient.Balance;
 				//Отсылаем смс если клиенту осталось работать 2 дня или меньше
-				if (client.SendSmsNotifocation && (bufBal - client.GetSumForRegularWriteOff() * 2 < 0)) {
-					if (phisicalClient.Balance > 0) {
-						var message = string.Format("Ваш баланс {0} руб. {1} доступ в сеть будет заблокирован.",
-							client.PhysicalClient.Balance.ToString("0.00"),
-							bufBal - client.GetSumForRegularWriteOff() < 0 ? "Завтра" : "Послезавтра");
-						var now = SystemTime.Now();
-						DateTime shouldBeSendDate;
-						if (now.Hour < 22)
-							shouldBeSendDate = new DateTime(now.Year, now.Month, now.Day, 12, 0, 0);
-						else {
-							shouldBeSendDate = SystemTime.Now().Date.AddDays(1).AddHours(12);
-						}
-						var smsMessage = new SmsMessage(client, message, shouldBeSendDate);
-						smsMessage.Save();
-						Messages.Add(smsMessage);
+				if (client.ShouldNotifyOnLowBalance()) {
+					var message = string.Format("Ваш баланс {0:C} {1:d} доступ в сеть будет заблокирован.",
+						client.PhysicalClient.Balance,
+						client.GetPossibleBlockDate());
+					var now = SystemTime.Now();
+					DateTime shouldBeSendDate;
+					if (now.Hour < 22)
+						shouldBeSendDate = new DateTime(now.Year, now.Month, now.Day, 12, 0, 0);
+					else {
+						shouldBeSendDate = SystemTime.Now().Date.AddDays(1).AddHours(12);
 					}
+					var smsMessage = new SmsMessage(client, message, shouldBeSendDate);
+					smsMessage.Save();
+					Messages.Add(smsMessage);
 				}
 				if (client.NeedShowWarning(client.GetSumForRegularWriteOff())) {
 					client.ShowBalanceWarningPage = true;

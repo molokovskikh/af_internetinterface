@@ -44,7 +44,7 @@
 			<tr>
 				<td>
 					<label for="sendSmsNot">Отправлять уведомления</label>
-					<input type="checkbox" id="sendSmsNot" name="SendSmsNotifocation" ${"checked" if SendSmsNotifocation}/>
+					<input type="checkbox" id="sendSmsNot" name="sendSmsNotification" ${"checked" if sendSmsNotification}/>
 				</td>
 			</tr>
 			<tr>

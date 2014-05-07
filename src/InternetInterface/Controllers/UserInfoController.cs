@@ -802,7 +802,7 @@ where r.`Label`= :LabelIndex;")
 				PropertyBag["EConnect"] = 0;
 
 			PropertyBag["EditConnectInfoFlag"] = filter.EditConnectInfoFlag;
-			PropertyBag["SendSmsNotifocation"] = client.SendSmsNotifocation;
+			PropertyBag["sendSmsNotification"] = client.SendSmsNotification;
 			PropertyBag["isService"] = false;
 			PropertyBag["RegionList"] = DbSession.Query<RegionHouse>().ToList();
 			ConnectPropertyBag(filter.ClientCode);

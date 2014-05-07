@@ -32,6 +32,12 @@ namespace InternetInterface.Test.Unit
 			client.PhysicalClient.Tariff = new Tariff("Тестовый тариф", 100);
 		}
 
+		[TearDown]
+		public void TearDown()
+		{
+			SystemTime.Reset();
+		}
+
 		[Test]
 		public void Auto_unblock_only_if_service_not_forbide_auto_unblocking()
 		{
@@ -82,6 +88,25 @@ namespace InternetInterface.Test.Unit
 
 			client.FindActiveService<PinnedIp>().IsFree = true;
 			Assert.AreEqual(100, client.GetPrice());
+		}
+
+		[Test]
+		public void Calculate_block_date()
+		{
+			SystemTime.Now = () => new DateTime(2014, 5, 7, 9, 56, 13);
+			client.RatedPeriodDate = DateTime.Now.AddMonths(-1);
+			client.BeginWork = DateTime.Now.AddDays(-8);
+			client.ClientServices.Each(s => s.TryActivate());
+
+			client.PhysicalClient.Balance = 50;
+			Assert.IsFalse(client.ShouldNotifyOnLowBalance());
+
+			client.PhysicalClient.Balance = 6;
+			Assert.IsTrue(client.ShouldNotifyOnLowBalance());
+			Assert.AreEqual(new DateTime(2014, 5, 9), client.GetPossibleBlockDate());
+
+			client.PhysicalClient.Balance = 1;
+			Assert.AreEqual(new DateTime(2014, 5, 8), client.GetPossibleBlockDate());
 		}
 	}
 }

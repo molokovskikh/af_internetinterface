@@ -165,7 +165,7 @@
 		<% end %>
 		<tr>
 			<td><span class="description">Смс рассылка</span>
-			<% if (_client.SendSmsNotifocation): %>
+			<% if (_client.SendSmsNotification): %>
 				Да
 				<% else: %>
 				Нет
