@@ -119,11 +119,11 @@ namespace Billing.Test.Integration
 			billing.Compute();
 			messages.AddRange(billing.Messages);
 			Assert.AreEqual(messages.Count, 1);
-			Assert.That(messages[0].Text, Is.StringContaining("Послезавтра"));
+			Assert.That(messages[0].Text, Is.StringContaining(DateTime.Now.Date.AddDays(2).ToString("d")));
 			billing.Compute();
 			messages.AddRange(billing.Messages);
 			Assert.AreEqual(messages.Count, 2);
-			Assert.That(messages[1].Text, Is.StringContaining("Завтра"));
+			Assert.That(messages[1].Text, Is.StringContaining(DateTime.Now.Date.AddDays(1).ToString("d")));
 			billing.Compute();
 			messages.AddRange(billing.Messages);
 			Assert.AreEqual(messages.Count, 2);
