@@ -14,3 +14,4 @@ UpgradeLog.htm
 _UpgradeReport_Files/
 src/*.properties
 src/*/testData/*
+*.gen.*

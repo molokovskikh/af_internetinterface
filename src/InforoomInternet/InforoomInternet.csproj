@@ -1,25 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="msbuild.gen.props" Condition="Exists('msbuild.gen.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
+    <FileUpgradeFlags></FileUpgradeFlags>
+    <UpgradeBackupLocation></UpgradeBackupLocation>
     <OldToolsVersion>4.0</OldToolsVersion>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
   </PropertyGroup>
-  <Import Project="..\ProjectLib.properties" Condition="Exists('..\ProjectLib.properties')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>
-    </ProductVersion>
+    <ProductVersion></ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{78BE8691-9A92-409B-89CE-D5172D5F16CD}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
@@ -81,8 +78,7 @@
     <Reference Include="Microsoft.CSharp">
       <Private>True</Private>
     </Reference>
-    <Reference Include="mysql.data">
-    </Reference>
+    <Reference Include="mysql.data"></Reference>
     <Reference Include="NHibernate">
       <HintPath>..\..\lib\NHibernate.dll</HintPath>
     </Reference>
@@ -236,8 +232,7 @@
     <None Include="Views\Main\Feedback.brail" />
     <None Include="Views\Main\MessageSended.brail" />
     <None Include="Views\Main\About.brail" />
-    <Content Include="Web.config">
-    </Content>
+    <Content Include="Web.config"></Content>
     <None Include="Views\PrivateOffice\AboutFriendAction.brail" />
     <None Include="Views\PrivateOffice\AboutSale.brail" />
     <None Include="Views\PrivateOffice\BalanceInfo.brail" />
@@ -279,8 +274,7 @@
     <None Include="Views\Subviews\WarnLawyer.brail" />
     <None Include="Views\Main\Zayavka.brail" />
     <None Include="Views\Main\Index.brail" />
-    <Content Include="Web.release.config">
-    </Content>
+    <Content Include="Web.release.config"></Content>
     <None Include="Views\PrivateOffice\IndexOffice.brail">
       <SubType>Designer</SubType>
     </None>
@@ -326,12 +320,10 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>64328</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>
-          </IISUrl>
+          <IISUrl></IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
-          <CustomServerUrl>
-          </CustomServerUrl>
+          <CustomServerUrl></CustomServerUrl>
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
