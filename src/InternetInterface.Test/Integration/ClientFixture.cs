@@ -68,16 +68,7 @@ namespace InternetInterface.Test.Integration
 		[Test(Description = "После деактивации услуги добровольная блокировка у клиента отрицательный баланс мы должны сбросить скидку тк он ушел в минус")]
 		public void Reset_sale_on_disable_in_voluntary_block()
 		{
-			var settings = session.Query<SaleSettings>().FirstOrDefault();
-			if (settings == null) {
-				settings = new SaleSettings {
-					MinSale = 3,
-					MaxSale = 15,
-					PeriodCount = 3,
-					SaleStep = 1
-				};
-				session.Save(settings);
-			}
+			var settings = session.Query<SaleSettings>().First();
 			var client = ClientHelper.Client();
 			client.RatedPeriodDate = DateTime.Now;
 			client.BeginWork = DateTime.Now.AddYears(-2);

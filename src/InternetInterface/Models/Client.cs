@@ -997,10 +997,9 @@ where CE.Client = {0}", Id))
 		{
 			var expectedDisabled = CanDisabled();
 			if (expectedDisabled != Disabled) {
-				Disabled = expectedDisabled;
-				AutoUnblocked = true;
-				StartNoBlock = null;
-				Status = Disabled ? Status.Find((uint)StatusType.NoWorked) : Status.Find((uint)StatusType.Worked);
+				SetStatus(expectedDisabled
+					? Status.Find((uint)StatusType.NoWorked)
+					: Status.Find((uint)StatusType.Worked));
 			}
 		}
 
@@ -1022,13 +1021,14 @@ where CE.Client = {0}", Id))
 		{
 			if (status.Type == StatusType.VoluntaryBlocking) {
 				Disabled = true;
-				AutoUnblocked = false;
 				DebtDays = 0;
+				AutoUnblocked = false;
 			}
 			else if (status.Type == StatusType.NoWorked) {
 				Disabled = true;
 				Sale = 0;
 				StartNoBlock = null;
+				AutoUnblocked = true;
 			}
 			else if (status.Type == StatusType.Worked) {
 				Disabled = false;

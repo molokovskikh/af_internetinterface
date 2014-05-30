@@ -82,9 +82,10 @@ namespace InternetInterface.Services
 		{
 			var client = assignedService.Client;
 			client.UpdateStatus();
-			client.Update();
 			assignedService.IsActivated = false;
 			assignedService.IsDeactivated = true;
+
+			ActiveRecordMediator.Update(client);
 			ActiveRecordMediator.Update(assignedService);
 		}
 

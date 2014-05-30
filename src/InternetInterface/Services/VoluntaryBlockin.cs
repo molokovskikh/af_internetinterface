@@ -98,9 +98,11 @@ namespace InternetInterface.Services
 		{
 			var client = assignedService.Client;
 			client.DebtDays = 0;
-			client.RatedPeriodDate = DateTime.Now;
 			client.ShowBalanceWarningPage = client.PhysicalClient.Balance < 0;
-			client.SetStatus(client.Balance > 0 ? Status.Find((uint)StatusType.Worked) : Status.Find((uint)StatusType.NoWorked));
+			client.SetStatus(client.Balance > 0
+				? Status.Find((uint)StatusType.Worked)
+				: Status.Find((uint)StatusType.NoWorked));
+			client.RatedPeriodDate = DateTime.Now;
 
 			if (!client.PaidDay && assignedService.IsActivated) {
 				assignedService.IsActivated = false;

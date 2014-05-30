@@ -721,7 +721,7 @@ namespace Billing.Test.Integration
 			using (new SessionScope()) {
 				client_simple.Refresh();
 				client_Post.Refresh();
-				Assert.IsTrue(client_Post.Disabled);
+				Assert.IsTrue(client_Post.Disabled, client_Post.Id.ToString());
 				Assert.IsFalse(client_simple.Disabled);
 
 				client_Post.Refresh();
