@@ -428,10 +428,7 @@ set s.LastStartFail = true;")
 				}
 			}
 			if (client.CanBlock()) {
-				client.Disabled = true;
-				client.Sale = 0;
-				client.StartNoBlock = null;
-				client.Status = Status.Find((uint)StatusType.NoWorked);
+				client.SetStatus(Status.Find((uint)StatusType.NoWorked));
 				if (client.IsChanged(c => c.Disabled))
 					client.CreareAppeal("Клиент был заблокирован", AppealType.Statistic);
 			}

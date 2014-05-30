@@ -751,11 +751,7 @@ where CE.Client = {0}", Id))
 
 		public virtual void Enable()
 		{
-			Status = Status.Find((uint)StatusType.Worked);
-			RatedPeriodDate = null;
-			DebtDays = 0;
-			ShowBalanceWarningPage = false;
-			Disabled = false;
+			SetStatus(Status.Find((uint)StatusType.Worked));
 		}
 
 		public virtual decimal GetPriceIgnoreDisabled()
@@ -1020,6 +1016,27 @@ where CE.Client = {0}", Id))
 				return DateTime.MaxValue;
 			// + 1 тк предпологается что текущий уже оплачен
 			return SystemTime.Today().AddDays((int)(Balance / sum) + 1).Date;
+		}
+
+		public virtual void SetStatus(Status status)
+		{
+			if (status.Type == StatusType.VoluntaryBlocking) {
+				Disabled = true;
+				AutoUnblocked = false;
+				DebtDays = 0;
+			}
+			else if (status.Type == StatusType.NoWorked) {
+				Disabled = true;
+				Sale = 0;
+				StartNoBlock = null;
+			}
+			else if (status.Type == StatusType.Worked) {
+				Disabled = false;
+				RatedPeriodDate = null;
+				DebtDays = 0;
+				ShowBalanceWarningPage = false;
+			}
+			Status = status;
 		}
 	}
 

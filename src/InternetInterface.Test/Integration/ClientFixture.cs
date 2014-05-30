@@ -6,6 +6,7 @@ using Common.Tools;
 using InternetInterface.Models;
 using InternetInterface.Services;
 using InternetInterface.Test.Helpers;
+using NHibernate.Linq;
 using NUnit.Framework;
 using Test.Support;
 
@@ -62,6 +63,45 @@ namespace InternetInterface.Test.Integration
 
 			Assert.IsFalse(client.CanUseDebtWork());
 			Assert.Throws<ServiceActivationException>(() => client.Activate(new ClientService(client, Service.Type<DebtWork>())));
+		}
+
+		[Test(Description = "После деактивации услуги добровольная блокировка у клиента отрицательный баланс мы должны сбросить скидку тк он ушел в минус")]
+		public void Reset_sale_on_disable_in_voluntary_block()
+		{
+			var settings = session.Query<SaleSettings>().FirstOrDefault();
+			if (settings == null) {
+				settings = new SaleSettings {
+					MinSale = 3,
+					MaxSale = 15,
+					PeriodCount = 3,
+					SaleStep = 1
+				};
+				session.Save(settings);
+			}
+			var client = ClientHelper.Client();
+			client.RatedPeriodDate = DateTime.Now;
+			client.BeginWork = DateTime.Now.AddYears(-2);
+			client.StartNoBlock = DateTime.Now.AddYears(-2);
+			client.Sale = settings.MaxSale;
+			client.PhysicalClient.Balance = 0;
+			client.PhysicalClient.MoneyBalance = 0;
+			client.FreeBlockDays = 0;
+			session.Save(client);
+			var clientService = new ClientService(client, session.Query<VoluntaryBlockin>().First()) {
+				BeginWorkDate = DateTime.Today,
+				EndWorkDate = DateTime.Today.AddDays(1)
+			};
+			client.Activate(clientService);
+			client.WriteOff(client.GetSumForRegularWriteOff(), false);
+			Assert.That(client.Balance, Is.LessThan(0));
+			SystemTime.Now = () => DateTime.Now.AddDays(1);
+			client.ClientServices.ToArray().Each(c => c.TryDeactivate());
+			Assert.IsFalse(clientService.IsActivated);
+
+			Assert.IsTrue(client.Disabled);
+			Assert.AreEqual(0, client.Sale);
+			Assert.IsNull(client.StartNoBlock);
+			Assert.AreEqual(StatusType.NoWorked, client.Status.Type);
 		}
 	}
 }

@@ -73,15 +73,11 @@ namespace InternetInterface.Services
 					ActiveRecordMediator.Save(writeOff);
 				}
 
-				client.Disabled = true;
-				client.AutoUnblocked = false;
-				client.DebtDays = 0;
-				client.Status = Status.Find((uint)StatusType.VoluntaryBlocking);
+				client.SetStatus(Status.Find((uint)StatusType.VoluntaryBlocking));
 				client.Update();
 
 				assignedService.IsActivated = true;
-				var evd = assignedService.EndWorkDate.Value;
-				assignedService.EndWorkDate = new DateTime(evd.Year, evd.Month, evd.Day);
+				assignedService.EndWorkDate = assignedService.EndWorkDate.Value.Date;
 				ActiveRecordMediator.Save(assignedService);
 
 				if (client.FreeBlockDays <= 0) {
@@ -103,14 +99,8 @@ namespace InternetInterface.Services
 			var client = assignedService.Client;
 			client.DebtDays = 0;
 			client.RatedPeriodDate = DateTime.Now;
-			client.Disabled = client.PhysicalClient.Balance < 0;
 			client.ShowBalanceWarningPage = client.PhysicalClient.Balance < 0;
-			client.AutoUnblocked = true;
-
-			if (assignedService.Client.PhysicalClient.Balance > 0) {
-				client.Disabled = false;
-				client.Status = Status.Find((uint)StatusType.Worked);
-			}
+			client.SetStatus(client.Balance > 0 ? Status.Find((uint)StatusType.Worked) : Status.Find((uint)StatusType.NoWorked));
 
 			if (!client.PaidDay && assignedService.IsActivated) {
 				assignedService.IsActivated = false;
