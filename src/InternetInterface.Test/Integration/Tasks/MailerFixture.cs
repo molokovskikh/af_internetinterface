@@ -6,6 +6,7 @@ using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Common.Tools;
 using Common.Web.Ui.ActiveRecordExtentions;
+using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Background;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
@@ -36,11 +37,9 @@ namespace InternetInterface.Test.Integration.Tasks
 					PhoneNumber = "123456789"
 				}
 			};
-			foreach (var smsMessage in messages) {
-				smsMessage.Save();
-			}
-			var sededMessages = new SendSmsNotification(session).SendSms();
-			Assert.That(sededMessages.Count, Is.EqualTo(2));
+			session.SaveMany(messages.ToArray());
+			var sent = new SendSmsNotification(session).SendMessages();
+			Assert.That(sent.Count, Is.EqualTo(2));
 		}
 
 		[Test]

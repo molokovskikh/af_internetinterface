@@ -23,24 +23,18 @@ namespace InternetInterface.Background
 
 		protected override void Process()
 		{
-			var thisDateMax = Session.Query<InternetSettings>().First();
-			var now = SystemTime.Now();
-			if ((thisDateMax.NextSmsSendDate - now).TotalMinutes <= 0) {
-				SendSms();
-				if (now.Hour < 12) {
-					thisDateMax.NextSmsSendDate = new DateTime(now.Year, now.Month, now.Day, 12, 0, 0);
-					Session.Save(thisDateMax);
-				}
-			}
+			SendMessages();
 		}
 
-		public IList<SmsMessage> SendSms()
+		public List<SmsMessage> SendMessages()
 		{
-			var messages = Session.Query<SmsMessage>().Where(m => !m.IsSended && m.PhoneNumber != null).ToList();
-			new SmsHelper().SendMessages(messages);
-			var thisDateMax = Session.Query<InternetSettings>().First();
-			thisDateMax.NextSmsSendDate = SystemTime.Now().AddDays(1).Date.AddHours(12);
-			Session.Update(thisDateMax);
+			var messages = Session.Query<SmsMessage>().Where(m =>
+				!m.IsSended
+					&& m.PhoneNumber != null
+					&& m.ShouldBeSend == null || (m.ShouldBeSend > DateTime.Today && m.ShouldBeSend < DateTime.Today.AddDays(1)))
+				.ToList();
+			if (messages.Count > 0)
+				new SmsHelper().SendMessages(messages);
 			return messages;
 		}
 	}

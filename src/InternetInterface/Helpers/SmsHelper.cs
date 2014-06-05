@@ -186,26 +186,25 @@ namespace InternetInterface.Helpers
 						new XElement("text", "Уважаемый абонент, компания Инфорум предлагает передовые услуги в сфере телекоммуникаций (подробнее http://ivrn.net)")));
 
 				var dataElement = document.Element("data");
-				if (dataElement != null) {
-					if (groupedSms.Key != null)
-						dataElement.Add(new XElement("datetime", groupedSms.Key.Value.ToString("yyyy-MM-dd HH:mm:ss")));
-					var smsId = GenerateSMSID();
-					dataElement.Add(new XElement("SMSID", smsId));
+				//сервис не принимает sms с датой отправки в прошлом
+				if (groupedSms.Key != null && groupedSms.Key >= DateTime.Now)
+					dataElement.Add(new XElement("datetime", groupedSms.Key.Value.ToString("yyyy-MM-dd HH:mm:ss")));
+				var smsId = GenerateSMSID();
+				dataElement.Add(new XElement("SMSID", smsId));
 
-					foreach (var smsMessage in groupedSms) {
-						if (!string.IsNullOrEmpty(smsMessage.PhoneNumber)) {
-							dataElement.Add(new XElement("to", new XAttribute("number", smsMessage.PhoneNumber), smsMessage.Text));
-							smsMessage.SendToOperatorDate = DateTime.Now;
-							smsMessage.SMSID = smsId;
-							if (SaveSms)
-								smsMessage.Save();
-						}
-						else {
-							_log.Error(
-								string.Format(
-									"Не было отправлено сообщение для клиента {0} Из-за того, что не был найден номер для отправки. Текст: {1}",
-									smsMessage.Client != null ? smsMessage.Client.Id.ToString(CultureInfo.InvariantCulture) : "<Не удалось определить клиента>", smsMessage.Text));
-						}
+				foreach (var smsMessage in groupedSms) {
+					if (!string.IsNullOrEmpty(smsMessage.PhoneNumber)) {
+						dataElement.Add(new XElement("to", new XAttribute("number", smsMessage.PhoneNumber), smsMessage.Text));
+						smsMessage.SendToOperatorDate = DateTime.Now;
+						smsMessage.SMSID = smsId;
+						if (SaveSms)
+							smsMessage.Save();
+					}
+					else {
+						_log.Error(
+							string.Format(
+								"Не было отправлено сообщение для клиента {0} Из-за того, что не был найден номер для отправки. Текст: {1}",
+								smsMessage.Client != null ? smsMessage.Client.Id.ToString(CultureInfo.InvariantCulture) : "<Не удалось определить клиента>", smsMessage.Text));
 					}
 				}
 
