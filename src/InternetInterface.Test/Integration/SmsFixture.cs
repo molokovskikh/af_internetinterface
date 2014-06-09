@@ -5,6 +5,7 @@ using System.Xml.Linq;
 using Castle.ActiveRecord;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using NHibernate.Linq;
 using NUnit.Framework;
 using Test.Support;
 
@@ -55,13 +56,12 @@ namespace InternetInterface.Test.Integration
 		public void DeleteNoSendingTest()
 		{
 			var client = new Client();
-			client.Save();
-			session.Flush();
-			new SmsMessage(client, "test_message").Save();
-			session.Flush();
-			Assert.That(SmsMessage.Queryable.Count(m => m.Client == client), Is.GreaterThan(0));
+			session.Save(client);
+			session.Save(new SmsMessage(client, "473-2606000", "test_message"));
+
+			Assert.That(session.Query<SmsMessage>().Count(m => m.Client == client), Is.GreaterThan(0));
 			SmsHelper.DeleteNoSendingMessages(client);
-			Assert.That(SmsMessage.Queryable.Count(m => m.Client == client), Is.EqualTo(0));
+			Assert.That(session.Query<SmsMessage>().Count(m => m.Client == client), Is.EqualTo(0));
 		}
 
 		[Test]
@@ -94,9 +94,7 @@ namespace InternetInterface.Test.Integration
 				+ "</data>";
 			Helper = new FakeSmsHelper(XDocument.Parse(dada));
 			Helper.SaveSms = false;
-			var sms = new SmsMessage(new Client(), "test") {
-				PhoneNumber = "473-2606000"
-			};
+			var sms = new SmsMessage(new Client(), "473-2606000", "test");
 			Helper.SendMessage(sms);
 			Assert.IsTrue(sms.IsFaulted);
 		}

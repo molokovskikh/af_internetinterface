@@ -39,6 +39,13 @@ namespace InternetInterface.Models
 			ShouldBeSend = shouldBeSend ?? DateTime.Today.AddDays(1).Add(new TimeSpan(12, 00, 00));
 		}
 
+		public SmsMessage(Client client, string phone, string text)
+			: this(phone)
+		{
+			Client = client;
+			Text = text;
+		}
+
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
