@@ -408,9 +408,11 @@ set s.LastStartFail = true;")
 					else {
 						shouldBeSendDate = SystemTime.Now().Date.AddDays(1).AddHours(12);
 					}
-					var smsMessage = new SmsMessage(client, message, shouldBeSendDate);
-					smsMessage.Save();
-					Messages.Add(smsMessage);
+					var sms = SmsMessage.TryCreate(client, message, shouldBeSendDate);
+					if (sms != null) {
+						ActiveRecordMediator.Save(sms);
+						Messages.Add(sms);
+					}
 				}
 				if (client.NeedShowWarning(client.GetSumForRegularWriteOff())) {
 					client.ShowBalanceWarningPage = true;

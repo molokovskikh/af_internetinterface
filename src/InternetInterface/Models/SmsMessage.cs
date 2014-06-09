@@ -27,22 +27,16 @@ namespace InternetInterface.Models
 		}
 
 		public SmsMessage(Client client, string text, DateTime? shouldBeSend = null)
+			: this()
 		{
-			if (client.Contacts != null) {
-				var contact =
-					client.Contacts.FirstOrDefault(c => c.Type == ContactType.SmsSending && !string.IsNullOrEmpty(c.Text) && Regex.IsMatch(c.Text, @"^(9)\d{9}"));
-				PhoneNumber = contact != null ? "+7" + contact.Text : null;
-			}
+			var contact = client.Contacts
+				.FirstOrDefault(c => c.Type == ContactType.SmsSending && !string.IsNullOrEmpty(c.Text) && Regex.IsMatch(c.Text, @"^(9)\d{9}"));
+			if (contact == null)
+				throw new Exception(String.Format("Для клиента {0} не найдена контактная информация для отправки sms", client.Id));
+			PhoneNumber = "+7" + contact.Text;
 			Client = client;
-			CreateDate = DateTime.Now;
 			Text = text;
-			if (shouldBeSend == null) {
-				var dtnAd = DateTime.Now.AddDays(1);
-				ShouldBeSend = new DateTime(dtnAd.Year, dtnAd.Month, dtnAd.Day, 12, 00, 00);
-			}
-			else {
-				ShouldBeSend = shouldBeSend;
-			}
+			ShouldBeSend = shouldBeSend ?? DateTime.Today.AddDays(1).Add(new TimeSpan(12, 00, 00));
 		}
 
 		[PrimaryKey]
@@ -79,5 +73,14 @@ namespace InternetInterface.Models
 
 		[BelongsTo]
 		public virtual Partner Registrator { get; set; }
+
+		public static SmsMessage TryCreate(Client client, string text, DateTime? shouldBeSend)
+		{
+			var contact = client.Contacts
+				.FirstOrDefault(c => c.Type == ContactType.SmsSending && !string.IsNullOrEmpty(c.Text) && Regex.IsMatch(c.Text, @"^(9)\d{9}"));
+			if (contact == null)
+				return null;
+			return new SmsMessage(client, text, shouldBeSend);
+		}
 	}
 }
