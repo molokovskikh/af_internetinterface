@@ -19,3 +19,9 @@
 		}
 	});
 }
+
+$('button[data-reveal-id]').live('click', function (e) {
+	e.preventDefault();
+	var modalLocation = $(this).attr('data-reveal-id');
+	$('#' + modalLocation).reveal($(this).data());
+});

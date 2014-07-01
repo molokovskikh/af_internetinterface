@@ -3,13 +3,13 @@
 	${app.Asset("EditingConnect.js")}
 <%end%>
 <div id="deletePointDialog" class="reveal-modal">
-<form class="formConnect" method="post" action="${siteroot}/UserInfo/DeleteEndPoint">
-<input type="hidden" name="endPointForDelete" id="endPointForDelete"/>
-<p>Вы собираетесь удалить точку подключения, если клиент уже работает на этой точке, он  будет отключен ! </p>
-<p>Вы уверены, что хотите удалить данную точку подключения ?</p>
-<button type="submit"  class="editBut">Удалить</button>
-</form>
-<a class="close-reveal-modal">x</a>
+	<form class="formConnect" method="post" action="${siteroot}/UserInfo/DeleteEndPoint">
+		<input type="hidden" name="endPointForDelete" id="endPointForDelete"/>
+		<p>Вы собираетесь удалить точку подключения, если клиент уже работает на этой точке, он  будет отключен ! </p>
+		<p>Вы уверены, что хотите удалить данную точку подключения ?</p>
+		<button type="submit"  class="editBut">Удалить</button>
+	</form>
+	<a class="close-reveal-modal">x</a>
 </div>
 
 <div id="closeOrderDialog" class="reveal-modal">
@@ -26,32 +26,32 @@
 <div class="clearBoth;">
 <%if PartnerAccessSet.AccesPartner("DHCP"): %>
 
-	<%if not EditingConnect: %>
+	<% if not EditingConnect: %>
 
-	<table class="table" align="left">
+	<table class="table">
 	<thead>
 		<tr>
-		<th class="orderInfo">Информация о заказе (заказ № ${OrderInfo.Order.Number})
-		<%if PartnerAccessSet.AccesPartner("DHCP") and OrderInfo.Order.CanEdit(): %>
-			<form class="formConnect" method="post" action="${siteroot}/UserInfo/LoadEditConnectMudule" class="displayInline">
-			<input type="hidden" name="ClientID" value="${ClientCode}" />
-			<input type="hidden" name="EditConnectFlag" value="${OrderInfo.Order.Id}" />
-			<button type="submit" class="button save" id="EditButton${OrderInfo.Order.Id}">Редактировать</button>
-			</form>
-		 <%end %>
+		<th class="orderInfo">
+			Информация о заказе (заказ № ${OrderInfo.Order.Number})
+			<% if PartnerAccessSet.AccesPartner("DHCP") and OrderInfo.Order.CanEdit(): %>
+				<form class="formConnect displayInline" method="post" action="${siteroot}/UserInfo/LoadEditConnectMudule">
+					<input type="hidden" name="ClientID" value="${ClientCode}" />
+					<input type="hidden" name="EditConnectFlag" value="${OrderInfo.Order.Id}" />
+					<button type="submit" class="button save" id="EditButton${OrderInfo.Order.Id}">Редактировать</button>
+				</form>
+			<% end %>
 		</th>
-		<th class="closeOrder">
+		<th>
 			<% if OrderInfo.Order.OrderStatus != 2:%>
-			<button data-reveal-id="closeOrderDialog" class="button closeOrderControl save big-link" id="closeOrderButton${OrderInfo.Order.Id}">Закрыть</button>
-			<input type="hidden" value="${OrderInfo.Order.Id}" class="closeOrderControl"/>
-
-				<% else: %>
-					<% if OrderInfo.Order.EndPoint != null:%>
-			<a href="#" class="big-link" data-reveal-id="deletePointDialog" >
-				<input type="hidden" value="${OrderInfo.ClientConnectInfo.endpointId}" />
-			<img class="deletePointControl" src="../images/onebit_32.png" />
-			</a>
-						<% end %>
+				<button data-reveal-id="closeOrderDialog" class="button closeOrderControl save big-link" id="closeOrderButton${OrderInfo.Order.Id}">Закрыть</button>
+				<input type="hidden" value="${OrderInfo.Order.Id}" class="closeOrderControl"/>
+			<% else: %>
+			<% if OrderInfo.Order.EndPoint != null:%>
+				<a href="#" class="big-link" data-reveal-id="deletePointDialog" >
+					<input type="hidden" value="${OrderInfo.ClientConnectInfo.endpointId}" />
+					<img class="deletePointControl" src="../images/onebit_32.png" />
+				</a>
+			<% end %>
 			<% end %>
 		</th>
 		</tr>

@@ -194,7 +194,7 @@ namespace InternetInterface.Test.Functional
 			AssertText("заказ № 777");
 		}
 
-		[Test(Description = "Проверяет закрытие заказа"), Ignore("Non Clicable - наверное проблемы с версткой")]
+		[Test(Description = "Проверяет закрытие заказа")]
 		public void CloseOrderTest()
 		{
 			var order = new Order {
@@ -206,9 +206,10 @@ namespace InternetInterface.Test.Functional
 			AssertText("заказ № " + order.Number);
 			browser.Manage().Window.Maximize();
 			Css("#closeOrderButton" + order.Id).Click();
-			//WaitForText("Вы уверены");
-			Click("Закрыть");
-			session.Clear();
+			WaitForText("Вы уверены");
+			Click(Css("div#closeOrderDialog"), "Закрыть");
+
+			session.Refresh(order);
 			var savedOrder = session.QueryOver<Order>().Where(o => o.Client == laywerPerson).SingleOrDefault();
 			Assert.That(savedOrder.Disabled, Is.True);
 		}
