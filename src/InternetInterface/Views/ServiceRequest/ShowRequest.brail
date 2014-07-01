@@ -28,7 +28,7 @@ ${app.Asset("service-requests.js")}
 		<tbody>
 			<tr class="requestCutInfo">
 				<td><b>Адрес клиента</b></td>
-				<td>${request.Client.PhysicalClient.GetAdress()}</td>
+				<td>${request.Client.GetAdress()}</td>
 				<% endPoint = request.Client.FirstPoint() %>
 				<% if endPoint != null: %>
 					<td><b>Подключен</b></td>

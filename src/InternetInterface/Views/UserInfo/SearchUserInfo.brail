@@ -47,7 +47,7 @@
 			<td>
 				<a href="${Siteroot}/UserInfo/Leases?filter.ClientCode=${ClientCode}" class="button ok">Статистика работы</a>
 				<a class="big-link button ok" data-reveal-id="myModal_active" href="javascript:void(0)">Управление услугами</a>
-				<a id="createServiceLink" href="${Siteroot}/ServiceRequest/RegisterServiceRequest?ClientCode=${ClientCode}" class="button ok">Сервисная заявка</a>
+				${app.LinkTo("Сервисная заявка", @ServiceRequest, @RegisterServiceRequest, { @ClientCode: ClientCode, @attributes: {@class: "button ok"}})}
 			</td>
 		</tr>
 		<tr>

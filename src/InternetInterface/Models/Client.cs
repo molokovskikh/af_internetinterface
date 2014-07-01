@@ -322,9 +322,10 @@ namespace InternetInterface.Models
 
 		public virtual string GetAdress()
 		{
-			if (PhysicalClient != null) {
+			if (PhysicalClient != null)
 				return PhysicalClient.GetAdress();
-			}
+			if (LawyerPerson != null)
+				return LawyerPerson.ActualAdress;
 			return String.Empty;
 		}
 
@@ -332,6 +333,8 @@ namespace InternetInterface.Models
 		{
 			if (PhysicalClient != null)
 				return PhysicalClient.GetShortAdress();
+			if (LawyerPerson != null)
+				return LawyerPerson.ActualAdress;
 			return String.Empty;
 		}
 

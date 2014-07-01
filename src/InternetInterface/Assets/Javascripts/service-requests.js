@@ -3,26 +3,28 @@
 		$('#request_Contact').val($.trim(this.innerText));
 	});
 
-	var pending;
-	function update(date, performer) {
-		var url = "/ServiceRequest/Timetable?" + $.param({ date: date, id: performer });
-		if (pending)
-			pending.abort();
-		pending = $.ajax({
-			url: url,
-			success: function (data) {
-				$("#timetable").html(data);
-				$("#timetable").data("url", url);
-			}
-		}).always(function () {
-			pending = null;
-		});
-	}
+	if ($("#timetable").length) {
+		var pending;
+		function update(date, performer) {
+			var url = "/ServiceRequest/Timetable?" + $.param({ date: date, id: performer });
+			if (pending)
+				pending.abort();
+			pending = $.ajax({
+				url: url,
+				success: function (data) {
+					$("#timetable").html(data);
+					$("#timetable").data("url", url);
+				}
+			}).always(function () {
+				pending = null;
+			});
+		}
 
-	$("#request_PerformanceDate,#request_Performer_Id").change(function () {
-		update($("#request_PerformanceDate").val(), $("#request_Performer_Id").val());
-	});
-	$("#request_PerformanceDate").change();
+		$("#request_PerformanceDate,#request_Performer_Id").change(function () {
+			update($("#request_PerformanceDate").val(), $("#request_Performer_Id").val());
+		});
+		$("#request_PerformanceDate").change();
+	}
 
 	var checkFlag = false;
 	$('.validateFormService').validate({
