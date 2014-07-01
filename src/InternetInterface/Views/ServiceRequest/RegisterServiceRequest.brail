@@ -34,7 +34,7 @@ ${app.Asset("service-requests.js")}
 									<% for contact in request.Client.Contacts: %>
 									<tr>
 										<td>
-											<a href="#" class="contact_link"><b> ${contact.HumanableNumber} </b></a>
+											<a href="#" class="contact_link"><b>${contact.HumanableNumber}</b></a>
 										</td>
 										<td>
 											${contact.GetReadbleCategorie()}

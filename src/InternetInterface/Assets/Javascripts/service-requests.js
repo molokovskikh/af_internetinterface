@@ -1,6 +1,6 @@
 ﻿$(function () {
 	$('.contact_link').click(function () {
-		$('#request_Contact').val(this.innerText);
+		$('#request_Contact').val($.trim(this.innerText));
 	});
 
 	var pending;
