@@ -19,6 +19,7 @@ namespace InternetInterface
 	public class AppConfig
 	{
 		public string PrinterPath { get; set; }
+		public string IvrnRoot { get; set; }
 	}
 
 	public class Global : WebApplication

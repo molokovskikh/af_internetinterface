@@ -60,7 +60,7 @@ namespace InternetInterface.Controllers
 	[Helper(typeof(TextHelper))]
 	[Helper(typeof(BindingHelper))]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
-	public class UserInfoController : BaseController
+	public class UserInfoController : InternetInterfaceController
 	{
 		public void SearchUserInfo([DataBind("filter")] ClientFilter filter, [DataBind("userWO")] UserWriteOff writeOff)
 		{
@@ -588,7 +588,7 @@ where r.`Label`= :LabelIndex;")
 					Deleted = true
 				}.SaveAndFlush();
 			}
-			Flash["Message"] = Message.Error("Нельзя создать метку без имени");
+			Error("Нельзя создать метку без имени");
 			RedirectToAction("RequestView");
 		}
 
@@ -920,15 +920,15 @@ where r.`Label`= :LabelIndex;")
 						Virtual = virtualPayment,
 						Comment = CommentText
 					}.Save();
-					Flash["Message"] = Message.Notify("Платеж ожидает обработки");
+					Notify("Платеж ожидает обработки");
 					Flash["sleepButton"] = true;
 				}
 				else {
-					Flash["Message"] = Message.Error("Юридические лица не могут оплачивать наличностью");
+					Error("Юридические лица не могут оплачивать наличностью");
 				}
 			}
 			else {
-				Flash["Message"] = Message.Error("Введена неверная сумма, должно быть положительное число.");
+				Error("Введена неверная сумма, должно быть положительное число.");
 			}
 			RedirectToUrl(clientToch.Redirect());
 		}
@@ -941,7 +941,7 @@ where r.`Label`= :LabelIndex;")
 			BindObjectInstance(writeOff, "userWO");
 			if (!HasValidationError(writeOff)) {
 				DbSession.Save(writeOff);
-				Flash["Message"] = Message.Notify("Списание ожидает обработки");
+				Notify("Списание ожидает обработки");
 			}
 			else
 				Flash["userWO"] = writeOff;

@@ -4,11 +4,9 @@ using System.Threading;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Common.MySql;
-using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.MonoRailExtentions;
 using InternetInterface.Controllers.Filter;
-using InternetInterface.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Queries;
 using System.Linq;
@@ -19,28 +17,6 @@ using NHibernate.Linq;
 
 namespace InternetInterface.Controllers
 {
-	public class InternetInterfaceController : BaseController
-	{
-		protected void RedirectTo(Client client)
-		{
-			string uri;
-			if (client.GetClientType() == ClientType.Phisical) {
-				uri = "~/UserInfo/SearchUserInfo.rails?filter.ClientCode={0}";
-			}
-			else {
-				uri = "~/UserInfo/LawyerPersonInfo.rails?filter.ClientCode={0}";
-			}
-			RedirectToUrl(string.Format(uri, client.Id));
-		}
-
-		public SmsHelper SmsHelper = new SmsHelper();
-
-		protected Partner Partner
-		{
-			get { return InitializeContent.Partner; }
-		}
-	}
-
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	[Helper(typeof(PaginatorHelper))]
 	public class ServiceRequestController : InternetInterfaceController

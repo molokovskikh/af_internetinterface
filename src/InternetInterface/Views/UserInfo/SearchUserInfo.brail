@@ -26,7 +26,7 @@
 	}
 </script>
 <div id="myModal" class="reveal-modal">
-<a class="close-reveal-modal">x</a>
+	<a class="close-reveal-modal">x</a>
 </div>
 
 <div style="width:50%; float:left;">
@@ -35,46 +35,45 @@
 <div id="block-tables" class="block">
 <div class="content">
 <%if not Editing: %>
-<%if PartnerAccessSet.AccesPartner("SSI"): %>
-<table class="table" style="width:100%;">
-	<thead>
-		<tr>
-			<th colspan=4>Панель действий</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<td>
-				<a href="${Siteroot}/UserInfo/Leases?filter.ClientCode=${ClientCode}" class="button ok">Статистика работы</a>
-				<a class="big-link button ok" data-reveal-id="myModal_active" href="javascript:void(0)">Управление услугами</a>
-				${app.LinkTo("Сервисная заявка", @ServiceRequest, @RegisterServiceRequest, { @ClientCode: ClientCode, @attributes: {@class: "button ok"}})}
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<a href="${Siteroot}/Sms/SmsIndex?clientId=${ClientCode}" class="button ok">Отправить смс</a>
-				<a href="${Siteroot}/PrivateMessages/ForClient?clientId=${ClientCode}" class="button ok">Приватное сообщение</a>
-			</td>
-		</tr>
-<%if PartnerAccessSet.AccesPartner("SSI"): %>
-		<tr>
-			<td style="font-size:small;">
-				<form class="form login inlineStyle" method="post" action="${siteroot}/UserInfo/PassAndShowCard">
-					<input type="hidden" name="ClientID" value="${ClientCode}" />
-					<button type="submit" id="Button1" class="button ok">Изменить пароль и показать карту</button>
-				</form>
-			<%if _client.HaveRed(): %>
-			<button type=button class="button ok" onclick="GoTo('http://redmine.analit.net/issues/${_client.RedmineTask}');">Страница Redmine</button></td>
-			<%end %>
-		</tr>
-	</tbody>
-</table>
-<%end %>
-<form class="form login" method="post" action="${siteroot}/UserInfo/LoadEditMudule">
-<input type="hidden" name="ClientID" value="${ClientCode}" />
-<input type="hidden" name="EditFlag" value="${Editing}" />
-<input type="hidden" name="appealType" value="${appealType}" />
-<%end %>
+<% if PartnerAccessSet.AccesPartner("SSI"): %>
+	<table class="table" style="width:100%;">
+		<thead>
+			<tr>
+				<th colspan=4>Панель действий</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>
+					<a href="${Siteroot}/UserInfo/Leases?filter.ClientCode=${ClientCode}" class="button ok">Статистика работы</a>
+					<a class="big-link button ok" data-reveal-id="myModal_active" href="javascript:void(0)">Управление услугами</a>
+					${app.LinkTo("Сервисная заявка", @ServiceRequest, @RegisterServiceRequest, { @ClientCode: ClientCode, @attributes: {@class: "button ok"}})}
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<a href="${Siteroot}/Sms/SmsIndex?clientId=${ClientCode}" class="button ok">Отправить смс</a>
+					<a href="${Siteroot}/PrivateMessages/ForClient?clientId=${ClientCode}" class="button ok">Приватное сообщение</a>
+				</td>
+			</tr>
+			<tr>
+				<td style="font-size:small;">
+					<form class="form login inlineStyle" method="post" action="${siteroot}/UserInfo/PassAndShowCard">
+						<input type="hidden" name="ClientID" value="${ClientCode}" />
+						<button type="submit" id="Button1" class="button ok">Изменить пароль и показать карту</button>
+					</form>
+				<% if _client.HaveRed(): %>
+					<button type=button class="button ok" onclick="GoTo('http://redmine.analit.net/issues/${_client.RedmineTask}');">Страница Redmine</button></td>
+				<% end %>
+				<a href="${config.IvrnRoot}/Login/?impersonate=${ClientCode}&partner=true" class="button ok">Личный кабинет</a>
+			</tr>
+		</tbody>
+	</table>
+	<form class="form login" method="post" action="${siteroot}/UserInfo/LoadEditMudule">
+	<input type="hidden" name="ClientID" value="${ClientCode}" />
+	<input type="hidden" name="EditFlag" value="${Editing}" />
+	<input type="hidden" name="appealType" value="${appealType}" />
+<% end %>
 <table class="table" style="width: 100%;" align="left">
 	<thead>
 		<%if IsDefined("EditFlag"):

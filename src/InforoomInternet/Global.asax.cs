@@ -53,6 +53,10 @@ namespace InforoomInternet
 				RoutingModuleEx.Engine.Add(new PatternRoute("/Main/requisite")
 					.DefaultForController().Is("Content")
 					.DefaultForAction().Is("Реквизиты"));
+
+				RoutingModuleEx.Engine.Add(new PatternRoute("/Login/")
+					.DefaultForController().Is("Login")
+					.DefaultForAction().Is("LoginPage"));
 			}
 			catch (Exception ex) {
 				Log.Fatal("Ошибка при запуске страницы.", ex);

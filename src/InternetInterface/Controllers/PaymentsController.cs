@@ -157,7 +157,7 @@ namespace InternetInterface.Controllers
 		{
 			var payments = TempPayments();
 			if (payments == null) {
-				Flash["Message"] = Message.Error("Время сессии истекло. Загрузите выписку повторно.");
+				Error("Время сессии истекло. Загрузите выписку повторно.");
 				RedirectToReferrer();
 				return;
 			}
@@ -243,7 +243,7 @@ namespace InternetInterface.Controllers
 				BindObjectInstance(payment, "payment", AutoLoadBehavior.NullIfInvalidKey);
 				if (IsValid(payment)) {
 					payment.UpdateInn();
-					Flash["Message"] = Message.Notify("Сохранено");
+					Notify("Сохранено");
 					RedirectToAction("ProcessPayments");
 					return;
 				}
@@ -349,7 +349,7 @@ namespace InternetInterface.Controllers
 						}
 					}
 					DbSession.Save(payment);
-					Flash["Message"] = Message.Notify("Сохранено");
+					Notify("Сохранено");
 					RedirectToReferrer();
 					return;
 				}

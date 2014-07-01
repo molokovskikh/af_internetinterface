@@ -36,10 +36,10 @@ namespace InternetInterface.Controllers
 
 				new SmsHelper().SendMessage(message);
 
-				Flash["Message"] = Message.Notify("Сообщение передано для отправки");
+				Notify("Сообщение передано для отправки");
 			}
 			else {
-				Flash["Message"] = Message.Error("Введите текст сообщения");
+				Error("Введите текст сообщения");
 			}
 			RedirectToReferrer();
 		}

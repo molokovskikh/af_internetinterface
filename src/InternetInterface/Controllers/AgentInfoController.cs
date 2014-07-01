@@ -75,7 +75,7 @@ namespace InternetInterface.Controllers
 			foreach (var agentTariff in tariffs) {
 				DbSession.Save(agentTariff);
 			}
-			Flash["Message"] = Message.Notify("Сохранено");
+			Notify("Сохранено");
 			RedirectToReferrer();
 		}
 	}
