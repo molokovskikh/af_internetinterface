@@ -79,8 +79,10 @@ namespace InternetInterface.Queries
 					.ToList().Select(i => new SessionResult(i)).ToList();
 			}
 			result.AddRange(appeal);
-			return result.OrderBy(r => r.Date).Skip(PageSize * CurrentPage)
-				.Take(getCount).ToList();
+			return result.OrderByDescending(r => r.Date)
+				.Skip(PageSize * CurrentPage)
+				.Take(getCount)
+				.ToList();
 		}
 	}
 }

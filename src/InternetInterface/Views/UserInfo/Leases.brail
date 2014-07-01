@@ -1,6 +1,6 @@
 ﻿<% import System.Linq.Enumerable from System.Core %>
 <div class="centred1000px">
-	<form method=get action="${Siteroot}/UserInfo/Leases">
+	<form method="get" action="${Siteroot}/UserInfo/Leases">
 		<table class="table">
 			<thead>
 				<tr>
