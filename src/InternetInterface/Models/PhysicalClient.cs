@@ -179,6 +179,13 @@ namespace InternetInterface.Models
 			}
 		}
 
+		public virtual string GetFullAddress()
+		{
+			return String.Format("улица {0} дом {1}{2} квартира {3} подъезд {4} этаж {5}",
+				Street, House, String.IsNullOrEmpty(CaseHouse) ? "" : " корпус " + CaseHouse,
+				Apartment, Entrance, Floor);
+		}
+
 		public virtual string GetAdress()
 		{
 			return String.Format("{0} Подъезд {1} Этаж {2}",

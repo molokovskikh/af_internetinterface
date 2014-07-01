@@ -106,20 +106,25 @@
 			<td><span class="description">Город: </span> ${Client.City}</td>
 		</tr>
 		<tr>
-			<td><span class="description">Адрес подключения: </span>   ${Client.Street} ${Client.House}${Client.CaseHouse} ${Client.Apartment} Подъезд ${Client.Entrance} Этаж ${Client.Floor}</td>
+			<td>
+				<span class="description">Адрес подключения:</span>
+				${client.GetFullAddress()}
+			</td>
 		</tr>
 		<% end %>
 		<% if PartnerAccessSet.AccesPartner("VP"): %>
 		<tr>
-			<td>Паспортные данные: <br />
-												 <span class="description">Серия\Номер</span> ${Client.PassportSeries} \ ${Client.PassportNumber}<br />
-												 <span class="description">Кем выдан: </span> ${Client.WhoGivePassport}<br />
-												 <span class="description">Адрес регистрации:</span> ${Client.RegistrationAdress}<br />
-												 <% if client.PassportDate != null: %>
-												 <span class="description">Дата выдачи :</span> ${Client.PassportDate.ToShortDateString()}</td>
-												 <% else: %>
-													<span class="description">Дата выдачи :</span></td>
-												<% end %>
+			<td>
+				Паспортные данные: <br />
+				<span class="description">Серия\Номер</span> ${Client.PassportSeries} \ ${Client.PassportNumber}<br />
+				<span class="description">Кем выдан: </span> ${Client.WhoGivePassport}<br />
+				<span class="description">Адрес регистрации:</span> ${Client.RegistrationAdress}<br />
+				<% if client.PassportDate != null: %>
+					<span class="description">Дата выдачи :</span> ${Client.PassportDate.ToShortDateString()}
+					<% else: %>
+					<span class="description">Дата выдачи :</span>
+				<% end %>
+			</td>
 		</tr>
 		<% end %>
 		<% if PartnerAccessSet.AccesPartner("SSI"): %>
@@ -133,7 +138,7 @@
 
 		<% if Client.Tariff != null and client.Client.Internet.ActivatedByUser: %>
 		<tr>
-			<td><span class="description">Тариф:</span><b>${Client.Tariff.Name} (${_client.GetPriceForTariff().ToString("C")})<b></td>
+			<td><span class="description">Тариф:</span><b> ${Client.Tariff.Name} (${_client.GetPriceForTariff().ToString("C")})<b></td>
 		</tr>
 		<% end %>
 		<% if client.Client.Iptv.Channels.Count: %>
@@ -163,12 +168,14 @@
 			</tr>
 		<% end %>
 		<tr>
-			<td><span class="description">Смс рассылка</span>
-			<% if (_client.SendSmsNotification): %>
-				Да
+			<td>
+				<span class="description">Смс рассылка: </span>
+				<% if (_client.SendSmsNotification): %>
+					Да
 				<% else: %>
-				Нет
-				<% end %></td>
+					Нет
+				<% end %>
+			</td>
 		</tr>
 		<tr>
 			<td>
