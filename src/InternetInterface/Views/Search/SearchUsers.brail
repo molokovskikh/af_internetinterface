@@ -22,7 +22,7 @@
 	}
 </style>
 
-<%if PartnerAccessSet.AccesPartner("GCI") or PartnerAccessSet.AccesPartner("SD"): %>
+<% if PartnerAccessSet.AccesPartner("GCI") or PartnerAccessSet.AccesPartner("SD"): %>
 <form id="SearchForm" name="SearchForm" action="${siteroot}/Search/SearchBy" 
 	style="width: 100%;">
 <center>
@@ -56,7 +56,7 @@
 				</td>
 			</tr>
 		</table>
-  <%if MapPartner.Role.ReductionName != "Diller": %>
+  <% if MapPartner.Role.ReductionName != "Diller": %>
 		<table style="width: 100%;"  class="table">
 			<tr><td style="text-align: left;">Искать по:</td><td></td><td></td></tr>
 			<tr>
@@ -90,7 +90,7 @@
 		</fieldset>
 
 		<a href="#" onclick="LoadExcel(this);">Выгрузить статистику по клиентам в Excel</a>
-	<%end %>
+	<% end %>
 	</td>
 	</tr>
 </table>
@@ -99,5 +99,5 @@
 </table>
 </center>
 </form>
-<%end %>
+<% end %>
 </div>

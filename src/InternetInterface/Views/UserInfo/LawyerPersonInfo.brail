@@ -4,7 +4,7 @@
 <div id="container">
 <div id="block-tables" class="block">
 <div class="content">
-<%if PartnerAccessSet.AccesPartner("SSI"): %>
+<% if PartnerAccessSet.AccesPartner("SSI"): %>
 <table class="table" style="width:100%;">
 	<thead>
 		<tr>
@@ -25,26 +25,26 @@
 		</tr>
 	</tbody>
 </table>
-<%end %>
-	<%if not Editing: %>
+<% end %>
+	<% if not Editing: %>
 		<form class="form login" method="post" action="${siteroot}/UserInfo/LoadEditMudule">
 	<input type="hidden" name="ClientID" value="${ClientCode}" />
 	<input type="hidden" name="EditFlag" value="${Editing}" />
 	<table class="table" style="width: 100%;" align="left">
 	<thead>
-			<%if IsDefined("EditFlag"):
+			<% if IsDefined("EditFlag"):
 			  output  WriteMessageNotice(EditFlag)
 		end %>
-				<%if IsDefined("Applying"):
+				<% if IsDefined("Applying"):
 			   output WriteMessageNotice(Applying)
 		end %>
-		<%if IsDefined("errorMessage"):
+		<% if IsDefined("errorMessage"):
 			  output  WriteMessageError(errorMessage)
-		   end%>
+		   end %>
 		<th>Информация по клиенту   ${Client.ShortName}  ${"(Он-Лайн)" if _client.OnLine()}
-		<%if PartnerAccessSet.AccesPartner("ECI"): %>
+		<% if PartnerAccessSet.AccesPartner("ECI"): %>
 			<button type="submit"  class="button save">Редактировать</button>
-		 <%end %>
+		 <% end %>
 		</th>
 	</thead>
 	<tbody>
@@ -52,7 +52,7 @@
 		<tr>
 			<td><span class="description">Номер лицевого счета: </span> ${_client.Id.ToString("00000")}</td>
 		</tr>
-	<%if PartnerAccessSet.AccesPartner("SSI"): %>
+	<% if PartnerAccessSet.AccesPartner("SSI"): %>
 		<tr>
 			<td><span class="description">Юридический адрес: </span> ${Client.LawyerAdress} </td>
 		</tr>
@@ -65,35 +65,35 @@
 		<tr>
 			<td><span class="description">Контактное лицо: </span> ${Client.ContactPerson}</td>
 		</tr>
-		<%end %>
-		<%if PartnerAccessSet.AccesPartner("SSI"): %>
+		<% end %>
+		<% if PartnerAccessSet.AccesPartner("SSI"): %>
 		<tr>
 			<td><span class="description">Дата регистрации:</span> ${_client.RegDate}</td>
 		</tr>
 
 
-		<%if _client.WhoRegistered != null: %>
+		<% if _client.WhoRegistered != null: %>
 			<tr>
 				<td><span class="description">Зарегистрировал:</span> ${_client.WhoRegistered.Name}</td>
 			</tr>
-		<%end %>
-		<%end %>
+		<% end %>
+		<% end %>
 		<tr>
 			<td><span class="description">Абонентская плата:</span> ${Client.Tariff.ToString("C")}</td>
 		</tr>
-		 <%if PartnerAccessSet.AccesPartner("SSI"): %>
+		 <% if PartnerAccessSet.AccesPartner("SSI"): %>
 		<tr>
 			<td><span class="description">Баланс:</span> ${Client.Balance}</td>
 		</tr>
 				<tr>
-		<%if _client.Status != null: %>
+		<% if _client.Status != null: %>
 			<tr>
 				<td><span class="description">Статус клиента:</span> ${_client.Status.Name}</td>
 			</tr>
-		<%end %>
+		<% end %>
 		</tr>
-		<%end %>
-		<%if PartnerAccessSet.AccesPartner("DHCP"): %>
+		<% end %>
+		<% if PartnerAccessSet.AccesPartner("DHCP"): %>
 		<tr>
 			<td>
 				<form method="post" action="${siteroot}/UserInfo/AddEndPoint">
@@ -102,23 +102,23 @@
 				</form>
 			</td>
 		</tr>
-<%end %>
+<% end %>
 	</tbody>
 </table>
-	<%else:%>
+	<% else: %>
 	<form class="form edit" method="post" action="${siteroot}/UserInfo/EditLawyerPerson">
 	<input type="hidden" name="ClientID" value="${ClientCode}" />
 	<input type=hidden name="appealType" value="${appealType}" />
-	<table class="table" style="width:100%; " border="0" id="EditTable">
-   <% OutputSubView("""\Subview\LegalPerson""") %>
-	   <tr>
-		<td colspan=4>
-			<label for="comment"><b>Введите Комментарий :</b></label>
-			<textarea id="comment" name="comment" rows="5" cols="80%"></textarea>
-		</td>
-	   </tr>
+	<table class="table" style="width:100%;" border="0" id="EditTable">
+		<% OutputSubView("/Subview/LegalPerson") %>
 		<tr>
-		<td >
+			<td colspan=4>
+				<label for="comment"><b>Введите Комментарий :</b></label>
+				<textarea id="comment" name="comment" rows="5" cols="80%"></textarea>
+			</td>
+		</tr>
+		<tr>
+		<td>
 			<div class="actions">
 				<button type="submit" id="SaveButton" class="button save">Сохранить</button>
 			</div>
@@ -126,7 +126,7 @@
 		</tr>
 	</table>
 	</form>
-	<%end %>
+	<% end %>
 <br />
 
 		<% for i,item in enumerate(ClientOrdersInfo):

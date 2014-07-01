@@ -28,7 +28,7 @@
 				<select name="brig">
 				<% for i, Brig in enumerate(Brigads):  %>
 					<option value=${Brig.Id} ${"selected" if (Brig.Id == Brigad.Id)}>${Brig.Name}</option>
-				<%end %>
+				<% end %>
 				</select>
 			</td>
 		</tr>
@@ -55,27 +55,27 @@
 	</thead>
 	<tbody>
 		<% for i, interval in enumerate(Intervals):  %>
-		<%client = Brigad.GetOneGraph(i, selectDate) %>
+		<% client = Brigad.GetOneGraph(i, selectDate) %>
 			<tr>
 				<td style="text-align:center;">
 					${interval}
 				</td>
 				<td style="text-align:center;">
-				<%if client != null: %>
+				<% if client != null: %>
 					<a href="../Search/Redirect?filter.ClientCode=${client.Id}">${client.Id.ToString("00000")}</a>
-				<%end %>
+				<% end %>
 				</td>
 				<td>
-				<%if client != null: %>
+				<% if client != null: %>
 				<% ConnectInfo = client.ConnectInfoFirst() %>
 					<b>${client.PhysicalClient.Street} ${client.PhysicalClient.House}${client.PhysicalClient.CaseHouse} кв ${client.PhysicalClient.Apartment} </b> Подъезд ${client.PhysicalClient.Entrance} Этаж ${client.PhysicalClient.Floor} <br />
-					<%if ConnectInfo != null: %>
+					<% if ConnectInfo != null: %>
 					Коммутатор: ${ConnectInfo.Swith_adr} (${ConnectInfo.swith_IP}) Порт: ${ConnectInfo.Port}
-					<%end %>
-				<%end %>
+					<% end %>
+				<% end %>
 				</td>
 			</tr>
-		<%end %>
+		<% end %>
 			<tr>
 				<td></td>
 				<td></td><td><button id="print_button" class="button" type=submit value="Назначить">Сформировать и распечатать заявки</button></td>

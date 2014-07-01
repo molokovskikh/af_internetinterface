@@ -24,7 +24,7 @@
 	}
 </script>
 
-<%if PartnerAccessSet.AccesPartner("DHCP"): %>
+<% if PartnerAccessSet.AccesPartner("DHCP"): %>
 	<table id="editConnectTable" class="table" style="width: 100%;">
 		<thead>
 			<th colspan = "3" >
@@ -113,7 +113,7 @@
 		<td>
 			<select name="ConnectInfo.Switch" id="SelectSwitches" style="width: 100%" >
 				<option id="Option2" value="0" > </option>
-				<%for j, Switch in enumerate(Switches): %>
+				<% for j, Switch in enumerate(Switches): %>
 				<option id="Option${j}" value="${Switch.Id}" ${"selected" if (Switch.Id == ConnectInfo.Switch)} >${Switch.Name}</option>
 				<% end %>
 			</select>
@@ -123,9 +123,9 @@
 	<tr>
 		<td>Порт</td>
 		<td><input type="text" id="Port"  name="ConnectInfo.Port"  value="${ConnectInfo.Port}" style="width: 50%; " /></td>
-		<td><%if IsDefined("PortError"):
+		<td><% if IsDefined("PortError"):
 			output  WriteMessageError(PortError)
-			end%>
+			end %>
 		</td>
 	</tr>
 	<tr>
@@ -133,7 +133,7 @@
 		<td colspan=2>
 			<select name="BrigadForConnect" id="BrigadForConnect" style="width: 100%" >
 			<option id="Option1" value="0" > </option>
-				<%for j, Brigad in enumerate(Brigads): %>
+				<% for j, Brigad in enumerate(Brigads): %>
 				<option id="OptionBrigad${j}" value="${Brigad.Id}" ${"selected" if (Brigad.Id == ChBrigad)} > ${Brigad.Name} </option>
 				<% end %>
 			</select>
@@ -141,5 +141,5 @@
 	</tr>
 	</tbody>
 </table>
-<%end %>
+<% end %>
 ${app.Asset("OrderService.js")}

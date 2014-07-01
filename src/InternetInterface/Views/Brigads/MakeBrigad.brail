@@ -20,12 +20,12 @@
 <div id="main">
 <div id="container">
     <div id="block-tables" class="block">
-                            <%if IsDefined("Editing"): %>
-                            <%if (not Editing): %>
+                            <% if IsDefined("Editing"): %>
+                            <% if (not Editing): %>
                   <form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Brigads/RegisterBrigad" >
-                            <%else: %>
+                            <% else: %>
                   <form class="form" id="RegistrationFormEdit" name="RegistrationForm" method="post" action="${siteroot}/Brigads/EditBrigad" >
-                              <%end %><%end %>
+                              <% end %><% end %>
         <input type="hidden" name="brigadid" value="${Brigad.Id}" />
         <table class="table" style="width:100%; " border="0" id="PartnerInfoTable">
             <thead>
@@ -33,20 +33,20 @@
             </thead>
             <tbody>
                 <tr>
-                    <td >Название</td>
+                    <td>Название</td>
                     <td colspan = 2> <input id="Name" type="text" value="${Brigad.Name}" name="Brigad.Name" /> </td>
                     <td> ${VB.GetBlock("Name")}</td>
                 </tr>
                 <tr>
                        <td colspan = 3>
                        <button type="submit" id="RegisterBrigadButton" class="button save" >
-                                                 <%if IsDefined("Editing"): %>
-                                                 <%if (not Editing): %>
+                                                 <% if IsDefined("Editing"): %>
+                                                 <% if (not Editing): %>
                                                  Зарегистрировать
-                                                 <%else: %>
+                                                 <% else: %>
                                                  Изменить
-                                                 <%end %>
-                                                 <%end %>
+                                                 <% end %>
+                                                 <% end %>
                        </button>
                        </td>
                        <td></td>

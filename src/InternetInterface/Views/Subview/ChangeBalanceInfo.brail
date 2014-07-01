@@ -1,4 +1,4 @@
-﻿<%if PartnerAccessSet.AccesPartner("CB"): %>
+﻿<% if PartnerAccessSet.AccesPartner("CB"): %>
 <div style="clear:both;">
 
 	<% if _client.LawyerPerson == null: %>
@@ -28,7 +28,7 @@
 			</table>
 		</form>
 	</div>
-	<%end %>
+	<% end %>
 </div>
 </div>
-<%end %>
+<% end %>

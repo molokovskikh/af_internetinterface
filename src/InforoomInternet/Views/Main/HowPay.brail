@@ -1,4 +1,4 @@
 ﻿${Content}
-<%if (AccessEditLink and ShowEditLink): %>
+<% if (AccessEditLink and ShowEditLink): %>
 <a href="${siteroot}/Main/HowPay?Edit=true"><b>Редактировать</b></a>
-<%end %>
+<% end %>

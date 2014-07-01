@@ -27,48 +27,48 @@
 			<td><span class="description">Тариф </span></td>
 			<td>${request.Tariff.Name}</td>
 		</tr>
-		<%if request.Label != null: %>
+		<% if request.Label != null: %>
 		<tr>
 			<td><span class="description">Метка назначана </span></td>
 			<td>${request.Label.Name}</td>
 		</tr>
-		<%end %>
+		<% end %>
 		<tr>
 			<td><span class="description">Дата последнего действия </span></td>
 			<td>${request.ActionDate}</td>
 		</tr>
-		<%if request.Operator != null: %>
+		<% if request.Operator != null: %>
 		<tr>
 			<td><span class="description">Совершена оператором </span></td>
 			<td>${request.Operator.Name}</td>
 		</tr>
-		<%end %>
+		<% end %>
 		<tr>
 			<td><span class="description">Дата регистрации заявки </span></td>
 			<td>${request.RegDate}</td>
 		</tr>
-		<%if request.Registrator != null: %>
+		<% if request.Registrator != null: %>
 		<tr>
 			<td><span class="description">Зарегистрировал: </span></td>
 			<td>${request.Registrator.Name}</td>
 		</tr>
-		<%end %>
+		<% end %>
 		<tr>
 			<td><span class="description">Заявка в архиве ? </span></td>
 			<td>
-				<%if request.Archive: %>
+				<% if request.Archive: %>
 					Да
-				<%else: %>
+				<% else: %>
 					Нет
-				<%end %>
+				<% end %>
 			</td>
 		</tr>
-		<%if request.Client != null: %>
+		<% if request.Client != null: %>
 		<tr>
 			<td><span class="description">Клиент зарегистрирован по заявке </span></td>
 			<td><a href="../Search/Redirect?filter.ClientCode=${request.Client.Id}">${request.Client.Name} </a></td>
 		</tr>
-		<%end %>
+		<% end %>
 		<tr>
 			<td>
 				<a href="../Register/RegisterClient?requestID=${request.Id}" class="button">Зарегистрировать</a>
@@ -116,13 +116,13 @@
 		<tr>
 			<td>${massage.Text}</td>
 			<td>${massage.Date}</td>
-			<%if massage.Registrator != null: %>
+			<% if massage.Registrator != null: %>
 			<td>${massage.Registrator.Name}</td>
-			<%else: %>
+			<% else: %>
 			<td></td>
-			<%end %>
+			<% end %>
 		</tr>
-	<%end %>
+	<% end %>
 	</tbody>
 </table>
 </div>

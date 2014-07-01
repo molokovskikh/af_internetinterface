@@ -1,8 +1,8 @@
-﻿<%if editing: %>
+﻿<% if editing: %>
 	<% OutputSubView("""\HouseMap\HouseEdit""") %>
-<%else: %>
+<% else: %>
 	<% OutputSubView("""\HouseMap\HouseInfo""", {
 					"House": sHouse,
 					"ApStatuses": sStatuses
 }) %>
-<%end %>
+<% end %>

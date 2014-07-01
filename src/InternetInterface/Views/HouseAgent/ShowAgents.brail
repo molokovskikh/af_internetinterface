@@ -36,6 +36,6 @@
 												 <span class="description">Дата выдачи :</span> ${agent.PassportDate.ToShortDateString()}</td>
             <td>${agent.RegistrationAdress}</td>
         </tr>
-    <%end %>
+    <% end %>
     </tbody>
 </table>

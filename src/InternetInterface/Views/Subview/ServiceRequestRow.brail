@@ -1,10 +1,10 @@
 ﻿<tr>
 	<td><a href="${Siteroot}/ServiceRequest/ShowRequest?Id=${request.Id}">${request.Id}</a></td>
-	<%if isService: %>
+	<% if isService: %>
 		<td>[${request.Client.Id}] ${request.Client.Name}</td>
-	<%else: %>
+	<% else: %>
 		<td><a href="${Siteroot}/Search/Redirect?filter.ClientCode=${request.Client.Id}">${request.Client.Name}</a></td>
-	<%end %>
+	<% end %>
 	<td>${request.GetMinDiscription()}</td>
 	<td>${request.Contact}</td>
 	<td>${request.GetStatusName()}</td>

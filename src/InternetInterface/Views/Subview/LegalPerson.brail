@@ -1,40 +1,53 @@
 ﻿<tr>
-	<td ><b>Полное наименвоание</b></td>
-	<td >${FormHelper.TextField("LegalPerson.Name")} 
+	<td>
+		<b>Полное наименвоание</b>
+	</td>
+	<td>
+		${FormHelper.TextField("LegalPerson.Name")}
 	<td>
 		${VB.GetBlock("Name")}
-		</td>
-</tr>
-<tr>
-	<td><b>Краткое наименование</b></td>
-	<td>${FormHelper.TextField("LegalPerson.ShortName")}
-		<td>
-		${VB.GetBlock("ShortName")}
-		</td>
+	</td>
 </tr>
 <tr>
 	<td>
-		Юридический адрес</td>
-	<td >
-		<input id="LawyerAdress" type="text" value="${LegalPerson.LawyerAdress}" name="LegalPerson.LawyerAdress"/></td>
+		<b>Краткое наименование</b>
+	</td>
+	<td>
+		${FormHelper.TextField("LegalPerson.ShortName")}
+	</td>
+	<td>
+		${VB.GetBlock("ShortName")}
+	</td>
+</tr>
+<tr>
+	<td>
+		Юридический адрес
+	</td>
+	<td>
+		${app.Edit("LegalPerson.LawyerAdress")}
+	</td>
 	<td>
 		${VB.GetBlock("LawyerAdress")}
 	</td>
 </tr>
 <tr>
 	<td>
-		Фактический адрес</td>
-	<td >
-		<input id="ActualAdress" type="text" value="${LegalPerson.ActualAdress}" name="LegalPerson.ActualAdress"/></td>
+		Фактический адрес
+	</td>
+	<td>
+		${app.Edit("LegalPerson.ActualAdress")}
+	</td>
 	<td>
 		${VB.GetBlock("ActualAdress")}
 	</td>
 </tr>
 <tr>
 	<td>
-		Почтовый адрес</td>
-	<td >
-		<input id="MailingAddress" type="text" value="${LegalPerson.MailingAddress}" name="LegalPerson.MailingAddress"/></td>
+		Почтовый адрес
+	</td>
+	<td>
+		${app.Edit("LegalPerson.MailingAddress")}
+	</td>
 	<td>
 		${VB.GetBlock("MailingAddress")}
 	</td>
@@ -51,47 +64,53 @@
 	</td>
 </tr>
 <tr>
-	<td >
-		ИНН</td>
 	<td>
-		<input id="INN" type="text" value="${LegalPerson.INN}" name="LegalPerson.INN"/></td>
-		<td>
+		ИНН
+	</td>
+	<td>
+		${app.Edit("LegalPerson.INN")}
+	</td>
+	<td>
 		${VB.GetBlock("INN")}
-		</td>
+	</td>
 </tr>
-<%if not IsDefined("Editing"): %>
+<% if not IsDefined("Editing"): %>
 <tr>
-	<td >
-		Email</td>
 	<td>
-		<input id="Email" type="text" value="${LegalPerson.Email}" name="LegalPerson.Email"/></td>
-		<td>
+		Email
+	</td>
+	<td>
+		${app.Edit("LegalPerson.Email")}
+	</td>
+	<td>
 		${VB.GetBlock("Email")}
-		</td>
+	</td>
 </tr>
 <tr>
-	<td >
-		<b>Номер телефона</b></td>
 	<td>
-		<input id="Telephone" type="text" value="${LegalPerson.Telephone}" name="LegalPerson.Telephone"/></td>
-		<td>
+		<b>Номер телефона</b>
+	</td>
+	<td>
+		${app.Edit("LegalPerson.Telephone")}
+	</td>
+	<td>
 		${VB.GetBlock("Telephone")}
-		</td>
+	</td>
 </tr>
-<%end %>
+<% end %>
 <tr>
 	<td>
 		Контактное лицо
 	</td>
 	<td>
-		<input id="ContactPerson" type="text" value="${LegalPerson.ContactPerson}" name="LegalPerson.ContactPerson"/></td>
-		</td>
-		<td>
+		${app.Edit("LegalPerson.ContactPerson")}
+	</td>
+	<td>
 		${VB.GetBlock("ContactPerson")}
-		</td>
+	</td>
 </tr>
 <tr>
-	<tr>
-		<td>Задача в Redmine для клиента</td>
-		<td>${FormHelper.TextField("_client.RedmineTask")}</td>
-		<td>${app.GetValidationError("_client.RedmineTask")}</td>
+	<td>Задача в Redmine для клиента</td>
+	<td>${FormHelper.TextField("_client.RedmineTask")}</td>
+	<td>${app.GetValidationError("_client.RedmineTask")}</td>
+</tr>

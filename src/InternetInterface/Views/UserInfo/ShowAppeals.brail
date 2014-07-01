@@ -56,22 +56,22 @@ ${FormHelper.EndFormTag()}
 	<tbody>
 		<% for i,item in enumerate(appeals): %>
 		<tr>
-		<%if item.Partner != null: %>
+		<% if item.Partner != null: %>
 			<td>${item.Partner.Name}</td>
-		<%else: %>
+		<% else: %>
 			<td></td>
-		<%end %>
+		<% end %>
 			<td>${item.Date}</td>
 			<td>${item.Type()}</td>
-			<%if item.Client != null : %>
+			<% if item.Client != null : %>
 			<td><a href="${Siteroot}/Search/Redirect?filter.ClientCode=${item.Client.Id}&filter.AppealType=${item.AppealType}">${item.Client.Id.ToString("00000")}</a></td>
 			<td>${item.Client.Name}</td>
-			<%else: %>
+			<% else: %>
 			<td colspan=2></td>
-			<%end %>
+			<% end %>
 			<td style="width:800px;">${item.GetTransformedAppeal()}</td>
 		</tr>
-		<%end %>
+		<% end %>
 		<tr>
 			<td colspan=6>${PaginatorHelper.ShowPaginator()}</td>
 		</tr>

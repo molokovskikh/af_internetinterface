@@ -11,64 +11,64 @@
 		<tr>
 			<td>Порт: </td><td><b>${point.Port}</b></td>
 		</tr>
-		<%if lease != null: %>
+		<% if lease != null: %>
 		<tr>
 			<td colspan=2 class="textLeft">Информация из аренды <br /> (Дата начала: ${lease.LeaseBegin} Дата конца: ${lease.LeaseEnd})</td>
 		</tr>
 		<tr>
-			<%if IsDefined("IPResult"): %>
+			<% if IsDefined("IPResult"): %>
 			<td colspan=2 class="${"commutateurFalse" if not lease.CompareIp(IPResult)}">
-			<%else: %>
+			<% else: %>
 			<td colspan=2 class="commutateurFalse">
-			<%end %>
+			<% end %>
 				Арендованный IP
 				<b>${lease.Ip}</b>
-				<%if IsDefined("IPResult"): %>
+				<% if IsDefined("IPResult"): %>
 					<span> // IP на порту коммутатора: <b>${IPResult}</b></span>
-				<%else: %>
+				<% else: %>
 					<b> // Не удалось определить IP на порту коммутатора</b>
-				<%end %>
+				<% end %>
 			</td>
 		</tr>
 		<tr>
-			<%if IsDefined("MACResult"): %>
+			<% if IsDefined("MACResult"): %>
 			<td colspan=2 class="${"commutateurFalse" if not lease.CompareMac(MACResult)}">
-			<%else: %>
+			<% else: %>
 			<td colspan=2 class="commutateurFalse">
-			<%end %>
+			<% end %>
 				МАС адрес <b>${lease.GetMac()} </b>
-				<%if IsDefined("MACResult"): %>
+				<% if IsDefined("MACResult"): %>
 				<span> // MAC на порту коммутатора: <b> ${MACResult} </b></span>
-				<%else: %>
+				<% else: %>
 					<b> // Не удалось определить MAC на порту коммутатора</b>
-				<%end %>
+				<% end %>
 			</td>
 		</tr>
-		<%else: %>
+		<% else: %>
 		<tr>
 			<td colspan=2 class="noSessionDhcp">Сессия DHCP не зерегистрирована</td>
 		</tr>
-		<%if IsDefined("IPResult"): %>
+		<% if IsDefined("IPResult"): %>
 		<tr>
 			<td>IP на порту коммутатора</td>
 			<td>${IPResult}</td>
 		</tr>
-		<%else: %>
+		<% else: %>
 		<tr>
 			<td colspan=2 class="commutateurFalse textCenter"><b>Не удалось определить IP на порту коммутатора</b></td>
 		</tr>
-		<%end %>
-		<%if IsDefined("MACResult"): %>
+		<% end %>
+		<% if IsDefined("MACResult"): %>
 		<tr>
 			<td>MAC на порту коммутатора</td>
 			<td>${MACResult}</td>
 		</tr>
-		<%else: %>
+		<% else: %>
 		<tr>
 			<td colspan=2 class="commutateurFalse textCenter"><b>Не удалось определить MAC на порту коммутатора</b></td>
 		</tr>
-		<%end %>
-		<%end %>
+		<% end %>
+		<% end %>
 		</tbody>
 	</table>
 </div>

@@ -34,7 +34,7 @@
 <div id="container">
 <div id="block-tables" class="block">
 <div class="content">
-<%if not Editing: %>
+<% if not Editing: %>
 <% if PartnerAccessSet.AccesPartner("SSI"): %>
 	<table class="table" style="width:100%;">
 		<thead>
@@ -76,21 +76,21 @@
 <% end %>
 <table class="table" style="width: 100%;" align="left">
 	<thead>
-		<%if IsDefined("EditFlag"):
+		<% if IsDefined("EditFlag"):
 			  output  WriteMessageNotice(EditFlag)
 		end %>
-		<%if IsDefined("Applying"):
+		<% if IsDefined("Applying"):
 			   output WriteMessageNotice(Applying)
 		end %>
-		<%if IsDefined("errorMessage"):
+		<% if IsDefined("errorMessage"):
 			  output  WriteMessageError(errorMessage)
-		end%>
+		end %>
 		<th><span style="color:#787676"> Информация по клиенту </span> <span style="color:Black">  ${Client.Surname}  ${Client.Name}  ${Client.Patronymic} ${"(Он-Лайн)" if _client.OnLine()} </span>
-		<%if PartnerAccessSet.AccesPartner("ECI"): %>
+		<% if PartnerAccessSet.AccesPartner("ECI"): %>
 			<button type="submit"  class="button save">
 				Редактировать
 			</button>
-		 <%end %>
+		 <% end %>
 		</th>
 	</thead>
 	<tbody>
@@ -115,11 +115,11 @@
 												 <span class="description">Серия\Номер</span> ${Client.PassportSeries} \ ${Client.PassportNumber}<br />
 												 <span class="description">Кем выдан: </span> ${Client.WhoGivePassport}<br />
 												 <span class="description">Адрес регистрации:</span> ${Client.RegistrationAdress}<br />
-												 <%if client.PassportDate != null: %>
+												 <% if client.PassportDate != null: %>
 												 <span class="description">Дата выдачи :</span> ${Client.PassportDate.ToShortDateString()}</td>
-												 <%else:%>
+												 <% else: %>
 													<span class="description">Дата выдачи :</span></td>
-												<%end%>
+												<% end %>
 		</tr>
 		<% end %>
 		<% if PartnerAccessSet.AccesPartner("SSI"): %>
@@ -175,66 +175,66 @@
 				<span class="description">Скидка: </span>${_client.Sale.ToString("0.00")}%
 			</td>
 		</tr>
-		<%if _client.AdditionalStatus != null: %>
+		<% if _client.AdditionalStatus != null: %>
 			<tr>
 				<td><span class="description">Дополнительный статус:</span> ${_client.AdditionalStatus.Name}</td>
 			</tr>
-		<%end %>
-		<%if _client.Request != null: %>
+		<% end %>
+		<% if _client.Request != null: %>
 		<tr>
 			<td><span class="description">Создан по заявке </span><a href="${Siteroot}/UserInfo/RequestOne?id=${_client.Request.Id}">№${_client.Request.Id}</a></td>
 		</tr>
-		<%end %>
-		<%end %>
-		<%if PartnerAccessSet.AccesPartner("SSI"): %>
-				<%if IsDefined("RegisntationDate"): %>
+		<% end %>
+		<% end %>
+		<% if PartnerAccessSet.AccesPartner("SSI"): %>
+				<% if IsDefined("RegisntationDate"): %>
 			<tr>
 				<td><span class="description">Дата регистрации заявки:</span> ${RegisntationDate}</td>
 			</tr>
-		<%end %>
-		<%if IsDefined("CloseDate"): %>
+		<% end %>
+		<% if IsDefined("CloseDate"): %>
 		<tr>
 				<td><span class="description">Дата подключения:</span> ${CloseDate}</td>
 		</tr>
-		<%end %>
-		<%if _client.RatedPeriodDate != null: %>
+		<% end %>
+		<% if _client.RatedPeriodDate != null: %>
 		<tr>
 			<td><span class="description">Дата начала расчетного периода:</span> ${_client.RatedPeriodDate.ToShortDateString()}</td>
 		</tr>
-		<%end %>
-		<%if _client.StartNoBlock != null : %>
+		<% end %>
+		<% if _client.StartNoBlock != null : %>
 		<tr>
 			<td><span class="description">Дата начала программы скидок:</span> ${_client.StartNoBlock.ToShortDateString()}</td>
 		</tr>
-		<%end %>
+		<% end %>
 		<tr>
 			<td><span class="description">Проверен: </span>
 			<% if (_client.PhysicalClient.Checked): %> Да <% else: %> Нет <% end %>
 			</td>
 		</tr>
-		<%end %>
-	<%if PartnerAccessSet.AccesPartner("ECI"): %>
+		<% end %>
+	<% if PartnerAccessSet.AccesPartner("ECI"): %>
 			<tr>
 				<td>
 					<% if _client.AdditionalCanUsed("Refused"): %>
 						<a href="#" class="big-link" data-reveal-id="myModal">
 							<button id="Refused" name="../UserInfo/AddInfo.rails?ClientCode=${ClientCode}" class="button_mod">Отказ</button>
 						</a>
-					<%end %>
+					<% end %>
 					<% if _client.AdditionalCanUsed("NotPhoned"): %>
 						<a href="#" class="big-link" data-reveal-id="myModal">
 							<button id="NotPhoned" name="../UserInfo/NoPhoned.rails?ClientCode=${ClientCode}" class="button_mod">Недозвон</button>
 						</a>
-					<%end %>
+					<% end %>
 					<% if _client.AdditionalCanUsed("AppointedToTheGraph"): %>
 						<a href="#" class="big-link" data-reveal-id="myModal" >
 							<button id="naznach_but" name="../UserInfo/AppointedToTheGraph.rails?ClientCode=${ClientCode}" class="button_mod2" >${naznach_text}</button>
 						</a>
-					<%end %>
+					<% end %>
 				 </td>
 			</tr>
-	<%end %>
-	<%if PartnerAccessSet.AccesPartner("DHCP"): %>
+	<% end %>
+	<% if PartnerAccessSet.AccesPartner("DHCP"): %>
 			<tr>
 				<td>
 					<form class="inlineForm" method="post" action="${siteroot}/UserInfo/AddEndPoint">
@@ -248,10 +248,10 @@
 					</form>
 				</td>
 			</tr>
-	<%end %>
+	<% end %>
 	</tbody>
 </table>
-<%else:%>
+<% else: %>
 	<form class="form edit" id="clientEditForm" method="post" action="${siteroot}/UserInfo/EditInformation">
 	<input type="hidden" name="ClientID" value="${ClientCode}" />
 	<input type=hidden name="appealType" value="${appealType}" />
@@ -267,7 +267,7 @@
 					</td>
 				</tr>
 				<tr>
-				<td >
+				<td>
 					<div class="actions">
 						<button type="submit" id="SaveButton" class="button save">
 							Сохранить
@@ -278,7 +278,7 @@
 			</tbody>
 		</table>
 	</form>
-<%end %>
+<% end %>
 <br />
 <% for i,item in enumerate(ClientConnectInf):
  OutputSubView("""\Subview\ConnectInfo""", {
@@ -294,7 +294,7 @@ end %>
 </div>
 </div>
 <div style="width:49%; float:right; padding-top:5px;">
-<%if PartnerAccessSet.AccesPartner("SSI"):
+<% if PartnerAccessSet.AccesPartner("SSI"):
 	OutputSubView("""\Subview\ContactInfo""")
 end
 	OutputSubView("""\Subview\AppealsInfo""")

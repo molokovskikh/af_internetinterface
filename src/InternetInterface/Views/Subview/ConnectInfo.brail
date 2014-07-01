@@ -1,6 +1,6 @@
-﻿<%if not IsDefined("filter") or filter.EditingConnect: %>
+﻿<% if not IsDefined("filter") or filter.EditingConnect: %>
 	${app.Asset("EditingConnect.js")}
-<%end%>
+<% end %>
 <style type="text/css">
 	.error
 	{
@@ -24,22 +24,22 @@
 </div>
 
 <div style="clear:both;">
-<%if PartnerAccessSet.AccesPartner("DHCP"): %>
+<% if PartnerAccessSet.AccesPartner("DHCP"): %>
 
-	<%if not EditingConnect: %>
+	<% if not EditingConnect: %>
 
 	<table  style="width: 100%;"><tbody><tr><td>
 	<table class="table" style="width: 100%;" align="left">
 	<thead>
 		<tr>
 		<th style="border-right-width:0px; width:400px;">Информация по подключению (точка № ${ConnectInfo.endpointId})
-		<%if PartnerAccessSet.AccesPartner("DHCP"): %>
+		<% if PartnerAccessSet.AccesPartner("DHCP"): %>
 			<form class="formConnect" method="post" action="${siteroot}/UserInfo/LoadEditConnectMudule" style="display:inline;">
 			<input type="hidden" name="ClientID" value="${ClientCode}" />
 			<input type="hidden" name="EditConnectFlag" value="${ConnectInfo.endpointId}" />
 			<button type="submit"  class="button save">Редактировать</button>
 			</form>
-		<%end %>
+		<% end %>
 		</th>
 		<th style="border-left-width:0px; text-align:right; width:400px;">
 			<a href="#" class="big-link" data-reveal-id="deletePointDialog" >
@@ -76,36 +76,36 @@
 		  <td><span class="description">Скорость </span></td>
 		  <td>${ConnectInfo.GetNormalSpeed()}</td>
 		</tr>
-		<%if ConnectInfo.ActualPackageId != null:%>
+		<% if ConnectInfo.ActualPackageId != null: %>
 		<tr>
 		  <td><span class="description">Актуальный PackageId </span></td>
 		  <td>${ConnectInfo.ActualPackageId}</td>
 		</tr>
-		<%end%>
+		<% end %>
 		 <tr>
 		  <td><span class="description">Мониторинг </span></td>
-		  <td><%if (ConnectInfo.Monitoring): %>
+		  <td><% if (ConnectInfo.Monitoring): %>
 				Да
-				<%else: %>
+				<% else: %>
 				Нет
-				<%end %></td>
+				<% end %></td>
 		</tr>
 		<tr>
 		  <td><span class="description">Бригада </span></td>
 		  <td>${?ConnectInfo.WhoConnected}</td>
 		</tr>
-		<%if ConnectInfo.ConnectSum != null : %>
+		<% if ConnectInfo.ConnectSum != null : %>
 		<tr>
 			<td><span class="description">Стоимость подключения </span></td>
 			<td>${?ConnectInfo.ConnectSum.ToString("C")}</td>
 		</tr>
-		<%end %>
+		<% end %>
 		</tbody>
 	</table>
 	</td></tr></tbody></table>
-	<%if PartnerAccessSet.AccesPartner("DHCP"): %>
-<%staticIps = ConnectInfo.GetStaticAdreses() %>
-<%if staticIps.Count != 0: %>
+	<% if PartnerAccessSet.AccesPartner("DHCP"): %>
+<% staticIps = ConnectInfo.GetStaticAdreses() %>
+<% if staticIps.Count != 0: %>
 	<table class="table" align="left">
 		<thead>
 			<tr>
@@ -122,12 +122,12 @@
 					<td>${item.Ip} ${"/" if item.Mask != null} ${item.Mask}</td>
 					<td>${item.GetSubnet()}</td>
 				</tr>
-			<%end %>
+			<% end %>
 		</tbody>
 	</table>
-<%end %>
-<%end %>
-	<%else: %>
+<% end %>
+<% end %>
+	<% else: %>
 <script type="text/javascript">
 	function GetStaticIp() {
 		var req = {};
@@ -156,9 +156,9 @@
 	<table id="editConnectTable" class="table" style="width: 100%;">
 	<thead>
 		<th colspan = 3 > Информация по подключению
-		<%if PartnerAccessSet.AccesPartner("DHCP"): %>
+		<% if PartnerAccessSet.AccesPartner("DHCP"): %>
 		 <input id="Submit2" type="submit" value="Сохранить"  align="right" />
-		 <%end %>
+		 <% end %>
 		</th>
 	</thead>
 	<tbody>
@@ -180,7 +180,7 @@
 			<td style="width:200px;">
 				<select name="ConnectInfo.Switch" id="SelectSwitches" style="width: 100%">
 					<option value="0">Нет</option>
-				   <%for j, Switch in enumerate(Switches): %>
+				   <% for j, Switch in enumerate(Switches): %>
 					<option id="Option${j}" value="${Switch.Id}" ${"selected" if (Switch.Id.ToString() == ConnectInfo.Switch)} > ${Switch.Name} </option>
 					<% end %>
 				</select>
@@ -193,16 +193,16 @@
 		</tr>
 		<tr>
 		  <td>Скорость</td>
-		  <%if _client.IsPhysical(): %>
+		  <% if _client.IsPhysical(): %>
 		  <td>${ConnectInfo.GetNormalSpeed()}</td>
-		  <%else:%>
+		  <% else: %>
 			<td colspan=2>
 			<select name="ConnectInfo.PackageId" style="width: 200px;">
-				<%for j, speed in enumerate(Speeds): %>
+				<% for j, speed in enumerate(Speeds): %>
 					<option value="${speed.PackageId}" ${"selected" if (speed.PackageId == ChSpeed)}> ${speed}  PID(${speed.PackageId}) ${speed.Description} </option>
-				<%end %>
+				<% end %>
 		  </td>
-		  <%end%>
+		  <% end %>
 		</tr>
 		<tr>
 		  <td>Мониторинг</td>
@@ -254,7 +254,7 @@
 					<div class=delMenuItem id="delMenuItem_${i}"></div>
 				</td>
 			</tr>
-			<%end %>
+			<% end %>
 		</tbody>
 		</table>
 		<button type="button"  class="editBut" onclick="addNewAdress()"> Добавить новый адрес
@@ -265,8 +265,8 @@
 	</tbody>
 	</table>
 	</form>
-	<%end %>
-<%end %>
+	<% end %>
+<% end %>
 </div>
 <script type="text/javascript">
 	$(document).ready(function () {

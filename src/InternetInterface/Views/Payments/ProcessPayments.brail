@@ -71,9 +71,9 @@
 			<% output  WriteMessageNotice(notify_message) %>
 		</td>
 	</tr>
-<%else: %>
+<% else: %>
 </table>
-	<%if IsDefined("errors"):%>
+	<% if IsDefined("errors"): %>
 		<div class="flash">
 			<div class="message error" id="paymentErrorBlock">
 				Выписка не может быть загружена из-за ошибок. (<a href="javascript:" onclick="$('#paymentWarningBlock').slideDown(200);">показать</a>)
@@ -85,10 +85,10 @@
 					Платеж для Клиента: "${error.Client.Name}" содержит следующие ошибки: </br>
 					<% for i, messages in enumerate(error.Errors): %>
 						<b>${messages}</b></br>
-					<%end%>
+					<% end %>
 					</br>
-				<%end%>
+				<% end %>
 			</div>
 		</div>
-	<%end%>
-<%end%>
+	<% end %>
+<% end %>

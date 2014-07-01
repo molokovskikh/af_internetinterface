@@ -12,26 +12,26 @@
 	<tbody>
 		<% for i, interval in enumerate(Intervals):  %>
 			<tr>
-				<%client =  Brigad.GetOneGraph(i, selectDate) %>
+				<% client =  Brigad.GetOneGraph(i, selectDate) %>
 				<td style="text-align:center;">
 					${interval}
 				</td>
 				<td style="text-align:center;">
-				<%if client  != null: %>
+				<% if client  != null: %>
 					<a href="../Search/Redirect?ClientCode=${client.Id}">${client.Id.ToString("00000")}</a>
-				<%end %>
+				<% end %>
 				</td>
 				<td>
-				<%if client != null: %>
+				<% if client != null: %>
 				<% ConnectInfo = client.ConnectInfoFirst() %>
 					<b>${client.PhysicalClient.Street} ${client.PhysicalClient.House}${client.PhysicalClient.CaseHouse} кв ${client.PhysicalClient.Apartment} </b> Подъезд ${client.PhysicalClient.Entrance} Этаж ${client.PhysicalClient.Floor} <br />
-					<%if ConnectInfo != null: %>
+					<% if ConnectInfo != null: %>
 					Коммутатор: ${ConnectInfo.Swith_adr} (${ConnectInfo.swith_IP}) Порт: ${ConnectInfo.Port}
-					<%end %>
-				<%end %>
+					<% end %>
+				<% end %>
 				</td>
 			</tr>
-		<%end %>
+		<% end %>
 	</tbody>
 </table>
 
@@ -44,4 +44,4 @@
 					"ConnectInfo": Client.ConnectInfoFirst(),
                     "Password" : Client.ChangePhysicalClientPassword(),
                     "AccountNumber" : Client.Id.ToString("00000")}) %>
-<%end %>
+<% end %>

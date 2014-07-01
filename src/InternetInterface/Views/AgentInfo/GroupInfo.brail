@@ -21,20 +21,20 @@
 		</tr>
 	</thead>
 	<tbody>
-	<%for i, agentPay in enumerate(payments): %>
+	<% for i, agentPay in enumerate(payments): %>
 		<tr>
 			<td colspan=3 style="background-color:#b7d9e8; font-size:18px; font-weight:bold;">${agentPay.Key.Name} (<b>Итого: ${agentPay.Key.GetAgentPayment(interval)} рублей</b>)</td>
 		</tr>
 		<tr>
 			<td colspan=3>
-				<%payments = agentPay
+				<% payments = agentPay
 					OutputSubView("""\AgentInfo\PaymentBlock""", {
 					"payments": payments,
 					"message": """Начисления за текущий период""" })
 				%>
 			</td>
 		</tr>
-	<%end %>
+	<% end %>
 	</tbody>
 </table>
 </div>

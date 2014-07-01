@@ -1,61 +1,41 @@
 ﻿${app.Asset("registerlawperson.js")}
-<input type="hidden" name="hiddenClient" value="${LegalPerson}" />
 <div id="main">
-<div id="container" >
-	<div id="block-tables" class="block">
-		<div class="content" style="width:900px; padding-top: 10px;">
-							<%if IsDefined("EditiongMessage"):
-							output WriteMessageNotice(EditiongMessage)
-							end%>
+	<div id="container" >
+		<div id="block-tables" class="block">
+			<div class="content" style="width:900px; padding-top: 10px;">
 				<div class="inner">
-							<%if IsDefined("Editing"): %>
-							<%if (not Editing): %>
-				  <form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Register/RegisterLegalPerson" >
-							<%else: %>
-				  <form class="form" id="RegistrationFormEdit" name="RegistrationForm" method="post" action="${siteroot}/Register/EditLegalPerson" >
-				  <input type="hidden" name="PartnerKey" value=${PersonKey} />
-							  <%end %>
-							  <%end %>
-							<table class="table" style="width:100%; " border="0" id="RegTable">
+					<form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Register/RegisterLegalPerson">
+						<table class="table" id="RegTable">
 							<tr>
 								<th colspan="3">
-							<%if IsDefined("Editing"): %>
-							<%if (not Editing): %>
-									<strong>Форма регистрации</strong></th>
-									<%end %>
-									<%end %>
+									<strong>Форма регистрации</strong>
+								</th>
 							</tr>
-							<tr> <td colspan="3">
-							<% OutputSubView("""\Subview\LegalPerson""") %>
-							</td> </tr>
+							<% OutputSubView("/Subview/LegalPerson") %>
 							<tr>
-								<td><b>Не создавать заказ</b>
-								<input type="checkbox" name="DoNotCreateOrder" value="true" id="DoNotCreateOrder" ${"checked" if DoNotCreateOrder}/></td>
-							</tr>
-							<tr>
-								<td colspan="3">
-									<% OutputSubView("""\Subview\ConnectMenu""") %>
+								<td>
+									<b>Не создавать заказ</b>
+									<input type="checkbox" name="DoNotCreateOrder" value="true" id="DoNotCreateOrder" ${"checked" if DoNotCreateOrder} />
 								</td>
 							</tr>
 							<tr>
 								<td colspan="3">
-								<div class="actions">
-												<button type="submit" id="RegisterLegalButton" class="button save" >
-							<%if IsDefined("Editing"): %>
-							<%if (not Editing): %>
-												 Зарегистрировать
-												 <%else: %>
-												 Изменить
-												 <%end %>
-												 <%end %>
-												 </button>
-								</div>
+									<% OutputSubView("/Subview/ConnectMenu") %>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="3">
+									<div class="actions">
+										<button type="submit" id="RegisterLegalButton" class="button save">
+											Зарегистрировать
+										</button>
+									</div>
 								</td>
 							</tr>
 						</table>
-				  </form>
+					</form>
+				</div>
 			</div>
-		</div>
-	 </div>
- </div>
- </div>
+		 </div>
+	</div>
+</div>

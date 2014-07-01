@@ -2,42 +2,42 @@
 <table class="table" id="mapHead" style = "width:100%" >
 	<thead>
 		<tr valign="top"  class="menuItem">
-			<%if PartnerAccessSet.AccesPartner("RC"): %>
+			<% if PartnerAccessSet.AccesPartner("RC"): %>
 			<th>${App.LinkTo("Регистрация абонента", @Register, @RegisterClient)}</th>
-			<%end %>
-			<%if PartnerAccessSet.AccesPartner("RC"): %>
+			<% end %>
+			<% if PartnerAccessSet.AccesPartner("RC"): %>
 			<th>${App.LinkTo("Регистрация ЮрЛица", @Register, @RegisterLegalPerson)}</th>
-			<%end %>
-			<%if PartnerAccessSet.AccesPartner("VD"): %>
+			<% end %>
+			<% if PartnerAccessSet.AccesPartner("VD"): %>
 			<th>${App.LinkTo("Заявки", @UserInfo, @RequestView)}</th>
-			<%end %>
-			<%if PartnerAccessSet.AccesPartner("GCI"): %>
+			<% end %>
+			<% if PartnerAccessSet.AccesPartner("GCI"): %>
 			<th>${App.LinkTo("Клиенты", @Search, @SearchUsers)}</th>
-			<%end %>
-			<%if PartnerAccessSet.AccesPartner("DHCP"): %>
+			<% end %>
+			<% if PartnerAccessSet.AccesPartner("DHCP"): %>
 			<th>${App.LinkTo("OnLine клиенты", @Switches, @OnLineClient, {"filter.Zone" : "4"})}</th>
-			<%end %>
-			<%if PartnerAccessSet.AccesPartner("SSI"): %>
+			<% end %>
+			<% if PartnerAccessSet.AccesPartner("SSI"): %>
 			<th>${App.LinkTo("Платежи по регистраторам", @Payers, @Filter)}</th>
-			<%end %>
-			<%if (PartnerAccessSet.AccesPartner("SSI") or PartnerAccessSet.AccesPartner("PFA")): %>
+			<% end %>
+			<% if (PartnerAccessSet.AccesPartner("SSI") or PartnerAccessSet.AccesPartner("PFA")): %>
 			<th>${App.LinkTo("Платежи", @Payers, @AgentFilter)}</th>
-			<%end %>
-			<%if PartnerAccessSet.AccesPartner("SSI"): %>
+			<% end %>
+			<% if PartnerAccessSet.AccesPartner("SSI"): %>
 			<th>${App.LinkTo("График подключений", @UserInfo, @RequestGraph)}</th>
-			<%end %>
-			<%if PartnerAccessSet.AccesPartner("HMA"): %>
+			<% end %>
+			<% if PartnerAccessSet.AccesPartner("HMA"): %>
 			<th>${App.LinkTo("Карта дома", @HouseMap, @FindHouse)}</th>
-			<%end %>
-			<%if PartnerAccessSet.AccesPartner("SR"): %>
+			<% end %>
+			<% if PartnerAccessSet.AccesPartner("SR"): %>
 			<th>${App.LinkTo("Сервисные заявки", @ServiceRequest, @ViewRequests)}</th>
-			<%end %>
-			<%if PartnerAccessSet.AccesPartner("RP"): %>
+			<% end %>
+			<% if PartnerAccessSet.AccesPartner("RP"): %>
 			<th>${App.LinkTo("Администрирование", @UserInfo, @Administration)}</th>
-			<%end %>
-			<%if PartnerAccessSet.AccesPartner("AIV"): %>
+			<% end %>
+			<% if PartnerAccessSet.AccesPartner("AIV"): %>
 			<th>${App.LinkTo("Платежи", @AgentInfo, @SummaryInformation)}</th>
-			<%end %>
+			<% end %>
 			<th align=right style="text-align:right;">
 				<form class="form" id="Exit" name="Exit" method="post" action="${siteroot}/ExitPartner/Yes" >
 					<button type="submit" class="button save" style="float:none; display:inline;">Выход</button>
@@ -45,52 +45,52 @@
 			</th>
 		</tr>
 		<tr class="submenu">
-			<%if PartnerAccessSet.AccesPartner("RC"): %>
+			<% if PartnerAccessSet.AccesPartner("RC"): %>
 			<th></th>
-			<%end %>
-			<%if PartnerAccessSet.AccesPartner("RC"): %>
+			<% end %>
+			<% if PartnerAccessSet.AccesPartner("RC"): %>
 			<th></th>
-			<%end %>
-			<%if PartnerAccessSet.AccesPartner("VD"): %>
+			<% end %>
+			<% if PartnerAccessSet.AccesPartner("VD"): %>
 			<th></th>
-			<%end %>
-			<%if PartnerAccessSet.AccesPartner("SSI"): %>
+			<% end %>
+			<% if PartnerAccessSet.AccesPartner("SSI"): %>
 			<th>
 				${App.LinkTo("Обращения", @UserInfo, @ShowAppeals)} <br/>
 				${App.LinkTo("Подключения", @Brigads, @ReportOnWork)} <br/>
 				${App.LinkTo("Списания", @Payments, @ShowWriteOffs)}
 			</th>
-			<%end %>
-			<%if PartnerAccessSet.AccesPartner("DHCP"): %>
+			<% end %>
+			<% if PartnerAccessSet.AccesPartner("DHCP"): %>
 			<th>
 				${App.LinkTo("Статистика", @UserInfo, @Statistic)}
 			</th>
-			<%end %>
-			<%if PartnerAccessSet.AccesPartner("SSI"): %>
+			<% end %>
+			<% if PartnerAccessSet.AccesPartner("SSI"): %>
 			<th></th>
-			<%end %>
-			<%if PartnerAccessSet.AccesPartner("SSI"): %>
+			<% end %>
+			<% if PartnerAccessSet.AccesPartner("SSI"): %>
 			<th>
 				${App.LinkTo("Загрузить платежи", @Payments, @ProcessPayments)} <br />
 				${App.LinkTo("Банковские выписки", @Payments, @Index)} <br />
 				${App.LinkTo("Новый платеж", @Payments, @New)} <br />
 			</th>
-			<%end %>
-			<%if PartnerAccessSet.AccesPartner("SSI"): %>
+			<% end %>
+			<% if PartnerAccessSet.AccesPartner("SSI"): %>
 			<th></th>
-			<%end %>
-			<%if PartnerAccessSet.AccesPartner("HMA"): %>
+			<% end %>
+			<% if PartnerAccessSet.AccesPartner("HMA"): %>
 			<th></th>
-			<%end %>
-			<%if PartnerAccessSet.AccesPartner("RP"): %>
+			<% end %>
+			<% if PartnerAccessSet.AccesPartner("RP"): %>
 			<th></th>
-			<%end %>
-			<%if PartnerAccessSet.AccesPartner("RP"): %>
+			<% end %>
+			<% if PartnerAccessSet.AccesPartner("RP"): %>
 			<th>${App.LinkTo("Закладки", @Map, @ShowBookmarks)}</th>
-			<%end %>
-			<%if PartnerAccessSet.AccesPartner("RP"): %>
+			<% end %>
+			<% if PartnerAccessSet.AccesPartner("RP"): %>
 			<th></th>
-			<%end %>
+			<% end %>
 		</tr>
 	</thead>
 </table>

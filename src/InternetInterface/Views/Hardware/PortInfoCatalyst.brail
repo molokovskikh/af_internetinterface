@@ -3,7 +3,7 @@
 		<h3>Информация о клиенте</h3>
 		<% OutputSubView("ClientInfoView") %>
 
-		<%if IsDefined("counterInfo"): %>
+		<% if IsDefined("counterInfo"): %>
 		<div class="hardWareInfoBlock width600">
 		<h3>Трафик, счетчики пакетов на порту</h3>
 		<% for i in [0 , 2]: %>
@@ -27,10 +27,10 @@
 						</tr>
 					</tbody>
 				</table>
-		<%end %>
+		<% end %>
 		</div>
-	<%end %>
-	<%if IsDefined("errorCounterInfo"): %>
+	<% end %>
+	<% if IsDefined("errorCounterInfo"): %>
 		<div class="hardWareInfoBlock width600">
 		<h3>Статистика ошибок порта</h3>
 		<% for i in [0 , 2]: %>
@@ -43,10 +43,10 @@
 							<th>${errorCounterInfo[i][3]}</th>
 							<th>${errorCounterInfo[i][4]}</th>
 							<th>${errorCounterInfo[i][5]}</th>
-							<%if i == 2: %>
+							<% if i == 2: %>
 								<th>${errorCounterInfo[i][6]}</th>
 								<th>${errorCounterInfo[i][7]}</th>
-							<%end %>
+							<% end %>
 						</tr>
 					</thead>
 					<tbody>
@@ -57,24 +57,24 @@
 							<td>${errorCounterInfo[i+1][3]}</td>
 							<td>${errorCounterInfo[i+1][4]}</td>
 							<td>${errorCounterInfo[i+1][5]}</td>
-							<%if i == 2: %>
+							<% if i == 2: %>
 								<td>${errorCounterInfo[i+1][6]}</td>
 								<td>${errorCounterInfo[i+1][7]}</td>
-							<%end %>
+							<% end %>
 						</tr>
 					</tbody>
 				</table>
-		<%end %>
+		<% end %>
 		</div>
-	<%end %>
+	<% end %>
 
 </div>
 <div id="portInfoBlock">
-	<%if IsDefined("Info"): %>
+	<% if IsDefined("Info"): %>
 	<h3>Информация об активности порта</h3>
 	<div class="switchInfoBlock">
 		${Info}
 	</div>
-	<%end %>
+	<% end %>
 </div>
 </div>

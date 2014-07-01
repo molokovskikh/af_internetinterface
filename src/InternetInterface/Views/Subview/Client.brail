@@ -40,13 +40,13 @@ $(function () {
 
 	<% for i, region in enumerate(Regions): %>
 		regions[${region.Id}] = "${region.Name}";
-	<%end%>
+	<% end %>
 
-	<%if (ChHouse.Id > 0):%>
+	<% if (ChHouse.Id > 0): %>
 		SelectHouse('${ChHouse.Region.Id}', '${ChHouse.Id}');
-	<%else:%>
+	<% else: %>
 		SelectHouse('2', '0');
-	<%end%>
+	<% end %>
 });
 </script>
 
@@ -56,8 +56,8 @@ $(function () {
 		Личная информация</th>
 </tr>
 <tr>
-	<td ><b>Фамилия</b></td>
-	<td > <input id="Surname" type="text" value="${Client.Surname}" name="client.Surname"  /> </td>
+	<td><b>Фамилия</b></td>
+	<td> <input id="Surname" type="text" value="${Client.Surname}" name="client.Surname"  /> </td>
 	<td>
 		${VB.GetBlock("Surname")}
 	</td>
@@ -65,7 +65,7 @@ $(function () {
 <tr>
 	<td><b>
 		Имя</b></td>
-	<td ><input id="Name" type="text" value="${Client.Name}" name="client.Name" /></td>
+	<td><input id="Name" type="text" value="${Client.Name}" name="client.Name" /></td>
 		<td>
 		${VB.GetBlock("Name")}
 		</td>
@@ -73,7 +73,7 @@ $(function () {
 <tr>
 	<td><b>
 		Отчество</b></td>
-	<td >
+	<td>
 		<input id="Patronymic" type="text" value="${client.Patronymic}" name="client.Patronymic"/></td>
 	<td>
 		${VB.GetBlock("Patronymic")}
@@ -82,15 +82,15 @@ $(function () {
 <tr>
 	<td>
 		Дата рождения</td>
-	<td >
+	<td>
 		<input id="DateOfBirth" type="text" value="${?client.DateOfBirth.ToShortDateString()}" name="client.DateOfBirth"/></td>
 	<td>
 		${VB.GetBlock("DateOfBirth")}
 	</td>
 </tr>
-<%if not IsDefined("Editing"): %>
+<% if not IsDefined("Editing"): %>
 <tr>
-	<td ><b>
+	<td><b>
 		Мобильный телефон</b></td>
 	<td>
 		<input id="PhoneNumber" type="text" value="${client.PhoneNumber}" name="client.PhoneNumber"/></td>
@@ -99,7 +99,7 @@ $(function () {
 	</td>
 </tr>
 <tr>
-	<td >
+	<td>
 		Домашний телефон</td>
 	<td>
 		<input id="HomePhoneNumber" type="text" value="${client.HomePhoneNumber}" name="client.HomePhoneNumber"/></td>
@@ -108,7 +108,7 @@ $(function () {
 	</td>
 </tr>
 <tr>
-	<td >
+	<td>
 		Email</td>
 	<td>
 		<input id="Email" type="text" value="${client.Email}" name="client.Email"/></td>
@@ -116,7 +116,7 @@ $(function () {
 		${VB.GetBlock("Email")}
 	</td>
 </tr>
-<%end %>
+<% end %>
 <tr>
 	<td>
 		${app.Label("client.ExternalClientId")}
@@ -148,7 +148,7 @@ $(function () {
 		<select id="regionSelector" onchange="SelectHouse(this, ${ChHouse.Id});">
 			<% for i, region in enumerate(Regions): %>
 				<option value="${region.Id}" ${"selected" if ((ChHouse.Id > 0)and(region.Id == ChHouse.Region.Id))}>${region.Name}</option>
-			<%end%>
+			<% end %>
 		</select>
 	</td>
 </tr>
@@ -171,14 +171,14 @@ $(function () {
 	</td>
 </tr>
 <tr>
-	<td >
+	<td>
 		<b> Подъезд </b> </td> <td>  <input id="Entrance" type="text" value="${client.Entrance}" name="client.Entrance"/></td>
 		<td colspan = 3>
 		${VB.GetBlock("Entrance")}
 	</td>
 </tr>
 <tr>
-	<td >
+	<td>
 		<b> Этаж </b></td> <td>  <input id="Floor" type="text" value="${client.Floor}" name="client.Floor"/></td>
 		<td colspan = 3>
 		${VB.GetBlock("Floor")}
@@ -195,65 +195,65 @@ $(function () {
 	</thead>
 	<tbody>
 		<tr>
-			<%if PartnerAccessSet.AccesPartner("SSI"): %>
-				<td >Серия паспорта</td>
-				<%else: %>
+			<% if PartnerAccessSet.AccesPartner("SSI"): %>
+				<td>Серия паспорта</td>
+				<% else: %>
 				<td><b>Серия паспорта</b></td>
-			<%end %>
-			<td >
+			<% end %>
+			<td>
 				<input id="PassportSeries" type="text" value="${client.PassportSeries}" name="client.PassportSeries"/></td>
 			<td>
 				${VB.GetBlock("PassportSeries")}
 			</td>
 		</tr>
 		<tr>
-			<%if PartnerAccessSet.AccesPartner("SSI"): %>
-				<td >Номер паспорта</td>
-				<%else: %>
+			<% if PartnerAccessSet.AccesPartner("SSI"): %>
+				<td>Номер паспорта</td>
+				<% else: %>
 				<td><b>Номер паспорта</b></td>
-			<%end %>
-			<td >
+			<% end %>
+			<td>
 				<input id="PassportNumber" type="text" value="${client.PassportNumber}" name="client.PassportNumber"/></td>
 			<td>
 				${VB.GetBlock("PassportNumber")}
 			</td>
 		</tr>
 		<tr>
-			<%if PartnerAccessSet.AccesPartner("SSI"): %>
-			<td >Дата выдачи паспорта</td>
-			<%else: %>
-			<td ><b>Дата выдачи паспорта</b></td>
-			<%end %>
-			<td >
-				<%if client.PassportDate != null: %>
+			<% if PartnerAccessSet.AccesPartner("SSI"): %>
+			<td>Дата выдачи паспорта</td>
+			<% else: %>
+			<td><b>Дата выдачи паспорта</b></td>
+			<% end %>
+			<td>
+				<% if client.PassportDate != null: %>
 					<input id="PassportDate" type="text" value="${client.PassportDate.ToShortDateString()}" name="client.PassportDate"/>
-				<%else:%>
+				<% else: %>
 					<input id="PassportDate" type="text" name="client.PassportDate"/></td>
-				<%end%>
+				<% end %>
 			</td>
 			<td>
 				${VB.GetBlock("PassportDate")}
 			</td>
 		</tr>
 		<tr>
-			<%if PartnerAccessSet.AccesPartner("SSI"): %>
-			<td >Кем выдан</td>
-			<%else: %>
-			<td ><b>Кем выдан</b></td>
-			<%end %>
-			<td >
+			<% if PartnerAccessSet.AccesPartner("SSI"): %>
+			<td>Кем выдан</td>
+			<% else: %>
+			<td><b>Кем выдан</b></td>
+			<% end %>
+			<td>
 				<input id="WhoGivePassport" type="text" value="${client.WhoGivePassport}" name="client.WhoGivePassport"/></td>
 			<td>
 				${VB.GetBlock("WhoGivePassport")}
 			</td>
 		</tr>
 		<tr>
-			<%if PartnerAccessSet.AccesPartner("SSI"): %>
-			<td >Адрес регистрации</td>
-			<%else: %>
-			<td ><b>Адрес регистрации</b></td>
-			<%end %>
-			<td >
+			<% if PartnerAccessSet.AccesPartner("SSI"): %>
+			<td>Адрес регистрации</td>
+			<% else: %>
+			<td><b>Адрес регистрации</b></td>
+			<% end %>
+			<td>
 				<input id="RegistrationAdress" type="text" value="${client.RegistrationAdress}" name="client.RegistrationAdress"/></td>
 			<td>
 				${VB.GetBlock("RegistrationAdress")}
@@ -290,7 +290,7 @@ $(function () {
 				</select>
 			</td>
 			<td>
-				<%if IsDefined("statusCanChanged"):
+				<% if IsDefined("statusCanChanged"):
 					output WriteMessageError(statusCanChanged)
 				end %>
 			</td>

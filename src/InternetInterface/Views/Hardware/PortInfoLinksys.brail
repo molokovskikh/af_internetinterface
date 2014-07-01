@@ -3,7 +3,7 @@
 	<h3>Информация о клиенте</h3>
 	<% OutputSubView("ClientInfoView") %>
 
-		<%if IsDefined("countersLines"): %>
+		<% if IsDefined("countersLines"): %>
 		<div class="hardWareInfoBlock russianInfo">
 		<h3>Трафик, счетчики пакетов на порту</h3>
 		<table class="table">
@@ -11,28 +11,28 @@
 			<% for i, countersLine in enumerate(countersLines): %>
 				<tr>
 					<% for j, item in enumerate(countersLine): %>
-					<%if (i % 2 > 0):%>
+					<% if (i % 2 > 0): %>
 						<td>${item}</td>
-					<%else:%>
+					<% else: %>
 						<th>${item}</th>
-					<%end end%>
+					<% end end %>
 				</tr>
-			<%end %>
+			<% end %>
 		</tbody>
 		</table>
 		</div>
-		<%end %>
-		<%if IsDefined("interfaceCounters"): %>
+		<% end %>
+		<% if IsDefined("interfaceCounters"): %>
 		<h3>Статистика ошибок порта</h3>
 		<div class="hardWareInfoBlock" id="interfaceCountersBlock">
 			<% for i, interfaceCounter in enumerate(interfaceCounters): %>
 				<p>${interfaceCounter}</p>
-			<%end%>
+			<% end %>
 		</div>
-		<%end %>
+		<% end %>
 </div>
 <div class="interfaceLines" id="portActiveBlock">
-		<%if IsDefined("interfaceLines"): %>
+		<% if IsDefined("interfaceLines"): %>
 		<h3>Информация об активности порта</h3>
 		<div class="hardWareInfoBlock width600">
 		<table class="table">
@@ -40,16 +40,16 @@
 			<% for i, interfaceLine in enumerate(interfaceLines): %>
 				<tr>
 					<% for j, item in enumerate(interfaceLine): %>
-					<%if i < 1 :%>
+					<% if i < 1 : %>
 					<th>${item}</th>
-					<%else:%>
+					<% else: %>
 					<td>${item}</td>
-					<%end end%>
+					<% end end %>
 				</tr>
-			<%end %>
+			<% end %>
 		</thead>
 		</table>
 		</div>
-		<%end %>
+		<% end %>
 </div>
 </div>

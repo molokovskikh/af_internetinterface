@@ -10,12 +10,12 @@
 		</tr>
 	</thead>
 	<tbody>
-	<%for i, payment in enumerate(payments): %>
+	<% for i, payment in enumerate(payments): %>
 		<tr>
 			<td>${payment.RegistrationDate.ToShortDateString()}</td>
 			<td>${payment.Sum}</td>
 			<td>${payment.Comment}</td>
 		</tr>
-	<%end %>
+	<% end %>
 	</tbody>
 </table>

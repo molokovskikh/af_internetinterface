@@ -31,9 +31,9 @@
 
 	<table class="table">
 		<thead>
-				<%firstLease = _client.GetFirstLease() %>
-				<%lastLease = _client.GetLastLease() %>
-		<%if firstLease != null: %>
+				<% firstLease = _client.GetFirstLease() %>
+				<% lastLease = _client.GetLastLease() %>
+		<% if firstLease != null: %>
 			<tr>
 				<th colspan=5>Аренды -
 					Первая: ${firstLease.LeaseBegin}
@@ -47,16 +47,16 @@
 				<th>Начало аренды</th>
 				<th>Конец аренды</th>
 			</tr>
-		<%else: %>
+		<% else: %>
 			<tr>
 				<th>Данный клиент не начинал работу</th>
 			</tr>
-		<%end %>
+		<% end %>
 		</thead>
 		<tbody>
 		<% for i,searchItem in enumerate(Leases): %>
-		<%if (searchItem.Lease != null):
-		item = searchItem.Lease%>
+		<% if (searchItem.Lease != null):
+		item = searchItem.Lease %>
 			<tr>
 				<td>${item.GetNormalIp()}</td>
 				<td align=center class="small">${item.EndpointId.Id}</td>
@@ -64,14 +64,14 @@
 				<td>${item.LeaseBegin}</td>
 				<td>${item.LeaseEnd}</td>
 			</tr>
-		<%else:
-		appeal = searchItem.Appeal%>
+		<% else:
+		appeal = searchItem.Appeal %>
 			<tr>
 				<td colspan=4>${appeal.Appeal}</td>
 				<td>${appeal.Date}</td>
 			</tr>
-		<%end%>
-		<%end %>
+		<% end %>
+		<% end %>
 			<tr>
 				<td colspan=100>
 					<div class="Paginator">

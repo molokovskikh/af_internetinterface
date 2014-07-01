@@ -30,9 +30,9 @@
 		<div id="icons">
 			<a href="${siteroot}/" class="home">&nbsp;</a>
 			<a href="mailto:internet@ivrn.net" class="mail">&nbsp;</a>
-			<%if not AccessEditLink: %>
+			<% if not AccessEditLink: %>
 			<a href="${siteroot}/Login/LoginPage?partner=true" class="login">&nbsp;</a>
-			<%end %>
+			<% end %>
 		</div>
 	</div>
 	<div class="center">
@@ -89,10 +89,10 @@
 		<!-- Правая колонка // -->
 		<div class="right">
 			<a href="${siteroot}/Main/Feedback" id="HowPay2" class="button-orange">Обратная связь</a>
-			<%if AccessEditLink: %>
+			<% if AccessEditLink: %>
 			<a href="${siteroot}/Editor/Menu" style="color:White; margin-left:10px;">Редактировать меню</a>
-			<%end %>
-			<%if authorized: %>
+			<% end %>
+			<% if authorized: %>
 			<div id=poll>
 				<h3>Внимание АКЦИЯ</h3>
 				<p>Подключи друга и получи бонус!
@@ -102,7 +102,7 @@
 					Интернета и помогите оформить
 					<a href="${Siteroot}/Main/zayavka"> заявку </a> на подключение!</p>
 			</div>
-			<%end %>
+			<% end %>
 		</div>
 		<!-- //Правая колонка -->
 

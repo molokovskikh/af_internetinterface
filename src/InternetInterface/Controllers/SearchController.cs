@@ -18,25 +18,15 @@ namespace InternetInterface.Controllers
 {
 	public class ClientInfo
 	{
-		public ClientInfo(Client _client)
+		public ClientInfo(Client client)
 		{
-			client = _client;
+			this.client = client;
 		}
 
 		public Client client;
 		public bool OnLine;
 
-		public string Address
-		{
-			get
-			{
-				if (client.IsPhysical())
-					return client.GetAdress();
-				else {
-					return client.LawyerPerson.ActualAdress;
-				}
-			}
-		}
+		public string Address { get { return client.GetAdress(); } }
 
 		public virtual string ForSearchAddress(string query)
 		{

@@ -2,26 +2,26 @@
 ${app.Asset("service-requests.js")}
 
 <div class="borderless-content">
-	<%if request != null: %>
+	<% if request != null: %>
 	<div class="request-details">
-	<%if Edit: %>
+	<% if Edit: %>
 	<form class="validateFormService" action="${Siteroot}/ServiceRequest/EditServiceRequest" method="post">
 		${FormHelper.HiddenField("request.Id")}
 		${FormHelper.HiddenField("request.Client.Id")}
 		${FormHelper.HiddenField("request.Description")}
-	<%end %>
+	<% end %>
 	<table class="request-details-table table">
 		<thead>
 			<tr>
 				<th colspan=4>
-				<%if IsService: %>
+				<% if IsService: %>
 				Заявка клиента: ${request.Client.Name}
-				<%else: %>
+				<% else: %>
 					<a href="${Siteroot}/Search/Redirect?filter.ClientCode=${request.Client.Id}">${request.Client.Name}</a>
-				<%end %>
-				<%if not Edit: %>
+				<% end %>
+				<% if not Edit: %>
 				<a href="?Id=${request.Id}&Edit=true">(Редактировать)</a>
-				<%end %>
+				<% end %>
 				</th>
 			</tr>
 		</thead>
@@ -40,13 +40,13 @@ ${app.Asset("service-requests.js")}
 			</tr>
 			<tr class="requestCutInfo">
 				<td><b>Статус</b></td>
-				<%if not Edit: %>
+				<% if not Edit: %>
 				<td>${request.GetStatusName()}</td>
-				<%else: %>
+				<% else: %>
 				<td>
 					${app.Edit("request.Status")}
 				</td>
-				<%end %>
+				<% end %>
 				<td><b>Дата создания</b></td>
 				<td>${request.RegDate.ToShortDateString()}</td>
 			</tr>
@@ -58,7 +58,7 @@ ${app.Asset("service-requests.js")}
 				<td>${app.Edit("request.Contact")}</td>
 				<% end %>
 				<td><b>Дата/время выполнения</b></td>
-				<%if not Edit: %>
+				<% if not Edit: %>
 					<td>${?request.PerformanceDate}</td>
 				<% else: %>
 					<td>
@@ -81,24 +81,24 @@ ${app.Asset("service-requests.js")}
 			</tr>
 			<tr class="requestCutInfo last">
 				<td><b>Сумма за оказанные услуги</b></td>
-				<%if not Edit: %>
+				<% if not Edit: %>
 					<td>${?request.Sum.ToString("C")}</td>
-				<%else: %>
+				<% else: %>
 					<td>
 						<input id="sumField" type=text name="request.Sum" value="${?request.Sum.ToString("0.00").Replace(",",".")}" />
 					</td>
-				<%end %>
+				<% end %>
 				<td id="comment_sum"><b>Бесплатная</b></td>
-				<%if not Edit:
+				<% if not Edit:
 					if request.Free: %>
 						<td>Да</td>
-					<%else: %>
+					<% else: %>
 						<td>Нет</td>
-					<%end else: %>
+					<% end else: %>
 						<td>
 							${app.Edit("request.Free")}
 						</td>
-				<%end %>
+				<% end %>
 			</tr>
 			<tr>
 				<td colspan=4 style="padding-top: 20px"><b>Описание</b></td>
@@ -112,9 +112,9 @@ ${app.Asset("service-requests.js")}
 			<% end %>
 		</tbody>
 	</table>
-	<%if Edit: %>
+	<% if Edit: %>
 	</form>
-	<%end %>
+	<% end %>
 
 		<% if request.Iterations.Count: %>
 		<div class="borderless-content-subblock">
@@ -155,11 +155,11 @@ ${app.Asset("service-requests.js")}
 		${FormHelper.EndFormTag()}
 
 	</div>
-	<%else: %>
+	<% else: %>
 		<div class="flash">
 			<div class="error">
 				Заявка либо не найдена, либо вы не имеете доступа к ней
 			</div>
 		</div>
-	<%end %>
+	<% end %>
 </div>

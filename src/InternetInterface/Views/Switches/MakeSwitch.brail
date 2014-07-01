@@ -28,7 +28,7 @@
 					</thead>
 					<tbody>
 						<tr>
-							<td >Название</td>
+							<td>Название</td>
 							<td colspan = 2> 
 								<input class="swichInput" id="Name" type="text" value="${Switch.Name}" name="Switch.Name" />
 							</td>
@@ -37,7 +37,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td >IP адрес</td>
+							<td>IP адрес</td>
 							<td colspan = 2>
 								<input class="swichInput" id="Ip" type="text" value="${Switch.IP}" name="Switch.IP" />
 							</td>
@@ -46,21 +46,21 @@
 							</td>
 						</tr>
 						<tr>
-							<td >MAC адрес</td>
+							<td>MAC адрес</td>
 							<td colspan = 2> <input class="swichInput" id="Mac" type="text" value="${Switch.Mac}" name="Switch.Mac" /> </td>
 							<td>
 								${app.GetValidationError("Switch.Mac")}
 							</td>
 						</tr>
 						<tr>
-							<td >Всего портов</td>
+							<td>Всего портов</td>
 							<td colspan = 2>${FormHelper.TextFieldValue("Switch.TotalPorts", Switch.TotalPorts)}</td>
 							<td>
 								${app.GetValidationError("Switch.TotalPorts")}
 							</td>
 						</tr>
 						<tr>
-							<td >Зона</td>
+							<td>Зона</td>
 							<td colspan=2>
 								${app.Edit("Switch.Zone")}
 								${app.GetValidationError("Switch.Zone")}
@@ -68,7 +68,7 @@
 							<td></td>
 						</tr>
 						<tr>
-							<td >Тип</td>
+							<td>Тип</td>
 							<td colspan=2>
 								${app.Edit("Switch.Type")}
 								${app.GetValidationError("Switch.Type")}

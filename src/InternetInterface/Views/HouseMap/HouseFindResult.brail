@@ -35,17 +35,17 @@
                     <td>${House.GetSubscriberCount()}</td>
                     <td>${House.GetPenetrationPercent().ToString("F2")}%</td>
                     <td>${House.PassCount}</td>
-                    <%if House.LastPassDate != null: %>
+                    <% if House.LastPassDate != null: %>
                     <td id="naznach_${i}">
                         ${House.LastPassDate.ToShortDateString()} (<a class="big-link" data-reveal-id="myModal_Pass" href="#" >Назначить</a>)
                         <input type=hidden class="house_id" value="${House.Id}" />
                     </td>
-                    <%else: %>
+                    <% else: %>
                     <td>Нет проходов (<a class="big-link" data-reveal-id="myModal_Pass" href="#" >Назначить</a>)
                     <input type=hidden class="house_id" value="${House.Id}" /> </td>
-                    <%end %>
+                    <% end %>
                 </tr>
-                <%end %>
+                <% end %>
             </tbody>
         </table>
     </div>

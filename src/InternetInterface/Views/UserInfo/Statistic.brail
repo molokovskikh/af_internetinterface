@@ -1,4 +1,4 @@
-﻿<%if PartnerAccessSet.AccesPartner("SSI"):  %>
+﻿<% if PartnerAccessSet.AccesPartner("SSI"):  %>
 <form method='get'>
 	<table id="statTable">
 		<tbody>
@@ -21,7 +21,7 @@
 					<option value=0>Все</option>
 					<% for i,region in enumerate(Regions): %>
 						<option value="${region.Id}" ${"selected" if (region.Id == regionSet)}>${region.Name}</option>
-					<%end%>
+					<% end %>
 					</select>
 				</td>
 				<td align="right">
@@ -31,4 +31,4 @@
 		</tbody>
 	</table>
 </form>
-<%end %>
+<% end %>

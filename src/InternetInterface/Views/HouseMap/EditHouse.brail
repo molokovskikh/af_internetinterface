@@ -103,11 +103,11 @@ ${FormHelper.FormTag("${Siteroot}/HouseMap/EditHouse", {"id" : "editHouse"})}
                 <select name="Entrances[${i}].Switch.Id" id="NetSwitch${Entrance.Number}" style="width: 100%" >
                 <option id="Option1" value="0" >Нет</option>
                 <% for i, Switch in enumerate(Switches): %>
-                        <%if Entrance.Switch != null:  %>
+                        <% if Entrance.Switch != null:  %>
 		                <option id="Option${i}" value="${Switch.Id}"  ${"selected" if (Switch.Id == Entrance.Switch.Id)}>${Switch.Name}</option>
-                        <%else: %>
+                        <% else: %>
                         <option id="Option2" value="${Switch.Id}">${Switch.Name}</option>
-                        <%end %>
+                        <% end %>
                 <% end %>
                 </select>
             </td>
@@ -121,7 +121,7 @@ ${FormHelper.FormTag("${Siteroot}/HouseMap/EditHouse", {"id" : "editHouse"})}
         <tr class="enCables"><td>Кабель</td>
           <% for i, Entrance in enumerate(Entrances): %>
           <td class="ent${i}">${FormHelper.CheckboxField("Entrances[${i}].Cable")}</td>
-          <%end %>
+          <% end %>
         </tr>
         <tr>
             <td>Количество квартир</td>

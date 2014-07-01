@@ -45,10 +45,10 @@
 								<input type="hidden" value="${bookmark.Id}" name="Id" />
 								<button type="submit" class="button">Удалить</button>
 							</form>
-							<%end%>
+							<% end %>
 						</td>
 					</tr>
-				<%end %>
+				<% end %>
 					<tr>
 						<td colspan=4>
 							<form action="Bookmark">

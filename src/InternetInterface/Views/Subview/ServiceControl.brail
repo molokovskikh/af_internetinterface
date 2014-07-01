@@ -12,7 +12,7 @@
 			<td>
 			<div class="accordion" style="font-size:1em;">
 			<% for i, service in enumerate(services): %>
-			<%if service.InterfaceControl: %>
+			<% if service.InterfaceControl: %>
 				<% if service.CanActivateInWeb(_client): %>
 					<h4><a href="#"> ${service.HumanName} </a></h4>
 					<div>
@@ -27,8 +27,8 @@
 							<button class="button save" style="margin-top:15px;" value="Назначить">Активировать</button>
 						</form>
 					</div>
-				<%else: %>
-					<%if service.ActivatedForClient(_client): %>
+				<% else: %>
+					<% if service.ActivatedForClient(_client): %>
 						<h4><a href="#"> ${service.HumanName} </a> </h4>
 						<div>
 							<form method=post action="${siteroot}/UserInfo/DiactivateService">
@@ -37,13 +37,13 @@
 								<button class="button save" style="margin-top:15px;" value="Назначить">Деактивировать</button>
 							</form>
 						</div>
-					<%else: %>
+					<% else: %>
 						<h4><a href="#"> ${service.HumanName} </a> </h4>
 						<div>Активация услуги  невозможна</div>
-					<%end %>
-				<%end %>
-			<%end %>
-			<%end %>
+					<% end %>
+				<% end %>
+			<% end %>
+			<% end %>
 			</div>
 			</td>
 			</tr>

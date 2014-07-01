@@ -74,7 +74,7 @@
 				for (var i = 0; i < data.intervals.length; i++) {
 					var tds = '';
 					$(data.brigads).each(function () {
-						tds += '<td >' + data.intervals[i] + '</td>';
+						tds += '<td>' + data.intervals[i] + '</td>';
 						tds += '<td id="tdi_' + i + '_' + this.Id + '"> <input type="radio" name="graph_button" value="' + i + '_' + this.Id + '"> </td>';
 					});
 					$('#tr_' + i).append(tds);

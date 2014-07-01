@@ -10,8 +10,8 @@
 			</tr>
 		</thead>
 		<tbody>
-			<%for i,item in enumerate(Payers): %>
-			<%if item.Payments.Count > 0: %>
+			<% for i,item in enumerate(Payers): %>
+			<% if item.Payments.Count > 0: %>
 				<tr>
 					<td><a href="../Search/Redirect?filter.ClientCode=${item.Id}"> ${item.Id.ToString("00000")}</a></td>
 					<td>${item.PhysicalClient.Surname} ${item.PhysicalClient.Name} ${item.PhysicalClient.Patronymic}</td>
@@ -31,24 +31,24 @@
 						</tr>
 					</thead>
 					<tbody>
-						<%for i,pay in enumerate(item.Payments): %>
-						<%if pay.Sum != 0 : %>
+						<% for i,pay in enumerate(item.Payments): %>
+						<% if pay.Sum != 0 : %>
 							<tr>
 								<td>${pay.Sum}</td>
 								<td>${pay.PaidOn}</td>
-								<%if pay.Agent != null: %>
+								<% if pay.Agent != null: %>
 								<td>${pay.Agent.Name}</td>
-								<%else: %>
+								<% else: %>
 								<td></td>
-								<%end %>
+								<% end %>
 							</tr>
-							<%end %>
-						<%end %>
+							<% end %>
+						<% end %>
 					</tbody>
 					</table>
 					</td>
 				</tr>
-				<%end %>
-			<%end %>
+				<% end %>
+			<% end %>
 		</tbody>
 </table>

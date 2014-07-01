@@ -29,17 +29,17 @@
 			 <% for i,Switch in enumerate(Switches): %>
 				<tr>
 					<td>${Switch.Id}</td>
-				<%if (Switch.Name != null) and (Switch.Name != ""): %>
+				<% if (Switch.Name != null) and (Switch.Name != ""): %>
 					<td><a href="../Switches/MakeSwitch?Switch=${Switch.Id}"> ${Switch.Name}</a></td>
-					<%else:%>
+					<% else: %>
 					<td><a href="../Switches/MakeSwitch?Switch=${Switch.Id}"> (Редактировать)</a></td>
-					<%end %>
+					<% end %>
 					<td>${Switch.IP}</td>
 					<td>${Switch.Mac}</td>
 					<td>${Switch.Zone.Name}</td>
 					<td>${Switch.GetCommentForWeb()}</td>
 				</tr>
-			 <%end %>
+			 <% end %>
 			</tbody>
 		</table>
 

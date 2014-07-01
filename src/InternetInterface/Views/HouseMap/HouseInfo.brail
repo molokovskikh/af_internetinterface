@@ -118,11 +118,11 @@
 			<th>Количество квартир: ${House.ApartmentCount}</th>
 		</tr>
 		<tr>
-		<%if House.LastPassDate!=null: %>
+		<% if House.LastPassDate!=null: %>
 			<th colspan=3>Последний проход: ${House.LastPassDate.ToShortDateString()}, назначен на ${House.GetLastBypass().Agent.Name}</th>
-		<%else: %>
+		<% else: %>
 			<th colspan=3>Нет проходов по данному дому</th>
-		<%end %>
+		<% end %>
 		</tr>
 	</thead>
 </table>
@@ -138,31 +138,31 @@
 	<tbody>
 		<tr><td>Оборудование</td>
 		  <% for i, Entrance in enumerate(House.Entrances): %>
-		  <%if Entrance.Switch != null : %>
+		  <% if Entrance.Switch != null : %>
 			<td><a href="${Siteroot}/Switches/MakeSwitch?Switch=${Entrance.Switch.Id}"> ${Entrance.Switch.Name} </a></td>
-			<%else: %>
-			<%if Entrance.Cable : %>
+			<% else: %>
+			<% if Entrance.Cable : %>
 			<td> Кабель</td>
-			<%else: %>
+			<% else: %>
 			<td> Нет</td>
-			<%end %>
+			<% end %>
 		  <% end %>
 		  <% end %>
 		</tr>
 		<tr><td>Стояки</td>
 		  <% for i, Entrance in enumerate(House.Entrances): %>
-		  <%if Entrance.Strut : %>
+		  <% if Entrance.Strut : %>
 			<td>Да</td>
-			<%else: %>
+			<% else: %>
 		   <td> Нет</td>
 		  <% end %>
 		  <% end %>
 		</tr>
 		<tr><td>Возможность подключения</td>
 		  <% for i, Entrance in enumerate(House.Entrances): %>
-		  <%if Entrance.WasConnected() : %>
+		  <% if Entrance.WasConnected() : %>
 			<td>Да</td>
-			<%else: %>
+			<% else: %>
 			<td> Нет</td>
 		  <% end %>
 		  <% end %>
@@ -238,7 +238,7 @@
 							<option value="0">Нет</option>
 						<% for i, status in enumerate(ApStatuses): %>
 							<option id="option_${status.Id}" value=${status.Id}>${status.Name}</option>
-						<%end %>
+						<% end %>
 					</select>
 				</td>
 			</tr>
@@ -268,30 +268,30 @@
 <table style="width:100%">
 	<tbody>
 	<tr>
-<%for j in range(0 , 2): %>
+<% for j in range(0 , 2): %>
 <td valign=top>
 <table border="1" style="width:490px;" class="table" id="kv_table">
 	<thead>
 		<tr align=center>
 			<th></th>
 			<th colspan=2>Было</th>
-			<%if IsDefined("ForPrint"): %>
+			<% if IsDefined("ForPrint"): %>
 			<th colspan=2>Результат</th>
-			<%else: %>
+			<% else: %>
 			<th colspan=2>Статус</th>
-			<%end %>
+			<% end %>
 			<th></th>
 		</tr>
 		<tr>
 			<th>кв.</th>
 			<th>Int</th>
 			<th>TV</th>
-			<%if IsDefined("ForPrint"): %>
+			<% if IsDefined("ForPrint"): %>
 			<th>INT</th>
 			<th>TV</th>
-			<%else: %>
+			<% else: %>
 			<th colspan=2></th>
-			<%end %>
+			<% end %>
 			<th>Комментарии</th>
 		</tr>
 	</thead>
@@ -299,70 +299,70 @@
 	<% ap_count = House.ApartmentCount %>
 	<% for i in range(ap_count / 2 * j, ap_count / 2 + ap_count / 2 * j + ap_count % 2 *j): %>
 	<tr>
-		<%apartment = House.GetApartmentWithNumber(i+1) %>
-		<%inforumClient = House.GetClientWithApNumber(i+1) %>
-		<%if apartment!= null: %>
-			<%request = apartment.GetRequestForThis() %>
-		<%else: %>
-			<%request = null %>
-		<%end %>
-		<%if inforumClient == 0: %>
-			<%if (request != null): %>
+		<% apartment = House.GetApartmentWithNumber(i+1) %>
+		<% inforumClient = House.GetClientWithApNumber(i+1) %>
+		<% if apartment!= null: %>
+			<% request = apartment.GetRequestForThis() %>
+		<% else: %>
+			<% request = null %>
+		<% end %>
+		<% if inforumClient == 0: %>
+			<% if (request != null): %>
 			<td>${i+1}
-			<%else: %>
+			<% else: %>
 			<td><a href="#" class="apartment_link" data-reveal-id="myModal_IT" > ${i+1}</a>
-			<%end %>
-			<%else: %>
+			<% end %>
+			<% else: %>
 			<td>${i+1}
-		<%end %>
+		<% end %>
 		<input type=hidden name="apartment" value=${i+1} class="apartment_table" />
 		</td>
-		<%if apartment != null : %>
+		<% if apartment != null : %>
 			<td id="td_last_inet_${i+1}">${apartment.LastInternet}</td>
 			<td id="td_last_TV_${i+1}">${apartment.LastTV}</td>
-			<%if IsDefined("ForPrint"): %>
+			<% if IsDefined("ForPrint"): %>
 			<td></td>
 			<td></td>
-			<%else: %>
-				<%if request == null: %>
-					<%if apartment.Status != null : %>
+			<% else: %>
+				<% if request == null: %>
+					<% if apartment.Status != null : %>
 					<td colspan=2 id="td_status_${i+1}">${apartment.Status.Name}</td>
-					<%else: %>
+					<% else: %>
 					<td colspan=2 id="td_status_${i+1}"></td>
-					<%end %>
-				<%else: %>
+					<% end %>
+				<% else: %>
 					<td colspan=2 id="td_status_${i+1}">В заявке (№${request.Id})</td>
-				<%end %>
-			<%end %>
-		<%else: %>
-			<%if inforumClient != 0: %>
+				<% end %>
+			<% end %>
+		<% else: %>
+			<% if inforumClient != 0: %>
 				<td style="color:#258936;" id="td_last_inet_${i+1}"><b>${inforumClient}</b></td>
-				<%else: %>
+				<% else: %>
 				<td id="td_last_inet_${i+1}"></td>
-			<%end %>
+			<% end %>
 			<td id="td_last_TV_${i+1}"></td>
-			<%if IsDefined("ForPrint"): %>
+			<% if IsDefined("ForPrint"): %>
 			<td></td>
 			<td></td>
-			<%else: %>
+			<% else: %>
 			<td colspan=2 id="td_status_${i+1}"></td>
-			<%end %>
-		<%end %>
-		<%if apartment != null : %>
-			<%if ((request == null) or ((request != null) and (request.Label == null))): %>
+			<% end %>
+		<% end %>
+		<% if apartment != null : %>
+			<% if ((request == null) or ((request != null) and (request.Label == null))): %>
 				<td id="td_comment_${i+1}">${apartment.Comment}</td>
-			<%else: %>
+			<% else: %>
 				<td id="td_comment_${i+1}">${request.Label.Name}</td>
-			<%end %>
-		<%else: %>
+			<% end %>
+		<% else: %>
 		<td id="td_comment_${i+1}"></td>
-		<%end %>
+		<% end %>
 	</tr>
-	<%end %>
+	<% end %>
 	</tbody>
 </table>
 </td>
-<%end %>
+<% end %>
 </tr>
 </tbody>
 </table>

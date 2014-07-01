@@ -143,37 +143,37 @@
 			<tr> 
 			 <td><input type="checkbox" id="Checkbox1" name="LabelList[${i}]" value=${Client.Id} /></td>
 			 <td>${Client.Id}</td>
-				<%if PartnerAccessSet.AccesPartner("RC"): %>
-					<%if Client.Client == null: %>
+				<% if PartnerAccessSet.AccesPartner("RC"): %>
+					<% if Client.Client == null: %>
 				<td><a id="request_to_reg_${Client.Id}" href="../UserInfo/RequestOne?id=${Client.Id}">${TextHelper.SelectQuery(filter.query, Client.ApplicantName)}</a></td>
-					<%else: %>
+					<% else: %>
 				<td><a id="request_to_reg_${Client.Id}" href="../Search/Redirect?filter.ClientCode=${Client.Client.Id}"> ${TextHelper.SelectQuery(filter.query, Client.ApplicantName)}</a></td>
-					<%end %>
-				<%else: %>
+					<% end %>
+				<% else: %>
 				<td>${Client.ApplicantName}</td>
-				<%end %>
+				<% end %>
 				<td>${TextHelper.SelectContact(filter.query, Client.ApplicantPhoneNumber)}</td>
 				<td>${Client.ApplicantEmail}</td>
 				<td style="width:200px;">
 					${Client.City} ул. ${TextHelper.SelectQuery(filter.query, Client.Street)}
-					<%if Client.House != null: %>
+					<% if Client.House != null: %>
 					 д. ${Client.House} 
-					 <%end %>
-					 <%if Client.CaseHouse != null: %>
+					 <% end %>
+					 <% if Client.CaseHouse != null: %>
 					 корп. ${Client.CaseHouse} 
-					 <%end %>
-					 <%if Client.Apartment != null: %>
+					 <% end %>
+					 <% if Client.Apartment != null: %>
 					 кв. ${Client.Apartment} 
-					 <%end %>
-					 <%if Client.Entrance != null: %>
+					 <% end %>
+					 <% if Client.Entrance != null: %>
 					 подъезд ${Client.Entrance}
-					 <%end %>
-					 <%if Client.Floor != null: %>
+					 <% end %>
+					 <% if Client.Floor != null: %>
 					 этаж ${Client.Floor}
-					 <%end %>
+					 <% end %>
 				</td>
 				<td>${Client.Tariff.Name}</td>
-				<%if (Client.Label != null) and (Client.Label.Id != 0): %>
+				<% if (Client.Label != null) and (Client.Label.Id != 0): %>
 				<td style="width:180px;">
 					<div class='flash' style="float:left; height:40px; width:180px; float: left; padding:0px; margin:0px;"> 
 						<div class="fontgit">
@@ -187,21 +187,21 @@
 				<td style="width:180px;">
 				</td>
 				<% end %>
-					<%if Client.RegDate.ToShortDateString() != "01.01.0001": %>
+					<% if Client.RegDate.ToShortDateString() != "01.01.0001": %>
 					<td>
 						${Client.RegDate.ToShortDateString()}
 					</td>
-					<%else: %>
+					<% else: %>
 					<td>---------</td>
-					<%end %>
-					<%if not Client.Archive: %>
+					<% end %>
+					<% if not Client.Archive: %>
 					<td><a class="button" href="../UserInfo/RequestInArchive?id=${Client.Id}&action=true">В архив</a></td>
-					<%else: %>
+					<% else: %>
 					<td><a class="button" href="../UserInfo/RequestInArchive?id=${Client.Id}&action=false">Из архива</a></td>
-					<%end %>
-				<%i++ %>
+					<% end %>
+				<% i++ %>
 				</tr>
-			<%end %>
+			<% end %>
 				<tr>
 					<td colspan=2>
 						<select name="labelch" id="labelch" style="width: 100%" >
@@ -222,7 +222,7 @@
 					</div>
 					</td>
 				</tr>
-			<%end %>
+			<% end %>
 			</tbody>
 			</table>
 			 </div>

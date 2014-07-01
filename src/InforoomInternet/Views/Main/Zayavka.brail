@@ -1,12 +1,12 @@
 ﻿<div id="wrapper_in">
 	<div id="wrapper_inner">
 		<form method="post" action="send" id="zakazform">
-		<%if authorized: %>
+		<% if authorized: %>
 		<p></p>
 		<p class="info" style="padding:10px; margin-top:10px;">
 			Заполнение данной заявки означает принятие участие в акции "подключи друга".
 		</p>
-		<%end %>
+		<% end %>
 		<p>
 			<label for="fio">Ф.И.О.</label>
 			<input type="text" id="fio" name="application.ApplicantName" value="${application.ApplicantName if IsDefined( "application" )}" size="45" />
@@ -42,7 +42,7 @@
 				<span class="errorSpan">${application.GetValidationError("Street")}</span>
 				<% else: %>
 
-				<%end %>
+				<% end %>
 		  </p>
 		  <div style="position:absolute">
 			<div style="float:left">
@@ -53,7 +53,7 @@
 					<span class="errorSpan">${application.GetValidationError("House")}</span>
 					<% else: %>
 
-					<%end %>
+					<% end %>
 			</div>
 			<div style="float:left">
 				<label class="adress_Label" for="CaseHouse">Корпус:</label>
@@ -67,7 +67,7 @@
 					<span class="errorSpan">${application.GetValidationError("Apartment")}</span>
 					<% else: %>
 
-					<%end %>
+					<% end %>
 			</div>
 		</div> 
 		<br />

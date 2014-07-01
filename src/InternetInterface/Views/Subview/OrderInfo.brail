@@ -1,7 +1,7 @@
 ﻿${app.Asset("orderinfo.css")}
-<%if not IsDefined("filter") or filter.EditingConnect: %>
+<% if not IsDefined("filter") or filter.EditingConnect: %>
 	${app.Asset("EditingConnect.js")}
-<%end%>
+<% end %>
 <div id="deletePointDialog" class="reveal-modal">
 	<form class="formConnect" method="post" action="${siteroot}/UserInfo/DeleteEndPoint">
 		<input type="hidden" name="endPointForDelete" id="endPointForDelete"/>
@@ -24,7 +24,7 @@
 </div>
 
 <div class="clearBoth;">
-<%if PartnerAccessSet.AccesPartner("DHCP"): %>
+<% if PartnerAccessSet.AccesPartner("DHCP"): %>
 
 	<% if not EditingConnect: %>
 
@@ -42,11 +42,11 @@
 			<% end %>
 		</th>
 		<th>
-			<% if OrderInfo.Order.OrderStatus != 2:%>
+			<% if OrderInfo.Order.OrderStatus != 2: %>
 				<button data-reveal-id="closeOrderDialog" class="button closeOrderControl save big-link" id="closeOrderButton${OrderInfo.Order.Id}">Закрыть</button>
 				<input type="hidden" value="${OrderInfo.Order.Id}" class="closeOrderControl"/>
 			<% else: %>
-			<% if OrderInfo.Order.EndPoint != null:%>
+			<% if OrderInfo.Order.EndPoint != null: %>
 				<a href="#" class="big-link" data-reveal-id="deletePointDialog" >
 					<input type="hidden" value="${OrderInfo.ClientConnectInfo.endpointId}" />
 					<img class="deletePointControl" src="../images/onebit_32.png" />
@@ -84,7 +84,7 @@
 				Дата окончания
 			</td>
 			<td colspan="2">
-			<% if OrderInfo.Order.EndDate != null:%>
+			<% if OrderInfo.Order.EndDate != null: %>
 				${OrderInfo.Order.EndDate.ToString("dd.MM.yyyy")}
 			<% end %>
 			</td>
@@ -163,37 +163,37 @@
 		  <td><span class="description">Скорость </span></td>
 		  <td>${OrderInfo.ClientConnectInfo.GetNormalSpeed()}</td>
 		</tr>
-		<%if OrderInfo.ClientConnectInfo.ActualPackageId != null:%>
+		<% if OrderInfo.ClientConnectInfo.ActualPackageId != null: %>
 		<tr>
 		  <td><span class="description">Актуальный PackageId </span></td>
 		  <td>${OrderInfo.ClientConnectInfo.ActualPackageId}</td>
 		</tr>
-		<%end%>
+		<% end %>
 		 <tr>
 		  <td><span class="description">Мониторинг </span></td>
-		  <td><%if (OrderInfo.ClientConnectInfo.Monitoring): %>
+		  <td><% if (OrderInfo.ClientConnectInfo.Monitoring): %>
 				Да
-				<%else: %>
+				<% else: %>
 				Нет
-				<%end %></td>
+				<% end %></td>
 		</tr>
 		<tr>
 		  <td><span class="description">Бригада </span></td>
 		  <td>${?OrderInfo.ClientConnectInfo.WhoConnected}</td>
 		</tr>
-		<%if OrderInfo.ClientConnectInfo.ConnectSum > 0 : %>
+		<% if OrderInfo.ClientConnectInfo.ConnectSum > 0 : %>
 		<tr>
 			<td><span class="description">Стоимость подключения </span></td>
 			<td>${?OrderInfo.ClientConnectInfo.ConnectSum.ToString("C")}</td>
 		</tr>
-		<%end %>
+		<% end %>
 			<% end %>
 		</tbody>
 	</table>
 
-	<%if PartnerAccessSet.AccesPartner("DHCP"): %>
-<%staticIps = OrderInfo.ClientConnectInfo.GetStaticAdreses() %>
-<%if staticIps.Count != 0: %>
+	<% if PartnerAccessSet.AccesPartner("DHCP"): %>
+<% staticIps = OrderInfo.ClientConnectInfo.GetStaticAdreses() %>
+<% if staticIps.Count != 0: %>
 	<table class="table" align="left">
 		<thead>
 			<tr>
@@ -210,12 +210,12 @@
 					<td>${item.Ip} ${"/" if item.Mask != null} ${item.Mask}</td>
 					<td>${item.GetSubnet()}</td>
 				</tr>
-			<%end %>
+			<% end %>
 		</tbody>
 	</table>
-<%end %>
-<%end %>
-	<%else: %>
+<% end %>
+<% end %>
+	<% else: %>
 <script type="text/javascript">
 	function GetStaticIp() {
 	var req = {};
@@ -245,9 +245,9 @@
 	<table id="editConnectTable" class="table">
 	<thead>
 		<th colspan = 3 > Информация по подключению
-		<%if PartnerAccessSet.AccesPartner("DHCP"): %>
+		<% if PartnerAccessSet.AccesPartner("DHCP"): %>
 			<input id="Submit2" type="submit" value="Сохранить"  align="right" />
-		<%end %>
+		<% end %>
 		</th>
 	</thead>
 		<tbody>
@@ -331,10 +331,10 @@
 					<select name="currentEndPoint">
 					<option value="0">Нет</option>
 					<% for i, item in enumerate(_client.Orders): %>
-					<%if item.EndPoint != null:%>
+					<% if item.EndPoint != null: %>
 						<option value="${item.EndPoint.Id}">${item.EndPoint.Id}</option>
-					<%end%>
-					<%end%>
+					<% end %>
+					<% end %>
 					</select>
 				</td>
 			</tr>
@@ -369,7 +369,7 @@
 			<td class="width200px">
 				<select name="ConnectInfo.Switch" id="SelectSwitches" class="width100">
 					<option value="0">Нет</option>
-					<%for j, Switch in enumerate(Switches): %>
+					<% for j, Switch in enumerate(Switches): %>
 					<option id="Option${j}" value="${Switch.Id}" ${"selected" if (Switch.Id.ToString() == OrderInfo.ClientConnectInfo.Switch)} > ${Switch.Name} </option>
 					<% end %>
 				</select>
@@ -382,16 +382,16 @@
 		</tr>
 		<tr>
 		  <td>Скорость</td>
-		  <%if _client.IsPhysical(): %>
+		  <% if _client.IsPhysical(): %>
 		  <td>${OrderInfo.ClientConnectInfo.GetNormalSpeed()}</td>
-		  <%else:%>
+		  <% else: %>
 			<td colspan=2>
 			<select name="ConnectInfo.PackageId" class="width200px">
-				<%for j, speed in enumerate(Speeds): %>
+				<% for j, speed in enumerate(Speeds): %>
 					<option value="${speed.PackageId}" ${"selected" if (speed.PackageId == ChSpeed)}> ${speed}  PID(${speed.PackageId}) ${speed.Description} </option>
-				<%end %>
+				<% end %>
 		  </td>
-		  <%end%>
+		  <% end %>
 		</tr>
 		<tr>
 		  <td>Мониторинг</td>
@@ -399,7 +399,7 @@
 		</tr>
 		<tr>
 		 <td>Бригада по подключению</td>
-		 <%if OrderInfo.ClientConnectInfo.WhoConnected == null: %>
+		 <% if OrderInfo.ClientConnectInfo.WhoConnected == null: %>
 			<td colspan=2>
 				<select name="BrigadForConnect" id="BrigadForConnect" class="width100" >
 				<% for j, Brigad in enumerate(Brigads): %>
@@ -407,20 +407,20 @@
 				<% end %>
 				</select>
 			</td>
-		 <%else: %>
+		 <% else: %>
 		 <td colspan=2>
 			 ${OrderInfo.ClientConnectInfo.WhoConnected}
 		 </td>
-		 <%end %>
+		 <% end %>
 		 </tr>
-		 <%if OrderInfo.ClientConnectInfo.ConnectSum > 0:%>
+		 <% if OrderInfo.ClientConnectInfo.ConnectSum > 0: %>
 		 <tr>
 			<td>Сумма за подключение</td>
 			<td>
 				${OrderInfo.ClientConnectInfo.ConnectSum}
 			</td>
 		 </tr>
-		 <%end%>
+		 <% end %>
 		<tr>
 		<td colspan=3>
 	<button type="button"  class="editBut" onclick="$('#staticAdreses').slideToggle('slow');"> Редактировать статические адреса
@@ -455,7 +455,7 @@
 					<div class=delMenuItem id="delMenuItem_${i}"></div>
 				</td>
 			</tr>
-			<%end %>
+			<% end %>
 		</tbody>
 		</table>
 		<button type="button"  class="editBut" onclick="addNewAdress()"> Добавить новый адрес
@@ -466,8 +466,8 @@
 	</tbody>
 	</table>
 	</form>
-	<%end %>
-<%end %>
+	<% end %>
+<% end %>
 </div>
 <script type="text/javascript">
 	$(document).ready(function () {

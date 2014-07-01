@@ -23,13 +23,13 @@
              <% for i,Brigad in enumerate(Brigads): %>
                 <tr>
                     <td>${Brigad.Id}</td>
-                <%if (Brigad.Name != null): %>
+                <% if (Brigad.Name != null): %>
                     <td><a href="../Brigads/MakeBrigad?brigad=${Brigad.Id}"> ${Brigad.Name}</a></td>
-                    <%else:%>
+                    <% else: %>
                     <td><a href="../Brigads/MakeBrigad?brigad=${Brigad.Id}"> (Редактировать)</a></td>
-                    <%end %>
+                    <% end %>
                 </tr>
-             <%end %>
+             <% end %>
             </tbody>
         </table>
 

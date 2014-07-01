@@ -27,7 +27,7 @@ ${FormHelper.HiddenField("filter.SortDirection")}
 				<option>Все</option>
 				<% for i,region in enumerate(regions): %>
 					<option value="${region.Id}" ${"selected" if region.Id == filter.Region}>${region.Name}</option>
-				<%end%>
+				<% end %>
 			</td>
 		</tr>
 		<tr>

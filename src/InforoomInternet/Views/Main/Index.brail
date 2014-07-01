@@ -5,7 +5,7 @@
 		<table cellpadding="3" cellspacing="0" width="100%">
 			<tr class="caption">
 				<td class="left">Название тарифа</td>
-				<td >Скорость доступа</td>
+				<td>Скорость доступа</td>
 				<td class="right">Абонентская плата</td>
 			</tr>
 				<% for tariff in tariffs :  %>

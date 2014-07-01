@@ -1,4 +1,4 @@
-﻿<%if Client.CanUseDebtWork(): %>
+﻿<% if Client.CanUseDebtWork(): %>
 <table>
 	<tbody>
 		<tr class="caption" style="text-align:center; font-size:14px;">
@@ -29,8 +29,8 @@
 		</tr>
 	</tbody>
 </table>
-<%else: %>
-<%if IsDefined("message"): %>
+<% else: %>
+<% if IsDefined("message"): %>
 <h2>${message}</h2>
-<%end %>
-<%end %>
+<% end %>
+<% end %>

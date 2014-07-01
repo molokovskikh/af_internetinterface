@@ -214,11 +214,11 @@ div.WordSection1
   justify;line-height:normal'>прописанный по адресу: <i style='mso-bidi-font-style:
   normal'><u>__________________________________________________________________</u></i></p>
 
-  <%if (Client.HomePhoneNumber == ""): %>
+  <% if (Client.HomePhoneNumber == ""): %>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
   justify;line-height:normal'>домашний телефон: <i style='mso-bidi-font-style:
   normal'><u>8-${Client.HomePhoneNumber}</u></i></p>
-  <%end %>
+  <% end %>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
   justify;line-height:normal'>мобильный телефон: <i style='mso-bidi-font-style:
   normal'><u>${_client.Contact}</u></i></p>
@@ -232,16 +232,16 @@ div.WordSection1
   justify;line-height:normal'>
     Счет: <i style='mso-bidi-font-style:
   normal'><u>${AccountNumber}<b style='mso-bidi-font-weight:normal'><o:p></o:p></b></u></i>
-  <%if IsDefined("ConnectInfo"): %>
-  <%if ConnectInfo != null: %>
-  <%if ConnectInfo.Switch != null: %>
+  <% if IsDefined("ConnectInfo"): %>
+  <% if ConnectInfo != null: %>
+  <% if ConnectInfo.Switch != null: %>
   Коммутатор: <i style='mso-bidi-font-style:
   normal'><u>${ConnectInfo.Swith_adr} (${ConnectInfo.swith_IP})<b style='mso-bidi-font-weight:normal'><o:p></o:p></b></u></i>
     Порт: <i style='mso-bidi-font-style:
   normal'><u>${ConnectInfo.Port}<b style='mso-bidi-font-weight:normal'><o:p></o:p></b></u></i>
-  <%end %>
-  <%end %>
-  <%end %>
+  <% end %>
+  <% end %>
+  <% end %>
   Тарифный план: <i style='mso-bidi-font-style:
   normal'><u>${?Client.Tariff.Name}<b style='mso-bidi-font-weight:normal'><o:p></o:p></b></u></i></p>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
@@ -380,19 +380,19 @@ div.WordSection1
   %>
   <br/>
   <span>Свободные порты: ${freePorts}</span>
-  <%end%>
+  <% end %>
   </p>
   <p class=MsoNormal align=right style='margin-bottom:0cm;margin-bottom:.0001pt;
   text-align:right;line-height:normal'>Работы выполнил 
-   <%if WhoConnected == null: %>
+   <% if WhoConnected == null: %>
   <b style='mso-bidi-font-weight:normal'>
   <![if !vml]><img width=166 height=24
   src="../Images/image005.gif" v:shapes="_x0000_s1029"><![endif]></b>
 <span
   style='mso-spacerun:yes'> </span><i style='mso-bidi-font-style:normal'>
-	<%else: %>
+	<% else: %>
 		${WhoConnected.Name}
-	<%end %></i></p>
+	<% end %></i></p>
   </td>
  </tr>
  <tr style='mso-yfti-irow:1'>
@@ -543,14 +543,14 @@ div.WordSection1
   style='mso-bidi-font-style:normal'><u><o:p></o:p></u></i></b></p>
   <p class=MsoNormal align=right style='margin-bottom:0cm;margin-bottom:.0001pt;
   text-align:right;line-height:normal'>Работы выполнил 
-	 <%if WhoConnected == null: %>
+	 <% if WhoConnected == null: %>
   <![if !vml]><img width=166 height=24
   src="../Images/image005.gif" v:shapes="_x0000_s1028"><![endif]>
   <span
   style='mso-spacerun:yes'> </span><span style='mso-spacerun:yes'> </span><i
-  style='mso-bidi-font-style:normal'>  <%else: %>
+  style='mso-bidi-font-style:normal'>  <% else: %>
   ${WhoConnected.Name}
-  <%end %></i></p>
+  <% end %></i></p>
   <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
   justify;line-height:normal'><span style='font-size:2.0pt'><o:p>&nbsp;</o:p></span></p>
   </td>

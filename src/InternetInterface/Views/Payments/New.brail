@@ -51,21 +51,21 @@
 			<td>
 				<input type=hidden id="payment_payer_id" value="${Payment.Payer.Id if Payment.Payer != null }" name=Payment.Payer.Id>
 				<input type=text id=payer value="${Payment.Payer.Name if Payment.Payer != null }" class="required">
-				<%if IsDefined("Payment"): %>
+				<% if IsDefined("Payment"): %>
 					<br />
 					${app.GetValidationError(Payment, "Payer")}
 					${app.GetValidationError(Payment, "Recipient")}
-				<%end %>
+				<% end %>
 			</td>
 			<td>
 				<input type=text name=Payment.DocumentNumber>
 			</td>
 			<td>
 				<input type=text name=Payment.Sum value="${Payment.Sum}" class="input-sum required">
-				<%if IsDefined("Payment"): %>
+				<% if IsDefined("Payment"): %>
 					<br />
 					${app.GetValidationError(Payment, "Sum")}
-				<%end %>
+				<% end %>
 			</td>
 		</tr>
 		<tr>
@@ -100,7 +100,7 @@
 		<% if payment.Payer: %>
 			<% if payment.Payer.IsPhysical(): %>
 				${UrlHelper.Link(payment.Payer.Name, {@controller : @UserInfo, @action : @SearchUserInfo, @querystring: { "filter.ClientCode" : payment.Payer.Id}})}</td>
-			<% else:%>
+			<% else: %>
 					${UrlHelper.Link(payment.Payer.Name, {@controller : @UserInfo, @action : @LawyerPersonInfo, @querystring: { "filter.ClientCode" : payment.Payer.Id}})}
 			<% end %>
 		<% end %>

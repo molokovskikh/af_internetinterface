@@ -1,7 +1,7 @@
 ﻿<form class="form login" id="changeBalanceForm" method="post" action="${siteroot}/UserInfo/ChangeBalance">
 	<input type="hidden" name="ClientID" value="${ClientCode}" />
 	<div class="form-sub-block">
-		<%if IsDefined("sleepButton"): %>
+		<% if IsDefined("sleepButton"): %>
 		<script type="text/javascript">
 			$(function () {
 				$('#ChangeBalanceButton').attr("disabled", "disabled");
@@ -16,7 +16,7 @@
 				}, 3000);
 			});
 		</script>
-		<%end %>
+		<% end %>
 		<h3>Пополнить баланс клиента</h3>
 		<table class="form-table">
 			<tbody>
@@ -34,7 +34,7 @@
 						<input type="text" class="CommentText" id="CommentText"  name="CommentText"/>
 					</td>
 				</tr>
-				<%if PartnerAccessSet.AccesPartner("SSI"): %>
+				<% if PartnerAccessSet.AccesPartner("SSI"): %>
 				<tr>
 					<td>
 						<label for="virtualPayment">Зачислить как бонус</label>
@@ -43,7 +43,7 @@
 						<input id="virtualPayment" type=checkbox name="virtualPayment" value="true"/>
 					</td>
 				</tr>
-				<%end %>
+				<% end %>
 				<tr>
 					<td colspan=100>
 						<button type="submit" id="ChangeBalanceButton" class="button ok">

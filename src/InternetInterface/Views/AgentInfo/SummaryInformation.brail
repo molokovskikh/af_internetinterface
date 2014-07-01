@@ -27,7 +27,7 @@
 	</tbody>
 </table>
 </form>
-<%if Payments.Count > 0: %>
+<% if Payments.Count > 0: %>
 <table class="table" id="payments_table" style="border:1px solid #AAA;">
 	<thead>
 		<tr>
@@ -43,13 +43,13 @@
 			<td>${payment.Comment}</td>
 			<td class="center">${payment.RegistrationDate.ToShortDateString()}</td>
 		</tr>
-	<%end %>
+	<% end %>
 	<tr>
 		<td colspan=3 style="font-size:15px;"><b>Итого:</b><b style="color:#026e1b;"> ${TotalSum.ToString("0.00")} </b><b> рублей.</b></td>
 	</tr>
 	</tbody>
 </table>
-<%else:
+<% else:
 output WriteMessageError("За выбраный период платежей не зарегистрировано")
  end %>
 </div>

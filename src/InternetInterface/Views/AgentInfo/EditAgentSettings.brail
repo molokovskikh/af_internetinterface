@@ -3,12 +3,12 @@
 	$(function () {
 		$('#agentSettingsForm').validate();
 
-<%for i,item in enumerate(agentSettings): %>
+<% for i,item in enumerate(agentSettings): %>
 		$('#agentSumField${i}').rules("add", { required: true, decimal: true, messages: {
 			required: "Введите число"
 		}
 		});
-<%end %>
+<% end %>
 	});
 </script>
 <div style="width:800px;" class="backGround whereNewTable">
@@ -19,7 +19,7 @@
 			<th colspan=2>Настройки работы агентов</th>
 		</tr>
 	</thead>
-	<%for i,item in enumerate(agentSettings): %>
+	<% for i,item in enumerate(agentSettings): %>
 		<tr>
 			<td>${item.Description}</td>
 			<td>
@@ -27,7 +27,7 @@
 				<input type=text id="agentSumField${i}" name="agentSettings[${i}].Sum" value="${item.Sum}"/>
 			</td>
 		</tr>
-	<%end %>
+	<% end %>
 		<tr>
 			<td colspan=2><button class="button" id="button_validate" type=submit>Сохранить</button></td>
 		</tr>
