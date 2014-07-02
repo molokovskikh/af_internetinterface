@@ -1,8 +1,8 @@
 ﻿<tr>
     <td>
-                <select name="deletelabelch" id="deletelabelch" style="width: 100%" >
+                <select name="deletelabelch" id="deletelabelch" style="width: 100%">
                 <% for i, Label in enumerate(Labels): %>
                 <option id="Option1" value=${Label.Id} style="background-color: ${Label.Color}"> ${Label.Name} </option>
-                <% end %> 
+                <% end %>
     </td>
 </tr>

@@ -49,7 +49,7 @@
 			</tr>
 			<tr>
 				<td>
-					<button type="submit" class="button ok" >
+					<button type="submit" class="button ok">
 						Сохранить
 					</button>
 				</td>

@@ -12,7 +12,7 @@
 		Для продолжения роботы в интернет нажмите кнопку "Продолжить".
 	</p>
 	<form method="post">
-		<input name="referer" type="hidden" value="!{referer}" >
+		<input name="referer" type="hidden" value="!{referer}">
 		<input type="submit" class="button" id="ConButton" value="Продолжить">
 	</form>
 <% end %>

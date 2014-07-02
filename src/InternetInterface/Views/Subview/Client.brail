@@ -154,7 +154,7 @@ $(function () {
 </tr>
 <tr>
 	<td style="width:200px;">
-		<b>Дом </b> (<a href="#" class="big-link" data-reveal-id="register_house" >Создать новый</a>)
+		<b>Дом </b> (<a href="#" class="big-link" data-reveal-id="register_house">Создать новый</a>)
 	</td>
 	<td id="SelectHouseTD"></td>
 	<td>

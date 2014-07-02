@@ -56,7 +56,7 @@
     <tbody>
         <tr>
             <td>
-                    <a href="#" class="big-link" data-reveal-id="myModal" >
+                    <a href="#" class="big-link" data-reveal-id="myModal">
                     <button class="button save" value="Назначить">Создать дом</button>
                     </a>
             </td>

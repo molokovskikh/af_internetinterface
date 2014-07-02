@@ -1,0 +1,131 @@
+﻿<div style="width:80%;">
+	<div style="width:50%; float:left;">
+		<table class="table">
+			<thead>
+				<tr>
+					<th colspan=2>Заявка</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td><span class="description">ФИО </span></td>
+					<td>${request.ApplicantName}</td>
+				</tr>
+				<tr>
+					<td><span class="description">Телефон </span></td>
+					<td>${request.ApplicantPhoneNumber}</td>
+				</tr>
+				<tr>
+					<td><span class="description">Email </span></td>
+					<td>${request.ApplicantEmail}</td>
+				</tr>
+				<tr>
+					<td><span class="description">Адрес </span></td>
+					<td>${request.Street} ${request.House}${request.CaseHouse} ${request.Apartment} Подъезд ${request.Entrance} Этаж ${request.Floor}</td>
+				</tr>
+				<tr>
+					<td><span class="description">Тариф </span></td>
+					<td>${request.Tariff.Name}</td>
+				</tr>
+				<% if request.Label != null: %>
+				<tr>
+					<td><span class="description">Метка назначана </span></td>
+					<td>${request.Label.Name}</td>
+				</tr>
+				<% end %>
+				<tr>
+					<td><span class="description">Дата последнего действия </span></td>
+					<td>${request.ActionDate}</td>
+				</tr>
+				<% if request.Operator != null: %>
+				<tr>
+					<td><span class="description">Совершена оператором </span></td>
+					<td>${request.Operator.Name}</td>
+				</tr>
+				<% end %>
+				<tr>
+					<td><span class="description">Дата регистрации заявки </span></td>
+					<td>${request.RegDate}</td>
+				</tr>
+				<% if request.Registrator != null: %>
+				<tr>
+					<td><span class="description">Зарегистрировал: </span></td>
+					<td>${request.Registrator.Name}</td>
+				</tr>
+				<% end %>
+				<tr>
+					<td><span class="description">Заявка в архиве ? </span></td>
+					<td>
+						<% if request.Archive: %>
+							Да
+						<% else: %>
+							Нет
+						<% end %>
+					</td>
+				</tr>
+				<% if request.Client != null: %>
+				<tr>
+					<td><span class="description">Клиент зарегистрирован по заявке </span></td>
+					<td><a href="${siteroot}/Search/Redirect?filter.ClientCode=${request.Client.Id}">${request.Client.Name} </a></td>
+				</tr>
+				<% end %>
+				<tr>
+					<td>
+						<a href="${siteroot}/Register/RegisterClient?requestID=${request.Id}" class="button">Зарегистрировать</a>
+					</td>
+					<td>
+						<% if not request.Archive: %>
+							${app.LinkTo("В архив", @ConnectionRequest, @RequestInArchive, { @id: request.Id, @action: true, @attributes: { @class: "button" } })}
+						<% else: %>
+							${app.LinkTo("Из архива", @ConnectionRequest, @RequestInArchive, { @id: request.Id, @action: false, @attributes: { @class: "button" } })}
+						<% end %>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div style="width:48%; float:right;">
+		<form class="form appeal" method="post" action="${siteroot}/ConnectionRequest/CreateRequestComment">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Работа с заявкой</th>
+					</tr>
+				</thead>
+				<tbody>
+				<tr>
+					<td>
+						<input type="hidden" name="requestId" value="${request.Id}" />
+						<label for="textField"><b>Введите текст комментария :</b></label>
+						<textarea id="textField" name="comment" rows="8" cols="84%"></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<button type="submit" id="Button2" class="button ok">Зарегистрировать</button>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+		</form>
+
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Текст комментария</th>
+					<th>Дата</th>
+					<th>Зарегистрировал</th>
+				</tr>
+			</thead>
+			<tbody>
+			<% for message in messages: %>
+				<tr>
+					<td>${message.Text}</td>
+					<td>${message.Date}</td>
+					<td>${?message.Registrator.Name}</td>
+				</tr>
+			<% end %>
+			</tbody>
+		</table>
+	</div>
+</div>

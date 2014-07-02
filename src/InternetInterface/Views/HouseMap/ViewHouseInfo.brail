@@ -70,7 +70,7 @@
 <div class="house_selector_div">
 	<form action="${Siteroot}/HouseMap/EditHouse" method=post>
 		<span>Выберете дом: </span>
-		<select name="houseId" id="SelectHouse" style="width: 100%" >
+		<select name="houseId" id="SelectHouse" style="width: 100%">
 		<% for i, House in enumerate(Houses): %>
 			<option id="Option${i}" value="${House.Id}" ${"selected" if (House.Id == SelectedHouse)} >${House.Street} ${House.Number} ${House.Case}</option>
 		<% end %>
@@ -80,10 +80,10 @@
 				Создать дом
 			</a>
 			<button type=submit class="button save">Редактировать</button>
-			<a href="#" class="big-link button save" data-reveal-id="myModal_1" >
+			<a href="#" class="big-link button save" data-reveal-id="myModal_1">
 				Найти
 			</a>
-			<a class="big-link button save" data-reveal-id="myModal_Pass" href="#" >
+			<a class="big-link button save" data-reveal-id="myModal_Pass" href="#">
 				Назначить проход
 			</a>
 		</div>

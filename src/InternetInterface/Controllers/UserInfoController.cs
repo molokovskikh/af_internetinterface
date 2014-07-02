@@ -494,134 +494,6 @@ namespace InternetInterface.Controllers
 			RedirectToUrl("../Search/Redirect.rails?filter.ClientCode=" + ClientID + "&filter.EditingConnect=" + EditConnectFlag);
 		}
 
-		private void SendRequestEditParameter()
-		{
-			PropertyBag["labelColors"] = ColorWork.GetColorSet();
-			PropertyBag["LabelName"] = string.Empty;
-			PropertyBag["Labels"] = Label.FindAll();
-		}
-
-		public void EditLabel(uint deletelabelch, string LabelName, string labelcolor)
-		{
-			var labelForEdit = DbSession.Load<Label>(deletelabelch);
-			if (labelForEdit != null && labelForEdit.Deleted) {
-				if (LabelName != null)
-					labelForEdit.Name = LabelName;
-				if (labelcolor != "#000000") {
-					labelForEdit.Color = labelcolor;
-				}
-				labelForEdit.UpdateAndFlush();
-			}
-			RedirectToUrl("../UserInfo/RequestView.rails");
-		}
-
-		public void DeleteLabel(uint deletelabelch)
-		{
-			var labelForDel = DbSession.Load<Label>(deletelabelch);
-			if (labelForDel != null && labelForDel.Deleted) {
-				labelForDel.DeleteAndFlush();
-				DbSession.CreateSQLQuery(
-					@"update internet.Requests R
-set r.`Label` = null,
-r.`ActionDate` = :ActDate,
-r.`Operator` = :Oper
-where r.`Label`= :LabelIndex;")
-					.SetParameter("LabelIndex", deletelabelch)
-					.SetParameter("ActDate", DateTime.Now)
-					.SetParameter("Oper", InitializeContent.Partner.Id)
-					.ExecuteUpdate();
-			}
-			RedirectToUrl("../UserInfo/RequestView.rails");
-		}
-
-		public void RequestView([DataBind("filter")] RequestFilter filter)
-		{
-			var requests = filter.Find();
-			PropertyBag["Clients"] = InitializeContent.Partner.Role.ReductionName == "Agent"
-				? requests.Where(r => r.Registrator == InitializeContent.Partner).ToList()
-				: requests.ToList();
-			PropertyBag["filter"] = filter;
-			PropertyBag["Direction"] = filter.Direction;
-			PropertyBag["SortBy"] = filter.SortBy;
-			SendRequestEditParameter();
-		}
-
-		public void RequestOne(uint id)
-		{
-			PropertyBag["Request"] = DbSession.Load<Request>(id);
-			PropertyBag["Messages"] = DbSession.Query<RequestMessage>().Where(r => r.Request.Id == id).ToList();
-		}
-
-		public void CreateRequestComment(uint requestId, string comment)
-		{
-			if (!string.IsNullOrEmpty(comment)) {
-				var message = new RequestMessage {
-					Date = DateTime.Now,
-					Registrator = InitializeContent.Partner,
-					Comment = comment,
-					Request = DbSession.Load<Request>(requestId)
-				};
-				DbSession.Save(message);
-			}
-			RedirectToReferrer();
-		}
-
-		public void RequestInArchive(uint id, bool action)
-		{
-			var request = DbSession.Load<Request>(id);
-			request.Archive = action;
-			DbSession.Save(request);
-			RedirectToReferrer();
-		}
-
-		/// <summary>
-		/// Создать новую метку
-		/// </summary>
-		/// <param name="LabelName"></param>
-		/// <param name="labelcolor"></param>
-		public void CreateLabel(string LabelName, string labelcolor)
-		{
-			if (!string.IsNullOrEmpty(LabelName)) {
-				new Label {
-					Color = labelcolor,
-					Name = LabelName,
-					Deleted = true
-				}.SaveAndFlush();
-			}
-			Error("Нельзя создать метку без имени");
-			RedirectToAction("RequestView");
-		}
-
-		/// <summary>
-		/// Устанавливает метки на клиентов
-		/// </summary>
-		/// <param name="labelList"></param>
-		/// <param name="labelch"></param>
-		[AccessibleThrough(Verb.Post)]
-		public void SetLabel([DataBind("LabelList")] List<uint> labelList, uint labelch)
-		{
-			var _label = DbSession.Get<Label>(labelch);
-			foreach (var label in labelList) {
-				var request = DbSession.Load<Request>(label);
-				if ((request.Label == null) ||
-					(request.Label.ShortComment != "Refused" && request.Label.ShortComment != "Registered")) {
-					request.Label = _label;
-					request.ActionDate = DateTime.Now;
-					request.Operator = InitializeContent.Partner;
-					if (_label != null)
-						if (_label.ShortComment == "Refused" || _label.ShortComment == "Deleted" || _label.ShortComment == "Registered") {
-							request.Archive = true;
-						}
-					request.UpdateAndFlush();
-				}
-			}
-			RedirectToReferrer();
-		}
-
-		public void InforoomUsersPreview()
-		{
-		}
-
 		[AccessibleThrough(Verb.Post)]
 		public void LoadEditMudule(uint ClientID, AppealType appealType)
 		{
@@ -653,7 +525,7 @@ where r.`Label`= :LabelIndex;")
 					updateClient.LogComment = comment;
 				}
 
-				_client.Name = updateClient.ShortName;
+				_client.PostUpdate();
 				DbSession.Save(_client);
 				DbSession.Save(updateClient);
 
@@ -676,7 +548,6 @@ where r.`Label`= :LabelIndex;")
 				LawyerPersonInfo(filter);
 			}
 		}
-
 
 		[AccessibleThrough(Verb.Post)]
 		public void EditInformation(uint ClientID, uint status,
@@ -715,7 +586,7 @@ where r.`Label`= :LabelIndex;")
 					updateClient.LogComment = comment;
 				}
 
-				client.Name = string.Format("{0} {1} {2}", updateClient.Surname, updateClient.Name, updateClient.Patronymic);
+				client.PostUpdate();
 				updateClient.UpdatePackageId();
 
 				if (client.IsChanged(s => s.Status)) {

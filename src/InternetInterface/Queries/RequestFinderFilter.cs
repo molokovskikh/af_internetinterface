@@ -98,16 +98,24 @@ namespace InternetInterface.Queries
 			}
 			if (Region != null) {
 				criteria.CreateAlias("CL.PhysicalClient", "p")
-					.CreateAlias("p.HouseObj", "h");
-				criteria.Add(Expression.Eq("h.Region", Region));
+					.CreateAlias("p.HouseObj", "h")
+					.CreateAlias("CL.LawyerPerson", "l");
+				criteria.Add(Restrictions.Eq("h.Region", Region) || Restrictions.Eq("l.Region", Region));
 			}
 			if (!string.IsNullOrEmpty(Text)) {
-				uint clientId = 0;
-				if (UInt32.TryParse(Text, out clientId)) {
-					criteria.Add(Restrictions.Eq("CL.Id", clientId));
+				uint id;
+				if (UInt32.TryParse(Text, out id)) {
+					criteria.Add(Restrictions.Eq("CL.Id", id)
+						|| Restrictions.Eq("Id", id)
+						|| Restrictions.Like("Contact", Text, MatchMode.Anywhere));
 				}
 				else {
-					criteria.Add(Restrictions.Like("Description", Text, MatchMode.Anywhere));
+					criteria.Add(
+						Restrictions.Like("Description", Text, MatchMode.Anywhere)
+						|| Restrictions.Like("CL.Name", Text, MatchMode.Anywhere)
+						|| Restrictions.Like("CL.Address", Text, MatchMode.Anywhere)
+						|| Restrictions.Like("Contact", Text, MatchMode.Anywhere)
+					);
 				}
 			}
 			criteria.AddOrder(Order.Asc("Status"));

@@ -9,7 +9,7 @@
 		<div id="block-tables" class="block">
 			<div class="content" style="width:900px;">
 				<div class="inner">
-					<form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Register/RegisterClient" >
+					<form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Register/RegisterClient">
 					<% if IsDefined("requestID"): %>
 						<input type=hidden value=${requestID} name=requestID />
 					<% end %>

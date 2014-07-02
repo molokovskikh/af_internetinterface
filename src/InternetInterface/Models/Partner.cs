@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Security.Permissions;
 using Castle.ActiveRecord;
 using Castle.Components.Validator;
 using Castle.MonoRail.Framework;
@@ -204,6 +205,11 @@ namespace InternetInterface.Models
 				{
 					"RP", new IPermission[] {
 						new ControllerPermission(typeof(PartnersController)),
+					}
+				},
+				{
+					"VD", new IPermission[] {
+						new ControllerPermission(typeof(ConnectionRequestController)),
 					}
 				}
 			};

@@ -3,7 +3,7 @@
 </tr>
 <tr>
     <td>
-            <select name="labelcolor" id="labelcolor" style="width: 100%" >
+            <select name="labelcolor" id="labelcolor" style="width: 100%">
             <% for i, color in enumerate(labelColors): %>
             <option id="color${i}" value=${color} style="background-color: ${color}"> ${color} </option>
             <% end %>

@@ -1,6 +1,6 @@
 ﻿${app.Asset("registerlawperson.js")}
 <div id="main">
-	<div id="container" >
+	<div id="container">
 		<div id="block-tables" class="block">
 			<div class="content" style="width:900px; padding-top: 10px;">
 				<div class="inner">

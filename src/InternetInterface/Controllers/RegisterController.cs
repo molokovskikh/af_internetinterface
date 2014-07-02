@@ -5,6 +5,7 @@ using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Common.Tools;
 using Common.Web.Ui.Controllers;
+using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.AllLogic;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
@@ -169,27 +170,33 @@ namespace InternetInterface.Controllers
 
 		public void RegisterLegalPerson(int speed, [DataBind("ConnectInfo")] ConnectInfo info, uint brigadForConnect, [DataBind("order")] Order order, bool DoNotCreateOrder)
 		{
-			var settings = new Settings(DbSession);
 			SetBinder(new DecimalValidateBinder { Validator = Validator });
+
+			var settings = new Settings(DbSession);
 			var person = new LawyerPerson();
 			BindObjectInstance(person, ParamStore.Form, "LegalPerson");
 			var connectErrors = Validation.ValidationConnectInfo(info, true);
 			if (!string.IsNullOrEmpty(info.Port) && order.OrderServices.Count == 0 && !DoNotCreateOrder)
 				connectErrors = "Невозможно создать подключение, не создавая услуг в заказе";
 			if (IsValid(person) && string.IsNullOrEmpty(connectErrors)) {
-				person.SaveAndFlush();
+				DbSession.Save(person);
 				var client = new Client(person, InitializeContent.Partner) {
 					Recipient = DbSession.Query<Recipient>().FirstOrDefault(r => r.INN == "3666152146"),
 					Status = Status.Find((uint)StatusType.BlockedAndNoConnected),
 					Disabled = order.OrderServices.Count == 0,
 				};
+				client.PostUpdate();
 				if (!DoNotCreateOrder) {
 					client.Orders.Add(order);
-					DbSession.Save(client);
 					order.Client = client;
-				}
-				else {
-					DbSession.Save(client);
+					if (string.IsNullOrEmpty(info.Port)) {
+						var endPoint = new ClientEndpoint(client, Int32.Parse(info.Port), DbSession.Load<NetworkSwitch>(info.Switch)) {
+							WhoConnected = DbSession.Load<Brigad>(brigadForConnect)
+						};
+						client.AddEndpoint(endPoint, settings);
+						order.EndPoint = endPoint;
+						client.Status = Status.Find((uint)StatusType.Worked);
+					}
 				}
 
 				if (!string.IsNullOrEmpty(person.Telephone)) {
@@ -203,24 +210,10 @@ namespace InternetInterface.Controllers
 					});
 				}
 
-				foreach (var contact in client.Contacts) {
-					DbSession.Save(contact);
-				}
+				DbSession.Save(client);
+				DbSession.SaveMany(client.Contacts);
+				DbSession.SaveMany(client.Orders);
 
-				if (!string.IsNullOrEmpty(info.Port) && !DoNotCreateOrder) {
-					var endPoint = new ClientEndpoint(client, Int32.Parse(info.Port), DbSession.Load<NetworkSwitch>(info.Switch)) {
-						WhoConnected = DbSession.Load<Brigad>(brigadForConnect)
-					};
-					client.AddEndpoint(endPoint, settings);
-					order.EndPoint = endPoint;
-					DbSession.Save(order);
-					client.Status = Status.Find((uint)StatusType.Worked);
-					DbSession.Save(client);
-				}
-				else
-					if (!DoNotCreateOrder)
-					DbSession.Save(order);
-				RegisterLegalPerson();
 				Notify("Клиент успешно загистрирвоан");
 				RedirectToUrl("../UserInfo/LawyerPersonInfo.rails?filter.ClientCode=" + client.Id);
 			}
@@ -240,10 +233,10 @@ namespace InternetInterface.Controllers
 				PropertyBag["Editing"] = false;
 				PropertyBag["LegalPerson"] = person;
 				PropertyBag["DoNotCreateOrder"] = DoNotCreateOrder;
+				PropertyBag["RegionList"] = RegionHouse.All();
 				person.SetValidationErrors(Validator.GetErrorSummary(person));
 				PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(person);
 			}
-			PropertyBag["RegionList"] = RegionHouse.All();
 		}
 
 		public void RegisterClient()

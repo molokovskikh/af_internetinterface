@@ -6,7 +6,7 @@
 		}
 	.delimiter_td
 	{
-		border-right:1px solid #AAA 
+		border-right:1px solid #AAA
 		}
 </style>
 <script type="text/javascript">
@@ -186,7 +186,7 @@
 </table>
 
 <input type=hidden id="House" value=${House.Id} />
-<div id="myModal_IT" class="reveal-modal"> 
+<div id="myModal_IT" class="reveal-modal">
 		<input type=hidden name="apartment" id="apartment_div"  />
 		<table class="table">
 			<thead>
@@ -197,7 +197,7 @@
 			<tbody>
 			<tr>
 				<td>
-					<label for="last_inet" >Интернет</label>
+					<label for="last_inet">Интернет</label>
 				</td>
 				<td>
 				   <!-- <input type=text id="last_inet" name="last_inet" /> <br /> -->
@@ -209,7 +209,7 @@
 			</tr>
 			<tr>
 				<td>
-					<label for="last_TV" >TV</label>
+					<label for="last_TV">TV</label>
 				</td>
 				<td>
 				   <!-- <input type=text id="last_TV" name="last_TV" /> -->
@@ -223,10 +223,10 @@
 			</tr>
 			<tr>
 				<td>
-					<label for="comment" >Комментарий</label>
+					<label for="comment">Комментарий</label>
 				</td>
 				<td>
-					<input type=text id="comment" name="comment" /> 
+					<input type=text id="comment" name="comment" />
 				</td>
 			</tr>
 			<tr>
@@ -264,7 +264,7 @@
 			</tbody>
 		</table>
 	<a class="close-reveal-modal">х</a>
-</div> 
+</div>
 <table style="width:100%">
 	<tbody>
 	<tr>
@@ -310,7 +310,7 @@
 			<% if (request != null): %>
 			<td>${i+1}
 			<% else: %>
-			<td><a href="#" class="apartment_link" data-reveal-id="myModal_IT" > ${i+1}</a>
+			<td><a href="#" class="apartment_link" data-reveal-id="myModal_IT"> ${i+1}</a>
 			<% end %>
 			<% else: %>
 			<td>${i+1}

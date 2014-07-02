@@ -100,6 +100,9 @@ namespace InternetInterface.Models
 		public virtual string Name { get; set; }
 
 		[Property]
+		public virtual string Address { get; set; }
+
+		[Property]
 		public virtual ClientType Type { get; set; }
 
 		[BelongsTo("PhysicalClient", Lazy = FetchWhen.OnInvoke, Cascade = CascadeEnum.SaveUpdate), Auditable]
@@ -914,7 +917,7 @@ where CE.Client = {0}", Id))
 		public virtual bool AfterRegistration(Agent agent, Partner registrator)
 		{
 			var havePayment = PhysicalClient.Balance > 0;
-			Name = string.Format("{0} {1} {2}", PhysicalClient.Surname, PhysicalClient.Name, PhysicalClient.Patronymic);
+			PostUpdate();
 			AutoUnblocked = havePayment;
 			Disabled = !havePayment;
 
@@ -1040,6 +1043,18 @@ where CE.Client = {0}", Id))
 				ShowBalanceWarningPage = false;
 			}
 			Status = status;
+		}
+
+		public virtual void PostUpdate()
+		{
+			if (LawyerPerson != null) {
+				Name = LawyerPerson.ShortName;
+				Address = LawyerPerson.ActualAdress;
+			}
+			if (PhysicalClient != null) {
+				Name = string.Format("{0} {1} {2}", PhysicalClient.Surname, PhysicalClient.Name, PhysicalClient.Patronymic);
+				Address = PhysicalClient.GetFullAddress();
+			}
 		}
 	}
 

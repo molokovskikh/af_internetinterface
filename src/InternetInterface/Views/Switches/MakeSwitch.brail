@@ -3,7 +3,7 @@
 	{
 		width: 300px;
 	}
-		
+
 	#block-tables
 	{
 		margin-left:20px;
@@ -17,9 +17,9 @@
 				<form method=post action="${siteroot}/Switches/${Switch.Id}/Delete">
 					<input type=submit value="Удалить"/>
 				</form>
-				<form class="form" id="RegistrationFormEdit" name="RegistrationForm" method="post" action="${siteroot}/Switches/EditSwitch" >
+				<form class="form" id="RegistrationFormEdit" name="RegistrationForm" method="post" action="${siteroot}/Switches/EditSwitch">
 			<% else: %>
-				<form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Switches/RegisterSwitch" >
+				<form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Switches/RegisterSwitch">
 			<% end %>
 			<input type="hidden" name="Switch.Id" value="${Switch.Id}" />
 				<table class="table" style="width:60%; " border="0" id="PartnerInfoTable">
@@ -29,7 +29,7 @@
 					<tbody>
 						<tr>
 							<td>Название</td>
-							<td colspan = 2> 
+							<td colspan = 2>
 								<input class="swichInput" id="Name" type="text" value="${Switch.Name}" name="Switch.Name" />
 							</td>
 							<td>

@@ -272,8 +272,8 @@
       <SubType>Designer</SubType>
     </Content>
     <None Include="Views\UserInfo\CreateAndPrintGraph.brail" />
-    <None Include="Views\UserInfo\RequestOne.brail" />
-    <None Include="Views\UserInfo\RequestGraph.brail" />
+    <None Include="Views\ConnectionRequest\RequestOne.brail" />
+    <None Include="Views\ConnectionRequest\RequestGraph.brail" />
     <None Include="Views\UserInfo\LawyerPersonInfo.brail" />
     <None Include="Views\UserInfo\NoPhoned.brail" />
     <None Include="Views\Partners\Index.brail" />
@@ -317,6 +317,7 @@
     <Compile Include="Controllers\BrigadsController.cs" />
     <Compile Include="Controllers\ChannelGroupsController.cs" />
     <Compile Include="Controllers\ClientsController.cs" />
+    <Compile Include="Controllers\ConnectionRequestController.cs" />
     <Compile Include="Controllers\ContractsController.cs" />
     <Compile Include="Controllers\ExportController.cs" />
     <Compile Include="Controllers\Filter\ActsFilter.cs" />
@@ -485,7 +486,7 @@
     <None Include="Views\Partners\Partner.brail" />
     <None Include="Views\Subview\Payment.brail" />
     <None Include="Views\Partners\Report.brail" />
-    <None Include="Views\UserInfo\RequestView.brail" />
+    <None Include="Views\ConnectionRequest\Index.brail" />
     <None Include="Views\UserInfo\SearchUserInfo.brail">
       <SubType>Designer</SubType>
     </None>

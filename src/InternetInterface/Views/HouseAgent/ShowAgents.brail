@@ -3,7 +3,7 @@
         <tr>
             <td>
                 <a style="color:White;" href="${Siteroot}/HouseAgent/Agent">
-                <button type="button" id="RegisterPartnerButton" class="button save" >
+                <button type="button" id="RegisterPartnerButton" class="button save">
                        Зарегистрирвоать агента
                        </button></a>
             </td>

@@ -19,7 +19,7 @@
     <div class="filterDiv">
         <form method="get" action="${siteroot}/Payers/Show">
             <p>Выберете регистратора по которому будет применен фильтр</p>
-            <select name="registrator" id="registrator" style="width: 70%" >
+            <select name="registrator" id="registrator" style="width: 70%">
             <% for i, registrator in enumerate(Registrators): %>
             <option id="Tarif${registrator.Id}" value="${registrator.Id}" ${"selected" if (registrator.Id == registrId)}> ${registrator.Name} </option>
             <% end %>

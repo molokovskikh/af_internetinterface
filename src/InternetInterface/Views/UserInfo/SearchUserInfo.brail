@@ -234,8 +234,8 @@
 						</a>
 					<% end %>
 					<% if _client.AdditionalCanUsed("AppointedToTheGraph"): %>
-						<a href="#" class="big-link" data-reveal-id="myModal" >
-							<button id="naznach_but" name="../UserInfo/AppointedToTheGraph.rails?ClientCode=${ClientCode}" class="button_mod2" >${naznach_text}</button>
+						<a href="#" class="big-link" data-reveal-id="myModal">
+							<button id="naznach_but" name="../UserInfo/AppointedToTheGraph.rails?ClientCode=${ClientCode}" class="button_mod2">${naznach_text}</button>
 						</a>
 					<% end %>
 				 </td>

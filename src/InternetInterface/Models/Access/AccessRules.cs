@@ -46,9 +46,6 @@ namespace InternetInterface.Models.Access
 			if (GetRulesName_accessDHCP() != string.Empty) {
 				result.Add(GetRulesName_accessDHCP());
 			}
-			if (GetRulesName_visibleDemand() != string.Empty) {
-				result.Add(GetRulesName_visibleDemand());
-			}
 			if (GetRulesName_showSecretInfo() != string.Empty) {
 				result.Add(GetRulesName_showSecretInfo());
 			}
@@ -190,23 +187,6 @@ namespace InternetInterface.Models.Access
 				"PortInfo"
 			};
 			return _accessDHCP.Contains(methodName) ? "DHCP" : string.Empty;
-		}
-
-		private static string GetRulesName_visibleDemand()
-		{
-			_visibleDemand = new HashSet<string> {
-				"RequestView",
-				"ChangeLabel",
-				"EditLabel",
-				"DeleteLabel",
-				"SiteMap",
-				"CreateLabel",
-				"SetLabel",
-				"RequestInArchive",
-				"RequestOne",
-				"CreateRequestComment"
-			};
-			return _visibleDemand.Contains(methodName) ? "VD" : string.Empty;
 		}
 
 		private static string GetRulesName_showSecretInfo()

@@ -1,5 +1,5 @@
 ﻿${app.Asset("ShowRegions.js")}
-<a href="#" class="big-link" data-reveal-id="register_region" >Добавить</a>
+<a href="#" class="big-link" data-reveal-id="register_region">Добавить</a>
 <table id="RegionTable" class="table">
 	<thead>
 		<tr>

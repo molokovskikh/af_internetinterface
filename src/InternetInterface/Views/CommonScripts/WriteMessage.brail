@@ -1,16 +1,16 @@
 ﻿def WriteMessageNotice(MessageText as string):
-             return """<div class='flash'> 
-               <div class='message notice'> 
-                  <p><strong>${MessageText}</strong></p> 
-               </div> 
+             return """<div class='flash'>
+               <div class='message notice'>
+                  <p><strong>${MessageText}</strong></p>
+               </div>
              </div>"""
 end
 
 def WriteMessageError(MessageText as string):
-             return """<div class='flash' style="margin:0px; padding:0px; height:100%; width:100%;"> 
-               <div class='message error'> 
-                  <p><strong>${MessageText}</strong></p> 
-               </div> 
+             return """<div class='flash' style="margin:0px; padding:0px; height:100%; width:100%;">
+               <div class='message error'>
+                  <p><strong>${MessageText}</strong></p>
+               </div>
            </div>"""
 end
 
@@ -18,7 +18,7 @@ def OperatorsSelect(name as string):
             return """
     <select name="${name}">
         <option value=" = ">Равно</option>
-        <option value=" > ">Больше</option>
+        <option value="> ">Больше</option>
         <option value=" < ">Меньше</option>
-    </select>""" 
+    </select>"""
 end

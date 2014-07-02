@@ -16,6 +16,7 @@ using NHibernate;
 using NHibernate.Linq;
 using NUnit.Framework;
 using Rhino.Mocks;
+using Test.Support.log4net;
 
 namespace InternetInterface.Test.Integration
 {
@@ -185,8 +186,24 @@ namespace InternetInterface.Test.Integration
 			var request = new Request { ApplicantName = name, ApplicantPhoneNumber = "900-9090900", Street = "123", Tariff = tariff };
 			session.Save(request);
 			var filter = new RequestFilter { query = request.Id.ToString() };
-			var result = filter.Find();
+			var result = filter.Find(session);
 			Assert.AreEqual(result[0].ApplicantName, name);
+		}
+
+		[Test]
+		public void Filter_request_by_number_type()
+		{
+			var tariff = new Tariff("test", 100);
+			session.Save(tariff);
+			var request = new Request { ApplicantName = Generator.Name(), ApplicantPhoneNumber = "900-9090900", Street = "123", House = 2, Tariff = tariff, ActionDate = DateTime.Now };
+			session.Save(request);
+			var request2 = new Request { ApplicantName = Generator.Name(), ApplicantPhoneNumber = "900-9090900", Street = "123", House = 1, Tariff = tariff, ActionDate = DateTime.Now };
+			session.Save(request2);
+
+			var filter = new RequestFilter { HouseNumberType = HouseNumberType.Odd };
+			var result = filter.Find(session).Select(r => r.Id).ToArray();
+			Assert.Contains(request2.Id, result);
+			Assert.That(result, Is.Not.Contains(request.Id));
 		}
 	}
 }

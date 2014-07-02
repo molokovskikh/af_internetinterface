@@ -1,5 +1,5 @@
 ﻿<div class="wid">
-<table class="table" id="mapHead" style = "width:100%" >
+<table class="table" id="mapHead" style = "width:100%">
 	<thead>
 		<tr valign="top"  class="menuItem">
 			<% if PartnerAccessSet.AccesPartner("RC"): %>
@@ -8,9 +8,9 @@
 			<% if PartnerAccessSet.AccesPartner("RC"): %>
 			<th>${App.LinkTo("Регистрация ЮрЛица", @Register, @RegisterLegalPerson)}</th>
 			<% end %>
-			<% if PartnerAccessSet.AccesPartner("VD"): %>
-			<th>${App.LinkTo("Заявки", @UserInfo, @RequestView)}</th>
-			<% end %>
+			<th>
+				${app.LinkTo("Заявки", @ConnectionRequest, @Index)}
+			</th>
 			<% if PartnerAccessSet.AccesPartner("GCI"): %>
 			<th>${App.LinkTo("Клиенты", @Search, @SearchUsers)}</th>
 			<% end %>
@@ -39,7 +39,7 @@
 			<th>${App.LinkTo("Платежи", @AgentInfo, @SummaryInformation)}</th>
 			<% end %>
 			<th align=right style="text-align:right;">
-				<form class="form" id="Exit" name="Exit" method="post" action="${siteroot}/ExitPartner/Yes" >
+				<form class="form" id="Exit" name="Exit" method="post" action="${siteroot}/ExitPartner/Yes">
 					<button type="submit" class="button save" style="float:none; display:inline;">Выход</button>
 				</form>
 			</th>

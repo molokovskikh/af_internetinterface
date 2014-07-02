@@ -37,11 +37,11 @@
                     <td>${House.PassCount}</td>
                     <% if House.LastPassDate != null: %>
                     <td id="naznach_${i}">
-                        ${House.LastPassDate.ToShortDateString()} (<a class="big-link" data-reveal-id="myModal_Pass" href="#" >Назначить</a>)
+                        ${House.LastPassDate.ToShortDateString()} (<a class="big-link" data-reveal-id="myModal_Pass" href="#">Назначить</a>)
                         <input type=hidden class="house_id" value="${House.Id}" />
                     </td>
                     <% else: %>
-                    <td>Нет проходов (<a class="big-link" data-reveal-id="myModal_Pass" href="#" >Назначить</a>)
+                    <td>Нет проходов (<a class="big-link" data-reveal-id="myModal_Pass" href="#">Назначить</a>)
                     <input type=hidden class="house_id" value="${House.Id}" /> </td>
                     <% end %>
                 </tr>

@@ -47,7 +47,7 @@
 				<input type="hidden" value="${OrderInfo.Order.Id}" class="closeOrderControl"/>
 			<% else: %>
 			<% if OrderInfo.Order.EndPoint != null: %>
-				<a href="#" class="big-link" data-reveal-id="deletePointDialog" >
+				<a href="#" class="big-link" data-reveal-id="deletePointDialog">
 					<input type="hidden" value="${OrderInfo.ClientConnectInfo.endpointId}" />
 					<img class="deletePointControl" src="../images/onebit_32.png" />
 				</a>
@@ -401,7 +401,7 @@
 		 <td>Бригада по подключению</td>
 		 <% if OrderInfo.ClientConnectInfo.WhoConnected == null: %>
 			<td colspan=2>
-				<select name="BrigadForConnect" id="BrigadForConnect" class="width100" >
+				<select name="BrigadForConnect" id="BrigadForConnect" class="width100">
 				<% for j, Brigad in enumerate(Brigads): %>
 					<option id="OptionBrigad${j}" value="${Brigad.Id}" ${"selected" if (Brigad.Id == ChBrigad)} > ${Brigad.Name} </option>
 				<% end %>

@@ -26,7 +26,7 @@
             }
             str += '</tr></tbody></table>';
             str += '<div><span>Введите количество квартир  </span><input  type="text" id="ApCount" name="ApCount" /></div>'
-            str += '<div><button type="button" class="button" href="#" id="naznach_link" onclick="SaveHouseMap()" >Назначить </button></div></div>'
+            str += '<div><button type="button" class="button" href="#" id="naznach_link" onclick="SaveHouseMap()">Назначить </button></div></div>'
             $('#enEditor').append(str);
         });
 
@@ -71,7 +71,7 @@
             req.SelectHouse = houseId;
             req.ApCount = $('#ApCount').val();
             $.post("SaveHouseMap", req, function (data) {
-                
+
                 var html = $.ajax({
                     url: '../HouseMap/BasicHouseInfo?id=' + houseId,
                     async: false
@@ -100,7 +100,7 @@
         }
 </style>
 <div>
-    <div>   
+    <div>
     <form id="editHouse">
         <span>Введите количество подъездов</span>
         <!-- <input type=text value=35 id="SelectHouse" /> -->

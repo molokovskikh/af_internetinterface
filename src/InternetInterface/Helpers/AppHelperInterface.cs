@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -6,6 +7,7 @@ using System.Text;
 using System.Web;
 using Castle.MonoRail.Framework;
 using Common.Web.Ui.Helpers;
+using Common.Web.Ui.MonoRailExtentions;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using InternetInterface.Models.Access;
@@ -89,6 +91,27 @@ namespace InternetInterface.Helpers
 			errObj.AppendLine("</div>");
 			errObj.AppendLine("</div>");
 			return errObj.ToString();
+		}
+
+		public IDictionary Merge(object src, object dst)
+		{
+			var srcDict = ToDict(src);
+			var dstDict = ToDict(dst);
+			foreach (var key in srcDict.Keys) {
+				if (!dstDict.Contains(key)) {
+					dstDict.Add(key, srcDict[key]);
+				}
+			}
+			return dstDict;
+		}
+
+		private IDictionary ToDict(object src)
+		{
+			if (src is IDictionary)
+				return (IDictionary)src;
+			if (src is IUrlContributor)
+				return ((IUrlContributor)src).GetQueryString();
+			return new Dictionary<object, object>();
 		}
 	}
 }

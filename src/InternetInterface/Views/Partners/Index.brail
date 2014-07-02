@@ -1,8 +1,8 @@
 ﻿<div class="borderless-content">
 	<div class="borderless-content-subblock">
-		<form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Partners/New" >
+		<form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Partners/New">
 			${FormHelper.HiddenField("roleId", role.Id)}
-			<button type="submit" id="RegisterPartnerButton" class="button save" >Зарегистрировать партнера</button>
+			<button type="submit" id="RegisterPartnerButton" class="button save">Зарегистрировать партнера</button>
 		</form>
 	</div>
 

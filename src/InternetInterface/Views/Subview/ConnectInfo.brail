@@ -42,7 +42,7 @@
 		<% end %>
 		</th>
 		<th style="border-left-width:0px; text-align:right; width:400px;">
-			<a href="#" class="big-link" data-reveal-id="deletePointDialog" >
+			<a href="#" class="big-link" data-reveal-id="deletePointDialog">
 			<input type="hidden" value="${ConnectInfo.endpointId}" />
 			<img class="deletePointControl" src="../images/onebit_32.png" />
 			</a>

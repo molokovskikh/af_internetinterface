@@ -5,7 +5,7 @@
         font-size:12px;
         font-style:oblique;
         }
-        
+
                 .house_selector_div
         {
 			    width:800px;
@@ -46,7 +46,7 @@
 
     function addEnt() {
         var enClount = $('.enNums').children().length;
-        var str = '<th style="text-align:center;" class="ent' + enClount + '">' + enClount + '<a href="#" class="delBut" >Удалить</a>' + '</th>';
+        var str = '<th style="text-align:center;" class="ent' + enClount + '">' + enClount + '<a href="#" class="delBut">Удалить</a>' + '</th>';
         $('.enNums').append(str);
         str = '<td class="ent' + enClount + '">' + $.ajax({
                     url: '../HouseMap/NetworkSwitches?id=' + enClount,
@@ -67,7 +67,7 @@
             var nums = $('.enNums').children();
             for (var i = 1; i < nums.length; i++) {
                 $(nums[i]).empty();
-                $(nums[i]).append(i + '<a href="#" class="delBut" >Удалить</a>');
+                $(nums[i]).append(i + '<a href="#" class="delBut">Удалить</a>');
             }
             delEnt($('.delBut'));
         });
@@ -90,7 +90,7 @@ ${FormHelper.FormTag("${Siteroot}/HouseMap/EditHouse", {"id" : "editHouse"})}
         <tr class="enNums">
             <th>№ подъезда</th>
             <% for i, Entrance in enumerate(Entrances): %>
-                <th class="ent${i}">${Entrance.Number}<a href="#" class="delBut" >Удалить</a></th>
+                <th class="ent${i}">${Entrance.Number}<a href="#" class="delBut">Удалить</a></th>
             <% end %>
         </tr>
     </thead>
@@ -100,8 +100,8 @@ ${FormHelper.FormTag("${Siteroot}/HouseMap/EditHouse", {"id" : "editHouse"})}
 
 		    <td class="ent${i}">
                 <input type=hidden name="Entrances[${i}].Id" value="${Entrance.Id}" />
-                <select name="Entrances[${i}].Switch.Id" id="NetSwitch${Entrance.Number}" style="width: 100%" >
-                <option id="Option1" value="0" >Нет</option>
+                <select name="Entrances[${i}].Switch.Id" id="NetSwitch${Entrance.Number}" style="width: 100%">
+                <option id="Option1" value="0">Нет</option>
                 <% for i, Switch in enumerate(Switches): %>
                         <% if Entrance.Switch != null:  %>
 		                <option id="Option${i}" value="${Switch.Id}"  ${"selected" if (Switch.Id == Entrance.Switch.Id)}>${Switch.Name}</option>

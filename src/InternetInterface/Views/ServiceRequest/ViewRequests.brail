@@ -93,7 +93,7 @@ ${app.Asset("service-requests.js")}
 		</table>
 	<% else: %>
 	<div class="flash empty-result">
-		<div class="message error" >
+		<div class="message error">
 			По вашему запросу ничего не найдено, либо вы не ввели информацию для поиска
 		</div>
 	</div>

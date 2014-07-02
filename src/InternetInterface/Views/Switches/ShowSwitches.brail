@@ -5,8 +5,8 @@
 			<tbody>
 				<tr>
 					<td>
-						<form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Switches/MakeSwitch" >
-							<button type="submit" id="RegisterPartnerButton" class="button save" >
+						<form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Switches/MakeSwitch">
+							<button type="submit" id="RegisterPartnerButton" class="button save">
 								Зарегистрирвоать коммутатор
 							</button>
 						</form>

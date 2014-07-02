@@ -81,7 +81,7 @@
 </p>
 <p>
 	<span for="appealText">Введите текст обращения</span><br />
-	<textarea id="appealText" name="appealText" rows="8" cols="70%" ></textarea>
+	<textarea id="appealText" name="appealText" rows="8" cols="70%"></textarea>
 </p>
 <p>
 	<button id="saveFeedback" type=submit class="button">Отправить</button>

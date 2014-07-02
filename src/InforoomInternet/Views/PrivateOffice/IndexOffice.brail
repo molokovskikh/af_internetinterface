@@ -7,26 +7,26 @@
 	{
 		width:355px;
 	}
-	
+
 	#clientInfo table tbody tr td
 	{
 		border-bottom: 1px double #dfdddd;
 		padding-top : 5px;
 		padding-bottom : 5px;
 		}
-		
+
 	#clientInfo table
 	{
 		text-align:center;
 		}
-		
+
 	.hideH
 	{
 		display:inline;
 		padding:5px;
 		margin-bottom:5px;
 		}
-		
+
 	#headDiv .headTable td
 	{
 		background:none;
@@ -113,9 +113,9 @@ function GetLinkText(hide) {
 	<td valign=top style="padding-bottom:0px;">
 		<div style="text-align:right; font-weight:bold; margin-top:8px;">
 			<a href="${Siteroot}/PrivateOffice/Services">Управление услугами</a> <br />
-			<a href="${Siteroot}/PrivateOffice/SmsNotification" >Смс уведомления</a> <br />
-			<a href="${Siteroot}/PrivateOffice/AboutSale" >Программа скидок</a>
-			<a href="${Siteroot}/PrivateOffice/BonusProgram" >Бонусные программы</a>
+			<a href="${Siteroot}/PrivateOffice/SmsNotification">Смс уведомления</a> <br />
+			<a href="${Siteroot}/PrivateOffice/AboutSale">Программа скидок</a>
+			<a href="${Siteroot}/PrivateOffice/BonusProgram">Бонусные программы</a>
 		</div>
 	</td>
 </tr>

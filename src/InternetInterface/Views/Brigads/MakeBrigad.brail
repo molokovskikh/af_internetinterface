@@ -22,9 +22,9 @@
     <div id="block-tables" class="block">
                             <% if IsDefined("Editing"): %>
                             <% if (not Editing): %>
-                  <form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Brigads/RegisterBrigad" >
+                  <form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Brigads/RegisterBrigad">
                             <% else: %>
-                  <form class="form" id="RegistrationFormEdit" name="RegistrationForm" method="post" action="${siteroot}/Brigads/EditBrigad" >
+                  <form class="form" id="RegistrationFormEdit" name="RegistrationForm" method="post" action="${siteroot}/Brigads/EditBrigad">
                               <% end %><% end %>
         <input type="hidden" name="brigadid" value="${Brigad.Id}" />
         <table class="table" style="width:100%; " border="0" id="PartnerInfoTable">
@@ -39,7 +39,7 @@
                 </tr>
                 <tr>
                        <td colspan = 3>
-                       <button type="submit" id="RegisterBrigadButton" class="button save" >
+                       <button type="submit" id="RegisterBrigadButton" class="button save">
                                                  <% if IsDefined("Editing"): %>
                                                  <% if (not Editing): %>
                                                  Зарегистрировать

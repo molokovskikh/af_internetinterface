@@ -66,7 +66,7 @@
 				<% if item.PhysicalClient != null: %>
 					<td style="background-color:${"#facada" if item.PhysicalClient.Balance < 0};">${item.PhysicalClient.Balance}</td>
 					<% if item.Status != null: %>
-						<td  style="background-color:${"#b0dca3" if itemInfo.OnLine};" >${item.Status.Name}</td>
+						<td  style="background-color:${"#b0dca3" if itemInfo.OnLine};">${item.Status.Name}</td>
 						<% else: %>
 						<td  style="background-color:${"#b0dca3" if itemInfo.OnLine};">Статус не задан</td>
 					<% end %>
