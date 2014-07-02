@@ -1,563 +1,483 @@
 ﻿<html xmlns:v="urn:schemas-microsoft-com:vml"
-xmlns:o="urn:schemas-microsoft-com:office:office"
-xmlns:w="urn:schemas-microsoft-com:office:word"
-xmlns:m="http://schemas.microsoft.com/office/2004/12/omml"
-xmlns="http://www.w3.org/TR/REC-html40">
+	xmlns:o="urn:schemas-microsoft-com:office:office"
+	xmlns:w="urn:schemas-microsoft-com:office:word"
+	xmlns:m="http://schemas.microsoft.com/office/2004/12/omml"
+	xmlns="http://www.w3.org/TR/REC-html40">
 
-<head>
-<meta http-equiv=Content-Type content="text/html; charset=utf-8">
-<meta name=ProgId content=Word.Document>
-<meta name=Generator content="Microsoft Word 12">
-<meta name=Originator content="Microsoft Word 12">
+	<head>
+		<meta http-equiv=Content-Type content="text/html; charset=utf-8">
+		<meta name=ProgId content=Word.Document>
+		<meta name=Generator content="Microsoft Word 12">
+		<meta name=Originator content="Microsoft Word 12">
 
 
 
-<link rel=dataStoreItem href="НАРЯД%20НА%20ПОДКЛЮЧЕНИЕ.files/item0001.xml"
-target="НАРЯД%20НА%20ПОДКЛЮЧЕНИЕ.files/props0002.xml">
-<link rel=themeData href="НАРЯД%20НА%20ПОДКЛЮЧЕНИЕ.files/themedata.thmx">
-<link rel=colorSchemeMapping
-href="НАРЯД%20НА%20ПОДКЛЮЧЕНИЕ.files/colorschememapping.xml">
+		<link rel=dataStoreItem href="НАРЯД%20НА%20ПОДКЛЮЧЕНИЕ.files/item0001.xml"
+			target="НАРЯД%20НА%20ПОДКЛЮЧЕНИЕ.files/props0002.xml">
+		<link rel=themeData href="НАРЯД%20НА%20ПОДКЛЮЧЕНИЕ.files/themedata.thmx">
+		<link rel=colorSchemeMapping
+			href="НАРЯД%20НА%20ПОДКЛЮЧЕНИЕ.files/colorschememapping.xml">
 
-<style>
+		<style>
 
- @font-face
-	{font-family:"Cambria Math";
-	panose-1:2 4 5 3 5 4 6 3 2 4;
-	mso-font-charset:1;
-	mso-generic-font-family:roman;
-	mso-font-format:other;
-	mso-font-pitch:variable;
-	mso-font-signature:0 0 0 0 0 0;}
-@font-face
-	{font-family:Calibri;
-	panose-1:2 15 5 2 2 2 4 3 2 4;
-	mso-font-charset:204;
-	mso-generic-font-family:swiss;
-	mso-font-pitch:variable;
-	mso-font-signature:-520092929 1073786111 9 0 415 0;}
-@font-face
-	{font-family:Tahoma;
-	panose-1:2 11 6 4 3 5 4 4 2 4;
-	mso-font-charset:0;
-	mso-generic-font-family:swiss;
-	mso-font-format:other;
-	mso-font-pitch:variable;
-	mso-font-signature:3 0 0 0 1 0;}
- /* Style Definitions */
- p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{mso-style-unhide:no;
-	mso-style-qformat:yes;
-	mso-style-parent:"";
-	margin-top:0cm;
-	margin-right:0cm;
-	margin-bottom:6.0pt;
-	margin-left:0cm;
-	line-height:100%;
-	mso-pagination:widow-orphan;
-	font-family:"Calibri","sans-serif";
-	font-size:10pt;
-	mso-ascii-font-family:Calibri;
-	mso-ascii-theme-font:minor-latin;
-	mso-fareast-font-family:Calibri;
-	mso-fareast-theme-font:minor-latin;
-	mso-hansi-font-family:Calibri;
-	mso-hansi-theme-font:minor-latin;
-	mso-bidi-font-family:"Times New Roman";
-	mso-bidi-theme-font:minor-bidi;
-	mso-fareast-language:EN-US;}
-a:link, span.MsoHyperlink
-	{mso-style-priority:99;
-	color:blue;
-	mso-themecolor:hyperlink;
-	text-decoration:underline;
-	text-underline:single;}
-a:visited, span.MsoHyperlinkFollowed
-	{mso-style-noshow:yes;
-	mso-style-priority:99;
-	color:purple;
-	mso-themecolor:followedhyperlink;
-	text-decoration:underline;
-	text-underline:single;}
-p.MsoAcetate, li.MsoAcetate, div.MsoAcetate
-	{mso-style-noshow:yes;
-	mso-style-priority:99;
-	mso-style-link:"Текст выноски Знак";
-	margin:0cm;
-	margin-bottom:.0001pt;
-	mso-pagination:widow-orphan;
-	font-size:8.0pt;
-	font-family:"Tahoma","sans-serif";
-	mso-fareast-font-family:Calibri;
-	mso-fareast-theme-font:minor-latin;
-	mso-bidi-font-family:Tahoma;
-	mso-fareast-language:EN-US;}
-p.MsoNoSpacing, li.MsoNoSpacing, div.MsoNoSpacing
-	{mso-style-priority:1;
-	mso-style-unhide:no;
-	mso-style-qformat:yes;
-	mso-style-parent:"";
-	margin:0cm;
-	margin-bottom:.0001pt;
-	mso-pagination:widow-orphan;
-	font-size:11.0pt;
-	font-family:"Calibri","sans-serif";
-	mso-ascii-font-family:Calibri;
-	mso-ascii-theme-font:minor-latin;
-	mso-fareast-font-family:Calibri;
-	mso-fareast-theme-font:minor-latin;
-	mso-hansi-font-family:Calibri;
-	mso-hansi-theme-font:minor-latin;
-	mso-bidi-font-family:"Times New Roman";
-	mso-bidi-theme-font:minor-bidi;
-	mso-fareast-language:EN-US;}
-span.a
-	{mso-style-name:"Текст выноски Знак";
-	mso-style-noshow:yes;
-	mso-style-priority:99;
-	mso-style-unhide:no;
-	mso-style-locked:yes;
-	mso-style-link:"Текст выноски";
-	mso-ansi-font-size:8.0pt;
-	mso-bidi-font-size:8.0pt;
-	font-family:"Tahoma","sans-serif";
-	mso-ascii-font-family:Tahoma;
-	mso-hansi-font-family:Tahoma;
-	mso-bidi-font-family:Tahoma;}
-span.apple-style-span
-	{mso-style-name:apple-style-span;
-	mso-style-unhide:no;}
-span.apple-converted-space
-	{mso-style-name:apple-converted-space;
-	mso-style-unhide:no;}
-span.GramE
-	{mso-style-name:"";
-	mso-gram-e:yes;}
-.MsoChpDefault
-	{mso-style-type:export-only;
-	mso-default-props:yes;
-	mso-ascii-font-family:Calibri;
-	mso-ascii-theme-font:minor-latin;
-	mso-fareast-font-family:Calibri;
-	mso-fareast-theme-font:minor-latin;
-	mso-hansi-font-family:Calibri;
-	mso-hansi-theme-font:minor-latin;
-	mso-bidi-font-family:"Times New Roman";
-	mso-bidi-theme-font:minor-bidi;
-	mso-fareast-language:EN-US;}
-.MsoPapDefault
-	{mso-style-type:export-only;
-	margin-bottom:10.0pt;
-	line-height:115%;}
-@page WordSection1
-	{size:595.3pt 841.9pt;
-	margin:21.3pt 28.3pt 0cm 1.0cm;
-	mso-header-margin:35.4pt;
-	mso-footer-margin:35.4pt;
-	mso-paper-source:0;}
-div.WordSection1
-	{page:WordSection1;}
-	.style1
-	{
-		width: 566pt;
-	}
-	.style2
-	{
-		height: 6px;
-	}
-    .style3
-    {
-        width: 537.9pt;
-        height: 19pt;
-    }
-    .style4
-    {
-        width: 537.9pt;
-        height: 5pt;
-    }
-</style>
+			@font-face {
+				font-family: "Cambria Math";
+				mso-font-charset: 1;
+				mso-font-format: other;
+				mso-font-pitch: variable;
+				mso-font-signature: 0 0 0 0 0 0;
+				mso-generic-font-family: roman;
+				panose-1: 2 4 5 3 5 4 6 3 2 4;
+			}
 
-</head>
+			@font-face {
+				font-family: Calibri;
+				mso-font-charset: 204;
+				mso-font-pitch: variable;
+				mso-font-signature: -520092929 1073786111 9 0 415 0;
+				mso-generic-font-family: swiss;
+				panose-1: 2 15 5 2 2 2 4 3 2 4;
+			}
 
-<body link=blue vlink=purple style='tab-interval:35.4pt'>
+			@font-face {
+				font-family: Tahoma;
+				mso-font-charset: 0;
+				mso-font-format: other;
+				mso-font-pitch: variable;
+				mso-font-signature: 3 0 0 0 1 0;
+				mso-generic-font-family: swiss;
+				panose-1: 2 11 6 4 3 5 4 4 2 4;
+			}
 
-<div class=WordSection1>
+			/* Style Definitions */
 
-<table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0
- style='border-collapse:collapse;border:none;mso-border-alt:solid black .5pt;
- mso-border-themecolor:text1;mso-yfti-tbllook:1184;mso-padding-alt:0cm 5.4pt 0cm 5.4pt'>
- <tr style='mso-yfti-irow:0;mso-yfti-firstrow:yes'>
-  <td valign=top style='border:solid black 1.0pt;
-  mso-border-themecolor:text1;mso-border-alt:solid black .5pt;mso-border-themecolor:
-  text1;padding:0cm 5.4pt 0cm 5.4pt' class="style1">
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
-  normal'> <div style="float:left">
-  <![if !vml]><span style='mso-ignore:vglayout;
-  position:relative;z-index:8;left:-1px;top:2px;width:152px;height:53px'><img
-  width=152 height=51 src="../Images/image002.jpg" v:shapes="Рисунок_x0020_1"></span><![endif]></div>
-  <div style="margin-left:480px"><p class=MsoNormal><b
-  style='mso-bidi-font-weight:normal'><i style='mso-bidi-font-style:normal'><o:p>&nbsp;</o:p><br /> НАРЯД
-  НА ПОДКЛЮЧЕНИЕ<o:p></o:p></i></b></p></div></p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'>&nbsp;</p>
-	  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'>Абонент <b style='mso-bidi-font-weight:normal'><i
-  style='mso-bidi-font-style:normal'><u>${Client.Surname} ${Client.Name} ${Client.Patronymic}</u></i></b>,<a
-  name=Фамилия></a> </p>
+			p.MsoNormal, li.MsoNormal, div.MsoNormal {
+				font-family: "Calibri", "sans-serif";
+				font-size: 10pt;
+				line-height: 100%;
+				margin-bottom: 6.0pt;
+				margin-left: 0cm;
+				margin-right: 0cm;
+				margin-top: 0cm;
+				mso-ascii-font-family: Calibri;
+				mso-ascii-theme-font: minor-latin;
+				mso-bidi-font-family: "Times New Roman";
+				mso-bidi-theme-font: minor-bidi;
+				mso-fareast-font-family: Calibri;
+				mso-fareast-language: EN-US;
+				mso-fareast-theme-font: minor-latin;
+				mso-hansi-font-family: Calibri;
+				mso-hansi-theme-font: minor-latin;
+				mso-pagination: widow-orphan;
+				mso-style-parent: "";
+				mso-style-qformat: yes;
+				mso-style-unhide: no;
+			}
 
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'>паспорт серия <i style='mso-bidi-font-style:normal'><u>_________</u></i>
-  № <i style='mso-bidi-font-style:normal'><u>______________</u></i> выдан <i
-  style='mso-bidi-font-style:normal'><u>_____._____._________ <span class=GramE>г</span>.</u></i>,
-  </p>  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'><i style='mso-bidi-font-style:normal'><u>________________________________________________________________________________________</u></i>, </p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'>прописанный по адресу: <i style='mso-bidi-font-style:
-  normal'><u>__________________________________________________________________</u></i></p>
+			a:link, span.MsoHyperlink {
+				color: blue;
+				mso-style-priority: 99;
+				mso-themecolor: hyperlink;
+				text-decoration: underline;
+				text-underline: single;
+			}
 
-  <% if (Client.HomePhoneNumber == ""): %>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'>домашний телефон: <i style='mso-bidi-font-style:
-  normal'><u>8-${Client.HomePhoneNumber}</u></i></p>
-  <% end %>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'>мобильный телефон: <i style='mso-bidi-font-style:
-  normal'><u>${_client.Contact}</u></i></p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'>принял подключение услуги доступа к сети интернет
-  со следующими параметрами:</p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'>адрес подключения: <i style='mso-bidi-font-style:
-  normal'><u>г. ${Client.City} ул. ${Client.Street} д. ${Client.House} ${Client.CaseHouse} кв. ${Client.Apartment} этаж ${Client.Floor}</u></i></p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'>
-    Счет: <i style='mso-bidi-font-style:
-  normal'><u>${AccountNumber}<b style='mso-bidi-font-weight:normal'><o:p></o:p></b></u></i>
-  <% if IsDefined("ConnectInfo"): %>
-  <% if ConnectInfo != null: %>
-  <% if ConnectInfo.Switch != null: %>
-  Коммутатор: <i style='mso-bidi-font-style:
-  normal'><u>${ConnectInfo.Swith_adr} (${ConnectInfo.swith_IP})<b style='mso-bidi-font-weight:normal'><o:p></o:p></b></u></i>
-    Порт: <i style='mso-bidi-font-style:
-  normal'><u>${ConnectInfo.Port}<b style='mso-bidi-font-weight:normal'><o:p></o:p></b></u></i>
-  <% end %>
-  <% end %>
-  <% end %>
-  Тарифный план: <i style='mso-bidi-font-style:
-  normal'><u>${?Client.Tariff.Name}<b style='mso-bidi-font-weight:normal'><o:p></o:p></b></u></i></p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'>Дополнительные услуги: </p>
-  <table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0
-   
-          style='border-style: none; border-color: inherit; border-width: medium; border-collapse:collapse; mso-border-alt:solid black .5pt;
-   mso-border-themecolor:text1; mso-yfti-tbllook:1184; mso-padding-alt:0cm 5.4pt 0cm 5.4pt; height: 10px; margin-bottom: 0px;'>
-   <tr style='mso-yfti-irow:0;mso-yfti-firstrow:yes;mso-yfti-lastrow:yes;
-	'>
-	<td width=717 valign=top style='border:solid black 1.0pt;
-	mso-border-themecolor:text1;mso-border-alt:solid black .5pt;mso-border-themecolor:
-	text1;padding:0cm 5.4pt 0cm 5.4pt;' class="style4">
-	<p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;
-	text-align:justify;line-height:normal'><o:p>&nbsp;</o:p></p>
-	<p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;
-	text-align:justify;line-height:normal'><o:p>&nbsp;</o:p></p>
-	</td>
-   </tr>
-  </table>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'>Стоимость выполненных работ <b style='mso-bidi-font-weight:
-  normal'><i style='mso-bidi-font-style:normal'><u>${Client.ConnectSum}</u></i></b>
-  руб.</p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'>Я <b style='mso-bidi-font-weight:normal'><i
-  style='mso-bidi-font-style:normal'><u>${Client.Surname} ${Client.Name} ${Client.Patronymic}</u></i></b> принимаю
-  подключение к услугам доступа к сети Интернет.</p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'>Претензий по объёму и качеству оказанных услуг не
-  имею.</p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'><o:p>&nbsp;</o:p></p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'>__________________________________________<span
-  style='mso-spacerun:yes'>               </span><span
-  style='mso-spacerun:yes'>     </span><span
-  style='mso-spacerun:yes'>         </span><span
-  style='mso-spacerun:yes'>   </span><i style='mso-bidi-font-style:normal'><u>________________________</u></i></p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'><span style='font-size:8.0pt'><span
-  style='mso-spacerun:yes'>                                         </span>(подпись
-  Абонента)<span
-  style='mso-spacerun:yes'>                                                                                
-  </span><span style='mso-spacerun:yes'>            </span><span
-  style='mso-spacerun:yes'>          </span><span
-  style='mso-spacerun:yes'>  </span><span
-  style='mso-spacerun:yes'>      </span>(дата)<o:p></o:p></span></p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'>
-  <![if !vml]><span style='mso-ignore:vglayout'>
-  <table cellpadding=0 cellspacing=0 align=left style="height: 70px; margin-top: -12px;">
-   <tr>
-	<td width=532 class="style2"></td>
-   </tr>
-   <tr>
-	<td>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
-  normal'><b style='mso-bidi-font-weight:normal'><i style='mso-bidi-font-style:
-  normal'>Уважаемый Абонент! Благодарим Вас за выбор нашей Компании!<o:p></o:p></i></b></p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
-  normal'><i style='mso-bidi-font-style:normal'>Наша Компания ставит своей
-  задачей постоянное повышение качества <o:p></o:p></i></p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
-  normal'><i style='mso-bidi-font-style:normal'>предоставляемых услуг и
-  обслуживания наших Абонентов. <o:p></o:p></i></p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
-  normal'><i style='mso-bidi-font-style:normal'>Просим Вас оценить качество
-  подключения по десятибалльной шкале <o:p></o:p></i></p>
-	   </td>
-	<td width=175 height=50 bgcolor=white style='border:.75pt solid black;
-	vertical-align:top;background:white'><![endif]><![if !mso]><span
-	style='position:absolute;mso-ignore:vglayout;left:0pt;z-index:7'>
-	<table cellpadding=0 cellspacing=0 width="100%">
-	 <tr>
-	  <td><![endif]>
-	  <div v:shape="_x0000_s1027" style='padding:4.35pt 7.95pt 4.35pt 7.95pt'
-	  class=shape>
-	  <p class=MsoNormal align=center style='text-align:center'><span
-	  style='font-size:5.0pt;line-height:115%'><o:p>&nbsp;</o:p></span></p>
-	  <p class=MsoNormal align=center style='text-align:center'><span
-	  style='font-size:5.0pt;line-height:115%'><o:p>&nbsp;</o:p></span></p>
-	  <p class=MsoNoSpacing align=center style='text-align:center'><b
-	  style='mso-bidi-font-weight:normal'><span style='font-size:8.0pt'><o:p>&nbsp;</o:p></span></b></p>
-	  </div>
-	  <![if !mso]></td>
-	 </tr>
-	</table>
-	</span><![endif]><![if !mso & !vml]>&nbsp;<span style='mso-ignore:vglayout'><span
-	style='mso-ignore:vglayout;'><br />
-		<br />
-		<br />
-	  <p class=MsoNoSpacing align=center style='text-align:center'><b
-	  style='mso-bidi-font-weight:normal'><span style='font-size:8.0pt'>поле
-	  заполняется Абонентом<o:p></o:p></span></b></p>
-	</span>
-  </span><![endif]><![if !vml]></td>
-   </tr>
-  </table>
-  </span><![endif]><span style='font-size:8.0pt;mso-ascii-font-family:Calibri;
-  mso-hansi-font-family:Calibri'><o:p>&nbsp;</o:p></span></p>
-  <br style='mso-ignore:vglayout' clear=ALL>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
-  normal'><b style='mso-bidi-font-weight:normal'>Расход материалов:<o:p></o:p></b></p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
-  normal'><span style='mso-spacerun:yes'> </span><b style='mso-bidi-font-weight:
-  normal'>кабель </b><b style='mso-bidi-font-weight:normal'><span lang=EN-US
-  style='mso-ansi-language:EN-US'>UTP</span> 2</b><b style='mso-bidi-font-weight:
-  normal'><span lang=EN-US style='mso-ansi-language:EN-US'>x</span>2</b> начальная
-  метка 
-  <![if !vml]><img width=114 height=20
-  src="../Images/image003.gif" v:shapes="_x0000_s1033"><![endif]>
-  <span
-  style='mso-spacerun:yes'> </span>конечная метка 
-  <![if !vml]><img width=114 height=20
-  src="../Images/image003.gif" v:shapes="_x0000_s1032"><![endif]>
-  </p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
-  normal'><b style='mso-bidi-font-weight:normal'>коннектор </b><b
-  style='mso-bidi-font-weight:normal'><span lang=EN-US style='mso-ansi-language:
-  EN-US'>RJ</span>-45</b> - <b
-  style='mso-bidi-font-weight:normal'>
-  <![if !vml]><img width=51 height=20
-  src="../Images/image004.gif" v:shapes="_x0000_s1031"><![endif]></b>
-  <span
-  style='mso-spacerun:yes'> </span>шт. <b style='mso-bidi-font-weight:normal'>скоба
-  с гвоздем</b> - 
-  <b style='mso-bidi-font-weight:normal'>
-  <![if !vml]><img width=51 height=20
-  src="../Images/image004.gif" v:shapes="_x0000_s1030"><![endif]></b>
-  <span
-  style='mso-spacerun:yes'>  </span>шт.
-  <%
-  freePorts = _client.GetFreePorts()
-  if (freePorts != ""):
-  %>
-  <br/>
-  <span>Свободные порты: ${freePorts}</span>
-  <% end %>
-  </p>
-  <p class=MsoNormal align=right style='margin-bottom:0cm;margin-bottom:.0001pt;
-  text-align:right;line-height:normal'>Работы выполнил 
-   <% if WhoConnected == null: %>
-  <b style='mso-bidi-font-weight:normal'>
-  <![if !vml]><img width=166 height=24
-  src="../Images/image005.gif" v:shapes="_x0000_s1029"><![endif]></b>
-<span
-  style='mso-spacerun:yes'> </span><i style='mso-bidi-font-style:normal'>
-	<% else: %>
-		${WhoConnected.Name}
-	<% end %></i></p>
-  </td>
- </tr>
- <tr style='mso-yfti-irow:1'>
-  <td valign=top 
-		 style='border-bottom:
-  solid black 1.0pt;mso-border-bottom-themecolor:text1;mso-border-top-alt:solid black .5pt;
-  mso-border-top-themecolor:text1;mso-border-top-alt:solid black .5pt;
-  mso-border-top-themecolor:text1;mso-border-bottom-alt:solid black .5pt;
-  mso-border-bottom-themecolor:text1;padding:0cm 5.4pt 0cm 5.4pt; border-left-style: none; border-left-color: inherit; border-left-width: medium; border-right-style: none; border-right-color: inherit; border-right-width: medium; border-top-style: none; border-top-color: inherit; border-top-width: medium;' 
-		 class="style1">
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
-  normal'><i style='mso-bidi-font-style:normal'><span style='font-size:8.0pt'>---------------------------------линия
-  отрыва<span style='mso-spacerun:yes'>   </span>---<span
-  style='mso-spacerun:yes'>  </span>линия отрыва<span
-  style='mso-spacerun:yes'>   </span>---<span style='mso-spacerun:yes'> 
-  </span>линия отрыва<span style='mso-spacerun:yes'>  </span>---<span
-  style='mso-spacerun:yes'>   </span>линия отрыва<span
-  style='mso-spacerun:yes'>   </span>---<span style='mso-spacerun:yes'> 
-  </span>линия отрыва<span style='mso-spacerun:yes'>   <o:p>
-	  ---------------------------</o:p></span></i></p>
-  </td>
- </tr>
- <tr style='mso-yfti-irow:2;mso-yfti-lastrow:yes'>
-  <td valign=top 
-		 style='mso-border-themecolor:text1; border-left: 1.0pt solid black; border-right: 1.0pt solid black; border-bottom: 1.0pt solid black; mso-border-top-alt:solid black .5pt;
-  mso-border-top-themecolor:text1; mso-border-alt:solid black .5pt; mso-border-themecolor:
-  text1; padding:0cm 5.4pt 0cm 5.4pt; border-top-style: none; border-top-color: inherit; border-top-width: medium;' 
-		 class="style1">
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'>
-  <![if !vml]><span style='mso-ignore:vglayout;
-  position:absolute;z-index:9;left:0px;margin-left:20px;margin-top:7px;
-  width:152px;height:40px'><img width=152 height=51
-  src="../Images/image002.jpg" v:shapes="_x0000_s1035"></span><![endif]><b
-  style='mso-bidi-font-weight:normal'><i style='mso-bidi-font-style:normal'><o:p></o:p></i></b></p>
-  <p class=MsoNormal style='margin-top:0cm;margin-right:0cm;margin-bottom:0cm;
-  margin-left:361.5pt;margin-bottom:.0001pt;line-height:normal'><b
-  style='mso-bidi-font-weight:normal'><i style='mso-bidi-font-style:normal'>ЗАКАЗ
-  НА ПРЕДОСТАВЛЕНИЕ УСЛУГ<o:p></o:p></i></b></p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
-  normal'><b style='mso-bidi-font-weight:normal'><i style='mso-bidi-font-style:
-  normal'><o:p>&nbsp;</o:p></i></b></p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal;tab-stops:center 269.3pt'>&nbsp;</p>
-	  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal;tab-stops:center 269.3pt'>&nbsp;</p>
-	  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal;tab-stops:center 269.3pt'>
-		  <b style='mso-bidi-font-weight:
-  normal'><i style='mso-bidi-font-style:normal'>Параметры услуги: </i></b>Адрес
-  подключения: <i style='mso-bidi-font-style:normal'><u>г. ${Client.City} ул. ${Client.Street} д. ${Client.House} ${Client.CaseHouse} кв. ${Client.Apartment}</u></i></p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'>Тарифный план: <i style='mso-bidi-font-style:
-  normal'><u>${?Client.Tariff.Name}<b style='mso-bidi-font-weight:normal'><o:p></o:p></b></u></i></p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'>Лицевой счет № <i style='mso-bidi-font-style:
-  normal'><u>${AccountNumber}<b style='mso-bidi-font-weight:
-  normal'><o:p></o:p></b></u></i></p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'><b style='mso-bidi-font-weight:normal'>Для оплаты
-  услуг доступа к сети интернет используйте номер Вашего лицевого счета.<o:p></o:p></b></p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'>Дополнительные услуги: </p>
-  <table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0
-   style='border-collapse:collapse;border:none;mso-border-alt:solid black .5pt;
-   mso-border-themecolor:text1;mso-yfti-tbllook:1184;mso-padding-alt:0cm 5.4pt 0cm 5.4pt'>
-   <tr style='mso-yfti-irow:0;mso-yfti-firstrow:yes;mso-yfti-lastrow:yes;
-	'>
-	<td width=717 valign=top style='border:solid black 1.0pt;
-	mso-border-themecolor:text1;mso-border-alt:solid black .5pt;mso-border-themecolor:
-	text1;padding:0cm 5.4pt 0cm 5.4pt;' class="style3">
-	<p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;
-	text-align:justify;line-height:normal'><o:p>&nbsp;</o:p></p>
-	</td>
-   </tr>
-  </table>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'>Параметры доступа к личному кабинету на <span
-  lang=EN-US style='mso-ansi-language:EN-US'>web</span>-сервере <a
-  href="http://www.ivrn.net"><b style='mso-bidi-font-weight:normal'><i
-  style='mso-bidi-font-style:normal'><span lang=EN-US style='mso-ansi-language:
-  EN-US'>www</span>.</i></b><b style='mso-bidi-font-weight:normal'><i
-  style='mso-bidi-font-style:normal'><span lang=EN-US style='mso-ansi-language:
-  EN-US'>ivrn</span>.</i></b><b style='mso-bidi-font-weight:normal'><i
-  style='mso-bidi-font-style:normal'><span lang=EN-US style='mso-ansi-language:
-  EN-US'>net</span></i></b></a>: </p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'>Логин: <b style='mso-bidi-font-weight:normal'><u>${AccountNumber}</u></b></p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'>Пароль: <b style='mso-bidi-font-weight:normal'><u>${Password}<o:p></o:p></u></b></p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'>Работы по подключению к сети интернет
-  представителем ООО &quot;Инфорум&quot; выполнены в полном объёме.</p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'>Абонент к качеству и объему выполненных работ
-  претензий не имеет. С условиями Договора-оферты <span class=GramE>ознакомлен</span>.
-  Место прокладки кабеля согласовано.</p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'><o:p>&nbsp;</o:p></p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'>Стоимость услуг по подключению <b
-  style='mso-bidi-font-weight:normal'><i style='mso-bidi-font-style:normal'><u>${Client.ConnectSum} </u></i></b> руб.</p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'>&nbsp;</p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'>__________________________________________<span
-  style='mso-spacerun:yes'>               </span><span
-  style='mso-spacerun:yes'>            </span><span
-  style='mso-spacerun:yes'>     </span><span
-  style='mso-spacerun:yes'>       </span><i style='mso-bidi-font-style:normal'><u>________________________</u></i></p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'><span style='font-size:8.0pt'><span
-  style='mso-spacerun:yes'>                                         </span>(подпись
-  Абонента)<span
-  style='mso-spacerun:yes'>                                                                                         
-  </span><span style='mso-spacerun:yes'>                      </span><span
-  style='mso-spacerun:yes'>    </span><span style='mso-spacerun:yes'>   </span><span
-  style='mso-spacerun:yes'> </span>(дата)<o:p></o:p></span></p>
-  <p class=MsoNormal align=center style='margin-bottom:0cm;margin-bottom:.0001pt;
-  text-align:center;line-height:normal'><i style='mso-bidi-font-style:normal'><span
-  style='font-size:10.0pt'>Договор - оферты и правила оказания услуг
-  опубликованы на </span></i><i style='mso-bidi-font-style:normal'><span
-  lang=EN-US style='font-size:10.0pt;mso-ansi-language:EN-US'>web</span></i><i
-  style='mso-bidi-font-style:normal'><span style='font-size:10.0pt'>-сервере
-  ООО «Инфорум» по адресу </span></i><a href="http://www.ivrn.net"><b
-  style='mso-bidi-font-weight:normal'><i style='mso-bidi-font-style:normal'><span
-  lang=EN-US style='font-size:10.0pt;mso-ansi-language:EN-US'>www</span></i></b><b
-  style='mso-bidi-font-weight:normal'><i style='mso-bidi-font-style:normal'><span
-  style='font-size:10.0pt'>.</span></i></b><b style='mso-bidi-font-weight:normal'><i
-  style='mso-bidi-font-style:normal'><span lang=EN-US style='font-size:10.0pt;
-  mso-ansi-language:EN-US'>ivrn</span></i></b><b style='mso-bidi-font-weight:
-  normal'><i style='mso-bidi-font-style:normal'><span style='font-size:10.0pt'>.</span></i></b><b
-  style='mso-bidi-font-weight:normal'><i style='mso-bidi-font-style:normal'><span
-  lang=EN-US style='font-size:10.0pt;mso-ansi-language:EN-US'>net</span></i></b></a><i
-  style='mso-bidi-font-style:normal'><span style='font-size:10.0pt'><o:p></o:p></span></i></p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'>Контакты службы технической поддержки: тел. <b
-  style='mso-bidi-font-weight:normal'><i style='mso-bidi-font-style:normal'><u>(473)
-  22-999-87</u></i></b> <span lang=EN-US style='mso-ansi-language:EN-US'>e</span>-<span
-  lang=EN-US style='mso-ansi-language:EN-US'>mail</span>: <a
-  href="mailto:Internet@ivrn.net"><b style='mso-bidi-font-weight:normal'><i
-  style='mso-bidi-font-style:normal'><span lang=EN-US style='mso-ansi-language:
-  EN-US'>Internet</span>@</i></b><b style='mso-bidi-font-weight:normal'><i
-  style='mso-bidi-font-style:normal'><span lang=EN-US style='mso-ansi-language:
-  EN-US'>ivrn</span>.</i></b><b style='mso-bidi-font-weight:normal'><i
-  style='mso-bidi-font-style:normal'><span lang=EN-US style='mso-ansi-language:
-  EN-US'>net</span></i></b></a><b style='mso-bidi-font-weight:normal'><i
-  style='mso-bidi-font-style:normal'><u><o:p></o:p></u></i></b></p>
-  <p class=MsoNormal align=right style='margin-bottom:0cm;margin-bottom:.0001pt;
-  text-align:right;line-height:normal'>Работы выполнил 
-	 <% if WhoConnected == null: %>
-  <![if !vml]><img width=166 height=24
-  src="../Images/image005.gif" v:shapes="_x0000_s1028"><![endif]>
-  <span
-  style='mso-spacerun:yes'> </span><span style='mso-spacerun:yes'> </span><i
-  style='mso-bidi-font-style:normal'>  <% else: %>
-  ${WhoConnected.Name}
-  <% end %></i></p>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'><span style='font-size:2.0pt'><o:p>&nbsp;</o:p></span></p>
-  </td>
- </tr>
-</table>
-<p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-justify;line-height:normal'><span lang=EN-US style='mso-ansi-language:EN-US'><o:p>&nbsp;</o:p></span></p>
-</div>
-</body>
+			a:visited, span.MsoHyperlinkFollowed {
+				color: purple;
+				mso-style-noshow: yes;
+				mso-style-priority: 99;
+				mso-themecolor: followedhyperlink;
+				text-decoration: underline;
+				text-underline: single;
+			}
+
+			p.MsoAcetate, li.MsoAcetate, div.MsoAcetate {
+				font-family: "Tahoma", "sans-serif";
+				font-size: 8.0pt;
+				margin: 0cm;
+				margin-bottom: .0001pt;
+				mso-bidi-font-family: Tahoma;
+				mso-fareast-font-family: Calibri;
+				mso-fareast-language: EN-US;
+				mso-fareast-theme-font: minor-latin;
+				mso-pagination: widow-orphan;
+				mso-style-link: "Текст выноски Знак";
+				mso-style-noshow: yes;
+				mso-style-priority: 99;
+			}
+
+			p.MsoNoSpacing, li.MsoNoSpacing, div.MsoNoSpacing {
+				font-family: "Calibri", "sans-serif";
+				font-size: 11.0pt;
+				margin: 0cm;
+				margin-bottom: .0001pt;
+				mso-ascii-font-family: Calibri;
+				mso-ascii-theme-font: minor-latin;
+				mso-bidi-font-family: "Times New Roman";
+				mso-bidi-theme-font: minor-bidi;
+				mso-fareast-font-family: Calibri;
+				mso-fareast-language: EN-US;
+				mso-fareast-theme-font: minor-latin;
+				mso-hansi-font-family: Calibri;
+				mso-hansi-theme-font: minor-latin;
+				mso-pagination: widow-orphan;
+				mso-style-parent: "";
+				mso-style-priority: 1;
+				mso-style-qformat: yes;
+				mso-style-unhide: no;
+			}
+
+			span.a {
+				font-family: "Tahoma", "sans-serif";
+				mso-ansi-font-size: 8.0pt;
+				mso-ascii-font-family: Tahoma;
+				mso-bidi-font-family: Tahoma;
+				mso-bidi-font-size: 8.0pt;
+				mso-hansi-font-family: Tahoma;
+				mso-style-link: "Текст выноски";
+				mso-style-locked: yes;
+				mso-style-name: "Текст выноски Знак";
+				mso-style-noshow: yes;
+				mso-style-priority: 99;
+				mso-style-unhide: no;
+			}
+
+			span.apple-style-span {
+				mso-style-name: apple-style-span;
+				mso-style-unhide: no;
+			}
+
+			span.apple-converted-space {
+				mso-style-name: apple-converted-space;
+				mso-style-unhide: no;
+			}
+
+			span.GramE {
+				mso-gram-e: yes;
+				mso-style-name: "";
+			}
+
+			.MsoChpDefault {
+				mso-ascii-font-family: Calibri;
+				mso-ascii-theme-font: minor-latin;
+				mso-bidi-font-family: "Times New Roman";
+				mso-bidi-theme-font: minor-bidi;
+				mso-default-props: yes;
+				mso-fareast-font-family: Calibri;
+				mso-fareast-language: EN-US;
+				mso-fareast-theme-font: minor-latin;
+				mso-hansi-font-family: Calibri;
+				mso-hansi-theme-font: minor-latin;
+				mso-style-type: export-only;
+			}
+
+			.MsoPapDefault {
+				line-height: 115%;
+				margin-bottom: 10.0pt;
+				mso-style-type: export-only;
+			}
+
+			@page WordSection1 {
+				margin: 21.3pt 28.3pt 0cm 1.0cm;
+				mso-footer-margin: 35.4pt;
+				mso-header-margin: 35.4pt;
+				mso-paper-source: 0;
+				size: 595.3pt 841.9pt;
+			}
+
+			div.WordSection1 { page: WordSection1; }
+
+			.style1 { width: 566pt; }
+
+			.style2 { height: 6px; }
+
+			.style3 {
+				height: 19pt;
+				width: 537.9pt;
+			}
+
+			.style4 {
+				height: 5pt;
+				width: 537.9pt;
+			}
+		</style>
+
+	</head>
+
+	<body link=blue vlink=purple style='tab-interval: 35.4pt'>
+
+		<div class=WordSection1>
+
+			<table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0
+				style='border-collapse: collapse; border: none; mso-border-alt: solid black .5pt; mso-border-themecolor: text1; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt'>
+				<tr style='mso-yfti-irow: 0; mso-yfti-firstrow: yes'>
+					<td valign=top style='border: solid black 1.0pt; mso-border-themecolor: text1; mso-border-alt: solid black .5pt; mso-border-themecolor: text1; padding: 0cm 5.4pt 0cm 5.4pt' class="style1">
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; line-height: normal'> <div style="float: left">
+							                                                                                           <![if !vml]><span style='mso-ignore: vglayout; position: relative; z-index: 8; left: -1px; top: 2px; width: 152px; height: 53px'><img
+								                                                                                                                                                                                                                   width=152 height=51 src="../Images/image002.jpg" v:shapes="Рисунок_x0020_1"></span><![endif]></div>
+							<div style="margin-left: 480px"><p class=MsoNormal><b
+								                                                  style='mso-bidi-font-weight: normal'><i style='mso-bidi-font-style: normal'><o:p>&nbsp;</o:p><br /> НАРЯД
+									                                                                                      НА ПОДКЛЮЧЕНИЕ<o:p></o:p></i></b></p></div></p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>&nbsp;</p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+							Абонент <b style='mso-bidi-font-weight: normal'><i style='mso-bidi-font-style: normal'><u>${Client.Surname} ${Client.Name} ${Client.Patronymic}</u></i></b>
+							дата рождения: <i style='mso-bidi-font-style: normal'><u>_____._____._________ <span class=GramE>г</span>.</u></i>,
+						</p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>паспорт серия <i style='mso-bidi-font-style: normal'><u>_________</u></i>
+							№ <i style='mso-bidi-font-style: normal'><u>______________</u></i>
+							выдан <i style='mso-bidi-font-style: normal'><u>_____._____._________ <span class=GramE>г</span>.</u></i>,
+						</p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+							Кем выдан:<i style='mso-bidi-font-style: normal'><u>______________________________________________________________________________</u></i>,
+						</p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>прописанный по адресу: <i style='mso-bidi-font-style: normal'><u>__________________________________________________________________</u></i></p>
+
+						<% if (Client.HomePhoneNumber == ""): %>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>домашний телефон: <i style='mso-bidi-font-style: normal'><u>8-${Client.HomePhoneNumber}</u></i></p>
+						<% end %>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>мобильный телефон: <i style='mso-bidi-font-style: normal'><u>${_client.Contact}</u></i></p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>принял подключение услуги доступа к сети интернет
+							со следующими параметрами:</p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>адрес подключения: <i style='mso-bidi-font-style: normal'><u>г. ${Client.City} ул. ${Client.Street} д. ${Client.House} ${Client.CaseHouse} кв. ${Client.Apartment} этаж ${Client.Floor}</u></i></p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+							Счет: <i style='mso-bidi-font-style: normal'><u>${AccountNumber}<b style='mso-bidi-font-weight: normal'><o:p></o:p></b></u></i>
+							<% if IsDefined("ConnectInfo"): %>
+							<% if ConnectInfo != null: %>
+							<% if ConnectInfo.Switch != null: %>
+							Коммутатор: <i style='mso-bidi-font-style: normal'><u>${ConnectInfo.Swith_adr} (${ConnectInfo.swith_IP})<b style='mso-bidi-font-weight: normal'><o:p></o:p></b></u></i>
+							Порт: <i style='mso-bidi-font-style: normal'><u>${ConnectInfo.Port}<b style='mso-bidi-font-weight: normal'><o:p></o:p></b></u></i>
+							<% end %>
+							<% end %>
+							<% end %>
+							Тарифный план: <i style='mso-bidi-font-style: normal'><u>${?Client.Tariff.Name}<b style='mso-bidi-font-weight: normal'><o:p></o:p></b></u></i></p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>Дополнительные услуги: </p>
+						<table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0
+
+							style='border-style: none; border-color: inherit; border-width: medium; border-collapse: collapse; mso-border-alt: solid black .5pt; mso-border-themecolor: text1; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt; height: 10px; margin-bottom: 0px;'>
+							<tr style='mso-yfti-irow: 0; mso-yfti-firstrow: yes; mso-yfti-lastrow: yes;'>
+								<td width=717 valign=top style='border: solid black 1.0pt; mso-border-themecolor: text1; mso-border-alt: solid black .5pt; mso-border-themecolor: text1; padding: 0cm 5.4pt 0cm 5.4pt;' class="style4">
+									<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'><o:p>&nbsp;</o:p></p>
+									<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'><o:p>&nbsp;</o:p></p>
+								</td>
+							</tr>
+						</table>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>Стоимость выполненных работ <b style='mso-bidi-font-weight: normal'><i style='mso-bidi-font-style: normal'><u>${Client.ConnectSum}</u></i></b>
+							руб.</p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>Я <b style='mso-bidi-font-weight: normal'><i
+							                                                                                                                                                      style='mso-bidi-font-style: normal'><u>${Client.Surname} ${Client.Name} ${Client.Patronymic}</u></i></b> принимаю
+							подключение к услугам доступа к сети Интернет.</p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>Претензий по объёму и качеству оказанных услуг не
+							имею.</p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'><o:p>&nbsp;</o:p></p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>__________________________________________<span
+							                                                                                                                                                       style='mso-spacerun: yes'>               </span><span
+								                                                                                                                                                                                                      style='mso-spacerun: yes'>     </span><span
+									                                                                                                                                                                                                                                           style='mso-spacerun: yes'>         </span><span
+										                                                                                                                                                                                                                                                                                    style='mso-spacerun: yes'>   </span><i style='mso-bidi-font-style: normal'><u>________________________</u></i></p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'><span style='font-size: 8.0pt'><span
+							                                                                                                                                           style='mso-spacerun: yes'>                                         </span>(подпись
+							                                                                                                             Абонента)<span
+								                                                                                                                      style='mso-spacerun: yes'>                                                                                
+							                                                                                                                      </span><span style='mso-spacerun: yes'>            </span><span
+								                                                                                                                                                                               style='mso-spacerun: yes'>          </span><span
+									                                                                                                                                                                                                                         style='mso-spacerun: yes'>  </span><span
+										                                                                                                                                                                                                                                                           style='mso-spacerun: yes'>      </span>(дата)<o:p></o:p></span></p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+							<![if !vml]><span style='mso-ignore: vglayout'>
+								<table cellpadding=0 cellspacing=0 align=left style="height: 70px; margin-top: -12px;">
+								<tr>
+									<td width=532 class="style2"></td>
+								</tr>
+								<tr>
+								<td>
+									<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; line-height: normal'><b style='mso-bidi-font-weight: normal'><i style='mso-bidi-font-style: normal'>Уважаемый Абонент! Благодарим Вас за выбор нашей Компании!<o:p></o:p></i></b></p>
+									<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; line-height: normal'><i style='mso-bidi-font-style: normal'>Наша Компания ставит своей
+										                                                                                          задачей постоянное повышение качества <o:p></o:p></i></p>
+									<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; line-height: normal'><i style='mso-bidi-font-style: normal'>предоставляемых услуг и
+										                                                                                          обслуживания наших Абонентов. <o:p></o:p></i></p>
+									<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; line-height: normal'><i style='mso-bidi-font-style: normal'>Просим Вас оценить качество
+										                                                                                          подключения по десятибалльной шкале <o:p></o:p></i></p>
+								</td>
+								<td width=175 height=50 bgcolor=white style='border: .75pt solid black; vertical-align: top; background: white'><![endif]><![if !mso]><span
+									                                                                                                                                    style='position: absolute; mso-ignore: vglayout; left: 0pt; z-index: 7'>
+									                                                                                                                        <table cellpadding=0 cellspacing=0 width="100%">
+									                                                                                                                        <tr>
+									                                                                                                                        <td><![endif]>
+							<div v:shape="_x0000_s1027" style='padding: 4.35pt 7.95pt 4.35pt 7.95pt'
+								class=shape>
+								<p class=MsoNormal align=center style='text-align: center'><span
+									                                                          style='font-size: 5.0pt; line-height: 115%'><o:p>&nbsp;</o:p></span></p>
+								<p class=MsoNormal align=center style='text-align: center'><span
+									                                                          style='font-size: 5.0pt; line-height: 115%'><o:p>&nbsp;</o:p></span></p>
+								<p class=MsoNoSpacing align=center style='text-align: center'><b
+									                                                             style='mso-bidi-font-weight: normal'><span style='font-size: 8.0pt'><o:p>&nbsp;</o:p></span></b></p>
+							</div>
+							<![if !mso]></td>
+								</tr>
+								</table>
+								</span><![endif]><![if !mso & !vml]>&nbsp;<span style='mso-ignore: vglayout'><span
+									                                                                            style='mso-ignore: vglayout;'><br />
+									                                                                            <br />
+									                                                                            <br />
+									                                                                            <p class=MsoNoSpacing align=center style='text-align: center'><b
+										                                                                                                                                         style='mso-bidi-font-weight: normal'><span style='font-size: 8.0pt'>поле
+											                                                                                                                                                                             заполняется Абонентом<o:p></o:p></span></b></p>
+								                                                                            </span>
+								                                          </span><![endif]><![if !vml]></td>
+									                                                           </tr>
+									                                                           </table>
+									                                                           </span><![endif]><span style='font-size: 8.0pt; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'><o:p>&nbsp;</o:p></span></p>
+						<br style='mso-ignore: vglayout' clear=ALL>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; line-height: normal'><b style='mso-bidi-font-weight: normal'>Расход материалов:<o:p></o:p></b></p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; line-height: normal'><span style='mso-spacerun: yes'> </span><b style='mso-bidi-font-weight: normal'>кабель </b><b style='mso-bidi-font-weight: normal'><span lang=EN-US
+							                                                                                                                                                                                                                              style='mso-ansi-language: EN-US'>UTP</span> 2</b><b style='mso-bidi-font-weight: normal'><span lang=EN-US style='mso-ansi-language: EN-US'>x</span>2</b> начальная
+							метка
+							<![if !vml]><img width=114 height=20
+								            src="../Images/image003.gif" v:shapes="_x0000_s1033"><![endif]>
+							<span
+								style='mso-spacerun: yes'> </span>конечная метка
+							<![if !vml]><img width=114 height=20
+								            src="../Images/image003.gif" v:shapes="_x0000_s1032"><![endif]>
+						</p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; line-height: normal'><b style='mso-bidi-font-weight: normal'>коннектор </b><b
+							                                                                                                                                               style='mso-bidi-font-weight: normal'><span lang=EN-US style='mso-ansi-language: EN-US'>RJ</span>-45</b> - <b
+								                                                                                                                                                                                                                                                           style='mso-bidi-font-weight: normal'>
+								                                                                                                                                                                                                                                                           <![if !vml]><img width=51 height=20
+									                                                                                                                                                                                                                                                                       src="../Images/image004.gif" v:shapes="_x0000_s1031"><![endif]></b>
+							<span
+								style='mso-spacerun: yes'> </span>шт. <b style='mso-bidi-font-weight: normal'>скоба
+									                                     с гвоздем</b> -
+							<b style='mso-bidi-font-weight: normal'>
+								<![if !vml]><img width=51 height=20
+									            src="../Images/image004.gif" v:shapes="_x0000_s1030"><![endif]></b>
+							<span
+								style='mso-spacerun: yes'>  </span>шт.
+							<%
+							freePorts = _client.GetFreePorts()
+							if (freePorts != ""):
+							%>
+							<br/>
+							<span>Свободные порты: ${freePorts}</span>
+							<% end %>
+						</p>
+						<p class=MsoNormal align=right style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: right; line-height: normal'>Работы выполнил
+							<% if WhoConnected == null: %>
+							<b style='mso-bidi-font-weight: normal'>
+								<![if !vml]><img width=166 height=24
+									            src="../Images/image005.gif" v:shapes="_x0000_s1029"><![endif]></b>
+							<span
+								style='mso-spacerun: yes'> </span><i style='mso-bidi-font-style: normal'>
+									                                 <% else: %>
+									                                 ${WhoConnected.Name}
+									                                 <% end %></i></p>
+					</td>
+				</tr>
+				<tr style='mso-yfti-irow: 1'>
+					<td valign=top
+						style='border-bottom: solid black 1.0pt; mso-border-bottom-themecolor: text1; mso-border-top-alt: solid black .5pt; mso-border-top-themecolor: text1; mso-border-top-alt: solid black .5pt; mso-border-top-themecolor: text1; mso-border-bottom-alt: solid black .5pt; mso-border-bottom-themecolor: text1; padding: 0cm 5.4pt 0cm 5.4pt; border-left-style: none; border-left-color: inherit; border-left-width: medium; border-right-style: none; border-right-color: inherit; border-right-width: medium; border-top-style: none; border-top-color: inherit; border-top-width: medium;'
+						class="style1">
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; line-height: normal'>
+							<i style='mso-bidi-font-style: normal'>
+								<span style='font-size: 8.0pt'>---------------------------------линия отрыва<span style='mso-spacerun: yes'>   </span>---<span style='mso-spacerun: yes'>  </span>линия отрыва<span style='mso-spacerun: yes'>   </span>---<span style='mso-spacerun: yes'>   </span>линия отрыва<span style='mso-spacerun: yes'>   </span>---<span style='mso-spacerun: yes'>   </span>линия отрыва<span style='mso-spacerun: yes'></span>---<span style='mso-spacerun: yes'>   </span>линия отрыва<span style='mso-spacerun: yes'>   <o:p>---------------------------------</o:p></span>
+							</i>
+						</p>
+					</td>
+				</tr>
+				<tr style='mso-yfti-irow: 2; mso-yfti-lastrow: yes'>
+					<td valign=top
+						style='mso-border-themecolor: text1; border-left: 1.0pt solid black; border-right: 1.0pt solid black; border-bottom: 1.0pt solid black; mso-border-top-alt: solid black .5pt; mso-border-top-themecolor: text1; mso-border-alt: solid black .5pt; mso-border-themecolor: text1; padding: 0cm 5.4pt 0cm 5.4pt; border-top-style: none; border-top-color: inherit; border-top-width: medium;'
+						class="style1">
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+							<![if !vml]><span style='mso-ignore: vglayout; position: absolute; z-index: 9; left: 0px; margin-left: 20px; margin-top: 7px; width: 152px; height: 40px'><img width=152 height=51
+								                                                                                                                                                   src="../Images/image002.jpg" v:shapes="_x0000_s1035"></span><![endif]><b
+									                                                                                                                                                                                                                         style='mso-bidi-font-weight: normal'><i style='mso-bidi-font-style: normal'><o:p></o:p></i></b></p>
+						<p class=MsoNormal style='margin-top: 0cm; margin-right: 0cm; margin-bottom: 0cm; margin-left: 361.5pt; margin-bottom: .0001pt; line-height: normal'><b
+							                                                                                                                                              style='mso-bidi-font-weight: normal'><i style='mso-bidi-font-style: normal'>ЗАКАЗ
+								                                                                                                                                                                                  НА ПРЕДОСТАВЛЕНИЕ УСЛУГ<o:p></o:p></i></b></p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; line-height: normal'><b style='mso-bidi-font-weight: normal'><i style='mso-bidi-font-style: normal'><o:p>&nbsp;</o:p></i></b></p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal; tab-stops: center 269.3pt'>&nbsp;</p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal; tab-stops: center 269.3pt'>&nbsp;</p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal; tab-stops: center 269.3pt'>
+							<b style='mso-bidi-font-weight: normal'><i style='mso-bidi-font-style: normal'>Параметры услуги: </i></b>Адрес
+							подключения: <i style='mso-bidi-font-style: normal'><u>г. ${Client.City} ул. ${Client.Street} д. ${Client.House} ${Client.CaseHouse} кв. ${Client.Apartment}</u></i></p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>Тарифный план: <i style='mso-bidi-font-style: normal'><u>${?Client.Tariff.Name}<b style='mso-bidi-font-weight: normal'><o:p></o:p></b></u></i></p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>Лицевой счет № <i style='mso-bidi-font-style: normal'><u>${AccountNumber}<b style='mso-bidi-font-weight: normal'><o:p></o:p></b></u></i></p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'><b style='mso-bidi-font-weight: normal'>Для оплаты
+							                                                                                                             услуг доступа к сети интернет используйте номер Вашего лицевого счета.<o:p></o:p></b></p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>Дополнительные услуги: </p>
+						<table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0
+							style='border-collapse: collapse; border: none; mso-border-alt: solid black .5pt; mso-border-themecolor: text1; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt'>
+							<tr style='mso-yfti-irow: 0; mso-yfti-firstrow: yes; mso-yfti-lastrow: yes;'>
+								<td width=717 valign=top style='border: solid black 1.0pt; mso-border-themecolor: text1; mso-border-alt: solid black .5pt; mso-border-themecolor: text1; padding: 0cm 5.4pt 0cm 5.4pt;' class="style3">
+									<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'><o:p>&nbsp;</o:p></p>
+								</td>
+							</tr>
+						</table>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>Параметры доступа к личному кабинету на <span
+							                                                                                                                                                     lang=EN-US style='mso-ansi-language: EN-US'>web</span>-сервере <a
+								                                                                                                                                                                                                                   href="http://www.ivrn.net"><b style='mso-bidi-font-weight: normal'><i
+									                                                                                                                                                                                                                                                                                     style='mso-bidi-font-style: normal'><span lang=EN-US style='mso-ansi-language: EN-US'>www</span>.</i></b><b style='mso-bidi-font-weight: normal'><i
+										                                                                                                                                                                                                                                                                                                                                                                                                                                       style='mso-bidi-font-style: normal'><span lang=EN-US style='mso-ansi-language: EN-US'>ivrn</span>.</i></b><b style='mso-bidi-font-weight: normal'><i
+											                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          style='mso-bidi-font-style: normal'><span lang=EN-US style='mso-ansi-language: EN-US'>net</span></i></b></a>: </p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>Логин: <b style='mso-bidi-font-weight: normal'><u>${AccountNumber}</u></b></p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>Пароль: <b style='mso-bidi-font-weight: normal'><u>${Password}<o:p></o:p></u></b></p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>Работы по подключению к сети интернет
+							представителем ООО &quot;Инфорум&quot; выполнены в полном объёме.</p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>Абонент к качеству и объему выполненных работ
+							претензий не имеет. С условиями Договора-оферты <span class=GramE>ознакомлен</span>.
+							Место прокладки кабеля согласовано.</p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'><o:p>&nbsp;</o:p></p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>Стоимость услуг по подключению <b
+							                                                                                                                                            style='mso-bidi-font-weight: normal'><i style='mso-bidi-font-style: normal'><u>${Client.ConnectSum} </u></i></b> руб.</p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>&nbsp;</p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>__________________________________________<span
+							                                                                                                                                                       style='mso-spacerun: yes'>               </span><span
+								                                                                                                                                                                                                      style='mso-spacerun: yes'>            </span><span
+									                                                                                                                                                                                                                                                  style='mso-spacerun: yes'>     </span><span
+										                                                                                                                                                                                                                                                                                       style='mso-spacerun: yes'>       </span><i style='mso-bidi-font-style: normal'><u>________________________</u></i></p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'><span style='font-size: 8.0pt'><span
+							                                                                                                                                           style='mso-spacerun: yes'>                                         </span>(подпись
+							                                                                                                             Абонента)<span
+								                                                                                                                      style='mso-spacerun: yes'>                                                                                         
+							                                                                                                                      </span><span style='mso-spacerun: yes'>                      </span><span
+								                                                                                                                                                                                         style='mso-spacerun: yes'>    </span><span style='mso-spacerun: yes'>   </span><span
+									                                                                                                                                                                                                                                                                      style='mso-spacerun: yes'> </span>(дата)<o:p></o:p></span></p>
+						<p class=MsoNormal align=center style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: center; line-height: normal'><i style='mso-bidi-font-style: normal'><span
+							                                                                                                                                                               style='font-size: 10.0pt'>Договор - оферты и правила оказания услуг
+							                                                                                                                                                               опубликованы на </span></i><i style='mso-bidi-font-style: normal'><span
+								                                                                                                                                                                                                                                lang=EN-US style='font-size: 10.0pt; mso-ansi-language: EN-US'>web</span></i><i
+									                                                                                                                                                                                                                                                                                                          style='mso-bidi-font-style: normal'><span style='font-size: 10.0pt'>-сервере
+										                                                                                                                                                                                                                                                                                                                                             ООО «Инфорум» по адресу </span></i><a href="http://www.ivrn.net"><b
+											                                                                                                                                                                                                                                                                                                                                                                                                              style='mso-bidi-font-weight: normal'><i style='mso-bidi-font-style: normal'><span
+												                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        lang=EN-US style='font-size: 10.0pt; mso-ansi-language: EN-US'>www</span></i></b><b
+													                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      style='mso-bidi-font-weight: normal'><i style='mso-bidi-font-style: normal'><span
+														                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                style='font-size: 10.0pt'>.</span></i></b><b style='mso-bidi-font-weight: normal'><i
+															                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                style='mso-bidi-font-style: normal'><span lang=EN-US style='font-size: 10.0pt; mso-ansi-language: EN-US'>ivrn</span></i></b><b style='mso-bidi-font-weight: normal'><i style='mso-bidi-font-style: normal'><span style='font-size: 10.0pt'>.</span></i></b><b
+																                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            style='mso-bidi-font-weight: normal'><i style='mso-bidi-font-style: normal'><span
+																	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      lang=EN-US style='font-size: 10.0pt; mso-ansi-language: EN-US'>net</span></i></b></a><i
+																		                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        style='mso-bidi-font-style: normal'><span style='font-size: 10.0pt'><o:p></o:p></span></i></p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>Контакты службы технической поддержки: тел. <b
+							                                                                                                                                                         style='mso-bidi-font-weight: normal'><i style='mso-bidi-font-style: normal'><u>(473)
+								                                                                                                                                                                                                                                   22-999-87</u></i></b> <span lang=EN-US style='mso-ansi-language: EN-US'>e</span>-<span
+									                                                                                                                                                                                                                                                                                                                   lang=EN-US style='mso-ansi-language: EN-US'>mail</span>: <a
+										                                                                                                                                                                                                                                                                                                                                                                           href="mailto:Internet@ivrn.net"><b style='mso-bidi-font-weight: normal'><i
+											                                                                                                                                                                                                                                                                                                                                                                                                                                                  style='mso-bidi-font-style: normal'><span lang=EN-US style='mso-ansi-language: EN-US'>Internet</span>@</i></b><b style='mso-bidi-font-weight: normal'><i
+												                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         style='mso-bidi-font-style: normal'><span lang=EN-US style='mso-ansi-language: EN-US'>ivrn</span>.</i></b><b style='mso-bidi-font-weight: normal'><i
+													                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            style='mso-bidi-font-style: normal'><span lang=EN-US style='mso-ansi-language: EN-US'>net</span></i></b></a><b style='mso-bidi-font-weight: normal'><i
+														                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 style='mso-bidi-font-style: normal'><u><o:p></o:p></u></i></b></p>
+						<p class=MsoNormal align=right style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: right; line-height: normal'>Работы выполнил
+							<% if WhoConnected == null: %>
+							<![if !vml]><img width=166 height=24
+								            src="../Images/image005.gif" v:shapes="_x0000_s1028"><![endif]>
+							<span
+								style='mso-spacerun: yes'> </span><span style='mso-spacerun: yes'> </span><i
+									                                                                        style='mso-bidi-font-style: normal'>  <% else: %>
+									                                                                        ${WhoConnected.Name}
+									                                                                        <% end %></i></p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'><span style='font-size: 2.0pt'><o:p>&nbsp;</o:p></span></p>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</body>
 </html>
