@@ -189,7 +189,7 @@
 		<% end %>
 		<% if _client.Request != null: %>
 		<tr>
-			<td><span class="description">Создан по заявке </span><a href="${Siteroot}/UserInfo/RequestOne?id=${_client.Request.Id}">№${_client.Request.Id}</a></td>
+			<td><span class="description">Создан по заявке </span><a href="${Siteroot}/ConnectionRequest/RequestOne?id=${_client.Request.Id}">№${_client.Request.Id}</a></td>
 		</tr>
 		<% end %>
 		<% end %>
