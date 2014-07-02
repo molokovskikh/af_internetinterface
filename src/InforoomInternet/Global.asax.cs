@@ -54,7 +54,7 @@ namespace InforoomInternet
 					.DefaultForController().Is("Content")
 					.DefaultForAction().Is("Реквизиты"));
 
-				RoutingModuleEx.Engine.Add(new PatternRoute("/Login/")
+				RoutingModuleEx.Engine.Add(new PatternRoute("/Login/<action>")
 					.DefaultForController().Is("Login")
 					.DefaultForAction().Is("LoginPage"));
 			}

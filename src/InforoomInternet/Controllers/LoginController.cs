@@ -61,15 +61,15 @@ namespace InforoomInternet.Controllers
 				var client = LoginHelper.IsAccessibleClient(Convert.ToUInt32(login), password);
 				if (client != null) {
 					Session["LoginClient"] = login;
-					RedirectToUrl(@"..//PrivateOffice/IndexOffice");
+					Redirect("PrivateOffice", "IndexOffice");
 				}
 				else {
-					RedirectToUrl(@"..//Login/LoginPage");
+					RedirectToAction("LoginPage");
 				}
 			}
 			catch (Exception ex) {
 				Logger.Error("Ошибка авторизации", ex);
-				RedirectToUrl(@"..//Login/LoginPage");
+				RedirectToAction("LoginPage");
 			}
 		}
 
