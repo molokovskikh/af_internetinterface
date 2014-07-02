@@ -8,7 +8,7 @@ using Test.Support.Selenium;
 namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
-	class RegisterLawyerFixture : SeleniumFixture
+	public class RegisterLawyerFixture : SeleniumFixture
 	{
 		[Test(Description = "Проверяет создание юр. лица с заказом и точкой подключения"), Ignore("Отключен функционал")]
 		public void RegisterLegalPersonTest()

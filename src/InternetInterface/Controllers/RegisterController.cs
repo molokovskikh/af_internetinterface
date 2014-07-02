@@ -189,7 +189,7 @@ namespace InternetInterface.Controllers
 				if (!DoNotCreateOrder) {
 					client.Orders.Add(order);
 					order.Client = client;
-					if (string.IsNullOrEmpty(info.Port)) {
+					if (!string.IsNullOrEmpty(info.Port)) {
 						var endPoint = new ClientEndpoint(client, Int32.Parse(info.Port), DbSession.Load<NetworkSwitch>(info.Switch)) {
 							WhoConnected = DbSession.Load<Brigad>(brigadForConnect)
 						};
