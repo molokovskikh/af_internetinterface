@@ -211,8 +211,8 @@ namespace InternetInterface.Controllers
 				}
 
 				DbSession.Save(client);
-				DbSession.SaveMany(client.Contacts);
-				DbSession.SaveMany(client.Orders);
+				DbSession.SaveMany(client.Contacts.ToArray());
+				DbSession.SaveMany(client.Orders.ToArray());
 
 				Notify("Клиент успешно загистрирвоан");
 				RedirectToUrl("../UserInfo/LawyerPersonInfo.rails?filter.ClientCode=" + client.Id);
