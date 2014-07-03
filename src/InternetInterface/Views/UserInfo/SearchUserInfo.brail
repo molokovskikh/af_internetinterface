@@ -65,7 +65,7 @@
 				<% if _client.HaveRed(): %>
 					<button type=button class="button ok" onclick="GoTo('http://redmine.analit.net/issues/${_client.RedmineTask}');">Страница Redmine</button></td>
 				<% end %>
-				<a href="${config.IvrnRoot}/Login/?impersonate=${ClientCode}&partner=true" class="button ok">Личный кабинет</a>
+				<a href="${config.IvrnRoot}?impersonate=${ClientCode}&partner=true" class="button ok">Личный кабинет</a>
 			</tr>
 		</tbody>
 	</table>

@@ -112,10 +112,9 @@ namespace InternetInterface.Queries
 				else {
 					criteria.Add(
 						Restrictions.Like("Description", Text, MatchMode.Anywhere)
-						|| Restrictions.Like("CL.Name", Text, MatchMode.Anywhere)
-						|| Restrictions.Like("CL.Address", Text, MatchMode.Anywhere)
-						|| Restrictions.Like("Contact", Text, MatchMode.Anywhere)
-					);
+							|| Restrictions.Like("CL.Name", Text, MatchMode.Anywhere)
+							|| Restrictions.Like("CL.Address", Text, MatchMode.Anywhere)
+							|| Restrictions.Like("Contact", Text, MatchMode.Anywhere));
 				}
 			}
 			criteria.AddOrder(Order.Asc("Status"));
