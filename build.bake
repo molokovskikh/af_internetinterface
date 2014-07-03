@@ -13,11 +13,11 @@ task @default, [@Build, @BuildBackground]
 
 task @Build, [@BuildWebSite, @BuildBackground, @BuildPrinter]
 
-task @deploy, [@DeployPipeline, @DeployPrinter, @DeployBackground]
+task @deploy, [@DeployPipeline, @DeployPrinter, "deploy:background"]
 
-task @DeployBackground, [@Production, @BuildBackground, @Migrate]:
+task "deploy:background", [@Production, @BuildBackground, @Migrate]:
 	return if Globals.Environment != @Production
-	XCopyDeploy(Globals, "InternetInterface.Background", """\\fms\apps\InternetInterface.Background""")
+	DeployService(Globals, "InternetInterface.Background", "fms")
 
 task @BuildBackground:
 	Build(Globals, "InternetInterface.Background")
