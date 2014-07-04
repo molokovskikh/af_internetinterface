@@ -49,6 +49,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Boo.Lang.Compiler, Version=2.0.9.3, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Castle.Monorail.2.1.4\lib\net40\Boo.Lang.Compiler.dll</HintPath>
+    </Reference>
     <Reference Include="Castle.ActiveRecord">
       <HintPath>..\..\lib\Castle.ActiveRecord.dll</HintPath>
     </Reference>
@@ -88,6 +92,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\mysql.data.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json" />
     <Reference Include="NHibernate">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\NHibernate.dll</HintPath>
@@ -121,6 +126,7 @@
     <Content Include="Assets\Javascripts\Common.js" />
     <Content Include="Assets\Javascripts\dialog.action.js" />
     <Content Include="Assets\Javascripts\EditingConnect.js" />
+    <Content Include="Assets\Javascripts\online-client.js" />
     <Content Include="Assets\Javascripts\OrderService.js" />
     <Content Include="Assets\Javascripts\Register.js" />
     <Content Include="Assets\Javascripts\registerlawperson.js" />
@@ -168,6 +174,7 @@
     <Content Include="Views\Acts\Index.brail" />
     <Content Include="Views\Acts\Edit.brail" />
     <Content Include="Views\Acts\Print.brail" />
+    <Content Include="packages.config" />
     <None Include="Views\AgentInfo\GroupInfo.brail" />
     <None Include="Views\AgentInfo\PaymentBlock.brail" />
     <None Include="Views\AgentInfo\SummaryInformation.brail" />

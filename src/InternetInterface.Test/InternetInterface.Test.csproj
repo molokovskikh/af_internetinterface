@@ -140,9 +140,6 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WatiN.Core" />
-    <Reference Include="WatiN.CssSelectorExtensions">
-    </Reference>
     <Reference Include="WebDriver, Version=2.33.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="WebDriver.Support, Version=2.33.0.0, Culture=neutral, processorArchitecture=MSIL" />
   </ItemGroup>
@@ -164,6 +161,7 @@
     <Compile Include="Functional\RequestGraphFixture.cs" />
     <Compile Include="Functional\SearchFixture.cs" />
     <Compile Include="Functional\ServiceFixture.cs" />
+    <Compile Include="Functional\SwitchesFixture.cs" />
     <Compile Include="Functional\UserInfoFixture.cs" />
     <Compile Include="Functional\Setup.cs" />
     <Compile Include="Functional\WriteoffFixture.cs" />
@@ -173,7 +171,6 @@
     <Compile Include="Helpers\DataMother.cs" />
     <Compile Include="Helpers\PartnerHelper.cs" />
     <Compile Include="Helpers\PropertiesHelper.cs" />
-    <Compile Include="Helpers\UseDialogOnce.cs" />
     <Compile Include="Integration\ActsFilterFixture.cs" />
     <Compile Include="Integration\AgentFilterFixture.cs" />
     <Compile Include="Integration\Controllers\PrivateMessagesControllerFixture.cs" />

@@ -1,13 +1,8 @@
 ﻿using System;
-using System.IO;
-using System.Text;
 using CassiniDev;
 using NUnit.Framework;
-using System.Configuration;
 using Test.Support.Selenium;
 using Test.Support.Web;
-using WatiN.Core;
-using log4net;
 
 namespace InforoomInternet.Test.Functional
 {

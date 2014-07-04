@@ -16,7 +16,6 @@ using NHibernate.Linq;
 using NUnit.Framework;
 using Test.Support.Selenium;
 using Test.Support.Web;
-using WatiN.Core;
 using log4net.Config;
 
 namespace InternetInterface.Test.Functional

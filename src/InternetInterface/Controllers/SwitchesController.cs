@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using Castle.Components.Binder;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
+using Common.Tools;
 using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.MonoRailExtentions;
@@ -13,6 +15,7 @@ using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using InternetInterface.Queries;
 using InternetInterface.Helpers;
+using Newtonsoft.Json;
 using NHibernate.Linq;
 
 namespace InternetInterface.Controllers
@@ -33,9 +36,23 @@ namespace InternetInterface.Controllers
 			SetARDataBinder(AutoLoadBehavior.NewRootInstanceIfInvalidKey);
 		}
 
-		public void ShowSwitches()
+		public void ShowSwitches(uint? zoneId, string format)
 		{
-			PropertyBag["Switches"] = DbSession.Query<NetworkSwitch>().OrderBy(s => s.Name).ToList();
+			var query = DbSession.Query<NetworkSwitch>();
+			if (zoneId != null) {
+				query = query.Where(s => s.Zone.Id == zoneId);
+			}
+			var switches = query.OrderBy(s => s.Name).ToList();
+			if (format.Match("json"))
+				RenderJson(switches.Select(s => new { id = s.Id, name = s.Name }));
+			else
+				PropertyBag["Switches"] = switches;
+		}
+
+		private void RenderJson(object data)
+		{
+			Response.ContentType = "application/json";
+			RenderText(JsonConvert.SerializeObject(data));
 		}
 
 		public void Delete(uint id)
