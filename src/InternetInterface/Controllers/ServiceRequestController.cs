@@ -53,7 +53,7 @@ namespace InternetInterface.Controllers
 			};
 			PropertyBag["request"] = request;
 			PropertyBag["ingeners"] = Partner.GetServiceEngineers(DbSession);
-			PropertyBag["requests"] = new RequestFinderFilter(client).Find(DbSession);
+			PropertyBag["requests"] = new ServiceRequestFilter(client).Find(DbSession);
 			if (IsPost) {
 				BindObjectInstance(request, "Request", AutoLoadBehavior.NewInstanceIfInvalidKey);
 
@@ -67,7 +67,7 @@ namespace InternetInterface.Controllers
 			}
 		}
 
-		public void ViewRequests([SmartBinder("filter")] RequestFinderFilter filter)
+		public void ViewRequests([SmartBinder("filter")] ServiceRequestFilter filter)
 		{
 			PropertyBag["requests"] = filter.Find(DbSession);
 			PropertyBag["engineers"] = Partner.GetServiceEngineers(DbSession);

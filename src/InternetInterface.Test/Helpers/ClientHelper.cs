@@ -18,7 +18,7 @@ namespace InternetInterface.Test.Helpers
 			var person = new LawyerPerson {
 				Name = "TestClient",
 				Balance = 1000,
-				Region = GetRegionId()
+				Region = GetRegion()
 			};
 			return new Client() {
 				LawyerPerson = person,
@@ -103,7 +103,7 @@ namespace InternetInterface.Test.Helpers
 			return PhysicalClient().Client;
 		}
 
-		public static RegionHouse GetRegionId()
+		public static RegionHouse GetRegion()
 		{
 			return ArHelper.WithSession(s => {
 				var region = s.Query<RegionHouse>().FirstOrDefault(r => r.Name == "Воронеж");

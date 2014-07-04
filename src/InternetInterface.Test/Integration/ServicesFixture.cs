@@ -8,12 +8,14 @@ using System.Text;
 using System.Web.Hosting;
 using Castle.ActiveRecord;
 using Common.Web.Ui.Helpers;
+using Common.Web.Ui.Models;
 using InternetInterface.Controllers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using InternetInterface.Queries;
 using InternetInterface.Test.Helpers;
 using NHibernate.Criterion;
+using NHibernate.Linq;
 using NHibernate.SqlCommand;
 using NUnit.Framework;
 using Test.Support;
@@ -53,10 +55,30 @@ namespace InternetInterface.Test.Integration
 			};
 			session.Save(request);
 			scope.Flush();
-			var filter = new RequestFinderFilter();
+			var filter = new ServiceRequestFilter();
 			Assert.That(filter.Find(session).Count, Is.EqualTo(0));
 			filter.Period = new DatePeriod(DateTime.Now.AddMonths(-1), DateTime.Now);
 			Assert.That(filter.Find(session).Count, Is.EqualTo(1));
+		}
+
+		[Test]
+		public void Filter_request_by_region()
+		{
+			var client = ClientHelper.Client();
+			client.PhysicalClient.HouseObj = new House("Тест", 1, ClientHelper.GetRegion());
+			var request = new ServiceRequest {
+				Client = client,
+				Description = "test",
+				Contact = "473-2606000",
+				Performer = Partner.GetServiceEngineers(session).First()
+			};
+			session.Save(client);
+			session.Save(request);
+
+			var filter = new ServiceRequestFilter();
+			filter.Region = client.PhysicalClient.HouseObj.Region;
+			var requests = filter.Find(session);
+			Assert.Contains(request.Id, requests.Select(r => r.Id).ToArray());
 		}
 	}
 }

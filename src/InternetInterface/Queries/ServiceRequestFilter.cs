@@ -13,7 +13,7 @@ using Order = NHibernate.Criterion.Order;
 
 namespace InternetInterface.Queries
 {
-	public class RequestFinderFilter : PaginableSortable
+	public class ServiceRequestFilter : PaginableSortable
 	{
 		[Description("Статус")]
 		public ServiceRequestStatus? Status { get; set; }
@@ -34,7 +34,7 @@ namespace InternetInterface.Queries
 
 		public bool IsService;
 
-		public RequestFinderFilter()
+		public ServiceRequestFilter()
 		{
 			PageSize = 30;
 			SortBy = "RegistrationDate";
@@ -57,7 +57,7 @@ namespace InternetInterface.Queries
 			IsService = InitializeContent.Partner.CategorieIs("Service");
 		}
 
-		public RequestFinderFilter(Client client)
+		public ServiceRequestFilter(Client client)
 			: this()
 		{
 			Period = null;
@@ -97,9 +97,9 @@ namespace InternetInterface.Queries
 				criteria.Add(Expression.Where<ServiceRequest>(r => r.Performer == Partner));
 			}
 			if (Region != null) {
-				criteria.CreateAlias("CL.PhysicalClient", "p")
-					.CreateAlias("p.HouseObj", "h")
-					.CreateAlias("CL.LawyerPerson", "l");
+				criteria.CreateAlias("CL.PhysicalClient", "p", JoinType.LeftOuterJoin)
+					.CreateAlias("p.HouseObj", "h", JoinType.LeftOuterJoin)
+					.CreateAlias("CL.LawyerPerson", "l", JoinType.LeftOuterJoin);
 				criteria.Add(Restrictions.Eq("h.Region", Region) || Restrictions.Eq("l.Region", Region));
 			}
 			if (!string.IsNullOrEmpty(Text)) {

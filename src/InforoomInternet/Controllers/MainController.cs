@@ -145,15 +145,13 @@ namespace InforoomInternet.Controllers
 		public void Send([DataBind("application")] Request request)
 		{
 			if (Validator.IsValid(request)) {
-				request.RegDate = DateTime.Now;
-				request.ActionDate = DateTime.Now;
 				if (AccessFilter.Authorized(Context)) {
 					var clientId = Convert.ToUInt32(Session["LoginClient"]);
 					var client = Client.Find(clientId);
 					request.FriendThisClient = client;
 				}
-				var phoneNumber = request.ApplicantPhoneNumber.Substring(2, request.ApplicantPhoneNumber.Length - 2).Replace("-", string.Empty);
-				request.ApplicantPhoneNumber = phoneNumber;
+				request.PreInsert();
+				DbSession.Save(request);
 				request.Save();
 				Flash["application"] = request;
 				RedirectToAction("Ok");
