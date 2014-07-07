@@ -36,11 +36,6 @@ namespace InternetInterface
 
 		private void Application_Start(object sender, EventArgs e)
 		{
-			Console.WriteLine(Directory.GetCurrentDirectory());
-			AppDomain.CurrentDomain.FirstChanceException += (o, args) => {
-				Log.Error(new StackTrace());
-				Log.Error(args.Exception);
-			};
 			InstallBundle("jquery.calendar.support");
 			InstallBundle("jquery.validate");
 

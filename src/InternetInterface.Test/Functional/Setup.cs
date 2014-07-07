@@ -15,7 +15,6 @@ using InternetInterface.Models;
 using NHibernate.Linq;
 using NUnit.Framework;
 using Test.Support.Selenium;
-using Test.Support.Web;
 using log4net.Config;
 
 namespace InternetInterface.Test.Functional
@@ -33,7 +32,7 @@ namespace InternetInterface.Test.Functional
 			PrepareTestData();
 
 			InitializeContent.GetPartner = () => Partner.FindFirst();
-			_webServer = WatinSetup.StartServer();
+			_webServer = SeleniumFixture.StartServer();
 		}
 
 		[TearDown]

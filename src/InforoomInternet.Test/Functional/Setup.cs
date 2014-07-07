@@ -2,7 +2,6 @@
 using CassiniDev;
 using NUnit.Framework;
 using Test.Support.Selenium;
-using Test.Support.Web;
 
 namespace InforoomInternet.Test.Functional
 {
@@ -15,7 +14,7 @@ namespace InforoomInternet.Test.Functional
 		public void SetupFixture()
 		{
 			SeleniumFixture.GlobalSetup();
-			_webServer = WatinSetup.StartServer();
+			_webServer = SeleniumFixture.StartServer();
 			InternetInterface.Test.Functional.Setup.PrepareTestData();
 		}
 

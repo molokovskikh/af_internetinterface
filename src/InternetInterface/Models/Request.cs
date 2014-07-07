@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
@@ -17,56 +18,57 @@ namespace InternetInterface.Models
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
-		[Property, ValidateNonEmpty("Введите ФИО")]
+		[Property, ValidateNonEmpty("Введите ФИО"), Description("ФИО")]
 		public virtual string ApplicantName { get; set; }
 
 		[
 			Property,
 			ValidateNonEmpty("Введите номер телефона"),
-			ValidateRegExp(@"^(([0-9]{1})-([0-9]{3})-([0-9]{3})-([0-9]{2})-([0-9]{2}))", "Ошибка формата телефонного номера: мобильный телефон (8-***-***-**-**))")
+			ValidateRegExp(@"^(([0-9]{1})-([0-9]{3})-([0-9]{3})-([0-9]{2})-([0-9]{2}))", "Ошибка формата телефонного номера: мобильный телефон (8-***-***-**-**))"),
+			Description("Номер телефона")
 		]
 		public virtual string ApplicantPhoneNumber { get; set; }
 
-		[Property, ValidateEmail("Ошибка ввода Email (должно быть adr@domen.com)")]
+		[Property, ValidateEmail("Ошибка ввода Email (должно быть adr@domen.com)"), Description("Электронная почта")]
 		public virtual string ApplicantEmail { get; set; }
 
-		[Property]
+		[Property, Description("Город")]
 		public virtual string City { get; set; }
 
-		[Property, ValidateNonEmpty("Введите улицу")]
+		[Property, ValidateNonEmpty("Введите улицу"), Description("Улица")]
 		public virtual string Street { get; set; }
 
-		[Property, ValidateNonEmpty("Введите номер дома"), ValidateInteger("Здесь должно быть число")]
+		[Property, ValidateNonEmpty("Введите номер дома"), ValidateInteger("Здесь должно быть число"), Description("Дом")]
 		public virtual int? House { get; set; }
 
 		/// <summary>
 		/// Корпус
 		/// </summary>
-		[Property]
+		[Property, Description("Корпус")]
 		public virtual string CaseHouse { get; set; }
 
 		/// <summary>
 		/// Квартира
 		/// </summary>
-		[Property, ValidateNonEmpty("Введите номер квартиры"), ValidateInteger("Здесь должно быть число")]
+		[Property, ValidateNonEmpty("Введите номер квартиры"), ValidateInteger("Здесь должно быть число"), Description("Квартира")]
 		public virtual int? Apartment { get; set; }
 
 		/// <summary>
 		/// Подъезд
 		/// </summary>
-		[Property, ValidateInteger("Здесь должно быть число")]
+		[Property, ValidateInteger("Здесь должно быть число"), Description("Подъезд")]
 		public virtual int? Entrance { get; set; }
 
 		/// <summary>
 		/// Этаж
 		/// </summary>
-		[Property, ValidateInteger("Здесь должно быть число")]
+		[Property, ValidateInteger("Здесь должно быть число"), Description("Этаж")]
 		public virtual int? Floor { get; set; }
 
 		[Property]
 		public virtual bool SelfConnect { get; set; }
 
-		[BelongsTo("Tariff")]
+		[BelongsTo("Tariff"), ValidateNonEmpty, Description("Tariff")]
 		public virtual Tariff Tariff { get; set; }
 
 		[BelongsTo("Label")]
@@ -99,7 +101,6 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool PaidFriendBonus { get; set; }
 
-
 		public virtual IDictionary GetValidateionErrors()
 		{
 			var validator = new ActiveRecordValidator(this);
@@ -117,6 +118,14 @@ namespace InternetInterface.Models
 		{
 			var errors = GetValidateionErrors();
 			return errors.Contains(GetType().GetProperty(field));
+		}
+
+		public virtual void PreInsert()
+		{
+			RegDate = DateTime.Now;
+			ActionDate = DateTime.Now;
+			ApplicantPhoneNumber = ApplicantPhoneNumber
+				.Substring(2, ApplicantPhoneNumber.Length - 2).Replace("-", string.Empty);
 		}
 	}
 }
