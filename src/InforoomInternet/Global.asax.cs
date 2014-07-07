@@ -1,22 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Web;
-using System.Web.Routing;
-using Castle.ActiveRecord;
 using System.Reflection;
-using Castle.MonoRail.Framework;
-using Castle.MonoRail.Framework.Configuration;
-using Castle.MonoRail.Framework.Internal;
 using Castle.MonoRail.Framework.Routing;
-using Castle.MonoRail.Framework.Services;
-using Castle.MonoRail.Views.Brail;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.MonoRailExtentions;
-using InforoomInternet.Models;
-using InternetInterface.Helpers;
-using log4net;
-using log4net.Repository.Hierarchy;
 
 namespace InforoomInternet
 {
@@ -34,8 +20,6 @@ namespace InforoomInternet
 			try {
 				InstallBundle("jquery.calendar.support");
 				InstallBundle("jquery.validate");
-
-				ActiveRecordStarter.EventListenerComponentRegistrationHook += AuditListener.RemoveAuditListener;
 
 				Initialize();
 

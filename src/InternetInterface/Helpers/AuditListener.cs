@@ -77,7 +77,7 @@ namespace InternetInterface.Helpers
 						Appeal = message,
 						Client = client,
 						Date = DateTime.Now,
-						Partner = InitializeContent.Partner,
+						Partner = InitializeContent.TryGetPartner(),
 						AppealType = AppealType.System
 					};
 				}

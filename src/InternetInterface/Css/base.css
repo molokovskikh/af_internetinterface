@@ -213,6 +213,13 @@ body {
 	font-size: 12px;
 }
 
+.centred
+{
+	margin-left: auto;
+	margin-right: auto;
+	width: 40%;
+}
+
 .non-greedy-table
 {
 	border-spacing: 0;

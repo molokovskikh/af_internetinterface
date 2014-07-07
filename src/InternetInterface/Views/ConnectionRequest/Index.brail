@@ -1,46 +1,44 @@
 ﻿${app.CSS("RequestCss.css")}
 
 <div class=scroller>
-	<center>
-		<form method=get>
-			<table class="table" id="searchTable">
-				<thead>
-					<tr>
-						<th colspan=2>Поиск заявки</th>
-					</tr>
-				</thead>
-				<tbody>
-					<input type=hidden name="filter.Archive" value="${filter.Archive}" />
-					<input type=hidden name="filter.SortBy" value="${filter.SortBy}" />
-					<input type=hidden name="filter.Direction" value="${filter.Direction}" />
-					<input type=hidden name="filter.labelId" value="${filter.labelId}" />
-					<tr>
-						<td style="width:150px;">Период</td>
-						<td>
-							<label for="startDate">c</label>
-							<input type=text value="${filter.beginDate.ToShortDateString()}" name="filter.beginDate" id="startDate"  class="date-pick dp-applied">
-							<label for="EndDate">по</label>
-							<input type=text value="${filter.endDate.ToShortDateString()}" name="filter.endDate" id="EndDate"  class="date-pick dp-applied">
-						</td>
-					</tr>
-					<tr>
-						<td style="width:200px;">
-							<label for="streetText">Введите Адрес / Телефон / ФИО / Номер заявки: </label>
-						</td>
-						<td>
-							<input id="streetText" type="text" value="${filter.query}" name="filter.query" />
-						</td>
-					</tr>
-					${app.FilterFor("filter.HouseNumberBegin")}
-					${app.FilterFor("filter.HouseNumberEnd")}
-					${app.FilterFor("filter.HouseNumberType")}
-					<tr>
-						<td colspan=2><button type=submit class="button">Найти</button></td>
-					</tr>
-				</tbody>
-			</table>
-		</form>
-	</center>
+	<form method=get>
+		<table class="table table centred" id="searchTable">
+			<thead>
+				<tr>
+					<th colspan=2>Поиск заявки</th>
+				</tr>
+			</thead>
+			<tbody>
+				<input type=hidden name="filter.Archive" value="${filter.Archive}" />
+				<input type=hidden name="filter.SortBy" value="${filter.SortBy}" />
+				<input type=hidden name="filter.Direction" value="${filter.Direction}" />
+				<input type=hidden name="filter.labelId" value="${filter.labelId}" />
+				<tr>
+					<td style="width:150px;">Период</td>
+					<td>
+						<label for="startDate">c</label>
+						<input type=text value="${filter.beginDate.ToShortDateString()}" name="filter.beginDate" id="startDate"  class="date-pick dp-applied">
+						<label for="EndDate">по</label>
+						<input type=text value="${filter.endDate.ToShortDateString()}" name="filter.endDate" id="EndDate"  class="date-pick dp-applied">
+					</td>
+				</tr>
+				<tr>
+					<td style="width:200px;">
+						<label for="streetText">Введите Адрес / Телефон / ФИО / Номер заявки: </label>
+					</td>
+					<td>
+						<input id="streetText" type="text" value="${filter.query}" name="filter.query" />
+					</td>
+				</tr>
+				${app.FilterFor("filter.HouseNumberBegin")}
+				${app.FilterFor("filter.HouseNumberEnd")}
+				${app.FilterFor("filter.HouseNumberType")}
+				<tr>
+					<td colspan=2><button type=submit class="button">Найти</button></td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
 
 	<div id="sidebar">
 		<table class="table">

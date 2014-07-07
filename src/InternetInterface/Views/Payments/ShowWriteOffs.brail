@@ -1,12 +1,13 @@
 ﻿${app.Asset("payments.css")}
-${app.BeginFormFor("filter")}
+
+${FormHelper.FormTag("", {})}
 ${FormHelper.HiddenField("filter.SortBy")}
 ${FormHelper.HiddenField("filter.SortDirection")}
-<table class="CenterBlock FilterTable">
+<table class="table centred">
 	<tbody>
 		<tr>
 			<td>Имя клиента</td>
-			<td>${FormHelper.TextFieldValue("filter.Name", filter.Name)}</td>
+			<td>${app.Edit("filter.Name")}</td>
 		</tr>
 		<tr>
 			<td>Начало периода</td>
@@ -37,11 +38,17 @@ ${FormHelper.HiddenField("filter.SortDirection")}
 			</td>
 		</tr>
 		<tr>
-			<td>${app.ExportLink("Выгрузить в Ехсel", "ExcelShowWriteOffs", filter)}</td>
-			${app.EndFormFor("filter")}
+			<td colspan="100">${app.ExportLink("Выгрузить в Ехсel", "ExcelShowWriteOffs", filter)}</td>
+		</tr>
+		<tr>
+			<td colspan="100">
+				${FormHelper.Submit("Показать")}
+			</td>
 		</tr>
 	</tbody>
 </table>
+${FormHelper.EndFormTag()}
+
 <div id="writeOffsBlock">
 ${tableHelper.ViewResult(writeOffs, filter)}
 <div>

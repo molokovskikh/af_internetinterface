@@ -3,7 +3,7 @@ ${app.Asset("service-requests.js")}
 
 <div class="borderless-content">
 	<form class="borderless-content-subblock">
-		<table class="non-greedy-table">
+		<table class="table centred">
 			<thead>
 				<tr>
 					<th colspan="2">Фильтр</th>
