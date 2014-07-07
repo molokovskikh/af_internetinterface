@@ -286,7 +286,6 @@ namespace InforoomInternet.Test.Functional
 			AssertText("Спасибо, теперь вы можете продолжить работу");
 
 			session.Refresh(client);
-			Assert.IsTrue(client.AutoUnblocked);
 			Assert.IsTrue(client.FirstLaunch);
 		}
 	}

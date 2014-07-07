@@ -249,32 +249,21 @@ namespace InternetInterface.Models
 		public virtual void CreateAutoEndPont(IPAddress ip, Lease lease, ISession session)
 		{
 			var settings = new Settings(session);
-			var endpoint = CreateAutoEndpoint(lease, Status.Get(StatusType.Worked, session));
+			if (string.IsNullOrEmpty(lease.Switch.Name))
+				lease.Switch.Name = PhysicalClient.GetShortAdress();
+
+			var endpoint = new ClientEndpoint(this, lease.Port, lease.Switch);
+			var paymentForConnect = new PaymentForConnect(PhysicalClient.ConnectSum, endpoint);
+			endpoint.PayForCon = paymentForConnect;
+			lease.Endpoint = endpoint;
+
+			SetStatus(Status.Get(StatusType.Worked, session));
 			AddEndpoint(endpoint, settings);
 
 			session.Save(lease.Switch);
 			session.Save(endpoint.PayForCon);
 			session.Save(lease);
 			session.Save(this);
-		}
-
-		public virtual ClientEndpoint CreateAutoEndpoint(Lease lease, Status worked)
-		{
-			if (string.IsNullOrEmpty(lease.Switch.Name))
-				lease.Switch.Name = PhysicalClient.GetShortAdress();
-
-			var newPoint = new ClientEndpoint(this, lease.Port, lease.Switch);
-			var paymentForConnect = new PaymentForConnect(PhysicalClient.ConnectSum, newPoint);
-			newPoint.PayForCon = paymentForConnect;
-			lease.Endpoint = newPoint;
-
-			if (!Status.Connected) {
-				Status = worked;
-				FirstLaunch = true;
-				Disabled = false;
-				AutoUnblocked = true;
-			}
-			return newPoint;
 		}
 
 		public virtual string GetFreePorts()
