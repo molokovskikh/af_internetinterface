@@ -95,10 +95,6 @@
     <Reference Include="Headless">
       <HintPath>..\..\packages\Headless.1.0.103\lib\NET45\Headless.dll</HintPath>
     </Reference>
-    <Reference Include="Interop.SHDocVw">
-      <HintPath>..\..\lib\Interop.SHDocVw.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
     <Reference Include="log4net">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\log4net.dll</HintPath>
@@ -241,10 +237,6 @@
     <ProjectReference Include="..\Test.Support\Test.Support.Selenium\Test.Support.Selenium.csproj">
       <Project>{E37375CE-ADBA-47C9-9FA1-D7C5C704CD89}</Project>
       <Name>Test.Support.Selenium</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Test.Support\Test.Support.Web\Test.Support.Web.csproj">
-      <Project>{12258b1d-35e8-45ba-9c1e-5f7b8acd7d37}</Project>
-      <Name>Test.Support.Web</Name>
     </ProjectReference>
     <ProjectReference Include="..\Test.Support\Test.Support\Test.Support.csproj">
       <Project>{A215E837-1208-49E3-AF93-A9612223122C}</Project>

@@ -173,10 +173,6 @@
       <Project>{E37375CE-ADBA-47C9-9FA1-D7C5C704CD89}</Project>
       <Name>Test.Support.Selenium</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Test.Support\Test.Support.Web\Test.Support.Web.csproj">
-      <Project>{12258B1D-35E8-45BA-9C1E-5F7B8ACD7D37}</Project>
-      <Name>Test.Support.Web</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Test.Support\Test.Support\Test.Support.csproj">
       <Project>{A215E837-1208-49E3-AF93-A9612223122C}</Project>
       <Name>Test.Support</Name>
