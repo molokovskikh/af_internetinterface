@@ -126,6 +126,7 @@
     <Content Include="Assets\Javascripts\Common.js" />
     <Content Include="Assets\Javascripts\dialog.action.js" />
     <Content Include="Assets\Javascripts\EditingConnect.js" />
+    <Content Include="Assets\Javascripts\new-connection-request.js" />
     <Content Include="Assets\Javascripts\online-client.js" />
     <Content Include="Assets\Javascripts\OrderService.js" />
     <Content Include="Assets\Javascripts\Register.js" />
@@ -191,6 +192,7 @@
     <Content Include="Views\Hardware\PortInfo.brail" />
     <Content Include="Views\Hardware\PortInfoLinksys.brail" />
     <Content Include="Views\Hardware\ClientInfoView.brail" />
+    <Content Include="Views\ConnectionRequest\New.brail" />
     <None Include="Views\Invoices\Edit.brail" />
     <None Include="Views\Invoices\Index.brail" />
     <None Include="Views\Invoices\InvoiceBody.brail" />
@@ -314,8 +316,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AllLogic\ColorWork.cs" />
-    <Compile Include="AllLogic\GetClientsLogic.cs" />
     <Compile Include="AllLogic\HardwareHelper.cs" />
     <Compile Include="AllLogic\Validation.cs" />
     <Compile Include="Components\ContactTypeList.cs" />
@@ -446,6 +446,7 @@
     <Compile Include="Models\SmsMessage.cs" />
     <Compile Include="Models\StaticIp.cs" />
     <Compile Include="Models\Status.cs" />
+    <Compile Include="Models\Street.cs" />
     <Compile Include="Models\TariffChangeRule.cs" />
     <Compile Include="Models\Timeunit.cs" />
     <Compile Include="Models\Universal\ChildActiveRecordLinqBase.cs" />
@@ -475,7 +476,7 @@
     <Compile Include="Queries\PaymentFilter.cs" />
     <Compile Include="Queries\RequestFilter.cs" />
     <Compile Include="Queries\ServiceRequestFilter.cs" />
-    <Compile Include="Queries\SeachFilter.cs" />
+    <Compile Include="Queries\SearchFilter.cs" />
     <Compile Include="Queries\WriteOffsFilter.cs" />
     <Compile Include="Services\DebtWork.cs" />
     <Compile Include="Services\Service.cs" />

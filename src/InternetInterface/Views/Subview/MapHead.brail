@@ -51,9 +51,9 @@
 			<% if PartnerAccessSet.AccesPartner("RC"): %>
 			<th></th>
 			<% end %>
-			<% if PartnerAccessSet.AccesPartner("VD"): %>
-			<th></th>
-			<% end %>
+			<th>
+				${App.LinkTo("Регистрация", @ConnectionRequest, @New)}
+			</th>
 			<% if PartnerAccessSet.AccesPartner("SSI"): %>
 			<th>
 				${App.LinkTo("Обращения", @UserInfo, @ShowAppeals)} <br/>

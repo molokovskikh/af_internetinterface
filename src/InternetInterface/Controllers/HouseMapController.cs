@@ -88,7 +88,7 @@ namespace InternetInterface.Controllers
 				}.Save();
 			}
 			EditHouse(house.Id);
-			RedirectToUrl("..//HouseMap/ViewHouseInfo.rails?House=" + house.Id);
+			RedirectToUrl("~/HouseMap/ViewHouseInfo?House=" + house.Id);
 		}
 
 		public void FindHouse()

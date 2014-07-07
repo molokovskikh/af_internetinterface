@@ -26,3 +26,7 @@ form span.message.error {
 	clear: both;
 	color: red;
 }
+
+form.div-form input.big {
+	width: 300px;
+}

@@ -192,7 +192,7 @@ namespace InforoomInternet.Controllers
 			}
 
 			if (endpoint == null || endpoint.Client == null) {
-				this.RedirectRoot();
+				RedirectToSiteRoot();
 				return;
 			}
 
@@ -230,7 +230,7 @@ namespace InforoomInternet.Controllers
 		{
 			var url = Request.Form[name];
 			if (String.IsNullOrEmpty(url))
-				this.RedirectRoot();
+				RedirectToSiteRoot();
 			else
 				RedirectToUrl(string.Format("http://{0}", url));
 		}

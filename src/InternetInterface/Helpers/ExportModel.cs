@@ -15,7 +15,7 @@ namespace InternetInterface.Helpers
 {
 	public class ExportModel
 	{
-		public static byte[] GetClients(SeachFilter filter)
+		public static byte[] GetClients(SearchFilter filter)
 		{
 			filter.ExportInExcel = true;
 			var clients = filter.Find();

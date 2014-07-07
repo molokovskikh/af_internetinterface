@@ -13,14 +13,6 @@ using NHibernate.Linq;
 
 namespace InforoomInternet.Controllers
 {
-	public static class Redirecter
-	{
-		public static void RedirectRoot(this Controller controller)
-		{
-			controller.RedirectToUrl(controller.Context.ApplicationPath + "/");
-		}
-	}
-
 	public class NHibernateFilter : IFilter
 	{
 		public bool Perform(ExecuteWhen exec, IEngineContext context, IController controller, IControllerContext controllerContext)
@@ -95,7 +87,7 @@ namespace InforoomInternet.Controllers
 		{
 			var authorized = Authorized(context);
 			if (!authorized)
-				context.Response.RedirectToUrl(@"..//Login/LoginPage");
+				context.Response.RedirectToUrl("~/Login/LoginPage");
 			return authorized;
 		}
 	}

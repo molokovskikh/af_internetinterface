@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Common.MySql;
 using Common.Web.Ui.Helpers;
@@ -30,10 +31,44 @@ namespace InternetInterface.Controllers
 			SendRequestEditParameter();
 		}
 
+		public void New()
+		{
+			var request = new Request();
+			PropertyBag["request"] = request;
+			if (IsPost) {
+				SetARDataBinder(AutoLoadBehavior.NullIfInvalidKey);
+				BindObjectInstance(request, "request");
+				if (IsValid(request)) {
+					request.PreInsert();
+					DbSession.Save(request);
+					Notify("Сохранено");
+					RedirectToAction("RequestOne", new { request.Id });
+				}
+			}
+		}
+
 		public void RequestOne(uint id)
 		{
 			PropertyBag["Request"] = DbSession.Load<Request>(id);
 			PropertyBag["Messages"] = DbSession.Query<RequestMessage>().Where(r => r.Request.Id == id).ToList();
+		}
+
+		[return: JSONReturnBinder]
+		public object StreetAutoComplete(string term)
+		{
+			if (string.IsNullOrEmpty(term))
+				return new object[0];
+
+			if (Request == null || Request.Headers["X-Requested-With"] != "XMLHttpRequest")
+				return new object[0];
+
+			var subs = term.Split(' ');
+
+			return subs.SelectMany(s => DbSession.Query<Street>().Where(x => x.Name.Contains(s)))
+				.Distinct()
+				.Select(s => s.Name)
+				.ToList();
+
 		}
 
 		public void CreateRequestComment(uint requestId, string comment)
@@ -52,7 +87,7 @@ namespace InternetInterface.Controllers
 
 		private void SendRequestEditParameter()
 		{
-			PropertyBag["labelColors"] = ColorWork.GetColorSet();
+			PropertyBag["labelColors"] = Label.GetColors();
 			PropertyBag["LabelName"] = string.Empty;
 			PropertyBag["Labels"] = DbSession.Query<Label>().OrderBy(l => l.Name).ToList();
 		}

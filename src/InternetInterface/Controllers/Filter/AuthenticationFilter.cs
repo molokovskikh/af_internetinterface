@@ -23,7 +23,7 @@ namespace InternetInterface.Controllers.Filter
 				context.Session["Login"] = context.CurrentUser.Identity.Name;
 			}
 			if (Partner.FindAllByProperty("Login", context.Session["Login"]).Length == 0) {
-				context.Response.RedirectToUrl(@"..\\Login\LoginPartner.rails");
+				context.Response.RedirectToUrl(@"~/Login/LoginPartner");
 				return false;
 			}
 
@@ -37,7 +37,7 @@ namespace InternetInterface.Controllers.Filter
 			controllerContext.PropertyBag["MapPartner"] = partner;
 			if (AccessRules.GetAccessName(controllerContext.Action).Count(CategorieAccessSet.AccesPartner) == 0
 				&& !partner.HavePermissionTo(controllerContext.Name, controllerContext.Action)) {
-				context.Response.RedirectToUrl(@"..\\Errors\AccessDin.aspx");
+				context.Response.RedirectToUrl("~/Errors/AccessDin.aspx");
 				return false;
 			}
 			return true;

@@ -24,7 +24,7 @@ namespace InternetInterface.Controllers
 			Response.ContentType = "application/vnd.ms-excel";
 		}
 
-		public void GetClientsInExcel([DataBind("filter")]SeachFilter filter)
+		public void GetClientsInExcel([DataBind("filter")]SearchFilter filter)
 		{
 			PrepareExcelHeader("Клиенты.xls");
 

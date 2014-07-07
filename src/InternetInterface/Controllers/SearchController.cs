@@ -40,7 +40,7 @@ namespace InternetInterface.Controllers
 	public class SearchController : BaseController
 	{
 		[AccessibleThrough(Verb.Get)]
-		public void SearchBy([DataBind("filter")] SeachFilter filter)
+		public void SearchBy([DataBind("filter")] SearchFilter filter)
 		{
 			var result = filter.Find();
 			if (result.Count == 1) {
@@ -58,7 +58,7 @@ namespace InternetInterface.Controllers
 
 		public void SearchUsers(string query, PhysicalClient sClients)
 		{
-			var filter = new SeachFilter {
+			var filter = new SearchFilter {
 				SearchProperties = SearchUserBy.Auto,
 				EnabledTypeProperties = EndbledType.All,
 				StatusType = 0,

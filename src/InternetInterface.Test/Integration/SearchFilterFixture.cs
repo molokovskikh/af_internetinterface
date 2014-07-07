@@ -38,7 +38,7 @@ namespace InternetInterface.Test.Integration
 			};
 			session.Save(client.PhysicalClient.HouseObj);
 			Flush();
-			var filter = new SeachFilter {
+			var filter = new SearchFilter {
 				Region = _region.Id
 			};
 			var result = filter.Find(true);
@@ -53,7 +53,7 @@ namespace InternetInterface.Test.Integration
 			Save(client.LawyerPerson);
 			Save(client);
 			Flush();
-			var filter = new SeachFilter {
+			var filter = new SearchFilter {
 				Region = _region.Id
 			};
 			var result = filter.Find(true);

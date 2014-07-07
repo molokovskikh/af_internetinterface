@@ -1,0 +1,71 @@
+﻿${app.Asset("new-connection-request.js")}
+
+${FormHelper.FormTag("", { @class : "div-form" })}
+<h3>Регистрация новой заявки на подключение</h3>
+<div>
+	${app.Label("request.ApplicantName")}
+	${app.Edit("request.ApplicantName", { @class: @big })}
+	${app.Error("request.ApplicantName")}
+</div>
+
+<div>
+	${app.Label("request.ApplicantPhoneNumber")}
+	${app.Edit("request.ApplicantPhoneNumber")}
+	${app.Error("request.ApplicantPhoneNumber")}
+</div>
+
+<div>
+	${app.Label("request.ApplicantEmail")}
+	${app.Edit("request.ApplicantEmail")}
+	${app.Error("request.ApplicantEmail")}
+</div>
+
+<div>
+	${app.Label("request.City")}
+	${app.Edit("request.City", { @class: @big })}
+	${app.Error("request.City")}
+</div>
+
+<div>
+	${app.Label("request.Street")}
+	${app.Edit("request.Street", { @class: @big })}
+	${app.Error("request.Street")}
+</div>
+
+<div>
+	${app.Label("request.House")}
+	${app.Edit("request.House")}
+	${app.Error("request.House")}
+</div>
+
+<div>
+	${app.Label("request.CaseHouse")}
+	${app.Edit("request.CaseHouse")}
+	${app.Error("request.CaseHouse")}
+</div>
+
+<div>
+	${app.Label("request.Apartment")}
+	${app.Edit("request.Apartment")}
+	${app.Error("request.Apartment")}
+</div>
+
+<div>
+	${app.Label("request.Entrance")}
+	${app.Edit("request.Entrance")}
+	${app.Error("request.Entrance")}
+</div>
+
+<div>
+	${app.Label("request.Floor")}
+	${app.Edit("request.Floor")}
+	${app.Error("request.Floor")}
+</div>
+
+<div>
+	${app.Label("request.Tariff")}
+	${app.Edit("request.Tariff")}
+	${app.Error("request.Tariff")}
+</div>
+${FormHelper.Submit("Сохранить")}
+${FormHelper.EndFormTag()}

@@ -31,7 +31,7 @@ namespace InternetInterface.Test.Integration
 		public void GetClientsInExcelTest()
 		{
 			Response.Output = new StringWriter(new StringBuilder());
-			Controller.GetClientsInExcel(new SeachFilter());
+			Controller.GetClientsInExcel(new SearchFilter());
 			Assert.That(Response.OutputStream.Length, Is.GreaterThan(0));
 			Response.OutputStream.Seek(0, SeekOrigin.Begin);
 			var wb = Workbook.Load(Response.OutputStream);
