@@ -2,7 +2,7 @@
 
 <div class=scroller>
 	<form method=get>
-		<table class="table table centred" id="searchTable">
+		<table class="table centred" id="searchTable">
 			<thead>
 				<tr>
 					<th colspan=2>Поиск заявки</th>
