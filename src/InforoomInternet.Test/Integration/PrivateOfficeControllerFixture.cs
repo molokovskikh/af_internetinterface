@@ -152,6 +152,7 @@ namespace InforoomInternet.Test.Integration
 
 			client = session.Get<Client>(client.Id);
 			Assert.AreEqual(client.Endpoints.Count, 1);
+			Assert.AreEqual(StatusType.Worked, client.Status.Type);
 		}
 
 		[Test]

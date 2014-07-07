@@ -96,14 +96,9 @@ namespace InforoomInternet.Controllers
 				if (IsValid(client.PhysicalClient)) {
 					var address = GetHost();
 					var lease = DbSession.Query<Lease>().FirstOrDefault(l => l.Ip == address);
-					if (client.NoEndPoint() && lease != null) {
+					if (client.NoEndPoint() && lease != null)
 						client.CreateAutoEndPont(address, lease, DbSession);
-					}
-					client.UpdateStatus();
 					client.FirstLaunch = true;
-					client.AutoUnblocked = true;
-					if (client.IsChanged(c => c.Disabled))
-						client.CreareAppeal("Клиент был заблокирован из личного кабинета при посещении первой страницы", AppealType.Statistic);
 					DbSession.Save(client);
 					Notify("Спасибо, теперь вы можете продолжить работу");
 					RedirectToAction("IndexOffice");
