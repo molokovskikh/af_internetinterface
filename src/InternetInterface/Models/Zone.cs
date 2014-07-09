@@ -16,9 +16,10 @@ namespace InternetInterface.Models
 		{
 		}
 
-		public Zone(string name)
+		public Zone(string name, RegionHouse region = null)
 		{
 			Name = name;
+			Region = region;
 		}
 
 		[PrimaryKey]

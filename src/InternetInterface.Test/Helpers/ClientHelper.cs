@@ -105,16 +105,7 @@ namespace InternetInterface.Test.Helpers
 
 		public static RegionHouse GetRegion()
 		{
-			return ArHelper.WithSession(s => {
-				var region = s.Query<RegionHouse>().FirstOrDefault(r => r.Name == "Воронеж");
-				if (region == null) {
-					region = new RegionHouse {
-						Name = "Воронеж"
-					};
-					s.Save(region);
-				}
-				return region;
-			});
+			return ArHelper.WithSession(s => s.Query<RegionHouse>().First(r => r.Name == "Воронеж"));
 		}
 	}
 }

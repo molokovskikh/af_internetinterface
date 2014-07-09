@@ -31,11 +31,5 @@ namespace InternetInterface.Test.Functional
 			options = browser.FindElementsByCssSelector("#filter_Switch_Id option").Select(e => e.Text).ToArray();
 			Assert.That(options, Is.Not.Contains(overZone.Name));
 		}
-
-		public void WaitAjax()
-		{
-			new WebDriverWait(browser, 5.Second())
-				.Until(d => Convert.ToInt32(Eval("return $.active")) == 0);
-		}
 	}
 }

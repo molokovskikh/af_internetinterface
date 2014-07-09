@@ -62,7 +62,8 @@ namespace InternetInterface.Controllers
 		[AccessibleThrough(Verb.Post)]
 		public void EditHouse(uint houseId)
 		{
-			PropertyBag["house"] = DbSession.Load<House>(houseId);
+			var house = DbSession.Load<House>(houseId);
+			PropertyBag["house"] = house;
 			PropertyBag["Entrances"] = DbSession.Query<Entrance>().Where(e => e.House.Id == houseId).ToList();
 			PropertyBag["Switches"] = NetworkSwitch.All(DbSession);
 			PropertyBag["RegionList"] = DbSession.Query<RegionHouse>().ToList();

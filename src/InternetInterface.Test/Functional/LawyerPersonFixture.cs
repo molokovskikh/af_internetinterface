@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Castle.MonoRail.Framework.Helpers;
 using Common.Tools;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
@@ -55,8 +56,7 @@ namespace InternetInterface.Test.Functional
 				Speed = 10
 			};
 			session.Save(package);
-			var commutator = new NetworkSwitch("Тестовый коммутатор", session.Query<Zone>().First());
-			session.Save(commutator);
+			var commutator = CreateCommutator(laywerPerson.GetRegion());
 			Open(laywerPerson.Redirect());
 			Click("Добавить заказ");
 			Css("#SelectSwitches").SelectByValue(commutator.Id.ToString());
@@ -73,6 +73,18 @@ namespace InternetInterface.Test.Functional
 			Assert.That(order.OrderServices[0].IsPeriodic, Is.True);
 			Assert.That(order.OrderServices[0].Description, Is.EqualTo("Тестовый заказ"));
 			Assert.That(order.OrderServices[0].Cost, Is.EqualTo(1000));
+		}
+
+		private NetworkSwitch CreateCommutator(RegionHouse region)
+		{
+			var zone = session.Query<Zone>().FirstOrDefault(z => z.Region == region);
+			if (zone == null) {
+				zone = new Zone(region.Name, region);
+				session.Save(zone);
+			}
+			var commutator = new NetworkSwitch("Тестовый коммутатор", zone);
+			session.Save(commutator);
+			return commutator;
 		}
 
 		[Test(Description = "Проверяет создание нового заказа без точки подключения")]

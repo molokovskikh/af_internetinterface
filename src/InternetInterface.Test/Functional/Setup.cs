@@ -74,7 +74,7 @@ namespace InternetInterface.Test.Functional
 						var partner = new Partner {
 							Name = "Сервисный инженер для тестирования",
 							Login = "test_serviceman",
-							Role = UserRole.Queryable.First(c => c.ReductionName == "service")
+							Role = session.Query<UserRole>().First(c => c.ReductionName == "service")
 						};
 						session.Save(partner);
 					}
@@ -83,6 +83,9 @@ namespace InternetInterface.Test.Functional
 						var zone = new Zone("Тестовая зона");
 						session.Save(zone);
 					}
+
+					if (!session.Query<RegionHouse>().Any(r => r.Name == "Воронеж"))
+						session.Save(new RegionHouse("Воронеж"));
 
 					if (!session.Query<House>().Any()) {
 						var region = new RegionHouse("Тестовый регион");

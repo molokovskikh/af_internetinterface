@@ -64,20 +64,20 @@ namespace InternetInterface.Test.Functional
 			Assert.IsTrue(Client.PhysicalClient.Checked);
 		}
 
-		[Test, Ignore("Нестабильный")]
+		[Test]
 		public void Make_reservation()
 		{
-			Client.Status = Status.Find((uint)StatusType.BlockedAndNoConnected);
+			Client.Status = session.Load<Status>((uint)StatusType.BlockedAndNoConnected);
 			session.Save(Client);
-			Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", Client.Id));
+			Open();
 
-			Css("#naznach_but").Click();
-
-			WaitReveal();
+			Click("Назначить в график");
+			AssertText("Назначение в график клиента");
+			WaitAjax();
 			SafeClick("[name=\"graph_button\"]");
 
-			Css("#reserv_but").Click();
-			WaitForText("Резерв");
+			Click("Зарезервировать");
+			WaitAjax();
 			AssertText("Резерв");
 		}
 
@@ -144,7 +144,7 @@ namespace InternetInterface.Test.Functional
 			AssertText("Списание ожидает обработки");
 		}
 
-		[Test, Ignore("нестабильный")]
+		[Test]
 		public void Reset_client()
 		{
 			var brigad = new Brigad("test");
@@ -165,15 +165,14 @@ namespace InternetInterface.Test.Functional
 			WaitForText("Сохранить");
 			Css("#SaveButton").Click();
 			WaitForText("Назначить в график");
-			Css("#naznach_but").Click();
 
-			WaitReveal();
+			Click("Назначить в график");
+			AssertText("Назначение в график клиента");
+			WaitAjax();
 			SafeClick("[name=\"graph_button\"]");
+			Click("Назначить");
 
-			Css("#naznach_but_1").Click();
-			SafeWaitText("Информация по клиенту");
 			AssertText("Информация по клиенту");
-			WaitForText("Сбросить");
 			AssertText("Сбросить");
 		}
 
