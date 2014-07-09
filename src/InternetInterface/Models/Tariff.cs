@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
@@ -41,7 +42,7 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool Hidden { get; set; }
 
-		[Property]
+		[Property, Description("Доступен в личном кабинете")]
 		public virtual bool CanUseForSelfConfigure { get; set; }
 
 		[Property]
@@ -49,6 +50,9 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual decimal FinalPrice { get; set; }
+
+		[BelongsTo("RegionId"), Description("Регион")]
+		public virtual RegionHouse Region { get; set; }
 
 		[Property, Obsolete("Подготовка к удалению")]
 		public virtual bool CanUseForSelfRegistration { get; set; }

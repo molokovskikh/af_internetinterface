@@ -175,7 +175,13 @@ namespace InforoomInternet.Controllers
 			var internet = client.Internet;
 			var iptv = client.Iptv;
 
-			var tariffs = DbSession.Query<Tariff>().Where(t => t.CanUseForSelfConfigure).ToList()
+			var queryable = DbSession.Query<Tariff>();
+			var region = client.GetRegion();
+			if (region != null) {
+				queryable = queryable.Where(t => t.Region == null || t.Region == region);
+			}
+			var tariffs = queryable
+				.Where(t => t.CanUseForSelfConfigure).ToList()
 				.Concat(new[] { client.PhysicalClient.Tariff }.Where(t => t != null))
 				.Distinct()
 				.OrderBy(t => t.Name)

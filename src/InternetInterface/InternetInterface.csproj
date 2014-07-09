@@ -266,6 +266,8 @@
     <None Include="Views\Switches\MakeSwitch.brail" />
     <None Include="Views\Switches\OnLineClient.brail" />
     <None Include="Views\Switches\ShowSwitches.brail" />
+    <Content Include="Views\Tariffs\Index.brail" />
+    <Content Include="Views\Tariffs\Edit.brail" />
     <None Include="Views\Templates\Internet.brail" />
     <None Include="Views\Templates\IpTv.brail" />
     <None Include="Views\UserInfo\AddInfo.brail" />

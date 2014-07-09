@@ -12,6 +12,30 @@ namespace InternetInterface.Controllers
 	[Filter(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class TariffsController : BaseController
 	{
+		public TariffsController()
+		{
+			SetSmartBinder(AutoLoadBehavior.NullIfInvalidKey);
+		}
+
+		public void Index()
+		{
+			PropertyBag["tariffs"] = DbSession.Query<Tariff>().OrderBy(t => t.Name).ToList();
+		}
+
+		public void Edit(uint id)
+		{
+			var tariff = DbSession.Load<Tariff>(id);
+			PropertyBag["tariff"] = tariff;
+			if (IsPost) {
+				BindObjectInstance(tariff, "tariff");
+				if (IsValid(tariff)) {
+					DbSession.Save(tariff);
+					Notify("Сохранено");
+					RedirectToAction("Index");
+				}
+			}
+		}
+
 		public void ChangeRules()
 		{
 			var rules = DbSession.Query<TariffChangeRule>().ToList();
@@ -22,7 +46,6 @@ namespace InternetInterface.Controllers
 			PropertyBag["rules"] = rules;
 
 			if (IsPost) {
-				SetSmartBinder(AutoLoadBehavior.NullIfInvalidKey);
 				rules = BindObject<List<TariffChangeRule>>("rules");
 				if (IsValid(rules)) {
 					foreach (var rule in rules)

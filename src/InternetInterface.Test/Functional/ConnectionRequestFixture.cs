@@ -2,6 +2,7 @@
 using System.Linq;
 using Headless;
 using NUnit.Framework;
+using Test.Support;
 using Test.Support.Selenium;
 
 namespace InternetInterface.Test.Functional
@@ -12,38 +13,29 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void Create_request()
 		{
-			var page = Open();
-			page = Click(page, "Регистрация");
-			Assert.That(page.Html, Is.StringContaining("Регистрация новой заявки на подключение"));
-			Input(page, "request_ApplicantName", "Ребкин Вадим Леонидович");
-			Input(page, "request_ApplicantPhoneNumber", "8-473-606-20-00");
-			Input(page, "request_Street", "Суворова");
-			Input(page, "request_House", "1");
-			Input(page, "request_Apartment", "1");
-			page = ClickButton(page, "Сохранить");
-			Assert.That(page.Html, Is.StringContaining("Сохранено"));
-		}
-
-		private DynamicHtmlPage ClickButton(DynamicHtmlPage page, string name)
-		{
-			var button = page.Find<HtmlButton>().All().First(e => e.Value == name);
-			return button.Click<DynamicHtmlPage>();
-		}
-
-		private static string Input(DynamicHtmlPage page, string id, string value)
-		{
-			return page.Find<HtmlInput>().ById(id).Value = value;
+			Open();
+			Click(page, "Регистрация");
+			AssertText("Регистрация новой заявки на подключение");
+			Input("request_ApplicantName", "Ребкин Вадим Леонидович");
+			Input("request_ApplicantPhoneNumber", "8-473-606-20-00");
+			Input("request_Street", "Суворова");
+			Input("request_House", "1");
+			Input("request_Apartment", "1");
+			ClickButton("Сохранить");
+			AssertText("Сохранено");
 		}
 	}
 
-	public class HeadlessFixture
+	public class HeadlessFixture : IntegrationFixture
 	{
 		protected Browser browser;
+		protected DynamicHtmlPage page;
 
 		[SetUp]
 		public void Setup()
 		{
 			browser = new Browser();
+			page = null;
 		}
 
 		public static DynamicHtmlPage Click(DynamicHtmlPage page, string name)
@@ -53,9 +45,34 @@ namespace InternetInterface.Test.Functional
 			return page;
 		}
 
+		public void Click(string name)
+		{
+			var link = page.Find<HtmlLink>().All().First(l => l.Text == name);
+			page = link.Click<DynamicHtmlPage>();
+		}
+
 		protected DynamicHtmlPage Open(string url = "Map/SiteMap")
 		{
-			return browser.GoTo<DynamicHtmlPage>(new Uri(SeleniumFixture.GetUri(url)));
+			session.Flush();
+			session.Transaction.Commit();
+			page = browser.GoTo<DynamicHtmlPage>(new Uri(SeleniumFixture.GetUri(url)));
+			return page;
+		}
+
+		protected void AssertText(string text)
+		{
+			Assert.That(page.Html, Is.StringContaining(text));
+		}
+
+		protected string Input(string id, string value)
+		{
+			return page.Find<HtmlInput>().ById(id).Value = value;
+		}
+
+		protected void ClickButton(string name)
+		{
+			var button = page.Find<HtmlButton>().All().First(e => e.Value == name);
+			page = button.Click<DynamicHtmlPage>();
 		}
 	}
 }

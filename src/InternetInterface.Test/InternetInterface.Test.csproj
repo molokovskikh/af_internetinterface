@@ -159,6 +159,7 @@
     <Compile Include="Functional\SearchFixture.cs" />
     <Compile Include="Functional\ServiceFixture.cs" />
     <Compile Include="Functional\SwitchesFixture.cs" />
+    <Compile Include="Functional\TariffFixture.cs" />
     <Compile Include="Functional\UserInfoFixture.cs" />
     <Compile Include="Functional\Setup.cs" />
     <Compile Include="Functional\WriteoffFixture.cs" />

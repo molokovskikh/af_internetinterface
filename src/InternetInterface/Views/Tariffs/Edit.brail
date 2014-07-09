@@ -1,0 +1,14 @@
+﻿${FormHelper.FormTag("", { @class : "div-form" })}
+<h3>Редактирование тарифа</h3>
+<div class="form-item">
+	${app.Label("tariff.Region")}
+	${app.Edit("tariff.Region", { @emptyValue: "" })}
+	${app.Error("tariff.Region")}
+</div>
+
+<div class="form-item">
+	${app.Edit("tariff.CanUseForSelfConfigure")}
+	${app.Error("tariff.CanUseForSelfConfigure")}
+</div>
+${FormHelper.Submit("Сохранить")}
+${FormHelper.EndFormTag()}

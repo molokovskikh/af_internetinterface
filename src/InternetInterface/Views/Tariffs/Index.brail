@@ -1,0 +1,12 @@
+﻿<div class="borderless-content">
+	<h1>Тарифы</h1>
+	<table class="table">
+	<% for tariff in tariffs: %>
+		<tr>
+			<td>
+				${app.LinkTo(tariff, @Edit)}
+			</td>
+		</tr>
+	<% end %>
+	</table>
+</div>

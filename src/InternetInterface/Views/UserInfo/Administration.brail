@@ -94,12 +94,17 @@
 		</tr>
 		<tr>
 			<td>
+				${app.LinkTo("Тарифы", @Tariffs, @Index)}
+			</td>
+		</tr>
+		<tr>
+			<td>
 				${app.LinkTo("Стоимость изменения тарифов", @Tariffs, @ChangeRules)}
 			</td>
 		</tr>
 		<tr>
 			<td>
-				${app.LinkTo("Редактирование справочника регионов", @UserInfo, @ShowRegions)}
+				${app.LinkTo("Регионы", @UserInfo, @ShowRegions)}
 			</td>
 		</tr>
 	</tbody>
