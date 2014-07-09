@@ -171,7 +171,7 @@ namespace InternetInterface.Test.Functional
 			WaitAjax();
 			SafeClick("[name=\"graph_button\"]");
 			Click("Назначить");
-
+			WaitAjax();
 			AssertText("Информация по клиенту");
 			AssertText("Сбросить");
 		}
