@@ -23,7 +23,7 @@
 
 <div class=block  style="margin: 0 auto; width:1000px;">
 <form class="accountant-friendly" method=post>
-	<table class="table" style="border: 1px double Black; border-right: 1px double Black;">
+	<table class="table">
 	<thead>
 		<tr>
 			<th colspan=5 style="text-align:center; font-size:16px;">Новый платеж</th>
@@ -96,15 +96,7 @@
 		</td>
 		<td>${payment.Recipient.Name}</td>
 		<td>${payment.PayedOn}</td>
-		<td>
-		<% if payment.Payer: %>
-			<% if payment.Payer.IsPhysical(): %>
-				${UrlHelper.Link(payment.Payer.Name, {@controller : @UserInfo, @action : @SearchUserInfo, @querystring: { "filter.ClientCode" : payment.Payer.Id}})}</td>
-			<% else: %>
-					${UrlHelper.Link(payment.Payer.Name, {@controller : @UserInfo, @action : @LawyerPersonInfo, @querystring: { "filter.ClientCode" : payment.Payer.Id}})}
-			<% end %>
-		<% end %>
-		</td>
+		<td>${app.LinkTo(payment.Payer)}</td>
 		<td>${payment.Sum}</td>
 		<td>${payment.RegistredOn}</td>
 	</tr>

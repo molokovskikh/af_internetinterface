@@ -117,6 +117,8 @@ namespace InternetInterface.Helpers
 
 		public override string LinkTo(object item)
 		{
+			if (item == null)
+				return "";
 			if (NHibernateUtil.GetClass(item) == typeof(Client)) {
 				var client = ((Client)item);
 				var action = "SearchUserInfo";
