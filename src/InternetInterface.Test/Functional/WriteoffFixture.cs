@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Headless;
+using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 using Rhino.Mocks;
 using Test.Support.Selenium;

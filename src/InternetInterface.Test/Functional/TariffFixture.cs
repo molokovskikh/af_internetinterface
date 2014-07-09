@@ -2,6 +2,7 @@
 using System.Linq;
 using Headless;
 using InternetInterface.Models;
+using InternetInterface.Test.Helpers;
 using NHibernate.Hql.Ast.ANTLR.Tree;
 using NHibernate.Linq;
 using NUnit.Framework;
