@@ -20,7 +20,7 @@ namespace InternetInterface.Models
 		[Description("Пользовательские")] User = 1,
 		[Description("Системные")] System = 3,
 		[Description("Внешние")] FeedBack = 5,
-		[Description("Статистические")] Statistic = 7
+		[Description("Статистические")] Statistic = 7,
 	}
 
 	public enum UniversalAppealType
@@ -95,13 +95,13 @@ namespace InternetInterface.Models
 			return AppealHelper.GetTransformedAppeal(Appeal);
 		}
 
-		public static List<UniversalAppeal> GetAllAppeal(ISession session, Client client, AppealType Type)
+		public static List<UniversalAppeal> GetAllAppeal(ISession session, Client client, AppealType type)
 		{
 			Expression<Func<Appeals, bool>> predicate;
-			if (Type == AppealType.All)
+			if (type == AppealType.All)
 				predicate = a => a.Client == client;
 			else {
-				predicate = a => a.Client == client && a.AppealType == Type;
+				predicate = a => a.Client == client && a.AppealType == type;
 			}
 			var appeals = Queryable.Where(predicate).ToList().Select(a => new UniversalAppeal {
 				Date = a.Date,
@@ -110,7 +110,7 @@ namespace InternetInterface.Models
 				Type = UniversalAppealType.Appeal,
 				AppealType = a.AppealType
 			}).ToList();
-			if (Type == AppealType.All) {
+			if (type == AppealType.All) {
 				var serviceRequests = session.Query<ServiceRequest>().Where(s => s.Client == client);
 				var service = serviceRequests.ToList().Select(s => new UniversalAppeal {
 					Id = s.Id,

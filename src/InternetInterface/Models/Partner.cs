@@ -8,6 +8,7 @@ using Castle.Components.Validator;
 using Castle.MonoRail.Framework;
 using Common.Tools;
 using Common.Tools.Calendar;
+using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Models.Security;
 using InternetInterface.Controllers;
 using InternetInterface.Helpers;
@@ -78,6 +79,9 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual TimeSpan? WorkStep { get; set; }
 
+		[Property, Description("Отключен")]
+		public virtual bool IsDisabled { get; set; }
+
 		[BelongsTo("Categorie", Lazy = FetchWhen.OnInvoke, Cascade = CascadeEnum.SaveUpdate), ValidateNonEmpty]
 		public virtual UserRole Role { get; set; }
 
@@ -103,7 +107,7 @@ namespace InternetInterface.Models
 
 		public static Partner GetPartnerForLogin(string login)
 		{
-			return FindAllByProperty("Login", login).FirstOrDefault();
+			return ArHelper.WithSession(s => s.Query<Partner>().FirstOrDefault(p => p.Login == login && !p.IsDisabled));
 		}
 
 		public virtual bool CategorieIs(string reductionName)
@@ -131,7 +135,7 @@ namespace InternetInterface.Models
 
 		public static List<Partner> GetServiceEngineers(ISession session)
 		{
-			return session.Query<Partner>().Where(p => p.Role.ReductionName == "Service").OrderBy(p => p.Name).ToList();
+			return session.Query<Partner>().Where(p => p.Role.ReductionName == "Service" && !p.IsDisabled).OrderBy(p => p.Name).ToList();
 		}
 
 		public override void SaveAndFlush()
@@ -210,6 +214,11 @@ namespace InternetInterface.Models
 				{
 					"VD", new IPermission[] {
 						new ControllerPermission(typeof(ConnectionRequestController)),
+					}
+				},
+				{
+					"MB", new IPermission[] {
+						new ControllerPermission(typeof(BrigadsController)),
 					}
 				}
 			};

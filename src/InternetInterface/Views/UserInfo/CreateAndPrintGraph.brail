@@ -36,12 +36,13 @@
 </table>
 
 <% for i, Client in enumerate(Clients):  %>
-	<br style="page-break-before: always;"/>
-	<% OutputSubView("""\UserInfo\ClientRegisteredInfo""", {
-					"_client": Client,
-					"Client": Client.PhysicalClient,
-                    "WhoConnected" : Client.WhoConnected,
-					"ConnectInfo": Client.ConnectInfoFirst(),
-                    "Password" : Client.ChangePhysicalClientPassword(),
-                    "AccountNumber" : Client.Id.ToString("00000")}) %>
+	<div style="page-break-before: always;">
+		<% OutputSubView("""\UserInfo\ClientRegisteredInfo""", {
+						"_client": Client,
+						"Client": Client.PhysicalClient,
+						"WhoConnected" : Client.WhoConnected,
+						"ConnectInfo": Client.ConnectInfoFirst(),
+						"Password" : Client.ChangePhysicalClientPassword(),
+						"AccountNumber" : Client.Id.ToString("00000")}) %>
+	</div>
 <% end %>

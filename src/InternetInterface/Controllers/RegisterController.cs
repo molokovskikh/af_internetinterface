@@ -152,14 +152,15 @@ namespace InternetInterface.Controllers
 
 		public void RegisterLegalPerson()
 		{
+			var brigads = Brigad.All(DbSession);
 			PropertyBag["OrderInfo"] = new ClientOrderInfo {
 				Order = new Order(),
 				ClientConnectInfo = new ClientConnectInfo()
 			};
 			PropertyBag["ClientCode"] = 0;
-			PropertyBag["Brigads"] = Brigad.FindAllSort();
+			PropertyBag["Brigads"] = brigads;
 			PropertyBag["Switches"] = NetworkSwitch.All(DbSession);
-			PropertyBag["ChBrigad"] = Brigad.FindFirst().Id;
+			PropertyBag["ChBrigad"] = brigads.Select(b => b.Id).FirstOrDefault();
 			PropertyBag["ConnectInfo"] = new ConnectInfo();
 			PropertyBag["Editing"] = false;
 			PropertyBag["LegalPerson"] = new LawyerPerson();
@@ -223,7 +224,7 @@ namespace InternetInterface.Controllers
 					ClientConnectInfo = new ClientConnectInfo()
 				};
 				PropertyBag["ClientCode"] = 0;
-				PropertyBag["Brigads"] = Brigad.FindAllSort();
+				PropertyBag["Brigads"] = Brigad.All(DbSession);
 				PropertyBag["Switches"] = NetworkSwitch.All(DbSession);
 				PropertyBag["ChBrigad"] = brigadForConnect;
 				if (!string.IsNullOrEmpty(connectErrors))
@@ -352,7 +353,7 @@ namespace InternetInterface.Controllers
 		private void EditorValues()
 		{
 			PropertyBag["Regions"] = DbSession.Query<RegionHouse>().ToList();
-			PropertyBag["Brigads"] = Brigad.FindAllSort();
+			PropertyBag["Brigads"] = Brigad.All(DbSession);
 			PropertyBag["Statuss"] = Status.FindAllSort();
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
 			PropertyBag["channels"] = ChannelGroup.All(DbSession);

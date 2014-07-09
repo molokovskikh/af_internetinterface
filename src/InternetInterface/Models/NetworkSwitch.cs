@@ -91,9 +91,13 @@ namespace InternetInterface.Models
 			return ArHelper.WithSession(s => All(s));
 		}
 
-		public static List<NetworkSwitch> All(ISession session)
+		public static List<NetworkSwitch> All(ISession session, RegionHouse region = null)
 		{
-			return session.Query<NetworkSwitch>().Where(s => s.Name != null && s.Name != "").OrderBy(s => s.Name).ToList();
+			var query = session.Query<NetworkSwitch>().Where(s => s.Name != null && s.Name != "");
+			if (region != null) {
+				query = query.Where(s => s.Zone.Region == region);
+			}
+			return query.OrderBy(s => s.Name).ToList();
 		}
 	}
 }

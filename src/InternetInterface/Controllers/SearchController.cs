@@ -81,7 +81,6 @@ namespace InternetInterface.Controllers
 		{
 			PropertyBag["Statuses"] = Status.FindAllAdd();
 			PropertyBag["RegionList"] = RegionHouse.FindAllAdd();
-			PropertyBag["Brigads"] = Brigad.FindAllAdd();
 			PropertyBag["additionalStatuses"] = AdditionalStatus.FindAllAdd();
 			PropertyBag["Tariffs"] = Tariff.FindAllAdd();
 			PropertyBag["WhoRegistered"] = Partner.FindAllAdd();

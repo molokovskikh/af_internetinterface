@@ -3,6 +3,11 @@
 	clear: both;
 }
 
+form.div-form label.inline {
+	display: inline;
+	clear: none;
+}
+
 form.div-form .form-item {
 	padding-bottom: 10px;
 }

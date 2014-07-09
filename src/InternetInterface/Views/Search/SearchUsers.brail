@@ -72,7 +72,7 @@
 		</table>
 		<fieldset style="padding: 0; margin: 0; text-align: left; width: 99%;">
 			<legend>Фильтры: </legend>
-			<table border="0" class="table filter_front">
+			<table class="table filter_front">
 				<thead>
 					<tr align="left">
 						<td>

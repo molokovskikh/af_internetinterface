@@ -34,9 +34,6 @@ namespace InternetInterface.Models.Access
 			if (GetRulesName_registerClient() != string.Empty) {
 				result.Add(GetRulesName_registerClient());
 			}
-			if (GetRulesName_manageBrigads() != string.Empty) {
-				result.Add(GetRulesName_manageBrigads());
-			}
 			if (GetRulesName_registerPartner() != string.Empty) {
 				result.Add(GetRulesName_registerPartner());
 			}
@@ -140,17 +137,6 @@ namespace InternetInterface.Models.Access
 			};
 			return _registerClient.Contains(methodName) ? "RC" : string.Empty;
 		}
-
-		private static string GetRulesName_manageBrigads()
-		{
-			_manageBrigads = new HashSet<string> {
-				"MakeBrigad",
-				"RegisterBrigad",
-				"EditBrigad"
-			};
-			return _manageBrigads.Contains(methodName) ? "MB" : string.Empty;
-		}
-
 
 		private static string GetRulesName_registerPartner()
 		{

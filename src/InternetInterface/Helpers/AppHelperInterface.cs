@@ -11,6 +11,7 @@ using Common.Web.Ui.MonoRailExtentions;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using InternetInterface.Models.Access;
+using NHibernate;
 
 namespace InternetInterface.Helpers
 {
@@ -112,6 +113,20 @@ namespace InternetInterface.Helpers
 			if (src is IUrlContributor)
 				return ((IUrlContributor)src).GetQueryString();
 			return new Dictionary<object, object>();
+		}
+
+		public override string LinkTo(object item)
+		{
+			if (NHibernateUtil.GetClass(item) == typeof(Client)) {
+				var client = ((Client)item);
+				var action = "SearchUserInfo";
+				if (client.GetClientType() == ClientType.Legal)
+					action = "LawyerPersonInfo";
+				return LinkTo(client.Name, "UserInfo", action, new Dictionary<string, object> {
+					{ "filter.ClientCode", client.Id }
+				});
+			}
+			return base.LinkTo(item);
 		}
 	}
 }

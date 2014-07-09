@@ -1,0 +1,15 @@
+﻿${FormHelper.FormTag("", { @class : "div-form" })}
+<h3>Регистрация бригады</h3>
+<div class="form-item">
+	${app.Label("brigad.Name")}
+	${app.Edit("brigad.Name")}
+	${app.Error("brigad.Name")}
+</div>
+
+<div class="form-item">
+	${app.Label("brigad.Region")}
+	${app.Edit("brigad.Region", { @emptyValue: "" })}
+	${app.Error("brigad.Region")}
+</div>
+${FormHelper.Submit("Сохранить")}
+${FormHelper.EndFormTag()}

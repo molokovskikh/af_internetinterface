@@ -225,18 +225,16 @@
 				<td>
 					<% if _client.AdditionalCanUsed("Refused"): %>
 						<a href="#" class="big-link" data-reveal-id="myModal">
-							<button id="Refused" name="../UserInfo/AddInfo.rails?ClientCode=${ClientCode}" class="button_mod">Отказ</button>
+							<button id="Refused" name="../UserInfo/AddInfo.rails?ClientCode=${ClientCode}" class="button button_mod">Отказ</button>
 						</a>
 					<% end %>
 					<% if _client.AdditionalCanUsed("NotPhoned"): %>
 						<a href="#" class="big-link" data-reveal-id="myModal">
-							<button id="NotPhoned" name="../UserInfo/NoPhoned.rails?ClientCode=${ClientCode}" class="button_mod">Недозвон</button>
+							<button id="NotPhoned" name="../UserInfo/NoPhoned.rails?ClientCode=${ClientCode}" class="button button_mod">Недозвон</button>
 						</a>
 					<% end %>
 					<% if _client.AdditionalCanUsed("AppointedToTheGraph"): %>
-						<a href="#" class="big-link" data-reveal-id="myModal">
-							<button id="naznach_but" name="../UserInfo/AppointedToTheGraph.rails?ClientCode=${ClientCode}" class="button_mod2">${naznach_text}</button>
-						</a>
+						${app.LinkTo(naznach_text, @UserInfo, @AppointedToTheGraph, { @ClientCode: ClientCode, @attributes: {@class: "button"} })}
 					<% end %>
 				 </td>
 			</tr>

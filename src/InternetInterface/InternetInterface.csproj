@@ -179,9 +179,10 @@
     <None Include="Views\AgentInfo\GroupInfo.brail" />
     <None Include="Views\AgentInfo\PaymentBlock.brail" />
     <None Include="Views\AgentInfo\SummaryInformation.brail" />
-    <None Include="Views\Brigads\MakeBrigad.brail" />
+    <Content Include="Views\Brigads\Edit.brail" />
+    <Content Include="Views\Brigads\New.brail" />
     <None Include="Views\Brigads\ReportOnWork.brail" />
-    <None Include="Views\Brigads\ShowBrigad.brail" />
+    <None Include="Views\Brigads\Index.brail" />
     <None Include="Views\ChannelGroups\Index.brail" />
     <None Include="Views\ChannelGroups\Edit.brail" />
     <Content Include="Views\Contracts\Index.brail" />

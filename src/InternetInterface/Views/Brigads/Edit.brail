@@ -1,0 +1,20 @@
+﻿${FormHelper.FormTag("", { @class : "div-form" })}
+<h3>Редактирование бригады</h3>
+<div class="form-item">
+	${app.Label("brigad.Name")}
+	${app.Edit("brigad.Name")}
+	${app.Error("brigad.Name")}
+</div>
+
+<div class="form-item">
+	${app.Label("brigad.Region")}
+	${app.Edit("brigad.Region", { @emptyValue: "" })}
+	${app.Error("brigad.Region")}
+</div>
+
+<div class="form-item">
+	${app.Edit("brigad.IsDisabled")}
+	${app.Error("brigad.IsDisabled")}
+</div>
+${FormHelper.Submit("Сохранить")}
+${FormHelper.EndFormTag()}

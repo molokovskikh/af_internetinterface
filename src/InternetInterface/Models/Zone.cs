@@ -30,6 +30,9 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool IsSelfRegistrationEnabled { get; set; }
 
+		[BelongsTo("RegionId")]
+		public virtual RegionHouse Region { get; set; }
+
 		public static IList<Zone> All()
 		{
 			return ArHelper.WithSession(s => s.Query<Zone>().OrderBy(z => z.Name).ToList());

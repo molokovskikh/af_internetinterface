@@ -70,7 +70,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Editing"] = filter.Editing;
 			PropertyBag["appealType"] = filter.appealType;
 			PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClient>(new PhysicalClient());
-			PropertyBag["Switches"] = NetworkSwitch.All(DbSession);
+			PropertyBag["Switches"] = NetworkSwitch.All(DbSession, client.GetRegion());
 			PropertyBag["RegionList"] = DbSession.Query<RegionHouse>().ToList();
 		}
 
@@ -723,17 +723,18 @@ namespace InternetInterface.Controllers
 		public void ConnectPropertyBag(uint clientId)
 		{
 			var client = DbSession.Load<Client>(clientId);
+			var brigads = Brigad.All(DbSession);
 			PropertyBag["_client"] = client;
 			PropertyBag["ClientCode"] = clientId;
-			PropertyBag["Switches"] = NetworkSwitch.All(DbSession);
-			PropertyBag["Brigads"] = Brigad.FindAllSort();
+			PropertyBag["Switches"] = NetworkSwitch.All(DbSession, client.GetRegion());
+			PropertyBag["Brigads"] = brigads;
 			var endPoint = client.Endpoints.FirstOrDefault();
 			if (endPoint != null && endPoint.WhoConnected != null)
 				PropertyBag["ChBrigad"] = endPoint.WhoConnected.Id;
 			else {
-				var brigad = Brigad.FindFirst();
+				var brigad = brigads.FirstOrDefault();
 				if (brigad != null)
-					PropertyBag["ChBrigad"] = Brigad.FindFirst().Id;
+					PropertyBag["ChBrigad"] = brigad.Id;
 			}
 			List<PackageSpeed> speeds;
 			var tariffs = Tariff.FindAll().Select(t => t.PackageId).ToList();
@@ -869,24 +870,25 @@ namespace InternetInterface.Controllers
 			RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID);
 		}
 
-		public void AppointedToTheGraph(uint ClientCode)
+		public void AppointedToTheGraph(uint clientCode)
 		{
-			PropertyBag["ClientCode"] = ClientCode;
-			PropertyBag["Brigads"] = Brigad.FindAllSort();
+			var client = DbSession.Load<Client>(clientCode);
+			PropertyBag["client"] = client;
 			PropertyBag["StartDate"] = DateTime.Now.AddDays(1).ToShortDateString();
-			LayoutName = "NoMap";
 		}
 
 		[return: JSONReturnBinder]
-		public object GetGraph()
+		public object GetGraph(DateTime date, uint clientId)
 		{
-			var selDate = DateTime.Parse(Request.Form["graph_date"]);
+			var client = DbSession.Load<Client>(clientId);
+			var brigads = Brigad.All(DbSession, client.GetRegion());
+			var connectGraphs = DbSession.Query<ConnectGraph>().Where(g => brigads.Contains(g.Brigad) && g.Day.Date == date);
 			return new {
-				brigads = Brigad.FindAll().Select(b => new { b.Id, b.Name }).ToArray(),
-				graphs =
-					DbSession.Query<ConnectGraph>().Where(c => c.Day.Date == selDate).Select(
-						g => new { brigadId = g.Brigad.Id, clientId = g.Client != null ? g.Client.Id : 0, g.IntervalId }).ToArray(),
-				intervals = Intervals.GetIntervals()
+				brigads = brigads.Select(b => new { b.Id, b.Name }).ToArray(),
+				graphs = connectGraphs
+					.Select(g => new { brigadId = g.Brigad.Id, clientId = g.Client != null ? g.Client.Id : 0, g.IntervalId })
+					.ToArray(),
+				intervals = ConnectGraph.GetIntervals()
 			};
 		}
 
@@ -902,29 +904,24 @@ namespace InternetInterface.Controllers
 					}
 				var briad = DbSession.Load<Brigad>(Convert.ToUInt32(but_id[1]));
 				var interval = Convert.ToUInt32(but_id[0]);
-				new ConnectGraph {
+				DbSession.Save(new ConnectGraph {
 					IntervalId = interval,
 					Brigad = briad,
 					Client = client,
 					Day = DateTime.Parse(Request.Form["graph_date"]),
-				}.Save();
+				});
 				client.AdditionalStatus = AdditionalStatus.Find((uint)AdditionalStatusType.AppointedToTheGraph);
 				foreach (var clientEndpoint in client.Endpoints) {
 					clientEndpoint.WhoConnected = briad;
 					DbSession.Save(clientEndpoint);
 				}
 				DbSession.Save(client);
-				new Appeals {
-					Client = client,
-					Date = DateTime.Now,
-					Partner = InitializeContent.Partner,
-					Appeal =
-						string.Format("Назначен в график, \r\n Бригада: {0} \r\n Дата: {1} \r\n Время: {2}",
-							briad.Name,
-							DateTime.Parse(Request.Form["graph_date"]).ToShortDateString(),
-							Intervals.GetIntervals()[(int)interval]),
-					AppealType = AppealType.User
-				}.Save();
+				var message = string.Format("Назначен в график, \r\n Бригада: {0} \r\n Дата: {1} \r\n Время: {2}",
+					briad.Name,
+					DateTime.Parse(Request.Form["graph_date"]).ToShortDateString(),
+					ConnectGraph.GetIntervals()[(int)interval]);
+
+				DbSession.Save(new Appeals(message, client, AppealType.User));
 				return true;
 			}
 			else {
@@ -959,7 +956,7 @@ namespace InternetInterface.Controllers
 				var appeal = client.CreareAppeal(string.Format("Удалено назначение в график, \r\n Бригада: {0} \r\n Дата: {1} \r\n Время: {2}",
 					briad.Name,
 					date.ToShortDateString(),
-					Intervals.GetIntervals()[(int)interval]), AppealType.User);
+					ConnectGraph.GetIntervals()[(int)interval]), AppealType.User);
 				DbSession.Save(appeal);
 				return true;
 			}
@@ -972,10 +969,11 @@ namespace InternetInterface.Controllers
 
 		public void RequestGraph(DateTime selectDate, uint brig)
 		{
+			var brigads = Brigad.All(DbSession);
 			PropertyBag["selectDate"] = selectDate != DateTime.MinValue ? selectDate : DateTime.Now;
-			PropertyBag["Brigad"] = brig != 0 ? DbSession.Load<Brigad>(brig) : Brigad.FindFirst();
-			PropertyBag["Brigads"] = Brigad.FindAll();
-			PropertyBag["Intervals"] = Intervals.GetIntervals();
+			PropertyBag["Brigad"] = DbSession.Get<Brigad>(brig) ?? brigads.FirstOrDefault();
+			PropertyBag["Brigads"] = brigads;
+			PropertyBag["Intervals"] = ConnectGraph.GetIntervals();
 		}
 
 		public void CreateAndPrintGraph(uint Brig, DateTime selectDate)
@@ -985,7 +983,7 @@ namespace InternetInterface.Controllers
 					s => s.Client).Where(c => c != null).ToList();
 			PropertyBag["selectDate"] = selectDate;
 			PropertyBag["Brigad"] = DbSession.Load<Brigad>(Brig);
-			PropertyBag["Intervals"] = Intervals.GetIntervals();
+			PropertyBag["Intervals"] = ConnectGraph.GetIntervals();
 		}
 
 		public void ShowAppeals([DataBind("filter")] AppealFilter filter)

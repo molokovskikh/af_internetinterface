@@ -3,9 +3,19 @@
 	<form method="post">
 		${FormHelper.HiddenField("Partner.Id")}
 		${FormHelper.HiddenField("Partner.Role.Id")}
-
 		<table class="form-table">
 			<% OutputSubView("Partner") %>
+			<tr>
+				<td>
+					${app.Label("Partner.IsDisabled")}
+				</td>
+				<td>
+					${app.Edit("Partner.IsDisabled")}
+				</td>
+				<td>
+					${app.Error("Partner.IsDisabled")}
+				</td>
+			</tr>
 			<tr>
 				<td colspan="100">
 					<button type="submit" id="RegisterPartnerButton" class="button save">Сохранить</button>

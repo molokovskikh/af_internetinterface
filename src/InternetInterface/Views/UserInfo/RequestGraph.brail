@@ -1,86 +1,78 @@
-﻿<script type="text/javascript">
-	$(function () {
+﻿<center>
+	<form method="post">
+		<table class="table" style="width:700px;">
+			<thead>
+				<tr><th colspan="2">Настройки</th></tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td><span>Выберете дату</span></td>
+					<td>
+						<input type="text" name="selectDate" id="datepicker" value="${selectDate.ToShortDateString()}" class="date-pick" />
+					</td>
+				</tr>
+				<tr>
+					<td><span>Выберете бригаду</span></td>
+					<td>
+						<select name="brig">
+						<% for i, Brig in enumerate(Brigads):  %>
+							<option value=${Brig.Id} ${"selected" if (Brig.Id == Brigad.Id)}>${Brig.Name}</option>
+						<% end %>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="100">
+						<button id="naznach_but_1" class="button" type=submit value="Назначить">Показать расписание</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
 
-		$('#datepicker').datepicker({
-			inline: true
-		});
-	});
-</script>
-
-
-<center>
-<form method=post action="">
-<table class="table" style="width:700px;">
-	<thead>
-		<tr><th colspan="2">Настройки</th></tr>
-	</thead>
-	<tbody>
-		<tr>
-			<td><span>Выберете дату</span></td>
-			<td>
-			<meta charset="UTF-8" />
-				<input type="text" name="selectDate" id="datepicker" value="${selectDate.ToShortDateString()}"/>
-			</td>
-		</tr>
-		<tr>
-			<td><span>Выберете бригаду</span></td>
-			<td>
-				<select name="brig">
-				<% for i, Brig in enumerate(Brigads):  %>
-					<option value=${Brig.Id} ${"selected" if (Brig.Id == Brigad.Id)}>${Brig.Name}</option>
+	<form method=post action="${siteroot}/UserInfo/CreateAndPrintGraph">
+		<input type=hidden name="selectDate" value=${selectDate} />
+		<input type=hidden name="Brig" value=${Brigad.Id} />
+		<table class="table" style="width:700px;">
+			<thead>
+				<tr>
+					<th colspan="3" style="text-align:center;"> ${Brigad.Name} </th>
+				</tr>
+				<tr>
+					<th style="text-align:center; width:80px;">Время</th>
+					<th style="text-align:center; width:80px;">Номер счета</th>
+					<th style="text-align:center;">ФИО</th>
+				</tr>
+			</thead>
+			<tbody>
+				<% for i, interval in enumerate(Intervals):  %>
+				<% client = Brigad.GetOneGraph(i, selectDate) %>
+					<tr>
+						<td style="text-align:center;">
+							${interval}
+						</td>
+						<td style="text-align:center;">
+						<% if client != null: %>
+							<a href="../Search/Redirect?filter.ClientCode=${client.Id}">${client.Id.ToString("00000")}</a>
+						<% end %>
+						</td>
+						<td>
+						<% if client != null: %>
+						<% ConnectInfo = client.ConnectInfoFirst() %>
+							<b>${client.PhysicalClient.Street} ${client.PhysicalClient.House}${client.PhysicalClient.CaseHouse} кв ${client.PhysicalClient.Apartment} </b> Подъезд ${client.PhysicalClient.Entrance} Этаж ${client.PhysicalClient.Floor} <br />
+							<% if ConnectInfo != null: %>
+							Коммутатор: ${ConnectInfo.Swith_adr} (${ConnectInfo.swith_IP}) Порт: ${ConnectInfo.Port}
+							<% end %>
+						<% end %>
+						</td>
+					</tr>
 				<% end %>
-				</select>
-			</td>
-		</tr>
-		<tr>
-			<td><button id="naznach_but_1" class="button" type=submit value="Назначить">Показать расписание</button></td>
-			<td></td>
-		</tr>
-	</tbody>
-</table>
-</form>
-<form method=post action="${siteroot}/UserInfo/CreateAndPrintGraph">
-<input type=hidden name="selectDate" value=${selectDate} />
-<input type=hidden name="Brig" value=${Brigad.Id} />
-<table class="table" style="width:700px;">
-	<thead>
-		<tr>
-			<th colspan="3" style="text-align:center;"> ${Brigad.Name} </th>
-		</tr>
-		<tr>
-			<th style="text-align:center; width:80px;">Время</th>
-			<th style="text-align:center; width:80px;">Номер счета</th>
-			<th style="text-align:center;">ФИО</th>
-		</tr>
-	</thead>
-	<tbody>
-		<% for i, interval in enumerate(Intervals):  %>
-		<% client = Brigad.GetOneGraph(i, selectDate) %>
-			<tr>
-				<td style="text-align:center;">
-					${interval}
-				</td>
-				<td style="text-align:center;">
-				<% if client != null: %>
-					<a href="../Search/Redirect?filter.ClientCode=${client.Id}">${client.Id.ToString("00000")}</a>
-				<% end %>
-				</td>
-				<td>
-				<% if client != null: %>
-				<% ConnectInfo = client.ConnectInfoFirst() %>
-					<b>${client.PhysicalClient.Street} ${client.PhysicalClient.House}${client.PhysicalClient.CaseHouse} кв ${client.PhysicalClient.Apartment} </b> Подъезд ${client.PhysicalClient.Entrance} Этаж ${client.PhysicalClient.Floor} <br />
-					<% if ConnectInfo != null: %>
-					Коммутатор: ${ConnectInfo.Swith_adr} (${ConnectInfo.swith_IP}) Порт: ${ConnectInfo.Port}
-					<% end %>
-				<% end %>
-				</td>
-			</tr>
-		<% end %>
-			<tr>
-				<td></td>
-				<td></td><td><button id="print_button" class="button" type=submit value="Назначить">Сформировать и распечатать заявки</button></td>
-			</tr>
-	</tbody>
-</table>
-</form>
+					<tr>
+						<td colspan="100">
+							<button id="print_button" class="button" type=submit value="Назначить">Сформировать и распечатать заявки</button>
+						</td>
+					</tr>
+			</tbody>
+		</table>
+	</form>
 </center>

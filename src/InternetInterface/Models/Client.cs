@@ -1045,6 +1045,15 @@ where CE.Client = {0}", Id))
 				Address = PhysicalClient.GetFullAddress();
 			}
 		}
+
+		public virtual RegionHouse GetRegion()
+		{
+			if (PhysicalClient != null && PhysicalClient.HouseObj != null)
+				return PhysicalClient.HouseObj.Region;
+			if (LawyerPerson != null)
+				return LawyerPerson.Region;
+			return null;
+		}
 	}
 
 	public class ServiceActivationException : Exception

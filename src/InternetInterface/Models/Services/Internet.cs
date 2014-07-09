@@ -40,7 +40,7 @@ namespace InternetInterface.Models.Services
 				}
 			}
 			base.ForceDeactivate(assignedService);
-			assignedService.Client.CreareAppeal(String.Format("Включена услуга \"{0}\"", HumanName));
+			assignedService.Client.CreareAppeal(String.Format("Отключена услуга \"{0}\"", HumanName));
 		}
 
 		public override void Activate(ClientService assignedService)

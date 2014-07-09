@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
@@ -10,64 +11,49 @@ using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Queries;
+using NHibernate.Linq;
 
 namespace InternetInterface.Controllers
 {
-	[Helper(typeof(PaginatorHelper)),
-	 Helper(typeof(CategorieAccessSet)),]
+	[Helper(typeof(PaginatorHelper))]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class BrigadsController : BaseController
 	{
-		public void ShowBrigad()
+		public BrigadsController()
 		{
-			PropertyBag["Brigads"] = Brigad.FindAllSort();
+			SetARDataBinder(AutoLoadBehavior.NullIfInvalidKey);
 		}
 
-		public void MakeBrigad()
+		public void Index()
 		{
-			PropertyBag["Brigad"] = new Brigad();
-			PropertyBag["Editing"] = false;
-			PropertyBag["VB"] = new ValidBuilderHelper<Brigad>(new Brigad());
+			PropertyBag["brigads"] = DbSession.Query<Brigad>().OrderBy(b => b.Name).ToList();
 		}
 
-		public void MakeBrigad(uint brigad)
+		public void New()
 		{
-			PropertyBag["Brigad"] = DbSession.Load<Brigad>(brigad);
-			PropertyBag["brigadid"] = brigad;
-			PropertyBag["Editing"] = true;
-			PropertyBag["VB"] = new ValidBuilderHelper<Brigad>(new Brigad());
-		}
-
-		public void RegisterBrigad([DataBind("Brigad")] Brigad brigad)
-		{
-			if (Validator.IsValid(brigad)) {
-				brigad.SaveAndFlush();
-				RedirectToUrl("../Brigads/ShowBrigad.rails");
-			}
-			else {
-				RenderView("MakeBrigad");
-				Flash["Editing"] = false;
-				brigad.SetValidationErrors(Validator.GetErrorSummary(brigad));
-				Flash["VB"] = new ValidBuilderHelper<Brigad>(brigad);
-				Flash["Brigad"] = brigad;
+			var brigad = new Brigad();
+			PropertyBag["brigad"] = brigad;
+			if (IsPost) {
+				BindObjectInstance(brigad, "brigad");
+				if (IsValid(brigad)) {
+					DbSession.Save(brigad);
+					Notify("Сохранено");
+					RedirectToAction("Index");
+				}
 			}
 		}
 
-		public void EditBrigad([DataBind("Brigad")] Brigad brigad, uint brigadid)
+		public void Edit(uint id)
 		{
-			if (Validator.IsValid(brigad)) {
-				var edbrigad = DbSession.Load<Brigad>(brigadid);
-				BindObjectInstance(edbrigad, ParamStore.Form, "Brigad");
-				edbrigad.UpdateAndFlush();
-				RedirectToUrl("../Brigads/ShowBrigad.rails");
-			}
-			else {
-				brigad.SetValidationErrors(Validator.GetErrorSummary(brigad));
-				brigad.Id = brigadid;
-				PropertyBag["Editing"] = true;
-				Flash["VB"] = new ValidBuilderHelper<Brigad>(brigad);
-				Flash["Brigad"] = brigad;
-				RenderView("MakeBrigad");
+			var brigad = DbSession.Load<Brigad>(id);
+			PropertyBag["brigad"] = brigad;
+			if (IsPost) {
+				BindObjectInstance(brigad, "brigad");
+				if (IsValid(brigad)) {
+					DbSession.Save(brigad);
+					Notify("Сохранено");
+					RedirectToAction("Index");
+				}
 			}
 		}
 

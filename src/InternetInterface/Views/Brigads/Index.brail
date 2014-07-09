@@ -5,7 +5,7 @@
             <tbody>
                 <tr>
                     <td>
-                       <form class="form" id="RegistrationForm" name="RegistrationForm" method="post" action="${siteroot}/Brigads/MakeBrigad">
+                       <form class="form" id="RegistrationForm" name="RegistrationForm" method="get" action="${siteroot}/Brigads/New">
                        <button type="submit" id="RegisterBrigad" class="button save">
                            Зарегистрирвоать бригаду
                        </button>
@@ -24,9 +24,9 @@
                 <tr>
                     <td>${Brigad.Id}</td>
                 <% if (Brigad.Name != null): %>
-                    <td><a href="../Brigads/MakeBrigad?brigad=${Brigad.Id}"> ${Brigad.Name}</a></td>
+                    <td><a href="../Brigads/Edit?id=${Brigad.Id}"> ${Brigad.Name}</a></td>
                     <% else: %>
-                    <td><a href="../Brigads/MakeBrigad?brigad=${Brigad.Id}"> (Редактировать)</a></td>
+                    <td><a href="../Brigads/Edit?id=${Brigad.Id}"> (Редактировать)</a></td>
                     <% end %>
                 </tr>
              <% end %>
