@@ -285,7 +285,7 @@ namespace InternetInterface.Models
 				return;
 
 			var comment = String.Format("Изменение тарифа, старый '{0}' новый '{1}'", oldTariff.Name, Tariff.Name);
-			Client.UserWriteOffs.Add(new UserWriteOff(Client, rule.Price, comment, false));
+			Client.UserWriteOffs.Add(new UserWriteOff(Client, rule.Price, comment));
 		}
 
 		public virtual void AccountPayment(Payment newPayment)

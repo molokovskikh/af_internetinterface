@@ -98,7 +98,7 @@ namespace InternetInterface.Services
 		{
 			if ((!assignedService.IsActivated && !assignedService.IsDeactivated && CanActivate(assignedService))) {
 				if (assignedService.EndWorkDate > SystemTime.Now().AddDays(3)) {
-					var userWriteOff = new UserWriteOff(assignedService.Client, 50, "Активация обещанного платежа на 10 дней", false);
+					var userWriteOff = new UserWriteOff(assignedService.Client, 50, "Активация обещанного платежа на 10 дней");
 					ActiveRecordMediator.Save(userWriteOff);
 				}
 				var client = assignedService.Client;

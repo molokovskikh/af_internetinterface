@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Castle.ActiveRecord;
+using InternetInterface.Controllers.Filter;
 
 namespace InternetInterface.Models
 {
@@ -18,6 +19,7 @@ namespace InternetInterface.Models
 			Sum = sum;
 			EndPoint = point;
 			RegDate = DateTime.Now;
+			Partner = InitializeContent.TryGetPartner();
 		}
 
 		[PrimaryKey]

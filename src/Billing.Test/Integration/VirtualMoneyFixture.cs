@@ -29,7 +29,7 @@ namespace Billing.Test.Integration
 
 			billing.OnMethod();
 
-			var userWriteOff = new UserWriteOff(client, 10, "test", false);
+			var userWriteOff = new UserWriteOff(client, 10, "test");
 			session.Save(userWriteOff);
 
 			billing.OnMethod();
@@ -52,7 +52,7 @@ namespace Billing.Test.Integration
 
 			billing.OnMethod();
 
-			var userWriteOff = new UserWriteOff(client, 65, "test", false);
+			var userWriteOff = new UserWriteOff(client, 65, "test");
 			session.Save(userWriteOff);
 
 			billing.OnMethod();

@@ -138,7 +138,7 @@ set s.LastStartFail = true;")
 			WithTransaction(session => {
 				var newEndPointForConnect = session.Query<ClientEndpoint>().Where(c => c.Client.PhysicalClient != null && !c.PayForCon.Paid && c.Client.BeginWork != null).ToList();
 				foreach (var clientEndpoint in newEndPointForConnect) {
-					var writeOff = new UserWriteOff(clientEndpoint.Client, clientEndpoint.PayForCon.Sum, "Плата за подключение", false);
+					var writeOff = new UserWriteOff(clientEndpoint.Client, clientEndpoint.PayForCon.Sum, "Плата за подключение");
 					session.SaveOrUpdate(writeOff);
 					clientEndpoint.PayForCon.Paid = true;
 					session.SaveOrUpdate(clientEndpoint.PayForCon);

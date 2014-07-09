@@ -309,13 +309,7 @@ namespace InternetInterface.Controllers
 						}
 						if (clientEntPoint.Ip == null && !string.IsNullOrEmpty(ConnectInfo.static_IP))
 							if (client.IsPhysical()) {
-								new UserWriteOff {
-									Client = client,
-									Date = DateTime.Now,
-									Sum = 200,
-									Comment = string.Format("Плата за фиксированный Ip адрес ({0})", ConnectInfo.static_IP),
-									Registrator = InitializeContent.Partner
-								}.Save();
+								DbSession.Save(new UserWriteOff(client, 200, string.Format("Плата за фиксированный Ip адрес ({0})", ConnectInfo.static_IP)));
 							}
 							else {
 								needNewServiceForStaticIp = true;
@@ -370,13 +364,8 @@ namespace InternetInterface.Controllers
 						var connectSum = 0m;
 						if (!string.IsNullOrEmpty(ConnectSum) && decimal.TryParse(ConnectSum, out connectSum) && connectSum > 0) {
 							var payments = DbSession.Query<PaymentForConnect>().Where(p => p.EndPoint == clientEntPoint).ToList();
-							if (payments.Count() == 0)
-								new PaymentForConnect {
-									Sum = connectSum,
-									Partner = InitializeContent.Partner,
-									EndPoint = clientEntPoint,
-									RegDate = DateTime.Now
-								}.Save();
+							if (!payments.Any())
+								DbSession.Save(new PaymentForConnect(connectSum, clientEntPoint));
 							else {
 								var payment = payments.First();
 								payment.Sum = connectSum;
@@ -608,6 +597,10 @@ namespace InternetInterface.Controllers
 							client.CreareAppeal("Оператором отключена страница Warning", AppealType.Statistic);
 					}
 					if (client.Status.Type == StatusType.Dissolved) {
+						var endpointLog = client.Endpoints
+							.Where(e => e.Switch != null)
+							.Implode(e => String.Format("Коммутатор {0} порт {1}", e.Switch.Name, e.Port), Environment.NewLine);
+						client.CreareAppeal(endpointLog, AppealType.System, false);
 						client.Endpoints.Clear();
 						client.PhysicalClient.HouseObj = null;
 						client.Disabled = true;
@@ -782,7 +775,7 @@ namespace InternetInterface.Controllers
 			decimal tryBalance;
 			if (decimal.TryParse(balanceText, out tryBalance) && tryBalance > 0) {
 				if (clientToch.LawyerPerson == null) {
-					new Payment {
+					DbSession.Save(new Payment {
 						Client = clientToch,
 						Agent = Agent.GetByInitPartner(),
 						PaidOn = DateTime.Now,
@@ -791,7 +784,7 @@ namespace InternetInterface.Controllers
 						BillingAccount = false,
 						Virtual = virtualPayment,
 						Comment = CommentText
-					}.Save();
+					});
 					Notify("Платеж ожидает обработки");
 					Flash["sleepButton"] = true;
 				}
@@ -935,11 +928,11 @@ namespace InternetInterface.Controllers
 			var but_id = Request.Form["graph_button"].Split('_');
 			var briad = DbSession.Load<Brigad>(Convert.ToUInt32(but_id[1]));
 			var interval = Convert.ToUInt32(but_id[0]);
-			new ConnectGraph {
+			DbSession.Save(new ConnectGraph {
 				Brigad = briad,
 				IntervalId = interval,
 				Day = DateTime.Parse(Request.Form["graph_date"])
-			}.Save();
+			});
 			return "Время зарезервировано";
 		}
 

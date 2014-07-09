@@ -17,19 +17,18 @@ namespace InternetInterface.Models
 		{
 		}
 
-		public UserWriteOff(Client client, decimal sum, string comment, bool setRegistrator = true)
-			: this(client, setRegistrator)
+		public UserWriteOff(Client client, decimal sum, string comment)
+			: this(client)
 		{
 			Sum = sum;
 			Comment = comment;
 		}
 
-		public UserWriteOff(Client client, bool setRegistrator = true)
+		public UserWriteOff(Client client)
 		{
 			Client = client;
 			Date = DateTime.Now;
-			if (setRegistrator)
-				Registrator = InitializeContent.Partner;
+			Registrator = InitializeContent.TryGetPartner();
 		}
 
 		[PrimaryKey]

@@ -140,8 +140,7 @@ namespace InternetInterface.Models
 				Channels.Add(channelGroup);
 				Client.UserWriteOffs.Add(new UserWriteOff(Client,
 					channelGroup.ActivationCost,
-					String.Format("Подключение пакета каналов {0}", channelGroup.Name),
-					false));
+					String.Format("Подключение пакета каналов {0}", channelGroup.Name)));
 			}
 			foreach (var channelGroup in Channels.Except(channelGroups).ToArray()) {
 				Channels.Remove(channelGroup);

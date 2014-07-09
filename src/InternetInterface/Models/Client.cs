@@ -944,9 +944,12 @@ where CE.Client = {0}", Id))
 			return String.Format("№{0} - {1}", Id, Name);
 		}
 
-		public virtual Appeals CreareAppeal(string message, AppealType type = AppealType.System)
+		public virtual Appeals CreareAppeal(string message, AppealType type = AppealType.System, bool logBalance = true)
 		{
-			message += string.Format(". Баланс {0}.", Balance.ToString("0.00"));
+			if (String.IsNullOrWhiteSpace(message))
+				return null;
+			if (logBalance)
+				message += string.Format(". Баланс {0}.", Balance.ToString("0.00"));
 			var appeal = new Appeals(message, this, type);
 			Appeals.Add(appeal);
 			return appeal;

@@ -101,6 +101,8 @@ namespace InternetInterface.Test.Integration
 			Assert.True(client.Disabled);
 			Assert.False(client.AutoUnblocked);
 			Assert.That(endpoint, Is.EqualTo(null));
+			var message = client.Appeals.Reverse().FirstOrDefault(a => a.Appeal.Contains("Коммутатор"));
+			Assert.AreEqual("Коммутатор Тестовый коммутатор порт 1", message.Appeal);
 			session.Clear();
 		}
 
