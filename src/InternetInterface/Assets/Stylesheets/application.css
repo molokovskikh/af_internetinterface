@@ -4,3 +4,8 @@
 .borderless-content-subblock {
 	padding-bottom: 20px;
 }
+
+.legend-mark {
+	width:25px;
+	height:25px;
+}

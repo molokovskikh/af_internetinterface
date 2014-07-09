@@ -47,8 +47,11 @@ namespace InternetInterface.Models
 					return "#C8E8CB";
 				if (AppealType == AppealType.User)
 					return "#f5efdf";
-				if (AppealType == AppealType.System)
+				if (AppealType == AppealType.System) {
+					if ((Text ?? "").Contains("Отключена услуга") || (Text ?? "").Contains("Клиент был заблокирован"))
+						return "#F77B7B";
 					return "#e3e7f7";
+				}
 				if (AppealType == AppealType.FeedBack)
 					return "#FCD9D9";
 				return string.Empty;
@@ -98,8 +101,9 @@ namespace InternetInterface.Models
 		public static List<UniversalAppeal> GetAllAppeal(ISession session, Client client, AppealType type)
 		{
 			Expression<Func<Appeals, bool>> predicate;
-			if (type == AppealType.All)
+			if (type == AppealType.All) {
 				predicate = a => a.Client == client;
+			}
 			else {
 				predicate = a => a.Client == client && a.AppealType == type;
 			}

@@ -61,7 +61,7 @@ ${app.JS("validation.js")}
 		</tbody>
 	</table>
 
-	<table class="table legend"">
+	<table>
 		<tr>
 			<td><div class="legend-mark virtual"></div></td>
 			<td>Бонусный платеж</td>
