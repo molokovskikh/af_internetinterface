@@ -41,7 +41,7 @@ namespace InternetInterface.Test.Integration
 			var filter = new SearchFilter {
 				Region = _region.Id
 			};
-			var result = filter.Find(true);
+			var result = filter.Find(session, true);
 			Assert.That(result.Count(r => r.client.Id == client.Id), Is.EqualTo(1));
 		}
 
@@ -56,8 +56,24 @@ namespace InternetInterface.Test.Integration
 			var filter = new SearchFilter {
 				Region = _region.Id
 			};
-			var result = filter.Find(true);
+			var result = filter.Find(session, true);
 			Assert.That(result.Count(r => r.client.Id == client.Id), Is.EqualTo(1));
+		}
+
+		[Test]
+		public void Search_by_address_for_dissolved_client()
+		{
+			var client = ClientHelper.Client();
+			client.PhysicalClient.Street = "славы";
+			client.PhysicalClient.House = 129;
+			client.PhysicalClient.HouseObj = null;
+			session.Save(client);
+			var filter = new SearchFilter();
+			filter.SearchProperties = SearchUserBy.Address;
+			filter.Street = "славы";
+			filter.House = "129";
+			var clients = filter.Find(session, true);
+			Assert.Contains(client.Id, clients.Select(c => c.client.Id).ToArray());
 		}
 	}
 }

@@ -42,7 +42,7 @@ namespace InternetInterface.Controllers
 		[AccessibleThrough(Verb.Get)]
 		public void SearchBy([DataBind("filter")] SearchFilter filter)
 		{
-			var result = filter.Find();
+			var result = filter.Find(DbSession);
 			if (result.Count == 1) {
 				RedirectToUrl(result[0].client.Redirect());
 				return;

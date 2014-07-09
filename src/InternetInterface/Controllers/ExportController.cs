@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using Castle.MonoRail.Framework;
 using Common.Web.Ui.Controllers;
+using Common.Web.Ui.MonoRailExtentions;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Queries;
@@ -13,24 +14,9 @@ namespace InternetInterface.Controllers
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class ExportController : BaseController
 	{
-		private void PrepareExcelHeader(string fileName)
+		public void GetClientsInExcel([DataBind("filter")] SearchFilter filter)
 		{
-			CancelLayout();
-			CancelView();
-
-			Response.Clear();
-			Response.AppendHeader("Content-Disposition",
-				String.Format("attachment; filename=\"{0}\"", Uri.EscapeDataString(fileName)));
-			Response.ContentType = "application/vnd.ms-excel";
-		}
-
-		public void GetClientsInExcel([DataBind("filter")]SearchFilter filter)
-		{
-			PrepareExcelHeader("Клиенты.xls");
-
-			var buf = ExportModel.GetClients(filter);
-
-			Response.OutputStream.Write(buf, 0, buf.Length);
+			this.RenderFile("Клиенты.xls", ExportModel.GetClients(filter, filter.Find(DbSession)));
 		}
 	}
 }

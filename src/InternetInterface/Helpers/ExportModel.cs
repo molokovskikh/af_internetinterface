@@ -6,6 +6,7 @@ using System.Web;
 using Common.Web.Ui.Excel;
 using Common.Web.Ui.Helpers;
 using ExcelLibrary.SpreadSheet;
+using InternetInterface.Controllers;
 using InternetInterface.Models;
 using InternetInterface.Queries;
 using NPOI.HSSF.UserModel;
@@ -15,10 +16,9 @@ namespace InternetInterface.Helpers
 {
 	public class ExportModel
 	{
-		public static byte[] GetClients(SearchFilter filter)
+		public static byte[] GetClients(SearchFilter filter, IList<ClientInfo> clients)
 		{
 			filter.ExportInExcel = true;
-			var clients = filter.Find();
 
 			Workbook wb = new Workbook();
 			Worksheet ws = new Worksheet("Статистика по клиентам");
@@ -70,7 +70,6 @@ namespace InternetInterface.Helpers
 				wb.Save(ms);
 				return ms.ToArray();
 			}
-			return new byte[0];
 		}
 
 		private static void FormatClientsStatisticXls(Worksheet ws)

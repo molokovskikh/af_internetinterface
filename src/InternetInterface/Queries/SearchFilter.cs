@@ -11,6 +11,7 @@ using InternetInterface.Controllers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using NHibernate;
+using NHibernate.Linq;
 
 namespace InternetInterface.Queries
 {
@@ -135,9 +136,10 @@ namespace InternetInterface.Queries
 			return String.Format("{0} {1} ", "C.Name", "ASC");
 		}
 
-		public IList<ClientInfo> Find(bool forTest = false)
+		public IList<ClientInfo> Find(ISession session, bool forTest = false)
 		{
-			if (!forTest && InitializeContent.Partner.IsDiller() && String.IsNullOrEmpty(SearchText))
+			var partner = InitializeContent.Partner;
+			if (!forTest && partner.IsDiller() && String.IsNullOrEmpty(SearchText))
 				return new List<ClientInfo>();
 
 			var selectText = @"SELECT
@@ -151,48 +153,42 @@ left join internet.Tariffs t on t.Id = p.Tariff
 left join internet.houses h on h.Id = p.HouseObj
 join internet.Status S on s.id = c.Status";
 
-			IList<Client> result = new List<Client>();
-			ArHelper.WithSession(session => {
-				var sqlStr = String.Empty;
-				IQuery query = null;
-				var limitPart = InitializeContent.Partner.IsDiller() ? "Limit 5 " : String.Format("Limit {0}, {1}", CurrentPage * PageSize, PageSize);
-				if (ExportInExcel)
-					limitPart = String.Empty;
-				var wherePart = GetWhere(this);
+			var limitPart = partner.IsDiller() ? "Limit 5 " : String.Format("Limit {0}, {1}", CurrentPage * PageSize, PageSize);
+			if (ExportInExcel)
+				limitPart = String.Empty;
+			var wherePart = GetWhere(this);
 
-				sqlStr = String.Format(
-					@"{0}
+			var sqlStr = String.Format(
+				@"{0}
 {1}
 group by c.id
 ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
-				query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Client));
-				SetParameters(query, wherePart);
+			var query = session.CreateSQLQuery(sqlStr).AddEntity(typeof(Client));
+			SetParameters(query, wherePart);
 
-				result = query.List<Client>();
+			var result = query.List<Client>();
 
-				if (!InitializeContent.Partner.IsDiller()) {
-					var newSql = sqlStr.Replace("c.*", "count(*)");
-					newSql = newSql.Replace(", co.Contact", String.Empty);
-					if (!ExportInExcel) {
-						var limitPosition = newSql.IndexOf("Limit");
-						newSql = newSql.Remove(limitPosition);
-					}
-					newSql = String.Format("select count(*) from ({0}) as t1;", newSql);
-					var countQuery = session.CreateSQLQuery(newSql);
-					if (!String.IsNullOrEmpty(SearchText) && wherePart.Contains(":SearchText"))
-						countQuery.SetParameter("SearchText", "%" + SearchText.ToLower() + "%");
-					if (CategorieAccessSet.AccesPartner("SSI"))
-						if (SearchProperties != SearchUserBy.SearchAccount && SearchProperties != SearchUserBy.OuterClientCode)
-							SetParameters(countQuery, wherePart);
-					_lastRowsCount = Convert.ToInt32(countQuery.UniqueResult());
+			if (!partner.IsDiller()) {
+				var newSql = sqlStr.Replace("c.*", "count(*)");
+				newSql = newSql.Replace(", co.Contact", String.Empty);
+				if (!ExportInExcel) {
+					var limitPosition = newSql.IndexOf("Limit");
+					newSql = newSql.Remove(limitPosition);
 				}
+				newSql = String.Format("select count(*) from ({0}) as t1;", newSql);
+				var countQuery = session.CreateSQLQuery(newSql);
+				if (!String.IsNullOrEmpty(SearchText) && wherePart.Contains(":SearchText"))
+					countQuery.SetParameter("SearchText", "%" + SearchText.ToLower() + "%");
+				if (CategorieAccessSet.AccesPartner("SSI"))
+					if (SearchProperties != SearchUserBy.SearchAccount && SearchProperties != SearchUserBy.OuterClientCode)
+						SetParameters(countQuery, wherePart);
+				_lastRowsCount = Convert.ToInt32(countQuery.UniqueResult());
+			}
 
-				return result;
-			});
 
 			var clientsInfo = result.Select(c => new ClientInfo(c)).ToList();
 			var onLineClients =
-				ActiveRecordLinqBase<Lease>.Queryable.Where(l => l.Endpoint.Client != null).Select(c => c.Endpoint.Client.Id).ToList();
+				session.Query<Lease>().Where(l => l.Endpoint.Client != null).Select(c => c.Endpoint.Client.Id).ToList();
 			foreach (var clientInfo in clientsInfo.Where(clientInfo => onLineClients.Contains(clientInfo.client.Id))) {
 				clientInfo.OnLine = true;
 			}
@@ -270,13 +266,13 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 					var where = "where";
 					var whereCount = 0;
 					if (!String.IsNullOrEmpty(filter.City)) {
-						@where += "(LOWER(p.City) like :City or LOWER(l.ActualAdress) like :City)";
+						@where += "(p.City like :City or l.ActualAdress like :City)";
 						whereCount++;
 					}
 					if (!String.IsNullOrEmpty(filter.Street)) {
 						if (whereCount > 0)
 							@where += " and ";
-						@where += "(LOWER(h.Street) like :Street or LOWER(l.ActualAdress) like :Street)";
+						@where += "(h.Street like :Street or l.ActualAdress like :Street or p.Street like :Street)";
 						whereCount++;
 					}
 					if (!String.IsNullOrEmpty(filter.House)) {
@@ -288,7 +284,7 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 					if (!String.IsNullOrEmpty(filter.CaseHouse)) {
 						if (whereCount > 0)
 							@where += " and ";
-						@where += "(LOWER(p.CaseHouse) like :CaseHouse or LOWER(l.ActualAdress) like :CaseHouse)";
+						@where += "(p.CaseHouse like :CaseHouse or l.ActualAdress like :CaseHouse)";
 						whereCount++;
 					}
 					if (!String.IsNullOrEmpty(filter.Apartment)) {
