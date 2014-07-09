@@ -156,7 +156,7 @@ join internet.Status S on s.id = c.Status";
 			var limitPart = partner.IsDiller() ? "Limit 5 " : String.Format("Limit {0}, {1}", CurrentPage * PageSize, PageSize);
 			if (ExportInExcel)
 				limitPart = String.Empty;
-			var wherePart = GetWhere(this);
+			var wherePart = GetWhere();
 
 			var sqlStr = String.Format(
 				@"{0}
@@ -195,32 +195,32 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 			return clientsInfo.ToList();
 		}
 
-		public static string GetWhere(SearchFilter filter)
+		public string GetWhere()
 		{
 			var _return = String.Empty;
 			if (!InitializeContent.Partner.IsDiller()) {
-				if (filter.StatusType > 0)
+				if (StatusType > 0)
 					_return += " and S.Id = :statusType";
 
-				if (filter.ClientTypeFilter == ForSearchClientType.Physical)
+				if (ClientTypeFilter == ForSearchClientType.Physical)
 					_return += " and C.PhysicalClient is not null";
 
-				if (filter.ClientTypeFilter == ForSearchClientType.Lawyer)
+				if (ClientTypeFilter == ForSearchClientType.Lawyer)
 					_return += " and C.LawyerPerson is not null";
 
-				if (filter.EnabledTypeProperties == EndbledType.Disabled)
+				if (EnabledTypeProperties == EndbledType.Disabled)
 					_return += " and c.Disabled";
 
-				if (filter.EnabledTypeProperties == EndbledType.Enabled)
+				if (EnabledTypeProperties == EndbledType.Enabled)
 					_return += " and c.Disabled = false";
 
-				if(filter.Region != null && filter.Region > 0) {
+				if(Region != null && Region > 0) {
 					_return += " and (h.RegionId = :regionid or l.RegionId = :regionid)";
 				}
 
-				if (filter.SearchProperties != SearchUserBy.Address) {
-					if (!String.IsNullOrEmpty(filter.SearchText)) {
-						if (filter.SearchProperties == SearchUserBy.Auto) {
+				if (SearchProperties != SearchUserBy.Address) {
+					if (!String.IsNullOrEmpty(SearchText)) {
+						if (SearchProperties == SearchUserBy.Auto) {
 							return
 								String.Format(
 									@"
@@ -233,28 +233,28 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 	LOWER(l.ActualAdress) like {0} )",
 									":SearchText") + _return;
 						}
-						if (filter.SearchProperties == SearchUserBy.SearchAccount) {
+						if (SearchProperties == SearchUserBy.SearchAccount) {
 							var id = 0u;
-							UInt32.TryParse(filter.SearchText, out id);
+							UInt32.TryParse(SearchText, out id);
 							if (id > 0)
 								return String.Format("where C.id = {0}", id);
 						}
-						if (filter.SearchProperties == SearchUserBy.OuterClientCode) {
+						if (SearchProperties == SearchUserBy.OuterClientCode) {
 							var id = 0u;
-							UInt32.TryParse(filter.SearchText, out id);
+							UInt32.TryParse(SearchText, out id);
 							if (id > 0)
 								return String.Format("where p.ExternalClientId = {0}", id);
 						}
-						if (filter.SearchProperties == SearchUserBy.ByFio) {
+						if (SearchProperties == SearchUserBy.ByFio) {
 							return
 								String.Format(@"
 	WHERE (LOWER(C.Name) like {0} )", ":SearchText")
 									+ _return;
 						}
-						if (filter.SearchProperties == SearchUserBy.TelNum) {
+						if (SearchProperties == SearchUserBy.TelNum) {
 							return String.Format(@"WHERE (LOWER(co.Contact) like {0})", ":SearchText") + _return;
 						}
-						if (filter.SearchProperties == SearchUserBy.ByPassport) {
+						if (SearchProperties == SearchUserBy.ByPassport) {
 							return String.Format(@"
 	WHERE (LOWER(p.PassportSeries) like {0} or LOWER(p.PassportNumber)  like {0} or
 	LOWER(l.ActualAdress) like {0})", ":SearchText")
@@ -265,29 +265,29 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 				else {
 					var where = "where";
 					var whereCount = 0;
-					if (!String.IsNullOrEmpty(filter.City)) {
+					if (!String.IsNullOrEmpty(City)) {
 						@where += "(p.City like :City or l.ActualAdress like :City)";
 						whereCount++;
 					}
-					if (!String.IsNullOrEmpty(filter.Street)) {
+					if (!String.IsNullOrEmpty(Street)) {
 						if (whereCount > 0)
 							@where += " and ";
 						@where += "(h.Street like :Street or l.ActualAdress like :Street or p.Street like :Street)";
 						whereCount++;
 					}
-					if (!String.IsNullOrEmpty(filter.House)) {
+					if (!String.IsNullOrEmpty(House)) {
 						if (whereCount > 0)
 							@where += " and ";
 						@where += "(p.House = :House)";
 						whereCount++;
 					}
-					if (!String.IsNullOrEmpty(filter.CaseHouse)) {
+					if (!String.IsNullOrEmpty(CaseHouse)) {
 						if (whereCount > 0)
 							@where += " and ";
 						@where += "(p.CaseHouse like :CaseHouse or l.ActualAdress like :CaseHouse)";
 						whereCount++;
 					}
-					if (!String.IsNullOrEmpty(filter.Apartment)) {
+					if (!String.IsNullOrEmpty(Apartment)) {
 						if (whereCount > 0)
 							@where += " and ";
 						@where += "(p.Apartment = :Apartment)";
@@ -302,11 +302,11 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 			}
 			else {
 				var id = 0u;
-				UInt32.TryParse(filter.SearchText, out id);
+				UInt32.TryParse(SearchText, out id);
 				if (id > 0) {
 					return String.Format("WHERE (c.Id = {0}) and (C.PhysicalClient is not null)", id);
 				}
-				else if (!String.IsNullOrEmpty(filter.SearchText))
+				if (!String.IsNullOrEmpty(SearchText))
 					return "WHERE (LOWER(C.Name) like :SearchText) and (C.PhysicalClient is not null)";
 			}
 			return String.IsNullOrEmpty(_return) ? String.Empty : String.Format("WHERE {0}", _return.Remove(0, 4));

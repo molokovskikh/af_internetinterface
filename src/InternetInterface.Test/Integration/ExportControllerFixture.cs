@@ -24,7 +24,7 @@ namespace InternetInterface.Test.Integration
 		public void Setup()
 		{
 			Controller = new ExportController();
-			PrepareController(Controller);
+			Prepare(Controller);
 		}
 
 		[Test]

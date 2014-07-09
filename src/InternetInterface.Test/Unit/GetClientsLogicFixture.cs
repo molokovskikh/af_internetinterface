@@ -38,7 +38,7 @@ namespace InternetInterface.Test.Unit
 		{
 			_thisPartner.Role.ReductionName = "Diller";
 			_filter.SearchText = "5";
-			var result = SearchFilter.GetWhere(_filter);
+			var result = _filter.GetWhere();
 			Assert.That(result, Is.EqualTo("WHERE (c.Id = 5) and (C.PhysicalClient is not null)"));
 		}
 
@@ -47,14 +47,14 @@ namespace InternetInterface.Test.Unit
 		{
 			_thisPartner.Role.ReductionName = "Diller";
 			_filter.SearchText = "testText";
-			var result = SearchFilter.GetWhere(_filter);
+			var result = _filter.GetWhere();
 			Assert.That(result, Is.EqualTo("WHERE (LOWER(C.Name) like :SearchText) and (C.PhysicalClient is not null)"));
 		}
 
 		[Test]
 		public void Get_where_office_base()
 		{
-			var result = SearchFilter.GetWhere(_filter);
+			var result = _filter.GetWhere();
 			Assert.That(result, Is.Empty);
 		}
 
@@ -62,7 +62,7 @@ namespace InternetInterface.Test.Unit
 		public void Get_where_office_text()
 		{
 			_filter.SearchText = "testText";
-			var result = SearchFilter.GetWhere(_filter);
+			var result = _filter.GetWhere();
 			Assert.That(result, Is.EqualTo(@"
 	WHERE
 	(LOWER(C.Name) like :SearchText or
@@ -78,7 +78,7 @@ namespace InternetInterface.Test.Unit
 		public void Get_where_office_statusType()
 		{
 			_filter.StatusType = 1;
-			var result = SearchFilter.GetWhere(_filter);
+			var result = _filter.GetWhere();
 			Assert.That(result, Is.EqualTo("WHERE  S.Id = :statusType"));
 		}
 
@@ -86,7 +86,7 @@ namespace InternetInterface.Test.Unit
 		public void Get_where_office_clientTypeFilter_Physical()
 		{
 			_filter.ClientTypeFilter = ForSearchClientType.Physical;
-			var result = SearchFilter.GetWhere(_filter);
+			var result = _filter.GetWhere();
 			Assert.That(result, Is.EqualTo("WHERE  C.PhysicalClient is not null"));
 		}
 
@@ -94,7 +94,7 @@ namespace InternetInterface.Test.Unit
 		public void Get_where_office_clientTypeFilter_Lawyer()
 		{
 			_filter.ClientTypeFilter = ForSearchClientType.Lawyer;
-			var result = SearchFilter.GetWhere(_filter);
+			var result = _filter.GetWhere();
 			Assert.That(result, Is.EqualTo("WHERE  C.LawyerPerson is not null"));
 		}
 
@@ -102,7 +102,7 @@ namespace InternetInterface.Test.Unit
 		public void Get_where_office_EnabledTypeProperties_enabled()
 		{
 			_filter.EnabledTypeProperties = EndbledType.Enabled;
-			var result = SearchFilter.GetWhere(_filter);
+			var result = _filter.GetWhere();
 			Assert.That(result, Is.EqualTo("WHERE  c.Disabled = false"));
 		}
 
@@ -110,7 +110,7 @@ namespace InternetInterface.Test.Unit
 		public void Get_where_office_EnabledTypeProperties_disabled()
 		{
 			_filter.EnabledTypeProperties = EndbledType.Disabled;
-			var result = SearchFilter.GetWhere(_filter);
+			var result = _filter.GetWhere();
 			Assert.That(result, Is.EqualTo("WHERE  c.Disabled"));
 		}
 
@@ -119,7 +119,7 @@ namespace InternetInterface.Test.Unit
 		{
 			_filter.SearchText = "5";
 			_filter.SearchProperties = SearchUserBy.SearchAccount;
-			var result = SearchFilter.GetWhere(_filter);
+			var result = _filter.GetWhere();
 			Assert.That(result, Is.EqualTo("where C.id = 5"));
 		}
 
@@ -128,7 +128,7 @@ namespace InternetInterface.Test.Unit
 		{
 			_filter.SearchText = "5";
 			_filter.SearchProperties = SearchUserBy.ByFio;
-			var result = SearchFilter.GetWhere(_filter);
+			var result = _filter.GetWhere();
 			Assert.That(result, Is.EqualTo(@"
 	WHERE (LOWER(C.Name) like :SearchText )"));
 		}
@@ -138,7 +138,7 @@ namespace InternetInterface.Test.Unit
 		{
 			_filter.SearchText = "5";
 			_filter.SearchProperties = SearchUserBy.TelNum;
-			var result = SearchFilter.GetWhere(_filter);
+			var result = _filter.GetWhere();
 			Assert.That(result, Is.EqualTo("WHERE (LOWER(co.Contact) like :SearchText)"));
 		}
 
@@ -147,7 +147,7 @@ namespace InternetInterface.Test.Unit
 		{
 			_filter.SearchText = "5";
 			_filter.SearchProperties = SearchUserBy.ByPassport;
-			var result = SearchFilter.GetWhere(_filter);
+			var result = _filter.GetWhere();
 			Assert.That(result, Is.EqualTo(String.Format(@"
 	WHERE (LOWER(p.PassportSeries) like {0} or LOWER(p.PassportNumber)  like {0} or
 	LOWER(l.ActualAdress) like {0})", ":SearchText")));
@@ -158,8 +158,8 @@ namespace InternetInterface.Test.Unit
 		{
 			_filter.SearchProperties = SearchUserBy.Address;
 			_filter.City = "testCity";
-			var where = SearchFilter.GetWhere(_filter);
-			Assert.AreEqual(where, @"where(LOWER(p.City) like :City or LOWER(l.ActualAdress) like :City)");
+			var where = _filter.GetWhere();
+			Assert.AreEqual(where, @"where(p.City like :City or l.ActualAdress like :City)");
 		}
 
 		[Test]
@@ -167,8 +167,8 @@ namespace InternetInterface.Test.Unit
 		{
 			_filter.SearchProperties = SearchUserBy.Address;
 			_filter.Street = "Street";
-			var where = SearchFilter.GetWhere(_filter);
-			Assert.AreEqual(where, @"where(LOWER(h.Street) like :Street or LOWER(l.ActualAdress) like :Street)");
+			var where = _filter.GetWhere();
+			Assert.AreEqual(where, @"where(h.Street like :Street or l.ActualAdress like :Street or p.Street like :Street)");
 		}
 
 		[Test]
@@ -176,7 +176,7 @@ namespace InternetInterface.Test.Unit
 		{
 			_filter.SearchProperties = SearchUserBy.Address;
 			_filter.House = "5";
-			var where = SearchFilter.GetWhere(_filter);
+			var where = _filter.GetWhere();
 			Assert.AreEqual(where, @"where(p.House = :House)");
 		}
 
@@ -185,8 +185,8 @@ namespace InternetInterface.Test.Unit
 		{
 			_filter.SearchProperties = SearchUserBy.Address;
 			_filter.CaseHouse = "testCase";
-			var where = SearchFilter.GetWhere(_filter);
-			Assert.AreEqual(where, @"where(LOWER(p.CaseHouse) like :CaseHouse or LOWER(l.ActualAdress) like :CaseHouse)");
+			var where = _filter.GetWhere();
+			Assert.AreEqual(where, @"where(p.CaseHouse like :CaseHouse or l.ActualAdress like :CaseHouse)");
 		}
 
 		[Test]
@@ -194,7 +194,7 @@ namespace InternetInterface.Test.Unit
 		{
 			_filter.SearchProperties = SearchUserBy.Address;
 			_filter.Apartment = "5";
-			var where = SearchFilter.GetWhere(_filter);
+			var where = _filter.GetWhere();
 			Assert.AreEqual(where, @"where(p.Apartment = :Apartment)");
 		}
 
@@ -207,8 +207,8 @@ namespace InternetInterface.Test.Unit
 			_filter.House = "testHouse";
 			_filter.CaseHouse = "testCaseCouse";
 			_filter.Apartment = "restApartment";
-			var where = SearchFilter.GetWhere(_filter);
-			Assert.AreEqual(where, @"where(LOWER(p.City) like :City or LOWER(l.ActualAdress) like :City) and (LOWER(h.Street) like :Street or LOWER(l.ActualAdress) like :Street) and (p.House = :House) and (LOWER(p.CaseHouse) like :CaseHouse or LOWER(l.ActualAdress) like :CaseHouse) and (p.Apartment = :Apartment)");
+			var where = _filter.GetWhere();
+			Assert.AreEqual(where, @"where(p.City like :City or l.ActualAdress like :City) and (h.Street like :Street or l.ActualAdress like :Street or p.Street like :Street) and (p.House = :House) and (p.CaseHouse like :CaseHouse or l.ActualAdress like :CaseHouse) and (p.Apartment = :Apartment)");
 		}
 
 		[Test]

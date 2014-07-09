@@ -127,7 +127,7 @@ namespace InternetInterface.Test.Integration
 			session.Save(bankPayment);
 
 			var paymentsController = new PaymentsController();
-			PrepareController(paymentsController);
+			Prepare(paymentsController);
 			paymentsController.DbSession = session;
 			paymentsController.Delete(bankPayment.Id);
 
