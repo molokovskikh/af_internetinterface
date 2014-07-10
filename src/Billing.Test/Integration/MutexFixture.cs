@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using BillingService;
 using Castle.ActiveRecord;
 using Common.Tools;
 using InternetInterface.Models;

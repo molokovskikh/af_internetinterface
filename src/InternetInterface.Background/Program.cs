@@ -43,34 +43,7 @@ namespace InternetInterface.Background
 
 				tasks.Each(t => t.Cancellation = runner.Cancellation);
 
-				var cmd = args.FirstOrDefault();
-
-				if (cmd.Match("uninstall")) {
-					CommandService.Uninstall();
-					return 0;
-				}
-				if (cmd.Match("install")) {
-					CommandService.Install();
-					return 0;
-				}
-				if (cmd.Match("console")) {
-					runner.Start();
-					if (Console.IsInputRedirected) {
-						Console.WriteLine("Для завершения нажмите ctrl-c");
-						Console.CancelKeyPress += (e, a) => runner.Stop();
-						runner.Cancellation.WaitHandle.WaitOne();
-					}
-					else {
-						Console.WriteLine("Для завершения нажмите любую клавишу");
-						Console.ReadLine();
-						runner.Stop();
-					}
-					runner.Join();
-					return 0;
-				}
-
-				ServiceBase.Run(new CommandService(runner));
-				return 0;
+				return CommandService.Main(args, runner);
 			}
 			catch(Exception e) {
 				log.Error("Ошибка при запуске приложения", e);
