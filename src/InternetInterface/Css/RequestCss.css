@@ -1,24 +1,24 @@
 ﻿#content
 {
-width:75%;
-z-index:10;
-border-right:#ddd 1px solid;
-min-height: 700px;
-margin: 0px;
+	width:75%;
+	z-index:10;
+	border-right:#ddd 1px solid;
+	min-height: 700px;
+	margin: 0px;
 }
 
 #sidebar {
-float:right;
-width:14%;
-z-index:9;
-position:relative;
-margin: 0px;
+	float:right;
+	width:14%;
+	z-index:9;
+	position:relative;
+	margin: 0px;
 }
 
-	.body_cl
-	{
-		min-width: 1024px;
-	}
+.body_cl
+{
+	min-width: 1024px;
+}
 
 .fontgit
 {
@@ -26,6 +26,7 @@ margin: 0px;
 	font-size: small;
 	font-weight: normal;
 }
+
 div.scroller
 {
 	min-width:1250;

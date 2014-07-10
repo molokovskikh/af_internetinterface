@@ -22,7 +22,7 @@ namespace InternetInterface.Test.Helpers
 				Client = client,
 			};
 			session.Save(endpoint);
-			defaultUrl = string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}&filter.EditingConnect=true&filter.Editing={1}", client.Id, false);
+			defaultUrl = string.Format("UserInfo/SearchUserInfo?filter.ClientCode={0}&filter.EditingConnect=true&filter.Editing={1}", client.Id, false);
 		}
 
 		protected BankPayment SavePayment(Client payer)

@@ -130,5 +130,21 @@ namespace InternetInterface.Helpers
 			}
 			return base.LinkTo(item);
 		}
+
+		public string LinkToTitled(object item, object title)
+		{
+			if (item == null)
+				return "";
+			if (NHibernateUtil.GetClass(item) == typeof(Client)) {
+				var client = ((Client)item);
+				var action = "SearchUserInfo";
+				if (client.GetClientType() == ClientType.Legal)
+					action = "LawyerPersonInfo";
+				return LinkTo(title != null ? title.ToString() : client.Name, "UserInfo", action, new Dictionary<string, object> {
+					{ "filter.ClientCode", client.Id }
+				});
+			}
+			return base.LinkTo(item, title, null);
+		}
 	}
 }

@@ -39,7 +39,7 @@ namespace InternetInterface.Models
 
 		public virtual Request GetRequestForThis()
 		{
-			return Request.Queryable.FirstOrDefault(r => r.Street == House.Street
+			return ActiveRecordLinqBase<Request>.Queryable.FirstOrDefault(r => r.Street == House.Street
 				&& r.House == House.Number
 				&& r.CaseHouse == House.Case && r.Apartment == Number
 				&& r.Registrator != null);

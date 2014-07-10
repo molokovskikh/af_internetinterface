@@ -15,7 +15,7 @@ namespace InternetInterface.Test.Functional
 		{
 			var commutator = new NetworkSwitch("Тестовый коммутатор для регистрации клиента", session.Query<Zone>().First());
 			session.Save(commutator);
-			Open("Register/RegisterLegalPerson.rails");
+			Open("Register/RegisterLegalPerson");
 			var name = "Тестовый клиент" + DateTime.Now;
 			browser.FindElementByName("LegalPerson_Name").Clear();
 			browser.FindElementByName("LegalPerson_Name").SendKeys(name);
@@ -46,7 +46,7 @@ namespace InternetInterface.Test.Functional
 		[Test(Description = "Проверяет сохранение юр.лица без заказа")]
 		public void RegisterLegalPersonWithoutOrderTest()
 		{
-			Open("Register/RegisterLegalPerson.rails");
+			Open("Register/RegisterLegalPerson");
 			var name = "Тестовый клиент" + DateTime.Now;
 			browser.FindElementById("LegalPerson_Name").SendKeys(name);
 			browser.FindElementById("LegalPerson_ShortName").SendKeys(name);
@@ -57,7 +57,7 @@ namespace InternetInterface.Test.Functional
 		[Test(Description = "Проверяет обязательность поля с датой начала для заказа")]
 		public void RegisterLegalPersonWithoutBeginDateTest()
 		{
-			Open("Register/RegisterLegalPerson.rails");
+			Open("Register/RegisterLegalPerson");
 			var name = "Тестовый клиент" + DateTime.Now;
 			browser.FindElementById("LegalPerson_Name").SendKeys(name);
 			browser.FindElementById("LegalPerson_ShortName").SendKeys(name);

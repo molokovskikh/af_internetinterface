@@ -1,11 +1,8 @@
-п»їusing System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using System;
 using InternetInterface.Interfaces;
 using InternetInterface.Models;
 
-namespace InternetInterface.AllLogic
+namespace InternetInterface.Helpers
 {
 	public class HardwareHelper
 	{
@@ -37,23 +34,23 @@ namespace InternetInterface.AllLogic
 		{
 			switch (mashineName) {
 				case "Port":
-					return "РџРѕСЂС‚";
+					return "Порт";
 				case "InUcastPkts":
-					return "РџРѕР»СѓС‡РµРЅРѕ РїР°РєРµС‚РѕРІ";
+					return "Получено пакетов";
 				case "InMcastPkts":
-					return "РџРѕР»СѓС‡РµРЅРѕ РјСѓР»СЊС‚РёРєР°СЃС‚ РїР°РєРµС‚РѕРІ";
+					return "Получено мультикаст пакетов";
 				case "InBcastPkts":
-					return "РџРѕР»СѓС‡РµРЅРѕ С€РёСЂРѕРєРѕРІРµС‰Р°С‚РµР»СЊРЅС‹С… РїР°РєРµС‚РѕРІ";
+					return "Получено широковещательных пакетов";
 				case "InOctets":
-					return "РџСЂРёРЅСЏС‚Рѕ Р±Р°Р№С‚";
+					return "Принято байт";
 				case "OutUcastPkts":
-					return "РћС‚РїСЂР°РІР»РµРЅРѕ РїР°РєРµС‚РѕРІ";
+					return "Отправлено пакетов";
 				case "OutMcastPkts":
-					return "РћС‚РїСЂР°РІР»РµРЅРѕ РјСѓР»СЊС‚РёРєР°СЃС‚ РїР°РєРµС‚РѕРІ";
+					return "Отправлено мультикаст пакетов";
 				case "OutBcastPkts":
-					return "РћС‚РїСЂР°РІР»РµРЅРѕ С€РёСЂРѕРєРѕРІРµС‰Р°С‚РµР»СЊРЅС‹С… РїР°РєРµС‚РѕРІ";
+					return "Отправлено широковещательных пакетов";
 				case "OutOctets":
-					return "РћС‚РїСЂР°РІР»РµРЅРѕ Р±Р°Р№С‚";
+					return "Отправлено байт";
 				default:
 					return mashineName;
 			}

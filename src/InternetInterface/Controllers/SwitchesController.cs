@@ -29,7 +29,7 @@ namespace InternetInterface.Controllers
 
 	[Helper(typeof(PaginatorHelper))]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
-	public class SwitchesController : BaseController
+	public class SwitchesController : InternetInterfaceController
 	{
 		public SwitchesController()
 		{
@@ -47,12 +47,6 @@ namespace InternetInterface.Controllers
 				RenderJson(switches.Select(s => new { id = s.Id, name = s.Name }));
 			else
 				PropertyBag["Switches"] = switches;
-		}
-
-		private void RenderJson(object data)
-		{
-			Response.ContentType = "application/json";
-			RenderText(JsonConvert.SerializeObject(data));
 		}
 
 		public void Delete(uint id)

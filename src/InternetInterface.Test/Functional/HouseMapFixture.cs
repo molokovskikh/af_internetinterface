@@ -57,7 +57,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void FindHouseTest()
 		{
-			Open("HouseMap/FindHouse.rails");
+			Open("HouseMap/FindHouse");
 			Click("Найти");
 			var rowsCount = browser.FindElements(By.XPath("//table[@id='find_result_table']/tbody/tr")).Count;
 			Assert.Greater(rowsCount, 0);

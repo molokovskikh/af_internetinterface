@@ -20,7 +20,7 @@ namespace InternetInterface.Test.Functional
 
 			Save(brigad, client, connect);
 
-			Open("UserInfo/RequestGraph.rails");
+			Open("UserInfo/RequestGraph");
 			AssertText("Настройки");
 		}
 	}

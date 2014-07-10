@@ -28,7 +28,7 @@ namespace InternetInterface.Test.Functional
 		[Test, Ignore("Клиента без тарифа не должно существовать")]
 		public void Edit_tariff_for_client_without_tariff()
 		{
-			Open("UserInfo/SearchUserInfo.rails?filter.ClientCode=" + client.Id);
+			Open("UserInfo/SearchUserInfo?filter.ClientCode=" + client.Id);
 			AssertText("Информация по клиенту");
 			Click("Редактировать");
 			AssertText("Личная информация");
@@ -40,7 +40,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void Activate_iptv_box_rent()
 		{
-			Open("UserInfo/SearchUserInfo.rails?filter.ClientCode=" + client.Id);
+			Open("UserInfo/SearchUserInfo?filter.ClientCode=" + client.Id);
 			Click("Управление услугами");
 			Click("Аренда приставки");
 			var el = browser.FindElementByCssSelector("input[value='9']");

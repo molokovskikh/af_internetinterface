@@ -34,7 +34,7 @@ namespace Billing.Test.Integration
 					Street = "testStreet",
 					Tariff = tariff
 				};
-				request.Save();
+				ActiveRecordMediator.Save(request);
 			}
 			billing.Compute();
 			using (new SessionScope()) {
@@ -49,7 +49,7 @@ namespace Billing.Test.Integration
 			billing.On();
 			billing.Compute();
 			using (new SessionScope()) {
-				request.Refresh();
+				ActiveRecordMediator.Refresh(request);
 				Assert.IsTrue(request.PaidFriendBonus);
 				payment = Payment.Queryable.Where(p => p.Client == friend_client).ToList();
 				Assert.That(payment.Count, Is.EqualTo(1));

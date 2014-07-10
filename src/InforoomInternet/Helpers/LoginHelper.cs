@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using InternetInterface;
+using InternetInterface.Helpers;
 using InternetInterface.Models;
 
 namespace InforoomInternet.Helpers

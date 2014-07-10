@@ -26,18 +26,12 @@ namespace InternetInterface.Test.Functional
 				Client = Client,
 			};
 			session.Save(EndPoint);
-			ClientUrl = string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}&filter.EditingConnect=true&filter.Editing=true", Client.Id);
-		}
-
-		public void WaitAjax()
-		{
-			new WebDriverWait(browser, 5.Second())
-				.Until(d => Convert.ToInt32(Eval("return $.active")) == 0);
+			ClientUrl = string.Format("UserInfo/SearchUserInfo?filter.ClientCode={0}&filter.EditingConnect=true&filter.Editing=true", Client.Id);
 		}
 
 		protected void Open()
 		{
-			Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", Client.Id));
+			Open(string.Format("UserInfo/SearchUserInfo?filter.ClientCode={0}", Client.Id));
 		}
 	}
 }

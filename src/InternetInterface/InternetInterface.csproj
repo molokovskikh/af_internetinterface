@@ -237,6 +237,7 @@
     <None Include="Views\Payments\New.brail" />
     <None Include="Views\Payments\ProcessPayments.brail" />
     <Content Include="Views\Register\HouseSelect.brail" />
+    <Content Include="Views\Register\CheckClient.brail" />
     <None Include="Views\Register\RegisterLegalPerson.brail" />
     <None Include="Views\Register\RegisterRequest.brail" />
     <None Include="Views\Rescues\404.brail" />
@@ -319,8 +320,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AllLogic\HardwareHelper.cs" />
-    <Compile Include="AllLogic\Validation.cs" />
     <Compile Include="Components\ContactTypeList.cs" />
     <Compile Include="Controllers\ActsController.cs" />
     <Compile Include="Controllers\AgentInfoController.cs" />
@@ -369,7 +368,9 @@
     <Compile Include="Helpers\ActiveDirectoryHelper.cs" />
     <Compile Include="Helpers\AppHelper.cs" />
     <Compile Include="Helpers\BigEndianConverter.cs" />
+    <Compile Include="Helpers\CryptoPass.cs" />
     <Compile Include="Helpers\DeleteListner.cs" />
+    <Compile Include="Helpers\HardwareHelper.cs" />
     <Compile Include="Helpers\MailAboutOrder.cs" />
     <Compile Include="Helpers\EmailHelper.cs" />
     <Compile Include="Helpers\ExceptionHelper.cs" />
@@ -387,6 +388,7 @@
     <Compile Include="Helpers\TelnetInterface.cs" />
     <Compile Include="Helpers\TextHelper.cs" />
     <Compile Include="Helpers\UsersParsers.cs" />
+    <Compile Include="Helpers\Validation.cs" />
     <Compile Include="Helpers\ValidationHelper.cs" />
     <Compile Include="Helpers\ValidBuilderHelper.cs" />
     <Compile Include="Initializers\ActiveRecord.cs" />
@@ -458,7 +460,6 @@
     <Compile Include="Models\Payment.cs" />
     <Compile Include="Models\Tariff.cs" />
     <Compile Include="Models\Universal\ValidActiveRecordLinqBase.cs" />
-    <Compile Include="AllLogic\CryptoPass.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

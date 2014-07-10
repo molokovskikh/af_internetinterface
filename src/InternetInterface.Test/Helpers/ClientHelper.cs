@@ -5,6 +5,7 @@ using Castle.ActiveRecord.Framework;
 using Castle.Components.Validator;
 using Common.Tools;
 using Common.Web.Ui.ActiveRecordExtentions;
+using InternetInterface.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Models.Services;
 using NHibernate.Linq;

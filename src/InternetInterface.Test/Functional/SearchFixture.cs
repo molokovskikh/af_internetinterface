@@ -14,7 +14,7 @@ namespace InternetInterface.Test.Functional
 		[SetUp]
 		public void Setup()
 		{
-			Open("Search/SearchUsers.rails");
+			Open("Search/SearchUsers");
 		}
 
 		[Test]
@@ -45,7 +45,7 @@ namespace InternetInterface.Test.Functional
 			disabledClient.Disabled = true;
 			session.Save(disabledClient);
 
-			Open("Search/SearchUsers.rails");
+			Open("Search/SearchUsers");
 			RunJavaScript("$('#filter_clientTypeFilter_0').click();");
 			RunJavaScript("$('#filter_EnabledTypeProperties_0').click();");
 

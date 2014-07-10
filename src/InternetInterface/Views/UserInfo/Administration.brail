@@ -4,11 +4,6 @@
 		border: 0px;
 		padding-left:0px;
 	}
-	.comment_text
-	{
-		color:Gray;
-		font-size:small;
-	}
 </style>
 <table class="table" style="width:400px">
 	<tbody>

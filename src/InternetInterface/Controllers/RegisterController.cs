@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Common.Tools;
 using Common.Web.Ui.Controllers;
 using Common.Web.Ui.NHibernateExtentions;
-using InternetInterface.AllLogic;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
@@ -58,34 +58,32 @@ namespace InternetInterface.Controllers
 	}
 
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
-	public class RegisterController : BaseController
+	public class RegisterController : InternetInterfaceController
 	{
 		[AccessibleThrough(Verb.Post)]
-		public void RegisterClient(decimal balanceText, uint status, uint BrigadForConnect, bool VisibleRegisteredInfo, uint house_id, uint requestID)
+		public void RegisterClient(decimal balanceText, uint status, uint BrigadForConnect, bool VisibleRegisteredInfo, uint house_id, uint requestID, string marker)
 		{
 			SetARDataBinder();
 
-			var registrator = InitializeContent.Partner;
-			var agent = DbSession.Query<Agent>().FirstOrDefault(a => a.Partner == registrator);
+			var agent = DbSession.Query<Agent>().FirstOrDefault(a => a.Partner == Partner);
 			var settings = new Settings(DbSession);
 
 			var physicalClient = new PhysicalClient {
 				Balance = balanceText
 			};
-			var client = new Client(physicalClient, settings, registrator);
+			var client = new Client(physicalClient, settings, Partner);
 			var iptv = client.Iptv;
 			var internet = client.Internet;
 
+			client.PhysicalClient.UpdateHouse(DbSession.Get<House>(house_id));
 			BindObjectInstance(physicalClient, "client", AutoLoadBehavior.Always);
 			BindObjectInstance(iptv, "iptv", AutoLoadBehavior.Always);
 			BindObjectInstance(internet, "internet", AutoLoadBehavior.Always);
 
 			PropertyBag["iptv"] = iptv;
 			PropertyBag["internet"] = internet;
-
-			if (Validator.IsValid(physicalClient) && Validator.IsValid(client)) {
-				client.PhysicalClient.UpdateHouse(DbSession.Load<House>(house_id));
-				client.AfterRegistration(agent, registrator);
+			if (IsValid(physicalClient) && IsValid(client)) {
+				client.AfterRegistration(agent, Partner);
 				foreach (var payment in client.Payments)
 					DbSession.Save(payment);
 
@@ -103,6 +101,14 @@ namespace InternetInterface.Controllers
 				if (apartmentForClient != null)
 					DbSession.Delete(apartmentForClient);
 
+				var request = DbSession.Get<Request>(requestID);
+				if (request != null) {
+					request.Label = DbSession.Query<Label>().FirstOrDefault(l => l.ShortComment == "Registered");
+					request.Archive = true;
+					request.Client = client;
+					DbSession.Save(request);
+				}
+
 				Flash["_client"] = client;
 				Flash["Password"] = password;
 				Flash["Client"] = physicalClient;
@@ -113,23 +119,15 @@ namespace InternetInterface.Controllers
 				else
 					Flash["WhoConnected"] = null;
 				Flash["ConnectInfo"] = client.GetConnectInfo(DbSession).FirstOrDefault();
-				foreach (var requestse in Models.Request.FindAllByProperty("Id", requestID)) {
-					if (requestse.Registrator != null) {
-						DbSession.Save(physicalClient);
-					}
-					requestse.Label = DbSession.Query<Label>().FirstOrDefault(l => l.ShortComment == "Registered");
-					requestse.Archive = true;
-					requestse.Client = client;
-					DbSession.Save(requestse);
-				}
-				if (registrator.Role.ReductionName == "Office")
+				if (Partner.Role.ReductionName == "Office") {
 					if (VisibleRegisteredInfo)
-						RedirectToUrl("../UserInfo/ClientRegisteredInfo.rails");
+						RedirectToUrl("../UserInfo/ClientRegisteredInfo");
 					else {
-						RedirectToUrl("../UserInfo/SearchUserInfo.rails?filter.ClientCode=" + client.Id);
+						RedirectToUrl("../UserInfo/SearchUserInfo?filter.ClientCode=" + client.Id);
 					}
-				if (registrator.Role.ReductionName == "Diller")
-					RedirectToUrl("../UserInfo/ClientRegisteredInfoFromDiller.rails");
+				}
+				else if (Partner.IsDiller())
+					RedirectToUrl("../UserInfo/ClientRegisteredInfoFromDiller");
 			}
 			else {
 				EditorValues();
@@ -137,9 +135,10 @@ namespace InternetInterface.Controllers
 				if (!CategorieAccessSet.AccesPartner("SSI"))
 					status = 1;
 
+				PropertyBag["requestID"] = requestID;
 				PropertyBag["Client"] = physicalClient;
 				PropertyBag["BalanceText"] = balanceText;
-				PropertyBag["ChHouse"] = DbSession.Get<House>(house_id);
+				PropertyBag["ChHouse"] = DbSession.Get<House>(house_id) ?? new House();
 				PropertyBag["Applying"] = "false";
 				PropertyBag["ChStatus"] = status;
 				PropertyBag["ChBrigad"] = BrigadForConnect;
@@ -147,7 +146,6 @@ namespace InternetInterface.Controllers
 
 				PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClient>(physicalClient);
 			}
-			PropertyBag["RegionList"] = RegionHouse.All();
 		}
 
 		public void RegisterLegalPerson()
@@ -200,17 +198,6 @@ namespace InternetInterface.Controllers
 					}
 				}
 
-				if (!string.IsNullOrEmpty(person.Telephone)) {
-					client.Contacts.Add(new Contact(client, ContactType.MobilePhone, person.Telephone) {
-						Comment = "Указан при регистрации"
-					});
-				}
-				if (!string.IsNullOrEmpty(person.Email)) {
-					client.Contacts.Add(new Contact(client, ContactType.Email, person.Email) {
-						Comment = "Указан при регистрации"
-					});
-				}
-
 				DbSession.Save(client);
 				DbSession.SaveMany(client.Contacts.ToArray());
 				DbSession.SaveMany(client.Orders.ToArray());
@@ -240,6 +227,7 @@ namespace InternetInterface.Controllers
 			}
 		}
 
+		[AccessibleThrough(Verb.Get)]
 		public void RegisterClient()
 		{
 			var client = new PhysicalClient();
@@ -248,6 +236,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Client"] = client;
 		}
 
+		[AccessibleThrough(Verb.Get)]
 		public void RegisterClient(uint requestID)
 		{
 			var request = DbSession.Load<Request>(requestID);
@@ -347,12 +336,12 @@ namespace InternetInterface.Controllers
 			PropertyBag["Applying"] = "false";
 			PropertyBag["BalanceText"] = 0;
 			PropertyBag["ConnectInfo"] = new ClientConnectInfo();
-			PropertyBag["RegionList"] = DbSession.Query<RegionHouse>().ToList();
 		}
 
 		private void EditorValues()
 		{
-			PropertyBag["Regions"] = DbSession.Query<RegionHouse>().ToList();
+			PropertyBag["RegionList"] = RegionHouse.All();
+			PropertyBag["Regions"] = RegionHouse.All();
 			PropertyBag["Brigads"] = Brigad.All(DbSession);
 			PropertyBag["Statuss"] = Status.FindAllSort();
 			PropertyBag["Tariffs"] = Tariff.FindAllSort();
@@ -405,6 +394,26 @@ namespace InternetInterface.Controllers
 			var houses = DbSession.Query<House>().Where(h => h.Region.Id == regionCode).OrderBy(h => h.Street).ToList();
 			PropertyBag["ChHouse"] = DbSession.Get<House>(chHouse) ?? new House();
 			PropertyBag["Houses"] = houses;
+		}
+
+		public void CheckClient()
+		{
+			CancelLayout();
+			var settings = new Settings(DbSession);
+			var physicalClient = new PhysicalClient();
+			var client = new Client(physicalClient, settings, Partner);
+
+			BindObjectInstance(physicalClient, "client");
+			var exist = DbSession.Query<PhysicalClient>()
+				.FirstOrDefault(c => c.Surname == physicalClient.Surname
+					&& c.Name == physicalClient.Name
+					&& c.Patronymic == physicalClient.Patronymic);
+			if (exist != null) {
+				PropertyBag["client"] = exist.Client;
+			}
+			else {
+				RenderText("");
+			}
 		}
 	}
 }

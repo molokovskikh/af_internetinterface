@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using InternetInterface.AllLogic;
-using InternetInterface.Controllers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using InternetInterface.Queries;
-using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 
 namespace InternetInterface.Test.Unit

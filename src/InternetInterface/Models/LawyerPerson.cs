@@ -56,12 +56,6 @@ namespace InternetInterface.Models
 		[Property, Auditable("ИНН")]
 		public virtual string INN { get; set; }
 
-		[ValidateEmail("Ошибка ввода Email (adr@dom.com)")]
-		public virtual string Email { get; set; }
-
-		[ValidateRegExp(@"^((\d{3})-(\d{7}))", "Ошибка формата телефонного номера (***-*******)")]
-		public virtual string Telephone { get; set; }
-
 		[Property, Auditable("Контактное лицо")]
 		public virtual string ContactPerson { get; set; }
 

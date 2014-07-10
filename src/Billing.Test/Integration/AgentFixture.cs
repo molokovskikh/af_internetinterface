@@ -28,7 +28,7 @@ namespace Billing.Test.Integration
 					Street = string.Empty,
 					Tariff = Tariff.FindFirst()
 				};
-				request.Save();
+				ActiveRecordMediator.Save(request);
 				client.BeginWork = DateTime.Now;
 				client.Request = request;
 				client.Save();
@@ -58,7 +58,7 @@ namespace Billing.Test.Integration
 					Street = string.Empty,
 					Tariff = Tariff.FindFirst()
 				};
-				request.Save();
+				ActiveRecordMediator.Save(request);
 			}
 			using (new SessionScope()) {
 				client.BeginWork = DateTime.Now;
@@ -68,7 +68,7 @@ namespace Billing.Test.Integration
 			billing.Compute();
 			billing.Compute();
 			using (new SessionScope()) {
-				request.Refresh();
+				ActiveRecordMediator.Refresh(request);
 				Assert.IsFalse(request.PaidBonus);
 				var payment = new Payment {
 					Client = client,
@@ -81,7 +81,7 @@ namespace Billing.Test.Integration
 			billing.Compute();
 			billing.Compute();
 			using (new SessionScope()) {
-				request.Refresh();
+				ActiveRecordMediator.Refresh(request);
 				Assert.IsTrue(request.PaidBonus);
 				var payments = PaymentsForAgent.Queryable.Where(p => p.Agent == InitializeContent.Partner).ToList();
 				Assert.That(payments.Count, Is.EqualTo(1));

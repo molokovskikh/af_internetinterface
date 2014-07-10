@@ -194,7 +194,6 @@
     <Compile Include="Troubleshoot.cs" />
     <Compile Include="Unit\ByteFixture.cs" />
     <Compile Include="Unit\ClientFixture.cs" />
-    <Compile Include="Unit\DataBinderFixture.cs" />
     <Compile Include="Unit\HouseFixture.cs" />
     <Compile Include="Unit\GetClientsLogicFixture.cs" />
     <Compile Include="Unit\InternetFixture.cs" />

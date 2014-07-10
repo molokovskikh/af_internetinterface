@@ -14,7 +14,6 @@ using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.MonoRailExtentions;
 using Common.Web.Ui.NHibernateExtentions;
-using InternetInterface.AllLogic;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
@@ -552,6 +551,7 @@ namespace InternetInterface.Controllers
 			var iptv = client.Iptv;
 			var internet = client.Internet;
 
+			updateClient.UpdateHouse(DbSession.Get<House>(house_id));
 			SetARDataBinder();
 			BindObjectInstance(iptv, "iptv", AutoLoadBehavior.NullIfInvalidKey);
 			BindObjectInstance(internet, "internet", AutoLoadBehavior.NullIfInvalidKey);
@@ -564,11 +564,6 @@ namespace InternetInterface.Controllers
 			if (Validator.IsValid(updateClient)) {
 				if (!oldStatus.ManualSet && client.Status.Id != statusEntity.Id)
 					message = Message.Warning(string.Format("Статус не был изменен, т.к. нельзя изменить статус '{0}' вручную. Остальные данные были сохранены.", client.Status.Name));
-
-				var house = DbSession.Get<House>(house_id);
-				if (house != null) {
-					updateClient.UpdateHouse(house);
-				}
 
 				if (!string.IsNullOrEmpty(comment)) {
 					client.LogComment = comment;

@@ -580,6 +580,10 @@ div.commented, .commented {
 	width: 630px;
 }
 
+.width900 {
+	width: 900px;
+}
+
 #floatedInfo {
 	float:left;
 	padding-left:30px;

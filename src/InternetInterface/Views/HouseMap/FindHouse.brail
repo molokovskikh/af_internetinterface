@@ -111,6 +111,6 @@
 </center>
 
 <div id="myModal"class="reveal-modal">
-    <% OutputSubView("""\HouseMap\RegisterHouse""") %>
-<a class="close-reveal-modal">х</a>
+	<% OutputSubView("""\HouseMap\RegisterHouse""") %>
+	<a class="close-reveal-modal">х</a>
 </div>

@@ -9,3 +9,9 @@
 	width:25px;
 	height:25px;
 }
+
+.comment_text
+{
+	color:Gray;
+	font-size:small;
+}

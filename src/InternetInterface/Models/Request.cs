@@ -13,7 +13,7 @@ using InternetInterface.Helpers;
 namespace InternetInterface.Models
 {
 	[ActiveRecord("Requests", Schema = "Internet", Lazy = true)]
-	public class Request : ActiveRecordLinqBase<Request>
+	public class Request
 	{
 		[PrimaryKey]
 		public virtual uint Id { get; set; }

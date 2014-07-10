@@ -33,7 +33,7 @@ namespace InternetInterface.Test.Functional
 		[Test, Ignore("Отключет функционал")]
 		public void View_invoices()
 		{
-			Open("Map/SiteMap.rails");
+			Open("Map/SiteMap");
 			Click("Счета");
 			AssertText("Счета");
 		}

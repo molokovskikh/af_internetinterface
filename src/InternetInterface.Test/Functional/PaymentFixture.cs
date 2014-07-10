@@ -74,7 +74,7 @@ namespace InternetInterface.Test.Functional
 			var payment = new Payment(client, 1000);
 			Save(client, payment);
 
-			Open("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", client.Id);
+			Open("UserInfo/SearchUserInfo?filter.ClientCode={0}", client.Id);
 			Css("#show_payments").Click();
 			WaitForVisibleCss("#paymentReason");
 			Css("#paymentReason").SendKeys("тест");
@@ -91,7 +91,7 @@ namespace InternetInterface.Test.Functional
 		{
 			var client = ClientHelper.Client();
 			Save(client);
-			Open("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", client.Id);
+			Open("UserInfo/SearchUserInfo?filter.ClientCode={0}", client.Id);
 			browser.FindElementByName("BalanceText").Clear();
 			browser.FindElementByName("BalanceText").SendKeys("100");
 			browser.FindElementByName("CommentText").Clear();

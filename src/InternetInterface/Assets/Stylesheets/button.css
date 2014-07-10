@@ -3,6 +3,10 @@
 	background-color: transparent;
 }
 
+button.button:disabled, input[type=submit]:disabled, input[type=button]:disabled {
+	color: GrayText;
+}
+
 a.button:link, a.button:visited, a.button:hover, a.button:active, button.button, input[type=submit], input[type=button] {
   color: #222;
   margin:0 7px 0 0;

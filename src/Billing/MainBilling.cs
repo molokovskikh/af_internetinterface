@@ -278,18 +278,18 @@ set s.LastStartFail = true;")
 					if (client.Payments.Sum(p => p.Sum) >= needToAgentSum * agentSettings) {
 						var request = client.Request;
 						request.PaidBonus = true;
-						request.Update();
-						new PaymentsForAgent {
+						ActiveRecordMediator.Save(request);
+						ActiveRecordMediator.Save(new PaymentsForAgent {
 							Action = AgentTariff.GetAction(AgentActions.WorkedClient),
 							Agent = request.Registrator,
 							RegistrationDate = SystemTime.Now(),
 							Sum = needToAgentSum,
 							Comment = string.Format("Клиент {0} начал работать (Заявка №{1})", client.Id, client.Request.Id)
-						}.Save();
+						});
 					}
 				}
 
-				var friendBonusRequests = Request.Queryable.Where(r =>
+				var friendBonusRequests = ActiveRecordLinqBase<Request>.Queryable.Where(r =>
 					r.Client != null &&
 						r.FriendThisClient != null &&
 						!r.PaidFriendBonus &&
@@ -306,7 +306,7 @@ set s.LastStartFail = true;")
 							Comment = string.Format("Подключи друга {0}", friendBonusRequest.FriendThisClient.Id)
 						}.Save();
 						friendBonusRequest.PaidFriendBonus = true;
-						friendBonusRequest.Update();
+						ActiveRecordMediator.Save(friendBonusRequest);
 					}
 				}
 				transaction.VoteCommit();

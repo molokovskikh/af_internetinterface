@@ -6,7 +6,6 @@ using Castle.ActiveRecord.Framework;
 using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.MonoRailExtentions;
-using InternetInterface.AllLogic;
 using InternetInterface.Controllers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;

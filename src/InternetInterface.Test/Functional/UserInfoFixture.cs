@@ -12,7 +12,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void Base_view_test()
 		{
-			Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", Client.Id));
+			Open(string.Format("UserInfo/SearchUserInfo?filter.ClientCode={0}", Client.Id));
 			AssertText(string.Format("Дата начала расчетного периода: {0}", DateTime.Now.ToShortDateString()));
 			AssertText(string.Format("Дата начала программы скидок: {0}", DateTime.Now.AddMonths(-1).ToShortDateString()));
 		}
@@ -84,7 +84,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void TelephoneTest()
 		{
-			Open(string.Format("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}&filter.EditConnectInfoFlag=True", Client.Id));
+			Open(string.Format("UserInfo/SearchUserInfo?filter.ClientCode={0}&filter.EditConnectInfoFlag=True", Client.Id));
 			AssertText("Информация по клиенту");
 			Css("#addContactButton").Click();
 			browser.FindElementByClassName("telephoneField").SendKeys("900-9090900");
@@ -123,7 +123,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void RequestGraphTest()
 		{
-			Open("UserInfo/RequestGraph.rails");
+			Open("UserInfo/RequestGraph");
 			AssertText("Настройки");
 			Css("#naznach_but_1").Click();
 			AssertText("Настройки");

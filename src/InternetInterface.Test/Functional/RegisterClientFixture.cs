@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using InternetInterface.Models;
+using InternetInterface.Test.Helpers;
 using NHibernate.Linq;
 using NUnit.Framework;
 using Test.Support.Selenium;
@@ -7,23 +9,22 @@ using Test.Support.Selenium;
 namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
-	class RegisterClientFixture : SeleniumFixture
+	public class RegisterClientFixture : SeleniumFixture
 	{
 		[Test]
 		public void RegisterClientTest()
 		{
-			var commutator = new NetworkSwitch("Тестовый коммутатор для регистрации клиента", session.Query<Zone>().First());
-			var tariff = new Tariff("Тариф для тестирования", 111);
-			Save(commutator, tariff);
 			session.CreateSQLQuery("delete from internet.houses;").ExecuteUpdate();
-			var testRegion1 = new RegionHouse { Name = "testRegionFirst" };
-			session.Save(testRegion1);
-			var house1 = new House("testStreetFirst", 1, testRegion1);
-			session.Save(house1);
-			Close();
 
-			Open("Register/RegisterClient.rails");
-			AssertText("Форма регистрации");
+			var tariff = new Tariff("Тариф для тестирования", 111);
+			session.Save(tariff);
+			var region = new RegionHouse { Name = "testRegionFirst" };
+			session.Save(region);
+			var house = new House("testStreetFirst", 1, region);
+			session.Save(house);
+
+			Open("Register/RegisterClient");
+			AssertText("Регистрация абонента");
 			AssertText("Личная информация");
 			AssertText("Фамилия");
 			AssertText("Имя");
@@ -37,27 +38,25 @@ namespace InternetInterface.Test.Functional
 			AssertText("Адрес регистрации");
 			AssertText("Зарегистрировать");
 
-			Css("#Surname").SendKeys("TestSurname");
-			Css("#Name").SendKeys("TestName");
-			Css("#Patronymic").SendKeys("TestPatronymic");
-			Css("#Apartment").SendKeys("5");
-			Css("#Entrance").SendKeys("5");
-			Css("#Floor").SendKeys("1");
-			Css("#PhoneNumber").SendKeys("900-9009090");
-			Css("#PassportSeries").SendKeys("1234");
-			Css("#PassportNumber").SendKeys("123456");
-			Css("#WhoGivePassport").SendKeys("TestWhoGivePassport");
-			Css("#RegistrationAdress").SendKeys("TestRegistrationAdress");
-			Css("#PassportDate").SendKeys("10.01.2002");
+			Css("#client_Surname").SendKeys("TestSurname" + Guid.NewGuid());
+			Css("#client_Name").SendKeys("TestName");
+			Css("#client_Patronymic").SendKeys("TestPatronymic");
+			Css("#client_Apartment").SendKeys("5");
+			Css("#client_Entrance").SendKeys("5");
+			Css("#client_Floor").SendKeys("1");
+			Css("#client_PhoneNumber").SendKeys("900-9009090");
+			Css("#client_PassportSeries").SendKeys("1234");
+			Css("#client_PassportNumber").SendKeys("123456");
+			Css("#client_WhoGivePassport").SendKeys("TestWhoGivePassport");
+			Css("#client_RegistrationAdress").SendKeys("TestRegistrationAdress");
+			Css("#client_PassportDate").SendKeys("10.01.2002");
 			Css("#client_ConnectSum").SendKeys("100");
 
-
-			Css("#regionSelector").SelectByValue(testRegion1.Id.ToString());
+			Css("#regionSelector").SelectByValue(region.Id.ToString());
 			RunJavaScript("$('#regionSelector').change();");
 
 			WaitForCss("#client_Tariff_Id");
 			Css("#client_Tariff_Id").SelectByValue(tariff.Id.ToString());
-
 
 			var checkbox = browser.FindElementByXPath("//input[@id='VisibleRegisteredInfo'][@type='checkbox']");
 			if(!checkbox.Selected)
@@ -102,20 +101,38 @@ namespace InternetInterface.Test.Functional
 			AssertNoText("testStreetFirst");
 		}
 
-		[Test, Ignore("Отключен функционал выбора коммутатора при регистрации")]
-		public void Show_switch_comment()
+		[Test]
+		public void Warn_on_duplicate()
 		{
-			var commutator = new NetworkSwitch("Тестовый коммутатор с комментарием", session.Query<Zone>().First()) {
-				Comment = "Тестовый комментарий к коммутатору"
-			};
-			commutator.Name += " " + commutator.Id;
-			session.Save(commutator);
+			var client = ClientHelper.Client();
+			var tariff = new Tariff("Тариф для тестирования", 111);
+			session.Save(tariff);
+			var region = new RegionHouse { Name = "testRegionFirst" };
+			session.Save(region);
+			var house = new House("testStreetFirst", 1, region);
+			session.Save(house);
 
-			Open("Register/RegisterClient.rails");
-			Css("#SelectSwitches").Select(commutator.Name);
-			RunJavaScript("$('#SelectSwitches').change()");
-			WaitForText(commutator.Comment);
-			AssertText(commutator.Comment);
+			Open("Register/RegisterClient");
+			Css("#client_Surname").SendKeys(client.PhysicalClient.Surname);
+			Css("#client_Name").SendKeys(client.PhysicalClient.Name);
+			Css("#client_Patronymic").SendKeys(client.PhysicalClient.Patronymic);
+			Css("#client_Apartment").SendKeys("5");
+			Css("#client_Entrance").SendKeys("5");
+			Css("#client_Floor").SendKeys("1");
+			Css("#client_PhoneNumber").SendKeys("900-9009090");
+			Css("#client_ConnectSum").SendKeys("100");
+
+			Css("#regionSelector").SelectByValue(region.Id.ToString());
+			RunJavaScript("$('#regionSelector').change();");
+
+			WaitForCss("#client_Tariff_Id");
+			Css("#client_Tariff_Id").SelectByValue(tariff.Id.ToString());
+
+			Click("Зарегистрировать");
+			WaitAjax();
+			AssertText("Клиент с таким именем уже существует");
+			Click(Css(".ui-dialog"), "Продолжить");
+			AssertText("Информация по клиенту");
 		}
 	}
 }

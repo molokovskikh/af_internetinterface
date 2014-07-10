@@ -7,6 +7,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using Castle.ActiveRecord;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Common.Tools;
@@ -152,7 +153,7 @@ namespace InforoomInternet.Controllers
 				}
 				request.PreInsert();
 				DbSession.Save(request);
-				request.Save();
+				DbSession.Save(request);
 				Flash["application"] = request;
 				RedirectToAction("Ok");
 			}

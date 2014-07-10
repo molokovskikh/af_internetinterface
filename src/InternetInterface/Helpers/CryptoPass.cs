@@ -1,8 +1,8 @@
-﻿using System;
-using System.Text;
+using System;
 using System.Security.Cryptography;
+using System.Text;
 
-namespace InternetInterface
+namespace InternetInterface.Helpers
 {
 	public class CryptoPass
 	{

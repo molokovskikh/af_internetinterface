@@ -73,7 +73,7 @@ namespace InternetInterface.Test.Functional
 		{
 			var request = CreateRequest();
 			session.Save(request);
-			Open("UserInfo/SearchUserInfo.rails?filter.ClientCode={0}", client.Id);
+			Open("UserInfo/SearchUserInfo?filter.ClientCode={0}", client.Id);
 
 			ClickLink(request.Id.ToString());
 

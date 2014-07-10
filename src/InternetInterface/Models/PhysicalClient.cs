@@ -106,7 +106,7 @@ namespace InternetInterface.Models
 		[Property, ValidateNonEmpty("Введите номер этажа"), ValidateInteger("Должно быть введено число"), Auditable("Этаж")]
 		public virtual int? Floor { get; set; }
 
-		[ValidateRegExp(@"^((\d{3})-(\d{7}))", "Ошибка формата телефонного номера: мобильный телефон (000-0000000)")]
+		[ValidateNonEmpty, ValidateRegExp(@"^((\d{3})-(\d{7}))", "Ошибка формата телефонного номера: мобильный телефон (000-0000000)")]
 		public virtual string PhoneNumber { get; set; }
 
 		[ValidateRegExp(@"^((\d{3})-(\d{7}))", "Ошибка формата телефонного номера (***-*******)")]
@@ -177,6 +177,10 @@ namespace InternetInterface.Models
 			if (ExternalClientIdRequired && ExternalClientId == null) {
 				errors.RegisterErrorMessage("ExternalClientId", "Нужно указать номер абонента");
 			}
+
+			if (Client.Status.Type != StatusType.Dissolved && HouseObj == null) {
+				errors.RegisterErrorMessage("HouseObj", "Нужно выбрать дом");
+			}
 		}
 
 		public virtual string GetFullAddress()
@@ -208,6 +212,8 @@ namespace InternetInterface.Models
 
 		public virtual void UpdateHouse(House house)
 		{
+			if (house == null)
+				return;
 			HouseObj = house;
 			Street = house.Street;
 			House = house.Number;

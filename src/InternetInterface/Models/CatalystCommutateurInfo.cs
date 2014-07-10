@@ -6,7 +6,6 @@ using System.Linq;
 using System.Web;
 using Castle.Core.Logging;
 using Common.Tools;
-using InternetInterface.AllLogic;
 using InternetInterface.Helpers;
 using InternetInterface.Interfaces;
 using NHibernate;
@@ -27,7 +26,6 @@ namespace InternetInterface.Models
 			try {
 #if DEBUG
 				var telnet = new TelnetConnection("172.16.1.112", 23);
-				//var telnet = new TelnetConnection("172.16.1.114", 23);
 				telnet.Login(login, password, 100);
 				var port = 2.ToString();
 #else

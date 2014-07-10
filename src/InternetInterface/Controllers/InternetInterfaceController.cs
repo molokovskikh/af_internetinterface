@@ -2,6 +2,7 @@ using Common.Web.Ui.Controllers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using Newtonsoft.Json;
 
 namespace InternetInterface.Controllers
 {
@@ -31,6 +32,12 @@ namespace InternetInterface.Controllers
 		protected Partner Partner
 		{
 			get { return InitializeContent.Partner; }
+		}
+
+		protected void RenderJson(object data)
+		{
+			Response.ContentType = "application/json";
+			RenderText(JsonConvert.SerializeObject(data));
 		}
 	}
 }

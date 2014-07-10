@@ -1,29 +1,26 @@
-п»їusing System;
-using System.Collections.Generic;
+using System;
 using System.Linq;
-using System.Web;
 using Castle.Components.Binder;
 using Castle.Components.Validator;
 using Castle.MonoRail.ActiveRecordSupport;
-using Castle.MonoRail.Framework;
 using InternetInterface.Models;
 
-namespace InternetInterface.AllLogic
+namespace InternetInterface.Helpers
 {
 	public class Validation
 	{
 		public static string ValidationConnectInfo(ConnectInfo info, bool register, uint endpointId = 0)
 		{
 			if (string.IsNullOrEmpty(info.Port) && !register)
-				return "Р’РІРµРґРёС‚Рµ РїРѕСЂС‚";
+				return "Введите порт";
 			if (info.Switch == 0 && !register)
-				return "Р’С‹Р±РµСЂРµС‚Рµ РєРѕРјРјСѓС‚Р°С‚РѕСЂ";
+				return "Выберете коммутатор";
 			int res;
 			if (Int32.TryParse(info.Port, out res)) {
 				if (res > 48 || res < 1)
-					return "РџРѕСЂС‚ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РІ РїСЂРµРґРµР»Р°С… Рѕ 1 РґРѕ 48";
+					return "Порт должен быть в пределах о 1 до 48";
 				if (ClientEndpoint.Queryable.Any(e => e.Port == res && e.Switch.Id == info.Switch && e.Id != endpointId))
-					return "РўР°РєР°СЏ РїР°СЂР° РїРѕСЂС‚/РєРѕРјРјСѓС‚Р°С‚РѕСЂ СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚";
+					return "Такая пара порт/коммутатор уже существует";
 			}
 			return string.Empty;
 		}
