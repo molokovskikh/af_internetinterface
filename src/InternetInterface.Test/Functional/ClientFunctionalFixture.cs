@@ -19,7 +19,7 @@ namespace InternetInterface.Test.Functional
 		[SetUp]
 		public void FixtureSetup()
 		{
-			Client = ClientHelper.Client();
+			Client = ClientHelper.Client(session);
 			PhysicalClient = Client.PhysicalClient;
 			session.Save(Client);
 			EndPoint = new ClientEndpoint {

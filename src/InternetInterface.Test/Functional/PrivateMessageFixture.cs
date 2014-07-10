@@ -10,7 +10,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void Create_private_message()
 		{
-			var client = ClientHelper.Client();
+			var client = ClientHelper.Client(session);
 			session.Save(client);
 			Open("/PrivateMessages/ForClient?clientId={0}", client.Id);
 			AssertText("Объявление для");

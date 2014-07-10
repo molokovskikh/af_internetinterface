@@ -14,7 +14,7 @@ namespace InternetInterface.Test.Helpers
 
 		public Client PhysicalClient()
 		{
-			return ClientHelper.Client();
+			return ClientHelper.Client(session);
 		}
 	}
 }

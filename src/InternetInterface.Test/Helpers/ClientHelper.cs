@@ -8,6 +8,7 @@ using Common.Web.Ui.ActiveRecordExtentions;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Models.Services;
+using NHibernate;
 using NHibernate.Linq;
 
 namespace InternetInterface.Test.Helpers
@@ -29,37 +30,12 @@ namespace InternetInterface.Test.Helpers
 			};
 		}
 
-		public static void CreateClient(Func<Client, bool> Ok)
+		public static PhysicalClient PhysicalClient(ISession session)
 		{
-			var client = PhysicalClient();
-			var internalClient = client.Client;
-			var valid = new ValidatorRunner(new CachedValidationRegistry());
-			if (valid.IsValid(client)) {
-				var pay = new Payment {
-					Client = internalClient,
-					PaidOn = DateTime.Now,
-					RecievedOn = DateTime.Now,
-					Sum = 500
-				};
-				internalClient.SaveAndFlush();
-				client.SaveAndFlush();
-				pay.SaveAndFlush();
-				Ok(internalClient);
-				client.DeleteAndFlush();
-				pay.DeleteAndFlush();
-			}
-			else {
-				throw new Exception(String.Format("Создали невалидного клиента {0}",
-					valid.GetErrorSummary(client).ErrorMessages.Implode()));
-			}
-		}
-
-		public static PhysicalClient PhysicalClient()
-		{
-			var tariff = ActiveRecordLinqBase<Tariff>.Queryable.First();
-			var internet = ActiveRecordLinqBase<Internet>.Queryable.First();
-			var iptv = ActiveRecordLinqBase<IpTv>.Queryable.First();
-			var status = ActiveRecordBase<Status>.Find((uint)StatusType.Worked);
+			var tariff = session.Query<Tariff>().First();
+			var internet = session.Query<Internet>().First();
+			var iptv = session.Query<IpTv>().First();
+			var status = session.Load<Status>((uint)StatusType.Worked);
 
 			var client = new PhysicalClient {
 				Apartment = 1,
@@ -85,6 +61,13 @@ namespace InternetInterface.Test.Helpers
 				ConnectSum = 555
 			};
 
+			client.HouseObj = session.Query<House>()
+				.FirstOrDefault(h => h.Street == client.Street && h.Number == client.House && h.Case == client.CaseHouse);
+			if (client.HouseObj == null) {
+				client.HouseObj = new House(client.Street, client.House.GetValueOrDefault(), session.Query<RegionHouse>().First());
+				session.Save(client.HouseObj);
+			}
+
 			var internalClient = new Client {
 				PhysicalClient = client,
 				BeginWork = null,
@@ -99,9 +82,9 @@ namespace InternetInterface.Test.Helpers
 			return client;
 		}
 
-		public static Client Client()
+		public static Client Client(ISession session)
 		{
-			return PhysicalClient().Client;
+			return PhysicalClient(session).Client;
 		}
 
 		public static RegionHouse GetRegion()

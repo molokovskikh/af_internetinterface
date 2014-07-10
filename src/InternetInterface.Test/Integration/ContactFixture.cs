@@ -12,7 +12,7 @@ namespace InternetInterface.Test.Integration
 		[Test]
 		public void Log_changes()
 		{
-			var client = ClientHelper.Client();
+			var client = ClientHelper.Client(session);
 			Save(client);
 
 			var contact = new Contact(client, ContactType.MobilePhone, "111-1111111");

@@ -81,7 +81,7 @@ namespace InternetInterface.Test.Integration
 			var commutator = new NetworkSwitch("Тестовый коммутатор", session.Query<Zone>().First());
 			session.Save(commutator);
 
-			var client = ClientHelper.Client();
+			var client = ClientHelper.Client(session);
 			client.Status = worked;
 			var endpoint = new ClientEndpoint(client, 1, commutator);
 			client.Endpoints.Add(endpoint);
@@ -117,7 +117,7 @@ namespace InternetInterface.Test.Integration
 		public void Delete_payment_test()
 		{
 			var recipient = new Recipient { Name = "testRecipient", BankAccountNumber = "40702810602000758601" };
-			var client = ClientHelper.Client();
+			var client = ClientHelper.Client(session);
 			client.Recipient = recipient;
 			var payment = new Payment(client, 333);
 			session.Save(payment);
@@ -141,7 +141,7 @@ namespace InternetInterface.Test.Integration
 		[Test]
 		public void Delete_write_off_physical_client_test()
 		{
-			var client = ClientHelper.Client();
+			var client = ClientHelper.Client(session);
 			var writeOff = new WriteOff(client, 300) { VirtualSum = 150, MoneySum = 150 };
 			client.PhysicalClient.Balance = 0;
 			session.Save(client);

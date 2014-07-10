@@ -104,7 +104,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void Warn_on_duplicate()
 		{
-			var client = ClientHelper.Client();
+			var client = ClientHelper.Client(session);
 			var tariff = new Tariff("Тариф для тестирования", 111);
 			session.Save(tariff);
 			var region = new RegionHouse { Name = "testRegionFirst" };

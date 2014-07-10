@@ -14,7 +14,7 @@ namespace InternetInterface.Test.Helpers
 		[SetUp]
 		public void FixtureSetup()
 		{
-			client = ClientHelper.Client();
+			client = ClientHelper.Client(session);
 			physicalClient = client.PhysicalClient;
 
 			session.Save(client);

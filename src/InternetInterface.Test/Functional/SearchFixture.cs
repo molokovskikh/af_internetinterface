@@ -40,7 +40,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void TariffSortTest()
 		{
-			var disabledClient = ClientHelper.Client();
+			var disabledClient = ClientHelper.Client(session);
 			disabledClient.Name = "disabledClient";
 			disabledClient.Disabled = true;
 			session.Save(disabledClient);

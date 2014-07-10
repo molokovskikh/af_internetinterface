@@ -15,7 +15,7 @@ namespace InternetInterface.Test.Functional
 		public void View_client_in_request_graph()
 		{
 			var brigad = session.Query<Brigad>().First();
-			var client = ClientHelper.Client();
+			var client = ClientHelper.Client(session);
 			var connect = new ConnectGraph(client, DateTime.Today, brigad);
 
 			Save(brigad, client, connect);

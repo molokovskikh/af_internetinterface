@@ -51,7 +51,7 @@ namespace InternetInterface.Test.Integration.Tasks
 		[Test]
 		public void StaticIpFixture()
 		{
-			var client = ClientHelper.Client();
+			var client = ClientHelper.Client(session);
 			ActiveRecordMediator.Save(client);
 			var networkSwitch = new NetworkSwitch();
 			ActiveRecordMediator.Save(networkSwitch);

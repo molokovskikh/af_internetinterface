@@ -561,7 +561,7 @@ namespace InternetInterface.Controllers
 			if (oldStatus.ManualSet)
 				client.Status = statusEntity;
 
-			if (Validator.IsValid(updateClient)) {
+			if (IsValid(updateClient)) {
 				if (!oldStatus.ManualSet && client.Status.Id != statusEntity.Id)
 					message = Message.Warning(string.Format("Статус не был изменен, т.к. нельзя изменить статус '{0}' вручную. Остальные данные были сохранены.", client.Status.Name));
 

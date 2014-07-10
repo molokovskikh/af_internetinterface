@@ -28,7 +28,7 @@ namespace InternetInterface.Test.Integration
 		[Test]
 		public void SearchWithRegionTest()
 		{
-			var client = ClientHelper.Client();
+			var client = ClientHelper.Client(session);
 			session.Save(client);
 			client.PhysicalClient.HouseObj = new House {
 				Region = _region,
@@ -63,7 +63,7 @@ namespace InternetInterface.Test.Integration
 		[Test]
 		public void Search_by_address_for_dissolved_client()
 		{
-			var client = ClientHelper.Client();
+			var client = ClientHelper.Client(session);
 			client.PhysicalClient.Street = "славы";
 			client.PhysicalClient.House = 129;
 			client.PhysicalClient.HouseObj = null;

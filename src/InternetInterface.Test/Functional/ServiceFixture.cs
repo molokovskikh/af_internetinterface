@@ -27,7 +27,7 @@ namespace InternetInterface.Test.Functional
 			};
 			session.Save(performer);
 			registrator = session.Query<Partner>().First(p => p.Login == Environment.UserName);
-			client = ClientHelper.Client();
+			client = ClientHelper.Client(session);
 			session.Save(client);
 		}
 

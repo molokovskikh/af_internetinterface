@@ -16,7 +16,7 @@ namespace InternetInterface.Test.Functional
 		public void SetUp()
 		{
 			bankPayment = SavePayment(client);
-			newClient = ClientHelper.Client();
+			newClient = ClientHelper.Client(session);
 			newClient.Recipient = bankPayment.Recipient;
 
 			Save(client, newClient, bankPayment, bankPayment.Payment);
@@ -70,7 +70,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void Cancel_client_payment()
 		{
-			var client = ClientHelper.Client();
+			var client = ClientHelper.Client(session);
 			var payment = new Payment(client, 1000);
 			Save(client, payment);
 
@@ -89,7 +89,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void PaymentCommentTest()
 		{
-			var client = ClientHelper.Client();
+			var client = ClientHelper.Client(session);
 			Save(client);
 			Open("UserInfo/SearchUserInfo?filter.ClientCode={0}", client.Id);
 			browser.FindElementByName("BalanceText").Clear();

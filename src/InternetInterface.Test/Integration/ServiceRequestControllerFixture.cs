@@ -26,7 +26,7 @@ namespace InternetInterface.Test.Integration
 		[Test]
 		public void Send_sms_on_request_cancelation()
 		{
-			var client = ClientHelper.Client();
+			var client = ClientHelper.Client(session);
 			session.Save(client);
 
 			var performer = Partner.GetServiceEngineers(session).First();

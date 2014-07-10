@@ -39,7 +39,7 @@ namespace InforoomInternet.Test.Functional
 				session.Save(pool);
 			}
 
-			physicalClient = ClientHelper.PhysicalClient();
+			physicalClient = ClientHelper.PhysicalClient(session);
 			client = physicalClient.Client;
 			client.FirstLaunch = true;
 			client.BeginWork = DateTime.Now;

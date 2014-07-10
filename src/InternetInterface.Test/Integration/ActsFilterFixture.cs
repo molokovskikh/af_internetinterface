@@ -16,7 +16,7 @@ namespace InternetInterface.Test.Integration
 		[Test]
 		public void SearchActsTest()
 		{
-			var client = ClientHelper.Client();
+			var client = ClientHelper.Client(session);
 			session.Save(client);
 			var act = new Act {
 				Client = client,

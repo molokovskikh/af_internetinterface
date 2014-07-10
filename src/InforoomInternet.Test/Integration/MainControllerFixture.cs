@@ -38,7 +38,7 @@ namespace InforoomInternet.Test.Integration
 			session.Delete("from Lease");
 
 			var settings = new Settings(session);
-			client = ClientHelper.Client();
+			client = ClientHelper.Client(session);
 			networkSwitch = new NetworkSwitch("Тестовый коммутатор", session.Query<Zone>().First());
 			endpoint = new ClientEndpoint(client, 1, networkSwitch);
 			client.AddEndpoint(endpoint, settings);

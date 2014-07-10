@@ -51,7 +51,7 @@ namespace InternetInterface.Test.Integration.Controllers
 			session.Save(zone);
 			var commutator = new NetworkSwitch(Generator.Name(), zone);
 			session.Save(commutator);
-			var client = ClientHelper.Client();
+			var client = ClientHelper.Client(session);
 			session.Save(client);
 			var endPoint = new ClientEndpoint(client, 1, commutator);
 			session.Save(endPoint);

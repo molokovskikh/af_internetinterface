@@ -39,7 +39,7 @@ namespace InforoomInternet.Test.Integration
 			controller = new PrivateOfficeController();
 			Prepare(controller);
 
-			physicalClient = ClientHelper.PhysicalClient();
+			physicalClient = ClientHelper.PhysicalClient(session);
 			client = physicalClient.Client;
 
 			session.Save(client);

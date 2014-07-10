@@ -64,7 +64,7 @@ namespace InternetInterface.Test.Integration
 		[Test]
 		public void Filter_request_by_region()
 		{
-			var client = ClientHelper.Client();
+			var client = ClientHelper.Client(session);
 			client.PhysicalClient.HouseObj = new House("Тест", 1, ClientHelper.GetRegion());
 			var request = new ServiceRequest {
 				Client = client,

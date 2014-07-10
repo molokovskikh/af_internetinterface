@@ -15,7 +15,7 @@ namespace InternetInterface.Test.Integration.Queries
 		[Test]
 		public void Find_leas()
 		{
-			var client = ClientHelper.Client();
+			var client = ClientHelper.Client(session);
 			var zone = new Zone("Тестовая зона");
 			var networkSwitch = new NetworkSwitch("Тестовый коммутатор", zone);
 			client.Endpoints.Add(new ClientEndpoint(client, 1, networkSwitch));

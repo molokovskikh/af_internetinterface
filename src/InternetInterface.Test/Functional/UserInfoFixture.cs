@@ -34,7 +34,6 @@ namespace InternetInterface.Test.Functional
 			Client.Status = Status.Find((uint)StatusType.Worked);
 			session.Save(Client);
 
-
 			Open(ClientUrl);
 
 			Assert.That(Css("#ChStatus").SelectedOption.Text, Is.EqualTo(" Подключен "));
@@ -108,12 +107,12 @@ namespace InternetInterface.Test.Functional
 		public void EditClientNameTest()
 		{
 			Open(ClientUrl);
-			browser.FindElementById("Surname").Clear();
-			browser.FindElementById("Surname").SendKeys("Иванов");
-			browser.FindElementById("Name").Clear();
-			browser.FindElementById("Name").SendKeys("Иван");
-			browser.FindElementById("Patronymic").Clear();
-			browser.FindElementById("Patronymic").SendKeys("Иванович");
+			Css("#client_Surname").Clear();
+			Css("#client_Surname").SendKeys("Иванов");
+			Css("#client_Name").Clear();
+			Css("#client_Name").SendKeys("Иван");
+			Css("#client_Patronymic").Clear();
+			Css("#client_Patronymic").SendKeys("Иванович");
 			Css("#SaveButton").Click();
 
 			session.Refresh(Client);

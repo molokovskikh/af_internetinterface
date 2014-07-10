@@ -19,7 +19,7 @@ namespace InternetInterface.Test.Integration
 		[SetUp]
 		public void Setup()
 		{
-			var client = ClientHelper.Client();
+			var client = ClientHelper.Client(session);
 			session.Save(client);
 
 			engineer1 = new Partner(Guid.NewGuid().ToString()) {

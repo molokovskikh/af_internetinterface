@@ -24,7 +24,7 @@ namespace InternetInterface.Test.Integration
 		[Test]
 		public void Get_writeoff()
 		{
-			var client = ClientHelper.Client();
+			var client = ClientHelper.Client(session);
 			session.SaveOrUpdate(client);
 			var writeOff = new WriteOff(client, 500m);
 			var userWriteOff = new UserWriteOff(client, 100m, "testUserWriteOff");
@@ -41,7 +41,7 @@ namespace InternetInterface.Test.Integration
 		[Test]
 		public void Do_not_activate_debt_work_second_time()
 		{
-			var client = ClientHelper.Client();
+			var client = ClientHelper.Client(session);
 			client.BeginWork = DateTime.Now;
 			session.Save(client);
 			client.WriteOff(500, false);
@@ -69,7 +69,7 @@ namespace InternetInterface.Test.Integration
 		public void Reset_sale_on_disable_in_voluntary_block()
 		{
 			var settings = session.Query<SaleSettings>().First();
-			var client = ClientHelper.Client();
+			var client = ClientHelper.Client(session);
 			client.RatedPeriodDate = DateTime.Now;
 			client.BeginWork = DateTime.Now.AddYears(-2);
 			client.StartNoBlock = DateTime.Now.AddYears(-2);
