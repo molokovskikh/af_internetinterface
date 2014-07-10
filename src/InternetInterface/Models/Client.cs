@@ -1057,6 +1057,11 @@ where CE.Client = {0}", Id))
 				return LawyerPerson.Region;
 			return null;
 		}
+
+		public virtual bool IsDisabledByBilling()
+		{
+			return Disabled && AutoUnblocked && Status.Type == StatusType.NoWorked;
+		}
 	}
 
 	public class ServiceActivationException : Exception

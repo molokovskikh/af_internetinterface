@@ -160,16 +160,16 @@ set s.LastStartFail = true;")
 						if (updateClient.HavePaymentToStart()) {
 							updateClient.AutoUnblocked = true;
 						}
-						if (updateClient.RatedPeriodDate != null)
+						if (updateClient.RatedPeriodDate != null) {
 							if (physicalClient.Balance >= updateClient.GetPriceIgnoreDisabled() * updateClient.PercentBalance) {
 								updateClient.ShowBalanceWarningPage = false;
 								if (updateClient.IsChanged(c => c.ShowBalanceWarningPage))
 									updateClient.CreareAppeal("Отключена страница Warning, клиент внес платеж", AppealType.Statistic);
 							}
-						if (updateClient.ClientServices != null)
 							foreach (var clientService in updateClient.ClientServices.ToList()) {
 								clientService.PaymentProcessed();
 							}
+						}
 						updateClient.Update();
 					}
 					if (lawyerClient != null) {
@@ -203,8 +203,11 @@ set s.LastStartFail = true;")
 				transaction.VoteCommit();
 			}
 			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
-				var clients = Client.Queryable.Where(c => c.PhysicalClient != null && c.Disabled && c.AutoUnblocked).ToList();
-				clients = clients.Where(c => c.PhysicalClient.Balance > c.GetPriceIgnoreDisabled() * c.PercentBalance).ToList();
+				var clients = Client.Queryable
+					.Where(c => c.PhysicalClient != null && c.Disabled && c.AutoUnblocked)
+					.ToList()
+					.Where(c => c.PhysicalClient.Balance > c.GetPriceIgnoreDisabled() * c.PercentBalance)
+					.ToList();
 				foreach (var client in clients) {
 					client.Enable();
 					if (client.IsChanged(c => c.ShowBalanceWarningPage))

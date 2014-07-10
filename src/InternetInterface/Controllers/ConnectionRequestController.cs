@@ -67,7 +67,6 @@ namespace InternetInterface.Controllers
 				.Distinct()
 				.Select(s => s.Name)
 				.ToList();
-
 		}
 
 		public void CreateRequestComment(uint requestId, string comment)

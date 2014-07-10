@@ -13,7 +13,7 @@ namespace Billing
 		{
 			try {
 				var billing = new MainBilling();
-				var cmds = new [] {
+				var cmds = new[] {
 					new RepeatableCommand(billing.On, 600000),
 					new RepeatableCommand(billing.Run, 180000),
 				};

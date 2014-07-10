@@ -166,6 +166,11 @@
 			<tr>
 				<td><span class="description">Статус клиента:</span> ${_client.Status.Name}</td>
 			</tr>
+			<% if _client.IsDisabledByBilling(): %>
+			<tr>
+				<td><span class="description">Сумма для разблокировки:</span>${_client.ToPay().ToString("C")}</td>
+			</tr>
+			<% end %>
 		<% end %>
 		<tr>
 			<td>
