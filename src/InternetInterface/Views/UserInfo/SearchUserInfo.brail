@@ -291,14 +291,14 @@
 <% end %>
 <br />
 <% for i,item in enumerate(ClientConnectInf):
- OutputSubView("""\Subview\ConnectInfo""", {
-					"ConnectInfo": item,
-					"EditingConnect" : EConnect == item.endpointId})
+OutputSubView("/Subview/ConnectInfo", {
+	"ConnectInfo": item,
+	"EditingConnect" : EConnect == item.endpointId})
 end %>
-<% OutputSubView("""\Subview\PaymentInfo""") %>
+<% OutputSubView("/Subview/PaymentInfo") %>
 <br />
-<% OutputSubView("""\Subview\WriteOffInfo""") %>
-<% OutputSubView("""\Subview\ChangeBalanceInfo""") %>
+<% OutputSubView("/Subview/WriteOffInfo") %>
+<% OutputSubView("/Subview/ChangeBalanceInfo") %>
 </div>
 </div>
 </div>

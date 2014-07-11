@@ -4,7 +4,7 @@ ${app.Asset("underscore.js")}
 
 <% OutputSubView("/Shared/JsTemplates/search.editor.v2") %>
 
-${app.Form("", {@class: "div-form"})}
+${app.Form({@class: "div-form"})}
 	<div class="form-item">
 		${app.Label(model.Target + ".Comment")}
 		${app.Edit(model.Target + ".Comment")}

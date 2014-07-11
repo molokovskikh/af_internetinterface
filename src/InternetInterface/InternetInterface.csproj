@@ -305,7 +305,6 @@
     <None Include="Views\Subview\ServiceRequestRow.brail" />
     <None Include="Views\Payments\СhangeSaleSettings.brail" />
     <None Include="Views\AgentInfo\EditAgentSettings.brail" />
-    <Content Include="JavaScript\validation.js" />
     <None Include="Views\Tariffs\ChangeRules.brail" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

@@ -146,5 +146,10 @@ namespace InternetInterface.Helpers
 			}
 			return base.LinkTo(item, title, null);
 		}
+
+		public string Form(IDictionary parameters = null)
+		{
+			return Form("", parameters);
+		}
 	}
 }
