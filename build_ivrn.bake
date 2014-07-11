@@ -10,6 +10,6 @@ Global(
 
 task @default, [@Build]
 
-task @Build, [@BuildWebSite]
+task @Build, ["generate:assembly:info", @BuildWebSite]
 
 task @deploy, [@DeployPipeline, @CopyTiny]

@@ -15,3 +15,16 @@
 	color:Gray;
 	font-size:small;
 }
+
+#page-footer {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+}
+
+#release-tag {
+	margin: 0 auto;
+	display: table;
+	font-size: 0.7em;
+}

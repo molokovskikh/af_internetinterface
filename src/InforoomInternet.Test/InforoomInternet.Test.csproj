@@ -130,7 +130,6 @@
     <Compile Include="Integration\MainControllerFixture.cs" />
     <Compile Include="Integration\PrivateOfficeControllerFixture.cs" />
     <Compile Include="Setup.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Unit\ActivePackageId.cs" />
     <Compile Include="Unit\IPTypeConverter.cs" />
     <Compile Include="Unit\LoginTest.cs" />
@@ -188,5 +187,8 @@
     <StyleCopAdditionalAddinPaths Include="$(StylecopAddonPath)\lib\4.0">
       <InProject>false</InProject>
     </StyleCopAdditionalAddinPaths>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
 </Project>

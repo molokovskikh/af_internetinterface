@@ -9,9 +9,9 @@ Global(
 	}
 )
 
-task @default, [@Build, @BuildBackground]
+task @default, [@Build]
 
-task @Build, [@BuildWebSite, @BuildBackground, @BuildPrinter]
+task @Build, ["generate:assembly:info", @BuildWebSite, @BuildBackground, @BuildPrinter]
 
 task @deploy, [@DeployPipeline, @DeployPrinter, "deploy:background"]
 

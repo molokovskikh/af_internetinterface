@@ -3,14 +3,14 @@
 Global(
 	Project : "BillingService",
 	Server : "fms",
-	platform : "AnyCPU",
 	DeployTo : """\\fms\BillingService""",
 	ServiceName : "BillingInternetService",
-	HumanReadableName : "Сервис биллинга"
+	HumanReadableName : "Сервис биллинга",
+	JenkinsProject: @InternetInterface
 )
 
 Task @default, [@BuildService]
 
-task @Build, [@BuildService]
+task @Build, ["generate:assembly:info", @BuildService]
 
 Task @deploy, [@ServiceDeployPipeline]
