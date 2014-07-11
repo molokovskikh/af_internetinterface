@@ -16,3 +16,4 @@ src/*.properties
 src/*/testData/*
 *.gen.*
 TestData/
+AssemblyInfo.cs
