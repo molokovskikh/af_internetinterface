@@ -39,7 +39,7 @@
 						</div>
 					<% else: %>
 						<h4><a href="#"> ${service.HumanName} </a> </h4>
-						<div>Активация услуги  невозможна</div>
+						<div>Активация услуги невозможна</div>
 					<% end %>
 				<% end %>
 			<% end %>
@@ -49,5 +49,5 @@
 			</tr>
 		</tbody>
 	</table>
-<a class="close-reveal-modal">х</a>
+	<a class="close-reveal-modal">х</a>
 </div> 

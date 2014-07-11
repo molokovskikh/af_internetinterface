@@ -12,18 +12,6 @@ namespace InternetInterface.Services
 	[ActiveRecord(DiscriminatorValue = "DebtWork")]
 	public class DebtWork : Service
 	{
-		public override string GetParameters()
-		{
-			var builder = new StringBuilder();
-			builder.Append("<tr>");
-			builder.Append(
-				string.Format(
-					"<td><label for=\"endDate\"> Конец периода </label><input type=text  name=\"endDate\" id=\"endDate\" value=\"{0}\" class=\"date-pick dp-applied\"></td>",
-					DateTime.Now.AddDays(1).ToShortDateString()));
-			builder.Append("</tr>");
-			return builder.ToString();
-		}
-
 		private static bool InternalCanActivate(Client client)
 		{
 			return client.PhysicalClient != null
@@ -91,16 +79,13 @@ namespace InternetInterface.Services
 
 		public override bool CanDeactivate(ClientService assignedService)
 		{
-			return assignedService.IsActivated && assignedService.EndWorkDate.Value < SystemTime.Now();
+			return assignedService.IsActivated && assignedService.EndWorkDate.GetValueOrDefault() < SystemTime.Now();
 		}
 
 		public override void Activate(ClientService assignedService)
 		{
-			if ((!assignedService.IsActivated && !assignedService.IsDeactivated && CanActivate(assignedService))) {
-				if (assignedService.EndWorkDate > SystemTime.Now().AddDays(3)) {
-					var userWriteOff = new UserWriteOff(assignedService.Client, 50, "Активация обещанного платежа на 10 дней");
-					ActiveRecordMediator.Save(userWriteOff);
-				}
+			assignedService.EndWorkDate = assignedService.EndWorkDate ?? DateTime.Now.AddDays(3);
+			if (!assignedService.IsActivated && !assignedService.IsDeactivated && CanActivate(assignedService)) {
 				var client = assignedService.Client;
 				client.Disabled = false;
 				client.RatedPeriodDate = SystemTime.Now();

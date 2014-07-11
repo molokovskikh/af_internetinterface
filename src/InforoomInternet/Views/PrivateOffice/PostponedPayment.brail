@@ -7,23 +7,15 @@
 		<tr>
 			<td style="background:none">
 				<span style="font-size:small; ">
-					Услуга "Обещанный платеж" открывает доступ к Интернет, сроком на 3-e, либо на 10 суток, при отрицательном балансе. При активации <b>на 10 суток</b> взимается разовый платеж <b>50</b> рублей, активация на 3-е суток бесплатна. Услуга предоставляется однократно. Повторное использование возможно после внесения платежа, покрывающего задолженность.
+					Услуга "Обещанный платеж" открывает доступ к Интернет, сроком на 3-e суток, при отрицательном балансе. Услуга бесплатная.
+					Услуга предоставляется однократно. Повторное использование возможно после внесения платежа, покрывающего задолженность.
 				</span>
 			</td>
 		</tr>
 		<tr>
 			<td style="background:none">
 				<form method=post action="PostponedPaymentActivate">
-					<button type="submit" id="PostponedBut" class="button">Активировать на 3 дня</button>
-					<input type=hidden value="3" name="daysCount" />
-				</form>
-			</td>
-		</tr>
-		<tr>
-			<td style="background:none">
-				<form method=post action="PostponedPaymentActivate">
-					<button type="submit" id="PostponedBut" class="button">Активировать на 10 дней</button>
-					<input type=hidden value="10" name="daysCount" />
+					<button type="submit" id="PostponedBut" class="button">Активировать</button>
 				</form>
 			</td>
 		</tr>

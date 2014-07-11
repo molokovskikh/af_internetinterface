@@ -122,14 +122,13 @@ namespace InforoomInternet.Controllers
 			PropertyBag["message"] = message;
 		}
 
-		public void PostponedPaymentActivate(int daysCount)
+		public void PostponedPaymentActivate()
 		{
 			var client = LoadClient();
-			var validDayCount = (daysCount == 3) || (daysCount == 10);
-			if (client.CanUseDebtWork() & validDayCount) {
+			if (client.CanUseDebtWork()) {
 				var service = new ClientService(client, Service.GetByType(typeof(DebtWork))) {
 					BeginWorkDate = DateTime.Now,
-					EndWorkDate = DateTime.Now.AddDays(daysCount),
+					EndWorkDate = DateTime.Now.AddDays(3),
 				};
 				Notify(client.Activate(service));
 				if (client.IsNeedRecofiguration)

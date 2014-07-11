@@ -131,7 +131,7 @@ namespace InforoomInternet.Test.Functional
 			Refresh();
 
 			Click("Подробнее...");
-			Click("Активировать на 3 дня");
+			Click("Активировать");
 
 			AssertText("Ваш личный кабинет");
 			AssertText("Услуга \"Обещанный платеж\" активирована");
