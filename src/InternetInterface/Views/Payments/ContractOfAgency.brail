@@ -51,4 +51,7 @@
 			<td>______________________________________</td>
 		</tr>
 	</table>
+	<p>
+		Я, !{MapPartner.Name}, получила денежную сумму в размере !{payment.Sum.ToString("C")} от !{payment.Client.Name} в исполнении по Договору Поручению № !{payment.Id}
+	</p>
 </div>
