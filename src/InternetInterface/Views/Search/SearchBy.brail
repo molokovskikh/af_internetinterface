@@ -93,13 +93,13 @@
 	<table class="table" style="width:auto;">
 		<tbody>
 			<tr>
-				<td style="width:25px;"><div style="background-color:#b0dca3; width:25px; height:25px; border:1 solid black;"></div></td>
+				<td style="width:25px;"><div style="background-color:#b0dca3; width:25px; height:25px;"></div></td>
 				<td style="width:150px;">Клиент Он-Лайн</td>
-				<td style="width:25px;"><div style="background-color:#d79c9c; width:25px; height:25px; border:1 solid black;"></div></td>
+				<td style="width:25px;"><div style="background-color:#d79c9c; width:25px; height:25px;"></div></td>
 				<td style="width:180px;">Отрицательный баланс</td>
-				<td style="width:25px;"><div style="background-color:#f5efdf; width:25px; height:25px; border:1 solid black;"></div></td>
+				<td style="width:25px;"><div style="background-color:#f5efdf; width:25px; height:25px;"></div></td>
 				<td style="width:180px;">Юридическое лицо</td>
-				<td style="width:25px;"><div style="background-color:#e3e7f7; width:25px; height:25px; border:1 solid black;"></div></td>
+				<td style="width:25px;"><div style="background-color:#e3e7f7; width:25px; height:25px;"></div></td>
 				<td style="width:180px;">Физическое лицо</td>
 			</tr>
 		</tbody>

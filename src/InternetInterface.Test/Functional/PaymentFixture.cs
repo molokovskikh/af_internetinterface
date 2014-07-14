@@ -76,31 +76,15 @@ namespace InternetInterface.Test.Functional
 
 			Open("UserInfo/SearchUserInfo?filter.ClientCode={0}", client.Id);
 			Css("#show_payments").Click();
-			WaitForVisibleCss("#paymentReason");
-			Css("#paymentReason").SendKeys("тест");
 			Click("Отменить");
+			WaitForVisibleCss("#cancel_payment_action #comment");
+			Css("#cancel_payment_action #comment").SendKeys("тест");
+			Click(Css("#cancel_payment_action"), "Продолжить");
 			AssertText("Отменено");
 
 			session.Clear();
 			payment = session.Get<Payment>(payment.Id);
 			Assert.That(payment, Is.Null);
-		}
-
-		[Test]
-		public void PaymentCommentTest()
-		{
-			var client = ClientHelper.Client(session);
-			Save(client);
-			Open("UserInfo/SearchUserInfo?filter.ClientCode={0}", client.Id);
-			browser.FindElementByName("BalanceText").Clear();
-			browser.FindElementByName("BalanceText").SendKeys("100");
-			browser.FindElementByName("CommentText").Clear();
-			browser.FindElementByName("CommentText").SendKeys("testComment");
-			Css("#ChangeBalanceButton").Click();
-			AssertText("Платеж ожидает обработки");
-			Css("#show_payments").Click();
-			WaitForText("testComment");
-			AssertText("testComment");
 		}
 
 		[Test]

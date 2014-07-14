@@ -217,7 +217,7 @@ namespace Billing.Test.Integration
 		[Test]
 		public void DebtWorkTest()
 		{
-			const int countDays = 10;
+			const int countDays = 3;
 			var client = base.client;
 
 			PhysicalClient physicalClient;
@@ -260,8 +260,7 @@ namespace Billing.Test.Integration
 				Assert.IsNull(client.StartNoBlock);
 				client.Disabled = false;
 				client.Update();
-				//-50 из-за того, что платеж за 10 дней
-				Assert.That(Math.Round(-client.GetPrice() / client.GetInterval() * countDays, 0) - 10 - 50,
+				Assert.That(Math.Round(-client.GetPrice() / client.GetInterval() * countDays, 0) - 10,
 					Is.EqualTo(Math.Round(physicalClient.Balance, 0)));
 				Assert.That(client.RatedPeriodDate.Value.Date, Is.EqualTo(DateTime.Now.Date));
 				CServive = new ClientService {
@@ -530,7 +529,7 @@ namespace Billing.Test.Integration
 		{
 			ClientService service;
 			PhysicalClient physClient;
-			const int countDays = 5;
+			const int countDays = 3;
 			using (new SessionScope()) {
 				physClient = client.PhysicalClient;
 				physClient.Balance = -10m;
@@ -585,13 +584,12 @@ namespace Billing.Test.Integration
 			using (new SessionScope()) {
 				client = Client.Find(client.Id);
 				var userWriteOffs = UserWriteOff.Queryable.ToList();
-				Assert.That(userWriteOffs.Count, Is.EqualTo(4), userWriteOffs.Implode());
-				Assert.That(userWriteOffs[0].Sum, Is.EqualTo(50m));
-				Assert.That(userWriteOffs[1].Sum, Is.GreaterThan(5m));
-				Assert.That(userWriteOffs[1].Sum, Is.LessThan(25m));
-				Assert.That(userWriteOffs[2].Sum, Is.EqualTo(50m));
-				Assert.That(userWriteOffs[3].Sum, Is.GreaterThan(5m));
-				Assert.That(userWriteOffs[3].Sum, Is.LessThan(25m));
+				Assert.That(userWriteOffs.Count, Is.EqualTo(3), userWriteOffs.Implode());
+				Assert.That(userWriteOffs[0].Sum, Is.GreaterThan(5m));
+				Assert.That(userWriteOffs[0].Sum, Is.LessThan(25m));
+				Assert.That(userWriteOffs[1].Sum, Is.EqualTo(50m));
+				Assert.That(userWriteOffs[2].Sum, Is.GreaterThan(5m));
+				Assert.That(userWriteOffs[2].Sum, Is.LessThan(25m));
 				Assert.IsFalse(client.Disabled);
 			}
 			billing.OnMethod();

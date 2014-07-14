@@ -74,12 +74,19 @@
 			<legend>Фильтры: </legend>
 			<table class="table filter_front">
 				<thead>
-					<tr align="left">
 						<td>
-							<span>Статус</span><br />
-							${FormHelper.Select("filter.statusType", Statuses, {"value" : "Id", "text" : "Name"})}
-							<br /><span>Регион</span><br />
-							${FormHelper.Select("filter.Region", RegionList, {"value" : "Id", "text" : "Name"})}
+							<div>
+								<span>Статус</span><br>
+								${FormHelper.Select("filter.statusType", Statuses, {"value" : "Id", "text" : "Name"})}
+							</div>
+							<div>
+								<span>Регион</span><br>
+								${FormHelper.Select("filter.Region", RegionList, {"value" : "Id", "text" : "Name"})}
+							</div>
+							<div>
+								<span>Услуги</span><br>
+								${app.Edit("filter.Service", { @items: serviceItems })}
+							</div>
 						</td>
 						<td>
 							${app.Edit("filter.EnabledTypeProperties", "RadioList")}

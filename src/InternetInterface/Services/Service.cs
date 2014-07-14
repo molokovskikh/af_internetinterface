@@ -32,6 +32,14 @@ namespace InternetInterface.Services
 		[Property]
 		public virtual bool Configurable { get; set; }
 
+		public virtual string Name
+		{
+			get
+			{
+				return HumanName;
+			}
+		}
+
 		public virtual bool SupportUserAcivation
 		{
 			get { return false; }

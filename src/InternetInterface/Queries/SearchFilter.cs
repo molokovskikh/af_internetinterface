@@ -9,6 +9,7 @@ using Common.Web.Ui.MonoRailExtentions;
 using InternetInterface.Controllers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
+using InternetInterface.Services;
 using NHibernate;
 using NHibernate.Linq;
 
@@ -38,6 +39,8 @@ namespace InternetInterface.Queries
 		public string House { get; set; }
 		public string CaseHouse { get; set; }
 		public string Apartment { get; set; }
+
+		public Service Service { get; set; }
 
 		private int _lastRowsCount;
 
@@ -94,9 +97,12 @@ namespace InternetInterface.Queries
 			if (StatusType > 0 && SearchProperties != SearchUserBy.OuterClientCode)
 				query.SetParameter("statusType", StatusType);
 
-			if(Region != null && Region > 0 && SearchProperties != SearchUserBy.OuterClientCode) {
+			if (Region != null && Region > 0 && SearchProperties != SearchUserBy.OuterClientCode) {
 				query.SetParameter("regionid", Region);
 			}
+
+			if (Service != null)
+				query.SetParameter("serviceId", Service.Id);
 
 			if (SearchProperties == SearchUserBy.Address) {
 				if (!String.IsNullOrEmpty(City))
@@ -215,6 +221,10 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 
 				if(Region != null && Region > 0) {
 					_return += " and (h.RegionId = :regionid or l.RegionId = :regionid)";
+				}
+
+				if (Service != null) {
+					_return += " and exists(select * from internet.ClientServices cs where cs.Client = c.Id and cs.Service = :serviceId) ";
 				}
 
 				if (SearchProperties != SearchUserBy.Address) {

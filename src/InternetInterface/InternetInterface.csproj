@@ -444,6 +444,7 @@
     <Compile Include="Models\SendedLease.cs" />
     <Compile Include="Models\ServiceRequest.cs" />
     <Compile Include="Models\ServiceInteration.cs" />
+    <Compile Include="Models\Services\HardwareRent.cs" />
     <Compile Include="Models\Services\Internet.cs" />
     <Compile Include="Models\Services\IpTv.cs" />
     <Compile Include="Models\Services\IpTvBoxRent.cs" />

@@ -1,17 +1,23 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using System.Text;
 using Castle.ActiveRecord;
+using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
+using Common.Web.Ui.MonoRailExtentions;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using InternetInterface.Models.Services;
 using InternetInterface.Queries;
+using InternetInterface.Services;
 using log4net;
 using MonoRail.Debugger.Toolbar;
 using NHibernate.Criterion;
+using NHibernate.Linq;
 using NHibernate.SqlCommand;
 
 namespace InternetInterface.Controllers
@@ -35,12 +41,12 @@ namespace InternetInterface.Controllers
 	}
 
 	[Helper(typeof(PaginatorHelper)),
-	 Helper(typeof(CategorieAccessSet)),]
+		Helper(typeof(CategorieAccessSet))]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class SearchController : BaseController
 	{
 		[AccessibleThrough(Verb.Get)]
-		public void SearchBy([DataBind("filter")] SearchFilter filter)
+		public void SearchBy([SmartBinder("filter")] SearchFilter filter)
 		{
 			var result = filter.Find(DbSession);
 			if (result.Count == 1) {
@@ -55,15 +61,9 @@ namespace InternetInterface.Controllers
 			AddIndispensableParameters();
 		}
 
-
 		public void SearchUsers(string query, PhysicalClient sClients)
 		{
-			var filter = new SearchFilter {
-				SearchProperties = SearchUserBy.Auto,
-				EnabledTypeProperties = EndbledType.All,
-				StatusType = 0,
-				ClientTypeFilter = ForSearchClientType.AllClients,
-			};
+			var filter = new SearchFilter();
 			PropertyBag["filter"] = filter;
 			PropertyBag["SearchText"] = "";
 			PropertyBag["ChTariff"] = 0;
@@ -84,9 +84,10 @@ namespace InternetInterface.Controllers
 			PropertyBag["additionalStatuses"] = AdditionalStatus.FindAllAdd();
 			PropertyBag["Tariffs"] = Tariff.FindAllAdd();
 			PropertyBag["WhoRegistered"] = Partner.FindAllAdd();
+			PropertyBag["serviceItems"] = DbSession.Query<Service>().OrderBy(s => s.HumanName).ToList();
 		}
 
-		public void Redirect([DataBind("filter")] ClientFilter filter)
+		public void Redirect([SmartBinder("filter")] ClientFilter filter)
 		{
 			var builder = string.Empty;
 			foreach (string name in Request.QueryString)
@@ -98,7 +99,6 @@ namespace InternetInterface.Controllers
 			else {
 				RedirectToUrl(string.Format("../UserInfo/LawyerPersonInfo.rails?{0}", builder));
 			}
-			CancelView();
 		}
 	}
 }
