@@ -138,6 +138,7 @@
     <Content Include="Assets\Stylesheets\alt-form.css" />
     <Content Include="Assets\Stylesheets\application.css" />
     <Content Include="Assets\Stylesheets\client.css" />
+    <Content Include="Assets\Stylesheets\contract-of-agency.css" />
     <Content Include="Assets\Stylesheets\orderinfo.css" />
     <Content Include="Assets\Stylesheets\orders.css" />
     <Content Include="Assets\Stylesheets\payments.css" />
@@ -209,6 +210,7 @@
     <Content Include="Views\Payments\ShowWriteOffs.brail" />
     <Content Include="Views\Partners\New.brail" />
     <Content Include="Views\Partners\Edit.brail" />
+    <Content Include="Views\Payments\ContractOfAgency.brail" />
     <None Include="Views\PrivateMessages\ForClient.brail" />
     <None Include="Views\PrivateMessages\ForSwitch.brail" />
     <None Include="Views\PrivateMessages\Message.brail" />

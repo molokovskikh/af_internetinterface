@@ -763,15 +763,16 @@ namespace InternetInterface.Controllers
 		[AccessibleThrough(Verb.Post)]
 		public void ChangeBalance(uint clientId, string balanceText, bool virtualPayment, string CommentText)
 		{
-			if (InitializeContent.Partner.IsDiller())
+			if (Partner.IsDiller())
 				virtualPayment = false;
 
-			var clientToch = DbSession.Load<Client>(clientId);
+			Payment payment = null;
+			var client = DbSession.Load<Client>(clientId);
 			decimal tryBalance;
 			if (decimal.TryParse(balanceText, out tryBalance) && tryBalance > 0) {
-				if (clientToch.LawyerPerson == null) {
-					DbSession.Save(new Payment {
-						Client = clientToch,
+				if (client.LawyerPerson == null) {
+					payment = new Payment {
+						Client = client,
 						Agent = Agent.GetByInitPartner(),
 						PaidOn = DateTime.Now,
 						RecievedOn = DateTime.Now,
@@ -779,7 +780,8 @@ namespace InternetInterface.Controllers
 						BillingAccount = false,
 						Virtual = virtualPayment,
 						Comment = CommentText
-					});
+					};
+					DbSession.Save(payment);
 					Notify("Платеж ожидает обработки");
 					Flash["sleepButton"] = true;
 				}
@@ -790,7 +792,10 @@ namespace InternetInterface.Controllers
 			else {
 				Error("Введена неверная сумма, должно быть положительное число.");
 			}
-			RedirectToUrl(clientToch.Redirect());
+			if (payment != null && Partner.ShowContractOfAgency && client.IsPhysical())
+				Redirect("Payments", "ContractOfAgency", new { id = payment.Id });
+			else
+				RedirectToUrl(client.Redirect());
 		}
 
 		[AccessibleThrough(Verb.Post)]

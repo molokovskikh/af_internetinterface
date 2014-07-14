@@ -79,8 +79,11 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual TimeSpan? WorkStep { get; set; }
 
-		[Property, Description("Отключен")]
+		[Property]
 		public virtual bool IsDisabled { get; set; }
+
+		[Property]
+		public virtual bool ShowContractOfAgency { get; set; }
 
 		[BelongsTo("Categorie", Lazy = FetchWhen.OnInvoke, Cascade = CascadeEnum.SaveUpdate), ValidateNonEmpty]
 		public virtual UserRole Role { get; set; }

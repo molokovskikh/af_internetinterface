@@ -31,8 +31,6 @@ namespace InternetInterface.Controllers
 
 		public void LoginPartner()
 		{
-			var c = new CompilerParameters();
-			var a = c.LoadAssembly("Castle.MonoRail.Framework");
 			LayoutName = "NoMap";
 			if (Context.Session["Login"] == null)
 				Context.Session["Login"] = Context.CurrentUser.Identity.Name;

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Headless;
 using NUnit.Framework;
@@ -52,7 +53,8 @@ namespace InternetInterface.Test.Helpers
 
 		protected void ClickButton(string name)
 		{
-			var button = page.Find<HtmlButton>().All().First(e => e.Value == name);
+			var button = page.Find<HtmlButton>().All()
+				.First(e => (e.Value ?? "").Trim() == name || (e.Text ?? "").Trim() == name);
 			page = button.Click<DynamicHtmlPage>();
 		}
 	}

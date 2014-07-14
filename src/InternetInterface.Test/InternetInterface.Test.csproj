@@ -141,6 +141,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Functional\BrigadFixture.cs" />
+    <Compile Include="Functional\ClientFixture.cs" />
     <Compile Include="Functional\ClientFunctionalFixture.cs" />
     <Compile Include="Functional\CommutatorFixture.cs" />
     <Compile Include="Functional\ConnectionRequestFixture.cs" />

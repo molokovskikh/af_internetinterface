@@ -1,6 +1,7 @@
 ﻿using System;
 using Castle.ActiveRecord;
 using Castle.Components.Validator;
+using Common.Tools;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Models.Universal;
 
@@ -43,9 +44,9 @@ namespace InternetInterface.Models
 		public virtual Client Client { get; set; }
 
 		[Property,
-		 ValidateNonEmpty("Введите сумму"),
-		 ValidateRange(1, 100000, "Сумма должна быть больше 0 и меньше 100 000 рублей"),
-		 ValidateDecimal("Некорректно введено значение суммы")]
+			ValidateNonEmpty("Введите сумму"),
+			ValidateRange(1, 100000, "Сумма должна быть больше 0 и меньше 100 000 рублей"),
+			ValidateDecimal("Некорректно введено значение суммы")]
 		public virtual decimal Sum { get; set; }
 
 		[BelongsTo("Agent")]
@@ -75,6 +76,11 @@ namespace InternetInterface.Models
 				Client.WriteOff(Sum, Virtual);
 
 			return Client.CreareAppeal(String.Format("Удален платеж на сумму {0:C} \r\n Комментарий: {1}", Sum, comment), AppealType.System);
+		}
+
+		public virtual string SumToLiteral()
+		{
+			return RusCurrency.Str((double)Sum);
 		}
 	}
 }

@@ -37,3 +37,9 @@ html {
 body {
 	margin-bottom: 30px;
 }
+
+@media print {
+	#page-footer {
+		display: none;
+	}
+}

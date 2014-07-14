@@ -9,6 +9,17 @@
 		${app.Error("Partner.Name")}
 	</td>
 </tr>
+<tr>
+	<td>
+		Показывать договор поручения
+	</td>
+	<td>
+		${app.Edit("Partner.ShowContractOfAgency")}
+	</td>
+	<td>
+		${app.Error("Partner.ShowContractOfAgency")}
+	</td>
+</tr>
 <% if Partner.Role.HasExAttrs: %>
 <tr>
 	<td>

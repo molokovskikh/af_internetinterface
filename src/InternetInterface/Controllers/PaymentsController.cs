@@ -65,7 +65,7 @@ namespace InternetInterface.Controllers
 	[Helper(typeof(ViewHelper))]
 	[Helper(typeof(TableHelper), "tableHelper")]
 	[Helper(typeof(PaginatorHelper), "paginator")]
-	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter)), System.Runtime.InteropServices.GuidAttribute("5382FACE-DB49-4A02-9E2E-0A512B0D2E49")]
+	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class PaymentsController : BaseController
 	{
 		public void Index([DataBind("filter")] PaymentFilter filter)
@@ -451,6 +451,12 @@ namespace InternetInterface.Controllers
 			SetARDataBinder(AutoLoadBehavior.NullIfInvalidKey);
 			BindObjectInstance(filter, IsPost ? ParamStore.Form : ParamStore.QueryString, "filter", AutoLoadBehavior.NullIfInvalidKey);
 			this.RenderFile(string.Format("Выгрузка списаний ({0}).xls", DateTime.Now.ToShortDateString()), ExportModel.GetWriteOffsExcel(filter));
+		}
+
+		public void ContractOfAgency(uint id)
+		{
+			var payment = DbSession.Load<Payment>(id);
+			PropertyBag["payment"] = payment;
 		}
 	}
 }

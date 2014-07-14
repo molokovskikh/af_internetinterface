@@ -7,7 +7,7 @@
 			<% OutputSubView("Partner") %>
 			<tr>
 				<td>
-					${app.Label("Partner.IsDisabled")}
+					Отключен
 				</td>
 				<td>
 					${app.Edit("Partner.IsDisabled")}
