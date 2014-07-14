@@ -21,7 +21,7 @@ namespace InternetInterface.Models
 		[Description("Добровольная блокировка")]
 		VoluntaryBlocking = 9,
 		[Description("Расторгнут")]
-		Dissolved = 11
+		Dissolved = 10
 	}
 
 	[ActiveRecord("Status", Schema = "internet", Lazy = true)]
