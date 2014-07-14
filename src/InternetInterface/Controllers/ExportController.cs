@@ -14,8 +14,9 @@ namespace InternetInterface.Controllers
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class ExportController : BaseController
 	{
-		public void GetClientsInExcel([DataBind("filter")] SearchFilter filter)
+		public void GetClientsInExcel([SmartBinder("filter")] SearchFilter filter)
 		{
+			filter.ExportInExcel = true;
 			this.RenderFile("Клиенты.xls", ExportModel.GetClients(filter, filter.Find(DbSession)));
 		}
 	}
