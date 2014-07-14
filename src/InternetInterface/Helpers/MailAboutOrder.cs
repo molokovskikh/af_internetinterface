@@ -147,7 +147,8 @@ namespace InternetInterface.Helpers
 
 		public static void SendMail(string subject, string textMessage)
 		{
-			string[] address = { "internet@ivrn.net", "billing@analit.net" };
+			var address = (ConfigurationManager.AppSettings["OrderNotificationMail"] ?? "")
+				.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 			var mailer = new Mailer(Sender);
 			mailer.SendText("internet@ivrn.net", address, subject, textMessage);
 		}
