@@ -66,6 +66,8 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void Make_reservation()
 		{
+			var brigad = new Brigad("Тестовая бригада");
+			session.Save(brigad);
 			Client.Status = session.Load<Status>((uint)StatusType.BlockedAndNoConnected);
 			session.Save(Client);
 			Open();
