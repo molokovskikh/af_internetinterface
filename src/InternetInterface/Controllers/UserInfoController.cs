@@ -1087,7 +1087,6 @@ namespace InternetInterface.Controllers
 		{
 			var order = DbSession.Load<Order>(orderId);
 			order.EndDate = orderCloseDate;
-			order.Disabled = true;
 			DbSession.Save(order);
 			RedirectToUrl(order.Client.Redirect());
 			var message = MessageOrderHelper.GenerateText(order, "закрытие");
