@@ -11,13 +11,32 @@ Global(
 
 task @default, [@Build]
 
-task @Build, ["generate:assembly:info", @BuildWebSite, @BuildBackground, @BuildPrinter]
+task @Build, ["generate:assembly:info", @BuildWebSite, @BuildBackground, @BuildPrinter, "build:billing", "build:ivrn"]
 
-task @deploy, [@DeployPipeline, @DeployPrinter, "deploy:background"]
+task @deploy, [@DeployPipeline, @DeployPrinter, "deploy:background", "deploy:ivrn", "deploy:billing"]
 
 task "deploy:background", [@Production, @BuildBackground, @Migrate]:
 	return if Globals.Environment != @Production
 	DeployService(Globals, "InternetInterface.Background", "fms")
+
+task "deploy:ivrn", ["build:ivrn"]:
+	XCopyDeploy(Globals, "InforoomInternet", GetDeploy(Globals, "InforoomInternet", "IVrn"))
+
+task "deploy:billing", ["build:billing"]:
+	return if Globals.Environment != @Production
+	DeployService(Globals, "Billing", "fms")
+
+task "build:billing", ["clean:billing"]:
+	Build(Globals, "Billing")
+
+task "build:ivrn", [@CopyTiny, "clean:ivrn"]:
+	BuildWeb(Globals, "InforoomInternet")
+
+task "clean:billing":
+	Clean(Globals, "Billing")
+
+task "clean:ivrn":
+	CleanWeb(Globals, "InforoomInternet")
 
 task @BuildBackground:
 	Build(Globals, "InternetInterface.Background")
@@ -28,4 +47,3 @@ task @BuildPrinter:
 task @DeployPrinter:
 	return if Globals.Environment != @Production
 	XCopyDeploy(Globals, "InternetInterface.Printer", "\\\\adc.analit.net\\Inforoom\\Apps\\InternetInterface.Printer")
-
