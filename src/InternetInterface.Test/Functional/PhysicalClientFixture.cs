@@ -44,7 +44,10 @@ namespace InternetInterface.Test.Functional
 			Click("Управление услугами");
 			Click("Аренда приставки");
 			var el = browser.FindElementByCssSelector("input[value='9']");
-			el.FindElement(By.XPath("..")).Submit();
+			var form = el.FindElement(By.XPath(".."));
+			Css(form, "#clientService_Model").SendKeys("IP STB Aminet");
+			Css(form, "#clientService_SerialNumber").SendKeys("748644654");
+			form.Submit();
 			AssertText("Услуга \"Аренда приставки\" активирована");
 			Click("Управление услугами");
 			Click("Аренда приставки");
