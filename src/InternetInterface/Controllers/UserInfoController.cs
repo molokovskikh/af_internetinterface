@@ -3,14 +3,9 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Collections.Generic;
-using Castle.ActiveRecord;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
-using Castle.MonoRail.Framework.Helpers;
-using Common.MySql;
 using Common.Tools;
-using Common.Web.Ui.ActiveRecordExtentions;
-using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.MonoRailExtentions;
 using Common.Web.Ui.NHibernateExtentions;
@@ -1083,10 +1078,15 @@ namespace InternetInterface.Controllers
 			RenderView("EditOrderService");
 		}
 
-		public void CloseOrder(uint orderId, DateTime orderCloseDate)
+		public void CloseOrder(uint orderId, DateTime? orderCloseDate)
 		{
 			var order = DbSession.Load<Order>(orderId);
-			order.EndDate = orderCloseDate;
+			if (orderCloseDate != null)
+				order.EndDate = orderCloseDate;
+			else {
+				order.Disabled = true;
+				order.EndDate = DateTime.Today;
+			}
 			DbSession.Save(order);
 			RedirectToUrl(order.Client.Redirect());
 			var message = MessageOrderHelper.GenerateText(order, "закрытие");
