@@ -180,7 +180,9 @@ namespace InternetInterface.Test.Functional
 		private void SafeClick(string css)
 		{
 			WaitClickable(css);
-			Click(css);
+			var element = browser.FindElementByCssSelector(css);
+			browser.ExecuteScript(String.Format("window.scrollTo({0},{1})", element.Location.X, element.Location.Y));
+			element.Click();
 		}
 
 		private void WaitReveal()
