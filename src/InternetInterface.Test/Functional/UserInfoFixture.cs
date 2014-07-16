@@ -170,7 +170,7 @@ namespace InternetInterface.Test.Functional
 			Click("Назначить в график");
 			AssertText("Назначение в график клиента");
 			WaitAjax();
-			SafeClick("[name=\"graph_button\"]");
+			SafeClick("[name=graph_button]");
 			Click("Назначить");
 			WaitAjax();
 			AssertText("Информация по клиенту");
@@ -180,9 +180,7 @@ namespace InternetInterface.Test.Functional
 		private void SafeClick(string css)
 		{
 			WaitClickable(css);
-			var element = browser.FindElementByCssSelector(css);
-			browser.ExecuteScript(String.Format("window.scrollTo({0},{1})", element.Location.X, element.Location.Y));
-			element.Click();
+			Click(css);
 		}
 
 		private void WaitReveal()
