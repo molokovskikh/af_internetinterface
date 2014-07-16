@@ -1062,6 +1062,12 @@ where CE.Client = {0}", Id))
 		{
 			return Disabled && AutoUnblocked && Status.Type == StatusType.NoWorked;
 		}
+
+		public virtual List<ClientService> GetRentServices()
+		{
+			var services = new[] { typeof(IpTvBoxRent), typeof(HardwareRent) };
+			return ClientServices.Where(s => services.Contains(NHibernateUtil.GetClass(s.Service))).ToList();
+		}
 	}
 
 	public class ServiceActivationException : Exception

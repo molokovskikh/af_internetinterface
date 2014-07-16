@@ -42,6 +42,8 @@ namespace InternetInterface.Queries
 
 		public Service Service { get; set; }
 
+		public int? BlockDayCount { get; set; }
+
 		private int _lastRowsCount;
 
 		public int RowsCount
@@ -100,7 +102,10 @@ namespace InternetInterface.Queries
 			if (Region != null && Region > 0 && SearchProperties != SearchUserBy.OuterClientCode) {
 				query.SetParameter("regionid", Region);
 			}
-
+			if (BlockDayCount != null) {
+				var blockBefore = DateTime.Today.AddDays(-BlockDayCount.Value);
+				query.SetParameter("blockBefore", blockBefore);
+			}
 			if (Service != null)
 				query.SetParameter("serviceId", Service.Id);
 
@@ -225,6 +230,10 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 
 				if (Service != null) {
 					_return += " and exists(select * from internet.ClientServices cs where cs.Client = c.Id and cs.Service = :serviceId) ";
+				}
+
+				if (BlockDayCount != null) {
+					_return += "and c.Disabled and c.BlockDate < :blockBefore";
 				}
 
 				if (SearchProperties != SearchUserBy.Address) {

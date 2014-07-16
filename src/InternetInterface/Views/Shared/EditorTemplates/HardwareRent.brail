@@ -1,0 +1,25 @@
+﻿<tr>
+	<td>Начало аренды</td>
+	<td>
+		${FormHelper.TextField("startDate", { @class: "required validate-date input-date" })}
+		<input type="button" class="CalendarInput" />
+	</td>
+</tr>
+<tr>
+	<td>Тип оборудования</td>
+	<td>
+		${FormHelper.TextField("clientService.Type", { @class: @required })}
+	</td>
+</tr>
+<tr>
+	<td>Модель</td>
+	<td>
+		${FormHelper.TextField("clientService.Model", { @class: @required })}
+	</td>
+</tr>
+<tr>
+	<td>Серийный номер</td>
+	<td>
+		${FormHelper.TextField("clientService.SerialNumber", { @class: @required })}
+	</td>
+</tr>

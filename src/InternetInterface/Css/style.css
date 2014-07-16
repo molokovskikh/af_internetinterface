@@ -490,9 +490,11 @@ table .filter_front {
 	margin: 10px;
 }
 
-table .filter_front thead td{
+table .filter_front td {
 	padding: 5px;
-	width: 50%;
+}
+table .filter_front td div {
+	padding-top: 3px;
 }
 
 .hidden {

@@ -11,17 +11,17 @@
 		<tr>
 			<td>
 			<div class="accordion" style="font-size:1em;">
-			<% for i, service in enumerate(services): %>
+			<% for service in services: %>
 			<% if service.InterfaceControl: %>
 				<% if service.CanActivateInWeb(_client): %>
-					<h4><a href="#"> ${service.HumanName} </a></h4>
+					<h4><a href="#">${service.HumanName}</a></h4>
 					<div>
-						<form method=post action="${siteroot}/UserInfo/ActivateService">
+						<form method="post" action="${siteroot}/UserInfo/ActivateService" class="validable">
 							<input type="hidden" name="clientId" value="${ClientCode}" />
 							<input type="hidden" name="serviceId" value="${service.Id}" />
 							<table>
 								<tbody>
-									${service.GetParameters()}
+									${app.RenderService("assignedService", service)}
 								</tbody>
 							</table>
 							<button class="button save" style="margin-top:15px;" value="Назначить">Активировать</button>
@@ -31,7 +31,7 @@
 					<% if service.ActivatedForClient(_client): %>
 						<h4><a href="#"> ${service.HumanName} </a> </h4>
 						<div>
-							<form method=post action="${siteroot}/UserInfo/DiactivateService">
+							<form method="post" action="${siteroot}/UserInfo/DiactivateService">
 								<input type="hidden" name="clientId" value="${ClientCode}" />
 								<input type="hidden" name="serviceId" value="${service.Id}" />
 								<button class="button save" style="margin-top:15px;" value="Назначить">Деактивировать</button>

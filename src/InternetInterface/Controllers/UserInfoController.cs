@@ -205,6 +205,7 @@ namespace InternetInterface.Controllers
 							dtn.Second),
 					Activator = InitializeContent.Partner
 				};
+				BindObjectInstance(clientService, "clientService");
 
 				try {
 					Notify(client.Activate(clientService));

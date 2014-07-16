@@ -4,6 +4,9 @@
 	//на которые в свою очередь могут быть назначены правила валидации
 	//по этому игнорируем все скрытые поля кроме type=hidden
 	$.validator.defaults.ignore = ":hidden:not(input[type=hidden])";
+	$("form.validable").each(function () {
+		$(this).validate();
+	});
 	window.searchEditors = { client: { url: "/clients/search" } };
 	registerCheckboxAll();
 	registerEditable();

@@ -70,29 +70,31 @@
 				</td>
 			</tr>
 		</table>
-		<fieldset style="padding: 0; margin: 0; text-align: left; width: 99%;">
-			<legend>Фильтры: </legend>
+		<fieldset style="padding: 0; margin: 0; width: 99%;">
+			<legend>Фильтры:</legend>
 			<table class="table filter_front">
-				<thead>
-						<td>
-							<div>
-								<span>Статус</span><br>
-								${FormHelper.Select("filter.statusType", Statuses, {"value" : "Id", "text" : "Name"})}
-							</div>
-							<div>
-								<span>Регион</span><br>
-								${FormHelper.Select("filter.Region", RegionList, {"value" : "Id", "text" : "Name"})}
-							</div>
-							<div>
-								<span>Услуги</span><br>
-								${app.Edit("filter.Service", { @items: serviceItems })}
-							</div>
-						</td>
-						<td>
-							${app.Edit("filter.EnabledTypeProperties", "RadioList")}
-						</td>
-					</tr>
-				</thead>
+				<tr>
+					<td>
+						<div>
+							<span>Статус</span><br>
+							${FormHelper.Select("filter.statusType", Statuses, {"value" : "Id", "text" : "Name"})}
+						</div>
+						<div>
+							<span>Регион</span><br>
+							${FormHelper.Select("filter.Region", RegionList, {"value" : "Id", "text" : "Name"})}
+						</div>
+						<div>
+							<span>Услуги</span><br>
+							${app.Edit("filter.Service", { @items: serviceItems })}
+						</div>
+						<div>
+							<span>Заблокирован более ${app.Edit("filter.BlockDayCount", { @style: "width: 3em" })} дней</span>
+						</div>
+					</td>
+					<td>
+						${app.Edit("filter.EnabledTypeProperties", "RadioList")}
+					</td>
+				</tr>
 			</table>
 		</fieldset>
 

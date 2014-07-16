@@ -75,7 +75,7 @@ namespace InternetInterface.Test.Functional
 			Click("Назначить в график");
 			AssertText("Назначение в график клиента");
 			WaitAjax();
-			SafeClick("[name=\"graph_button\"]");
+			SafeClick("[name=graph_button]");
 
 			Click("Зарезервировать");
 			WaitAjax();

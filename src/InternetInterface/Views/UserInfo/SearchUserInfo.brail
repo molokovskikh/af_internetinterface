@@ -119,11 +119,7 @@
 				<span class="description">Серия\Номер</span> ${Client.PassportSeries} \ ${Client.PassportNumber}<br />
 				<span class="description">Кем выдан: </span> ${Client.WhoGivePassport}<br />
 				<span class="description">Адрес регистрации:</span> ${Client.RegistrationAdress}<br />
-				<% if client.PassportDate != null: %>
-					<span class="description">Дата выдачи :</span> ${Client.PassportDate.ToShortDateString()}
-					<% else: %>
-					<span class="description">Дата выдачи :</span>
-				<% end %>
+				<span class="description">Дата выдачи :</span> ${?Client.PassportDate.ToShortDateString()}
 			</td>
 		</tr>
 		<% end %>
@@ -139,6 +135,15 @@
 		<% if Client.Tariff != null and client.Client.Internet.ActivatedByUser: %>
 		<tr>
 			<td><span class="description">Тариф:</span><b> ${Client.Tariff.Name} (${_client.GetPriceForTariff().ToString("C")})<b></td>
+		</tr>
+		<% end %>
+		<% for service in client.Client.GetRentServices(): %>
+		<tr>
+			<td>
+				!{service.Service.Name} - !{service.Type}<br>
+				<span class="description">Модель:</span>!{service.Model}<br>
+				<span class="description">Серийный номер:</span>!{service.SerialNumber}<br>
+			</td>
 		</tr>
 		<% end %>
 		<% if client.Client.Iptv.Channels.Count: %>

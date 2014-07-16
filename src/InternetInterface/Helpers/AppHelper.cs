@@ -11,6 +11,8 @@ using Common.Web.Ui.MonoRailExtentions;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using InternetInterface.Models.Access;
+using InternetInterface.Models.Services;
+using InternetInterface.Services;
 using NHibernate;
 
 namespace InternetInterface.Helpers
@@ -150,6 +152,15 @@ namespace InternetInterface.Helpers
 		public string Form(IDictionary parameters = null)
 		{
 			return Form("", parameters);
+		}
+
+		public string RenderService(string target, Service service)
+		{
+			if (NHibernateUtil.GetClass(service) == typeof(HardwareRent)
+				|| NHibernateUtil.GetClass(service) == typeof(IpTvBoxRent)) {
+				return Templataize(target, new ClientService(), "shared/EditorTemplates", NHibernateUtil.GetClass(service));
+			}
+			return service.GetParameters();
 		}
 	}
 }

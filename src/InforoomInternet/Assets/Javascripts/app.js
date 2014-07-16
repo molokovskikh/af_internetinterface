@@ -11,5 +11,7 @@
 		selectOnly: true,
 		maxItemsToShow: 10
 	});
-	$("form.validable").validate();
+	$("form.validable").each(function () {
+		$(this).validate();
+	});
 });

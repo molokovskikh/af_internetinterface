@@ -249,6 +249,8 @@
     <None Include="Views\Services\Edit.brail" />
     <None Include="Views\Shared\EditorTemplates\Contact.brail" />
     <Content Include="Views\Shared\EditorTemplates\PaymentMoveAction.brail" />
+    <Content Include="Views\Shared\EditorTemplates\HardwareRent.brail" />
+    <Content Include="Views\Shared\EditorTemplates\IpTvBoxRent.brail" />
     <None Include="Views\Sms\SmsIndex.brail" />
     <None Include="Views\Subview\AppealsInfo.brail" />
     <None Include="Views\Subview\CallsHistory.brail" />
@@ -304,7 +306,6 @@
     <Content Include="JavaScript\jquery.tablesorter.js" />
     <None Include="Views\Subview\StaticIps.brail" />
     <None Include="Views\ServiceRequest\RegisterServiceRequest.brail" />
-    <None Include="Views\Subview\ServiceRequestRow.brail" />
     <None Include="Views\Payments\СhangeSaleSettings.brail" />
     <None Include="Views\AgentInfo\EditAgentSettings.brail" />
     <None Include="Views\Tariffs\ChangeRules.brail" />

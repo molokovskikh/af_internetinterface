@@ -80,10 +80,20 @@ namespace InternetInterface.Models
 		[BelongsTo]
 		public virtual ClientEndpoint Endpoint { get; set; }
 
+
+		[Property]
+		public virtual string Type { get; set; }
+
+		[Property]
+		public virtual string SerialNumber { get; set; }
+
+		[Property]
+		public virtual string Model { get; set; }
+
 		private void DeleteFromClient()
 		{
 			if (Service.CanDelete(this)) {
-				//строка ниже не работает, в тестt ServiceFixture.ActiveDeactive хотя должна, какой то бред
+				//строка ниже не работает, в тесте ServiceFixture.ActiveDeactive хотя должна, какой то бред
 				if (Id == 0)
 					Client.ClientServices.Remove(this);
 				else
