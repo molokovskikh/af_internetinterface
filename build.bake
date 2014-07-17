@@ -26,14 +26,11 @@ task "deploy:billing", ["build:billing"]:
 	return if Globals.Environment != @Production
 	DeployService(Globals, "Billing", "fms")
 
-task "build:billing", ["clean:billing"]:
+task "build:billing":
 	Build(Globals, "Billing")
 
 task "build:ivrn", [@CopyTiny, "clean:ivrn"]:
 	BuildWeb(Globals, "InforoomInternet")
-
-task "clean:billing":
-	Clean(Globals, "Billing")
 
 task "clean:ivrn":
 	CleanWeb(Globals, "InforoomInternet")
