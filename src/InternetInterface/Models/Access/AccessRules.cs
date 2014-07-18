@@ -11,7 +11,6 @@ namespace InternetInterface.Models.Access
 		private static string methodName;
 		private static HashSet<string> _getClientInfo;
 		private static HashSet<string> _registerClient;
-		private static HashSet<string> _manageBrigads;
 		private static HashSet<string> _registerPartner;
 		private static HashSet<string> _changeBalance;
 		private static HashSet<string> _accessDHCP;
@@ -20,7 +19,6 @@ namespace InternetInterface.Models.Access
 		private static HashSet<string> _agentInfo;
 		private static HashSet<string> _agentPayers;
 		private static HashSet<string> _serviceRequest;
-		private static HashSet<string> _adminServiceRequest;
 		private static HashSet<string> _smsRule;
 
 		public static List<string> GetAccessName(string _methodName)

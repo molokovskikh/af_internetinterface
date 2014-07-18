@@ -451,7 +451,7 @@ namespace InternetInterface.Controllers
 
 		public void PassAndShowCard(uint ClientID)
 		{
-			if (CategorieAccessSet.AccesPartner("SSI")) {
+			if (Partner.AccesedPartner.Contains("SSI")) {
 				var client = DbSession.Load<Client>(ClientID);
 				var physicalClient = client.PhysicalClient;
 				var password = CryptoPass.GeneratePassword();

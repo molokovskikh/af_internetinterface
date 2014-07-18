@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
 using Headless;
+using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
+using NHibernate.Linq;
 using NUnit.Framework;
 using Rhino.Mocks;
 using Test.Support.Selenium;
@@ -14,9 +16,21 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void View_write_off()
 		{
-			var page = Open();
-			page = Click(page, "Списания");
-			Assert.That(page.Html, Is.StringContaining("Имя клиента"));
+			Open();
+			Click("Списания");
+			AssertText("Имя клиента");
+		}
+
+		[Test]
+		public void View_connections()
+		{
+			var client = ClientHelper.Client(session);
+			session.Save(client);
+			session.Save(new ConnectGraph(client, DateTime.Today, session.Query<Brigad>().First()));
+
+			Open();
+			Click("Подключения");
+			AssertText(client.Name);
 		}
 	}
 }

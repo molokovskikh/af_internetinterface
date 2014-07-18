@@ -43,7 +43,7 @@ namespace InternetInterface.Background
 
 				tasks.Each(t => t.Cancellation = runner.Cancellation);
 
-				return CommandService.Main(args, runner);
+				return CommandService.Start(args, runner);
 			}
 			catch(Exception e) {
 				log.Error("Ошибка при запуске приложения", e);

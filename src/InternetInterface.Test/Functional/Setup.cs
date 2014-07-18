@@ -29,7 +29,7 @@ namespace InternetInterface.Test.Functional
 		{
 			SeleniumFixture.GlobalSetup();
 			ConfigTest();
-			PrepareTestData();
+			SeedDb();
 
 			InitializeContent.GetPartner = () => Partner.FindFirst();
 			_webServer = SeleniumFixture.StartServer();
@@ -42,7 +42,7 @@ namespace InternetInterface.Test.Functional
 			_webServer.ShutDown();
 		}
 
-		public static void PrepareTestData()
+		public static void SeedDb()
 		{
 			using (new SessionScope()) {
 				ArHelper.WithSession(session => {

@@ -64,7 +64,7 @@ namespace InternetInterface.Queries
 				.ToList();
 		}
 
-		public string GetUri()
+		public new string GetUri()
 		{
 			var parts = new List<string>();
 			if (Period != null)

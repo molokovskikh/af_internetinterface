@@ -40,9 +40,8 @@ namespace InternetInterface.Controllers
 		}
 	}
 
-	[Helper(typeof(PaginatorHelper)),
-		Helper(typeof(CategorieAccessSet))]
-	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
+	[Helper(typeof(PaginatorHelper))]
+	[Filter(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class SearchController : BaseController
 	{
 		[AccessibleThrough(Verb.Get)]
