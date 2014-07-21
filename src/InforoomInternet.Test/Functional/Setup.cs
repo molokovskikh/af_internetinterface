@@ -15,7 +15,7 @@ namespace InforoomInternet.Test.Functional
 		{
 			SeleniumFixture.GlobalSetup();
 			_webServer = SeleniumFixture.StartServer();
-			InternetInterface.Test.Functional.Setup.PrepareTestData();
+			InternetInterface.Test.Functional.Setup.SeedDb();
 		}
 
 		[TearDown]

@@ -29,7 +29,6 @@ namespace InternetInterface.Queries
 		public ForSearchClientType ClientTypeFilter { get; set; }
 		public EndbledType EnabledTypeProperties { get; set; }
 		public string SearchText { get; set; }
-		public string SortBy { get; set; }
 		public string Direction { get; set; }
 		public bool ExportInExcel { get; set; }
 		public uint Region { get; set; }
@@ -89,7 +88,7 @@ namespace InternetInterface.Queries
 			return String.Join("&", ToUrl());
 		}
 
-		public string GetUri()
+		public new string GetUri()
 		{
 			return ToUrlQuery();
 		}
@@ -99,7 +98,7 @@ namespace InternetInterface.Queries
 			if (StatusType > 0 && SearchProperties != SearchUserBy.OuterClientCode)
 				query.SetParameter("statusType", StatusType);
 
-			if (Region != null && Region > 0 && SearchProperties != SearchUserBy.OuterClientCode) {
+			if (Region > 0 && SearchProperties != SearchUserBy.OuterClientCode) {
 				query.SetParameter("regionid", Region);
 			}
 			if (BlockDayCount != null) {
@@ -224,7 +223,7 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 				if (EnabledTypeProperties == EndbledType.Enabled)
 					_return += " and c.Disabled = false";
 
-				if(Region != null && Region > 0) {
+				if(Region > 0) {
 					_return += " and (h.RegionId = :regionid or l.RegionId = :regionid)";
 				}
 

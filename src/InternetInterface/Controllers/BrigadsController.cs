@@ -16,7 +16,7 @@ using NHibernate.Linq;
 namespace InternetInterface.Controllers
 {
 	[Helper(typeof(PaginatorHelper))]
-	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
+	[Filter(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class BrigadsController : BaseController
 	{
 		public BrigadsController()

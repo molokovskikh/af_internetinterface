@@ -16,11 +16,11 @@
 				<tr>
 					<th>${app.Sortable("Номер счета", "Id", "head_id")}</th>
 					<th>${app.Sortable("ФИО", "Name", "head_name")}</th>
-					<% if CategorieAccessSet.AccesPartner("SSI"): %>
+					<% if PartnerAccessSet.AccesPartner("SSI"): %>
 					<th>${app.Sortable("Адрес подключения", "Adress", "head_adress")}</th>
 					<th>${app.Sortable("Контактная информация", "TelNum", "head_telNum")}</th>
 					<% end %>
-					<% if CategorieAccessSet.AccesPartner("SSI"): %>
+					<% if PartnerAccessSet.AccesPartner("SSI"): %>
 					<th>${app.Sortable("Дата регистрации", "RegDate", "head_regDate")}</th>
 					<% end %>
 					<th>${app.Sortable("Тариф", "Tariff", "head_tariff")}</th>
@@ -40,13 +40,13 @@
 			<% end %>
 				<td><a href="../Search/Redirect?filter.ClientCode=${item.Id}">${item.ForSearchId(filter.SearchText)}</a></td>
 				<td> ${item.ForSearchName(filter.SearchText)}</td>
-				<% if CategorieAccessSet.AccesPartner("SSI"): %>
+				<% if PartnerAccessSet.AccesPartner("SSI"): %>
 					<td>
 						${itemInfo.ForSearchAddress(filter.SearchText)}
 					</td>
 					<td>${item.ForSearchContact(filter.SearchText)}</td>
 				<% end %>
-				<% if CategorieAccessSet.AccesPartner("SSI"): %>
+				<% if PartnerAccessSet.AccesPartner("SSI"): %>
 					<% if item.PhysicalClient != null: %>
 					<td>${item.RegDate}</td>
 					<% else: %>

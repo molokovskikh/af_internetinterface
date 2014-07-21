@@ -132,7 +132,7 @@ namespace InternetInterface.Controllers
 			else {
 				EditorValues();
 
-				if (!CategorieAccessSet.AccesPartner("SSI"))
+				if (!Partner.AccesedPartner.Contains("SSI"))
 					status = 1;
 
 				PropertyBag["requestID"] = requestID;

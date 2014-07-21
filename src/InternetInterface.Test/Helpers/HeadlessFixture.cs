@@ -14,7 +14,7 @@ namespace InternetInterface.Test.Helpers
 		protected DynamicHtmlPage page;
 
 		[SetUp]
-		public void Setup()
+		public void HeadlessSetup()
 		{
 			browser = new Browser();
 			page = null;

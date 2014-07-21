@@ -38,7 +38,6 @@ namespace InternetInterface.Queries
 		public string query { get; set; }
 		public DateTime? beginDate { get; set; }
 		public DateTime? endDate { get; set; }
-		public string SortBy { get; set; }
 		public string Direction { get; set; }
 		public uint? labelId { get; set; }
 		public bool Archive { get; set; }
