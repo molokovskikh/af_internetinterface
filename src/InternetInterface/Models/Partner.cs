@@ -97,13 +97,13 @@ namespace InternetInterface.Models
 		{
 			if (Role != null && Role.ReductionName == "Service") {
 				if (WorkBegin == null) {
-					errors.RegisterErrorMessage("WorkBegin", "Поле должно быть заполено");
+					errors.RegisterErrorMessage("WorkBegin", "Поле должно быть заполнено");
 				}
 				if (WorkEnd == null) {
-					errors.RegisterErrorMessage("WorkEnd", "Поле должно быть заполено");
+					errors.RegisterErrorMessage("WorkEnd", "Поле должно быть заполнено");
 				}
 				if (WorkStep == null) {
-					errors.RegisterErrorMessage("WorkStep", "Поле должно быть заполено");
+					errors.RegisterErrorMessage("WorkStep", "Поле должно быть заполнено");
 				}
 			}
 		}

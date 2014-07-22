@@ -7,7 +7,7 @@
                     <td>
                        <form class="form" id="RegistrationForm" name="RegistrationForm" method="get" action="${siteroot}/Brigads/New">
                        <button type="submit" id="RegisterBrigad" class="button save">
-                           Зарегистрирвоать бригаду
+                           Зарегистрировать бригаду
                        </button>
                        </form>
                     </td>

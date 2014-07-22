@@ -50,6 +50,6 @@
 	</tbody>
 </table>
 <% else:
-output WriteMessageError("За выбраный период платежей не зарегистрировано")
+output WriteMessageError("За выбранный период платежей не зарегистрировано")
  end %>
 </div>

@@ -40,8 +40,8 @@ namespace InternetInterface.Services
 		}
 
 		//будь бдителен два вызова CanActivate похожи но не идентичные
-		//CanActivate(Client client) - происхоидт если нужно узнать может ли услуга быть активирована
-		//CanActivate(ClientService assignedService) - проиходит когда услуга активируется
+		//CanActivate(Client client) - происходит если нужно узнать может ли услуга быть активирована
+		//CanActivate(ClientService assignedService) - происходит когда услуга активируется
 		//разница в проверке дублей когда услуга активируется она уже будет в списке ClientService
 		public override bool CanActivate(ClientService assignedService)
 		{

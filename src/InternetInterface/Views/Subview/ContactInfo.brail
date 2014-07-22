@@ -34,7 +34,7 @@
 		<thead>
 			<tr>
 				<th colspan=4>
-					Редактивание списка контактов
+					Редактирование списка контактов
 					<input id="SaveContactButton" type="submit" value="Сохранить" align="right"/>
 				</th>
 			</tr>

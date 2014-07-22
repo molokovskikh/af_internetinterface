@@ -305,9 +305,7 @@ ${app.Asset("Register.js")}
 				</select>
 			</td>
 			<td>
-				<% if IsDefined("statusCanChanged"):
-					output WriteMessageError(statusCanChanged)
-				end %>
+				${app.Error("client.Status")}
 			</td>
 		</tr>
 		<tr>

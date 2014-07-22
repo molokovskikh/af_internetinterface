@@ -81,7 +81,7 @@
 		req.graph_date = $('#graph_date').val();
 		$.post("SaveGraph", req, function (data) {
 			if (data) {
-				writeMessage("Заявка включена в рассписание", "notice");
+				writeMessage("Заявка включена в расписание", "notice");
 				window.location.href = '../Search/Redirect?filter.ClientCode=${ClientCode}';
 			}
 			else {

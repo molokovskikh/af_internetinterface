@@ -870,7 +870,7 @@ where CE.Client = {0}", Id))
 		}
 
 		//флаг устанавливается в случае если нужно изменить настройки sce
-		//например если была активирована услуга обещаный платеж
+		//например если была активирована услуга обещанный платеж
 		public virtual bool IsNeedRecofiguration { get; set; }
 
 		public virtual void RegistreContacts(Partner registrator)
@@ -1011,7 +1011,7 @@ where CE.Client = {0}", Id))
 			var sum = GetSumForRegularWriteOff();
 			if (sum == 0)
 				return DateTime.MaxValue;
-			// + 1 тк предпологается что текущий уже оплачен
+			// + 1 тк предполагается что текущий уже оплачен
 			return SystemTime.Today().AddDays((int)(Balance / sum) + 1).Date;
 		}
 

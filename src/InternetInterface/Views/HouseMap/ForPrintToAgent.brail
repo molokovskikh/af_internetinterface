@@ -31,7 +31,7 @@
             <td>4 - Заявка</td>
         </tr>
         <tr>
-            <td>Фио агента: ${SHouse.GetLastBypass().Agent.Name}</td>
+            <td>ФИО агента: ${SHouse.GetLastBypass().Agent.Name}</td>
             <td>Дата: ${sHouse.LastPassDate.ToShortDateString()}</td>
         </tr>
     </tbody>

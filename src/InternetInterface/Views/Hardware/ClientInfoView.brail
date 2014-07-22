@@ -46,7 +46,7 @@
 		</tr>
 		<% else: %>
 		<tr>
-			<td colspan=2 class="noSessionDhcp">Сессия DHCP не зерегистрирована</td>
+			<td colspan=2 class="noSessionDhcp">Сессия DHCP не зарегистрирована</td>
 		</tr>
 		<% if IsDefined("IPResult"): %>
 		<tr>

@@ -554,8 +554,14 @@ namespace InternetInterface.Controllers
 			BindObjectInstance(updateClient, ParamStore.Form, "Client", AutoLoadBehavior.NullIfInvalidKey);
 			BindObjectInstance(client, ParamStore.Form, "_client");
 
-			if (oldStatus.ManualSet)
+			if (oldStatus.ManualSet) {
 				client.Status = statusEntity;
+				if (statusEntity.Type == StatusType.Dissolved && (client.HaveService<HardwareRent>() || client.HaveService<IpTvBoxRent>())) {
+					GetErrorSummary(updateClient)
+						.RegisterErrorMessage("Status", "Договор не может быть расторгнут тк у клиента имеется арендованное" +
+							" оборудование, перед расторжением договора нужно изъять оборудование");
+				}
+			}
 
 			if (IsValid(updateClient)) {
 				if (!oldStatus.ManualSet && client.Status.Id != statusEntity.Id)

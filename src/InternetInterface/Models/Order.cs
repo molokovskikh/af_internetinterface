@@ -66,7 +66,7 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool IsActivated { get; set; }
 
-		//обработана ли деактивация заказа, устанавливает биллинг нужен для учета списаний переодических услуг
+		//обработана ли деактивация заказа, устанавливает биллинг нужен для учета списаний периодических услуг
 		[Property]
 		public virtual bool IsDeactivated { get; set; }
 

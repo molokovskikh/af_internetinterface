@@ -1,6 +1,6 @@
 ﻿<tr>
 	<td>
-		<b>Полное наименвоание</b>
+		<b>Полное наименование</b>
 	</td>
 	<td>
 		${FormHelper.TextField("LegalPerson.Name")}

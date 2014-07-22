@@ -16,7 +16,7 @@
 	<form id='closeOrderForm' method="post" action="${siteroot}/UserInfo/CloseOrder">
 		<input type="hidden" name="orderId" id="closedOrderId"/>
 		<p>Вы уверены, что хотите закрыть данный заказ?</p>
-		Введиле дату окончинаия:
+		Введите дату окончания:
 		<input type="text" name="OrderCloseDate" id="EndDate" class="graph_date"> <br/>
 		<button type="submit"  class="editBut">Закрыть</button>
 	</form>

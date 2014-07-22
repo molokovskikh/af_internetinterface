@@ -164,7 +164,7 @@ namespace InternetInterface.Controllers
 
 			foreach (var payment in payments.ToList()) {
 				//если зайти в два платежа и отредактировать их
-				//то получим двух плательщиков из разных сесей
+				//то получим двух плательщиков из разных сессий
 				//правим это
 				if (payment.Payer != null)
 					payment.Payer = ActiveRecordLinqBase<Client>.Queryable.FirstOrDefault(p => p.Id == payment.Payer.Id);

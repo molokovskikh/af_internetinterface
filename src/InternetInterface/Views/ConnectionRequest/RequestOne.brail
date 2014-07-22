@@ -29,7 +29,7 @@
 				</tr>
 				<% if request.Label != null: %>
 				<tr>
-					<td><span class="description">Метка назначана </span></td>
+					<td><span class="description">Метка назначена </span></td>
 					<td>${request.Label.Name}</td>
 				</tr>
 				<% end %>
