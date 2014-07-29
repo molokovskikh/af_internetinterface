@@ -97,16 +97,4 @@ namespace InternetInterface.Models
 			return GetForIp(ip, session) != null;
 		}
 	}
-
-	public class Point
-	{
-		public static bool isUnique(uint _Switch, int _Port)
-		{
-			if (ClientEndpoint.FindAll(DetachedCriteria.For(typeof(ClientEndpoint))
-				.Add(Expression.Eq("Switch.Id", _Switch))
-				.Add(Expression.Eq("Port", _Port))).Length == 0)
-				return true;
-			return false;
-		}
-	}
 }

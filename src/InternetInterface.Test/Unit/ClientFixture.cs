@@ -108,5 +108,51 @@ namespace InternetInterface.Test.Unit
 			client.PhysicalClient.Balance = 1;
 			Assert.AreEqual(new DateTime(2014, 5, 8), client.GetPossibleBlockDate());
 		}
+
+		[Test]
+		public void Activate_duplicate_rent()
+		{
+			client.Activate(new ClientService(client, new IpTvBoxRent()) {
+				SerialNumber = "1",
+				Model = "2",
+			});
+			client.Activate(new ClientService(client, new IpTvBoxRent()) {
+				SerialNumber = "3",
+				Model = "2",
+			});
+		}
+
+		[Test]
+		public void Do_not_recompensate_rent_on_balance_below_zero()
+		{
+			SystemTime.Now = () => new DateTime(2014, 7, 29);
+			client.BeginWork = SystemTime.Now();
+			client.RatedPeriodDate = SystemTime.Now();
+			client.PhysicalClient.Balance = 100;
+			client.PhysicalClient.MoneyBalance = 100;
+			client.Activate(new ClientService(client, new HardwareRent()) {
+				RentableHardware = new RentableHardware(50, "Тестовое оборудование")
+			});
+			client.ClientServices.Each(s => s.TryActivate());
+			Assert.AreEqual(100, client.GetPrice());
+
+			DailyWriteoff();
+			Assert.AreEqual(96.77, client.PhysicalClient.Balance);
+			client.PhysicalClient.Balance = 0;
+			client.PhysicalClient.MoneyBalance = 0;
+			client.PhysicalClient.VirtualBalance = 0;
+			DailyWriteoff();
+			Assert.AreEqual(50, client.GetPrice());
+			Assert.AreEqual(-4.84, client.PhysicalClient.Balance);
+		}
+
+		private void DailyWriteoff()
+		{
+			client.PhysicalClient.WriteOff(client.GetSumForRegularWriteOff());
+			if (client.CanBlock())
+				client.SetStatus(new Status(StatusType.NoWorked));
+			client.ClientServices.Each(s => s.WriteOffProcessed());
+			client.ClientServices.Each(s => s.TryDeactivate());
+		}
 	}
 }

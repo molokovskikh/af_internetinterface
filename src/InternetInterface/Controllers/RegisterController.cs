@@ -51,6 +51,9 @@ namespace InternetInterface.Controllers
 					new PinnedIp {
 						Price = 30,
 					}
+				},
+				DefaultStatus = new Status {
+					ShortName = "Worked"
 				}
 			};
 			return settings;

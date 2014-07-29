@@ -1,53 +1,48 @@
 ﻿<div id="myModal_active" class="reveal-modal">
-	<table class="table">
-		<thead>
-			<tr>
-				<th colspan=2>
-					Назначить услуги
-				</th>
-			</tr>
-		</thead>
-		<tbody>
-		<tr>
-			<td>
-			<div class="accordion" style="font-size:1em;">
-			<% for service in services: %>
-			<% if service.InterfaceControl: %>
-				<% if service.CanActivateInWeb(_client): %>
-					<h4><a href="#">${service.HumanName}</a></h4>
-					<div>
-						<form method="post" action="${siteroot}/UserInfo/ActivateService" class="validable">
-							<input type="hidden" name="clientId" value="${ClientCode}" />
-							<input type="hidden" name="serviceId" value="${service.Id}" />
-							<table>
-								<tbody>
-									${app.RenderService("assignedService", service)}
-								</tbody>
-							</table>
-							<button class="button save" style="margin-top:15px;" value="Назначить">Активировать</button>
-						</form>
-					</div>
-				<% else: %>
-					<% if service.ActivatedForClient(_client): %>
-						<h4><a href="#"> ${service.HumanName} </a> </h4>
-						<div>
-							<form method="post" action="${siteroot}/UserInfo/DiactivateService">
-								<input type="hidden" name="clientId" value="${ClientCode}" />
-								<input type="hidden" name="serviceId" value="${service.Id}" />
-								<button class="button save" style="margin-top:15px;" value="Назначить">Деактивировать</button>
-							</form>
-						</div>
-					<% else: %>
-						<h4><a href="#"> ${service.HumanName} </a> </h4>
-						<div>Активация услуги невозможна</div>
-					<% end %>
-				<% end %>
-			<% end %>
-			<% end %>
+	<% if activeServices.Count: %>
+	<h3>
+		Активные услуги
+	</h3>
+	<div class="accordion" style="font-size:1em;">
+		<% for assignedService in activeServices: %>
+			<h4>
+				<a href="#">!{assignedService.Service.HumanName}</a>
+			</h4>
+			<div>
+				<form method="post" action="${siteroot}/UserInfo/DiactivateService">
+					<input type="hidden" name="clientId" value="${ClientCode}" />
+					<input type="hidden" name="serviceId" value="${assignedService.Service.Id}" />
+					${app.DisplayService(assignedService)}
+					<button class="button save" style="margin-top:15px;" value="Назначить">Деактивировать</button>
+				</form>
 			</div>
-			</td>
-			</tr>
-		</tbody>
-	</table>
+		<% end %>
+	</div>
+	<% end %>
+
+	<% if services.Count: %>
+	<h3>
+		Доступные услуги
+	</h3>
+	<div class="accordion" style="font-size:1em;">
+		<% for service in services: %>
+			<h4>
+				<a href="#">!{service.HumanName}</a>
+			</h4>
+			<div>
+				<form method="post" action="${siteroot}/UserInfo/ActivateService" class="validable">
+					<input type="hidden" name="clientId" value="${ClientCode}" />
+					<input type="hidden" name="serviceId" value="${service.Id}" />
+					<table>
+						<tbody>
+							${app.EditService("assignedService", service)}
+						</tbody>
+					</table>
+					<button class="button save" style="margin-top:15px;" value="Назначить">Активировать</button>
+				</form>
+			</div>
+		<% end %>
+	</div>
+	<% end %>
 	<a class="close-reveal-modal">х</a>
 </div> 

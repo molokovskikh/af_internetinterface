@@ -1,0 +1,4 @@
+﻿<div>
+	<span class="description">Модель:</span>!{model.Value.Model}<br>
+	<span class="description">Серийный номер:</span>!{model.Value.SerialNumber}<br>
+</div>

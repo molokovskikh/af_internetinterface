@@ -80,9 +80,8 @@ namespace InternetInterface.Models
 		[BelongsTo]
 		public virtual ClientEndpoint Endpoint { get; set; }
 
-
-		[Property]
-		public virtual string Type { get; set; }
+		[BelongsTo]
+		public virtual RentableHardware RentableHardware { get; set; }
 
 		[Property]
 		public virtual string SerialNumber { get; set; }

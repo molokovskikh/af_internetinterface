@@ -54,5 +54,10 @@ namespace InternetInterface.Models.Services
 				return true;
 			return false;
 		}
+
+		public override bool CanActivateInWeb(Client client)
+		{
+			return true;
+		}
 	}
 }

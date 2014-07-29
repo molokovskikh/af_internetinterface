@@ -16,13 +16,8 @@ namespace InternetInterface.Controllers.Filter
 		/// </summary>
 		public bool Perform(ExecuteWhen exec, IEngineContext context, IController controller, IControllerContext controllerContext)
 		{
-#if DEBUG
-			context.Session["Login"] = Environment.UserName;
-#endif
-			if (context.Session["Login"] == null) {
-				context.Session["Login"] = context.CurrentUser.Identity.Name;
-			}
-			if (Partner.FindAllByProperty("Login", context.Session["Login"]).Length == 0) {
+			var username = context.Session["Login"];
+			if (username == null || Partner.FindAllByProperty("Login", username).Length == 0) {
 				context.Response.RedirectToUrl(@"~/Login/LoginPartner");
 				return false;
 			}

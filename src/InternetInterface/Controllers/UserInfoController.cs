@@ -200,6 +200,7 @@ namespace InternetInterface.Controllers
 							dtn.Second),
 					Activator = InitializeContent.Partner
 				};
+				SetARDataBinder(AutoLoadBehavior.NullIfInvalidKey);
 				BindObjectInstance(clientService, "clientService");
 
 				try {
@@ -638,7 +639,11 @@ namespace InternetInterface.Controllers
 			PropertyBag["internet"] = client.Internet;
 			PropertyBag["grouped"] = grouped;
 			PropertyBag["BalanceText"] = string.Empty;
-			PropertyBag["services"] = Service.FindAll();
+
+			PropertyBag["services"] = DbSession.Query<Service>().OrderBy(s => s.HumanName).ToList().Where(s => s.CanActivateInWeb(client)).ToList();
+			PropertyBag["activeServices"] = client.ClientServices.Where(c => c.Service.InterfaceControl).OrderBy(s => s.Service.HumanName).ToList();
+			PropertyBag["rentableHardwares"] = DbSession.Query<RentableHardware>().OrderBy(h => h.Name).ToList();
+
 			PropertyBag["Appeals"] = Appeals.GetAllAppeal(DbSession, client, appealType);
 			PropertyBag["Client"] = client.PhysicalClient;
 			PropertyBag["EditAddress"] = client.AdditionalStatus == null ? false : client.AdditionalStatus.ShortName == "Refused";

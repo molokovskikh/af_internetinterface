@@ -113,12 +113,7 @@ namespace InternetInterface.Services
 
 		public virtual bool CanActivateInWeb(Client client)
 		{
-			return CanActivate(client) && !client.ClientServices.Select(c => c.Service.Id).Contains(Id);
-		}
-
-		public virtual bool ActivatedForClient(Client client)
-		{
-			return client.ClientServices.Where(s => s.IsActivated).Any(s => s.Service.Id == Id);
+			return InterfaceControl && CanActivate(client) && !client.ClientServices.Select(c => c.Service.Id).Contains(Id);
 		}
 
 		public virtual void WriteOff(ClientService assignedService)

@@ -5,8 +5,6 @@
 		public static string MobileTelephoneParcer(string number)
 		{
 			if (number.Length == 10) {
-				//number = number.Replace("-", string.Empty);
-				//number = number.Substring(1, number.Length - 1);
 				return number.Substring(0, 3) + "-" + number.Substring(3, 7);
 			}
 			return number;

@@ -1,0 +1,20 @@
+﻿<div class="borderless-content">
+	<h3>Аренда оборудования</h3>
+	<div>
+		${app.LinkTo("Добавить", @RentableHardwares, @New)}
+	</div>
+	<table>
+		<% for item in items: %>
+		<tr>
+			<td>
+				${FormHelper.FormTag({@controller: @RentableHardwares, @action: @delete, @params: {@id: item.Id}})}
+					${FormHelper.Submit("Удалить")}
+				${FormHelper.EndFormTag()}
+			</td>
+			<td>
+				${app.LinkTo(item, @Edit)}
+			</td>
+		</tr>
+		<% end %>
+	</table>
+</div>

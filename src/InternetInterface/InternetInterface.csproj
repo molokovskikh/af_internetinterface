@@ -242,11 +242,16 @@
     <Content Include="Views\Register\CheckClient.brail" />
     <None Include="Views\Register\RegisterLegalPerson.brail" />
     <None Include="Views\Register\RegisterRequest.brail" />
+    <Content Include="Views\RentableHardwares\Index.brail" />
+    <Content Include="Views\RentableHardwares\New.brail" />
+    <Content Include="Views\RentableHardwares\Edit.brail" />
     <None Include="Views\Rescues\404.brail" />
     <None Include="Views\ServiceRequest\ShowRequest.brail" />
     <Content Include="Views\ServiceRequest\Timetable.brail" />
     <None Include="Views\ServiceRequest\ViewRequests.brail" />
     <None Include="Views\Services\Edit.brail" />
+    <None Include="Views\Shared\DisplayTemplates\HardwareRent.brail" />
+    <Content Include="Views\Shared\DisplayTemplates\IpTvBoxRent.brail" />
     <None Include="Views\Shared\EditorTemplates\Contact.brail" />
     <Content Include="Views\Shared\EditorTemplates\PaymentMoveAction.brail" />
     <Content Include="Views\Shared\EditorTemplates\HardwareRent.brail" />
@@ -347,6 +352,7 @@
     <Compile Include="Controllers\PayersController.cs" />
     <Compile Include="Controllers\PaymentsController.cs" />
     <Compile Include="Controllers\RegisterController.cs" />
+    <Compile Include="Controllers\RentableHardwaresController.cs" />
     <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Controllers\ServiceRequestController.cs" />
     <Compile Include="Controllers\ServicesController.cs" />
@@ -382,7 +388,6 @@
     <Compile Include="Helpers\IpHelper.cs" />
     <Compile Include="Helpers\IPUserType.cs" />
     <Compile Include="Helpers\AuditListener.cs" />
-    <Compile Include="Helpers\LoginCreatorHelper.cs" />
     <Compile Include="Helpers\SceHelper.cs" />
     <Compile Include="Helpers\SmsHelper.cs" />
     <Compile Include="Helpers\StandaloneInitializer.cs" />
@@ -395,7 +400,6 @@
     <Compile Include="Helpers\ValidBuilderHelper.cs" />
     <Compile Include="Initializers\ActiveRecord.cs" />
     <Compile Include="Initializers\Development.cs" />
-    <Compile Include="Interfaces\IPortInfo.cs" />
     <Compile Include="Mails\LawyerUserWriteOffNotice.cs" />
     <Compile Include="Models\Access\AccessCategories.cs" />
     <Compile Include="Models\Access\AccessRules.cs" />
@@ -451,6 +455,7 @@
     <Compile Include="Models\Services\IpTvBoxRent.cs" />
     <Compile Include="Models\Services\ChannelGroup.cs" />
     <Compile Include="Models\Services\PinnedIp.cs" />
+    <Compile Include="Models\Services\RentableHardware.cs" />
     <Compile Include="Models\SmsMessage.cs" />
     <Compile Include="Models\StaticIp.cs" />
     <Compile Include="Models\Status.cs" />

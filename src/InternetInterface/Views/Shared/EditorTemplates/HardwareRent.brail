@@ -8,7 +8,7 @@
 <tr>
 	<td>Тип оборудования</td>
 	<td>
-		${FormHelper.TextField("clientService.Type", { @class: @required })}
+		${FormHelper.Select("clientService.RentableHardware.Id", rentableHardwares, {@text: @Name, @value: @Id, @class: @required})}
 	</td>
 </tr>
 <tr>

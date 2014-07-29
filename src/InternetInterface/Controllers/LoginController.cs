@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Web;
 using System.Web.Security;
 using Castle.MonoRail.Framework;
@@ -6,10 +7,13 @@ using Common.Web.Ui.Controllers;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 using Boo.Lang.Compiler;
+using NHibernate.Linq;
+using NPOI.SS.Formula.Functions;
 
 
 namespace InternetInterface.Controllers
 {
+	[Layout("NoMap")]
 	public class LoginController : BaseController
 	{
 		/// <summary>
@@ -18,24 +22,30 @@ namespace InternetInterface.Controllers
 		[AccessibleThrough(Verb.Post)]
 		public void Sub(string login, string password)
 		{
-			if (ActiveDirectoryHelper.IsAuthenticated(login, password)) {
+			if (ActiveDirectoryHelper.IsAuthenticated(login, password)
+				&& DbSession.Query<Partner>().Any(p => p.Login == login && !p.IsDisabled)) {
 				FormsAuthentication.RedirectFromLoginPage(login, true);
 				Session.Add("Login", login);
-				RedirectToUrl(@"~/Map/SiteMap.rails");
+				RedirectToUrl(@"~/Map/SiteMap");
 			}
 			else {
-				Error(ActiveDirectoryHelper.ErrorMessage);
-				RedirectToUrl(@"LoginPartner.rails");
+				Error(ActiveDirectoryHelper.ErrorMessage ?? "Пользователь заблокирован");
+				RedirectToAction("LoginPartner");
 			}
 		}
 
 		public void LoginPartner()
 		{
-			LayoutName = "NoMap";
-			if (Context.Session["Login"] == null)
-				Context.Session["Login"] = Context.CurrentUser.Identity.Name;
-			if (Context.Session["Login"] != null && !String.IsNullOrEmpty(Context.Session["Login"].ToString()))
-				RedirectToUrl(@"~/Map/SiteMap.rails");
+			var username = Context.Session["Login"];
+#if DEBUG
+			username = username ?? Environment.UserName;
+#endif
+			if (username != null) {
+				if (DbSession.Query<Partner>().Any(p => p.Login == username && !p.IsDisabled)) {
+					Session.Add("Login", username);
+					RedirectToUrl(@"~/Map/SiteMap.rails");
+				}
+			}
 		}
 	}
 }

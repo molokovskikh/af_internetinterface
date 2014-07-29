@@ -175,6 +175,7 @@ namespace InternetInterface.Models
 		{
 			var permissionMap = new Dictionary<string, IPermission[]> {
 				{
+					//Просмотр личных данных
 					"SSI", new IPermission[] {
 						new ControllerPermission(typeof(PaymentsController)),
 						new ControllerPermission(typeof(ChannelGroupsController)),
@@ -191,7 +192,8 @@ namespace InternetInterface.Models
 						new ControllerActionPermission("Brigads", "ReportOnWork"),
 						new ControllerActionPermission("UserInfo", "ShowRegions"),
 						new ControllerActionPermission("UserInfo", "EditRegion"),
-						new ControllerActionPermission("UserInfo", "RegisterRegion")
+						new ControllerActionPermission("UserInfo", "RegisterRegion"),
+						new ControllerPermission(typeof(RentableHardwaresController)),
 					}
 				},
 				{
@@ -220,6 +222,7 @@ namespace InternetInterface.Models
 					}
 				},
 				{
+					//Управление бригадами
 					"MB", new IPermission[] {
 						new ControllerPermission(typeof(BrigadsController)),
 					}

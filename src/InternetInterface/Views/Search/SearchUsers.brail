@@ -23,17 +23,16 @@
 </style>
 
 <% if PartnerAccessSet.AccesPartner("GCI") or PartnerAccessSet.AccesPartner("SD"): %>
-<form id="SearchForm" name="SearchForm" action="${siteroot}/Search/SearchBy" 
-	style="width: 100%;">
+<form id="SearchForm" name="SearchForm" action="${siteroot}/Search/SearchBy">
 <center>
 <table>
 <tr>
-	<td style="width:100%">
-	<table class="table" bgcolor="#FFFFFF">
+	<td>
+	<table class="table">
 	<tr>
 	<td id="TableSize">
-		<table  class="table" width="100%">
-			<th align="center">Поиск пользователей</th>
+		<table class="table">
+			<th>Поиск пользователей</th>
 			<tr>
 				<td class="FindInputFields" id="AllFindT">
 					Введите текст для поиска:<br />
@@ -52,11 +51,11 @@
 					<input type="text" class="addressInput" id="InputCaseHouse"  name="filter.CaseHouse"  value="${filter.CaseHouse}" /> </br>
 					<label for="InputApartment">Квартира: </label>
 					<input type="text" class="addressInput" id="InputApartment"  name="filter.Apartment"  value="${filter.Apartment}" /> </br>
-					<input id="SearchButton" type="submit" value="Поиск"  align="right" />
+					<input id="SearchButton" type="submit" value="Поиск" align="right" />
 				</td>
 			</tr>
 		</table>
-  <% if MapPartner.Role.ReductionName != "Diller": %>
+	<% if MapPartner.Role.ReductionName != "Diller": %>
 		<table style="width: 100%;"  class="table">
 			<tr><td style="text-align: left;">Искать по:</td><td></td><td></td></tr>
 			<tr>

@@ -10,7 +10,7 @@ using Common.Web.Ui.Models.Audit;
 
 namespace InternetInterface.Models
 {
-	[ActiveRecord("Tariffs", Schema = "internet", Lazy = true), Auditable]
+	[ActiveRecord(Schema = "internet", Lazy = true), Auditable]
 	public class Tariff : ChildActiveRecordLinqBase<Tariff>
 	{
 		public Tariff()

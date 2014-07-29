@@ -1,0 +1,15 @@
+﻿${app.Form({ @class : "div-form" })}
+<h3>Регистрация оборудования</h3>
+<div class="form-item">
+	${app.Label("item.Name")}
+	${app.Edit("item.Name")}
+	${app.Error("item.Name")}
+</div>
+
+<div class="form-item">
+	${app.Label("item.Cost")}
+	${app.Edit("item.Cost")}
+	${app.Error("item.Cost")}
+</div>
+${FormHelper.Submit("Сохранить")}
+${app.End()}

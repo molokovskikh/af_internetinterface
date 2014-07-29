@@ -5,6 +5,7 @@ using Castle.ActiveRecord;
 using Castle.Components.Validator;
 using InternetInterface.Models.Universal;
 using NHibernate;
+using NPOI.SS.Formula.Functions;
 
 namespace InternetInterface.Models
 {
@@ -27,6 +28,16 @@ namespace InternetInterface.Models
 	[ActiveRecord("Status", Schema = "internet", Lazy = true)]
 	public class Status : ValidActiveRecordLinqBase<Status>
 	{
+		public Status()
+		{
+		}
+
+		public Status(StatusType status)
+		{
+			ShortName = status.ToString();
+			Name = status.GetDescription();
+		}
+
 		[PrimaryKey(PrimaryKeyType.Assigned)]
 		public virtual uint Id { get; set; }
 

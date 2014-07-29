@@ -60,19 +60,10 @@ namespace InternetInterface.Controllers
 			AddIndispensableParameters();
 		}
 
-		public void SearchUsers(string query, PhysicalClient sClients)
+		public void SearchUsers()
 		{
 			var filter = new SearchFilter();
 			PropertyBag["filter"] = filter;
-			PropertyBag["SearchText"] = "";
-			PropertyBag["ChTariff"] = 0;
-			PropertyBag["ChRegistr"] = 0;
-			PropertyBag["ChBrigad"] = 0;
-			PropertyBag["Connected"] = false;
-			PropertyBag["ChAdditional"] = 0;
-			if (sClients != null) {
-				Flash["SClients"] = sClients;
-			}
 			AddIndispensableParameters();
 		}
 

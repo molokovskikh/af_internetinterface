@@ -798,8 +798,12 @@ where CE.Client = {0}", Id))
 		/// </summary>
 		public virtual string Activate(ClientService clientService)
 		{
-			if (ClientServices.Any(c => NHibernateUtil.GetClass(c.Service) == NHibernateUtil.GetClass(clientService.Service))
-				|| !clientService.TryActivate())
+			var serviceType = NHibernateUtil.GetClass(clientService.Service);
+			if (ClientServices.Any(c => NHibernateUtil.GetClass(c.Service) == serviceType)
+				&& !new[] { typeof(IpTvBoxRent), typeof(HardwareRent)}.Contains(serviceType))
+				throw new ServiceActivationException(String.Format("Невозможно активировать услугу \"{0}\"", clientService.Service.HumanName));
+
+			if (!clientService.TryActivate())
 				throw new ServiceActivationException(String.Format("Невозможно активировать услугу \"{0}\"", clientService.Service.HumanName));
 
 			ClientServices.Add(clientService);
@@ -811,7 +815,7 @@ where CE.Client = {0}", Id))
 					? clientService.EndWorkDate.Value.ToShortDateString()
 					: string.Empty);
 			CreareAppeal(message, AppealType.Statistic);
-			IsNeedRecofiguration = NHibernateUtil.GetClass(clientService.Service) == typeof(DebtWork);
+			IsNeedRecofiguration = serviceType == typeof(DebtWork);
 			return message;
 		}
 

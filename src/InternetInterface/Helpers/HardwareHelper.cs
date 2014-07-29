@@ -1,9 +1,17 @@
 using System;
-using InternetInterface.Interfaces;
+using System.Collections;
+using Castle.Core.Logging;
 using InternetInterface.Models;
+using NHibernate;
 
 namespace InternetInterface.Helpers
 {
+	public interface IPortInfo
+	{
+		void GetPortInfo(ISession session, IDictionary propertyBag, ILogger logger, uint endPointId);
+		string ViewName { get; }
+	}
+
 	public class HardwareHelper
 	{
 		public static IPortInfo GetPortInformator(ClientEndpoint point)

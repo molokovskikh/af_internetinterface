@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -154,13 +155,41 @@ namespace InternetInterface.Helpers
 			return Form("", parameters);
 		}
 
-		public string RenderService(string target, Service service)
+		public string DisplayService(object service)
+		{
+			return Templataize2("", service, "shared/DisplayTemplates", NHibernateUtil.GetClass(((ClientService)service).Service));
+		}
+
+		public string EditService(string target, Service service)
 		{
 			if (NHibernateUtil.GetClass(service) == typeof(HardwareRent)
 				|| NHibernateUtil.GetClass(service) == typeof(IpTvBoxRent)) {
 				return Templataize(target, new ClientService(), "shared/EditorTemplates", NHibernateUtil.GetClass(service));
 			}
 			return service.GetParameters();
+		}
+
+		protected string Templataize2(string target, object value, string folder, Type type)
+		{
+			if (type == null)
+				return null;
+
+			var template = folder + "/" + type.Name;
+
+			if (!Context.Services.ViewEngineManager.HasTemplate(template))
+				return null;
+
+			using (var writer = new StringWriter()) {
+				var context = new ControllerContext {
+					Helpers = ControllerContext.Helpers
+				};
+				foreach (var key in Context.CurrentControllerContext.PropertyBag.Keys) {
+					context.PropertyBag[key] = Context.CurrentControllerContext.PropertyBag[key];
+				}
+				context.PropertyBag["model"] = new DisplayModel(target, value);
+				Context.Services.ViewEngineManager.ProcessPartial(template, writer, Context, Controller, context);
+				return writer.ToString();
+			}
 		}
 	}
 }
