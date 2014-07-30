@@ -95,10 +95,10 @@ namespace InternetInterface.Queries
 
 		private void SetParameters(IQuery query, string wherePart)
 		{
-			if (StatusType > 0 && SearchProperties != SearchUserBy.OuterClientCode)
+			if (StatusType > 0)
 				query.SetParameter("statusType", StatusType);
 
-			if (Region > 0 && SearchProperties != SearchUserBy.OuterClientCode) {
+			if (Region > 0) {
 				query.SetParameter("regionid", Region);
 			}
 			if (BlockDayCount != null) {
@@ -110,18 +110,18 @@ namespace InternetInterface.Queries
 
 			if (SearchProperties == SearchUserBy.Address) {
 				if (!String.IsNullOrEmpty(City))
-					query.SetParameter("City", "%" + City.ToLower() + "%");
+					query.SetParameter("City", "%" + City + "%");
 				if (!String.IsNullOrEmpty(Street))
-					query.SetParameter("Street", "%" + Street.ToLower() + "%");
+					query.SetParameter("Street", "%" + Street + "%");
 				if (!String.IsNullOrEmpty(House))
-					query.SetParameter("House", House.ToLower());
+					query.SetParameter("House", House);
 				if (!String.IsNullOrEmpty(CaseHouse))
-					query.SetParameter("CaseHouse", "%" + CaseHouse.ToLower() + "%");
+					query.SetParameter("CaseHouse", "%" + CaseHouse + "%");
 				if (!String.IsNullOrEmpty(Apartment))
-					query.SetParameter("Apartment", Apartment.ToLower());
+					query.SetParameter("Apartment", Apartment);
 			}
 			else if (!String.IsNullOrEmpty(SearchText) && wherePart.Contains(":SearchText"))
-				query.SetParameter("SearchText", "%" + SearchText.ToLower() + "%");
+				query.SetParameter("SearchText", "%" + SearchText + "%");
 		}
 
 		private string GetOrderField()
@@ -187,10 +187,9 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 				newSql = String.Format("select count(*) from ({0}) as t1;", newSql);
 				var countQuery = session.CreateSQLQuery(newSql);
 				if (!String.IsNullOrEmpty(SearchText) && wherePart.Contains(":SearchText"))
-					countQuery.SetParameter("SearchText", "%" + SearchText.ToLower() + "%");
+					countQuery.SetParameter("SearchText", "%" + SearchText + "%");
 				if (CategorieAccessSet.AccesPartner("SSI"))
-					if (SearchProperties != SearchUserBy.SearchAccount && SearchProperties != SearchUserBy.OuterClientCode)
-						SetParameters(countQuery, wherePart);
+					SetParameters(countQuery, wherePart);
 				_lastRowsCount = Convert.ToInt32(countQuery.UniqueResult());
 			}
 
@@ -238,17 +237,14 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 				if (SearchProperties != SearchUserBy.Address) {
 					if (!String.IsNullOrEmpty(SearchText)) {
 						if (SearchProperties == SearchUserBy.Auto) {
-							return
-								String.Format(
-									@"
+							return @"
 	WHERE
-	(LOWER(C.Name) like {0} or
-	C.id like {0} or
-	p.ExternalClientId like {0} or
-	LOWER(co.Contact) like {0} or
-	LOWER(h.Street) like {0} or
-	LOWER(l.ActualAdress) like {0} )",
-									":SearchText") + _return;
+	(C.Name like :SearchText or
+	C.id like :SearchText or
+	p.ExternalClientId like :SearchText or
+	co.Contact like :SearchText or
+	h.Street like :SearchText or
+	l.ActualAdress like :SearchText)" + _return;
 						}
 						if (SearchProperties == SearchUserBy.SearchAccount) {
 							var id = 0u;
@@ -263,18 +259,14 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 								return String.Format("where p.ExternalClientId = {0}", id);
 						}
 						if (SearchProperties == SearchUserBy.ByFio) {
-							return
-								String.Format(@"
-	WHERE (LOWER(C.Name) like {0} )", ":SearchText")
-									+ _return;
+							return "WHERE (C.Name like :SearchText)" + _return;
 						}
 						if (SearchProperties == SearchUserBy.TelNum) {
-							return String.Format(@"WHERE (LOWER(co.Contact) like {0})", ":SearchText") + _return;
+							return "WHERE (co.Contact like :SearchText)" + _return;
 						}
 						if (SearchProperties == SearchUserBy.ByPassport) {
-							return String.Format(@"
-	WHERE (LOWER(p.PassportSeries) like {0} or LOWER(p.PassportNumber)  like {0} or
-	LOWER(l.ActualAdress) like {0})", ":SearchText")
+							return @"
+	WHERE (p.PassportSeries like :SearchText or p.PassportNumber like :SearchText or l.ActualAdress like :SearchText)"
 								+ _return;
 						}
 					}
@@ -324,7 +316,7 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 					return String.Format("WHERE (c.Id = {0}) and (C.PhysicalClient is not null)", id);
 				}
 				if (!String.IsNullOrEmpty(SearchText))
-					return "WHERE (LOWER(C.Name) like :SearchText) and (C.PhysicalClient is not null)";
+					return "WHERE (C.Name like :SearchText) and (C.PhysicalClient is not null)";
 			}
 			return String.IsNullOrEmpty(_return) ? String.Empty : String.Format("WHERE {0}", _return.Remove(0, 4));
 		}
