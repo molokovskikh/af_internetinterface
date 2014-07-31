@@ -1,17 +1,34 @@
 ﻿@media print {
 	h1 {
-		font-size: 11px;
+		font-size: 12px;
 		font-weight: bold;
 	}
 	h2 {
-		font-size: 9px;
+		font-size: 11px;
+		font-weight: bold;
+	}
+	h3 {
+		font-size: 10px;
 		font-weight: bold;
 	}
 	body {
 		font-size: 9px;
 	}
+	.page-break {
+		page-break-before: always;
+	}
+	.breadcrumb {
+		display: none;
+	}
+	.table {
+		color: rgb(51, 51, 51);
+	}
 }
 
 table.sing {
 	width: 100%
+}
+
+li {
+	margin-left: 40px;
 }

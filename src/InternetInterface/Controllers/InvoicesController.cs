@@ -28,6 +28,7 @@ namespace InternetInterface.Controllers
 		{
 			var binder = new DoNotRecreateCollectionBinder();
 			binder.AutoLoad = AutoLoadBehavior.NewInstanceIfInvalidKey;
+			binder.Validator = controller.Validator;
 			typeof(ARDataBinder).GetField("expectCollPropertiesList", BindingFlags.Instance | BindingFlags.NonPublic)
 				.SetValue(binder, new[] { "root." + expect });
 
@@ -109,13 +110,6 @@ namespace InternetInterface.Controllers
 
 				Notify("Удалено");
 			}
-
-			/*if (Form["email"] != null) {
-				foreach (var invoice in invoices)
-					this.Mailer().Invoice(invoice, ContactType.ActEmail).Send();
-
-				Notify("Отправлено");
-			}*/
 
 			if (Form["print"] != null) {
 				var printer = Form["printer"];

@@ -10,6 +10,7 @@ using InternetInterface.Models.Services;
 using InternetInterface.Models.Universal;
 using InternetInterface.Services;
 using NHibernate;
+using NPOI.SS.Formula.Functions;
 
 namespace InternetInterface.Models
 {
@@ -89,6 +90,9 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string Model { get; set; }
 
+		[HasMany]
+		public virtual IList<UploadDoc> Docs { get; set; }
+
 		private void DeleteFromClient()
 		{
 			if (Service.CanDelete(this)) {
@@ -159,6 +163,17 @@ namespace InternetInterface.Models
 		public virtual bool IsService(Service service)
 		{
 			return NHibernateUtil.GetClass(Service) == NHibernateUtil.GetClass(service);
+		}
+
+		public virtual List<RentDocItem> GetDocItems()
+		{
+			if (RentableHardware == null)
+				return Enumerable.Empty<RentDocItem>().ToList();
+			return new [] {
+					new RentDocItem(String.Format("{0} {1}, серийный № {2}", RentableHardware.Name, Model, SerialNumber), 1)
+				}
+				.Concat(RentableHardware.DefaultDocItems)
+				.ToList();
 		}
 	}
 }

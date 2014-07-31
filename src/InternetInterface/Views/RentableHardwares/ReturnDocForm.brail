@@ -1,0 +1,197 @@
+﻿${app.Asset("contract-of-agency.css")}
+${app.Asset("printact.css")}
+
+<div class="borderless-content">
+	<ul class="breadcrumb">
+		<li>${app.LinkTo(item.Client)}</li>
+		<li>${app.LinkTo(item)}</li>
+	</ul>
+
+	<table style="width: 100%">
+		<tr>
+			<td></td>
+			<td style="text-align: right">
+				Приложение № 1<br>
+				Акт приема-передачи<br>
+				к ДОГОВОРУ-ОФЕРТЕ аренды телекоммуникационного<br>
+				оборудования для физических лиц<br>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				г. Воронеж<br>
+				!{System.DateTime.Now.ToString("D")}<br>
+			</td>
+		</tr>
+	</table>
+
+	<h3>АКТ ВОЗВРАТА ОБОРУДОВАНИЯ</h3>
+	<span>Арендодатель принял, а Арендатор передал телекоммуникационное Оборудование:</span>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>№</th>
+				<th>Наименование</th>
+				<th>Кол-во, шт.</th>
+			</tr>
+		</thead>
+		<tbody>
+			<% for i, docItem in enumerate(docItems): %>
+			<tr>
+				<td>!{i+1}</td>
+				<td>!{docItem.Name}</td>
+				<td>!{docItem.Count}</td>
+			</tr>
+			<% end %>
+		</tbody>
+	</table>
+	<p>
+		Передаваемое Оборудование в исправном состоянии.<br>
+		ПРИМЕЧАНИЯ: _____________________________________________________________________________________
+	</p>
+
+	<h3>Подписи сторон:</h3>
+	<table class="sing">
+		<colgroup>
+			<col style="width: 300px"/>
+		</colgroup>
+		<tr>
+			<td>Арендодатель:</td>
+			<td>Арендатор:</td>
+		</tr>
+		<tr>
+			<td>ООО «Инфорум»</td>
+			<td>Лицевой счет: !{client.Id}</td>
+		</tr>
+		<tr>
+			<td>
+				ИНН/КПП  3666152146/366601001
+			</td>
+			<td>
+				Ф.И.О.: !{client.Name}
+			</td>
+		</tr>
+		<tr>
+			<td>
+				ОГРН 1083668017146
+			</td>
+			<td>Паспорт: !{client.PhysicalClient.PassportSeries} \ !{client.PhysicalClient.HomePhoneNumber} Выдан: !{client.PhysicalClient.WhoGivePassport}</td>
+		</tr>
+		<tr>
+			<td>Юр. адрес: 394036, г. Воронеж,</td>
+			<td>Дата выдачи: !{?client.PhysicalClient.PassportDate.ToShortDateString()}</td>
+		</tr>
+		<tr>
+			<td>ул. Студенческая,  д.12а</td>
+			<td>Зарегистрирован: !{client.PhysicalClient.RegistrationAdress}</td>
+		</tr>
+		<tr>
+			<td>тел.: (473) 22-999-87</td>
+			<td>контактный тел.: !{client.Contact}</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>М. П. </td>
+			<td>Подпись</td>
+		</tr>
+	</table>
+
+	<table style="width: 100%">
+		<tr>
+			<td></td>
+			<td style="text-align: right">
+				Приложение № 1<br>
+				Акт приема-передачи<br>
+				к ДОГОВОРУ-ОФЕРТЕ аренды телекоммуникационного<br>
+				оборудования для физических лиц<br>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				г. Воронеж<br>
+				!{System.DateTime.Now.ToString("D")}<br>
+			</td>
+		</tr>
+	</table>
+
+	<h3>АКТ ВОЗВРАТА ОБОРУДОВАНИЯ</h3>
+	<span>Арендодатель принял, а Арендатор передал телекоммуникационное Оборудование:</span>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>№</th>
+				<th>Наименование</th>
+				<th>Кол-во, шт.</th>
+			</tr>
+		</thead>
+		<tbody>
+			<% for i, docItem in enumerate(docItems): %>
+			<tr>
+				<td>!{i+1}</td>
+				<td>!{docItem.Name}</td>
+				<td>!{docItem.Count}</td>
+			</tr>
+			<% end %>
+		</tbody>
+	</table>
+	<p>
+		Передаваемое Оборудование в исправном состоянии.<br>
+		ПРИМЕЧАНИЯ: ________________________________________________________________________________
+	</p>
+
+	<h3>Подписи сторон:</h3>
+	<table class="sing">
+		<colgroup>
+			<col style="width: 300px"/>
+		</colgroup>
+		<tr>
+			<td>Арендодатель:</td>
+			<td>Арендатор:</td>
+		</tr>
+		<tr>
+			<td>ООО «Инфорум»</td>
+			<td>Лицевой счет: !{client.Id}</td>
+		</tr>
+		<tr>
+			<td>
+				ИНН/КПП  3666152146/366601001
+			</td>
+			<td>
+				Ф.И.О.: !{client.Name}
+			</td>
+		</tr>
+		<tr>
+			<td>
+				ОГРН 1083668017146
+			</td>
+			<td>Паспорт: !{client.PhysicalClient.PassportSeries} \ !{client.PhysicalClient.HomePhoneNumber} Выдан: !{client.PhysicalClient.WhoGivePassport}</td>
+		</tr>
+		<tr>
+			<td>Юр. адрес: 394036, г. Воронеж,</td>
+			<td>Дата выдачи: !{?client.PhysicalClient.PassportDate.ToShortDateString()}</td>
+		</tr>
+		<tr>
+			<td>ул. Студенческая,  д.12а</td>
+			<td>Зарегистрирован: !{client.PhysicalClient.RegistrationAdress}</td>
+		</tr>
+		<tr>
+			<td>тел.: (473) 22-999-87</td>
+			<td>контактный тел.: !{client.Contact}</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>М. П. </td>
+			<td>Подпись</td>
+		</tr>
+	</table>
+</div>

@@ -43,3 +43,59 @@ body {
 		display: none;
 	}
 }
+
+.breadcrumb {
+	list-style: none;
+	border-color: #ddd;
+	border-width: 1px;
+	border-radius: 4px;
+	border-style: solid;
+	padding: 8px 15px;
+}
+
+.breadcrumb>li {
+	display: inline-block;
+	margin: 0;
+}
+
+.breadcrumb>li+li:before {
+	padding: 0 5px;
+	color: #ccc;
+	content: "/\00a0";
+}
+
+.text-right {
+	text-align: right;
+}
+
+.width100 {
+	width: 100%;
+}
+
+.width50 {
+	width: 50%;
+}
+
+.width1px {
+	width:1px;
+}
+
+.width100px {
+	width: 100px;
+}
+
+.width150px {
+	width:150px;
+}
+
+.width200px {
+	width:200px;
+}
+
+.width300px {
+	width:300px;
+}
+
+.width400px {
+	width: 400px;
+}

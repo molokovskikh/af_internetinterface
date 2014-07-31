@@ -1,4 +1,28 @@
-﻿${app.Form({ @class : "div-form" })}
+﻿${app.Asset("mustache.js")}
+
+<script>
+	$(function () {
+		$(".editable").data("template", function () {
+			return $($('#editable-template').html());
+		});
+	});
+</script>
+
+<script id="editable-template" type="x-tmpl-mustache">
+	<tr>
+		<td>
+			<input type="button" class="delete" value="Удалить">
+		</td>
+		<td>
+			<textarea name="item.DefaultDocItems[0].Name" cols="30" rows="2" class="required"></textarea>
+		</td>
+		<td>
+			<input name="item.DefaultDocItems[0].Count" class="required">
+		</td>
+	</tr>
+</script>
+
+${app.Form({ @class : "div-form width50" })}
 	<h3>Редактирование оборудования</h3>
 	<div class="form-item">
 		${app.Label("item.Name")}
@@ -10,6 +34,41 @@
 		${app.Label("item.Cost")}
 		${app.Edit("item.Cost")}
 		${app.Error("item.Cost")}
+	</div>
+
+	<div class="form-item">
+		<h4>Комплектация</h4>
+		<span class="description">
+			Элементы комплектации выводятся в печатной форме акта приема-передчи
+		</span>
+		<table class="editable table">
+			<colgroup>
+				<col class="width1px" />
+			</colgroup>
+			<thead>
+				<tr>
+					<th class="textLeft"><input type="button" class="add" value="Добавить"></th>
+					<th>Наименование</th>
+					<th>Количество</th>
+				</tr>
+			</thead>
+			<tbody>
+				<% for i, docItem in enumerate(item.DefaultDocItems): %>
+				<tr>
+					<td>
+						<input type="button" class="delete" value="Удалить">
+					</td>
+					<td>
+						${FormHelper.HiddenField("item.DefaultDocItems[${i}].Id")}
+						${FormHelper.TextArea("item.DefaultDocItems[${i}].Name", {@cols: 30, @rows: 2})}
+					</td>
+					<td>
+						${FormHelper.TextField("item.DefaultDocItems[${i}].Count")}
+					</td>
+				</tr>
+				<% end %>
+			</tbody>
+		</table>
 	</div>
 	${FormHelper.Submit("Сохранить")}
 ${app.End()}

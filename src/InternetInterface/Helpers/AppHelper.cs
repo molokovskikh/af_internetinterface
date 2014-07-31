@@ -120,24 +120,27 @@ namespace InternetInterface.Helpers
 
 		public override string LinkTo(object item)
 		{
-			if (item == null)
-				return "";
-			if (NHibernateUtil.GetClass(item) == typeof(Client)) {
-				var client = ((Client)item);
-				var action = "SearchUserInfo";
-				if (client.GetClientType() == ClientType.Legal)
-					action = "LawyerPersonInfo";
-				return LinkTo(client.Name, "UserInfo", action, new Dictionary<string, object> {
-					{ "filter.ClientCode", client.Id }
-				});
-			}
-			return base.LinkTo(item);
+			return LinkToTitled(item, null);
 		}
 
 		public string LinkToTitled(object item, object title)
 		{
 			if (item == null)
 				return "";
+			if (NHibernateUtil.GetClass(item) == typeof(UploadDoc)) {
+				var doc = (UploadDoc)item;
+				return LinkTo(title as string ?? doc.Filename, "RentableHardwares", "ShowDoc", new Dictionary<string, object> {
+					{ "id", doc.Id }
+				});
+			}
+			if (NHibernateUtil.GetClass(item) == typeof(ClientService)) {
+				var service = (ClientService)item;
+				if (service.RentableHardware == null)
+					return "";
+				return LinkTo(title as string ?? service.Service.HumanName, "RentableHardwares", "Show", new Dictionary<string, object> {
+					{ "id", service.Id }
+				});
+			}
 			if (NHibernateUtil.GetClass(item) == typeof(Client)) {
 				var client = ((Client)item);
 				var action = "SearchUserInfo";
@@ -164,7 +167,7 @@ namespace InternetInterface.Helpers
 		{
 			if (NHibernateUtil.GetClass(service) == typeof(HardwareRent)
 				|| NHibernateUtil.GetClass(service) == typeof(IpTvBoxRent)) {
-				return Templataize(target, new ClientService(), "shared/EditorTemplates", NHibernateUtil.GetClass(service));
+				return Templataize2(target, new ClientService(), "shared/EditorTemplates", NHibernateUtil.GetClass(service));
 			}
 			return service.GetParameters();
 		}

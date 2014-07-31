@@ -3,34 +3,12 @@
 	font-size: small;
 }
 
-.ipPrefix { width: 25px; }
+.ipPrefix {
+	width: 25px;
+}
 
 div.clearBoth {
 	clear: both;
-}
-
-.width100 {
-	width: 100%;
-}
-
-.width100px {
-	width: 100px;
-}
-
-.width200px {
-	width:200px;
-}
-
-.width50 {
-	width: 50%;
-}
-
-.width1px {
-	width:1px;
-}
-
-.width150px {
-	width:150px;
 }
 
 .orderInfo {
@@ -46,10 +24,6 @@ div.clearBoth {
 
 .displayInline {
 	display: inline;
-}
-
-.width400px {
-	width: 400px;
 }
 
 .centerText {

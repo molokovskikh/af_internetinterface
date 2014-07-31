@@ -988,7 +988,7 @@ namespace InternetInterface.Controllers
 
 		public void ShowAppeals([DataBind("filter")] AppealFilter filter)
 		{
-			PropertyBag["appeals"] = filter.Find();
+			PropertyBag["appeals"] = filter.Find(DbSession);
 			PropertyBag["filter"] = filter;
 		}
 

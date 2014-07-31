@@ -9,6 +9,7 @@ using Common.Web.Ui.MonoRailExtentions;
 using InternetInterface.Controllers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
+using InternetInterface.Models.Services;
 using InternetInterface.Services;
 using NHibernate;
 using NHibernate.Linq;
@@ -40,6 +41,7 @@ namespace InternetInterface.Queries
 		public string Apartment { get; set; }
 
 		public Service Service { get; set; }
+		public RentableHardware RentableHardware { get; set; }
 
 		public int? BlockDayCount { get; set; }
 
@@ -98,9 +100,12 @@ namespace InternetInterface.Queries
 			if (StatusType > 0)
 				query.SetParameter("statusType", StatusType);
 
-			if (Region > 0) {
+			if (Region > 0)
 				query.SetParameter("regionid", Region);
-			}
+
+			if (RentableHardware != null)
+				query.SetParameter("hardwareId", RentableHardware.Id);
+
 			if (BlockDayCount != null) {
 				var blockBefore = DateTime.Today.AddDays(-BlockDayCount.Value);
 				query.SetParameter("blockBefore", blockBefore);
@@ -205,33 +210,37 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 
 		public string GetWhere()
 		{
-			var _return = String.Empty;
+			var result = String.Empty;
 			if (!InitializeContent.Partner.IsDiller()) {
 				if (StatusType > 0)
-					_return += " and S.Id = :statusType";
+					result += " and S.Id = :statusType";
 
 				if (ClientTypeFilter == ForSearchClientType.Physical)
-					_return += " and C.PhysicalClient is not null";
+					result += " and C.PhysicalClient is not null";
 
 				if (ClientTypeFilter == ForSearchClientType.Lawyer)
-					_return += " and C.LawyerPerson is not null";
+					result += " and C.LawyerPerson is not null";
 
 				if (EnabledTypeProperties == EndbledType.Disabled)
-					_return += " and c.Disabled";
+					result += " and c.Disabled";
 
 				if (EnabledTypeProperties == EndbledType.Enabled)
-					_return += " and c.Disabled = false";
+					result += " and c.Disabled = false";
 
 				if(Region > 0) {
-					_return += " and (h.RegionId = :regionid or l.RegionId = :regionid)";
+					result += " and (h.RegionId = :regionid or l.RegionId = :regionid)";
 				}
 
 				if (Service != null) {
-					_return += " and exists(select * from internet.ClientServices cs where cs.Client = c.Id and cs.Service = :serviceId) ";
+					result += " and exists(select * from internet.ClientServices cs where cs.Client = c.Id and cs.Service = :serviceId) ";
+				}
+
+				if (RentableHardware != null) {
+					result += " and exists(select * from internet.ClientServices cs where cs.Client = c.Id and cs.RentableHardware = :hardwareId) ";
 				}
 
 				if (BlockDayCount != null) {
-					_return += "and c.Disabled and c.BlockDate < :blockBefore";
+					result += "and c.Disabled and c.BlockDate < :blockBefore";
 				}
 
 				if (SearchProperties != SearchUserBy.Address) {
@@ -244,7 +253,7 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 	p.ExternalClientId like :SearchText or
 	co.Contact like :SearchText or
 	h.Street like :SearchText or
-	l.ActualAdress like :SearchText)" + _return;
+	l.ActualAdress like :SearchText)" + result;
 						}
 						if (SearchProperties == SearchUserBy.SearchAccount) {
 							var id = 0u;
@@ -259,15 +268,15 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 								return String.Format("where p.ExternalClientId = {0}", id);
 						}
 						if (SearchProperties == SearchUserBy.ByFio) {
-							return "WHERE (C.Name like :SearchText)" + _return;
+							return "WHERE (C.Name like :SearchText)" + result;
 						}
 						if (SearchProperties == SearchUserBy.TelNum) {
-							return "WHERE (co.Contact like :SearchText)" + _return;
+							return "WHERE (co.Contact like :SearchText)" + result;
 						}
 						if (SearchProperties == SearchUserBy.ByPassport) {
 							return @"
 	WHERE (p.PassportSeries like :SearchText or p.PassportNumber like :SearchText or l.ActualAdress like :SearchText)"
-								+ _return;
+								+ result;
 						}
 					}
 				}
@@ -306,7 +315,7 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 					if (whereCount == 0)
 						@where += "(1 = 1)";
 
-					return @where + _return;
+					return @where + result;
 				}
 			}
 			else {
@@ -318,7 +327,7 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 				if (!String.IsNullOrEmpty(SearchText))
 					return "WHERE (C.Name like :SearchText) and (C.PhysicalClient is not null)";
 			}
-			return String.IsNullOrEmpty(_return) ? String.Empty : String.Format("WHERE {0}", _return.Remove(0, 4));
+			return String.IsNullOrEmpty(result) ? String.Empty : String.Format("WHERE {0}", result.Remove(0, 4));
 		}
 	}
 }

@@ -4,6 +4,9 @@ using System.Linq;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Models;
 using System.Web;
+using NHibernate;
+using NHibernate.Linq;
+
 namespace InternetInterface.Queries
 {
 	public class AppealFilter : PaginableSortable
@@ -20,7 +23,7 @@ namespace InternetInterface.Queries
 		public DateTime? EndDate { get; set; }
 		public AppealType AppealType { get; set; }
 
-		public List<Appeals> Find()
+		public List<Appeals> Find(ISession session)
 		{
 			var thisD = DateTime.Now;
 			if (StartDate == null)
@@ -28,9 +31,10 @@ namespace InternetInterface.Queries
 			if (EndDate == null)
 				EndDate = DateTime.Now;
 
-			var totalRes =
-				Appeals.Queryable.Where(a => a.Date.Date >= StartDate.Value.Date && a.Date.Date <= EndDate.Value.Date)
-					.OrderByDescending(o => o.Date).ToList();
+			var totalRes = session.Query<Appeals>()
+				.Where(a => a.Date.Date >= StartDate.Value.Date && a.Date.Date <= EndDate.Value.Date)
+				.OrderByDescending(o => o.Date)
+				.ToList();
 			if (AppealType != AppealType.All)
 				totalRes = totalRes.Where(a => a.AppealType == AppealType).ToList();
 			if (!string.IsNullOrEmpty(Query))

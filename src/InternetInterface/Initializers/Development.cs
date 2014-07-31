@@ -9,6 +9,7 @@ namespace InternetInterface.Initializers
 		{
 			var config = Global.Config;
 			config.PrinterPath = FileHelper.MakeRooted(config.PrinterPath);
+			config.DocPath = FileHelper.MakeRooted(config.DocPath);
 		}
 	}
 }

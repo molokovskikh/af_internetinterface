@@ -87,6 +87,10 @@
 							${app.Edit("filter.Service", { @items: serviceItems })}
 						</div>
 						<div>
+							<span>Аренда оборудования</span><br>
+							${app.Edit("filter.RentableHardware")}
+						</div>
+						<div>
 							<span>Заблокирован более ${app.Edit("filter.BlockDayCount", { @style: "width: 3em" })} дней</span>
 						</div>
 					</td>

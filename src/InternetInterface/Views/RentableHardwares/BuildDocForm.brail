@@ -1,0 +1,60 @@
+﻿<script>
+	$(function () {
+		$(".editable").data("template", function () {
+			return $($('#editable-template').html());
+		});
+	});
+</script>
+
+<script id="editable-template" type="x-tmpl-mustache">
+	<tr>
+		<td>
+			<input type="button" class="delete" value="Удалить">
+		</td>
+		<td>
+			<textarea name="docItems[0].Name" cols="30" rows="2" class="required"></textarea>
+		</td>
+		<td>
+			<input name="docItems[0].Count" class="required">
+		</td>
+	</tr>
+</script>
+
+<div class="borderless-content width50">
+	<ul class="breadcrumb">
+		<li>${app.LinkTo(item.Client)}</li>
+		<li>${app.LinkTo(item)}</li>
+	</ul>
+
+	<h3>!{header}</h3>
+	${app.Form()}
+		<table class="editable table">
+			<colgroup>
+				<col class="width1px" />
+			</colgroup>
+			<thead>
+				<tr>
+					<th class="textLeft"><input type="button" class="add" value="Добавить"></th>
+					<th>Наименование</th>
+					<th>Количество</th>
+				</tr>
+			</thead>
+			<tbody>
+				<% for i, item in enumerate(docItems): %>
+				<tr>
+					<td>
+						<input type="button" class="delete" value="Удалить">
+					</td>
+					<td>
+						${FormHelper.TextArea("docItems[${i}].Name", {@cols: 30, @rows: 2})}
+					</td>
+					<td>
+						${FormHelper.TextField("docItems[${i}].Count")}
+					</td>
+				</tr>
+				<% end %>
+			</tbody>
+		</table>
+		${FormHelper.Submit("Сформировать")}
+	${app.End()}
+</div>

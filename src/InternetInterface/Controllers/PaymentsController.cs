@@ -73,7 +73,7 @@ namespace InternetInterface.Controllers
 			if (filter.Recipient != null && filter.Recipient.Id == 0)
 				filter.Recipient = null;
 
-			var payments = filter.Find();
+			var payments = filter.Find(DbSession);
 			PropertyBag["filter"] = filter;
 			PropertyBag["payments"] = payments;
 			PropertyBag["stat"] = new PaymentStatistics(payments);
@@ -207,7 +207,7 @@ namespace InternetInterface.Controllers
 			if (IsPost) {
 				var file = Request.Files["inputfile"] as HttpPostedFile;
 				if (file == null || file.ContentLength == 0) {
-					PropertyBag["Message"] = Message.Error("Нужно выбрать файл для загрузки");
+					Error("Нужно выбрать файл для загрузки");
 					return;
 				}
 				var payments = BankPayment.Parse(file.FileName, file.InputStream);

@@ -362,16 +362,9 @@ namespace InternetInterface.Models
 		{
 			get
 			{
-				if (Contacts != null) {
-					var contact = Contacts.FirstOrDefault(c => c.Type == ContactType.HeadPhone);
-					if (contact != null) {
-						return contact.HumanableNumber;
-					}
-					contact = Contacts.FirstOrDefault();
-					if (contact != null)
-						return contact.HumanableNumber;
-				}
-				return String.Empty;
+				return Contacts.Where(c => c.Type == ContactType.HeadPhone)
+					.Select(c => c.HumanableNumber)
+					.FirstOrDefault(Contacts.Select(c => c.HumanableNumber).FirstOrDefault());
 			}
 		}
 

@@ -21,6 +21,7 @@ namespace InternetInterface
 	{
 		public string PrinterPath { get; set; }
 		public string IvrnRoot { get; set; }
+		public string DocPath { get; set; }
 	}
 
 	public class Global : WebApplication

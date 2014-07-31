@@ -1,0 +1,37 @@
+﻿<div class="borderless-content">
+	<ul class="breadcrumb">
+		<li>${app.LinkTo(item.Client)}</li>
+	</ul>
+
+	<h3>!{item.Service.Name} - !{item.RentableHardware.Name}</h3>
+	<div class="borderless-content-subblock">
+		Модель:!{item.Model}<br>
+		Серийный номер:!{item.SerialNumber}<br>
+	</div>
+	<div class="borderless-content-subblock">
+		${app.LinkTo("Акт возврата оборудование", @RentableHardwares, @ReturnDoc, { @id: item.Id })}<br>
+		${app.LinkTo("Договор и Акт приема-передачи", @RentableHardwares, @RentDoc, { @id: item.Id })}<br>
+	</div>
+	<div class="borderless-content-subblock">
+		<% if item.Docs.Count: %>
+			<h5>Документы</h5>
+			<table>
+			<% for doc in item.Docs: %>
+					<td>
+						${FormHelper.FormTag({@controller: @RentableHardwares, @action: @DeleteDoc, @params: { @id: doc.Id }})}
+							${FormHelper.Submit("Удалить")}
+						${FormHelper.EndFormTag()}
+					</td>
+					<td>
+						${app.LinkToTitled(doc, doc.Filename)}
+					</td>
+			<% end %>
+			</table>
+		<% end %>
+		<h5>Загрузить отсканированный документ</h5>
+		${FormHelper.FormTag({@enctype: "multipart/form-data", @controller: @RentableHardwares, @action: @Upload, @params: { @id: item.Id }})}
+			${FormHelper.FileField("doc")}
+			${FormHelper.Submit("Загрузить")}
+		${FormHelper.EndFormTag()}
+	</div>
+</div>

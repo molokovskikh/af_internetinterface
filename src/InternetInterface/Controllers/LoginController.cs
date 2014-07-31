@@ -34,7 +34,7 @@ namespace InternetInterface.Controllers
 			}
 		}
 
-		public void LoginPartner()
+		public void LoginPartner(string redirect)
 		{
 			var username = Context.Session["Login"];
 #if DEBUG
@@ -43,7 +43,7 @@ namespace InternetInterface.Controllers
 			if (username != null) {
 				if (DbSession.Query<Partner>().Any(p => p.Login == username && !p.IsDisabled)) {
 					Session.Add("Login", username);
-					RedirectToUrl(@"~/Map/SiteMap.rails");
+					RedirectToUrl(redirect ?? @"~/Map/SiteMap");
 				}
 			}
 		}

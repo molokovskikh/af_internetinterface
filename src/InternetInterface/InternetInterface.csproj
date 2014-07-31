@@ -245,6 +245,10 @@
     <Content Include="Views\RentableHardwares\Index.brail" />
     <Content Include="Views\RentableHardwares\New.brail" />
     <Content Include="Views\RentableHardwares\Edit.brail" />
+    <Content Include="Views\RentableHardwares\Show.brail" />
+    <Content Include="Views\RentableHardwares\BuildDocForm.brail" />
+    <Content Include="Views\RentableHardwares\RentDocForm.brail" />
+    <Content Include="Views\RentableHardwares\ReturnDocForm.brail" />
     <None Include="Views\Rescues\404.brail" />
     <None Include="Views\ServiceRequest\ShowRequest.brail" />
     <Content Include="Views\ServiceRequest\Timetable.brail" />
@@ -474,6 +478,7 @@
     <Compile Include="Models\Partner.cs" />
     <Compile Include="Models\PhysicalClient.cs" />
     <Compile Include="Models\UnresolvedCalls.cs" />
+    <Compile Include="Models\UploadDoc.cs" />
     <Compile Include="Models\UserRole.cs" />
     <Compile Include="Models\UserWriteOff.cs" />
     <Compile Include="Models\WriteOff.cs" />

@@ -6,6 +6,7 @@ using Common.Tools;
 using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Models;
+using NHibernate;
 using NHibernate.Criterion;
 
 namespace InternetInterface.Queries
@@ -40,7 +41,7 @@ namespace InternetInterface.Queries
 			get { return Recipient.Queryable.OrderBy(r => r.Name).ToList(); }
 		}
 
-		public List<BankPayment> Find()
+		public List<BankPayment> Find(ISession session)
 		{
 			var criteria = DetachedCriteria.For<BankPayment>()
 				.Add(Expression.Ge("PayedOn", Period.Begin) && Expression.Lt("PayedOn", Period.End.AddDays(1)));
@@ -58,9 +59,8 @@ namespace InternetInterface.Queries
 
 			ApplySort(criteria);
 
-			return ArHelper.WithSession(s =>
-				criteria.GetExecutableCriteria(s)
-					.List<BankPayment>())
+			return criteria.GetExecutableCriteria(session)
+				.List<BankPayment>()
 				.ToList();
 		}
 

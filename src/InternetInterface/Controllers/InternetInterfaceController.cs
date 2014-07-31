@@ -39,5 +39,10 @@ namespace InternetInterface.Controllers
 			Response.ContentType = "application/json";
 			RenderText(JsonConvert.SerializeObject(data));
 		}
+
+		protected AppConfig Config
+		{
+			get { return Global.Config; }
+		}
 	}
 }

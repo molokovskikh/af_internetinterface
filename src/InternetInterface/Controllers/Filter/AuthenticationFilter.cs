@@ -18,7 +18,7 @@ namespace InternetInterface.Controllers.Filter
 		{
 			var username = context.Session["Login"];
 			if (username == null || Partner.FindAllByProperty("Login", username).Length == 0) {
-				context.Response.RedirectToUrl(@"~/Login/LoginPartner");
+				context.Response.RedirectToUrl(@"~/Login/LoginPartner", new { redirect = context.Request.Url });
 				return false;
 			}
 

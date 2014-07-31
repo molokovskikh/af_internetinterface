@@ -140,7 +140,7 @@
 		<% for service in client.Client.GetRentServices(): %>
 		<tr>
 			<td>
-				!{service.Service.Name} - !{service.Type}<br>
+				${app.LinkToTitled(service, "${service.Service.Name} - ${service.RentableHardware.Name}")}<br>
 				<span class="description">Модель:</span>!{service.Model}<br>
 				<span class="description">Серийный номер:</span>!{service.SerialNumber}<br>
 			</td>
