@@ -43,7 +43,7 @@ namespace InternetInterface.Test.Unit
 			_thisPartner.Role.ReductionName = "Diller";
 			_filter.SearchText = "testText";
 			var result = _filter.GetWhere();
-			Assert.That(result, Is.EqualTo("WHERE (LOWER(C.Name) like :SearchText) and (C.PhysicalClient is not null)"));
+			Assert.That(result, Is.EqualTo("WHERE (C.Name like :SearchText) and (C.PhysicalClient is not null)"));
 		}
 
 		[Test]
@@ -60,12 +60,12 @@ namespace InternetInterface.Test.Unit
 			var result = _filter.GetWhere();
 			Assert.That(result, Is.EqualTo(@"
 	WHERE
-	(LOWER(C.Name) like :SearchText or
+	(C.Name like :SearchText or
 	C.id like :SearchText or
 	p.ExternalClientId like :SearchText or
-	LOWER(co.Contact) like :SearchText or
-	LOWER(h.Street) like :SearchText or
-	LOWER(l.ActualAdress) like :SearchText )"),
+	co.Contact like :SearchText or
+	h.Street like :SearchText or
+	l.ActualAdress like :SearchText)"),
 				result);
 		}
 
@@ -124,8 +124,7 @@ namespace InternetInterface.Test.Unit
 			_filter.SearchText = "5";
 			_filter.SearchProperties = SearchUserBy.ByFio;
 			var result = _filter.GetWhere();
-			Assert.That(result, Is.EqualTo(@"
-	WHERE (LOWER(C.Name) like :SearchText )"));
+			Assert.That(result, Is.EqualTo(@"WHERE (C.Name like :SearchText)"));
 		}
 
 		[Test]
@@ -134,7 +133,7 @@ namespace InternetInterface.Test.Unit
 			_filter.SearchText = "5";
 			_filter.SearchProperties = SearchUserBy.TelNum;
 			var result = _filter.GetWhere();
-			Assert.That(result, Is.EqualTo("WHERE (LOWER(co.Contact) like :SearchText)"));
+			Assert.That(result, Is.EqualTo("WHERE (co.Contact like :SearchText)"));
 		}
 
 		[Test]
@@ -144,8 +143,7 @@ namespace InternetInterface.Test.Unit
 			_filter.SearchProperties = SearchUserBy.ByPassport;
 			var result = _filter.GetWhere();
 			Assert.That(result, Is.EqualTo(String.Format(@"
-	WHERE (LOWER(p.PassportSeries) like {0} or LOWER(p.PassportNumber)  like {0} or
-	LOWER(l.ActualAdress) like {0})", ":SearchText")));
+	WHERE (p.PassportSeries like {0} or p.PassportNumber like {0} or l.ActualAdress like {0})", ":SearchText")));
 		}
 
 		[Test]
