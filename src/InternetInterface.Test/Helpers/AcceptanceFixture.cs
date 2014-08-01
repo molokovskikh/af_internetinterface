@@ -1,6 +1,12 @@
 ﻿using System;
+using System.Linq;
+using Common.Tools.Calendar;
 using InternetInterface.Models;
+using InternetInterface.Services;
+using NHibernate.Linq;
 using NUnit.Framework;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
 using Test.Support.Selenium;
 
 namespace InternetInterface.Test.Helpers
@@ -34,6 +40,28 @@ namespace InternetInterface.Test.Helpers
 			var payment = new Payment(payer, 300) { BankPayment = bankPayment };
 			bankPayment.Payment = payment;
 			return bankPayment;
+		}
+
+		protected IWebElement SafeSelectService(string name)
+		{
+			Click("Управление услугами");
+			WaitAnimation();
+
+			var service = session.Query<Service>().First(s => s.HumanName == name);
+			var el = browser.FindElementByCssSelector(String.Format("input[name='serviceId'][value='{0}']", service.Id));
+			var form = el.FindElement(By.XPath(".."));
+			var findElement = form.FindElement(By.CssSelector("button"));
+			if (!findElement.Displayed) {
+				Click(name);
+				WaitAnimation();
+			}
+			return form;
+		}
+
+		protected void WaitAnimation()
+		{
+			new WebDriverWait(browser, 5.Second())
+				.Until(d => Convert.ToInt32(Eval("return $(\":animated\").length")) == 0);
 		}
 	}
 }

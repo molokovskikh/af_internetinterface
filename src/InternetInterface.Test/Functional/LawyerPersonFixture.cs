@@ -10,6 +10,7 @@ using InternetInterface.Test.Helpers;
 using NHibernate.Linq;
 using NUnit.Framework;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.UI;
 
 namespace InternetInterface.Test.Functional
@@ -43,14 +44,11 @@ namespace InternetInterface.Test.Functional
 		public void Activate_disable_block()
 		{
 			Open(laywerPerson.Redirect());
-			Click("Управление услугами");
-			WaitAnimation();
+
 			var el = SafeSelectService("Отключить блокировки");
 			Click(el, "Активировать");
 			AssertText("Услуга \"Отключить блокировки\" активирована");
 
-			Click("Управление услугами");
-			WaitAnimation();
 			el = SafeSelectService("Отключить блокировки");
 			Click(el, "Деактивировать");
 			AssertText("Услуга \"Отключить блокировки\" деактивирована");
@@ -261,25 +259,6 @@ namespace InternetInterface.Test.Functional
 			session.Clear();
 			var savedOrder = session.QueryOver<Order>().Where(o => o.Client == laywerPerson).SingleOrDefault();
 			Assert.That(savedOrder.OrderServices.Count, Is.EqualTo(2));
-		}
-
-		private IWebElement SafeSelectService(string name)
-		{
-			var service = session.Query<Service>().First(s => s.HumanName == name);
-			var el = browser.FindElementByCssSelector(String.Format("input[name='serviceId'][value='{0}']", service.Id));
-			var form = el.FindElement(By.XPath(".."));
-			var findElement = form.FindElement(By.CssSelector("button"));
-			if (!findElement.Displayed) {
-				Click(name);
-				WaitAnimation();
-			}
-			return form;
-		}
-
-		public void WaitAnimation()
-		{
-			new WebDriverWait(browser, 5.Second())
-				.Until(d => Convert.ToInt32(Eval("return $(\":animated\").length")) == 0);
 		}
 	}
 }
