@@ -66,16 +66,13 @@ namespace InternetInterface.Test.Functional
 				session.Save(hardware);
 			}
 			Open("UserInfo/SearchUserInfo?filter.ClientCode=" + client.Id);
-			Click("Управление услугами");
-			var el = browser.FindElementByCssSelector("input[name='serviceId'][value='12']");
-			var form = el.FindElement(By.XPath(".."));
-			if (!Css(form, "#clientService_Model").Displayed)
-				Click("Аренда оборудования");
-			Css(form, "#startDate").SendKeys(DateTime.Today.ToShortDateString());
-			Css(form, "#clientService_Model").SendKeys("DES-1005A/C1");
-			Css(form, "#clientService_SerialNumber").SendKeys("748644654");
-			Css(form, "#clientService_RentableHardware_Id").SelectByValue(hardware.Id.ToString());
-			form.Submit();
+			var el = SafeSelectService("Аренда оборудования");
+			Css(el, "#startDate").SendKeys(DateTime.Today.ToShortDateString());
+			Css(el, "#clientService_Model").SendKeys("DES-1005A/C1");
+			Css(el, "#clientService_SerialNumber").SendKeys("748644654");
+			Css(el, "#clientService_RentableHardware_Id").SelectByValue(hardware.Id.ToString());
+			Click(el, "Активировать");
+
 			AssertText("Услуга \"Аренда оборудования\" активирована");
 			Click("Аренда оборудования - Коммутатор");
 			AssertText("Акт возврата оборудование");
