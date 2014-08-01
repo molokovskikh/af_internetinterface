@@ -169,9 +169,8 @@ namespace InternetInterface.Models
 		{
 			if (RentableHardware == null)
 				return Enumerable.Empty<RentDocItem>().ToList();
-			return new[] {
-					new RentDocItem(String.Format("{0} {1}, серийный № {2}", RentableHardware.Name, Model, SerialNumber), 1)
-				}
+			var rootItem = new RentDocItem(String.Format("{0} {1}, серийный № {2}", RentableHardware.Name, Model, SerialNumber), 1);
+			return new[] { rootItem }
 				.Concat(RentableHardware.DefaultDocItems)
 				.ToList();
 		}
