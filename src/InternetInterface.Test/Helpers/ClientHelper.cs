@@ -15,18 +15,16 @@ namespace InternetInterface.Test.Helpers
 {
 	public class ClientHelper
 	{
-		public static Client CreateLaywerPerson()
+		public static Client CreateLaywerPerson(ISession session)
 		{
 			var person = new LawyerPerson {
 				Name = "TestClient",
 				Balance = 1000,
 				Region = GetRegion()
 			};
-			return new Client() {
-				LawyerPerson = person,
-				Disabled = false,
+			return new Client(person, session.Query<Partner>().First()) {
 				BeginWork = DateTime.Now,
-				Status = ActiveRecordBase<Status>.Find((uint)StatusType.Worked)
+				Status = session.Load<Status>((uint)StatusType.Worked)
 			};
 		}
 

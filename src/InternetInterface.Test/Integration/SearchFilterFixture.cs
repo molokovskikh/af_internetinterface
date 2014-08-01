@@ -48,7 +48,7 @@ namespace InternetInterface.Test.Integration
 		[Test]
 		public void SearchLegalPersonWithRegion()
 		{
-			var client = ClientHelper.CreateLaywerPerson();
+			var client = ClientHelper.CreateLaywerPerson(session);
 			client.LawyerPerson.Region = _region;
 			Save(client.LawyerPerson);
 			Save(client);

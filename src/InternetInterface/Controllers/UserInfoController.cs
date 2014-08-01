@@ -87,7 +87,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["filter"] = filter;
 			PropertyBag["appealType"] = filter.appealType == 0 ? AppealType.User : filter.appealType;
 			PropertyBag["Statuss"] = Status.FindAllSort();
-			PropertyBag["services"] = Service.FindAll();
+			SetupServiceEditor(client);
 
 			var packagesForTariff = DbSession.Query<Tariff>().Select(t => t.PackageId).ToList();
 			PropertyBag["Speeds"] =
@@ -640,9 +640,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["grouped"] = grouped;
 			PropertyBag["BalanceText"] = string.Empty;
 
-			PropertyBag["services"] = DbSession.Query<Service>().OrderBy(s => s.HumanName).ToList().Where(s => s.CanActivateInWeb(client)).ToList();
-			PropertyBag["activeServices"] = client.ClientServices.Where(c => c.Service.InterfaceControl).OrderBy(s => s.Service.HumanName).ToList();
-			PropertyBag["rentableHardwares"] = DbSession.Query<RentableHardware>().OrderBy(h => h.Name).ToList();
+			SetupServiceEditor(client);
 
 			PropertyBag["Appeals"] = Appeals.GetAllAppeal(DbSession, client, appealType);
 			PropertyBag["Client"] = client.PhysicalClient;
@@ -674,6 +672,14 @@ namespace InternetInterface.Controllers
 			ConnectPropertyBag(filter.ClientCode);
 			SendConnectInfo(client);
 			SendUserWriteOff();
+		}
+
+		private void SetupServiceEditor(Client client)
+		{
+			var services = DbSession.Query<Service>().OrderBy(s => s.HumanName).ToList();
+			PropertyBag["services"] = services.Where(s => s.CanActivateInWeb(client)).ToList();
+			PropertyBag["activeServices"] = client.ClientServices.Where(c => c.Service.InterfaceControl).OrderBy(s => s.Service.HumanName).ToList();
+			PropertyBag["rentableHardwares"] = DbSession.Query<RentableHardware>().OrderBy(h => h.Name).ToList();
 		}
 
 		private void LoadBalanceData(string grouped, Client client)

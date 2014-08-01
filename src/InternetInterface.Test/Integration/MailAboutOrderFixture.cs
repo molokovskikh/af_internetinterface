@@ -32,7 +32,7 @@ namespace InternetInterface.Test.Integration
 			controller = new UserInfoController();
 			Prepare(controller);
 			MessageOrderHelper.Sender = _sender;
-			client = ClientHelper.CreateLaywerPerson();
+			client = ClientHelper.CreateLaywerPerson(session);
 			session.Save(client);
 			order = new Order{Client = client};
 			orderService = new OrderService {

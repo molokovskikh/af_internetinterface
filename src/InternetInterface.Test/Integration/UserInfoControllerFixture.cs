@@ -35,7 +35,7 @@ namespace InternetInterface.Test.Integration
 		[Test(Description = "Проверяет корректное создание акта и счета при создании или редактировании заказа"), Ignore("Отключет функционал")]
 		public void CreateActAndInvoiceTest()
 		{
-			var client = ClientHelper.CreateLaywerPerson();
+			var client = ClientHelper.CreateLaywerPerson(session);
 			session.Save(client);
 			SystemTime.Now = () => new DateTime(2013, 4, 20);
 			var order = new Order();
@@ -165,7 +165,7 @@ namespace InternetInterface.Test.Integration
 		[Test]
 		public void Delete_write_off_lawyer_person_test()
 		{
-			var client = ClientHelper.CreateLaywerPerson();
+			var client = ClientHelper.CreateLaywerPerson(session);
 			client.LawyerPerson.Balance = 0;
 			var writeOff = new WriteOff(client, 300);
 			session.Save(client);

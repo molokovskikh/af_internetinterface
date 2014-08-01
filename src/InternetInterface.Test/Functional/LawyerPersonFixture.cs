@@ -17,7 +17,7 @@ namespace InternetInterface.Test.Functional
 		[SetUp]
 		public void Setup()
 		{
-			laywerPerson = ClientHelper.CreateLaywerPerson();
+			laywerPerson = ClientHelper.CreateLaywerPerson(session);
 			laywerPerson.LawyerPerson.Balance = -100000;
 			session.Save(laywerPerson);
 

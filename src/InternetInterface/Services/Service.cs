@@ -4,7 +4,9 @@ using System.Linq;
 using System.Web;
 using Castle.ActiveRecord;
 using InternetInterface.Models;
+using InternetInterface.Models.Services;
 using InternetInterface.Models.Universal;
+using NHibernate;
 
 namespace InternetInterface.Services
 {
@@ -113,6 +115,10 @@ namespace InternetInterface.Services
 
 		public virtual bool CanActivateInWeb(Client client)
 		{
+			if (client.Type == ClientType.Legal
+				&& (NHibernateUtil.GetClass(this) == typeof(IpTvBoxRent) || NHibernateUtil.GetClass(this) == typeof(HardwareRent))) {
+				return false;
+			}
 			return InterfaceControl && CanActivate(client) && !client.ClientServices.Select(c => c.Service.Id).Contains(Id);
 		}
 

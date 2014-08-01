@@ -28,7 +28,7 @@ namespace InternetInterface.Test.Integration
 					return true;
 				}));
 
-			var client = ClientHelper.CreateLaywerPerson();
+			var client = ClientHelper.CreateLaywerPerson(session);
 			var writeOff = new UserWriteOff(client, 500, "testComment");
 			writeOff.Sender = sender;
 			session.Save(client);
