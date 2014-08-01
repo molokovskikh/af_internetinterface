@@ -17,6 +17,8 @@ namespace InternetInterface.Helpers
 		private static string _filterAttribute;
 		public static string ErrorMessage;
 
+		//"LDAP://OU=Клиенты,DC=adc,DC=analit,DC=net"
+
 		public static bool IsAuthenticated(string username, string pwd)
 		{
 			if (Authenticated(@"LDAP://OU=Офис,DC=adc,DC=analit,DC=net", username, pwd))
@@ -26,10 +28,10 @@ namespace InternetInterface.Helpers
 			return false;
 		}
 
-		public static bool Authenticated(string ldap, string username, string pwd)
+		public static bool Authenticated(string LDAP, string username, string pwd)
 		{
 			var domainAndUsername = @"analit\" + username;
-			entryAu = new DirectoryEntry(ldap, domainAndUsername, pwd, AuthenticationTypes.None);
+			entryAu = new DirectoryEntry(LDAP, domainAndUsername, pwd, AuthenticationTypes.None);
 			try {
 				// Bind to the native AdsObject to force authentication.
 				var obj = entryAu.NativeObject;
@@ -49,6 +51,35 @@ namespace InternetInterface.Helpers
 			}
 			entryAu.RefreshCache();
 			return true;
+		}
+
+		public static void CreateUserInAD(string login, string password)
+		{
+#if !DEBUG
+			var root = new DirectoryEntry("LDAP://acdcserv/OU=Пользователи,OU=Клиенты,DC=adc,DC=analit,DC=net");
+			var userGroup = new DirectoryEntry("LDAP://acdcserv/CN=Базовая группа клиентов - получателей данных,OU=Группы,OU=Клиенты,DC=adc,DC=analit,DC=net");
+			var user = root.Children.Add("CN=" + login, "user");
+			user.Properties["samAccountName"].Value = login;
+			user.Properties["userWorkstations"].Add("acdcserv,solo");
+			//user.Properties["description"].Value = clientCode.ToString();
+			user.CommitChanges();
+			user.Invoke("SetPassword", password);
+			user.Properties["userAccountControl"].Value = 66048;
+			user.CommitChanges();
+			userGroup.Invoke("Add", user.Path);
+			userGroup.CommitChanges();
+			root.CommitChanges();
+#endif
+		}
+
+		public static DirectoryEntry FindDirectoryEntry(string login)
+		{
+			using (var searcher = new DirectorySearcher(String.Format(@"(&(objectClass=user)(sAMAccountName={0}))", login))) {
+				var searchResult = searcher.FindOne();
+				if (searchResult != null)
+					return searcher.FindOne().GetDirectoryEntry();
+				return null;
+			}
 		}
 	}
 }

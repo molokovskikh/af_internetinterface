@@ -793,7 +793,7 @@ where CE.Client = {0}", Id))
 		{
 			var serviceType = NHibernateUtil.GetClass(clientService.Service);
 			if (ClientServices.Any(c => NHibernateUtil.GetClass(c.Service) == serviceType)
-				&& !new[] { typeof(IpTvBoxRent), typeof(HardwareRent)}.Contains(serviceType))
+				&& !new[] { typeof(IpTvBoxRent), typeof(HardwareRent) }.Contains(serviceType))
 				throw new ServiceActivationException(String.Format("Невозможно активировать услугу \"{0}\"", clientService.Service.HumanName));
 
 			if (!clientService.TryActivate())
