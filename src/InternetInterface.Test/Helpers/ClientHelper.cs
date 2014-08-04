@@ -5,6 +5,7 @@ using Castle.ActiveRecord.Framework;
 using Castle.Components.Validator;
 using Common.Tools;
 using Common.Web.Ui.ActiveRecordExtentions;
+using InternetInterface.Controllers;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Models.Services;
@@ -66,9 +67,7 @@ namespace InternetInterface.Test.Helpers
 				session.Save(client.HouseObj);
 			}
 
-			var internalClient = new Client {
-				PhysicalClient = client,
-				BeginWork = null,
+			var internalClient = new Client(client, new Settings(session)) {
 				Name = String.Format("{0} {1} {2}", client.Surname, client.Name, client.Patronymic),
 				Status = status,
 				RatedPeriodDate = DateTime.Now,
@@ -76,7 +75,6 @@ namespace InternetInterface.Test.Helpers
 			};
 			internalClient.ClientServices.Add(new ClientService(internalClient, internet));
 			internalClient.ClientServices.Add(new ClientService(internalClient, iptv));
-			client.Client = internalClient;
 			return client;
 		}
 

@@ -1,5 +1,5 @@
 ﻿${app.Asset("search.editor.v2.js")}
-${app.Asset("knockout-2.1.0.js")}
+${app.Asset("knockout.js")}
 ${app.Asset("underscore.js")}
 
 <% OutputSubView("/Shared/JsTemplates/search.editor.v2") %>

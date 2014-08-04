@@ -7,6 +7,7 @@ using InternetInterface.Test.Helpers;
 using NHibernate.Linq;
 using NUnit.Framework;
 using Test.Support;
+using ContactType = InternetInterface.Models.ContactType;
 
 namespace InternetInterface.Test.Integration
 {
@@ -78,6 +79,21 @@ namespace InternetInterface.Test.Integration
 			Assert.AreEqual("+7" + engineer1.TelNum, cancelMessage.PhoneNumber);
 			var newMessage = messages.First(m => m.Text.Contains("9505001055"));
 			Assert.AreEqual("+7" + engineer2.TelNum, newMessage.PhoneNumber);
+		}
+
+		[Test]
+		public void Send_sms_on_close()
+		{
+			request.Client.Contacts.Add(new Contact(request.Client, ContactType.SmsSending, "9794561231"));
+			request.RegDate = new DateTime(2014, 08, 01);
+			request.Status = ServiceRequestStatus.Close;
+			request.Sum = 200;
+			request.CloseSmsMessage = "переобжим коннектора со стороны абонента";
+			var messages = request.GetEditSms(session);
+			Assert.AreEqual(1, messages.Count);
+			var message = messages[0];
+			Assert.AreEqual("+79794561231", message.PhoneNumber);
+			Assert.AreEqual(String.Format("С Вашего счета списано 200,00р. по сервисной заявке №{0} от 01.08.2014 переобжим коннектора со стороны абонента", request.Id), message.Text);
 		}
 	}
 }
