@@ -1,4 +1,29 @@
 ﻿$(function () {
+
+	var checkFlag = false;
+	var Request = function () {
+		var self = this;
+		self.sum = ko.observable();
+		self.isFree = ko.observable();
+		self.status = ko.observable();
+		self.canWriteSms = ko.computed(function () {
+			return self.sum() > 0 && !self.isFree() && self.status() == 3;
+		}, self);
+		self.isFree.subscribe(function () {
+			checkFlag = true;
+			if (self.isFree()) {
+				self.sum("");
+			}
+		});
+	};
+
+	$(".validateFormService").each(function () {
+		var el = $(this);
+		var model = new Request(el);
+		el.data("model", model);
+		ko.applyBindings(model, this);
+	});
+
 	$('.contact_link').click(function () {
 		$('#request_Contact').val($.trim(this.innerText));
 	});
@@ -26,7 +51,6 @@
 		$("#request_PerformanceDate").change();
 	}
 
-	var checkFlag = false;
 	$('.validateFormService').validate({
 		errorElement: "div",
 		errorLabelContainer: "#errorContainer",
@@ -48,15 +72,14 @@
 
 	$.validator.addMethod(
 		"zeroSumValidator",
-		function (value, element, validValue) {
+		function (value, element) {
 			if (element.checked && checkFlag) {
-				if ($('.comment_sum_text').length == 0) {
-					$('#comment_sum').append('<br />Причина: <input type="text" class="comment_sum_text">');
-				}
-				if ($('.comment_sum_text:first').val() != "") {
+				if ($('.comment_sum_text').val() != "") {
 					return true;
 				}
-			} else { return true; }
+			} else {
+				return true;
+			}
 			return false;
 		}, "Введите комментарий");
 
@@ -76,19 +99,5 @@
 				zeroSumValidator: "Опишите причину, почему заявка стала бесплатной"
 			}
 		});
-	});
-
-	$('#sumField').change(function () {
-		$('#request_Free').removeAttr("checked");
-	});
-
-	$('#request_Free').click(function () {
-		checkFlag = true;
-		if (this.checked){
-			$('#sumField').val("");
-			if ($('.comment_sum_text').length == 0) {
-				$('#comment_sum').append('<br />Причина: <input type="text" class="comment_sum_text">');
-			}
-		}
 	});
 });

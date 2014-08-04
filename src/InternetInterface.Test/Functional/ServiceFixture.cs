@@ -108,6 +108,21 @@ namespace InternetInterface.Test.Functional
 			AssertText("900-9090900");
 		}
 
+		[Test]
+		public void Sms_on_close()
+		{
+			var request = CreateRequest();
+			session.Save(request);
+			Open("ServiceRequest/ShowRequest?Id={0}", request.Id);
+			Click("(Редактировать)");
+			Css("#request_Status").SelectByValue("3");
+			Css("#sumField").SendKeys("500");
+			var sms = Css("#request_CloseSmsMessage");
+			sms.SendKeys("тестовое сообщение");
+			Assert.IsTrue(sms.Displayed);
+			Click("Сохранить");
+		}
+
 		private void WaitAjax(string querystring)
 		{
 			var wait = new WebDriverWait(new SystemClock(), browser, 5.Second(), TimeSpan.FromMilliseconds(100));
@@ -116,11 +131,6 @@ namespace InternetInterface.Test.Functional
 				wait.Message = String.Format("Не удалось дождаться состояния #timetable ждем '{0}' текущее {1}", querystring, text);
 				return text.EndsWith(querystring);
 			});
-		}
-
-		private WebDriverWait Wait()
-		{
-			return new WebDriverWait(browser, 5.Second());
 		}
 
 		protected void WaitForHiddenCss(string css)

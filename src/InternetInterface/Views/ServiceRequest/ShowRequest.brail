@@ -1,5 +1,6 @@
 ﻿${app.Asset("service-requests.css")}
 ${app.Asset("service-requests.js")}
+${app.Asset("knockout.js")}
 
 <div class="borderless-content">
 	<% if request != null: %>
@@ -15,12 +16,12 @@ ${app.Asset("service-requests.js")}
 			<tr>
 				<th colspan=4>
 				<% if IsService: %>
-				Заявка клиента: ${request.Client.Name}
+					Заявка клиента: ${request.Client.Name}
 				<% else: %>
-					<a href="${Siteroot}/Search/Redirect?filter.ClientCode=${request.Client.Id}">${request.Client.Name}</a>
+					${app.LinkTo(request.Client)}
 				<% end %>
 				<% if not Edit: %>
-				<a href="?Id=${request.Id}&Edit=true">(Редактировать)</a>
+					<a href="?Id=${request.Id}&Edit=true">(Редактировать)</a>
 				<% end %>
 				</th>
 			</tr>
@@ -32,7 +33,7 @@ ${app.Asset("service-requests.js")}
 				<% endPoint = request.Client.FirstPoint() %>
 				<% if endPoint != null: %>
 					<td><b>Подключен</b></td>
-					<td>${endPoint.Switch.Name} (${endPoint.Switch.IP}) <b>Порт </b> ${endPoint.Port}</td>
+					<td>${?endPoint.Switch.Name} (${?endPoint.Switch.IP}) <b>Порт</b> ${endPoint.Port}</td>
 				<% else: %>
 					<td></td>
 					<td></td>
@@ -41,11 +42,9 @@ ${app.Asset("service-requests.js")}
 			<tr class="requestCutInfo">
 				<td><b>Статус</b></td>
 				<% if not Edit: %>
-				<td>${request.GetStatusName()}</td>
+					<td>${app.Display(request.Status)}</td>
 				<% else: %>
-				<td>
-					${app.Edit("request.Status")}
-				</td>
+					<td>${app.Edit("request.Status", {"data-bind": "value: status"})}</td>
 				<% end %>
 				<td><b>Дата создания</b></td>
 				<td>${request.RegDate.ToShortDateString()}</td>
@@ -85,7 +84,7 @@ ${app.Asset("service-requests.js")}
 					<td>${?request.Sum.ToString("C")}</td>
 				<% else: %>
 					<td>
-						<input id="sumField" type=text name="request.Sum" value="${?request.Sum.ToString("0.00").Replace(",",".")}" />
+						<input id="sumField" type=text name="request.Sum" data-bind="value: sum, disable: isFree, valueUpdate: 'input'" value="${?request.Sum.ToString("0.00").Replace(",",".")}" />
 					</td>
 				<% end %>
 				<td id="comment_sum"><b>Бесплатная</b></td>
@@ -96,10 +95,30 @@ ${app.Asset("service-requests.js")}
 						<td>Нет</td>
 					<% end else: %>
 						<td>
-							${app.Edit("request.Free")}
+							${app.Edit("request.Free", {"data-bind": "checked: isFree"})}
 						</td>
 				<% end %>
 			</tr>
+			<% if edit: %>
+			<tr data-bind="visible: isFree">
+				<td>
+					Основание для бесплатной заявки:
+				</td>
+				<td colspan="100">
+					<textarea cols="30" rows="2" class="comment_sum_text"></textarea>
+				</td>
+			</tr>
+			<% end %>
+			<% if edit: %>
+			<tr data-bind="visible: canWriteSms">
+				<td>
+					${app.Label("request.CloseSmsMessage")}
+				</td>
+				<td colspan="100">
+					${FormHelper.TextArea("request.CloseSmsMessage", { @cols: 30, @rows: 2 })}
+				</td>
+			</tr>
+			<% end %>
 			<tr>
 				<td colspan=4 style="padding-top: 20px"><b>Описание</b></td>
 			</tr>

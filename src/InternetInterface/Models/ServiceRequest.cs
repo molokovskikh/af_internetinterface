@@ -118,6 +118,9 @@ namespace InternetInterface.Models
 		[Property, Auditable("Бесплатная заявка")]
 		public virtual bool Free { get; set; }
 
+		[Description("Текст смс для отправки клиенту")]
+		public virtual string CloseSmsMessage { get; set; }
+
 		[BelongsTo]
 		public virtual Partner Registrator { get; set; }
 
@@ -136,24 +139,6 @@ namespace InternetInterface.Models
 		{
 			if (Description != null)
 				return AppealHelper.GetTransformedAppeal(Description.Take(100).Implode(string.Empty)) + (Description.Length > 100 ? "..." : string.Empty);
-			return string.Empty;
-		}
-
-		public virtual string GetStatusName()
-		{
-			return GetStatusName(Status);
-		}
-
-		public static string GetStatusName(ServiceRequestStatus status)
-		{
-			switch (status) {
-				case ServiceRequestStatus.New:
-					return "Новый";
-				case ServiceRequestStatus.Close:
-					return "Закрыт";
-				case ServiceRequestStatus.Cancel:
-					return "Отменен";
-			}
 			return string.Empty;
 		}
 
@@ -182,6 +167,15 @@ namespace InternetInterface.Models
 
 			if (Status == ServiceRequestStatus.Cancel && session.IsChanged(this, r => r.Status)) {
 				messages.Add(GetCancelSms(Performer));
+			}
+
+			if (Status == ServiceRequestStatus.Close
+				&& session.IsChanged(this, r => r.Status)
+				&& Sum > 0
+				&& Client.Type == ClientType.Phisical) {
+				var text = String.Format("С Вашего счета списано {0:C} по сервисной заявке №{1} от {2:d} {3}",
+					Sum, Id, RegDate, CloseSmsMessage);
+				messages.Add(new SmsMessage(Client, Contact, text));
 			}
 
 			return messages.Where(m => m != null).ToList();
