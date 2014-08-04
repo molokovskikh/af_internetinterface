@@ -165,9 +165,9 @@ namespace InternetInterface.Helpers
 
 		public string EditService(string target, Service service)
 		{
-			if (NHibernateUtil.GetClass(service) == typeof(HardwareRent)
-				|| NHibernateUtil.GetClass(service) == typeof(IpTvBoxRent)) {
-				return Templataize2(target, new ClientService(), "shared/EditorTemplates", NHibernateUtil.GetClass(service));
+			var type = NHibernateUtil.GetClass(service);
+			if (Context.Services.ViewEngineManager.HasTemplate("shared/EditorTemplates/" + type.Name)) {
+				return Templataize2(target, new ClientService(), "shared/EditorTemplates", type);
 			}
 			return service.GetParameters();
 		}

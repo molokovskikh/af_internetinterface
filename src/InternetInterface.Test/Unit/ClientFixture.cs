@@ -146,6 +146,20 @@ namespace InternetInterface.Test.Unit
 			Assert.AreEqual(-4.84, client.PhysicalClient.Balance);
 		}
 
+		[Test]
+		public void Activate_speed_boost()
+		{
+			var clientEndpoint = new ClientEndpoint(client, 1, new NetworkSwitch("тест", new Zone("тест")));
+			client.AddEndpoint(clientEndpoint, settings);
+			client.Activate(new ClientService(client, new SpeedBoost()) {
+				BeginWorkDate = DateTime.Today,
+				EndWorkDate = DateTime.Today.AddDays(1)
+			});
+			client.ClientServices.Each(s => s.TryActivate());
+			Assert.AreEqual(23, client.Endpoints[0].PackageId);
+			Assert.IsTrue(client.IsNeedRecofiguration);
+		}
+
 		private void DailyWriteoff()
 		{
 			client.PhysicalClient.WriteOff(client.GetSumForRegularWriteOff());

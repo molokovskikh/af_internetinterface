@@ -115,10 +115,6 @@ namespace InternetInterface.Services
 
 		public virtual bool CanActivateInWeb(Client client)
 		{
-			if (client.Type == ClientType.Legal
-				&& (NHibernateUtil.GetClass(this) == typeof(IpTvBoxRent) || NHibernateUtil.GetClass(this) == typeof(HardwareRent))) {
-				return false;
-			}
 			return InterfaceControl && CanActivate(client) && !client.ClientServices.Select(c => c.Service.Id).Contains(Id);
 		}
 

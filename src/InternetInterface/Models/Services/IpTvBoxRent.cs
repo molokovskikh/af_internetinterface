@@ -57,6 +57,8 @@ namespace InternetInterface.Models.Services
 
 		public override bool CanActivateInWeb(Client client)
 		{
+			if (client.Type == ClientType.Legal)
+				return false;
 			return true;
 		}
 	}

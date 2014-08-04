@@ -754,7 +754,7 @@ namespace InternetInterface.Controllers
 
 			int? packageId;
 			if (clientEndPointId > 0)
-				packageId = DbSession.Get<ClientEndpoint>(clientEndPointId).PackageId;
+				packageId = DbSession.Load<ClientEndpoint>(clientEndPointId).PackageId;
 			else
 				packageId = client.Endpoints.Select(e => e.PackageId).FirstOrDefault();
 
