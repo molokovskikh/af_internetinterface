@@ -1,12 +1,12 @@
 ﻿<tr>
-	<td>Начало аренды</td>
+	<td>Начало</td>
 	<td>
 		${FormHelper.TextField("startDate", { @class: "required validate-date input-date", @id: "startDate" + model.Value.Id })}
 		<input type="button" class="CalendarInput" />
 	</td>
 </tr>
 <tr>
-	<td>Окончание аренды</td>
+	<td>Окончание</td>
 	<td>
 		${FormHelper.TextField("endDate", { @class: "required validate-date input-date", @id: "endDate" + model.Value.Id })}
 		<input type="button" class="CalendarInput" />
