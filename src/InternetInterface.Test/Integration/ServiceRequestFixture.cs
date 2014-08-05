@@ -76,9 +76,9 @@ namespace InternetInterface.Test.Integration
 			var messages = request.GetEditSms(session);
 			Assert.AreEqual(2, messages.Count);
 			var cancelMessage = messages.First(m => m.Text.Contains("заявка отменена"));
-			Assert.AreEqual("+7" + engineer1.TelNum, cancelMessage.PhoneNumber);
+			Assert.AreEqual("+79808791258", cancelMessage.PhoneNumber);
 			var newMessage = messages.First(m => m.Text.Contains("9505001055"));
-			Assert.AreEqual("+7" + engineer2.TelNum, newMessage.PhoneNumber);
+			Assert.AreEqual("+79201564189", newMessage.PhoneNumber);
 		}
 
 		[Test]
