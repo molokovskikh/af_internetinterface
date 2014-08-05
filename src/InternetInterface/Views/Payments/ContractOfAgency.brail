@@ -3,23 +3,21 @@
 <div class="borderless-content">
 	<h1>ДОГОВОР ПОРУЧЕНИЯ № !{payment.Id}</h1>
 	<p>
-		г. Воронеж&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;«07» июня  2013 г.
+		г. Воронеж&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!{System.DateTime.Now.ToString("D")}
 	</p>
-	Гражданин !{payment.Client.Name},<br>
-	Паспорт !{payment.Client.PhysicalClient.PassportSeries} \ !{payment.Client.PhysicalClient.HomePhoneNumber} выдан !{payment.Client.PhysicalClient.WhoGivePassport}<br>
-	Зарегистрирован по адресу !{payment.Client.PhysicalClient.RegistrationAdress}<br>
+	Гражданин <b>!{payment.Client.Name},</b><br>
+	Паспорт <b>!{payment.Client.PhysicalClient.PassportSeries} \ !{payment.Client.PhysicalClient.PassportNumber} выдан !{payment.Client.PhysicalClient.WhoGivePassport}</b><br>
+	Зарегистрирован по адресу <b>!{payment.Client.PhysicalClient.RegistrationAdress}</b><br>
 	именуемый в дальнейшем «Доверитель» с одной стороны и<br>
 	!{MapPartner.Name}<br>
 	именуемый в дальнейшем «Поверенный» с другой стороны, заключили настоящий договор о нижеследующем:<br>
 
-	<p>
 	<h2>1. Предмет договора</h2>
 	По настоящему договору Доверитель поручает, а Поверенный принимает на себя обязательства внести от имени и за счет Доверителя денежную сумму в размере:<br>
-	!{payment.SumToLiteral()}<br>
-	на лицевой счет абонента пользователя для доступа в сеть Интернет N !{payment.Client.Id}<br>
+	<b>!{payment.SumToLiteral()}</b><br>
+	на лицевой счет абонента пользователя для доступа в сеть Интернет N <b>!{payment.Client.Id}</b><br>
 	в срок не позднее дня, следующего за днем заключения договора.<br>
 
-	<p>
 	<h2>2. Права и обязанности сторон</h2>
 	2.1. Обязанности Поверенного:<br>
 	2.1.1. Поверенный после получения денежных средств от Доверителя обязан исполнить данное ему поручение в соответствии с указаниями Доверителя. Поверенный вправе отступить от этих указаний, если по обстоятельствам дела это необходимо в интересах Доверителя и Поверенный не мог предварительно запросить Доверителя либо не получил своевременно ответа на свой запрос; <br>
@@ -35,7 +33,7 @@
 	3.2.Во всем ином, не предусмотренном настоящим договором, применяются действующее законодательство, регулирующее отношения по договору поручения.<br>
 
 	<h2>4.Срок действия договора</h2>
-	Настоящий  договор действует с момента его подписания и передачи денежных средств от доверителя поверенному до момента поступления денежных средств на лицевой счет, указанный в разделе 1 настоящего договора __________________.
+	Настоящий  договор действует с момента его подписания и передачи денежных средств от доверителя поверенному до момента поступления денежных средств на лицевой счет, указанный в разделе 1 настоящего договора.
 	По истечении срока действия настоящего договора все финансовые претензии сторон, возникшие при исполнении настоящего договора, сохраняют силу до их разрешения.
 
 	<h2>5. Прочие условия.</h2>
@@ -51,7 +49,29 @@
 			<td>______________________________________</td>
 		</tr>
 	</table>
-	<p>
-		Я, !{MapPartner.Name}, получила денежную сумму в размере !{payment.Sum.ToString("C")} от !{payment.Client.Name} в исполнении по Договору Поручению № !{payment.Id}
-	</p>
+	<h1>Расписка</h1>
+	<div>
+		<b>Я, !{MapPartner.Name}, получил(а) от гражданина</b> !{payment.Client.Name} денежную сумму в размере <b>!{payment.SumToLiteral()}</b> в исполнении по Договору Поручению № <b>!{payment.Id}</b>
+	</div>
+	<table class="sing">
+		<tr>
+			<td>ПОВЕРЕННЫЙ</td>
+			<td>ДОВЕРИТЕЛЬ</td>
+		</tr>
+		<tr>
+			<td>______________________________________</td>
+			<td>______________________________________</td>
+		</tr>
+	</table>
+	<div>
+		Уважаемые абоненты!  Обращаем Ваше внимание!!!<br>
+		Кассы РИЦ по приёму платежей за жилищно-коммунальные услуги от населения <br>
+		начали прием платежей компании Инфорум в г. Борисоглебске:<br>
+		Адреса, по которым можно оплатить наши услуги:<br>
+		1) Победы, д. 2,   2) Юго-восточный микрорайон, д. 12,   3) Северный микрорайон, д. 42,<br>
+		4) Третьяковская, д. 2,  5) Аэродромная, д. 5<br>
+		<br>
+		Услуги Интернет компании Инфорум также можно оплачивать без комиссии в отделениях Сбербанка РФ<br>
+		Телефон технической поддержки клиентов: (473) 22-999-87 (920) 22-999-87<br>
+	</div>
 </div>

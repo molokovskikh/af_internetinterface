@@ -202,6 +202,7 @@
     <Compile Include="Unit\LawyerPersonFixture.cs" />
     <Compile Include="Unit\LinksysCommutateurInfoFixture.cs" />
     <Compile Include="Unit\PasswordFixture.cs" />
+    <Compile Include="Unit\PaymentFixture.cs" />
     <Compile Include="Unit\PhysicalClientFixture.cs" />
     <Compile Include="Integration\ServiceRequestFixture.cs" />
     <Compile Include="Unit\SetupFixture.cs" />

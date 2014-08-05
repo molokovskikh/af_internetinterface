@@ -80,7 +80,7 @@ namespace InternetInterface.Models
 
 		public virtual string SumToLiteral()
 		{
-			return RusCurrency.Str((double)Sum);
+			return TextUtil.NumToPaymentString((double)Sum);
 		}
 	}
 }
