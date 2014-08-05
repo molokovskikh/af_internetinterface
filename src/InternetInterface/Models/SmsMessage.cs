@@ -20,10 +20,7 @@ namespace InternetInterface.Models
 		public SmsMessage(string phone)
 			: this()
 		{
-			PhoneNumber = phone;
-			if (!PhoneNumber.StartsWith("+7")) {
-				PhoneNumber = "+7" + PhoneNumber;
-			}
+			UpdatePhone(phone);
 		}
 
 		public SmsMessage(Client client, string text, DateTime? shouldBeSend = null)
@@ -33,7 +30,7 @@ namespace InternetInterface.Models
 				.FirstOrDefault(c => c.Type == ContactType.SmsSending && !string.IsNullOrEmpty(c.Text) && Regex.IsMatch(c.Text, @"^(9)\d{9}"));
 			if (contact == null)
 				throw new Exception(String.Format("Для клиента {0} не найдена контактная информация для отправки sms", client.Id));
-			PhoneNumber = "+7" + contact.Text;
+			UpdatePhone(contact.Text);
 			Client = client;
 			Text = text;
 			ShouldBeSend = shouldBeSend ?? DateTime.Today.AddDays(1).Add(new TimeSpan(12, 00, 00));
@@ -88,6 +85,15 @@ namespace InternetInterface.Models
 			if (contact == null)
 				return null;
 			return new SmsMessage(client, text, shouldBeSend);
+		}
+
+		private void UpdatePhone(string phone)
+		{
+			PhoneNumber = phone;
+			if (!PhoneNumber.StartsWith("+7")) {
+				PhoneNumber = "+7" + PhoneNumber;
+			}
+			PhoneNumber = PhoneNumber.Replace("-", "");
 		}
 	}
 }

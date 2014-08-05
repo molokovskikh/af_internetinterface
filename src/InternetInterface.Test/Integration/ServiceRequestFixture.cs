@@ -92,7 +92,7 @@ namespace InternetInterface.Test.Integration
 			var messages = request.GetEditSms(session);
 			Assert.AreEqual(1, messages.Count);
 			var message = messages[0];
-			Assert.AreEqual("+79794561231", message.PhoneNumber);
+			Assert.AreEqual("+79505001055", message.PhoneNumber);
 			Assert.AreEqual(String.Format("С Вашего счета списано 200,00р. по сервисной заявке №{0} от 01.08.2014 переобжим коннектора со стороны абонента", request.Id), message.Text);
 		}
 	}
