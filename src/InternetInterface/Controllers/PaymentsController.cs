@@ -88,14 +88,14 @@ namespace InternetInterface.Controllers
 				if (!HasValidationError(payment)) {
 					payment.RegisterPayment();
 					DbSession.Save(payment);
-					new Payment {
+					DbSession.Save(new Payment {
 						Client = payment.Payer,
 						Sum = payment.Sum,
 						RecievedOn = payment.RegistredOn,
 						PaidOn = payment.PayedOn,
 						Agent = Agent.GetByInitPartner(),
 						BankPayment = payment
-					}.Save();
+					});
 					RedirectToReferrer();
 					return;
 				}
@@ -167,23 +167,23 @@ namespace InternetInterface.Controllers
 				//то получим двух плательщиков из разных сессий
 				//правим это
 				if (payment.Payer != null)
-					payment.Payer = ActiveRecordLinqBase<Client>.Queryable.FirstOrDefault(p => p.Id == payment.Payer.Id);
+					payment.Payer = DbSession.Query<Client>().FirstOrDefault(p => p.Id == payment.Payer.Id);
 
 				if (Validator.IsValid(payment)) {
 					payment.RegisterPayment();
 					DbSession.Save(payment);
 					if (payment.Payer != null)
-						new Payment {
+						DbSession.Save(new Payment {
 							Client = payment.Payer,
 							Sum = payment.Sum,
 							RecievedOn = payment.RegistredOn,
 							PaidOn = payment.PayedOn,
 							Agent = Agent.GetByInitPartner(),
 							BankPayment = payment
-						}.Save();
+						});
 				}
 				else {
-					ArHelper.WithSession(s => ArHelper.Evict(s, new[] { payment }));
+					DbSession.Evict(payment);
 				}
 			}
 
@@ -282,7 +282,7 @@ namespace InternetInterface.Controllers
 
 		public void Edit(uint id)
 		{
-			var payment = BankPayment.TryFind(id);
+			var payment = DbSession.Load<BankPayment>(id);
 			if (IsPost) {
 				var oldBalance = payment.Sum;
 				var oldPayer = payment.Payer;
@@ -295,37 +295,37 @@ namespace InternetInterface.Controllers
 					if (oldPayer != null && payment.Payer == oldPayer) {
 						var client = payment.Payer;
 						if (newBalance - oldBalance < 0 && payment.Payer != null) {
-							new UserWriteOff {
+							DbSession.Save(new UserWriteOff {
 								Registrator = InitializeContent.Partner,
 								Client = client,
 								Sum = oldBalance - newBalance,
 								Date = DateTime.Now,
 								Comment = string.Format("Списание после редактирования банковского платежа (id = {0})", payment.Id)
-							}.Save();
+							});
 						}
 						if (newBalance - oldBalance > 0 && payment.Payer != null) {
-							new Payment {
+							DbSession.Save(new Payment {
 								Agent = Agent.GetByInitPartner(),
 								Client = client,
 								PaidOn = DateTime.Now,
 								RecievedOn = DateTime.Now,
 								Sum = newBalance - oldBalance,
 								LogComment = string.Format("Зачисление после редактирования банковского платежа (id = {0})", payment.Id)
-							}.Save();
+							});
 						}
 					}
 					if (newPayerFlag) {
-						new Payment {
+						DbSession.Save(new Payment {
 							Agent = Agent.GetByInitPartner(),
 							Client = payment.Payer,
 							PaidOn = DateTime.Now,
 							RecievedOn = DateTime.Now,
 							Sum = payment.Sum,
 							LogComment = string.Format("Зачисление после редактирования банковского платежа (id = {0}), назначен плательщик", payment.Id)
-						}.Save();
+						});
 					}
 					if (oldPayer != null && oldPayer != payment.Payer) {
-						new Payment {
+						DbSession.Save(new Payment {
 							Agent = Agent.GetByInitPartner(),
 							Client = payment.Payer,
 							PaidOn = DateTime.Now,
@@ -333,18 +333,18 @@ namespace InternetInterface.Controllers
 							Sum = payment.Sum,
 							LogComment = string.Format("Зачисление после редактирования банковского платежа (id = {0})", payment.Id),
 							BankPayment = payment
-						}.Save();
+						});
 						if (oldPayment.Payment != null) {
 							Cancel(oldPayment.Payment.Id, string.Format("Изменение плательщика в банковском платеже {0} с '{1}' на '{2}'", oldPayment.Id, oldPayer.Name, payment.Payer.Name));
 						}
 						else {
-							new UserWriteOff {
+							DbSession.Save(new UserWriteOff {
 								Registrator = InitializeContent.Partner,
 								Client = oldPayer,
 								Comment = string.Format("Списание после смены плательщика, при редактировании банковского платежа №{0} \r\n Клиент стал: {1}", payment.Id, payment.Payer.Id),
 								Date = DateTime.Now,
 								Sum = oldPayment.Sum
-							}.Save();
+							});
 							DbSession.Save(new Appeals(string.Format("После смены плательщика в платеже {0} было создано пользовательское списание, так как не был найден привязанный к банковскому платежу физический платеж для отмены", oldPayment.Id), oldPayer, AppealType.System));
 						}
 					}
@@ -366,8 +366,7 @@ namespace InternetInterface.Controllers
 		{
 			uint id;
 			uint.TryParse(term, out id);
-			return ActiveRecordLinq
-				.AsQueryable<Client>()
+			return DbSession.Query<Client>()
 				.Where(p => p.Name.Contains(term) || p.Id == id)
 				.Take(20)
 				.ToList()

@@ -6,6 +6,7 @@ using Castle.ActiveRecord;
 using Castle.Components.Binder;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
+using Common.MySql;
 using Common.Tools;
 using Common.Web.Ui.Controllers;
 using InternetInterface.Controllers.Filter;
@@ -49,10 +50,14 @@ namespace InternetInterface.Controllers
 		{
 			var @switch = DbSession.Load<NetworkSwitch>(switchId);
 			PropertyBag["switch"] = @switch;
-			var messages = ClientEndpoint.FindAll(DetachedCriteria.For(typeof(ClientEndpoint))
+			var messages = DetachedCriteria.For(typeof(ClientEndpoint))
 				.CreateAlias("Client", "c", JoinType.InnerJoin)
 				.CreateAlias("c.Message", "m", JoinType.InnerJoin)
-				.Add(Expression.Eq("Switch", @switch))).Select(e => e.Client.Message).ToList();
+				.Add(Expression.Eq("Switch", @switch))
+				.GetExecutableCriteria(DbSession)
+				.List<ClientEndpoint>()
+				.Select(e => e.Client.Message)
+				.ToList();
 			var message = new MessageForClient();
 			if (messages.Count > 0)
 				message = messages

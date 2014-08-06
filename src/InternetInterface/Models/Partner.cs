@@ -150,17 +150,6 @@ namespace InternetInterface.Models
 			}
 		}
 
-		public static bool RegistrLogicPartner(Partner partner, ValidatorRunner validator)
-		{
-			if (validator.IsValid(partner)) {
-				partner.Role.Refresh();
-				partner.RegDate = DateTime.Now;
-				partner.SaveAndFlush();
-				return true;
-			}
-			return false;
-		}
-
 		public override string ToString()
 		{
 			return Name;
@@ -231,6 +220,11 @@ namespace InternetInterface.Models
 
 			var lookup = permissionMap.ToLookup(k => k.Key, k => k.Value);
 			return AccesedPartner.Select(p => lookup[p].SelectMany(i => i)).SelectMany(p => p);
+		}
+
+		public static IList<Partner> All(ISession session)
+		{
+			return session.Query<Partner>().OrderBy(p => p.Name).ToList();
 		}
 	}
 }

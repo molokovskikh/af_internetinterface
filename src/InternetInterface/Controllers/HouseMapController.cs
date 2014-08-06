@@ -37,10 +37,11 @@ namespace InternetInterface.Controllers
 
 		public void ViewHouseInfo()
 		{
-			PropertyBag["Houses"] = House.FindAll().OrderBy(h => h.Street);
-			PropertyBag["SelectedHouse"] = House.FindFirst().Id;
+			var houses = House.All(DbSession);
+			PropertyBag["Houses"] = houses;
+			PropertyBag["SelectedHouse"] = houses.First().Id;
 			PropertyBag["agents"] = Partner.GetHouseMapAgents(DbSession);
-			PropertyBag["RegionList"] = DbSession.Query<RegionHouse>().ToList();
+			PropertyBag["RegionList"] = RegionHouse.All(DbSession);
 			FindHouse();
 		}
 
@@ -80,13 +81,13 @@ namespace InternetInterface.Controllers
 			foreach (var enterance in enterances) {
 				enCount++;
 				var networkSwitche = DbSession.Get<NetworkSwitch>(enterance.Switch.Id);
-				new Entrance {
+				DbSession.Save(new Entrance {
 					Cable = enterance.Cable,
 					House = house,
 					Number = enCount,
 					Strut = enterance.Strut,
 					Switch = networkSwitche
-				}.Save();
+				});
 			}
 			EditHouse(house.Id);
 			RedirectToUrl("~/HouseMap/ViewHouseInfo?House=" + house.Id);
@@ -108,7 +109,7 @@ namespace InternetInterface.Controllers
 					OptionName = "Меньше"
 				}
 			};
-			PropertyBag["RegionList"] = RegionHouse.All();
+			PropertyBag["RegionList"] = RegionHouse.All(DbSession);
 		}
 
 		public void HouseFindResult(string adress, int SubscriberCount, int PenetrationPercent, int PassCount,
@@ -255,13 +256,13 @@ namespace InternetInterface.Controllers
 			house.ApartmentCount = Convert.ToInt32(apCount);
 			DbSession.Save(house);
 			for (int i = 0; i < NetSwitch.Length; i++) {
-				new Entrance {
+				DbSession.Save(new Entrance {
 					Cable = Convert.ToBoolean(Cable[i]),
 					House = house,
 					Number = i + 1,
 					Strut = Convert.ToBoolean(Strut[i]),
 					Switch = Convert.ToInt32(NetSwitch[i]) > 0 ? DbSession.Load<NetworkSwitch>(Convert.ToUInt32(NetSwitch[i])) : null
-				}.Save();
+				});
 			}
 			return true;
 		}

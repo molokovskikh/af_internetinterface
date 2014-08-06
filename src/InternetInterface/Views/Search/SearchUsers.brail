@@ -80,7 +80,7 @@
 						</div>
 						<div>
 							<span>Регион</span><br>
-							${FormHelper.Select("filter.Region", RegionList, {"value" : "Id", "text" : "Name"})}
+							${app.Edit("filter.Region")}
 						</div>
 						<div>
 							<span>Услуги</span><br>

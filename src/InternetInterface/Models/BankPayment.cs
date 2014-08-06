@@ -448,7 +448,6 @@ namespace InternetInterface.Models
 				&& PayerClient != null
 				&& !String.IsNullOrEmpty(PayerClient.Inn)) {
 				Payer.LawyerPerson.INN = PayerClient.Inn;
-				//Payer.Save();
 			}
 		}
 	}

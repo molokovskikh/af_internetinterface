@@ -5,6 +5,8 @@ using System.Web;
 using Castle.ActiveRecord;
 using Castle.Components.Validator;
 using InternetInterface.Models.Universal;
+using NHibernate;
+using NHibernate.Linq;
 
 namespace InternetInterface.Models
 {
@@ -108,6 +110,11 @@ namespace InternetInterface.Models
 		public override string ToString()
 		{
 			return string.Format("{0} {1} {2}", Street, Number, !string.IsNullOrEmpty(Case) ? "корп " + Case : string.Empty);
+		}
+
+		public static IList<House> All(ISession session)
+		{
+			return session.Query<House>().OrderBy(h => h.Street).ToList();
 		}
 	}
 }

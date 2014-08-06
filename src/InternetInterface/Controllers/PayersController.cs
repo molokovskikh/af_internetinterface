@@ -23,8 +23,9 @@ namespace InternetInterface.Controllers
 	{
 		public void Filter()
 		{
-			PropertyBag["Registrators"] = Partner.FindAll();
-			PropertyBag["registrId"] = Partner.FindFirst().Id;
+			var partners = Partner.All(DbSession);
+			PropertyBag["Registrators"] = partners;
+			PropertyBag["registrId"] = partners.First().Id;
 		}
 
 		public void AgentFilter([SmartBinder] AgentFilter filter)
@@ -39,7 +40,7 @@ namespace InternetInterface.Controllers
 
 		public void Show(uint registrator)
 		{
-			PropertyBag["Registrators"] = Partner.FindAll();
+			PropertyBag["Registrators"] = Partner.All(DbSession);
 			PropertyBag["registrId"] = registrator;
 			PropertyBag["Payers"] = DbSession.Query<Client>().Where(p => p.WhoRegistered.Id == registrator && p.PhysicalClient != null);
 		}

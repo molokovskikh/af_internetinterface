@@ -74,7 +74,7 @@ namespace Billing.Test.Integration
 		public static PhysicalClient CreatePhisicalClient(bool statusBlocked, decimal balance)
 		{
 			var tariff = CreateTariff((int)balance);
-			tariff.Save();
+			ActiveRecordMediator.Save(tariff);
 			return new PhysicalClient {
 				Name = "TestPhisicalClient",
 				Balance = balance,

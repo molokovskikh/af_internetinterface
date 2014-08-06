@@ -45,12 +45,12 @@ namespace InforoomInternet.Controllers
 
 		public void Index()
 		{
-			PropertyBag["tariffs"] = Tariff.FindAll();
+			PropertyBag["tariffs"] = Tariff.All(DbSession);
 		}
 
 		public void Zayavka()
 		{
-			PropertyBag["tariffs"] = Tariff.FindAll();
+			PropertyBag["tariffs"] = Tariff.All(DbSession);
 		}
 
 		public void Main()
@@ -158,8 +158,7 @@ namespace InforoomInternet.Controllers
 				RedirectToAction("Ok");
 			}
 			else {
-				var all = Tariff.FindAll();
-				PropertyBag["tariffs"] = all;
+				PropertyBag["tariffs"] = Tariff.All(DbSession);
 				PropertyBag["application"] = request;
 				RenderView("Zayavka");
 			}

@@ -7,7 +7,7 @@ using Castle.ActiveRecord;
 namespace InternetInterface.Models
 {
 	[ActiveRecord("UserCategories", Schema = "Internet", Lazy = true)]
-	public class UserRole : ChildActiveRecordLinqBase<UserRole>
+	public class UserRole
 	{
 		[PrimaryKey]
 		public virtual uint Id { get; set; }

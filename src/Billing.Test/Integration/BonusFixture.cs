@@ -20,7 +20,7 @@ namespace Billing.Test.Integration
 			Client friend_client;
 			using (new SessionScope()) {
 				var tariff = new Tariff("test", 100);
-				tariff.Save();
+				ActiveRecordMediator.Save(tariff);
 				friend_client = new Client();
 				friend_client.Save();
 				client.BeginWork = DateTime.Now;

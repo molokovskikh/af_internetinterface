@@ -105,7 +105,7 @@ namespace Billing.Test.Integration
 					Name = "intervalTariff",
 					Description = "intervalTariff"
 				};
-				intervalTariff.Save();
+				ActiveRecordMediator.Save(intervalTariff);
 				client.PhysicalClient.Tariff = intervalTariff;
 				client.Update();
 				Assert.That(client.GetPrice(), Is.EqualTo(100));
@@ -318,7 +318,7 @@ namespace Billing.Test.Integration
 					FinalPrice = 590,
 					Description = "domolink"
 				};
-				domTariff.Save();
+				ActiveRecordMediator.Save(domTariff);
 
 				var physDom = new PhysicalClient {
 					Name = "Александр",
@@ -363,7 +363,7 @@ namespace Billing.Test.Integration
 			}
 			var tarif = client.PhysicalClient.Tariff;
 			tarif.Price = 500;
-			tarif.Update();
+			ActiveRecordMediator.Save(tarif);
 			while (client.DebtDays < 1 && count < 365) {
 				SystemTime.Now = () => new DateTime(2011, 6, 7, 22, 15, 9).AddDays(count);
 				billing.Compute();

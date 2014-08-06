@@ -66,7 +66,7 @@ namespace InternetInterface.Controllers
 
 		public virtual void EditAgentSettings()
 		{
-			PropertyBag["agentSettings"] = AgentTariff.FindAll();
+			PropertyBag["agentSettings"] = DbSession.Query<AgentTariff>().OrderBy(t => t.Description).ToList();
 		}
 
 		[AccessibleThrough(Verb.Post)]

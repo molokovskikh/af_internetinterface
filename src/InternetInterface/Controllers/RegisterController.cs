@@ -166,7 +166,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Editing"] = false;
 			PropertyBag["LegalPerson"] = new LawyerPerson();
 			PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(new LawyerPerson());
-			PropertyBag["RegionList"] = RegionHouse.All();
+			PropertyBag["RegionList"] = RegionHouse.All(DbSession);
 			PropertyBag["DoNotCreateOrder"] = false;
 		}
 
@@ -184,7 +184,7 @@ namespace InternetInterface.Controllers
 				DbSession.Save(person);
 				var client = new Client(person, InitializeContent.Partner) {
 					Recipient = DbSession.Query<Recipient>().FirstOrDefault(r => r.INN == "3666152146"),
-					Status = Status.Find((uint)StatusType.BlockedAndNoConnected),
+					Status = DbSession.Load<Status>((uint)StatusType.BlockedAndNoConnected),
 					Disabled = order.OrderServices.Count == 0,
 				};
 				client.PostUpdate();
@@ -197,7 +197,7 @@ namespace InternetInterface.Controllers
 						};
 						client.AddEndpoint(endPoint, settings);
 						order.EndPoint = endPoint;
-						client.Status = Status.Find((uint)StatusType.Worked);
+						client.Status = DbSession.Load<Status>((uint)StatusType.Worked);
 					}
 				}
 
@@ -224,7 +224,7 @@ namespace InternetInterface.Controllers
 				PropertyBag["Editing"] = false;
 				PropertyBag["LegalPerson"] = person;
 				PropertyBag["DoNotCreateOrder"] = DoNotCreateOrder;
-				PropertyBag["RegionList"] = RegionHouse.All();
+				PropertyBag["RegionList"] = RegionHouse.All(DbSession);
 				person.SetValidationErrors(Validator.GetErrorSummary(person));
 				PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(person);
 			}
@@ -343,11 +343,11 @@ namespace InternetInterface.Controllers
 
 		private void EditorValues()
 		{
-			PropertyBag["RegionList"] = RegionHouse.All();
-			PropertyBag["Regions"] = RegionHouse.All();
+			PropertyBag["RegionList"] = RegionHouse.All(DbSession);
+			PropertyBag["Regions"] = RegionHouse.All(DbSession);
 			PropertyBag["Brigads"] = Brigad.All(DbSession);
 			PropertyBag["Statuss"] = Status.FindAllSort();
-			PropertyBag["Tariffs"] = Tariff.FindAllSort();
+			PropertyBag["Tariffs"] = Tariff.All(DbSession);
 			PropertyBag["channels"] = ChannelGroup.All(DbSession);
 			PropertyBag["Switches"] = NetworkSwitch.All(DbSession);
 		}
@@ -355,7 +355,7 @@ namespace InternetInterface.Controllers
 		public void RegisterRequest(uint house, int apartment)
 		{
 			var houseEntity = DbSession.Load<House>(house);
-			PropertyBag["tariffs"] = Tariff.FindAll();
+			PropertyBag["tariffs"] = Tariff.All(DbSession);
 			PropertyBag["Request"] = new Request {
 				Street = houseEntity.Street,
 				CaseHouse = houseEntity.Case,

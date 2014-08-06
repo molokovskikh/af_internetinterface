@@ -39,7 +39,7 @@ namespace InternetInterface.Test.Integration
 			session.Save(client.PhysicalClient.HouseObj);
 			Flush();
 			var filter = new SearchFilter {
-				Region = _region.Id
+				Region = _region
 			};
 			var result = filter.Find(session, true);
 			Assert.That(result.Count(r => r.client.Id == client.Id), Is.EqualTo(1));
@@ -54,7 +54,7 @@ namespace InternetInterface.Test.Integration
 			Save(client);
 			Flush();
 			var filter = new SearchFilter {
-				Region = _region.Id
+				Region = _region
 			};
 			var result = filter.Find(session, true);
 			Assert.That(result.Count(r => r.client.Id == client.Id), Is.EqualTo(1));

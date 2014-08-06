@@ -32,7 +32,7 @@ namespace InternetInterface.Queries
 		public string SearchText { get; set; }
 		public string Direction { get; set; }
 		public bool ExportInExcel { get; set; }
-		public uint Region { get; set; }
+		public RegionHouse Region { get; set; }
 
 		public string City { get; set; }
 		public string Street { get; set; }
@@ -100,8 +100,8 @@ namespace InternetInterface.Queries
 			if (StatusType > 0)
 				query.SetParameter("statusType", StatusType);
 
-			if (Region > 0)
-				query.SetParameter("regionid", Region);
+			if (Region != null)
+				query.SetParameter("regionid", Region.Id);
 
 			if (RentableHardware != null)
 				query.SetParameter("hardwareId", RentableHardware.Id);
@@ -227,7 +227,7 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 				if (EnabledTypeProperties == EndbledType.Enabled)
 					result += " and c.Disabled = false";
 
-				if(Region > 0) {
+				if(Region != null) {
 					result += " and (h.RegionId = :regionid or l.RegionId = :regionid)";
 				}
 

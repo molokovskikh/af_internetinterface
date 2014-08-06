@@ -70,9 +70,7 @@ namespace InternetInterface.Controllers
 		private void AddIndispensableParameters()
 		{
 			PropertyBag["Statuses"] = Status.FindAllAdd();
-			PropertyBag["RegionList"] = RegionHouse.FindAllAdd();
 			PropertyBag["additionalStatuses"] = AdditionalStatus.FindAllAdd();
-			PropertyBag["Tariffs"] = Tariff.FindAllAdd();
 			PropertyBag["WhoRegistered"] = Partner.FindAllAdd();
 			PropertyBag["serviceItems"] = DbSession.Query<Service>().OrderBy(s => s.HumanName).ToList();
 		}

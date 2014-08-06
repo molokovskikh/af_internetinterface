@@ -5,13 +5,16 @@ using System.Linq;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
 using Common.Tools;
+using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.Models.Audit;
+using NHibernate;
+using NHibernate.Linq;
 
 namespace InternetInterface.Models
 {
 	[ActiveRecord(Schema = "internet", Lazy = true), Auditable]
-	public class Tariff : ChildActiveRecordLinqBase<Tariff>
+	public class Tariff
 	{
 		public Tariff()
 		{
@@ -57,9 +60,14 @@ namespace InternetInterface.Models
 		[Property, Obsolete("Подготовка к удалению")]
 		public virtual bool CanUseForSelfRegistration { get; set; }
 
+		public static IList<Tariff> All(ISession session)
+		{
+			return session.Query<Tariff>().OrderBy(t => t.Name).ToList();
+		}
+
 		public static IList<Tariff> All()
 		{
-			return FindAllSort();
+			return ArHelper.WithSession(s => All(s));
 		}
 
 		public virtual string GetFullName()

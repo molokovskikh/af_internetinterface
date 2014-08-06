@@ -108,7 +108,7 @@ namespace InternetInterface.Controllers
 		{
 			var labelForDel = DbSession.Load<Label>(deletelabelch);
 			if (labelForDel != null && labelForDel.Deleted) {
-				labelForDel.DeleteAndFlush();
+				DbSession.Delete(labelForDel);
 				DbSession.CreateSQLQuery(
 					@"update internet.Requests R
 set r.`Label` = null,

@@ -82,7 +82,7 @@ namespace InternetInterface.Controllers
 			if (client.Status != null)
 				PropertyBag["ChStatus"] = client.Status.Id;
 			else
-				PropertyBag["ChStatus"] = Status.FindFirst().Id;
+				PropertyBag["ChStatus"] = DbSession.Query<Status>().First();
 			PropertyBag["grouped"] = filter.grouped;
 			PropertyBag["filter"] = filter;
 			PropertyBag["appealType"] = filter.appealType == 0 ? AppealType.User : filter.appealType;
@@ -116,7 +116,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["CallLogs"] = UnresolvedCall.LastCalls;
 			PropertyBag["Contacts"] = client.Contacts.OrderBy(c => c.Type).ToList();
 			PropertyBag["EditConnectInfoFlag"] = filter.EditConnectInfoFlag;
-			PropertyBag["RegionList"] = RegionHouse.All();
+			PropertyBag["RegionList"] = RegionHouse.All(DbSession);
 			SendConnectInfo(client);
 			ConnectPropertyBag(filter.ClientCode);
 			SendUserWriteOff();
@@ -341,7 +341,7 @@ namespace InternetInterface.Controllers
 						}
 						client.ConnectedDate = DateTime.Now;
 						if (client.Status.Id == (uint)StatusType.BlockedAndNoConnected)
-							client.Status = Status.Find((uint)StatusType.BlockedAndConnected);
+							client.Status = DbSession.Load<Status>((uint)StatusType.BlockedAndConnected);
 						client.SyncServices(settings);
 						DbSession.Save(client);
 
@@ -441,13 +441,13 @@ namespace InternetInterface.Controllers
 		public void CreateAppeal(string Appeal, uint ClientID)
 		{
 			if (!string.IsNullOrEmpty(Appeal))
-				new Appeals {
+				DbSession.Save(new Appeals {
 					Appeal = Appeal,
 					Date = DateTime.Now,
 					Partner = InitializeContent.Partner,
 					Client = DbSession.Load<Client>(ClientID),
 					AppealType = AppealType.User
-				}.SaveAndFlush();
+				});
 			RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID);
 		}
 
@@ -458,7 +458,7 @@ namespace InternetInterface.Controllers
 				var physicalClient = client.PhysicalClient;
 				var password = CryptoPass.GeneratePassword();
 				physicalClient.Password = CryptoPass.GetHashString(password);
-				physicalClient.UpdateAndFlush();
+				DbSession.Save(physicalClient);
 				var endPoint = client.Endpoints.FirstOrDefault();
 				if (endPoint != null)
 					PropertyBag["WhoConnected"] = endPoint.WhoConnected;
@@ -648,10 +648,10 @@ namespace InternetInterface.Controllers
 
 			PropertyBag["Regions"] = DbSession.Query<RegionHouse>().ToList();
 			PropertyBag["ChHouse"] = client.PhysicalClient.HouseObj ?? new House();
-			PropertyBag["Tariffs"] = Tariff.FindAllSort();
+			PropertyBag["Tariffs"] = Tariff.All(DbSession);
 			PropertyBag["Statuss"] = Status.FindAllSort();
 			PropertyBag["channels"] = ChannelGroup.All(DbSession);
-			PropertyBag["ChStatus"] = client.Status != null ? client.Status.Id : Status.FindFirst().Id;
+			PropertyBag["ChStatus"] = client.Status != null ? client.Status.Id : DbSession.Query<Status>().First().Id;
 			PropertyBag["naznach_text"] = DbSession.Query<ConnectGraph>().Count(c => c.Client.Id == filter.ClientCode) != 0
 				? "Переназначить в график"
 				: "Назначить в график";
@@ -738,7 +738,7 @@ namespace InternetInterface.Controllers
 					PropertyBag["ChBrigad"] = brigad.Id;
 			}
 			List<PackageSpeed> speeds;
-			var tariffs = Tariff.FindAll().Select(t => t.PackageId).ToList();
+			var tariffs = DbSession.Query<Tariff>().Select(t => t.PackageId).ToList();
 			var clientEndPointId = 0u;
 			var eConnect = Convert.ToUInt32(PropertyBag["EConnect"]);
 			if (client.GetClientType() == ClientType.Phisical) {
@@ -836,7 +836,7 @@ namespace InternetInterface.Controllers
 		public void Refused(uint ClientID, string prichina, string Appeal)
 		{
 			var client = DbSession.Load<Client>(ClientID);
-			client.AdditionalStatus = AdditionalStatus.Find((uint)AdditionalStatusType.Refused);
+			client.AdditionalStatus = DbSession.Load<AdditionalStatus>((uint)AdditionalStatusType.Refused);
 			client.Endpoints.Clear();
 			client.PhysicalClient.HouseObj = null;
 			DbSession.Save(client);
@@ -860,18 +860,18 @@ namespace InternetInterface.Controllers
 		public void NoPhoned(uint ClientID, string NoPhoneDate, string Appeal, string prichina)
 		{
 			var client = DbSession.Load<Client>(ClientID);
-			client.AdditionalStatus = AdditionalStatus.Find((uint)AdditionalStatusType.NotPhoned);
-			DateTime _noPhoneDate;
-			if (DateTime.TryParse(NoPhoneDate, out _noPhoneDate)) {
-				new Appeals {
+			client.AdditionalStatus = DbSession.Load<AdditionalStatus>((uint)AdditionalStatusType.NotPhoned);
+			DateTime noPhoneDate;
+			if (DateTime.TryParse(NoPhoneDate, out noPhoneDate)) {
+				DbSession.Save(new Appeals {
 					Appeal =
-						"Причина недозвона:  " + prichina + " \r\n Дата: " + _noPhoneDate.ToShortDateString() +
+						"Причина недозвона:  " + prichina + " \r\n Дата: " + noPhoneDate.ToShortDateString() +
 							" \r\n Комментарий: \r\n " + Appeal,
 					Date = DateTime.Now,
 					Partner = InitializeContent.Partner,
 					Client = DbSession.Load<Client>(ClientID),
 					AppealType = AppealType.User
-				}.SaveAndFlush();
+				});
 			}
 			RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID);
 		}
@@ -916,7 +916,7 @@ namespace InternetInterface.Controllers
 					Client = client,
 					Day = DateTime.Parse(Request.Form["graph_date"]),
 				});
-				client.AdditionalStatus = AdditionalStatus.Find((uint)AdditionalStatusType.AppointedToTheGraph);
+				client.AdditionalStatus = DbSession.Load<AdditionalStatus>((uint)AdditionalStatusType.AppointedToTheGraph);
 				foreach (var clientEndpoint in client.Endpoints) {
 					clientEndpoint.WhoConnected = briad;
 					DbSession.Save(clientEndpoint);

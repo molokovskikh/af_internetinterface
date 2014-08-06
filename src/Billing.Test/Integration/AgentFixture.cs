@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Castle.ActiveRecord;
+using Castle.ActiveRecord.Framework;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using NUnit.Framework;
@@ -26,7 +27,7 @@ namespace Billing.Test.Integration
 					ApplicantPhoneNumber = string.Empty,
 					ApplicantEmail = string.Empty,
 					Street = string.Empty,
-					Tariff = Tariff.FindFirst()
+					Tariff = ActiveRecordLinqBase<Tariff>.Queryable.First()
 				};
 				ActiveRecordMediator.Save(request);
 				client.BeginWork = DateTime.Now;
@@ -56,7 +57,7 @@ namespace Billing.Test.Integration
 					ApplicantPhoneNumber = string.Empty,
 					ApplicantEmail = string.Empty,
 					Street = string.Empty,
-					Tariff = Tariff.FindFirst()
+					Tariff = ActiveRecordLinqBase<Tariff>.Queryable.First()
 				};
 				ActiveRecordMediator.Save(request);
 			}
