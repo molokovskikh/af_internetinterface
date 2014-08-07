@@ -21,7 +21,7 @@ namespace Billing.Test.Integration
 		public void Before_write_off_balance_test()
 		{
 			var oldBalance = client.Balance;
-			billing.Compute();
+			billing.ProcessWriteoffs();
 			ArHelper.WithSession(s => {
 				client = s.Get<Client>(client.Id);
 				var writeOff = client.WriteOffs.First();
@@ -36,14 +36,14 @@ namespace Billing.Test.Integration
 				client.RatedPeriodDate = DateTime.Now.AddMonths(-1);
 				client.Update();
 			}
-			billing.Compute();
+			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				client.Refresh();
 				Assert.That(client.RatedPeriodDate.Value.Date, Is.EqualTo(DateTime.Now.Date));
 				client.RatedPeriodDate = DateTime.Now.AddMonths(-3).AddDays(-5);
 				client.Update();
 			}
-			billing.Compute();
+			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				client.Refresh();
 				Assert.That(client.RatedPeriodDate.Value.Date, Is.EqualTo(DateTime.Now.Date));
@@ -53,21 +53,21 @@ namespace Billing.Test.Integration
 				SystemTime.Now = () => new DateTime(2012, 2, 29, 22, 10, 10);
 				client.Update();
 			}
-			billing.Compute();
+			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				client.Refresh();
 				Assert.That(client.RatedPeriodDate.Value.Date, Is.EqualTo(new DateTime(2012, 2, 29)));
 				Assert.That(client.DebtDays, Is.EqualTo(2));
 				SystemTime.Now = () => new DateTime(2012, 3, 30, 22, 10, 10);
 			}
-			billing.Compute();
+			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				client.Refresh();
 				Assert.That(client.RatedPeriodDate.Value.Date, Is.EqualTo(new DateTime(2012, 2, 29)));
 				Assert.That(client.DebtDays, Is.EqualTo(2));
 				SystemTime.Now = () => new DateTime(2012, 3, 31, 22, 10, 10);
 			}
-			billing.Compute();
+			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				client.Refresh();
 				Assert.That(client.RatedPeriodDate.Value.Date, Is.EqualTo(new DateTime(2012, 3, 31)));
@@ -153,7 +153,7 @@ namespace Billing.Test.Integration
 					Comment = string.Empty
 				}.Save();
 			}
-			billing.OnMethod();
+			billing.ProcessPayments();
 			using (new SessionScope()) {
 				client.Refresh();
 				Assert.That(client.LawyerPerson.Balance, Is.EqualTo(500m));
@@ -198,7 +198,7 @@ namespace Billing.Test.Integration
 				client.RatedPeriodDate = SystemTime.Now();
 				client.Update();
 			}
-			billing.Compute();
+			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				writeOff = WriteOff.Queryable.FirstOrDefault(w => w.Client == client);
 				Assert.That(writeOff, !Is.Null);
@@ -221,7 +221,7 @@ namespace Billing.Test.Integration
 				ishBalance = client.PhysicalClient.Balance;
 				Assert.That(writeOff, Is.Null);
 			}
-			var onTh = new Thread(() => billing.On());
+			var onTh = new Thread(() => billing.SafeProcessPayments());
 			var runTh = new Thread(() => billing.Run());
 			onTh.Start();
 			runTh.Start();
@@ -249,14 +249,14 @@ namespace Billing.Test.Integration
 				client.RatedPeriodDate = SystemTime.Now().AddDays(-dayCount);
 				client.Update();
 			}
-			billing.Compute();
+			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
 				Assert.That(dayInMonth, Is.EqualTo(client.GetInterval()));
 				client.DebtDays = 29;
 				client.Update();
 			}
-			billing.Compute();
+			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
 				Assert.That(dayInMonth + 29, Is.EqualTo(client.GetInterval()));
@@ -273,13 +273,13 @@ namespace Billing.Test.Integration
 				client.RatedPeriodDate = new DateTime(2011, 5, 31, 15, 05, 23);
 				SystemTime.Now = () => new DateTime(2011, 6, 30, 22, 02, 03);
 			}
-			billing.Compute();
+			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				client.Refresh();
 				Assert.That(client.DebtDays, Is.EqualTo(1));
 				SystemTime.Now = () => new DateTime(2011, 7, 31, 19, 03, 6);
 			}
-			billing.Compute();
+			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				client.Refresh();
 				Assert.That(client.DebtDays, Is.EqualTo(0));
@@ -296,7 +296,7 @@ namespace Billing.Test.Integration
 				client.RatedPeriodDate = new DateTime(2011, 5, 15, 15, 05, 23);
 				SystemTime.Now = () => new DateTime(2011, 6, 15, 22, 02, 03);
 			}
-			billing.Compute();
+			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				client.Refresh();
 				Assert.That(client.DebtDays, Is.EqualTo(0));
@@ -340,8 +340,8 @@ namespace Billing.Test.Integration
 					Sum = 5m
 				}.Save();
 			}
-			billing.OnMethod();
-			billing.OnMethod();
+			billing.ProcessPayments();
+			billing.ProcessPayments();
 			using (new SessionScope()) {
 				domolinkClient = Client.Find(domolinkClient.Id);
 				Assert.IsTrue(domolinkClient.AutoUnblocked);
@@ -366,7 +366,7 @@ namespace Billing.Test.Integration
 			ActiveRecordMediator.Save(tarif);
 			while (client.DebtDays < 1 && count < 365) {
 				SystemTime.Now = () => new DateTime(2011, 6, 7, 22, 15, 9).AddDays(count);
-				billing.Compute();
+				billing.ProcessWriteoffs();
 				client.Refresh();
 				count++;
 			}
@@ -387,7 +387,7 @@ namespace Billing.Test.Integration
 				client.PhysicalClient.Balance = partBalance * 2 - 1;
 				client.Update();
 			}
-			billing.Compute();
+			billing.ProcessWriteoffs();
 			Assert_statistic_appeal();
 			using (new SessionScope()) {
 				client.Refresh();
@@ -399,7 +399,7 @@ namespace Billing.Test.Integration
 					BillingAccount = false,
 				}.Save();
 			}
-			billing.OnMethod();
+			billing.ProcessPayments();
 			using (new SessionScope()) {
 				client.Refresh();
 				Assert.IsTrue(client.ShowBalanceWarningPage);
@@ -409,7 +409,7 @@ namespace Billing.Test.Integration
 					BillingAccount = false,
 				}.Save();
 			}
-			billing.OnMethod();
+			billing.ProcessPayments();
 			Assert_statistic_appeal();
 			using (new SessionScope()) {
 				client.Refresh();
@@ -431,7 +431,7 @@ namespace Billing.Test.Integration
 				unblockedClient.Update();
 				phisClient = unblockedClient.PhysicalClient;
 			}
-			billing.OnMethod();
+			billing.ProcessPayments();
 			using (new SessionScope()) {
 				unblockedClient.Refresh();
 				Assert.IsTrue(unblockedClient.Disabled);
@@ -444,7 +444,7 @@ namespace Billing.Test.Integration
 					Sum = unblockedClient.GetPriceForTariff() / 2
 				}.Save();
 			}
-			billing.OnMethod();
+			billing.ProcessPayments();
 			using (new SessionScope()) {
 				unblockedClient.Refresh();
 				Assert.IsTrue(unblockedClient.Disabled);
@@ -458,7 +458,7 @@ namespace Billing.Test.Integration
 					Sum = unblockedClient.GetPriceForTariff()
 				}.Save();
 			}
-			billing.OnMethod();
+			billing.ProcessPayments();
 			Assert_statistic_appeal();
 			using (new SessionScope()) {
 				unblockedClient.Refresh();
@@ -473,7 +473,7 @@ namespace Billing.Test.Integration
 					Sum = 20
 				}.Save();
 			}
-			billing.OnMethod();
+			billing.ProcessPayments();
 			using (new SessionScope()) {
 				unblockedClient.Refresh();
 				Assert.IsTrue(unblockedClient.Disabled);
@@ -482,7 +482,7 @@ namespace Billing.Test.Integration
 					Sum = unblockedClient.GetPriceForTariff() - phisClient.Balance
 				}.Save();
 			}
-			billing.OnMethod();
+			billing.ProcessPayments();
 			Assert_statistic_appeal();
 			using (new SessionScope()) {
 				unblockedClient.Refresh();
@@ -549,7 +549,7 @@ namespace Billing.Test.Integration
 				ActiveRecordMediator.Save(client);
 			}
 
-			billing.Compute();
+			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				var writeOffs = WriteOff.Queryable.Where(w => w.Client == client).ToList();
 				Assert.That(writeOffs.Count, Is.EqualTo(1));

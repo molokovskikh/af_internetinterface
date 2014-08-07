@@ -1,4 +1,5 @@
 ﻿using System;
+using InternetInterface.Models;
 using NUnit.Framework;
 
 namespace InforoomInternet.Test.Functional
@@ -34,6 +35,17 @@ namespace InforoomInternet.Test.Functional
 			session.Save(Client);
 			Open("Main/Warning");
 			AssertText("Ваша задолженность за оказанные услуги составляет");
+		}
+
+		[Test]
+		public void Block_for_repair()
+		{
+			Client.SetStatus(StatusType.BlockedForRepair, session);
+			Open("Main/Warning");
+			AssertText("Доступ в интернет заблокирован из-за проведения работ по сервисной заявке, на время работ тарификация остановлена");
+			Click("Продолжить");
+			session.Refresh(Client);
+			Assert.AreEqual(StatusType.Worked, Client.Status.Type);
 		}
 	}
 }

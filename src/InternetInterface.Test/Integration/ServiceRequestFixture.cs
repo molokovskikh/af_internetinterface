@@ -23,7 +23,7 @@ namespace InternetInterface.Test.Integration
 			var client = ClientHelper.Client(session);
 			session.Save(client);
 
-			engineer1 = new Partner(Guid.NewGuid().ToString()) {
+			engineer1 = new Partner(Guid.NewGuid().ToString(), session.Load<UserRole>(3u)) {
 				TelNum = "980-8791258",
 				Role = session.Query<UserRole>().First(c => c.ReductionName == "Service")
 			};
@@ -66,7 +66,7 @@ namespace InternetInterface.Test.Integration
 		[Test]
 		public void Send_cancelation_on_performer_change()
 		{
-			var engineer2 = new Partner(Guid.NewGuid().ToString()) {
+			var engineer2 = new Partner(Guid.NewGuid().ToString(), session.Load<UserRole>(3u)) {
 				TelNum = "920-1564189",
 				Role = session.Query<UserRole>().First(c => c.ReductionName == "Service")
 			};

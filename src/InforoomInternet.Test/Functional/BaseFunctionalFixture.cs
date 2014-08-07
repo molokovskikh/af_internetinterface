@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Common.Web.Ui.NHibernateExtentions;
+using InternetInterface.Controllers;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Models.Services;
@@ -29,7 +30,7 @@ namespace InforoomInternet.Test.Functional
 				End = IPAddress.Parse("192.168.1.100").ToBigEndian(),
 			};
 			PhysicalClient = new PhysicalClient();
-			Client = new Client();
+			Client = new Client(PhysicalClient, new Settings(session));
 			Client.PhysicalClient = PhysicalClient;
 			ClientEndpoint = new ClientEndpoint();
 			ClientEndpoint.Client = Client;

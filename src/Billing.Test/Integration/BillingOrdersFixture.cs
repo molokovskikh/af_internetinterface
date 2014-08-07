@@ -185,7 +185,7 @@ namespace Billing.Test.Integration
 			if (session.Transaction.IsActive)
 				session.Transaction.Commit();
 			session.Clear();
-			billing.Compute();
+			billing.ProcessWriteoffs();
 		}
 
 		[Test]
@@ -259,13 +259,13 @@ namespace Billing.Test.Integration
 			var beginData = new DateTime(sn.Year, sn.Month, 1);
 			for (int i = 0; i < days; i++) {
 				SystemTime.Now = () => beginData.AddDays(i);
-				billing.Compute();
+				billing.ProcessWriteoffs();
 			}
 
 			session.Clear();
 			lPerson = session.Get<LawyerPerson>(lPerson.Id);
 			Assert.That(-30000m, Is.EqualTo(lPerson.Balance), lPerson.Id.ToString());
-			billing.OnMethod();
+			billing.ProcessPayments();
 			lPerson.Balance += 15000;
 			session.Update(lPerson);
 			session.Flush();
@@ -276,7 +276,7 @@ namespace Billing.Test.Integration
 			lawyerClient = session.Get<Client>(lawyerClient.Id);
 			Assert.IsTrue(lawyerClient.ShowBalanceWarningPage);
 
-			billing.OnMethod();
+			billing.ProcessPayments();
 
 			session.Clear();
 			lawyerClient = session.Get<Client>(lawyerClient.Id);

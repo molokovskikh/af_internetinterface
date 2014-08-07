@@ -66,8 +66,8 @@ namespace Billing.Test.Integration
 				client.Request = request;
 				client.Save();
 			}
-			billing.Compute();
-			billing.Compute();
+			billing.ProcessWriteoffs();
+			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				ActiveRecordMediator.Refresh(request);
 				Assert.IsFalse(request.PaidBonus);
@@ -78,9 +78,9 @@ namespace Billing.Test.Integration
 				payment.Save();
 				client.Payments.Add(payment);
 			}
-			billing.OnMethod();
-			billing.Compute();
-			billing.Compute();
+			billing.ProcessPayments();
+			billing.ProcessWriteoffs();
+			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				ActiveRecordMediator.Refresh(request);
 				Assert.IsTrue(request.PaidBonus);

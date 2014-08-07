@@ -27,7 +27,7 @@ namespace Billing.Test.Integration
 		{
 			for (int i = 1; i < 20; i++) {
 				SystemTime.Now = () => DateTime.Now.AddMonths(i).AddDays(-5);
-				billing.Compute();
+				billing.ProcessWriteoffs();
 				var sale = 0m;
 				if (i > PerionCount)
 					sale = MinSale + (i - MinSale - 1) * SaleStep;
@@ -44,7 +44,7 @@ namespace Billing.Test.Integration
 		public void Sale_sum()
 		{
 			SystemTime.Now = () => DateTime.Now.AddMonths(4).AddDays(-5);
-			billing.Compute();
+			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				client.Refresh();
 				Assert.AreEqual(client.Sale, SaleStep * MinSale);
@@ -63,34 +63,34 @@ namespace Billing.Test.Integration
 				client.PhysicalClient.Balance = 100;
 				client.Update();
 			}
-			billing.Compute();
+			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				client.Refresh();
 				Assert.AreEqual(client.Sale, SaleStep * MinSale);
 			}
 			Wait(client, () => client.Disabled, () => {
-				billing.Compute();
-				billing.OnMethod();
+				billing.ProcessWriteoffs();
+				billing.ProcessPayments();
 			});
 			Assert.AreEqual(client.Sale, 0);
 			new Payment {
 				Client = client,
 				Sum = 1000
 			}.Save();
-			billing.OnMethod();
-			billing.Compute();
+			billing.ProcessPayments();
+			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				client.Refresh();
 				Assert.AreEqual(client.Sale, 0);
 				client.StartNoBlock = SystemTime.Now();
 				client.Update();
 			}
-			billing.Compute();
+			billing.ProcessWriteoffs();
 			using (new SessionScope())
 				client.Refresh();
 			Assert.AreEqual(client.Sale, 0);
 			SystemTime.Now = () => DateTime.Now.AddMonths(8).AddDays(-10);
-			billing.Compute();
+			billing.ProcessWriteoffs();
 			using (new SessionScope())
 				client.Refresh();
 			Assert.AreEqual(client.Sale, SaleStep * MinSale, client.Id.ToString());
@@ -105,12 +105,12 @@ namespace Billing.Test.Integration
 				client.PhysicalClient.VirtualBalance = 0;
 				client.PhysicalClient.Save();
 			}
-			var iterationCount = Wait(client, () => client.Disabled, () => billing.Compute());
+			var iterationCount = Wait(client, () => client.Disabled, () => billing.ProcessWriteoffs());
 			Assert.Greater(iterationCount, 1);
 			using (new SessionScope())
 				client.Refresh();
 			Assert.IsNull(client.StartNoBlock);
-			billing.Compute();
+			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				client.Refresh();
 				Assert.IsNull(client.StartNoBlock, client.Id.ToString());
@@ -122,13 +122,13 @@ namespace Billing.Test.Integration
 					Client = client
 				}.Save();
 			}
-			billing.OnMethod();
+			billing.ProcessPayments();
 			using (new SessionScope()) {
 				client.Refresh();
 				client.RatedPeriodDate = DateTime.Now;
 				client.Update();
 			}
-			billing.Compute();
+			billing.ProcessWriteoffs();
 			using (new SessionScope())
 				client.Refresh();
 			Assert.That(client.StartNoBlock.Value.Date, Is.EqualTo(SystemTime.Now().Date));

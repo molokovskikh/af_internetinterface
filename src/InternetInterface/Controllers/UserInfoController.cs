@@ -78,16 +78,10 @@ namespace InternetInterface.Controllers
 		public void LawyerPersonInfo([DataBind("filter")] ClientFilter filter)
 		{
 			var client = DbSession.Load<Client>(filter.ClientCode);
-
-			if (client.Status != null)
-				PropertyBag["ChStatus"] = client.Status.Id;
-			else
-				PropertyBag["ChStatus"] = DbSession.Query<Status>().First();
 			PropertyBag["grouped"] = filter.grouped;
 			PropertyBag["filter"] = filter;
 			PropertyBag["appealType"] = filter.appealType == 0 ? AppealType.User : filter.appealType;
-			PropertyBag["Statuss"] = Status.FindAllSort();
-			SetupServiceEditor(client);
+			CommonEditorValues(client);
 
 			var packagesForTariff = DbSession.Query<Tariff>().Select(t => t.PackageId).ToList();
 			PropertyBag["Speeds"] =
@@ -640,7 +634,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["grouped"] = grouped;
 			PropertyBag["BalanceText"] = string.Empty;
 
-			SetupServiceEditor(client);
+			CommonEditorValues(client);
 
 			PropertyBag["Appeals"] = Appeals.GetAllAppeal(DbSession, client, appealType);
 			PropertyBag["Client"] = client.PhysicalClient;
@@ -649,7 +643,6 @@ namespace InternetInterface.Controllers
 			PropertyBag["Regions"] = DbSession.Query<RegionHouse>().ToList();
 			PropertyBag["ChHouse"] = client.PhysicalClient.HouseObj ?? new House();
 			PropertyBag["Tariffs"] = Tariff.All(DbSession);
-			PropertyBag["Statuss"] = Status.FindAllSort();
 			PropertyBag["channels"] = ChannelGroup.All(DbSession);
 			PropertyBag["ChStatus"] = client.Status != null ? client.Status.Id : DbSession.Query<Status>().First().Id;
 			PropertyBag["naznach_text"] = DbSession.Query<ConnectGraph>().Count(c => c.Client.Id == filter.ClientCode) != 0
@@ -674,8 +667,9 @@ namespace InternetInterface.Controllers
 			SendUserWriteOff();
 		}
 
-		private void SetupServiceEditor(Client client)
+		private void CommonEditorValues(Client client)
 		{
+			PropertyBag["statuses"] = client.GetAvailableStatuses(DbSession);
 			var services = DbSession.Query<Service>().OrderBy(s => s.HumanName).ToList();
 			PropertyBag["services"] = services.Where(s => s.CanActivateInWeb(client)).ToList();
 			PropertyBag["activeServices"] = client.ClientServices.Where(c => c.Service.InterfaceControl).OrderBy(s => s.Service.HumanName).ToList();
@@ -1036,7 +1030,7 @@ namespace InternetInterface.Controllers
 			client.RatedPeriodDate = null;
 			if (client.ConnectGraph != null)
 				DbSession.Delete(client.ConnectGraph);
-			DbSession.SaveOrUpdate(client);
+			DbSession.Save(client);
 			RedirectToReferrer();
 		}
 

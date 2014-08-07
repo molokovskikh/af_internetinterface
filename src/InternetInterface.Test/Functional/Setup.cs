@@ -63,7 +63,7 @@ namespace InternetInterface.Test.Functional
 
 					var self = session.Query<Partner>().FirstOrDefault(p => p.Login == Environment.UserName);
 					if (self == null) {
-						self = new Partner(Environment.UserName);
+						self = new Partner(Environment.UserName, session.Load<UserRole>(3u));
 						session.Save(self);
 					}
 					if (!session.Query<Tariff>().Any())

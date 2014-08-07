@@ -45,7 +45,7 @@ namespace Billing.Test.Integration
 			Assert.IsTrue(client.ClientServices.Select(c => c.Service).Contains(Service.Type<DebtWork>()));
 
 			SystemTime.Now = () => DateTime.Now.AddDays(2);
-			billing.OnMethod();
+			billing.ProcessPayments();
 
 			session.Refresh(client);
 			service = client.ClientServices.FirstOrDefault(s => s.Service.Id == Service.Type<DebtWork>().Id);
@@ -54,7 +54,7 @@ namespace Billing.Test.Integration
 			Assert.False(service.IsActivated);
 
 			session.Save(new Payment(client, client.GetPriceForTariff() + 50));
-			billing.OnMethod();
+			billing.ProcessPayments();
 
 			session.Refresh(client);
 			service = client.ClientServices.FirstOrDefault(s => s.Service.Id == Service.Type<DebtWork>().Id);
@@ -69,7 +69,7 @@ namespace Billing.Test.Integration
 			session.Save(client);
 			session.Transaction.Commit();
 
-			billing.Compute();
+			billing.ProcessWriteoffs();
 
 			session.Refresh(client);
 			Assert.IsTrue(client.Disabled);
@@ -79,9 +79,9 @@ namespace Billing.Test.Integration
 			};
 			client.Activate(service);
 			session.Save(new Payment(client, 550));
-			billing.On();
+			billing.SafeProcessPayments();
 			SystemTime.Now = () => DateTime.Now.AddDays(1);
-			billing.On();
+			billing.SafeProcessPayments();
 
 			session.Refresh(client);
 			Assert.That(client.Disabled, Is.False);
@@ -101,7 +101,7 @@ namespace Billing.Test.Integration
 				EndWorkDate = DateTime.Now.AddDays(3),
 			};
 			client.Activate(service);
-			billing.OnMethod();
+			billing.ProcessPayments();
 
 			session.Refresh(client);
 			Assert.IsFalse(client.Disabled);

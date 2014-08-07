@@ -31,8 +31,8 @@ namespace InternetInterface.Models
 		{
 		}
 
-		public Partner(string login)
-			: this(UserRole.Find(3u))
+		public Partner(string login, UserRole role)
+			: this(role)
 		{
 			Login = login;
 			Name = login;

@@ -108,6 +108,9 @@ namespace InternetInterface.Models
 		[BelongsTo("PhysicalClient", Lazy = FetchWhen.OnInvoke, Cascade = CascadeEnum.SaveUpdate), Auditable]
 		public virtual PhysicalClient PhysicalClient { get; set; }
 
+		/// <summary>
+		/// Устанавливатся в dhcp в текущую дату если client.RatedPeriodDate == null && !client.Disabled
+		/// </summary>
 		[Property]
 		public virtual DateTime? RatedPeriodDate { get; set; }
 
@@ -117,6 +120,9 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool ShowBalanceWarningPage { get; set; }
 
+		/// <summary>
+		/// Устанавливается в dhcp в текущую дату если client.BeginWork == null && !client.Disabled
+		/// </summary>
 		[Property]
 		public virtual DateTime? BeginWork { get; set; }
 
@@ -138,7 +144,7 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool AutoUnblocked { get; set; }
 
-		[BelongsTo, Auditable("Статус")]
+		[BelongsTo, Auditable("Статус"), ValidateNonEmpty]
 		public virtual Status Status { get; set; }
 
 		[BelongsTo(Lazy = FetchWhen.OnInvoke)]
@@ -869,6 +875,7 @@ where CE.Client = {0}", Id))
 		//флаг устанавливается в случае если нужно изменить настройки sce
 		//например если была активирована услуга обещанный платеж
 		public virtual bool IsNeedRecofiguration { get; set; }
+		public virtual DateTime StatusChangedOn { get; set; }
 
 		public virtual void RegistreContacts(Partner registrator)
 		{
@@ -1012,8 +1019,16 @@ where CE.Client = {0}", Id))
 			return SystemTime.Today().AddDays((int)(Balance / sum) + 1).Date;
 		}
 
+		public virtual void SetStatus(StatusType status, ISession session)
+		{
+			SetStatus(session.Load<Status>((uint)status));
+		}
+
 		public virtual void SetStatus(Status status)
 		{
+			if (Status.Type == status.Type)
+				return;
+
 			if (status.Type == StatusType.VoluntaryBlocking) {
 				Disabled = true;
 				DebtDays = 0;
@@ -1030,6 +1045,10 @@ where CE.Client = {0}", Id))
 				RatedPeriodDate = null;
 				DebtDays = 0;
 				ShowBalanceWarningPage = false;
+			}
+			if (status.Type == StatusType.BlockedForRepair) {
+				Disabled = true;
+				AutoUnblocked = false;
 			}
 			Status = status;
 		}
@@ -1064,6 +1083,20 @@ where CE.Client = {0}", Id))
 		{
 			var services = new[] { typeof(IpTvBoxRent), typeof(HardwareRent) };
 			return ClientServices.Where(s => services.Contains(NHibernateUtil.GetClass(s.Service))).ToList();
+		}
+
+		public virtual IList<Status> GetAvailableStatuses(ISession session)
+		{
+			if (Status.Type == StatusType.BlockedForRepair)
+				return new []{ session.Load<Status>(StatusType.BlockedForRepair) };
+			var statuses = session.Query<Status>().Where(s => s.ManualSet).ToList();
+			statuses.Add(Status);
+			return statuses.OrderBy(s => s.Name).ToList();
+		}
+
+		public virtual bool IsBlockForRepair()
+		{
+			return Status.Type == StatusType.BlockedForRepair;
 		}
 	}
 

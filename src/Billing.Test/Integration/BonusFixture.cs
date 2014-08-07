@@ -36,7 +36,7 @@ namespace Billing.Test.Integration
 				};
 				ActiveRecordMediator.Save(request);
 			}
-			billing.Compute();
+			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				payment = Payment.Queryable.Where(p => p.Client == friend_client).ToList();
 				Assert.That(payment.Count, Is.EqualTo(0));
@@ -46,16 +46,16 @@ namespace Billing.Test.Integration
 					Sum = client.GetPriceForTariff()
 				}.Save();
 			}
-			billing.On();
-			billing.Compute();
+			billing.SafeProcessPayments();
+			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				ActiveRecordMediator.Refresh(request);
 				Assert.IsTrue(request.PaidFriendBonus);
 				payment = Payment.Queryable.Where(p => p.Client == friend_client).ToList();
 				Assert.That(payment.Count, Is.EqualTo(1));
 			}
-			billing.Compute();
-			billing.Compute();
+			billing.ProcessWriteoffs();
+			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				payment = Payment.Queryable.Where(p => p.Client == friend_client).ToList();
 				Assert.That(payment.Count, Is.EqualTo(1));

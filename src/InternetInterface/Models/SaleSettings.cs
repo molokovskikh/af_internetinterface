@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Web;
 using Castle.ActiveRecord;
@@ -12,18 +13,24 @@ namespace InternetInterface.Models
 	public class SaleSettings
 	{
 		[PrimaryKey]
-		public uint Id { get; set; }
+		public virtual uint Id { get; set; }
 
 		[Property, ValidateNonEmpty("Поле не должно быть пустым"), ValidateInteger("Должно быть введено число")]
-		public int PeriodCount { get; set; }
+		public virtual int PeriodCount { get; set; }
 
 		[Property, ValidateNonEmpty("Поле не должно быть пустым"), ValidateInteger("Должно быть введено число")]
-		public int MinSale { get; set; }
+		public virtual int MinSale { get; set; }
 
 		[Property, ValidateNonEmpty("Поле не должно быть пустым"), ValidateInteger("Должно быть введено число")]
-		public int MaxSale { get; set; }
+		public virtual int MaxSale { get; set; }
 
 		[Property, ValidateNonEmpty("Поле не должно быть пустым"), ValidateDecimal("Должно быть введено число"), ValidateRange("0.5", "5", errorMessage: "Значение выходит за разрешенный интервал")]
-		public decimal SaleStep { get; set; }
+		public virtual decimal SaleStep { get; set; }
+
+		[Property, Description("Количество дней через которое сбрасывается статус \"Заблокирован - Восстановление работы\"")]
+		public virtual int DaysForRepair { get; set; }
+
+		[Property, Description("Количество дней в год когда услуга добровольная блокировка бесплатная")]
+		public virtual int FreeDaysVoluntaryBlocking { get; set; }
 	}
 }

@@ -20,10 +20,7 @@ namespace InternetInterface.Test.Unit
 			};
 			var baseClient = new Client(client, Settings.UnitTestSettings());
 			client.Client.PhysicalClient = client;
-			client.Client.Status = new Status {
-				Blocked = true,
-				Connected = false
-			};
+			client.Client.Status = new Status();
 		}
 
 		[Test]

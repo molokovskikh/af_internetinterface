@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Text;
-using Castle.ActiveRecord;
 using Common.Tools;
-using Common.Web.Ui.ActiveRecordExtentions;
 using InternetInterface.Models;
 using NHibernate.Linq;
 using NUnit.Framework;
@@ -13,79 +8,75 @@ using NUnit.Framework;
 namespace Billing.Test.Integration
 {
 	[TestFixture]
-	public class ClientFixture : MainBillingFixture
+	public class ClientFixture : BillingFixture2
 	{
 		[Test]
 		public void Payment_for_connect_fixture()
 		{
-			using (new TransactionScope(OnDispose.Commit)) {
-				ArHelper.WithSession(s => {
-					client.BeginWork = null;
-					s.SaveOrUpdate(client);
-					var clientEndPoint = new ClientEndpoint { Client = client };
-					var paymentForConnect = new PaymentForConnect(500, clientEndPoint);
-					client.PhysicalClient.Balance = 200;
-					s.Save(clientEndPoint);
-					s.Save(paymentForConnect);
-					s.SaveOrUpdate(client.PhysicalClient);
-				});
-			}
-			billing.OnMethod();
-			using (new TransactionScope(OnDispose.Commit)) {
-				ArHelper.WithSession(s => {
-					client = s.Get<Client>(client.Id);
-					Assert.IsNull(client.BeginWork);
-					Assert.AreEqual(client.Balance, 200);
-					client.BeginWork = DateTime.Now;
-					s.SaveOrUpdate(client);
-				});
-			}
-			billing.OnMethod();
-			using (new TransactionScope(OnDispose.Commit)) {
-				ArHelper.WithSession(s => {
-					client = s.Get<Client>(client.Id);
-					Assert.IsNotNull(client.BeginWork);
-					Assert.AreEqual(client.Balance, -300);
-					var userWtiteOffs = client.UserWriteOffs.First();
-					Assert.AreEqual(userWtiteOffs.Sum, 500);
-					Assert.AreEqual(userWtiteOffs.Comment, "Плата за подключение");
-					Assert.AreEqual(client.UserWriteOffs.Count, 1);
-				});
-			}
+			client.BeginWork = null;
+			session.Save(client);
+			var clientEndPoint = new ClientEndpoint { Client = client };
+			var paymentForConnect = new PaymentForConnect(500, clientEndPoint);
+			client.PhysicalClient.Balance = 200;
+			session.Save(clientEndPoint);
+			session.Save(paymentForConnect);
+			session.Save(client.PhysicalClient);
+
+			session.Flush();
+			session.Clear();
+			billing.ProcessPayments();
+			session.Flush();
+			session.Clear();
+
+			client = session.Get<Client>(client.Id);
+			Assert.IsNull(client.BeginWork);
+			Assert.AreEqual(client.Balance, 200);
+			client.BeginWork = DateTime.Now;
+			session.Save(client);
+
+			session.Flush();
+			session.Clear();
+			billing.ProcessPayments();
+			session.Flush();
+			session.Clear();
+
+			client = session.Get<Client>(client.Id);
+			Assert.IsNotNull(client.BeginWork);
+			Assert.AreEqual(client.Balance, -300);
+			var userWtiteOffs = client.UserWriteOffs.First();
+			Assert.AreEqual(userWtiteOffs.Sum, 500);
+			Assert.AreEqual(userWtiteOffs.Comment, "Плата за подключение");
+			Assert.AreEqual(client.UserWriteOffs.Count, 1);
 		}
 
 		[Test]
 		public void Payment_for_connect_lawyer_person()
 		{
-			using (new TransactionScope(OnDispose.Commit)) {
-				ArHelper.WithSession(s => {
-					Assert.IsNotNull(client.BeginWork);
-					var lawPerson = new LawyerPerson();
-					lawPerson.Region = s.Query<RegionHouse>().FirstOrDefault();
-					s.Save(lawPerson);
-					client.PhysicalClient = null;
-					client.LawyerPerson = lawPerson;
-					s.SaveOrUpdate(client);
-					var clientEndPoint = new ClientEndpoint { Client = client };
-					var paymentForConnect = new PaymentForConnect(500, clientEndPoint);
-					s.Save(clientEndPoint);
-					s.Save(paymentForConnect);
-				});
-			}
-			billing.OnMethod();
-			using (new TransactionScope(OnDispose.Commit)) {
-				ArHelper.WithSession(s => {
-					client = s.Get<Client>(client.Id);
-					Assert.AreEqual(client.UserWriteOffs.Count, 0);
-				});
-			}
+			Assert.IsNotNull(client.BeginWork);
+			var lawPerson = new LawyerPerson();
+			lawPerson.Region = session.Query<RegionHouse>().FirstOrDefault();
+			session.Save(lawPerson);
+			client.PhysicalClient = null;
+			client.LawyerPerson = lawPerson;
+			session.SaveOrUpdate(client);
+			var clientEndPoint = new ClientEndpoint { Client = client };
+			var paymentForConnect = new PaymentForConnect(500, clientEndPoint);
+			session.Save(clientEndPoint);
+			session.Save(paymentForConnect);
+
+			session.Flush();
+			session.Clear();
+			billing.ProcessPayments();
+			session.Flush();
+			session.Clear();
+
+			client = session.Get<Client>(client.Id);
+			Assert.AreEqual(client.UserWriteOffs.Count, 0);
 		}
 
 		[Test]
 		public void VirtualPaymentAndUnBlockClient()
 		{
-			InitSession();
-
 			client.PhysicalClient.Balance = -30;
 			client.PhysicalClient.MoneyBalance = -30;
 			client.PhysicalClient.VirtualBalance = -30;
@@ -99,9 +90,44 @@ namespace Billing.Test.Integration
 				Virtual = true
 			};
 			session.Save(payment);
-			billing.OnMethod();
+			billing.ProcessPayments();
 			session.Refresh(client);
 			Assert.IsFalse(client.Disabled);
+		}
+
+		[Test]
+		public void Reset_repair_status_on_timeout()
+		{
+			client.SetStatus(StatusType.BlockedForRepair, session);
+			session.Save(client);
+			session.Flush();
+			session.Clear();
+			session.Transaction.Commit();
+			billing.ProcessPayments();
+			billing.ProcessWriteoffs();
+
+			client = session.Load<Client>(client.Id);
+			Assert.AreEqual(0, client.WriteOffs.Count);
+
+			SystemTime.Now = () => DateTime.Now.AddDays(3);
+			billing.ProcessPayments();
+			billing.ProcessWriteoffs();
+
+			session.Clear();
+			client = session.Load<Client>(client.Id);
+			//симулируем обращение к dhcp
+			client.RatedPeriodDate = DateTime.Now;
+			session.Save(client);
+			session.Flush();
+
+			SystemTime.Now = () => DateTime.Now.AddDays(4);
+			billing.ProcessPayments();
+			billing.ProcessWriteoffs();
+
+			session.Clear();
+			client = session.Load<Client>(client.Id);
+			Assert.AreEqual(StatusType.Worked, client.Status.Type);
+			Assert.AreEqual(1, client.WriteOffs.Count);
 		}
 	}
 }

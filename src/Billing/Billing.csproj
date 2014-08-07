@@ -72,6 +72,10 @@
       <Project>{8A680813-C83B-497A-85E6-E8F07B7D7650}</Project>
       <Name>Common.MySql</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Common.MySql\Common.NHibernate\Common.NHibernate.csproj">
+      <Project>{8BE188CA-A0D9-4609-AB2E-AB8EDF849FE0}</Project>
+      <Name>Common.NHibernate</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common.Tools\Common.Tools\Common.Tools.csproj">
       <Project>{72AFCFE8-C9E9-45FA-9698-BEE896A517A3}</Project>
       <Name>Common.Tools</Name>

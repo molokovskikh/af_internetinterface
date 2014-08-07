@@ -6,6 +6,7 @@ using Castle.MonoRail.Framework;
 using Common.MySql;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.MonoRailExtentions;
+using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using InternetInterface.Queries;
@@ -45,7 +46,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["timetable"] = Timeunit.FromRequests(date.Value, partner, requests);
 		}
 
-		public void RegisterServiceRequest(uint clientCode)
+		public void New(uint clientCode)
 		{
 			var client = DbSession.Load<Client>(clientCode);
 			var request = new ServiceRequest(Partner) {
@@ -58,6 +59,9 @@ namespace InternetInterface.Controllers
 				BindObjectInstance(request, "Request", AutoLoadBehavior.NewInstanceIfInvalidKey);
 
 				if (IsValid(request)) {
+					if (request.BlockForRepair && request.Client.PhysicalClient != null) {
+						client.SetStatus(Status.Get(StatusType.BlockedForRepair, DbSession));
+					}
 					DbSession.Save(request);
 					var sms = request.GetNewSms();
 					if (SendSms(request, sms))
@@ -104,6 +108,14 @@ namespace InternetInterface.Controllers
 				DbSession.Save(request);
 				if (writeOff != null)
 					DbSession.Save(writeOff);
+
+				if (request.BlockForRepair
+					&& request.Client.Status.Type == StatusType.BlockedForRepair
+					&& (request.Status == ServiceRequestStatus.Close || request.Status == ServiceRequestStatus.Cancel)
+					&& request.IsChanged(r => r.Status)
+					&& !DbSession.Query<ServiceRequest>().Any(r => r.Client == request.Client && r.Status == ServiceRequestStatus.New && r.BlockForRepair)) {
+					request.Client.SetStatus(Status.Get(StatusType.Worked, DbSession));
+				}
 
 				if (SendSms(request, request.GetEditSms(DbSession)))
 					Notify("Сохранено");

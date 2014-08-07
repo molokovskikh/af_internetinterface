@@ -27,7 +27,7 @@ namespace Billing.Test.Integration
 		public void BorderDateSmsTest()
 		{
 			SystemTime.Now = () => new DateTime(2012, 3, 31, 22, 3, 0);
-			billing.Compute();
+			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				var sms = SmsMessage.Queryable.Where(m => m.Client == client);
 				foreach (var smsMessage in sms) {
@@ -41,7 +41,7 @@ namespace Billing.Test.Integration
 		[Test]
 		public void Payment_and_sms_Test()
 		{
-			billing.Compute();
+			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				Assert.That(SmsMessage.Queryable.Count(m => m.Client == client), Is.EqualTo(1));
 				new Payment {
@@ -49,7 +49,7 @@ namespace Billing.Test.Integration
 					Sum = 100
 				}.Save();
 			}
-			billing.OnMethod();
+			billing.ProcessPayments();
 			using (new SessionScope())
 				Assert.That(SmsMessage.Queryable.Count(m => m.Client == client), Is.EqualTo(0));
 		}
@@ -58,7 +58,7 @@ namespace Billing.Test.Integration
 		public void Generated_sms_сlient()
 		{
 			SystemTime.Now = () => DateTime.Now.Date.AddHours(22).AddMinutes(1);
-			billing.Compute();
+			billing.ProcessWriteoffs();
 
 			var message = billing.Messages.FirstOrDefault();
 			var messageText =
@@ -75,7 +75,7 @@ namespace Billing.Test.Integration
 			var contact = new Contact(client, ContactType.SmsSending, "9507738447");
 			client.Contacts = new List<Contact> { contact };
 			ActiveRecordMediator.Save(contact);
-			billing.Compute();
+			billing.ProcessWriteoffs();
 			var message = billing.Messages.FirstOrDefault();
 			if (message != null) {
 				message.ShouldBeSend = null;
@@ -87,7 +87,7 @@ namespace Billing.Test.Integration
 		{
 			IEnumerable<SmsMessage> sms;
 			SystemTime.Now = () => DateTime.Now.Date.AddHours(15);
-			billing.Compute();
+			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				sms = SmsMessage.Queryable.Where(m => m.Client == client);
 				foreach (var smsMessage in sms) {
@@ -96,7 +96,7 @@ namespace Billing.Test.Integration
 				SystemTime.Now = () => DateTime.Now.Date.AddHours(22).AddMinutes(1);
 				SmsMessage.DeleteAll();
 			}
-			billing.Compute();
+			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				sms = SmsMessage.Queryable.Where(m => m.Client == client);
 				foreach (var smsMessage in sms) {
@@ -112,18 +112,18 @@ namespace Billing.Test.Integration
 			var sum = client.GetPrice() / client.GetInterval();
 			client.PhysicalClient.Balance = sum * 3 + 1;
 			client.PhysicalClient.Update();
-			billing.Compute();
+			billing.ProcessWriteoffs();
 			messages.AddRange(billing.Messages);
 			Assert.AreEqual(messages.Count, 0);
-			billing.Compute();
+			billing.ProcessWriteoffs();
 			messages.AddRange(billing.Messages);
 			Assert.AreEqual(messages.Count, 1);
 			Assert.That(messages[0].Text, Is.StringContaining(DateTime.Now.Date.AddDays(2).ToString("d")));
-			billing.Compute();
+			billing.ProcessWriteoffs();
 			messages.AddRange(billing.Messages);
 			Assert.AreEqual(messages.Count, 2);
 			Assert.That(messages[1].Text, Is.StringContaining(DateTime.Now.Date.AddDays(1).ToString("d")));
-			billing.Compute();
+			billing.ProcessWriteoffs();
 			messages.AddRange(billing.Messages);
 			Assert.AreEqual(messages.Count, 2);
 		}

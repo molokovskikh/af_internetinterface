@@ -14,7 +14,7 @@ namespace Billing
 			try {
 				var billing = new MainBilling();
 				var cmds = new[] {
-					new RepeatableCommand(billing.On, 600000),
+					new RepeatableCommand(billing.SafeProcessPayments, 600000),
 					new RepeatableCommand(billing.Run, 180000),
 				};
 				return CommandService.Start(args, cmds);

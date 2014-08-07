@@ -160,7 +160,7 @@ namespace InforoomInternet.Test.Functional
 		{
 			var billing = new MainBilling();
 
-			billing.OnMethod();
+			billing.ProcessPayments();
 			session.CreateSQLQuery("delete from internet.Appeals;").ExecuteUpdate();
 
 			Click("Управление услугами");
@@ -170,7 +170,7 @@ namespace InforoomInternet.Test.Functional
 			session.Refresh(client);
 			Assert.That(client.Internet.ActivatedByUser, Is.False);
 
-			billing.OnMethod();
+			billing.ProcessPayments();
 
 			var appeals = Appeals.GetAllAppeal(session, client, AppealType.System);
 			Assert.AreEqual(appeals.Count, 1);

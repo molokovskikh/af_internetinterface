@@ -315,7 +315,7 @@
     <Content Include="JavaScript\jquery.reveal.js" />
     <Content Include="JavaScript\jquery.tablesorter.js" />
     <None Include="Views\Subview\StaticIps.brail" />
-    <None Include="Views\ServiceRequest\RegisterServiceRequest.brail" />
+    <None Include="Views\ServiceRequest\New.brail" />
     <None Include="Views\Payments\СhangeSaleSettings.brail" />
     <None Include="Views\AgentInfo\EditAgentSettings.brail" />
     <None Include="Views\Tariffs\ChangeRules.brail" />

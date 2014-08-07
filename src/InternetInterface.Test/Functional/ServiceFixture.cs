@@ -62,7 +62,7 @@ namespace InternetInterface.Test.Functional
 			var request = CreateRequest();
 			session.Save(request);
 
-			Open("ServiceRequest/RegisterServiceRequest?ClientCode={0}", client.Id);
+			Open("ServiceRequest/New?ClientCode={0}", client.Id);
 			Css("#request_Performer_Id").SelectByText(performer.Name);
 			WaitAjax("id=" + performer.Id);
 			Assert.AreEqual("true", Css("input[name=\"request.PerformanceTime\"][value=\"12:30:00\"]").GetAttribute("disabled"));

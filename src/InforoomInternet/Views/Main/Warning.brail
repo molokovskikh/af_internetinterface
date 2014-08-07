@@ -1,12 +1,12 @@
 ﻿<h1 style="color:#FF5F5F; text-align:center; font-family:Arial;">Внимание!</h1>
 
+<p class="info">Номер лицевого счета для оплаты: ${Client.Id.ToString("00000")}</p>
 <% if client.PhysicalClient: %>
 	<% OutputSubView("/Subviews/WarnPhysical") %>
 <% elif client.LawyerPerson: %>
 	<% OutputSubView("/Subviews/WarnLawyer") %>
 <% end %>
 
-<p class="info">Номер лицевого счета для оплаты: ${Client.Id.ToString("00000")}</p>
 <% if not Client.Disabled: %>
 	<p>
 		Для продолжения роботы в интернет нажмите кнопку "Продолжить".

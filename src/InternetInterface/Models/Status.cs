@@ -22,7 +22,9 @@ namespace InternetInterface.Models
 		[Description("Добровольная блокировка")]
 		VoluntaryBlocking = 9,
 		[Description("Расторгнут")]
-		Dissolved = 10
+		Dissolved = 10,
+		[Description("Заблокирован - Восстановление работы")]
+		BlockedForRepair = 11
 	}
 
 	[ActiveRecord("Status", Schema = "internet", Lazy = true)]
@@ -43,12 +45,6 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual string Name { get; set; }
-
-		[Property]
-		public virtual bool Blocked { get; set; }
-
-		[Property]
-		public virtual bool Connected { get; set; }
 
 		[Property]
 		public virtual bool ManualSet { get; set; }
@@ -86,6 +82,8 @@ namespace InternetInterface.Models
 					return StatusType.NoWorked;
 				if (ShortName == "Dissolved")
 					return StatusType.Dissolved;
+				if (ShortName == "BlockedForRepair")
+					return StatusType.BlockedForRepair;
 				return 0;
 			}
 		}

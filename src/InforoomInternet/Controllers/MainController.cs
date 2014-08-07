@@ -198,10 +198,13 @@ namespace InforoomInternet.Controllers
 
 			var client = endpoint.Client;
 			if (IsPost) {
-				if (client.Disabled)
+				if (client.Status.Type == StatusType.BlockedForRepair) {
+					client.SetStatus(StatusType.Worked, DbSession);
+				}
+				else if (client.Disabled) {
 					RedirectToSiteRoot();
-
-				if (client.ShowBalanceWarningPage) {
+				}
+				else if (client.ShowBalanceWarningPage) {
 					client.ShowBalanceWarningPage = false;
 					client.CreareAppeal("Отключена страница Warning, клиент отключил со страницы", AppealType.Statistic);
 				}

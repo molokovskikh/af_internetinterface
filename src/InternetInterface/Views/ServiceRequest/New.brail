@@ -15,12 +15,20 @@ ${app.Asset("service-requests.js")}
 			</thead>
 			<tbody>
 				<tr>
-					<td colspan=2>
+					<td colspan="2">
 						${app.Label("request.Description")}<br>
 						${FormHelper.TextArea("request.Description", {@rows: 8, @cols: "90%"})}
 						${app.Error("request.Description")}
 					</td>
 				</tr>
+				<% if request.Client.PhysicalClient: %>
+				<tr>
+					<td colspan="2">
+						${app.Edit("request.BlockForRepair")}
+						${app.Error("request.BlockForRepair")}
+					</td>
+				</tr>
+				<% end %>
 				<tr>
 					<td>
 						${app.Label("request.Contact")}

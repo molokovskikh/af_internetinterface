@@ -20,7 +20,7 @@
 					<button type=button class="button ok" onclick="GoTo('http://redmine.analit.net/issues/${_client.RedmineTask}');">Страница Redmine</button>
 				<% end %>
 				${app.LinkTo("Архив заказов", @UserInfo, @OrdersArchive, {"clientCode": ClientCode, @attributes: {@class: "button ok"}})}
-				${app.LinkTo("Сервисная заявка", @ServiceRequest, @RegisterServiceRequest, { @ClientCode: ClientCode, @attributes: {@class: "button ok"}})}
+				${app.LinkTo("Сервисная заявка", @ServiceRequest, @New, { @ClientCode: ClientCode, @attributes: {@class: "button ok"}})}
 			</td>
 		</tr>
 	</tbody>

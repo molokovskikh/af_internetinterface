@@ -27,12 +27,12 @@ namespace Billing.Test.Integration
 			client.PhysicalClient.Balance = 0;
 			session.Update(client);
 
-			billing.OnMethod();
+			billing.ProcessPayments();
 
 			var userWriteOff = new UserWriteOff(client, 10, "test");
 			session.Save(userWriteOff);
 
-			billing.OnMethod();
+			billing.ProcessPayments();
 
 			session.Refresh(client);
 			Assert.AreEqual(client.Balance, 70m);
@@ -50,12 +50,12 @@ namespace Billing.Test.Integration
 			client.PhysicalClient.Balance = 0;
 			session.Update(client);
 
-			billing.OnMethod();
+			billing.ProcessPayments();
 
 			var userWriteOff = new UserWriteOff(client, 65, "test");
 			session.Save(userWriteOff);
 
-			billing.OnMethod();
+			billing.ProcessPayments();
 
 			session.Refresh(client);
 			Assert.AreEqual(client.Balance, 15);
@@ -79,14 +79,14 @@ namespace Billing.Test.Integration
 
 			client.PhysicalClient.Balance = 0;
 			client.Update();
-			billing.OnMethod();
+			billing.ProcessPayments();
 
 			session.Refresh(client);
 			Assert.That(client.PhysicalClient.VirtualBalance, Is.EqualTo(paySum + 5));
 			Assert.That(client.PhysicalClient.Balance, Is.EqualTo(paySum + 5 + 100));
 			Assert.That(client.PhysicalClient.MoneyBalance, Is.EqualTo(100m));
 
-			billing.Compute();
+			billing.ProcessWriteoffs();
 
 			session.Refresh(client);
 			var writeOff = client.WriteOffs.FirstOrDefault();
@@ -95,7 +95,7 @@ namespace Billing.Test.Integration
 			Assert.That(client.PhysicalClient.VirtualBalance, Is.EqualTo(paySum + 5));
 			Assert.That(client.PhysicalClient.MoneyBalance, Is.EqualTo(100 - paySum));
 
-			billing.Compute();
+			billing.ProcessWriteoffs();
 
 			session.Refresh(client);
 			writeOff = client.WriteOffs.Last();
@@ -106,7 +106,7 @@ namespace Billing.Test.Integration
 			Assert.That(client.PhysicalClient.VirtualBalance, Is.EqualTo(paySum + 5));
 			Assert.That(client.PhysicalClient.MoneyBalance, Is.EqualTo(100 - paySum * 2));
 
-			billing.Compute();
+			billing.ProcessWriteoffs();
 
 			session.Refresh(client);
 			writeOff = client.WriteOffs.Last();

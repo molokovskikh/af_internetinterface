@@ -121,6 +121,9 @@ namespace InternetInterface.Models
 		[Description("Текст смс для отправки клиенту")]
 		public virtual string CloseSmsMessage { get; set; }
 
+		[Property, Description("Восстановление работы")]
+		public virtual bool BlockForRepair { get; set; }
+
 		[BelongsTo]
 		public virtual Partner Registrator { get; set; }
 

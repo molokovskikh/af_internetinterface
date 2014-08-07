@@ -29,7 +29,7 @@ namespace Billing.Test.Integration
 		[Test]
 		public void BaseMutexFixture()
 		{
-			var thread = new Thread(_billing.On);
+			var thread = new Thread(_billing.SafeProcessPayments);
 			thread.Start();
 			thread.Join();
 			_billing.Run();
@@ -39,7 +39,7 @@ namespace Billing.Test.Integration
 		public void NoWriteOff()
 		{
 			var thread = new Thread(() => {
-				_billing.On();
+				_billing.SafeProcessPayments();
 				Thread.Sleep(500);
 			});
 

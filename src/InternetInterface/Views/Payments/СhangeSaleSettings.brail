@@ -26,7 +26,7 @@
 </script>
 <div style="width:800px;" class="backGround whereNewTable">
 	<form id="saleSettings" method=post>
-		<table class="table" style="border:1px double #AAA;">
+		<table class="table">
 			<thead>
 				<tr><th colspan=2>Настройки скидок</th></tr>
 			</thead>
@@ -53,6 +53,24 @@
 					<td>Шаг прироста скидки за каждый последующий месяц (в %)</td>
 					<td>
 						<input type=text name="settings.SaleStep" id="settings_SaleStep" value=${settings.SaleStep.ToString("0.00").Replace(",",".")} />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						${app.Label("settings.DaysForRepair")}
+					</td>
+					<td>
+						${app.Edit("settings.DaysForRepair")}
+						${app.Error("settings.DaysForRepair")}
+					</td>
+				</tr>
+				<tr>
+					<td>
+						${app.Label("settings.FreeDaysVoluntaryBlockin")}
+					</td>
+					<td>
+						${app.Edit("settings.FreeDaysVoluntaryBlockin")}
+						${app.Error("settings.FreeDaysVoluntaryBlockin")}
 					</td>
 				</tr>
 				<tr>

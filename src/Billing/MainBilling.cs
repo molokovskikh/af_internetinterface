@@ -5,6 +5,7 @@ using System.Threading;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Common.MySql;
+using Common.NHibernate;
 using Common.Tools;
 using Common.Tools.Calendar;
 using Common.Web.Ui.ActiveRecordExtentions;
@@ -23,8 +24,6 @@ namespace Billing
 {
 	public class MainBilling
 	{
-		public const int FreeDaysVoluntaryBlockin = 28;
-
 		private readonly ILog _log = LogManager.GetLogger(typeof(MainBilling));
 
 		private Mutex _mutex = new Mutex();
@@ -51,15 +50,15 @@ namespace Billing
 			}
 		}
 
-		public void On()
+		public void SafeProcessPayments()
 		{
 			try {
 				_mutex.WaitOne();
 
-				OnMethod();
+				ProcessPayments();
 			}
 			catch (Exception ex) {
-				_log.Error("Ошибка в методе OnMethod", ex);
+				_log.Error("При обработке платежей", ex);
 			}
 			finally {
 				_mutex.ReleaseMutex();
@@ -92,10 +91,10 @@ namespace Billing
 				}
 
 				if (normalFlag || errorFlag)
-					Compute();
+					ProcessWriteoffs();
 			}
 			catch (Exception ex) {
-				_log.Error("Ошибка в методе Compute", ex);
+				_log.Error("Ошибка при начислении списаний", ex);
 			}
 			finally {
 				_mutex.ReleaseMutex();
@@ -131,7 +130,7 @@ set s.LastStartFail = true;")
 			}
 		}
 
-		public void OnMethod()
+		public void ProcessPayments()
 		{
 			WithTransaction(ActivateServices);
 
@@ -246,7 +245,7 @@ set s.LastStartFail = true;")
 			}
 		}
 
-		public virtual void Compute()
+		public virtual void ProcessWriteoffs()
 		{
 			int errorCount = 0;
 			using (new SessionScope()) {
@@ -268,10 +267,10 @@ set s.LastStartFail = true;")
 				() => Client.Queryable.Where(c => c.LawyerPerson != null && !c.PaidDay),
 				ref errorCount);
 
-			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
+			WithTransaction(s => {
 				var agentSettings = AgentTariff.GetPriceForAction(AgentActions.AgentPayIndex);
 				var needToAgentSum = AgentTariff.GetPriceForAction(AgentActions.WorkedClient);
-				var bonusesClients = Client.Queryable.Where(c =>
+				var bonusesClients = s.Query<Client>().Where(c =>
 					c.Request != null &&
 						!c.Request.PaidBonus &&
 						c.Request.Registrator != null &&
@@ -281,8 +280,8 @@ set s.LastStartFail = true;")
 					if (client.Payments.Sum(p => p.Sum) >= needToAgentSum * agentSettings) {
 						var request = client.Request;
 						request.PaidBonus = true;
-						ActiveRecordMediator.Save(request);
-						ActiveRecordMediator.Save(new PaymentsForAgent {
+						s.Save(request);
+						s.Save(new PaymentsForAgent {
 							Action = AgentTariff.GetAction(AgentActions.WorkedClient),
 							Agent = request.Registrator,
 							RegistrationDate = SystemTime.Now(),
@@ -292,38 +291,33 @@ set s.LastStartFail = true;")
 					}
 				}
 
-				var friendBonusRequests = ActiveRecordLinqBase<Request>.Queryable.Where(r =>
-					r.Client != null &&
+				var friendBonusRequests = s.Query<Request>().Where(r =>
+						r.Client != null &&
 						r.FriendThisClient != null &&
 						!r.PaidFriendBonus &&
 						r.Client.BeginWork != null)
 					.ToList();
 				foreach (var friendBonusRequest in friendBonusRequests) {
 					if (friendBonusRequest.Client.HavePaymentToStart()) {
-						new Payment {
-							Client = friendBonusRequest.FriendThisClient,
-							Sum = 250m,
-							PaidOn = SystemTime.Now(),
+						s.Save(new Payment(friendBonusRequest.FriendThisClient, 250) {
 							RecievedOn = SystemTime.Now(),
 							Virtual = true,
 							Comment = string.Format("Подключи друга {0}", friendBonusRequest.FriendThisClient.Id)
-						}.Save();
+						});
 						friendBonusRequest.PaidFriendBonus = true;
-						ActiveRecordMediator.Save(friendBonusRequest);
+						s.Save(friendBonusRequest);
 					}
 				}
-				transaction.VoteCommit();
-			}
-			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
-				var settings = ActiveRecordMediator<InternetSettings>.FindFirst();
+			});
+			WithTransaction(s => {
+				var settings = s.Query<InternetSettings>().First();
 				settings.LastStartFail = errorCount > 0;
 				settings.Save();
-
-				transaction.VoteCommit();
-			}
+				s.Save(settings);
+			});
 		}
 
-		private void ProcessAll(Action<Client> action, Func<IQueryable<Client>> query, ref int errorCount)
+		private void ProcessAll(Action<ISession, Client> action, Func<IQueryable<Client>> query, ref int errorCount)
 		{
 			var ids = new List<uint>();
 			using (new SessionScope()) {
@@ -332,16 +326,13 @@ set s.LastStartFail = true;")
 
 			foreach (var id in ids) {
 				try {
-					using (var transaction = new TransactionScope(OnDispose.Rollback)) {
-						var client = ActiveRecordMediator<Client>.FindByPrimaryKey(id);
-						action(client);
-						foreach (var clientService in client.ClientServices.ToList()) {
-							clientService.WriteOffProcessed();
-						}
+					WithTransaction(session => {
+						var client = session.Load<Client>(id);
+						action(session, client);
+						client.ClientServices.ToArray().Each(s => s.WriteOffProcessed());
 						client.PaidDay = true;
-						client.Update();
-						transaction.VoteCommit();
-					}
+						session.Save(client);
+					});
 				}
 				catch (Exception ex) {
 					errorCount++;
@@ -350,8 +341,12 @@ set s.LastStartFail = true;")
 			}
 		}
 
-		private void WriteOffFromPhysicalClient(Client client)
+		private void WriteOffFromPhysicalClient(ISession session, Client client)
 		{
+			if (client.Status.Type == StatusType.BlockedForRepair && (DateTime.Now - client.StatusChangedOn).TotalDays > _saleSettings.DaysForRepair) {
+				client.SetStatus(Status.Get(StatusType.Worked, session));
+			}
+
 			var phisicalClient = client.PhysicalClient;
 			var balance = phisicalClient.Balance;
 			if (balance >= 0
@@ -385,7 +380,6 @@ set s.LastStartFail = true;")
 					client.Sale = sale;
 			}
 
-
 			if (!client.PaidDay
 				&& client.RatedPeriodDate.GetValueOrDefault() != DateTime.MinValue
 				&& client.GetSumForRegularWriteOff() > 0) {
@@ -413,7 +407,7 @@ set s.LastStartFail = true;")
 					}
 					var sms = SmsMessage.TryCreate(client, message, shouldBeSendDate);
 					if (sms != null) {
-						ActiveRecordMediator.Save(sms);
+						session.Save(sms);
 						Messages.Add(sms);
 					}
 				}
@@ -433,26 +427,23 @@ set s.LastStartFail = true;")
 				}
 			}
 			if (client.CanBlock()) {
-				client.SetStatus(Status.Find((uint)StatusType.NoWorked));
+				client.SetStatus(Status.Get(StatusType.NoWorked, session));
 				if (client.IsChanged(c => c.Disabled))
 					client.CreareAppeal("Клиент был заблокирован", AppealType.Statistic);
 			}
 			if ((client.YearCycleDate == null && client.BeginWork != null) || (SystemTime.Now().Date >= client.YearCycleDate.Value.AddYears(1).Date)) {
-				client.FreeBlockDays = FreeDaysVoluntaryBlockin;
+				client.FreeBlockDays = _saleSettings.FreeDaysVoluntaryBlocking;
 				client.YearCycleDate = SystemTime.Now();
 			}
 		}
 
-		private static void WriteOffFromLawyerPerson(Client client)
+		private static void WriteOffFromLawyerPerson(ISession session, Client client)
 		{
 			var person = client.LawyerPerson;
 			var writeoffs = client.LawyerPerson.Calculate(SystemTime.Today());
 			person.Balance -= writeoffs.Sum(w => w.Sum);
-			person.UpdateAndFlush();
-
-			foreach (var writeOff in writeoffs) {
-				writeOff.SaveAndFlush();
-			}
+			session.Save(person);
+			session.SaveEach(writeoffs);
 		}
 	}
 }

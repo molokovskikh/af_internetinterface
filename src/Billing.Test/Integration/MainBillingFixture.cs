@@ -20,9 +20,9 @@ namespace Billing.Test.Integration
 {
 	public class MainBillingForTest : MainBilling
 	{
-		public override void Compute()
+		public override void ProcessWriteoffs()
 		{
-			base.Compute();
+			base.ProcessWriteoffs();
 
 			using (new SessionScope()) {
 				ArHelper.WithSession(s => s.CreateSQLQuery("update internet.Clients set PaidDay = false;").ExecuteUpdate());
@@ -99,59 +99,58 @@ namespace Billing.Test.Integration
 			});
 
 			using (new SessionScope()) {
-				new Partner("Test").Save();
-				if (!ActiveRecordLinqBase<Status>.Queryable.Any())
-					CreateStatuses();
+				ArHelper.WithSession(s => {
+					s.Save(new Partner("Test", s.Load<UserRole>(3u)));
+					if (!s.Query<Status>().Any())
+						CreateStatuses();
 
-				new DebtWork {
-					BlockingAll = false,
-					Price = 0,
-					HumanName = "DebtWork"
-				}.Save();
+					s.Save(new DebtWork {
+						BlockingAll = false,
+						Price = 0,
+						HumanName = "DebtWork"
+					});
 
-				new AgentTariff {
-					ActionName = AgentActions.WorkedClient,
-					Sum = 250
-				}.Save();
+					s.Save(new AgentTariff {
+						ActionName = AgentActions.WorkedClient,
+						Sum = 250
+					});
 
-				new AgentTariff {
-					ActionName = AgentActions.AgentPayIndex,
-					Sum = 1.5m
-				}.Save();
+					s.Save(new AgentTariff {
+						ActionName = AgentActions.AgentPayIndex,
+						Sum = 1.5m
+					});
 
-				new VoluntaryBlockin {
-					BlockingAll = true,
-					Price = 0,
-					HumanName = "VoluntaryBlockin"
-				}.Save();
+					s.Save(new VoluntaryBlockin {
+						BlockingAll = true,
+						Price = 0,
+						HumanName = "VoluntaryBlockin"
+					});
 
-				new WorkLawyer {
-					InterfaceControl = true,
-					HumanName = "WorkLawyer"
-				}.Save();
+					s.Save(new WorkLawyer {
+						InterfaceControl = true,
+						HumanName = "WorkLawyer"
+					});
 
-				new InternetSettings { NextBillingDate = DateTime.Now }.Save();
+					s.Save(new InternetSettings { NextBillingDate = DateTime.Now });
+				});
 			}
 		}
 
 		private static void CreateStatuses()
 		{
 			new Status {
-				Blocked = false,
 				Id = (uint)StatusType.Worked,
 				Name = "unblocked",
 				ShortName = "Worked"
 			}.Save();
 
 			new Status {
-				Blocked = true,
 				Id = (uint)StatusType.BlockedAndConnected,
 				Name = "unblocked",
 				ShortName = "BlockedAndConnected"
 			}.Save();
 
 			new Status {
-				Blocked = true,
 				Id = (uint)StatusType.NoWorked,
 				Name = "testBlockedStatus",
 				ShortName = "NoWorked"
@@ -160,9 +159,7 @@ namespace Billing.Test.Integration
 			new Status {
 				ShortName = "VoluntaryBlocking",
 				Id = (uint)StatusType.VoluntaryBlocking,
-				Blocked = true,
 				Name = "VoluntaryBlocking",
-				Connected = true
 			}.Save();
 		}
 
@@ -206,7 +203,7 @@ namespace Billing.Test.Integration
 				client.Update();
 			}
 			SystemTime.Now = () => rd.dtTo;
-			billing.Compute();
+			billing.ProcessWriteoffs();
 		}
 
 		public void Assert_statistic_appeal(int appealCount = 1)
@@ -280,7 +277,7 @@ namespace Billing.Test.Integration
 
 			session.CreateSQLQuery("delete from Internet.InternetSettings").ExecuteUpdate();
 
-			session.Save(new Partner("Test"));
+			session.Save(new Partner("Test", session.Load<UserRole>(3u)));
 			if (!session.Query<Status>().Any())
 				CreateStatuses();
 
@@ -317,21 +314,18 @@ namespace Billing.Test.Integration
 		private void CreateStatuses()
 		{
 			session.Save(new Status {
-				Blocked = false,
 				Id = (uint)StatusType.Worked,
 				Name = "unblocked",
 				ShortName = "Worked"
 			});
 
 			session.Save(new Status {
-				Blocked = true,
 				Id = (uint)StatusType.BlockedAndConnected,
 				Name = "unblocked",
 				ShortName = "BlockedAndConnected"
 			});
 
 			session.Save(new Status {
-				Blocked = true,
 				Id = (uint)StatusType.NoWorked,
 				Name = "testBlockedStatus",
 				ShortName = "NoWorked"
@@ -340,9 +334,7 @@ namespace Billing.Test.Integration
 			session.Save(new Status {
 				ShortName = "VoluntaryBlocking",
 				Id = (uint)StatusType.VoluntaryBlocking,
-				Blocked = true,
 				Name = "VoluntaryBlocking",
-				Connected = true
 			});
 		}
 
@@ -380,7 +372,7 @@ delete from Internet.LawyerPerson;")
 			client.RatedPeriodDate = rd.dtFrom;
 			client.Update();
 			SystemTime.Now = () => rd.dtTo;
-			billing.Compute();
+			billing.ProcessWriteoffs();
 		}
 
 		public void Assert_statistic_appeal(int appealCount = 1)

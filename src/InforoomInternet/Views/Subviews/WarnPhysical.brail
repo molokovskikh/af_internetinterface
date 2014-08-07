@@ -1,5 +1,15 @@
 ﻿<% if client.Disabled: %>
-	<% if Client.HaveVoluntaryBlockin(): %>
+	<% if Client.IsBlockForRepair(): %>
+		<p class="error">
+			Доступ в интернет заблокирован из-за проведения работ по сервисной заявке, на время работ тарификация остановлена.
+			Если работы завершены нажмите кнопку "Продолжить".
+			После нажатия кнопки "Продолжить" тарификация будет возобновлена.
+		</p>
+		<form method="post">
+			<input name="referer" type="hidden" value="!{referer}">
+			<input type="submit" class="button" id="ConButton" value="Продолжить">
+		</form>
+	<% elif Client.HaveVoluntaryBlockin(): %>
 		<% OutputSubView("/PrivateOffice/DiactivateVoluntaryBlockin") %>
 	<% elif Client.BeginWork == null: %>
 		<p class="info">

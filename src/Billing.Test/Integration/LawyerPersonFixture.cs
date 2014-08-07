@@ -54,7 +54,7 @@ namespace Billing.Test.Integration
 				Assert.IsNull(lawyerClient.WhenShowWarning);
 				Assert.IsFalse(lawyerClient.SendEmailNotification);
 			}
-			billing.OnMethod();
+			billing.ProcessPayments();
 			Assert_statistic_appeal();
 			using (new SessionScope()) {
 				lawyerClient.Refresh();
@@ -63,19 +63,19 @@ namespace Billing.Test.Integration
 				lawyerClient.ShowBalanceWarningPage = false;
 				lawyerClient.Update();
 			}
-			billing.OnMethod();
+			billing.ProcessPayments();
 			using (new SessionScope()) {
 				lawyerClient.Refresh();
 				Assert.IsFalse(lawyerClient.ShowBalanceWarningPage);
 				SystemTime.Now = () => DateTime.Now.AddHours(2).AddMinutes(45);
 			}
-			billing.OnMethod();
+			billing.ProcessPayments();
 			using (new SessionScope()) {
 				lawyerClient.Refresh();
 				Assert.IsFalse(lawyerClient.ShowBalanceWarningPage);
 				SystemTime.Now = () => DateTime.Now.AddHours(3);
 			}
-			billing.OnMethod();
+			billing.ProcessPayments();
 			Assert_statistic_appeal();
 			using (new SessionScope()) {
 				lawyerClient.Refresh();
@@ -89,7 +89,7 @@ namespace Billing.Test.Integration
 		{
 			for (var i = 1; i <= 30; i++) {
 				SystemTime.Now = () => new DateTime(2012, 4, i);
-				billing.Compute();
+				billing.ProcessWriteoffs();
 			}
 			using (new SessionScope()) {
 				var writeOffs = WriteOff.Queryable.Where(w => w.Client == lawyerClient).ToList();
@@ -105,13 +105,13 @@ namespace Billing.Test.Integration
 				lawyerClient.Disabled = true;
 				ActiveRecordMediator.Save(lawyerClient);
 			}
-			billing.OnMethod();
+			billing.ProcessPayments();
 			using (new SessionScope()) {
 				lawyerClient.Refresh();
 				Assert.IsTrue(lawyerClient.Disabled);
 				ActiveRecordMediator.Save(new Payment(lawyerClient, 100));
 			}
-			billing.OnMethod();
+			billing.ProcessPayments();
 			using (new SessionScope()) {
 				lawyerClient.Refresh();
 				Assert.False(lawyerClient.Disabled);
@@ -131,7 +131,7 @@ namespace Billing.Test.Integration
 				ActiveRecordMediator.Save(order);
 				ActiveRecordMediator.Save(lawyerClient);
 			}
-			billing.Compute();
+			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				var writeOffs = ActiveRecordLinq.AsQueryable<WriteOff>().Where(w => w.Client == lawyerClient).ToList();
 				Assert.AreEqual(writeOffs.Count, 1);

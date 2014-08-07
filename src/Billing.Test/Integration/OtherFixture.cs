@@ -59,7 +59,7 @@ namespace Billing.Test.Integration
 			using (new SessionScope())
 				ActiveRecordMediator.Save(client);
 
-			billing.Compute();
+			billing.ProcessWriteoffs();
 
 			using (new SessionScope()) {
 				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);

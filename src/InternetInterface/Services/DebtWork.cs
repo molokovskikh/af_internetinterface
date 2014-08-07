@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using Castle.ActiveRecord;
+using Castle.ActiveRecord.Framework;
 using Common.Tools;
 using InternetInterface.Models;
 
@@ -56,7 +57,7 @@ namespace InternetInterface.Services
 			if (assignedService.Activator != null)
 				return true;
 
-			var lastPayments = Payment.Queryable
+			var lastPayments = ActiveRecordLinqBase<Payment>.Queryable
 				.Where(p => p.Client == assignedService.Client && assignedService.BeginWorkDate.Value <= p.PaidOn)
 				.ToList().Sum(p => p.Sum);
 			var balance = assignedService.Client.PhysicalClient.Balance;
