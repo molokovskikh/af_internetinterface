@@ -20,7 +20,6 @@ using NHibernate.Linq;
 
 namespace InforoomInternet.Controllers
 {
-	[Filter(ExecuteWhen.BeforeAction, typeof(NHibernateFilter))]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AccessFilter))]
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(BeforeFilter))]
 	public class PrivateOfficeController : BaseController

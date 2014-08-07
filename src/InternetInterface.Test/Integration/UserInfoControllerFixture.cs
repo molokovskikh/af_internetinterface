@@ -91,7 +91,8 @@ namespace InternetInterface.Test.Integration
 			session.Save(house);
 
 			session.Flush();
-			controller.EditInformation(client.Id, dissolved.Id, null, house.Id, AppealType.All, null, new ClientFilter());
+			Request.Form["_client.Status.id"] = dissolved.Id.ToString();
+			controller.EditInformation(client.Id, null, house.Id, AppealType.All, null, new ClientFilter());
 			CheckValidationError(client.PhysicalClient);
 
 			session.Flush();

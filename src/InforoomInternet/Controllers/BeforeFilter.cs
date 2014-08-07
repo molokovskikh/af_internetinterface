@@ -13,22 +13,6 @@ using NHibernate.Linq;
 
 namespace InforoomInternet.Controllers
 {
-	public class NHibernateFilter : IFilter
-	{
-		public bool Perform(ExecuteWhen exec, IEngineContext context, IController controller, IControllerContext controllerContext)
-		{
-			var holder = ActiveRecordMediator.GetSessionFactoryHolder();
-			var session = holder.CreateSession(typeof(ActiveRecordBase));
-			try {
-				session.EnableFilter("HiddenTariffs");
-			}
-			finally {
-				holder.ReleaseSession(session);
-			}
-			return true;
-		}
-	}
-
 	public class EditAccessFilter : IFilter
 	{
 		public bool Perform(ExecuteWhen exec, IEngineContext context, IController controller, IControllerContext controllerContext)

@@ -1091,7 +1091,7 @@ where CE.Client = {0}", Id))
 				return new[] { session.Load<Status>(StatusType.BlockedForRepair) };
 			var statuses = session.Query<Status>().Where(s => s.ManualSet).ToList();
 			statuses.Add(Status);
-			return statuses.OrderBy(s => s.Name).ToList();
+			return statuses.Distinct().OrderBy(s => s.Name).ToList();
 		}
 
 		public virtual bool IsBlockForRepair()

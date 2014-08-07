@@ -753,26 +753,25 @@ button.button:hover
 }
 
 .info, .success, .warning, .error, .validation {
-border: 1px solid;
-margin: 10px 0px;
-padding:5px;
-background-repeat: no-repeat;
-background-position: 10px center;
+	border: 1px solid;
+	margin: 10px 0px;
+	padding:5px;
+	background-repeat: no-repeat;
+	background-position: 10px center;
 }
 
 #content .info {
-color: #00529B;
-background-color: #E2F3FC;
+	color: #00529B;
+	background-color: #E2F3FC;
 	padding: 7px 7px 7px 7px;
 }
 .success {
-color: #4F8A10;
-background-color: #DFF2BF;
-
+	color: #4F8A10;
+	background-color: #DFF2BF;
 }
 .warning {
-color: #9F6000;
-background-color: #FEEFB3;
+	color: #9F6000;
+	background-color: #FEEFB3;
 }
 .error {
 	color: #D8000C;
@@ -824,16 +823,6 @@ label.error {
 	margin-left: 2px;
 	padding-top: 2px;
 	cursor: pointer;
-}
-
-#serviceTable #endDate
-{
-	/*margin-left: -70px;*/
-}
-
-#serviceTable #endDateLabel
-{
-	/*margin-left: -70px;*/
 }
 
 #PostponedButDeactive

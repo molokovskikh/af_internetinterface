@@ -296,7 +296,7 @@ ${app.Asset("Register.js")}
 				Статус
 			</td>
 			<td>
-				${app.Edit("_client.Status", {@items: statuses, @id: ChStatus, @style: "width: 95%;"})}
+				${app.Edit("_client.Status", {@items: statuses, @id: @ChStatus, @style: "width: 95%;"})}
 			</td>
 			<td>
 				${app.Error("_client.Status")}

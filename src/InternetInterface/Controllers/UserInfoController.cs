@@ -529,13 +529,13 @@ namespace InternetInterface.Controllers
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void EditInformation(uint ClientID, uint status,
+		public void EditInformation(uint ClientID,
 			string group, uint house_id, AppealType appealType, string comment,
 			[DataBind("filter")] ClientFilter filter)
 		{
 			Message message = null;
 			var client = DbSession.Load<Client>(ClientID);
-			var statusEntity = DbSession.Load<Status>(status);
+			//var statusEntity = DbSession.Load<Status>(status);
 			var updateClient = client.PhysicalClient;
 			var oldStatus = client.Status;
 
@@ -549,19 +549,21 @@ namespace InternetInterface.Controllers
 			BindObjectInstance(updateClient, ParamStore.Form, "Client", AutoLoadBehavior.NullIfInvalidKey);
 			BindObjectInstance(client, ParamStore.Form, "_client");
 
-			if (oldStatus.ManualSet) {
-				client.Status = statusEntity;
-				if (statusEntity.Type == StatusType.Dissolved && (client.HaveService<HardwareRent>() || client.HaveService<IpTvBoxRent>())) {
-					GetErrorSummary(updateClient)
-						.RegisterErrorMessage("Status", "Договор не может быть расторгнут тк у клиента имеется арендованное" +
-							" оборудование, перед расторжением договора нужно изъять оборудование");
+			if (oldStatus != client.Status) {
+				if (oldStatus.ManualSet) {
+					if (client.Status.Type == StatusType.Dissolved && (client.HaveService<HardwareRent>() || client.HaveService<IpTvBoxRent>())) {
+						GetErrorSummary(updateClient)
+							.RegisterErrorMessage("Status", "Договор не может быть расторгнут тк у клиента имеется арендованное" +
+								" оборудование, перед расторжением договора нужно изъять оборудование");
+					}
+				}
+				else {
+					client.Status = oldStatus;
+					message = Message.Warning(string.Format("Статус не был изменен, т.к. нельзя изменить статус '{0}' вручную. Остальные данные были сохранены.", client.Status.Name));
 				}
 			}
 
 			if (IsValid(updateClient)) {
-				if (!oldStatus.ManualSet && client.Status.Id != statusEntity.Id)
-					message = Message.Warning(string.Format("Статус не был изменен, т.к. нельзя изменить статус '{0}' вручную. Остальные данные были сохранены.", client.Status.Name));
-
 				if (!string.IsNullOrEmpty(comment)) {
 					client.LogComment = comment;
 					updateClient.LogComment = comment;

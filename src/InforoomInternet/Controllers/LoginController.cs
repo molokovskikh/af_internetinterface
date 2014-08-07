@@ -9,7 +9,6 @@ using log4net;
 namespace InforoomInternet.Controllers
 {
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(BeforeFilter))]
-	[Filter(ExecuteWhen.BeforeAction, typeof(NHibernateFilter))]
 	public class LoginController : BaseController
 	{
 		public void LoginPage(bool partner, uint? impersonate)

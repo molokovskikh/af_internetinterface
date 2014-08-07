@@ -210,15 +210,15 @@ namespace InforoomInternet.Test.Functional
 		{
 			Open("Main/zayavka");
 			AssertText("Заполнение данной заявки означает принятие участие в акции \"подключи друга\".");
-			browser.FindElementById("fio").SendKeys("testFio");
-			browser.FindElementById("phone_").SendKeys("8-900-900-90-90");
-			browser.FindElementById("City").SendKeys("Воронеж");
-			browser.FindElementById("residence").SendKeys("Студенческая");
-			browser.FindElementById("House").SendKeys("12");
-			browser.FindElementById("CaseHouse").SendKeys("а");
-			browser.FindElementById("Apartment").SendKeys("1");
-			browser.FindElementById("Entrance").SendKeys("2");
-			browser.FindElementById("Floor").SendKeys("1");
+			Css("#request_ApplicantName").SendKeys("testFio");
+			Css("#request_ApplicantPhoneNumber").SendKeys("8-900-900-90-90");
+			Css("#request_City").SendKeys("Воронеж");
+			Css("#request_Street").SendKeys("Студенческая");
+			Css("#request_House").SendKeys("12");
+			Css("#request_CaseHouse").SendKeys("а");
+			Css("#request_Apartment").SendKeys("1");
+			Css("#request_Entrance").SendKeys("2");
+			Css("#request_Floor").SendKeys("1");
 			Click("Отправить");
 			AssertText("Спасибо, Ваша заявка принята. Номер заявки");
 			var requests = session.QueryOver<Request>().Where(r => r.FriendThisClient == client).List();

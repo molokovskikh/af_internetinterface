@@ -9,7 +9,6 @@ using InternetInterface.Helpers;
 namespace InforoomInternet.Controllers
 {
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(BeforeFilter))]
-	[Filter(ExecuteWhen.BeforeAction, typeof(NHibernateFilter))]
 	[Filter(ExecuteWhen.BeforeAction, typeof(EditAccessFilter))]
 	public class EditorController : BaseEditorController
 	{

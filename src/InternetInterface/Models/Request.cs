@@ -68,7 +68,7 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool SelfConnect { get; set; }
 
-		[BelongsTo("Tariff"), ValidateNonEmpty, Description("Tariff")]
+		[BelongsTo("Tariff"), ValidateNonEmpty, Description("Тарифный план")]
 		public virtual Tariff Tariff { get; set; }
 
 		[BelongsTo("Label")]

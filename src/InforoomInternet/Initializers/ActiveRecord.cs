@@ -21,24 +21,5 @@ namespace InforoomInternet.Initializers
 				.Where(t => namespaces.Contains(t.Namespace))
 				.ToArray();
 		}
-
-		public override void Initialize(IConfigurationSource config)
-		{
-			base.Initialize(config);
-
-			SetupFilters();
-		}
-
-		public static void SetupFilters()
-		{
-			var configuration = ActiveRecordMediator
-				.GetSessionFactoryHolder()
-				.GetAllConfigurations()
-				.First();
-			configuration.FilterDefinitions.Add("HiddenTariffs",
-				new FilterDefinition("HiddenTariffs", "", new Dictionary<string, IType>(), true));
-			var mapping = configuration.GetClassMapping(typeof(Tariff));
-			mapping.AddFilter("HiddenTariffs", "Hidden = 0");
-		}
 	}
 }

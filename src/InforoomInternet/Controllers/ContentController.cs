@@ -11,7 +11,6 @@ using InternetInterface.Models;
 namespace InforoomInternet.Controllers
 {
 	[Filter(ExecuteWhen.BeforeAction, typeof(BeforeFilter))]
-	[Filter(ExecuteWhen.BeforeAction, typeof(NHibernateFilter))]
 	public class ContentController : BaseContentController
 	{
 		public override void Contextualize(IEngineContext engineContext, IControllerContext context)

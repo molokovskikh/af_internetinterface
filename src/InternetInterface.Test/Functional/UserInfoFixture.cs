@@ -27,10 +27,11 @@ namespace InternetInterface.Test.Functional
 			session.Save(Client);
 			Open(ClientUrl);
 
-			Assert.That(Css("#ChStatus").SelectedOption.Text, Is.EqualTo(" Заблокирован "));
+			Css("#ChStatus").SelectByText("Заблокирован");
 			WaitForText("Сохранить");
 			Css("#SaveButton").Click();
 
+			session.Refresh(Client);
 			Assert.That(Client.Status.Type, Is.EqualTo(StatusType.BlockedAndNoConnected));
 			AssertText("Статус не был изменен, т.к. нельзя изменить статус 'Зарегистрирован' вручную. Остальные данные были сохранены.");
 
@@ -39,13 +40,13 @@ namespace InternetInterface.Test.Functional
 
 			Open(ClientUrl);
 
-			Assert.That(Css("#ChStatus").SelectedOption.Text, Is.EqualTo(" Подключен "));
-			Css("#ChStatus").SelectByText(" Заблокирован ");
+			Assert.That(Css("#ChStatus").SelectedOption.Text, Is.EqualTo("Подключен"));
+			Css("#ChStatus").SelectByText("Заблокирован");
 			Css("#SaveButton").Click();
 
 			AssertText("Данные изменены");
 
-			Client.Refresh();
+			session.Refresh(Client);
 			Assert.That(Client.Status.Type, Is.EqualTo(StatusType.NoWorked));
 			Assert.That(Client.Sale, Is.EqualTo(0));
 			Assert.That(Client.StartNoBlock, Is.Null);

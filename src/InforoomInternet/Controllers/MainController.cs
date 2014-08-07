@@ -24,7 +24,6 @@ using NHibernate.Linq;
 
 namespace InforoomInternet.Controllers
 {
-	[Filter(ExecuteWhen.BeforeAction, typeof(NHibernateFilter))]
 	[Filter(ExecuteWhen.BeforeAction, typeof(BeforeFilter))]
 	public class MainController : BaseController
 	{
@@ -45,12 +44,26 @@ namespace InforoomInternet.Controllers
 
 		public void Index()
 		{
-			PropertyBag["tariffs"] = Tariff.All(DbSession);
 		}
 
 		public void Zayavka()
 		{
-			PropertyBag["tariffs"] = Tariff.All(DbSession);
+			var request = new Request();
+			if (AccessFilter.Authorized(Context)) {
+				var client = DbSession.Load<Client>(Convert.ToUInt32(Session["LoginClient"]));
+				request.FriendThisClient = client;
+			}
+
+			PropertyBag["tariffs"] = DbSession.Query<Tariff>().Where(t => !t.Hidden).ToList();
+			PropertyBag["request"] = request;
+			if (IsPost) {
+				Bind(request, "request");
+				if (IsValid(request)) {
+					request.PreInsert();
+					DbSession.Save(request);
+					RedirectToAction("Ok", new { id = request.Id });
+				}
+			}
 		}
 
 		public void Main()
@@ -62,10 +75,9 @@ namespace InforoomInternet.Controllers
 			SetEdatableAttribute(edit, "HowPay");
 		}
 
-		public void Ok()
+		public void Ok(uint id)
 		{
-			if (Flash["application"] == null)
-				RedirectToSiteRoot();
+			PropertyBag["application"] = DbSession.Load<Request>(id);
 		}
 
 		public void OfferContract(bool edit)
@@ -140,28 +152,6 @@ namespace InforoomInternet.Controllers
 				.Distinct()
 				.Select(s => s.Name)
 				.ToList();
-		}
-
-		[AccessibleThrough(Verb.Post)]
-		public void Send([DataBind("application")] Request request)
-		{
-			if (Validator.IsValid(request)) {
-				if (AccessFilter.Authorized(Context)) {
-					var clientId = Convert.ToUInt32(Session["LoginClient"]);
-					var client = Client.Find(clientId);
-					request.FriendThisClient = client;
-				}
-				request.PreInsert();
-				DbSession.Save(request);
-				DbSession.Save(request);
-				Flash["application"] = request;
-				RedirectToAction("Ok");
-			}
-			else {
-				PropertyBag["tariffs"] = Tariff.All(DbSession);
-				PropertyBag["application"] = request;
-				RenderView("Zayavka");
-			}
 		}
 
 		public void Warning()
