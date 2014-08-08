@@ -6,9 +6,22 @@
 		self.sum = ko.observable();
 		self.isFree = ko.observable();
 		self.status = ko.observable();
+		self.isOverdue = ko.observable($("#request_IsOverdue").val() == "True");
 		self.canWriteSms = ko.computed(function () {
 			return self.sum() > 0 && !self.isFree() && self.status() == 3;
 		}, self);
+		self.isOverdueReasonMandatory = ko.computed(function () {
+			return self.status() == 3 && self.isOverdue();
+		}, self);
+		self.isOverdueReasonMandatory.subscribe(function () {
+			if (self.isOverdueReasonMandatory()) {
+				$('#request_OverdueReason').each(function () {
+					$(this).rules("add", {
+						required: true,
+					});
+				});
+			}
+		});
 		self.isFree.subscribe(function () {
 			checkFlag = true;
 			if (self.isFree()) {
@@ -52,8 +65,6 @@
 	}
 
 	$('.validateFormService').validate({
-		errorElement: "div",
-		errorLabelContainer: "#errorContainer",
 		submitHandler: function (form) {
 			var id = $("#request_Id");
 			var flagFree = document.getElementById('request_Free').checked;

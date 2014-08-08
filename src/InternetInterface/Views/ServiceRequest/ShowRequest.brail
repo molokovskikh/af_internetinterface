@@ -3,6 +3,8 @@ ${app.Asset("service-requests.js")}
 ${app.Asset("knockout.js")}
 
 <div class="borderless-content">
+	<% #поле должно быть за пределами формы что бы избежать биндинга, оно нужно что бы передать данные в js %>
+	${FormHelper.HiddenField("request.IsOverdue")}
 	<% if request != null: %>
 	<div class="request-details">
 	<% if Edit: %>
@@ -99,17 +101,33 @@ ${app.Asset("knockout.js")}
 						</td>
 				<% end %>
 			</tr>
+			<% if request.BlockForRepair: %>
+			<tr>
+				<td>
+					<b>Тип заявки</b>
+				</td>
+				<td>
+					Восстановление работы
+				</td>
+			</tr>
+			<% end %>
 			<% if edit: %>
+			<tr data-bind="visible: isOverdueReasonMandatory">
+				<td>
+					<b>${app.Label("request.OverdueReason")}</b>
+				</td>
+				<td>
+					${FormHelper.TextArea("request.OverdueReason", { @cols: 30, @rows: 2 })}
+				</td>
+			</tr>
 			<tr data-bind="visible: isFree">
 				<td>
-					Основание для бесплатной заявки:
+					<b>Основание для бесплатной заявки</b>
 				</td>
 				<td colspan="100">
 					<textarea cols="30" rows="2" class="comment_sum_text"></textarea>
 				</td>
 			</tr>
-			<% end %>
-			<% if edit: %>
 			<tr data-bind="visible: canWriteSms">
 				<td>
 					${app.Label("request.CloseSmsMessage")}
@@ -120,14 +138,17 @@ ${app.Asset("knockout.js")}
 			</tr>
 			<% end %>
 			<tr>
-				<td colspan=4 style="padding-top: 20px"><b>Описание</b></td>
+				<td colspan="4" style="padding-top: 20px"><b>Описание</b></td>
 			</tr>
 			<tr>
-				<td colspan=4>${request.GetDescription()}</td>
+				<td colspan="4">${request.GetDescription()}</td>
 			</tr>
 			<% if Edit: %>
-			<tr><td colspan=4 id="errorContainer"></td></tr>
-			<tr><td colspan=4><button type=submit id="saveButton" class="button">Сохранить</button></td></tr>
+			<tr>
+				<td colspan="4">
+					<button type=submit id="saveButton" class="button">Сохранить</button>
+				</td>
+			</tr>
 			<% end %>
 		</tbody>
 	</table>

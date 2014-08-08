@@ -1085,7 +1085,7 @@ where CE.Client = {0}", Id))
 		public virtual IList<Status> GetAvailableStatuses(ISession session)
 		{
 			if (Status.Type == StatusType.BlockedForRepair)
-				return new[] { session.Load<Status>(StatusType.BlockedForRepair) };
+				return new[] { session.Load<Status>((uint)StatusType.BlockedForRepair) };
 			var statuses = session.Query<Status>().Where(s => s.ManualSet).ToList();
 			statuses.Add(Status);
 			return statuses.Distinct().OrderBy(s => s.Name).ToList();
