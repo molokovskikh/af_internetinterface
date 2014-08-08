@@ -335,6 +335,7 @@ set s.LastStartFail = true;")
 					});
 				}
 				catch (Exception ex) {
+					Console.WriteLine(ex);
 					errorCount++;
 					_log.Error(string.Format("Ошибка при обработке клиента {0}", id), ex);
 				}
@@ -388,10 +389,10 @@ set s.LastStartFail = true;")
 
 				var writeOff = phisicalClient.WriteOff(client.GetSumForRegularWriteOff());
 				if (writeOff != null) {
-					writeOff.Save();
+					session.Save(writeOff);
 				}
 
-				phisicalClient.Update();
+				session.Save(phisicalClient);
 
 				//Отсылаем смс если клиенту осталось работать 2 дня или меньше
 				if (client.ShouldNotifyOnLowBalance()) {
@@ -431,7 +432,8 @@ set s.LastStartFail = true;")
 				if (client.IsChanged(c => c.Disabled))
 					client.CreareAppeal("Клиент был заблокирован", AppealType.Statistic);
 			}
-			if ((client.YearCycleDate == null && client.BeginWork != null) || (SystemTime.Now().Date >= client.YearCycleDate.Value.AddYears(1).Date)) {
+			if ((client.YearCycleDate == null && client.BeginWork != null)
+				|| (SystemTime.Now().Date >= client.YearCycleDate.Value.AddYears(1).Date)) {
 				client.FreeBlockDays = _saleSettings.FreeDaysVoluntaryBlocking;
 				client.YearCycleDate = SystemTime.Now();
 			}

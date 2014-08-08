@@ -1026,9 +1026,6 @@ where CE.Client = {0}", Id))
 
 		public virtual void SetStatus(Status status)
 		{
-			if (Status.Type == status.Type)
-				return;
-
 			if (status.Type == StatusType.VoluntaryBlocking) {
 				Disabled = true;
 				DebtDays = 0;
