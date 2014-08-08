@@ -59,7 +59,8 @@ namespace Billing.Test.Integration
 						MaxSale = MaxSale,
 						MinSale = MinSale,
 						PeriodCount = PerionCount,
-						SaleStep = SaleStep
+						SaleStep = SaleStep,
+						FreeDaysVoluntaryBlocking = 28
 					};
 					s.Save(settings);
 				});
@@ -259,7 +260,8 @@ namespace Billing.Test.Integration
 				MaxSale = MaxSale,
 				MinSale = MinSale,
 				PeriodCount = PerionCount,
-				SaleStep = SaleStep
+				SaleStep = SaleStep,
+				FreeDaysVoluntaryBlocking = 28
 			};
 			session.Save(settings);
 		}

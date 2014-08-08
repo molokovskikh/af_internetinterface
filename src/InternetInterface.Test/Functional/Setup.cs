@@ -56,7 +56,8 @@ namespace InternetInterface.Test.Functional
 							MinSale = 3,
 							MaxSale = 15,
 							PeriodCount = 3,
-							SaleStep = 1
+							SaleStep = 1,
+							FreeDaysVoluntaryBlocking = 28,
 						};
 						session.Save(saleSettings);
 					}
