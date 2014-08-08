@@ -29,3 +29,8 @@ input.graph_date {
 .request-details-table td {
 	border: 0;
 }
+
+label.error {
+	clear: both;
+	display: block;
+}

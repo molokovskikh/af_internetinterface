@@ -82,6 +82,8 @@ namespace InternetInterface.Controllers
 		public void ShowRequest(uint id, bool edit)
 		{
 			var request = DbSession.Load<ServiceRequest>(id);
+			var settings = DbSession.Query<SaleSettings>().First();
+			request.Calculate(settings);
 			var isService = Partner.CategorieIs("Service");
 			PropertyBag["Request"] = ((isService && request.Performer == Partner) || !isService) ? request : null;
 			PropertyBag["Edit"] = edit;
@@ -120,6 +122,12 @@ namespace InternetInterface.Controllers
 				if (SendSms(request, request.GetEditSms(DbSession)))
 					Notify("Сохранено");
 
+				if (!String.IsNullOrEmpty(request.OverdueReason)) {
+					request.Iterations.Add(new ServiceIteration(request) {
+						Description = String.Format("Заявка по восстановлению работы просрочена, причина - {0}", request.OverdueReason)
+					});
+				}
+
 				RedirectToUrl("../ServiceRequest/ShowRequest?Id=" + request.Id);
 			}
 			else
@@ -130,8 +138,7 @@ namespace InternetInterface.Controllers
 		{
 			commentText = string.Format("Заявка стала бесплатной, поскольку: {0}", commentText);
 			var request = DbSession.Load<ServiceRequest>(requestId);
-			var interaction = new ServiceIteration {
-				Request = request,
+			var interaction = new ServiceIteration(request) {
 				Description = commentText
 			};
 			DbSession.Save(interaction);

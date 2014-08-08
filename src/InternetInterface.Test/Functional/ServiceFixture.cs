@@ -112,11 +112,26 @@ namespace InternetInterface.Test.Functional
 		public void Sms_on_close()
 		{
 			var request = CreateRequest();
+			request.RegDate.AddDays(-5);
 			session.Save(request);
 			Open("ServiceRequest/ShowRequest?Id={0}", request.Id);
 			Click("(Редактировать)");
-			Css("#request_Status").SelectByValue("3");
-			Css("#sumField").SendKeys("500");
+			Css("#request_Status").SelectByText("Закрыт");
+			var sms = Css("#request_OverdueReason");
+			sms.SendKeys("тестовое сообщение");
+			Assert.IsTrue(sms.Displayed);
+			Click("Сохранить");
+			AssertText("Заявка по восстановлению работы просрочена, причина - тестовое сообщение");
+		}
+
+		[Test]
+		public void Close_overdue_repair_request()
+		{
+			var request = CreateRequest();
+			session.Save(request);
+			Open("ServiceRequest/ShowRequest?Id={0}", request.Id);
+			Click("(Редактировать)");
+			Css("#request_Status").SelectByText("Закрыт");
 			var sms = Css("#request_CloseSmsMessage");
 			sms.SendKeys("тестовое сообщение");
 			Assert.IsTrue(sms.Displayed);

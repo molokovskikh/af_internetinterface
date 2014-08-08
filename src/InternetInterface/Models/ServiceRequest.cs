@@ -121,6 +121,9 @@ namespace InternetInterface.Models
 		[Description("Текст смс для отправки клиенту")]
 		public virtual string CloseSmsMessage { get; set; }
 
+		[Description("Причина задержки выполения заявки")]
+		public virtual string OverdueReason { get; set; }
+
 		[Property, Description("Восстановление работы")]
 		public virtual bool BlockForRepair { get; set; }
 
@@ -130,8 +133,16 @@ namespace InternetInterface.Models
 		[BelongsTo, Auditable("Исполнитель"), ValidateNonEmpty]
 		public virtual Partner Performer { get; set; }
 
-		[HasMany(ColumnKey = "Request", OrderBy = "RegDate", Lazy = true)]
+		[HasMany(ColumnKey = "Request", OrderBy = "RegDate", Lazy = true, Cascade = ManyRelationCascadeEnum.AllDeleteOrphan)]
 		public virtual IList<ServiceIteration> Iterations { get; set; }
+
+		public virtual bool IsOverdue { get; private set; }
+
+		public virtual void Calculate(SaleSettings settings)
+		{
+			if (Status == ServiceRequestStatus.New)
+				IsOverdue = DateTime.Now > RegDate.AddDays(settings.DaysForRepair);
+		}
 
 		public virtual string GetDescription()
 		{
