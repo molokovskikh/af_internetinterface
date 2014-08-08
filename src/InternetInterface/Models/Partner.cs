@@ -93,7 +93,7 @@ namespace InternetInterface.Models
 
 		public virtual IList<string> AccesedPartner { get; set; }
 
-		public Boolean AccesPartner(string reduseRulesName)
+		public virtual bool AccesPartner(string reduseRulesName)
 		{
 			return AccesedPartner.Contains(reduseRulesName);
 		}
