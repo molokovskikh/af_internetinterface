@@ -68,7 +68,7 @@ namespace InternetInterface.Queries
 
 		public Dictionary<string, object> GetParameters()
 		{
-			if (CategorieAccessSet.AccesPartner("SSI"))
+			if (InitializeContent.Partner.AccesPartner("SSI"))
 				return new Dictionary<string, object> {
 					{ "filter.SearchText", SearchText },
 					{ "filter.SearchProperties", SearchProperties },
@@ -193,7 +193,7 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 				var countQuery = session.CreateSQLQuery(newSql);
 				if (!String.IsNullOrEmpty(SearchText) && wherePart.Contains(":SearchText"))
 					countQuery.SetParameter("SearchText", "%" + SearchText + "%");
-				if (CategorieAccessSet.AccesPartner("SSI"))
+				if (InitializeContent.Partner.AccesPartner("SSI"))
 					SetParameters(countQuery, wherePart);
 				_lastRowsCount = Convert.ToInt32(countQuery.UniqueResult());
 			}

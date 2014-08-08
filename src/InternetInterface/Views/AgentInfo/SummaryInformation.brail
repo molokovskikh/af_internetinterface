@@ -28,7 +28,7 @@
 </table>
 </form>
 <% if Payments.Count > 0: %>
-<table class="table" id="payments_table" style="border:1px solid #AAA;">
+<table class="table" id="payments_table">
 	<thead>
 		<tr>
 			<th>Сумма платежа</th>

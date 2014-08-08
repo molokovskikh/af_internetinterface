@@ -35,7 +35,7 @@
 <div id="block-tables" class="block">
 <div class="content">
 <% if not Editing: %>
-<% if PartnerAccessSet.AccesPartner("SSI"): %>
+<% if MapPartner.AccesPartner("SSI"): %>
 	<table class="table" style="width:100%;">
 		<thead>
 			<tr>
@@ -86,7 +86,7 @@
 			  output  WriteMessageError(errorMessage)
 		end %>
 		<th><span style="color:#787676"> Информация по клиенту </span> <span style="color:Black">  ${Client.Surname}  ${Client.Name}  ${Client.Patronymic} ${"(Он-Лайн)" if _client.OnLine()} </span>
-		<% if PartnerAccessSet.AccesPartner("ECI"): %>
+		<% if MapPartner.AccesPartner("ECI"): %>
 			<button type="submit"  class="button save">
 				Редактировать
 			</button>
@@ -98,7 +98,7 @@
 		<tr>
 			<td><span class="description">Номер лицевого счета: </span> ${_client.Id.ToString("00000")}</td>
 		</tr>
-		<% if PartnerAccessSet.AccesPartner("SSI"): %>
+		<% if MapPartner.AccesPartner("SSI"): %>
 		<tr>
 			<td><span class="description">Дата рождения: </span> ${?Client.DateOfBirth.ToShortDateString()}</td>
 		</tr>
@@ -112,7 +112,7 @@
 			</td>
 		</tr>
 		<% end %>
-		<% if PartnerAccessSet.AccesPartner("VP"): %>
+		<% if MapPartner.AccesPartner("VP"): %>
 		<tr>
 			<td>
 				Паспортные данные: <br />
@@ -123,7 +123,7 @@
 			</td>
 		</tr>
 		<% end %>
-		<% if PartnerAccessSet.AccesPartner("SSI"): %>
+		<% if MapPartner.AccesPartner("SSI"): %>
 		<tr>
 			<td><span class="description">Дата регистрации:</span> ${_client.RegDate.ToShortDateString()}</td>
 		</tr>
@@ -161,7 +161,7 @@
 		</tr>
 		<% end %>
 
-		<% if PartnerAccessSet.AccesPartner("SSI"): %>
+		<% if MapPartner.AccesPartner("SSI"): %>
 		<tr>
 			<td><span class="description">Баланс:</span> ${Client.Balance}</td>
 		</tr>
@@ -207,7 +207,7 @@
 		</tr>
 		<% end %>
 		<% end %>
-		<% if PartnerAccessSet.AccesPartner("SSI"): %>
+		<% if MapPartner.AccesPartner("SSI"): %>
 				<% if IsDefined("RegisntationDate"): %>
 			<tr>
 				<td><span class="description">Дата регистрации заявки:</span> ${RegisntationDate}</td>
@@ -234,7 +234,7 @@
 			</td>
 		</tr>
 		<% end %>
-	<% if PartnerAccessSet.AccesPartner("ECI"): %>
+	<% if MapPartner.AccesPartner("ECI"): %>
 			<tr>
 				<td>
 					<% if _client.AdditionalCanUsed("Refused"): %>
@@ -253,7 +253,7 @@
 				 </td>
 			</tr>
 	<% end %>
-	<% if PartnerAccessSet.AccesPartner("DHCP"): %>
+	<% if MapPartner.AccesPartner("DHCP"): %>
 			<tr>
 				<td>
 					<form class="inlineForm" method="post" action="${siteroot}/UserInfo/AddEndPoint">
@@ -300,9 +300,9 @@
 <% end %>
 <br />
 <% for i,item in enumerate(ClientConnectInf):
-OutputSubView("/Subview/ConnectInfo", {
-	"ConnectInfo": item,
-	"EditingConnect" : EConnect == item.endpointId})
+	OutputSubView("/Subview/ConnectInfo", {
+		"ConnectInfo": item,
+		"EditingConnect" : EConnect == item.endpointId})
 end %>
 <% OutputSubView("/Subview/PaymentInfo") %>
 <br />
@@ -313,12 +313,12 @@ end %>
 </div>
 </div>
 <div style="width:49%; float:right; padding-top:5px;">
-<% if PartnerAccessSet.AccesPartner("SSI"):
-	OutputSubView("""\Subview\ContactInfo""")
+<% if MapPartner.AccesPartner("SSI"):
+	OutputSubView("/Subview/ContactInfo")
 end
-	OutputSubView("""\Subview\AppealsInfo""")
-if PartnerAccessSet.AccesPartner("SSI"):
-	OutputSubView("""\Subview\CallsHistory""")
-	OutputSubView("""\Subview\ServiceControl""")
+	OutputSubView("/Subview/AppealsInfo")
+if MapPartner.AccesPartner("SSI"):
+	OutputSubView("/Subview/CallsHistory")
+	OutputSubView("/Subview/ServiceControl")
 end %>
 </div>

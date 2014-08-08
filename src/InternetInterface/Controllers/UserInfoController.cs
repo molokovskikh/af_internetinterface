@@ -801,10 +801,7 @@ namespace InternetInterface.Controllers
 			else {
 				Error("Введена неверная сумма, должно быть положительное число.");
 			}
-			if (payment != null && Partner.ShowContractOfAgency && client.IsPhysical() && !payment.Virtual)
-				Redirect("Payments", "ContractOfAgency", new { id = payment.Id });
-			else
-				RedirectToUrl(client.Redirect());
+			RedirectToUrl(client.Redirect());
 		}
 
 		[AccessibleThrough(Verb.Post)]

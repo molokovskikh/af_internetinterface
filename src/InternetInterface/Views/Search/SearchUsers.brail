@@ -22,7 +22,7 @@
 	}
 </style>
 
-<% if PartnerAccessSet.AccesPartner("GCI") or PartnerAccessSet.AccesPartner("SD"): %>
+<% if MapPartner.AccesPartner("GCI") or MapPartner.AccesPartner("SD"): %>
 <form id="SearchForm" name="SearchForm" action="${siteroot}/Search/SearchBy">
 <center>
 <table>

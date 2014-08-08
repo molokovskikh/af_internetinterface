@@ -210,7 +210,7 @@ ${app.Asset("Register.js")}
 	</thead>
 	<tbody>
 		<tr>
-			<% if PartnerAccessSet.AccesPartner("SSI"): %>
+			<% if MapPartner.AccesPartner("SSI"): %>
 				<td>Серия паспорта</td>
 			<% else: %>
 				<td><b>Серия паспорта</b></td>
@@ -223,7 +223,7 @@ ${app.Asset("Register.js")}
 			</td>
 		</tr>
 		<tr>
-			<% if PartnerAccessSet.AccesPartner("SSI"): %>
+			<% if MapPartner.AccesPartner("SSI"): %>
 				<td>Номер паспорта</td>
 			<% else: %>
 				<td><b>Номер паспорта</b></td>
@@ -236,7 +236,7 @@ ${app.Asset("Register.js")}
 			</td>
 		</tr>
 		<tr>
-			<% if PartnerAccessSet.AccesPartner("SSI"): %>
+			<% if MapPartner.AccesPartner("SSI"): %>
 				<td>Дата выдачи паспорта</td>
 			<% else: %>
 				<td><b>Дата выдачи паспорта</b></td>
@@ -249,7 +249,7 @@ ${app.Asset("Register.js")}
 			</td>
 		</tr>
 		<tr>
-			<% if PartnerAccessSet.AccesPartner("SSI"): %>
+			<% if MapPartner.AccesPartner("SSI"): %>
 				<td>Кем выдан</td>
 			<% else: %>
 				<td><b>Кем выдан</b></td>
@@ -262,7 +262,7 @@ ${app.Asset("Register.js")}
 			</td>
 		</tr>
 		<tr>
-			<% if PartnerAccessSet.AccesPartner("SSI"): %>
+			<% if MapPartner.AccesPartner("SSI"): %>
 				<td>Адрес регистрации</td>
 			<% else: %>
 				<td><b>Адрес регистрации</b></td>
@@ -280,7 +280,7 @@ ${app.Asset("Register.js")}
 <% OutputSubView("/Templates/IpTv") %>
 <% OutputSubView("/Templates/Internet") %>
 
-<% if PartnerAccessSet.AccesPartner("SSI")\
+<% if MapPartner.AccesPartner("SSI")\
 	and IsDefined("Editing")\
 	and Editing: %>
 

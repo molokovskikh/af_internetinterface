@@ -19,7 +19,6 @@ ${app.Asset("payments.css")}
 <span class="itogo">Всего: ${paymentsSum.ToString("C")}</span>
 
 <div id="PaymentTable" style="display:none">
-<div style="clear:both;">
 	<% if (Payments.Count == 0): %>
 		<div class="flash">
 			<div class="message error">
@@ -27,10 +26,11 @@ ${app.Asset("payments.css")}
 			</div>
 		</div>
 	<% else: %>
-	<table class="table" style="width: 100%; font-size: small;" align="left">
+	<table class="table">
 		<thead>
 			<tr>
 				<th></th>
+				<th>Номер платежа</th>
 				<th>Платеж зарегистрировал</th>
 				<th>Дата оплаты клиентом</th>
 				<th>Дата регистрации платежа</th>
@@ -44,6 +44,13 @@ ${app.Asset("payments.css")}
 				<td>
 					<input type="button" data-dialog-action="cancel_payment_action" data-url="${siteroot}/Payments/${item.Id}/Cancel" value="Отменить" />
 					<input type="button" data-dialog-action="move_payment_action" data-url="${siteroot}/Payments/${item.Id}/Move" value="Переместить" />
+				</td>
+				<td>
+					<% if MapPartner.NeedShowAgenceContract(item): %>
+					${app.LinkTo(item, item.Id, @ContractOfAgency)}
+					<% else: %>
+					!{item.Id}
+					<% end %>
 				</td>
 				<td>${?item.Agent.Name}</td>
 				<td>${item.PaidOn}</td>
@@ -64,5 +71,4 @@ ${app.Asset("payments.css")}
 		</tr>
 	</table>
 	<% end %>
-</div>
 </div>

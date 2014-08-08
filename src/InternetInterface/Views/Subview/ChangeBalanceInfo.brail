@@ -1,11 +1,11 @@
-﻿<% if PartnerAccessSet.AccesPartner("CB"): %>
+﻿<% if MapPartner.AccesPartner("CB"): %>
 <div style="clear:both;">
 
 	<% if _client.LawyerPerson == null: %>
 		<% OutputSubView("""\Subview\Payment""") %>
 	<% end %>
 
-	<% if PartnerAccessSet.AccesPartner("ECI"): %>
+	<% if MapPartner.AccesPartner("ECI"): %>
 	<div class="form-sub-block">
 		<h3>Списание средств</h3>
 		<form method="post" action="${siteroot}/UserInfo/UserWriteOff">

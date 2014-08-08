@@ -14,7 +14,7 @@
 						<b>Сумма за подключение:</b>
 					</td>
 					<td>
-						<% if PartnerAccessSet.AccesPartner("SSI"): %>
+						<% if MapPartner.AccesPartner("SSI"): %>
 							${app.Edit("client.ConnectSum")}
 						<% else: %>
 							${FormHelper.HiddenField("client.ConnectSum")}
@@ -28,7 +28,7 @@
 
 		<table>
 			<tbody>
-				<% if PartnerAccessSet.AccesPartner("SSI"): %>
+				<% if MapPartner.AccesPartner("SSI"): %>
 				<tr>
 					<td colspan=2>
 						<label for="VisibleRegisteredInfo">Показывать наряд на подключение</label>

@@ -15,7 +15,7 @@
 		<td>
 			<button type="submit" id="Button2" class="button ok">Зарегистрировать</button>
 	</form>
-	<% if PartnerAccessSet.AccesPartner("SSI"): %>
+	<% if MapPartner.AccesPartner("SSI"): %>
 			<a href="${Siteroot}/Search/Redirect?filter.ClientCode=${ClientCode}&filter.appealType=1" class="button" style="background-color:${"#cdc6c6" if appealType == 1};">Пользовательские</a>
 			<a href="${Siteroot}/Search/Redirect?filter.ClientCode=${ClientCode}&filter.appealType=3" class="button" style="background-color:${"#cdc6c6" if appealType == 3};">Системные</a>
 			<a href="${Siteroot}/Search/Redirect?filter.ClientCode=${ClientCode}&filter.appealType=5" class="button" style="background-color:${"#cdc6c6" if appealType == 5};">Внешние</a>

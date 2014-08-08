@@ -148,7 +148,7 @@
 			<tr>
 			 <td><input type="checkbox" id="Checkbox1" name="LabelList[${i}]" value=${Client.Id} /></td>
 			 <td>${Client.Id}</td>
-				<% if PartnerAccessSet.AccesPartner("RC"): %>
+				<% if MapPartner.AccesPartner("RC"): %>
 					<% if Client.Client == null: %>
 				<td><a id="request_to_reg_${Client.Id}" href="${siteroot}/ConnectionRequest/RequestOne?id=${Client.Id}">${TextHelper.SelectQuery(filter.query, Client.ApplicantName)}</a></td>
 					<% else: %>

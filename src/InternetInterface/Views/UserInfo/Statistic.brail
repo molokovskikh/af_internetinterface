@@ -1,4 +1,4 @@
-﻿<% if PartnerAccessSet.AccesPartner("SSI"):  %>
+﻿<% if MapPartner.AccesPartner("SSI"):  %>
 <form method='get'>
 	<table id="statTable">
 		<tbody>
