@@ -335,7 +335,6 @@ set s.LastStartFail = true;")
 					});
 				}
 				catch (Exception ex) {
-					Console.WriteLine(ex);
 					errorCount++;
 					_log.Error(string.Format("Ошибка при обработке клиента {0}", id), ex);
 				}
@@ -344,8 +343,8 @@ set s.LastStartFail = true;")
 
 		private void WriteOffFromPhysicalClient(ISession session, Client client)
 		{
-			if (client.Status.Type == StatusType.BlockedForRepair && (DateTime.Now - client.StatusChangedOn).TotalDays > _saleSettings.DaysForRepair) {
-				client.SetStatus(Status.Get(StatusType.Worked, session));
+			if (_saleSettings.IsRepairExpaired(client)) {
+				client.SetStatus(StatusType.Worked, session);
 			}
 
 			var phisicalClient = client.PhysicalClient;

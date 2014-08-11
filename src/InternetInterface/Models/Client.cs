@@ -19,6 +19,7 @@ using InternetInterface.Models.Services;
 using InternetInterface.Services;
 using NHibernate;
 using NHibernate.Linq;
+using NPOI.SS.Formula.Functions;
 
 namespace InternetInterface.Models
 {
@@ -173,6 +174,9 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual DateTime? BlockDate { get; set; }
+
+		[Property]
+		public virtual DateTime? StatusChangedOn { get; set; }
 
 		[Property]
 		public virtual bool SendEmailNotification { get; set; }
@@ -875,7 +879,6 @@ where CE.Client = {0}", Id))
 		//флаг устанавливается в случае если нужно изменить настройки sce
 		//например если была активирована услуга обещанный платеж
 		public virtual bool IsNeedRecofiguration { get; set; }
-		public virtual DateTime StatusChangedOn { get; set; }
 
 		public virtual void RegistreContacts(Partner registrator)
 		{
@@ -1039,13 +1042,19 @@ where CE.Client = {0}", Id))
 			}
 			else if (status.Type == StatusType.Worked) {
 				Disabled = false;
-				RatedPeriodDate = null;
+				//если мы возобновили работу после поломки то дата начала периода тарификации не должна изменяться
+				//если ее сбросить списания начнутся только когда клиент получит аренду
+				if (status.Type == StatusType.BlockedForRepair)
+					RatedPeriodDate = null;
 				DebtDays = 0;
 				ShowBalanceWarningPage = false;
 			}
 			if (status.Type == StatusType.BlockedForRepair) {
 				Disabled = true;
 				AutoUnblocked = false;
+			}
+			if (Status.Type != status.Type) {
+				StatusChangedOn = DateTime.Now;
 			}
 			Status = status;
 		}

@@ -50,16 +50,8 @@ namespace InternetInterface.Test.Functional
 					if (settings == null)
 						session.Save(new InternetSettings());
 
-					var saleSettings = session.Query<SaleSettings>().FirstOrDefault();
-					if (settings == null) {
-						saleSettings = new SaleSettings {
-							MinSale = 3,
-							MaxSale = 15,
-							PeriodCount = 3,
-							SaleStep = 1,
-							FreeDaysVoluntaryBlocking = 28,
-						};
-						session.Save(saleSettings);
+					if (!session.Query<SaleSettings>().Any()) {
+						session.Save(SaleSettings.Defaults());
 					}
 
 					var self = session.Query<Partner>().FirstOrDefault(p => p.Login == Environment.UserName);
