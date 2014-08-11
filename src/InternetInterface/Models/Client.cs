@@ -1044,7 +1044,7 @@ where CE.Client = {0}", Id))
 				Disabled = false;
 				//если мы возобновили работу после поломки то дата начала периода тарификации не должна изменяться
 				//если ее сбросить списания начнутся только когда клиент получит аренду
-				if (status.Type == StatusType.BlockedForRepair)
+				if (Status.Type != StatusType.BlockedForRepair)
 					RatedPeriodDate = null;
 				DebtDays = 0;
 				ShowBalanceWarningPage = false;
