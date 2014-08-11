@@ -140,7 +140,6 @@ namespace Billing.Test.Integration
 			client = session.Load<Client>(client.Id);
 			Assert.AreEqual(StatusType.Worked, client.Status.Type);
 			Assert.AreEqual(1, client.WriteOffs.Count);
-
 		}
 	}
 }
