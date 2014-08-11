@@ -262,6 +262,15 @@ namespace InforoomInternet.Controllers
 			}
 		}
 
+		public void RepairCompleted()
+		{
+			var client = LoadClient();
+			if (client.Status.Type == StatusType.BlockedForRepair)
+				client.SetStatus(StatusType.Worked, DbSession);
+			Notify("Работа возобновлена");
+			RedirectToAction("IndexOffice");
+		}
+
 		private string TransformTelNum(string num)
 		{
 			return "8-" + num.Substring(0, 3) + "-" + num.Substring(3, 3) + "-" + num.Substring(6, 2) + "-" + num.Substring(8, 2);

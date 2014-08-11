@@ -5,10 +5,17 @@
 			Если работы завершены нажмите кнопку "Продолжить".
 			После нажатия кнопки "Продолжить" тарификация будет возобновлена.
 		</p>
+		<% # если мы находимся на в личном кабинете %>
+		<% if IsDefined(@PhysicalClient): %>
+		<form method="post" action="${siteroot}/PrivateOffice/RepairCompleted">
+			<input type="submit" class="button" value="Продолжить">
+		</form>
+		<% else: %>
 		<form method="post">
 			<input name="referer" type="hidden" value="!{referer}">
-			<input type="submit" class="button" id="ConButton" value="Продолжить">
+			<input type="submit" class="button" value="Продолжить">
 		</form>
+		<% end %>
 	<% elif Client.HaveVoluntaryBlockin(): %>
 		<% OutputSubView("/PrivateOffice/DiactivateVoluntaryBlockin") %>
 	<% elif Client.BeginWork == null: %>
