@@ -112,7 +112,7 @@ namespace InternetInterface.Test.Functional
 		public void Sms_on_close()
 		{
 			var request = CreateRequest();
-			request.RegDate.AddDays(-5);
+			request.RegDate = request.RegDate.AddDays(-5);
 			session.Save(request);
 			Open("ServiceRequest/ShowRequest?Id={0}", request.Id);
 			Click("(Редактировать)");
@@ -131,6 +131,7 @@ namespace InternetInterface.Test.Functional
 			session.Save(request);
 			Open("ServiceRequest/ShowRequest?Id={0}", request.Id);
 			Click("(Редактировать)");
+			Css("#sumField").SendKeys("500");
 			Css("#request_Status").SelectByText("Закрыт");
 			var sms = Css("#request_CloseSmsMessage");
 			sms.SendKeys("тестовое сообщение");
