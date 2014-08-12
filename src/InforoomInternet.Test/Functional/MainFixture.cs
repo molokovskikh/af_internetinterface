@@ -16,5 +16,12 @@ namespace InforoomInternet.Test.Functional
 			Css("#saveFeedback").Click();
 			AssertText("Спасибо, Ваша заявка принята.");
 		}
+
+		[Test]
+		public void View_tariffs()
+		{
+			Open("/Main/Index");
+			AssertText("На всех тарифах доступ к крупнейшему торрент-треккеру");
+		}
 	}
 }

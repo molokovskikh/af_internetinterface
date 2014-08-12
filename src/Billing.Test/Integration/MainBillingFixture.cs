@@ -55,14 +55,7 @@ namespace Billing.Test.Integration
 					client = CreateClient();
 
 					s.CreateSQLQuery("delete from Internet.SaleSettings").ExecuteUpdate();
-					var settings = new SaleSettings {
-						MaxSale = MaxSale,
-						MinSale = MinSale,
-						PeriodCount = PerionCount,
-						SaleStep = SaleStep,
-						FreeDaysVoluntaryBlocking = 28
-					};
-					s.Save(settings);
+					s.Save(SaleSettings.Defaults());
 				});
 			}
 		}
@@ -256,14 +249,7 @@ namespace Billing.Test.Integration
 			client = CreateClient();
 
 			session.CreateSQLQuery("delete from Internet.SaleSettings").ExecuteUpdate();
-			var settings = new SaleSettings {
-				MaxSale = MaxSale,
-				MinSale = MinSale,
-				PeriodCount = PerionCount,
-				SaleStep = SaleStep,
-				FreeDaysVoluntaryBlocking = 28
-			};
-			session.Save(settings);
+			session.Save(SaleSettings.Defaults());
 		}
 
 		public void SeedDb()

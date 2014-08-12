@@ -80,14 +80,7 @@ namespace Billing.Test.Integration
 			CleanDb();
 
 			session.CreateSQLQuery("delete from Internet.SaleSettings").ExecuteUpdate();
-			var saleSettings = new SaleSettings {
-				MaxSale = MaxSale,
-				MinSale = MinSale,
-				PeriodCount = PerionCount,
-				SaleStep = SaleStep,
-				FreeDaysVoluntaryBlocking = 28
-			};
-			session.Save(saleSettings);
+			session.Save(SaleSettings.Defaults());
 		}
 
 		[Test(Description = "Проверяет корректное списание при активации заказа")]

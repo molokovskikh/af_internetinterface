@@ -288,5 +288,15 @@ namespace InforoomInternet.Test.Functional
 			session.Refresh(client);
 			Assert.IsTrue(client.FirstLaunch);
 		}
+
+		[Test]
+		public void Blocked_for_repair()
+		{
+			client.SetStatus(StatusType.BlockedForRepair, session);
+			Open("PrivateOffice/IndexOffice");
+			AssertText("Доступ в интернет заблокирован из-за проведения работ по сервисной заявке");
+			Click("Продолжить");
+			AssertText("Работа возобновлена");
+		}
 	}
 }

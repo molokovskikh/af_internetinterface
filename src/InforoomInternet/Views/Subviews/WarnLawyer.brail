@@ -1,5 +1,4 @@
-﻿<h1 style="color:Red">Внимание!</h1>
-<p>
+﻿<p>
 <% if Client.Disabled: %>
 	Доступ в интернет заблокирован.<br>
 <% end %>
@@ -11,12 +10,3 @@
 	<% end %>
 <% end %>
 </p>
-<% if not Client.Disabled: %>
-	<p>
-		Сейчас вы можете продолжить работу в интернет, нажав кнопку "Продолжить".
-	</p>
-	<form method=post>
-		<input name=referer type=hidden value="!{referer}">
-		<input type=submit id="ConButton" value="Продолжить">
-	</form>
-<% end %>

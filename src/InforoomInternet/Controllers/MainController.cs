@@ -44,6 +44,7 @@ namespace InforoomInternet.Controllers
 
 		public void Index()
 		{
+			PropertyBag["tariffs"] = DbSession.Query<Tariff>().Where(t => !t.Hidden).ToList();
 		}
 
 		public void Zayavka()

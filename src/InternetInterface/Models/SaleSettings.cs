@@ -6,6 +6,7 @@ using System.Web;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Castle.Components.Validator;
+using Common.Tools;
 
 namespace InternetInterface.Models
 {
@@ -32,5 +33,23 @@ namespace InternetInterface.Models
 
 		[Property, Description("Количество дней в год когда услуга добровольная блокировка бесплатная")]
 		public virtual int FreeDaysVoluntaryBlocking { get; set; }
+
+		public static SaleSettings Defaults()
+		{
+			return new SaleSettings {
+				MaxSale = 15,
+				MinSale = 3,
+				PeriodCount = 3,
+				SaleStep = 1,
+				FreeDaysVoluntaryBlocking = 28,
+				DaysForRepair = 3
+			};
+		}
+
+		public virtual bool IsRepairExpaired(Client client)
+		{
+			return client.Status.Type == StatusType.BlockedForRepair
+				&& (SystemTime.Now() - client.StatusChangedOn).GetValueOrDefault().TotalDays > DaysForRepair;
+		}
 	}
 }

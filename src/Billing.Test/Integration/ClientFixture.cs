@@ -98,32 +98,44 @@ namespace Billing.Test.Integration
 		[Test]
 		public void Reset_repair_status_on_timeout()
 		{
+			client.RatedPeriodDate = DateTime.Now;
 			client.SetStatus(StatusType.BlockedForRepair, session);
 			session.Save(client);
 			session.Flush();
-			session.Clear();
 			session.Transaction.Commit();
 			billing.ProcessPayments();
 			billing.ProcessWriteoffs();
 
+			session.Clear();
 			client = session.Load<Client>(client.Id);
 			Assert.AreEqual(0, client.WriteOffs.Count);
+
+			SystemTime.Now = () => DateTime.Now.AddDays(2);
+			billing.ProcessPayments();
+			billing.ProcessWriteoffs();
+
+			session.Clear();
+			client = session.Load<Client>(client.Id);
+			Assert.AreEqual(StatusType.BlockedForRepair, client.Status.Type);
+			//симулируем обращение к dhcp
+			session.Save(client);
+			session.Flush();
 
 			SystemTime.Now = () => DateTime.Now.AddDays(3);
 			billing.ProcessPayments();
 			billing.ProcessWriteoffs();
 
+			//если прошло три дня ставим статус работает, но денег не списываем тк возможности работать не было
 			session.Clear();
 			client = session.Load<Client>(client.Id);
-			//симулируем обращение к dhcp
-			client.RatedPeriodDate = DateTime.Now;
-			session.Save(client);
-			session.Flush();
+			Assert.AreEqual(StatusType.Worked, client.Status.Type);
+			Assert.AreEqual(0, client.WriteOffs.Count);
 
 			SystemTime.Now = () => DateTime.Now.AddDays(4);
 			billing.ProcessPayments();
 			billing.ProcessWriteoffs();
 
+			//на четвертый день списываем деньги
 			session.Clear();
 			client = session.Load<Client>(client.Id);
 			Assert.AreEqual(StatusType.Worked, client.Status.Type);
