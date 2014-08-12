@@ -109,7 +109,7 @@ namespace InternetInterface.Test.Functional
 		}
 
 		[Test]
-		public void Sms_on_close()
+		public void Close_overdue_repair_request()
 		{
 			var request = CreateRequest();
 			request.RegDate = request.RegDate.AddDays(-5);
@@ -125,7 +125,7 @@ namespace InternetInterface.Test.Functional
 		}
 
 		[Test]
-		public void Close_overdue_repair_request()
+		public void Sms_on_close()
 		{
 			var request = CreateRequest();
 			session.Save(request);
