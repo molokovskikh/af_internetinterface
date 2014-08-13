@@ -69,6 +69,11 @@ namespace InternetInterface.Models
 		}
 	}
 
+	public enum IdDocType
+	{
+		[Description("Паспорт РФ")] LocalId,
+		[Description("Иной документ")] Over
+	}
 
 	[ActiveRecord("PhysicalClients", Schema = "internet", Lazy = true), Auditable]
 	public class PhysicalClient : ValidActiveRecordLinqBase<PhysicalClient>
@@ -112,10 +117,16 @@ namespace InternetInterface.Models
 		[ValidateRegExp(@"^((\d{3})-(\d{7}))", "Ошибка формата телефонного номера (***-*******)")]
 		public virtual string HomePhoneNumber { get; set; }
 
-		[Property, ValidateRegExp(@"^(\d{4})?$", "Неправильный формат серии паспорта (4 цифры)"), UserValidateNonEmpty("Поле не должно быть пустым"), Auditable("Серия паспорта")]
+		[Property, Description("Документ удостоверяющий личность")]
+		public virtual IdDocType IdDocType { get; set; }
+
+		[Property, Description("Название документа удостоверяющего личность")]
+		public virtual string IdDocName { get; set; }
+
+		[Property, /*ValidateRegExp(@"^(\d{4})?$", "Неправильный формат серии паспорта (4 цифры)"),*/ UserValidateNonEmpty("Поле не должно быть пустым"), Auditable("Серия паспорта")]
 		public virtual string PassportSeries { get; set; }
 
-		[Property, ValidateRegExp(@"^(\d{6})?$", "Неправильный формат номера паспорта (6 цифр)"), UserValidateNonEmpty("Поле не должно быть пустым"), Auditable("Номер паспорта")]
+		[Property, /*ValidateRegExp(@"^(\d{6})?$", "Неправильный формат номера паспорта (6 цифр)"),*/ UserValidateNonEmpty("Поле не должно быть пустым"), Auditable("Номер паспорта")]
 		public virtual string PassportNumber { get; set; }
 
 		[Property, UserValidateNonEmpty("Введите дату выдачи паспорта"), ValidateDate("Ошибка формата даты **-**-****"), Auditable("Дата выдачи паспорта")]
@@ -166,6 +177,16 @@ namespace InternetInterface.Models
 		[OneToOne(PropertyRef = "PhysicalClient")]
 		public virtual Client Client { get; set; }
 
+		public virtual string SafeIdDocName
+		{
+			get
+			{
+				if (IdDocType == IdDocType.LocalId)
+					return "Паспорт";
+				return IdDocName;
+			}
+		}
+
 		[ValidateSelf]
 		public virtual void Validate(ErrorSummary errors)
 		{
@@ -180,6 +201,20 @@ namespace InternetInterface.Models
 
 			if (Client.Status.Type != StatusType.Dissolved && HouseObj == null) {
 				errors.RegisterErrorMessage("HouseObj", "Нужно выбрать дом");
+			}
+
+			if (IdDocType == IdDocType.LocalId) {
+				if (!new RegularExpressionValidator(@"^(\d{6})?$").IsValid(this, PassportNumber)) {
+					errors.RegisterErrorMessage("PassportNumber", "Неправильный формат номера паспорта (6 цифр)");
+				}
+				if (!new RegularExpressionValidator(@"^(\d{4})?$").IsValid(this, PassportSeries)) {
+					errors.RegisterErrorMessage("PassportSeries", "Неправильный формат серии паспорта (4 цифры)");
+				}
+			}
+			else {
+				if (new NonEmptyValidator().IsValid(this, IdDocName)) {
+					errors.RegisterErrorMessage("IdDocName", "Заполнение поля обязательно");
+				}
 			}
 		}
 

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
+using Common.MySql;
 using Common.Tools;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.MonoRailExtentions;
@@ -56,16 +57,14 @@ namespace InternetInterface.Controllers
 	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class UserInfoController : InternetInterfaceController
 	{
-		public void SearchUserInfo([DataBind("filter")] ClientFilter filter, [DataBind("userWO")] UserWriteOff writeOff)
+		public void ShowPhysicalClient([DataBind("filter")] ClientFilter filter, [DataBind("userWO")] UserWriteOff writeOff)
 		{
 			var client = DbSession.Load<Client>(filter.ClientCode);
 			PropertyBag["filter"] = filter;
 			SendParam(filter, filter.grouped, filter.appealType);
 			PropertyBag["Editing"] = filter.Editing;
 			PropertyBag["appealType"] = filter.appealType;
-			PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClient>(new PhysicalClient());
 			PropertyBag["Switches"] = NetworkSwitch.All(DbSession, client.GetRegion());
-			PropertyBag["RegionList"] = DbSession.Query<RegionHouse>().ToList();
 		}
 
 		public void Leases([DataBind("filter")] LeaseLogFilter filter)
@@ -75,7 +74,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Leases"] = filter.Find(DbSession);
 		}
 
-		public void LawyerPersonInfo([DataBind("filter")] ClientFilter filter)
+		public void ShowLawyerPerson([DataBind("filter")] ClientFilter filter)
 		{
 			var client = DbSession.Load<Client>(filter.ClientCode);
 			PropertyBag["grouped"] = filter.grouped;
@@ -207,7 +206,7 @@ namespace InternetInterface.Controllers
 					Error(e.Message);
 				}
 			}
-			RedirectToUrl(client.Redirect());
+			RedirectTo(client);
 		}
 
 		public void DiactivateService(uint clientId, uint serviceId)
@@ -219,7 +218,7 @@ namespace InternetInterface.Controllers
 				if (client.IsNeedRecofiguration)
 					SceHelper.UpdatePackageId(DbSession, client);
 			}
-			RedirectToUrl(client.Redirect());
+			RedirectTo(client);
 		}
 
 		[return: JSONReturnBinder]
@@ -492,29 +491,29 @@ namespace InternetInterface.Controllers
 		public void EditLawyerPerson(uint ClientID, int Speed, string grouped, AppealType appealType, string comment)
 		{
 			SetBinder(new DecimalValidateBinder { Validator = Validator });
-			var _client = DbSession.Query<Client>().First(c => c.Id == ClientID);
-			var updateClient = _client.LawyerPerson;
+			var client = DbSession.Load<Client>(ClientID);
+			var updateClient = client.LawyerPerson;
 
 			BindObjectInstance(updateClient, ParamStore.Form, "LegalPerson");
-			BindObjectInstance(_client, ParamStore.Form, "_client");
+			BindObjectInstance(client, ParamStore.Form, "_client");
 
 			if (IsValid(updateClient)) {
 				if (!string.IsNullOrEmpty(comment)) {
-					_client.LogComment = comment;
+					client.LogComment = comment;
 					updateClient.LogComment = comment;
 				}
 
-				_client.PostUpdate();
-				DbSession.Save(_client);
+				client.PostUpdate();
+				DbSession.Save(client);
 				DbSession.Save(updateClient);
 
-				RedirectToUrl("../Search/Redirect?filter.ClientCode=" + ClientID);
+				RedirectTo(client);
 			}
 			else {
 				updateClient.SetValidationErrors(Validator.GetErrorSummary(updateClient));
 				PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(updateClient);
 				DbSession.Evict(updateClient);
-				RenderView("LawyerPersonInfo");
+				RenderView("ShowLawyerPerson");
 				PropertyBag["LegalPerson"] = updateClient;
 				PropertyBag["grouped"] = grouped;
 				var filter = new ClientFilter {
@@ -524,7 +523,7 @@ namespace InternetInterface.Controllers
 					Editing = true,
 					EditingConnect = 0
 				};
-				LawyerPersonInfo(filter);
+				ShowLawyerPerson(filter);
 			}
 		}
 
@@ -535,7 +534,6 @@ namespace InternetInterface.Controllers
 		{
 			Message message = null;
 			var client = DbSession.Load<Client>(ClientID);
-			//var statusEntity = DbSession.Load<Status>(status);
 			var updateClient = client.PhysicalClient;
 			var oldStatus = client.Status;
 
@@ -610,13 +608,10 @@ namespace InternetInterface.Controllers
 				if (message == null)
 					message = Message.Notify("Данные изменены");
 				Flash["Message"] = message;
-				RedirectToUrl("../UserInfo/SearchUserInfo?filter.ClientCode=" + ClientID + "&filter.appealType=" + appealType);
+				RedirectToUrl("../UserInfo/ShowPhysicalClient?filter.ClientCode=" + ClientID + "&filter.appealType=" + appealType);
 			}
 			else {
-				updateClient.SetValidationErrors(Validator.GetErrorSummary(updateClient));
-				PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClient>(updateClient);
-				DbSession.Evict(updateClient);
-				RenderView("SearchUserInfo");
+				RenderView("ShowPhysicalClient");
 				Flash["Editing"] = true;
 				Flash["_client"] = client;
 				Flash["Client"] = updateClient;
@@ -663,7 +658,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["EditConnectInfoFlag"] = filter.EditConnectInfoFlag;
 			PropertyBag["sendSmsNotification"] = client.SendSmsNotification;
 			PropertyBag["isService"] = false;
-			PropertyBag["RegionList"] = DbSession.Query<RegionHouse>().ToList();
+			PropertyBag["RegionList"] = DbSession.Query<RegionHouse>().OrderBy(r => r.Name).ToList();
 			ConnectPropertyBag(filter.ClientCode);
 			SendConnectInfo(client);
 			SendUserWriteOff();
@@ -801,7 +796,7 @@ namespace InternetInterface.Controllers
 			else {
 				Error("Введена неверная сумма, должно быть положительное число.");
 			}
-			RedirectToUrl(client.Redirect());
+			RedirectTo(client);
 		}
 
 		[AccessibleThrough(Verb.Post)]
@@ -817,7 +812,7 @@ namespace InternetInterface.Controllers
 			else
 				Flash["userWO"] = writeOff;
 
-			RedirectToUrl(client.Redirect());
+			RedirectTo(client);
 		}
 
 		public void AddInfo(uint ClientCode)
@@ -1099,7 +1094,7 @@ namespace InternetInterface.Controllers
 				order.EndDate = DateTime.Today;
 			}
 			DbSession.Save(order);
-			RedirectToUrl(order.Client.Redirect());
+			RedirectTo(order.Client);
 			var message = MessageOrderHelper.GenerateText(order, "закрытие");
 			message += MessageOrderHelper.GenerateTextService(order);
 			MessageOrderHelper.SendMail("Уведомление о закрытии заказа", message);

@@ -29,7 +29,7 @@ namespace InternetInterface.Test.Functional
 		{
 			var client = ClientHelper.Client(session);
 			session.Save(client);
-			Open(string.Format("UserInfo/SearchUserInfo?filter.ClientCode={0}", client.Id));
+			Open(client.Redirect());
 			AssertText("Информация по клиенту");
 			Input("BalanceText", "500");
 			ClickButton("Пополнить баланс");

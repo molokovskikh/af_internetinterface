@@ -271,9 +271,9 @@
 	</tbody>
 </table>
 <% else: %>
-	<form class="form edit" id="clientEditForm" method="post" action="${siteroot}/UserInfo/EditInformation">
-	<input type="hidden" name="ClientID" value="${ClientCode}" />
-	<input type=hidden name="appealType" value="${appealType}" />
+	${FormHelper.FormTag("/UserInfo/EditInformation", {@id: "clientEditForm", @class: "form edit"})}
+		<input type="hidden" name="ClientID" value="${ClientCode}" />
+		<input type="hidden" name="appealType" value="${appealType}" />
 
 		<% OutputSubView("/Subview/Client") %>
 		<table>
@@ -296,7 +296,8 @@
 				</tr>
 			</tbody>
 		</table>
-	</form>
+	${FormHelper.EndFormTag()}
+	${app.Asset("Register.js")}
 <% end %>
 <br />
 <% for i,item in enumerate(ClientConnectInf):

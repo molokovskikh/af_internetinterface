@@ -15,7 +15,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void Base_view_test()
 		{
-			Open(string.Format("UserInfo/SearchUserInfo?filter.ClientCode={0}", Client.Id));
+			Open(string.Format("UserInfo/ShowPhysicalClient?filter.ClientCode={0}", Client.Id));
 			AssertText(string.Format("Дата начала расчетного периода: {0}", DateTime.Now.ToShortDateString()));
 			AssertText(string.Format("Дата начала программы скидок: {0}", DateTime.Now.AddMonths(-1).ToShortDateString()));
 		}
@@ -89,7 +89,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void TelephoneTest()
 		{
-			Open(string.Format("UserInfo/SearchUserInfo?filter.ClientCode={0}&filter.EditConnectInfoFlag=True", Client.Id));
+			Open(string.Format("UserInfo/ShowPhysicalClient?filter.ClientCode={0}&filter.EditConnectInfoFlag=True", Client.Id));
 			AssertText("Информация по клиенту");
 			Css("#addContactButton").Click();
 			browser.FindElementByClassName("telephoneField").SendKeys("900-9090900");

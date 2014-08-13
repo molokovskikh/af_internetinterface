@@ -789,8 +789,8 @@ where CE.Client = {0}", Id))
 		public virtual string Redirect()
 		{
 			return GetClientType() == ClientType.Phisical
-				? "../UserInfo/SearchUserInfo.rails?filter.ClientCode=" + Id
-				: "../UserInfo/LawyerPersonInfo.rails?filter.ClientCode=" + Id;
+				? "../UserInfo/ShowPhysicalClient?filter.ClientCode=" + Id
+				: "../UserInfo/ShowLawyerPerson?filter.ClientCode=" + Id;
 		}
 
 		/// <summary>

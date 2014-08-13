@@ -124,13 +124,13 @@ namespace InternetInterface.Controllers
 				Flash["ConnectInfo"] = client.GetConnectInfo(DbSession).FirstOrDefault();
 				if (Partner.Role.ReductionName == "Office") {
 					if (VisibleRegisteredInfo)
-						RedirectToUrl("../UserInfo/ClientRegisteredInfo");
+						RedirectToUrl("~/UserInfo/ClientRegisteredInfo");
 					else {
-						RedirectToUrl("../UserInfo/SearchUserInfo?filter.ClientCode=" + client.Id);
+						RedirectTo(client);
 					}
 				}
 				else if (Partner.IsDiller())
-					RedirectToUrl("../UserInfo/ClientRegisteredInfoFromDiller");
+					RedirectToUrl("~/UserInfo/ClientRegisteredInfoFromDiller");
 			}
 			else {
 				EditorValues();
@@ -145,9 +145,6 @@ namespace InternetInterface.Controllers
 				PropertyBag["Applying"] = "false";
 				PropertyBag["ChStatus"] = status;
 				PropertyBag["ChBrigad"] = BrigadForConnect;
-				physicalClient.SetValidationErrors(Validator.GetErrorSummary(physicalClient));
-
-				PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClient>(physicalClient);
 			}
 		}
 
@@ -206,7 +203,7 @@ namespace InternetInterface.Controllers
 				DbSession.SaveMany(client.Orders.ToArray());
 
 				Notify("Клиент успешно загистрирвоан");
-				RedirectToUrl("../UserInfo/LawyerPersonInfo.rails?filter.ClientCode=" + client.Id);
+				RedirectTo(client);
 			}
 			else {
 				PropertyBag["OrderInfo"] = new ClientOrderInfo {
@@ -329,13 +326,9 @@ namespace InternetInterface.Controllers
 			EditorValues();
 
 			PropertyBag["BalanceText"] = string.Empty;
-
 			PropertyBag["iptv"] = client.Client.Iptv;
 			PropertyBag["internet"] = client.Client.Internet;
-
 			PropertyBag["ChBrigad"] = 0;
-			PropertyBag["VB"] = new ValidBuilderHelper<PhysicalClient>(new PhysicalClient());
-
 			PropertyBag["Applying"] = "false";
 			PropertyBag["BalanceText"] = 0;
 			PropertyBag["ConnectInfo"] = new ClientConnectInfo();

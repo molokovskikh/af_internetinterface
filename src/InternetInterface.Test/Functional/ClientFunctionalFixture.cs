@@ -26,12 +26,12 @@ namespace InternetInterface.Test.Functional
 				Client = Client,
 			};
 			session.Save(EndPoint);
-			ClientUrl = string.Format("UserInfo/SearchUserInfo?filter.ClientCode={0}&filter.EditingConnect=true&filter.Editing=true", Client.Id);
+			ClientUrl = string.Format("UserInfo/ShowPhysicalClient?filter.ClientCode={0}&filter.EditingConnect=true&filter.Editing=true", Client.Id);
 		}
 
 		protected void Open()
 		{
-			Open(string.Format("UserInfo/SearchUserInfo?filter.ClientCode={0}", Client.Id));
+			Open(Client.Redirect());
 		}
 	}
 }

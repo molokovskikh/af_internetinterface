@@ -6,7 +6,7 @@
 		г. Воронеж&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!{System.DateTime.Now.ToString("D")}
 	</p>
 	Гражданин <b>!{payment.Client.Name},</b><br>
-	Паспорт <b>!{payment.Client.PhysicalClient.PassportSeries} \ !{payment.Client.PhysicalClient.PassportNumber} выдан !{payment.Client.PhysicalClient.WhoGivePassport}</b><br>
+	!{payment.Client.PhysicalClient.SafeIdDocName} <b>!{payment.Client.PhysicalClient.PassportSeries} \ !{payment.Client.PhysicalClient.PassportNumber} выдан !{payment.Client.PhysicalClient.WhoGivePassport}</b><br>
 	Зарегистрирован по адресу <b>!{payment.Client.PhysicalClient.RegistrationAdress}</b><br>
 	именуемый в дальнейшем «Доверитель» с одной стороны и<br>
 	!{MapPartner.Name}<br>

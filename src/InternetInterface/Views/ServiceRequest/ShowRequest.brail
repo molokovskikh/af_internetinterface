@@ -1,6 +1,5 @@
 ﻿${app.Asset("service-requests.css")}
 ${app.Asset("service-requests.js")}
-${app.Asset("knockout.js")}
 
 <div class="borderless-content">
 	<% #поле должно быть за пределами формы что бы избежать биндинга, оно нужно что бы передать данные в js %>

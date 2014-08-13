@@ -32,7 +32,7 @@ namespace InternetInterface.Test.Functional
 		[Test, Ignore("Клиента без тарифа не должно существовать")]
 		public void Edit_tariff_for_client_without_tariff()
 		{
-			Open("UserInfo/SearchUserInfo?filter.ClientCode=" + client.Id);
+			Open(client.Redirect());
 			AssertText("Информация по клиенту");
 			Click("Редактировать");
 			AssertText("Личная информация");
@@ -44,7 +44,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void Activate_iptv_box_rent()
 		{
-			Open("UserInfo/SearchUserInfo?filter.ClientCode=" + client.Id);
+			Open(client.Redirect());
 			var el = SafeSelectService("Аренда приставки");
 			Css(el, "#clientService_Model").SendKeys("IP STB Aminet");
 			Css(el, "#clientService_SerialNumber").SendKeys("748644654");
@@ -65,7 +65,7 @@ namespace InternetInterface.Test.Functional
 				hardware = new RentableHardware(150, "Коммутатор");
 				session.Save(hardware);
 			}
-			Open("UserInfo/SearchUserInfo?filter.ClientCode=" + client.Id);
+			Open(client.Redirect());
 			var el = SafeSelectService("Аренда оборудования");
 			Css(el, "#startDate").SendKeys(DateTime.Today.ToShortDateString());
 			Css(el, "#clientService_Model").SendKeys("DES-1005A/C1");

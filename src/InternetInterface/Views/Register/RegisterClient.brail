@@ -47,3 +47,4 @@
 		</table>
 	${FormHelper.EndFormTag()}
 </div>
+${app.Asset("Register.js")}

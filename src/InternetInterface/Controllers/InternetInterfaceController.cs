@@ -19,10 +19,10 @@ namespace InternetInterface.Controllers
 		{
 			string uri;
 			if (client.GetClientType() == ClientType.Phisical) {
-				uri = "~/UserInfo/SearchUserInfo.rails?filter.ClientCode={0}";
+				uri = "~/UserInfo/ShowPhysicalClient?filter.ClientCode={0}";
 			}
 			else {
-				uri = "~/UserInfo/LawyerPersonInfo.rails?filter.ClientCode={0}";
+				uri = "~/UserInfo/ShowLawyerPerson?filter.ClientCode={0}";
 			}
 			RedirectToUrl(string.Format(uri, client.Id));
 		}

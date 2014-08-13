@@ -143,9 +143,9 @@ namespace InternetInterface.Helpers
 			}
 			if (NHibernateUtil.GetClass(item) == typeof(Client)) {
 				var client = ((Client)item);
-				var action = "SearchUserInfo";
+				var action = "ShowPhysicalClient";
 				if (client.GetClientType() == ClientType.Legal)
-					action = "LawyerPersonInfo";
+					action = "ShowLawyerPerson";
 				return LinkTo(title != null ? title.ToString() : client.Name, "UserInfo", action, new Dictionary<string, object> {
 					{ "filter.ClientCode", client.Id }
 				});

@@ -1,91 +1,91 @@
 ﻿<style type="text/css">
-    .error
-    {
-        color:Red;
-        /*font-size:10px;
-        padding-left:10px;*/
-        }
-        
-    .house_selector_div
-        {
-			    width:600px;
-			    height:550px;
-			    background-color:White;
-			    text-align:left;
-			    border: 1px solid black;
-			    padding: 10px;
-			    margin:10px;
-            }
+	.error
+	{
+		color:Red;
+	}
+	.house_selector_div
+	{
+		width:600px;
+		height:550px;
+		background-color:White;
+		text-align:left;
+		border: 1px solid black;
+		padding: 10px;
+		margin:10px;
+	}
 </style>
 <script type="text/javascript">
-    $(function () {
-        if ("${ActionName}" == "RegisterHouseAgent")
-    {
-        $('#agent_DateOfBirth').val("");
-        $('#agent_PassportDate').val("");
-        }
-    })
+	$(function () {
+		if ("${ActionName}" == "RegisterHouseAgent")
+		{
+			$('#agent_DateOfBirth').val("");
+			$('#agent_PassportDate').val("");
+		}
+	})
 </script>
+
 <center>
-<div class=house_selector_div>
-${FormHelper.FormTag("${Siteroot}/HouseAgent/${ActionName}", {"id" : "editAgent"})}
-<input type=hidden name="agentId" value="${agent.Id}" />
-<table class="table" style="width:600px;">
-    <thead>
-        <tr>
-            <th colspan=2 style="text-align:center;">Работа с агентом по подключению</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>Фамилия</td>
-            <td>${FormHelper.TextField("agent.Surname")}</td>
-        </tr>
-                <tr>
-            <td>Имя</td>
-            <td>${FormHelper.TextField("agent.Name")}</td>
-        </tr>
-                <tr>
-            <td>Отчество</td>
-            <td>${FormHelper.TextField("agent.Patronymic")}</td>
-        </tr>
-                <tr>
-            <td>Дата рождения</td>
-            <td>${FormHelper.TextField("agent.DateOfBirth")}</td>
-        </tr>
-                <tr>
-            <td>Телефон</td>
-            <td>${FormHelper.TextField("agent.Telephone")}</td>
-        </tr>
-                <tr>
-            <td>Адрес проживания</td>
-            <td>${FormHelper.TextField("agent.Adress")}</td>
-        </tr>
-                <tr>
-            <td>Серия паспорта</td>
-            <td>${FormHelper.TextField("agent.PassportSeries")}</td>
-        </tr>
-                <tr>
-            <td>Номер паспорта</td>
-            <td>${FormHelper.TextField("agent.PassportNumber")}</td>
-        </tr>
-                <tr>
-            <td>Дата выдачи паспорта</td>
-            <td>${FormHelper.TextField("agent.PassportDate")}</td>
-        </tr>
-                        <tr>
-            <td>Кем выдан</td>
-            <td>${FormHelper.TextField("agent.WhoGivePassport")}</td>
-        </tr>
-                        <tr>
-            <td>Адрес регистрации</td>
-            <td>${FormHelper.TextField("agent.RegistrationAdress")}</td>
-        </tr>
-        <tr>
-            <td colspan=2> <button type=submit class="button">Сохранить</button></td>
-        </tr>
-    </tbody>
-</table>
-${FormHelper.EndFormTag()}
-</div>
+	<div class="house_selector_div">
+		${FormHelper.FormTag("${Siteroot}/HouseAgent/${ActionName}", {"id" : "editAgent"})}
+		<input type=hidden name="agentId" value="${agent.Id}" />
+		<table class="table" style="width:600px;">
+			<thead>
+				<tr>
+					<th colspan=2 style="text-align:center;">Работа с агентом по подключению</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Фамилия</td>
+					<td>${FormHelper.TextField("agent.Surname")}</td>
+				</tr>
+				<tr>
+					<td>Имя</td>
+					<td>${FormHelper.TextField("agent.Name")}</td>
+				</tr>
+				<tr>
+					<td>Отчество</td>
+					<td>${FormHelper.TextField("agent.Patronymic")}</td>
+				</tr>
+				<tr>
+					<td>Дата рождения</td>
+					<td>${FormHelper.TextField("agent.DateOfBirth")}</td>
+				</tr>
+				<tr>
+					<td>Телефон</td>
+					<td>${FormHelper.TextField("agent.Telephone")}</td>
+				</tr>
+				<tr>
+					<td>Адрес проживания</td>
+					<td>${FormHelper.TextField("agent.Adress")}</td>
+				</tr>
+				<tr>
+					<td>Серия паспорта</td>
+					<td>${FormHelper.TextField("agent.PassportSeries")}</td>
+				</tr>
+				<tr>
+					<td>Номер паспорта</td>
+					<td>${FormHelper.TextField("agent.PassportNumber")}</td>
+				</tr>
+				<tr>
+					<td>Дата выдачи паспорта</td>
+					<td>${FormHelper.TextField("agent.PassportDate")}</td>
+				</tr>
+				<tr>
+					<td>Кем выдан</td>
+					<td>${FormHelper.TextField("agent.WhoGivePassport")}</td>
+				</tr>
+				<tr>
+					<td>Адрес регистрации</td>
+					<td>${FormHelper.TextField("agent.RegistrationAdress")}</td>
+				</tr>
+				<tr>
+					<td colspan=2>
+						<button type=submit class="button">Сохранить</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	${FormHelper.EndFormTag()}
+	</div>
 </center>

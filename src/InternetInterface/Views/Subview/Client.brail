@@ -1,16 +1,18 @@
-﻿${app.Asset("client.css")}
-${app.Asset("Register.js")}
+﻿<%
+# будь бдителен! лоигка валидации определена в файле Register.js но здесь его импортировать нельзя
+# тк он должен регистрироваться после встроеных валидаторов
+# тег формы окружающий subview должен генерироваться с помощью AppHelper или FormHelper
+# после закрывающего тега должен быть импорт
+# ${app.Asset("Register.js")}
+%>
+${app.Asset("client.css")}
 
 <script type="text/javascript">
 	var regions = [];
 
 	$(function () {
-		$('#clientEditForm').validate({
-			errorElement: "div",
-			errorLabelContainer: "#errorContainerComment"
-		});
 		$('#ChStatus').change(function () {
-			if ($('#ChStatus option:selected').attr("id") == "Dissolved") {
+			if ($('#ChStatus').val() == "10") {
 				$('#comment').rules("add", { required: true,
 					messages: {
 						required: "Введите комментарий"
@@ -210,13 +212,23 @@ ${app.Asset("Register.js")}
 	</thead>
 	<tbody>
 		<tr>
+			<td>${app.Label("client.IdDocType")}</td>
+			<td>${app.Edit("client.IdDocType", {"data-bind": "value: idDocType"})}</td>
+			<td>${app.Error("client.IdDocType")}</td>
+		</tr>
+		<tr>
+			<td>${app.Label("client.IdDocName")}</td>
+			<td>${app.Edit("client.IdDocName", {"data-bind": "value: idDocName"})}</td>
+			<td>${app.Error("client.IdDocName")}</td>
+		</tr>
+		<tr>
 			<% if MapPartner.AccesPartner("SSI"): %>
 				<td>Серия паспорта</td>
 			<% else: %>
 				<td><b>Серия паспорта</b></td>
 			<% end %>
 			<td>
-				${app.Edit("client.PassportSeries")}
+				${app.Edit("client.PassportSeries", {"data-bind": "value: passportSeries"})}
 			</td>
 			<td>
 				${app.Error("client.PassportSeries")}
@@ -229,7 +241,7 @@ ${app.Asset("Register.js")}
 				<td><b>Номер паспорта</b></td>
 			<% end %>
 			<td>
-				${app.Edit("client.PassportNumber")}
+				${app.Edit("client.PassportNumber", {"data-bind": "value: passportNumber"})}
 			</td>
 			<td>
 				${app.Error("client.PassportNumber")}

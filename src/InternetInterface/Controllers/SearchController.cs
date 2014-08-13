@@ -42,14 +42,14 @@ namespace InternetInterface.Controllers
 
 	[Helper(typeof(PaginatorHelper))]
 	[Filter(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
-	public class SearchController : BaseController
+	public class SearchController : InternetInterfaceController
 	{
 		[AccessibleThrough(Verb.Get)]
 		public void SearchBy([SmartBinder("filter")] SearchFilter filter)
 		{
 			var result = filter.Find(DbSession);
 			if (result.Count == 1) {
-				RedirectToUrl(result[0].client.Redirect());
+				RedirectTo(result[0].client);
 				return;
 			}
 			PropertyBag["SClients"] = result;
@@ -82,10 +82,10 @@ namespace InternetInterface.Controllers
 				builder += String.Format("{0}={1}&", name, Request.QueryString[name]);
 			builder = builder.Substring(0, builder.Length - 1);
 			if (DbSession.Load<Client>(filter.ClientCode).GetClientType() == ClientType.Phisical) {
-				RedirectToUrl(string.Format("../UserInfo/SearchUserInfo.rails?{0}", builder));
+				RedirectToUrl(string.Format("../UserInfo/ShowPhysicalClient?{0}", builder));
 			}
 			else {
-				RedirectToUrl(string.Format("../UserInfo/LawyerPersonInfo.rails?{0}", builder));
+				RedirectToUrl(string.Format("../UserInfo/ShowLawyerPerson?{0}", builder));
 			}
 		}
 	}

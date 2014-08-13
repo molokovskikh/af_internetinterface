@@ -118,7 +118,7 @@ namespace InternetInterface.Models.Access
 				"SearchUsers",
 				"SearchBy",
 				"SiteMap",
-				"SearchUserInfo",
+				"ShowPhysicalClient",
 				"Redirect"
 			};
 			return _getClientInfo.Contains(methodName) ? "GCI" : string.Empty;
@@ -151,7 +151,7 @@ namespace InternetInterface.Models.Access
 			_changeBalance = new HashSet<string> {
 				"ChangeBalance",
 				"SiteMap",
-				"SearchUserInfo",
+				"ShowPhysicalClient",
 				"NotifyInforum"
 			};
 			return _changeBalance.Contains(methodName) ? "CB" : string.Empty;
@@ -178,7 +178,7 @@ namespace InternetInterface.Models.Access
 		{
 			_visibleDemand = new HashSet<string> {
 				"ClientRegisteredInfo",
-				"LawyerPersonInfo",
+				"ShowLawyerPerson",
 				"ShowBrigad",
 				"PassAndShowCard",
 				"CreateAppeal",
