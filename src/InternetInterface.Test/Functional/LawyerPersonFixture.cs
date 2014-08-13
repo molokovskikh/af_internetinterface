@@ -30,14 +30,47 @@ namespace InternetInterface.Test.Functional
 			defaultUrl = laywerPerson.Redirect();
 		}
 
-		private void AddOrderService()
+		private void AddOrderService(int number = 1)
 		{
 			Click("Добавить");
-			browser.FindElementByName("order.OrderServices[1].Description").SendKeys("Тестовый заказ");
-			browser.FindElementByName("order.OrderServices[1].Cost").SendKeys("1000");
-			var checkbox = browser.FindElementByName("order.OrderServices[1].IsPeriodic");
-			if(!checkbox.Selected)
+			var nameServiceElement = browser.FindElementByName("order.OrderServices[" + number + "].Description");
+			nameServiceElement.SendKeys((number == 1) ? "Тестовый заказ" : ("Тестовый заказ" + number));
+			browser.FindElementByName("order.OrderServices[" + number + "].Cost").SendKeys("1000");
+			var checkbox = browser.FindElementByName("order.OrderServices[" + number + "].IsPeriodic");
+			if (!checkbox.Selected)
 				checkbox.Click();
+		}
+
+		[Test(Description = "Проверяет добавление услуги к заказу при редактировании заказа")]
+		public void Check_data_index()
+		{
+			var package = new PackageSpeed {
+				Description = "10мб",
+				Speed = 10
+			};
+			session.Save(package);
+			var commutator = CreateCommutator(laywerPerson.GetRegion());
+			Open(laywerPerson.Redirect());
+			Click("Добавить заказ");
+			Css("#SelectSwitches").SelectByValue(commutator.Id.ToString());
+			browser.FindElementById("Port").Clear();
+			browser.FindElementById("Port").SendKeys("1");
+			browser.FindElementByName("order.Number").Clear();
+			browser.FindElementByName("order.Number").SendKeys("99");
+			AddOrderService();
+			Click("Сохранить");
+			var tag = browser.FindElementsByName("EditConnectFlag");
+			browser.FindElementById("EditButton" + tag[0].GetAttribute("value")).Click();
+			AddOrderService(2);
+			Click("Сохранить");
+			tag = browser.FindElementsByName("EditConnectFlag");
+			browser.FindElementById("EditButton" + tag[0].GetAttribute("value")).Click();
+			AddOrderService(3);
+			Click("Сохранить");
+
+			AssertText("Тестовый заказ");
+			AssertText("Тестовый заказ2");
+			AssertText("Тестовый заказ3");
 		}
 
 		[Test]
