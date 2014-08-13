@@ -211,10 +211,8 @@ namespace InternetInterface.Models
 					errors.RegisterErrorMessage("PassportSeries", "Неправильный формат серии паспорта (4 цифры)");
 				}
 			}
-			else {
-				if (new NonEmptyValidator().IsValid(this, IdDocName)) {
-					errors.RegisterErrorMessage("IdDocName", "Заполнение поля обязательно");
-				}
+			else if (new NonEmptyValidator().IsValid(this, IdDocName)) {
+				errors.RegisterErrorMessage("IdDocName", "Заполнение поля обязательно");
 			}
 		}
 
