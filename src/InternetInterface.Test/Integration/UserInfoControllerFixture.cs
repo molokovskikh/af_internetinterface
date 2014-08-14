@@ -186,10 +186,11 @@ namespace InternetInterface.Test.Integration
 			var name = Generator.Name();
 			var tariff = new Tariff("test", 100);
 			session.Save(tariff);
-			var request = new Request { ApplicantName = name, ApplicantPhoneNumber = "900-9090900", Street = "123", Tariff = tariff };
+			var request = new Request { ApplicantName = name, ApplicantPhoneNumber = "900-9090900", Street = "123", Tariff = tariff, ActionDate = DateTime.Now };
 			session.Save(request);
 			var filter = new RequestFilter { query = request.Id.ToString() };
 			var result = filter.Find(session);
+			Assert.Greater(result.Count, 0);
 			Assert.AreEqual(result[0].ApplicantName, name);
 		}
 
