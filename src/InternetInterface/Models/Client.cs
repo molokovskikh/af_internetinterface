@@ -310,6 +310,8 @@ namespace InternetInterface.Models
 
 		public virtual bool HavePaymentToStart()
 		{
+			if (Status.Type == StatusType.BlockedForRepair)
+				return false;
 			var forbiddenByService = ClientServices.Any(s => s.Service.BlockingAll && s.IsActivated);
 			if (forbiddenByService)
 				return false;
