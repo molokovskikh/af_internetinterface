@@ -9,7 +9,7 @@ ${app.Asset("service-requests.js")}
 			<thead>
 				<tr>
 					<th colspan=2>
-						Регистрация сервисной заявки ${app.LinkTo(client)}
+						Регистрация сервисной заявки ${app.LinkTo(request.Client)}
 					</th>
 				</tr>
 			</thead>

@@ -33,6 +33,10 @@ namespace InternetInterface.Test.Functional
 			AssertText("Информация по клиенту");
 			Input("BalanceText", "500");
 			ClickButton("Пополнить баланс");
+
+			client.Refresh();
+			var payment = client.Payments.Last(p => p.Sum == 500);
+			Click(payment.Id.ToString());
 			AssertText("ДОГОВОР ПОРУЧЕНИЯ");
 		}
 	}

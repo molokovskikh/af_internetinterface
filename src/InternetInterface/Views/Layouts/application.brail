@@ -38,6 +38,9 @@
 	<% OutputSubView("/Subviews/DefaultJs") %>
 </head>
 <body>
+	<script>
+		window.onerror = function (errorMsg, url, lineNumber) { alert(errorMsg); };
+	</script>
 	<div class="non-printable">
 		<% OutputSubView("/Subview/MapHead") %>
 	</div>

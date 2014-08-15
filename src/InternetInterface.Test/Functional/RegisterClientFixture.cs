@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NHibernate.Linq;
@@ -14,7 +15,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void RegisterClientTest()
 		{
-			session.CreateSQLQuery("delete from internet.houses;").ExecuteUpdate();
+			session.CreateSQLQuery("delete from houses;").ExecuteUpdate();
 
 			var tariff = new Tariff("Тариф для тестирования", 111);
 			session.Save(tariff);

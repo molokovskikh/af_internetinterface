@@ -1,40 +1,61 @@
 ﻿$(function () {
-	$("#RegistrationForm").submit(function () {
-		var form = this;
-		var validator = $(form).data("validator");
-		if (validator) {
-			validator.settings.submitHandler = function () {
-				var submit = $(form).find("input[type=submit],button[type=submit]");
-				submit.prop("disabled", true);
-				$.ajax({
-					url: "/Register/CheckClient",
-					type: "POST",
-					cache: false,
-					data: $("#RegistrationForm").serialize(),
-				}).success(function (data) {
-					if (data) {
-						$("<p>" + data + "</p>").dialog({
-							modal: true,
-							buttons: {
-								"Продолжить": function () {
-									form.submit();
-								},
-								"Отменить": function () {
-									submit.prop("disabled", false);
-									$(this).dialog("destroy");
-								}
-							}
-						});
+
+	function checkDuplicate(form) {
+		var submit = $(form).find("input[type=submit],button[type=submit]");
+		submit.prop("disabled", true);
+		$.ajax({
+			url: "/Register/CheckClient",
+			type: "POST",
+			cache: false,
+			data: $("#RegistrationForm").serialize(),
+		}).success(function (data) {
+			if (data) {
+				$("<p>" + data + "</p>").dialog({
+					modal: true,
+					buttons: {
+						"Продолжить": function () {
+							form.submit();
+						},
+						"Отменить": function () {
+							submit.prop("disabled", false);
+							$(this).dialog("destroy");
+						}
 					}
-					else {
-						form.submit();
-					}
-				}).error(function () {
-					form.submit();
 				});
 			}
+			else {
+				form.submit();
+			}
+		}).error(function () {
+			form.submit();
+		});
+	}
+
+	//порядок регистрации влияет на то как нужно обрабатываться отправку формы
+	//если валидатор уже зарегистрирован то просто добавляем обработчик
+	//если нет добавляем обработчик отправки формы что бы позже проверить наличие валидатора
+	var el = $("#RegistrationForm");
+	var validator = el.data("validator");
+	if (validator) {
+		validator.settings.submitHandler = function () {
+			checkDuplicate(el.get(0));
 		}
-	});
+	}
+	else {
+		el.submit(function () {
+			var form = this;
+			var validator = $(form).data("validator");
+			if (validator) {
+				validator.settings.submitHandler = function () {
+					checkDuplicate(form);
+				}
+			}
+			else {
+				checkDuplicate(form);
+			}
+		});
+	}
+
 
 	$.validator.addMethod(
 		'reg',
@@ -90,7 +111,6 @@
 		});
 	}
 	var client = new Client();
-	//window.cl = client;
 	if ($("#RegistrationForm").length > 0)
 		ko.applyBindings(client, $("#RegistrationForm").get(0));
 	if ($("#clientEditForm").length > 0)
