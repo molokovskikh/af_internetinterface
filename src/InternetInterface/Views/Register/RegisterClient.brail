@@ -21,7 +21,7 @@
 							!{client.ConnectSum.ToString("C")}
 						<% end %>
 					</td>
-					<td>${VB.GetBlock("ConnectSum")}</td>
+					<td>${App.Error("client.ConnectSum")}</td>
 				</tr>
 			</tbody>
 		</table>

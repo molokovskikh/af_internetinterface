@@ -134,5 +134,24 @@ namespace InternetInterface.Test.Functional
 			Click(Css(".ui-dialog"), "Продолжить");
 			AssertText("Информация по клиенту");
 		}
+
+		[Test]
+		public void Id_doc_validation()
+		{
+			Open("Register/RegisterClient");
+			Css("#client_PassportSeries").SendKeys("a4512");
+			Click("Зарегистрировать");
+			Assert.That(GetValidationError("#client_PassportSeries"), Is.StringContaining("Неправильный формат серии паспорта (4 цифры)"));
+
+			Css("#client_IdDocType").SelectByText("Иной документ");
+			Click("Зарегистрировать");
+			Assert.That(GetValidationError("#client_IdDocName"), Is.StringContaining("Это поле необходимо заполнить."));
+			Assert.AreEqual("", GetValidationError("#client_PassportSeries"));
+		}
+
+		private string GetValidationError(string selector)
+		{
+			return Css(selector).FindElementByXPath("..").Text;
+		}
 	}
 }

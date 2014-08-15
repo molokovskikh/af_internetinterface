@@ -123,10 +123,10 @@ namespace InternetInterface.Models
 		[Property, Description("Название документа удостоверяющего личность")]
 		public virtual string IdDocName { get; set; }
 
-		[Property, /*ValidateRegExp(@"^(\d{4})?$", "Неправильный формат серии паспорта (4 цифры)"),*/ UserValidateNonEmpty("Поле не должно быть пустым"), Auditable("Серия паспорта")]
+		[Property, UserValidateNonEmpty("Поле не должно быть пустым"), Auditable("Серия паспорта")]
 		public virtual string PassportSeries { get; set; }
 
-		[Property, /*ValidateRegExp(@"^(\d{6})?$", "Неправильный формат номера паспорта (6 цифр)"),*/ UserValidateNonEmpty("Поле не должно быть пустым"), Auditable("Номер паспорта")]
+		[Property, UserValidateNonEmpty("Поле не должно быть пустым"), Auditable("Номер паспорта")]
 		public virtual string PassportNumber { get; set; }
 
 		[Property, UserValidateNonEmpty("Введите дату выдачи паспорта"), ValidateDate("Ошибка формата даты **-**-****"), Auditable("Дата выдачи паспорта")]
