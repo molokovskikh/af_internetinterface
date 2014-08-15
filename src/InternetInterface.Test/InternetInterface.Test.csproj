@@ -188,6 +188,7 @@
     <Compile Include="Integration\ServiceRequestControllerFixture.cs" />
     <Compile Include="Integration\ServicesFixture.cs" />
     <Compile Include="Integration\SmsFixture.cs" />
+    <Compile Include="Integration\SwitchesFixture.cs" />
     <Compile Include="Integration\Tasks\MailerFixture.cs" />
     <Compile Include="Integration\UserInfoControllerFixture.cs" />
     <Compile Include="Integration\SetupFixture.cs" />
