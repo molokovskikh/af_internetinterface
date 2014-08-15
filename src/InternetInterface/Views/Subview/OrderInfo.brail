@@ -317,7 +317,7 @@
 						<% end %>
 					<% end %>
 				</table>
-				<a id="addOrderServiceLink" class="icon icon-add" name="2" href="javascript:" onclick="addOrderService(${OrderInfo.Order.Id})">Добавить</a>
+				<a id="addOrderServiceLink" class="icon icon-add" name="2" data-index=${OrderInfo.Order.OrderServices.Count} href="javascript:" onclick="addOrderService(${OrderInfo.Order.Id})">Добавить</a>
 			</td>
 			</tr>
 			<% if OrderInfo.Order.Id == 0 or OrderInfo.Order.EndPoint == null: %>
