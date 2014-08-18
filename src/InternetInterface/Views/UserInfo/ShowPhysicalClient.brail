@@ -271,7 +271,7 @@
 	</tbody>
 </table>
 <% else: %>
-	${FormHelper.FormTag("/UserInfo/EditInformation", {@id: "clientEditForm", @class: "form edit"})}
+	${FormHelper.FormTag("${siteroot}/UserInfo/EditInformation", {@id: "clientEditForm", @class: "form edit"})}
 		<input type="hidden" name="ClientID" value="${ClientCode}" />
 		<input type="hidden" name="appealType" value="${appealType}" />
 
