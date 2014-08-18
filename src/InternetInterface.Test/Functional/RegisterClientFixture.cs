@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Web.UI;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NHibernate.Linq;
@@ -41,7 +42,8 @@ namespace InternetInterface.Test.Functional
 			Css("#client_Surname").SendKeys("TestSurname" + Guid.NewGuid());
 			Css("#client_Name").SendKeys("TestName");
 			Css("#client_Patronymic").SendKeys("TestPatronymic");
-			Css("#client_Apartment").SendKeys("5");
+			Css("#client_Apartment").SendKeys("5d");
+			Css("#client_Additional").SendKeys("общежитие");
 			Css("#client_Entrance").SendKeys("5");
 			Css("#client_Floor").SendKeys("1");
 			Css("#client_PhoneNumber").SendKeys("900-9009090");
@@ -65,6 +67,7 @@ namespace InternetInterface.Test.Functional
 			Css("#RegisterClientButton").Click();
 			WaitForText("прописанный по адресу:");
 			AssertText("прописанный по адресу:");
+			AssertText("5d");
 			AssertText("адрес подключения:");
 			AssertText("принимаю подключение к услугам доступа");
 
@@ -116,7 +119,7 @@ namespace InternetInterface.Test.Functional
 			Css("#client_Surname").SendKeys(client.PhysicalClient.Surname);
 			Css("#client_Name").SendKeys(client.PhysicalClient.Name);
 			Css("#client_Patronymic").SendKeys(client.PhysicalClient.Patronymic);
-			Css("#client_Apartment").SendKeys("5");
+			Css("#client_Apartment").SendKeys("5d");
 			Css("#client_Entrance").SendKeys("5");
 			Css("#client_Floor").SendKeys("1");
 			Css("#client_PhoneNumber").SendKeys("900-9009090");

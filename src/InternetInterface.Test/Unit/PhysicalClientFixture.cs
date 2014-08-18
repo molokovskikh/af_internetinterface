@@ -16,7 +16,7 @@ namespace InternetInterface.Test.Unit
 				Street = "Студенческая",
 				House = 12,
 				CaseHouse = "а",
-				Apartment = 100,
+				Apartment = "100",
 			};
 			var baseClient = new Client(client, Settings.UnitTestSettings());
 			client.Client.PhysicalClient = client;

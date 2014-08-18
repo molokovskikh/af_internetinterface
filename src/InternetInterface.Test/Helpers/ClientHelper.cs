@@ -37,7 +37,7 @@ namespace InternetInterface.Test.Helpers
 			var status = session.Load<Status>((uint)StatusType.Worked);
 
 			var client = new PhysicalClient {
-				Apartment = 1,
+				Apartment = "1",
 				Balance = 100,
 				CaseHouse = "A",
 				City = "VRN",

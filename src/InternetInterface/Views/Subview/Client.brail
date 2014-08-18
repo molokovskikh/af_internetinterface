@@ -184,8 +184,14 @@ ${app.Asset("Register.js")}
 			<td>
 				${app.Edit("client.Entrance")}
 			</td>
-			<td colspan="3">
+			<td>
 				${app.Error("client.Entrance")}
+			</td>
+			<td>
+				<b>Дополнительно:</b>
+			</td>
+			<td>
+				${app.Edit("client.Additional")}
 			</td>
 		</tr>
 		<tr>
