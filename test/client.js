@@ -3,6 +3,6 @@ define(["register"], function(module) {
 		$("form").validate();
 		var client = new module.Model();
 		ko.applyBindings(client);
-		equal(client.passportSeries(), "45871");
+		equal(client.passportSeries(), "4587");
 	});
 });
