@@ -1,5 +1,4 @@
-﻿$(function () {
-
+﻿var initModule = function () {
 	function checkDuplicate(form) {
 		var submit = $(form).find("input[type=submit],button[type=submit]");
 		submit.prop("disabled", true);
@@ -70,12 +69,20 @@
 		base(element, valueAccessor, allBindingsAccessor);
 		if (valueAccessor().validation)
 			$(element).rules("add", valueAccessor().validation);
+		var value;
+		//при инициализации мы должны загрузить значения из полей формы
+		//что бы модель начала жить в том же состоянии что и форма
+		if (element.type == 'checkbox')
+			value = element.checked;
+		else
+			value = element.value;
+		valueAccessor()(value);
 	}
 	ko.extenders.validation = function (target, validation) {
 		target.validation = validation;
 		return target;
 	};
-	var Client = function () {
+	return function () {
 		var self = this;
 		self.idDocType = ko.observable();
 		self.idDocName = ko.observable().extend({
@@ -110,12 +117,7 @@
 			}
 		});
 	}
-	var client = new Client();
-	if ($("#RegistrationForm").length > 0)
-		ko.applyBindings(client, $("#RegistrationForm").get(0));
-	if ($("#clientEditForm").length > 0)
-		ko.applyBindings(client, $("#clientEditForm").get(0));
-});
+}
 
 function SelectHouse(item, chHouse) {
 	var regionCode = $(item).val();
@@ -148,5 +150,24 @@ function registerHouse() {
 		} else {
 			$('#houseErrorMessageSpan').text(data.Name);
 		}
+	});
+}
+
+//для тестов используется requirejs
+if (typeof require === 'function') {
+	define(["jquery-validate", "knockout"], function (validate, ko) {
+		window.ko = ko;
+		var model = initModule();
+		return { Model: model };
+	});
+}
+else {
+	$(function () {
+		var model = initModule();
+		var client = new model();
+		if ($("#RegistrationForm").length > 0)
+			ko.applyBindings(client, $("#RegistrationForm").get(0));
+		if ($("#clientEditForm").length > 0)
+			ko.applyBindings(client, $("#clientEditForm").get(0));
 	});
 }

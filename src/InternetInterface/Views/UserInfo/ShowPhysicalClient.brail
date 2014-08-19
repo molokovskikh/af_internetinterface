@@ -116,6 +116,7 @@
 		<tr>
 			<td>
 				Паспортные данные: <br />
+				!{Client.SafeIdDocName}<br>
 				<span class="description">Серия\Номер</span> ${Client.PassportSeries} \ ${Client.PassportNumber}<br />
 				<span class="description">Кем выдан: </span> ${Client.WhoGivePassport}<br />
 				<span class="description">Адрес регистрации:</span> ${Client.RegistrationAdress}<br />

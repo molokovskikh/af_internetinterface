@@ -117,10 +117,10 @@ namespace InternetInterface.Models
 		[ValidateRegExp(@"^((\d{3})-(\d{7}))", "Ошибка формата телефонного номера (***-*******)")]
 		public virtual string HomePhoneNumber { get; set; }
 
-		[Property, Description("Документ удостоверяющий личность")]
+		[Property, Description("Документ удостоверяющий личность"), Auditable]
 		public virtual IdDocType IdDocType { get; set; }
 
-		[Property, Description("Название документа удостоверяющего личность")]
+		[Property, Description("Название документа удостоверяющего личность"), Auditable]
 		public virtual string IdDocName { get; set; }
 
 		[Property, UserValidateNonEmpty("Поле не должно быть пустым"), Auditable("Серия паспорта")]
@@ -211,7 +211,7 @@ namespace InternetInterface.Models
 					errors.RegisterErrorMessage("PassportSeries", "Неправильный формат серии паспорта (4 цифры)");
 				}
 			}
-			else if (new NonEmptyValidator().IsValid(this, IdDocName)) {
+			else if (!new NonEmptyValidator().IsValid(this, IdDocName)) {
 				errors.RegisterErrorMessage("IdDocName", "Заполнение поля обязательно");
 			}
 		}
