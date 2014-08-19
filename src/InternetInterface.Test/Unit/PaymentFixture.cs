@@ -11,7 +11,7 @@ namespace InternetInterface.Test.Unit
 		{
 			var payment = new Payment();
 			payment.Sum = 1000;
-			Assert.AreEqual("1000 (одна тысяча) рублей 00 копеек", payment.SumToLiteral());
+			Assert.AreEqual("1000 (Одна тысяча) рублей 00 копеек", payment.SumToLiteral());
 		}
 	}
 }
