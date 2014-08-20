@@ -14,6 +14,7 @@ using InternetInterface.Models.Services;
 using InternetInterface.Services;
 using NHibernate;
 using NHibernate.Linq;
+using System.Text.RegularExpressions;
 
 namespace InternetInterface.Controllers
 {
@@ -178,8 +179,16 @@ namespace InternetInterface.Controllers
 			var person = new LawyerPerson();
 			BindObjectInstance(person, ParamStore.Form, "LegalPerson");
 			var connectErrors = Validation.ValidationConnectInfo(info, true);
-			if (!string.IsNullOrEmpty(info.Port) && order.OrderServices.Count == 0 && !DoNotCreateOrder)
-				connectErrors = "Невозможно создать подключение, не создавая услуг в заказе";
+			if (IsValid(person) && !string.IsNullOrEmpty(info.Port) && !DoNotCreateOrder) {
+				var errors = ValidateDeep(order);
+				if(errors.ErrorsCount > 0) {
+					Error(errors.ErrorMessages.First());
+					//Ошибки выводятся так, так как Order не поддерживает вывод ошибок в шаблон
+					RedirectToReferrer();
+					return;
+				}
+			}
+
 			if (IsValid(person) && string.IsNullOrEmpty(connectErrors)) {
 				DbSession.Save(person);
 				var client = new Client(person, InitializeContent.Partner) {
@@ -188,6 +197,7 @@ namespace InternetInterface.Controllers
 					Disabled = order.OrderServices.Count == 0,
 				};
 				client.PostUpdate();
+
 				if (!DoNotCreateOrder) {
 					client.Orders.Add(order);
 					order.Client = client;

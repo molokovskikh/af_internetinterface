@@ -393,6 +393,7 @@
     <Compile Include="Helpers\IpHelper.cs" />
     <Compile Include="Helpers\IPUserType.cs" />
     <Compile Include="Helpers\AuditListener.cs" />
+    <Compile Include="Helpers\GreaterOrEqualZeroValidator.cs" />
     <Compile Include="Helpers\SceHelper.cs" />
     <Compile Include="Helpers\SmsHelper.cs" />
     <Compile Include="Helpers\StandaloneInitializer.cs" />
