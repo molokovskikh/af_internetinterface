@@ -1,0 +1,3 @@
+INSERT INTO Internet.accesscategories VALUES (NULL,"Доступ к обращениям клиентов","ClientAppealsRead");
+INSERT INTO Internet.accesscategories VALUES (NULL,"Возможность удалять абоненскую плату","ClientWriteOffDelete");
+INSERT INTO Internet.categoriesaccessset SELECT NULL,3, AC.Id FROM Internet.accesscategories AS AC WHERE AC.ReduceName = "CLientWriteOffDelete" OR  AC.ReduceName = "ClientAppealsRead";

@@ -318,7 +318,9 @@ end %>
 <% if MapPartner.AccesPartner("SSI"):
 	OutputSubView("/Subview/ContactInfo")
 end
+if MapPartner.AccesPartner("ClientAppealsRead"):
 	OutputSubView("/Subview/AppealsInfo")
+end
 if MapPartner.AccesPartner("SSI"):
 	OutputSubView("/Subview/CallsHistory")
 	OutputSubView("/Subview/ServiceControl")
