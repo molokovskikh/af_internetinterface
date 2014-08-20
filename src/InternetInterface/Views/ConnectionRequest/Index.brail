@@ -23,20 +23,14 @@
 					</td>
 				</tr>
 				<tr>
-					<td style="width:200px;">
-						<label for="streetText">Введите Адрес / Телефон / ФИО / Номер заявки: </label>
-					</td>
-					<td>
-						<input id="streetText" type="text" value="${filter.query}" name="filter.query" />
-					</td>
-				</tr>
+				${app.FilterFor("filter.query")}
+				${app.FilterFor("filter.City")}
 				${app.FilterFor("filter.HouseNumberBegin")}
 				${app.FilterFor("filter.HouseNumberEnd")}
 				${app.FilterFor("filter.HouseNumberType")}
 				<tr>
 					<td colspan=2><button type=submit class="button">Найти</button></td>
 				</tr>
-			</tbody>
 		</table>
 	</form>
 
@@ -136,6 +130,7 @@
 				<th >${app.Sortable("Имя", "ApplicantName", "Name")}</th>
 				<th  style="width:120px;">Телефон</th>
 				<th >Email</th>
+				<th >${app.Sortable("Город", "City", "City")}</th>
 				<th >${app.Sortable("Адрес", "Street", "Adress")}</th>
 				<th >Тариф</th>
 				<th ><center>Метка</center></th>
@@ -148,7 +143,7 @@
 			<tr>
 			 <td><input type="checkbox" id="Checkbox1" name="LabelList[${i}]" value=${Client.Id} /></td>
 			 <td>${Client.Id}</td>
-				<% if PartnerAccessSet.AccesPartner("RC"): %>
+				<% if MapPartner.AccesPartner("RC"): %>
 					<% if Client.Client == null: %>
 				<td><a id="request_to_reg_${Client.Id}" href="${siteroot}/ConnectionRequest/RequestOne?id=${Client.Id}">${TextHelper.SelectQuery(filter.query, Client.ApplicantName)}</a></td>
 					<% else: %>
@@ -159,8 +154,13 @@
 				<% end %>
 				<td>${TextHelper.SelectContact(filter.query, Client.ApplicantPhoneNumber)}</td>
 				<td>${Client.ApplicantEmail}</td>
+				<td>
+				<% if (string.IsNullOrEmpty(Client.City) == false): %>
+				г. ${TextHelper.SelectQuery(filter.City, Client.City)}
+				<% end %>
+				</td>
 				<td style="width:200px;">
-					${Client.City} ул. ${TextHelper.SelectQuery(filter.query, Client.Street)}
+					 ул. ${TextHelper.SelectQuery(filter.query, Client.Street)}
 					<% if Client.House != null: %>
 					 д. ${Client.House}
 					 <% end %>

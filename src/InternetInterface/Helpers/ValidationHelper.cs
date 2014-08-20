@@ -12,7 +12,7 @@ namespace InternetInterface.Helpers
 
 		public override IValidator Build()
 		{
-			IValidator validator = new NonEmptyValidator();
+			IValidator validator = new UserNonEmptyValidator();
 
 			ConfigureValidatorMessage(validator);
 
@@ -20,7 +20,7 @@ namespace InternetInterface.Helpers
 		}
 	}
 
-	public class NonEmptyValidator : AbstractValidator
+	public class UserNonEmptyValidator : AbstractValidator
 	{
 		public override bool IsValid(object instance, object fieldValue)
 		{

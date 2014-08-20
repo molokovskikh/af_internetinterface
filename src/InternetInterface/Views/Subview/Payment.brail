@@ -34,7 +34,7 @@
 						<input type="text" class="CommentText" id="CommentText"  name="CommentText"/>
 					</td>
 				</tr>
-				<% if PartnerAccessSet.AccesPartner("SSI"): %>
+				<% if MapPartner.AccesPartner("SSI"): %>
 				<tr>
 					<td>
 						<label for="virtualPayment">Зачислить как бонус</label>

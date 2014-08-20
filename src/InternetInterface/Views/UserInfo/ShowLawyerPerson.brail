@@ -4,7 +4,7 @@
 <div id="container">
 <div id="block-tables" class="block">
 <div class="content">
-<% if PartnerAccessSet.AccesPartner("SSI"): %>
+<% if MapPartner.AccesPartner("SSI"): %>
 <table class="table" style="width:100%;">
 	<thead>
 		<tr>
@@ -42,7 +42,7 @@
 			  output  WriteMessageError(errorMessage)
 		   end %>
 		<th>Информация по клиенту   ${Client.ShortName}  ${"(Он-Лайн)" if _client.OnLine()}
-		<% if PartnerAccessSet.AccesPartner("ECI"): %>
+		<% if MapPartner.AccesPartner("ECI"): %>
 			<button type="submit"  class="button save">Редактировать</button>
 		 <% end %>
 		</th>
@@ -52,7 +52,7 @@
 		<tr>
 			<td><span class="description">Номер лицевого счета: </span> ${_client.Id.ToString("00000")}</td>
 		</tr>
-	<% if PartnerAccessSet.AccesPartner("SSI"): %>
+	<% if MapPartner.AccesPartner("SSI"): %>
 		<tr>
 			<td><span class="description">Юридический адрес: </span> ${Client.LawyerAdress} </td>
 		</tr>
@@ -66,7 +66,7 @@
 			<td><span class="description">Контактное лицо: </span> ${Client.ContactPerson}</td>
 		</tr>
 		<% end %>
-		<% if PartnerAccessSet.AccesPartner("SSI"): %>
+		<% if MapPartner.AccesPartner("SSI"): %>
 		<tr>
 			<td><span class="description">Дата регистрации:</span> ${_client.RegDate}</td>
 		</tr>
@@ -81,7 +81,7 @@
 		<tr>
 			<td><span class="description">Абонентская плата:</span> ${Client.Tariff.ToString("C")}</td>
 		</tr>
-		 <% if PartnerAccessSet.AccesPartner("SSI"): %>
+		 <% if MapPartner.AccesPartner("SSI"): %>
 		<tr>
 			<td><span class="description">Баланс:</span> ${Client.Balance}</td>
 		</tr>
@@ -93,7 +93,7 @@
 		<% end %>
 		</tr>
 		<% end %>
-		<% if PartnerAccessSet.AccesPartner("DHCP"): %>
+		<% if MapPartner.AccesPartner("DHCP"): %>
 		<tr>
 			<td>
 				<form method="post" action="${siteroot}/UserInfo/AddEndPoint">

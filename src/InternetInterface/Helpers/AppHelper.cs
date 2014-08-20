@@ -32,7 +32,7 @@ namespace InternetInterface.Helpers
 
 		public override bool HavePermission(string controller, string action)
 		{
-			return AccessRules.GetAccessName(action).Count(CategorieAccessSet.AccesPartner) > 0
+			return AccessRules.GetAccessName(action).Count(InitializeContent.Partner.AccesPartner) > 0
 				|| InitializeContent.Partner.HavePermissionTo(controller, action);
 		}
 
@@ -143,9 +143,9 @@ namespace InternetInterface.Helpers
 			}
 			if (NHibernateUtil.GetClass(item) == typeof(Client)) {
 				var client = ((Client)item);
-				var action = "SearchUserInfo";
+				var action = "ShowPhysicalClient";
 				if (client.GetClientType() == ClientType.Legal)
-					action = "LawyerPersonInfo";
+					action = "ShowLawyerPerson";
 				return LinkTo(title != null ? title.ToString() : client.Name, "UserInfo", action, new Dictionary<string, object> {
 					{ "filter.ClientCode", client.Id }
 				});

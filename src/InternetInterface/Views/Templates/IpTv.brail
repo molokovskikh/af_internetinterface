@@ -15,7 +15,7 @@
 				<tr>
 					<td>!{channel.Name}</td>
 					<td>
-						<input data-bind="checked: getChannel(${channel.Id}).activated" type=checkbox name="iptv.Channels[${i}].Id" value=${channel.Id} ${"checked" if iptv.Channels.Contains(channel)} />
+						<input type="checkbox" name="iptv.Channels[${i}].Id" value=${channel.Id} ${"checked" if iptv.Channels.Contains(channel)} />
 					</td>
 					<td>!{channel.CostPerMonth.ToString("C")}</td>
 					<td>!{channel.CostPerMonthWithInternet.ToString("C")}</td>

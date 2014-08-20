@@ -2,40 +2,40 @@
 	<table class="table" id="mapHead">
 		<thead>
 			<tr class="menuItem">
-				<% if PartnerAccessSet.AccesPartner("RC"): %>
+				<% if MapPartner.AccesPartner("RC"): %>
 				<th>${App.LinkTo("Регистрация абонента", @Register, @RegisterClient)}</th>
 				<% end %>
-				<% if PartnerAccessSet.AccesPartner("RC"): %>
+				<% if MapPartner.AccesPartner("RC"): %>
 				<th>${App.LinkTo("Регистрация ЮрЛица", @Register, @RegisterLegalPerson)}</th>
 				<% end %>
 				<th>
 					${app.LinkTo("Заявки", @ConnectionRequest, @Index)}
 				</th>
-				<% if PartnerAccessSet.AccesPartner("GCI"): %>
+				<% if MapPartner.AccesPartner("GCI"): %>
 				<th>${App.LinkTo("Клиенты", @Search, @SearchUsers)}</th>
 				<% end %>
-				<% if PartnerAccessSet.AccesPartner("DHCP"): %>
+				<% if MapPartner.AccesPartner("DHCP"): %>
 				<th>${App.LinkTo("OnLine клиенты", @Switches, @OnLineClient, {"filter.Zone" : "4"})}</th>
 				<% end %>
-				<% if PartnerAccessSet.AccesPartner("SSI"): %>
+				<% if MapPartner.AccesPartner("SSI"): %>
 				<th>${App.LinkTo("Платежи по регистраторам", @Payers, @Filter)}</th>
 				<% end %>
-				<% if (PartnerAccessSet.AccesPartner("SSI") or PartnerAccessSet.AccesPartner("PFA")): %>
+				<% if (MapPartner.AccesPartner("SSI") or MapPartner.AccesPartner("PFA")): %>
 				<th>${App.LinkTo("Платежи", @Payers, @AgentFilter)}</th>
 				<% end %>
-				<% if PartnerAccessSet.AccesPartner("SSI"): %>
+				<% if MapPartner.AccesPartner("SSI"): %>
 				<th>${App.LinkTo("График подключений", @UserInfo, @RequestGraph)}</th>
 				<% end %>
-				<% if PartnerAccessSet.AccesPartner("HMA"): %>
+				<% if MapPartner.AccesPartner("HMA"): %>
 				<th>${App.LinkTo("Карта дома", @HouseMap, @FindHouse)}</th>
 				<% end %>
-				<% if PartnerAccessSet.AccesPartner("SR"): %>
+				<% if MapPartner.AccesPartner("SR"): %>
 				<th>${App.LinkTo("Сервисные заявки", @ServiceRequest, @ViewRequests)}</th>
 				<% end %>
-				<% if PartnerAccessSet.AccesPartner("RP"): %>
+				<% if MapPartner.AccesPartner("RP"): %>
 				<th>${App.LinkTo("Администрирование", @UserInfo, @Administration)}</th>
 				<% end %>
-				<% if PartnerAccessSet.AccesPartner("AIV"): %>
+				<% if MapPartner.AccesPartner("AIV"): %>
 				<th>${App.LinkTo("Платежи", @AgentInfo, @SummaryInformation)}</th>
 				<% end %>
 				<th>
@@ -45,50 +45,50 @@
 				</th>
 			</tr>
 			<tr class="submenu">
-				<% if PartnerAccessSet.AccesPartner("RC"): %>
+				<% if MapPartner.AccesPartner("RC"): %>
 				<th></th>
 				<% end %>
-				<% if PartnerAccessSet.AccesPartner("RC"): %>
+				<% if MapPartner.AccesPartner("RC"): %>
 				<th></th>
 				<% end %>
 				<th>
 					${App.LinkTo("Регистрация", @ConnectionRequest, @New)}
 				</th>
-				<% if PartnerAccessSet.AccesPartner("SSI"): %>
+				<% if MapPartner.AccesPartner("SSI"): %>
 				<th>
 					${App.LinkTo("Обращения", @UserInfo, @ShowAppeals)} <br/>
 					${App.LinkTo("Подключения", @Brigads, @ReportOnWork)} <br/>
 					${App.LinkTo("Списания", @Payments, @ShowWriteOffs)}
 				</th>
 				<% end %>
-				<% if PartnerAccessSet.AccesPartner("DHCP"): %>
+				<% if MapPartner.AccesPartner("DHCP"): %>
 				<th>
 					${App.LinkTo("Статистика", @UserInfo, @Statistic)}
 				</th>
 				<% end %>
-				<% if PartnerAccessSet.AccesPartner("SSI"): %>
+				<% if MapPartner.AccesPartner("SSI"): %>
 				<th></th>
 				<% end %>
-				<% if PartnerAccessSet.AccesPartner("SSI"): %>
+				<% if MapPartner.AccesPartner("SSI"): %>
 				<th>
 					${App.LinkTo("Загрузить платежи", @Payments, @ProcessPayments)} <br />
 					${App.LinkTo("Банковские выписки", @Payments, @Index)} <br />
 					${App.LinkTo("Новый платеж", @Payments, @New)} <br />
 				</th>
 				<% end %>
-				<% if PartnerAccessSet.AccesPartner("SSI"): %>
+				<% if MapPartner.AccesPartner("SSI"): %>
 				<th></th>
 				<% end %>
-				<% if PartnerAccessSet.AccesPartner("HMA"): %>
+				<% if MapPartner.AccesPartner("HMA"): %>
 				<th></th>
 				<% end %>
-				<% if PartnerAccessSet.AccesPartner("RP"): %>
+				<% if MapPartner.AccesPartner("RP"): %>
 				<th></th>
 				<% end %>
-				<% if PartnerAccessSet.AccesPartner("RP"): %>
+				<% if MapPartner.AccesPartner("RP"): %>
 				<th>${App.LinkTo("Закладки", @Map, @ShowBookmarks)}</th>
 				<% end %>
-				<% if PartnerAccessSet.AccesPartner("RP"): %>
+				<% if MapPartner.AccesPartner("RP"): %>
 				<th></th>
 				<% end %>
 			</tr>

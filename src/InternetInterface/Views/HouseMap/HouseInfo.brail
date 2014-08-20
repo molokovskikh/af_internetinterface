@@ -170,7 +170,7 @@
 	</tbody>
 </table>
 
-<table class="table" style="border:1px solid #AAA ;">
+<table class="table">
 	<tbody>
 		<tr>
 			<td>Абоненты Инфорум</td>
@@ -200,11 +200,10 @@
 					<label for="last_inet">Интернет</label>
 				</td>
 				<td>
-				   <!-- <input type=text id="last_inet" name="last_inet" /> <br /> -->
-				   <select id="last_inet"  name="last_inet" style="width:200px;">
+					<select id="last_inet"  name="last_inet" style="width:200px;">
 						<option value="">Нет</option>
 						<option value="Д">Д - Домолинк</option>
-				   </select>
+					</select>
 				</td>
 			</tr>
 			<tr>
@@ -212,13 +211,12 @@
 					<label for="last_TV">TV</label>
 				</td>
 				<td>
-				   <!-- <input type=text id="last_TV" name="last_TV" /> -->
 					<select id="last_TV"  name="last_TV" style="width:200px;">
 						<option value="">Нет</option>
 						<option value="С.Т">С.Т - Спутник триколор</option>
 						<option value="К">К - Кабельное</option>
 						<option value="С.Н">С.Н - Снутник НТВ</option>
-				   </select>
+					</select>
 				</td>
 			</tr>
 			<tr>
@@ -325,11 +323,7 @@
 			<td></td>
 			<% else: %>
 				<% if request == null: %>
-					<% if apartment.Status != null : %>
-					<td colspan=2 id="td_status_${i+1}">${apartment.Status.Name}</td>
-					<% else: %>
-					<td colspan=2 id="td_status_${i+1}"></td>
-					<% end %>
+					<td colspan=2 id="td_status_${i+1}">${?apartment.Status.Name}</td>
 				<% else: %>
 					<td colspan=2 id="td_status_${i+1}">В заявке (№${request.Id})</td>
 				<% end %>

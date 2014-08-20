@@ -24,7 +24,7 @@
 </div>
 
 <div style="clear:both;">
-<% if PartnerAccessSet.AccesPartner("DHCP"): %>
+<% if MapPartner.AccesPartner("DHCP"): %>
 
 	<% if not EditingConnect: %>
 
@@ -33,7 +33,7 @@
 	<thead>
 		<tr>
 		<th style="border-right-width:0px; width:400px;">Информация по подключению (точка № ${ConnectInfo.endpointId})
-		<% if PartnerAccessSet.AccesPartner("DHCP"): %>
+		<% if MapPartner.AccesPartner("DHCP"): %>
 			<form class="formConnect" method="post" action="${siteroot}/UserInfo/LoadEditConnectMudule" style="display:inline;">
 			<input type="hidden" name="ClientID" value="${ClientCode}" />
 			<input type="hidden" name="EditConnectFlag" value="${ConnectInfo.endpointId}" />
@@ -103,7 +103,7 @@
 		</tbody>
 	</table>
 	</td></tr></tbody></table>
-	<% if PartnerAccessSet.AccesPartner("DHCP"): %>
+	<% if MapPartner.AccesPartner("DHCP"): %>
 <% staticIps = ConnectInfo.GetStaticAdreses() %>
 <% if staticIps.Count != 0: %>
 	<table class="table" align="left">
@@ -156,7 +156,7 @@
 	<table id="editConnectTable" class="table" style="width: 100%;">
 	<thead>
 		<th colspan = 3 > Информация по подключению
-		<% if PartnerAccessSet.AccesPartner("DHCP"): %>
+		<% if MapPartner.AccesPartner("DHCP"): %>
 		 <input id="Submit2" type="submit" value="Сохранить"  align="right" />
 		 <% end %>
 		</th>

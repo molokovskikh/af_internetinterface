@@ -175,7 +175,6 @@ namespace InternetInterface.Models
 								Categorie = userCategorie
 							};
 							newRight.SaveAndFlush();
-							//toadd.AcceptTo(partner);
 						}
 					}
 				}

@@ -1,6 +1,4 @@
-﻿//setupCalendar();
-
-function addOrderService(orderId) {
+﻿function addOrderService(orderId) {
 	var index = getIndex(0, "#addOrderServiceLink");
 	var id = "orderService" + index;
 	var name = "order.OrderServices[" + index + "]";

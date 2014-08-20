@@ -34,7 +34,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void Create_request()
 		{
-			Open("UserInfo/SearchUserInfo?filter.ClientCode={0}", client.Id);
+			Open("UserInfo/ShowPhysicalClient?filter.ClientCode={0}", client.Id);
 			Click("Сервисная заявка");
 
 			Css("#request_Performer_Id").SelectByText(performer.Name);
@@ -73,7 +73,7 @@ namespace InternetInterface.Test.Functional
 		{
 			var request = CreateRequest();
 			session.Save(request);
-			Open("UserInfo/SearchUserInfo?filter.ClientCode={0}", client.Id);
+			Open("UserInfo/ShowPhysicalClient?filter.ClientCode={0}", client.Id);
 
 			ClickLink(request.Id.ToString());
 
@@ -137,6 +137,7 @@ namespace InternetInterface.Test.Functional
 			sms.SendKeys("тестовое сообщение");
 			Assert.IsTrue(sms.Displayed);
 			Click("Сохранить");
+			AssertText("Сохранено");
 		}
 
 		private void WaitAjax(string querystring)

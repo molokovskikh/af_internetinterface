@@ -34,8 +34,10 @@ namespace InternetInterface.Queries
 		{
 			PageSize = 20;
 		}
-
+		[Description("Введите Адрес / Телефон / ФИО / Номер заявки")]
 		public string query { get; set; }
+		[Description("Город")]
+		public string City { get; set; }
 		public DateTime? beginDate { get; set; }
 		public DateTime? endDate { get; set; }
 		public string Direction { get; set; }
@@ -53,44 +55,41 @@ namespace InternetInterface.Queries
 
 		public List<Request> Find(ISession session)
 		{
+			//фильтр по датам и архиву
 			beginDate = beginDate ?? DateTime.Today.FirstDayOfMonth();
 			endDate = endDate ?? DateTime.Today;
-
-			Expression<Func<Request, bool>> predicate;
-			if (labelId != 0)
-				if (!string.IsNullOrEmpty(query))
-					predicate = i => (i.Street.Contains(query)
-						|| i.ApplicantPhoneNumber.Contains(query)
-						|| i.ApplicantName.Contains(query))
-						&& i.ActionDate.Date >= beginDate.Value.Date && i.ActionDate.Date <= endDate.Value.Date && i.Label.Id == labelId && i.Archive == Archive;
-				else {
-					predicate = i => i.ActionDate.Date >= beginDate.Value.Date && i.ActionDate.Date <= endDate.Value.Date && i.Label.Id == labelId && i.Archive == Archive;
-				}
-			else {
-				if (!string.IsNullOrEmpty(query))
-					predicate =
-						i =>
-							(i.Street.Contains(query) || i.ApplicantPhoneNumber.Contains(query) || i.ApplicantName.Contains(query)) && i.ActionDate.Date >= beginDate.Value.Date &&
-								i.ActionDate.Date <= endDate.Value.Date &&
-								i.Archive == Archive;
-				else {
-					predicate =
-						i => i.ActionDate.Date >= beginDate.Value.Date && i.ActionDate.Date <= endDate.Value.Date && i.Archive == Archive;
-				}
-			}
+			var dbQuery = session.Query<Request>().Where(r => r.Archive == Archive && (r.ActionDate.Date >= beginDate.Value.Date && r.ActionDate.Date <= endDate.Value.Date));
 
 			var outId = 0u;
-			if (UInt32.TryParse(query, out outId))
-				predicate = i => i.Id == outId;
+			//фильтр id или по улице, телефону и имени 
+			if(UInt32.TryParse(query, out outId)) {
+				dbQuery = dbQuery.Where(r => r.Id == outId);
+			}
+			else if(!string.IsNullOrEmpty(query)) {
+				dbQuery = dbQuery.Where(r => r.Street.Contains(query) || r.ApplicantPhoneNumber.Contains(query) || r.ApplicantName.Contains(query));
+			} 
 
-			var dbQuery = session.Query<Request>().Where(predicate);
+			//фильтр по городу
+			if (!string.IsNullOrEmpty(City)) {
+				dbQuery = dbQuery.Where(r => r.City.Contains(City));
+			}
+
+			//фильтр по меткам
+			if (labelId != 0) {
+				dbQuery = dbQuery.Where(r => r.Label.Id == labelId);
+			}
+
+			//фильтр по дому1
 			if (HouseNumberBegin != null) {
 				dbQuery = dbQuery.Where(r => r.House >= HouseNumberBegin);
 			}
 
+			//фильтр по дому2
 			if (HouseNumberEnd != null) {
 				dbQuery = dbQuery.Where(r => r.House <= HouseNumberEnd);
 			}
+
+			//Четность домов
 			if (HouseNumberType != null) {
 				var result = HouseNumberType.Value == Queries.HouseNumberType.Even ? 0 : 1;
 				dbQuery = dbQuery.Where(r => LinqEx.Mod(r.House, 2) == result);
@@ -101,7 +100,8 @@ namespace InternetInterface.Queries
 				var getCount = RowsCount - PageSize * CurrentPage < PageSize ? RowsCount - PageSize * CurrentPage : PageSize;
 				var result = dbQuery.ToList();
 				if (!string.IsNullOrEmpty(SortBy))
-					result.Sort(new PropertyComparer<Request>(IsDesc() ? Common.Tools.SortDirection.Desc : Common.Tools.SortDirection.Asc, SortBy));
+					result.Sort(
+						new PropertyComparer<Request>(IsDesc() ? Common.Tools.SortDirection.Desc : Common.Tools.SortDirection.Asc, SortBy));
 				return result.Skip(PageSize * CurrentPage)
 					.Take(getCount)
 					.ToList();

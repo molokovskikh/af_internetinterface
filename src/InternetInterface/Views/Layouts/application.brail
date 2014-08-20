@@ -7,6 +7,8 @@
 	${app.Asset("jquery-1.6.4.min.js")}
 	${app.Asset("jquery-ui-1.10.3.min.js")}
 	${app.Asset("jquery-ui-i18n.min.js")}
+	${app.Asset("knockout.js")}
+	${app.Asset("underscore.js")}
 
 	${app.Asset("editable.js")}
 	${app.Asset("checkbox.all.js")}

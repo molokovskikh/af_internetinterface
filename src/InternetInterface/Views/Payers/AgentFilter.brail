@@ -31,7 +31,7 @@
 	<form>
 		<table>
 			<tbody>
-				<% if PartnerAccessSet.AccesPartner("SSI"): %>
+				<% if MapPartner.AccesPartner("SSI"): %>
 					<tr>
 						<th colspan="100">Выберете регистратора по которому будет применен фильтр</th>
 					</tr>

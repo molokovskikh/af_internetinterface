@@ -1,16 +1,18 @@
-﻿${app.Asset("client.css")}
-${app.Asset("Register.js")}
+﻿<%
+# будь бдителен! логика валидации определена в файле Register.js но здесь его импортировать нельзя
+# тк он должен регистрироваться после встроеных валидаторов
+# тег формы окружающий subview должен генерироваться с помощью AppHelper или FormHelper
+# после закрывающего тега должен быть импорт
+# ${app.Asset("Register.js")}
+%>
+${app.Asset("client.css")}
 
 <script type="text/javascript">
 	var regions = [];
 
 	$(function () {
-		$('#clientEditForm').validate({
-			errorElement: "div",
-			errorLabelContainer: "#errorContainerComment"
-		});
 		$('#ChStatus').change(function () {
-			if ($('#ChStatus option:selected').attr("id") == "Dissolved") {
+			if ($('#ChStatus').val() == "10") {
 				$('#comment').rules("add", { required: true,
 					messages: {
 						required: "Введите комментарий"
@@ -216,33 +218,43 @@ ${app.Asset("Register.js")}
 	</thead>
 	<tbody>
 		<tr>
-			<% if PartnerAccessSet.AccesPartner("SSI"): %>
+			<td>${app.Label("client.IdDocType")}</td>
+			<td>${app.Edit("client.IdDocType", {"data-bind": "value: idDocType"})}</td>
+			<td>${app.Error("client.IdDocType")}</td>
+		</tr>
+		<tr>
+			<td>${app.Label("client.IdDocName")}</td>
+			<td>${app.Edit("client.IdDocName", {"data-bind": "value: idDocName"})}</td>
+			<td>${app.Error("client.IdDocName")}</td>
+		</tr>
+		<tr>
+			<% if MapPartner.AccesPartner("SSI"): %>
 				<td>Серия паспорта</td>
 			<% else: %>
 				<td><b>Серия паспорта</b></td>
 			<% end %>
 			<td>
-				${app.Edit("client.PassportSeries")}
+				${app.Edit("client.PassportSeries", {"data-bind": "value: passportSeries"})}
 			</td>
 			<td>
 				${app.Error("client.PassportSeries")}
 			</td>
 		</tr>
 		<tr>
-			<% if PartnerAccessSet.AccesPartner("SSI"): %>
+			<% if MapPartner.AccesPartner("SSI"): %>
 				<td>Номер паспорта</td>
 			<% else: %>
 				<td><b>Номер паспорта</b></td>
 			<% end %>
 			<td>
-				${app.Edit("client.PassportNumber")}
+				${app.Edit("client.PassportNumber", {"data-bind": "value: passportNumber"})}
 			</td>
 			<td>
 				${app.Error("client.PassportNumber")}
 			</td>
 		</tr>
 		<tr>
-			<% if PartnerAccessSet.AccesPartner("SSI"): %>
+			<% if MapPartner.AccesPartner("SSI"): %>
 				<td>Дата выдачи паспорта</td>
 			<% else: %>
 				<td><b>Дата выдачи паспорта</b></td>
@@ -255,7 +267,7 @@ ${app.Asset("Register.js")}
 			</td>
 		</tr>
 		<tr>
-			<% if PartnerAccessSet.AccesPartner("SSI"): %>
+			<% if MapPartner.AccesPartner("SSI"): %>
 				<td>Кем выдан</td>
 			<% else: %>
 				<td><b>Кем выдан</b></td>
@@ -268,7 +280,7 @@ ${app.Asset("Register.js")}
 			</td>
 		</tr>
 		<tr>
-			<% if PartnerAccessSet.AccesPartner("SSI"): %>
+			<% if MapPartner.AccesPartner("SSI"): %>
 				<td>Адрес регистрации</td>
 			<% else: %>
 				<td><b>Адрес регистрации</b></td>
@@ -286,7 +298,7 @@ ${app.Asset("Register.js")}
 <% OutputSubView("/Templates/IpTv") %>
 <% OutputSubView("/Templates/Internet") %>
 
-<% if PartnerAccessSet.AccesPartner("SSI")\
+<% if MapPartner.AccesPartner("SSI")\
 	and IsDefined("Editing")\
 	and Editing: %>
 

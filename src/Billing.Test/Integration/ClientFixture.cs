@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Common.Tools;
+using Common.Tools.Calendar;
 using InternetInterface.Models;
 using NHibernate.Linq;
 using NUnit.Framework;
@@ -22,11 +23,7 @@ namespace Billing.Test.Integration
 			session.Save(paymentForConnect);
 			session.Save(client.PhysicalClient);
 
-			session.Flush();
-			session.Clear();
-			billing.ProcessPayments();
-			session.Flush();
-			session.Clear();
+			Process();
 
 			client = session.Get<Client>(client.Id);
 			Assert.IsNull(client.BeginWork);
@@ -34,11 +31,7 @@ namespace Billing.Test.Integration
 			client.BeginWork = DateTime.Now;
 			session.Save(client);
 
-			session.Flush();
-			session.Clear();
-			billing.ProcessPayments();
-			session.Flush();
-			session.Clear();
+			Process();
 
 			client = session.Get<Client>(client.Id);
 			Assert.IsNotNull(client.BeginWork);
@@ -64,11 +57,7 @@ namespace Billing.Test.Integration
 			session.Save(clientEndPoint);
 			session.Save(paymentForConnect);
 
-			session.Flush();
-			session.Clear();
-			billing.ProcessPayments();
-			session.Flush();
-			session.Clear();
+			Process();
 
 			client = session.Get<Client>(client.Id);
 			Assert.AreEqual(client.UserWriteOffs.Count, 0);
@@ -101,45 +90,59 @@ namespace Billing.Test.Integration
 			client.RatedPeriodDate = DateTime.Now;
 			client.SetStatus(StatusType.BlockedForRepair, session);
 			session.Save(client);
-			session.Flush();
-			session.Transaction.Commit();
-			billing.ProcessPayments();
-			billing.ProcessWriteoffs();
+			Process();
 
-			session.Clear();
 			client = session.Load<Client>(client.Id);
 			Assert.AreEqual(0, client.WriteOffs.Count);
 
-			SystemTime.Now = () => DateTime.Now.AddDays(2);
-			billing.ProcessPayments();
-			billing.ProcessWriteoffs();
+			Process(2.Days());
 
-			session.Clear();
 			client = session.Load<Client>(client.Id);
 			Assert.AreEqual(StatusType.BlockedForRepair, client.Status.Type);
-			//симулируем обращение к dhcp
-			session.Save(client);
-			session.Flush();
-
-			SystemTime.Now = () => DateTime.Now.AddDays(3);
-			billing.ProcessPayments();
-			billing.ProcessWriteoffs();
 
 			//если прошло три дня ставим статус работает, но денег не списываем тк возможности работать не было
-			session.Clear();
+			Process(3.Days());
+
 			client = session.Load<Client>(client.Id);
 			Assert.AreEqual(StatusType.Worked, client.Status.Type);
 			Assert.AreEqual(0, client.WriteOffs.Count);
 
-			SystemTime.Now = () => DateTime.Now.AddDays(4);
-			billing.ProcessPayments();
-			billing.ProcessWriteoffs();
-
 			//на четвертый день списываем деньги
-			session.Clear();
+			Process(4.Days());
+
 			client = session.Load<Client>(client.Id);
 			Assert.AreEqual(StatusType.Worked, client.Status.Type);
 			Assert.AreEqual(1, client.WriteOffs.Count);
+		}
+
+		[Test(Description = "При обработке платежа происходит установка флага автоматической разблокировки, " +
+			"в случае восстановления работы этого происходить не должно")]
+		public void Do_not_auto_unblock_on_payment()
+		{
+			client.RatedPeriodDate = DateTime.Now;
+			client.SetStatus(StatusType.BlockedForRepair, session);
+			session.Save(client);
+			session.Save(new Payment(client, 500));
+
+			Process();
+
+			client = session.Load<Client>(client.Id);
+			Assert.AreEqual(StatusType.BlockedForRepair, client.Status.Type);
+		}
+
+		private void Process(TimeSpan? offset = null)
+		{
+			if (offset != null)
+				SystemTime.Now = () => DateTime.Now.Add(offset.Value);
+
+			session.Flush();
+			if (session.Transaction.IsActive)
+				session.Transaction.Commit();
+			//в результате работы биллинга объекты могут быть удалены например ClientService
+			//если сделать Refresh для такого объекта в коллекции которого есть такой объект то это приведет к ошибке
+			session.Clear();
+			billing.ProcessPayments();
+			billing.ProcessWriteoffs();
 		}
 	}
 }

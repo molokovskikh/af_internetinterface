@@ -93,6 +93,16 @@ namespace InternetInterface.Models
 
 		public virtual IList<string> AccesedPartner { get; set; }
 
+		public virtual bool AccesPartner(string reduseRulesName)
+		{
+			return AccesedPartner.Contains(reduseRulesName);
+		}
+
+		public virtual bool NeedShowAgenceContract(Payment payment)
+		{
+			return payment != null && ShowContractOfAgency && payment.Client.IsPhysical() && !payment.Virtual;
+		}
+
 		public virtual void ValidateSelf(ErrorSummary errors)
 		{
 			if (Role != null && Role.ReductionName == "Service") {

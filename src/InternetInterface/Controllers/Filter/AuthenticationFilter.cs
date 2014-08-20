@@ -28,9 +28,8 @@ namespace InternetInterface.Controllers.Filter
 				.Add(Restrictions.Eq("Categorie", partner.Role)))
 				.Select(c => c.AccessCat.ReduceName).ToList();
 			context.Items.Add("Administrator", partner);
-			controllerContext.PropertyBag["PartnerAccessSet"] = new CategorieAccessSet();
 			controllerContext.PropertyBag["MapPartner"] = partner;
-			if (AccessRules.GetAccessName(controllerContext.Action).Count(CategorieAccessSet.AccesPartner) == 0
+			if (AccessRules.GetAccessName(controllerContext.Action).Count(partner.AccesPartner) == 0
 				&& !partner.HavePermissionTo(controllerContext.Name, controllerContext.Action)) {
 				context.Response.RedirectToUrl("~/Errors/AccessDin.aspx");
 				return false;

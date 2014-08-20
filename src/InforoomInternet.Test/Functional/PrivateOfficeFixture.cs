@@ -255,6 +255,12 @@ namespace InforoomInternet.Test.Functional
 			AssertText("Введите фамилию");
 			AssertText("Введите имя");
 			AssertText("Введите отчество");
+
+			//тк формат серии и номера зависит от типа документа используется серверная валидация
+			Css("#PhysicalClient_Surname").SendKeys("Иванов");
+			Css("#PhysicalClient_Name").SendKeys("Иван");
+			Css("#PhysicalClient_Patronymic").SendKeys("Иванович");
+			Click("Подтвердить");
 			AssertText("Неправильный формат серии паспорта (4 цифры)");
 			AssertText("Неправильный формат номера паспорта (6 цифр)");
 		}

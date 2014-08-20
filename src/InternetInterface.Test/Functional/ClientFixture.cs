@@ -29,10 +29,14 @@ namespace InternetInterface.Test.Functional
 		{
 			var client = ClientHelper.Client(session);
 			session.Save(client);
-			Open(string.Format("UserInfo/SearchUserInfo?filter.ClientCode={0}", client.Id));
+			Open(client.Redirect());
 			AssertText("Информация по клиенту");
 			Input("BalanceText", "500");
 			ClickButton("Пополнить баланс");
+
+			client.Refresh();
+			var payment = client.Payments.Last(p => p.Sum == 500);
+			Click(payment.Id.ToString());
 			AssertText("ДОГОВОР ПОРУЧЕНИЯ");
 		}
 	}

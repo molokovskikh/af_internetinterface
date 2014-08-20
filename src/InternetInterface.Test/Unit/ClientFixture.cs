@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Net;
+using Castle.Components.Validator;
 using Common.Tools;
 using InternetInterface.Controllers;
 using InternetInterface.Models;
@@ -158,6 +159,19 @@ namespace InternetInterface.Test.Unit
 			client.ClientServices.Each(s => s.TryActivate());
 			Assert.AreEqual(23, client.Endpoints[0].PackageId);
 			Assert.IsTrue(client.IsNeedRecofiguration);
+		}
+
+		[Test]
+		public void Validate_id_doc()
+		{
+			var errors = new ErrorSummary();
+			client.PhysicalClient.HouseObj = new House("Тест", 1, new RegionHouse("Тестовый регион"));
+			client.PhysicalClient.IdDocType = IdDocType.Over;
+			client.PhysicalClient.IdDocName = "Вид на жительство";
+			client.PhysicalClient.PassportSeries = "АЕ";
+			client.PhysicalClient.PassportNumber = "000000";
+			client.PhysicalClient.Validate(errors);
+			Assert.AreEqual(0, errors.ErrorsCount, errors.ErrorMessages.Implode());
 		}
 
 		private void DailyWriteoff()

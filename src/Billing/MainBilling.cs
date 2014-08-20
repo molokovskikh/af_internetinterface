@@ -126,7 +126,7 @@ set s.LastStartFail = true;")
 			var services = session.Query<ClientService>().Where(s => !s.IsActivated);
 			foreach (var service in services) {
 				service.TryActivate();
-				session.SaveOrUpdate(service);
+				session.Save(service);
 			}
 		}
 
@@ -138,29 +138,25 @@ set s.LastStartFail = true;")
 				var newEndPointForConnect = session.Query<ClientEndpoint>().Where(c => c.Client.PhysicalClient != null && !c.PayForCon.Paid && c.Client.BeginWork != null).ToList();
 				foreach (var clientEndpoint in newEndPointForConnect) {
 					var writeOff = new UserWriteOff(clientEndpoint.Client, clientEndpoint.PayForCon.Sum, "Плата за подключение");
-					session.SaveOrUpdate(writeOff);
+					session.Save(writeOff);
 					clientEndpoint.PayForCon.Paid = true;
-					session.SaveOrUpdate(clientEndpoint.PayForCon);
+					session.Save(clientEndpoint.PayForCon);
 				}
 			});
 
-			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
-				var newPayments = Payment.FindAll(DetachedCriteria.For(typeof(Payment)).Add(Restrictions.Eq("BillingAccount", false)));
-				foreach (var newPayment in newPayments) {
-					var updateClient = newPayment.Client;
-					var physicalClient = updateClient.PhysicalClient;
-					var lawyerClient = updateClient.LawyerPerson;
-					if (physicalClient != null) {
-						physicalClient.AccountPayment(newPayment);
-						physicalClient.Update();
-						newPayment.BillingAccount = true;
-						newPayment.Update();
+			WithTransaction(session => {
+				var payments = session.Query<Payment>().Where(p => !p.BillingAccount);
+				foreach (var payment in payments) {
+					var updateClient = payment.Client;
+					if (updateClient.PhysicalClient != null) {
+						updateClient.PhysicalClient.AccountPayment(payment);
+						payment.BillingAccount = true;
 						SmsHelper.DeleteNoSendingMessages(updateClient);
 						if (updateClient.HavePaymentToStart()) {
 							updateClient.AutoUnblocked = true;
 						}
 						if (updateClient.RatedPeriodDate != null) {
-							if (physicalClient.Balance >= updateClient.GetPriceIgnoreDisabled() * updateClient.PercentBalance) {
+							if (updateClient.PhysicalClient.Balance >= updateClient.GetPriceIgnoreDisabled() * updateClient.PercentBalance) {
 								updateClient.ShowBalanceWarningPage = false;
 								if (updateClient.IsChanged(c => c.ShowBalanceWarningPage))
 									updateClient.CreareAppeal("Отключена страница Warning, клиент внес платеж", AppealType.Statistic);
@@ -169,40 +165,31 @@ set s.LastStartFail = true;")
 								clientService.PaymentProcessed();
 							}
 						}
-						updateClient.Update();
 					}
-					if (lawyerClient != null) {
-						lawyerClient.Balance += Convert.ToDecimal(newPayment.Sum);
-						lawyerClient.UpdateAndFlush();
-						newPayment.BillingAccount = true;
-						newPayment.UpdateAndFlush();
+					if (updateClient.LawyerPerson != null) {
+						updateClient.LawyerPerson.Balance += Convert.ToDecimal(payment.Sum);
+						payment.BillingAccount = true;
 						updateClient.Disabled = false;
-						updateClient.Update();
 					}
 				}
-				transaction.VoteCommit();
-			}
-			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
-				var userWriteOffs = UserWriteOff.Queryable.Where(u => !u.BillingAccount && u.Client != null).ToList();
-				foreach (var userWriteOff in userWriteOffs) {
+			});
+			WithTransaction(session => {
+				var writeoffs = session.Query<UserWriteOff>().Where(w => !w.BillingAccount && w.Client != null);
+				foreach (var userWriteOff in writeoffs) {
 					var client = userWriteOff.Client;
 					if (client.PhysicalClient != null) {
 						var physicalClient = client.PhysicalClient;
 						physicalClient.WriteOff(userWriteOff.Sum);
-						physicalClient.Update();
 					}
 					if (client.LawyerPerson != null) {
 						var lawyerPerson = client.LawyerPerson;
 						lawyerPerson.Balance -= userWriteOff.Sum;
-						lawyerPerson.Update();
 					}
 					userWriteOff.BillingAccount = true;
-					userWriteOff.Update();
 				}
-				transaction.VoteCommit();
-			}
-			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
-				var clients = Client.Queryable
+			});
+			WithTransaction(session => {
+				var clients = session.Query<Client>()
 					.Where(c => c.PhysicalClient != null && c.Disabled && c.AutoUnblocked)
 					.ToList()
 					.Where(c => c.PhysicalClient.Balance > c.GetPriceIgnoreDisabled() * c.PercentBalance)
@@ -213,10 +200,9 @@ set s.LastStartFail = true;")
 						client.CreareAppeal("Отключена страница Warning, клиент разблокирован", AppealType.Statistic);
 					if (client.IsChanged(c => c.Disabled))
 						client.CreareAppeal("Клиент разблокирован", AppealType.Statistic);
-					client.UpdateAndFlush();
 					SmsHelper.DeleteNoSendingMessages(client);
 				}
-				var lawyerPersons = Client.Queryable.Where(c => c.LawyerPerson != null);
+				var lawyerPersons = session.Query<Client>().Where(c => c.LawyerPerson != null);
 				foreach (var client in lawyerPersons) {
 					if (client.NeedShowWarningForLawyer()) {
 						if (client.WhenShowWarning == null ||
@@ -236,18 +222,16 @@ set s.LastStartFail = true;")
 						if (client.IsChanged(c => c.ShowBalanceWarningPage))
 							client.CreareAppeal("Отключена страница Warning", AppealType.Statistic);
 					}
-					client.Update();
 				}
-				foreach (var cserv in ActiveRecordMediator.FindAll(typeof(ClientService)).Cast<ClientService>()) {
-					cserv.TryDeactivate();
+				foreach (var assignedservice in session.Query<ClientService>()) {
+					assignedservice.TryDeactivate();
 				}
-				transaction.VoteCommit();
-			}
+			});
 		}
 
 		public virtual void ProcessWriteoffs()
 		{
-			int errorCount = 0;
+			var errorCount = 0;
 			using (new SessionScope()) {
 				ArHelper.WithSession(s => {
 					var settings = s.Query<InternetSettings>().First();
@@ -260,11 +244,11 @@ set s.LastStartFail = true;")
 			}
 
 			ProcessAll(WriteOffFromPhysicalClient,
-				() => Client.Queryable.Where(c => c.PhysicalClient != null && !c.PaidDay),
+				s => s.Query<Client>().Where(c => c.PhysicalClient != null && !c.PaidDay),
 				ref errorCount);
 
 			ProcessAll(WriteOffFromLawyerPerson,
-				() => Client.Queryable.Where(c => c.LawyerPerson != null && !c.PaidDay),
+				s => s.Query<Client>().Where(c => c.LawyerPerson != null && !c.PaidDay),
 				ref errorCount);
 
 			WithTransaction(s => {
@@ -317,12 +301,12 @@ set s.LastStartFail = true;")
 			});
 		}
 
-		private void ProcessAll(Action<ISession, Client> action, Func<IQueryable<Client>> query, ref int errorCount)
+		private void ProcessAll(Action<ISession, Client> action, Func<ISession, IQueryable<Client>> query, ref int errorCount)
 		{
 			var ids = new List<uint>();
-			using (new SessionScope()) {
-				ids = query().Select(c => c.Id).ToList();
-			}
+			WithTransaction(session => {
+				ids = query(session).Select(c => c.Id).ToList();
+			});
 
 			foreach (var id in ids) {
 				try {

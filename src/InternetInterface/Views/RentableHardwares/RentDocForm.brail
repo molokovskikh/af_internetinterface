@@ -144,7 +144,7 @@ ${app.Asset("printact.css")}
 			<td>
 				ОГРН 1083668017146
 			</td>
-			<td>Паспорт: !{client.PhysicalClient.PassportSeries} \ !{client.PhysicalClient.PassportNumber} Выдан: !{client.PhysicalClient.WhoGivePassport}</td>
+			<td>!{client.PhysicalClient.SafeIdDocName}: !{client.PhysicalClient.PassportSeries} \ !{client.PhysicalClient.PassportNumber} Выдан: !{client.PhysicalClient.WhoGivePassport}</td>
 		</tr>
 		<tr>
 			<td>Юр. адрес: 394036, г. Воронеж,</td>
@@ -238,7 +238,7 @@ ${app.Asset("printact.css")}
 			<td>
 				ОГРН 1083668017146
 			</td>
-			<td>Паспорт: !{client.PhysicalClient.PassportSeries} \ !{client.PhysicalClient.PassportNumber} Выдан: !{client.PhysicalClient.WhoGivePassport}</td>
+			<td>!{client.PhysicalClient.SafeIdDocName}: !{client.PhysicalClient.PassportSeries} \ !{client.PhysicalClient.PassportNumber} Выдан: !{client.PhysicalClient.WhoGivePassport}</td>
 		</tr>
 		<tr>
 			<td>Юр. адрес: 394036, г. Воронеж,</td>
@@ -321,7 +321,7 @@ ${app.Asset("printact.css")}
 			<td>
 				ОГРН 1083668017146
 			</td>
-			<td>Паспорт: !{client.PhysicalClient.PassportSeries} \ !{client.PhysicalClient.PassportNumber} Выдан: !{client.PhysicalClient.WhoGivePassport}</td>
+			<td>!{client.PhysicalClient.SafeIdDocName}: !{client.PhysicalClient.PassportSeries} \ !{client.PhysicalClient.PassportNumber} Выдан: !{client.PhysicalClient.WhoGivePassport}</td>
 		</tr>
 		<tr>
 			<td>Юр. адрес: 394036, г. Воронеж,</td>
@@ -404,7 +404,7 @@ ${app.Asset("printact.css")}
 			<td>
 				ОГРН 1083668017146
 			</td>
-			<td>Паспорт: !{client.PhysicalClient.PassportSeries} \ !{client.PhysicalClient.PassportNumber} Выдан: !{client.PhysicalClient.WhoGivePassport}</td>
+			<td>!{client.PhysicalClient.SafeIdDocName}: !{client.PhysicalClient.PassportSeries} \ !{client.PhysicalClient.PassportNumber} Выдан: !{client.PhysicalClient.WhoGivePassport}</td>
 		</tr>
 		<tr>
 			<td>Юр. адрес: 394036, г. Воронеж,</td>

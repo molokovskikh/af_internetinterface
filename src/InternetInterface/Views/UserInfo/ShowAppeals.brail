@@ -1,46 +1,46 @@
-﻿<div style="width:600px; margin: 0 auto; ">
-
-${FormHelper.FormTag("${Siteroot}/UserInfo/ShowAppeals", {@method: @get})}
-<table style="border: 1px solid #AAA; background-color:White;" class="table">
-	<thead>
-		<tr>
-			<th colspan=2 style="text-align:center;">Фильт по обращениям</th>
-		</tr>
-	</thead>
-	<tbody style="text-align:left;">
-		<tr>
-			<td colspan=2>
-				<label for="queryText">Введите фразу для поиска : </label> 
-				${app.Edit("filter.Query", {@class: "search_query"})}
-			</td>
-		</tr>
-		<tr>
-			<td>Начало периода</td>
-			<td>Конец периода</td>
-		</tr>
-		<tr>
-			<td>
-				${app.Edit("filter.StartDate", { @class: "date_field"})}
-			</td>
-			<td>
-				${app.Edit("filter.EndDate", { @class: "date_field"})}
-			</td>
-		</tr>
-		<tr>
-			<td>Тип обращения</td>
-			<td style="text-align:left;">
-				${app.Edit("filter.AppealType", "RadioList")}
-			</td>
-		</tr>
-		<tr>
-			<td colspan=2 style="text-align:left;">
-				${FormHelper.Submit("Показать")}
-			</td>
-		</tr>
-	</tbody>
-</table>
-${FormHelper.EndFormTag()}
+﻿<div class="centred width600">
+	${FormHelper.FormTag("${Siteroot}/UserInfo/ShowAppeals", {@method: @get})}
+	<table class="table">
+		<thead>
+			<tr>
+				<th colspan=2>Фильт по обращениям</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td colspan=2>
+					<label for="queryText">Введите фразу для поиска: </label>
+					${app.Edit("filter.Query", {@class: "search_query"})}
+				</td>
+			</tr>
+			<tr>
+				<td>Начало периода</td>
+				<td>Конец периода</td>
+			</tr>
+			<tr>
+				<td>
+					${app.Edit("filter.StartDate", { @class: "date_field"})}
+				</td>
+				<td>
+					${app.Edit("filter.EndDate", { @class: "date_field"})}
+				</td>
+			</tr>
+			<tr>
+				<td>Тип обращения</td>
+				<td>
+					${app.Edit("filter.AppealType", "RadioList")}
+				</td>
+			</tr>
+			<tr>
+				<td colspan=2>
+					${FormHelper.Submit("Показать")}
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	${FormHelper.EndFormTag()}
 </div>
+
 <div style="text-align:center; padding-bottom:20px; font-size:16px; font-weight:bold;">Найдено ${filter.RowsCount} обращений</div>
 <table class="table">
 	<thead>

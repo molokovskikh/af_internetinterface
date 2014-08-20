@@ -17,3 +17,8 @@
 	color: red;
 	font-weight: bold;
 }
+
+form label.error {
+	clear: both;
+	display: block;
+}

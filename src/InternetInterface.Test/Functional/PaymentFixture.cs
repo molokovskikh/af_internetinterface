@@ -74,7 +74,7 @@ namespace InternetInterface.Test.Functional
 			var payment = new Payment(client, 1000);
 			Save(client, payment);
 
-			Open("UserInfo/SearchUserInfo?filter.ClientCode={0}", client.Id);
+			Open(client.Redirect());
 			Css("#show_payments").Click();
 			Click("Отменить");
 			WaitForVisibleCss("#cancel_payment_action #comment");

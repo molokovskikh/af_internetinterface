@@ -24,7 +24,7 @@
 	}
 </script>
 
-<% if PartnerAccessSet.AccesPartner("DHCP"): %>
+<% if MapPartner.AccesPartner("DHCP"): %>
 	<table id="editConnectTable" class="table" style="width: 100%;">
 		<thead>
 			<th colspan = "3">

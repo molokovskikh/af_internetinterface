@@ -1,12 +1,12 @@
 ﻿<div class="registration-sub-block">
 	<h3 class="form-like">!{internet.Service.HumanName}</h3>
 	<div>
-		${app.Edit("internet.ActivatedByUser", {"data-bind": "checked: internetActivated"})}
+		${app.Edit("internet.ActivatedByUser")}
 		${app.GetValidationError("client.ActivatedByUser")}
 	</div>
 	<div>
 		${app.Label("client.Tariff")}
-		${app.Edit("client.Tariff", {@emptyValue: "", "data-bind": "value: tariff"})}
+		${app.Edit("client.Tariff", {@emptyValue: ""})}
 		${app.GetValidationError("client.Tariff")}
 	</div>
 </div>
