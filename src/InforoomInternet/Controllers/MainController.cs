@@ -15,6 +15,7 @@ using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.Models.Editor;
+using InforoomInternet.Helpers;
 using InforoomInternet.Models;
 using InternetInterface.Controllers;
 using InternetInterface.Helpers;
@@ -27,21 +28,6 @@ namespace InforoomInternet.Controllers
 	[Filter(ExecuteWhen.BeforeAction, typeof(BeforeFilter))]
 	public class MainController : BaseController
 	{
-		private IPAddress GetHost()
-		{
-			var hostAdress = Request.UserHostAddress;
-#if DEBUG
-			if (ConfigurationManager.AppSettings["DebugHost"] != null)
-				hostAdress = ConfigurationManager.AppSettings["DebugHost"];
-#endif
-			return IPAddress.Parse(hostAdress);
-		}
-
-		private Lease FindLease()
-		{
-			return DbSession.Query<Lease>().FirstOrDefault(l => l.Ip == GetHost());
-		}
-
 		public void Index()
 		{
 			PropertyBag["tariffs"] = DbSession.Query<Tariff>().Where(t => !t.Hidden).ToList();
@@ -91,20 +77,19 @@ namespace InforoomInternet.Controllers
 
 		public void Feedback(string clientName, string contactInfo, uint clientId, string appealText, uint autoClientId)
 		{
-			var ip = Request.UserHostAddress;
 			var mailToAdress = "internet@ivrn.net";
 #if DEBUG
 			mailToAdress = "kvasovtest@analit.net";
 #endif
-			var lease = FindLease();
-			var client = lease != null && lease.Endpoint != null ? lease.Endpoint.Client : null;
+			var clientEndPoint = IpAdressHelper.GetClientEndpoint(Request.UserHostAddress, DbSession);
+			var client = clientEndPoint != null ? clientEndPoint.Client : null;
 			client = client ?? new Client();
 			PropertyBag["client"] = client;
 
 			if (IsPost) {
 				var Text = new StringBuilder();
 				Text.AppendLine("Обращение клиента через сайт WWW.IVRN.NET \r\n");
-				Text.AppendLine("Клиент пришел с адреса: " + ip);
+				Text.AppendLine("Клиент пришел с адреса: " + Request.UserHostAddress);
 				Text.AppendLine(string.Format("Наша система определила запрос с лицевого счета номер: {0} \r\n", autoClientId));
 				Text.AppendLine("Введена информация : \r\n");
 				Text.AppendLine("ФИО: " + clientName);
@@ -157,31 +142,12 @@ namespace InforoomInternet.Controllers
 
 		public void Warning()
 		{
-			var ipAddress = GetHost();
 			var origin = "";
 			if (!string.IsNullOrEmpty(Request["host"])) {
 				origin = Request["host"] + Request["url"];
 			}
 			PropertyBag["referer"] = origin;
-
-			var lease = FindLease();
-			ClientEndpoint endpoint;
-			if (lease != null)
-				endpoint = lease.Endpoint;
-			else {
-				var ips = DbSession.Query<StaticIp>().ToList();
-				endpoint = ips.Where(ip => {
-					if (ip.Ip == ipAddress.ToString())
-						return true;
-					if (ip.Mask != null) {
-						var subnet = SubnetMask.CreateByNetBitLength(ip.Mask.Value);
-						if (ipAddress.IsInSameSubnet(IPAddress.Parse(ip.Ip), subnet))
-							return true;
-					}
-					return false;
-				}).Select(s => s.EndPoint).FirstOrDefault();
-			}
-
+			var endpoint = IpAdressHelper.GetClientEndpoint(Request.UserHostAddress, DbSession);
 			if (endpoint == null || endpoint.Client == null) {
 				RedirectToSiteRoot();
 				return;
