@@ -17,7 +17,7 @@ namespace InternetInterface.Models
 		public virtual House House { get; set; }
 
 		[Property]
-		public virtual int Number { get; set; }
+		public virtual string Number { get; set; }
 
 		[Property]
 		public virtual string LastInternet { get; set; }
@@ -41,7 +41,7 @@ namespace InternetInterface.Models
 		{
 			return ActiveRecordLinqBase<Request>.Queryable.FirstOrDefault(r => r.Street == House.Street
 				&& r.House == House.Number
-				&& r.CaseHouse == House.Case && r.Apartment == Number
+				&& r.CaseHouse == House.Case && r.Apartment.ToString() == Number
 				&& r.Registrator != null);
 		}
 	}

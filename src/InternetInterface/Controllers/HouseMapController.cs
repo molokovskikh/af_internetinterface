@@ -197,7 +197,7 @@ namespace InternetInterface.Controllers
 			var statusId = UInt32.Parse(Request.Form["status"]);
 			var status = statusId > 0 ? DbSession.Load<ApartmentStatus>(statusId) : null;
 			var apps =
-				DbSession.Query<Apartment>().Where(a => a.Number == Int32.Parse(apartment) && a.House.Id == Int32.Parse(house))
+				DbSession.Query<Apartment>().Where(a => a.Number == apartment && a.House.Id == Int32.Parse(house))
 					.ToList();
 			if (apps.Count != 0) {
 				foreach (var app in apps) {
@@ -214,7 +214,7 @@ namespace InternetInterface.Controllers
 				apps.Add(
 					new Apartment {
 						House = DbSession.Load<House>(Convert.ToUInt32(house)),
-						Number = Int32.Parse(apartment),
+						Number = apartment,
 						LastInternet = last_inet,
 						LastTV = last_TV,
 						Status = status,
@@ -295,7 +295,7 @@ namespace InternetInterface.Controllers
 		{
 			try {
 				var house = Request.Form["House"];
-				var apartment = Int32.Parse(Request.Form["apartment_num"]);
+				var apartment = Request.Form["apartment_num"];
 				var apps = DbSession.Query<Apartment>().Where(a => a.Number == apartment && a.House.Id == Int32.Parse(house))
 					.ToList().FirstOrDefault();
 				if (apps != null) {
@@ -316,7 +316,7 @@ namespace InternetInterface.Controllers
 		public List<HistoryInfo> LoadApartmentHistory()
 		{
 			var house = Request.Form["House"];
-			var apartment = Int32.Parse(Request.Form["apartment_num"]);
+			var apartment = Request.Form["apartment_num"];
 			var apps =
 				DbSession.Query<Apartment>().Where(a => a.Number == apartment && a.House.Id == Int32.Parse(house))
 					.ToList().FirstOrDefault();

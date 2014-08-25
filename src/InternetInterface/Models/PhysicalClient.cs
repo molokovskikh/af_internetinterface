@@ -102,8 +102,11 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string CaseHouse { get; set; }
 
-		[Property, ValidateNonEmpty("Введите номер квартиры"), ValidateInteger("Должно быть введено число"), Auditable("Номер квартиры")]
-		public virtual int? Apartment { get; set; }
+		[Property, ValidateNonEmpty("Введите номер квартиры"), Auditable("Номер квартиры")]
+		public virtual string Apartment { get; set; }
+
+		[Property]
+		public virtual string Additional { get; set; }
 
 		[Property, ValidateNonEmpty("Введите номер подъезда"), ValidateInteger("Должно быть введено число"), Auditable("Номер подъезда")]
 		public virtual int? Entrance { get; set; }
@@ -218,17 +221,17 @@ namespace InternetInterface.Models
 
 		public virtual string GetFullAddress()
 		{
-			return String.Format("улица {0} дом {1}{2} квартира {3} подъезд {4} этаж {5}",
+			return String.Format("улица {0} дом {1}{2} квартира {3} подъезд {4} этаж {5} {6}",
 				Street, House, String.IsNullOrEmpty(CaseHouse) ? "" : " корпус " + CaseHouse,
-				Apartment, Entrance, Floor);
+				Apartment, Entrance, Floor, Additional);
 		}
 
 		public virtual string GetAdress()
 		{
-			return String.Format("{0} Подъезд {1} Этаж {2}",
+			return String.Format("{0} Подъезд {1} Этаж {2} {3}",
 				GetShortAdress(),
 				Entrance,
-				Floor);
+				Floor, Additional);
 		}
 
 		public virtual string GetShortAdress()

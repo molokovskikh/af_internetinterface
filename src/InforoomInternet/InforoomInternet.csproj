@@ -262,6 +262,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\AppHelper.cs" />
+    <Compile Include="Helpers\IpAdressHelper.cs" />
     <Compile Include="Helpers\LoginHelper.cs" />
     <Compile Include="Initializers\ActiveRecord.cs" />
     <Compile Include="Models\ViewText.cs" />

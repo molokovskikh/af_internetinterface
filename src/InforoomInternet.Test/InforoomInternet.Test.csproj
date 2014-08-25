@@ -131,6 +131,7 @@
     <Compile Include="Integration\PrivateOfficeControllerFixture.cs" />
     <Compile Include="Setup.cs" />
     <Compile Include="Unit\ActivePackageId.cs" />
+    <Compile Include="Integration\IpAdressHelperTest.cs" />
     <Compile Include="Unit\IPTypeConverter.cs" />
     <Compile Include="Unit\LoginTest.cs" />
   </ItemGroup>
