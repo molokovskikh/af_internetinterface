@@ -259,7 +259,7 @@ namespace InternetInterface.Controllers
 				Floor = request.Floor,
 				House = request.House,
 				Street = request.Street,
-				Apartment = request.Apartment,
+				Apartment = request.Apartment.ToString(),
 				Entrance = request.Entrance,
 				Email = request.ApplicantEmail,
 			};
@@ -370,11 +370,11 @@ namespace InternetInterface.Controllers
 				request.RegDate = DateTime.Now;
 				request.Operator = InitializeContent.Partner;
 				DbSession.Save(request);
-				var apartment = DbSession.Query<Apartment>().FirstOrDefault(a => a.House == DbSession.Load<House>(houseNumber) && a.Number == request.Apartment);
+				var apartment = DbSession.Query<Apartment>().FirstOrDefault(a => a.House == DbSession.Load<House>(houseNumber) && a.Number == request.Apartment.ToString());
 				if (apartment == null) {
 					apartment = new Apartment {
 						House = DbSession.Load<House>(houseNumber),
-						Number = request.Apartment != null ? request.Apartment.Value : 0,
+						Number = request.Apartment != null ? request.Apartment.Value.ToString() : "0",
 					};
 					DbSession.Save(apartment);
 				}

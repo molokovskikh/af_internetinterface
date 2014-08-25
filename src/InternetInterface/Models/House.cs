@@ -68,7 +68,7 @@ namespace InternetInterface.Models
 			get { return FindAll().OrderBy(h => h.Street).ToList(); }
 		}
 
-		public virtual Apartment GetApartmentWithNumber(int num)
+		public virtual Apartment GetApartmentWithNumber(string num)
 		{
 			var apartment = Apartments.Where(a => a.Number == num).ToList();
 			if (apartment.Count != 0)
@@ -76,7 +76,7 @@ namespace InternetInterface.Models
 			return null;
 		}
 
-		public virtual uint GetClientWithApNumber(int num)
+		public virtual uint GetClientWithApNumber(string num)
 		{
 			return
 				Client.Queryable.Where(c => c.PhysicalClient.HouseObj == this && c.PhysicalClient.Apartment == num)
