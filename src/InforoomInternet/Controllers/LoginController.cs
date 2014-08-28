@@ -17,7 +17,7 @@ namespace InforoomInternet.Controllers
 				PropertyBag["AcceptName"] = "AcceptClient";
 			}
 			else {
-				if (LoginHelper.IsAccessiblePartner(Session["LoginPartner"])) {
+				if (HttpContext.Items["Partner"] != null) {
 					if (impersonate == null) {
 						RedirectToSiteRoot();
 					}

@@ -14,4 +14,9 @@
 	$("form.validable").each(function () {
 		$(this).validate();
 	});
+
+	var selfUrl = decodeURIComponent(window.location.href);
+	if (endsWith(selfUrl, "Login/LoginPage"))
+		selfUrl = selfUrl.replace("Login/LoginPage", "PrivateOffice/IndexOffice");
+	setupContentMenu(selfUrl);
 });

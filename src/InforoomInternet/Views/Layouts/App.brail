@@ -11,6 +11,7 @@
 	${app.Asset("jquery-ui-i18n.min.js")}
 	${app.Asset("colorbox/jquery.colorbox-min.js")}
 	${app.Asset("colorbox/i18n/jquery.colorbox-ru.js")}
+	${app.Asset("content-menu.js")}
 
 	${app.Asset("app.js")}
 

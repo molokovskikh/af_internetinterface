@@ -17,7 +17,7 @@ namespace InforoomInternet.Controllers
 	{
 		public bool Perform(ExecuteWhen exec, IEngineContext context, IController controller, IControllerContext controllerContext)
 		{
-			return LoginHelper.IsAccessiblePartner(context.Session["LoginPartner"]);
+			return context.Items["Partner"] != null;
 		}
 	}
 
@@ -33,7 +33,12 @@ namespace InforoomInternet.Controllers
 				context.Session["LoginPartner"] = context.CurrentUser.Identity.Name;
 			}
 
-			controllerContext.PropertyBag["AccessEditLink"] = LoginHelper.IsAccessiblePartner(context.Session["LoginPartner"]);
+			var login = context.Session["LoginPartner"] as string;
+			if (login != null) {
+				var partner = Partner.Queryable.FirstOrDefault(p => p.Login == login);
+				context.Items["Partner"] = partner;
+				controllerContext.PropertyBag["AccessEditLink"] = partner != null;
+			}
 			return true;
 		}
 	}

@@ -8,8 +8,8 @@ using InternetInterface.Helpers;
 
 namespace InforoomInternet.Controllers
 {
-	[FilterAttribute(ExecuteWhen.BeforeAction, typeof(BeforeFilter))]
-	[Filter(ExecuteWhen.BeforeAction, typeof(EditAccessFilter))]
+	[Filter(ExecuteWhen.BeforeAction, typeof(BeforeFilter), ExecutionOrder = 0)]
+	[Filter(ExecuteWhen.BeforeAction, typeof(EditAccessFilter), ExecutionOrder = 1)]
 	public class EditorController : BaseEditorController
 	{
 		public override IEnumerable<string> SpecialLinks
