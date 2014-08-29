@@ -47,5 +47,17 @@ namespace InforoomInternet.Test.Functional
 			session.Refresh(Client);
 			Assert.AreEqual(StatusType.Worked, Client.Status.Type);
 		}
+
+		[Test]
+		public void No_passport_data()
+		{
+			Client.BeginWork = DateTime.Now.AddDays(-10);
+			Client.ShowBalanceWarningPage = true;
+			PhysicalClient.Balance = 500;
+			session.Save(Client);
+
+			Open("Main/Warning");
+			AssertText("При регистрации в сети Инфорум Вами были указаны некорректные паспортные данные.");
+		}
 	}
 }

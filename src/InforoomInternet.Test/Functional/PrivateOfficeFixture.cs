@@ -191,7 +191,7 @@ namespace InforoomInternet.Test.Functional
 		}
 
 		[Test]
-		public void Friend_bunus_base_view_test()
+		public void Friend_bonus_base_view_test()
 		{
 			Click("Бонусные программы");
 			AssertText("Ваши друзья до сих пор пользуются интернетом с низкой скоростью?");
@@ -226,7 +226,7 @@ namespace InforoomInternet.Test.Functional
 		}
 
 		[Test]
-		public void Fist_launch_test()
+		public void First_launch_test()
 		{
 			CreateLease();
 			client.FirstLaunch = false;
