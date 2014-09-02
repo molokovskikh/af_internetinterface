@@ -2,16 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Web;
-using System.Web.Services.Description;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework.Internal.EventListener;
-using Common.Web.Ui.Helpers;
 using Common.Web.Ui.Models.Audit;
-using Common.Web.Ui.MonoRailExtentions;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
-using NHibernate;
 using NHibernate.Event;
 
 namespace InternetInterface.Helpers
@@ -31,7 +26,7 @@ namespace InternetInterface.Helpers
 	}
 
 	[EventListener]
-	public class AuditListener : BaseAuditListener
+	public class AuditListener : BaseAuditListener, IPreInsertEventListener
 	{
 		protected override AuditableProperty GetAuditableProperty(PropertyInfo property, string name, object newState, object oldState, object entity)
 		{
@@ -41,6 +36,26 @@ namespace InternetInterface.Helpers
 					auditableProperty.Message = String.Format("Услуга '{0}' {1}", ((OrderService)entity).Description, auditableProperty.Message);
 			}
 			return auditableProperty;
+		}
+
+		public bool OnPreInsert(PreInsertEvent @event)
+		{
+			var session = @event.Session;
+			var entity = @event.Entity;
+
+			if (entity is ClientEndpoint) {
+				var endpoint = (ClientEndpoint)entity;
+				var message = "Создана точка подключения.";
+				LoadData(session, () => {
+					if (endpoint.Switch != null) {
+						var @switch = endpoint.Switch;
+						message += " Коммутатор " + @switch.Name + " # " + @switch.Id;
+					}
+					var appeal = new Appeals(message, endpoint.Client, AppealType.System);
+					session.Save(appeal);
+				});
+			}
+			return false;
 		}
 
 		protected override void Log(PostUpdateEvent @event, IEnumerable<AuditableProperty> properties, bool isHtml)
@@ -76,7 +91,6 @@ namespace InternetInterface.Helpers
 					appeal = new Appeals {
 						Appeal = message,
 						Client = client,
-						Date = DateTime.Now,
 						Partner = InitializeContent.TryGetPartner(),
 						AppealType = AppealType.System
 					};
