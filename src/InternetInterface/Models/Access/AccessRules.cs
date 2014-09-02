@@ -232,7 +232,8 @@ namespace InternetInterface.Models.Access
 				"EditOrderService",
 				"CloseOrder",
 				"OrdersArchive",
-				"DeleteWriteOff"
+				"DeleteWriteOff",
+				"InitGraph"
 			};
 			return _visibleDemand.Contains(methodName) ? "ECI" : string.Empty;
 		}

@@ -123,6 +123,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Javascripts\application.js" />
+    <Content Include="Assets\Javascripts\AppointedToTheGraph.js" />
     <Content Include="Assets\Javascripts\Common.js" />
     <Content Include="Assets\Javascripts\dialog.action.js" />
     <Content Include="Assets\Javascripts\EditingConnect.js" />
@@ -251,7 +252,9 @@
     <Content Include="Views\RentableHardwares\ReturnDocForm.brail" />
     <None Include="Views\Rescues\404.brail" />
     <None Include="Views\ServiceRequest\ShowRequest.brail" />
-    <Content Include="Views\ServiceRequest\Timetable.brail" />
+    <Content Include="Views\ServiceRequest\Timetable.brail">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Views\ServiceRequest\ViewRequests.brail" />
     <None Include="Views\Services\Edit.brail" />
     <None Include="Views\Shared\DisplayTemplates\HardwareRent.brail" />
@@ -302,6 +305,10 @@
     <None Include="Views\ConnectionRequest\RequestOne.brail" />
     <None Include="Views\UserInfo\RequestGraph.brail" />
     <None Include="Views\UserInfo\ShowLawyerPerson.brail" />
+    <None Include="Views\UserInfo\RequestGraph.brail">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Views\UserInfo\LawyerPersonInfo.brail" />
     <None Include="Views\UserInfo\NoPhoned.brail" />
     <None Include="Views\Partners\Index.brail" />
     <None Include="Views\UserInfo\ClientRegisteredInfo.brail" />
@@ -473,6 +480,7 @@
     <Compile Include="Models\Access\CategorieAccessSet.cs" />
     <Compile Include="Models\Payment.cs" />
     <Compile Include="Models\Tariff.cs" />
+    <Compile Include="Models\Universal\TimeInterval.cs" />
     <Compile Include="Models\Universal\ValidActiveRecordLinqBase.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

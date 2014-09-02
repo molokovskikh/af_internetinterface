@@ -46,24 +46,27 @@
 			</thead>
 			<tbody>
 				<% for i, interval in enumerate(Intervals):  %>
-				<% client = Brigad.GetOneGraph(i, selectDate) %>
 					<tr>
+						<% client = null%>
 						<td style="text-align:center;">
 							${interval}
 						</td>
 						<td style="text-align:center;">
-						<% if client != null: %>
-							<a href="../Search/Redirect?filter.ClientCode=${client.Id}">${client.Id.ToString("00000")}</a>
-						<% end %>
+							<% if interval.Request and interval.Request.IsReserved != true:%>
+								<% client = interval.Request.Client%>
+							<% end %>
+							<% if client != null: %>
+								<a href="../Search/Redirect?filter.ClientCode=${client.Id}">${client.Id.ToString("00000")}</a>
+							<% end %>
 						</td>
 						<td>
-						<% if client != null: %>
-						<% ConnectInfo = client.ConnectInfoFirst() %>
-							<b>${client.PhysicalClient.Street} ${client.PhysicalClient.House}${client.PhysicalClient.CaseHouse} кв ${client.PhysicalClient.Apartment} </b> Подъезд ${client.PhysicalClient.Entrance} Этаж ${client.PhysicalClient.Floor} <br />
-							<% if ConnectInfo != null: %>
-							Коммутатор: ${ConnectInfo.Swith_adr} (${ConnectInfo.swith_IP}) Порт: ${ConnectInfo.Port}
+							<% if client != null: %>
+								<% ConnectInfo = client.ConnectInfoFirst() %>
+								<b>${client.PhysicalClient.Street} ${client.PhysicalClient.House}${client.PhysicalClient.CaseHouse} кв ${client.PhysicalClient.Apartment} </b> Подъезд ${client.PhysicalClient.Entrance} Этаж ${client.PhysicalClient.Floor} <br />
+								<% if ConnectInfo != null: %>
+									Коммутатор: ${ConnectInfo.Swith_adr} (${ConnectInfo.swith_IP}) Порт: ${ConnectInfo.Port}
+								<% end %>
 							<% end %>
-						<% end %>
 						</td>
 					</tr>
 				<% end %>

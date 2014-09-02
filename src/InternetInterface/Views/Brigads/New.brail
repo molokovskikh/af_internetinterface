@@ -7,6 +7,24 @@
 </div>
 
 <div class="form-item">
+	${app.Label("brigad.WorkBegin")}
+	${app.Edit("brigad.WorkBegin")}
+	${app.Error("brigad.WorkBegin")}
+</div>
+
+<div class="form-item">
+	${app.Label("brigad.WorkEnd")}
+	${app.Edit("brigad.WorkEnd")}
+	${app.Error("brigad.WorkEnd")}
+</div>
+
+<div class="form-item">
+	${app.Label("brigad.WorkStep")}
+	${app.Edit("brigad.WorkStep")}
+	${app.Error("brigad.WorkStep")}
+</div>
+
+<div class="form-item">
 	${app.Label("brigad.Region")}
 	${app.Edit("brigad.Region", { @emptyValue: "" })}
 	${app.Error("brigad.Region")}

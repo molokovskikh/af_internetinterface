@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Web;
 using Castle.ActiveRecord;
+using ExcelLibrary.BinaryFileFormat;
 using InternetInterface.Models.Universal;
+using NHibernate;
+using NHibernate.Criterion;
+using NHibernate.Linq;
 
 namespace InternetInterface.Models
 {
 	[ActiveRecord("ConnectGraph", Schema = "internet", Lazy = true)]
-	public class ConnectGraph : ValidActiveRecordLinqBase<ConnectGraph>
+	public class ConnectGraph : ValidActiveRecordLinqBase<ConnectGraph>, ISerializable
 	{
 		public ConnectGraph()
 		{
@@ -17,7 +22,7 @@ namespace InternetInterface.Models
 		public ConnectGraph(Client client, DateTime day, Brigad brigad)
 		{
 			Client = client;
-			Day = day;
+			DateAndTime = day;
 			Brigad = brigad;
 		}
 
@@ -31,23 +36,20 @@ namespace InternetInterface.Models
 		public virtual Client Client { get; set; }
 
 		[Property]
-		public virtual DateTime Day { get; set; }
+		public virtual DateTime DateAndTime { get; set; }
+
+		[Property]
+		public virtual bool IsReserved { get; set; }
 
 		[BelongsTo]
 		public virtual Brigad Brigad { get; set; }
 
-		public static List<string> GetIntervals()
+		public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
-			return new List<string> {
-				"9:30 - 10:30",
-				"10:30 - 11:30",
-				"11:30 - 12:30",
-				"13:30 - 14:30",
-				"14:30 - 15:30",
-				"15:30 - 16:30",
-				"16:30 - 17:30",
-				"17-30 - 18:30"
-			};
+			info.AddValue("interval", IntervalId, typeof(string));
+			info.AddValue("isReserved", IsReserved, typeof(bool));
+			info.AddValue("clientId", Client.Id, typeof(string));
+			info.AddValue("Id", Id, typeof(string));
 		}
 	}
 }
