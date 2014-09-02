@@ -99,7 +99,11 @@
 						<td>${Client.static_IP}</td>
 						<td>${Client.Leased_IP}</td>
 						<td>${Client.LeaseBegin}</td>
-						<td><a href="${Siteroot}/Search/Redirect?filter.ClientCode=${Client.Client}">${Client.Client.ToString("00000")}</a></td>
+						<td>
+							<% if(Client.Client != 0): %>
+								<a href="${Siteroot}/Search/Redirect?filter.ClientCode=${Client.Client}">${Client.Client.ToString("00000")}</a>
+							<% end %>
+						</td>
 						<td>${Client.endpointId}</td>
 						<td>${Client.ForSearchName(filter.SearchText)}</td>
 						<td>${Client.Switch}</td>
