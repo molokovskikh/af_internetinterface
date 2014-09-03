@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Castle.Components.Validator;
 using Common.Tools;
+using Common.Web.Ui.MonoRailExtentions;
 using InternetInterface.Models;
 using InternetInterface.Services;
 using InternetInterface.Test.Helpers;
@@ -19,6 +21,7 @@ namespace InternetInterface.Test.Integration
 		public void TearDown()
 		{
 			SystemTime.Reset();
+			ValidEventListner.ValidatorAccessor = null;
 		}
 
 		[Test]
@@ -93,6 +96,26 @@ namespace InternetInterface.Test.Integration
 			Assert.AreEqual(0, client.Sale);
 			Assert.IsNull(client.StartNoBlock);
 			Assert.AreEqual(StatusType.NoWorked, client.Status.Type);
+		}
+
+		[Test]
+		public void Do_not_audit_not_valid_changes()
+		{
+			var client = ClientHelper.Client(session);
+			session.Save(client);
+			session.Flush();
+			session.Clear();
+
+			client = session.Load<Client>(client.Id);
+			client.PhysicalClient.Surname = "";
+			var validator = new ValidatorRunner(new CachedValidationRegistry());
+			Assert.IsFalse(validator.IsValid(client.PhysicalClient));
+			ValidEventListner.ValidatorAccessor = new LambdaValidatorAccessor(() => validator);
+			session.Flush();
+			session.Clear();
+
+			var appeals = session.Query<Appeals>().Where(a => a.Client == client).ToArray();
+			Assert.AreEqual(0, appeals.Length, appeals.Implode());
 		}
 	}
 }

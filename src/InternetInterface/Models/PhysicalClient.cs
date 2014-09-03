@@ -202,8 +202,10 @@ namespace InternetInterface.Models
 				errors.RegisterErrorMessage("ExternalClientId", "Нужно указать номер абонента");
 			}
 
-			if (Client.Status.Type != StatusType.Dissolved && HouseObj == null) {
-				errors.RegisterErrorMessage("HouseObj", "Нужно выбрать дом");
+			if (Client.Status.Type != StatusType.Dissolved
+				&& (Client.AdditionalStatus == null || Client.AdditionalStatus.Id != (uint)AdditionalStatusType.Refused)) {
+				if (HouseObj == null)
+					errors.RegisterErrorMessage("HouseObj", "Нужно выбрать дом");
 			}
 
 			if (IdDocType == IdDocType.LocalId) {

@@ -145,5 +145,10 @@ namespace InternetInterface.Models
 				type = "Системное";
 			return type;
 		}
+
+		public override string ToString()
+		{
+			return Appeal;
+		}
 	}
 }

@@ -1,10 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Castle.ActiveRecord;
-using Castle.ActiveRecord.Framework;
-using Castle.Components.Validator;
-using Common.Tools;
-using Common.Web.Ui.ActiveRecordExtentions;
 using InternetInterface.Controllers;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
@@ -21,7 +16,7 @@ namespace InternetInterface.Test.Helpers
 			var person = new LawyerPerson {
 				Name = "TestClient",
 				Balance = 1000,
-				Region = GetRegion()
+				Region = session.Query<RegionHouse>().First(r => r.Name == "Воронеж")
 			};
 			return new Client(person, session.Query<Partner>().First()) {
 				BeginWork = DateTime.Now,
@@ -81,11 +76,6 @@ namespace InternetInterface.Test.Helpers
 		public static Client Client(ISession session)
 		{
 			return PhysicalClient(session).Client;
-		}
-
-		public static RegionHouse GetRegion()
-		{
-			return ArHelper.WithSession(s => s.Query<RegionHouse>().First(r => r.Name == "Воронеж"));
 		}
 	}
 }

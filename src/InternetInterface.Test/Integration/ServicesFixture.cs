@@ -65,7 +65,7 @@ namespace InternetInterface.Test.Integration
 		public void Filter_request_by_region()
 		{
 			var client = ClientHelper.Client(session);
-			client.PhysicalClient.HouseObj = new House("Тест", 1, ClientHelper.GetRegion());
+			client.PhysicalClient.HouseObj = new House("Тест", 1, session.Query<RegionHouse>().First(r => r.Name == "Воронеж"));
 			var request = new ServiceRequest {
 				Client = client,
 				Description = "test",

@@ -10,7 +10,9 @@ using Castle.ActiveRecord.Framework;
 using Common.MySql;
 using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Helpers;
+using Common.Web.Ui.MonoRailExtentions;
 using InternetInterface.Controllers.Filter;
+using InternetInterface.Initializers;
 using InternetInterface.Models;
 using NHibernate.Linq;
 using NUnit.Framework;
@@ -92,10 +94,14 @@ namespace InternetInterface.Test.Functional
 		public static void ConfigTest()
 		{
 			XmlConfigurator.Configure();
-			if (!ActiveRecordStarter.IsInitialized)
+			if (!ActiveRecordStarter.IsInitialized) {
 				ActiveRecordInitialize.Init(ConnectionHelper.GetConnectionName(),
-					Assembly.Load("InternetInterface"),
-					Assembly.Load("InternetInterface.Test"));
+					new[] {
+						Assembly.Load("InternetInterface"),
+						Assembly.Load("InternetInterface.Test")
+					},
+					new[] { typeof(ValidEventListner) });
+			}
 		}
 	}
 }
