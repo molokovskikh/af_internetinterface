@@ -18,7 +18,7 @@
 				</td>
 				<td style="text-align:center;">
 				<% if client  != null: %>
-					<a href="../Search/Redirect?ClientCode=${client.Id}">${client.Id.ToString("00000")}</a>
+					${app.LinkToTitled(client, client.Id.ToString("00000"))}
 				<% end %>
 				</td>
 				<td>
