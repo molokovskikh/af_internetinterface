@@ -186,7 +186,7 @@ namespace InternetInterface.Test.Functional
 			Open(laywerPerson.Redirect());
 
 			AssertText("заказ № 1");
-			Click("<Подключенные услуги(1):");
+			Click("Подключенные услуги(1):");
 			AssertText("Периодичная");
 			AssertText("Тестовая услуга");
 			Css("#EditButton" + order.Id).Click();
@@ -284,7 +284,7 @@ namespace InternetInterface.Test.Functional
 			}
 			Open(laywerPerson.Redirect());
 			AssertText("заказ № " + order.Number);
-			AssertText("<Подключенные услуги(3)");
+			AssertText("Подключенные услуги(3)");
 			Css("#EditButton" + order.Id).Click();
 			browser.Manage().Window.Maximize();
 			ClickLink("Удалить");
