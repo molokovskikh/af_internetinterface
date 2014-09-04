@@ -112,6 +112,9 @@ namespace InternetInterface.Test.Functional
 			Assert.That(order.OrderServices[0].IsPeriodic, Is.True);
 			Assert.That(order.OrderServices[0].Description, Is.EqualTo("Тестовый заказ"));
 			Assert.That(order.OrderServices[0].Cost, Is.EqualTo(1000));
+			//Проверка логирования
+			var endpointAppeal = session.Query<Appeals>().First(a => a.Client == laywerPerson && a.Appeal.Contains("Создана точка подключения"));
+			Assert.That(endpointAppeal, Is.Not.Null);
 		}
 
 		private NetworkSwitch CreateCommutator(RegionHouse region)
