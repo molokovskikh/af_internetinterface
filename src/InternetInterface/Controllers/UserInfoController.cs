@@ -718,6 +718,7 @@ namespace InternetInterface.Controllers
 			var brigads = Brigad.All(DbSession);
 			PropertyBag["_client"] = client;
 			PropertyBag["ClientCode"] = clientId;
+			PropertyBag["uniqueClientEndpoints"] = client.Endpoints.Distinct().ToList();
 			PropertyBag["Switches"] = NetworkSwitch.All(DbSession, client.GetRegion());
 			PropertyBag["Brigads"] = brigads;
 			var endPoint = client.Endpoints.FirstOrDefault();
