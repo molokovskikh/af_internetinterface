@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using InternetInterface.Models;
 using InternetInterface.Models.Services;
+using NHibernate;
 using NHibernate.Linq;
 using NUnit.Framework;
 using OpenQA.Selenium;
@@ -18,6 +19,42 @@ namespace InternetInterface.Test.Functional
 			Open(string.Format("UserInfo/ShowPhysicalClient?filter.ClientCode={0}", Client.Id));
 			AssertText(string.Format("Дата начала расчетного периода: {0}", DateTime.Now.ToShortDateString()));
 			AssertText(string.Format("Дата начала программы скидок: {0}", DateTime.Now.AddMonths(-1).ToShortDateString()));
+		}
+
+		[Test(Description = "Проверяет отображение различной информации в зависимости от роли партнера")]
+		public void CategoriesAccess()
+		{
+			//Setup
+			var partner = session.Query<Partner>().First(p => p.Login == Environment.UserName);
+			var prevRole = partner.Role;
+			var office = session.Query<UserRole>().First(r => r.ReductionName == "Office");
+			var dealer = session.Query<UserRole>().First(r => r.ReductionName == "Diller");
+
+			try {
+				partner.Role = office;
+				session.Save(partner);
+				Open(string.Format("UserInfo/ShowPhysicalClient?filter.ClientCode={0}", Client.Id));
+				Css("#userWriteOffSum").SendKeys("1000");
+				Css("#userWriteOffComment").SendKeys("Test");
+				Css("#userWriteOffButton").Click();
+
+				//Test
+				var clientAppeals = "Обращения клиента";
+				AssertText(clientAppeals);
+				var elements = browser.FindElementsByCssSelector("#WriteOffTable .cancelButton");
+				Assert.That(elements.Count, Is.GreaterThan(0));
+
+				partner.Role = dealer;
+				session.Save(partner);
+				Open(string.Format("UserInfo/ShowPhysicalClient?filter.ClientCode={0}", Client.Id));
+				AssertNoText(clientAppeals);
+				elements = browser.FindElementsByCssSelector("#WriteOffTable .cancelButton");
+				Assert.That(elements.Count, Is.EqualTo(0));
+			}
+			finally {
+				partner.Role = prevRole;
+				session.Save(partner);
+			}
 		}
 
 		[Test]
@@ -43,7 +80,6 @@ namespace InternetInterface.Test.Functional
 			Assert.That(Css("#ChStatus").SelectedOption.Text, Is.EqualTo("Подключен"));
 			Css("#ChStatus").SelectByText("Заблокирован");
 			Css("#SaveButton").Click();
-
 			AssertText("Данные изменены");
 
 			session.Refresh(Client);
