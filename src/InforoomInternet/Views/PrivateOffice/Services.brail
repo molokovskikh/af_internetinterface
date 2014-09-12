@@ -27,6 +27,10 @@
 			<h3>!{internet.Service.HumanName}</h3>
 			<div class="serviceInternetBox">
 				<div>
+					<span>
+						Уважаемый абонент!<br>
+						При переходе на ТП "Популярный" взимается плата в размере 150 руб.
+					</span>
 					${app.Label("client.PhysicalClient.Tariff")}
 					${app.Edit("client.PhysicalClient.Tariff", tariffs)}
 					${app.GetValidationError("client.PhysicalClient.Tariff")}
