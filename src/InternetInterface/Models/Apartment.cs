@@ -39,9 +39,10 @@ namespace InternetInterface.Models
 
 		public virtual Request GetRequestForThis()
 		{
+			int num = int.Parse(Number);
 			return ActiveRecordLinqBase<Request>.Queryable.FirstOrDefault(r => r.Street == House.Street
 				&& r.House == House.Number
-				&& r.CaseHouse == House.Case && r.Apartment.ToString() == Number
+				&& r.CaseHouse == House.Case && r.Apartment == num
 				&& r.Registrator != null);
 		}
 	}
