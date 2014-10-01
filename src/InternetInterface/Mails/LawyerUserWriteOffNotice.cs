@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Web;
@@ -28,8 +29,12 @@ namespace InternetInterface.Mails
 			var registrator = writeOff.Registrator != null ? writeOff.Registrator.Name : string.Empty;
 			messageText.AppendFormat("Списание: Сумма - {0} \r\nКомментарий: {1} \r\nОператор: {2}",
 				writeOff.Sum.ToString("0.00"), writeOff.Comment, registrator);
-			mailer.SendText("internet@ivrn.net", "InternetBilling@analit.net",
-				"Списание для Юр.Лица.", messageText.ToString());
+
+			var str = ConfigurationManager.AppSettings["WriteOffNotificationMail"];
+			if(str == null)
+				throw new Exception("Параметр приложения WriteOffNotificationMail должен быть задан в config");
+			var emails = str.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+			mailer.SendText("internet@ivrn.net", emails,"Списание для Юр.Лица.", messageText.ToString());
 		}
 	}
 }

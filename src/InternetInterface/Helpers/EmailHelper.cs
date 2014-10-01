@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net.Mail;
 using System.Web;
@@ -12,9 +13,12 @@ namespace InternetInterface.Helpers
 		public static void Send(string to, string subject, string message)
 		{
 			var mailer = new Mailer();
-#if DEBUG
-			to = "kvasovtest@analit.net";
-#endif
+		#if DEBUG
+			message = to + "\n" + message;
+			to = ConfigurationManager.AppSettings["DebugMail"];
+			if(to == null)
+				throw new Exception("Параметр приложения DebugMail должен быть задан в config");
+		#endif
 			mailer.SendText("internet@ivrn.net", to, subject, message);
 		}
 	}

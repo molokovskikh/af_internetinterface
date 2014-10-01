@@ -1,9 +1,13 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
+using System.Management.Instrumentation;
 using System.Net.Mail;
 using Castle.Core.Smtp;
 using Common.Web.Ui.MonoRailExtentions;
 using InternetInterface.Controllers;
 using InternetInterface.Controllers.Filter;
+using NHibernate.Mapping;
+using NHibernate.SqlCommand;
 
 namespace InternetInterface.Models
 {
@@ -26,29 +30,26 @@ namespace InternetInterface.Models
 			To = "internet@ivrn.net";
 		}
 
-		public void SendText(string from, string to, string subject, string body)
+		public void SendText(string from, string to, string subject, string message)
 		{
-			To = to;
-			From = from;
-			Subject = subject;
-
-			var mailMessage = new MailMessage(from, to, subject, body);
-#if DEBUG
-			mailMessage = new MailMessage(from, "kvasovtest@analit.net", subject, body);
-#endif
-			Sender.Send(mailMessage);
+			String[] arr = {to};
+			SendText(from,arr,subject,message);
 		}
 
-		public void SendText(string from, string[] toEmails, string subject, string body)
+		public void SendText(string from, string[] toEmails, string subject, string message)
 		{
 			From = from;
 			Subject = subject;
 #if DEBUG
-			toEmails = new string[1] { "kvasovtest@analit.net" };
+			foreach (var email in toEmails) 
+				message = email + "\n" + message;
+			var mail = ConfigurationManager.AppSettings["DebugMail"];
+			if(mail == null)
+				throw new Exception("Параметр приложения DebugMail должен быть задан в config");
+			toEmails = new string[1] {mail};
 #endif
 			foreach (var email in toEmails) {
-				//To = email;
-				var mailMessage = new MailMessage(from, email, subject, body);
+				var mailMessage = new MailMessage(from, email, subject, message);
 				Sender.Send(mailMessage);
 			}
 		}
