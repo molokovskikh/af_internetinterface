@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Linq;
@@ -1122,7 +1123,12 @@ namespace InternetInterface.Controllers
 			DbSession.Save(message);
 			Notify("Удалено");
 			var mailer = this.Mailer<Mailer>();
-			mailer.SendText("internet@ivrn.net", "internet@ivrn.net", "Уведомление об удалении списания", string.Format(@"
+
+			var str = ConfigurationManager.AppSettings["WriteOffNotificationMail"];
+			if(str == null)
+				throw new Exception("Параметр приложения WriteOffNotificationMail должен быть задан в config");
+			var emails = str.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+			mailer.SendText("internet@ivrn.net", emails, "Уведомление об удалении списания", string.Format(@"
 Отменено списание №{0}
 Клиент: №{1} - {2}
 Сумма: {3}

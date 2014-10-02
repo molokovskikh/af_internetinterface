@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Configuration;
 using System.Linq;
 using System.Net.Mail;
 using System.Reflection;
@@ -398,14 +399,19 @@ namespace InternetInterface.Controllers
 				DbSession.Delete(payment);
 				DbSession.Save(message);
 				Notify("Отменено");
-				InternetInterface.Helpers.EmailHelper.Send("internet@ivrn.net", "Уведомление об отмене платежа",
-					string.Format(@"
+				var mailer = this.Mailer<Mailer>();
+				var str = ConfigurationManager.AppSettings["PaymentNotificationMail"];
+				if(str == null)
+					throw new Exception("Параметр приложения PaymentNotificationMail должен быть задан в config");
+				var emails = str.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+				var body = string.Format(@"
 Отменено платеж №{0}
 Клиент: №{1}
 Сумма: {2:C}
 Оператор: {3}
 Комментарий: {4}
-", payment.Id, payment.Client, payment.Sum, InitializeContent.Partner.Name, comment));
+", payment.Id, payment.Client, payment.Sum, InitializeContent.Partner.Name, comment);
+				mailer.SendText("internet@ivrn.net", emails, "Уведомление об отмене платежа", body);
 			}
 			else {
 				Error("Введите комментарий для отмены платежа");

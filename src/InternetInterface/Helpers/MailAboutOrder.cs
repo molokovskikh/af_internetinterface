@@ -147,8 +147,10 @@ namespace InternetInterface.Helpers
 
 		public static void SendMail(string subject, string textMessage)
 		{
-			var address = (ConfigurationManager.AppSettings["OrderNotificationMail"] ?? "")
-				.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+			var str = ConfigurationManager.AppSettings["OrderNotificationMail"];
+			if(str == null)
+				throw new Exception("Параметр OrderNotificationMail должен быть задан в config");
+			var address = str.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 			var mailer = new Mailer(Sender);
 			mailer.SendText("internet@ivrn.net", address, subject, textMessage);
 		}
