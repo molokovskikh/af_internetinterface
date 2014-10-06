@@ -129,6 +129,7 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
@@ -173,6 +174,7 @@
     <Compile Include="Helpers\PropertiesHelper.cs" />
     <Compile Include="Integration\ActsFilterFixture.cs" />
     <Compile Include="Integration\AgentFilterFixture.cs" />
+    <Compile Include="Integration\BrigadFixture.cs" />
     <Compile Include="Integration\Controllers\PrivateMessagesControllerFixture.cs" />
     <Compile Include="Integration\MailAboutOrderFixture.cs" />
     <Compile Include="Integration\ClientFixture.cs" />
@@ -193,6 +195,7 @@
     <Compile Include="Integration\UserInfoControllerFixture.cs" />
     <Compile Include="Integration\SetupFixture.cs" />
     <Compile Include="Troubleshoot.cs" />
+    <Compile Include="Unit\BrigadFixture.cs" />
     <Compile Include="Unit\ByteFixture.cs" />
     <Compile Include="Unit\ClientFixture.cs" />
     <Compile Include="Unit\HouseFixture.cs" />

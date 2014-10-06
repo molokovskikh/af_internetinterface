@@ -1,112 +1,12 @@
-﻿<script type="text/javascript">
-	function fillData() {
-		$('#graph_table').remove();
-		var req = {
-			date: $('#graph_date').val(),
-			clientId: $('#clientId').val()
-		};
-		$.post("GetGraph", req, function (data) {
-			var str = '<table class="table" id="graph_table"> <thead> <tr>';
-			$(data.brigads).each(function () {
-				str += '<th colspan="2" id=th_' + this.Id + '>' + this.Name + '</th>';
-			});
-			str += '<tbody> ';
-			for (var i = 0; i < data.intervals.length; i++) {
-				str += '<tr id="tr_' + i + '"></tr>';
-			}
-
-			$('#graph_div').append(str + '</tr> </thead> </table>');
-
-			for (var i = 0; i < data.intervals.length; i++) {
-				var tds = '';
-				$(data.brigads).each(function () {
-					tds += '<td>' + data.intervals[i] + '</td>';
-					tds += '<td id="tdi_' + i + '_' + this.Id + '"> <input type="radio" name="graph_button" value="' + i + '_' + this.Id + '"> </td>';
-				});
-				$('#tr_' + i).append(tds);
-			}
-			$(data.graphs).each(function () {
-				var currentTd = $('#tdi_' + this.IntervalId + '_' + this.brigadId);
-				currentTd.empty();
-				if (this.clientId != 0) {
-					currentTd.append('<a class="graph_link" href="../Search/Redirect?filter.ClientCode=' + this.clientId + '">' + this.clientId + '</a>');
-					currentTd.append('<a href="#" onclick="Delete(this);" value=""> <img class="deletePointControl" src="../images/onebit_32.png"> </a>');
-					currentTd.append('<input type=hidden class="intervalValue" value="' + this.IntervalId + '">');
-					currentTd.append('<input type=hidden class="brigadValue" value="' + this.brigadId + '">');
-				}
-				else
-					currentTd.append('Резерв');
-			});
-		});
-	}
-
-	$(function () {
-		writeMessage("");
-		$('#graph_date').datepicker({
-			inline: true
-		}).change(function () { fillData(); });
-		fillData();
-	});
-
-
-	function Reserv() {
-		var req = {};
-		var check_field = $('input:radio[name="graph_button"]:checked');
-		req.graph_button = check_field.val();
-		req.graph_date = $('#graph_date').val();
-		$.post("ReservGraph", req, function (data) {
-			writeMessage(data, "notice");
-			var appended_field = check_field.parent();
-			appended_field.empty();
-			appended_field.append('Резерв');
-		});
-	}
-
-	function Delete(elem) {
-		var req = {};
-		req.interval = $(elem).parent().children('input.intervalValue:first').val();
-		req.brigad = $(elem).parent().children('input.brigadValue:first').val();
-		req.clientId = $('#clientId').val();
-		req.date = $('#graph_date').val();
-		$.post("DeleteGraph", req, function (data) {
-			window.location.href = '../Search/Redirect?filter.ClientCode=${ClientCode}';
-		});
-	}
-
-	function Save() {
-		var req = {};
-		req.clientId = $('#clientId').val();
-		var check_field = $('input:radio[name="graph_button"]:checked');
-		req.graph_button = check_field.val();
-		req.graph_date = $('#graph_date').val();
-		$.post("SaveGraph", req, function (data) {
-			if (data) {
-				writeMessage("Заявка включена в расписание", "notice");
-				window.location.href = '../Search/Redirect?filter.ClientCode=${ClientCode}';
-			}
-			else {
-				writeMessage("Не выбран интервал времени", "error");
-			}
-		});
-	}
-
-	function writeMessage(text, clazz) {
-		$('#message_graph_block').css('display', 'none');
-		$('#message_graph').empty();
-		if (text != ""){
-			$('#message_graph_block').css('display', 'block');
-			$('#message_graph').attr('class', 'message ' + clazz);
-			$('#message_graph').append(text);
-		}
-	}
-</script>
-
+﻿${app.Asset("AppointedToTheGraph.js")}
 <div class="borderless-content">
 	<h3>Назначение в график клиента ${app.LinkTo(client)}</h3>
 	<input type="hidden" id="clientId" name="ClientID" value="${client.Id}" />
 	<div>
 		<input type=text value="${StartDate}" name="graph_date" id="graph_date" class="date-pick">
 		<input type="button" class="CalendarInput">
+		<select id="brigadSelect">
+		</select>
 	</div>
 	<div id="graph_div"></div>
 	<div>

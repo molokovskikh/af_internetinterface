@@ -41,7 +41,7 @@ namespace InternetInterface.Queries
 			if (Brigad != null && Brigad.Id > 0)
 				query = query.Where(c => c.Brigad.Id == Brigad.Id);
 			if (Period != null)
-				query = query.Where(c => c.Day >= Period.Begin && c.Day <= Period.End);
+				query = query.Where(c => c.DateAndTime >= Period.Begin && c.DateAndTime <= Period.End);
 			if (State == ClientState.Connected)
 				query = query.Where(c => c.Client.BeginWork != null);
 			if (State == ClientState.NoConnected)
