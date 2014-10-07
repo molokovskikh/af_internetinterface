@@ -47,5 +47,16 @@ namespace InternetInterface.Controllers
 				}
 			}
 		}
+
+#if DEBUG
+		public void ChangeLoggedInPartner(string login, string redirect)
+		{
+			if (Session.Contains("Login")) {
+				Session.Remove("Login");
+			}
+			Session.Add("Login", login);
+			RedirectToUrl(redirect ?? @"~/Map/SiteMap");
+		}
+#endif
 	}
 }
