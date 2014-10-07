@@ -146,6 +146,7 @@
     <Compile Include="Functional\ClientFunctionalFixture.cs" />
     <Compile Include="Functional\CommutatorFixture.cs" />
     <Compile Include="Functional\ConnectionRequestFixture.cs" />
+    <Compile Include="Functional\RoleBasedFixture.cs" />
     <Compile Include="Functional\HouseMapFixture.cs" />
     <Compile Include="Functional\InvoiceFixture.cs" />
     <Compile Include="Functional\LawyerPersonFixture.cs" />
@@ -161,6 +162,7 @@
     <Compile Include="Functional\SearchFixture.cs" />
     <Compile Include="Functional\ServiceFixture.cs" />
     <Compile Include="Functional\SwitchesFixture.cs" />
+    <Compile Include="Functional\SwitchLoginFixture.cs" />
     <Compile Include="Functional\TariffFixture.cs" />
     <Compile Include="Functional\UserInfoFixture.cs" />
     <Compile Include="Functional\Setup.cs" />
