@@ -94,7 +94,7 @@ namespace InternetInterface.Controllers
 						Sum = payment.Sum,
 						RecievedOn = payment.RegistredOn,
 						PaidOn = payment.PayedOn,
-						Agent = Agent.GetByInitPartner(),
+						Agent = Partner.GetInitPartner(),
 						BankPayment = payment
 					});
 					RedirectToReferrer();
@@ -179,7 +179,7 @@ namespace InternetInterface.Controllers
 							Sum = payment.Sum,
 							RecievedOn = payment.RegistredOn,
 							PaidOn = payment.PayedOn,
-							Agent = Agent.GetByInitPartner(),
+							Agent = Partner.GetInitPartner(),
 							BankPayment = payment
 						});
 				}
@@ -306,7 +306,7 @@ namespace InternetInterface.Controllers
 						}
 						if (newBalance - oldBalance > 0 && payment.Payer != null) {
 							DbSession.Save(new Payment {
-								Agent = Agent.GetByInitPartner(),
+								Agent = Partner.GetInitPartner(),
 								Client = client,
 								PaidOn = DateTime.Now,
 								RecievedOn = DateTime.Now,
@@ -317,7 +317,7 @@ namespace InternetInterface.Controllers
 					}
 					if (newPayerFlag) {
 						DbSession.Save(new Payment {
-							Agent = Agent.GetByInitPartner(),
+							Agent = Partner.GetInitPartner(),
 							Client = payment.Payer,
 							PaidOn = DateTime.Now,
 							RecievedOn = DateTime.Now,
@@ -327,7 +327,7 @@ namespace InternetInterface.Controllers
 					}
 					if (oldPayer != null && oldPayer != payment.Payer) {
 						DbSession.Save(new Payment {
-							Agent = Agent.GetByInitPartner(),
+							Agent = Partner.GetInitPartner(),
 							Client = payment.Payer,
 							PaidOn = DateTime.Now,
 							RecievedOn = DateTime.Now,

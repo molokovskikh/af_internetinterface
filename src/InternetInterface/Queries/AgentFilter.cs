@@ -22,7 +22,7 @@ namespace InternetInterface.Queries
 	public class AgentFilter : PaginableSortable
 	{
 		public decimal TotalSum;
-		public Agent CurrentAgent;
+		public Partner CurrentAgent;
 		public Partner CurrentPartner;
 
 		public AgentFilter()
@@ -35,7 +35,7 @@ namespace InternetInterface.Queries
 			};
 		}
 
-		public Agent Agent { get; set; }
+		public Partner Agent { get; set; }
 		public DateTime Begin { get; set; }
 		public DateTime End { get; set; }
 		public string Year { get; set; }

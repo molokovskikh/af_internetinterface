@@ -144,6 +144,7 @@
     <Compile Include="Functional\BrigadFixture.cs" />
     <Compile Include="Functional\ClientFixture.cs" />
     <Compile Include="Functional\ClientFunctionalFixture.cs" />
+    <Compile Include="Functional\ClientPaymentFixture.cs" />
     <Compile Include="Functional\CommutatorFixture.cs" />
     <Compile Include="Functional\ConnectionRequestFixture.cs" />
     <Compile Include="Functional\RoleBasedFixture.cs" />
