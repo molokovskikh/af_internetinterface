@@ -18,6 +18,8 @@ namespace InternetInterface.Test.Functional
 		[Test(Description = "Тестируется поведение базового класса и функции SwitchUser.")]
 		public void SwitchUserTest()
 		{
+			Open();
+			AssertNoText("Администрирование");
 			var partner = PartnerHelper.CreatePartnerByRole(3, session);
 			SwitchUser(partner.Login);
 			AssertText("Администрирование");

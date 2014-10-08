@@ -26,10 +26,10 @@ namespace InternetInterface.Test.Functional
 		public void SetUp()
 		{
 			InitialPartnerLogin = Environment.UserName;
+			var initialPartner = Partner.GetPartnerForLogin(InitialPartnerLogin);
 			CurrentPartner = PartnerHelper.CreatePartnerByRole(GetRoleId(), session);
 			//проверяем есть ли необходимость в смене пользователя
-			var roleId = GetRoleId();
-			if (roleId != CurrentPartner.Role.Id)
+			if (initialPartner.Role.Id != CurrentPartner.Role.Id)
 				SwitchUser(CurrentPartner.Login);
 		}
 
