@@ -11,6 +11,7 @@ using Common.Tools.Calendar;
 using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Models.Security;
 using InternetInterface.Controllers;
+using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models.Universal;
 using NHibernate;
@@ -151,15 +152,6 @@ namespace InternetInterface.Models
 			return session.Query<Partner>().Where(p => p.Role.ReductionName == "Service" && !p.IsDisabled).OrderBy(p => p.Name).ToList();
 		}
 
-		public override void SaveAndFlush()
-		{
-			base.SaveAndFlush();
-			var catAS = CategorieAccessSet.FindAllByProperty("Categorie", Role);
-			foreach (var categorieAccessSet in catAS) {
-				categorieAccessSet.AccessCat.AcceptToOne(this);
-			}
-		}
-
 		public override string ToString()
 		{
 			return Name;
@@ -235,6 +227,11 @@ namespace InternetInterface.Models
 		public static IList<Partner> All(ISession session)
 		{
 			return session.Query<Partner>().OrderBy(p => p.Name).ToList();
+		}
+
+		public static Partner GetInitPartner()
+		{
+			return InitializeContent.Partner;
 		}
 	}
 }
