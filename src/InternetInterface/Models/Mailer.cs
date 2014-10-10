@@ -33,7 +33,7 @@ namespace InternetInterface.Models
 		public void SendText(string from, string to, string subject, string message)
 		{
 			String[] arr = {to};
-			SendText(from,arr,subject,message);
+			SendText(from, arr, subject, message);
 		}
 
 		public void SendText(string from, string[] toEmails, string subject, string message)

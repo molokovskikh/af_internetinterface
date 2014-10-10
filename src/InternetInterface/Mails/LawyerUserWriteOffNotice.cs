@@ -34,7 +34,7 @@ namespace InternetInterface.Mails
 			if(str == null)
 				throw new Exception("Параметр приложения WriteOffNotificationMail должен быть задан в config");
 			var emails = str.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-			mailer.SendText("internet@ivrn.net", emails,"Списание для Юр.Лица.", messageText.ToString());
+			mailer.SendText("internet@ivrn.net", emails, "Списание для Юр.Лица.", messageText.ToString());
 		}
 	}
 }
