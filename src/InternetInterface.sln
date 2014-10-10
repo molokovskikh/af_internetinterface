@@ -41,6 +41,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Support.Selenium", "Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.NHibernate", "Common.MySql\Common.NHibernate\Common.NHibernate.csproj", "{8BE188CA-A0D9-4609-AB2E-AB8EDF849FE0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inforoom2", "Inforoom2\Inforoom2.csproj", "{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		ChildrenFolder|Any CPU = ChildrenFolder|Any CPU
@@ -642,6 +644,36 @@ Global
 		{8BE188CA-A0D9-4609-AB2E-AB8EDF849FE0}.release-net45|Mixed Platforms.Build.0 = release-net45|Any CPU
 		{8BE188CA-A0D9-4609-AB2E-AB8EDF849FE0}.release-net45|x64.ActiveCfg = release-net45|Any CPU
 		{8BE188CA-A0D9-4609-AB2E-AB8EDF849FE0}.release-net45|x86.ActiveCfg = release-net45|Any CPU
+		{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}.ChildrenFolder|Any CPU.ActiveCfg = Release|Any CPU
+		{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}.ChildrenFolder|Any CPU.Build.0 = Release|Any CPU
+		{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}.ChildrenFolder|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}.ChildrenFolder|Mixed Platforms.Build.0 = Release|Any CPU
+		{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}.ChildrenFolder|x64.ActiveCfg = Release|Any CPU
+		{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}.ChildrenFolder|x86.ActiveCfg = Release|Any CPU
+		{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}.debug-net45|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}.debug-net45|Any CPU.Build.0 = Debug|Any CPU
+		{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}.debug-net45|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}.debug-net45|Mixed Platforms.Build.0 = Debug|Any CPU
+		{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}.debug-net45|x64.ActiveCfg = Debug|Any CPU
+		{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}.debug-net45|x86.ActiveCfg = Debug|Any CPU
+		{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}.Release|x64.ActiveCfg = Release|Any CPU
+		{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}.Release|x86.ActiveCfg = Release|Any CPU
+		{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}.release-net45|Any CPU.ActiveCfg = Release|Any CPU
+		{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}.release-net45|Any CPU.Build.0 = Release|Any CPU
+		{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}.release-net45|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}.release-net45|Mixed Platforms.Build.0 = Release|Any CPU
+		{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}.release-net45|x64.ActiveCfg = Release|Any CPU
+		{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}.release-net45|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
