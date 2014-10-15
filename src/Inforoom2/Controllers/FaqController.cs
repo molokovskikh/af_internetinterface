@@ -17,7 +17,7 @@ namespace Inforoom2.Controllers
 		/// </summary>
 		public ActionResult Index()
 		{
-			var questions = DBSession.Query<Question>().ToList();
+			var questions = DbSession.Query<Question>().ToList();
 			var question = new Question();
 
 			ViewBag.NewQuestion = question;
@@ -33,12 +33,12 @@ namespace Inforoom2.Controllers
 		{
 			var errors = ValidationRunner.ValidateDeep(newQuestion);
 			if (errors.Length == 0) {
-				DBSession.Save(newQuestion);
+				DbSession.Save(newQuestion);
 				SuccessMessage("Вопрос успешно отправлен. Ждите ответа на почту.");
 				return RedirectToAction("Index");
 			}
 
-			var questions = DBSession.Query<Question>().ToList();
+			var questions = DbSession.Query<Question>().ToList();
 			ViewBag.NewQuestion = newQuestion;
 			ViewBag.Questions = questions;
 			ViewBag.ShowQuestionForm = true;

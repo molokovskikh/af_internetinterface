@@ -8,7 +8,7 @@ namespace Inforoom2.Models
 	/// <summary>
 	/// Класс для вопроса на странице "Вопросы и ответы"
 	/// </summary>
-	[Class(Table = "Questions", NameType = typeof (Question))]
+	[Class(Table = "questions", NameType = typeof (Question))]
 	public class Question : BaseModel
 	{
 	

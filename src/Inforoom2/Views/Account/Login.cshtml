@@ -1,8 +1,10 @@
-﻿@model Inforoom2.Models.User
-
+﻿
 @{
     ViewBag.Title = "Вход";
     Layout = "~/Views/Shared/_Layout.cshtml";
+	string username = ViewBag.Username;
+	string password = ViewBag.Password;
+	
 }
 
 <h2>Login</h2>
@@ -14,19 +16,13 @@
 			<legend>Enter user credentials</legend>
 
 			<div>
-				@Html.LabelFor(model => model.Username)
+				@Html.EditorFor(model => username)
+				@Html.ValidationMessageFor(model => username)
 			</div>
+			
 			<div>
-				@Html.EditorFor(model => model.Username)
-				@Html.ValidationMessageFor(model => model.Username)
-			</div>
-
-			<div>
-				@Html.LabelFor(model => model.Password)
-			</div>
-			<div>
-				@Html.PasswordFor(model => model.Password)
-				@Html.ValidationMessageFor(model => model.Password)
+				@Html.PasswordFor(model =>password)
+				@Html.ValidationMessageFor(model => password)
 			</div>
 
 			<p>

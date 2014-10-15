@@ -1,10 +1,11 @@
 ﻿using System;
 using NHibernate.Mapping.Attributes;
 
+
 namespace Inforoom2.Models
 {
-	[Class(0, Table = "Users", NameType = typeof (User))]
-	public class User : BaseModel
+	[Class(0, Table = "client", NameType = typeof (Client))]
+	public class Client : BaseModel
 	{
 	
 		[Property]
@@ -14,8 +15,8 @@ namespace Inforoom2.Models
 		public virtual string Password { get; set; }
 
 		[Property]
-		public virtual string Roles { get; set; }
-
+		public virtual string Salt { get; set; }
+		
 		[Property]
 		public virtual string City { get; set; }
 	}
