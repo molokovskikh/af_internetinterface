@@ -178,6 +178,7 @@
     <Compile Include="Components\ValidationRunner.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\AdminQuestionController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\FaqController.cs">
       <SubType>Code</SubType>
@@ -217,6 +218,8 @@
     <Content Include="Views\Faq\Index.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
     <Content Include="Scripts\jquery-2.1.1.min.map" />
+    <Content Include="Views\AdminQuestion\AdminQuestionIndex.cshtml" />
+    <Content Include="Views\AdminQuestion\EditQuestion.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

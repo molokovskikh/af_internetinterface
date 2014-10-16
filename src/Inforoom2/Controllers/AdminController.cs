@@ -8,10 +8,11 @@ using NHibernate.Linq;
 
 namespace Inforoom2.Controllers
 {
+	[AuthorizeUser(Roles = "Admin")]
 	public class AdminController : BaseController
 	{
 		
-		[AuthorizeUser(Permissions = "CanEverything")]
+		
 		public ActionResult Index()
 		{
 			var users = DbSession.Query<Employee>().ToList();

@@ -3762,7 +3762,7 @@ function datepicker_getZindex( elem ) {
 
 	return 0;
 }
-/* Date picker manager.
+/* CreationDate picker manager.
    Use the singleton instance of this class, $.datepicker, to interact with the date picker.
    Settings for (groups of) date pickers are maintained in an instance object,
    allowing multiple different settings on the same page. */
@@ -3825,7 +3825,7 @@ function Datepicker() {
 		selectOtherMonths: false, // True to allow selection of dates in other months, false for unselectable
 		showWeek: false, // True to show week of the year, false to not show it
 		calculateWeek: this.iso8601Week, // How to calculate the week of the year,
-			// takes a Date and returns the number of the week for it
+			// takes a CreationDate and returns the number of the week for it
 		shortYearCutoff: "+10", // Short year values < this are in the current century,
 			// > this are in the previous century,
 			// string value starting with "+" for current year + value
@@ -4027,7 +4027,7 @@ $.extend(Datepicker.prototype, {
 
 	/* Pop-up the date picker in a "dialog" box.
 	 * @param  input element - ignored
-	 * @param  date	string or Date - the initial date to display
+	 * @param  date	string or CreationDate - the initial date to display
 	 * @param  onSelect  function - the function to call when a date is selected
 	 * @param  settings  object - update the dialog date picker instance's settings (anonymous object)
 	 * @param  pos int[2] - coordinates for the dialog's position within the screen or
@@ -4264,7 +4264,7 @@ $.extend(Datepicker.prototype, {
 
 	/* Set the dates for a jQuery selection.
 	 * @param  target element - the target input field or division or span
-	 * @param  date	Date - the new date
+	 * @param  date	CreationDate - the new date
 	 */
 	_setDateDatepicker: function(target, date) {
 		var inst = this._getInst(target);
@@ -4278,7 +4278,7 @@ $.extend(Datepicker.prototype, {
 	/* Get the date(s) for the first entry in a jQuery selection.
 	 * @param  target element - the target input field or division or span
 	 * @param  noDefault boolean - true if no default date is to be used
-	 * @return Date - the current date
+	 * @return CreationDate - the current date
 	 */
 	_getDateDatepicker: function(target, noDefault) {
 		var inst = this._getInst(target);
@@ -4779,7 +4779,7 @@ $.extend(Datepicker.prototype, {
 	},
 
 	/* Set as beforeShowDay function to prevent selection of weekends.
-	 * @param  date  Date - the date to customise
+	 * @param  date  CreationDate - the date to customise
 	 * @return [boolean, string] - is this date selectable?, what is its CSS class?
 	 */
 	noWeekends: function(date) {
@@ -4788,7 +4788,7 @@ $.extend(Datepicker.prototype, {
 	},
 
 	/* Set as calculateWeek to determine the week of the year based on the ISO 8601 definition.
-	 * @param  date  Date - the date to get the week for
+	 * @param  date  CreationDate - the date to get the week for
 	 * @return  number - the number of the week within the year that contains this date
 	 */
 	iso8601Week: function(date) {
@@ -4815,7 +4815,7 @@ $.extend(Datepicker.prototype, {
 	 *					dayNames		string[7] - names of the days from Sunday (optional)
 	 *					monthNamesShort string[12] - abbreviated names of the months (optional)
 	 *					monthNames		string[12] - names of the months (optional)
-	 * @return  Date - the extracted date value or null if value is blank
+	 * @return  CreationDate - the extracted date value or null if value is blank
 	 */
 	parseDate: function (format, value, settings) {
 		if (format == null || value == null) {
@@ -5018,7 +5018,7 @@ $.extend(Datepicker.prototype, {
 	 * '' - single quote
 	 *
 	 * @param  format string - the desired format of the date
-	 * @param  date Date - the date value to format
+	 * @param  date CreationDate - the date value to format
 	 * @param  settings Object - attributes include:
 	 *					dayNamesShort	string[7] - abbreviated names of the days from Sunday (optional)
 	 *					dayNames		string[7] - names of the days from Sunday (optional)
@@ -5240,7 +5240,7 @@ $.extend(Datepicker.prototype, {
 			newDate = (date == null || date === "" ? defaultDate : (typeof date === "string" ? offsetString(date) :
 				(typeof date === "number" ? (isNaN(date) ? defaultDate : offsetNumeric(date)) : new Date(date.getTime()))));
 
-		newDate = (newDate && newDate.toString() === "Invalid Date" ? defaultDate : newDate);
+		newDate = (newDate && newDate.toString() === "Invalid CreationDate" ? defaultDate : newDate);
 		if (newDate) {
 			newDate.setHours(0);
 			newDate.setMinutes(0);
@@ -5254,8 +5254,8 @@ $.extend(Datepicker.prototype, {
 	 * Hours may be non-zero on daylight saving cut-over:
 	 * > 12 when midnight changeover, but then cannot generate
 	 * midnight datetime, so jump to 1AM, otherwise reset.
-	 * @param  date  (Date) the date to check
-	 * @return  (Date) the corrected date
+	 * @param  date  (CreationDate) the date to check
+	 * @return  (CreationDate) the corrected date
 	 */
 	_daylightSavingAdjust: function(date) {
 		if (!date) {
@@ -5625,7 +5625,7 @@ $.extend(Datepicker.prototype, {
 
 	/* Determine the current maximum date - ensure no time components are set. */
 	_getMinMaxDate: function(inst, minMax) {
-		return this._determineDate(inst, this._get(inst, minMax + "Date"), null);
+		return this._determineDate(inst, this._get(inst, minMax + "CreationDate"), null);
 	},
 
 	/* Find the number of days in a given month. */
@@ -9244,7 +9244,7 @@ $.effects = {
  * Released under the MIT license.
  * http://jquery.org/license
  *
- * Date: Wed Jan 16 08:47:09 2013 -0600
+ * CreationDate: Wed Jan 16 08:47:09 2013 -0600
  */
 (function( jQuery, undefined ) {
 

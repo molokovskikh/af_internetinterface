@@ -17,10 +17,10 @@ namespace Inforoom2.Controllers
 		/// </summary>
 		public ActionResult Index()
 		{
-			var questions = DbSession.Query<Question>().ToList();
-			var question = new Question();
+			var questions = DbSession.Query<Question>().Where(k => k.IsPublished).OrderBy(k=>k.Priority).ToList();
+			//var question = new Question();
 
-			ViewBag.NewQuestion = question;
+		//	ViewBag.NewQuestion = question;
 			ViewBag.Questions = questions;
 			return View();
 		}

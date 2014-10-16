@@ -3,14 +3,14 @@
 @{
 	ViewBag.Title = "Index";
 	Question newQuestion = ViewBag.NewQuestion;
-	IEnumerable<Question> questions = ViewBag.Questions;
+	IList<Question> questions = ViewBag.Questions;
 }
 
 <h2>FAQ</h2>
 
-<div style="width:1000px; height:200px; margin:0px auto; border:1px gainsboro solid">
+@*<div style="width:1000px; height:200px; margin:0px auto; border:1px gainsboro solid">
 	@{var style = ViewBag.ShowQuestionForm != null ? "display:none" : "";}
-		<button class="ShowQuestionForm" style="@style">Показать</button>
+		<button class="ShowQuestionForm" style="@style">Задать вопрос</button>
 	@{ style = ViewBag.ShowQuestionForm == null ? "display:none" : "";}
 	<div class="QuestionForm" style="@style" >
 		<button class="HideQuestionForm">hide</button>
@@ -26,15 +26,15 @@
 				@Html.TextAreaFor(model => newQuestion.Text)
 				@ViewBag.Validation.GetError(newQuestion,"Text","Сообщение не может быть пустым")
 			</div>
-			<input type="submit"  value="Create New Question"/>
+			<input type="submit"  value="Отправить вопрос"/>
 		}
 	</div>
-</div>
+</div>*@
 
 @foreach (var item in questions) {
 	<div class="question">
 		<div class="text">
-			<span>@Html.DisplayFor(modelItem => item.Text)<button class="ShowAnswer">Show</button></span>
+			<span>@Html.DisplayFor(modelItem => item.Text)<button class="ShowAnswer">Показать ответ</button></span>
 		</div>
 		<div class="answer" style="display: none;">
 			<span>@Html.DisplayFor(modelItem => item.Answer)</span>

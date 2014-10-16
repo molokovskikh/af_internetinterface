@@ -6,41 +6,11 @@
 	Employee client = new Employee();
 }
 
-<h2>Clients</h2>
+<h2>Панель администратора</h2>
 
-<div style="width: 1000px; height: 200px; margin: 0px auto; border: 1px gainsboro solid">
-	
-	
-	@foreach (var item in users) {
-		<div class="user">
-			<div class="text">
-				<span>@Html.DisplayFor(modelItem => item.Username)</span>
-			</div>
-			<div class="text" style="display: none;">
-				<span>@Html.DisplayFor(modelItem => item.Roles)</span>
-			</div>
-		
-		</div>
-	}
-
-	<div class="ClientForm"  >
-		@using (@Html.BeginForm("CreateUser", "Admin", FormMethod.Post)) {
+<div class="navbar navbar-inverse navbar-fixed-top">
+			<div class="container">
+				@Html.ActionLink("Questions", "AdminQuestionIndex", "AdminQuestion", null, new {@class = "navbar-brand"})
+				
 			
-			<div>
-				<span>Clientname</span>
-				@Html.TextBoxFor(newUser => client.Username)
 			</div>
-			<div>
-				<span>Password</span>
-				@Html.TextBoxFor(newUser => client.Password)
-			</div>
-			<div>
-				<span>Roles</span>
-				@Html.TextBoxFor(newUser => client.Roles)
-			</div>
-		
-
-			<input type="submit"  value="Создать нового пользователя"/>
-		}
-	</div>
-</div>

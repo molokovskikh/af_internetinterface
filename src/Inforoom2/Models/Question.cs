@@ -1,4 +1,5 @@
 ﻿using System;
+using NHibernate.Mapping;
 using NHibernate.Mapping.Attributes;
 using NHibernate.Validator.Constraints;
 
@@ -14,35 +15,28 @@ namespace Inforoom2.Models
 	
 		[Property, NotNullNotEmpty]
 		public virtual string Text { get; set; }
-
-		[Property, NotNullNotEmpty, Email]
-		public virtual string Email { get; set; }
-
-		[Property,]
-		public virtual DateTime Date { get; set; }
-
-		[Property]
+		
+		[Property, NotNullNotEmpty]
 		public virtual string Answer { get; set; }
+		
+		[Property,]
+		public virtual DateTime CreationDate { get; set; }
 
 		[Property]
-		public virtual DateTime? AnswerDate { get; set; }
+		public virtual bool IsPublished { get; set; }
 
-		[Property]
-		public virtual bool Notified { get; set; }
+		[Property(Unique = true)]
+		public virtual int Priority { get; set; }
 
-		[Property]
-		public virtual bool Published { get; set; }
-
-		[Property]
-		public virtual int? Priority { get; set; }
+		public Question(int priority)
+		{
+			CreationDate = DateTime.Now;
+			Priority = priority;
+		}
 
 		public Question()
 		{
-			Date = DateTime.Now;
-			Notified = false;
-			Published = true;
 		}
-
 	}
 
 }
