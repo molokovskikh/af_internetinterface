@@ -175,10 +175,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Components\EmailSender.cs" />
     <Compile Include="Components\ValidationRunner.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\AdminQuestionController.cs" />
+    <Compile Include="Controllers\AdminTicketController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\FaqController.cs">
       <SubType>Code</SubType>
@@ -206,6 +208,7 @@
     <Compile Include="Models\Role.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Models\Ticket.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -220,6 +223,8 @@
     <Content Include="Scripts\jquery-2.1.1.min.map" />
     <Content Include="Views\AdminQuestion\AdminQuestionIndex.cshtml" />
     <Content Include="Views\AdminQuestion\EditQuestion.cshtml" />
+    <Content Include="Views\AdminTicket\AdminTicketIndex.cshtml" />
+    <Content Include="Views\AdminTicket\EditTicket.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

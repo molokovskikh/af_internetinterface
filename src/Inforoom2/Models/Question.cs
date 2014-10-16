@@ -19,7 +19,7 @@ namespace Inforoom2.Models
 		[Property, NotNullNotEmpty]
 		public virtual string Answer { get; set; }
 		
-		[Property,]
+		[Property]
 		public virtual DateTime CreationDate { get; set; }
 
 		[Property]

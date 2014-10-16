@@ -2,13 +2,13 @@
 @section JavaScript{<script type="text/javascript"src="@Url.Content("~/Scripts/FaqController.js")"></script>}
 @{
 	ViewBag.Title = "Index";
-	Question newQuestion = ViewBag.NewQuestion;
+	Ticket newTicket = ViewBag.NewTicket;
 	IList<Question> questions = ViewBag.Questions;
 }
 
 <h2>FAQ</h2>
 
-@*<div style="width:1000px; height:200px; margin:0px auto; border:1px gainsboro solid">
+<div style="width:1000px; height:200px; margin:0px auto; border:1px gainsboro solid">
 	@{var style = ViewBag.ShowQuestionForm != null ? "display:none" : "";}
 		<button class="ShowQuestionForm" style="@style">Задать вопрос</button>
 	@{ style = ViewBag.ShowQuestionForm == null ? "display:none" : "";}
@@ -18,18 +18,18 @@
 		{
 			<div>
 				<span>Email</span>
-				@Html.TextBoxFor(model => newQuestion.Email)
-				@ViewBag.Validation.GetError(newQuestion,"Email","Почта указана неправильно")
+				@Html.TextBoxFor(model => newTicket.Email)
+				@ViewBag.Validation.GetError(newTicket,"Email","Почта указана неправильно")
 			</div>
 			<div>
 				<span>Question</span>
-				@Html.TextAreaFor(model => newQuestion.Text)
-				@ViewBag.Validation.GetError(newQuestion,"Text","Сообщение не может быть пустым")
+				@Html.TextAreaFor(model => newTicket.Text)
+				@ViewBag.Validation.GetError(newTicket,"Text","Сообщение не может быть пустым")
 			</div>
 			<input type="submit"  value="Отправить вопрос"/>
 		}
 	</div>
-</div>*@
+</div>
 
 @foreach (var item in questions) {
 	<div class="question">

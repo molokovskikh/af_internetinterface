@@ -8,6 +8,9 @@ using NHibernate.Proxy;
 
 namespace Inforoom2.Controllers
 {
+	/// <summary>
+	/// Страница управления вопросами и ответами
+	/// </summary>
 	public class AdminQuestionController : AdminController
 	{
 		public ActionResult AdminQuestionIndex()

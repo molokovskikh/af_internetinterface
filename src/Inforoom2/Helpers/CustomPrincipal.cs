@@ -5,6 +5,9 @@ using Inforoom2.Models;
 
 namespace Inforoom2.Helpers
 {
+	/// <summary>
+	/// Расширенная модель пользователя ASP.Identity
+	/// </summary>
 	public class CustomPrincipal : IPrincipal
 	{
 		public IList<Permission> Permissions { get; set; }

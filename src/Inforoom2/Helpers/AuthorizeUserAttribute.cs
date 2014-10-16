@@ -5,6 +5,9 @@ using Inforoom2.Models;
 
 namespace Inforoom2.Helpers
 {
+	/// <summary>
+	/// Расширенный атрибут авторизации
+	/// </summary>
 	public class AuthorizeUserAttribute : AuthorizeAttribute
 	{
 		public string Permissions { get; set; }

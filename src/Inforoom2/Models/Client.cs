@@ -4,6 +4,9 @@ using NHibernate.Mapping.Attributes;
 
 namespace Inforoom2.Models
 {
+	/// <summary>
+	/// Модель пользователя
+	/// </summary>
 	[Class(0, Table = "client", NameType = typeof (Client))]
 	public class Client : BaseModel
 	{
@@ -19,5 +22,8 @@ namespace Inforoom2.Models
 		
 		[Property]
 		public virtual string City { get; set; }
+
+		[Property]
+		public virtual string Email { get; set; }
 	}
 }

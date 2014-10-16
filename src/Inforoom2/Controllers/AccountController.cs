@@ -8,6 +8,9 @@ using NHibernate.Linq;
 
 namespace Inforoom2.Controllers
 {
+	/// <summary>
+	/// Страница управления аутентификацией
+	/// </summary>
 	public class AccountController : BaseController
 	{
 		public ActionResult Login()
@@ -29,11 +32,13 @@ namespace Inforoom2.Controllers
 			}
 
 			if (DbSession.Query<Employee>().Count() == 0) {
+
 				var emp = new Employee() {
 					Username = "admin",
 					Password = pass.Hash,
 					Salt = pass.Salt,
 				};
+
 				DbSession.Save(emp);
 			}
 #endif

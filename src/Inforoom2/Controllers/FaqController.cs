@@ -18,9 +18,8 @@ namespace Inforoom2.Controllers
 		public ActionResult Index()
 		{
 			var questions = DbSession.Query<Question>().Where(k => k.IsPublished).OrderBy(k=>k.Priority).ToList();
-			//var question = new Question();
-
-		//	ViewBag.NewQuestion = question;
+			var ticket = new Ticket();
+			ViewBag.NewTicket = ticket;
 			ViewBag.Questions = questions;
 			return View();
 		}
@@ -29,17 +28,18 @@ namespace Inforoom2.Controllers
 		/// Обрабатывает отправку нового вопроса
 		/// </summary>
 		[HttpPost]
-		public ActionResult Create(Question newQuestion)
+		public ActionResult Create(Ticket newTicket)
 		{
-			var errors = ValidationRunner.ValidateDeep(newQuestion);
+			newTicket.Answer = "Без ответа";
+			var errors = ValidationRunner.ValidateDeep(newTicket);
 			if (errors.Length == 0) {
-				DbSession.Save(newQuestion);
+				DbSession.Save(newTicket);
 				SuccessMessage("Вопрос успешно отправлен. Ждите ответа на почту.");
 				return RedirectToAction("Index");
 			}
 
 			var questions = DbSession.Query<Question>().ToList();
-			ViewBag.NewQuestion = newQuestion;
+			ViewBag.NewTicket = newTicket;
 			ViewBag.Questions = questions;
 			ViewBag.ShowQuestionForm = true;
 			return View("Index");

@@ -3,6 +3,9 @@ using NHibernate.Mapping.Attributes;
 
 namespace Inforoom2.Models
 {
+	/// <summary>
+	/// Модель роли
+	/// </summary>
 	[Class(0, Table = "roles", NameType = typeof(Role))]
 	public class Role : BaseModel
 	{

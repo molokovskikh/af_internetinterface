@@ -4,7 +4,9 @@ using NHibernate.Mapping.Attributes;
 
 namespace Inforoom2.Models
 {
-
+	/// <summary>
+	/// Модель прав
+	/// </summary>
 	[Class(0, Table = "permissions", NameType = typeof(Permission))]
 	public class Permission : BaseModel
 	{

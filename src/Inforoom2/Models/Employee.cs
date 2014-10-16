@@ -5,6 +5,9 @@ using NHibernate.Mapping.Attributes;
 
 namespace Inforoom2.Models
 {
+	/// <summary>
+	/// Модель сотрудника (администратора)
+	/// </summary>
 	[Class(0, Table = "employee", NameType = typeof (Employee))]
 	public class Employee : BaseModel
 	{
