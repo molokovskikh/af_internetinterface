@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
@@ -6,6 +7,7 @@ using Inforoom2.Controllers;
 using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.Linq;
+using Configuration = NHibernate.Cfg.Configuration;
 
 namespace Inforoom2.Helpers
 {
@@ -23,17 +25,22 @@ namespace Inforoom2.Helpers
 		{
 			Configuration configuration = new Configuration();
 			configuration.SetNamingStrategy(new TableNamingStrategy());
-			var configurationPath = HttpContext.Current.Server.MapPath(@"~\Nhibernate\hibernate.cfg.xml");
-			configuration.Configure(configurationPath);
+			var nhibernateConnectionString = ConfigurationManager.AppSettings["nhibernateConnectionString"];
+			configuration.SetProperty("connection.provider", "NHibernate.Connection.DriverConnectionProvider")
+				.SetProperty("connection.driver_class", "NHibernate.Driver.MySqlDataDriver")
+				.SetProperty("connection.connection_string", nhibernateConnectionString)
+				.SetProperty("dialect", "NHibernate.Dialect.MySQL5Dialect");
+			/*	var configurationPath = HttpContext.Current.Server.MapPath(@"~\Nhibernate\hibernate.cfg.xml");
+			configuration.Configure(configurationPath);*/
 			configuration.AddInputStream(
 				NHibernate.Mapping.Attributes.HbmSerializer.Default.Serialize(Assembly.GetExecutingAssembly()));
 
-			var schema = new NHibernate.Tool.hbm2ddl.SchemaExport(configuration);
+		/*	var schema = new NHibernate.Tool.hbm2ddl.SchemaExport(configuration);
 			schema.Create(false, true);
-
+*/
 			return configuration.BuildSessionFactory();
 		}
-		
+
 
 		public override void OnActionExecuting(ActionExecutingContext filterContext)
 		{

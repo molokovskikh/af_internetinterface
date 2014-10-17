@@ -166,7 +166,6 @@
     <Content Include="Scripts\inforoom.js" />
     <Content Include="Css\jquery-ui.css" />
     <Content Include="Css\jquery-ui.theme.css" />
-    <None Include="Scripts\jquery-2.1.1.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.1.js" />
     <Content Include="Scripts\jquery-2.1.1.min.js" />
     <Content Include="Scripts\jquery-ui-1.11.1.js" />
@@ -209,7 +208,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Models\Ticket.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />
@@ -220,7 +218,6 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Faq\Index.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
-    <Content Include="Scripts\jquery-2.1.1.min.map" />
     <Content Include="Views\AdminQuestion\AdminQuestionIndex.cshtml" />
     <Content Include="Views\AdminQuestion\EditQuestion.cshtml" />
     <Content Include="Views\AdminTicket\AdminTicketIndex.cshtml" />
@@ -234,6 +231,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common.MySql\Common.MySql\Common.MySql.csproj">
