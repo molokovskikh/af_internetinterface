@@ -17,32 +17,6 @@ namespace Inforoom2.Controllers
 		{
 			ViewBag.Username = "";
 			ViewBag.Password = "";
-
-#if DEBUG
-			var pass = PasswordHasher.Hash("password");
-
-			if (DbSession.Query<Client>().Count() == 0) {
-				var client = new Client {
-					City = "Борисоглебск",
-					Username = "client1",
-					Password = pass.Hash,
-					Salt = pass.Salt
-				};
-				DbSession.Save(client);
-			}
-
-			if (DbSession.Query<Employee>().Count() == 0) {
-
-				var emp = new Employee() {
-					Username = "admin",
-					Password = pass.Hash,
-					Salt = pass.Salt,
-				};
-
-				DbSession.Save(emp);
-			}
-#endif
-			
 			return View();
 		}
 
@@ -50,7 +24,6 @@ namespace Inforoom2.Controllers
 		public ActionResult Login(string username, string password, string returnUrl)
 		{
 			if (ModelState.IsValid) {
-
 				if (IsAdmin(username, password)) {
 					return Authenticate(Url.Content("~/Admin"), username);
 				}
@@ -61,7 +34,6 @@ namespace Inforoom2.Controllers
 				}
 				ModelState.AddModelError("", "Неправильный логин или пароль");
 			}
-
 			// If we got this far, something failed, redisplay form
 			return View();
 		}
@@ -77,8 +49,8 @@ namespace Inforoom2.Controllers
 		{
 			var admin = DbSession.Query<Employee>().FirstOrDefault(k => k.Username == username);
 			if (admin != null && PasswordHasher.Equals(password, admin.Salt, admin.Password)) {
-					return true;
-				}
+				return true;
+			}
 			return false;
 		}
 

@@ -32,9 +32,8 @@ namespace Inforoom2.Controllers
 			ViewBag.Ticket = ticket;
 			var errors = ValidationRunner.ValidateDeep(ticket);
 			if (errors.Length == 0) {
-				var employee = DbSession.Query<Employee>().FirstOrDefault(k => k.Username == User.Identity.Name);
 				ticket.AnswerDate = DateTime.Now;
-				ticket.Employee = employee;
+				ticket.Employee = CurrentEmployee;
 				ticket.IsNotified = true;
 				EmailSender.SendEmail(new Client { Email = ticket.Email }, "Ответ на вопрос", ticket.Answer);
 				DbSession.SaveOrUpdate(ticket);

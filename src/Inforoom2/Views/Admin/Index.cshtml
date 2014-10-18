@@ -2,17 +2,15 @@
 
 @{
 	ViewBag.Title = "Index";
-	IList<Employee> users = ViewBag.Users;
-	Employee client = new Employee();
 	string ticketTitle = string.Format("Tickets " + "(" + ViewBag.TicketsAmount + ")");
 }
 
 <h2>Панель администратора</h2>
 
 <div class="navbar navbar-inverse navbar-fixed-top">
-			<div class="container">
-				@Html.ActionLink("Questions", "AdminQuestionIndex", "AdminQuestion", null, new {@class = "navbar-brand"})
-				@Html.ActionLink(ticketTitle, "AdminTicketIndex", "AdminTicket", null, new {@class = "navbar-brand"})
-				
-			
-			</div>
+	<div class="container">
+		@Html.ActionLink("Questions", "AdminQuestionIndex", "AdminQuestion", null, new { @class = "navbar-brand" })
+		@Html.ActionLink(ticketTitle, "AdminTicketIndex", "AdminTicket", null, new { @class = "navbar-brand" })
+		@Html.ActionLink("News", "AdminNewsIndex", "AdminNews", null, new { @class = "navbar-brand" })
+	</div>
+</div>

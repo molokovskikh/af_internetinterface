@@ -1,0 +1,35 @@
+﻿@using Inforoom2.Models
+
+@{
+	ViewBag.Title = "AdminNewsIndex";
+	IList<NewsBlock> newsBlocks = ViewBag.NewsBlocks;
+}
+
+<h2>AdminQuestion</h2>
+
+<span><button class="CreateQuestion" onclick=" location.href = '@Url.Action("EditNewsBlock", "AdminNews")' ">Создать новость</button></span>
+
+<div class="AdminQuestion">
+	
+	<table class="AdminQuestionTable">
+		@foreach (var item in newsBlocks) {
+			<tr>
+				<td>@Html.DisplayFor(modelItem => item.Priority)</td>
+				<td>@Html.DisplayFor(modelItem => item.Title)</td>
+				<td>@Html.DisplayFor(modelItem => item.Preview)</td>
+				<td>@Html.DisplayFor(modelItem => item.Body)</td>
+				<td>@Html.DisplayFor(modelItem => item.CreationDate)</td>
+				<td>@Html.DisplayFor(modelItem => item.Employee.Username)</td>
+				<td>@Html.CheckBoxFor(modelItem => item.IsPublished)</td>
+				<td>
+					
+					<span><button class="ViewQuestion" onclick=" location.href = '@Url.Action("EditNewsBlock", "AdminNews", new { newsBlockId = item.Id })' ">Просмотр</button></span>
+					<span><button class="NewsBlockDelete" onclick=" location.href = '@Url.Action("DeleteNewsBlock", "AdminNews", new { newsBlockId = item.Id })' ">Удалить</button></span>
+					<span><button class="NewsBlockUp" onclick=" location.href = '@Url.Action("Move", "AdminNews", new { newsBlockId = item.Id, direction = "Up" })' ">Вверх</button></span>
+					<span><button class="NewsBlockDown" onclick=" location.href = '@Url.Action("Move", "AdminNews", new { newsBlockId = item.Id, direction = "Down" })' ">Вниз</button></span>
+				
+				</td>
+			</tr>
+		}
+	</table>
+</div>

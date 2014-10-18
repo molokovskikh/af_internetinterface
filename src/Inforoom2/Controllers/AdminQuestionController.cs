@@ -16,10 +16,9 @@ namespace Inforoom2.Controllers
 		public ActionResult AdminQuestionIndex()
 		{
 			var questions = DbSession.Query<Question>().OrderBy(k => k.Priority).ToList();
-			var maxPriority = questions.Max(k => k.Priority);
-			var question = new Question(maxPriority + 1);
-			ViewBag.Questions = questions;
-			ViewBag.Question = question;
+			if (questions.Count != 0) {
+				ViewBag.Questions = questions;
+			}
 			return View();
 		}
 
@@ -31,39 +30,16 @@ namespace Inforoom2.Controllers
 			}
 			else {
 				var questions = DbSession.Query<Question>().OrderBy(k => k.Priority).ToList();
-				var maxPriority = questions.Max(k => k.Priority);
+				var maxPriority = questions.Count != 0 ? questions.Max(k => k.Priority) : 0;
 				question = new Question(maxPriority + 1);
 			}
 			ViewBag.Question = question;
 			return View();
 		}
-
-		public ActionResult CreateQuestion()
-		{
-			return View(ViewBag.Question);
-		}
-
+		
 		public ActionResult Move(int? questionId, string direction)
 		{
-			var question = DbSession.Get<Question>(questionId);
-			IList<Question> questions;
-			Question targetQuestion;
-			if (direction == "Up") {
-				questions = DbSession.Query<Question>().OrderByDescending(k => k.Priority).ToList();
-				targetQuestion = questions.FirstOrDefault(k => k.Priority < question.Priority);
-			}
-			else {
-				questions = DbSession.Query<Question>().OrderBy(k => k.Priority).ToList();
-				targetQuestion = questions.FirstOrDefault(k => k.Priority > question.Priority);
-			}
-			if (targetQuestion != null) {
-				int targetPerriority = targetQuestion.Priority;
-				targetQuestion.Priority = question.Priority;
-				question.Priority = targetPerriority;
-				DbSession.Save(question);
-				DbSession.Save(targetQuestion);
-			}
-			return RedirectToAction("AdminQuestionIndex");
+			return ChangeModelPriority<Question>(questionId, direction, "AdminQuestionIndex", "AdminQuestion");
 		}
 
 		[HttpPost]
@@ -81,6 +57,13 @@ namespace Inforoom2.Controllers
 				return View("EditQuestion");
 			}
 
+			return RedirectToAction("AdminQuestionIndex");
+		}
+
+		public ActionResult DeleteQuestion(int? questionId)
+		{
+			var question = DbSession.Get<Question>(questionId);
+			DbSession.Delete(question);
 			return RedirectToAction("AdminQuestionIndex");
 		}
 	}

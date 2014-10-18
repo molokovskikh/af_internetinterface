@@ -159,9 +159,7 @@
     <Content Include="Css\images\ui-icons_ffffff_256x240.png" />
     <Content Include="Css\style.css" />
     <Content Include="Global.asax" />
-    <Content Include="Nhibernate\hibernate.cfg.xml">
-      <SubType>Designer</SubType>
-    </Content>
+    <Content Include="Scripts\EditNewsBlock.js" />
     <Content Include="Scripts\FaqController.js" />
     <Content Include="Scripts\inforoom.js" />
     <Content Include="Css\jquery-ui.css" />
@@ -178,6 +176,7 @@
     <Compile Include="Components\ValidationRunner.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\AdminNewsController.cs" />
     <Compile Include="Controllers\AdminQuestionController.cs" />
     <Compile Include="Controllers\AdminTicketController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
@@ -195,10 +194,12 @@
     <Compile Include="Helpers\IpGeoHelper.cs" />
     <Compile Include="Helpers\NHibernateActionFilter.cs" />
     <Compile Include="Helpers\PasswordHasher.cs" />
+    <Compile Include="Intefaces\IModelWithPriority.cs" />
     <Compile Include="Models\Employee.cs" />
     <Compile Include="Models\BaseModel.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Models\NewsBlock.cs" />
     <Compile Include="Models\Permission.cs" />
     <Compile Include="Models\Question.cs">
       <SubType>Code</SubType>
@@ -222,6 +223,15 @@
     <Content Include="Views\AdminQuestion\EditQuestion.cshtml" />
     <Content Include="Views\AdminTicket\AdminTicketIndex.cshtml" />
     <Content Include="Views\AdminTicket\EditTicket.cshtml" />
+    <Content Include="Views\AdminNews\AdminNewsIndex.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Views\AdminNews\EditNewsBlock.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Views\Home\ViewNewsBlock.cshtml">
+      <SubType>Code</SubType>
+    </Content>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -250,7 +260,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>51803</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

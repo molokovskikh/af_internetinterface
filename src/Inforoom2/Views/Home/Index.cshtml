@@ -1,5 +1,10 @@
-﻿@{
+﻿@using System.Activities.Statements
+@using Inforoom2.Models
+@model dynamic
+
+@{
 	ViewBag.Title = "Home";
+	IList<NewsBlock> news = ViewBag.News;
 	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -8,5 +13,24 @@
 <h2>Home</h2>
 
 @ViewBag.Message
-
-
+<h3>Новости</h3>
+<div style="width: 1000px; height: 200px; margin: 0px auto; border: 1px gainsboro solid">
+	
+	
+	@foreach (var item in news) {
+		
+		<div class="newsBlock">
+			@Html.DisplayFor(modelItem => item.CreationDate)
+			@Html.DisplayFor(modelItem => item.Preview)
+			@if (!string.IsNullOrEmpty(item.Body)) {
+				if (string.IsNullOrEmpty(item.Url)) {
+					 <span><button class="ViewNewsBlock" onclick=" location.href = '@Url.Action("ViewNewsBlock", "Home", new { newsId = item.Id })' ">Подробнее</button></span>
+				 }
+				 else {
+					 <span><button class="ViewNewsBlock" onclick=" location.href = '@item.Url'" >Подробнее</button></span>
+				 }
+			}
+		
+		</div>
+	}
+</div>

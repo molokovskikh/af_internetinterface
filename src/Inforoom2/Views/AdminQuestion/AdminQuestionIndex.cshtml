@@ -20,6 +20,7 @@
 				<td>
 					
 					<span><button class="ViewQuestion" onclick=" location.href = '@Url.Action("EditQuestion", "AdminQuestion", new { questionId = item.Id})' ">Просмотр</button></span>
+					<span><button class="QuestionDelete" onclick=" location.href = '@Url.Action("DeleteQuestion", "AdminQuestion", new { questionId = item.Id })' ">Удалить</button></span>
 					<span><button class="QuestionUp" onclick=" location.href = '@Url.Action("Move", "AdminQuestion", new { questionId = item.Id, direction = "Up" })' ">Вверх</button></span>
 					<span><button class="QuestionDown" onclick=" location.href = '@Url.Action("Move", "AdminQuestion", new { questionId = item.Id, direction = "Down" })' ">Вниз</button></span>
 				</td>

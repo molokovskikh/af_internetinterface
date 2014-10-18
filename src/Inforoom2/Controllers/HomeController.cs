@@ -1,4 +1,7 @@
-﻿using System.Web.Mvc;
+﻿using System.Linq;
+using System.Web.Mvc;
+using Inforoom2.Models;
+using NHibernate.Linq;
 
 namespace Inforoom2.Controllers
 {
@@ -11,6 +14,9 @@ namespace Inforoom2.Controllers
 			if (User != null && User.HasPermissions("CanEverything")) {
 				ViewBag.Message = "Я одмин";
 			}
+
+			var news = DbSession.Query<NewsBlock>().Where(k => k.IsPublished).ToList();
+			ViewBag.News = news;
 			
 			return View();
 		}
@@ -18,6 +24,15 @@ namespace Inforoom2.Controllers
 		public ActionResult AdminIndex()
 		{
 			return RedirectToAction("Index", "Admin");
+		}
+
+		
+
+		public ActionResult ViewNewsBlock(int? newsid)
+		{
+			var newsBlock = DbSession.Get<NewsBlock>(newsid);
+			ViewBag.NewsBlock = newsBlock;
+			return View();
 		}
 	}
 }

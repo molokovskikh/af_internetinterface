@@ -1,5 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Principal;
+using NHibernate;
+using NHibernate.Linq;
 using NHibernate.Mapping.Attributes;
 
 
@@ -30,7 +34,6 @@ namespace Inforoom2.Models
 		[Key(1, Column = "user", NotNull = false)]
 		[ManyToMany(2, Column = "permission", ClassType = typeof(Permission))]
 		public virtual  IList<Permission> Permissions { get; set; }
-
 	}
 
 	

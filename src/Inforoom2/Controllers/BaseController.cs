@@ -28,6 +28,11 @@ namespace Inforoom2.Controllers
 			get { return HttpContext.User as CustomPrincipal; }
 		}
 
+		protected Employee CurrentEmployee
+		{
+			get { return DbSession.Query<Employee>().FirstOrDefault(k => k.Username == User.Identity.Name); }
+		}
+
 		protected string VisitorRegion
 		{
 			get { return HttpSession["VisitorRegion"].ToString(); }
@@ -75,7 +80,7 @@ namespace Inforoom2.Controllers
 			if (User != null && !User.Identity.IsAuthenticated) {
 				//Анонимный посетитель. Определяем город.
 				if (cookie != null) {
-					VisitorRegion = cookie.Value; 
+					VisitorRegion = cookie.Value;
 					ViewBag.UserCity = cookie.Value;
 				}
 				else {

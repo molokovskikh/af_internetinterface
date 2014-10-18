@@ -1,4 +1,5 @@
 ﻿using System;
+using Inforoom2.Intefaces;
 using NHibernate.Mapping;
 using NHibernate.Mapping.Attributes;
 using NHibernate.Validator.Constraints;
@@ -10,7 +11,7 @@ namespace Inforoom2.Models
 	/// Класс для вопроса на странице "Вопросы и ответы"
 	/// </summary>
 	[Class(Table = "questions", NameType = typeof (Question))]
-	public class Question : BaseModel
+	public class Question : BaseModel, IModelWithPriority
 	{
 	
 		[Property, NotNullNotEmpty]
