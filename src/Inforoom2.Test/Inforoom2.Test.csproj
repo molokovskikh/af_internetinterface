@@ -106,9 +106,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Functional\BaseFixture.cs" />
-    <Compile Include="Functional\DraftFixture.cs" />
+    <Compile Include="Functional\HomeFixture.cs" />
+    <Compile Include="Functional\FaqFixture.cs" />
     <Compile Include="Functional\Setup.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Inforoom2\Inforoom2.csproj">
@@ -131,6 +131,9 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
