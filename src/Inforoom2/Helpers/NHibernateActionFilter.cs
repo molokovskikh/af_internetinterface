@@ -35,8 +35,9 @@ namespace Inforoom2.Helpers
 			configuration.AddInputStream(
 				NHibernate.Mapping.Attributes.HbmSerializer.Default.Serialize(Assembly.GetExecutingAssembly()));
 
-			var schema = new NHibernate.Tool.hbm2ddl.SchemaExport(configuration);
-			schema.Create(false, true);
+			//TODO Раскоментировать для создания таблиц с помощью Nhibernate
+		/*	var schema = new NHibernate.Tool.hbm2ddl.SchemaExport(configuration);
+			schema.Create(false, true);*/
 
 			return configuration.BuildSessionFactory();
 		}

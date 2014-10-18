@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -19,11 +21,10 @@ namespace Inforoom2.Test.Functional
 	[SetUpFixture]
 	public class Setup
 	{
-		
 		public static Uri Url;
 		public static ISession session = NHibernateActionFilter.sessionFactory.OpenSession();
-	
-	
+
+
 		private Server _webServer;
 
 		[SetUp]
@@ -40,30 +41,37 @@ namespace Inforoom2.Test.Functional
 			SeleniumFixture.GlobalTearDown();
 			_webServer.ShutDown();
 		}
-		
+
 		public static void SeedDb()
 		{
+			Permission permission = new Permission { Name = "TestPermission" };
+			session.Save(permission);
+
+			Role role = new Role { Name = "Admin" };
+			session.Save(role);
+
 			var pass = PasswordHasher.Hash("password");
+			var client = new Client {
+				City = "Борисоглебск",
+				Username = "client",
+				Password = pass.Hash,
+				Salt = pass.Salt
+			};
+			session.Save(client);
 
-			if (session.Query<Client>().Count() == 0) {
-				var client = new Client {
-					City = "Борисоглебск",
-					Username = "client1",
-					Password = pass.Hash,
-					Salt = pass.Salt
-				};
-				session.Save(client);
-			}
+			IList<Role> roles = new List<Role>();
+			roles.Add(role);
 
-			if (session.Query<Employee>().Count() == 0) {
-				var emp = new Employee() {
-					Username = "admin1",
-					Password = pass.Hash,
-					Salt = pass.Salt,
-				};
+			var emp = new Employee() {
+				Username = "admin",
+				Password = pass.Hash,
+				Salt = pass.Salt,
+				Roles = roles,
+			};
+				
 
-				session.Save(emp);
-			}
+			session.Save(emp);
+			session.Flush();
 		}
 	}
 }

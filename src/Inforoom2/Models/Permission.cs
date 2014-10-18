@@ -14,12 +14,12 @@ namespace Inforoom2.Models
 		public virtual string Name { get; set; }
 
 		[Bag(0, Table = "perm_role", Lazy = CollectionLazy.False)]
-		[Key(1, Column = "permission",NotNull = false)]
+		[Key(1, Column = "permission", NotNull = false)]
 		[ManyToMany(2, Column = "role", ClassType = typeof(Role))]
 		public virtual IList<Role> Roles { get; set; }
 
 		[Bag(0, Table = "user_role", Lazy = CollectionLazy.False)]
-		[Key(1, Column = "permission",NotNull = false)]
+		[Key(1, Column = "permission", NotNull = false)]
 		[ManyToMany(2, Column = "user", ClassType = typeof(Employee))]
 		public virtual IList<Employee> Users { get; set; }
 	}

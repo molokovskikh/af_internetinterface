@@ -23,8 +23,7 @@ namespace Inforoom2.Models
 
 		[Property]
 		public virtual string Salt { get; set; }
-
-
+		
 		[Bag(0, Table = "user_role", Lazy = CollectionLazy.False)]
 		[Key(1, Column = "user", NotNull = false)]
 		[ManyToMany(2, Column = "role", ClassType = typeof(Role))]
