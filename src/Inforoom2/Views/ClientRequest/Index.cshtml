@@ -1,0 +1,67 @@
+﻿@using Inforoom2.Models
+@{
+	ClientRequest clientRequest = ViewBag.ClientRequest;
+}
+
+
+<div class="CreateClientRequest" >
+	
+	@using (@Html.BeginForm("Create", "ClientRequest", FormMethod.Post)) {
+		<div>
+			<span>ФИО</span>
+			@Html.TextBoxFor(model => clientRequest.ApplicantName)
+			@ViewBag.Validation.GetError(clientRequest, "ApplicantName", "Поле не может быть пустым")
+		</div>
+		<div>
+			<span>Номер телефона</span>
+			@Html.TextBoxFor(model => clientRequest.ApplicantPhoneNumber)
+			@ViewBag.Validation.GetError(clientRequest, "ApplicantName", "Укажите номер телефона")
+		</div>
+
+		<div>
+			<span>Эл. почта</span>
+			@Html.TextBoxFor(model => clientRequest.Email)
+			@ViewBag.Validation.GetError(clientRequest, "ApplicantName", "Неправильный адрес эл. почты")
+		</div>
+		<div>
+			<span>Город</span>
+			@Html.TextBoxFor(model => clientRequest.City)
+			@ViewBag.Validation.GetError(clientRequest, "ApplicantName", "Поле не может быть пустым")
+		</div>
+		<div>
+			<span>Улица</span>
+			@Html.TextBoxFor(model => clientRequest.Street)
+			@ViewBag.Validation.GetError(clientRequest, "ApplicantName", "Поле не может быть пустым")
+		</div>
+		<div>
+			<span>Дом</span>
+			@Html.TextBoxFor(model => clientRequest.House)
+			@ViewBag.Validation.GetError(clientRequest, "ApplicantName", "Поле не может быть пустым")
+		</div>
+		<div>
+			<span>Корпус</span>
+			@Html.TextBoxFor(model => clientRequest.CaseHouse)
+		</div>
+		<div>
+			<span>Квартира</span>
+			@Html.TextBoxFor(model => clientRequest.Apartment)
+			@ViewBag.Validation.GetError(clientRequest, "ApplicantName", "Поле не может быть пустым")
+		</div>
+		<div>
+			<span>Подъезд</span>
+			@Html.TextBoxFor(model => clientRequest.Entrance)
+		</div>
+		<div>
+			<span>Этаж</span>
+			@Html.TextBoxFor(model => clientRequest.Floor)
+			@ViewBag.Validation.GetError(clientRequest, "ApplicantName", "Поле не может быть пустым")
+		</div>
+		<div>
+			<span>Выберите тариф</span>
+			@Html.DropDownListFor(k => clientRequest.Tariff.Name, ViewBag.Tariffs as IList<SelectListItem>)
+		</div>
+
+		<input type="submit"  value="Отправить заявку"/>
+	}
+	
+</div>

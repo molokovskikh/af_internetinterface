@@ -10,7 +10,6 @@ namespace Inforoom2.Models
 	[Class(0, Table = "client", NameType = typeof (Client))]
 	public class Client : BaseModel
 	{
-	
 		[Property]
 		public virtual string Username { get; set; }
 

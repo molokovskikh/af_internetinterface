@@ -9,9 +9,9 @@
 	<body>
 		<div class="navbar navbar-inverse navbar-fixed-top">
 			<div class="container">
-				@Html.ActionLink("Home", "Index", "Home", null, new {@class = "navbar-brand"})
-				@Html.ActionLink("FAQ", "Index", "Faq", null, new {@class = "navbar-brand"})
-				@Html.ActionLink("Request", "Index", "ConnectionRequest", null, new {@class = "navbar-brand"})
+				@Html.ActionLink("Главная", "Index", "Home", null, new {@class = "navbar-brand"})
+				@Html.ActionLink("Вопросы и ответы", "Index", "Faq", null, new {@class = "navbar-brand"})
+				@Html.ActionLink("Заявка на подключение", "Index", "ClientRequest", null, new {@class = "navbar-brand"})
 				@Html.ActionLink("About", "Index", "About", null, new {@class = "navbar-brand"})
 				@if (Request.IsAuthenticated) {
 					<text>Welcome <strong>@User.Identity.Name</strong>!

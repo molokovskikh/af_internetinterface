@@ -180,6 +180,7 @@
     <Compile Include="Controllers\AdminQuestionController.cs" />
     <Compile Include="Controllers\AdminTicketController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\ClientRequestController.cs" />
     <Compile Include="Controllers\FaqController.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -195,6 +196,7 @@
     <Compile Include="Helpers\NHibernateActionFilter.cs" />
     <Compile Include="Helpers\PasswordHasher.cs" />
     <Compile Include="Intefaces\IModelWithPriority.cs" />
+    <Compile Include="Models\ClientRequest.cs" />
     <Compile Include="Models\Employee.cs" />
     <Compile Include="Models\BaseModel.cs">
       <SubType>Code</SubType>
@@ -208,6 +210,7 @@
     <Compile Include="Models\Role.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Models\Tariff.cs" />
     <Compile Include="Models\Ticket.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -232,6 +235,7 @@
     <Content Include="Views\Home\ViewNewsBlock.cshtml">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="Views\ClientRequest\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
