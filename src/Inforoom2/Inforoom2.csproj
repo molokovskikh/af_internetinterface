@@ -160,7 +160,9 @@
     <Content Include="Css\style.css" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\EditNewsBlock.js" />
+    <Content Include="Scripts\EventEmitter.js" />
     <Content Include="Scripts\FaqController.js" />
+    <Content Include="Scripts\Helpers.js" />
     <Content Include="Scripts\inforoom.js" />
     <Content Include="Css\jquery-ui.css" />
     <Content Include="Css\jquery-ui.theme.css" />
@@ -168,6 +170,7 @@
     <Content Include="Scripts\jquery-2.1.1.min.js" />
     <Content Include="Scripts\jquery-ui-1.11.1.js" />
     <Content Include="Scripts\jquery-ui.min-1.11.1.js" />
+    <Content Include="Scripts\Window.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

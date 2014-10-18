@@ -11,20 +11,34 @@ function Inforoom() {
      * @var Параметры клиента. Пополняются параметрами с сервера.
      */
 	this.params = {};
+	this.templates = {};
 
 	/**
      * Контсруктор
      */
-	this.initialize = function() {
+	this.initialize = function () {
+		window.cli = this;
 		console.log(this);
 
-		var msg = this.getCookie("SuccessMessage", true);
-		if (msg)
-			alert(msg);
-		var city = this.getCookie("userCity");
-		if (city == null) {
-			this.showRegionDialog();
+		var paramDivs = $(".JavascriptParams div").get();
+		for (var i in paramDivs) {
+			var div = paramDivs[i];
+			this.params[$(div).attr("id")] = div.innerHTML;
 		}
+		$(".JavascriptParams").remove();
+		console.log("Params from server", this.params);
+
+		var templateDivs = $(".HtmlTemplates > div").get();
+		for (var i in templateDivs) {
+			var div = templateDivs[i];
+			this.templates[$(div).attr("id")] = div.outerHTML;
+		}
+		$(".HtmlTemplates").remove();
+		console.log("Templates added", this.templates);
+		
+
+		this.checkCity();
+		this.showMessages();
 	}
 
 	/**
@@ -32,8 +46,9 @@ function Inforoom() {
      * @returns {Window} Объект окна
      */
 	this.createWindow = function(name, content) {
-		var window = new Window();
+		var window = new Window(name,content);
 		this.windows.push(window);
+		window.render(document.body);
 		return window;
 	}
 
@@ -85,7 +100,6 @@ function Inforoom() {
 			options.expires = expires.toUTCString();
 		}
 
-
 		var updatedCookie = name + "=" + value;
 
 		for (var propName in options) {
@@ -105,9 +119,11 @@ function Inforoom() {
 		var ret = matches ? (matches[1]) : undefined;
 		if (eraseFlag)
 			this.setCookie(name, null);
-		return ret;o
+		return ret;
 	}
-
+	this.getTemplate = function(name) {
+		return this.templates[name] ? this.templates[name].toHTML() : null;
+	}
 	this.getParam = function(name) {
 		return this.params[name];
 	}
@@ -123,51 +139,49 @@ function Inforoom() {
 		}.bind(this));
 	}
 
-	
-
-	this.showRegionDialog = function() {
-		var buttonsConfig = [
-		{
-			text: "Верно",
-			click: function () {
-				$(this).dialog("close");
-				var e = document.getElementById("viewBagCity");
-				cli.setCookie("userCity", e.innerHTML);
-			}
-		},
-		{
-			text: "Нет, я выберу город из списка",
-			click: function () {
-				var dialogBody = $('#dialogMessage');
-				dialogBody.html($('#citiesList'));
-				$('#citiesList').show();
-
-			}
-		}
-		];
-		$("#dialogMessage").show();
-		$("#dialogMessage").dialog({
-			modal: true,
-			draggable: true,
-			resizable: false,
-			position: ['center', 'top'],
-			show: 'blind',
-			hide: 'blind',
-			width: 400,
-			dialogClass: 'ui-dialog',
-			buttons: buttonsConfig
-		});
-	};
-
-	this.onCityChanged = function() {
-		var e = document.getElementById("city");
-		var city = e.options[e.selectedIndex].text;
-		this.setCookie("userCity", city);
-		window.location.reload();
+	this.showMessages = function() {
+		var msg = this.getCookie("SuccessMessage", true);
+		if (msg)
+			alert(msg);
 	}
 
+	this.checkCity = function () {
+		$('.cities a').on("click", function () {
+			cli.setCookie("userCity", this.innerHTML);
+			window.location.reload();
+		});
+		var city = null;// this.getCookie("userCity");
+		if (city == null)
+			this.showCityWindow();
+	};
+
+	this.showCityWindow = function() {
+		var wnd = this.createWindow("Выберите город", this.getTemplate("CityWindow"));
+		wnd.block();
+		//ok button event
+		$(wnd.getElement()).find('.button.ok').on("click", function () {
+			var city = $(wnd.getElement()).find(".UserCity").html();
+			wnd.remove();
+			cli.setCookie("userCity", city);
+		});
+
+		//cancel button event
+		$(wnd.getElement()).find(".button.cancel").on("click", function () {
+			var content = cli.getTemplate("SelectCityWindow");
+			wnd.pushContent(content);
+			$(wnd.getElement()).find('.cities a').on("click", function () {
+				cli.setCookie("userCity", this.innerHTML);
+				window.location.reload();
+			});
+			$(wnd.getElement()).find('.button.cancel').on("click", wnd.popContent.bind(wnd));
+		});
+	}
 
 	this.initialize();
 }
 
-cli = new Inforoom();
+
+window.onload = function()
+{
+	cli = new Inforoom();
+}

@@ -1,4 +1,4 @@
-п»ї.ui-datepicker-trigger {
+﻿п»ї.ui-datepicker-trigger {
 	background: url(../Images/calendar.gif) no-repeat;
 	background-position: center center;
 	width: 16px;
@@ -158,8 +158,8 @@ a.button.ok, button.button.ok {
 /*autocomplete*/
 #wrapper_in .ac_results {
 	padding: 0px;
-	border: 1px solid WindowFrame;
-	background-color: Window;
+	border: 1px solid XWindowFrame;
+	background-color: XWindow;
 	overflow: hidden;
 }
 
@@ -196,7 +196,7 @@ a.button.ok, button.button.ok {
 }
 
 #wrapper_in  .ac_loading {
-	background : Window url('../Images/autocomplete_indicator.png') right center no-repeat;
+	background : XWindow url('../Images/autocomplete_indicator.png') right center no-repeat;
 }
 
 #wrapper_in  .ac_over {

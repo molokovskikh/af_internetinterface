@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Security.Principal;
 using System.Web;
@@ -23,6 +24,19 @@ namespace Inforoom2.Controllers
 		public ISession DbSession { get; set; }
 		protected ValidationRunner ValidationRunner;
 
+		protected BaseController()
+		{
+			ValidationRunner = new ValidationRunner();
+			ViewBag.Validation = ValidationRunner;
+			ViewBag.JavascriptParams = new Dictionary<string, string>();
+			ViewBag.Cities = new string[]{"Воронеж","Борисоглебск","Москва"};
+		}
+
+		public void AddJavascriptParam(string name, string value)
+		{
+			ViewBag.JavascriptParams[name] = value;
+		}
+
 		protected new virtual CustomPrincipal User
 		{
 			get { return HttpContext.User as CustomPrincipal; }
@@ -42,12 +56,6 @@ namespace Inforoom2.Controllers
 		public HttpSessionStateBase HttpSession
 		{
 			get { return Session; }
-		}
-
-		protected BaseController()
-		{
-			ValidationRunner = new ValidationRunner();
-			ViewBag.Validation = ValidationRunner;
 		}
 
 		public void SuccessMessage(string message)
