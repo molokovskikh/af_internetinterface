@@ -71,8 +71,14 @@ namespace Inforoom2.Helpers
 		{
 			var ip = GetVisitorIpAddress();
 			List<IpAnswer> answer = GetServiceAnswer(new List<string>() { ip });
-			if (answer.Count > 0)
-				return answer[0];
+			if (answer.Count > 0) {
+				if (string.IsNullOrEmpty(answer[0].City)) {
+					throw new WebException("");
+				}
+				else {
+					return answer[0];
+				}
+			}
 			return null;
 		}
 

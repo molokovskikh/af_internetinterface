@@ -4,7 +4,9 @@ using System.Web.UI.WebControls;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
 using NHibernate.Linq;
+using NHibernate.Mapping.Attributes;
 using NUnit.Framework;
+using OpenQA.Selenium;
 
 namespace Inforoom2.Test.Functional
 {
@@ -30,13 +32,21 @@ namespace Inforoom2.Test.Functional
 
 		[Test, Description("Проверка возможности просматривать вопросы и ответы")]
 		public void QuestionsTest()
-		{	
+		{
+		/*	string js = @"cli.setCookie('userCity','Воронеж')";
+			browser.ExecuteScript(js);*/
 			Open("Faq");
+		
 			//Проверяем наличие вопросов
 			AssertText(Question.Text);
 
 			//Проверяем наличие ответов при клике
 			AssertNoText(Question.Answer);
+		/*	if (IsTextExists("ВЫБЕРИТЕ ГОРОД")) {
+				var bt = browser.FindElement(By.XPath("//div[@class='buttons']//button"));
+				bt.Click();
+			}*/
+
 			var answerButtons = browser.FindElementsByCssSelector(".ShowAnswer");
 			foreach(var button in answerButtons)
 				button.Click();
@@ -72,7 +82,9 @@ namespace Inforoom2.Test.Functional
 			showButton.Click();
 			email.SendKeys(testEmail);
 			text.SendKeys(testQuestion);
+	
 			applyButton.Click();
+			browser.SwitchTo().Alert().Accept();
 
 			var ticket = session.Query<Ticket>().OrderByDescending(i=>i.Id).First();
 			Assert.That(ticket.Text,Is.EqualTo(testQuestion));

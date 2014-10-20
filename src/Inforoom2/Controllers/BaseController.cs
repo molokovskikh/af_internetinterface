@@ -23,13 +23,13 @@ namespace Inforoom2.Controllers
 	{
 		public ISession DbSession { get; set; }
 		protected ValidationRunner ValidationRunner;
-
+		
 		protected BaseController()
 		{
 			ValidationRunner = new ValidationRunner();
 			ViewBag.Validation = ValidationRunner;
 			ViewBag.JavascriptParams = new Dictionary<string, string>();
-			ViewBag.Cities = new string[]{"Воронеж","Борисоглебск","Москва"};
+			ViewBag.Cities = new string[] { "Воронеж", "Борисоглебск", "Москва" };
 		}
 
 		public void AddJavascriptParam(string name, string value)
@@ -47,11 +47,13 @@ namespace Inforoom2.Controllers
 			get { return DbSession.Query<Employee>().FirstOrDefault(k => k.Username == User.Identity.Name); }
 		}
 
-		protected string VisitorRegion
+		private static string userCity;
+
+		public static string UserCity
 		{
-			get { return HttpSession["VisitorRegion"].ToString(); }
-			set { HttpSession["VisitorRegion"] = value; }
+			get { return userCity; }
 		}
+
 
 		public HttpSessionStateBase HttpSession
 		{
@@ -76,7 +78,11 @@ namespace Inforoom2.Controllers
 		protected override void OnActionExecuting(ActionExecutingContext filterContext)
 		{
 			base.OnActionExecuting(filterContext);
+		}
 
+		protected override void OnActionExecuted(ActionExecutedContext filterContext)
+		{
+			base.OnActionExecuted(filterContext);
 			ProcessRegionPanel();
 		}
 
@@ -85,40 +91,47 @@ namespace Inforoom2.Controllers
 		{
 			var cookie = Request.Cookies.Get("userCity");
 
-			if (User != null && !User.Identity.IsAuthenticated) {
+			if (User == null) {
 				//Анонимный посетитель. Определяем город.
 				if (cookie != null) {
-					VisitorRegion = cookie.Value;
+					userCity = cookie.Value;
 					ViewBag.UserCity = cookie.Value;
 				}
 				else {
-					var geoService = new IpGeoBase();
-					IpAnswer geoAnswer;
-					try {
-						geoAnswer = geoService.GetInfo();
-					}
-					catch (WebException e) {
-						geoAnswer = new IpAnswer { City = "Воронеж" };
-					}
-					VisitorRegion = geoAnswer.City;
-					ViewBag.UserCity = geoAnswer.City;
+					GetVisitorCityByGeoBase();
 				}
 			}
 			else {
-				var user = new Client {
-					City = "Воронеж"
-				}; // TODO stub DBSession.Query<Client>().FirstOrDefault(k => k.Username == Client.Identity.Name);
-				VisitorRegion = user.City;
-				ViewBag.UserCity = user.City;
-				//Добавляем куки, чтобы не показывать попап залогиненому пользователю
-				if (cookie == null) {
-					Response.Cookies.Add(new HttpCookie("userCity", user.City) { Path = "/" });
-				}
-				else {
-					VisitorRegion = cookie.Value;
+				if (cookie != null) {
+					userCity = cookie.Value;
 					ViewBag.UserCity = cookie.Value;
 				}
+				else {
+					//Куков нет, пытаемся достать город из базы, иначе определяем по геобазе
+					var user = DbSession.Query<Client>().FirstOrDefault(k => k.Username == User.Identity.Name);
+					if (user != null) {
+						userCity = user.City;
+						ViewBag.UserCity = user.City;
+					}
+					else {
+						GetVisitorCityByGeoBase();
+					}
+				}
 			}
+		}
+
+		private void GetVisitorCityByGeoBase()
+		{
+			var geoService = new IpGeoBase();
+			IpAnswer geoAnswer;
+			try {
+				geoAnswer = geoService.GetInfo();
+			}
+			catch (WebException e) {
+				geoAnswer = new IpAnswer { City = "Воронеж" };
+			}
+			userCity = geoAnswer.City;
+			ViewBag.UserCity = geoAnswer.City;
 		}
 	}
 }

@@ -16,7 +16,7 @@ function Inforoom() {
 	/**
      * Контсруктор
      */
-	this.initialize = function () {
+	this.initialize = function() {
 		window.cli = this;
 		console.log(this);
 
@@ -35,7 +35,7 @@ function Inforoom() {
 		}
 		$(".HtmlTemplates").remove();
 		console.log("Templates added", this.templates);
-		
+
 
 		this.checkCity();
 		this.showMessages();
@@ -46,7 +46,7 @@ function Inforoom() {
      * @returns {Window} Объект окна
      */
 	this.createWindow = function(name, content) {
-		var window = new Window(name,content);
+		var window = new Window(name, content);
 		this.windows.push(window);
 		window.render(document.body);
 		return window;
@@ -145,12 +145,12 @@ function Inforoom() {
 			alert(msg);
 	}
 
-	this.checkCity = function () {
-		$('.cities a').on("click", function () {
+	this.checkCity = function() {
+		$('.cities a').on("click", function() {
 			cli.setCookie("userCity", this.innerHTML);
 			window.location.reload();
 		});
-		var city = null;// this.getCookie("userCity");
+		var city = this.getCookie("userCity");
 		if (city == null)
 			this.showCityWindow();
 	};
@@ -159,17 +159,17 @@ function Inforoom() {
 		var wnd = this.createWindow("Выберите город", this.getTemplate("CityWindow"));
 		wnd.block();
 		//ok button event
-		$(wnd.getElement()).find('.button.ok').on("click", function () {
+		$(wnd.getElement()).find('.button.ok').on("click", function() {
 			var city = $(wnd.getElement()).find(".UserCity").html();
 			wnd.remove();
 			cli.setCookie("userCity", city);
 		});
 
 		//cancel button event
-		$(wnd.getElement()).find(".button.cancel").on("click", function () {
+		$(wnd.getElement()).find(".button.cancel").on("click", function() {
 			var content = cli.getTemplate("SelectCityWindow");
 			wnd.pushContent(content);
-			$(wnd.getElement()).find('.cities a').on("click", function () {
+			$(wnd.getElement()).find('.cities a').on("click", function() {
 				cli.setCookie("userCity", this.innerHTML);
 				window.location.reload();
 			});
@@ -181,7 +181,6 @@ function Inforoom() {
 }
 
 
-window.onload = function()
-{
+window.onload = function() {
 	cli = new Inforoom();
 }

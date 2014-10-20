@@ -5,6 +5,7 @@ using Inforoom2.Helpers;
 using Inforoom2.Models;
 using NHibernate.Linq;
 using NUnit.Framework;
+using OpenQA.Selenium;
 
 namespace Inforoom2.Test.Functional
 {
@@ -15,24 +16,18 @@ namespace Inforoom2.Test.Functional
 
 		[Test, Description("Проверка определения города")]
 		public void CitySelectTest()
-		{	
+		{
 			Open();
-			AssertText("Ваш город");
-			var link = browser.FindElementByCssSelector("#cityLink");
-			Assert.That(link.Text, Is.EqualTo("Воронеж"));
+			string js = @"cli.setCookie('userCity')";
+			browser.ExecuteScript(js);
+			Open();
+			AssertText("ВЫБЕРИТЕ ГОРОД");
+			var bt = browser.FindElement(By.XPath("//div[@class='buttons']//button[@class='button cancel']"));
+			bt.Click();
+			var link = browser.FindElement(By.XPath("//div[@class='cities']//a[text()='Борисоглебск']"));
 			link.Click();
-			WaitForVisibleCss(".selectCity");
-			var cityLink = browser.FindElementByCssSelector(".selectCity");
-			cityLink.Click();
-			var cities = browser.FindElementsByCssSelector(".city");
-			foreach(var city in cities)
-				if(city.Text == "Борисоглебск")
-					city.Click();
-			Open("Faq");
-			AssertText("Ваш город");
-			link = browser.FindElementByCssSelector("#cityLink");
-			Assert.That(link.Text, Is.EqualTo("Борисоглебск"));
+			var cookie = browser.Manage().Cookies.GetCookieNamed("userCity");
+			Assert.That(cookie.Value, Is.EqualTo("Борисоглебск"));
 		}
-
 	}
 }

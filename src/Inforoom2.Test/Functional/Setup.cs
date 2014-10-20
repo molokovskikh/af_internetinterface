@@ -32,6 +32,7 @@ namespace Inforoom2.Test.Functional
 		{
 			SeleniumFixture.GlobalSetup();
 			_webServer = SeleniumFixture.StartServer();
+
 			SeedDb();
 		}
 
@@ -52,7 +53,7 @@ namespace Inforoom2.Test.Functional
 
 			var pass = PasswordHasher.Hash("password");
 			var client = new Client {
-				City = "Борисоглебск",
+				City = "Воронеж",
 				Username = "client",
 				Password = pass.Hash,
 				Salt = pass.Salt
