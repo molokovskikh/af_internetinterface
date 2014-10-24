@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using Common.Tools.Calendar;
 using Common.Tools.Helpers;
@@ -71,6 +72,33 @@ namespace InternetInterface.Test.Functional
 			Css("#SearchText").SendKeys(Client.Id.ToString());
 			Css("#SearchButton").Click();
 			AssertText("Информация по клиенту");
+		}
+		[Test]
+		public void SearchYeYoTest()
+		{
+			var yoClient = ClientHelper.Client(session);
+			yoClient.Name = "Том Ёрнинг";
+			session.Save(yoClient);
+
+			var yeClient = ClientHelper.Client(session);
+			yeClient.Name = "Том Ернинг";
+			session.Save(yeClient);
+
+			var noClient = ClientHelper.Client(session);
+			noClient.Name = "Том Рэддл";
+			session.Save(noClient);
+			Css("#SearchText").SendKeys("Том");
+			Css("#SearchButton").Click();
+			AssertText(yoClient.Name);
+			AssertText(yeClient.Name);
+			AssertText(noClient.Name);
+			browser.FindElementByCssSelector("#SearchText").Clear();
+			Css("#SearchText").SendKeys("Ёрнинг");
+			Css("#SearchButton").Click();
+
+			AssertText(yoClient.Name);
+			AssertText(yeClient.Name);
+			AssertNoText(noClient.Name);
 		}
 
 		[Test]

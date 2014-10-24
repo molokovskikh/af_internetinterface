@@ -12,14 +12,15 @@ namespace InternetInterface.Helpers
 		public static string SelectQuery(string query, string value)
 		{
 			if (!string.IsNullOrEmpty(query) && !string.IsNullOrEmpty(value)) {
-				query = query.ToLower();
-				var bufValue = value.ToLower();
+				query = query.ToLower().Replace('ё', 'е');
+				var bufValue = value.ToLower().Replace('ё', 'е');
 				var indexQuery = bufValue.IndexOf(query);
 				if (indexQuery != -1) {
 					value = value.Insert(indexQuery, "<b class=\"selectorQuery\">");
-					bufValue = value.ToLower();
+					bufValue = value.ToLower().Replace('ё', 'е');
 					indexQuery = bufValue.IndexOf(query);
-					return value.Insert(indexQuery + query.Length, "</b>");
+					var ret =  value.Insert(indexQuery + query.Length, "</b>");
+					return ret;
 				}
 			}
 			return value;
