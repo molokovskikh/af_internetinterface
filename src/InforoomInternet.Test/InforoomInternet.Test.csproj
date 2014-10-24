@@ -136,6 +136,10 @@
     <Compile Include="Unit\LoginTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\global.config">
+      <Link>global.config</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>

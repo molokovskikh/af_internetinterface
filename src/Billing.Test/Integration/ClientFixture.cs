@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Common.Tools;
 using Common.Tools.Calendar;
+using Common.Web.Ui.ActiveRecordExtentions;
 using InternetInterface.Models;
 using NHibernate.Linq;
 using NUnit.Framework;
@@ -143,6 +145,72 @@ namespace Billing.Test.Integration
 			session.Clear();
 			billing.ProcessPayments();
 			billing.ProcessWriteoffs();
+		}
+
+		[Test(Description = "Блокировка юр. лиц при негативном балансе")]
+		public void Block_lawyer_person_negative_balance()
+		{
+			//Более мнее красивый тест для юр. лиц
+			//Можно будет потом переписать работу с юр. лицами
+			var region = new RegionHouse {
+						Name = "Воронеж"
+					};
+			session.Save(region);
+			var status = session.Load<Status>((uint)StatusType.Worked);
+
+			//Клиент с отрицательным балансом
+			var BadPerson = new LawyerPerson {
+				Balance = -3000,
+				Region = region,
+			};
+
+			session.Save(BadPerson);
+			var BadClient = new Client() {
+				Disabled = false,
+				Name = "TestLawyer",
+				ShowBalanceWarningPage = false,
+				LawyerPerson = BadPerson,
+				Status = status
+			};
+			session.Save(BadClient);
+
+			var order = new Order() { BeginDate = DateTime.Now, Client = BadClient, OrderServices = new List<OrderService>() };
+			var service = new OrderService() { Cost = 100, IsPeriodic = true, Description = "testService", Order = order };
+			order.OrderServices.Add(service);
+			BadClient.Orders = new List<Order>();
+			BadClient.Orders.Add(order);
+			session.Save(service);
+			session.Save(order);
+			BadPerson.client = BadClient;
+			session.Save(BadPerson);
+
+			//Клиент с положительным балансом
+			var GoodPerson = new LawyerPerson
+			{
+				Balance = 3000,
+				Region = region,
+			};
+			session.Save(GoodPerson);
+			var GoodClient = new Client()
+			{
+				Disabled = false,
+				Name = "TestLawyer2",
+				ShowBalanceWarningPage = false,
+				LawyerPerson = GoodPerson,
+				Status = status
+			};
+			session.Save(GoodClient);
+			GoodPerson.client = GoodClient;
+			session.Save(GoodPerson);
+
+			//Сам тест
+			Assert.That(BadClient.Disabled,Is.False);
+			Assert.That(GoodClient.Disabled,Is.False);
+			billing.ProcessWriteoffs();
+			var saved = session.Load<Client>(BadClient.Id);
+			var saved2 = session.Load<Client>(GoodClient.Id);
+			Assert.That(saved.Disabled, Is.True);
+			Assert.That(saved2.Disabled, Is.False);
 		}
 	}
 }

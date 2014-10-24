@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -554,7 +555,16 @@ namespace InternetInterface.Models
 
 		public virtual bool CanBlock()
 		{
-			var cServ = ClientServices.FirstOrDefault(c => NHibernateUtil.GetClass(c.Service) == typeof(DebtWork));
+			//Если у юр. лица баланс меньше абоненской платы, помноженной на модификатор из настроек 
+			if (LawyerPerson != null) {
+				var param = ConfigurationManager.AppSettings["LawyerPersonBalanceBlockingRate"];
+				var rate = decimal.Parse(param);
+				if (LawyerPerson.Tariff > 0 && LawyerPerson.Balance < LawyerPerson.Tariff * -rate && !Disabled)
+					return true;
+				return false;
+			}
+
+		var cServ = ClientServices.FirstOrDefault(c => NHibernateUtil.GetClass(c.Service) == typeof(DebtWork));
 			if (cServ != null && !cServ.Service.CanBlock(cServ))
 				return false;
 

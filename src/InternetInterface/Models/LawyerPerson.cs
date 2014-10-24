@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Web;
@@ -13,6 +14,7 @@ using Common.Web.Ui.Models.Audit;
 using Common.Web.Ui.MonoRailExtentions;
 using ExcelLibrary.BinaryFileFormat;
 using InternetInterface.Models.Universal;
+using NPOI.SS.Formula.Functions;
 
 namespace InternetInterface.Models
 {
@@ -85,7 +87,9 @@ namespace InternetInterface.Models
 
 		public virtual bool NeedShowWarning()
 		{
-			return Balance < -(Tariff * 2);
+			var param = ConfigurationManager.AppSettings["LawyerPersonBalanceWarningRate"];
+			var rate = decimal.Parse(param);
+			return Balance < -(Tariff * rate);
 		}
 
 		public virtual List<WriteOff> Calculate(DateTime dateTime)

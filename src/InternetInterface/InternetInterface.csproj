@@ -178,6 +178,10 @@
     <Content Include="Views\Acts\Edit.brail" />
     <Content Include="Views\Acts\Print.brail" />
     <Content Include="packages.config" />
+    <Content Include="..\global.config">
+      <Link>global.config</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Views\AgentInfo\GroupInfo.brail" />
     <None Include="Views\AgentInfo\PaymentBlock.brail" />
     <None Include="Views\AgentInfo\SummaryInformation.brail" />
@@ -328,6 +332,7 @@
     <None Include="Views\Tariffs\ChangeRules.brail" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Web.release.config">
     </Content>

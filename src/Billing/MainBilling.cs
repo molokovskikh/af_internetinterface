@@ -429,6 +429,13 @@ set s.LastStartFail = true;")
 			person.Balance -= writeoffs.Sum(w => w.Sum);
 			session.Save(person);
 			session.SaveEach(writeoffs);
+
+			if (client.CanBlock())
+			{
+				client.SetStatus(Status.Get(StatusType.NoWorked, session));
+				if (client.IsChanged(c => c.Disabled))
+					client.CreareAppeal("Клиент был заблокирован в связи с отрицательным балансом", AppealType.Statistic);
+			}
 		}
 	}
 }

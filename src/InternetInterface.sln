@@ -41,6 +41,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Support.Selenium", "Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.NHibernate", "Common.MySql\Common.NHibernate\Common.NHibernate.csproj", "{8BE188CA-A0D9-4609-AB2E-AB8EDF849FE0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{6CE4E94C-A2F2-4D1F-ADCE-18C75E20D6AE}"
+	ProjectSection(SolutionItems) = preProject
+		global.config = global.config
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		ChildrenFolder|Any CPU = ChildrenFolder|Any CPU
