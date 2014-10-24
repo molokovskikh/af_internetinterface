@@ -126,7 +126,8 @@ namespace InternetInterface.Queries
 					query.SetParameter("Apartment", Apartment);
 			}
 			else if (!String.IsNullOrEmpty(SearchText) && wherePart.Contains(":SearchText"))
-				query.SetParameter("SearchText", "%" + SearchText + "%");
+				query.SetParameter("SearchText", SearchText.ToLower().Replace('е', 'Ж').Replace('Є', 'Ж').Replace("Ж", "(е|Є)"));
+			//¬ базе regex все равно ищет в без регистра
 		}
 
 		private string GetOrderField()
@@ -192,7 +193,8 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 				newSql = String.Format("select count(*) from ({0}) as t1;", newSql);
 				var countQuery = session.CreateSQLQuery(newSql);
 				if (!String.IsNullOrEmpty(SearchText) && wherePart.Contains(":SearchText"))
-					countQuery.SetParameter("SearchText", "%" + SearchText + "%");
+					countQuery.SetParameter("SearchText", SearchText.ToLower().Replace('е', 'Ж').Replace('Є', 'Ж').Replace("Ж", "(е|Є)"));
+				//¬ базе regex все равно ищет в без регистра
 				if (InitializeContent.Partner.AccesPartner("SSI"))
 					SetParameters(countQuery, wherePart);
 				_lastRowsCount = Convert.ToInt32(countQuery.UniqueResult());
@@ -248,7 +250,7 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 						if (SearchProperties == SearchUserBy.Auto) {
 							return @"
 	WHERE
-	(C.Name like :SearchText or
+	(C.Name REGEXP :SearchText or
 	C.id like :SearchText or
 	p.ExternalClientId like :SearchText or
 	co.Contact like :SearchText or
@@ -268,7 +270,7 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 								return String.Format("where p.ExternalClientId = {0}", id);
 						}
 						if (SearchProperties == SearchUserBy.ByFio) {
-							return "WHERE (C.Name like :SearchText)" + result;
+							return "WHERE (C.Name REGEXP :SearchText)" + result;
 						}
 						if (SearchProperties == SearchUserBy.TelNum) {
 							return "WHERE (co.Contact like :SearchText)" + result;
@@ -325,7 +327,7 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 					return String.Format("WHERE (c.Id = {0}) and (C.PhysicalClient is not null)", id);
 				}
 				if (!String.IsNullOrEmpty(SearchText))
-					return "WHERE (C.Name like :SearchText) and (C.PhysicalClient is not null)";
+					return "WHERE (C.Name REGEXP :SearchText) and (C.PhysicalClient is not null)";
 			}
 			return String.IsNullOrEmpty(result) ? String.Empty : String.Format("WHERE {0}", result.Remove(0, 4));
 		}
