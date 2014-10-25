@@ -4,6 +4,8 @@ using System.Configuration;
 using System.Linq;
 using System.Net;
 using Castle.Components.Binder;
+using Castle.Components.Validator;
+using Castle.DynamicProxy.Contributors;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Common.Tools.Calendar;
@@ -197,7 +199,6 @@ namespace InforoomInternet.Controllers
 			PropertyBag["channels"] = channels;
 			PropertyBag["Client"] = client;
 			PropertyBag["VoluntaryBlockinService"] = new VoluntaryBlockin();
-
 			if (IsPost) {
 				if (!client.CanEditServicesFromPrivateOffice) {
 					Error("Услуги можно редактировать только когда баланс положительный и клиент активен");
@@ -207,7 +208,21 @@ namespace InforoomInternet.Controllers
 
 				SetSmartBinder(AutoLoadBehavior.NullIfInvalidKey);
 				BindObjectInstance(internet, "internet", "ActivatedByUser");
-				BindObjectInstance(client, "client", "PhysicalClient.Tariff");
+
+				var tariffId = Request.Params.Get("client.PhysicalClient.Tariff.Id");
+				var tariff = tariffs.First(i => i.Id == uint.Parse(tariffId));
+				if (client.PhysicalClient.Tariff != tariff) {
+
+					var sum = new ErrorSummary();
+					if(client.PhysicalClient.CanChangeTariff(tariff,sum))
+						client.PhysicalClient.Tariff = tariff;
+					else {
+						//Топорное решение, но ковыряться почему флеш не чистится в старом проекте - потеря времени
+						PropertyBag["error"] = sum.ErrorMessages.First();
+						return;
+					}
+				}
+				
 
 				if (IsValid(client.PhysicalClient)) {
 					client.PhysicalClient.UpdatePackageId();

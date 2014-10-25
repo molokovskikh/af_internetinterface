@@ -369,5 +369,14 @@ namespace InternetInterface.Models
 				ExternalClientId = (int?)Client.Id;
 			}
 		}
+
+		public virtual bool CanChangeTariff(Tariff tariff, ErrorSummary sum)
+		{
+			if (Client.Iptv != null && !tariff.Iptv) {
+				sum.RegisterErrorMessage("tariff", "Переход на этот тариф не возможен с включенной услугой IPTV");
+				return false;
+			}
+			return true;
+		}
 	}
 }

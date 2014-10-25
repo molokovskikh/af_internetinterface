@@ -41,6 +41,9 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual int PackageId { get; set; }
+	
+		[Property]
+		public virtual bool Iptv { get; set; }
 
 		[Property]
 		public virtual bool Hidden { get; set; }

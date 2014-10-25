@@ -10,5 +10,11 @@
 	${app.Edit("tariff.CanUseForSelfConfigure")}
 	${app.Error("tariff.CanUseForSelfConfigure")}
 </div>
+
+<div class="form-item">
+	${app.Edit("tariff.Iptv")}
+	${app.Error("tariff.Iptv")}
+	Возможно подключения IPTV
+</div>
 ${FormHelper.Submit("Сохранить")}
 ${FormHelper.EndFormTag()}
