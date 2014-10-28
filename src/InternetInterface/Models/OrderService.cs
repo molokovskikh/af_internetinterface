@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Web;
 using Castle.ActiveRecord;
 using Castle.Components.Validator;
 using Common.Tools;
 using Common.Tools.Calendar;
 using Common.Web.Ui.Models.Audit;
-using Common.Web.Ui.MonoRailExtentions;
-using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Helpers;
-using NPOI.SS.Formula.Functions;
 
 namespace InternetInterface.Models
 {
@@ -39,10 +33,10 @@ namespace InternetInterface.Models
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
-		[Property, Description("Описание"), Auditable("Описание"), SendEmailAboutOrder]
+		[Property, ValidateNonEmpty("Услуги должны иметь читаемые имена"), ValidateRegExp(@"\S+", "Услуги должны иметь читаемые имена"), Description("Описание"), Auditable("Описание"), SendEmailAboutOrder]
 		public virtual string Description { get; set; }
 
-		[Property, Description("Стоимость"), Auditable("Стоимость услуги"), ValidateDecimal("Ошибка ввода суммы"), ValidateGreaterThanZero, SendEmailAboutOrder]
+		[Property, Description("Стоимость"), Auditable("Стоимость услуги"), ValidateGreaterOrEqualZero("Стоимость услуги не может быть меньше нуля"), SendEmailAboutOrder]
 		public virtual decimal Cost { get; set; }
 
 		[Property, Description("Услуга периодичная"), Auditable("Периодичность"), SendEmailAboutOrder]

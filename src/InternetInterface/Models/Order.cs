@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Web;
 using Castle.ActiveRecord;
+using Castle.Components.Validator;
 using Common.Tools;
 using Common.Web.Ui.Models.Audit;
 using InternetInterface.Helpers;
@@ -52,7 +53,7 @@ namespace InternetInterface.Models
 		[BelongsTo]
 		public virtual ClientEndpoint EndPoint { get; set; }
 
-		[HasMany(ColumnKey = "OrderId", Lazy = true, Cascade = ManyRelationCascadeEnum.SaveUpdate)]
+		[HasMany(ColumnKey = "OrderId", Lazy = true, Cascade = ManyRelationCascadeEnum.SaveUpdate), ValidateCollectionNotEmpty("Невозможно создать заказ без услуг")]
 		public virtual IList<OrderService> OrderServices { get; set; }
 
 		[BelongsTo(Column = "ClientId")]

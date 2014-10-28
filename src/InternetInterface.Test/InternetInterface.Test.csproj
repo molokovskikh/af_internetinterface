@@ -178,6 +178,7 @@
     <Compile Include="Integration\AgentFilterFixture.cs" />
     <Compile Include="Integration\BrigadFixture.cs" />
     <Compile Include="Integration\Controllers\PrivateMessagesControllerFixture.cs" />
+    <Compile Include="Integration\InternetInterfaceControllerFixture.cs" />
     <Compile Include="Integration\MailAboutOrderFixture.cs" />
     <Compile Include="Integration\ClientFixture.cs" />
     <Compile Include="Integration\ContactFixture.cs" />
