@@ -23,7 +23,7 @@ namespace Inforoom2.Controllers
 	{
 		public ISession DbSession { get; set; }
 		protected ValidationRunner ValidationRunner;
-		
+
 		protected BaseController()
 		{
 			ValidationRunner = new ValidationRunner();
@@ -75,9 +75,15 @@ namespace Inforoom2.Controllers
 			Response.Cookies.Add(new HttpCookie("WarningMessage", message) { Path = "/" });
 		}
 
-		protected override void OnActionExecuting(ActionExecutingContext filterContext)
+		protected override void OnException(ExceptionContext filterContext)
 		{
-			base.OnActionExecuting(filterContext);
+			if (filterContext.ExceptionHandled) {
+				return;
+			}
+			filterContext.Result = new ViewResult {
+				ViewName ="" //TODO some error view
+			};
+			filterContext.ExceptionHandled = true;
 		}
 
 		protected override void OnActionExecuted(ActionExecutedContext filterContext)
@@ -132,6 +138,15 @@ namespace Inforoom2.Controllers
 			}
 			userCity = geoAnswer.City;
 			ViewBag.UserCity = geoAnswer.City;
+		}
+
+		protected List<TModel> GetAllSafe<TModel>()
+		{
+			var entities = DbSession.Query<TModel>().ToList();
+				if (entities.Count == 0) {
+					entities = new List<TModel>();
+				}
+				return entities;
 		}
 	}
 }

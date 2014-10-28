@@ -4,7 +4,7 @@
 
 @{
 	ViewBag.Title = "Home";
-	IList<NewsBlock> news = ViewBag.News;
+	IList<NewsBlock> news = ViewBag.News ?? new List<NewsBlock>();
 	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 

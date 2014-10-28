@@ -1,0 +1,30 @@
+﻿@using Inforoom2.Models
+@{
+	ViewBag.Title = "AdminCity";
+	IList<City> citiesList = ViewBag.CitiesList;
+}
+
+<h2>AdminCity</h2>
+
+<span><button class="CreateAddress" onclick=" location.href = '@Url.Action("EditCity", "AdminAddress")' ">Создать город</button></span>
+
+<div class="AdminAddress">
+	<table class="AdminAddressTable">
+		<tr>
+			<td>
+				<div>Название</div>
+			</td>
+		</tr>
+		@foreach (var item in citiesList) {
+			<tr>
+				<td>
+					@Html.DisplayFor(modelItem => item.Name)
+				</td>
+				<td>
+					<span><button class="ViewAddress" onclick=" location.href = '@Url.Action("EditCity", "AdminAddress", new { cityId = item.Id })' ">Просмотр</button></span>
+					<span><button class="DeleteAddress" onclick=" location.href = '@Url.Action("DeleteCity", "AdminAddress", new { cityId = item.Id })' ">Удалить</button></span>
+				</td>
+			</tr>
+		}
+	</table>
+</div>

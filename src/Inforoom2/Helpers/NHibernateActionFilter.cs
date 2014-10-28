@@ -62,7 +62,14 @@ namespace Inforoom2.Helpers
 			if (filterContext.Exception != null)
 				session.Transaction.Rollback();
 			else
-				session.Transaction.Commit();
+				try {
+					session.Transaction.Commit();
+					}
+				catch (Exception e) {
+					(filterContext.Controller as BaseController).ErrorMessage("Не удалось сохранить транзакцию.");
+					session.Transaction.Rollback();
+				}
+			
 		}
 	}
 

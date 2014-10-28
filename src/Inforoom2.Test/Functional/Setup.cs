@@ -6,15 +6,19 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Policy;
+using System.Text;
 using System.Web.Http;
 using System.Web.Http.SelfHost;
+using System.Web.Mvc;
 using CassiniDev;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
+using LinqToExcel;
 using NHibernate;
 using NHibernate.Linq;
 using NUnit.Framework;
 using Test.Support.Selenium;
+using Switch = Inforoom2.Models.Switch;
 
 namespace Inforoom2.Test.Functional
 {
@@ -69,10 +73,129 @@ namespace Inforoom2.Test.Functional
 				Salt = pass.Salt,
 				Roles = roles,
 			};
-				
+
 
 			session.Save(emp);
 			session.Flush();
+
+			ImportSwitchesAddresses();
+		}
+
+		public static void ImportSwitchesAddresses()
+		{
+			string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"switch.xlsx");
+			var excelFile = new ExcelQueryFactory(path);
+			var query =
+				excelFile.Worksheet("Дома").Select(row => new {
+					row, item = new {
+						Disctrict = row["Район"].Cast<string>(),
+						Street = row["Улица"].Cast<string>().Trim(),
+						House = row["дом, №"].Cast<string>()
+					}
+				}).ToList();
+
+			var excelQuery = query.Where(q => q.item.House != null);
+			var city = new City { Name = "Белгород" };
+			var region = new Region { City = city, Name = "Белгород" };
+			session.Save(region);
+
+			var streetsQuery = excelQuery.GroupBy(q => q.item.Street.Trim())
+				.Select(r => r.First())
+				.ToList();
+
+			IList<Street> streets = streetsQuery.Select(row => new Street() { Name = row.item.Street, District = row.item.Disctrict, Region = region }).ToList();
+
+			foreach (var street in streets) {
+				session.Save(street);
+			}
+
+
+			IList<SwitchAddress> addresses = new List<SwitchAddress>();
+			var excelItems = excelQuery.Select(r => r.item).ToList();
+			foreach (var item in excelItems) {
+				string number = string.Empty;
+				string housing = string.Empty;
+				if (item.House != null) {
+					AddressHelper.SplitHouseAndHousing(item.House, ref number, ref housing);
+					var house = new House();
+					house.Number = number;
+					house.Housing = housing;
+					house.Street = streets.FirstOrDefault(s => s.Name == item.Street);
+					SwitchAddress address = new SwitchAddress();
+					
+					address.House = house;
+					address.Switch = new Switch {
+						Name = string.Format("{0}_{1}_{2}", house.Street.Name, house.Number, house.Housing)
+					};
+					addresses.Add(address);
+				}
+			}
+
+
+			/*	foreach (var q in excelQuery) {
+				string number = string.Empty;
+				string housing = string.Empty;
+				SplitHouseAndHousing(q.item.House, ref number, ref housing);
+				SwitchAddress address = new SwitchAddress();
+				address.Street = streets.FirstOrDefault(s => s.Name == q.item.Street);
+				address.House = housesList.FirstOrDefault(s => s.Number == number && s.Housing == housing);
+				addresses.Add(address);
+			}*/
+
+			foreach (var switchAddress in addresses) {
+				session.Save(switchAddress);
+			}
+
+
+			city = new City { Name = "Борисоглебск" };
+			region = new Region { City = city, Name = "Борисоглебск" };
+
+			string textFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"switches.txt");
+			var sb = new StringBuilder();
+			using (var sr = new StreamReader(textFile, Encoding.GetEncoding("windows-1251"))) {
+				String line;
+				while ((line = sr.ReadLine()) != null) {
+					sb.AppendLine(line);
+				}
+			}
+			string borisoglebsk = sb.ToString();
+			borisoglebsk = RemoveSpaces(borisoglebsk);
+
+			var streetRows = borisoglebsk.Split(new[] { ';' }).ToList();
+			foreach (var row in streetRows) {
+				var str = row.Split(':');
+				var street = new Street { Name = str[0].Replace("ул. ", "").Replace("мкр. ", "").Replace("пер. ", "").Replace("пр. ", ""), Region = region };
+
+				if (str.Length > 1) {
+					var houseString = str[1];
+					foreach (var houseNumber in houseString.Split(',')) {
+						string number = string.Empty;
+						string housing = string.Empty;
+						AddressHelper.SplitHouseAndHousing(houseNumber, ref number, ref housing);
+						var house = new House();
+						house.Number = number;
+						house.Housing = housing;
+						house.Street = street;
+						var switchAddress = new SwitchAddress();
+						switchAddress.House = house;
+						switchAddress.Switch = new Switch {
+							Name = string.Format("{0}_{1}_{2}", house.Street.Name, house.Number, house.Housing)
+						};
+
+						session.Save(switchAddress);
+					}
+				}
+			}
+
+			session.Flush();
+		}
+
+
+		private static string RemoveSpaces(string input)
+		{
+			return new string(input.ToCharArray()
+				.Where(c => !Char.IsWhiteSpace(c))
+				.ToArray());
 		}
 	}
 }

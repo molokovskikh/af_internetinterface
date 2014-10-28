@@ -141,8 +141,13 @@ function Inforoom() {
 
 	this.showMessages = function() {
 		var msg = this.getCookie("SuccessMessage", true);
-		if (msg)
+		if (msg) {
 			alert(msg);
+		} else {
+			msg = this.getCookie("ErrorMessage", true);
+			if(msg)
+				alert(msg);
+		}
 	}
 
 	this.checkCity = function() {

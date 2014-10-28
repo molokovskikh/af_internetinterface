@@ -28,6 +28,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -159,7 +160,9 @@
     <Content Include="Css\images\ui-icons_ffffff_256x240.png" />
     <Content Include="Css\style.css" />
     <Content Include="Global.asax" />
+    <Content Include="Scripts\AdminAddressController.js" />
     <Content Include="Scripts\EditNewsBlock.js" />
+    <Content Include="Scripts\ClientRequest.js" />
     <Content Include="Scripts\EventEmitter.js" />
     <Content Include="Scripts\FaqController.js" />
     <Content Include="Scripts\Helpers.js" />
@@ -178,6 +181,7 @@
     <Compile Include="Components\EmailSender.cs" />
     <Compile Include="Components\ValidationRunner.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AdminAddressController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\AdminNewsController.cs" />
     <Compile Include="Controllers\AdminQuestionController.cs" />
@@ -191,6 +195,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\AddressHelper.cs" />
     <Compile Include="Helpers\AuthorizeUserAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -198,22 +203,31 @@
     <Compile Include="Helpers\IpGeoHelper.cs" />
     <Compile Include="Helpers\NHibernateActionFilter.cs" />
     <Compile Include="Helpers\PasswordHasher.cs" />
+    <Compile Include="Helpers\ViewHelper.cs" />
     <Compile Include="Intefaces\IModelWithPriority.cs" />
+    <Compile Include="Models\Address.cs" />
+    <Compile Include="Models\City.cs" />
     <Compile Include="Models\ClientRequest.cs" />
+    <Compile Include="Models\Switch.cs" />
+    <Compile Include="Models\SwitchAdress.cs" />
     <Compile Include="Models\Employee.cs" />
     <Compile Include="Models\BaseModel.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Models\House.cs" />
     <Compile Include="Models\NewsBlock.cs" />
     <Compile Include="Models\Permission.cs" />
+    <Compile Include="Models\PhysicalClient.cs" />
     <Compile Include="Models\Question.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Models\Client.cs" />
+    <Compile Include="Models\Region.cs" />
     <Compile Include="Models\Role.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Models\Tariff.cs" />
+    <Compile Include="Models\Street.cs" />
+    <Compile Include="Models\Plan.cs" />
     <Compile Include="Models\Ticket.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -239,6 +253,19 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="Views\ClientRequest\Index.cshtml" />
+    <Content Include="Views\AdminAddress\AdminAddressRegion.cshtml" />
+    <Content Include="Views\AdminAddress\EditCity.cshtml" />
+    <Content Include="Views\AdminAddress\EditRegion.cshtml" />
+    <Content Include="Views\AdminAddress\AdminAddressCity.cshtml" />
+    <Content Include="Views\AdminAddress\AdminAddressStreet.cshtml" />
+    <Content Include="Views\AdminAddress\EditStreet.cshtml" />
+    <Content Include="Views\AdminAddress\AdminAddressHouse.cshtml" />
+    <Content Include="Views\AdminAddress\EditHouse.cshtml" />
+    <Content Include="Views\AdminAddress\AdminAddressAddress.cshtml" />
+    <Content Include="Views\AdminAddress\EditAddress.cshtml" />
+    <Content Include="Views\AdminAddress\AdminAddressSwitchAddress.cshtml" />
+    <Content Include="Views\AdminAddress\EditSwitchAddress.cshtml" />
+    <Content Include="Views\AdminAddress\EditPrivateSwitchAddress.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
