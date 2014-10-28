@@ -210,18 +210,19 @@ namespace InforoomInternet.Controllers
 				BindObjectInstance(internet, "internet", "ActivatedByUser");
 
 				var tariffId = Request.Params.Get("client.PhysicalClient.Tariff.Id");
-				var tariff = tariffs.First(i => i.Id == uint.Parse(tariffId));
-				if (client.PhysicalClient.Tariff != tariff) {
-					var sum = new ErrorSummary();
-					if(client.PhysicalClient.CanChangeTariff(tariff, sum))
-						client.PhysicalClient.Tariff = tariff;
-					else {
-						//Топорное решение, но ковыряться почему флеш не чистится в старом проекте - потеря времени
-						PropertyBag["error"] = sum.ErrorMessages.First();
-						return;
+				if (tariffId != null) {
+					var tariff = DbSession.Get<Tariff>(uint.Parse(tariffId));
+					if (client.PhysicalClient.Tariff != tariff) {
+						var sum = new ErrorSummary();
+						if (client.PhysicalClient.CanChangeTariff(tariff, sum))
+							client.PhysicalClient.Tariff = tariff;
+						else {
+							//Топорное решение, но ковыряться почему флеш не чистится в старом проекте - потеря времени
+							PropertyBag["error"] = sum.ErrorMessages.First();
+							return;
+						}
 					}
 				}
-				
 
 				if (IsValid(client.PhysicalClient)) {
 					client.PhysicalClient.UpdatePackageId();
