@@ -212,9 +212,8 @@ namespace InforoomInternet.Controllers
 				var tariffId = Request.Params.Get("client.PhysicalClient.Tariff.Id");
 				var tariff = tariffs.First(i => i.Id == uint.Parse(tariffId));
 				if (client.PhysicalClient.Tariff != tariff) {
-
 					var sum = new ErrorSummary();
-					if(client.PhysicalClient.CanChangeTariff(tariff,sum))
+					if(client.PhysicalClient.CanChangeTariff(tariff, sum))
 						client.PhysicalClient.Tariff = tariff;
 					else {
 						//Топорное решение, но ковыряться почему флеш не чистится в старом проекте - потеря времени

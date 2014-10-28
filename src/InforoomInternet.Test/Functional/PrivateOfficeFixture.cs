@@ -340,7 +340,6 @@ namespace InforoomInternet.Test.Functional
 			Css("#client_PhysicalClient_Tariff_Id").SelectByValue(noIptvTariff.Id.ToString());
 			browser.FindElementByCssSelector("input[type='submit']").Click();
 			AssertText("Переход на этот тариф не возможен с включенной услугой IPTV");
-
 		}
 	}
 }

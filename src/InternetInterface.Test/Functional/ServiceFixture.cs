@@ -96,7 +96,7 @@ namespace InternetInterface.Test.Functional
 		{
 			var request = CreateRequest();
 			session.Save(request);
-			Assert.That(request.BlockForRepair,Is.False);
+			Assert.That(request.BlockForRepair, Is.False);
 			Open("ServiceRequest/ShowRequest?Id={0}&Edit=true", request.Id);
 			AssertText("Восстановление работы");
 			var checkBox = browser.FindElementById("request_BlockForRepair");
@@ -106,8 +106,7 @@ namespace InternetInterface.Test.Functional
 			AssertText("Сохранено");
 			session.Clear();
 			var saved = session.Load<ServiceRequest>(request.Id);
-			Assert.That(saved.BlockForRepair,Is.True);
-
+			Assert.That(saved.BlockForRepair, Is.True);
 		}
 
 		[Test]

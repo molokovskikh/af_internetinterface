@@ -564,7 +564,7 @@ namespace InternetInterface.Models
 				return false;
 			}
 
-		var cServ = ClientServices.FirstOrDefault(c => NHibernateUtil.GetClass(c.Service) == typeof(DebtWork));
+			var cServ = ClientServices.FirstOrDefault(c => NHibernateUtil.GetClass(c.Service) == typeof(DebtWork));
 			if (cServ != null && !cServ.Service.CanBlock(cServ))
 				return false;
 

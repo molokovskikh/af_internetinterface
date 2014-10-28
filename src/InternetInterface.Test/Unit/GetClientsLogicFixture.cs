@@ -139,7 +139,6 @@ namespace InternetInterface.Test.Unit
 		[Test]
 		public void Get_where_office_searchProperties_IsSearchTelephone()
 		{
-
 			_filter.SearchText = "5";
 			_filter.SearchProperties = SearchUserBy.TelNum;
 			var result = _filter.GetWhere();

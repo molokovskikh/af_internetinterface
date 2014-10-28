@@ -430,8 +430,7 @@ set s.LastStartFail = true;")
 			session.Save(person);
 			session.SaveEach(writeoffs);
 
-			if (client.CanBlock())
-			{
+			if (client.CanBlock()) {
 				client.SetStatus(Status.Get(StatusType.NoWorked, session));
 				if (client.IsChanged(c => c.Disabled))
 					client.CreareAppeal("Клиент был заблокирован в связи с отрицательным балансом", AppealType.Statistic);

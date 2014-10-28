@@ -153,8 +153,8 @@ namespace Billing.Test.Integration
 			//Более мнее красивый тест для юр. лиц
 			//Можно будет потом переписать работу с юр. лицами
 			var region = new RegionHouse {
-						Name = "Воронеж"
-					};
+				Name = "Воронеж"
+			};
 			session.Save(region);
 			var status = session.Load<Status>((uint)StatusType.Worked);
 
@@ -185,14 +185,12 @@ namespace Billing.Test.Integration
 			session.Save(BadPerson);
 
 			//Клиент с положительным балансом
-			var GoodPerson = new LawyerPerson
-			{
+			var GoodPerson = new LawyerPerson{
 				Balance = 3000,
 				Region = region,
 			};
 			session.Save(GoodPerson);
-			var GoodClient = new Client()
-			{
+			var GoodClient = new Client() {
 				Disabled = false,
 				Name = "TestLawyer2",
 				ShowBalanceWarningPage = false,
@@ -204,8 +202,8 @@ namespace Billing.Test.Integration
 			session.Save(GoodPerson);
 
 			//Сам тест
-			Assert.That(BadClient.Disabled,Is.False);
-			Assert.That(GoodClient.Disabled,Is.False);
+			Assert.That(BadClient.Disabled, Is.False);
+			Assert.That(GoodClient.Disabled, Is.False);
 			billing.ProcessWriteoffs();
 			var saved = session.Load<Client>(BadClient.Id);
 			var saved2 = session.Load<Client>(GoodClient.Id);

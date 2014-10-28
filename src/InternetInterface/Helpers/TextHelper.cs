@@ -19,7 +19,7 @@ namespace InternetInterface.Helpers
 					value = value.Insert(indexQuery, "<b class=\"selectorQuery\">");
 					bufValue = value.ToLower().Replace('ё', 'е');
 					indexQuery = bufValue.IndexOf(query);
-					var ret =  value.Insert(indexQuery + query.Length, "</b>");
+					var ret = value.Insert(indexQuery + query.Length, "</b>");
 					return ret;
 				}
 			}
