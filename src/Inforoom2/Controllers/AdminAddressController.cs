@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
 using NHibernate.Linq;
@@ -342,32 +343,24 @@ namespace Inforoom2.Controllers
 			return View();
 		}
 
-		public ActionResult DeleteSwitchAddress(int? switchAddressId)
+		
+		[HttpPost]
+		public ActionResult DeleteSwitchAddress([EntityBinder]SwitchAddress switchAddress)
 		{
-			var switchAddress = DbSession.Get<SwitchAddress>(switchAddressId);
+			//var switchAddress = DbSession.Get<SwitchAddress>(switchAddressId);
 			DbSession.Delete(switchAddress);
 			return RedirectToAction("AdminAddressSwitchAddress");
 		}
 
 		[HttpPost]
-		public ActionResult UpdateSwitchAddress(SwitchAddress switchAddress)
+		public ActionResult UpdateSwitchAddress([EntityBinder] SwitchAddress switchAddress)
 		{
 			ViewBag.Address = switchAddress;
 			ViewBag.Houses = Houses;
 			ViewBag.Regions = Regions;
 			ViewBag.Streets = Streets;
 			ViewBag.Switches = Switches;
-			var @switch = Switches.FirstOrDefault(r => r.Id == switchAddress.Switch.Id);
-			if (switchAddress.House != null) {
-				var house = Houses.FirstOrDefault(r => r.Id == switchAddress.House.Id);
-				switchAddress.House = house;
-			}
-			else {
-				var street = Streets.FirstOrDefault(r => r.Id == switchAddress.Street.Id);
-				switchAddress.Street = street;
-			}
 
-			switchAddress.Switch = @switch;
 			var errors = ValidationRunner.ValidateDeep(switchAddress);
 			if (errors.Length == 0) {
 				DbSession.SaveOrUpdate(switchAddress);

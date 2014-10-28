@@ -45,8 +45,7 @@ namespace Inforoom2.Helpers
 
 		public override void OnActionExecuting(ActionExecutingContext filterContext)
 		{
-			var controller = filterContext.Controller as BaseController;
-			controller.DbSession = CurrentSession = sessionFactory.OpenSession();
+			CurrentSession = sessionFactory.OpenSession();
 			CurrentSession.BeginTransaction();
 		}
 
@@ -69,7 +68,6 @@ namespace Inforoom2.Helpers
 					(filterContext.Controller as BaseController).ErrorMessage("Не удалось сохранить транзакцию.");
 					session.Transaction.Rollback();
 				}
-			
 		}
 	}
 

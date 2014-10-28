@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Web.Mvc;
+using Inforoom2.Helpers;
 using Inforoom2.Models;
 using NHibernate.Linq;
 
@@ -9,7 +10,16 @@ namespace Inforoom2.Controllers
 	{
 		public ActionResult Index()
 		{
+			var session = NHibernateActionFilter.sessionFactory.OpenSession();
+			var h = session.Get<House>(28);
+			session.BeginTransaction();
+			h.Number = "I defgfdgdg";
+			session.Flush();
+			session.Transaction.Commit();
+			session.Save(h);
+			session.Flush();
 			
+
 			ViewBag.Message = "HomeController";
 			if (User != null && User.HasPermissions("CanEverything")) {
 				ViewBag.Message = "Я одмин";

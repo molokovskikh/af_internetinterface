@@ -21,7 +21,11 @@ namespace Inforoom2.Controllers
 	[NHibernateActionFilter]
 	public abstract class BaseController : Controller
 	{
-		public ISession DbSession { get; set; }
+		public ISession DbSession
+		{
+			get { return NHibernateActionFilter.CurrentSession; }
+		}
+
 		protected ValidationRunner ValidationRunner;
 
 		protected BaseController()
@@ -29,7 +33,7 @@ namespace Inforoom2.Controllers
 			ValidationRunner = new ValidationRunner();
 			ViewBag.Validation = ValidationRunner;
 			ViewBag.JavascriptParams = new Dictionary<string, string>();
-			ViewBag.Cities = new string[] { "Воронеж", "Борисоглебск", "Москва" };
+			ViewBag.Cities = new string[] {"Воронеж", "Борисоглебск", "Москва"};
 		}
 
 		public void AddJavascriptParam(string name, string value)
@@ -62,17 +66,17 @@ namespace Inforoom2.Controllers
 
 		public void SuccessMessage(string message)
 		{
-			Response.Cookies.Add(new HttpCookie("SuccessMessage", message) { Path = "/" });
+			Response.Cookies.Add(new HttpCookie("SuccessMessage", message) {Path = "/"});
 		}
 
 		public void ErrorMessage(string message)
 		{
-			Response.Cookies.Add(new HttpCookie("ErrorMessage", message) { Path = "/" });
+			Response.Cookies.Add(new HttpCookie("ErrorMessage", message) {Path = "/"});
 		}
 
 		public void WarningMessage(string message)
 		{
-			Response.Cookies.Add(new HttpCookie("WarningMessage", message) { Path = "/" });
+			Response.Cookies.Add(new HttpCookie("WarningMessage", message) {Path = "/"});
 		}
 
 		protected override void OnException(ExceptionContext filterContext)
@@ -81,7 +85,7 @@ namespace Inforoom2.Controllers
 				return;
 			}
 			filterContext.Result = new ViewResult {
-				ViewName ="" //TODO some error view
+				ViewName = "" //TODO some error view
 			};
 			filterContext.ExceptionHandled = true;
 		}
@@ -134,7 +138,7 @@ namespace Inforoom2.Controllers
 				geoAnswer = geoService.GetInfo();
 			}
 			catch (WebException e) {
-				geoAnswer = new IpAnswer { City = "Воронеж" };
+				geoAnswer = new IpAnswer {City = "Воронеж"};
 			}
 			userCity = geoAnswer.City;
 			ViewBag.UserCity = geoAnswer.City;
@@ -143,10 +147,10 @@ namespace Inforoom2.Controllers
 		protected List<TModel> GetAllSafe<TModel>()
 		{
 			var entities = DbSession.Query<TModel>().ToList();
-				if (entities.Count == 0) {
-					entities = new List<TModel>();
-				}
-				return entities;
+			if (entities.Count == 0) {
+				entities = new List<TModel>();
+			}
+			return entities;
 		}
 	}
 }
