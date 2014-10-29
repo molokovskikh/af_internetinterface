@@ -31,7 +31,7 @@
 				}
 			</ul>
 		</nav>
-		<div class="JavascriptParams" style="display:none">
+		<div class="JavascriptParams" style="display: none">
 			@{
 				var dic = ViewBag.JavascriptParams as Dictionary<string, string>;
 				foreach (var key in dic.Keys) {
@@ -39,13 +39,13 @@
 				}
 			}
 		</div>
-		<div class ="HtmlTemplates" style="display:none">
+		<div class ="HtmlTemplates" style="display: none">
 			<div id="WindowLayout"class='window'>
 				<div class='header'>
 					<div class='title'></div>
 					<button class="button close">close</button>
 				</div>
-			<div class='wrap'></div>
+				<div class='wrap'></div>
 			</div>
 			<div id="CityWindow" >
 				<div>
@@ -79,13 +79,14 @@
 					}
 				}
 			}
-			
-			@RenderBody()
-			<hr />
-			<footer>
-				<p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-			</footer>
 		</div>
+			
+		@RenderBody()
+		<hr />
+		<footer>
+			<p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+		</footer>
+	
 	</body>
 	<script src="~/Scripts/jquery-2.1.1.js"></script>
 	<script src="~/Scripts/jquery-ui-1.11.1.js"></script>
