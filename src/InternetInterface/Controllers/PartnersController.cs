@@ -84,12 +84,7 @@ namespace InternetInterface.Controllers
 				}
 				BindObjectInstance(partner, ParamStore.Form, "Partner");
 				if (IsValid(partner)) {
-					var agent = DbSession.Query<Agent>().FirstOrDefault(a => a.Partner == partner);
-					if (agent != null) {
-						agent.Name = partner.Name;
-						DbSession.Save(agent);
-					}
-
+					DbSession.Save(partner);
 					Notify("Сохранено");
 					RedirectToReferrer();
 				}

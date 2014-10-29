@@ -16,17 +16,5 @@ namespace InternetInterface.Models
 
 		[BelongsTo("AccessCat")]
 		public virtual AccessCategories AccessCat { get; set; }
-
-		public override void SaveAndFlush()
-		{
-			base.SaveAndFlush();
-			AccessCat.AcceptTo(Categorie);
-		}
-
-		public override void DeleteAndFlush()
-		{
-			base.DeleteAndFlush();
-			AccessCat.DeleteTo(Categorie);
-		}
 	}
 }

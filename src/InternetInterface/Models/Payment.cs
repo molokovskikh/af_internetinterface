@@ -49,8 +49,8 @@ namespace InternetInterface.Models
 			ValidateDecimal("Некорректно введено значение суммы")]
 		public virtual decimal Sum { get; set; }
 
-		[BelongsTo("Agent")]
-		public virtual Agent Agent { get; set; }
+		[BelongsTo("Partner",Column = "Agent")]
+		public virtual Partner Agent { get; set; }
 
 		[Property]
 		public virtual bool BillingAccount { get; set; }

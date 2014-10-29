@@ -30,7 +30,7 @@ namespace InternetInterface.Controllers
 
 		public void AgentFilter([SmartBinder] AgentFilter filter)
 		{
-			filter.CurrentAgent = Agent.GetByInitPartner();
+			filter.CurrentAgent = Partner.GetInitPartner();
 			filter.CurrentPartner = InitializeContent.Partner;
 
 			PropertyBag["filter"] = filter;

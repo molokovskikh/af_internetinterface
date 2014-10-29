@@ -182,8 +182,7 @@ namespace InternetInterface.Models
 			}
 		}
 	}
-
-
+	
 	[ActiveRecord("AccessCategories", Schema = "internet", Lazy = true)]
 	public class AccessCategories : ChildActiveRecordLinqBase<AccessCategories>
 	{
@@ -195,43 +194,5 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual string ReduceName { get; set; }
-
-		public virtual void AcceptTo(UserRole userCategorie)
-		{
-			var partners = Partner.FindAllByProperty("Categorie", userCategorie);
-			foreach (var partner in partners) {
-				AcceptToOne(partner);
-			}
-		}
-
-		public virtual void AcceptToOne(Partner partner)
-		{
-			if ((int)AccessCategoriesType.ChangeBalance == Id) {
-				var findedAgents = FindAgentByPartner(partner);
-				if (findedAgents.Count == 0) {
-					var newAgent = new Agent {
-						Name = partner.Name,
-						Partner = partner
-					};
-					newAgent.SaveAndFlush();
-				}
-				else {
-					foreach (var findedAgent in findedAgents) {
-						findedAgent.Partner = partner;
-						findedAgent.UpdateAndFlush();
-					}
-				}
-			}
-		}
-
-		public virtual void DeleteTo(UserRole userCategorie)
-		{
-		}
-
-		private static List<Agent> FindAgentByPartner(Partner partner)
-		{
-			return Agent.FindAll(DetachedCriteria.For(typeof(Agent))
-				.Add(Expression.Eq("Partner", partner))).ToList();
-		}
 	}
 }

@@ -922,7 +922,7 @@ where CE.Client = {0}", Id))
 			}
 		}
 
-		public virtual bool AfterRegistration(Agent agent, Partner registrator)
+		public virtual bool AfterRegistration(Partner registrator)
 		{
 			var havePayment = PhysicalClient.Balance > 0;
 			PostUpdate();
@@ -933,7 +933,7 @@ where CE.Client = {0}", Id))
 
 			if (havePayment) {
 				var payment = new Payment(this, PhysicalClient.Balance) {
-					Agent = agent,
+					Agent = registrator,
 					BillingAccount = true,
 					RecievedOn = DateTime.Now,
 				};

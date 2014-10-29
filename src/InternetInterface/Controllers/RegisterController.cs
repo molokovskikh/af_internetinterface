@@ -69,7 +69,6 @@ namespace InternetInterface.Controllers
 		{
 			SetARDataBinder();
 
-			var agent = DbSession.Query<Agent>().FirstOrDefault(a => a.Partner == Partner);
 			var settings = new Settings(DbSession);
 
 			var physicalClient = new PhysicalClient {
@@ -87,7 +86,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["iptv"] = iptv;
 			PropertyBag["internet"] = internet;
 			if (IsValid(physicalClient) && IsValid(client)) {
-				client.AfterRegistration(agent, Partner);
+				client.AfterRegistration(Partner);
 				foreach (var payment in client.Payments)
 					DbSession.Save(payment);
 
