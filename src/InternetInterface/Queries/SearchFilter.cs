@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Castle.ActiveRecord.Framework;
 using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Helpers;
@@ -126,8 +127,12 @@ namespace InternetInterface.Queries
 					query.SetParameter("Apartment", Apartment);
 			}
 			else if (!String.IsNullOrEmpty(SearchText) && wherePart.Contains(":SearchText"))
-				query.SetParameter("SearchText", SearchText.ToLower().Replace('е', 'Ж').Replace('Є', 'Ж').Replace("Ж", "(е|Є)"));
-			//¬ базе regex все равно ищет в без регистра
+			{
+				//¬ базе regex все равно ищет в без регистра
+				var text = Regex.Escape(SearchText);
+				text = text.ToLower().Replace('е', 'Ж').Replace('Є', 'Ж').Replace("Ж", "(е|Є)");
+				query.SetParameter("SearchText",text);
+			}
 		}
 
 		private string GetOrderField()
@@ -192,9 +197,13 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 				}
 				newSql = String.Format("select count(*) from ({0}) as t1;", newSql);
 				var countQuery = session.CreateSQLQuery(newSql);
-				if (!String.IsNullOrEmpty(SearchText) && wherePart.Contains(":SearchText"))
-					countQuery.SetParameter("SearchText", SearchText.ToLower().Replace('е', 'Ж').Replace('Є', 'Ж').Replace("Ж", "(е|Є)"));
-				//¬ базе regex все равно ищет в без регистра
+				if (!String.IsNullOrEmpty(SearchText) && wherePart.Contains(":SearchText")) {
+					//¬ базе regex все равно ищет в без регистра
+					var text = Regex.Escape(SearchText);
+					text = text.ToLower().Replace('е', 'Ж').Replace('Є', 'Ж').Replace("Ж", "(е|Є)");
+					countQuery.SetParameter("SearchText", text);
+				}
+
 				if (InitializeContent.Partner.AccesPartner("SSI"))
 					SetParameters(countQuery, wherePart);
 				_lastRowsCount = Convert.ToInt32(countQuery.UniqueResult());
