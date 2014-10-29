@@ -38,7 +38,7 @@ namespace InternetInterface.Controllers
 		{
 			var username = Context.Session["Login"];
 #if DEBUG
-			//username = username ?? Environment.UserName;
+			username = username ?? Environment.UserName;
 #endif
 			if (username != null) {
 				if (DbSession.Query<Partner>().Any(p => p.Login == username && !p.IsDisabled)) {
