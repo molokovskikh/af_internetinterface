@@ -49,7 +49,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Boo.Lang.Compiler, Version=2.0.9.3, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Boo.Lang.Compiler">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Castle.Monorail.2.1.4\lib\net40\Boo.Lang.Compiler.dll</HintPath>
     </Reference>
