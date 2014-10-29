@@ -53,6 +53,22 @@ namespace InternetInterface.Helpers
 			return true;
 		}
 
+
+		private static DirectoryEntry GetDirectoryEntry(string login)
+		{
+			var entry = FindDirectoryEntry(login);
+			if (entry == null)
+				throw new Exception(String.Format("Учетная запись Active Directory {0} не найдена", login));
+			return entry;
+		}
+
+		public static void ChangePassword(string login, string password)
+		{
+			var entry = GetDirectoryEntry(login);
+			GetDirectoryEntry(login).Invoke("SetPassword", password);
+			entry.CommitChanges();
+		}
+
 		public static void CreateUserInAD(string login, string password)
 		{
 #if !DEBUG

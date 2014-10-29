@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Configuration;
 using System.Diagnostics.SymbolStore;
 using System.Linq;
 using Castle.MonoRail.ActiveRecordSupport;
@@ -63,7 +64,24 @@ namespace InternetInterface.Controllers
 		{
 			var partner = DbSession.Load<Partner>(id);
 			PropertyBag["Partner"] = partner;
-			if (IsPost) {
+			if (IsPost)
+			{
+				var passwordReset = Request.Params["passwordReset"];
+				if(passwordReset != null) {
+					if(String.IsNullOrEmpty(partner.Email)) {
+						Notify("У партнера не указан адрес эл. почты");
+						RedirectToReferrer();
+						return;
+					}
+					var random = Guid.NewGuid().ToString().Substring(0, 8);
+					ActiveDirectoryHelper.ChangePassword(partner.Login,random);
+					var mailer = this.Mailer<Mailer>();
+					var body = "Ваш пароль был изменен, новый пароль - " + random;
+					mailer.SendText("internet@ivrn.net",partner.Email , "Уведомление об изменении пароля", body);
+					Notify("Пароль сброшен и отправлен на почту ");
+					RedirectToReferrer();
+					return;
+				}
 				BindObjectInstance(partner, ParamStore.Form, "Partner");
 				if (IsValid(partner)) {
 					var agent = DbSession.Query<Agent>().FirstOrDefault(a => a.Partner == partner);
