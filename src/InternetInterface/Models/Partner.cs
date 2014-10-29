@@ -229,6 +229,11 @@ namespace InternetInterface.Models
 			return session.Query<Partner>().OrderBy(p => p.Name).ToList();
 		}
 
+		public static IList<Partner> All()
+		{
+			return ArHelper.WithSession(s=> s.Query<Partner>().OrderBy(p => p.Name).ToList());
+		}
+
 		public static Partner GetInitPartner()
 		{
 			return InitializeContent.Partner;
