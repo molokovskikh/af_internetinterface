@@ -248,7 +248,7 @@ namespace InternetInterface.Controllers
 			[DataBind("order")] Order Order, bool withoutEndPoint, uint currentEndPoint)
 		{
 			var errors = ValidateDeep(Order);
-			if(errors.ErrorsCount > 0) {
+			if(Order.Id != 0 && errors.ErrorsCount > 0) {
 				Error(errors.ErrorMessages.First());
 				RedirectToReferrer();
 				return;
