@@ -1,4 +1,5 @@
-﻿@using Inforoom2.Models
+﻿@section JavaScript{<script type="text/javascript"src="@Url.Content("~/Scripts/ClientRequest.js")"></script>}
+@using Inforoom2.Models
 @{
 	ClientRequest clientRequest = ViewBag.ClientRequest;
 }
@@ -67,10 +68,6 @@
 	}
 	
 	<button class="SwitchAddressCheck" onclick=" checkSwitchAddress() ">Проверить адрес свича</button>
-	<script src="~/Scripts/ClientRequest.js" type="text/javascript"></script>
-	<script src="~/Scripts/jquery-2.1.1.min.js" type="text/javascript"></script>
-	<script src="~/Scripts/Inforoom.js"></script>
-	
 	<div><span class="YMapAddressResult"></span></div>
 	<div><span class="SwitchAddressResult"></span></div>
 	
