@@ -44,7 +44,8 @@ namespace InternetInterface.Queries
 		public Service Service { get; set; }
 		public RentableHardware RentableHardware { get; set; }
 
-		public int? BlockDayCount { get; set; }
+		public DateTime? BlockDayMin { get; set; }
+		public DateTime? BlockDayMax { get; set; }
 
 		private int _lastRowsCount;
 
@@ -107,9 +108,11 @@ namespace InternetInterface.Queries
 			if (RentableHardware != null)
 				query.SetParameter("hardwareId", RentableHardware.Id);
 
-			if (BlockDayCount != null) {
-				var blockBefore = DateTime.Today.AddDays(-BlockDayCount.Value);
-				query.SetParameter("blockBefore", blockBefore);
+			if (BlockDayMax != null) {
+				query.SetParameter("blockBefore", BlockDayMax);
+			}
+			if (BlockDayMin != null) {
+				query.SetParameter("blockAfter", BlockDayMin);
 			}
 			if (Service != null)
 				query.SetParameter("serviceId", Service.Id);
@@ -250,8 +253,13 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 					result += " and exists(select * from internet.ClientServices cs where cs.Client = c.Id and cs.RentableHardware = :hardwareId) ";
 				}
 
-				if (BlockDayCount != null) {
-					result += "and c.Disabled and c.BlockDate < :blockBefore";
+				if(BlockDayMax !=null || BlockDayMax != null)
+					result += "and c.Disabled ";
+				if (BlockDayMin != null) {
+					result += "and c.BlockDate > :blockAfter ";
+				}
+				if (BlockDayMax != null) {
+					result += "and c.BlockDate < :blockBefore ";
 				}
 
 				if (SearchProperties != SearchUserBy.Address) {
