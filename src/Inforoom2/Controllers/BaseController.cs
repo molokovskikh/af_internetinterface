@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Security.Principal;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Mvc.Filters;
@@ -33,7 +36,7 @@ namespace Inforoom2.Controllers
 			ValidationRunner = new ValidationRunner();
 			ViewBag.Validation = ValidationRunner;
 			ViewBag.JavascriptParams = new Dictionary<string, string>();
-			ViewBag.Cities = new string[] {"Воронеж", "Борисоглебск", "Москва"};
+			ViewBag.Cities = new string[] {"Воронеж", "Борисоглебск", "Белгород"};
 		}
 
 		public void AddJavascriptParam(string name, string value)
@@ -66,17 +69,17 @@ namespace Inforoom2.Controllers
 
 		public void SuccessMessage(string message)
 		{
-			Response.Cookies.Add(new HttpCookie("SuccessMessage", message) {Path = "/"});
+			SetCookie("SuccessMessage", message);
 		}
 
 		public void ErrorMessage(string message)
 		{
-			Response.Cookies.Add(new HttpCookie("ErrorMessage", message) {Path = "/"});
+			SetCookie("ErrorMessage", message);
 		}
 
 		public void WarningMessage(string message)
 		{
-			Response.Cookies.Add(new HttpCookie("WarningMessage", message) {Path = "/"});
+			SetCookie("WarningMessage", message);
 		}
 
 		protected override void OnException(ExceptionContext filterContext)
@@ -99,22 +102,21 @@ namespace Inforoom2.Controllers
 
 		public void ProcessRegionPanel()
 		{
-			var cookie = Request.Cookies.Get("userCity");
-
+			var cookieCity = GetCookie("userCity");
 			if (User == null) {
 				//Анонимный посетитель. Определяем город.
-				if (cookie != null) {
-					userCity = cookie.Value;
-					ViewBag.UserCity = cookie.Value;
+				if (!string.IsNullOrEmpty(cookieCity)) {
+					userCity = cookieCity;
+					ViewBag.UserCity = cookieCity;
 				}
 				else {
 					GetVisitorCityByGeoBase();
 				}
 			}
 			else {
-				if (cookie != null) {
-					userCity = cookie.Value;
-					ViewBag.UserCity = cookie.Value;
+				if (!string.IsNullOrEmpty(cookieCity)) {
+					userCity = cookieCity;
+					ViewBag.UserCity = cookieCity;
 				}
 				else {
 					//Куков нет, пытаемся достать город из базы, иначе определяем по геобазе
@@ -138,7 +140,7 @@ namespace Inforoom2.Controllers
 				geoAnswer = geoService.GetInfo();
 			}
 			catch (WebException e) {
-				geoAnswer = new IpAnswer {City = "Воронеж"};
+				geoAnswer = new IpAnswer {City = "Борисоглебск"};
 			}
 			userCity = geoAnswer.City;
 			ViewBag.UserCity = geoAnswer.City;
@@ -151,6 +153,34 @@ namespace Inforoom2.Controllers
 				entities = new List<TModel>();
 			}
 			return entities;
+		}
+
+		protected string GetCookie(string cookieName)
+		{
+			var cookie = Request.Cookies.Get(cookieName);
+			if (cookie == null) {
+				return string.Empty;
+			}
+			var s = Uri.UnescapeDataString(cookie.Value);
+			return HttpUtility.UrlDecode(s);
+			
+		}
+
+		protected void SetCookie(string name, string value)
+		{
+			Response.Cookies.Add(new HttpCookie(name, value) {Path = "/"});
+		}
+
+		public static Encoding DetectEncoding(String fileName, out String contents)
+		{
+			// open the file with the stream-reader:
+			using (StreamReader reader = new StreamReader(fileName, true)) {
+				// read the contents of the file into a string
+				contents = reader.ReadToEnd();
+
+				// return the encoding.
+				return reader.CurrentEncoding;
+			}
 		}
 	}
 }

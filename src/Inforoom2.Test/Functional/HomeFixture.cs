@@ -26,8 +26,8 @@ namespace Inforoom2.Test.Functional
 			bt.Click();
 			var link = browser.FindElement(By.XPath("//div[@class='cities']//a[text()='Борисоглебск']"));
 			link.Click();
-			var cookie = browser.Manage().Cookies.GetCookieNamed("userCity");
-			Assert.That(cookie.Value, Is.EqualTo("Борисоглебск"));
+			var userCity = GetCookie("userCity");
+			Assert.That(userCity, Is.EqualTo("Борисоглебск"));
 		}
 	}
 }

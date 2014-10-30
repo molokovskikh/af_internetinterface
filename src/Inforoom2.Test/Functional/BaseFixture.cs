@@ -42,5 +42,16 @@ namespace Inforoom2.Test.Functional
 			var body = browser.FindElementByCssSelector("body").Text;
 			return body.Contains(text);
 		}
+
+		protected string GetCookie(string cookieName)
+		{
+			var cookie = browser.Manage().Cookies.GetCookieNamed(cookieName);
+			if (cookie == null) {
+				return string.Empty;
+			}
+			var s = Uri.UnescapeDataString(cookie.Value);
+			return HttpUtility.UrlDecode(s);
+			
+		}
 	}
 }

@@ -99,7 +99,7 @@ function Inforoom() {
 		if (expires && expires.toUTCString) {
 			options.expires = expires.toUTCString();
 		}
-
+		value = encodeURIComponent(value);
 		var updatedCookie = name + "=" + value;
 
 		for (var propName in options) {
@@ -119,6 +119,9 @@ function Inforoom() {
 		var ret = matches ? (matches[1]) : undefined;
 		if (eraseFlag)
 			this.setCookie(name, null);
+		if (ret) {
+			ret = decodeURIComponent(ret);
+		}
 		return ret;
 	}
 	this.getTemplate = function(name) {
