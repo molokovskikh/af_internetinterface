@@ -561,7 +561,8 @@ namespace InternetInterface.Controllers
 			BindObjectInstance(client, ParamStore.Form, "_client");
 
 			if (oldStatus != client.Status) {
-				if (oldStatus.ManualSet) {
+				//BlockedAndConnected = "не подключен", а не то, что ты подумал
+				if (oldStatus.ManualSet || oldStatus.Type == StatusType.BlockedAndConnected) {
 					if (client.Status.Type == StatusType.Dissolved && (client.HaveService<HardwareRent>() || client.HaveService<IpTvBoxRent>())) {
 						GetErrorSummary(updateClient)
 							.RegisterErrorMessage("Status", "Договор не может быть расторгнут тк у клиента имеется арендованное" +
