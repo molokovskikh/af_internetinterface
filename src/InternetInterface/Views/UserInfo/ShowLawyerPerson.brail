@@ -87,7 +87,7 @@
 		</tr>
 				<tr>
 		<% if _client.Status != null: %>
-			<tr>
+			<tr class="status ${_client.Status.Type}">
 				<td><span class="description">Статус клиента:</span> ${_client.Status.Name}</td>
 			</tr>
 		<% end %>
