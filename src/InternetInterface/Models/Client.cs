@@ -44,6 +44,7 @@ namespace InternetInterface.Models
 			Endpoints = new List<ClientEndpoint>();
 			Appeals = new List<Appeals>();
 			Orders = new List<Order>();
+			ServiceRequests = new List<ServiceRequest>();
 		}
 
 		public Client(PhysicalClient client, Settings settings, Partner registrator = null)
@@ -205,6 +206,9 @@ namespace InternetInterface.Models
 
 		[HasMany(ColumnKey = "Client", OrderBy = "PaidOn", Lazy = true)]
 		public virtual IList<Payment> Payments { get; set; }
+
+		[HasMany(ColumnKey = "Client", OrderBy = "RegDate", Lazy = true)]
+		public virtual IList<ServiceRequest> ServiceRequests { get; set; }
 
 		[HasMany(ColumnKey = "Client", OrderBy = "WriteOffDate", Lazy = true)]
 		public virtual IList<WriteOff> WriteOffs { get; set; }

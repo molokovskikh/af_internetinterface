@@ -4,6 +4,7 @@ using System.Linq;
 using Common.Tools;
 using Common.Tools.Calendar;
 using Common.Web.Ui.ActiveRecordExtentions;
+using Common.Web.Ui.Models;
 using InternetInterface.Models;
 using NHibernate.Linq;
 using NUnit.Framework;
@@ -89,8 +90,23 @@ namespace Billing.Test.Integration
 		[Test]
 		public void Reset_repair_status_on_timeout()
 		{
+
+			//В тесте эти данные не используются (и кстати зря)
+			//но биллинг без них упадет, так как пошлет на почту письмо с номером заявки
+			var request = new ServiceRequest();
+			request.Client = client;
+			request.Description = "test test test";
+			session.Save(request);
+			var region = new RegionHouse("Воронеж");
+			session.Save(region);
+			region = new RegionHouse("Белгород");
+			session.Save(region);
+			var house = new House("dsadasd", 11, region);
+			session.Save(house);
+
 			client.RatedPeriodDate = DateTime.Now;
 			client.SetStatus(StatusType.BlockedForRepair, session);
+			client.PhysicalClient.HouseObj = house;
 			session.Save(client);
 			Process();
 
