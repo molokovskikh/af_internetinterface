@@ -26,7 +26,7 @@ namespace Inforoom2.Test.Functional
 	public class Setup
 	{
 		public static Uri Url;
-		public static ISession session = NHibernateActionFilter.sessionFactory.OpenSession();
+		public static ISession session = MvcApplication.SessionFactory.OpenSession();
 
 
 		private Server _webServer;

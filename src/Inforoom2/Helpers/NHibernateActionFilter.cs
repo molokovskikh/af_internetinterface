@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using Inforoom2.Controllers;
 using NHibernate;
 using NHibernate.Cfg;
+using NHibernate.Context;
 using NHibernate.Linq;
 using Configuration = NHibernate.Cfg.Configuration;
 
@@ -13,45 +14,30 @@ namespace Inforoom2.Helpers
 {
 	public class NHibernateActionFilter : ActionFilterAttribute
 	{
-		public static readonly ISessionFactory sessionFactory = BuildSessionFactory();
+		private ISessionFactory SessionFactory { get; set; }
 
-		public static ISession CurrentSession
+		public NHibernateActionFilter()
 		{
-			get { return HttpContext.Current.Items["NHibernateSession"] as ISession; }
-			set { HttpContext.Current.Items["NHibernateSession"] = value; }
+			SessionFactory = MvcApplication.SessionFactory;
 		}
-
-		private static ISessionFactory BuildSessionFactory()
-		{
-			Configuration configuration = new Configuration();
-			configuration.SetNamingStrategy(new TableNamingStrategy());
-			var nhibernateConnectionString = ConfigurationManager.AppSettings["nhibernateConnectionString"];
-			configuration.SetProperty("connection.provider", "NHibernate.Connection.DriverConnectionProvider")
-				.SetProperty("connection.driver_class", "NHibernate.Driver.MySqlDataDriver")
-				.SetProperty("connection.connection_string", nhibernateConnectionString)
-				.SetProperty("dialect", "NHibernate.Dialect.MySQL5Dialect");
-			/*	var configurationPath = HttpContext.Current.Server.MapPath(@"~\Nhibernate\hibernate.cfg.xml");
-			configuration.Configure(configurationPath);*/
-			configuration.AddInputStream(
-				NHibernate.Mapping.Attributes.HbmSerializer.Default.Serialize(Assembly.GetExecutingAssembly()));
-
-			//TODO Раскоментировать для создания таблиц с помощью Nhibernate
-		/*	var schema = new NHibernate.Tool.hbm2ddl.SchemaExport(configuration);
-			schema.Create(false, true);*/
-
-			return configuration.BuildSessionFactory();
-		}
-
 
 		public override void OnActionExecuting(ActionExecutingContext filterContext)
 		{
-			CurrentSession = sessionFactory.OpenSession();
-			CurrentSession.BeginTransaction();
+			if (!CurrentSessionContext.HasBind(SessionFactory)) {
+				var session = SessionFactory.OpenSession();
+				CurrentSessionContext.Bind(session);
+				session.BeginTransaction();
+			}
 		}
 
 		public override void OnActionExecuted(ActionExecutedContext filterContext)
 		{
-			var session = CurrentSession;
+			
+		}
+
+		public override void OnResultExecuted(ResultExecutedContext filterContext)
+		{
+			var session = SessionFactory.GetCurrentSession();
 			if (session == null)
 				return;
 
@@ -63,13 +49,18 @@ namespace Inforoom2.Helpers
 			else
 				try {
 					session.Transaction.Commit();
-					}
+				}
 				catch (Exception e) {
 					(filterContext.Controller as BaseController).ErrorMessage("Не удалось сохранить транзакцию.");
 					session.Transaction.Rollback();
 				}
+			//session = CurrentSessionContext.Unbind(SessionFactory);
+			//session.Close();
 		}
 	}
+
+	
+	 
 
 	public class TableNamingStrategy : INamingStrategy
 	{

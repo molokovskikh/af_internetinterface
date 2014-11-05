@@ -8,6 +8,7 @@ using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Mvc.Filters;
+using System.Web.Routing;
 using System.Web.Security;
 using Inforoom2.Components;
 using Inforoom2.Helpers;
@@ -26,7 +27,7 @@ namespace Inforoom2.Controllers
 	{
 		public ISession DbSession
 		{
-			get { return NHibernateActionFilter.CurrentSession; }
+			get { return MvcApplication.SessionFactory.GetCurrentSession(); }
 		}
 
 		protected ValidationRunner ValidationRunner;
@@ -52,6 +53,11 @@ namespace Inforoom2.Controllers
 		protected Employee CurrentEmployee
 		{
 			get { return DbSession.Query<Employee>().FirstOrDefault(k => k.Username == User.Identity.Name); }
+		}
+
+		protected Client CurrentClient
+		{
+			get { return DbSession.Query<Client>().FirstOrDefault(k => k.Username == User.Identity.Name); }
 		}
 
 		private static string userCity;
@@ -87,9 +93,9 @@ namespace Inforoom2.Controllers
 			if (filterContext.ExceptionHandled) {
 				return;
 			}
-			filterContext.Result = new ViewResult {
-				ViewName = "" //TODO some error view
-			};
+		 /*  filterContext.Result = new RedirectToRouteResult(
+                new RouteValueDictionary
+                    {{"controller", "Home"}, {"action", "Index"}});*/
 			filterContext.ExceptionHandled = true;
 		}
 

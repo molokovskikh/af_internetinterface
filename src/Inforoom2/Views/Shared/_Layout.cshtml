@@ -9,33 +9,31 @@
 	<body>
 		<div class="navbar navbar-inverse navbar-fixed-top">
 			<div class="container">
-				@Html.ActionLink("Главная", "Index", "Home", null, new {@class = "navbar-brand"})
-				@Html.ActionLink("Вопросы и ответы", "Index", "Faq", null, new {@class = "navbar-brand"})
-				@Html.ActionLink("Заявка на подключение", "Index", "ClientRequest", null, new {@class = "navbar-brand"})
-				@Html.ActionLink("About", "Index", "About", null, new {@class = "navbar-brand"})
+				@Html.ActionLink("Главная", "Index", "Home", null, new { @class = "navbar-brand" })
+				@Html.ActionLink("Вопросы и ответы", "Index", "Faq", null, new { @class = "navbar-brand" })
+				@Html.ActionLink("Заявка на подключение", "Index", "ClientRequest", null, new { @class = "navbar-brand" })
+				@Html.ActionLink("About", "Index", "About", null, new { @class = "navbar-brand" })
 				@if (Request.IsAuthenticated) {
 					<text>Welcome <strong>@User.Identity.Name</strong>!
-						[ @Html.ActionLink("Logout", "Logout", "Account") ]</text>
+						[ @Html.ActionLink("Выход", "Logout", "Account") ]
+						@Html.ActionLink("Личный кабинет", "Index", "Personal")
+						@if (User.IsInRole("Admin")) {
+							@Html.ActionLink("Панель администратора", "AdminIndex", "Home")
+						} </text>
 				}
 				else {
-					@:[ @Html.ActionLink("Login", "Login", "Account") ]
+					@:[ @Html.ActionLink("Вход", "Login", "Account") ]
 				}
 			</div>
 		</div>
 	
-		<nav>
-			<ul id="menu">
-				<li>@Html.ActionLink("Home", "Index", "Home")</li>
-				@if (User.IsInRole("Admin")) {
-					<li>@Html.ActionLink("Admin", "AdminIndex", "Home")</li>
-				}
-			</ul>
-		</nav>
 		<div class="JavascriptParams" style="display: none">
 			@{
 				var dic = ViewBag.JavascriptParams as Dictionary<string, string>;
-				foreach (var key in dic.Keys) {
-					<div id="@key">@dic[key]</div>
+				if (dic != null && dic.Count != 0) {
+					foreach (var key in dic.Keys) {
+						<div id="@key">@dic[key]</div>
+					}
 				}
 			}
 		</div>

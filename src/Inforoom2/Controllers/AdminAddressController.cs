@@ -11,42 +11,6 @@ namespace Inforoom2.Controllers
 {
 	public class AdminAddressController : AdminController
 	{
-		private List<City> Cities
-		{
-			get { return GetAllSafe<City>(); }
-		}
-
-		private List<Street> Streets
-		{
-			get { return GetAllSafe<Street>(); }
-		}
-
-		private IList<Region> Regions
-		{
-			get { return GetAllSafe<Region>(); }
-		}
-
-		private IList<House> Houses
-		{
-			get { return GetAllSafe<House>(); }
-		}
-
-		private IList<Address> Addresses
-		{
-			get { return GetAllSafe<Address>(); }
-		}
-
-		private IList<SwitchAddress> SwitchAddresses
-		{
-			get { return GetAllSafe<SwitchAddress>(); }
-		}
-
-		private IList<Switch> Switches
-		{
-			get { return GetAllSafe<Switch>(); }
-		}
-
-
 		public ActionResult AdminAddressCity()
 		{
 			ViewBag.CitiesList = Cities;

@@ -15,7 +15,7 @@ namespace Inforoom2.Test.Functional
 	{
 		protected new ISession session
 		{
-			get { return NHibernateActionFilter.sessionFactory.OpenSession(); }
+			get { return MvcApplication.SessionFactory.OpenSession(); }
 		}
 
 		[SetUp]

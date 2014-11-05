@@ -46,6 +46,7 @@
       <HintPath>..\..\packages\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
@@ -92,7 +93,6 @@
     <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Microsoft.AspNet.Razor.3.0.0\lib\net45\System.Web.Razor.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -138,8 +138,17 @@
     <Content Include="Scripts\FaqController.js" />
     <Content Include="Scripts\Helpers.js" />
     <Content Include="Scripts\inforoom.js" />
+    <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\jquery-1.10.2.js" />
+    <Content Include="Scripts\jquery-1.10.2.min.js" />
     <Content Include="Scripts\jquery-2.1.1.js" />
     <Content Include="Scripts\jquery-ui-1.11.1.js" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\PersonalController.js" />
     <Content Include="Scripts\Window.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -162,6 +171,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\PersonalController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -178,6 +188,7 @@
     <Compile Include="Models\Address.cs" />
     <Compile Include="Models\City.cs" />
     <Compile Include="Models\ClientRequest.cs" />
+    <Compile Include="Models\Service.cs" />
     <Compile Include="Models\Switch.cs" />
     <Compile Include="Models\SwitchAdress.cs" />
     <Compile Include="Models\Employee.cs" />
@@ -251,6 +262,16 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Views\Personal\Index.cshtml" />
+    <Content Include="Scripts\jquery-1.10.2.min.map" />
+    <Content Include="Views\Personal\ShowProfile.cshtml" />
+    <Content Include="Views\Personal\Plans.cshtml" />
+    <Content Include="Views\Personal\Payment.cshtml" />
+    <Content Include="Views\Personal\Credit.cshtml" />
+    <Content Include="Views\Personal\UserDetails.cshtml" />
+    <Content Include="Views\Personal\Service.cshtml" />
+    <Content Include="Views\Personal\Notifications.cshtml" />
+    <Content Include="Views\Personal\Bonus.cshtml" />
     <None Include="Web.Inforoom2_Test.config" />
   </ItemGroup>
   <PropertyGroup>

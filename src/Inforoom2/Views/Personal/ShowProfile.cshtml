@@ -1,0 +1,10 @@
+﻿@using Inforoom2.Models
+
+@{
+	Client client = ViewBag.CurrentClient;
+}
+
+<h2>@ViewBag.Title</h2>
+
+@Html.DisplayFor(k=>client.Username)
+@Html.DisplayFor(k=>client.City)
