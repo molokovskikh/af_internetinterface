@@ -36,7 +36,7 @@
 			<% if itemInfo.client.LawyerPerson == null:  %>
 			<tr class="<% if item.Status != null: %> status ${item.Status.Type}<% end;%>" style="background-color:#e3e7f7;">
 			<% else: %>
-			<tr class="<% if item.Status != null: %> status ${item.Status.Type}<% end;%>" style="background-color:#f5efdf;">s
+			<tr class="<% if item.Status != null: %> status ${item.Status.Type}<% end;%>" style="background-color:#f5efdf;">
 			<% end %>
 				<td><a href="../Search/Redirect?filter.ClientCode=${item.Id}">${item.ForSearchId(filter.SearchText)}</a></td>
 				<td> ${item.ForSearchName(filter.SearchText)}</td>
