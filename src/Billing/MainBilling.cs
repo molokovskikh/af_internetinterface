@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Threading;
 using Castle.ActiveRecord;
@@ -10,6 +11,7 @@ using Common.Tools;
 using Common.Tools.Calendar;
 using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Helpers;
+using Common.Web.Ui.MonoRailExtentions;
 using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
@@ -329,6 +331,18 @@ set s.LastStartFail = true;")
 		{
 			if (_saleSettings.IsRepairExpaired(client)) {
 				client.SetStatus(StatusType.Worked, session);
+
+				var str = ConfigurationManager.AppSettings["BlockForRepairNotificationMail"];
+				if (str == null)
+					throw new Exception("Параметр BlockForRepairNotificationMail должен быть задан в config");
+				var mailer = new Mailer(new FolderSender(ConfigurationManager.AppSettings["SmtpServer"]));
+				var request = client.ServiceRequests.LastOrDefault();
+				var textMessage = "Срок исполнения сервисной заявки #" + request.Id + " истек";
+				var region = client.GetRegion();
+				var addresses = str.Split(new[] { ',' });
+				for (var i = 0; i < addresses.Length; i ++)
+					if(region.Id == (i+1))
+						mailer.SendText("internet@ivrn.net", addresses, textMessage, textMessage);
 			}
 
 			var phisicalClient = client.PhysicalClient;
