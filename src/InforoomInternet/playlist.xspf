@@ -1,0 +1,2249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<playlist version="1" xmlns="http://xspf.org/ns/0/" xmlns:vlc="http://www.videolan.org/vlc/playlist/ns/0/">
+  <title>Playlist InetCom</title>
+  <location></location>
+    <trackList>
+                <track>
+            <location>rtp://@230.3.4.217:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Телеканал 2x2]]></title>
+            <annotation><![CDATA[Мультфильмы для детей и взрослых. В эфире представлены все возможные анимационные жанры – от классики вроде «Симпсонов» до концептуальных мультфильмов «не для всех».]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>42</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.89:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Пятый канал]]></title>
+            <annotation><![CDATA[Федеральный канал с центром вещания в Санкт-Петербурге. Является преемником старейшего в России (СССР) ленинградского телевидения. В настоящее время канал ориентирован на широкую аудиторию, которой предлагаются как информационно-аналитические, так и развлекательные программы и шоу, документальные и художественные фильмы, сериалы.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>23</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.32:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Домашний]]></title>
+            <annotation><![CDATA[Семейный телеканал, в эфире которого представлены программы соответствующей тематики: о кулинарии, ремонте и дизайне дома, медицине и здоровье, семейных проблемах и путях их решения, животных и путешествиях. Также в сетке вещания - добрые семейные фильмы и сериалы.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>20</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.7:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Муз ТВ]]></title>
+            <annotation><![CDATA["МУЗ-ТВ" в классическом формате музыкального телеканала. В эфире - модная музыка и клипы, чарты и новости шоу-бизнеса.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>18</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.125:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[НТВ]]></title>
+            <annotation><![CDATA[Основу эфира составляет информационное и публицистическое вещание – новостные и аналитические программы, общественно-политические ток-шоу, журналистские расследования, циклы документальных фильмов. Вместе с тем, на канале представлены в значительном объеме спортивные трансляции, развлекательные и познавательные программы для семейного просмотра, сериальная продукция (в основном – криминального жанра).]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>117</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.134:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Первый Канал]]></title>
+            <annotation><![CDATA[Первый канал является не только самым масштабным, но и самым популярным телеканалом страны. В эфире канала - новости и аналитика, фильмы и сериалы, развлекательные программы и ток-шоу.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>13</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.126:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Пятница]]></title>
+            <annotation><![CDATA[Развлекательный телеканал. Эфирное наполнение состоит из телесериалов, хитов мирового кинематографа, реалити-шоу, передач золотого фонда развлекательного ТВ, а также программ разнообразной тематики – от кухни, моды и здоровья до приключений, мистики и спорта.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>71</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.135:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[РЕН ТВ]]></title>
+            <annotation><![CDATA[Канал ориентирован на активную аудиторию зрителей среднего возраста (30-45 лет). В эфире представлены информационные программы, реалити-шоу, циклы журналистских расследований, документальные фильмы и познавательные программы, сериалы и художественные фильмы преимущественно остросюжетного плана.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>40</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.130:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Россия 1]]></title>
+            <annotation><![CDATA[Общероссийский государственный телевизионный канал. Жанровую структуру вещания телеканала «Россия» составляют информационные программы, многосерийные телефильмы и сериалы, телепублицистика, ток-шоу, телевикторины, комедийные и игровые форматы, полнометражные художественные и документальные фильмы, трансляции спортивных и общественно-политических событий, зрелищных мероприятий.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>14</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.132:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Россия 2]]></title>
+            <annotation><![CDATA[Общероссийский телеканал, транслирующий ключевые спортивные соревнования российского, европейского и мирового значения. Ежедневно в эфире - прямые трансляции самых престижных состязаний. Также в структуру эфира канала входят спортивные информационно-аналитические программы, передачи о путешествиях и приключениях, науке и технике, остросюжетное кино.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>22</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.131:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Россия К]]></title>
+            <annotation><![CDATA[Общероссийский государственный телеканал о культуре во всех ее аспектах. В эфире представлен широчайший спектр программ, посвященных различным направлениям культурной жизни – музыке, живописи, театру, литературе, кино и другим. Канал производит большое количество собственных программ и циклов, над которыми работают лучшие специалисты в тех или иных областях культуры. На канале отсутствует коммерческая телевизионная реклама.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>15</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.242:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[СТС]]></title>
+            <annotation><![CDATA[Развлекательный канал классического типа. Основное время вещания занимают игры и викторины, комедийные сериалы, юмористические шоу, а также художественные фильмы.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>16</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.188:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[ТНТ]]></title>
+            <annotation><![CDATA[Федеральный канал развлекательной тематики. В сетке вещания представлены мультфильмы для детей разного возраста, юмористические шоу, комедийные сериалы, реалити-шоу, художественные фильмы.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>17</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.171:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[ТВ3]]></title>
+            <annotation><![CDATA[Канал ориентирован на показ художественных, документальных фильмов и сериалов мистической, фантастической и приключенческой тематики.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>127</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.161:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[ТВ Центр]]></title>
+            <annotation><![CDATA[Канал освещает все многообразие духовной, интеллектуальной, социальной, научной, политической и финансово-экономической жизни Москвы; в то же время его программы адресованы населению всей России. Канал ориентируется на программы актуального звучания с акцентом на волнующие всех проблемы, взвешенную информацию, острую публицистику, качественную аналитику, разнообразное документальное и детское вещание, классику отечественного и зарубежного кино.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>21</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.146:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Перец]]></title>
+            <annotation><![CDATA[Современный развлекательный канал, предлагающий своим зрителям уникальный подбор программ - от лучших западных шоу до самых последних новинок отечественного кино, документальные сериалы и художественные фильмы и музыкальные программы]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>57</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.254:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Ю]]></title>
+            <annotation><![CDATA[Канал только для девушек, в эфире которого: ток-шоу, реалити, ситкомы, сериалы и фильмы, релевантные женской аудитории. Основная тематика телеканала: любовь, красота, мода, искренность, самосовершенствование и даже котики.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>290</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.128:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Звезда]]></title>
+            <annotation><![CDATA[Общественно-патриотический канал. Эфир состоит из трех основных направлений: новости, документалистика, кинопоказ. Основную часть вещания составляют информационные и аналитические передачи.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>103</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.93:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[A-One]]></title>
+            <annotation><![CDATA[Канал для поклонников современной альтернативной музыки. Транслирует видеоклипы и концерты зарубежных и российских музыкантов, собственные музыкально-развлекательные и новостные программы.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>45</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.252:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Bridge TV]]></title>
+            <annotation><![CDATA[Эфир канала состаляет музыка в стиле Rhytmic EuroPop. Отбирая клипы для эфира, мы руководствуемся качеством музыки и видео, а также различными рейтингами и вкусом аудитории, оперативно реагируя на изменения в мировых чартах.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>49</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.169:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Dange TV]]></title>
+            <annotation><![CDATA[Лучшие российские и иностранные клипы различных направлений танцевальной музыки всех времен, а также уроки танцев, секреты мировых диджеев, видеоотчеты о самых прогрессивных мероприятиях танцевальной индустрии.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>306</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.124:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Европа Плюс ТВ]]></title>
+            <annotation><![CDATA[В эфире канала лучшие образцы популярной музыки и ТВ-программы собственного производства. Основу эфира составляют клипы исполнителей, занимающие высокие места в мировых и европейских чартах, а также видео российских звезд, соответствующих формату Европы Плюс.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>283</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.58:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Ля-Минор]]></title>
+            <annotation><![CDATA[Это авторская и бардовская песня, городской романс. Музыкальные видеоклипы, видеозаписи концертов исполнителей песен в стиле русский шансон,а также документальные, развлекательные и публицистические программы о музыкантах, фильмы, викторины и конкурсы]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>112</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.117:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[MCM Top]]></title>
+            <annotation><![CDATA[Молодежный музыкальный канал для тех, кому от 15 до 25 лет, кто ведет активный образ жизни, открыт для всего нового. Около трети всех программ посвящены современной французской музыке, и в этом - привлекательность МСМ для тех, кто хочет расширить диапазон своих интересов. Остальное – модные направления мирового рока и поп-музыки]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>68</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.78:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Mezzo]]></title>
+            <annotation><![CDATA[Французский музыкальный канал, предназначенный для меломанов и людей, увлеченных классикой. Основа вещания - записи концертов выдающихся исполнителей классической и джазовой музыки, а также музыкальные новости.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>69</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.115:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[MTV Dance]]></title>
+            <annotation><![CDATA[Круглосуточный канал танцевальной электронной музыки. В эфире представлены видеоклипы и тематические рубрики: чарты, подборки музыкальных видео, презентации клипов.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>70</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.235:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Музыка Первого]]></title>
+            <annotation><![CDATA[Круглосуточный канал для поклонников современной российской музыки: видеоклипы представителей разных жанров, хит-парады, тематические музыкальные подборки.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>29</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.235:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[RUSSIAN MUSICBOX]]></title>
+            <annotation><![CDATA[Музыкальный канал видеоклипов популярных российских групп и исполнителей, новинок музыкальной индустрии. Транслируется с учетом результатов интерактивного голосования зрителей. Также в эфире – хит-парады, музыкальные новости.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>72</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.151:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[MUSICBOX]]></title>
+            <annotation><![CDATA[Музыкальный канал видеоклипов популярных мировых групп и исполнителей. Транслируется с учетом результатов интерактивного голосования зрителей. Также в эфире – хит-парады, музыкальные новости.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>73</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.136:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[RUSONG TV]]></title>
+            <annotation><![CDATA[Программа выстраивается профессиональными диджеями круглосуточно, в режиме online. Зрителям предоставляется возможность общаться между собой и с диджеями в прямом эфире, через SMS-чат. В эфире самые известные танцевальные хиты 90-х, лучшие танцевальные клипы и собственные съемки крупнейших танцевальных мероприятий.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>287</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.1:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[RU TV]]></title>
+            <annotation><![CDATA[Музыкальный канал, телеверсия Русского Радио: музыкальные произведения только на русском языке - популярная музыка прошлого и наших дней.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>78</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.244:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Шансон ТВ]]></title>
+            <annotation><![CDATA[Это и городской романс, блатная  и цыганские песня и эстрада. В сетке вещания клипы таких исполнителей как Успенская, Шуфутинский, Новиков, Вика Циганова.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>131</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.110:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[VH1 Classic]]></title>
+            <annotation><![CDATA[Музыкальный канал. Основу вещания составляют «проверенные временем» и уже ставшие классикой музыкальные видео разных стилей и исполнителей, записанные в период с 60-х по 90-е годы 20 века.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>88</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.18:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[VH1 European]]></title>
+            <annotation><![CDATA[Музыкальный канал. Композиции из мировых хит-парадов от 80-х годов до наших дней, передачи о звездах рок-музыки и сюжеты о съемках музыкальных видеоклипов.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>257</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.20:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[BBC World News]]></title>
+            <annotation><![CDATA[Знаменитый британский телеканал новостей, ежедневно освещающий самые последние события политики и финансов, культуры и спорта]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>24</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.111:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[CNN International]]></title>
+            <annotation><![CDATA[Один из ведущих информационно-аналитических каналов мира. В основе вещания - концепция новостной исключительности, оперативное корреспондентское освещение событий, эксклюзивные репортажи. На английском языке.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>52</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.52:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Deutsche Welle]]></title>
+            <annotation><![CDATA[Круглосуточный общественно-информационный телеканал. Особое внимание уделяется событиям в Европе и Германии. Передачи на немецком и английском языке.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>58</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.21:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[EuroNews]]></title>
+            <annotation><![CDATA[Круглосуточный информационный канал, освещающий мировые события, актуальные для жителя Европы. Информация оперативно передается прямыми включениями с мест событий и отличается беспристрастной манерой подачи.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>25</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.189:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[LifeNews]]></title>
+            <annotation><![CDATA[Круглосуточный информационный телеканал. Ориентирован на эксклюзивный видеоконтент. Основную часть эфира занимают выпуски новостей, прямые включения с мест событий, комментарии экспертов, интервью.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>322</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.51:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Москва 24]]></title>
+            <annotation><![CDATA[Круглосуточный информационный телеканал российской столицы. Основная задача канала - максимально подробно и оперативно информировать обо всех событиях, происходящих в Москве. Каждый час в прямом эфире городские новости.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>292</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.227:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[РБК ТВ]]></title>
+            <annotation><![CDATA[Это первый и единственный в России телевизионный бизнес-канал. Ежедневно в эфире РБК освещается ситуация на российском и международном финансовых рынках]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>122</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.86:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Russia Today]]></title>
+            <annotation><![CDATA[Информационный канал для международной аудитории: новости политической и экономической жизни в России и в мире, отчеты о событиях в области бизнеса, культуры, науки, спорта, обзоры прессы.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>79</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.252:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Россия 24]]></title>
+            <annotation><![CDATA[«Россия 24» (ФГУП ГТК «Телеканал „Вести“») — российский информационный телеканал, входящий в холдинг ВГТРК. Главная цель — представлять зрителям самую оперативную информацию из всех регионов страны и из-за её пределов 24 часа в сутки. В эфире представлены главные мировые новости, информация о жизни в России в виде включений программ региональных государственных телерадиокомпаний и отдельных материалов, а также новости экономики, спорта, культуры, высоких технологий, специальные репортажи, собственные расследования, прямые трансляции общественных, политических и других мероприятий.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>31</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.63:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Авто плюс]]></title>
+            <annotation><![CDATA[Первый в России телеканал, который 24 часа в сутки рассказывает об автомобилях, моторных видах спорта и активном отдыхе. Новинки автомобильного рынка, крупнейшие мировые гоночные серии, отчеты с международных автосалонов, история автомобильных марок, экзотические средства передвижения, рекомендации по тюнингу и сервисному обслуживанию авто.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>96</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.111:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Бойцовский клуб]]></title>
+            <annotation><![CDATA[Самый мужской телеканал. Два года в эфире. Прямые трансляции лучших боев – каждую неделю.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>278</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.62:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Боец]]></title>
+            <annotation><![CDATA[В эфире канала поединки мастеров единоборств мирового класса. Интервью с виртуозами боевых искусств, ток-шоу и мастер-классы легендарных российских и зарубежных спортсменов. Турниры по различным видам боевых искусств.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>97</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.118:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Extreme Sports]]></title>
+            <annotation><![CDATA[Спортивный телеканал. Освещает соревнования по экстремальным видам спорта - от рукопашного боя до мотофристайла, транслирует выпуски спортивных новостей.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>135</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.176:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[КХЛ ТВ]]></title>
+            <annotation><![CDATA[Канал, посвященный отечественному хоккею с шайбой и деятельности Континентальной Хоккейной Лиги на территории России и стран СНГ. Вещание канала включает как прямые трансляции матчей Чемпионата КХЛ, так и показ наиболее интересных матчей прошлых лет, информационно-аналитические и новостные программы, интервью со звездами КХЛ и ветеранами хоккея и тематические программы, посвященные советскому хоккею.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>286</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.10:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Русский Экстрим]]></title>
+            <annotation><![CDATA[Канал о российских экстремалах и экстремальных видах спорта. Программы канала о путешествиях, туризме, приключениях и таких экстремальным видам спорта как каякинг, парапланеризм, альпинизм, дайвинг, парашютизм, серфинг, яхтинг, горные лыжи и другие.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>3</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.105:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Спорт]]></title>
+            <annotation><![CDATA[В эфире канала трансляции соревнований по различным видам спорта и передачи собственного производства.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>269</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.109:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Спорт 1]]></title>
+            <annotation><![CDATA[В эфире канала - самые зрелищные спортивные события мира: футбольные чемпионаты, турниры по большому теннису, биатлону, хоккею, боксу, баскетболу и другим популярным видам спорта.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>250</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.101:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Viasat Sport]]></title>
+            <annotation><![CDATA[Круглосуточные трансляции игр лучших хоккейных, футбольных и бейсбольных команд, боксерских поединков и автогонок. Трансляции соревнований чередуются с блоками новостей и ток-шоу.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>91</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.216:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[24 Док]]></title>
+            <annotation><![CDATA[Специализированный канал документального кино об истории России, не только отечественного, но и иностранного производства. Популярные документальные сериалы, фильмы современных режиссеров и классиков документалистики.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>284</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.219:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[24 Техно]]></title>
+            <annotation><![CDATA[Научно-популярный канал о достижениях науки и техники. Открытия, экспедиции, необъяснимые явления и скрытые возможности человека.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>41</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.54:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[365 дней]]></title>
+            <annotation><![CDATA[В эфире канала - документальные и научно-популярные фильмы о разных эпохах цивилизации. Великие люди и исторические личности, крушения империй, рождение шедевров, катастрофы, открытия и многое другое.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>43</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.73:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Discovery Channel]]></title>
+            <annotation><![CDATA[Познавательный телеканал. Основные темы для освещения - мир науки и техники, изобретения, открытия, путешествия, экстремальные развлечения. Канал отличается высокой степенью компетентности и рассчитан на широкую аудиторию.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>53</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.114:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Discovery Science]]></title>
+            <annotation><![CDATA[Канал для поклонников науки и техники. Разнообразные передачи в доступной и красочной форме рассказывают о громких научных достижениях, экспериментах и открытиях.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>54</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.113:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Discovery World]]></title>
+            <annotation><![CDATA[Познавательный телеканал о развитии цивилизации. В эфире можно увидеть высококачественные документальные программы и фильмы, исследующие эволюцию человечества - тайны исчезнувших цивилизаций, секреты выдающихся исторических личностей, события, оказавшие большое влияние на развитие нашего мира.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>56</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=1</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.178:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[ID Investigation Discovery]]></title>
+            <annotation><![CDATA[Телеканал для поклонников криминалистики. Предлагает широкий спектр документальных программ и реалити-шоу, посвященных анализу и расследованию громких преступлений, а также рассказывающих о реальной работе органов правопорядка и спецслужб, экспертов-криминалистов и служб спасения.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>258</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.60:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Интересное ТВ]]></title>
+            <annotation><![CDATA[В эфире канала - документальные, научно-познавательные программы о различных хобби — коллекционировании, изобретательстве, рукоделии и пр. Программы о спортивных, азартных и экстремальных увлечениях, сопровождаемых риском для жизни.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>108</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.122:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[КТО ЕСТЬ КТО]]></title>
+            <annotation><![CDATA[Основу вещания канала составляют документальные фильмы, рассказывающие о жизни выдающихся людей – знаменитых актеров, писателей, художников, политических деятелей.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>281</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.106:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Моя планета]]></title>
+            <annotation><![CDATA[Российский круглосуточный познавательный канал о путешествиях, науке и истории. В эфире представлены документальные проекты российского телевидения и зарубежные научно-популярные фильмы. Загадки истории, новые технологии и самые красивые уголки мира.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>115</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.218:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[National Geographic Channel]]></title>
+            <annotation><![CDATA[Gознавательный канал, созданный по инициативе Национального географического общества США. Это документальные фильмы и передачи о животном и растительном мире планеты, жизни людей в разных странах и их обычаях, об истории и археологии.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>74</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.104:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Наука 2.0]]></title>
+            <annotation><![CDATA[Основа эфира канала – программы о космосе, медицине, технологиях, истории великих открытий. Редакция канала успешно сотрудничает с ведущими научными центрами. Также канал предлагает программы компаний BBC.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>268</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.208:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Оружие]]></title>
+            <annotation><![CDATA[Телеканал полностью посвящен теме оружия. Наземное и воздушное вооружение, история огнестрельного и холодного оружия, лучшие образцы оружия всего мира, история войн и военных мировых конфликтов, боевые искусства, интервью с оружейниками, юридический ликбез в области хранения и использования оружия.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>317</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.103:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Первый Образовательный]]></title>
+            <annotation><![CDATA[СГУ ТВ  предлагает своим зрителям  16  уникальных телепередач. Все программы собственного производства. На сегодняшний день в эфире телеканала СГУ ТВ в рамках передачи «Телекурсы» показано более 1 200 уроков по различным дисциплинам. Представлено более 700 оригинальных авторских программ, которые ведут академики, доктора наук и специалисты-практики. Еженедельно выходят передачи «Телевизионного семейного университета»: «Спросим у юриста», «Школа здоровья», «Мир образования», «События культурной жизни» и другие]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>124</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.153:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Совершенно секретно]]></title>
+            <annotation><![CDATA[Это документальные фильмы, фильмы-расследования и программы, снятые медиахолдингом «Совершенно секретно», а также документальные и детективные фильмы и программы, созданные ведущими телекомпаниями мира.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>288</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.99:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Viasat Explorer]]></title>
+            <annotation><![CDATA[Познавательный телеканал о приключениях, путешествиях, разнообразии животного мира, технике, об экстремальных видах спорта и истории знаменитых преступлений. В программу входят документальные фильмы и тематические шоу о различных увлечениях человека.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>89</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.100:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Viasat History]]></title>
+            <annotation><![CDATA[Канал документального кино о науке и технике, спорте и музыке, о военном и коммерческом деле, об исторических личностях.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>90</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.114:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Viasat Nature]]></title>
+            <annotation><![CDATA[Канал о живой природе всех уголков Земли. Высокое качество съемок. Программы канала не содержат сюжетов о насилии или жестокости. Также отсутствует «домашнее» видео. Канал предназначен для широкой аудитории.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>260</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.232:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Время]]></title>
+            <annotation><![CDATA[Историко-биографический канал о жизни замечательных людей: актеров, спортсменов, музыкантов, политиков, ученых.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>27</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.112:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Cartoon Network]]></title>
+            <annotation><![CDATA[В эфире канала - мультипликационные сериалы студий Hanna-Barbera и Warner Bros. Классические и современные анимационные фильмы. Основная аудитория – дети 6-12 лет. В программе присутствует блок мультфильмов для взрослых adult swim.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>50</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.247:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Da Vinci Learning]]></title>
+            <annotation><![CDATA[Образовательный канал для всей семьи. Программы с интереснейшими опытами, которые дети могут проводить вместе с родителями, увлекательные путешествия сквозь время и пространство. Интересные документальные фильмы со всего света предлагают возможность для развлечения и познания.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>249</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.84:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Детский]]></title>
+            <annotation><![CDATA[Телеканал рассчитан на аудиторию от 3-х до 16-ти лет. Мультфильмы и сериалы: от «Черепашек Ниндзя», до классических советских и российских анимационных фильмов. Познавательно-развлекательные передачи собственного производства.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>100</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.90:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Disney Channel Russia]]></title>
+            <annotation><![CDATA[Федеральный развлекательный телеканал для всей семьи. Популярные мультипликационные и художественные сериалы, лучшие анимационные и кинофильмы, классическая анимация Disney, оригинальное кино канала Disney, а также программы и сериалы российского производства. Круглосуточное вещание.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>64</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.80:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Gulli]]></title>
+            <annotation><![CDATA[Развлекательно-познавательный канал для всей семьи. Образовательные программы для детей от 6 до 14 лет. Большое разнообразие документальных и развлекательно-образовательных программ, мультфильмы, репортажи и короткие передачи. Каждая из них затрагивает важные для обсуждения в семье вопросы.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>12</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.20:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[JimJam]]></title>
+            <annotation><![CDATA[Канал для детей от 1 до 6 лет. Кукольные и рисованные мультфильмы, программы с пластилиновыми персонажами, веселые песни с субтитрами, занимательные истории, рассказанные в форме костюмированных музыкально-танцевальных постановок. В телепрограмму канала включены блоки, обучающие основам английского языка.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>259</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.242:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Карусель]]></title>
+            <annotation><![CDATA[Общероссийский канал для детей и подростков. В эфире представлены познавательные, обучающие, игровые программы, а также мультфильмы и телесериалы.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>28</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.228:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Мультимания]]></title>
+            <annotation><![CDATA[Развлекательный канал для детей и подростков от 5 до 15 лет. Мультфильмы, мультсериалы от ведущих производителей и познавательные программы. Круглосуточное вещание.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>285</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.147:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Nickelodeon]]></title>
+            <annotation><![CDATA[Детский канал мультипликационных фильмов и телесериалов, развлекательных, спортивных и музыкальных программ. Взрослое телевидение в детском варианте.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>76</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.104:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Радость моя]]></title>
+            <annotation><![CDATA[Детский семейный образовательный телеканал. Культурно-просветительские, образовательные и детские программы собственного производства.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>121</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.6:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[TiJi]]></title>
+            <annotation><![CDATA[Детский телеканал, ориентированный на дошкольную аудиторию, один из ведущих детских каналов во Франции. В программе представлены мультсериалы, кукольные шоу, музыкальные клипы, а также развивающие передачи, направленные на обучение детей полезным жизненным навыкам.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>11</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.49:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Улыбка ребенка]]></title>
+            <annotation><![CDATA[Детский телеканал - передачи о нравственном воспитании детей, развитии детского творчества, детском образовании, мультфильмы и многое другое.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>129</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.191:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Amedia Premium HD (orig)]]></title>
+            <annotation><![CDATA[Телеканал лучших сериалов планеты. Оригинальная озвучка.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>324</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.190:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Amedia Premium HD (rus)]]></title>
+            <annotation><![CDATA[Телеканал лучших сериалов планеты.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>323</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.233:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Дом кино]]></title>
+            <annotation><![CDATA[Круглосуточный канал русского кино. Отечественные фильмы разных лет и жанров, от советской классики XX века до современных российских блокбастеров.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>26</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.241:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[ЕвроКино]]></title>
+            <annotation><![CDATA[Тематический канал европейского кино: фильмы киностудий стран Европейского Союза, включая работы признанных режиссеров и ленты начинающих или малоизвестных кинематографистов.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>101</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.85:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Иллюзион+]]></title>
+            <annotation><![CDATA[Канал зарубежных фильмов и телесериалов разных жанров: комедии, мелодрамы, боевики, фантастика, мультипликация.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>105</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.57:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Индия ТВ]]></title>
+            <annotation><![CDATA[Первый российский канал фильмов и телевизионных программ Индии. Для тех, кто любит индийское кино и интересуется индийской культурой. Классические картины Болливуда, премьеры новых фильмов и сериалов, музыка, новости индийского кино, документальные и познавательные передачи.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>107</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.56:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Комедия ТВ]]></title>
+            <annotation><![CDATA[Развлекательный телеканал отечественных и зарубежных комедий. Классические комедийные фильмы и сериалы, юмористические телевизионные шоу.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>109</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.225:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[НСТ]]></title>
+            <annotation><![CDATA[«Настоящее Страшное Телевидение» – это классические фильмы ужасов, современные триллеры, мистика, фантастика, трэш, аниме, документальные фильмы и программы соответствующего содержания. Много черного юмора.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>116</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.236:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Русский Иллюзион]]></title>
+            <annotation><![CDATA[Канал демонстрирует ностальгическое кино, объединяющее поколения. Ежедневно на канале ретроспектива популярных советских кинофильмов и телесериалов разных лет. Программы собственного производства о звездах советского кино и неизвестных подробностях создания популярных фильмов.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>104</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.112:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Русский роман]]></title>
+            <annotation><![CDATA[Круглосуточный телеканал для любителей отечественных телевизионных мелодрам.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>279</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.229:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Sony Entertainment]]></title>
+            <annotation><![CDATA[Канал популярных американских кинофильмов и телесериалов разных жанров – от боевиков до комедий. Только фильмы с участием известных актеров, в том числе мировые хиты.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>81</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.230:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Sony Sci-fi]]></title>
+            <annotation><![CDATA[Канал фантастических и мистических фильмов и телесериалов. Сочетает развлекательную и серьезную научную фантастику.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>10</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.51:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[TV-XXI]]></title>
+            <annotation><![CDATA[Это сочетание классики европейского, американского и российского кино с лентами авангардных мастеров и малоизвестных широкому кругу зрителей режиссеров: фильмы в широком диапазоне жанров и стран-производителей.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>84</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.102:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[TV1000 Русское кино]]></title>
+            <annotation><![CDATA[В эфире канала - фильмы России и СНГ, от советской классики, до новинок кинопроката, удостоенных призов различных кинофестивалей.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>92</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.98:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[TV1000]]></title>
+            <annotation><![CDATA[Эфир канала составляют зарубежные кинофильмы разных лет. В том числе известные голливудские и европейские ленты.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>85</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.97:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[TV1000 ACTION]]></title>
+            <annotation><![CDATA[Канал остросюжетных фильмов: широкий выбор голливудских блокбастеров, криминальных драм, фантастики и триллеров.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>86</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.193:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Восьмой канал]]></title>
+            <annotation><![CDATA[Российский информационно-развлекательный телеканал. Кино, сериалы, спортивные шоу, информационные и развлекательные программы, документальные фильмы, репортажи, мультфильмы и юмор.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>261</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.47:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Amazing Life]]></title>
+            <annotation><![CDATA[В эфире канала представлены познавательные программы (кулинарные, о путешествиях, странах, истории), современные художественные фильмы и сериалы, мультфильмы, документальные ленты, подборки музыкальных клипов.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>47</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.6:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Arirang]]></title>
+            <annotation><![CDATA[Динамичная Корея во всех ее проявлениях. Корейская политика, экономика, спорт, мода, кухня, шоу-бизнес... Недаром «Arirang» по-корейски значит «гимн». Этот телеканал - настоящий гимн прекрасной стране.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>136</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.253:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[CNL]]></title>
+            <annotation><![CDATA[CNL - это поток Божьих благословений, который изливается в миллионы домов по всему лицу Земли. CNL - это ежедневное прославление, молитва, поклонение Богу, учение и радость.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>51</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.1:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Comedy TV]]></title>
+            <annotation><![CDATA[Круглосуточный развлекательный телеканал. Основу вещания составляют лучшие номера, скетчи и шутки из всех проектов Comedy Club Production, таких как Comedy Club, «Наша Russia», «Убойная лига», «Смех без правил» и других.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>6</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.53:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Контакт Шанс ТВ]]></title>
+            <annotation><![CDATA[]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>110</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.94:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Домашний магазин]]></title>
+            <annotation><![CDATA[Здесь все покупки делать легко и удобно, здесь, в доброжелательной и спокойной обстановке вы купите все, что вам необходимо, и при этом прилично сэкономите! Мы приготовили для вас много интересных товаров для дома, которые принесут много пользы вашей семье.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>262</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.243:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Fashion TV Russia]]></title>
+            <annotation><![CDATA[Канал, посвященный моде и только моде. Коллекции знаменитых Домов, недели прет-а-порте, модные линии сезона - в стильном музыкальном оформлении]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>60</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.240:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Юмор BOX]]></title>
+            <annotation><![CDATA[Развлекательный канал транслирует различные юмористические программы, записи выступлений артистов разговорного жанра, музыкальные номера, цирковые выступления, комедийные киноленты и сериалы, мультфильмы.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>133</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.61:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Кухня ТВ]]></title>
+            <annotation><![CDATA[канал о вкусной и здоровой пище, кулинарные шоу, практические советы по приготовлению блюд, познавательные программы о национальной кухне, диете и здоровом питании. Ежедневно – рецепт, связанный с конкретным днем в истории.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>111</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.226:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Мать и Дитя]]></title>
+            <annotation><![CDATA[Познавательный канал о материнстве и детстве. В ежедневных программах: все этапы развития ребенка, советы экспертов по уходу за детьми. Своим опытом воспитания делятся известные деятели культуры и науки.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>303</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.205:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Мир]]></title>
+            <annotation><![CDATA[Политика. Экономика. Культура. Спорт. Телеканал «Мир» освещает все самые важные события в Содружестве Независимых Государств и способствует созданию единого информационного пространства]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>32</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.241:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Москва Доверие]]></title>
+            <annotation><![CDATA[]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>309</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.12:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Ностальгия]]></title>
+            <annotation><![CDATA[В эфире канала - программы из архивов отечественного телевещания, спектакли последних тридцати лет, документальные фильмы об истории советского периода, отечественные и зарубежные кинофильмы 1960-х – 1980-х годов, популярные ранее шоу-программы.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>5</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.2:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Парк развлечений]]></title>
+            <annotation><![CDATA[В эфире, в основном, программы о музыке (история известных коллективов, живые концерты, музыкальные шоу) и кинематографе (о процессе создания фильмов, выдающихся личностях из мира кино). Ежедневные выпуски новостей познакомят с событиями из мира кино, театра, музыки, дизайна.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>289</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.206:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[РЖД]]></title>
+            <annotation><![CDATA[Корпоративный телеканал ОАО «РЖД». В эфире представлены информационные, познавательные, профессионально-ориентированные, тематические и документальные программы, освещающие различные аспекты работы российских железных дорог.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>80</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.107:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Сарафан]]></title>
+            <annotation><![CDATA[Развлекательный канал. В программе представлены ранее выходившие в эфир юмористические программы производства ВГТРК, записи выступлений артистов разговорного жанра, отечественная музыка.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>138</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.65:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Союз]]></title>
+            <annotation><![CDATA[Православный телеканал Екатеринбургской епархии. Освещает деятельность многих епархий Русской Православной Церкви как в России, так и в некоторых странах СНГ.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>125</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.167:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Спас]]></title>
+            <annotation><![CDATA[Общественно православный канал. 60% процентов эфирного времени канала отведено общественному вещанию (документалистика, просветительские и образовательные программы), а остальные 40% составляет православная тематика.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>126</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.127:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Страна]]></title>
+            <annotation><![CDATA[В эфире канала - фильмы и телепрограммы о России, дебютные работы молодых кинематографистов, студенческие короткометражки и музыкальные клипы начинающих исполнителей, а также новости науки и техники, культуры и искусства, экономики и потребительского рынка, популярные советские фильмы и новое российское кино, документальные фильмы.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>37</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.48:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Style TV]]></title>
+            <annotation><![CDATA[Канал о стильном образе жизни: новинки высокой моды; роскошные автомобили, яхты и самолеты; тенденции в области оздоровления и улучшения физической формы. А также: новости музыки, кино, шоу-бизнеса, музыкальные клипы.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>82</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.192:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[STV]]></title>
+            <annotation><![CDATA[Телеканал о жизни звезд, модных трендах и главных светских событиях. Герои канала - звезды шоу-бизнеса, политики, спортсмены, дизайнеры, актеры, художники и другие знаменитости. Также в эфире репортажи с модных показов, отчеты с недель мод.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>98</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.139:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[TDK]]></title>
+            <annotation><![CDATA[Женский канал TDK расскажет, как устроиться на работу, воспитывать ребенка, выстраивать взаимоотношения с мужем, справиться с конфликтами на работе и семейными проблемами, выбрать товар или услугу, хорошо выглядеть.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>83</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.231:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Телекафе]]></title>
+            <annotation><![CDATA[Кулинарный телеканал. Основной жанр - «звездная кулинария». Известные личности и знаменитые шеф-повара делятся секретами фирменных блюд, любимыми рецептами, актуальными кулинарными тенденциями.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>30</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.77:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[TLC]]></title>
+            <annotation><![CDATA[Канал для женской аудитории, рассказывающий о жизни современной женщины. Программы о семье и детях, развлекательные передачи, советы по обустройству дома, рекомендации стилистов, трогательные реальные истории.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>256</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.204:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[ТНВ-планета]]></title>
+            <annotation><![CDATA[Информационные, познавательные и развлекательные передачи на татарском и русском языках для всех кто считает Татарстан своей исторической родиной и интересуется национальной культурой, историей и современной жизнью Республики.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>19</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.170:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[ТНВ-Татарстан]]></title>
+            <annotation><![CDATA[Общественно-информационный канал: новости, ток-шоу, художественные и документальные фильмы, сериалы, мультфильмы. Вещание ведется на татарском и русском языках.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>295</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.203:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[ТРО Союз]]></title>
+            <annotation><![CDATA[]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>128</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.50:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[TTC]]></title>
+            <annotation><![CDATA[Телеканал «ТТС» дает Вам возможность приобретать широкий ассортимент уникальных и качественных товаров по привлекательным ценам.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>247</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.116:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Zone Reality]]></title>
+            <annotation><![CDATA[Экстремальные ситуации, захватывающие события, катастрофы, невероятные происшествия, главным героем которых выступает человек, – основные объекты внимания канала о Реальной Жизни.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>93</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.121:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Brazzers TV Europe]]></title>
+            <annotation><![CDATA[]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>280</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.150:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[FRENCHLOVER TV]]></title>
+            <annotation><![CDATA[]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>264</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.110:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Русская ночь]]></title>
+            <annotation><![CDATA[Первый российский круглосуточный эротический канал. В эфире телеканала транслируются лучшие телевизионные шоу и клипы с участием российских и мировых красавиц. Только на телеканале «Русская ночь», впервые в стране, можно увидеть эротический конкурс красоты «Мисс Русская Ночь», в котором участвуют лучшие девушки со всей необъятной России.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>267</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.11:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[360° Подмосковье HD]]></title>
+            <annotation><![CDATA[Телеканал "360° Подмосковье" – новый, яркий и амбициозный проект. Мы освещаем полный спектр жизни Московского региона от масштабных преобразований до семейных историй жителей.
+
+Мы видим больше! В небе Подмосковья несет информационную вахту телевизионный вертолет Robinson R44. "Вертолет 360" – ежедневное шоу, которое представит важные события с высоты птичьего полета.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>355</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.3:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Fox HD]]></title>
+            <annotation><![CDATA[Это премьеры лучших сериалов самых разных жанров, включающих драмы, комедии, триллеры и детективные истории.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>300</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.4:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Fox Life Russia HD]]></title>
+            <annotation><![CDATA[Канал телесериалов для современных, активных женщин: популярные во всем мире комедийные, мелодраматические и драматические сериалы.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>297</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.123:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Fashion One HD]]></title>
+            <annotation><![CDATA[Телеканал о моде и стиле жизни. В эфире представлен широкий спектр программ, посвященных красоте, гламуру, стилю и роскоши, развлечениям и кино, экзотическим путешествиям, фитнесу, здоровому питанию. Большое внимание уделяется важнейшим событиям мира моды.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>339</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.200:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Mezzo Live HD]]></title>
+            <annotation><![CDATA[]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>348</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.202:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[MGM HD]]></title>
+            <annotation><![CDATA[]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>350</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.12:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Мир HD]]></title>
+            <annotation><![CDATA[Телеканал «МИР HD» знакомит зрителей с современной жизнью и историей стран постсоветского пространства, формирует культурные, социальные и экономические связи. Основу контента составляют информационно-аналитические, познавательные, развлекательные и публицистические программы, в том числе и для детей. Значительная часть эфира отведена художественным и многосерийным фильмам.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>356</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.203:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[MTV Live HD]]></title>
+            <annotation><![CDATA[]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>351</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.0:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[National Geographic Channel HD]]></title>
+            <annotation><![CDATA[Познавательный канал, созданный по инициативе Национального географического общества США. Это документальные фильмы и передачи о животном и растительном мире планеты, жизни людей в разных странах и их обычаях, об истории и археологии.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>299</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.246:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Nat Geo Wild HD]]></title>
+            <annotation><![CDATA[Канал о дикой природе. В эфире представлен большой спектр неизменно качественных документальных фильмов собственного производства, рассказывающих о красоте, разнообразии и опасностях животного мира нашей планеты.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>298</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.204:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Nickelodeon HD]]></title>
+            <annotation><![CDATA[]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>352</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.122:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Outdoor Channel HD]]></title>
+            <annotation><![CDATA[Cпециализированный телеканал об активном отдыхе - охоте, рыбалке, путешествиях и развлечениях на природе. Передачи о внедорожной технике и мотоспорте, оружии и боеприпасах, экстремальных видах спорта.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>338</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.201:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Охотник и рыболов HD]]></title>
+            <annotation><![CDATA[]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>349</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.152:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Первый Канал HD]]></title>
+            <annotation><![CDATA[Версия Первого канала в формате высокой четкости. Полностью дублирует основную версию Первого канала.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>294</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.131:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Россия HD]]></title>
+            <annotation><![CDATA[Канал вещающий в формате высокой четкости. Программная сетка "Россия HD" не дублирует телеканал "Россия 1" или какой-либо другой канал ВГТРК, а формируется из лучших передач каналов "России 1", "Россия 2" (спорт), "Россия К" (культура).]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>293</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.120:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Russian Travel Guide HD]]></title>
+            <annotation><![CDATA[Канал о путешествиях по России: уникальные природные заповедники и места отдыха, лучшие гостиницы и рестораны, культура, искусство и традиции коренных народов.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>336</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.156:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[RT Doc HD]]></title>
+            <annotation><![CDATA[Эксклюзивные документальные фильмы, сериалы и дискуссионные программы о событиях в России и в мире.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>302</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.151:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[RT News HD]]></title>
+            <annotation><![CDATA[Информационный канал для международной аудитории: новости политической и экономической жизни в России и в мире, отчеты о событиях в области бизнеса, культуры, науки, спорта, обзоры прессы.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>291</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.119:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Спорт 1 HD]]></title>
+            <annotation><![CDATA[Самые зрелищные спортивные события мира: футбольные чемпионаты, турниры по большому теннису, биатлону, хоккею, боксу, баскетболу и другим популярным видам спорта.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>263</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.121:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Travel+Adventure HD]]></title>
+            <annotation><![CDATA[Телеканал о путешествиях, туризме, активном отдыхе и приключениях. В сетке вещания представлены передачи, рассказывающие о достопримечательностях и особенностях разных уголков Земли, программы-путеводители для тех, кто планирует отпуск, советы опытных путешественников, документальные фильмы.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>337</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.13:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[World Business Channel HD]]></title>
+            <annotation><![CDATA[World Business Channel — канал не только о бизнесе, это канал для деловых людей. Наполнение телеканала осуществляется по трем основным тематикам: бизнес, спорт, развлечения.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>357</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.123:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Эгоист ТВ]]></title>
+            <annotation><![CDATA[В эфире канала представлена пополняемая коллекция эксклюзивных аудиовизуальных произведений коротких форм в жанре художественного и документального фильма, fashion, музыки и ню-арта. В течение дня в эфир выходит около ста пятидесяти оригинальных фильмов. Некоторые программы канала могут содержать откровенные сцены, ненормативную лексику. Не рекомендуется к показу несовершеннолетним.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>282</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.187:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[AMEDIA 1]]></title>
+            <annotation><![CDATA[Современная киноклассика и самые яркие звезды мирового кинематографа, документальные фильмы и полнометражная анимация, мейнстрим и артхаус.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>319</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.188:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[AMEDIA 2]]></title>
+            <annotation><![CDATA[Самые популярные российские сериалы, снятые в последние 10 лет, а также премьеры новых телехитов демонстрируются на этом канале в удобное время. Каждый день - новые серии.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>320</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.79:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[CBS Drama]]></title>
+            <annotation><![CDATA[Канал демонстрирует современные и классические телесериалы и фильмы производства США. В сетке представлена продукция различных жанров.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>94</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.77:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[E!]]></title>
+            <annotation><![CDATA[В эфире канала представлены реалити-шоу, новости из мира шоу-бизнеса, а также программы, посвященные значимым голливудским мероприятиям, известным личностям и громким историям.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>255</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.215:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Феникс Плюс Кино]]></title>
+            <annotation><![CDATA[В эфире канала - фильмы, в основном производства кинокомпании «Феникс-Фильм», с успехом прошедшие на федеральных каналах. Лучшие российские сериалы 90-х - 2000-х годов.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>130</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.96:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[FOX]]></title>
+            <annotation><![CDATA[Первый и единственный русский развлекательный канал, полностью посвященный детективам, расследованиям и мистике]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>61</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.124:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Fox Life]]></title>
+            <annotation><![CDATA[Канал телесериалов для современных, активных женщин: популярные во всем мире комедийные, мелодраматические и драматические сериалы.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>62</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.59:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Много ТВ]]></title>
+            <annotation><![CDATA[Канал телесериалов. Зарубежные мелодрамы, триллеры, приключения, фантастика, ужасы, боевики, латиноамериканские теленовеллы.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>114</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.202:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[СТС Love]]></title>
+            <annotation><![CDATA[Канал в первую очередь, для молодежной женской аудитории 18-25. В эфире лучшие российские и международные сериалы и реалити, в том числе хиты телеканала СТС: «Ранетки», «Папины дочки», «Кадетство», «Закрытая школа» и «Молодежка».]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>327</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.78:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Universal]]></title>
+            <annotation><![CDATA[Это художественные фильмы и сериалы детективного жанра производства компании NBC Universal Global Networks.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>9</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.75:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Animal Planet]]></title>
+            <annotation><![CDATA[Первый и единственный телеканал в мире, посвященный полному чудес животному миру. Увлекательные документальные ленты и живописные репортажи о жизни животных.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>48</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.3.95:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Nat Geo Wild]]></title>
+            <annotation><![CDATA[Канал о дикой природе. В эфире представлен большой спектр неизменно качественных документальных фильмов собственного производства, рассказывающих о красоте, разнообразии и опасностях животного мира нашей планеты.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>75</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.135:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[Russian Travel Guide]]></title>
+            <annotation><![CDATA[Канал о путешествиях по России: уникальные природные заповедники и места отдыха, лучшие гостиницы и рестораны, культура, искусство и традиции коренных народов.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>137</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=0</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.239:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[ZooПарк]]></title>
+            <annotation><![CDATA[В эфире канала - жизнь животных в домашних условиях и естественной среде обитания. Документальные фильмы, любительские съемки, познавательные программы, советы дрессировщиков, ветеринаров и зоопсихологов.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>95</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.177:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[НТВ+ Наш Футбол]]></title>
+            <annotation><![CDATA[Официальный телеканал Российской Футбольной Премьер-Лиги, эксклюзивно транслирующий в прямом эфире все матчи СОГАЗ-Чемпионата России по футболу. В эфире канала: обзор туров чемпионата страны, авторские программы, регулярные передачи о клубах Премьер-Лиги и другое.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>316</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+            <track>
+            <location>rtp://@230.3.4.175:5678</location>
+            <album><![CDATA[InetCom TV]]></album>
+            <title><![CDATA[НТВ+ Наш Футбол HD]]></title>
+            <annotation><![CDATA[«Наш футбол» - официальный телеканал Российской Футбольной Премьер-Лиги, эксклюзивно транслирующий в прямом эфире все матчи СОГАЗ-Чемпионата России по футболу. В эфире канала: обзор туров чемпионата страны, авторские программы, регулярные передачи о клубах Премьер-Лиги и другое.]]></annotation>            
+            <extension application="http://www.videolan.org/vlc/playlist/0">                
+                <vlc:id>315</vlc:id>
+                <vlc:option>deinterlace-mode=linear</vlc:option>
+                <vlc:option>http-caching=3000</vlc:option>
+                <vlc:option>audio-track=</vlc:option>
+            </extension>
+        </track>
+        </trackList>
+    <extension application="http://www.videolan.org/vlc/playlist/0">
+        <vlc:node title="Эфирные">
+            <vlc:item tid="42" />
+            <vlc:item tid="23" />
+            <vlc:item tid="20" />
+            <vlc:item tid="18" />
+            <vlc:item tid="117" />
+            <vlc:item tid="13" />
+            <vlc:item tid="71" />
+            <vlc:item tid="40" />
+            <vlc:item tid="14" />
+            <vlc:item tid="22" />
+            <vlc:item tid="15" />
+            <vlc:item tid="16" />
+            <vlc:item tid="17" />
+            <vlc:item tid="127" />
+            <vlc:item tid="21" />
+            <vlc:item tid="57" />
+            <vlc:item tid="290" />
+            <vlc:item tid="103" />
+          </vlc:node>
+        <vlc:node title="Музыкальные">
+            <vlc:item tid="45" />
+            <vlc:item tid="49" />
+            <vlc:item tid="306" />
+            <vlc:item tid="283" />
+            <vlc:item tid="112" />
+            <vlc:item tid="68" />
+            <vlc:item tid="69" />
+            <vlc:item tid="70" />
+            <vlc:item tid="29" />
+            <vlc:item tid="72" />
+            <vlc:item tid="73" />
+            <vlc:item tid="287" />
+            <vlc:item tid="78" />
+            <vlc:item tid="131" />
+            <vlc:item tid="88" />
+            <vlc:item tid="257" />
+          </vlc:node>
+        <vlc:node title="Новостные">
+            <vlc:item tid="24" />
+            <vlc:item tid="52" />
+            <vlc:item tid="58" />
+            <vlc:item tid="25" />
+            <vlc:item tid="322" />
+            <vlc:item tid="292" />
+            <vlc:item tid="122" />
+            <vlc:item tid="79" />
+            <vlc:item tid="31" />
+          </vlc:node>
+        <vlc:node title="Спортивные">
+            <vlc:item tid="96" />
+            <vlc:item tid="278" />
+            <vlc:item tid="97" />
+            <vlc:item tid="135" />
+            <vlc:item tid="286" />
+            <vlc:item tid="3" />
+            <vlc:item tid="269" />
+            <vlc:item tid="250" />
+            <vlc:item tid="91" />
+          </vlc:node>
+        <vlc:node title="Познавательные">
+            <vlc:item tid="284" />
+            <vlc:item tid="41" />
+            <vlc:item tid="43" />
+            <vlc:item tid="53" />
+            <vlc:item tid="54" />
+            <vlc:item tid="56" />
+            <vlc:item tid="258" />
+            <vlc:item tid="108" />
+            <vlc:item tid="281" />
+            <vlc:item tid="115" />
+            <vlc:item tid="74" />
+            <vlc:item tid="268" />
+            <vlc:item tid="317" />
+            <vlc:item tid="124" />
+            <vlc:item tid="288" />
+            <vlc:item tid="89" />
+            <vlc:item tid="90" />
+            <vlc:item tid="260" />
+            <vlc:item tid="27" />
+          </vlc:node>
+        <vlc:node title="Детские">
+            <vlc:item tid="50" />
+            <vlc:item tid="249" />
+            <vlc:item tid="100" />
+            <vlc:item tid="64" />
+            <vlc:item tid="12" />
+            <vlc:item tid="259" />
+            <vlc:item tid="28" />
+            <vlc:item tid="285" />
+            <vlc:item tid="76" />
+            <vlc:item tid="121" />
+            <vlc:item tid="11" />
+            <vlc:item tid="129" />
+          </vlc:node>
+        <vlc:node title="Фильмовые">
+            <vlc:item tid="324" />
+            <vlc:item tid="323" />
+            <vlc:item tid="26" />
+            <vlc:item tid="101" />
+            <vlc:item tid="105" />
+            <vlc:item tid="107" />
+            <vlc:item tid="109" />
+            <vlc:item tid="116" />
+            <vlc:item tid="104" />
+            <vlc:item tid="279" />
+            <vlc:item tid="81" />
+            <vlc:item tid="10" />
+            <vlc:item tid="84" />
+            <vlc:item tid="92" />
+            <vlc:item tid="85" />
+            <vlc:item tid="86" />
+          </vlc:node>
+        <vlc:node title="Разные">
+            <vlc:item tid="261" />
+            <vlc:item tid="47" />
+            <vlc:item tid="136" />
+            <vlc:item tid="51" />
+            <vlc:item tid="6" />
+            <vlc:item tid="110" />
+            <vlc:item tid="262" />
+            <vlc:item tid="60" />
+            <vlc:item tid="133" />
+            <vlc:item tid="111" />
+            <vlc:item tid="303" />
+            <vlc:item tid="32" />
+            <vlc:item tid="309" />
+            <vlc:item tid="5" />
+            <vlc:item tid="289" />
+            <vlc:item tid="80" />
+            <vlc:item tid="138" />
+            <vlc:item tid="125" />
+            <vlc:item tid="126" />
+            <vlc:item tid="37" />
+            <vlc:item tid="82" />
+            <vlc:item tid="98" />
+            <vlc:item tid="83" />
+            <vlc:item tid="30" />
+            <vlc:item tid="256" />
+            <vlc:item tid="19" />
+            <vlc:item tid="295" />
+            <vlc:item tid="128" />
+            <vlc:item tid="247" />
+            <vlc:item tid="93" />
+          </vlc:node>
+        <vlc:node title="Для взрослых">
+            <vlc:item tid="280" />
+            <vlc:item tid="264" />
+            <vlc:item tid="267" />
+          </vlc:node>
+        <vlc:node title="HD каналы">
+            <vlc:item tid="355" />
+            <vlc:item tid="300" />
+            <vlc:item tid="297" />
+            <vlc:item tid="339" />
+            <vlc:item tid="348" />
+            <vlc:item tid="350" />
+            <vlc:item tid="356" />
+            <vlc:item tid="351" />
+            <vlc:item tid="299" />
+            <vlc:item tid="298" />
+            <vlc:item tid="352" />
+            <vlc:item tid="338" />
+            <vlc:item tid="349" />
+            <vlc:item tid="294" />
+            <vlc:item tid="293" />
+            <vlc:item tid="336" />
+            <vlc:item tid="302" />
+            <vlc:item tid="291" />
+            <vlc:item tid="263" />
+            <vlc:item tid="337" />
+            <vlc:item tid="357" />
+          </vlc:node>
+        <vlc:node title="Эгоист ТВ">
+            <vlc:item tid="282" />
+          </vlc:node>
+        <vlc:node title="Сериалы">
+            <vlc:item tid="319" />
+            <vlc:item tid="320" />
+            <vlc:item tid="94" />
+            <vlc:item tid="255" />
+            <vlc:item tid="130" />
+            <vlc:item tid="61" />
+            <vlc:item tid="62" />
+            <vlc:item tid="114" />
+            <vlc:item tid="327" />
+            <vlc:item tid="9" />
+          </vlc:node>
+        <vlc:node title="Планета Земля">
+            <vlc:item tid="48" />
+            <vlc:item tid="75" />
+            <vlc:item tid="137" />
+            <vlc:item tid="95" />
+          </vlc:node>
+        <vlc:node title="НТВ+">
+            <vlc:item tid="316" />
+            <vlc:item tid="315" />
+          </vlc:node>
+      </extension>
+</playlist>
