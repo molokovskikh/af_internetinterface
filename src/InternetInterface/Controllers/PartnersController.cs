@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Configuration;
 using System.Diagnostics.SymbolStore;
 using System.Linq;
+using System.Net.Mail;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Common.Web.Ui.Controllers;
@@ -74,11 +75,18 @@ namespace InternetInterface.Controllers
 						return;
 					}
 					var random = Guid.NewGuid().ToString().Substring(0, 8);
-					ActiveDirectoryHelper.ChangePassword(partner.Login,random);
-					var mailer = this.Mailer<Mailer>();
-					var body = "Ваш пароль был изменен, новый пароль - " + random;
-					mailer.SendText("internet@ivrn.net",partner.Email , "Уведомление об изменении пароля", body);
-					Notify("Пароль сброшен и отправлен на почту ");
+					try {
+						ActiveDirectoryHelper.ChangePassword(partner.Login,random);
+						var mailer = this.Mailer<Mailer>();
+						var body = "Ваш пароль был изменен, новый пароль - " + random;
+						mailer.SendText("internet@ivrn.net", partner.Email, "Уведомление об изменении пароля", body);
+						Notify("Пароль сброшен и отправлен на почту ");
+					}
+					catch (SmtpFailedRecipientException)
+					{
+						Error("Что-то пошло не так. Возможно адрес электронной почты не существует.");
+					}
+					
 					RedirectToReferrer();
 					return;
 				}

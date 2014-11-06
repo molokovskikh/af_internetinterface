@@ -524,7 +524,9 @@
     <None Include="Views\Register\RegisterClient.brail" />
     <None Include="Views\Search\SearchBy.brail" />
     <None Include="Views\Subview\MapHead.brail" />
-    <None Include="Views\Partners\Partner.brail" />
+    <None Include="Views\Partners\Partner.brail">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Views\Subview\Payment.brail" />
     <None Include="Views\Partners\Report.brail" />
     <None Include="Views\ConnectionRequest\Index.brail" />
