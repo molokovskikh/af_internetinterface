@@ -236,6 +236,7 @@
       <Link>global.config</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="playlist.xspf" />
     <None Include="Views\BonusPrograms\ConnectFriend.brail" />
     <None Include="Views\Main\Feedback.brail" />
     <None Include="Views\Main\MessageSended.brail" />
