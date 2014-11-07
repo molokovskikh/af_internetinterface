@@ -6,7 +6,7 @@ using Castle.MonoRail.Framework;
 using Common.Web.Ui.Controllers;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
-using Boo.Lang.Compiler;
+
 using NHibernate.Linq;
 using NPOI.SS.Formula.Functions;
 
