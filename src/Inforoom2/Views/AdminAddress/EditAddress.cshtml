@@ -4,7 +4,7 @@
 @{
 	Address address = ViewBag.Address;
 }
-<div style="width: 1000px; height: 200px; margin: 0px auto; border: 1px gainsboro solid">
+<div style="width: 1000px;  margin: 0px auto; border: 1px gainsboro solid">
 	<div class="UpdateAddress" >
 		@using (@Html.BeginForm("UpdateAddress", "AdminAddress", FormMethod.Post)) {
 			@Html.HiddenFor(model => address.Id)

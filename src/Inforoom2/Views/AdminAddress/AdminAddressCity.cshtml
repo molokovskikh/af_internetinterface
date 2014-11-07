@@ -5,7 +5,7 @@
 }
 
 <h2>AdminCity</h2>
-
+@{ Html.RenderPartial("AdminPanel");  }
 <span><button class="CreateAddress" onclick=" location.href = '@Url.Action("EditCity", "AdminAddress")' ">Создать город</button></span>
 
 <div class="AdminAddress">

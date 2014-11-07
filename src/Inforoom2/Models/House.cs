@@ -6,6 +6,16 @@ namespace Inforoom2.Models
 	[Class(0, Table = "house", NameType = typeof(House))]
 	public class House : BaseModel
 	{
+		public House()
+		{
+		}
+
+		public House(string number, string housing)
+		{
+			Number = number;
+			Housing = housing;
+		}
+
 		[ManyToOne(Column = "Street", Cascade = "save-update")]
 		public virtual Street Street { get; set; }
 

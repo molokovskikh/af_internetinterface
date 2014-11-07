@@ -8,7 +8,7 @@
 }
 
 <h2>AdminAddress</h2>
-
+@{ Html.RenderPartial("AdminPanel");  }
 <span><button class="CreateAddress" onclick=" location.href = '@Url.Action("EditSwitchAddress", "AdminAddress")' ">Создать адрес</button></span>
 <span><button class="CreateAddress" onclick=" location.href = '@Url.Action("EditPrivateSwitchAddress", "AdminAddress")' ">Создать адрес в частном секторе</button></span>
 

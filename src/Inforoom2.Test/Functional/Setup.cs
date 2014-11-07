@@ -49,6 +49,9 @@ namespace Inforoom2.Test.Functional
 
 		public static void SeedDb()
 		{
+			ImportSwitchesAddresses();
+			GeneratePlansAndPrices();
+
 			Permission permission = new Permission { Name = "TestPermission" };
 			session.Save(permission);
 
@@ -57,11 +60,18 @@ namespace Inforoom2.Test.Functional
 
 			var pass = PasswordHasher.Hash("password");
 			var client = new Client {
-				City = "Воронеж",
 				Username = "client",
 				Password = pass.Hash,
-				Salt = pass.Salt
+				Salt = pass.Salt,
+				PhoneNumber = "4951234567",
+				Name = "Иван",
+				Surname = "Дулин",
+				Patronymic = "Михалыч",
+				Plan = session.Get<Plan>(1),
+				Balance = 10000
 			};
+
+			client.Address = new Address { House = session.Query<House>().FirstOrDefault() };
 			session.Save(client);
 
 			IList<Role> roles = new List<Role>();
@@ -73,12 +83,35 @@ namespace Inforoom2.Test.Functional
 				Salt = pass.Salt,
 				Roles = roles,
 			};
-
-
 			session.Save(emp);
 			session.Flush();
+		}
 
-			ImportSwitchesAddresses();
+		private static void GeneratePlansAndPrices()
+		{
+		
+			Plan plan1 = new Plan();
+			plan1.Name = "Plan1";
+			plan1.Price = 5;
+			plan1.Speed = 5;
+			plan1.PlanTransfers = new List<PlanTransfer>();
+
+			Plan plan2 = new Plan();
+			plan2.Name = "Plan2";
+			plan2.Price = 5;
+			plan2.Speed = 5;
+			
+			plan1.AddPlanTransfer(plan2, 100);
+
+			session.Save(plan1);
+			session.Save(plan2);
+			
+			session.Flush();
+
+			var dbPlan = session.Get<Plan>(1);
+			foreach (var plan in dbPlan.PlanTransfers) {
+				var x = plan.IsAvailableToSwitch;
+			}
 		}
 
 		public static void ImportSwitchesAddresses()
@@ -122,7 +155,7 @@ namespace Inforoom2.Test.Functional
 					house.Housing = housing;
 					house.Street = streets.FirstOrDefault(s => s.Name == item.Street);
 					SwitchAddress address = new SwitchAddress();
-					
+
 					address.House = house;
 					address.Switch = new Switch {
 						Name = string.Format("{0}_{1}_{2}", house.Street.Name, house.Number, house.Housing)

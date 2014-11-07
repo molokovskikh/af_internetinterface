@@ -6,7 +6,7 @@
 }
 
 <h2>AdminQuestion</h2>
-
+@{ Html.RenderPartial("AdminPanel");  }
 <span><button class="CreateQuestion" onclick=" location.href = '@Url.Action("EditNewsBlock", "AdminNews")' ">Создать новость</button></span>
 
 <div class="AdminQuestion">

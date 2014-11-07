@@ -3,10 +3,8 @@ using NHibernate.Mapping.Attributes;
 
 namespace Inforoom2.Models
 {
-	public class PhysicalClient : BaseModel
+	public class PhysicalClient : Client
 	{
-		
-		[ManyToOne(Column = "Address")]
-		public virtual Address Address { get; set; } 
+
 	}
 }

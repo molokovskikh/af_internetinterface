@@ -7,6 +7,15 @@ namespace Inforoom2.Models
 	[Class(0, Table = "street", NameType = typeof(Street))]
 	public class Street : BaseModel
 	{
+		public Street()
+		{
+		}
+
+		public Street(string name)
+		{
+			Name = name;
+		}
+
 		[Property, NotEmpty]
 		public virtual string Name { get; set; }
 

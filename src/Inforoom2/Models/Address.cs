@@ -17,5 +17,15 @@ namespace Inforoom2.Models
 
 		[Property, Min(Value = 1)]
 		public virtual int Floor { get; set; }
+
+		public virtual string FullAddress
+		{
+			get
+			{
+				return House.Street.Region.City.Name + ". "
+				       + House.Street.Name + ". "
+				       + House.FullName;
+			}
+		}
 	}
 }

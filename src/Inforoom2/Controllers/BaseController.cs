@@ -30,6 +30,46 @@ namespace Inforoom2.Controllers
 			get { return MvcApplication.SessionFactory.GetCurrentSession(); }
 		}
 
+		protected List<City> Cities
+		{
+			get { return GetAllSafe<City>(); }
+		}
+
+		protected List<Street> Streets
+		{
+			get { return GetAllSafe<Street>(); }
+		}
+
+		protected IList<Region> Regions
+		{
+			get { return GetAllSafe<Region>(); }
+		}
+
+		protected IList<House> Houses
+		{
+			get { return GetAllSafe<House>(); }
+		}
+
+		protected IList<Address> Addresses
+		{
+			get { return GetAllSafe<Address>(); }
+		}
+
+		protected IList<SwitchAddress> SwitchAddresses
+		{
+			get { return GetAllSafe<SwitchAddress>(); }
+		}
+
+		protected IList<Switch> Switches
+		{
+			get { return GetAllSafe<Switch>(); }
+		}
+
+		protected IList<Plan> Plans
+		{
+			get { return GetAllSafe<Plan>(); }
+		}
+
 		protected ValidationRunner ValidationRunner;
 
 		protected BaseController()
@@ -37,7 +77,7 @@ namespace Inforoom2.Controllers
 			ValidationRunner = new ValidationRunner();
 			ViewBag.Validation = ValidationRunner;
 			ViewBag.JavascriptParams = new Dictionary<string, string>();
-			ViewBag.Cities = new string[] {"Воронеж", "Борисоглебск", "Белгород"};
+			ViewBag.Cities = new string[] { "Воронеж", "Борисоглебск", "Белгород" };
 		}
 
 		public void AddJavascriptParam(string name, string value)
@@ -57,7 +97,13 @@ namespace Inforoom2.Controllers
 
 		protected Client CurrentClient
 		{
-			get { return DbSession.Query<Client>().FirstOrDefault(k => k.Username == User.Identity.Name); }
+			get
+			{
+				if (User == null) {
+					return null;
+				}
+				return DbSession.Query<Client>().FirstOrDefault(k => k.Username == User.Identity.Name);
+			}
 		}
 
 		private static string userCity;
@@ -90,19 +136,22 @@ namespace Inforoom2.Controllers
 
 		protected override void OnException(ExceptionContext filterContext)
 		{
-			if (filterContext.ExceptionHandled) {
+		/*	if (filterContext.ExceptionHandled) {
 				return;
 			}
-		 /*  filterContext.Result = new RedirectToRouteResult(
+			  filterContext.Result = new RedirectToRouteResult(
                 new RouteValueDictionary
-                    {{"controller", "Home"}, {"action", "Index"}});*/
-			filterContext.ExceptionHandled = true;
+                    {{"controller", "Home"}, {"action", "Index"}});
+			filterContext.ExceptionHandled = true;*/
 		}
 
 		protected override void OnActionExecuted(ActionExecutedContext filterContext)
 		{
 			base.OnActionExecuted(filterContext);
 			ProcessRegionPanel();
+			if (CurrentClient != null) {
+				ViewBag.ClientInfo = string.Format("{0}, Баланс: {1} ", CurrentClient.FullName, CurrentClient.Balance);
+			}
 		}
 
 
@@ -128,8 +177,8 @@ namespace Inforoom2.Controllers
 					//Куков нет, пытаемся достать город из базы, иначе определяем по геобазе
 					var user = DbSession.Query<Client>().FirstOrDefault(k => k.Username == User.Identity.Name);
 					if (user != null) {
-						userCity = user.City;
-						ViewBag.UserCity = user.City;
+						userCity = user.Address.House.Street.Region.City.Name;
+						ViewBag.UserCity = user.Address.House.Street.Region.City.Name;
 					}
 					else {
 						GetVisitorCityByGeoBase();
@@ -146,7 +195,7 @@ namespace Inforoom2.Controllers
 				geoAnswer = geoService.GetInfo();
 			}
 			catch (WebException e) {
-				geoAnswer = new IpAnswer {City = "Борисоглебск"};
+				geoAnswer = new IpAnswer { City = "Борисоглебск" };
 			}
 			userCity = geoAnswer.City;
 			ViewBag.UserCity = geoAnswer.City;
@@ -169,12 +218,11 @@ namespace Inforoom2.Controllers
 			}
 			var s = Uri.UnescapeDataString(cookie.Value);
 			return HttpUtility.UrlDecode(s);
-			
 		}
 
 		protected void SetCookie(string name, string value)
 		{
-			Response.Cookies.Add(new HttpCookie(name, value) {Path = "/"});
+			Response.Cookies.Add(new HttpCookie(name, value) { Path = "/" });
 		}
 
 		public static Encoding DetectEncoding(String fileName, out String contents)

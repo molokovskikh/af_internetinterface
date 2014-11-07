@@ -7,7 +7,7 @@
 }
 
 <h2>AdminStreet</h2>
-
+@{ Html.RenderPartial("AdminPanel");  }
 <span><button class="CreateAddress" onclick=" location.href = '@Url.Action("EditStreet", "AdminAddress")' ">Создать улицу</button></span>
 
 <div class="AdminAddress">

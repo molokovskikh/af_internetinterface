@@ -138,9 +138,9 @@
     <Content Include="Scripts\FaqController.js" />
     <Content Include="Scripts\Helpers.js" />
     <Content Include="Scripts\inforoom.js" />
-    <None Include="Scripts\jquery-1.10.2.intellisense.js" />
-    <Content Include="Scripts\jquery-1.10.2.js" />
-    <Content Include="Scripts\jquery-1.10.2.min.js" />
+    <None Include="Scripts\jquery-1.4.4-vsdoc.js" />
+    <Content Include="Scripts\jquery-1.4.4.js" />
+    <Content Include="Scripts\jquery-1.4.4.min.js" />
     <Content Include="Scripts\jquery-2.1.1.js" />
     <Content Include="Scripts\jquery-ui-1.11.1.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
@@ -148,8 +148,13 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
-    <Content Include="Scripts\PersonalController.js" />
     <Content Include="Scripts\Window.js" />
+    <Content Include="Views\AdminPlan\AdminPlan.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Views\AdminPlan\EditPlan.cshtml">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -163,6 +168,9 @@
     <Compile Include="Controllers\AdminAddressController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\AdminNewsController.cs" />
+    <Compile Include="Controllers\AdminPlanController.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Controllers\AdminQuestionController.cs" />
     <Compile Include="Controllers\AdminTicketController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
@@ -188,6 +196,8 @@
     <Compile Include="Models\Address.cs" />
     <Compile Include="Models\City.cs" />
     <Compile Include="Models\ClientRequest.cs" />
+    <Compile Include="Models\LegalClient.cs" />
+    <Compile Include="Models\PlanTransfer.cs" />
     <Compile Include="Models\Service.cs" />
     <Compile Include="Models\Switch.cs" />
     <Compile Include="Models\SwitchAdress.cs" />
@@ -210,6 +220,7 @@
     <Compile Include="Models\Street.cs" />
     <Compile Include="Models\Plan.cs" />
     <Compile Include="Models\Ticket.cs" />
+    <Compile Include="Models\WriteOff.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />
@@ -262,16 +273,17 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Personal\Index.cshtml" />
-    <Content Include="Scripts\jquery-1.10.2.min.map" />
-    <Content Include="Views\Personal\ShowProfile.cshtml" />
-    <Content Include="Views\Personal\Plans.cshtml" />
+    <Content Include="Views\Personal\Profile.cshtml" />
+    <Content Include="Views\Personal\Tariffs.cshtml" />
     <Content Include="Views\Personal\Payment.cshtml" />
     <Content Include="Views\Personal\Credit.cshtml" />
     <Content Include="Views\Personal\UserDetails.cshtml" />
     <Content Include="Views\Personal\Service.cshtml" />
     <Content Include="Views\Personal\Notifications.cshtml" />
     <Content Include="Views\Personal\Bonus.cshtml" />
+    <Content Include="Views\Personal\Menu.cshtml" />
+    <Content Include="Views\Personal\PaymentWindow.cshtml" />
+    <Content Include="Views\Shared\AdminPanel.cshtml" />
     <None Include="Web.Inforoom2_Test.config" />
   </ItemGroup>
   <PropertyGroup>

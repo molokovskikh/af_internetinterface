@@ -2,22 +2,7 @@
 
 @{
 	ViewBag.Title = "Index";
-	string ticketTitle = string.Format("Tickets " + "(" + ViewBag.TicketsAmount + ")");
 }
 
 <h2>Панель администратора</h2>
-
-<div class="navbar navbar-inverse navbar-fixed-top">
-	<div class="container">
-		@Html.ActionLink("Вопросы", "AdminQuestionIndex", "AdminQuestion", null, new { @class = "navbar-brand" })
-		@Html.ActionLink(ticketTitle, "AdminTicketIndex", "AdminTicket", null, new { @class = "navbar-brand" })
-		@Html.ActionLink("Новости", "AdminNewsIndex", "AdminNews", null, new { @class = "navbar-brand" })
-		@Html.ActionLink("Города", "AdminAddressCity", "AdminAddress", null, new { @class = "navbar-brand" })
-		@Html.ActionLink("Регионы", "AdminAddressRegion", "AdminAddress", null, new { @class = "navbar-brand" })
-		@Html.ActionLink("Улицы", "AdminAddressStreet", "AdminAddress", null, new { @class = "navbar-brand" })
-		@Html.ActionLink("Дома", "AdminAddressHouse", "AdminAddress", null, new { @class = "navbar-brand" })
-		@Html.ActionLink("Адреса", "AdminAddressAddress", "AdminAddress", null, new { @class = "navbar-brand" })
-		@Html.ActionLink("Адреса маршрутизаторов", "AdminAddressSwitchAddress", "AdminAddress", null, new { @class = "navbar-brand" })
-		@Html.ActionLink("Тарифы", "AdminPlan", "AdminPlan", null, new { @class = "navbar-brand" })
-	</div>
-</div>
+@{ Html.RenderPartial("AdminPanel");  }

@@ -14,12 +14,15 @@
 				@Html.ActionLink("Заявка на подключение", "Index", "ClientRequest", null, new { @class = "navbar-brand" })
 				@Html.ActionLink("About", "Index", "About", null, new { @class = "navbar-brand" })
 				@if (Request.IsAuthenticated) {
-					<text>Welcome <strong>@User.Identity.Name</strong>!
+					<text>
+						@ViewBag.ClientInfo
 						[ @Html.ActionLink("Выход", "Logout", "Account") ]
-						@Html.ActionLink("Личный кабинет", "Index", "Personal")
+						@Html.ActionLink("Личный кабинет", "Profile", "Personal")
+
 						@if (User.IsInRole("Admin")) {
 							@Html.ActionLink("Панель администратора", "AdminIndex", "Home")
-						} </text>
+						} 
+					</text>
 				}
 				else {
 					@:[ @Html.ActionLink("Вход", "Login", "Account") ]

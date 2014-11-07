@@ -29,12 +29,7 @@ namespace Inforoom2.Helpers
 				session.BeginTransaction();
 			}
 		}
-
-		public override void OnActionExecuted(ActionExecutedContext filterContext)
-		{
-			
-		}
-
+		
 		public override void OnResultExecuted(ResultExecutedContext filterContext)
 		{
 			var session = SessionFactory.GetCurrentSession();
@@ -54,8 +49,8 @@ namespace Inforoom2.Helpers
 					(filterContext.Controller as BaseController).ErrorMessage("Не удалось сохранить транзакцию.");
 					session.Transaction.Rollback();
 				}
-			//session = CurrentSessionContext.Unbind(SessionFactory);
-			//session.Close();
+			session = CurrentSessionContext.Unbind(SessionFactory);
+			session.Close();
 		}
 	}
 

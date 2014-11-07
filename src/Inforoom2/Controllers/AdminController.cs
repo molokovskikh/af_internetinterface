@@ -16,41 +16,6 @@ namespace Inforoom2.Controllers
 	[AuthorizeUser(Roles = "Admin")]
 	public class AdminController : BaseController
 	{
-		protected List<City> Cities
-		{
-			get { return GetAllSafe<City>(); }
-		}
-
-		protected List<Street> Streets
-		{
-			get { return GetAllSafe<Street>(); }
-		}
-
-		protected IList<Region> Regions
-		{
-			get { return GetAllSafe<Region>(); }
-		}
-
-		protected IList<House> Houses
-		{
-			get { return GetAllSafe<House>(); }
-		}
-
-		protected IList<Address> Addresses
-		{
-			get { return GetAllSafe<Address>(); }
-		}
-
-		protected IList<SwitchAddress> SwitchAddresses
-		{
-			get { return GetAllSafe<SwitchAddress>(); }
-		}
-
-		protected IList<Switch> Switches
-		{
-			get { return GetAllSafe<Switch>(); }
-		}
-
 		public ActionResult Index()
 		{
 			//проверяем наличие неотвеченных тикетов

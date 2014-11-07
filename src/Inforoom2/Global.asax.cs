@@ -22,6 +22,23 @@ namespace Inforoom2
 {
 	public class MvcApplication : System.Web.HttpApplication
 	{
+		private static ISessionFactory _sessionFactory;
+
+		public static ISessionFactory SessionFactory
+		{
+			get
+			{
+				if (_sessionFactory != null) {
+					return _sessionFactory;
+				}
+				else {
+					InitializeSessionFactory();
+					return _sessionFactory;
+				}
+			}
+			private set { _sessionFactory = value; }
+		}
+
 		protected void Application_Start()
 		{
 			AreaRegistration.RegisterAllAreas();
@@ -47,9 +64,7 @@ namespace Inforoom2
 			}
 		}
 
-		public static ISessionFactory SessionFactory { get; private set; }
-
-		private void InitializeSessionFactory()
+		private static void InitializeSessionFactory()
 		{
 			Configuration configuration = new Configuration();
 			configuration.SetNamingStrategy(new TableNamingStrategy());
@@ -58,15 +73,15 @@ namespace Inforoom2
 				.SetProperty("connection.driver_class", "NHibernate.Driver.MySqlDataDriver")
 				.SetProperty("connection.connection_string", nhibernateConnectionString)
 				.SetProperty("dialect", "NHibernate.Dialect.MySQL5Dialect")
-				.SetProperty("current_session_context_class","web");
-		
+				.SetProperty("current_session_context_class", "web");
+
 			/*	var configurationPath = HttpContext.Current.Server.MapPath(@"~\Nhibernate\hibernate.cfg.xml");
 			configuration.Configure(configurationPath);*/
 			configuration.AddInputStream(
 				NHibernate.Mapping.Attributes.HbmSerializer.Default.Serialize(Assembly.GetExecutingAssembly()));
 
 			//TODO Раскоментировать для создания таблиц с помощью Nhibernate
-		/*	var schema = new NHibernate.Tool.hbm2ddl.SchemaExport(configuration);
+			/*var schema = new NHibernate.Tool.hbm2ddl.SchemaExport(configuration);
 			schema.Create(false, true);*/
 
 			SessionFactory = configuration.BuildSessionFactory();
