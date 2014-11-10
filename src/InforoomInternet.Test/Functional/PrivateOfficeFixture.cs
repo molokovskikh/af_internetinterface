@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using Billing;
+using Common.Tools;
 using InternetInterface;
 using InternetInterface.Controllers;
 using InternetInterface.Helpers;
@@ -308,10 +309,50 @@ namespace InforoomInternet.Test.Functional
 		}
 
 		[Test]
+		public void IPTV_files()
+		{
+			var service = session.Get<Service>(7u);
+			var serv = new ClientService(client, service);
+			client.ClientServices.Clear();
+			client.ClientServices.Add(serv);
+			session.Save(client);
+			var iptvTariff = new Tariff();
+			iptvTariff.Name = "iptvTariff";
+			iptvTariff.Description = "iptvTariff";
+			iptvTariff.Iptv = true;
+			iptvTariff.PackageId = 1;
+			iptvTariff.Hidden = false;
+			iptvTariff.CanUseForSelfConfigure = true;
+			session.Save(iptvTariff);
+			var noIptvTariff = new Tariff();
+			noIptvTariff.Name = "noiptvTariff";
+			noIptvTariff.Description = "noiptvTariff";
+			noIptvTariff.Iptv = false;
+			noIptvTariff.PackageId = 1;
+			noIptvTariff.Hidden = false;
+			noIptvTariff.CanUseForSelfConfigure = true;
+			
+			Open("PrivateOffice/IndexOffice");
+			AssertText("Каналы для IPTV");
+
+			serv.IsActivated = true;
+			session.Save(serv);
+			Open("PrivateOffice/IndexOffice");
+			AssertNoText("Каналы для IPTV");
+
+		}
+
+		[Test]
 		public void Tariffs_Without_IPTV()
 		{
 			var service = session.Get<Service>(7u);
 			var serv = new ClientService(client, service);
+			serv.IsActivated = true;
+			client.ClientServices.Clear();
+			client.ClientServices.Add(serv);
+			service = session.Get<Service>(5u);
+			serv = new ClientService(client, service);
+			serv.IsActivated = true;
 			client.ClientServices.Add(serv);
 			session.Save(client);
 			var iptvTariff = new Tariff();
