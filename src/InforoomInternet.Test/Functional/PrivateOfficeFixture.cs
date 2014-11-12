@@ -333,12 +333,12 @@ namespace InforoomInternet.Test.Functional
 			noIptvTariff.CanUseForSelfConfigure = true;
 			
 			Open("PrivateOffice/IndexOffice");
-			AssertText("Каналы для IPTV");
+			AssertNoText("Каналы для IPTV");
 
 			serv.IsActivated = true;
 			session.Save(serv);
 			Open("PrivateOffice/IndexOffice");
-			AssertNoText("Каналы для IPTV");
+			AssertText("Каналы для IPTV");
 
 		}
 
