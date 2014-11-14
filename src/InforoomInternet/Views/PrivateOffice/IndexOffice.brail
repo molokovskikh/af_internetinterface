@@ -110,8 +110,8 @@ function GetLinkText(hide) {
 		<p style="color:#8d8d8e;">Доступ в интернет заблокирован, Вы можете воспольваться услугой "Обещанный платеж" <a id="podrob" href="PostponedPayment">Подробнее...</a></p>
 		<% end %>
 	</td>
-	<% if Client.Iptv != null : %>
-	<td>
+	<% if Client.Iptv != null and Client.Iptv.IsActivated == true : %>
+		<td>
 		<div class="iptv">
 			<a href="${siteroot}/playlist.xspf">Каналы для IPTV</a>
 		</div>

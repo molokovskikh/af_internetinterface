@@ -372,7 +372,7 @@ namespace InternetInterface.Models
 
 		public virtual bool CanChangeTariff(Tariff tariff, ErrorSummary sum)
 		{
-			if (Client.Iptv != null && !tariff.Iptv) {
+			if (Client.Iptv != null && Client.Iptv.IsActivated == true && !tariff.Iptv) {
 				sum.RegisterErrorMessage("tariff", "Переход на этот тариф не возможен с включенной услугой IPTV");
 				return false;
 			}

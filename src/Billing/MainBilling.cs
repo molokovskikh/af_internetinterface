@@ -342,7 +342,7 @@ set s.LastStartFail = true;")
 				var addresses = str.Split(new[] { ',' });
 				for (var i = 0; i < addresses.Length; i ++)
 					if(region.Id == (i+1))
-						mailer.SendText("internet@ivrn.net", addresses, textMessage, textMessage);
+						mailer.SendText("internet@ivrn.net", addresses[i], textMessage, textMessage);
 			}
 
 			var phisicalClient = client.PhysicalClient;
