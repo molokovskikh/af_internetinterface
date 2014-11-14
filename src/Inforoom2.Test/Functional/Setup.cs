@@ -49,7 +49,7 @@ namespace Inforoom2.Test.Functional
 
 		public static void SeedDb()
 		{
-			ImportSwitchesAddresses();
+		//	ImportSwitchesAddresses();
 			GeneratePlansAndPrices();
 
 			Permission permission = new Permission { Name = "TestPermission" };
