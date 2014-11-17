@@ -90,7 +90,6 @@ namespace Billing.Test.Integration
 		[Test]
 		public void Reset_repair_status_on_timeout()
 		{
-
 			//В тесте эти данные не используются (и кстати зря)
 			//но биллинг без них упадет, так как пошлет на почту письмо с номером заявки
 			var request = new ServiceRequest();
@@ -134,7 +133,7 @@ namespace Billing.Test.Integration
 		}
 
 		[Test(Description = "При обработке платежа происходит установка флага автоматической разблокировки, " +
-			"в случае восстановления работы этого происходить не должно")]
+		                    "в случае восстановления работы этого происходить не должно")]
 		public void Do_not_auto_unblock_on_payment()
 		{
 			client.RatedPeriodDate = DateTime.Now;
@@ -201,7 +200,7 @@ namespace Billing.Test.Integration
 			session.Save(BadPerson);
 
 			//Клиент с положительным балансом
-			var GoodPerson = new LawyerPerson{
+			var GoodPerson = new LawyerPerson {
 				Balance = 3000,
 				Region = region,
 			};

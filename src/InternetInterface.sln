@@ -45,6 +45,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{6CE4E9
 	ProjectSection(SolutionItems) = preProject
 		global.config = global.config
 	EndProjectSection
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inforoom2", "Inforoom2\Inforoom2.csproj", "{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inforoom2.Test", "Inforoom2.Test\Inforoom2.Test.csproj", "{279323D6-24C8-47BD-A0EB-BE164B4B5CB1}"

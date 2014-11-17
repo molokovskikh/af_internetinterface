@@ -1,15 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Security.Policy;
 using System.Text;
-using System.Web.Http;
-using System.Web.Http.SelfHost;
-using System.Web.Mvc;
 using CassiniDev;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
@@ -36,7 +29,6 @@ namespace Inforoom2.Test.Functional
 		{
 			SeleniumFixture.GlobalSetup();
 			_webServer = SeleniumFixture.StartServer();
-
 			SeedDb();
 		}
 

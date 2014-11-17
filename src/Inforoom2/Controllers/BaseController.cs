@@ -7,7 +7,6 @@ using System.Security.Principal;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Mvc.Filters;
 using System.Web.Routing;
 using System.Web.Security;
 using Inforoom2.Components;

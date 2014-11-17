@@ -129,12 +129,11 @@ namespace InternetInterface.Queries
 				if (!String.IsNullOrEmpty(Apartment))
 					query.SetParameter("Apartment", Apartment);
 			}
-			else if (!String.IsNullOrEmpty(SearchText) && wherePart.Contains(":SearchText"))
-			{
+			else if (!String.IsNullOrEmpty(SearchText) && wherePart.Contains(":SearchText")) {
 				//¬ базе regex все равно ищет в без регистра
 				var text = Regex.Escape(SearchText);
 				text = text.ToLower().Replace('е', 'Ж').Replace('Є', 'Ж').Replace("Ж", "(е|Є)");
-				query.SetParameter("SearchText",text);
+				query.SetParameter("SearchText", text);
 			}
 		}
 
@@ -241,7 +240,7 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 				if (EnabledTypeProperties == EndbledType.Enabled)
 					result += " and c.Disabled = false";
 
-				if(Region != null) {
+				if (Region != null) {
 					result += " and (h.RegionId = :regionid or l.RegionId = :regionid)";
 				}
 
@@ -253,7 +252,7 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 					result += " and exists(select * from internet.ClientServices cs where cs.Client = c.Id and cs.RentableHardware = :hardwareId) ";
 				}
 
-				if(BlockDayMax !=null || BlockDayMax != null)
+				if (BlockDayMax != null || BlockDayMax != null)
 					result += "and c.Disabled ";
 				if (BlockDayMin != null) {
 					result += "and c.BlockDate > :blockAfter ";
@@ -295,7 +294,7 @@ ORDER BY {2} {3}", selectText, wherePart, GetOrderField(), limitPart);
 						if (SearchProperties == SearchUserBy.ByPassport) {
 							return @"
 	WHERE (p.PassportSeries like :SearchText or p.PassportNumber like :SearchText or l.ActualAdress like :SearchText)"
-								+ result;
+							       + result;
 						}
 					}
 				}

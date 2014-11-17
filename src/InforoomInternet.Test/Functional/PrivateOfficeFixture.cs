@@ -339,7 +339,6 @@ namespace InforoomInternet.Test.Functional
 			session.Save(serv);
 			Open("PrivateOffice/IndexOffice");
 			AssertText("Каналы для IPTV");
-
 		}
 
 		[Test]

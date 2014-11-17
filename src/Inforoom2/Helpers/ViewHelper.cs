@@ -98,7 +98,7 @@ namespace Inforoom2.Helpers
 			var sb = new StringBuilder();
 			IList<PropertyInfo> props = new List<PropertyInfo>(type.GetProperties());
 			foreach (PropertyInfo prop in props) {
-				var attribute = prop.GetValue(obj);
+				var attribute = prop.GetValue(obj, null);
 				sb.AppendFormat(prop.Name + "=" + "\"" + attribute + "\"");
 			}
 			return sb;
