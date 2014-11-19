@@ -49,7 +49,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Boo.Lang.Compiler, Version=2.0.9.3, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Boo.Lang.Compiler">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Castle.Monorail.2.1.4\lib\net40\Boo.Lang.Compiler.dll</HintPath>
     </Reference>
@@ -229,7 +229,9 @@
     <None Include="Views\HouseMap\ForPrintToAgent.brail" />
     <None Include="Views\HouseMap\HouseEdit.brail" />
     <None Include="Views\HouseMap\HouseFindResult.brail" />
-    <None Include="Views\HouseMap\HouseInfo.brail" />
+    <None Include="Views\HouseMap\HouseInfo.brail">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Views\HouseMap\NetworkSwitches.brail" />
     <None Include="Views\HouseMap\PassView.brail" />
     <None Include="Views\HouseMap\RegisterHouse.brail" />

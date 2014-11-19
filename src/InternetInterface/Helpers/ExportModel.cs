@@ -56,10 +56,10 @@ namespace InternetInterface.Helpers
 				ExcelHelper.Write(ws, row, colShift + 0, item.client.Id, true);
 				ExcelHelper.Write(ws, row, colShift + 1, item.client.Name, true);
 				ExcelHelper.Write(ws, row, colShift + 2, item.Address, true);
-				if(item.client.PhysicalClient != null) {
+				if (item.client.PhysicalClient != null) {
 					ExcelHelper.Write(ws, row, colShift + 3, item.client.PhysicalClient.City, true);
 					ExcelHelper.Write(ws, row, colShift + 4, item.client.PhysicalClient.Street, true);
-					ExcelHelper.Write(ws, row, colShift + 5, item.client.PhysicalClient.House+" "+item.client.PhysicalClient.CaseHouse, true);
+					ExcelHelper.Write(ws, row, colShift + 5, item.client.PhysicalClient.House + " " + item.client.PhysicalClient.CaseHouse, true);
 					ExcelHelper.Write(ws, row, colShift + 6, item.client.PhysicalClient.Apartment, true);
 				}
 				else {
@@ -70,25 +70,25 @@ namespace InternetInterface.Helpers
 					ExcelHelper.Write(ws, row, colShift + 6, obj["Apartment"], true);
 				}
 				var contacts = "";
-				if(item.client.Contacts.Count == 1)
+				if (item.client.Contacts.Count == 1)
 					contacts = item.client.Contacts[0].HumanableNumber;
 				else
-					for(var i=1; i < item.client.Contacts.Count;i++)
-						contacts += ", "+item.client.Contacts[i].HumanableNumber;
-				ExcelHelper.Write(ws, row, colShift + 7,contacts , true);
+					for (var i = 1; i < item.client.Contacts.Count; i++)
+						contacts += ", " + item.client.Contacts[i].HumanableNumber;
+				ExcelHelper.Write(ws, row, colShift + 7, contacts, true);
 				ExcelHelper.Write(ws, row, colShift + 8, item.client.RegDate, true);
 				ExcelHelper.Write(ws, row, colShift + 9, item.client.GetTariffName(), true);
 				ExcelHelper.Write(ws, row, colShift + 10, item.client.Balance, true);
 				ExcelHelper.Write(ws, row, colShift + 11, item.client.Status.Type.GetDescription(), true);
 				var textBlock = "";
-				if(item.client.Status.Type == StatusType.NoWorked)
+				if (item.client.Status.Type == StatusType.NoWorked)
 					textBlock = item.client.BlockDate.ToString();
-				ExcelHelper.Write(ws, row, colShift + 12,textBlock, true);
+				ExcelHelper.Write(ws, row, colShift + 12, textBlock, true);
 				var endpoint = item.client.Endpoints.FirstOrDefault();
 				var textEndpoint = "";
-				if(endpoint != null && endpoint.Switch != null && endpoint.Switch.IP != null)
-					textEndpoint = endpoint.Switch.Name + "(" +endpoint.Switch.IP+ ")";
-				ExcelHelper.Write(ws, row, colShift + 13,textEndpoint, true);
+				if (endpoint != null && endpoint.Switch != null && endpoint.Switch.IP != null)
+					textEndpoint = endpoint.Switch.Name + "(" + endpoint.Switch.IP + ")";
+				ExcelHelper.Write(ws, row, colShift + 13, textEndpoint, true);
 				row++;
 			}
 			FormatClientsStatisticXls(ws);

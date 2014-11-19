@@ -1,0 +1,45 @@
+﻿@section JavaScript{<script type="text/javascript"src="@Url.Content("~/Scripts/AdminAddressController.js")"></script>}
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@{
+	House house = ViewBag.House;
+}
+<div style="width: 1000px;  margin: 0px auto; border: 1px gainsboro solid">
+	<div class="UpdateAddress" >
+		@using (@Html.BeginForm("UpdateHouse", "AdminAddress", FormMethod.Post)) {
+			@Html.HiddenFor(model => house.Id)
+			<div>
+				<span >Номер</span>
+				@Html.TextBoxFor(model => house.Number)
+				@ViewBag.Validation.GetError(house, "Number", "Номер не может быть пустым")
+			</div>
+			<div>
+				<div>Корпус</div>
+				@Html.TextBoxFor(k => house.Housing)
+				@ViewBag.Validation.GetError(house, "Housing", "Значение не может быть пустым")
+			</div>
+			<div>
+				<div>Город</div>
+				@Html.DropDownListExtendedFor(k => house.Street.Region ,ViewBag.Regions as List<Region>, k => k.Name, region => new { @class = "region" + region.Id }, null, house.Street.Region.Id)
+			</div>
+			<div>
+				<div>Улица</div>
+				@Html.DropDownListExtendedFor(k => house.Street, ViewBag.Streets as List<Street>, k => k.Name, street => new { @class = "region" + street.Region.Id }, null, house.Street.Id)
+			</div>
+			<div>
+				<div>Кол-во квартир</div>
+				@Html.TextBoxFor(k => house.ApartmentAmount)
+				@ViewBag.Validation.GetError(house, "ApartmentAmount", "Значение не может быть пустым")
+			</div>
+			<div>
+				<div>Кол-во подъездов</div>
+				@Html.TextBoxFor(k => house.EntranceAmount)
+				@ViewBag.Validation.GetError(house, "EntranceAmount", "Значение не может быть пустым")
+			</div>
+
+			<input type="submit"  value="Принять изменения"/>
+		}
+		<button class="BackButton" onclick=" location.href = '@Url.Action("AdminAddressHouse", "AdminAddress")' ">Назад</button>
+	
+	</div>
+</div>

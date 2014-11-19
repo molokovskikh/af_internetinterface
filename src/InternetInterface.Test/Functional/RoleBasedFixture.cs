@@ -44,7 +44,6 @@ namespace InternetInterface.Test.Functional
 			//проверяем есть ли необходимость в смене пользователя
 			if(CurrentPartner.Login != InitialPartnerLogin)
 				SwitchUser(InitialPartnerLogin);
-			base.TearDown();
 		}
 	}
 }

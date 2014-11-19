@@ -44,3 +44,18 @@ task "build:printer":
 task "deploy:printer":
 	return if Globals.Environment != @Production
 	XCopyDeploy(Globals, "InternetInterface.Printer", "\\\\adc.analit.net\\Inforoom\\Apps\\InternetInterface.Printer")
+
+
+task "deploy:inforoom2:test", ["inforoom2:build", "version:bump", "copy:inforoom2:test", "db:migrate"]
+	
+task "inforoom2:build", ["generate:assembly:info" , "clean:inforoom2", "build:inforoom2:test"]
+
+task "build:inforoom2:test":
+	Globals.Environment = "Inforoom2_Test"
+	BuildWeb(Globals, "Inforoom2")
+		
+task "clean:inforoom2":
+	CleanWeb(Globals, "Inforoom2")
+	
+task "copy:inforoom2:test":
+	XCopyDeploy(Globals, "Inforoom2", "\\\\test2.analit.net\\WWW")

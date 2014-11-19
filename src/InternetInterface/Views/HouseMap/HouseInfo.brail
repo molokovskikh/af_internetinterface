@@ -297,6 +297,7 @@
 	<% ap_count = House.ApartmentCount %>
 	<% for i in range(ap_count / 2 * j, ap_count / 2 + ap_count / 2 * j + ap_count % 2 *j): %>
 	<tr>
+
 		<% apartment = House.GetApartmentWithNumber((i+1).ToString()) %>
 		<% inforumClient = House.GetClientWithApNumber((i+1).ToString()) %>
 		<% if apartment!= null: %>

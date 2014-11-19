@@ -1,0 +1,33 @@
+﻿@using Inforoom2.Models
+
+@{
+
+	Client client = ViewBag.CurrentClient;
+}
+
+
+<h2>@ViewBag.Title</h2>
+@{ Html.RenderPartial("Menu"); }
+
+<div class="UserProfile">
+	<div>
+		@Html.DisplayFor(c => client.FullName)
+	</div>
+	<div>
+		@Html.DisplayFor(c => client.Plan.Name)
+	</div>
+	<div>
+		@Html.DisplayFor(c => client.PhoneNumber)
+	</div>
+	<div>
+		@Html.DisplayFor(c => client.Address.FullAddress)
+	</div>
+		<div>
+		@Html.DisplayFor(c => client.Balance) р.
+	</div>
+	
+	
+</div>
+
+
+@{ Html.RenderPartial("PaymentWindow"); }

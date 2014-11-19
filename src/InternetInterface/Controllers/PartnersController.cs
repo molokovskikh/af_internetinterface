@@ -65,28 +65,26 @@ namespace InternetInterface.Controllers
 		{
 			var partner = DbSession.Load<Partner>(id);
 			PropertyBag["Partner"] = partner;
-			if (IsPost)
-			{
+			if (IsPost) {
 				var passwordReset = Request.Params["passwordReset"];
-				if(passwordReset != null) {
-					if(String.IsNullOrEmpty(partner.Email)) {
+				if (passwordReset != null) {
+					if (String.IsNullOrEmpty(partner.Email)) {
 						Notify("У партнера не указан адрес эл. почты");
 						RedirectToReferrer();
 						return;
 					}
 					var random = Guid.NewGuid().ToString().Substring(0, 8);
 					try {
-						ActiveDirectoryHelper.ChangePassword(partner.Login,random);
+						ActiveDirectoryHelper.ChangePassword(partner.Login, random);
 						var mailer = this.Mailer<Mailer>();
 						var body = "Ваш пароль был изменен, новый пароль - " + random;
 						mailer.SendText("internet@ivrn.net", partner.Email, "Уведомление об изменении пароля", body);
 						Notify("Пароль сброшен и отправлен на почту ");
 					}
-					catch (SmtpFailedRecipientException)
-					{
+					catch (SmtpFailedRecipientException) {
 						Error("Что-то пошло не так. Возможно адрес электронной почты не существует.");
 					}
-					
+
 					RedirectToReferrer();
 					return;
 				}

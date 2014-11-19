@@ -1,0 +1,48 @@
+﻿@section JavaScript{<script type="text/javascript"src="@Url.Content("~/Scripts/EditNewsBlock.js")"></script>}
+@using Inforoom2.Models
+@{
+	NewsBlock newsBlock = ViewBag.NewsBlock;
+	
+}
+<div style="width: 1000px; margin: 0px auto; border: 1px gainsboro solid">
+	<div class="UpdateNewsBlock" >
+	
+		@using (@Html.BeginForm("UpdateNewsBlock", "AdminNews", FormMethod.Post)) {
+			@Html.HiddenFor(model => newsBlock.Id)
+			@Html.HiddenFor(model => newsBlock.Priority)
+			@Html.HiddenFor(model => newsBlock.PublishedDate)
+			@Html.HiddenFor(model => newsBlock.CreationDate)
+			@Html.HiddenFor(model => newsBlock.Employee)
+
+			<div>
+				<span>Полная версия</span>
+				<input class="NewsVersionCheckbox" type="checkbox" name="newsVersionCheckbox" checked ="checked" />
+			</div>
+			<div>
+				<span >Заголовок</span>
+				@Html.TextAreaFor(model => newsBlock.Title)
+				@ViewBag.Validation.GetError(newsBlock, "Title", "Тело не может быть пустым")
+			</div>
+			<div>
+				<span>Превью</span>
+				@Html.TextAreaFor(model => newsBlock.Preview)
+				@ViewBag.Validation.GetError(newsBlock, "Preview", "Превью не может быть пустым")
+			</div>
+			<div>
+				<span id ="newsBlock_Body_Label">Полная версия</span>
+				@Html.TextAreaFor(model => newsBlock.Body)
+			</div>
+			<div>
+				<span id ="newsBlock_Url_Label">Url</span>
+				@Html.TextAreaFor(model => newsBlock.Url)
+			</div>
+			<div>
+				<span>Опубликовать</span>
+				@Html.CheckBoxFor(model => newsBlock.IsPublished)
+			</div>
+			<input type="submit"  value="Принять изменения"/>
+		}
+		<button class="BackButton" onclick=" location.href = '@Url.Action("AdminNewsIndex", "AdminNews")' ">Назад</button>
+	</div>
+</div>
+

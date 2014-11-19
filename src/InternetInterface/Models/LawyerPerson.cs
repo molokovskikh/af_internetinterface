@@ -61,8 +61,10 @@ namespace InternetInterface.Models
 		[Property, Auditable("Контактное лицо")]
 		public virtual string ContactPerson { get; set; }
 
-		public virtual decimal? Tariff {
-			get {
+		public virtual decimal? Tariff
+		{
+			get
+			{
 				return client.Orders.Where(o => o.IsActivated && !o.IsDeactivated)
 					.SelectMany(o => o.OrderServices)
 					.Where(s => s.IsPeriodic)
@@ -135,9 +137,9 @@ namespace InternetInterface.Models
 			return results.Where(w => w.Sum > 0).ToList();
 		}
 
-		public virtual Dictionary<string,string> ParseAddress()
+		public virtual Dictionary<string, string> ParseAddress()
 		{
-			var obj = new Dictionary<string,string>();
+			var obj = new Dictionary<string, string>();
 			obj["City"] = "--";
 			obj["Street"] = "--";
 			obj["House"] = "--";
@@ -146,50 +148,43 @@ namespace InternetInterface.Models
 			//Можно парсить адреса юриков но будут ошибки и результат в районе 70%
 			IList<string> actual = ActualAdress == null ? new string[0] : ActualAdress.Split(',');
 			IList<string> paper = LawyerAdress == null ? new string[0] : LawyerAdress.Split(',');
-			if(actual.Count == 0)
+			if (actual.Count == 0)
 				return obj;
-			if(actual.Count == 1)
-			{
+			if (actual.Count == 1) {
 				obj["City"] = actual[0];
 				return obj;
 			}
 			int digital;
 			int.TryParse(actual[0], out digital);
-			bool officeFlag = actual[actual.Count -1].Contains("оф");
+			bool officeFlag = actual[actual.Count - 1].Contains("оф");
 			//Стандартный адрес
-			if(actual.Count == 3 && !officeFlag)
-			{
+			if (actual.Count == 3 && !officeFlag) {
 				obj["City"] = actual[0];
 				obj["Street"] = actual[1];
 				obj["House"] = actual[2];
 			}
 
-			if(actual.Count == 3 && officeFlag)
-			{
+			if (actual.Count == 3 && officeFlag) {
 				obj["Street"] = actual[0];
 				obj["House"] = actual[1];
 			}
 			//индекс+стандартный адрес
-			if(digital != 0 && actual.Count == 4)
-			{
+			if (digital != 0 && actual.Count == 4) {
 				obj["City"] = actual[1];
 				obj["Street"] = actual[2];
 				obj["House"] = actual[3];
 			}
 			//индекс+область+стандартный адрес
-			if(digital != 0 && actual.Count == 5 && actual[1].Contains("обл"))
-			{
+			if (digital != 0 && actual.Count == 5 && actual[1].Contains("обл")) {
 				obj["City"] = actual[2];
 				obj["Street"] = actual[3];
 				obj["House"] = actual[4];
 			}
-			if(actual.Count == 2)
-			{
+			if (actual.Count == 2) {
 				obj["Street"] = actual[0];
 				obj["House"] = actual[1];
 			}
 			return obj;
 		}
-
 	}
 }

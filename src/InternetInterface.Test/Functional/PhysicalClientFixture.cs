@@ -11,13 +11,13 @@ using OpenQA.Selenium;
 namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
-	class PhysicalClientFixture : AcceptanceFixture
+	internal class PhysicalClientFixture : AcceptanceFixture
 	{
 		[Test]
 		public void NoOrderForPhysicalClient()
 		{
-			var reg = session.Query<RegionHouse>().First(i=>i.Name == "Воронеж");
-			var zone = session.Query<Zone>().First(i=>i.Region == reg);
+			var reg = session.Query<RegionHouse>().First(i => i.Name == "Воронеж");
+			var zone = session.Query<Zone>().First(i => i.Region == reg);
 			session.Save(zone);
 			var sw = new NetworkSwitch("ClientTestSwitch", zone);
 			session.Save(sw);
@@ -31,7 +31,7 @@ namespace InternetInterface.Test.Functional
 			Css("input#Submit2").Click();
 			var order = session.Get<Order>(client.Id);
 			Assert.Null(order);
-			var endpoint = session.Query<ClientEndpoint>().First(i=>i.Client == client);
+			var endpoint = session.Query<ClientEndpoint>().First(i => i.Client == client);
 			Assert.NotNull(endpoint);
 			Assert.False(browser.PageSource.Contains("class=\"err\""));
 		}

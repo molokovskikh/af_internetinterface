@@ -1,0 +1,25 @@
+﻿@using Inforoom2.Helpers
+@using Inforoom2.Models
+@{
+	Street street = ViewBag.Street;
+}
+<div style="width: 1000px; margin: 0px auto; border: 1px gainsboro solid">
+	<div class="UpdateAddress" >
+	
+		@using (@Html.BeginForm("UpdateStreet", "AdminAddress", FormMethod.Post)) {
+			@Html.HiddenFor(model => street.Id)
+			<div>
+				<span >Название</span>
+				@Html.TextBoxFor(model => street.Name)
+				@ViewBag.Validation.GetError(street, "Name", "Название не может быть пустым")
+			</div>
+			<div>
+				<div>Город</div>
+				@Html.DropDownListExtendedFor(k => street.Region.City , ViewBag.CitiesList as IList<City>, k=>k.Name, street.Region.Id)
+			</div>
+
+			<input type="submit"  value="Принять изменения"/>
+		}
+		<button class="BackButton" onclick=" location.href = '@Url.Action("AdminAddressStreet", "AdminAddress")' ">Назад</button>
+	</div>
+</div>

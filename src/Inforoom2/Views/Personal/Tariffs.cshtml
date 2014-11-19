@@ -1,0 +1,75 @@
+﻿@using Inforoom2.Models
+
+@{
+	Client client = ViewBag.CurrentClient;
+	IList<Plan> plans = ViewBag.Plans;
+}
+
+<h2>@ViewBag.Title</h2>
+
+@{ Html.RenderPartial("Menu");  }
+
+<span>Бесплатная смена тарифа доступна 1 раз в месяц.
+	Ваш тариф: @client.Plan.Name
+</span>
+
+<div class="AdminPlan">
+	<table class="AdminPlanTable">
+		<tr>
+			<td>
+				<div>Название</div>
+			</td>
+			<td>
+				<div>Скорость</div>
+			</td>
+			<td>
+				<div>Абон. плата</div>
+			</td>
+			<td>
+				<div>Стоимость перехода</div>
+			</td>
+			<td>
+				<div>Действие</div>
+			</td>
+		</tr>
+		@foreach (var plan in plans) {
+			<tr>
+				<td>
+					@Html.HiddenFor(modelItem => plan.Id)
+					@Html.DisplayFor(modelItem => plan.Name)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => plan.Speed)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => plan.Price)
+				</td>
+				<td>
+					@if (client.IsFreePlanChange) {
+						<text>0</text>
+					}
+					else {
+						@Html.DisplayFor(modelItem => plan.SwitchPrice)
+					}
+					
+				</td>
+				<td>
+					@if (plan.Id == client.Plan.Id) {
+						<text>Текущий</text>
+					}
+					else {
+						using(@Html.BeginForm("ChangePlan","Personal"))
+						{
+							@Html.HiddenFor(modelItem => plan.Id)
+							<input type="submit" value="Сменить"/>
+						}
+						@*<span><button class="ChangePlan" onclick=" location.href = '@Url.Action("ChangePlan", "Personal", new { planId = plan.Id })' ">Сменить</button></span>*@
+					}
+				
+				</td>
+				
+			</tr>
+		}
+	</table>
+	
+</div>

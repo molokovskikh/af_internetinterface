@@ -33,7 +33,6 @@ namespace InternetInterface.Test.Functional
 			defaultUrl =
 				string.Format("UserInfo/ShowPhysicalClient?filter.ClientCode={0}&filter.EditingConnect=true&filter.Editing={1}",
 					client.Id, false);
-			
 		}
 
 		[Test]

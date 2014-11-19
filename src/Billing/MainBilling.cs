@@ -208,7 +208,7 @@ set s.LastStartFail = true;")
 				foreach (var client in lawyerPersons) {
 					if (client.NeedShowWarningForLawyer()) {
 						if (client.WhenShowWarning == null ||
-							(SystemTime.Now() - client.WhenShowWarning.Value).TotalHours >= 3) {
+						    (SystemTime.Now() - client.WhenShowWarning.Value).TotalHours >= 3) {
 							client.ShowBalanceWarningPage = true;
 							client.WhenShowWarning = SystemTime.Now();
 							if (!client.SendEmailNotification)
@@ -258,9 +258,9 @@ set s.LastStartFail = true;")
 				var needToAgentSum = AgentTariff.GetPriceForAction(AgentActions.WorkedClient);
 				var bonusesClients = s.Query<Client>().Where(c =>
 					c.Request != null &&
-						!c.Request.PaidBonus &&
-						c.Request.Registrator != null &&
-						c.BeginWork != null)
+					!c.Request.PaidBonus &&
+					c.Request.Registrator != null &&
+					c.BeginWork != null)
 					.ToList();
 				foreach (var client in bonusesClients) {
 					if (client.Payments.Sum(p => p.Sum) >= needToAgentSum * agentSettings) {
@@ -278,10 +278,10 @@ set s.LastStartFail = true;")
 				}
 
 				var friendBonusRequests = s.Query<Request>().Where(r =>
-						r.Client != null &&
-						r.FriendThisClient != null &&
-						!r.PaidFriendBonus &&
-						r.Client.BeginWork != null)
+					r.Client != null &&
+					r.FriendThisClient != null &&
+					!r.PaidFriendBonus &&
+					r.Client.BeginWork != null)
 					.ToList();
 				foreach (var friendBonusRequest in friendBonusRequests) {
 					if (friendBonusRequest.Client.HavePaymentToStart()) {
@@ -306,9 +306,7 @@ set s.LastStartFail = true;")
 		private void ProcessAll(Action<ISession, Client> action, Func<ISession, IQueryable<Client>> query, ref int errorCount)
 		{
 			var ids = new List<uint>();
-			WithTransaction(session => {
-				ids = query(session).Select(c => c.Id).ToList();
-			});
+			WithTransaction(session => { ids = query(session).Select(c => c.Id).ToList(); });
 
 			foreach (var id in ids) {
 				try {
@@ -340,16 +338,14 @@ set s.LastStartFail = true;")
 				var textMessage = "Срок исполнения сервисной заявки #" + request.Id + " истек";
 				var region = client.GetRegion();
 				var addresses = str.Split(new[] { ',' });
-				for (var i = 0; i < addresses.Length; i ++)
-					if(region.Id == (i+1))
+				for (var i = 0; i < addresses.Length; i++)
+					if (region.Id == (i + 1))
 						mailer.SendText("internet@ivrn.net", addresses[i], textMessage, textMessage);
 			}
 
 			var phisicalClient = client.PhysicalClient;
 			var balance = phisicalClient.Balance;
-			if (balance >= 0
-				&& !client.Disabled
-				&& client.RatedPeriodDate.GetValueOrDefault() != DateTime.MinValue) {
+			if (balance >= 0 && !client.Disabled && client.RatedPeriodDate.GetValueOrDefault() != DateTime.MinValue) {
 				var dtNow = SystemTime.Now();
 
 				if ((client.RatedPeriodDate.Value.AddMonths(1).Date - dtNow.Date).Days == -client.DebtDays) {
@@ -378,9 +374,7 @@ set s.LastStartFail = true;")
 					client.Sale = sale;
 			}
 
-			if (!client.PaidDay
-				&& client.RatedPeriodDate.GetValueOrDefault() != DateTime.MinValue
-				&& client.GetSumForRegularWriteOff() > 0) {
+			if (!client.PaidDay && client.RatedPeriodDate.GetValueOrDefault() != DateTime.MinValue && client.GetSumForRegularWriteOff() > 0) {
 				if (client.StartNoBlock == null)
 					client.StartNoBlock = SystemTime.Now();
 
@@ -429,8 +423,7 @@ set s.LastStartFail = true;")
 				if (client.IsChanged(c => c.Disabled))
 					client.CreareAppeal("Клиент был заблокирован", AppealType.Statistic);
 			}
-			if ((client.YearCycleDate == null && client.BeginWork != null)
-				|| (SystemTime.Now().Date >= client.YearCycleDate.Value.AddYears(1).Date)) {
+			if ((client.YearCycleDate == null && client.BeginWork != null) || (SystemTime.Now().Date >= client.YearCycleDate.Value.AddYears(1).Date)) {
 				client.FreeBlockDays = _saleSettings.FreeDaysVoluntaryBlocking;
 				client.YearCycleDate = SystemTime.Now();
 			}

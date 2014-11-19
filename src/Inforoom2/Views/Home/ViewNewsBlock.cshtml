@@ -1,0 +1,14 @@
+﻿@using Inforoom2.Models
+@model dynamic
+
+@{
+	ViewBag.Title = "title";
+
+	NewsBlock news = ViewBag.NewsBlock;
+}
+
+<h2>@Html.DisplayFor(modelItem => news.Title)</h2>
+
+<div class="NewsBlockDeatil">
+	@Html.DisplayFor(modelItem => news.Body)
+</div>

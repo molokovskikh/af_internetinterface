@@ -1,0 +1,31 @@
+﻿@using Inforoom2.Models
+@{
+	Question question = ViewBag.Question;
+}
+
+<div style="width: 1000px; margin: 0px auto; border: 1px gainsboro solid">
+	<div class="UpdateQuestion" >
+	
+	
+		@using (@Html.BeginForm("UpdateQuestion", "AdminQuestion", FormMethod.Post)) {
+			<div>
+				@Html.HiddenFor(model => question.Id)
+				@Html.HiddenFor(model => question.Priority)
+				<span>Вопрос</span>
+				@Html.TextAreaFor(model => question.Text)
+				@ViewBag.Validation.GetError(question, "Text", "Вопрос не может быть пустым")
+			</div>
+			<div>
+				<span>Ответ</span>
+				@Html.TextAreaFor(model => question.Answer)
+				@ViewBag.Validation.GetError(question, "Answer", "Ответ не может быть пустым")
+			</div>
+			<div>
+				<span>Опубликовать</span>
+				@Html.CheckBoxFor(model => question.IsPublished)
+			</div>
+			<input type="submit"  value="Принять изменения"/>
+		}
+		<button class="BackButton" onclick=" location.href = '@Url.Action("AdminQuestionIndex", "AdminQuestion")' ">Назад</button>
+	</div>
+</div>
