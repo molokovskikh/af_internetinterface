@@ -100,13 +100,22 @@ ${app.Asset("service-requests.js")}
 						</td>
 				<% end %>
 			</tr>
-			<% if request.BlockForRepair: %>
+			<% if request.Client.PhysicalClient : %>
 			<tr>
 				<td>
-					<b>Тип заявки</b>
+					<b>Восстановление работы</b>
 				</td>
 				<td>
-					Восстановление работы
+				<% if not Edit: %>
+					<% if request.BlockForRepair : %>
+					да
+					<% else: %>
+					нет
+					<% end %>
+				<% else: %>
+				${app.Edit("request.BlockForRepair")}
+				${app.Error("request.BlockForRepair")}
+				<% end %>
 				</td>
 			</tr>
 			<% end %>

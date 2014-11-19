@@ -40,10 +40,13 @@ namespace InternetInterface.Test.Unit
 		[Test]
 		public void Get_where_diller_name()
 		{
+			//Эти тесты надо выкинуть, потому что это бред
+			//Проверять надо результат работы объектов а не их отдельных функций
+			//Мешает модификации
 			_thisPartner.Role.ReductionName = "Diller";
 			_filter.SearchText = "testText";
 			var result = _filter.GetWhere();
-			Assert.That(result, Is.EqualTo("WHERE (C.Name like :SearchText) and (C.PhysicalClient is not null)"));
+			Assert.That(result, Is.EqualTo("WHERE (C.Name REGEXP :SearchText) and (C.PhysicalClient is not null)"));
 		}
 
 		[Test]
@@ -56,11 +59,14 @@ namespace InternetInterface.Test.Unit
 		[Test]
 		public void Get_where_office_text()
 		{
+			//Эти тесты надо выкинуть, потому что это бред
+			//Проверять надо результат работы объектов а не их отдельных функций
+			//Мешает модификации
 			_filter.SearchText = "testText";
 			var result = _filter.GetWhere();
 			Assert.That(result, Is.EqualTo(@"
 	WHERE
-	(C.Name like :SearchText or
+	(C.Name REGEXP :SearchText or
 	C.id like :SearchText or
 	p.ExternalClientId like :SearchText or
 	co.Contact like :SearchText or
@@ -121,10 +127,13 @@ namespace InternetInterface.Test.Unit
 		[Test]
 		public void Get_where_office_searchProperties_IsSearchByFio()
 		{
+			//Эти тесты надо выкинуть, потому что это бред
+			//Проверять надо результат работы объектов а не их отдельных функций
+			//Мешает модификации
 			_filter.SearchText = "5";
 			_filter.SearchProperties = SearchUserBy.ByFio;
 			var result = _filter.GetWhere();
-			Assert.That(result, Is.EqualTo(@"WHERE (C.Name like :SearchText)"));
+			Assert.That(result, Is.EqualTo(@"WHERE (C.Name REGEXP :SearchText)"));
 		}
 
 		[Test]

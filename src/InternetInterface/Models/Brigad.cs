@@ -58,7 +58,10 @@ namespace InternetInterface.Models
 
 		public virtual Client GetOneGraph(int intervalNum, DateTime selectDate)
 		{
-			return Graphs.Where(c => c.DateAndTime.Date == selectDate.Date && c.IntervalId == (uint)intervalNum)
+			var timeInterval = TimeInterval.FromRequests(selectDate, this, Graphs.ToList())[intervalNum];
+			return Graphs.Where(c => c.DateAndTime.Date == selectDate.Date
+				&& c.DateAndTime.TimeOfDay >= timeInterval.Begin
+				&& c.DateAndTime.TimeOfDay < timeInterval.End)
 				.Select(g => g.Client)
 				.FirstOrDefault();
 		}

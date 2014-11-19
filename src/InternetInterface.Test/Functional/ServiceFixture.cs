@@ -92,6 +92,24 @@ namespace InternetInterface.Test.Functional
 		}
 
 		[Test]
+		public void EditBlockForRepair()
+		{
+			var request = CreateRequest();
+			session.Save(request);
+			Assert.That(request.BlockForRepair, Is.False);
+			Open("ServiceRequest/ShowRequest?Id={0}&Edit=true", request.Id);
+			AssertText("Восстановление работы");
+			var checkBox = browser.FindElementById("request_BlockForRepair");
+			var save = browser.FindElementById("saveButton");
+			checkBox.Click();
+			save.Click();
+			AssertText("Сохранено");
+			session.Clear();
+			var saved = session.Load<ServiceRequest>(request.Id);
+			Assert.That(saved.BlockForRepair, Is.True);
+		}
+
+		[Test]
 		public void Filter_test()
 		{
 			var request = CreateRequest();

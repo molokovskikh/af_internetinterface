@@ -139,7 +139,7 @@ namespace InternetInterface.Models
 			return
 				Payments.Where(
 					p => p.RegistrationDate.Date >= interval.StartDate.Date && p.RegistrationDate.Date <= interval.EndDate.Date).Sum(
-					p => p.Sum);
+						p => p.Sum);
 		}
 
 		public static List<Partner> GetHouseMapAgents(ISession session)
@@ -186,33 +186,27 @@ namespace InternetInterface.Models
 						new ControllerActionPermission("UserInfo", "RegisterRegion"),
 						new ControllerPermission(typeof(RentableHardwaresController)),
 					}
-				},
-				{
+				}, {
 					"DHCP", new IPermission[] {
 						new ControllerPermission(typeof(SwitchesController)),
 					}
-				},
-				{
+				}, {
 					"CB", new IPermission[] {
 						new ControllerActionPermission("Payments", "Cancel")
 					}
-				},
-				{
+				}, {
 					"ASR", new IPermission[] {
 						new ControllerPermission(typeof(ServiceRequestController)),
 					}
-				},
-				{
+				}, {
 					"RP", new IPermission[] {
 						new ControllerPermission(typeof(PartnersController)),
 					}
-				},
-				{
+				}, {
 					"VD", new IPermission[] {
 						new ControllerPermission(typeof(ConnectionRequestController)),
 					}
-				},
-				{
+				}, {
 					//Управление бригадами
 					"MB", new IPermission[] {
 						new ControllerPermission(typeof(BrigadsController)),
@@ -227,6 +221,11 @@ namespace InternetInterface.Models
 		public static IList<Partner> All(ISession session)
 		{
 			return session.Query<Partner>().OrderBy(p => p.Name).ToList();
+		}
+
+		public static IList<Partner> All()
+		{
+			return ArHelper.WithSession(s => s.Query<Partner>().OrderBy(p => p.Name).ToList());
 		}
 
 		public static Partner GetInitPartner()

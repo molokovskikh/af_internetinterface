@@ -53,6 +53,7 @@
       <HintPath>..\..\lib\NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml.Linq" />
@@ -101,8 +102,14 @@
     </StyleCopAdditionalAddinPaths>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\global.config">
+      <Link>global.config</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="app.config" />
-    <None Include="app.release.config" />
+    <None Include="app.release.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.

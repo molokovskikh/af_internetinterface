@@ -2,15 +2,18 @@
 using System.Linq;
 using System.Net;
 using Billing;
+using Common.Tools;
 using InternetInterface;
 using InternetInterface.Controllers;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using InternetInterface.Services;
 using InternetInterface.Test.Helpers;
 using NHibernate.Linq;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using Test.Support.Selenium;
+using InternetInterface.Models.Services;
 
 namespace InforoomInternet.Test.Functional
 {
@@ -303,6 +306,80 @@ namespace InforoomInternet.Test.Functional
 			AssertText("Доступ в интернет заблокирован из-за проведения работ по сервисной заявке");
 			Click("Продолжить");
 			AssertText("Работа возобновлена");
+		}
+
+		[Test]
+		public void IPTV_files()
+		{
+			var service = session.Get<Service>(7u);
+			var serv = new ClientService(client, service);
+			client.ClientServices.Clear();
+			client.ClientServices.Add(serv);
+			session.Save(client);
+			var iptvTariff = new Tariff();
+			iptvTariff.Name = "iptvTariff";
+			iptvTariff.Description = "iptvTariff";
+			iptvTariff.Iptv = true;
+			iptvTariff.PackageId = 1;
+			iptvTariff.Hidden = false;
+			iptvTariff.CanUseForSelfConfigure = true;
+			session.Save(iptvTariff);
+			var noIptvTariff = new Tariff();
+			noIptvTariff.Name = "noiptvTariff";
+			noIptvTariff.Description = "noiptvTariff";
+			noIptvTariff.Iptv = false;
+			noIptvTariff.PackageId = 1;
+			noIptvTariff.Hidden = false;
+			noIptvTariff.CanUseForSelfConfigure = true;
+			
+			Open("PrivateOffice/IndexOffice");
+			AssertNoText("Каналы для IPTV");
+
+			serv.IsActivated = true;
+			session.Save(serv);
+			Open("PrivateOffice/IndexOffice");
+			AssertText("Каналы для IPTV");
+		}
+
+		[Test]
+		public void Tariffs_Without_IPTV()
+		{
+			var service = session.Get<Service>(7u);
+			var serv = new ClientService(client, service);
+			serv.IsActivated = true;
+			client.ClientServices.Clear();
+			client.ClientServices.Add(serv);
+			service = session.Get<Service>(5u);
+			serv = new ClientService(client, service);
+			serv.IsActivated = true;
+			client.ClientServices.Add(serv);
+			session.Save(client);
+			var iptvTariff = new Tariff();
+			iptvTariff.Name = "iptvTariff";
+			iptvTariff.Description = "iptvTariff";
+			iptvTariff.Iptv = true;
+			iptvTariff.PackageId = 1;
+			iptvTariff.Hidden = false;
+			iptvTariff.CanUseForSelfConfigure = true;
+			session.Save(iptvTariff);
+			var noIptvTariff = new Tariff();
+			noIptvTariff.Name = "noiptvTariff";
+			noIptvTariff.Description = "noiptvTariff";
+			noIptvTariff.Iptv = false;
+			noIptvTariff.PackageId = 1;
+			noIptvTariff.Hidden = false;
+			noIptvTariff.CanUseForSelfConfigure = true;
+			session.Save(noIptvTariff);
+
+			Open("PrivateOffice/Services");
+			Css("#client_PhysicalClient_Tariff_Id").SelectByValue(iptvTariff.Id.ToString());
+			browser.FindElementByCssSelector("input[type='submit']").Click();
+			AssertNoText("Переход на этот тариф не возможен с включенной услугой IPTV");
+
+			Open("PrivateOffice/Services");
+			Css("#client_PhysicalClient_Tariff_Id").SelectByValue(noIptvTariff.Id.ToString());
+			browser.FindElementByCssSelector("input[type='submit']").Click();
+			AssertText("Переход на этот тариф не возможен с включенной услугой IPTV");
 		}
 	}
 }

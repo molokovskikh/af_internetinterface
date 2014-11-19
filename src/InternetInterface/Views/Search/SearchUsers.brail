@@ -91,7 +91,7 @@
 							${app.Edit("filter.RentableHardware")}
 						</div>
 						<div>
-							<span>Заблокирован более ${app.Edit("filter.BlockDayCount", { @style: "width: 3em" })} дней</span>
+							<span>Заблокирован c ${app.Edit("filter.BlockDayMin", { @style: "width: 3em" })} по ${app.Edit("filter.BlockDayMax", { @style: "width: 3em" })}</span>
 						</div>
 					</td>
 					<td>

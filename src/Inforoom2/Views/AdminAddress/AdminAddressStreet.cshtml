@@ -1,0 +1,39 @@
+﻿@using Inforoom2.Models
+
+@{
+	ViewBag.Title = "AdminStreet";
+
+	IList<Street> streets = ViewBag.Streets;
+}
+
+<h2>AdminStreet</h2>
+@{ Html.RenderPartial("AdminPanel");  }
+<span><button class="CreateAddress" onclick=" location.href = '@Url.Action("EditStreet", "AdminAddress")' ">Создать улицу</button></span>
+
+<div class="AdminAddress">
+	<table class="AdminAddressTable">
+		<tr>
+			<td>
+				<div>Название</div>
+			</td>
+			<td>
+				<div>Город</div>
+			</td>
+		</tr>
+		@foreach (var item in streets) {
+			<tr>
+				<td>
+					@Html.DisplayFor(modelItem => item.Name)
+				</td>
+			
+				<td>
+					@Html.DisplayFor(modelItem => item.Region.City.Name)
+				</td>
+				<td>
+					<span><button class="ViewAddress" onclick=" location.href = '@Url.Action("EditStreet", "AdminAddress", new { streetId = item.Id })' ">Просмотр</button></span>
+					<span><button class="DeleteAddress" onclick=" location.href = '@Url.Action("DeleteStreet", "AdminAddress", new { streetId = item.Id })' ">Удалить</button></span>
+				</td>
+			</tr>
+		}
+	</table>
+</div>

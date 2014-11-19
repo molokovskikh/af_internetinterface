@@ -19,6 +19,7 @@
 			<tr>
 				<td colspan="100">
 					<button type="submit" id="RegisterPartnerButton" class="button save">Сохранить</button>
+					<button type="submit"  class="button save" name="passwordReset" value="true">Сбросить пароль</button>
 				</td>
 			</tr>
 		</table>

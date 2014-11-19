@@ -20,7 +20,7 @@
 		${app.Error("Partner.ShowContractOfAgency")}
 	</td>
 </tr>
-<% if Partner.Role.HasExAttrs: %>
+
 <tr>
 	<td>
 		EMail
@@ -32,6 +32,7 @@
 		${app.Error("Partner.Email")}
 	</td>
 </tr>
+<% if Partner.Role.HasExAttrs: %>
 <tr>
 	<td>
 		Номер телефона

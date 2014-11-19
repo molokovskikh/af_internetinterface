@@ -40,10 +40,10 @@ namespace InternetInterface.Test.Helpers
 
 		public static Partner CreatePartnerByRole(int roleId, ISession session)
 		{
-			var role = session.Query<UserRole>().First(r => r.Id ==  roleId);
+			var role = session.Query<UserRole>().First(r => r.Id == roleId);
 			int random = new Random().Next(1, 10000);
 			string name = DateTime.Now.ToShortDateString() + random;
-			var	partner = new Partner(role){
+			var	partner = new Partner(role) {
 				Name = name,
 				Login = name
 			};

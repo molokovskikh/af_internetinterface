@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -55,12 +56,39 @@ namespace InternetInterface.Helpers
 				ExcelHelper.Write(ws, row, colShift + 0, item.client.Id, true);
 				ExcelHelper.Write(ws, row, colShift + 1, item.client.Name, true);
 				ExcelHelper.Write(ws, row, colShift + 2, item.Address, true);
-				ExcelHelper.Write(ws, row, colShift + 3, item.client.ForSearchContactNoLight(filter.SearchText), true);
-				ExcelHelper.Write(ws, row, colShift + 4, item.client.RegDate, true);
-				ExcelHelper.Write(ws, row, colShift + 5, item.client.GetTariffName(), true);
-				ExcelHelper.Write(ws, row, colShift + 6, item.client.Balance, true);
-				ExcelHelper.Write(ws, row, colShift + 7, item.client.Status.Type.GetDescription(), true);
-
+				if (item.client.PhysicalClient != null) {
+					ExcelHelper.Write(ws, row, colShift + 3, item.client.PhysicalClient.City, true);
+					ExcelHelper.Write(ws, row, colShift + 4, item.client.PhysicalClient.Street, true);
+					ExcelHelper.Write(ws, row, colShift + 5, item.client.PhysicalClient.House + " " + item.client.PhysicalClient.CaseHouse, true);
+					ExcelHelper.Write(ws, row, colShift + 6, item.client.PhysicalClient.Apartment, true);
+				}
+				else {
+					var obj = item.client.LawyerPerson.ParseAddress();
+					ExcelHelper.Write(ws, row, colShift + 3, obj["City"], true);
+					ExcelHelper.Write(ws, row, colShift + 4, obj["Street"], true);
+					ExcelHelper.Write(ws, row, colShift + 5, obj["House"], true);
+					ExcelHelper.Write(ws, row, colShift + 6, obj["Apartment"], true);
+				}
+				var contacts = "";
+				if (item.client.Contacts.Count == 1)
+					contacts = item.client.Contacts[0].HumanableNumber;
+				else
+					for (var i = 1; i < item.client.Contacts.Count; i++)
+						contacts += ", " + item.client.Contacts[i].HumanableNumber;
+				ExcelHelper.Write(ws, row, colShift + 7, contacts, true);
+				ExcelHelper.Write(ws, row, colShift + 8, item.client.RegDate, true);
+				ExcelHelper.Write(ws, row, colShift + 9, item.client.GetTariffName(), true);
+				ExcelHelper.Write(ws, row, colShift + 10, item.client.Balance, true);
+				ExcelHelper.Write(ws, row, colShift + 11, item.client.Status.Type.GetDescription(), true);
+				var textBlock = "";
+				if (item.client.Status.Type == StatusType.NoWorked)
+					textBlock = item.client.BlockDate.ToString();
+				ExcelHelper.Write(ws, row, colShift + 12, textBlock, true);
+				var endpoint = item.client.Endpoints.FirstOrDefault();
+				var textEndpoint = "";
+				if (endpoint != null && endpoint.Switch != null && endpoint.Switch.IP != null)
+					textEndpoint = endpoint.Switch.Name + "(" + endpoint.Switch.IP + ")";
+				ExcelHelper.Write(ws, row, colShift + 13, textEndpoint, true);
 				row++;
 			}
 			FormatClientsStatisticXls(ws);
@@ -72,26 +100,35 @@ namespace InternetInterface.Helpers
 			}
 		}
 
+
 		private static void FormatClientsStatisticXls(Worksheet ws)
 		{
 			int headerRow = 7;
 			ExcelHelper.WriteHeader1(ws, headerRow, 0, "Номер счета", true, true);
 			ExcelHelper.WriteHeader1(ws, headerRow, 1, "ФИО", true, true);
 			ExcelHelper.WriteHeader1(ws, headerRow, 2, "Адрес подключения", true, true);
-			ExcelHelper.WriteHeader1(ws, headerRow, 3, "Контактная информация", true, true);
-			ExcelHelper.WriteHeader1(ws, headerRow, 4, "Дата регистрации", true, true);
-			ExcelHelper.WriteHeader1(ws, headerRow, 5, "Тариф", true, true);
-			ExcelHelper.WriteHeader1(ws, headerRow, 6, "Баланс", true, true);
-			ExcelHelper.WriteHeader1(ws, headerRow, 7, "Статус", true, true);
+			ExcelHelper.WriteHeader1(ws, headerRow, 3, "Город", true, true);
+			ExcelHelper.WriteHeader1(ws, headerRow, 4, "Улица", true, true);
+			ExcelHelper.WriteHeader1(ws, headerRow, 5, "Дом", true, true);
+			ExcelHelper.WriteHeader1(ws, headerRow, 6, "Квартира", true, true);
+			ExcelHelper.WriteHeader1(ws, headerRow, 7, "Контактная информация", true, true);
+			ExcelHelper.WriteHeader1(ws, headerRow, 8, "Дата регистрации", true, true);
+			ExcelHelper.WriteHeader1(ws, headerRow, 9, "Тариф", true, true);
+			ExcelHelper.WriteHeader1(ws, headerRow, 10, "Баланс", true, true);
+			ExcelHelper.WriteHeader1(ws, headerRow, 11, "Статус", true, true);
+			ExcelHelper.WriteHeader1(ws, headerRow, 12, "Дата блокировки", true, true);
+			ExcelHelper.WriteHeader1(ws, headerRow, 13, "Коммутатор", true, true);
 
 			ws.Cells.ColumnWidth[0] = 4000;
 			ws.Cells.ColumnWidth[1] = 10000;
 			ws.Cells.ColumnWidth[2] = 15000;
-			ws.Cells.ColumnWidth[3] = 4000;
-			ws.Cells.ColumnWidth[4] = 5000;
-			ws.Cells.ColumnWidth[5] = 4000;
-			ws.Cells.ColumnWidth[6] = 3000;
 			ws.Cells.ColumnWidth[7] = 4000;
+			ws.Cells.ColumnWidth[8] = 5000;
+			ws.Cells.ColumnWidth[9] = 4000;
+			ws.Cells.ColumnWidth[10] = 3000;
+			ws.Cells.ColumnWidth[11] = 4000;
+			ws.Cells.ColumnWidth[12] = 4000;
+			ws.Cells.ColumnWidth[13] = 8000;
 
 			ws.Cells.Rows[headerRow].Height = 514;
 		}

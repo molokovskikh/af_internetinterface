@@ -116,6 +116,7 @@ namespace InforoomInternet.Test.Integration
 		{
 			var oldTariff = client.PhysicalClient.Tariff.Name;
 			var tarriff = new Tariff("Тариф для тестирования изменения тарифов", 500);
+			tarriff.Iptv = true;
 			session.Save(new TariffChangeRule(client.PhysicalClient.Tariff, tarriff, 50));
 			session.Save(tarriff);
 

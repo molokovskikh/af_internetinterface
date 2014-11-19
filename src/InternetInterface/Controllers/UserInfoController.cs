@@ -247,13 +247,22 @@ namespace InternetInterface.Controllers
 			uint EditConnect, string ConnectSum,
 			[DataBind("order")] Order Order, bool withoutEndPoint, uint currentEndPoint)
 		{
+			var errors = ValidateDeep(Order);
+			if(Order.Id != 0 && errors.ErrorsCount > 0) {
+				Error(errors.ErrorMessages.First());
+				RedirectToReferrer();
+				return;
+			}
 			var needNewServiceForStaticIp = false;
 			var settings = new Settings(DbSession);
 			var client = DbSession.Load<Client>(ClientID);
 			var newFlag = false;
 			var clientEntPoint = new ClientEndpoint();
 
+			//если это не создание ордера, то это его редактировани
+			//если editConnect == 0, то это новый ордер
 			var existingOrder = DbSession.Query<Order>().FirstOrDefault(o => o.Id == EditConnect);
+
 			if (!client.IsPhysical()) {
 				if (existingOrder != null) {
 					if (existingOrder.EndPoint != null)
@@ -387,6 +396,7 @@ namespace InternetInterface.Controllers
 				}
 				if (existingOrder.Client == null)
 					existingOrder.Client = client;
+
 				DbSession.SaveOrUpdate(existingOrder);
 				foreach (var orderService in existingOrder.OrderServices.ToList()) {
 					if(Order.OrderServices.All(s => s.Id != orderService.Id)) {
@@ -551,7 +561,8 @@ namespace InternetInterface.Controllers
 			BindObjectInstance(client, ParamStore.Form, "_client");
 
 			if (oldStatus != client.Status) {
-				if (oldStatus.ManualSet) {
+				//BlockedAndConnected = "не подключен", а не то, что ты подумал
+				if (oldStatus.ManualSet || oldStatus.Type == StatusType.BlockedAndConnected) {
 					if (client.Status.Type == StatusType.Dissolved && (client.HaveService<HardwareRent>() || client.HaveService<IpTvBoxRent>())) {
 						GetErrorSummary(updateClient)
 							.RegisterErrorMessage("Status", "Договор не может быть расторгнут тк у клиента имеется арендованное" +

@@ -1,4 +1,9 @@
-﻿<div class="servicePage">
+﻿<% if IsDefined("error"): %>
+<div class="error"> ${error} </div>
+<% end %>
+<div class="servicePage">
+
+		
 	<% haveService = false %>
 
 	<% if Client.CanUseDebtWork(): %>

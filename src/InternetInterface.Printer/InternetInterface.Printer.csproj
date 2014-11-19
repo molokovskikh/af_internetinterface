@@ -12,7 +12,8 @@
     <RootNamespace>InternetInterface.Printer</RootNamespace>
     <AssemblyName>InternetInterface.Printer</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile></TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -101,6 +102,10 @@
     <EmbeddedResource Include="..\InternetInterface\Views\Acts\Print.brail">
       <Link>Views\Acts\Print.brail</Link>
     </EmbeddedResource>
+    <None Include="..\global.config">
+      <Link>global.config</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="App.config" />
     <None Include="App.release.config" />
   </ItemGroup>

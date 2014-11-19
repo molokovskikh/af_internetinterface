@@ -11,7 +11,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>InternetInterface.Test</RootNamespace>
     <AssemblyName>InternetInterface.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -137,8 +137,8 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WebDriver, Version=2.33.0.0, Culture=neutral, processorArchitecture=MSIL" />
-    <Reference Include="WebDriver.Support, Version=2.33.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="WebDriver" />
+    <Reference Include="WebDriver.Support" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Functional\BrigadFixture.cs" />
@@ -179,6 +179,7 @@
     <Compile Include="Integration\AgentFilterFixture.cs" />
     <Compile Include="Integration\BrigadFixture.cs" />
     <Compile Include="Integration\Controllers\PrivateMessagesControllerFixture.cs" />
+    <Compile Include="Integration\InternetInterfaceControllerFixture.cs" />
     <Compile Include="Integration\MailAboutOrderFixture.cs" />
     <Compile Include="Integration\ClientFixture.cs" />
     <Compile Include="Integration\ContactFixture.cs" />
@@ -216,6 +217,10 @@
     <Compile Include="Unit\TimeunitFixture.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\global.config">
+      <Link>global.config</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>

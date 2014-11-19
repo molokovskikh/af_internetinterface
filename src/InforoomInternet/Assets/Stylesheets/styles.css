@@ -1,4 +1,7 @@
 /* Основные элементы */
+
+.iptv a {position: absolute; top: 137px; left: 186px;}
+
 body {
   background: White url(../Images/Layouts/wrapper.png) repeat-x top;
   color: Black;

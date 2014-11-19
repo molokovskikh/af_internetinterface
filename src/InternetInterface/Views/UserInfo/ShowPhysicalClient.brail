@@ -173,8 +173,8 @@
 			<td><span class="description">Бонусов:</span> ${Client.VirtualBalance.ToString("0.00")}</td>
 		</tr>
 		<% if _client.Status != null: %>
-			<tr>
-				<td><span class="description">Статус клиента:</span> ${_client.Status.Name}</td>
+			<tr class="status ${_client.Status.Type}">
+				<td><span class="description ">Статус клиента:</span> ${_client.Status.Name}</td>
 			</tr>
 			<% if _client.IsDisabledByBilling(): %>
 			<tr>

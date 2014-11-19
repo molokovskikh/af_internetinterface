@@ -1,5 +1,6 @@
 * {margin:0;padding:0}
 .clear { clear: both; height: 0; }
+.status.Dissolved { background-color: #F77B7B!important}
 
 .wat-cf:after {
 	 content: ".";

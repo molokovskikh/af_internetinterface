@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Common.Web.Ui.Models;
 using InternetInterface.Models;
 using InternetInterface.Models.Services;
 using InternetInterface.Test.Helpers;
@@ -10,16 +11,29 @@ using OpenQA.Selenium;
 namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
-	class PhysicalClientFixture : AcceptanceFixture
+	internal class PhysicalClientFixture : AcceptanceFixture
 	{
 		[Test]
 		public void NoOrderForPhysicalClient()
 		{
+			var reg = session.Query<RegionHouse>().First(i => i.Name == "Воронеж");
+			var zone = session.Query<Zone>().First(i => i.Region == reg);
+			session.Save(zone);
+			var sw = new NetworkSwitch("ClientTestSwitch", zone);
+			session.Save(sw);
+
+			var url = string.Format("UserInfo/ShowPhysicalClient?filter.ClientCode={0}&filter.EditingConnect=true&filter.Editing={1}", client.Id, false);
+			Open(url);
+
 			Css("input[name='EditConnectFlag'] + button").Click();
 			Css("input#Port").SendKeys("1");
+			Css("#SelectSwitches").SelectByValue(sw.Id.ToString());
 			Css("input#Submit2").Click();
 			var order = session.Get<Order>(client.Id);
 			Assert.Null(order);
+			var endpoint = session.Query<ClientEndpoint>().First(i => i.Client == client);
+			Assert.NotNull(endpoint);
+			Assert.False(browser.PageSource.Contains("class=\"err\""));
 		}
 
 		[Test]

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -43,6 +44,7 @@ namespace InternetInterface.Models
 			Endpoints = new List<ClientEndpoint>();
 			Appeals = new List<Appeals>();
 			Orders = new List<Order>();
+			ServiceRequests = new List<ServiceRequest>();
 		}
 
 		public Client(PhysicalClient client, Settings settings, Partner registrator = null)
@@ -204,6 +206,9 @@ namespace InternetInterface.Models
 
 		[HasMany(ColumnKey = "Client", OrderBy = "PaidOn", Lazy = true)]
 		public virtual IList<Payment> Payments { get; set; }
+
+		[HasMany(ColumnKey = "Client", OrderBy = "RegDate", Lazy = true)]
+		public virtual IList<ServiceRequest> ServiceRequests { get; set; }
 
 		[HasMany(ColumnKey = "Client", OrderBy = "WriteOffDate", Lazy = true)]
 		public virtual IList<WriteOff> WriteOffs { get; set; }
@@ -554,6 +559,15 @@ namespace InternetInterface.Models
 
 		public virtual bool CanBlock()
 		{
+			//Если у юр. лица баланс меньше абоненской платы, помноженной на модификатор из настроек 
+			if (LawyerPerson != null) {
+				var param = ConfigurationManager.AppSettings["LawyerPersonBalanceBlockingRate"];
+				var rate = decimal.Parse(param);
+				if (LawyerPerson.Tariff > 0 && LawyerPerson.Balance < LawyerPerson.Tariff * -rate && !Disabled)
+					return true;
+				return false;
+			}
+
 			var cServ = ClientServices.FirstOrDefault(c => NHibernateUtil.GetClass(c.Service) == typeof(DebtWork));
 			if (cServ != null && !cServ.Service.CanBlock(cServ))
 				return false;

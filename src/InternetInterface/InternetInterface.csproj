@@ -49,7 +49,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Boo.Lang.Compiler, Version=2.0.9.3, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Boo.Lang.Compiler">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Castle.Monorail.2.1.4\lib\net40\Boo.Lang.Compiler.dll</HintPath>
     </Reference>
@@ -178,6 +178,10 @@
     <Content Include="Views\Acts\Edit.brail" />
     <Content Include="Views\Acts\Print.brail" />
     <Content Include="packages.config" />
+    <Content Include="..\global.config">
+      <Link>global.config</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Views\AgentInfo\GroupInfo.brail" />
     <None Include="Views\AgentInfo\PaymentBlock.brail" />
     <None Include="Views\AgentInfo\SummaryInformation.brail" />
@@ -225,7 +229,9 @@
     <None Include="Views\HouseMap\ForPrintToAgent.brail" />
     <None Include="Views\HouseMap\HouseEdit.brail" />
     <None Include="Views\HouseMap\HouseFindResult.brail" />
-    <None Include="Views\HouseMap\HouseInfo.brail" />
+    <None Include="Views\HouseMap\HouseInfo.brail">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Views\HouseMap\NetworkSwitches.brail" />
     <None Include="Views\HouseMap\PassView.brail" />
     <None Include="Views\HouseMap\RegisterHouse.brail" />
@@ -328,6 +334,7 @@
     <None Include="Views\Tariffs\ChangeRules.brail" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Web.release.config">
     </Content>
@@ -400,6 +407,7 @@
     <Compile Include="Helpers\IpHelper.cs" />
     <Compile Include="Helpers\IPUserType.cs" />
     <Compile Include="Helpers\AuditListener.cs" />
+    <Compile Include="Helpers\GreaterOrEqualZeroValidator.cs" />
     <Compile Include="Helpers\SceHelper.cs" />
     <Compile Include="Helpers\SmsHelper.cs" />
     <Compile Include="Helpers\StandaloneInitializer.cs" />
@@ -518,7 +526,9 @@
     <None Include="Views\Register\RegisterClient.brail" />
     <None Include="Views\Search\SearchBy.brail" />
     <None Include="Views\Subview\MapHead.brail" />
-    <None Include="Views\Partners\Partner.brail" />
+    <None Include="Views\Partners\Partner.brail">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Views\Subview\Payment.brail" />
     <None Include="Views\Partners\Report.brail" />
     <None Include="Views\ConnectionRequest\Index.brail" />
