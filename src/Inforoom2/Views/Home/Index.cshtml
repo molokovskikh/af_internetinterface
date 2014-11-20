@@ -9,16 +9,74 @@
 }
 
 
+<div class="offers">
+	<div class="slider">
+		<div class="content">
+			<div class="longspace notext">
+				<div class="offer">
+					<img src="~/images/slider1.png"/>
+				</div>
+				<div class="offer">
+					<img src="~/images/slider1.png"/>
+				</div>
+				<div class="offer">
+					<img src="~/images/slider1.png"/>
+				</div>
+				<div class="offer">
+					<img src="~/images/slider1.png"/>
+				</div>
+				<div class="offer">
+					<img src="~/images/slider1.png"/>
+				</div>
+			</div>
+		</div>
+		<ul class="controls">
+			<li class="active"></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li class="stop">II</li>
+		</ul>
+	</div>
+	<div class="main-offer">
+		<img src="~/images/offer.png"/>
+	</div>
+	<script src="http://code.jquery.com/jquery-2.1.1.js"></script>
+	<script src="~/Scripts/main.js"></script>
+</div>
+<div class="find">
+	<div class="speed">Протестировать скорость
+		<div class="speedbg"></div>
+	</div>
+	<div class="connection">Подключен ли мой дом?
+		<div class="connectionbg"></div>
+	</div>
+</div>
+<div class="news">НОВОСТИ</div>
+<div class="information">
+	
+	@foreach (var item in news) {
+		<div class="text">
+			<h1>@Html.DisplayFor(modelItem => item.Title)</h1>
+			<p>@Html.DisplayFor(modelItem => item.CreationDate)</p>
+			<h2>@Html.DisplayFor(modelItem => item.Preview)</h2>
+			
+			@if (!string.IsNullOrEmpty(item.Body)) {
+				if (string.IsNullOrEmpty(item.Url)) {
+					<span><button class="ViewNewsBlock" onclick=" location.href = '@Url.Action("ViewNewsBlock", "Home", new { newsId = item.Id })' ">Подробнее</button></span>
+				}
+				else {
+					<span><button class="ViewNewsBlock" onclick=" location.href = '@item.Url' " >Подробнее</button></span>
+				}
+			}
+		
+		</div>
+	}
+	
+</div>
 
-<h2>Home</h2>
-
-Тестовые пользователи:
-<br>
-client : password
-<br>
-admin : password
-<h3>Новости</h3>
-<div style="width: 1000px; height: 200px; margin: 0px auto; border: 1px gainsboro solid">
+@*<div style="width: 1000px; height: 200px; margin: 0px auto; border: 1px gainsboro solid">
 	
 	
 	@foreach (var item in news) {
@@ -37,4 +95,4 @@ admin : password
 		
 		</div>
 	}
-</div>
+</div>*@
