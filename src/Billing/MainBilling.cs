@@ -208,7 +208,7 @@ set s.LastStartFail = true;")
 				foreach (var client in lawyerPersons) {
 					if (client.NeedShowWarningForLawyer()) {
 						if (client.WhenShowWarning == null ||
-						    (SystemTime.Now() - client.WhenShowWarning.Value).TotalHours >= 3) {
+							(SystemTime.Now() - client.WhenShowWarning.Value).TotalHours >= 3) {
 							client.ShowBalanceWarningPage = true;
 							client.WhenShowWarning = SystemTime.Now();
 							if (!client.SendEmailNotification)
@@ -329,19 +329,10 @@ set s.LastStartFail = true;")
 		{
 			if (_saleSettings.IsRepairExpaired(client)) {
 				client.SetStatus(StatusType.Worked, session);
-
-				var str = ConfigurationManager.AppSettings["BlockForRepairNotificationMail"];
-				if (str == null)
-					throw new Exception("Параметр BlockForRepairNotificationMail должен быть задан в config");
-				var mailer = new Mailer(new FolderSender(ConfigurationManager.AppSettings["SmtpServer"]));
-				var request = client.ServiceRequests.LastOrDefault();
-				var textMessage = "Срок исполнения сервисной заявки #" + request.Id + " истек";
-				var region = client.GetRegion();
-				var addresses = str.Split(new[] { ',' });
-				for (var i = 0; i < addresses.Length; i++)
-					if (region.Id == (i + 1))
-						mailer.SendText("internet@ivrn.net", addresses[i], textMessage, textMessage);
 			}
+
+			//Отсылка инфы о просроченных заявках
+			SendExpiredServiceRequestEmails(client);
 
 			var phisicalClient = client.PhysicalClient;
 			var balance = phisicalClient.Balance;
@@ -426,6 +417,32 @@ set s.LastStartFail = true;")
 			if ((client.YearCycleDate == null && client.BeginWork != null) || (SystemTime.Now().Date >= client.YearCycleDate.Value.AddYears(1).Date)) {
 				client.FreeBlockDays = _saleSettings.FreeDaysVoluntaryBlocking;
 				client.YearCycleDate = SystemTime.Now();
+			}
+		}
+
+		/// <summary>
+		/// Отправляем письма о просроченных заявках техподдержке
+		/// </summary>
+		/// <param name="client">Клиент</param>
+		private void SendExpiredServiceRequestEmails(Client client)
+		{
+			foreach (var request in client.ServiceRequests) {
+				if (request.Status != ServiceRequestStatus.Close && request.Status != ServiceRequestStatus.Cancel)
+					continue;
+				if ((SystemTime.Now() - request.RegDate).TotalDays < 3)
+					continue;
+
+				var str = ConfigurationManager.AppSettings["BlockForRepairNotificationMail"];
+				if (str == null)
+					throw new Exception("Параметр BlockForRepairNotificationMail должен быть задан в config");
+				var mailer = new Mailer(new FolderSender(ConfigurationManager.AppSettings["SmtpServer"]));
+
+				var textMessage = "Срок исполнения сервисной заявки #" + request.Id + " истек";
+				var region = client.GetRegion();
+				var addresses = str.Split(new[] { ',' });
+				for (var i = 0; i < addresses.Length; i++)
+					if (region.Id == (i + 1))
+						mailer.SendText("internet@ivrn.net", addresses[i], textMessage, textMessage);
 			}
 		}
 
