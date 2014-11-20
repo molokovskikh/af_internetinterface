@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Web.Mvc;
 using System.Web.Security;
 using Common.MySql;
@@ -13,29 +14,21 @@ namespace Inforoom2.Controllers
 	/// </summary>
 	public class AccountController : BaseController
 	{
-		public ActionResult Login()
-		{
-			ViewBag.Username = "";
-			ViewBag.Password = "";
-			return View();
-		}
-
 		[HttpPost]
 		public ActionResult Login(string username, string password, string returnUrl)
 		{
-			if (ModelState.IsValid) {
-				if (IsAdmin(username, password)) {
-					return Authenticate(Url.Content("~/Admin"), username);
-				}
-
-				var user = DbSession.Query<Client>().FirstOrDefault(k => k.Username == username);
-				if (user != null && PasswordHasher.Equals(password, user.Salt, user.Password)) {
-					return Authenticate(returnUrl, username);
-				}
-				ModelState.AddModelError("", "Неправильный логин или пароль");
+			if (IsAdmin(username, password)) {
+				return Authenticate("Index", "Admin", username);
 			}
-			// If we got this far, something failed, redisplay form
-			return View();
+			int id = 0;
+			int.TryParse(username, out id);
+			var user = DbSession.Query<PhysicalClient>().FirstOrDefault(k => k.Id == id);
+			if (user != null && PasswordHasher.Equals(password, user.Salt, user.Password)) {
+				return Authenticate("Profile", "Personal", username);
+			}
+
+			ErrorMessage("Неправильный логин или пароль");
+			return Redirect(returnUrl);
 		}
 
 
@@ -54,14 +47,10 @@ namespace Inforoom2.Controllers
 			return false;
 		}
 
-		private ActionResult Authenticate(string returnUrl, string username)
+		private ActionResult Authenticate(string action, string controller, string username)
 		{
 			FormsAuthentication.SetAuthCookie(username, false);
-			if (Url.IsLocalUrl(returnUrl) && returnUrl.Length > 1 && returnUrl.StartsWith("/")
-			    && !returnUrl.StartsWith("//") && !returnUrl.StartsWith("/\\")) {
-				return Redirect(returnUrl);
-			}
-			return RedirectToAction("Index", "Home");
+			return RedirectToAction(action, controller);
 		}
 	}
 }

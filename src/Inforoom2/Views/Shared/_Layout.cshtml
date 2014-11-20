@@ -1,104 +1,128 @@
 ﻿<!DOCTYPE html>
-<html>
 
+@{
+	string username = "";
+	string password = "";
+}
+<html>
 	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>@ViewBag.Title - My ASP.NET Application</title>
+		<title>Inforum</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link href="../../css/main.css" rel="stylesheet" />
 	</head>
 	<body>
-		<div class="navbar navbar-inverse navbar-fixed-top">
-			<div class="container">
-				@Html.ActionLink("Главная", "Index", "Home", null, new { @class = "navbar-brand" })
-				@Html.ActionLink("Вопросы и ответы", "Index", "Faq", null, new { @class = "navbar-brand" })
-				@Html.ActionLink("Заявка на подключение", "Index", "ClientRequest", null, new { @class = "navbar-brand" })
-				@Html.ActionLink("About", "Index", "About", null, new { @class = "navbar-brand" })
-				@if (Request.IsAuthenticated) {
-					<text>
-						@ViewBag.ClientInfo
-						[ @Html.ActionLink("Выход", "Logout", "Account") ]
-						@Html.ActionLink("Личный кабинет", "Profile", "Personal")
-
-						@if (User.IsInRole("Admin")) {
-							@Html.ActionLink("Панель администратора", "AdminIndex", "Home")
-						} 
-					</text>
-				}
-				else {
-					@:[ @Html.ActionLink("Вход", "Login", "Account") ]
-				}
-			</div>
-		</div>
-	
-		<div class="JavascriptParams" style="display: none">
-			@{
-				var dic = ViewBag.JavascriptParams as Dictionary<string, string>;
-				if (dic != null && dic.Count != 0) {
-					foreach (var key in dic.Keys) {
-						<div id="@key">@dic[key]</div>
-					}
-				}
-			}
-		</div>
-		<div class ="HtmlTemplates" style="display: none">
-			<div id="WindowLayout"class='window'>
-				<div class='header'>
-					<div class='title'></div>
-					<button class="button close">close</button>
-				</div>
-				<div class='wrap'></div>
-			</div>
-			<div id="CityWindow" >
-				<div>
-					<div id="userCity">Мы определили, что вы находитесь в городе <span class="UserCity">@(ViewBag.UserCity)</span></div>
-					<div class="buttons">
-						<button class="button ok">Да</button>
-						<button class="button cancel">Нет</button>
+		<div class="leftbg"></div>
+		<div class="rightbg"></div>
+		<div class="wrapper">
+			<div class="top">
+				<div class="tab">
+					<div class="whiteleft"></div>
+					<div class="blackleft"></div>
+					<div class="city">Воронеж 
+						<div class="arrow"></div>
 					</div>
+					<div class="whiteright"></div>
+					<div class="blackright"></div>
 				</div>
-			</div>
-			<div id ="SelectCityWindow" >
-				<div>Выберете город:</div>
-				<div class="cities">
-					@{
-						foreach (var city in ViewBag.Cities) {
-							<a href="#">@city</a>
+				<div class="login">
+					@if (Request.IsAuthenticated) {
+						<text>
+							@ViewBag.ClientInfo
+							[ @Html.ActionLink("Выход", "Logout", "Account") ]
+							@Html.ActionLink("Личный кабинет", "Profile", "Personal")
+
+							@if (User.IsInRole("Admin")) {
+								@Html.ActionLink("Панель администратора", "AdminIndex", "Home")
+							} 
+						</text>
+					}
+					else {
+						using (Html.BeginForm("Login", "Account", new { returnUrl = @Request.Url }, FormMethod.Post, null)) {
+							@Html.TextBoxFor(model => username, new { @class = "user", placeholder = "Номер счета" })
+							@Html.PasswordFor(model => password, new { @class = "user", placeholder = "Пароль" })
+							<input class="click" type="submit" value="Войти">
 						}
 					}
 				</div>
-				<div class="buttons">
-					<button class="button cancel">Назад</button>
+			</div>
+			<div class="JavascriptParams" style="display: none">
+				@{
+					var dic = ViewBag.JavascriptParams as Dictionary<string, string>;
+					if (dic != null && dic.Count != 0) {
+						foreach (var key in dic.Keys) {
+							<div id="@key">@dic[key]</div>
+						}
+					}
+				}
+			</div>
+			
+			<div class="header">
+				<a href="/">
+					<div class="inforum">
+					</div>
+				</a>
+				<input class="connect" type="submit" value="Подключиться">
+				<input class="call" type="submit" value="Обратный звонок">
+				<div class="phone">8 800 200-00-32</div>
+			</div>
+			<div class="menu">
+				<ul>
+					<li>	@Html.ActionLink("Главная", "Index", "Home", null, new { @class = "active" }) </li> 
+					<li>	@Html.ActionLink("Тарифы", "Index", "Home", null, null) </li> 
+					<li>	@Html.ActionLink("Заявка на подключение", "Index", "ClientRequest", null, null)</li> 
+					<li>	@Html.ActionLink("Для бизнеса", "Index", "ClientRequest", null, null)</li> 
+					<li>	@Html.ActionLink("Вопросы и ответы", "Index", "Faq", null, null)</li> 
+					<li>	@Html.ActionLink("Оплата", "Index", "Faq", null, null)</li> 
+					<li>	@Html.ActionLink("О компании", "Index", "Faq", null, null)</li> 
+				</ul>
+			</div>
+
+			@RenderBody()
+
+			<div class="features">
+				<div class="requisite">
+					<div class="logo"></div>
+					<div class="address">
+						<p>© 2014 — ООО «Инфорум»</p> 
+						<p>г. Воронеж, Студенческая ул. д. 12</p>
+					</div>
+				</div>
+				<div class="support">
+					<ul>
+						<li>Подключен ли мой дом?</li>
+						<li>Протестировать скорость</li>
+						<li class="tech">Техподдержка<sup>24</sup></li>
+					</ul>
+				</div>
+				<div class="support">
+					<ul>
+						<li>Личный кабинет</li>
+						<li>Тарифы</li>
+						<li>Заявка на подключение</li>
+						<li>Вопросы и ответы</li>
+						<li>Оплата</li>
+					</ul>
+				</div>
+				<div class="support">
+					<ul>
+						<li>О компании</li>
+						<li>Для бизнеса</li>
+						<li>Оферта</li>
+						<li>Реквизиты</li>
+					</ul>
 				</div>
 			</div>
 		</div>
-		<div class="cities container body-content">
-			Ваш город: <a href="#">@(ViewBag.UserCity)</a>
-			@{
-				foreach (var city in ViewBag.Cities) {
-					if (city != ViewBag.UserCity) {
-						<a href="#">@city</a>
-					}
-				}
-			}
-		</div>
-			
-		@RenderBody()
-		<hr />
-		<footer>
-			<p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-		</footer>
-	
 	</body>
+	
 	<script src="~/Scripts/jquery-2.1.1.js"></script>
 	<script src="~/Scripts/jquery-ui-1.11.1.js"></script>
-	
-	<link href="@Url.Content("~/Css/style.css")" rel="stylesheet" type="text/css" />
-	<link href="@Url.Content("~/Css/jquery-ui.css")" rel="stylesheet" type="text/css" />
-	<link href="@Url.Content("~/Css/jquery-ui.theme.css")" rel="stylesheet" type="text/css" />
 	<script src="~/Scripts/Helpers.js"></script>
 	<script src="~/Scripts/EventEmitter.js"></script>
 	<script src="~/Scripts/Inforoom.js"></script>
 	<script src="~/Scripts/Window.js"></script>
+	<script src="/Scripts/main.js"></script>
 	
 	@RenderSection("JavaScript", required: false)
+			
 </html>

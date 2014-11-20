@@ -94,14 +94,16 @@ namespace Inforoom2.Controllers
 			get { return DbSession.Query<Employee>().FirstOrDefault(k => k.Username == User.Identity.Name); }
 		}
 
-		protected Client CurrentClient
+		protected PhysicalClient CurrentClient
 		{
 			get
 			{
 				if (User == null) {
 					return null;
 				}
-				return DbSession.Query<Client>().FirstOrDefault(k => k.Username == User.Identity.Name);
+				int id = 0;
+				int.TryParse(User.Identity.Name, out id);
+				return DbSession.Query<PhysicalClient>().FirstOrDefault(k => k.Id == id );
 			}
 		}
 
@@ -174,7 +176,7 @@ namespace Inforoom2.Controllers
 				}
 				else {
 					//Куков нет, пытаемся достать город из базы, иначе определяем по геобазе
-					var user = DbSession.Query<Client>().FirstOrDefault(k => k.Username == User.Identity.Name);
+					var user = DbSession.Query<PhysicalClient>().FirstOrDefault(k => k.Id == Convert.ToInt32(User.Identity.Name) );
 					if (user != null) {
 						userCity = user.Address.House.Street.Region.City.Name;
 						ViewBag.UserCity = user.Address.House.Street.Region.City.Name;
