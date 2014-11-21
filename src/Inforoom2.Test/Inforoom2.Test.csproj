@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Inforoom2.Test</RootNamespace>
     <AssemblyName>Inforoom2.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -122,12 +122,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Functional\BaseFixture.cs" />
-    <Compile Include="Functional\HomeFixture.cs" />
-    <Compile Include="Functional\FaqFixture.cs" />
-    <Compile Include="Functional\Setup.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Inforoom2\Inforoom2.csproj">
       <Project>{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}</Project>
       <Name>Inforoom2</Name>
@@ -156,6 +150,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Functional\" />
     <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
