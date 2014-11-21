@@ -563,7 +563,7 @@ namespace InternetInterface.Models
 			if (LawyerPerson != null) {
 				var param = ConfigurationManager.AppSettings["LawyerPersonBalanceBlockingRate"];
 				var rate = decimal.Parse(param);
-				if (LawyerPerson.Tariff > 0 && LawyerPerson.Balance < LawyerPerson.Tariff * -rate && !Disabled)
+				if (LawyerPerson.Tariff > 0 && LawyerPerson.Balance <= LawyerPerson.Tariff * -rate && !Disabled)
 					return true;
 				return false;
 			}
