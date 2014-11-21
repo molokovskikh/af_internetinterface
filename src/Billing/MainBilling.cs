@@ -432,17 +432,23 @@ set s.LastStartFail = true;")
 				if ((SystemTime.Now() - request.RegDate).TotalDays < 3)
 					continue;
 
-				var str = ConfigurationManager.AppSettings["BlockForRepairNotificationMail"];
-				if (str == null)
+				var address = ConfigurationManager.AppSettings["BlockForRepairNotificationMail"];
+				if (address == null)
 					throw new Exception("Параметр BlockForRepairNotificationMail должен быть задан в config");
 				var mailer = new Mailer(new FolderSender(ConfigurationManager.AppSettings["SmtpServer"]));
 
-				var textMessage = "Срок исполнения сервисной заявки #" + request.Id + " истек";
+				var regionName = "неизвестно";
 				var region = client.GetRegion();
-				var addresses = str.Split(new[] { ',' });
-				for (var i = 0; i < addresses.Length; i++)
-					if (region.Id == (i + 1))
-						mailer.SendText("internet@ivrn.net", addresses[i], textMessage, textMessage);
+
+				//на 21.11.14 в базе бывают люди без регионов. В основном в белгороде.
+				if (region != null)
+					regionName = region.Name;
+				if (client.PhysicalClient != null && client.PhysicalClient.City != null)
+					regionName = client.PhysicalClient.City;
+
+				var textMessage = "Срок исполнения сервисной заявки #" + request.Id + " (" + regionName + ") истек";
+				mailer.SendText("internet@ivrn.net", address, textMessage, textMessage);
+
 			}
 		}
 
