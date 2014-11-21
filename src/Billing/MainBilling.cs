@@ -427,7 +427,7 @@ set s.LastStartFail = true;")
 		private void SendExpiredServiceRequestEmails(Client client)
 		{
 			foreach (var request in client.ServiceRequests) {
-				if (request.Status != ServiceRequestStatus.Close && request.Status != ServiceRequestStatus.Cancel)
+				if (request.Status == ServiceRequestStatus.Close || request.Status == ServiceRequestStatus.Cancel)
 					continue;
 				if ((SystemTime.Now() - request.RegDate).TotalDays < 3)
 					continue;
