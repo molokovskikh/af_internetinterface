@@ -91,7 +91,7 @@ namespace InternetInterface.Models
 		{
 			var param = ConfigurationManager.AppSettings["LawyerPersonBalanceWarningRate"];
 			var rate = decimal.Parse(param);
-			return Balance < -(Tariff * rate);
+			return Balance <= -(Tariff * rate);
 		}
 
 		public virtual List<WriteOff> Calculate(DateTime dateTime)
