@@ -153,8 +153,18 @@ function Inforoom() {
 		}
 	}
 
-	this.checkCity = function() {
-		$('.cities a').on("click", function() {
+	this.checkCity = function () {
+		//показать выбор городов
+		$('.city .name').on("click", function(e) {
+			$('.city .cities').show();
+			e.stopPropagation();
+		});
+		//убрать выбор городов
+		$('body').on("click", function () {
+			$('.city .cities').hide();
+		});
+		$('.cities a').on("click", function () {
+			$('.city .name').html($(this).html());
 			cli.setCookie("userCity", this.innerHTML);
 			window.location.reload();
 		});

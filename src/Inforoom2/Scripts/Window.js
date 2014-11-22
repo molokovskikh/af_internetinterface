@@ -22,7 +22,8 @@ Window.extending(EventEmitter);
  * 
  * @param HTMLElement element DOM элемент, в котором будет отображаться окно
  */
-Window.prototype.render = function(element) {
+Window.prototype.render = function (element) {
+
 	this.content = cli.getTemplate("WindowLayout");
 	$(this.content).find(".title").html(this.title);
 	$(this.content).find(".button.close").on("click", this.remove.bind(this));

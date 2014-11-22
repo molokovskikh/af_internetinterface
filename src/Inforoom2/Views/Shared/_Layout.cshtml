@@ -18,8 +18,19 @@
 				<div class="tab">
 					<div class="whiteleft"></div>
 					<div class="blackleft"></div>
-					<div class="city">Воронеж 
+					<div class="city">
+						<div class="name">@(ViewBag.UserCity)</div>
 						<div class="arrow"></div>
+						<div class="cities">
+							@{
+								<a href="#">@(ViewBag.UserCity)</a>
+								foreach (var city in ViewBag.Cities) {
+									if (city != ViewBag.UserCity) {
+										<a href="#">@city</a>
+									}
+								}
+							}
+						</div>
 					</div>
 					<div class="whiteright"></div>
 					<div class="blackright"></div>
@@ -45,17 +56,6 @@
 					}
 				</div>
 			</div>
-			<div class="JavascriptParams" style="display: none">
-				@{
-					var dic = ViewBag.JavascriptParams as Dictionary<string, string>;
-					if (dic != null && dic.Count != 0) {
-						foreach (var key in dic.Keys) {
-							<div id="@key">@dic[key]</div>
-						}
-					}
-				}
-			</div>
-			
 			<div class="header">
 				<a href="/">
 					<div class="inforum">
@@ -113,16 +113,69 @@
 				</div>
 			</div>
 		</div>
-	</body>
-	
-	<script src="~/Scripts/jquery-2.1.1.js"></script>
-	<script src="~/Scripts/jquery-ui-1.11.1.js"></script>
-	<script src="~/Scripts/Helpers.js"></script>
-	<script src="~/Scripts/EventEmitter.js"></script>
-	<script src="~/Scripts/Inforoom.js"></script>
-	<script src="~/Scripts/Window.js"></script>
-	<script src="/Scripts/main.js"></script>
-	
-	@RenderSection("JavaScript", required: false)
+<!-- Техническая информация -->
+		<div class="JavascriptParams" style="display: none">
+			@{
+				var dic = ViewBag.JavascriptParams as Dictionary<string, string>;
+				if (dic != null && dic.Count != 0) {
+					foreach (var key in dic.Keys) {
+						<div id="@key">@dic[key]</div>
+					}
+				}
+			}
+		</div>
+		<div class ="HtmlTemplates" style="display: none">
 			
+			<div id="WindowLayout" class='window outer'>
+				<div class="cell">
+					<div class="window inner">
+						<div class='header'>
+							<div class='title'></div>
+							<button class="button close">close</button>
+						</div>
+						<div class='wrap'></div>
+					</div>
+					</div>
+			</div>
+			<div id="CityWindow" >
+				<div>
+					<div id="userCity">Мы определили, что вы находитесь в городе <span class="UserCity">@(ViewBag.UserCity)</span></div>
+					<div class="buttons">
+						<button class="button ok">Да</button>
+						<button class="button cancel">Нет</button>
+					</div>
+				</div>
+			</div>
+			<div id ="SelectCityWindow" >
+				<div class="cities">
+					@{
+						foreach (var city in ViewBag.Cities) {
+							<a href="#">@city</a>
+						}
+					}
+				</div>
+				<div class="buttons">
+					<button class="button cancel">Назад</button>
+				</div>
+			</div>
+			<div class="cities container body-content">
+				Ваш город: <a href="#">@(ViewBag.UserCity)</a>
+				@{
+					foreach (var city in ViewBag.Cities) {
+						if (city != ViewBag.UserCity) {
+							<a href="#">@city</a>
+						}
+					}
+				}
+			</div>
+		</div>
+
+	<script type="text/javascript" src="~/Scripts/jquery-2.1.1.js"></script>
+	<script type="text/javascript" src="~/Scripts/jquery-ui-1.11.1.js"></script>
+	<script type="text/javascript" src="~/Scripts/Helpers.js"></script>
+	<script type="text/javascript" src="~/Scripts/EventEmitter.js"></script>
+	<script type="text/javascript" src="~/Scripts/Inforoom.js"></script>
+	<script type="text/javascript" src="~/Scripts/Window.js"></script>
+	@RenderSection("JavaScript", required: false)
+	</body>
 </html>

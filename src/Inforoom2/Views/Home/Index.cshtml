@@ -1,7 +1,7 @@
 ﻿@using System.Activities.Statements
 @using Inforoom2.Models
 @model dynamic
-
+@section JavaScript{<script type="text/javascript"src="@Url.Content("~/Scripts/HomeController.js")"></script>}
 @{
 	ViewBag.Title = "Home";
 	IList<NewsBlock> news = ViewBag.News ?? new List<NewsBlock>();
@@ -42,8 +42,7 @@
 	<div class="main-offer">
 		<img src="~/images/offer.png"/>
 	</div>
-	<script src="http://code.jquery.com/jquery-2.1.1.js"></script>
-	<script src="~/Scripts/main.js"></script>
+
 </div>
 <div class="find">
 	<div class="speed">Протестировать скорость

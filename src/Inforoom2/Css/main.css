@@ -1,3 +1,16 @@
+.notext { font-size: 0px;}
+.top .city { overflow: visible;z-index: 1; }
+	.top .cities {display: none;background-color: white;border: 1px solid #e7e7e7;border-radius: 5px;left: 0;padding: 8px 0 10px 20px;position: absolute;top: 0;width: 100px;}
+		.top .cities a {color: #474747}
+		.top .cities a:hover {color: #a71b22}
+.window.outer {display: table;position: fixed;top: 0;left: 0;width: 100%;height: 100%;z-index: 30000;background-color: rgba(0,0,0,0.5);}
+	.window .cell { display: table-cell;text-align: center; vertical-align: middle;}
+		.window.inner { display: inline-block;background: white; position: relative}
+			.window .header { height: 20px;text-align: left;padding: 10px;background: #e3dfdf;}
+			.window .header .close { position: absolute;right: 10px;top: 10px;}
+			.window .wrap  { padding: 10px;}
+			#CityWindow, #SelectCityWindow { height: 200px;width: 400px;}
+/*Стили верстальщика*/
 @font-face {
     font-family: PDFDinTextPro; 
     src: url(../fonts/PDFDinTextPro.ttf); /* Путь к файлу со шрифтом */
@@ -6,7 +19,6 @@
     font-family: PTSans; 
     src: url(../fonts/PTSans.ttf); /* Путь к файлу со шрифтом */
 }
-
 body {margin:0px; overflow-x: hidden; background: #aaafb5;font-family: PDFDinTextPro;}
 ul {margin: 0px;}
 a {text-decoration: none;}
@@ -24,7 +36,7 @@ a {text-decoration: none;}
 .user {margin-right:13px;height:24px;width:166px;background:#cacaca;font-family:PTSans;font-style: oblique;font-size:13px;border:medium none;
        padding-left:10px;color:#8f8f8f; }
 .click {background:#aa181e;border: medium none;margin-left: -3px;height: 29px;width: 102px;color:#ffffff;font-family:PTSans;font-size:14px;border-radius: 2px;cursor: pointer;}
-.header {width:1182px;height: 166px;background: #ffffff;}
+.wrapper .header {width:1182px;height: 166px;background: #ffffff;}
 .inforum {width: 300px;height: 100px;background: url("../images/inforum.png");background-repeat: no-repeat;position: absolute;top: 70px;left: 22px;cursor: pointer;}
 .connect {background:#aa181e;border: medium none;height: 39px;width:180px;color:#ffffff;border-radius: 2px;position: absolute;left: 507px;
           top: 90px;font-size: 20px;font-family: PDFDinTextPro;cursor: pointer;padding-bottom: 3px;}
