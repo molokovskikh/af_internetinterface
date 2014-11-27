@@ -97,16 +97,21 @@ namespace InternetInterface.Test.Functional
 			var request = CreateRequest();
 			session.Save(request);
 			Assert.That(request.BlockForRepair, Is.False);
+			Assert.That(request.Client.Status.Type, Is.EqualTo(StatusType.Worked));
 			Open("ServiceRequest/ShowRequest?Id={0}&Edit=true", request.Id);
-			AssertText("Восстановление работы");
-			var checkBox = browser.FindElementById("request_BlockForRepair");
-			var save = browser.FindElementById("saveButton");
-			checkBox.Click();
+			var span = browser.FindElementByCssSelector(".blockForRepair");
+			Assert.That(span.Text.Contains("нет"),Is.True);
+
+			var save = browser.FindElementByCssSelector("input[name='blockForRepair']");
 			save.Click();
+
+			span = browser.FindElementByCssSelector(".blockForRepair");
+			Assert.That(span.Text.Contains("да"),Is.True);
 			AssertText("Сохранено");
 			session.Clear();
 			var saved = session.Load<ServiceRequest>(request.Id);
 			Assert.That(saved.BlockForRepair, Is.True);
+			Assert.That(saved.Client.Status.Type, Is.EqualTo(StatusType.BlockedForRepair));
 		}
 
 		[Test]
