@@ -15,7 +15,7 @@ namespace Billing
 		public static bool Send(StringBuilder messageText, string subject)
 		{
 			try {
-				var mailToAdress = "internet@ivrn.net";
+				var mailToAdress = "ibilling@analit.net";
 #if DEBUG
 				mailToAdress = "kvasovtest@analit.net";
 #endif
