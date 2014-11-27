@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
@@ -12,8 +13,19 @@ namespace Inforoom2.Controllers
 		{
 			ViewBag.Message = "HomeController";
 			var news = DbSession.Query<NewsBlock>().Where(k => k.IsPublished).ToList();
-			ViewBag.News = news;
+			var newsList = new List<NewsBlock>();
+			for (int i = 0; i < 3; i++) {
+				if (news.Count!=0 && news[i] != null) {
+					newsList.Add(news[i]);
+				}
+			}
+			ViewBag.News = newsList;
 			
+			return View();
+		}
+
+		public ActionResult TariffPlans()
+		{
 			return View();
 		}
 	
@@ -28,5 +40,7 @@ namespace Inforoom2.Controllers
 			ViewBag.NewsBlock = newsBlock;
 			return View();
 		}
+
+		
 	}
 }

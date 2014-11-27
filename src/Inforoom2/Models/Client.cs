@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using Inforoom2.Models.Services;
 using NHibernate;
 using NHibernate.Linq;
+using NHibernate.Mapping;
 using NHibernate.Mapping.Attributes;
 using NHibernate.Validator.Constraints;
 
@@ -11,81 +15,180 @@ namespace Inforoom2.Models
 	/// <summary>
 	/// Модель пользователя
 	/// </summary>
-	[Class(0, Table = "client", NameType = typeof(Client))]
+	[Class(0, Table = "Clients", Schema = "internet", NameType = typeof (Client))]
 	public class Client : BaseModel
 	{
 		[Property]
-		public virtual string Username { get; set; }
+		public virtual bool Disabled { get; set; }
+
+		[Property(NotNull = true)]
+		public virtual int DebtDays { get; set; }
+
+		[Property(NotNull = true)]
+		public virtual bool ShowBalanceWarningPage { get; set; }
+
+		[Property(NotNull = true)]
+		public virtual bool AutoUnblocked { get; set; }
+
+		[Property(NotNull = true)]
+		public virtual bool DebtWork { get; set; }
+
+		[Property(NotNull = true)]
+		public virtual decimal PercentBalance { get; set; }
+
+		[Property(NotNull = true)]
+		public virtual bool PaidDay { get; set; }
+
+		[Property(NotNull = true)]
+		public virtual int FreeBlockDays { get; set; }
+
+		[Property(NotNull = true)]
+		public virtual decimal Sale { get; set; }
+
+		[Property(NotNull = true)]
+		public virtual bool FirstLunch { get; set; }
+		
+		[Property]
+		public virtual DateTime? StartNoBlock { get; set; }
 
 		[Property]
-		public virtual string Password { get; set; }
+		public virtual DateTime? RatedPeriodDate { get; set; }
 
 		[Property]
-		public virtual string Salt { get; set; }
+		public virtual DateTime? StatusChangedOn { get; set; }
 
-		[ManyToOne(Column = "Address", Cascade = "save-update")]
-		public virtual Address Address { get; set; }
+		[Property(Column = "BeginWork")]
+		public virtual DateTime? WorkingStartDate { get; set; }
 
-		[Property]
-		public virtual string Email { get; set; }
+		[ManyToOne(Cascade = "save-update")]
+		public virtual Status Status { get; set; }
 
-		[ManyToOne(Column = "Tariff")]
-		public virtual Plan Plan { get; set; }
+		[ManyToOne(Column = "PhysicalClient", Cascade = "save-update")]
+		public virtual PhysicalClient PhysicalClient { get; set; }
 
-		[Property]
-		public virtual DateTime LastTimePlanChanged { get; set; }
+		[ManyToOne(Column = "LawyerPerson", Cascade = "save-update")]
+		public virtual LegalClient LegalClient { get; set; }
 
-		[Property]
-		public virtual decimal Balance { get; set; }
+		[Bag(0, Table = "ClientServices", Cascade = "all-delete-orphan")]
+		[Key(1, Column = "Client")]
+		[OneToMany(2, ClassType = typeof (ClientService))]
+		public virtual IList<ClientService> ClientServices { get; set; }
+		
+		[Bag(0,Table = "ClientEndpoints" )]
+		[Key(1, Column = "client")]
+		[OneToMany(2, ClassType = typeof (ClientEndpoint))]
+		public virtual IList<ClientEndpoint> Endpoints { get; set; }
 
-		[Property(NotNull = true), NotEmpty, Pattern(Regex = (@"^((\d{3})-(\d{7}))"))]
-		public virtual string PhoneNumber { get; set; }
 
-		[Property(NotNull = true), NotEmpty(Message = "Введите имя")]
-		public virtual string Name { get; set; }
+		public virtual bool IsNeedRecofiguration { get; set; }
 
-		[Property(NotNull = true), NotEmpty(Message = "Введите фамилию")]
-		public virtual string Surname { get; set; }
-
-		[Property(NotNull = true), NotEmpty(Message = "Введите отчество")]
-		public virtual string Patronymic { get; set; }
-
-		public virtual string FullName
+		public virtual bool IsWorkStarted()
 		{
-			get { return Surname + " " + Name + " " + Patronymic; }
+			return WorkingStartDate != null;
 		}
 
-		public virtual bool ChangeTariffPlan(Plan planToSwitchOn)
+		
+		public virtual bool HasActiveService(Service service)
 		{
-			if (IsFreePlanChange) {
-				SwitchPlan(planToSwitchOn, 0);
-				return true;
+			return ClientServices.FirstOrDefault(cs => cs.Service.Id == service.Id && cs.IsActivated) != null;
+		}
+
+		public virtual ClientService FindActiveService<T>()
+		{
+			return ClientServices.FirstOrDefault(c => c.IsActivated && NHibernateUtil.GetClass(c.Service) == typeof (T));
+		}
+
+		public virtual bool HasActiveService<T>()
+		{
+			return FindActiveService<T>() != null;
+		}
+
+		public virtual bool CanUseService(Service service)
+		{
+			return service.IsActivableFor(this);
+		}
+
+		public virtual decimal GetInterval()
+		{
+			return (((DateTime) RatedPeriodDate).AddMonths(1) - (DateTime) RatedPeriodDate).Days + DebtDays;
+		}
+
+		public virtual decimal GetSumForRegularWriteOff()
+		{
+			var daysInInterval = GetInterval();
+			var price = GetPrice();
+			return Math.Round(price/daysInInterval, 2);
+		}
+
+		public virtual decimal GetPrice()
+		{
+			var services = ClientServices.Where(c => c.IsActivated).ToArray();
+			var blockingService = services.FirstOrDefault(c => c.Service.BlockingAll);
+			if (blockingService != null)
+				return blockingService.GetPrice() + services.Where(c => c.Service.ProcessEvenInBlock).Sum(c => c.GetPrice());
+
+			return services.Sum(c => c.GetPrice());
+		}
+
+		public virtual void SetStatus(StatusType status, ISession session)
+		{
+			SetStatus(session.Load<Status>((uint) status));
+		}
+
+		public virtual void SetStatus(Status status)
+		{
+			if (status.Type == StatusType.VoluntaryBlocking) {
+				Disabled = true;
+				DebtDays = 0;
+				AutoUnblocked = false;
 			}
-			if (!IsEnoughBalance(planToSwitchOn.SwitchPrice)) {
-				return false;
+			else if (status.Type == StatusType.NoWorked) {
+				Disabled = true;
+				Sale = 0;
+				StartNoBlock = null;
+				AutoUnblocked = true;
 			}
-			SwitchPlan(planToSwitchOn, planToSwitchOn.SwitchPrice);
-			return true;
-		}
-
-		private void SwitchPlan(Plan toPlan, decimal price)
-		{
-			Plan = toPlan;
-			Balance -= price;
-			LastTimePlanChanged = DateTime.Now;
-		}
-
-		public virtual bool IsFreePlanChange
-		{
-			get { return LastTimePlanChanged.AddMonths(1) < DateTime.Now; }
-		}
-
-		public virtual bool IsEnoughBalance(decimal sum)
-		{
-			if (sum < 0) {
-				return false;
+			else if (status.Type == StatusType.Worked) {
+				Disabled = false;
+				//если мы возобновили работу после поломки то дата начала периода тарификации не должна изменяться
+				//если ее сбросить списания начнутся только когда клиент получит аренду
+				if (Status.Type != StatusType.BlockedForRepair)
+					RatedPeriodDate = null;
+				DebtDays = 0;
+				ShowBalanceWarningPage = false;
 			}
-			return Balance - sum > 0;
+			if (status.Type == StatusType.BlockedForRepair) {
+				Disabled = true;
+				AutoUnblocked = false;
+			}
+			if (Status.Type != status.Type) {
+				StatusChangedOn = DateTime.Now;
+			}
+			Status = status;
 		}
+
+		public virtual decimal Balance
+		{
+			get
+			{
+				if (PhysicalClient != null)
+					return PhysicalClient.Balance;
+				if (LegalClient != null)
+					return LegalClient.Balance;
+				return 0m;
+			}
+		}
+	}
+
+
+	public enum StatusType
+	{
+		[Description("Зарегистрирован")] BlockedAndNoConnected = 1,
+		[Description("Не подключен")] BlockedAndConnected = 3,
+		[Description("Подключен")] Worked = 5,
+		[Description("Заблокирован")] NoWorked = 7,
+		[Description("Добровольная блокировка")] VoluntaryBlocking = 9,
+		[Description("Расторгнут")] Dissolved = 10,
+		[Description("Заблокирован - Восстановление работы")] BlockedForRepair = 11
 	}
 }

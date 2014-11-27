@@ -68,7 +68,7 @@
 			<div class="menu">
 				<ul>
 					<li>	@Html.ActionLink("Главная", "Index", "Home", null, new { @class = "active" }) </li> 
-					<li>	@Html.ActionLink("Тарифы", "Index", "Home", null, null) </li> 
+					<li>	@Html.ActionLink("Тарифы", "TariffPlans", "Home", null, null) </li> 
 					<li>	@Html.ActionLink("Заявка на подключение", "Index", "ClientRequest", null, null)</li> 
 					<li>	@Html.ActionLink("Для бизнеса", "Index", "ClientRequest", null, null)</li> 
 					<li>	@Html.ActionLink("Вопросы и ответы", "Index", "Faq", null, null)</li> 
@@ -96,10 +96,10 @@
 				</div>
 				<div class="support">
 					<ul>
-						<li>Личный кабинет</li>
-						<li>Тарифы</li>
-						<li>Заявка на подключение</li>
-						<li>Вопросы и ответы</li>
+						<li>@Html.ActionLink("Личный кабинет", "Profile", "Personal")</li>
+						<li>@Html.ActionLink("Тарифы", "TariffPlans", "Home", null, null)</li>
+						<li>@Html.ActionLink("Заявка на подключение", "Index", "ClientRequest", null, null)</li>
+						<li>@Html.ActionLink("Вопросы и ответы", "Index", "Faq", null, null)</li>
 						<li>Оплата</li>
 					</ul>
 				</div>

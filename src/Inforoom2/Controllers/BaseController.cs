@@ -94,7 +94,7 @@ namespace Inforoom2.Controllers
 			get { return DbSession.Query<Employee>().FirstOrDefault(k => k.Username == User.Identity.Name); }
 		}
 
-		protected PhysicalClient CurrentClient
+		protected Client CurrentClient
 		{
 			get
 			{
@@ -103,7 +103,7 @@ namespace Inforoom2.Controllers
 				}
 				int id = 0;
 				int.TryParse(User.Identity.Name, out id);
-				return DbSession.Query<PhysicalClient>().FirstOrDefault(k => k.Id == id );
+				return DbSession.Query<Client>().FirstOrDefault(k => k.Id == id );
 			}
 		}
 
@@ -151,7 +151,7 @@ namespace Inforoom2.Controllers
 			base.OnActionExecuted(filterContext);
 			ProcessRegionPanel();
 			if (CurrentClient != null) {
-				ViewBag.ClientInfo = string.Format("{0}, Баланс: {1} ", CurrentClient.FullName, CurrentClient.Balance);
+				ViewBag.ClientInfo = string.Format("{0}, Баланс: {1} ", CurrentClient.PhysicalClient.FullName, CurrentClient.PhysicalClient.Balance);
 			}
 		}
 

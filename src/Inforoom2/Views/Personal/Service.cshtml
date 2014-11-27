@@ -1,7 +1,129 @@
-﻿@model dynamic
+﻿@using Inforoom2.Helpers
+@using Inforoom2.Models
+@using Inforoom2.Models.Services
+@using NHibernate.Mapping.ByCode.Impl
+
 @{
-	
+	Client client = ViewBag.Client;
+	IList<Service> availableServices = ViewBag.AvailableServices;
+	IList<ClientService> clientServices = ViewBag.ClientServices;
 }
 
 <h2>@ViewBag.Title</h2>
-@{ Html.RenderPartial("Menu");  }
+
+@{ Html.RenderPartial("Menu"); }
+
+
+<div style="width:800px; margin:0 auto;">
+	@if (clientServices.Count != 0) {
+		<span>Подключеные услуги</span>
+		<table class="">
+			<tr>
+				<td>
+					<div>Название</div>
+				</td>
+				<td>
+					<div>Описание</div>
+				</td>
+				<td>
+					<div>Цена</div>
+				</td>
+				<td>
+					<div>Срок действия</div>
+				</td>
+				<td>
+					<div>Действие</div>
+				</td>
+			</tr>
+			@foreach (var clientService in clientServices) {
+				<tr>
+					<td>
+						@Html.HiddenFor(modelItem => clientService.Id)
+						@Html.DisplayFor(modelItem => clientService.Service.Name)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => clientService.Service.Description)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => clientService.Service.PriceDescription)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => clientService.EndDate)
+					</td>
+				
+					<td>
+						@switch (clientService.Service.GetType().Name) {
+							case "BlockAccountService":
+								@Html.ActionLink("Отключить", "BlockAccount", "Service")
+								break;
+						}
+					</td>
+				</tr>
+			}
+		</table>
+	}
+	else {
+		<p>У Вас нет активированых услуг</p>
+	}
+	
+</div>
+
+
+<div style="width:800px; margin:0 auto;">
+	@if (availableServices.Count != 0) {
+
+
+		<span>Доступные услуги</span>
+		<table class="">
+			<tr>
+				<td>
+					<div>Название</div>
+				</td>
+				<td>
+					<div>Описание</div>
+				</td>
+				<td>
+					<div>Цена</div>
+				</td>
+				<td>
+					<div>Действие</div>
+				</td>
+			</tr>
+			@foreach (var service in availableServices) {
+				<tr>
+					<td>
+						@Html.HiddenFor(modelItem => service.Id)
+						@Html.DisplayFor(modelItem => service.Name)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => service.Description)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => service.PriceDescription)
+					</td>
+					<td>
+						@if (client.CanUseService(service)) {
+							switch (service.GetType().Name) {
+								case "BlockAccountService":
+									@Html.ActionLink("Подключить", "BlockAccount", "Service")
+									;
+									break;
+								case "DeferredPayment":
+									@Html.ActionLink("Подключить", "DeferredPayment", "Service")
+									break;
+							}
+						}
+						else {
+							<text>Услуга </text>
+							@service.Name<text> не доступна</text>
+						}
+					</td>
+				</tr>
+			}
+		</table>
+	}
+	else {
+		<p>Вам не доступны услуги для активации </p>
+	}
+	
+</div>

@@ -29,7 +29,7 @@ namespace Inforoom2.Helpers
 				session.BeginTransaction();
 			}
 		}
-		
+
 		public override void OnResultExecuted(ResultExecutedContext filterContext)
 		{
 			var session = SessionFactory.GetCurrentSession();
@@ -54,8 +54,6 @@ namespace Inforoom2.Helpers
 		}
 	}
 
-	
-	 
 
 	public class TableNamingStrategy : INamingStrategy
 	{
@@ -71,6 +69,24 @@ namespace Inforoom2.Helpers
 
 		public string TableName(string tableName)
 		{
+			if (tableName == "PhysicalClients"
+			    || tableName == "Tariffs"
+			    || tableName == "Regions"
+			    || tableName == "Services"
+				|| tableName == "ClientServices"
+				|| tableName == "Clients"
+				|| tableName == "UserWriteOffs"
+				|| tableName == "StatusCorrelation"
+				|| tableName == "Status"
+				|| tableName == "AdditionalStatus"
+				|| tableName == "LawyerPerson"
+				|| tableName == "InternetSettings"
+				|| tableName == "Leases"
+				|| tableName == "SaleSettings"
+				|| tableName == "ClientEndpoints"
+				|| tableName == "StaticIps") {
+				return tableName;
+			}
 			return "inforoom2_" + tableName;
 		}
 

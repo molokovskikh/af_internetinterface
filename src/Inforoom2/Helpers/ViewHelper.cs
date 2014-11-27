@@ -142,5 +142,10 @@ namespace Inforoom2.Helpers
 					Selected = selectedItem == item.ToString()
 				}).ToList();
 		}
+
+		public static HtmlString Grid<T>(this HtmlHelper helper, IList<T> list )
+		{
+			return new HtmlString("dsds");
+		}
 	}
 }

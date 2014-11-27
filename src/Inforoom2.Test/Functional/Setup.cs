@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Text;
 using CassiniDev;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
+using Inforoom2.Models.Services;
 using LinqToExcel;
 using NHibernate;
 using NHibernate.Linq;
@@ -41,69 +43,126 @@ namespace Inforoom2.Test.Functional
 
 		public static void SeedDb()
 		{
-		//	ImportSwitchesAddresses();
-			GeneratePlansAndPrices();
+			var settings = session.Query<InternetSettings>().FirstOrDefault();
+			if (settings == null)
+				session.Save(new InternetSettings());
 
-			Permission permission = new Permission { Name = "TestPermission" };
-			session.Save(permission);
+			if (!session.Query<SaleSettings>().Any()) {
+				session.Save(SaleSettings.Defaults());
+			}
+			if (session.Query<Client>().ToList().Count != 0) {
+				return;
+			}
 
-			Role role = new Role { Name = "Admin" };
-			session.Save(role);
+			/*if (!session.Query<Address>().Any()) {
+				ImportSwitchesAddresses();
+			}*/
+			if (!session.Query<Plan>().Any(p => p.Name == "Популярный")) {
+				GeneratePlansAndPrices();
+			}
 
-			var pass = PasswordHasher.Hash("password");
-			var client = new Client {
-				Username = "client",
-				Password = pass.Hash,
-				Salt = pass.Salt,
-				PhoneNumber = "4951234567",
-				Name = "Иван",
-				Surname = "Дулин",
-				Patronymic = "Михалыч",
-				Plan = session.Get<Plan>(1),
-				Balance = 10000
-			};
+			if (!session.Query<Client>().Any()) {
+				Permission permission = new Permission {Name = "TestPermission"};
+				session.Save(permission);
 
-			client.Address = new Address { House = session.Query<House>().FirstOrDefault() };
-			session.Save(client);
+				Role role = new Role {Name = "Admin"};
+				session.Save(role);
 
-			IList<Role> roles = new List<Role>();
-			roles.Add(role);
+				var pass = PasswordHasher.Hash("password");
 
-			var emp = new Employee() {
-				Username = "admin",
-				Password = pass.Hash,
-				Salt = pass.Salt,
-				Roles = roles,
-			};
-			session.Save(emp);
+				IList<Role> roles = new List<Role>();
+				roles.Add(role);
+
+				var emp = new Employee() {
+					Username = "admin",
+					Password = pass.Hash,
+					Salt = pass.Salt,
+					Roles = roles,
+				};
+				session.Save(emp);
+
+
+				var client = new Client {
+					PhysicalClient = new PhysicalClient {
+						Password = pass.Hash,
+						Salt = pass.Salt,
+						PhoneNumber = "4951234567",
+						Email = "test@client.rru",
+						Name = "Иван",
+						Surname = "Дулин",
+						Patronymic = "Михалыч",
+						Plan = session.Query<Plan>().FirstOrDefault(p => p.Name == "Популярный"),
+						Balance = 1000,
+						Address = new Address {House = session.Query<House>().FirstOrDefault()},
+						LastTimePlanChanged = DateTime.Now.AddMonths(-2)
+					},
+					Disabled = false,
+					Status = new Status(StatusType.Worked),
+					RatedPeriodDate = DateTime.Now,
+					FreeBlockDays = 28,
+					WorkingStartDate = DateTime.Now
+					
+					
+				};
+
+				var services =
+					session.Query<Service>().Where(s =>s.Name == "IpTv" || s.Name == "Internet").ToList();
+				IList<ClientService> csList =
+					services.Select(service => new ClientService {Service = service, Client = client, BeginDate = DateTime.Now, IsActivated = true})
+						.ToList();
+				client.ClientServices = csList;
+
+				var availableServices =
+					session.Query<Service>().Where(s => s.Name == "Обещанный платеж" || s.Name == "Добровольная блокировка").ToList();
+
+				availableServices.ForEach(s=>s.IsActivableFromWeb = true);
+				session.Save(client);
+			}
+
 			session.Flush();
 		}
 
 		private static void GeneratePlansAndPrices()
 		{
-		
-			Plan plan1 = new Plan();
-			plan1.Name = "Plan1";
-			plan1.Price = 5;
-			plan1.Speed = 5;
-			plan1.PlanTransfers = new List<PlanTransfer>();
+			var plan1 = new Plan {
+				Name = "Популярный",
+				Price = 300,
+				Speed = 30,
+				PlanTransfers = new List<PlanTransfer>(),
+				IsArchived = false,
+				IsServicePlan = false
+			};
 
-			Plan plan2 = new Plan();
-			plan2.Name = "Plan2";
-			plan2.Price = 5;
-			plan2.Speed = 5;
-			
+			var plan2 = new Plan {
+				Name = "Оптимальный",
+				Price = 500,
+				Speed = 50,
+				PlanTransfers = new List<PlanTransfer>(),
+				IsArchived = false,
+				IsServicePlan = false
+			};
+
+			var plan3 = new Plan {
+				Name = "Гениальный",
+				Price = 800,
+				Speed = 80,
+				PlanTransfers = new List<PlanTransfer>(),
+				IsArchived = false,
+				IsServicePlan = false
+			};
+
 			plan1.AddPlanTransfer(plan2, 100);
+			plan1.AddPlanTransfer(plan3, 100);
+			plan2.AddPlanTransfer(plan1, 100);
+			plan2.AddPlanTransfer(plan3, 100);
+			plan3.AddPlanTransfer(plan1, 100);
+			plan3.AddPlanTransfer(plan2, 100);
 
 			session.Save(plan1);
 			session.Save(plan2);
-			
-			session.Flush();
+			session.Save(plan3);
 
-			var dbPlan = session.Get<Plan>(1);
-			foreach (var plan in dbPlan.PlanTransfers) {
-				var x = plan.IsAvailableToSwitch;
-			}
+			session.Flush();
 		}
 
 		public static void ImportSwitchesAddresses()
@@ -112,7 +171,8 @@ namespace Inforoom2.Test.Functional
 			var excelFile = new ExcelQueryFactory(path);
 			var query =
 				excelFile.Worksheet("Дома").Select(row => new {
-					row, item = new {
+					row,
+					item = new {
 						Disctrict = row["Район"].Cast<string>(),
 						Street = row["Улица"].Cast<string>().Trim(),
 						House = row["дом, №"].Cast<string>()
@@ -120,15 +180,17 @@ namespace Inforoom2.Test.Functional
 				}).ToList();
 
 			var excelQuery = query.Where(q => q.item.House != null);
-			var city = new City { Name = "Белгород" };
-			var region = new Region { City = city, Name = "Белгород" };
+			var city = new City {Name = "Белгород"};
+			var region = new Region {City = city, Name = "Белгород"};
 			session.Save(region);
 
 			var streetsQuery = excelQuery.GroupBy(q => q.item.Street.Trim())
 				.Select(r => r.First())
 				.ToList();
 
-			IList<Street> streets = streetsQuery.Select(row => new Street() { Name = row.item.Street, District = row.item.Disctrict, Region = region }).ToList();
+			IList<Street> streets =
+				streetsQuery.Select(row => new Street() {Name = row.item.Street, District = row.item.Disctrict, Region = region})
+					.ToList();
 
 			foreach (var street in streets) {
 				session.Save(street);
@@ -172,8 +234,8 @@ namespace Inforoom2.Test.Functional
 			}
 
 
-			city = new City { Name = "Борисоглебск" };
-			region = new Region { City = city, Name = "Борисоглебск" };
+			city = new City {Name = "Борисоглебск"};
+			region = new Region {City = city, Name = "Борисоглебск"};
 
 			string textFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"switches.txt");
 			var sb = new StringBuilder();
@@ -186,10 +248,13 @@ namespace Inforoom2.Test.Functional
 			string borisoglebsk = sb.ToString();
 			borisoglebsk = RemoveSpaces(borisoglebsk);
 
-			var streetRows = borisoglebsk.Split(new[] { ';' }).ToList();
+			var streetRows = borisoglebsk.Split(new[] {';'}).ToList();
 			foreach (var row in streetRows) {
 				var str = row.Split(':');
-				var street = new Street { Name = str[0].Replace("ул. ", "").Replace("мкр. ", "").Replace("пер. ", "").Replace("пр. ", ""), Region = region };
+				var street = new Street {
+					Name = str[0].Replace("ул. ", "").Replace("мкр. ", "").Replace("пер. ", "").Replace("пр. ", ""),
+					Region = region
+				};
 
 				if (str.Length > 1) {
 					var houseString = str[1];
@@ -211,6 +276,8 @@ namespace Inforoom2.Test.Functional
 					}
 				}
 			}
+			session.Save(city);
+			session.Save(region);
 
 			session.Flush();
 		}

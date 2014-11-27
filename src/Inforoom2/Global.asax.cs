@@ -14,6 +14,7 @@ using Inforoom2.Models;
 using NHibernate;
 using NHibernate.Cfg.MappingSchema;
 using NHibernate.Context;
+using NHibernate.Event;
 using NHibernate.Linq;
 using NHibernate.Mapping.ByCode;
 using Configuration = NHibernate.Cfg.Configuration;
@@ -75,15 +76,20 @@ namespace Inforoom2
 				.SetProperty("dialect", "NHibernate.Dialect.MySQL5Dialect")
 				.SetProperty("current_session_context_class", "web");
 
+		/*	var listener = new SyncObject();
+			configuration.EventListeners.PostUpdateEventListeners =
+				new IPostUpdateEventListener[] { listener };
+			configuration.EventListeners.PostInsertEventListeners =
+				new IPostInsertEventListener[] { listener };*/
+
 			/*	var configurationPath = HttpContext.Current.Server.MapPath(@"~\Nhibernate\hibernate.cfg.xml");
 			configuration.Configure(configurationPath);*/
 			configuration.AddInputStream(
 				NHibernate.Mapping.Attributes.HbmSerializer.Default.Serialize(Assembly.GetExecutingAssembly()));
 
 			//TODO Раскоментировать для создания таблиц с помощью Nhibernate
-			/*var schema = new NHibernate.Tool.hbm2ddl.SchemaExport(configuration);
+		/*	var schema = new NHibernate.Tool.hbm2ddl.SchemaExport(configuration);
 			schema.Create(false, true);*/
-
 			SessionFactory = configuration.BuildSessionFactory();
 		}
 	}
