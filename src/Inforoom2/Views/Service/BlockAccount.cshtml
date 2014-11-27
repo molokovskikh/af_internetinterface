@@ -1,0 +1,37 @@
+﻿@using System.Globalization
+@using System.Threading
+@using Inforoom2.Models
+
+@model dynamic
+@section JavaScript{<script type="text/javascript"src="@Url.Content("~/Scripts/ServiceController.js")"></script>}
+@{
+	Client client = ViewBag.Client;
+	BlockAccountService service = ViewBag.BlockAccountService;
+	var blockingEndDate = DateTime.Now.AddDays(client.FreeBlockDays).ToShortDateString();
+}
+
+<h2>@ViewBag.Title</h2>
+
+@{ Html.RenderPartial("Menu"); }
+
+ <div style="width:800px; margin:0 auto;">
+	@if (client.CanUseService(service)) {
+	 
+		<p>В течении года Вам предоставляется 28 дней бесплатного использования данной услуги. По истечении этого времени абонентская плата составляет 3 руб/день, а стоимость активации равна 50 руб.</p>
+		<p> Количество бесплатных дней: @client.FreeBlockDays </p>
+
+		using (@Html.BeginForm("ActivateAccountBlocking", "Service", null, FormMethod.Post)) {
+			@Html.HiddenFor(modelItem => service.Id)
+			<p>Заблокировать до: @Html.TextBoxFor(modelItem => blockingEndDate, null, new {@class = "datePicker"})</p>
+			<input type="submit" value="Подключить"/>
+		}
+	}
+	else if (client.HasActiveService(service)) {
+		@:Услуга активирована до @client.ClientServices.FirstOrDefault(c => c.Service.GetType() == typeof (BlockAccountService)).EndDate
+		using (@Html.BeginForm("DeactivateAccountBlocking", "Service", null, FormMethod.Post)) {
+			@Html.HiddenFor(modelItem => service.Id)
+			<input type="submit" value="Отключить" />
+		}
+	}
+	<button class="BackButton" onclick=" location.href = '@Url.Action("Service", "Personal")' ">Назад</button>
+</div>

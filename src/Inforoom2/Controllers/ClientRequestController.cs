@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using Common.MySql;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
 using NHibernate.Linq;
@@ -14,6 +15,12 @@ namespace Inforoom2.Controllers
 		/// </summary>
 		public ActionResult Index()
 		{
+			InitClientRequest();
+			return View();
+		}
+
+		private void InitClientRequest(Plan plan = null)
+		{
 			var clientRequest = new ClientRequest();
 			clientRequest.Address = new Address();
 			clientRequest.Address.House = new House();
@@ -23,9 +30,11 @@ namespace Inforoom2.Controllers
 			if (!string.IsNullOrEmpty(UserCity)) {
 				clientRequest.Address.House.Street.Region.City.Name = UserCity;
 			}
+			if (plan != null) {
+				clientRequest.Plan = plan;
+			}
 			ViewBag.ClientRequest = clientRequest;
 			SetPlans();
-			return View();
 		}
 
 		private List<Plan> SetPlans()
@@ -48,7 +57,7 @@ namespace Inforoom2.Controllers
 			if (errors.Length == 0) {
 				//TODO Нужно придумать что делать с заполненой заявкой
 				DbSession.Save(clientRequest);
-				
+
 				return RedirectToAction("Index", "Home");
 			}
 			ViewBag.ClientRequest = clientRequest;
@@ -74,6 +83,13 @@ namespace Inforoom2.Controllers
 				                       || (sa.Street.Region.City.Name.ToLower() == city && street.Contains(sa.Street.Name.ToLower()))));
 
 			return switchAddress != null;
+		}
+
+		public ActionResult RequestFromTariff(string planName)
+		{
+			var plan = DbSession.Query<Plan>().FirstOrDefault(p => p.Name == planName);
+			InitClientRequest(plan);
+			return View("Index");
 		}
 	}
 }

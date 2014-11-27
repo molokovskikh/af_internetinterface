@@ -6,11 +6,12 @@ namespace Inforoom2.Components
 {
 	public class EmailSender 
 	{
-		public static void SendEmail(Client user, string subject, string body)
+		public static void SendEmail(PhysicalClient user, string subject, string body)
 		{
 			var mail = new MailMessage();
+			//TODO change email
 #if !DEBUG
-			mail.To.Add(user.Email);
+			mail.To.Add("efedorov@analit.net");
 #else
 			mail.To.Add("efedorov@analit.net");
 #endif

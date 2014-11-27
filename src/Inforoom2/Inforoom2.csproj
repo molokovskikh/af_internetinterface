@@ -43,33 +43,33 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Iesi.Collections, Version=1.0.1.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+    <Reference Include="Iesi.Collections">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Web.Infrastructure">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Newtonsoft.Json.6.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate, Version=3.3.1.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+    <Reference Include="NHibernate">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NHibernate.3.3.4.4000\lib\Net35\NHibernate.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate.Mapping.Attributes, Version=3.2.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+    <Reference Include="NHibernate.Mapping.Attributes">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NHibernate.Mapping.Attributes.3.2.0.0\lib\NHibernate.Mapping.Attributes.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate.Validator, Version=1.3.2.4000, Culture=neutral, PublicKeyToken=70154e18752585bd, processorArchitecture=MSIL">
+    <Reference Include="NHibernate.Validator">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NHibernate.Validator.1.3.2.4000\lib\Net35\NHibernate.Validator.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate.Validator.Specific, Version=1.3.2.4000, Culture=neutral, PublicKeyToken=70154e18752585bd, processorArchitecture=MSIL">
+    <Reference Include="NHibernate.Validator.Specific">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NHibernate.Validator.1.3.2.4000\lib\Net35\NHibernate.Validator.Specific.dll</HintPath>
     </Reference>
@@ -84,27 +84,27 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Web.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="System.Web.Helpers">
       <Private>True</Private>
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.2.0.30506.0\lib\net40\System.Web.Helpers.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="System.Web.Mvc">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Microsoft.AspNet.Mvc.4.0.30506.0\lib\net40\System.Web.Mvc.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="System.Web.Razor">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Microsoft.AspNet.Razor.2.0.30506.0\lib\net40\System.Web.Razor.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="System.Web.WebPages">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.2.0.30506.0\lib\net40\System.Web.WebPages.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.WebPages.Deployment, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="System.Web.WebPages.Deployment">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.2.0.30506.0\lib\net40\System.Web.WebPages.Deployment.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.WebPages.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="System.Web.WebPages.Razor">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.2.0.30506.0\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
@@ -131,17 +131,37 @@
     <Content Include="Css\images\ui-icons_ffffff_256x240.png" />
     <Content Include="Css\jquery-ui.css" />
     <Content Include="Css\jquery-ui.theme.css" />
+    <Content Include="Css\main.css" />
     <Content Include="Css\style.css" />
     <Content Include="Global.asax" />
+    <Content Include="Images\arrow.png" />
+    <Content Include="Images\connectionbg.png" />
+    <Content Include="Images\connectionbgactiv.png" />
+    <Content Include="Images\inforum.png" />
+    <Content Include="Images\leftbg.jpg" />
+    <Content Include="Images\leftbg.png" />
+    <Content Include="Images\offer.png" />
+    <Content Include="Images\rightbg.jpg" />
+    <Content Include="Images\rightbg.png" />
+    <Content Include="Images\slider1.jpg" />
+    <Content Include="Images\slider1.png" />
+    <Content Include="Images\slider2.jpg" />
+    <Content Include="Images\slider3.jpg" />
+    <Content Include="Images\slider4.jpg" />
+    <Content Include="Images\slider5.jpg" />
+    <Content Include="Images\speedbg.png" />
+    <Content Include="Images\speedbgactiv.png" />
     <Content Include="Scripts\AdminAddressController.js" />
     <Content Include="Scripts\ClientRequest.js" />
     <Content Include="Scripts\EditNewsBlock.js" />
     <Content Include="Scripts\EventEmitter.js" />
     <Content Include="Scripts\FaqController.js" />
     <Content Include="Scripts\Helpers.js" />
+    <Content Include="Scripts\HomeController.js" />
     <Content Include="Scripts\inforoom.js" />
     <Content Include="Scripts\jquery-2.1.1.js" />
     <Content Include="Scripts\jquery-ui-1.11.1.js" />
+    <Content Include="Scripts\ServiceController.js" />
     <Content Include="Scripts\Window.js" />
     <Content Include="Views\AdminPlan\AdminPlan.cshtml">
       <SubType>Code</SubType>
@@ -177,6 +197,7 @@
     </Compile>
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PersonalController.cs" />
+    <Compile Include="Controllers\ServiceController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -186,16 +207,35 @@
     </Compile>
     <Compile Include="Helpers\CustomPrincipal.cs" />
     <Compile Include="Helpers\IpGeoHelper.cs" />
+    <Compile Include="Helpers\IPUserType.cs" />
     <Compile Include="Helpers\NHibernateActionFilter.cs" />
     <Compile Include="Helpers\PasswordHasher.cs" />
+    <Compile Include="Helpers\SceHelper.cs" />
     <Compile Include="Helpers\ViewHelper.cs" />
     <Compile Include="Intefaces\IModelWithPriority.cs" />
+    <Compile Include="Models\AdditionalStatus.cs" />
     <Compile Include="Models\Address.cs" />
     <Compile Include="Models\City.cs" />
+    <Compile Include="Models\ClientEndPoint.cs" />
     <Compile Include="Models\ClientRequest.cs" />
+    <Compile Include="Models\ClientService.cs" />
+    <Compile Include="Models\InternetSettings.cs" />
+    <Compile Include="Models\Lease.cs" />
     <Compile Include="Models\LegalClient.cs" />
     <Compile Include="Models\PlanTransfer.cs" />
-    <Compile Include="Models\Service.cs" />
+    <Compile Include="Models\SaleSettings.cs" />
+    <Compile Include="Models\Services\BlockAccountService.cs" />
+    <Compile Include="Models\Services\DeferredPayment.cs" />
+    <Compile Include="Models\Services\HardwareRent.cs" />
+    <Compile Include="Models\Services\Internet.cs" />
+    <Compile Include="Models\Services\IpTv.cs" />
+    <Compile Include="Models\Services\IpTvBoxRent.cs" />
+    <Compile Include="Models\Services\PinnedIp.cs" />
+    <Compile Include="Models\Services\Service.cs" />
+    <Compile Include="Models\Services\SpeedBoost.cs" />
+    <Compile Include="Models\Services\WorkLawyer.cs" />
+    <Compile Include="Models\StaticIp.cs" />
+    <Compile Include="Models\Status.cs" />
     <Compile Include="Models\Switch.cs" />
     <Compile Include="Models\SwitchAdress.cs" />
     <Compile Include="Models\Employee.cs" />
@@ -217,7 +257,7 @@
     <Compile Include="Models\Street.cs" />
     <Compile Include="Models\Plan.cs" />
     <Compile Include="Models\Ticket.cs" />
-    <Compile Include="Models\WriteOff.cs" />
+    <Compile Include="Models\UserWriteOff.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">
@@ -266,6 +306,10 @@
       <Project>{8a680813-c83b-497a-85e6-e8f07b7d7650}</Project>
       <Name>Common.MySql</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Common.Tools\Common.Tools\Common.Tools.csproj">
+      <Project>{72afcfe8-c9e9-45fa-9698-bee896a517a3}</Project>
+      <Name>Common.Tools</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Personal\Profile.cshtml" />
@@ -279,6 +323,10 @@
     <Content Include="Views\Personal\Menu.cshtml" />
     <Content Include="Views\Personal\PaymentWindow.cshtml" />
     <Content Include="Views\Shared\AdminPanel.cshtml" />
+    <Content Include="Views\Service\BlockAccount.cshtml" />
+    <Content Include="Views\Service\DeferredPayment.cshtml" />
+    <Content Include="Fonts\PDFDinTextPro.ttf" />
+    <Content Include="Fonts\PTSans.ttf" />
     <None Include="Web.Inforoom2_Test.config">
       <SubType>Designer</SubType>
     </None>

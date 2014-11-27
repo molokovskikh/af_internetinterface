@@ -1,0 +1,30 @@
+﻿@using System.Globalization
+@using System.Threading
+@using Inforoom2.Models
+@using Inforoom2.Models.Services
+
+@model dynamic
+
+@{
+	Client client = ViewBag.Client;
+	DeferredPayment service = ViewBag.DeferredPayment;
+}
+
+<h2>@ViewBag.Title</h2>
+
+@{ Html.RenderPartial("Menu"); }
+
+<div>
+	@if (client.CanUseService(service)) {
+		<text>	Услуга "Обещанный платеж" открывает доступ к Интернет, сроком на 3-e суток, при отрицательном балансе. Услуга бесплатная.
+			Услуга предоставляется однократно. Повторное использование возможно после внесения платежа, покрывающего задолженность.</text>
+		using (@Html.BeginForm("ActivateDefferedPayment", "Service", null, FormMethod.Post)) {
+			@Html.HiddenFor(modelItem => service.Id)
+			<input type="submit" value="Подключить"/>
+		}
+	}
+	else {
+		<text>Услуга @service.Name не доступна</text>
+	}
+	<button class="BackButton" onclick=" location.href = '@Url.Action("Service", "Personal")' ">Назад</button>
+</div>

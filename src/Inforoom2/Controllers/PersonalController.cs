@@ -1,9 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.Razor.Parser.SyntaxTree;
+using Common.MySql;
 using Inforoom2.Components;
 using Inforoom2.Models;
+using Inforoom2.Models.Services;
+using NHibernate;
+using NHibernate.Criterion;
 using NHibernate.Linq;
+using NHibernate.Proxy;
+using Service = Inforoom2.Models.Services.Service;
+
 
 namespace Inforoom2.Controllers
 {
@@ -20,9 +31,13 @@ namespace Inforoom2.Controllers
 		public ActionResult Tariffs()
 		{
 			var client = CurrentClient;
-			var plans = Plans.Where(p => !p.IsArchived && !p.IsServicePlan && p.Regions.Any(r => r.Id == client.Address.House.Street.Region.Id)).ToList();
+			var plans =
+				Plans.Where(
+					p =>
+						!p.IsArchived && !p.IsServicePlan &&
+						p.Regions.Any(r => r.Id == client.PhysicalClient.Address.House.Street.Region.Id)).ToList();
 			foreach (var plan in plans) {
-				plan.SwitchPrice = GetPlanSwitchPrice(client.Plan, plan, true);
+				plan.SwitchPrice = GetPlanSwitchPrice(client.PhysicalClient.Plan, plan, true);
 			}
 
 			plans = plans.Where(p => p.SwitchPrice != -1).ToList();
@@ -48,13 +63,31 @@ namespace Inforoom2.Controllers
 		public ActionResult UserDetails()
 		{
 			ViewBag.Title = "Данные пользователя";
-		return View();
+			return View();
 		}
 
 		public ActionResult Service()
 		{
 			ViewBag.Title = "Услуги";
-		return View();
+			InitServices();
+			return View();
+		}
+
+		protected void InitServices()
+		{
+			var client = CurrentClient;
+			var services = DbSession.Query<Service>().Where(s=>s.IsActivableFromWeb);
+			var blockAccountService = services.OfType<BlockAccountService>().FirstOrDefault();
+			var deferredPayment = services.OfType<DeferredPayment>().FirstOrDefault();
+			var pinnedIp = services.OfType<PinnedIp>().FirstOrDefault();
+			var inforoomServices = new List<Service> {blockAccountService, deferredPayment};
+			inforoomServices = inforoomServices.Where(i => i.IsActivableFor(client)).ToList();
+			ViewBag.Client = client;
+			ViewBag.ClientServices = client.ClientServices.Where(cs => cs.Service.IsActivableFromWeb && cs.IsActivated).ToList();
+			ViewBag.AvailableServices = inforoomServices;
+
+			ViewBag.BlockAccountService = blockAccountService;
+			ViewBag.DeferredPayment = deferredPayment;
 		}
 
 		public ActionResult Notifications()
@@ -72,10 +105,10 @@ namespace Inforoom2.Controllers
 		[HttpPost]
 		public ActionResult ChangePlan([EntityBinder] Plan plan)
 		{
-		//	var plan = DbSession.Get<Plan>(planId);
+			//	var plan = DbSession.Get<Plan>(planId);
 			var client = CurrentClient;
-			plan.SwitchPrice = GetPlanSwitchPrice(client.Plan, plan, true);
-			if (!client.ChangeTariffPlan(plan)) {
+			plan.SwitchPrice = GetPlanSwitchPrice(client.PhysicalClient.Plan, plan, true);
+			if (!client.PhysicalClient.ChangeTariffPlan(plan)) {
 				ErrorMessage("Не достаточно средств для смены тарифного плана");
 				return View("Tariffs");
 			}

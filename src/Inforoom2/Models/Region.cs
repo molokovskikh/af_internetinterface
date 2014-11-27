@@ -6,14 +6,14 @@ using NHibernate.Mapping.Attributes;
 
 namespace Inforoom2.Models
 {
-	[Class(0, Table = "region", NameType = typeof(Region))]
+	[Class(0, Table = "Regions", NameType = typeof(Region))]
 	public class Region : BaseModel
 	{
 		
-		[Property]
+		[Property(Column = "Region")]
 		public virtual string Name { get; set; }
 
-		[ManyToOne(Column = "City", Cascade = "save-update")]
+		[ManyToOne(Column = "_City", Cascade = "save-update")]
 		public virtual City City { get; set; }
 		
 		[Bag(0, Table = "region_plan")]

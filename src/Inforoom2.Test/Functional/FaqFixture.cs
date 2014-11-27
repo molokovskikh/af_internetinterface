@@ -1,16 +1,12 @@
-﻿using System;
-using System.Linq;
-using System.Web.UI.WebControls;
-using Inforoom2.Helpers;
+﻿using System.Linq;
 using Inforoom2.Models;
 using NHibernate.Linq;
-using NHibernate.Mapping.Attributes;
 using NUnit.Framework;
-using OpenQA.Selenium;
 
 namespace Inforoom2.Test.Functional
 {
 	[TestFixture]
+	[Ignore]
 	public class FaqFixture : BaseFixture
 	{
 		protected Question Question;

@@ -22,8 +22,8 @@ namespace Inforoom2.Controllers
 			}
 			int id = 0;
 			int.TryParse(username, out id);
-			var user = DbSession.Query<PhysicalClient>().FirstOrDefault(k => k.Id == id);
-			if (user != null && PasswordHasher.Equals(password, user.Salt, user.Password)) {
+			var user = DbSession.Query<Client>().FirstOrDefault(k => k.Id == id);
+			if (user != null && PasswordHasher.Equals(password, user.PhysicalClient.Salt, user.PhysicalClient.Password)) {
 				return Authenticate("Profile", "Personal", username);
 			}
 

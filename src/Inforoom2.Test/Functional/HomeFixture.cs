@@ -10,6 +10,7 @@ using OpenQA.Selenium;
 namespace Inforoom2.Test.Functional
 {
 	[TestFixture]
+	[Ignore]
 	public class HomeFixture : BaseFixture
 	{
 		protected Question Question;
