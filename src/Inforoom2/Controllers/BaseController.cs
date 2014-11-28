@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -14,6 +15,7 @@ using Inforoom2.Helpers;
 using Inforoom2.Models;
 using NHibernate;
 using NHibernate.Linq;
+using Switch = Inforoom2.Models.Switch;
 
 
 namespace Inforoom2.Controllers
@@ -148,7 +150,8 @@ namespace Inforoom2.Controllers
 
 		protected override void OnActionExecuted(ActionExecutedContext filterContext)
 		{
-			base.OnActionExecuted(filterContext);
+			ViewBag.ActionName = filterContext.RouteData.Values["action"].ToString();
+			ViewBag.ControllerName = filterContext.RouteData.Values["controller"].ToString();
 			ProcessRegionPanel();
 			if (CurrentClient != null) {
 				ViewBag.ClientInfo = string.Format("{0}, Баланс: {1} ", CurrentClient.PhysicalClient.FullName, CurrentClient.PhysicalClient.Balance);

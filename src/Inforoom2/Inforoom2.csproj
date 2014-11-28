@@ -115,6 +115,34 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Css\images\OfferMini\d1.jpg" />
+    <Content Include="Css\images\OfferMini\d2.jpg" />
+    <Content Include="Css\images\OfferMini\d3.jpg" />
+    <Content Include="Css\images\OfferMini\d4.jpg" />
+    <Content Include="Css\images\OfferMini\d5.jpg" />
+    <Content Include="Css\images\OfferMini\ou1.jpg" />
+    <Content Include="Css\images\OfferMini\ou2.jpg" />
+    <Content Include="Css\images\OfferMini\ou3.jpg" />
+    <Content Include="Css\images\OfferMini\pou.jpg" />
+    <Content Include="Css\images\OfferMini\pou2.jpg" />
+    <Content Include="Css\images\OfferMini\pou3.jpg" />
+    <Content Include="Css\images\OfferMini\pr1.jpg" />
+    <Content Include="Css\images\OfferMini\pr2.jpg" />
+    <Content Include="Css\images\OfferMini\t.jpg" />
+    <Content Include="Css\images\Offer\ДоговорОферта.jpg" />
+    <Content Include="Css\images\Offer\ДоговорОферта2.jpg" />
+    <Content Include="Css\images\Offer\ДоговорОферта3.jpg" />
+    <Content Include="Css\images\Offer\ДоговорОферта4.jpg" />
+    <Content Include="Css\images\Offer\ДоговорОферта5.jpg" />
+    <Content Include="Css\images\Offer\ОписаниеУслуг.jpg" />
+    <Content Include="Css\images\Offer\ОписаниеУслуг2.jpg" />
+    <Content Include="Css\images\Offer\ОписаниеУслуг3.jpg" />
+    <Content Include="Css\images\Offer\ПорядокРасчетов.jpg" />
+    <Content Include="Css\images\Offer\ПорядокРасчетов2.jpg" />
+    <Content Include="Css\images\Offer\ПравилаОказанияУслуг.jpg" />
+    <Content Include="Css\images\Offer\ПравилаОказанияУслуг2.jpg" />
+    <Content Include="Css\images\Offer\ПравилаОказанияУслуг3.jpg" />
+    <Content Include="Css\images\Offer\Тарифы.jpg" />
     <Content Include="Css\images\ui-bg_diagonals-thick_18_b81900_40x40.png" />
     <Content Include="Css\images\ui-bg_diagonals-thick_20_666666_40x40.png" />
     <Content Include="Css\images\ui-bg_flat_10_000000_40x100.png" />
@@ -196,6 +224,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\OfferContractController.cs" />
     <Compile Include="Controllers\PersonalController.cs" />
     <Compile Include="Controllers\ServiceController.cs" />
     <Compile Include="Global.asax.cs">
@@ -327,6 +356,7 @@
     <Content Include="Views\Service\DeferredPayment.cshtml" />
     <Content Include="Fonts\PDFDinTextPro.ttf" />
     <Content Include="Fonts\PTSans.ttf" />
+    <Content Include="Views\OfferContract\Index.cshtml" />
     <None Include="Web.Inforoom2_Test.config">
       <SubType>Designer</SubType>
     </None>

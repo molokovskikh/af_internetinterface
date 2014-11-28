@@ -1,4 +1,13 @@
+ul { padding: 0px;}
+.menu ul { width: 100%!important;}
+	.menu ul li:first-child { margin: 15px 30px!important;}
+	.menu ul li { margin: 15px 30px!important;}
 .notext { font-size: 0px;}
+.heading {font-family: PDFDinTextPro; font-size: 27px;left: 472px; display: inline-block; font-weight: normal;margin: 5px 0px; color: #2e2d2d;}
+.wrapper { height: auto!important;}
+.features { position: relative!important;top: auto!important;}
+a {color: #474747}
+a:visited, a:active { color: inherit;}
 .top .city { overflow: visible;z-index: 1; }
 	.top .cities {display: none;background-color: white;border: 1px solid #e7e7e7;border-radius: 5px;left: 0;padding: 8px 0 10px 20px;position: absolute;top: 0;width: 100px;}
 		.top .cities a {color: #474747}
@@ -10,6 +19,10 @@
 			.window .header .close { position: absolute;right: 10px;top: 10px;}
 			.window .wrap  { padding: 10px;}
 			#CityWindow, #SelectCityWindow { height: 200px;width: 400px;}
+.OfferContract { margin: 20px;text-align: center;}
+.OfferContract .thumbnail { display: inline-block;width: 180px;margin: 10px;border: 1px solid #e7e7e7;border-radius: 13px;padding: 10px;text-align: center;color: #474747;}
+
+
 /*Стили верстальщика*/
 @font-face {
     font-family: PDFDinTextPro; 
