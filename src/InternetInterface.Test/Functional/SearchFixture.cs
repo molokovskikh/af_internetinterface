@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
+using Common.Tools;
 using Common.Tools.Calendar;
 using Common.Tools.Helpers;
 using InternetInterface.Models;
@@ -76,20 +77,18 @@ namespace InternetInterface.Test.Functional
 			AssertText("Информация по клиенту");
 		}
 
-		/* Test author: Geraskin Andrey
-		 * Test date:   27.11.2014 */
-		[Test]
+		[Test(Description = "Тестирует подсветку OnLine клиентов на странице поиска клиентов")]
 		public void ColourOnlineClientsTest()
 		{
-			var randNamePart = new string(Convert.ToChar(new Random().Next(255)), 3);
-
 			var offlineClient = ClientHelper.Client(session);
-			offlineClient.Name = randNamePart + "_OfflineClient";
+			offlineClient.Name = "offline_ColouredClient";
 			session.Save(offlineClient);
 
 			var onlineClient = ClientHelper.Client(session);
-			onlineClient.Name = randNamePart + "_OnlineClient";
+			onlineClient.Name = "online_ColouredClient";
 			session.Save(onlineClient);
+
+			// Занесение в БД объектов, определяющих "onlineClient" как OnLine клиента
 			var newNetSwitch = new NetworkSwitch();
 			session.Save(newNetSwitch);
 			var clientEndpoint = new ClientEndpoint(onlineClient, 1, newNetSwitch);
@@ -99,7 +98,7 @@ namespace InternetInterface.Test.Functional
 			session.Save(clientLease);
 
 			Open("Search/SearchUsers");
-			Css("#SearchText").SendKeys(randNamePart);
+			Css("#SearchText").SendKeys("_ColouredClient");
 			Css("#SearchButton").Click();
 
 			// Проверка наличия 1 web-элемента класса ".online_client" на странице браузера
