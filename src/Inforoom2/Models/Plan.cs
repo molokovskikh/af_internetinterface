@@ -15,7 +15,7 @@ namespace Inforoom2.Models
 		[Property(NotNull = true, Unique = true), NotEmpty]
 		public virtual string Name { get; set; }
 
-		[Property(NotNull = true, Column = "_Speed"), Min(1), NotNull]
+		[Property(NotNull = true, Column = "_Speed")]
 		public virtual int Speed { get; set; }
 
 		[Property(Column = "Price",NotNull = true), Min(1)]

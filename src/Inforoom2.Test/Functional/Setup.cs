@@ -54,9 +54,9 @@ namespace Inforoom2.Test.Functional
 			if (session.Query<Client>().ToList().Count != 0) {
 				return;
 			}
-			/*if (!session.Query<Address>().Any()) {
-				ImportSwitchesAddresses();
-			}*/
+			if (!session.Query<Address>().Any()) {
+				/*ImportSwitchesAddresses();*/
+			}
 			if (!session.Query<Plan>().Any(p => p.Name == "Популярный")) {
 				GeneratePlansAndPrices();
 			}
