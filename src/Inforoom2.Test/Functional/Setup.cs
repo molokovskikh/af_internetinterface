@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using CassiniDev;
 using Inforoom2.Helpers;
@@ -53,7 +54,6 @@ namespace Inforoom2.Test.Functional
 			if (session.Query<Client>().ToList().Count != 0) {
 				return;
 			}
-
 			/*if (!session.Query<Address>().Any()) {
 				ImportSwitchesAddresses();
 			}*/
@@ -97,25 +97,27 @@ namespace Inforoom2.Test.Functional
 						LastTimePlanChanged = DateTime.Now.AddMonths(-2)
 					},
 					Disabled = false,
-					Status = new Status(StatusType.Worked),
 					RatedPeriodDate = DateTime.Now,
 					FreeBlockDays = 28,
 					WorkingStartDate = DateTime.Now
-					
-					
 				};
+
+				client.Status = session.Get<Status>(5);
 
 				var services =
 					session.Query<Service>().Where(s =>s.Name == "IpTv" || s.Name == "Internet").ToList();
 				IList<ClientService> csList =
-					services.Select(service => new ClientService {Service = service, Client = client, BeginDate = DateTime.Now, IsActivated = true})
+					services.Select(service => new ClientService {Service = service, Client = client, BeginDate = DateTime.Now, IsActivated = true, ActivatedByUser = true})
 						.ToList();
 				client.ClientServices = csList;
 
 				var availableServices =
 					session.Query<Service>().Where(s => s.Name == "Обещанный платеж" || s.Name == "Добровольная блокировка").ToList();
-
 				availableServices.ForEach(s=>s.IsActivableFromWeb = true);
+				IPAddress addr;
+				IPAddress.TryParse("192.168.0.1", out addr);
+				var endpoint = new ClientEndpoint {PackageId = 19, Client = client, Ip = addr};
+				client.Endpoints = new List<ClientEndpoint> {endpoint};
 				session.Save(client);
 			}
 
@@ -130,7 +132,8 @@ namespace Inforoom2.Test.Functional
 				Speed = 30,
 				PlanTransfers = new List<PlanTransfer>(),
 				IsArchived = false,
-				IsServicePlan = false
+				IsServicePlan = false,
+				PackageId = 19
 			};
 
 			var plan2 = new Plan {
@@ -139,7 +142,8 @@ namespace Inforoom2.Test.Functional
 				Speed = 50,
 				PlanTransfers = new List<PlanTransfer>(),
 				IsArchived = false,
-				IsServicePlan = false
+				IsServicePlan = false,
+				PackageId = 19
 			};
 
 			var plan3 = new Plan {
@@ -148,7 +152,8 @@ namespace Inforoom2.Test.Functional
 				Speed = 80,
 				PlanTransfers = new List<PlanTransfer>(),
 				IsArchived = false,
-				IsServicePlan = false
+				IsServicePlan = false,
+				PackageId = 19
 			};
 
 			plan1.AddPlanTransfer(plan2, 100);

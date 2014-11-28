@@ -74,7 +74,7 @@ namespace Inforoom2.Models
 		[OneToMany(2, ClassType = typeof (ClientService))]
 		public virtual IList<ClientService> ClientServices { get; set; }
 		
-		[Bag(0,Table = "ClientEndpoints" )]
+		[Bag(0,Table = "ClientEndpoints", Cascade = "all-delete-orphan")]
 		[Key(1, Column = "client")]
 		[OneToMany(2, ClassType = typeof (ClientEndpoint))]
 		public virtual IList<ClientEndpoint> Endpoints { get; set; }
@@ -85,6 +85,11 @@ namespace Inforoom2.Models
 		public virtual bool IsWorkStarted()
 		{
 			return WorkingStartDate != null;
+		}
+
+		public virtual ClientService Internet
+		{
+			get { return ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof(Internet)); }
 		}
 
 		
@@ -132,7 +137,7 @@ namespace Inforoom2.Models
 
 		public virtual void SetStatus(StatusType status, ISession session)
 		{
-			SetStatus(session.Load<Status>((uint) status));
+			SetStatus(session.Load<Status>((Int32) status));
 		}
 
 		public virtual void SetStatus(Status status)
@@ -177,6 +182,14 @@ namespace Inforoom2.Models
 					return LegalClient.Balance;
 				return 0m;
 			}
+		}
+
+		public virtual void WriteOff(decimal sum, bool isVirtual)
+		{
+			if (PhysicalClient != null)
+				PhysicalClient.WriteOff(sum, isVirtual);
+			//else
+				//LawyerPerson.Balance -= sum;
 		}
 	}
 

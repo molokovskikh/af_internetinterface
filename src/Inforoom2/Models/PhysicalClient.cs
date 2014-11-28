@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Common.Tools;
+using NHibernate.Linq;
 using NHibernate.Mapping;
 using NHibernate.Mapping.Attributes;
 using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models
 {
-	[Class(0, Table = "PhysicalClients", Schema = "internet", NameType = typeof(PhysicalClient))]
+	[Class(0, Table = "PhysicalClients", Schema = "internet", NameType = typeof (PhysicalClient))]
 	public class PhysicalClient : BaseModel
 	{
-		
 		[Property]
 		public virtual string Password { get; set; }
 
@@ -32,7 +33,13 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual decimal Balance { get; set; }
 
-		[Property(Column = "_PhoneNumber",NotNull = true), NotEmpty, Pattern(Regex = (@"^((\d{3})-(\d{7}))"))]
+		[Property]
+		public virtual decimal VirtualBalance { get; set; }
+
+		[Property]
+		public virtual decimal MoneyBalance { get; set; }
+
+		[Property(Column = "_PhoneNumber", NotNull = true), NotEmpty, Pattern(Regex = (@"^((\d{3})-(\d{7}))"))]
 		public virtual string PhoneNumber { get; set; }
 
 		[Property(NotNull = true), NotEmpty(Message = "Введите имя")]
@@ -43,30 +50,42 @@ namespace Inforoom2.Models
 
 		[Property(NotNull = true), NotEmpty(Message = "Введите отчество")]
 		public virtual string Patronymic { get; set; }
-		
+
+		[OneToOne(PropertyRef = "PhysicalClient")]
+		public virtual Client Client { get; set; }
+
 		public virtual string FullName
 		{
 			get { return Surname + " " + Name + " " + Patronymic; }
 		}
 
-		public virtual bool ChangeTariffPlan(Plan planToSwitchOn)
+		public virtual UserWriteOff ChangeTariffPlan(Plan planToSwitchOn)
 		{
 			if (IsFreePlanChange) {
-				SwitchPlan(planToSwitchOn, 0);
-				return true;
+				return SwitchPlan(planToSwitchOn, 0);
 			}
 			if (!IsEnoughBalance(planToSwitchOn.SwitchPrice)) {
-				return false;
+				return null;
 			}
-			SwitchPlan(planToSwitchOn, planToSwitchOn.SwitchPrice);
-			return true;
+			return SwitchPlan(planToSwitchOn, planToSwitchOn.SwitchPrice);
 		}
 
-		private void SwitchPlan(Plan toPlan, decimal price)
+		private UserWriteOff SwitchPlan(Plan toPlan, decimal price)
 		{
+			var comment = string.Format("Изменение тарифа, старый '{0}' новый '{1}'", Plan.Name, toPlan.Name);
 			Plan = toPlan;
-			Balance -= price;
+			WriteOff(price);
+			var writeOff = new UserWriteOff {
+				Client = Client,
+				Date = DateTime.Now,
+				Sum = price,
+				Comment = comment,
+				IsProcessedByBilling = true
+			};
 			LastTimePlanChanged = DateTime.Now;
+			if (Client.Internet.ActivatedByUser)
+				Client.Endpoints.ForEach(e=>e.PackageId = Plan.PackageId);
+			return writeOff;
 		}
 
 		public virtual bool IsFreePlanChange
@@ -80,6 +99,47 @@ namespace Inforoom2.Models
 				return false;
 			}
 			return Balance - sum > 0;
+		}
+
+		public virtual WriteOff WriteOff(decimal sum, bool writeoffVirtualFirst = false)
+		{
+			var writeoff = CalculateWriteoff(sum, writeoffVirtualFirst);
+
+			if (writeoff == null)
+				return null;
+
+			Balance -= writeoff.WriteOffSum;
+			VirtualBalance -= writeoff.VirtualSum;
+			MoneyBalance -= writeoff.MoneySum;
+
+			return writeoff;
+		}
+
+		public virtual WriteOff CalculateWriteoff(decimal sum, bool writeoffVirtualFirst = false)
+		{
+			if (sum <= 0)
+				return null;
+
+			decimal virtualWriteoff;
+			decimal moneyWriteoff;
+
+			if (writeoffVirtualFirst) {
+				virtualWriteoff = Math.Min(sum, VirtualBalance);
+			}
+			else {
+				virtualWriteoff = Math.Min(Math.Abs(Math.Min(MoneyBalance - sum, 0)), VirtualBalance);
+			}
+			moneyWriteoff = sum - virtualWriteoff;
+
+			return new WriteOff {
+				Client = Client,
+				WriteOffDate = SystemTime.Now(),
+				WriteOffSum = Math.Round(sum, 2),
+				MoneySum = Math.Round(moneyWriteoff, 2),
+				VirtualSum = Math.Round(virtualWriteoff, 2),
+				Sale = Client.Sale,
+				BeforeWriteOffBalance = Client.Balance
+			};
 		}
 	}
 }

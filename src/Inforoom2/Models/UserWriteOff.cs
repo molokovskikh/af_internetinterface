@@ -29,5 +29,8 @@ namespace Inforoom2.Models
 
 		[Property, NotEmpty]
 		public virtual string Comment { get; set; }
+
+		[Property(Column = "BillingAccount")]
+		public virtual bool IsProcessedByBilling { get; set; }
 	}
 }
