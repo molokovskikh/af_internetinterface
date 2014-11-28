@@ -2,6 +2,10 @@
 .clear { clear: both; height: 0; }
 .status.Dissolved { background-color: #F77B7B!important}
 
+td.online_client {
+	background-color: #B0DCA3;
+}
+
 .wat-cf:after {
 	 content: ".";
 	 display: block;
