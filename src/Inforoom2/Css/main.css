@@ -19,9 +19,11 @@ a:visited, a:active { color: inherit;}
 			.window .header .close { position: absolute;right: 10px;top: 10px;}
 			.window .wrap  { padding: 10px;}
 			#CityWindow, #SelectCityWindow { height: 200px;width: 400px;}
-.OfferContract { margin: 20px;text-align: center;}
+.testspeed, .OfferContract { margin: 20px;text-align: center;}
 .OfferContract .thumbnail { display: inline-block;width: 180px;margin: 10px;border: 1px solid #e7e7e7;border-radius: 13px;padding: 10px;text-align: center;color: #474747;}
 
+.testspeed { height: 500px;}
+.testspeed .speedtest { margin-top: 20px;}
 
 .top .city { width: 150px;padding-left: 7px;text-align: center;} /*паддинг - ширина иконки. Центируем текст, с трелка она как бы сама по себе справа*/
 		.city .name { display: inline-block;}
