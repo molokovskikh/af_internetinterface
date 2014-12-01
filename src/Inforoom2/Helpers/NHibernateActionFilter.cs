@@ -84,7 +84,9 @@ namespace Inforoom2.Helpers
 				|| tableName == "Leases"
 				|| tableName == "SaleSettings"
 				|| tableName == "ClientEndpoints"
-				|| tableName == "StaticIps") {
+				|| tableName == "StaticIps"
+				|| tableName == "WriteOff"
+				|| tableName == "Requests") {
 				return tableName;
 			}
 			return "inforoom2_" + tableName;

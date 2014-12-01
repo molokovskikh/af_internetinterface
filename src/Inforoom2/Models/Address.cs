@@ -6,16 +6,16 @@ namespace Inforoom2.Models
 	[Class(0, Table = "address", NameType = typeof(Address))]
 	public class Address : BaseModel
 	{
-		[ManyToOne(Column = "house", Cascade = "save-update")]
+		[ManyToOne(Column = "house")]
 		public virtual House House { get; set; }
 
-		[Property, Min(Value = 1)]
+		[Property]
 		public virtual int Entrance { get; set; }
 
-		[Property, Min(Value = 1)]
+		[Property, Min(Value = 1, Message = "Введите номер квартиры")]
 		public virtual int Apartment { get; set; }
 
-		[Property, Min(Value = 1)]
+		[Property]
 		public virtual int Floor { get; set; }
 
 		public virtual string FullAddress

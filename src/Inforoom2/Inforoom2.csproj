@@ -287,6 +287,7 @@
     <Compile Include="Models\Plan.cs" />
     <Compile Include="Models\Ticket.cs" />
     <Compile Include="Models\UserWriteOff.cs" />
+    <Compile Include="Models\WriteOff.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">
@@ -356,6 +357,7 @@
     <Content Include="Views\Service\DeferredPayment.cshtml" />
     <Content Include="Fonts\PDFDinTextPro.ttf" />
     <Content Include="Fonts\PTSans.ttf" />
+    <Content Include="Views\Home\TariffPlans.cshtml" />
     <Content Include="Views\OfferContract\Index.cshtml" />
     <None Include="Web.Inforoom2_Test.config">
       <SubType>Designer</SubType>

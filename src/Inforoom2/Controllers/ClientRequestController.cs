@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Common.MySql;
@@ -53,15 +54,32 @@ namespace Inforoom2.Controllers
 		{
 			var tariff = SetPlans().FirstOrDefault(k => k.Name == clientRequest.Plan.Name);
 			clientRequest.Plan = tariff;
+			clientRequest.ActionDate = clientRequest.RegDate = DateTime.Now;
+			ConvertRequestToOldModel(clientRequest);
 			var errors = ValidationRunner.ValidateDeep(clientRequest);
 			if (errors.Length == 0) {
-				//TODO Нужно придумать что делать с заполненой заявкой
+				clientRequest.Address = null;
 				DbSession.Save(clientRequest);
-
+				SuccessMessage(string.Format("Спасибо, Ваша заявка принята. Номер заявки {0}", clientRequest.Id)) ;
 				return RedirectToAction("Index", "Home");
 			}
 			ViewBag.ClientRequest = clientRequest;
 			return View("Index");
+		}
+
+		private void ConvertRequestToOldModel(ClientRequest clientRequest)
+		{
+			clientRequest.City = clientRequest.Address.House.Street.Region.City.Name;
+			clientRequest.Street = clientRequest.Address.House.Street.Name;
+			int house;
+			int.TryParse(clientRequest.Address.House.Number, out house);
+			clientRequest.House = house;
+			clientRequest.CaseHouse = clientRequest.Address.House.Housing;
+			clientRequest.Entrance = clientRequest.Address.Entrance;
+			clientRequest.Floor = clientRequest.Address.Floor;
+			clientRequest.Apartment = clientRequest.Address.Apartment;
+			//TODO необходимо реализовать единый механизм управления адресом
+			
 		}
 
 		public bool CheckSwitchAddress(string city, string street, string house)
@@ -80,7 +98,8 @@ namespace Inforoom2.Controllers
 				                        && sa.House.Number.ToLower() == houseNumber
 				                        && sa.House.Housing.ToLower() == housing)
 					//проверка частного сектора (частный сектор содержит только улицу) 
-				                       || (sa.Street.Region.City.Name.ToLower() == city && street.Contains(sa.Street.Name.ToLower()))));
+				                       ||
+				                       (sa.Street.Region.City.Name.ToLower() == city && street.Contains(sa.Street.Name.ToLower()))));
 
 			return switchAddress != null;
 		}

@@ -1,7 +1,7 @@
 ﻿@using Inforoom2.Models
 
 @{
-	PhysicalClient client = ViewBag.CurrentClient.PhysicalClient;
+	PhysicalClient client = ViewBag.Client.PhysicalClient;
 	IList<Plan> plans = ViewBag.Plans;
 }
 
@@ -9,6 +9,7 @@
 
 @{ Html.RenderPartial("Menu");  }
 
+<div style="width:800px; margin:0 auto;">
 <span>Бесплатная смена тарифа доступна 1 раз в месяц.
 	Ваш тариф: @client.Plan.Name
 </span>
@@ -73,3 +74,4 @@
 	</table>
 	
 </div>
+	</div>

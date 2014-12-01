@@ -15,10 +15,10 @@ namespace Inforoom2.Models
 		[Property(NotNull = true, Unique = true), NotEmpty]
 		public virtual string Name { get; set; }
 
-		[Property(NotNull = true, Column = "_Speed"), Min(1), NotNull]
+		[Property(NotNull = true, Column = "_Speed")]
 		public virtual int Speed { get; set; }
 
-		[Property(Column = "FinalPrice",NotNull = true), Min(1)]
+		[Property(Column = "Price",NotNull = true), Min(1)]
 		public virtual decimal Price { get; set; }
 
 		[Property(Column = "_IsServicePlan")]
@@ -36,6 +36,9 @@ namespace Inforoom2.Models
 		[Key(1, Column = "PlanFrom")]
 		[OneToMany(2, ClassType = typeof(PlanTransfer))]
 		public virtual IList<PlanTransfer> PlanTransfers { get; set; }
+
+		[Property]
+		public virtual int PackageId { get; set; }
 		
 		public virtual decimal SwitchPrice { get; set; }
 

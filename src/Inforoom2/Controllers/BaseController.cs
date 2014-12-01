@@ -139,7 +139,7 @@ namespace Inforoom2.Controllers
 
 		protected override void OnException(ExceptionContext filterContext)
 		{
-		/*	if (filterContext.ExceptionHandled) {
+			/*if (filterContext.ExceptionHandled) {
 				return;
 			}
 			  filterContext.Result = new RedirectToRouteResult(
@@ -150,6 +150,9 @@ namespace Inforoom2.Controllers
 
 		protected override void OnActionExecuted(ActionExecutedContext filterContext)
 		{
+			base.OnActionExecuted(filterContext);
+			if (filterContext.Exception != null) {
+			}
 			ViewBag.ActionName = filterContext.RouteData.Values["action"].ToString();
 			ViewBag.ControllerName = filterContext.RouteData.Values["controller"].ToString();
 			ProcessRegionPanel();
@@ -157,7 +160,6 @@ namespace Inforoom2.Controllers
 				ViewBag.ClientInfo = string.Format("{0}, Баланс: {1} ", CurrentClient.PhysicalClient.FullName, CurrentClient.PhysicalClient.Balance);
 			}
 		}
-
 
 		public void ProcessRegionPanel()
 		{
@@ -179,7 +181,9 @@ namespace Inforoom2.Controllers
 				}
 				else {
 					//Куков нет, пытаемся достать город из базы, иначе определяем по геобазе
-					var user = DbSession.Query<PhysicalClient>().FirstOrDefault(k => k.Id == Convert.ToInt32(User.Identity.Name) );
+					int userId;
+					int.TryParse(User.Identity.Name, out userId);
+					var user = DbSession.Query<PhysicalClient>().FirstOrDefault(k => k.Id == userId);
 					if (user != null) {
 						userCity = user.Address.House.Street.Region.City.Name;
 						ViewBag.UserCity = user.Address.House.Street.Region.City.Name;

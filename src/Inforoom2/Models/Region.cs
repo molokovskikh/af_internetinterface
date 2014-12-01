@@ -13,7 +13,7 @@ namespace Inforoom2.Models
 		[Property(Column = "Region")]
 		public virtual string Name { get; set; }
 
-		[ManyToOne(Column = "_City", Cascade = "save-update")]
+		[ManyToOne(Column = "_City")]
 		public virtual City City { get; set; }
 		
 		[Bag(0, Table = "region_plan")]

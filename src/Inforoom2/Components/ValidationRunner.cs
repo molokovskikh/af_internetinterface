@@ -55,6 +55,16 @@ namespace Inforoom2.Components
 					return errors;
 			}
 
+			props = allprops.Where(prop => Attribute.IsDefined(prop, typeof (ManyToOneAttribute)));
+			foreach (var p in props) {
+				var value = p.GetValue(obj, null);
+				if (value == null || !NHibernateUtil.IsInitialized(value))
+					continue;
+					var errors = ValidateDeep(value, validatedObjects);
+					if (errors.Length > 0)
+					return errors;
+			}
+
 			return summary;
 		}
 

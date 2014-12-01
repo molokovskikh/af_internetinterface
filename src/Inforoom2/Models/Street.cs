@@ -16,13 +16,13 @@ namespace Inforoom2.Models
 			Name = name;
 		}
 
-		[Property, NotEmpty]
+		[Property, NotEmpty(Message = "Введите номер улицы")]
 		public virtual string Name { get; set; }
 
 		[Property]
 		public virtual string District { get; set; }
 
-		[ManyToOne(Column = "Region", Cascade = "save-update")]
+		[ManyToOne(Column = "Region")]
 		public virtual Region Region { get; set; }
 	}
 }

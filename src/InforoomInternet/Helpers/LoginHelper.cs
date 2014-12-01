@@ -11,8 +11,8 @@ namespace InforoomInternet.Helpers
 		{
 			return Client.Queryable.FirstOrDefault(c =>
 				c.Id == id &&
-					c.PhysicalClient != null);// &&
-					//c.PhysicalClient.Password == CryptoPass.GetHashString(password));
+					c.PhysicalClient != null &&
+					c.PhysicalClient.Password == CryptoPass.GetHashString(password));
 		}
 	}
 }

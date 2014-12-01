@@ -27,22 +27,22 @@
 		</div>
 		<div>
 			<span>Город</span>
-			@Html.TextBoxFor(model => clientRequest.Address.House.Street.Region.City.Name, new { onkeyup = "typeWatcher( 1500);" })
+			@Html.TextBoxFor(model => clientRequest.Address.House.Street.Region.City.Name, new {onkeyup = "typeWatcher( 1500);"})
 			@ViewBag.Validation.GetError(clientRequest.Address.House.Street.Region.City, "Name", "Поле не может быть пустым")
 		</div>
 		<div>
 			<span>Улица</span>
-			@Html.TextBoxFor(model => clientRequest.Address.House.Street.Name, new { onkeyup = "typeWatcher( 1500);" })
+			@Html.TextBoxFor(model => clientRequest.Address.House.Street.Name, new {onkeyup = "typeWatcher( 1500);"})
 			@ViewBag.Validation.GetError(clientRequest.Address.House.Street, "Name", "Поле не может быть пустым")
 		</div>
 		<div>
 			<span>Дом</span>
-			@Html.TextBoxFor(model => clientRequest.Address.House.Number, new { onkeyup = "typeWatcher( 1500);", placeholder = "Например 14А" })
+			@Html.TextBoxFor(model => clientRequest.Address.House.Number, new {onkeyup = "typeWatcher( 1500);", placeholder = "Например 14А"})
 			@ViewBag.Validation.GetError(clientRequest.Address.House, "Number", "Поле не может быть пустым")
 		</div>
 		<div>
 			<span>Корпус / Строение</span>
-			@Html.TextBoxFor(model => clientRequest.Address.House.Housing, new { onkeyup = "typeWatcher( 1500);", placeholder = "Например К3 С1" })
+			@Html.TextBoxFor(model => clientRequest.Address.House.Housing, new {onkeyup = "typeWatcher( 1500);", placeholder = "Например К3 С1"})
 		</div>
 		<div>
 			<span>Квартира</span>
@@ -62,6 +62,11 @@
 		<div>
 			<span>Выберите тариф</span>
 			@Html.DropDownListFor(k => clientRequest.Plan.Name, ViewBag.Tariffs as IList<SelectListItem>)
+		</div>
+
+		<div>
+			<span>Возможность самостоятельного подключения:</span>
+			@Html.CheckBoxFor(k => clientRequest.SelfConnect)
 		</div>
 
 		<input type="submit"  value="Отправить заявку"/>
