@@ -61,24 +61,32 @@
 					<div class="inforum">
 					</div>
 				</a>
+				<form method="Pos" action="/ClientRequest">
 				<input class="connect" type="submit" value="Подключиться">
+				</form>
 				<input class="call" type="submit" value="Обратный звонок">
 				<div class="phone">8 800 200-00-32</div>
 			</div>
 			<div class="menu">
 				<ul>
-					<li>	@Html.ActionLink("Главная", "Index", "Home", null, new { @class = "active" }) </li> 
-					<li>	@Html.ActionLink("Тарифы", "TariffPlans", "Home", null, null) </li> 
-					<li>	@Html.ActionLink("Заявка на подключение", "Index", "ClientRequest", null, null)</li> 
-					<li>	@Html.ActionLink("Для бизнеса", "Index", "ClientRequest", null, null)</li> 
-					<li>	@Html.ActionLink("Вопросы и ответы", "Index", "Faq", null, null)</li> 
-					<li>	@Html.ActionLink("Оплата", "Index", "Faq", null, null)</li> 
-					<li>	@Html.ActionLink("О компании", "Index", "Faq", null, null)</li> 
+				@{
+					var menu = new List<string[]>();
+					menu.Add(new []{"Главная", "Index", "Home"});
+					menu.Add(new []{"Тарифы", "TariffPlans", "Home"});
+					menu.Add(new []{"Заявка на подключение", "Index", "ClientRequest"});
+					menu.Add(new []{"Для бизнеса", "Index", "ClientRequest"});
+					menu.Add(new []{"Вопросы и ответы", "Index", "Faq"});
+					menu.Add(new []{"Оплата", "Index", "Faq"});
+					menu.Add(new []{"О компании", "Index", "Faq"});
+					foreach(var item in menu) {
+						<li>@Html.ActionLink(item[0], item[1], item[2], null, new {@class = ViewBag.ControllerName == item[2] && ViewBag.ActionName == item[1] ? "active" : ""}) </li>
+					}
+				}
 				</ul>
 			</div>
-
-			@RenderBody()
-
+			<div class="@(ViewBag.ControllerName) @(ViewBag.ActionName)">
+				@RenderBody()
+			</div>
 			<div class="features">
 				<div class="requisite">
 					<div class="logo"></div>
@@ -107,7 +115,7 @@
 					<ul>
 						<li>О компании</li>
 						<li>Для бизнеса</li>
-						<li>Оферта</li>
+						<li>@Html.ActionLink("Оферта", "Index", "OfferContract", null, null)</li>
 						<li>Реквизиты</li>
 					</ul>
 				</div>

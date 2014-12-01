@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using Castle.ActiveRecord;
@@ -226,9 +227,12 @@ namespace Billing.Test.Integration
 			Assert.AreEqual(0, lawyerClient.Endpoints.Count);
 		}
 
-		[Test]
+		[Test(Description = "Проверяет, отображается ли пользователю страница с предупреждением, если баланс уходит в минус")]
 		public void LawyerPersonTest()
 		{
+			var param = ConfigurationManager.AppSettings["LawyerPersonBalanceWarningRate"];
+			var rate = decimal.Parse(param);
+
 			var region = session.Query<RegionHouse>().First(r => r.Name == "Воронеж");
 			var lPerson = new LawyerPerson(region);
 			session.Save(lPerson);
@@ -236,6 +240,8 @@ namespace Billing.Test.Integration
 				Name = "TestLawyer",
 				LawyerPerson = lPerson
 			};
+
+			lawyerClient.LawyerPerson.Balance += 5000;
 			session.Save(lawyerClient);
 			SystemTime.Now = () => new DateTime(2013, 4, 1);
 			var order = new Order {
@@ -249,7 +255,7 @@ namespace Billing.Test.Integration
 			FlushAndCommit();
 
 			var sn = SystemTime.Now();
-			var days = sn.DaysInMonth() + sn.AddMonths(1).DaysInMonth() + sn.AddMonths(2).DaysInMonth();
+			var days = sn.DaysInMonth() + sn.AddMonths(1).DaysInMonth()*rate;
 			var beginData = new DateTime(sn.Year, sn.Month, 1);
 			for (int i = 0; i < days; i++) {
 				SystemTime.Now = () => beginData.AddDays(i);
@@ -258,7 +264,7 @@ namespace Billing.Test.Integration
 
 			session.Clear();
 			lPerson = session.Get<LawyerPerson>(lPerson.Id);
-			Assert.That(-30000m, Is.EqualTo(lPerson.Balance), lPerson.Id.ToString());
+			Assert.That(lPerson.Balance, Is.EqualTo(-25000m), lPerson.Id.ToString());
 			billing.ProcessPayments();
 			lPerson.Balance += 15000;
 			session.Update(lPerson);
@@ -269,13 +275,12 @@ namespace Billing.Test.Integration
 			session.Clear();
 			lawyerClient = session.Get<Client>(lawyerClient.Id);
 			Assert.IsTrue(lawyerClient.ShowBalanceWarningPage);
-
+			Assert.IsTrue(lawyerClient.Status == null); //смотрим, а вдруг его вырубило уже по отрицательному балансу. Изначально у клиента(тестового) статуса нет, но он появится при блокировке
 			billing.ProcessPayments();
 
 			session.Clear();
 			lawyerClient = session.Get<Client>(lawyerClient.Id);
 			Assert.IsFalse(lawyerClient.ShowBalanceWarningPage);
-
 			Assert_statistic_appeal();
 		}
 

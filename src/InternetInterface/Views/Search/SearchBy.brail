@@ -38,7 +38,9 @@
 			<% else: %>
 			<tr class="<% if item.Status != null: %> status ${item.Status.Type}<% end;%>" style="background-color:#f5efdf;">
 			<% end %>
-				<td><a href="../Search/Redirect?filter.ClientCode=${item.Id}">${item.ForSearchId(filter.SearchText)}</a></td>
+				<td class="${"online_client" if itemInfo.OnLine}">
+					<a href="../Search/Redirect?filter.ClientCode=${item.Id}">${item.ForSearchId(filter.SearchText)}</a>
+				</td>
 				<td> ${item.ForSearchName(filter.SearchText)}</td>
 				<% if MapPartner.AccesPartner("SSI"): %>
 					<td>
@@ -66,16 +68,16 @@
 					<% if item.PhysicalClient != null: %>
 						<td style="background-color:${"#facada" if item.PhysicalClient.Balance < 0};">${item.PhysicalClient.Balance}</td>
 						<% if item.Status != null: %>
-							<td class= style="background-color:${"#b0dca3" if itemInfo.OnLine};">${item.Status.Name}</td>
-							<% else: %>
-							<td  style="background-color:${"#b0dca3" if itemInfo.OnLine};">Статус не задан</td>
+							<td>${item.Status.Name}</td>
+						<% else: %>
+							<td>Статус не задан</td>
 						<% end %>
 					<% else: %>
 						<td style="background-color:${"#facada" if item.LawyerPerson.Balance < 0};">${item.LawyerPerson.Balance}</td>
 						<% if item.Status != null: %>
-						<td " style="background-color:${"#b0dca3" if itemInfo.OnLine};">${item.Status.Name}</td>
+								<td>${item.Status.Name}</td>
 						<% else: %>
-						<td  style="background-color:${"#b0dca3" if itemInfo.OnLine};">Статус не задан</td>
+								<td>Статус не задан</td>
 						<% end %>
 					<% end %>
 				<% end %>

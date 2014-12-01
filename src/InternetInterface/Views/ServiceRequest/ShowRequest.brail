@@ -106,15 +106,15 @@ ${app.Asset("service-requests.js")}
 					<b>Восстановление работы</b>
 				</td>
 				<td>
-				<% if not Edit: %>
-					<% if request.BlockForRepair : %>
-					да
-					<% else: %>
-					нет
-					<% end %>
+				<span class="blockForRepair">
+				<% if request.BlockForRepair : %>
+				да
 				<% else: %>
-				${app.Edit("request.BlockForRepair")}
-				${app.Error("request.BlockForRepair")}
+				нет
+				<% end %>
+				</span>
+				<% if Edit and not request.BlockForRepair : %>
+				<input type="submit" name="blockForRepair" value="Восстановление работы" />
 				<% end %>
 				</td>
 			</tr>

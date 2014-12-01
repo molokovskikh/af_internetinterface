@@ -1,9 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using Common.Tools.Calendar;
 using Common.Tools.Helpers;
+using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NUnit.Framework;
 
@@ -73,6 +75,38 @@ namespace InternetInterface.Test.Functional
 			Css("#SearchButton").Click();
 			AssertText("Информация по клиенту");
 		}
+
+		/* Test author: Geraskin Andrey
+		 * Test date:   27.11.2014 */
+		[Test]
+		public void ColourOnlineClientsTest()
+		{
+			var randNamePart = new string(Convert.ToChar(new Random().Next(255)), 3);
+
+			var offlineClient = ClientHelper.Client(session);
+			offlineClient.Name = randNamePart + "_OfflineClient";
+			session.Save(offlineClient);
+
+			var onlineClient = ClientHelper.Client(session);
+			onlineClient.Name = randNamePart + "_OnlineClient";
+			session.Save(onlineClient);
+			var newNetSwitch = new NetworkSwitch();
+			session.Save(newNetSwitch);
+			var clientEndpoint = new ClientEndpoint(onlineClient, 1, newNetSwitch);
+			session.Save(clientEndpoint);
+			var clientLease = new Lease(clientEndpoint);
+			clientLease.Ip = new IPAddress(new Random().Next(1000000));
+			session.Save(clientLease);
+
+			Open("Search/SearchUsers");
+			Css("#SearchText").SendKeys(randNamePart);
+			Css("#SearchButton").Click();
+
+			// Проверка наличия 1 web-элемента класса ".online_client" на странице браузера
+			var cssElemCollection = browser.FindElementsByCssSelector(".online_client");
+			Assert.That(cssElemCollection.Count, Is.EqualTo(1));
+		}
+
 		[Test]
 		public void SearchYeYoTest()
 		{
