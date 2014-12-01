@@ -185,6 +185,33 @@ namespace InternetInterface.Test.Functional
 			AssertText("Списание ожидает обработки");
 		}
 
+		[Test(Description = "Проверяет создание заявки на подключение ТВ для пользователя")]
+		public void CreateTvRequest()
+		{
+			var phone = "+7 926 123 12 13";
+			var contact = new Contact(Client,ContactType.MobilePhone,phone);
+			session.Save(contact);
+			Open("UserInfo/ShowPhysicalClient?filter.ClientCode={0}", Client.Id);
+			Click("Заявка на ТВ");
+			Css("#request_Hdmi").Click();
+			Css("#request_Contact").SelectByText(phone);
+			Css("#request_Comment").SendKeys("Hello");
+			Css("#send").Click();
+			var request = session.Query<TvRequest>().First(i => i.Client == Client);
+			Assert.That(request,Is.Not.Null);
+			Assert.That(request.Hdmi,Is.True);
+			Assert.That(request.Comment.Contains("Hello"),Is.True);
+			Assert.That(request.Contact,Is.Not.Null);
+
+			
+			var issue = session.Query<RedmineIssue>().First(i => i.project_id == 67);
+			Assert.That(issue, Is.Not.Null);
+			Assert.That(issue.description.Contains("HDMI: да"),Is.True);
+
+			var appeal = session.Query<Appeals>().First(i => i.Client == Client && i.Appeal.Contains("на подключение ТВ"));
+			Assert.That(appeal, Is.Not.Null);
+		}
+
 		[Test]
 		public void Reset_client()
 		{

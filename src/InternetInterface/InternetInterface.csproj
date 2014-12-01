@@ -303,6 +303,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Views\UserInfo\ClientRegisteredInfoFromDiller.brail" />
+    <None Include="Views\TvRequest\new.brail" />
     <Content Include="Views\UserInfo\EditRegion.brail" />
     <Content Include="Views\UserInfo\OrdersArchive.brail">
       <SubType>Designer</SubType>
@@ -377,6 +378,7 @@
     <Compile Include="Controllers\ServicesController.cs" />
     <Compile Include="Controllers\SwitchesController.cs" />
     <Compile Include="Controllers\TariffsController.cs" />
+    <Compile Include="Controllers\TvRequestController.cs" />
     <Compile Include="Controllers\UserInfoController.cs" />
     <Compile Include="Errors\AccessDin.aspx.cs">
       <DependentUpon>AccessDin.aspx</DependentUpon>
@@ -462,6 +464,7 @@
     <Compile Include="Models\PaymentsForAgent.cs" />
     <Compile Include="Models\Period.cs" />
     <Compile Include="Models\Printer.cs" />
+    <Compile Include="Models\RedmineIssue.cs" />
     <Compile Include="Models\RegionHouse.cs" />
     <Compile Include="Models\Request.cs" />
     <Compile Include="Models\RequestMessage.cs" />
@@ -483,6 +486,7 @@
     <Compile Include="Models\Street.cs" />
     <Compile Include="Models\TariffChangeRule.cs" />
     <Compile Include="Models\Timeunit.cs" />
+    <Compile Include="Models\TvRequest.cs" />
     <Compile Include="Models\Universal\ChildActiveRecordLinqBase.cs" />
     <Compile Include="Models\Universal\ClientSearchProperties.cs" />
     <Compile Include="Models\Access\CategorieAccessSet.cs" />
