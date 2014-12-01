@@ -30,7 +30,7 @@ namespace InternetInterface.Background
 			var sndingLease = Session.Query<SendedLease>().Where(s => s.SendDate >= DateTime.Now.Date).Select(s => s.LeaseId).ToList();
 			var smtp = new Mailer();
 #if !DEBUG
-			var mailToAdress = "internet@ivrn.net";
+			var mailToAdress = "ibilling@ivrn.net";
 #else
 			var mailToAdress = "kvasovtest@analit.net";
 #endif
