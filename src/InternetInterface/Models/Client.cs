@@ -557,9 +557,18 @@ namespace InternetInterface.Models
 			return Math.Round(price / daysInInterval, 2);
 		}
 
+		/// <summary>
+		/// Биллинг этой функцией проверяет должен ли быть клиент заблокирован.
+		/// </summary>
+		/// <returns>True, если клиента необходимо блокировать</returns>
 		public virtual bool CanBlock()
 		{
-			//Если у юр. лица баланс меньше абоненской платы, помноженной на модификатор из настроек 
+			//Если у клиента подключен сервис, отменяющий блокировки, то он не должен быть заблокирован
+			var cServ = ClientServices.FirstOrDefault(c => NHibernateUtil.GetClass(c.Service) == typeof(DebtWork));
+			if (cServ != null && !cServ.Service.CanBlock(cServ))
+				return false;
+
+			//Если у юр. лица баланс меньше абоненской платы, помноженной на коэффициент из настроек
 			if (LawyerPerson != null) {
 				var param = ConfigurationManager.AppSettings["LawyerPersonBalanceBlockingRate"];
 				var rate = decimal.Parse(param);
@@ -568,10 +577,7 @@ namespace InternetInterface.Models
 				return false;
 			}
 
-			var cServ = ClientServices.FirstOrDefault(c => NHibernateUtil.GetClass(c.Service) == typeof(DebtWork));
-			if (cServ != null && !cServ.Service.CanBlock(cServ))
-				return false;
-
+			//Физики блокируются при отрицательном балансе
 			if (Disabled || PhysicalClient.Balance >= 0)
 				return false;
 			return true;
@@ -763,6 +769,9 @@ where CE.Client = {0}", Id))
 			return services.Sum(c => c.GetPrice());
 		}
 
+		/// <summary>
+		/// Разблокирует клиента
+		/// </summary>
 		public virtual void Enable()
 		{
 			SetStatus(Status.Find((uint)StatusType.Worked));

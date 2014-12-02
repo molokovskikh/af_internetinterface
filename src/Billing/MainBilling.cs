@@ -171,7 +171,11 @@ set s.LastStartFail = true;")
 					if (updateClient.LawyerPerson != null) {
 						updateClient.LawyerPerson.Balance += Convert.ToDecimal(payment.Sum);
 						payment.BillingAccount = true;
-						updateClient.Disabled = false;
+						if (updateClient.LawyerPerson.Balance >= 0)
+						{
+							updateClient.SetStatus(StatusType.Worked,session);
+							updateClient.CreareAppeal("Клиент разблокирован", AppealType.Statistic);
+						}
 					}
 				}
 			});
@@ -452,6 +456,11 @@ set s.LastStartFail = true;")
 			}
 		}
 
+		/// <summary>
+		/// Списания с юр. лиц
+		/// </summary>
+		/// <param name="session">Сессия базы данных</param>
+		/// <param name="client">Клиент</param>
 		private static void WriteOffFromLawyerPerson(ISession session, Client client)
 		{
 			var person = client.LawyerPerson;

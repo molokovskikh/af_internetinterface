@@ -162,6 +162,59 @@ namespace Billing.Test.Integration
 			billing.ProcessWriteoffs();
 		}
 
+		[Test(Description = "Разблокировка юр. лиц при положительном балансе")]
+		public void UnBlock_lawyer_person_negative_balance()
+		{
+			//Более мнее красивый тест для юр. лиц
+			//Можно будет потом переписать работу с юр. лицами
+			var region = new RegionHouse
+			{
+				Name = "Воронеж"
+			};
+			session.Save(region);
+			var status = session.Load<Status>((uint)StatusType.Worked);
+
+			//Клиент с отрицательным балансом
+			var BadPerson = new LawyerPerson
+			{
+				Balance = -3000,
+				Region = region,
+			};
+
+			session.Save(BadPerson);
+			var BadClient = new Client()
+			{
+				Disabled = false,
+				Name = "TestLawyer",
+				ShowBalanceWarningPage = false,
+				LawyerPerson = BadPerson,
+				Status = status
+			};
+			session.Save(BadClient);
+			var order = new Order() { BeginDate = DateTime.Now, Client = BadClient, OrderServices = new List<OrderService>() };
+			var service = new OrderService() { Cost = 100, IsPeriodic = true, Description = "testService", Order = order };
+			order.OrderServices.Add(service);
+			BadClient.Orders = new List<Order>();
+			BadClient.Orders.Add(order);
+			session.Save(service);
+			session.Save(order);
+			BadPerson.client = BadClient;
+			session.Save(BadPerson);
+
+			//Тест
+			Assert.That(BadClient.Disabled, Is.False);
+			billing.ProcessWriteoffs();
+			var saved = session.Load<Client>(BadClient.Id);
+			Assert.That(saved.Disabled, Is.True);
+
+			var payment = new Payment(saved, 10000);
+			session.Save(payment);
+
+			billing.ProcessPayments();
+			saved = session.Load<Client>(BadClient.Id);
+			Assert.That(saved.Disabled, Is.False);
+
+		}
 		[Test(Description = "Блокировка юр. лиц при негативном балансе")]
 		public void Block_lawyer_person_negative_balance()
 		{
