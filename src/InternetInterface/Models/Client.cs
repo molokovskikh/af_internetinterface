@@ -568,8 +568,9 @@ namespace InternetInterface.Models
 			if (cServ != null && !cServ.Service.CanBlock(cServ))
 				return false;
 
-			//Если у юр. лица баланс меньше абоненской платы, помноженной на коэффициент из настроек
-			if (LawyerPerson != null) {
+			//Если у юр. лица баланс меньше абоненской платы, помноженной на коэффициент из настроек, если у него не отключены блокировки
+			var serv = ClientServices.FirstOrDefault(c => NHibernateUtil.GetClass(c.Service) == typeof(WorkLawyer));
+			if (LawyerPerson != null && serv == null) {
 				var param = ConfigurationManager.AppSettings["LawyerPersonBalanceBlockingRate"];
 				var rate = decimal.Parse(param);
 				if (LawyerPerson.Tariff > 0 && LawyerPerson.Balance <= LawyerPerson.Tariff * -rate && !Disabled)
