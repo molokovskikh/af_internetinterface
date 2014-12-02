@@ -98,28 +98,6 @@ namespace Billing.Test.Integration
 		}
 
 		[Test]
-		public void Lawyer_person_payment_disable()
-		{
-			var balance = lawyerClient.Balance;
-			using (new SessionScope()) {
-				lawyerClient.Disabled = true;
-				ActiveRecordMediator.Save(lawyerClient);
-			}
-			billing.ProcessPayments();
-			using (new SessionScope()) {
-				lawyerClient.Refresh();
-				Assert.IsTrue(lawyerClient.Disabled);
-				ActiveRecordMediator.Save(new Payment(lawyerClient, 100));
-			}
-			billing.ProcessPayments();
-			using (new SessionScope()) {
-				lawyerClient.Refresh();
-				Assert.False(lawyerClient.Disabled);
-				Assert.AreEqual(balance + 100, lawyerClient.Balance);
-			}
-		}
-
-		[Test]
 		public void Disable_write_Off()
 		{
 			using (new SessionScope()) {
