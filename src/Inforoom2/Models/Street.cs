@@ -22,7 +22,7 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual string District { get; set; }
 
-		[ManyToOne(Column = "Region")]
+		[ManyToOne(Column = "Region", Cascade = "save-update")]
 		public virtual Region Region { get; set; }
 	}
 }

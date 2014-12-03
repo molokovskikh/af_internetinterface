@@ -50,6 +50,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inforoom2", "Inforoom2\Info
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inforoom2.Test", "Inforoom2.Test\Inforoom2.Test.csproj", "{279323D6-24C8-47BD-A0EB-BE164B4B5CB1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InforoomControlPanel", "InforoomControlPanel\InforoomControlPanel.csproj", "{4436A72E-730B-497C-989C-42BBB4208024}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		ChildrenFolder|Any CPU = ChildrenFolder|Any CPU
@@ -862,6 +864,42 @@ Global
 		{279323D6-24C8-47BD-A0EB-BE164B4B5CB1}.Test|Mixed Platforms.Build.0 = Test|Any CPU
 		{279323D6-24C8-47BD-A0EB-BE164B4B5CB1}.Test|x64.ActiveCfg = Test|Any CPU
 		{279323D6-24C8-47BD-A0EB-BE164B4B5CB1}.Test|x86.ActiveCfg = Test|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.ChildrenFolder|Any CPU.ActiveCfg = Release|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.ChildrenFolder|Any CPU.Build.0 = Release|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.ChildrenFolder|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.ChildrenFolder|Mixed Platforms.Build.0 = Release|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.ChildrenFolder|x64.ActiveCfg = Release|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.ChildrenFolder|x86.ActiveCfg = Release|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.debug-net45|Any CPU.ActiveCfg = Debug|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.debug-net45|Any CPU.Build.0 = Debug|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.debug-net45|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.debug-net45|Mixed Platforms.Build.0 = Debug|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.debug-net45|x64.ActiveCfg = Debug|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.debug-net45|x86.ActiveCfg = Debug|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.Release|x64.ActiveCfg = Release|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.Release|x86.ActiveCfg = Release|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.release-net45|Any CPU.ActiveCfg = Release|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.release-net45|Any CPU.Build.0 = Release|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.release-net45|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.release-net45|Mixed Platforms.Build.0 = Release|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.release-net45|x64.ActiveCfg = Release|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.release-net45|x86.ActiveCfg = Release|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.Test|Any CPU.ActiveCfg = Release|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.Test|Any CPU.Build.0 = Release|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.Test|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.Test|Mixed Platforms.Build.0 = Release|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.Test|x64.ActiveCfg = Release|Any CPU
+		{4436A72E-730B-497C-989C-42BBB4208024}.Test|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

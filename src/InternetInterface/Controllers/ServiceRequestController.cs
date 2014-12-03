@@ -112,8 +112,7 @@ namespace InternetInterface.Controllers
 					DbSession.Save(writeOff);
 
 				var blockForRepairButtonPressed = Request.Params["blockForRepair"];
-				if(!String.IsNullOrEmpty(blockForRepairButtonPressed))
-				{
+				if (!String.IsNullOrEmpty(blockForRepairButtonPressed)) {
 					request.Client.SetStatus(Status.Get(StatusType.BlockedForRepair, DbSession));
 					request.BlockForRepair = true;
 					DbSession.Save(request);

@@ -28,12 +28,7 @@ namespace Inforoom2.Controllers
 		{
 			return View();
 		}
-	
-		public ActionResult AdminIndex()
-		{
-			return RedirectToAction("Index", "Admin");
-		}
-		
+
 		public ActionResult ViewNewsBlock(int? newsid)
 		{
 			var newsBlock = DbSession.Get<NewsBlock>(newsid);

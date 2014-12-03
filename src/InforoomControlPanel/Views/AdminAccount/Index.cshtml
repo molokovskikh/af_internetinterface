@@ -1,0 +1,26 @@
+﻿@model dynamic
+
+@{
+	ViewBag.Title = "title";
+	
+	string username = string.Empty;
+	string password = string.Empty;
+}
+
+<div class="login">
+	@if (Request.IsAuthenticated) {
+		<text>
+			[ @Html.ActionLink("Выход", "AdminLogout", "AdminAccount") ]
+			@if (User.IsInRole("Admin")) {
+				@Html.ActionLink("Панель администратора", "Index", "Admin")
+			} 
+		</text>
+	}
+	else {
+		using (Html.BeginForm("Login", "AdminAccount", new { returnUrl = @Request.Url }, FormMethod.Post, null)) {
+			@Html.TextBoxFor(model => username, new { @class = "user", placeholder = "Логин" })
+			@Html.PasswordFor(model => password, new { @class = "user", placeholder = "Пароль" })
+			<input class="click" type="submit" value="Войти">
+		}
+	}
+</div>

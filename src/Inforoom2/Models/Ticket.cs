@@ -26,7 +26,7 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual bool IsNotified { get; set; }
 
-		[ManyToOne(Column = "Employee")]
+		[ManyToOne(Column = "User")]
 		public virtual Employee Employee { get; set; }
 
 		[Property, Email, NotNullNotEmpty]

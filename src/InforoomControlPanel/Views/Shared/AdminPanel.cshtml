@@ -1,0 +1,17 @@
+﻿<nav>
+	<div class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container">
+			@Html.ActionLink("FAQ", "QuestionIndex", "Question", null, new { @class = "navbar-brand" })
+			@Html.ActionLink("Вопросы", "TicketIndex", "Ticket", null, new { @class = "navbar-brand" })
+			@Html.ActionLink("Новости", "NewsIndex", "News", null, new { @class = "navbar-brand" })
+			@Html.ActionLink("Города", "AddressCity", "Address", null, new { @class = "navbar-brand" })
+			@Html.ActionLink("Регионы", "AddressRegion", "Address", null, new { @class = "navbar-brand" })
+			@Html.ActionLink("Улицы", "AddressStreet", "Address", null, new { @class = "navbar-brand" })
+			@Html.ActionLink("Дома", "AddressHouse", "Address", null, new { @class = "navbar-brand" })
+			@Html.ActionLink("Адреса", "AddressAddress", "Address", null, new { @class = "navbar-brand" })
+			@Html.ActionLink("Адреса маршрутизаторов", "AddressSwitchAddress", "Address", null, new { @class = "navbar-brand" })
+			@Html.ActionLink("Тарифы", "Plan", "Plan", null, new { @class = "navbar-brand" })
+			@Html.ActionLink("Войти как...", "Impersonate", "AdminAccount", null, new { @class = "navbar-brand" })
+		</div>
+	</div>
+</nav>

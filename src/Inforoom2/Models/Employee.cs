@@ -12,17 +12,17 @@ namespace Inforoom2.Models
 	/// <summary>
 	/// Модель сотрудника (администратора)
 	/// </summary>
-	[Class(0, Table = "employee", NameType = typeof (Employee))]
+	[Class(0, Table = "Partners", NameType = typeof (Employee))]
 	public class Employee : BaseModel
 	{
 		[Property]
-		public virtual string Username { get; set; }
+		public virtual string Name { get; set; }
 
 		[Property]
-		public virtual string Password { get; set; }
+		public virtual string Login { get; set; }
 
 		[Property]
-		public virtual string Salt { get; set; }
+		public virtual bool IsDisabled { get; set; }
 		
 		[Bag(0, Table = "user_role", Lazy = CollectionLazy.False)]
 		[Key(1, Column = "user", NotNull = false)]
@@ -33,6 +33,8 @@ namespace Inforoom2.Models
 		[Key(1, Column = "user", NotNull = false)]
 		[ManyToMany(2, Column = "permission", ClassType = typeof(Permission))]
 		public virtual  IList<Permission> Permissions { get; set; }
+
+		
 	}
 
 	

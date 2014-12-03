@@ -16,7 +16,7 @@ namespace Inforoom2.Models
 			Housing = housing;
 		}
 
-		[ManyToOne(Column = "Street"), NotNull]
+		[ManyToOne(Column = "Street",  Cascade = "save-update"), NotNull]
 		public virtual Street Street { get; set; }
 
 		[Property, NotEmpty(Message = "Введите номер дома"), IsNumeric]

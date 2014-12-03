@@ -14,9 +14,9 @@ namespace InternetInterface.Test.Functional
 {
 	public class ServiceFixture : SeleniumFixture
 	{
-		Client client;
-		Partner registrator;
-		Partner performer;
+		private Client client;
+		private Partner registrator;
+		private Partner performer;
 
 		[SetUp]
 		public void Setup()
@@ -100,13 +100,13 @@ namespace InternetInterface.Test.Functional
 			Assert.That(request.Client.Status.Type, Is.EqualTo(StatusType.Worked));
 			Open("ServiceRequest/ShowRequest?Id={0}&Edit=true", request.Id);
 			var span = browser.FindElementByCssSelector(".blockForRepair");
-			Assert.That(span.Text.Contains("нет"),Is.True);
+			Assert.That(span.Text.Contains("нет"), Is.True);
 
 			var save = browser.FindElementByCssSelector("input[name='blockForRepair']");
 			save.Click();
 
 			span = browser.FindElementByCssSelector(".blockForRepair");
-			Assert.That(span.Text.Contains("да"),Is.True);
+			Assert.That(span.Text.Contains("да"), Is.True);
 			AssertText("Сохранено");
 			session.Clear();
 			var saved = session.Load<ServiceRequest>(request.Id);
