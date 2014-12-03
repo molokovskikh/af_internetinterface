@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using Common.Tools;
 using Common.Tools.Calendar;
@@ -277,6 +278,53 @@ namespace Billing.Test.Integration
 			var saved2 = session.Load<Client>(GoodClient.Id);
 			Assert.That(saved.Disabled, Is.True);
 			Assert.That(saved2.Disabled, Is.False);
+		}
+
+		[Test(Description = "Начисление бонусов физикам за первый платеж")]
+		public void first_payment_bonus()
+		{
+			ConfigurationManager.AppSettings["ProcessFirstPaymentBonus"] = "1";
+			client.PhysicalClient.Balance = 0;
+			client.PhysicalClient.MoneyBalance = 0;
+			client.PhysicalClient.VirtualBalance = 0;
+			session.Update(client.PhysicalClient);
+			client.PhysicalClient.Tariff.Price = 500;
+			session.Update(client.PhysicalClient.Tariff);
+			var payment = new Payment(client, 600) {
+				Virtual = true
+			};
+			session.Save(payment);
+
+			//эта строчка нужна так как иначе биллинг получит клиента без пеймента - сессия не отдельная, однако
+			session.Refresh(client);
+			Assert.That(client.Payments.Count, Is.EqualTo(1));
+			Assert.That(client.Balance, Is.EqualTo(0));
+			//Проверяем 1 раз - новый платеж бы создан, но не обработан
+			billing.ProcessPayments();
+			session.Refresh(client);
+			Assert.That(client.Balance, Is.EqualTo(600));
+			Assert.That(client.Payments.Count, Is.EqualTo(2));
+			//Во второй раз обработается виртуальный бонусный платеж
+			billing.ProcessPayments();
+			session.Refresh(client);
+			Assert.That(client.Balance, Is.EqualTo(1100));
+
+			//Создадим еще платеж
+			payment = new Payment(client, 600)
+			{
+				Virtual = true
+			};
+			session.Save(payment);
+			session.Refresh(client);
+			Assert.That(client.Payments.Count, Is.EqualTo(3));
+
+			//Пусть билинг, хоть заработается себе но никаких новых бонусов быть не должно
+			billing.ProcessPayments();
+			billing.ProcessPayments();
+			billing.ProcessPayments();
+			Assert.That(client.Balance, Is.EqualTo(1700));
+
+			ConfigurationManager.AppSettings["ProcessFirstPaymentBonus"] = null;
 		}
 	}
 }
