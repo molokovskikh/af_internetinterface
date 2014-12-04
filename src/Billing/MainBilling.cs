@@ -261,10 +261,8 @@ set s.LastStartFail = true;")
 				session.Save(appeal);
 				var message = "Вам начислен бонус в размере " + client.PhysicalClient.Tariff.Price + " рублей.Благодарим за сотрудничество";
 				var sms = SmsMessage.TryCreate(client, message, DateTime.Now.AddMinutes(1));
-				if (sms != null) {
+				if (sms != null)
 					session.Save(sms);
-					Messages.Add(sms);
-				}
 			}
 		}
 
