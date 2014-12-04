@@ -77,8 +77,8 @@ namespace Inforoom2.Components
 				fieldName = _idName;
 			result = bindingContext.ValueProvider.GetValue(fieldName);
 			if (FieldNotFoundOrValueIsEmpty(result)) {
-				if (_relaxed) return null;
-				throw new MissingFieldException("Could not find the request parameter: " + fieldName);
+				/*if (_relaxed)*/ return null;
+				//throw new MissingFieldException("Could not find the request parameter: " + fieldName);
 			}
 
 			var entityType = _entityType ?? bindingContext.ModelType;

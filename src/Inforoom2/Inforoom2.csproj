@@ -162,12 +162,18 @@
     <Content Include="Css\main.css" />
     <Content Include="Css\style.css" />
     <Content Include="Global.asax" />
+    <Content Include="Images\answererrorbg.png" />
+    <Content Include="Images\answersuccessbg.png" />
+    <Content Include="Images\arro.png" />
     <Content Include="Images\arrow.png" />
     <Content Include="Images\connectionbg.png" />
     <Content Include="Images\connectionbgactiv.png" />
+    <Content Include="Images\crusty.png" />
+    <Content Include="Images\disposal.png" />
     <Content Include="Images\inforum.png" />
     <Content Include="Images\leftbg.jpg" />
     <Content Include="Images\leftbg.png" />
+    <Content Include="Images\map.png" />
     <Content Include="Images\offer.png" />
     <Content Include="Images\rightbg.jpg" />
     <Content Include="Images\rightbg.png" />
@@ -179,6 +185,9 @@
     <Content Include="Images\slider5.jpg" />
     <Content Include="Images\speedbg.png" />
     <Content Include="Images\speedbgactiv.png" />
+    <Content Include="Images\tick.png" />
+    <Content Include="Images\typehit.png" />
+    <Content Include="Images\upward.png" />
     <Content Include="Scripts\AdminAddressController.js" />
     <Content Include="Scripts\ClientRequest.js" />
     <Content Include="Scripts\EditNewsBlock.js" />
@@ -202,6 +211,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Components\EmailSender.cs" />
     <Compile Include="Components\EntityBinder.cs" />
+    <Compile Include="Components\HtmlTag.cs" />
     <Compile Include="Components\ValidationRunner.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
@@ -320,6 +330,7 @@
     <Content Include="Fonts\PTSans.ttf" />
     <Content Include="Views\Home\TariffPlans.cshtml" />
     <Content Include="Views\OfferContract\Index.cshtml" />
+    <Content Include="Views\Shared\Menu.cshtml" />
     <None Include="Web.Inforoom2_Test.config">
       <SubType>Designer</SubType>
     </None>

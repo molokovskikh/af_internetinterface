@@ -145,6 +145,15 @@
     <Content Include="Views\AdminAccount\Index.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\AdminAccount\Impersonate.cshtml" />
+    <Content Include="Web.InforoomControlPanel_Test.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <None Include="Web.InforoomControlPanel_Test.Debug.config">
+      <DependentUpon>Web.InforoomControlPanel_Test.config</DependentUpon>
+    </None>
+    <None Include="Web.InforoomControlPanel_Test.Release.config">
+      <DependentUpon>Web.InforoomControlPanel_Test.config</DependentUpon>
+    </None>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

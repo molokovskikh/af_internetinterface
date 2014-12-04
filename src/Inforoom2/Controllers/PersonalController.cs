@@ -104,7 +104,7 @@ namespace Inforoom2.Controllers
 			if (price != null) {
 				return price.Price;
 			}
-			return -1;
+			return 0;
 		}
 
 		protected void InitServices()
@@ -134,9 +134,7 @@ namespace Inforoom2.Controllers
 			foreach (var plan in plans) {
 				plan.SwitchPrice = GetPlanSwitchPrice(client.PhysicalClient.Plan, plan, true);
 			}
-
-			plans = plans.Where(p => p.SwitchPrice != -1).ToList();
-			ViewBag.Plans = plans;
+			ViewBag.Plans = plans.Take(3).ToList();
 		}
 	}
 }
