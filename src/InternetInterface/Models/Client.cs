@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -574,7 +575,7 @@ namespace InternetInterface.Models
 				if (serv != null)
 					return false;
 				var param = ConfigurationManager.AppSettings["LawyerPersonBalanceBlockingRate"];
-				var rate = decimal.Parse(param);
+				var rate = (decimal)float.Parse(param, CultureInfo.InvariantCulture);
 				if (LawyerPerson.Tariff > 0 && LawyerPerson.Balance <= LawyerPerson.Tariff * -rate && !Disabled)
 					return true;
 				return false;

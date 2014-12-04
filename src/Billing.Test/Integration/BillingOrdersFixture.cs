@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using Castle.ActiveRecord;
@@ -231,7 +232,7 @@ namespace Billing.Test.Integration
 		public void LawyerPersonTest()
 		{
 			var param = ConfigurationManager.AppSettings["LawyerPersonBalanceWarningRate"];
-			var rate = decimal.Parse(param);
+			var rate = decimal.Parse(param, CultureInfo.InvariantCulture);
 
 			var region = session.Query<RegionHouse>().First(r => r.Name == "Воронеж");
 			var lPerson = new LawyerPerson(region);
