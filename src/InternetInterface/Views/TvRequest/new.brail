@@ -1,0 +1,41 @@
+﻿<div class="tvrequest">
+	<a href="${SiteRoot}/UserInfo/ShowPhysicalClient/?filter.ClientCode=${client.Id}">Назад</a>
+	<h2>Создание заявки на подключение ТВ для пользователя ${client.Name}</h2>
+	<div class="content">
+	<form method="post">
+		<input type="hidden" name="request.Client.Id" value="${client.Id}"/>
+		<div class="row">
+			<span>HDMI</span>
+			${app.Edit("request.Hdmi")}
+			${app.Error("request.Hdmi")}
+		</div>
+		<div class="row">
+<% if contacts.Count > 0: %>
+			<span>Контакт</span>
+			<select id="request_Contact" name="request.Contact.Id">
+				<option value="0"> </option>
+				<% for contact in contacts: %>
+				<option value="${contact.Id}">${contact.HumanableNumber}</option>
+				<% end %>
+			</select>
+			${app.Error("request.Contact")}
+<% else: %>
+	<span class="error">У данного клиента не указаны номера телефонов</span> 
+<% end; %>
+</div>
+	
+		<div class="row">
+			<span>Дополнительный контакт</span>
+			${app.Edit("request.AdditionalContact")}
+			${app.Error("request.AdditionalContact")}
+		</div>
+
+		<div class="row">
+			<span>Комментарий</span>
+			<textarea id="request_Comment" name="request.Comment" value=""></textarea>
+			${app.Error("request.Comment")}
+		</div>
+		<input id="send" type="submit" />
+	</form>
+	</div>
+</div>

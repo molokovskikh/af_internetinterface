@@ -23,7 +23,6 @@
 						<div class="arrow"></div>
 						<div class="cities">
 							@{
-								<a href="#">@(ViewBag.UserCity)</a>
 								foreach (var city in ViewBag.Cities) {
 									if (city != ViewBag.UserCity) {
 										<a href="#">@city</a>

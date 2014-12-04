@@ -9,7 +9,7 @@ ul { padding: 0px;}
 a {color: #474747}
 a:visited, a:active { color: inherit;}
 .top .city { overflow: visible;z-index: 1; }
-	.top .cities {display: none;background-color: white;border: 1px solid #e7e7e7;border-radius: 5px;left: 0;padding: 8px 0 10px 20px;position: absolute;top: 0;width: 100px;}
+	.top .cities {background-color: white;border: 1px solid #e7e7e7;border-radius: 5px;display: none;left: 0;position: absolute;text-align: center;top: 32px;width: 155px;}
 		.top .cities a {color: #474747}
 		.top .cities a:hover {color: #a71b22}
 .window.outer {display: table;position: fixed;top: 0;left: 0;width: 100%;height: 100%;z-index: 30000;background-color: rgba(0,0,0,0.5);}
@@ -19,9 +19,16 @@ a:visited, a:active { color: inherit;}
 			.window .header .close { position: absolute;right: 10px;top: 10px;}
 			.window .wrap  { padding: 10px;}
 			#CityWindow, #SelectCityWindow { height: 200px;width: 400px;}
-.OfferContract { margin: 20px;text-align: center;}
+.testspeed, .OfferContract { margin: 20px;text-align: center;}
 .OfferContract .thumbnail { display: inline-block;width: 180px;margin: 10px;border: 1px solid #e7e7e7;border-radius: 13px;padding: 10px;text-align: center;color: #474747;}
 
+.testspeed { height: 500px;}
+.testspeed .speedtest { margin-top: 20px;}
+
+.top .city { width: 150px;padding-left: 7px;text-align: center;} /*паддинг - ширина иконки. Центируем текст, с трелка она как бы сама по себе справа*/
+		.city .name { display: inline-block;}
+		.city .arrow { top: 10px;position: relative;left: 0;display: inline-block;}
+	.top .whiteright, .top .blackright { left: 186px;}
 
 /*Стили верстальщика*/
 @font-face {

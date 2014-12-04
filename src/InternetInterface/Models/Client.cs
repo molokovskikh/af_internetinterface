@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -557,21 +558,30 @@ namespace InternetInterface.Models
 			return Math.Round(price / daysInInterval, 2);
 		}
 
+		/// <summary>
+		/// Биллинг этой функцией проверяет должен ли быть клиент заблокирован.
+		/// </summary>
+		/// <returns>True, если клиента необходимо блокировать</returns>
 		public virtual bool CanBlock()
 		{
-			//Если у юр. лица баланс меньше абоненской платы, помноженной на модификатор из настроек 
+			//Если у клиента подключен сервис, отменяющий блокировки, то он не должен быть заблокирован
+			var cServ = ClientServices.FirstOrDefault(c => NHibernateUtil.GetClass(c.Service) == typeof(DebtWork));
+			if (cServ != null && !cServ.Service.CanBlock(cServ))
+				return false;
+
+			//Если у юр. лица баланс меньше абоненской платы, помноженной на коэффициент из настроек, если у него не отключены блокировки
 			if (LawyerPerson != null) {
+				var serv = ClientServices.FirstOrDefault(c => NHibernateUtil.GetClass(c.Service) == typeof(WorkLawyer));
+				if (serv != null)
+					return false;
 				var param = ConfigurationManager.AppSettings["LawyerPersonBalanceBlockingRate"];
-				var rate = decimal.Parse(param);
+				var rate = (decimal)float.Parse(param, CultureInfo.InvariantCulture);
 				if (LawyerPerson.Tariff > 0 && LawyerPerson.Balance <= LawyerPerson.Tariff * -rate && !Disabled)
 					return true;
 				return false;
 			}
 
-			var cServ = ClientServices.FirstOrDefault(c => NHibernateUtil.GetClass(c.Service) == typeof(DebtWork));
-			if (cServ != null && !cServ.Service.CanBlock(cServ))
-				return false;
-
+			//Физики блокируются при отрицательном балансе
 			if (Disabled || PhysicalClient.Balance >= 0)
 				return false;
 			return true;
@@ -763,6 +773,9 @@ where CE.Client = {0}", Id))
 			return services.Sum(c => c.GetPrice());
 		}
 
+		/// <summary>
+		/// Разблокирует клиента
+		/// </summary>
 		public virtual void Enable()
 		{
 			SetStatus(Status.Find((uint)StatusType.Worked));

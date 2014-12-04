@@ -167,11 +167,19 @@ set s.LastStartFail = true;")
 								clientService.PaymentProcessed();
 							}
 						}
+						ProcessBonusesForFirstPayment(payment, session);
 					}
+
+					//Обработка платежей юриков
 					if (updateClient.LawyerPerson != null) {
 						updateClient.LawyerPerson.Balance += Convert.ToDecimal(payment.Sum);
 						payment.BillingAccount = true;
-						updateClient.Disabled = false;
+						//Разблокировка при положительном балансе
+						if (updateClient.LawyerPerson.Balance >= 0)
+						{
+							updateClient.SetStatus(StatusType.Worked,session);
+							updateClient.CreareAppeal("Клиент разблокирован", AppealType.Statistic);
+						}
 					}
 				}
 			});
@@ -229,6 +237,33 @@ set s.LastStartFail = true;")
 					assignedservice.TryDeactivate();
 				}
 			});
+		}
+
+		/// <summary>
+		/// Начисляет бонусы за первый платеж
+		/// </summary>
+		/// <param name="payment">Платеж</param>
+		/// <param name="session">Сессия базы данных</param>
+		private void ProcessBonusesForFirstPayment(Payment payment, ISession session)
+		{
+			var client = payment.Client;
+			var firstPayment = client.Payments.Count == 1;
+			var correctSum = payment.Sum >= client.PhysicalClient.Tariff.Price;
+			var correctPlan = client.PhysicalClient.Tariff.Id != 77;
+			var str = ConfigurationManager.AppSettings["ProcessFirstPaymentBonus"];
+			var processBonus = str != null;
+			if (processBonus && correctSum && correctPlan && firstPayment)
+			{
+				var p = new Payment(client, client.PhysicalClient.Tariff.Price);
+				p.Virtual = true;
+				session.Save(p);
+				var appeal = client.CreareAppeal("Был зачислен бонус за первый платеж в размере " + client.PhysicalClient.Tariff.Price + " Рублей");
+				session.Save(appeal);
+				var message = "Вам начислен бонус в размере " + client.PhysicalClient.Tariff.Price + " рублей.Благодарим за сотрудничество";
+				var sms = SmsMessage.TryCreate(client, message, DateTime.Now.AddMinutes(1));
+				if (sms != null)
+					session.Save(sms);
+			}
 		}
 
 		public virtual void ProcessWriteoffs()
@@ -451,6 +486,11 @@ set s.LastStartFail = true;")
 			}
 		}
 
+		/// <summary>
+		/// Списания с юр. лиц
+		/// </summary>
+		/// <param name="session">Сессия базы данных</param>
+		/// <param name="client">Клиент</param>
 		private static void WriteOffFromLawyerPerson(ISession session, Client client)
 		{
 			var person = client.LawyerPerson;

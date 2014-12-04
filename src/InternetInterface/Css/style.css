@@ -2,6 +2,12 @@ a:link, a:visited { color: #474e99; text-decoration: none; }
 a, a:hover, a:active { color: #474e99; }
 h1, h2, h3 {color: #444}
 
+.tvrequest { margin: 20px;}
+	.tvrequest .content { border: 1px solid #ccc; width: 600px; padding:20px;}
+	.tvrequest .row {margin: 20px 0px;}
+	.tvrequest textarea {width: 350px; height:100px; display:block;}
+	.tvrequest span {margin-right: 10px;}
+
 body {
   color: #333;
   font: normal 12px/1.5em "Helvetica Neue";

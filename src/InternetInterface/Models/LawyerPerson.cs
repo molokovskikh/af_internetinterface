@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Web;
@@ -90,7 +91,7 @@ namespace InternetInterface.Models
 		public virtual bool NeedShowWarning()
 		{
 			var param = ConfigurationManager.AppSettings["LawyerPersonBalanceWarningRate"];
-			var rate = decimal.Parse(param);
+			var rate = (decimal)float.Parse(param, CultureInfo.InvariantCulture);
 			var cond = Balance <= -(Tariff * rate) && Balance < 0;
 			return cond;
 		}

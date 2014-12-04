@@ -771,9 +771,9 @@ namespace Billing.Test.Integration
 			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
+				Assert.That(client.ClientServices.Count, Is.EqualTo(0));
 				Assert.True(client.ShowBalanceWarningPage);
 				Assert.True(client.Disabled);
-				Assert.That(client.ClientServices.Count, Is.EqualTo(0));
 			}
 		}
 
