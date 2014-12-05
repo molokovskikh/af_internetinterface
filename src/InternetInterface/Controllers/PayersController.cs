@@ -34,7 +34,7 @@ namespace InternetInterface.Controllers
 			filter.CurrentPartner = InitializeContent.Partner;
 
 			PropertyBag["filter"] = filter;
-			PropertyBag["agents"] = DbSession.Query<Partner>().Where(i => i.Payments.Count != 0 || i.Role.ReductionName == "Diller").ToList();
+			PropertyBag["agents"] = DbSession.Query<Partner>().Where(i => i.CommonPayments.Count != 0 || i.Payments.Count != 0 || i.Role.ReductionName == "Diller").ToList();
 			if (Request.QueryString.AllKeys.Any(k => k.StartsWith("filter")))
 				PropertyBag["Payments"] = filter.Find(DbSession);
 		}
