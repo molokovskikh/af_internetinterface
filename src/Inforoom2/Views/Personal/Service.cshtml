@@ -9,121 +9,91 @@
 	IList<ClientService> clientServices = ViewBag.ClientServices;
 }
 
-<h2>@ViewBag.Title</h2>
 
-@{ Html.RenderPartial("Menu"); }
-
-
-<div style="width:800px; margin:0 auto;">
-	@if (clientServices.Count != 0) {
-		<span>Подключеные услуги</span>
-		<table class="">
-			<tr>
-				<td>
-					<div>Название</div>
+<div class="heading">ЛИЧНЫЙ КАБИНЕТ:УСЛУГИ</div>
+<div class="list">
+	<div class="disposals">Все услуги</div>
+	<table class="cost dl">
+		<tr class="menucost">
+			<td class="namemenu"><div class="namemenubg"></div>Услуга</td>
+			<td class="namemenu description"><div class="namemenubg"></div>Описание</td>
+			<td class="namemenu price"><div class="pracebg"></div>Стоимость</td>
+			<td class="namemenu"><div class="namemenubg"></div>Срок действия</td>
+			<td class="namemenu tr">Действие</td>
+		</tr>
+	
+		@foreach (var clientService in clientServices) {
+			<tr class="menufee">
+				<td class="disposal">
+					@Html.HiddenFor(modelItem => clientService.Id)
+					@Html.DisplayFor(modelItem => clientService.Service.Name)
+				</td>
+				<td class="description td">
+					@Html.DisplayFor(modelItem => clientService.Service.Description)
+				</td>
+				<td class="price tr">
+					@Html.DisplayFor(modelItem => clientService.Service.Price)
+				</td>
+				<td class="price tr">
+					@Html.DisplayFor(modelItem => clientService.EndDate)
 				</td>
 				<td>
-					<div>Описание</div>
-				</td>
-				<td>
-					<div>Цена</div>
-				</td>
-				<td>
-					<div>Срок действия</div>
-				</td>
-				<td>
-					<div>Действие</div>
+					@switch (clientService.Service.GetType().Name) {
+						case "BlockAccountService":
+							@Html.ActionLink("Отключить", "BlockAccount", "Service", null, new { @class = "disposalbg", })
+							break;
+					}
 				</td>
 			</tr>
-			@foreach (var clientService in clientServices) {
-				<tr>
-					<td>
-						@Html.HiddenFor(modelItem => clientService.Id)
-						@Html.DisplayFor(modelItem => clientService.Service.Name)
-					</td>
-					<td>
-						@Html.DisplayFor(modelItem => clientService.Service.Description)
-					</td>
-					<td>
-						@Html.DisplayFor(modelItem => clientService.Service.PriceDescription)
-					</td>
-					<td>
-						@Html.DisplayFor(modelItem => clientService.EndDate)
-					</td>
-				
-					<td>
-						@switch (clientService.Service.GetType().Name) {
+		}
+	</table>
+
+	@if (clientServices.Count == 0) {
+		<text>
+			<div class="noactiveservice">У вас нет подключенных услуг</div>
+		</text>
+	}
+
+	<div class="disposals everything">Подключенные услуги</div>
+	<table class="cost all">
+		<tr class="menucost">
+			<td class="namemenu"><div class="namemenubg"></div>Услуга</td>
+			<td class="namemenu description"><div class="namemenubg"></div>Описание</td>
+			<td class="namemenu price"><div class="pracebg"></div>Стоимость</td>
+			<td class="namemenu descriptions">Действие</td>
+		</tr>
+			
+		@foreach (var service in availableServices) {
+			<tr class="menufee">
+				<td class="disposal">
+					@Html.HiddenFor(modelItem => service.Id)
+					@Html.DisplayFor(modelItem => service.Name)
+				</td>
+				<td class="description td">
+					@Html.DisplayFor(modelItem => service.Description)
+				</td>
+				<td class="price tr">
+					@Html.DisplayFor(modelItem => service.Price)
+				</td>
+				<td>
+					@if (client.CanUseService(service)) {
+						switch (service.GetType().Name) {
 							case "BlockAccountService":
-								@Html.ActionLink("Отключить", "BlockAccount", "Service")
+								@Html.ActionLink("Подключить", "BlockAccount", "Service", null, new { @class = "plugs" })
+
+								break;
+							case "DeferredPayment":
+								@Html.ActionLink("Подключить", "DeferredPayment", "Service", null, new { @class = "plugs" })
 								break;
 						}
-					</td>
-				</tr>
-			}
-		</table>
-	}
-	else {
-		<p>У Вас нет активированых услуг</p>
-	}
-	
-</div>
-
-
-<div style="width:800px; margin:0 auto;">
-	@if (availableServices.Count != 0) {
-
-
-		<span>Доступные услуги</span>
-		<table class="">
-			<tr>
-				<td>
-					<div>Название</div>
-				</td>
-				<td>
-					<div>Описание</div>
-				</td>
-				<td>
-					<div>Цена</div>
-				</td>
-				<td>
-					<div>Действие</div>
+					}
+					else {
+							@Html.ActionLink("Не доступно", "Service", "Personal", null, new { @class = "plugs" })
+					}
 				</td>
 			</tr>
-			@foreach (var service in availableServices) {
-				<tr>
-					<td>
-						@Html.HiddenFor(modelItem => service.Id)
-						@Html.DisplayFor(modelItem => service.Name)
-					</td>
-					<td>
-						@Html.DisplayFor(modelItem => service.Description)
-					</td>
-					<td>
-						@Html.DisplayFor(modelItem => service.PriceDescription)
-					</td>
-					<td>
-						@if (client.CanUseService(service)) {
-							switch (service.GetType().Name) {
-								case "BlockAccountService":
-									@Html.ActionLink("Подключить", "BlockAccount", "Service")
-									;
-									break;
-								case "DeferredPayment":
-									@Html.ActionLink("Подключить", "DeferredPayment", "Service")
-									break;
-							}
-						}
-						else {
-							<text>Услуга </text>
-							@service.Name<text> не доступна</text>
-						}
-					</td>
-				</tr>
-			}
-		</table>
-	}
-	else {
-		<p>Вам не доступны услуги для активации </p>
-	}
-	
+		}
+	</table>
+
+	@{ Html.RenderPartial("Menu"); }
 </div>

@@ -239,6 +239,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\ClientRequestController.cs" />
+    <Compile Include="Controllers\StaticContent.cs" />
     <Compile Include="Controllers\TestSpeedController.cs" />
     <Compile Include="Controllers\FaqController.cs">
       <SubType>Code</SubType>
@@ -358,6 +359,8 @@
     <Content Include="Views\TestSpeed\Index.cshtml" />
     <Content Include="speedtest\upload.jsp" />
     <Content Include="speedtest\upload.php" />
+    <Content Include="Views\StaticContent\PageNotFound.cshtml" />
+    <Content Include="Views\StaticContent\Error.cshtml" />
     <None Include="Web.Inforoom2_Test.config">
       <SubType>Designer</SubType>
     </None>
