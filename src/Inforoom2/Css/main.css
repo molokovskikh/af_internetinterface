@@ -42,8 +42,8 @@ a:visited, a:active { color: inherit;}
 
 body {margin:0px; overflow-x: hidden; background: #aaafb5;font-family: PDFDinTextPro;}
 ul {margin: 0px;}
-a {text-decoration: none;}
-.wrapper {width:1182px; background: #ffffff; height: 1186px;margin:0px auto;position: relative;overflow: visible; }
+a {text-decoration: none;color: #474747;}
+.wrapper {width:1182px; background: #ffffff; height: auto;margin:0px auto;position: relative;overflow: visible; }
 .top {background-color:#373737;height:51px;position: absolute;width:1182px;}
 .blackleft {width: 20px;height: 20px;background: #373637;position: absolute;left: 11px;top: 31px;border-radius: 0 0 8px;}
 .whiteleft {width: 20px;height: 20px;background: #ffffff;position: absolute;left: 11px;top: 31px;}
@@ -66,12 +66,12 @@ a {text-decoration: none;}
 .phone {position: absolute;width: 200px;height: 50px;font-size:26px;font-family: PDFDinTextPro;left: 962px;top: 92px;cursor: pointer;}
 .menu {width:1182px;height: 57px;background: #e3dfdf;box-shadow:inset  0px 1px 5px 5px #d7d1d1;}
 .menu ul {display: inline-block;font-size: 18px;text-align: center;}
-.menu li {display: inline-block;font-family: PDFDinTextPro;margin: 15px 32px;}
+.menu li {display: inline-block;font-family: PDFDinTextPro;margin: 15px 31px;}
 .menu li:first-child { margin-left: -10px;}
 .menu a {color: #474747;border-bottom: 1px solid;}
 .menu a.active {color: #a71b22;border-bottom: none;}
 .plans {background: #cfc9c9;width: 1182px;height: 711px;}
-.tariffs {font-family: PDFDinTextPro; font-size: 27px;height: 60px;left: 472px;position: absolute;top: 254px;width: 300px;color: #2e2d2d;}
+.heading {font-family: PDFDinTextPro; font-size: 27px;height: 60px;left: 394px;position: absolute;top: 254px;width: 365px;color: #2e2d2d;text-align: center;}
 .variants {width:1182px;height: 454px;text-align: center;position: absolute;top: 322px;left: 8px;}
 .type {background: #ffffff;width: 305px;height: 454px;display: inline-block;margin-right: 15px;border-radius: 10px;vertical-align: top;position: relative;}
 .typehit {border: 3px solid #a81c22;}
@@ -88,6 +88,82 @@ a {text-decoration: none;}
 .details {color: #737373;font-family: PTSans;font-size: 13px;height: 130px;left: 123px;line-height: 9px;position: absolute;top: 801px;width: 853px;}
 .details p sup {font-size: 8px;}
 .type h4 sup {font-size: 10px;}
+.request {font-family: PDFDinTextPro; font-size: 27px;height: 60px;left: 410px;position: absolute;top: 254px;width: 355px;color: #2e2d2d;}
+.leftpersonal {margin-left: 102px;margin-top: 89px;width: 550px;height: 400px;display: inline-block;}
+.personals {width: 175px;height: 20px;display: inline-block;margin-bottom: 35px;}
+.personal {height: 28px;width: 345px;background: none repeat scroll 0 0 #f1f1f1;border: 1px solid #dadada;}
+.personal:focus {box-shadow: 0 0 7px  #ca1e27;border: 1px solid #dadada!important;}
+.block {display: inline-block;}
+.addon {display: inline-block;width: 91px;margin-bottom: 30px;}
+.addons {display: inline-block;height: 25px;width: 70px;margin-right: 5px; background: none repeat scroll 0 0 #f1f1f1;border: 1px solid #dadada;}
+.addons:focus {box-shadow: 0 0 7px  #ca1e27;}
+.rounded {color: #8f8f8f;font-family: PTSans;font-size: 13px;font-weight: bold;height: 32px; padding-left: 13px;width: 272px;background: none repeat scroll 0 0 #f1f1f1;
+         border: 1px solid #d2d2d2;box-shadow: 0 0 1px;}
+.success {display: inline-block;}
+.error {display: inline-block;}
+.success .icon {background: url("../images/tick.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);display: inline-block;height: 14px;width: 16px;}
+.error .icon {background: url("../images/crusty.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);display: inline-block;height: 14px;width: 16px;}
+.leftpersonal .error input {border:1px solid #920f15;}
+.leftpersonal .success input {border:1px solid #6ec400;}
+.map {width: 442px;height: 445px; background: url("../images/map.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);display: inline-block; position: absolute;
+    right: 62px;top: 313px;}
+.contract {margin-left: 100px;margin-top: 36px;width: 925px;font-family: PTSans;font-size: 14px;}
+.contract p {font-size: 13px;color: #8b8b8b;}
+.resend {background: none repeat scroll 0 0 #aa181e;border: medium none;border-radius: 2px;color: #ffffff;cursor: pointer;font-family: PDFDinTextPro;font-size: 20px;height: 39px;
+margin-bottom: 20px;margin-left: 478px;margin-top: 17px;padding-bottom: 3px;width: 180px;}
+.know {background: none repeat scroll 0 0 #e3dfde;border-radius: 17px;margin-left: 84px;margin-top: 89px;width: 1000px;margin-bottom: 15px;padding-top: 15px;}
+.ask { color: #af3436;font-size: 18px;height: 40px;margin-left: 28px;width: 120px;}
+.turn {float: right;font-size: 18px;margin-right: 16px;width: 105px;text-decoration: underline;cursor: pointer;margin-top: -39px;}
+.upward  {display: inline-block;width: 10px;height: 10px;background: url("../images/arro.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);}
+.upward.active {background: url("../images/upward.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);}
+.networking {height: 290px;margin-left: 30px;margin-top: 18px;width: 950px;}
+.problem {height: auto;margin-bottom: 161px;margin-left: 89px;;width: 900px;}
+.problem .active {color: #a71b22;}
+.answer {color: black;font-family: PTSans;font-size: 14px;height: auto;line-height: 25px;text-decoration: none;width: 985px;}
+.question {margin-bottom: 8px;font-size: 18px;cursor: pointer;}
+.question .pointer {width: 20px;height: 7px; background: url("../images/arro.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);display: inline-block;margin-left: 7px;}
+.question .pointer.active {background: url("../images/upward.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0)}
+.set {background: none repeat scroll 0 0 #aa181e;border: medium none;border-radius: 2px;color: #ffffff;cursor: pointer;font-family: PDFDinTextPro;font-size: 20px;height: 39px;
+margin-left: 369px;margin-top: 25px;padding-bottom: 3px;width: 180px;}
+.entry {height: 26px;width: 340px;}
+.entry:focus {box-shadow: 0 0 7px  #ca1e27;}
+.ties {display: inline-block;margin-bottom:26px;width: 225px;vertical-align: top;}
+.know.hidden .networking {display: none;}
+.question .answer.hidden {display: none;}
+.cabinet {border: 1px solid #e7e7e7;height: 430px;margin-bottom: 70px;margin-left: 75px;margin-top: 66px;width: 245px;border-radius: 12px;box-shadow: 0 0 2px 1px #e7e7e7;}
+.cabinet ul {font-size: 18px;text-align: left;list-style: outside none none;padding: 0px;}
+.cabinet li {font-family: PDFDinTextPro;margin: 15px 27px;}
+.cabinet a {color: #474747;border-bottom: 1px solid;}
+.cabinet a.active {color: #a71b22;}
+.addressleft { height: 540px;margin-left: 97px;margin-top: 43px;width: 499px;}
+.mapright {width: 442px;height: 445px; background: url("../images/map.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);display: inline-block; position: absolute;
+    right: 62px;top: 360px;}
+.contracttop {font-family: PTSans;font-size: 14px;margin-left: 100px;margin-top: 75px;width: 994px;}
+.location .personals {vertical-align: top;}
+.location textarea {background: none repeat scroll 0 0 #f1f1f1;border: 1px solid #d2d2d2;color: #8f8f8f;}
+.verify {background: none repeat scroll 0 0 #aa181e;border: medium none;border-radius: 2px;color: #ffffff;cursor: pointer;font-family: PDFDinTextPro;font-size: 20px;height: 39px;
+    padding-bottom: 3px;width: 180px; margin-left: 268px;margin-top: 20px;}
+.answersuccess {background: none repeat scroll 0 0 #e3dfdf;border-radius: 18px;height: 74px;margin-top: 61px;width: 435px; }
+.answersuccessbg {background: url("../images/answersuccessbg.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);height: 40px;left: 112px;position: absolute;top: 688px;width: 50px;}
+.answererror {background: none repeat scroll 0 0 #e3dfdf;border-radius: 18px;height: 90px;margin-top: 15px;width: 435px;}
+.answererrorbg {background: url("../images/answererrorbg.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);height: 48px;left: 112px;position: absolute;top: 781px;width: 50px;}
+.reply {width: 325px;height: 75px;margin-left: 77px;color: #2e2d2d;}
+.reply h1 {font-size: 18px;margin-bottom: 5px;padding-top: 13px;font-weight: normal;}
+.reply p {font-size: 16px;margin: 0px;}
+.cost {border: 3px solid #a81c22;border-collapse: collapse;border-radius: 15px;display: inline-block;float: right;height: 236px;margin-right: 92px;margin-top: 91px;width: 733px;font-size: 0px;background: #f1f1f1;}
+.menucost {width: 732px;height: 60px;}
+.namemenu {background: none repeat scroll 0 0 #e3dfdf;border-collapse: collapse;cursor: pointer;font-size: 16px;height: 57px;margin: 0;padding: 0 30px;position: relative;
+text-align: left;vertical-align: middle;width: 117px;color: #403f3f;}
+.namemenu.td {width: 116px;}
+.namemenu:first-child {border-radius: 12px 0px 0px 12px;}
+.namemenu:last-child {border-radius: 0px 12px 12px 0px;}
+.namemenubg {background: url("../images/arro.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);display: inline-block;height: 4px;left: 15px;position: absolute;top: 30px;width: 10px;}
+.tariffscost {height: 40px;width: 137px;color: #ac3237;text-decoration: underline;font-size: 14px;font-family: PTSans;font-weight: bold;cursor: pointer;padding: 0 30px 8px;}
+.fee {width: 103px;height: 40px;color: #2e2d2d;font-size: 13px;font-family: PTSans;font-weight: bold;padding: 0 30px;}
+.costs {width: 103px;height: 40px;color: #2e2d2d;font-size: 14px;font-family: PTSans;padding: 0 30px;}
+.connectfee {background: none repeat scroll 0 0 #aa181e;border: medium none;border-radius: 2px;color: #ffffff;cursor: pointer;font-family: PDFDinTextPro;font-size: 12px;
+height: 28px;padding-bottom: 0px;width: 92px;text-align: center;padding-top: -11px;line-height: 24px;display: inline-block;margin-top: 7px;margin-left: 30px;}
+.menufee {height: 30px;}
 .offers { background: #333333; height:265px;width: 1182px;}
 .slider {text-align:center; position: relative; height:100%; width:883px; background: pink; display: inline-block;}
 .content {overflow: hidden;height:100%;}
@@ -125,10 +201,10 @@ a {text-decoration: none;}
 .text h1 {font-size: 18px;color:#ac3237;text-decoration: underline;font-family:PDFDinTextPro;font-weight: normal;margin: 0px;cursor: pointer;}
 .text p{font-size: 13px;font-family: PTSans;margin: 0;padding-top: 3px;color: #898989;padding-bottom: 7px;}
 .text h2 {font-size: 14px;font-family: PTSans;font-weight: normal;margin: 0px;}
-.features{ height: 200px;left: 99px;position: absolute;width: 1000px;top: 968px;}
+.features{ height: 200px;left: 99px;position: relative;width: 1000px;top: auto;}
 .requisite {position: relative;display: inline-block;float: left;height: 150px;}
 .logo {height: 107px;width: 230px;background:url("../images/inforum.png");background-repeat: no-repeat;cursor: pointer; }
-.address {width: 262px;height: 100px;font-size: 12px;line-height: 2px;color: #828282;font-family: PTSans;margin-left: 6px; }
+.address {width: 262px;height: 30px;font-size: 12px;line-height: 2px;color: #828282;font-family: PTSans;margin-left: 6px; }
 .support {overflow: hidden;position: relative;display: inline-block;float: left;padding-top: 12px;}
 .support li {overflow: hidden;padding-bottom: 14px;padding-right: 35px;text-decoration: underline;color: #737373;font-size: 15px;
              font-family: PDFDinTextPro;cursor: pointer;}
@@ -137,3 +213,41 @@ a {text-decoration: none;}
 .features li sup {font-size: 10px;text-decoration: none;position: absolute;}
 .leftbg {position: absolute;background: url("../images/leftbg.jpg") no-repeat scroll 0 0 rgba(0, 0, 0, 0);height: 900px;width: 600px;left: 0px;}
 .rightbg {position: absolute; background: url("../images/rightbg.jpg") no-repeat scroll 0 0 rgba(0, 0, 0, 0);height: 900px;width: 600px;right: 0px;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.disponsals { color: #2e2d2d;font-size: 22px;height: 31px;left: 374px;position: absolute;top: 309px;width: 228px;}
+.disposalmenu {cursor: pointer;display: inline-block;height: 46px;margin-left: 32px;padding-top: 7px;position: relative;width: 102px;margin-right: 8px;color: #2e2d2d;}
+.disposalmenubg {background: url("../images/arro.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);display: inline-block;height: 10px;position: absolute;right: 106px;top: 17px;width: 10px;}
+.disposal {width: 137px;height: 150px;margin-top: 15px;display: inline-block;color: #2e2d2d;vertical-align: top;margin-right: 51px;}
+.disposal ul {list-style: outside none none;font-size: 14px;font-family: PTSans;padding: 0px;}
+.disposal li {margin-bottom: 35px;margin-left: 20px;}
+.description { color: #2e2d2d;display: inline-block;height: 150px;margin-right: 51px;margin-top: 15px;vertical-align: top;width: 204px;}
+.description ul {list-style: outside none none;font-size: 14px;font-family: PTSans;padding: 0px;}
+.description li {margin-bottom: 35px;margin-left: 20px;}
+.service {display: inline-block;height: 150px;margin-top: 15px;width: 140px;}
+.service ul {list-style: outside none none;color: #ac3237;text-decoration: underline;font-size: 14px;font-family: PTSans;font-weight: bold;padding: 0px;}
+.service li {margin-bottom: 35px;margin-left: 20px;cursor: pointer;}
+.descriptions {margin-right: 75px;}
+.rate {margin-right: 0px;width: 79px;}
+.ratebg {background: url("../images/arro.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);display: inline-block;height: 10px;position: absolute;right: 81px;top: 17px;width: 10px;}
+.price {width: 23px;height: 150px;margin-top: 15px;display: inline-block;color: #2e2d2d;vertical-align: top;margin-right: 51px;}
+.price ul {list-style: outside none none;font-size: 14px;font-family: PTSans;padding: 0px;}
+.price li {margin-bottom: 68px; margin-left: 20px;margin-top: 15px;}
+.action {background: url("../images/disposal.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);display: inline-block;height: 25px;margin-bottom: 38px;margin-left: 90px;margin-top: 14px;
+ vertical-align: top;width: 25px}

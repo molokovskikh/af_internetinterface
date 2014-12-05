@@ -10,6 +10,7 @@ using System.Threading;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Mvc.Html;
+using Inforoom2.Components;
 using Inforoom2.Models;
 using NHibernate.Linq;
 using NHibernate.Linq.Functions;
@@ -43,7 +44,7 @@ namespace Inforoom2.Helpers
 
 				var optionAttributes = new StringBuilder();
 				if (htmlAttributes != null) {
-					 optionAttributes = GetPropsValues(htmlAttributes(model));
+					optionAttributes = GetPropsValues(htmlAttributes(model));
 				}
 				if (model.Id == selectedValueId) {
 					options.AppendFormat("<option value={0} selected = selected {1}>{2}</option>", model.Id,
@@ -92,6 +93,46 @@ namespace Inforoom2.Helpers
 			return DropDownListExtendedFor(helper, expression, modelCollection, optionValue, null, null, selectedValueId);
 		}
 
+
+		public static HtmlString ValidationEditor(this HtmlHelper helper,ValidationRunner validation, object obj, string propertyName, object htmlAttributes, HtmlTag htmlTag, HtmlType htmlType)
+		{
+			var tag = Enum.GetName(typeof(HtmlTag), htmlTag);
+			string type = string.Empty;
+			if (htmlType != HtmlType.none) {
+				type = Enum.GetName(typeof(HtmlType), htmlType);
+			}
+			
+			
+			var objName = obj.GetType().Name;
+			objName =Char.ToLowerInvariant(objName[0]) + objName.Substring(1);
+			var name = objName + "." + propertyName;
+			var value = obj.GetType().GetProperty(propertyName).GetValue(obj, null);
+			var id = objName + "_" + propertyName;
+
+			var attributes = new StringBuilder();
+			if (htmlAttributes != null) {
+				attributes = GetPropsValues(htmlAttributes);
+			}
+			string html = string.Empty;
+			switch (htmlTag) {
+				case HtmlTag.input:
+					 html = string.Format("<{0} id=\"{1}\" {2} type=\"{3}\" name =\"{4}\" value=\"{5}\">", tag, id, attributes, type, name, value);
+					break;
+				case HtmlTag.textarea:
+					 html = string.Format("<{0} name =\"{3}\" rows = \"6\" cols = \"75\">{4}</{5}>", tag, id, attributes, name, value,tag);
+					break;
+				default:
+					throw new NotImplementedException("Html for tag is not implemented");
+			}
+			
+			
+			var error = validation.GetError(obj, propertyName, html);
+			if (string.IsNullOrEmpty(error.ToString())) {
+				return new HtmlString(html);
+			}
+			return  error;
+		}
+
 		private static StringBuilder GetPropsValues(object obj)
 		{
 			var type = obj.GetType();
@@ -134,8 +175,8 @@ namespace Inforoom2.Helpers
 		{
 			return (from object item in Enum.GetValues(enumType)
 				let fi = enumType.GetField(item.ToString())
-				let attribute = fi.GetCustomAttributes(typeof (DisplayAttribute), true).FirstOrDefault()
-				let title = attribute == null ? item.ToString() : ((DisplayAttribute) attribute).Name
+				let attribute = fi.GetCustomAttributes(typeof(DisplayAttribute), true).FirstOrDefault()
+				let title = attribute == null ? item.ToString() : ((DisplayAttribute)attribute).Name
 				select new SelectListItem {
 					Value = item.ToString(),
 					Text = title,
@@ -143,7 +184,7 @@ namespace Inforoom2.Helpers
 				}).ToList();
 		}
 
-		public static HtmlString Grid<T>(this HtmlHelper helper, IList<T> list )
+		public static HtmlString Grid<T>(this HtmlHelper helper, IList<T> list)
 		{
 			return new HtmlString("dsds");
 		}

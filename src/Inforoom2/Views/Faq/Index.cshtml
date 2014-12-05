@@ -1,43 +1,58 @@
-﻿@using Inforoom2.Models
+﻿@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
 @section JavaScript{<script type="text/javascript"src="@Url.Content("~/Scripts/FaqController.js")"></script>}
 @{
 	ViewBag.Title = "Index";
-	Ticket newTicket = ViewBag.NewTicket;
+	Ticket ticket = ViewBag.NewTicket;
 	IList<Question> questions = ViewBag.Questions;
+	ValidationRunner validationRunner = ViewBag.Validation;
 }
 
-<h2>FAQ</h2>
+<div class="heading">ВОПРОСЫ И ОТВЕТЫ</div>
 
-<div style="width:1000px; height:200px; margin:0px auto; border:1px gainsboro solid">
-	@{var style = ViewBag.ShowQuestionForm != null ? "display:none" : "";}
-		<button class="ShowQuestionForm" style="@style">Задать вопрос</button>
-	@{ style = ViewBag.ShowQuestionForm == null ? "display:none" : "";}
-	<div class="QuestionForm" style="@style" >
-		<button class="HideQuestionForm">hide</button>
-		@using (@Html.BeginForm("Create","Faq",FormMethod.Post))
-		{
-			<div>
-				<span>Email</span>
-				@Html.TextBoxFor(model => newTicket.Email)
-				@ViewBag.Validation.GetError(newTicket,"Email","Почта указана неправильно")
-			</div>
-			<div>
-				<span>Question</span>
-				@Html.TextAreaFor(model => newTicket.Text)
-				@ViewBag.Validation.GetError(newTicket,"Text","Сообщение не может быть пустым")
-			</div>
-			<input type="submit"  value="Отправить вопрос"/>
-		}
-	</div>
+@if (ViewBag.ShowQuestionForm != null && ViewBag.ShowQuestionForm) {
+	<text>
+		<div class="know">
+		<div class="ask">Задать вопрос:</div>
+		<div class="turn">Свернуть
+			<div class="upward active"></div>
+		</div>
+	</text>
+}
+else {
+	<text>
+
+		<div class="know hidden">
+		<div class="ask">Задать вопрос:</div>
+		<div class="turn">Развернуть
+			<div class="upward"></div>
+		</div>
+	</text>
+}
+
+<div class="networking">
+	@using (@Html.BeginForm("Index", "Faq", FormMethod.Post)) {
+		<div>
+			<div class="ties">Email : </div>
+			@Html.ValidationEditor(validationRunner, ticket, "Email", new { @class = "entry" }, HtmlTag.input, HtmlType.text)
+		</div>
+		<div>
+			<div class="ties">Текст вопроса : </div>
+			@Html.ValidationEditor(validationRunner, ticket, "Text", null, HtmlTag.textarea, HtmlType.none)
+		</div>
+		<input type="submit" class="set"  value="Отправить вопрос"/>
+	}
 </div>
-
-@foreach (var item in questions) {
-	<div class="question">
-		<div class="text">
-			<span>@Html.DisplayFor(modelItem => item.Text)<button class="ShowAnswer">Показать ответ</button></span>
+</div>
+<div class="problem">
+	
+	@foreach (var item in questions) {
+		<div class="question"> @Html.DisplayFor(modelItem => item.Text)<div class="pointer"></div>
+			<div class="answer hidden">
+				<span>@Html.DisplayFor(modelItem => item.Answer)</span>
+			</div>
 		</div>
-		<div class="answer" style="display: none;">
-			<span>@Html.DisplayFor(modelItem => item.Answer)</span>
-		</div>
-	</div>
-}
+	}
+	
+</div>

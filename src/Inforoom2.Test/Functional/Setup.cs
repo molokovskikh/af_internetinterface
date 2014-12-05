@@ -55,7 +55,7 @@ namespace Inforoom2.Test.Functional
 				return;
 			}
 			if (!session.Query<Address>().Any()) {
-				/*ImportSwitchesAddresses();*/
+				ImportSwitchesAddresses();
 			}
 			if (!session.Query<Plan>().Any(p => p.Name == "Популярный")) {
 				GeneratePlansAndPrices();
@@ -74,10 +74,9 @@ namespace Inforoom2.Test.Functional
 				roles.Add(role);
 
 				var emp = new Employee() {
-					Username = "admin",
-					Password = pass.Hash,
-					Salt = pass.Salt,
+					Name = Environment.UserName,
 					Roles = roles,
+					Login = Environment.UserName
 				};
 				session.Save(emp);
 

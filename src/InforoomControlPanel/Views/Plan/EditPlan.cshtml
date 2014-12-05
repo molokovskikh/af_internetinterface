@@ -1,0 +1,55 @@
+﻿@using System.Collections
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@{
+	Plan plan = ViewBag.Plan;
+	IList<Region> allRegions = ViewBag.Regions;
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+	
+
+<div style="width: 1000px;  margin: 0px auto; border: 1px gainsboro solid">
+	<div class="UpdatePlan" >
+		@using (@Html.BeginForm("UpdatePlan", "Plan", FormMethod.Post)) {
+			<div>
+				@Html.HiddenFor(model => plan.Id)
+				@Html.HiddenFor(model => plan.Regions)
+
+				<div >Название</div>
+				@Html.TextBoxFor(model => plan.Name)
+				@ViewBag.Validation.GetError(plan, "Name", "Название не может быть пустым")
+
+				<div >Скорость</div>
+				@Html.EditorFor(model => plan.Speed)
+				@ViewBag.Validation.GetError(plan, "Speed", "Поле не может быть пустым")
+				
+				<div >Цена</div>
+				@Html.EditorFor(model => plan.Price)
+				@ViewBag.Validation.GetError(plan, "Price", "Поле не может быть пустым")
+				
+				<div >Служебный</div>
+				@Html.CheckBoxFor(model => plan.IsServicePlan)
+				
+				<div >Архивный</div>
+				@Html.CheckBoxFor(model => plan.IsArchived)
+			
+			</div>
+			<div>
+				<div>Регионы</div>
+				@foreach (var region in allRegions) {
+					bool isChecked = false;
+					foreach (var r in plan.Regions.Where(r => r.Id == region.Id)) {
+						isChecked = true;
+					}
+					<div>
+						@Html.Label(region.Name)
+						<input id="@region.Id" name="checkedRegions"  value="@region.Id" checked="@isChecked"  type="checkbox" />
+					</div>
+				}
+			
+			</div>
+			<input type="submit"  value="Принять изменения"/>
+		}
+		<button class="BackButton" onclick=" location.href = '@Url.Action("Plan", "Plan")' ">Назад</button>
+	</div>
+</div>

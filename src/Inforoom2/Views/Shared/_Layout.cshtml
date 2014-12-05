@@ -35,15 +35,11 @@
 					<div class="blackright"></div>
 				</div>
 				<div class="login">
-					@if (Request.IsAuthenticated) {
+					@if (Request.IsAuthenticated && ViewBag.ClientInfo != null) {
 						<text>
 							@ViewBag.ClientInfo
 							[ @Html.ActionLink("Выход", "Logout", "Account") ]
 							@Html.ActionLink("Личный кабинет", "Profile", "Personal")
-
-							@if (User.IsInRole("Admin")) {
-								@Html.ActionLink("Панель администратора", "AdminIndex", "Home")
-							} 
 						</text>
 					}
 					else {

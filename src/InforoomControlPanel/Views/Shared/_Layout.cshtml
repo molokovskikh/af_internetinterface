@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+
+@{
+	string username = "";
+	string password = "";
+}
+<html>
+	<head>
+		<title>Inforoom панель управление</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	
+	</head>
+	<body>
+			<div class="login">
+	@if (Request.IsAuthenticated) {
+		<text>
+			[ @Html.ActionLink("Выход", "AdminLogout", "AdminAccount") ]
+		</text>
+	}
+	else {
+		@Html.ActionLink("Войти","Login","AdminAccount")
+	}
+</div>
+			<div class="@(ViewBag.ControllerName) @(ViewBag.ActionName)">
+				@RenderBody()
+			</div>
+		
+<!-- Техническая информация -->
+		<div class="JavascriptParams" style="display: none">
+			@{
+				var dic = ViewBag.JavascriptParams as Dictionary<string, string>;
+				if (dic != null && dic.Count != 0) {
+					foreach (var key in dic.Keys) {
+						<div id="@key">@dic[key]</div>
+					}
+				}
+			}
+		</div>
+	
+
+	<script type="text/javascript" src="~/Scripts/jquery-2.1.1.js"></script>
+	<script type="text/javascript" src="~/Scripts/jquery-ui-1.11.1.js"></script>
+	<script type="text/javascript" src="~/Scripts/Helpers.js"></script>
+	<script type="text/javascript" src="~/Scripts/EventEmitter.js"></script>
+	<script type="text/javascript" src="~/Scripts/Inforoom.js"></script>
+	<script type="text/javascript" src="~/Scripts/Window.js"></script>
+	@RenderSection("JavaScript", required: false)
+	</body>
+</html>

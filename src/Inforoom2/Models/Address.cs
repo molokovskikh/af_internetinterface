@@ -6,7 +6,7 @@ namespace Inforoom2.Models
 	[Class(0, Table = "address", NameType = typeof(Address))]
 	public class Address : BaseModel
 	{
-		[ManyToOne(Column = "house")]
+		[ManyToOne(Column = "house", Cascade = "save-update")]
 		public virtual House House { get; set; }
 
 		[Property]

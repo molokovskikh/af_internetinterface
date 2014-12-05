@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Linq;
 using System.Web.Mvc;
 using Inforoom2.Models;
@@ -28,21 +29,22 @@ namespace Inforoom2.Controllers
 		/// Обрабатывает отправку нового вопроса
 		/// </summary>
 		[HttpPost]
-		public ActionResult Create(Ticket newTicket)
+		public ActionResult Index(Ticket ticket)
 		{
-			newTicket.Answer = "Без ответа";
-			var errors = ValidationRunner.ValidateDeep(newTicket);
+			ticket.Answer = "Без ответа";
+			var errors = ValidationRunner.ValidateDeep(ticket);
 			if (errors.Length == 0) {
-				DbSession.Save(newTicket);
+				ticket.CreationDate = DateTime.Now;
+				DbSession.Save(ticket);
 				SuccessMessage("Вопрос успешно отправлен. Ждите ответа на почту.");
 				return RedirectToAction("Index");
 			}
 
 			var questions = DbSession.Query<Question>().ToList();
-			ViewBag.NewTicket = newTicket;
+			ViewBag.NewTicket = ticket;
 			ViewBag.Questions = questions;
 			ViewBag.ShowQuestionForm = true;
-			return View("Index");
+			return View();
 			
 		}
 	}

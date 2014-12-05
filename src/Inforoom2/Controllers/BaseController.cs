@@ -93,7 +93,7 @@ namespace Inforoom2.Controllers
 
 		protected Employee CurrentEmployee
 		{
-			get { return DbSession.Query<Employee>().FirstOrDefault(k => k.Username == User.Identity.Name); }
+			get { return DbSession.Query<Employee>().FirstOrDefault(k => k.Name == User.Identity.Name); }
 		}
 
 		protected Client CurrentClient
@@ -228,9 +228,14 @@ namespace Inforoom2.Controllers
 			return HttpUtility.UrlDecode(s);
 		}
 
-		protected void SetCookie(string name, string value)
+		public void SetCookie(string name, string value)
 		{
 			Response.Cookies.Add(new HttpCookie(name, value) { Path = "/" });
+		}
+
+		public void DeleteCookie(string name)
+		{
+			Response.Cookies.Remove(name);
 		}
 
 		public static Encoding DetectEncoding(String fileName, out String contents)
@@ -243,6 +248,23 @@ namespace Inforoom2.Controllers
 				// return the encoding.
 				return reader.CurrentEncoding;
 			}
+		}
+
+		protected ActionResult Authenticate(string action, string controller, string username, bool shouldRemember, string userData = "")
+		{
+			var ticket = new FormsAuthenticationTicket(
+				1,
+				username,
+				DateTime.Now,
+				DateTime.Now.AddMinutes(FormsAuthentication.Timeout.TotalMinutes),
+				shouldRemember,
+				userData,
+				FormsAuthentication.FormsCookiePath);
+			var cookie = new HttpCookie(FormsAuthentication.FormsCookieName, FormsAuthentication.Encrypt(ticket));
+			if (shouldRemember)
+				cookie.Expires = DateTime.Now.AddMinutes(FormsAuthentication.Timeout.TotalMinutes);
+			Response.Cookies.Set(cookie);
+			return RedirectToAction(action, controller);
 		}
 	}
 }

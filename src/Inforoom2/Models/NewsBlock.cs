@@ -23,7 +23,7 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual string Url { get; set; }
 
-		[ManyToOne(Column = "Employee")]
+		[ManyToOne(Column = "User")]
 		public virtual Employee Employee { get; set; }
 
 		[Property]

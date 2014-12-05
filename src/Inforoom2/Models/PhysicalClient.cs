@@ -5,6 +5,7 @@ using Common.Tools;
 using NHibernate.Linq;
 using NHibernate.Mapping;
 using NHibernate.Mapping.Attributes;
+using NHibernate.Util;
 using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models

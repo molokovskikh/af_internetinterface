@@ -52,7 +52,6 @@ function checkAddress(firstGeoObject) {
 			console.log("Проверяем улицу", yandexStreet.indexOf(userStreet));
 			var userHouseDetails = userHouse + userHousing;
 			console.log("Проверяем дом", userHouseDetails, yandexHouseDetails, userHouseDetails == yandexHouseDetails);
-
 			if (yandexCity == userCity && yandexStreet.indexOf(userStreet) > -1 && userHouseDetails == yandexHouseDetails) {
 				$('.YMapAddressResult').html("Проверка яндекса: Адрес правильный");
 			} else {
@@ -61,9 +60,7 @@ function checkAddress(firstGeoObject) {
 		} else {
 			$('.YMapAddressResult').html("Проверка яндекса: Адрес не найден");
 		}
-
 		checkSwitchAddress();
-
 	});
 }
 
@@ -80,12 +77,13 @@ function findAddressOnMap(searchQuery) {
 
 var typeWatcher = function() {
 	var timer = 0;
+	console.log('tick');
 	return function(ms) {
 		var callback = function showAddressOnMap() {
-			userCity = document.getElementById('clientRequest_Address_House_Street_Region_City_Name').value.toLowerCase();
-			userStreet = document.getElementById('clientRequest_Address_House_Street_Name').value.toLowerCase();
-			userHouse = document.getElementById('clientRequest_Address_House_Number').value.toLowerCase();
-			userHousing = document.getElementById('clientRequest_Address_House_Housing').value.toLowerCase();
+			userCity = document.getElementById('clientRequest_City').value.toLowerCase();
+			userStreet = document.getElementById('clientRequest_Street').value.toLowerCase();
+			userHouse = document.getElementById('clientRequest_HouseNumber').value.toLowerCase();
+			userHousing = document.getElementById('clientRequest_Housing').value.toLowerCase();
 
 			var address = userCity + " " + userStreet + " " + userHouse + " " + userHousing;
 			findAddressOnMap(address);

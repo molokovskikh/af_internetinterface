@@ -216,7 +216,7 @@ set s.LastStartFail = true;")
 				foreach (var client in lawyerPersons) {
 					if (client.NeedShowWarningForLawyer()) {
 						if (client.WhenShowWarning == null ||
-							(SystemTime.Now() - client.WhenShowWarning.Value).TotalHours >= 3) {
+						    (SystemTime.Now() - client.WhenShowWarning.Value).TotalHours >= 3) {
 							client.ShowBalanceWarningPage = true;
 							client.WhenShowWarning = SystemTime.Now();
 							if (!client.SendEmailNotification)
@@ -483,7 +483,6 @@ set s.LastStartFail = true;")
 
 				var textMessage = "Срок исполнения сервисной заявки #" + request.Id + " (" + regionName + ") истек";
 				mailer.SendText("internet@ivrn.net", address, textMessage, textMessage);
-
 			}
 		}
 

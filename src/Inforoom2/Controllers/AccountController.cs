@@ -15,18 +15,14 @@ namespace Inforoom2.Controllers
 	public class AccountController : BaseController
 	{
 		[HttpPost]
-		public ActionResult Login(string username, string password, string returnUrl)
+		public ActionResult Login(string username, string password, string returnUrl, bool shouldRemember = false)
 		{
-			if (IsAdmin(username, password)) {
-				return Authenticate("Index", "Admin", username);
-			}
 			int id = 0;
 			int.TryParse(username, out id);
 			var user = DbSession.Query<Client>().FirstOrDefault(k => k.Id == id);
 			if (user != null && PasswordHasher.Equals(password, user.PhysicalClient.Salt, user.PhysicalClient.Password)) {
-				return Authenticate("Profile", "Personal", username);
+				return Authenticate("Profile", "Personal", username, shouldRemember);
 			}
-
 			ErrorMessage("Неправильный логин или пароль");
 			return Redirect(returnUrl);
 		}
@@ -37,20 +33,6 @@ namespace Inforoom2.Controllers
 			FormsAuthentication.SignOut();
 			return RedirectToAction("Index", "Home");
 		}
-
-		private bool IsAdmin(string username, string password)
-		{
-			var admin = DbSession.Query<Employee>().FirstOrDefault(k => k.Username == username);
-			if (admin != null && PasswordHasher.Equals(password, admin.Salt, admin.Password)) {
-				return true;
-			}
-			return false;
-		}
-
-		private ActionResult Authenticate(string action, string controller, string username)
-		{
-			FormsAuthentication.SetAuthCookie(username, false);
-			return RedirectToAction(action, controller);
-		}
+		
 	}
 }

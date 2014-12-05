@@ -43,33 +43,33 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Iesi.Collections">
+    <Reference Include="Iesi.Collections, Version=4.0.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
+      <HintPath>..\..\packages\Iesi.Collections.4.0.1.4000\lib\net40\Iesi.Collections.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="Microsoft.Web.Infrastructure">
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Newtonsoft.Json.6.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.5\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate">
+    <Reference Include="NHibernate, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\NHibernate.3.3.4.4000\lib\Net35\NHibernate.dll</HintPath>
+      <HintPath>..\..\packages\NHibernate.4.0.2.4000\lib\net40\NHibernate.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate.Mapping.Attributes">
+    <Reference Include="NHibernate.Mapping.Attributes, Version=3.2.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NHibernate.Mapping.Attributes.3.2.0.0\lib\NHibernate.Mapping.Attributes.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate.Validator">
+    <Reference Include="NHibernate.Validator, Version=1.3.2.4000, Culture=neutral, PublicKeyToken=70154e18752585bd, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NHibernate.Validator.1.3.2.4000\lib\Net35\NHibernate.Validator.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate.Validator.Specific">
+    <Reference Include="NHibernate.Validator.Specific, Version=1.3.2.4000, Culture=neutral, PublicKeyToken=70154e18752585bd, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NHibernate.Validator.1.3.2.4000\lib\Net35\NHibernate.Validator.Specific.dll</HintPath>
     </Reference>
@@ -84,27 +84,27 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Web.Helpers">
-      <Private>True</Private>
+    <Reference Include="System.Web.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.2.0.30506.0\lib\net40\System.Web.Helpers.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.Mvc">
+    <Reference Include="System.Web.Mvc, Version=4.0.0.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Microsoft.AspNet.Mvc.4.0.30506.0\lib\net40\System.Web.Mvc.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.Razor">
+    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Microsoft.AspNet.Razor.2.0.30506.0\lib\net40\System.Web.Razor.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.WebPages">
+    <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.2.0.30506.0\lib\net40\System.Web.WebPages.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.WebPages.Deployment">
+    <Reference Include="System.Web.WebPages.Deployment, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.2.0.30506.0\lib\net40\System.Web.WebPages.Deployment.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.WebPages.Razor">
+    <Reference Include="System.Web.WebPages.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.2.0.30506.0\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
@@ -162,12 +162,18 @@
     <Content Include="Css\main.css" />
     <Content Include="Css\style.css" />
     <Content Include="Global.asax" />
+    <Content Include="Images\answererrorbg.png" />
+    <Content Include="Images\answersuccessbg.png" />
+    <Content Include="Images\arro.png" />
     <Content Include="Images\arrow.png" />
     <Content Include="Images\connectionbg.png" />
     <Content Include="Images\connectionbgactiv.png" />
+    <Content Include="Images\crusty.png" />
+    <Content Include="Images\disposal.png" />
     <Content Include="Images\inforum.png" />
     <Content Include="Images\leftbg.jpg" />
     <Content Include="Images\leftbg.png" />
+    <Content Include="Images\map.png" />
     <Content Include="Images\offer.png" />
     <Content Include="Images\rightbg.jpg" />
     <Content Include="Images\rightbg.png" />
@@ -179,6 +185,9 @@
     <Content Include="Images\slider5.jpg" />
     <Content Include="Images\speedbg.png" />
     <Content Include="Images\speedbgactiv.png" />
+    <Content Include="Images\tick.png" />
+    <Content Include="Images\typehit.png" />
+    <Content Include="Images\upward.png" />
     <Content Include="Scripts\AdminAddressController.js" />
     <Content Include="Scripts\ClientRequest.js" />
     <Content Include="Scripts\EditNewsBlock.js" />
@@ -225,16 +234,9 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Components\EmailSender.cs" />
     <Compile Include="Components\EntityBinder.cs" />
+    <Compile Include="Components\HtmlTag.cs" />
     <Compile Include="Components\ValidationRunner.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\AdminAddressController.cs" />
-    <Compile Include="Controllers\AdminController.cs" />
-    <Compile Include="Controllers\AdminNewsController.cs" />
-    <Compile Include="Controllers\AdminPlanController.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Controllers\AdminQuestionController.cs" />
-    <Compile Include="Controllers\AdminTicketController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\ClientRequestController.cs" />
     <Compile Include="Controllers\TestSpeedController.cs" />
@@ -315,34 +317,10 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Faq\Index.cshtml" />
-    <Content Include="Views\Admin\Index.cshtml" />
-    <Content Include="Views\AdminQuestion\AdminQuestionIndex.cshtml" />
-    <Content Include="Views\AdminQuestion\EditQuestion.cshtml" />
-    <Content Include="Views\AdminTicket\AdminTicketIndex.cshtml" />
-    <Content Include="Views\AdminTicket\EditTicket.cshtml" />
-    <Content Include="Views\AdminNews\AdminNewsIndex.cshtml">
-      <SubType>Code</SubType>
-    </Content>
-    <Content Include="Views\AdminNews\EditNewsBlock.cshtml">
-      <SubType>Code</SubType>
-    </Content>
     <Content Include="Views\Home\ViewNewsBlock.cshtml">
       <SubType>Code</SubType>
     </Content>
     <Content Include="Views\ClientRequest\Index.cshtml" />
-    <Content Include="Views\AdminAddress\AdminAddressRegion.cshtml" />
-    <Content Include="Views\AdminAddress\EditCity.cshtml" />
-    <Content Include="Views\AdminAddress\EditRegion.cshtml" />
-    <Content Include="Views\AdminAddress\AdminAddressCity.cshtml" />
-    <Content Include="Views\AdminAddress\AdminAddressStreet.cshtml" />
-    <Content Include="Views\AdminAddress\EditStreet.cshtml" />
-    <Content Include="Views\AdminAddress\AdminAddressHouse.cshtml" />
-    <Content Include="Views\AdminAddress\EditHouse.cshtml" />
-    <Content Include="Views\AdminAddress\AdminAddressAddress.cshtml" />
-    <Content Include="Views\AdminAddress\EditAddress.cshtml" />
-    <Content Include="Views\AdminAddress\AdminAddressSwitchAddress.cshtml" />
-    <Content Include="Views\AdminAddress\EditSwitchAddress.cshtml" />
-    <Content Include="Views\AdminAddress\EditPrivateSwitchAddress.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -370,13 +348,13 @@
     <Content Include="Views\Personal\Bonus.cshtml" />
     <Content Include="Views\Personal\Menu.cshtml" />
     <Content Include="Views\Personal\PaymentWindow.cshtml" />
-    <Content Include="Views\Shared\AdminPanel.cshtml" />
     <Content Include="Views\Service\BlockAccount.cshtml" />
     <Content Include="Views\Service\DeferredPayment.cshtml" />
     <Content Include="Fonts\PDFDinTextPro.ttf" />
     <Content Include="Fonts\PTSans.ttf" />
     <Content Include="Views\Home\TariffPlans.cshtml" />
     <Content Include="Views\OfferContract\Index.cshtml" />
+    <Content Include="Views\Shared\Menu.cshtml" />
     <Content Include="Views\TestSpeed\Index.cshtml" />
     <Content Include="speedtest\upload.jsp" />
     <Content Include="speedtest\upload.php" />

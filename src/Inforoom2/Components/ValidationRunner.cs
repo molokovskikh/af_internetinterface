@@ -9,6 +9,7 @@ using NHibernate.Validator.Engine;
 
 namespace Inforoom2.Components
 {
+
 	public class ValidationRunner
 	{
 		protected ArrayList ValidatedObjectList = new ArrayList();
@@ -67,8 +68,8 @@ namespace Inforoom2.Components
 
 			return summary;
 		}
-
-		public HtmlString GetError(object obj, string field, string message = null)
+		
+		public HtmlString GetError(object obj, string field, string message = null, string html = "")
 		{
 			var runner = new ValidatorEngine();
 
@@ -82,14 +83,23 @@ namespace Inforoom2.Components
 					return WrapError(message);
 				return WrapError(ret);
 			}
-			return new HtmlString(string.Empty);
+			return WrapSuccess(message);
 		}
 
 		protected HtmlString WrapError(string msg)
 		{
-			var html = "<div class=\"error\">" + msg + "</div>";
+			var html = "<div class=\"error\">" + msg + "<div class=\"icon\"></div>"+ "</div>";
 			var ret = new HtmlString(html);
 			return ret;
 		}
+
+			protected HtmlString WrapSuccess(string msg)
+		{
+			var html = "<div class=\"success\">" + msg + "<div class=\"icon\"></div>"+ "</div>";
+			var ret = new HtmlString(html);
+			return ret;
+		}
+
+		
 	}
 }

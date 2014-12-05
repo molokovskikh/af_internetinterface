@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Common.MySql;
+using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
 using NHibernate.Linq;
@@ -20,51 +21,51 @@ namespace Inforoom2.Controllers
 			return View();
 		}
 
-		private void InitClientRequest(Plan plan = null)
-		{
-			var clientRequest = new ClientRequest();
-			clientRequest.Address = new Address();
-			clientRequest.Address.House = new House();
-			clientRequest.Address.House.Street = new Street();
-			clientRequest.Address.House.Street.Region = new Region();
-			clientRequest.Address.House.Street.Region.City = new City();
-			if (!string.IsNullOrEmpty(UserCity)) {
-				clientRequest.Address.House.Street.Region.City.Name = UserCity;
-			}
-			if (plan != null) {
-				clientRequest.Plan = plan;
-			}
-			ViewBag.ClientRequest = clientRequest;
-			SetPlans();
-		}
-
-		private List<Plan> SetPlans()
-		{
-			var tariffs = DbSession.Query<Plan>();
-			List<SelectListItem> selectListItems = tariffs.Select(k => new SelectListItem {
-				Value = k.Name,
-				Text = k.Name
-			}).ToList();
-			ViewBag.Tariffs = selectListItems;
-			return tariffs.ToList();
-		}
-
 		[HttpPost]
-		public ActionResult Create(ClientRequest clientRequest)
+		public ActionResult Index(ClientRequest clientRequest)
 		{
-			var tariff = SetPlans().FirstOrDefault(k => k.Name == clientRequest.Plan.Name);
+			var tariff = InitRequestPlans().FirstOrDefault(k => k.Id == clientRequest.Plan.Id);
 			clientRequest.Plan = tariff;
 			clientRequest.ActionDate = clientRequest.RegDate = DateTime.Now;
-			ConvertRequestToOldModel(clientRequest);
+			//ConvertRequestToOldModel(clientRequest);
 			var errors = ValidationRunner.ValidateDeep(clientRequest);
-			if (errors.Length == 0) {
+			if (errors.Length == 0 && clientRequest.IsContractAccepted) {
 				clientRequest.Address = null;
 				DbSession.Save(clientRequest);
 				SuccessMessage(string.Format("Спасибо, Ваша заявка принята. Номер заявки {0}", clientRequest.Id)) ;
 				return RedirectToAction("Index", "Home");
 			}
+			if (!clientRequest.IsContractAccepted) {
+				ErrorMessage("Пожалуйста, подтвердите, что Вы согласны с договором-офертой");
+			}
 			ViewBag.ClientRequest = clientRequest;
 			return View("Index");
+		}
+
+		private void InitClientRequest(Plan plan = null)
+		{
+			var clientRequest = new ClientRequest();
+			/*
+			clientRequest.Address = new Address();
+			clientRequest.Address.House = new House();
+			clientRequest.Address.House.Street = new Street();
+			clientRequest.Address.House.Street.Region = new Region();
+			clientRequest.Address.House.Street.Region.City = new City();*/
+			if (!string.IsNullOrEmpty(UserCity)) {
+				clientRequest.City = UserCity;
+			}
+			if (plan != null) {
+				clientRequest.Plan = plan;
+			}
+			ViewBag.ClientRequest = clientRequest;
+			InitRequestPlans();
+		}
+
+		private List<Plan> InitRequestPlans()
+		{
+			var plans = DbSession.Query<Plan>().Where(p=>!p.IsArchived && !p.IsServicePlan && !p.Hidden).ToList();
+			ViewBag.Plans = plans;
+			return plans;
 		}
 
 		private void ConvertRequestToOldModel(ClientRequest clientRequest)
@@ -73,8 +74,8 @@ namespace Inforoom2.Controllers
 			clientRequest.Street = clientRequest.Address.House.Street.Name;
 			int house;
 			int.TryParse(clientRequest.Address.House.Number, out house);
-			clientRequest.House = house;
-			clientRequest.CaseHouse = clientRequest.Address.House.Housing;
+			clientRequest.HouseNumber = house;
+			clientRequest.Housing = clientRequest.Address.House.Housing;
 			clientRequest.Entrance = clientRequest.Address.Entrance;
 			clientRequest.Floor = clientRequest.Address.Floor;
 			clientRequest.Apartment = clientRequest.Address.Apartment;
