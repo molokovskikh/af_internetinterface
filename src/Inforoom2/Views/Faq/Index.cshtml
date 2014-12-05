@@ -6,9 +6,42 @@
 	IList<Question> questions = ViewBag.Questions;
 }
 
-<h2>FAQ</h2>
 
-<div style="width:1000px; height:200px; margin:0px auto; border:1px gainsboro solid">
+   <div class="heading">ВОПРОСЫ И ОТВЕТЫ</div>
+	    <div class="know hidden">
+		<div class="ask">Задать вопрос:</div>
+		<div class="turn">Развернуть
+		    <div class="upward"></div>
+		</div>
+		<div class="networking">
+		    <div>
+			<div class="ties">Номер телефона : </div>
+			<input class="entry">
+		    </div>
+		    <div>
+			<div class="ties">Электронная почта : </div>
+			<input class="entry">
+		    </div>
+		    <div>
+			<div class="ties">Текст вопроса : </div>
+			<textarea rows="6" cols="75"></textarea>
+		    </div>
+		    <input class="set" type="submit" value="Задать">
+		</div>
+	    </div>
+<div class="problem">
+	
+	@foreach (var item in questions) {
+		<div class="question"> @Html.DisplayFor(modelItem => item.Text)<div class="pointer"></div>
+		<div class="answer hidden">
+			<span>@Html.DisplayFor(modelItem => item.Answer)</span>
+		</div>
+	</div>
+}
+	
+</div>
+
+@*<div style="width:1000px; height:200px; margin:0px auto; border:1px gainsboro solid">
 	@{var style = ViewBag.ShowQuestionForm != null ? "display:none" : "";}
 		<button class="ShowQuestionForm" style="@style">Задать вопрос</button>
 	@{ style = ViewBag.ShowQuestionForm == null ? "display:none" : "";}
@@ -40,4 +73,4 @@
 			<span>@Html.DisplayFor(modelItem => item.Answer)</span>
 		</div>
 	</div>
-}
+}*@
