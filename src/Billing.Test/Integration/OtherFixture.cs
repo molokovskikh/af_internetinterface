@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using Castle.ActiveRecord;
@@ -65,6 +66,17 @@ namespace Billing.Test.Integration
 				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
 				Assert.AreEqual(client.ShowBalanceWarningPage, assert);
 			}
+		}
+
+		[Test]
+		public void String_Parsing()
+		{
+			var one = "1.5";
+			var two = "2.5";
+			var val1 = (decimal)float.Parse(one, CultureInfo.InvariantCulture);
+			var val2 = decimal.Parse(two, CultureInfo.InvariantCulture);
+			Assert.That(val1, Is.EqualTo(1.5));
+			Assert.That(val2, Is.EqualTo(2.5));
 		}
 	}
 }
