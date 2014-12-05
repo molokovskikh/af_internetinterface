@@ -97,7 +97,12 @@ namespace Inforoom2.Helpers
 		public static HtmlString ValidationEditor(this HtmlHelper helper,ValidationRunner validation, object obj, string propertyName, object htmlAttributes, HtmlTag htmlTag, HtmlType htmlType)
 		{
 			var tag = Enum.GetName(typeof(HtmlTag), htmlTag);
-			var type =   Enum.GetName(typeof(HtmlType), htmlType);
+			string type = string.Empty;
+			if (htmlType != HtmlType.none) {
+				type = Enum.GetName(typeof(HtmlType), htmlType);
+			}
+			
+			
 			var objName = obj.GetType().Name;
 			objName =Char.ToLowerInvariant(objName[0]) + objName.Substring(1);
 			var name = objName + "." + propertyName;
@@ -108,7 +113,18 @@ namespace Inforoom2.Helpers
 			if (htmlAttributes != null) {
 				attributes = GetPropsValues(htmlAttributes);
 			}
-			var html = string.Format("<{0} id=\"{1}\" {2} type=\"{3}\" name =\"{4}\" value=\"{5}\">", tag, id, attributes, type, name, value);
+			string html = string.Empty;
+			switch (htmlTag) {
+				case HtmlTag.input:
+					 html = string.Format("<{0} id=\"{1}\" {2} type=\"{3}\" name =\"{4}\" value=\"{5}\">", tag, id, attributes, type, name, value);
+					break;
+				case HtmlTag.textarea:
+					 html = string.Format("<{0} name =\"{3}\" rows = \"6\" cols = \"75\">{4}</{5}>", tag, id, attributes, name, value,tag);
+					break;
+				default:
+					throw new NotImplementedException("Html for tag is not implemented");
+			}
+			
 			
 			var error = validation.GetError(obj, propertyName, html);
 			if (string.IsNullOrEmpty(error.ToString())) {

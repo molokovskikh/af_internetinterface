@@ -29,12 +29,10 @@ namespace Inforoom2.Models
 		[ManyToOne(Column = "User")]
 		public virtual Employee Employee { get; set; }
 
-		[Property, Email, NotNullNotEmpty]
+		[Property, Email, NotNullNotEmpty(Message = "Введите Email"), Pattern(@"^\S+@\S+$")]
 		public virtual string Email { get; set; }
 
-		public Ticket()
-		{
-			CreationDate = DateTime.Now;
-		}
+		
+		
 	}
 }
