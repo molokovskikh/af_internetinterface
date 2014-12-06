@@ -91,6 +91,9 @@ namespace InternetInterface.Models
 
 		[HasMany(ColumnKey = "Agent", OrderBy = "RegistrationDate", Lazy = true)]
 		public virtual IList<PaymentsForAgent> Payments { get; set; }
+	
+		[HasMany(ColumnKey = "Agent", OrderBy = "RegistrationDate", Lazy = true)]
+		public virtual IList<Payment> CommonPayments { get; set; }
 
 		public virtual IList<string> AccesedPartner { get; set; }
 

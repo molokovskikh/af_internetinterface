@@ -31,10 +31,8 @@ namespace Inforoom2.Controllers
 		[HttpPost]
 		public ActionResult Index(Ticket ticket)
 		{
-			ticket.Answer = "Без ответа";
 			var errors = ValidationRunner.ValidateDeep(ticket);
 			if (errors.Length == 0) {
-				ticket.CreationDate = DateTime.Now;
 				DbSession.Save(ticket);
 				SuccessMessage("Вопрос успешно отправлен. Ждите ответа на почту.");
 				return RedirectToAction("Index");
@@ -45,7 +43,6 @@ namespace Inforoom2.Controllers
 			ViewBag.Questions = questions;
 			ViewBag.ShowQuestionForm = true;
 			return View();
-			
 		}
 	}
 }

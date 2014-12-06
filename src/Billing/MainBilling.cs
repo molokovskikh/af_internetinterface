@@ -266,6 +266,9 @@ set s.LastStartFail = true;")
 			}
 		}
 
+		/// <summary>
+		/// Списания абоненской платы
+		/// </summary>
 		public virtual void ProcessWriteoffs()
 		{
 			var errorCount = 0;
@@ -360,6 +363,11 @@ set s.LastStartFail = true;")
 			}
 		}
 
+		/// <summary>
+		/// Списание абоненской платы с физического клиента
+		/// </summary>
+		/// <param name="session">Сессия бд</param>
+		/// <param name="client">Объект клиента</param>
 		private void WriteOffFromPhysicalClient(ISession session, Client client)
 		{
 			if (_saleSettings.IsRepairExpaired(client)) {
@@ -372,8 +380,8 @@ set s.LastStartFail = true;")
 			var phisicalClient = client.PhysicalClient;
 			var balance = phisicalClient.Balance;
 			if (balance >= 0 && !client.Disabled && client.RatedPeriodDate.GetValueOrDefault() != DateTime.MinValue) {
-				var dtNow = SystemTime.Now();
 
+				var dtNow = SystemTime.Now();
 				if ((client.RatedPeriodDate.Value.AddMonths(1).Date - dtNow.Date).Days == -client.DebtDays) {
 					var dtFrom = client.RatedPeriodDate.Value;
 					var dtTo = dtNow;
@@ -400,15 +408,14 @@ set s.LastStartFail = true;")
 					client.Sale = sale;
 			}
 
+			//Обработка списаний с клиента
 			if (!client.PaidDay && client.RatedPeriodDate.GetValueOrDefault() != DateTime.MinValue && client.GetSumForRegularWriteOff() > 0) {
 				if (client.StartNoBlock == null)
 					client.StartNoBlock = SystemTime.Now();
 
 				var writeOff = phisicalClient.WriteOff(client.GetSumForRegularWriteOff());
-				if (writeOff != null) {
+				if (writeOff != null)
 					session.Save(writeOff);
-				}
-
 				session.Save(phisicalClient);
 
 				//Отсылаем смс если клиенту осталось работать 2 дня или меньше
@@ -429,6 +436,8 @@ set s.LastStartFail = true;")
 						Messages.Add(sms);
 					}
 				}
+
+				//Обработка отображения предупреждения о балансе
 				if (client.NeedShowWarning(client.GetSumForRegularWriteOff())) {
 					client.ShowBalanceWarningPage = true;
 					if (client.IsChanged(c => c.ShowBalanceWarningPage))
@@ -443,12 +452,16 @@ set s.LastStartFail = true;")
 					if (client.IsChanged(c => c.ShowBalanceWarningPage))
 						client.CreareAppeal("Отключена страница Warning", AppealType.Statistic);
 				}
-			}
+			} //конец обработки списаний
+
+			//Обработка блокировок
 			if (client.CanBlock()) {
 				client.SetStatus(Status.Get(StatusType.NoWorked, session));
 				if (client.IsChanged(c => c.Disabled))
 					client.CreareAppeal("Клиент был заблокирован", AppealType.Statistic);
 			}
+
+			//назначаем или переназначаем бесплатные блокировочные дни
 			if ((client.YearCycleDate == null && client.BeginWork != null) || (SystemTime.Now().Date >= client.YearCycleDate.Value.AddYears(1).Date)) {
 				client.FreeBlockDays = _saleSettings.FreeDaysVoluntaryBlocking;
 				client.YearCycleDate = SystemTime.Now();

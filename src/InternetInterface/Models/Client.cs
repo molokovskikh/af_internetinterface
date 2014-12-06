@@ -125,6 +125,7 @@ namespace InternetInterface.Models
 		public virtual bool ShowBalanceWarningPage { get; set; }
 
 		/// <summary>
+		/// Начал ли клиент работать
 		/// Устанавливается в dhcp в текущую дату если client.BeginWork == null && !client.Disabled
 		/// </summary>
 		[Property]
@@ -184,6 +185,11 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool SendEmailNotification { get; set; }
 
+		/// <summary>
+		/// Флаг, запустил ли клиент первый раз страницу личного кабинета на сайте.
+		/// Судя по всему флаг обратен наименованию.
+		/// Если False, то значит клиент еще не запускал личный кабинет и ему будет отображена дополнительная информация
+		/// </summary>
 		[Property("FirstLunch")]
 		public virtual bool FirstLaunch { get; set; }
 
@@ -546,11 +552,19 @@ namespace InternetInterface.Models
 			return BeginWork != null;
 		}
 
+		/// <summary>
+		/// Получить интервал за
+		/// </summary>
+		/// <returns></returns>
 		public virtual decimal GetInterval()
 		{
 			return (((DateTime)RatedPeriodDate).AddMonths(1) - (DateTime)RatedPeriodDate).Days + DebtDays;
 		}
 
+		/// <summary>
+		/// Получить сумму ежедневного списания абонентской платы
+		/// </summary>
+		/// <returns></returns>
 		public virtual decimal GetSumForRegularWriteOff()
 		{
 			var daysInInterval = GetInterval();
@@ -763,6 +777,10 @@ where CE.Client = {0}", Id))
 			return price;
 		}
 
+		/// <summary>
+		/// Получить сумму ежемесячного списания
+		/// </summary>
+		/// <returns></returns>
 		public virtual decimal GetPrice()
 		{
 			var services = ClientServices.Where(c => c.IsActivated).ToArray();

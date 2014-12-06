@@ -1,3 +1,4 @@
+textarea { resize: none;}
 ul { padding: 0px;}
 .menu ul { width: 100%!important;}
 	.menu ul li:first-child { margin: 15px 30px!important;}
@@ -10,7 +11,7 @@ a {color: #474747}
 a:visited, a:active { color: inherit;}
 .top .city { overflow: visible;z-index: 1; }
 	.top .cities {background-color: white;border: 1px solid #e7e7e7;border-radius: 5px;display: none;left: 0;position: absolute;text-align: center;top: 32px;width: 155px;}
-		.top .cities a {color: #474747}
+		.top .cities a { color: #474747; display: block;}
 		.top .cities a:hover {color: #a71b22}
 .window.outer {display: table;position: fixed;top: 0;left: 0;width: 100%;height: 100%;z-index: 30000;background-color: rgba(0,0,0,0.5);}
 	.window .cell { display: table-cell;text-align: center; vertical-align: middle;}
@@ -19,23 +20,28 @@ a:visited, a:active { color: inherit;}
 			.window .header .close { position: absolute;right: 10px;top: 10px;}
 			.window .wrap  { padding: 10px;}
 			#CityWindow, #SelectCityWindow { height: 200px;width: 400px;}
-.testspeed, .OfferContract { margin: 20px;text-align: center;}
+.TestSpeed, .OfferContract { margin: 20px;text-align: center;}
 .OfferContract .thumbnail { display: inline-block;width: 180px;margin: 10px;border: 1px solid #e7e7e7;border-radius: 13px;padding: 10px;text-align: center;color: #474747;}
 
-.testspeed { height: 500px;}
-.testspeed .speedtest { margin-top: 20px;}
-
+.TestSpeed { height: 500px;}
+.TestSpeed .heading, .OfferContract .heading, .Faq .heading { position: relative;left: 0;top: 0;width: 100%;}
+	.Faq .know { margin-top: 0px;}
 .top .city { width: 150px;padding-left: 7px;text-align: center;} /*паддинг - ширина иконки. Центируем текст, с трелка она как бы сама по себе справа*/
 		.city .name { display: inline-block;}
 		.city .arrow { top: 10px;position: relative;left: 0;display: inline-block;}
 	.top .whiteright, .top .blackright { left: 186px;}
-
+.Faq textarea ,input.entry {width: 617px;}
+.wrapper .plans { background: white;}
+	.wrapper .type {border: 3px solid #cfc9c9;}
+	.wrapper .type.typehit {border: 3px solid #a81c22;}
 	.errorpage {display: inline-block;height: 200px;line-height: 32px;margin-top: 130px; margin-left: 400px ;vertical-align: top;width: 407px;}
 .errorpage h1 {font-size: 18px;font-weight: normal;color: #2e2d2d;margin-bottom: 36px;}
 .errorpage a {color: #a71b22;text-decoration: underline;}
 .page.Service .disposal {  padding: 28px 11px 8px;}
 .page.Service .namemenu.descriptions {padding: 0 55px 0 0;}
 a.plugs { color: white;}
+.success .icon, .error .icon {vertical-align: top; margin-left: 5px;margin-top: 5px;}
+
 /*Стили верстальщика*/
 @font-face {
     font-family: PDFDinTextPro; 
@@ -188,8 +194,8 @@ height: 28px;padding-bottom: 0px;width: 92px;text-align: center;padding-top: -11
 .cost.all {background: none repeat scroll 0 0 #f1f1f1;border: 3px solid #a81c22;border-collapse: collapse;border-radius: 15px;display: inline-block;
   float: right;font-size: 0;height: 370px;margin-right: 92px;margin-top: 70px;width: 733px;}
 .namemenu.descriptions {padding: 0 23px 0 0;width: 116px;}
-.plugs { background: none repeat scroll 0 0 #aa181e;border: medium none;border-radius: 2px;color: white; cursor: pointer;display: inline-block;
-font-family: PDFDinTextPro;font-size: 12px;height: 28px;line-height: 24px;padding-bottom: 0;text-align: center;width: 92px;}
+.plugs { background: none repeat scroll 0 0 #aa181e;border: medium none;border-radius: 2px;color: #ffffff;cursor: pointer;display: inline-block;
+ font-family: PDFDinTextPro;font-size: 12px;height: 28px;line-height: 24px;padding-bottom: 0;text-align: center;width: 92px;}
 .disposals.everything {top: 95px;}
 .business {background: #cbc6c6;width:1182px;height: 502px;}
 .decision {background: none repeat scroll 0 0 #cbc6c6;padding-left: 94px;padding-top: 86px;width: 600px;}
@@ -285,3 +291,4 @@ font-style: oblique;padding-left: 10px;}
 .none {display: inline-block;height: 200px;line-height: 32px;margin-left: 78px;margin-top: 130px;vertical-align: top;width: 407px;}
 .none h1 {font-size: 18px;font-weight: normal;color: #2e2d2d;margin-bottom: 36px;}
 .none a {color: #a71b22;text-decoration: underline;}
+
