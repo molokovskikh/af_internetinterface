@@ -3,7 +3,7 @@
 @using Inforoom2.Models
 @section JavaScript{<script type="text/javascript"src="@Url.Content("~/Scripts/FaqController.js")"></script>}
 @{
-	ViewBag.Title = "Index";
+	ViewBag.Title = "Вопросы и ответы";
 	Ticket ticket = ViewBag.NewTicket;
 	IList<Question> questions = ViewBag.Questions;
 	ValidationRunner validationRunner = ViewBag.Validation;

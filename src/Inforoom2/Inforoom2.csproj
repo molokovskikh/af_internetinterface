@@ -166,10 +166,13 @@
     <Content Include="Images\answersuccessbg.png" />
     <Content Include="Images\arro.png" />
     <Content Include="Images\arrow.png" />
+    <Content Include="Images\boy.png" />
     <Content Include="Images\connectionbg.png" />
     <Content Include="Images\connectionbgactiv.png" />
+    <Content Include="Images\cooperationsbg.png" />
     <Content Include="Images\crusty.png" />
     <Content Include="Images\disposal.png" />
+    <Content Include="Images\girl.png" />
     <Content Include="Images\inforum.png" />
     <Content Include="Images\leftbg.jpg" />
     <Content Include="Images\leftbg.png" />
@@ -185,9 +188,11 @@
     <Content Include="Images\slider5.jpg" />
     <Content Include="Images\speedbg.png" />
     <Content Include="Images\speedbgactiv.png" />
+    <Content Include="Images\staff.png" />
     <Content Include="Images\tick.png" />
     <Content Include="Images\typehit.png" />
     <Content Include="Images\upward.png" />
+    <Content Include="Images\wifi.png" />
     <Content Include="Scripts\AdminAddressController.js" />
     <Content Include="Scripts\ClientRequest.js" />
     <Content Include="Scripts\EditNewsBlock.js" />
@@ -239,6 +244,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\ClientRequestController.cs" />
+    <Compile Include="Controllers\BussinessController.cs" />
     <Compile Include="Controllers\TestSpeedController.cs" />
     <Compile Include="Controllers\FaqController.cs">
       <SubType>Code</SubType>
@@ -268,6 +274,7 @@
     <Compile Include="Models\ClientEndPoint.cs" />
     <Compile Include="Models\ClientRequest.cs" />
     <Compile Include="Models\ClientService.cs" />
+    <Compile Include="Models\CallMeBackTicket.cs" />
     <Compile Include="Models\InternetSettings.cs" />
     <Compile Include="Models\Lease.cs" />
     <Compile Include="Models\LegalClient.cs" />
@@ -358,6 +365,7 @@
     <Content Include="Views\TestSpeed\Index.cshtml" />
     <Content Include="speedtest\upload.jsp" />
     <Content Include="speedtest\upload.php" />
+    <Content Include="Views\Bussiness\Index.cshtml" />
     <None Include="Web.Inforoom2_Test.config">
       <SubType>Designer</SubType>
     </None>
