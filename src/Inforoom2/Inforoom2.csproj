@@ -245,6 +245,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\ClientRequestController.cs" />
+    <Compile Include="Controllers\StaticContent.cs" />
     <Compile Include="Controllers\BussinessController.cs" />
     <Compile Include="Controllers\AboutController.cs" />
     <Compile Include="Controllers\TestSpeedController.cs" />
@@ -367,6 +368,8 @@
     <Content Include="Views\TestSpeed\Index.cshtml" />
     <Content Include="speedtest\upload.jsp" />
     <Content Include="speedtest\upload.php" />
+    <Content Include="Views\StaticContent\PageNotFound.cshtml" />
+    <Content Include="Views\StaticContent\Error.cshtml" />
     <Content Include="Views\Bussiness\Index.cshtml" />
     <Content Include="Views\About\Index.cshtml" />
     <Content Include="Views\About\Details.cshtml" />

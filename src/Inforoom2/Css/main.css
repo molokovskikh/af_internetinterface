@@ -30,14 +30,14 @@ a:visited, a:active { color: inherit;}
 		.city .name { display: inline-block;}
 		.city .arrow { top: 10px;position: relative;left: 0;display: inline-block;}
 	.top .whiteright, .top .blackright { left: 186px;}
-.Faq {min-height: 700px;}
+.page.Error, .Faq {min-height: 700px;}
 	.Faq textarea ,input.entry {width: 617px;}
 .Bussiness .window {bottom: 78px;}
 .ClientRequest .map {top: 99px;}
 .wrapper .plans { background: white;}
 	.wrapper .type {border: 3px solid #cfc9c9;}
 	.wrapper .type.typehit {border: 3px solid #a81c22;}
-
+.wrapper .girl { top: 87px;}
 .About { min-height: 600px;}
 	.About .whiteblock,.About .whiteblocktext {height: auto;margin-top: -45px;}
 		.About .boy { background-image: url("../images/office_mini.png"); top: 53px;left: 58px;height: 397px; width: 418px;}
@@ -45,6 +45,14 @@ a:visited, a:active { color: inherit;}
 .heading { text-transform: uppercase;}
 .Details { text-align: center;}
 	.Details table {text-align: left;height: auto;margin-bottom: 45px;}
+
+	.errorpage {display: inline-block;height: 200px;line-height: 32px;margin-top: 130px; margin-left: 400px ;vertical-align: top;width: 407px;}
+.errorpage h1 {font-size: 18px;font-weight: normal;color: #2e2d2d;margin-bottom: 36px;}
+.errorpage a {color: #a71b22;text-decoration: underline;}
+.page.Service .disposal {  padding: 28px 11px 8px;}
+.page.Service .namemenu.descriptions {padding: 0 55px 0 0;}
+a.plugs { color: white;}
+body .leftbg, body .rightbg {min-height: 1100px}
 
 /*Стили верстальщика*/
 @font-face {

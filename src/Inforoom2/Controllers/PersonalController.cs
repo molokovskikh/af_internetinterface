@@ -115,7 +115,7 @@ namespace Inforoom2.Controllers
 			var deferredPayment = services.OfType<DeferredPayment>().FirstOrDefault();
 			var pinnedIp = services.OfType<PinnedIp>().FirstOrDefault();
 			var inforoomServices = new List<Service> {blockAccountService, deferredPayment};
-			inforoomServices = inforoomServices.Where(i => i.IsActivableFor(client)).ToList();
+		
 			ViewBag.Client = client;
 			ViewBag.ClientServices = client.ClientServices.Where(cs => cs.Service.IsActivableFromWeb && cs.IsActivated).ToList();
 			ViewBag.AvailableServices = inforoomServices;
