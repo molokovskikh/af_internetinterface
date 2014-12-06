@@ -2,10 +2,11 @@
 @{
 	string username = "";
 	string password = "";
+
 }
 <html>
 	<head>
-		<title>Inforum</title>
+		<title>@(ViewBag.Title)</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<link href="../../css/main.css" rel="stylesheet" />
 	</head>
@@ -70,15 +71,15 @@
 					menu.Add(new []{"Заявка на подключение", "Index", "ClientRequest"});
 					menu.Add(new []{"Для бизнеса", "Index", "Bussiness"});
 					menu.Add(new []{"Вопросы и ответы", "Index", "Faq"});
-					menu.Add(new []{"Оплата", "Index", "Faq"});
-					menu.Add(new []{"О компании", "Index", "Faq"});
+					menu.Add(new[] {"Оплата", "Payment", "About" });
+					menu.Add(new []{"О компании", "Index", "About"});
 					foreach(var item in menu) {
 						<li>@Html.ActionLink(item[0], item[1], item[2], null, new {@class = ViewBag.ControllerName == item[2] && ViewBag.ActionName == item[1] ? "active" : ""}) </li>
 					}
 				}
 				</ul>
 			</div>
-			<div class="@(ViewBag.ControllerName) @(ViewBag.ActionName)">
+			<div class="page @(ViewBag.ControllerName) @(ViewBag.ActionName)">
 				@RenderBody()
 			</div>
 			<div class="features">
@@ -107,10 +108,10 @@
 				</div>
 				<div class="support">
 					<ul>
-						<li>О компании</li>
+						<li>@Html.ActionLink("О компании", "Index", "About", null, null)</li>
 						<li>@Html.ActionLink("Для бизнеса", "Index", "Bussiness")</li>
 						<li>@Html.ActionLink("Оферта", "Index", "OfferContract", null, null)</li>
-						<li>Реквизиты</li>
+						<li>@Html.ActionLink("Реквизиты", "Details", "About", null, null)</li>
 					</ul>
 				</div>
 			</div>

@@ -77,6 +77,7 @@ namespace Inforoom2.Controllers
 		{
 			ValidationRunner = new ValidationRunner();
 			ViewBag.Validation = ValidationRunner;
+			ViewBag.Title = "Инфорум";
 			ViewBag.JavascriptParams = new Dictionary<string, string>();
 			ViewBag.Cities = new string[] { "Воронеж", "Борисоглебск", "Белгород" };
 		}

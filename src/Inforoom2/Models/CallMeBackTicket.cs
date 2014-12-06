@@ -25,13 +25,13 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual DateTime AnswerDate { get; set; }
 
-		[ManyToOne(Column = "User")]
+		[ManyToOne(Column = "Employee")]
 		public virtual Employee Employee { get; set; }
 
 		[Property]
 		public new virtual string Email { get; set; }
 
-		[Property, NotNullNotEmpty(Message = "Введите номер телефона")]
+		[Property(Column = "Phone"), NotNullNotEmpty(Message = "Введите номер телефона")]
 		public virtual string PhoneNumber { get; set; }
 
 		[Property, NotNullNotEmpty(Message = "Введите имя")]

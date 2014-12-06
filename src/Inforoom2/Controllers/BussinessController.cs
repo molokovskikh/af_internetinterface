@@ -24,17 +24,17 @@ namespace Inforoom2.Controllers
 		/// Обрабатывает отправку заявки на звонок
 		/// </summary>
 		[HttpPost]
-		public ActionResult Index(CallMeBackTicket ticket)
+		public ActionResult Index(CallMeBackTicket callMeBackTicket)
 		{
-			var errors = ValidationRunner.ValidateDeep(ticket);
+			var errors = ValidationRunner.ValidateDeep(callMeBackTicket);
 			if (errors.Length == 0)
 			{
-				DbSession.Save(ticket);
+				DbSession.Save(callMeBackTicket);
 				SuccessMessage("Заявка отправлена. В течении для вам перезвонят.");
 				return RedirectToAction("Index");
 			}
 
-			ViewBag.NewTicket = ticket;
+			ViewBag.NewTicket = callMeBackTicket;
 			return View();
 		}
 	}
