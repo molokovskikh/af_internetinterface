@@ -34,8 +34,14 @@ a:visited, a:active { color: inherit;}
 .wrapper .plans { background: white;}
 	.wrapper .type {border: 3px solid #cfc9c9;}
 	.wrapper .type.typehit {border: 3px solid #a81c22;}
-
+	.errorpage {display: inline-block;height: 200px;line-height: 32px;margin-top: 130px; margin-left: 400px ;vertical-align: top;width: 407px;}
+.errorpage h1 {font-size: 18px;font-weight: normal;color: #2e2d2d;margin-bottom: 36px;}
+.errorpage a {color: #a71b22;text-decoration: underline;}
+.page.Service .disposal {  padding: 28px 11px 8px;}
+.page.Service .namemenu.descriptions {padding: 0 55px 0 0;}
+a.plugs { color: white;}
 .success .icon, .error .icon {vertical-align: top; margin-left: 5px;margin-top: 5px;}
+
 /*Стили верстальщика*/
 @font-face {
     font-family: PDFDinTextPro; 
@@ -189,7 +195,7 @@ height: 28px;padding-bottom: 0px;width: 92px;text-align: center;padding-top: -11
   float: right;font-size: 0;height: 370px;margin-right: 92px;margin-top: 70px;width: 733px;}
 .namemenu.descriptions {padding: 0 23px 0 0;width: 116px;}
 .plugs { background: none repeat scroll 0 0 #aa181e;border: medium none;border-radius: 2px;color: #ffffff;cursor: pointer;display: inline-block;
-font-family: PDFDinTextPro;font-size: 12px;height: 28px;line-height: 24px;padding-bottom: 0;text-align: center;width: 92px;}
+ font-family: PDFDinTextPro;font-size: 12px;height: 28px;line-height: 24px;padding-bottom: 0;text-align: center;width: 92px;}
 .disposals.everything {top: 95px;}
 .business {background: #cbc6c6;width:1182px;height: 502px;}
 .decision {background: none repeat scroll 0 0 #cbc6c6;padding-left: 94px;padding-top: 86px;width: 600px;}
@@ -285,3 +291,4 @@ font-style: oblique;padding-left: 10px;}
 .none {display: inline-block;height: 200px;line-height: 32px;margin-left: 78px;margin-top: 130px;vertical-align: top;width: 407px;}
 .none h1 {font-size: 18px;font-weight: normal;color: #2e2d2d;margin-bottom: 36px;}
 .none a {color: #a71b22;text-decoration: underline;}
+

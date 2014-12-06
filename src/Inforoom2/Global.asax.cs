@@ -10,6 +10,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
 using Inforoom2.Components;
+using Inforoom2.Controllers;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
 using NHibernate;
@@ -55,11 +56,11 @@ namespace Inforoom2
 				if (cookie != null) {
 					var ticket = FormsAuthentication.Decrypt(cookie.Value);
 					var clientId = 0;
-					if (ticket != null && !string.IsNullOrEmpty( ticket.UserData)) {
+					if (ticket != null && !string.IsNullOrEmpty(ticket.UserData)) {
 						var impersonatedClientId = ticket.UserData;
 						int.TryParse(impersonatedClientId, out clientId);
 					}
-					var userName= ticket.Name;
+					var userName = ticket.Name;
 
 					if (clientId != 0) {
 						userName = clientId.ToString();
@@ -95,6 +96,51 @@ namespace Inforoom2
 			/*	var schema = new NHibernate.Tool.hbm2ddl.SchemaExport(configuration);
 			schema.Create(false, true);*/
 			SessionFactory = configuration.BuildSessionFactory();
+		}
+
+		protected void Application_Error(object sender, EventArgs e)
+		{
+			Exception exception = Server.GetLastError();
+			Response.Clear();
+			HttpException httpException = exception as HttpException;
+			RouteData routeData = new RouteData();
+			routeData.Values.Add("controller", "StaticContent");
+			if (httpException == null) {
+				routeData.Values.Add("action", "Error");
+			}
+			else //It's an Http Exception, Let's handle it.
+			{
+				switch (httpException.GetHttpCode()) {
+					case 404:
+						// Page not found.
+						routeData.Values.Add("action", "PageNotFound");
+						break;
+					case 500:
+						// Server error.
+						routeData.Values.Add("action", "HttpError500");
+						break;
+
+						// Here you can handle Views to other error codes.
+						// I choose a General error template  
+					default:
+						routeData.Values.Add("action", "Error");
+						break;
+				}
+			}
+
+			// Pass exception details to the target error View.
+			routeData.Values.Add("error", exception);
+
+			// Clear the error on server.
+			Server.ClearError();
+
+			// Avoid IIS7 getting in the middle
+			Response.TrySkipIisCustomErrors = true;
+
+			// Call target Controller and pass the routeData.
+			IController errorController = new StaticContentController();
+			errorController.Execute(new RequestContext(
+				new HttpContextWrapper(Context), routeData));
 		}
 	}
 }
