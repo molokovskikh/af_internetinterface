@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Web;
 using System.Web.Security;
 using Castle.MonoRail.Framework;
 using Common.Web.Ui.Controllers;
+using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
-
 using NHibernate.Linq;
 using NPOI.SS.Formula.Functions;
 
@@ -23,9 +25,9 @@ namespace InternetInterface.Controllers
 		public void Sub(string login, string password)
 		{
 			if (ActiveDirectoryHelper.IsAuthenticated(login, password)
-				&& DbSession.Query<Partner>().Any(p => p.Login == login && !p.IsDisabled)) {
+			    && DbSession.Query<Partner>().Any(p => p.Login == login && !p.IsDisabled)) {
 				FormsAuthentication.RedirectFromLoginPage(login, true);
-				Session.Add("Login", login);
+				AuthenticationFilter.SetLoginCookie(Context, login);
 				RedirectToUrl(@"~/Map/SiteMap");
 			}
 			else {
@@ -36,13 +38,13 @@ namespace InternetInterface.Controllers
 
 		public void LoginPartner(string redirect)
 		{
-			var username = Context.Session["Login"];
+			string username = AuthenticationFilter.GetLoginFromCookie(Context);
 #if DEBUG
 			username = username ?? Environment.UserName;
 #endif
 			if (username != null) {
 				if (DbSession.Query<Partner>().Any(p => p.Login == username && !p.IsDisabled)) {
-					Session.Add("Login", username);
+					AuthenticationFilter.SetLoginCookie(Context, username);
 					RedirectToUrl(redirect ?? @"~/Map/SiteMap");
 				}
 			}
@@ -51,10 +53,10 @@ namespace InternetInterface.Controllers
 #if DEBUG
 		public void ChangeLoggedInPartner(string login, string redirect)
 		{
-			if (Session.Contains("Login")) {
-				Session.Remove("Login");
+			if (AuthenticationFilter.GetLoginFromCookie(Context) != null) {
+				Response.RemoveCookie(FormsAuthentication.FormsCookieName);
 			}
-			Session.Add("Login", login);
+			AuthenticationFilter.SetLoginCookie(Context, login);
 			RedirectToUrl(redirect ?? @"~/Map/SiteMap");
 		}
 #endif

@@ -262,18 +262,6 @@ namespace Inforoom2.Controllers
 			Response.Cookies.Remove(name);
 		}
 
-		public static Encoding DetectEncoding(String fileName, out String contents)
-		{
-			// open the file with the stream-reader:
-			using (StreamReader reader = new StreamReader(fileName, true)) {
-				// read the contents of the file into a string
-				contents = reader.ReadToEnd();
-
-				// return the encoding.
-				return reader.CurrentEncoding;
-			}
-		}
-
 		protected ActionResult Authenticate(string action, string controller, string username, bool shouldRemember, string userData = "")
 		{
 			var ticket = new FormsAuthenticationTicket(
