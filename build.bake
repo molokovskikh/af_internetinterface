@@ -59,3 +59,19 @@ task "clean:inforoom2":
 	
 task "copy:inforoom2:test":
 	XCopyDeploy(Globals, "Inforoom2", "\\\\test2.analit.net\\WWW")
+	
+	
+	
+task "deploy:inforoomcp:test", ["inforoom2cp:build", "version:bump", "copy:inforoomcp:test", "db:migrate"]
+	
+task "inforoomcp:build", ["generate:assembly:info" , "clean:inforoomcp", "build:inforoomcp:test"]
+
+task "build:inforoomcp:test":
+	Globals.Environment = "InforoomControlPanel_Test"
+	BuildWeb(Globals, "InforoomControlPanel")
+		
+task "clean:inforoomcp":
+	CleanWeb(Globals, "InforoomControlPanel")
+	
+task "copy:inforoomcp:test":
+	XCopyDeploy(Globals, "InforoomControlPanel", "\\\\test2.analit.net\\WWW")
