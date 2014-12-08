@@ -40,7 +40,7 @@ namespace InternetInterface.Controllers
 		{
 			string username = AuthenticationFilter.GetLoginFromCookie(Context);
 #if DEBUG
-			//username = username ?? Environment.UserName;
+			username = username ?? Environment.UserName;
 #endif
 			if (username != null) {
 				if (DbSession.Query<Partner>().Any(p => p.Login == username && !p.IsDisabled)) {

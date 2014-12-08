@@ -2,10 +2,11 @@
 @{
 	string username = "";
 	string password = "";
+
 }
 <html>
 	<head>
-		<title>Inforum</title>
+		<title>@(ViewBag.Title)</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<link href="../../css/main.css" rel="stylesheet" />
 	</head>
@@ -70,8 +71,8 @@
 					menu.Add(new []{"Заявка на подключение", "Index", "ClientRequest"});
 					menu.Add(new []{"Для бизнеса", "Index", "Bussiness"});
 					menu.Add(new []{"Вопросы и ответы", "Index", "Faq"});
-					menu.Add(new []{"Оплата", "Index", "Faq"});
-					menu.Add(new []{"О компании", "Index", "Faq"});
+					menu.Add(new[] {"Оплата", "Payment", "About" });
+					menu.Add(new []{"О компании", "Index", "About"});
 					foreach(var item in menu) {
 						<li>@Html.ActionLink(item[0], item[1], item[2], null, new {@class = ViewBag.ControllerName == item[2] && ViewBag.ActionName == item[1] ? "active" : ""}) </li>
 					}
@@ -93,7 +94,7 @@
 					<ul>
 						<li>Подключен ли мой дом?</li>
 						<li>@Html.ActionLink("Протестировать скорость","Index","TestSpeed")</li>
-						<li class="tech">Техподдержка<sup>24</sup></li>
+						<li class="tech">@Html.ActionLink("Техподдержка","TechSupport","Faq")<sup>24</sup></li>
 					</ul>
 				</div>
 				<div class="support">
@@ -107,10 +108,10 @@
 				</div>
 				<div class="support">
 					<ul>
-						<li>О компании</li>
+						<li>@Html.ActionLink("О компании", "Index", "About", null, null)</li>
 						<li>@Html.ActionLink("Для бизнеса", "Index", "Bussiness")</li>
 						<li>@Html.ActionLink("Оферта", "Index", "OfferContract", null, null)</li>
-						<li>Реквизиты</li>
+						<li>@Html.ActionLink("Реквизиты", "Details", "About", null, null)</li>
 					</ul>
 				</div>
 			</div>
@@ -133,22 +134,23 @@
 					<div class="window inner">
 						<div class='header'>
 							<div class='title'></div>
-							<button class="button close">close</button>
+							<div class="button close"></div>
 						</div>
 						<div class='wrap'></div>
 					</div>
 					</div>
 			</div>
-			<div id="CityWindow" >
+			<div class="cityWindow" id="CityWindow" >
 				<div>
-					<div id="userCity">Мы определили, что вы находитесь в городе <span class="UserCity">@(ViewBag.UserCity)</span></div>
+					<div id="userCity" class="whiteblocktext"><p>Мы определили, что вы находитесь в регионе <span class="UserCity">@(ViewBag.UserCity)</span></p></div>
 					<div class="buttons">
 						<button class="button ok">Да</button>
 						<button class="button cancel">Нет</button>
 					</div>
 				</div>
 			</div>
-			<div id ="SelectCityWindow" >
+			<div class="cityWindow" id ="SelectCityWindow" >
+				<div class="whiteblocktext"><p>Выберите регион из списка:</span></p></div>
 				<div class="cities">
 					@{
 						foreach (var city in ViewBag.Cities) {

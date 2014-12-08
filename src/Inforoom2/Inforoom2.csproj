@@ -178,6 +178,7 @@
     <Content Include="Images\leftbg.png" />
     <Content Include="Images\map.png" />
     <Content Include="Images\offer.png" />
+    <Content Include="Images\office_mini.png" />
     <Content Include="Images\rightbg.jpg" />
     <Content Include="Images\rightbg.png" />
     <Content Include="Images\slider1.jpg" />
@@ -246,6 +247,7 @@
     <Compile Include="Controllers\ClientRequestController.cs" />
     <Compile Include="Controllers\StaticContent.cs" />
     <Compile Include="Controllers\BussinessController.cs" />
+    <Compile Include="Controllers\AboutController.cs" />
     <Compile Include="Controllers\TestSpeedController.cs" />
     <Compile Include="Controllers\FaqController.cs">
       <SubType>Code</SubType>
@@ -369,6 +371,8 @@
     <Content Include="Views\StaticContent\PageNotFound.cshtml" />
     <Content Include="Views\StaticContent\Error.cshtml" />
     <Content Include="Views\Bussiness\Index.cshtml" />
+    <Content Include="Views\About\Index.cshtml" />
+    <Content Include="Views\About\Details.cshtml" />
     <None Include="Web.Inforoom2_Test.config">
       <SubType>Designer</SubType>
     </None>
