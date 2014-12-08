@@ -21,10 +21,15 @@ a:visited, a:active { color: inherit;}
 			.window .wrap  { padding: 10px;}
 			.cityWindow { height: 200px;}
 				.cityWindow button { cursor: pointer;  margin: 0 20px; width: 80px;}
-				.cityWindow .whiteblocktext { width: auto;padding: 0px;}
+				.window .whiteblocktext { width: auto;padding: 0px;}
 				.cityWindow a { text-decoration: underline;}
 				.cityWindow a:hover { color: #a81c22;}
 				#SelectCityWindow .cancel { position: absolute;bottom: 0;right: 0;margin: 10px;}
+	#CallMeBackWindow { height: 300px;}
+		#CallMeBackWindow .whiteblocktext p { margin-left: 33px;text-align: left;}
+		#CallMeBackWindow .applications{display: inline-block;height: 225px;text-align: left;width: 458px;}
+		#CallMeBackWindow .contacting { position: absolute;right: 0px;bottom: 0px;margin: 20px 32px;}
+		#CallMeBackWindow .definitely { position: absolute;left: 0px;bottom: 0px;margin: 40px;}
 .TestSpeed, .OfferContract { margin: 20px;text-align: center;}
 .OfferContract .thumbnail { display: inline-block;width: 180px;margin: 10px;border: 1px solid #e7e7e7;border-radius: 13px;padding: 10px; text-align: center; color: #474747;}
 .tech a {color: #b3393e}

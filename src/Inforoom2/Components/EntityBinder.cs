@@ -61,6 +61,30 @@ namespace Inforoom2.Components
 		}
 
 		/// <summary>
+		/// Натягивает форму из запроса на модель
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		public object MapModel(HttpRequestBase request)
+		{
+				var entityType = _entityType;
+				object instance = Activator.CreateInstance(entityType);
+				var props = instance.GetType().GetProperties();
+				if (props.Count() != 0)
+				{
+					foreach (var propertyInfo in props)
+					{
+						var propertyName = propertyInfo.Name;
+						var propertyValue = request.Form.Get(entityType.Name.ToLower() + "." + propertyName);
+						if (!string.IsNullOrEmpty(propertyValue))
+						{
+							SetValue(instance, propertyName, propertyValue, propertyInfo);
+						}
+					}
+				}
+				return instance;
+		}
+		/// <summary>
 		/// Binds the model to a value by using the specified controller context and binding context.
 		/// </summary>
 		/// <returns>

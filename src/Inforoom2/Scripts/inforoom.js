@@ -36,11 +36,18 @@ function Inforoom() {
 		$(".HtmlTemplates").remove();
 		console.log("Templates added", this.templates);
 
+		if (this.getParam("CallMeBack") == "1")
+			this.callMeBackWindow();
+		$(".header .call").on("click", this.callMeBackWindow.bind(this));
 
 		this.checkCity();
 		this.showMessages();
 	}
 
+	this.callMeBackWindow = function() {
+		var wnd = this.createWindow("Обратный звонок", this.getTemplate("CallMeBackWindow"));
+		wnd.block();
+	}
 	/**
      * Создает окно
      * @returns {Window} Объект окна

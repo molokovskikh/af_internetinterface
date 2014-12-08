@@ -14,11 +14,10 @@ namespace Inforoom2.Models
 		{
 			CreationDate = DateTime.Now;
 		}
-		 
-		[Property, NotNullNotEmpty]
+
+		[Property]
 		public virtual string Text { get; set; }
 
-		
 		[Property]
 		public virtual DateTime CreationDate { get; set; }
 

@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+<!DOCTYPE html>
 @{
 	string username = "";
 	string password = "";
@@ -170,6 +173,31 @@
 							<a href="#">@city</a>
 						}
 					}
+				}
+			</div>
+			<div class="cityWindow" id ="CallMeBackWindow" >
+						@{
+							CallMeBackTicket ticket = ViewBag.CallMeBackTicket;
+							ValidationRunner validationRunner = ViewBag.Validation;
+							String action = ViewBag.ActionName.ToString();
+							String controller = ViewBag.ControllerName.ToString();
+						}
+				@using (@Html.BeginForm(action, controller, FormMethod.Post)) {
+					<div class="whiteblocktext">
+						<p>Свяжитесь с нами по вопросам сотрудничества:</p>
+					</div>
+					<div class="applications">
+						<div class="label">Имя:<sup>*</sup></div>
+						@Html.ValidationEditor(validationRunner, ticket, "Name", new { @class = "application" }, HtmlTag.input, HtmlType.none)
+						<div class="label">Номер телефона:<sup>*</sup></div>
+						@Html.ValidationEditor(validationRunner, ticket, "PhoneNumber", new { @class = "application" }, HtmlTag.input, HtmlType.none)
+						<div class="label">Комментарий:</div>
+						@Html.ValidationEditor(validationRunner, ticket, "Text", null, HtmlTag.textarea, HtmlType.none)
+					</div>
+					<div class="definitely"><sup>*</sup>- обязательно для заполнения</div>
+					<div class="buttons">
+						<input class="contacting" type="submit" value="Связаться">
+					</div>
 				}
 			</div>
 		</div>
