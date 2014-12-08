@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web.Security;
 using Castle.MonoRail.Framework;
 
 namespace InternetInterface.Controllers
@@ -7,7 +8,7 @@ namespace InternetInterface.Controllers
 	{
 		public void Yes()
 		{
-			Session["Login"] = string.Empty;
+			Response.RemoveCookie(FormsAuthentication.FormsCookieName);
 			RedirectToUrl(@"../Login/LoginPartner.rails");
 		}
 	}
