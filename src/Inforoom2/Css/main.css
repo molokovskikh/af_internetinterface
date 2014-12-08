@@ -55,7 +55,8 @@ a:visited, a:active { color: inherit;}
 .heading { text-transform: uppercase;}
 .Details { text-align: center;}
 	.Details table {text-align: left;height: auto;margin-bottom: 45px;}
-
+.TechSupport .boy {background-image: url("../images/tech_support.png");background-position: 5px center;border: 1px solid #e3dfde;border-radius: 5px;height: 224px;left: 83px;padding: 5px;top: 60px;width: 337px;}
+.TechSupport .whiteblock { height: 360px;}
 	.errorpage {display: inline-block;height: 200px;line-height: 32px;margin-top: 130px; margin-left: 400px ;vertical-align: top;width: 407px;}
 .errorpage h1 {font-size: 18px;font-weight: normal;color: #2e2d2d;margin-bottom: 36px;}
 .errorpage a {color: #a71b22;text-decoration: underline;}
