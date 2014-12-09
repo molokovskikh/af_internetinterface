@@ -38,7 +38,7 @@ namespace InforoomControlPanel.Controllers
 				plan.Regions = new List<Region>();
 			}
 			ViewBag.Plan = plan;
-			ViewBag.Regions = Regions;
+			ViewBag.Regions = GetList<Region>();
 			return View();
 		}
 
@@ -62,7 +62,7 @@ namespace InforoomControlPanel.Controllers
 			}
 			else {
 				ViewBag.Plan = plan;
-				ViewBag.Regions = Regions;
+				ViewBag.Regions = GetList<Region>();
 				return View("EditPlan");
 			}
 

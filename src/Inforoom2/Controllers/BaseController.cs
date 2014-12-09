@@ -32,46 +32,6 @@ namespace Inforoom2.Controllers
 			get { return MvcApplication.SessionFactory.GetCurrentSession(); }
 		}
 
-		protected List<City> Cities
-		{
-			get { return GetAllSafe<City>(); }
-		}
-
-		protected List<Street> Streets
-		{
-			get { return GetAllSafe<Street>(); }
-		}
-
-		protected IList<Region> Regions
-		{
-			get { return GetAllSafe<Region>(); }
-		}
-
-		protected IList<House> Houses
-		{
-			get { return GetAllSafe<House>(); }
-		}
-
-		protected IList<Address> Addresses
-		{
-			get { return GetAllSafe<Address>(); }
-		}
-
-		protected IList<SwitchAddress> SwitchAddresses
-		{
-			get { return GetAllSafe<SwitchAddress>(); }
-		}
-
-		protected IList<Switch> Switches
-		{
-			get { return GetAllSafe<Switch>(); }
-		}
-
-		protected IList<Plan> Plans
-		{
-			get { return GetAllSafe<Plan>(); }
-		}
-
 		protected ValidationRunner ValidationRunner;
 
 		protected BaseController()
@@ -107,7 +67,7 @@ namespace Inforoom2.Controllers
 				}
 				int id = 0;
 				int.TryParse(User.Identity.Name, out id);
-				return DbSession.Query<Client>().FirstOrDefault(k => k.Id == id );
+				return DbSession.Get<Client>(id);
 			}
 		}
 
@@ -162,7 +122,9 @@ namespace Inforoom2.Controllers
 			ProcessCallMeBackTicket();
 			ProcessRegionPanel();
 			if (CurrentClient != null) {
-				ViewBag.ClientInfo = string.Format("{0}, Баланс: {1} ", CurrentClient.PhysicalClient.FullName, CurrentClient.PhysicalClient.Balance);
+				StringBuilder sb = new StringBuilder();
+				sb.AppendFormat("Здравствуйте, {0}. Ваш баланс: {1} руб.",  CurrentClient.PhysicalClient.Name,   CurrentClient.PhysicalClient.Balance);
+				ViewBag.ClientInfo = sb.ToString();
 			}
 		}
 
@@ -233,7 +195,7 @@ namespace Inforoom2.Controllers
 			ViewBag.UserCity = geoAnswer.City;
 		}
 
-		protected List<TModel> GetAllSafe<TModel>()
+		protected List<TModel> GetList<TModel>()
 		{
 			var entities = DbSession.Query<TModel>().ToList();
 			if (entities.Count == 0) {

@@ -12,7 +12,7 @@ namespace Inforoom2.Controllers
 			var address = new Address { House = new House { Street = new Street { Region = new Region() } } };
 			var clientRequest = new ClientRequest();
 			clientRequest.Address = address;
-			ViewBag.Regions = Regions;
+			ViewBag.Regions = GetList<Region>();
 			ViewBag.ClientRequest = clientRequest;
 			ViewBag.IsConnected = null;
 			return View();
@@ -26,7 +26,7 @@ namespace Inforoom2.Controllers
 			if (clientRequest.IsAddressConnected(switchAddress.ToList())) {
 				ViewBag.IsConnected = true;
 			}
-			ViewBag.Regions = Regions;
+			ViewBag.Regions = GetList<Region>();
 			ViewBag.ClientRequest = clientRequest;
 			return View();
 		}

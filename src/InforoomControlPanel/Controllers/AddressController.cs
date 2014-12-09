@@ -12,7 +12,7 @@ namespace InforoomControlPanel.Controllers
 	{
 		public ActionResult AddressCity()
 		{
-			ViewBag.CitiesList = Cities;
+			ViewBag.CitiesList = GetList<City>();
 			return View();
 		}
 
@@ -49,7 +49,7 @@ namespace InforoomControlPanel.Controllers
 
 		public ActionResult AddressRegion()
 		{
-			ViewBag.Regions = Regions;
+			ViewBag.Regions = GetList<Region>();
 
 			return View();
 		}
@@ -67,7 +67,7 @@ namespace InforoomControlPanel.Controllers
 			}
 			var plans = DbSession.Query<Plan>().ToList();
 			ViewBag.Region = region;
-			ViewBag.CitiesList = Cities;
+			ViewBag.CitiesList = GetList<City>();
 			ViewBag.Plans = plans;
 
 			return View();
@@ -91,7 +91,7 @@ namespace InforoomControlPanel.Controllers
 					region.Plans.Add(plan);
 				}
 			}
-			var city = Cities.FirstOrDefault(c => c.Id == region.City.Id);
+			var city = GetList<City>().FirstOrDefault(c => c.Id == region.City.Id);
 			region.City = city;
 			ViewBag.Region = region;
 			var errors = ValidationRunner.ValidateDeep(region);
@@ -109,7 +109,7 @@ namespace InforoomControlPanel.Controllers
 
 		public ActionResult AddressStreet()
 		{
-			ViewBag.Streets = Streets;
+			ViewBag.Streets = GetList<Street>();
 
 			return View();
 		}
@@ -125,7 +125,7 @@ namespace InforoomControlPanel.Controllers
 				street = new Street();
 				street.Region = new Region();
 			}
-			ViewBag.CitiesList = Cities;
+			ViewBag.CitiesList = GetList<City>();
 			ViewBag.Street = street;
 			return View();
 		}
@@ -141,7 +141,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult UpdateStreet(Street street)
 		{
 			ViewBag.Street = street;
-			var region = Regions.FirstOrDefault(r => r.Name == street.Region.Name);
+			var region = GetList<Region>().FirstOrDefault(r => r.Name == street.Region.Name);
 			street.Region = region;
 			var errors = ValidationRunner.ValidateDeep(street);
 			if (errors.Length == 0) {
@@ -157,7 +157,7 @@ namespace InforoomControlPanel.Controllers
 
 		public ActionResult AddressHouse()
 		{
-			ViewBag.Houses = Houses;
+			ViewBag.Houses = GetList<House>();
 
 			return View();
 		}
@@ -176,8 +176,8 @@ namespace InforoomControlPanel.Controllers
 			}
 
 			ViewBag.House = house;
-			ViewBag.Regions = Regions;
-			ViewBag.Streets = Streets;
+			ViewBag.Regions = GetList<Region>();
+			ViewBag.Streets = GetList<Street>();
 			return View();
 		}
 
@@ -192,7 +192,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult UpdateHouse(House house)
 		{
 			ViewBag.House = house;
-			var street = Streets.FirstOrDefault(r => r.Id == house.Street.Id);
+			var street = GetList<Street>().FirstOrDefault(r => r.Id == house.Street.Id);
 			house.Street = street;
 			var errors = ValidationRunner.ValidateDeep(house);
 			if (errors.Length == 0) {
@@ -208,7 +208,7 @@ namespace InforoomControlPanel.Controllers
 
 		public ActionResult AddressAddress()
 		{
-			ViewBag.Addresses = Addresses;
+			ViewBag.Addresses = GetList<Address>();
 			return View();
 		}
 
@@ -224,9 +224,9 @@ namespace InforoomControlPanel.Controllers
 			}
 
 			ViewBag.Address = address;
-			ViewBag.Houses = Houses;
-			ViewBag.Regions = Regions;
-			ViewBag.Streets = Streets;
+			ViewBag.Houses = GetList<House>();
+			ViewBag.Regions = GetList<Region>();
+			ViewBag.Streets = GetList<Street>();
 			return View();
 		}
 
@@ -241,10 +241,10 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult UpdateAddress(Address address)
 		{
 			ViewBag.Address = address;
-			ViewBag.Houses = Houses;
-			ViewBag.Regions = Regions;
-			ViewBag.Streets = Streets;
-			var house = Houses.FirstOrDefault(r => r.Id == address.House.Id);
+			ViewBag.Houses = GetList<House>();
+			ViewBag.Regions = GetList<Region>();
+			ViewBag.Streets = GetList<Street>();
+			var house = GetList<House>().FirstOrDefault(r => r.Id == address.House.Id);
 			address.House = house;
 			var errors = ValidationRunner.ValidateDeep(address);
 			if (errors.Length == 0) {
@@ -259,7 +259,7 @@ namespace InforoomControlPanel.Controllers
 
 		public ActionResult AddressSwitchAddress()
 		{
-			ViewBag.SwitchAddresses = SwitchAddresses;
+			ViewBag.SwitchAddresses = GetList<SwitchAddress>();
 			return View();
 		}
 
@@ -278,10 +278,10 @@ namespace InforoomControlPanel.Controllers
 			}
 
 			ViewBag.SwitchAddress = switchAddress;
-			ViewBag.Switches = Switches;
-			ViewBag.Houses = Houses;
-			ViewBag.Regions = Regions;
-			ViewBag.Streets = Streets;
+			ViewBag.Switches = GetList<Switch>();
+			ViewBag.Houses = GetList<House>();
+			ViewBag.Regions = GetList<Region>();
+			ViewBag.Streets = GetList<Street>();
 			return View();
 		}
 
@@ -299,10 +299,10 @@ namespace InforoomControlPanel.Controllers
 			}
 
 			ViewBag.SwitchAddress = switchAddress;
-			ViewBag.Switches = Switches;
-			ViewBag.Houses = Houses;
-			ViewBag.Regions = Regions;
-			ViewBag.Streets = Streets;
+			ViewBag.Switches = GetList<Switch>();
+			ViewBag.Houses = GetList<House>();
+			ViewBag.Regions = GetList<Region>();
+			ViewBag.Streets = GetList<Street>();
 			return View();
 		}
 
@@ -319,10 +319,10 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult UpdateSwitchAddress([EntityBinder] SwitchAddress switchAddress)
 		{
 			ViewBag.Address = switchAddress;
-			ViewBag.Houses = Houses;
-			ViewBag.Regions = Regions;
-			ViewBag.Streets = Streets;
-			ViewBag.Switches = Switches;
+			ViewBag.Houses = GetList<House>();
+			ViewBag.Regions = GetList<Region>();
+			ViewBag.Streets = GetList<Street>();
+			ViewBag.Switches = GetList<SwitchAddress>();
 
 			var errors = ValidationRunner.ValidateDeep(switchAddress);
 			if (errors.Length == 0) {

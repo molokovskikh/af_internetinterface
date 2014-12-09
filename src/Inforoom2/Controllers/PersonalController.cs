@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Web.Mvc;
 using System.Web.Razor.Parser.SyntaxTree;
 using Common.MySql;
@@ -42,6 +43,31 @@ namespace Inforoom2.Controllers
 		public ActionResult Payment()
 		{
 			ViewBag.Title = "Платежи";
+			var client = CurrentClient;
+			var writeOffs = DbSession.Query<WriteOff>().Where(wo => wo.Client.Id == client.Id && wo.WriteOffDate > DateTime.Now.AddMonths(-3));
+			var userWriteOffs = DbSession.Query<UserWriteOff>().Where(uwo => uwo.Client.Id == client.Id && uwo.Date > DateTime.Now.AddMonths(-3));
+			var payments = DbSession.Query<Payment>().Where(p => p.Client.Id == client.Id && p.RecievedOn > DateTime.Now.AddMonths(-3));
+
+			var historyList = userWriteOffs.Select(userWriteOff => new BillingHistory {
+				Date = userWriteOff.Date,
+				Sum = userWriteOff.Sum,
+				Description = userWriteOff.Comment
+			}).ToList();
+
+			historyList.AddRange(writeOffs.Select(writeOff => new BillingHistory {
+				Date = writeOff.WriteOffDate,
+				Sum = writeOff.WriteOffSum,
+				Description = new StringBuilder().AppendFormat("Абонентская плата").ToString()
+			}));
+
+			historyList.AddRange(payments.Select(payment => new BillingHistory {
+				Date = payment.RecievedOn,
+				Sum = payment.Sum,
+				Description = new StringBuilder().AppendFormat("Пополнение счета").ToString()
+			}));
+
+			historyList = historyList.OrderByDescending(h => h.Date).ToList();
+			ViewBag.HistoryList = historyList;
 			return View();
 		}
 
@@ -114,8 +140,8 @@ namespace Inforoom2.Controllers
 			var blockAccountService = services.OfType<BlockAccountService>().FirstOrDefault();
 			var deferredPayment = services.OfType<DeferredPayment>().FirstOrDefault();
 			var pinnedIp = services.OfType<PinnedIp>().FirstOrDefault();
-			var inforoomServices = new List<Service> {blockAccountService, deferredPayment};
-		
+			var inforoomServices = new List<Service> { blockAccountService, deferredPayment };
+
 			ViewBag.Client = client;
 			ViewBag.ClientServices = client.ClientServices.Where(cs => cs.Service.IsActivableFromWeb && cs.IsActivated).ToList();
 			ViewBag.AvailableServices = inforoomServices;
@@ -127,7 +153,7 @@ namespace Inforoom2.Controllers
 		private void InitPlans(Client client)
 		{
 			var plans =
-				Plans.Where(
+				GetList<Plan>().Where(
 					p =>
 						!p.IsArchived && !p.IsServicePlan &&
 						p.Regions.Any(r => r.Id == client.PhysicalClient.Address.House.Street.Region.Id)).ToList();

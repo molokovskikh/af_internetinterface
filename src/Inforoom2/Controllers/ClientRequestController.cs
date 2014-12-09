@@ -67,29 +67,29 @@ namespace Inforoom2.Controllers
 
 		protected Address GetAddressByYandexData(ClientRequest clientRequest)
 		{
-			var city = Cities.FirstOrDefault(c => c.Name.Equals(clientRequest.YandexCity, StringComparison.InvariantCultureIgnoreCase));
+			var city = GetList<City>().FirstOrDefault(c => c.Name.Equals(clientRequest.YandexCity, StringComparison.InvariantCultureIgnoreCase));
 
 			if (city == null || !clientRequest.IsYandexAddressValid()) {
 				var badAddress = new Address { IsCorrectAddress = false };
 				return badAddress;
 			}
-			var region = Regions.FirstOrDefault(r => r.City == city);
+			var region = GetList<Region>().FirstOrDefault(r => r.City == city);
 
-			var street = Streets.FirstOrDefault(s => s.Name.Equals(clientRequest.YandexStreet, StringComparison.InvariantCultureIgnoreCase)
+			var street = GetList<Street>().FirstOrDefault(s => s.Name.Equals(clientRequest.YandexStreet, StringComparison.InvariantCultureIgnoreCase)
 			                                         && s.Region.Equals(region));
 
 			if (street == null) {
 				street = new Street(clientRequest.YandexStreet);
 			}
 
-			var house = Houses.FirstOrDefault(h => h.Number.Equals(clientRequest.YandexHouse, StringComparison.InvariantCultureIgnoreCase)
+			var house = GetList<House>().FirstOrDefault(h => h.Number.Equals(clientRequest.YandexHouse, StringComparison.InvariantCultureIgnoreCase)
 			                                       && h.Street.Name.Equals(clientRequest.YandexStreet, StringComparison.InvariantCultureIgnoreCase)
 			                                       && h.Street.Region.Equals(region));
 
 			if (house == null) {
 				house = new House(clientRequest.YandexHouse);
 			}
-			var address = Addresses.FirstOrDefault(a => a.IsCorrectAddress
+			var address = GetList<Address>().FirstOrDefault(a => a.IsCorrectAddress
 			                                            && a.House.Equals(house)
 			                                            && a.House.Street.Equals(street)
 			                                            && a.House.Street.Region.Equals(region)

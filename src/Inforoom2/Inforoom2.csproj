@@ -270,12 +270,12 @@
     <Compile Include="Helpers\IpGeoHelper.cs" />
     <Compile Include="Helpers\IPUserType.cs" />
     <Compile Include="Helpers\NHibernateActionFilter.cs" />
-    <Compile Include="Helpers\PasswordHasher.cs" />
     <Compile Include="Helpers\SceHelper.cs" />
     <Compile Include="Helpers\ViewHelper.cs" />
     <Compile Include="Intefaces\IModelWithPriority.cs" />
     <Compile Include="Models\AdditionalStatus.cs" />
     <Compile Include="Models\Address.cs" />
+    <Compile Include="Models\BillingHistory.cs" />
     <Compile Include="Models\City.cs" />
     <Compile Include="Models\ClientEndPoint.cs" />
     <Compile Include="Models\ClientRequest.cs" />
@@ -284,6 +284,7 @@
     <Compile Include="Models\InternetSettings.cs" />
     <Compile Include="Models\Lease.cs" />
     <Compile Include="Models\LegalClient.cs" />
+    <Compile Include="Models\Payment.cs" />
     <Compile Include="Models\PlanTransfer.cs" />
     <Compile Include="Models\SaleSettings.cs" />
     <Compile Include="Models\Services\BlockAccountService.cs" />
@@ -348,6 +349,10 @@
     <ProjectReference Include="..\Common.Tools\Common.Tools\Common.Tools.csproj">
       <Project>{72afcfe8-c9e9-45fa-9698-bee896a517a3}</Project>
       <Name>Common.Tools</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\InternetInterface\InternetInterface.csproj">
+      <Project>{E2B03BC7-AACB-4A72-BBC7-DF4325912504}</Project>
+      <Name>InternetInterface</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
