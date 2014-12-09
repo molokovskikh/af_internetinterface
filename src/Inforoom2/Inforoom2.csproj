@@ -375,6 +375,7 @@
     <Content Include="Views\About\Index.cshtml" />
     <Content Include="Views\About\Details.cshtml" />
     <Content Include="Views\Faq\TechSupport.cshtml" />
+    <Content Include="Views\About\Payment.cshtml" />
     <None Include="Web.Inforoom2_Test.config">
       <SubType>Designer</SubType>
     </None>

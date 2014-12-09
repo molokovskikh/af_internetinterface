@@ -48,8 +48,14 @@ a:visited, a:active { color: inherit;}
 	.wrapper .type {border: 3px solid #cfc9c9;}
 	.wrapper .type.typehit {border: 3px solid #a81c22;}
 .wrapper .girl { top: 87px;}
-.About { min-height: 600px;}
+
+
 	.About .whiteblock,.About .whiteblocktext {height: auto;margin-top: -45px;}
+	.About.Payment .window { height: 300px;left: 30px;top: 61px;width: 450px;  height: 225px;}
+	.About.Payment .contacting {bottom: 20px;position: absolute;right: 10px;}
+		.About.Payment .cooperation { height: 60px; width: 100%;margin: auto;}
+		.About.Payment .whiteblocktext { width: 635px;}
+		.About.Payment .applications { margin-left: 10px;height: 110px;}
 		.About .boy { background-image: url("../images/office_mini.png"); top: 53px;left: 58px;height: 397px; width: 418px;}
 .success .icon, .error .icon {vertical-align: top; margin-left: 5px;margin-top: 5px;}
 .heading { text-transform: uppercase;}
