@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Mail;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
@@ -17,6 +18,7 @@ using NHibernate.Linq;
 using NUnit.Framework;
 using Rhino.Mocks;
 using Test.Support.log4net;
+using Array = NHibernate.Mapping.Array;
 
 namespace InternetInterface.Test.Integration
 {
@@ -208,6 +210,37 @@ namespace InternetInterface.Test.Integration
 			var result = filter.Find(session).Select(r => r.Id).ToArray();
 			Assert.Contains(request2.Id, result);
 			Assert.That(result, Is.Not.Contains(request.Id));
+		}
+
+		[Test(Description = "При получении статического IP, у клиента заполняется инфа, которую заполняет ДХЦП сервер, при подключении клиента.")]
+		public void DHCP_Prepared_Fields_on_static_clients()
+		{
+			var client = ClientHelper.Client(session);
+			client.RatedPeriodDate = null;
+			session.Save(client);
+			Assert.That(client.BeginWork,Is.Null);
+			Assert.That(client.RatedPeriodDate, Is.Null);
+
+			var zone = new Zone("dasdad");
+			session.Save(zone);
+			var sw = new NetworkSwitch("lal", zone);
+			session.Save(sw);
+
+			var ip = new StaticIp();
+			ip.Ip = "172.28.11.2";
+			ip.Mask = 255;
+
+			var info = new ConnectInfo();
+			info.Port = "22";
+			info.Switch = sw.Id;
+
+			controller.SaveSwitchForClient(client.Id, info, 0, new StaticIp[1] { ip }, 0, "100", new Order(), false, 0);
+			session.Flush();
+			Assert.That(client.BeginWork, Is.Not.Null);
+			Assert.That(client.RatedPeriodDate, Is.Not.Null);
+
+
+		
 		}
 	}
 }
