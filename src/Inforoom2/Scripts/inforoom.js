@@ -184,21 +184,21 @@ function Inforoom() {
 		var wnd = this.createWindow("Выберите город", this.getTemplate("CityWindow"));
 		wnd.block();
 		//ok button event
-		$(wnd.getElement()).find('.button.ok').on("click", function() {
+		$(wnd.getElement()).find('.click.ok').on("click", function() {
 			var city = $(wnd.getElement()).find(".UserCity").html();
 			wnd.remove();
 			cli.setCookie("userCity", city);
 		});
 
 		//cancel button event
-		$(wnd.getElement()).find(".button.cancel").on("click", function() {
+		$(wnd.getElement()).find(".click.cancel").on("click", function() {
 			var content = cli.getTemplate("SelectCityWindow");
 			wnd.pushContent(content);
 			$(wnd.getElement()).find('.cities a').on("click", function() {
 				cli.setCookie("userCity", this.innerHTML);
 				window.location.reload();
 			});
-			$(wnd.getElement()).find('.button.cancel').on("click", wnd.popContent.bind(wnd));
+			$(wnd.getElement()).find('.click.cancel').on("click", wnd.popContent.bind(wnd));
 		});
 	}
 
