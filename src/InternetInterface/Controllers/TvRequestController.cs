@@ -28,7 +28,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["contacts"] = client.Contacts.Where(c => contactTypes.Contains(c.Type)).ToList();
 		}
 
-		public void New(uint clientId, [ARDataBind("request", AutoLoad = AutoLoadBehavior.NewInstanceIfInvalidKey)] TvRequest request)
+		public void New(uint clientId, [ARDataBind("request", AutoLoad = AutoLoadBehavior.NewRootInstanceIfInvalidKey)] TvRequest request)
 		{
 			request.Partner = Partner;
 

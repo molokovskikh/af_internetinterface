@@ -1,3 +1,4 @@
+a.corpred, .corpred { color: #a61c21 !important;}
 textarea { resize: none;}
 ul { padding: 0px;}
 .menu ul { width: 100%!important;}
@@ -75,7 +76,12 @@ body .leftbg, body .rightbg {min-height: 1100px}
 .wrapper .historys {width: 802px;margin-left: 366px;margin-top: 60px; height: auto } 
 .page.Personal.Payment .cabinet.descript {position: absolute;}
 
+.wrapper .answererror, .wrapper .answersuccess { position: relative;}
+.wrapper .answererrorbg, .wrapper .answersuccessbg  {height: 46px; left: 15px;position: absolute;top: 23px;width: 46px;}
+.wrapper .mapright { top: 158px;}
+.wrapper .contracttop { margin-top: 0px;}
 
+/*Стили верстальщика*/
 
 @font-face {
     font-family: PDFDinTextPro; 
