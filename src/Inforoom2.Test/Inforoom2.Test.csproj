@@ -126,6 +126,10 @@
       <Project>{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}</Project>
       <Name>Inforoom2</Name>
     </ProjectReference>
+    <ProjectReference Include="..\InternetInterface\InternetInterface.csproj">
+      <Project>{E2B03BC7-AACB-4A72-BBC7-DF4325912504}</Project>
+      <Name>InternetInterface</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Test.Support\Test.Support.Selenium\Test.Support.Selenium.csproj">
       <Project>{E37375CE-ADBA-47C9-9FA1-D7C5C704CD89}</Project>
       <Name>Test.Support.Selenium</Name>

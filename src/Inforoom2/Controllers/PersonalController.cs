@@ -127,7 +127,7 @@ namespace Inforoom2.Controllers
 		private void InitPlans(Client client)
 		{
 			var plans =
-				Plans.Where(
+				GetList<Plan>().Where(
 					p =>
 						!p.IsArchived && !p.IsServicePlan &&
 						p.Regions.Any(r => r.Id == client.PhysicalClient.Address.House.Street.Region.Id)).ToList();

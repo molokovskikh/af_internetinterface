@@ -9,6 +9,7 @@ using CassiniDev;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
+using InternetInterface.Helpers;
 using LinqToExcel;
 using NHibernate;
 using NHibernate.Linq;
@@ -68,7 +69,7 @@ namespace Inforoom2.Test.Functional
 				Role role = new Role {Name = "Admin"};
 				session.Save(role);
 
-				var pass = PasswordHasher.Hash("password");
+				var pass = CryptoPass.GetHashString("password");
 
 				IList<Role> roles = new List<Role>();
 				roles.Add(role);
@@ -83,8 +84,7 @@ namespace Inforoom2.Test.Functional
 
 				var client = new Client {
 					PhysicalClient = new PhysicalClient {
-						Password = pass.Hash,
-						Salt = pass.Salt,
+						Password = pass,
 						PhoneNumber = "4951234567",
 						Email = "test@client.rru",
 						Name = "Иван",

@@ -5,6 +5,7 @@ using System.Web.Security;
 using Common.MySql;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
+using InternetInterface.Helpers;
 using NHibernate.Linq;
 
 namespace Inforoom2.Controllers
@@ -20,7 +21,7 @@ namespace Inforoom2.Controllers
 			int id = 0;
 			int.TryParse(username, out id);
 			var user = DbSession.Query<Client>().FirstOrDefault(k => k.Id == id);
-			if (user != null && PasswordHasher.Equals(password, user.PhysicalClient.Salt, user.PhysicalClient.Password)) {
+			if (user != null && CryptoPass.GetHashString(password) == user.PhysicalClient.Password) {
 				return Authenticate("Profile", "Personal", username, shouldRemember);
 			}
 			ErrorMessage("Неправильный логин или пароль");
@@ -32,7 +33,6 @@ namespace Inforoom2.Controllers
 			else
 				return RedirectToAction("Index", "Home");
 		}
-
 
 		public ActionResult Logout()
 		{
