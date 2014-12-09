@@ -18,7 +18,7 @@ namespace Inforoom2.Models
 		[Property, NotNullNotEmpty]
 		public virtual string Text { get; set; }
 		
-		[Property, NotNullNotEmpty]
+		[Property,]
 		public virtual string Answer { get; set; }
 		
 		[Property]

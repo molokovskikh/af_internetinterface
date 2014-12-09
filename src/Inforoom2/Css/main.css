@@ -21,10 +21,15 @@ a:visited, a:active { color: inherit;}
 			.window .wrap  { padding: 10px;}
 			.cityWindow { height: 200px;}
 				.cityWindow button { cursor: pointer;  margin: 0 20px; width: 80px;}
-				.cityWindow .whiteblocktext { width: auto;padding: 0px;}
+				.window .whiteblocktext { width: auto;padding: 0px;}
 				.cityWindow a { text-decoration: underline;}
 				.cityWindow a:hover { color: #a81c22;}
 				#SelectCityWindow .cancel { position: absolute;bottom: 0;right: 0;margin: 10px;}
+	#CallMeBackWindow { height: 300px;}
+		#CallMeBackWindow .whiteblocktext p { margin-left: 33px;text-align: left;}
+		#CallMeBackWindow .applications{display: inline-block;height: 225px;text-align: left;width: 458px;}
+		#CallMeBackWindow .contacting { position: absolute;right: 0px;bottom: 0px;margin: 20px 32px;}
+		#CallMeBackWindow .definitely { position: absolute;left: 0px;bottom: 0px;margin: 40px;}
 .TestSpeed, .OfferContract { margin: 20px;text-align: center;}
 .OfferContract .thumbnail { display: inline-block;width: 180px;margin: 10px;border: 1px solid #e7e7e7;border-radius: 13px;padding: 10px; text-align: center; color: #474747;}
 .tech a {color: #b3393e}
@@ -43,14 +48,21 @@ a:visited, a:active { color: inherit;}
 	.wrapper .type {border: 3px solid #cfc9c9;}
 	.wrapper .type.typehit {border: 3px solid #a81c22;}
 .wrapper .girl { top: 87px;}
-.About { min-height: 600px;}
+
+
 	.About .whiteblock,.About .whiteblocktext {height: auto;margin-top: -45px;}
+	.About.Payment .window { height: 300px;left: 30px;top: 61px;width: 450px;  height: 225px;}
+	.About.Payment .contacting {bottom: 20px;position: absolute;right: 10px;}
+		.About.Payment .cooperation { height: 60px; width: 100%;margin: auto;}
+		.About.Payment .whiteblocktext { width: 635px;}
+		.About.Payment .applications { margin-left: 10px;height: 110px;}
 		.About .boy { background-image: url("../images/office_mini.png"); top: 53px;left: 58px;height: 397px; width: 418px;}
 .success .icon, .error .icon {vertical-align: top; margin-left: 5px;margin-top: 5px;}
 .heading { text-transform: uppercase;}
 .Details { text-align: center;}
 	.Details table {text-align: left;height: auto;margin-bottom: 45px;}
-
+.TechSupport .boy {background-image: url("../images/tech_support.png");background-position: 5px center;border: 1px solid #e3dfde;border-radius: 5px;height: 224px;left: 83px;padding: 5px;top: 60px;width: 337px;}
+.TechSupport .whiteblock { height: 360px;}
 	.errorpage {display: inline-block;height: 200px;line-height: 32px;margin-top: 130px; margin-left: 400px ;vertical-align: top;width: 407px;}
 .errorpage h1 {font-size: 18px;font-weight: normal;color: #2e2d2d;margin-bottom: 36px;}
 .errorpage a {color: #a71b22;text-decoration: underline;}

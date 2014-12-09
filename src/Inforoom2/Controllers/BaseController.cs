@@ -10,6 +10,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
+using System.Web.UI.WebControls;
 using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
@@ -138,6 +139,8 @@ namespace Inforoom2.Controllers
 			SetCookie("WarningMessage", message);
 		}
 
+
+
 		protected override void OnException(ExceptionContext filterContext)
 		{
 			/*if (filterContext.ExceptionHandled) {
@@ -156,10 +159,30 @@ namespace Inforoom2.Controllers
 			}
 			ViewBag.ActionName = filterContext.RouteData.Values["action"].ToString();
 			ViewBag.ControllerName = filterContext.RouteData.Values["controller"].ToString();
+			ProcessCallMeBackTicket();
 			ProcessRegionPanel();
 			if (CurrentClient != null) {
 				ViewBag.ClientInfo = string.Format("{0}, Баланс: {1} ", CurrentClient.PhysicalClient.FullName, CurrentClient.PhysicalClient.Balance);
 			}
+		}
+
+		private void ProcessCallMeBackTicket()
+		{
+			ViewBag.CallMeBackTicket = new CallMeBackTicket();
+			var binder = new EntityBinderAttribute("callMeBackTicket.Id", typeof(CallMeBackTicket));
+			CallMeBackTicket callMeBackTicket = (CallMeBackTicket)binder.MapModel(Request);
+			if (callMeBackTicket.Name == null)
+				return;
+			var errors = ValidationRunner.ValidateDeep(callMeBackTicket);
+			if (errors.Length == 0)
+			{
+				DbSession.Save(callMeBackTicket);
+				SuccessMessage("Заявка отправлена. В течении для вам перезвонят.");
+				return;
+			}
+
+			ViewBag.CallMeBackTicket = callMeBackTicket;
+			AddJavascriptParam("CallMeBack", "1");
 		}
 
 		public void ProcessRegionPanel()

@@ -190,6 +190,7 @@
     <Content Include="Images\speedbg.png" />
     <Content Include="Images\speedbgactiv.png" />
     <Content Include="Images\staff.png" />
+    <Content Include="Images\tech_support.png" />
     <Content Include="Images\tick.png" />
     <Content Include="Images\typehit.png" />
     <Content Include="Images\upward.png" />
@@ -376,6 +377,8 @@
     <Content Include="Views\About\Index.cshtml" />
     <Content Include="Views\About\Details.cshtml" />
     <Content Include="Views\IsMyHouseConnected\Index.cshtml" />
+    <Content Include="Views\Faq\TechSupport.cshtml" />
+    <Content Include="Views\About\Payment.cshtml" />
     <None Include="Web.Inforoom2_Test.config">
       <SubType>Designer</SubType>
     </None>

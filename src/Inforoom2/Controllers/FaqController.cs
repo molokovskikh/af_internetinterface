@@ -31,17 +31,35 @@ namespace Inforoom2.Controllers
 		[HttpPost]
 		public ActionResult Index(Ticket ticket)
 		{
+			Index();
+			ViewBag.NewTicket = ticket;
 			var errors = ValidationRunner.ValidateDeep(ticket);
 			if (errors.Length == 0) {
 				DbSession.Save(ticket);
-				SuccessMessage("Вопрос успешно отправлен. Ждите ответа на почту.");
-				return RedirectToAction("Index");
+				SuccessMessage("Вопрос успешно отправлен. Ответ придет вам на на почту.");
+				ViewBag.NewTicket = new Ticket();
 			}
+			else
+				ViewBag.ShowQuestionForm = true;
+			return View();
+		}
 
-			var questions = DbSession.Query<Question>().ToList();
-			ViewBag.NewTicket = ticket;
-			ViewBag.Questions = questions;
-			ViewBag.ShowQuestionForm = true;
+		/// <summary>
+		/// Страница техподдержки
+		/// </summary>
+		public ActionResult TechSupport()
+		{
+			Index();
+			return View();
+		}
+
+		/// <summary>
+		/// Обрабатывает отправку нового вопроса
+		/// </summary>
+		[HttpPost]
+		public ActionResult TechSupport(Ticket ticket)
+		{
+			Index(ticket);
 			return View();
 		}
 	}

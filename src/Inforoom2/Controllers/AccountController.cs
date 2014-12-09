@@ -24,7 +24,13 @@ namespace Inforoom2.Controllers
 				return Authenticate("Profile", "Personal", username, shouldRemember);
 			}
 			ErrorMessage("Неправильный логин или пароль");
-			return Redirect(returnUrl);
+			if (String.IsNullOrEmpty(returnUrl))
+				returnUrl = Request.UrlReferrer.ToString();
+
+			if(!String.IsNullOrEmpty(returnUrl))
+				return Redirect(returnUrl);
+			else
+				return RedirectToAction("Index", "Home");
 		}
 
 
