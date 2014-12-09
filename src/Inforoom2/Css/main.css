@@ -71,6 +71,11 @@ a:visited, a:active { color: inherit;}
 a.plugs { color: white;}
 body .leftbg, body .rightbg {min-height: 1100px}
 
+.wrapper .answererror, .wrapper .answersuccess { position: relative;}
+.wrapper .answererrorbg, .wrapper .answersuccessbg  {height: 46px; left: 15px;position: absolute;top: 23px;width: 46px;}
+.wrapper .mapright { top: 158px;}
+.wrapper .contracttop { margin-top: 0px;}
+
 /*Стили верстальщика*/
 @font-face {
     font-family: PDFDinTextPro; 
