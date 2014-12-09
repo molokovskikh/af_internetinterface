@@ -31,6 +31,7 @@ namespace Inforoom2.Controllers
 
 		public ActionResult ViewNewsBlock(int? newsid)
 		{
+			
 			var newsBlock = DbSession.Get<NewsBlock>(newsid);
 			ViewBag.NewsBlock = newsBlock;
 			return View();

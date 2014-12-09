@@ -26,19 +26,19 @@
 		</div>
 		<div>
 			<div class="personals">Город:</div>
-			@Html.ValidationEditor(validationRunner, clientRequest, "City", new { @class = "personal", onkeyup = "typeWatcher( 1500)" }, HtmlTag.input, HtmlType.text)
+			@Html.ValidationEditor(validationRunner, clientRequest, "City", new { @class = "personal", onkeyup = "typeWatcher(1000)" }, HtmlTag.input, HtmlType.text)
 		</div>
 		<div>
 			<div class="personals">Улица:</div>
-			@Html.ValidationEditor(validationRunner, clientRequest, "Street", new { @class = "personal", onkeyup = "typeWatcher( 1500)" }, HtmlTag.input, HtmlType.text)
+			@Html.ValidationEditor(validationRunner, clientRequest, "Street", new { @class = "personal", onkeyup = "typeWatcher(1000)" }, HtmlTag.input, HtmlType.text)
 		</div>
 		<div class="block">
 			<div class="addon">Дом:</div>
-			@Html.ValidationEditor(validationRunner, clientRequest, "HouseNumber", new { @class = "addons", onkeyup = "typeWatcher( 1500)" }, HtmlTag.input, HtmlType.text)
+			@Html.ValidationEditor(validationRunner, clientRequest, "HouseNumber", new { @class = "addons", onkeyup = "typeWatcher(1000)" }, HtmlTag.input, HtmlType.text)
 		</div>
 		<div class="block">
 			<div class="addon">Корпус:</div>
-			@Html.ValidationEditor(validationRunner, clientRequest, "Housing", new { @class = "addons", onkeyup = "typeWatcher( 1500)" }, HtmlTag.input, HtmlType.text)
+			@Html.ValidationEditor(validationRunner, clientRequest, "Housing", new { @class = "addons", onkeyup = "typeWatcher(1000)" }, HtmlTag.input, HtmlType.text)
 		</div>
 		<div class="block">
 			<div class="addon">Квартира:</div>
@@ -67,5 +67,8 @@
 			в соответствии с которым одна сторона принимает на себя обязательство по оказанию услуг в отношении неопределенного круга лиц,
 			обратившихся с запросом на предоставление данных услуг.</p>
 	</div>
+	@Html.HiddenFor(k => clientRequest.YandexCity, new { id = "yandexCityHidden" })
+	@Html.HiddenFor(k => clientRequest.YandexStreet, new { id = "yandexStreetHidden" })
+	@Html.HiddenFor(k => clientRequest.YandexHouse, new { id = "yandexHouseHidden" })
 	<input class="resend" type="submit" value="Отправить">
 }

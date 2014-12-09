@@ -17,6 +17,10 @@ namespace Inforoom2.Models
 
 		[Property]
 		public virtual int Floor { get; set; }
+		
+		//true если яндекс api нашел адрес
+		[Property]
+		public virtual bool IsCorrectAddress { get; set; }
 
 		public virtual string FullAddress
 		{
@@ -24,8 +28,11 @@ namespace Inforoom2.Models
 			{
 				return House.Street.Region.City.Name + ". "
 				       + House.Street.Name + ". "
-				       + House.FullName;
+				       + House.Number;
 			}
 		}
+
+		public virtual string AddressAsString { get; set; }
+		
 	}
 }

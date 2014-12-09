@@ -204,19 +204,16 @@ namespace Inforoom2.Test.Functional
 			IList<SwitchAddress> addresses = new List<SwitchAddress>();
 			var excelItems = excelQuery.Select(r => r.item).ToList();
 			foreach (var item in excelItems) {
-				string number = string.Empty;
-				string housing = string.Empty;
+				
 				if (item.House != null) {
-					AddressHelper.SplitHouseAndHousing(item.House, ref number, ref housing);
 					var house = new House();
-					house.Number = number;
-					house.Housing = housing;
-					house.Street = streets.FirstOrDefault(s => s.Name == item.Street);
+					house.Number = item.House;
+				house.Street = streets.FirstOrDefault(s => s.Name == item.Street);
 					SwitchAddress address = new SwitchAddress();
 
 					address.House = house;
 					address.Switch = new Switch {
-						Name = string.Format("{0}_{1}_{2}", house.Street.Name, house.Number, house.Housing)
+						Name = string.Format("{0}_{1}", house.Street.Name, house.Number)
 					};
 					addresses.Add(address);
 				}
@@ -268,12 +265,11 @@ namespace Inforoom2.Test.Functional
 						AddressHelper.SplitHouseAndHousing(houseNumber, ref number, ref housing);
 						var house = new House();
 						house.Number = number;
-						house.Housing = housing;
 						house.Street = street;
 						var switchAddress = new SwitchAddress();
 						switchAddress.House = house;
 						switchAddress.Switch = new Switch {
-							Name = string.Format("{0}_{1}_{2}", house.Street.Name, house.Number, house.Housing)
+							Name = string.Format("{0}_{1}", house.Street.Name, house.Number)
 						};
 
 						session.Save(switchAddress);
