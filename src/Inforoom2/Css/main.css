@@ -72,6 +72,10 @@ a.plugs { color: white;}
 body .leftbg, body .rightbg {min-height: 1100px}
 .wrapper .logon {padding-right: 30px; text-align: right; width: 800px;}
 .logonform {display: inline-block;}
+.wrapper .historys {width: 802px;margin-left: 366px;margin-top: 60px; height: auto } 
+.page.Personal.Payment .cabinet.descript {position: absolute;}
+
+
 
 @font-face {
     font-family: PDFDinTextPro; 

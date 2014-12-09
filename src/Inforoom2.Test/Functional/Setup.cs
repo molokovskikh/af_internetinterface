@@ -56,7 +56,7 @@ namespace Inforoom2.Test.Functional
 				return;
 			}
 			if (!session.Query<Address>().Any()) {
-				ImportSwitchesAddresses();
+			/*	ImportSwitchesAddresses();*/
 			}
 			if (!session.Query<Plan>().Any(p => p.Name == "Популярный")) {
 				GeneratePlansAndPrices();

@@ -275,6 +275,7 @@
     <Compile Include="Intefaces\IModelWithPriority.cs" />
     <Compile Include="Models\AdditionalStatus.cs" />
     <Compile Include="Models\Address.cs" />
+    <Compile Include="Models\BillingHistory.cs" />
     <Compile Include="Models\City.cs" />
     <Compile Include="Models\ClientEndPoint.cs" />
     <Compile Include="Models\ClientRequest.cs" />
@@ -283,6 +284,7 @@
     <Compile Include="Models\InternetSettings.cs" />
     <Compile Include="Models\Lease.cs" />
     <Compile Include="Models\LegalClient.cs" />
+    <Compile Include="Models\Payment.cs" />
     <Compile Include="Models\PlanTransfer.cs" />
     <Compile Include="Models\SaleSettings.cs" />
     <Compile Include="Models\Services\BlockAccountService.cs" />
