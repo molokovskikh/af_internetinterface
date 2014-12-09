@@ -70,8 +70,9 @@ a:visited, a:active { color: inherit;}
 .page.Service .namemenu.descriptions {padding: 0 55px 0 0;}
 a.plugs { color: white;}
 body .leftbg, body .rightbg {min-height: 1100px}
+.wrapper .logon {padding-right: 30px; text-align: right; width: 800px;}
+.logonform {display: inline-block;}
 
-/*Стили верстальщика*/
 @font-face {
     font-family: PDFDinTextPro; 
     src: url(../fonts/PDFDinTextPro.ttf); /* Путь к файлу со шрифтом */
@@ -173,6 +174,11 @@ margin-left: 369px;margin-top: 25px;padding-bottom: 3px;width: 180px;}
 .tiestext {width: 655px;height: 105px;}
 .know.hidden .networking {display: none;}
 .question .answer.hidden {display: none;}
+.logon {display: inline-block;float: right;height: 49px;width: 400px;}
+.logon p {font-size: 14px;font-family: PDFDinTextPro;font-style: italic;color: #b6b6b6;display: inline-block;margin-right: 10px;}
+.logon input {background: none repeat scroll 0 0 #aa181e;border: medium none; border-radius: 2px;color: #ffffff;cursor: pointer;display: inline-block;font-family: PDFDinTextPro;
+font-size: 14px;height: 29px;padding-bottom: 3px;width: 127px;}
+.logon a {font-size: 14px;color: #ffffff;text-decoration: underline;font-family: PDFDinTextPro;margin-left: 15px;cursor: pointer;}
 .cabinet {border: 1px solid #e7e7e7;height: 389px;margin-left: 75px;width: 245px;border-radius: 12px;box-shadow: 0 0 2px 1px #e7e7e7;display: inline-block;}
 .cabinet ul {font-size: 18px;text-align: left;list-style: outside none none;padding: 0px;}
 .cabinet li {font-family: PDFDinTextPro;margin: 15px 27px;}
@@ -180,20 +186,42 @@ margin-left: 369px;margin-top: 25px;padding-bottom: 3px;width: 180px;}
 .cabinet a.active {color: #a71b22;}
 .addressleft { height: 540px;margin-left: 97px;margin-top: 43px;width: 499px;}
 .mapright {width: 442px;height: 445px; background: url("../images/map.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);display: inline-block; position: absolute;
-    right: 62px;top: 360px;}
-.contracttop {font-family: PTSans;font-size: 14px;margin-left: 100px;margin-top: 75px;width: 994px;}
+    right: 62px;top: 150px;}
+.contracttop {font-family: PTSans;font-size: 14px;margin-left: 100px;width: 994px;}
 .location .personals {vertical-align: top;}
-.location textarea {background: none repeat scroll 0 0 #f1f1f1;border: 1px solid #d2d2d2;color: #8f8f8f;}
+.location textarea {background: none repeat scroll 0 0 #f1f1f1;border: 1px solid #d2d2d2;color: #8f8f8f;height: 108px;width: 269px;}
 .verify {background: none repeat scroll 0 0 #aa181e;border: medium none;border-radius: 2px;color: #ffffff;cursor: pointer;font-family: PDFDinTextPro;font-size: 20px;height: 39px;
     padding-bottom: 3px;width: 180px; margin-left: 268px;margin-top: 20px;}
 .answersuccess {background: none repeat scroll 0 0 #e3dfdf;border-radius: 18px;height: 74px;margin-top: 61px;width: 435px; }
-.answersuccessbg {background: url("../images/answersuccessbg.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);height: 40px;left: 112px;position: absolute;top: 688px;width: 50px;}
+.answersuccessbg {background: url("../images/answersuccessbg.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);height: 40px;left: 112px;position: absolute;top: 462px;width: 50px;}
 .answererror {background: none repeat scroll 0 0 #e3dfdf;border-radius: 18px;height: 90px;margin-top: 15px;width: 435px;}
-.answererrorbg {background: url("../images/answererrorbg.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);height: 48px;left: 112px;position: absolute;top: 781px;width: 50px;}
+.answererrorbg {background: url("../images/answererrorbg.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);height: 48px;left: 112px;position: absolute;top: 557px;width: 50px;}
 .reply {width: 325px;height: 75px;margin-left: 77px;color: #2e2d2d;}
 .reply h1 {font-size: 18px;margin-bottom: 5px;padding-top: 13px;font-weight: normal;}
 .reply p {font-size: 16px;margin: 0px;}
-.cost {border: 3px solid #a81c22;border-collapse: collapse;border-radius: 15px;display: inline-block;float: right;height: 236px;margin-right: 92px;margin-top: 40px;width: 733px;font-size: 0px;background: #f1f1f1;}
+.billing {background: none repeat scroll 0 0 #e3dfdf;float: right;height: 345px;margin-right: 85px;margin-top: 60px;width: 725px;border-radius: 18px;}
+.expense {width: 593px;margin-top: 28px;margin-left: 14px;}
+.replenish {display: inline-block;height: 20px;margin-bottom: 35px;width: 144px;font-size: 19px;}
+.expenses {background: none repeat scroll 0 0 #f1f1f1;border: 1px solid #dadada;height: 28px;width: 262px;color: #8f8f8f;font-family: PTSans;font-size: 13px;
+font-style: oblique;padding-left: 10px;}
+.banks {height: 157px;margin-left: 13px;margin-top: 8px;width: 586px;}
+.bank {display: inline-block;background: #ffffff;width: 125px;height: 125px;border-radius: 12px;margin-right: 10px;border: 3px solid rgba(0, 0, 0, 0);cursor: pointer;}
+.bankbgsb {width: 101px;height: 101px;background: url("../images/sb.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);margin-left: 11px;margin-top: 15px;}
+.bankbgcp {width: 105px;height: 101px;background: url("../images/cp.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);margin-left: 11px;margin-top: 15px;}
+.bankbgqw {width: 105px;height: 101px;background: url("../images/qw.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);margin-left: 11px;margin-top: 15px;}
+.bankbgap {width: 105px;height: 101px;background: url("../images/ap.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);margin-left: 11px;margin-top: 15px;}
+.bank.active {border: 3px solid #a81c22;}
+.pay {background: none repeat scroll 0 0 #aa181e;border: medium none;border-radius: 2px;color: #ffffff;cursor: pointer;font-family: PDFDinTextPro;font-size: 20px;height: 39px;padding-bottom: 3px;
+     width: 180px;margin-left: 256px;margin-top: 19px;}
+.historys {height: 330px;width: 802px;margin-left: 366px;margin-top: 60px;}
+.history {color: #2e2d2d;font-family: PDFDinTextPro;font-size: 27px;height: 60px;text-align: center;width: 475px;margin-left: 135px;}
+.historytb {background: none repeat scroll 0 0 #f1f1f1;border: 3px solid #a81c22;border-collapse: collapse;border-radius: 15px;display: inline-block;font-size: 0;width: 733px;padding-bottom: 10px;}
+.menyhistory {background: none repeat scroll 0 0 #e3dfdf;border-collapse: collapse;color: #403f3f;cursor: pointer;font-size: 16px;height: 57px;margin: 0;padding: 0 30px;position: relative;
+text-align: left;vertical-align: middle;width: 117px;}
+.menyhistory:first-child {border-radius: 12px 0 0 12px;width: 313px;}
+.menyhistory:last-child {border-radius: 0 12px 12px 0;}
+.fistorytb { font-family: PTSans;font-style: oblique;font-size: 14px;font-weight: normal;padding: 14px 30px;}
+.cost {border: 3px solid #a81c22;border-collapse: collapse;border-radius: 15px;display: inline-block;float: right;margin-right: 92px;margin-top: 40px;width: 733px;font-size: 0px;background: #f1f1f1;padding-bottom: 10px;}
 .menucost {width: 732px;height: 60px;}
 .namemenu {background: none repeat scroll 0 0 #e3dfdf;border-collapse: collapse;cursor: pointer;font-size: 16px;height: 57px;margin: 0;padding: 0 30px;position: relative;
 text-align: left;vertical-align: middle;width: 117px;color: #403f3f;}
@@ -222,8 +250,7 @@ height: 28px;padding-bottom: 0px;width: 92px;text-align: center;padding-top: -11
 .disposalbg {background: url("../images/disposal.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);display: inline-block;height: 29px;width: 32px;margin-left: 18px;cursor: pointer;}
 .lists {color: #2e2d2d;font-size: 22px;height: 435px;width: 839px;margin-left: 343px;}
 .listsb {color: #2e2d2d;font-size: 22px;height: 0px;width: 230px;margin-left: 45px;}
-.cost.all {background: none repeat scroll 0 0 #f1f1f1;border: 3px solid #a81c22;border-collapse: collapse;border-radius: 15px;display: inline-block;
-  float: right;font-size: 0;height: 370px;margin-right: 92px;width: 733px;}
+.cost.all {background: none repeat scroll 0 0 #f1f1f1;border: 3px solid #a81c22;border-collapse: collapse;border-radius: 15px;display: inline-block;float: right;font-size: 0;margin-right: 92px;width: 733px;padding-bottom: 10px;}
 .namemenu.descriptions {padding: 0 23px 0 0;width: 116px;}
 .plugs { background: none repeat scroll 0 0 #aa181e;border: medium none;border-radius: 2px;color: #ffffff;cursor: pointer;display: inline-block;
 font-family: PDFDinTextPro;font-size: 12px;height: 28px;line-height: 24px;padding-bottom: 0;text-align: center;width: 92px;}
@@ -305,35 +332,20 @@ padding-bottom: 3px;width: 170px;margin-left: 56px;}
 .none {display: inline-block;height: 200px;line-height: 32px;margin-left: 78px;margin-top: 130px;vertical-align: top;width: 407px;}
 .none h1 {font-size: 18px;font-weight: normal;color: #2e2d2d;margin-bottom: 36px;}
 .none a {color: #a71b22;text-decoration: underline;}
-
-
-
-
-
-
-
-
-
-.billing {background: none repeat scroll 0 0 #e3dfdf;float: right;height: 345px;margin-right: 85px;margin-top: 60px;width: 725px;border-radius: 18px;}
-.expense {width: 593px;margin-top: 28px;margin-left: 14px;}
-.replenish {display: inline-block;height: 20px;margin-bottom: 35px;width: 144px;font-size: 19px;}
-.expenses {background: none repeat scroll 0 0 #f1f1f1;border: 1px solid #dadada;height: 28px;width: 262px;color: #8f8f8f;font-family: PTSans;font-size: 13px;
-font-style: oblique;padding-left: 10px;}
-.banks {height: 157px;margin-left: 13px;margin-top: 8px;width: 586px;}
-.bank {display: inline-block;background: #ffffff;width: 125px;height: 125px;border-radius: 12px;margin-right: 10px;border: 3px solid rgba(0, 0, 0, 0);cursor: pointer;}
-.bankbgsb {width: 101px;height: 101px;background: url("../images/sb.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);margin-left: 11px;margin-top: 15px;}
-.bankbgcp {width: 105px;height: 101px;background: url("../images/cp.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);margin-left: 11px;margin-top: 15px;}
-.bankbgqw {width: 105px;height: 101px;background: url("../images/qw.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);margin-left: 11px;margin-top: 15px;}
-.bankbgap {width: 105px;height: 101px;background: url("../images/ap.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);margin-left: 11px;margin-top: 15px;}
-.bank.active {border: 3px solid #a81c22;}
-.pay {background: none repeat scroll 0 0 #aa181e;border: medium none;border-radius: 2px;color: #ffffff;cursor: pointer;font-family: PDFDinTextPro;font-size: 20px;height: 39px;padding-bottom: 3px;
-     width: 180px;margin-left: 256px;margin-top: 19px;}
-.historys {height: 330px;width: 802px;margin-left: 366px;margin-top: 60px;}
-.history {color: #2e2d2d;font-family: PDFDinTextPro;font-size: 27px;height: 60px;text-align: center;width: 475px;margin-left: 135px;}
-.historytb {background: none repeat scroll 0 0 #f1f1f1;border: 3px solid #a81c22;border-collapse: collapse;border-radius: 15px;display: inline-block;font-size: 0;
-    height: 236px;width: 733px;}
-.menyhistory {background: none repeat scroll 0 0 #e3dfdf;border-collapse: collapse;color: #403f3f;cursor: pointer;font-size: 16px;height: 57px;margin: 0;padding: 0 30px;position: relative;
-text-align: left;vertical-align: middle;width: 117px;}
-.menyhistory:first-child {border-radius: 12px 0 0 12px;width: 313px;}
-.menyhistory:last-child {border-radius: 0 12px 12px 0;}
-.fistorytb { font-family: PTSans;font-style: oblique;font-size: 14px;font-weight: normal;padding: 14px 30px;}
+.font {margin-left: 107px;width: 790px;height: 300px;}
+.font h2 {font-size: 22px;font-family: PDFDinTextPro; font-weight: normal;color: #2e2d2d;}
+.font .active {color: #ac3237;text-decoration: underline;font-size: 18px;font-family: PDFDinTextPro; font-weight: normal;}
+.font p {font-size: 14px;font-family: PTSans;color: #2e2d2d;}
+.font a {font-size: 14px;font-family: PTSans;color: #ac3237;text-decoration: underline;cursor: pointer;}
+.font h3 {font-size: 15px;font-family: PDFDinTextPro;font-weight: normal;color: #2e2d2d;}
+.font .explanation {font-size: 13px;font-family: PTSans;color: #737373;}
+.buttons {width: 200px;height: 200px;margin-left: 104px;display: inline-block;}
+.button {background: none repeat scroll 0 0 #aa181e;border: medium none;border-radius: 2px;color: #ffffff;cursor: pointer;font-family: PDFDinTextPro;font-size: 20px;height: 39px;
+ padding-bottom: 3px;width: 180px;}
+.button.active {background: none repeat scroll 0 0 #7b0c10;border: medium none;border-radius: 2px;color: #ffffff;cursor: pointer;font-family: PDFDinTextPro;font-size: 20px;height: 39px;
+ padding-bottom: 3px;width: 180px;margin-top: 15px;}
+.callbacks {display: inline-block;width: 200px;height: 200px;vertical-align: top;}
+.callback {background: none repeat scroll 0 0 #ffffff;border: 2px solid #e7e7e7;border-radius: 5px;box-shadow: 0 0 2px 0 #e7e7e7;color: #aa181e;cursor: pointer;font-family: PDFDinTextPro;font-size: 20px;
+ height: 43px;padding-bottom: 3px;width: 207px;}
+.callback.active {background: none repeat scroll 0 0 #ffffff;border: 0px solid #e7e7e7;border-radius: 5px;box-shadow: 0 0 10px 0 #e39194;color: #aa181e;cursor: pointer;font-family: PDFDinTextPro;font-size: 20px;
+ height: 43px;padding-bottom: 3px;width: 207px;margin-top: 10px;}

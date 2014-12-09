@@ -67,7 +67,7 @@ namespace Inforoom2.Controllers
 				}
 				int id = 0;
 				int.TryParse(User.Identity.Name, out id);
-				return DbSession.Query<Client>().FirstOrDefault(k => k.Id == id );
+				return DbSession.Get<Client>(id);
 			}
 		}
 
@@ -122,7 +122,9 @@ namespace Inforoom2.Controllers
 			ProcessCallMeBackTicket();
 			ProcessRegionPanel();
 			if (CurrentClient != null) {
-				ViewBag.ClientInfo = string.Format("{0}, Баланс: {1} ", CurrentClient.PhysicalClient.FullName, CurrentClient.PhysicalClient.Balance);
+				StringBuilder sb = new StringBuilder();
+				sb.AppendFormat("Здравствуйте, {0}. Ваш баланс: {1} руб.",  CurrentClient.PhysicalClient.Name,   CurrentClient.PhysicalClient.Balance);
+				ViewBag.ClientInfo = sb.ToString();
 			}
 		}
 

@@ -5,7 +5,6 @@
 @{
 	string username = "";
 	string password = "";
-
 }
 <html>
 	<head>
@@ -37,22 +36,24 @@
 					<div class="whiteright"></div>
 					<div class="blackright"></div>
 				</div>
-				<div class="login">
-					@if (Request.IsAuthenticated && ViewBag.ClientInfo != null) {
-						<text>
-							@ViewBag.ClientInfo
-							[ @Html.ActionLink("Выход", "Logout", "Account") ]
-							@Html.ActionLink("Личный кабинет", "Profile", "Personal")
-						</text>
-					}
-					else {
-						using (Html.BeginForm("Login", "Account", new { returnUrl = @Request.Url }, FormMethod.Post, null)) {
+				@if (Request.IsAuthenticated && ViewBag.ClientInfo != null) {
+					<div class="logon">
+						<p>	@ViewBag.ClientInfo </p>
+						@using (Html.BeginForm("Profile", "Personal", FormMethod.Post, new { @class = "logonform" })) {
+							<input type="submit" value="Личный кабинет">
+						}
+						@Html.ActionLink("Выход", "Logout", "Account") 
+					</div>
+				}
+				else {
+					<div class="login">
+						@using (Html.BeginForm("Login", "Account", new { returnUrl = @Request.Url }, FormMethod.Post, null)) {
 							@Html.TextBoxFor(model => username, new { @class = "user", placeholder = "Номер счета" })
 							@Html.PasswordFor(model => password, new { @class = "user", placeholder = "Пароль" })
 							<input class="click" type="submit" value="Войти">
 						}
-					}
-				</div>
+					</div>
+				}
 			</div>
 			<div class="header">
 				<a href="/">
@@ -60,26 +61,26 @@
 					</div>
 				</a>
 				<form method="Pos" action="/ClientRequest">
-				<input class="connect" type="submit" value="Подключиться">
+					<input class="connect" type="submit" value="Подключиться">
 				</form>
 				<input class="call" type="submit" value="Обратный звонок">
 				<div class="phone">8 800 200-00-32</div>
 			</div>
 			<div class="menu">
 				<ul>
-				@{
-					var menu = new List<string[]>();
-					menu.Add(new []{"Главная", "Index", "Home"});
-					menu.Add(new []{"Тарифы", "TariffPlans", "Home"});
-					menu.Add(new []{"Заявка на подключение", "Index", "ClientRequest"});
-					menu.Add(new []{"Для бизнеса", "Index", "Bussiness"});
-					menu.Add(new []{"Вопросы и ответы", "Index", "Faq"});
-					menu.Add(new[] {"Оплата", "Payment", "About" });
-					menu.Add(new []{"О компании", "Index", "About"});
-					foreach(var item in menu) {
-						<li>@Html.ActionLink(item[0], item[1], item[2], null, new {@class = ViewBag.ControllerName == item[2] && ViewBag.ActionName == item[1] ? "active" : ""}) </li>
+					@{
+						var menu = new List<string[]>();
+						menu.Add(new[] { "Главная", "Index", "Home" });
+						menu.Add(new[] { "Тарифы", "TariffPlans", "Home" });
+						menu.Add(new[] { "Заявка на подключение", "Index", "ClientRequest" });
+						menu.Add(new[] { "Для бизнеса", "Index", "Bussiness" });
+						menu.Add(new[] { "Вопросы и ответы", "Index", "Faq" });
+						menu.Add(new[] { "Оплата", "Payment", "About" });
+						menu.Add(new[] { "О компании", "Index", "About" });
+						foreach (var item in menu) {
+							<li>@Html.ActionLink(item[0], item[1], item[2], null, new { @class = ViewBag.ControllerName == item[2] && ViewBag.ActionName == item[1] ? "active" : "" }) </li>
+						}
 					}
-				}
 				</ul>
 			</div>
 			<div class="page @(ViewBag.ControllerName) @(ViewBag.ActionName)">
@@ -95,9 +96,9 @@
 				</div>
 				<div class="support">
 					<ul>
-						<li>@Html.ActionLink("Подключен ли мой дом?","Index","IsMyHouseConnected")</li>
-						<li>@Html.ActionLink("Протестировать скорость","Index","TestSpeed")</li>
-						<li class="tech">@Html.ActionLink("Техподдержка","TechSupport","Faq")<sup>24</sup></li>
+						<li>@Html.ActionLink("Подключен ли мой дом?", "Index", "IsMyHouseConnected")</li>
+						<li>@Html.ActionLink("Протестировать скорость", "Index", "TestSpeed")</li>
+						<li class="tech">@Html.ActionLink("Техподдержка", "TechSupport", "Faq")<sup>24</sup></li>
 					</ul>
 				</div>
 				<div class="support">
@@ -119,7 +120,7 @@
 				</div>
 			</div>
 		</div>
-<!-- Техническая информация -->
+		<!-- Техническая информация -->
 		<div class="JavascriptParams" style="display: none">
 			@{
 				var dic = ViewBag.JavascriptParams as Dictionary<string, string>;
@@ -141,7 +142,7 @@
 						</div>
 						<div class='wrap'></div>
 					</div>
-					</div>
+				</div>
 			</div>
 			<div class="cityWindow" id="CityWindow" >
 				<div>
@@ -176,12 +177,12 @@
 				}
 			</div>
 			<div class="cityWindow" id ="CallMeBackWindow" >
-						@{
-							CallMeBackTicket ticket = ViewBag.CallMeBackTicket;
-							ValidationRunner validationRunner = ViewBag.Validation;
-							String action = ViewBag.ActionName.ToString();
-							String controller = ViewBag.ControllerName.ToString();
-						}
+				@{
+					CallMeBackTicket ticket = ViewBag.CallMeBackTicket;
+					ValidationRunner validationRunner = ViewBag.Validation;
+					String action = ViewBag.ActionName.ToString();
+					String controller = ViewBag.ControllerName.ToString();
+				}
 				@using (@Html.BeginForm(action, controller, FormMethod.Post)) {
 					<div class="whiteblocktext">
 						<p>Свяжитесь с нами по вопросам сотрудничества:</p>
@@ -201,13 +202,12 @@
 				}
 			</div>
 		</div>
-
-	<script type="text/javascript" src="~/Scripts/jquery-2.1.1.js"></script>
-	<script type="text/javascript" src="~/Scripts/jquery-ui-1.11.1.js"></script>
-	<script type="text/javascript" src="~/Scripts/Helpers.js"></script>
-	<script type="text/javascript" src="~/Scripts/EventEmitter.js"></script>
-	<script type="text/javascript" src="~/Scripts/Inforoom.js"></script>
-	<script type="text/javascript" src="~/Scripts/Window.js"></script>
-	@RenderSection("JavaScript", required: false)
+		<script type="text/javascript" src="~/Scripts/jquery-2.1.1.js"></script>
+		<script type="text/javascript" src="~/Scripts/jquery-ui-1.11.1.js"></script>
+		<script type="text/javascript" src="~/Scripts/Helpers.js"></script>
+		<script type="text/javascript" src="~/Scripts/EventEmitter.js"></script>
+		<script type="text/javascript" src="~/Scripts/Inforoom.js"></script>
+		<script type="text/javascript" src="~/Scripts/Window.js"></script>
+		@RenderSection("JavaScript", required: false)
 	</body>
 </html>
