@@ -348,8 +348,16 @@ namespace InternetInterface.Controllers
 						if (client.Status.Id == (uint)StatusType.BlockedAndNoConnected)
 							client.Status = DbSession.Load<Status>((uint)StatusType.BlockedAndConnected);
 						client.SyncServices(settings);
+						
+						//Если клиент не включался и ему сразу был дан статический IP
+						//То данные, которые проставляются DHCP сервисом, необходимо проставлять вручную, если их нет
+						if (staticAdress.Length > 0) {
+							if (client.BeginWork == null)
+								client.BeginWork = DateTime.Now;
+							if (client.RatedPeriodDate == null)
+								client.RatedPeriodDate = DateTime.Now;
+						}
 						DbSession.Save(client);
-
 						DbSession.Query<StaticIp>().Where(s => s.EndPoint == clientEntPoint).ToList().Where(
 							s => !staticAdress.Select(f => f.Id).Contains(s.Id)).ToList()
 							.ForEach(s => DbSession.Delete(s));
