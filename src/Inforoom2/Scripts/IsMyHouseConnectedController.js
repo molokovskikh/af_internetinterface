@@ -1,4 +1,4 @@
-﻿console.log("ClientRequest.js");
+﻿console.log("IsMyHouseConnectedController.js");
 ymaps.ready(init);
 var myMap;
 var userCity;
@@ -18,13 +18,14 @@ function init() { // Создаем карту.
 		zoom: 15,
 		controls: ['zoomControl']
 	});
+	myMap.disableRuler();
 }
 
 
 function checkAddress(firstGeoObject) {
 	//запрос адреса в формате яндекса
 	if (!firstGeoObject) {
-		$('.YMapAddressResult').html("Яндекс: Адрес введен некорректно");
+		console.log("Яндекс: Адрес введен некорректно");
 		return;
 	}
 	ymaps.geocode(firstGeoObject.geometry.getCoordinates(), {
@@ -64,15 +65,9 @@ function findAddressOnMap(searchQuery) {
 
 var typeWatcher = function() {
 	var timer = 0;
-	console.log('tick');
 	return function(ms) {
 		var callback = function showAddressOnMap() {
-			userCity = document.getElementById('clientRequest_City').value.toLowerCase();
-			userStreet = document.getElementById('clientRequest_Street').value.toLowerCase();
-			userHouse = document.getElementById('clientRequest_HouseNumber').value.toLowerCase();
-			userHousing = document.getElementById('clientRequest_Housing').value.toLowerCase();
-
-			var address = userCity + " " + userStreet + " " + userHouse + " " + userHousing;
+			var address = $('.rounded option:selected').text() +" "+ document.getElementById('addressArea').value.toLowerCase();
 			findAddressOnMap(address);
 			
 		}

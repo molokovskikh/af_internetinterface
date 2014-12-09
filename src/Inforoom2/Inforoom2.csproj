@@ -196,6 +196,7 @@
     <Content Include="Images\wifi.png" />
     <Content Include="Scripts\AdminAddressController.js" />
     <Content Include="Scripts\ClientRequest.js" />
+    <Content Include="Scripts\IsMyHouseConnectedController.js" />
     <Content Include="Scripts\EditNewsBlock.js" />
     <Content Include="Scripts\EventEmitter.js" />
     <Content Include="Scripts\FaqController.js" />
@@ -245,6 +246,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\ClientRequestController.cs" />
+    <Compile Include="Controllers\IsMyHouseConnectedController.cs" />
     <Compile Include="Controllers\StaticContent.cs" />
     <Compile Include="Controllers\BussinessController.cs" />
     <Compile Include="Controllers\AboutController.cs" />
@@ -373,6 +375,7 @@
     <Content Include="Views\Bussiness\Index.cshtml" />
     <Content Include="Views\About\Index.cshtml" />
     <Content Include="Views\About\Details.cshtml" />
+    <Content Include="Views\IsMyHouseConnected\Index.cshtml" />
     <None Include="Web.Inforoom2_Test.config">
       <SubType>Designer</SubType>
     </None>
