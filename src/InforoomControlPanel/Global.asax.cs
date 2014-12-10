@@ -39,7 +39,7 @@ namespace InforoomControlPanel
 		{
 			AreaRegistration.RegisterAllAreas();
 			RouteConfig.RegisterRoutes(RouteTable.Routes);
-		//	InitializeSessionFactory();
+			InitializeSessionFactory();
 		}
 
 		protected void Application_PostAuthenticateRequest(Object sender, EventArgs e)
