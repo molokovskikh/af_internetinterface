@@ -9,7 +9,6 @@ namespace Inforoom2.Models
 	[Class(0, Table = "Regions", NameType = typeof(Region))]
 	public class Region : BaseModel
 	{
-		
 		[Property(Column = "Region")]
 		public virtual string Name { get; set; }
 
@@ -20,6 +19,9 @@ namespace Inforoom2.Models
 		[Key(1, Column = "region", NotNull = false)]
 		[ManyToMany(2, Column = "Plan",ClassType = typeof(Plan))]
 		public virtual IList<Plan> Plans { get; set; }
-		
+
+		[Property(Column = "_RegionOfficePhoneNumber")]
+		public virtual string RegionOfficePhoneNumber { get; set; }
+
 	}
 }
