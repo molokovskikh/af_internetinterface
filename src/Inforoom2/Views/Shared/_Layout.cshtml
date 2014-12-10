@@ -148,8 +148,8 @@
 				<div>
 					<div id="userCity" class="whiteblocktext"><p>Мы определили, что вы находитесь в регионе <span class="UserCity">@(ViewBag.UserCity)</span></p></div>
 					<div class="buttons">
+						<button class="click cancel">Нет</button>
 						<button class="click ok">Да</button>
-						<button class="click  cancel">Нет</button>
 					</div>
 				</div>
 			</div>
@@ -185,7 +185,8 @@
 				}
 				@using (@Html.BeginForm(action, controller, FormMethod.Post)) {
 					<div class="whiteblocktext">
-						<p>Наш оператор свяжется с вами в течении дня.</p>
+						<p>Наш оператор свяжется с вами в течении дня.
+						</p>
 					</div>
 					<div class="applications">
 						<div class="label">Имя:<sup>*</sup></div>
@@ -200,6 +201,10 @@
 						<input class="contacting" type="submit" value="Связаться">
 					</div>
 				}
+			</div>
+			<div id="windowButtons" class="buttons">
+				<button class="click cancel">Нет</button>
+				<button class="click ok">Да</button>
 			</div>
 		</div>
 		<script type="text/javascript" src="~/Scripts/jquery-2.1.1.js"></script>

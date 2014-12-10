@@ -42,6 +42,7 @@ function Inforoom() {
 
 		this.checkCity();
 		this.showMessages();
+		this.areYouSure("Вы уверенны, что вы хуй?", function() { alert(1); });
 	}
 
 	this.callMeBackWindow = function() {
@@ -142,11 +143,28 @@ function Inforoom() {
 		this.params[name] = value;
 	}
 
-	this.areYouSure = function(element, message, callback) {
-		element.event("click", function(e) {
-			var window = this.createWindow("Вы уверены?", message);
-			window.css(".ok").event("click", callback);
-		}.bind(this));
+	/**
+	* Отображает диалоговое окно, с сообщением о подтверждении пользовательского действия
+	*
+	* @param {String} message Сообщение, отоброжаемое пользователю
+	* @param {Function} callback Функция обратного вызова, которая будет исполнена, если пользователь согласен
+	* @param {String} title Название окна - по умолчанию "Вы уверены?"
+	* @returns {Window} элемент окна
+	*/
+	this.areYouSure = function ( message, callback, title) {
+		if (title == null)
+			title = "Вы уверены?";
+		var str = "<div class='whiteblocktext'>" + message + "</div>";
+		var html = str.toHTML();
+		$(html).height(100);
+		var window = this.createWindow(title,html);
+		window.add2Buttons();
+		$(window.getOkButton()).on("click", function () {
+			window.remove();
+			callback();
+		});
+		$(window.getCancelButton()).on("click", window.remove.bind(window));
+		return window;
 	}
 
 	this.showMessages = function() {
