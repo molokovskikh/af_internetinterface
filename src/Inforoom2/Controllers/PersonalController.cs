@@ -10,11 +10,17 @@ using Common.MySql;
 using Inforoom2.Components;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
+using InternetInterface.Models;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Linq;
 using NHibernate.Proxy;
+using Client = Inforoom2.Models.Client;
+using Contact = Inforoom2.Models.Contact;
+using Payment = Inforoom2.Models.Payment;
 using Service = Inforoom2.Models.Services.Service;
+using UserWriteOff = Inforoom2.Models.UserWriteOff;
+using WriteOff = Inforoom2.Models.WriteOff;
 
 
 namespace Inforoom2.Controllers
@@ -90,10 +96,50 @@ namespace Inforoom2.Controllers
 			return View();
 		}
 
-
 		public ActionResult Notifications()
 		{
+			var client = CurrentClient;
+			var smsContact = client.Contacts.FirstOrDefault(c => c.Type == ContactType.SmsSending);
+			if (smsContact == null) {
+				smsContact = new Contact();
+				smsContact.Type = ContactType.SmsSending;
+			}
+			ViewBag.Contact = smsContact;
+			ViewBag.IsSmsNotificationActive = client.SendSmsNotification;
 			ViewBag.Title = "Уведомления";
+			return View();
+		}
+
+
+		[HttpPost]
+		public ActionResult Notifications(Contact contact)
+		{
+			var client = CurrentClient;
+			var errors = ValidationRunner.ValidateDeep(contact);
+			if (errors.Length == 0) {
+				var smsContact = client.Contacts.FirstOrDefault(c => c.Type == ContactType.SmsSending);
+				if (smsContact == null) {
+					smsContact = contact;
+					smsContact.Date = DateTime.Now;
+					smsContact.Comment = "Пользователь создал из личного кабинета";
+					client.Contacts.Add(smsContact);
+				}
+				if (client.SendSmsNotification) {
+					client.SendSmsNotification = false;
+					SuccessMessage("Вы успешно отписались от смс рассылки");
+				}
+				else {
+					client.SendSmsNotification = true;
+					SuccessMessage("Вы успешно подписались на смс рассылку");
+				}
+
+				smsContact.ContactString = contact.ContactString;
+				DbSession.Save(client);
+				return RedirectToAction("Notifications");
+			}
+
+			ViewBag.Contact = contact;
+			ViewBag.IsSmsNotificationActive = client.SendSmsNotification;
 			return View();
 		}
 

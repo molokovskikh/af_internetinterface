@@ -1,7 +1,31 @@
-﻿@model dynamic
+﻿@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@model dynamic
 @{
-	
+	Contact contact = ViewBag.Contact;
+	ValidationRunner validationRunner = ViewBag.Validation;
 }
 
-<h2>@ViewBag.Title</h2>
-@{ Html.RenderPartial("Menu");  }
+@{ Html.RenderPartial("Menu"); }
+
+@if (!ViewBag.IsSmsNotificationActive) {
+	using (Html.BeginForm("Notifications", "Personal", FormMethod.Post)) {
+		<div>Укажите номер телефона для смс рассылки </div>
+		@Html.ValidationEditor(validationRunner, contact, "ContactString", new { @class = "personal", @placeholder ="Введите номер в десятизначном формате" }, HtmlTag.input, HtmlType.text)
+		@Html.HiddenFor(k=>contact.Type)
+		@Html.HiddenFor(k=>contact.Date)
+		<input  type="submit" value="Подписаться">
+	}
+}
+else {
+	using (Html.BeginForm("Notifications", "Personal", FormMethod.Post)) {
+		<div>Вы подписаны на смс рассылку</div>
+		@Html.DisplayFor(k=>contact.ContactString)
+		@Html.HiddenFor(k=>contact.ContactString)
+		@Html.HiddenFor(k=>contact.Date)
+		@Html.HiddenFor(k=>contact.Type)
+		<input  type="submit" value="Отписаться">
+	}
+	
+}
