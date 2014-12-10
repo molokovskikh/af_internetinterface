@@ -79,7 +79,14 @@ namespace Inforoom2.Models
 		[OneToMany(2, ClassType = typeof (ClientEndpoint))]
 		public virtual IList<ClientEndpoint> Endpoints { get; set; }
 
-
+		[Bag(0,Table = "Contacts", Cascade = "all-delete-orphan")]
+		[Key(1, Column = "client")]
+		[OneToMany(2, ClassType = typeof (Contact))]
+		public virtual IList<Contact> Contacts { get; set; }
+		
+		[Property(Column = "SendSmsNotifocation")]
+		public virtual bool SendSmsNotification { get; set; }
+		
 		public virtual bool IsNeedRecofiguration { get; set; }
 
 		public virtual bool IsWorkStarted()

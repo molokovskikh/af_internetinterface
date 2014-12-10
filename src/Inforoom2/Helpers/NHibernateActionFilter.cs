@@ -89,7 +89,8 @@ namespace Inforoom2.Helpers
 				|| tableName == "WriteOff"
 				|| tableName == "Requests"
 				|| tableName == "Partners"
-				|| tableName == "Payments") {
+				|| tableName == "Payments"
+				|| tableName == "Contacts") {
 				return tableName;
 			}
 			return "inforoom2_" + tableName;
