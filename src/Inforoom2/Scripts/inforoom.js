@@ -42,7 +42,6 @@ function Inforoom() {
 
 		this.checkCity();
 		this.showMessages();
-		this.areYouSure("Вы уверенны, что вы хуй?", function() { alert(1); });
 	}
 
 	this.callMeBackWindow = function() {
