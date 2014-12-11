@@ -40,7 +40,7 @@ namespace Inforoom2.Controllers
 			ViewBag.Validation = ValidationRunner;
 			ViewBag.Title = "Инфорум";
 			ViewBag.JavascriptParams = new Dictionary<string, string>();
-			ViewBag.Cities = new string[] { "Воронеж", "Борисоглебск", "Белгород" };
+			ViewBag.Cities = new string[] { "Борисоглебск", "Белгород" };
 		}
 
 		public void AddJavascriptParam(string name, string value)
@@ -78,6 +78,12 @@ namespace Inforoom2.Controllers
 			get { return userCity; }
 		}
 
+		public Region CurrentRegion
+		{
+			get { return DbSession.Query<Region>().FirstOrDefault(r => r.Name == UserCity)
+				?? DbSession.Query<Region>().FirstOrDefault(); }
+		}
+
 
 		public HttpSessionStateBase HttpSession
 		{
@@ -100,7 +106,6 @@ namespace Inforoom2.Controllers
 		}
 
 
-
 		protected override void OnException(ExceptionContext filterContext)
 		{
 			/*if (filterContext.ExceptionHandled) {
@@ -110,6 +115,12 @@ namespace Inforoom2.Controllers
                 new RouteValueDictionary
                     {{"controller", "Home"}, {"action", "Index"}});
 			filterContext.ExceptionHandled = true;*/
+		}
+
+		protected override void OnResultExecuting(ResultExecutingContext filterContext)
+		{
+			ViewBag.RegionOfficePhoneNumber = CurrentRegion.RegionOfficePhoneNumber;
+			base.OnResultExecuting(filterContext);
 		}
 
 		protected override void OnActionExecuted(ActionExecutedContext filterContext)
@@ -123,7 +134,7 @@ namespace Inforoom2.Controllers
 			ProcessRegionPanel();
 			if (CurrentClient != null) {
 				StringBuilder sb = new StringBuilder();
-				sb.AppendFormat("Здравствуйте, {0}. Ваш баланс: {1} руб.",  CurrentClient.PhysicalClient.Name,   CurrentClient.PhysicalClient.Balance);
+				sb.AppendFormat("Здравствуйте, {0}. Ваш баланс: {1} руб.", CurrentClient.PhysicalClient.Name, CurrentClient.PhysicalClient.Balance);
 				ViewBag.ClientInfo = sb.ToString();
 			}
 		}
@@ -136,8 +147,7 @@ namespace Inforoom2.Controllers
 			if (callMeBackTicket.Name == null)
 				return;
 			var errors = ValidationRunner.ValidateDeep(callMeBackTicket);
-			if (errors.Length == 0)
-			{
+			if (errors.Length == 0) {
 				DbSession.Save(callMeBackTicket);
 				SuccessMessage("Заявка отправлена. В течении для вам перезвонят.");
 				return;
