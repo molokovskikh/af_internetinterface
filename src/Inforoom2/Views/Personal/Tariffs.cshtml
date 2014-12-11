@@ -5,73 +5,37 @@
 	IList<Plan> plans = ViewBag.Plans;
 }
 
-<h2>@ViewBag.Title</h2>
+<div class="heading">Тарифы</div>
+<div class="personalinfo">Бесплатная смена тарифного плана доступна 1 раз в месяц.
+В меняли тариф @client.LastTimePlanChanged.ToShortDateString()</div>
+<table class="cost">
+	<tr class="menucost">
+		<td class="namemenu"><div class="namemenubg"></div>Название</td>
+		<td class="namemenu"><div class="namemenubg"></div>Скорость</td>
+		<td class="namemenu"><div class="namemenubg "></div>Абонентская плата</td>
+		<td class="namemenu"><div class="namemenubg "></div>Стоимость перехода</td>
+		<td class="namemenu td">Действие</td>
+	</tr>
+	@foreach (var plan in plans) {
+		@Html.HiddenFor(modelItem => plan.Id)
 
-@{ Html.RenderPartial("Menu");  }
-
-<div style="width:800px; margin:0 auto;">
-<span>Бесплатная смена тарифа доступна 1 раз в месяц.
-	Ваш тариф: @client.Plan.Name
-</span>
-
-<div class="AdminPlan">
-	<table class="AdminPlanTable">
-		<tr>
-			<td>
-				<div>Название</div>
-			</td>
-			<td>
-				<div>Скорость</div>
-			</td>
-			<td>
-				<div>Абон. плата</div>
-			</td>
-			<td>
-				<div>Стоимость перехода</div>
-			</td>
-			<td>
-				<div>Действие</div>
+		<tr class="menufee">
+			<td class="tariffscost">@Html.DisplayFor(modelItem => plan.Name)</td>
+			<td class="fee">@Html.DisplayFor(modelItem => plan.Speed)</td>
+			<td class="fee">@Html.DisplayFor(modelItem => plan.Price)</td>
+			<td class="costs">@Html.DisplayFor(modelItem => plan.SwitchPrice)</td>
+			<td >
+				@if (plan.Id == client.Plan.Id) {
+					<input class="connectfee" disabled="disabled"  value="Текущий"/>
+				}
+				else {
+					using (@Html.BeginForm("ChangePlan", "Personal")) {
+						@Html.HiddenFor(modelItem => plan.Id)
+						<input class="connectfee" type="submit" value="Сменить"/>
+					}
+				}
 			</td>
 		</tr>
-		@foreach (var plan in plans) {
-			<tr>
-				<td>
-					@Html.HiddenFor(modelItem => plan.Id)
-					@Html.DisplayFor(modelItem => plan.Name)
-				</td>
-				<td>
-					@Html.DisplayFor(modelItem => plan.Speed)
-				</td>
-				<td>
-					@Html.DisplayFor(modelItem => plan.Price)
-				</td>
-				<td>
-					@if (client.IsFreePlanChange) {
-						<text>0</text>
-					}
-					else {
-						@Html.DisplayFor(modelItem => plan.SwitchPrice)
-					}
-					
-				</td>
-				<td>
-					@if (plan.Id == client.Plan.Id) {
-						<text>Текущий</text>
-					}
-					else {
-						using(@Html.BeginForm("ChangePlan","Personal"))
-						{
-							@Html.HiddenFor(modelItem => plan.Id)
-							<input type="submit" value="Сменить"/>
-						}
-						@*<span><button class="ChangePlan" onclick=" location.href = '@Url.Action("ChangePlan", "Personal", new { planId = plan.Id })' ">Сменить</button></span>*@
-					}
-				
-				</td>
-				
-			</tr>
-		}
-	</table>
-	
-</div>
-	</div>
+	}
+</table>
+@{ Html.RenderPartial("Menu");  }

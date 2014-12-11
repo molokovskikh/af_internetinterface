@@ -1,82 +1,74 @@
 ﻿@section JavaScript{<script type="text/javascript"src="@Url.Content("~/Scripts/ClientRequest.js")"></script>}
+@using Inforoom2.Components
+@using Inforoom2.Helpers
 @using Inforoom2.Models
 @{
 	ClientRequest clientRequest = ViewBag.ClientRequest;
+	ValidationRunner validationRunner = ViewBag.Validation;
 }
 
 <script src="http://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
 
-
-<div class="CreateClientRequest" >
-	
-	@using (@Html.BeginForm("Create", "ClientRequest", FormMethod.Post)) {
+<div class="heading">ЗАЯВКА НА ПОДКЛЮЧЕНИЕ</div>
+@using (@Html.BeginForm("Index", "ClientRequest", FormMethod.Post)) {
+	<div class="leftpersonal">
 		<div>
-			<span>ФИО</span>
-			@Html.TextBoxFor(model => clientRequest.ApplicantName)
-			@ViewBag.Validation.GetError(clientRequest, "ApplicantName", "Поле не может быть пустым")
+			<div class="personals">Ф.И.О:</div>
+			@Html.ValidationEditor(validationRunner, clientRequest, "ApplicantName", new { @class = "personal" }, HtmlTag.input, HtmlType.text)
 		</div>
 		<div>
-			<span>Номер телефона</span>
-			@Html.TextBoxFor(model => clientRequest.ApplicantPhoneNumber)
-			@ViewBag.Validation.GetError(clientRequest, "ApplicantPhoneNumber", "Укажите номер телефона")
+			<div class="personals">Номер телефона:</div>
+			@Html.ValidationEditor(validationRunner, clientRequest, "ApplicantPhoneNumber", new { @class = "personal", placeholder = "8-***-***-**-**" }, HtmlTag.input, HtmlType.text)
 		</div>
 		<div>
-			<span>Эл. почта</span>
-			@Html.TextBoxFor(model => clientRequest.Email)
-			@ViewBag.Validation.GetError(clientRequest, "Email", "Неправильный адрес эл. почты")
+			<div class="personals">Электронная почта:</div>
+			@Html.ValidationEditor(validationRunner, clientRequest, "Email", new { @class = "personal" }, HtmlTag.input, HtmlType.text)
 		</div>
 		<div>
-			<span>Город</span>
-			@Html.TextBoxFor(model => clientRequest.Address.House.Street.Region.City.Name, new {onkeyup = "typeWatcher( 1500);"})
-			@ViewBag.Validation.GetError(clientRequest.Address.House.Street.Region.City, "Name", "Поле не может быть пустым")
+			<div class="personals">Город:</div>
+			@Html.ValidationEditor(validationRunner, clientRequest, "City", new { @class = "personal", onkeyup = "typeWatcher(1000)" }, HtmlTag.input, HtmlType.text)
 		</div>
 		<div>
-			<span>Улица</span>
-			@Html.TextBoxFor(model => clientRequest.Address.House.Street.Name, new {onkeyup = "typeWatcher( 1500);"})
-			@ViewBag.Validation.GetError(clientRequest.Address.House.Street, "Name", "Поле не может быть пустым")
+			<div class="personals">Улица:</div>
+			@Html.ValidationEditor(validationRunner, clientRequest, "Street", new { @class = "personal", onkeyup = "typeWatcher(1000)" }, HtmlTag.input, HtmlType.text)
+		</div>
+		<div class="block">
+			<div class="addon">Дом:</div>
+			@Html.ValidationEditor(validationRunner, clientRequest, "HouseNumber", new { @class = "addons", onkeyup = "typeWatcher(1000)" }, HtmlTag.input, HtmlType.text)
+		</div>
+		<div class="block">
+			<div class="addon">Корпус:</div>
+			@Html.ValidationEditor(validationRunner, clientRequest, "Housing", new { @class = "addons", onkeyup = "typeWatcher(1000)" }, HtmlTag.input, HtmlType.text)
+		</div>
+		<div class="block">
+			<div class="addon">Квартира:</div>
+			@Html.ValidationEditor(validationRunner, clientRequest, "Apartment", new { @class = "addons" }, HtmlTag.input, HtmlType.text)
+		</div>
+		<div class="block">
+			<div class="addon">Подъезд:</div>
+			@Html.ValidationEditor(validationRunner, clientRequest, "Entrance", new { @class = "addons" }, HtmlTag.input, HtmlType.text)
+		</div>
+		<div class="block">
+			<div class="addon">Этаж:</div>
+			@Html.ValidationEditor(validationRunner, clientRequest, "Floor", new { @class = "addons" }, HtmlTag.input, HtmlType.text)
 		</div>
 		<div>
-			<span>Дом</span>
-			@Html.TextBoxFor(model => clientRequest.Address.House.Number, new {onkeyup = "typeWatcher( 1500);", placeholder = "Например 14А"})
-			@ViewBag.Validation.GetError(clientRequest.Address.House, "Number", "Поле не может быть пустым")
+			<div class="personals">Тарифный план:</div>
+			@Html.DropDownListExtendedFor(k => clientRequest.Plan, ViewBag.Plans as List<Plan>, k => k.Name, null, new { @class = "rounded" }, clientRequest.Plan != null ? clientRequest.Plan.Id : 0)
 		</div>
+		
+	</div>
+	<div id="yandexMap" class="map"></div>
+	<div class="contract">
 		<div>
-			<span>Корпус / Строение</span>
-			@Html.TextBoxFor(model => clientRequest.Address.House.Housing, new {onkeyup = "typeWatcher( 1500);", placeholder = "Например К3 С1"})
-		</div>
-		<div>
-			<span>Квартира</span>
-			@Html.TextBoxFor(model => clientRequest.Address.Apartment)
-			@ViewBag.Validation.GetError(clientRequest.Address, "Apartment", "Поле не может быть пустым")
-		</div>
-		<div>
-			<span>Подъезд</span>
-			@Html.TextBoxFor(model => clientRequest.Address.Entrance)
-			@ViewBag.Validation.GetError(clientRequest.Address, "Entrance", "Поле не может быть пустым")
-		</div>
-		<div>
-			<span>Этаж</span>
-			@Html.TextBoxFor(model => clientRequest.Address.Floor)
-			@ViewBag.Validation.GetError(clientRequest.Address, "Floor", "Поле не может быть пустым")
-		</div>
-		<div>
-			<span>Выберите тариф</span>
-			@Html.DropDownListFor(k => clientRequest.Plan.Name, ViewBag.Tariffs as IList<SelectListItem>)
-		</div>
-
-		<div>
-			<span>Возможность самостоятельного подключения:</span>
-			@Html.CheckBoxFor(k => clientRequest.SelfConnect)
-		</div>
-
-		<input type="submit"  value="Отправить заявку"/>
-	}
-	
-	<button class="SwitchAddressCheck" onclick=" checkSwitchAddress() ">Проверить адрес свича</button>
-	<div><span class="YMapAddressResult"></span></div>
-	<div><span class="SwitchAddressResult"></span></div>
-	
-	<div id="yandexMap" class="YMap" style="width: 600px; height: 400px"></div>
-
-	
-</div>
+			@Html.CheckBoxFor(k => clientRequest.IsContractAccepted)
+			Я прочитал договор оферту</div>
+		<p>В соответствии со ст.426 Гражданского кодекса РФ публичный договор является одним из видов договоров,
+			в соответствии с которым одна сторона принимает на себя обязательство по оказанию услуг в отношении неопределенного круга лиц,
+			обратившихся с запросом на предоставление данных услуг.</p>
+	</div>
+	@Html.HiddenFor(k => clientRequest.YandexCity, new { id = "yandexCityHidden" })
+	@Html.HiddenFor(k => clientRequest.YandexStreet, new { id = "yandexStreetHidden" })
+	@Html.HiddenFor(k => clientRequest.YandexHouse, new { id = "yandexHouseHidden" })
+	<input class="resend" type="submit" value="Отправить">
+}

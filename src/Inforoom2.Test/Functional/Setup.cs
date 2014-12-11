@@ -9,6 +9,7 @@ using CassiniDev;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
+using InternetInterface.Helpers;
 using LinqToExcel;
 using NHibernate;
 using NHibernate.Linq;
@@ -55,11 +56,14 @@ namespace Inforoom2.Test.Functional
 				return;
 			}
 			if (!session.Query<Address>().Any()) {
-				/*ImportSwitchesAddresses();*/
+				ImportSwitchesAddresses();
 			}
-			if (!session.Query<Plan>().Any(p => p.Name == "Популярный")) {
+
+				if (!session.Query<Plan>().Any(p => p.Name == "Популярный")) {
 				GeneratePlansAndPrices();
+					
 			}
+		
 
 			if (!session.Query<Client>().Any()) {
 				Permission permission = new Permission {Name = "TestPermission"};
@@ -68,24 +72,22 @@ namespace Inforoom2.Test.Functional
 				Role role = new Role {Name = "Admin"};
 				session.Save(role);
 
-				var pass = PasswordHasher.Hash("password");
+				var pass = CryptoPass.GetHashString("password");
 
 				IList<Role> roles = new List<Role>();
 				roles.Add(role);
 
 				var emp = new Employee() {
-					Username = "admin",
-					Password = pass.Hash,
-					Salt = pass.Salt,
+					Name = Environment.UserName,
 					Roles = roles,
+					Login = Environment.UserName
 				};
 				session.Save(emp);
 
 
 				var client = new Client {
 					PhysicalClient = new PhysicalClient {
-						Password = pass.Hash,
-						Salt = pass.Salt,
+						Password = pass,
 						PhoneNumber = "4951234567",
 						Email = "test@client.rru",
 						Name = "Иван",
@@ -93,7 +95,7 @@ namespace Inforoom2.Test.Functional
 						Patronymic = "Михалыч",
 						Plan = session.Query<Plan>().FirstOrDefault(p => p.Name == "Популярный"),
 						Balance = 1000,
-						Address = new Address {House = session.Query<House>().FirstOrDefault()},
+						Address = session.Query<Address>().FirstOrDefault(),
 						LastTimePlanChanged = DateTime.Now.AddMonths(-2)
 					},
 					Disabled = false,
@@ -121,11 +123,48 @@ namespace Inforoom2.Test.Functional
 				session.Save(client);
 			}
 
+			
+			GenerateNewsAndQuestions();
+			GenerateBillInfo();
 			session.Flush();
+		}
+
+		private static void GenerateBillInfo()
+		{
+			var client = session.Query<Client>().FirstOrDefault();
+			for (int i = 0; i < 10; i++) {
+				var writeof = new WriteOff();
+				writeof.Client = client;
+				writeof.MoneySum = i;
+				writeof.WriteOffSum = i;
+				writeof.WriteOffDate = DateTime.Now.AddDays(-i);
+				
+
+				var userWriteOff = new UserWriteOff();
+				userWriteOff.Client = client;
+				userWriteOff.Date = DateTime.Now.AddDays(-i);
+				userWriteOff.IsProcessedByBilling = true;
+				userWriteOff.Sum = i;
+				userWriteOff.Comment = "Списание за супер быстрый интернет";
+
+				var payment = new Payment();
+				payment.Sum = i;
+				payment.PaidOn = DateTime.Now.AddDays(-i);
+				payment.Client = client;
+				payment.Comment = "Платеж";
+
+				session.Save(writeof);
+				session.Save(userWriteOff);
+				session.Save(payment);
+			}
 		}
 
 		private static void GeneratePlansAndPrices()
 		{
+			var plans = session.Query<Plan>().ToList();
+			plans.ForEach(p=>p.IsArchived = true);
+			plans.ForEach(p=>session.SaveOrUpdate(p));
+			var reginon = session.Query<Region>().FirstOrDefault();
 			var plan1 = new Plan {
 				Name = "Популярный",
 				Price = 300,
@@ -133,7 +172,8 @@ namespace Inforoom2.Test.Functional
 				PlanTransfers = new List<PlanTransfer>(),
 				IsArchived = false,
 				IsServicePlan = false,
-				PackageId = 19
+				PackageId = 19,
+				Regions = new List<Region>(){reginon}
 			};
 
 			var plan2 = new Plan {
@@ -143,7 +183,8 @@ namespace Inforoom2.Test.Functional
 				PlanTransfers = new List<PlanTransfer>(),
 				IsArchived = false,
 				IsServicePlan = false,
-				PackageId = 19
+				PackageId = 19,
+				Regions = new List<Region>(){reginon}
 			};
 
 			var plan3 = new Plan {
@@ -153,7 +194,8 @@ namespace Inforoom2.Test.Functional
 				PlanTransfers = new List<PlanTransfer>(),
 				IsArchived = false,
 				IsServicePlan = false,
-				PackageId = 19
+				PackageId = 19,
+				Regions = new List<Region>(){reginon}	
 			};
 
 			plan1.AddPlanTransfer(plan2, 100);
@@ -170,9 +212,29 @@ namespace Inforoom2.Test.Functional
 			session.Flush();
 		}
 
+		public static void GenerateNewsAndQuestions()
+		{
+			for (int i = 0; i < 3; i++) {
+				var newsBlock = new NewsBlock(i);
+				newsBlock.Title = "Заголовок новости";
+				newsBlock.Preview = "Превью новости.С 02.06.2014г. офис интернет провайдера «Инфорум» располагается по новому адресу:г." +
+				                    " Борисоглебск, ул. Третьяковская д.6,напротив магазина «Удачный» ";
+				newsBlock.CreationDate = DateTime.Now;
+				newsBlock.IsPublished = true;
+				session.Save(newsBlock);
+
+				var question = new Question(i);
+				question.IsPublished = true;
+				question.Text = "Могу ли я одновременно пользоваться интернетом на нескольких компьютерах, если у меня один кабель?";
+				question.Answer = "Да, это возможно. Вам необходимо преобрести роутер, к которому будет подсоединяться кабель, и который будет раздавать сигнал на 2 или более устройств. Поскольку не все модели роутеров могут корректно работать в сети ООО «Инфорум», перед приобретением роутeра";
+				session.Save(question);
+			}
+			
+		}
+
 		public static void ImportSwitchesAddresses()
 		{
-			string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"switch.xlsx");
+		/*	string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"switch.xlsx");
 			var excelFile = new ExcelQueryFactory(path);
 			var query =
 				excelFile.Worksheet("Дома").Select(row => new {
@@ -184,12 +246,21 @@ namespace Inforoom2.Test.Functional
 					}
 				}).ToList();
 
-			var excelQuery = query.Where(q => q.item.House != null);
+			var excelQuery = query.Where(q => q.item.House != null);*/
 			var city = new City {Name = "Белгород"};
 			var region = new Region {City = city, Name = "Белгород"};
+			var address = new Address();
+			var house =  new House("86");
+			address.House = house;
+			address.House.Street = new Street("улица мичурина");
+			address.House.Street.Region = region;
+			var sw = new SwitchAddress();
+			sw.House = house;
 			session.Save(region);
+			session.Save(address);
+			session.Save(sw);
 
-			var streetsQuery = excelQuery.GroupBy(q => q.item.Street.Trim())
+			/*var streetsQuery = excelQuery.GroupBy(q => q.item.Street.Trim())
 				.Select(r => r.First())
 				.ToList();
 
@@ -205,44 +276,33 @@ namespace Inforoom2.Test.Functional
 			IList<SwitchAddress> addresses = new List<SwitchAddress>();
 			var excelItems = excelQuery.Select(r => r.item).ToList();
 			foreach (var item in excelItems) {
-				string number = string.Empty;
-				string housing = string.Empty;
+				
 				if (item.House != null) {
-					AddressHelper.SplitHouseAndHousing(item.House, ref number, ref housing);
 					var house = new House();
-					house.Number = number;
-					house.Housing = housing;
-					house.Street = streets.FirstOrDefault(s => s.Name == item.Street);
+					house.Number = item.House;
+				house.Street = streets.FirstOrDefault(s => s.Name == item.Street);
 					SwitchAddress address = new SwitchAddress();
 
 					address.House = house;
 					address.Switch = new Switch {
-						Name = string.Format("{0}_{1}_{2}", house.Street.Name, house.Number, house.Housing)
+						Name = string.Format("{0}_{1}", house.Street.Name, house.Number)
 					};
 					addresses.Add(address);
 				}
-			}
-
-
-			/*	foreach (var q in excelQuery) {
-				string number = string.Empty;
-				string housing = string.Empty;
-				SplitHouseAndHousing(q.item.House, ref number, ref housing);
-				SwitchAddress address = new SwitchAddress();
-				address.Street = streets.FirstOrDefault(s => s.Name == q.item.Street);
-				address.House = housesList.FirstOrDefault(s => s.Number == number && s.Housing == housing);
-				addresses.Add(address);
 			}*/
 
-			foreach (var switchAddress in addresses) {
+
+			
+
+	/*		foreach (var switchAddress in addresses) {
 				session.Save(switchAddress);
-			}
+			}*/
 
 
 			city = new City {Name = "Борисоглебск"};
 			region = new Region {City = city, Name = "Борисоглебск"};
 
-			string textFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"switches.txt");
+			/*string textFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"switches.txt");
 			var sb = new StringBuilder();
 			using (var sr = new StreamReader(textFile, Encoding.GetEncoding("windows-1251"))) {
 				String line;
@@ -269,18 +329,17 @@ namespace Inforoom2.Test.Functional
 						AddressHelper.SplitHouseAndHousing(houseNumber, ref number, ref housing);
 						var house = new House();
 						house.Number = number;
-						house.Housing = housing;
 						house.Street = street;
 						var switchAddress = new SwitchAddress();
 						switchAddress.House = house;
 						switchAddress.Switch = new Switch {
-							Name = string.Format("{0}_{1}_{2}", house.Street.Name, house.Number, house.Housing)
+							Name = string.Format("{0}_{1}", house.Street.Name, house.Number)
 						};
 
 						session.Save(switchAddress);
 					}
 				}
-			}
+			}*/
 			session.Save(city);
 			session.Save(region);
 

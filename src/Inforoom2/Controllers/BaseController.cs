@@ -10,6 +10,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
+using System.Web.UI.WebControls;
 using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
@@ -31,54 +32,15 @@ namespace Inforoom2.Controllers
 			get { return MvcApplication.SessionFactory.GetCurrentSession(); }
 		}
 
-		protected List<City> Cities
-		{
-			get { return GetAllSafe<City>(); }
-		}
-
-		protected List<Street> Streets
-		{
-			get { return GetAllSafe<Street>(); }
-		}
-
-		protected IList<Region> Regions
-		{
-			get { return GetAllSafe<Region>(); }
-		}
-
-		protected IList<House> Houses
-		{
-			get { return GetAllSafe<House>(); }
-		}
-
-		protected IList<Address> Addresses
-		{
-			get { return GetAllSafe<Address>(); }
-		}
-
-		protected IList<SwitchAddress> SwitchAddresses
-		{
-			get { return GetAllSafe<SwitchAddress>(); }
-		}
-
-		protected IList<Switch> Switches
-		{
-			get { return GetAllSafe<Switch>(); }
-		}
-
-		protected IList<Plan> Plans
-		{
-			get { return GetAllSafe<Plan>(); }
-		}
-
 		protected ValidationRunner ValidationRunner;
 
 		protected BaseController()
 		{
 			ValidationRunner = new ValidationRunner();
 			ViewBag.Validation = ValidationRunner;
+			ViewBag.Title = "Инфорум";
 			ViewBag.JavascriptParams = new Dictionary<string, string>();
-			ViewBag.Cities = new string[] { "Воронеж", "Борисоглебск", "Белгород" };
+			ViewBag.Cities = new string[] { "Борисоглебск", "Белгород" };
 		}
 
 		public void AddJavascriptParam(string name, string value)
@@ -93,7 +55,7 @@ namespace Inforoom2.Controllers
 
 		protected Employee CurrentEmployee
 		{
-			get { return DbSession.Query<Employee>().FirstOrDefault(k => k.Username == User.Identity.Name); }
+			get { return DbSession.Query<Employee>().FirstOrDefault(k => k.Name == User.Identity.Name); }
 		}
 
 		protected Client CurrentClient
@@ -105,7 +67,7 @@ namespace Inforoom2.Controllers
 				}
 				int id = 0;
 				int.TryParse(User.Identity.Name, out id);
-				return DbSession.Query<Client>().FirstOrDefault(k => k.Id == id );
+				return DbSession.Get<Client>(id);
 			}
 		}
 
@@ -114,6 +76,12 @@ namespace Inforoom2.Controllers
 		public static string UserCity
 		{
 			get { return userCity; }
+		}
+
+		public Region CurrentRegion
+		{
+			get { return DbSession.Query<Region>().FirstOrDefault(r => r.Name == UserCity)
+				?? DbSession.Query<Region>().FirstOrDefault(); }
 		}
 
 
@@ -137,6 +105,7 @@ namespace Inforoom2.Controllers
 			SetCookie("WarningMessage", message);
 		}
 
+
 		protected override void OnException(ExceptionContext filterContext)
 		{
 			/*if (filterContext.ExceptionHandled) {
@@ -148,6 +117,12 @@ namespace Inforoom2.Controllers
 			filterContext.ExceptionHandled = true;*/
 		}
 
+		protected override void OnResultExecuting(ResultExecutingContext filterContext)
+		{
+			ViewBag.RegionOfficePhoneNumber = CurrentRegion.RegionOfficePhoneNumber;
+			base.OnResultExecuting(filterContext);
+		}
+
 		protected override void OnActionExecuted(ActionExecutedContext filterContext)
 		{
 			base.OnActionExecuted(filterContext);
@@ -155,10 +130,31 @@ namespace Inforoom2.Controllers
 			}
 			ViewBag.ActionName = filterContext.RouteData.Values["action"].ToString();
 			ViewBag.ControllerName = filterContext.RouteData.Values["controller"].ToString();
+			ProcessCallMeBackTicket();
 			ProcessRegionPanel();
 			if (CurrentClient != null) {
-				ViewBag.ClientInfo = string.Format("{0}, Баланс: {1} ", CurrentClient.PhysicalClient.FullName, CurrentClient.PhysicalClient.Balance);
+				StringBuilder sb = new StringBuilder();
+				sb.AppendFormat("Здравствуйте, {0}. Ваш баланс: {1} руб.", CurrentClient.PhysicalClient.Name, CurrentClient.PhysicalClient.Balance);
+				ViewBag.ClientInfo = sb.ToString();
 			}
+		}
+
+		private void ProcessCallMeBackTicket()
+		{
+			ViewBag.CallMeBackTicket = new CallMeBackTicket();
+			var binder = new EntityBinderAttribute("callMeBackTicket.Id", typeof(CallMeBackTicket));
+			CallMeBackTicket callMeBackTicket = (CallMeBackTicket)binder.MapModel(Request);
+			if (callMeBackTicket.Name == null)
+				return;
+			var errors = ValidationRunner.ValidateDeep(callMeBackTicket);
+			if (errors.Length == 0) {
+				DbSession.Save(callMeBackTicket);
+				SuccessMessage("Заявка отправлена. В течении для вам перезвонят.");
+				return;
+			}
+
+			ViewBag.CallMeBackTicket = callMeBackTicket;
+			AddJavascriptParam("CallMeBack", "1");
 		}
 
 		public void ProcessRegionPanel()
@@ -209,7 +205,7 @@ namespace Inforoom2.Controllers
 			ViewBag.UserCity = geoAnswer.City;
 		}
 
-		protected List<TModel> GetAllSafe<TModel>()
+		protected List<TModel> GetList<TModel>()
 		{
 			var entities = DbSession.Query<TModel>().ToList();
 			if (entities.Count == 0) {
@@ -228,21 +224,31 @@ namespace Inforoom2.Controllers
 			return HttpUtility.UrlDecode(s);
 		}
 
-		protected void SetCookie(string name, string value)
+		public void SetCookie(string name, string value)
 		{
 			Response.Cookies.Add(new HttpCookie(name, value) { Path = "/" });
 		}
 
-		public static Encoding DetectEncoding(String fileName, out String contents)
+		public void DeleteCookie(string name)
 		{
-			// open the file with the stream-reader:
-			using (StreamReader reader = new StreamReader(fileName, true)) {
-				// read the contents of the file into a string
-				contents = reader.ReadToEnd();
+			Response.Cookies.Remove(name);
+		}
 
-				// return the encoding.
-				return reader.CurrentEncoding;
-			}
+		protected ActionResult Authenticate(string action, string controller, string username, bool shouldRemember, string userData = "")
+		{
+			var ticket = new FormsAuthenticationTicket(
+				1,
+				username,
+				DateTime.Now,
+				DateTime.Now.AddMinutes(FormsAuthentication.Timeout.TotalMinutes),
+				shouldRemember,
+				userData,
+				FormsAuthentication.FormsCookiePath);
+			var cookie = new HttpCookie(FormsAuthentication.FormsCookieName, FormsAuthentication.Encrypt(ticket));
+			if (shouldRemember)
+				cookie.Expires = DateTime.Now.AddMinutes(FormsAuthentication.Timeout.TotalMinutes);
+			Response.Cookies.Set(cookie);
+			return RedirectToAction(action, controller);
 		}
 	}
 }

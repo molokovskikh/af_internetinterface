@@ -1,0 +1,50 @@
+﻿@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@{
+	ViewBag.Title = "Инфорум - решение для бизнеса";
+	CallMeBackTicket ticket = ViewBag.NewTicket;
+	ValidationRunner validationRunner = ViewBag.Validation;
+}
+  <div class="greyblock">
+		<div class="heading">ИНФОРУМ — РЕШЕНИЕ ДЛЯ БИЗНЕСА</div>
+		<div class="greyblocktext">
+		    <p>Интернет от компании «Инфорум» — это эффективный инструмент для ведения Вашего бизнеса. Подключение осуществляется по выделенной линии, 
+			синхронному каналу, с использованием оптико - волоконных технологий, что обеспечивает высокую скорость и бесперебойность предоставляемых услуг.</p>
+		    <p>Индивидуальный подход и персональный сервис наших специалистов создают максимальный комфорт при пользовании нашими услугами.</p>
+		    <p class="textblockgrey">Быстрее, надежнее или дешевле? Вам не придется выбирать одно из трех!</p>
+		</div>
+		<div class="girl"></div>
+		<div class="wifi"></div>
+	    </div>
+	    <div class="whiteblock">
+		<div class="boy"></div>
+		<div class="whiteblocktext">
+		<h3>БЫСТРЫЙ ИНТЕРНЕТ ПО ЦЕНЕ ОТ 890 РУБЛЕЙ В МЕСЯЦ!</h3>
+		<p>Для малого и среднего бизнеса мы предлагаем безлимитные высокоскоростные тарифы на Интернет по цене от 890 рублей и скоростью доступа до 100 Мбит/с и выше. 
+		    При этом Вы получаете бесперебойный доступ в Сеть и персональное обслуживание. Для крупного бизнеса и клиентов из бизнес-центров существует своя индивидуальная тарифная сетка.</p>
+		<p class="textblockwhite">Перед подключением наши профессиональные менеджеры предложат тарифы в зависимости от Ваших желаний и потребностей.</p>
+		</div>
+	    </div>
+	    <div class="staff"></div>
+@using (@Html.BeginForm("Index", "Bussiness", FormMethod.Post)) {
+	<div class="window">
+		<div class="windowicon"></div>
+		<div class="cooperation">
+			<h3>Свяжитесь с нами</h3>
+			<p>по вопросам сотрудничеста:</p>
+		</div>
+		<div class="applications">
+			<div class="label">Ф.И.О:<sup>*</sup></div>
+			@Html.ValidationEditor(validationRunner, ticket, "Name", new { @class = "application" }, HtmlTag.input, HtmlType.none)
+			<div class="label">Номер телефона:<sup>*</sup></div>
+			@Html.ValidationEditor(validationRunner, ticket, "PhoneNumber", new { @class = "application" }, HtmlTag.input, HtmlType.none)
+			<div class="label">Электронная почта:</div>
+			@Html.ValidationEditor(validationRunner, ticket, "Email", new { @class = "application" }, HtmlTag.input, HtmlType.none)
+			<div class="label">Комментарий:</div>
+			@Html.ValidationEditor(validationRunner, ticket, "Text", null, HtmlTag.textarea, HtmlType.none)
+		</div>
+		<div class="definitely"><sup>*</sup>- обязательно для заполнения</div>
+		<input class="contacting" type="submit" value="Связаться">
+	</div>
+}

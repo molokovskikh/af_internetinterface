@@ -30,8 +30,6 @@ namespace Inforoom2.Models.Services
 		[OneToMany(2, ClassType = typeof(ClientService))]
 		public virtual IList<ClientService> ServiceClients { get; set; }
 		
-		public virtual string PriceDescription { get; set; }
-
 		public virtual bool ProcessEvenInBlock
 		{
 			get { return false; }

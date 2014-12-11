@@ -46,6 +46,7 @@ namespace Inforoom2.Helpers
 					session.Transaction.Commit();
 				}
 				catch (Exception e) {
+					(filterContext.Controller as BaseController).DeleteCookie("SuccessMessage");
 					(filterContext.Controller as BaseController).ErrorMessage("Не удалось сохранить транзакцию.");
 					session.Transaction.Rollback();
 				}
@@ -86,7 +87,10 @@ namespace Inforoom2.Helpers
 				|| tableName == "ClientEndpoints"
 				|| tableName == "StaticIps"
 				|| tableName == "WriteOff"
-				|| tableName == "Requests") {
+				|| tableName == "Requests"
+				|| tableName == "Partners"
+				|| tableName == "Payments"
+				|| tableName == "Contacts") {
 				return tableName;
 			}
 			return "inforoom2_" + tableName;

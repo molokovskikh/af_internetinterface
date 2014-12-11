@@ -45,7 +45,7 @@
   <ItemGroup>
     <Reference Include="Iesi.Collections">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
+      <HintPath>..\..\packages\Iesi.Collections.4.0.1.4000\lib\net40\Iesi.Collections.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualBasic" />
@@ -55,11 +55,11 @@
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Newtonsoft.Json.6.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.5\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NHibernate">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\NHibernate.3.3.4.4000\lib\Net35\NHibernate.dll</HintPath>
+      <HintPath>..\..\packages\NHibernate.4.0.2.4000\lib\net40\NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="NHibernate.Mapping.Attributes">
       <SpecificVersion>False</SpecificVersion>
@@ -85,7 +85,7 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Helpers">
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.2.0.30506.0\lib\net40\System.Web.Helpers.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Mvc">
@@ -162,13 +162,23 @@
     <Content Include="Css\main.css" />
     <Content Include="Css\style.css" />
     <Content Include="Global.asax" />
+    <Content Include="Images\answererrorbg.png" />
+    <Content Include="Images\answersuccessbg.png" />
+    <Content Include="Images\arro.png" />
     <Content Include="Images\arrow.png" />
+    <Content Include="Images\boy.png" />
     <Content Include="Images\connectionbg.png" />
     <Content Include="Images\connectionbgactiv.png" />
+    <Content Include="Images\cooperationsbg.png" />
+    <Content Include="Images\crusty.png" />
+    <Content Include="Images\disposal.png" />
+    <Content Include="Images\girl.png" />
     <Content Include="Images\inforum.png" />
     <Content Include="Images\leftbg.jpg" />
     <Content Include="Images\leftbg.png" />
+    <Content Include="Images\map.png" />
     <Content Include="Images\offer.png" />
+    <Content Include="Images\office_mini.png" />
     <Content Include="Images\rightbg.jpg" />
     <Content Include="Images\rightbg.png" />
     <Content Include="Images\slider1.jpg" />
@@ -179,8 +189,15 @@
     <Content Include="Images\slider5.jpg" />
     <Content Include="Images\speedbg.png" />
     <Content Include="Images\speedbgactiv.png" />
+    <Content Include="Images\staff.png" />
+    <Content Include="Images\tech_support.png" />
+    <Content Include="Images\tick.png" />
+    <Content Include="Images\typehit.png" />
+    <Content Include="Images\upward.png" />
+    <Content Include="Images\wifi.png" />
     <Content Include="Scripts\AdminAddressController.js" />
     <Content Include="Scripts\ClientRequest.js" />
+    <Content Include="Scripts\IsMyHouseConnectedController.js" />
     <Content Include="Scripts\EditNewsBlock.js" />
     <Content Include="Scripts\EventEmitter.js" />
     <Content Include="Scripts\FaqController.js" />
@@ -225,18 +242,15 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Components\EmailSender.cs" />
     <Compile Include="Components\EntityBinder.cs" />
+    <Compile Include="Components\HtmlTag.cs" />
     <Compile Include="Components\ValidationRunner.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\AdminAddressController.cs" />
-    <Compile Include="Controllers\AdminController.cs" />
-    <Compile Include="Controllers\AdminNewsController.cs" />
-    <Compile Include="Controllers\AdminPlanController.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Controllers\AdminQuestionController.cs" />
-    <Compile Include="Controllers\AdminTicketController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\ClientRequestController.cs" />
+    <Compile Include="Controllers\IsMyHouseConnectedController.cs" />
+    <Compile Include="Controllers\StaticContent.cs" />
+    <Compile Include="Controllers\BussinessController.cs" />
+    <Compile Include="Controllers\AboutController.cs" />
     <Compile Include="Controllers\TestSpeedController.cs" />
     <Compile Include="Controllers\FaqController.cs">
       <SubType>Code</SubType>
@@ -256,19 +270,22 @@
     <Compile Include="Helpers\IpGeoHelper.cs" />
     <Compile Include="Helpers\IPUserType.cs" />
     <Compile Include="Helpers\NHibernateActionFilter.cs" />
-    <Compile Include="Helpers\PasswordHasher.cs" />
     <Compile Include="Helpers\SceHelper.cs" />
     <Compile Include="Helpers\ViewHelper.cs" />
     <Compile Include="Intefaces\IModelWithPriority.cs" />
     <Compile Include="Models\AdditionalStatus.cs" />
     <Compile Include="Models\Address.cs" />
+    <Compile Include="Models\BillingHistory.cs" />
     <Compile Include="Models\City.cs" />
     <Compile Include="Models\ClientEndPoint.cs" />
     <Compile Include="Models\ClientRequest.cs" />
     <Compile Include="Models\ClientService.cs" />
+    <Compile Include="Models\CallMeBackTicket.cs" />
+    <Compile Include="Models\Contact.cs" />
     <Compile Include="Models\InternetSettings.cs" />
     <Compile Include="Models\Lease.cs" />
     <Compile Include="Models\LegalClient.cs" />
+    <Compile Include="Models\Payment.cs" />
     <Compile Include="Models\PlanTransfer.cs" />
     <Compile Include="Models\SaleSettings.cs" />
     <Compile Include="Models\Services\BlockAccountService.cs" />
@@ -315,34 +332,10 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Faq\Index.cshtml" />
-    <Content Include="Views\Admin\Index.cshtml" />
-    <Content Include="Views\AdminQuestion\AdminQuestionIndex.cshtml" />
-    <Content Include="Views\AdminQuestion\EditQuestion.cshtml" />
-    <Content Include="Views\AdminTicket\AdminTicketIndex.cshtml" />
-    <Content Include="Views\AdminTicket\EditTicket.cshtml" />
-    <Content Include="Views\AdminNews\AdminNewsIndex.cshtml">
-      <SubType>Code</SubType>
-    </Content>
-    <Content Include="Views\AdminNews\EditNewsBlock.cshtml">
-      <SubType>Code</SubType>
-    </Content>
     <Content Include="Views\Home\ViewNewsBlock.cshtml">
       <SubType>Code</SubType>
     </Content>
     <Content Include="Views\ClientRequest\Index.cshtml" />
-    <Content Include="Views\AdminAddress\AdminAddressRegion.cshtml" />
-    <Content Include="Views\AdminAddress\EditCity.cshtml" />
-    <Content Include="Views\AdminAddress\EditRegion.cshtml" />
-    <Content Include="Views\AdminAddress\AdminAddressCity.cshtml" />
-    <Content Include="Views\AdminAddress\AdminAddressStreet.cshtml" />
-    <Content Include="Views\AdminAddress\EditStreet.cshtml" />
-    <Content Include="Views\AdminAddress\AdminAddressHouse.cshtml" />
-    <Content Include="Views\AdminAddress\EditHouse.cshtml" />
-    <Content Include="Views\AdminAddress\AdminAddressAddress.cshtml" />
-    <Content Include="Views\AdminAddress\EditAddress.cshtml" />
-    <Content Include="Views\AdminAddress\AdminAddressSwitchAddress.cshtml" />
-    <Content Include="Views\AdminAddress\EditSwitchAddress.cshtml" />
-    <Content Include="Views\AdminAddress\EditPrivateSwitchAddress.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -358,6 +351,10 @@
       <Project>{72afcfe8-c9e9-45fa-9698-bee896a517a3}</Project>
       <Name>Common.Tools</Name>
     </ProjectReference>
+    <ProjectReference Include="..\InternetInterface\InternetInterface.csproj">
+      <Project>{E2B03BC7-AACB-4A72-BBC7-DF4325912504}</Project>
+      <Name>InternetInterface</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Personal\Profile.cshtml" />
@@ -370,16 +367,24 @@
     <Content Include="Views\Personal\Bonus.cshtml" />
     <Content Include="Views\Personal\Menu.cshtml" />
     <Content Include="Views\Personal\PaymentWindow.cshtml" />
-    <Content Include="Views\Shared\AdminPanel.cshtml" />
     <Content Include="Views\Service\BlockAccount.cshtml" />
     <Content Include="Views\Service\DeferredPayment.cshtml" />
     <Content Include="Fonts\PDFDinTextPro.ttf" />
     <Content Include="Fonts\PTSans.ttf" />
     <Content Include="Views\Home\TariffPlans.cshtml" />
     <Content Include="Views\OfferContract\Index.cshtml" />
+    <Content Include="Views\Shared\Menu.cshtml" />
     <Content Include="Views\TestSpeed\Index.cshtml" />
     <Content Include="speedtest\upload.jsp" />
     <Content Include="speedtest\upload.php" />
+    <Content Include="Views\StaticContent\PageNotFound.cshtml" />
+    <Content Include="Views\StaticContent\Error.cshtml" />
+    <Content Include="Views\Bussiness\Index.cshtml" />
+    <Content Include="Views\About\Index.cshtml" />
+    <Content Include="Views\About\Details.cshtml" />
+    <Content Include="Views\IsMyHouseConnected\Index.cshtml" />
+    <Content Include="Views\Faq\TechSupport.cshtml" />
+    <Content Include="Views\About\Payment.cshtml" />
     <None Include="Web.Inforoom2_Test.config">
       <SubType>Designer</SubType>
     </None>

@@ -39,7 +39,10 @@ namespace Inforoom2.Models
 
 		[Property]
 		public virtual int PackageId { get; set; }
-		
+
+		[Property]
+		public virtual bool Hidden { get; set; }
+
 		public virtual decimal SwitchPrice { get; set; }
 
 		public virtual void AddPlanTransfer(Plan plan, decimal price)

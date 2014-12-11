@@ -1,0 +1,26 @@
+﻿@{
+	ViewBag.Title = "Оплата услуг";
+}
+		<h2 class="heading">@(ViewBag.Title.ToString().ToUpper())</h2>
+<div class="whiteblock">
+@using (Html.BeginForm("Login", "Account", null, FormMethod.Post, null)) {
+	<div class="window">
+		<div class="cooperation">
+			<p>Вход в личный кабинет</p>
+		</div>
+		<div class="applications">
+			<div class="label">Номер счета:</div>
+			<input class="application" type="text" name="username" value=""/>
+			<div class="label">Пароль:</div>
+			<input class="application" type="password" name="password" value=""/>
+		</div>
+		<input class="contacting" type="submit" value="Войти">
+	</div>
+}
+
+	<div class="whiteblocktext">
+		<p>Оплата возможна наличными через терминалы QIWI и Comepay, салон «Tele2» (адреса указаны на сайте в разделе «Как оплатить»), или в офисе по адресу: г. Борисоглебск, ул. Третьяковская, д.10 (2-ой этаж) магазин Эксперт-Компьютерс ( на пересечении ул.Третьяковская и Бланская, напротив гостиницы "Борисоглебск") (в будние дни с 9-00 до 18-00).
+		</p>
+		<p>Информация по зачислениям платежей и списаниям доступна в Личном Кабинете. Если Вы утеряли пароль, обратитесь в службу технической поддержки по тел. 8-920-22-999-87 или (473) 22-999-87 (в будние дни с 9-00 до 19-00), назовите номер своего лицевого счета, ФИО владельца договора и его паспортные данные, и Вам будет предоставлен новый пароль.</p>
+	</div>
+</div>

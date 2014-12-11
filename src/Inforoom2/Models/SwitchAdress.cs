@@ -13,7 +13,7 @@ namespace Inforoom2.Models
 		[ManyToOne(Column = "Switch", Cascade = "save-update")]
 		public virtual Switch Switch { get; set; }
 
-		[ManyToOne(Column = "Street")]
+		[ManyToOne(Column = "Street", Cascade = "save-update")]
 		public virtual Street Street { get; set; }
 
 		[Property]

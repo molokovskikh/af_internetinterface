@@ -28,7 +28,7 @@ namespace InternetInterface.Test.Functional
 			Css("input[name='EditConnectFlag'] + button").Click();
 			Css("input#Port").SendKeys("1");
 			Css("#SelectSwitches").SelectByValue(sw.Id.ToString());
-			Css("input#Submit2").Click();
+			Css("input#SaveConnectionBtn").Click();
 			var order = session.Get<Order>(client.Id);
 			Assert.Null(order);
 			var endpoint = session.Query<ClientEndpoint>().First(i => i.Client == client);

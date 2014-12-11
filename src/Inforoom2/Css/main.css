@@ -1,36 +1,89 @@
+body { background: #9EA5AD!important;}
+a.corpred, .corpred { color: #a61c21 !important;}
+textarea { resize: none;}
 ul { padding: 0px;}
 .menu ul { width: 100%!important;}
 	.menu ul li:first-child { margin: 15px 30px!important;}
 	.menu ul li { margin: 15px 30px!important;}
 .notext { font-size: 0px;}
-.heading {font-family: PDFDinTextPro; font-size: 27px;left: 472px; display: inline-block; font-weight: normal;margin: 5px 0px; color: #2e2d2d;}
+.wrapper .heading {z-index: 2;font-family: PDFDinTextPro; font-size: 27px; display: inline-block; font-weight: normal;width: 100%;left: 0;margin: 5px 0px; color: #2e2d2d;}
 .wrapper { height: auto!important;}
 .features { position: relative!important;top: auto!important;}
 a {color: #474747}
 a:visited, a:active { color: inherit;}
 .top .city { overflow: visible;z-index: 1; }
 	.top .cities {background-color: white;border: 1px solid #e7e7e7;border-radius: 5px;display: none;left: 0;position: absolute;text-align: center;top: 32px;width: 155px;}
-		.top .cities a {color: #474747}
+		.top .cities a { color: #474747; display: block;}
 		.top .cities a:hover {color: #a71b22}
-.window.outer {display: table;position: fixed;top: 0;left: 0;width: 100%;height: 100%;z-index: 30000;background-color: rgba(0,0,0,0.5);}
+.window.outer {border: 0px;border-radius: 0px;display: table;position: fixed;top: 0;left: 0;width: 100%;height: 100%;z-index: 30000;background-color: rgba(0,0,0,0.5);}
 	.window .cell { display: table-cell;text-align: center; vertical-align: middle;}
-		.window.inner { display: inline-block;background: white; position: relative}
-			.window .header { height: 20px;text-align: left;padding: 10px;background: #e3dfdf;}
-			.window .header .close { position: absolute;right: 10px;top: 10px;}
+		.window.inner { display: inline-block;background: white;top: 0;left: 0;height: auto;bottom: 0;right: 0; position: relative}
+			.window .header {  border-radius: 7px;text-transform: uppercase;height: 20px;text-align: left;padding: 10px;background: #e3dfdf;}
+			.window .header .close { position: absolute;right: 10px;top: 13px;background: url("../images/crusty.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);display: inline-block;height: 12px;width: 12px;cursor: pointer;}
 			.window .wrap  { padding: 10px;}
-			#CityWindow, #SelectCityWindow { height: 200px;width: 400px;}
-.testspeed, .OfferContract { margin: 20px;text-align: center;}
-.OfferContract .thumbnail { display: inline-block;width: 180px;margin: 10px;border: 1px solid #e7e7e7;border-radius: 13px;padding: 10px;text-align: center;color: #474747;}
-
-.testspeed { height: 500px;}
-.testspeed .speedtest { margin-top: 20px;}
-
+			.window .buttons {bottom: 0;display: inline-block;height: 30px;margin: 0;position: absolute;right: 0;text-align: right;vertical-align: bottom;width: 100%;}
+			.cityWindow { height: 200px;}
+				.window .buttons .click { cursor: pointer;  margin-right:20px; bottom: 15px;position: relative; width: 80px;}
+				.window .whiteblocktext { width: auto;padding: 0px;}
+				.cityWindow a { text-decoration: underline;}
+				.cityWindow a:hover { color: #a81c22;}
+	#CallMeBackWindow { height: 300px;}
+		#CallMeBackWindow .whiteblocktext p { margin-left: 33px;text-align: left;}
+		#CallMeBackWindow .applications{display: inline-block;height: 225px;text-align: left;width: 458px;}
+		#CallMeBackWindow .contacting { position: absolute;right: 0px;bottom: 0px;margin: 20px 32px;}
+		#CallMeBackWindow .definitely { position: absolute;left: 0px;bottom: 0px;margin: 40px;}
+.TestSpeed, .OfferContract { margin: 20px;text-align: center;}
+.OfferContract .thumbnail { display: inline-block;width: 180px;margin: 10px;border: 1px solid #e7e7e7;border-radius: 13px;padding: 10px; text-align: center; color: #474747;}
+.tech a {color: #b3393e}
+.TestSpeed { height: 500px;}
+.TestSpeed .heading, .OfferContract .heading, .Faq .heading { position: relative;left: 0;top: 0;width: 100%;}
+	.Faq .know { margin-top: 0px;}
 .top .city { width: 150px;padding-left: 7px;text-align: center;} /*паддинг - ширина иконки. Центируем текст, с трелка она как бы сама по себе справа*/
 		.city .name { display: inline-block;}
 		.city .arrow { top: 10px;position: relative;left: 0;display: inline-block;}
 	.top .whiteright, .top .blackright { left: 186px;}
+.page {min-height: 700px;}
+	.Faq textarea ,input.entry {width: 617px;}
+.Bussiness .window {bottom: 78px;}
+.ClientRequest .map {top: 99px;}
+.wrapper .plans { background: white;}
+	.wrapper .type {border: 3px solid #cfc9c9;}
+	.wrapper .type.typehit {border: 3px solid #a81c22;}
+.wrapper .girl { top: 87px;}
+
+
+	.About .whiteblock,.About .whiteblocktext {height: auto;margin-top: -45px;}
+	.About.Payment .window { height: 300px;left: 30px;top: 61px;width: 450px;  height: 225px;}
+	.About.Payment .contacting {bottom: 20px;position: absolute;right: 10px;}
+		.About.Payment .cooperation { height: 60px; width: 100%;margin: auto;}
+		.About.Payment .whiteblocktext { width: 635px;}
+		.About.Payment .applications { margin-left: 10px;height: 110px;}
+		.About .boy { background-image: url("../images/office_mini.png"); top: 53px;left: 58px;height: 397px; width: 418px;}
+.success .icon, .error .icon {vertical-align: top; margin-left: 5px;margin-top: 5px;}
+.heading { text-transform: uppercase;}
+.Details { text-align: center;}
+	.Details table {text-align: left;height: auto;margin-bottom: 45px;}
+.TechSupport .boy {background-image: url("../images/tech_support.png");background-position: 5px center;border: 1px solid #e3dfde;border-radius: 5px;height: 224px;left: 83px;padding: 5px;top: 60px;width: 337px;}
+.TechSupport .whiteblock { height: 360px;}
+	.errorpage {display: inline-block;height: 200px;line-height: 32px;margin-top: 130px; margin-left: 400px ;vertical-align: top;width: 407px;}
+.errorpage h1 {font-size: 18px;font-weight: normal;color: #2e2d2d;margin-bottom: 36px;}
+.errorpage a {color: #a71b22;text-decoration: underline;}
+.page.Service .disposal {  padding: 28px 11px 8px;}
+.page.Service .namemenu.descriptions {padding: 0 55px 0 0;}
+a.plugs { color: white;}
+body .leftbg, body .rightbg {min-height: 1100px}
+.wrapper .logon {padding-right: 30px; text-align: right; width: 800px;}
+.logonform {display: inline-block;}
+.wrapper .historys {width: 802px;margin-left: 366px;margin-top: 60px; height: auto } 
+.page.Personal.Payment .cabinet.descript {position: absolute;}
+
+.wrapper .answererror, .wrapper .answersuccess { position: relative;}
+.wrapper .answererrorbg, .wrapper .answersuccessbg  {height: 46px; left: 15px;position: absolute;top: 23px;width: 46px;}
+.wrapper .mapright { top: 158px;}
+.wrapper .contracttop { margin-top: 0px;}
 
 /*Стили верстальщика*/
+
 @font-face {
     font-family: PDFDinTextPro; 
     src: url(../fonts/PDFDinTextPro.ttf); /* Путь к файлу со шрифтом */
@@ -42,8 +95,8 @@ a:visited, a:active { color: inherit;}
 
 body {margin:0px; overflow-x: hidden; background: #aaafb5;font-family: PDFDinTextPro;}
 ul {margin: 0px;}
-a {text-decoration: none;}
-.wrapper {width:1182px; background: #ffffff; height: 1186px;margin:0px auto;position: relative;overflow: visible; }
+a {text-decoration: none;color: #474747;}
+.wrapper {width:1182px; background: #ffffff; height: auto;margin:0px auto;position: relative;overflow: visible; }
 .top {background-color:#373737;height:51px;position: absolute;width:1182px;}
 .blackleft {width: 20px;height: 20px;background: #373637;position: absolute;left: 11px;top: 31px;border-radius: 0 0 8px;}
 .whiteleft {width: 20px;height: 20px;background: #ffffff;position: absolute;left: 11px;top: 31px;}
@@ -66,13 +119,14 @@ a {text-decoration: none;}
 .phone {position: absolute;width: 200px;height: 50px;font-size:26px;font-family: PDFDinTextPro;left: 962px;top: 92px;cursor: pointer;}
 .menu {width:1182px;height: 57px;background: #e3dfdf;box-shadow:inset  0px 1px 5px 5px #d7d1d1;}
 .menu ul {display: inline-block;font-size: 18px;text-align: center;}
-.menu li {display: inline-block;font-family: PDFDinTextPro;margin: 15px 32px;}
+.menu li {display: inline-block;font-family: PDFDinTextPro;margin: 15px 31px;}
 .menu li:first-child { margin-left: -10px;}
 .menu a {color: #474747;border-bottom: 1px solid;}
 .menu a.active {color: #a71b22;border-bottom: none;}
+.page {position: relative;}
 .plans {background: #cfc9c9;width: 1182px;height: 711px;}
-.tariffs {font-family: PDFDinTextPro; font-size: 27px;height: 60px;left: 472px;position: absolute;top: 254px;width: 300px;color: #2e2d2d;}
-.variants {width:1182px;height: 454px;text-align: center;position: absolute;top: 322px;left: 8px;}
+.heading {color: #2e2d2d;font-family: PDFDinTextPro;font-size: 27px;height: 60px;margin-left: 365px; padding-top: 10px;text-align: center;width: 444px;position: relative;}
+.variants {width:1182px;height: 454px;text-align: center;position: absolute;top: 70px;left: 8px;}
 .type {background: #ffffff;width: 305px;height: 454px;display: inline-block;margin-right: 15px;border-radius: 10px;vertical-align: top;position: relative;}
 .typehit {border: 3px solid #a81c22;}
 .typehitbg {background: url("../images/typehit.png");background-repeat: no-repeat;width: 60px;height: 60px;position: absolute;right: -21px;top: -17px; }
@@ -85,9 +139,157 @@ a {text-decoration: none;}
 .plug { background: none repeat scroll 0 0 #dad5d5;border: medium none;border-radius: 4px;bottom: 31px;color: #2e2d2d;cursor: pointer;font-family: PDFDinTextPro;
         font-size: 20px;height: 39px;left: 70px;padding-bottom: 3px;position: absolute;width: 160px;}
 .plughit {background: none repeat scroll 0 0 #a51b21;color: #ffffff;}
-.details {color: #737373;font-family: PTSans;font-size: 13px;height: 130px;left: 123px;line-height: 9px;position: absolute;top: 801px;width: 853px;}
+.details {color: #737373;font-family: PTSans;font-size: 13px;height: 130px;left: 123px;line-height: 9px;position: absolute;top: 552px;width: 853px;}
 .details p sup {font-size: 8px;}
 .type h4 sup {font-size: 10px;}
+.request {font-family: PDFDinTextPro; font-size: 27px;height: 60px;left: 410px;position: absolute;top: 254px;width: 355px;color: #2e2d2d;}
+.leftpersonal {margin-left: 102px;margin-top: 19px;width: 550px;height: 400px;display: inline-block;}
+.personals {width: 175px;height: 20px;display: inline-block;margin-bottom: 35px;}
+.personal {height: 28px;width: 345px;background: none repeat scroll 0 0 #f1f1f1;border: 1px solid #dadada;}
+.personal:focus {box-shadow: 0 0 7px  #ca1e27;border: 1px solid #dadada!important;}
+.block {display: inline-block;}
+.addon {display: inline-block;width: 91px;margin-bottom: 30px;}
+.addons {display: inline-block;height: 25px;width: 70px;margin-right: 5px; background: none repeat scroll 0 0 #f1f1f1;border: 1px solid #dadada;}
+.addons:focus {box-shadow: 0 0 7px  #ca1e27;}
+.rounded {color: #8f8f8f;font-family: PTSans;font-size: 13px;font-weight: bold;height: 32px; padding-left: 13px;width: 272px;background: none repeat scroll 0 0 #f1f1f1;
+         border: 1px solid #d2d2d2;box-shadow: 0 0 1px;}
+.success {display: inline-block;}
+.error {display: inline-block;}
+.success .icon {background: url("../images/tick.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);display: inline-block;height: 14px;width: 16px;}
+.error .icon {background: url("../images/crusty.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);display: inline-block;height: 14px;width: 16px;}
+.leftpersonal .error input {border:1px solid #920f15;}
+.leftpersonal .success input {border:1px solid #6ec400;}
+.map {width: 442px;height: 445px; background: url("../images/map.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);display: inline-block; position: absolute;
+    right: 62px;top: 89px;}
+.contract {margin-left: 100px;margin-top: 36px;width: 925px;font-family: PTSans;font-size: 14px;}
+.contract p {font-size: 13px;color: #8b8b8b;}
+.resend {background: none repeat scroll 0 0 #aa181e;border: medium none;border-radius: 2px;color: #ffffff;cursor: pointer;font-family: PDFDinTextPro;font-size: 20px;height: 39px;
+margin-bottom: 20px;margin-left: 478px;margin-top: 17px;padding-bottom: 3px;width: 180px;}
+.know {background: none repeat scroll 0 0 #e3dfde;border-radius: 17px;margin-left: 84px;margin-top: 9px;width: 1000px;margin-bottom: 15px;padding-top: 15px;}
+.ask { color: #af3436;font-size: 18px;height: 40px;margin-left: 28px;width: 120px;}
+.turn {float: right;font-size: 18px;margin-right: 16px;width: 105px;text-decoration: underline;cursor: pointer;margin-top: -39px;}
+.upward  {display: inline-block;width: 10px;height: 10px;background: url("../images/arro.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);}
+.upward.active {background: url("../images/upward.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);}
+.networking {height: 290px;margin-left: 30px;margin-top: 18px;width: 950px;}
+.problem {height: auto;margin-bottom: 161px;margin-left: 89px;;width: 900px;}
+.problem .active {color: #a71b22;}
+.answer {color: black;font-family: PTSans;font-size: 14px;height: auto;line-height: 25px;text-decoration: none;width: 985px;}
+.question {margin-bottom: 8px;font-size: 18px;cursor: pointer;}
+.question .pointer {width: 20px;height: 7px; background: url("../images/arro.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);display: inline-block;margin-left: 7px;}
+.question .pointer.active {background: url("../images/upward.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0)}
+.set {background: none repeat scroll 0 0 #aa181e;border: medium none;border-radius: 2px;color: #ffffff;cursor: pointer;font-family: PDFDinTextPro;font-size: 20px;height: 39px;
+margin-left: 369px;margin-top: 25px;padding-bottom: 3px;width: 180px;}
+.entry {height: 26px;width: 340px;}
+.entry:focus {box-shadow: 0 0 7px  #ca1e27;}
+.ties {display: inline-block;margin-bottom:26px;width: 225px;vertical-align: top;}
+.tiestext {width: 655px;height: 105px;}
+.know.hidden .networking {display: none;}
+.question .answer.hidden {display: none;}
+.logon {display: inline-block;float: right;height: 49px;width: 400px;}
+.logon p {font-size: 14px;font-family: PDFDinTextPro;font-style: italic;color: #b6b6b6;display: inline-block;margin-right: 10px;}
+.logon input {background: none repeat scroll 0 0 #aa181e;border: medium none; border-radius: 2px;color: #ffffff;cursor: pointer;display: inline-block;font-family: PDFDinTextPro;
+font-size: 14px;height: 29px;padding-bottom: 3px;width: 127px;}
+.logon a {font-size: 14px;color: #ffffff;text-decoration: underline;font-family: PDFDinTextPro;margin-left: 15px;cursor: pointer;}
+.cabinet {border: 1px solid #e7e7e7;height: 389px;margin-left: 75px;width: 245px;border-radius: 12px;box-shadow: 0 0 2px 1px #e7e7e7;display: inline-block;}
+.cabinet ul {font-size: 18px;text-align: left;list-style: outside none none;padding: 0px;}
+.cabinet li {font-family: PDFDinTextPro;margin: 15px 27px;}
+.cabinet a {color: #474747;border-bottom: 1px solid;}
+.cabinet a.active {color: #a71b22;}
+.addressleft { height: 540px;margin-left: 97px;margin-top: 43px;width: 499px;}
+.mapright {width: 442px;height: 445px; background: url("../images/map.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);display: inline-block; position: absolute;
+    right: 62px;top: 150px;}
+.contracttop {font-family: PTSans;font-size: 14px;margin-left: 100px;width: 994px;}
+.location .personals {vertical-align: top;}
+.location textarea {background: none repeat scroll 0 0 #f1f1f1;border: 1px solid #d2d2d2;color: #8f8f8f;height: 108px;width: 269px;}
+.verify {background: none repeat scroll 0 0 #aa181e;border: medium none;border-radius: 2px;color: #ffffff;cursor: pointer;font-family: PDFDinTextPro;font-size: 20px;height: 39px;
+    padding-bottom: 3px;width: 180px; margin-left: 268px;margin-top: 20px;}
+.answersuccess {background: none repeat scroll 0 0 #e3dfdf;border-radius: 18px;height: 74px;margin-top: 61px;width: 435px; }
+.answersuccessbg {background: url("../images/answersuccessbg.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);height: 40px;left: 112px;position: absolute;top: 462px;width: 50px;}
+.answererror {background: none repeat scroll 0 0 #e3dfdf;border-radius: 18px;height: 90px;margin-top: 15px;width: 435px;}
+.answererrorbg {background: url("../images/answererrorbg.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);height: 48px;left: 112px;position: absolute;top: 557px;width: 50px;}
+.reply {width: 325px;height: 75px;margin-left: 77px;color: #2e2d2d;}
+.reply h1 {font-size: 18px;margin-bottom: 5px;padding-top: 13px;font-weight: normal;}
+.reply p {font-size: 16px;margin: 0px;}
+.billing {background: none repeat scroll 0 0 #e3dfdf;float: right;height: 345px;margin-right: 85px;margin-top: 60px;width: 725px;border-radius: 18px;}
+.expense {width: 593px;margin-top: 28px;margin-left: 14px;}
+.replenish {display: inline-block;height: 20px;margin-bottom: 35px;width: 144px;font-size: 19px;}
+.expenses {background: none repeat scroll 0 0 #f1f1f1;border: 1px solid #dadada;height: 28px;width: 262px;color: #8f8f8f;font-family: PTSans;font-size: 13px;
+font-style: oblique;padding-left: 10px;}
+.banks {height: 157px;margin-left: 13px;margin-top: 8px;width: 586px;}
+.bank {display: inline-block;background: #ffffff;width: 125px;height: 125px;border-radius: 12px;margin-right: 10px;border: 3px solid rgba(0, 0, 0, 0);cursor: pointer;}
+.bankbgsb {width: 101px;height: 101px;background: url("../images/sb.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);margin-left: 11px;margin-top: 15px;}
+.bankbgcp {width: 105px;height: 101px;background: url("../images/cp.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);margin-left: 11px;margin-top: 15px;}
+.bankbgqw {width: 105px;height: 101px;background: url("../images/qw.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);margin-left: 11px;margin-top: 15px;}
+.bankbgap {width: 105px;height: 101px;background: url("../images/ap.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);margin-left: 11px;margin-top: 15px;}
+.bank.active {border: 3px solid #a81c22;}
+.pay {background: none repeat scroll 0 0 #aa181e;border: medium none;border-radius: 2px;color: #ffffff;cursor: pointer;font-family: PDFDinTextPro;font-size: 20px;height: 39px;padding-bottom: 3px;
+     width: 180px;margin-left: 256px;margin-top: 19px;}
+.historys {height: 330px;width: 802px;margin-left: 366px;margin-top: 60px;}
+.history {color: #2e2d2d;font-family: PDFDinTextPro;font-size: 27px;height: 60px;text-align: center;width: 475px;margin-left: 135px;}
+.historytb {background: none repeat scroll 0 0 #f1f1f1;border: 3px solid #a81c22;border-collapse: collapse;border-radius: 15px;display: inline-block;font-size: 0;width: 733px;padding-bottom: 10px;}
+.menyhistory {background: none repeat scroll 0 0 #e3dfdf;border-collapse: collapse;color: #403f3f;cursor: pointer;font-size: 16px;height: 57px;margin: 0;padding: 0 30px;position: relative;
+text-align: left;vertical-align: middle;width: 117px;}
+.menyhistory:first-child {border-radius: 12px 0 0 12px;width: 313px;}
+.menyhistory:last-child {border-radius: 0 12px 12px 0;}
+.fistorytb { font-family: PTSans;font-style: oblique;font-size: 14px;font-weight: normal;padding: 14px 30px;}
+.cost {border: 3px solid #a81c22;border-collapse: collapse;border-radius: 15px;display: inline-block;float: right;margin-right: 92px;margin-top: 40px;width: 733px;font-size: 0px;background: #f1f1f1;padding-bottom: 10px;}
+.menucost {width: 732px;height: 60px;}
+.namemenu {background: none repeat scroll 0 0 #e3dfdf;border-collapse: collapse;cursor: pointer;font-size: 16px;height: 57px;margin: 0;padding: 0 30px;position: relative;
+text-align: left;vertical-align: middle;width: 117px;color: #403f3f;}
+.namemenu.td {padding: 0px;width: 177px}
+.namemenu:first-child {border-radius: 12px 0px 0px 12px;}
+.namemenu:last-child {border-radius: 0px 12px 12px 0px;}
+.namemenubg {background: url("../images/arro.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);display: inline-block;height: 4px;left: 15px;position: absolute;top: 30px;width: 10px;}
+.list {margin-bottom: 120px;}
+.tariffscost {height: 40px;width: 137px;color: #ac3237;text-decoration: underline;font-size: 14px;font-family: PTSans;font-weight: bold;cursor: pointer;padding: 0 30px 8px;}
+.fee {width: 103px;height: 40px;color: #2e2d2d;font-size: 13px;font-family: PTSans;font-weight: bold;padding: 0 30px;}
+.costs {width: 103px;height: 40px;color: #2e2d2d;font-size: 14px;font-family: PTSans;padding: 0 30px;}
+.connectfee {background: none repeat scroll 0 0 #aa181e;border: medium none;border-radius: 2px;color: #ffffff;cursor: pointer;font-family: PDFDinTextPro;font-size: 12px;
+height: 28px;padding-bottom: 0px;width: 92px;text-align: center;padding-top: -11px;line-height: 24px;display: inline-block;margin-top: 7px;margin-left: 30px;}
+.menufee {height: 30px;}
+.disposals {font-size: 22px;height: 60px;left: 383px;position: absolute;top: 90px;width: 230px;color: #2e2d2d;}
+.disposal {color: #ac3237;cursor: pointer;font-family: PTSans;font-size: 14px;font-weight: bold;height: 40px;padding: 25px 30px 8px;text-decoration: underline;width: 137px;}
+.cost.dl {margin-top: 70px;}
+.description {width: 103px;height: 40px;color: #2e2d2d;padding: 0 30px;font-size: 16px;}
+.namemenu.description {padding-right: 146px;}
+.description.td {font-weight: normal;font-size: 14px;font-family: PTSans;}
+.price {width: 103px;height: 40px;color: #2e2d2d;font-size: 14px;padding: 0px;}
+.namemenu.price {padding-right: 28px;font-size: 16px;padding-left: 0;padding-right: 0px;}
+.price.tr {font-weight: normal;font-size: 14px;font-family: PTSans;padding: 0 30px;}
+.pracebg {background: url("../images/arro.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);display: inline-block;height: 4px;left: -13px;position: absolute;top: 30px;width: 10px;}
+.namemenu.tr {width: 116px;padding: 0px 23px 0px 0px;}
+.disposalbg {background: url("../images/disposal.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);display: inline-block;height: 29px;width: 32px;margin-left: 18px;cursor: pointer;}
+.lists {color: #2e2d2d;font-size: 22px;height: 435px;width: 839px;margin-left: 343px;}
+.listsb {color: #2e2d2d;font-size: 22px;height: 0px;width: 230px;margin-left: 45px;}
+.cost.all {background: none repeat scroll 0 0 #f1f1f1;border: 3px solid #a81c22;border-collapse: collapse;border-radius: 15px;display: inline-block;float: right;font-size: 0;margin-right: 92px;width: 733px;padding-bottom: 10px;}
+.namemenu.descriptions {padding: 0 23px 0 0;width: 116px;}
+.plugs { background: none repeat scroll 0 0 #aa181e;border: medium none;border-radius: 2px;color: #ffffff;cursor: pointer;display: inline-block;
+font-family: PDFDinTextPro;font-size: 12px;height: 28px;line-height: 24px;padding-bottom: 0;text-align: center;width: 92px;}
+.greyblock {background: #cbc6c6;width:1182px;position: relative;padding-bottom: 27px;}
+.greyblocktext {background: none repeat scroll 0 0 #cbc6c6;padding-left: 94px;padding-top: 22px;width: 600px;}
+.greyblocktext p {font-family: PTSans; font-size: 18px;color: #383737;font-weight: normal;line-height: 30px;margin-bottom: 32px;}
+.greyblocktext .textblockgrey {color: #ab1114;font-family: PTSans; font-size: 18px;font-weight: bold;line-height: 30px;}
+.girl {background: url("../images/girl.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);height: 429px;left: 686px;position: absolute;top: 76px;width: 354px;}
+.wifi {background: url("../images/wifi.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);height: 60px;left: 696px;position: absolute;top: 163px;width: 71px;}
+.whiteblock {width:1182px;height: 467px;background: #ffffff;position: relative;}
+.whiteblocktext {padding-left: 532px;padding-top: 47px;width: 554px;padding-bottom: 57px;}
+.whiteblocktext h3 {font-size: 27px;font-weight: normal;}
+.whiteblocktext p {font-size: 16px;font-family: PTSans;font-weight: normal;margin-top: 4px;line-height: 30px;}
+.whiteblocktext .textblockwhite  {color: #ab1114;font-size: 16px;font-weight: normal;line-height: 30px;margin-top: 37px;}
+.boy {background: url("../images/boy.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);height: 323px;left: 153px;position: absolute;top: 60px;width: 323px;}
+.staff {width:1182px;height: 934px;background: url("../images/staff.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);}
+.window {background: none repeat scroll 0 0 #ffffff;border: 3px solid #a81c22;border-radius: 10px;height: 443px;left: 323px;position: absolute;width: 504px;bottom: 278px;}
+.windowicon {background: url("../images/cooperationsbg.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);height: 56px;left: 467px;position: absolute;top: -17px;width: 59px;}
+.cooperation {height: 100px;text-align: center;width: 299px;margin-left: 104px;}
+.cooperation h3 {font-size: 29px;color: #ac3237;font-weight: normal;margin-bottom: 0px;}
+.cooperation p {font-size: 23px;color: #2e2d2d;font-weight: normal;margin-top: 0px;}
+.applications {height: 225px;margin-left: 34px;width: 458px;}
+.label {display: inline-block;height: 20px;margin-bottom: 30px;width: 146px;vertical-align: top;}
+.application {background: none repeat scroll 0 0 #f1f1f1;border: 1px solid #dadada;height: 28px;width: 275px;}
+.applications textarea {background: none repeat scroll 0 0 #f1f1f1;border: 1px solid #dadada;height: 73px;width: 274px;}
+.definitely { font-size: 14px; margin-left: 35px;margin-top: 48px;font-family: PTSans;width: 197px;height: 22px;display: inline-block;}
+.contacting {background: none repeat scroll 0 0 #aa181e;border: medium none;border-radius: 2px;color: #ffffff;cursor: pointer;font-family: PDFDinTextPro;font-size: 20px;height: 39px;
+padding-bottom: 3px;width: 170px;margin-left: 56px;}
 .offers { background: #333333; height:265px;width: 1182px;}
 .slider {text-align:center; position: relative; height:100%; width:883px; background: pink; display: inline-block;}
 .content {overflow: hidden;height:100%;}
@@ -102,7 +304,7 @@ a {text-decoration: none;}
 .controls li.stop.active {color:#a81b20;}
 .controls li.stop {  background: none repeat scroll 0 0 white; margin:0px; font-family: arial;  color: #a2a2a2; font-size: 11px; font-weight: bolder;bottom: 3px;position: relative;}
 .main-offer {width:299px; height:100%; background-color: #333333;float:right;}
-.find {width:1000px;height: 100px;position: absolute;left:207px;top: 530px;}
+.find {width:1000px;height: 100px;position: absolute;left:207px;top: 312px;}
 .speed {font-size: 22px;font-family: PDFDinTextPro;color:#a81b20;border-radius: 70px;height:48px;width: 271px;cursor: pointer;
         border: 3px solid #e7e7e7;background: #ffffff;color: #ac3237;margin-right: 27px;padding-left: 93px;
         display: inline-block;padding-top: 18px;box-shadow: 0px 0px 3px 0px #e7e7e7; }
@@ -125,10 +327,10 @@ a {text-decoration: none;}
 .text h1 {font-size: 18px;color:#ac3237;text-decoration: underline;font-family:PDFDinTextPro;font-weight: normal;margin: 0px;cursor: pointer;}
 .text p{font-size: 13px;font-family: PTSans;margin: 0;padding-top: 3px;color: #898989;padding-bottom: 7px;}
 .text h2 {font-size: 14px;font-family: PTSans;font-weight: normal;margin: 0px;}
-.features{ height: 200px;left: 99px;position: absolute;width: 1000px;top: 968px;}
+.features{ height: 200px;left: 99px;position: relative;width: 1000px;top: auto;}
 .requisite {position: relative;display: inline-block;float: left;height: 150px;}
 .logo {height: 107px;width: 230px;background:url("../images/inforum.png");background-repeat: no-repeat;cursor: pointer; }
-.address {width: 262px;height: 100px;font-size: 12px;line-height: 2px;color: #828282;font-family: PTSans;margin-left: 6px; }
+.address {width: 262px;height: 30px;font-size: 12px;line-height: 2px;color: #828282;font-family: PTSans;margin-left: 6px; }
 .support {overflow: hidden;position: relative;display: inline-block;float: left;padding-top: 12px;}
 .support li {overflow: hidden;padding-bottom: 14px;padding-right: 35px;text-decoration: underline;color: #737373;font-size: 15px;
              font-family: PDFDinTextPro;cursor: pointer;}
@@ -137,3 +339,24 @@ a {text-decoration: none;}
 .features li sup {font-size: 10px;text-decoration: none;position: absolute;}
 .leftbg {position: absolute;background: url("../images/leftbg.jpg") no-repeat scroll 0 0 rgba(0, 0, 0, 0);height: 900px;width: 600px;left: 0px;}
 .rightbg {position: absolute; background: url("../images/rightbg.jpg") no-repeat scroll 0 0 rgba(0, 0, 0, 0);height: 900px;width: 600px;right: 0px;}
+.errorpng { background: url("../images/404.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);display: inline-block;height: 260px;margin-bottom: 170px;margin-left: 145px;margin-top: 126px;width: 388px;}
+.none {display: inline-block;height: 200px;line-height: 32px;margin-left: 78px;margin-top: 130px;vertical-align: top;width: 407px;}
+.none h1 {font-size: 18px;font-weight: normal;color: #2e2d2d;margin-bottom: 36px;}
+.none a {color: #a71b22;text-decoration: underline;}
+.font {margin-left: 107px;width: 790px;height: 300px;}
+.font h2 {font-size: 22px;font-family: PDFDinTextPro; font-weight: normal;color: #2e2d2d;}
+.font .active {color: #ac3237;text-decoration: underline;font-size: 18px;font-family: PDFDinTextPro; font-weight: normal;}
+.font p {font-size: 14px;font-family: PTSans;color: #2e2d2d;}
+.font a {font-size: 14px;font-family: PTSans;color: #ac3237;text-decoration: underline;cursor: pointer;}
+.font h3 {font-size: 15px;font-family: PDFDinTextPro;font-weight: normal;color: #2e2d2d;}
+.font .explanation {font-size: 13px;font-family: PTSans;color: #737373;}
+.buttons {width: 200px;height: 200px;margin-left: 104px;display: inline-block;}
+.button {background: none repeat scroll 0 0 #aa181e;border: medium none;border-radius: 2px;color: #ffffff;cursor: pointer;font-family: PDFDinTextPro;font-size: 20px;height: 39px;
+ padding-bottom: 3px;width: 180px;}
+.button.active {background: none repeat scroll 0 0 #7b0c10;border: medium none;border-radius: 2px;color: #ffffff;cursor: pointer;font-family: PDFDinTextPro;font-size: 20px;height: 39px;
+ padding-bottom: 3px;width: 180px;margin-top: 15px;}
+.callbacks {display: inline-block;width: 200px;height: 200px;vertical-align: top;}
+.callback {background: none repeat scroll 0 0 #ffffff;border: 2px solid #e7e7e7;border-radius: 5px;box-shadow: 0 0 2px 0 #e7e7e7;color: #aa181e;cursor: pointer;font-family: PDFDinTextPro;font-size: 20px;
+ height: 43px;padding-bottom: 3px;width: 207px;}
+.callback.active {background: none repeat scroll 0 0 #ffffff;border: 0px solid #e7e7e7;border-radius: 5px;box-shadow: 0 0 10px 0 #e39194;color: #aa181e;cursor: pointer;font-family: PDFDinTextPro;font-size: 20px;
+ height: 43px;padding-bottom: 3px;width: 207px;margin-top: 10px;}

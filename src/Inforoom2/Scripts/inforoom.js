@@ -36,11 +36,18 @@ function Inforoom() {
 		$(".HtmlTemplates").remove();
 		console.log("Templates added", this.templates);
 
+		if (this.getParam("CallMeBack") == "1")
+			this.callMeBackWindow();
+		$(".header .call").on("click", this.callMeBackWindow.bind(this));
 
 		this.checkCity();
 		this.showMessages();
 	}
 
+	this.callMeBackWindow = function() {
+		var wnd = this.createWindow("Обратный звонок", this.getTemplate("CallMeBackWindow"));
+		wnd.block();
+	}
 	/**
      * Создает окно
      * @returns {Window} Объект окна
@@ -135,11 +142,28 @@ function Inforoom() {
 		this.params[name] = value;
 	}
 
-	this.areYouSure = function(element, message, callback) {
-		element.event("click", function(e) {
-			var window = this.createWindow("Вы уверены?", message);
-			window.css(".ok").event("click", callback);
-		}.bind(this));
+	/**
+	* Отображает диалоговое окно, с сообщением о подтверждении пользовательского действия
+	*
+	* @param {String} message Сообщение, отоброжаемое пользователю
+	* @param {Function} callback Функция обратного вызова, которая будет исполнена, если пользователь согласен
+	* @param {String} title Название окна - по умолчанию "Вы уверены?"
+	* @returns {Window} элемент окна
+	*/
+	this.areYouSure = function ( message, callback, title) {
+		if (title == null)
+			title = "Вы уверены?";
+		var str = "<div class='whiteblocktext'>" + message + "</div>";
+		var html = str.toHTML();
+		$(html).height(100);
+		var window = this.createWindow(title,html);
+		window.add2Buttons();
+		$(window.getOkButton()).on("click", function () {
+			window.remove();
+			callback();
+		});
+		$(window.getCancelButton()).on("click", window.remove.bind(window));
+		return window;
 	}
 
 	this.showMessages = function() {
@@ -177,21 +201,21 @@ function Inforoom() {
 		var wnd = this.createWindow("Выберите город", this.getTemplate("CityWindow"));
 		wnd.block();
 		//ok button event
-		$(wnd.getElement()).find('.button.ok').on("click", function() {
+		$(wnd.getElement()).find('.click.ok').on("click", function() {
 			var city = $(wnd.getElement()).find(".UserCity").html();
 			wnd.remove();
 			cli.setCookie("userCity", city);
 		});
 
 		//cancel button event
-		$(wnd.getElement()).find(".button.cancel").on("click", function() {
+		$(wnd.getElement()).find(".click.cancel").on("click", function() {
 			var content = cli.getTemplate("SelectCityWindow");
 			wnd.pushContent(content);
 			$(wnd.getElement()).find('.cities a').on("click", function() {
 				cli.setCookie("userCity", this.innerHTML);
 				window.location.reload();
 			});
-			$(wnd.getElement()).find('.button.cancel').on("click", wnd.popContent.bind(wnd));
+			$(wnd.getElement()).find('.click.cancel').on("click", wnd.popContent.bind(wnd));
 		});
 	}
 

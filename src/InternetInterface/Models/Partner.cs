@@ -1,23 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Security.Permissions;
 using Castle.ActiveRecord;
 using Castle.Components.Validator;
-using Castle.MonoRail.Framework;
-using Common.Tools;
 using Common.Tools.Calendar;
 using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Models.Security;
 using InternetInterface.Controllers;
 using InternetInterface.Controllers.Filter;
-using InternetInterface.Helpers;
 using InternetInterface.Models.Universal;
 using NHibernate;
-using NHibernate.Criterion;
 using NHibernate.Linq;
-using NHibernate.SqlCommand;
 
 namespace InternetInterface.Models
 {
@@ -92,6 +85,9 @@ namespace InternetInterface.Models
 		[HasMany(ColumnKey = "Agent", OrderBy = "RegistrationDate", Lazy = true)]
 		public virtual IList<PaymentsForAgent> Payments { get; set; }
 
+		[HasMany(ColumnKey = "Agent", OrderBy = "RegistrationDate", Lazy = true)]
+		public virtual IList<Payment> CommonPayments { get; set; }
+
 		public virtual IList<string> AccesedPartner { get; set; }
 
 		public virtual bool AccesPartner(string reduseRulesName)
@@ -149,7 +145,11 @@ namespace InternetInterface.Models
 
 		public static List<Partner> GetServiceEngineers(ISession session)
 		{
-			return session.Query<Partner>().Where(p => p.Role.ReductionName == "Service" && !p.IsDisabled).OrderBy(p => p.Name).ToList();
+			return
+				session.Query<Partner>()
+					.Where(p => p.Role.ReductionName == "Service" && !p.IsDisabled)
+					.OrderBy(p => p.Name)
+					.ToList();
 		}
 
 		public override string ToString()
@@ -168,17 +168,17 @@ namespace InternetInterface.Models
 				{
 					//Просмотр личных данных
 					"SSI", new IPermission[] {
-						new ControllerPermission(typeof(PaymentsController)),
-						new ControllerPermission(typeof(ChannelGroupsController)),
-						new ControllerPermission(typeof(InvoicesController)),
-						new ControllerPermission(typeof(ActsController)),
-						new ControllerPermission(typeof(ContractsController)),
-						new ControllerPermission(typeof(ServicesController)),
-						new ControllerPermission(typeof(TariffsController)),
-						new ControllerPermission(typeof(ExportController)),
-						new ControllerPermission(typeof(MapController)),
-						new ControllerPermission(typeof(TvRequestController)),
-                        new ControllerPermission(typeof(IpPoolsController)), 
+						new ControllerPermission(typeof (PaymentsController)),
+						new ControllerPermission(typeof (ChannelGroupsController)),
+						new ControllerPermission(typeof (InvoicesController)),
+						new ControllerPermission(typeof (ActsController)),
+						new ControllerPermission(typeof (ContractsController)),
+						new ControllerPermission(typeof (ServicesController)),
+						new ControllerPermission(typeof (TariffsController)),
+						new ControllerPermission(typeof (ExportController)),
+						new ControllerPermission(typeof (MapController)),
+						new ControllerPermission(typeof (TvRequestController)),
+						new ControllerPermission(typeof (IpPoolsController)),
 						new ControllerActionPermission("Sms", "GetSmsStatus"),
 						new ControllerActionPermission("UserInfo", "RemakeVirginityClient"),
 						new ControllerActionPermission("UserInfo", "DeleteGraph"),
@@ -186,11 +186,11 @@ namespace InternetInterface.Models
 						new ControllerActionPermission("UserInfo", "ShowRegions"),
 						new ControllerActionPermission("UserInfo", "EditRegion"),
 						new ControllerActionPermission("UserInfo", "RegisterRegion"),
-						new ControllerPermission(typeof(RentableHardwaresController)),
+						new ControllerPermission(typeof (RentableHardwaresController))
 					}
 				}, {
 					"DHCP", new IPermission[] {
-						new ControllerPermission(typeof(SwitchesController)),
+						new ControllerPermission(typeof (SwitchesController))
 					}
 				}, {
 					"CB", new IPermission[] {
@@ -198,25 +198,25 @@ namespace InternetInterface.Models
 					}
 				}, {
 					"ASR", new IPermission[] {
-						new ControllerPermission(typeof(ServiceRequestController)),
+						new ControllerPermission(typeof (ServiceRequestController))
 					}
 				}, {
 					"RP", new IPermission[] {
-						new ControllerPermission(typeof(PartnersController)),
+						new ControllerPermission(typeof (PartnersController))
 					}
 				}, {
 					"VD", new IPermission[] {
-						new ControllerPermission(typeof(ConnectionRequestController)),
+						new ControllerPermission(typeof (ConnectionRequestController))
 					}
 				}, {
 					//Управление бригадами
 					"MB", new IPermission[] {
-						new ControllerPermission(typeof(BrigadsController)),
+						new ControllerPermission(typeof (BrigadsController))
 					}
 				}
 			};
 
-			var lookup = permissionMap.ToLookup(k => k.Key, k => k.Value);
+			ILookup<string, IPermission[]> lookup = permissionMap.ToLookup(k => k.Key, k => k.Value);
 			return AccesedPartner.Select(p => lookup[p].SelectMany(i => i)).SelectMany(p => p);
 		}
 

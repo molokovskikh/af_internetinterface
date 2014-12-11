@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Common.MySql;
+using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
 using NHibernate.Linq;
@@ -20,88 +21,93 @@ namespace Inforoom2.Controllers
 			return View();
 		}
 
-		private void InitClientRequest(Plan plan = null)
-		{
-			var clientRequest = new ClientRequest();
-			clientRequest.Address = new Address();
-			clientRequest.Address.House = new House();
-			clientRequest.Address.House.Street = new Street();
-			clientRequest.Address.House.Street.Region = new Region();
-			clientRequest.Address.House.Street.Region.City = new City();
-			if (!string.IsNullOrEmpty(UserCity)) {
-				clientRequest.Address.House.Street.Region.City.Name = UserCity;
-			}
-			if (plan != null) {
-				clientRequest.Plan = plan;
-			}
-			ViewBag.ClientRequest = clientRequest;
-			SetPlans();
-		}
-
-		private List<Plan> SetPlans()
-		{
-			var tariffs = DbSession.Query<Plan>();
-			List<SelectListItem> selectListItems = tariffs.Select(k => new SelectListItem {
-				Value = k.Name,
-				Text = k.Name
-			}).ToList();
-			ViewBag.Tariffs = selectListItems;
-			return tariffs.ToList();
-		}
-
 		[HttpPost]
-		public ActionResult Create(ClientRequest clientRequest)
+		public ActionResult Index(ClientRequest clientRequest)
 		{
-			var tariff = SetPlans().FirstOrDefault(k => k.Name == clientRequest.Plan.Name);
+			var tariff = InitRequestPlans().FirstOrDefault(k => k.Id == clientRequest.Plan.Id);
 			clientRequest.Plan = tariff;
 			clientRequest.ActionDate = clientRequest.RegDate = DateTime.Now;
-			ConvertRequestToOldModel(clientRequest);
 			var errors = ValidationRunner.ValidateDeep(clientRequest);
-			if (errors.Length == 0) {
-				clientRequest.Address = null;
+
+			if (errors.Length == 0 && clientRequest.IsContractAccepted) {
+				clientRequest.Address = GetAddressByYandexData(clientRequest);
 				DbSession.Save(clientRequest);
-				SuccessMessage(string.Format("Спасибо, Ваша заявка принята. Номер заявки {0}", clientRequest.Id)) ;
+				SuccessMessage(string.Format("Спасибо, Ваша заявка принята. Номер заявки {0}", clientRequest.Id));
 				return RedirectToAction("Index", "Home");
+			}
+			if (!clientRequest.IsContractAccepted) {
+				ErrorMessage("Пожалуйста, подтвердите, что Вы согласны с договором-офертой");
 			}
 			ViewBag.ClientRequest = clientRequest;
 			return View("Index");
 		}
 
-		private void ConvertRequestToOldModel(ClientRequest clientRequest)
+
+		private void InitClientRequest(Plan plan = null)
 		{
-			clientRequest.City = clientRequest.Address.House.Street.Region.City.Name;
-			clientRequest.Street = clientRequest.Address.House.Street.Name;
-			int house;
-			int.TryParse(clientRequest.Address.House.Number, out house);
-			clientRequest.House = house;
-			clientRequest.CaseHouse = clientRequest.Address.House.Housing;
-			clientRequest.Entrance = clientRequest.Address.Entrance;
-			clientRequest.Floor = clientRequest.Address.Floor;
-			clientRequest.Apartment = clientRequest.Address.Apartment;
-			//TODO необходимо реализовать единый механизм управления адресом
-			
+			var clientRequest = new ClientRequest();
+
+			if (!string.IsNullOrEmpty(UserCity)) {
+				clientRequest.City = UserCity;
+			}
+			if (plan != null) {
+				clientRequest.Plan = plan;
+			}
+			ViewBag.ClientRequest = clientRequest;
+			InitRequestPlans();
 		}
 
-		public bool CheckSwitchAddress(string city, string street, string house)
+		private List<Plan> InitRequestPlans()
 		{
-			string houseNumber = string.Empty;
-			string housing = string.Empty;
-			AddressHelper.SplitHouseAndHousing(house, ref houseNumber, ref housing);
+			var plans = DbSession.Query<Plan>().Where(p => !p.IsArchived && !p.IsServicePlan && !p.Hidden).ToList();
+			ViewBag.Plans = plans;
+			return plans;
+		}
 
-			if (string.IsNullOrEmpty(city) || string.IsNullOrEmpty(street) || string.IsNullOrEmpty(houseNumber)) {
-				return false;
+
+		protected Address GetAddressByYandexData(ClientRequest clientRequest)
+		{
+			var city = GetList<City>().FirstOrDefault(c => c.Name.Equals(clientRequest.YandexCity, StringComparison.InvariantCultureIgnoreCase));
+
+			if (city == null || !clientRequest.IsYandexAddressValid()) {
+				var badAddress = new Address { IsCorrectAddress = false };
+				return badAddress;
+			}
+			var region = GetList<Region>().FirstOrDefault(r => r.City == city);
+
+			var street = GetList<Street>().FirstOrDefault(s => s.Name.Equals(clientRequest.YandexStreet, StringComparison.InvariantCultureIgnoreCase)
+			                                         && s.Region.Equals(region));
+
+			if (street == null) {
+				street = new Street(clientRequest.YandexStreet);
 			}
 
-			var switchAddress = DbSession.Query<SwitchAddress>()
-				.FirstOrDefault((sa => (sa.House.Street.Region.City.Name.ToLower() == city
-				                        && street.Contains(sa.House.Street.Name.ToLower())
-				                        && sa.House.Number.ToLower() == houseNumber
-				                        && sa.House.Housing.ToLower() == housing)
-					//проверка частного сектора (частный сектор содержит только улицу) 
-				                       ||
-				                       (sa.Street.Region.City.Name.ToLower() == city && street.Contains(sa.Street.Name.ToLower()))));
+			var house = GetList<House>().FirstOrDefault(h => h.Number.Equals(clientRequest.YandexHouse, StringComparison.InvariantCultureIgnoreCase)
+			                                       && h.Street.Name.Equals(clientRequest.YandexStreet, StringComparison.InvariantCultureIgnoreCase)
+			                                       && h.Street.Region.Equals(region));
 
-			return switchAddress != null;
+			if (house == null) {
+				house = new House(clientRequest.YandexHouse);
+			}
+			var address = GetList<Address>().FirstOrDefault(a => a.IsCorrectAddress
+			                                            && a.House.Equals(house)
+			                                            && a.House.Street.Equals(street)
+			                                            && a.House.Street.Region.Equals(region)
+			                                            && a.Entrance == clientRequest.Entrance
+			                                            && a.Floor == clientRequest.Floor
+			                                            && a.Apartment == clientRequest.Apartment);
+
+			if (address == null) {
+				address = new Address();
+				address.House = house;
+				address.Apartment = clientRequest.Apartment;
+				address.Floor = clientRequest.Floor;
+				address.Entrance = clientRequest.Entrance;
+				address.House.Street = street;
+				address.House.Street.Region = region;
+				address.IsCorrectAddress = true;
+			}
+			return address;
 		}
 
 		public ActionResult RequestFromTariff(string planName)

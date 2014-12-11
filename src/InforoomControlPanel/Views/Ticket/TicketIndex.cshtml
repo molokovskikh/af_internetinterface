@@ -1,0 +1,29 @@
+﻿@using Inforoom2.Models
+@model dynamic
+
+@{
+	ViewBag.Title = "Index";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	IList<Ticket> tickets = ViewBag.Tickets ?? new List<Ticket>();
+	
+}
+
+<h2>title</h2>
+@{ Html.RenderPartial("AdminPanel");  }
+
+<div class="AdminQuestion">
+	
+	<table class="AdminTicketTable">
+		@foreach (var item in tickets) {
+			<tr>
+				<td>@Html.DisplayFor(modelItem => item.Email)</td>
+				<td>@Html.DisplayFor(modelItem => item.Text)</td>
+				<td>@Html.DisplayFor(modelItem => item.CreationDate)</td>
+				<td>
+					<span><button class="ViewTicket" onclick=" location.href = '@Url.Action("EditTicket", "Ticket", new { ticketId = item.Id})' ">Ответить</button></span>
+				</td>
+			</tr>
+		}
+	</table>
+</div>
+

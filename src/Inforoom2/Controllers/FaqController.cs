@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Linq;
 using System.Web.Mvc;
 using Inforoom2.Models;
@@ -28,22 +29,38 @@ namespace Inforoom2.Controllers
 		/// Обрабатывает отправку нового вопроса
 		/// </summary>
 		[HttpPost]
-		public ActionResult Create(Ticket newTicket)
+		public ActionResult Index(Ticket ticket)
 		{
-			newTicket.Answer = "Без ответа";
-			var errors = ValidationRunner.ValidateDeep(newTicket);
+			Index();
+			ViewBag.NewTicket = ticket;
+			var errors = ValidationRunner.ValidateDeep(ticket);
 			if (errors.Length == 0) {
-				DbSession.Save(newTicket);
-				SuccessMessage("Вопрос успешно отправлен. Ждите ответа на почту.");
-				return RedirectToAction("Index");
+				DbSession.Save(ticket);
+				SuccessMessage("Вопрос успешно отправлен. Ответ придет вам на на почту.");
+				ViewBag.NewTicket = new Ticket();
 			}
+			else
+				ViewBag.ShowQuestionForm = true;
+			return View();
+		}
 
-			var questions = DbSession.Query<Question>().ToList();
-			ViewBag.NewTicket = newTicket;
-			ViewBag.Questions = questions;
-			ViewBag.ShowQuestionForm = true;
-			return View("Index");
-			
+		/// <summary>
+		/// Страница техподдержки
+		/// </summary>
+		public ActionResult TechSupport()
+		{
+			Index();
+			return View();
+		}
+
+		/// <summary>
+		/// Обрабатывает отправку нового вопроса
+		/// </summary>
+		[HttpPost]
+		public ActionResult TechSupport(Ticket ticket)
+		{
+			Index(ticket);
+			return View();
 		}
 	}
 }

@@ -1,27 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.Linq;
-using System.Runtime.Serialization;
-using System.Web;
 using Castle.ActiveRecord;
-using Castle.ActiveRecord.Framework;
 using Castle.Components.Validator;
 using Common.Tools;
 using Common.Tools.Calendar;
-using Common.Web.Ui.Helpers;
 using Common.Web.Ui.Models.Audit;
-using Common.Web.Ui.MonoRailExtentions;
-using ExcelLibrary.BinaryFileFormat;
 using InternetInterface.Models.Universal;
-using NPOI.SS.Formula.Functions;
 
 namespace InternetInterface.Models
 {
 	public class ConnectInfo
 	{
 		public string Port { get; set; }
-        public uint? Pool { get; set; }
+		public uint? Pool { get; set; }
 		public uint Switch { get; set; }
 		public uint Brigad { get; set; }
 		public string static_IP { get; set; }
@@ -90,9 +84,9 @@ namespace InternetInterface.Models
 
 		public virtual bool NeedShowWarning()
 		{
-			var param = ConfigurationManager.AppSettings["LawyerPersonBalanceWarningRate"];
-			var rate = decimal.Parse(param);
-			var cond = Balance <= -(Tariff * rate) && Balance < 0;
+			string param = ConfigurationManager.AppSettings["LawyerPersonBalanceWarningRate"];
+			var rate = (decimal) float.Parse(param, CultureInfo.InvariantCulture);
+			bool cond = Balance <= -(Tariff*rate) && Balance < 0;
 			return cond;
 		}
 
@@ -104,7 +98,7 @@ namespace InternetInterface.Models
 
 			var results = new List<WriteOff>();
 			//списываем деньги за отключенные услуги
-			var toDeactivate = client.Orders.Where(o => !o.IsDeactivated && o.OrderStatus == OrderStatus.Disabled).ToArray();
+			Order[] toDeactivate = client.Orders.Where(o => !o.IsDeactivated && o.OrderStatus == OrderStatus.Disabled).ToArray();
 			results.AddRange(toDeactivate
 				.SelectMany(s => s.OrderServices)
 				.Where(s => s.IsPeriodic)
@@ -112,7 +106,7 @@ namespace InternetInterface.Models
 			toDeactivate.Each(o => {
 				o.IsDeactivated = true;
 				client.CreareAppeal(String.Format("Деактивирован заказ {0}", o.Description));
-				var endpoint = o.EndPoint;
+				ClientEndpoint endpoint = o.EndPoint;
 				if (endpoint != null) {
 					o.EndPoint = null;
 					if (!client.Orders.Select(x => x.EndPoint).Contains(endpoint))
@@ -120,7 +114,7 @@ namespace InternetInterface.Models
 				}
 			});
 
-			var toActivate = client.Orders.Where(o => !o.IsActivated && o.OrderStatus == OrderStatus.Enabled).ToArray();
+			Order[] toActivate = client.Orders.Where(o => !o.IsActivated && o.OrderStatus == OrderStatus.Enabled).ToArray();
 			results.AddRange(toActivate
 				.SelectMany(s => s.OrderServices)
 				.Where(s => !s.IsPeriodic)

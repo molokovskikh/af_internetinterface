@@ -5,6 +5,7 @@ using Common.Tools;
 using NHibernate.Linq;
 using NHibernate.Mapping;
 using NHibernate.Mapping.Attributes;
+using NHibernate.Util;
 using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models
@@ -14,9 +15,6 @@ namespace Inforoom2.Models
 	{
 		[Property]
 		public virtual string Password { get; set; }
-
-		[Property(Column = "_Salt")]
-		public virtual string Salt { get; set; }
 
 		[ManyToOne(Column = "_Address", Cascade = "save-update")]
 		public virtual Address Address { get; set; }

@@ -13,7 +13,9 @@ function Window(title,html)
 	this.content = null;
 	this.contentStack = [];
 	this._bindedCloseHandler = null;
-   
+	this.okButton = null;
+	this.cancelButton = null;
+
 }
 Window.extending(EventEmitter);
 
@@ -170,4 +172,27 @@ Window.prototype.autofocus = function()
 	var input = this.getElement().selector('input[autofocus]');
 	if(input)
 		input.focus();
+}
+
+Window.prototype.add2Buttons = function ()
+{
+	var html = cli.getTemplate("windowButtons");
+	this.okButton = $(html).find(".ok");
+	this.cancelButton = $(html).find(".cancel");
+	this.getElement().selector('.wrap').appendChild(html);
+
+	//Надо добавить спейсер, так как эта штукенция - абсолютная
+	//Это не самое лучшее решение, но в принципе сойдет
+	var height = $(html).height();
+	var spacer = "<div class='spacer'></div>".toHTML();
+	$(spacer).height(height);
+	this.getElement().selector('.wrap').appendChild(spacer);
+}
+
+Window.prototype.getOkButton = function () {
+	return this.okButton;
+}
+
+Window.prototype.getCancelButton = function () {
+	return this.cancelButton;
 }

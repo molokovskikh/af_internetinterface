@@ -72,11 +72,11 @@ namespace InternetInterface.Controllers
 			PropertyBag["Editing"] = filter.Editing;
 			PropertyBag["appealType"] = filter.appealType;
 		    var clientRegion = client.GetRegion();
-            if (clientRegion != null)
-                PropertyBag["IpPools"] = IpPoolRegion.AllWhitePools(DbSession, clientRegion);
-            else
-                PropertyBag["IpPools"] = null;
-            PropertyBag["Switches"] = NetworkSwitch.All(DbSession, clientRegion);
+			if (clientRegion != null)
+				PropertyBag["IpPools"] = IpPoolRegion.GetPoolsForRegion(DbSession, clientRegion);
+			else
+				PropertyBag["IpPools"] = null;
+			PropertyBag["Switches"] = NetworkSwitch.All(DbSession, clientRegion);
 		}
 
 		public void Leases([DataBind("filter")] LeaseLogFilter filter)
@@ -358,8 +358,16 @@ namespace InternetInterface.Controllers
 						if (client.Status.Id == (uint)StatusType.BlockedAndNoConnected)
 							client.Status = DbSession.Load<Status>((uint)StatusType.BlockedAndConnected);
 						client.SyncServices(settings);
+						
+						//Если клиент не включался и ему сразу был дан статический IP
+						//То данные, которые проставляются DHCP сервисом, необходимо проставлять вручную, если их нет
+						if (staticAdress.Length > 0) {
+							if (client.BeginWork == null)
+								client.BeginWork = DateTime.Now;
+							if (client.RatedPeriodDate == null)
+								client.RatedPeriodDate = DateTime.Now;
+						}
 						DbSession.Save(client);
-
 						DbSession.Query<StaticIp>().Where(s => s.EndPoint == clientEntPoint).ToList().Where(
 							s => !staticAdress.Select(f => f.Id).Contains(s.Id)).ToList()
 							.ForEach(s => DbSession.Delete(s));
@@ -743,12 +751,12 @@ namespace InternetInterface.Controllers
 			PropertyBag["ClientCode"] = clientId;
 			PropertyBag["uniqueClientEndpoints"] = client.Endpoints.Distinct().ToList();
 
-            var clientRegion = client.GetRegion();
-            if (clientRegion != null)
-                PropertyBag["IpPools"] = IpPoolRegion.AllWhitePools(DbSession, clientRegion);
-            else
-                PropertyBag["IpPools"] = null;
-            PropertyBag["Switches"] = NetworkSwitch.All(DbSession, clientRegion);
+			RegionHouse clientRegion = client.GetRegion();
+			if (clientRegion != null)
+				PropertyBag["IpPools"] = IpPoolRegion.GetPoolsForRegion(DbSession, clientRegion);
+			else
+				PropertyBag["IpPools"] = null;
+			PropertyBag["Switches"] = NetworkSwitch.All(DbSession, clientRegion);
 			PropertyBag["Brigads"] = brigads;
 			var endPoint = client.Endpoints.FirstOrDefault();
 			if (endPoint != null && endPoint.WhoConnected != null)
@@ -1093,7 +1101,7 @@ namespace InternetInterface.Controllers
 			return new { region.Id, regionName };
 		}
 
-	    public void AddOrderService(uint orderId)
+		public void AddOrderService(uint orderId)
 		{
 			var order = DbSession.Load<Order>(orderId);
 			PropertyBag["OrderService"] = new OrderService();

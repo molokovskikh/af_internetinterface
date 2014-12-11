@@ -10,11 +10,15 @@ namespace Inforoom2.Models
 	[Class(Table = "tickets", NameType = typeof (Ticket))]
 	public class Ticket : BaseModel
 	{
+		public Ticket()
+		{
+			CreationDate = DateTime.Now;
+		}
 		 
 		[Property, NotNullNotEmpty]
 		public virtual string Text { get; set; }
 		
-		[Property, NotNullNotEmpty]
+		[Property,]
 		public virtual string Answer { get; set; }
 		
 		[Property]
@@ -26,15 +30,10 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual bool IsNotified { get; set; }
 
-		[ManyToOne(Column = "Employee")]
+		[ManyToOne(Column = "User")]
 		public virtual Employee Employee { get; set; }
 
-		[Property, Email, NotNullNotEmpty]
+		[Property, Email, NotNullNotEmpty(Message = "Введите Email"), Pattern(@"^\S+@\S+$",Message = "Адрес эл. почты введен неправильно")]
 		public virtual string Email { get; set; }
-
-		public Ticket()
-		{
-			CreationDate = DateTime.Now;
-		}
 	}
 }

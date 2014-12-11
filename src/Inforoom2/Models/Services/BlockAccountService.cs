@@ -1,21 +1,15 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using Inforoom2.Models.Services;
 using NHibernate;
 using NHibernate.Mapping.Attributes;
 
-
-namespace Inforoom2.Models
+namespace Inforoom2.Models.Services
 {
 	[Subclass(0, ExtendsType = typeof (Service), DiscriminatorValue = "VoluntaryBlockin")]
 	public class BlockAccountService : Service
 	{
-		public override string PriceDescription
-		{
-			get { return "28 календарных дней - Бесплатно, начиная с 29 дня 50 р +   3 р./сутки."; }
-		}
-
+		
 		public override void Activate(ClientService assignedService, ISession session)
 		{
 			var client = assignedService.Client;

@@ -5,6 +5,7 @@ using System.Web.Security;
 using Common.MySql;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
+using InternetInterface.Helpers;
 using NHibernate.Linq;
 
 namespace Inforoom2.Controllers
@@ -15,42 +16,29 @@ namespace Inforoom2.Controllers
 	public class AccountController : BaseController
 	{
 		[HttpPost]
-		public ActionResult Login(string username, string password, string returnUrl)
+		public ActionResult Login(string username, string password, string returnUrl, bool shouldRemember = false)
 		{
-			if (IsAdmin(username, password)) {
-				return Authenticate("Index", "Admin", username);
-			}
 			int id = 0;
 			int.TryParse(username, out id);
 			var user = DbSession.Query<Client>().FirstOrDefault(k => k.Id == id);
-			if (user != null && PasswordHasher.Equals(password, user.PhysicalClient.Salt, user.PhysicalClient.Password)) {
-				return Authenticate("Profile", "Personal", username);
+			if (user != null && CryptoPass.GetHashString(password) == user.PhysicalClient.Password) {
+				return Authenticate("Profile", "Personal", username, shouldRemember);
 			}
-
 			ErrorMessage("Неправильный логин или пароль");
-			return Redirect(returnUrl);
-		}
+			if (String.IsNullOrEmpty(returnUrl))
+				returnUrl = Request.UrlReferrer.ToString();
 
+			if(!String.IsNullOrEmpty(returnUrl))
+				return Redirect(returnUrl);
+			else
+				return RedirectToAction("Index", "Home");
+		}
 
 		public ActionResult Logout()
 		{
 			FormsAuthentication.SignOut();
 			return RedirectToAction("Index", "Home");
 		}
-
-		private bool IsAdmin(string username, string password)
-		{
-			var admin = DbSession.Query<Employee>().FirstOrDefault(k => k.Username == username);
-			if (admin != null && PasswordHasher.Equals(password, admin.Salt, admin.Password)) {
-				return true;
-			}
-			return false;
-		}
-
-		private ActionResult Authenticate(string action, string controller, string username)
-		{
-			FormsAuthentication.SetAuthCookie(username, false);
-			return RedirectToAction(action, controller);
-		}
+		
 	}
 }

@@ -1,12 +1,14 @@
-﻿<!DOCTYPE html>
-
+﻿@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+<!DOCTYPE html>
 @{
 	string username = "";
 	string password = "";
 }
 <html>
 	<head>
-		<title>Inforum</title>
+		<title>@(ViewBag.Title)</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<link href="../../css/main.css" rel="stylesheet" />
 	</head>
@@ -34,26 +36,24 @@
 					<div class="whiteright"></div>
 					<div class="blackright"></div>
 				</div>
-				<div class="login">
-					@if (Request.IsAuthenticated) {
-						<text>
-							@ViewBag.ClientInfo
-							[ @Html.ActionLink("Выход", "Logout", "Account") ]
-							@Html.ActionLink("Личный кабинет", "Profile", "Personal")
-
-							@if (User.IsInRole("Admin")) {
-								@Html.ActionLink("Панель администратора", "AdminIndex", "Home")
-							} 
-						</text>
-					}
-					else {
-						using (Html.BeginForm("Login", "Account", new { returnUrl = @Request.Url }, FormMethod.Post, null)) {
+				@if (Request.IsAuthenticated && ViewBag.ClientInfo != null) {
+					<div class="logon">
+						<p>	@ViewBag.ClientInfo </p>
+						@using (Html.BeginForm("Profile", "Personal", FormMethod.Post, new { @class = "logonform" })) {
+							<input type="submit" value="Личный кабинет">
+						}
+						@Html.ActionLink("Выход", "Logout", "Account") 
+					</div>
+				}
+				else {
+					<div class="login">
+						@using (Html.BeginForm("Login", "Account", new { returnUrl = @Request.Url }, FormMethod.Post, null)) {
 							@Html.TextBoxFor(model => username, new { @class = "user", placeholder = "Номер счета" })
 							@Html.PasswordFor(model => password, new { @class = "user", placeholder = "Пароль" })
 							<input class="click" type="submit" value="Войти">
 						}
-					}
-				</div>
+					</div>
+				}
 			</div>
 			<div class="header">
 				<a href="/">
@@ -61,34 +61,36 @@
 					</div>
 				</a>
 				<form method="Pos" action="/ClientRequest">
-				<input class="connect" type="submit" value="Подключиться">
+					<input class="connect" type="submit" value="Подключиться">
 				</form>
 				<input class="call" type="submit" value="Обратный звонок">
-				<div class="phone">8 800 200-00-32</div>
+				<div class="phone">@ViewBag.RegionOfficePhoneNumber</div>
 			</div>
 			<div class="menu">
 				<ul>
-				@{
-					var menu = new List<string[]>();
-					menu.Add(new []{"Главная", "Index", "Home"});
-					menu.Add(new []{"Тарифы", "TariffPlans", "Home"});
-					menu.Add(new []{"Заявка на подключение", "Index", "ClientRequest"});
-					menu.Add(new []{"Для бизнеса", "Index", "ClientRequest"});
-					menu.Add(new []{"Вопросы и ответы", "Index", "Faq"});
-					menu.Add(new []{"Оплата", "Index", "Faq"});
-					menu.Add(new []{"О компании", "Index", "Faq"});
-					foreach(var item in menu) {
-						<li>@Html.ActionLink(item[0], item[1], item[2], null, new {@class = ViewBag.ControllerName == item[2] && ViewBag.ActionName == item[1] ? "active" : ""}) </li>
+					@{
+						var menu = new List<string[]>();
+						menu.Add(new[] { "Главная", "Index", "Home" });
+						menu.Add(new[] { "Тарифы", "TariffPlans", "Home" });
+						menu.Add(new[] { "Заявка на подключение", "Index", "ClientRequest" });
+						menu.Add(new[] { "Для бизнеса", "Index", "Bussiness" });
+						menu.Add(new[] { "Вопросы и ответы", "Index", "Faq" });
+						menu.Add(new[] { "Оплата", "Payment", "About" });
+						menu.Add(new[] { "О компании", "Index", "About" });
+						foreach (var item in menu) {
+							<li>@Html.ActionLink(item[0], item[1], item[2], null, new { @class = ViewBag.ControllerName == item[2] && ViewBag.ActionName == item[1] ? "active" : "" }) </li>
+						}
 					}
-				}
 				</ul>
 			</div>
-			<div class="@(ViewBag.ControllerName) @(ViewBag.ActionName)">
+			<div class="page @(ViewBag.ControllerName) @(ViewBag.ActionName)">
 				@RenderBody()
 			</div>
 			<div class="features">
 				<div class="requisite">
+					<a href="/">
 					<div class="logo"></div>
+						</a>
 					<div class="address">
 						<p>© 2014 — ООО «Инфорум»</p> 
 						<p>г. Воронеж, Студенческая ул. д. 12</p>
@@ -96,9 +98,9 @@
 				</div>
 				<div class="support">
 					<ul>
-						<li>Подключен ли мой дом?</li>
-						<li>Протестировать скорость</li>
-						<li class="tech">Техподдержка<sup>24</sup></li>
+						<li>@Html.ActionLink("Подключен ли мой дом?", "Index", "IsMyHouseConnected")</li>
+						<li>@Html.ActionLink("Протестировать скорость", "Index", "TestSpeed")</li>
+						<li class="tech">@Html.ActionLink("Техподдержка", "TechSupport", "Faq")<sup>24</sup></li>
 					</ul>
 				</div>
 				<div class="support">
@@ -107,20 +109,20 @@
 						<li>@Html.ActionLink("Тарифы", "TariffPlans", "Home", null, null)</li>
 						<li>@Html.ActionLink("Заявка на подключение", "Index", "ClientRequest", null, null)</li>
 						<li>@Html.ActionLink("Вопросы и ответы", "Index", "Faq", null, null)</li>
-						<li>Оплата</li>
+						<li>@Html.ActionLink("Оплата", "Payment", "About", null, null)</li>
 					</ul>
 				</div>
 				<div class="support">
 					<ul>
-						<li>О компании</li>
-						<li>Для бизнеса</li>
+						<li>@Html.ActionLink("О компании", "Index", "About", null, null)</li>
+						<li>@Html.ActionLink("Для бизнеса", "Index", "Bussiness")</li>
 						<li>@Html.ActionLink("Оферта", "Index", "OfferContract", null, null)</li>
-						<li>Реквизиты</li>
+						<li>@Html.ActionLink("Реквизиты", "Details", "About", null, null)</li>
 					</ul>
 				</div>
 			</div>
 		</div>
-<!-- Техническая информация -->
+		<!-- Техническая информация -->
 		<div class="JavascriptParams" style="display: none">
 			@{
 				var dic = ViewBag.JavascriptParams as Dictionary<string, string>;
@@ -138,22 +140,23 @@
 					<div class="window inner">
 						<div class='header'>
 							<div class='title'></div>
-							<button class="button close">close</button>
+							<div class="button close"></div>
 						</div>
 						<div class='wrap'></div>
 					</div>
-					</div>
+				</div>
 			</div>
-			<div id="CityWindow" >
+			<div class="cityWindow" id="CityWindow" >
 				<div>
-					<div id="userCity">Мы определили, что вы находитесь в городе <span class="UserCity">@(ViewBag.UserCity)</span></div>
+					<div id="userCity" class="whiteblocktext"><p>Мы определили, что вы находитесь в регионе <span class="UserCity">@(ViewBag.UserCity)</span></p></div>
 					<div class="buttons">
-						<button class="button ok">Да</button>
-						<button class="button cancel">Нет</button>
+						<button class="click cancel">Нет</button>
+						<button class="click ok">Да</button>
 					</div>
 				</div>
 			</div>
-			<div id ="SelectCityWindow" >
+			<div class="cityWindow" id ="SelectCityWindow" >
+				<div class="whiteblocktext"><p>Выберите регион из списка:</span></p></div>
 				<div class="cities">
 					@{
 						foreach (var city in ViewBag.Cities) {
@@ -175,14 +178,43 @@
 					}
 				}
 			</div>
+			<div class="cityWindow" id ="CallMeBackWindow" >
+				@{
+					CallMeBackTicket ticket = ViewBag.CallMeBackTicket;
+					ValidationRunner validationRunner = ViewBag.Validation;
+					String action = ViewBag.ActionName.ToString();
+					String controller = ViewBag.ControllerName.ToString();
+				}
+				@using (@Html.BeginForm(action, controller, FormMethod.Post)) {
+					<div class="whiteblocktext">
+						<p>Наш оператор свяжется с вами в течении дня.
+						</p>
+					</div>
+					<div class="applications">
+						<div class="label">Имя:<sup>*</sup></div>
+						@Html.ValidationEditor(validationRunner, ticket, "Name", new { @class = "application" }, HtmlTag.input, HtmlType.none)
+						<div class="label">Номер телефона:<sup>*</sup></div>
+						@Html.ValidationEditor(validationRunner, ticket, "PhoneNumber", new { @class = "application" }, HtmlTag.input, HtmlType.none)
+						<div class="label">Комментарий:</div>
+						@Html.ValidationEditor(validationRunner, ticket, "Text", null, HtmlTag.textarea, HtmlType.none)
+					</div>
+					<div class="definitely"><sup>*</sup>- обязательно для заполнения</div>
+					<div class="buttons">
+						<input class="contacting" type="submit" value="Связаться">
+					</div>
+				}
+			</div>
+			<div id="windowButtons" class="buttons">
+				<button class="click cancel">Нет</button>
+				<button class="click ok">Да</button>
+			</div>
 		</div>
-
-	<script type="text/javascript" src="~/Scripts/jquery-2.1.1.js"></script>
-	<script type="text/javascript" src="~/Scripts/jquery-ui-1.11.1.js"></script>
-	<script type="text/javascript" src="~/Scripts/Helpers.js"></script>
-	<script type="text/javascript" src="~/Scripts/EventEmitter.js"></script>
-	<script type="text/javascript" src="~/Scripts/Inforoom.js"></script>
-	<script type="text/javascript" src="~/Scripts/Window.js"></script>
-	@RenderSection("JavaScript", required: false)
+		<script type="text/javascript" src="~/Scripts/jquery-2.1.1.js"></script>
+		<script type="text/javascript" src="~/Scripts/jquery-ui-1.11.1.js"></script>
+		<script type="text/javascript" src="~/Scripts/Helpers.js"></script>
+		<script type="text/javascript" src="~/Scripts/EventEmitter.js"></script>
+		<script type="text/javascript" src="~/Scripts/Inforoom.js"></script>
+		<script type="text/javascript" src="~/Scripts/Window.js"></script>
+		@RenderSection("JavaScript", required: false)
 	</body>
 </html>

@@ -1,0 +1,48 @@
+﻿@section JavaScript{<script type="text/javascript"src="@Url.Content("~/Scripts/IsMyHouseConnectedController.js")"></script>}
+@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@{
+	ViewBag.Title = "Подключен ли ваш дом?";
+	ClientRequest clientRequest = ViewBag.ClientRequest;
+}
+<script src="http://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+<div class="heading">ПОДКЛЮЧЕН ЛИ ВАШ ДОМ?</div>
+<div class="contracttop">На данной странице, вы можете проверить, подключен ли ваш дом к нашей сети. В случае, если ваш дом не подключен, не спешите расстраиваться - лучше сделать звонок в техподдержку и уточнить информацию по подключению вашего дома.</div>
+<div id="yandexMap" class="mapright"></div>
+<div class="addressleft">
+	
+	@using (@Html.BeginForm("Index", "IsMyHouseConnected", FormMethod.Post)) {
+		<div class="personals">Выберите город:</div>
+		@Html.DropDownListExtendedFor(k => clientRequest.Address.House.Street.Region, ViewBag.Regions as List<Region>, k => k.Name, null, new { @class = "rounded", onchange="typeWatcher(50)" }, clientRequest.Address.House.Street.Region != null ? clientRequest.Address.House.Street.Region.Id : 0 )
+		<div class="location">
+			<div class="personals">Введите адрес:</div>
+			@Html.TextAreaFor(k => clientRequest.AddressAsString, 6, 31, new {id="addressArea", onkeyup = "typeWatcher( 500)" })
+		</div>
+		@Html.HiddenFor(k => clientRequest.YandexCity, new { id = "yandexCityHidden" })
+		@Html.HiddenFor(k => clientRequest.YandexStreet, new { id = "yandexStreetHidden" })
+		@Html.HiddenFor(k => clientRequest.YandexHouse, new { id = "yandexHouseHidden" })
+		<input class="verify" type="submit" value="Проверить">
+	}
+	@if (ViewBag.IsConnected != null) {
+		if (ViewBag.IsConnected) {
+			<div class="answersuccess">
+				<div class="answersuccessbg"></div>
+				<div class="reply">
+					<h1>Ваш дом подключен!</h1>
+					<p>Вы можете оставить @Html.ActionLink("заявку на подключение", "Index", "ClientRequest",null,new {@class = "corpred"})</p>
+				</div>
+			</div>
+		}
+		else {
+			<div class="answererror">
+				<div class="answererrorbg"></div>
+				<div class="reply">
+					<h1>Ошибка!</h1>
+					<p>Просьба уточнить информацию по телефону
+						@ViewBag.RegionOfficePhoneNumber</p>
+				</div>
+			</div>
+		}
+	}
+</div>

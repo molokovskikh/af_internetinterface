@@ -1,19 +1,19 @@
 ﻿<div class="borderless-content">
 
-  <h2>Выбирите регион:</h2>
-  <table class="table" id="AllRegionsTable">
+	<h2>Выбирите регион:</h2>
+	<table class="table" id="AllRegionsTable">
 		<thead>
 			<th>Наименование региона</th>
 		</thead>
 		<tbody>
-      <% for item in RegionsList: %>
-			  <tr>
-				  <td>
-            <a href="${siteroot}/IpPools/ShowIpPoolsOfRegion?regionId=${item.Id}">!{item.Name}</a>
-          </td>
-			  </tr>
+			<% for item in RegionsList: %>
+				<tr>
+					<td>
+						<a href="${siteroot}/IpPools/ShowIpPoolsOfRegion?regionId=${item.Id}">!{item.Name}</a>
+					</td>
+				</tr>
 			<% end %>
 		</tbody>
 	</table>
-  
+
 </div>

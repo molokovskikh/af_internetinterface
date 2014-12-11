@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using Castle.ActiveRecord;
@@ -60,7 +61,7 @@ namespace Billing.Test.Integration
 		public void CleanDb()
 		{
 			session.CreateSQLQuery(
-					@"delete from Internet.ClientServices;
+				@"delete from Internet.ClientServices;
 				delete from Internet.Requests;
 				delete from Internet.SmsMessages;
 				delete from Internet.UserWriteOffs;
@@ -231,7 +232,7 @@ namespace Billing.Test.Integration
 		public void LawyerPersonTest()
 		{
 			var param = ConfigurationManager.AppSettings["LawyerPersonBalanceWarningRate"];
-			var rate = decimal.Parse(param);
+			var rate = decimal.Parse(param, CultureInfo.InvariantCulture);
 
 			var region = session.Query<RegionHouse>().First(r => r.Name == "Воронеж");
 			var lPerson = new LawyerPerson(region);
@@ -255,7 +256,7 @@ namespace Billing.Test.Integration
 			FlushAndCommit();
 
 			var sn = SystemTime.Now();
-			var days = sn.DaysInMonth() + sn.AddMonths(1).DaysInMonth()*rate;
+			var days = sn.DaysInMonth() + sn.AddMonths(1).DaysInMonth() * rate;
 			var beginData = new DateTime(sn.Year, sn.Month, 1);
 			for (int i = 0; i < days; i++) {
 				SystemTime.Now = () => beginData.AddDays(i);

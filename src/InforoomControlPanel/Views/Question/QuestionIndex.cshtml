@@ -1,0 +1,31 @@
+﻿@using Inforoom2.Models
+
+@{
+	ViewBag.Title = "Index";
+	IList<Question> questions = ViewBag.Questions ?? new List<Question>();
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>AdminQuestion</h2>
+@{ Html.RenderPartial("AdminPanel");  }
+<span><button class="CreateQuestion" onclick=" location.href = '@Url.Action("EditQuestion", "Question")' ">Создать вопрос</button></span>
+
+<div class="AdminQuestion">
+	
+	<table class="AdminQuestionTable">
+		@foreach (var item in questions) {
+			<tr>
+				<td>@Html.DisplayFor(modelItem => item.Priority)</td>
+				<td>@Html.DisplayFor(modelItem => item.Text)</td>
+				<td>@Html.CheckBoxFor(modelItem => item.IsPublished)</td>
+				<td>
+					
+					<span><button class="ViewQuestion" onclick=" location.href = '@Url.Action("EditQuestion", "Question", new { questionId = item.Id})' ">Просмотр</button></span>
+					<span><button class="QuestionDelete" onclick=" location.href = '@Url.Action("DeleteQuestion", "Question", new { questionId = item.Id })' ">Удалить</button></span>
+					<span><button class="QuestionUp" onclick=" location.href = '@Url.Action("Move", "Question", new { questionId = item.Id, direction = "Up" })' ">Вверх</button></span>
+					<span><button class="QuestionDown" onclick=" location.href = '@Url.Action("Move", "Question", new { questionId = item.Id, direction = "Down" })' ">Вниз</button></span>
+				</td>
+			</tr>
+		}
+	</table>
+</div>

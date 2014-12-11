@@ -15,7 +15,8 @@ function init() { // Создаем карту.
 
 	myMap = new ymaps.Map("yandexMap", {
 		center: [55.76, 37.64],
-		zoom: 15
+		zoom: 15,
+		controls: ['zoomControl']
 	});
 }
 
@@ -40,30 +41,13 @@ function checkAddress(firstGeoObject) {
 		}
 
 		console.log('Получен адрес: ', yandexCity, yandexStreet, yandexHouseDetails);
-		console.log('Показываем');
 		myMap.geoObjects.add(firstGeoObject);
 		myMap.setCenter(firstGeoObject.geometry.getCoordinates(), 17, {
 			checkZoomRange: true
 		});
-
-		if (yandexCity && yandexStreet && yandexHouseDetails) {
-			//Проверяем корректность адреса
-			console.log("Проверяем город", yandexCity == userCity);
-			console.log("Проверяем улицу", yandexStreet.indexOf(userStreet));
-			var userHouseDetails = userHouse + userHousing;
-			console.log("Проверяем дом", userHouseDetails, yandexHouseDetails, userHouseDetails == yandexHouseDetails);
-
-			if (yandexCity == userCity && yandexStreet.indexOf(userStreet) > -1 && userHouseDetails == yandexHouseDetails) {
-				$('.YMapAddressResult').html("Проверка яндекса: Адрес правильный");
-			} else {
-				$('.YMapAddressResult').html("Проверка яндекса: Адрес не найден");
-			}
-		} else {
-			$('.YMapAddressResult').html("Проверка яндекса: Адрес не найден");
-		}
-
-		checkSwitchAddress();
-
+			document.getElementById('yandexCityHidden').value = yandexCity;
+			document.getElementById('yandexStreetHidden').value = yandexStreet;
+			document.getElementById('yandexHouseHidden').value = yandexHouseDetails;
 	});
 }
 
@@ -80,12 +64,13 @@ function findAddressOnMap(searchQuery) {
 
 var typeWatcher = function() {
 	var timer = 0;
+	console.log('tick');
 	return function(ms) {
 		var callback = function showAddressOnMap() {
-			userCity = document.getElementById('clientRequest_Address_House_Street_Region_City_Name').value.toLowerCase();
-			userStreet = document.getElementById('clientRequest_Address_House_Street_Name').value.toLowerCase();
-			userHouse = document.getElementById('clientRequest_Address_House_Number').value.toLowerCase();
-			userHousing = document.getElementById('clientRequest_Address_House_Housing').value.toLowerCase();
+			userCity = document.getElementById('clientRequest_City').value.toLowerCase();
+			userStreet = document.getElementById('clientRequest_Street').value.toLowerCase();
+			userHouse = document.getElementById('clientRequest_HouseNumber').value.toLowerCase();
+			userHousing = document.getElementById('clientRequest_Housing').value.toLowerCase();
 
 			var address = userCity + " " + userStreet + " " + userHouse + " " + userHousing;
 			findAddressOnMap(address);
@@ -95,15 +80,3 @@ var typeWatcher = function() {
 		timer = setTimeout(callback, ms);
 	};
 }();
-
-function checkSwitchAddress() {
-	var url = "/ClientRequest/CheckSwitchAddress";
-	$.post(url, { city: yandexCity, street: yandexStreet, house: yandexHouseDetails}, function (isValid) {
-		console.log(isValid);
-		if (isValid == 'True') {
-			$('.SwitchAddressResult').html("Проверка свича: Дом подключен!");
-		} else {
-			$('.SwitchAddressResult').html("Проверка свича: Дом не подключен!");
-		}
-	});
-}
