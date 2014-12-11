@@ -11,6 +11,7 @@
 		<title>@(ViewBag.Title)</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<link href="../../css/main.css" rel="stylesheet" />
+		<link href="../../css/style.css" rel="stylesheet" />
 	</head>
 	<body>
 		<div class="leftbg"></div>
@@ -39,7 +40,7 @@
 				@if (Request.IsAuthenticated && ViewBag.ClientInfo != null) {
 					<div class="logon">
 						<p>	@ViewBag.ClientInfo </p>
-						@using (Html.BeginForm("Profile", "Personal", FormMethod.Post, new { @class = "logonform" })) {
+						@using (Html.BeginForm("Profile", "Personal", FormMethod.Get, new { @class = "logonform" })) {
 							<input type="submit" value="Личный кабинет">
 						}
 						@Html.ActionLink("Выход", "Logout", "Account") 
@@ -156,7 +157,7 @@
 				</div>
 			</div>
 			<div class="cityWindow" id ="SelectCityWindow" >
-				<div class="whiteblocktext"><p>Выберите регион из списка:</span></p></div>
+				<div class="whiteblocktext"><p>Выберите регион из списка:</p></div>
 				<div class="cities">
 					@{
 						foreach (var city in ViewBag.Cities) {

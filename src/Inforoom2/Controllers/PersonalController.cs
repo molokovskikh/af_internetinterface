@@ -30,6 +30,7 @@ namespace Inforoom2.Controllers
 	{
 		public new ActionResult Profile()
 		{
+			InitServices();
 			ViewBag.Title = "Личный кабинет";
 			ViewBag.CurrentClient = CurrentClient;
 			return View();

@@ -1,41 +1,46 @@
 ﻿@using Inforoom2.Models
 
 @{
+	ViewBag.Title = "Личный кабинет: Тарифы";
 	PhysicalClient client = ViewBag.Client.PhysicalClient;
 	IList<Plan> plans = ViewBag.Plans;
 }
 
-<div class="heading">Тарифы</div>
-<div class="personalinfo">Бесплатная смена тарифного плана доступна 1 раз в месяц.
-В меняли тариф @client.LastTimePlanChanged.ToShortDateString()</div>
-<table class="cost">
-	<tr class="menucost">
-		<td class="namemenu"><div class="namemenubg"></div>Название</td>
-		<td class="namemenu"><div class="namemenubg"></div>Скорость</td>
-		<td class="namemenu"><div class="namemenubg "></div>Абонентская плата</td>
-		<td class="namemenu"><div class="namemenubg "></div>Стоимость перехода</td>
-		<td class="namemenu td">Действие</td>
-	</tr>
-	@foreach (var plan in plans) {
-		@Html.HiddenFor(modelItem => plan.Id)
-
-		<tr class="menufee">
-			<td class="tariffscost">@Html.DisplayFor(modelItem => plan.Name)</td>
-			<td class="fee">@Html.DisplayFor(modelItem => plan.Speed)</td>
-			<td class="fee">@Html.DisplayFor(modelItem => plan.Price)</td>
-			<td class="costs">@Html.DisplayFor(modelItem => plan.SwitchPrice)</td>
-			<td >
-				@if (plan.Id == client.Plan.Id) {
-					<input class="connectfee" disabled="disabled"  value="Текущий"/>
-				}
-				else {
-					using (@Html.BeginForm("ChangePlan", "Personal")) {
-						@Html.HiddenFor(modelItem => plan.Id)
-						<input class="connectfee" type="submit" value="Сменить"/>
-					}
-				}
-			</td>
+<div class="heading">@ViewBag.Title</div>
+<div class="right-block">
+	
+	<div class="paragraph">Бесплатная смена тарифного плана доступна 1 раз в месяц.
+		В меняли тариф @client.LastTimePlanChanged.ToShortDateString()</div>
+	<br/>
+	<table class="cost">
+		<tr class="menucost">
+			<td class="namemenu"><div class="namemenubg"></div>Название</td>
+			<td class="namemenu"><div class="namemenubg"></div>Скорость</td>
+			<td class="namemenu"><div class="namemenubg "></div>Абонентская плата</td>
+			<td class="namemenu"><div class="namemenubg "></div>Стоимость перехода</td>
+			<td class="namemenu td">Действие</td>
 		</tr>
-	}
-</table>
+		@foreach (var plan in plans) {
+			@Html.HiddenFor(modelItem => plan.Id)
+
+			<tr class="menufee">
+				<td class="tariffscost">@Html.DisplayFor(modelItem => plan.Name)</td>
+				<td class="fee">@Html.DisplayFor(modelItem => plan.Speed)</td>
+				<td class="fee">@Html.DisplayFor(modelItem => plan.Price)</td>
+				<td class="costs">@Html.DisplayFor(modelItem => plan.SwitchPrice)</td>
+				<td >
+					@if (plan.Id == client.Plan.Id) {
+						<div class="paragraph">Текущий</div>
+					}
+					else {
+						using (@Html.BeginForm("ChangePlan", "Personal")) {
+							@Html.HiddenFor(modelItem => plan.Id)
+							<input class="connectfee" type="submit" value="Сменить"/>
+						}
+					}
+				</td>
+			</tr>
+		}
+	</table>
+</div>
 @{ Html.RenderPartial("Menu");  }
