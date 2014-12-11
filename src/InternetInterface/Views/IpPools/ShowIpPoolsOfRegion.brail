@@ -1,0 +1,42 @@
+﻿<div class="region-ip-pools">
+    <h2>Назначение IP-пулов для региона "${RegionName}"</h2>
+
+    <div class="content">
+        <form id="AddPoolForm" method="POST" action="${siteroot}/IpPools/ChainIpPoolWithRegion?regionId=${regionId}">
+            <div class="form-row">
+              <% if (IpPoolsList.Count > 0): %>
+                <span>IP-пул</span>
+                <select id="PoolsSelect" name="addRegPool.IpPool.Id">
+                    <% for pool in IpPoolsList: %>
+                    <option value="${pool.Id}">!{pool.Id} (!{pool.Begin}-!{pool.End})</option>
+                    <% end %>
+                </select>
+                <input id="AddPoolButton" type="submit" value="Добавить" style="position: relative; left: 45px;"/>
+              <% else: %>
+                <span>Все доступные IP-пулы уже прикреплены</span>
+              <% end %>
+            </div>
+        </form>
+
+        <div class="form-row">
+          <% if (RegIpPoolsList.Count > 0): %>
+            <table id="RegionPoolsTable" class="table">
+                <% for regPool in RegIpPoolsList: %>
+                <tr>
+                    <td>!{regPool.IpPool.Id} (!{regPool.IpPool.Begin}-!{regPool.IpPool.End})</td>
+                    <td style="text-align: center">
+                        <form method="POST" action="${siteroot}/IpPools/UnchainIpPoolWithRegion?regionId=${regionId}">
+                            <input type="hidden" name="delRegPool.Id" value="${regPool.Id}"/>
+                            <input id="DeletePoolButton" type="submit" value="X"/>
+                        </form>
+                    </td>
+                </tr>
+                <% end %>
+            </table>
+          <% else: %>
+            <span class="error">У данного региона нет ни одного IP-пула</span>
+          <% end %>
+        </div>
+    </div>
+
+</div>

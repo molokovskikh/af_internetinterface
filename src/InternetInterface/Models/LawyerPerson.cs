@@ -21,6 +21,7 @@ namespace InternetInterface.Models
 	public class ConnectInfo
 	{
 		public string Port { get; set; }
+        public uint? Pool { get; set; }
 		public uint Switch { get; set; }
 		public uint Brigad { get; set; }
 		public string static_IP { get; set; }

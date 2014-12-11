@@ -178,6 +178,7 @@ namespace InternetInterface.Models
 						new ControllerPermission(typeof(ExportController)),
 						new ControllerPermission(typeof(MapController)),
 						new ControllerPermission(typeof(TvRequestController)),
+                        new ControllerPermission(typeof(IpPoolsController)), 
 						new ControllerActionPermission("Sms", "GetSmsStatus"),
 						new ControllerActionPermission("UserInfo", "RemakeVirginityClient"),
 						new ControllerActionPermission("UserInfo", "DeleteGraph"),

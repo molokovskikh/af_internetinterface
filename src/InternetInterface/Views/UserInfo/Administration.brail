@@ -102,9 +102,15 @@
 				${app.LinkTo("Регионы", @UserInfo, @ShowRegions)}
 			</td>
 		</tr>
-		<tr>
-			<td>
-				${app.LinkTo("Аренда оборудование", @RentableHardwares, @Index)}
+    <tr>
+      <td>
+        ${app.LinkTo("IP-пулы по регионам", @IpPools, @ShowRegionsList)}
+        <br><span class="comment_text">Просмотр регионов и выбор для них IP-пулов</span>
+      </td>
+    </tr>
+    <tr>
+		  <td>
+				${app.LinkTo("Аренда оборудования", @RentableHardwares, @Index)}
 			</td>
 		</tr>
 	</tbody>

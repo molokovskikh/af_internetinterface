@@ -69,7 +69,7 @@ namespace InternetInterface.Controllers
 			if(validatedObjects == null)
 				validatedObjects = new ArrayList();
 
-			if(!obj.GetType().HasAttribute<ActiveRecordAttribute>())
+            if (!obj.GetType().HasAttribute<ActiveRecordAttribute>() && !obj.GetType().BaseType.HasAttribute<ActiveRecordAttribute>())
 				throw new Exception("Объект не имеет аттрибута ActiveRecord");
 
 			var runner = new ValidatorRunner(new CachedValidationRegistry());

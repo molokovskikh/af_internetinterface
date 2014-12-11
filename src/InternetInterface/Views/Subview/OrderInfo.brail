@@ -145,6 +145,10 @@
 		  <td><span class="description">Арендованный IP </span></td>
 		  <td>${OrderInfo.ClientConnectInfo.Leased_IP}</td>
 		</tr>
+	    <tr>
+	      <td><span class="description">IP-пул</span></td>
+	      <td>${OrderInfo.ClientConnectInfo.Pool}</td>
+	    </tr>
 		<tr>
 		  <td class="width400px">
 			<a href="${SiteRoot}/Switches/MakeSwitch?Switch=${OrderInfo.ClientConnectInfo.Switch}"> Коммутатор</a>
@@ -364,6 +368,22 @@
 		  <td>Арендованный IP</td>
 		  <td colspan=2>${OrderInfo.ClientConnectInfo.Leased_IP}</td>
 		</tr>
+	    <tr>
+	      <td>IP-пул</td>
+	      <td colspan=2>
+	        <% if (IpPools == null): %>
+            <span class="error">Невозмоно задать IP-пул, т.к. не задан регион</span>
+            <% else: %>
+	        <select name="OrderInfo.ClientConnectInfo.Pool" id="PoolsSelect" style="width:50%">
+	            <option value="0"></option>
+	            <% for pool in IpPools: %>
+	            <option value="${pool.Id}" ${"selected" if (pool.Id == OrderInfo.ClientConnectInfo.Pool)}>!{pool.Id} (!{pool.Begin}-!{pool.End})</option>
+	            <% end %>
+	        </select>
+	        <% end %>
+		    ${app.Error("OrderInfo.ClientConnectInfo.Pool")}
+	      </td>
+	    </tr>
 		<tr>
 			<td>Коммутатор</td>
 			<td class="width200px">
