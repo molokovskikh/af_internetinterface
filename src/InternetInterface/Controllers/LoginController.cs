@@ -26,6 +26,7 @@ namespace InternetInterface.Controllers
 		{
 			if (ActiveDirectoryHelper.IsAuthenticated(login, password)
 			    && DbSession.Query<Partner>().Any(p => p.Login == login && !p.IsDisabled)) {
+				FormsAuthentication.RedirectFromLoginPage(login, true);
 				AuthenticationFilter.SetLoginCookie(Context, login);
 				RedirectToUrl(@"~/Map/SiteMap");
 			}
@@ -53,7 +54,7 @@ namespace InternetInterface.Controllers
 		public void ChangeLoggedInPartner(string login, string redirect)
 		{
 			if (AuthenticationFilter.GetLoginFromCookie(Context) != null) {
-				FormsAuthentication.SignOut();
+				Response.RemoveCookie(FormsAuthentication.FormsCookieName);
 			}
 			AuthenticationFilter.SetLoginCookie(Context, login);
 			RedirectToUrl(redirect ?? @"~/Map/SiteMap");
