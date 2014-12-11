@@ -4,27 +4,29 @@
 @model dynamic
 @{
 	IList<BillingHistory> historyList = ViewBag.HistoryList;
+	ViewBag.Title = "Личный кабинет: платежи";
 }
 
 
-<div class="heading">ЛИЧНЫЙ КАБИНЕТ: ПЛАТЕЖИ</div>
-<div class="list">
+<h2 class="heading">@ViewBag.Title.ToUpper()</h2>
+<div class="right-block">
 	@{ Html.RenderPartial("Menu"); }
-	<div class="historys">
-		<div class="history">ИСТОРИЯ БАЛАНСА</div>
-		<table class="historytb">
-			<tr class="menucost">
-				<td class="menyhistory">Действие</td>
-				<td class="menyhistory">Сумма, руб.</td>
-				<td class="menyhistory">Дата</td>
+	@*		<div class="history">ИСТОРИЯ БАЛАНСА</div>*@
+	<table class="cost">
+		<tr class="menucost">
+			<td class="menyhistory">Действие</td>
+			<td class="menyhistory">Сумма, руб.</td>
+			<td class="menyhistory">Дата</td>
+		</tr>
+		@foreach (var entry in historyList) {
+			<tr class="menufee">
+				<td class="fistorytb">@Html.DisplayFor(k => entry.Description)</td>
+				<td class="fee">@Html.DisplayFor(k => entry.Sum)</td>
+				<td class="price tr">@Html.DisplayFor(k => entry.Date)</td>
 			</tr>
-			@foreach (var entry in historyList) {
-				<tr class="menufee">
-					<td class="fistorytb">@Html.DisplayFor(k => entry.Description)</td>
-					<td class="fee">@Html.DisplayFor(k => entry.Sum)</td>
-					<td class="price tr">@Html.DisplayFor(k => entry.Date)</td>
-				</tr>
-			}
-		</table>
-	</div>
+		}
+	</table>
 </div>
+@if (historyList.Count == 0) {
+	<div class="noTableRows">У вас нет списаний</div>
+}

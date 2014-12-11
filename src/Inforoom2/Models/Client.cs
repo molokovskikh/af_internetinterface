@@ -27,6 +27,9 @@ namespace Inforoom2.Models
 		[Property(NotNull = true)]
 		public virtual bool ShowBalanceWarningPage { get; set; }
 
+		[Property(Column = "Sale", NotNull = true)]
+		public virtual int Discount { get; set; }
+
 		[Property(NotNull = true)]
 		public virtual bool AutoUnblocked { get; set; }
 
