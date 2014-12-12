@@ -43,12 +43,20 @@ namespace Inforoom2.Controllers
 		}
 
 
-		private void InitClientRequest(Plan plan = null)
+		private void InitClientRequest(Plan plan = null, string street = "", string house = "")
 		{
 			var clientRequest = new ClientRequest();
 
 			if (!string.IsNullOrEmpty(UserCity)) {
 				clientRequest.City = UserCity;
+			}
+
+			if (!string.IsNullOrEmpty(street) && !string.IsNullOrEmpty(house)) {
+				clientRequest.Street = street;
+				int housen = 0;
+				int.TryParse(house, out housen);
+				if (housen != 0)
+					clientRequest.HouseNumber = housen;
 			}
 			if (plan != null) {
 				clientRequest.Plan = plan;
@@ -64,7 +72,6 @@ namespace Inforoom2.Controllers
 			return plans;
 		}
 
-
 		protected Address GetAddressByYandexData(ClientRequest clientRequest)
 		{
 			var city = GetList<City>().FirstOrDefault(c => c.Name.Equals(clientRequest.YandexCity, StringComparison.InvariantCultureIgnoreCase));
@@ -76,26 +83,26 @@ namespace Inforoom2.Controllers
 			var region = GetList<Region>().FirstOrDefault(r => r.City == city);
 
 			var street = GetList<Street>().FirstOrDefault(s => s.Name.Equals(clientRequest.YandexStreet, StringComparison.InvariantCultureIgnoreCase)
-			                                         && s.Region.Equals(region));
+			                                                   && s.Region.Equals(region));
 
 			if (street == null) {
 				street = new Street(clientRequest.YandexStreet);
 			}
 
 			var house = GetList<House>().FirstOrDefault(h => h.Number.Equals(clientRequest.YandexHouse, StringComparison.InvariantCultureIgnoreCase)
-			                                       && h.Street.Name.Equals(clientRequest.YandexStreet, StringComparison.InvariantCultureIgnoreCase)
-			                                       && h.Street.Region.Equals(region));
+			                                                 && h.Street.Name.Equals(clientRequest.YandexStreet, StringComparison.InvariantCultureIgnoreCase)
+			                                                 && h.Street.Region.Equals(region));
 
 			if (house == null) {
 				house = new House(clientRequest.YandexHouse);
 			}
 			var address = GetList<Address>().FirstOrDefault(a => a.IsCorrectAddress
-			                                            && a.House.Equals(house)
-			                                            && a.House.Street.Equals(street)
-			                                            && a.House.Street.Region.Equals(region)
-			                                            && a.Entrance == clientRequest.Entrance
-			                                            && a.Floor == clientRequest.Floor
-			                                            && a.Apartment == clientRequest.Apartment);
+			                                                     && a.House.Equals(house)
+			                                                     && a.House.Street.Equals(street)
+			                                                     && a.House.Street.Region.Equals(region)
+			                                                     && a.Entrance == clientRequest.Entrance
+			                                                     && a.Floor == clientRequest.Floor
+			                                                     && a.Apartment == clientRequest.Apartment);
 
 			if (address == null) {
 				address = new Address();
@@ -114,6 +121,12 @@ namespace Inforoom2.Controllers
 		{
 			var plan = DbSession.Query<Plan>().FirstOrDefault(p => p.Name == planName);
 			InitClientRequest(plan);
+			return View("Index");
+		}
+
+		public ActionResult RequestFromConnectionCheck(string street, string house)
+		{
+			InitClientRequest(null, street, house);
 			return View("Index");
 		}
 	}
