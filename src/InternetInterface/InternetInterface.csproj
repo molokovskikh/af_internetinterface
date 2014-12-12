@@ -215,7 +215,9 @@
     <None Include="Views\Map\ShowBookmarks.brail" />
     <Content Include="Views\Payments\ShowWriteOffs.brail" />
     <Content Include="Views\Partners\New.brail" />
-    <Content Include="Views\Partners\Edit.brail" />
+    <Content Include="Views\Partners\Edit.brail">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Views\Payments\ContractOfAgency.brail" />
     <None Include="Views\PrivateMessages\ForClient.brail" />
     <None Include="Views\PrivateMessages\ForSwitch.brail" />
@@ -296,6 +298,9 @@
     <None Include="Views\Templates\Internet.brail" />
     <None Include="Views\Templates\IpTv.brail" />
     <None Include="Views\UserInfo\AddInfo.brail" />
+    <Content Include="Views\IpPools\ShowIpPoolsOfRegion.brail">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Views\UserInfo\AddPoint.brail">
       <SubType>Designer</SubType>
     </None>
@@ -304,7 +309,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Views\UserInfo\ClientRegisteredInfoFromDiller.brail" />
-    <None Include="Views\TvRequest\new.brail" />
+    <None Include="Views\TvRequest\new.brail">
+      <SubType>Designer</SubType>
+    </None>
     <Content Include="Views\UserInfo\EditRegion.brail" />
     <Content Include="Views\UserInfo\OrdersArchive.brail">
       <SubType>Designer</SubType>
@@ -318,7 +325,9 @@
     </None>
     <None Include="Views\UserInfo\LawyerPersonInfo.brail" />
     <None Include="Views\UserInfo\NoPhoned.brail" />
-    <None Include="Views\Partners\Index.brail" />
+    <None Include="Views\Partners\Index.brail">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Views\UserInfo\ClientRegisteredInfo.brail" />
     <None Include="Views\Subview\DeleteLabel.brail" />
     <None Include="Views\UserInfo\Leases.brail" />
@@ -344,6 +353,9 @@
     <None Include="Views\UserInfo\ShowAppeals.brail" />
     <Content Include="Views\UserInfo\ShowRegions.brail" />
     <Content Include="Views\UserInfo\Statistic.brail" />
+    <Content Include="Views\IpPools\ShowRegionsList.brail">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Web.test.config">
       <SubType>Designer</SubType>
     </None>
@@ -362,6 +374,7 @@
     <Compile Include="Controllers\Filter\ContractFilter.cs" />
     <Compile Include="Controllers\InternetInterfaceController.cs" />
     <Compile Include="Controllers\InvoicesController.cs" />
+    <Compile Include="Controllers\IpPoolsController.cs" />
     <Compile Include="Controllers\PartnersController.cs" />
     <Compile Include="Controllers\PrivateMessagesController.cs" />
     <Compile Include="Controllers\ExitPartner.cs" />
@@ -452,6 +465,7 @@
     <Compile Include="Models\InternetSettings.cs" />
     <Compile Include="Models\Invoice.cs" />
     <Compile Include="Models\IpPool.cs" />
+    <Compile Include="Models\IpPoolRegion.cs" />
     <Compile Include="Models\Label.cs" />
     <Compile Include="Models\LawyerPerson.cs" />
     <Compile Include="Models\Lease.cs" />
@@ -584,8 +598,8 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
-          <AutoAssignPort>False</AutoAssignPort>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>59059</DevelopmentServerPort>
           <DevelopmentServerVPath>/InternetInterface</DevelopmentServerVPath>
           <IISUrl>http://localhost:59060/</IISUrl>

@@ -14,13 +14,13 @@
 </style>
 
 <div id="deletePointDialog" class="reveal-modal">
-<form class="formConnect" method="post" action="${siteroot}/UserInfo/DeleteEndPoint">
-<input type="hidden" name="endPointForDelete" id="endPointForDelete"/>
-<p>Вы собираетесь удалить точку подключения, если клиент уже работает на этой точке, он  будет отключен ! </p>
-<p>Вы уверены, что хотите удалить данную точку подключения ?</p>
-<button type="submit"  class="editBut">Удалить</button>
-</form>
-<a class="close-reveal-modal">x</a>
+	<form class="formConnect" method="post" action="${siteroot}/UserInfo/DeleteEndPoint">
+		<input type="hidden" name="endPointForDelete" id="endPointForDelete"/>
+		<p>Вы собираетесь удалить точку подключения, если клиент уже работает на этой точке, он  будет отключен ! </p>
+		<p>Вы уверены, что хотите удалить данную точку подключения ?</p>
+		<button type="submit"  class="editBut">Удалить</button>
+	</form>
+	<a class="close-reveal-modal">x</a>
 </div>
 
 <div style="clear:both;">
@@ -37,7 +37,7 @@
 			<form class="formConnect" method="post" action="${siteroot}/UserInfo/LoadEditConnectMudule" style="display:inline;">
 			<input type="hidden" name="ClientID" value="${ClientCode}" />
 			<input type="hidden" name="EditConnectFlag" value="${ConnectInfo.endpointId}" />
-			<button type="submit"  class="button save">Редактировать</button>
+			<button id="EditConnectionBtn" type="submit"  class="button save">Редактировать</button>
 			</form>
 		<% end %>
 		</th>
@@ -51,48 +51,52 @@
 	</thead>
 	<tbody>
 		<tr>
-		  <td><span class="description">Фиксированный </span></td>
-		  <td>${ConnectInfo.static_IP}</td>
+			<td><span class="description">Фиксированный </span></td>
+			<td>${ConnectInfo.static_IP}</td>
 		</tr>
 		<tr>
-		  <td><span class="description">Арендованный IP </span></td>
-		  <td>${ConnectInfo.Leased_IP}</td>
+			<td><span class="description">Арендованный IP </span></td>
+			<td>${ConnectInfo.Leased_IP}</td>
 		</tr>
 		<tr>
-		  <td style="width:400px;">
-			<a href="${SiteRoot}/Switches/MakeSwitch?Switch=${ConnectInfo.Switch}"> Коммутатор</a>
-		</td>
-		  <td>
-			<a href="${siteroot}/Hardware/PortInfo?endPoint=${ConnectInfo.endpointId}">
-				${ConnectInfo.Swith_adr} (${ConnectInfo.swith_IP})
-			</a>
-		</td>
+			<td><span class="description">IP-пул</span></td>
+			<td>${ConnectInfo.Pool}</td>
 		</tr>
 		<tr>
-		  <td><span class="description">Порт </span></td>
-		  <td>${ConnectInfo.Port}</td>
+			<td style="width: 400px;">
+				<a href="${SiteRoot}/Switches/MakeSwitch?Switch=${ConnectInfo.Switch}"> Коммутатор</a>
+			</td>
+			<td>
+				<a href="${siteroot}/Hardware/PortInfo?endPoint=${ConnectInfo.endpointId}">
+					${ConnectInfo.Swith_adr} (${ConnectInfo.swith_IP})
+				</a>
+			</td>
 		</tr>
 		<tr>
-		  <td><span class="description">Скорость </span></td>
-		  <td>${ConnectInfo.GetNormalSpeed()}</td>
+			<td><span class="description">Порт </span></td>
+			<td>${ConnectInfo.Port}</td>
+		</tr>
+		<tr>
+			<td><span class="description">Скорость </span></td>
+			<td>${ConnectInfo.GetNormalSpeed()}</td>
 		</tr>
 		<% if ConnectInfo.ActualPackageId != null: %>
 		<tr>
-		  <td><span class="description">Актуальный PackageId </span></td>
-		  <td>${ConnectInfo.ActualPackageId}</td>
+			<td><span class="description">Актуальный PackageId </span></td>
+			<td>${ConnectInfo.ActualPackageId}</td>
 		</tr>
 		<% end %>
-		 <tr>
-		  <td><span class="description">Мониторинг </span></td>
-		  <td><% if (ConnectInfo.Monitoring): %>
-				Да
-				<% else: %>
-				Нет
-				<% end %></td>
+		<tr>
+			<td><span class="description">Мониторинг </span></td>
+			<td>
+				<% if (ConnectInfo.Monitoring): %>Да
+				<% else: %>Нет
+				<% end %>
+			</td>
 		</tr>
 		<tr>
-		  <td><span class="description">Бригада </span></td>
-		  <td>${?ConnectInfo.WhoConnected}</td>
+			<td><span class="description">Бригада </span></td>
+			<td>${?ConnectInfo.WhoConnected}</td>
 		</tr>
 		<% if ConnectInfo.ConnectSum != null : %>
 		<tr>
@@ -131,7 +135,9 @@
 <script type="text/javascript">
 	function GetStaticIp() {
 		var req = {};
-		req.endPontId = ${ConnectInfo.endpointId};
+		req.endPontId = $;
+		{ConnectInfo.endpointId;
+		};
 		$.post("GetStaticIp", req, function (data) {
 			if (data){
 				$('#static_IP_hiden').val(data);
@@ -157,30 +163,46 @@
 	<thead>
 		<th colspan = 3 > Информация по подключению
 		<% if MapPartner.AccesPartner("DHCP"): %>
-		 <input id="Submit2" type="submit" value="Сохранить"  align="right" />
+		 <input id="SaveConnectionBtn" type="submit" value="Сохранить"  align="right" />
 		 <% end %>
 		</th>
 	</thead>
 	<tbody>
 		<tr>
-		  <td>Фиксированный IP</td>
-		  <td colspan=2>
+			<td>Фиксированный IP</td>
+			<td colspan=2>
 				<input type="button" onclick="DeleteStaticIp()" value="Удалить" style="width: 100px; " />
 				<input type="button" onclick="GetStaticIp()" id="static_IP" value="Назначить" style="width: 100px; " />
 				<input type="hidden" id="static_IP_hiden" name="ConnectInfo.static_IP"  value="${ConnectInfo.static_IP}" />
 				<label id="staticIdLabel" style="font-weight:bold;">${ConnectInfo.static_IP}</label>
-		  </td>
+			</td>
 		</tr>
 		<tr>
-		  <td>Арендованный IP</td>
-		  <td colspan=2>${ConnectInfo.Leased_IP}</td>
+			<td>Арендованный IP</td>
+			<td colspan=2>${ConnectInfo.Leased_IP}</td>
+		</tr>
+		<tr>
+			<td>IP-пул</td>
+			<td colspan=2>
+				<% if (IpPools == null): %>
+					<span class="error">Невозмоно задать IP-пул, т.к. не задан регион</span>
+				<% else: %>
+					<select name="ConnectInfo.Pool" id="PoolsSelect" style="width: 50%">
+						<option value="0"></option>
+						<% for pool in IpPools: %>
+						<option value="${pool.Id}" ${"selected" if (pool.Id == ConnectInfo.Pool)}>!{pool.Id} (!{pool.Begin}-!{pool.End})</option>
+						<% end %>
+					</select>
+				<% end %>
+				${app.Error("ConnectInfo.Pool")}
+			</td>
 		</tr>
 		<tr>
 			<td>Коммутатор</td>
 			<td style="width:200px;">
 				<select name="ConnectInfo.Switch" id="SelectSwitches" style="width: 100%">
 					<option value="0">Нет</option>
-				   <% for j, Switch in enumerate(Switches): %>
+					<% for j, Switch in enumerate(Switches): %>
 					<option id="Option${j}" value="${Switch.Id}" ${"selected" if (Switch.Id.ToString() == ConnectInfo.Switch)} > ${Switch.Name} </option>
 					<% end %>
 				</select>
@@ -192,17 +214,18 @@
 		  <td colspan=2><input type="text" id="Port"  name="ConnectInfo.Port"  value="${ConnectInfo.Port}" style="width: 50%; " /></td>
 		</tr>
 		<tr>
-		  <td>Скорость</td>
-		  <% if _client.IsPhysical(): %>
-		  <td>${ConnectInfo.GetNormalSpeed()}</td>
-		  <% else: %>
-			<td colspan=2>
-			<select name="ConnectInfo.PackageId" style="width: 200px;">
-				<% for j, speed in enumerate(Speeds): %>
-					<option value="${speed.PackageId}" ${"selected" if (speed.PackageId == ChSpeed)}> ${speed}  PID(${speed.PackageId}) ${speed.Description} </option>
-				<% end %>
-		  </td>
-		  <% end %>
+			<td>Скорость</td>
+			<% if _client.IsPhysical(): %>
+				<td>${ConnectInfo.GetNormalSpeed()}</td>
+			<% else: %>
+				<td colspan=2>
+					<select name="ConnectInfo.PackageId" style="width: 200px;">
+						<% for j, speed in enumerate(Speeds): %>
+						<option value="${speed.PackageId}" ${"selected" if (speed.PackageId == ChSpeed)}> ${speed}  PID(${speed.PackageId}) ${speed.Description} </option>
+						<% end %>
+					</select>
+				</td>
+			<% end %>
 		</tr>
 		<tr>
 		  <td>Мониторинг</td>
@@ -355,12 +378,12 @@
 			messages: {
 				required : "Поле не может быть пустым"
 			}
-		})
+		});
 	}
 
 	 function SetValidGate(elem) {
-	 	$(elem).rules("add", { regex: "^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$" })
-	}
+	 	$(elem).rules("add", { regex: "^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$" });
+	 }
 
 	function SetValidMask(elem) {
 		$(elem).rules("add", {digits:true, max: 30 , min : 8,
@@ -369,7 +392,7 @@
 				max: "Маска не может быть больше 30",
 				min: "Маска не может быть меньше 8"
 			}
-		})
+		});
 	}
 
 	function delMenu(clickDiv) {
@@ -411,7 +434,7 @@
 			delMenu(this);
 		});
 		SetValid($('#staticAdress_' + lastIndex));
-		SetValidMask($('#staticPrefix_' + lastIndex))
+		SetValidMask($('#staticPrefix_' + lastIndex));
 		VisualSubnet($('#staticPrefix_' + lastIndex));
 	}
 </script>

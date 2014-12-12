@@ -94,7 +94,7 @@
 			<td colspan="3">
 				<strong>
 					<a id="showServicesLink${OrderInfo.Order.Id}" class="icon icon-add" name="2" href="javascript:"
-							onclick="showOrderServices(${OrderInfo.Order.Id}, 'Подключенные услуги(${OrderInfo.Order.OrderServices.Count}):')">
+							onclick="showOrderServices($;{OrderInfo.Order.Id;}, 'Подключенные услуги(${OrderInfo.Order.OrderServices.Count}):');; ">
 						Подключенные услуги(${OrderInfo.Order.OrderServices.Count}):</a>
 				</strong>
 			</td>
@@ -146,7 +146,11 @@
 		  <td>${OrderInfo.ClientConnectInfo.Leased_IP}</td>
 		</tr>
 		<tr>
-		  <td class="width400px">
+			<td><span class="description">IP-пул</span></td>
+			<td>${OrderInfo.ClientConnectInfo.Pool}</td>
+		</tr>
+		<tr>
+			<td class="width400px">
 			<a href="${SiteRoot}/Switches/MakeSwitch?Switch=${OrderInfo.ClientConnectInfo.Switch}"> Коммутатор</a>
 		</td>
 		  <td>
@@ -219,7 +223,9 @@
 <script type="text/javascript">
 	function GetStaticIp() {
 	var req = {};
-	req.endPontId = ${OrderInfo.ClientConnectInfo.endpointId};
+	req.endPontId = $;
+		{OrderInfo.ClientConnectInfo.endpointId;
+		};
 	$.post("GetStaticIp", req, function (data) {
 		if (data){
 			$('#static_IP_hiden').val(data);
@@ -317,7 +323,7 @@
 						<% end %>
 					<% end %>
 				</table>
-				<a id="addOrderServiceLink" class="icon icon-add" name="2" data-index=${OrderInfo.Order.OrderServices.Count} href="javascript:" onclick="addOrderService(${OrderInfo.Order.Id})">Добавить</a>
+				<a id="addOrderServiceLink" class="icon icon-add" name="2" data-index=${OrderInfo.Order.OrderServices.Count} href="javascript:" onclick="addOrderService($;{OrderInfo.Order.Id;})">Добавить</a>
 			</td>
 			</tr>
 			<% if OrderInfo.Order.Id == 0 or OrderInfo.Order.EndPoint == null: %>
@@ -352,18 +358,34 @@
 			</thead>
 		<tbody>
 		<tr>
-		  <td>Фиксированный IP</td>
-		  <td colspan=2>
+			<td>Фиксированный IP</td>
+			<td colspan=2>
 				<input type="button" onclick="DeleteStaticIp()" value="Удалить" class="width100px" />
 				<input type="button" onclick="GetStaticIp()" id="static_IP" value="Назначить" class="width100px" />
 				<input type="hidden" id="static_IP_hiden" name="ConnectInfo.static_IP"  value="${OrderInfo.ClientConnectInfo.static_IP}" />
 				<label id="staticIdLabel" class="boldFont">${OrderInfo.ClientConnectInfo.static_IP}</label>
-		  </td>
+			</td>
 		</tr>
 		<tr>
-		  <td>Арендованный IP</td>
-		  <td colspan=2>${OrderInfo.ClientConnectInfo.Leased_IP}</td>
+			<td>Арендованный IP</td>
+			<td colspan=2>${OrderInfo.ClientConnectInfo.Leased_IP}</td>
 		</tr>
+			<tr>
+				<td>IP-пул</td>
+				<td colspan=2>
+					<% if (IpPools == null): %>
+						<span class="error">Невозмоно задать IP-пул, т.к. не задан регион</span>
+					<% else: %>
+						<select name="OrderInfo.ClientConnectInfo.Pool" id="PoolsSelect" style="width: 50%">
+						<option value="0"></option>
+						<% for pool in IpPools: %>
+						<option value="${pool.Id}" ${"selected" if (pool.Id == OrderInfo.ClientConnectInfo.Pool)}>!{pool.Id} (!{pool.Begin}-!{pool.End})</option>
+						<% end %>
+						</select>
+					<% end %>
+					${app.Error("OrderInfo.ClientConnectInfo.Pool")}
+				</td>
+			</tr>
 		<tr>
 			<td>Коммутатор</td>
 			<td class="width200px">
@@ -561,11 +583,11 @@
 			messages: {
 				required : "Поле не может быть пустым"
 			}
-		})
+		});
 	}
 
 	function SetValidGate(elem) {
-		$(elem).rules("add", { regex: "^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$" })
+		$(elem).rules("add", { regex: "^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$" });
 	}
 
 	function SetValidMask(elem) {
@@ -575,7 +597,7 @@
 				max: "Маска не может быть больше 30",
 				min: "Маска не может быть меньше 8"
 			}
-		})
+		});
 	}
 
 	function delMenu(clickDiv) {
@@ -617,16 +639,16 @@
 		delMenu(this);
 		});
 		SetValid($('#staticAdress_' + lastIndex));
-		SetValidMask($('#staticPrefix_' + lastIndex))
+		SetValidMask($('#staticPrefix_' + lastIndex));
 		VisualSubnet($('#staticPrefix_' + lastIndex));
 		}
 
 		function changeVisibleEndpoint(check){
 		if(check.checked){
-		$('#endpointTable').hide()
+		$('#endpointTable').hide();
 		}
 		else{
-		$('#endpointTable').show()
+		$('#endpointTable').show();
 		}
 		}
 

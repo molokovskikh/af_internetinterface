@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
+using Common.Tools;
+using InternetInterface.Controllers;
 using InternetInterface.Models;
 using InternetInterface.Models.Services;
+using InternetInterface.Test.Helpers;
 using NHibernate;
 using NHibernate.Linq;
 using NUnit.Framework;
@@ -276,6 +279,66 @@ namespace InternetInterface.Test.Functional
 		{
 			WaitAnimation(".reveal-modal-bg");
 			WaitAnimation("#myModal");
+		}
+
+		[Test(Description = "Проверяет возм-ть задания IP-пула для данной точки подключения пользователя")]
+		public void SetIpPoolForEndPoint()
+		{
+			// Занесение в БД нового региона "region"
+			var region = new RegionHouse("NewTestRegion");
+			session.Save(region);
+			region.Name += region.Id;
+			session.SaveOrUpdate(region);
+
+			// Занесение в БД 2-х новых IP-пулов
+			var pool1 = new IpPool {
+				Begin = 12345,
+				End = 54321,
+				IsGray = false
+			};
+			session.Save(pool1);
+			var pool2 = new IpPool {
+				Begin = pool1.End,
+				End = pool1.Begin,
+				IsGray = false
+			};
+			session.Save(pool2);
+
+			// Создание в БД 2-х новых ассоциаций между IP-пулами и регионом "region"
+			var poolReg1 = new IpPoolRegion(pool1, region);
+			session.Save(poolReg1);
+			var poolReg2 = new IpPoolRegion(pool2, region);
+			session.Save(poolReg2);
+
+			// Занесение в БД нового пользователя "client"
+			Client client = ClientHelper.Client(session);
+			client.Name = "User_from_" + region.Name;
+			client.PhysicalClient = ClientHelper.PhysicalClient(session);
+			client.PhysicalClient.City = region.Name;
+			client.PhysicalClient.HouseObj.Region = region;
+			session.Save(client);
+
+			// Создание в БД точки подключения для пользователя "client"
+			var zone = new Zone("Zone_of_" + region.Name, region);
+			session.Save(zone);
+			var netSwitch = new NetworkSwitch("Switch#" + client.Id, zone);
+			session.Save(netSwitch);
+			var clientEndpoint = new ClientEndpoint(client, 10, netSwitch);
+			session.Save(clientEndpoint);
+			client.AddEndpoint(clientEndpoint, new Settings(session));
+
+			// Проверка отсутствия IP-пула в точке подключения пользователя "client"
+			Assert.That(client.Endpoints[0].Pool, Is.EqualTo(null));
+
+			Open("UserInfo/ShowPhysicalClient?filter.ClientCode={0}", client.Id);
+			Css("#EditConnectionBtn").Click();
+			Css("#PoolsSelect").SelectByText(pool1.Id + " (" + pool1.Begin + "-" + pool1.End + ")");
+			Css("#SaveConnectionBtn").Click();
+
+			// Проверка наличия IP-пула "pool1" в точке подключения пользователя "client"
+			client.Refresh();
+			client = session.Get<Client>(client.Id);
+			Assert.That(client.Endpoints[0].Pool, Is.EqualTo(pool1.Id));
 		}
 	}
 }

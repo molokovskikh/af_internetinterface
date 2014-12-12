@@ -703,6 +703,7 @@ select
 inet_ntoa(CE.Ip) as static_IP,
 inet_ntoa(L.Ip) as Leased_IP,
 CE.Client,
+CE.Pool,
 Ce.Switch,
 NS.Name as Swith_adr,
 inet_ntoa(NS.ip) as swith_IP,

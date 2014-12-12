@@ -8,6 +8,10 @@ h1, h2, h3 {color: #444}
 	.tvrequest textarea {width: 350px; height:100px; display:block;}
 	.tvrequest span {margin-right: 10px;}
 
+.region-ip-pools { margin: 20px; }
+    .region-ip-pools .content {border: 1px solid #ccc; width: 400px; padding: 20px; }
+	.region-ip-pools .form-row {margin: 20px 0px;}
+
 body {
   color: #333;
   font: normal 12px/1.5em "Helvetica Neue";

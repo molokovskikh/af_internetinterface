@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
-using System.Collections.Specialized;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Castle.ActiveRecord;
 using Castle.Components.Validator;
 using Castle.Core.Internal;
@@ -10,11 +12,6 @@ using InternetInterface.Helpers;
 using InternetInterface.Models;
 using Newtonsoft.Json;
 using NHibernate;
-using NHibernate.Mapping;
-using NHibernate.Type;
-using Castle.Components.Binder;
-using System.Linq;
-using System.Collections.Generic;
 
 namespace InternetInterface.Controllers
 {
@@ -22,9 +19,8 @@ namespace InternetInterface.Controllers
 	{
 		public InternetInterfaceController()
 		{
-			BeforeAction += (action, context1, controller, controllerContext) => {
-				controllerContext.PropertyBag["config"] = Global.Config;
-			};
+			BeforeAction +=
+				(action, context1, controller, controllerContext) => { controllerContext.PropertyBag["config"] = Global.Config; };
 		}
 
 		protected void RedirectTo(Client client)
@@ -58,28 +54,28 @@ namespace InternetInterface.Controllers
 		}
 
 		/// <summary>
-		/// Возвращает список ошибок данных в объекте ActiveRecord и его потомков.
-		/// Из вложенных объектов учитываются только объекты с аттрибутами HasMany,Nested и OneToOne
+		///     Возвращает список ошибок данных в объекте ActiveRecord и его потомков.
+		///     Из вложенных объектов учитываются только объекты с аттрибутами HasMany,Nested и OneToOne
 		/// </summary>
 		/// <param name="obj">Объект c аттрибутом ActiveRecord</param>
 		/// <param name="validatedObjects">Список уже проверенных объектов</param>
 		/// <returns>Список ошибок объекта, который первый не прошел валидацию. В случае отсутствия ошибок список пустой.</returns>
 		public ErrorSummary ValidateDeep(object obj, IList validatedObjects = null)
 		{
-			if(validatedObjects == null)
+			if (validatedObjects == null)
 				validatedObjects = new ArrayList();
 
-			if(!obj.GetType().HasAttribute<ActiveRecordAttribute>())
+			if (!obj.GetType().HasAttribute<ActiveRecordAttribute>() && !obj.GetType().BaseType.HasAttribute<ActiveRecordAttribute>())
 				throw new Exception("Объект не имеет аттрибута ActiveRecord");
 
 			var runner = new ValidatorRunner(new CachedValidationRegistry());
-			var valid = runner.IsValid(obj);
-			var summary = runner.GetErrorSummary(obj);
+			bool valid = runner.IsValid(obj);
+			ErrorSummary summary = runner.GetErrorSummary(obj);
 			if (!valid)
 				return summary;
 			validatedObjects.Add(obj);
 
-			var allprops = obj.GetType().GetProperties();
+			PropertyInfo[] allprops = obj.GetType().GetProperties();
 			//Код оставил, так как считаю, что он может потребоваться в будущем
 			//BelongsTo проверка на пустоту (без валиадции) - важно только для главного узла
 			//Так как ссылки на родителя не выставляются при автоматическом создании моделей (даже при сохранении)
@@ -95,30 +91,30 @@ namespace InternetInterface.Controllers
 			//}
 
 			//HasMany атрибуты
-			var props = allprops.Where(prop => Attribute.IsDefined(prop, typeof(HasManyAttribute)));
-			foreach (var p in props) {
-				var value = p.GetValue(obj, null);
+			IEnumerable<PropertyInfo> props = allprops.Where(prop => Attribute.IsDefined(prop, typeof (HasManyAttribute)));
+			foreach (PropertyInfo p in props) {
+				object value = p.GetValue(obj, null);
 				if (!NHibernateUtil.IsInitialized(value))
 					continue;
-				var list = (ICollection)value;
-				foreach (var o in list) {
-					if(validatedObjects.Contains(o))
+				var list = (ICollection) value;
+				foreach (object o in list) {
+					if (validatedObjects.Contains(o))
 						continue;
-					var errors = ValidateDeep(o, validatedObjects);
+					ErrorSummary errors = ValidateDeep(o, validatedObjects);
 					if (errors.HasError)
 						return errors;
 				}
 			}
 
 			//OneToOne and Nested атрибуты
-			var oneToOne = allprops.Where(prop => Attribute.IsDefined(prop, typeof(OneToOneAttribute)));
-			var nested = allprops.Where(prop => Attribute.IsDefined(prop, typeof(NestedAttribute)));
+			IEnumerable<PropertyInfo> oneToOne = allprops.Where(prop => Attribute.IsDefined(prop, typeof (OneToOneAttribute)));
+			IEnumerable<PropertyInfo> nested = allprops.Where(prop => Attribute.IsDefined(prop, typeof (NestedAttribute)));
 			props = oneToOne.Concat(nested);
-			foreach (var p in props) {
-				var value = p.GetValue(obj, null);
-				if(!NHibernateUtil.IsInitialized(value) || validatedObjects.Contains(value))
+			foreach (PropertyInfo p in props) {
+				object value = p.GetValue(obj, null);
+				if (!NHibernateUtil.IsInitialized(value) || validatedObjects.Contains(value))
 					continue;
-				var errors = ValidateDeep(value, validatedObjects);
+				ErrorSummary errors = ValidateDeep(value, validatedObjects);
 				if (errors.HasError)
 					return errors;
 			}

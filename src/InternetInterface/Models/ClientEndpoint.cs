@@ -58,7 +58,7 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual int? MaxLeaseCount { get; set; }
 
-		[Property]
+		[Property, Auditable("IP-пул")]
 		public virtual uint? Pool { get; set; }
 
 		[BelongsTo(Lazy = FetchWhen.OnInvoke)]

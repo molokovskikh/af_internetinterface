@@ -168,13 +168,28 @@ function Inforoom() {
 
 	this.showMessages = function() {
 		var msg = this.getCookie("SuccessMessage", true);
-		if (msg) {
-			alert(msg);
-		} else {
-			msg = this.getCookie("ErrorMessage", true);
-			if(msg)
-				alert(msg);
-		}
+		if (msg)
+			this.showSuccess(msg);
+	
+		var msg2 = this.getCookie("ErrorMessage", true);
+		if(msg2)
+			this.showError(msg2);
+	}
+
+	this.showError = function(msg) {
+		var div = this.showSuccess(msg);
+		$(div).addClass("error");
+		return div;
+	}
+
+	this.showSuccess = function (msg) {
+		var div = this.getTemplate("notification");
+		$(div).find(".message").append(msg);
+		$(".errorContainer").append(div);
+		$(div).find(".hide").on("click", function() {
+			$(div).remove();
+		});
+		return div;
 	}
 
 	this.checkCity = function () {
