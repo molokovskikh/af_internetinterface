@@ -48,6 +48,9 @@ namespace Inforoom2.Test.Functional
 		}
 
 
+		private static Client client;
+		private static Client client2;
+
 		public static void SeedDb()
 		{
 			var settings = session.Query<InternetSettings>().FirstOrDefault();
@@ -87,7 +90,7 @@ namespace Inforoom2.Test.Functional
 				session.Save(emp);
 
 
-				var client = new Client {
+				 client = new Client {
 					PhysicalClient = new PhysicalClient {
 						Password = pass,
 						PhoneNumber = "4951234567",
@@ -106,14 +109,40 @@ namespace Inforoom2.Test.Functional
 					WorkingStartDate = DateTime.Now
 				};
 
+				 client2 = new Client {
+					PhysicalClient = new PhysicalClient {
+						Password = pass,
+						PhoneNumber = "4951234567",
+						Email = "test@client.rru",
+						Name = "Алексей",
+						Surname = "Дулин",
+						Patronymic = "Михалыч",
+						Plan = session.Query<Plan>().FirstOrDefault(p => p.Name == "Популярный"),
+						Balance = 0,
+						Address = session.Query<Address>().FirstOrDefault(),
+						LastTimePlanChanged = DateTime.Now.AddMonths(-2)
+						
+					},
+					Disabled = true,
+					RatedPeriodDate = DateTime.Now,
+					FreeBlockDays = 0,
+					WorkingStartDate = DateTime.Now,
+					AutoUnblocked = true
+				};
+
 				client.Status = session.Get<Status>(5);
+				client2.Status = session.Get<Status>(7);
 
 				var services =
 					session.Query<Service>().Where(s => s.Name == "IpTv" || s.Name == "Internet").ToList();
 				IList<ClientService> csList =
 					services.Select(service => new ClientService { Service = service, Client = client, BeginDate = DateTime.Now, IsActivated = true, ActivatedByUser = true })
 						.ToList();
+				IList<ClientService> csList2 =
+					services.Select(service => new ClientService { Service = service, Client = client2, BeginDate = DateTime.Now, IsActivated = true, ActivatedByUser = true })
+						.ToList();
 				client.ClientServices = csList;
+				client2.ClientServices = csList2;
 
 				var availableServices =
 					session.Query<Service>().Where(s => s.Name == "Обещанный платеж" || s.Name == "Добровольная блокировка").ToList();
@@ -123,6 +152,7 @@ namespace Inforoom2.Test.Functional
 				var endpoint = new ClientEndpoint { PackageId = 19, Client = client, Ip = addr };
 				client.Endpoints = new List<ClientEndpoint> { endpoint };
 				session.Save(client);
+				session.Save(client2);
 			}
 
 			if (!session.Query<Question>().Any()) {
@@ -217,15 +247,24 @@ namespace Inforoom2.Test.Functional
 
 		public static void GenerateNewsAndQuestions()
 		{
-			for (int i = 0; i < 3; i++) {
-				var newsBlock = new NewsBlock(i);
-				newsBlock.Title = "Заголовок новости";
+		
+				var newsBlock = new NewsBlock(0);
+				newsBlock.Title = client.Id.ToString();
 				newsBlock.Preview = "Превью новости.С 02.06.2014г. офис интернет провайдера «Инфорум» располагается по новому адресу:г." +
 				                    " Борисоглебск, ул. Третьяковская д.6,напротив магазина «Удачный» ";
 				newsBlock.CreationDate = DateTime.Now;
 				newsBlock.IsPublished = true;
 				session.Save(newsBlock);
 
+				newsBlock = new NewsBlock(1);
+				newsBlock.Title = client2.Id.ToString();
+				newsBlock.Preview = "Превью новости.С 02.06.2014г. офис интернет провайдера «Инфорум» располагается по новому адресу:г." +
+				                    " Борисоглебск, ул. Третьяковская д.6,напротив магазина «Удачный» ";
+				newsBlock.CreationDate = DateTime.Now;
+				newsBlock.IsPublished = true;
+				session.Save(newsBlock);
+
+				for (int i = 0; i < 3; i++) {
 				var question = new Question(i);
 				question.IsPublished = true;
 				question.Text = "Могу ли я одновременно пользоваться интернетом на нескольких компьютерах, если у меня один кабель?";
@@ -245,7 +284,7 @@ namespace Inforoom2.Test.Functional
 			}
 
 			var city = new City { Name = "Белгород" };
-			var region = new Region { City = city, Name = "Белгород" };
+			var region = new Region { City = city, Name = "Белгород",RegionOfficePhoneNumber = "8-200-100-200"};
 			session.Save(city);
 			session.Save(region);
 
@@ -258,7 +297,7 @@ namespace Inforoom2.Test.Functional
 			}
 
 			city = new City { Name = "Борисоглебск" };
-			region = new Region { City = city, Name = "Борисоглебск" };
+			region = new Region { City = city, Name = "Борисоглебск",RegionOfficePhoneNumber = "8-200-100-201" };
 			session.Save(city);
 			session.Save(region);
 

@@ -199,11 +199,15 @@ namespace Inforoom2.Controllers
 
 		private void InitPlans(Client client)
 		{
-			var plans =
-				GetList<Plan>().Where(
-					p =>
-						!p.IsArchived && !p.IsServicePlan &&
-						p.Regions.Any(r => r.Id == client.PhysicalClient.Address.House.Street.Region.Id)).ToList();
+			IList<Plan> plans = null;
+			//если адреса нет, показываем все тарифы
+			if (client.PhysicalClient.Address != null) {
+				plans = GetList<Plan>().Where(p => !p.IsArchived && !p.IsServicePlan && p.Regions.Any(r => r.Id == client.PhysicalClient.Address.House.Street.Region.Id)).ToList();
+			}
+			else {
+				plans = GetList<Plan>().Where(p => !p.IsArchived && !p.IsServicePlan).ToList();
+			}
+
 			foreach (var plan in plans) {
 				plan.SwitchPrice = GetPlanSwitchPrice(client.PhysicalClient.Plan, plan, true);
 			}

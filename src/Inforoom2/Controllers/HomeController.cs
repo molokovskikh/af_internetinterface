@@ -12,13 +12,16 @@ namespace Inforoom2.Controllers
 		public ActionResult Index()
 		{
 			ViewBag.Message = "HomeController";
-			var news = DbSession.Query<NewsBlock>().Where(k => k.IsPublished).ToList();
+			var news = DbSession.Query<NewsBlock>().Where(k => k.IsPublished).OrderByDescending(n=>n.PublishedDate).ToList();
 			var newsList = new List<NewsBlock>();
-			for (int i = 0; i < 3; i++) {
-				if (news.Count!=0 && news[i] != null) {
-					newsList.Add(news[i]);
+			int i = 0;
+			foreach (var newsBlock in news) {
+				i++;
+				if (i < 3 && newsBlock != null) {
+					newsList.Add(newsBlock);
 				}
 			}
+
 			ViewBag.News = newsList;
 			
 			return View();

@@ -35,7 +35,7 @@ namespace InforoomControlPanel.Controllers
 				ticket.AnswerDate = DateTime.Now;
 				ticket.Employee = CurrentEmployee;
 				ticket.IsNotified = true;
-				EmailSender.SendEmail(new PhysicalClient { Email = ticket.Email }, "Ответ на вопрос", ticket.Answer);
+				EmailSender.SendEmail(new PhysicalClient { Email = ticket.Email }, "Ответ на ваш запрос в техподдержку компании Инфорум", ticket.Answer);
 				DbSession.SaveOrUpdate(ticket);
 				SuccessMessage("Ответ отправлен пользователю.");
 			}
