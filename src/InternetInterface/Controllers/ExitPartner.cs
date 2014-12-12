@@ -8,7 +8,7 @@ namespace InternetInterface.Controllers
 	{
 		public void Yes()
 		{
-			Response.RemoveCookie(FormsAuthentication.FormsCookieName);
+			FormsAuthentication.SignOut();
 			RedirectToUrl(@"../Login/LoginPartner.rails");
 		}
 	}
