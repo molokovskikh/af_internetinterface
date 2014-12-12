@@ -6,13 +6,10 @@ using Castle.ActiveRecord;
 using Castle.Components.Validator;
 using Common.Tools;
 using Common.Tools.Calendar;
-using Common.Web.Ui.Helpers;
 using Common.Web.Ui.Models.Audit;
 using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Helpers;
-using InternetInterface.Models.Services;
 using InternetInterface.Models.Universal;
-using NHibernate;
 
 namespace InternetInterface.Models
 {
@@ -32,6 +29,8 @@ namespace InternetInterface.Models
 		public int? ActualPackageId { get; set; }
 
 		public string Name { get; set; }
+
+		public uint? Pool { get; set; }
 
 		public string Switch { get; set; }
 		public string Swith_adr { get; set; }
@@ -57,7 +56,7 @@ namespace InternetInterface.Models
 
 		public IList<StaticIp> GetStaticAdreses()
 		{
-			var endPoint = ClientEndpoint.TryFind((uint)endpointId);
+			ClientEndpoint endPoint = ClientEndpoint.TryFind((uint) endpointId);
 			if (endPoint != null)
 				return endPoint.StaticIps;
 			return new List<StaticIp>();
@@ -108,13 +107,15 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string Additional { get; set; }
 
-		[Property, ValidateNonEmpty("Введите номер подъезда"), ValidateInteger("Должно быть введено число"), Auditable("Номер подъезда")]
+		[Property, ValidateNonEmpty("Введите номер подъезда"), ValidateInteger("Должно быть введено число"),
+		 Auditable("Номер подъезда")]
 		public virtual int? Entrance { get; set; }
 
 		[Property, ValidateNonEmpty("Введите номер этажа"), ValidateInteger("Должно быть введено число"), Auditable("Этаж")]
 		public virtual int? Floor { get; set; }
 
-		[ValidateNonEmpty(RunWhen = RunWhen.Insert), ValidateRegExp(@"^((\d{3})-(\d{7}))", "Ошибка формата телефонного номера: мобильный телефон (000-0000000)")]
+		[ValidateNonEmpty(RunWhen = RunWhen.Insert),
+		 ValidateRegExp(@"^((\d{3})-(\d{7}))", "Ошибка формата телефонного номера: мобильный телефон (000-0000000)")]
 		public virtual string PhoneNumber { get; set; }
 
 		[ValidateRegExp(@"^((\d{3})-(\d{7}))", "Ошибка формата телефонного номера (***-*******)")]
@@ -132,7 +133,8 @@ namespace InternetInterface.Models
 		[Property, UserValidateNonEmpty("Поле не должно быть пустым"), Auditable("Номер паспорта")]
 		public virtual string PassportNumber { get; set; }
 
-		[Property, UserValidateNonEmpty("Введите дату выдачи паспорта"), ValidateDate("Ошибка формата даты **-**-****"), Auditable("Дата выдачи паспорта")]
+		[Property, UserValidateNonEmpty("Введите дату выдачи паспорта"), ValidateDate("Ошибка формата даты **-**-****"),
+		 Auditable("Дата выдачи паспорта")]
 		public virtual DateTime? PassportDate { get; set; }
 
 		[Property, UserValidateNonEmpty("Заполните поле 'Кем выдан паспорт'"), Auditable("Кем выдан паспорт")]
@@ -193,7 +195,7 @@ namespace InternetInterface.Models
 		[ValidateSelf]
 		public virtual void Validate(ErrorSummary errors)
 		{
-			var internet = Client.Internet;
+			ClientService internet = Client.Internet;
 			if (internet.ActivatedByUser && Tariff == null) {
 				errors.RegisterErrorMessage("Tariff", "Нужно выбрать тариф");
 			}
@@ -203,7 +205,7 @@ namespace InternetInterface.Models
 			}
 
 			if (Client.Status.Type != StatusType.Dissolved
-				&& (Client.AdditionalStatus == null || Client.AdditionalStatus.Id != (uint)AdditionalStatusType.Refused)) {
+			    && (Client.AdditionalStatus == null || Client.AdditionalStatus.Id != (uint) AdditionalStatusType.Refused)) {
 				if (HouseObj == null)
 					errors.RegisterErrorMessage("HouseObj", "Нужно выбрать дом");
 			}
@@ -260,7 +262,7 @@ namespace InternetInterface.Models
 
 		public virtual WriteOff WriteOff(decimal sum, bool writeoffVirtualFirst = false)
 		{
-			var writeoff = CalculateWriteoff(sum, writeoffVirtualFirst);
+			WriteOff writeoff = CalculateWriteoff(sum, writeoffVirtualFirst);
 
 			if (writeoff == null)
 				return null;
@@ -320,15 +322,15 @@ namespace InternetInterface.Models
 			if (Tariff == null)
 				return;
 
-			var oldTariff = this.OldValue(c => c.Tariff);
+			Tariff oldTariff = this.OldValue(c => c.Tariff);
 			if (oldTariff == null)
 				return;
 
-			var rule = rules.FirstOrDefault(r => r.FromTariff == oldTariff && r.ToTariff == Tariff);
+			TariffChangeRule rule = rules.FirstOrDefault(r => r.FromTariff == oldTariff && r.ToTariff == Tariff);
 			if (rule == null || rule.Price == 0)
 				return;
 
-			var comment = String.Format("Изменение тарифа, старый '{0}' новый '{1}'", oldTariff.Name, Tariff.Name);
+			string comment = String.Format("Изменение тарифа, старый '{0}' новый '{1}'", oldTariff.Name, Tariff.Name);
 			Client.UserWriteOffs.Add(new UserWriteOff(Client, rule.Price, comment));
 		}
 
@@ -349,8 +351,8 @@ namespace InternetInterface.Models
 		{
 			//По требованию #18207 Было сделано 3 дня
 			const int days = 3;
-			var dayInMonth = (DateTime.Today.LastDayOfMonth() - DateTime.Today.FirstDayOfMonth()).Days + 1;
-			var sum = (Client.GetPriceIgnoreDisabled() / dayInMonth) * days;
+			int dayInMonth = (DateTime.Today.LastDayOfMonth() - DateTime.Today.FirstDayOfMonth()).Days + 1;
+			decimal sum = (Client.GetPriceIgnoreDisabled()/dayInMonth)*days;
 			var payment = new Payment(Client, sum) {
 				Virtual = true,
 				Comment = "Бонус при самостоятельной регистрации"
@@ -364,15 +366,15 @@ namespace InternetInterface.Models
 				return;
 
 			if (HouseObj.Region != null
-				&& HouseObj.Region.IsExternalClientIdMandatory
-				&& ExternalClientId == null) {
-				ExternalClientId = (int?)Client.Id;
+			    && HouseObj.Region.IsExternalClientIdMandatory
+			    && ExternalClientId == null) {
+				ExternalClientId = (int?) Client.Id;
 			}
 		}
 
 		public virtual bool CanChangeTariff(Tariff tariff, ErrorSummary sum)
 		{
-			if (Client.Iptv != null && Client.Iptv.IsActivated == true && !tariff.Iptv) {
+			if (Client.Iptv != null && Client.Iptv.IsActivated && !tariff.Iptv) {
 				sum.RegisterErrorMessage("tariff", "Переход на этот тариф не возможен с включенной услугой IPTV");
 				return false;
 			}

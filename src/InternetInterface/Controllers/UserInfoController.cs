@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Configuration;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -9,6 +10,7 @@ using Castle.MonoRail.Framework;
 using Common.MySql;
 using Common.Tools;
 using Common.Web.Ui.Helpers;
+using Common.Web.Ui.Models;
 using Common.Web.Ui.MonoRailExtentions;
 using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Controllers.Filter;
@@ -20,6 +22,8 @@ using InternetInterface.Services;
 using NHibernate.Linq;
 using NHibernate.Proxy;
 using NPOI.SS.Formula.Functions;
+using Contact = InternetInterface.Models.Contact;
+using ContactType = InternetInterface.Models.ContactType;
 using TextHelper = InternetInterface.Helpers.TextHelper;
 
 namespace InternetInterface.Controllers
@@ -67,7 +71,12 @@ namespace InternetInterface.Controllers
 			SendParam(filter, filter.grouped, filter.appealType);
 			PropertyBag["Editing"] = filter.Editing;
 			PropertyBag["appealType"] = filter.appealType;
-			PropertyBag["Switches"] = NetworkSwitch.All(DbSession, client.GetRegion());
+		    var clientRegion = client.GetRegion();
+			if (clientRegion != null)
+				PropertyBag["IpPools"] = IpPoolRegion.GetPoolsForRegion(DbSession, clientRegion);
+			else
+				PropertyBag["IpPools"] = null;
+			PropertyBag["Switches"] = NetworkSwitch.All(DbSession, clientRegion);
 		}
 
 		public void Leases([DataBind("filter")] LeaseLogFilter filter)
@@ -322,6 +331,7 @@ namespace InternetInterface.Controllers
 						else
 							clientEntPoint.Ip = null;
 						clientEntPoint.Port = Int32.Parse(ConnectInfo.Port);
+						clientEntPoint.Pool = ConnectInfo.Pool;
 						clientEntPoint.Switch = DbSession.Load<NetworkSwitch>(ConnectInfo.Switch);
 						clientEntPoint.Monitoring = ConnectInfo.Monitoring;
 						if (newFlag) {
@@ -740,7 +750,13 @@ namespace InternetInterface.Controllers
 			PropertyBag["_client"] = client;
 			PropertyBag["ClientCode"] = clientId;
 			PropertyBag["uniqueClientEndpoints"] = client.Endpoints.Distinct().ToList();
-			PropertyBag["Switches"] = NetworkSwitch.All(DbSession, client.GetRegion());
+
+			RegionHouse clientRegion = client.GetRegion();
+			if (clientRegion != null)
+				PropertyBag["IpPools"] = IpPoolRegion.GetPoolsForRegion(DbSession, clientRegion);
+			else
+				PropertyBag["IpPools"] = null;
+			PropertyBag["Switches"] = NetworkSwitch.All(DbSession, clientRegion);
 			PropertyBag["Brigads"] = brigads;
 			var endPoint = client.Endpoints.FirstOrDefault();
 			if (endPoint != null && endPoint.WhoConnected != null)
