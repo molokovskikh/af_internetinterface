@@ -1,0 +1,50 @@
+﻿@using Inforoom2.Helpers
+@using Inforoom2.Models
+@using Inforoom2.Models.Services
+@using NHibernate.Mapping.ByCode.Impl
+
+@{
+	Client client = ViewBag.Client;
+	IList<Service> availableServices = ViewBag.AvailableServices;
+	IList<ClientService> clientServices = ViewBag.ClientServices;
+}
+
+	<div class="name-table">Подключенные услуги</div>
+	<table class="cost">
+		<tr class="menucost">
+			<td class="namemenu"><div class="namemenubg"></div>Услуга</td>
+			<td class="namemenu description"><div class="namemenubg"></div>Описание</td>
+			<td class="namemenu price"><div class="pracebg"></div>Стоимость</td>
+			<td class="namemenu"><div class="namemenubg"></div>Срок действия</td>
+			<td class="namemenu tr">Действие</td>
+		</tr>
+	
+		@foreach (var clientService in clientServices) {
+			<tr class="menufee">
+				<td class="disposal">
+					@Html.HiddenFor(modelItem => clientService.Id)
+					@Html.DisplayFor(modelItem => clientService.Service.Name)
+				</td>
+				<td class="description td">
+					@Html.DisplayFor(modelItem => clientService.Service.Description)
+				</td>
+				<td class="price tr">
+					@Html.DisplayFor(modelItem => clientService.Service.Price)
+				</td>
+				<td class="price tr">
+					@Html.DisplayFor(modelItem => clientService.EndDate)
+				</td>
+				<td>
+					@switch (clientService.Service.GetType().Name) {
+						case "BlockAccountService":
+							@Html.ActionLink("Отключить", "BlockAccount", "Service", null, new { @class = "disposalbg", })
+							break;
+					}
+				</td>
+			</tr>
+		}
+	</table>
+
+	@if (clientServices.Count == 0) {
+			<div class="noTableRows">У вас нет подключенных услуг</div>
+	}
