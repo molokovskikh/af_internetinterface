@@ -161,6 +161,7 @@
     <Content Include="Css\images\ui-icons_ef8c08_256x240.png" />
     <Content Include="Css\images\ui-icons_ffd27a_256x240.png" />
     <Content Include="Css\images\ui-icons_ffffff_256x240.png" />
+    <Content Include="Css\jquery-ui-1.10.4.custom.min.css" />
     <Content Include="Css\jquery-ui.css" />
     <Content Include="Css\jquery-ui.theme.css" />
     <Content Include="Css\main.css" />
@@ -183,6 +184,7 @@
     <Content Include="Images\map.png" />
     <Content Include="Images\offer.png" />
     <Content Include="Images\office_mini.png" />
+    <Content Include="Images\profile_offer.png" />
     <Content Include="Images\rightbg.jpg" />
     <Content Include="Images\rightbg.png" />
     <Content Include="Images\slider1.jpg" />
@@ -211,7 +213,6 @@
     <Content Include="Scripts\jquery-2.1.1.js" />
     <Content Include="Scripts\jquery-ui-1.11.1.js" />
     <Content Include="Scripts\ServiceController.js" />
-    <Content Include="Scripts\Tariffs.js" />
     <Content Include="Scripts\Window.js" />
     <Content Include="speedtest.swf" />
     <Content Include="speedtest\expressInstall.swf" />

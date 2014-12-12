@@ -7,24 +7,25 @@
 
 @{
 	Client client = ViewBag.Client;
+	ViewBag.Title = "Личный кабинет: Обещанный платеж";
 	DeferredPayment service = ViewBag.DeferredPayment;
 }
 
-<h2>@ViewBag.Title</h2>
+<h2 class="heading">@ViewBag.Title</h2>
 
 @{ Html.RenderPartial("Menu"); }
 
-<div>
+ <div class="right-block">
 	@if (client.CanUseService(service)) {
-		<text>	Услуга "Обещанный платеж" открывает доступ к Интернет, сроком на 3-e суток, при отрицательном балансе. Услуга бесплатная.
-			Услуга предоставляется однократно. Повторное использование возможно после внесения платежа, покрывающего задолженность.</text>
+		<p class="parag">	Услуга "Обещанный платеж" открывает доступ к Интернет, сроком на 3-e суток, при отрицательном балансе. Услуга бесплатная.
+			Услуга предоставляется однократно. Повторное использование возможно после внесения платежа, покрывающего задолженность.</p>
+		<br/>
 		using (@Html.BeginForm("ActivateDefferedPayment", "Service", null, FormMethod.Post)) {
 			@Html.HiddenFor(modelItem => service.Id)
-			<input type="submit" value="Подключить"/>
+			<input class="button" type="submit" value="Подключить"/>
 		}
 	}
 	else {
 		<text>Услуга @service.Name не доступна</text>
 	}
-	<button class="BackButton" onclick=" location.href = '@Url.Action("Service", "Personal")' ">Назад</button>
 </div>

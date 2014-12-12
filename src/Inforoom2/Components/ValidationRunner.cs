@@ -80,15 +80,15 @@ namespace Inforoom2.Components
 			if (errors.Length > 0) {
 				var ret = errors.First().Message;
 				if (message != null)
-					return WrapError(message);
+					return WrapError(message, ret);
 				return WrapError(ret);
 			}
 			return WrapSuccess(message);
 		}
 
-		protected HtmlString WrapError(string msg)
+		protected HtmlString WrapError(string element,string msg = "")
 		{
-			var html = "<div class=\"error\">" + msg + "<div class=\"icon\"></div>"+ "</div>";
+			var html = "<div class=\"error\">" + element + "<div class=\"msg\">" + msg + "</div><div class=\"icon\"></div>" + "</div>";
 			var ret = new HtmlString(html);
 			return ret;
 		}

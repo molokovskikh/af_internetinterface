@@ -40,6 +40,9 @@ function Inforoom() {
 			this.callMeBackWindow();
 		$(".header .call").on("click", this.callMeBackWindow.bind(this));
 
+		$(".error .msg").on("mouseover", function() {
+			$(this).fadeOut();
+		});
 		this.checkCity();
 		this.showMessages();
 	}

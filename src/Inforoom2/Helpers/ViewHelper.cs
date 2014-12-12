@@ -113,6 +113,7 @@ namespace Inforoom2.Helpers
 			if (htmlAttributes != null) {
 				attributes = GetPropsValues(htmlAttributes);
 			}
+
 			string html = string.Empty;
 			switch (htmlTag) {
 				case HtmlTag.input:
@@ -124,12 +125,13 @@ namespace Inforoom2.Helpers
 				default:
 					throw new NotImplementedException("Html for tag is not implemented");
 			}
-			
-			
+
 			var error = validation.GetError(obj, propertyName, html);
+			
 			if (string.IsNullOrEmpty(error.ToString())) {
 				return new HtmlString(html);
 			}
+			error = new HtmlString(error.ToString().Replace("placeholder=", "broken_placeholder="));
 			return  error;
 		}
 

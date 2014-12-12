@@ -17,7 +17,7 @@ namespace Inforoom2.Controllers
 			int i = 0;
 			foreach (var newsBlock in news) {
 				i++;
-				if (i < 3 && newsBlock != null) {
+				if (i < 4 && newsBlock != null) {
 					newsList.Add(newsBlock);
 				}
 			}

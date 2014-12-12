@@ -102,3 +102,9 @@ table.cost { min-height: 140px;}
 .notification .hide {cursor: pointer; color: #ac3237;display: inline-block;margin-left: 20px;position: absolute;right: 20px; }
 .notification.error { background: #F77B7B;border: 1px solid #737373;}
 .notification.error .hide{ color: black;}
+
+.Service  .datePicker { width: 150px;}
+
+.error { position: relative;}
+.error .msg { position: absolute; box-sizing: border-box;color: #920f15;display: block;height: 100%;left: 0;padding: 5px 9px;position: absolute;top: 0;width: 100%;z-index: 30;}
+input.personal {padding: 5px; box-sizing: padding-box;}
