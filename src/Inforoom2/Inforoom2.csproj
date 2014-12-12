@@ -211,6 +211,7 @@
     <Content Include="Scripts\jquery-2.1.1.js" />
     <Content Include="Scripts\jquery-ui-1.11.1.js" />
     <Content Include="Scripts\ServiceController.js" />
+    <Content Include="Scripts\Tariffs.js" />
     <Content Include="Scripts\Window.js" />
     <Content Include="speedtest.swf" />
     <Content Include="speedtest\expressInstall.swf" />
