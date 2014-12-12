@@ -90,8 +90,8 @@
 			<div class="features">
 				<div class="requisite">
 					<a href="/">
-					<div class="logo"></div>
-						</a>
+						<div class="logo"></div>
+					</a>
 					<div class="address">
 						<p>© 2014 — ООО «Инфорум»</p> 
 						<p>г. Воронеж, Студенческая ул. д. 12</p>
@@ -218,4 +218,34 @@
 		<script type="text/javascript" src="~/Scripts/Window.js"></script>
 		@RenderSection("JavaScript", required: false)
 	</body>
+	<script type="text/javascript">
+		(function(d, w, c) {
+			(w[c] = w[c] || []).push(function() {
+				try {
+					w.yaCounter27457815 = new Ya.Metrika({
+						id: 27457815,
+						webvisor: true,
+						clickmap: true,
+						trackLinks: true,
+						accurateTrackBounce: true
+					});
+				} catch (e) {
+				}
+			});
+
+			var n = d.getElementsByTagName("script")[0],
+			    s = d.createElement("script"),
+			    f = function() { n.parentNode.insertBefore(s, n); };
+			s.type = "text/javascript";
+			s.async = true;
+			s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+			if (w.opera == "[object Opera]") {
+				d.addEventListener("DOMContentLoaded", f, false);
+			} else {
+				f();
+			}
+		})(document, window, "yandex_metrika_callbacks");
+	</script>
+	<noscript><div><img src="//mc.yandex.ru/watch/27457815" style="position: absolute; left: -9999px;" alt="" /></div></noscript>
 </html>

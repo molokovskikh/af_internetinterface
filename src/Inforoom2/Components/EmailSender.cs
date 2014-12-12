@@ -43,10 +43,14 @@ namespace Inforoom2.Components
 
 		public static void SendError(string message)
 		{
+			var service = ConfigurationManager.AppSettings["ServiceSender"];
+			if (string.IsNullOrEmpty(service)) {
+				return;
+			}
 			message = "<pre>" + message + "</pre>";
 			var mail = new MailMessage();
-			mail.To.Add("service@analit.net");
-			mail.From = new MailAddress("service@analit.net");
+			mail.To.Add(service);
+			mail.From = new MailAddress(service);
 			mail.Subject = "Ошибка в Inforoom2";
 			mail.Body = message;
 			mail.IsBodyHtml = true;
