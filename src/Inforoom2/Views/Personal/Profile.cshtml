@@ -1,33 +1,42 @@
 ﻿@using Inforoom2.Models
-
 @{
-
+	ViewBag.Title = "Личный кабинет: Профиль";
 	PhysicalClient client = ViewBag.CurrentClient.PhysicalClient;
 }
-
-
-<h2>@ViewBag.Title</h2>
+<h2 class="heading">@ViewBag.Title</h2>
 @{ Html.RenderPartial("Menu"); }
-
-<div class="UserProfile">
-	<div>
-		@Html.DisplayFor(c => client.FullName)
+	    <div class="profiles">
+		<div class="number">
+		    <div class="column">Номер счета :</div>
+		    <div class="shelf profilenomber">@Html.DisplayFor(c => client.Id)</div>
+		</div>
+		<div class="line">
+		    <div class="column">Ф.И.О:</div>
+		    <div class="shelf">@Html.DisplayFor(c => client.FullName)</div>
+		    <div class="pen"></div>
+		</div>
+		<div class="line">
+		    <div class="column">Скидка:</div>
+		    <div class="shelf">@Html.DisplayFor(c => client.Client.Discount)%</div>
+		</div>
+		<div class="line">
+		    <div class="column">Номер телефона:</div>
+		    <div class="shelf">@Html.DisplayFor(c => client.PhoneNumber)</div>
+		     <div class="pen"></div>
+		</div>
+		<div class="line">
+		    <div class="column">Электронная почта:</div>
+		    <div class="shelf">@Html.DisplayFor(c => client.Email)</div>
+		     <div class="pen"></div>
+		</div>
+	    </div>
+<div class="actions">
+	<div class="action"><img src="/images/offer.png"></div>
+	<div class="actiontext">
+		<h3>Внимание новая акция</h3>
+		<p>С 31.01.2014 мы предлагаем вам новую супер акцию - Бенгальский огонь!</p>
 	</div>
-	<div>
-		@Html.DisplayFor(c => client.Plan.Name)
-	</div>
-	<div>
-		@Html.DisplayFor(c => client.PhoneNumber)
-	</div>
-	<div>
-		@Html.DisplayFor(c => client.Address.FullAddress)
-	</div>
-		<div>
-		@Html.DisplayFor(c => client.Balance) р.
-	</div>
-	
-	
 </div>
-
-
-@{ Html.RenderPartial("PaymentWindow"); }
+ <div class="right-block">
+	@{ Html.RenderPartial("ActiveServices"); }
+ </div>

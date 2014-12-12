@@ -1,12 +1,16 @@
-﻿<div class="cabinet descript">
+﻿<div class="cabinet">
 	<ul>
-		<li>@Html.ActionLink("Профиль", "Profile", "Personal")</li>
-			<li>@Html.ActionLink("История баланса", "Payment", "Personal")</li>
-			<li>@Html.ActionLink("Доверительный платеж", "Credit", "Personal")</li>
-			<li>@Html.ActionLink("Тарифы", "Tariffs", "Personal")</li>
-			<li>@Html.ActionLink("Услуги", "Service", "Personal")</li>
-			<li>@Html.ActionLink("Данные пользователя", "UserDetails", "Personal")</li>
-			<li>@Html.ActionLink("Уведомления", "Notifications", "Personal")</li>
-			<li>@Html.ActionLink("Бонусные программы", "Bonus", "Personal")</li>
+		@{
+			var menu = new List<string[]>();
+			menu.Add(new[] { "Профиль", "Profile", "Personal" });
+			menu.Add(new[] { "История баланса", "Payment", "Personal" });
+			menu.Add(new[] { "Тарифы", "Tariffs", "Personal" });
+			menu.Add(new[] { "Услуги", "Service", "Personal" });
+			menu.Add(new[] { "Уведомления", "Notifications", "Personal" });
+			menu.Add(new[] { "Бонусные программы", "Bonus", "Personal" });
+			foreach (var item in menu) {
+				<li>@Html.ActionLink(item[0], item[1], item[2], null, new { @class = ViewBag.ControllerName == item[2] && ViewBag.ActionName == item[1] ? "active" : "" }) </li>
+			}
+		}
 	</ul>
 </div>
