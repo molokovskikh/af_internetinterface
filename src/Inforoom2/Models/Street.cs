@@ -16,6 +16,12 @@ namespace Inforoom2.Models
 			Name = name;
 		}
 
+		public Street(string street, Region region)
+		{
+			Name = street;
+			Region = region;
+		}
+
 		[Property, NotEmpty(Message = "Введите номер улицы")]
 		public virtual string Name { get; set; }
 

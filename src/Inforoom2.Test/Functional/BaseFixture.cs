@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.Web;
+using Inforoom2.Components;
 using Inforoom2.Helpers;
 using NHibernate;
 using NHibernate.Cfg;
@@ -42,7 +43,7 @@ namespace Inforoom2.Test.Functional
 			var body = browser.FindElementByCssSelector("body").Text;
 			return body.Contains(text);
 		}
-
+	
 		protected string GetCookie(string cookieName)
 		{
 			var cookie = browser.Manage().Cookies.GetCookieNamed(cookieName);
