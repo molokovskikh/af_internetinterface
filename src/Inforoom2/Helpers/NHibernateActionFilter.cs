@@ -39,17 +39,11 @@ namespace Inforoom2.Helpers
 			if (!session.Transaction.IsActive)
 				return;
 
-			if (filterContext.Exception != null)
+			/*	if (filterContext.Exception != null)
 				session.Transaction.Rollback();
-			else
-				try {
-					session.Transaction.Commit();
-				}
-				catch (Exception e) {
-					(filterContext.Controller as BaseController).DeleteCookie("SuccessMessage");
-					(filterContext.Controller as BaseController).ErrorMessage("Не удалось сохранить транзакцию.");
-					session.Transaction.Rollback();
-				}
+			else {*/
+			session.Transaction.Commit();
+			//	}
 			session = CurrentSessionContext.Unbind(SessionFactory);
 			session.Close();
 		}
@@ -74,23 +68,23 @@ namespace Inforoom2.Helpers
 			    || tableName == "Tariffs"
 			    || tableName == "Regions"
 			    || tableName == "Services"
-				|| tableName == "ClientServices"
-				|| tableName == "Clients"
-				|| tableName == "UserWriteOffs"
-				|| tableName == "StatusCorrelation"
-				|| tableName == "Status"
-				|| tableName == "AdditionalStatus"
-				|| tableName == "LawyerPerson"
-				|| tableName == "InternetSettings"
-				|| tableName == "Leases"
-				|| tableName == "SaleSettings"
-				|| tableName == "ClientEndpoints"
-				|| tableName == "StaticIps"
-				|| tableName == "WriteOff"
-				|| tableName == "Requests"
-				|| tableName == "Partners"
-				|| tableName == "Payments"
-				|| tableName == "Contacts") {
+			    || tableName == "ClientServices"
+			    || tableName == "Clients"
+			    || tableName == "UserWriteOffs"
+			    || tableName == "StatusCorrelation"
+			    || tableName == "Status"
+			    || tableName == "AdditionalStatus"
+			    || tableName == "LawyerPerson"
+			    || tableName == "InternetSettings"
+			    || tableName == "Leases"
+			    || tableName == "SaleSettings"
+			    || tableName == "ClientEndpoints"
+			    || tableName == "StaticIps"
+			    || tableName == "WriteOff"
+			    || tableName == "Requests"
+			    || tableName == "Partners"
+			    || tableName == "Payments"
+			    || tableName == "Contacts") {
 				return tableName;
 			}
 			return "inforoom2_" + tableName;

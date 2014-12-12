@@ -14,9 +14,9 @@ using System.Web.UI.WebControls;
 using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
+using log4net;
 using NHibernate;
 using NHibernate.Linq;
-using Switch = Inforoom2.Models.Switch;
 
 
 namespace Inforoom2.Controllers
@@ -31,6 +31,8 @@ namespace Inforoom2.Controllers
 		{
 			get { return MvcApplication.SessionFactory.GetCurrentSession(); }
 		}
+
+		protected static readonly ILog log = LogManager.GetLogger(typeof(BaseController));
 
 		protected ValidationRunner ValidationRunner;
 
@@ -80,8 +82,11 @@ namespace Inforoom2.Controllers
 
 		public Region CurrentRegion
 		{
-			get { return DbSession.Query<Region>().FirstOrDefault(r => r.Name == UserCity)
-				?? DbSession.Query<Region>().FirstOrDefault(); }
+			get
+			{
+				return DbSession.Query<Region>().FirstOrDefault(r => r.Name == UserCity)
+				       ?? DbSession.Query<Region>().FirstOrDefault();
+			}
 		}
 
 
@@ -108,13 +113,14 @@ namespace Inforoom2.Controllers
 
 		protected override void OnException(ExceptionContext filterContext)
 		{
-			/*if (filterContext.ExceptionHandled) {
-				return;
-			}
-			  filterContext.Result = new RedirectToRouteResult(
-                new RouteValueDictionary
-                    {{"controller", "Home"}, {"action", "Index"}});
-			filterContext.ExceptionHandled = true;*/
+			DeleteCookie("SuccessMessage");
+			filterContext.Result = new RedirectToRouteResult(
+				new RouteValueDictionary
+				{ { "controller", "StaticContent" }, { "action", "Error" } });
+
+			log.ErrorFormat("{0} {1}",filterContext.Exception.Message, filterContext.Exception.StackTrace);
+			EmailSender.SendError(filterContext.Exception.ToString());
+			filterContext.ExceptionHandled = true;
 		}
 
 		protected override void OnResultExecuting(ResultExecutingContext filterContext)

@@ -37,7 +37,7 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual decimal MoneyBalance { get; set; }
 
-		[Property(Column = "_PhoneNumber", NotNull = true), NotEmpty, Pattern(Regex = (@"^((\d{3})-(\d{7}))"))]
+		[Property(Column = "_PhoneNumber", NotNull = true)]
 		public virtual string PhoneNumber { get; set; }
 
 		[Property(NotNull = true), NotEmpty(Message = "Введите имя")]
@@ -135,7 +135,7 @@ namespace Inforoom2.Models
 				WriteOffSum = Math.Round(sum, 2),
 				MoneySum = Math.Round(moneyWriteoff, 2),
 				VirtualSum = Math.Round(virtualWriteoff, 2),
-				Sale = Client.Sale,
+				Sale = Client.Discount,
 				BeforeWriteOffBalance = Client.Balance
 			};
 		}

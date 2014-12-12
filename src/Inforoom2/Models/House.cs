@@ -15,6 +15,12 @@ namespace Inforoom2.Models
 			Number = number;
 		}
 
+		public House(string number, Street street)
+		{
+			Number = number;
+			Street = street;
+		}
+
 		[ManyToOne(Column = "Street",  Cascade = "save-update"), NotNull]
 		public virtual Street Street { get; set; }
 

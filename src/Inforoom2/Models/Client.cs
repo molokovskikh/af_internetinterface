@@ -44,10 +44,7 @@ namespace Inforoom2.Models
 
 		[Property(NotNull = true)]
 		public virtual int FreeBlockDays { get; set; }
-
-		[Property(NotNull = true)]
-		public virtual decimal Sale { get; set; }
-
+		
 		[Property(NotNull = true)]
 		public virtual bool FirstLunch { get; set; }
 		
@@ -159,7 +156,7 @@ namespace Inforoom2.Models
 			}
 			else if (status.Type == StatusType.NoWorked) {
 				Disabled = true;
-				Sale = 0;
+				Discount = 0;
 				StartNoBlock = null;
 				AutoUnblocked = true;
 			}
@@ -188,8 +185,8 @@ namespace Inforoom2.Models
 			{
 				if (PhysicalClient != null)
 					return PhysicalClient.Balance;
-				if (LegalClient != null)
-					return LegalClient.Balance;
+			/*	if (LegalClient != null)
+					return LegalClient.Balance;*/
 				return 0m;
 			}
 		}

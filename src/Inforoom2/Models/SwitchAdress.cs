@@ -34,6 +34,10 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual int Floor { get; set; }
 
+		//true если яндекс api нашел адрес
+		[Property]
+		public virtual bool IsCorrectAddress { get; set; }
+
 		public virtual bool IsPrivateSector
 		{
 			get { return Street != null; }

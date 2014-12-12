@@ -348,6 +348,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Web.release.config">
+      <SubType>Designer</SubType>
     </Content>
     <None Include="Views\UserInfo\ShowAppeals.brail" />
     <Content Include="Views\UserInfo\ShowRegions.brail" />
