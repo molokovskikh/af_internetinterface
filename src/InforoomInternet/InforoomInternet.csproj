@@ -242,6 +242,7 @@
     <None Include="Views\Main\MessageSended.brail" />
     <None Include="Views\Main\About.brail" />
     <Content Include="Web.config">
+      <SubType>Designer</SubType>
     </Content>
     <None Include="Views\PrivateOffice\AboutFriendAction.brail" />
     <None Include="Views\PrivateOffice\AboutSale.brail" />
