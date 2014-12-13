@@ -60,16 +60,6 @@
 			<h3 class="links-header"><a href="@Url.Action("ViewNewsBlock", "Home", new { id = item.Id })">@Html.DisplayFor(modelItem => item.Title)</a></h3>
 			<p>@Html.DisplayFor(modelItem => item.CreationDate)</p>
 			<div class="font">@Html.DisplayFor(modelItem => item.Preview)</div>
-			
-			@if (!string.IsNullOrEmpty(item.Body)) {
-				if (string.IsNullOrEmpty(item.Url)) {
-					<span><button class="ViewNewsBlock" onclick=" location.href = '@Url.Action("ViewNewsBlock", "Home", new { newsId = item.Id })' ">Подробнее</button></span>
-				}
-				else {
-					<span><button class="ViewNewsBlock" onclick=" location.href = '@item.Url' " >Подробнее</button></span>
-				}
-			}
-		
 		</div>
 	}
 	
