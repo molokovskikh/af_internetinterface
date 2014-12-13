@@ -41,10 +41,10 @@ namespace InternetInterface.Models
 		/// <returns>Список IP-пулов</returns>
 		public static List<IpPool> GetPoolsForRegion(ISession dbSession, RegionHouse region = null)
 		{
-			List<IpPool> poolsList = dbSession.Query<IpPool>().Where(p => !(p.IsGray)).ToList();
+			var poolsList = dbSession.Query<IpPool>().Where(p => !(p.IsGray)).ToList();
 			if (region != null && poolsList.Count != 0) {
-				List<IpPoolRegion> poolRegsList = dbSession.Query<IpPoolRegion>()
-																										.ToList().FindAll(rp => (rp.Region == region.Id));
+				var poolRegsList = dbSession.Query<IpPoolRegion>()
+					.ToList().FindAll(rp => (rp.Region == region.Id));
 				poolsList = poolsList.FindAll(p => poolRegsList.Exists(rp => rp.IpPool.Id == p.Id));
 			}
 			return poolsList;
