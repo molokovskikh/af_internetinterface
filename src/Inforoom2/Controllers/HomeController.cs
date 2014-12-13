@@ -26,9 +26,13 @@ namespace Inforoom2.Controllers
 			
 			return View();
 		}
-
-		public ActionResult TariffPlans()
+		
+		public ActionResult Plans(int? id)
 		{
+			if (id != null) {
+				var plan = DbSession.Get<Plan>(id);
+				ViewBag.Plan = plan;
+			}
 			return View();
 		}
 

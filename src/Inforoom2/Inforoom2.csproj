@@ -383,7 +383,7 @@
     <Content Include="Views\Service\DeferredPayment.cshtml" />
     <Content Include="Fonts\PDFDinTextPro.ttf" />
     <Content Include="Fonts\PTSans.ttf" />
-    <Content Include="Views\Home\TariffPlans.cshtml" />
+    <Content Include="Views\Home\Plans.cshtml" />
     <Content Include="Views\OfferContract\Index.cshtml" />
     <Content Include="Views\Shared\Menu.cshtml" />
     <Content Include="Views\TestSpeed\Index.cshtml" />
@@ -397,6 +397,8 @@
     <Content Include="Views\IsMyHouseConnected\Index.cshtml" />
     <Content Include="Views\Faq\TechSupport.cshtml" />
     <Content Include="Views\About\Payment.cshtml" />
+    <Content Include="Views\Home\CommonPlans.cshtml" />
+    <Content Include="Views\Home\ActionPlans.cshtml" />
     <None Include="Web.Inforoom2_Test.config">
       <SubType>Designer</SubType>
     </None>

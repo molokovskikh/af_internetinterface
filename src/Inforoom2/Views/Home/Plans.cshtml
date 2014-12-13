@@ -1,0 +1,15 @@
+﻿@using System.Activities.Statements
+@using Inforoom2.Models
+@model dynamic
+@section JavaScript{<script type="text/javascript"src="@Url.Content("~/Scripts/HomeController.js")"></script>}
+@{
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	Plan plan = ViewBag.Plan;
+}
+
+@if (plan != null) {
+	Html.RenderPartial("ActionPlans");
+}
+else {
+	Html.RenderPartial("CommonPlans");
+}

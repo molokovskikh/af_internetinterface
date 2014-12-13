@@ -71,7 +71,7 @@ namespace InternetInterface.Controllers
 			SendParam(filter, filter.grouped, filter.appealType);
 			PropertyBag["Editing"] = filter.Editing;
 			PropertyBag["appealType"] = filter.appealType;
-		    var clientRegion = client.GetRegion();
+			var clientRegion = client.GetRegion();
 			if (clientRegion != null)
 				PropertyBag["IpPools"] = IpPoolRegion.GetPoolsForRegion(DbSession, clientRegion);
 			else
@@ -305,7 +305,7 @@ namespace InternetInterface.Controllers
 			if (!validateSum)
 				errorMessage = "Введена невалидная сумма";
 
-			bool savedEndpoint = false;
+			var savedEndpoint = false;
 			if(!withoutEndPoint && currentEndPoint == 0) {
 				if ((ConnectInfo.static_IP != string.Empty) || (nullFlag)) {
 					if (validateSum && string.IsNullOrEmpty(errorMessage) || validateSum &&
@@ -751,7 +751,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["ClientCode"] = clientId;
 			PropertyBag["uniqueClientEndpoints"] = client.Endpoints.Distinct().ToList();
 
-			RegionHouse clientRegion = client.GetRegion();
+			var clientRegion = client.GetRegion();
 			if (clientRegion != null)
 				PropertyBag["IpPools"] = IpPoolRegion.GetPoolsForRegion(DbSession, clientRegion);
 			else
