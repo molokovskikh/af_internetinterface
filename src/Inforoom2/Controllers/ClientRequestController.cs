@@ -39,6 +39,9 @@ namespace Inforoom2.Controllers
 				ErrorMessage("Пожалуйста, подтвердите, что Вы согласны с договором-офертой");
 			}
 			ViewBag.IsRedirected = false;
+			ViewBag.IsCityValidated = false;
+			ViewBag.IsStreetValidated = false;
+			ViewBag.IsHouseValidated = false;
 			ViewBag.ClientRequest = clientRequest;
 			return View("Index");
 		}
@@ -46,6 +49,10 @@ namespace Inforoom2.Controllers
 
 		private void InitClientRequest(Plan plan = null, string city = "", string street = "", string house = "")
 		{
+			ViewBag.IsRedirected = false;
+			ViewBag.IsCityValidated = false;
+			ViewBag.IsStreetValidated = false;
+			ViewBag.IsHouseValidated = false;
 			var clientRequest = new ClientRequest();
 
 			if (!string.IsNullOrEmpty(UserCity)) {
@@ -55,12 +62,17 @@ namespace Inforoom2.Controllers
 			if (!string.IsNullOrEmpty(city) && !string.IsNullOrEmpty(street) && !string.IsNullOrEmpty(house)) {
 				clientRequest.Street = street;
 				clientRequest.City = city;
+				ViewBag.IsCityValidated = true;
+				ViewBag.IsStreetValidated = true;
+
 				int housen = 0;
 				int.TryParse(house, out housen);
-				if (housen != 0)
+				if (housen != 0) {
+					ViewBag.IsHouseValidated = true;
 					clientRequest.HouseNumber = housen;
+				}
 			}
-			ViewBag.IsRedirected = false;
+
 			if (plan != null) {
 				clientRequest.Plan = plan;
 				ViewBag.IsRedirected = true;
@@ -133,9 +145,9 @@ namespace Inforoom2.Controllers
 			return View("Index");
 		}
 
-		public ActionResult RequestFromConnectionCheck(string city ,string street, string house)
+		public ActionResult RequestFromConnectionCheck(string city, string street, string house)
 		{
-			InitClientRequest(null,city, street, house);
+			InitClientRequest(null, city, street, house);
 			return View("Index");
 		}
 	}
