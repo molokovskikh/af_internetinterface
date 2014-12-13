@@ -9,7 +9,6 @@ using NHibernate.Validator.Engine;
 
 namespace Inforoom2.Components
 {
-
 	public class ValidationRunner
 	{
 		protected ArrayList ValidatedObjectList = new ArrayList();
@@ -30,12 +29,12 @@ namespace Inforoom2.Components
 
 			var allprops = obj.GetType().GetProperties();
 			//HasMany атрибуты
-			var props = allprops.Where(prop => Attribute.IsDefined(prop, typeof (OneToManyAttribute)));
+			var props = allprops.Where(prop => Attribute.IsDefined(prop, typeof(OneToManyAttribute)));
 			foreach (var p in props) {
 				var value = p.GetValue(obj, null);
 				if (!NHibernateUtil.IsInitialized(value))
 					continue;
-				var list = (ICollection) value;
+				var list = (ICollection)value;
 				foreach (var o in list) {
 					if (validatedObjects.Contains(o))
 						continue;
@@ -46,7 +45,7 @@ namespace Inforoom2.Components
 			}
 
 			//OneToOne and Nested атрибуты
-			props = allprops.Where(prop => Attribute.IsDefined(prop, typeof (OneToOneAttribute)));
+			props = allprops.Where(prop => Attribute.IsDefined(prop, typeof(OneToOneAttribute)));
 			foreach (var p in props) {
 				var value = p.GetValue(obj, null);
 				if (!NHibernateUtil.IsInitialized(value) || validatedObjects.Contains(value))
@@ -56,21 +55,24 @@ namespace Inforoom2.Components
 					return errors;
 			}
 
-			props = allprops.Where(prop => Attribute.IsDefined(prop, typeof (ManyToOneAttribute)));
+			props = allprops.Where(prop => Attribute.IsDefined(prop, typeof(ManyToOneAttribute)));
 			foreach (var p in props) {
 				var value = p.GetValue(obj, null);
 				if (value == null || !NHibernateUtil.IsInitialized(value))
 					continue;
-					var errors = ValidateDeep(value, validatedObjects);
-					if (errors.Length > 0)
+				var errors = ValidateDeep(value, validatedObjects);
+				if (errors.Length > 0)
 					return errors;
 			}
 
 			return summary;
 		}
-		
-		public HtmlString GetError(object obj, string field, string message = null, string html = "")
+
+		public HtmlString GetError(object obj, string field, string message = null, string html = "", bool IsValidated = false)
 		{
+			if (IsValidated) {
+				return WrapSuccess(message);
+			}
 			var runner = new ValidatorEngine();
 
 			if (!ValidatedObjectList.Contains(obj))
@@ -86,20 +88,18 @@ namespace Inforoom2.Components
 			return WrapSuccess(message);
 		}
 
-		protected HtmlString WrapError(string element,string msg = "")
+		protected HtmlString WrapError(string element, string msg = "")
 		{
 			var html = "<div class=\"error\">" + element + "<div class=\"msg\">" + msg + "</div><div class=\"icon\"></div>" + "</div>";
 			var ret = new HtmlString(html);
 			return ret;
 		}
 
-			protected HtmlString WrapSuccess(string msg)
+		protected HtmlString WrapSuccess(string msg)
 		{
-			var html = "<div class=\"success\">" + msg + "<div class=\"icon\"></div>"+ "</div>";
+			var html = "<div class=\"success\">" + msg + "<div class=\"icon\"></div>" + "</div>";
 			var ret = new HtmlString(html);
 			return ret;
 		}
-
-		
 	}
 }
