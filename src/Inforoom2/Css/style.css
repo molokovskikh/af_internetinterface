@@ -1,5 +1,5 @@
 ﻿input, textarea, input:hover, textarea:hover  { outline: none;}
-.Bussiness .entry, .Faq .entry, #CallMeBackWindow .entry .ClientRequest .addons { outline: none; box-sizing: padding-box; padding-left: 5px;}
+.Bussiness .entry, .Faq .entry, #CallMeBackWindow .entry, .ClientRequest .addons { outline: none; box-sizing: padding-box; padding-left: 5px;}
 .Bussiness textarea.entry,#CallMeBackWindow textarea.entry, .Faq textarea.entry {padding-top: 5px;}
 .Faq textarea.entry { height: 110px;}
 body { background: #9EA5AD!important;}
