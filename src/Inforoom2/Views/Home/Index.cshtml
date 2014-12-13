@@ -57,9 +57,9 @@
 	
 	@foreach (var item in news) {
 		<div class="text">
-			<h1>@Html.DisplayFor(modelItem => item.Title)</h1>
+			<h3 class="links-header"><a href="@Url.Action("ViewNewsBlock", "Home", new { id = item.Id })">@Html.DisplayFor(modelItem => item.Title)</a></h3>
 			<p>@Html.DisplayFor(modelItem => item.CreationDate)</p>
-			<h2>@Html.DisplayFor(modelItem => item.Preview)</h2>
+			<div class="font">@Html.DisplayFor(modelItem => item.Preview)</div>
 			
 			@if (!string.IsNullOrEmpty(item.Body)) {
 				if (string.IsNullOrEmpty(item.Url)) {

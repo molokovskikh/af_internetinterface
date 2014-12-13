@@ -40,17 +40,23 @@ function Inforoom() {
 			this.callMeBackWindow();
 		$(".header .call").on("click", this.callMeBackWindow.bind(this));
 
-		$(".error .msg").on("mouseover", function() {
-			$(this).fadeOut(800);
-		});
-		$(".error .icon").on("mouseover", function() {
-			$(this).parent().find(".msg").fadeIn();
-		});
-		$('input').attr('autocomplete', 'off');
+		this.initInputs();
 		this.checkCity();
 		this.showMessages();
 	}
 
+	this.initInputs = function() {
+		$(".error .msg").on("mouseover", function () {
+			$(this).fadeOut(800);
+		});
+		$(".error .msg").on("click", function () {
+			$(this).parent().find("input, textarea").focus();
+		});
+		$(".error .icon").on("mouseover", function () {
+			$(this).parent().find(".msg").fadeIn();
+		});
+		$('input').attr('autocomplete', 'off');
+	}
 	this.callMeBackWindow = function() {
 		var wnd = this.createWindow("Обратный звонок", this.getTemplate("CallMeBackWindow"));
 		wnd.block();
@@ -227,6 +233,10 @@ function Inforoom() {
 			var city = $(wnd.getElement()).find(".UserCity").html();
 			wnd.remove();
 			cli.setCookie("userCity", city);
+		});
+		$(wnd.getElement()).find('.cities a').on("click", function () {
+			cli.setCookie("userCity", this.innerHTML);
+			window.location.reload();
 		});
 
 		//cancel button event

@@ -7,8 +7,17 @@
 	NewsBlock news = ViewBag.NewsBlock;
 }
 
-<h2>@Html.DisplayFor(modelItem => news.Title)</h2>
+<h2 class="heading">@Html.DisplayFor(modelItem => news.Title)</h2>
 
-<div class="NewsBlockDeatil">
-	@Html.DisplayFor(modelItem => news.Body)
+<div class="NewsBlockDeatil paragraph">
+	@if (news.Body == null) {
+		@Html.DisplayFor(modelItem => news.Preview)
+	}
+	else {
+		@Html.DisplayFor(modelItem => news.Body)
+	}
 </div>
+<br/>
+@using (Html.BeginForm("Index", "Home", null, FormMethod.Get, null)) {
+	<input type="submit"class="click" value="Назад" />
+}

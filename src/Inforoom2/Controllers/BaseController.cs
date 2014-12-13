@@ -176,16 +176,15 @@ namespace Inforoom2.Controllers
 				//Анонимный посетитель. Определяем город.
 				if (!string.IsNullOrEmpty(cookieCity)) {
 					userCity = cookieCity;
-					ViewBag.UserCity = cookieCity;
+					
 				}
 				else {
-					GetVisitorCityByGeoBase();
+					userCity = GetVisitorCityByGeoBase(); 
 				}
 			}
 			else {
 				if (!string.IsNullOrEmpty(cookieCity)) {
 					userCity = cookieCity;
-					ViewBag.UserCity = cookieCity;
 				}
 				else {
 					//Куков нет, пытаемся достать город из базы, иначе определяем по геобазе
@@ -194,16 +193,26 @@ namespace Inforoom2.Controllers
 					var user = DbSession.Query<PhysicalClient>().FirstOrDefault(k => k.Id == userId);
 					if (user != null) {
 						userCity = user.Address.House.Street.Region.City.Name;
-						ViewBag.UserCity = user.Address.House.Street.Region.City.Name;
 					}
 					else {
-						GetVisitorCityByGeoBase();
+						userCity = GetVisitorCityByGeoBase();
 					}
 				}
 			}
+			ViewBag.UserCityBelongsToUs = IsUserCityBelongsToUs(UserCity);
+			ViewBag.UserCity = UserCity;
 		}
-
-		private void GetVisitorCityByGeoBase()
+		private bool IsUserCityBelongsToUs(string city)
+		{
+			if (city != null)
+			{
+				var region = DbSession.Query<Region>().FirstOrDefault(i => i.Name.Contains(city));
+				if (region != null)
+					return true;
+			}
+			return false;
+		}
+		private string GetVisitorCityByGeoBase()
 		{
 			var geoService = new IpGeoBase();
 			IpAnswer geoAnswer;
@@ -211,10 +220,9 @@ namespace Inforoom2.Controllers
 				geoAnswer = geoService.GetInfo();
 			}
 			catch (WebException e) {
-				geoAnswer = new IpAnswer { City = "Борисоглебск" };
+				return null;
 			}
-			userCity = geoAnswer.City;
-			ViewBag.UserCity = geoAnswer.City;
+			return geoAnswer.City;
 		}
 
 		protected List<TModel> GetList<TModel>()

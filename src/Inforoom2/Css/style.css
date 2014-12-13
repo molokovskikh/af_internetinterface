@@ -1,6 +1,11 @@
-﻿input, textarea, input:hover, textarea:hover  { outline: none;}
-.Bussiness .entry, .Faq .entry, #CallMeBackWindow .entry, .ClientRequest .addons { outline: none; box-sizing: padding-box; padding-left: 5px;}
-.Bussiness textarea.entry,#CallMeBackWindow textarea.entry, .Faq textarea.entry {padding-top: 5px;}
+﻿h1, h2, h3 {margin: 0px;}
+.plans h1, .plans h2 { margin-top: 18px;}
+.plans h3 { margin: 47px 0px;}
+.IsMyHouseConnected .answer { width: auto;}
+.IsMyHouseConnected .error { position: absolute;}
+input, textarea, input:hover, textarea:hover { outline: none;}
+input.entry, textarea.entry { outline: none; box-sizing: padding-box; padding-left: 5px;}
+textarea.entry {padding-top: 5px;}
 .Faq textarea.entry { height: 110px;}
 body { background: #9EA5AD!important;}
 a.corpred, .corpred { color: #a61c21 !important;}
@@ -45,6 +50,7 @@ a {color: #474747}
 		.city .name { display: inline-block;}
 		.city .arrow { top: 10px;position: relative;left: 0;display: inline-block;}
 	.top .whiteright, .top .blackright { left: 186px;}
+	.top .blackright { width: 25px;}
 .page {min-height: 700px;}
 	.Faq textarea ,.Faq input.entry {width: 617px;}
 .Bussiness .window {bottom: 78px;}
@@ -118,8 +124,13 @@ input.personal {padding: 5px; box-sizing: padding-box;}
 	text-align: center;
 }
 .question { color: #474747;margin-bottom: 15px;}
+.answerbg.error {top: 20px;}
 .Faq .answer { background: none;margin-top: 0px;}
-
+.information h3 a {color: #b3393e}
+.Home .news { cursor: default;}
+.offers img { cursor: pointer;}
+.ViewNewsBlock {padding: 0px 40px ;}
+.answer .reply p { width: 400px;}
 /* JQUERY UI */
 .ui-datepicker-title { color: white; font-family: PDFDinTextPro;font-size: 14px;}
 /* END JQUERY UI */

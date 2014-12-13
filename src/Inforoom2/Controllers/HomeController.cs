@@ -32,10 +32,9 @@ namespace Inforoom2.Controllers
 			return View();
 		}
 
-		public ActionResult ViewNewsBlock(int? newsid)
+		public ActionResult ViewNewsBlock(int id)
 		{
-			
-			var newsBlock = DbSession.Get<NewsBlock>(newsid);
+			var newsBlock = DbSession.Get<NewsBlock>(id);
 			ViewBag.NewsBlock = newsBlock;
 			return View();
 		}
