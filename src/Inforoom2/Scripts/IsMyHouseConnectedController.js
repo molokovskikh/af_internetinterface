@@ -18,7 +18,7 @@ function init() { // Создаем карту.
 		zoom: 15,
 		controls: ['zoomControl']
 	});
-	myMap.disableRuler();
+	typeWatcher(0);
 }
 
 

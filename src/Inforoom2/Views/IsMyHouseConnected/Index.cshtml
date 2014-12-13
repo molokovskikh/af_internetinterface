@@ -30,7 +30,7 @@
 				<div class="answersuccessbg"></div>
 				<div class="reply">
 					<h1>Ваш дом подключен!</h1>
-					<p>Вы можете оставить @Html.ActionLink("заявку на подключение", "RequestFromConnectionCheck", "ClientRequest",new{street = clientRequest.YandexStreet, house = clientRequest.YandexHouse},new {@class = "corpred"})</p>
+					<p>Вы можете оставить @Html.ActionLink("заявку на подключение", "RequestFromConnectionCheck", "ClientRequest",new{city = clientRequest.YandexCity ,street = clientRequest.YandexStreet, house = clientRequest.YandexHouse},new {@class = "corpred"})</p>
 				</div>
 			</div>
 		}

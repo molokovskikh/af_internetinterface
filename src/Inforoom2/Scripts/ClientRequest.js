@@ -18,6 +18,8 @@ function init() { // Создаем карту.
 		zoom: 15,
 		controls: ['zoomControl']
 	});
+
+	typeWatcher(0);
 }
 
 

@@ -44,7 +44,7 @@ namespace Inforoom2.Controllers
 		}
 
 
-		private void InitClientRequest(Plan plan = null, string street = "", string house = "")
+		private void InitClientRequest(Plan plan = null, string city = "", string street = "", string house = "")
 		{
 			var clientRequest = new ClientRequest();
 
@@ -52,8 +52,9 @@ namespace Inforoom2.Controllers
 				clientRequest.City = UserCity;
 			}
 
-			if (!string.IsNullOrEmpty(street) && !string.IsNullOrEmpty(house)) {
+			if (!string.IsNullOrEmpty(city) && !string.IsNullOrEmpty(street) && !string.IsNullOrEmpty(house)) {
 				clientRequest.Street = street;
+				clientRequest.City = city;
 				int housen = 0;
 				int.TryParse(house, out housen);
 				if (housen != 0)
@@ -132,9 +133,9 @@ namespace Inforoom2.Controllers
 			return View("Index");
 		}
 
-		public ActionResult RequestFromConnectionCheck(string street, string house)
+		public ActionResult RequestFromConnectionCheck(string city ,string street, string house)
 		{
-			InitClientRequest(null, street, house);
+			InitClientRequest(null,city, street, house);
 			return View("Index");
 		}
 	}
