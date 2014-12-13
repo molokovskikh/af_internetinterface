@@ -74,7 +74,7 @@
 					@{
 						var menu = new List<string[]>();
 						menu.Add(new[] { "Главная", "Index", "Home" });
-						menu.Add(new[] { "Тарифы", "TariffPlans", "Home" });
+						menu.Add(new[] { "Тарифы", "Plans", "Home" });
 						menu.Add(new[] { "Заявка на подключение", "Index", "ClientRequest" });
 						menu.Add(new[] { "Для бизнеса", "Index", "Bussiness" });
 						menu.Add(new[] { "Вопросы и ответы", "Index", "Faq" });
@@ -109,7 +109,7 @@
 				<div class="support">
 					<ul>
 						<li>@Html.ActionLink("Личный кабинет", "Profile", "Personal")</li>
-						<li>@Html.ActionLink("Тарифы", "TariffPlans", "Home", null, null)</li>
+						<li>@Html.ActionLink("Тарифы", "Plans", "Home", null, null)</li>
 						<li>@Html.ActionLink("Заявка на подключение", "Index", "ClientRequest", null, null)</li>
 						<li>@Html.ActionLink("Вопросы и ответы", "Index", "Faq", null, null)</li>
 						<li>@Html.ActionLink("Оплата", "Payment", "About", null, null)</li>

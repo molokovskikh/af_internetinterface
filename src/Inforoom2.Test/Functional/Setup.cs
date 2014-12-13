@@ -66,7 +66,7 @@ namespace Inforoom2.Test.Functional
 			//	}
 
 			if (!session.Query<Plan>().Any(p => p.Name == "Популярный")) {
-				GeneratePlansAndPrices();
+				//GeneratePlansAndPrices();
 			}
 
 

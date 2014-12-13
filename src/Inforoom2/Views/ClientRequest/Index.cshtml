@@ -5,6 +5,7 @@
 @{
 	ClientRequest clientRequest = ViewBag.ClientRequest;
 	ValidationRunner validationRunner = ViewBag.Validation;
+	bool IsRedirected = ViewBag.IsRedirected;
 }
 
 <script src="http://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
@@ -53,10 +54,18 @@
 			@Html.ValidationEditor(validationRunner, clientRequest, "Floor", new { @class = "addons" }, HtmlTag.input, HtmlType.text)
 		</div>
 		<div>
-			<div class="personals">Тарифный план:</div>
-			@Html.DropDownListExtendedFor(k => clientRequest.Plan, ViewBag.Plans as List<Plan>, k => k.Name, null, new { @class = "rounded" }, clientRequest.Plan != null ? clientRequest.Plan.Id : 0)
+				@if (IsRedirected) {
+				<div class ="success">
+					<div class="personals">Тарифный план:</div>
+					@Html.DropDownListExtendedFor(k => clientRequest.Plan, ViewBag.Plans as List<Plan>, k => k.Name, null, new { @class = "rounded" }, clientRequest.Plan != null ? clientRequest.Plan.Id : 0)
+					<div class="icon"></div>
+				</div>
+			}
+			else {
+				<div class="personals">Тарифный план:</div>
+					@Html.DropDownListExtendedFor(k => clientRequest.Plan, ViewBag.Plans as List<Plan>, k => k.Name, null, new { @class = "rounded" }, clientRequest.Plan != null ? clientRequest.Plan.Id : 0)
+			}
 		</div>
-		
 	</div>
 	<div id="yandexMap" class="map"></div>
 	<div class="contract">

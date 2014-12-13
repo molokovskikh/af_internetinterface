@@ -130,7 +130,9 @@ namespace Inforoom2.Controllers
 
 		protected override void OnResultExecuting(ResultExecutingContext filterContext)
 		{
-			ViewBag.RegionOfficePhoneNumber = CurrentRegion.RegionOfficePhoneNumber;
+			if (CurrentRegion != null) {
+				ViewBag.RegionOfficePhoneNumber = CurrentRegion.RegionOfficePhoneNumber;
+			}
 			base.OnResultExecuting(filterContext);
 		}
 
