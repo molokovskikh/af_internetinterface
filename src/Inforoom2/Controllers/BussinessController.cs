@@ -31,10 +31,13 @@ namespace Inforoom2.Controllers
 			{
 				DbSession.Save(callMeBackTicket);
 				SuccessMessage("Заявка отправлена. В течении для вам перезвонят.");
-				return RedirectToAction("Index");
+				return new RedirectResult(Url.Action("Index") + "#notification");
 			}
 
 			ViewBag.NewTicket = callMeBackTicket;
+			//если на странице бизнеса отправить заявку на звонок, то не должно появляться окно
+			if(Request.Params["bussiness"] != null)
+				AddJavascriptParam("CallMeBack", "0");
 			return View();
 		}
 	}

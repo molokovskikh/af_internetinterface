@@ -41,8 +41,12 @@ function Inforoom() {
 		$(".header .call").on("click", this.callMeBackWindow.bind(this));
 
 		$(".error .msg").on("mouseover", function() {
-			$(this).fadeOut();
+			$(this).fadeOut(800);
 		});
+		$(".error .icon").on("mouseover", function() {
+			$(this).parent().find(".msg").fadeIn();
+		});
+		$('input').attr('autocomplete', 'off');
 		this.checkCity();
 		this.showMessages();
 	}

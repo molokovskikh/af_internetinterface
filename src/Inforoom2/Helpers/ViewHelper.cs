@@ -120,7 +120,7 @@ namespace Inforoom2.Helpers
 					 html = string.Format("<{0} id=\"{1}\" {2} type=\"{3}\" name =\"{4}\" value=\"{5}\">", tag, id, attributes, type, name, value);
 					break;
 				case HtmlTag.textarea:
-					 html = string.Format("<{0} name =\"{3}\" rows = \"6\" cols = \"75\">{4}</{5}>", tag, id, attributes, name, value,tag);
+					html = string.Format("<{0} name =\"{3}\" {2} rows = \"6\" cols = \"75\">{4}</{5}>", tag, id, attributes, name, value, tag);
 					break;
 				default:
 					throw new NotImplementedException("Html for tag is not implemented");

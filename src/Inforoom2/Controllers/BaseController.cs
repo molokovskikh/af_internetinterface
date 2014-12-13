@@ -49,7 +49,12 @@ namespace Inforoom2.Controllers
 		{
 			ViewBag.JavascriptParams[name] = value;
 		}
-
+		public string GetJavascriptParam(string name)
+		{
+			string val = null;
+			ViewBag.JavascriptParams.TryGetValue(name,out val);
+			return val;
+		}
 		protected new virtual CustomPrincipal User
 		{
 			get { return HttpContext.User as CustomPrincipal; }
@@ -150,7 +155,7 @@ namespace Inforoom2.Controllers
 			ViewBag.CallMeBackTicket = new CallMeBackTicket();
 			var binder = new EntityBinderAttribute("callMeBackTicket.Id", typeof(CallMeBackTicket));
 			CallMeBackTicket callMeBackTicket = (CallMeBackTicket)binder.MapModel(Request);
-			if (callMeBackTicket.Name == null)
+			if (Request.Params["callMeBackTicket.Name"] == null)
 				return;
 			var errors = ValidationRunner.ValidateDeep(callMeBackTicket);
 			if (errors.Length == 0) {
@@ -160,7 +165,8 @@ namespace Inforoom2.Controllers
 			}
 
 			ViewBag.CallMeBackTicket = callMeBackTicket;
-			AddJavascriptParam("CallMeBack", "1");
+			if (GetJavascriptParam("CallMeBack") == null)
+				AddJavascriptParam("CallMeBack", "1");
 		}
 
 		public void ProcessRegionPanel()

@@ -1,4 +1,8 @@
-﻿body { background: #9EA5AD!important;}
+﻿input, textarea, input:hover, textarea:hover  { outline: none;}
+.Bussiness .entry, .Faq .entry, #CallMeBackWindow .entry .ClientRequest .addons { outline: none; box-sizing: padding-box; padding-left: 5px;}
+.Bussiness textarea.entry,#CallMeBackWindow textarea.entry, .Faq textarea.entry {padding-top: 5px;}
+.Faq textarea.entry { height: 110px;}
+body { background: #9EA5AD!important;}
 a.corpred, .corpred { color: #a61c21 !important;}
 textarea { resize: none;}
 ul { padding: 0px;}
@@ -42,7 +46,7 @@ a {color: #474747}
 		.city .arrow { top: 10px;position: relative;left: 0;display: inline-block;}
 	.top .whiteright, .top .blackright { left: 186px;}
 .page {min-height: 700px;}
-	.Faq textarea ,input.entry {width: 617px;}
+	.Faq textarea ,.Faq input.entry {width: 617px;}
 .Bussiness .window {bottom: 78px;}
 .ClientRequest .map {top: 99px;}
 .wrapper .plans { background: white;}
@@ -59,7 +63,7 @@ a {color: #474747}
 		.About.Payment .whiteblocktext { width: 635px;}
 		.About.Payment .applications { margin-left: 10px;height: 110px;}
 		.About .boy { background-image: url("../images/office_mini.png"); top: 53px;left: 58px;height: 397px; width: 418px;}
-.success .icon, .error .icon {vertical-align: top; margin-left: 5px;margin-top: 5px;}
+.success .icon, .error .icon {position: absolute; vertical-align: top; margin-left: 5px;margin-top: 5px;}
 .heading { text-transform: uppercase;}
 .Details { text-align: center;}
 	.Details table {text-align: left;height: auto;margin-bottom: 45px;}
@@ -104,7 +108,18 @@ table.cost { min-height: 140px;}
 .notification.error .hide{ color: black;}
 
 .Service  .datePicker { width: 150px;}
-
+.Service .connectfee { margin-left: 0px;}
+.namemenu:last-child { text-align: center;}
 .error { position: relative;}
-.error .msg { position: absolute; box-sizing: border-box;color: #920f15;display: block;height: 100%;left: 0;padding: 5px 9px;position: absolute;top: 0;width: 100%;z-index: 30;}
+.error .msg {background: none repeat scroll 0 0 #f1f1f1; border: 1px solid #dadada;box-sizing: border-box;color: #920f15;display: block;height: 100%;left: 0;padding: 5px 6px;position: absolute;top: 0;width: 100%;z-index: 30;}
 input.personal {padding: 5px; box-sizing: padding-box;}
+
+.actiontext h3 {
+	text-align: center;
+}
+.question { color: #474747;margin-bottom: 15px;}
+.Faq .answer { background: none;margin-top: 0px;}
+
+/* JQUERY UI */
+.ui-datepicker-title { color: white; font-family: PDFDinTextPro;font-size: 14px;}
+/* END JQUERY UI */
