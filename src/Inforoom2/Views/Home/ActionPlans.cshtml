@@ -1,0 +1,112 @@
+﻿@using Inforoom2.Models
+ 
+@{
+	Plan plan = ViewBag.Plan;
+}
+<div class="plans">
+	<div class="heading">ТАРИФНЫЕ ПЛАНЫ</div>
+	<div class="variants">
+		@if (plan.Name.Contains("Популярный")) {
+			<div class="type typehit">
+				<h1>Популярный</h1>
+				<h2>30 Мбит/с</h2>
+				<p>Один основной пакет на выбор входит
+					в стоимость пакета. Следите за
+					последними спортивными событиями,
+					смотрите спортивные трансляции?
+					Подключайте пакет «Спортивный»!</p>
+				<h3>300 <span>&#8381</span>/мес.</h3>
+				@using (Html.BeginForm("RequestFromTariff", "ClientRequest", new { id = 45 }, FormMethod.Post, null)) {
+					<input class="button plug" type="submit" value="Подключить">
+				}
+			</div>
+		}
+		else {
+			<div class="type">
+				<h1>Популярный</h1>
+				<h2>30 Мбит/с</h2>
+				<p>Один основной пакет на выбор входит
+					в стоимость пакета. Следите за
+					последними спортивными событиями,
+					смотрите спортивные трансляции?
+					Подключайте пакет «Спортивный»!</p>
+				<h3>300 <span>&#8381</span>/мес.</h3>
+				@using (Html.BeginForm("RequestFromTariff", "ClientRequest", new { id = 45 }, FormMethod.Post, null)) {
+					<input class="plug" type="submit" value="Подключить">
+				}
+			</div>
+		}
+		
+		@if (plan.Name.Contains("Оптимальный")) {
+			<div class="type typehit">
+				<h1>Оптимальный</h1>
+				<h2>50 Мбит/с</h2>
+				<h4>+Ночной безлимит<sup>1</sup></h4>
+				<h4>+TV Free<sup>2</sup></h4>
+				<p>Один основной пакет на выбор входит
+					в стоимость пакета. Следите за
+					последними спортивными событиями,
+					смотрите спортивные трансляции?
+					Подключайте пакет «Спортивный»!</p>
+				<h3>500 <span>&#8381</span>/мес.</h3>
+				@using (Html.BeginForm("RequestFromTariff", "ClientRequest", new { id = 49 }, FormMethod.Post, null)) {
+					<input class="button plug" type="submit" value="Подключить">
+				}
+			</div>
+		}
+		else {
+			<div class="type">
+				<h1>Оптимальный</h1>
+				<h2>50 Мбит/с</h2>
+				<h4>+Ночной безлимит<sup>1</sup></h4>
+				<h4>+TV Free<sup>2</sup></h4>
+				<p>Один основной пакет на выбор входит
+					в стоимость пакета. Следите за
+					последними спортивными событиями,
+					смотрите спортивные трансляции?
+					Подключайте пакет «Спортивный»!</p>
+				<h3>500 <span>&#8381</span>/мес.</h3>
+				@using (Html.BeginForm("RequestFromTariff", "ClientRequest", new { id = 49 }, FormMethod.Post, null)) {
+					<input class="plug" type="submit" value="Подключить">
+				}
+			</div>
+		}
+		
+		@if (plan.Name.Contains("Максимальный")) {
+			<div class="type typehit">
+				<h1>Максимальный</h1>
+				<h2>100 Мбит/с</h2>
+				<p>Один основной пакет на выбор входит
+					в стоимость пакета. Следите за
+					последними спортивными событиями,
+					смотрите спортивные трансляции?
+					Подключайте пакет «Спортивный»!</p>
+				<h3>900 <span>&#8381</span>/мес.</h3>
+				@using (Html.BeginForm("RequestFromTariff", "ClientRequest", new { id = 81 }, FormMethod.Post, null)) {
+					<input class="button plug" type="submit" value="Подключить">
+				}
+			</div>
+		}
+		else {
+			<div class="type">
+				<h1>Максимальный</h1>
+				<h2>100 Мбит/с</h2>
+				<p>Один основной пакет на выбор входит
+					в стоимость пакета. Следите за
+					последними спортивными событиями,
+					смотрите спортивные трансляции?
+					Подключайте пакет «Спортивный»!</p>
+				<h3>900 <span>&#8381</span>/мес.</h3>
+				@using (Html.BeginForm("RequestFromTariff", "ClientRequest", new { id = 81 }, FormMethod.Post, null)) {
+					<input class="plug" type="submit" value="Подключить">
+				}
+			</div>
+		}
+	</div>
+	<div class="details">
+		<p><sup>1</sup> — Ночной безлимит – скорость до 100 Мбит/с. с 21:00 до 7:00 часов</p>
+		<p><sup>2</sup> — Подключение возможно при наличии технической возможностиGПредоставляется в ответственное хранение оборудование на один телевизор</p>
+		<p>Есть возможность предоставления Wi-Fi роутера</p>
+		<p>TV Free включает в себя 158 каналов (12 HD)</p>
+	</div>
+</div>

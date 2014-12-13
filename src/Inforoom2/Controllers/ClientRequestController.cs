@@ -38,12 +38,13 @@ namespace Inforoom2.Controllers
 			if (!clientRequest.IsContractAccepted) {
 				ErrorMessage("Пожалуйста, подтвердите, что Вы согласны с договором-офертой");
 			}
+			ViewBag.IsRedirected = false;
 			ViewBag.ClientRequest = clientRequest;
 			return View("Index");
 		}
 
 
-		private void InitClientRequest(Plan plan = null, string street = "", string house = "")
+		private void InitClientRequest(Plan plan = null, string city = "", string street = "", string house = "")
 		{
 			var clientRequest = new ClientRequest();
 
@@ -51,15 +52,18 @@ namespace Inforoom2.Controllers
 				clientRequest.City = UserCity;
 			}
 
-			if (!string.IsNullOrEmpty(street) && !string.IsNullOrEmpty(house)) {
+			if (!string.IsNullOrEmpty(city) && !string.IsNullOrEmpty(street) && !string.IsNullOrEmpty(house)) {
 				clientRequest.Street = street;
+				clientRequest.City = city;
 				int housen = 0;
 				int.TryParse(house, out housen);
 				if (housen != 0)
 					clientRequest.HouseNumber = housen;
 			}
+			ViewBag.IsRedirected = false;
 			if (plan != null) {
 				clientRequest.Plan = plan;
+				ViewBag.IsRedirected = true;
 			}
 			ViewBag.ClientRequest = clientRequest;
 			InitRequestPlans();
@@ -67,7 +71,7 @@ namespace Inforoom2.Controllers
 
 		private List<Plan> InitRequestPlans()
 		{
-			var plans = DbSession.Query<Plan>().Where(p => !p.IsArchived && !p.IsServicePlan && !p.Hidden).ToList();
+			var plans = DbSession.Query<Plan>().Where(p => !p.IsArchived && !p.IsServicePlan).ToList();
 			ViewBag.Plans = plans;
 			return plans;
 		}
@@ -117,16 +121,21 @@ namespace Inforoom2.Controllers
 			return address;
 		}
 
-		public ActionResult RequestFromTariff(string planName)
+		public ActionResult RequestFromTariff(int? id)
 		{
-			var plan = DbSession.Query<Plan>().FirstOrDefault(p => p.Name == planName);
-			InitClientRequest(plan);
+			if (id != null) {
+				var plan = DbSession.Get<Plan>(id);
+				InitClientRequest(plan);
+			}
+			else {
+				InitClientRequest();
+			}
 			return View("Index");
 		}
 
-		public ActionResult RequestFromConnectionCheck(string street, string house)
+		public ActionResult RequestFromConnectionCheck(string city ,string street, string house)
 		{
-			InitClientRequest(null, street, house);
+			InitClientRequest(null,city, street, house);
 			return View("Index");
 		}
 	}
