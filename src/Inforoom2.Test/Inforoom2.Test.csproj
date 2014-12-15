@@ -144,6 +144,7 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="dbswitches.xlsx" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

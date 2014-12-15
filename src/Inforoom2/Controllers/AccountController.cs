@@ -16,22 +16,17 @@ namespace Inforoom2.Controllers
 	public class AccountController : BaseController
 	{
 		[HttpPost]
-		public ActionResult Login(string username, string password, string returnUrl, bool shouldRemember = false)
+		public ActionResult Login(string username, string password)
 		{
 			int id = 0;
 			int.TryParse(username, out id);
 			var user = DbSession.Query<Client>().FirstOrDefault(k => k.Id == id);
 			if (user != null && CryptoPass.GetHashString(password) == user.PhysicalClient.Password) {
-				return Authenticate("Profile", "Personal", username, shouldRemember);
+				return Authenticate("Profile", "Personal", username, true);
 			}
 			ErrorMessage("Неправильный логин или пароль");
-			if (String.IsNullOrEmpty(returnUrl))
-				returnUrl = Request.UrlReferrer.ToString();
-
-			if(!String.IsNullOrEmpty(returnUrl))
-				return Redirect(returnUrl);
-			else
-				return RedirectToAction("Index", "Home");
+			var returnUrl = Request.UrlReferrer.ToString();
+			return Redirect(returnUrl);
 		}
 
 		public ActionResult Logout()

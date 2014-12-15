@@ -211,7 +211,7 @@ namespace Inforoom2.Controllers
 			foreach (var plan in plans) {
 				plan.SwitchPrice = GetPlanSwitchPrice(client.PhysicalClient.Plan, plan, true);
 			}
-			ViewBag.Plans = plans.Take(3).ToList();
+			ViewBag.Plans = plans.ToList();
 		}
 	}
 }
