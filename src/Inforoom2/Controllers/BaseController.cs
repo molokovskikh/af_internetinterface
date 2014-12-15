@@ -128,6 +128,15 @@ namespace Inforoom2.Controllers
 			filterContext.ExceptionHandled = true;
 		}
 
+		protected override void OnActionExecuting(ActionExecutingContext filterContext)
+		{
+			var cookieCity = GetCookie("userCity");
+			if (!string.IsNullOrEmpty(cookieCity)) {
+				userCity = cookieCity;
+			}
+			base.OnActionExecuting(filterContext);
+		}
+
 		protected override void OnResultExecuting(ResultExecutingContext filterContext)
 		{
 			if (CurrentRegion != null) {
@@ -159,6 +168,10 @@ namespace Inforoom2.Controllers
 			CallMeBackTicket callMeBackTicket = (CallMeBackTicket)binder.MapModel(Request);
 			if (Request.Params["callMeBackTicket.Name"] == null)
 				return;
+			var client = CurrentClient;
+			if (client != null) {
+				callMeBackTicket.Client = client;
+			}
 			var errors = ValidationRunner.ValidateDeep(callMeBackTicket);
 			if (errors.Length == 0) {
 				DbSession.Save(callMeBackTicket);

@@ -29,6 +29,11 @@ namespace Inforoom2.Controllers
 			return Redirect(returnUrl);
 		}
 
+		public ActionResult Login()
+		{
+			return View();
+		}
+
 		public ActionResult Logout()
 		{
 			FormsAuthentication.SignOut();

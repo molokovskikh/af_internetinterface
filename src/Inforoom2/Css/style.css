@@ -134,3 +134,7 @@ input.personal {padding: 5px; box-sizing: padding-box;}
 /* JQUERY UI */
 .ui-datepicker-title { color: white; font-family: PDFDinTextPro;font-size: 14px;}
 /* END JQUERY UI */
+.Account.Login .window{ height: 300px;top: 140px;width: 450px;  height: 225px;}
+	.Account.Login .cooperation { height: 60px; width: 100%;margin: auto;}
+		.Account.Login .whiteblocktext { width: 635px;}
+		.Account.Login .applications { margin-left: 10px;height: 110px;}

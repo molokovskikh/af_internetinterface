@@ -251,6 +251,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Components\CustomAuthorizeAttribute.cs" />
     <Compile Include="Components\EmailSender.cs" />
     <Compile Include="Components\EntityBinder.cs" />
     <Compile Include="Components\YandexParser.cs" />
@@ -399,6 +400,8 @@
     <Content Include="Views\About\Payment.cshtml" />
     <Content Include="Views\Home\CommonPlans.cshtml" />
     <Content Include="Views\Home\ActionPlans.cshtml" />
+    <Content Include="Views\Shared\LoginPartial.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
     <None Include="Web.Inforoom2_Test.config">
       <SubType>Designer</SubType>
     </None>

@@ -19,7 +19,7 @@ namespace Inforoom2.Models
 		[Property, NotNullNotEmpty(Message = "Введите номер телефона"),  Pattern(@"^\d{10}$", Message = "Введите номер в десятизначном формате")]
 		public virtual string ApplicantPhoneNumber { get; set; }
 
-		[Property(Column = "ApplicantEmail"), NotNullNotEmpty(Message = "Введите Email"), Pattern(@"^\S+@\S+$")]
+		[Property(Column = "ApplicantEmail")]
 		public virtual string Email { get; set; }
 
 		[ManyToOne(Column = "_Address", Cascade = "save-update")]

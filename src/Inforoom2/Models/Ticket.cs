@@ -33,6 +33,9 @@ namespace Inforoom2.Models
 		[ManyToOne(Column = "User")]
 		public virtual Employee Employee { get; set; }
 
+		[ManyToOne]
+		public virtual Client Client { get; set; }
+
 		[Property, Email(Message = "Адрес эл. почты введен неправильно"), NotNullNotEmpty(Message = "Введите Email"), Pattern(@"^\S+@\S+$",Message = "Адрес эл. почты введен неправильно")]
 		public virtual string Email { get; set; }
 	}

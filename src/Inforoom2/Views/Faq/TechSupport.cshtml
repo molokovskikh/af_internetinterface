@@ -34,6 +34,8 @@
 			<div class="ties">Текст вопроса* : </div>
 			@Html.ValidationEditor(validationRunner, ticket, "Text", new { @class = "entry" }, HtmlTag.textarea, HtmlType.none)
 		</div>
+		 @Html.HiddenFor(k=>ticket.Client)
+		 @Html.HiddenFor(k=>ticket.Id)
 		<input type="submit" class="set"  value="Отправить вопрос"/>
 	}
 </div>
