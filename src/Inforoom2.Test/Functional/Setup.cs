@@ -48,9 +48,6 @@ namespace Inforoom2.Test.Functional
 		}
 
 
-		private static Client client;
-		private static Client client2;
-
 		public static void SeedDb()
 		{
 			var settings = session.Query<InternetSettings>().FirstOrDefault();
@@ -62,7 +59,7 @@ namespace Inforoom2.Test.Functional
 			}
 
 			//if (!session.Query<Address>().Any()) {
-		//	ImportSwitchesAddresses();
+			//	ImportSwitchesAddresses();
 			//	}
 
 			if (!session.Query<Plan>().Any(p => p.Name == "Популярный")) {
@@ -90,7 +87,7 @@ namespace Inforoom2.Test.Functional
 				emp.Roles = roles;
 				session.Save(emp);
 
-				client = new Client {
+				var client = new Client {
 					PhysicalClient = new PhysicalClient {
 						Password = pass,
 						PhoneNumber = "4951234567",
@@ -109,7 +106,7 @@ namespace Inforoom2.Test.Functional
 					WorkingStartDate = DateTime.Now
 				};
 
-				client2 = new Client {
+				var client2 = new Client {
 					PhysicalClient = new PhysicalClient {
 						Password = pass,
 						PhoneNumber = "4951234567",
@@ -246,8 +243,14 @@ namespace Inforoom2.Test.Functional
 
 		public static void GenerateNewsAndQuestions()
 		{
+			var client = session.Query<Client>().FirstOrDefault(c => c.PhysicalClient.Name == "Иван");
 			if (client == null) {
-				client = session.Query<Client>().FirstOrDefault();
+				return;
+			}
+
+			var client2 = session.Query<Client>().FirstOrDefault(c => c.PhysicalClient.Name == "Алексей");
+			if (client2 == null) {
+				return;
 			}
 			var newsBlock = new NewsBlock(0);
 			newsBlock.Title = client.Id.ToString();

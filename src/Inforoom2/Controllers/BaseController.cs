@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -118,14 +119,18 @@ namespace Inforoom2.Controllers
 
 		protected override void OnException(ExceptionContext filterContext)
 		{
+			bool showErrorPage = false;
+			bool.TryParse(ConfigurationManager.AppSettings["ShowErrorPage"], out showErrorPage);
 			DeleteCookie("SuccessMessage");
-			filterContext.Result = new RedirectToRouteResult(
-				new RouteValueDictionary
-				{ { "controller", "StaticContent" }, { "action", "Error" } });
-
+			if (showErrorPage) {
+				filterContext.Result = new RedirectToRouteResult(
+					new RouteValueDictionary
+					{ { "controller", "StaticContent" }, { "action", "Error" } });
+					filterContext.ExceptionHandled = true;
+			}
 			log.ErrorFormat("{0} {1}",filterContext.Exception.Message, filterContext.Exception.StackTrace);
 			EmailSender.SendError(filterContext.Exception.ToString());
-			filterContext.ExceptionHandled = true;
+		
 		}
 
 		protected override void OnActionExecuting(ActionExecutingContext filterContext)
