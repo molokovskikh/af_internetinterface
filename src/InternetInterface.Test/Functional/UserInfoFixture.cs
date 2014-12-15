@@ -311,7 +311,7 @@ namespace InternetInterface.Test.Functional
 			session.Save(poolReg2);
 
 			// Занесение в БД нового пользователя "client"
-			Client client = ClientHelper.Client(session);
+			var client = ClientHelper.Client(session);
 			client.Name = "User_from_" + region.Name;
 			client.PhysicalClient = ClientHelper.PhysicalClient(session);
 			client.PhysicalClient.City = region.Name;

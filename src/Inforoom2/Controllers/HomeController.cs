@@ -12,8 +12,7 @@ namespace Inforoom2.Controllers
 		public ActionResult Index()
 		{
 			ViewBag.Message = "HomeController";
-			var news = DbSession.Query<NewsBlock>().Where(k => k.IsPublished && (k.Region == CurrentRegion || k.Region == null)).OrderByDescending(n=>n.PublishedDate).ToList();
-
+			var news = DbSession.Query<NewsBlock>().Where(k => k.IsPublished && (k.Region == CurrentRegion || k.Region == null)).OrderByDescending(n=>n.Priority).ToList();
 			var newsList = new List<NewsBlock>();
 			int i = 0;
 			foreach (var newsBlock in news) {

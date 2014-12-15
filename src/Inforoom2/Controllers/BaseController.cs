@@ -217,7 +217,7 @@ namespace Inforoom2.Controllers
 		{
 			if (city != null)
 			{
-				var region = DbSession.Query<Region>().FirstOrDefault(i => i.Name.Contains(city));
+				var region = DbSession.Query<Region>().FirstOrDefault(i => i.Name.Contains(city) && i.City != null);
 				if (region != null)
 					return true;
 			}

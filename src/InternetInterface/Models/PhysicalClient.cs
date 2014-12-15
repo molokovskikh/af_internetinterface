@@ -195,7 +195,7 @@ namespace InternetInterface.Models
 		[ValidateSelf]
 		public virtual void Validate(ErrorSummary errors)
 		{
-			ClientService internet = Client.Internet;
+			var internet = Client.Internet;
 			if (internet.ActivatedByUser && Tariff == null) {
 				errors.RegisterErrorMessage("Tariff", "Нужно выбрать тариф");
 			}
@@ -262,7 +262,7 @@ namespace InternetInterface.Models
 
 		public virtual WriteOff WriteOff(decimal sum, bool writeoffVirtualFirst = false)
 		{
-			WriteOff writeoff = CalculateWriteoff(sum, writeoffVirtualFirst);
+			var writeoff = CalculateWriteoff(sum, writeoffVirtualFirst);
 
 			if (writeoff == null)
 				return null;
@@ -322,15 +322,15 @@ namespace InternetInterface.Models
 			if (Tariff == null)
 				return;
 
-			Tariff oldTariff = this.OldValue(c => c.Tariff);
+			var oldTariff = this.OldValue(c => c.Tariff);
 			if (oldTariff == null)
 				return;
 
-			TariffChangeRule rule = rules.FirstOrDefault(r => r.FromTariff == oldTariff && r.ToTariff == Tariff);
+			var rule = rules.FirstOrDefault(r => r.FromTariff == oldTariff && r.ToTariff == Tariff);
 			if (rule == null || rule.Price == 0)
 				return;
 
-			string comment = String.Format("Изменение тарифа, старый '{0}' новый '{1}'", oldTariff.Name, Tariff.Name);
+			var comment = String.Format("Изменение тарифа, старый '{0}' новый '{1}'", oldTariff.Name, Tariff.Name);
 			Client.UserWriteOffs.Add(new UserWriteOff(Client, rule.Price, comment));
 		}
 
@@ -351,8 +351,8 @@ namespace InternetInterface.Models
 		{
 			//По требованию #18207 Было сделано 3 дня
 			const int days = 3;
-			int dayInMonth = (DateTime.Today.LastDayOfMonth() - DateTime.Today.FirstDayOfMonth()).Days + 1;
-			decimal sum = (Client.GetPriceIgnoreDisabled()/dayInMonth)*days;
+			var dayInMonth = (DateTime.Today.LastDayOfMonth() - DateTime.Today.FirstDayOfMonth()).Days + 1;
+			var sum = (Client.GetPriceIgnoreDisabled()/dayInMonth)*days;
 			var payment = new Payment(Client, sum) {
 				Virtual = true,
 				Comment = "Бонус при самостоятельной регистрации"

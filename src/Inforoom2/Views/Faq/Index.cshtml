@@ -46,9 +46,10 @@ else {
 </div>
 </div>
 <div class="problem">
-	
+	@{ var index=0;}
 	@foreach (var item in questions) {
-		<div class="question"> @Html.DisplayFor(modelItem => item.Text)<div class="pointer"></div>
+		index++;
+		<div class="question"><span>@index. </span>@Html.DisplayFor(modelItem => item.Text)<div class="pointer"></div>
 			<div class="answer hidden">
 				<span>@Html.DisplayFor(modelItem => item.Answer)</span>
 			</div>
