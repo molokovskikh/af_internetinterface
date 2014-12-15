@@ -55,7 +55,7 @@
 	else
 	{
 					<div class="login">
-						@using (Html.BeginForm("Login", "Account", new { returnUrl = @Request.Url }, FormMethod.Post, null))
+						@using (Html.BeginForm("Login", "Account", FormMethod.Post, null))
 	  {
 							@Html.TextBoxFor(model => username, new { @class = "user", placeholder = "Номер счета" })
 							@Html.PasswordFor(model => password, new { @class = "user", placeholder = "Пароль" })

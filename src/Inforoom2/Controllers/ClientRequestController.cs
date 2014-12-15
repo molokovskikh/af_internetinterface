@@ -83,7 +83,7 @@ namespace Inforoom2.Controllers
 
 		private List<Plan> InitRequestPlans()
 		{
-			var plans = DbSession.Query<Plan>().Where(p => !p.IsArchived && !p.IsServicePlan).ToList();
+			var plans = DbSession.Query<Plan>().Where(p => !p.IsArchived).ToList();
 			ViewBag.Plans = plans;
 			return plans;
 		}
