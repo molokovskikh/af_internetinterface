@@ -84,9 +84,9 @@ namespace InternetInterface.Models
 
 		public virtual bool NeedShowWarning()
 		{
-			string param = ConfigurationManager.AppSettings["LawyerPersonBalanceWarningRate"];
+			var param = ConfigurationManager.AppSettings["LawyerPersonBalanceWarningRate"];
 			var rate = (decimal) float.Parse(param, CultureInfo.InvariantCulture);
-			bool cond = Balance <= -(Tariff*rate) && Balance < 0;
+			var cond = Balance <= -(Tariff*rate) && Balance < 0;
 			return cond;
 		}
 
@@ -98,7 +98,7 @@ namespace InternetInterface.Models
 
 			var results = new List<WriteOff>();
 			//списываем деньги за отключенные услуги
-			Order[] toDeactivate = client.Orders.Where(o => !o.IsDeactivated && o.OrderStatus == OrderStatus.Disabled).ToArray();
+			var toDeactivate = client.Orders.Where(o => !o.IsDeactivated && o.OrderStatus == OrderStatus.Disabled).ToArray();
 			results.AddRange(toDeactivate
 				.SelectMany(s => s.OrderServices)
 				.Where(s => s.IsPeriodic)
@@ -106,7 +106,7 @@ namespace InternetInterface.Models
 			toDeactivate.Each(o => {
 				o.IsDeactivated = true;
 				client.CreareAppeal(String.Format("Деактивирован заказ {0}", o.Description));
-				ClientEndpoint endpoint = o.EndPoint;
+				var endpoint = o.EndPoint;
 				if (endpoint != null) {
 					o.EndPoint = null;
 					if (!client.Orders.Select(x => x.EndPoint).Contains(endpoint))
@@ -114,7 +114,7 @@ namespace InternetInterface.Models
 				}
 			});
 
-			Order[] toActivate = client.Orders.Where(o => !o.IsActivated && o.OrderStatus == OrderStatus.Enabled).ToArray();
+			var toActivate = client.Orders.Where(o => !o.IsActivated && o.OrderStatus == OrderStatus.Enabled).ToArray();
 			results.AddRange(toActivate
 				.SelectMany(s => s.OrderServices)
 				.Where(s => !s.IsPeriodic)
