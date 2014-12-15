@@ -128,6 +128,15 @@ namespace Inforoom2.Controllers
 			filterContext.ExceptionHandled = true;
 		}
 
+		protected override void OnActionExecuting(ActionExecutingContext filterContext)
+		{
+			var cookieCity = GetCookie("userCity");
+			if (!string.IsNullOrEmpty(cookieCity)) {
+				userCity = cookieCity;
+			}
+			base.OnActionExecuting(filterContext);
+		}
+
 		protected override void OnResultExecuting(ResultExecutingContext filterContext)
 		{
 			if (CurrentRegion != null) {
