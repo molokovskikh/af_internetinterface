@@ -35,5 +35,8 @@ namespace Inforoom2.Models
 
 		[Property, NotNullNotEmpty(Message = "Введите имя")]
 		public virtual string Name { get; set; }
+
+		[ManyToOne]
+		public virtual Client Client { get; set; }
 	}
 }

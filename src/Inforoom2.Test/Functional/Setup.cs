@@ -62,7 +62,7 @@ namespace Inforoom2.Test.Functional
 			}
 
 			//if (!session.Query<Address>().Any()) {
-			ImportSwitchesAddresses();
+		//	ImportSwitchesAddresses();
 			//	}
 
 			if (!session.Query<Plan>().Any(p => p.Name == "Популярный")) {
@@ -246,6 +246,9 @@ namespace Inforoom2.Test.Functional
 
 		public static void GenerateNewsAndQuestions()
 		{
+			if (client == null) {
+				client = session.Query<Client>().FirstOrDefault();
+			}
 			var newsBlock = new NewsBlock(0);
 			newsBlock.Title = client.Id.ToString();
 			newsBlock.Preview = "Превью новости.С 02.06.2014г. офис интернет провайдера «Инфорум» располагается по новому адресу:г." +

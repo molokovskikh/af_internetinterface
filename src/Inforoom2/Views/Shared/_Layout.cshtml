@@ -85,7 +85,7 @@
 						menu.Add(new[] { "Для бизнеса", "Index", "Bussiness" });
 						menu.Add(new[] { "Вопросы и ответы", "Index", "Faq" });
 						menu.Add(new[] { "Оплата", "Payment", "About" });
-						menu.Add(new[] { "О компании", "Index", "About" });
+						menu.Add(new[] { "О компании", "Details", "About" });
 						foreach (var item in menu)
 						{
 							<li>@Html.ActionLink(item[0], item[1], item[2], null, new { @class = ViewBag.ControllerName == item[2] && ViewBag.ActionName == item[1] ? "active" : "" }) </li>
@@ -124,10 +124,9 @@
 				</div>
 				<div class="support">
 					<ul>
-						<li>@Html.ActionLink("О компании", "Index", "About", null, null)</li>
+						<li>@Html.ActionLink("О компании", "Details", "About", null, null)</li>
 						<li>@Html.ActionLink("Для бизнеса", "Index", "Bussiness")</li>
 						<li>@Html.ActionLink("Оферта", "Index", "OfferContract", null, null)</li>
-						<li>@Html.ActionLink("Реквизиты", "Details", "About", null, null)</li>
 					</ul>
 				</div>
 			</div>

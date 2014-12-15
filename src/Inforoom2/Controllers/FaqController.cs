@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using System.Web.Mvc;
+using Inforoom2.Components;
 using Inforoom2.Models;
 using NHibernate.Linq;
 
@@ -18,8 +19,10 @@ namespace Inforoom2.Controllers
 		/// </summary>
 		public ActionResult Index()
 		{
+			
 			var questions = DbSession.Query<Question>().Where(k => k.IsPublished).OrderBy(k=>k.Priority).ToList();
 			var ticket = new Ticket();
+			
 			ViewBag.NewTicket = ticket;
 			ViewBag.Questions = questions;
 			return View();
@@ -31,6 +34,10 @@ namespace Inforoom2.Controllers
 		[HttpPost]
 		public ActionResult Index(Ticket ticket)
 		{
+			var client = CurrentClient;
+				if (client != null) {
+					ticket.Client = client;
+				}
 			Index();
 			ViewBag.NewTicket = ticket;
 			var errors = ValidationRunner.ValidateDeep(ticket);

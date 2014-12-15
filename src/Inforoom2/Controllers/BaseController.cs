@@ -168,6 +168,10 @@ namespace Inforoom2.Controllers
 			CallMeBackTicket callMeBackTicket = (CallMeBackTicket)binder.MapModel(Request);
 			if (Request.Params["callMeBackTicket.Name"] == null)
 				return;
+			var client = CurrentClient;
+			if (client != null) {
+				callMeBackTicket.Client = client;
+			}
 			var errors = ValidationRunner.ValidateDeep(callMeBackTicket);
 			if (errors.Length == 0) {
 				DbSession.Save(callMeBackTicket);
