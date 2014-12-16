@@ -15,13 +15,15 @@
 				<th>ФИО</th>
 			</tr>
 		</thead>
-		<% for i, contact in enumerate(Contacts): %>
+		<tbody id="ContactsTableBody1">
+			<% for i, contact in enumerate(Contacts): %>
 			<tr>
 				<td>${contact.HumanableNumber}</td>
-				<td>${BindingHelper.GetDescription(contact.Type)}</td>
+				<td>${contact.GetReadbleCategorie()}</td>
 				<td>${contact.ContactName}</td>
 			</tr>
-		<% end %>
+			<% end %>
+		</tbody>
 	</table>
 </form>
 
@@ -40,7 +42,7 @@
 			</tr>
 			<tr>
 				<th colspan=4>
-					<button type=button onclick="addNumber()" class="button ok" id="addContactButton">
+					<button type="button" onclick="addNumber()" class="button ok" id="addContactButton">
 						Добавить контакт
 					</button>
 				</th>
@@ -53,7 +55,7 @@
 			</tr>
 		</thead>
 
-		<tbody id="numbersButton">
+		<tbody id="ContactsTableBody2">
 			<% for i, contact in enumerate(Contacts): %>
 				${app.Edit("Contacts[${i}]")}
 			<% end %>
@@ -70,6 +72,7 @@
 	$(function () {
 		$("#telephoneForm").validate();
 		$('#firstListSelector').css('display', 'none');
+
 		$.validator.addMethod(
 		"regexContact",
 		function (value, element, regexp) {
@@ -97,15 +100,15 @@
 	function addNumber() {
 		var countTelephones = $("#totalTelCount").val();
 		var str = "<tr class='addedRow'><td>";
-		str += "<input class='telephoneField' type=text name='Contacts[" + countTelephones + "].Text' />";
+		str += "<input class='telephoneField' type=\"text\" name='Contacts[" + countTelephones + "].Text' />";
 		str += "</td><td class='toSelectList'></td>";
 		str += "<td><input type=\"text\" id=\"Contacts_" + countTelephones + "_ContactName\" name=\"Contacts[" + countTelephones + "].ContactName\" value=\"\"></td>";
 		str += "<td></td>";
 		str += "</tr>";
-		$('#numbersButton').append(str);
+		$('#ContactsTableBody2').append(str);
 		var selectList = $('.linkSelector:first').clone();
 		selectList.css('display', 'inline-block');
-		selectList.attr("name", "contact[" + countTelephones + "].Type");
+		selectList.attr("name", "Contacts[" + countTelephones + "].Type");
 		$('.addedRow:last').children('.toSelectList:first').append(selectList);
 		$('.addedRow:last').children('td:last').append("<img class='deletePointControl' src='../images/onebit_32.png'>");
 		$('.addedRow:last').children('td:last').children('img:first').click(function () {
@@ -121,10 +124,12 @@
 	}
 
 	function SetValidContact(elem) {
-		$(elem).rules("add", { required: true, regexContact: "^([0-9]{3})\-([0-9]{7})$",
+		$(elem).rules("add", {
+			required: true,
+			regexContact: "^([0-9]{3})\-([0-9]{7})$",
 			messages: {
 				required: "Поле не может быть пустым"
 			}
-		})
+		});
 	}
 </script>
