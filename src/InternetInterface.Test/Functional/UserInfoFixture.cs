@@ -355,11 +355,12 @@ namespace InternetInterface.Test.Functional
 			Open("UserInfo/ShowPhysicalClient?filter.ClientCode={0}&filter.EditConnectInfoFlag={1}", client.Id, true);
 			var parentTag = "#ContactsTableBody2";
 			var childTag = string.Empty;
+			var contactText = string.Empty;
 			for (var i = 1; i <= 4; i++) {
 				Css("#addContactButton").Click();
 
 				childTag = " > tr:nth-child(" + i + ")";
-				var contactText = Contact.GetReadbleCategorie((ContactType) (i - 1));		// (i-1) <= ContactType.Email
+				contactText = Contact.GetReadbleCategorie((ContactType) (i - 1));		// (i-1) <= ContactType.Email
 
 				Css(parentTag + childTag + "> td:nth-child(1) > input").SendKeys((i < 4) ? "999-1112233" : "mymail@mail.ru");
 				Css(parentTag + childTag + "> td:nth-child(2) > select").SelectByText(contactText);
@@ -369,11 +370,11 @@ namespace InternetInterface.Test.Functional
 
 			// Проверка правильного сохранения типов контактов в данных пользователя "client"
 			parentTag = "#ContactsTableBody1";
-			childTag = string.Empty;
-			for (var i = 1; i < 4 /*<=ContactType.Email*/; i++) {
-				childTag = " > tr:nth-child(" + i + ")";
-				var cssElement = browser.FindElementByCssSelector(parentTag + childTag + "> td:nth-child(2)");
-				var contactText = Contact.GetReadbleCategorie((ContactType) (i - 1));		// (i-1) <= ContactType.Email
+			for (var i = 1; i <= 4; i++) {
+				childTag = " > tr:nth-child(" + i + ") > td:nth-child(2)";
+				var cssElement = browser.FindElementByCssSelector(parentTag + childTag);
+				contactText = Contact.GetReadbleCategorie((ContactType) (i - 1));		// (i-1) <= ContactType.Email
+
 				Assert.That(cssElement.Text, Is.EqualTo(contactText));
 			}
 		}
