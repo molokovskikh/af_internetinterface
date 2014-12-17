@@ -14,19 +14,24 @@
 		<div class="content">
 			<div class="longspace notext">
 				<div class="offer">
-					<img src="~/images/slider1.png"/>
+					<a href="/Home/Plans/45">
+						<img src="~/images/free.jpg"/>
+					</a>
 				</div>
 				<div class="offer">
-					<img src="~/images/slider1.png"/>
+					<a href="/Home/Plans/49">
+						<img src="~/images/tv.jpg"/>
+					</a>
 				</div>
 				<div class="offer">
-					<img src="~/images/slider1.png"/>
+					<a href="/Home/Plans/81">
+						<img src="~/images/maximum.jpg"/>
+					</a>
 				</div>
 				<div class="offer">
-					<img src="~/images/slider1.png"/>
-				</div>
-				<div class="offer">
-					<img src="~/images/slider1.png"/>
+					<a href="/Bussiness">
+						<img src="~/images/biznes.jpg"/>
+					</a>
 				</div>
 			</div>
 		</div>
@@ -35,12 +40,13 @@
 			<li></li>
 			<li></li>
 			<li></li>
-			<li></li>
 			<li class="stop">II</li>
 		</ul>
 	</div>
 	<div class="main-offer">
-		<img src="~/images/offer.png"/>
+		<a href="/ClientRequest/RequestFromTariff/79">
+		<img src="~/images/ogonek.jpg"/>
+			</a>
 	</div>
 
 </div>
@@ -61,19 +67,9 @@
 	
 	@foreach (var item in news) {
 		<div class="text">
-			<h1>@Html.DisplayFor(modelItem => item.Title)</h1>
+			<h3 class="links-header"><a href="@Url.Action("ViewNewsBlock", "Home", new { id = item.Id })">@Html.DisplayFor(modelItem => item.Title)</a></h3>
 			<p>@Html.DisplayFor(modelItem => item.CreationDate)</p>
-			<h2>@Html.DisplayFor(modelItem => item.Preview)</h2>
-			
-			@if (!string.IsNullOrEmpty(item.Body)) {
-				if (string.IsNullOrEmpty(item.Url)) {
-					<span><button class="ViewNewsBlock" onclick=" location.href = '@Url.Action("ViewNewsBlock", "Home", new { newsId = item.Id })' ">Подробнее</button></span>
-				}
-				else {
-					<span><button class="ViewNewsBlock" onclick=" location.href = '@item.Url' " >Подробнее</button></span>
-				}
-			}
-		
+			<div class="font">@Html.DisplayFor(modelItem => item.Preview)</div>
 		</div>
 	}
 	

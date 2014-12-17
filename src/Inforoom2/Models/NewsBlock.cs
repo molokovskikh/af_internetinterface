@@ -23,6 +23,9 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual string Url { get; set; }
 
+		[ManyToOne]
+		public virtual Region Region { get; set; }
+
 		[ManyToOne(Column = "User")]
 		public virtual Employee Employee { get; set; }
 

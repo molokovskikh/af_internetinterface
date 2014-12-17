@@ -40,10 +40,23 @@ function Inforoom() {
 			this.callMeBackWindow();
 		$(".header .call").on("click", this.callMeBackWindow.bind(this));
 
+		this.initInputs();
 		this.checkCity();
 		this.showMessages();
 	}
 
+	this.initInputs = function() {
+		$(".error .msg").on("mouseover", function () {
+			$(this).fadeOut(800);
+		});
+		$(".error .msg").on("click", function () {
+			$(this).parent().find("input, textarea").focus();
+		});
+		$(".error .icon").on("mouseover", function () {
+			$(this).parent().find(".msg").fadeIn();
+		});
+		$('input').attr('autocomplete', 'off');
+	}
 	this.callMeBackWindow = function() {
 		var wnd = this.createWindow("Обратный звонок", this.getTemplate("CallMeBackWindow"));
 		wnd.block();
@@ -168,13 +181,28 @@ function Inforoom() {
 
 	this.showMessages = function() {
 		var msg = this.getCookie("SuccessMessage", true);
-		if (msg) {
-			alert(msg);
-		} else {
-			msg = this.getCookie("ErrorMessage", true);
-			if(msg)
-				alert(msg);
-		}
+		if (msg)
+			this.showSuccess(msg);
+	
+		var msg2 = this.getCookie("ErrorMessage", true);
+		if(msg2)
+			this.showError(msg2);
+	}
+
+	this.showError = function(msg) {
+		var div = this.showSuccess(msg);
+		$(div).addClass("error");
+		return div;
+	}
+
+	this.showSuccess = function (msg) {
+		var div = this.getTemplate("notification");
+		$(div).find(".message").append(msg);
+		$(".errorContainer").append(div);
+		$(div).find(".hide").on("click", function() {
+			$(div).remove();
+		});
+		return div;
 	}
 
 	this.checkCity = function () {
@@ -205,6 +233,10 @@ function Inforoom() {
 			var city = $(wnd.getElement()).find(".UserCity").html();
 			wnd.remove();
 			cli.setCookie("userCity", city);
+		});
+		$(wnd.getElement()).find('.cities a').on("click", function () {
+			cli.setCookie("userCity", this.innerHTML);
+			window.location.reload();
 		});
 
 		//cancel button event

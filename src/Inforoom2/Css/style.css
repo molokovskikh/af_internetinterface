@@ -1,4 +1,13 @@
-﻿body { background: #9EA5AD!important;}
+﻿h1, h2, h3 {margin: 0px;}
+.plans h1, .plans h2 { margin-top: 18px;}
+.plans h3 { margin: 47px 0px;}
+.IsMyHouseConnected .answer { width: auto;}
+.IsMyHouseConnected .error { position: absolute;}
+input, textarea, input:hover, textarea:hover { outline: none;}
+input.entry, textarea.entry { outline: none; box-sizing: padding-box; padding-left: 5px;}
+textarea.entry {padding-top: 5px;}
+.Faq textarea.entry { height: 110px;}
+body { background: #9EA5AD!important;}
 a.corpred, .corpred { color: #a61c21 !important;}
 textarea { resize: none;}
 ul { padding: 0px;}
@@ -18,7 +27,7 @@ a {color: #474747}
 	.window .cell { display: table-cell;text-align: center; vertical-align: middle;}
 		.window.inner { display: inline-block;background: white;top: 0;left: 0;height: auto;bottom: 0;right: 0; position: relative}
 			.window .header {  border-radius: 7px;text-transform: uppercase;height: 20px;text-align: left;padding: 10px;background: #e3dfdf;}
-			.window .header .close { position: absolute;right: 10px;top: 13px;background: url("../images/crusty.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);display: inline-block;height: 12px;width: 12px;cursor: pointer;}
+			.notification .close, .window .header .close { position: absolute;right: 10px;top: 13px;background: url("../images/crusty.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);display: inline-block;height: 12px;width: 12px;cursor: pointer;}
 			.window .wrap  { padding: 10px;}
 			.window .buttons {bottom: 0;display: inline-block;height: 30px;margin: 0;position: absolute;right: 0;text-align: right;vertical-align: bottom;width: 100%;}
 			.cityWindow { height: 200px;}
@@ -41,8 +50,9 @@ a {color: #474747}
 		.city .name { display: inline-block;}
 		.city .arrow { top: 10px;position: relative;left: 0;display: inline-block;}
 	.top .whiteright, .top .blackright { left: 186px;}
+	.top .blackright { width: 25px;}
 .page {min-height: 700px;}
-	.Faq textarea ,input.entry {width: 617px;}
+	.Faq textarea ,.Faq input.entry {width: 617px;}
 .Bussiness .window {bottom: 78px;}
 .ClientRequest .map {top: 99px;}
 .wrapper .plans { background: white;}
@@ -59,7 +69,7 @@ a {color: #474747}
 		.About.Payment .whiteblocktext { width: 635px;}
 		.About.Payment .applications { margin-left: 10px;height: 110px;}
 		.About .boy { background-image: url("../images/office_mini.png"); top: 53px;left: 58px;height: 397px; width: 418px;}
-.success .icon, .error .icon {vertical-align: top; margin-left: 5px;margin-top: 5px;}
+.success .icon, .error .icon {position: absolute; vertical-align: top; margin-left: 5px;margin-top: 5px;}
 .heading { text-transform: uppercase;}
 .Details { text-align: center;}
 	.Details table {text-align: left;height: auto;margin-bottom: 45px;}
@@ -96,3 +106,35 @@ table.cost { min-height: 140px;}
 .features .support li.tech a{ color: #b3393e}
 
 .Notifications .button, .BlockAccount .button {margin-left: 20px;}
+
+.errorContainer {top: 223px;position: absolute;width: 100%;z-index: 20;}
+.notification {background: none repeat scroll 0 0 #c8e8cb;border: 1px solid #e0e0e0;box-sizing: border-box;display: block;height: 52px;line-height: 50px;text-align: center;vertical-align: middle;font-size: 17px;}
+.notification .hide {cursor: pointer; color: #ac3237;display: inline-block;margin-left: 20px;position: absolute;right: 20px; }
+.notification.error { background: #F77B7B;border: 1px solid #737373;}
+.notification.error .hide{ color: black;}
+
+.Service  .datePicker { width: 150px;}
+.Service .connectfee { margin-left: 0px;}
+.namemenu:last-child { text-align: center;}
+.error { position: relative;}
+.error .msg {cursor: text; background: none repeat scroll 0 0 #f1f1f1; border: 1px solid #dadada;box-sizing: border-box;color: #920f15;display: block;height: 100%;left: 0;padding: 5px 6px;position: absolute;top: 0;width: 100%;z-index: 30;}
+input.personal {padding: 5px; box-sizing: padding-box;}
+
+.actiontext h3 {
+	text-align: center;
+}
+.question { color: #474747;margin-bottom: 15px;}
+.answerbg.error {top: 20px;}
+.Faq .answer { background: none;margin-top: 0px;}
+.information h3 a {color: #b3393e}
+.Home .news { cursor: default;}
+.offers img { cursor: pointer;}
+.ViewNewsBlock {padding: 0px 40px ;}
+.answer .reply p { width: 400px;}
+/* JQUERY UI */
+.ui-datepicker-title { color: white; font-family: PDFDinTextPro;font-size: 14px;}
+/* END JQUERY UI */
+.Account.Login .window{ height: 300px;top: 140px;width: 450px;  height: 225px;}
+	.Account.Login .cooperation { height: 60px; width: 100%;margin: auto;}
+		.Account.Login .whiteblocktext { width: 635px;}
+		.Account.Login .applications { margin-left: 10px;height: 110px;}

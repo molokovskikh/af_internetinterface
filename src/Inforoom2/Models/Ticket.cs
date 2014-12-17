@@ -15,7 +15,7 @@ namespace Inforoom2.Models
 			CreationDate = DateTime.Now;
 		}
 		 
-		[Property, NotNullNotEmpty]
+		[Property, NotNullNotEmpty(Message = "Текст вопроса должен быть заполнен")]
 		public virtual string Text { get; set; }
 		
 		[Property,]
@@ -33,7 +33,10 @@ namespace Inforoom2.Models
 		[ManyToOne(Column = "User")]
 		public virtual Employee Employee { get; set; }
 
-		[Property, Email, NotNullNotEmpty(Message = "Введите Email"), Pattern(@"^\S+@\S+$",Message = "Адрес эл. почты введен неправильно")]
+		[ManyToOne]
+		public virtual Client Client { get; set; }
+
+		[Property, Email(Message = "Адрес эл. почты введен неправильно"), NotNullNotEmpty(Message = "Введите Email"), Pattern(@"^\S+@\S+$",Message = "Адрес эл. почты введен неправильно")]
 		public virtual string Email { get; set; }
 	}
 }

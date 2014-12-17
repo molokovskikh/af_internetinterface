@@ -26,25 +26,26 @@
 		<p class="textblockwhite">Перед подключением наши профессиональные менеджеры предложат тарифы в зависимости от Ваших желаний и потребностей.</p>
 		</div>
 	    </div>
-	    <div class="staff"></div>
-@using (@Html.BeginForm("Index", "Bussiness", FormMethod.Post)) {
+<div class="staff"></div>
+<form action="@Url.Action("Index","Bussiness")#apply" method="post">
 	<div class="window">
 		<div class="windowicon"></div>
 		<div class="cooperation">
 			<h3>Свяжитесь с нами</h3>
 			<p>по вопросам сотрудничеста:</p>
 		</div>
-		<div class="applications">
+		<div id="apply" class="applications">
 			<div class="label">Ф.И.О:<sup>*</sup></div>
-			@Html.ValidationEditor(validationRunner, ticket, "Name", new { @class = "application" }, HtmlTag.input, HtmlType.none)
+			@Html.ValidationEditor(validationRunner, ticket, "Name", new { @class = "application entry" }, HtmlTag.input, HtmlType.none)
 			<div class="label">Номер телефона:<sup>*</sup></div>
-			@Html.ValidationEditor(validationRunner, ticket, "PhoneNumber", new { @class = "application" }, HtmlTag.input, HtmlType.none)
+			@Html.ValidationEditor(validationRunner, ticket, "PhoneNumber", new { @class = "application entry" }, HtmlTag.input, HtmlType.none)
 			<div class="label">Электронная почта:</div>
-			@Html.ValidationEditor(validationRunner, ticket, "Email", new { @class = "application" }, HtmlTag.input, HtmlType.none)
+			@Html.ValidationEditor(validationRunner, ticket, "Email", new { @class = "application entry" }, HtmlTag.input, HtmlType.none)
 			<div class="label">Комментарий:</div>
-			@Html.ValidationEditor(validationRunner, ticket, "Text", null, HtmlTag.textarea, HtmlType.none)
+			@Html.ValidationEditor(validationRunner, ticket, "Text", new { @class = "entry" }, HtmlTag.textarea, HtmlType.none)
+			<input type="hidden" name="bussiness" value="true"/>
 		</div>
 		<div class="definitely"><sup>*</sup>- обязательно для заполнения</div>
 		<input class="contacting" type="submit" value="Связаться">
 	</div>
-}
+</form>

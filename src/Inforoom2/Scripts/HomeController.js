@@ -1,6 +1,17 @@
-
+/**
+* Слайдер картинок
+*/
 function Slider()
 {
+	/**
+	* Сколько по времени пользователь видит один слайд в милисекунах
+	*/
+	this.slideTimeout = 2000;
+	/**
+	* Скорость анимации в милисекунах
+	*/
+	this.animationSpeed = 1000;
+
   this.initialized = false;
   this.stopFlag = false;
   var timeout = null;
@@ -15,7 +26,7 @@ function Slider()
   {
      if(!this.initialized)
         this.init();
-      setTimeout(this.move.bind(this),1000);
+     setTimeout(this.move.bind(this), this.slideTimeout);
   }
   
   this.init = function()
@@ -47,7 +58,7 @@ function Slider()
         {
             stopButton.removeClass("active");
             this.release();
-            setTimeout(this.move.bind(this),1000);
+            setTimeout(this.move.bind(this), this.slideTimeout);
         }
         
       }.bind(this));
@@ -91,7 +102,7 @@ function Slider()
 
     //анимация
     console.log(img);
-    this.animation = $(img).animate({marginLeft: -width*this.iteration},1000,null,function(){
+    this.animation = $(img).animate({marginLeft: -width*this.iteration},this.animationSpeed,null,function(){
        if(this.count == this.iteration)
        {  
            console.log("Reseting slider");
@@ -99,7 +110,7 @@ function Slider()
            this.iteration = 0;
        }
        if(!this.stopFlag)
-          timeout = setTimeout(this.move.bind(this),1000);
+			timeout = setTimeout(this.move.bind(this), this.slideTimeout);
        else
           console.log("Stoping iterations",iteration);
     }.bind(this));
@@ -108,4 +119,4 @@ function Slider()
 }
 
 var slider =  new Slider();
-slider.start();
+slider.start(slider);

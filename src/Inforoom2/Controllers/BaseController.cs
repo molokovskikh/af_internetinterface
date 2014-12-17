@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -49,7 +50,12 @@ namespace Inforoom2.Controllers
 		{
 			ViewBag.JavascriptParams[name] = value;
 		}
-
+		public string GetJavascriptParam(string name)
+		{
+			string val = null;
+			ViewBag.JavascriptParams.TryGetValue(name,out val);
+			return val;
+		}
 		protected new virtual CustomPrincipal User
 		{
 			get { return HttpContext.User as CustomPrincipal; }
@@ -113,19 +119,34 @@ namespace Inforoom2.Controllers
 
 		protected override void OnException(ExceptionContext filterContext)
 		{
+			bool showErrorPage = false;
+			bool.TryParse(ConfigurationManager.AppSettings["ShowErrorPage"], out showErrorPage);
 			DeleteCookie("SuccessMessage");
-			filterContext.Result = new RedirectToRouteResult(
-				new RouteValueDictionary
-				{ { "controller", "StaticContent" }, { "action", "Error" } });
-
+			if (showErrorPage) {
+				filterContext.Result = new RedirectToRouteResult(
+					new RouteValueDictionary
+					{ { "controller", "StaticContent" }, { "action", "Error" } });
+					filterContext.ExceptionHandled = true;
+			}
 			log.ErrorFormat("{0} {1}",filterContext.Exception.Message, filterContext.Exception.StackTrace);
 			EmailSender.SendError(filterContext.Exception.ToString());
-			filterContext.ExceptionHandled = true;
+		
+		}
+
+		protected override void OnActionExecuting(ActionExecutingContext filterContext)
+		{
+			var cookieCity = GetCookie("userCity");
+			if (!string.IsNullOrEmpty(cookieCity)) {
+				userCity = cookieCity;
+			}
+			base.OnActionExecuting(filterContext);
 		}
 
 		protected override void OnResultExecuting(ResultExecutingContext filterContext)
 		{
-			ViewBag.RegionOfficePhoneNumber = CurrentRegion.RegionOfficePhoneNumber;
+			if (CurrentRegion != null) {
+				ViewBag.RegionOfficePhoneNumber = CurrentRegion.RegionOfficePhoneNumber;
+			}
 			base.OnResultExecuting(filterContext);
 		}
 
@@ -150,8 +171,12 @@ namespace Inforoom2.Controllers
 			ViewBag.CallMeBackTicket = new CallMeBackTicket();
 			var binder = new EntityBinderAttribute("callMeBackTicket.Id", typeof(CallMeBackTicket));
 			CallMeBackTicket callMeBackTicket = (CallMeBackTicket)binder.MapModel(Request);
-			if (callMeBackTicket.Name == null)
+			if (Request.Params["callMeBackTicket.Name"] == null)
 				return;
+			var client = CurrentClient;
+			if (client != null) {
+				callMeBackTicket.Client = client;
+			}
 			var errors = ValidationRunner.ValidateDeep(callMeBackTicket);
 			if (errors.Length == 0) {
 				DbSession.Save(callMeBackTicket);
@@ -160,7 +185,8 @@ namespace Inforoom2.Controllers
 			}
 
 			ViewBag.CallMeBackTicket = callMeBackTicket;
-			AddJavascriptParam("CallMeBack", "1");
+			if (GetJavascriptParam("CallMeBack") == null)
+				AddJavascriptParam("CallMeBack", "1");
 		}
 
 		public void ProcessRegionPanel()
@@ -170,16 +196,15 @@ namespace Inforoom2.Controllers
 				//Анонимный посетитель. Определяем город.
 				if (!string.IsNullOrEmpty(cookieCity)) {
 					userCity = cookieCity;
-					ViewBag.UserCity = cookieCity;
+					
 				}
 				else {
-					GetVisitorCityByGeoBase();
+					userCity = GetVisitorCityByGeoBase(); 
 				}
 			}
 			else {
 				if (!string.IsNullOrEmpty(cookieCity)) {
 					userCity = cookieCity;
-					ViewBag.UserCity = cookieCity;
 				}
 				else {
 					//Куков нет, пытаемся достать город из базы, иначе определяем по геобазе
@@ -188,16 +213,26 @@ namespace Inforoom2.Controllers
 					var user = DbSession.Query<PhysicalClient>().FirstOrDefault(k => k.Id == userId);
 					if (user != null) {
 						userCity = user.Address.House.Street.Region.City.Name;
-						ViewBag.UserCity = user.Address.House.Street.Region.City.Name;
 					}
 					else {
-						GetVisitorCityByGeoBase();
+						userCity = GetVisitorCityByGeoBase();
 					}
 				}
 			}
+			ViewBag.UserCityBelongsToUs = IsUserCityBelongsToUs(UserCity);
+			ViewBag.UserCity = UserCity;
 		}
-
-		private void GetVisitorCityByGeoBase()
+		private bool IsUserCityBelongsToUs(string city)
+		{
+			if (city != null)
+			{
+				var region = DbSession.Query<Region>().FirstOrDefault(i => i.Name.Contains(city) && i.City != null);
+				if (region != null)
+					return true;
+			}
+			return false;
+		}
+		private string GetVisitorCityByGeoBase()
 		{
 			var geoService = new IpGeoBase();
 			IpAnswer geoAnswer;
@@ -205,10 +240,9 @@ namespace Inforoom2.Controllers
 				geoAnswer = geoService.GetInfo();
 			}
 			catch (WebException e) {
-				geoAnswer = new IpAnswer { City = "Борисоглебск" };
+				return null;
 			}
-			userCity = geoAnswer.City;
-			ViewBag.UserCity = geoAnswer.City;
+			return geoAnswer.City;
 		}
 
 		protected List<TModel> GetList<TModel>()

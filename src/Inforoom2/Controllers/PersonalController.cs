@@ -25,7 +25,7 @@ using WriteOff = Inforoom2.Models.WriteOff;
 
 namespace Inforoom2.Controllers
 {
-	[Authorize]
+	[CustomAuthorize]
 	public class PersonalController : BaseController
 	{
 		public new ActionResult Profile()
@@ -211,7 +211,7 @@ namespace Inforoom2.Controllers
 			foreach (var plan in plans) {
 				plan.SwitchPrice = GetPlanSwitchPrice(client.PhysicalClient.Plan, plan, true);
 			}
-			ViewBag.Plans = plans.Take(3).ToList();
+			ViewBag.Plans = plans.ToList();
 		}
 	}
 }

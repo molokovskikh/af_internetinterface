@@ -101,11 +101,17 @@ namespace Inforoom2
 
 		protected void Application_Error(object sender, EventArgs e)
 		{
+			bool showErrorPage = false;
+			bool.TryParse(ConfigurationManager.AppSettings["ShowErrorPage"], out showErrorPage);
+			if (!showErrorPage) {
+				return;
+			}
 			Exception exception = Server.GetLastError();
 			Response.Clear();
 			HttpException httpException = exception as HttpException;
 			RouteData routeData = new RouteData();
 			routeData.Values.Add("controller", "StaticContent");
+			
 			if (httpException == null) {
 				routeData.Values.Add("action", "Error");
 			}
@@ -141,7 +147,8 @@ namespace Inforoom2
 			// Call target Controller and pass the routeData.
 			IController errorController = new StaticContentController();
 			errorController.Execute(new RequestContext(
-				new HttpContextWrapper(Context), routeData));
+					new HttpContextWrapper(Context), routeData));
+			
 		}
 	}
 }

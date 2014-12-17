@@ -23,7 +23,7 @@
 
 		using (@Html.BeginForm("ActivateAccountBlocking", "Service", null, FormMethod.Post)) {
 			@Html.HiddenFor(modelItem => service.Id)
-			<p>Заблокировать до: @Html.TextBoxFor(modelItem => blockingEndDate, null, new {@class = "datePicker"})	<input class="button" type="submit" value="Подключить"/></p>
+			<p>Заблокировать до: @Html.TextBoxFor(modelItem => blockingEndDate, null, new {@class = "datePicker personal"})	<input class="button" type="submit" value="Подключить"/></p>
 		
 		}
 	}

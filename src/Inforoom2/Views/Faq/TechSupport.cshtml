@@ -27,13 +27,15 @@
 <div class="networking">
 	@using (@Html.BeginForm("TechSupport", "Faq", FormMethod.Post)) {
 		<div>
-			<div class="ties">Email : </div>
+			<div class="ties">Email* : </div>
 			@Html.ValidationEditor(validationRunner, ticket, "Email", new { @class = "entry" }, HtmlTag.input, HtmlType.text)
 		</div>
 		<div>
-			<div class="ties">Текст вопроса : </div>
-			@Html.ValidationEditor(validationRunner, ticket, "Text", null, HtmlTag.textarea, HtmlType.none)
+			<div class="ties">Текст вопроса* : </div>
+			@Html.ValidationEditor(validationRunner, ticket, "Text", new { @class = "entry" }, HtmlTag.textarea, HtmlType.none)
 		</div>
+		 @Html.HiddenFor(k=>ticket.Client)
+		 @Html.HiddenFor(k=>ticket.Id)
 		<input type="submit" class="set"  value="Отправить вопрос"/>
 	}
 </div>

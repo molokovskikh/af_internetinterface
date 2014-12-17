@@ -16,10 +16,10 @@ namespace Inforoom2.Models
 		[Property, NotNullNotEmpty(Message = "Введите ФИО")]
 		public virtual string ApplicantName { get; set; }
 
-		[Property, NotNullNotEmpty(Message = "Введите номер телефона"), Pattern(@"^(([0-9]{1})-([0-9]{3})-([0-9]{3})-([0-9]{2})-([0-9]{2}))", RegexOptions.Compiled, "Ошибка формата телефонного номера: мобильный телефон (8-***-***-**-**))")]
+		[Property, NotNullNotEmpty(Message = "Введите номер телефона"),  Pattern(@"^\d{10}$", Message = "Введите номер в десятизначном формате")]
 		public virtual string ApplicantPhoneNumber { get; set; }
 
-		[Property(Column = "ApplicantEmail"), NotNullNotEmpty(Message = "Введите Email"), Pattern(@"^\S+@\S+$")]
+		[Property(Column = "ApplicantEmail")]
 		public virtual string Email { get; set; }
 
 		[ManyToOne(Column = "_Address", Cascade = "save-update")]

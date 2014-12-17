@@ -25,6 +25,7 @@ namespace Inforoom2.Controllers
 			ViewBag.IsConnected = false;
 			if (clientRequest.IsAddressConnected(switchAddress.ToList())) {
 				ViewBag.IsConnected = true;
+
 			}
 			ViewBag.Regions = GetList<Region>();
 			ViewBag.ClientRequest = clientRequest;

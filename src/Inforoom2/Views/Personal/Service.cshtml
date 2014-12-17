@@ -42,11 +42,11 @@
 					@if (client.CanUseService(service)) {
 						switch (service.GetType().Name) {
 							case "BlockAccountService":
-								@Html.ActionLink("Подключить", "BlockAccount", "Service", null, new { @class = "plugs" })
+								@Html.ActionLink("Подключить", "BlockAccount", "Service", null, new { @class = "connectfee" })
 
 								break;
 							case "DeferredPayment":
-								@Html.ActionLink("Подключить", "DeferredPayment", "Service", null, new { @class = "plugs" })
+								@Html.ActionLink("Подключить", "DeferredPayment", "Service", null, new { @class = "connectfee" })
 								break;
 						}
 					}

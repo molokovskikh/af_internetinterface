@@ -14,10 +14,10 @@
 	
 	@using (@Html.BeginForm("Index", "IsMyHouseConnected", FormMethod.Post)) {
 		<div class="personals">Выберите город:</div>
-		@Html.DropDownListExtendedFor(k => clientRequest.Address.House.Street.Region, ViewBag.Regions as List<Region>, k => k.Name, null, new { @class = "rounded", onchange="typeWatcher(50)" }, clientRequest.Address.House.Street.Region != null ? clientRequest.Address.House.Street.Region.Id : 0 )
+		@Html.DropDownListExtendedFor(k => clientRequest.Address.House.Street.Region, ViewBag.Regions as List<Region>, k => k.Name, null, new { @class = "rounded", onchange = "typeWatcher(50)" }, clientRequest.Address.House.Street.Region != null ? clientRequest.Address.House.Street.Region.Id : 0)
 		<div class="location">
 			<div class="personals">Введите адрес:</div>
-			@Html.TextAreaFor(k => clientRequest.AddressAsString, 6, 31, new {id="addressArea", onkeyup = "typeWatcher( 500)" })
+			@Html.TextAreaFor(k => clientRequest.AddressAsString, 6, 31, new { @class = "entry", id = "addressArea", onkeyup = "typeWatcher( 500)", placeholder = "Например: улица Славы 4 к.2" })
 		</div>
 		@Html.HiddenFor(k => clientRequest.YandexCity, new { id = "yandexCityHidden" })
 		@Html.HiddenFor(k => clientRequest.YandexStreet, new { id = "yandexStreetHidden" })
@@ -26,21 +26,21 @@
 	}
 	@if (ViewBag.IsConnected != null) {
 		if (ViewBag.IsConnected) {
-			<div class="answersuccess">
-				<div class="answersuccessbg"></div>
+			<div class="answer">
+				<div class="answerbg "></div>
 				<div class="reply">
-					<h1>Ваш дом подключен!</h1>
-					<p>Вы можете оставить @Html.ActionLink("заявку на подключение", "Index", "ClientRequest",null,new {@class = "corpred"})</p>
+					<h3 class="secondary-header">Ваш дом подключен!</h3>
+					<p>Вы можете оставить @Html.ActionLink("заявку на подключение", "RequestFromConnectionCheck", "ClientRequest", new { city = clientRequest.YandexCity, street = clientRequest.YandexStreet, house = clientRequest.YandexHouse }, new { @class = "links-header" })</p>
 				</div>
 			</div>
 		}
 		else {
-			<div class="answererror">
-				<div class="answererrorbg"></div>
+			<div class="answer">
+				<div class="answerbg error"></div>
 				<div class="reply">
-					<h1>Ошибка!</h1>
+					<h3 class="secondary-header">Ошибка!</h3>
 					<p>Просьба уточнить информацию по телефону
-						@ViewBag.RegionOfficePhoneNumber</p>
+						<a class="links-header">@ViewBag.RegionOfficePhoneNumber</a></p>
 				</div>
 			</div>
 		}

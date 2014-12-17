@@ -161,6 +161,7 @@
     <Content Include="Css\images\ui-icons_ef8c08_256x240.png" />
     <Content Include="Css\images\ui-icons_ffd27a_256x240.png" />
     <Content Include="Css\images\ui-icons_ffffff_256x240.png" />
+    <Content Include="Css\jquery-ui-1.10.4.custom.min.css" />
     <Content Include="Css\jquery-ui.css" />
     <Content Include="Css\jquery-ui.theme.css" />
     <Content Include="Css\main.css" />
@@ -170,19 +171,24 @@
     <Content Include="Images\answersuccessbg.png" />
     <Content Include="Images\arro.png" />
     <Content Include="Images\arrow.png" />
+    <Content Include="Images\biznes.jpg" />
     <Content Include="Images\boy.png" />
     <Content Include="Images\connectionbg.png" />
     <Content Include="Images\connectionbgactiv.png" />
     <Content Include="Images\cooperationsbg.png" />
     <Content Include="Images\crusty.png" />
     <Content Include="Images\disposal.png" />
+    <Content Include="Images\free.jpg" />
     <Content Include="Images\girl.png" />
     <Content Include="Images\inforum.png" />
     <Content Include="Images\leftbg.jpg" />
     <Content Include="Images\leftbg.png" />
     <Content Include="Images\map.png" />
+    <Content Include="Images\maximum.jpg" />
     <Content Include="Images\offer.png" />
     <Content Include="Images\office_mini.png" />
+    <Content Include="Images\ogonek.jpg" />
+    <Content Include="Images\profile_offer.png" />
     <Content Include="Images\rightbg.jpg" />
     <Content Include="Images\rightbg.png" />
     <Content Include="Images\slider1.jpg" />
@@ -196,6 +202,7 @@
     <Content Include="Images\staff.png" />
     <Content Include="Images\tech_support.png" />
     <Content Include="Images\tick.png" />
+    <Content Include="Images\tv.jpg" />
     <Content Include="Images\typehit.png" />
     <Content Include="Images\upward.png" />
     <Content Include="Images\wifi.png" />
@@ -244,6 +251,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Components\CustomAuthorizeAttribute.cs" />
     <Compile Include="Components\EmailSender.cs" />
     <Compile Include="Components\EntityBinder.cs" />
     <Compile Include="Components\YandexParser.cs" />
@@ -376,7 +384,7 @@
     <Content Include="Views\Service\DeferredPayment.cshtml" />
     <Content Include="Fonts\PDFDinTextPro.ttf" />
     <Content Include="Fonts\PTSans.ttf" />
-    <Content Include="Views\Home\TariffPlans.cshtml" />
+    <Content Include="Views\Home\Plans.cshtml" />
     <Content Include="Views\OfferContract\Index.cshtml" />
     <Content Include="Views\Shared\Menu.cshtml" />
     <Content Include="Views\TestSpeed\Index.cshtml" />
@@ -390,6 +398,10 @@
     <Content Include="Views\IsMyHouseConnected\Index.cshtml" />
     <Content Include="Views\Faq\TechSupport.cshtml" />
     <Content Include="Views\About\Payment.cshtml" />
+    <Content Include="Views\Home\CommonPlans.cshtml" />
+    <Content Include="Views\Home\ActionPlans.cshtml" />
+    <Content Include="Views\Shared\LoginPartial.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
     <None Include="Web.Inforoom2_Test.config">
       <SubType>Designer</SubType>
     </None>

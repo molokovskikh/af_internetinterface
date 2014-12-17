@@ -94,17 +94,17 @@ namespace Inforoom2.Helpers
 		}
 
 
-		public static HtmlString ValidationEditor(this HtmlHelper helper,ValidationRunner validation, object obj, string propertyName, object htmlAttributes, HtmlTag htmlTag, HtmlType htmlType)
+		public static HtmlString ValidationEditor(this HtmlHelper helper, ValidationRunner validation, object obj, string propertyName, object htmlAttributes, HtmlTag htmlTag, HtmlType htmlType, bool isValidated)
 		{
 			var tag = Enum.GetName(typeof(HtmlTag), htmlTag);
 			string type = string.Empty;
 			if (htmlType != HtmlType.none) {
 				type = Enum.GetName(typeof(HtmlType), htmlType);
 			}
-			
-			
+
+
 			var objName = obj.GetType().Name;
-			objName =Char.ToLowerInvariant(objName[0]) + objName.Substring(1);
+			objName = Char.ToLowerInvariant(objName[0]) + objName.Substring(1);
 			var name = objName + "." + propertyName;
 			var value = obj.GetType().GetProperty(propertyName).GetValue(obj, null);
 			var id = objName + "_" + propertyName;
@@ -113,24 +113,31 @@ namespace Inforoom2.Helpers
 			if (htmlAttributes != null) {
 				attributes = GetPropsValues(htmlAttributes);
 			}
+
 			string html = string.Empty;
 			switch (htmlTag) {
 				case HtmlTag.input:
-					 html = string.Format("<{0} id=\"{1}\" {2} type=\"{3}\" name =\"{4}\" value=\"{5}\">", tag, id, attributes, type, name, value);
+					html = string.Format("<{0} id=\"{1}\" {2} type=\"{3}\" name =\"{4}\" value=\"{5}\">", tag, id, attributes, type, name, value);
 					break;
 				case HtmlTag.textarea:
-					 html = string.Format("<{0} name =\"{3}\" rows = \"6\" cols = \"75\">{4}</{5}>", tag, id, attributes, name, value,tag);
+					html = string.Format("<{0} name =\"{3}\" {2} rows = \"6\" cols = \"75\">{4}</{5}>", tag, id, attributes, name, value, tag);
 					break;
 				default:
 					throw new NotImplementedException("Html for tag is not implemented");
 			}
-			
-			
-			var error = validation.GetError(obj, propertyName, html);
+
+			var error = validation.GetError(obj, propertyName, html, null, isValidated);
+
 			if (string.IsNullOrEmpty(error.ToString())) {
 				return new HtmlString(html);
 			}
-			return  error;
+			error = new HtmlString(error.ToString().Replace("placeholder=", "broken_placeholder="));
+			return error;
+		}
+
+		public static HtmlString ValidationEditor(this HtmlHelper helper, ValidationRunner validation, object obj, string propertyName, object htmlAttributes, HtmlTag htmlTag, HtmlType htmlType)
+		{
+		 	return ValidationEditor(helper, validation, obj, propertyName, htmlAttributes, htmlTag, htmlType, false);
 		}
 
 		private static StringBuilder GetPropsValues(object obj)
