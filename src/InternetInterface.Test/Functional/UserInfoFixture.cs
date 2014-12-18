@@ -342,6 +342,58 @@ namespace InternetInterface.Test.Functional
 			Assert.That(client.Endpoints[0].Pool, Is.EqualTo(pool1.Id));
 		}
 
+		[Test(Description = "Проверяет задание нулевого IP-пула для данной точки подключения пользователя")]
+		public void CheckNullIpPool()
+		{
+			// Занесение в БД нового региона "region"
+			var region = new RegionHouse("NewTestRegion");
+			session.Save(region);
+			region.Name += region.Id;
+			session.SaveOrUpdate(region);
+
+			// Занесение в БД нового IP-пула
+			var pool = new IpPool {
+				Begin = 12345,
+				End = 54321,
+				IsGray = false
+			};
+			session.Save(pool);
+
+			// Создание в БД новой ассоциации между IP-пулом и регионом "region"
+			var poolReg = new IpPoolRegion(pool, region);
+			session.Save(poolReg);
+
+			// Занесение в БД нового пользователя "client"
+			var client = ClientHelper.Client(session);
+			client.Name = "User_from_" + region.Name;
+			client.PhysicalClient = ClientHelper.PhysicalClient(session);
+			client.PhysicalClient.City = region.Name;
+			client.PhysicalClient.HouseObj.Region = region;
+			session.Save(client);
+
+			// Создание в БД точки подключения для пользователя "client"
+			var zone = new Zone("Zone_of_" + region.Name, region);
+			session.Save(zone);
+			var netSwitch = new NetworkSwitch("Switch#" + client.Id, zone);
+			session.Save(netSwitch);
+			var clientEndpoint = new ClientEndpoint(client, 10, netSwitch);
+			session.Save(clientEndpoint);
+			client.AddEndpoint(clientEndpoint, new Settings(session));
+
+			// Проверка отсутствия IP-пула в точке подключения пользователя "client"
+			Assert.That(client.Endpoints[0].Pool, Is.EqualTo(null));
+
+			Open("UserInfo/ShowPhysicalClient?filter.ClientCode={0}", client.Id);
+			Css("#EditConnectionBtn").Click();
+			Css("#PoolsSelect").SelectByText("");
+			Css("#SaveConnectionBtn").Click();
+
+			// Вновь проверка отсутствия IP-пула в точке подключения пользователя "client"
+			client.Refresh();
+			client = session.Get<Client>(client.Id);
+			Assert.That(client.Endpoints[0].Pool, Is.EqualTo(null));
+		}
+
 		[Test(Description = "Проверяет правильность первичного сохранения контактов пользователя")]
 		public void PrimarySaveUserContactsTest()
 		{
