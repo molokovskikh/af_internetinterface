@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Security.Principal;
 using System.Text;
 using System.Web;
@@ -12,6 +13,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
 using System.Web.UI.WebControls;
+using Common.Tools;
 using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
@@ -156,8 +158,10 @@ namespace Inforoom2.Controllers
 			base.OnActionExecuted(filterContext);
 			if (filterContext.Exception != null) {
 			}
+
 			ViewBag.ActionName = filterContext.RouteData.Values["action"].ToString();
 			ViewBag.ControllerName = filterContext.RouteData.Values["controller"].ToString();
+
 			ProcessCallMeBackTicket();
 			ProcessRegionPanel();
 			if (CurrentClient != null) {
@@ -184,7 +188,6 @@ namespace Inforoom2.Controllers
 				SuccessMessage("Заявка отправлена. В течении для вам перезвонят.");
 				return;
 			}
-
 			ViewBag.CallMeBackTicket = callMeBackTicket;
 			if (GetJavascriptParam("CallMeBack") == null)
 				AddJavascriptParam("CallMeBack", "1");
@@ -293,6 +296,37 @@ namespace Inforoom2.Controllers
 				cookie.Expires = DateTime.Now.AddMinutes(FormsAuthentication.Timeout.TotalMinutes);
 			Response.Cookies.Set(cookie);
 			return RedirectToAction(action, controller);
+		}
+
+		public void SubmitCallMeBackTicket(string actionString, string controllerString)
+		{
+			ForwardToAction(controllerString, actionString, new object[0]);
+		}
+
+		protected void ForwardToAction(string controllerString, string actionString, object[] parameters)
+		{
+			var type = Assembly.GetExecutingAssembly().GetTypes().First(t => t.Name == controllerString + "Controller");
+			var module = new UrlRoutingModule();
+			var col = module.RouteCollection;
+			HttpContext.RewritePath("/" + controllerString + "/" + actionString);
+			var fakeRouteData = col.GetRouteData(HttpContext);
+
+			var ctxt = new RequestContext(ControllerContext.HttpContext, fakeRouteData);
+			var iController = ControllerBuilder.Current.GetControllerFactory()
+				.CreateController(ctxt, controllerString);
+
+			var controller = iController as BaseController;
+			controller.ControllerContext = new ControllerContext(ctxt, this);
+
+			var methodTypes = parameters.Select(parameter => parameter.GetType()).ToList();
+			var actionMethod = type.GetMethod(actionString, methodTypes.ToArray());
+			var actionResult = (ActionResult)actionMethod.Invoke(controller, parameters);
+
+			controller.ViewBag.ActionName = actionString;
+			controller.ViewBag.ControllerName = controllerString;
+			controller.ProcessCallMeBackTicket();
+
+			actionResult.ExecuteResult(controller.ControllerContext);
 		}
 	}
 }
