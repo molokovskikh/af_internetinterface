@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using Common.Tools;
+using Common.Web.Ui.Components;
 using InternetInterface.Controllers;
 using InternetInterface.Models;
 using InternetInterface.Models.Services;
@@ -339,6 +340,95 @@ namespace InternetInterface.Test.Functional
 			client.Refresh();
 			client = session.Get<Client>(client.Id);
 			Assert.That(client.Endpoints[0].Pool, Is.EqualTo(pool1.Id));
+		}
+
+		[Test(Description = "Проверяет задание нулевого IP-пула для данной точки подключения пользователя")]
+		public void CheckNullIpPool()
+		{
+			// Занесение в БД нового региона "region"
+			var region = new RegionHouse("NewTestRegion");
+			session.Save(region);
+			region.Name += region.Id;
+			session.SaveOrUpdate(region);
+
+			// Занесение в БД нового IP-пула
+			var pool = new IpPool {
+				Begin = 12345,
+				End = 54321,
+				IsGray = false
+			};
+			session.Save(pool);
+
+			// Создание в БД новой ассоциации между IP-пулом и регионом "region"
+			var poolReg = new IpPoolRegion(pool, region);
+			session.Save(poolReg);
+
+			// Занесение в БД нового пользователя "client"
+			var client = ClientHelper.Client(session);
+			client.Name = "User_from_" + region.Name;
+			client.PhysicalClient = ClientHelper.PhysicalClient(session);
+			client.PhysicalClient.City = region.Name;
+			client.PhysicalClient.HouseObj.Region = region;
+			session.Save(client);
+
+			// Создание в БД точки подключения для пользователя "client"
+			var zone = new Zone("Zone_of_" + region.Name, region);
+			session.Save(zone);
+			var netSwitch = new NetworkSwitch("Switch#" + client.Id, zone);
+			session.Save(netSwitch);
+			var clientEndpoint = new ClientEndpoint(client, 10, netSwitch);
+			session.Save(clientEndpoint);
+			client.AddEndpoint(clientEndpoint, new Settings(session));
+
+			// Проверка отсутствия IP-пула в точке подключения пользователя "client"
+			Assert.That(client.Endpoints[0].Pool, Is.EqualTo(null));
+
+			Open("UserInfo/ShowPhysicalClient?filter.ClientCode={0}", client.Id);
+			Css("#EditConnectionBtn").Click();
+			Css("#PoolsSelect").SelectByText("");
+			Css("#SaveConnectionBtn").Click();
+
+			// Вновь проверка отсутствия IP-пула в точке подключения пользователя "client"
+			client.Refresh();
+			client = session.Get<Client>(client.Id);
+			Assert.That(client.Endpoints[0].Pool, Is.EqualTo(null));
+		}
+
+		[Test(Description = "Проверяет правильность первичного сохранения контактов пользователя")]
+		public void PrimarySaveUserContactsTest()
+		{
+			// Занесение в БД нового пользователя "client"
+			var client = ClientHelper.Client(session);
+			session.Save(client);
+			client.Name = "User_#" + client.Id;
+			session.Update(client);
+
+			// Авто-заполнение контактов клиента
+			Open("UserInfo/ShowPhysicalClient?filter.ClientCode={0}&filter.EditConnectInfoFlag={1}", client.Id, true);
+			var parentTag = "#ContactsTableBody2";
+			var childTag = string.Empty;
+			var contactText = string.Empty;
+			for (var i = 1; i <= 4; i++) {
+				Css("#addContactButton").Click();
+
+				childTag = " > tr:nth-child(" + i + ")";
+				contactText = Contact.GetReadbleCategorie((ContactType) (i - 1));		// (i-1) <= ContactType.Email
+
+				Css(parentTag + childTag + "> td:nth-child(1) > input").SendKeys((i < 4) ? "999-1112233" : "mymail@mail.ru");
+				Css(parentTag + childTag + "> td:nth-child(2) > select").SelectByText(contactText);
+				Css(parentTag + childTag + "> td:nth-child(3) > input").SendKeys((i < 4) ? ("phone" + i) : "email");
+			}
+			Css("#SaveContactButton").Click();
+
+			// Проверка правильного сохранения типов контактов в данных пользователя "client"
+			parentTag = "#ContactsTableBody1";
+			for (var i = 1; i <= 4; i++) {
+				childTag = " > tr:nth-child(" + i + ") > td:nth-child(2)";
+				var cssElement = browser.FindElementByCssSelector(parentTag + childTag);
+				contactText = Contact.GetReadbleCategorie((ContactType) (i - 1));		// (i-1) <= ContactType.Email
+
+				Assert.That(cssElement.Text, Is.EqualTo(contactText));
+			}
 		}
 	}
 }

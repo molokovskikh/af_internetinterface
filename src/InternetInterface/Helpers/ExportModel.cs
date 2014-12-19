@@ -23,7 +23,7 @@ namespace InternetInterface.Helpers
 
 			Workbook wb = new Workbook();
 			Worksheet ws = new Worksheet("Статистика по клиентам");
-			int row = 7;
+			int row = 8;
 			int colShift = 0;
 
 			ws.Merge(0, 0, 0, 9);
