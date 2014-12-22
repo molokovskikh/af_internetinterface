@@ -23,8 +23,7 @@ namespace Inforoom2.Test.Functional
 		public override void IntegrationSetup()
 		{
 			//Ставим куки, чтобы не отображался popup
-			var cookie = new Cookie("userCity", "Воронеж");
-			browser.Manage().Cookies.AddCookie(cookie);
+		SetCookie("userCity", BuildTestUrl("Белгород"));
 		}
 
 		[TearDown]
@@ -43,6 +42,14 @@ namespace Inforoom2.Test.Functional
 			var body = browser.FindElementByCssSelector("body").Text;
 			return body.Contains(text);
 		}
+
+		public void SetCookie(string name, string value)
+		{
+			var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(value);
+			var text = System.Convert.ToBase64String(plainTextBytes);
+			var cookie = new Cookie(name, text);
+			browser.Manage().Cookies.AddCookie(cookie);
+		}
 	
 		protected string GetCookie(string cookieName)
 		{
@@ -50,8 +57,9 @@ namespace Inforoom2.Test.Functional
 			if (cookie == null) {
 				return string.Empty;
 			}
-			var s = Uri.UnescapeDataString(cookie.Value);
-			return HttpUtility.UrlDecode(s);
+
+			var base64EncodedBytes = System.Convert.FromBase64String(cookie.Value);
+			return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
 			
 		}
 	}

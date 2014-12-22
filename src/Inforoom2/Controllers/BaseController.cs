@@ -28,18 +28,14 @@ namespace Inforoom2.Controllers
 	/// Базовый контроллер от которого все наследуются
 	/// </summary>
 	[NHibernateActionFilter]
-	public abstract class BaseController : Controller
+	public class BaseController : Controller
 	{
-		public ISession DbSession
-		{
-			get { return MvcApplication.SessionFactory.GetCurrentSession(); }
-		}
-
+		public ISession DbSession;
 		protected static readonly ILog log = LogManager.GetLogger(typeof(BaseController));
 
 		protected ValidationRunner ValidationRunner;
 
-		protected BaseController()
+		public BaseController()
 		{
 			ValidationRunner = new ValidationRunner();
 			ViewBag.Validation = ValidationRunner;
@@ -303,7 +299,7 @@ namespace Inforoom2.Controllers
 			ForwardToAction(controllerString, actionString, new object[0]);
 		}
 
-		protected void ForwardToAction(string controllerString, string actionString, object[] parameters)
+		public void ForwardToAction(string controllerString, string actionString, object[] parameters)
 		{
 			var type = Assembly.GetExecutingAssembly().GetTypes().First(t => t.Name == controllerString + "Controller");
 			var module = new UrlRoutingModule();
@@ -312,10 +308,11 @@ namespace Inforoom2.Controllers
 			var fakeRouteData = col.GetRouteData(HttpContext);
 
 			var ctxt = new RequestContext(ControllerContext.HttpContext, fakeRouteData);
-			var iController = ControllerBuilder.Current.GetControllerFactory()
-				.CreateController(ctxt, controllerString);
+			var factory = ControllerBuilder.Current.GetControllerFactory();
+			var iController = factory.CreateController(ctxt, controllerString);
 
 			var controller = iController as BaseController;
+			controller.DbSession = DbSession;
 			controller.ControllerContext = new ControllerContext(ctxt, this);
 
 			var methodTypes = parameters.Select(parameter => parameter.GetType()).ToList();
