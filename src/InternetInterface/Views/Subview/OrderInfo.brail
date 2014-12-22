@@ -250,7 +250,7 @@
 	<thead>
 		<th colspan = 3 > Информация по подключению
 		<% if MapPartner.AccesPartner("DHCP"): %>
-			<input id="Submit2" type="submit" value="Сохранить"  align="right" />
+			<input id="SaveConnectionBtn" type="submit" value="Сохранить"  align="right" />
 		<% end %>
 		</th>
 	</thead>
@@ -376,7 +376,7 @@
 					<% elif (IpPools.Count == 0): %>
 						<span class="error">Невозмоно задать IP-пул, т.к. к данному региону не прикреплен ни один IP-пул </span>
 					<% else: %>
-						<select name="OrderInfo.ClientConnectInfo.Pool" id="PoolsSelect" style="width: 50%">
+						<select name="ConnectInfo.Pool" id="PoolsSelect" style="width: 50%">
 							<option value=""></option>
 							<% for pool in IpPools: %>
 							<option value="${pool.Id}" ${"selected" if (pool.Id == OrderInfo.ClientConnectInfo.Pool)}>!{pool.Id} (!{pool.Begin}-!{pool.End})</option>
