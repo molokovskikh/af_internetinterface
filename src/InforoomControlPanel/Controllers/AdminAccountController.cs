@@ -17,8 +17,16 @@ namespace InforoomControlPanel.Controllers
 	/// </summary>
 	public class AdminAccountController : BaseController
 	{
+		protected override void OnActionExecuting(ActionExecutingContext filterContext)
+		{
+			base.OnActionExecuting(filterContext);
+			ViewBag.BreadCrumb = "Главная";
+		}
+
 		public ActionResult Index()
 		{
+			if (Request.IsAuthenticated)
+				RedirectToAction("Impersonate");
 			return View();
 		}
 
@@ -27,7 +35,7 @@ namespace InforoomControlPanel.Controllers
 		{
 			if (ActiveDirectoryHelper.IsAuthenticated(username, password)
 			    && DbSession.Query<Employee>().Any(p => p.Login == username && !p.IsDisabled)) {
-				return Authenticate("Index", "Admin", username, shouldRemember, impersonateClient);
+					return Authenticate("Impersonate", "AdminAccount", username, shouldRemember, impersonateClient);
 			}
 			ErrorMessage("Неправильный логин или пароль");
 			return Redirect(returnUrl);
@@ -36,7 +44,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult AdminLogout()
 		{
 			FormsAuthentication.SignOut();
-			return RedirectToAction("Index", "Admin");
+			return RedirectToAction("Index");
 		}
 
 		[Authorize(Roles = "Admin")]
