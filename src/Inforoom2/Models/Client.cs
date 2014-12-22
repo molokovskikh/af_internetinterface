@@ -198,6 +198,11 @@ namespace Inforoom2.Models
 			//else
 				//LawyerPerson.Balance -= sum;
 		}
+
+		public virtual string GetAddressString()
+		{
+			return "г. Москва, ул. Вильнюсская, д.8, к.2";
+		}
 	}
 
 

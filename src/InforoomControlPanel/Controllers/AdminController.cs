@@ -15,12 +15,12 @@ namespace InforoomControlPanel.Controllers
 	[AuthorizeUser(Roles = "Admin")]
 	public class AdminController : BaseController
 	{
-		public ActionResult Index()
-		{
-			//проверяем наличие неотвеченных тикетов
-			ViewBag.TicketsAmount = DbSession.Query<Ticket>().Count(k => !k.IsNotified);
-			return View();
-		}
+		//public ActionResult Index()
+		//{
+		//	//проверяем наличие неотвеченных тикетов
+		//	ViewBag.TicketsAmount = DbSession.Query<Ticket>().Count(k => !k.IsNotified);
+		//	return View();
+		//}
 
 
 		/// <summary>

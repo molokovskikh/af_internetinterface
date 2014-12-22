@@ -1,0 +1,27 @@
+﻿@using System.Activities.Expressions
+@using System.Activities.Statements
+@using Inforoom2.Models
+@using Inforoom2.Helpers
+@{
+	ViewBag.Title = "Сервисные инженеры";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	List<Employee> employees = ViewBag.Employees;
+	List<ServiceMan> team = ViewBag.Team;
+	ServiceMan ServiceMan = ViewBag.ServiceMan;
+}
+@using (@Html.BeginForm(FormMethod.Post)) {
+	<div>
+		<div>Добавление сервисного инженера</div>
+		<div>
+			@Html.DropDownListExtendedFor(i => ServiceMan.Employee,employees, obj => obj.Name, null)
+			@ViewBag.Validation.GetError(ServiceMan, "Employee", "Поле не может быть пустым")
+			<input type="submit"  value="Добавить"/>
+		</div>
+	</div>
+}
+<div>
+	<h2>Сервисные инженеры:</h2>
+	@foreach (var serviceMan in team) {
+		<div>@serviceMan.Employee.Name</div>
+	}
+</div>

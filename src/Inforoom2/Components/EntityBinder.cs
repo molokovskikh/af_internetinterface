@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using Inforoom2.Controllers;
 using Inforoom2.Helpers;
+using Inforoom2.Models;
 using Microsoft.VisualBasic.CompilerServices;
 using NHibernate;
 using NHibernate.Context;
@@ -78,7 +79,7 @@ namespace Inforoom2.Components
 						var propertyValue = request.Form.Get(entityType.Name.ToLower() + "." + propertyName);
 						if (!string.IsNullOrEmpty(propertyValue))
 						{
-							SetValue(instance, propertyName, propertyValue, propertyInfo);
+							SetValue(instance, propertyName, propertyValue, propertyInfo,null);
 						}
 					}
 				}
@@ -101,7 +102,7 @@ namespace Inforoom2.Components
 				fieldName = _idName;
 			result = bindingContext.ValueProvider.GetValue(fieldName);
 			if (FieldNotFoundOrValueIsEmpty(result)) {
-				/*if (_relaxed)*/ return null;
+				/*if (_relaxed)*/
 				//throw new MissingFieldException("Could not find the request parameter: " + fieldName);
 			}
 
@@ -116,15 +117,22 @@ namespace Inforoom2.Components
 				return instances.ToArray();
 			}
 			else {
-				var id = GetId(result, fieldName);
-				object instance = session.Get(entityType, id) ?? Activator.CreateInstance(entityType);
+				var id = 0;
+				if(result != null)
+					id = GetId(result, fieldName);
+				var instance = session.Get(entityType, id) ?? Activator.CreateInstance(entityType);
 				var props = instance.GetType().GetProperties();
 				if (props.Count() != 0) {
 					foreach (var propertyInfo in props) {
 						var propertyName = propertyInfo.Name;
 						var propertyValue = request.Form.Get(entityType.Name.ToLower() + "." + propertyName);
 						if (!string.IsNullOrEmpty(propertyValue)) {
-							SetValue(instance, propertyName, propertyValue, propertyInfo);
+							SetValue(instance, propertyName, propertyValue, propertyInfo,session);
+						}
+						var objectId = request.Form.Get(entityType.Name.ToLower() + "." + propertyName + ".Id");
+						if (!string.IsNullOrEmpty(objectId))
+						{
+							SetValue(instance, propertyName, objectId, propertyInfo, session);
 						}
 					}
 				}
@@ -156,7 +164,7 @@ namespace Inforoom2.Components
 			       result.AttemptedValue == "System.Web.Mvc.UrlParameter";
 		}
 
-		public void SetValue(object inputObject, string propertyName, object propertyVal, PropertyInfo info)
+		public void SetValue(object inputObject, string propertyName, object propertyVal, PropertyInfo info, ISession session)
 		{
 			//find out the type
 			Type type = inputObject.GetType();
@@ -180,7 +188,9 @@ namespace Inforoom2.Components
 			}
 			catch (Exception e) {
 				if (!propertyInfo.PropertyType.IsInterface) {
-					var instance = Activator.CreateInstance(propertyInfo.PropertyType);
+					var id = 0;
+					int.TryParse((string) propertyVal, out id);
+					var instance = session.Get(targetType, id) ?? Activator.CreateInstance(propertyInfo.PropertyType);
 					propertyInfo.SetValue(inputObject, instance, null);
 				}
 				return;

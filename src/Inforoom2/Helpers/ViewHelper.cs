@@ -10,6 +10,7 @@ using System.Threading;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Mvc.Html;
+using System.Web.UI.WebControls;
 using Inforoom2.Components;
 using Inforoom2.Models;
 using NHibernate.Linq;
@@ -124,6 +125,23 @@ namespace Inforoom2.Helpers
 					break;
 				case HtmlTag.textarea:
 					html = string.Format("<{0} name =\"{3}\" {2} rows = \"6\" cols = \"75\">{4}</{5}>", tag, id, attributes, name, value, tag);
+					break;
+				case HtmlTag.checkbox:
+					var val = (bool)value ? "checked" : "";
+					html = string.Format("<input type=\"checkbox\" id=\"{0}\" name =\"{2}\" {1} value=\"{3}\"></input>", id, attributes, name, val);
+					break;
+				case HtmlTag.date:
+					html = string.Format("<div class=\"input-group\"><input id=\"{0}\" name =\"{2}\" {1} value=\"{3}\" class=\"form-control datepicker\" data-format=\"D, dd MM yyyy\" type=\"text\" /><div class=\"input-group-addon\"><a href=\"#\"><i class=\"entypo-calendar\"></i></a></div></div>", id, attributes, name, value);
+					break;
+				case HtmlTag.datetime:
+					var dobj = (DateTime)value;
+					if (dobj == DateTime.MinValue) {
+						dobj = DateTime.Now;
+					}
+					var date = dobj.Date.ToString().Split(' ')[0];
+					var time = dobj.TimeOfDay;
+					var datetime = dobj;
+					html = string.Format("<div id=\"{0}\" {1} class=\"date-and-time\"><input  name =\"{2}\" type=\"hidden\" value=\"{5}\" /><input type=\"text\" data-format=\"dd.mm.yyyy\" value=\"{3}\" class=\"form-control datepicker\"><input value=\"{4}\" type=\"text\" data-second-step=\"5\" data-minute-step=\"5\" data-show-meridian=\"false\" data-default-time=\"current\" data-template=\"dropdown\" class=\"form-control timepicker\"></div>", id, attributes, name, date, time, datetime);
 					break;
 				default:
 					throw new NotImplementedException("Html for tag is not implemented");

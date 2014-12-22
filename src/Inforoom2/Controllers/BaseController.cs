@@ -38,6 +38,7 @@ namespace Inforoom2.Controllers
 		public BaseController()
 		{
 			ValidationRunner = new ValidationRunner();
+			ViewBag.BreadCrumb = "Панель управления";
 			ViewBag.Validation = ValidationRunner;
 			ViewBag.Title = "Инфорум";
 			ViewBag.JavascriptParams = new Dictionary<string, string>();
@@ -63,7 +64,12 @@ namespace Inforoom2.Controllers
 
 		protected Employee CurrentEmployee
 		{
-			get { return DbSession.Query<Employee>().FirstOrDefault(k => k.Name == User.Identity.Name); }
+			get
+			{
+				if (User == null)
+					return null;
+				return DbSession.Query<Employee>().FirstOrDefault(k => k.Login == User.Identity.Name);
+			}
 		}
 
 		protected Client CurrentClient
@@ -160,6 +166,9 @@ namespace Inforoom2.Controllers
 
 			ProcessCallMeBackTicket();
 			ProcessRegionPanel();
+			if (CurrentEmployee != null) {
+				ViewBag.CurrentEmployee = CurrentEmployee;
+			}
 			if (CurrentClient != null) {
 				StringBuilder sb = new StringBuilder();
 				sb.AppendFormat("Здравствуйте, {0}. Ваш баланс: {1} руб.", CurrentClient.PhysicalClient.Name, CurrentClient.PhysicalClient.Balance);
