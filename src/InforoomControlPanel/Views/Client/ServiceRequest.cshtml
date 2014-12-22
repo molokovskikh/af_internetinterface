@@ -1,0 +1,55 @@
+﻿@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@model dynamic
+
+@{
+	ViewBag.Title = "Сервисная заявка";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	Client client = ViewBag.Client;
+	ServiceRequest ServiceRequest = ViewBag.ServiceRequest;
+	ValidationRunner runner = ViewBag.Validation;
+	string action = ViewBag.ActionName;
+	string controller = ViewBag.ControllerName;
+}
+
+<div class="panel panel-primary col-md-6">
+	<div class="panel-body">
+		@using (@Html.BeginForm(action, controller, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
+		{
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Текст заявки</label>
+				<div class="col-sm-4">
+					@Html.ValidationEditor(runner, ServiceRequest, "Description", new { @class = "form-control" }, HtmlTag.textarea, HtmlType.none)
+				</div>
+				
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Восстановление работы</label>
+				<div class="col-sm-4">
+					@Html.ValidationEditor(runner, ServiceRequest, "BlockNetwork", new { @class = "" }, HtmlTag.checkbox, HtmlType.none)
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Время выполнения</label>
+				<div class="col-sm-4">
+					@Html.ValidationEditor(runner, ServiceRequest, "BeginTime", null, HtmlTag.datetime, HtmlType.none)
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Длительность выполнения (мин)</label>
+				<div class="col-sm-4">
+					<div class="input-spinner">
+						<button class="btn btn-default" type="button">-</button>
+						<input type="text" value="60" class="form-control size-1">
+						<button class="btn btn-default" type="button">+</button>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<button class="btn btn-green" type="submit">Создать заявку</button>
+			</div>
+		}
+	</div>
+</div>
+@{ Html.RenderPartial("ConnectionTable");  }

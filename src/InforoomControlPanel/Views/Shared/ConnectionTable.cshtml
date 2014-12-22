@@ -1,0 +1,121 @@
+﻿@using System.Activities.Expressions
+@using System.Activities.Statements
+@using Inforoom2.Models
+@{
+	ViewBag.Title = "График подключений";
+	var team = ViewBag.Servicemen;
+}
+<style>
+	.Client.ServiceRequest textarea {width:600px; height:200px; resize: none;}
+	.servicemen {padding:10px;}
+	.servicemen .wrapper{ margin:auto; width:700px; overflow-x: scroll; overflow-y: hidden;}
+	.servicemen table {width:1000px; text-align:center;}
+
+	.servicemen tbody th,.servicemen thead th:first-child {font-size: 9px; width:20px;}
+	.servicemen thead th {width:100px;}
+
+	.servicemen td.active {background: red;}
+	.servicemen .hover {font-weight: bold;}
+	.servicemen .serviceRequest {background: greenyellow}
+	.servicemen .connectionRequest {background: darksalmon}
+	.servicemen td.time {font-size:11px; color:burlywood; text-align: center;}
+</style>
+<script type="text/javascript">
+
+	setTimeout(function() {
+		$(".servicemen td").on("mouseover", function() {
+			$(this).parent().find("th, td").addClass("hover");
+			var cl = $(this).attr("class").split(" ")[0];
+			$(".servicemen thead th." + cl).addClass("hover");
+		});
+		$(".servicemen td").on("click", function () {
+			$(".servicemen td").removeClass("active");
+			$(this).addClass("active");
+		});
+		$(".servicemen td").on("mouseout", function() {
+			$(".servicemen th, .servicemen td").removeClass("hover");
+		});
+	},2000);
+</script>
+<div class="servicemen panel panel-primary col-md-6">
+	<div class="wrapper">
+		<table class="table table-bordered table-striped datatable dataTable no-footer">
+			<thead>
+				<tr>
+					<th class="time"></th>
+					@foreach (var employee in team) {
+						var cl = "employee" + employee.Employee.Id;
+						<th class="@cl">@employee.Employee.Name</th>
+					}
+				</tr>
+			</thead>
+			<tbody>
+				@{
+					var day = DateTime.Today;
+					var startHour = 9;
+					var endHour = 18;
+					var nowHour = startHour;
+					var NowMin = 0;
+					var step = 10;
+
+					var showedRequests = new List<object>();
+				}
+				@while (nowHour < endHour) {
+					<tr>
+						@{var time = day.AddHours(nowHour).AddMinutes(NowMin);}
+						<th>@time.TimeOfDay.ToString().Substring(0, 5)</th>
+						@foreach (ServiceMan employee in team) {
+							var requestFlag = false;
+							var cl = "employee" + employee.Employee.Id;
+							//Отображение сервисных заявок
+							foreach (var request in employee.ServiceRequests) {
+								if (request.BeginTime <= time && request.EndTime >= time) {
+									requestFlag = true;
+									if (showedRequests.Contains(request)) {
+										continue;
+									}
+									showedRequests.Add(request);
+									//Надо вычислить сколько ячеек будет занимать наша запись
+									var diff = request.EndTime - request.BeginTime;
+									double span = Math.Ceiling(diff.TotalMinutes / step);
+									<td class="@cl serviceRequest" rowspan="@span">
+										<div>@request.Description</div>
+										<div>@request.Client.PhysicalClient.PhoneNumber</div>
+										<div>@request.Client.GetAddressString()</div>
+									</td>
+								}
+							}
+							//Отображение заявок на подключение
+							foreach (var request in employee.ConnectionRequests) {
+								if (request.BeginTime <= time && request.EndTime >= time) {
+									requestFlag = true;
+									if (showedRequests.Contains(request)) {
+										continue;
+									}
+									showedRequests.Add(request);
+									//Надо вычислить сколько ячеек будет занимать наша запись
+									var diff = request.EndTime - request.BeginTime;
+									double span = Math.Floor(diff.TotalMinutes / step);
+									<td class="@cl connectionRequest" rowspan="@span">
+										<div>@request.Client.PhysicalClient.Name</div>
+										<div>@request.Client.PhysicalClient.PhoneNumber</div>
+										<div>@request.Client.GetAddressString()</div>
+									</td>
+								}
+							}
+							if (!requestFlag) {
+								<td class="@cl time">@time.TimeOfDay.ToString().Substring(0, 5)</td>
+							}
+						}
+
+					</tr>
+					NowMin += step;
+					if (NowMin >= 60) {
+						nowHour++;
+						NowMin = 0;
+					}
+				}
+			</tbody>
+		</table>
+	</div>
+</div>

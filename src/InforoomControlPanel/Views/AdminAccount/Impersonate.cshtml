@@ -3,13 +3,10 @@
 @model dynamic
 
 @{
-	ViewBag.Title = "title";
+	ViewBag.Title = "Вход за пользователя";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	IList<Client> clients = ViewBag.Clients;
 }
-
-@{ Html.RenderPartial("AdminPanel"); }
-
 <div class="Impersonation">
 	<table>
 		<tr>
