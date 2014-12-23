@@ -52,7 +52,17 @@ ${app.Asset("payments.css")}
 					!{item.Id}
 					<% end %>
 				</td>
-				<td>${?item.Agent.Name}</td>
+				<td>
+					<% if (item.Virtual == true): %>
+					Инфорум
+					<% if (item.Agent != null and item.Agent.Name.Length > 0):  %>
+					&nbsp;-&nbsp;
+					<% end %>
+					<% end %>
+					<span>
+					${?item.Agent.Name}
+					</span>
+				</td>
 				<td>${item.PaidOn}</td>
 				<td>${item.RecievedOn}</td>
 				<td>${item.Sum.ToString(".00")}</td>

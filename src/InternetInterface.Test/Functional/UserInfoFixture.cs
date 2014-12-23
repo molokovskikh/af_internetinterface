@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Linq;
-using System.Threading;
-using Common.Tools;
+using Billing;
 using InternetInterface.Controllers;
 using InternetInterface.Models;
-using InternetInterface.Models.Services;
 using InternetInterface.Test.Helpers;
-using NHibernate;
 using NHibernate.Linq;
 using NUnit.Framework;
-using OpenQA.Selenium;
 
 namespace InternetInterface.Test.Functional
 {
@@ -173,6 +169,32 @@ namespace InternetInterface.Test.Functional
 			AssertText("Настройки");
 			Css("#print_button").Click();
 			AssertText("Время");
+		}
+
+		[Test(Description = "Тест для проверки вывода комментария и агента платежа в строку платежа")]
+		public void CheckCommentAndAgentInPaymentLine()
+		{
+			// Создать клиенту новый платеж
+			var newPay = new Payment(Client, 500) {
+				Comment = "new bonus",
+				Virtual = true
+			};
+			session.Save(newPay);
+			Client.Payments.Add(newPay);
+			session.Update(Client);
+
+			// Создать биллинг и обработать новый платеж
+			var billing = new MainBilling();
+			billing.ProcessPayments();
+
+			Open(string.Format("UserInfo/ShowPhysicalClient?filter.ClientCode={0}", Client.Id));
+			Css("#show_payments").Click();
+
+			// Проверить содержание в 1-ой строке таблицы "Зачисления" данных по новому платежу
+			WaitForText("Инфорум");
+			Assert.IsTrue(Css("#Row0 > td:nth-child(3)").Text.Contains("Инфорум"));
+			Assert.IsTrue(Css("#Row0 > td:nth-child(6)").Text == newPay.Sum.ToString("F"));
+			Assert.IsTrue(Css("#Row0 > td:nth-child(7)").Text == newPay.Comment);
 		}
 
 		[Test]

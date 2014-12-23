@@ -1,6 +1,4 @@
-﻿@using System.Collections
-@using System.Web.UI.WebControls
-@using Inforoom2.Models
+﻿@using Inforoom2.Models
 @model dynamic
 @{
 	IList<BillingHistory> historyList = ViewBag.HistoryList;
@@ -14,19 +12,23 @@
 	@*		<div class="history">ИСТОРИЯ БАЛАНСА</div>*@
 	<table class="cost">
 		<tr class="menucost">
-			<td class="menyhistory">Действие</td>
+			<td class="menyhistory">Тип платежа</td>
 			<td class="menyhistory">Сумма, руб.</td>
 			<td class="menyhistory">Дата</td>
+			<td class="menyhistory">Комментарий</td>
+			<td class="menyhistory">Зарегистрировал</td>
 		</tr>
 		@foreach (var entry in historyList) {
 			<tr class="menufee">
 				<td class="fistorytb">@Html.DisplayFor(k => entry.Description)</td>
 				<td class="fee">@Html.DisplayFor(k => entry.Sum)</td>
 				<td class="price tr">@Html.DisplayFor(k => entry.Date)</td>
+				<td class="price tr">@Html.DisplayFor(k => entry.Comment)</td>
+				<td class="price tr">@Html.DisplayFor(k => entry.WhoRegistered)</td>
 			</tr>
 		}
 	</table>
 	@if (historyList.Count == 0) {
-	<div class="noTableRows">У вас нет списаний</div>
+	<div class="noTableRows">У вас не было платежей за последние 3 месяца</div>
 }
 </div>

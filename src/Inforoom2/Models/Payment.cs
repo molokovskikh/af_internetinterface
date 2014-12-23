@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using NHibernate.Mapping.Attributes;
 
 namespace Inforoom2.Models
@@ -20,6 +21,9 @@ namespace Inforoom2.Models
 
 		[Property]
 		public virtual bool BillingAccount { get; set; }
+
+		[Property, Description("Характеризует платеж как бонусный/виртуальный")]
+		public virtual bool Virtual { get; set; }
 
 		[Property]
 		public virtual string Comment { get; set; }

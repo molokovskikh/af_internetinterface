@@ -33,7 +33,7 @@ namespace Inforoom2.Controllers
 			get { return MvcApplication.SessionFactory.GetCurrentSession(); }
 		}
 
-		protected static readonly ILog log = LogManager.GetLogger(typeof(BaseController));
+		protected static readonly ILog log = LogManager.GetLogger(typeof (BaseController));
 
 		protected ValidationRunner ValidationRunner;
 
@@ -43,19 +43,21 @@ namespace Inforoom2.Controllers
 			ViewBag.Validation = ValidationRunner;
 			ViewBag.Title = "Инфорум";
 			ViewBag.JavascriptParams = new Dictionary<string, string>();
-			ViewBag.Cities = new string[] { "Борисоглебск", "Белгород" };
+			ViewBag.Cities = new string[] {"Борисоглебск", "Белгород"};
 		}
 
 		public void AddJavascriptParam(string name, string value)
 		{
 			ViewBag.JavascriptParams[name] = value;
 		}
+
 		public string GetJavascriptParam(string name)
 		{
 			string val = null;
-			ViewBag.JavascriptParams.TryGetValue(name,out val);
+			ViewBag.JavascriptParams.TryGetValue(name, out val);
 			return val;
 		}
+
 		protected new virtual CustomPrincipal User
 		{
 			get { return HttpContext.User as CustomPrincipal; }
@@ -125,12 +127,11 @@ namespace Inforoom2.Controllers
 			if (showErrorPage) {
 				filterContext.Result = new RedirectToRouteResult(
 					new RouteValueDictionary
-					{ { "controller", "StaticContent" }, { "action", "Error" } });
-					filterContext.ExceptionHandled = true;
+					{{"controller", "StaticContent"}, {"action", "Error"}});
+				filterContext.ExceptionHandled = true;
 			}
-			log.ErrorFormat("{0} {1}",filterContext.Exception.Message, filterContext.Exception.StackTrace);
+			log.ErrorFormat("{0} {1}", filterContext.Exception.Message, filterContext.Exception.StackTrace);
 			EmailSender.SendError(filterContext.Exception.ToString());
-		
 		}
 
 		protected override void OnActionExecuting(ActionExecutingContext filterContext)
@@ -161,7 +162,8 @@ namespace Inforoom2.Controllers
 			ProcessRegionPanel();
 			if (CurrentClient != null) {
 				StringBuilder sb = new StringBuilder();
-				sb.AppendFormat("Здравствуйте, {0}. Ваш баланс: {1} руб.", CurrentClient.PhysicalClient.Name, CurrentClient.PhysicalClient.Balance);
+				sb.AppendFormat("Здравствуйте, {0}. Ваш баланс: {1} руб.", CurrentClient.PhysicalClient.Name,
+					CurrentClient.PhysicalClient.Balance);
 				ViewBag.ClientInfo = sb.ToString();
 			}
 		}
@@ -169,8 +171,8 @@ namespace Inforoom2.Controllers
 		private void ProcessCallMeBackTicket()
 		{
 			ViewBag.CallMeBackTicket = new CallMeBackTicket();
-			var binder = new EntityBinderAttribute("callMeBackTicket.Id", typeof(CallMeBackTicket));
-			CallMeBackTicket callMeBackTicket = (CallMeBackTicket)binder.MapModel(Request);
+			var binder = new EntityBinderAttribute("callMeBackTicket.Id", typeof (CallMeBackTicket));
+			CallMeBackTicket callMeBackTicket = (CallMeBackTicket) binder.MapModel(Request);
 			if (Request.Params["callMeBackTicket.Name"] == null)
 				return;
 			var client = CurrentClient;
@@ -196,10 +198,9 @@ namespace Inforoom2.Controllers
 				//Анонимный посетитель. Определяем город.
 				if (!string.IsNullOrEmpty(cookieCity)) {
 					userCity = cookieCity;
-					
 				}
 				else {
-					userCity = GetVisitorCityByGeoBase(); 
+					userCity = GetVisitorCityByGeoBase();
 				}
 			}
 			else {
@@ -222,16 +223,17 @@ namespace Inforoom2.Controllers
 			ViewBag.UserCityBelongsToUs = IsUserCityBelongsToUs(UserCity);
 			ViewBag.UserCity = UserCity;
 		}
+
 		private bool IsUserCityBelongsToUs(string city)
 		{
-			if (city != null)
-			{
+			if (city != null) {
 				var region = DbSession.Query<Region>().FirstOrDefault(i => i.Name.Contains(city) && i.City != null);
 				if (region != null)
 					return true;
 			}
 			return false;
 		}
+
 		private string GetVisitorCityByGeoBase()
 		{
 			var geoService = new IpGeoBase();
@@ -242,6 +244,8 @@ namespace Inforoom2.Controllers
 			catch (WebException e) {
 				return null;
 			}
+
+			if (geoAnswer == null) return null;
 			return geoAnswer.City;
 		}
 
@@ -266,7 +270,7 @@ namespace Inforoom2.Controllers
 
 		public void SetCookie(string name, string value)
 		{
-			Response.Cookies.Add(new HttpCookie(name, value) { Path = "/" });
+			Response.Cookies.Add(new HttpCookie(name, value) {Path = "/"});
 		}
 
 		public void DeleteCookie(string name)
@@ -274,7 +278,8 @@ namespace Inforoom2.Controllers
 			Response.Cookies.Remove(name);
 		}
 
-		protected ActionResult Authenticate(string action, string controller, string username, bool shouldRemember, string userData = "")
+		protected ActionResult Authenticate(string action, string controller, string username, bool shouldRemember,
+			string userData = "")
 		{
 			var ticket = new FormsAuthenticationTicket(
 				1,

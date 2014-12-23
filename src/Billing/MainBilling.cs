@@ -252,14 +252,16 @@ set s.LastStartFail = true;")
 			var correctPlan = client.PhysicalClient.Tariff.Id != 77;
 			var str = ConfigurationManager.AppSettings["ProcessFirstPaymentBonus"];
 			var processBonus = str != null;
-			if (processBonus && correctSum && correctPlan && firstPayment)
-			{
-				var p = new Payment(client, client.PhysicalClient.Tariff.Price);
-				p.Virtual = true;
-				session.Save(p);
-				var appeal = client.CreareAppeal("Был зачислен бонус за первый платеж в размере " + client.PhysicalClient.Tariff.Price + " Рублей");
+			if (processBonus && correctSum && correctPlan && firstPayment) {
+				var bonusPayment = new Payment(client, client.PhysicalClient.Tariff.Price) {
+					Virtual	= true,
+					Comment = "Месяц в подарок"
+				};
+				session.Save(bonusPayment);
+
+				var appeal = client.CreareAppeal("Был зачислен бонус за первый платеж в размере " + bonusPayment.Sum + " Рублей");
 				session.Save(appeal);
-				var message = "Вам начислен бонус в размере " + client.PhysicalClient.Tariff.Price + " рублей.Благодарим за сотрудничество";
+				var message = "Вам начислен бонус в размере " + bonusPayment.Sum + " рублей.Благодарим за сотрудничество";
 				var sms = SmsMessage.TryCreate(client, message, DateTime.Now.AddMinutes(1));
 				if (sms != null)
 					session.Save(sms);

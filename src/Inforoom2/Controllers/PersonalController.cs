@@ -70,6 +70,8 @@ namespace Inforoom2.Controllers
 			historyList.AddRange(payments.Select(payment => new BillingHistory {
 				Date = payment.RecievedOn,
 				Sum = payment.Sum,
+				Comment = payment.Comment,
+				WhoRegistered = (payment.Virtual) ? "Инфорум" : "",
 				Description = new StringBuilder().AppendFormat("Пополнение счета").ToString()
 			}));
 
