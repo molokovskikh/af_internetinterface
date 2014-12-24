@@ -387,19 +387,17 @@ namespace InforoomInternet.Test.Functional
 				Virtual = true
 			};
 			session.Save(newPay);
-			client.Payments.Add(newPay);
-			session.Update(client);
 
 			// Проверить наличие заголовков "Комментарий" и "Зарегистрировал" в таблице "Зачисления"
 			AssertText("Комментарий");
 			AssertText("Зарегистрировал");
 
-			// Создать биллинг и обработать новый платеж
-			var billing = new MainBilling();
-			billing.ProcessPayments();
+			// Обработать новый платеж клиента
+			newPay.BillingAccount = true;
+			newPay.Update();
 			Refresh();										// Обновить текущую страницу сайта
 				
-			// Проверить содержание в 1-ой строке таблицы "Зачисления" данных по новому платежу
+			// Проверить содержание данных по новому платежу в 1-ой строке таблицы "Зачисления"
 			Assert.IsTrue(Css(".WriteOffSum").Text == newPay.Sum.ToString("F"));
 			Assert.IsTrue(Css(".WriteOffDate").Text == newPay.PaidOn.ToString("dd.MM.yyyy"));
 			Assert.IsTrue(Css(".WriteOffComment").Text == newPay.Comment);

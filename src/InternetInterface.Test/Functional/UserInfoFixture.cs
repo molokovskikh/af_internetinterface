@@ -180,17 +180,16 @@ namespace InternetInterface.Test.Functional
 				Virtual = true
 			};
 			session.Save(newPay);
-			Client.Payments.Add(newPay);
-			session.Update(Client);
 
-			// Создать биллинг и обработать новый платеж
-			var billing = new MainBilling();
-			billing.ProcessPayments();
+			// Обработать новый платеж клиента
+			newPay.BillingAccount = true;
+			newPay.Update();
+			Client.Refresh();
 
 			Open(string.Format("UserInfo/ShowPhysicalClient?filter.ClientCode={0}", Client.Id));
 			Css("#show_payments").Click();
 
-			// Проверить содержание в 1-ой строке таблицы "Зачисления" данных по новому платежу
+			// Проверить содержание данных по новому платежу в 1-ой строке таблицы "Платежи"
 			WaitForText("Инфорум");
 			Assert.IsTrue(Css("#Row0 > td:nth-child(3)").Text.Contains("Инфорум"));
 			Assert.IsTrue(Css("#Row0 > td:nth-child(6)").Text == newPay.Sum.ToString("F"));
