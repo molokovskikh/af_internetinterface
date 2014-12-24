@@ -35,7 +35,7 @@ namespace Inforoom2.Helpers
 			if (selectTagAttributes != null) {
 				selectAttributes = GetPropsValues(selectTagAttributes);
 			}
-
+			
 			var options = new StringBuilder();
 			foreach (var model in modelCollection) {
 				string value = string.Empty;
@@ -47,7 +47,8 @@ namespace Inforoom2.Helpers
 				if (htmlAttributes != null) {
 					optionAttributes = GetPropsValues(htmlAttributes(model));
 				}
-				if (model.Id == selectedValueId) {
+				if (model.Id == selectedValueId)
+				{
 					options.AppendFormat("<option value={0} selected = selected {1}>{2}</option>", model.Id,
 						optionAttributes.Replace("{", "").Replace("}", ""), value);
 				}
@@ -138,7 +139,7 @@ namespace Inforoom2.Helpers
 					var date = dobj.Date.ToString().Split(' ')[0];
 					var time = dobj.TimeOfDay;
 					var datetime = dobj;
-					html = string.Format("<div id=\"{0}\" {1} class=\"date-and-time\"><input  name =\"{2}\" type=\"hidden\" value=\"{5}\" /><input type=\"text\" data-format=\"dd.mm.yyyy\" value=\"{3}\" class=\"form-control datepicker\"><input value=\"{4}\" type=\"text\" data-second-step=\"5\" data-minute-step=\"5\" data-show-meridian=\"false\" data-default-time=\"current\" data-template=\"dropdown\" class=\"form-control timepicker\"></div>", id, attributes, name, date, time, datetime);
+					html = string.Format("<div {1} id=\"{0}\"  class=\"date-and-time\"><input  name =\"{2}\" type=\"hidden\" value=\"{5}\" /><input {1} type=\"text\" data-format=\"dd.mm.yyyy\" value=\"{3}\" class=\"form-control datepicker\"><input {1} value=\"{4}\" type=\"text\" data-second-step=\"5\" data-minute-step=\"10\" data-show-meridian=\"false\" data-default-time=\"current\" data-template=\"dropdown\" class=\"form-control timepicker\"></div>", id, attributes, name, date, time, datetime);
 					break;
 				default:
 					throw new NotImplementedException("Html for tag is not implemented");
@@ -149,7 +150,7 @@ namespace Inforoom2.Helpers
 			if (string.IsNullOrEmpty(error.ToString())) {
 				return new HtmlString(html);
 			}
-			error = new HtmlString(error.ToString().Replace("placeholder=", "broken_placeholder="));
+		
 			return error;
 		}
 

@@ -15,7 +15,7 @@ namespace Inforoom2.Models
 		public ServiceMan()
 		{
 			ServiceRequests = new List<ServiceRequest>();
-			ConnectionRequests = new List<ConnectionRequest>();
+			ClientRequests = new List<ClientRequest>();
 		}
 
 		public ServiceMan(Employee employee) : this()
@@ -26,15 +26,48 @@ namespace Inforoom2.Models
 		[ManyToOne(Column = "Employee"),NotNull]
 		public virtual Employee Employee { get; set; }
 
-		[OneToMany(1, ClassType = typeof(ServiceRequest))]
+		[ManyToOne(Column = "Region"), NotNull]
+		public virtual Region Region { get; set; }
+
+		[ManyToOne(Column = "ServiceTeam")]
+		public virtual ServiceTeam ServiceTeam { get; set; }
+
+		[Bag(0, Table = "ServiceRequest")]
+		[Key(1, Column = "Performer")]
+		[OneToMany(2, ClassType = typeof(ServiceRequest))]
 		public virtual IList<ServiceRequest> ServiceRequests { get; set; }
 
-
-		[OneToMany(0, ClassType = typeof(ConnectionRequest))]
-		public virtual IList<ConnectionRequest> ConnectionRequests { get; set; }
+		[Bag(0, Table = "requests")]
+		[Key(1, Column = "_ServiceMan")]
+		[OneToMany(2, ClassType = typeof(ClientRequest))]
+		public virtual IList<ClientRequest> ClientRequests { get; set; }
 	}
 
-	[Class(0, Table = "ServiceRequests", NameType = typeof(ServiceRequest))]
+	[Class(0, Table = "ConnectBrigads", NameType = typeof(ServiceTeam))]
+	public class ServiceTeam : BaseModel
+	{
+		public ServiceTeam()
+		{
+			Disabled = false;
+		}
+
+		public ServiceTeam(Region region)
+			: this()
+		{
+			Region = region;
+		}
+
+		[Property(Column = "Name"), NotNullNotEmpty]
+		public virtual string Name { get; set; }
+
+		[Property(Column = "IsDisabled"), NotNullNotEmpty]
+		public virtual bool Disabled { get; set; }
+
+		[ManyToOne(Column = "Region"),NotNull]
+		public virtual Region Region { get; set; }
+	}
+
+	[Class(0, Table = "ServiceRequest", NameType = typeof(ServiceRequest))]
 	public class ServiceRequest : BaseModel
 	{
 		public ServiceRequest()
@@ -45,13 +78,14 @@ namespace Inforoom2.Models
 		{
 			Client = client;
 		}
+
 		[ManyToOne(Column = "Performer")]
 		public virtual ServiceMan ServiceMan { get; set; }
 
 		[ManyToOne(Column = "Client")]
 		public virtual Client Client { get; set; }
 
-		[Property(Column = "Description")]
+		[Property(Column = "Description"),NotNullNotEmpty]
 		public virtual string Description { get; set; }
 	
 		[Property(Column = "BlockForRepair")]
@@ -61,31 +95,9 @@ namespace Inforoom2.Models
 		public virtual DateTime BeginTime { get; set; }
 
 		[Property(Column = "RegDate")]
-		public virtual DateTime EndTime { get; set; }
-	}
+		public virtual DateTime CreationDate { get; set; }
 
-	[Class(0, Table = "ConnectGraph", NameType = typeof(ConnectionRequest))]
-	public class ConnectionRequest : BaseModel
-	{
-		public ConnectionRequest()
-		{
-			
-		}
-		public ConnectionRequest(Client client) : this()
-		{
-			Client = client;
-		}
-
-		[ManyToOne(Column = "Brigad")]
-		public virtual ServiceMan ServiceMan { get; set; }
-
-		[ManyToOne(Column = "Client")]
-		public virtual Client Client { get; set; }
-
-		[Property(Column = "DateAndTime")]
-		public virtual DateTime BeginTime { get; set; }
-
-		[Property(Column = "DateAndTime")]
+		[Property(Column = "_EndTime")]
 		public virtual DateTime EndTime { get; set; }
 	}
 }
