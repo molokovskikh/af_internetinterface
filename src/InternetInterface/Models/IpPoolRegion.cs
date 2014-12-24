@@ -8,7 +8,7 @@ using NHibernate.Linq;
 namespace InternetInterface.Models
 {
 	/// <summary>
-	/// Ассоциация между IP-пулом и регионом
+	/// Связка (ассоциация) между IP-пулом и регионом
 	/// </summary>
 	[ActiveRecord("IpPoolRegions", Schema = "internet", Lazy = true)]
 	public class IpPoolRegion : ChildActiveRecordLinqBase<IpPoolRegion>

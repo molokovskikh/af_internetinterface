@@ -18,7 +18,7 @@
 		<div class="leftbg"></div>
 		<div class="rightbg"></div>
 		<div class="wrapper">
-		<div class="errorContainer"></div>
+			<div class="errorContainer"></div>
 			<div class="top">
 				<div class="tab">
 					<div class="whiteleft"></div>
@@ -28,10 +28,8 @@
 						<div class="arrow"></div>
 						<div class="cities">
 							@{
-								foreach (var city in ViewBag.Cities)
-								{
-									if (city != ViewBag.UserCity)
-									{
+								foreach (var city in ViewBag.Cities) {
+									if (city != ViewBag.UserCity) {
 										<a href="#">@city</a>
 									}
 								}
@@ -41,28 +39,24 @@
 					<div class="whiteright"></div>
 					<div class="blackright"></div>
 				</div>
-				@if (Request.IsAuthenticated && ViewBag.ClientInfo != null)
-	{
+				@if (Request.IsAuthenticated && ViewBag.ClientInfo != null) {
 					<div class="logon">
 						<p>	@ViewBag.ClientInfo </p>
-						@using (Html.BeginForm("Profile", "Personal", FormMethod.Get, new { @class = "logonform" }))
-	  {
+						@using (Html.BeginForm("Profile", "Personal", FormMethod.Get, new { @class = "logonform" })) {
 							<input type="submit" value="Личный кабинет">
-	  }
+						}
 						@Html.ActionLink("Выход", "Logout", "Account") 
 					</div>
-	}
-	else
-	{
+				}
+				else {
 					<div class="login">
-						@using (Html.BeginForm("Login", "Account", FormMethod.Post, null))
-	  {
+						@using (Html.BeginForm("Login", "Account", FormMethod.Post, null)) {
 							@Html.TextBoxFor(model => username, new { @class = "user", placeholder = "Номер счета" })
 							@Html.PasswordFor(model => password, new { @class = "user", placeholder = "Пароль" })
 							<input class="click" type="submit" value="Войти">
-	  }
+						}
 					</div>
-	}
+				}
 			</div>
 			<div class="header">
 				<a href="/">
@@ -86,8 +80,7 @@
 						menu.Add(new[] { "Вопросы и ответы", "Index", "Faq" });
 						menu.Add(new[] { "Оплата", "Payment", "About" });
 						menu.Add(new[] { "О компании", "Details", "About" });
-						foreach (var item in menu)
-						{
+						foreach (var item in menu) {
 							<li>@Html.ActionLink(item[0], item[1], item[2], null, new { @class = ViewBag.ControllerName == item[2] && ViewBag.ActionName == item[1] ? "active" : "" }) </li>
 						}
 					}
@@ -135,10 +128,8 @@
 		<div class="JavascriptParams" style="display: none">
 			@{
 				var dic = ViewBag.JavascriptParams as Dictionary<string, string>;
-				if (dic != null && dic.Count != 0)
-				{
-					foreach (var key in dic.Keys)
-					{
+				if (dic != null && dic.Count != 0) {
+					foreach (var key in dic.Keys) {
 						<div id="@key">@dic[key]</div>
 					}
 				}
@@ -160,30 +151,29 @@
 			<div class="cityWindow" id="CityWindow" >
 				<div>
 					@if (ViewBag.UserCity != null && ViewBag.UserCityBelongsToUs) {
-					<div id="userCity" class="whiteblocktext">
-						<p>Мы определили, что вы находитесь в регионе <span class="UserCity">@(ViewBag.UserCity)</span></p>
-					</div>
+						<div id="userCity" class="whiteblocktext">
+							<p>Мы определили, что вы находитесь в регионе <span class="UserCity">@(ViewBag.UserCity)</span></p>
+						</div>
 						<div class="buttons">
 							<button class="click cancel">Нет</button>
 							<button class="click ok">Да</button>
 						</div>
 					}
 					else {
-						if(ViewBag.UserCity != null) {
-							 <div id="userCity" class="whiteblocktext">
+						if (ViewBag.UserCity != null) {
+							<div id="userCity" class="whiteblocktext">
 								<p>Мы определили, что вы находитесь в регионе <span class="UserCity">@(ViewBag.UserCity)</span>, но, к сожалению, мы не обслуживаем этот регион. Выберите регион из списка:</p>
 							</div>
-						 }
+						}
 						else {
-							 <div id="userCity" class="whiteblocktext">
+							<div id="userCity" class="whiteblocktext">
 								<p>Нам не удалось определить в каком регионе вы находитесь. Выберите регион из списка:</p>
 							</div>
 						}
 						<div class="cities">
-						@foreach (var city in ViewBag.Cities)
-						{
-							<a href="#">@city</a>
-						}
+							@foreach (var city in ViewBag.Cities) {
+								<a href="#">@city</a>
+							}
 						</div>
 					}
 				</div>
@@ -192,8 +182,7 @@
 				<div class="whiteblocktext"><p>Выберите регион из списка:</p></div>
 				<div class="cities">
 					@{
-						foreach (var city in ViewBag.Cities)
-						{
+						foreach (var city in ViewBag.Cities) {
 							<a href="#">@city</a>
 						}
 					}
@@ -205,10 +194,8 @@
 			<div class="cities container body-content">
 				Ваш город: <a href="#">@(ViewBag.UserCity)</a>
 				@{
-					foreach (var city in ViewBag.Cities)
-					{
-						if (city != ViewBag.UserCity)
-						{
+					foreach (var city in ViewBag.Cities) {
+						if (city != ViewBag.UserCity) {
 							<a href="#">@city</a>
 						}
 					}
@@ -221,8 +208,7 @@
 					String action = ViewBag.ActionName.ToString();
 					String controller = ViewBag.ControllerName.ToString();
 				}
-				@using (@Html.BeginForm(action, controller, FormMethod.Post))
-	{
+				@using (@Html.BeginForm("SubmitCallMeBackTicket", controller, new { actionString = action, controllerString = controller}, FormMethod.Post)) {
 					<div class="whiteblocktext">
 						<p>Наш оператор свяжется с вами в течении дня.
 						</p>
@@ -239,7 +225,7 @@
 					<div class="buttons">
 						<input class="contacting" type="submit" value="Связаться">
 					</div>
-	}
+				}
 			</div>
 			<div id="windowButtons" class="buttons">
 				<button class="click cancel">Нет</button>

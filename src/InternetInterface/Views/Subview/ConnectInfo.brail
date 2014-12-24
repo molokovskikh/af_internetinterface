@@ -37,7 +37,7 @@
 			<form class="formConnect" method="post" action="${siteroot}/UserInfo/LoadEditConnectMudule" style="display:inline;">
 			<input type="hidden" name="ClientID" value="${ClientCode}" />
 			<input type="hidden" name="EditConnectFlag" value="${ConnectInfo.endpointId}" />
-			<button id="EditConnectionBtn" type="submit"  class="button save">Редактировать</button>
+			<button id="EditConn${ConnectInfo.endpointId}Btn" type="submit"  class="button save">Редактировать</button>
 			</form>
 		<% end %>
 		</th>
@@ -186,9 +186,11 @@
 			<td colspan=2>
 				<% if (IpPools == null): %>
 					<span class="error">Невозмоно задать IP-пул, т.к. не задан регион</span>
+				<% elif (IpPools.Count == 0): %>
+					<span class="error">Невозмоно задать IP-пул, т.к. к данному региону не прикреплен ни один IP-пул </span>
 				<% else: %>
 					<select name="ConnectInfo.Pool" id="PoolsSelect" style="width: 50%">
-						<option value="0"></option>
+						<option value=""></option>
 						<% for pool in IpPools: %>
 						<option value="${pool.Id}" ${"selected" if (pool.Id == ConnectInfo.Pool)}>!{pool.Id} (!{pool.Begin}-!{pool.End})</option>
 						<% end %>

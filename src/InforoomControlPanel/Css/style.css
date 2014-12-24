@@ -1,0 +1,33 @@
+﻿ @media print {
+	.main-content > *, .ConnectionTable > *{ display: none;}
+	.main-content .servicemen.panel, .ConnectionTable{ display: block;}
+}
+ .servicemen table { table-layout:fixed; overflow:hidden;}
+ .servicemen td { height: 40px;}
+
+
+.Client.ServiceRequest textarea {width:600px; height:200px; resize: none;}
+	.servicemen {padding:10px;}
+	.servicemen .form-horizontal {margin: 10px 0px;}
+	.servicemen .wrapper{ margin:auto; width:700px; overflow-x: scroll; overflow-y: hidden;}
+	.ConnectionTable .wrapper{  width: auto!important; }
+	.ConnectionTable .servicemen.panel { width: auto!important;display: block!important;float: none !important; }
+	.servicemen table {text-align:center;}
+
+	.servicemen tbody th,.servicemen thead th:first-child {color: #949494;font-size: 9px; width:20px;}
+	.servicemen thead th {font-weight: bold;text-align: center;width:150px;}
+	.servicemen thead td { height: 30px;}
+
+	.servicemen td.time {cursor: pointer;}
+	.servicemen td.time:hover {color: black!important;}
+	.servicemen td.active {color: red!important;font-weight: bold;}
+	.servicemen .hover {color: black;}
+	.page-body .servicemen tbody .ServiceRequest {background: #0fbd71; color: white;border: 1px solid #f8f8f8;}
+	.page-body .servicemen tbody .ClientRequest {background: #0072bc; color: white;border: 1px solid #f8f8f8;}
+	.servicemen td.time {font-size:11px; text-align: center;}
+	.servicemen .time.left { display: none;}
+	
+	.page-body .servicemen  tbody  td.request {position: relative; vertical-align: top;}
+	.servicemen .description { font-weight: bold;margin-bottom: 20px;}
+	
+	.error .msg { color: red;}

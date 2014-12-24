@@ -27,6 +27,7 @@ namespace Inforoom2.Helpers
 				var session = SessionFactory.OpenSession();
 				CurrentSessionContext.Bind(session);
 				session.BeginTransaction();
+				(filterContext.Controller as BaseController).DbSession = session;
 			}
 		}
 
@@ -84,6 +85,8 @@ namespace Inforoom2.Helpers
 			    || tableName == "Requests"
 			    || tableName == "Partners"
 			    || tableName == "Payments"
+				|| tableName == "ServiceRequest"
+				|| tableName == "ConnectBrigads"
 			    || tableName == "Contacts") {
 				return tableName;
 			}

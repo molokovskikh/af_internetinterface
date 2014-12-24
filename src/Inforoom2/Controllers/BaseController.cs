@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Security.Principal;
 using System.Text;
 using System.Web;
@@ -12,6 +13,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
 using System.Web.UI.WebControls;
+using Common.Tools;
 using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
@@ -26,20 +28,17 @@ namespace Inforoom2.Controllers
 	/// Базовый контроллер от которого все наследуются
 	/// </summary>
 	[NHibernateActionFilter]
-	public abstract class BaseController : Controller
+	public class BaseController : Controller
 	{
-		public ISession DbSession
-		{
-			get { return MvcApplication.SessionFactory.GetCurrentSession(); }
-		}
-
-		protected static readonly ILog log = LogManager.GetLogger(typeof (BaseController));
+		public ISession DbSession;
+		protected static readonly ILog log = LogManager.GetLogger(typeof(BaseController));
 
 		protected ValidationRunner ValidationRunner;
 
-		protected BaseController()
+		public BaseController()
 		{
 			ValidationRunner = new ValidationRunner();
+			ViewBag.BreadCrumb = "Панель управления";
 			ViewBag.Validation = ValidationRunner;
 			ViewBag.Title = "Инфорум";
 			ViewBag.JavascriptParams = new Dictionary<string, string>();
@@ -65,7 +64,12 @@ namespace Inforoom2.Controllers
 
 		protected Employee CurrentEmployee
 		{
-			get { return DbSession.Query<Employee>().FirstOrDefault(k => k.Name == User.Identity.Name); }
+			get
+			{
+				if (User == null)
+					return null;
+				return DbSession.Query<Employee>().FirstOrDefault(k => k.Login == User.Identity.Name);
+			}
 		}
 
 		protected Client CurrentClient
@@ -127,7 +131,7 @@ namespace Inforoom2.Controllers
 			if (showErrorPage) {
 				filterContext.Result = new RedirectToRouteResult(
 					new RouteValueDictionary
-					{{"controller", "StaticContent"}, {"action", "Error"}});
+					{ { "controller", "StaticContent" }, { "action", "Error" } });
 				filterContext.ExceptionHandled = true;
 			}
 			log.ErrorFormat("{0} {1}", filterContext.Exception.Message, filterContext.Exception.StackTrace);
@@ -136,6 +140,7 @@ namespace Inforoom2.Controllers
 
 		protected override void OnActionExecuting(ActionExecutingContext filterContext)
 		{
+			ViewBag.JavascriptParams["baseurl"] = Request.Url.GetLeftPart(UriPartial.Authority);
 			var cookieCity = GetCookie("userCity");
 			if (!string.IsNullOrEmpty(cookieCity)) {
 				userCity = cookieCity;
@@ -156,10 +161,15 @@ namespace Inforoom2.Controllers
 			base.OnActionExecuted(filterContext);
 			if (filterContext.Exception != null) {
 			}
+
 			ViewBag.ActionName = filterContext.RouteData.Values["action"].ToString();
 			ViewBag.ControllerName = filterContext.RouteData.Values["controller"].ToString();
+
 			ProcessCallMeBackTicket();
 			ProcessRegionPanel();
+			if (CurrentEmployee != null) {
+				ViewBag.CurrentEmployee = CurrentEmployee;
+			}
 			if (CurrentClient != null) {
 				StringBuilder sb = new StringBuilder();
 				sb.AppendFormat("Здравствуйте, {0}. Ваш баланс: {1} руб.", CurrentClient.PhysicalClient.Name,
@@ -185,7 +195,6 @@ namespace Inforoom2.Controllers
 				SuccessMessage("Заявка отправлена. В течении для вам перезвонят.");
 				return;
 			}
-
 			ViewBag.CallMeBackTicket = callMeBackTicket;
 			if (GetJavascriptParam("CallMeBack") == null)
 				AddJavascriptParam("CallMeBack", "1");
@@ -241,7 +250,7 @@ namespace Inforoom2.Controllers
 			try {
 				geoAnswer = geoService.GetInfo();
 			}
-			catch (WebException e) {
+			catch (Exception e) {
 				return null;
 			}
 
@@ -264,13 +273,16 @@ namespace Inforoom2.Controllers
 			if (cookie == null) {
 				return string.Empty;
 			}
-			var s = Uri.UnescapeDataString(cookie.Value);
-			return HttpUtility.UrlDecode(s);
+
+			var base64EncodedBytes = System.Convert.FromBase64String(cookie.Value);
+			return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
 		}
 
 		public void SetCookie(string name, string value)
 		{
-			Response.Cookies.Add(new HttpCookie(name, value) {Path = "/"});
+			var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(value);
+			var text = System.Convert.ToBase64String(plainTextBytes);
+			Response.Cookies.Add(new HttpCookie(name, text) { Path = "/" });
 		}
 
 		public void DeleteCookie(string name)
@@ -294,6 +306,38 @@ namespace Inforoom2.Controllers
 				cookie.Expires = DateTime.Now.AddMinutes(FormsAuthentication.Timeout.TotalMinutes);
 			Response.Cookies.Set(cookie);
 			return RedirectToAction(action, controller);
+		}
+
+		public void SubmitCallMeBackTicket(string actionString, string controllerString)
+		{
+			ForwardToAction(controllerString, actionString, new object[0]);
+		}
+
+		public void ForwardToAction(string controllerString, string actionString, object[] parameters)
+		{
+			var type = Assembly.GetExecutingAssembly().GetTypes().First(t => t.Name == controllerString + "Controller");
+			var module = new UrlRoutingModule();
+			var col = module.RouteCollection;
+			HttpContext.RewritePath("/" + controllerString + "/" + actionString);
+			var fakeRouteData = col.GetRouteData(HttpContext);
+
+			var ctxt = new RequestContext(ControllerContext.HttpContext, fakeRouteData);
+			var factory = ControllerBuilder.Current.GetControllerFactory();
+			var iController = factory.CreateController(ctxt, controllerString);
+
+			var controller = iController as BaseController;
+			controller.DbSession = DbSession;
+			controller.ControllerContext = new ControllerContext(ctxt, this);
+
+			var methodTypes = parameters.Select(parameter => parameter.GetType()).ToList();
+			var actionMethod = type.GetMethod(actionString, methodTypes.ToArray());
+			var actionResult = (ActionResult)actionMethod.Invoke(controller, parameters);
+
+			controller.ViewBag.ActionName = actionString;
+			controller.ViewBag.ControllerName = controllerString;
+			controller.ProcessCallMeBackTicket();
+
+			actionResult.ExecuteResult(controller.ControllerContext);
 		}
 	}
 }

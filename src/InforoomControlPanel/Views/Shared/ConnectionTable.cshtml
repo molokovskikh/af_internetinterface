@@ -1,0 +1,112 @@
+﻿@using System.Activities.Expressions
+@using System.Activities.Statements
+@using Inforoom2.Models
+@{
+	ViewBag.Title = "График подключений";
+	var team = ViewBag.Servicemen;
+	DateTime date = ViewBag.ServicemenDate;
+	ServiceRequest ServiceRequest = ViewBag.ServiceRequest;
+}
+@section JavaScript{<script type="text/javascript"src="@Url.Content("~/Scripts/ClientController.ServiceRequest.js")"></script>}
+<div class="servicemen panel panel-primary col-md-6">
+	<div class="wrapper">
+		<form class="form-horizontal form-groups-bordered">
+		<div class="form-group">
+			<label class="col-sm-1 control-label">Дата</label>
+								
+			<div class="col-sm-4">
+				<div class="input-group">
+					<input type="text" data-format="dd.mm.yyyy" class="form-control datepicker" value="@date">
+										
+					<div class="input-group-addon">
+						<a href="#"><i class="entypo-calendar"></i></a>
+					</div>
+				</div>
+			</div>
+		</div>
+			</form>
+		<table class="table table-bordered table-striped datatable dataTable no-footer">
+			<thead>
+				<tr>
+					<th class="time left"></th>
+					@foreach (var employee in team) {
+						var cl = "employee" + employee.Id;
+						<th class="@cl">@employee.Employee.Name</th>
+					}
+				</tr>
+			</thead>
+			<tbody>
+				@{
+					var day = ServiceRequest != null ? ServiceRequest.BeginTime.Date : date;
+					var startHour = 9;
+					var endHour = 18;
+					var nowHour = startHour;
+					var NowMin = 0;
+					var step = ViewBag.TableTimeStep;
+
+					var showedRequests = new List<object>();
+				}
+				@while (nowHour < endHour) {
+					<tr>
+						@{var time = day.AddHours(nowHour).AddMinutes(NowMin);}
+						<th class="time left">@time.TimeOfDay.ToString().Substring(0, 5)</th>
+						@foreach (ServiceMan employee in team) {
+							var requestFlag = false;
+							var cl = "employee" + employee.Id;
+							//Отображение сервисных заявок
+							foreach (var request in employee.ServiceRequests) {
+								if (request.BeginTime <= time && request.EndTime >= time) {
+									requestFlag = true;
+									if (showedRequests.Contains(request)) {
+										continue;
+									}
+									showedRequests.Add(request);
+									//Надо вычислить сколько ячеек будет занимать наша запись
+									var diff = request.EndTime - request.BeginTime;
+									double span = Math.Ceiling(diff.TotalMinutes / step);
+									<td class="@cl ServiceRequest request" rowspan="@span">
+										<div class="description">@request.Description</div>
+										<div class="contact">@request.Client.PhysicalClient.PhoneNumber</div>
+										<div class="address">@request.Client.GetAddressString()</div>
+									</td>
+								}
+							}
+							//Отображение заявок на подключение
+							foreach (var request in employee.ClientRequests) {
+								if (request.BeginTime <= time && request.EndTime >= time) {
+									requestFlag = true;
+									if (showedRequests.Contains(request)) {
+										continue;
+									}
+									showedRequests.Add(request);
+									//Надо вычислить сколько ячеек будет занимать наша запись
+									var diff = request.EndTime - request.BeginTime;
+									double span = Math.Floor(diff.TotalMinutes / step);
+									<td class="@cl ClientRequest request" rowspan="@span">
+										<div  class="description">@request.ApplicantName</div>
+										<div  class="contact">@request.ApplicantPhoneNumber</div>
+										<div  class="address"></div>
+									</td>
+								}
+							}
+							if (!requestFlag) {
+								var active = "";
+								if (ServiceRequest != null && ServiceRequest.ServiceMan == employee && ServiceRequest.BeginTime == time)
+								{
+									active = "active";
+								}
+								<td class="@cl time @active">@time.TimeOfDay.ToString().Substring(0, 5)</td>
+							}
+						}
+
+					</tr>
+					NowMin += step;
+					if (NowMin >= 60) {
+						nowHour++;
+						NowMin = 0;
+					}
+				}
+			</tbody>
+		</table>
+	</div>
+</div>

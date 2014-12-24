@@ -250,7 +250,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Components\CustomAuthorizeAttribute.cs" />
     <Compile Include="Components\EmailSender.cs" />
     <Compile Include="Components\EntityBinder.cs" />
@@ -301,6 +300,7 @@
     <Compile Include="Models\Payment.cs" />
     <Compile Include="Models\PlanTransfer.cs" />
     <Compile Include="Models\SaleSettings.cs" />
+    <Compile Include="Models\ServiceMan.cs" />
     <Compile Include="Models\Services\BlockAccountService.cs" />
     <Compile Include="Models\Services\DeferredPayment.cs" />
     <Compile Include="Models\Services\HardwareRent.cs" />
@@ -352,6 +352,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="App_Start\" />
     <Folder Include="Content\" />
     <Folder Include="Properties\" />
   </ItemGroup>

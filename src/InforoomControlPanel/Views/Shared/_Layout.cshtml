@@ -1,31 +1,175 @@
-﻿<!DOCTYPE html>
-
+﻿@using System.Web.UI.WebControls
+@using Inforoom2.Models
+<!DOCTYPE html>
 @{
 	string username = "";
 	string password = "";
+	Employee CurrentEmployee = ViewBag.CurrentEmployee;
 }
 <html>
 	<head>
-		<title>Inforoom панель управление</title>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="description" content="Neon Admin Panel" />
+		<meta name="author" content="" />
+
+		<title>Панель управления | @ViewBag.Title</title>
+
+		<link rel="stylesheet" href="~/assets/js/jquery-ui/css/no-theme/jquery-ui-1.10.3.custom.min.css">
+		<link rel="stylesheet" href="~/assets/css/font-icons/entypo/css/entypo.css">
+		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic">
+		<link rel="stylesheet" href="~/assets/css/bootstrap.css">
+		<link rel="stylesheet" href="~/assets/css/neon-core.css">
+		<link rel="stylesheet" href="~/assets/css/neon-theme.css">
+		<link rel="stylesheet" href="~/assets/css/neon-forms.css">
+		<link rel="stylesheet" href="~/assets/css/custom.css">
+
+		<script src="~/assets/js/jquery-1.11.0.min.js"></script>
+		<script>$.noConflict();</script>
+
+		<!--[if lt IE 9]><script src="~/assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+
 	</head>
-	<body>
-			<div class="login">
-	@if (Request.IsAuthenticated) {
-		<text>
-			[ @Html.ActionLink("Выход", "AdminLogout", "AdminAccount") ]
-		</text>
-	}
-	else {
-		@Html.ActionLink("Войти","Login","AdminAccount")
-	}
-</div>
-			<div class="@(ViewBag.ControllerName) @(ViewBag.ActionName)">
-				@RenderBody()
+<body class="page-body" data-url="http://neon.dev">
+<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
+	
+	<div class="sidebar-menu">
+
+		<div class="sidebar-menu-inner">
+			
+			<header class="logo-env">
+
+				<!-- logo -->
+				<div class="logo">
+					<a href="index.html">
+						<img src="~/assets/images/logo@2x.png" width="120" alt="" />
+					</a>
+				</div>
+
+				<!-- logo collapse icon -->
+				<div class="sidebar-collapse">
+					<a href="#" class="sidebar-collapse-icon"><!-- add class "with-animation" if you want sidebar to have animation during expanding/collapsing transition -->
+						<i class="entypo-menu"></i>
+					</a>
+				</div>
+
+								
+				<!-- open/close menu icon (do not remove if you want to enable menu on mobile devices) -->
+				<div class="sidebar-mobile-menu visible-xs">
+					<a href="#" class="with-animation"><!-- add class "with-animation" to support animation -->
+						<i class="entypo-menu"></i>
+					</a>
+				</div>
+
+			</header>
+			
+									
+			<ul id="main-menu" class="main-menu">
+				<!-- add class "multiple-expanded" to allow multiple submenus to open -->
+				<!-- class "auto-inherit-active-class" will automatically add "active" class for parent elements who are marked already with class "active" -->
+				<li>
+					<a href="@Url.Action("Impersonate","AdminAccount")">
+						<i class="entypo-home"></i>
+						<span class="title">Главная</span>
+					</a>
+				</li>
+				<li>
+				<a href="@Url.Action("Index","Client")">
+						<i class="entypo-users"></i>
+						<span class="title">Клиенты</span>
+				</a>
+				</li>
+				<li>
+					<a href="@Url.Action("Brigads","ConnectionTeam")">
+						<i class="entypo-attention"></i>
+						<span class="title">Сервисные бригады</span>
+					</a>
+					<ul class="visible">
+						<li>
+							<a href="@Url.Action("Servicemen","ConnectionTeam")">
+								<span class="title">Сервисные инженеры</span>
+							</a>
+						</li>
+						<li>
+							<a href="@Url.Action("ServiceRequests","ConnectionTeam")">
+								<span class="title">Сервисные заявки</span>
+							</a>
+						</li>
+						<li>
+							<a href="@Url.Action("ClientRequests","ConnectionTeam")">
+								<span class="title">Заявки на подключение</span>
+							</a>
+						</li>
+						<li>
+							<a href="@Url.Action("ConnectionTable","ConnectionTeam")">
+								<span class="title">График подключений</span>
+							</a>
+						</li>
+					</ul>
+				</li>
+			</ul>
+			
+		</div>
+
+	</div>
+
+	<div class="main-content">
+		<div class="row">
+			<!-- Profile Info and Notifications -->
+			<div class="col-md-6 col-sm-8 clearfix">
+			</div>
+			<!-- Raw Links -->
+			<div class="col-md-6 col-sm-4 clearfix hidden-xs">
+		
+				<ul class="list-inline links-list pull-right">
+					<li>@CurrentEmployee.Name</li>
+					<li class="sep"></li>
+					<li>
+						<a href="@Url.Action("AdminLogout", "AdminAccount")">
+							Выход <i class="entypo-logout right"></i>
+						</a>
+					</li>
+				</ul>
 			</div>
 		
-<!-- Техническая информация -->
+		</div>
+		<hr />
+		<ol class="breadcrumb bc-3">
+			<li>
+				<a href="@Url.Action("Impersonate","AdminAccount")"><i class="fa-home"></i>Панель управления</a>
+			</li>
+			<li>
+				<a href="@Url.Action("Index")">@ViewBag.BreadCrumb</a>
+			</li>
+			<li class="active">
+				<strong>@ViewBag.Title</strong>
+			</li>
+		</ol>
+		<h2>@ViewBag.Title</h2>
+		<br/>
+		<div class="@ViewBag.ControllerName @ViewBag.ActionName">
+		@RenderBody()
+		</div>
+		<!-- lets do some work here... -->
+		<!-- Footer -->
+		<footer class="main">
+			
+			&copy; 2014 <strong>Neon</strong> Admin Theme by <a href="http://laborator.co" target="_blank">Laborator</a>
+		
+		</footer>
+	</div>
+</div>
+
+		<!-- Техническая информация -->
 		<div class="JavascriptParams" style="display: none">
 			@{
 				var dic = ViewBag.JavascriptParams as Dictionary<string, string>;
@@ -36,14 +180,32 @@
 				}
 			}
 		</div>
-	
+		
+		<!-- Bottom scripts (common) -->
+	<script src="~/assets/js/gsap/main-gsap.js"></script>
+	<script src="~/assets/js/jquery-ui/js/jquery-ui-1.10.3.minimal.min.js"></script>
+	<script src="~/assets/js/bootstrap.js"></script>
+	<script src="~/assets/js/bootstrap-datepicker.js"></script>
+	<script src="~/assets/js/bootstrap-timepicker.min.js"></script>
+	<script src="~/assets/js/joinable.js"></script>
+	<script src="~/assets/js/resizeable.js"></script>
+	<script src="~/assets/js/neon-api.js"></script>
 
-	<script type="text/javascript" src="~/Scripts/jquery-2.1.1.js"></script>
-	<script type="text/javascript" src="~/Scripts/jquery-ui-1.11.1.js"></script>
-	<script type="text/javascript" src="~/Scripts/Helpers.js"></script>
-	<script type="text/javascript" src="~/Scripts/EventEmitter.js"></script>
-	<script type="text/javascript" src="~/Scripts/Inforoom.js"></script>
-	<script type="text/javascript" src="~/Scripts/Window.js"></script>
-	@RenderSection("JavaScript", required: false)
+
+	<!-- JavaScripts initializations and stuff -->
+	<script src="~/assets/js/neon-custom.js"></script>
+
+
+	<!-- Demo Settings -->
+	<script src="~/assets/js/neon-demo.js"></script>
+
+		<script type="text/javascript" src="~/Scripts/jquery-2.1.1.js"></script>
+		<script type="text/javascript" src="~/Scripts/jquery-ui-1.11.1.js"></script>
+		<script type="text/javascript" src="~/Scripts/Helpers.js"></script>
+		<script type="text/javascript" src="~/Scripts/EventEmitter.js"></script>
+		<script type="text/javascript" src="~/Scripts/ControlPanel.js"></script>
+		<script type="text/javascript" src="~/Scripts/Window.js"></script>
+		<link rel="stylesheet" href="~/Css/style.css"></link>
+		@RenderSection("JavaScript", required: false)
 	</body>
 </html>
