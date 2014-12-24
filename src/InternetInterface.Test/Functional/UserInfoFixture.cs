@@ -171,6 +171,31 @@ namespace InternetInterface.Test.Functional
 			AssertText("Время");
 		}
 
+		[Test(Description = "Тест для проверки вывода комментария и агента платежа в строку платежа")]
+		public void CheckCommentAndAgentInPaymentLine()
+		{
+			// Создать клиенту новый платеж
+			var newPay = new Payment(Client, 500) {
+				Comment = "new bonus",
+				Virtual = true
+			};
+			session.Save(newPay);
+
+			// Обработать новый платеж клиента
+			newPay.BillingAccount = true;
+			newPay.Update();
+			Client.Refresh();
+
+			Open(string.Format("UserInfo/ShowPhysicalClient?filter.ClientCode={0}", Client.Id));
+			Css("#show_payments").Click();
+
+			// Проверить содержание данных по новому платежу в 1-ой строке таблицы "Платежи"
+			WaitForText("Инфорум");
+			Assert.IsTrue(Css("#Row0 > td:nth-child(3)").Text.Contains("Инфорум"));
+			Assert.IsTrue(Css("#Row0 > td:nth-child(6)").Text == newPay.Sum.ToString("F"));
+			Assert.IsTrue(Css("#Row0 > td:nth-child(7)").Text == newPay.Comment);
+		}
+
 		[Test]
 		public void UserWriteOffsTest()
 		{

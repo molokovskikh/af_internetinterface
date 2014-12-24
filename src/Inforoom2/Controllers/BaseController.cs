@@ -42,7 +42,7 @@ namespace Inforoom2.Controllers
 			ViewBag.Validation = ValidationRunner;
 			ViewBag.Title = "Инфорум";
 			ViewBag.JavascriptParams = new Dictionary<string, string>();
-			ViewBag.Cities = new string[] { "Борисоглебск", "Белгород" };
+			ViewBag.Cities = new string[] {"Борисоглебск", "Белгород"};
 		}
 
 		public void AddJavascriptParam(string name, string value)
@@ -172,7 +172,8 @@ namespace Inforoom2.Controllers
 			}
 			if (CurrentClient != null) {
 				StringBuilder sb = new StringBuilder();
-				sb.AppendFormat("Здравствуйте, {0}. Ваш баланс: {1} руб.", CurrentClient.PhysicalClient.Name, CurrentClient.PhysicalClient.Balance);
+				sb.AppendFormat("Здравствуйте, {0}. Ваш баланс: {1} руб.", CurrentClient.PhysicalClient.Name,
+					CurrentClient.PhysicalClient.Balance);
 				ViewBag.ClientInfo = sb.ToString();
 			}
 		}
@@ -180,8 +181,8 @@ namespace Inforoom2.Controllers
 		private void ProcessCallMeBackTicket()
 		{
 			ViewBag.CallMeBackTicket = new CallMeBackTicket();
-			var binder = new EntityBinderAttribute("callMeBackTicket.Id", typeof(CallMeBackTicket));
-			CallMeBackTicket callMeBackTicket = (CallMeBackTicket)binder.MapModel(Request);
+			var binder = new EntityBinderAttribute("callMeBackTicket.Id", typeof (CallMeBackTicket));
+			CallMeBackTicket callMeBackTicket = (CallMeBackTicket) binder.MapModel(Request);
 			if (Request.Params["callMeBackTicket.Name"] == null)
 				return;
 			var client = CurrentClient;
@@ -252,6 +253,8 @@ namespace Inforoom2.Controllers
 			catch (Exception e) {
 				return null;
 			}
+
+			if (geoAnswer == null) return null;
 			return geoAnswer.City;
 		}
 
@@ -287,7 +290,8 @@ namespace Inforoom2.Controllers
 			Response.Cookies.Remove(name);
 		}
 
-		protected ActionResult Authenticate(string action, string controller, string username, bool shouldRemember, string userData = "")
+		protected ActionResult Authenticate(string action, string controller, string username, bool shouldRemember,
+			string userData = "")
 		{
 			var ticket = new FormsAuthenticationTicket(
 				1,

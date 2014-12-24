@@ -1,40 +1,48 @@
 ﻿<style type="text/css">
 	.WriteOffSum
 	{
-		width:250px;
+		width:80px;
 	}
 	.WriteOffDate
 	{
-		width:355px;
+		width:80px;
+	}
+	.WriteOffComment
+	{
+		width:150px;
+	}
+	.WriteOffAgent
+	{
+		width:95px;
 	}
 
 	#clientInfo table tbody tr td
 	{
-		border-bottom: 1px double #dfdddd;
-		padding-top : 5px;
-		padding-bottom : 5px;
-		}
+	border-bottom: 1px double #dfdddd;
+	padding-top : 5px;
+	padding-bottom : 5px;
+	}
 
 	#clientInfo table
 	{
-		text-align:center;
-		}
+	text-align:center;
+	}
 
 	.hideH
 	{
-		display:inline;
-		padding:5px;
-		margin-bottom:5px;
-		}
+	display:inline;
+	padding:5px;
+	margin-bottom:5px;
+	}
 
 	#headDiv .headTable td
 	{
-		background:none;
-		}
+	background:none;
+	}
 	.headTable
 	{
-		margin-left:-10px;
-		}
+	margin-left:-10px;
+	}
 </style>
 <script type="text/javascript">
 	$(function () {
@@ -141,9 +149,9 @@ function GetLinkText(hide) {
 </div>
 <div class="text" id="clientInfo">
 <% if Payments.Length > 0: %>
-	<h3 class=hideH><b>Зачисления</b></h3>
+	<h3 class="hideH"><b>Зачисления</b></h3>
 	<% if Payments.Length > 1: %>
-	<a href="javascript:" class="But_slide_payment"">Показать все</a>
+	<a href="javascript:" class="But_slide_payment">Показать все</a>
 	<% end %>
 	<br /><br />
 	<table cellpadding="3" cellspacing="0" width="100%">
@@ -151,11 +159,21 @@ function GetLinkText(hide) {
 			<tr class="caption">
 				<td>Сумма</td>
 				<td>Дата</td>
+				<td>Комментарий</td>
+				<td>Зарегистрировал</td>
 			</tr>
 		</thead>
 			<tr>
 				<td class="WriteOffSum">${Payments[0].Sum.ToString("0.00")}</td>
 				<td class="WriteOffDate">${Payments[0].PaidOn.ToShortDateString()}</td>
+				<td class="WriteOffComment">${Payments[0].Comment}</td>
+				<td class="WriteOffAgent">
+					<% if (Payments[0].Virtual == true): %>
+						Инфорум
+					<% else: %>
+						${?Payments[0].Agent.Name}
+					<% end %>
+				</td>
 			</tr>
 	</table>
 <div id="paymentDiv" style="display:none;">
@@ -165,6 +183,14 @@ function GetLinkText(hide) {
 		<tr>
 			<td class="WriteOffSum">${item.Sum.ToString("0.00")}</td>
 			<td class="WriteOffDate">${item.PaidOn.ToShortDateString()}</td>
+			<td class="WriteOffComment">${item.Comment}</td>
+			<td class="WriteOffAgent">
+				<% if (item.Virtual == true): %>
+						Инфорум
+				<% else: %>
+						${?item.Agent.Name}
+				<% end %>
+			</td>
 		</tr>
 	<% end end %>
 	</table>
@@ -173,7 +199,7 @@ function GetLinkText(hide) {
 	userWriteOffs = Client.GetUserWriteOffs()
 	if userWriteOffs.Count > 0: %>
 	<br />
-	<h3 class=hideH><b>Дополнительные услуги</b></h3>
+	<h3 class="hideH"><b>Дополнительные услуги</b></h3>
 	<% if userWriteOffs.Count > 1: %>
 	<a href="javascript:" class="But_slide_User_WriteOff">Показать все</a>
 	<% end %>

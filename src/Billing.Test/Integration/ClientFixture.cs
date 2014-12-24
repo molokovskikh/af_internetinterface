@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -295,15 +296,17 @@ namespace Billing.Test.Integration
 			};
 			session.Save(payment);
 
-			//эта строчка нужна так как иначе биллинг получит клиента без пеймента - сессия не отдельная, однако
+			//эта строчка нужна, так как иначе биллинг получит клиента без платежа - сессия не отдельная, однако
 			session.Refresh(client);
-			Assert.That(client.Payments.Count, Is.EqualTo(1));
 			Assert.That(client.Balance, Is.EqualTo(0));
-			//Проверяем 1 раз - новый платеж бы создан, но не обработан
+			Assert.That(client.Payments.Count, Is.EqualTo(1));
+			Assert.That(client.Payments[0].Comment, Is.EqualTo(null));
+			//Проверяем 1 раз - новый платеж был создан, но не обработан
 			billing.ProcessPayments();
 			session.Refresh(client);
 			Assert.That(client.Balance, Is.EqualTo(600));
 			Assert.That(client.Payments.Count, Is.EqualTo(2));
+			Assert.That(client.Payments[1].Comment, Is.EqualTo("Месяц в подарок"));
 			//Во второй раз обработается виртуальный бонусный платеж
 			billing.ProcessPayments();
 			session.Refresh(client);
@@ -318,7 +321,7 @@ namespace Billing.Test.Integration
 			session.Refresh(client);
 			Assert.That(client.Payments.Count, Is.EqualTo(3));
 
-			//Пусть билинг, хоть заработается себе но никаких новых бонусов быть не должно
+			//Пусть билинг хоть заработается себе, но никаких новых бонусов быть не должно
 			billing.ProcessPayments();
 			billing.ProcessPayments();
 			billing.ProcessPayments();

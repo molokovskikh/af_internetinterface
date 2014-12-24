@@ -2,8 +2,6 @@
 using System.Linq;
 using System.Net;
 using Billing;
-using Common.Tools;
-using InternetInterface;
 using InternetInterface.Controllers;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
@@ -11,9 +9,7 @@ using InternetInterface.Services;
 using InternetInterface.Test.Helpers;
 using NHibernate.Linq;
 using NUnit.Framework;
-using OpenQA.Selenium;
 using Test.Support.Selenium;
-using InternetInterface.Models.Services;
 
 namespace InforoomInternet.Test.Functional
 {
@@ -380,6 +376,32 @@ namespace InforoomInternet.Test.Functional
 			Css("#client_PhysicalClient_Tariff_Id").SelectByValue(noIptvTariff.Id.ToString());
 			browser.FindElementByCssSelector("input[type='submit']").Click();
 			AssertText("Переход на этот тариф не возможен с включенной услугой IPTV");
+		}
+
+		[Test(Description = "Тест для проверки вывода комментария и агента платежа в строку платежа ")]
+		public void CheckCommentAndAgentInPaymentLine()
+		{
+			// Создать клиенту новый платеж
+			var newPay = new Payment(client, 500) {
+				Comment = "new bonus",
+				Virtual = true
+			};
+			session.Save(newPay);
+
+			// Проверить наличие заголовков "Комментарий" и "Зарегистрировал" в таблице "Зачисления"
+			AssertText("Комментарий");
+			AssertText("Зарегистрировал");
+
+			// Обработать новый платеж клиента
+			newPay.BillingAccount = true;
+			newPay.Update();
+			Refresh();										// Обновить текущую страницу сайта
+				
+			// Проверить содержание данных по новому платежу в 1-ой строке таблицы "Зачисления"
+			Assert.IsTrue(Css(".WriteOffSum").Text == newPay.Sum.ToString("F"));
+			Assert.IsTrue(Css(".WriteOffDate").Text == newPay.PaidOn.ToString("dd.MM.yyyy"));
+			Assert.IsTrue(Css(".WriteOffComment").Text == newPay.Comment);
+			Assert.IsTrue(Css(".WriteOffAgent").Text == "Инфорум");
 		}
 	}
 }
