@@ -56,7 +56,10 @@ namespace Inforoom2.Helpers
 						optionAttributes.Replace("{", "").Replace("}", ""), value);
 				}
 			}
-			string selectId = modelCollection.FirstOrDefault().GetType().Name + "DropDown";
+			string selectId = string.Empty;
+			if (modelCollection.Count > 0) {
+				selectId = modelCollection.FirstOrDefault().GetType().Name + "DropDown";
+			}
 
 			var selectString = string.Format("<select id='{0}' name='{3}' {2}>{1}</select>", selectId.Replace("Proxy", ""),
 				options, selectAttributes, propertyInfo);

@@ -27,6 +27,7 @@ namespace Inforoom2.Helpers
 				var session = SessionFactory.OpenSession();
 				CurrentSessionContext.Bind(session);
 				session.BeginTransaction();
+				(filterContext.Controller as BaseController).DbSession = session;
 			}
 		}
 

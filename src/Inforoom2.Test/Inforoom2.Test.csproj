@@ -55,6 +55,15 @@
       <Private>True</Private>
       <HintPath>..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Web.Mvc">
+      <HintPath>..\..\packages\Mvc2Futures.2.0.50217.0\lib\Microsoft.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="MvcContrib">
+      <HintPath>..\..\packages\MvcContrib.2.0.95.0\lib\MvcContrib.dll</HintPath>
+    </Reference>
+    <Reference Include="MvcContrib.TestHelper">
+      <HintPath>..\..\packages\MvcContrib.TestHelper.2.0.95.0\lib\net\MvcContrib.TestHelper.dll</HintPath>
+    </Reference>
     <Reference Include="NHibernate">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NHibernate.4.0.2.4000\lib\net40\NHibernate.dll</HintPath>
@@ -79,6 +88,9 @@
     <Reference Include="nunit.framework">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NUnit.2.5.10.11092\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Rhino.Mocks">
+      <HintPath>..\..\packages\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -120,6 +132,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common.Web.UI\Common.Web.Ui\Common.Web.Ui.csproj">
+      <Project>{95E2C313-46FA-4B4B-9EFF-3228662908F4}</Project>
+      <Name>Common.Web.Ui</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Inforoom2\Inforoom2.csproj">
       <Project>{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}</Project>
       <Name>Inforoom2</Name>
@@ -158,8 +174,10 @@
   <ItemGroup>
     <Compile Include="Functional\BaseFixture.cs" />
     <Compile Include="Functional\FaqFixture.cs" />
+    <Compile Include="Functional\CallMeBackFixture.cs" />
     <Compile Include="Functional\HomeFixture.cs" />
     <Compile Include="Functional\Setup.cs" />
+    <Compile Include="Integration\BaseIntegrationFixture.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -45,7 +45,7 @@ namespace Inforoom2
 		protected void Application_Start()
 		{
 			AreaRegistration.RegisterAllAreas();
-			RouteConfig.RegisterRoutes(RouteTable.Routes);
+			RegisterRoutes(RouteTable.Routes);
 			log4net.Config.XmlConfigurator.Configure();
 			InitializeSessionFactory();
 		}
@@ -149,6 +149,16 @@ namespace Inforoom2
 			errorController.Execute(new RequestContext(
 					new HttpContextWrapper(Context), routeData));
 			
+		}
+
+		public static void RegisterRoutes(RouteCollection routes)
+		{
+			routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+			routes.MapRoute(
+				name: "Default",
+				url: "{controller}/{action}/{id}",
+				defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+				);
 		}
 	}
 }
