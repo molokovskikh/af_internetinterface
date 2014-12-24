@@ -93,25 +93,20 @@
 						<i class="entypo-attention"></i>
 						<span class="title">Сервисные бригады</span>
 					</a>
-					<ul>
+					<ul class="visible">
 						<li>
-							<a href="@Url.Action("Brigads","ConnectionTeam")">
-								<span class="title">Бригады</span>
-							</a>
-						</li><li>
 							<a href="@Url.Action("Servicemen","ConnectionTeam")">
 								<span class="title">Сервисные инженеры</span>
 							</a>
 						</li>
 						<li>
-							<a href="@Url.Action("ServiceRequest","ConnectionTeam")">
-								<span class="title">Сервисная заявка</span>
+							<a href="@Url.Action("ServiceRequests","ConnectionTeam")">
+								<span class="title">Сервисные заявки</span>
 							</a>
 						</li>
 						<li>
-							<a href="@Url.Action("ConnectionRequest","ConnectionTeam")">
-								<span class="title">Заявка на подключение</span>
-								<span class="badge badge-success badge-roundless">+1</span>
+							<a href="@Url.Action("ClientRequests","ConnectionTeam")">
+								<span class="title">Заявки на подключение</span>
 							</a>
 						</li>
 						<li>

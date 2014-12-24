@@ -85,6 +85,8 @@ namespace Inforoom2.Helpers
 			    || tableName == "Requests"
 			    || tableName == "Partners"
 			    || tableName == "Payments"
+				|| tableName == "ServiceRequest"
+				|| tableName == "ConnectBrigads"
 			    || tableName == "Contacts") {
 				return tableName;
 			}

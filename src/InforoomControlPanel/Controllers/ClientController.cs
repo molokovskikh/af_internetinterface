@@ -22,6 +22,12 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.Clients = clients;
 			return View("ClientList");
 		}
+
+		/// <summary>
+		/// Создание заявки на подключение
+		/// </summary>
+		/// <param name="clientId"></param>
+		/// <returns></returns>
 		public ActionResult ServiceRequest(int clientId)
 		{
 			var client = DbSession.Get<Client>(clientId);
@@ -30,16 +36,28 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.Client = client;
 			ViewBag.ServiceRequest = ServiceRequest;
 			ViewBag.Servicemen = servicemen;
+			ViewBag.ServicemenDate = DateTime.Today;
 			return View();
 		}
 
+		/// <summary>
+		/// Создание заявки на подключение
+		/// </summary>
+		/// <param name="clientId"></param>
+		/// <returns></returns>
 		[HttpPost]
-		public ActionResult ServiceRequest(ServiceRequest ServiceRequest)
+		public ActionResult ServiceRequest([EntityBinder] ServiceRequest ServiceRequest)
 		{
-			var forms = Request.Form;
 			var client = ServiceRequest.Client;
 			this.ServiceRequest(client.Id);
-
+			ViewBag.ServicemenDate = ServiceRequest.BeginTime.Date;
+			var errors = ValidationRunner.ValidateDeep(ServiceRequest);
+			if (errors.Length == 0) {
+				DbSession.Save(ServiceRequest);
+				SuccessMessage("Сервисная заявка успешно добавлена");
+				return this.ServiceRequest(client.Id);
+			}
+			ViewBag.ServiceRequest = ServiceRequest;
 			return View();
 		}
 	}

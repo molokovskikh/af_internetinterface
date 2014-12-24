@@ -31,6 +31,14 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual bool SelfConnect { get; set; }
 
+		[ManyToOne(Column = "_ServiceMan")]
+		public virtual ServiceMan ServiceMan { get; set; }
+
+		[Property(Column = "_BeginTime")]
+		public virtual DateTime BeginTime { get; set; }
+
+		[Property(Column = "_EndTime")]
+		public virtual DateTime EndTime { get; set; }
 
 		//Поля старой модели заявки
 

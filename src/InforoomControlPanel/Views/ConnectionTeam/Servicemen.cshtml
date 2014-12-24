@@ -1,5 +1,6 @@
 ﻿@using System.Activities.Expressions
 @using System.Activities.Statements
+@using Inforoom2.Components
 @using Inforoom2.Models
 @using Inforoom2.Helpers
 @{
@@ -7,18 +8,35 @@
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	List<Employee> employees = ViewBag.Employees;
 	List<ServiceMan> team = ViewBag.Team;
+	List<Region> regions = ViewBag.Regions;
 	ServiceMan ServiceMan = ViewBag.ServiceMan;
+	string action = ViewBag.ActionName;
+	string controller = ViewBag.ControllerName;
 }
-@using (@Html.BeginForm(FormMethod.Post)) {
-	<div>
-		<div>Добавление сервисного инженера</div>
-		<div>
-			@Html.DropDownListExtendedFor(i => ServiceMan.Employee,employees, obj => obj.Name, null)
-			@ViewBag.Validation.GetError(ServiceMan, "Employee", "Поле не может быть пустым")
-			<input type="submit"  value="Добавить"/>
-		</div>
+<div class="panel panel-primary col-md-12">
+	<div class="panel-body">
+		@using (@Html.BeginForm(action, controller, null, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
+		{
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Соотрудник</label>
+				<div class="col-sm-4">
+					@Html.DropDownListExtendedFor(i => ServiceMan.Employee,employees, obj => obj.Name, null, new { @class = "form-control" })
+					@ViewBag.Validation.GetError(ServiceMan, "Employee", "Поле не может быть пустым")
+				</div>
+			</div>
+	  			<div class="form-group">
+				<label class="col-sm-2 control-label">Регион</label>
+				<div class="col-sm-4">
+				@Html.DropDownListExtendedFor(i => ServiceMan.Region,regions, obj => obj.Name, null, new { @class = "form-control" })
+				@ViewBag.Validation.GetError(ServiceMan, "Region", "Поле не может быть пустым")
+				</div>
+			</div>
+			<div class="form-group">
+				<button class="btn btn-green" type="submit">Добавить</button>
+			</div>
+		}
 	</div>
-}
+</div>
 <div>
 	<h2>Сервисные инженеры:</h2>
 	@foreach (var serviceMan in team) {

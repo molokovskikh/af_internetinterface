@@ -140,6 +140,7 @@ namespace Inforoom2.Controllers
 
 		protected override void OnActionExecuting(ActionExecutingContext filterContext)
 		{
+			ViewBag.JavascriptParams["baseurl"] = Request.Url.GetLeftPart(UriPartial.Authority);
 			var cookieCity = GetCookie("userCity");
 			if (!string.IsNullOrEmpty(cookieCity)) {
 				userCity = cookieCity;
@@ -248,7 +249,7 @@ namespace Inforoom2.Controllers
 			try {
 				geoAnswer = geoService.GetInfo();
 			}
-			catch (WebException e) {
+			catch (Exception e) {
 				return null;
 			}
 			return geoAnswer.City;

@@ -52,9 +52,14 @@ function ControlPanel() {
 				$(input).val(datepicker + " " + timepicker);
 			}
 		}
-
+		console.log("init datepickers");
 		$(".datepicker, .timepicker").each(function () {
-			$(this).get(0).onchange = refreshDatepicker;
+			var oldEvent = $(this).get(0).onchange;
+			$(this).get(0).onchange = function () {
+				refreshDatepicker();
+				if (oldEvent)
+					oldEvent();
+			}
 			refreshDatepicker.call(this);
 		});
 		

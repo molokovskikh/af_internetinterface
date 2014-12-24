@@ -1488,6 +1488,7 @@
     <Content Include="assets\js\zurb-responsive-tables\stylesheets\ui.css" />
     <Content Include="Css\style.css" />
     <Content Include="Scripts\AdminAddressController.js" />
+    <Content Include="Scripts\ClientController.ServiceRequest.js" />
     <Content Include="Scripts\EditNewsBlock.js" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\EventEmitter.js" />
@@ -1582,7 +1583,7 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\ConnectionTeam\ConnectionTable.cshtml" />
+    <Content Include="Views\Shared\ConnectionTable.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\ConnectionTeam\Index.cshtml" />
@@ -1804,6 +1805,21 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Client\ServiceRequest.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ConnectionTeam\BigConnectionTable.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ConnectionTeam\ServiceRequests.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ConnectionTeam\AttachServiceRequest.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ConnectionTeam\ClientRequests.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ConnectionTeam\AttachClientRequest.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
