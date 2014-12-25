@@ -147,7 +147,7 @@
 		</tr>
 		<tr>
 			<td><span class="description">IP-пул</span></td>
-			<td>${OrderInfo.ClientConnectInfo.Pool}</td>
+			<td>${OrderInfo.ClientConnectInfo.Pool} ${"(${?ClientPoolRegion.Description})" if OrderInfo.ClientConnectInfo.Pool != null}</td>
 		</tr>
 		<tr>
 			<td class="width400px">
@@ -371,15 +371,15 @@
 			<tr>
 				<td>IP-пул</td>
 				<td colspan=2>
-					<% if (IpPools == null): %>
+					<% if (RegPoolsList == null): %>
 						<span class="error">Невозмоно задать IP-пул, т.к. не задан регион</span>
-					<% elif (IpPools.Count == 0): %>
+					<% elif (RegPoolsList.Count == 0): %>
 						<span class="error">Невозмоно задать IP-пул, т.к. к данному региону не прикреплен ни один IP-пул </span>
 					<% else: %>
 						<select name="ConnectInfo.Pool" id="PoolsSelect" style="width: 50%">
 							<option value=""></option>
-							<% for pool in IpPools: %>
-							<option value="${pool.Id}" ${"selected" if (pool.Id == OrderInfo.ClientConnectInfo.Pool)}>!{pool.Id} (!{pool.Begin}-!{pool.End})</option>
+							<% for regPool in RegPoolsList: %>
+							<option value="${regPool.IpPool.Id}" ${"selected" if (regPool.IpPool.Id == OrderInfo.ClientConnectInfo.Pool)}>!{regPool.Description}</option>
 							<% end %>
 						</select>
 					<% end %>

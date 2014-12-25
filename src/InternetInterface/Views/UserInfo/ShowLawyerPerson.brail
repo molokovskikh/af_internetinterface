@@ -132,6 +132,7 @@
 		<% for i,item in enumerate(ClientOrdersInfo):
  OutputSubView("""\Subview\OrderInfo""", {
 					"OrderInfo": item,
+					"ClientPoolRegion": PoolRegionList[i],
 					"EditingConnect" : EConnect == item.Order.Id})
 end %>
 <% OutputSubView("""\Subview\PaymentInfo""") %>

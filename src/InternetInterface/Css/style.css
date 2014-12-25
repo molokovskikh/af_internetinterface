@@ -8,9 +8,31 @@ h1, h2, h3 {color: #444}
 	.tvrequest textarea {width: 350px; height:100px; display:block;}
 	.tvrequest span {margin-right: 10px;}
 
-.region-ip-pools { margin: 20px; }
-    .region-ip-pools .content {border: 1px solid #ccc; width: 400px; padding: 20px; }
-	.region-ip-pools .form-row {margin: 20px 0px;}
+.region-ip-pools {
+		margin: 20px;
+}
+		.region-ip-pools .content {
+				border: 1px solid #ccc;
+				width: 450px;
+				padding: 20px 20px 0 20px;
+		}
+		.region-ip-pools .form-row {
+				margin: 0 0 20px 0;
+		}
+		.region-ip-pools .inner-content {
+				border: 1px solid #ccc;
+				height: 50px;
+				padding: 10px;
+		}
+		.region-ip-pools .remark {
+				position: relative;
+				padding: 10px;
+		}
+		.region-ip-pools .submit {
+				position: relative;
+				left: 80%;
+				top: -45px;
+		}
 
 body {
   color: #333;

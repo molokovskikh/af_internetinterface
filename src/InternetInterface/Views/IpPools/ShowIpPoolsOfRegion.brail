@@ -3,15 +3,19 @@
 
 	<div class="content">
 		<form id="AddPoolForm" method="POST" action="${siteroot}/IpPools/ChainIpPoolWithRegion?regionId=${regionId}">
-			<div class="form-row">
+			<div class="form-row inner-content">
 				<% if (IpPoolsList.Count > 0): %>
 					<span>IP-пул</span>
-					<select id="PoolsSelect" name="addRegPool.IpPool.Id">
+					<select id="PoolsSelect" name="addRegPool.IpPool.Id" style="width: 65%">
 						<% for pool in IpPoolsList: %>
-							<option value="${pool.Id}">!{pool.Id} (!{pool.Begin}-!{pool.End})</option>
+							<option value="${pool.Id}">!{pool.Id} (!{pool.GetBeginIp()}-!{pool.GetEndIp()})</option>
 						<% end %>
 					</select>
-					<input id="AddPoolButton" type="submit" value="Добавить" style="position: relative; left: 45px;" />
+					<div class="remark">
+						<span>Описание</span>
+						<input id="Description" type="text" name="addRegPool.Description" value="" style="width: 59%"/>
+					</div>
+					<input id="AddPoolButton" type="submit" value="Добавить" class="submit" />
 				<% else: %>
 					<span>Все доступные IP-пулы уже прикреплены</span>
 				<% end %>
@@ -23,7 +27,8 @@
 				<table id="RegionPoolsTable" class="table">
 					<% for regPool in RegIpPoolsList: %>
 						<tr>
-							<td>!{regPool.IpPool.Id} (!{regPool.IpPool.Begin}-!{regPool.IpPool.End})</td>
+							<td style="width: 52%">!{regPool.IpPool.Id} (!{regPool.IpPool.GetBeginIp()}-!{regPool.IpPool.GetEndIp()})</td>
+							<td style="width: 38%">!{?regPool.Description}</td>
 							<td style="text-align: center">
 								<form method="POST" action="${siteroot}/IpPools/UnchainIpPoolWithRegion?regionId=${regionId}">
 									<input type="hidden" name="delRegPool.Id" value="${regPool.Id}" />

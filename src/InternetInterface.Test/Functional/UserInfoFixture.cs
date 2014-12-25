@@ -300,7 +300,9 @@ namespace InternetInterface.Test.Functional
 			session.Save(newPool);
 
 			// Создание в БД новой связки между IP-пулом и регионом
-			newPoolReg = new IpPoolRegion(newPool, newReg);
+			newPoolReg = new IpPoolRegion(newPool, newReg) {
+				Description = "IP-пул для региона " + newReg.Name
+			};
 			session.Save(newPoolReg);
 		}
 
@@ -346,7 +348,7 @@ namespace InternetInterface.Test.Functional
 
 			Open("UserInfo/ShowPhysicalClient?filter.ClientCode={0}", client.Id);
 			Css("#EditConn" + clientEndpoint.Id + "Btn").Click();
-			Css("#PoolsSelect").SelectByText(pool.Id + " (" + pool.Begin + "-" + pool.End + ")");
+			Css("#PoolsSelect").SelectByText(poolReg.Description);
 			Css("#SaveConnectionBtn").Click();
 
 			// Проверка наличия IP-пула "pool" в точке подключения пользователя "client"
@@ -432,7 +434,7 @@ namespace InternetInterface.Test.Functional
 
 			Open("UserInfo/ShowLawyerPerson?filter.ClientCode={0}", client.Id);
 			Css("#EditButton" + order.Id).Click();
-			Css("#PoolsSelect").SelectByText(pool.Id + " (" + pool.Begin + "-" + pool.End + ")");
+			Css("#PoolsSelect").SelectByText(poolReg.Description);
 			Css("#SaveConnectionBtn").Click();
 
 			// Проверка наличия IP-пула "pool" в точке подключения клиента "client"

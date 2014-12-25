@@ -5,6 +5,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Collections.Generic;
+using Castle.Core.Internal;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Common.MySql;
@@ -66,17 +67,10 @@ namespace InternetInterface.Controllers
 	{
 		public void ShowPhysicalClient([DataBind("filter")] ClientFilter filter, [DataBind("userWO")] UserWriteOff writeOff)
 		{
-			var client = DbSession.Load<Client>(filter.ClientCode);
 			PropertyBag["filter"] = filter;
 			SendParam(filter, filter.grouped, filter.appealType);
 			PropertyBag["Editing"] = filter.Editing;
 			PropertyBag["appealType"] = filter.appealType;
-			var clientRegion = client.GetRegion();
-			if (clientRegion != null)
-				PropertyBag["IpPools"] = IpPoolRegion.GetPoolsForRegion(DbSession, clientRegion);
-			else
-				PropertyBag["IpPools"] = null;
-			PropertyBag["Switches"] = NetworkSwitch.All(DbSession, clientRegion);
 		}
 
 		public void Leases([DataBind("filter")] LeaseLogFilter filter)
@@ -751,11 +745,41 @@ namespace InternetInterface.Controllers
 			PropertyBag["ClientCode"] = clientId;
 			PropertyBag["uniqueClientEndpoints"] = client.Endpoints.Distinct().ToList();
 
+			// Составить список IP-пулов для текущего региона клиента
 			var clientRegion = client.GetRegion();
-			if (clientRegion != null)
-				PropertyBag["IpPools"] = IpPoolRegion.GetPoolsForRegion(DbSession, clientRegion);
+			var regPoolsList = new List<IpPoolRegion>();
+			if (clientRegion != null) {
+				regPoolsList = DbSession.Query<IpPoolRegion>()
+						.Where(rp => rp.Region == clientRegion.Id).ToList();
+				PropertyBag["RegPoolsList"] = regPoolsList;
+			}
 			else
-				PropertyBag["IpPools"] = null;
+				PropertyBag["RegPoolsList"] = null;
+
+			// Заполнить список описаний IP-пулов клиента
+			var clientPoolRegList = new List<IpPoolRegion>();
+			if (client.IsPhysical()) {
+				foreach (var ePoint in client.Endpoints) {
+					if (ePoint.Disabled) // Если данная точка подключения не выводится на экран
+						continue;
+					var epPoolRegion = regPoolsList.Find(rp => rp.IpPool.Id == ePoint.Pool);
+					clientPoolRegList.Add(epPoolRegion);
+				}
+			}
+			else {
+				foreach (var order in client.Orders) {
+					if (order.Disabled) // Если данный заказ не выводится на экран
+						continue;
+					var orPoolRegion = new IpPoolRegion();
+					if (order.EndPoint != null)
+						orPoolRegion = regPoolsList.Find(rp => rp.IpPool.Id == order.EndPoint.Pool);
+					clientPoolRegList.Add(orPoolRegion);
+				}
+			}
+			if (clientPoolRegList.Count == 0)				// В случае, если у клиента нет точек подключения/ордеров
+				clientPoolRegList.Add(new IpPoolRegion());
+			PropertyBag["PoolRegionList"] = clientPoolRegList;
+
 			PropertyBag["Switches"] = NetworkSwitch.All(DbSession, clientRegion);
 			PropertyBag["Brigads"] = brigads;
 			var endPoint = client.Endpoints.FirstOrDefault();
