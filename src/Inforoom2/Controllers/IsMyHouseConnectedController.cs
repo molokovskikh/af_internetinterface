@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Web.Mvc;
 using Inforoom2.Models;
 using NHibernate.Linq;
@@ -25,10 +26,11 @@ namespace Inforoom2.Controllers
 			ViewBag.IsConnected = false;
 			if (clientRequest.IsAddressConnected(switchAddress.ToList())) {
 				ViewBag.IsConnected = true;
-
 			}
-			ViewBag.Regions = GetList<Region>();
+			var regions =GetList<Region>();
+			ViewBag.Regions = regions;
 			ViewBag.ClientRequest = clientRequest;
+			ViewBag.SelectedRegionOfficePhoneNumber = regions.FirstOrDefault(r => r.Name.Equals(clientRequest.YandexCity, StringComparison.InvariantCultureIgnoreCase)).RegionOfficePhoneNumber;
 			return View();
 		}
 
