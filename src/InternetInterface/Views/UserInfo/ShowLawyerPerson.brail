@@ -43,7 +43,7 @@
 		   end %>
 		<th>Информация по клиенту   ${Client.ShortName}  ${"(Он-Лайн)" if _client.OnLine()}
 		<% if MapPartner.AccesPartner("ECI"): %>
-			<button type="submit"  class="button save">Редактировать</button>
+			<button id="EditInfoBtn" type="submit"  class="button save">Редактировать</button>
 		 <% end %>
 		</th>
 	</thead>

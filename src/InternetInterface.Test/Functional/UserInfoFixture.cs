@@ -160,6 +160,36 @@ namespace InternetInterface.Test.Functional
 			Assert.That(Client.Name, Is.EqualTo(string.Format("{0} {1} {2}", "Иванов", "Иван", "Иванович")));
 		}
 
+		[Test(Description = "")]
+		public void CheckRedMineTaskSave()
+		{
+			// Задать имя уже созданного физического клиента
+			Client.Name = "Client#" + Client.Id + "_with_RedMoneyTask";
+			Client.Update();
+
+			Open(ClientUrl);
+			Css("#_client_RedmineTask").SendKeys("1000");
+			Css("#SaveButton").Click();
+
+			// Удостовериться, что на странице клиента Client появилась кнопка "Страница Redmine"
+			AssertText("Страница Redmine");
+
+			// Создать юридическое лицо
+			var lawyerPerson = ClientHelper.CreateLaywerPerson(session);
+			lawyerPerson.Name = "Lawyer#" + Client.Id + "_with_RedMoneyTask";
+			lawyerPerson.LawyerPerson.Name = "TestLawyer";
+			lawyerPerson.LawyerPerson.ShortName = "Lawyer";
+			session.Save(lawyerPerson);
+
+			Open("UserInfo/ShowLawyerPerson?filter.ClientCode={0}", lawyerPerson.Id);
+			Css("#EditInfoBtn").Click();
+			Css("#_client_RedmineTask").SendKeys("1000");
+			Css("#SaveButton").Click();
+
+			// Удостовериться, что на странице клиента lawyerPerson появилась кнопка "Страница Redmine"
+			AssertText("Страница Redmine");
+		}
+
 		[Test]
 		public void RequestGraphTest()
 		{

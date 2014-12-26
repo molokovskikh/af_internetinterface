@@ -287,7 +287,9 @@
     <None Include="Views\Subview\CreateEditLabel.brail" />
     <None Include="Views\Switches\FreePortForSwitch.brail" />
     <None Include="Views\Subview\House.brail" />
-    <None Include="Views\Subview\LegalPerson.brail" />
+    <None Include="Views\Subview\LegalPerson.brail">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Views\Subview\PaymentInfo.brail" />
     <None Include="Views\Subview\WriteOffInfo.brail" />
     <None Include="Views\Switches\MakeSwitch.brail" />

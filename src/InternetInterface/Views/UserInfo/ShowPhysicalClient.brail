@@ -88,7 +88,7 @@
 		end %>
 		<th><span style="color:#787676"> Информация по клиенту </span> <span style="color:Black">  ${Client.Surname}  ${Client.Name}  ${Client.Patronymic} ${"(Он-Лайн)" if _client.OnLine()} </span>
 		<% if MapPartner.AccesPartner("ECI"): %>
-			<button type="submit"  class="button save">
+			<button id="EditInfoBtn" type="submit"  class="button save">
 				Редактировать
 			</button>
 		 <% end %>
