@@ -760,23 +760,29 @@ namespace InternetInterface.Controllers
 			var clientPoolRegList = new List<IpPoolRegion>();
 			if (client.IsPhysical()) {
 				foreach (var ePoint in client.Endpoints) {
-					if (ePoint.Disabled) // Если данная точка подключения не выводится на экран
+					if (ePoint.Disabled)														// Если данная точка подключения не выводится на экран
 						continue;
 					var epPoolRegion = regPoolsList.Find(rp => rp.IpPool.Id == ePoint.Pool);
 					clientPoolRegList.Add(epPoolRegion);
 				}
+				var connectCount = client.GetConnectInfo(DbSession).Count;
+				while (clientPoolRegList.Count < connectCount)		// Чтобы для всех ConnectInfo был свой IpPoolRegion
+					clientPoolRegList.Add(new IpPoolRegion());
 			}
 			else {
 				foreach (var order in client.Orders) {
-					if (order.Disabled) // Если данный заказ не выводится на экран
+					if (order.Disabled)															// Если данный заказ не выводится на экран
 						continue;
 					var orPoolRegion = new IpPoolRegion();
 					if (order.EndPoint != null)
 						orPoolRegion = regPoolsList.Find(rp => rp.IpPool.Id == order.EndPoint.Pool);
 					clientPoolRegList.Add(orPoolRegion);
 				}
+				var orderCount = client.GetOrderInfo(DbSession).Count;
+				while (clientPoolRegList.Count < orderCount)			// Чтобы для всех OrderInfo был свой IpPoolRegion
+					clientPoolRegList.Add(new IpPoolRegion());
 			}
-			if (clientPoolRegList.Count == 0)				// В случае, если у клиента нет точек подключения/ордеров
+			if (clientPoolRegList.Count == 0)										// В случае, если у клиента нет точек подключения/ордеров
 				clientPoolRegList.Add(new IpPoolRegion());
 			PropertyBag["PoolRegionList"] = clientPoolRegList;
 
