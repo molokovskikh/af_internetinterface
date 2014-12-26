@@ -88,7 +88,7 @@ namespace InternetInterface.Controllers
 
 		public void ShowLawyerPerson([DataBind("filter")] ClientFilter filter)
 		{
-			var client = DbSession.Load<Client>(filter.ClientCode);
+			var client = DbSession.Get<Client>(filter.ClientCode);
 			PropertyBag["grouped"] = filter.grouped;
 			PropertyBag["filter"] = filter;
 			PropertyBag["appealType"] = filter.appealType == 0 ? AppealType.User : filter.appealType;
