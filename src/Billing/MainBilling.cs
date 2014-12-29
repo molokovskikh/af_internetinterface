@@ -247,7 +247,7 @@ set s.LastStartFail = true;")
 		private void ProcessBonusesForFirstPayment(Payment payment, ISession session)
 		{
 			var client = payment.Client;
-			var firstPayment = client.Payments.Count == 1;
+			var firstPayment = client.Payments.Where(p => p.BillingAccount).ToList().Count == 1;
 			var correctSum = payment.Sum >= client.PhysicalClient.Tariff.Price;
 			var correctPlan = client.PhysicalClient.Tariff.Id != 77;
 			var str = ConfigurationManager.AppSettings["ProcessFirstPaymentBonus"];
