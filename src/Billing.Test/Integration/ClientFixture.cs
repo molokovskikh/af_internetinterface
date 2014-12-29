@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -326,6 +325,50 @@ namespace Billing.Test.Integration
 			billing.ProcessPayments();
 			billing.ProcessPayments();
 			Assert.That(client.Balance, Is.EqualTo(1700));
+
+			ConfigurationManager.AppSettings["ProcessFirstPaymentBonus"] = null;
+		}
+
+		[Test(Description = "Проверка начисления бонуса при быстром приходе 2-го платежа; тест для задачи 30619")]
+		public void Check_first_bonus_before_2nd_payment()
+		{
+			ConfigurationManager.AppSettings["ProcessFirstPaymentBonus"] = "1";
+
+			client.Name = "Billing_client_with_2_payments";
+			client.PhysicalClient.Balance = 0;
+			client.PhysicalClient.MoneyBalance = 0;
+			client.PhysicalClient.VirtualBalance = 0;
+			session.Update(client.PhysicalClient);
+			client.PhysicalClient.Tariff.Price = 500;
+			session.Update(client.PhysicalClient.Tariff);
+
+			// Создание двух платежей для клиента
+			var payment1 = new Payment(client, 600) {
+				PaidOn = DateTime.Now,
+				RecievedOn = DateTime.Now,
+				Comment = "payment1",
+				Virtual = true
+			};
+			session.Save(payment1);
+			var payment2 = new Payment(client, 600) {
+				PaidOn = DateTime.Now.AddSeconds(30),							// Для формального соблюдения паузы при оплате
+				RecievedOn = DateTime.Now.AddSeconds(30),					// Для формального соблюдения паузы при оплате 
+				Comment = "payment2",
+				Virtual = true
+			};
+			session.Save(payment2);
+			client.Refresh();
+
+			// 1-я обработка платежей (бонус только внесен)
+			billing.ProcessPayments();
+			client.Refresh();
+			Assert.That(client.Payments.Count, Is.EqualTo(3));	// payment1, payment2, bonus
+			Assert.That(client.Balance, Is.EqualTo(1200));			// 600 (payment1) + 600 (payment2)
+
+			// 2-я обработка платежей (бонус обработан)
+			billing.ProcessPayments();
+			client.Refresh();
+			Assert.That(client.Balance, Is.EqualTo(1700));			// 600 (payment1) + 600 (payment2) + 500 (bonus)
 
 			ConfigurationManager.AppSettings["ProcessFirstPaymentBonus"] = null;
 		}
