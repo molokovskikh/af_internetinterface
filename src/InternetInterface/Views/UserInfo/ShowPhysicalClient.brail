@@ -305,7 +305,6 @@
 <% for i,item in enumerate(ClientConnectInf):
 	OutputSubView("/Subview/ConnectInfo", {
 		"ConnectInfo": item,
-		"ClientPoolRegion": PoolRegionList[i],
 		"EditingConnect" : EConnect == item.endpointId})
 end %>
 <% OutputSubView("/Subview/PaymentInfo") %>

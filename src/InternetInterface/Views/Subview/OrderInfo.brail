@@ -147,7 +147,7 @@
 		</tr>
 		<tr>
 			<td><span class="description">IP-пул</span></td>
-			<td>${OrderInfo.ClientConnectInfo.Pool} ${"(${?ClientPoolRegion.Description})" if OrderInfo.ClientConnectInfo.Pool != null}</td>
+			<td>${OrderInfo.ClientConnectInfo.Pool} ${"(${OrderInfo.ClientConnectInfo.PoolDescription})" if OrderInfo.ClientConnectInfo.Pool != null}</td>
 		</tr>
 		<tr>
 			<td class="width400px">

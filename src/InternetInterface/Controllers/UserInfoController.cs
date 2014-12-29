@@ -718,7 +718,22 @@ namespace InternetInterface.Controllers
 		{
 			if (client.LawyerPerson != null) {
 				var orderInfo = client.GetOrderInfo(DbSession);
-				if (orderInfo.Count == 0) {
+				if (orderInfo.Count > 0) {
+					for (int i = 0, j = 0; i < orderInfo.Count; i++, j++) {
+						if (client.Orders[j].IsDeactivated) {
+							--i;									// Не учитывать заказ, который не выводится на экран
+							continue;
+						}
+						var epoint = client.Orders[j].EndPoint;
+						if (epoint == null)
+							continue;
+						var poolReg = epoint.GetAvailablePoolRegionList(DbSession)
+								.FirstOrDefault(pr => pr.IpPool.Id == epoint.Pool);
+						orderInfo[i].ClientConnectInfo.Pool = (poolReg != null) ? (uint?)poolReg.IpPool.Id : null;
+						orderInfo[i].ClientConnectInfo.PoolDescription = (poolReg != null) ? poolReg.Description : "";
+					}
+				}
+				else {
 					var connectSum = client.IsPhysical() ? client.PhysicalClient.ConnectSum : 0;
 					orderInfo.Add(new ClientOrderInfo {
 						Order = new Order() { Number = Order.GetNextNumber(DbSession, client.Id) },
@@ -729,9 +744,17 @@ namespace InternetInterface.Controllers
 			}
 			else {
 				var connectInfo = client.GetConnectInfo(DbSession);
-				if (connectInfo.Count == 0) {
+				if (connectInfo.Count > 0) {
+					for (var i = 0; i < connectInfo.Count; i++) {
+						var poolReg = client.Endpoints[i].GetAvailablePoolRegionList(DbSession)
+								.FirstOrDefault(pr => pr.IpPool.Id == client.Endpoints[i].Pool);
+						connectInfo[i].Pool = (poolReg != null) ? (uint?)poolReg.IpPool.Id : null;
+						connectInfo[i].PoolDescription = (poolReg != null) ? poolReg.Description : "";
+					}
+				}
+				else {
 					var connectSum = client.IsPhysical() ? client.PhysicalClient.ConnectSum : 0;
-					connectInfo.Add(new ClientConnectInfo { ConnectSum = connectSum });
+					connectInfo.Add(new ClientConnectInfo {ConnectSum = connectSum});
 				}
 				PropertyBag["ClientConnectInf"] = connectInfo;
 			}
@@ -747,44 +770,12 @@ namespace InternetInterface.Controllers
 
 			// Составить список IP-пулов для текущего региона клиента
 			var clientRegion = client.GetRegion();
-			var regPoolsList = new List<IpPoolRegion>();
 			if (clientRegion != null) {
-				regPoolsList = DbSession.Query<IpPoolRegion>()
+				PropertyBag["RegPoolsList"] = DbSession.Query<IpPoolRegion>()
 						.Where(rp => rp.Region == clientRegion.Id).ToList();
-				PropertyBag["RegPoolsList"] = regPoolsList;
 			}
 			else
 				PropertyBag["RegPoolsList"] = null;
-
-			// Заполнить список описаний IP-пулов клиента
-			var clientPoolRegList = new List<IpPoolRegion>();
-			if (client.IsPhysical()) {
-				foreach (var ePoint in client.Endpoints) {
-					if (ePoint.Disabled)														// Если данная точка подключения не выводится на экран
-						continue;
-					var epPoolRegion = regPoolsList.Find(rp => rp.IpPool.Id == ePoint.Pool);
-					clientPoolRegList.Add(epPoolRegion);
-				}
-				var connectCount = client.GetConnectInfo(DbSession).Count;
-				while (clientPoolRegList.Count < connectCount)		// Чтобы для всех ConnectInfo был свой IpPoolRegion
-					clientPoolRegList.Add(new IpPoolRegion());
-			}
-			else {
-				foreach (var order in client.Orders) {
-					if (order.Disabled)															// Если данный заказ не выводится на экран
-						continue;
-					var orPoolRegion = new IpPoolRegion();
-					if (order.EndPoint != null)
-						orPoolRegion = regPoolsList.Find(rp => rp.IpPool.Id == order.EndPoint.Pool);
-					clientPoolRegList.Add(orPoolRegion);
-				}
-				var orderCount = client.GetOrderInfo(DbSession).Count;
-				while (clientPoolRegList.Count < orderCount)			// Чтобы для всех OrderInfo был свой IpPoolRegion
-					clientPoolRegList.Add(new IpPoolRegion());
-			}
-			if (clientPoolRegList.Count == 0)										// В случае, если у клиента нет точек подключения/ордеров
-				clientPoolRegList.Add(new IpPoolRegion());
-			PropertyBag["PoolRegionList"] = clientPoolRegList;
 
 			PropertyBag["Switches"] = NetworkSwitch.All(DbSession, clientRegion);
 			PropertyBag["Brigads"] = brigads;

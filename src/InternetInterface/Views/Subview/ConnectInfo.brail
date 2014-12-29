@@ -60,7 +60,7 @@
 		</tr>
 		<tr>
 			<td><span class="description">IP-пул</span></td>
-			<td>${ConnectInfo.Pool} ${"(${?ClientPoolRegion.Description})" if ConnectInfo.Pool != null}</td>
+			<td>${ConnectInfo.Pool} ${"(${ConnectInfo.PoolDescription})" if ConnectInfo.Pool != null}</td>
 		</tr>
 		<tr>
 			<td style="width: 400px;">

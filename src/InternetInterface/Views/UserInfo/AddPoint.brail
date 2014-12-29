@@ -1,6 +1,5 @@
 ﻿<div style="width:850px; margin: 0px auto;">
 	<% OutputSubView("""\Subview\OrderInfo""", {
 						"OrderInfo": OrderInfo,
-						"ClientPoolRegion": null,
 						"EditingConnect" : true }) %>
 </div>
