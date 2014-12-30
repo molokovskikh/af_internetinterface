@@ -66,6 +66,29 @@ namespace Inforoom2.Test.Functional
 				//GeneratePlansAndPrices();
 			}
 
+			
+			session.Query<City>().ToList().ForEach(i=>session.Delete(i));
+			session.Query<Region>().ToList().ForEach(i => session.Delete(i));
+			session.Flush();
+			if (!session.Query<Region>().Any()) {
+				var vrn = new City();
+				vrn.Name = "Воронеж";
+				session.Save(vrn);
+				var blg = new City();
+				blg.Name = "Белгород";
+				session.Save(blg);
+				var region = new Region();
+				region.Name = "Воронеж";
+				region.RegionOfficePhoneNumber = "8-800-2000-600";
+				region.City = vrn;
+				session.Save(region);
+				region = new Region();
+				region.Name = "Белгород";
+				region.RegionOfficePhoneNumber = "8-800-123-12-23";
+				region.City = blg;
+				session.Save(region);
+			}
+
 
 			if (!session.Query<Client>().Any()) {
 				Permission permission = new Permission { Name = "TestPermission" };

@@ -23,12 +23,15 @@ namespace Inforoom2.Helpers
 
 		public override void OnActionExecuting(ActionExecutingContext filterContext)
 		{
+			var controller = filterContext.Controller as BaseController;
 			if (!CurrentSessionContext.HasBind(SessionFactory)) {
 				var session = SessionFactory.OpenSession();
 				CurrentSessionContext.Bind(session);
 				session.BeginTransaction();
-				(filterContext.Controller as BaseController).DbSession = session;
+				controller.DbSession = session;
 			}
+			else if (controller.DbSession == null)
+				controller.DbSession = MvcApplication.SessionFactory.GetCurrentSession();
 		}
 
 		public override void OnResultExecuted(ResultExecutedContext filterContext)

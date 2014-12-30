@@ -29,9 +29,6 @@ namespace Inforoom2.Models
 		[ManyToOne(Column = "Region"), NotNull]
 		public virtual Region Region { get; set; }
 
-		[ManyToOne(Column = "ServiceTeam")]
-		public virtual ServiceTeam ServiceTeam { get; set; }
-
 		[Bag(0, Table = "ServiceRequest")]
 		[Key(1, Column = "Performer")]
 		[OneToMany(2, ClassType = typeof(ServiceRequest))]
