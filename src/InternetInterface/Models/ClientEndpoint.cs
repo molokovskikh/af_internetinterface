@@ -83,6 +83,14 @@ namespace InternetInterface.Models
 			get { return Pool != null || (MaxLeaseCount != null && MaxLeaseCount > 1); }
 		}
 
+		public virtual List<IpPoolRegion> GetAvailablePoolRegionList(ISession session)
+		{
+			var region = Client.GetRegion();
+			if (region == null)
+				return new List<IpPoolRegion>();
+			return session.Query<IpPoolRegion>().Where(rp => rp.Region == region.Id).ToList();
+		}
+
 		public static ClientEndpoint GetForIp(IPAddress ip, ISession session)
 		{
 			var lease = session.Query<Lease>().FirstOrDefault(l => l.Ip == ip);

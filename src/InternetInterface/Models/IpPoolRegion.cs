@@ -33,6 +33,9 @@ namespace InternetInterface.Models
 		[Property, ValidateNonEmpty]
 		public virtual uint Region { get; set; }
 
+		[Property]
+		public virtual string Description { get; set; }
+
 		/// <summary>
 		///     Возвращает все "белые" IP-пулы из таблицы "IpPools" БД (для указанного региона)
 		/// </summary>
