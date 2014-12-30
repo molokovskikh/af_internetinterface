@@ -77,16 +77,29 @@
 				<!-- add class "multiple-expanded" to allow multiple submenus to open -->
 				<!-- class "auto-inherit-active-class" will automatically add "active" class for parent elements who are marked already with class "active" -->
 				<li>
+					<a href="http://stat.ivrn.net/ii/">
+						<i class="entypo-home"></i>
+						<span class="title">Перейти в InternetInterface</span>
+					</a>
+				</li>
+				<li>
 					<a href="@Url.Action("Impersonate","AdminAccount")">
 						<i class="entypo-home"></i>
 						<span class="title">Главная</span>
 					</a>
 				</li>
 				<li>
-				<a href="@Url.Action("Index","Client")">
+					<a href="@Url.Action("Index","Client")">
 						<i class="entypo-users"></i>
 						<span class="title">Клиенты</span>
-				</a>
+					</a>
+					<ul class="visible">
+						<li>
+							<a href="@Url.Action("ClientRequests","ConnectionTeam")">
+								<span class="title">Заявки на регистрацию</span>
+							</a>
+						</li>
+					</ul>
 				</li>
 				<li>
 					<a href="@Url.Action("Brigads","ConnectionTeam")">
