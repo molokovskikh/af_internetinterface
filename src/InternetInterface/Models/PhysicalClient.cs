@@ -31,6 +31,7 @@ namespace InternetInterface.Models
 		public string Name { get; set; }
 
 		public uint? Pool { get; set; }
+		public string PoolDescription { get; set; }
 
 		public string Switch { get; set; }
 		public string Swith_adr { get; set; }
