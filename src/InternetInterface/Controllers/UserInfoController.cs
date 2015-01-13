@@ -746,8 +746,11 @@ namespace InternetInterface.Controllers
 				var connectInfo = client.GetConnectInfo(DbSession);
 				if (connectInfo.Count > 0) {
 					for (var i = 0; i < connectInfo.Count; i++) {
-						var poolReg = client.Endpoints[i].GetAvailablePoolRegionList(DbSession)
-								.FirstOrDefault(pr => pr.IpPool.Id == client.Endpoints[i].Pool);
+						// Чтобы учесть случаи повторения connectInfo для одной EndPoint
+						var epoint = client.Endpoints.First(ep => ep.Id == connectInfo[i].endpointId);
+
+						var poolReg = epoint.GetAvailablePoolRegionList(DbSession)
+								.FirstOrDefault(pr => pr.IpPool.Id == epoint.Pool);
 						connectInfo[i].Pool = (poolReg != null) ? (uint?)poolReg.IpPool.Id : null;
 						connectInfo[i].PoolDescription = (poolReg != null) ? poolReg.Description : "";
 					}
