@@ -241,7 +241,9 @@
     <None Include="Views\HouseMap\ViewHouseInfo.brail" />
     <None Include="Views\Layouts\application.brail" />
     <None Include="Views\Layouts\NoMap.brail" />
-    <None Include="Views\Payers\AgentFilter.brail" />
+    <None Include="Views\Payers\AgentFilter.brail">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Views\Payers\Filter.brail" />
     <None Include="Views\Payers\Show.brail" />
     <None Include="Views\Payments\Edit.brail" />
