@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Common.Tools;
 using Common.Tools.Calendar;
 using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Models;
 using InternetInterface.Models;
 using NHibernate.Linq;
+using NHibernate.Mapping;
 using NUnit.Framework;
 
 namespace Billing.Test.Integration
@@ -280,7 +282,7 @@ namespace Billing.Test.Integration
 			Assert.That(saved2.Disabled, Is.False);
 		}
 
-		[Test(Description = "Начисление бонусов физикам за первый платеж")]
+		[Test(Description = "Начисление начисления бонусов физикам за первый (основной) платеж")]
 		public void first_payment_bonus()
 		{
 			ConfigurationManager.AppSettings["ProcessFirstPaymentBonus"] = "1";
@@ -288,8 +290,14 @@ namespace Billing.Test.Integration
 			client.PhysicalClient.MoneyBalance = 0;
 			client.PhysicalClient.VirtualBalance = 0;
 			session.Update(client.PhysicalClient);
+			client.PhysicalClient.Tariff.Name = "Популярный";		// Пример для теста
 			client.PhysicalClient.Tariff.Price = 500;
 			session.Update(client.PhysicalClient.Tariff);
+
+			// Изменим Id тарифного плана "Популярный" в биллинге (на время теста)
+			billing.FirstPaymentBonusTariffIds[0] = client.PhysicalClient.Tariff.Id;
+
+			//Создадим платеж
 			var payment = new Payment(client, 600) {
 				Virtual = true
 			};
@@ -339,8 +347,12 @@ namespace Billing.Test.Integration
 			client.PhysicalClient.MoneyBalance = 0;
 			client.PhysicalClient.VirtualBalance = 0;
 			session.Update(client.PhysicalClient);
+			client.PhysicalClient.Tariff.Name = "Оптимальный";	// Пример для теста
 			client.PhysicalClient.Tariff.Price = 500;
 			session.Update(client.PhysicalClient.Tariff);
+
+			// Изменим Id тарифного плана "Оптимальный" в биллинге (на время теста)
+			billing.FirstPaymentBonusTariffIds[1] = client.PhysicalClient.Tariff.Id;
 
 			// Создание двух платежей для клиента
 			var payment1 = new Payment(client, 600) {
@@ -369,6 +381,50 @@ namespace Billing.Test.Integration
 			billing.ProcessPayments();
 			client.Refresh();
 			Assert.That(client.Balance, Is.EqualTo(1700));			// 600 (payment1) + 600 (payment2) + 500 (bonus)
+
+			ConfigurationManager.AppSettings["ProcessFirstPaymentBonus"] = null;
+		}
+
+		[Test(Description = "Проверка неначисления бонуса в случае прихода первого НЕосновного платежа; тест для задачи 30871")]
+		public void Check_first_payment_without_bonus()
+		{
+			ConfigurationManager.AppSettings["ProcessFirstPaymentBonus"] = "1";
+
+			client.Name = "Billing_client_with_payment_without_bonus";
+			client.PhysicalClient.Balance = 0;
+			client.PhysicalClient.MoneyBalance = 0;
+			client.PhysicalClient.VirtualBalance = 0;
+			session.Update(client.PhysicalClient);
+			client.PhysicalClient.Tariff.Name = "Лёгкий";				// Пример для теста
+			client.PhysicalClient.Tariff.Price = 500;
+			session.Update(client.PhysicalClient.Tariff);
+
+			// Изменим Id тарифного плана, совпадающего по своему Id в биллинге (на время теста)
+			var tariff = client.PhysicalClient.Tariff;
+			var index = billing.FirstPaymentBonusTariffIds.IndexOf(tariff.Id);
+			if (index > 0)
+				billing.FirstPaymentBonusTariffIds[index] = client.PhysicalClient.Tariff.Id;
+
+			// Создание платежей для клиента
+			var payment = new Payment(client, 600) {
+				PaidOn = DateTime.Now,
+				RecievedOn = DateTime.Now,
+				Comment = "payment",
+				Virtual = true
+			};
+			session.Save(payment);
+			client.Refresh();
+
+			// 1-я обработка платежей (платеж внесен без бонуса)
+			billing.ProcessPayments();
+			client.Refresh();
+			Assert.That(client.Payments.Count, Is.EqualTo(1));	// payment
+			Assert.That(client.Balance, Is.EqualTo(600));				// 600 (payment)
+
+			// 2-я обработка платежей (бонус не начислен)
+			billing.ProcessPayments();
+			client.Refresh();
+			Assert.That(client.Balance, Is.EqualTo(600));				// 600 (payment) + 0 (bonus)
 
 			ConfigurationManager.AppSettings["ProcessFirstPaymentBonus"] = null;
 		}
