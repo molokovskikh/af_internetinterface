@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Web;
-using System.Web.Services.Description;
 using Castle.MonoRail.Framework;
 using Common.Web.Ui.Controllers;
 using Common.Web.Ui.Helpers;
@@ -12,7 +9,6 @@ using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using InternetInterface.Queries;
 using NHibernate.Linq;
-using NHibernate.Util;
 using BankPayment = InternetInterface.Models.BankPayment;
 
 namespace InternetInterface.Controllers
@@ -34,7 +30,10 @@ namespace InternetInterface.Controllers
 			filter.CurrentPartner = InitializeContent.Partner;
 
 			PropertyBag["filter"] = filter;
-			PropertyBag["agents"] = DbSession.Query<Partner>().Where(i => i.CommonPayments.Count != 0 || i.Payments.Count != 0 || i.Role.ReductionName == "Diller").ToList();
+			var agentsList = DbSession.Query<Partner>()
+				.Where(i => i.CommonPayments.Count != 0 || i.Payments.Count != 0 || i.Role.ReductionName == "Diller").ToList();
+			agentsList.Sort((p1, p2) => String.Compare(p1.Name, p2.Name, false));
+			PropertyBag["agents"] = agentsList;
 			if (Request.QueryString.AllKeys.Any(k => k.StartsWith("filter")))
 				PropertyBag["Payments"] = filter.Find(DbSession);
 		}
