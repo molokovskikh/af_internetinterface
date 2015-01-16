@@ -282,7 +282,7 @@ namespace Billing.Test.Integration
 			Assert.That(saved2.Disabled, Is.False);
 		}
 
-		[Test(Description = "Начисление начисления бонусов физикам за первый (основной) платеж")]
+		[Test(Description = "Проверка начисления бонусов физикам за первый платеж (при основном тарифе)")]
 		public void first_payment_bonus()
 		{
 			ConfigurationManager.AppSettings["ProcessFirstPaymentBonus"] = "1";
@@ -337,8 +337,8 @@ namespace Billing.Test.Integration
 			ConfigurationManager.AppSettings["ProcessFirstPaymentBonus"] = null;
 		}
 
-		[Test(Description = "Проверка начисления бонуса при быстром приходе 2-го платежа; тест для задачи 30619")]
-		public void Check_first_bonus_before_2nd_payment()
+		[Test(Description = "Проверка начисления бонуса при быстром приходе 2-го платежа; тест к задаче 30619")]
+		public void Check_bonus_before_2nd_payment()
 		{
 			ConfigurationManager.AppSettings["ProcessFirstPaymentBonus"] = "1";
 
@@ -385,7 +385,7 @@ namespace Billing.Test.Integration
 			ConfigurationManager.AppSettings["ProcessFirstPaymentBonus"] = null;
 		}
 
-		[Test(Description = "Проверка неначисления бонуса в случае прихода первого НЕосновного платежа; тест для задачи 30871")]
+		[Test(Description = "Проверка НЕначисления бонуса в случае прихода 1-го платежа (при НЕосновном тарифе); тест к задаче 30871")]
 		public void Check_first_payment_without_bonus()
 		{
 			ConfigurationManager.AppSettings["ProcessFirstPaymentBonus"] = "1";
@@ -405,7 +405,7 @@ namespace Billing.Test.Integration
 			if (index > 0)
 				billing.FirstPaymentBonusTariffIds[index] = client.PhysicalClient.Tariff.Id;
 
-			// Создание платежей для клиента
+			// Создание 1-го платежа для клиента
 			var payment = new Payment(client, 600) {
 				PaidOn = DateTime.Now,
 				RecievedOn = DateTime.Now,

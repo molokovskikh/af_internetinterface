@@ -30,7 +30,7 @@ namespace Billing
 
 		public List<SmsMessage> Messages;
 
-		// Базовые тарифные планы (для начисления бонуса при первичном платеже)
+		// Основные тарифные планы (для начисления бонуса при первом платеже)
 		public uint[] FirstPaymentBonusTariffIds = {
 			45,		// "Популярный"
 			49,		// "Оптимальный"

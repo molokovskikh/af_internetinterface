@@ -7,7 +7,7 @@ namespace Inforoom2.Test.Functional
 {
 	public class CallMeBackFixture : BaseFixture
 	{
-		[Test, Description("Проверка возможности запросить обратный звонок, так же проверяется forwarding")]
+		[Test, Description("Проверка возможности запросить обратный звонок, так же проверяется forwarding"), Ignore]
 		public void QuestionsTest()
 		{
 			Open("Faq");
