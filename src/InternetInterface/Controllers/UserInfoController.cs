@@ -116,6 +116,10 @@ namespace InternetInterface.Controllers
 			PropertyBag["Contacts"] = client.Contacts.OrderBy(c => c.Type).ToList();
 			PropertyBag["EditConnectInfoFlag"] = filter.EditConnectInfoFlag;
 			PropertyBag["RegionList"] = RegionHouse.All(DbSession);
+
+			PropertyBag["StatusList"] = client.GetAvailableStatuses(DbSession);
+			PropertyBag["client_status"] = client.Status.Id;
+
 			SendConnectInfo(client);
 			ConnectPropertyBag(filter.ClientCode);
 			SendUserWriteOff();
@@ -513,33 +517,35 @@ namespace InternetInterface.Controllers
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void EditLawyerPerson(uint ClientID, int Speed, string grouped, AppealType appealType, string comment)
+		public void EditLawyerPerson(uint ClientID, int Speed, string grouped, AppealType appealType, uint client_status, string comment)
 		{
 			SetBinder(new DecimalValidateBinder { Validator = Validator });
-			var client = DbSession.Load<Client>(ClientID);
-			var updateClient = client.LawyerPerson;
+			var client = DbSession.Get<Client>(ClientID);
+			var updateLawyer = client.LawyerPerson;
 
-			BindObjectInstance(updateClient, ParamStore.Form, "LegalPerson");
+			BindObjectInstance(updateLawyer, ParamStore.Form, "LegalPerson");
 			BindObjectInstance(client, ParamStore.Form, "_client");
+			var newStatus = DbSession.Get<Status>(client_status);
+			client.SetStatus(newStatus);
 
-			if (IsValid(updateClient)) {
+			if (IsValid(updateLawyer)) {
 				if (!string.IsNullOrEmpty(comment)) {
 					client.LogComment = comment;
-					updateClient.LogComment = comment;
+					updateLawyer.LogComment = comment;
 				}
 
 				client.PostUpdate();
 				DbSession.Save(client);
-				DbSession.Save(updateClient);
+				DbSession.Save(updateLawyer);
 
 				RedirectTo(client);
 			}
 			else {
-				updateClient.SetValidationErrors(Validator.GetErrorSummary(updateClient));
-				PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(updateClient);
-				DbSession.Evict(updateClient);
+				updateLawyer.SetValidationErrors(Validator.GetErrorSummary(updateLawyer));
+				PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(updateLawyer);
+				DbSession.Evict(updateLawyer);
 				RenderView("ShowLawyerPerson");
-				PropertyBag["LegalPerson"] = updateClient;
+				PropertyBag["LegalPerson"] = updateLawyer;
 				PropertyBag["grouped"] = grouped;
 				var filter = new ClientFilter {
 					ClientCode = ClientID,
