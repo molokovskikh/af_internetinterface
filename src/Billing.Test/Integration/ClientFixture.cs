@@ -313,7 +313,7 @@ namespace Billing.Test.Integration
 			session.Refresh(client);
 			Assert.That(client.Balance, Is.EqualTo(600));
 			Assert.That(client.Payments.Count, Is.EqualTo(2));
-			Assert.That(client.Payments[1].Comment, Is.EqualTo("Месяц в подарок"));
+			Assert.That(client.Payments.Where(p => p.Comment == "Месяц в подарок").ToList().Count, Is.EqualTo(1));
 			//Во второй раз обработается виртуальный бонусный платеж
 			billing.ProcessPayments();
 			session.Refresh(client);
