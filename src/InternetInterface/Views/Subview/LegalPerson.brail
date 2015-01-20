@@ -113,10 +113,10 @@
 <tr>
 	<td>Статус</td>
 	<td>
-		${FormHelper.Select("client_status", StatusList, {"value" : "Id", "text" : "Name"})}
+		${FormHelper.Select("clientStatusId", StatusList, {"value" : "Id", "text" : "Name"})}
 	</td>
 	<td>
-		${app.Error("client_status")}
+		${app.Error("clientStatusId")}
 	</td>
 </tr>
 <% end %>

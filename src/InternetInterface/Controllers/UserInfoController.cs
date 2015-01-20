@@ -1,17 +1,13 @@
 ﻿using System;
-using System.CodeDom;
 using System.Configuration;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Collections.Generic;
-using Castle.Core.Internal;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
-using Common.MySql;
 using Common.Tools;
 using Common.Web.Ui.Helpers;
-using Common.Web.Ui.Models;
 using Common.Web.Ui.MonoRailExtentions;
 using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Controllers.Filter;
@@ -21,8 +17,6 @@ using InternetInterface.Models.Services;
 using InternetInterface.Queries;
 using InternetInterface.Services;
 using NHibernate.Linq;
-using NHibernate.Proxy;
-using NPOI.SS.Formula.Functions;
 using Contact = InternetInterface.Models.Contact;
 using ContactType = InternetInterface.Models.ContactType;
 using TextHelper = InternetInterface.Helpers.TextHelper;
@@ -118,7 +112,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["RegionList"] = RegionHouse.All(DbSession);
 
 			PropertyBag["StatusList"] = client.GetAvailableStatuses(DbSession);
-			PropertyBag["client_status"] = client.Status.Id;
+			PropertyBag["clientStatusId"] = client.Status.Id;
 
 			SendConnectInfo(client);
 			ConnectPropertyBag(filter.ClientCode);
@@ -517,7 +511,7 @@ namespace InternetInterface.Controllers
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void EditLawyerPerson(uint ClientID, int Speed, string grouped, AppealType appealType, uint client_status, string comment)
+		public void EditLawyerPerson(uint ClientID, int Speed, string grouped, AppealType appealType, uint clientStatusId, string comment)
 		{
 			SetBinder(new DecimalValidateBinder { Validator = Validator });
 			var client = DbSession.Get<Client>(ClientID);
@@ -525,7 +519,7 @@ namespace InternetInterface.Controllers
 
 			BindObjectInstance(updateLawyer, ParamStore.Form, "LegalPerson");
 			BindObjectInstance(client, ParamStore.Form, "_client");
-			var newStatus = DbSession.Get<Status>(client_status);
+			var newStatus = DbSession.Get<Status>(clientStatusId);
 			client.SetStatus(newStatus);
 
 			if (IsValid(updateLawyer)) {
