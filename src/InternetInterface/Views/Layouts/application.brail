@@ -43,6 +43,9 @@
 	</div>
 	<% OutputSubView("/Subviews/Message") %>
 	${ChildOutput}
+	<a href="http://test2.analit.net/controlpanel" title="http://test2.analit.net/controlpanel">
+		<span style="position: relative; left: 1250px; text-decoration: underline;">Перейти в Inforoom2</span>
+	<a/>
 	<!--<div id="page-footer">
 		<div id="release-tag">
 			${app.ReleaseTag()}

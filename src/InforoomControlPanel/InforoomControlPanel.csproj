@@ -1486,9 +1486,13 @@
     <Content Include="assets\js\zurb-responsive-tables\stylesheets\reveal.css" />
     <Content Include="assets\js\zurb-responsive-tables\stylesheets\typography.css" />
     <Content Include="assets\js\zurb-responsive-tables\stylesheets\ui.css" />
+    <Content Include="Css\from_inforoom2.css" />
     <Content Include="Css\style.css" />
+    <Content Include="Images\map.png" />
+    <Content Include="Images\tick.png" />
     <Content Include="Scripts\AdminAddressController.js" />
     <Content Include="Scripts\ClientController.ServiceRequest.js" />
+    <Content Include="Scripts\ClientRequest.js" />
     <Content Include="Scripts\EditNewsBlock.js" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\EventEmitter.js" />
@@ -1816,10 +1820,13 @@
     <Content Include="Views\ConnectionTeam\AttachServiceRequest.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\ConnectionTeam\ClientRequests.cshtml" />
+    <Content Include="Views\Client\ClientRequestsList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\ConnectionTeam\AttachClientRequest.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Client\ClientRequest.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
