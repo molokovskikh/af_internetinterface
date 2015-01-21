@@ -174,6 +174,8 @@ namespace InternetInterface.Controllers
 			var settings = new Settings(DbSession);
 			var person = new LawyerPerson();
 			BindObjectInstance(person, ParamStore.Form, "LegalPerson");
+			var clientInstance = new Client();
+			BindObjectInstance(clientInstance, ParamStore.Form, "_client");
 			var connectErrors = Validation.ValidationConnectInfo(info, true);
 			if (IsValid(person) && !string.IsNullOrEmpty(info.Port) && !DoNotCreateOrder) {
 				var errors = ValidateDeep(order);
@@ -191,6 +193,7 @@ namespace InternetInterface.Controllers
 					Recipient = DbSession.Query<Recipient>().FirstOrDefault(r => r.INN == "3666152146"),
 					Status = DbSession.Load<Status>((uint)StatusType.BlockedAndNoConnected),
 					Disabled = order.OrderServices.Count == 0,
+					RedmineTask = clientInstance.RedmineTask
 				};
 				client.PostUpdate();
 

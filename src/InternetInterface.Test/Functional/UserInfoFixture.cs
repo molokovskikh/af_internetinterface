@@ -174,20 +174,22 @@ namespace InternetInterface.Test.Functional
 			// Удостовериться, что на странице клиента Client появилась кнопка "Страница Redmine"
 			AssertText("Страница Redmine");
 
-			// Создать юридическое лицо
-			var lawyerPerson = ClientHelper.CreateLaywerPerson(session);
-			lawyerPerson.Name = "Lawyer#" + Client.Id + "_with_RedMoneyTask";
-			lawyerPerson.LawyerPerson.Name = "TestLawyer";
-			lawyerPerson.LawyerPerson.ShortName = "Lawyer";
-			session.Save(lawyerPerson);
-
-			Open("UserInfo/ShowLawyerPerson?filter.ClientCode={0}", lawyerPerson.Id);
-			Css("#EditInfoBtn").Click();
+			// Зарегистрировать новое юридическое лицо
+			Open("Register/RegisterLegalPerson");
+			Css("#LegalPerson_Name").SendKeys("TestLawyer");
+			Css("#LegalPerson_ShortName").SendKeys("Lawyer");
 			Css("#_client_RedmineTask").SendKeys("1000");
+			Css("#RegisterLegalButton").Click();
+
+			// Удостовериться, что на странице клиента lawyer имеется кнопка "Страница Redmine"
+			AssertText("Страница Redmine");
+
+			Css("#EditInfoBtn").Click();
+			Css("#_client_RedmineTask").Clear();
 			Css("#SaveButton").Click();
 
-			// Удостовериться, что на странице клиента lawyerPerson появилась кнопка "Страница Redmine"
-			AssertText("Страница Redmine");
+			// Удостовериться, что на странице клиента lawyer исчезла кнопка "Страница Redmine"
+			AssertNoText("Страница Redmine");
 		}
 
 		[Test]

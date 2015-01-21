@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Configuration;
 using System.Linq;
 using System.Threading;
 using Castle.ActiveRecord;
-using Castle.ActiveRecord.Framework;
 using Common.MySql;
 using Common.NHibernate;
 using Common.Tools;
 using Common.Tools.Calendar;
 using Common.Web.Ui.ActiveRecordExtentions;
-using Common.Web.Ui.Helpers;
 using Common.Web.Ui.MonoRailExtentions;
 using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Helpers;
@@ -19,8 +18,6 @@ using NHibernate;
 using NHibernate.Linq;
 using log4net;
 using log4net.Config;
-using NHibernate.Criterion;
-using NHibernate.SqlCommand;
 
 namespace Billing
 {
@@ -32,6 +29,13 @@ namespace Billing
 		private SaleSettings _saleSettings;
 
 		public List<SmsMessage> Messages;
+
+		// Основные тарифные планы (для начисления бонуса при первом платеже)
+		public uint[] FirstPaymentBonusTariffIds = {
+			45,		// "Популярный"
+			49,		// "Оптимальный"
+			81		// "Максимальный"
+		};
 
 		public MainBilling()
 		{
@@ -249,7 +253,7 @@ set s.LastStartFail = true;")
 			var client = payment.Client;
 			var firstPayment = client.Payments.Where(p => p.BillingAccount).ToList().Count == 1;
 			var correctSum = payment.Sum >= client.PhysicalClient.Tariff.Price;
-			var correctPlan = client.PhysicalClient.Tariff.Id != 77;
+			var correctPlan = FirstPaymentBonusTariffIds.Contains(client.PhysicalClient.Tariff.Id);
 			var str = ConfigurationManager.AppSettings["ProcessFirstPaymentBonus"];
 			var processBonus = str != null;
 			if (processBonus && correctSum && correctPlan && firstPayment) {
