@@ -768,6 +768,7 @@ namespace InternetInterface.Controllers
 			var client = DbSession.Load<Client>(clientId);
 			var brigads = Brigad.All(DbSession);
 			PropertyBag["_client"] = client;
+			PropertyBag["IsDissolved"] = StatusType.Dissolved;		// Для задания префикса "РАСТОРГНУТ" клиенту
 			PropertyBag["ClientCode"] = clientId;
 			PropertyBag["uniqueClientEndpoints"] = client.Endpoints.Distinct().ToList();
 
