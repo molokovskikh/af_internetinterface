@@ -1,32 +1,38 @@
 ﻿@using Inforoom2.Models
 @{
 	Question question = ViewBag.Question;
+	ViewBag.Title = "Редактировать Вопрос и Ответ";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-<div style="width: 1000px; margin: 0px auto; border: 1px gainsboro solid">
-	<div class="UpdateQuestion" >
-	
-	
-		@using (@Html.BeginForm("UpdateQuestion", "Question", FormMethod.Post)) {
-			<div>
+	@using (@Html.BeginForm("UpdateQuestion", "Question", FormMethod.Post,new {@class = "form-horizontal form-groups-bordered"})) {
+			<div class="form-group">
 				@Html.HiddenFor(model => question.Id)
 				@Html.HiddenFor(model => question.Priority)
-				<span>Вопрос</span>
-				@Html.TextAreaFor(model => question.Text)
-				@ViewBag.Validation.GetError(question, "Text", "Вопрос не может быть пустым")
+				<label class="col-sm-3 control-label" for="field-ta">Вопрос</label>
+				<div class="col-sm-5">
+					@Html.TextAreaFor(model => question.Text,new {@class = "form-control", style="height: 200px"})
+					@ViewBag.Validation.GetError(question, "Text", "Вопрос не может быть пустым")
+				</div>
 			</div>
-			<div>
-				<span>Ответ</span>
-				@Html.TextAreaFor(model => question.Answer)
+		<div class="form-group">
+			<label class="col-sm-3 control-label" for="field-ta">Ответ</label>
+			<div class="col-sm-5">
+				@Html.TextAreaFor(model => question.Answer,new {@class = "form-control", style="height: 200px"})
 				@ViewBag.Validation.GetError(question, "Answer", "Ответ не может быть пустым")
 			</div>
-			<div>
-				<span>Опубликовать</span>
-				@Html.CheckBoxFor(model => question.IsPublished)
+		</div>
+			<div class="form-group">
+			<label class="col-sm-3 control-label" for="field-ta">Опубликовать</label>
+				<div class="col-sm-5">
+					@Html.CheckBoxFor(model => question.IsPublished)
+				</div>
+		</div>
+			<div class="form-group">
+			<div class="col-sm-7">
+				</div>
+				<button class="btn btn-green" type="submit">Принять изменения</button>
 			</div>
-			<input type="submit"  value="Принять изменения"/>
 		}
-		<button class="BackButton" onclick=" location.href = '@Url.Action("QuestionIndex", "Question")' ">Назад</button>
-	</div>
+<div class="form-group">
 </div>
+<button class="btn btn-blue" onclick=" location.href = '@Url.Action("QuestionIndex", "Question")' ">Назад</button>

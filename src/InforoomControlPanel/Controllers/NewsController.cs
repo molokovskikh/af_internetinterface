@@ -66,7 +66,7 @@ namespace InforoomControlPanel.Controllers
 
 		public ActionResult Move(int newsblockid, string direction)
 		{
-			return ChangeModelPriority<NewsBlock>(newsblockid, direction, "NewsIndex", "AdminNews");
+			return ChangeModelPriority<NewsBlock>(newsblockid, direction, "NewsIndex", "News");
 		}
 	}
 }

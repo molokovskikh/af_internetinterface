@@ -7,8 +7,8 @@ namespace Inforoom2.Test.Functional
 {
 	public class CallMeBackFixture : BaseFixture
 	{
-		[Test, Description("Проверка возможности запросить обратный звонок, так же проверяется forwarding"), Ignore]
-		public void QuestionsTest()
+		[Test, Description("Проверка возможности запросить обратный звонок, так же проверяется forwarding")]
+		public void CallMeBackTicket()
 		{
 			Open("Faq");
 
@@ -18,7 +18,6 @@ namespace Inforoom2.Test.Functional
 			name.SendKeys("Иван Петров");
 			phone.SendKeys("855647897");
 			browser.FindElementByCssSelector(".contacting").Click();
-
 			var callMeBackTicket = session.Query<CallMeBackTicket>().FirstOrDefault(c => c.PhoneNumber == "855647897");
 			Assert.NotNull(callMeBackTicket);
 			AssertText("Задать вопрос:");

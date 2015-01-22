@@ -14,11 +14,42 @@ namespace InforoomControlPanel.Controllers
 	{
 		public ActionResult TicketIndex()
 		{
-			var tickets = DbSession.Query<Ticket>().Where(k => !k.IsNotified).ToList();
+			var tickets = DbSession.Query<Ticket>().OrderByDescending(i=>i.CreationDate).ToList();
 			ViewBag.Tickets = tickets;
 			return View();
 		}
 
+		public ActionResult CallMeBackTicketIndex()
+		{
+			var tickets = DbSession.Query<CallMeBackTicket>().OrderByDescending(i=>i.CreationDate).ToList();
+			ViewBag.Tickets = tickets;
+			return View();
+		}
+		public ActionResult EditCallMeBackTicket(int? ticketid)
+		{
+			CallMeBackTicket ticket;
+			ticket = DbSession.Get<CallMeBackTicket>(ticketid);
+			ViewBag.Ticket = ticket;
+			return View();
+		}
+
+		public ActionResult UpdateCallMeBackTicket([EntityBinder]CallMeBackTicket ticket)
+		{
+			ViewBag.Ticket = ticket;
+			var errors = ValidationRunner.ValidateDeep(ticket);
+			if (errors.Length == 0) {
+				ticket.AnswerDate = DateTime.Now;
+				ticket.Employee = CurrentEmployee;
+				DbSession.SaveOrUpdate(ticket);
+				SuccessMessage("Запрос на обратный звонок успешно изменен");
+			}
+			else {
+				ErrorMessage("Что-то пошло не так");
+				return View("EditCallMeBackTicket");
+			}
+
+			return RedirectToAction("CallMeBackTicketIndex");
+		}
 		public ActionResult EditTicket(int? ticketid)
 		{
 			Ticket ticket;
@@ -27,7 +58,7 @@ namespace InforoomControlPanel.Controllers
 			return View();
 		}
 
-		public ActionResult UpdateTicket(Ticket ticket)
+		public ActionResult UpdateTicket([EntityBinder]Ticket ticket)
 		{
 			ViewBag.Ticket = ticket;
 			var errors = ValidationRunner.ValidateDeep(ticket);

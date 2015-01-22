@@ -51,7 +51,7 @@ else {
 		index++;
 		<div class="question"><span>@index. </span>@Html.DisplayFor(modelItem => item.Text)<div class="pointer"></div>
 			<div class="answer hidden">
-				<span>@Html.DisplayFor(modelItem => item.Answer)</span>
+				<span>@(new HtmlString(item.Answer.Replace("\n","<br />")))</span>
 			</div>
 		</div>
 	}

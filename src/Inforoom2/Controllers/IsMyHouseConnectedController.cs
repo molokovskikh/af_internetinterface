@@ -13,7 +13,7 @@ namespace Inforoom2.Controllers
 			var address = new Address { House = new House { Street = new Street { Region = new Region() } } };
 			var clientRequest = new ClientRequest();
 			clientRequest.Address = address;
-			ViewBag.Regions = GetList<Region>();
+			ViewBag.Regions = DbSession.Query<Region>().Where(i => i.City != null).ToList();
 			ViewBag.ClientRequest = clientRequest;
 			ViewBag.IsConnected = null;
 			return View();
@@ -30,7 +30,11 @@ namespace Inforoom2.Controllers
 			var regions =GetList<Region>();
 			ViewBag.Regions = regions;
 			ViewBag.ClientRequest = clientRequest;
-			ViewBag.SelectedRegionOfficePhoneNumber = regions.FirstOrDefault(r => r.Name.Equals(clientRequest.YandexCity, StringComparison.InvariantCultureIgnoreCase)).RegionOfficePhoneNumber;
+			var selectedRegion = regions.FirstOrDefault(r => r.Name.Equals(clientRequest.YandexCity, StringComparison.InvariantCultureIgnoreCase));
+			if(selectedRegion != null)
+				ViewBag.SelectedRegionOfficePhoneNumber = selectedRegion.RegionOfficePhoneNumber;
+			else
+				ViewBag.SelectedRegionOfficePhoneNumber = regions.First().RegionOfficePhoneNumber;
 			return View();
 		}
 

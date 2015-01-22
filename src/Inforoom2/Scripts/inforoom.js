@@ -207,7 +207,7 @@ function Inforoom() {
 
 	this.checkCity = function () {
 		//показать выбор городов
-		$('.city .name').on("click", function(e) {
+		$('.city .name, .city .arrow').on("click", function(e) {
 			$('.city .cities').show();
 			e.stopPropagation();
 		});
@@ -215,6 +215,7 @@ function Inforoom() {
 		$('body').on("click", function () {
 			$('.city .cities').hide();
 		});
+
 		$('.cities a').on("click", function () {
 			$('.city .name').html($(this).html());
 			cli.setCookie("userCity", this.innerHTML);
@@ -234,6 +235,15 @@ function Inforoom() {
 			wnd.remove();
 			cli.setCookie("userCity", city);
 		});
+
+		//обработка крестика - выбор первого города
+		$(wnd.getElement()).find('.close').on("click", function () {
+			var cities = $(wnd.getElement()).find('.cities a');
+			cli.setCookie("userCity", cities.get(0).innerHTML);
+			window.location.reload();
+		});
+
+		//обработка
 		$(wnd.getElement()).find('.cities a').on("click", function () {
 			cli.setCookie("userCity", this.innerHTML);
 			window.location.reload();

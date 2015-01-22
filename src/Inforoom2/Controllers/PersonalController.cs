@@ -15,6 +15,7 @@ using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Linq;
 using NHibernate.Proxy;
+using AppealType = Inforoom2.Models.AppealType;
 using Client = Inforoom2.Models.Client;
 using Contact = Inforoom2.Models.Contact;
 using Payment = Inforoom2.Models.Payment;
@@ -30,6 +31,8 @@ namespace Inforoom2.Controllers
 	{
 		public new ActionResult Profile()
 		{
+			if(CurrentClient == null)
+				return RedirectToAction("Login", "Account");
 			InitServices();
 			ViewBag.Title = "Личный кабинет";
 			ViewBag.CurrentClient = CurrentClient;
@@ -129,10 +132,14 @@ namespace Inforoom2.Controllers
 				}
 				if (client.SendSmsNotification) {
 					client.SendSmsNotification = false;
+					var appeal = new Appeal("Клиент отписался от смс рассылки", client, AppealType.User);
+					DbSession.Save(appeal);
 					SuccessMessage("Вы успешно отписались от смс рассылки");
 				}
 				else {
 					client.SendSmsNotification = true;
+					var appeal = new Appeal("Клиент подписался смс рассылку", client, AppealType.User);
+					DbSession.Save(appeal);
 					SuccessMessage("Вы успешно подписались на смс рассылку");
 				}
 
@@ -159,6 +166,7 @@ namespace Inforoom2.Controllers
 			var client = CurrentClient;
 			ViewBag.Client = client;
 			plan.SwitchPrice = GetPlanSwitchPrice(client.PhysicalClient.Plan, plan, true);
+			var oldPlan = client.PhysicalClient.Plan;
 			var result = client.PhysicalClient.ChangeTariffPlan(plan);
 			if (result == null) {
 				ErrorMessage("Не достаточно средств для смены тарифного плана");
@@ -168,14 +176,15 @@ namespace Inforoom2.Controllers
 			DbSession.Save(client);
 			DbSession.Save(result);
 			SuccessMessage("Тариф изменен");
+			var appeal = new Appeal("Тарифный план был изменен с " + oldPlan.Name + " на " + plan.Name, client, AppealType.User);
+			DbSession.Save(appeal);
 			return RedirectToAction("Tariffs");
 		}
 
 		protected decimal GetPlanSwitchPrice(Plan planFrom, Plan planTo, bool onlyAvailableToSwitch)
 		{
 			IList<PlanTransfer> prices = planFrom.PlanTransfers;
-			var price = prices.FirstOrDefault(p => p.PlanFrom.Id == planFrom.Id
-			                                       && p.PlanTo.Id == planTo.Id);
+			var price = prices.FirstOrDefault(p => p.PlanFrom.Id == planFrom.Id && p.PlanTo.Id == planTo.Id);
 			if (price != null) {
 				return price.Price;
 			}

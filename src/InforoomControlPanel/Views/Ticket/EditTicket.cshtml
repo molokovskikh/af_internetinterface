@@ -2,30 +2,38 @@
 @{
 	Ticket ticket = ViewBag.Ticket;
 	Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewBag.Title = "Ответить на запрос в техподдержку";
 }
 
-<div style="width: 1000px; margin: 0px auto; border: 1px gainsboro solid">
-	<div class="UpdateTicket" >
-	
-	
-		@using (@Html.BeginForm("UpdateTicket", "Ticket", FormMethod.Post)) {
-			<div>
+		@using (@Html.BeginForm("UpdateTicket", "Ticket", FormMethod.Post,new {@class = "form-horizontal form-groups-bordered"})) {
+			<div class="form-group">
 				@Html.HiddenFor(model => ticket.Id)
 				@Html.HiddenFor(model => ticket.Email)
 				@Html.HiddenFor(model => ticket.Text)
-				<span>Email</span>
-				@Html.DisplayFor(model => ticket.Email)
-				<span>Вопрос</span>
-				@Html.DisplayFor(model => ticket.Text)
+				<label class="col-sm-3 control-label" for="field-ta">Email</label>
+				<div class="col-sm-5">
+					<label class="col-sm-3 control-label" for="field-ta">@Html.DisplayFor(model => ticket.Email)</label>
 				</div>
-			<div>
-				<span>Ответ</span>
-				@Html.TextAreaFor(model => ticket.Answer)
-				@ViewBag.Validation.GetError(ticket, "Answer", "Ответ не может быть пустым")
 			</div>
-		
-			<input type="submit"  value="Ответить"/>
+			<div class="form-group">
+				<label class="col-sm-3 control-label" for="field-ta">Вопрос</label>
+				<div class="col-sm-5">
+					<label class="col-sm-3 control-label" for="field-ta">@Html.DisplayFor(model => ticket.Text)</label>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label" for="field-ta">Ответ</label>
+				<div class="col-sm-5">
+					@Html.TextAreaFor(model => ticket.Answer,new {@class = "form-control", style="height: 200px"})
+					@ViewBag.Validation.GetError(ticket, "Answer", "Ответ не может быть пустым")
+				</div>
+			</div>
+			<div class="form-group">
+			<div class="col-sm-7">
+				</div>
+				<button class="btn btn-green" type="submit">Ответить</button>
+			</div>
 		}
-		<button class="BackButton" onclick=" location.href = '@Url.Action("TicketIndex", "Ticket")' ">Назад</button>
-	</div>
+<div class="form-group">
 </div>
+<button class="btn btn-blue" onclick=" location.href = '@Url.Action("TicketIndex", "Ticket")' ">Назад</button>

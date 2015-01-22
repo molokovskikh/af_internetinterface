@@ -50,7 +50,7 @@
 
 				<!-- logo -->
 				<div class="logo">
-					<a href="index.html">
+					<a href="@Url.Action("Index","AdminAccount")">
 						<img src="~/assets/images/logo@2x.png" width="120" alt="" />
 					</a>
 				</div>
@@ -77,13 +77,13 @@
 				<!-- add class "multiple-expanded" to allow multiple submenus to open -->
 				<!-- class "auto-inherit-active-class" will automatically add "active" class for parent elements who are marked already with class "active" -->
 				<li>
-					<a href="@Url.Action("Impersonate","AdminAccount")">
+					<a href="@Url.Action("Index","AdminAccount")">
 						<i class="entypo-home"></i>
 						<span class="title">Главная</span>
 					</a>
 				</li>
 				<li>
-				<a href="@Url.Action("Index","Client")">
+				<a href="@Url.Action("ClientList","Client")">
 						<i class="entypo-users"></i>
 						<span class="title">Клиенты</span>
 				</a>
@@ -112,6 +112,55 @@
 						<li>
 							<a href="@Url.Action("ConnectionTable","ConnectionTeam")">
 								<span class="title">График подключений</span>
+							</a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="@Url.Action("QuestionIndex","Question")">
+						<i class="entypo-picture"></i>
+						<span class="title">Контент</span>
+					</a>
+					<ul class="visible">
+						<li>
+							<a href="@Url.Action("QuestionIndex","Question")">
+								<span class="title">Вопросы и ответы</span>
+							</a>
+						</li>
+						<li>
+							<a href="@Url.Action("NewsIndex", "News")">
+								<span class="title">Новости</span>
+							</a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="@Url.Action("Admins","Admin")">
+						<i class="entypo-user"></i>
+						<span class="title">Администраторы</span>
+					</a>
+					<ul class="visible">
+						<li>
+							<a href="@Url.Action("Admins","Admin")">
+								<span class="title">Администраторы</span>
+							</a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="@Url.Action("TicketIndex","Ticket")">
+						<i class="entypo-mail"></i>
+						<span class="title">Запросы пользователей</span>
+					</a>
+					<ul class="visible">
+						<li>
+							<a href="@Url.Action("TicketIndex","Ticket")">
+								<span class="title">Запросы в техподдержку</span>
+							</a>
+						</li>
+						<li>
+							<a href="@Url.Action("CallMeBackTicketIndex","Ticket")">
+								<span class="title">Заявки на обратный звонок</span>
 							</a>
 						</li>
 					</ul>
@@ -145,7 +194,7 @@
 		<hr />
 		<ol class="breadcrumb bc-3">
 			<li>
-				<a href="@Url.Action("Impersonate","AdminAccount")"><i class="fa-home"></i>Панель управления</a>
+				<a href="@Url.Action("Index","AdminAccount")"><i class="fa-home"></i>Панель управления</a>
 			</li>
 			<li>
 				<a href="@Url.Action("Index")">@ViewBag.BreadCrumb</a>

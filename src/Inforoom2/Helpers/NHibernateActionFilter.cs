@@ -69,6 +69,7 @@ namespace Inforoom2.Helpers
 		public string TableName(string tableName)
 		{
 			if (tableName == "PhysicalClients"
+			    || tableName == "Appeals"
 			    || tableName == "Tariffs"
 			    || tableName == "Regions"
 			    || tableName == "Services"

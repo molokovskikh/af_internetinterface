@@ -38,7 +38,6 @@ namespace Inforoom2.Controllers
 		public BaseController()
 		{
 			ValidationRunner = new ValidationRunner();
-			ViewBag.BreadCrumb = "Панель управления";
 			ViewBag.Validation = ValidationRunner;
 			ViewBag.Title = "Инфорум";
 			ViewBag.JavascriptParams = new Dictionary<string, string>();
@@ -134,8 +133,44 @@ namespace Inforoom2.Controllers
 					{ { "controller", "StaticContent" }, { "action", "Error" } });
 				filterContext.ExceptionHandled = true;
 			}
+
 			log.ErrorFormat("{0} {1}", filterContext.Exception.Message, filterContext.Exception.StackTrace);
-			EmailSender.SendError(filterContext.Exception.ToString());
+
+			//Формируем сообщение об ошибке
+			var builder = this.CollectDebugInfo();
+			var msg = filterContext.Exception.ToString();
+			builder.Append(msg);
+			EmailSender.SendError(builder.ToString());
+		}
+
+		protected StringBuilder CollectDebugInfo()
+		{
+			var builder = new StringBuilder(1000);
+			if(CurrentClient != null)
+				builder.Append("Клиент: " + CurrentClient.Id + " \n ");
+			builder.Append("Форма: \n ");
+			foreach (var key in Request.Form.AllKeys)
+			{
+				//if(key == "password") {
+				//	builder.Append("Password : !!!Restricted!!! \n");
+				//	continue;
+				//}
+				builder.Append(key);
+				builder.Append(" : ");
+				builder.Append(Request.Form[key]);
+				builder.Append("\n");
+			}
+			builder.Append("Запрос: " +Request.FilePath+ " : "+ Request.QueryString + " \n ");
+			builder.Append("Браузер: " +Request.Browser.Browser + " \n ");
+			builder.Append("Куки: \n ");
+			foreach (var key in Request.Cookies.AllKeys)
+			{
+				builder.Append(key);
+				builder.Append(" : ");
+				builder.Append(GetCookie(key));
+				builder.Append("\n");
+			}
+			return builder;
 		}
 
 		protected override void OnActionExecuting(ActionExecutingContext filterContext)
@@ -192,7 +227,7 @@ namespace Inforoom2.Controllers
 			var errors = ValidationRunner.ValidateDeep(callMeBackTicket);
 			if (errors.Length == 0) {
 				DbSession.Save(callMeBackTicket);
-				SuccessMessage("Заявка отправлена. В течении для вам перезвонят.");
+				SuccessMessage("Заявка отправлена. В течении дня вам перезвонят.");
 				return;
 			}
 			ViewBag.CallMeBackTicket = callMeBackTicket;
@@ -223,7 +258,7 @@ namespace Inforoom2.Controllers
 					int.TryParse(User.Identity.Name, out userId);
 					if(userId != 0)
 						user = DbSession.Query<PhysicalClient>().FirstOrDefault(k => k.Id == userId);
-					if (user != null) {
+					if (user != null && user.Address != null) {
 						userCity = user.Address.House.Street.Region.City.Name;
 					}
 					else {
@@ -233,6 +268,9 @@ namespace Inforoom2.Controllers
 			}
 			ViewBag.UserCityBelongsToUs = IsUserCityBelongsToUs(UserCity);
 			ViewBag.UserCity = UserCity;
+			ViewBag.UserRegion = DbSession.Query<Region>().FirstOrDefault(i => i.Name == UserCity);
+			if(ViewBag.UserRegion == null)
+				ViewBag.UserRegion = DbSession.Query<Region>().First();
 		}
 
 		private bool IsUserCityBelongsToUs(string city)
@@ -272,7 +310,7 @@ namespace Inforoom2.Controllers
 		protected string GetCookie(string cookieName)
 		{
 			var cookie = Request.Cookies.Get(cookieName);
-			if (cookie == null) {
+			if (cookie == null || cookie.Value.Length <= 1) {
 				return string.Empty;
 			}
 

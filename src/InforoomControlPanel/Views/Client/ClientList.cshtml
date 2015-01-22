@@ -18,6 +18,7 @@
 							</label>
 						</div>
 					</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2" >Номер</th>
 				<th class="sorting" tabindex="0" aria-controls="table-2" >Имя</th>
 				<th class="sorting" tabindex="0" aria-controls="table-2" >Действия</th>
 			</tr>
@@ -31,6 +32,7 @@
 							<label class="cb-wrapper"><input type="checkbox" id="chk-1"><div class="checked"></div></label>
 						</div>
 					</td>
+					<td>@client.Id</td>
 					<td>@client.PhysicalClient.FullName</td>
 					<td>
 						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("ServiceRequest","Client",new {clientId = client.Id})">
@@ -41,27 +43,19 @@
 							<i class="entypo-plus-circled"></i>
 							Заявка на подключеие
 						</a>
+						<form style="display:inline" action="@Url.Action("ApplyImpersonation","AdminAccount")" method="post">
+							<input  name="client.Id" type="hidden" value="@client.Id">
+							<button class="btn btn-success btn-sm btn-icon icon-left" type="submit" value="Войти">
+								<i class="entypo-key"></i>
+								Войти в личный кабинет
+							</button>
+						</form>
 					</td>
 				</tr>
 			}
 		</tbody>
 	</table>
 	<div class="row">
-		<div class="col-xs-6 col-left">
-			<div class="dataTables_info" id="table-2_info" role="status" aria-live="polite">Showing 1 to 8 of 60 entries</div>
-		</div>
-		<div class="col-xs-6 col-right"><div class="dataTables_paginate paging_bootstrap" id="table-2_paginate">
-											<ul class="pagination pagination-sm">
-												<li class="prev disabled">
-													<a href="#"><i class="entypo-left-open"></i></a>
-												</li>
-												<li class="active">
-													<a href="#">1</a>
-												</li>
-												<li>
-													<a href="#">2</a>
-												</li><li><a href="#">3</a></li><li><a href="#">4</a></li><li><a href="#">5</a></li><li class="next"><a href="#"><i class="entypo-right-open"></i></a></li>
-											</ul>
-										</div></div>
+		@{ Html.RenderPartial("Pagination");  }
 	</div>
 </div>

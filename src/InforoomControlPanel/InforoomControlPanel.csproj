@@ -1544,7 +1544,6 @@
     <Content Include="Views\Shared\AdminPanel.cshtml" />
     <Content Include="Views\AdminAccount\Index.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\AdminAccount\Impersonate.cshtml" />
     <Content Include="Web.InforoomControlPanel_Test.config">
       <SubType>Designer</SubType>
     </Content>
@@ -1820,6 +1819,21 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\ConnectionTeam\AttachClientRequest.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Admin\Admins.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\Pagination.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\Error.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Ticket\CallMeBackTicketIndex.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Ticket\EditCallMeBackTicket.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

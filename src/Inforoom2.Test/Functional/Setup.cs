@@ -88,16 +88,37 @@ namespace Inforoom2.Test.Functional
 				region.City = blg;
 				session.Save(region);
 			}
+			//Переходы с тарифов
+			session.Query<PlanTransfer>().ToList().ForEach(i=>session.Delete(i));
+			session.Flush();
+			var plans = session.Query<Plan>().ToList();
+			//var popular = plans.First(i => i.Name.Contains("Популярный"));
+			//Переход со всех тарифов
+			foreach (var plan in plans)
+			{
+				foreach(var plan2 in plans)
+				{
+					var transfer = new PlanTransfer();
+					transfer.PlanFrom = plan;
+					transfer.PlanTo = plan2;
+					transfer.Price = 150;
+					transfer.IsAvailableToSwitch = true;
+					session.Save(transfer);
+				}
+			}
 
-
+			//Пользователи
+			session.Query<Payment>().ToList().ForEach(i=>session.Delete(i));
+			session.Query<Client>().ToList().ForEach(i=>session.Delete(i));
+			session.Query<PhysicalClient>().ToList().ForEach(i=>session.Delete(i));
+			session.Flush();
+			var pass = CryptoPass.GetHashString("password");
 			if (!session.Query<Client>().Any()) {
 				Permission permission = new Permission { Name = "TestPermission" };
 				session.Save(permission);
 
 				Role role = new Role { Name = "Admin" };
 				session.Save(role);
-
-				var pass = CryptoPass.GetHashString("password");
 
 				IList<Role> roles = new List<Role>();
 				roles.Add(role);
@@ -116,8 +137,8 @@ namespace Inforoom2.Test.Functional
 						PhoneNumber = "4951234567",
 						Email = "test@client.rru",
 						Name = "Иван",
-						Surname = "Дулин",
-						Patronymic = "Михалыч",
+						Surname = "Кузнецов",
+						Patronymic = "Дмитриевич",
 						Plan = session.Query<Plan>().FirstOrDefault(p => p.Name == "Популярный"),
 						Balance = 1000,
 						Address = session.Query<Address>().FirstOrDefault(),

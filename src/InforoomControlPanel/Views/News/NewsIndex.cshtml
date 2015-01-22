@@ -1,36 +1,50 @@
 ﻿@using Inforoom2.Models
 
 @{
-	ViewBag.Title = "NewsIndex";
+	ViewBag.Title = "Новости";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	IList<NewsBlock> newsBlocks = ViewBag.NewsBlocks;
 }
-
-<h2>AdminQuestion</h2>
-@{ Html.RenderPartial("AdminPanel");  }
-<span><button class="CreateQuestion" onclick=" location.href = '@Url.Action("EditNewsBlock", "News")' ">Создать новость</button></span>
-
-<div class="AdminQuestion">
-	
-	<table class="AdminQuestionTable">
-		@foreach (var item in newsBlocks) {
+<div class="form-group">
+<a class="btn btn-success btn-sm btn-icon icon-left" href = '@Url.Action("EditNewsBlock", "News")'>
+	<i class="entypo-plus"></i>
+	Создать новость
+</a>
+	</div>
+<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
+	<thead>
+		<tr role="row">
+			<th class="sorting" tabindex="0" aria-controls="table-2" >Номер</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2" >Название</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2" >Короткое описание</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2" >Дата создания</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2" >Автор</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2" >Опубликовано</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2" >Действия</th>
+		</tr>
+	</thead>
+			@foreach (var item in newsBlocks)
+			{
 			<tr>
 				<td>@Html.DisplayFor(modelItem => item.Priority)</td>
 				<td>@Html.DisplayFor(modelItem => item.Title)</td>
 				<td>@Html.DisplayFor(modelItem => item.Preview)</td>
-				<td>@Html.DisplayFor(modelItem => item.Body)</td>
 				<td>@Html.DisplayFor(modelItem => item.CreationDate)</td>
 				<td>@Html.DisplayFor(modelItem => item.Employee.Name)</td>
 				<td>@Html.CheckBoxFor(modelItem => item.IsPublished)</td>
-				<td>
-					
-					<span><button class="ViewQuestion" onclick=" location.href = '@Url.Action("EditNewsBlock", "News", new { newsBlockId = item.Id })' ">Просмотр</button></span>
-					<span><button class="NewsBlockDelete" onclick=" location.href = '@Url.Action("DeleteNewsBlock", "News", new { newsBlockId = item.Id })' ">Удалить</button></span>
-					<span><button class="NewsBlockUp" onclick=" location.href = '@Url.Action("Move", "News", new { newsBlockId = item.Id, direction = "Up" })' ">Вверх</button></span>
-					<span><button class="NewsBlockDown" onclick=" location.href = '@Url.Action("Move", "News", new { newsBlockId = item.Id, direction = "Down" })' ">Вниз</button></span>
-				
-				</td>
+				<td style="width:180px">
+					<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("EditNewsBlock","News",new {newsBlockId = item.Id})">
+						<i class="entypo-vcard"></i>
+						Изменить
+					</a>
+					<a class="entypo-up" href="@Url.Action("Move","News",new {newsBlockId = item.Id, direction = "Up" })"></a>
+					<a class="entypo-down" href="@Url.Action("Move","News",new {newsBlockId = item.Id, direction = "Down" })"></a>
+					<a class="entypo-cancel-circled" style="color:red" href="@Url.Action("DeleteNewsBlock","News",new {newsBlockId = item.Id })"></a>
+								</td>
 			</tr>
-		}
-	</table>
+			}
+	<tbody>
+	</tbody>
+</table>
 </div>

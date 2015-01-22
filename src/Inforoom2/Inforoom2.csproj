@@ -287,6 +287,7 @@
     <Compile Include="Intefaces\IModelWithPriority.cs" />
     <Compile Include="Models\AdditionalStatus.cs" />
     <Compile Include="Models\Address.cs" />
+    <Compile Include="Models\Administrator.cs" />
     <Compile Include="Models\BillingHistory.cs" />
     <Compile Include="Models\City.cs" />
     <Compile Include="Models\ClientEndPoint.cs" />
@@ -294,6 +295,7 @@
     <Compile Include="Models\ClientService.cs" />
     <Compile Include="Models\CallMeBackTicket.cs" />
     <Compile Include="Models\Contact.cs" />
+    <Compile Include="Models\Appeal.cs" />
     <Compile Include="Models\InternetSettings.cs" />
     <Compile Include="Models\Lease.cs" />
     <Compile Include="Models\LegalClient.cs" />
@@ -403,8 +405,13 @@
     <Content Include="Views\Home\ActionPlans.cshtml" />
     <Content Include="Views\Shared\LoginPartial.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Account\AdminLogin.cshtml" />
     <None Include="Web.Inforoom2_Test.config">
       <SubType>Designer</SubType>
+    </None>
+    <None Include="Web.release.config">
+      <SubType>Designer</SubType>
+      <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
   <ItemGroup>
