@@ -148,6 +148,7 @@ namespace Inforoom2.Controllers
 			var builder = new StringBuilder(1000);
 			if(CurrentClient != null)
 				builder.Append("Клиент: " + CurrentClient.Id + " \n ");
+			builder.Append("Ip: "+Request.UserHostAddress+" \n ");
 			builder.Append("Форма: \n ");
 			foreach (var key in Request.Form.AllKeys)
 			{
@@ -183,6 +184,30 @@ namespace Inforoom2.Controllers
 			base.OnActionExecuting(filterContext);
 		}
 
+		//Авторизация клиента из сети
+		private void TryAuthorizeNetworkClient()
+		{	var ip = Request.UserHostAddress;
+				if(string.IsNullOrEmpty(ip))
+					return;
+				var address = IPAddress.Parse(ip);
+				var leases = DbSession.Query<Lease>().Where(l => l.Ip == address).ToList();
+				if (leases.Count != 0) {
+					var client = leases.Where(l => l.Endpoint != null
+						&& l.Endpoint.Client != null
+						&& l.Endpoint.Client.PhysicalClient != null)
+						.Select(l => l.Endpoint.Client)
+						.FirstOrDefault();
+					if (client != null)
+					{
+						//var builder = CollectDebugInfo();
+						//builder.Append("Авторизация клиента внутри сети");
+						//EmailSender.SendEmail("asarychev@analit.net","Авторизация: "+Request.UserHostAddress,builder.ToString());
+						SetCookie("networkClient","true");
+						this.Authenticate(ViewBag.ActionName, ViewBag.ControllerName, client.Id.ToString(), true);
+					}
+				}
+		}
+
 		protected override void OnResultExecuting(ResultExecutingContext filterContext)
 		{
 			if (CurrentRegion != null) {
@@ -196,12 +221,12 @@ namespace Inforoom2.Controllers
 			base.OnActionExecuted(filterContext);
 			if (filterContext.Exception != null) {
 			}
-
 			ViewBag.ActionName = filterContext.RouteData.Values["action"].ToString();
 			ViewBag.ControllerName = filterContext.RouteData.Values["controller"].ToString();
 
 			ProcessCallMeBackTicket();
 			ProcessRegionPanel();
+			ViewBag.NetworkClientFlag = string.IsNullOrEmpty(GetCookie("networkClient")) ? false : true;
 			if (CurrentEmployee != null) {
 				ViewBag.CurrentEmployee = CurrentEmployee;
 			}
@@ -210,6 +235,9 @@ namespace Inforoom2.Controllers
 				sb.AppendFormat("Здравствуйте, {0}. Ваш баланс: {1} руб.", CurrentClient.PhysicalClient.Name,
 					CurrentClient.PhysicalClient.Balance);
 				ViewBag.ClientInfo = sb.ToString();
+			}
+			else {
+				TryAuthorizeNetworkClient();
 			}
 		}
 

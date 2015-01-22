@@ -1,0 +1,98 @@
+﻿@using Inforoom2.Models
+@using Inforoom2.Models.Services
+@model dynamic
+
+@{
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewBag.Title = "Предупреждение";
+	Client client = ViewBag.Client;
+	BlockAccountService service = ViewBag.BlockAccountService;
+}
+<div class="name-page">
+	<h1 class="header-page" >Внимание!</h1>
+</div>
+<div class="block-page">
+<p class="info">Номер лицевого счета для оплаты: @client.Id</p>
+@if(client.LegalClient != null) {
+		if(client.Disabled) {
+			<p>Доступ в интернет заблокирован.</p>
+		}
+		if(client.Balance < 0)
+		{
+			<p>Ваша задолженность за оказанные услуги по доступу в интернет составляет @client.Balance.ToString("C")</p>
+			if(client.Disabled != true){
+				<p>При непоступлении оплаты доступ в сеть будет заблокирован</p>
+			 }
+		}
+}
+else if(client.PhysicalClient != null)
+{
+	if (client.Disabled)
+	{
+		if (client.Status.Type == StatusType.BlockedForRepair)
+		{
+			<p class="error">
+				Доступ в интернет заблокирован из-за проведения работ по сервисной заявке, на время работ тарификация остановлена.
+				Если работы завершены нажмите кнопку "Продолжить".
+				После нажатия кнопки "Продолжить" тарификация будет возобновлена.
+			</p>
+			<form method="post" action="@Url.Action("RepairCompleted","Warning")">
+				<input type="submit" class="button" value="Продолжить">
+			</form>
+		}
+		else if (client.Status.Type == StatusType.VoluntaryBlocking)
+		{
+			<p>Услуга "Добровольная блокировка" активирована до @client.ClientServices.FirstOrDefault(c => c.Service.GetType() == typeof(BlockAccountService)).EndDate</p>
+			using (@Html.BeginForm("DeactivateAccountBlocking", "Service", null, FormMethod.Post))
+			{
+				@Html.HiddenFor(modelItem => service.Id)
+				<input class="button" type="submit" value="Отключить" />
+			}
+		}
+		else if (!client.IsWorkStarted())
+		{
+			<p class="info">
+				Для начала работы внесите первый платеж.
+			</p>
+		}
+		else if (client.Balance < 0)
+		{
+			<p class="error">
+				Ваша задолженность за оказанные услуги составляет @client.Balance.ToString("C")<br>
+				Для возобновления доступа в интернет Вам необходимо погасить задолженность и внести абонентскую плату за полный месяц<br>
+			</p>
+		}
+		else
+		{
+			<p class="error">
+				Доступ в интернет заблокирован за неуплату. Сумма на вашем лицевом счете недостаточна для разблокировки<br>
+				Для возобновления доступа в интернет Вам необходимо внести абонентскую плату за полный месяц<br>
+			</p>
+		}
+
+	}
+	else if (client.ShowBalanceWarningPage)
+	{
+		if(client.ShowWarningBecauseNoPassport())
+		{
+			<p>У вас не заполненны паспортные данные</p>
+		}
+		else
+		{
+			<p>Ваш баланс составляет @client.Balance.ToString("C") <br/>
+				При непоступлении оплаты, доступ в сеть будет заблокирован в течение суток. <br>
+																							В случае блокировки, для возобновления доступа в интернет, Вам необходимо будет погасить задолженность и внести абонентскую плату за полный месяц.</p>
+		}
+	}
+}
+@if(client.Disabled == false)	{
+	<p>
+		Для продолжения роботы в интернет нажмите кнопку "Продолжить".
+	</p>
+	<form method="post">
+		<input name="referer" type="hidden" value="!{referer}">
+		<input type="hidden" name="disable" value="1"/>
+		<input type="submit" class="button" id="ConButton" value="Продолжить">
+	</form>
+}
+</div>

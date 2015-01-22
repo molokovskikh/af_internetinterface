@@ -44,8 +44,10 @@
 						<p>	@ViewBag.ClientInfo </p>
 						@using (Html.BeginForm("Profile", "Personal", FormMethod.Get, new { @class = "logonform" })) {
 							<input type="submit" value="Личный кабинет">
+							}
+						@if(!ViewBag.NetworkClientFlag){
+							@Html.ActionLink("Выход", "Logout", "Account")
 						}
-						@Html.ActionLink("Выход", "Logout", "Account") 
 					</div>
 				}
 				else {

@@ -26,9 +26,6 @@ namespace Inforoom2.Controllers
 				return Authenticate("Profile", "Personal", username, true);
 			}
 			ErrorMessage("Неправильный логин или пароль");
-			var builder = CollectDebugInfo();
-			builder.Append("Неверно введен логин и пароль");
-			EmailSender.SendError(builder.ToString());
 			var returnUrl = Request.UrlReferrer.ToString();
 			return Redirect(returnUrl);
 		}

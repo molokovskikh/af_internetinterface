@@ -39,7 +39,6 @@ function Inforoom() {
 		if (this.getParam("CallMeBack") == "1")
 			this.callMeBackWindow();
 		$(".header .call").on("click", this.callMeBackWindow.bind(this));
-
 		this.initInputs();
 		this.checkCity();
 		this.showMessages();

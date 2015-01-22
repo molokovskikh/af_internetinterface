@@ -29,6 +29,11 @@ namespace Inforoom2.Controllers
 	[CustomAuthorize]
 	public class PersonalController : BaseController
 	{
+		public ActionResult FirstVisit()
+		{
+			return View();
+		}
+
 		public new ActionResult Profile()
 		{
 			if(CurrentClient == null)

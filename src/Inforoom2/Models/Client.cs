@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using Common.Tools;
 using Inforoom2.Models.Services;
 using NHibernate;
 using NHibernate.Linq;
@@ -202,6 +203,21 @@ namespace Inforoom2.Models
 		public virtual string GetAddressString()
 		{
 			return "г. Москва, ул. Вильнюсская, д.8, к.2";
+		}
+
+		public virtual bool ShowWarningBecauseNoPassport()
+		{
+			if (PhysicalClient == null)
+				return false;
+
+			if (!IsWorkStarted())
+				return false;
+
+			var dontHavePassportData = string.IsNullOrEmpty(PhysicalClient.PassportNumber);
+			var goodMoney = Balance > 0;
+			var date = SystemTime.Now() > WorkingStartDate.Value.AddDays(7);
+
+			return dontHavePassportData && goodMoney && date;
 		}
 	}
 

@@ -37,6 +37,9 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual decimal MoneyBalance { get; set; }
 
+		[Property]
+		public virtual string PassportNumber { get; set; }
+
 		[Property(Column = "_PhoneNumber", NotNull = true)]
 		public virtual string PhoneNumber { get; set; }
 

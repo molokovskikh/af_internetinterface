@@ -259,6 +259,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\ClientRequestController.cs" />
+    <Compile Include="Controllers\WarningController.cs" />
     <Compile Include="Controllers\IsMyHouseConnectedController.cs" />
     <Compile Include="Controllers\StaticContent.cs" />
     <Compile Include="Controllers\BussinessController.cs" />
@@ -406,6 +407,7 @@
     <Content Include="Views\Shared\LoginPartial.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\AdminLogin.cshtml" />
+    <Content Include="Views\Warning\Index.cshtml" />
     <None Include="Web.Inforoom2_Test.config">
       <SubType>Designer</SubType>
     </None>
