@@ -54,10 +54,12 @@ namespace InforoomControlPanel.Controllers
 				clientRequest.Address = GetAddressByYandexData(clientRequest);
 				DbSession.Save(clientRequest);
 				SuccessMessage(string.Format("Спасибо, Ваша заявка создана. Номер заявки {0}", clientRequest.Id));
+				return RedirectToAction("ClientRequest");
 			}
-			if (!clientRequest.IsContractAccepted) {
-				ErrorMessage("Пожалуйста, подтвердите, что Вы согласны с договором-офертой");
-			}
+			// Пока используется IsContractAccepted=true, закомментированные строки кода не нужны
+			//if (!clientRequest.IsContractAccepted) {
+			//	ErrorMessage("Пожалуйста, подтвердите, что Вы согласны с договором-офертой");
+			//}
 			ViewBag.IsRedirected = false;
 			ViewBag.IsCityValidated = false;
 			ViewBag.IsStreetValidated = false;
