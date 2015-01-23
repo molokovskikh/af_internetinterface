@@ -31,15 +31,14 @@ namespace Inforoom2.Controllers
 		public ActionResult Index(int disable = 0, string ip ="")
 		{
 #if !DEBUG
-		var ip = Request.UserHostAddress;
-		var address = IPAddress.Parse(ip);
+		var addrs = Request.UserHostAddress;
+		var address = IPAddress.Parse(addrs);
 		var leases = DbSession.Query<Lease>().Where(l => l.Ip == address).ToList();
-		var lease = leases.FirstOrDefault(l => l.Endpoint != null
-		                                       && l.Endpoint.Client != null);
-		var endpoint = lease.Endpoint;
-			if (lease.Endpoint == null || lease.Endpoint.Client == null) {
-				return RedirectToAction("Index","Home");
+		var lease = leases.FirstOrDefault(l => l.Endpoint != null && l.Endpoint.Client != null);
+		if (lease == null) {
+			return RedirectToAction("Index","Home");
 			}
+		var endpoint = lease.Endpoint;
 		var client = endpoint.Client;
 #else
 		Client client;

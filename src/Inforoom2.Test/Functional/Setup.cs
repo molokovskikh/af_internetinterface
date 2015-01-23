@@ -66,7 +66,7 @@ namespace Inforoom2.Test.Functional
 				//GeneratePlansAndPrices();
 			}
 
-			
+
 			session.Query<City>().ToList().ForEach(i=>session.Delete(i));
 			session.Query<Region>().ToList().ForEach(i => session.Delete(i));
 			session.Flush();
@@ -111,6 +111,7 @@ namespace Inforoom2.Test.Functional
 			session.Query<Payment>().ToList().ForEach(i=>session.Delete(i));
 			session.Query<Client>().ToList().ForEach(i=>session.Delete(i));
 			session.Query<PhysicalClient>().ToList().ForEach(i=>session.Delete(i));
+			session.Query<ClientService>().ToList().ForEach(i=>session.Delete(i));
 			session.Flush();
 			var pass = CryptoPass.GetHashString("password");
 			if (!session.Query<Client>().Any()) {
@@ -147,7 +148,8 @@ namespace Inforoom2.Test.Functional
 					Disabled = false,
 					RatedPeriodDate = DateTime.Now,
 					FreeBlockDays = 28,
-					WorkingStartDate = DateTime.Now
+					WorkingStartDate = DateTime.Now,
+					Lunched = true
 				};
 
 				var client2 = new Client {
@@ -167,14 +169,14 @@ namespace Inforoom2.Test.Functional
 					RatedPeriodDate = DateTime.Now,
 					FreeBlockDays = 0,
 					WorkingStartDate = DateTime.Now,
-					AutoUnblocked = true
+					AutoUnblocked = true,
+					Lunched = true
 				};
 
 				client.Status = session.Get<Status>(5);
 				client2.Status = session.Get<Status>(7);
 
-				var services =
-					session.Query<Service>().Where(s => s.Name == "IpTv" || s.Name == "Internet").ToList();
+				var services = session.Query<Service>().Where(s => s.Name == "IpTv" || s.Name == "Internet").ToList();
 				IList<ClientService> csList =
 					services.Select(service => new ClientService { Service = service, Client = client, BeginDate = DateTime.Now, IsActivated = true, ActivatedByUser = true })
 						.ToList();
@@ -183,6 +185,45 @@ namespace Inforoom2.Test.Functional
 						.ToList();
 				client.ClientServices = csList;
 				client2.ClientServices = csList2;
+
+				var unpluggedClient = new Client {
+					PhysicalClient = new PhysicalClient {
+						Password = pass,
+						PhoneNumber = "4951234567",
+						Email = "test@client.rru",
+						Name = "Алексей",
+						Surname = "Третьяков",
+						Patronymic = "Павлович",
+						Plan = session.Query<Plan>().FirstOrDefault(p => p.Name == "Популярный"),
+						Balance = 1000,
+						Address = session.Query<Address>().FirstOrDefault(),
+						LastTimePlanChanged = DateTime.Now.AddMonths(-2)
+					},
+					Disabled = false,
+					RatedPeriodDate = DateTime.Now,
+					FreeBlockDays = 28,
+					WorkingStartDate = DateTime.Now,
+					Lunched = false
+				};
+				unpluggedClient.Status = session.Get<Status>(1);
+				session.Save(unpluggedClient);
+				var servs =
+					services.Select(service => new ClientService { Service = service, Client = unpluggedClient, BeginDate = null, IsActivated = false, ActivatedByUser = true })
+						.ToList();
+				unpluggedClient.ClientServices = servs;
+				session.Save(unpluggedClient);
+
+				session.Query<Lease>().ToList().ForEach(i=>session.Delete(i));
+				session.Query<Switch>().ToList().ForEach(i=>session.Delete(i));
+				session.Flush();
+				var @switch = new Switch();
+				@switch.Name = "Тестовый коммутатор";
+				session.Save(@switch);
+				var lease = new Lease();
+				lease.Port = 22;
+				lease.Ip = IPAddress.Parse("172.25.7.87");
+				lease.Switch = @switch;
+				session.Save(lease);
 
 				var availableServices =
 					session.Query<Service>().Where(s => s.Name == "Обещанный платеж" || s.Name == "Добровольная блокировка").ToList();

@@ -24,7 +24,6 @@ namespace Inforoom2.Models.Services
 		[Property(Column = "_IsActivableFromWeb")]
 		public virtual bool IsActivableFromWeb { get; set; }
 
-
 		[Bag(0, Table = "ClientServices")]
 		[Key(1, Column = "service")]
 		[OneToMany(2, ClassType = typeof(ClientService))]
@@ -61,6 +60,8 @@ namespace Inforoom2.Models.Services
 		BlockAccount = 1,
 		Credit = 2,
 		StaticIp = 3,
-		PermIp = 4
+		PermIp = 4,
+		Internet = 5,
+		Iptv = 7
 	}
 }

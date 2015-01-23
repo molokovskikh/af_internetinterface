@@ -32,13 +32,25 @@ namespace Inforoom2.Models
 		public virtual decimal Balance { get; set; }
 
 		[Property]
+		public virtual decimal ConnectSum { get; set; }
+
+		[Property]
 		public virtual decimal VirtualBalance { get; set; }
 
 		[Property]
 		public virtual decimal MoneyBalance { get; set; }
 
-		[Property]
+		[Property,NotNullNotEmpty(Message = "Введите номер пасспорта")]
 		public virtual string PassportNumber { get; set; }
+
+		[Property,NotNullNotEmpty(Message = "Введите серию пасспорта")]
+		public virtual string PassportSeries { get; set; }
+
+		[Property,NotNull(Message = "Введите дату выдачи пасспорта")]
+		public virtual DateTime PassportDate { get; set; }
+
+		[Property(Column = "WhoGivePassport"),NotNullNotEmpty(Message = "Поле не может быть пустым")]
+		public virtual string PassportResidention { get; set; }
 
 		[Property(Column = "_PhoneNumber", NotNull = true)]
 		public virtual string PhoneNumber { get; set; }

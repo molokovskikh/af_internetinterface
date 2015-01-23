@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Linq;
+using System.Text;
 using System.Web.Mvc;
 using Inforoom2.Components;
 using Inforoom2.Models;
@@ -43,6 +44,22 @@ namespace Inforoom2.Controllers
 			var errors = ValidationRunner.ValidateDeep(ticket);
 			if (errors.Length == 0) {
 				DbSession.Save(ticket);
+
+				//Дублирование письма на почту
+				var builder = new StringBuilder(1000);
+				if(ticket.Client != null)
+					builder.Append("Клиент: " + ticket.Client.Id);
+				builder.AppendLine("<br />");
+				builder.Append("IP: " + Request.UserHostAddress);
+				builder.AppendLine("<br />");
+				builder.Append(ticket.Text);
+				EmailSender.SendEmail("internet@ivrn.net","Запрос в техподдержку с ivrn.net от "+ticket.Email,builder.ToString());
+
+				if(ticket.Client != null) {
+					var appeal = new Appeal("Клиент написал тикет в техподдержку #"+ticket.Id,ticket.Client,AppealType.Statistic);
+					DbSession.Save(appeal);
+				}
+
 				SuccessMessage("Вопрос успешно отправлен. Ответ придет вам на на почту.");
 				ViewBag.NewTicket = new Ticket();
 			}

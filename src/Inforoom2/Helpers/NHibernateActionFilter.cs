@@ -84,6 +84,8 @@ namespace Inforoom2.Helpers
 			    || tableName == "Leases"
 			    || tableName == "SaleSettings"
 			    || tableName == "ClientEndpoints"
+			    || tableName == "NetworkSwitches"
+			    || tableName == "PaymentForConnect"
 			    || tableName == "StaticIps"
 			    || tableName == "WriteOff"
 			    || tableName == "Requests"

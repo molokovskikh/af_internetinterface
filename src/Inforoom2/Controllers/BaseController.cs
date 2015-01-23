@@ -148,6 +148,7 @@ namespace Inforoom2.Controllers
 			var builder = new StringBuilder(1000);
 			if(CurrentClient != null)
 				builder.Append("Клиент: " + CurrentClient.Id + " \n ");
+			builder.Append("Дата: "+DateTime.Now+" \n ");
 			builder.Append("Ip: "+Request.UserHostAddress+" \n ");
 			builder.Append("Форма: \n ");
 			foreach (var key in Request.Form.AllKeys)
@@ -249,12 +250,17 @@ namespace Inforoom2.Controllers
 			if (Request.Params["callMeBackTicket.Name"] == null)
 				return;
 			var client = CurrentClient;
-			if (client != null) {
+			if (client != null)
 				callMeBackTicket.Client = client;
-			}
+
 			var errors = ValidationRunner.ValidateDeep(callMeBackTicket);
 			if (errors.Length == 0) {
 				DbSession.Save(callMeBackTicket);
+				if(callMeBackTicket.Client != null) {
+					var appeal = new Appeal("Клиент создал запрос на обратный звонок #"+callMeBackTicket.Id, callMeBackTicket.Client, AppealType.Statistic);
+					DbSession.Save(appeal);
+				}
+
 				SuccessMessage("Заявка отправлена. В течении дня вам перезвонят.");
 				return;
 			}

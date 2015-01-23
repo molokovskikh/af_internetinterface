@@ -46,8 +46,8 @@ namespace Inforoom2.Models
 		[Property(NotNull = true)]
 		public virtual int FreeBlockDays { get; set; }
 		
-		[Property(NotNull = true)]
-		public virtual bool FirstLunch { get; set; }
+		[Property(NotNull = true,Column = "FirstLunch")]
+		public virtual bool Lunched { get; set; }
 		
 		[Property]
 		public virtual DateTime? StartNoBlock { get; set; }

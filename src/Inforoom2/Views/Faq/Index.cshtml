@@ -34,7 +34,7 @@ else {
 <div class="networking">
 	@using (@Html.BeginForm("Index", "Faq", FormMethod.Post)) {
 		<div>
-			<div class="ties">Email* : </div>
+			<div class="ties">Email : </div>
 			@Html.ValidationEditor(validationRunner, ticket, "Email", new { @class = "entry" }, HtmlTag.input, HtmlType.text)
 		</div>
 		<div>

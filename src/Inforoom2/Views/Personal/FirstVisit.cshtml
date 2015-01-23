@@ -1,0 +1,47 @@
+﻿@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@model dynamic
+@section JavaScript{<script type="text/javascript"src="@Url.Content("~/Scripts/ServiceController.js")"></script>}
+@{
+	ViewBag.Title = "Добро пожаловать";
+	ValidationRunner validationRunner = ViewBag.Validation;
+	PhysicalClient PhysicalClient = ViewBag.PhysicalClient;
+}
+<h2 class="heading">@ViewBag.Title</h2>
+@{ Html.RenderPartial("Menu"); }
+@using(@Html.BeginForm("FirstVisit", "Personal", null, FormMethod.Post)) {
+<div class="right-block">
+	<h4 class="secondary-header">Это Ваше первое посещение личного кабинета, просим подтвердить свои данные паспортные данные:</h4>
+	@Html.HiddenFor(i=>PhysicalClient.Id)
+	<div>
+		<div class="personals">Фамилия:</div>
+		@Html.ValidationEditor(validationRunner, PhysicalClient, "Surname", new { @class = "personal" }, HtmlTag.input, HtmlType.text)
+	</div>
+	<div>
+		<div class="personals">Имя:</div>
+		@Html.ValidationEditor(validationRunner, PhysicalClient, "Name", new { @class = "personal" }, HtmlTag.input, HtmlType.text)
+	</div>
+	<div>
+		<div class="personals">Отчество:</div>
+		@Html.ValidationEditor(validationRunner, PhysicalClient, "Patronymic", new { @class = "personal" }, HtmlTag.input, HtmlType.text)
+	</div>
+	<div>
+		<div class="personals">Серия пасспорта:</div>
+		@Html.ValidationEditor(validationRunner, PhysicalClient, "PassportSeries", new { @class = "personal" }, HtmlTag.input, HtmlType.text)
+	</div>
+	<div>
+		<div class="personals">Номер пасспорта:</div>
+		@Html.ValidationEditor(validationRunner, PhysicalClient, "PassportNumber", new { @class = "personal" }, HtmlTag.input, HtmlType.text)
+	</div>
+	<div>
+		<div class="personals">Кем выдан:</div>
+		@Html.ValidationEditor(validationRunner, PhysicalClient, "PassportResidention", new { @class = "personal" }, HtmlTag.input, HtmlType.text)
+	</div>
+	<div>
+		<div class="personals">Дата выдачи:</div>
+		@Html.ValidationEditor(validationRunner, PhysicalClient, "PassportDate", new { @class = "personal" }, HtmlTag.input, HtmlType.text)
+	</div>
+	<input class="button" type="submit" value="Отправить">
+</div>
+}
