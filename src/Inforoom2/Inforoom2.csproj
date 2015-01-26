@@ -218,6 +218,7 @@
     <Content Include="Scripts\jquery-2.1.1.js" />
     <Content Include="Scripts\jquery-ui-1.11.1.js" />
     <Content Include="Scripts\ServiceController.js" />
+    <Content Include="Scripts\Personal.Plans.js" />
     <Content Include="Scripts\Window.js" />
     <Content Include="speedtest.swf" />
     <Content Include="speedtest\expressInstall.swf" />
@@ -378,14 +379,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Personal\Profile.cshtml" />
-    <Content Include="Views\Personal\Tariffs.cshtml" />
+    <Content Include="Views\Personal\Plans.cshtml" />
     <Content Include="Views\Personal\Payment.cshtml" />
     <Content Include="Views\Personal\Credit.cshtml" />
     <Content Include="Views\Personal\UserDetails.cshtml" />
     <Content Include="Views\Personal\Service.cshtml" />
     <Content Include="Views\Personal\Notifications.cshtml" />
     <Content Include="Views\Personal\Bonus.cshtml" />
-    <Content Include="Views\Personal\Menu.cshtml" />
     <Content Include="Views\Personal\PaymentWindow.cshtml" />
     <Content Include="Views\Service\BlockAccount.cshtml" />
     <Content Include="Views\Service\DeferredPayment.cshtml" />

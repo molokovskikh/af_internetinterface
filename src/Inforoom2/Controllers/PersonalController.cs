@@ -120,7 +120,7 @@ namespace Inforoom2.Controllers
 			return View();
 		}
 
-		public ActionResult Tariffs()
+		public ActionResult Plans()
 		{
 			var client = CurrentClient;
 			InitPlans(client);
@@ -252,14 +252,14 @@ namespace Inforoom2.Controllers
 			if (result == null) {
 				ErrorMessage("Не достаточно средств для смены тарифного плана");
 				InitPlans(client);
-				return View("Tariffs");
+				return View("Plans");
 			}
 			DbSession.Save(client);
 			DbSession.Save(result);
 			SuccessMessage("Тариф изменен");
 			var appeal = new Appeal("Тарифный план был изменен с " + oldPlan.Name + " на " + plan.Name, client, AppealType.User);
 			DbSession.Save(appeal);
-			return RedirectToAction("Tariffs");
+			return RedirectToAction("Plans");
 		}
 
 		protected decimal GetPlanSwitchPrice(Plan planFrom, Plan planTo, bool onlyAvailableToSwitch)
