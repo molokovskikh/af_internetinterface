@@ -13,7 +13,7 @@ namespace Inforoom2.Controllers
 		public ActionResult Index()
 		{
 			ViewBag.Message = "HomeController";
-			var news = DbSession.Query<NewsBlock>().Where(k => k.IsPublished && (k.Region == CurrentRegion || k.Region == null)).OrderByDescending(n=>n.Priority).ToList();
+			var news = DbSession.Query<NewsBlock>().Where(k => k.IsPublished && (k.Region == CurrentRegion || k.Region == null)).OrderByDescending(n => n.Priority).ToList();
 			var newsList = new List<NewsBlock>();
 			int i = 0;
 			foreach (var newsBlock in news) {
@@ -25,7 +25,7 @@ namespace Inforoom2.Controllers
 			ViewBag.News = newsList;
 			return View();
 		}
-		
+
 		public ActionResult Plans(int? id)
 		{
 			if (id != null) {
@@ -42,6 +42,11 @@ namespace Inforoom2.Controllers
 			return View();
 		}
 
-		
-	}
+		public ActionResult PermanentHomeRedirect()
+		{
+			return RedirectToActionPermanent("Index");
+		}
+
+
+}
 }

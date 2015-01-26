@@ -250,9 +250,11 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\ControllerManager.cs" />
     <Compile Include="Components\CustomAuthorizeAttribute.cs" />
     <Compile Include="Components\EmailSender.cs" />
     <Compile Include="Components\EntityBinder.cs" />
+    <Compile Include="Components\SyncObject.cs" />
     <Compile Include="Components\YandexParser.cs" />
     <Compile Include="Components\HtmlTag.cs" />
     <Compile Include="Components\ValidationRunner.cs" />
