@@ -206,6 +206,7 @@
     <Content Include="Images\typehit.png" />
     <Content Include="Images\upward.png" />
     <Content Include="Images\wifi.png" />
+    <Content Include="list.txt" />
     <Content Include="Scripts\AdminAddressController.js" />
     <Content Include="Scripts\ClientRequest.js" />
     <Content Include="Scripts\IsMyHouseConnectedController.js" />
@@ -412,6 +413,7 @@
     <Content Include="Views\Account\AdminLogin.cshtml" />
     <Content Include="Views\Warning\Index.cshtml" />
     <Content Include="Views\Personal\FirstVisit.cshtml" />
+    <Content Include="Views\About\ConnectedHousesLists.cshtml" />
     <None Include="Web.Inforoom2_Test.config">
       <SubType>Designer</SubType>
     </None>

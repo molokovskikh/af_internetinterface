@@ -8,7 +8,7 @@
 }
 <script src="http://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
 <div class="heading">ПОДКЛЮЧЕН ЛИ ВАШ ДОМ?</div>
-<div class="contracttop">На данной странице, вы можете проверить, подключен ли ваш дом к нашей сети. В случае, если ваш дом не подключен, не спешите расстраиваться - лучше сделать звонок в техподдержку и уточнить информацию по подключению вашего дома.</div>
+<div class="contracttop">На данной странице, вы можете проверить, подключен ли ваш дом к нашей сети. В случае, если ваш дом не подключен, не спешите расстраиваться - лучше сделать звонок в техподдержку и уточнить информацию по подключению вашего дома. Также вы можете проверить наличие вашего дома в <a class="link-text" href="@Url.Action("ConnectedHousesLists","About")">списке подключенных домов</a></div>
 <div id="yandexMap" class="mapright"></div>
 <div class="addressleft">
 	
@@ -38,9 +38,9 @@
 			<div class="answer">
 				<div class="answerbg error"></div>
 				<div class="reply">
-					<h3 class="secondary-header">Ошибка!</h3>
-					<p>Просьба уточнить информацию по телефону
-						<a class="links-header">@ViewBag.SelectedRegionOfficePhoneNumber</a></p>
+					<h3 class="secondary-header">Дом не найден!</h3>
+					<p>Но не спешите расстраиваться! Возможно яндекс не может найти ваш дом. Лучше уточнить информацию по телефону
+						<a class="links-header">@ViewBag.SelectedRegionOfficePhoneNumber</a> или проверить дом в <a class="links-header" href="@Url.Action("ConnectedHousesLists","About")">списке подключенных домов</a></p>
 				</div>
 			</div>
 		}
