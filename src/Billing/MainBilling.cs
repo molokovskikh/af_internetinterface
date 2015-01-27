@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Configuration;
 using System.Linq;
 using System.Threading;
@@ -179,9 +178,8 @@ set s.LastStartFail = true;")
 						updateClient.LawyerPerson.Balance += Convert.ToDecimal(payment.Sum);
 						payment.BillingAccount = true;
 						//Разблокировка при положительном балансе
-						if (updateClient.LawyerPerson.Balance >= 0)
-						{
-							updateClient.SetStatus(StatusType.Worked,session);
+						if (updateClient.LawyerPerson.Balance >= 0) {
+							updateClient.SetStatus(StatusType.Worked, session);
 							updateClient.CreareAppeal("Клиент разблокирован", AppealType.Statistic);
 						}
 					}
@@ -386,7 +384,6 @@ set s.LastStartFail = true;")
 			var phisicalClient = client.PhysicalClient;
 			var balance = phisicalClient.Balance;
 			if (balance >= 0 && !client.Disabled && client.RatedPeriodDate.GetValueOrDefault() != DateTime.MinValue) {
-
 				var dtNow = SystemTime.Now();
 				if ((client.RatedPeriodDate.Value.AddMonths(1).Date - dtNow.Date).Days == -client.DebtDays) {
 					var dtFrom = client.RatedPeriodDate.Value;
