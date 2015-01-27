@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using Castle.ActiveRecord;
 using Castle.Components.Validator;
 
@@ -28,7 +25,7 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual string Comment { get; set; }
 
-		[BelongsTo,ValidateNonEmpty]
+		[BelongsTo, ValidateNonEmpty]
 		public virtual Client Client { get; set; }
 
 		[BelongsTo, ValidateNonEmpty]
@@ -41,9 +38,9 @@ namespace InternetInterface.Models
 		{
 			Date = DateTime.Now;
 		}
+
 		public TvRequest(Client client) : this()
 		{
-
 		}
 	}
 }
