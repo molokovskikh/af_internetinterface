@@ -296,5 +296,19 @@ namespace InternetInterface.Test.Functional
 			var savedOrder = session.QueryOver<Order>().Where(o => o.Client == laywerPerson).SingleOrDefault();
 			Assert.That(savedOrder.OrderServices.Count, Is.EqualTo(2));
 		}
+
+		[Test(Description = "Проверяет возм-ть назначения статуса 'Расторгнут' юр. лицу; тест для задачи №29157")]
+		public void SetStatus_dissolved_ForClient()
+		{
+			Open(laywerPerson.Redirect());
+			Assert.AreEqual((uint)StatusType.Worked, laywerPerson.Status.Id);
+			Css("#EditInfoBtn").Click();
+			Css("#LegalPerson_ShortName").SendKeys("Lawyer#" + laywerPerson.LawyerPerson.Id);
+			Css("#clientStatusId").SelectByText("Расторгнут");
+			Css("#SaveButton").Click();
+			laywerPerson.Refresh();
+			Assert.AreEqual((uint)StatusType.Dissolved, laywerPerson.Status.Id);
+			AssertText("Статус клиента: Расторгнут");
+		}
 	}
 }
