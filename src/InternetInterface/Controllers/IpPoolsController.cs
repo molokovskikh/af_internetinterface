@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Linq;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using InternetInterface.Controllers.Filter;
@@ -10,7 +7,7 @@ using NHibernate.Linq;
 
 namespace InternetInterface.Controllers
 {
-	[Filter(ExecuteWhen.BeforeAction, typeof (AuthenticationFilter))]
+	[Filter(ExecuteWhen.BeforeAction, typeof(AuthenticationFilter))]
 	public class IpPoolsController : InternetInterfaceController
 	{
 		// Метод-контроллер отображения списка регионов (страница $siteroot/IpPools/ShowRegionsList)

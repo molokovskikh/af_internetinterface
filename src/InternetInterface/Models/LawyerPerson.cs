@@ -85,8 +85,8 @@ namespace InternetInterface.Models
 		public virtual bool NeedShowWarning()
 		{
 			var param = ConfigurationManager.AppSettings["LawyerPersonBalanceWarningRate"];
-			var rate = (decimal) float.Parse(param, CultureInfo.InvariantCulture);
-			var cond = Balance <= -(Tariff*rate) && Balance < 0;
+			var rate = (decimal)float.Parse(param, CultureInfo.InvariantCulture);
+			var cond = Balance <= -(Tariff * rate) && Balance < 0;
 			return cond;
 		}
 
