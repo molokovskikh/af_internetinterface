@@ -1508,6 +1508,7 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\ConnectionTeamController.cs" />
     <Compile Include="Controllers\ClientController.cs" />
+    <Compile Include="Controllers\PlansController.cs" />
     <Compile Include="Controllers\NewsController.cs" />
     <Compile Include="Controllers\PlanController.cs" />
     <Compile Include="Controllers\QuestionController.cs" />
@@ -1834,6 +1835,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Ticket\EditCallMeBackTicket.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Plans\EditPlan.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Plans\PlanIndex.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

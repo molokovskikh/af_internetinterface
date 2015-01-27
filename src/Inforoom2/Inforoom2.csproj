@@ -206,7 +206,6 @@
     <Content Include="Images\typehit.png" />
     <Content Include="Images\upward.png" />
     <Content Include="Images\wifi.png" />
-    <Content Include="list.txt" />
     <Content Include="Scripts\AdminAddressController.js" />
     <Content Include="Scripts\ClientRequest.js" />
     <Content Include="Scripts\IsMyHouseConnectedController.js" />

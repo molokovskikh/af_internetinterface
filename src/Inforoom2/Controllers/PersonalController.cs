@@ -240,15 +240,18 @@ namespace Inforoom2.Controllers
 			return View();
 		}
 
+		/// <summary>
+		/// Смена тарифного плана
+		/// </summary>
+		/// <param name="plan">Тарифный план</param>
+		/// <returns></returns>
 		[HttpPost]
 		public ActionResult ChangePlan([EntityBinder] Plan plan)
 		{
-			//	var plan = DbSession.Get<Plan>(planId);
 			var client = CurrentClient;
 			ViewBag.Client = client;
-			plan.SwitchPrice = GetPlanSwitchPrice(client.PhysicalClient.Plan, plan, true);
 			var oldPlan = client.PhysicalClient.Plan;
-			var result = client.PhysicalClient.ChangeTariffPlan(plan);
+			var result = client.PhysicalClient.ChangePlan(plan);
 			if (result == null) {
 				ErrorMessage("Не достаточно средств для смены тарифного плана");
 				InitPlans(client);
@@ -300,9 +303,6 @@ namespace Inforoom2.Controllers
 				plans = GetList<Plan>().Where(p => !p.IsArchived && !p.IsServicePlan).ToList();
 			}
 
-			foreach (var plan in plans) {
-				plan.SwitchPrice = GetPlanSwitchPrice(client.PhysicalClient.Plan, plan, true);
-			}
 			ViewBag.Plans = plans.ToList();
 		}
 	}
