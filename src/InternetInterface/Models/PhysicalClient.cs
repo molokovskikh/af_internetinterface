@@ -57,7 +57,7 @@ namespace InternetInterface.Models
 
 		public IList<StaticIp> GetStaticAdreses()
 		{
-			ClientEndpoint endPoint = ClientEndpoint.TryFind((uint) endpointId);
+			var endPoint = ClientEndpoint.TryFind((uint)endpointId);
 			if (endPoint != null)
 				return endPoint.StaticIps;
 			return new List<StaticIp>();
@@ -206,7 +206,7 @@ namespace InternetInterface.Models
 			}
 
 			if (Client.Status.Type != StatusType.Dissolved
-			    && (Client.AdditionalStatus == null || Client.AdditionalStatus.Id != (uint) AdditionalStatusType.Refused)) {
+			    && (Client.AdditionalStatus == null || Client.AdditionalStatus.Id != (uint)AdditionalStatusType.Refused)) {
 				if (HouseObj == null)
 					errors.RegisterErrorMessage("HouseObj", "Нужно выбрать дом");
 			}
@@ -353,7 +353,7 @@ namespace InternetInterface.Models
 			//По требованию #18207 Было сделано 3 дня
 			const int days = 3;
 			var dayInMonth = (DateTime.Today.LastDayOfMonth() - DateTime.Today.FirstDayOfMonth()).Days + 1;
-			var sum = (Client.GetPriceIgnoreDisabled()/dayInMonth)*days;
+			var sum = (Client.GetPriceIgnoreDisabled() / dayInMonth) * days;
 			var payment = new Payment(Client, sum) {
 				Virtual = true,
 				Comment = "Бонус при самостоятельной регистрации"
@@ -369,7 +369,7 @@ namespace InternetInterface.Models
 			if (HouseObj.Region != null
 			    && HouseObj.Region.IsExternalClientIdMandatory
 			    && ExternalClientId == null) {
-				ExternalClientId = (int?) Client.Id;
+				ExternalClientId = (int?)Client.Id;
 			}
 		}
 

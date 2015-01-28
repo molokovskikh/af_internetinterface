@@ -1,0 +1,31 @@
+﻿@using Inforoom2.Models
+@model dynamic
+@{
+	ViewBag.Title = "Список тарифов";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	IList<Plan> plans = ViewBag.Plans;
+}
+<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+	<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
+		<thead>
+			<tr role="row">
+				<th class="sorting" tabindex="0" aria-controls="table-2" >Название</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2" >Скорость</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2" >Пакет</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2" >Стоимость</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2" >Доступен пользователю</th>
+			</tr>
+		</thead>
+			
+		<tbody>
+			@foreach (var item in plans) {
+				<tr role="row" class="odd">
+					<td><a href="@Url.Action("EditPlan","Plans",new {id = item.Id})">@item.Name</a></td>
+					<td>@item.Speed</td>
+					<td>@item.PackageId</td>
+					<td>@item.Price</td>
+					<td>@(!item.IsArchived ? "Да" : "Нет")</td>
+				</tr>
+			}
+		</tbody>
+	</table>

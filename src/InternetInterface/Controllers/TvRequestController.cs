@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using InternetInterface.Controllers.Filter;
-using InternetInterface.Helpers;
 using InternetInterface.Models;
-using NPOI.SS.Formula.Functions;
 
 namespace InternetInterface.Controllers
 {
@@ -41,7 +37,7 @@ namespace InternetInterface.Controllers
 			var title = " Заявка на ТВ. ЛС: " + request.Client.Id + ", " + request.Client.Name;
 			var issue = new RedmineIssue(title, body);
 			issue.assigned_to_id = 279; //Группа координаторы
-			issue.project_id =  67; //Координация
+			issue.project_id = 67; //Координация
 			issue.due_date = request.Date.AddDays(3);
 
 			var errors = ValidateDeep(request);
@@ -53,9 +49,8 @@ namespace InternetInterface.Controllers
 				issue.root_id = (int)issue.Id;
 				DbSession.Save(issue);
 				//Пишем коммент пользователю
-				var appeal = request.Client.CreareAppeal("Создана заявка на подключение ТВ №"+request.Id+", задача #"+issue.Id);
+				var appeal = request.Client.CreareAppeal("Создана заявка на подключение ТВ №" + request.Id + ", задача #" + issue.Id);
 				DbSession.Save(appeal);
-				
 
 				Notify("Заявка успешно создана");
 				RedirectTo(request.Client);
