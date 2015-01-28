@@ -1,26 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Security.Principal;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
-using System.Web.UI.WebControls;
-using Common.Tools;
 using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
 using log4net;
 using NHibernate;
 using NHibernate.Linq;
-
 
 namespace Inforoom2.Controllers
 {
@@ -41,7 +35,7 @@ namespace Inforoom2.Controllers
 			ViewBag.Validation = ValidationRunner;
 			ViewBag.Title = "Инфорум";
 			ViewBag.JavascriptParams = new Dictionary<string, string>();
-			ViewBag.Cities = new string[] {"Борисоглебск", "Белгород"};
+			ViewBag.Cities = new [] {"Борисоглебск", "Белгород"};
 		}
 
 		public void AddJavascriptParam(string name, string value)
@@ -78,7 +72,7 @@ namespace Inforoom2.Controllers
 				if (User == null) {
 					return null;
 				}
-				int id = 0;
+				int id;
 				int.TryParse(User.Identity.Name, out id);
 				return DbSession.Get<Client>(id);
 			}
@@ -124,7 +118,7 @@ namespace Inforoom2.Controllers
 
 		protected override void OnException(ExceptionContext filterContext)
 		{
-			bool showErrorPage = false;
+			var showErrorPage = false;
 			bool.TryParse(ConfigurationManager.AppSettings["ShowErrorPage"], out showErrorPage);
 			DeleteCookie("SuccessMessage");
 			if (showErrorPage) {
@@ -232,9 +226,9 @@ namespace Inforoom2.Controllers
 				ViewBag.CurrentEmployee = CurrentEmployee;
 			}
 			if (CurrentClient != null) {
-				StringBuilder sb = new StringBuilder();
-				sb.AppendFormat("Здравствуйте, {0}. Ваш баланс: {1} руб.", CurrentClient.PhysicalClient.Name,
-					CurrentClient.PhysicalClient.Balance);
+				var sb = new StringBuilder();
+				sb.AppendFormat("Здравствуйте, {0} {1}. Ваш баланс: {2} руб.", CurrentClient.PhysicalClient.Name, 
+						CurrentClient.PhysicalClient.Patronymic, CurrentClient.PhysicalClient.Balance);
 				ViewBag.ClientInfo = sb.ToString();
 			}
 			else {
@@ -246,7 +240,7 @@ namespace Inforoom2.Controllers
 		{
 			ViewBag.CallMeBackTicket = new CallMeBackTicket();
 			var binder = new EntityBinderAttribute("callMeBackTicket.Id", typeof (CallMeBackTicket));
-			CallMeBackTicket callMeBackTicket = (CallMeBackTicket) binder.MapModel(Request);
+			var callMeBackTicket = (CallMeBackTicket) binder.MapModel(Request);
 			if (Request.Params["callMeBackTicket.Name"] == null)
 				return;
 			var client = CurrentClient;
@@ -303,7 +297,7 @@ namespace Inforoom2.Controllers
 			ViewBag.UserCityBelongsToUs = IsUserCityBelongsToUs(UserCity);
 			ViewBag.UserCity = UserCity;
 			ViewBag.UserRegion = DbSession.Query<Region>().FirstOrDefault(i => i.Name == UserCity);
-			if(ViewBag.UserRegion == null)
+			if (ViewBag.UserRegion == null)
 				ViewBag.UserRegion = DbSession.Query<Region>().First();
 		}
 

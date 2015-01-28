@@ -305,6 +305,7 @@
     <Compile Include="Models\Lease.cs" />
     <Compile Include="Models\LegalClient.cs" />
     <Compile Include="Models\Payment.cs" />
+    <Compile Include="Models\PaymentSystem.cs" />
     <Compile Include="Models\PlanTransfer.cs" />
     <Compile Include="Models\SaleSettings.cs" />
     <Compile Include="Models\ServiceMan.cs" />
