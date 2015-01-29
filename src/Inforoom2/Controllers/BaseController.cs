@@ -56,19 +56,17 @@ namespace Inforoom2.Controllers
 			return val;
 		}
 
+		public virtual Employee GetCurrentEmployee()
+		{
+			if (Session == null || Session["employee"] == null)
+				return null;
+			var employeeId = Convert.ToInt32(Session["employee"]);
+			return DbSession.Query<Employee>().FirstOrDefault(k => k.Id == employeeId);
+		}
+
 		protected new virtual CustomPrincipal User
 		{
 			get { return HttpContext.User as CustomPrincipal; }
-		}
-
-		protected Employee CurrentEmployee
-		{
-			get
-			{
-				if (User == null)
-					return null;
-				return DbSession.Query<Employee>().FirstOrDefault(k => k.Login == User.Identity.Name);
-			}
 		}
 
 		protected Client CurrentClient
@@ -228,8 +226,8 @@ namespace Inforoom2.Controllers
 			ProcessCallMeBackTicket();
 			ProcessRegionPanel();
 			ViewBag.NetworkClientFlag = string.IsNullOrEmpty(GetCookie("networkClient")) ? false : true;
-			if (CurrentEmployee != null) {
-				ViewBag.CurrentEmployee = CurrentEmployee;
+			if (GetCurrentEmployee() != null) {
+				ViewBag.CurrentEmployee = GetCurrentEmployee();	// TODO Перенести в AdminController
 			}
 			if (CurrentClient != null) {
 				StringBuilder sb = new StringBuilder();
@@ -257,7 +255,10 @@ namespace Inforoom2.Controllers
 			if (errors.Length == 0) {
 				DbSession.Save(callMeBackTicket);
 				if(callMeBackTicket.Client != null) {
-					var appeal = new Appeal("Клиент создал запрос на обратный звонок #"+callMeBackTicket.Id, callMeBackTicket.Client, AppealType.Statistic);
+					var appeal = new Appeal("Клиент создал запрос на обратный звонок #" + callMeBackTicket.Id, 
+						callMeBackTicket.Client, AppealType.Statistic) {
+							Employee = GetCurrentEmployee()
+						};
 					DbSession.Save(appeal);
 				}
 
