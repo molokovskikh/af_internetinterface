@@ -68,7 +68,11 @@ namespace Inforoom2.Test.Functional
 			Assert.That(Client.Endpoints.Count,Is.EqualTo(1));
 			Assert.That(internet.IsActivated,Is.True);
 			Assert.That(iptv.IsActivated,Is.True);
+		}
 
+		[Test(Description = "Проверка отображения бонусных платежей и авторов платежей в 'Истории баланса'"), Ignore]
+		public void ShowBonusPayments()
+		{
 		}
 	}
 }
