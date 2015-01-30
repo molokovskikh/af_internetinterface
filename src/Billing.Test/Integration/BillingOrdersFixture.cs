@@ -224,7 +224,10 @@ namespace Billing.Test.Integration
 			var sum = Math.Round(200 + thisMonthSum + nextMonthSum, 2);
 			Assert.AreEqual(sum, writeOffs.Sum(w => w.WriteOffSum));
 			lawyerClient = session.Get<Client>(lawyerClient.Id);
-			Assert.That(lawyerClient.Appeals.Last().Appeal, Is.StringContaining("Деактивирован заказ"));
+			var appealsList = lawyerClient.Appeals
+					.Where(ap => ap.Appeal.Contains("Деактивирован заказ"))
+					.ToList();
+			Assert.AreEqual(1, appealsList.Count);
 			Assert.AreEqual(0, lawyerClient.Endpoints.Count);
 		}
 

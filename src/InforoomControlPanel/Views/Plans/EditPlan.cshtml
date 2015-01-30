@@ -1,0 +1,113 @@
+﻿@using Inforoom2.Helpers
+@using Inforoom2.Models
+@using NPOI.SS.Formula.Functions
+@model dynamic
+
+@{
+	ViewBag.Title = "Тарифный план";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	Plan plan = ViewBag.Plan;
+	PlanTransfer PlanTransfer = ViewBag.PlanTransfer;
+	IList<Plan> plans = ViewBag.Plans;
+}
+<div class="panel panel-primary">
+	<div class="panel-body">
+	<div class="col-md-6">
+			@using (@Html.BeginForm("UpdatePlan", "Plans", FormMethod.Post,new {@class = "form-horizontal form-groups-bordered"})) {
+				<div class="form-group">
+					@Html.HiddenFor(model => plan.Id)
+					<label class="col-sm-3 control-label" for="field-ta">Название</label>
+					<div class="col-sm-5">
+						@Html.TextBoxFor(model => plan.Name,new {@class = "form-control"})
+						@ViewBag.Validation.GetError(plan, "Name", "Имя не может быть пустым")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label" for="field-ta">Скорость</label>
+					<div class="col-sm-5">
+						@Html.TextBoxFor(model => plan.Speed,new {@class = "form-control"})
+						@ViewBag.Validation.GetError(plan, "Speed")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label" for="field-ta">Стоимость</label>
+					<div class="col-sm-5">
+						@Html.TextBoxFor(model => plan.Price,new {@class = "form-control"})
+						@ViewBag.Validation.GetError(plan, "Price")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label" for="field-ta">Пакет</label>
+					<div class="col-sm-5">
+						@Html.TextBoxFor(model => plan.PackageId,new {@class = "form-control"})
+						@ViewBag.Validation.GetError(plan, "PackageId")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label" for="field-ta">Скрытый (не доступен пользователю в личном кабинете)</label>
+					<div class="col-sm-5">
+						@Html.CheckBoxFor(model => plan.IsArchived)
+					</div>
+				</div>
+				<div class="form-group">
+					<button class="btn btn-green" type="submit">Принять изменения</button>
+				</div>
+			}
+	</div>
+		<div class="col-md-6">
+			@if(plans.Count > 0) {
+			<div class="col-sm-12">
+				<h4>Создать стоимость перехода:</h4>
+			</div>
+			<div class="col-sm-12 ">
+				@using (@Html.BeginForm("AddPlanTransfer", "Plans", FormMethod.Post, new { @class = "form-horizontal form-groups-bordered col-sm-12" })) {
+					<div class="form-group">
+						<div class="col-sm-5">Тарифный план</div>
+						<div class="col-sm-2">Стоимость</div>
+						<div class="col-sm-2"></div>
+					</div>
+					<div class="form-group">
+						@Html.HiddenFor(i=>PlanTransfer.PlanFrom.Id)
+						<div class="col-sm-5">
+							@Html.DropDownListExtendedFor(i=>PlanTransfer.PlanTo,plans,obj=>obj.Name,null,new {@class = "form-control"})
+							@ViewBag.Validation.GetError(PlanTransfer, "PlanTo")
+						</div>
+						<div class="col-sm-2">
+							@Html.TextBoxFor(model => PlanTransfer.Price,new {@class = "form-control", style="width: 50px;"})
+							@ViewBag.Validation.GetError(PlanTransfer, "Speed")
+						</div>
+						<div class="col-sm-2">
+							<button class="btn btn-green" type="submit">Добавить</button>
+						</div>
+					</div>
+				}
+			</div>
+			}
+			<div class="col-sm-12">
+				<h4>Стоимости переходов на другие тарифы:</h4>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-5">Тарифный план</div>
+				<div class="col-sm-2">Стоимость</div>
+				<div class="col-sm-2">Действия</div>
+			</div>
+			@foreach (var item in plan.PlanTransfers) {
+				<div class="form-group">
+					<div class="col-sm-5">
+						@item.PlanTo.Name
+					</div>
+					<div class="col-sm-2">
+						@item.Price.ToString("F2")
+					</div>
+					<div class="col-sm-2">
+						<a class="entypo-cancel-circled" style="color:red" href="@Url.Action("DeletePlanTransfer","Plans",new {id = item.Id })"></a>
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+</div>
+
+<div class="form-group">
+</div>
+<button class="btn btn-blue" onclick=" location.href = '@Url.Action("PlanIndex", "Plans")' ">Назад</button>

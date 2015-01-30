@@ -2,14 +2,10 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Common.Tools;
 using Common.Tools.Calendar;
-using Common.Web.Ui.ActiveRecordExtentions;
-using Common.Web.Ui.Models;
 using InternetInterface.Models;
 using NHibernate.Linq;
-using NHibernate.Mapping;
 using NUnit.Framework;
 
 namespace Billing.Test.Integration
@@ -216,8 +212,8 @@ namespace Billing.Test.Integration
 			billing.ProcessPayments();
 			saved = session.Load<Client>(BadClient.Id);
 			Assert.That(saved.Disabled, Is.False);
-
 		}
+
 		[Test(Description = "Блокировка юр. лиц при негативном балансе")]
 		public void Block_lawyer_person_negative_balance()
 		{

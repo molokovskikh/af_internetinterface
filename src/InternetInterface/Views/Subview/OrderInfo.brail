@@ -138,7 +138,7 @@
 		</tr>
 		<tr>
 		<tr>
-		  <td><span class="description">Фиксированный </span></td>
+		  <td><span class="description">Фиксированный IP </span></td>
 		  <td>${OrderInfo.ClientConnectInfo.static_IP}</td>
 		</tr>
 		<tr>

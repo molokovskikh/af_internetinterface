@@ -312,13 +312,6 @@ namespace Inforoom2.Test.Functional
 				Regions = new List<Region>() { reginon }
 			};
 
-			plan1.AddPlanTransfer(plan2, 100);
-			plan1.AddPlanTransfer(plan3, 100);
-			plan2.AddPlanTransfer(plan1, 100);
-			plan2.AddPlanTransfer(plan3, 100);
-			plan3.AddPlanTransfer(plan1, 100);
-			plan3.AddPlanTransfer(plan2, 100);
-
 			session.Save(plan1);
 			session.Save(plan2);
 			session.Save(plan3);
