@@ -213,13 +213,17 @@ namespace Inforoom2.Controllers
 				}
 				if (client.SendSmsNotification) {
 					client.SendSmsNotification = false;
-					var appeal = new Appeal("Клиент отписался от смс рассылки", client, AppealType.User);
+					var appeal = new Appeal("Клиент отписался от смс рассылки", client, AppealType.User) {
+						Employee = GetCurrentEmployee()
+					};
 					DbSession.Save(appeal);
 					SuccessMessage("Вы успешно отписались от смс рассылки");
 				}
 				else {
 					client.SendSmsNotification = true;
-					var appeal = new Appeal("Клиент подписался смс рассылку", client, AppealType.User);
+					var appeal = new Appeal("Клиент подписался на смс рассылку", client, AppealType.User) {
+						Employee = GetCurrentEmployee()
+					};
 					DbSession.Save(appeal);
 					SuccessMessage("Вы успешно подписались на смс рассылку");
 				}
@@ -257,7 +261,9 @@ namespace Inforoom2.Controllers
 			DbSession.Save(client);
 			DbSession.Save(result);
 			SuccessMessage("Тариф изменен");
-			var appeal = new Appeal("Тарифный план был изменен с " + oldPlan.Name + " на " + plan.Name, client, AppealType.User);
+			var appeal = new Appeal("Тарифный план был изменен с " + oldPlan.Name + " на " + plan.Name, client, AppealType.User) {
+				Employee = GetCurrentEmployee()
+			};
 			DbSession.Save(appeal);
 			return RedirectToAction("Plans");
 		}

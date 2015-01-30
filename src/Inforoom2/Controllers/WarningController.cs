@@ -1,14 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Web.Mvc;
-using System.Web.Security;
-using Common.MySql;
-using Inforoom2.Components;
-using Inforoom2.Helpers;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
-using InternetInterface.Helpers;
 using NHibernate.Linq;
 using SceHelper = Inforoom2.Helpers.SceHelper;
 
@@ -46,12 +40,12 @@ namespace Inforoom2.Controllers
 		if(string.IsNullOrEmpty(ip))
 		{
 			 client = CurrentClient;
-			 endpoint = client.Endpoints.First();
+			 endpoint = client.Endpoints.FirstOrDefault();
 		}
 		else
 		{
 			var address = IPAddress.Parse(ip);
-			var leases = DbSession.Query<Lease>().Where(l => l.Ip == address).ToList();
+			var leases = DbSession.Query<Lease>().Where(l => l.Ip.Equals(address)).ToList();
 			var lease = leases.FirstOrDefault(l => l.Endpoint != null
 		                                       && l.Endpoint.Client != null);
 			endpoint = lease.Endpoint;
@@ -71,11 +65,13 @@ namespace Inforoom2.Controllers
 				}
 				else if (client.ShowBalanceWarningPage) {
 					client.ShowBalanceWarningPage = false;
-					var appeal = new Appeal("Отключена страница Warning, клиент отключил со страницы", client, AppealType.Statistic);
+					var appeal = new Appeal("Отключена страница Warning, клиент отключил со страницы", client, AppealType.Statistic) {
+						Employee = GetCurrentEmployee()
+					};
 					DbSession.Save(appeal);
 				}
 
-				SceHelper.UpdatePackageId(DbSession, endpoint.Client);
+				SceHelper.UpdatePackageId(DbSession, client);
 				DbSession.Save(client);
 				return RedirectToAction("Index","Home");
 			}
@@ -85,7 +81,5 @@ namespace Inforoom2.Controllers
 			ViewBag.BlockAccountService = blockAccountService;
 			return View();
 		}
-
-
 	}
 }

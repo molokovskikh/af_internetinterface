@@ -243,20 +243,18 @@ namespace Inforoom2.Controllers
 		private void ProcessCallMeBackTicket()
 		{
 			ViewBag.CallMeBackTicket = new CallMeBackTicket();
-			var binder = new EntityBinderAttribute("callMeBackTicket.Id", typeof (CallMeBackTicket));
-			CallMeBackTicket callMeBackTicket = (CallMeBackTicket) binder.MapModel(Request);
+			var binder = new EntityBinderAttribute("callMeBackTicket.Id", typeof(CallMeBackTicket));
+			var callMeBackTicket = (CallMeBackTicket)binder.MapModel(Request);
 			if (Request.Params["callMeBackTicket.Name"] == null)
 				return;
-			var client = CurrentClient;
-			if (client != null)
-				callMeBackTicket.Client = client;
+			callMeBackTicket.Client = CurrentClient;
 
 			var errors = ValidationRunner.ValidateDeep(callMeBackTicket);
 			if (errors.Length == 0) {
 				DbSession.Save(callMeBackTicket);
 				if(callMeBackTicket.Client != null) {
 					var appeal = new Appeal("Клиент создал запрос на обратный звонок #" + callMeBackTicket.Id, 
-						callMeBackTicket.Client, AppealType.Statistic) {
+						callMeBackTicket.Client, AppealType.FeedBack) {
 							Employee = GetCurrentEmployee()
 						};
 					DbSession.Save(appeal);

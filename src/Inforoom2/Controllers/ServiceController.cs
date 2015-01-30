@@ -35,7 +35,9 @@ namespace Inforoom2.Controllers
 					ActivatedByUser = true
 				};
 				ActivateService(clientService, client);
-				var appeal = new Appeal("Клиент активировал блокировку счета", client, AppealType.User);
+				var appeal = new Appeal("Клиент активировал блокировку счета", client, AppealType.User) {
+					Employee = GetCurrentEmployee()
+				};
 				DbSession.Save(appeal);
 				return RedirectToAction("Service", "Personal");
 			}
@@ -54,7 +56,9 @@ namespace Inforoom2.Controllers
 				SceHelper.UpdatePackageId(DbSession, client);
 			DbSession.Update(client);
 			InitServices();
-			var appeal = new Appeal("Клиент выключил блокировку счета", client, AppealType.User);
+			var appeal = new Appeal("Клиент выключил блокировку счета", client, AppealType.User) {
+				Employee = GetCurrentEmployee()
+			};
 			DbSession.Save(appeal);
 			return RedirectToAction("Service", "Personal");
 		}
