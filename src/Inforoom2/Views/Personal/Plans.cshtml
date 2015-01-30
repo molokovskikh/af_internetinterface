@@ -28,7 +28,7 @@
 				<td class="tariffscost">@Html.DisplayFor(modelItem => plan.Name)</td>
 				<td class="fee">@Html.DisplayFor(modelItem => plan.Speed) мбит/с</td>
 				<td class="fee">@Html.DisplayFor(modelItem => plan.Price) р.</td>
-				<td class="fee">@plan.GetTransferPrice(client.Plan).ToString("f2") р.</td>
+				<td class="fee">@client.Plan.GetTransferPrice(plan).ToString("f2") р.</td>
 				<td >
 					@if (plan.Id == client.Plan.Id) {
 						<div class="paragraph">Текущий</div>
