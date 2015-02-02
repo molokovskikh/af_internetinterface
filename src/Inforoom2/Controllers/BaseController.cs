@@ -50,19 +50,17 @@ namespace Inforoom2.Controllers
 			return val;
 		}
 
+		public virtual Employee GetCurrentEmployee()
+		{
+			if (Session == null || Session["employee"] == null)
+				return null;
+			var employeeId = Convert.ToInt32(Session["employee"]);
+			return DbSession.Query<Employee>().FirstOrDefault(k => k.Id == employeeId);
+		}
+
 		protected new virtual CustomPrincipal User
 		{
 			get { return HttpContext.User as CustomPrincipal; }
-		}
-
-		protected Employee CurrentEmployee
-		{
-			get
-			{
-				if (User == null)
-					return null;
-				return DbSession.Query<Employee>().FirstOrDefault(k => k.Login == User.Identity.Name);
-			}
 		}
 
 		protected Client CurrentClient
@@ -131,7 +129,7 @@ namespace Inforoom2.Controllers
 			log.ErrorFormat("{0} {1}", filterContext.Exception.Message, filterContext.Exception.StackTrace);
 
 			//Формируем сообщение об ошибке
-			var builder = this.CollectDebugInfo();
+			var builder = CollectDebugInfo();
 			var msg = filterContext.Exception.ToString();
 			builder.Append(msg);
 			EmailSender.SendError(builder.ToString());
@@ -143,7 +141,7 @@ namespace Inforoom2.Controllers
 			if(CurrentClient != null)
 				builder.Append("Клиент: " + CurrentClient.Id + " \n ");
 			builder.Append("Дата: "+DateTime.Now+" \n ");
-			builder.Append("Ip: "+Request.UserHostAddress+" \n ");
+			builder.Append("Ip: " + Request.UserHostAddress + " \n ");
 			builder.Append("Форма: \n ");
 			foreach (var key in Request.Form.AllKeys)
 			{
@@ -185,7 +183,7 @@ namespace Inforoom2.Controllers
 				if(string.IsNullOrEmpty(ip))
 					return;
 				var address = IPAddress.Parse(ip);
-				var leases = DbSession.Query<Lease>().Where(l => l.Ip == address).ToList();
+				var leases = DbSession.Query<Lease>().Where(l => l.Ip.Equals(address)).ToList();
 				if (leases.Count != 0) {
 					var client = leases.Where(l => l.Endpoint != null
 						&& l.Endpoint.Client != null
@@ -222,8 +220,8 @@ namespace Inforoom2.Controllers
 			ProcessCallMeBackTicket();
 			ProcessRegionPanel();
 			ViewBag.NetworkClientFlag = string.IsNullOrEmpty(GetCookie("networkClient")) ? false : true;
-			if (CurrentEmployee != null) {
-				ViewBag.CurrentEmployee = CurrentEmployee;
+			if (GetCurrentEmployee() != null) {
+				ViewBag.CurrentEmployee = GetCurrentEmployee();	// TODO Перенести в AdminController
 			}
 			if (CurrentClient != null) {
 				var sb = new StringBuilder();
@@ -239,19 +237,20 @@ namespace Inforoom2.Controllers
 		private void ProcessCallMeBackTicket()
 		{
 			ViewBag.CallMeBackTicket = new CallMeBackTicket();
-			var binder = new EntityBinderAttribute("callMeBackTicket.Id", typeof (CallMeBackTicket));
-			var callMeBackTicket = (CallMeBackTicket) binder.MapModel(Request);
+			var binder = new EntityBinderAttribute("callMeBackTicket.Id", typeof(CallMeBackTicket));
+			var callMeBackTicket = (CallMeBackTicket)binder.MapModel(Request);
 			if (Request.Params["callMeBackTicket.Name"] == null)
 				return;
-			var client = CurrentClient;
-			if (client != null)
-				callMeBackTicket.Client = client;
+			callMeBackTicket.Client = CurrentClient;
 
 			var errors = ValidationRunner.ValidateDeep(callMeBackTicket);
 			if (errors.Length == 0) {
 				DbSession.Save(callMeBackTicket);
 				if(callMeBackTicket.Client != null) {
-					var appeal = new Appeal("Клиент создал запрос на обратный звонок #"+callMeBackTicket.Id, callMeBackTicket.Client, AppealType.Statistic);
+					var appeal = new Appeal("Клиент создал запрос на обратный звонок #" + callMeBackTicket.Id, 
+						callMeBackTicket.Client, AppealType.FeedBack) {
+							Employee = GetCurrentEmployee()
+						};
 					DbSession.Save(appeal);
 				}
 
@@ -318,7 +317,7 @@ namespace Inforoom2.Controllers
 			try {
 				geoAnswer = geoService.GetInfo();
 			}
-			catch (Exception e) {
+			catch (Exception) {
 				return null;
 			}
 
@@ -342,14 +341,14 @@ namespace Inforoom2.Controllers
 				return string.Empty;
 			}
 
-			var base64EncodedBytes = System.Convert.FromBase64String(cookie.Value);
-			return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+			var base64EncodedBytes = Convert.FromBase64String(cookie.Value);
+			return Encoding.UTF8.GetString(base64EncodedBytes);
 		}
 
 		public void SetCookie(string name, string value)
 		{
-			var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(value);
-			var text = System.Convert.ToBase64String(plainTextBytes);
+			var plainTextBytes = Encoding.UTF8.GetBytes(value);
+			var text = Convert.ToBase64String(plainTextBytes);
 			Response.Cookies.Add(new HttpCookie(name, text) { Path = "/" });
 		}
 
