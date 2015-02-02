@@ -72,22 +72,23 @@ namespace Inforoom2.Models
 			get { return Surname + " " + Name + " " + Patronymic; }
 		}
 
-		public virtual UserWriteOff ChangePlan(Plan planToSwitchOn)
+		public virtual UserWriteOff RequestChangePlan(Plan planToSwitchOn)
 		{
+			var price = Plan.GetTransferPrice(planToSwitchOn);
 			if (IsFreePlanChange) {
 				return SwitchPlan(planToSwitchOn, 0);
 			}
-			if (!IsEnoughBalance(planToSwitchOn.GetTransferPrice(planToSwitchOn)))
+			if (!IsEnoughBalance(price))
 			{
 				return null;
 			}
-			return SwitchPlan(planToSwitchOn, planToSwitchOn.GetTransferPrice(planToSwitchOn));
+			return SwitchPlan(planToSwitchOn, price);
 		}
 
-		private UserWriteOff SwitchPlan(Plan toPlan, decimal price)
+		private UserWriteOff SwitchPlan(Plan planTo, decimal price)
 		{
-			var comment = string.Format("Изменение тарифа, старый '{0}' новый '{1}'", Plan.Name, toPlan.Name);
-			Plan = toPlan;
+			var comment = string.Format("Изменение тарифа, старый '{0}' новый '{1}'", Plan.Name, planTo.Name);
+			Plan = planTo;
 			WriteOff(price);
 			var writeOff = new UserWriteOff {
 				Client = Client,

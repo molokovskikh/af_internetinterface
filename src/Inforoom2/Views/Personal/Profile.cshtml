@@ -8,12 +8,16 @@
 	    <div class="profiles">
 		<div class="number">
 		    <div class="column">Номер счета :</div>
-		    <div class="shelf profilenomber">@Html.DisplayFor(c => client.Client.Id)</div>
+		    <div class="shelf profilenomber">@client.Client.Id.ToString("D5")</div>
 		</div>
 		<div class="line">
 		    <div class="column">Ф.И.О:</div>
 		    <div class="shelf">@Html.DisplayFor(c => client.FullName)</div>
 		    <div class="pen"></div>
+		</div>
+		<div class="line">
+		    <div class="column">Тариф:</div>
+		    <div class="shelf">@Html.DisplayFor(c => client.Plan.Name)</div>
 		</div>
 		<div class="line">
 		    <div class="column">Скидка:</div>

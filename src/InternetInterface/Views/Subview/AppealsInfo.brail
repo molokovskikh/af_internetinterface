@@ -47,7 +47,13 @@
 				</td>
 			<% end %>
 			<td>${item.Date}</td>
-			<td>${item.Partner}</td>
+			<td>
+				<% if (item.AppealType == 1 and item.Partner == ""): %>
+					Абонент
+				<% else: %>
+					${item.Partner}
+				<% end %>
+			</td>
 		</tr>
 		<% if item.SubFields != null: %>
 			<% for j,subItem in enumerate(item.SubFields): %>
@@ -57,6 +63,13 @@
 					</td>
 					<td>${subItem.Date}</td>
 					<td>${subItem.Partner}</td>
+					<td>
+						<% if (subItem.AppealType == 1 and subItem.Partner == ""): %>
+							Абонент
+						<% else: %>
+							${subItem.Partner}
+						<% end %>
+					</td>
 				</tr>
 			<% end %>
 		<% end %>

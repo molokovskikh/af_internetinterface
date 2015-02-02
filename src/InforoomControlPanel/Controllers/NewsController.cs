@@ -7,7 +7,7 @@ using NHibernate.Linq;
 
 namespace InforoomControlPanel.Controllers
 {
-	public class NewsController : InforoomControlPanel.Controllers.AdminController
+	public class NewsController : AdminController
 	{
 		public ActionResult NewsIndex()
 		{
@@ -29,9 +29,10 @@ namespace InforoomControlPanel.Controllers
 			else {
 				var newsBlocks = DbSession.Query<NewsBlock>().OrderBy(k => k.Priority).ToList();
 				int maxPriority = newsBlocks.Count != 0 ? newsBlocks.Max(k => k.Priority) : 0;
-				newsBlock = new NewsBlock(maxPriority + 1);
-				newsBlock.Employee = CurrentEmployee;
-				newsBlock.PublishedDate = DateTime.Now;
+				newsBlock = new NewsBlock(maxPriority + 1) {
+					Employee = GetCurrentEmployee(),
+					PublishedDate = DateTime.Now
+				};
 			}
 			newsBlock.Url = Request.Url.GetLeftPart(UriPartial.Authority);
 			ViewBag.NewsBlock = newsBlock;

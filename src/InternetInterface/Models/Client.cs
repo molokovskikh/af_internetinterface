@@ -915,12 +915,12 @@ where CE.Client = {0}", Id))
 
 		public virtual ClientService Internet
 		{
-			get { return ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof(Internet)); }
+			get { return ClientServices.FirstOrDefault(s => NHibernateUtil.GetClass(s.Service) == typeof(Internet)); }
 		}
 
 		public virtual ClientService Iptv
 		{
-			get { return ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof(IpTv)); }
+			get { return ClientServices.FirstOrDefault(s => NHibernateUtil.GetClass(s.Service) == typeof(IpTv)); }
 		}
 
 		//флаг устанавливается в случае если нужно изменить настройки sce
