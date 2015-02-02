@@ -242,8 +242,12 @@ namespace Inforoom2.Controllers
 		{
 			var client = CurrentClient;
 			ViewBag.Client = client;
+			var beginDate = client.WorkingStartDate ?? new DateTime();
+			if (beginDate == DateTime.MinValue || beginDate.AddMonths(2) >= DateTime.Now)
+				return View("Plans");
+
 			var oldPlan = client.PhysicalClient.Plan;
-			var result = client.PhysicalClient.ChangePlan(plan);
+			var result = client.PhysicalClient.RequestChangePlan(plan);
 			if (result == null) {
 				ErrorMessage("Не достаточно средств для смены тарифного плана");
 				InitPlans(client);
