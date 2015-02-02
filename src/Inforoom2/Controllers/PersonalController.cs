@@ -142,14 +142,21 @@ namespace Inforoom2.Controllers
 				Description = new StringBuilder().AppendFormat("Абонентская плата").ToString()
 			}).ToList());
 
-			historyList.AddRange(payments.Select(payment => new BillingHistory {
-				Date = payment.RecievedOn,
-				Sum = payment.Sum,
-				Comment = payment.Comment,
-				WhoRegistered = (payment.Agent.IsPaymentSystem() ? payment.Agent.Name : "Инфорум") + 
-												(payment.Virtual.HasValue && payment.Virtual.Value ? " (бонус)" : ""),
-				Description = new StringBuilder().AppendFormat("Пополнение счета").ToString()
-			}).ToList());
+			var paymentsList = new List<BillingHistory>();
+			foreach (var payment in payments) {
+				var obj = new BillingHistory();
+				obj.Date = payment.RecievedOn;
+				obj.Sum = payment.Sum;
+				obj.Comment = payment.Comment;
+				obj.WhoRegistered = "Инфорум";
+				if(payment.Employee != null && payment.Employee.IsPaymentSystem())
+					obj.WhoRegistered =  payment.Employee.Name;
+				if (payment.Virtual.HasValue && payment.Virtual.Value)
+					obj.WhoRegistered += " (бонус)";
+				obj.Description = new StringBuilder().AppendFormat("Пополнение счета").ToString();
+				paymentsList.Add(obj);
+			}
+			historyList.AddRange(paymentsList);
 
 			historyList = historyList.OrderByDescending(h => h.Date).ToList();
 			ViewBag.HistoryList = historyList;

@@ -21,7 +21,7 @@ namespace Inforoom2.Models
 		public virtual Client Client { get; set; }
 
 		[ManyToOne(Column = "Agent"), NotNull]
-		public virtual Employee Agent { get; set; }
+		public virtual Employee Employee { get; set; }
 
 		[Property]
 		public virtual bool BillingAccount { get; set; }
