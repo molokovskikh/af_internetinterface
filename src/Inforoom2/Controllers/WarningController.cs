@@ -45,7 +45,7 @@ namespace Inforoom2.Controllers
 		else
 		{
 			var address = IPAddress.Parse(ip);
-			var leases = DbSession.Query<Lease>().Where(l => l.Ip.Equals(address)).ToList();
+			var leases = DbSession.Query<Lease>().Where(l => l.Ip == address).ToList();
 			var lease = leases.FirstOrDefault(l => l.Endpoint != null
 		                                       && l.Endpoint.Client != null);
 			endpoint = lease.Endpoint;

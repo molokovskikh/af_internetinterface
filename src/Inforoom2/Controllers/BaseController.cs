@@ -183,7 +183,7 @@ namespace Inforoom2.Controllers
 				if(string.IsNullOrEmpty(ip))
 					return;
 				var address = IPAddress.Parse(ip);
-				var leases = DbSession.Query<Lease>().Where(l => l.Ip.Equals(address)).ToList();
+				var leases = DbSession.Query<Lease>().Where(l => l.Ip == address).ToList();
 				if (leases.Count != 0) {
 					var client = leases.Where(l => l.Endpoint != null
 						&& l.Endpoint.Client != null
