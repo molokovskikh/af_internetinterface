@@ -1,0 +1,46 @@
+﻿@using System.Activities.Expressions
+@using Inforoom2.Models
+
+@{
+	ViewBag.Title = "Адреса коммутаторов";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	IList<SwitchAddress> addresses = ViewBag.Addresses;
+}
+<div class="form-group">
+<a class="btn btn-success btn-sm btn-icon icon-left" href = '@Url.Action("CreateSwitchAddress", "Address")'>
+	<i class="entypo-plus"></i>
+	Создать адрес
+</a>
+	</div>
+<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
+	<thead>
+		<tr role="row">
+			<th class="sorting" tabindex="0" aria-controls="table-2" >Регион</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2" >Улица</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2" >Дом</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2" >Подъезд</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2" >Коммутатор</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2" >Действия</th>
+		</tr>
+	</thead>
+			@foreach (var item in addresses)
+			{
+			<tr>
+				<td>@Html.DisplayFor(modelItem => item.House.Street.Region.Name)</td>
+				<td>@Html.DisplayFor(modelItem => item.House.Street.Name)</td>
+				<td>@Html.DisplayFor(modelItem => item.House.Number)</td>
+				<td>@(item.Entrance != 0 ? item.Entrance.ToString() : "Не указан")</td>
+				<td>@(item.Switch != null ? item.Switch.Name : "Не прикреплен")</td>
+				<td>
+					<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("EditSwitchAddress","Address",new {id = item.Id})">
+						<i class="entypo-vcard"></i>
+						Изменить
+					</a>
+				</td>
+			</tr>
+			}
+	<tbody>
+	</tbody>
+</table>
+</div>

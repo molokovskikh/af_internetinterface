@@ -300,6 +300,7 @@
     <Compile Include="Models\CallMeBackTicket.cs" />
     <Compile Include="Models\Contact.cs" />
     <Compile Include="Models\Appeal.cs" />
+    <Compile Include="Models\StreetAlias.cs" />
     <Compile Include="Models\PaymentForConnect.cs" />
     <Compile Include="Models\InternetSettings.cs" />
     <Compile Include="Models\Lease.cs" />
@@ -413,6 +414,7 @@
     <Content Include="Views\Warning\Index.cshtml" />
     <Content Include="Views\Personal\FirstVisit.cshtml" />
     <Content Include="Views\About\ConnectedHousesLists.cshtml" />
+    <Content Include="Views\Shared\Empty.cshtml" />
     <None Include="Web.Inforoom2_Test.config">
       <SubType>Designer</SubType>
     </None>

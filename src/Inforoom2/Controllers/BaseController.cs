@@ -75,7 +75,7 @@ namespace Inforoom2.Controllers
 		{
 			get
 			{
-				if (User == null) {
+				if (User == null || !DbSession.IsConnected) {
 					return null;
 				}
 				int id = 0;
@@ -213,6 +213,7 @@ namespace Inforoom2.Controllers
 		{
 			if (CurrentRegion != null) {
 				ViewBag.RegionOfficePhoneNumber = CurrentRegion.RegionOfficePhoneNumber;
+				ViewBag.CurrentRegion = CurrentRegion;
 			}
 			base.OnResultExecuting(filterContext);
 		}

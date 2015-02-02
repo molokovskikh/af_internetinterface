@@ -142,3 +142,7 @@ input.personal {padding: 5px; box-sizing: padding-box;}
 		.plans .variants h4 { height: 24px;}
 
 .paddedBlock {margin: 0px 40px 40px}
+
+.IsMyHouseConnected .entry {
+	width: 270px;
+}

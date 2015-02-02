@@ -13,6 +13,17 @@ namespace Inforoom2.Components
 	{
 		protected ArrayList ValidatedObjectList = new ArrayList();
 
+
+		public InvalidValue[] Validate(object obj)
+		{
+			ValidatedObjectList.Add(obj);
+
+			var runner = new ValidatorEngine();
+			var summary = runner.Validate(obj);
+
+			return summary; 
+		}
+
 		public InvalidValue[] ValidateDeep(object obj, IList validatedObjects = null)
 		{
 			ValidatedObjectList.Add(obj);

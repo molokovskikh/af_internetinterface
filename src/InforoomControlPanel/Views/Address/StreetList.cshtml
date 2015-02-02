@@ -1,0 +1,45 @@
+﻿@using System.Activities.Expressions
+@using System.ComponentModel.DataAnnotations
+@using Inforoom2.Models
+
+@{
+	ViewBag.Title = "Улицы";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	IList<Street> streets = ViewBag.Streets;
+}
+<div class="form-group">
+<a class="btn btn-success btn-sm btn-icon icon-left" href = '@Url.Action("CreateStreet", "Address")'>
+	<i class="entypo-plus"></i>
+	Создать улицу
+</a>
+	</div>
+<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
+	<thead>
+		<tr role="row">
+			<th class="sorting" tabindex="0" aria-controls="table-2" >#</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2" >Регион</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2" >Название</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2" >Проверенно яндексом</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2" >Действия</th>
+		</tr>
+	</thead>
+			@foreach (var item in streets)
+			{
+			<tr>
+				<td>@item.Id</td>
+				<td>@item.Region.Name</td>
+				<td>@item.Name</td>
+				<td>@Html.DisplayFor(i=>item.Confirmed)</td>
+				<td>
+					<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("EditStreet","Address",new {id = item.Id})">
+						<i class="entypo-vcard"></i>
+						Изменить
+					</a>
+				</td>
+			</tr>
+			}
+	<tbody>
+	</tbody>
+</table>
+</div>

@@ -218,6 +218,7 @@ namespace Inforoom2.Test.Functional
 				session.Flush();
 				var @switch = new Switch();
 				@switch.Name = "Тестовый коммутатор";
+				@switch.PortCount = 24;
 				session.Save(@switch);
 				var lease = new Lease();
 				lease.Port = 22;

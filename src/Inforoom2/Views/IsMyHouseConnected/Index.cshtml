@@ -5,6 +5,7 @@
 @{
 	ViewBag.Title = "Подключен ли ваш дом?";
 	ClientRequest clientRequest = ViewBag.ClientRequest;
+	Region CurrentRegion = ViewBag.CurrentRegion;
 }
 <script src="http://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
 <div class="heading">ПОДКЛЮЧЕН ЛИ ВАШ ДОМ?</div>
@@ -13,11 +14,15 @@
 <div class="addressleft">
 	
 	@using (@Html.BeginForm("Index", "IsMyHouseConnected", FormMethod.Post)) {
-		<div class="personals">Выберите город:</div>
-		@Html.DropDownListExtendedFor(k => clientRequest.Address.House.Street.Region, ViewBag.Regions as List<Region>, k => k.Name, null, new { @class = "rounded", onchange = "typeWatcher(50)" }, clientRequest.Address.House.Street.Region != null ? clientRequest.Address.House.Street.Region.Id : 0)
+		<div class="personals">Город:</div>
+		@Html.DropDownListExtendedFor(k => clientRequest.Address.House.Street.Region, ViewBag.Regions as List<Region>, k => k.Name, null, new { @class = "rounded", onchange = "typeWatcher(50)" }, clientRequest.Address.House.Street.Region != null ? clientRequest.Address.House.Street.Region.Id : CurrentRegion.Id)
 		<div class="location">
-			<div class="personals">Введите адрес:</div>
-			@Html.TextAreaFor(k => clientRequest.AddressAsString, 6, 31, new { @class = "entry", id = "addressArea", onkeyup = "typeWatcher( 500)", placeholder = "Например: улица Славы 4 к.2" })
+			<div class="personals">Улица:</div>
+			@Html.TextBoxFor(k => clientRequest.Street, new { @class = "entry", id = "streetId", onkeyup = "typeWatcher( 500)", placeholder = "Например: улица Славы " })
+		</div>
+	 	<div class="location">
+			<div class="personals">Дом:</div>
+			@Html.TextBoxFor(k => clientRequest.HouseNumber, new { @class = "entry", id = "houseId", onkeyup = "typeWatcher( 500)", placeholder = "Например: 4к2" })
 		</div>
 		@Html.HiddenFor(k => clientRequest.YandexCity, new { id = "yandexCityHidden" })
 		@Html.HiddenFor(k => clientRequest.YandexStreet, new { id = "yandexStreetHidden" })
