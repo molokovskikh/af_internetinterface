@@ -51,14 +51,13 @@ namespace Inforoom2.Models
 		/// <summary>
 		/// Получение стоимости перехода на другой тариф
 		/// </summary>
-		/// <param name="plan">Тарифный план</param>
+		/// <param name="planTo">Тарифный план</param>
 		/// <returns>Стоимость перехода</returns>
-		public virtual decimal GetTransferPrice(Plan plan)
+		public virtual decimal GetTransferPrice(Plan planTo)
 		{
-			var transfer = PlanTransfers.FirstOrDefault(i => i.PlanTo == plan);
+			var transfer = PlanTransfers.FirstOrDefault(i => i.PlanTo == planTo);
 			var ret = transfer != null ? transfer.Price : 0;
 			return ret;
 		}
-
 	}
 }
