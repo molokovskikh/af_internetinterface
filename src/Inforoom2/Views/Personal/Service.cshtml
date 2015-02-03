@@ -1,4 +1,5 @@
-﻿@using Inforoom2.Models
+﻿@using Inforoom2.Helpers
+@using Inforoom2.Models
 @using Inforoom2.Models.Services
 
 @{
@@ -31,20 +32,9 @@
 				<td class="description td">
 					@Html.DisplayFor(modelItem => service.Description)
 					@if (service.GetType().Name == "DeferredPayment" && !client.HasActiveService(service) && !service.IsActivableFor(client)) {
-						var serviceTime = client.TimeToServiceActivation;
-						<div>Услуга станет доступна через
-							@if (serviceTime.Days > 0) {
-								<div> @serviceTime.Days
-									@((serviceTime.Days%20 == 1) ? " день." : ((serviceTime.Days%20 >= 5) ? " дней." : " дня."))
-								</div>
-							} else {
-								<div>
-									@if (serviceTime.Hours > 0) {
-										@(serviceTime.Hours + " ч.")
-									}
-									@(serviceTime.Minutes + " мин.")
-								</div>
-							}
+						<div>
+							Услуга станет доступна через
+							<br/> @StringHepler.ShowTimeLeft(client.TimeToServiceActivation)
 						</div>
 					}
 				</td>
