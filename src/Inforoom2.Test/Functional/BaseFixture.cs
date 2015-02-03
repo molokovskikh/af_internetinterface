@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Web;
 using Inforoom2.Components;
+using Inforoom2.Controllers;
 using Inforoom2.Helpers;
 using NHibernate;
 using NHibernate.Cfg;
@@ -23,7 +24,8 @@ namespace Inforoom2.Test.Functional
 		public override void IntegrationSetup()
 		{
 			//Ставим куки, чтобы не отображался popup
-			SetCookie("userCity", BuildTestUrl("Белгород"));
+			SetCookie("userCity", "Белгород");
+			Setup.SeedDb();
 		}
 
 		[TearDown]

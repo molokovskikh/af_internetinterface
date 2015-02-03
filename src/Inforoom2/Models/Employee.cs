@@ -16,6 +16,9 @@ namespace Inforoom2.Models
 		public virtual string Login { get; set; }
 
 		[Property]
+		public virtual int? Categorie { get; set; }
+
+		[Property]
 		public virtual bool IsDisabled { get; set; }
 		
 		[Bag(0, Table = "user_role", Lazy = CollectionLazy.False)]

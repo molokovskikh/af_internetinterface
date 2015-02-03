@@ -40,7 +40,6 @@ namespace Inforoom2.Test.Functional
 		[SetUp]
 		public void SetupFixture()
 		{
-			SeedDb();
 			//Все опасные функции, должны быть вызванны до этого момента, так как исключения в сетапе
 			//оставляют невысвобожденные ресурсы браузера и веб сервера
 			SeleniumFixture.GlobalSetup();
@@ -55,219 +54,272 @@ namespace Inforoom2.Test.Functional
 			_webServer.ShutDown();
 		}
 
+		/// <summary>
+		/// Очистка базы данных для тестов
+		/// </summary>
+		public static void CleanDb(){
 
-		public static void CleanDb()
-		{
 			var strategy = new TableNamingStrategy();
 			var tables = new List<string>();
-			var order = "regions";
+
+			//Приоритет удаления данных
+			var order = "lawyerperson,regions";
 			var parts = order.Split(',');
 			foreach (var part in parts) {
 				var tablename = strategy.TableName(part);
 				tables.Add(tablename);
 			}
 
+			////Собираем остальные таблицы при помощи моделей проекта
 			var types = Assembly.GetAssembly(typeof(BaseModel)).GetTypes().ToList();
-			foreach (var t in types) {
+			foreach (var t in types)
+			{
 				var attribute = Attribute.GetCustomAttribute(t, typeof(ClassAttribute)) as ClassAttribute;
-
-				if (attribute != null) {
+				if (attribute != null)
+				{
 					var name = strategy.TableName(attribute.Table);
-					tables.Add(name);
+					tables.Add(name.ToLower());
 				}
 			}
 
+			//Удаляем из списка таблицы, которые не надо очищать
+			var exceptions = "partners,services,status,packagespeed,networkzones,accesscategories," +
+							"categoriesaccessset,connectbrigads,statuscorrelation,usercategories,additionalstatus," +
+							"salesettings,internetsettings";
+			parts = exceptions.Split(',');
+			foreach (var part in parts){
+				tables.RemoveAll(i=>i == strategy.TableName(part));
+			}
+
+			//Чистим таблицы
 			foreach (var name in tables) {
 				var query = "delete from internet." + name;
 				session.CreateSQLQuery(query).ExecuteUpdate();
 				session.Flush();
 			}
+			Console.WriteLine("Cleaning "+tables.Count+" tables");
 			
 		}
 
 		public static void SeedDb()
 		{
 			CleanDb();
-
-			var settings = session.Query<InternetSettings>().FirstOrDefault();
-			if (settings == null)
+			if (!session.Query<InternetSettings>().Any())
 				session.Save(new InternetSettings());
-
-			if (!session.Query<SaleSettings>().Any()) {
+			if (!session.Query<SaleSettings>().Any())
 				session.Save(SaleSettings.Defaults());
+
+
+			SeedRegions();
+			SeedPlans();
+			SeedAdmins();
+			SeedUsers();
+			SeedContent();
+			SeedPaymentsAndWriteoffs();
+			session.Flush();
+		}
+
+		private static void SeedRegions()
+		{
+			var vrn = new City();
+			vrn.Name = "Воронеж";
+			session.Save(vrn);
+			var blg = new City();
+			blg.Name = "Белгород";
+			session.Save(blg);
+			var region = new Region();
+			region.Name = "Воронеж";
+			region.RegionOfficePhoneNumber = "8-800-2000-600";
+			region.City = vrn;
+			session.Save(region);
+			region = new Region();
+			region.Name = "Белгород";
+			region.RegionOfficePhoneNumber = "8-800-123-12-23";
+			region.City = blg;
+			session.Save(region);
+		}
+
+		private static void SeedAdmins()
+		{
+			Permission permission = new Permission { Name = "TestPermission" };
+			session.Save(permission);
+
+			Role role = new Role { Name = "Admin" };
+			session.Save(role);
+
+			IList<Role> roles = new List<Role>();
+			roles.Add(role);
+			var emp = session.Query<Employee>().FirstOrDefault(e => e.Login == Environment.UserName);
+			if (emp == null)
+			{
+				emp = new Employee();
+				emp.Name = Environment.UserName;
+				emp.Login = Environment.UserName;
+				emp.Categorie = 3;
 			}
+			emp.Roles = roles;
+			session.Save(emp);
+		}
 
-			//if (!session.Query<Address>().Any()) {
-			//	ImportSwitchesAddresses();
-			//	}
+		private static void SeedUsers()
+		{
+			var pass = CryptoPass.GetHashString("password");
+			var client = new Client
+			{
+				PhysicalClient = new PhysicalClient
+				{
+					Password = pass,
+					PhoneNumber = "4951234567",
+					Email = "test@client.rru",
+					Name = "Иван",
+					Surname = "Кузнецов",
+					Patronymic = "Дмитриевич",
+					Plan = session.Query<Plan>().FirstOrDefault(p => p.Name == "Популярный"),
+					Balance = 1000,
+					Address = session.Query<Address>().FirstOrDefault(),
+					LastTimePlanChanged = DateTime.Now.AddMonths(-2)
+				},
+				Disabled = false,
+				RatedPeriodDate = DateTime.Now,
+				FreeBlockDays = 28,
+				WorkingStartDate = DateTime.Now.AddMonths(-3),
+				Lunched = true
+			};
 
+			var client2 = new Client
+			{
+				PhysicalClient = new PhysicalClient
+				{
+					Password = pass,
+					PhoneNumber = "4951234567",
+					Email = "test@client.rru",
+					Name = "Алексей",
+					Surname = "Дулин",
+					Patronymic = "Михалыч",
+					Plan = session.Query<Plan>().FirstOrDefault(p => p.Name == "Популярный"),
+					Balance = 0,
+					Address = session.Query<Address>().FirstOrDefault(),
+					LastTimePlanChanged = DateTime.Now.AddMonths(-2)
+				},
+				Disabled = true,
+				RatedPeriodDate = DateTime.Now,
+				FreeBlockDays = 0,
+				WorkingStartDate = DateTime.Now,
+				AutoUnblocked = true,
+				Lunched = true
+			};
 
-			if (!session.Query<Region>().Any()) {
-				var vrn = new City();
-				vrn.Name = "Воронеж";
-				session.Save(vrn);
-				var blg = new City();
-				blg.Name = "Белгород";
-				session.Save(blg);
-				var region = new Region();
-				region.Name = "Воронеж";
-				region.RegionOfficePhoneNumber = "8-800-2000-600";
-				region.City = vrn;
-				session.Save(region);
-				region = new Region();
-				region.Name = "Белгород";
-				region.RegionOfficePhoneNumber = "8-800-123-12-23";
-				region.City = blg;
-				session.Save(region);
-			}
+			client.Status = session.Get<Status>(5);
+			client2.Status = session.Get<Status>(7);
+
+			var services = session.Query<Service>().Where(s => s.Name == "IpTv" || s.Name == "Internet").ToList();
+			IList<ClientService> csList =
+				services.Select(service => new ClientService { Service = service, Client = client, BeginDate = DateTime.Now, IsActivated = true, ActivatedByUser = true })
+					.ToList();
+			IList<ClientService> csList2 =
+				services.Select(service => new ClientService { Service = service, Client = client2, BeginDate = DateTime.Now, IsActivated = true, ActivatedByUser = true })
+					.ToList();
+			client.ClientServices = csList;
+			client2.ClientServices = csList2;
+
+			var unpluggedClient = new Client
+			{
+				PhysicalClient = new PhysicalClient
+				{
+					Password = pass,
+					PhoneNumber = "4951234567",
+					Email = "test@client.rru",
+					Name = "Алексей",
+					Surname = "Третьяков",
+					Patronymic = "Павлович",
+					Plan = session.Query<Plan>().FirstOrDefault(p => p.Name == "Популярный"),
+					Balance = 1000,
+					Address = session.Query<Address>().FirstOrDefault(),
+					LastTimePlanChanged = DateTime.Now.AddMonths(-2)
+				},
+				Disabled = false,
+				RatedPeriodDate = DateTime.Now,
+				FreeBlockDays = 28,
+				WorkingStartDate = DateTime.Now,
+				Lunched = false
+			};
+			unpluggedClient.Status = session.Get<Status>(1);
+			session.Save(unpluggedClient);
+			var servs =
+				services.Select(service => new ClientService { Service = service, Client = unpluggedClient, BeginDate = null, IsActivated = false, ActivatedByUser = true })
+					.ToList();
+			unpluggedClient.ClientServices = servs;
+			session.Save(unpluggedClient);
+
+			var @switch = new Switch();
+			@switch.Name = "Тестовый коммутатор";
+			@switch.PortCount = 24;
+			session.Save(@switch);
+			var lease = new Lease();
+			lease.Port = 22;
+			lease.Ip = IPAddress.Parse("172.25.7.87");
+			lease.Switch = @switch;
+			session.Save(lease);
+
+			var availableServices =
+				session.Query<Service>().Where(s => s.Name == "Обещанный платеж" || s.Name == "Добровольная блокировка").ToList();
+			availableServices.ForEach(s => s.IsActivableFromWeb = true);
+			IPAddress addr;
+			IPAddress.TryParse("192.168.0.1", out addr);
+			var endpoint = new ClientEndpoint { PackageId = 19, Client = client, Ip = addr };
+			client.Endpoints = new List<ClientEndpoint> { endpoint };
+			session.Save(client);
+			session.Save(client2);
+		}
+
+		private static void SeedPlans()
+		{
+			//Тарифы
+			var plan = new Plan();
+			plan.Price = 300;
+			plan.Speed = 30;
+			plan.Name = "Популярный";
+			plan.IsArchived = false;
+			plan.Hidden = false;
+			plan.IsServicePlan = false;
+			session.Save(plan);
+			plan = new Plan();
+			plan.Price = 500;
+			plan.Speed = 50;
+			plan.Name = "Оптимальный";
+			plan.IsArchived = false;
+			plan.Hidden = false;
+			plan.IsServicePlan = false;
+			session.Save(plan);
+			plan = new Plan();
+			plan.Price = 900;
+			plan.Speed = 100;
+			plan.Name = "Максимальный";
+			plan.IsArchived = false;
+			plan.Hidden = false;
+			plan.IsServicePlan = false;
+			session.Save(plan);
+			session.Flush();
 
 			//Переходы с тарифов
 			var plans = session.Query<Plan>().ToList();
 			//var popular = plans.First(i => i.Name.Contains("Популярный"));
 			//Переход со всех тарифов
-			foreach (var plan in plans)
+			foreach (var plan1 in plans)
 			{
-				foreach(var plan2 in plans)
+				foreach (var plan2 in plans)
 				{
 					var transfer = new PlanTransfer();
-					transfer.PlanFrom = plan;
+					transfer.PlanFrom = plan1;
 					transfer.PlanTo = plan2;
 					transfer.Price = 150;
 					transfer.IsAvailableToSwitch = true;
 					session.Save(transfer);
 				}
 			}
-
-			//Пользователи
-			var pass = CryptoPass.GetHashString("password");
-			if (!session.Query<Client>().Any()) {
-				Permission permission = new Permission { Name = "TestPermission" };
-				session.Save(permission);
-
-				Role role = new Role { Name = "Admin" };
-				session.Save(role);
-
-				IList<Role> roles = new List<Role>();
-				roles.Add(role);
-				var emp = session.Query<Employee>().FirstOrDefault(e => e.Login == Environment.UserName);
-				if (emp == null) {
-					emp = new Employee();
-					emp.Name = Environment.UserName;
-					emp.Login = Environment.UserName;
-				}
-				emp.Roles = roles;
-				session.Save(emp);
-
-				var client = new Client {
-					PhysicalClient = new PhysicalClient {
-						Password = pass,
-						PhoneNumber = "4951234567",
-						Email = "test@client.rru",
-						Name = "Иван",
-						Surname = "Кузнецов",
-						Patronymic = "Дмитриевич",
-						Plan = session.Query<Plan>().FirstOrDefault(p => p.Name == "Популярный"),
-						Balance = 1000,
-						Address = session.Query<Address>().FirstOrDefault(),
-						LastTimePlanChanged = DateTime.Now.AddMonths(-2)
-					},
-					Disabled = false,
-					RatedPeriodDate = DateTime.Now,
-					FreeBlockDays = 28,
-					WorkingStartDate = DateTime.Now,
-					Lunched = true
-				};
-
-				var client2 = new Client {
-					PhysicalClient = new PhysicalClient {
-						Password = pass,
-						PhoneNumber = "4951234567",
-						Email = "test@client.rru",
-						Name = "Алексей",
-						Surname = "Дулин",
-						Patronymic = "Михалыч",
-						Plan = session.Query<Plan>().FirstOrDefault(p => p.Name == "Популярный"),
-						Balance = 0,
-						Address = session.Query<Address>().FirstOrDefault(),
-						LastTimePlanChanged = DateTime.Now.AddMonths(-2)
-					},
-					Disabled = true,
-					RatedPeriodDate = DateTime.Now,
-					FreeBlockDays = 0,
-					WorkingStartDate = DateTime.Now,
-					AutoUnblocked = true,
-					Lunched = true
-				};
-
-				client.Status = session.Get<Status>(5);
-				client2.Status = session.Get<Status>(7);
-
-				var services = session.Query<Service>().Where(s => s.Name == "IpTv" || s.Name == "Internet").ToList();
-				IList<ClientService> csList =
-					services.Select(service => new ClientService { Service = service, Client = client, BeginDate = DateTime.Now, IsActivated = true, ActivatedByUser = true })
-						.ToList();
-				IList<ClientService> csList2 =
-					services.Select(service => new ClientService { Service = service, Client = client2, BeginDate = DateTime.Now, IsActivated = true, ActivatedByUser = true })
-						.ToList();
-				client.ClientServices = csList;
-				client2.ClientServices = csList2;
-
-				var unpluggedClient = new Client {
-					PhysicalClient = new PhysicalClient {
-						Password = pass,
-						PhoneNumber = "4951234567",
-						Email = "test@client.rru",
-						Name = "Алексей",
-						Surname = "Третьяков",
-						Patronymic = "Павлович",
-						Plan = session.Query<Plan>().FirstOrDefault(p => p.Name == "Популярный"),
-						Balance = 1000,
-						Address = session.Query<Address>().FirstOrDefault(),
-						LastTimePlanChanged = DateTime.Now.AddMonths(-2)
-					},
-					Disabled = false,
-					RatedPeriodDate = DateTime.Now,
-					FreeBlockDays = 28,
-					WorkingStartDate = DateTime.Now,
-					Lunched = false
-				};
-				unpluggedClient.Status = session.Get<Status>(1);
-				session.Save(unpluggedClient);
-				var servs =
-					services.Select(service => new ClientService { Service = service, Client = unpluggedClient, BeginDate = null, IsActivated = false, ActivatedByUser = true })
-						.ToList();
-				unpluggedClient.ClientServices = servs;
-				session.Save(unpluggedClient);
-
-				var @switch = new Switch();
-				@switch.Name = "Тестовый коммутатор";
-				@switch.PortCount = 24;
-				session.Save(@switch);
-				var lease = new Lease();
-				lease.Port = 22;
-				lease.Ip = IPAddress.Parse("172.25.7.87");
-				lease.Switch = @switch;
-				session.Save(lease);
-
-				var availableServices =
-					session.Query<Service>().Where(s => s.Name == "Обещанный платеж" || s.Name == "Добровольная блокировка").ToList();
-				availableServices.ForEach(s => s.IsActivableFromWeb = true);
-				IPAddress addr;
-				IPAddress.TryParse("192.168.0.1", out addr);
-				var endpoint = new ClientEndpoint { PackageId = 19, Client = client, Ip = addr };
-				client.Endpoints = new List<ClientEndpoint> { endpoint };
-				session.Save(client);
-				session.Save(client2);
-			}
-
-			if (!session.Query<Question>().Any()) {
-				GenerateNewsAndQuestions();
-			}
-			GenerateBillInfo();
-			session.Flush();
 		}
 
-		private static void GenerateBillInfo()
+		private static void SeedPaymentsAndWriteoffs()
 		{
 			var client = session.Query<Client>().FirstOrDefault();
 			for (int i = 0; i < 10; i++) {
@@ -297,53 +349,7 @@ namespace Inforoom2.Test.Functional
 			}
 		}
 
-		private static void GeneratePlansAndPrices()
-		{
-			var plans = session.Query<Plan>().ToList();
-			plans.ForEach(p => p.IsArchived = true);
-			plans.ForEach(p => session.SaveOrUpdate(p));
-			var reginon = session.Query<Region>().FirstOrDefault();
-			var plan1 = new Plan {
-				Name = "Популярный",
-				Price = 300,
-				Speed = 30,
-				PlanTransfers = new List<PlanTransfer>(),
-				IsArchived = false,
-				IsServicePlan = false,
-				PackageId = 19,
-				Regions = new List<Region>() { reginon }
-			};
-
-			var plan2 = new Plan {
-				Name = "Оптимальный",
-				Price = 500,
-				Speed = 50,
-				PlanTransfers = new List<PlanTransfer>(),
-				IsArchived = false,
-				IsServicePlan = false,
-				PackageId = 19,
-				Regions = new List<Region>() { reginon }
-			};
-
-			var plan3 = new Plan {
-				Name = "Гениальный",
-				Price = 800,
-				Speed = 80,
-				PlanTransfers = new List<PlanTransfer>(),
-				IsArchived = false,
-				IsServicePlan = false,
-				PackageId = 19,
-				Regions = new List<Region>() { reginon }
-			};
-
-			session.Save(plan1);
-			session.Save(plan2);
-			session.Save(plan3);
-
-			session.Flush();
-		}
-
-		public static void GenerateNewsAndQuestions()
+		public static void SeedContent()
 		{
 			var client = session.Query<Client>().FirstOrDefault(c => c.PhysicalClient.Name == "Иван");
 			if (client == null) {
