@@ -4,19 +4,24 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using CassiniDev;
+using Common.Web.Ui.NHibernateExtentions;
 using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
 using InternetInterface.Helpers;
+using MvcContrib.UI.InputBuilder.Conventions;
 using NHibernate;
 using NHibernate.Linq;
+using NHibernate.Mapping.Attributes;
 using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using NUnit.Framework;
+using Rhino.Mocks.Constraints;
 using Test.Support.Selenium;
 using Address = Inforoom2.Models.Address;
 using Switch = Inforoom2.Models.Switch;
@@ -35,9 +40,12 @@ namespace Inforoom2.Test.Functional
 		[SetUp]
 		public void SetupFixture()
 		{
+			SeedDb();
+			//Все опасные функции, должны быть вызванны до этого момента, так как исключения в сетапе
+			//оставляют невысвобожденные ресурсы браузера и веб сервера
 			SeleniumFixture.GlobalSetup();
 			_webServer = SeleniumFixture.StartServer();
-			SeedDb();
+			
 		}
 
 		[TearDown]
@@ -48,8 +56,39 @@ namespace Inforoom2.Test.Functional
 		}
 
 
+		public static void CleanDb()
+		{
+			var strategy = new TableNamingStrategy();
+			var tables = new List<string>();
+			var order = "regions";
+			var parts = order.Split(',');
+			foreach (var part in parts) {
+				var tablename = strategy.TableName(part);
+				tables.Add(tablename);
+			}
+
+			var types = Assembly.GetAssembly(typeof(BaseModel)).GetTypes().ToList();
+			foreach (var t in types) {
+				var attribute = Attribute.GetCustomAttribute(t, typeof(ClassAttribute)) as ClassAttribute;
+
+				if (attribute != null) {
+					var name = strategy.TableName(attribute.Table);
+					tables.Add(name);
+				}
+			}
+
+			foreach (var name in tables) {
+				var query = "delete from internet." + name;
+				session.CreateSQLQuery(query).ExecuteUpdate();
+				session.Flush();
+			}
+			
+		}
+
 		public static void SeedDb()
 		{
+			CleanDb();
+
 			var settings = session.Query<InternetSettings>().FirstOrDefault();
 			if (settings == null)
 				session.Save(new InternetSettings());
@@ -62,14 +101,7 @@ namespace Inforoom2.Test.Functional
 			//	ImportSwitchesAddresses();
 			//	}
 
-			if (!session.Query<Plan>().Any(p => p.Name == "Популярный")) {
-				//GeneratePlansAndPrices();
-			}
 
-
-			session.Query<City>().ToList().ForEach(i=>session.Delete(i));
-			session.Query<Region>().ToList().ForEach(i => session.Delete(i));
-			session.Flush();
 			if (!session.Query<Region>().Any()) {
 				var vrn = new City();
 				vrn.Name = "Воронеж";
@@ -88,9 +120,8 @@ namespace Inforoom2.Test.Functional
 				region.City = blg;
 				session.Save(region);
 			}
+
 			//Переходы с тарифов
-			session.Query<PlanTransfer>().ToList().ForEach(i=>session.Delete(i));
-			session.Flush();
 			var plans = session.Query<Plan>().ToList();
 			//var popular = plans.First(i => i.Name.Contains("Популярный"));
 			//Переход со всех тарифов
@@ -108,11 +139,6 @@ namespace Inforoom2.Test.Functional
 			}
 
 			//Пользователи
-			session.Query<Payment>().ToList().ForEach(i=>session.Delete(i));
-			session.Query<Client>().ToList().ForEach(i=>session.Delete(i));
-			session.Query<PhysicalClient>().ToList().ForEach(i=>session.Delete(i));
-			session.Query<ClientService>().ToList().ForEach(i=>session.Delete(i));
-			session.Flush();
 			var pass = CryptoPass.GetHashString("password");
 			if (!session.Query<Client>().Any()) {
 				Permission permission = new Permission { Name = "TestPermission" };
@@ -213,9 +239,6 @@ namespace Inforoom2.Test.Functional
 				unpluggedClient.ClientServices = servs;
 				session.Save(unpluggedClient);
 
-				session.Query<Lease>().ToList().ForEach(i=>session.Delete(i));
-				session.Query<Switch>().ToList().ForEach(i=>session.Delete(i));
-				session.Flush();
 				var @switch = new Switch();
 				@switch.Name = "Тестовый коммутатор";
 				session.Save(@switch);
