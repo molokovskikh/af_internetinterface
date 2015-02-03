@@ -1,338 +1,299 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web.Mvc;
 using Inforoom2.Components;
 using Inforoom2.Models;
 using NHibernate.Linq;
+using NHibernate.Mapping.Attributes;
+using Switch = Inforoom2.Models.Switch;
 
 namespace InforoomControlPanel.Controllers
 {
 	public class AddressController : AdminController
 	{
-		public ActionResult AddressCity()
-		{
-			ViewBag.CitiesList = GetList<City>();
-			return View();
-		}
 
-		public ActionResult EditCity(int? cityId)
+		public ActionResult DeleteHouse(int? id)
 		{
-			City city;
-			city = cityId != null ? DbSession.Get<City>(cityId) : new City();
-			ViewBag.City = city;
-			return View();
-		}
-
-		public ActionResult DeleteCity(int? cityId)
-		{
-			var city = DbSession.Get<City>(cityId);
+			var city = DbSession.Get<City>(id);
+			SuccessMessage("Улица успешно удален");
 			DbSession.Delete(city);
-			return RedirectToAction("AddressCity");
+			return RedirectToAction("HouseList");
 		}
 
-		[HttpPost]
-		public ActionResult UpdateCity(City city)
+		public ActionResult DeleteStreet(int id)
 		{
-			ViewBag.City = city;
-			var errors = ValidationRunner.ValidateDeep(city);
-			if (errors.Length == 0) {
-				DbSession.SaveOrUpdate(city);
-				SuccessMessage("Город успешно отредактирован");
-			}
-			else {
-				return View("EditCity");
-			}
-
-			return RedirectToAction("AddressCity");
-		}
-
-		public ActionResult AddressRegion()
-		{
-			ViewBag.Regions = GetList<Region>();
-
-			return View();
-		}
-
-		public ActionResult EditRegion(int? regionId)
-		{
-			Region region;
-			if (regionId != null) {
-				region = DbSession.Get<Region>(regionId);
-			}
-			else {
-				region = new Region();
-				region.City = new City();
-				region.Plans = new List<Plan>();
-			}
-			var plans = DbSession.Query<Plan>().ToList();
-			ViewBag.Region = region;
-			ViewBag.CitiesList = GetList<City>();
-			ViewBag.Plans = plans;
-
-			return View();
-		}
-
-		public ActionResult DeleteRegion(int? regionId)
-		{
-			var region = DbSession.Get<Region>(regionId);
-			DbSession.Delete(region);
-			return RedirectToAction("AddressRegion");
-		}
-
-
-		[HttpPost]
-		public ActionResult UpdateRegion(Region region, string[] checkedPlans)
-		{
-			region.Plans.Clear();
-			if (checkedPlans != null) {
-				foreach (var checkedPlan in checkedPlans) {
-					var plan = DbSession.Get<Plan>(Convert.ToInt32(checkedPlan));
-					region.Plans.Add(plan);
-				}
-			}
-			var city = GetList<City>().FirstOrDefault(c => c.Id == region.City.Id);
-			region.City = city;
-			ViewBag.Region = region;
-			var errors = ValidationRunner.ValidateDeep(region);
-			if (errors.Length == 0) {
-				DbSession.SaveOrUpdate(region);
-				SuccessMessage("Регион успешно отредактирован");
-			}
-			else {
-				return View("EditRegion");
-			}
-
-			return RedirectToAction("AddressRegion");
-		}
-
-
-		public ActionResult AddressStreet()
-		{
-			ViewBag.Streets = GetList<Street>();
-
-			return View();
-		}
-
-		public ActionResult EditStreet(int? streetId)
-		{
-			Street street;
-
-			if (streetId != null) {
-				street = DbSession.Get<Street>(streetId);
-			}
-			else {
-				street = new Street();
-				street.Region = new Region();
-			}
-			ViewBag.CitiesList = GetList<City>();
-			ViewBag.Street = street;
-			return View();
-		}
-
-		public ActionResult DeleteStreet(int? streetId)
-		{
-			var street = DbSession.Get<Street>(streetId);
+			var street = DbSession.Get<Street>(id);
+			SuccessMessage("Улица успешно удалена");
 			DbSession.Delete(street);
-			return RedirectToAction("AddressStreet");
+			return RedirectToAction("StreetList");
 		}
 
-		[HttpPost]
-		public ActionResult UpdateStreet(Street street)
+		/// <summary>
+		/// Не реализована страница адресов пользователей 30.01.15
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		public ActionResult DeleteAddress(int id)
 		{
-			ViewBag.Street = street;
-			var region = GetList<Region>().FirstOrDefault(r => r.Name == street.Region.Name);
-			street.Region = region;
-			var errors = ValidationRunner.ValidateDeep(street);
-			if (errors.Length == 0) {
-				DbSession.SaveOrUpdate(street);
-				SuccessMessage("Улица успешно отредактирована");
-			}
-			else {
-				return View("EditStreet");
-			}
-
-			return RedirectToAction("AddressStreet");
-		}
-
-		public ActionResult AddressHouse()
-		{
-			ViewBag.Houses = GetList<House>();
-
-			return View();
-		}
-
-		public ActionResult EditHouse(int? houseid)
-		{
-			House house;
-			if (houseid != null) {
-				house = DbSession.Get<House>(houseid);
-			}
-			else {
-				house = new House();
-				house.Street = new Street();
-				house.Street.Region = new Region();
-				house.Street.Region.City = new City();
-			}
-
-			ViewBag.House = house;
-			ViewBag.Regions = GetList<Region>();
-			ViewBag.Streets = GetList<Street>();
-			return View();
-		}
-
-		public ActionResult DeleteHouse(int? houseid)
-		{
-			var house = DbSession.Get<House>(houseid);
-			DbSession.Delete(house);
-			return RedirectToAction("AddressHouse");
-		}
-
-		[HttpPost]
-		public ActionResult UpdateHouse(House house)
-		{
-			ViewBag.House = house;
-			var street = GetList<Street>().FirstOrDefault(r => r.Id == house.Street.Id);
-			house.Street = street;
-			var errors = ValidationRunner.ValidateDeep(house);
-			if (errors.Length == 0) {
-				DbSession.SaveOrUpdate(house);
-				SuccessMessage("Улица успешно отредактирована");
-			}
-			else {
-				return View("EditHouse");
-			}
-
-			return RedirectToAction("AddressHouse");
-		}
-
-		public ActionResult AddressAddress()
-		{
-			ViewBag.Addresses = GetList<Address>();
-			return View();
-		}
-
-		public ActionResult EditAddress(int? addressId)
-		{
-			Address address;
-			if (addressId != null) {
-				address = DbSession.Get<Address>(addressId);
-			}
-			else {
-				address = new Address();
-				address.House = new House();
-			}
-
-			ViewBag.Address = address;
-			ViewBag.Houses = GetList<House>();
-			ViewBag.Regions = GetList<Region>();
-			ViewBag.Streets = GetList<Street>();
-			return View();
-		}
-
-		public ActionResult DeleteAddress(int? addressId)
-		{
-			var address = DbSession.Get<Address>(addressId);
+			var address = DbSession.Get<Address>(id);
+			SuccessMessage("Адрес успешно удален");
 			DbSession.Delete(address);
-			return RedirectToAction("AddressAddress");
+			return RedirectToAction("AddressList");
+		}
+
+		public ActionResult DeleteSwitchAddress(int id)
+		{
+			var switchAddress = DbSession.Get<SwitchAddress>(id);
+			SuccessMessage("Адрес успешно удален");
+			DbSession.Delete(switchAddress);
+			return RedirectToAction("SwitchAddressList");
+		}
+
+
+		public ActionResult SwitchAddressList()
+		{
+			ViewBag.Addresses = GetList<SwitchAddress>();
+			return View();
 		}
 
 		[HttpPost]
-		public ActionResult UpdateAddress(Address address)
+		public ActionResult CreateSwitchAddress([EntityBinder] SwitchAddress SwitchAddress, bool? noEntrances)
 		{
-			ViewBag.Address = address;
-			ViewBag.Houses = GetList<House>();
-			ViewBag.Regions = GetList<Region>();
-			ViewBag.Streets = GetList<Street>();
-			var house = GetList<House>().FirstOrDefault(r => r.Id == address.House.Id);
-			address.House = house;
-			var errors = ValidationRunner.ValidateDeep(address);
+			if (noEntrances.HasValue)
+			{
+				SwitchAddress.Entrance = null;
+			}
+			var errors = ValidationRunner.ValidateDeep(SwitchAddress);
 			if (errors.Length == 0) {
-				DbSession.SaveOrUpdate(address);
-				SuccessMessage("Адрес успешно сохранен");
-			}
-			else {
-				return View("EditAddress");
-			}
-			return RedirectToAction("AddressAddress");
-		}
-
-		public ActionResult AddressSwitchAddress()
-		{
-			ViewBag.SwitchAddresses = GetList<SwitchAddress>();
-			return View();
-		}
-
-		public ActionResult EditSwitchAddress(int? switchAddressId)
-		{
-			SwitchAddress switchAddress;
-			if (switchAddressId != null) {
-				switchAddress = DbSession.Get<SwitchAddress>(switchAddressId);
-			}
-			else {
-				switchAddress = new SwitchAddress();
-				switchAddress.House = new House();
-				switchAddress.House.Street = new Street();
-				switchAddress.House.Street.Region = new Region();
-				switchAddress.Switch = new Switch();
+				DbSession.Save(SwitchAddress);
+				SuccessMessage("Адрес коммутатора успешно добавлен");
+				return RedirectToAction("SwitchAddressList");
 			}
 
-			ViewBag.SwitchAddress = switchAddress;
-			ViewBag.Switches = GetList<Switch>();
-			ViewBag.Houses = GetList<House>();
-			ViewBag.Regions = GetList<Region>();
-			ViewBag.Streets = GetList<Street>();
-			return View();
-		}
-
-		public ActionResult EditPrivateSwitchAddress(int? switchAddressId)
-		{
-			SwitchAddress switchAddress;
-			if (switchAddressId != null) {
-				switchAddress = DbSession.Get<SwitchAddress>(switchAddressId);
-			}
-			else {
-				switchAddress = new SwitchAddress();
-				switchAddress.Street = new Street();
-				switchAddress.Street.Region = new Region();
-				switchAddress.Switch = new Switch();
-			}
-
-			ViewBag.SwitchAddress = switchAddress;
-			ViewBag.Switches = GetList<Switch>();
-			ViewBag.Houses = GetList<House>();
-			ViewBag.Regions = GetList<Region>();
-			ViewBag.Streets = GetList<Street>();
-			return View();
+			CreateSwitchAddress(SwitchAddress.House.Street.Region.Id,SwitchAddress.House.Street.Id);
+			ViewBag.SwitchAddress = SwitchAddress;
+			ViewBag.House = SwitchAddress.House;
+			return View("CreateSwitchAddress");
 		}
 
 		
-		[HttpPost]
-		public ActionResult DeleteSwitchAddress([EntityBinder]SwitchAddress switchAddress)
+		public ActionResult CreateSwitchAddress(int regionId = 0, int streetId = 0, int switchId = 0)
 		{
-			//var switchAddress = DbSession.Get<SwitchAddress>(switchAddressId);
-			DbSession.Delete(switchAddress);
-			return RedirectToAction("AddressSwitchAddress");
+			var SwitchAddress = new SwitchAddress();
+			if (regionId > 0)
+				ViewBag.Region = DbSession.Get<Region>(regionId);
+
+			if (streetId > 0)
+				ViewBag.Street = DbSession.Get<Street>(streetId);
+			if (switchId > 0)
+				ViewBag.Switch = DbSession.Get<Switch>(switchId);
+
+			var regions = DbSession.Query<Region>().ToList();
+			var streets = DbSession.Query<Street>().ToList();
+			var houses = DbSession.Query<House>().ToList();
+			var Switches = DbSession.Query<Switch>().ToList();
+			ViewBag.Streets = streets;
+			ViewBag.Houses = houses;
+			ViewBag.Regions = regions;
+			ViewBag.Switches = Switches;
+			ViewBag.SwitchAddress = SwitchAddress;
+			return View("CreateSwitchAddress");
 		}
 
 		[HttpPost]
-		public ActionResult UpdateSwitchAddress([EntityBinder] SwitchAddress switchAddress)
+		public ActionResult EditSwitchAddress([EntityBinder] SwitchAddress SwitchAddress, bool? noEntrances)
 		{
-			ViewBag.Address = switchAddress;
-			ViewBag.Houses = GetList<House>();
-			ViewBag.Regions = GetList<Region>();
-			ViewBag.Streets = GetList<Street>();
-			ViewBag.Switches = GetList<SwitchAddress>();
+			if (noEntrances.HasValue)
+			{
+				SwitchAddress.Entrance = null;
+			}
+			var errors = ValidationRunner.ValidateDeep(SwitchAddress);
+			if (errors.Length == 0)
+			{
+				DbSession.Save(SwitchAddress);
+				SuccessMessage("Адрес коммутатора успешно изменен");
+				return RedirectToAction("SwitchAddressList");
+			}
 
-			var errors = ValidationRunner.ValidateDeep(switchAddress);
+			CreateSwitchAddress(SwitchAddress.House.Street.Region.Id, SwitchAddress.House.Street.Id);
+			ViewBag.SwitchAddress = SwitchAddress;
+			ViewBag.House = SwitchAddress.House;
+			return View("CreateSwitchAddress");
+		}
+		public ActionResult EditSwitchAddress(int id)
+		{
+			var SwitchAddress = DbSession.Get<SwitchAddress>(id);
+			CreateSwitchAddress();
+
+			ViewBag.Region = SwitchAddress.House.Street.Region;
+			ViewBag.Street = SwitchAddress.House.Street;
+			ViewBag.Switch = SwitchAddress.Switch;
+			ViewBag.House = SwitchAddress.House;
+			ViewBag.SwitchAddress = SwitchAddress;
+			return View("CreateSwitchAddress");
+		}
+		public ActionResult CityList()
+		{
+			var cities = DbSession.Query<City>().ToList();
+			ViewBag.Cities = cities;
+			return View();
+		}
+
+		public ActionResult RegionList()
+		{
+			var regions = DbSession.Query<Region>().ToList();
+			ViewBag.Regions = regions;
+			return View();
+		}
+
+		public ActionResult StreetList()
+		{
+			var streets = DbSession.Query<Street>().ToList();
+			ViewBag.Streets = streets;
+			return View();
+		}
+
+		public ActionResult CreateStreet(int regionId = 0)
+		{
+			var Street = new Street();
+			Street.Confirmed = true;
+			if (regionId > 0)
+				ViewBag.Region = DbSession.Get<Region>(regionId);
+
+			var regions = DbSession.Query<Region>().ToList();
+			ViewBag.Regions = regions;
+			ViewBag.Street = Street;
+			return View("CreateStreet");
+		}
+
+		[HttpPost]
+		public ActionResult CreateStreet([EntityBinder] Street Street, string yandexStreet, string yandexPosition)
+		{
+			//По возможности используем формализацию яндекса
+			if (Street.Confirmed) {
+				Street.Name = yandexStreet;
+				Street.Geomark = yandexPosition;
+			}
+
+			var errors = ValidationRunner.ValidateDeep(Street);
 			if (errors.Length == 0) {
-				DbSession.SaveOrUpdate(switchAddress);
-				SuccessMessage("Адрес успешно сохранен");
+				DbSession.Save(Street);
+				SuccessMessage("Улица успешно добавлена");
+				return RedirectToAction("StreetList");
 			}
-			else {
-				return View("EditAddress");
+
+			CreateStreet();
+			ViewBag.Street = Street;
+			return View("CreateStreet");
+		}
+
+		public ActionResult EditStreet(int id)
+		{
+			var Street = DbSession.Get<Street>(id);
+			var regions = DbSession.Query<Region>().ToList();
+			ViewBag.Region = Street.Region;
+			ViewBag.Regions = regions;
+			ViewBag.Street = Street;
+			return View("CreateStreet");
+		}
+
+		[HttpPost]
+		public ActionResult EditStreet([EntityBinder] Street Street, string yandexStreet, string yandexPosition)
+		{
+			//По возможности используем формализацию яндекса
+			if (Street.Confirmed) {
+				Street.Name = yandexStreet;
+				Street.Geomark = yandexPosition;
 			}
-			return RedirectToAction("AddressSwitchAddress");
+
+			var errors = ValidationRunner.ValidateDeep(Street);
+			if (errors.Length == 0) {
+				DbSession.Save(Street);
+				SuccessMessage("Улица успешно изменена");
+				return RedirectToAction("StreetList");
+			}
+
+			EditStreet(Street.Id);
+			ViewBag.Street = Street;
+			return View("CreateStreet");
+		}
+
+		public ActionResult HouseList()
+		{
+			var houses = DbSession.Query<House>().ToList();
+			ViewBag.Houses = houses;
+			return View();
+		}
+
+		public ActionResult CreateHouse(int streetId = 0)
+		{
+			var House = new House();
+			House.Confirmed = true;
+			if (streetId > 0)
+				ViewBag.Street = DbSession.Get<Street>(streetId);
+
+			var streets = DbSession.Query<Street>().ToList();
+			ViewBag.Streets = streets;
+			ViewBag.House = House;
+			return View("CreateHouse");
+		}
+
+		[HttpPost]
+		public ActionResult CreateHouse([EntityBinder] House House, string yandexHouse, string yandexPosition)
+		{
+			//По возможности используем формализацию яндекса
+			if (House.Confirmed) {
+				House.Number = yandexHouse;
+				House.Geomark = yandexPosition;
+			}
+
+			var errors = ValidationRunner.Validate(House);
+			if (errors.Length == 0)
+			{
+				DbSession.Save(House);
+				SuccessMessage("Дом успешно добавлен");
+				return RedirectToAction("HouseList");
+			}
+
+			CreateHouse(House.Id);
+			ViewBag.House = House;
+			return View("CreateHouse");
+		}
+
+		public ActionResult EditHouse(int id = 0)
+		{
+			var House = DbSession.Get<House>(id);
+			var streets = DbSession.Query<Street>().ToList();
+			ViewBag.Street = House.Street;
+			ViewBag.Streets = streets;
+			ViewBag.House = House;
+			return View("CreateHouse");
+		}
+
+		[HttpPost]
+		public ActionResult EditHouse([EntityBinder] House House, string yandexHouse, string yandexPosition)
+		{
+			//По возможности используем формализацию яндекса
+			if (House.Confirmed)
+			{
+				House.Number = yandexHouse;
+				House.Geomark = yandexPosition;
+			}
+
+			var errors = ValidationRunner.Validate(House);
+			if (errors.Length == 0)
+			{
+				DbSession.Save(House);
+				SuccessMessage("Дом успешно изменен");
+				return RedirectToAction("HouseList");
+			}
+
+			EditHouse(House.Id);
+			ViewBag.House = House;
+			return View("CreateHouse");
 		}
 	}
+
 }

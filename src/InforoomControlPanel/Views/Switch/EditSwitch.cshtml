@@ -1,0 +1,62 @@
+﻿@using System.Activities.Expressions
+@using Inforoom2.Models
+@model dynamic
+
+@{
+	ViewBag.Title = "Редактировать коммутатор";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	Switch Switch = ViewBag.Switch;
+}
+<div class="panel panel-primary">
+	<div class="panel-body">
+	<div class="col-md-6">
+			@using (@Html.BeginForm("EditSwitch", "Switch", FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
+   {
+				<div class="form-group">
+					@Html.HiddenFor(model => Switch.Id)
+					<label class="col-sm-3 control-label" for="field-ta">Название</label>
+					<div class="col-sm-5">
+						@Html.TextBoxFor(model => Switch.Name,new {@class = "form-control"})
+						@ViewBag.Validation.GetError(Switch, "Name", "Имя не может быть пустым")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label" for="field-ta">Кол-во портов</label>
+					<div class="col-sm-5">
+						@Html.TextBoxFor(model => Switch.PortCount,new {@class = "form-control"})
+						@ViewBag.Validation.GetError(Switch, "PortCount")
+					</div>
+				</div>
+				<div class="form-group">
+					<button class="btn btn-green" type="submit">Принять изменения</button>
+				</div>
+			}
+	</div>
+		<div class="col-md-6">
+			<div class="col-sm-12 ">
+			<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("CreateSwitchAddress","Address",new {switchId = Switch.Id})">
+						<i class="entypo-plus"></i>
+						Добавить адрес
+					</a>
+			</div>
+			
+			<div class="col-sm-12">
+				<h4>Обслуживает адреса</h4>
+			</div>
+			@foreach (var item in Switch.Addresses) {
+				<div class="form-group">
+					<div class="col-sm-5">
+						@item.GetFullAddress(true)
+					</div>
+					<div class="col-sm-2">
+						<a class="entypo-cancel-circled" style="color:red" href="@Url.Action("DeleteSwitchAdress","Switch",new {id = item.Id })"></a>
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+</div>
+
+<div class="form-group">
+</div>
+<button class="btn btn-blue" onclick=" location.href = '@Url.Action("SwitchList", "Switch")' ">Назад</button>

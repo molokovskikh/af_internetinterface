@@ -51,7 +51,7 @@
 	</thead>
 	<tbody>
 		<tr>
-			<td><span class="description">Фиксированный </span></td>
+			<td><span class="description">Фиксированный IP </span></td>
 			<td>${ConnectInfo.static_IP}</td>
 		</tr>
 		<tr>
@@ -135,9 +135,7 @@
 <script type="text/javascript">
 	function GetStaticIp() {
 		var req = {};
-		req.endPontId = $;
-		{ConnectInfo.endpointId;
-		};
+		req.endPontId = ${ConnectInfo.endpointId};
 		$.post("GetStaticIp", req, function (data) {
 			if (data){
 				$('#static_IP_hiden').val(data);

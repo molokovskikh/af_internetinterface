@@ -1,0 +1,40 @@
+﻿@using System.Activities.Expressions
+@using Inforoom2.Models
+
+@{
+	ViewBag.Title = "Регионы";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	IList<Region> regions = ViewBag.Regions;
+}
+<div class="form-group">
+<a class="btn btn-success btn-sm btn-icon icon-left" href = '@Url.Action("CreateRegion", "Address")'>
+	<i class="entypo-plus"></i>
+	Создать адрес
+</a>
+	</div>
+<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
+	<thead>
+		<tr role="row">
+			<th class="sorting" tabindex="0" aria-controls="table-2" >Город</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2" >Название</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2" >Действия</th>
+		</tr>
+	</thead>
+			@foreach (var item in regions)
+			{
+			<tr>
+				<td>@(item.City != null ? item.City.Name : "Не прикреплен")</td>
+				<td>@item.Name</td>
+				<td>
+					<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("EditRegion","Address",new {id = item.Id})">
+						<i class="entypo-vcard"></i>
+						Изменить
+					</a>
+				</td>
+			</tr>
+			}
+	<tbody>
+	</tbody>
+</table>
+</div>

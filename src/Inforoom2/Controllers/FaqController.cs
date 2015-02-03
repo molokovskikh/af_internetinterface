@@ -1,9 +1,11 @@
-﻿
-using System;
+﻿using System;
+using System.Configuration;
 using System.Linq;
+using System.Text;
 using System.Web.Mvc;
 using Inforoom2.Components;
 using Inforoom2.Models;
+using InternetInterface;
 using NHibernate.Linq;
 
 namespace Inforoom2.Controllers
@@ -43,7 +45,37 @@ namespace Inforoom2.Controllers
 			var errors = ValidationRunner.ValidateDeep(ticket);
 			if (errors.Length == 0) {
 				DbSession.Save(ticket);
-				SuccessMessage("Вопрос успешно отправлен. Ответ придет вам на на почту.");
+
+				//Дублирование письма на почту
+				var builder = new StringBuilder(1000);
+				if(ticket.Client != null)
+					builder.Append("Клиент: " + ticket.Client.Id);
+				builder.AppendLine("<br />");
+				builder.Append("IP: " + Request.UserHostAddress);
+				builder.AppendLine("<br />");
+				builder.Append(ticket.Text);
+
+#if DEBUG
+				var email = ConfigurationManager.AppSettings["DebugMailAddress"];
+#else
+				var email = ConfigurationManager.AppSettings["MailSenderAddress"];
+#endif
+				try {
+					EmailSender.SendEmail(email, "Запрос в техподдержку с ivrn.net от " + ticket.Email, builder.ToString());
+				}
+				catch (Exception) {
+					ErrorMessage("Извините, произошла ошибка");
+					return View();
+				}
+
+				if(ticket.Client != null) {
+					var appeal = new Appeal("Клиент написал тикет в техподдержку #" + ticket.Id, ticket.Client, AppealType.Statistic) {
+						Employee = GetCurrentEmployee()
+					};
+					DbSession.Save(appeal);
+				}
+
+				SuccessMessage("Вопрос успешно отправлен. Ответ придет вам на почту.");
 				ViewBag.NewTicket = new Ticket();
 			}
 			else

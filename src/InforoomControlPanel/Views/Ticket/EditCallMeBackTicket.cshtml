@@ -1,0 +1,38 @@
+﻿@using Inforoom2.Models
+@{
+	CallMeBackTicket ticket = ViewBag.Ticket;
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewBag.Title = "Заявка на обратный звонок";
+}
+
+		@using (@Html.BeginForm("UpdateCallMeBackTicket", "Ticket", FormMethod.Post,new {@class = "form-horizontal form-groups-bordered"})) {
+			<div class="form-group">
+				@Html.HiddenFor(model => ticket.Id)
+				@Html.HiddenFor(model => ticket.Email)
+				@Html.HiddenFor(model => ticket.Text)
+				<label class="col-sm-3 control-label" for="field-ta">Имя</label>
+				<div class="col-sm-5">
+					<label class="col-sm-3 control-label" for="field-ta">@Html.DisplayFor(model => ticket.Name)</label>
+				</div>
+			</div>
+				<div class="form-group">
+				<label class="col-sm-3 control-label" for="field-ta">Номер телефона</label>
+				<div class="col-sm-5">
+					<label class="col-sm-3 control-label" for="field-ta">@Html.DisplayFor(model => ticket.PhoneNumber)</label>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label" for="field-ta">Вопрос</label>
+				<div class="col-sm-5">
+					<label class="col-sm-3 control-label" for="field-ta">@Html.DisplayFor(model => ticket.Text)</label>
+				</div>
+			</div>
+			<div class="form-group">
+			<div class="col-sm-7">
+				</div>
+				<button class="btn btn-green" type="submit">Заявка обработана</button>
+			</div>
+		}
+<div class="form-group">
+</div>
+<button class="btn btn-blue" onclick=" location.href = '@Url.Action("TicketIndex", "Ticket")' ">Назад</button>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using Common.Tools;
 using Inforoom2.Models.Services;
 using NHibernate;
 using NHibernate.Linq;
@@ -45,8 +46,8 @@ namespace Inforoom2.Models
 		[Property(NotNull = true)]
 		public virtual int FreeBlockDays { get; set; }
 		
-		[Property(NotNull = true)]
-		public virtual bool FirstLunch { get; set; }
+		[Property(NotNull = true,Column = "FirstLunch")]
+		public virtual bool Lunched { get; set; }
 		
 		[Property]
 		public virtual DateTime? StartNoBlock { get; set; }
@@ -113,6 +114,20 @@ namespace Inforoom2.Models
 		public virtual bool HasActiveService<T>()
 		{
 			return FindActiveService<T>() != null;
+		}
+
+		// Время до момента, когда клиенту станет доступна услуга, использованная при последнем доступе к методу ServiceAccepted
+		public virtual TimeSpan TimeToServiceActivation { get; protected set; }
+
+		// Метод для проверки, доступна ли клиенту данная услуга
+		public virtual bool ServiceAccepted(Service service)
+		{
+			var lastService = ClientServices.OrderBy(cs => cs.BeginDate).LastOrDefault(s => s.Service.Id == service.Id);
+			if (lastService == null || lastService.IsActivated)
+				return false;
+			var serviceDate = lastService.BeginDate ?? new DateTime();
+			TimeToServiceActivation = serviceDate.AddDays(30) - DateTime.Now;
+			return (TimeToServiceActivation < TimeSpan.Zero);
 		}
 
 		public virtual bool CanUseService(Service service)
@@ -202,6 +217,21 @@ namespace Inforoom2.Models
 		public virtual string GetAddressString()
 		{
 			return "г. Москва, ул. Вильнюсская, д.8, к.2";
+		}
+
+		public virtual bool ShowWarningBecauseNoPassport()
+		{
+			if (PhysicalClient == null)
+				return false;
+
+			if (!IsWorkStarted())
+				return false;
+
+			var dontHavePassportData = string.IsNullOrEmpty(PhysicalClient.PassportNumber);
+			var goodMoney = Balance > 0;
+			var date = SystemTime.Now() > WorkingStartDate.Value.AddDays(7);
+
+			return dontHavePassportData && goodMoney && date;
 		}
 	}
 

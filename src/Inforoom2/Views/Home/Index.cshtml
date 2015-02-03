@@ -3,7 +3,7 @@
 @model dynamic
 @section JavaScript{<script type="text/javascript"src="@Url.Content("~/Scripts/HomeController.js")"></script>}
 @{
-	ViewBag.Title = "Home";
+	ViewBag.Title = "Инфорум";
 	IList<NewsBlock> news = ViewBag.News ?? new List<NewsBlock>();
 	Layout = "~/Views/Shared/_Layout.cshtml";
 }

@@ -23,7 +23,7 @@ namespace Inforoom2.Test.Functional
 		public override void IntegrationSetup()
 		{
 			//Ставим куки, чтобы не отображался popup
-		SetCookie("userCity", BuildTestUrl("Белгород"));
+			SetCookie("userCity", BuildTestUrl("Белгород"));
 		}
 
 		[TearDown]

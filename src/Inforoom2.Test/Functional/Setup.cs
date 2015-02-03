@@ -4,19 +4,24 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using CassiniDev;
+using Common.Web.Ui.NHibernateExtentions;
 using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
 using InternetInterface.Helpers;
+using MvcContrib.UI.InputBuilder.Conventions;
 using NHibernate;
 using NHibernate.Linq;
+using NHibernate.Mapping.Attributes;
 using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using NUnit.Framework;
+using Rhino.Mocks.Constraints;
 using Test.Support.Selenium;
 using Address = Inforoom2.Models.Address;
 using Switch = Inforoom2.Models.Switch;
@@ -35,9 +40,12 @@ namespace Inforoom2.Test.Functional
 		[SetUp]
 		public void SetupFixture()
 		{
+			SeedDb();
+			//Все опасные функции, должны быть вызванны до этого момента, так как исключения в сетапе
+			//оставляют невысвобожденные ресурсы браузера и веб сервера
 			SeleniumFixture.GlobalSetup();
 			_webServer = SeleniumFixture.StartServer();
-			SeedDb();
+			
 		}
 
 		[TearDown]
@@ -48,8 +56,39 @@ namespace Inforoom2.Test.Functional
 		}
 
 
+		public static void CleanDb()
+		{
+			var strategy = new TableNamingStrategy();
+			var tables = new List<string>();
+			var order = "regions";
+			var parts = order.Split(',');
+			foreach (var part in parts) {
+				var tablename = strategy.TableName(part);
+				tables.Add(tablename);
+			}
+
+			var types = Assembly.GetAssembly(typeof(BaseModel)).GetTypes().ToList();
+			foreach (var t in types) {
+				var attribute = Attribute.GetCustomAttribute(t, typeof(ClassAttribute)) as ClassAttribute;
+
+				if (attribute != null) {
+					var name = strategy.TableName(attribute.Table);
+					tables.Add(name);
+				}
+			}
+
+			foreach (var name in tables) {
+				var query = "delete from internet." + name;
+				session.CreateSQLQuery(query).ExecuteUpdate();
+				session.Flush();
+			}
+			
+		}
+
 		public static void SeedDb()
 		{
+			CleanDb();
+
 			var settings = session.Query<InternetSettings>().FirstOrDefault();
 			if (settings == null)
 				session.Save(new InternetSettings());
@@ -62,14 +101,7 @@ namespace Inforoom2.Test.Functional
 			//	ImportSwitchesAddresses();
 			//	}
 
-			if (!session.Query<Plan>().Any(p => p.Name == "Популярный")) {
-				//GeneratePlansAndPrices();
-			}
 
-			
-			session.Query<City>().ToList().ForEach(i=>session.Delete(i));
-			session.Query<Region>().ToList().ForEach(i => session.Delete(i));
-			session.Flush();
 			if (!session.Query<Region>().Any()) {
 				var vrn = new City();
 				vrn.Name = "Воронеж";
@@ -89,15 +121,31 @@ namespace Inforoom2.Test.Functional
 				session.Save(region);
 			}
 
+			//Переходы с тарифов
+			var plans = session.Query<Plan>().ToList();
+			//var popular = plans.First(i => i.Name.Contains("Популярный"));
+			//Переход со всех тарифов
+			foreach (var plan in plans)
+			{
+				foreach(var plan2 in plans)
+				{
+					var transfer = new PlanTransfer();
+					transfer.PlanFrom = plan;
+					transfer.PlanTo = plan2;
+					transfer.Price = 150;
+					transfer.IsAvailableToSwitch = true;
+					session.Save(transfer);
+				}
+			}
 
+			//Пользователи
+			var pass = CryptoPass.GetHashString("password");
 			if (!session.Query<Client>().Any()) {
 				Permission permission = new Permission { Name = "TestPermission" };
 				session.Save(permission);
 
 				Role role = new Role { Name = "Admin" };
 				session.Save(role);
-
-				var pass = CryptoPass.GetHashString("password");
 
 				IList<Role> roles = new List<Role>();
 				roles.Add(role);
@@ -116,8 +164,8 @@ namespace Inforoom2.Test.Functional
 						PhoneNumber = "4951234567",
 						Email = "test@client.rru",
 						Name = "Иван",
-						Surname = "Дулин",
-						Patronymic = "Михалыч",
+						Surname = "Кузнецов",
+						Patronymic = "Дмитриевич",
 						Plan = session.Query<Plan>().FirstOrDefault(p => p.Name == "Популярный"),
 						Balance = 1000,
 						Address = session.Query<Address>().FirstOrDefault(),
@@ -126,7 +174,8 @@ namespace Inforoom2.Test.Functional
 					Disabled = false,
 					RatedPeriodDate = DateTime.Now,
 					FreeBlockDays = 28,
-					WorkingStartDate = DateTime.Now
+					WorkingStartDate = DateTime.Now,
+					Lunched = true
 				};
 
 				var client2 = new Client {
@@ -146,14 +195,14 @@ namespace Inforoom2.Test.Functional
 					RatedPeriodDate = DateTime.Now,
 					FreeBlockDays = 0,
 					WorkingStartDate = DateTime.Now,
-					AutoUnblocked = true
+					AutoUnblocked = true,
+					Lunched = true
 				};
 
 				client.Status = session.Get<Status>(5);
 				client2.Status = session.Get<Status>(7);
 
-				var services =
-					session.Query<Service>().Where(s => s.Name == "IpTv" || s.Name == "Internet").ToList();
+				var services = session.Query<Service>().Where(s => s.Name == "IpTv" || s.Name == "Internet").ToList();
 				IList<ClientService> csList =
 					services.Select(service => new ClientService { Service = service, Client = client, BeginDate = DateTime.Now, IsActivated = true, ActivatedByUser = true })
 						.ToList();
@@ -162,6 +211,43 @@ namespace Inforoom2.Test.Functional
 						.ToList();
 				client.ClientServices = csList;
 				client2.ClientServices = csList2;
+
+				var unpluggedClient = new Client {
+					PhysicalClient = new PhysicalClient {
+						Password = pass,
+						PhoneNumber = "4951234567",
+						Email = "test@client.rru",
+						Name = "Алексей",
+						Surname = "Третьяков",
+						Patronymic = "Павлович",
+						Plan = session.Query<Plan>().FirstOrDefault(p => p.Name == "Популярный"),
+						Balance = 1000,
+						Address = session.Query<Address>().FirstOrDefault(),
+						LastTimePlanChanged = DateTime.Now.AddMonths(-2)
+					},
+					Disabled = false,
+					RatedPeriodDate = DateTime.Now,
+					FreeBlockDays = 28,
+					WorkingStartDate = DateTime.Now,
+					Lunched = false
+				};
+				unpluggedClient.Status = session.Get<Status>(1);
+				session.Save(unpluggedClient);
+				var servs =
+					services.Select(service => new ClientService { Service = service, Client = unpluggedClient, BeginDate = null, IsActivated = false, ActivatedByUser = true })
+						.ToList();
+				unpluggedClient.ClientServices = servs;
+				session.Save(unpluggedClient);
+
+				var @switch = new Switch();
+				@switch.Name = "Тестовый коммутатор";
+				@switch.PortCount = 24;
+				session.Save(@switch);
+				var lease = new Lease();
+				lease.Port = 22;
+				lease.Ip = IPAddress.Parse("172.25.7.87");
+				lease.Switch = @switch;
+				session.Save(lease);
 
 				var availableServices =
 					session.Query<Service>().Where(s => s.Name == "Обещанный платеж" || s.Name == "Добровольная блокировка").ToList();
@@ -249,13 +335,6 @@ namespace Inforoom2.Test.Functional
 				PackageId = 19,
 				Regions = new List<Region>() { reginon }
 			};
-
-			plan1.AddPlanTransfer(plan2, 100);
-			plan1.AddPlanTransfer(plan3, 100);
-			plan2.AddPlanTransfer(plan1, 100);
-			plan2.AddPlanTransfer(plan3, 100);
-			plan3.AddPlanTransfer(plan1, 100);
-			plan3.AddPlanTransfer(plan2, 100);
 
 			session.Save(plan1);
 			session.Save(plan2);

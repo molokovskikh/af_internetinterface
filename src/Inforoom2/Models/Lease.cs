@@ -12,5 +12,11 @@ namespace Inforoom2.Models
 
 		[Property(Column = "Ip",TypeType = typeof(IPUserType))]
 		public virtual IPAddress Ip { get; set; }
+
+		[ManyToOne(Column = "Switch")]
+		public virtual Switch Switch { get; set; }
+
+		[Property]
+		public virtual int Port { get; set; }
 	}
 }

@@ -9,6 +9,9 @@ using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models
 {
+	/// <summary>
+	/// Тарифный план
+	/// </summary>
 	[Class(0, Table = "Tariffs", NameType = typeof(Plan))]
 	public class Plan : BaseModel
 	{
@@ -45,14 +48,16 @@ namespace Inforoom2.Models
 
 		public virtual decimal SwitchPrice { get; set; }
 
-		public virtual void AddPlanTransfer(Plan plan, decimal price)
+		/// <summary>
+		/// Получение стоимости перехода на другой тариф
+		/// </summary>
+		/// <param name="planTo">Тарифный план</param>
+		/// <returns>Стоимость перехода</returns>
+		public virtual decimal GetTransferPrice(Plan planTo)
 		{
-			PlanTransfer planTransfer = new PlanTransfer();
-			planTransfer.PlanTo = plan;
-			planTransfer.PlanFrom = this;
-			planTransfer.Price = price;
-			PlanTransfers.Add(planTransfer);
-			//plan.PlanTransfers.Add(planTransfer);
+			var transfer = PlanTransfers.FirstOrDefault(i => i.PlanTo == planTo);
+			var ret = transfer != null ? transfer.Price : 0;
+			return ret;
 		}
 	}
 }

@@ -173,6 +173,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Functional\BaseFixture.cs" />
+    <Compile Include="Functional\PersonalPlansFixture.cs" />
+    <Compile Include="Functional\PersonalFixture.cs" />
     <Compile Include="Functional\FaqFixture.cs" />
     <Compile Include="Functional\CallMeBackFixture.cs" />
     <Compile Include="Functional\HomeFixture.cs" />

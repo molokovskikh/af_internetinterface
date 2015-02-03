@@ -13,21 +13,20 @@
 <div class="whiteblock">
 		<div class="boy"></div>
 		<div class="whiteblocktext">
-			<p>Вы можете быть уверены — специалисты "Инфорум" ответят на Ваш звонок и окажут квалифицированную помощь.Служба техподдержки работает круглосуточно, без выходных. 
-			</p>
-			<p>Также вы можете заказать обратный звонок или позвонить по круглосуточному бесплатному номеру - <a href="">@ViewBag.RegionOfficePhoneNumber</a>
+			<p>Вы можете быть уверены — специалисты "Инфорум" ответят на Ваш звонок и окажут квалифицированную помощь. Служба техподдержки работает круглосуточно, без выходных.</p>
+			<p>Также вы можете заказать обратный звонок или позвонить по круглосуточному номеру - <a href="">@ViewBag.RegionOfficePhoneNumber</a>
 			</p>
 			<p>Вы можете описать свою проблему при помощи формы, расположенной ниже. Наши специалисты ответят на ваши вопросы, прислав письмо на указанный адрес эл. почты.</p>
 
 		</div>
-	    </div>
+		</div>
 		<div class="know">
 
 
 <div class="networking">
 	@using (@Html.BeginForm("TechSupport", "Faq", FormMethod.Post)) {
 		<div>
-			<div class="ties">Email* : </div>
+			<div class="ties">Email : </div>
 			@Html.ValidationEditor(validationRunner, ticket, "Email", new { @class = "entry" }, HtmlTag.input, HtmlType.text)
 		</div>
 		<div>

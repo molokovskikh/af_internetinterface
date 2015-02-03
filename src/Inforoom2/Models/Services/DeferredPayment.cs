@@ -29,6 +29,7 @@ namespace Inforoom2.Models.Services
 			       && client.Balance <= 0
 			       && !client.HasActiveService<BlockAccountService>()
 			       && !client.HasActiveService<DeferredPayment>()
+			       && client.ServiceAccepted(this)
 			       && client.AutoUnblocked;
 		}
 	}

@@ -68,29 +68,34 @@ namespace Inforoom2.Helpers
 
 		public string TableName(string tableName)
 		{
-			if (tableName == "PhysicalClients"
-			    || tableName == "Tariffs"
-			    || tableName == "Regions"
-			    || tableName == "Services"
-			    || tableName == "ClientServices"
-			    || tableName == "Clients"
-			    || tableName == "UserWriteOffs"
-			    || tableName == "StatusCorrelation"
-			    || tableName == "Status"
-			    || tableName == "AdditionalStatus"
-			    || tableName == "LawyerPerson"
-			    || tableName == "InternetSettings"
-			    || tableName == "Leases"
-			    || tableName == "SaleSettings"
-			    || tableName == "ClientEndpoints"
-			    || tableName == "StaticIps"
-			    || tableName == "WriteOff"
-			    || tableName == "Requests"
-			    || tableName == "Partners"
-			    || tableName == "Payments"
-				|| tableName == "ServiceRequest"
-				|| tableName == "ConnectBrigads"
-			    || tableName == "Contacts") {
+			tableName = tableName.ToLower();
+			if (tableName == "PhysicalClients".ToLower()
+				|| tableName == "Appeals".ToLower()
+				|| tableName == "Tariffs".ToLower()
+				|| tableName == "Regions".ToLower()
+				|| tableName == "Services".ToLower()
+				|| tableName == "ClientServices".ToLower()
+				|| tableName == "Clients".ToLower()
+				|| tableName == "UserWriteOffs".ToLower()
+				|| tableName == "StatusCorrelation".ToLower()
+				|| tableName == "Status".ToLower()
+				|| tableName == "AdditionalStatus".ToLower()
+				|| tableName == "LawyerPerson".ToLower()
+				|| tableName == "InternetSettings".ToLower()
+				|| tableName == "Leases".ToLower()
+				|| tableName == "SaleSettings".ToLower()
+				|| tableName == "ClientEndpoints".ToLower()
+				|| tableName == "NetworkSwitches".ToLower()
+				|| tableName == "PaymentForConnect".ToLower()
+				|| tableName == "StaticIps".ToLower()
+				|| tableName == "WriteOff".ToLower()
+				|| tableName == "Requests".ToLower()
+				|| tableName == "Partners".ToLower()
+				|| tableName == "Payments".ToLower()
+				|| tableName == "ServiceRequest".ToLower()
+				|| tableName == "ConnectBrigads".ToLower()
+				|| tableName == "Contacts".ToLower())
+			{
 				return tableName;
 			}
 			return "inforoom2_" + tableName;

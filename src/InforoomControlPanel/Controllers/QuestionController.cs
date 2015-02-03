@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 using Inforoom2.Models;
 using NHibernate.Linq;
@@ -36,13 +37,13 @@ namespace InforoomControlPanel.Controllers
 		
 		public ActionResult Move(int? questionId, string direction)
 		{
-			return ChangeModelPriority<Question>(questionId, direction, "QuestionIndex", "AdminQuestion");
+			return ChangeModelPriority<Question>(questionId, direction, "QuestionIndex", "Question");
 		}
 
-		[HttpPost]
+		[ValidateInput(false),HttpPost]
 		public ActionResult UpdateQuestion(Question question)
-
 		{
+			//question.Answer = HttpUtility.HtmlEncode(question.Answer);
 			ViewBag.Question = question;
 			var errors = ValidationRunner.ValidateDeep(question);
 			if (errors.Length == 0) {

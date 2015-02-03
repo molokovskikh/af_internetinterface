@@ -126,13 +126,23 @@ namespace Inforoom2.Components
 					foreach (var propertyInfo in props) {
 						var propertyName = propertyInfo.Name;
 						var propertyValue = request.Form.Get(entityType.Name.ToLower() + "." + propertyName);
-						if (!string.IsNullOrEmpty(propertyValue)) {
+						var propertyValue2 = request.Form.Get(entityType.Name.ToLower() + "proxy." + propertyName);
+						if (propertyValue != null) {
 							SetValue(instance, propertyName, propertyValue, propertyInfo,session);
 						}
+						else if(propertyValue2 != null)
+						{
+							SetValue(instance, propertyName, propertyValue2, propertyInfo,session);
+						}
 						var objectId = request.Form.Get(entityType.Name.ToLower() + "." + propertyName + ".Id");
+						var objectId2 = request.Form.Get(entityType.Name.ToLower() + "proxy." + propertyName + ".Id");
 						if (!string.IsNullOrEmpty(objectId))
 						{
 							SetValue(instance, propertyName, objectId, propertyInfo, session);
+						}
+						else if(objectId2 != null)
+						{
+							SetValue(instance, propertyName, objectId2, propertyInfo, session);
 						}
 					}
 				}

@@ -3,47 +3,59 @@
 @{
 	NewsBlock newsBlock = ViewBag.NewsBlock;
 	Layout = "~/Views/Shared/_Layout.cshtml";
-	
+	ViewBag.Title = "Изменить новость";
 }
-<div style="width: 1000px; margin: 0px auto; border: 1px gainsboro solid">
-	<div class="UpdateNewsBlock" >
-	
-		@using (@Html.BeginForm("UpdateNewsBlock", "News", FormMethod.Post)) {
-			@Html.HiddenFor(model => newsBlock.Id)
+	@using (@Html.BeginForm("UpdateNewsBlock", "News", FormMethod.Post,new {@class = "form-horizontal form-groups-bordered"})) {
+			<div class="form-group">
+				@Html.HiddenFor(model => newsBlock.Id)
 			@Html.HiddenFor(model => newsBlock.Priority)
 			@Html.HiddenFor(model => newsBlock.PublishedDate)
 			@Html.HiddenFor(model => newsBlock.CreationDate)
 			@Html.HiddenFor(model => newsBlock.Employee)
-
-			<div>
-				<span>Полная версия</span>
-				<input class="NewsVersionCheckbox" type="checkbox" name="newsVersionCheckbox" checked ="checked" />
+				<label class="col-sm-3 control-label" for="field-ta">Полная версия</label>
+				<div class="col-sm-5">
+					<input class="NewsVersionCheckbox" type="checkbox" name="newsVersionCheckbox" checked ="checked" />
+				</div>
 			</div>
-			<div>
-				<span >Заголовок</span>
-				@Html.TextAreaFor(model => newsBlock.Title)
-				@ViewBag.Validation.GetError(newsBlock, "Title", "Тело не может быть пустым")
+		<div class="form-group">
+			<label class="col-sm-3 control-label" for="field-ta">Заголовок</label>
+			<div class="col-sm-5">
+				@Html.TextBoxFor(model => newsBlock.Title,new {@class = "form-control"})
+				@ViewBag.Validation.GetError(newsBlock, "Title", "Заголовок не может быть пустым")
 			</div>
-			<div>
-				<span>Превью</span>
-				@Html.TextAreaFor(model => newsBlock.Preview)
-				@ViewBag.Validation.GetError(newsBlock, "Preview", "Превью не может быть пустым")
+		</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label" for="field-ta">Короткое описание</label>
+				<div class="col-sm-5">
+					@Html.TextAreaFor(model => newsBlock.Preview,new {@class = "form-control", style="height: 200px"})
+					@ViewBag.Validation.GetError(newsBlock, "Preview", "Короткое описание не может быть пустым")
+				</div>
 			</div>
-			<div>
-				<span id ="newsBlock_Body_Label">Полная версия</span>
-				@Html.TextAreaFor(model => newsBlock.Body)
+		<div class="form-group">
+			<label class="col-sm-3 control-label" for="field-ta">Полное описание</label>
+			<div class="col-sm-5">
+				@Html.TextAreaFor(model => newsBlock.Body,new {@class = "form-control", style="height: 200px"})
+				@ViewBag.Validation.GetError(newsBlock, "Body", "Описание не может быть пустым")
 			</div>
-			<div>
-				<span id ="newsBlock_Url_Label">Url</span>
-				@Html.TextAreaFor(model => newsBlock.Url)
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label" for="field-ta">URL</label>
+			<div class="col-sm-5">
+				@Html.TextBoxFor(model => newsBlock.Url,new {@class = "form-control"})
 			</div>
-			<div>
-				<span>Опубликовать</span>
+		</div>
+			<div class="form-group">
+			<label class="col-sm-3 control-label" for="field-ta">Опубликовано</label>
+			<div class="col-sm-5">
 				@Html.CheckBoxFor(model => newsBlock.IsPublished)
 			</div>
-			<input type="submit"  value="Принять изменения"/>
+			</div>
+			<div class="form-group">
+			<div class="col-sm-7">
+				</div>
+				<button class="btn btn-green" type="submit">Изменить</button>
+			</div>
 		}
-		<button class="BackButton" onclick=" location.href = '@Url.Action("Index", "News")' ">Назад</button>
-	</div>
+<div class="form-group">
 </div>
-
+<button class="btn btn-blue" onclick=" location.href = '@Url.Action("NewsIndex", "News")' ">Назад</button>

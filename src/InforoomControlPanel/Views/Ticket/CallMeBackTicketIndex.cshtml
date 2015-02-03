@@ -1,0 +1,51 @@
+﻿@using Inforoom2.Models
+@model dynamic
+
+@{
+	ViewBag.Title = "Заявки на обратный звонок";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	IList<CallMeBackTicket> tickets = ViewBag.Tickets ?? new List<CallMeBackTicket>();
+}
+<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+	<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
+		<thead>
+			<tr role="row">
+				<th class="sorting" tabindex="0" aria-controls="table-2" >Номер</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2" >Вопрос</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2" >Имя</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2" >Номер телефона</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2" >Дата создания</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2" >Дата ответа</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2" >Ответил</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2" >Действия</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			@foreach (var item in tickets) {
+				<tr role="row" class="odd">
+					<td>@Html.DisplayFor(modelItem => item.Id)</td>
+					<td>@Html.DisplayFor(modelItem => item.Text)</td>
+					<td>@Html.DisplayFor(modelItem => item.Name)</td>
+					<td>@Html.DisplayFor(modelItem => item.PhoneNumber)</td>
+					<td>@Html.DisplayFor(modelItem => item.CreationDate)</td>
+					@if(item.AnswerDate != DateTime.MinValue)
+					{
+						<td>@Html.DisplayFor(modelItem => item.AnswerDate)</td>
+					}
+					else
+					{
+						<td></td>
+					}
+					<td>@Html.DisplayFor(modelItem => item.Employee.Name)</td>
+					<td>
+						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("EditCallMeBackTicket","Ticket",new {ticketId = item.Id})">
+							<i class="entypo-plus-circled"></i>
+							Ответить
+						</a>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+</div>

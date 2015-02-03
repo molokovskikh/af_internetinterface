@@ -1,0 +1,16 @@
+﻿@using (Html.BeginForm("AdminLogin", "Account", null, FormMethod.Post, null)) {
+	<div class="window">
+		<div class="cooperation">
+			<p>Вход в личный кабинет</p>
+		</div>
+		<div class="applications">
+			<div class="label">Номер счета:</div>
+			<input class="application entry" type="text" name="clientId" value="@ViewBag.ClientId"/>
+			<div class="label">Имя пользователя:</div>
+			<input class="application entry" type="text" name="username" value="@ViewBag.Username"/>
+			<div class="label">Пароль:</div>
+			<input class="application entry" type="password" name="password" value=""/>
+		</div>
+		<input class="contacting" type="submit" value="Войти">
+	</div>
+}

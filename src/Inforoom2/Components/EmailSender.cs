@@ -30,7 +30,7 @@ namespace Inforoom2.Components
 		{
 			var mail = new MailMessage();
 			mail.To.Add(to);
-			mail.From = new MailAddress(ConfigurationManager.AppSettings["MaileSenderAddress"]);
+			mail.From = new MailAddress(ConfigurationManager.AppSettings["MailSenderAddress"]);
 			mail.Subject = subject;
 			mail.Body = body;
 			mail.IsBodyHtml = true;

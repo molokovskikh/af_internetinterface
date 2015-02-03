@@ -1,0 +1,43 @@
+﻿@{
+	var perpage = 10;
+	if(ViewBag.ModelsPerPage != null) {
+		perpage = ViewBag.ModelsPerPage;
+	}
+	var page = 1;
+	if(ViewBag.Page != null) {
+		page = ViewBag.Page;
+	}
+	var count = ViewBag.ModelsCount;
+	var pageCount = Math.Ceiling((double) count/perpage);
+	var prevClass = page <= 1 ? "disabled" : "";
+	var nextClass = page >= pageCount ? "disabled" : "";
+	var from = page*perpage;
+	var to = from + perpage-1;
+}
+<div class="col-xs-6 col-left">
+	<div class="dataTables_info" id="table-2_info" role="status" aria-live="polite">Showing @from to @to of @count entries</div>
+</div>
+<div class="col-xs-6 col-right">
+	<div class="dataTables_paginate paging_bootstrap" id="table-2_paginate">
+			  <ul class="pagination pagination-sm">
+				  <li class="prev @prevClass">
+					  <a href="@Url.Action(ViewBag.ActionName,ViewBag.ControllerName,new {page = ViewBag.Page - 1})"><i class="entypo-left-open"></i></a>
+				  </li>
+				  @for(var i=1; i <= pageCount; i++)
+				  {
+					var cl = "";
+					if(i == page) {
+						cl = "active";
+					}
+					<li class="@cl">
+						<a href="@Url.Action(ViewBag.ActionName,ViewBag.ControllerName,new {page = i})">@i</a>
+					</li>
+				  }
+					<li class="next @nextClass">
+					  <a href="@Url.Action(ViewBag.ActionName,ViewBag.ControllerName,new {page = page + 1})">
+						  <i class="entypo-right-open"></i>
+					  </a>
+				  </li>
+			  </ul>
+		  </div>
+</div>

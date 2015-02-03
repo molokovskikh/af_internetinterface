@@ -2,28 +2,47 @@
 @model dynamic
 
 @{
-	ViewBag.Title = "Index";
+	ViewBag.Title = "Запросы в техподдержку";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	IList<Ticket> tickets = ViewBag.Tickets ?? new List<Ticket>();
 	
 }
-
-<h2>title</h2>
-@{ Html.RenderPartial("AdminPanel");  }
-
-<div class="AdminQuestion">
-	
-	<table class="AdminTicketTable">
-		@foreach (var item in tickets) {
-			<tr>
-				<td>@Html.DisplayFor(modelItem => item.Email)</td>
-				<td>@Html.DisplayFor(modelItem => item.Text)</td>
-				<td>@Html.DisplayFor(modelItem => item.CreationDate)</td>
-				<td>
-					<span><button class="ViewTicket" onclick=" location.href = '@Url.Action("EditTicket", "Ticket", new { ticketId = item.Id})' ">Ответить</button></span>
-				</td>
+<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+	<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
+		<thead>
+			<tr role="row">
+				<th class="sorting" tabindex="0" aria-controls="table-2" >Номер</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2" >Эл. почта</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2" >Вопрос</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2" >Дата</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2" >Отвечен</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2" >Дата ответа</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2" >Действия</th>
 			</tr>
-		}
+		</thead>
+
+		<tbody>
+			@foreach (var item in tickets) {
+				<tr role="row" class="odd">
+					<td>@Html.DisplayFor(modelItem => item.Id)</td>
+					<td>@Html.DisplayFor(modelItem => item.Email)</td>
+					<td>@Html.DisplayFor(modelItem => item.Text)</td>
+					<td>@Html.DisplayFor(modelItem => item.CreationDate)</td>
+					<td>@Html.DisplayFor(modelItem => item.IsNotified)</td>
+					@if(item.AnswerDate != DateTime.MinValue) {
+						<td>@Html.DisplayFor(modelItem => item.AnswerDate)</td>
+					}
+					else {
+						<td></td>
+					}
+					<td>
+						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("EditTicket","Ticket",new {ticketId = item.Id})">
+							<i class="entypo-plus-circled"></i>
+							Ответить
+						</a>
+					</td>
+				</tr>
+			}
+		</tbody>
 	</table>
 </div>
-

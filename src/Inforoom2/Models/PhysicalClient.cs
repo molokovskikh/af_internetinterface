@@ -32,10 +32,25 @@ namespace Inforoom2.Models
 		public virtual decimal Balance { get; set; }
 
 		[Property]
+		public virtual decimal ConnectSum { get; set; }
+
+		[Property]
 		public virtual decimal VirtualBalance { get; set; }
 
 		[Property]
 		public virtual decimal MoneyBalance { get; set; }
+
+		[Property,NotNullNotEmpty(Message = "Введите номер пасспорта")]
+		public virtual string PassportNumber { get; set; }
+
+		[Property,NotNullNotEmpty(Message = "Введите серию пасспорта")]
+		public virtual string PassportSeries { get; set; }
+
+		[Property,NotNull(Message = "Введите дату выдачи пасспорта")]
+		public virtual DateTime PassportDate { get; set; }
+
+		[Property(Column = "WhoGivePassport"),NotNullNotEmpty(Message = "Поле не может быть пустым")]
+		public virtual string PassportResidention { get; set; }
 
 		[Property(Column = "_PhoneNumber", NotNull = true)]
 		public virtual string PhoneNumber { get; set; }
@@ -57,21 +72,23 @@ namespace Inforoom2.Models
 			get { return Surname + " " + Name + " " + Patronymic; }
 		}
 
-		public virtual UserWriteOff ChangeTariffPlan(Plan planToSwitchOn)
+		public virtual UserWriteOff RequestChangePlan(Plan planToSwitchOn)
 		{
+			var price = Plan.GetTransferPrice(planToSwitchOn);
 			if (IsFreePlanChange) {
 				return SwitchPlan(planToSwitchOn, 0);
 			}
-			if (!IsEnoughBalance(planToSwitchOn.SwitchPrice)) {
+			if (!IsEnoughBalance(price))
+			{
 				return null;
 			}
-			return SwitchPlan(planToSwitchOn, planToSwitchOn.SwitchPrice);
+			return SwitchPlan(planToSwitchOn, price);
 		}
 
-		private UserWriteOff SwitchPlan(Plan toPlan, decimal price)
+		private UserWriteOff SwitchPlan(Plan planTo, decimal price)
 		{
-			var comment = string.Format("Изменение тарифа, старый '{0}' новый '{1}'", Plan.Name, toPlan.Name);
-			Plan = toPlan;
+			var comment = string.Format("Изменение тарифа, старый '{0}' новый '{1}'", Plan.Name, planTo.Name);
+			Plan = planTo;
 			WriteOff(price);
 			var writeOff = new UserWriteOff {
 				Client = Client,

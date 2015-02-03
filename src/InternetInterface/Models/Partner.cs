@@ -166,17 +166,17 @@ namespace InternetInterface.Models
 				{
 					//Просмотр личных данных
 					"SSI", new IPermission[] {
-						new ControllerPermission(typeof (PaymentsController)),
-						new ControllerPermission(typeof (ChannelGroupsController)),
-						new ControllerPermission(typeof (InvoicesController)),
-						new ControllerPermission(typeof (ActsController)),
-						new ControllerPermission(typeof (ContractsController)),
-						new ControllerPermission(typeof (ServicesController)),
-						new ControllerPermission(typeof (TariffsController)),
-						new ControllerPermission(typeof (ExportController)),
-						new ControllerPermission(typeof (MapController)),
-						new ControllerPermission(typeof (TvRequestController)),
-						new ControllerPermission(typeof (IpPoolsController)),
+						new ControllerPermission(typeof(PaymentsController)),
+						new ControllerPermission(typeof(ChannelGroupsController)),
+						new ControllerPermission(typeof(InvoicesController)),
+						new ControllerPermission(typeof(ActsController)),
+						new ControllerPermission(typeof(ContractsController)),
+						new ControllerPermission(typeof(ServicesController)),
+						new ControllerPermission(typeof(TariffsController)),
+						new ControllerPermission(typeof(ExportController)),
+						new ControllerPermission(typeof(MapController)),
+						new ControllerPermission(typeof(TvRequestController)),
+						new ControllerPermission(typeof(IpPoolsController)),
 						new ControllerActionPermission("Sms", "GetSmsStatus"),
 						new ControllerActionPermission("UserInfo", "RemakeVirginityClient"),
 						new ControllerActionPermission("UserInfo", "DeleteGraph"),
@@ -184,11 +184,11 @@ namespace InternetInterface.Models
 						new ControllerActionPermission("UserInfo", "ShowRegions"),
 						new ControllerActionPermission("UserInfo", "EditRegion"),
 						new ControllerActionPermission("UserInfo", "RegisterRegion"),
-						new ControllerPermission(typeof (RentableHardwaresController))
+						new ControllerPermission(typeof(RentableHardwaresController))
 					}
 				}, {
 					"DHCP", new IPermission[] {
-						new ControllerPermission(typeof (SwitchesController))
+						new ControllerPermission(typeof(SwitchesController))
 					}
 				}, {
 					"CB", new IPermission[] {
@@ -196,20 +196,20 @@ namespace InternetInterface.Models
 					}
 				}, {
 					"ASR", new IPermission[] {
-						new ControllerPermission(typeof (ServiceRequestController))
+						new ControllerPermission(typeof(ServiceRequestController))
 					}
 				}, {
 					"RP", new IPermission[] {
-						new ControllerPermission(typeof (PartnersController))
+						new ControllerPermission(typeof(PartnersController))
 					}
 				}, {
 					"VD", new IPermission[] {
-						new ControllerPermission(typeof (ConnectionRequestController))
+						new ControllerPermission(typeof(ConnectionRequestController))
 					}
 				}, {
 					//Управление бригадами
 					"MB", new IPermission[] {
-						new ControllerPermission(typeof (BrigadsController))
+						new ControllerPermission(typeof(BrigadsController))
 					}
 				}
 			};

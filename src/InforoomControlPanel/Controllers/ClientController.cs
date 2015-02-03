@@ -20,10 +20,16 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.BreadCrumb = "Клиенты";
 		}
 
-		public ActionResult Index()
+		public ActionResult ClientList(int page=1)
 		{
-			var clients = DbSession.Query<Client>().Take(100).ToList();
+			var perpage = 100;
+			var clients = DbSession.Query<Client>().Where(i=>i.PhysicalClient != null).Skip((page-1)*perpage).Take(perpage).ToList();
 			ViewBag.Clients = clients;
+			//Пагинация
+			ViewBag.Models = clients;
+			ViewBag.Page = page;
+			ViewBag.ModelsPerPage = perpage;
+			ViewBag.ModelsCount = DbSession.QueryOver<Client>().Where(i=>i.PhysicalClient != null).RowCount();
 			return View("ClientList");
 		}
 

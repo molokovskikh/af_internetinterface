@@ -7,7 +7,7 @@
     src: url(../fonts/PTSans.ttf); /* Путь к файлу со шрифтом */
 }
 
-body {margin:0px; overflow-x: hidden; background: #aaafb5;font-family: PDFDinTextPro;}
+body {margin:0px; background: #aaafb5;font-family: PDFDinTextPro;}
 ul {margin: 0px;}
 a {text-decoration: none;color: #474747;}
 .notext { font-size: 0px;}

@@ -138,3 +138,11 @@ input.personal {padding: 5px; box-sizing: padding-box;}
 	.Account.Login .cooperation { height: 60px; width: 100%;margin: auto;}
 		.Account.Login .whiteblocktext { width: 635px;}
 		.Account.Login .applications { margin-left: 10px;height: 110px;}
+
+		.plans .variants h4 { height: 24px;}
+
+.paddedBlock {margin: 0px 40px 40px}
+
+.IsMyHouseConnected .entry {
+	width: 270px;
+}

@@ -19,8 +19,8 @@ task "deploy:background", ["build:background"]:
 	return if Globals.Environment != @Production
 	DeployService(Globals, "InternetInterface.Background", "fms")
 
-task "deploy:ivrn", ["build:ivrn"]:
-	XCopyDeploy(Globals, "InforoomInternet", GetDeploy(Globals, "InforoomInternet", "IVrn"))
+task "deploy:ivrn", ["inforoom2:build", "version:bump"]:
+	XCopyDeploy(Globals, "Inforoom2", GetDeploy(Globals, "InforoomInternet", "IVrn"))
 
 task "deploy:billing", ["build:billing"]:
 	return if Globals.Environment != @Production

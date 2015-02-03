@@ -1,26 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Security.Principal;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
-using System.Web.UI.WebControls;
-using Common.Tools;
 using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
 using log4net;
 using NHibernate;
 using NHibernate.Linq;
-
 
 namespace Inforoom2.Controllers
 {
@@ -38,11 +32,10 @@ namespace Inforoom2.Controllers
 		public BaseController()
 		{
 			ValidationRunner = new ValidationRunner();
-			ViewBag.BreadCrumb = "Панель управления";
 			ViewBag.Validation = ValidationRunner;
 			ViewBag.Title = "Инфорум";
 			ViewBag.JavascriptParams = new Dictionary<string, string>();
-			ViewBag.Cities = new string[] {"Борисоглебск", "Белгород"};
+			ViewBag.Cities = new [] {"Борисоглебск", "Белгород"};
 		}
 
 		public void AddJavascriptParam(string name, string value)
@@ -57,29 +50,27 @@ namespace Inforoom2.Controllers
 			return val;
 		}
 
+		public virtual Employee GetCurrentEmployee()
+		{
+			if (Session == null || Session["employee"] == null)
+				return null;
+			var employeeId = Convert.ToInt32(Session["employee"]);
+			return DbSession.Query<Employee>().FirstOrDefault(k => k.Id == employeeId);
+		}
+
 		protected new virtual CustomPrincipal User
 		{
 			get { return HttpContext.User as CustomPrincipal; }
-		}
-
-		protected Employee CurrentEmployee
-		{
-			get
-			{
-				if (User == null)
-					return null;
-				return DbSession.Query<Employee>().FirstOrDefault(k => k.Login == User.Identity.Name);
-			}
 		}
 
 		protected Client CurrentClient
 		{
 			get
 			{
-				if (User == null) {
+				if (User == null || !DbSession.IsConnected) {
 					return null;
 				}
-				int id = 0;
+				int id;
 				int.TryParse(User.Identity.Name, out id);
 				return DbSession.Get<Client>(id);
 			}
@@ -125,7 +116,7 @@ namespace Inforoom2.Controllers
 
 		protected override void OnException(ExceptionContext filterContext)
 		{
-			bool showErrorPage = false;
+			var showErrorPage = false;
 			bool.TryParse(ConfigurationManager.AppSettings["ShowErrorPage"], out showErrorPage);
 			DeleteCookie("SuccessMessage");
 			if (showErrorPage) {
@@ -134,8 +125,46 @@ namespace Inforoom2.Controllers
 					{ { "controller", "StaticContent" }, { "action", "Error" } });
 				filterContext.ExceptionHandled = true;
 			}
+
 			log.ErrorFormat("{0} {1}", filterContext.Exception.Message, filterContext.Exception.StackTrace);
-			EmailSender.SendError(filterContext.Exception.ToString());
+
+			//Формируем сообщение об ошибке
+			var builder = CollectDebugInfo();
+			var msg = filterContext.Exception.ToString();
+			builder.Append(msg);
+			EmailSender.SendError(builder.ToString());
+		}
+
+		protected StringBuilder CollectDebugInfo()
+		{
+			var builder = new StringBuilder(1000);
+			if(CurrentClient != null)
+				builder.Append("Клиент: " + CurrentClient.Id + " \n ");
+			builder.Append("Дата: "+DateTime.Now+" \n ");
+			builder.Append("Ip: " + Request.UserHostAddress + " \n ");
+			builder.Append("Форма: \n ");
+			foreach (var key in Request.Form.AllKeys)
+			{
+				//if(key == "password") {
+				//	builder.Append("Password : !!!Restricted!!! \n");
+				//	continue;
+				//}
+				builder.Append(key);
+				builder.Append(" : ");
+				builder.Append(Request.Form[key]);
+				builder.Append("\n");
+			}
+			builder.Append("Запрос: " +Request.FilePath+ " : "+ Request.QueryString + " \n ");
+			builder.Append("Браузер: " +Request.Browser.Browser + " \n ");
+			builder.Append("Куки: \n ");
+			foreach (var key in Request.Cookies.AllKeys)
+			{
+				builder.Append(key);
+				builder.Append(" : ");
+				builder.Append(GetCookie(key));
+				builder.Append("\n");
+			}
+			return builder;
 		}
 
 		protected override void OnActionExecuting(ActionExecutingContext filterContext)
@@ -148,10 +177,35 @@ namespace Inforoom2.Controllers
 			base.OnActionExecuting(filterContext);
 		}
 
+		//Авторизация клиента из сети
+		private void TryAuthorizeNetworkClient()
+		{	var ip = Request.UserHostAddress;
+				if(string.IsNullOrEmpty(ip))
+					return;
+				var address = IPAddress.Parse(ip);
+				var leases = DbSession.Query<Lease>().Where(l => l.Ip == address).ToList();
+				if (leases.Count != 0) {
+					var client = leases.Where(l => l.Endpoint != null
+						&& l.Endpoint.Client != null
+						&& l.Endpoint.Client.PhysicalClient != null)
+						.Select(l => l.Endpoint.Client)
+						.FirstOrDefault();
+					if (client != null)
+					{
+						//var builder = CollectDebugInfo();
+						//builder.Append("Авторизация клиента внутри сети");
+						//EmailSender.SendEmail("asarychev@analit.net","Авторизация: "+Request.UserHostAddress,builder.ToString());
+						SetCookie("networkClient","true");
+						this.Authenticate(ViewBag.ActionName, ViewBag.ControllerName, client.Id.ToString(), true);
+					}
+				}
+		}
+
 		protected override void OnResultExecuting(ResultExecutingContext filterContext)
 		{
 			if (CurrentRegion != null) {
 				ViewBag.RegionOfficePhoneNumber = CurrentRegion.RegionOfficePhoneNumber;
+				ViewBag.CurrentRegion = CurrentRegion;
 			}
 			base.OnResultExecuting(filterContext);
 		}
@@ -161,38 +215,47 @@ namespace Inforoom2.Controllers
 			base.OnActionExecuted(filterContext);
 			if (filterContext.Exception != null) {
 			}
-
 			ViewBag.ActionName = filterContext.RouteData.Values["action"].ToString();
 			ViewBag.ControllerName = filterContext.RouteData.Values["controller"].ToString();
 
 			ProcessCallMeBackTicket();
 			ProcessRegionPanel();
-			if (CurrentEmployee != null) {
-				ViewBag.CurrentEmployee = CurrentEmployee;
+			ViewBag.NetworkClientFlag = string.IsNullOrEmpty(GetCookie("networkClient")) ? false : true;
+			if (GetCurrentEmployee() != null) {
+				ViewBag.CurrentEmployee = GetCurrentEmployee();	// TODO Перенести в AdminController
 			}
 			if (CurrentClient != null) {
-				StringBuilder sb = new StringBuilder();
-				sb.AppendFormat("Здравствуйте, {0}. Ваш баланс: {1} руб.", CurrentClient.PhysicalClient.Name,
-					CurrentClient.PhysicalClient.Balance);
+				var sb = new StringBuilder();
+				sb.AppendFormat("Здравствуйте, {0} {1}. Ваш баланс: {2} руб.", CurrentClient.PhysicalClient.Name, 
+						CurrentClient.PhysicalClient.Patronymic, CurrentClient.PhysicalClient.Balance);
 				ViewBag.ClientInfo = sb.ToString();
+			}
+			else {
+				TryAuthorizeNetworkClient();
 			}
 		}
 
 		private void ProcessCallMeBackTicket()
 		{
 			ViewBag.CallMeBackTicket = new CallMeBackTicket();
-			var binder = new EntityBinderAttribute("callMeBackTicket.Id", typeof (CallMeBackTicket));
-			CallMeBackTicket callMeBackTicket = (CallMeBackTicket) binder.MapModel(Request);
+			var binder = new EntityBinderAttribute("callMeBackTicket.Id", typeof(CallMeBackTicket));
+			var callMeBackTicket = (CallMeBackTicket)binder.MapModel(Request);
 			if (Request.Params["callMeBackTicket.Name"] == null)
 				return;
-			var client = CurrentClient;
-			if (client != null) {
-				callMeBackTicket.Client = client;
-			}
+			callMeBackTicket.Client = CurrentClient;
+
 			var errors = ValidationRunner.ValidateDeep(callMeBackTicket);
 			if (errors.Length == 0) {
 				DbSession.Save(callMeBackTicket);
-				SuccessMessage("Заявка отправлена. В течении для вам перезвонят.");
+				if(callMeBackTicket.Client != null) {
+					var appeal = new Appeal("Клиент создал запрос на обратный звонок #" + callMeBackTicket.Id, 
+						callMeBackTicket.Client, AppealType.FeedBack) {
+							Employee = GetCurrentEmployee()
+						};
+					DbSession.Save(appeal);
+				}
+
+				SuccessMessage("Заявка отправлена. В течении дня вам перезвонят.");
 				return;
 			}
 			ViewBag.CallMeBackTicket = callMeBackTicket;
@@ -223,7 +286,7 @@ namespace Inforoom2.Controllers
 					int.TryParse(User.Identity.Name, out userId);
 					if(userId != 0)
 						user = DbSession.Query<PhysicalClient>().FirstOrDefault(k => k.Id == userId);
-					if (user != null) {
+					if (user != null && user.Address != null) {
 						userCity = user.Address.House.Street.Region.City.Name;
 					}
 					else {
@@ -233,6 +296,9 @@ namespace Inforoom2.Controllers
 			}
 			ViewBag.UserCityBelongsToUs = IsUserCityBelongsToUs(UserCity);
 			ViewBag.UserCity = UserCity;
+			ViewBag.UserRegion = DbSession.Query<Region>().FirstOrDefault(i => i.Name == UserCity);
+			if (ViewBag.UserRegion == null)
+				ViewBag.UserRegion = DbSession.Query<Region>().First();
 		}
 
 		private bool IsUserCityBelongsToUs(string city)
@@ -252,7 +318,7 @@ namespace Inforoom2.Controllers
 			try {
 				geoAnswer = geoService.GetInfo();
 			}
-			catch (Exception e) {
+			catch (Exception) {
 				return null;
 			}
 
@@ -272,18 +338,18 @@ namespace Inforoom2.Controllers
 		protected string GetCookie(string cookieName)
 		{
 			var cookie = Request.Cookies.Get(cookieName);
-			if (cookie == null) {
+			if (cookie == null || cookie.Value.Length <= 1) {
 				return string.Empty;
 			}
 
-			var base64EncodedBytes = System.Convert.FromBase64String(cookie.Value);
-			return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+			var base64EncodedBytes = Convert.FromBase64String(cookie.Value);
+			return Encoding.UTF8.GetString(base64EncodedBytes);
 		}
 
 		public void SetCookie(string name, string value)
 		{
-			var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(value);
-			var text = System.Convert.ToBase64String(plainTextBytes);
+			var plainTextBytes = Encoding.UTF8.GetBytes(value);
+			var text = Convert.ToBase64String(plainTextBytes);
 			Response.Cookies.Add(new HttpCookie(name, text) { Path = "/" });
 		}
 

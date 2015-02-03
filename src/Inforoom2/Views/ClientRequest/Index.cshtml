@@ -3,9 +3,8 @@
 @using Inforoom2.Helpers
 @using Inforoom2.Models
 
-
-
 @{
+	ViewBag.Title = "Заявка на подключение";
 	ClientRequest clientRequest = ViewBag.ClientRequest;
 	ValidationRunner validationRunner = ViewBag.Validation;
 	bool IsRedirected = ViewBag.IsRedirected;
@@ -63,8 +62,8 @@
 			@if (IsRedirected) {
 				<div class ="success">
 					<div class="personals">Тарифный план:</div>
-					@Html.DropDownListExtendedFor(k => clientRequest.Plan, ViewBag.Plans as List<Plan>, k => k.Name, null, new { @class = "rounded" }, clientRequest.Plan != null ? clientRequest.Plan.Id : 0)
-					<div class="icon"></div>
+					@Html.DropDownListExtendedFor(k => clientRequest.Plan, ViewBag.Plans as List<Plan>, k => k.Name, null, new { @class = "rounded" }, clientRequest.Plan != null ? clientRequest.Plan.Id : 0)<div class="icon"></div>
+					<!-- не переноси строку - поедет верстка -->
 				</div>
 			}
 			else {

@@ -36,7 +36,7 @@ namespace Inforoom2.Models
 		[ManyToOne]
 		public virtual Client Client { get; set; }
 
-		[Property, Email(Message = "Адрес эл. почты введен неправильно"), NotNullNotEmpty(Message = "Введите Email"), Pattern(@"^\S+@\S+$",Message = "Адрес эл. почты введен неправильно")]
+		[Property]
 		public virtual string Email { get; set; }
 	}
 }
