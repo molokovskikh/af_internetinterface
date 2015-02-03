@@ -14,8 +14,8 @@ namespace Inforoom2.Test.Functional
 		[SetUp]
 		public void Setup()
 		{
-			Open("Personal/Tariffs");
-			AssertText("Бесплатная смена тарифного плана");
+			Open("Personal/Plans");
+			AssertText("Текущий тарифный план");
 		}
 
 		[Test(Description = "Тест на визуальное соотвествие")]
