@@ -46,7 +46,37 @@ namespace Inforoom2.Controllers
 			return View("Index");
 		}
 
+		[HttpPost]
+		public JsonResult CheckForUnusualAddress(string city, string street, string house, string address)
+		{
+			object result = new { };
+			var dbCity = DbSession.Query<City>().FirstOrDefault(i => i.Name.ToLower().Contains(city.ToLower()));
+			if (dbCity == null || string.IsNullOrEmpty(street))
+				return Json(result);
 
+			//Псевдоним улицы приоритетнее улицы
+			var dbStreetAlias = StreetAlias.FindAlias(address, DbSession);
+			Street dbStreet;
+			if (dbStreetAlias == null)
+				dbStreet = DbSession.Query<Street>().FirstOrDefault(i => i.Region.City == dbCity && i.Name.ToLower().Contains(street.ToLower()));
+			else
+				dbStreet = dbStreetAlias.Street;
+
+			if (dbStreet == null)
+				return Json(result);
+			house = house ?? "";
+			var dbHouse = DbSession.Query<House>().FirstOrDefault(i => i.Street == dbStreet && i.Number.ToLower().Contains(house.ToLower()));
+			if (dbHouse != null && !string.IsNullOrEmpty(house)) {
+				//Если дом найден то ищем, имеется ли там коммутатор
+				var addr = DbSession.Query<SwitchAddress>().FirstOrDefault(i => i.House == dbHouse);
+				var availible = addr != null;
+				result = new {streetAlias = dbStreetAlias != null, city = dbCity.Name, street = dbStreet.Name, house = dbHouse.Number, geomark = dbHouse.Geomark, available = availible };
+			}
+			else
+				result = new {streetAlias = dbStreetAlias != null, city = dbCity.Name, street = dbStreet.Name, geomark = dbStreet.Geomark };
+
+			return Json(result);
+		}
 		private void InitClientRequest(Plan plan = null, string city = "", string street = "", string house = "")
 		{
 			ViewBag.IsRedirected = false;

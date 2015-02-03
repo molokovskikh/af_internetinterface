@@ -1,0 +1,38 @@
+﻿@using System.Activities.Expressions
+@using Inforoom2.Models
+
+@{
+	ViewBag.Title = "Города";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	IList<City> cities = ViewBag.Cities;
+}
+<div class="form-group">
+<a class="btn btn-success btn-sm btn-icon icon-left" href = '@Url.Action("CreateСity", "Address")'>
+	<i class="entypo-plus"></i>
+	Создать город
+</a>
+	</div>
+<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
+	<thead>
+		<tr role="row">
+			<th class="sorting" tabindex="0" aria-controls="table-2" >Название</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2" >Действия</th>
+		</tr>
+	</thead>
+			@foreach (var item in cities)
+			{
+			<tr>
+				<td>@item.Name</td>
+				<td>
+					<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("EditCity","Address",new {id = item.Id})">
+						<i class="entypo-vcard"></i>
+						Изменить
+					</a>
+				</td>
+			</tr>
+			}
+	<tbody>
+	</tbody>
+</table>
+</div>

@@ -26,7 +26,7 @@ namespace Inforoom2.Models
 		public virtual StreetSide Side { get; set; }
 
 		[Property]
-		public virtual int Entrance { get; set; }
+		public virtual int? Entrance { get; set; }
 
 		[Property]
 		public virtual int Apartment { get; set; }
@@ -41,6 +41,14 @@ namespace Inforoom2.Models
 		public virtual bool IsPrivateSector
 		{
 			get { return Street != null; }
+		}
+
+		public virtual string GetFullAddress(bool showEntrance = false)
+		{
+			var str =  House.Street.Region.Name + ", " + House.Street.Name + ", " + House.Number;
+			if (showEntrance && Entrance != 0)
+				str += ", " + Entrance;
+			return str;
 		}
 	}
 

@@ -23,5 +23,10 @@ namespace Inforoom2.Models
 		[Property(Column = "_RegionOfficePhoneNumber")]
 		public virtual string RegionOfficePhoneNumber { get; set; }
 
+		[Bag(0, Table = "Street", Cascade = "all-delete-orphan")]
+		[Key(1, Column = "Region")]
+		[OneToMany(2, ClassType = typeof(Street))]
+		public virtual IList<Street> Streets { get; set; }
+
 	}
 }
