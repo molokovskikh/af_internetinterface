@@ -24,7 +24,7 @@ namespace InternetInterface.Test.Functional
 			Input("request_City", "Москва");
 			Input("request_House", "1");
 			Input("request_Apartment", "1");
-			Select("request_RequestSource", "от оператора");
+			Select("request_RequestSource", "2");			// Назначить "от оператора"
 			ClickButton("Сохранить");
 			AssertText("Сохранено");
 			AssertText("от оператора");
