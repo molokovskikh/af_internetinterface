@@ -4,7 +4,7 @@
 @{
 	string username = "";
 	string password = "";
-	Employee CurrentEmployee = ViewBag.CurrentEmployee;
+	Employee currentEmployee = ViewBag.CurrentEmployee;
 }
 <html>
 	<head>
@@ -95,7 +95,7 @@
 					</a>
 					<ul class="visible">
 						<li>
-							<a href="@Url.Action("Index","Client")">
+							<a href="@Url.Action("ClientList","Client")">
 								<span class="title">Список клиентов</span>
 							</a>
 						</li>
@@ -249,7 +249,7 @@
 			<div class="col-md-6 col-sm-4 clearfix hidden-xs">
 		
 				<ul class="list-inline links-list pull-right">
-					<li>@CurrentEmployee.Name</li>
+					<li>@currentEmployee.Name</li>
 					<li class="sep"></li>
 					<li>
 						<a href="@Url.Action("AdminLogout", "AdminAccount")">

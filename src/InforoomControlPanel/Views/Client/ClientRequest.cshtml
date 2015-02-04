@@ -7,6 +7,7 @@
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	ViewBag.Title = "Заявка на регистрацию";
 	ClientRequest clientRequest = ViewBag.ClientRequest;
+	var reqAuthor = clientRequest.RequestAuthor ?? new Employee();
 	List<Employee> employees = ViewBag.Employees;
 	ValidationRunner validationRunner = ViewBag.Validation;
 	bool isRedirected = ViewBag.IsRedirected;
@@ -83,7 +84,7 @@
 			</div>
 			<div>
 				<div class="personals">Регистрирует:</div>
-				@Html.DropDownListExtendedFor(k => clientRequest.RequestAuthor, employees, emp => emp.Name, null, new { @class = "rounded" })
+				@Html.DropDownListExtendedFor(k => clientRequest.RequestAuthor, employees, emp => emp.Name, null, new { @class = "rounded" }, reqAuthor.Id)
 			</div>
 			<div id="yandexMap" class="map"></div>
 			<div class="contract">

@@ -1824,9 +1824,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Client\ClientRequest.cshtml" />
-	</ItemGroup>
-	<ItemGroup>
-			<Content Include="Views\Admin\Admins.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Admin\Admins.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Shared\Pagination.cshtml" />
@@ -1888,7 +1888,9 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>64098</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:50393</IISUrl>
+          <IISUrl>http://localhost:50394</IISUrl>
+          <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl>
+          <IISAppRootUrl>http://localhost:50394/</IISAppRootUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

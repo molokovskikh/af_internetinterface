@@ -33,9 +33,10 @@ namespace InforoomControlPanel.Controllers
 		[HttpPost]
 		public ActionResult Login(string username, string password, string returnUrl, bool shouldRemember = false, string impersonateClient = "")
 		{
-			if (ActiveDirectoryHelper.IsAuthenticated(username, password)
-			    && DbSession.Query<Employee>().Any(p => p.Login == username && !p.IsDisabled)) {
-					return Authenticate("Index", "Admin", username, shouldRemember, impersonateClient);
+			var employee = DbSession.Query<Employee>().FirstOrDefault(p => p.Login == username && !p.IsDisabled);
+			if (ActiveDirectoryHelper.IsAuthenticated(username, password) && employee != null) {
+				Session.Add("employee", employee.Id);
+				return Authenticate("Index", "Admin", username, shouldRemember, impersonateClient);
 			}
 			ErrorMessage("Неправильный логин или пароль");
 			return Redirect(returnUrl);
