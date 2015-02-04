@@ -76,7 +76,7 @@ namespace InternetInterface.Test.Integration
 			Assert.That(email.Body, Is.StringContaining("Зарегистрировано закрытие заказа для Юр.Лица"));
 			session.Flush();
 			session.Refresh(client);
-			Assert.That(client.Appeals[1].Appeal, Is.StringContaining("Зарегистрировано закрытие заказа для Юр.Лица"));
+			Assert.That(client.Appeals.Where(p => p.Appeal == "Зарегистрировано закрытие заказа для Юр.Лица").ToList().Count, Is.EqualTo(1));
 		}
 
 		[Test(Description = "Проверяет, создалось ли обращение и письмо при создании услуги")]
@@ -93,7 +93,7 @@ namespace InternetInterface.Test.Integration
 			Assert.That(email.Body, Is.StringContaining("Зарегистрировано внесение изменений заказа для Юр.Лица"));
 			session.Flush();
 			session.Refresh(client);
-			Assert.That(client.Appeals.Last().Appeal, Is.StringContaining("Зарегистрировано внесение изменений заказа для Юр.Лица"));
+			Assert.That(client.Appeals.Where(p => p.Appeal == "Зарегистрировано внесение изменений заказа для Юр.Лица").ToList().Count, Is.EqualTo(1));
 		}
 
 		[Test(Description = "Проверяет, создалось ли обращение и письмо при удалении услуги")]
@@ -105,7 +105,7 @@ namespace InternetInterface.Test.Integration
 			session.Flush();
 			session.Refresh(client);
 			Assert.That(email.Body, Is.StringContaining("Зарегистрировано внесение изменений заказа для Юр.Лица"));
-			Assert.That(client.Appeals.Last().Appeal, Is.StringContaining("Зарегистрировано внесение изменений заказа для Юр.Лица"));
+			Assert.That(client.Appeals.Where(p => p.Appeal == "Зарегистрировано внесение изменений заказа для Юр.Лица").ToList().Count, Is.EqualTo(1));
 		}
 	}
 }
