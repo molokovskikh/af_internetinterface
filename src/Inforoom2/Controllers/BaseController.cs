@@ -179,7 +179,8 @@ namespace Inforoom2.Controllers
 
 		//Авторизация клиента из сети
 		private void TryAuthorizeNetworkClient()
-		{	var ip = Request.UserHostAddress;
+		{
+				var ip = Request.UserHostAddress;
 				if(string.IsNullOrEmpty(ip))
 					return;
 				var address = IPAddress.Parse(ip);
@@ -194,7 +195,7 @@ namespace Inforoom2.Controllers
 					{
 						//var builder = CollectDebugInfo();
 						//builder.Append("Авторизация клиента внутри сети");
-						//EmailSender.SendEmail("asarychev@analit.net","Авторизация: "+Request.UserHostAddress,builder.ToString());
+						//EmailSender.SendEmail("asarychev@analit.net", "Авторизация: " + Request.UserHostAddress + "," + client.Id, builder.ToString());
 						SetCookie("networkClient","true");
 						this.Authenticate(ViewBag.ActionName, ViewBag.ControllerName, client.Id.ToString(), true);
 					}
@@ -224,6 +225,9 @@ namespace Inforoom2.Controllers
 			if (GetCurrentEmployee() != null) {
 				ViewBag.CurrentEmployee = GetCurrentEmployee();	// TODO Перенести в AdminController
 			}
+			if (ViewBag.NetworkClientFlag) {
+				CheckNetworkClientLease();
+			}
 			if (CurrentClient != null) {
 				var sb = new StringBuilder();
 				sb.AppendFormat("Здравствуйте, {0} {1}. Ваш баланс: {2} руб.", CurrentClient.PhysicalClient.Name, 
@@ -232,6 +236,37 @@ namespace Inforoom2.Controllers
 			}
 			else {
 				TryAuthorizeNetworkClient();
+			}
+		}
+
+		private void CheckNetworkClientLease()
+		{
+			var ip = Request.UserHostAddress;
+			if (CurrentClient == null || string.IsNullOrEmpty(ip)) {
+				SetCookie("networkClient", null);
+				return;
+			}
+			var address = IPAddress.Parse(ip);
+			var leases = DbSession.Query<Lease>().Where(l => l.Ip == address).ToList();
+			if (leases.Count != 0)
+			{
+				var client = leases.Where(l => l.Endpoint != null
+					&& l.Endpoint.Client != null
+					&& l.Endpoint.Client.PhysicalClient != null)
+					.Select(l => l.Endpoint.Client)
+					.FirstOrDefault();
+				if (client.Id != CurrentClient.Id)
+				{
+					var builder = CollectDebugInfo();
+					builder.Append("Выкидываем неправильно залогиненного клиента");
+					EmailSender.SendEmail("asarychev@analit.net", "Авторизация: " + Request.UserHostAddress + "," + client.Id + ", " + CurrentClient.Id, builder.ToString());
+					FormsAuthentication.SignOut();
+					RedirectToAction("Index", "Home");
+				}
+				else {
+					return;
+				}
+				SetCookie("networkClient", null);
 			}
 		}
 
@@ -348,6 +383,10 @@ namespace Inforoom2.Controllers
 
 		public void SetCookie(string name, string value)
 		{
+			if (value == null) {
+				Response.Cookies.Add(new HttpCookie(name, "false") { Path = "/",Expires = DateTime.Now});
+				return;
+			}
 			var plainTextBytes = Encoding.UTF8.GetBytes(value);
 			var text = Convert.ToBase64String(plainTextBytes);
 			Response.Cookies.Add(new HttpCookie(name, text) { Path = "/" });
