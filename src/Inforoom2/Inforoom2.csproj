@@ -262,6 +262,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\ClientRequestController.cs" />
+    <Compile Include="Controllers\Inforoom2Controller.cs" />
     <Compile Include="Controllers\WarningController.cs" />
     <Compile Include="Controllers\IsMyHouseConnectedController.cs" />
     <Compile Include="Controllers\StaticContent.cs" />

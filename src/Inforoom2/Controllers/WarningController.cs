@@ -11,7 +11,7 @@ namespace Inforoom2.Controllers
 	/// <summary>
 	/// Страница управления аутентификацией
 	/// </summary>
-	public class WarningController : BaseController
+	public class WarningController : Inforoom2Controller
 	{
 
 		public ActionResult RepairCompleted()

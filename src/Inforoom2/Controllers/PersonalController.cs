@@ -27,7 +27,7 @@ using WriteOff = Inforoom2.Models.WriteOff;
 namespace Inforoom2.Controllers
 {
 	[CustomAuthorize]
-	public class PersonalController : BaseController
+	public class PersonalController : Inforoom2Controller
 	{
 		public ActionResult FirstVisit()
 		{
