@@ -294,7 +294,8 @@ namespace Inforoom2.Controllers
 			var inforoomServices = new List<Service> { blockAccountService, deferredPayment };
 
 			ViewBag.Client = client;
-			ViewBag.ClientServices = client.ClientServices.Where(cs => cs.Service.IsActivableFromWeb && cs.IsActivated).ToList();
+			//@todo Убрать исключения для статического IP, когда будет внедрено ручное включение сервиса
+			ViewBag.ClientServices = client.ClientServices.Where(cs => (cs.Service.Name == "Фиксированный ip-адрес" || cs.Service.IsActivableFromWeb) && cs.IsActivated).ToList();
 			ViewBag.AvailableServices = inforoomServices;
 
 			ViewBag.BlockAccountService = blockAccountService;

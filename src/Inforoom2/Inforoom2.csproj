@@ -319,7 +319,7 @@
     <Compile Include="Models\Services\Internet.cs" />
     <Compile Include="Models\Services\IpTv.cs" />
     <Compile Include="Models\Services\IpTvBoxRent.cs" />
-    <Compile Include="Models\Services\PinnedIp.cs" />
+    <Compile Include="Models\Services\FixedIp.cs" />
     <Compile Include="Models\Services\Service.cs" />
     <Compile Include="Models\Services\SpeedBoost.cs" />
     <Compile Include="Models\Services\WorkLawyer.cs" />
