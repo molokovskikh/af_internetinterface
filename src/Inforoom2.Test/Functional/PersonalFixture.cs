@@ -22,7 +22,7 @@ namespace Inforoom2.Test.Functional
 		public void LoginForClient(Client Client)
 		{
 			Open("Account/Login");
-			Assert.IsTrue(browser.PageSource.Contains("Вход в личный кабинет"));
+			Assert.That(browser.PageSource,Is.StringContaining("Вход в личный кабинет"));
 			var name = browser.FindElementByCssSelector(".Account.Login input[name=username]");
 			var password = browser.FindElementByCssSelector(".Account.Login input[name=password]");
 			name.SendKeys(Client.Id.ToString());
@@ -30,7 +30,7 @@ namespace Inforoom2.Test.Functional
 			browser.FindElementByCssSelector(".Account.Login input[type=submit]").Click();
 		}
 
-		[Test]
+		[Test, Ignore]
 		public void FirstVisit()
 		{
 			Client = session.Query<Client>().First(i => i.PhysicalClient.Surname == "Третьяков");
@@ -68,11 +68,6 @@ namespace Inforoom2.Test.Functional
 			Assert.That(Client.Endpoints.Count,Is.EqualTo(1));
 			Assert.That(internet.IsActivated,Is.True);
 			Assert.That(iptv.IsActivated,Is.True);
-		}
-
-		[Test(Description = "Проверка отображения бонусных платежей и авторов платежей в 'Истории баланса'"), Ignore]
-		public void ShowBonusPayments()
-		{
 		}
 	}
 }

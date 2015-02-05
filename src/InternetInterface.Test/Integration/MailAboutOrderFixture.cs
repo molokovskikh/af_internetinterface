@@ -11,7 +11,8 @@ using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
-using NUnit.Framework;
+﻿using NHibernate.Linq;
+﻿using NUnit.Framework;
 using Test.Support;
 using Rhino.Mocks;
 
@@ -76,7 +77,7 @@ namespace InternetInterface.Test.Integration
 			Assert.That(email.Body, Is.StringContaining("Зарегистрировано закрытие заказа для Юр.Лица"));
 			session.Flush();
 			session.Refresh(client);
-			Assert.That(client.Appeals[1].Appeal, Is.StringContaining("Зарегистрировано закрытие заказа для Юр.Лица"));
+			Assert.That(client.Appeals.Where(p => p.Appeal.Contains("Зарегистрировано закрытие заказа для Юр.Лица")).ToList().Count, Is.EqualTo(1));
 		}
 
 		[Test(Description = "Проверяет, создалось ли обращение и письмо при создании услуги")]
@@ -93,7 +94,8 @@ namespace InternetInterface.Test.Integration
 			Assert.That(email.Body, Is.StringContaining("Зарегистрировано внесение изменений заказа для Юр.Лица"));
 			session.Flush();
 			session.Refresh(client);
-			Assert.That(client.Appeals.Last().Appeal, Is.StringContaining("Зарегистрировано внесение изменений заказа для Юр.Лица"));
+			client.Appeals.ForEach(i=>Console.WriteLine(i.Appeal));
+			Assert.That(client.Appeals.Where(p => p.Appeal.Contains("Зарегистрировано внесение изменений заказа для Юр.Лица")).ToList().Count, Is.EqualTo(1));
 		}
 
 		[Test(Description = "Проверяет, создалось ли обращение и письмо при удалении услуги")]
@@ -104,8 +106,9 @@ namespace InternetInterface.Test.Integration
 			session.Update(order);
 			session.Flush();
 			session.Refresh(client);
+			client.Appeals.ForEach(i => Console.WriteLine(i.Appeal));
 			Assert.That(email.Body, Is.StringContaining("Зарегистрировано внесение изменений заказа для Юр.Лица"));
-			Assert.That(client.Appeals.Last().Appeal, Is.StringContaining("Зарегистрировано внесение изменений заказа для Юр.Лица"));
+			Assert.That(client.Appeals.Where(p => p.Appeal.Contains("Зарегистрировано внесение изменений заказа для Юр.Лица")).ToList().Count, Is.EqualTo(1));
 		}
 	}
 }
