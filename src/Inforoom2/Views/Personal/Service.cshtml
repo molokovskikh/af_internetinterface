@@ -7,6 +7,8 @@
 	ViewBag.Title = "Личный кабинет: Услуги";
 	IList<Service> availableServices = ViewBag.AvailableServices;
 	IList<ClientService> clientServices = ViewBag.ClientServices;
+	var serviceIsAccepted = client.Disabled && client.Balance <= 0 && !client.HasActiveService<BlockAccountService>() 
+			&& !client.HasActiveService<DeferredPayment>() && client.AutoUnblocked;
 }
 
 
@@ -31,7 +33,7 @@
 				</td>
 				<td class="description td">
 					@Html.DisplayFor(modelItem => service.Description)
-					@if (service.GetType().Name == "DeferredPayment" && !client.HasActiveService(service) && !service.IsActivableFor(client)) {
+					@if (service.GetType().Name == "DeferredPayment" && serviceIsAccepted && !client.ServiceAcceptedInThisTime(service)) {
 						<div>
 							Услуга станет доступна через
 							<br/> @StringHepler.ShowTimeLeft(client.TimeToServiceActivation)
