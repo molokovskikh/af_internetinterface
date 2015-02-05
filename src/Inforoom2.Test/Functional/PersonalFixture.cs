@@ -57,7 +57,10 @@ namespace Inforoom2.Test.Functional
 			//date.SendKeys("18.12.2014");
 
 			var residention = browser.FindElementByCssSelector("input[name='physicalClient.PassportResidention']");
-			residention.SendKeys("Пасспортно-визовое отделение по району северный гор. Воронежа");
+			residention.SendKeys("Паспортно-визовое отделение по району северный гор. Воронежа");
+
+			var address = browser.FindElementByCssSelector("input[name='physicalClient.PassportResidention']");
+			address.SendKeys("г. Воронеж, студенческая ул, д12");
 
 			var button = browser.FindElementByCssSelector(".right-block .button");
 			button.Click();

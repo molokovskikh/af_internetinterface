@@ -128,8 +128,10 @@ namespace Inforoom2.Helpers
 			string html = string.Empty;
 			switch (htmlTag) {
 				case HtmlTag.input:
-					if (value is DateTime && (DateTime)value == DateTime.MinValue)
-						value = "";
+					//Форматируем дату
+					if (value is DateTime)
+						value = (DateTime)value == DateTime.MinValue ? "" : ((DateTime)value).ToString("dd.MM.yy");
+
 					html = string.Format("<{0} id=\"{1}\" {2} type=\"{3}\" name =\"{4}\" value=\"{5}\">", tag, id, attributes, type, name, value);
 					break;
 				case HtmlTag.textarea:
