@@ -574,8 +574,11 @@ namespace InternetInterface.Controllers
 
 			if (oldStatus != client.Status) {
 				//BlockedAndConnected = "не подключен", а не то, что ты подумал
-				if (oldStatus.ManualSet || oldStatus.Type == StatusType.BlockedAndConnected) {
-					if (client.Status.Type == StatusType.Dissolved && (client.HaveService<HardwareRent>() || client.HaveService<IpTvBoxRent>())) {
+				if (oldStatus.ManualSet || 
+						oldStatus.Type == StatusType.BlockedAndConnected ||
+						(oldStatus.Type == StatusType.VoluntaryBlocking && client.NoEndPoint())) {
+					if (client.Status.Type == StatusType.Dissolved && 
+							(client.HaveService<HardwareRent>() || client.HaveService<IpTvBoxRent>())) {
 						GetErrorSummary(updateClient)
 							.RegisterErrorMessage("Status", "Договор не может быть расторгнут тк у клиента имеется арендованное" +
 								" оборудование, перед расторжением договора нужно изъять оборудование");
@@ -583,7 +586,9 @@ namespace InternetInterface.Controllers
 				}
 				else {
 					client.Status = oldStatus;
-					message = Message.Warning(string.Format("Статус не был изменен, т.к. нельзя изменить статус '{0}' вручную. Остальные данные были сохранены.", client.Status.Name));
+					message = Message.Warning(
+						string.Format("Статус не был изменен, т.к. нельзя изменить статус '{0}' вручную. Остальные данные были сохранены.",
+							client.Status.Name));
 				}
 			}
 
