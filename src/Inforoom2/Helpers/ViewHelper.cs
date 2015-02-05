@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net.Mime;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -19,8 +20,12 @@ using NHibernate.Validator.Cfg.Loquacious;
 
 namespace Inforoom2.Helpers
 {
+	public abstract class HTMLGenerator
+	{
+	}
 	public static class ViewHelper
 	{
+		static HTMLGenerator html; 
 		public static HtmlString DropDownListExtendedFor<TModel, TProperty>(this HtmlHelper helper,
 			Expression<Func<TModel, TProperty>> expression, IList<TModel> modelCollection, Func<TModel, string> optionValue,
 			Func<TModel, object> htmlAttributes, object selectTagAttributes, int selectedValueId)
@@ -119,9 +124,12 @@ namespace Inforoom2.Helpers
 				attributes = GetPropsValues(htmlAttributes);
 			}
 
+			
 			string html = string.Empty;
 			switch (htmlTag) {
 				case HtmlTag.input:
+					if (value is DateTime && (DateTime)value == DateTime.MinValue)
+						value = "";
 					html = string.Format("<{0} id=\"{1}\" {2} type=\"{3}\" name =\"{4}\" value=\"{5}\">", tag, id, attributes, type, name, value);
 					break;
 				case HtmlTag.textarea:
@@ -132,6 +140,7 @@ namespace Inforoom2.Helpers
 					html = string.Format("<input type=\"checkbox\" id=\"{0}\" name =\"{2}\" {1} value=\"{3}\"></input>", id, attributes, name, val);
 					break;
 				case HtmlTag.date:
+					//todo Использовать HTMLGenerator
 					html = string.Format("<div class=\"input-group\"><input id=\"{0}\" name =\"{2}\" {1} value=\"{3}\" class=\"form-control datepicker\" data-format=\"D, dd MM yyyy\" type=\"text\" /><div class=\"input-group-addon\"><a href=\"#\"><i class=\"entypo-calendar\"></i></a></div></div>", id, attributes, name, value);
 					break;
 				case HtmlTag.datetime:
@@ -218,4 +227,6 @@ namespace Inforoom2.Helpers
 			return new HtmlString("dsds");
 		}
 	}
+
+
 }
