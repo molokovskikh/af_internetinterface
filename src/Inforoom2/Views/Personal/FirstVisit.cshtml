@@ -2,7 +2,7 @@
 @using Inforoom2.Helpers
 @using Inforoom2.Models
 @model dynamic
-@section JavaScript{<script type="text/javascript"src="@Url.Content("~/Scripts/ServiceController.js")"></script>}
+@section JavaScript{<script type="text/javascript"src="@Url.Content("~/Scripts/PersonalController.FirstVisit.js")"></script>}
 @{
 	ViewBag.Title = "Добро пожаловать";
 	ValidationRunner validationRunner = ViewBag.Validation;
@@ -40,7 +40,7 @@
 	</div>
 	<div>
 		<div class="personals">Дата выдачи:</div>
-		@Html.ValidationEditor(validationRunner, PhysicalClient, "PassportDate", new { @class = "personal" }, HtmlTag.input, HtmlType.text)
+		@Html.ValidationEditor(validationRunner, PhysicalClient, "PassportDate", new { @class = "personal yearDatePicker", @readonly="readonly" }, HtmlTag.input, HtmlType.text)
 	</div>
 	<input class="button" type="submit" value="Отправить">
 </div>

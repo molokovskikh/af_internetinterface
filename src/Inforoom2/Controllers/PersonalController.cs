@@ -31,7 +31,10 @@ namespace Inforoom2.Controllers
 	{
 		public ActionResult FirstVisit()
 		{
+			if (CurrentClient.Lunched)
+				return RedirectToAction("Profile");
 			var physicalClient = DbSession.Get<PhysicalClient>(CurrentClient.PhysicalClient.Id);
+			//TODO Придумать что с этим делать
 			var unproxy = DbSession.GetSessionImplementation().PersistenceContext.Unproxy(physicalClient);
 			ViewBag.PhysicalClient = unproxy;
 			return View();
@@ -39,7 +42,7 @@ namespace Inforoom2.Controllers
 		[HttpPost]
 		public ActionResult FirstVisit([EntityBinder] PhysicalClient PhysicalClient)
 		{
-			var errors = ValidationRunner.ValidateDeep(PhysicalClient);
+			var errors = ValidationRunner.Validate(PhysicalClient);
 			if(errors.Length == 0)
 			{
 				DbSession.Save(PhysicalClient);
@@ -55,8 +58,10 @@ namespace Inforoom2.Controllers
 					//var settings = new Settings(session);
 					if (string.IsNullOrEmpty(lease.Switch.Name)) {
 						var addr = CurrentClient.PhysicalClient.Address;
-						if(addr != null)
-							lease.Switch.Name = addr.House.Street.Region.City.Name + ", " + addr.House.Street.Name +", " + addr.House.Number;
+						if (addr != null)
+							lease.Switch.Name = addr.House.Street.Region.City.Name + ", " + addr.House.Street.Name + ", " + addr.House.Number;
+						else
+							lease.Switch.Name = CurrentClient.Id +": адрес неопределен";
 					}
 
 					var endpoint = new ClientEndpoint();
@@ -69,12 +74,7 @@ namespace Inforoom2.Controllers
 
 					var paymentForConnect = new PaymentForConnect(PhysicalClient.ConnectSum, endpoint);
 					//Пытаемся найти сотрудника
-					var empId = (string)Session["Employee"];
-					if(empId != null)	{
-						var id = uint.Parse(empId);
-						var emp = DbSession.Get<Employee>(id);
-						paymentForConnect.Employee = emp;
-					}
+					paymentForConnect.Employee = GetCurrentEmployee();
 
 					CurrentClient.SetStatus(Status.Get(StatusType.Worked, DbSession));
 
@@ -90,6 +90,7 @@ namespace Inforoom2.Controllers
 					DbSession.Save(paymentForConnect);
 					DbSession.Save(lease);
 				}
+				SuccessMessage("Данные успешно заполнены");
 				CurrentClient.Lunched = true;
 				DbSession.Save(CurrentClient);
 				return RedirectToAction("Profile");
@@ -103,8 +104,8 @@ namespace Inforoom2.Controllers
 			if(CurrentClient == null)
 				return RedirectToAction("Login", "Account");
 
-			//if(CurrentClient.Lunched == false)
-			//	return RedirectToAction("FirstVisit");
+			if(!CurrentClient.Lunched)
+				return RedirectToAction("FirstVisit");
 
 			InitServices();
 			ViewBag.Title = "Личный кабинет";
@@ -300,6 +301,7 @@ namespace Inforoom2.Controllers
 			ViewBag.DeferredPayment = deferredPayment;
 		}
 
+		//@todo убрать этот бред - заменить функцией с return
 		private void InitPlans(Client client)
 		{
 			IList<Plan> plans;

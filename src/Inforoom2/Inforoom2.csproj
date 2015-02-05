@@ -208,6 +208,7 @@
     <Content Include="Images\wifi.png" />
     <Content Include="Scripts\AdminAddressController.js" />
     <Content Include="Scripts\ClientRequest.js" />
+    <Content Include="Scripts\PersonalController.FirstVisit.js" />
     <Content Include="Scripts\IsMyHouseConnectedController.js" />
     <Content Include="Scripts\EditNewsBlock.js" />
     <Content Include="Scripts\EventEmitter.js" />

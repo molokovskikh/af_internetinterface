@@ -30,7 +30,7 @@ namespace Inforoom2.Test.Functional
 			browser.FindElementByCssSelector(".Account.Login input[type=submit]").Click();
 		}
 
-		[Test, Ignore]
+		[Test]
 		public void FirstVisit()
 		{
 			Client = session.Query<Client>().First(i => i.PhysicalClient.Surname == "Третьяков");
@@ -42,7 +42,7 @@ namespace Inforoom2.Test.Functional
 			Assert.That(internet.IsActivated,Is.False);
 			Assert.That(iptv.IsActivated,Is.False);
 			LoginForClient(Client);
-			AssertText("Серия пасспорта");
+			AssertText("Серия паспорта");
 
 			var series = browser.FindElementByCssSelector("input[name='physicalClient.PassportSeries']");
 			series.SendKeys("1234");
@@ -51,21 +51,24 @@ namespace Inforoom2.Test.Functional
 			number.SendKeys("123456");
 
 			var date = browser.FindElementByCssSelector("input[name='physicalClient.PassportDate']");
-			date.SendKeys("18.12.2014");
+			date.Click();
+			var popup = browser.FindElementByCssSelector("a.ui-state-default");
+			popup.Click();
+			//date.SendKeys("18.12.2014");
 
 			var residention = browser.FindElementByCssSelector("input[name='physicalClient.PassportResidention']");
 			residention.SendKeys("Пасспортно-визовое отделение по району северный гор. Воронежа");
 
 			var button = browser.FindElementByCssSelector(".right-block .button");
 			button.Click();
-
+			AssertText("успешно");
 			session.Clear();
 			var client= session.Query<Client>().First(i => i.PhysicalClient.Surname == "Третьяков");
 			internet = client.ClientServices.First(i => (ServiceType) i.Service.Id == ServiceType.Internet);
 			iptv = client.ClientServices.First(i => (ServiceType) i.Service.Id == ServiceType.Iptv);
 
-			Assert.That(Client.Lunched,Is.True);
-			Assert.That(Client.Endpoints.Count,Is.EqualTo(1));
+			Assert.That(client.Lunched, Is.True);
+			Assert.That(client.Endpoints.Count, Is.EqualTo(1));
 			Assert.That(internet.IsActivated,Is.True);
 			Assert.That(iptv.IsActivated,Is.True);
 		}
