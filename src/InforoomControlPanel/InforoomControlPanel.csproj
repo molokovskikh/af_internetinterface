@@ -1486,7 +1486,10 @@
     <Content Include="assets\js\zurb-responsive-tables\stylesheets\reveal.css" />
     <Content Include="assets\js\zurb-responsive-tables\stylesheets\typography.css" />
     <Content Include="assets\js\zurb-responsive-tables\stylesheets\ui.css" />
+    <Content Include="Css\from_inforoom2.css" />
     <Content Include="Css\style.css" />
+    <Content Include="Images\map.png" />
+    <Content Include="Images\tick.png" />
     <Content Include="Scripts\AdminAddressController.js" />
     <Content Include="Scripts\AddressController.CreateStreet.js" />
     <Content Include="Scripts\AddressController.CreateHouse.js" />
@@ -1814,10 +1817,13 @@
     <Content Include="Views\ConnectionTeam\AttachServiceRequest.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\ConnectionTeam\ClientRequests.cshtml" />
+    <Content Include="Views\Client\ClientRequestsList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\ConnectionTeam\AttachClientRequest.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Client\ClientRequest.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Admin\Admins.cshtml" />
@@ -1882,7 +1888,9 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>64098</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:50393</IISUrl>
+          <IISUrl>http://localhost:50394</IISUrl>
+          <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl>
+          <IISAppRootUrl>http://localhost:50394/</IISAppRootUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

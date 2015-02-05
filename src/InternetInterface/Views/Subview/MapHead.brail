@@ -46,7 +46,8 @@
 			</tr>
 			<tr class="submenu">
 				<% if MapPartner.AccesPartner("RC"): %>
-				<th></th>
+				<th><a href="http://test2.analit.net/controlpanel">Перейти в Inforoom2<a/>
+				</th>
 				<% end %>
 				<% if MapPartner.AccesPartner("RC"): %>
 				<th></th>

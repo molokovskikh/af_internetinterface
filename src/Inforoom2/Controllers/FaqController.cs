@@ -5,7 +5,6 @@ using System.Text;
 using System.Web.Mvc;
 using Inforoom2.Components;
 using Inforoom2.Models;
-using InternetInterface;
 using NHibernate.Linq;
 
 namespace Inforoom2.Controllers
@@ -13,7 +12,7 @@ namespace Inforoom2.Controllers
 	/// <summary>
 	/// Страница вопросов и ответов
 	/// </summary>
-	public class FaqController : BaseController
+	public class FaqController : Inforoom2Controller
 	{
 
 		/// <summary>

@@ -2,7 +2,7 @@
 
 namespace Inforoom2.Controllers
 {
-	public class StaticContentController : BaseController
+	public class StaticContentController : Inforoom2Controller
 	{
 		public ActionResult PageNotFound()
 		{
