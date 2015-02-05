@@ -2,9 +2,6 @@
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Security;
-using Common.MySql;
-using Inforoom2.Components;
-using Inforoom2.Helpers;
 using Inforoom2.Models;
 using InternetInterface.Helpers;
 using NHibernate.Linq;
@@ -14,7 +11,7 @@ namespace Inforoom2.Controllers
 	/// <summary>
 	/// Страница управления аутентификацией
 	/// </summary>
-	public class AccountController : BaseController
+	public class AccountController : Inforoom2Controller
 	{
 		[HttpPost]
 		public ActionResult Login(string username, string password)

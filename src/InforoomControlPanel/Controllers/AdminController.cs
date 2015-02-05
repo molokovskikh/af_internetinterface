@@ -21,6 +21,12 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.BreadCrumb = "Панель управления";
 		}
 
+		protected override void OnResultExecuting(ResultExecutingContext filterContext)
+		{
+			var curEmployee = GetCurrentEmployee();
+			ViewBag.CurrentEmployee = curEmployee ?? new Employee();
+		}
+
 		public ActionResult Index()
 		{
 			return View();

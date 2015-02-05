@@ -52,7 +52,7 @@ namespace Inforoom2.Controllers
 
 		public virtual Employee GetCurrentEmployee()
 		{
-			if (Session == null || Session["employee"] == null)
+			if (Session == null || DbSession == null || Session["employee"] == null)
 				return null;
 			var employeeId = Convert.ToInt32(Session["employee"]);
 			return DbSession.Query<Employee>().FirstOrDefault(k => k.Id == employeeId);
@@ -67,7 +67,7 @@ namespace Inforoom2.Controllers
 		{
 			get
 			{
-				if (User == null || !DbSession.IsConnected) {
+				if (User == null || DbSession == null || !DbSession.IsConnected) {
 					return null;
 				}
 				int id;
@@ -222,9 +222,6 @@ namespace Inforoom2.Controllers
 			ProcessCallMeBackTicket();
 			ProcessRegionPanel();
 			ViewBag.NetworkClientFlag = string.IsNullOrEmpty(GetCookie("networkClient")) ? false : true;
-			if (GetCurrentEmployee() != null) {
-				ViewBag.CurrentEmployee = GetCurrentEmployee();	// TODO Перенести в AdminController
-			}
 			if (ViewBag.NetworkClientFlag) {
 				CheckNetworkClientLease();
 			}
