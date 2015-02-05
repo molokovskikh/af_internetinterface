@@ -255,7 +255,7 @@ namespace Inforoom2.Controllers
 					&& l.Endpoint.Client.PhysicalClient != null)
 					.Select(l => l.Endpoint.Client)
 					.FirstOrDefault();
-				if (client.Id != CurrentClient.Id)
+				if (client != null && client.Id != CurrentClient.Id)
 				{
 					var builder = CollectDebugInfo();
 					builder.Append("Выкидываем неправильно залогиненного клиента");
