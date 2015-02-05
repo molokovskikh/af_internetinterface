@@ -65,7 +65,7 @@ function checkAddress(firstGeoObject, geoObjects) {
 			success: function (msg) {
 				console.log('Получен адрес', msg);
 				console.log('Получен адрес Yandex: ', yandexCity, yandexStreet, yandexHouseDetails);
-				if (msg.geomark != null) {
+				if (msg.geomark != null && msg.geomark != "") {
 					var coords = msg.geomark.split(",");
 					firstGeoObject = new ymaps.Placemark([coords[0], coords[1]]);
 					yandexCity = msg.city;
