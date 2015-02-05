@@ -51,7 +51,7 @@ namespace Inforoom2.Models.Services
 
 		public virtual bool IsActivableFor(Client client)
 		{
-			return true;
+			return false;
 		}
 	}
 

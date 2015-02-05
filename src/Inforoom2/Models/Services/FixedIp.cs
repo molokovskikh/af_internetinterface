@@ -4,7 +4,7 @@ using NHibernate.Mapping.Attributes;
 namespace Inforoom2.Models
 {
 	[Subclass(0,ExtendsType = typeof(Service) ,DiscriminatorValue= "PinnedIp")]
-	public class PinnedIp : Service
+	public class FixedIp : Service
 	{
 		 
 	}
