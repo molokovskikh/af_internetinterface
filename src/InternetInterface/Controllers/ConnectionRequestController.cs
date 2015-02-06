@@ -51,7 +51,10 @@ namespace InternetInterface.Controllers
 		{
 			var request = DbSession.Load<Request>(id);
 			PropertyBag["Request"] = request;
-			PropertyBag["reqSourceDesc"] = request.RequestSource.GetDescription();
+			if (request.RequestSource == RequestType.FromClient || request.RequestSource == RequestType.FromOperator)
+				PropertyBag["reqSourceDesc"] = request.RequestSource.GetDescription();
+			else
+				PropertyBag["reqSourceDesc"] = "";
 			PropertyBag["Messages"] = DbSession.Query<RequestMessage>().Where(r => r.Request.Id == id).ToList();
 		}
 
