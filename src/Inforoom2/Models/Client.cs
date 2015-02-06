@@ -116,20 +116,6 @@ namespace Inforoom2.Models
 			return FindActiveService<T>() != null;
 		}
 
-		// Время до момента, когда клиенту станет доступна услуга, использованная при последнем доступе к методу ServiceAccepted
-		public virtual TimeSpan TimeToServiceActivation { get; protected set; }
-
-		// Метод для проверки, доступна ли клиенту данная услуга
-		public virtual bool ServiceAccepted(Service service)
-		{
-			var lastService = ClientServices.OrderBy(cs => cs.BeginDate).LastOrDefault(s => s.Service.Id == service.Id);
-			if (lastService == null || lastService.IsActivated)
-				return false;
-			var serviceDate = lastService.BeginDate ?? new DateTime();
-			TimeToServiceActivation = serviceDate.AddDays(30) - DateTime.Now;
-			return (TimeToServiceActivation < TimeSpan.Zero);
-		}
-
 		public virtual bool CanUseService(Service service)
 		{
 			return service.IsActivableFor(this);
