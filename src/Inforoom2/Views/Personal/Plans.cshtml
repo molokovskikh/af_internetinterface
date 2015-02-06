@@ -5,7 +5,7 @@
 @{
 	ViewBag.Title = "Личный кабинет: Тарифы";
 	PhysicalClient client = ViewBag.Client.PhysicalClient;
-	DateTime beginDate = (DateTime)client.Client.WorkingStartDate;
+	var beginDate = client.Client.WorkingStartDate ?? new DateTime();
 	IList<Plan> plans = ViewBag.Plans;
 }
 
