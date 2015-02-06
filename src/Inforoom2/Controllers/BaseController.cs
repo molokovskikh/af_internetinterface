@@ -218,10 +218,9 @@ namespace Inforoom2.Controllers
 			}
 			ViewBag.ActionName = filterContext.RouteData.Values["action"].ToString();
 			ViewBag.ControllerName = filterContext.RouteData.Values["controller"].ToString();
-
-			ProcessCallMeBackTicket();
+			ViewBag.CallMeBackTicket = new CallMeBackTicket();
 			ProcessRegionPanel();
-			ViewBag.NetworkClientFlag = string.IsNullOrEmpty(GetCookie("networkClient")) ? false : true;
+			ViewBag.NetworkClientFlag = !string.IsNullOrEmpty(GetCookie("networkClient"));
 			if (ViewBag.NetworkClientFlag) {
 				CheckNetworkClientLease();
 			}
@@ -269,9 +268,9 @@ namespace Inforoom2.Controllers
 
 		private void ProcessCallMeBackTicket()
 		{
-			ViewBag.CallMeBackTicket = new CallMeBackTicket();
 			var binder = new EntityBinderAttribute("callMeBackTicket.Id", typeof(CallMeBackTicket));
 			var callMeBackTicket = (CallMeBackTicket)binder.MapModel(Request);
+			ViewBag.CallMeBackTicket = callMeBackTicket;
 			if (Request.Params["callMeBackTicket.Name"] == null)
 				return;
 			callMeBackTicket.Client = CurrentClient;
@@ -290,7 +289,7 @@ namespace Inforoom2.Controllers
 				SuccessMessage("Заявка отправлена. В течении дня вам перезвонят.");
 				return;
 			}
-			ViewBag.CallMeBackTicket = callMeBackTicket;
+			
 			if (GetJavascriptParam("CallMeBack") == null)
 				AddJavascriptParam("CallMeBack", "1");
 		}
@@ -414,6 +413,7 @@ namespace Inforoom2.Controllers
 
 		public void SubmitCallMeBackTicket(string actionString, string controllerString)
 		{
+			ProcessCallMeBackTicket();
 			ForwardToAction(controllerString, actionString, new object[0]);
 		}
 
@@ -439,7 +439,6 @@ namespace Inforoom2.Controllers
 
 			controller.ViewBag.ActionName = actionString;
 			controller.ViewBag.ControllerName = controllerString;
-			controller.ProcessCallMeBackTicket();
 
 			actionResult.ExecuteResult(controller.ControllerContext);
 		}

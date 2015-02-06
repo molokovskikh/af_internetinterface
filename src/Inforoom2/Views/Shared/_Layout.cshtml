@@ -205,7 +205,7 @@
 			</div>
 			<div class="cityWindow" id ="CallMeBackWindow" >
 				@{
-					CallMeBackTicket ticket = ViewBag.CallMeBackTicket;
+					CallMeBackTicket ticket = ViewBag.CallMeBackTicket ?? new CallMeBackTicket();
 					ValidationRunner validationRunner = ViewBag.Validation;
 					String action = ViewBag.ActionName.ToString();
 					String controller = ViewBag.ControllerName.ToString();
