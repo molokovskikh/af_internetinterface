@@ -58,7 +58,7 @@ namespace InternetInterface.Test.Helpers
 			client.HouseObj = session.Query<House>()
 				.FirstOrDefault(h => h.Street == client.Street && h.Number == client.House && h.Case == client.CaseHouse);
 			if (client.HouseObj == null) {
-				client.HouseObj = new House(client.Street, client.House.GetValueOrDefault(), session.Query<RegionHouse>().First());
+				client.HouseObj = new House(client.Street, client.House.GetValueOrDefault(), session.Query<RegionHouse>().First(i => i.Name.Contains("Воронеж")));
 				session.Save(client.HouseObj);
 			}
 
