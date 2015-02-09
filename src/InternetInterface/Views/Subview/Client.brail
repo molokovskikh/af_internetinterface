@@ -39,7 +39,7 @@ ${app.Asset("client.css")}
 	<a class="close-reveal-modal">х</a>
 </div>
 
-<table class="table" id="EditTable">
+<table class="table" id="EditTable" style="margin-bottom: 15px;">
 	<tr>
 		<th colspan="3">
 			Личная информация
@@ -142,6 +142,31 @@ ${app.Asset("client.css")}
 		</td>
 	</tr>
 </table>
+<% if IsDefined("requestID"): %>
+<table class="table" id="RequestInfoTable" style="margin-bottom: 15px;">
+	<thead>
+		<tr>
+			<th colspan="2">Информация о заявке</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><b>Дата регистрации:</b></td>
+			<td>!{request.RegDate}</td>
+		</tr>
+		<tr>
+			<td><b>Источник заявки:</b></td>
+			<td>!{reqSourceDesc}</td>
+		</tr>
+		<% if request.Registrator != null: %>
+		<tr>
+			<td><b>Зарегистрировал:</b></td>
+			<td>!{request.Registrator.Name}</td>
+		</tr>
+		<% end %>
+	</tbody>
+</table>
+<% end %>
 <% if not IsDefined("EditAddress") or EditAddress != true: %>
 <table class="table" id="AdressTable" style="margin-bottom: 15px;">
 	<thead>

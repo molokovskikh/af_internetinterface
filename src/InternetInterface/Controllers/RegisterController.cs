@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Common.Tools;
-using Common.Web.Ui.Controllers;
 using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
@@ -14,7 +11,6 @@ using InternetInterface.Models.Services;
 using InternetInterface.Services;
 using NHibernate;
 using NHibernate.Linq;
-using System.Text.RegularExpressions;
 
 namespace InternetInterface.Controllers
 {
@@ -281,6 +277,8 @@ namespace InternetInterface.Controllers
 				newPhisClient.HomePhoneNumber = UsersParsers.MobileTelephoneParcer(request.ApplicantPhoneNumber);
 			PropertyBag["Client"] = newPhisClient;
 			PropertyBag["requestID"] = requestID;
+			PropertyBag["request"] = request;
+			PropertyBag["reqSourceDesc"] = request.RequestSource.GetDescription();
 			if (newPhisClient.House != null) {
 				var houses =
 					DbSession.Query<House>().Where(

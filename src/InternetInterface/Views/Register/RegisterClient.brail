@@ -35,6 +35,17 @@
 						<input type="checkbox" id="VisibleRegisteredInfo" name="VisibleRegisteredInfo" value=true />
 					</td>
 				</tr>
+				<% if not IsDefined("requestID"): %>
+				<tr>
+						<td colspan="2">
+							<label for="DealerSelect">Привел клиента в компанию:</label>
+							<select id="DealerSelect" name="client.Client.Dealer.Id">
+								<option selected="selected"></option>
+								<option value="client.Client.Dealer.Id">${?client.Client.Dealer.Name}</option>
+							</select>
+						</td>
+				</tr>
+				<% end %>
 				<% end %>
 				<tr>
 					<td colspan="3">

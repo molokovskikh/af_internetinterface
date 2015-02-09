@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Configuration;
 using System.Globalization;
 using System.Linq;
@@ -181,6 +182,9 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual DateTime? StatusChangedOn { get; set; }
+
+		[BelongsTo, Description("Партнёр, занимающийся привлечением клиентов в компанию")]
+		public virtual Partner Dealer { get; set; }
 
 		[Property]
 		public virtual bool SendEmailNotification { get; set; }
