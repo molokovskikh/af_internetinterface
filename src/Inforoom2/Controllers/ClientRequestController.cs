@@ -2,15 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
-using Common.MySql;
-using Inforoom2.Components;
-using Inforoom2.Helpers;
 using Inforoom2.Models;
 using NHibernate.Linq;
 
 namespace Inforoom2.Controllers
 {
-	public class ClientRequestController : BaseController
+	public class ClientRequestController : Inforoom2Controller
 	{
 		/// <summary>
 		/// Отображает  форму новой заявки

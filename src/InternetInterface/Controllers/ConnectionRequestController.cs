@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
-using Common.MySql;
 using Common.Web.Ui.Helpers;
+using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
@@ -34,6 +34,7 @@ namespace InternetInterface.Controllers
 		{
 			var request = new Request();
 			PropertyBag["request"] = request;
+			PropertyBag["partnersList"] = DbSession.Query<Partner>().ToList();
 			if (IsPost) {
 				SetARDataBinder(AutoLoadBehavior.NullIfInvalidKey);
 				BindObjectInstance(request, "request");
@@ -48,7 +49,12 @@ namespace InternetInterface.Controllers
 
 		public void RequestOne(uint id)
 		{
-			PropertyBag["Request"] = DbSession.Load<Request>(id);
+			var request = DbSession.Load<Request>(id);
+			PropertyBag["Request"] = request;
+			if (request.RequestSource == RequestType.FromClient || request.RequestSource == RequestType.FromOperator)
+				PropertyBag["reqSourceDesc"] = request.RequestSource.GetDescription();
+			else
+				PropertyBag["reqSourceDesc"] = "";
 			PropertyBag["Messages"] = DbSession.Query<RequestMessage>().Where(r => r.Request.Id == id).ToList();
 		}
 

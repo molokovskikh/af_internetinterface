@@ -19,6 +19,11 @@ namespace Inforoom2.Models
 	[Class(0, Table = "Clients", Schema = "internet", NameType = typeof (Client))]
 	public class Client : BaseModel
 	{
+		public Client()
+		{
+			Endpoints = new List<ClientEndpoint>();
+			ClientServices = new List<ClientService>();
+		}
 		[Property]
 		public virtual bool Disabled { get; set; }
 
@@ -116,20 +121,6 @@ namespace Inforoom2.Models
 			return FindActiveService<T>() != null;
 		}
 
-		// Время до момента, когда клиенту станет доступна услуга, использованная при последнем доступе к методу ServiceAccepted
-		public virtual TimeSpan TimeToServiceActivation { get; protected set; }
-
-		// Метод для проверки, доступна ли клиенту данная услуга
-		public virtual bool ServiceAccepted(Service service)
-		{
-			var lastService = ClientServices.OrderBy(cs => cs.BeginDate).LastOrDefault(s => s.Service.Id == service.Id);
-			if (lastService == null || lastService.IsActivated)
-				return false;
-			var serviceDate = lastService.BeginDate ?? new DateTime();
-			TimeToServiceActivation = serviceDate.AddDays(30) - DateTime.Now;
-			return (TimeToServiceActivation < TimeSpan.Zero);
-		}
-
 		public virtual bool CanUseService(Service service)
 		{
 			return service.IsActivableFor(this);
@@ -196,14 +187,47 @@ namespace Inforoom2.Models
 
 		public virtual decimal Balance
 		{
-			get
-			{
-				if (PhysicalClient != null)
-					return PhysicalClient.Balance;
-			/*	if (LegalClient != null)
-					return LegalClient.Balance;*/
-				return 0m;
-			}
+			get { return PhysicalClient != null ? PhysicalClient.Balance : 0; }
+			set { PhysicalClient.Balance = value; }
+		}
+
+		public virtual string PhoneNumber 
+		{
+			get {return PhysicalClient != null ? PhysicalClient.PhoneNumber : null;}
+			set { PhysicalClient.PhoneNumber = value; }
+		}
+
+		public virtual string Email
+		{
+			get { return PhysicalClient != null ? PhysicalClient.Email : null; }
+			set { PhysicalClient.Email = value; }
+		}
+		public virtual string Name
+		{
+			get { return PhysicalClient != null ? PhysicalClient.Name : null; }
+			set { PhysicalClient.Name = value; }
+		}
+		public virtual string Surname
+		{
+			get { return PhysicalClient != null ? PhysicalClient.Surname : null; }
+			set { PhysicalClient.Surname = value; }
+		}
+		public virtual string Patronymic
+		{
+			get { return PhysicalClient != null ? PhysicalClient.Patronymic : null; }
+			set { PhysicalClient.Patronymic = value; }
+		}
+		public virtual Address Address
+		{
+			get { return PhysicalClient != null ? PhysicalClient.Address : null; }
+		}
+		public virtual DateTime LastTimePlanChanged
+		{
+			get { return PhysicalClient != null ? PhysicalClient.LastTimePlanChanged : DateTime.MinValue; }
+		}
+		public virtual Plan Plan
+		{
+			get { return PhysicalClient != null ? PhysicalClient.Plan : null; }
 		}
 
 		public virtual void WriteOff(decimal sum, bool isVirtual)

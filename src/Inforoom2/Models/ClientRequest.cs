@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text.RegularExpressions;
-using NHibernate.Engine;
 using NHibernate.Mapping.Attributes;
 using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models
 {
+	public enum RequestType
+	{
+		[Display(Name = "от клиента")] FromClient = 1,
+		[Display(Name = "от оператора")] FromOperator = 2
+	}
+
 	[Class(0, Table = "Requests", NameType = typeof(ClientRequest))]
 	public class ClientRequest : BaseModel
 	{
@@ -39,6 +43,12 @@ namespace Inforoom2.Models
 
 		[Property(Column = "_EndTime")]
 		public virtual DateTime EndTime { get; set; }
+
+		[Property(Column = "_RequestSource"), Description("Источник заявки")]
+		public virtual RequestType RequestSource { get; set; }
+
+		[ManyToOne(Column = "Registrator"), Description("Автор регистрации заявки")]
+		public virtual Employee RequestAuthor { get; set; }
 
 		//Поля старой модели заявки
 

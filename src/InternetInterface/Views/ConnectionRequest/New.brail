@@ -67,5 +67,23 @@ ${FormHelper.FormTag("", { @class : "div-form" })}
 	${app.Edit("request.Tariff")}
 	${app.Error("request.Tariff")}
 </div>
+
+<div>
+	${app.Label("request.RequestSource")}
+	${app.Edit("request.RequestSource")}
+	${app.Error("request.RequestSource")}
+</div>
+
+<div>
+	${app.Label("request.Registrator")}
+	<select id="SelectRegistrator" name="request.Registrator.Id">
+		<% for partner in partnersList: %>
+			<option value="${partner.Id}">!{partner.Name}</option>
+		<% end %>
+	</select>
+	${app.Error("request.Registrator")}
+</div>
+
+<br/>
 ${FormHelper.Submit("Сохранить")}
 ${FormHelper.EndFormTag()}

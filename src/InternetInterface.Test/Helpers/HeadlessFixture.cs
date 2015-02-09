@@ -51,6 +51,11 @@ namespace InternetInterface.Test.Helpers
 			return page.Find<HtmlInput>().ById(id).Value = value;
 		}
 
+		protected void Select(string id, string value)
+		{
+			page.Find<HtmlList>().ById(id).Select(value);
+		}
+
 		protected void ClickButton(string name)
 		{
 			var button = page.Find<HtmlButton>().All()

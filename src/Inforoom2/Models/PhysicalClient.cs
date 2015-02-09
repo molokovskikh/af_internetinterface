@@ -40,14 +40,17 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual decimal MoneyBalance { get; set; }
 
-		[Property,NotNullNotEmpty(Message = "Введите номер пасспорта")]
+		[Property,NotNullNotEmpty(Message = "Введите номер паспорта")]
 		public virtual string PassportNumber { get; set; }
 
-		[Property,NotNullNotEmpty(Message = "Введите серию пасспорта")]
+		[Property,NotNullNotEmpty(Message = "Введите серию паспорта")]
 		public virtual string PassportSeries { get; set; }
 
-		[Property,NotNull(Message = "Введите дату выдачи пасспорта")]
+		[Property,NotNull(Message = "Введите дату выдачи паспорта")]
 		public virtual DateTime PassportDate { get; set; }
+
+		[Property(Column = "RegistrationAdress"), NotNull(Message = "Введите адрес регистрации")]
+		public virtual string RegistrationAddress { get; set; }
 
 		[Property(Column = "WhoGivePassport"),NotNullNotEmpty(Message = "Поле не может быть пустым")]
 		public virtual string PassportResidention { get; set; }

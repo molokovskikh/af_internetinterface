@@ -42,33 +42,14 @@ function checkAddress(firstGeoObject) {
 			}
 		}
 
-		//Переделать этот код
-		$.ajax({
-			type: "POST",
-			url: cli.getParam("baseurl") + "/ClientRequest/CheckForUnusualAddress",
-			data: { city: yandexCity, street: yandexStreet, house: yandexHouseDetails, address: userCity + " " + userStreet + " " + userHouse + userHousing },
-			success: function (msg) {
-				console.log('Получен адрес',msg);
-				console.log('Получен адрес Yandex: ', yandexCity, yandexStreet, yandexHouseDetails);
-				if (msg.geomark != null && msg.geomark != "") {
-					var coords = msg.geomark.split(",");
-					firstGeoObject = new ymaps.Placemark([coords[0], coords[1]]);
-					yandexCity = msg.city;
-					yandexCity = msg.street;
-					if (msg.house)
-						yandexHouseDetails = msg.house;
-				}
-
-				myMap.geoObjects.add(firstGeoObject);
-				myMap.setCenter(firstGeoObject.geometry.getCoordinates(), 17, {
-					checkZoomRange: true
-				});
-				
-				document.getElementById('yandexCityHidden').value = yandexCity;
-				document.getElementById('yandexStreetHidden').value = yandexStreet;
-				document.getElementById('yandexHouseHidden').value = yandexHouseDetails;
-			}});
-		
+		console.log('Получен адрес: ', yandexCity, yandexStreet, yandexHouseDetails);
+		myMap.geoObjects.add(firstGeoObject);
+		myMap.setCenter(firstGeoObject.geometry.getCoordinates(), 17, {
+			checkZoomRange: true
+		});
+			document.getElementById('yandexCityHidden').value = yandexCity;
+			document.getElementById('yandexStreetHidden').value = yandexStreet;
+			document.getElementById('yandexHouseHidden').value = yandexHouseDetails;
 	});
 }
 

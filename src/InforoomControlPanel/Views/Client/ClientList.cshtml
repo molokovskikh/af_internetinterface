@@ -41,7 +41,7 @@
 						</a>
 						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("ConnectionRequest","Client",new {clientId = client.Id})">
 							<i class="entypo-plus-circled"></i>
-							Заявка на подключеие
+							Заявка на подключение
 						</a>
 						<form style="display:inline" action="@Url.Action("ApplyImpersonation","AdminAccount")" method="post">
 							<input  name="client.Id" type="hidden" value="@client.Id">

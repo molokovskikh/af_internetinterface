@@ -263,6 +263,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\ClientRequestController.cs" />
+    <Compile Include="Controllers\Inforoom2Controller.cs" />
     <Compile Include="Controllers\WarningController.cs" />
     <Compile Include="Controllers\IsMyHouseConnectedController.cs" />
     <Compile Include="Controllers\StaticContent.cs" />
@@ -318,7 +319,7 @@
     <Compile Include="Models\Services\Internet.cs" />
     <Compile Include="Models\Services\IpTv.cs" />
     <Compile Include="Models\Services\IpTvBoxRent.cs" />
-    <Compile Include="Models\Services\PinnedIp.cs" />
+    <Compile Include="Models\Services\FixedIp.cs" />
     <Compile Include="Models\Services\Service.cs" />
     <Compile Include="Models\Services\SpeedBoost.cs" />
     <Compile Include="Models\Services\WorkLawyer.cs" />
@@ -419,6 +420,7 @@
     <Content Include="Views\About\ConnectedHousesLists.cshtml" />
     <Content Include="Views\Shared\Empty.cshtml" />
     <Content Include="Views\Home\ExtraServicesPriceList.cshtml" />
+    <Content Include="Views\Personal\ActiveServices.cshtml" />
     <None Include="Web.Inforoom2_Test.config">
       <SubType>Designer</SubType>
     </None>

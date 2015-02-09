@@ -6,7 +6,7 @@ using NHibernate.Linq;
 
 namespace Inforoom2.Controllers
 {
-	public class HomeController : BaseController
+	public class HomeController : Inforoom2Controller
 	{
 		public ActionResult Index()
 		{
