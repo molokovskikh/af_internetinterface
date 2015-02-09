@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
-using Inforoom2.Helpers;
 using Inforoom2.Models;
 using NHibernate.Linq;
 
@@ -35,6 +33,11 @@ namespace Inforoom2.Controllers
 			return View();
 		}
 
+		public ActionResult PricesList()
+		{
+			return View("ExtraServicesPriceList");
+		}
+
 		public ActionResult ViewNewsBlock(int id)
 		{
 			var newsBlock = DbSession.Get<NewsBlock>(id);
@@ -46,7 +49,5 @@ namespace Inforoom2.Controllers
 		{
 			return RedirectToActionPermanent("Index");
 		}
-
-
-}
+	}
 }
