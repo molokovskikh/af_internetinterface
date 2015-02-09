@@ -254,6 +254,7 @@ namespace Inforoom2.Controllers
 		{
 			var client = CurrentClient;
 			ViewBag.Client = client;
+			//todo - наверно надо подумать как эти провеки засунуть куда следует
 			var beginDate = client.WorkingStartDate ?? new DateTime();
 			if (beginDate == DateTime.MinValue || beginDate.AddMonths(2) >= DateTime.Now)
 				return View("Plans");
@@ -268,7 +269,9 @@ namespace Inforoom2.Controllers
 			DbSession.Save(client);
 			DbSession.Save(result);
 			SuccessMessage("Тариф изменен");
-			var appeal = new Appeal("Тарифный план был изменен с " + oldPlan.Name + " на " + plan.Name, client, AppealType.User) {
+			var msg = string.Format("Изменение тарифа был изменен с '{0}'({1}) на '{2}'({3}). Стоимость перехода: {4} руб.", oldPlan.Name, oldPlan.Price, plan.Name, plan.Price, result.Sum);
+			var appeal = new Appeal(msg, client, AppealType.User)
+			{
 				Employee = GetCurrentEmployee()
 			};
 			DbSession.Save(appeal);

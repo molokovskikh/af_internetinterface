@@ -30,17 +30,32 @@ namespace Inforoom2.Test.Functional
 		[Test(Description = "Смена тарифа")]
 		public void ChangePlan()
 		{
-			var targetPlan = browser.FindElementByXPath("//td[contains(.,'Оптимальный')]");
+			var planFrom = Client.Plan;
+			var planTo = DbSession.Query<Plan>().First(i => i.Name.Contains("Оптимальный"));
+			var targetPlan = browser.FindElementByXPath("//td[contains(.,'"+planTo.Name+"')]");
 			var row = targetPlan.FindElement(By.XPath(".."));
 			var button = row.FindElement(By.CssSelector("input.connectfee"));
 			button.Click();
 			var confirm = browser.FindElementByCssSelector(".window .click.ok");
 			confirm.Click();
 
-			targetPlan = browser.FindElementByXPath("//td[contains(.,'Оптимальный')]");
+			targetPlan = browser.FindElementByXPath("//td[contains(.,'" + planTo.Name + "')]");
 			row = targetPlan.FindElement(By.XPath(".."));
 			var status = row.FindElement(By.CssSelector(".paragraph")).Text;
 			Assert.That(status,Is.EqualTo("Текущий"));
+
+			var client = Client;
+			DbSession.Refresh(client);
+			var appeal = DbSession.Query<Appeal>().FirstOrDefault();
+			var writeoff = DbSession.Query<UserWriteOff>().FirstOrDefault();
+			Assert.That(writeoff,Is.Not.Null);
+			Assert.That(appeal, Is.Not.Null);
+			Assert.That(appeal.Message, Is.StringContaining(planFrom.Name));
+			Assert.That(appeal.Message, Is.StringContaining("(" + planFrom.Price+")"));
+			Assert.That(appeal.Message, Is.StringContaining(planTo.Name));
+			Assert.That(appeal.Message, Is.StringContaining("("+planTo.Price+")"));
+			Assert.That(appeal.Message, Is.StringContaining(writeoff.Sum.ToString()));
+
 		}
 	}
 }
