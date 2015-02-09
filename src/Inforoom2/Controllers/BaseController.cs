@@ -279,7 +279,7 @@ namespace Inforoom2.Controllers
 			if (errors.Length == 0) {
 				DbSession.Save(callMeBackTicket);
 				if(callMeBackTicket.Client != null) {
-					var appeal = new Appeal("Клиент создал запрос на обратный звонок #" + callMeBackTicket.Id, 
+					var appeal = new Appeal("Клиент создал запрос на обратный звонок № " + callMeBackTicket.Id, 
 						callMeBackTicket.Client, AppealType.FeedBack) {
 							Employee = GetCurrentEmployee()
 						};
