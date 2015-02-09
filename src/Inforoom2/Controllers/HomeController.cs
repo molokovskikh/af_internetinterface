@@ -33,6 +33,11 @@ namespace Inforoom2.Controllers
 			return View();
 		}
 
+		public ActionResult PricesList()
+		{
+			return View("ExtraServicesPriceList");
+		}
+
 		public ActionResult ViewNewsBlock(int id)
 		{
 			var newsBlock = DbSession.Get<NewsBlock>(id);
@@ -44,7 +49,5 @@ namespace Inforoom2.Controllers
 		{
 			return RedirectToActionPermanent("Index");
 		}
-
-
-}
+	}
 }
