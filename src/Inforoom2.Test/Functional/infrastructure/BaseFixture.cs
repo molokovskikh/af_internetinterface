@@ -463,67 +463,67 @@ namespace Inforoom2.Test.Functional
 
 		public void ImportSwitchesAddresses()
 		{
-			var pasrser = new YandexParser(DbSession);
-			string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"switch.xlsx");
-			ISheet sheet;
-			XSSFWorkbook hssfwb;
-			using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read))
-			{
-				hssfwb = new XSSFWorkbook(file);
-			}
+			//var pasrser = new YandexParser(DbSession);
+			//string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"switch.xlsx");
+			//ISheet sheet;
+			//XSSFWorkbook hssfwb;
+			//using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read))
+			//{
+			//	hssfwb = new XSSFWorkbook(file);
+			//}
 
-			var city = new City { Name = "Белгород" };
-			var region = new Region { City = city, Name = "Белгород", RegionOfficePhoneNumber = "8-200-100-200" };
-			DbSession.Save(city);
-			DbSession.Save(region);
+			//var city = new City { Name = "Белгород" };
+			//var region = new Region { City = city, Name = "Белгород", RegionOfficePhoneNumber = "8-200-100-200" };
+			//DbSession.Save(city);
+			//DbSession.Save(region);
 
-			sheet = hssfwb.GetSheet("Дома");
-			for (int row = 1; row <= sheet.LastRowNum; row++)
-			{
-				var yad = pasrser.GetYandexAddress(region.Name, sheet.GetRow(row).GetCell(1).ToString(), sheet.GetRow(row).GetCell(2).ToString());
-				if (yad != null)
-				{
-					CreateSwitchAddresses(yad);
-				}
-			}
+			//sheet = hssfwb.GetSheet("Дома");
+			//for (int row = 1; row <= sheet.LastRowNum; row++)
+			//{
+			//	var yad = pasrser.GetYandexAddress(region.Name, sheet.GetRow(row).GetCell(1).ToString(), sheet.GetRow(row).GetCell(2).ToString());
+			//	if (yad != null)
+			//	{
+			//		CreateSwitchAddresses(yad);
+			//	}
+			//}
 
-			city = new City { Name = "Борисоглебск" };
-			region = new Region { City = city, Name = "Борисоглебск", RegionOfficePhoneNumber = "8-200-100-201" };
-			DbSession.Save(city);
-			DbSession.Save(region);
+			//city = new City { Name = "Борисоглебск" };
+			//region = new Region { City = city, Name = "Борисоглебск", RegionOfficePhoneNumber = "8-200-100-201" };
+			//DbSession.Save(city);
+			//DbSession.Save(region);
 
-			string textFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"switches.txt");
-			var sb = new StringBuilder();
-			using (var sr = new StreamReader(textFile, Encoding.GetEncoding("windows-1251")))
-			{
-				String line;
-				while ((line = sr.ReadLine()) != null)
-				{
-					sb.AppendLine(line);
-				}
-			}
-			string borisoglebsk = sb.ToString();
-			borisoglebsk = RemoveSpaces(borisoglebsk);
+			//string textFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"switches.txt");
+			//var sb = new StringBuilder();
+			//using (var sr = new StreamReader(textFile, Encoding.GetEncoding("windows-1251")))
+			//{
+			//	String line;
+			//	while ((line = sr.ReadLine()) != null)
+			//	{
+			//		sb.AppendLine(line);
+			//	}
+			//}
+			//string borisoglebsk = sb.ToString();
+			//borisoglebsk = RemoveSpaces(borisoglebsk);
 
-			var streetRows = borisoglebsk.Split(new[] { ';' }).ToList();
-			foreach (var row in streetRows)
-			{
-				var str = row.Split(':');
-				if (str.Length > 1)
-				{
-					var houseString = str[1];
+			//var streetRows = borisoglebsk.Split(new[] { ';' }).ToList();
+			//foreach (var row in streetRows)
+			//{
+			//	var str = row.Split(':');
+			//	if (str.Length > 1)
+			//	{
+			//		var houseString = str[1];
 
-					foreach (var houseNumber in houseString.Split(','))
-					{
-						var yandexAddress = pasrser.GetYandexAddress(region.Name, str[0], houseNumber);
-						if (yandexAddress != null)
-						{
-							CreateSwitchAddresses(yandexAddress);
-						}
-					}
-				}
-			}
-			DbSession.Flush();
+			//		foreach (var houseNumber in houseString.Split(','))
+			//		{
+			//			var yandexAddress = pasrser.GetYandexAddress(region.Name, str[0], houseNumber);
+			//			if (yandexAddress != null)
+			//			{
+			//				CreateSwitchAddresses(yandexAddress);
+			//			}
+			//		}
+			//	}
+			//}
+			//DbSession.Flush();
 		}
 
 		private void CreateSwitchAddresses(YandexAddress yandexAddress)
