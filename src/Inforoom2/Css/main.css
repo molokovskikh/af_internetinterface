@@ -56,9 +56,9 @@ a {text-decoration: none;color: #474747;}
         font-size: 20px;left: 70px;padding-bottom: 3px;position: absolute;padding: 5px 27px;}
 .plughit {background: none repeat scroll 0 0 #a51b21;color: #ffffff;}
 .pricelistlink {position: absolute;left: 123px;top: 552px;}
-.prices {position: absolute;left: 132px;top: 25px;}
+.prices {width: 860px;position: absolute;left: 155px;top: 25px;}
 .pricestable {display: inline-block;background: #f1f1f1;line-height: 18px;border: 3px solid #a81c22;border-collapse: collapse;border-radius: 15px;padding-bottom: 5px;}
-.pricesmenu {width: 732px;height: 60px;}
+.pricesmenu {height: 60px;}
 .pricetitle {background: none repeat scroll 0 0 #e3dfdf;border-collapse: collapse;color: #403f3f;cursor: pointer;
 						 font-size: 16px;height: 57px;margin: 0;padding: 0 10px 0 5px;position: relative;vertical-align: middle;width: 117px;}
 .pricetitle[colspan] {text-align: center;border-radius: 12px 12px 0 0;color: #2e2d2d; font-size: 22px;font-family: PDFDinTextPro; font-weight: normal;}
