@@ -116,6 +116,12 @@ namespace Inforoom2.Controllers
 
 		protected override void OnException(ExceptionContext filterContext)
 		{
+			//Формируем сообщение об ошибке
+			var builder = CollectDebugInfo();
+			var msg = filterContext.Exception.ToString();
+			builder.Append(msg);
+			EmailSender.SendError(builder.ToString());
+
 			var showErrorPage = false;
 			bool.TryParse(ConfigurationManager.AppSettings["ShowErrorPage"], out showErrorPage);
 			DeleteCookie("SuccessMessage");
@@ -127,12 +133,6 @@ namespace Inforoom2.Controllers
 			}
 
 			log.ErrorFormat("{0} {1}", filterContext.Exception.Message, filterContext.Exception.StackTrace);
-
-			//Формируем сообщение об ошибке
-			var builder = CollectDebugInfo();
-			var msg = filterContext.Exception.ToString();
-			builder.Append(msg);
-			EmailSender.SendError(builder.ToString());
 		}
 
 		protected StringBuilder CollectDebugInfo()

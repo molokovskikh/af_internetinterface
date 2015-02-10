@@ -78,9 +78,6 @@ namespace Inforoom2.Models
 		public virtual UserWriteOff RequestChangePlan(Plan planToSwitchOn)
 		{
 			var price = Plan.GetTransferPrice(planToSwitchOn);
-			if (IsFreePlanChange) {
-				return SwitchPlan(planToSwitchOn, 0);
-			}
 			if (!IsEnoughBalance(price))
 			{
 				return null;
@@ -104,11 +101,6 @@ namespace Inforoom2.Models
 			if (Client.Internet.ActivatedByUser)
 				Client.Endpoints.ForEach(e=>e.PackageId = Plan.PackageId);
 			return writeOff;
-		}
-
-		public virtual bool IsFreePlanChange
-		{
-			get { return LastTimePlanChanged.AddMonths(1) < DateTime.Now; }
 		}
 
 		public virtual bool IsEnoughBalance(decimal sum)

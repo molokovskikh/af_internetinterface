@@ -253,19 +253,22 @@ namespace Inforoom2.Controllers
 		public ActionResult ChangePlan([EntityBinder] Plan plan)
 		{
 			var client = CurrentClient;
+			InitPlans(client);
 			ViewBag.Client = client;
 			//todo - наверно надо подумать как эти провеки засунуть куда следует
 			var beginDate = client.WorkingStartDate ?? new DateTime();
-			if (beginDate == DateTime.MinValue || beginDate.AddMonths(2) >= DateTime.Now)
+			if (beginDate == DateTime.MinValue || beginDate.AddMonths(2) >= DateTime.Now) {
+				ErrorMessage("Нельзя менять тариф, в первые 2 месяца после подключения");
 				return View("Plans");
+			}
 
 			var oldPlan = client.PhysicalClient.Plan;
 			var result = client.PhysicalClient.RequestChangePlan(plan);
 			if (result == null) {
 				ErrorMessage("Не достаточно средств для смены тарифного плана");
-				InitPlans(client);
 				return View("Plans");
 			}
+
 			DbSession.Save(client);
 			DbSession.Save(result);
 			SuccessMessage("Тариф изменен");
