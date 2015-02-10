@@ -242,6 +242,7 @@ namespace InternetInterface.Controllers
 			SendRegisterParam(client);
 			PropertyBag["ChHouse"] = new House();
 			PropertyBag["Client"] = client;
+			PropertyBag["dealersList"] = DbSession.Query<Partner>().ToList();
 		}
 
 		[AccessibleThrough(Verb.Get)]
