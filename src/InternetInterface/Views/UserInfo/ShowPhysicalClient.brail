@@ -125,6 +125,15 @@
 			</td>
 		</tr>
 		<% end %>
+		
+		<% if _client.Dealer != null: %>
+		<tr>
+			<td>
+				<span class="description">Привел клиента в компанию:</span> ${_client.Dealer.Name}
+			</td>
+		</tr>
+		<% end %>
+
 		<% if MapPartner.AccesPartner("SSI"): %>
 		<tr>
 			<td><span class="description">Дата регистрации:</span> ${_client.RegDate.ToShortDateString()}</td>

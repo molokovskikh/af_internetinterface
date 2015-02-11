@@ -34,7 +34,10 @@ namespace InternetInterface.Controllers
 		{
 			var request = new Request();
 			PropertyBag["request"] = request;
-			PropertyBag["partnersList"] = DbSession.Query<Partner>().ToList();
+			var partners = DbSession.Query<Partner>().ToList();
+			var myPartner = partners.Where(p => p.Login == AuthenticationFilter.GetLoginFromCookie(Context)).ElementAt(0);
+			PropertyBag["myPartner"] = (myPartner == null) ? 0 : myPartner.Id;
+			PropertyBag["partnersList"] = partners;
 			if (IsPost) {
 				SetARDataBinder(AutoLoadBehavior.NullIfInvalidKey);
 				BindObjectInstance(request, "request");

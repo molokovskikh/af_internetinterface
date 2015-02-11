@@ -82,7 +82,8 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.IsStreetValidated = false;
 			ViewBag.IsHouseValidated = false;
 			var clientRequest = new ClientRequest() {
-				IsContractAccepted = true
+				IsContractAccepted = true,
+				RequestAuthor = GetCurrentEmployee()
 			};
 
 			if (!string.IsNullOrEmpty(UserCity)) {
@@ -95,7 +96,7 @@ namespace InforoomControlPanel.Controllers
 				ViewBag.IsCityValidated = true;
 				ViewBag.IsStreetValidated = true;
 
-				int housen = 0;
+				int housen;
 				int.TryParse(house, out housen);
 				if (housen != 0) {
 					ViewBag.IsHouseValidated = true;

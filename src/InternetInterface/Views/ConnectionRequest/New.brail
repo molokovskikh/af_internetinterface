@@ -78,7 +78,7 @@ ${FormHelper.FormTag("", { @class : "div-form" })}
 	${app.Label("request.Registrator")}
 	<select id="SelectRegistrator" name="request.Registrator.Id">
 		<% for partner in partnersList: %>
-			<option value="${partner.Id}">!{partner.Name}</option>
+			<option value="${partner.Id}" ${"selected" if partner.Id == myPartner}>!{partner.Name}</option>
 		<% end %>
 	</select>
 	${app.Error("request.Registrator")}
