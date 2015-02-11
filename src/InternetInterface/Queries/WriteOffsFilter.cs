@@ -144,7 +144,7 @@ and w.WriteOffDate <= :EndDate";
 			var query = SetParameters(Session.CreateSQLQuery(string.Format(sql, selectPart)));
 
 			var result = query.ToList<WriteOffsItem>();
-			result.ForEach(e => e.Prepare(ExportInExcel));
+			//result.ForEach(e => e.Prepare(ExportInExcel));
 			return result.Cast<BaseItemForTable>().ToList();
 		}
 
