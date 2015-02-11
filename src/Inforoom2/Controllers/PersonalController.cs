@@ -271,7 +271,8 @@ namespace Inforoom2.Controllers
 
 			DbSession.Save(client);
 			DbSession.Save(result);
-			SuccessMessage("Тариф изменен");
+			var warning = (client.GetWorkDays() <= 3) ? " Обратите внимание, что у вас низкий баланс!" : "";
+			SuccessMessage("Тариф успешно изменен." + warning);
 			var msg = string.Format("Изменение тарифа был изменен с '{0}'({1}) на '{2}'({3}). Стоимость перехода: {4} руб.", oldPlan.Name, oldPlan.Price, plan.Name, plan.Price, result.Sum);
 			var appeal = new Appeal(msg, client, AppealType.User)
 			{
