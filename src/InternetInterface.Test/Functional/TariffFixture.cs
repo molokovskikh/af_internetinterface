@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Linq;
-using Headless;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NHibernate.Hql.Ast.ANTLR.Tree;
 using NHibernate.Linq;
 using NUnit.Framework;
+using Test.Support.Selenium;
 
 namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
-	public class TariffFixture : HeadlessFixture
+	public class TariffFixture : SeleniumFixture
 	{
 		[Test]
 		public void Edit_tariff()
@@ -26,17 +26,12 @@ namespace InternetInterface.Test.Functional
 			AssertText(tariff.Name);
 			Click(tariff.Name);
 			AssertText("Редактирование тарифа");
-			Select("tariff_Region_Id", region.Id);
+			Css("#tariff_Region_Id").SelectByValue(region.Id.ToString());
 			ClickButton("Сохранить");
 			AssertText("Сохранено");
 
 			session.Refresh(tariff);
 			Assert.AreEqual(region, tariff.Region);
-		}
-
-		private void Select(string id, object value)
-		{
-			page.Find<HtmlList>().ById(id).Select(value.ToString());
 		}
 	}
 }

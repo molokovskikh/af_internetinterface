@@ -94,7 +94,7 @@ namespace InternetInterface.Test.Integration
 			Assert.That(email.Body, Is.StringContaining("Зарегистрировано внесение изменений заказа для Юр.Лица"));
 			session.Flush();
 			session.Refresh(client);
-			client.Appeals.ForEach(i=>Console.WriteLine(i.Appeal));
+			//client.Appeals.ForEach(i=>Console.WriteLine(i.Appeal));
 			Assert.That(client.Appeals.Where(p => p.Appeal.Contains("Зарегистрировано внесение изменений заказа для Юр.Лица")).ToList().Count, Is.EqualTo(1));
 		}
 
@@ -106,7 +106,7 @@ namespace InternetInterface.Test.Integration
 			session.Update(order);
 			session.Flush();
 			session.Refresh(client);
-			client.Appeals.ForEach(i => Console.WriteLine(i.Appeal));
+			//client.Appeals.ForEach(i => Console.WriteLine(i.Appeal));
 			Assert.That(email.Body, Is.StringContaining("Зарегистрировано внесение изменений заказа для Юр.Лица"));
 			Assert.That(client.Appeals.Where(p => p.Appeal.Contains("Зарегистрировано внесение изменений заказа для Юр.Лица")).ToList().Count, Is.EqualTo(1));
 		}

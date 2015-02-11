@@ -4,11 +4,12 @@ using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NHibernate.Linq;
 using NUnit.Framework;
+using Test.Support.Selenium;
 
 namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
-	public class ClientFixture : HeadlessFixture
+	public class ClientFixture : SeleniumFixture
 	{
 		[SetUp]
 		public void Setup()
@@ -31,11 +32,13 @@ namespace InternetInterface.Test.Functional
 			session.Save(client);
 			Open(client.Redirect());
 			AssertText("Информация по клиенту");
-			Input("BalanceText", "500");
-			ClickButton("Пополнить баланс");
+			Css("#BalanceText").SendKeys("500");
+			Click("Пополнить баланс");
 
 			client.Refresh();
 			var payment = client.Payments.Last(p => p.Sum == 500);
+			Css("#show_payments").Click();
+			WaitForText(payment.Id.ToString());
 			Click(payment.Id.ToString());
 			AssertText("ДОГОВОР ПОРУЧЕНИЯ");
 		}

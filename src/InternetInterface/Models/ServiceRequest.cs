@@ -136,7 +136,7 @@ namespace InternetInterface.Models
 		[HasMany(ColumnKey = "Request", OrderBy = "RegDate", Lazy = true, Cascade = ManyRelationCascadeEnum.AllDeleteOrphan)]
 		public virtual IList<ServiceIteration> Iterations { get; set; }
 
-		public virtual bool IsOverdue { get; private set; }
+		public virtual bool IsOverdue { get; protected set; }
 
 		public virtual void Calculate(SaleSettings settings)
 		{
