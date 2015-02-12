@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Net;
 using System.Web.Mvc;
+using System.Xml.Linq;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
 using NHibernate.Linq;
@@ -20,8 +21,11 @@ namespace Inforoom2.Controllers
 			if (client.Status.Type == StatusType.BlockedForRepair)
 				client.SetStatus(StatusType.Worked, DbSession);
 
+			DbSession.Save(client);
+			SuccessMessage("Работа возобновлена");
 			return RedirectToAction("Index", "Home");
 		}
+
 		public ActionResult Index(int disable = 0, string ip ="")
 		{
 #if !DEBUG
@@ -37,7 +41,7 @@ namespace Inforoom2.Controllers
 #else
 		Client client;
 		ClientEndpoint endpoint;
-		if(string.IsNullOrEmpty(ip))
+		if (CurrentClient != null)
 		{
 			 client = CurrentClient;
 			 endpoint = client.Endpoints.FirstOrDefault();
@@ -73,6 +77,10 @@ namespace Inforoom2.Controllers
 
 				SceHelper.UpdatePackageId(DbSession, client);
 				DbSession.Save(client);
+
+				if (!client.HasPassportData())
+					return RedirectToAction("FirstVisit","Personal");
+
 				return RedirectToAction("Index","Home");
 			}
 			var services = DbSession.Query<Service>().Where(s => s.IsActivableFromWeb);

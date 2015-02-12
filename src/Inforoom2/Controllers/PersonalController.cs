@@ -31,7 +31,7 @@ namespace Inforoom2.Controllers
 	{
 		public ActionResult FirstVisit()
 		{
-			if (CurrentClient.Lunched)
+			if (CurrentClient.Lunched && CurrentClient.HasPassportData())
 				return RedirectToAction("Profile");
 			var physicalClient = DbSession.Get<PhysicalClient>(CurrentClient.PhysicalClient.Id);
 			//TODO Придумать что с этим делать

@@ -60,6 +60,7 @@ namespace Inforoom2.Controllers
 				Employee = GetCurrentEmployee()
 			};
 			DbSession.Save(appeal);
+			SuccessMessage("Работа возобновлена");
 			return RedirectToAction("Service", "Personal");
 		}
 

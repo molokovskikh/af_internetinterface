@@ -243,19 +243,14 @@ namespace Inforoom2.Models
 			return "г. Москва, ул. Вильнюсская, д.8, к.2";
 		}
 
-		public virtual bool ShowWarningBecauseNoPassport()
+		public virtual bool HasPassportData()
 		{
-			if (PhysicalClient == null)
-				return false;
-
-			if (!IsWorkStarted())
-				return false;
-
-			var dontHavePassportData = string.IsNullOrEmpty(PhysicalClient.PassportNumber);
-			var goodMoney = Balance > 0;
-			var date = SystemTime.Now() > WorkingStartDate.Value.AddDays(7);
-
-			return dontHavePassportData && goodMoney && date;
+			var hasPassportData = !string.IsNullOrEmpty(PhysicalClient.PassportNumber);
+			hasPassportData = hasPassportData && !string.IsNullOrEmpty(PhysicalClient.PassportSeries);
+			hasPassportData = hasPassportData && !string.IsNullOrEmpty(PhysicalClient.PassportResidention);
+			hasPassportData = hasPassportData && PhysicalClient.PassportDate != DateTime.MinValue;
+			hasPassportData = hasPassportData && !string.IsNullOrEmpty(PhysicalClient.RegistrationAddress);
+			return hasPassportData;
 		}
 	}
 
