@@ -4,12 +4,9 @@ using System.ComponentModel;
 using System.Linq;
 using Common.Tools;
 using Inforoom2.Models.Services;
+using InternetInterface.Models;
 using NHibernate;
-using NHibernate.Linq;
-using NHibernate.Mapping;
 using NHibernate.Mapping.Attributes;
-using NHibernate.Validator.Constraints;
-
 
 namespace Inforoom2.Models
 {
@@ -129,6 +126,16 @@ namespace Inforoom2.Models
 		public virtual decimal GetInterval()
 		{
 			return (((DateTime) RatedPeriodDate).AddMonths(1) - (DateTime) RatedPeriodDate).Days + DebtDays;
+		}
+
+		/// <summary>
+		/// Получить число дней работы клиента при текущем балансе до авт. блокировки (в биллинге не использовать!)
+		/// </summary>
+		/// <returns>Расчётное кол-во дней работы без пополнения баланса</returns>
+		public virtual int GetWorkDays()
+		{
+			var priceInDay = Plan.Price/DateTime.Now.DaysInMonth();		// ToDo Улучшить алгоритм вычисления
+			return (int)Math.Floor(Balance/priceInDay);
 		}
 
 		public virtual decimal GetSumForRegularWriteOff()
