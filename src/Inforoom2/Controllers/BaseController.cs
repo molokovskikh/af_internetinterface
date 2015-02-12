@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
+using System.Web.UI.WebControls;
 using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
@@ -140,23 +141,34 @@ namespace Inforoom2.Controllers
 			var builder = new StringBuilder(1000);
 			if(CurrentClient != null)
 				builder.Append("Клиент: " + CurrentClient.Id + " \n ");
+
+			//Не должно случаться, но добавил, так как боюсь циклических исключений
+			//Получаем ip, ловим исключение, собираем инфо, получаем ip и так до бесконечности
+			try {
+				var tryClient = Client.GetClientForIp(Request.UserHostAddress, DbSession);
+				if (tryClient != null)
+					builder.Append("Клиент (по аренде): " + tryClient.Id + " \n ");
+			}
+			catch (Exception e) {
+				builder.Append("Поймали циклическое исключение на попытке получить ip клиента \n ");
+			}
+
 			builder.Append("Дата: "+DateTime.Now+" \n ");
+			builder.Append("Referrer: " + Request.UrlReferrer + " \n ");
+			builder.Append("Query: " + Request.QueryString + " \n ");
 			builder.Append("Ip: " + Request.UserHostAddress + " \n ");
-			builder.Append("Форма: \n ");
+			builder.Append("Форма:] \n ");
 			foreach (var key in Request.Form.AllKeys)
 			{
-				//if(key == "password") {
-				//	builder.Append("Password : !!!Restricted!!! \n");
-				//	continue;
-				//}
 				builder.Append(key);
 				builder.Append(" : ");
 				builder.Append(Request.Form[key]);
 				builder.Append("\n");
 			}
+			builder.Append("]");
 			builder.Append("Запрос: " +Request.FilePath+ " : "+ Request.QueryString + " \n ");
 			builder.Append("Браузер: " +Request.Browser.Browser + " \n ");
-			builder.Append("Куки: \n ");
+			builder.Append("Куки:[ \n ");
 			foreach (var key in Request.Cookies.AllKeys)
 			{
 				builder.Append(key);
@@ -164,6 +176,7 @@ namespace Inforoom2.Controllers
 				builder.Append(GetCookie(key));
 				builder.Append("\n");
 			}
+			builder.Append("]");
 			return builder;
 		}
 

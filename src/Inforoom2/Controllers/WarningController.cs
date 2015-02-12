@@ -1,7 +1,10 @@
-﻿using System.Linq;
+﻿using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using System.Xml.Linq;
+using Common.Tools;
+using Inforoom2.Components;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
 using NHibernate.Linq;
@@ -28,37 +31,17 @@ namespace Inforoom2.Controllers
 
 		public ActionResult Index(int disable = 0, string ip ="")
 		{
-#if !DEBUG
-		var addrs = Request.UserHostAddress;
-		var address = IPAddress.Parse(addrs);
-		var leases = DbSession.Query<Lease>().Where(l => l.Ip == address).ToList();
-		var lease = leases.FirstOrDefault(l => l.Endpoint != null && l.Endpoint.Client != null);
-		if (lease == null) {
-			return RedirectToAction("Index","Home");
-			}
-		var endpoint = lease.Endpoint;
-		var client = endpoint.Client;
-#else
-		Client client;
-		ClientEndpoint endpoint;
-		if (CurrentClient != null)
-		{
-			 client = CurrentClient;
-			 endpoint = client.Endpoints.FirstOrDefault();
-		}
-		else
-		{
-			var address = IPAddress.Parse(ip);
-			var leases = DbSession.Query<Lease>().Where(l => l.Ip == address).ToList();
-			var lease = leases.FirstOrDefault(l => l.Endpoint != null
-		                                       && l.Endpoint.Client != null);
-			endpoint = lease.Endpoint;
-			if (lease.Endpoint == null || lease.Endpoint.Client == null) {
-				return RedirectToAction("Index","Home");
-			}
-			 client = endpoint.Client;
-		}
+			var ipstring = Request.UserHostAddress;
+#if DEBUG
+			ipstring = ip;
 #endif
+			var endpoint = ClientEndpoint.GetEndpointForIp(ipstring, DbSession);
+			if (endpoint == null)
+			{
+				EmailSender.SendEmail("asarychev@analit.net", "Редидеркт с варнинга на главную",CollectDebugInfo().ToString());
+				return RedirectToAction("Index", "Home");
+			}
+			var client = endpoint.Client;
 
 			if (disable != 0) {
 				if (client.Status.Type == StatusType.BlockedForRepair) {
@@ -74,6 +57,8 @@ namespace Inforoom2.Controllers
 					};
 					DbSession.Save(appeal);
 				}
+				DbSession.Save(client);
+				DbSession.Flush();
 
 				SceHelper.UpdatePackageId(DbSession, client);
 				DbSession.Save(client);

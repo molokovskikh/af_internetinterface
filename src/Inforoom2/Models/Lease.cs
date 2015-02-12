@@ -1,5 +1,8 @@
-﻿using System.Net;
+﻿using System.Linq;
+using System.Net;
 using Inforoom2.Helpers;
+using NHibernate;
+using NHibernate.Linq;
 using NHibernate.Mapping.Attributes;
 
 namespace Inforoom2.Models
@@ -18,5 +21,12 @@ namespace Inforoom2.Models
 
 		[Property]
 		public virtual int Port { get; set; }
+
+		public static Lease GetLeaseForIp(string ipstr, ISession session)
+		{
+			var address = IPAddress.Parse(ipstr);
+			var lease = session.Query<Lease>().FirstOrDefault(l => l.Ip == address);
+			return lease;
+		}
 	}
 }

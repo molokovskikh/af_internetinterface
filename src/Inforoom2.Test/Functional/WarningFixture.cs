@@ -21,11 +21,17 @@ namespace Inforoom2.Test.Functional
 			billing.ProcessWriteoffs();
 			DbSession.Refresh(client);
 			Assert.That(client.ShowBalanceWarningPage, Is.True, "Клиенту не отображается страница Warning");
-			LoginForClient(client);
-
-			Open("Warning");
+			OpenWarningPage(client);
 		}
 
+		protected void OpenWarningPage(Client client)
+		{
+			LoginForClient(client);
+			var endpoint = client.Endpoints.First();
+			var lease = DbSession.Query<Lease>().First(i => i.Endpoint == endpoint);
+			var ipstr = lease.Ip.ToString();
+			Open("Warning?ip=" + ipstr);
+		}
 
 		[Test(Description = "Низкий баланс")]
 		public void LowBalancePhysical()
@@ -60,8 +66,7 @@ namespace Inforoom2.Test.Functional
 		{
 			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("заблокированный по сервисной заявке"));
 			Assert.That(client.Status.Type, Is.EqualTo(StatusType.BlockedForRepair), "Клиенту не заблокирован");
-			LoginForClient(client);
-			Open("Warning");
+			OpenWarningPage(client);
 
 			AssertText("проведения работ по сервисной заявке");
 			Css(".repairCompleted").Click();
@@ -79,8 +84,7 @@ namespace Inforoom2.Test.Functional
 			Assert.That(client.Status.Type, Is.EqualTo(StatusType.VoluntaryBlocking), "Клиент не заблокирован");
 			Assert.That(client.ClientServices.FirstOrDefault(i => i.Service == blockAccountService), Is.Not.Null, "У клиента нет услуги добровольной блокировки");
 
-			LoginForClient(client);
-			Open("Warning");
+			OpenWarningPage(client);
 			AssertText("Добровольная блокировка");
 			Css(".unfreeze").Click();
 
@@ -92,17 +96,15 @@ namespace Inforoom2.Test.Functional
 			Assert.That(client.ClientServices.FirstOrDefault(i => i.Service == blockAccountService), Is.Null, "У клиента все еще есть услуги добровольной блокировки");
 		}
 
-		[Test(Description = "неподключенный клиент"),Ignore]
-		public void NewClient()
+		[Test(Description = "Редирект на главную, в случае если точка подключения не найдена")]
+		public void BadLeaseClient()
 		{
+			//У неподключенного клиента нет точки подключения
 			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("неподключенный клиент"));
-			Assert.That(client.IsWorkStarted(),Is.False,"Клиент должен быть новым");
-			LoginForClient(client);
-			Open("Warning");
-
-			AssertText("внесите первый платеж");
-			var buttons = browser.FindElementsByCssSelector(".warning");
-			Assert.That(buttons.Count,Is.EqualTo(0),"Клиенту не должна отображаться кнопка продолжения работы");
+			var lease = DbSession.Query<Lease>().First(i => i.Endpoint == null);
+			var ipstr = lease.Ip.ToString();
+			Open("Warning?ip=" + ipstr);
+			AssertText("Протестировать скорость");
 		}
 	}
 }

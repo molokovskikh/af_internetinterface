@@ -20,6 +20,7 @@ namespace Inforoom2.Models
 		{
 			Endpoints = new List<ClientEndpoint>();
 			ClientServices = new List<ClientService>();
+			Payments = new List<Payment>();
 		}
 		[Property]
 		public virtual bool Disabled { get; set; }
@@ -76,6 +77,11 @@ namespace Inforoom2.Models
 		[Key(1, Column = "Client")]
 		[OneToMany(2, ClassType = typeof (ClientService))]
 		public virtual IList<ClientService> ClientServices { get; set; }
+
+		[Bag(0, Table = "Payments", Cascade = "all-delete-orphan")]
+		[Key(1, Column = "Client")]
+		[OneToMany(2, ClassType = typeof(Payment))]
+		public virtual IList<Payment> Payments { get; set; }
 		
 		[Bag(0,Table = "ClientEndpoints", Cascade = "all-delete-orphan")]
 		[Key(1, Column = "client")]
@@ -258,6 +264,14 @@ namespace Inforoom2.Models
 			hasPassportData = hasPassportData && PhysicalClient.PassportDate != DateTime.MinValue;
 			hasPassportData = hasPassportData && !string.IsNullOrEmpty(PhysicalClient.RegistrationAddress);
 			return hasPassportData;
+		}
+
+		public static Client GetClientForIp(string ipstr, ISession dbSession)
+		{
+			var endpoint = ClientEndpoint.GetEndpointForIp(ipstr, dbSession);
+			if (endpoint != null)
+				return endpoint.Client;
+			return null;
 		}
 	}
 

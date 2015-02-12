@@ -36,7 +36,6 @@ namespace Inforoom2.Test.Functional
 		protected ISession DbSession;
 		protected string DefaultClientPasword;
 		protected string DefaultIpString = "192.168.0.1";
-		protected int LeaseIpCounter;
 		protected int EndpointIpCounter;
 		
 
@@ -268,7 +267,7 @@ namespace Inforoom2.Test.Functional
 
 			//У неподключенного клиента уже есть аренда ip
 			//Но нет точки подключения
-			lease = CreateLease(unpluggedClient.Endpoints.First());
+			lease = DbSession.Query<Lease>().First(i => i.Endpoint == unpluggedClient.Endpoints.First());
 			lease.Endpoint = null;
 			DbSession.Save(lease);
 			unpluggedClient.Endpoints.Remove(unpluggedClient.Endpoints.First());
@@ -383,6 +382,9 @@ namespace Inforoom2.Test.Functional
 				endpoint.Switch = item.Switch;
 				endpoint.Client = obj;
 			}
+			DbSession.Save(obj);
+			var lease = CreateLease(obj.Endpoints.First());
+			DbSession.Save(lease);
 			return obj;
 		}
 

@@ -49,7 +49,7 @@ else if(client.PhysicalClient != null)
 				<input class="button unfreeze" type="submit" value="Отключить" />
 			}
 		}
-		else if (!client.IsWorkStarted())
+		else if (client.Payments.Count == 0)
 		{
 			<p class="info">
 				Для начала работы внесите первый платеж.
