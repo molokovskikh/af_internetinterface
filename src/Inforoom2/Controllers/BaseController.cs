@@ -127,8 +127,10 @@ namespace Inforoom2.Controllers
 			bool.TryParse(ConfigurationManager.AppSettings["ShowErrorPage"], out showErrorPage);
 			DeleteCookie("SuccessMessage");
 
-			if(DbSession.Transaction.IsActive)
+			if (DbSession.Transaction.IsActive) {
+				EmailSender.SendEmail("asarychev@analit.net", "Rollback транзакции в OnException", "");
 				DbSession.Transaction.Rollback();
+			}
 			if(DbSession.IsOpen)
 				DbSession.Close();
 
@@ -227,8 +229,9 @@ namespace Inforoom2.Controllers
 			ViewBag.ControllerName = filterContext.RouteData.Values["controller"].ToString();
 			ViewBag.CallMeBackTicket = new CallMeBackTicket();
 			if (!CheckNetworkClient())
-				RedirectToAction("Index","Home");
-
+				RedirectToAction("Index", "Home");
+			else
+				ViewBag.NetworkClientFlag = true;
 			if (CurrentClient != null) {
 				var sb = new StringBuilder();
 				sb.AppendFormat("Здравствуйте, {0} {1}. Ваш баланс: {2} руб.", CurrentClient.PhysicalClient.Name, 

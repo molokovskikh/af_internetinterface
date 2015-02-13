@@ -35,6 +35,10 @@ namespace Inforoom2.Helpers
 				controller.DbSession = MvcApplication.SessionFactory.GetCurrentSession();
 		}
 
+		/// <summary>
+		/// Закрытие транзакции и сессии после того, как контроллер отработал
+		/// </summary>
+		/// <param name="filterContext"></param>
 		public override void OnResultExecuted(ResultExecutedContext filterContext)
 		{
 			var session = SessionFactory.GetCurrentSession();
