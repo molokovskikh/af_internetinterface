@@ -204,7 +204,7 @@ namespace Inforoom2.Controllers
 			if(string.IsNullOrEmpty(Request.UserHostAddress))
 				return;
 			var endpoint = ClientEndpoint.GetEndpointForIp(Request.UserHostAddress,DbSession);
-			if (endpoint != null && endpoint.Client.PhysicalClient != null)
+			if (endpoint != null && endpoint.Client.PhysicalClient != null) //Юриков авторизовывать не нужно
 			{
 				SetCookie("networkClient","true");
 				this.Authenticate(ViewBag.ActionName, ViewBag.ControllerName, endpoint.Client.Id.ToString(), true);
@@ -227,7 +227,10 @@ namespace Inforoom2.Controllers
 			}
 			ViewBag.ActionName = filterContext.RouteData.Values["action"].ToString();
 			ViewBag.ControllerName = filterContext.RouteData.Values["controller"].ToString();
+			//todo куда это девать?
 			ViewBag.CallMeBackTicket = new CallMeBackTicket();
+
+			ProcessRegionPanel();
 			if (!CheckNetworkClient())
 				RedirectToAction("Index", "Home");
 			else

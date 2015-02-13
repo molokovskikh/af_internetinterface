@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net;
 using Common.Tools;
 using Inforoom2.Helpers;
@@ -47,18 +48,24 @@ namespace Inforoom2.Models
 
 			var ips = session.Query<StaticIp>().ToList();
 			var address = IPAddress.Parse(ipstr);
-			var endpoint = ips.Where(ip =>
-			{
-				if (ip.Ip == address.ToString())
-					return true;
-				if (ip.Mask != null)
-				{
-					var subnet = SubnetMask.CreateByNetBitLength(ip.Mask.Value);
-					if (address.IsInSameSubnet(IPAddress.Parse(ip.Ip), subnet))
+			ClientEndpoint endpoint = null;
+			try {
+				endpoint = ips.Where(ip => {
+					if (ip.Ip == address.ToString())
 						return true;
-				}
-				return false;
-			}).Select(s => s.EndPoint).FirstOrDefault();
+					if (ip.Mask != null) {
+						var subnet = SubnetMask.CreateByNetBitLength(ip.Mask.Value);
+						if (address.IsInSameSubnet(IPAddress.Parse(ip.Ip), subnet))
+							return true;
+					}
+					return false;
+				}).Select(s => s.EndPoint).FirstOrDefault();
+			}
+			catch (Exception e) {
+				//ничего не делаем пока
+				endpoint = null;
+			}
+
 			return endpoint;
 		}
 	}
