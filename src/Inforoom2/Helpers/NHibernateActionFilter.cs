@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
+using Inforoom2.Components;
 using Inforoom2.Controllers;
 using NHibernate;
 using NHibernate.Cfg;
@@ -40,16 +41,19 @@ namespace Inforoom2.Helpers
 			if (session == null)
 				return;
 
-			if (!session.Transaction.IsActive)
-				return;
+			if (session.Transaction.IsActive) {
+				//Мне кажется этот код никогда не исполнится, todo подумать и удалить
+				if (filterContext.Exception != null) {
+					EmailSender.SendEmail("asarychev@analit.net", "Rollback транзакции в OnResultExecuted","");
+					session.Transaction.Rollback();
+				}
+				else
+					session.Transaction.Commit();
+			}
 
-			/*	if (filterContext.Exception != null)
-				session.Transaction.Rollback();
-			else {*/
-			session.Transaction.Commit();
-			//	}
 			session = CurrentSessionContext.Unbind(SessionFactory);
-			session.Close();
+			if(session.IsOpen)
+				session.Close();
 		}
 	}
 

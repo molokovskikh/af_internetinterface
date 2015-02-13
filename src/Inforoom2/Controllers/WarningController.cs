@@ -72,7 +72,7 @@ namespace Inforoom2.Controllers
 			var blockAccountService = services.OfType<BlockAccountService>().FirstOrDefault();
 			ViewBag.Client = client;
 			ViewBag.BlockAccountService = blockAccountService;
-			return View();
+			return View("Index");
 		}
 	}
 }

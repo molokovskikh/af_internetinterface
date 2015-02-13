@@ -126,6 +126,12 @@ namespace Inforoom2.Controllers
 			var showErrorPage = false;
 			bool.TryParse(ConfigurationManager.AppSettings["ShowErrorPage"], out showErrorPage);
 			DeleteCookie("SuccessMessage");
+
+			if(DbSession.Transaction.IsActive)
+				DbSession.Transaction.Rollback();
+			if(DbSession.IsOpen)
+				DbSession.Close();
+
 			if (showErrorPage) {
 				filterContext.Result = new RedirectToRouteResult(
 					new RouteValueDictionary
@@ -173,7 +179,7 @@ namespace Inforoom2.Controllers
 			{
 				builder.Append(key);
 				builder.Append(" : ");
-				builder.Append(GetCookie(key));
+				builder.Append(GetCookie(key) ?? "");
 				builder.Append("\n");
 			}
 			builder.Append("]");
@@ -193,26 +199,14 @@ namespace Inforoom2.Controllers
 		//Авторизация клиента из сети
 		private void TryAuthorizeNetworkClient()
 		{
-				var ip = Request.UserHostAddress;
-				if(string.IsNullOrEmpty(ip))
-					return;
-				var address = IPAddress.Parse(ip);
-				var leases = DbSession.Query<Lease>().Where(l => l.Ip == address).ToList();
-				if (leases.Count != 0) {
-					var client = leases.Where(l => l.Endpoint != null
-						&& l.Endpoint.Client != null
-						&& l.Endpoint.Client.PhysicalClient != null)
-						.Select(l => l.Endpoint.Client)
-						.FirstOrDefault();
-					if (client != null)
-					{
-						//var builder = CollectDebugInfo();
-						//builder.Append("Авторизация клиента внутри сети");
-						//EmailSender.SendEmail("asarychev@analit.net", "Авторизация: " + Request.UserHostAddress + "," + client.Id, builder.ToString());
-						SetCookie("networkClient","true");
-						this.Authenticate(ViewBag.ActionName, ViewBag.ControllerName, client.Id.ToString(), true);
-					}
-				}
+			if(string.IsNullOrEmpty(Request.UserHostAddress))
+				return;
+			var endpoint = ClientEndpoint.GetEndpointForIp(Request.UserHostAddress,DbSession);
+			if (endpoint != null)
+			{
+				SetCookie("networkClient","true");
+				this.Authenticate(ViewBag.ActionName, ViewBag.ControllerName, endpoint.Client.Id.ToString(), true);
+			}
 		}
 
 		protected override void OnResultExecuting(ResultExecutingContext filterContext)
@@ -232,11 +226,9 @@ namespace Inforoom2.Controllers
 			ViewBag.ActionName = filterContext.RouteData.Values["action"].ToString();
 			ViewBag.ControllerName = filterContext.RouteData.Values["controller"].ToString();
 			ViewBag.CallMeBackTicket = new CallMeBackTicket();
-			ProcessRegionPanel();
-			ViewBag.NetworkClientFlag = !string.IsNullOrEmpty(GetCookie("networkClient"));
-			if (ViewBag.NetworkClientFlag) {
-				CheckNetworkClientLease();
-			}
+			if (!CheckNetworkClient())
+				RedirectToAction("Index","Home");
+
 			if (CurrentClient != null) {
 				var sb = new StringBuilder();
 				sb.AppendFormat("Здравствуйте, {0} {1}. Ваш баланс: {2} руб.", CurrentClient.PhysicalClient.Name, 
@@ -248,35 +240,46 @@ namespace Inforoom2.Controllers
 			}
 		}
 
-		private void CheckNetworkClientLease()
+		private bool CheckNetworkClient()
 		{
-			var ip = Request.UserHostAddress;
-			if (CurrentClient == null || string.IsNullOrEmpty(ip)) {
-				SetCookie("networkClient", null);
-				return;
-			}
-			var address = IPAddress.Parse(ip);
-			var leases = DbSession.Query<Lease>().Where(l => l.Ip == address).ToList();
-			if (leases.Count != 0)
+			//если нет куки значит клиент не из нутри сети - все впроядке
+			var cookie = GetCookie("networkClient");
+			if (cookie == null)
+				return true;
+
+			//если нет текущего клиента то снимаем флаг клиента из интернета
+			//больше ничего делать не надо - он может продолжить работку
+			if (CurrentClient == null || string.IsNullOrEmpty(Request.UserHostAddress))
 			{
-				var client = leases.Where(l => l.Endpoint != null
-					&& l.Endpoint.Client != null
-					&& l.Endpoint.Client.PhysicalClient != null)
-					.Select(l => l.Endpoint.Client)
-					.FirstOrDefault();
-				if (client != null && client.Id != CurrentClient.Id)
-				{
-					var builder = CollectDebugInfo();
-					builder.Append("Выкидываем неправильно залогиненного клиента");
-					EmailSender.SendEmail("asarychev@analit.net", "Авторизация: " + Request.UserHostAddress + "," + client.Id + ", " + CurrentClient.Id, builder.ToString());
-					FormsAuthentication.SignOut();
-					RedirectToAction("Index", "Home");
-				}
-				else {
-					return;
-				}
 				SetCookie("networkClient", null);
+				EmailSender.SendEmail("asarychev@analit.net", "Снимаем куку залогиненного автоматически клиента так как он не найден: " + Request.UserHostAddress,CollectDebugInfo().ToString());
+				return true;
 			}
+
+			var endpoint = ClientEndpoint.GetEndpointForIp(Request.UserHostAddress,DbSession);
+			if (endpoint != null)
+			{
+				if (endpoint.Client.Id != CurrentClient.Id)
+				{
+					//Оказывается, что точка подключения принадлежит другому клиенту и текущий сидит в чужом ЛК
+					//Снимаем куку и выкидываем клиента из ЛК
+					//Возможно нужен еще редирект
+					SetCookie("networkClient", null);
+					var msg = "Выкидываем неправильно залогиненного клиента: " + Request.UserHostAddress + "," + endpoint.Client.Id + ", " + CurrentClient.Id;
+					EmailSender.SendEmail("asarychev@analit.net", msg,CollectDebugInfo().ToString());
+					FormsAuthentication.SignOut();
+					return false;
+				}
+				//был найден клиент по точке подключения и текущий клиент. они совпадают, так что все путем
+				return true;
+			}
+
+			//Получается текущий клиент есть, флаг того, что мы его авторизовали есть, но точки подключения у него нет. Как так? Выкидываем
+			SetCookie("networkClient", null);
+			var str = "Выкидываем залогиненного клиента без аренды: " + Request.UserHostAddress + ", " + CurrentClient.Id;
+			EmailSender.SendEmail("asarychev@analit.net",str, CollectDebugInfo().ToString());
+			FormsAuthentication.SignOut();
+			return false;
 		}
 
 		private void ProcessCallMeBackTicket()
@@ -383,7 +386,7 @@ namespace Inforoom2.Controllers
 		{
 			var cookie = Request.Cookies.Get(cookieName);
 			if (cookie == null || cookie.Value.Length <= 1) {
-				return string.Empty;
+				return null;
 			}
 
 			var base64EncodedBytes = Convert.FromBase64String(cookie.Value);
