@@ -204,7 +204,7 @@ namespace Inforoom2.Controllers
 			if(string.IsNullOrEmpty(Request.UserHostAddress))
 				return;
 			var endpoint = ClientEndpoint.GetEndpointForIp(Request.UserHostAddress,DbSession);
-			if (endpoint != null)
+			if (endpoint != null && endpoint.Client.PhysicalClient != null)
 			{
 				SetCookie("networkClient","true");
 				this.Authenticate(ViewBag.ActionName, ViewBag.ControllerName, endpoint.Client.Id.ToString(), true);
@@ -257,6 +257,15 @@ namespace Inforoom2.Controllers
 				SetCookie("networkClient", null);
 				EmailSender.SendEmail("asarychev@analit.net", "Снимаем куку залогиненного автоматически клиента так как он не найден: " + Request.UserHostAddress,CollectDebugInfo().ToString());
 				return true;
+			}
+
+			//Выкидываем юрика
+			if (CurrentClient.PhysicalClient == null) {
+				SetCookie("networkClient", null);
+				var msg = "Выкидываем юридического клиента: " + CurrentClient.Id;
+				EmailSender.SendEmail("asarychev@analit.net", msg, CollectDebugInfo().ToString());
+				FormsAuthentication.SignOut();
+				return false;
 			}
 
 			var endpoint = ClientEndpoint.GetEndpointForIp(Request.UserHostAddress,DbSession);
