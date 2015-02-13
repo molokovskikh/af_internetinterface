@@ -223,8 +223,6 @@ namespace Inforoom2.Controllers
 		protected override void OnActionExecuted(ActionExecutedContext filterContext)
 		{
 			base.OnActionExecuted(filterContext);
-			if (filterContext.Exception != null) {
-			}
 			ViewBag.ActionName = filterContext.RouteData.Values["action"].ToString();
 			ViewBag.ControllerName = filterContext.RouteData.Values["controller"].ToString();
 			//todo куда это девать?
