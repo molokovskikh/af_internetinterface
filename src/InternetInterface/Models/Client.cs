@@ -1100,10 +1100,14 @@ where CE.Client = {0}", Id))
 				DebtDays = 0;
 				ShowBalanceWarningPage = false;
 			}
-			if (status.Type == StatusType.BlockedForRepair) {
+			else if (status.Type == StatusType.BlockedForRepair) {
 				Disabled = true;
 				AutoUnblocked = false;
 			}
+			else if (status.Type == StatusType.Dissolved) {
+				Sale = 0m;
+			}
+
 			if (Status.Type != status.Type) {
 				StatusChangedOn = DateTime.Now;
 			}

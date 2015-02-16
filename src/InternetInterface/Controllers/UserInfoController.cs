@@ -626,6 +626,7 @@ namespace InternetInterface.Controllers
 						client.CreareAppeal(endpointLog, AppealType.System, false);
 						client.Endpoints.Clear();
 						client.PhysicalClient.HouseObj = null;
+						client.Sale = 0m;
 						client.Disabled = true;
 						client.AutoUnblocked = false;
 					}
