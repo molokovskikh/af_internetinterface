@@ -38,8 +38,9 @@ namespace Inforoom2.Controllers
 			var endpoint = ClientEndpoint.GetEndpointForIp(ipstring, DbSession);
 			if (endpoint == null)
 			{
+				var lease = Lease.GetLeaseForIp(ipstring,DbSession);
 				if(!ipstring.Contains("172.25.0")) //Остановим спам от непонятных
-					EmailSender.SendEmail("asarychev@analit.net", "Редидеркт с варнинга на главную",CollectDebugInfo().ToString());
+					EmailSender.SendEmail("asarychev@analit.net", "Редидеркт с варнинга на главную: "+ipstring+(lease != null ? ", есть аренда:"+lease.Id:""),CollectDebugInfo().ToString());
 				return RedirectToAction("Index", "Home");
 			}
 			var client = endpoint.Client;

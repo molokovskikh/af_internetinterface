@@ -232,8 +232,8 @@ namespace Inforoom2.Controllers
 			ProcessRegionPanel();
 			if (!CheckNetworkClient())
 				RedirectToAction("Index", "Home");
-			else
-				ViewBag.NetworkClientFlag = true;
+
+			ViewBag.NetworkClientFlag = GetCookie("networkClient") != null;
 			if (CurrentClient != null) {
 				var sb = new StringBuilder();
 				sb.AppendFormat("Здравствуйте, {0} {1}. Ваш баланс: {2} руб.", CurrentClient.PhysicalClient.Name, 

@@ -258,6 +258,8 @@ namespace Inforoom2.Models
 
 		public virtual bool HasPassportData()
 		{
+			if(PhysicalClient == null)
+				return true;
 			var hasPassportData = !string.IsNullOrEmpty(PhysicalClient.PassportNumber);
 			hasPassportData = hasPassportData && !string.IsNullOrEmpty(PhysicalClient.PassportSeries);
 			hasPassportData = hasPassportData && !string.IsNullOrEmpty(PhysicalClient.PassportResidention);
