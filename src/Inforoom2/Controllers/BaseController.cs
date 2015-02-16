@@ -202,7 +202,7 @@ namespace Inforoom2.Controllers
 		//Авторизация клиента из сети
 		private void TryAuthorizeNetworkClient()
 		{
-			if(string.IsNullOrEmpty(Request.UserHostAddress))
+			if(CurrentClient != null || string.IsNullOrEmpty(Request.UserHostAddress))
 				return;
 			var endpoint = ClientEndpoint.GetEndpointForIp(Request.UserHostAddress,DbSession);
 			if (endpoint != null && endpoint.Client.PhysicalClient != null) //Юриков авторизовывать не нужно
@@ -230,9 +230,7 @@ namespace Inforoom2.Controllers
 			ViewBag.CallMeBackTicket = new CallMeBackTicket();
 
 			ProcessRegionPanel();
-			if (!CheckNetworkClient())
-				RedirectToAction("Index", "Home");
-
+			TryAuthorizeNetworkClient();
 			ViewBag.NetworkClientFlag = GetCookie("networkClient") != null;
 			if (CurrentClient != null) {
 				var sb = new StringBuilder();
@@ -240,9 +238,8 @@ namespace Inforoom2.Controllers
 						CurrentClient.PhysicalClient.Patronymic, CurrentClient.PhysicalClient.Balance);
 				ViewBag.ClientInfo = sb.ToString();
 			}
-			else {
-				TryAuthorizeNetworkClient();
-			}
+			if (!CheckNetworkClient())
+				RedirectToAction("Index", "Home");
 		}
 
 		private bool CheckNetworkClient()
