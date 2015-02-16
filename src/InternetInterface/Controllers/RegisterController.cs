@@ -279,7 +279,10 @@ namespace InternetInterface.Controllers
 			PropertyBag["Client"] = newPhisClient;
 			PropertyBag["requestID"] = requestID;
 			PropertyBag["request"] = request;
-			PropertyBag["reqSourceDesc"] = request.RequestSource.GetDescription();
+			if (request.RequestSource == RequestType.FromClient || request.RequestSource == RequestType.FromOperator)
+				PropertyBag["reqSourceDesc"] = request.RequestSource.GetDescription();
+			else
+				PropertyBag["reqSourceDesc"] = "";
 			if (newPhisClient.House != null) {
 				var houses =
 					DbSession.Query<House>().Where(
