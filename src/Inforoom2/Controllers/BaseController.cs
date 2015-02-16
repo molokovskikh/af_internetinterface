@@ -127,6 +127,7 @@ namespace Inforoom2.Controllers
 			bool.TryParse(ConfigurationManager.AppSettings["ShowErrorPage"], out showErrorPage);
 			DeleteCookie("SuccessMessage");
 
+			// Иногда транзакции надо закрывать отдельно, так как метод OnResultExecuted не будет вызван
 			if (DbSession.Transaction.IsActive) {
 				EmailSender.SendEmail("asarychev@analit.net", "Rollback транзакции в OnException", "");
 				DbSession.Transaction.Rollback();

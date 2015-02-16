@@ -38,7 +38,8 @@ namespace Inforoom2.Controllers
 			var endpoint = ClientEndpoint.GetEndpointForIp(ipstring, DbSession);
 			if (endpoint == null)
 			{
-				EmailSender.SendEmail("asarychev@analit.net", "Редидеркт с варнинга на главную",CollectDebugInfo().ToString());
+				if(!ipstring.Contains("172.25.0")) //Остановим спам от непонятных
+					EmailSender.SendEmail("asarychev@analit.net", "Редидеркт с варнинга на главную",CollectDebugInfo().ToString());
 				return RedirectToAction("Index", "Home");
 			}
 			var client = endpoint.Client;

@@ -45,12 +45,14 @@ namespace Inforoom2.Helpers
 			if (session == null)
 				return;
 
+			//дебаг
+			if (filterContext.Exception != null)
+				EmailSender.SendEmail("asarychev@analit.net", "Rollback транзакции в OnResultExecuted", "");
+
 			if (session.Transaction.IsActive) {
 				//Мне кажется этот код никогда не исполнится, todo подумать и удалить
-				if (filterContext.Exception != null) {
-					EmailSender.SendEmail("asarychev@analit.net", "Rollback транзакции в OnResultExecuted","");
+				if (filterContext.Exception != null)
 					session.Transaction.Rollback();
-				}
 				else
 					session.Transaction.Commit();
 			}
