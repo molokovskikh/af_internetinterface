@@ -257,7 +257,6 @@ namespace Inforoom2.Controllers
 
 		private bool CheckNetworkClient()
 		{
-			var ip = IPAddress.Parse(null);
 			var ipstring = Request.UserHostAddress;
 #if DEBUG
 			ipstring = GetCookie("debugIp");
