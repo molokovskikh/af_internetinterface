@@ -40,7 +40,7 @@ namespace Inforoom2.Controllers
 			{
 				var lease = Lease.GetLeaseForIp(ipstring,DbSession);
 				if(!ipstring.Contains("172.25.0")) //Остановим спам от непонятных
-					EmailSender.SendEmail("asarychev@analit.net", "Редидеркт с варнинга на главную: "+ipstring+(lease != null ? ", есть аренда:"+lease.Id:""),CollectDebugInfo().ToString());
+					EmailSender.SendDebugInfo("Редидеркт с варнинга на главную: "+ipstring+(lease != null ? ", есть аренда:"+lease.Id:""),CollectDebugInfo().ToString());
 				return RedirectToAction("Index", "Home");
 			}
 			var client = endpoint.Client;

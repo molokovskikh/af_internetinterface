@@ -191,6 +191,13 @@ namespace Inforoom2.Components
 			if (targetType == typeof(Boolean)) {
 				propertyVal = propertyVal.ToString().Contains("true");
 			}
+			if(targetType == typeof(DateTime))
+			{
+				DateTime date;
+				if(!DateTime.TryParse(propertyVal.ToString(),out date))
+					date = DateTime.MinValue;
+				propertyVal = date;
+			}
 			//Returns an System.Object with the specified System.Type and whose value is
 			//equivalent to the specified object.
 			try {

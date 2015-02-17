@@ -34,7 +34,7 @@ namespace Inforoom2.Models
 			}
 			catch(Exception e)
 			{
-				EmailSender.SendEmail("asarychev@analit.net","Не удалось распарсить ip: "+ipstr,e.ToString());
+				EmailSender.SendDebugInfo("Не удалось распарсить ip: "+ipstr,e.ToString());
 				return null;
 			}
 

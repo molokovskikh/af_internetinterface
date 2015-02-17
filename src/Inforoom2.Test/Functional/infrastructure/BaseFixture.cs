@@ -310,6 +310,14 @@ namespace Inforoom2.Test.Functional
 			if (frozenClient.IsNeedRecofiguration)
 				SceHelper.UpdatePackageId(DbSession, frozenClient);
 			DbSession.Save(frozenClient);
+
+			//Обновляем адреса клиентов, чтобы из БД видеть какой клиент какой
+			var clients = DbSession.Query<Client>().ToList();
+			foreach (var client in clients)
+			{
+				var query = "UPDATE clients SET WhoRegistered =\"" + client.Patronymic + "\" WHERE id ="+client.Id;
+				DbSession.CreateSQLQuery(query).ExecuteUpdate();
+			}
 		}
 
 		private Lease CreateLease(ClientEndpoint endpoint)

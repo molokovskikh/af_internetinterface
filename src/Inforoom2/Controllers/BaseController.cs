@@ -128,14 +128,6 @@ namespace Inforoom2.Controllers
 			bool.TryParse(ConfigurationManager.AppSettings["ShowErrorPage"], out showErrorPage);
 			DeleteCookie("SuccessMessage");
 
-			// Иногда транзакции надо закрывать отдельно, так как метод OnResultExecuted не будет вызван
-			if (DbSession.Transaction.IsActive) {
-				EmailSender.SendEmail("asarychev@analit.net", "Rollback транзакции в OnException", "");
-				DbSession.Transaction.Rollback();
-			}
-			if(DbSession.IsOpen)
-				DbSession.Close();
-
 			if (showErrorPage) {
 				filterContext.Result = new RedirectToRouteResult(
 					new RouteValueDictionary
@@ -144,6 +136,16 @@ namespace Inforoom2.Controllers
 			}
 
 			log.ErrorFormat("{0} {1}", filterContext.Exception.Message, filterContext.Exception.StackTrace);
+			if(DbSession == null)
+				return;
+			// Иногда транзакции надо закрывать отдельно, так как метод OnResultExecuted не будет вызван
+			if (DbSession.Transaction.IsActive) {
+				EmailSender.SendDebugInfo("Rollback транзакции в OnException", "");
+				DbSession.Transaction.Rollback();
+			}
+			if(DbSession.IsOpen)
+				DbSession.Close();
+
 		}
 
 		protected StringBuilder CollectDebugInfo()
@@ -255,6 +257,7 @@ namespace Inforoom2.Controllers
 
 		private bool CheckNetworkClient()
 		{
+			var ip = IPAddress.Parse(null);
 			var ipstring = Request.UserHostAddress;
 #if DEBUG
 			ipstring = GetCookie("debugIp");
@@ -269,7 +272,7 @@ namespace Inforoom2.Controllers
 			if (CurrentClient == null || string.IsNullOrEmpty(ipstring))
 			{
 				SetCookie("networkClient", null);
-				EmailSender.SendEmail("asarychev@analit.net", "Снимаем куку залогиненного автоматически клиента так как он не найден: " + ipstring,CollectDebugInfo().ToString());
+				EmailSender.SendDebugInfo("Снимаем куку залогиненного автоматически клиента так как он не найден: " + ipstring,CollectDebugInfo().ToString());
 				return true;
 			}
 
@@ -277,7 +280,7 @@ namespace Inforoom2.Controllers
 			if (CurrentClient.PhysicalClient == null) {
 				SetCookie("networkClient", null);
 				var msg = "Выкидываем юридического клиента: " + CurrentClient.Id;
-				EmailSender.SendEmail("asarychev@analit.net", msg, CollectDebugInfo().ToString());
+				EmailSender.SendDebugInfo(msg, CollectDebugInfo().ToString());
 				FormsAuthentication.SignOut();
 				return false;
 			}
@@ -292,7 +295,7 @@ namespace Inforoom2.Controllers
 					//Возможно нужен еще редирект
 					SetCookie("networkClient", null);
 					var msg = "Выкидываем неправильно залогиненного клиента: " + ipstring + "," + endpoint.Client.Id + ", " + CurrentClient.Id;
-					EmailSender.SendEmail("asarychev@analit.net", msg,CollectDebugInfo().ToString());
+					EmailSender.SendDebugInfo(msg,CollectDebugInfo().ToString());
 					FormsAuthentication.SignOut();
 					return false;
 				}
@@ -303,7 +306,7 @@ namespace Inforoom2.Controllers
 			//Получается текущий клиент есть, флаг того, что мы его авторизовали есть, но точки подключения у него нет. Как так? Выкидываем
 			SetCookie("networkClient", null);
 			var str = "Выкидываем залогиненного клиента без аренды: " + ipstring + ", " + CurrentClient.Id;
-			EmailSender.SendEmail("asarychev@analit.net",str, CollectDebugInfo().ToString());
+			EmailSender.SendDebugInfo(str, CollectDebugInfo().ToString());
 			FormsAuthentication.SignOut();
 			return false;
 		}
