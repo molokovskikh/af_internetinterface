@@ -6,6 +6,7 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Web;
+using System.Web.ClientServices;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
@@ -200,16 +201,25 @@ namespace Inforoom2.Controllers
 		}
 
 		//Авторизация клиента из сети
-		private void TryAuthorizeNetworkClient()
+		private bool TryAuthorizeNetworkClient()
 		{
-			if(CurrentClient != null || string.IsNullOrEmpty(Request.UserHostAddress))
-				return;
-			var endpoint = ClientEndpoint.GetEndpointForIp(Request.UserHostAddress,DbSession);
+			var ipstring = Request.UserHostAddress;
+#if DEBUG
+			//Можем авторизоваться по лизе за клиента
+			ipstring = Request.QueryString["ip"] ?? null;
+			if(GetCookie("debugIp") == null && ipstring != null)
+				SetCookie("debugIp", ipstring);
+#endif
+			if(CurrentClient != null || string.IsNullOrEmpty(ipstring))
+				return false;
+			var endpoint = ClientEndpoint.GetEndpointForIp(ipstring,DbSession);
 			if (endpoint != null && endpoint.Client.PhysicalClient != null) //Юриков авторизовывать не нужно
 			{
 				SetCookie("networkClient","true");
 				this.Authenticate(ViewBag.ActionName, ViewBag.ControllerName, endpoint.Client.Id.ToString(), true);
+				return true;
 			}
+			return false;
 		}
 
 		protected override void OnResultExecuting(ResultExecutingContext filterContext)
@@ -230,7 +240,8 @@ namespace Inforoom2.Controllers
 			ViewBag.CallMeBackTicket = new CallMeBackTicket();
 
 			ProcessRegionPanel();
-			TryAuthorizeNetworkClient();
+			if(TryAuthorizeNetworkClient())
+				return;
 			ViewBag.NetworkClientFlag = GetCookie("networkClient") != null;
 			if (CurrentClient != null) {
 				var sb = new StringBuilder();
@@ -244,6 +255,10 @@ namespace Inforoom2.Controllers
 
 		private bool CheckNetworkClient()
 		{
+			var ipstring = Request.UserHostAddress;
+#if DEBUG
+			ipstring = GetCookie("debugIp");
+#endif
 			//если нет куки значит клиент не из нутри сети - все впроядке
 			var cookie = GetCookie("networkClient");
 			if (cookie == null)
@@ -251,10 +266,10 @@ namespace Inforoom2.Controllers
 
 			//если нет текущего клиента то снимаем флаг клиента из интернета
 			//больше ничего делать не надо - он может продолжить работку
-			if (CurrentClient == null || string.IsNullOrEmpty(Request.UserHostAddress))
+			if (CurrentClient == null || string.IsNullOrEmpty(ipstring))
 			{
 				SetCookie("networkClient", null);
-				EmailSender.SendEmail("asarychev@analit.net", "Снимаем куку залогиненного автоматически клиента так как он не найден: " + Request.UserHostAddress,CollectDebugInfo().ToString());
+				EmailSender.SendEmail("asarychev@analit.net", "Снимаем куку залогиненного автоматически клиента так как он не найден: " + ipstring,CollectDebugInfo().ToString());
 				return true;
 			}
 
@@ -267,7 +282,7 @@ namespace Inforoom2.Controllers
 				return false;
 			}
 
-			var endpoint = ClientEndpoint.GetEndpointForIp(Request.UserHostAddress,DbSession);
+			var endpoint = ClientEndpoint.GetEndpointForIp(ipstring,DbSession);
 			if (endpoint != null)
 			{
 				if (endpoint.Client.Id != CurrentClient.Id)
@@ -276,7 +291,7 @@ namespace Inforoom2.Controllers
 					//Снимаем куку и выкидываем клиента из ЛК
 					//Возможно нужен еще редирект
 					SetCookie("networkClient", null);
-					var msg = "Выкидываем неправильно залогиненного клиента: " + Request.UserHostAddress + "," + endpoint.Client.Id + ", " + CurrentClient.Id;
+					var msg = "Выкидываем неправильно залогиненного клиента: " + ipstring + "," + endpoint.Client.Id + ", " + CurrentClient.Id;
 					EmailSender.SendEmail("asarychev@analit.net", msg,CollectDebugInfo().ToString());
 					FormsAuthentication.SignOut();
 					return false;
@@ -287,7 +302,7 @@ namespace Inforoom2.Controllers
 
 			//Получается текущий клиент есть, флаг того, что мы его авторизовали есть, но точки подключения у него нет. Как так? Выкидываем
 			SetCookie("networkClient", null);
-			var str = "Выкидываем залогиненного клиента без аренды: " + Request.UserHostAddress + ", " + CurrentClient.Id;
+			var str = "Выкидываем залогиненного клиента без аренды: " + ipstring + ", " + CurrentClient.Id;
 			EmailSender.SendEmail("asarychev@analit.net",str, CollectDebugInfo().ToString());
 			FormsAuthentication.SignOut();
 			return false;

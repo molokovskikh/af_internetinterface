@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net;
+using Inforoom2.Components;
 using Inforoom2.Helpers;
 using NHibernate;
 using NHibernate.Linq;
@@ -24,9 +26,18 @@ namespace Inforoom2.Models
 
 		public static Lease GetLeaseForIp(string ipstr, ISession session)
 		{
-			var address = IPAddress.Parse(ipstr);
-			var lease = session.Query<Lease>().FirstOrDefault(l => l.Ip == address);
-			return lease;
+			try
+			{
+				var address = IPAddress.Parse(ipstr);
+				var lease = session.Query<Lease>().FirstOrDefault(l => l.Ip == address);
+				return lease;
+			}
+			catch(Exception e)
+			{
+				EmailSender.SendEmail("asarychev@analit.net","Не удалось распарсить ip: "+ipstr,e.ToString());
+				return null;
+			}
+
 		}
 	}
 }

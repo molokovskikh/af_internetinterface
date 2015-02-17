@@ -35,7 +35,7 @@ namespace Inforoom2.Test.Functional
 	{
 		protected ISession DbSession;
 		protected string DefaultClientPasword;
-		protected string DefaultIpString = "192.168.0.1";
+		protected string DefaultIpString = "105.168.0.1";
 		protected int EndpointIpCounter;
 		
 
@@ -611,6 +611,16 @@ namespace Inforoom2.Test.Functional
 			browser.FindElementByCssSelector(".Account.Login input[type=submit]").Click();
 		}
 
+		public void NetworkLoginForClient(Client Client)
+		{
+			var endpoint = Client.Endpoints.First();
+			var lease = DbSession.Query<Lease>().First(i => i.Endpoint == endpoint);
+			var ipstring = lease.Ip.ToString();
+			Open("Home?ip="+ipstring);
+			Assert.That(browser.PageSource, Is.StringContaining("Протестировать скорость"));
+			Open("Personal/Profile");
+			Assert.IsTrue(browser.PageSource.Contains("Бонусные программы"));
+		}
 		public MainBilling GetBilling()
 		{
 			MainBilling.InitActiveRecord();

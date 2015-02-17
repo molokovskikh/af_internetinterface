@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using Common.Tools;
+using Inforoom2.Components;
 using Inforoom2.Helpers;
 using NHibernate;
 using NHibernate.Linq;
@@ -47,9 +48,9 @@ namespace Inforoom2.Models
 				return lease.Endpoint;
 
 			var ips = session.Query<StaticIp>().ToList();
-			var address = IPAddress.Parse(ipstr);
 			ClientEndpoint endpoint = null;
 			try {
+				var address = IPAddress.Parse(ipstr);
 				endpoint = ips.Where(ip => {
 					if (ip.Ip == address.ToString())
 						return true;
@@ -62,7 +63,7 @@ namespace Inforoom2.Models
 				}).Select(s => s.EndPoint).FirstOrDefault();
 			}
 			catch (Exception e) {
-				//ничего не делаем пока
+				EmailSender.SendEmail("asarychev@analit.net","Не удалось распарсить ip: "+ipstr,e.ToString());
 				endpoint = null;
 			}
 
