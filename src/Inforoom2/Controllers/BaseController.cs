@@ -237,7 +237,7 @@ namespace Inforoom2.Controllers
 		{
 			base.OnActionExecuted(filterContext);
 			ViewBag.ActionName = filterContext.RouteData.Values["action"].ToString();
-			ViewBag.ControllerName = filterContext.RouteData.Values["controller"].ToString();
+			ViewBag.ControllerName = GetType().Name.Replace("Controller","");
 			//todo куда это девать?
 			ViewBag.CallMeBackTicket = new CallMeBackTicket();
 
