@@ -39,13 +39,14 @@ namespace Inforoom2.Controllers
 			ViewBag.PhysicalClient = unproxy;
 			return View();
 		}
+
 		[HttpPost]
-		public ActionResult FirstVisit([EntityBinder] PhysicalClient PhysicalClient)
+		public ActionResult FirstVisit([EntityBinder] PhysicalClient physicalClient)
 		{
-			var errors = ValidationRunner.Validate(PhysicalClient);
+			var errors = ValidationRunner.Validate(physicalClient);
 			if(errors.Length == 0)
 			{
-				DbSession.Save(PhysicalClient);
+				DbSession.Save(physicalClient);
 				var ip = Request.UserHostAddress;
 				var address = IPAddress.Parse(ip);
 #if DEBUG
@@ -72,7 +73,7 @@ namespace Inforoom2.Controllers
 					DbSession.Save(endpoint);
 					lease.Endpoint = endpoint;
 
-					var paymentForConnect = new PaymentForConnect(PhysicalClient.ConnectSum, endpoint);
+					var paymentForConnect = new PaymentForConnect(physicalClient.ConnectSum, endpoint);
 					//Пытаемся найти сотрудника
 					paymentForConnect.Employee = GetCurrentEmployee();
 
@@ -95,7 +96,7 @@ namespace Inforoom2.Controllers
 				DbSession.Save(CurrentClient);
 				return RedirectToAction("Profile");
 			}
-			ViewBag.PhysicalClient = PhysicalClient;
+			ViewBag.PhysicalClient = physicalClient;
 			return View();
 		}
 

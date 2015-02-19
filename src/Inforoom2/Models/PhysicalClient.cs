@@ -1,16 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using Common.Tools;
-using NHibernate.Linq;
-using NHibernate.Mapping;
 using NHibernate.Mapping.Attributes;
 using NHibernate.Util;
 using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models
 {
-	[Class(0, Table = "PhysicalClients", Schema = "internet", NameType = typeof (PhysicalClient))]
+	public enum CertificateType
+	{
+		[Display(Name = "Паспорт РФ")] Passport = 0,
+		[Display(Name = "Иной документ")] Other = 1
+	}
+
+	[Class(1, Table = "PhysicalClients", Schema = "internet", NameType = typeof (PhysicalClient))]
 	public class PhysicalClient : BaseModel
 	{
 		[Property]
@@ -40,6 +44,12 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual decimal MoneyBalance { get; set; }
 
+		[Property(Column = "IdDocType"), Description("Документ удостоверяющий личность")]
+		public virtual CertificateType CertificateType { get; set; }
+
+		[Property(Column = "IdDocName"), Description("Название документа, удостоверяющего личность")]
+		public virtual string CertificateName { get; set; }
+
 		[Property,NotNullNotEmpty(Message = "Введите номер паспорта")]
 		public virtual string PassportNumber { get; set; }
 
@@ -66,6 +76,9 @@ namespace Inforoom2.Models
 
 		[Property(NotNull = true), NotEmpty(Message = "Введите отчество")]
 		public virtual string Patronymic { get; set; }
+
+		[Property(Column = "DateOfBirth"), NotNull(Message = "Введите дату рождения")]
+		public virtual DateTime BirthDate { get; set; }
 
 		[OneToOne(PropertyRef = "PhysicalClient")]
 		public virtual Client Client { get; set; }
