@@ -1,4 +1,4 @@
-user internet;
+use internet;
 CREATE TABLE `inforoom2_network_nodes` (
 	`Id` INT(11) NOT NULL AUTO_INCREMENT,
 	`Name` VARCHAR(250) NOT NULL,
