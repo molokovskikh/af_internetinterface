@@ -71,7 +71,19 @@ namespace InforoomControlPanel.Controllers
 				}
 				catch (System.Net.Mail.SmtpException) {
 					ErrorMessage("Указанный e-mail клиента не может быть обработан!");
-					return View("EditTicket");
+					return RedirectToAction("TicketIndex");
+				}
+				catch (FormatException) {
+					ErrorMessage("Некорректный формат e-mail у клиента!");
+					return RedirectToAction("TicketIndex");
+				}
+				catch (ArgumentException) {
+					ErrorMessage("e-mail клиента не может быть пустым!");
+					return RedirectToAction("TicketIndex");
+				}
+				catch (Exception) {
+					ErrorMessage("Произошла ошибка при отправке ответа клиенту!");
+					return RedirectToAction("TicketIndex");
 				}
 				DbSession.SaveOrUpdate(ticket);
 				SuccessMessage("Ответ отправлен пользователю.");
