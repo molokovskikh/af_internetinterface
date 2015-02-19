@@ -14,7 +14,7 @@
 			<th class="sorting" tabindex="0" aria-controls="table-2" >Ip</th>
 			<th class="sorting" tabindex="0" aria-controls="table-2" >Mac</th>
 			<th class="sorting" tabindex="0" aria-controls="table-2" >Количество портов</th>
-			<th class="sorting" tabindex="0" aria-controls="table-2" >Адрес</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2" >Узел связи</th>
 			<th class="sorting" tabindex="0" aria-controls="table-2" >Действия</th>
 		</tr>
 	</thead>
@@ -25,7 +25,7 @@
 				<td>@(item.Ip != null ? item.Ip.ToString() : "Нет")</td>
 				<td>@Html.DisplayFor(modelItem => item.Mac)</td>
 				<td>@item.Endpoints.Count / @item.PortCount</td>
-				<td>@(item.HasAddress() ? item.Addresses.First().GetFullAddress(true) : "Не прикреплен")</td>
+				<td>@(item.NetworkNode != null ? item.NetworkNode.Id.ToString() : "Не прикреплен")</td>
 				<td>
 					<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("EditSwitch","Switch",new {id = item.Id})">
 						<i class="entypo-vcard"></i>

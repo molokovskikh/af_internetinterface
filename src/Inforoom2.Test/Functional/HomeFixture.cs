@@ -19,9 +19,6 @@ namespace Inforoom2.Test.Functional
 		public void CitySelectTest()
 		{
 			Open();
-			string js = @"cli.setCookie('userCity')";
-			browser.ExecuteScript(js);
-			Open();
 			AssertText("ВЫБЕРИТЕ ГОРОД");
 			var bt = browser.FindElement(By.XPath("//div[@class='buttons']//button[@class='button cancel']"));
 			bt.Click();

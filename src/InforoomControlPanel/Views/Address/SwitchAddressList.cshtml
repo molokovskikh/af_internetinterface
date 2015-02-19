@@ -31,11 +31,15 @@
 				<td>@Html.DisplayFor(modelItem => item.House.Street.Name)</td>
 				<td>@Html.DisplayFor(modelItem => item.House.Number)</td>
 				<td>@(item.Entrance != 0 ? item.Entrance.ToString() : "Не указан")</td>
-				<td>@(item.Switch != null ? item.Switch.Name : "Не прикреплен")</td>
+				<td>@(item.NetworkNode != null ? item.NetworkNode.Name : "Не прикреплен")</td>
 				<td>
 					<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("EditSwitchAddress","Address",new {id = item.Id})">
 						<i class="entypo-vcard"></i>
 						Изменить
+					</a>
+					<a class="btn btn-red btn-sm btn-icon icon-left" href="@Url.Action("DeleteSwitchAddress","Address",new {id = item.Id})">
+						<i class="entypo-cancel-circled"></i>
+						Удалить
 					</a>
 				</td>
 			</tr>

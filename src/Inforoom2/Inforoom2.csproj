@@ -306,6 +306,8 @@
     <Compile Include="Models\CallMeBackTicket.cs" />
     <Compile Include="Models\Contact.cs" />
     <Compile Include="Models\Appeal.cs" />
+    <Compile Include="Models\TwistedPair.cs" />
+    <Compile Include="Models\NetworkNode.cs" />
     <Compile Include="Models\StreetAlias.cs" />
     <Compile Include="Models\PaymentForConnect.cs" />
     <Compile Include="Models\InternetSettings.cs" />

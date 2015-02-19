@@ -12,11 +12,11 @@
 	SwitchAddress SwitchAddress = ViewBag.SwitchAddress;
 	List<Region> Regions = ViewBag.Regions;
 	List<Street> Streets = ViewBag.Streets;
-	List<Switch> Switches = ViewBag.Switches;
+	List<NetworkNode> NetworkNodes = ViewBag.NetworkNodes;
 	List<House> Houses = ViewBag.Houses;
 	Region region = ViewBag.Region ?? new Region();
 	Street street = ViewBag.Street ?? new Street(){Region = new Region()};
-	Switch Switch = ViewBag.Switch ?? new Switch();
+	NetworkNode NetworkNode = ViewBag.NetworkNode ?? new NetworkNode();
 	House house = ViewBag.House ?? new House();
 }
 <div class="panel panel-default">
@@ -26,7 +26,7 @@
  {
 	<div class="form-group">
 		<label class="col-sm-1 control-label">Регион</label>
-		@Html.Hidden("switchId", Switch.Id)
+		@Html.Hidden("switchId", NetworkNode.Id)
 		<div class="col-sm-3">
 			@Html.DropDownListExtendedFor(i=>street.Region, Regions, i => i.Name, null, new { @class = "form-control regionId" },region.Id)
 		</div>
@@ -34,7 +34,7 @@
 	<div class="form-group">
 				<label class="col-sm-1 control-label">Улица</label>
 				@Html.Hidden("regionId", region.Id)
-				@Html.Hidden("switchId", Switch.Id)
+				@Html.Hidden("switchId", NetworkNode.Id)
 				<div class="col-sm-3">
 					@Html.DropDownListExtendedFor(i=>house.Street,Streets, i=>i.Name,i=>new {@class= i.Region.Id.ToString() }, new { @class = "form-control" },street.Id)
 				</div>
@@ -48,9 +48,9 @@
 		</div>
 	
 	<div class="form-group">
-		<label class="col-sm-1 control-label">Коммутатор</label>
+		<label class="col-sm-1 control-label">Узел связи</label>
 		<div class="col-sm-3">
-			@Html.DropDownListExtendedFor(i=>SwitchAddress.Switch,Switches,i=>i.Name,null,new{@class="form-control"},Switch.Id)
+			@Html.DropDownListExtendedFor(i=>SwitchAddress.NetworkNode,NetworkNodes,i=>i.Name,null,new{@class="form-control"},NetworkNode.Id)
 			@ViewBag.Validation.GetError(SwitchAddress, "Switch")
 		</div>
 	</div>
