@@ -1,26 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Text;
-using System.Threading;
-using System.Web;
-using System.Web.Hosting;
 using Inforoom2.Components;
-using Inforoom2.Controllers;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
 using InternetInterface.Helpers;
 using NHibernate;
-using NHibernate.Cfg;
 using NHibernate.Linq;
 using NHibernate.Mapping.Attributes;
-using NPOI.SS.UserModel;
-using NPOI.XSSF.UserModel;
 using NUnit.Framework;
 using Test.Support.Selenium;
 using Cookie = OpenQA.Selenium.Cookie;
@@ -236,9 +227,8 @@ namespace Inforoom2.Test.Functional
 			disabledClient.Name = "Алексей";
 			disabledClient.Surname = "Дулин";
 			disabledClient.Patronymic = "заблокированный клиент";
-			disabledClient.Status = DbSession.Get<Status>(7);
 			disabledClient.Balance = 0;
-			disabledClient.Disabled =true;
+			disabledClient.SetStatus(StatusType.NoWorked, DbSession);
 			DbSession.Save(disabledClient);
 
 			//Неподключенный клиент
