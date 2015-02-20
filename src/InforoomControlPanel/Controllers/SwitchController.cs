@@ -20,7 +20,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult EditSwitch(int id)
 		{
 			ViewBag.Switch = DbSession.Get<Switch>(id);
-			ViewBag.NetworkNodes = DbSession.Query<NetworkNode>().ToList();
+			ViewBag.NetworkNodes = DbSession.Query<NetworkNode>().OrderBy(i=>i.Name).ToList();
 			return View();
 		}
 

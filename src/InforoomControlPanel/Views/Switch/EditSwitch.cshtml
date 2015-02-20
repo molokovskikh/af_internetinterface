@@ -33,7 +33,7 @@
 					<div class="form-group">
 					<label class="col-sm-3 control-label" for="field-ta">Узел связи</label>
 					<div class="col-sm-5">
-						@Html.DropDownListExtendedFor(model => Switch.NetworkNode,NetworkNodes,i=>i.Name,null,new {@class = "form-control"}, NetworkNode.Id)
+						@Html.DropDownListExtendedFor(model => Switch.NetworkNode,NetworkNodes.ToList(),i=>i.Name,null,new {@class = "form-control"}, NetworkNode.Id)
 						@ViewBag.Validation.GetError(Switch, "PortCount")
 					</div>
 				</div>

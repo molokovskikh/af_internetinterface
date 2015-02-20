@@ -52,6 +52,8 @@ namespace InforoomControlPanel.Controllers
 			//request2.BeginTime = DateTime.Now.AddHours(-5).AddMinutes(1);
 			//request2.EndTime = DateTime.Now.AddHours(-3).AddMinutes(49);
 			//team[1].ConnectionRequests.Add(request2);
+			var regions = DbSession.Query<Region>().ToList();
+			ViewBag.Regions = regions;
 			ViewBag.ServicemenDate = DateTime.Today;
 			ViewBag.Servicemen = team;
 			return View("BigConnectionTable");
@@ -63,9 +65,16 @@ namespace InforoomControlPanel.Controllers
 		/// <param name="date">Дата для которой отображается график</param>
 		/// <returns></returns>
 		[HttpPost]
-		public ActionResult ConnectionTable(DateTime date)
+		public ActionResult ConnectionTable(DateTime date, int regionId = 0)
 		{
 			var team = DbSession.Query<ServiceMan>().ToList();
+			if(regionId != 0) {
+				ViewBag.Region = DbSession.Get<Region>(regionId);
+				team = team.Where(i => i.Region.Id == regionId).ToList();
+			}
+
+			var regions = DbSession.Query<Region>().ToList();
+			ViewBag.Regions = regions;
 			ViewBag.ServicemenDate = date;
 			ViewBag.Servicemen = team;
 			return View();
@@ -92,6 +101,8 @@ namespace InforoomControlPanel.Controllers
 		{
 			var serviceRequest = DbSession.Get<ServiceRequest>(requestId);
 			var servicemen = DbSession.Query<ServiceMan>().ToList();
+			var regions = DbSession.Query<Region>().ToList();
+			ViewBag.Regions = regions;
 			ViewBag.ServiceRequest = serviceRequest;
 			ViewBag.Servicemen = servicemen;
 			ViewBag.ServicemenDate = DateTime.Today;
@@ -111,7 +122,7 @@ namespace InforoomControlPanel.Controllers
 			int minutes = duration - hours * 60;
 			ViewBag.ServicemenDate = ServiceRequest.BeginTime.Date;
 			ServiceRequest.EndTime = ServiceRequest.BeginTime.AddHours(hours).AddMinutes(minutes);
-			var errors = ValidationRunner.ValidateDeep(ServiceRequest);
+			var errors = ValidationRunner.Validate(ServiceRequest);
 			if (errors.Length == 0)
 			{
 				DbSession.Save(ServiceRequest);
@@ -134,6 +145,8 @@ namespace InforoomControlPanel.Controllers
 		{
 			var clientRequest = DbSession.Get<ClientRequest>(requestId);
 			var servicemen = DbSession.Query<ServiceMan>().ToList();
+			var regions = DbSession.Query<Region>().ToList();
+			ViewBag.Regions = regions;
 			ViewBag.ClientRequest = clientRequest;
 			ViewBag.Servicemen = servicemen;
 			ViewBag.ServicemenDate = DateTime.Today;
@@ -153,7 +166,7 @@ namespace InforoomControlPanel.Controllers
 			int minutes = duration - hours * 60;
 			ViewBag.ServicemenDate = ClientRequest.BeginTime.Date;
 			ClientRequest.EndTime = ClientRequest.BeginTime.AddHours(hours).AddMinutes(minutes);
-			var errors = ValidationRunner.ValidateDeep(ClientRequest);
+			var errors = ValidationRunner.Validate(ClientRequest);
 			if (errors.Length == 0)
 			{
 				DbSession.Save(ClientRequest);

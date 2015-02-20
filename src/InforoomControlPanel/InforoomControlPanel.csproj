@@ -1877,6 +1877,7 @@
     <Content Include="Views\Switch\NetworkNodeList.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Views\Plans\CreatePlan.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
   </ItemGroup>

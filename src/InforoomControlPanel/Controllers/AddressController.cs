@@ -93,7 +93,7 @@ namespace InforoomControlPanel.Controllers
 			var regions = DbSession.Query<Region>().ToList();
 			var streets = DbSession.Query<Street>().ToList();
 			var houses = DbSession.Query<House>().ToList();
-			var NetworkNodes = DbSession.Query<NetworkNode>().ToList();
+			var NetworkNodes = DbSession.Query<NetworkNode>().OrderBy(i=>i.Name).ToList();
 			ViewBag.Streets = streets;
 			ViewBag.Houses = houses;
 			ViewBag.Regions = regions;

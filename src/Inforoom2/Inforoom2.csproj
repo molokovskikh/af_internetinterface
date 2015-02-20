@@ -170,6 +170,7 @@
     <Content Include="Css\main.css" />
     <Content Include="Css\style.css" />
     <Content Include="Global.asax" />
+    <Content Include="Images\action238.png" />
     <Content Include="Images\answererrorbg.png" />
     <Content Include="Images\answersuccessbg.png" />
     <Content Include="Images\arro.png" />

@@ -6,25 +6,32 @@
 	var team = ViewBag.Servicemen;
 	DateTime date = ViewBag.ServicemenDate;
 	ServiceRequest ServiceRequest = ViewBag.ServiceRequest;
+	var regions = new List<Region>();
+	regions.Add(new Region(){Id=0,Name = ""});
+	regions.AddRange(ViewBag.Regions);
+	Region Region = ViewBag.Region ?? regions.First();
 }
 @section JavaScript{<script type="text/javascript"src="@Url.Content("~/Scripts/ClientController.ServiceRequest.js")"></script>}
 <div class="servicemen panel panel-primary col-md-6">
 	<div class="wrapper">
 		<form class="form-horizontal form-groups-bordered">
-		<div class="form-group">
-			<label class="col-sm-1 control-label">Дата</label>
-								
-			<div class="col-sm-4">
-				<div class="input-group">
-					<input type="text" data-format="dd.mm.yyyy" class="form-control datepicker" value="@date">
+			<div class="form-group">
+				<label class="col-sm-1 control-label">Дата</label>
+				<iv class="col-sm-3">
+					<div class="input-group">
+						<input type="text" data-format="dd.mm.yyyy" class="form-control datepicker" value="@date">
 										
-					<div class="input-group-addon">
-						<a href="#"><i class="entypo-calendar"></i></a>
+						<div class="input-group-addon">
+							<a href="#"><i class="entypo-calendar"></i></a>
+						</div>
 					</div>
+				</iv>
+				<label class="col-sm-2 control-label">Регион</label>
+				<div class="col-sm-4">
+					@Html.DropDownList("regionId",new SelectList(regions,"Id","Name",Region.Id),new { @class = "regionId form-control" })
 				</div>
 			</div>
-		</div>
-			</form>
+		</form>
 		<table class="table table-bordered table-striped datatable dataTable no-footer">
 			<thead>
 				<tr>
@@ -43,7 +50,6 @@
 					var nowHour = startHour;
 					var NowMin = 0;
 					var step = ViewBag.TableTimeStep;
-
 					var showedRequests = new List<object>();
 				}
 				@while (nowHour < endHour) {
@@ -65,9 +71,10 @@
 									var diff = request.EndTime - request.BeginTime;
 									double span = Math.Ceiling(diff.TotalMinutes / step);
 									<td class="@cl ServiceRequest request" rowspan="@span">
-										<div class="description">@request.Description</div>
-										<div class="contact">@request.Client.PhysicalClient.PhoneNumber</div>
+										<div class="description">@request.Client.PhysicalClient.FullName</div>
+										<div class="contact">Тел:@request.Contact</div>
 										<div class="address">@request.Client.GetAddressString()</div>
+										<div class="contact">@request.Description</div>
 									</td>
 								}
 							}
@@ -84,8 +91,9 @@
 									double span = Math.Floor(diff.TotalMinutes / step);
 									<td class="@cl ClientRequest request" rowspan="@span">
 										<div  class="description">@request.ApplicantName</div>
-										<div  class="contact">@request.ApplicantPhoneNumber</div>
-										<div  class="address"></div>
+										<div  class="contact">Тел:@request.ApplicantPhoneNumber</div>
+										<div  class="contact">@request.Comment</div>
+										<div  class="address">@request.GetAddress()</div>
 									</td>
 								}
 							}
