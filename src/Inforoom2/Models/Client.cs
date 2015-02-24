@@ -20,6 +20,7 @@ namespace Inforoom2.Models
 		{
 			Endpoints = new List<ClientEndpoint>();
 			ClientServices = new List<ClientService>();
+			Payments = new List<Payment>();
 		}
 		[Property]
 		public virtual bool Disabled { get; set; }
@@ -76,6 +77,11 @@ namespace Inforoom2.Models
 		[Key(1, Column = "Client")]
 		[OneToMany(2, ClassType = typeof (ClientService))]
 		public virtual IList<ClientService> ClientServices { get; set; }
+
+		[Bag(0, Table = "Payments", Cascade = "all-delete-orphan")]
+		[Key(1, Column = "Client")]
+		[OneToMany(2, ClassType = typeof(Payment))]
+		public virtual IList<Payment> Payments { get; set; }
 		
 		[Bag(0,Table = "ClientEndpoints", Cascade = "all-delete-orphan")]
 		[Key(1, Column = "client")]
@@ -250,19 +256,24 @@ namespace Inforoom2.Models
 			return "г. Москва, ул. Вильнюсская, д.8, к.2";
 		}
 
-		public virtual bool ShowWarningBecauseNoPassport()
+		public virtual bool HasPassportData()
 		{
-			if (PhysicalClient == null)
-				return false;
+			if(PhysicalClient == null)
+				return true;
+			var hasPassportData = !string.IsNullOrEmpty(PhysicalClient.PassportNumber);
+			hasPassportData = hasPassportData && !string.IsNullOrEmpty(PhysicalClient.PassportSeries);
+			hasPassportData = hasPassportData && !string.IsNullOrEmpty(PhysicalClient.PassportResidention);
+			hasPassportData = hasPassportData && PhysicalClient.PassportDate != DateTime.MinValue;
+			hasPassportData = hasPassportData && !string.IsNullOrEmpty(PhysicalClient.RegistrationAddress);
+			return hasPassportData;
+		}
 
-			if (!IsWorkStarted())
-				return false;
-
-			var dontHavePassportData = string.IsNullOrEmpty(PhysicalClient.PassportNumber);
-			var goodMoney = Balance > 0;
-			var date = SystemTime.Now() > WorkingStartDate.Value.AddDays(7);
-
-			return dontHavePassportData && goodMoney && date;
+		public static Client GetClientForIp(string ipstr, ISession dbSession)
+		{
+			var endpoint = ClientEndpoint.GetEndpointForIp(ipstr, dbSession);
+			if (endpoint != null)
+				return endpoint.Client;
+			return null;
 		}
 	}
 

@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using Billing;
 using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
@@ -16,6 +17,7 @@ using NUnit.Framework;
 using Test.Support.Selenium;
 using Cookie = OpenQA.Selenium.Cookie;
 using Environment = System.Environment;
+using SceHelper = Inforoom2.Helpers.SceHelper;
 
 namespace Inforoom2.Test.Functional
 {
@@ -24,8 +26,7 @@ namespace Inforoom2.Test.Functional
 	{
 		protected ISession DbSession;
 		protected string DefaultClientPasword;
-		protected string DefaultIpString = "192.168.0.1";
-		protected int LeaseIpCounter;
+		protected string DefaultIpString = "105.168.0.1";
 		protected int EndpointIpCounter;
 		
 
@@ -204,6 +205,11 @@ namespace Inforoom2.Test.Functional
 					Name = "Иван",
 					Surname = "Кузнецов",
 					Patronymic = "нормальный клиент",
+					PassportDate = DateTime.Now.AddYears(-20),
+					PassportNumber = "123456",
+					PassportSeries = "1234",
+					PassportResidention = "УФМС россии по гор. Воронежу, по райнону Северный",
+					RegistrationAddress = "г. Борисоглебск, ул Ленина, 20",
 					Plan = DbSession.Query<Plan>().FirstOrDefault(p => p.Name == "Популярный"),
 					Balance = 1000,
 					Address = DbSession.Query<Address>().FirstOrDefault(),
@@ -221,7 +227,13 @@ namespace Inforoom2.Test.Functional
 			DbSession.Save(normalClient);
 			var lease = CreateLease(normalClient.Endpoints.First());
 			DbSession.Save(lease);
-			
+
+			//без паспортных данных
+			var nopassportClient = CloneClient(normalClient);
+			nopassportClient.Patronymic = "без паспортных данных";
+			nopassportClient.PhysicalClient.PassportNumber = "";
+			DbSession.Save(nopassportClient);
+
 			//Заблокированный
 			var disabledClient = CloneClient(normalClient);
 			disabledClient.Name = "Алексей";
@@ -245,7 +257,7 @@ namespace Inforoom2.Test.Functional
 
 			//У неподключенного клиента уже есть аренда ip
 			//Но нет точки подключения
-			lease = CreateLease(unpluggedClient.Endpoints.First());
+			lease = DbSession.Query<Lease>().First(i => i.Endpoint == unpluggedClient.Endpoints.First());
 			lease.Endpoint = null;
 			DbSession.Save(lease);
 			unpluggedClient.Endpoints.Remove(unpluggedClient.Endpoints.First());
@@ -258,6 +270,44 @@ namespace Inforoom2.Test.Functional
 			lowBalanceClient.Patronymic = "клиент с низким балансом";
 			lowBalanceClient.Balance = lowBalanceClient.Plan.Price / 100 * 5;
 			DbSession.Save(lowBalanceClient);
+
+			//Клиент с сервисной заявкой
+			var servicedClient = CloneClient(normalClient);
+			servicedClient.Patronymic = "клиент заблокированный по сервисной заявке";
+			servicedClient.SetStatus(DbSession.Get<Status>((int)StatusType.BlockedForRepair));
+			var serviceRequest = new ServiceRequest();
+			serviceRequest.BlockNetwork = true;
+			serviceRequest.Client = servicedClient;
+			serviceRequest.CreationDate = DateTime.Now;
+			serviceRequest.Description = "Почему-то не работает интернет";
+			DbSession.Save(serviceRequest);
+			DbSession.Save(servicedClient);
+
+			//Клиент с услугой добровольная блокировка
+			var frozenClient = CloneClient(normalClient);
+			frozenClient.Patronymic = "клиент с услугой добровольной блокировки";
+			frozenClient.SetStatus(DbSession.Get<Status>((int)StatusType.VoluntaryBlocking));
+			var blockAccountService = DbSession.Query<Service>().Where(s => s.IsActivableFromWeb).OfType<BlockAccountService>().FirstOrDefault();
+			var clientService = new ClientService {
+				BeginDate = DateTime.Now,
+				EndDate = DateTime.Now.AddDays(35),
+				Service = blockAccountService,
+				Client = frozenClient,
+				ActivatedByUser = true
+			};
+			DbSession.Save(frozenClient);
+			clientService.ActivateFor(frozenClient, DbSession);
+			if (frozenClient.IsNeedRecofiguration)
+				SceHelper.UpdatePackageId(DbSession, frozenClient);
+			DbSession.Save(frozenClient);
+
+			//Обновляем адреса клиентов, чтобы из БД видеть какой клиент какой
+			var clients = DbSession.Query<Client>().ToList();
+			foreach (var client in clients)
+			{
+				var query = "UPDATE clients SET WhoRegistered =\"" + client.Patronymic + "\" WHERE id ="+client.Id;
+				DbSession.CreateSQLQuery(query).ExecuteUpdate();
+			}
 		}
 
 		private Lease CreateLease(ClientEndpoint endpoint)
@@ -306,7 +356,12 @@ namespace Inforoom2.Test.Functional
 					Plan = client.Plan,
 					Balance = client.Balance,
 					Address = client.Address,
-					LastTimePlanChanged = client.LastTimePlanChanged
+					LastTimePlanChanged = client.LastTimePlanChanged,
+					PassportDate = client.PhysicalClient.PassportDate,
+					PassportNumber = client.PhysicalClient.PassportNumber,
+					PassportSeries = client.PhysicalClient.PassportSeries,
+					PassportResidention = client.PhysicalClient.PassportResidention,
+					RegistrationAddress = client.PhysicalClient.RegistrationAddress,
 				},
 				Disabled = client.Disabled,
 				RatedPeriodDate = client.RatedPeriodDate,
@@ -325,6 +380,9 @@ namespace Inforoom2.Test.Functional
 				endpoint.Switch = item.Switch;
 				endpoint.Client = obj;
 			}
+			DbSession.Save(obj);
+			var lease = CreateLease(obj.Endpoints.First());
+			DbSession.Save(lease);
 			return obj;
 		}
 
@@ -538,6 +596,34 @@ namespace Inforoom2.Test.Functional
 			return new string(input.ToCharArray()
 				.Where(c => !Char.IsWhiteSpace(c))
 				.ToArray());
+		}
+
+		public void LoginForClient(Client Client)
+		{
+			Open("Account/Login");
+			Assert.That(browser.PageSource, Is.StringContaining("Вход в личный кабинет"));
+			var name = browser.FindElementByCssSelector(".Account.Login input[name=username]");
+			var password = browser.FindElementByCssSelector(".Account.Login input[name=password]");
+			name.SendKeys(Client.Id.ToString());
+			password.SendKeys("password");
+			browser.FindElementByCssSelector(".Account.Login input[type=submit]").Click();
+		}
+
+		public void NetworkLoginForClient(Client Client)
+		{
+			var endpoint = Client.Endpoints.First();
+			var lease = DbSession.Query<Lease>().First(i => i.Endpoint == endpoint);
+			var ipstring = lease.Ip.ToString();
+			Open("Home?ip="+ipstring);
+			Assert.That(browser.PageSource, Is.StringContaining("Протестировать скорость"));
+			Open("Personal/Profile");
+			Assert.IsTrue(browser.PageSource.Contains("Бонусные программы"));
+		}
+		public MainBilling GetBilling()
+		{
+			MainBilling.InitActiveRecord();
+			var billing = new MainBilling();
+			return billing;
 		}
 	}
 }

@@ -43,7 +43,7 @@ namespace Inforoom2.Components
 
 		public static void SendError(string message)
 		{
-			var service = ConfigurationManager.AppSettings["ServiceSender"];
+			var service = ConfigurationManager.AppSettings["ErrorEmail"];
 			if (string.IsNullOrEmpty(service)) {
 				return;
 			}
@@ -59,6 +59,15 @@ namespace Inforoom2.Components
 			smtp.Port = 25;
 			smtp.UseDefaultCredentials = false;
 			smtp.Send(mail);
+		}
+
+		public static void SendDebugInfo(string title, string body)
+		{
+			var email = ConfigurationManager.AppSettings["DebugInfoEmail"];
+			if (string.IsNullOrEmpty(email)) {
+				return;
+			}
+			SendEmail(email,title,body);
 		}
 	}
 }

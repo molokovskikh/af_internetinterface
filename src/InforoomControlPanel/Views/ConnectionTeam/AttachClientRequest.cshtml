@@ -10,7 +10,7 @@
 @model dynamic
 
 @{
-	ViewBag.Title = "Сервисная заявка";
+	ViewBag.Title = "Заявка на подключение";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	List<ServiceMan> servicemen = ViewBag.Servicemen;
 	ClientRequest ClientRequest = ViewBag.ClientRequest;
@@ -24,6 +24,12 @@
 		@using (@Html.BeginForm(action, controller, new { requestId = ClientRequest.Id }, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
 		{
 			 @Html.HiddenFor(i=>ClientRequest.Id, new { @class = "form-control" })
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Комментарий</label>
+				<div class="col-sm-4">
+					@Html.TextAreaFor(i=>ClientRequest.Comment, new { @class = "form-control" })
+				</div>
+			</div>
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Имя заявителя</label>
 				<div class="col-sm-4">

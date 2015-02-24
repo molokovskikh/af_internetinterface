@@ -232,7 +232,7 @@ font-family: PDFDinTextPro;font-size: 12px;line-height: 24px;text-align: center;
 .definitely { font-size: 14px; margin-left: 35px;margin-top: 48px;font-family: PTSans;width: 197px;height: 22px;display: inline-block;}
 .contacting {background: none repeat scroll 0 0 #aa181e;border: medium none;border-radius: 2px;color: #ffffff;cursor: pointer;font-family: PDFDinTextPro;font-size: 20px;
 margin-left: 56px;padding: 5px 35px;}
-.offers { background: #333333; height:265px;width: 1182px;}
+.offers { background: #333333; height:264px;width: 1182px;}
 .slider {text-align:center; position: relative; height:100%; width:883px; background: pink; display: inline-block;}
 .content {overflow: hidden;height:100%;}
 .content .longspace {width: 10000px; text-align:left;}
@@ -245,7 +245,7 @@ margin-left: 56px;padding: 5px 35px;}
 .controls li.active {background-color: #a81b20;}
 .controls li.stop.active {color:#a81b20;}
 .controls li.stop {  background: none repeat scroll 0 0 white; margin:0px; font-family: arial;  color: #a2a2a2; font-size: 11px; font-weight: bolder;bottom: 3px;position: relative;}
-.main-offer {width:299px; height:100%; background-color: #333333;float:right;}
+.main-offer {width:299px; height:100%; background-color: #333333;float:right;overflow: hidden;position: relative;}
 .find {padding-top: 60px;text-align: center;}
 .speed {font-size: 22px;font-family: PDFDinTextPro;color:#a81b20;border-radius: 70px;height:48px;width: 271px;cursor: pointer;
         border: 3px solid #e7e7e7;background: #ffffff;margin-right: 27px;padding-left: 93px;color: #2e2d2d;

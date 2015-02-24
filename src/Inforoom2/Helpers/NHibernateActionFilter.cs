@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
+using Inforoom2.Components;
 using Inforoom2.Controllers;
 using NHibernate;
 using NHibernate.Cfg;
@@ -34,22 +35,31 @@ namespace Inforoom2.Helpers
 				controller.DbSession = MvcApplication.SessionFactory.GetCurrentSession();
 		}
 
+		/// <summary>
+		/// Закрытие транзакции и сессии после того, как контроллер отработал
+		/// </summary>
+		/// <param name="filterContext"></param>
 		public override void OnResultExecuted(ResultExecutedContext filterContext)
 		{
 			var session = SessionFactory.GetCurrentSession();
 			if (session == null)
 				return;
 
-			if (!session.Transaction.IsActive)
-				return;
+			//дебаг
+			if (filterContext.Exception != null)
+				EmailSender.SendDebugInfo("Rollback транзакции в OnResultExecuted", "");
 
-			/*	if (filterContext.Exception != null)
-				session.Transaction.Rollback();
-			else {*/
-			session.Transaction.Commit();
-			//	}
+			if (session.Transaction.IsActive) {
+				//Мне кажется этот код никогда не исполнится, todo подумать и удалить
+				if (filterContext.Exception != null)
+					session.Transaction.Rollback();
+				else
+					session.Transaction.Commit();
+			}
+
 			session = CurrentSessionContext.Unbind(SessionFactory);
-			session.Close();
+			if(session.IsOpen)
+				session.Close();
 		}
 	}
 

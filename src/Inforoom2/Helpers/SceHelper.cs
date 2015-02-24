@@ -105,6 +105,8 @@ namespace Inforoom2.Helpers
 				return;
 			endpoint.UpdateActualPackageId(Login(endpoint, addresses));
 			session.Save(endpoint);
+			//Кажется это должно решить проблему с дедлоком базы на странице warning
+			session.Flush();
 		}
 
 		public static void UpdatePackageId(ISession session, Client client)

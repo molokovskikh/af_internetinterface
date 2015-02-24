@@ -79,7 +79,7 @@ namespace InforoomControlPanel.Controllers
 		}
 
 		
-		public ActionResult CreateSwitchAddress(int regionId = 0, int streetId = 0, int switchId = 0)
+		public ActionResult CreateSwitchAddress(int regionId = 0, int streetId = 0, int id = 0)
 		{
 			var SwitchAddress = new SwitchAddress();
 			if (regionId > 0)
@@ -87,17 +87,17 @@ namespace InforoomControlPanel.Controllers
 
 			if (streetId > 0)
 				ViewBag.Street = DbSession.Get<Street>(streetId);
-			if (switchId > 0)
-				ViewBag.Switch = DbSession.Get<Switch>(switchId);
+			if (id > 0)
+				ViewBag.Switch = DbSession.Get<NetworkNode>(id);
 
 			var regions = DbSession.Query<Region>().ToList();
 			var streets = DbSession.Query<Street>().ToList();
 			var houses = DbSession.Query<House>().ToList();
-			var Switches = DbSession.Query<Switch>().ToList();
+			var NetworkNodes = DbSession.Query<NetworkNode>().OrderBy(i=>i.Name).ToList();
 			ViewBag.Streets = streets;
 			ViewBag.Houses = houses;
 			ViewBag.Regions = regions;
-			ViewBag.Switches = Switches;
+			ViewBag.NetworkNodes = NetworkNodes;
 			ViewBag.SwitchAddress = SwitchAddress;
 			return View("CreateSwitchAddress");
 		}
@@ -109,7 +109,7 @@ namespace InforoomControlPanel.Controllers
 			{
 				SwitchAddress.Entrance = null;
 			}
-			var errors = ValidationRunner.ValidateDeep(SwitchAddress);
+			var errors = ValidationRunner.Validate(SwitchAddress);
 			if (errors.Length == 0)
 			{
 				DbSession.Save(SwitchAddress);
@@ -129,7 +129,7 @@ namespace InforoomControlPanel.Controllers
 
 			ViewBag.Region = SwitchAddress.House.Street.Region;
 			ViewBag.Street = SwitchAddress.House.Street;
-			ViewBag.Switch = SwitchAddress.Switch;
+			ViewBag.NetworkNode = SwitchAddress.NetworkNode;
 			ViewBag.House = SwitchAddress.House;
 			ViewBag.SwitchAddress = SwitchAddress;
 			return View("CreateSwitchAddress");

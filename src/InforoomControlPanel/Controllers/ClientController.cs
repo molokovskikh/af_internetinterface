@@ -172,7 +172,7 @@ namespace InforoomControlPanel.Controllers
 		/// <returns></returns>
 		public ActionResult ClientRequestsList()
 		{
-			var clientRequests = DbSession.Query<ClientRequest>().ToList();
+			var clientRequests = DbSession.Query<ClientRequest>().OrderByDescending(i=>i.Id).ToList();
 			ViewBag.ClientRequests = clientRequests;
 			return View();
 		}

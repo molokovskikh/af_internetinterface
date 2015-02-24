@@ -184,7 +184,7 @@
 					</ul>
 				</li>
 				<li>
-					<a href="@Url.Action("PlanIndex","Plans")">
+				<a href="@Url.Action("PlanIndex","Plans")">
 						<i class="entypo-mail"></i>
 						<span class="title">Тарифы</span>
 					</a>
@@ -192,6 +192,24 @@
 						<li>
 							<a href="@Url.Action("PlanIndex","Plans")">
 								<span class="title">Тарифы</span>
+							</a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="@Url.Action("SwitchList","Switch")">
+						<i class="entypo-mail"></i>
+						<span class="title">Коммутаторы</span>
+					</a>
+					<ul class="visible">
+						<li>
+							<a href="@Url.Action("SwitchList","Switch")">
+								<span class="title">Коммутаторы</span>
+							</a>
+						</li>
+						<li>
+							<a href="@Url.Action("NetworkNodeList","Switch")">
+								<span class="title">Узлы связи</span>
 							</a>
 						</li>
 					</ul>
@@ -205,11 +223,6 @@
 						<li>
 							<a href="@Url.Action("SwitchAddressList","Address")">
 								<span class="title">Адреса коммутаторов</span>
-							</a>
-						</li>
-						<li>
-							<a href="@Url.Action("SwitchList","Switch")">
-								<span class="title">Коммутаторы</span>
 							</a>
 						</li>
 						<li>

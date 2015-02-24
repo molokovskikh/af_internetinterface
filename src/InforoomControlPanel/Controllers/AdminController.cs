@@ -21,6 +21,14 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.BreadCrumb = "Панель управления";
 		}
 
+		public override Employee GetCurrentEmployee()
+		{
+			if (User == null || DbSession == null || !DbSession.IsConnected) {
+				return null;
+			}
+			return DbSession.Query<Employee>().FirstOrDefault(e => e.Login == User.Identity.Name);
+		}
+
 		protected override void OnResultExecuting(ResultExecutingContext filterContext)
 		{
 			var curEmployee = GetCurrentEmployee();

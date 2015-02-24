@@ -91,6 +91,9 @@ namespace Inforoom2.Models
 		[Property(Column = "PerformanceDate")]
 		public virtual DateTime BeginTime { get; set; }
 
+		[Property(Column = "Contact")]
+		public virtual string Contact { get; set; }
+
 		[Property(Column = "RegDate")]
 		public virtual DateTime CreationDate { get; set; }
 

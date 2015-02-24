@@ -37,7 +37,7 @@ else if(client.PhysicalClient != null)
 				После нажатия кнопки "Продолжить" тарификация будет возобновлена.
 			</p>
 			<form method="post" action="@Url.Action("RepairCompleted","Warning")">
-				<input type="submit" class="button" value="Продолжить">
+				<input type="submit" class="repairCompleted"  class="button" value="Продолжить">
 			</form>
 		}
 		else if (client.Status.Type == StatusType.VoluntaryBlocking)
@@ -46,10 +46,10 @@ else if(client.PhysicalClient != null)
 			using (@Html.BeginForm("DeactivateAccountBlocking", "Service", null, FormMethod.Post))
 			{
 				@Html.HiddenFor(modelItem => service.Id)
-				<input class="button" type="submit" value="Отключить" />
+				<input class="button unfreeze" type="submit" value="Отключить" />
 			}
 		}
-		else if (!client.IsWorkStarted())
+		else if (client.Payments.Count == 0)
 		{
 			<p class="info">
 				Для начала работы внесите первый платеж.
@@ -73,9 +73,9 @@ else if(client.PhysicalClient != null)
 	}
 	else if (client.ShowBalanceWarningPage)
 	{
-		if(client.ShowWarningBecauseNoPassport())
+		if(!client.HasPassportData())
 		{
-			<p>У вас не заполненны паспортные данные</p>
+			<p>У вас не заполнены паспортные данные</p>
 		}
 		else
 		{
@@ -92,7 +92,7 @@ else if(client.PhysicalClient != null)
 	<form method="post">
 		<input name="referer" type="hidden" value="!{referer}">
 		<input type="hidden" name="disable" value="1"/>
-		<input type="submit" class="button" id="ConButton" value="Продолжить">
+		<input type="submit" class="button warning" value="Продолжить">
 	</form>
 }
 </div>

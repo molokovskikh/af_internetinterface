@@ -119,6 +119,9 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="apple-touch-icon-precomposed.png" />
+    <Content Include="apple-touch-icon.png" />
+    <Content Include="crossdomain.xml" />
     <Content Include="Css\images\OfferMini\d1.jpg" />
     <Content Include="Css\images\OfferMini\d2.jpg" />
     <Content Include="Css\images\OfferMini\d3.jpg" />
@@ -167,6 +170,7 @@
     <Content Include="Css\main.css" />
     <Content Include="Css\style.css" />
     <Content Include="Global.asax" />
+    <Content Include="Images\action238.png" />
     <Content Include="Images\answererrorbg.png" />
     <Content Include="Images\answersuccessbg.png" />
     <Content Include="Images\arro.png" />
@@ -303,6 +307,8 @@
     <Compile Include="Models\CallMeBackTicket.cs" />
     <Compile Include="Models\Contact.cs" />
     <Compile Include="Models\Appeal.cs" />
+    <Compile Include="Models\TwistedPair.cs" />
+    <Compile Include="Models\NetworkNode.cs" />
     <Compile Include="Models\StreetAlias.cs" />
     <Compile Include="Models\PaymentForConnect.cs" />
     <Compile Include="Models\InternetSettings.cs" />

@@ -6,9 +6,11 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Web;
+using System.Web.ClientServices;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
+using System.Web.UI.WebControls;
 using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
@@ -125,6 +127,7 @@ namespace Inforoom2.Controllers
 			var showErrorPage = false;
 			bool.TryParse(ConfigurationManager.AppSettings["ShowErrorPage"], out showErrorPage);
 			DeleteCookie("SuccessMessage");
+
 			if (showErrorPage) {
 				filterContext.Result = new RedirectToRouteResult(
 					new RouteValueDictionary
@@ -133,6 +136,16 @@ namespace Inforoom2.Controllers
 			}
 
 			log.ErrorFormat("{0} {1}", filterContext.Exception.Message, filterContext.Exception.StackTrace);
+			if(DbSession == null)
+				return;
+			// Иногда транзакции надо закрывать отдельно, так как метод OnResultExecuted не будет вызван
+			if (DbSession.Transaction.IsActive) {
+				EmailSender.SendDebugInfo("Rollback транзакции в OnException", "");
+				DbSession.Transaction.Rollback();
+			}
+			if(DbSession.IsOpen)
+				DbSession.Close();
+
 		}
 
 		protected StringBuilder CollectDebugInfo()
@@ -140,30 +153,42 @@ namespace Inforoom2.Controllers
 			var builder = new StringBuilder(1000);
 			if(CurrentClient != null)
 				builder.Append("Клиент: " + CurrentClient.Id + " \n ");
+
+			//Не должно случаться, но добавил, так как боюсь циклических исключений
+			//Получаем ip, ловим исключение, собираем инфо, получаем ip и так до бесконечности
+			try {
+				var tryClient = Client.GetClientForIp(Request.UserHostAddress, DbSession);
+				if (tryClient != null)
+					builder.Append("Клиент (по аренде): " + tryClient.Id + " \n ");
+			}
+			catch (Exception e) {
+				builder.Append("Поймали циклическое исключение на попытке получить ip клиента \n ");
+			}
+
 			builder.Append("Дата: "+DateTime.Now+" \n ");
+			builder.Append("Referrer: " + Request.UrlReferrer + " \n ");
+			builder.Append("Query: " + Request.QueryString + " \n ");
 			builder.Append("Ip: " + Request.UserHostAddress + " \n ");
-			builder.Append("Форма: \n ");
+			builder.Append("Форма:] \n ");
 			foreach (var key in Request.Form.AllKeys)
 			{
-				//if(key == "password") {
-				//	builder.Append("Password : !!!Restricted!!! \n");
-				//	continue;
-				//}
 				builder.Append(key);
 				builder.Append(" : ");
 				builder.Append(Request.Form[key]);
 				builder.Append("\n");
 			}
+			builder.Append("]");
 			builder.Append("Запрос: " +Request.FilePath+ " : "+ Request.QueryString + " \n ");
 			builder.Append("Браузер: " +Request.Browser.Browser + " \n ");
-			builder.Append("Куки: \n ");
+			builder.Append("Куки:[ \n ");
 			foreach (var key in Request.Cookies.AllKeys)
 			{
 				builder.Append(key);
 				builder.Append(" : ");
-				builder.Append(GetCookie(key));
+				builder.Append(GetCookie(key) ?? "");
 				builder.Append("\n");
 			}
+			builder.Append("]");
 			return builder;
 		}
 
@@ -178,28 +203,25 @@ namespace Inforoom2.Controllers
 		}
 
 		//Авторизация клиента из сети
-		private void TryAuthorizeNetworkClient()
+		private bool TryAuthorizeNetworkClient()
 		{
-				var ip = Request.UserHostAddress;
-				if(string.IsNullOrEmpty(ip))
-					return;
-				var address = IPAddress.Parse(ip);
-				var leases = DbSession.Query<Lease>().Where(l => l.Ip == address).ToList();
-				if (leases.Count != 0) {
-					var client = leases.Where(l => l.Endpoint != null
-						&& l.Endpoint.Client != null
-						&& l.Endpoint.Client.PhysicalClient != null)
-						.Select(l => l.Endpoint.Client)
-						.FirstOrDefault();
-					if (client != null)
-					{
-						//var builder = CollectDebugInfo();
-						//builder.Append("Авторизация клиента внутри сети");
-						//EmailSender.SendEmail("asarychev@analit.net", "Авторизация: " + Request.UserHostAddress + "," + client.Id, builder.ToString());
-						SetCookie("networkClient","true");
-						this.Authenticate(ViewBag.ActionName, ViewBag.ControllerName, client.Id.ToString(), true);
-					}
-				}
+			var ipstring = Request.UserHostAddress;
+#if DEBUG
+			//Можем авторизоваться по лизе за клиента
+			ipstring = Request.QueryString["ip"] ?? null;
+			if(GetCookie("debugIp") == null && ipstring != null)
+				SetCookie("debugIp", ipstring);
+#endif
+			if(CurrentClient != null || string.IsNullOrEmpty(ipstring))
+				return false;
+			var endpoint = ClientEndpoint.GetEndpointForIp(ipstring,DbSession);
+			if (endpoint != null && endpoint.Client.PhysicalClient != null) //Юриков авторизовывать не нужно
+			{
+				SetCookie("networkClient","true");
+				this.Authenticate(ViewBag.ActionName, ViewBag.ControllerName, endpoint.Client.Id.ToString(), true);
+				return true;
+			}
+			return false;
 		}
 
 		protected override void OnResultExecuting(ResultExecutingContext filterContext)
@@ -214,56 +236,78 @@ namespace Inforoom2.Controllers
 		protected override void OnActionExecuted(ActionExecutedContext filterContext)
 		{
 			base.OnActionExecuted(filterContext);
-			if (filterContext.Exception != null) {
-			}
 			ViewBag.ActionName = filterContext.RouteData.Values["action"].ToString();
-			ViewBag.ControllerName = filterContext.RouteData.Values["controller"].ToString();
+			ViewBag.ControllerName = GetType().Name.Replace("Controller","");
+			//todo куда это девать?
 			ViewBag.CallMeBackTicket = new CallMeBackTicket();
+
 			ProcessRegionPanel();
-			ViewBag.NetworkClientFlag = !string.IsNullOrEmpty(GetCookie("networkClient"));
-			if (ViewBag.NetworkClientFlag) {
-				CheckNetworkClientLease();
-			}
+			if(TryAuthorizeNetworkClient())
+				return;
+			ViewBag.NetworkClientFlag = GetCookie("networkClient") != null;
 			if (CurrentClient != null) {
 				var sb = new StringBuilder();
 				sb.AppendFormat("Здравствуйте, {0} {1}. Ваш баланс: {2} руб.", CurrentClient.PhysicalClient.Name, 
 						CurrentClient.PhysicalClient.Patronymic, CurrentClient.PhysicalClient.Balance);
 				ViewBag.ClientInfo = sb.ToString();
 			}
-			else {
-				TryAuthorizeNetworkClient();
-			}
+			if (!CheckNetworkClient())
+				RedirectToAction("Index", "Home");
 		}
 
-		private void CheckNetworkClientLease()
+		private bool CheckNetworkClient()
 		{
-			var ip = Request.UserHostAddress;
-			if (CurrentClient == null || string.IsNullOrEmpty(ip)) {
-				SetCookie("networkClient", null);
-				return;
-			}
-			var address = IPAddress.Parse(ip);
-			var leases = DbSession.Query<Lease>().Where(l => l.Ip == address).ToList();
-			if (leases.Count != 0)
+			var ipstring = Request.UserHostAddress;
+#if DEBUG
+			ipstring = GetCookie("debugIp");
+#endif
+			//если нет куки значит клиент не из нутри сети - все впроядке
+			var cookie = GetCookie("networkClient");
+			if (cookie == null)
+				return true;
+
+			//если нет текущего клиента то снимаем флаг клиента из интернета
+			//больше ничего делать не надо - он может продолжить работку
+			if (CurrentClient == null || string.IsNullOrEmpty(ipstring))
 			{
-				var client = leases.Where(l => l.Endpoint != null
-					&& l.Endpoint.Client != null
-					&& l.Endpoint.Client.PhysicalClient != null)
-					.Select(l => l.Endpoint.Client)
-					.FirstOrDefault();
-				if (client != null && client.Id != CurrentClient.Id)
-				{
-					var builder = CollectDebugInfo();
-					builder.Append("Выкидываем неправильно залогиненного клиента");
-					EmailSender.SendEmail("asarychev@analit.net", "Авторизация: " + Request.UserHostAddress + "," + client.Id + ", " + CurrentClient.Id, builder.ToString());
-					FormsAuthentication.SignOut();
-					RedirectToAction("Index", "Home");
-				}
-				else {
-					return;
-				}
 				SetCookie("networkClient", null);
+				EmailSender.SendDebugInfo("Снимаем куку залогиненного автоматически клиента так как он не найден: " + ipstring,CollectDebugInfo().ToString());
+				return true;
 			}
+
+			//Выкидываем юрика
+			if (CurrentClient.PhysicalClient == null) {
+				SetCookie("networkClient", null);
+				var msg = "Выкидываем юридического клиента: " + CurrentClient.Id;
+				EmailSender.SendDebugInfo(msg, CollectDebugInfo().ToString());
+				FormsAuthentication.SignOut();
+				return false;
+			}
+
+			var endpoint = ClientEndpoint.GetEndpointForIp(ipstring,DbSession);
+			if (endpoint != null)
+			{
+				if (endpoint.Client.Id != CurrentClient.Id)
+				{
+					//Оказывается, что точка подключения принадлежит другому клиенту и текущий сидит в чужом ЛК
+					//Снимаем куку и выкидываем клиента из ЛК
+					//Возможно нужен еще редирект
+					SetCookie("networkClient", null);
+					var msg = "Выкидываем неправильно залогиненного клиента: " + ipstring + "," + endpoint.Client.Id + ", " + CurrentClient.Id;
+					EmailSender.SendDebugInfo(msg,CollectDebugInfo().ToString());
+					FormsAuthentication.SignOut();
+					return false;
+				}
+				//был найден клиент по точке подключения и текущий клиент. они совпадают, так что все путем
+				return true;
+			}
+
+			//Получается текущий клиент есть, флаг того, что мы его авторизовали есть, но точки подключения у него нет. Как так? Выкидываем
+			SetCookie("networkClient", null);
+			var str = "Выкидываем залогиненного клиента без аренды: " + ipstring + ", " + CurrentClient.Id;
+			EmailSender.SendDebugInfo(str, CollectDebugInfo().ToString());
+			FormsAuthentication.SignOut();
+			return false;
 		}
 
 		private void ProcessCallMeBackTicket()
@@ -370,7 +414,7 @@ namespace Inforoom2.Controllers
 		{
 			var cookie = Request.Cookies.Get(cookieName);
 			if (cookie == null || cookie.Value.Length <= 1) {
-				return string.Empty;
+				return null;
 			}
 
 			var base64EncodedBytes = Convert.FromBase64String(cookie.Value);

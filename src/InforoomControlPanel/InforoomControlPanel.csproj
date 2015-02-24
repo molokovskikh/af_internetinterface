@@ -1873,6 +1873,14 @@
   <ItemGroup>
     <Content Include="Views\Address\CreateHouse.cshtml" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Switch\NetworkNodeList.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Plans\CreatePlan.cshtml" />
+    <None Include="Views\Switch\CreateNetworkNode.cshtml" />
+    <None Include="Views\Switch\EditNetworkNode.cshtml" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
