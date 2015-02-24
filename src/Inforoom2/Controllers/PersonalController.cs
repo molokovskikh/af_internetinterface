@@ -296,8 +296,8 @@ namespace Inforoom2.Controllers
 		{
 			var client = CurrentClient;
 			var services = DbSession.Query<Service>().Where(s => s.IsActivableFromWeb);
-			var blockAccountService = services.OfType<BlockAccountService>().FirstOrDefault();
-			var deferredPayment = services.OfType<DeferredPayment>().FirstOrDefault();
+			var blockAccountService = services.FirstOrDefault(i => i is BlockAccountService);
+			var deferredPayment = services.FirstOrDefault(i => i is DeferredPayment);
 			var inforoomServices = new List<Service> { blockAccountService, deferredPayment };
 
 			ViewBag.Client = client;
