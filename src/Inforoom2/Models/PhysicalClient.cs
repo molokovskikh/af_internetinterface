@@ -40,14 +40,17 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual decimal MoneyBalance { get; set; }
 
-		[Property,NotNullNotEmpty(Message = "Введите номер пасспорта")]
+		[Property,NotNullNotEmpty(Message = "Введите номер паспорта")]
 		public virtual string PassportNumber { get; set; }
 
-		[Property,NotNullNotEmpty(Message = "Введите серию пасспорта")]
+		[Property,NotNullNotEmpty(Message = "Введите серию паспорта")]
 		public virtual string PassportSeries { get; set; }
 
-		[Property,NotNull(Message = "Введите дату выдачи пасспорта")]
+		[Property,NotNull(Message = "Введите дату выдачи паспорта")]
 		public virtual DateTime PassportDate { get; set; }
+
+		[Property(Column = "RegistrationAdress"), NotNull(Message = "Введите адрес регистрации")]
+		public virtual string RegistrationAddress { get; set; }
 
 		[Property(Column = "WhoGivePassport"),NotNullNotEmpty(Message = "Поле не может быть пустым")]
 		public virtual string PassportResidention { get; set; }
@@ -72,21 +75,20 @@ namespace Inforoom2.Models
 			get { return Surname + " " + Name + " " + Patronymic; }
 		}
 
-		public virtual UserWriteOff ChangeTariffPlan(Plan planToSwitchOn)
+		public virtual UserWriteOff RequestChangePlan(Plan planToSwitchOn)
 		{
-			if (IsFreePlanChange) {
-				return SwitchPlan(planToSwitchOn, 0);
-			}
-			if (!IsEnoughBalance(planToSwitchOn.SwitchPrice)) {
+			var price = Plan.GetTransferPrice(planToSwitchOn);
+			if (!IsEnoughBalance(price))
+			{
 				return null;
 			}
-			return SwitchPlan(planToSwitchOn, planToSwitchOn.SwitchPrice);
+			return SwitchPlan(planToSwitchOn, price);
 		}
 
-		private UserWriteOff SwitchPlan(Plan toPlan, decimal price)
+		private UserWriteOff SwitchPlan(Plan planTo, decimal price)
 		{
-			var comment = string.Format("Изменение тарифа, старый '{0}' новый '{1}'", Plan.Name, toPlan.Name);
-			Plan = toPlan;
+			var comment = string.Format("Изменение тарифа, старый '{0}' новый '{1}'", Plan.Name, planTo.Name);
+			Plan = planTo;
 			WriteOff(price);
 			var writeOff = new UserWriteOff {
 				Client = Client,
@@ -99,11 +101,6 @@ namespace Inforoom2.Models
 			if (Client.Internet.ActivatedByUser)
 				Client.Endpoints.ForEach(e=>e.PackageId = Plan.PackageId);
 			return writeOff;
-		}
-
-		public virtual bool IsFreePlanChange
-		{
-			get { return LastTimePlanChanged.AddMonths(1) < DateTime.Now; }
 		}
 
 		public virtual bool IsEnoughBalance(decimal sum)

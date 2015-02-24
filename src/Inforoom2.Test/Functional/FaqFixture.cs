@@ -18,10 +18,10 @@ namespace Inforoom2.Test.Functional
 			question.Answer = "Test answer";
 			question.Text = "test question text";
 			question.IsPublished = true;
-			question.Priority = question.GetNextPriority(session);
+			question.Priority = question.GetNextPriority(DbSession);
 
-			session.Save(question);
-			session.Flush();
+			DbSession.Save(question);
+			DbSession.Flush();
 			Question = question;
 		}
 
@@ -82,7 +82,7 @@ namespace Inforoom2.Test.Functional
 			applyButton.Click();
 			browser.SwitchTo().Alert().Accept();
 
-			var ticket = session.Query<Ticket>().OrderByDescending(i=>i.Id).First();
+			var ticket = DbSession.Query<Ticket>().OrderByDescending(i=>i.Id).First();
 			Assert.That(ticket.Text,Is.EqualTo(testQuestion));
 			Assert.That(ticket.Email,Is.EqualTo(testEmail));
 		}

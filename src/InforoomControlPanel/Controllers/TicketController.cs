@@ -38,7 +38,7 @@ namespace InforoomControlPanel.Controllers
 			var errors = ValidationRunner.ValidateDeep(ticket);
 			if (errors.Length == 0) {
 				ticket.AnswerDate = DateTime.Now;
-				ticket.Employee = CurrentEmployee;
+				ticket.Employee = GetCurrentEmployee();
 				DbSession.SaveOrUpdate(ticket);
 				SuccessMessage("Запрос на обратный звонок успешно изменен");
 			}
@@ -63,7 +63,7 @@ namespace InforoomControlPanel.Controllers
 			var errors = ValidationRunner.ValidateDeep(ticket);
 			if (errors.Length == 0) {
 				ticket.AnswerDate = DateTime.Now;
-				ticket.Employee = CurrentEmployee;
+				ticket.Employee = GetCurrentEmployee();
 				ticket.IsNotified = true;
 				try {
 					EmailSender.SendEmail(new PhysicalClient {Email = ticket.Email},

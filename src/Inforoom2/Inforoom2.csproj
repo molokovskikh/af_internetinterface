@@ -206,9 +206,9 @@
     <Content Include="Images\typehit.png" />
     <Content Include="Images\upward.png" />
     <Content Include="Images\wifi.png" />
-    <Content Include="list.txt" />
     <Content Include="Scripts\AdminAddressController.js" />
     <Content Include="Scripts\ClientRequest.js" />
+    <Content Include="Scripts\PersonalController.FirstVisit.js" />
     <Content Include="Scripts\IsMyHouseConnectedController.js" />
     <Content Include="Scripts\EditNewsBlock.js" />
     <Content Include="Scripts\EventEmitter.js" />
@@ -263,6 +263,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\ClientRequestController.cs" />
+    <Compile Include="Controllers\Inforoom2Controller.cs" />
     <Compile Include="Controllers\WarningController.cs" />
     <Compile Include="Controllers\IsMyHouseConnectedController.cs" />
     <Compile Include="Controllers\StaticContent.cs" />
@@ -288,6 +289,7 @@
     <Compile Include="Helpers\IPUserType.cs" />
     <Compile Include="Helpers\NHibernateActionFilter.cs" />
     <Compile Include="Helpers\SceHelper.cs" />
+    <Compile Include="Helpers\StringHepler.cs" />
     <Compile Include="Helpers\ViewHelper.cs" />
     <Compile Include="Intefaces\IModelWithPriority.cs" />
     <Compile Include="Models\AdditionalStatus.cs" />
@@ -301,11 +303,13 @@
     <Compile Include="Models\CallMeBackTicket.cs" />
     <Compile Include="Models\Contact.cs" />
     <Compile Include="Models\Appeal.cs" />
+    <Compile Include="Models\StreetAlias.cs" />
     <Compile Include="Models\PaymentForConnect.cs" />
     <Compile Include="Models\InternetSettings.cs" />
     <Compile Include="Models\Lease.cs" />
     <Compile Include="Models\LegalClient.cs" />
     <Compile Include="Models\Payment.cs" />
+    <Compile Include="Models\PaymentSystem.cs" />
     <Compile Include="Models\PlanTransfer.cs" />
     <Compile Include="Models\SaleSettings.cs" />
     <Compile Include="Models\ServiceMan.cs" />
@@ -315,7 +319,7 @@
     <Compile Include="Models\Services\Internet.cs" />
     <Compile Include="Models\Services\IpTv.cs" />
     <Compile Include="Models\Services\IpTvBoxRent.cs" />
-    <Compile Include="Models\Services\PinnedIp.cs" />
+    <Compile Include="Models\Services\FixedIp.cs" />
     <Compile Include="Models\Services\Service.cs" />
     <Compile Include="Models\Services\SpeedBoost.cs" />
     <Compile Include="Models\Services\WorkLawyer.cs" />
@@ -414,6 +418,9 @@
     <Content Include="Views\Warning\Index.cshtml" />
     <Content Include="Views\Personal\FirstVisit.cshtml" />
     <Content Include="Views\About\ConnectedHousesLists.cshtml" />
+    <Content Include="Views\Shared\Empty.cshtml" />
+    <Content Include="Views\Home\ExtraServicesPriceList.cshtml" />
+    <Content Include="Views\Personal\ActiveServices.cshtml" />
     <None Include="Web.Inforoom2_Test.config">
       <SubType>Designer</SubType>
     </None>

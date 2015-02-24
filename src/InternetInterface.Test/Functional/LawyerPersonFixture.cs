@@ -41,6 +41,18 @@ namespace InternetInterface.Test.Functional
 				checkbox.Click();
 		}
 
+		[Test(Description = "Проверяет отображение слова 'РАСТОРГНУТ' в имени клиента (с этим статусом) в его ЛК")]
+		public void DisplayDissolvedStatusToName()
+		{
+			var shortName = "Lawyer#" + laywerPerson.LawyerPerson.Id;
+			laywerPerson.Name = "Test lawyer person";
+			laywerPerson.LawyerPerson.ShortName = shortName;
+			laywerPerson.SetStatus(StatusType.Dissolved, session);
+			session.Save(laywerPerson);
+			Open(laywerPerson.Redirect());
+			AssertText("РАСТОРГНУТ " + shortName);
+		}
+
 		[Test(Description = "Проверяет добавление услуги к заказу при редактировании заказа")]
 		public void Check_data_index()
 		{

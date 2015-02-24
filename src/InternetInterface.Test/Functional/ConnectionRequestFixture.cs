@@ -6,11 +6,12 @@ using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NHibernate.Linq;
 using NUnit.Framework;
+using Test.Support.Selenium;
 
 namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
-	public class ConnectionRequestFixture : HeadlessFixture
+	public class ConnectionRequestFixture : SeleniumFixture
 	{
 		[Test]
 		public void Create_request()
@@ -18,14 +19,16 @@ namespace InternetInterface.Test.Functional
 			Open();
 			Click("Регистрация");
 			AssertText("Регистрация новой заявки на подключение");
-			Input("request_ApplicantName", "Ребкин Вадим Леонидович");
-			Input("request_ApplicantPhoneNumber", "8-473-606-20-00");
-			Input("request_Street", "Суворова");
-			Input("request_City", "Москва");
-			Input("request_House", "1");
-			Input("request_Apartment", "1");
+			Css("#request_ApplicantName").SendKeys("Ребкин Вадим Леонидович");
+			Css("#request_ApplicantPhoneNumber").SendKeys("8-473-606-20-00");
+			Css("#request_Street").SendKeys("Суворова");
+			Css("#request_City").SendKeys("Москва");
+			Css("#request_House").SendKeys("1");
+			Css("#request_Apartment").SendKeys("1");
+			Css("#request_RequestSource").SelectByValue("2");			// Назначить "от оператора"
 			ClickButton("Сохранить");
 			AssertText("Сохранено");
+			AssertText("от оператора");
 		}
 
 		[Test]
@@ -58,10 +61,10 @@ namespace InternetInterface.Test.Functional
 			Click("Заявки");
 			AssertText(request.ApplicantName);
 			AssertText(request2.ApplicantName);
-			Input("filter_City", request.City);
-			ClickButton("Найти");
+			Css("#filter_City").SendKeys(request.City);
+			Click("Найти");
 			AssertText(request.ApplicantName);
-			Assert.That(page.Html, Is.Not.StringContaining(request2.ApplicantName));
+			AssertNoText(request2.ApplicantName);
 		}
 	}
 }

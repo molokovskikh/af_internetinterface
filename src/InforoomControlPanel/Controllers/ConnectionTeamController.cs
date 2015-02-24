@@ -126,18 +126,6 @@ namespace InforoomControlPanel.Controllers
 		}
 
 		/// <summary>
-		/// Список заявок на подключение
-		/// </summary>
-		/// <param name="ClientRequest"></param>
-		/// <returns></returns>
-		public ActionResult ClientRequests()
-		{
-			var clientRequests = DbSession.Query<ClientRequest>().ToList();
-			ViewBag.ClientRequests = clientRequests;
-			return View();
-		}
-
-		/// <summary>
 		/// Прикрепление заявки на подключение в график
 		/// </summary>
 		/// <param name="ClientRequest"></param>

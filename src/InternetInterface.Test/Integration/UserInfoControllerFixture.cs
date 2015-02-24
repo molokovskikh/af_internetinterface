@@ -1,24 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Mail;
-using Castle.ActiveRecord;
-using Castle.ActiveRecord.Framework;
-using Castle.Core.Smtp;
-using Castle.MonoRail.TestSupport;
 using Common.Tools;
-using Common.Web.Ui.MonoRailExtentions;
 using InternetInterface.Controllers;
 using InternetInterface.Models;
 using InternetInterface.Queries;
 using InternetInterface.Test.Helpers;
-using NHibernate;
 using NHibernate.Linq;
 using NUnit.Framework;
-using Rhino.Mocks;
-using Test.Support.log4net;
-using Array = NHibernate.Mapping.Array;
 
 namespace InternetInterface.Test.Integration
 {
@@ -218,7 +207,7 @@ namespace InternetInterface.Test.Integration
 			var client = ClientHelper.Client(session);
 			client.RatedPeriodDate = null;
 			session.Save(client);
-			Assert.That(client.BeginWork,Is.Null);
+			Assert.That(client.BeginWork, Is.Null);
 			Assert.That(client.RatedPeriodDate, Is.Null);
 
 			var zone = new Zone("dasdad");
@@ -238,9 +227,6 @@ namespace InternetInterface.Test.Integration
 			session.Flush();
 			Assert.That(client.BeginWork, Is.Not.Null);
 			Assert.That(client.RatedPeriodDate, Is.Not.Null);
-
-
-		
 		}
 	}
 }

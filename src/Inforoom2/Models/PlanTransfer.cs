@@ -2,6 +2,10 @@
 
 namespace Inforoom2.Models
 {
+	/// <summary>
+	/// Объект стоимости перехода между тарифными планами.
+	/// Задает стоимость перехода с тарифа на тариф для пользователя
+	/// </summary>
 	[Class(0, Table = "PlanTransfer", NameType = typeof(PlanTransfer))]
 	public class PlanTransfer : BaseModel
 	{

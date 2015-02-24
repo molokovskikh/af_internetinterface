@@ -4,8 +4,6 @@
 @using NHibernate.Mapping.ByCode.Impl
 
 @{
-	Client client = ViewBag.Client;
-	IList<Service> availableServices = ViewBag.AvailableServices;
 	IList<ClientService> clientServices = ViewBag.ClientServices;
 }
 
@@ -29,7 +27,7 @@
 					@Html.DisplayFor(modelItem => clientService.Service.Description)
 				</td>
 				<td class="price tr">
-					@Html.DisplayFor(modelItem => clientService.Service.Price)
+					@(clientService.Service.Price != 0 ? clientService.Service.Price+" руб./мес.": "")
 				</td>
 				<td class="price tr">
 					@Html.DisplayFor(modelItem => clientService.EndDate)

@@ -2,7 +2,7 @@
 @using Inforoom2.Helpers
 @using Inforoom2.Models
 @model dynamic
-@section JavaScript{<script type="text/javascript"src="@Url.Content("~/Scripts/ServiceController.js")"></script>}
+@section JavaScript{<script type="text/javascript"src="@Url.Content("~/Scripts/PersonalController.FirstVisit.js")"></script>}
 @{
 	ViewBag.Title = "Добро пожаловать";
 	ValidationRunner validationRunner = ViewBag.Validation;
@@ -12,7 +12,7 @@
 @{ Html.RenderPartial("Menu"); }
 @using(@Html.BeginForm("FirstVisit", "Personal", null, FormMethod.Post)) {
 <div class="right-block">
-	<h4 class="secondary-header">Это Ваше первое посещение личного кабинета, просим подтвердить свои данные паспортные данные:</h4>
+	<h4 class="secondary-header">Добрый день. Система обнаружила, что у вас не полностью заполнены данные. Просим внести свои паспортные данные:</h4>
 	@Html.HiddenFor(i=>PhysicalClient.Id)
 	<div>
 		<div class="personals">Фамилия:</div>
@@ -40,7 +40,11 @@
 	</div>
 	<div>
 		<div class="personals">Дата выдачи:</div>
-		@Html.ValidationEditor(validationRunner, PhysicalClient, "PassportDate", new { @class = "personal" }, HtmlTag.input, HtmlType.text)
+		@Html.ValidationEditor(validationRunner, PhysicalClient, "PassportDate", new { @class = "personal yearDatePicker", @readonly="readonly" }, HtmlTag.input, HtmlType.text)
+	</div>
+	<div>
+		<div class="personals">Адрес регистрации:</div>
+		@Html.ValidationEditor(validationRunner, PhysicalClient, "RegistrationAddress", new { @class = "personal" }, HtmlTag.input, HtmlType.text)
 	</div>
 	<input class="button" type="submit" value="Отправить">
 </div>

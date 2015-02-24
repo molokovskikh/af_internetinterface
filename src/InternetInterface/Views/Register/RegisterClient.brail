@@ -36,6 +36,20 @@
 					</td>
 				</tr>
 				<% end %>
+				<% if not IsDefined("requestID"): %>
+				<tr>
+						<td colspan="2">
+							<label for="DealerSelect">Привел клиента в компанию:</label>
+							<select id="DealerSelect" name="client.Client.Dealer.Id">
+								<option selected="selected"></option>
+								<% for dealer in dealersList: %>
+								<option value="${dealer.Id}">!{dealer.Name}</option>
+								<% end %>
+							</select>
+						</td>
+				</tr>
+				<tr></tr>
+				<% end %>
 				<tr>
 					<td colspan="3">
 						<div class="actions">

@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using Castle.ActiveRecord;
-using Castle.ActiveRecord.Framework;
-using Castle.ActiveRecord.Linq;
 using Castle.Components.Validator;
-using InternetInterface.Controllers.Filter;
-using InternetInterface.Helpers;
 
 namespace InternetInterface.Models
 {
+	public enum RequestType
+	{
+		[Description("от клиента")] FromClient = 1,
+		[Description("от оператора")] FromOperator = 2
+	}
+
 	[ActiveRecord("Requests", Schema = "Internet", Lazy = true)]
 	public class Request
 	{
@@ -80,7 +80,10 @@ namespace InternetInterface.Models
 		[BelongsTo("Operator")]
 		public virtual Partner Operator { get; set; }
 
-		[BelongsTo]
+		[Property("_RequestSource"), ValidateNonEmpty, Description("Заявка")]
+		public virtual RequestType RequestSource { get; set; }
+
+		[BelongsTo, Description("Регистратор")]
 		public virtual Partner Registrator { get; set; }
 
 		[Property]
@@ -126,6 +129,8 @@ namespace InternetInterface.Models
 			ActionDate = DateTime.Now;
 			ApplicantPhoneNumber = ApplicantPhoneNumber
 				.Substring(2, ApplicantPhoneNumber.Length - 2).Replace("-", string.Empty);
+			if (RequestSource == RequestType.FromClient)
+				Registrator = null;
 		}
 	}
 }

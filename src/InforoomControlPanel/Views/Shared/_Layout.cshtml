@@ -4,7 +4,7 @@
 @{
 	string username = "";
 	string password = "";
-	Employee CurrentEmployee = ViewBag.CurrentEmployee;
+	Employee currentEmployee = ViewBag.CurrentEmployee;
 }
 <html>
 	<head>
@@ -77,16 +77,39 @@
 				<!-- add class "multiple-expanded" to allow multiple submenus to open -->
 				<!-- class "auto-inherit-active-class" will automatically add "active" class for parent elements who are marked already with class "active" -->
 				<li>
+					<a href="http://stat.ivrn.net/ii/">
+						<i class="entypo-home"></i>
+						<span class="title">Перейти в InternetInterface</span>
+					</a>
+				</li>
+				<li>
 					<a href="@Url.Action("Index","AdminAccount")">
 						<i class="entypo-home"></i>
 						<span class="title">Главная</span>
 					</a>
 				</li>
 				<li>
-				<a href="@Url.Action("ClientList","Client")">
+					<a href="@Url.Action("ClientList","Client")">
 						<i class="entypo-users"></i>
 						<span class="title">Клиенты</span>
-				</a>
+					</a>
+					<ul class="visible">
+						<li>
+							<a href="@Url.Action("ClientList","Client")">
+								<span class="title">Список клиентов</span>
+							</a>
+						</li>
+						<li>
+							<a href="@Url.Action("ClientRequest","Client")">
+								<span class="title">Заявка на регистрацию</span>
+							</a>
+						</li>
+						<li>
+							<a href="@Url.Action("ClientRequestsList","Client")">
+								<span class="title">Список заявок</span>
+							</a>
+						</li>
+					</ul>
 				</li>
 				<li>
 					<a href="@Url.Action("Brigads","ConnectionTeam")">
@@ -102,11 +125,6 @@
 						<li>
 							<a href="@Url.Action("ServiceRequests","ConnectionTeam")">
 								<span class="title">Сервисные заявки</span>
-							</a>
-						</li>
-						<li>
-							<a href="@Url.Action("ClientRequests","ConnectionTeam")">
-								<span class="title">Заявки на подключение</span>
 							</a>
 						</li>
 						<li>
@@ -165,6 +183,57 @@
 						</li>
 					</ul>
 				</li>
+				<li>
+					<a href="@Url.Action("PlanIndex","Plans")">
+						<i class="entypo-mail"></i>
+						<span class="title">Тарифы</span>
+					</a>
+					<ul class="visible">
+						<li>
+							<a href="@Url.Action("PlanIndex","Plans")">
+								<span class="title">Тарифы</span>
+							</a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="@Url.Action("SwitchAddressList","Address")">
+						<i class="entypo-mail"></i>
+						<span class="title">Адреса</span>
+					</a>
+					<ul class="visible">
+						<li>
+							<a href="@Url.Action("SwitchAddressList","Address")">
+								<span class="title">Адреса коммутаторов</span>
+							</a>
+						</li>
+						<li>
+							<a href="@Url.Action("SwitchList","Switch")">
+								<span class="title">Коммутаторы</span>
+							</a>
+						</li>
+						<li>
+							<a href="@Url.Action("CityList","Address")">
+								<span class="title">Города</span>
+							</a>
+						</li>
+						<li>
+							<a href="@Url.Action("RegionList","Address")">
+								<span class="title">Регионы</span>
+							</a>
+						</li>
+						<li>
+							<a href="@Url.Action("StreetList","Address")">
+								<span class="title">Улицы</span>
+							</a>
+						</li>
+						<li>
+							<a href="@Url.Action("HouseList","Address")">
+								<span class="title">Дома</span>
+							</a>
+						</li>
+					</ul>
+				</li>
 			</ul>
 			
 		</div>
@@ -180,7 +249,7 @@
 			<div class="col-md-6 col-sm-4 clearfix hidden-xs">
 		
 				<ul class="list-inline links-list pull-right">
-					<li>@CurrentEmployee.Name</li>
+					<li>@currentEmployee.Name</li>
 					<li class="sep"></li>
 					<li>
 						<a href="@Url.Action("AdminLogout", "AdminAccount")">

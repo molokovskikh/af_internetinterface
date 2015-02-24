@@ -6,7 +6,7 @@ using NHibernate.Linq;
 
 namespace Inforoom2.Controllers
 {
-	public class IsMyHouseConnectedController : BaseController	
+	public class IsMyHouseConnectedController : Inforoom2Controller	
 	{
 		public ActionResult Index()
 		{
