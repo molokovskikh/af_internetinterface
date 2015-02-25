@@ -17,7 +17,7 @@ namespace Inforoom2.Models.Services
 				var client = assignedService.Client;
 				client.Disabled = false;
 				client.RatedPeriodDate = SystemTime.Now();
-				client.Status = Status.Get(StatusType.Worked, session);
+				client.SetStatus(StatusType.Worked, session);
 				session.Update(client);
 				assignedService.IsActivated = true;
 			}
