@@ -13,21 +13,20 @@ task @default, [@build]
 
 task @build, ["generate:assembly:info", @BuildWebSite, "build:background", "build:printer", "build:billing", "build:inforoom2"]
 
-task @deploy, [@Production, "build", "version:bump", "deploy:pipeline", "deploy:printer", "deploy:background", "deploy:Inforoom2", "deploy:billing"]
+task @deploy, [@Production, "build", "version:bump", "deploy:pipeline", "deploy:printer", "deploy:background", "deploy:inforoom2", "deploy:billing"]
 
 task "deploy:background", ["build:background"]:
 	return if Globals.Environment != @Production
 	DeployService(Globals, "InternetInterface.Background", "fms")
 	
 task "clean:inforoom2":
-	CleanWeb(Globals, "Inforoom2")
+	CleanWeb(Globals, "inforoom2")
 	
 task "build:inforoom2", ["generate:assembly:info" , "clean:inforoom2"]:
-	Globals.Environment = "Production"
-	BuildWeb(Globals, "Inforoom2")
+	BuildWeb(Globals, "inforoom2")
 	
-task "deploy:Inforoom2", ["build:inforoom2", "version:bump"]:
-	XCopyDeploy(Globals, "Inforoom2", GetDeploy(Globals, "InforoomInternet", "IVrn"))
+task "deploy:inforoom2", ["build:inforoom2", "version:bump"]:
+	XCopyDeploy(Globals, "inforoom2", GetDeploy(Globals, "InforoomInternet", "IVrn"))
 
 task "deploy:billing", ["build:billing"]:
 	return if Globals.Environment != @Production
@@ -46,25 +45,11 @@ task "deploy:printer":
 	return if Globals.Environment != @Production
 	XCopyDeploy(Globals, "InternetInterface.Printer", "\\\\adc.analit.net\\Inforoom\\Apps\\InternetInterface.Printer")
 
-	
-task "build:inforoom2:test", ["generate:assembly:info" , "clean:inforoom2"]:
-	Globals.Environment = "Inforoom2_Test"
-	BuildWeb(Globals, "Inforoom2")	
-
-task "copy:inforoom2:test":
-	XCopyDeploy(Globals, "Inforoom2", "\\\\test2.analit.net\\WWW\\Inforoom")
-	
-task "deploy:inforoom2:test", ["build:inforoom2:test", "version:bump", "copy:inforoom2:test", "db:migrate"]
-	
-	
 task "clean:controlpanel":
 	CleanWeb(Globals, "InforoomControlPanel")
 	
-task "build:controlpanel:test",["generate:assembly:info" , "clean:controlpanel"]:
-	Globals.Environment = "InforoomControlPanel_Test"
+task "build:controlpanel",["generate:assembly:info" , "clean:controlpanel"]:
 	BuildWeb(Globals, "InforoomControlPanel")
 	
-task "copy:controlpanel:test":
-	XCopyDeploy(Globals, "InforoomControlPanel", "\\\\test2.analit.net\\WWW\\ControlPanel")	
-	
-task "deploy:controlpanel:test", ["build:controlpanel:test", "version:bump", "copy:controlpanel:test", "db:migrate"]
+task "deploy:controlpanel", ["build:controlpanel", "version:bump", "db:migrate"]:
+	XCopyDeploy(Globals, "InforoomControlPanel", GetDeploy(Globals, "InforoomControlPanel", "ControlPanel"))

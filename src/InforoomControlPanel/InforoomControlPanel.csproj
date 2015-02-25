@@ -1546,7 +1546,7 @@
     <Content Include="Views\Shared\AdminPanel.cshtml" />
     <Content Include="Views\AdminAccount\Index.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Web.InforoomControlPanel_Test.config">
+    <Content Include="Web.test2.config">
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>

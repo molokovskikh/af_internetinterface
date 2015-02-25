@@ -427,7 +427,7 @@
     <Content Include="Views\Shared\Empty.cshtml" />
     <Content Include="Views\Home\ExtraServicesPriceList.cshtml" />
     <Content Include="Views\Personal\ActiveServices.cshtml" />
-    <None Include="Web.Inforoom2_Test.config" />
+    <None Include="Web.test2.config" />
     <None Include="Web.release.config">
       <SubType>Designer</SubType>
       <DependentUpon>Web.config</DependentUpon>
