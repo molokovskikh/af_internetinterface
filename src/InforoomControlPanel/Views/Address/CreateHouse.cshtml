@@ -13,22 +13,23 @@
 	List<Street> Streets = ViewBag.Streets;
 	Street street = ViewBag.Street ?? new Street();
 	House House = ViewBag.House;
-	
+	string action = ViewBag.ActionName;
 }
 	<div class="panel panel-default">
 		<div class="panel-body">
-			@using (Html.BeginForm(ViewBag.ActionName as string, "Address", FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" })) {
+			@using (Html.BeginForm(action, "Address", FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
+   {
 				<div class="col-sm-6">
 					<div class="form-group">
 						<label class="col-sm-4 control-label">Город</label>
 						<div class="col-sm-6">
-							<input type="text" readonly="readonly" class="form-control" id="cityName" value="@(street.Region != null ? street.Region.City.Name : Streets.First().Region.City.Name)"/>
+							<input type="text" readonly="readonly" class="form-control" id="cityName" value="@(street.Region != null ? street.Region.Name : Streets.First().Region.City.Name)"/>
 						</div>
 					</div>	
 					<div class="form-group">
 						<label class="col-sm-4 control-label">Улица</label>
 						<div class="col-sm-6">
-							@Html.DropDownListExtendedFor(i=>House.Street,Streets,i=>i.Name,i=>new{@class= i.Region.City.Name, @style= i.Confirmed ?"":"color:red", geomark =i.Confirmed ?"":i.Geomark},new { @class = "form-control" },street.Id)
+							@Html.DropDownListExtendedFor(i=>House.Street,Streets,i=>i.Name,i=>new{@class= i.Region.Name, @style= i.Confirmed ?"":"color:red", geomark =i.Confirmed ?"":i.Geomark},new { @class = "form-control" },street.Id)
 							@ViewBag.Validation.GetError(House, "Street")
 						</div>
 					</div>

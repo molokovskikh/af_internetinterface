@@ -87,7 +87,7 @@ namespace InforoomControlPanel.Controllers
 		/// <returns></returns>
 		public ActionResult ServiceRequests()
 		{
-			var serviceRequests = DbSession.Query<ServiceRequest>().ToList();
+			var serviceRequests = DbSession.Query<ServiceRequest>().OrderByDescending(i=>i.Id).ToList();
 			ViewBag.ServiceRequests = serviceRequests;
 			return View();
 		}

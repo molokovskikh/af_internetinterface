@@ -97,7 +97,7 @@ namespace Inforoom2.Models
 		{
 			var str = City + " " + Street + " " + HouseNumber + " " + Housing + " " + Apartment;
 			if(Floor != 0)
-				str+= " (" + Floor + ") этаж";
+				str+= " (" + Floor + " этаж)";
 			return str;
 		}
 		public virtual bool IsYandexAddressValid()

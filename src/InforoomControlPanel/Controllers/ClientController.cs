@@ -152,16 +152,16 @@ namespace InforoomControlPanel.Controllers
 			                                                     && a.Floor == clientRequest.Floor
 			                                                     && a.Apartment == clientRequest.Apartment);
 
-			if (address == null) {
-				address = new Address();
-				address.House = house;
-				address.Apartment = clientRequest.Apartment;
-				address.Floor = clientRequest.Floor;
-				address.Entrance = clientRequest.Entrance;
-				address.House.Street = street;
-				address.House.Street.Region = region;
-				address.IsCorrectAddress = true;
-			}
+			//if (address == null) {
+			//	address = new Address();
+			//	address.House = house;
+			//	address.Apartment = clientRequest.Apartment;
+			//	address.Floor = clientRequest.Floor;
+			//	address.Entrance = clientRequest.Entrance;
+			//	address.House.Street = street;
+			//	address.House.Street.Region = region;
+			//	address.IsCorrectAddress = true;
+			//}
 			return address;
 		}
 
