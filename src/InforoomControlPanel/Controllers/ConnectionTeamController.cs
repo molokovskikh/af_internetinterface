@@ -92,6 +92,31 @@ namespace InforoomControlPanel.Controllers
 			return View();
 		}
 
+		public ActionResult UnpluggedClientList()
+		{
+			var status = DbSession.Query<Status>().First(i => i.ShortName == "BlockedAndNoConnected");
+			var clients = DbSession.Query<Client>().Where(i => i.Status == status).OrderByDescending(i => i.Id).ToList();
+			ViewBag.clients = clients;
+			return View();
+		}
+
+		/// <summary>
+		/// Прикрепление сервисной заявки в график
+		/// </summary>
+		/// <param name="ClientRequest"></param>
+		/// <returns></returns>
+		public ActionResult AttachClient(int id)
+		{
+			var client = DbSession.Get<Client>(id);
+			var request = DbSession.Query<ConnectionRequest>().FirstOrDefault(i=>i.Client == client);
+			if (request == null) {
+				request = new ConnectionRequest();
+				request.Client = client;
+				DbSession.Save(request);
+			}
+			return RedirectToAction("AttachConnectionRequest", new { requestId = request.Id });
+		}
+
 		/// <summary>
 		/// Прикрепление сервисной заявки в график
 		/// </summary>
@@ -141,13 +166,13 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		/// <param name="ClientRequest"></param>
 		/// <returns></returns>
-		public ActionResult AttachClientRequest(int requestId)
+		public ActionResult AttachConnectionRequest(int requestId)
 		{
-			var clientRequest = DbSession.Get<ClientRequest>(requestId);
+			var ConnectionRequest = DbSession.Get<ConnectionRequest>(requestId);
 			var servicemen = DbSession.Query<ServiceMan>().ToList();
 			var regions = DbSession.Query<Region>().ToList();
 			ViewBag.Regions = regions;
-			ViewBag.ClientRequest = clientRequest;
+			ViewBag.ConnectionRequest = ConnectionRequest;
 			ViewBag.Servicemen = servicemen;
 			ViewBag.ServicemenDate = DateTime.Today;
 			return View();
@@ -159,24 +184,24 @@ namespace InforoomControlPanel.Controllers
 		/// <param name="ClientRequest"></param>
 		/// <returns></returns>
 		[HttpPost]
-		public ActionResult AttachClientRequest([EntityBinder] ClientRequest ClientRequest)
+		public ActionResult AttachConnectionRequest([EntityBinder] ConnectionRequest ConnectionRequest)
 		{
 			var duration = int.Parse(Request.Form["duration"]);
 			int hours = duration / 60;
 			int minutes = duration - hours * 60;
-			ViewBag.ServicemenDate = ClientRequest.BeginTime.Date;
-			ClientRequest.EndTime = ClientRequest.BeginTime.AddHours(hours).AddMinutes(minutes);
-			var errors = ValidationRunner.Validate(ClientRequest);
+			ViewBag.ServicemenDate = ConnectionRequest.BeginTime.Value.Date;
+			ConnectionRequest.EndTime = ConnectionRequest.BeginTime.Value.AddHours(hours).AddMinutes(minutes);
+			var errors = ValidationRunner.Validate(ConnectionRequest);
 			if (errors.Length == 0)
 			{
-				DbSession.Save(ClientRequest);
+				DbSession.Save(ConnectionRequest);
 				SuccessMessage("Сервисная заявка успешно добавлена в график");
 				DbSession.Flush();
 				DbSession.Clear();
-				return AttachClientRequest(ClientRequest.Id);
+				return AttachConnectionRequest(ConnectionRequest.Id);
 			}
-			AttachServiceRequest(ClientRequest.Id);
-			ViewBag.ClientRequest = ClientRequest;
+			AttachServiceRequest(ConnectionRequest.Id);
+			ViewBag.ClientRequest = ConnectionRequest;
 			return View();
 		}
 

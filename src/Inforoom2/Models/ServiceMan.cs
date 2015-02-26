@@ -15,7 +15,7 @@ namespace Inforoom2.Models
 		public ServiceMan()
 		{
 			ServiceRequests = new List<ServiceRequest>();
-			ClientRequests = new List<ClientRequest>();
+			ConnectionRequests = new List<ConnectionRequest>();
 		}
 
 		public ServiceMan(Employee employee) : this()
@@ -34,10 +34,10 @@ namespace Inforoom2.Models
 		[OneToMany(2, ClassType = typeof(ServiceRequest))]
 		public virtual IList<ServiceRequest> ServiceRequests { get; set; }
 
-		[Bag(0, Table = "requests")]
-		[Key(1, Column = "_ServiceMan")]
-		[OneToMany(2, ClassType = typeof(ClientRequest))]
-		public virtual IList<ClientRequest> ClientRequests { get; set; }
+		[Bag(0, Table = "ConnectionRequests")]
+		[Key(1, Column = "ServiceMAn")]
+		[OneToMany(2, ClassType = typeof(ConnectionRequest))]
+		public virtual IList<ConnectionRequest> ConnectionRequests { get; set; }
 	}
 
 	[Class(0, Table = "ConnectBrigads", NameType = typeof(ServiceTeam))]

@@ -22,6 +22,10 @@ namespace Inforoom2.Models
 			ClientServices = new List<ClientService>();
 			Payments = new List<Payment>();
 		}
+
+		[Property(Column = "RegDate")]
+		public virtual DateTime? CreationDate { get; set; }
+
 		[Property]
 		public virtual bool Disabled { get; set; }
 
@@ -215,9 +219,13 @@ namespace Inforoom2.Models
 			get { return PhysicalClient != null ? PhysicalClient.Email : null; }
 			set { PhysicalClient.Email = value; }
 		}
+
+		[Property(Column = "Name")]
+		public virtual string _Name { get; set; }
+
 		public virtual string Name
 		{
-			get { return PhysicalClient != null ? PhysicalClient.Name : null; }
+			get { return PhysicalClient != null ? PhysicalClient.Name : _Name; }
 			set { PhysicalClient.Name = value; }
 		}
 		public virtual string Surname
@@ -251,10 +259,6 @@ namespace Inforoom2.Models
 				//LawyerPerson.Balance -= sum;
 		}
 
-		public virtual string GetAddressString()
-		{
-			return "г. Москва, ул. Вильнюсская, д.8, к.2";
-		}
 
 		public virtual bool HasPassportData()
 		{
@@ -274,6 +278,13 @@ namespace Inforoom2.Models
 			if (endpoint != null)
 				return endpoint.Client;
 			return null;
+		}
+
+		[Property(Column = "Address")]
+		public virtual string _oldAdressStr { get; set; }
+		public virtual string GetAddress()
+		{
+			return _oldAdressStr;
 		}
 	}
 

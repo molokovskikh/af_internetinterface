@@ -11,7 +11,8 @@ namespace Inforoom2.Models
 	public enum RequestType
 	{
 		[Display(Name = "от клиента")] FromClient = 1,
-		[Display(Name = "от оператора")] FromOperator = 2
+		[Display(Name = "от оператора")] FromOperator = 2,
+		[Display(Name = "автоматическая")] Automatic = 3
 	}
 
 	[Class(0, Table = "Requests", NameType = typeof(ClientRequest))]
@@ -92,6 +93,9 @@ namespace Inforoom2.Models
 		public virtual string YandexHouse { get; set; }
 
 		public virtual string AddressAsString { get; set; }
+
+		[Property(Column = "Archive")]
+		public virtual bool Archived { get; set; }
 
 		public virtual string GetAddress()
 		{

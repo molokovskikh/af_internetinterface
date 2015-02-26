@@ -2,9 +2,9 @@
 @using System.Activities.Statements
 @using Inforoom2.Models
 @{
-	ViewBag.Title = "Заявки клиентов на регистрацию";
+	ViewBag.Title = "Неподключенные клиенты";
 	Layout = "~/Views/Shared/_Layout.cshtml";
-	List<ClientRequest> ClientRequests = ViewBag.ClientRequests;
+	List<Client> Clients = ViewBag.Clients;
 }
 
 <div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
@@ -20,14 +20,19 @@
 	</thead>
 			
 	<tbody>
-		@foreach (var request in ClientRequests)
+		@foreach (var item in Clients)
   {
 			<tr role="row" class="odd">
-				<td>@request.Id</td>
-				<td>@request.ApplicantName</td>
-				<td>@request.GetAddress()</td>
-				<td>@request.RegDate</td>
-				<td></td>
+				<td>@item.Id</td>
+				<td>@item.Name</td>
+				<td>@item.GetAddress()</td>
+				<td>@item.CreationDate</td>
+				<td>
+					<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("AttachClient","ConnectionTeam",new {id = item.Id})">
+							<i class="entypo-plus-circled"></i>
+							Назначить в график
+					</a>
+				</td>
 			</tr>
 		}
 	</tbody>
