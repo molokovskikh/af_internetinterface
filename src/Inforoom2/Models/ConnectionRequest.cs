@@ -15,7 +15,7 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual string Comment { get; set; }
 
-		[ManyToOne]
+		[ManyToOne(Column = "client", NotNull = true)]
 		public virtual Client Client { get; set; }
 
 		[ManyToOne]

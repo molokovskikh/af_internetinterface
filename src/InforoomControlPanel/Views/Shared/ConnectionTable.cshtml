@@ -93,7 +93,7 @@
 									double span = Math.Floor(diff.TotalMinutes / step);
 									<td class="@cl ClientRequest request" rowspan="@span">
 										<div  class="description">
-											<a href="@Url.Action("AttachConnectionRequest","ConnectionTeam",new{requestId=@request.Id})">@request.Client.Name</a>
+											<a href="@Url.Action("AttachConnectionRequest","ConnectionTeam",new{requestId=@request.Id})">@request.Client.Fullname</a>
 										</div>
 										<div  class="contact">Тел:@request.Client.PhoneNumber</div>
 										<div  class="contact">@request.Comment</div>

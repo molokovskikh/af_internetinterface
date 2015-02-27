@@ -15,18 +15,19 @@
 			<th class="sorting" tabindex="0" aria-controls="table-2" >Имя</th>
 			<th class="sorting" tabindex="0" aria-controls="table-2" >Адрес</th>
 			<th class="sorting" tabindex="0" aria-controls="table-2" >Дата</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2" >Назначен</th>
 			<th class="sorting" tabindex="0" aria-controls="table-2" >Действия</th>
 		</tr>
 	</thead>
-			
 	<tbody>
 		@foreach (var item in Clients)
   {
 			<tr role="row" class="odd">
 				<td>@item.Id</td>
-				<td>@item.Name</td>
+				<td>@item.Fullname</td>
 				<td>@item.GetAddress()</td>
 				<td>@item.CreationDate</td>
+				<td>@(item.ConnectionRequest != null ? item.ConnectionRequest.ServiceMan.Employee.Name : "Не назначен")</td>
 				<td>
 					<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("AttachClient","ConnectionTeam",new {id = item.Id})">
 							<i class="entypo-plus-circled"></i>

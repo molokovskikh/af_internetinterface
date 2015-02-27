@@ -30,7 +30,7 @@ namespace Inforoom2.Models
 		public virtual Region Region { get; set; }
 
 		[Bag(0, Table = "ServiceRequest")]
-		[Key(1, Column = "Performer")]
+		[Key(1, Column = "ServiceMAn")]
 		[OneToMany(2, ClassType = typeof(ServiceRequest))]
 		public virtual IList<ServiceRequest> ServiceRequests { get; set; }
 
@@ -76,7 +76,7 @@ namespace Inforoom2.Models
 			Client = client;
 		}
 
-		[ManyToOne(Column = "Performer")]
+		[ManyToOne]
 		public virtual ServiceMan ServiceMan { get; set; }
 
 		[ManyToOne(Column = "Client")]
@@ -88,7 +88,7 @@ namespace Inforoom2.Models
 		[Property(Column = "BlockForRepair")]
 		public virtual bool BlockNetwork { get; set; }
 
-		[Property(Column = "PerformanceDate")]
+		[Property]
 		public virtual DateTime BeginTime { get; set; }
 
 		[Property(Column = "Contact")]
@@ -97,7 +97,7 @@ namespace Inforoom2.Models
 		[Property(Column = "RegDate")]
 		public virtual DateTime CreationDate { get; set; }
 
-		[Property(Column = "_EndTime")]
+		[Property]
 		public virtual DateTime EndTime { get; set; }
 	}
 }

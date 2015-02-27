@@ -23,6 +23,18 @@ namespace Inforoom2.Models
 			Payments = new List<Payment>();
 		}
 
+		//todo исправить это почему-то не подцепляет маппинг
+		[Bag(0, Table = "ConnectionRequests")]
+		[Key(1, Column = "Client")]
+		[OneToMany(2, ClassType = typeof(ConnectionRequest))]
+		public virtual IList<ConnectionRequest> ConnectionRequests { get; set; }
+
+		public virtual ConnectionRequest ConnectionRequest
+		{
+			get { return ConnectionRequests != null ? ConnectionRequests.FirstOrDefault() : null; }
+			set { }
+		}
+
 		[Property(Column = "RegDate")]
 		public virtual DateTime? CreationDate { get; set; }
 
@@ -280,8 +292,18 @@ namespace Inforoom2.Models
 			return null;
 		}
 
+		//todo исправить
 		[Property(Column = "Address")]
 		public virtual string _oldAdressStr { get; set; }
+
+
+
+		public virtual string Fullname
+		{
+			get { return PhysicalClient != null ? PhysicalClient.FullName : _Name; }
+			set { }
+		}
+
 		public virtual string GetAddress()
 		{
 			return _oldAdressStr;
