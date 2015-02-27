@@ -27,7 +27,7 @@
 				<td>@item.Fullname</td>
 				<td>@item.GetAddress()</td>
 				<td>@item.CreationDate</td>
-				<td>@(item.ConnectionRequest != null ? item.ConnectionRequest.ServiceMan.Employee.Name : "Не назначен")</td>
+				<td>@(item.ConnectionRequest != null && item.ConnectionRequest.ServiceMan != null ? item.ConnectionRequest.ServiceMan.Employee.Name : "Не назначен")</td>
 				<td>
 					<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("AttachClient","ConnectionTeam",new {id = item.Id})">
 							<i class="entypo-plus-circled"></i>
