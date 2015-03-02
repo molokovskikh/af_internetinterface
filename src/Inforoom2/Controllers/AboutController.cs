@@ -15,6 +15,11 @@ namespace Inforoom2.Controllers
 		/// </summary>
 		public ActionResult Index()
 		{
+			AddJavascriptParam("office_region", CurrentRegion.Name);
+			AddJavascriptParam("office_address", CurrentRegion.Name + ", " + CurrentRegion.OfficeAddress);
+			var geoCoords = CurrentRegion.OfficeGeomark.Split(',');
+			AddJavascriptParam("office_geoX", geoCoords[0]);
+			AddJavascriptParam("office_geoY", geoCoords[1]);
 			return View();
 		}
 
