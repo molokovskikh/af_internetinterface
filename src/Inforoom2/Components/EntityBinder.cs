@@ -1,17 +1,10 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
-using Inforoom2.Controllers;
-using Inforoom2.Helpers;
-using Inforoom2.Models;
-using Microsoft.VisualBasic.CompilerServices;
 using NHibernate;
 using NHibernate.Context;
-using NHibernate.Type;
 
 namespace Inforoom2.Components
 {
@@ -188,12 +181,16 @@ namespace Inforoom2.Components
 				? Nullable.GetUnderlyingType(propertyInfo.PropertyType)
 				: propertyInfo.PropertyType;
 
-			if (targetType == typeof(Boolean)) {
+			if (targetType == typeof(Boolean))
 				propertyVal = propertyVal.ToString().Contains("true");
+			else if (targetType == typeof(DateTime))
+			{
+				DateTime date;
+				if(!DateTime.TryParse(propertyVal.ToString(),out date))
+					date = DateTime.MinValue;
+				propertyVal = date;
 			}
-			else if (targetType.BaseType == typeof(Enum)) {
-				propertyVal = Convert.ToInt32(propertyVal);
-			}
+
 			//Returns an System.Object with the specified System.Type and whose value is
 			//equivalent to the specified object.
 			try {

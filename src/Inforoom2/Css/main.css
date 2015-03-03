@@ -91,6 +91,7 @@ a {text-decoration: none;color: #474747;}
 .leftpersonal .success input {border:1px solid #6ec400;}
 .map {width: 442px;height: 445px; background: url("../images/map.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);display: inline-block; position: absolute;
     right: 62px;top: 89px;}
+.left-move { position: absolute;left: 65px;right: 0;top: 60px; }
 .contract {margin-left: 100px;margin-top: 36px;width: 925px;font-family: PTSans;font-size: 14px;}
 .contract p {font-size: 13px;color: #8b8b8b;}
 .resend {background: none repeat scroll 0 0 #aa181e;border: medium none;border-radius: 2px;color: #ffffff;cursor: pointer;font-family: PDFDinTextPro;font-size: 20px;
@@ -214,9 +215,9 @@ font-family: PDFDinTextPro;font-size: 12px;line-height: 24px;text-align: center;
 .girl {background: url("../images/girl.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);height: 429px;left: 686px;position: absolute;top: 76px;width: 354px;}
 .wifi {background: url("../images/wifi.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);height: 60px;left: 696px;position: absolute;top: 163px;width: 71px;}
 .whiteblock {width:1182px;height: 467px;background: #ffffff;position: relative;}
-.whiteblocktext {padding-left: 532px;padding-top: 47px;width: 554px;padding-bottom: 57px;}
+.whiteblocktext {padding-left: 560px;padding-top: 47px;width: 554px;padding-bottom: 57px;}
 .whiteblocktext h3 {font-size: 27px;font-weight: normal;}
-.whiteblocktext p {font-size: 16px;font-family: PTSans;font-weight: normal;margin-top: 4px;line-height: 30px;}
+.whiteblocktext p {font-size: 16px;font-family: PTSans;font-weight: normal;margin-top: 4px;line-height: 30px;text-align: justify;}
 .whiteblocktext .textblockwhite  {color: #ab1114;font-size: 16px;font-weight: normal;line-height: 30px;margin-top: 37px;}
 .boy {background: url("../images/boy.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);height: 323px;left: 153px;position: absolute;top: 60px;width: 323px;}
 .staff {width:1182px;height: 934px;background: url("../images/staff.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);}
@@ -232,7 +233,7 @@ font-family: PDFDinTextPro;font-size: 12px;line-height: 24px;text-align: center;
 .definitely { font-size: 14px; margin-left: 35px;margin-top: 48px;font-family: PTSans;width: 197px;height: 22px;display: inline-block;}
 .contacting {background: none repeat scroll 0 0 #aa181e;border: medium none;border-radius: 2px;color: #ffffff;cursor: pointer;font-family: PDFDinTextPro;font-size: 20px;
 margin-left: 56px;padding: 5px 35px;}
-.offers { background: #333333; height:265px;width: 1182px;}
+.offers { background: #333333; height:264px;width: 1182px;}
 .slider {text-align:center; position: relative; height:100%; width:883px; background: pink; display: inline-block;}
 .content {overflow: hidden;height:100%;}
 .content .longspace {width: 10000px; text-align:left;}
@@ -245,7 +246,7 @@ margin-left: 56px;padding: 5px 35px;}
 .controls li.active {background-color: #a81b20;}
 .controls li.stop.active {color:#a81b20;}
 .controls li.stop {  background: none repeat scroll 0 0 white; margin:0px; font-family: arial;  color: #a2a2a2; font-size: 11px; font-weight: bolder;bottom: 3px;position: relative;}
-.main-offer {width:299px; height:100%; background-color: #333333;float:right;}
+.main-offer {width:299px; height:100%; background-color: #333333;float:right;overflow: hidden;position: relative;}
 .find {padding-top: 60px;text-align: center;}
 .speed {font-size: 22px;font-family: PDFDinTextPro;color:#a81b20;border-radius: 70px;height:48px;width: 271px;cursor: pointer;
         border: 3px solid #e7e7e7;background: #ffffff;margin-right: 27px;padding-left: 93px;color: #2e2d2d;

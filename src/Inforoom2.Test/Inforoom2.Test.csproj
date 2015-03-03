@@ -173,6 +173,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Functional\BaseControllerFixture.cs" />
     <Compile Include="Functional\infrastructure\BaseFixture.cs" />
     <Compile Include="Functional\PersonalFirstVisitFixture.cs" />
     <Compile Include="Functional\PersonalPlansFixture.cs" />
@@ -181,6 +182,7 @@
     <Compile Include="Functional\CallMeBackFixture.cs" />
     <Compile Include="Functional\HomeFixture.cs" />
     <Compile Include="Functional\infrastructure\Setup.cs" />
+    <Compile Include="Functional\DeferredPaymentFixture.cs" />
     <Compile Include="Functional\WarningFixture.cs" />
     <Compile Include="Integration\BaseIntegrationFixture.cs" />
   </ItemGroup>

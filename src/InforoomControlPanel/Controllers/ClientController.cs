@@ -152,16 +152,16 @@ namespace InforoomControlPanel.Controllers
 			                                                     && a.Floor == clientRequest.Floor
 			                                                     && a.Apartment == clientRequest.Apartment);
 
-			if (address == null) {
-				address = new Address();
-				address.House = house;
-				address.Apartment = clientRequest.Apartment;
-				address.Floor = clientRequest.Floor;
-				address.Entrance = clientRequest.Entrance;
-				address.House.Street = street;
-				address.House.Street.Region = region;
-				address.IsCorrectAddress = true;
-			}
+			//if (address == null) {
+			//	address = new Address();
+			//	address.House = house;
+			//	address.Apartment = clientRequest.Apartment;
+			//	address.Floor = clientRequest.Floor;
+			//	address.Entrance = clientRequest.Entrance;
+			//	address.House.Street = street;
+			//	address.House.Street.Region = region;
+			//	address.IsCorrectAddress = true;
+			//}
 			return address;
 		}
 
@@ -172,7 +172,7 @@ namespace InforoomControlPanel.Controllers
 		/// <returns></returns>
 		public ActionResult ClientRequestsList()
 		{
-			var clientRequests = DbSession.Query<ClientRequest>().ToList();
+			var clientRequests = DbSession.Query<ClientRequest>().OrderByDescending(i=>i.Id).ToList();
 			ViewBag.ClientRequests = clientRequests;
 			return View();
 		}

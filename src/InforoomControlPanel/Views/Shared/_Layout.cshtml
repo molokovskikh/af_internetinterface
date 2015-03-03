@@ -101,12 +101,12 @@
 						</li>
 						<li>
 							<a href="@Url.Action("ClientRequest","Client")">
-								<span class="title">Заявка на регистрацию</span>
+								<span class="title">Создать заявку на подключение</span>
 							</a>
 						</li>
 						<li>
 							<a href="@Url.Action("ClientRequestsList","Client")">
-								<span class="title">Список заявок</span>
+								<span class="title">Заявки на подключение</span>
 							</a>
 						</li>
 					</ul>
@@ -126,10 +126,14 @@
 							<a href="@Url.Action("ServiceRequests","ConnectionTeam")">
 								<span class="title">Сервисные заявки</span>
 							</a>
+						</li><li>
+							<a href="@Url.Action("UnpluggedClientList","ConnectionTeam")">
+								<span class="title">Неподключенные клиенты</span>
+							</a>
 						</li>
 						<li>
 							<a href="@Url.Action("ConnectionTable","ConnectionTeam")">
-								<span class="title">График подключений</span>
+								<span class="title">График назначенных заявок</span>
 							</a>
 						</li>
 					</ul>
@@ -184,7 +188,7 @@
 					</ul>
 				</li>
 				<li>
-					<a href="@Url.Action("PlanIndex","Plans")">
+				<a href="@Url.Action("PlanIndex","Plans")">
 						<i class="entypo-mail"></i>
 						<span class="title">Тарифы</span>
 					</a>
@@ -192,6 +196,24 @@
 						<li>
 							<a href="@Url.Action("PlanIndex","Plans")">
 								<span class="title">Тарифы</span>
+							</a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="@Url.Action("SwitchList","Switch")">
+						<i class="entypo-mail"></i>
+						<span class="title">Коммутаторы</span>
+					</a>
+					<ul class="visible">
+						<li>
+							<a href="@Url.Action("SwitchList","Switch")">
+								<span class="title">Коммутаторы</span>
+							</a>
+						</li>
+						<li>
+							<a href="@Url.Action("NetworkNodeList","Switch")">
+								<span class="title">Узлы связи</span>
 							</a>
 						</li>
 					</ul>
@@ -205,11 +227,6 @@
 						<li>
 							<a href="@Url.Action("SwitchAddressList","Address")">
 								<span class="title">Адреса коммутаторов</span>
-							</a>
-						</li>
-						<li>
-							<a href="@Url.Action("SwitchList","Switch")">
-								<span class="title">Коммутаторы</span>
 							</a>
 						</li>
 						<li>

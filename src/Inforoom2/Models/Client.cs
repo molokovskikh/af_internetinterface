@@ -20,7 +20,24 @@ namespace Inforoom2.Models
 		{
 			Endpoints = new List<ClientEndpoint>();
 			ClientServices = new List<ClientService>();
+			Payments = new List<Payment>();
 		}
+
+		//todo исправить это почему-то не подцепляет маппинг
+		[Bag(0, Table = "ConnectionRequests")]
+		[Key(1, Column = "Client")]
+		[OneToMany(2, ClassType = typeof(ConnectionRequest))]
+		public virtual IList<ConnectionRequest> ConnectionRequests { get; set; }
+
+		public virtual ConnectionRequest ConnectionRequest
+		{
+			get { return ConnectionRequests != null ? ConnectionRequests.FirstOrDefault() : null; }
+			set { }
+		}
+
+		[Property(Column = "RegDate")]
+		public virtual DateTime? CreationDate { get; set; }
+
 		[Property]
 		public virtual bool Disabled { get; set; }
 
@@ -76,6 +93,11 @@ namespace Inforoom2.Models
 		[Key(1, Column = "Client")]
 		[OneToMany(2, ClassType = typeof (ClientService))]
 		public virtual IList<ClientService> ClientServices { get; set; }
+
+		[Bag(0, Table = "Payments", Cascade = "all-delete-orphan")]
+		[Key(1, Column = "Client")]
+		[OneToMany(2, ClassType = typeof(Payment))]
+		public virtual IList<Payment> Payments { get; set; }
 		
 		[Bag(0,Table = "ClientEndpoints", Cascade = "all-delete-orphan")]
 		[Key(1, Column = "client")]
@@ -209,9 +231,13 @@ namespace Inforoom2.Models
 			get { return PhysicalClient != null ? PhysicalClient.Email : null; }
 			set { PhysicalClient.Email = value; }
 		}
+
+		[Property(Column = "Name")]
+		public virtual string _Name { get; set; }
+
 		public virtual string Name
 		{
-			get { return PhysicalClient != null ? PhysicalClient.Name : null; }
+			get { return PhysicalClient != null ? PhysicalClient.Name : _Name; }
 			set { PhysicalClient.Name = value; }
 		}
 		public virtual string Surname
@@ -245,24 +271,42 @@ namespace Inforoom2.Models
 				//LawyerPerson.Balance -= sum;
 		}
 
-		public virtual string GetAddressString()
+
+		public virtual bool HasPassportData()
 		{
-			return "г. Москва, ул. Вильнюсская, д.8, к.2";
+			if(PhysicalClient == null)
+				return true;
+			var hasPassportData = !string.IsNullOrEmpty(PhysicalClient.PassportNumber);
+			hasPassportData = hasPassportData && !string.IsNullOrEmpty(PhysicalClient.PassportSeries);
+			hasPassportData = hasPassportData && !string.IsNullOrEmpty(PhysicalClient.PassportResidention);
+			hasPassportData = hasPassportData && PhysicalClient.PassportDate != DateTime.MinValue;
+			hasPassportData = hasPassportData && !string.IsNullOrEmpty(PhysicalClient.RegistrationAddress);
+			return hasPassportData;
 		}
 
-		public virtual bool ShowWarningBecauseNoPassport()
+		public static Client GetClientForIp(string ipstr, ISession dbSession)
 		{
-			if (PhysicalClient == null)
-				return false;
+			var endpoint = ClientEndpoint.GetEndpointForIp(ipstr, dbSession);
+			if (endpoint != null)
+				return endpoint.Client;
+			return null;
+		}
 
-			if (!IsWorkStarted())
-				return false;
+		//todo исправить
+		[Property(Column = "Address")]
+		public virtual string _oldAdressStr { get; set; }
 
-			var dontHavePassportData = string.IsNullOrEmpty(PhysicalClient.PassportNumber);
-			var goodMoney = Balance > 0;
-			var date = SystemTime.Now() > WorkingStartDate.Value.AddDays(7);
 
-			return dontHavePassportData && goodMoney && date;
+
+		public virtual string Fullname
+		{
+			get { return PhysicalClient != null ? PhysicalClient.FullName : _Name; }
+			set { }
+		}
+
+		public virtual string GetAddress()
+		{
+			return _oldAdressStr;
 		}
 	}
 

@@ -88,6 +88,9 @@ namespace Inforoom2.Models
 			get { return Surname + " " + Name + " " + Patronymic; }
 		}
 
+		[OneToMany]
+		public virtual ClientRequest ClientRequest { get; set; }
+
 		public virtual UserWriteOff RequestChangePlan(Plan planToSwitchOn)
 		{
 			var price = Plan.GetTransferPrice(planToSwitchOn);

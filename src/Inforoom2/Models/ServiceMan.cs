@@ -15,7 +15,7 @@ namespace Inforoom2.Models
 		public ServiceMan()
 		{
 			ServiceRequests = new List<ServiceRequest>();
-			ClientRequests = new List<ClientRequest>();
+			ConnectionRequests = new List<ConnectionRequest>();
 		}
 
 		public ServiceMan(Employee employee) : this()
@@ -30,14 +30,14 @@ namespace Inforoom2.Models
 		public virtual Region Region { get; set; }
 
 		[Bag(0, Table = "ServiceRequest")]
-		[Key(1, Column = "Performer")]
+		[Key(1, Column = "ServiceMAn")]
 		[OneToMany(2, ClassType = typeof(ServiceRequest))]
 		public virtual IList<ServiceRequest> ServiceRequests { get; set; }
 
-		[Bag(0, Table = "requests")]
-		[Key(1, Column = "_ServiceMan")]
-		[OneToMany(2, ClassType = typeof(ClientRequest))]
-		public virtual IList<ClientRequest> ClientRequests { get; set; }
+		[Bag(0, Table = "ConnectionRequests")]
+		[Key(1, Column = "ServiceMAn")]
+		[OneToMany(2, ClassType = typeof(ConnectionRequest))]
+		public virtual IList<ConnectionRequest> ConnectionRequests { get; set; }
 	}
 
 	[Class(0, Table = "ConnectBrigads", NameType = typeof(ServiceTeam))]
@@ -76,7 +76,7 @@ namespace Inforoom2.Models
 			Client = client;
 		}
 
-		[ManyToOne(Column = "Performer")]
+		[ManyToOne]
 		public virtual ServiceMan ServiceMan { get; set; }
 
 		[ManyToOne(Column = "Client")]
@@ -88,13 +88,16 @@ namespace Inforoom2.Models
 		[Property(Column = "BlockForRepair")]
 		public virtual bool BlockNetwork { get; set; }
 
-		[Property(Column = "PerformanceDate")]
+		[Property]
 		public virtual DateTime BeginTime { get; set; }
+
+		[Property(Column = "Contact")]
+		public virtual string Contact { get; set; }
 
 		[Property(Column = "RegDate")]
 		public virtual DateTime CreationDate { get; set; }
 
-		[Property(Column = "_EndTime")]
+		[Property]
 		public virtual DateTime EndTime { get; set; }
 	}
 }

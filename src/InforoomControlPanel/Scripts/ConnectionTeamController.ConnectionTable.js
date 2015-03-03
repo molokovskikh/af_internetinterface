@@ -1,5 +1,6 @@
 ﻿//обновление графика сервисных работ при смене даты
-var servicemenFunc = function() {
+var servicemenFunc = function () {
+	console.log("refreshing graph");
 	$(".servicemen td.time").on("mouseover", function() {
 		var cl = $(this).attr("class").split(" ")[0];
 		$(".servicemen thead th." + cl).addClass("hover");
@@ -24,22 +25,23 @@ var servicemenFunc = function() {
 		TimePickerValue = $(".timepicker").val();
 		ServiceManDropDownValue = $("#ServiceManDropDown").val();
 	});
-
-	$(".servicemen .datepicker").get(0).onchange = refreshConnectionTable.bind($(".servicemen .datepicker").get(0));
+	//надо именно так
+	$(".servicemen .datepicker").get(0).onchange = refreshConnectionTable;
+	$(".regionId").get(0).onchange = refreshConnectionTable;
 }
 
 //обновление графика сервисных работ при смене даты
 var refreshConnectionTable = function () {
-	console.log(this);
-	var date = $(this).val();
+
+	var date = $(".servicemen .datepicker").val();
 	$(".datepicker").each(function () {
 		$(this).val(date);
 	});
-
+	var region = $(".regionId option:selected").val();
 	$.ajax({
 		type: "POST",
 		url: cli.getParam("baseurl") + "/ConnectionTeam/ConnectionTable",
-		data: { date: date }
+		data: { date: date, regionId : region }
 	}).done(function (msg) {
 		var div = msg.toHTML();
 		$(div).find("form").remove();
@@ -47,7 +49,6 @@ var refreshConnectionTable = function () {
 		$(".servicemen .wrapper").append($(div).find(".wrapper").html());
 		//$(".datepicker").datepicker({format : "dd.mm.yyyy", startView : "startView"});
 		servicemenFunc();
-
 	});
 }
 servicemenFunc();

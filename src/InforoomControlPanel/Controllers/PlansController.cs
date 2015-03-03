@@ -18,7 +18,7 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		public ActionResult PlanIndex()
 		{
-			var plans = DbSession.Query<Plan>().OrderByDescending(i=> i.Name).ToList();
+			var plans = DbSession.Query<Plan>().OrderByDescending(i=> i.Id).ToList();
 			ViewBag.Plans = plans;
 			return View();
 		}
@@ -31,7 +31,7 @@ namespace InforoomControlPanel.Controllers
 			var plan = DbSession.Get<Plan>(id);
 			var PlanTransfer = new PlanTransfer();
 			PlanTransfer.PlanFrom = plan;
-			var plans = DbSession.Query<Plan>().OrderByDescending(i => i.Name).ToList();
+			var plans = DbSession.Query<Plan>().OrderByDescending(i => i.Id).ToList();
 			foreach (var transfer in plan.PlanTransfers) {
 				plans.Remove(transfer.PlanTo);
 			}

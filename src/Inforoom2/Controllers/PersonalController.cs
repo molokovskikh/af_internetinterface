@@ -31,7 +31,7 @@ namespace Inforoom2.Controllers
 	{
 		public ActionResult FirstVisit()
 		{
-			if (CurrentClient.Lunched)
+			if (CurrentClient.Lunched && CurrentClient.HasPassportData())
 				return RedirectToAction("Profile");
 			var physicalClient = DbSession.Get<PhysicalClient>(CurrentClient.PhysicalClient.Id);
 			//TODO Придумать что с этим делать
@@ -297,8 +297,8 @@ namespace Inforoom2.Controllers
 		{
 			var client = CurrentClient;
 			var services = DbSession.Query<Service>().Where(s => s.IsActivableFromWeb);
-			var blockAccountService = services.OfType<BlockAccountService>().FirstOrDefault();
-			var deferredPayment = services.OfType<DeferredPayment>().FirstOrDefault();
+			var blockAccountService = services.FirstOrDefault(i => i is BlockAccountService);
+			var deferredPayment = services.FirstOrDefault(i => i is DeferredPayment);
 			var inforoomServices = new List<Service> { blockAccountService, deferredPayment };
 
 			ViewBag.Client = client;

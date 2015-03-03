@@ -17,7 +17,7 @@ namespace Inforoom2.Models.Services
 				var client = assignedService.Client;
 				client.Disabled = false;
 				client.RatedPeriodDate = SystemTime.Now();
-				client.Status = Status.Get(StatusType.Worked, session);
+				client.SetStatus(StatusType.Worked, session);
 				session.Update(client);
 				assignedService.IsActivated = true;
 			}
@@ -29,12 +29,22 @@ namespace Inforoom2.Models.Services
 		// Метод для проверки, доступен ли клиенту "Обещанный платеж" в данный момент времени
 		public virtual bool IsAvailableInThisTime(Client client)
 		{
+			TimeToActivation = TimeSpan.Zero;
 			var lastService = client.ClientServices.OrderBy(cs => cs.BeginDate).LastOrDefault(s => s.Service.Id == Id);
 			if (lastService == null)							// Т.е. "Обещанный платеж" ещё ни разу не активировался
 				return true;
 			if (lastService.IsActivated)
 				return false;
+
 			var serviceDate = lastService.BeginDate ?? new DateTime();
+			// Проверка, запрещающая клиенту повторно подключить услугу без пополнения баланса на 80% от цены тарифа (СОГЛАСОВАНО)
+			if (serviceDate != DateTime.MinValue) {
+				var clientPayments = (client.Payments != null) ? client.Payments.Where(p => p.PaidOn > serviceDate).ToList() : null;
+					var paySum = (clientPayments != null) ? clientPayments.Sum(p => p.Sum) : 0;
+				if (paySum < (0.8m * client.Plan.Price))
+					return false;
+			}
+
 			TimeToActivation = serviceDate.AddDays(30) - DateTime.Now;
 			return (TimeToActivation < TimeSpan.Zero);
 		}
