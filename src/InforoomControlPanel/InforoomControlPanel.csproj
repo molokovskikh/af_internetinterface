@@ -1546,7 +1546,7 @@
     <Content Include="Views\Shared\AdminPanel.cshtml" />
     <Content Include="Views\AdminAccount\Index.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Web.InforoomControlPanel_Test.config">
+    <Content Include="Web.test2.config">
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
@@ -1820,7 +1820,7 @@
     <Content Include="Views\Client\ClientRequestsList.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\ConnectionTeam\AttachClientRequest.cshtml" />
+    <Content Include="Views\ConnectionTeam\AttachConnectionRequest.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Client\ClientRequest.cshtml" />
@@ -1878,6 +1878,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Plans\CreatePlan.cshtml" />
+    <Content Include="Views\ConnectionTeam\UnpluggedClientList.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
   </ItemGroup>

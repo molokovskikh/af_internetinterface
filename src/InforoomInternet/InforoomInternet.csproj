@@ -254,7 +254,7 @@
     <None Include="Views\PrivateOffice\SmsNotification.brail" />
     <None Include="Views\PrivateOffice\VoluntaryBlockin.brail" />
     <Content Include="Views\Subviews\WarnPhysical.brail" />
-    <None Include="Web.test.config" />
+    <None Include="Web.test2.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\BeforeFilter.cs" />

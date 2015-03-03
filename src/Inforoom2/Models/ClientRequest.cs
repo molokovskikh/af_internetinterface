@@ -11,7 +11,8 @@ namespace Inforoom2.Models
 	public enum RequestType
 	{
 		[Display(Name = "от клиента")] FromClient = 1,
-		[Display(Name = "от оператора")] FromOperator = 2
+		[Display(Name = "от оператора")] FromOperator = 2,
+		[Display(Name = "автоматическая")] Automatic = 3
 	}
 
 	[Class(0, Table = "Requests", NameType = typeof(ClientRequest))]
@@ -93,11 +94,14 @@ namespace Inforoom2.Models
 
 		public virtual string AddressAsString { get; set; }
 
+		[Property(Column = "Archive")]
+		public virtual bool Archived { get; set; }
+
 		public virtual string GetAddress()
 		{
 			var str = City + " " + Street + " " + HouseNumber + " " + Housing + " " + Apartment;
 			if(Floor != 0)
-				str+= " (" + Floor + ") этаж";
+				str+= " (" + Floor + " этаж)";
 			return str;
 		}
 		public virtual bool IsYandexAddressValid()
