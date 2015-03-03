@@ -177,10 +177,10 @@ namespace Inforoom2.Components
 		public void SetValue(object inputObject, string propertyName, object propertyVal, PropertyInfo info, ISession session)
 		{
 			//find out the type
-			Type type = inputObject.GetType();
+			var type = inputObject.GetType();
 
 			//get the property information based on the type
-			System.Reflection.PropertyInfo propertyInfo = type.GetProperty(propertyName);
+			var propertyInfo = type.GetProperty(propertyName);
 
 			//Convert.ChangeType does not handle conversion to nullable types
 			//if the property type is nullable, we need to get the underlying type of the property
@@ -190,6 +190,9 @@ namespace Inforoom2.Components
 
 			if (targetType == typeof(Boolean)) {
 				propertyVal = propertyVal.ToString().Contains("true");
+			}
+			else if (targetType.BaseType == typeof(Enum)) {
+				propertyVal = Convert.ToInt32(propertyVal);
 			}
 			//Returns an System.Object with the specified System.Type and whose value is
 			//equivalent to the specified object.
