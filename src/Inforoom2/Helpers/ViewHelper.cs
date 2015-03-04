@@ -146,7 +146,7 @@ namespace Inforoom2.Helpers
 					html = string.Format("<div class=\"input-group\"><input id=\"{0}\" name =\"{2}\" {1} value=\"{3}\" class=\"form-control datepicker\" data-format=\"D, dd MM yyyy\" type=\"text\" /><div class=\"input-group-addon\"><a href=\"#\"><i class=\"entypo-calendar\"></i></a></div></div>", id, attributes, name, value);
 					break;
 				case HtmlTag.datetime:
-					var dobj = (DateTime)value;
+					var dobj = value != null ? (DateTime)value : DateTime.Now;
 					if (dobj == DateTime.MinValue) {
 						dobj = DateTime.Now;
 					}

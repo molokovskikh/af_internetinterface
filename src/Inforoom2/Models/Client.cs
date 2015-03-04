@@ -22,6 +22,22 @@ namespace Inforoom2.Models
 			ClientServices = new List<ClientService>();
 			Payments = new List<Payment>();
 		}
+
+		//todo исправить это почему-то не подцепляет маппинг
+		[Bag(0, Table = "ConnectionRequests")]
+		[Key(1, Column = "Client")]
+		[OneToMany(2, ClassType = typeof(ConnectionRequest))]
+		public virtual IList<ConnectionRequest> ConnectionRequests { get; set; }
+
+		public virtual ConnectionRequest ConnectionRequest
+		{
+			get { return ConnectionRequests != null ? ConnectionRequests.FirstOrDefault() : null; }
+			set { }
+		}
+
+		[Property(Column = "RegDate")]
+		public virtual DateTime? CreationDate { get; set; }
+
 		[Property]
 		public virtual bool Disabled { get; set; }
 
@@ -215,9 +231,13 @@ namespace Inforoom2.Models
 			get { return PhysicalClient != null ? PhysicalClient.Email : null; }
 			set { PhysicalClient.Email = value; }
 		}
+
+		[Property(Column = "Name")]
+		public virtual string _Name { get; set; }
+
 		public virtual string Name
 		{
-			get { return PhysicalClient != null ? PhysicalClient.Name : null; }
+			get { return PhysicalClient != null ? PhysicalClient.Name : _Name; }
 			set { PhysicalClient.Name = value; }
 		}
 		public virtual string Surname
@@ -251,10 +271,6 @@ namespace Inforoom2.Models
 				//LawyerPerson.Balance -= sum;
 		}
 
-		public virtual string GetAddressString()
-		{
-			return "г. Москва, ул. Вильнюсская, д.8, к.2";
-		}
 
 		public virtual bool HasPassportData()
 		{
@@ -274,6 +290,23 @@ namespace Inforoom2.Models
 			if (endpoint != null)
 				return endpoint.Client;
 			return null;
+		}
+
+		//todo исправить
+		[Property(Column = "Address")]
+		public virtual string _oldAdressStr { get; set; }
+
+
+
+		public virtual string Fullname
+		{
+			get { return PhysicalClient != null ? PhysicalClient.FullName : _Name; }
+			set { }
+		}
+
+		public virtual string GetAddress()
+		{
+			return _oldAdressStr;
 		}
 	}
 

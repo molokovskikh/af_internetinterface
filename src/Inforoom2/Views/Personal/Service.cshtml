@@ -34,7 +34,8 @@
 				<td class="description td">
 					@Html.DisplayFor(modelItem => service.Description)
 					@{ var defPayment = service as DeferredPayment; }
-					@if (defPayment != null && defPaymentIsAvailable && !defPayment.IsAvailableInThisTime(client)) {
+					@if (defPayment != null && defPaymentIsAvailable && !defPayment.IsAvailableInThisTime(client) &&
+							 defPayment.TimeToActivation > TimeSpan.Zero) {
 						<div>
 							Услуга станет доступна через
 							<br/> @StringHepler.ShowTimeLeft(defPayment.TimeToActivation)

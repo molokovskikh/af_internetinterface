@@ -101,12 +101,12 @@
 						</li>
 						<li>
 							<a href="@Url.Action("ClientRequest","Client")">
-								<span class="title">Заявка на регистрацию</span>
+								<span class="title">Создать заявку на подключение</span>
 							</a>
 						</li>
 						<li>
 							<a href="@Url.Action("ClientRequestsList","Client")">
-								<span class="title">Список заявок</span>
+								<span class="title">Заявки на подключение</span>
 							</a>
 						</li>
 					</ul>
@@ -126,10 +126,14 @@
 							<a href="@Url.Action("ServiceRequests","ConnectionTeam")">
 								<span class="title">Сервисные заявки</span>
 							</a>
+						</li><li>
+							<a href="@Url.Action("UnpluggedClientList","ConnectionTeam")">
+								<span class="title">Неподключенные клиенты</span>
+							</a>
 						</li>
 						<li>
 							<a href="@Url.Action("ConnectionTable","ConnectionTeam")">
-								<span class="title">График подключений</span>
+								<span class="title">График назначенных заявок</span>
 							</a>
 						</li>
 					</ul>

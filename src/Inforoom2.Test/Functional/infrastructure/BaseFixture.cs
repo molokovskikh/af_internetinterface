@@ -163,11 +163,15 @@ namespace Inforoom2.Test.Functional
 			region.Name = "Борисоглебск";
 			region.RegionOfficePhoneNumber = "8-800-2000-600";
 			region.City = vrn;
+			region.OfficeAddress = "Третьяковская улица д6Б";
+			region.OfficeGeomark = "51.3663252,42.08180200000004";
 			DbSession.Save(region);
 			region = new Region();
 			region.Name = "Белгород";
 			region.RegionOfficePhoneNumber = "8-800-123-12-23";
 			region.City = blg;
+			region.OfficeAddress = "улица Князя Трубецкого д26";
+			region.OfficeGeomark = "50.592548,36.59665819999998";
 			DbSession.Save(region);
 		}
 

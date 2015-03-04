@@ -91,6 +91,7 @@ a {text-decoration: none;color: #474747;}
 .leftpersonal .success input {border:1px solid #6ec400;}
 .map {width: 442px;height: 445px; background: url("../images/map.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);display: inline-block; position: absolute;
     right: 62px;top: 89px;}
+.left-move { position: absolute;left: 65px;right: 0;top: 60px; }
 .contract {margin-left: 100px;margin-top: 36px;width: 925px;font-family: PTSans;font-size: 14px;}
 .contract p {font-size: 13px;color: #8b8b8b;}
 .resend {background: none repeat scroll 0 0 #aa181e;border: medium none;border-radius: 2px;color: #ffffff;cursor: pointer;font-family: PDFDinTextPro;font-size: 20px;
@@ -214,9 +215,9 @@ font-family: PDFDinTextPro;font-size: 12px;line-height: 24px;text-align: center;
 .girl {background: url("../images/girl.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);height: 429px;left: 686px;position: absolute;top: 76px;width: 354px;}
 .wifi {background: url("../images/wifi.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);height: 60px;left: 696px;position: absolute;top: 163px;width: 71px;}
 .whiteblock {width:1182px;height: 467px;background: #ffffff;position: relative;}
-.whiteblocktext {padding-left: 532px;padding-top: 47px;width: 554px;padding-bottom: 57px;}
+.whiteblocktext {padding-left: 560px;padding-top: 47px;width: 554px;padding-bottom: 57px;}
 .whiteblocktext h3 {font-size: 27px;font-weight: normal;}
-.whiteblocktext p {font-size: 16px;font-family: PTSans;font-weight: normal;margin-top: 4px;line-height: 30px;}
+.whiteblocktext p {font-size: 16px;font-family: PTSans;font-weight: normal;margin-top: 4px;line-height: 30px;text-align: justify;}
 .whiteblocktext .textblockwhite  {color: #ab1114;font-size: 16px;font-weight: normal;line-height: 30px;margin-top: 37px;}
 .boy {background: url("../images/boy.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);height: 323px;left: 153px;position: absolute;top: 60px;width: 323px;}
 .staff {width:1182px;height: 934px;background: url("../images/staff.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);}

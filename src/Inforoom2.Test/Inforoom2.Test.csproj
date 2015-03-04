@@ -182,7 +182,7 @@
     <Compile Include="Functional\CallMeBackFixture.cs" />
     <Compile Include="Functional\HomeFixture.cs" />
     <Compile Include="Functional\infrastructure\Setup.cs" />
-    <Compile Include="Functional\DefferedPaymentFixture.cs" />
+    <Compile Include="Functional\DeferredPaymentFixture.cs" />
     <Compile Include="Functional\WarningFixture.cs" />
     <Compile Include="Integration\BaseIntegrationFixture.cs" />
   </ItemGroup>

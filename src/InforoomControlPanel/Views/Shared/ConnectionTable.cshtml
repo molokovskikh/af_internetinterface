@@ -2,7 +2,7 @@
 @using System.Activities.Statements
 @using Inforoom2.Models
 @{
-	ViewBag.Title = "График подключений";
+	ViewBag.Title = "График назначенных заявок";
 	var team = ViewBag.Servicemen;
 	DateTime date = ViewBag.ServicemenDate;
 	ServiceRequest ServiceRequest = ViewBag.ServiceRequest;
@@ -71,15 +71,17 @@
 									var diff = request.EndTime - request.BeginTime;
 									double span = Math.Ceiling(diff.TotalMinutes / step);
 									<td class="@cl ServiceRequest request" rowspan="@span">
-										<div class="description">@request.Client.PhysicalClient.FullName</div>
+										<div class="description">
+											<a href="@Url.Action("AttachServiceRequest","ConnectionTeam",new{requestId=@request.Id})">@request.Client.PhysicalClient.FullName</a>
+										</div>
 										<div class="contact">Тел:@request.Contact</div>
-										<div class="address">@request.Client.GetAddressString()</div>
+										<div class="address">@request.Client.GetAddress()</div>
 										<div class="contact">@request.Description</div>
 									</td>
 								}
 							}
 							//Отображение заявок на подключение
-							foreach (var request in employee.ClientRequests) {
+							foreach (var request in employee.ConnectionRequests) {
 								if (request.BeginTime <= time && request.EndTime >= time) {
 									requestFlag = true;
 									if (showedRequests.Contains(request)) {
@@ -87,13 +89,15 @@
 									}
 									showedRequests.Add(request);
 									//Надо вычислить сколько ячеек будет занимать наша запись
-									var diff = request.EndTime - request.BeginTime;
+									var diff = request.EndTime.Value - request.BeginTime.Value;
 									double span = Math.Floor(diff.TotalMinutes / step);
 									<td class="@cl ClientRequest request" rowspan="@span">
-										<div  class="description">@request.ApplicantName</div>
-										<div  class="contact">Тел:@request.ApplicantPhoneNumber</div>
+										<div  class="description">
+											<a href="@Url.Action("AttachConnectionRequest","ConnectionTeam",new{requestId=@request.Id})">@request.Client.Fullname</a>
+										</div>
+										<div  class="contact">Тел:@request.Client.PhoneNumber</div>
 										<div  class="contact">@request.Comment</div>
-										<div  class="address">@request.GetAddress()</div>
+										<div  class="address">@request.Client.GetAddress()</div>
 									</td>
 								}
 							}

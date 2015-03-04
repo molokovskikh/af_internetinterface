@@ -210,6 +210,7 @@
     <Content Include="Images\typehit.png" />
     <Content Include="Images\upward.png" />
     <Content Include="Images\wifi.png" />
+    <Content Include="Scripts\AboutIndex.js" />
     <Content Include="Scripts\AdminAddressController.js" />
     <Content Include="Scripts\ClientRequest.js" />
     <Content Include="Scripts\PersonalController.FirstVisit.js" />
@@ -307,6 +308,7 @@
     <Compile Include="Models\CallMeBackTicket.cs" />
     <Compile Include="Models\Contact.cs" />
     <Compile Include="Models\Appeal.cs" />
+    <Compile Include="Models\ConnectionRequest.cs" />
     <Compile Include="Models\TwistedPair.cs" />
     <Compile Include="Models\NetworkNode.cs" />
     <Compile Include="Models\StreetAlias.cs" />
@@ -427,7 +429,7 @@
     <Content Include="Views\Shared\Empty.cshtml" />
     <Content Include="Views\Home\ExtraServicesPriceList.cshtml" />
     <Content Include="Views\Personal\ActiveServices.cshtml" />
-    <None Include="Web.Inforoom2_Test.config" />
+    <None Include="Web.test2.config" />
     <None Include="Web.release.config">
       <SubType>Designer</SubType>
       <DependentUpon>Web.config</DependentUpon>

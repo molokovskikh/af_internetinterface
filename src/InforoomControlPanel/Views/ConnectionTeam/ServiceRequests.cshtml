@@ -11,14 +11,10 @@
 <table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
 	<thead>
 		<tr role="row">
-			<th class="sorting_asc" rowspan="1" colspan="1" style="width: 50px;" aria-label="">
-				<div class="checkbox checkbox-replace neon-cb-replacement">
-					<label class="cb-wrapper"><input type="checkbox" id="chk-1">
-						<div class="checked"></div>
-					</label>
-				</div>
-			</th>
-			<th class="sorting" tabindex="0" aria-controls="table-2" >Имя</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2" >#</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2" >Описание</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2" >Дата создания</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2" >Назначена</th>
 			<th class="sorting" tabindex="0" aria-controls="table-2" >Действия</th>
 		</tr>
 	</thead>
@@ -26,12 +22,10 @@
 	<tbody>
 		@foreach (var request in ServiceRequests) {
 			<tr role="row" class="odd">
-				<td class="sorting_1">
-					<div class="checkbox checkbox-replace neon-cb-replacement">
-						<label class="cb-wrapper"><input type="checkbox" id="chk-1"><div class="checked"></div></label>
-					</div>
-				</td>
+				<td>@request.Id</td>
 				<td>@request.Description</td>
+				<td>@request.CreationDate</td>
+				<td>@(request.ServiceMan != null ? request.ServiceMan.Employee.Name : "Не назначена")</td>
 				<td>
 					<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("AttachServiceRequest","ConnectionTeam",new {requestId = request.Id})">
 						<i class="entypo-plus-circled"></i>
