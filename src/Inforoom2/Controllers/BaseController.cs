@@ -479,6 +479,10 @@ namespace Inforoom2.Controllers
 
 			var methodTypes = parameters.Select(parameter => parameter.GetType()).ToList();
 			var actionMethod = type.GetMethod(actionString, methodTypes.ToArray());
+			if (actionMethod == null) {
+				ForwardToAction("Home", "Index", new object[0]);
+				return;
+			}
 			var actionResult = (ActionResult)actionMethod.Invoke(controller, parameters);
 
 			controller.ViewBag.ActionName = actionString;
