@@ -190,6 +190,9 @@ namespace Inforoom2.Components
 					date = DateTime.MinValue;
 				propertyVal = date;
 			}
+			else if (targetType.BaseType == typeof(Enum)) {
+				propertyVal = Enum.Parse(targetType, propertyVal.ToString());
+			}
 
 			//Returns an System.Object with the specified System.Type and whose value is
 			//equivalent to the specified object.

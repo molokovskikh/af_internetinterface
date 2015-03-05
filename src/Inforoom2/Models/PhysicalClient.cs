@@ -8,13 +8,7 @@ using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models
 {
-	public enum CertificateType
-	{
-		[Display(Name = "Паспорт РФ")] Passport = 0,
-		[Display(Name = "Иной документ")] Other = 1
-	}
-
-	[Class(1, Table = "PhysicalClients", Schema = "internet", NameType = typeof (PhysicalClient))]
+	[Class(0, Table = "PhysicalClients", Schema = "internet", NameType = typeof (PhysicalClient))]
 	public class PhysicalClient : BaseModel
 	{
 		[Property]
@@ -44,25 +38,25 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual decimal MoneyBalance { get; set; }
 
-		[Property(Column = "IdDocType"), Description("Документ удостоверяющий личность")]
+		[Property(Column = "IdDocType"), Description("Документ, удостоверяющий личность")]
 		public virtual CertificateType CertificateType { get; set; }
 
-		[Property(Column = "IdDocName"), Description("Название документа, удостоверяющего личность")]
+		[Property(Column = "IdDocName"), NotNullNotEmpty(Message = "Введите название"), Description("Название документа, удостоверяющего личность")]
 		public virtual string CertificateName { get; set; }
 
-		[Property,NotNullNotEmpty(Message = "Введите номер паспорта")]
+		[Property, NotNullNotEmpty(Message = "Введите номер паспорта")]
 		public virtual string PassportNumber { get; set; }
 
-		[Property,NotNullNotEmpty(Message = "Введите серию паспорта")]
+		[Property, NotNullNotEmpty(Message = "Введите серию паспорта")]
 		public virtual string PassportSeries { get; set; }
 
-		[Property,NotNull(Message = "Введите дату выдачи паспорта")]
+		[Property]
 		public virtual DateTime PassportDate { get; set; }
 
 		[Property(Column = "RegistrationAdress"), NotNull(Message = "Введите адрес регистрации")]
 		public virtual string RegistrationAddress { get; set; }
 
-		[Property(Column = "WhoGivePassport"),NotNullNotEmpty(Message = "Поле не может быть пустым")]
+		[Property(Column = "WhoGivePassport"), NotNullNotEmpty(Message = "Поле не может быть пустым")]
 		public virtual string PassportResidention { get; set; }
 
 		[Property(Column = "_PhoneNumber", NotNull = true)]
@@ -77,7 +71,7 @@ namespace Inforoom2.Models
 		[Property(NotNull = true), NotEmpty(Message = "Введите отчество")]
 		public virtual string Patronymic { get; set; }
 
-		[Property(Column = "DateOfBirth"), NotNull(Message = "Введите дату рождения")]
+		[Property(Column = "DateOfBirth")]
 		public virtual DateTime BirthDate { get; set; }
 
 		[OneToOne(PropertyRef = "PhysicalClient")]
@@ -167,5 +161,11 @@ namespace Inforoom2.Models
 				BeforeWriteOffBalance = Client.Balance
 			};
 		}
+	}
+
+	public enum CertificateType
+	{
+		[Display(Name = "Паспорт РФ")] Passport = 0,
+		[Display(Name = "Иной документ")] Other = 1
 	}
 }
