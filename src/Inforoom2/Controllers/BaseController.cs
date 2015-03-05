@@ -239,7 +239,10 @@ namespace Inforoom2.Controllers
 			ViewBag.ActionName = filterContext.RouteData.Values["action"].ToString();
 			ViewBag.ControllerName = GetType().Name.Replace("Controller","");
 			//todo куда это девать?
-			ViewBag.CallMeBackTicket = new CallMeBackTicket();
+			ViewBag.CallMeBackTicket = new CallMeBackTicket {
+				Name = (CurrentClient == null) ? "" : CurrentClient.Name,
+				PhoneNumber = (CurrentClient == null) ? "" : CurrentClient.PhoneNumber
+			};
 
 			ProcessRegionPanel();
 			if(TryAuthorizeNetworkClient())
