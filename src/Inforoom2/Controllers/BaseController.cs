@@ -2,15 +2,12 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Web;
-using System.Web.ClientServices;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
-using System.Web.UI.WebControls;
 using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
@@ -336,7 +333,7 @@ namespace Inforoom2.Controllers
 				SuccessMessage("Заявка отправлена. В течении дня вам перезвонят.");
 				return;
 			}
-			
+
 			if (GetJavascriptParam("CallMeBack") == null)
 				AddJavascriptParam("CallMeBack", "1");
 		}
@@ -471,7 +468,7 @@ namespace Inforoom2.Controllers
 			var col = module.RouteCollection;
 			HttpContext.RewritePath("/" + controllerString + "/" + actionString);
 			var fakeRouteData = col.GetRouteData(HttpContext);
-
+				
 			var ctxt = new RequestContext(ControllerContext.HttpContext, fakeRouteData);
 			var factory = ControllerBuilder.Current.GetControllerFactory();
 			var iController = factory.CreateController(ctxt, controllerString);
@@ -482,10 +479,15 @@ namespace Inforoom2.Controllers
 
 			var methodTypes = parameters.Select(parameter => parameter.GetType()).ToList();
 			var actionMethod = type.GetMethod(actionString, methodTypes.ToArray());
+			if (actionMethod == null) {
+				ForwardToAction("Home", "Index", new object[0]);
+				return;
+			}
 			var actionResult = (ActionResult)actionMethod.Invoke(controller, parameters);
 
 			controller.ViewBag.ActionName = actionString;
 			controller.ViewBag.ControllerName = controllerString;
+			controller.ViewBag.JavascriptParams = ViewBag.JavascriptParams;
 
 			actionResult.ExecuteResult(controller.ControllerContext);
 		}
