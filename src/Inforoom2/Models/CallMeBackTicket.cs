@@ -15,7 +15,7 @@ namespace Inforoom2.Models
 			CreationDate = DateTime.Now;
 		}
 
-		[Property]
+		[Property, NotNullNotEmpty(Message = "Введите комментарий")]
 		public virtual string Text { get; set; }
 
 		[Property]

@@ -222,7 +222,7 @@
 						@Html.ValidationEditor(validationRunner, ticket, "Name", new { @class = "application entry" }, HtmlTag.input, HtmlType.none)
 						<div class="label">Номер телефона:<sup>*</sup></div>
 						@Html.ValidationEditor(validationRunner, ticket, "PhoneNumber", new { @class = "application entry" }, HtmlTag.input, HtmlType.none)
-						<div class="label">Комментарий:</div>
+						<div class="label">Комментарий:<sup>*</sup></div>
 						@Html.ValidationEditor(validationRunner, ticket, "Text", new { @class = "application entry" }, HtmlTag.textarea, HtmlType.none)
 					</div>
 					<div class="definitely"><sup>*</sup>- обязательно для заполнения</div>
