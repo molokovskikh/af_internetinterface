@@ -5,7 +5,18 @@
 @{
 	string username = "";
 	string password = "";
+	string regionPhones = ViewBag.RegionOfficePhoneNumber;
+	var regPhone = new string[2];
+	if (regionPhones.Contains(",")) {
+		var commaPos = regionPhones.IndexOf(',');
+		regPhone[0] = regionPhones.Substring(0, commaPos);
+		regPhone[1] = regionPhones.Substring(commaPos+1);
+	}
+	else {
+		regPhone[0] = regionPhones;
+	}
 }
+
 <html>
 	<head>
 		<title>@(ViewBag.Title)</title>
@@ -69,7 +80,10 @@
 					<input class="connect" type="submit" value="Подключиться">
 				</form>
 				<input class="call" type="submit" value="Обратный звонок">
-				<div class="phone">@ViewBag.RegionOfficePhoneNumber</div>
+				<div class="phone">@regPhone[0]</div>
+				@if (regPhone[1] != "") {
+					<div class="extra-phone">@regPhone[1]</div>
+				}
 			</div>
 			<div class="menu">
 				<ul>
