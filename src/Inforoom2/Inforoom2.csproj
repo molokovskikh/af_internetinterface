@@ -418,7 +418,6 @@
     <Content Include="Views\IsMyHouseConnected\Index.cshtml" />
     <Content Include="Views\Faq\TechSupport.cshtml" />
     <Content Include="Views\About\Payment.cshtml" />
-    <Content Include="Views\Home\CommonPlans.cshtml" />
     <Content Include="Views\Home\ActionPlans.cshtml" />
     <Content Include="Views\Shared\LoginPartial.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />

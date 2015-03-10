@@ -5,35 +5,39 @@
 }
 <h2 class="heading">@ViewBag.Title</h2>
 @{ Html.RenderPartial("Menu"); }
-	    <div class="profiles">
+	<div class="profiles">
 		<div class="number">
-		    <div class="column">Номер счета :</div>
-		    <div class="shelf profilenomber">@client.Client.Id.ToString("D5")</div>
+			<div class="column">Номер счета :</div>
+			<div class="shelf profilenomber">@client.Client.Id.ToString("D5")</div>
 		</div>
 		<div class="line">
-		    <div class="column">Ф.И.О:</div>
-		    <div class="shelf">@Html.DisplayFor(c => client.FullName)</div>
-		    <div class="pen"></div>
+			<div class="column-fio">Ф.И.О:</div>
+			<div class="shelf-fio">@Html.DisplayFor(c => client.FullName)</div>
+			<div class="pen"></div>
 		</div>
 		<div class="line">
-		    <div class="column">Тариф:</div>
-		    <div class="shelf">@Html.DisplayFor(c => client.Plan.Name)</div>
+			<div class="column">Тариф:</div>
+			<div class="shelf">@Html.DisplayFor(c => client.Plan.Name)</div>
 		</div>
 		<div class="line">
-		    <div class="column">Скидка:</div>
-		    <div class="shelf">@Html.DisplayFor(c => client.Client.Discount)%</div>
+			<div class="column">Скидка:</div>
+			<div class="shelf">@Html.DisplayFor(c => client.Client.Discount)%</div>
 		</div>
-		<div class="line">
-		    <div class="column">Номер телефона:</div>
-		    <div class="shelf">@Html.DisplayFor(c => client.PhoneNumber)</div>
-		     <div class="pen"></div>
-		</div>
-		<div class="line">
-		    <div class="column">Электронная почта:</div>
-		    <div class="shelf">@Html.DisplayFor(c => client.Email)</div>
-		     <div class="pen"></div>
-		</div>
-	    </div>
+		@if (client.PhoneNumber != string.Empty) {
+			<div class="line">
+				<div class="column">Номер телефона:</div>
+				<div class="shelf">@Html.DisplayFor(c => client.PhoneNumber)</div>
+				<div class="pen"></div>
+			</div>
+		}
+		@if (client.Email != string.Empty) {
+			<div class="line">
+				<div class="column">Электронная почта:</div>
+				<div class="shelf">@Html.DisplayFor(c => client.Email)</div>
+				<div class="pen"></div>
+			</div>
+		}
+	</div>
 <div class="actions">
 	<div class="action"><img src="/images/profile_offer.png"></div>
 	<div class="actiontext">

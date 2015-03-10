@@ -1,9 +1,14 @@
 ﻿@using Inforoom2.Models
  
 @{
-	Plan plan = ViewBag.Plan;
-	ViewBag.Title = "Тарифные планы";
+	Plan plan = ViewBag.Plan ?? new Plan {Name = ""};
+	Client client = ViewBag.Client;
+	var action = client == null ? "RequestFromTariff" : "Plans";
+	var controller = client == null ? "ClientRequest" : "Personal";
+	var divClass = plan.Name == "" ? "typehit" : "";
+	var inputClass = plan.Name == "" ? "button" : "";
 }
+
 <div class="plans">
 	<div class="heading">ТАРИФНЫЕ ПЛАНЫ</div>
 	<div class="variants">
@@ -12,10 +17,10 @@
 				<h1>Популярный</h1>
 				<h2>30 Мбит/с</h2>
 				<h4></h4>
-				<p>Для тех кто ценит время и деньги!
+				<p>Для тех, кто ценит время и деньги!
 Идеально подходит для серфинга в интернете и просмотра фильмов на одном компьютере.</p>
 				<h3>300 <span>Р.</span>/мес.</h3>
-				@using (Html.BeginForm("RequestFromTariff", "ClientRequest", new { id = 45 }, FormMethod.Post, null)) {
+				@using (Html.BeginForm(action, controller, new { id = 45 }, FormMethod.Post, null)) {
 					<input class="button plug" type="submit" value="Подключить">
 				}
 			</div>
@@ -25,11 +30,11 @@
 				<h1>Популярный</h1>
 				<h2>30 Мбит/с</h2>
 				<h4></h4>
-				<p>Для тех кто ценит время и деньги!
+				<p>Для тех, кто ценит время и деньги!
 Идеально подходит для серфинга в интернете и просмотра фильмов на одном компьютере.</p>
 				<h3>300 <span>Р.</span>/мес.</h3>
-				@using (Html.BeginForm("RequestFromTariff", "ClientRequest", new { id = 45 }, FormMethod.Post, null)) {
-					<input class="plug" type="submit" value="Подключить">
+				@using (Html.BeginForm(action, controller, new { id = 45 }, FormMethod.Post, null)) {
+					<input class="@inputClass plug" type="submit" value="Подключить">
 				}
 			</div>
 		}
@@ -40,31 +45,34 @@
 				<h2>50 Мбит/с</h2>
 				<h4>+Ночной безлимит<sup>1</sup></h4>
 				<h4>+TV Free<sup>2</sup></h4>
-			<p>Для тех кто действительно любит интернет!
+			<p>Для тех, кто действительно любит интернет!
 Этот тариф для современной семьи, позволяющий
 подключить устройства всех членов семьи через Wi-Fi,
 получить цифровое TV и воспользоваться ночным безлимитом на скорости 100 Мбит/с.
 При этом никто не будет обделен скоростью.</p>
 				<h3>500 <span>Р.</span>/мес.</h3>
-				@using (Html.BeginForm("RequestFromTariff", "ClientRequest", new { id = 49 }, FormMethod.Post, null)) {
+				@using (Html.BeginForm(action, controller, new { id = 49 }, FormMethod.Post, null)) {
 					<input class="button plug" type="submit" value="Подключить">
 				}
 			</div>
 		}
 		else {
-			<div class="type">
+			<div class="type @divClass">
+				@if (plan.Name == "") {
+					<div class="typehitbg"></div>
+				}
 				<h1>Оптимальный</h1>
 				<h2>50 Мбит/с</h2>
 				<h4>+Ночной безлимит<sup>1</sup></h4>
 				<h4>+TV Free<sup>2</sup></h4>
-			<p>Для тех кто действительно любит интернет!
+			<p>Для тех, кто действительно любит интернет!
 Этот тариф для современной семьи, позволяющий
 подключить устройства всех членов семьи через Wi-Fi,
 получить цифровое TV и воспользоваться ночным безлимитом на скорости 100 Мбит/с.
 При этом никто не будет обделен скоростью.</p>
 				<h3>500 <span>Р.</span>/мес.</h3>
-				@using (Html.BeginForm("RequestFromTariff", "ClientRequest", new { id = 49 }, FormMethod.Post, null)) {
-					<input class="plug" type="submit" value="Подключить">
+				@using (Html.BeginForm(action, controller, new { id = 49 }, FormMethod.Post, null)) {
+					<input class="@inputClass plug" type="submit" value="Подключить">
 				}
 			</div>
 		}
@@ -74,9 +82,9 @@
 				<h1>Максимальный</h1>
 				<h2>100 Мбит/с</h2>
 				<h4>+TV Free<sup>2</sup></h4>
-				<p>Для тех кто всегда получает максимум выгоды из любого предложения! Максимальная скорость и Максимальный TV пакет (167 цифровых каналов, 24 HD канала.)</p>
+				<p>Для тех, кто всегда получает максимум выгоды из любого предложения! Максимальная скорость и Максимальный TV пакет (167 цифровых каналов, 24 HD канала.)</p>
 				<h3>900 <span>Р.</span>/мес.</h3>
-				@using (Html.BeginForm("RequestFromTariff", "ClientRequest", new { id = 81 }, FormMethod.Post, null)) {
+				@using (Html.BeginForm(action, controller, new { id = 81 }, FormMethod.Post, null)) {
 					<input class="button plug" type="submit" value="Подключить">
 				}
 			</div>
@@ -86,11 +94,11 @@
 				<h1>Максимальный</h1>
 				<h2>100 Мбит/с</h2>
 				<h4>+TV Free<sup>2</sup></h4>
-				<p>Для тех кто всегда получает максимум выгоды из любого предложения!
+				<p>Для тех, кто всегда получает максимум выгоды из любого предложения!
 Максимальная скорость и Максимальный TV пакет (167 цифровых каналов, 24 HD канала.)</p>
 				<h3>900 <span>Р.</span>/мес.</h3>
-				@using (Html.BeginForm("RequestFromTariff", "ClientRequest", new { id = 81 }, FormMethod.Post, null)) {
-					<input class="plug" type="submit" value="Подключить">
+				@using (Html.BeginForm(action, controller, new { id = 81 }, FormMethod.Post, null)) {
+					<input class="@inputClass plug" type="submit" value="Подключить">
 				}
 			</div>
 		}
