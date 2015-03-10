@@ -26,6 +26,7 @@ namespace Inforoom2.Controllers
 
 		public ActionResult Plans(int? id)
 		{
+			ViewBag.Client = CurrentClient;
 			if (id != null) {
 				var plan = DbSession.Get<Plan>(id);
 				ViewBag.Plan = plan;

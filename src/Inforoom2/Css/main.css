@@ -127,7 +127,9 @@ font-size: 14px;height: 29px;padding-bottom: 3px;width: 127px;}
 .shelf.row {font-size: 22px;}
 .line {width: 435px;height: 55px;border-bottom:1px solid #d7d1d1;}
 .column {padding-top: 19px;width: 165px;font-size: 16px;padding-left: 10px;display: inline-block;}
+.column-fio {padding-top: 19px;font-size: 16px;padding-left: 10px;}
 .shelf {color: #a71a23;font-size: 16px;padding-top: 19px;display: inline-block;font-style: oblique;}
+.shelf-fio {color: #a71a23;font-size: 16px;width: 250px;display: run-in;font-style: oblique;position: relative;left: 180px;top: -30px;}
 .actions {display: inline-block;width: 233px;height: 400px;margin-left: 36px;}
 .action {width: 237px;height: 210px;border-radius: 12px;}
 .action img {border-radius: inherit; width: inherit;height: inherit;}
