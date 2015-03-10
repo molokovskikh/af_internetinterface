@@ -33,6 +33,19 @@ namespace InforoomControlPanel.Controllers
 			return View("ClientList");
 		}
 
+		public ActionResult ClientInfo(int clientId)
+		{
+			ViewBag.Client = DbSession.Get<Client>(clientId);
+			return View();
+		}
+
+		[HttpPost]
+		public ActionResult ClientInfo([EntityBinder] Client client)
+		{
+			DbSession.Update(client);
+			return View();
+		}
+
 		/// <summary>
 		/// Отображает форму новой заявки
 		/// </summary>

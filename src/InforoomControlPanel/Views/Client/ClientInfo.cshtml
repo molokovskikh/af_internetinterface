@@ -1,0 +1,41 @@
+﻿@using Inforoom2.Models
+
+@{
+	Client client = ViewBag.Client;
+	ViewBag.Title = "Информация по клиенту " + client.PhysicalClient.FullName;
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	string action = ViewBag.ActionName;
+	string controller = ViewBag.ControllerName;
+}
+
+<div class="panel panel-primary col-md-12">
+	<div class="panel-body">
+		@using (@Html.BeginForm(action, controller, null, FormMethod.Post, new { @id = "ClientInfoForm", @class = "form-horizontal form-groups-bordered"}))
+		{
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Номер лицевого счета:</label>
+				<div class = "col-sm-4">
+					@Html.DisplayFor(o => client.Id, new { @class = "form-control" })
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Фактический адрес:</label>
+				<div class = "col-sm-4">
+					@Html.DisplayFor(o => client.PhysicalClient.Address, new { @class = "form-control" })
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="BalanceField" class="col-sm-2 control-label">Баланс:</label>
+				<div class = "col-sm-4">
+					@Html.DisplayFor(o => client.Balance, new { @class = "form-control" })
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Статус:</label>
+				<div class = "col-sm-4">
+					@Html.DisplayFor(o => client.Status.Name, new { @class = "form-control" })
+				</div>
+			</div>
+		}
+	</div>
+</div>
