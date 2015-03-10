@@ -41,6 +41,18 @@ namespace InternetInterface.Test.Functional
 				checkbox.Click();
 		}
 
+		[Test(Description = "Проверяет отображение слова 'РАСТОРГНУТ' в имени клиента (с этим статусом) в его ЛК")]
+		public void DisplayDissolvedStatusToName()
+		{
+			var shortName = "Lawyer#" + laywerPerson.LawyerPerson.Id;
+			laywerPerson.Name = "Test lawyer person";
+			laywerPerson.LawyerPerson.ShortName = shortName;
+			laywerPerson.SetStatus(StatusType.Dissolved, session);
+			session.Save(laywerPerson);
+			Open(laywerPerson.Redirect());
+			AssertText("РАСТОРГНУТ " + shortName);
+		}
+
 		[Test(Description = "Проверяет добавление услуги к заказу при редактировании заказа")]
 		public void Check_data_index()
 		{
@@ -295,6 +307,20 @@ namespace InternetInterface.Test.Functional
 			session.Clear();
 			var savedOrder = session.QueryOver<Order>().Where(o => o.Client == laywerPerson).SingleOrDefault();
 			Assert.That(savedOrder.OrderServices.Count, Is.EqualTo(2));
+		}
+
+		[Test(Description = "Проверяет возм-ть назначения статуса 'Расторгнут' юр. лицу; тест для задачи №29157")]
+		public void SetStatus_dissolved_ForClient()
+		{
+			Open(laywerPerson.Redirect());
+			Assert.AreEqual((uint)StatusType.Worked, laywerPerson.Status.Id);
+			Css("#EditInfoBtn").Click();
+			Css("#LegalPerson_ShortName").SendKeys("Lawyer#" + laywerPerson.LawyerPerson.Id);
+			Css("#clientStatusId").SelectByText("Расторгнут");
+			Css("#SaveButton").Click();
+			laywerPerson.Refresh();
+			Assert.AreEqual((uint)StatusType.Dissolved, laywerPerson.Status.Id);
+			AssertText("Статус клиента: Расторгнут");
 		}
 	}
 }

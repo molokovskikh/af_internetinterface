@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
-using Inforoom2.Helpers;
 using Inforoom2.Models;
 using NHibernate.Linq;
 
 namespace Inforoom2.Controllers
 {
-	public class HomeController : BaseController
+	public class HomeController : Inforoom2Controller
 	{
 		public ActionResult Index()
 		{
 			ViewBag.Message = "HomeController";
-			var news = DbSession.Query<NewsBlock>().Where(k => k.IsPublished && (k.Region == CurrentRegion || k.Region == null)).OrderByDescending(n=>n.Priority).ToList();
+			var news = DbSession.Query<NewsBlock>().Where(k => k.IsPublished && (k.Region == CurrentRegion || k.Region == null)).OrderByDescending(n => n.Priority).ToList();
 			var newsList = new List<NewsBlock>();
 			int i = 0;
 			foreach (var newsBlock in news) {
@@ -25,7 +23,7 @@ namespace Inforoom2.Controllers
 			ViewBag.News = newsList;
 			return View();
 		}
-		
+
 		public ActionResult Plans(int? id)
 		{
 			if (id != null) {
@@ -35,6 +33,11 @@ namespace Inforoom2.Controllers
 			return View();
 		}
 
+		public ActionResult PricesList()
+		{
+			return View("ExtraServicesPriceList");
+		}
+
 		public ActionResult ViewNewsBlock(int id)
 		{
 			var newsBlock = DbSession.Get<NewsBlock>(id);
@@ -42,6 +45,9 @@ namespace Inforoom2.Controllers
 			return View();
 		}
 
-		
+		public ActionResult PermanentHomeRedirect()
+		{
+			return RedirectToActionPermanent("Index");
+		}
 	}
 }

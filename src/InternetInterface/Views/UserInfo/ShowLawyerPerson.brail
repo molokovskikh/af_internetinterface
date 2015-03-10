@@ -41,10 +41,11 @@
 		<% if IsDefined("errorMessage"):
 			  output  WriteMessageError(errorMessage)
 		   end %>
-		<th>Информация по клиенту   ${Client.ShortName}  ${"(Он-Лайн)" if _client.OnLine()}
-		<% if MapPartner.AccesPartner("ECI"): %>
-			<button id="EditInfoBtn" type="submit"  class="button save">Редактировать</button>
-		 <% end %>
+		<th>
+			Информация по клиенту ${"РАСТОРГНУТ" if _client.Status.Type.Equals(IsDissolved)} ${Client.ShortName}  ${"(Он-Лайн)" if _client.OnLine()}
+			<% if MapPartner.AccesPartner("ECI"): %>
+				<button id="EditInfoBtn" type="submit"  class="button save">Редактировать</button>
+			<% end %>
 		</th>
 	</thead>
 	<tbody>

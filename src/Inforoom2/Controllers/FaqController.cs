@@ -1,5 +1,5 @@
-﻿
-using System;
+﻿using System;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
@@ -12,7 +12,7 @@ namespace Inforoom2.Controllers
 	/// <summary>
 	/// Страница вопросов и ответов
 	/// </summary>
-	public class FaqController : BaseController
+	public class FaqController : Inforoom2Controller
 	{
 
 		/// <summary>
@@ -53,14 +53,28 @@ namespace Inforoom2.Controllers
 				builder.Append("IP: " + Request.UserHostAddress);
 				builder.AppendLine("<br />");
 				builder.Append(ticket.Text);
-				EmailSender.SendEmail("internet@ivrn.net","Запрос в техподдержку с ivrn.net от "+ticket.Email,builder.ToString());
+
+#if DEBUG
+				var email = ConfigurationManager.AppSettings["DebugMailAddress"];
+#else
+				var email = ConfigurationManager.AppSettings["MailSenderAddress"];
+#endif
+				try {
+					EmailSender.SendEmail(email, "Запрос в техподдержку с ivrn.net от " + ticket.Email, builder.ToString());
+				}
+				catch (Exception) {
+					ErrorMessage("Извините, произошла ошибка");
+					return View();
+				}
 
 				if(ticket.Client != null) {
-					var appeal = new Appeal("Клиент написал тикет в техподдержку #"+ticket.Id,ticket.Client,AppealType.Statistic);
+					var appeal = new Appeal("Клиент написал тикет в техподдержку #" + ticket.Id, ticket.Client, AppealType.Statistic) {
+						Employee = GetCurrentEmployee()
+					};
 					DbSession.Save(appeal);
 				}
 
-				SuccessMessage("Вопрос успешно отправлен. Ответ придет вам на на почту.");
+				SuccessMessage("Вопрос успешно отправлен. Ответ придет вам на почту.");
 				ViewBag.NewTicket = new Ticket();
 			}
 			else

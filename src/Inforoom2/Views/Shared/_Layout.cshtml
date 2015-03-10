@@ -10,9 +10,9 @@
 	<head>
 		<title>@(ViewBag.Title)</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<link href="../../css/main.css" rel="stylesheet" />
-		<link href="../../css/style.css" rel="stylesheet" />
-		<link href="../../css/jquery-ui-1.10.4.custom.min.css" rel="stylesheet" />
+		<link href="~/css/main.css?v3" rel="stylesheet" />
+		<link href="~/css/style.css?v3" rel="stylesheet" />
+		<link href="~/css/jquery-ui-1.10.4.custom.min.css" rel="stylesheet" />
 	</head>
 	<body>
 		<div class="leftbg"></div>
@@ -81,7 +81,7 @@
 						menu.Add(new[] { "Для бизнеса", "Index", "Bussiness" });
 						menu.Add(new[] { "Вопросы и ответы", "Index", "Faq" });
 						menu.Add(new[] { "Оплата", "Payment", "About" });
-						menu.Add(new[] { "О компании", "Details", "About" });
+						menu.Add(new[] { "О компании", "Index", "About" });
 						foreach (var item in menu) {
 							<li>@Html.ActionLink(item[0], item[1], item[2], null, new { @class = ViewBag.ControllerName == item[2] && ViewBag.ActionName == item[1] ? "active" : "" }) </li>
 						}
@@ -99,6 +99,7 @@
 					<div class="address">
 						<p>© 2014 — ООО «Инфорум»</p> 
 						<p>г. Воронеж, Студенческая ул. д. 12 А</p>
+						<p><a href="mailto:internet@ivrn.net">internet@ivrn.net</a></p>
 					</div>
 				</div>
 				<div class="support">
@@ -119,9 +120,10 @@
 				</div>
 				<div class="support">
 					<ul>
-						<li>@Html.ActionLink("О компании", "Details", "About", null, null)</li>
+						<li>@Html.ActionLink("О компании", "Index", "About", null, null)</li>
 						<li>@Html.ActionLink("Для бизнеса", "Index", "Bussiness")</li>
 						<li>@Html.ActionLink("Оферта", "Index", "OfferContract", null, null)</li>
+						<li>@Html.ActionLink("Реквизиты", "Details", "About")</li>
 					</ul>
 				</div>
 			</div>
@@ -205,7 +207,7 @@
 			</div>
 			<div class="cityWindow" id ="CallMeBackWindow" >
 				@{
-					CallMeBackTicket ticket = ViewBag.CallMeBackTicket;
+					CallMeBackTicket ticket = ViewBag.CallMeBackTicket ?? new CallMeBackTicket();
 					ValidationRunner validationRunner = ViewBag.Validation;
 					String action = ViewBag.ActionName.ToString();
 					String controller = ViewBag.ControllerName.ToString();
@@ -230,8 +232,8 @@
 				}
 			</div>
 			<div id="windowButtons" class="buttons">
-				<button class="click cancel">Нет</button>
 				<button class="click ok">Да</button>
+				<button class="click cancel">Нет</button>
 			</div>
 			<div id="notification" class="notification font-header"><span class="message"></span> <div class="hide">[скрыть]</div></div>
 		</div>
@@ -243,34 +245,29 @@
 		<script type="text/javascript" src="~/Scripts/Window.js"></script>
 		@RenderSection("JavaScript", required: false)
 	</body>
-	<script type="text/javascript">
-		(function(d, w, c) {
-			(w[c] = w[c] || []).push(function() {
-				try {
-					w.yaCounter27457815 = new Ya.Metrika({
-						id: 27457815,
-						webvisor: true,
-						clickmap: true,
-						trackLinks: true,
-						accurateTrackBounce: true
-					});
-				} catch (e) {
-				}
-			});
+	<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+	(function (d, w, c) {
+		(w[c] = w[c] || []).push(function () {
+			try {
+				w.yaCounter28020399 = new Ya.Metrika({
+					id: 28020399
+				});
+			} catch (e) { }
+		});
 
-			var n = d.getElementsByTagName("script")[0],
-			    s = d.createElement("script"),
-			    f = function() { n.parentNode.insertBefore(s, n); };
-			s.type = "text/javascript";
-			s.async = true;
-			s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+		var n = d.getElementsByTagName("script")[0],
+            s = d.createElement("script"),
+            f = function () { n.parentNode.insertBefore(s, n); };
+		s.type = "text/javascript";
+		s.async = true;
+		s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
 
-			if (w.opera == "[object Opera]") {
-				d.addEventListener("DOMContentLoaded", f, false);
-			} else {
-				f();
-			}
-		})(document, window, "yandex_metrika_callbacks");
-	</script>
-	<noscript><div><img src="//mc.yandex.ru/watch/27457815" style="position: absolute; left: -9999px;" alt="" /></div></noscript>
+		if (w.opera == "[object Opera]") {
+			d.addEventListener("DOMContentLoaded", f, false);
+		} else { f(); }
+	})(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript><div><img src="//mc.yandex.ru/watch/28020399" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
 </html>

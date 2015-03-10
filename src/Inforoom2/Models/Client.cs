@@ -4,12 +4,9 @@ using System.ComponentModel;
 using System.Linq;
 using Common.Tools;
 using Inforoom2.Models.Services;
+using InternetInterface.Models;
 using NHibernate;
-using NHibernate.Linq;
-using NHibernate.Mapping;
 using NHibernate.Mapping.Attributes;
-using NHibernate.Validator.Constraints;
-
 
 namespace Inforoom2.Models
 {
@@ -19,6 +16,28 @@ namespace Inforoom2.Models
 	[Class(0, Table = "Clients", Schema = "internet", NameType = typeof (Client))]
 	public class Client : BaseModel
 	{
+		public Client()
+		{
+			Endpoints = new List<ClientEndpoint>();
+			ClientServices = new List<ClientService>();
+			Payments = new List<Payment>();
+		}
+
+		//todo исправить это почему-то не подцепляет маппинг
+		[Bag(0, Table = "ConnectionRequests")]
+		[Key(1, Column = "Client")]
+		[OneToMany(2, ClassType = typeof(ConnectionRequest))]
+		public virtual IList<ConnectionRequest> ConnectionRequests { get; set; }
+
+		public virtual ConnectionRequest ConnectionRequest
+		{
+			get { return ConnectionRequests != null ? ConnectionRequests.FirstOrDefault() : null; }
+			set { }
+		}
+
+		[Property(Column = "RegDate")]
+		public virtual DateTime? CreationDate { get; set; }
+
 		[Property]
 		public virtual bool Disabled { get; set; }
 
@@ -74,6 +93,11 @@ namespace Inforoom2.Models
 		[Key(1, Column = "Client")]
 		[OneToMany(2, ClassType = typeof (ClientService))]
 		public virtual IList<ClientService> ClientServices { get; set; }
+
+		[Bag(0, Table = "Payments", Cascade = "all-delete-orphan")]
+		[Key(1, Column = "Client")]
+		[OneToMany(2, ClassType = typeof(Payment))]
+		public virtual IList<Payment> Payments { get; set; }
 		
 		[Bag(0,Table = "ClientEndpoints", Cascade = "all-delete-orphan")]
 		[Key(1, Column = "client")]
@@ -124,6 +148,16 @@ namespace Inforoom2.Models
 		public virtual decimal GetInterval()
 		{
 			return (((DateTime) RatedPeriodDate).AddMonths(1) - (DateTime) RatedPeriodDate).Days + DebtDays;
+		}
+
+		/// <summary>
+		/// Получить число дней работы клиента при текущем балансе до авт. блокировки (в биллинге не использовать!)
+		/// </summary>
+		/// <returns>Расчётное кол-во дней работы без пополнения баланса</returns>
+		public virtual int GetWorkDays()
+		{
+			var priceInDay = Plan.Price/DateTime.Now.DaysInMonth();		// ToDo Улучшить алгоритм вычисления
+			return (int)Math.Floor(Balance/priceInDay);
 		}
 
 		public virtual decimal GetSumForRegularWriteOff()
@@ -182,14 +216,51 @@ namespace Inforoom2.Models
 
 		public virtual decimal Balance
 		{
-			get
-			{
-				if (PhysicalClient != null)
-					return PhysicalClient.Balance;
-			/*	if (LegalClient != null)
-					return LegalClient.Balance;*/
-				return 0m;
-			}
+			get { return PhysicalClient != null ? PhysicalClient.Balance : 0; }
+			set { PhysicalClient.Balance = value; }
+		}
+
+		public virtual string PhoneNumber 
+		{
+			get {return PhysicalClient != null ? PhysicalClient.PhoneNumber : null;}
+			set { PhysicalClient.PhoneNumber = value; }
+		}
+
+		public virtual string Email
+		{
+			get { return PhysicalClient != null ? PhysicalClient.Email : null; }
+			set { PhysicalClient.Email = value; }
+		}
+
+		[Property(Column = "Name")]
+		public virtual string _Name { get; set; }
+
+		public virtual string Name
+		{
+			get { return PhysicalClient != null ? PhysicalClient.Name : _Name; }
+			set { PhysicalClient.Name = value; }
+		}
+		public virtual string Surname
+		{
+			get { return PhysicalClient != null ? PhysicalClient.Surname : null; }
+			set { PhysicalClient.Surname = value; }
+		}
+		public virtual string Patronymic
+		{
+			get { return PhysicalClient != null ? PhysicalClient.Patronymic : null; }
+			set { PhysicalClient.Patronymic = value; }
+		}
+		public virtual Address Address
+		{
+			get { return PhysicalClient != null ? PhysicalClient.Address : null; }
+		}
+		public virtual DateTime LastTimePlanChanged
+		{
+			get { return PhysicalClient != null ? PhysicalClient.LastTimePlanChanged : DateTime.MinValue; }
+		}
+		public virtual Plan Plan
+		{
+			get { return PhysicalClient != null ? PhysicalClient.Plan : null; }
 		}
 
 		public virtual void WriteOff(decimal sum, bool isVirtual)
@@ -200,24 +271,42 @@ namespace Inforoom2.Models
 				//LawyerPerson.Balance -= sum;
 		}
 
-		public virtual string GetAddressString()
+
+		public virtual bool HasPassportData()
 		{
-			return "г. Москва, ул. Вильнюсская, д.8, к.2";
+			if(PhysicalClient == null)
+				return true;
+			var hasPassportData = !string.IsNullOrEmpty(PhysicalClient.PassportNumber);
+			hasPassportData = hasPassportData && !string.IsNullOrEmpty(PhysicalClient.PassportSeries);
+			hasPassportData = hasPassportData && !string.IsNullOrEmpty(PhysicalClient.PassportResidention);
+			hasPassportData = hasPassportData && PhysicalClient.PassportDate != DateTime.MinValue;
+			hasPassportData = hasPassportData && !string.IsNullOrEmpty(PhysicalClient.RegistrationAddress);
+			return hasPassportData;
 		}
 
-		public virtual bool ShowWarningBecauseNoPassport()
+		public static Client GetClientForIp(string ipstr, ISession dbSession)
 		{
-			if (PhysicalClient == null)
-				return false;
+			var endpoint = ClientEndpoint.GetEndpointForIp(ipstr, dbSession);
+			if (endpoint != null)
+				return endpoint.Client;
+			return null;
+		}
 
-			if (!IsWorkStarted())
-				return false;
+		//todo исправить
+		[Property(Column = "Address")]
+		public virtual string _oldAdressStr { get; set; }
 
-			var dontHavePassportData = string.IsNullOrEmpty(PhysicalClient.PassportNumber);
-			var goodMoney = Balance > 0;
-			var date = SystemTime.Now() > WorkingStartDate.Value.AddDays(7);
 
-			return dontHavePassportData && goodMoney && date;
+
+		public virtual string Fullname
+		{
+			get { return PhysicalClient != null ? PhysicalClient.FullName : _Name; }
+			set { }
+		}
+
+		public virtual string GetAddress()
+		{
+			return _oldAdressStr;
 		}
 	}
 

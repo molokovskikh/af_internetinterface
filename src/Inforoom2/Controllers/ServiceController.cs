@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
+using Common.Tools;
 using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
@@ -35,7 +36,12 @@ namespace Inforoom2.Controllers
 					ActivatedByUser = true
 				};
 				ActivateService(clientService, client);
-				var appeal = new Appeal("Клиент активировал блокировку счета", client, AppealType.User);
+				var appealText = "Услуга \"{0}\" активирована на период с {1} по {2}. Баланс {3}.";
+				var appeal = new Appeal(string.Format(appealText, service.Name, DateTime.Now.ToShortDateString(),
+						blockingEndDate.Value.ToShortDateString(), client.Balance),
+						client, AppealType.User) {
+					Employee = GetCurrentEmployee()
+				};
 				DbSession.Save(appeal);
 				return RedirectToAction("Service", "Personal");
 			}
@@ -54,8 +60,12 @@ namespace Inforoom2.Controllers
 				SceHelper.UpdatePackageId(DbSession, client);
 			DbSession.Update(client);
 			InitServices();
-			var appeal = new Appeal("Клиент выключил блокировку счета", client, AppealType.User);
+			var appealText = "Услуга \"{0}\" деактивирована. Баланс {1}.";
+			var appeal = new Appeal(string.Format(appealText, service.Name, client.Balance), client, AppealType.User) {
+				Employee = GetCurrentEmployee()
+			};
 			DbSession.Save(appeal);
+			SuccessMessage("Работа возобновлена");
 			return RedirectToAction("Service", "Personal");
 		}
 
@@ -71,7 +81,11 @@ namespace Inforoom2.Controllers
 					Client = client
 				};
 				ActivateService(clientService, client);
-				var appeal = new Appeal("Клиент активировал доверительный платеж", client, AppealType.User);
+				var appealText = "Услуга \"{0}\" активирована на период с {1} по {2}. Баланс {3}.";
+				var appeal = new Appeal(string.Format(appealText, service.Name, DateTime.Now.ToShortDateString(),
+						DateTime.Now.AddDays(3).ToShortDateString(), client.Balance), client, AppealType.User) {
+					Employee = GetCurrentEmployee()
+				};
 				DbSession.Save(appeal);
 				return RedirectToAction("Service", "Personal");
 			}

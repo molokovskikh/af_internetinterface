@@ -1,0 +1,72 @@
+﻿@using Inforoom2.Helpers
+@using Inforoom2.Models
+@model dynamic
+@section JavaScript{
+	<script src="http://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+	<script type="text/javascript"src="@Url.Content("~/Scripts/YandexMapHelper.js")"></script>
+	<script type="text/javascript"src="@Url.Content("~/Scripts/AddressController.CreateStreet.js")"></script>
+	}
+@{
+	ViewBag.Title = "Создать новую улицу";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	List<Region> Regions = ViewBag.Regions;
+	Region region = ViewBag.Region ?? new Region();
+	Street Street = ViewBag.Street;
+}
+	  <div class="panel panel-default">
+		<div class="panel-body">
+			@using (Html.BeginForm(ViewBag.ActionName as string, "Address", FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
+   {
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label">Регион</label>
+						<div class="col-sm-6">
+							@Html.DropDownListExtendedFor(i=>Street.Region,Regions,i=>i.Name,null,new { @class = "form-control" },region.Id)
+							@ViewBag.Validation.GetError(Street, "Region")
+						</div>
+					</div><div class="form-group">
+						<label class="col-sm-4 control-label">Название</label>
+						<div class="col-sm-6">
+							@Html.TextBoxFor(I=>Street.Name,new { @class = "form-control" })
+							@ViewBag.Validation.GetError(Street, "Name")
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-4 control-label">Использовать яндекс (иногда яндекс не может найти адрес - тогда можно вписать название самостоятельно и создать метку кликнув по карте)</label>
+						<div class="col-sm-6">
+							@Html.CheckBoxFor(I=>Street.Confirmed,new { @class = "form-control"})
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-4 control-label">Название Yandex</label>
+						<div class="col-sm-6">
+							<div id="yandexError" style="color:red"></div>
+							<input id="yandexStreet" name="yandexStreet" class="form-control" readonly="readonly"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-4 control-label">Координаты Yandex</label>
+						<div class="col-sm-6">
+							@{ var val = Street.Confirmed ? Street.Geomark : "";}
+							<input value="@val" id="yandexPosition" name="yandexPosition" class="form-control" readonly="readonly"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-4 control-label">Координаты собственной метки</label>
+						<div class="col-sm-5">
+							@Html.TextBoxFor(I=>Street.Geomark,new { @class = "form-control",@readonly = "readonly" })
+							@ViewBag.Validation.GetError(Street, "Geomark")
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2">
+							<button class="btn btn-green" type="submit">Сохранить</button>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<div id="yandexMap" class="map" style="height:500px;"></div>
+				</div>
+					}
+				</div>
+			</div>

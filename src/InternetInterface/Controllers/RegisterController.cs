@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Common.Tools;
-using Common.Web.Ui.Controllers;
 using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Helpers;
@@ -14,7 +11,6 @@ using InternetInterface.Models.Services;
 using InternetInterface.Services;
 using NHibernate;
 using NHibernate.Linq;
-using System.Text.RegularExpressions;
 
 namespace InternetInterface.Controllers
 {
@@ -246,6 +242,7 @@ namespace InternetInterface.Controllers
 			SendRegisterParam(client);
 			PropertyBag["ChHouse"] = new House();
 			PropertyBag["Client"] = client;
+			PropertyBag["dealersList"] = DbSession.Query<Partner>().ToList();
 		}
 
 		[AccessibleThrough(Verb.Get)]
@@ -281,6 +278,11 @@ namespace InternetInterface.Controllers
 				newPhisClient.HomePhoneNumber = UsersParsers.MobileTelephoneParcer(request.ApplicantPhoneNumber);
 			PropertyBag["Client"] = newPhisClient;
 			PropertyBag["requestID"] = requestID;
+			PropertyBag["request"] = request;
+			if (request.RequestSource == RequestType.FromClient || request.RequestSource == RequestType.FromOperator)
+				PropertyBag["reqSourceDesc"] = request.RequestSource.GetDescription();
+			else
+				PropertyBag["reqSourceDesc"] = "";
 			if (newPhisClient.House != null) {
 				var houses =
 					DbSession.Query<House>().Where(

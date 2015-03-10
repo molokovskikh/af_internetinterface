@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-
+﻿
 namespace Inforoom2.Components
 {
 	public enum HtmlTag
@@ -11,6 +10,7 @@ namespace Inforoom2.Components
 		datetime = 5
 	}
 
+	// Устарел
 	public enum HtmlType
 	{
 		text = 1,

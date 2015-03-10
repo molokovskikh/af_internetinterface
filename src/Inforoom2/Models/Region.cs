@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Web.Mvc;
-using Inforoom2.Intefaces;
+﻿using System.Collections.Generic;
 using NHibernate.Mapping.Attributes;
 
 namespace Inforoom2.Models
@@ -22,6 +19,17 @@ namespace Inforoom2.Models
 
 		[Property(Column = "_RegionOfficePhoneNumber")]
 		public virtual string RegionOfficePhoneNumber { get; set; }
+
+		[Property(Column = "_OfficeAddress")]
+		public virtual string OfficeAddress { get; set; }
+
+		[Property(Column = "_OfficeGeomark")]
+		public virtual string OfficeGeomark { get; set; }
+
+		[Bag(0, Table = "Street", Cascade = "all-delete-orphan")]
+		[Key(1, Column = "Region")]
+		[OneToMany(2, ClassType = typeof(Street))]
+		public virtual IList<Street> Streets { get; set; }
 
 	}
 }

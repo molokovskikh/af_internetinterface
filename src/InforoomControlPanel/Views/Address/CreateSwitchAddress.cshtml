@@ -1,0 +1,82 @@
+﻿@using Inforoom2.Helpers
+@using Inforoom2.Models
+@using Microsoft.Win32
+@model dynamic
+@section JavaScript{
+	<script src="http://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+	<script type="text/javascript"src="@Url.Content("~/Scripts/AddressController.CreateSwitchAddress.js")"></script>
+	}
+@{
+	ViewBag.Title = "Создать новый адрес коммутатора";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	SwitchAddress SwitchAddress = ViewBag.SwitchAddress;
+	List<Region> Regions = ViewBag.Regions;
+	List<Street> Streets = ViewBag.Streets;
+	List<NetworkNode> NetworkNodes = ViewBag.NetworkNodes;
+	List<House> Houses = ViewBag.Houses;
+	Region region = ViewBag.Region ?? new Region();
+	Street street = ViewBag.Street ?? new Street(){Region = new Region()};
+	NetworkNode NetworkNode = ViewBag.NetworkNode ?? new NetworkNode();
+	House house = ViewBag.House ?? new House();
+}
+<div class="panel panel-default">
+	<div class="panel-body">
+
+@using (Html.BeginForm(ViewBag.ActionName as string, "Address", FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
+ {
+	<div class="form-group">
+		<label class="col-sm-1 control-label">Регион</label>
+		@Html.Hidden("switchId", NetworkNode.Id)
+		<div class="col-sm-3">
+			@Html.DropDownListExtendedFor(i=>street.Region, Regions, i => i.Name, null, new { @class = "form-control regionId" },region.Id)
+		</div>
+	</div>
+	<div class="form-group">
+				<label class="col-sm-1 control-label">Улица</label>
+				@Html.Hidden("regionId", region.Id)
+				@Html.Hidden("switchId", NetworkNode.Id)
+				<div class="col-sm-3">
+					@Html.DropDownListExtendedFor(i=>house.Street,Streets, i=>i.Name,i=>new {@class= i.Region.Id.ToString() }, new { @class = "form-control" },street.Id)
+				</div>
+	</div>
+
+	<div class="form-group">
+			<label class="col-sm-1 control-label">Дом</label>
+			<div class="col-sm-3">
+				@Html.DropDownListExtendedFor(i=>SwitchAddress.House,Houses,i=>i.Number,i=>new {@class=  i.Street.Id.ToString()},new{ @class="form-control"},house.Id)
+			</div>
+		</div>
+	
+	<div class="form-group">
+		<label class="col-sm-1 control-label">Узел связи</label>
+		<div class="col-sm-3">
+			@Html.DropDownListExtendedFor(i=>SwitchAddress.NetworkNode,NetworkNodes,i=>i.Name,null,new{@class="form-control"},NetworkNode.Id)
+			@ViewBag.Validation.GetError(SwitchAddress, "Switch")
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-1 control-label">Обслуживается весь дом</label>
+		<div class="col-sm-1">
+				@{	var ch ="checked='checked'";
+					if (SwitchAddress.House != null && SwitchAddress.Entrance == null) {
+						ch = "";
+					}
+				}
+				<input type="checkbox" name="noEntrances" class="form-control" @ch>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-1 control-label">Подъезд</label>
+		<div class="col-sm-3">
+				@Html.TextBoxFor(i=>SwitchAddress.Entrance,new {@disabled = "disabled"})
+				@ViewBag.Validation.GetError(SwitchAddress, "Entrance")
+		</div>
+	</div>
+		<div class="form-group">
+			<div class="col-sm-3" >
+				<button class="btn btn-green" type="submit">Сохранить</button>
+			</div>
+		</div>
+}
+		</div>
+</div>

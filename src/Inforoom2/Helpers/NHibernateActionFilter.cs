@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
+using Inforoom2.Components;
 using Inforoom2.Controllers;
 using NHibernate;
 using NHibernate.Cfg;
@@ -34,22 +35,31 @@ namespace Inforoom2.Helpers
 				controller.DbSession = MvcApplication.SessionFactory.GetCurrentSession();
 		}
 
+		/// <summary>
+		/// Закрытие транзакции и сессии после того, как контроллер отработал
+		/// </summary>
+		/// <param name="filterContext"></param>
 		public override void OnResultExecuted(ResultExecutedContext filterContext)
 		{
 			var session = SessionFactory.GetCurrentSession();
 			if (session == null)
 				return;
 
-			if (!session.Transaction.IsActive)
-				return;
+			//дебаг
+			if (filterContext.Exception != null)
+				EmailSender.SendDebugInfo("Rollback транзакции в OnResultExecuted", "");
 
-			/*	if (filterContext.Exception != null)
-				session.Transaction.Rollback();
-			else {*/
-			session.Transaction.Commit();
-			//	}
+			if (session.Transaction.IsActive) {
+				//Мне кажется этот код никогда не исполнится, todo подумать и удалить
+				if (filterContext.Exception != null)
+					session.Transaction.Rollback();
+				else
+					session.Transaction.Commit();
+			}
+
 			session = CurrentSessionContext.Unbind(SessionFactory);
-			session.Close();
+			if(session.IsOpen)
+				session.Close();
 		}
 	}
 
@@ -68,32 +78,34 @@ namespace Inforoom2.Helpers
 
 		public string TableName(string tableName)
 		{
-			if (tableName == "PhysicalClients"
-			    || tableName == "Appeals"
-			    || tableName == "Tariffs"
-			    || tableName == "Regions"
-			    || tableName == "Services"
-			    || tableName == "ClientServices"
-			    || tableName == "Clients"
-			    || tableName == "UserWriteOffs"
-			    || tableName == "StatusCorrelation"
-			    || tableName == "Status"
-			    || tableName == "AdditionalStatus"
-			    || tableName == "LawyerPerson"
-			    || tableName == "InternetSettings"
-			    || tableName == "Leases"
-			    || tableName == "SaleSettings"
-			    || tableName == "ClientEndpoints"
-			    || tableName == "NetworkSwitches"
-			    || tableName == "PaymentForConnect"
-			    || tableName == "StaticIps"
-			    || tableName == "WriteOff"
-			    || tableName == "Requests"
-			    || tableName == "Partners"
-			    || tableName == "Payments"
-				|| tableName == "ServiceRequest"
-				|| tableName == "ConnectBrigads"
-			    || tableName == "Contacts") {
+			tableName = tableName.ToLower();
+			if (tableName == "PhysicalClients".ToLower()
+				|| tableName == "Appeals".ToLower()
+				|| tableName == "Tariffs".ToLower()
+				|| tableName == "Regions".ToLower()
+				|| tableName == "Services".ToLower()
+				|| tableName == "ClientServices".ToLower()
+				|| tableName == "Clients".ToLower()
+				|| tableName == "UserWriteOffs".ToLower()
+				|| tableName == "StatusCorrelation".ToLower()
+				|| tableName == "Status".ToLower()
+				|| tableName == "AdditionalStatus".ToLower()
+				|| tableName == "LawyerPerson".ToLower()
+				|| tableName == "InternetSettings".ToLower()
+				|| tableName == "Leases".ToLower()
+				|| tableName == "SaleSettings".ToLower()
+				|| tableName == "ClientEndpoints".ToLower()
+				|| tableName == "NetworkSwitches".ToLower()
+				|| tableName == "PaymentForConnect".ToLower()
+				|| tableName == "StaticIps".ToLower()
+				|| tableName == "WriteOff".ToLower()
+				|| tableName == "Requests".ToLower()
+				|| tableName == "Partners".ToLower()
+				|| tableName == "Payments".ToLower()
+				|| tableName == "ServiceRequest".ToLower()
+				|| tableName == "ConnectBrigads".ToLower()
+				|| tableName == "Contacts".ToLower())
+			{
 				return tableName;
 			}
 			return "inforoom2_" + tableName;

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Headless;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
 using NHibernate.Linq;
@@ -11,7 +10,7 @@ using Test.Support.Selenium;
 namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
-	public class WriteoffFixture : HeadlessFixture
+	public class WriteoffFixture : SeleniumFixture
 	{
 		[Test]
 		public void View_write_off()

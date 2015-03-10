@@ -10,8 +10,8 @@ namespace Inforoom2.Models
 		[ManyToOne(Column = "House", Cascade = "save-update")]
 		public virtual House House { get; set; }
 
-		[ManyToOne(Column = "Switch", Cascade = "save-update")]
-		public virtual Switch Switch { get; set; }
+		[ManyToOne(Column = "NetworkNode", Cascade = "save-update")]
+		public virtual NetworkNode NetworkNode { get; set; }
 
 		[ManyToOne(Column = "Street", Cascade = "save-update")]
 		public virtual Street Street { get; set; }
@@ -26,7 +26,7 @@ namespace Inforoom2.Models
 		public virtual StreetSide Side { get; set; }
 
 		[Property]
-		public virtual int Entrance { get; set; }
+		public virtual int? Entrance { get; set; }
 
 		[Property]
 		public virtual int Apartment { get; set; }
@@ -41,6 +41,14 @@ namespace Inforoom2.Models
 		public virtual bool IsPrivateSector
 		{
 			get { return Street != null; }
+		}
+
+		public virtual string GetFullAddress(bool showEntrance = false)
+		{
+			var str =  House.Street.Region.Name + ", " + House.Street.Name + ", " + House.Number;
+			if (showEntrance && Entrance != 0)
+				str += ", " + Entrance;
+			return str;
 		}
 	}
 

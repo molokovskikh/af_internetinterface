@@ -47,6 +47,12 @@
 					<td><span class="description">Дата регистрации заявки </span></td>
 					<td>${request.RegDate}</td>
 				</tr>
+				<tr>
+					<td>
+						<span class="description">Заявка:</span>
+					</td>
+					<td>${reqSourceDesc}</td>
+				</tr>
 				<% if request.Registrator != null: %>
 				<tr>
 					<td><span class="description">Зарегистрировал: </span></td>

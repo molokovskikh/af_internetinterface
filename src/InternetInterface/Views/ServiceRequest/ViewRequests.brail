@@ -75,8 +75,13 @@ ${app.Asset("service-requests.js")}
 					<td>!{request.GetMinDiscription()}</td>
 					<td>!{request.Contact}</td>
 					<td>!{request.RegDate}</td>
+					<% if (request.Status == 1): %>
+					<td></td>
+					<td></td>
+					<% else: %>
 					<td>!{request.ClosedDate}</td>
 					<td>!{request.CancelDate}</td>
+					<% end %>
 					<td>!{?request.Sum.ToString("C")}</td>
 					<td>!{request.Performer}</td>
 					<td>!{request.PerformanceDate}</td>

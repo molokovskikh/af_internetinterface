@@ -1,11 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Principal;
-using NHibernate;
-using NHibernate.Linq;
+﻿using System.Collections.Generic;
 using NHibernate.Mapping.Attributes;
-
 
 namespace Inforoom2.Models
 {
@@ -22,20 +16,30 @@ namespace Inforoom2.Models
 		public virtual string Login { get; set; }
 
 		[Property]
+		public virtual int? Categorie { get; set; }
+
+		[Property]
 		public virtual bool IsDisabled { get; set; }
 		
 		[Bag(0, Table = "user_role", Lazy = CollectionLazy.False)]
 		[Key(1, Column = "user", NotNull = false)]
 		[ManyToMany(2, Column = "role", ClassType = typeof(Role))]
-		public virtual  IList<Role> Roles { get; set; }
+		public virtual IList<Role> Roles { get; set; }
 
 		[Bag(0, Table = "user_role", Lazy = CollectionLazy.False)]
 		[Key(1, Column = "user", NotNull = false)]
 		[ManyToMany(2, Column = "permission", ClassType = typeof(Permission))]
-		public virtual  IList<Permission> Permissions { get; set; }
+		public virtual IList<Permission> Permissions { get; set; }
 
-		
+		[Bag(0, Table = "paymentsystems", Lazy = CollectionLazy.False)]
+		[Key(1, Column = "Employee", NotNull = false)]
+		[ManyToMany(2, Column = "Id", ClassType = typeof(PaymentSystem))]
+		public virtual IList<PaymentSystem> PaymentEmployee { get; set; }
+
+		public virtual bool IsPaymentSystem()
+		{
+			var ret = PaymentEmployee.Count > 0;
+			return ret;
+		}
 	}
-
-	
 }

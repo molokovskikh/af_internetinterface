@@ -66,7 +66,7 @@
 				<% if _client.HaveRed(): %>
 					<button type=button class="button ok" onclick="GoTo('http://redmine.analit.net/issues/${_client.RedmineTask}');">Страница Redmine</button></td>
 				<% end %>
-				<a href="http://ivrn.net/Account/AdminLogin?clientId=${ClientCode}&username=${MapPartner.Login}" class="button ok">Личный кабинет</a>
+				<a href="http://ivrn.net/Account/AdminLogin?clientId=${ClientCode}&username=${MapPartner.Login}" class="button ok" target="_blank">Личный кабинет</a>
 			</tr>
 		</tbody>
 	</table>
@@ -125,6 +125,15 @@
 			</td>
 		</tr>
 		<% end %>
+		
+		<% if _client.Dealer != null: %>
+		<tr>
+			<td>
+				<span class="description">Привел клиента в компанию:</span> ${_client.Dealer.Name}
+			</td>
+		</tr>
+		<% end %>
+
 		<% if MapPartner.AccesPartner("SSI"): %>
 		<tr>
 			<td><span class="description">Дата регистрации:</span> ${_client.RegDate.ToShortDateString()}</td>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Configuration;
 using System.Globalization;
 using System.Linq;
@@ -181,6 +182,9 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual DateTime? StatusChangedOn { get; set; }
+
+		[BelongsTo, Description("Партнёр, занимающийся привлечением клиентов в компанию")]
+		public virtual Partner Dealer { get; set; }
 
 		[Property]
 		public virtual bool SendEmailNotification { get; set; }
@@ -915,12 +919,12 @@ where CE.Client = {0}", Id))
 
 		public virtual ClientService Internet
 		{
-			get { return ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof(Internet)); }
+			get { return ClientServices.FirstOrDefault(s => NHibernateUtil.GetClass(s.Service) == typeof(Internet)); }
 		}
 
 		public virtual ClientService Iptv
 		{
-			get { return ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof(IpTv)); }
+			get { return ClientServices.FirstOrDefault(s => NHibernateUtil.GetClass(s.Service) == typeof(IpTv)); }
 		}
 
 		//флаг устанавливается в случае если нужно изменить настройки sce
@@ -1096,10 +1100,14 @@ where CE.Client = {0}", Id))
 				DebtDays = 0;
 				ShowBalanceWarningPage = false;
 			}
-			if (status.Type == StatusType.BlockedForRepair) {
+			else if (status.Type == StatusType.BlockedForRepair) {
 				Disabled = true;
 				AutoUnblocked = false;
 			}
+			else if (status.Type == StatusType.Dissolved) {
+				Sale = 0m;
+			}
+
 			if (Status.Type != status.Type) {
 				StatusChangedOn = DateTime.Now;
 			}

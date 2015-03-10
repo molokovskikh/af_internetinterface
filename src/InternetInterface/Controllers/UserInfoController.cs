@@ -1,17 +1,13 @@
 ﻿using System;
-using System.CodeDom;
 using System.Configuration;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Collections.Generic;
-using Castle.Core.Internal;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
-using Common.MySql;
 using Common.Tools;
 using Common.Web.Ui.Helpers;
-using Common.Web.Ui.Models;
 using Common.Web.Ui.MonoRailExtentions;
 using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Controllers.Filter;
@@ -21,8 +17,6 @@ using InternetInterface.Models.Services;
 using InternetInterface.Queries;
 using InternetInterface.Services;
 using NHibernate.Linq;
-using NHibernate.Proxy;
-using NPOI.SS.Formula.Functions;
 using Contact = InternetInterface.Models.Contact;
 using ContactType = InternetInterface.Models.ContactType;
 using TextHelper = InternetInterface.Helpers.TextHelper;
@@ -116,6 +110,10 @@ namespace InternetInterface.Controllers
 			PropertyBag["Contacts"] = client.Contacts.OrderBy(c => c.Type).ToList();
 			PropertyBag["EditConnectInfoFlag"] = filter.EditConnectInfoFlag;
 			PropertyBag["RegionList"] = RegionHouse.All(DbSession);
+
+			PropertyBag["StatusList"] = client.GetAvailableStatuses(DbSession);
+			PropertyBag["clientStatusId"] = client.Status.Id;
+
 			SendConnectInfo(client);
 			ConnectPropertyBag(filter.ClientCode);
 			SendUserWriteOff();
@@ -513,33 +511,35 @@ namespace InternetInterface.Controllers
 		}
 
 		[AccessibleThrough(Verb.Post)]
-		public void EditLawyerPerson(uint ClientID, int Speed, string grouped, AppealType appealType, string comment)
+		public void EditLawyerPerson(uint ClientID, int Speed, string grouped, AppealType appealType, uint clientStatusId, string comment)
 		{
 			SetBinder(new DecimalValidateBinder { Validator = Validator });
-			var client = DbSession.Load<Client>(ClientID);
-			var updateClient = client.LawyerPerson;
+			var client = DbSession.Get<Client>(ClientID);
+			var updateLawyer = client.LawyerPerson;
 
-			BindObjectInstance(updateClient, ParamStore.Form, "LegalPerson");
+			BindObjectInstance(updateLawyer, ParamStore.Form, "LegalPerson");
 			BindObjectInstance(client, ParamStore.Form, "_client");
+			var newStatus = DbSession.Get<Status>(clientStatusId);
+			client.SetStatus(newStatus);
 
-			if (IsValid(updateClient)) {
+			if (IsValid(updateLawyer)) {
 				if (!string.IsNullOrEmpty(comment)) {
 					client.LogComment = comment;
-					updateClient.LogComment = comment;
+					updateLawyer.LogComment = comment;
 				}
 
 				client.PostUpdate();
 				DbSession.Save(client);
-				DbSession.Save(updateClient);
+				DbSession.Save(updateLawyer);
 
 				RedirectTo(client);
 			}
 			else {
-				updateClient.SetValidationErrors(Validator.GetErrorSummary(updateClient));
-				PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(updateClient);
-				DbSession.Evict(updateClient);
+				updateLawyer.SetValidationErrors(Validator.GetErrorSummary(updateLawyer));
+				PropertyBag["VB"] = new ValidBuilderHelper<LawyerPerson>(updateLawyer);
+				DbSession.Evict(updateLawyer);
 				RenderView("ShowLawyerPerson");
-				PropertyBag["LegalPerson"] = updateClient;
+				PropertyBag["LegalPerson"] = updateLawyer;
 				PropertyBag["grouped"] = grouped;
 				var filter = new ClientFilter {
 					ClientCode = ClientID,
@@ -574,8 +574,11 @@ namespace InternetInterface.Controllers
 
 			if (oldStatus != client.Status) {
 				//BlockedAndConnected = "не подключен", а не то, что ты подумал
-				if (oldStatus.ManualSet || oldStatus.Type == StatusType.BlockedAndConnected) {
-					if (client.Status.Type == StatusType.Dissolved && (client.HaveService<HardwareRent>() || client.HaveService<IpTvBoxRent>())) {
+				if (oldStatus.ManualSet || 
+						oldStatus.Type == StatusType.BlockedAndConnected ||
+						(oldStatus.Type == StatusType.VoluntaryBlocking && client.NoEndPoint())) {
+					if (client.Status.Type == StatusType.Dissolved && 
+							(client.HaveService<HardwareRent>() || client.HaveService<IpTvBoxRent>())) {
 						GetErrorSummary(updateClient)
 							.RegisterErrorMessage("Status", "Договор не может быть расторгнут тк у клиента имеется арендованное" +
 								" оборудование, перед расторжением договора нужно изъять оборудование");
@@ -583,7 +586,9 @@ namespace InternetInterface.Controllers
 				}
 				else {
 					client.Status = oldStatus;
-					message = Message.Warning(string.Format("Статус не был изменен, т.к. нельзя изменить статус '{0}' вручную. Остальные данные были сохранены.", client.Status.Name));
+					message = Message.Warning(
+						string.Format("Статус не был изменен, т.к. нельзя изменить статус '{0}' вручную. Остальные данные были сохранены.",
+							client.Status.Name));
 				}
 			}
 
@@ -621,6 +626,7 @@ namespace InternetInterface.Controllers
 						client.CreareAppeal(endpointLog, AppealType.System, false);
 						client.Endpoints.Clear();
 						client.PhysicalClient.HouseObj = null;
+						client.Sale = 0m;
 						client.Disabled = true;
 						client.AutoUnblocked = false;
 					}
@@ -768,6 +774,7 @@ namespace InternetInterface.Controllers
 			var client = DbSession.Load<Client>(clientId);
 			var brigads = Brigad.All(DbSession);
 			PropertyBag["_client"] = client;
+			PropertyBag["IsDissolved"] = StatusType.Dissolved;		// Для задания префикса "РАСТОРГНУТ" клиенту
 			PropertyBag["ClientCode"] = clientId;
 			PropertyBag["uniqueClientEndpoints"] = client.Endpoints.Distinct().ToList();
 

@@ -47,10 +47,6 @@
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\..\packages\NPOI.2.0.6\lib\net40\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
-    <Reference Include="Iesi.Collections">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Iesi.Collections.4.0.1.4000\lib\net40\Iesi.Collections.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Web.Infrastructure">
       <Private>True</Private>
       <HintPath>..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
@@ -93,6 +89,7 @@
       <HintPath>..\..\packages\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http" />
@@ -132,6 +129,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Billing\Billing.csproj">
+      <Project>{a30eb5bc-959b-4031-8d90-51f045af3e6d}</Project>
+      <Name>Billing</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common.Web.UI\Common.Web.Ui\Common.Web.Ui.csproj">
       <Project>{95E2C313-46FA-4B4B-9EFF-3228662908F4}</Project>
       <Name>Common.Web.Ui</Name>
@@ -172,13 +173,17 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Functional\BaseFixture.cs" />
+    <Compile Include="Functional\BaseControllerFixture.cs" />
+    <Compile Include="Functional\infrastructure\BaseFixture.cs" />
+    <Compile Include="Functional\PersonalFirstVisitFixture.cs" />
     <Compile Include="Functional\PersonalPlansFixture.cs" />
-    <Compile Include="Functional\PersonalFixture.cs" />
+    <Compile Include="Functional\infrastructure\PersonalFixture.cs" />
     <Compile Include="Functional\FaqFixture.cs" />
     <Compile Include="Functional\CallMeBackFixture.cs" />
     <Compile Include="Functional\HomeFixture.cs" />
-    <Compile Include="Functional\Setup.cs" />
+    <Compile Include="Functional\infrastructure\Setup.cs" />
+    <Compile Include="Functional\DeferredPaymentFixture.cs" />
+    <Compile Include="Functional\WarningFixture.cs" />
     <Compile Include="Integration\BaseIntegrationFixture.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

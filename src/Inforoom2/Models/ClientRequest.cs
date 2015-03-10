@@ -3,16 +3,24 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text.RegularExpressions;
-using NHibernate.Engine;
 using NHibernate.Mapping.Attributes;
 using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models
 {
+	public enum RequestType
+	{
+		[Display(Name = "от клиента")] FromClient = 1,
+		[Display(Name = "от оператора")] FromOperator = 2,
+		[Display(Name = "автоматическая")] Automatic = 3
+	}
+
 	[Class(0, Table = "Requests", NameType = typeof(ClientRequest))]
 	public class ClientRequest : BaseModel
 	{
+		[Property(Column = "_Comment")]
+		public virtual string Comment { get; set; }
+
 		[Property, NotNullNotEmpty(Message = "Введите ФИО")]
 		public virtual string ApplicantName { get; set; }
 
@@ -40,6 +48,12 @@ namespace Inforoom2.Models
 		[Property(Column = "_EndTime")]
 		public virtual DateTime EndTime { get; set; }
 
+		[Property(Column = "_RequestSource"), Description("Источник заявки")]
+		public virtual RequestType RequestSource { get; set; }
+
+		[ManyToOne(Column = "Registrator"), Description("Автор регистрации заявки")]
+		public virtual Employee RequestAuthor { get; set; }
+
 		//Поля старой модели заявки
 
 		[Property, NotNullNotEmpty(Message = "Введите город")]
@@ -63,6 +77,7 @@ namespace Inforoom2.Models
 		[Property, Digits(3, Message = "Здесь должно быть число")]
 		public virtual int Floor { get; set; }
 
+
 		[Property]
 		public virtual DateTime ActionDate { get; set; }
 
@@ -79,6 +94,16 @@ namespace Inforoom2.Models
 
 		public virtual string AddressAsString { get; set; }
 
+		[Property(Column = "Archive")]
+		public virtual bool Archived { get; set; }
+
+		public virtual string GetAddress()
+		{
+			var str = City + " " + Street + " " + HouseNumber + " " + Housing + " " + Apartment;
+			if(Floor != 0)
+				str+= " (" + Floor + " этаж)";
+			return str;
+		}
 		public virtual bool IsYandexAddressValid()
 		{
 			if (string.IsNullOrEmpty(YandexCity)

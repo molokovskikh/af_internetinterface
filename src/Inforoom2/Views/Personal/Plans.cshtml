@@ -1,0 +1,55 @@
+﻿@section JavaScript{<script type="text/javascript"src="@Url.Content("~/Scripts/Personal.Plans.js")"></script>}
+@using System
+@using Inforoom2.Models
+
+@{
+	ViewBag.Title = "Личный кабинет: Тарифы";
+	PhysicalClient client = ViewBag.Client.PhysicalClient;
+	var beginDate = client.Client.WorkingStartDate ?? new DateTime();
+	IList<Plan> plans = ViewBag.Plans;
+}
+
+<div class="heading">@ViewBag.Title</div>
+<div class="right-block">
+	<div class="paragraph">
+		Текущий тарифный план: @client.Plan.Name
+	</div>
+	<br/>
+	@if (beginDate.AddMonths(2) >= DateTime.Now) {
+		<div class="paragraph">
+			<b>Вы пока не можете сменить тарифный план, т.к. подключились к нам менее 2-х месяцев назад.</b>
+		</div>
+	}
+	<br/>
+	<table class="cost">
+		<tr class="menucost">
+			<td class="namemenu"><div class="namemenubg"></div>Название</td>
+			<td class="namemenu"><div class="namemenubg"></div>Скорость</td>
+			<td class="namemenu"><div class="namemenubg "></div>Абонентская плата</td>
+			<td class="namemenu"><div class="namemenubg "></div>Стоимость перехода</td>
+			<td class="namemenu td">Действие</td>
+		</tr>
+		@foreach (var plan in plans) {
+			@Html.HiddenFor(modelItem => plan.Id)
+
+			<tr class="menufee">
+				<td class="tariffscost">@Html.DisplayFor(modelItem => plan.Name)</td>
+				<td class="fee">@Html.DisplayFor(modelItem => plan.Speed) мбит/с</td>
+				<td class="fee">@Html.DisplayFor(modelItem => plan.Price) р.</td>
+				<td class="fee">@client.Plan.GetTransferPrice(plan).ToString("f2") р.</td>
+				<td >
+					@if (plan.Id == client.Plan.Id) {
+						<div class="paragraph">Текущий</div>
+					}
+					else if (beginDate.AddMonths(2) < DateTime.Now) {
+						using (@Html.BeginForm("ChangePlan", "Personal",FormMethod.Post,new{id="changeplan"})) {
+							@Html.HiddenFor(modelItem => plan.Id)
+							<input class="connectfee" type="submit" value="Сменить"/>
+						}
+					}
+				</td>
+			</tr>
+		}
+	</table>
+</div>
+@{ Html.RenderPartial("Menu");  }

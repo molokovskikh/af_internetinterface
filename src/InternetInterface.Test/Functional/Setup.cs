@@ -81,7 +81,15 @@ namespace InternetInterface.Test.Functional
 
 					if (!session.Query<RegionHouse>().Any(r => r.Name == "Воронеж"))
 						session.Save(new RegionHouse("Воронеж"));
-
+					session.Flush();
+					var zones = session.Query<Zone>();
+					foreach (var zone in zones) {
+						if (zone.Name.ToLower().Contains("воронеж")) {
+							zone.Region = session.Query<RegionHouse>().First(i => i.Name.ToLower().Contains("воронеж"));
+							session.Save(zone);
+						}
+					}
+					session.Flush();
 					if (!session.Query<House>().Any()) {
 						var region = new RegionHouse("Тестовый регион");
 						session.Save(region);

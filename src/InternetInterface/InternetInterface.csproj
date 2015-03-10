@@ -549,7 +549,9 @@
     <None Include="Views\Map\SiteMap.brail" />
     <None Include="Views\Register\RegisterClient.brail" />
     <None Include="Views\Search\SearchBy.brail" />
-    <None Include="Views\Subview\MapHead.brail" />
+    <None Include="Views\Subview\MapHead.brail">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Views\Partners\Partner.brail">
       <SubType>Designer</SubType>
     </None>
@@ -604,7 +606,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>59059</DevelopmentServerPort>
+          <DevelopmentServerPort>56301</DevelopmentServerPort>
           <DevelopmentServerVPath>/InternetInterface</DevelopmentServerVPath>
           <IISUrl>http://localhost:59060/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>

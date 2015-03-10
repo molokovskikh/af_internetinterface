@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Net.Mail;
 using Inforoom2.Models;
@@ -43,7 +44,7 @@ namespace Inforoom2.Components
 
 		public static void SendError(string message)
 		{
-			var service = ConfigurationManager.AppSettings["ServiceSender"];
+			var service = ConfigurationManager.AppSettings["ErrorEmail"];
 			if (string.IsNullOrEmpty(service)) {
 				return;
 			}
@@ -59,6 +60,21 @@ namespace Inforoom2.Components
 			smtp.Port = 25;
 			smtp.UseDefaultCredentials = false;
 			smtp.Send(mail);
+		}
+
+		public static void SendDebugInfo(string title, string body)
+		{
+			title = "inforoom2-debug: " + title;
+			var email = ConfigurationManager.AppSettings["DebugInfoEmail"];
+			if (string.IsNullOrEmpty(email)) {
+				return;
+			}
+			try {
+				SendEmail(email, title, body);
+			}
+			catch (Exception e) {
+			}
+			
 		}
 	}
 }
