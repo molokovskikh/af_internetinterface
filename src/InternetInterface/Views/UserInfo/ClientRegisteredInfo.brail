@@ -220,12 +220,12 @@
 									                                                                                      НА ПОДКЛЮЧЕНИЕ<o:p></o:p></i></b></p></div></p>
 						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>&nbsp;</p>
 						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
-							Абонент <b style='mso-bidi-font-weight: normal'><i style='mso-bidi-font-style: normal'><u>${Client.Surname} ${Client.Name} ${Client.Patronymic}</u></i></b>
+							ФИО: <b style='mso-bidi-font-weight: normal'><i style='mso-bidi-font-style: normal'><u>${Client.Surname} ${Client.Name} ${Client.Patronymic}</u></i></b>
 							дата рождения: <i style='mso-bidi-font-style: normal'><u>_____._____._________ <span class=GramE>г</span>.</u></i>,
 						</p>
-						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>паспорт серия <i style='mso-bidi-font-style: normal'><u>_________</u></i>
-							№ <i style='mso-bidi-font-style: normal'><u>______________</u></i>
-							выдан <i style='mso-bidi-font-style: normal'><u>_____._____._________ <span class=GramE>г</span>.</u></i>,
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>Паспорт серия:<i style='mso-bidi-font-style: normal'><u>_________</u></i>
+							, №:<i style='mso-bidi-font-style: normal'><u>______________</u></i>
+							, дата выдачи:<i style='mso-bidi-font-style: normal'><u>_____._____._________ <span class=GramE>г</span>.</u></i>,
 						</p>
 						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
 							Кем выдан:<i style='mso-bidi-font-style: normal'><u>______________________________________________________________________________</u></i>,
