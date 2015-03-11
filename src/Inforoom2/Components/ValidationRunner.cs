@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Web;
+using Castle.Components.Validator;
+using Inforoom2.Models;
+using Inforoom2.validators;
 using NHibernate;
 using NHibernate.Mapping.Attributes;
 using NHibernate.Validator.Engine;
@@ -13,15 +18,48 @@ namespace Inforoom2.Components
 	{
 		protected ArrayList ValidatedObjectList = new ArrayList();
 
+		protected ISession Session;
+
+		public ValidationRunner(ISession session)
+		{
+			Session = session;
+		}
+
+		private InvalidValue[] ValidateProperty(object obj, string name)
+		{
+			var summary = new List<InvalidValue>();
+			//Стандартная валидация
+			var prop = obj.GetType().GetProperty(name);
+			var runner = new ValidatorEngine();
+			var errors = runner.ValidatePropertyValue(obj, prop.Name);
+			summary.AddRange(errors);
+
+			//Кастомная валидация
+			var validators = Attribute.GetCustomAttributes(prop).OfType<CustomValidator>().ToList();
+			foreach (var validator in validators)
+			{
+				errors = validator.Start((BaseModel)obj, prop);
+				summary.AddRange(errors);
+			}
+			return summary.ToArray();
+		}
 
 		public InvalidValue[] Validate(object obj)
 		{
+			var summary = new List<InvalidValue>();
 			ValidatedObjectList.Add(obj);
 
-			var runner = new ValidatorEngine();
-			var summary = runner.Validate(obj);
+			var props = obj.GetType().GetProperties().Where(i => Attribute.GetCustomAttributes(i).OfType<CustomValidator>().Any()).ToList();
+			foreach (var prop in props) 
+				summary.AddRange(ValidateProperty(obj,prop.Name));
 
-			return summary; 
+			var runner = new ValidatorEngine();
+			var runnerErrors = runner.Validate(obj);
+			var selfValidateErrors = ((BaseModel)obj).Validate(Session);
+			summary.AddRange(runnerErrors);
+			summary.AddRange(selfValidateErrors);
+
+			return summary.ToArray(); 
 		}
 
 		public InvalidValue[] ValidateDeep(object obj, IList validatedObjects = null)
@@ -31,9 +69,7 @@ namespace Inforoom2.Components
 			if (validatedObjects == null)
 				validatedObjects = new ArrayList();
 
-			var runner = new ValidatorEngine();
-
-			var summary = runner.Validate(obj);
+			var summary = Validate(obj);
 			if (summary.Length != 0)
 				return summary;
 			validatedObjects.Add(obj);
@@ -84,12 +120,11 @@ namespace Inforoom2.Components
 			if (IsValidated) {
 				return WrapSuccess(message);
 			}
-			var runner = new ValidatorEngine();
 
 			if (!ValidatedObjectList.Contains(obj))
 				return new HtmlString(string.Empty);
 
-			var errors = runner.ValidatePropertyValue(obj, obj.GetType().GetProperty(field).Name);
+			var errors = ValidateProperty(obj, obj.GetType().GetProperty(field).Name);
 			if (errors.Length > 0) {
 				var ret = errors.First().Message;
 				if (message != null)

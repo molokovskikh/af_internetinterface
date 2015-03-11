@@ -99,10 +99,6 @@ namespace InforoomControlPanel.Controllers
 				RequestAuthor = GetCurrentEmployee()
 			};
 
-			if (!string.IsNullOrEmpty(UserCity)) {
-				clientRequest.City = UserCity;
-			}
-
 			if (!string.IsNullOrEmpty(city) && !string.IsNullOrEmpty(street) && !string.IsNullOrEmpty(house)) {
 				clientRequest.Street = street;
 				clientRequest.City = city;

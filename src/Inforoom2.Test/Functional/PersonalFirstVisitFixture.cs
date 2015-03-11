@@ -33,6 +33,11 @@ namespace Inforoom2.Test.Functional
 			date.Click();
 			var popup = browser.FindElementByCssSelector("a.ui-state-default");
 			popup.Click();
+
+			date = browser.FindElementByCssSelector("input[name='physicalClient.BirthDate']");
+			date.Click();
+			popup = browser.FindElementByCssSelector("a.ui-state-default");
+			popup.Click();
 			//date.SendKeys("18.12.2014");
 
 			var residention = browser.FindElementByCssSelector("input[name='physicalClient.PassportResidention']");
