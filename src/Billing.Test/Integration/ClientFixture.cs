@@ -381,6 +381,65 @@ namespace Billing.Test.Integration
 			ConfigurationManager.AppSettings["ProcessFirstPaymentBonus"] = null;
 		}
 
+		[Test(Description = "Проверка начисления бонуса в случае прихода двух первых платежей в течение 24 ч.; тест к задаче 30619")]
+		public void Check_bonus_for_two_first_payments()
+		{
+			ConfigurationManager.AppSettings["ProcessFirstPaymentBonus"] = "true";
+
+			client.Name = "Billing_client_with_2_payments";
+			client.PhysicalClient.Balance = 0;
+			client.PhysicalClient.MoneyBalance = 0;
+			client.PhysicalClient.VirtualBalance = 0;
+			session.Update(client.PhysicalClient);
+			client.PhysicalClient.Tariff.Name = "Оптимальный";	// Пример для теста
+			client.PhysicalClient.Tariff.Price = 500;
+			session.Update(client.PhysicalClient.Tariff);
+
+			// Изменим Id тарифного плана "Оптимальный" в биллинге (на время теста)
+			billing.FirstPaymentBonusTariffIds[1] = client.PhysicalClient.Tariff.Id;
+
+			// Создание двух платежей для клиента
+			var payment1 = new Payment(client, client.PhysicalClient.Tariff.Price - 100m) {
+				PaidOn = DateTime.Now,
+				RecievedOn = DateTime.Now,
+				Comment = "payment1",
+				Virtual = true
+			};
+			session.Save(payment1);
+			var payment2 = new Payment(client, 100m) {
+				PaidOn = DateTime.Now.AddHours(23),								// Чтобы соблюсти допустимый промежуток между платежами, равный 24 ч.
+				RecievedOn = DateTime.Now.AddSeconds(30),					// Для формального соблюдения паузы при оплате 
+				Comment = "payment2",
+				Virtual = true
+			};
+			session.Save(payment2);
+			client.Refresh();
+
+			// 1-я обработка платежей (бонус должен быть внесен)
+			billing.ProcessPayments();
+			client.Refresh();
+			Assert.That(client.Payments.Count, Is.EqualTo(3));	// payment1, payment2, bonus
+			Assert.That(client.Payments.Where(p => p.Comment == "Месяц в подарок").ToList().Count, Is.EqualTo(1));
+
+			// Удаление бонусного платежа у клиента
+			client.Payments.First(p => p.Comment == "Месяц в подарок").Delete();
+			// Изменение двух платежей для клиента
+			payment1.BillingAccount = false;
+			session.Update(payment1);
+			payment2.BillingAccount = false;
+			payment2.PaidOn = payment2.PaidOn.AddHours(2);			// Чтобы допустимый промежуток в 24 ч. был превышен на 1 ч.
+			session.Save(payment2);
+			client.Refresh();
+
+			// 2-я обработка платежей (бонус не полагается)
+			billing.ProcessPayments();
+			client.Refresh();
+			Assert.That(client.Payments.Count, Is.EqualTo(2));	// payment1, payment2
+			Assert.That(client.Payments.Where(p => p.Comment == "Месяц в подарок").ToList().Count, Is.EqualTo(0));
+
+			ConfigurationManager.AppSettings["ProcessFirstPaymentBonus"] = "false";
+		}
+
 		[Test(Description = "Проверка НЕначисления бонуса в случае прихода 1-го платежа (при НЕосновном тарифе); тест к задаче 30871")]
 		public void Check_first_payment_without_bonus()
 		{
