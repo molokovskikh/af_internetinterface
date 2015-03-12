@@ -7,7 +7,7 @@
 	string password = "";
 	string regionPhones = ViewBag.RegionOfficePhoneNumber;
 	var regPhone = new string[2];
-	if (regionPhones.Contains(",")) {
+	if (regionPhones != null && regionPhones.Contains(",")) {
 		var commaPos = regionPhones.IndexOf(',');
 		regPhone[0] = regionPhones.Substring(0, commaPos);
 		regPhone[1] = regionPhones.Substring(commaPos+1);
