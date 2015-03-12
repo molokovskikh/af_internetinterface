@@ -8,6 +8,8 @@
 	ValidationRunner validationRunner = ViewBag.Validation;
 	PhysicalClient physicalClient = ViewBag.PhysicalClient;
 	var isPassport = (physicalClient.CertificateType == CertificateType.Passport);
+	//В js эта часть дублируется, но все-таки вдруг js будет не корректно работать
+	physicalClient.CertificateName = isPassport ? "Паспорт" : physicalClient.CertificateName;
 }
 
 <h2 class="heading">@ViewBag.Title</h2>
@@ -34,9 +36,9 @@
 	</div>
 	<div>
 		<div class="personals">Документ, удост. личн.:</div>
-		@Html.DropDownEnumListFor(k => physicalClient.CertificateType, new { @class = "personal", @onchange = "showDocData()" })
+		@Html.DropDownEnumListFor(k => physicalClient.CertificateType, new { @class = "personal" })
 	</div>
-	<div id="PassportData" @(isPassport ? "" : "hidden")>
+	<div id="PassportData">
 		<div>
 			<div class="personals">Серия паспорта:</div>
 			@Html.ValidationEditor(validationRunner, physicalClient, "PassportSeries", new {@class = "personal"}, HtmlTag.input, HtmlType.text)
@@ -46,9 +48,9 @@
 			@Html.ValidationEditor(validationRunner, physicalClient, "PassportNumber", new {@class = "personal"}, HtmlTag.input, HtmlType.text)
 		</div>
 	</div>
-	<div id="OtherDocData" @(isPassport ? "hidden" : "")>
+	<div id="OtherDocData">
 		<div class="personals">Название документа:</div>
-		<input type="text" id="physicalClient_CertificateName" name="physicalClient.CertificateName" class="personal"/>
+		@Html.ValidationEditor(validationRunner, physicalClient, "CertificateName", new {@class = "personal"}, HtmlTag.input, HtmlType.text)
 	</div>
 	<div>
 		<div class="personals">Кем выдан:</div>

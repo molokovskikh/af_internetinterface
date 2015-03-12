@@ -43,6 +43,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Components.Validator, Version=2.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Castle.Components.Validator.2.5.4\lib\net40\Castle.Components.Validator.dll</HintPath>
+    </Reference>
     <Reference Include="Iesi.Collections">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Iesi.Collections.4.0.1.4000\lib\net40\Iesi.Collections.dll</HintPath>
@@ -257,11 +261,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Components\ControllerManager.cs" />
     <Compile Include="Components\CustomAuthorizeAttribute.cs" />
     <Compile Include="Components\EmailSender.cs" />
     <Compile Include="Components\EntityBinder.cs" />
-    <Compile Include="Components\SyncObject.cs" />
     <Compile Include="Components\YandexParser.cs" />
     <Compile Include="Components\HtmlTag.cs" />
     <Compile Include="Components\ValidationRunner.cs" />
@@ -292,7 +294,7 @@
     <Compile Include="Helpers\CustomPrincipal.cs" />
     <Compile Include="Helpers\IpGeoHelper.cs" />
     <Compile Include="Helpers\IPUserType.cs" />
-    <Compile Include="Helpers\NHibernateActionFilter.cs" />
+    <Compile Include="Helpers\TableNamingStrategy.cs" />
     <Compile Include="Helpers\SceHelper.cs" />
     <Compile Include="Helpers\StringHepler.cs" />
     <Compile Include="Helpers\ViewHelper.cs" />
@@ -356,6 +358,9 @@
     <Compile Include="Models\Ticket.cs" />
     <Compile Include="Models\UserWriteOff.cs" />
     <Compile Include="Models\WriteOff.cs" />
+    <Compile Include="validators\DateTimeNotEmpty.cs" />
+    <Compile Include="validators\CustomValidator.cs" />
+    <Compile Include="validators\DateTimeValidator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

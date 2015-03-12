@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Common.Tools;
+using Inforoom2.validators;
 using NHibernate.Mapping.Attributes;
 using NHibernate.Util;
 using NHibernate.Validator.Constraints;
@@ -50,7 +51,7 @@ namespace Inforoom2.Models
 		[Property, NotNullNotEmpty(Message = "Введите серию паспорта")]
 		public virtual string PassportSeries { get; set; }
 
-		[Property]
+		[Property,DateTimeNotEmpty]
 		public virtual DateTime PassportDate { get; set; }
 
 		[Property(Column = "RegistrationAdress"), NotNull(Message = "Введите адрес регистрации")]
@@ -71,7 +72,7 @@ namespace Inforoom2.Models
 		[Property(NotNull = true), NotEmpty(Message = "Введите отчество")]
 		public virtual string Patronymic { get; set; }
 
-		[Property(Column = "DateOfBirth")]
+		[Property(Column = "DateOfBirth"), DateTimeNotEmpty]
 		public virtual DateTime BirthDate { get; set; }
 
 		[OneToOne(PropertyRef = "PhysicalClient")]

@@ -6,12 +6,24 @@
 	});
 });
 
-function showDocData() {
-	if (document.getElementById('physicalClient_CertificateType').value == "Passport") {
-		document.getElementById('PassportData').hidden = false;
-		document.getElementById('OtherDocData').hidden = true;
+//Сокрытие полей паспорта
+var certificate = $("#physicalClient_CertificateType").get(0);
+var oldValue = $("#physicalClient_CertificateName").val();
+var checkFields = function () {
+	if ($(certificate).val() == "Passport") {
+		console.log("Отображаем данные паспорта");
+		$('#PassportData').show();
+		$('#OtherDocData').hide();
+		//Устанавливаем значение по умолчанию, чтобы валидатор модели сработал
+		oldValue = $("#physicalClient_CertificateName").val();
+		$("#physicalClient_CertificateName").val("Паспорт");
 	} else {
-		document.getElementById('PassportData').hidden = true;
-		document.getElementById('OtherDocData').hidden = false;
+		console.log("Отображаем данные иного документа");
+		$('#PassportData').hide();
+		$('#OtherDocData').show();
+		$("#physicalClient_CertificateName").val(oldValue);
 	}
 };
+$(certificate).on("change", checkFields);
+checkFields();
+

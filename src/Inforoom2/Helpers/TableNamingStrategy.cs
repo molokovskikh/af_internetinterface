@@ -1,69 +1,8 @@
 ﻿using System;
-using System.Configuration;
-using System.Reflection;
-using System.Web;
-using System.Web.Mvc;
-using Inforoom2.Components;
-using Inforoom2.Controllers;
-using NHibernate;
 using NHibernate.Cfg;
-using NHibernate.Context;
-using NHibernate.Linq;
-using Configuration = NHibernate.Cfg.Configuration;
 
 namespace Inforoom2.Helpers
 {
-	public class NHibernateActionFilter : ActionFilterAttribute
-	{
-		private ISessionFactory SessionFactory { get; set; }
-
-		public NHibernateActionFilter()
-		{
-			SessionFactory = MvcApplication.SessionFactory;
-		}
-
-		public override void OnActionExecuting(ActionExecutingContext filterContext)
-		{
-			var controller = filterContext.Controller as BaseController;
-			if (!CurrentSessionContext.HasBind(SessionFactory)) {
-				var session = SessionFactory.OpenSession();
-				CurrentSessionContext.Bind(session);
-				session.BeginTransaction();
-				controller.DbSession = session;
-			}
-			else if (controller.DbSession == null)
-				controller.DbSession = MvcApplication.SessionFactory.GetCurrentSession();
-		}
-
-		/// <summary>
-		/// Закрытие транзакции и сессии после того, как контроллер отработал
-		/// </summary>
-		/// <param name="filterContext"></param>
-		public override void OnResultExecuted(ResultExecutedContext filterContext)
-		{
-			var session = SessionFactory.GetCurrentSession();
-			if (session == null)
-				return;
-
-			//дебаг
-			if (filterContext.Exception != null)
-				EmailSender.SendDebugInfo("Rollback транзакции в OnResultExecuted", "");
-
-			if (session.Transaction.IsActive) {
-				//Мне кажется этот код никогда не исполнится, todo подумать и удалить
-				if (filterContext.Exception != null)
-					session.Transaction.Rollback();
-				else
-					session.Transaction.Commit();
-			}
-
-			session = CurrentSessionContext.Unbind(SessionFactory);
-			if(session.IsOpen)
-				session.Close();
-		}
-	}
-
-
 	public class TableNamingStrategy : INamingStrategy
 	{
 		public string ClassToTableName(string className)
