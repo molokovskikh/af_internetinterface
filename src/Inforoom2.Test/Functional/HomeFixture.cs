@@ -11,7 +11,7 @@ namespace Inforoom2.Test.Functional
 {
 	[TestFixture]
 	[Ignore]
-	public class HomeFixture : BaseFixture
+	public class HomeIndexFixture : BaseFixture
 	{
 		protected Question Question;
 

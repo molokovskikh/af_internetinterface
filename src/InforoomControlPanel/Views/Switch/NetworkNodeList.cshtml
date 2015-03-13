@@ -21,6 +21,7 @@
 			<th class="sorting" tabindex="0" aria-controls="table-2" >Название</th>
 			<th class="sorting" tabindex="0" aria-controls="table-2" >Описание</th>
 			<th class="sorting" tabindex="0" aria-controls="table-2" >Подключено коммутаторов</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2" >Подключено адресов</th>
 			<th class="sorting" tabindex="0" aria-controls="table-2" >Виртуальный</th>
 			<th class="sorting" tabindex="0" aria-controls="table-2" >Действия</th>
 		</tr>
@@ -32,6 +33,7 @@
 				<td>@Html.DisplayFor(modelItem => item.Name)</td>
 				<td>@Html.DisplayFor(modelItem => item.Description)</td>
 				<td>@item.Switches.Count</td>
+				<td>@item.Addresses.Count</td>
 				<td>@Html.DisplayFor(modelItem => item.Virtual)</td>
 				<td>
 					<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("EditNetworkNode","Switch",new {id = item.Id})">

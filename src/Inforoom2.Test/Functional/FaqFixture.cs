@@ -5,8 +5,7 @@ using NUnit.Framework;
 
 namespace Inforoom2.Test.Functional
 {
-	[TestFixture]
-	[Ignore]
+	[TestFixture, Ignore]
 	public class FaqFixture : BaseFixture
 	{
 		protected Question Question;
