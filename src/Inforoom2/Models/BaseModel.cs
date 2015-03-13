@@ -48,9 +48,6 @@ namespace Inforoom2.Models
 			var query = string.Format("UPDATE {0} SET id={1} WHERE id={2}", tablename, newid, Id);
 			session.CreateSQLQuery(query).ExecuteUpdate();
 			session.Flush();
-			Id = newid;
-			
-			session.Refresh(this);
 			return true;
 		}
 		public virtual InvalidValue[] Validate(ISession session)
