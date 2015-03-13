@@ -437,7 +437,10 @@ namespace Inforoom2.Test.Functional
 			plan.IsServicePlan = false;
 			DbSession.Save(plan);
 			DbSession.Flush();
+
+			//todo подумать что с этим делать
 			plan.ChangeId(83,DbSession);
+
 			//Переходы с тарифов
 			var plans = DbSession.Query<Plan>().ToList();
 			//var popular = plans.First(i => i.Name.Contains("Популярный"));
