@@ -29,6 +29,7 @@ namespace Inforoom2.Models
 		[Generator(1,Class = "native")]
 		public virtual int Id { get; set; }
 
+		//todo Ну и что это за хрень? Может пора ее выпилить?
 		public virtual int GetNextPriority(ISession session)
 		{
 			var classAttr = GetType().GetCustomAttributes(typeof(ClassAttribute), false).First() as ClassAttribute;
@@ -40,6 +41,18 @@ namespace Inforoom2.Models
 			return 1;
 		}
 
+		public virtual bool ChangeId(int newid, ISession session)
+		{
+			var attribute = Attribute.GetCustomAttribute(GetType(), typeof(ClassAttribute)) as ClassAttribute;
+			var tablename = attribute.Table;
+			var query = string.Format("UPDATE {0} SET id={1} WHERE id={2}", tablename, newid, Id);
+			session.CreateSQLQuery(query).ExecuteUpdate();
+			session.Flush();
+			Id = newid;
+			
+			session.Refresh(this);
+			return true;
+		}
 		public virtual InvalidValue[] Validate(ISession session)
 		{
 			return new InvalidValue[0];

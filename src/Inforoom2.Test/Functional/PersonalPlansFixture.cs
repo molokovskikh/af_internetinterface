@@ -31,7 +31,7 @@ namespace Inforoom2.Test.Functional
 		public void ChangePlan()
 		{
 			var planFrom = Client.Plan;
-			var planTo = DbSession.Query<Plan>().First(i => i.Name.Contains("Оптимальный"));
+			var planTo = DbSession.Query<Plan>().First(i => i.Name == "Оптимальный");
 			var targetPlan = browser.FindElementByXPath("//td[contains(.,'"+planTo.Name+"')]");
 			var row = targetPlan.FindElement(By.XPath(".."));
 			var button = row.FindElement(By.CssSelector("input.connectfee"));
