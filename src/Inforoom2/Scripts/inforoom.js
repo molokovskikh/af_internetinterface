@@ -260,7 +260,18 @@ function Inforoom() {
 		});
 	}
 
+	this.getCurrentDate = function() {
+		var date = new Date();
+		var timestamp = this.getParam("Timestamp");
+		date.setTime(timestamp * 1000);
+		return date;
+	};
+
 	this.initialize();
+}
+
+Date.prototype.getDaysInMonth = function() {
+	return new Date(this.getYear(), this.getMonth()+1, 0).getDate();
 }
 
 var Base64 = {

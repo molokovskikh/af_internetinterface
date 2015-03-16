@@ -14,6 +14,7 @@ namespace Inforoom2.Controllers
 		public ActionResult BlockAccount()
 		{
 			InitServices();
+			AddJavascriptParam("FreeBlockDays",CurrentClient.FreeBlockDays.ToString());
 			return View();
 		}
 

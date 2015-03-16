@@ -42,6 +42,11 @@ namespace Inforoom2.Controllers
 			}
 			else if (controller.DbSession == null)
 				controller.DbSession = MvcApplication.SessionFactory.GetCurrentSession();
+
+			//Additional
+			ViewBag.JavascriptParams = new Dictionary<string, string>();
+			var currentDate  = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+			AddJavascriptParam("Timestamp",currentDate.ToString());
 		}
 
 		public void AddJavascriptParam(string name, string value)
