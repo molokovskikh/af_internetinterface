@@ -55,7 +55,7 @@ namespace Inforoom2.Models
 		/// <returns>Стоимость перехода</returns>
 		public virtual decimal GetTransferPrice(Plan planTo)
 		{
-			var transfer = PlanTransfers.FirstOrDefault(i => i.PlanTo == planTo);
+			var transfer = PlanTransfers.ToList().FirstOrDefault(i => i.PlanTo.Unproxy() == planTo);
 			var ret = transfer != null ? transfer.Price : 0;
 			return ret;
 		}

@@ -283,15 +283,6 @@ namespace Inforoom2.Controllers
 			return RedirectToAction("Plans");
 		}
 
-		protected decimal GetPlanSwitchPrice(Plan planFrom, Plan planTo, bool onlyAvailableToSwitch)
-		{
-			IList<PlanTransfer> prices = planFrom.PlanTransfers;
-			var price = prices.FirstOrDefault(p => p.PlanFrom.Id == planFrom.Id && p.PlanTo.Id == planTo.Id);
-			if (price != null) {
-				return price.Price;
-			}
-			return 0;
-		}
 
 		protected void InitServices()
 		{

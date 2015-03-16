@@ -13,6 +13,7 @@ using NHibernate.Linq;
 using NHibernate.Mapping;
 using NHibernate.Mapping.Attributes;
 using NHibernate.Mapping.ByCode.Impl;
+using NHibernate.Proxy;
 using NHibernate.Type;
 using NHibernate.Util;
 using NHibernate.Validator.Cfg.Loquacious.Impl;
@@ -50,6 +51,18 @@ namespace Inforoom2.Models
 			session.Flush();
 			return true;
 		}
+
+		public virtual BaseModel Unproxy()
+		{
+			var proxy = this as INHibernateProxy;
+			if (proxy == null)
+				return this;
+
+			var session = proxy.HibernateLazyInitializer.Session;
+			var model = (BaseModel) session.PersistenceContext.Unproxy(proxy);
+			return model;
+		}
+
 		public virtual InvalidValue[] Validate(ISession session)
 		{
 			return new InvalidValue[0];
