@@ -122,7 +122,8 @@ namespace Inforoom2.Models
 			if (!IsYandexAddressValid())
 				return false;
 
-			var switchAddress = switchAddresses.FirstOrDefault(sa => (sa.House != null
+			var switchAddress = switchAddresses.FirstOrDefault(sa => (sa.House != null 
+																	&& sa.House.Street.Region.City != null
 																	&& sa.House.Street.Region.City.Name.Equals(YandexCity, StringComparison.InvariantCultureIgnoreCase)
 																	&& sa.House.Street.Name.Equals(YandexStreet, StringComparison.InvariantCultureIgnoreCase)
 																	&& sa.House.Number.Equals(YandexHouse, StringComparison.InvariantCultureIgnoreCase)));
