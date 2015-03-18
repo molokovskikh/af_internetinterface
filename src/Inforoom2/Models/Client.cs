@@ -80,6 +80,9 @@ namespace Inforoom2.Models
 		[Property(Column = "BeginWork")]
 		public virtual DateTime? WorkingStartDate { get; set; }
 
+		[Property]
+		public virtual DateTime? YearCycleDate { get; set; }
+
 		[ManyToOne(Cascade = "save-update")]
 		public virtual Status Status { get; set; }
 

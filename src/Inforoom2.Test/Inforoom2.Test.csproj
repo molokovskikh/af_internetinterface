@@ -133,6 +133,10 @@
       <Project>{a30eb5bc-959b-4031-8d90-51f045af3e6d}</Project>
       <Name>Billing</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Common.Tools\Common.Tools\Common.Tools.csproj">
+      <Project>{72AFCFE8-C9E9-45FA-9698-BEE896A517A3}</Project>
+      <Name>Common.Tools</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common.Web.UI\Common.Web.Ui\Common.Web.Ui.csproj">
       <Project>{95E2C313-46FA-4B4B-9EFF-3228662908F4}</Project>
       <Name>Common.Web.Ui</Name>
@@ -183,6 +187,7 @@
     <Compile Include="Functional\HomeFixture.cs" />
     <Compile Include="Functional\infrastructure\Setup.cs" />
     <Compile Include="Functional\DeferredPaymentFixture.cs" />
+    <Compile Include="Functional\VoluntaryBlockingFixture.cs" />
     <Compile Include="Functional\WarningFixture.cs" />
     <Compile Include="Integration\BaseIntegrationFixture.cs" />
   </ItemGroup>
