@@ -1,6 +1,4 @@
-﻿@using System.Globalization
-@using System.Threading
-@using Inforoom2.Models
+﻿@using Inforoom2.Models
 @using Inforoom2.Models.Services
 
 @model dynamic
@@ -10,30 +8,40 @@
 	Client client = ViewBag.Client;
 	BlockAccountService service = ViewBag.BlockAccountService;
 	var blockingEndDate = DateTime.Now.AddDays(client.FreeBlockDays).ToShortDateString();
+	var blockService = client.ClientServices.FirstOrDefault(c => c.Service.GetType() == typeof(BlockAccountService)) ?? new ClientService();
 }
 
 <h2 class="heading"> @ViewBag.Title </h2>
 @{ Html.RenderPartial("Menu"); }
- <div class="right-block">
+<div class="right-block">
 
 	@if (client.CanUseService(service)) {
-	 
-		<p class="font">В течении года Вам предоставляется 28 дней бесплатного использования данной услуги. По истечении этого времени абонентская плата составляет 3 руб/день, а стоимость активации равна 50 руб.</p>
+		<p class="font">В течении года Вам предоставляется 28 дней бесплатного использования данной услуги.<br/>
+				По истечении этого времени абонентская плата составляет 3 руб/день, а стоимость активации равна 50 руб.</p>
 		<p> Количество бесплатных дней: @client.FreeBlockDays </p>
 
-		using (@Html.BeginForm("ActivateAccountBlocking", "Service", null, FormMethod.Post)) {
+		using (@Html.BeginForm("ActivateAccountBlocking", "Service", FormMethod.Post)) {
 			@Html.HiddenFor(modelItem => service.Id)
-			<p>Заблокировать до: @Html.TextBoxFor(modelItem => blockingEndDate, null, new {@class = "datePicker personal"})	<input class="button" type="submit" value="Подключить"/></p>
-		
+			<p>Заблокировать до: @Html.TextBoxFor(modelItem => blockingEndDate, null, new {@class = "datePicker personal"})
+				<input id="ConnectBtn" class="button" type="submit" value="Подключить"/>
+			</p>
+		}
+		if (client.RatedPeriodDate != null) {
+			<p>Ваш расчетный период с @client.RatedPeriodDate по @client.RatedPeriodDate.Value.AddYears(1)</p>
 		}
 	}
 	else if (client.HasActiveService(service))
 	{
-		@:Услуга активирована до @client.ClientServices.FirstOrDefault(c => c.Service.GetType() == typeof(BlockAccountService)).EndDate
+		<p>Услуга активирована до @blockService.EndDate</p>
 		using (@Html.BeginForm("DeactivateAccountBlocking", "Service", null, FormMethod.Post))
 		{
 			@Html.HiddenFor(modelItem => service.Id)
-			<input class="button" type="submit" value="Отключить" />
+			<input id="DisconnectBtn" class="button" type="submit" value="Отключить" />
+		}
+		
+		<p>Доступно @client.FreeBlockDays бесплатных дней.</p>
+		if (client.RatedPeriodDate != null) {
+			<p>Ваш расчетный период с @client.RatedPeriodDate по @client.RatedPeriodDate.Value.AddYears(1)</p>
 		}
 	}
 	
