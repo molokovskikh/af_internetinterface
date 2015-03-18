@@ -177,12 +177,17 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Functional\Account\AccountFixture.cs" />
+    <Compile Include="Functional\Account\LogoutFixture.cs" />
     <Compile Include="Functional\BaseControllerFixture.cs" />
+    <Compile Include="Functional\ClientRequestFixture.cs" />
+    <Compile Include="Functional\Account\LoginFixture.cs" />
     <Compile Include="Functional\infrastructure\BaseFixture.cs" />
-    <Compile Include="Functional\PersonalFirstVisitFixture.cs" />
-    <Compile Include="Functional\PersonalPlansFixture.cs" />
+    <Compile Include="Functional\Personal\PersonalFirstVisitFixture.cs" />
+    <Compile Include="Functional\Personal\PersonalNotificationsFixture.cs" />
+    <Compile Include="Functional\Personal\PersonalPlansFixture.cs" />
     <Compile Include="Functional\infrastructure\PersonalFixture.cs" />
-    <Compile Include="Functional\FaqFixture.cs" />
+    <Compile Include="Functional\Faq\FaqFixture.cs" />
     <Compile Include="Functional\CallMeBackFixture.cs" />
     <Compile Include="Functional\HomeFixture.cs" />
     <Compile Include="Functional\infrastructure\Setup.cs" />
