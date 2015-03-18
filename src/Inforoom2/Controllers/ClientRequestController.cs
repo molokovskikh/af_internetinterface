@@ -120,8 +120,7 @@ namespace Inforoom2.Controllers
 			var city = GetList<City>().FirstOrDefault(c => c.Name.Equals(clientRequest.YandexCity, StringComparison.InvariantCultureIgnoreCase));
 
 			if (city == null || !clientRequest.IsYandexAddressValid()) {
-				var badAddress = new Address { IsCorrectAddress = false };
-				return badAddress;
+				return null;
 			}
 			var region = GetList<Region>().FirstOrDefault(r => r.City == city);
 
@@ -147,16 +146,6 @@ namespace Inforoom2.Controllers
 			                                                     && a.Floor == clientRequest.Floor
 			                                                     && a.Apartment == clientRequest.Apartment);
 
-			if (address == null) {
-				address = new Address();
-				address.House = house;
-				address.Apartment = clientRequest.Apartment;
-				address.Floor = clientRequest.Floor;
-				address.Entrance = clientRequest.Entrance;
-				address.House.Street = street;
-				address.House.Street.Region = region;
-				address.IsCorrectAddress = true;
-			}
 			return address;
 		}
 
