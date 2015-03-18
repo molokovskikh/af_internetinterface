@@ -4,6 +4,7 @@ using Billing;
 using Common.Tools;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
+using Inforoom2.Test.Functional.infrastructure;
 using NUnit.Framework;
 
 namespace Inforoom2.Test.Functional

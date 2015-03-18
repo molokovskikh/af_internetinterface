@@ -248,6 +248,10 @@ namespace Inforoom2.Test.Functional.infrastructure
 			unpluggedClient.WorkingStartDate = DateTime.Now;
 			unpluggedClient.Lunched = false;
 			unpluggedClient.Status = DbSession.Get<Status>(1);
+			unpluggedClient.PhysicalClient.PassportNumber = "";
+			unpluggedClient.PhysicalClient.PassportSeries = "";
+			unpluggedClient.PhysicalClient.PassportResidention = "";
+			unpluggedClient.PhysicalClient.RegistrationAddress = "";
 			foreach (var service in unpluggedClient.ClientServices)
 				service.IsActivated = false;
 			DbSession.Save(unpluggedClient);
