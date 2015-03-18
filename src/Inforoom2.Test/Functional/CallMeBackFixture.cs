@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Inforoom2.Models;
+using Inforoom2.Test.Functional.infrastructure;
 using NHibernate.Linq;
 using NUnit.Framework;
 

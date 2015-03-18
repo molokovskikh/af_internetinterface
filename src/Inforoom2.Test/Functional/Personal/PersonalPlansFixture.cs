@@ -1,10 +1,11 @@
 ﻿using System.Linq;
 using Inforoom2.Models;
+using Inforoom2.Test.Functional.infrastructure;
 using NHibernate.Linq;
 using NUnit.Framework;
 using OpenQA.Selenium;
 
-namespace Inforoom2.Test.Functional
+namespace Inforoom2.Test.Functional.Personal
 {
 	public class PersonalPlansFixture : PersonalFixture
 	{

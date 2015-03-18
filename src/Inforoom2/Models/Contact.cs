@@ -17,7 +17,7 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual ContactType Type { get; set; }
 
-		[Property(Column = "Contact"), NotNullNotEmpty(Message = "Введите номер телефона"), Pattern(@"^\d{10}$", RegexOptions.Compiled)]
+		[Property(Column = "Contact"), NotNullNotEmpty(Message = "Введите номер телефона"), Pattern(@"^\d{10}$", RegexOptions.Compiled,Message = "Номер телефона введен неправильно")]
 		public virtual string ContactString { get; set; }
 
 		[Property]

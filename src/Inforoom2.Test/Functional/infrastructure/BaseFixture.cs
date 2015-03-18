@@ -16,16 +16,16 @@ using NHibernate.Mapping.Attributes;
 using NUnit.Framework;
 using Test.Support.Selenium;
 using Cookie = OpenQA.Selenium.Cookie;
-using Environment = System.Environment;
 using SceHelper = Inforoom2.Helpers.SceHelper;
 
-namespace Inforoom2.Test.Functional
+namespace Inforoom2.Test.Functional.infrastructure
 {
 	[TestFixture]
 	public class BaseFixture : SeleniumFixture
 	{
 		protected ISession DbSession;
-		protected string DefaultClientPasword;
+		protected string DefaultClientPassword = "password";
+		protected string HashedDefaultClientPasword;
 		protected string DefaultIpString = "105.168.0.1";
 		protected int EndpointIpCounter;
 
@@ -35,7 +35,7 @@ namespace Inforoom2.Test.Functional
 		{
 			//Ставим куки, чтобы не отображался popup
 			DbSession = MvcApplication.SessionFactory.OpenSession();
-			DefaultClientPasword = CryptoPass.GetHashString("password");
+			HashedDefaultClientPasword = CryptoPass.GetHashString(DefaultClientPassword);
 			SetCookie("userCity", "Белгород");
 			GenerateObjects();
 		}
@@ -84,7 +84,7 @@ namespace Inforoom2.Test.Functional
 			var tables = new List<string>();
 
 			//Приоритет удаления данных
-			var order = "lawyerperson,regions";
+			var order = "lawyerperson,regions,requests";
 			var parts = order.Split(',');
 			foreach (var part in parts) {
 				var tablename = strategy.TableName(part);
@@ -195,7 +195,7 @@ namespace Inforoom2.Test.Functional
 		{
 			var normalClient = new Client {
 				PhysicalClient = new PhysicalClient {
-					Password = DefaultClientPasword,
+					Password = HashedDefaultClientPasword,
 					PhoneNumber = "4951234567",
 					Email = "test@client.ru",
 					Name = "Иван",
@@ -342,7 +342,7 @@ namespace Inforoom2.Test.Functional
 		{
 			var obj = new Client {
 				PhysicalClient = new PhysicalClient {
-					Password = DefaultClientPasword,
+					Password = HashedDefaultClientPasword,
 					PhoneNumber = client.PhoneNumber,
 					Email = client.Email,
 					Name = client.Name,
