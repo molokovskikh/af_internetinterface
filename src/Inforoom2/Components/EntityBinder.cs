@@ -13,10 +13,15 @@ namespace Inforoom2.Components
 	/// </summary>
 	public class EntityBinderAttribute : CustomModelBinderAttribute, IModelBinder
 	{
+		private static ISession session;
 		private readonly string _idName;
 		private readonly Type _entityType;
 		private readonly bool _relaxed;
 
+		public static void SetSession(ISession dbsession)
+		{
+			session = dbsession;
+		}
 		/// <summary>
 		/// 
 		/// </summary>
@@ -100,9 +105,6 @@ namespace Inforoom2.Components
 			}
 
 			var entityType = _entityType ?? bindingContext.ModelType;
-			var session = MvcApplication.SessionFactory.OpenSession();
-			CurrentSessionContext.Bind(session);
-			session.BeginTransaction();
 			if (entityType.IsArray) {
 				var realType = entityType.GetElementType();
 				var instances = from idString in (string[])result.RawValue
