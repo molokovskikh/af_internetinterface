@@ -40,9 +40,52 @@ $(document).ready(function () {
 			render(0, daysInNextMonth);
 	}
 
+	colorizeDates = setTimeout.bind(window, colorizeDates, 1);
+	var options = {};
+	options.firstDay = 1;
+	options.dateFormat = 'dd.mm.yy';
+	options.beforeShow = colorizeDates;
+	options.onChangeMonthYear = colorizeDates;
+	options.showOn = "both";
+	options.buttonImage = "/Images/x_office_calendar.png";
+	options.buttonImageOnly = true;
+	options.buttonText = "Select date";
+
 	//не во всех событиях то, что нужно нам уже появилось
 	//поэтому отдаем управление потоку jquery-ui, и выполняем свой код следом
-	colorizeDates = setTimeout.bind(window, colorizeDates, 1);
-	$('.datePicker').datepicker({ firstDay: 1, dateFormat: 'dd.mm.yy', beforeShow: colorizeDates, onChangeMonthYear : colorizeDates});
+	$('.datePicker').datepicker(options);
 	$.datepicker.setDefaults({ dayNamesMin: weekDays, monthNames : monthNames });
+});
+
+$("#ConnectBtn").on("click", function () {
+	var currentDate = cli.getCurrentDate();
+	var blockDate = $('.datePicker').datepicker("getDate");
+	var blockDays = Math.ceil((blockDate - currentDate) / (24 * 60 * 60 * 1000));
+	var freeDays = parseInt(cli.getParam("FreeBlockDays"));
+	if (blockDays > freeDays) {
+		var daysLeft = currentDate.getDaysInMonth() - currentDate.getDate();
+		var daysInThisMonth = daysLeft > freeDays ? (freeDays + 1) : daysLeft;
+		var daysInNextMonth = daysInThisMonth > (freeDays + 1) ? 0 : (freeDays + 1 - daysInThisMonth);
+		var newYear = currentDate.getFullYear();
+		var newMonth = currentDate.getMonth();
+		var newDay = currentDate.getDate();
+		if (daysInNextMonth == 0) {
+			newDay += daysInThisMonth;
+		}
+		else {
+			if (newMonth == 12) {
+				newYear += 1;
+				newMonth = 1;
+			}
+			else {
+				newMonth += 1;
+			}
+			newDay = daysInNextMonth;
+		}
+		var notFreeBlockDate = new Date(newYear, newMonth, newDay);
+		var content = "С " + notFreeBlockDate.toLocaleDateString() + " услуга станет платная: разовая абон/плата - 50р., ежедневная абон/плата - 3р.";
+		cli.areYouSure(content, function () { $(".right-block form").submit(); }, "Подтвердите действие");
+		return false;
+	}
+	return true;
 });
