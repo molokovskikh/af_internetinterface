@@ -68,7 +68,7 @@ ${FormHelper.FormTag("", { @class : "div-form" })}
 	${app.Error("request.Tariff")}
 </div>
 
-<div>
+<div hidden>
 	${app.Label("request.RequestSource")}
 	${app.Edit("request.RequestSource")}
 	${app.Error("request.RequestSource")}

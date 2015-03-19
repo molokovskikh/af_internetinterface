@@ -14,6 +14,7 @@ using Common.Tools;
 using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.Models.Audit;
+using Common.Web.Ui.MonoRailExtentions;
 using Common.Web.Ui.NHibernateExtentions;
 using ExcelLibrary.BinaryFileFormat;
 using InternetInterface.Controllers;
@@ -183,7 +184,7 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual DateTime? StatusChangedOn { get; set; }
 
-		[BelongsTo, Description("Партнёр, занимающийся привлечением клиентов в компанию")]
+		[BelongsTo, Description("Партнёр, привлекающий клиентов в компанию")]
 		public virtual Partner Dealer { get; set; }
 
 		[Property]
