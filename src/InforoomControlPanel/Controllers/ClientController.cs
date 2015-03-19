@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using Inforoom2.Components;
 using Inforoom2.Models;
 using NHibernate.Linq;
+using NHibernate.Util;
 using Client = Inforoom2.Models.Client;
 using House = Inforoom2.Models.House;
 using ServiceRequest = Inforoom2.Models.ServiceRequest;
@@ -62,13 +63,13 @@ namespace InforoomControlPanel.Controllers
 			clientRequest.Plan = tariff;
 			clientRequest.ActionDate = clientRequest.RegDate = DateTime.Now;
 			Employee reqAuthor = null;
-			if (clientRequest.RequestSource == RequestType.FromOperator) {
-				reqAuthor = DbSession.Query<Employee>()
+			if (clientRequest.RequestSource != RequestType.FromClient) {
+				reqAuthor = DbSession.Query<Employee>().ToList()
 					.FirstOrDefault(e => e.Id == clientRequest.RequestAuthor.Id);
 			}
 			clientRequest.RequestAuthor = reqAuthor;
-			var errors = ValidationRunner.ValidateDeep(clientRequest);
 
+			var errors = ValidationRunner.ValidateDeep(clientRequest);
 			if (errors.Length == 0 && clientRequest.IsContractAccepted) {
 				clientRequest.Address = GetAddressByYandexData(clientRequest);
 				DbSession.Save(clientRequest);
@@ -84,7 +85,8 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.IsStreetValidated = false;
 			ViewBag.IsHouseValidated = false;
 			ViewBag.ClientRequest = clientRequest;
-			ViewBag.Employees = DbSession.Query<Employee>().ToList();
+			var dealersList = DbSession.Query<Dealer>().Select(d => d.Employee).ToList();
+			ViewBag.Employees = dealersList.OrderBy(e => e.Name).ToList();
 			return View();
 		}
 
@@ -94,9 +96,10 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.IsCityValidated = false;
 			ViewBag.IsStreetValidated = false;
 			ViewBag.IsHouseValidated = false;
-			var clientRequest = new ClientRequest() {
+			var curDealer = DbSession.Query<Dealer>().Where(d => d.Employee == GetCurrentEmployee()).ToList();
+			var clientRequest = new ClientRequest {
 				IsContractAccepted = true,
-				RequestAuthor = GetCurrentEmployee()
+				RequestAuthor = (curDealer.Count > 0) ? curDealer.FirstOrDefault().Employee : null
 			};
 
 			if (!string.IsNullOrEmpty(city) && !string.IsNullOrEmpty(street) && !string.IsNullOrEmpty(house)) {
@@ -118,7 +121,8 @@ namespace InforoomControlPanel.Controllers
 				ViewBag.IsRedirected = true;
 			}
 			ViewBag.ClientRequest = clientRequest;
-			ViewBag.Employees = DbSession.Query<Employee>().ToList();
+			var dealersList = DbSession.Query<Dealer>().Select(d => d.Employee).ToList();
+			ViewBag.Employees = dealersList.OrderBy(e => e.Name).ToList();
 			InitRequestPlans();
 		}
 
