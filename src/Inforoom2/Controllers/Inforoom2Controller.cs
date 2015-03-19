@@ -57,8 +57,6 @@ namespace Inforoom2.Controllers
 			{
 				userCity = cookieCity;
 			}
-			ValidationRunner = new ValidationRunner(DbSession);
-			ViewBag.Validation = ValidationRunner;
 			ViewBag.Title = "Инфорум";
 			ViewBag.Cities = new[] { "Борисоглебск", "Белгород" };
 			ViewBag.JavascriptParams["baseurl"] = String.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, UrlHelper.GenerateContentUrl("~/",HttpContext));
