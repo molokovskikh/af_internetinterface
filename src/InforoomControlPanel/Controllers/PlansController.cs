@@ -11,7 +11,7 @@ namespace InforoomControlPanel.Controllers
 	/// <summary>
 	/// Страница управления вопросами от пользователя
 	/// </summary>
-	public class PlansController : InforoomControlPanel.Controllers.AdminController
+	public class PlansController : AdminController
 	{
 		/// <summary>
 		/// Список тарифов
@@ -19,7 +19,9 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult PlanIndex()
 		{
 			var plans = DbSession.Query<Plan>().OrderByDescending(i=> i.Id).ToList();
+			var regions = DbSession.Query<Region>().ToList();
 			ViewBag.Plans = plans;
+			ViewBag.Regions = regions;
 			return View();
 		}
 
@@ -28,17 +30,30 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		public ActionResult EditPlan(int id)
 		{
+			//забирается тарифный план из базы данных
 			var plan = DbSession.Get<Plan>(id);
+			//создание промежуточного объекта для перехода между тарифами
 			var PlanTransfer = new PlanTransfer();
+			//назначение поля тарифа
 			PlanTransfer.PlanFrom = plan;
 			var plans = DbSession.Query<Plan>().OrderByDescending(i => i.Id).ToList();
 			foreach (var transfer in plan.PlanTransfers) {
 				plans.Remove(transfer.PlanTo);
 			}
 
+			var RegionPlan = new RegionPlan();
+			RegionPlan.Plan = plan;
+			var regions = DbSession.Query<Region>().ToList();
+			foreach (var rp in plan.RegionPlans)
+			{
+				regions.Remove(rp.Region);
+			}
+
 			ViewBag.Plans = plans;
 			ViewBag.Plan = plan;
+			ViewBag.Regions = regions;
 			ViewBag.PlanTransfer = PlanTransfer;
+			ViewBag.RegionPlan = RegionPlan;
 			return View("EditPlan");
 		}
 
@@ -87,5 +102,39 @@ namespace InforoomControlPanel.Controllers
 			SuccessMessage("Стоимость перехода успешно удалена");
 			return RedirectToAction("EditPlan", new { id = transfer.PlanFrom.Id });
 		}
+
+		/// <summary>
+		/// Добавление региона
+		/// </summary>
+		/// <returns></returns>
+		public ActionResult AddRegionPlan([EntityBinder] RegionPlan regionPlan)
+		{
+			var errors = ValidationRunner.Validate(regionPlan);
+			if (errors.Length == 0)
+			{
+				DbSession.Save(regionPlan);
+				SuccessMessage("Регион успешно добавлен");
+				return RedirectToAction("EditPlan", new { id = regionPlan.Plan.Id });
+			}
+			EditPlan(regionPlan.Plan.Id);
+			ViewBag.RegionPlan = regionPlan;
+			return View("EditPlan");
+		}
+
+
+		/// <summary>
+		/// Удаление региона
+		/// </summary>
+		public ActionResult DeleteRegion(int id)
+		{
+			var rp = DbSession.Get<RegionPlan>(id);
+			DbSession.Delete(rp);
+			DbSession.Flush();
+			SuccessMessage("Регион успешно удален");
+			return RedirectToAction("EditPlan", new { id = rp.Plan.Id });
+		}
+
+
+
 	}
 }

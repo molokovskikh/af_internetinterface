@@ -1,4 +1,5 @@
-﻿@using Inforoom2.Helpers
+﻿@using System.Collections
+@using Inforoom2.Helpers
 @using Inforoom2.Models
 @using NPOI.SS.Formula.Functions
 @model dynamic
@@ -6,9 +7,12 @@
 @{
 	ViewBag.Title = "Тарифный план";
 	Layout = "~/Views/Shared/_Layout.cshtml";
-	Plan plan = ViewBag.Plan;
+	Plan plan = ViewBag.Plan;	
 	PlanTransfer PlanTransfer = ViewBag.PlanTransfer;
 	IList<Plan> plans = ViewBag.Plans;
+	IList<Region> regions = ViewBag.Regions;
+	RegionPlan RegionPlan = ViewBag.RegionPlan;
+	
 }
 <div class="panel panel-primary">
 	<div class="panel-body">
@@ -101,6 +105,45 @@
 					</div>
 					<div class="col-sm-2">
 						<a class="entypo-cancel-circled" style="color:red" href="@Url.Action("DeletePlanTransfer","Plans",new {id = item.Id })"></a>
+					</div>
+				</div>
+			}
+		</div>
+		<div class="col-md-6">
+			@if(plans.Count > 0) {
+			<div class="col-sm-12">
+				<h4>Добавить pегион:</h4>
+			</div>
+			<div class="col-sm-12 ">
+				@using (@Html.BeginForm("AddRegionPlan", "Plans", FormMethod.Post, new { @class = "form-horizontal form-groups-bordered col-sm-12" }))
+	{
+					<div class="form-group">
+						@Html.HiddenFor(i=>RegionPlan.Plan.Id)
+						<div class="col-sm-5">
+							@Html.DropDownListExtendedFor(i=>RegionPlan.Region,regions,obj=>obj.Name,null,new {@class = "form-control"})
+							@ViewBag.Validation.GetError(RegionPlan, "Region")
+						</div>
+						<div class="col-sm-2">
+						</div>
+						<div class="col-sm-2">
+							<button class="btn btn-green" type="submit">Добавить</button>
+						</div>
+					</div>
+				}
+			</div>
+			}
+			<div class="col-sm-12">
+				<h4>Тариф доступен в регионах:</h4>
+			</div>
+			@foreach (var item in plan.RegionPlans) {
+				<div class="form-group">
+					<div class="col-sm-5">
+						@item.Region.Name
+					</div>
+					<div class="col-sm-2">
+					</div>
+					<div class="col-sm-2">
+						<a class="entypo-cancel-circled" style="color:red" href="@Url.Action("DeleteRegion","Plans",new {id = item.Id })"></a>
 					</div>
 				</div>
 			}

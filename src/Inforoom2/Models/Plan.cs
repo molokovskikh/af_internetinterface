@@ -40,6 +40,11 @@ namespace Inforoom2.Models
 		[OneToMany(2, ClassType = typeof(PlanTransfer))]
 		public virtual IList<PlanTransfer> PlanTransfers { get; set; }
 
+		[Bag(0, Table = "RegionPlan", Cascade = "save-update")]
+		[Key(1, Column = "Plan")]
+		[OneToMany(2, ClassType = typeof(RegionPlan))]
+		public virtual IList<RegionPlan> RegionPlans { get; set; }
+
 		[Property]
 		public virtual int PackageId { get; set; }
 
