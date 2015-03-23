@@ -249,14 +249,25 @@ set s.LastStartFail = true;")
 		private void ProcessBonusesForFirstPayment(Payment payment, ISession session)
 		{
 			var client = payment.Client;
-			var firstPayment = client.Payments.Where(p => p.BillingAccount).ToList().Count == 1;
-			var correctSum = payment.Sum >= client.PhysicalClient.Tariff.Price;
-			var correctPlan = FirstPaymentBonusTariffIds.Contains(client.PhysicalClient.Tariff.Id);
 			var str = ConfigurationManager.AppSettings["ProcessFirstPaymentBonus"];
-			var processBonus = str != null;
-			if (processBonus && correctSum && correctPlan && firstPayment) {
+			var processBonus = (str == "true" || str == "1");
+
+			var clientPayments = client.Payments.Where(p => p.BillingAccount).ToList();
+			var firstPayment = clientPayments.Count == 1;
+			var correctSum = payment.Sum >= client.PhysicalClient.Tariff.Price;
+			// Обработка случая, когда ровно 2 первых платежа пришли за 24 ч. и их сумма >= цены тарифа
+			if (!firstPayment && !correctSum) {
+				var dateDiff = (clientPayments.Count == 2) ? (clientPayments[1].PaidOn - clientPayments[0].PaidOn) : TimeSpan.Zero;
+				if (dateDiff != TimeSpan.Zero && dateDiff.Duration() <= TimeSpan.FromDays(1d)) {
+					firstPayment = true;
+					correctSum = (clientPayments[0].Sum + clientPayments[1].Sum) >= client.PhysicalClient.Tariff.Price;
+				}
+			}
+
+			var correctPlan = FirstPaymentBonusTariffIds.Contains(client.PhysicalClient.Tariff.Id);
+			if (processBonus && firstPayment && correctSum && correctPlan) {
 				var bonusPayment = new Payment(client, client.PhysicalClient.Tariff.Price) {
-					Virtual	= true,
+					Virtual = true,
 					Comment = "Месяц в подарок"
 				};
 				session.Save(bonusPayment);

@@ -2,20 +2,18 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Web;
-using System.Web.ClientServices;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
-using System.Web.UI.WebControls;
 using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
 using log4net;
 using NHibernate;
+using NHibernate.Context;
 using NHibernate.Linq;
 
 namespace Inforoom2.Controllers
@@ -23,7 +21,6 @@ namespace Inforoom2.Controllers
 	/// <summary>
 	/// Базовый контроллер от которого все наследуются
 	/// </summary>
-	[NHibernateActionFilter]
 	public class BaseController : Controller
 	{
 		public ISession DbSession;
@@ -33,11 +30,27 @@ namespace Inforoom2.Controllers
 
 		public BaseController()
 		{
-			ValidationRunner = new ValidationRunner();
+			//Hibernate
+			var controller = this;
+			var SessionFactory = MvcApplication.SessionFactory;
+			if (!CurrentSessionContext.HasBind(SessionFactory))
+			{
+				var session = SessionFactory.OpenSession();
+				CurrentSessionContext.Bind(session);
+				session.BeginTransaction();
+				controller.DbSession = session;
+			}
+			else if (controller.DbSession == null)
+				controller.DbSession = MvcApplication.SessionFactory.GetCurrentSession();
+
+			EntityBinderAttribute.SetSession(DbSession);
+			//Additional
+			ValidationRunner = new ValidationRunner(DbSession);
 			ViewBag.Validation = ValidationRunner;
-			ViewBag.Title = "Инфорум";
+
 			ViewBag.JavascriptParams = new Dictionary<string, string>();
-			ViewBag.Cities = new [] {"Борисоглебск", "Белгород"};
+			var currentDate  = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+			AddJavascriptParam("Timestamp",currentDate.ToString());
 		}
 
 		public void AddJavascriptParam(string name, string value)
@@ -60,39 +73,6 @@ namespace Inforoom2.Controllers
 			return DbSession.Query<Employee>().FirstOrDefault(k => k.Id == employeeId);
 		}
 
-		protected new virtual CustomPrincipal User
-		{
-			get { return HttpContext.User as CustomPrincipal; }
-		}
-
-		protected Client CurrentClient
-		{
-			get
-			{
-				if (User == null || DbSession == null || !DbSession.IsConnected) {
-					return null;
-				}
-				int id;
-				int.TryParse(User.Identity.Name, out id);
-				return DbSession.Get<Client>(id);
-			}
-		}
-
-		private static string userCity;
-
-		public static string UserCity
-		{
-			get { return userCity; }
-		}
-
-		public Region CurrentRegion
-		{
-			get
-			{
-				return DbSession.Query<Region>().FirstOrDefault(r => r.Name == UserCity)
-				       ?? DbSession.Query<Region>().FirstOrDefault();
-			}
-		}
 
 
 		public HttpSessionStateBase HttpSession
@@ -148,258 +128,37 @@ namespace Inforoom2.Controllers
 
 		}
 
-		protected StringBuilder CollectDebugInfo()
+		protected virtual StringBuilder CollectDebugInfo()
 		{
-			var builder = new StringBuilder(1000);
-			if(CurrentClient != null)
-				builder.Append("Клиент: " + CurrentClient.Id + " \n ");
-
-			//Не должно случаться, но добавил, так как боюсь циклических исключений
-			//Получаем ip, ловим исключение, собираем инфо, получаем ip и так до бесконечности
-			try {
-				var tryClient = Client.GetClientForIp(Request.UserHostAddress, DbSession);
-				if (tryClient != null)
-					builder.Append("Клиент (по аренде): " + tryClient.Id + " \n ");
-			}
-			catch (Exception e) {
-				builder.Append("Поймали циклическое исключение на попытке получить ip клиента \n ");
-			}
-
-			builder.Append("Дата: "+DateTime.Now+" \n ");
-			builder.Append("Referrer: " + Request.UrlReferrer + " \n ");
-			builder.Append("Query: " + Request.QueryString + " \n ");
-			builder.Append("Ip: " + Request.UserHostAddress + " \n ");
-			builder.Append("Форма:] \n ");
-			foreach (var key in Request.Form.AllKeys)
-			{
-				builder.Append(key);
-				builder.Append(" : ");
-				builder.Append(Request.Form[key]);
-				builder.Append("\n");
-			}
-			builder.Append("]");
-			builder.Append("Запрос: " +Request.FilePath+ " : "+ Request.QueryString + " \n ");
-			builder.Append("Браузер: " +Request.Browser.Browser + " \n ");
-			builder.Append("Куки:[ \n ");
-			foreach (var key in Request.Cookies.AllKeys)
-			{
-				builder.Append(key);
-				builder.Append(" : ");
-				builder.Append(GetCookie(key) ?? "");
-				builder.Append("\n");
-			}
-			builder.Append("]");
-			return builder;
+			return new StringBuilder("");
 		}
 
-		protected override void OnActionExecuting(ActionExecutingContext filterContext)
-		{
-			ViewBag.JavascriptParams["baseurl"] = String.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~/"));
-			var cookieCity = GetCookie("userCity");
-			if (!string.IsNullOrEmpty(cookieCity)) {
-				userCity = cookieCity;
-			}
-			base.OnActionExecuting(filterContext);
-		}
 
-		//Авторизация клиента из сети
-		private bool TryAuthorizeNetworkClient()
+		protected override void OnResultExecuted(ResultExecutedContext filterContext)
 		{
-			var ipstring = Request.UserHostAddress;
-#if DEBUG
-			//Можем авторизоваться по лизе за клиента
-			ipstring = Request.QueryString["ip"] ?? null;
-			if(GetCookie("debugIp") == null && ipstring != null)
-				SetCookie("debugIp", ipstring);
-#endif
-			if(CurrentClient != null || string.IsNullOrEmpty(ipstring))
-				return false;
-			var endpoint = ClientEndpoint.GetEndpointForIp(ipstring,DbSession);
-			if (endpoint != null && endpoint.Client.PhysicalClient != null) //Юриков авторизовывать не нужно
-			{
-				SetCookie("networkClient","true");
-				this.Authenticate(ViewBag.ActionName, ViewBag.ControllerName, endpoint.Client.Id.ToString(), true);
-				return true;
-			}
-			return false;
-		}
-
-		protected override void OnResultExecuting(ResultExecutingContext filterContext)
-		{
-			if (CurrentRegion != null) {
-				ViewBag.RegionOfficePhoneNumber = CurrentRegion.RegionOfficePhoneNumber;
-				ViewBag.CurrentRegion = CurrentRegion;
-			}
-			base.OnResultExecuting(filterContext);
-		}
-
-		protected override void OnActionExecuted(ActionExecutedContext filterContext)
-		{
-			base.OnActionExecuted(filterContext);
-			ViewBag.ActionName = filterContext.RouteData.Values["action"].ToString();
-			ViewBag.ControllerName = GetType().Name.Replace("Controller","");
-			//todo куда это девать?
-			ViewBag.CallMeBackTicket = new CallMeBackTicket();
-
-			ProcessRegionPanel();
-			if(TryAuthorizeNetworkClient())
+			base.OnResultExecuted(filterContext);
+			var session = DbSession;
+			if (session == null)
 				return;
-			ViewBag.NetworkClientFlag = GetCookie("networkClient") != null;
-			if (CurrentClient != null) {
-				var sb = new StringBuilder();
-				sb.AppendFormat("Здравствуйте, {0} {1}. Ваш баланс: {2} руб.", CurrentClient.PhysicalClient.Name, 
-						CurrentClient.PhysicalClient.Patronymic, CurrentClient.PhysicalClient.Balance);
-				ViewBag.ClientInfo = sb.ToString();
-			}
-			if (!CheckNetworkClient())
-				RedirectToAction("Index", "Home");
-		}
 
-		private bool CheckNetworkClient()
-		{
-			var ipstring = Request.UserHostAddress;
-#if DEBUG
-			ipstring = GetCookie("debugIp");
-#endif
-			//если нет куки значит клиент не из нутри сети - все впроядке
-			var cookie = GetCookie("networkClient");
-			if (cookie == null)
-				return true;
+			//дебаг
+			if (filterContext.Exception != null)
+				EmailSender.SendDebugInfo("Rollback транзакции в OnResultExecuted", "");
 
-			//если нет текущего клиента то снимаем флаг клиента из интернета
-			//больше ничего делать не надо - он может продолжить работку
-			if (CurrentClient == null || string.IsNullOrEmpty(ipstring))
+			if (session.Transaction.IsActive)
 			{
-				SetCookie("networkClient", null);
-				EmailSender.SendDebugInfo("Снимаем куку залогиненного автоматически клиента так как он не найден: " + ipstring,CollectDebugInfo().ToString());
-				return true;
+				//Мне кажется этот код никогда не исполнится, todo подумать и удалить
+				if (filterContext.Exception != null)
+					session.Transaction.Rollback();
+				else
+					session.Transaction.Commit();
 			}
 
-			//Выкидываем юрика
-			if (CurrentClient.PhysicalClient == null) {
-				SetCookie("networkClient", null);
-				var msg = "Выкидываем юридического клиента: " + CurrentClient.Id;
-				EmailSender.SendDebugInfo(msg, CollectDebugInfo().ToString());
-				FormsAuthentication.SignOut();
-				return false;
-			}
-
-			var endpoint = ClientEndpoint.GetEndpointForIp(ipstring,DbSession);
-			if (endpoint != null)
-			{
-				if (endpoint.Client.Id != CurrentClient.Id)
-				{
-					//Оказывается, что точка подключения принадлежит другому клиенту и текущий сидит в чужом ЛК
-					//Снимаем куку и выкидываем клиента из ЛК
-					//Возможно нужен еще редирект
-					SetCookie("networkClient", null);
-					var msg = "Выкидываем неправильно залогиненного клиента: " + ipstring + "," + endpoint.Client.Id + ", " + CurrentClient.Id;
-					EmailSender.SendDebugInfo(msg,CollectDebugInfo().ToString());
-					FormsAuthentication.SignOut();
-					return false;
-				}
-				//был найден клиент по точке подключения и текущий клиент. они совпадают, так что все путем
-				return true;
-			}
-
-			//Получается текущий клиент есть, флаг того, что мы его авторизовали есть, но точки подключения у него нет. Как так? Выкидываем
-			SetCookie("networkClient", null);
-			var str = "Выкидываем залогиненного клиента без аренды: " + ipstring + ", " + CurrentClient.Id;
-			EmailSender.SendDebugInfo(str, CollectDebugInfo().ToString());
-			FormsAuthentication.SignOut();
-			return false;
+			session = CurrentSessionContext.Unbind(MvcApplication.SessionFactory);
+			if (session.IsOpen)
+				session.Close();
 		}
 
-		private void ProcessCallMeBackTicket()
-		{
-			var binder = new EntityBinderAttribute("callMeBackTicket.Id", typeof(CallMeBackTicket));
-			var callMeBackTicket = (CallMeBackTicket)binder.MapModel(Request);
-			ViewBag.CallMeBackTicket = callMeBackTicket;
-			if (Request.Params["callMeBackTicket.Name"] == null)
-				return;
-			callMeBackTicket.Client = CurrentClient;
-
-			var errors = ValidationRunner.ValidateDeep(callMeBackTicket);
-			if (errors.Length == 0) {
-				DbSession.Save(callMeBackTicket);
-				if(callMeBackTicket.Client != null) {
-					var appeal = new Appeal("Клиент создал запрос на обратный звонок № " + callMeBackTicket.Id, 
-						callMeBackTicket.Client, AppealType.FeedBack) {
-							Employee = GetCurrentEmployee()
-						};
-					DbSession.Save(appeal);
-				}
-
-				SuccessMessage("Заявка отправлена. В течении дня вам перезвонят.");
-				return;
-			}
-			
-			if (GetJavascriptParam("CallMeBack") == null)
-				AddJavascriptParam("CallMeBack", "1");
-		}
-
-		public void ProcessRegionPanel()
-		{
-			var cookieCity = GetCookie("userCity");
-			if (User == null) {
-				//Анонимный посетитель. Определяем город.
-				if (!string.IsNullOrEmpty(cookieCity)) {
-					userCity = cookieCity;
-				}
-				else {
-					userCity = GetVisitorCityByGeoBase();
-				}
-			}
-			else {
-				if (!string.IsNullOrEmpty(cookieCity)) {
-					userCity = cookieCity;
-				}
-				else {
-					//Куков нет, пытаемся достать город из базы, иначе определяем по геобазе
-					PhysicalClient user = null;
-					int userId;
-					int.TryParse(User.Identity.Name, out userId);
-					if(userId != 0)
-						user = DbSession.Query<PhysicalClient>().FirstOrDefault(k => k.Id == userId);
-					if (user != null && user.Address != null) {
-						userCity = user.Address.House.Street.Region.City.Name;
-					}
-					else {
-						userCity = GetVisitorCityByGeoBase();
-					}
-				}
-			}
-			ViewBag.UserCityBelongsToUs = IsUserCityBelongsToUs(UserCity);
-			ViewBag.UserCity = UserCity;
-			ViewBag.UserRegion = DbSession.Query<Region>().FirstOrDefault(i => i.Name == UserCity);
-			if (ViewBag.UserRegion == null)
-				ViewBag.UserRegion = DbSession.Query<Region>().First();
-		}
-
-		private bool IsUserCityBelongsToUs(string city)
-		{
-			if (city != null) {
-				var region = DbSession.Query<Region>().FirstOrDefault(i => i.Name.Contains(city) && i.City != null);
-				if (region != null)
-					return true;
-			}
-			return false;
-		}
-
-		private string GetVisitorCityByGeoBase()
-		{
-			var geoService = new IpGeoBase();
-			IpAnswer geoAnswer;
-			try {
-				geoAnswer = geoService.GetInfo();
-			}
-			catch (Exception) {
-				return null;
-			}
-
-			if (geoAnswer == null) return null;
-			return geoAnswer.City;
-		}
 
 		protected List<TModel> GetList<TModel>()
 		{
@@ -412,13 +171,15 @@ namespace Inforoom2.Controllers
 
 		protected string GetCookie(string cookieName)
 		{
-			var cookie = Request.Cookies.Get(cookieName);
-			if (cookie == null || cookie.Value.Length <= 1) {
+			try {
+				var cookie = Request.Cookies.Get(cookieName);
+				var base64EncodedBytes = Convert.FromBase64String(cookie.Value);
+				return Encoding.UTF8.GetString(base64EncodedBytes);
+			}
+			catch (Exception e) {
 				return null;
 			}
-
-			var base64EncodedBytes = Convert.FromBase64String(cookie.Value);
-			return Encoding.UTF8.GetString(base64EncodedBytes);
+			
 		}
 
 		public void SetCookie(string name, string value)
@@ -455,11 +216,6 @@ namespace Inforoom2.Controllers
 			return RedirectToAction(action, controller);
 		}
 
-		public void SubmitCallMeBackTicket(string actionString, string controllerString)
-		{
-			ProcessCallMeBackTicket();
-			ForwardToAction(controllerString, actionString, new object[0]);
-		}
 
 		public void ForwardToAction(string controllerString, string actionString, object[] parameters)
 		{
@@ -468,7 +224,7 @@ namespace Inforoom2.Controllers
 			var col = module.RouteCollection;
 			HttpContext.RewritePath("/" + controllerString + "/" + actionString);
 			var fakeRouteData = col.GetRouteData(HttpContext);
-
+				
 			var ctxt = new RequestContext(ControllerContext.HttpContext, fakeRouteData);
 			var factory = ControllerBuilder.Current.GetControllerFactory();
 			var iController = factory.CreateController(ctxt, controllerString);
@@ -479,10 +235,18 @@ namespace Inforoom2.Controllers
 
 			var methodTypes = parameters.Select(parameter => parameter.GetType()).ToList();
 			var actionMethod = type.GetMethod(actionString, methodTypes.ToArray());
+			if (actionMethod == null) {
+				ForwardToAction("Home", "Index", new object[0]);
+				return;
+			}
+			var c = new ActionExecutingContext();
+			c.RouteData = ctxt.RouteData;
+			controller.OnActionExecuting(c);
 			var actionResult = (ActionResult)actionMethod.Invoke(controller, parameters);
 
 			controller.ViewBag.ActionName = actionString;
 			controller.ViewBag.ControllerName = controllerString;
+			controller.ViewBag.JavascriptParams = ViewBag.JavascriptParams;
 
 			actionResult.ExecuteResult(controller.ControllerContext);
 		}

@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using Castle.ActiveRecord;
-using Castle.ActiveRecord.Framework.Scopes;
 using Common.Tools;
 using Common.Web.Ui.ActiveRecordExtentions;
 using InternetInterface.Controllers.Filter;
@@ -12,10 +8,8 @@ using InternetInterface.Models;
 using InternetInterface.Models.Services;
 using InternetInterface.Services;
 using NHibernate;
-using NHibernate.Impl;
 using NHibernate.Linq;
 using NUnit.Framework;
-using Test.Support.log4net;
 
 namespace Billing.Test.Integration
 {
@@ -63,8 +57,8 @@ namespace Billing.Test.Integration
 
 			using (new SessionScope()) {
 				client.Refresh();
-				Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(1));
-				Assert.That(WriteOff.Queryable.Count(w => w.Client == client), Is.EqualTo(0));
+				Assert.That(UserWriteOff.Queryable.AsQueryable().Count(), Is.EqualTo(1));
+				Assert.That(WriteOff.Queryable.AsQueryable().Count(w => w.Client == client), Is.EqualTo(0));
 				Assert.IsFalse(client.PaidDay);
 			}
 		}
@@ -153,10 +147,10 @@ namespace Billing.Test.Integration
 			}
 
 			using (new SessionScope()) {
-				Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(1), UserWriteOff.Queryable.Implode());
+				Assert.That(UserWriteOff.Queryable.AsQueryable().Count(), Is.EqualTo(1), UserWriteOff.Queryable.Implode());
 				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
 				Assert.That(client.FreeBlockDays, Is.EqualTo(0));
-				Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(0));
+				Assert.That(WriteOff.Queryable.AsQueryable().Count(), Is.EqualTo(1), "\nНет разового списания за услугу");
 			}
 		}
 
@@ -169,18 +163,18 @@ namespace Billing.Test.Integration
 			}
 			billing.ProcessWriteoffs();
 			using (new SessionScope())
-				Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(0));
+				Assert.That(WriteOff.Queryable.AsQueryable().Count(), Is.EqualTo(0));
 			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
-				Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(1));
-				Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(2), UserWriteOff.Queryable.Implode());
+				Assert.That(WriteOff.Queryable.AsQueryable().Count(), Is.EqualTo(2), "\nНет разового списания за услугу");
+				Assert.That(UserWriteOff.Queryable.AsQueryable().Count(), Is.EqualTo(2), UserWriteOff.Queryable.Implode());
 
 				service = ActiveRecordMediator<ClientService>.FindByPrimaryKey(service.Id);
 				service.ForceDeactivate();
 			}
 			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
-				Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(1));
+				Assert.That(WriteOff.Queryable.AsQueryable().Count(), Is.EqualTo(2), "\nНет разового списания за услугу");
 			}
 		}
 
@@ -207,7 +201,7 @@ namespace Billing.Test.Integration
 				billing.ProcessWriteoffs();
 			}
 			using (new SessionScope()) {
-				Assert.That(WriteOff.Queryable.Count(), Is.EqualTo(3));
+				Assert.That(WriteOff.Queryable.AsQueryable().Count(), Is.EqualTo(4), "\nНет разового списания за услугу");
 
 				var userWriteOffs = UserWriteOff.Queryable.ToList();
 				Assert.That(userWriteOffs.Count(), Is.EqualTo(3), userWriteOffs.Implode());
@@ -460,7 +454,7 @@ namespace Billing.Test.Integration
 				SystemTime.Now = () => DateTime.Now.AddDays(i1 + 3);
 			}
 			using (new SessionScope())
-				Assert.That(WriteOff.Queryable.Where(c => c.Client == client).ToList().Sum(w => w.WriteOffSum), Is.EqualTo(0));
+				Assert.That(WriteOff.Queryable.AsQueryable().Where(c => c.Client == client).ToList().Sum(w => w.WriteOffSum), Is.EqualTo(0));
 
 			SystemTime.Now = () => DateTime.Now.AddDays(countDays + 3);
 			billing.ProcessPayments();
@@ -510,7 +504,7 @@ namespace Billing.Test.Integration
 				}
 			}
 			using (new SessionScope()) {
-				var writeOffs = WriteOff.Queryable.Where(w => w.Client == client).ToList();
+				var writeOffs = WriteOff.Queryable.AsEnumerable().Where(w => w.Client.Id == client.Id && w.Sum == 3m).ToList();
 				var sum = writeOffs.Sum(w => w.WriteOffSum);
 				var lastWriteoffAt = writeOffs.Max(w => w.WriteOffDate);
 				var firstWriteoffAt = writeOffs.Min(w => w.WriteOffDate);
@@ -521,7 +515,6 @@ namespace Billing.Test.Integration
 				writeOffs.Select(w => w.WriteOffSum).Each(c => Assert.That(c, Is.EqualTo(3m)));
 			}
 		}
-
 
 		[Test]
 		public void ActiveDeactive()
@@ -705,7 +698,7 @@ namespace Billing.Test.Integration
 			billing.ProcessPayments();
 			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
-				Assert.That(WriteOff.Queryable.Where(w => w.Client == client_Post).Count(), Is.EqualTo(2));
+				Assert.That(WriteOff.Queryable.AsQueryable().Where(w => w.Client == client_Post).Count(), Is.EqualTo(2));
 
 				client_simple.Refresh();
 				client_Post = ActiveRecordMediator<Client>.FindByPrimaryKey(client_Post.Id);

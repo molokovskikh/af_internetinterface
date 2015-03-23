@@ -5,7 +5,18 @@
 @{
 	string username = "";
 	string password = "";
+	string regionPhones = ViewBag.RegionOfficePhoneNumber;
+	var regPhone = new string[2];
+	if (regionPhones != null && regionPhones.Contains(",")) {
+		var commaPos = regionPhones.IndexOf(',');
+		regPhone[0] = regionPhones.Substring(0, commaPos);
+		regPhone[1] = regionPhones.Substring(commaPos+1);
+	}
+	else {
+		regPhone[0] = regionPhones;
+	}
 }
+
 <html>
 	<head>
 		<title>@(ViewBag.Title)</title>
@@ -69,7 +80,10 @@
 					<input class="connect" type="submit" value="Подключиться">
 				</form>
 				<input class="call" type="submit" value="Обратный звонок">
-				<div class="phone">@ViewBag.RegionOfficePhoneNumber</div>
+				<div class="phone">@regPhone[0]</div>
+				@if (regPhone[1] != "") {
+					<div class="extra-phone">@regPhone[1]</div>
+				}
 			</div>
 			<div class="menu">
 				<ul>
@@ -222,7 +236,7 @@
 						@Html.ValidationEditor(validationRunner, ticket, "Name", new { @class = "application entry" }, HtmlTag.input, HtmlType.none)
 						<div class="label">Номер телефона:<sup>*</sup></div>
 						@Html.ValidationEditor(validationRunner, ticket, "PhoneNumber", new { @class = "application entry" }, HtmlTag.input, HtmlType.none)
-						<div class="label">Комментарий:</div>
+						<div class="label">Комментарий:<sup>*</sup></div>
 						@Html.ValidationEditor(validationRunner, ticket, "Text", new { @class = "application entry" }, HtmlTag.textarea, HtmlType.none)
 					</div>
 					<div class="definitely"><sup>*</sup>- обязательно для заполнения</div>

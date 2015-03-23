@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using Common.Tools;
-using NHibernate.Linq;
-using NHibernate.Mapping;
+using Inforoom2.validators;
 using NHibernate.Mapping.Attributes;
 using NHibernate.Util;
 using NHibernate.Validator.Constraints;
@@ -40,19 +39,25 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual decimal MoneyBalance { get; set; }
 
-		[Property,NotNullNotEmpty(Message = "Введите номер паспорта")]
+		[Property(Column = "IdDocType"), Description("Документ, удостоверяющий личность")]
+		public virtual CertificateType CertificateType { get; set; }
+
+		[Property(Column = "IdDocName"), NotNullNotEmpty(Message = "Введите название"), Description("Название документа, удостоверяющего личность")]
+		public virtual string CertificateName { get; set; }
+
+		[Property, NotNullNotEmpty(Message = "Введите номер паспорта")]
 		public virtual string PassportNumber { get; set; }
 
-		[Property,NotNullNotEmpty(Message = "Введите серию паспорта")]
+		[Property, NotNullNotEmpty(Message = "Введите серию паспорта")]
 		public virtual string PassportSeries { get; set; }
 
-		[Property,NotNull(Message = "Введите дату выдачи паспорта")]
+		[Property,DateTimeNotEmpty]
 		public virtual DateTime PassportDate { get; set; }
 
 		[Property(Column = "RegistrationAdress"), NotNull(Message = "Введите адрес регистрации")]
 		public virtual string RegistrationAddress { get; set; }
 
-		[Property(Column = "WhoGivePassport"),NotNullNotEmpty(Message = "Поле не может быть пустым")]
+		[Property(Column = "WhoGivePassport"), NotNullNotEmpty(Message = "Поле не может быть пустым")]
 		public virtual string PassportResidention { get; set; }
 
 		[Property(Column = "_PhoneNumber", NotNull = true)]
@@ -66,6 +71,9 @@ namespace Inforoom2.Models
 
 		[Property(NotNull = true), NotEmpty(Message = "Введите отчество")]
 		public virtual string Patronymic { get; set; }
+
+		[Property(Column = "DateOfBirth"), DateTimeNotEmpty]
+		public virtual DateTime BirthDate { get; set; }
 
 		[OneToOne(PropertyRef = "PhysicalClient")]
 		public virtual Client Client { get; set; }
@@ -154,5 +162,11 @@ namespace Inforoom2.Models
 				BeforeWriteOffBalance = Client.Balance
 			};
 		}
+	}
+
+	public enum CertificateType
+	{
+		[Display(Name = "Паспорт РФ")] Passport = 0,
+		[Display(Name = "Иной документ")] Other = 1
 	}
 }

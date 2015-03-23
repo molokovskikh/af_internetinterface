@@ -40,6 +40,11 @@ namespace Inforoom2.Models
 		[OneToMany(2, ClassType = typeof(PlanTransfer))]
 		public virtual IList<PlanTransfer> PlanTransfers { get; set; }
 
+		[Bag(0, Table = "RegionPlan", Cascade = "save-update")]
+		[Key(1, Column = "Plan")]
+		[OneToMany(2, ClassType = typeof(RegionPlan))]
+		public virtual IList<RegionPlan> RegionPlans { get; set; }
+
 		[Property]
 		public virtual int PackageId { get; set; }
 
@@ -55,7 +60,7 @@ namespace Inforoom2.Models
 		/// <returns>Стоимость перехода</returns>
 		public virtual decimal GetTransferPrice(Plan planTo)
 		{
-			var transfer = PlanTransfers.FirstOrDefault(i => i.PlanTo == planTo);
+			var transfer = PlanTransfers.ToList().FirstOrDefault(i => i.PlanTo.Unproxy() == planTo);
 			var ret = transfer != null ? transfer.Price : 0;
 			return ret;
 		}

@@ -119,18 +119,14 @@ namespace Inforoom2.Models
 
 		public virtual bool IsAddressConnected(IList<SwitchAddress> switchAddresses)
 		{
-			if (!IsYandexAddressValid()) {
+			if (!IsYandexAddressValid())
 				return false;
-			}
-			var switchAddress = switchAddresses.FirstOrDefault((sa => (sa.House != null
-			                                                           && sa.House.Street.Region.City.Name.Equals(YandexCity, StringComparison.InvariantCultureIgnoreCase)
-			                                                           && sa.House.Street.Name.Equals(YandexStreet, StringComparison.InvariantCultureIgnoreCase)
-			                                                           && sa.House.Number.Equals(YandexHouse, StringComparison.InvariantCultureIgnoreCase))
-				//проверка частного сектора (частный сектор содержит только улицу) 
-			                                                          ||
-			                                                          (sa.Street != null) &&
-			                                                          (sa.Street.Region.City.Name.Equals(YandexCity, StringComparison.InvariantCultureIgnoreCase)
-			                                                           && sa.Street.Name.Equals(YandexStreet, StringComparison.InvariantCultureIgnoreCase))));
+
+			var switchAddress = switchAddresses.FirstOrDefault(sa => (sa.House != null 
+																	&& sa.House.Street.Region.City != null
+																	&& sa.House.Street.Region.City.Name.Equals(YandexCity, StringComparison.InvariantCultureIgnoreCase)
+																	&& sa.House.Street.Name.Equals(YandexStreet, StringComparison.InvariantCultureIgnoreCase)
+																	&& sa.House.Number.Equals(YandexHouse, StringComparison.InvariantCultureIgnoreCase)));
 			return switchAddress != null;
 		}
 	}

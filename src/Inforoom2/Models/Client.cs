@@ -80,6 +80,9 @@ namespace Inforoom2.Models
 		[Property(Column = "BeginWork")]
 		public virtual DateTime? WorkingStartDate { get; set; }
 
+		[Property]
+		public virtual DateTime? YearCycleDate { get; set; }
+
 		[ManyToOne(Cascade = "save-update")]
 		public virtual Status Status { get; set; }
 
@@ -277,9 +280,15 @@ namespace Inforoom2.Models
 			if(PhysicalClient == null)
 				return true;
 			var hasPassportData = !string.IsNullOrEmpty(PhysicalClient.PassportNumber);
-			hasPassportData = hasPassportData && !string.IsNullOrEmpty(PhysicalClient.PassportSeries);
-			hasPassportData = hasPassportData && !string.IsNullOrEmpty(PhysicalClient.PassportResidention);
+			if (PhysicalClient.CertificateType == CertificateType.Passport) {
+				hasPassportData = hasPassportData && !string.IsNullOrEmpty(PhysicalClient.PassportSeries);
+				hasPassportData = hasPassportData && !string.IsNullOrEmpty(PhysicalClient.PassportResidention);
+			}
+			else 
+				hasPassportData = hasPassportData && !string.IsNullOrEmpty(PhysicalClient.CertificateName);
+
 			hasPassportData = hasPassportData && PhysicalClient.PassportDate != DateTime.MinValue;
+			hasPassportData = hasPassportData && PhysicalClient.BirthDate != DateTime.MinValue;
 			hasPassportData = hasPassportData && !string.IsNullOrEmpty(PhysicalClient.RegistrationAddress);
 			return hasPassportData;
 		}

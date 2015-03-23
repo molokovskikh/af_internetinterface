@@ -1841,7 +1841,10 @@
     <Content Include="Views\Ticket\EditCallMeBackTicket.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Plans\EditPlan.cshtml" />
+    <Content Include="Views\Client\ClientInfo.cshtml" />
+  </ItemGroup>
+	<ItemGroup>
+		<Content Include="Views\Plans\EditPlan.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Plans\PlanIndex.cshtml" />

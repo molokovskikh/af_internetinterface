@@ -3,18 +3,21 @@ using System.Linq;
 using System.Web.UI.WebControls;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
+using Inforoom2.Test.Functional.infrastructure;
 using NHibernate.Linq;
 using NUnit.Framework;
 using OpenQA.Selenium;
 
 namespace Inforoom2.Test.Functional
 {
+	/// <summary>
+	/// Проверка определения города
+	/// </summary>
 	[TestFixture]
 	[Ignore]
-	public class HomeFixture : BaseFixture
+	public class HomeIndexFixture : BaseFixture
 	{
 		protected Question Question;
-
 		[Test, Description("Проверка определения города")]
 		public void CitySelectTest()
 		{
@@ -27,5 +30,8 @@ namespace Inforoom2.Test.Functional
 			var userCity = GetCookie("userCity");
 			Assert.That(userCity, Is.EqualTo("Борисоглебск"));
 		}
+
+	
+
 	}
 }

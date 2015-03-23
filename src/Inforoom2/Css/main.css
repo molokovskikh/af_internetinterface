@@ -33,6 +33,7 @@ a {text-decoration: none;color: #474747;}
 .call {background: none repeat scroll 0 0 #ffffff;border: 2px solid #e7e7e7;box-shadow: 0px 0px 2px 0px #e7e7e7; border-radius: 5px;color: #aa181e;cursor: pointer;font-family: PDFDinTextPro;
        font-size: 20px;left: 713px;padding-bottom: 3px;position: absolute;top: 88px;padding: 4px 12px;}
 .phone {position: absolute;width: 200px;height: 50px;font-size:26px;font-family: PDFDinTextPro;left: 962px;top: 92px;cursor: pointer;}
+.extra-phone {position: absolute;width: 200px;height: 50px;font-size:26px;font-family: PDFDinTextPro;left: 962px;top: 125px;cursor: pointer;}
 .menu {width:1182px;height: 57px;background: #e3dfdf;box-shadow:inset  0px 1px 5px 5px #d7d1d1;}
 .menu ul {display: inline-block;font-size: 18px;text-align: center;}
 .menu li {display: inline-block;font-family: PDFDinTextPro;margin: 15px 31px;}
@@ -127,7 +128,9 @@ font-size: 14px;height: 29px;padding-bottom: 3px;width: 127px;}
 .shelf.row {font-size: 22px;}
 .line {width: 435px;height: 55px;border-bottom:1px solid #d7d1d1;}
 .column {padding-top: 19px;width: 165px;font-size: 16px;padding-left: 10px;display: inline-block;}
+.column-fio {padding-top: 19px;font-size: 16px;padding-left: 10px;}
 .shelf {color: #a71a23;font-size: 16px;padding-top: 19px;display: inline-block;font-style: oblique;}
+.shelf-fio {color: #a71a23;font-size: 16px;width: 250px;display: run-in;font-style: oblique;position: relative;left: 180px;top: -30px;}
 .actions {display: inline-block;width: 233px;height: 400px;margin-left: 36px;}
 .action {width: 237px;height: 210px;border-radius: 12px;}
 .action img {border-radius: inherit; width: inherit;height: inherit;}

@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Web;
 using Castle.ActiveRecord;
-using Castle.ActiveRecord.Framework.Scopes;
 using Common.Tools;
 using InternetInterface.Models;
 
@@ -159,6 +156,22 @@ namespace InternetInterface.Services
 				&& assignedService.EndWorkDate.Value.Date != SystemTime.Today()) {
 				client.FreeBlockDays--;
 				client.Update();
+			}
+			if (assignedService.IsActivated && client.FreeBlockDays == 0) {
+				var userWriteOffs = client.UserWriteOffs.ToList()
+					.Where(uw => uw.Comment == "Платеж за активацию услуги добровольная блокировка").ToList();
+				var lastUserWriteOff = userWriteOffs.OrderByDescending(uw => uw.Date).ToList().FirstOrDefault();
+				if (lastUserWriteOff == null || lastUserWriteOff.Date < assignedService.BeginWorkDate) {
+					var writeOffComment = "Разовое списание за пользование услугой добровольная блокировка";
+					var writeOffs = client.WriteOffs.ToList()
+						.Where(uw => uw.Comment == writeOffComment).ToList();
+					var lastWriteOff = writeOffs.OrderByDescending(w => w.WriteOffDate).ToList().FirstOrDefault();
+					if (lastWriteOff == null || lastWriteOff.WriteOffDate < assignedService.BeginWorkDate) {
+						var newWriteOff = client.PhysicalClient.WriteOff(50m);
+						newWriteOff.Comment = writeOffComment;
+						newWriteOff.Save();
+					}
+				}
 			}
 		}
 	}

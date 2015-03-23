@@ -39,13 +39,14 @@ namespace Inforoom2.Controllers
 			ViewBag.PhysicalClient = unproxy;
 			return View();
 		}
+
 		[HttpPost]
-		public ActionResult FirstVisit([EntityBinder] PhysicalClient PhysicalClient)
+		public ActionResult FirstVisit([EntityBinder] PhysicalClient physicalClient)
 		{
-			var errors = ValidationRunner.Validate(PhysicalClient);
+			var errors = ValidationRunner.Validate(physicalClient);
 			if(errors.Length == 0)
 			{
-				DbSession.Save(PhysicalClient);
+				DbSession.Save(physicalClient);
 				var ip = Request.UserHostAddress;
 				var address = IPAddress.Parse(ip);
 #if DEBUG
@@ -72,7 +73,7 @@ namespace Inforoom2.Controllers
 					DbSession.Save(endpoint);
 					lease.Endpoint = endpoint;
 
-					var paymentForConnect = new PaymentForConnect(PhysicalClient.ConnectSum, endpoint);
+					var paymentForConnect = new PaymentForConnect(physicalClient.ConnectSum, endpoint);
 					//Пытаемся найти сотрудника
 					paymentForConnect.Employee = GetCurrentEmployee();
 
@@ -95,7 +96,7 @@ namespace Inforoom2.Controllers
 				DbSession.Save(CurrentClient);
 				return RedirectToAction("Profile");
 			}
-			ViewBag.PhysicalClient = PhysicalClient;
+			ViewBag.PhysicalClient = physicalClient;
 			return View();
 		}
 
@@ -282,15 +283,6 @@ namespace Inforoom2.Controllers
 			return RedirectToAction("Plans");
 		}
 
-		protected decimal GetPlanSwitchPrice(Plan planFrom, Plan planTo, bool onlyAvailableToSwitch)
-		{
-			IList<PlanTransfer> prices = planFrom.PlanTransfers;
-			var price = prices.FirstOrDefault(p => p.PlanFrom.Id == planFrom.Id && p.PlanTo.Id == planTo.Id);
-			if (price != null) {
-				return price.Price;
-			}
-			return 0;
-		}
 
 		protected void InitServices()
 		{
