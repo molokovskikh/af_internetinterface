@@ -30,22 +30,24 @@
 			<tbody>
 				<% if MapPartner.AccesPartner("SSI"): %>
 				<tr>
-					<td colspan=2>
-						<label for="VisibleRegisteredInfo">Показывать наряд на подключение</label>
+					<td colspan="3">
+						<label for="VisibleRegisteredInfo"><b>Показывать наряд на подключение</b></label>
 						<input type="checkbox" id="VisibleRegisteredInfo" name="VisibleRegisteredInfo" value=true />
 					</td>
 				</tr>
 				<% end %>
 				<% if not IsDefined("requestID"): %>
 				<tr>
-						<td colspan="2">
-							<label for="DealerSelect">Привел клиента в компанию:</label>
-							<select id="DealerSelect" name="client.Client.Dealer.Id">
-								<% for dealer in dealersList: %>
-								<option value="${dealer.Id}">!{dealer.Name}</option>
-								<% end %>
-							</select>
-						</td>
+					<td colspan="2">
+						<label for="DealerSelect"><b>Привел клиента в компанию:</b></label>
+						<select id="DealerSelect" name="client.Client.Dealer.Id">
+							<option value="0" selected=""></option>
+							<% for dealer in dealersList: %>
+							<option value="${dealer.Id}">!{dealer.Name}</option>
+							<% end %>
+						</select>
+					</td>
+					<td>${App.Error("client.Client.Dealer.Id")}</td>
 				</tr>
 				<tr></tr>
 				<% end %>

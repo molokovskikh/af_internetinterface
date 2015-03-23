@@ -32,9 +32,11 @@ namespace InternetInterface.Controllers
 
 		public void New()
 		{
-			var request = new Request();
+			var request = new Request {
+				RequestSource = RequestType.FromOperator
+			};
 			PropertyBag["request"] = request;
-			var partners = DbSession.Query<Partner>().ToList();
+			var partners = DbSession.Query<Partner>().ToList().OrderBy(p => p.Name).ToList();
 			var myPartner = partners.Where(p => p.Login == AuthenticationFilter.GetLoginFromCookie(Context)).ElementAt(0);
 			PropertyBag["myPartner"] = (myPartner == null) ? 0 : myPartner.Id;
 			PropertyBag["partnersList"] = partners;
