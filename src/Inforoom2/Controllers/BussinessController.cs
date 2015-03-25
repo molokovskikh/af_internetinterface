@@ -21,7 +21,7 @@ namespace Inforoom2.Controllers
 		[HttpPost]
 		public ActionResult Index(CallMeBackTicket callMeBackTicket)
 		{
-			var errors = ValidationRunner.ValidateDeep(callMeBackTicket);
+			var errors = ValidationRunner.Validate(callMeBackTicket);
 			if (errors.Length == 0)
 			{
 				DbSession.Save(callMeBackTicket);

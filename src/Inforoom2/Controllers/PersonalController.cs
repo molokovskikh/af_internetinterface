@@ -203,7 +203,7 @@ namespace Inforoom2.Controllers
 		public ActionResult Notifications(Contact contact)
 		{
 			var client = CurrentClient;
-			var errors = ValidationRunner.ValidateDeep(contact);
+			var errors = ValidationRunner.Validate(contact);
 			if (errors.Length == 0) {
 				var smsContact = client.Contacts.FirstOrDefault(c => c.Type == ContactType.SmsSending);
 				if (smsContact == null) {
