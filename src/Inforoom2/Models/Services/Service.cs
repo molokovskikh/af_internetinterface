@@ -29,16 +29,25 @@ namespace Inforoom2.Models.Services
 		[OneToMany(2, ClassType = typeof(ClientService))]
 		public virtual IList<ClientService> ServiceClients { get; set; }
 		
+		/// <summary>
+		/// Индикатор управления услугой даже для заблокированного клиента
+		/// </summary>
 		public virtual bool ProcessEvenInBlock
 		{
 			get { return false; }
 		}
 
+		/// <summary>
+		/// Активирует клиентскую услугу assignedService
+		/// </summary>
 		public virtual void Activate(ClientService assignedService, ISession session)
 		{
 		
 		}
 
+		/// <summary>
+		/// Деактивирует клиентскую услугу assignedService
+		/// </summary>
 		public virtual void Deactivate(ClientService assignedService, ISession session)
 		{
 			
@@ -49,6 +58,17 @@ namespace Inforoom2.Models.Services
 			return assignedService.IsActivated;
 		}
 
+		/// <summary>
+		/// Проверяет, может ли быть запущен процесс активации клиентской услуги assignedService
+		/// </summary>
+		public virtual bool CanActivate(ClientService assignedService)
+		{
+			return true;
+		}
+
+		/// <summary>
+		/// Проверяет, доступна ли клиенту client услуга для активации 
+		/// </summary>
 		public virtual bool IsActivableFor(Client client)
 		{
 			return false;

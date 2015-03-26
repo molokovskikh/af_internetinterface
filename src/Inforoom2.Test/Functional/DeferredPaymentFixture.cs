@@ -15,7 +15,7 @@ namespace Inforoom2.Test.Functional
 			var client = DbSession.Query<Client>().ToList().FirstOrDefault(c => c.Patronymic.Contains("заблокированный клиент"));
 			Assert.IsNotNull(client, "Искомый клиент не найден");
 			Assert.AreEqual(StatusType.NoWorked, client.Status.Type, "Клиент не имеет статус 'Заблокирован'");
-			Assert.IsTrue(client.WorkingStartDate.HasValue, "У клиента не выставлена дана подключения");
+			Assert.IsTrue(client.WorkingStartDate.HasValue, "У клиента не выставлена дата подключения");
 
 			client.ShowBalanceWarningPage = true;
 			DbSession.Update(client);
