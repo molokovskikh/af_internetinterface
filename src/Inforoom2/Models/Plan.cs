@@ -18,10 +18,14 @@ namespace Inforoom2.Models
 		[Property(NotNull = true, Unique = true), NotEmpty]
 		public virtual string Name { get; set; }
 
-		[Property(NotNull = true, Column = "_Speed")]
-		public virtual int Speed { get; set; }
 
-		[Property(Column = "Price",NotNull = true), Min(1)]
+		public virtual int Speed
+		{
+			get { return PackageSpeed.GetSpeed(); }
+			set { PackageSpeed.Speed = value; }
+		}
+
+		[Property(Column = "Price", NotNull = true), Min(1)]
 		public virtual decimal Price { get; set; }
 
 		[Property(Column = "_IsServicePlan")]
@@ -45,13 +49,24 @@ namespace Inforoom2.Models
 		[OneToMany(2, ClassType = typeof(RegionPlan))]
 		public virtual IList<RegionPlan> RegionPlans { get; set; }
 
+		[ManyToOne(Column = "PackageId")]
+		public virtual PackageSpeed PackageSpeed { get; set; }
+
 		[Property]
-		public virtual int PackageId { get; set; }
+		public virtual bool IgnoreDiscount { get; set; }
 
 		[Property]
 		public virtual bool Hidden { get; set; }
 
 		public virtual decimal SwitchPrice { get; set; }
+
+		public Plan()
+		{
+			this.Regions = new List<Region>();
+			this.PlanTransfers = new List<PlanTransfer>();
+			this.RegionPlans = new List<RegionPlan>();
+		}
+		 
 
 		/// <summary>
 		/// Получение стоимости перехода на другой тариф

@@ -53,7 +53,8 @@ namespace InternetInterface.Models
 		public Client(PhysicalClient client, Settings settings, Partner registrator = null)
 			: this()
 		{
-			if (registrator != null) {
+			if (registrator != null)
+			{
 				WhoRegistered = registrator;
 				WhoRegisteredName = registrator.Name;
 			}
@@ -67,7 +68,8 @@ namespace InternetInterface.Models
 			PercentBalance = 0.8m;
 			Status = settings.DefaultStatus;
 			Recipient = settings.DefaultRecipient;
-			foreach (var defaultService in settings.DefaultServices) {
+			foreach (var defaultService in settings.DefaultServices)
+			{
 				ClientServices.Add(new ClientService(this, defaultService));
 			}
 		}
@@ -92,7 +94,8 @@ namespace InternetInterface.Models
 			get { return _disabled; }
 			set
 			{
-				if (_disabled != value) {
+				if (_disabled != value)
+				{
 					if (value)
 						BlockDate = SystemTime.Now();
 					else
@@ -299,7 +302,8 @@ namespace InternetInterface.Models
 			if (Endpoints.Count == 0)
 				return string.Empty;
 			var deniedPorts = Endpoints[0].Switch.Endpoints.Select(e => e.Port);
-			for (int i = 1; i <= Endpoints[0].Switch.TotalPorts; i++) {
+			for (int i = 1; i <= Endpoints[0].Switch.TotalPorts; i++)
+			{
 				if (!deniedPorts.Contains(i))
 					result += string.Format("{0}, ", i);
 			}
@@ -410,13 +414,16 @@ namespace InternetInterface.Models
 		public virtual string ForSearchContactAction(string query, Action<Contact> doContact)
 		{
 			var result = String.Empty;
-			if (!String.IsNullOrEmpty(query)) {
+			if (!String.IsNullOrEmpty(query))
+			{
 				var contacts = Contacts.Where(c => c.Text.Contains(query));
-				foreach (var contact in contacts) {
+				foreach (var contact in contacts)
+				{
 					doContact(contact);
 				}
 			}
-			if (String.IsNullOrEmpty(result)) {
+			if (String.IsNullOrEmpty(result))
+			{
 				return Contact;
 			}
 			return result;
@@ -425,7 +432,8 @@ namespace InternetInterface.Models
 		public virtual string ForSearchContact(string query)
 		{
 			var result = string.Empty;
-			ForSearchContactAction(query, contact => {
+			ForSearchContactAction(query, contact =>
+			{
 				result += TextHelper.SelectContact(query, contact.Text) + "<br/>";
 			});
 			return result;
@@ -434,7 +442,8 @@ namespace InternetInterface.Models
 		public virtual string ForSearchContactNoLight(string query)
 		{
 			var result = string.Empty;
-			ForSearchContactAction(query, contact => {
+			ForSearchContactAction(query, contact =>
+			{
 				result += (contact.Text + "/r/n");
 			});
 			return result;
@@ -452,7 +461,8 @@ namespace InternetInterface.Models
 		{
 			if (PhysicalClient != null)
 				return true;
-			if (LawyerPerson != null) {
+			if (LawyerPerson != null)
+			{
 				if (LawyerPerson.Tariff != null)
 					return true;
 			}
@@ -589,7 +599,8 @@ namespace InternetInterface.Models
 				return false;
 
 			//Если у юр. лица баланс меньше абоненской платы, помноженной на коэффициент из настроек, если у него не отключены блокировки
-			if (LawyerPerson != null) {
+			if (LawyerPerson != null)
+			{
 				var serv = ClientServices.FirstOrDefault(c => NHibernateUtil.GetClass(c.Service) == typeof(WorkLawyer));
 				if (serv != null)
 					return false;
@@ -687,11 +698,13 @@ where Client = :clientid and WriteOffSum > 0
 			var orders = Orders.Where(o => o.IsDeactivated == disabled).ToList();
 			var endpointInfos = GetConnectInfo(session);
 
-			foreach (var order in orders) {
-				var orderInfo = new ClientOrderInfo {
+			foreach (var order in orders)
+			{
+				var orderInfo = new ClientOrderInfo
+				{
 					Order = order
 				};
-				if(order.EndPoint != null)
+				if (order.EndPoint != null)
 					orderInfo.ClientConnectInfo = endpointInfos.FirstOrDefault(i => i.endpointId == order.EndPoint.Id);
 				if (orderInfo.ClientConnectInfo == null)
 					orderInfo.ClientConnectInfo = new ClientConnectInfo();
@@ -702,7 +715,8 @@ where Client = :clientid and WriteOffSum > 0
 
 		public virtual IList<ClientConnectInfo> GetConnectInfo(ISession session)
 		{
-			if ((PhysicalClient != null) || (LawyerPerson != null)) {
+			if ((PhysicalClient != null) || (LawyerPerson != null))
+			{
 				var infos = session.CreateSQLQuery(String.Format(@"
 select distinctrow
 inet_ntoa(CE.Ip) as static_IP,
@@ -755,7 +769,8 @@ where CE.Client = {0}", Id))
 			if (PhysicalClient.Tariff == null)
 				throw new Exception(String.Format("Для клиента {0} не задан тариф проверь настройки", Id));
 
-			var price = AccountDiscounts(PhysicalClient.Tariff.Price);
+			var price = PhysicalClient.Tariff.IgnoreDiscount ? PhysicalClient.Tariff.Price : AccountDiscounts(PhysicalClient.Tariff.Price);
+
 			var finalPrice = AccountDiscounts(PhysicalClient.Tariff.FinalPrice);
 
 			if ((PhysicalClient.Tariff.FinalPriceInterval == 0 || PhysicalClient.Tariff.FinalPrice == 0))
@@ -817,7 +832,8 @@ where CE.Client = {0}", Id))
 			if (Internet.ActivatedByUser)
 				price += GetPriceForTariff();
 
-			if (iptvPrice == 0) {
+			if (iptvPrice == 0)
+			{
 				var service = FindActiveService<IpTvBoxRent>();
 				if (service != null)
 					price += service.GetPrice();
@@ -893,7 +909,8 @@ where CE.Client = {0}", Id))
 		{
 			if (ClientServices.Any(s => s.Endpoint == endpoint && s.Service == service))
 				return false;
-			var clientService = new ClientService(this, service) {
+			var clientService = new ClientService(this, service)
+			{
 				Endpoint = endpoint
 			};
 			ClientServices.Add(clientService);
@@ -934,28 +951,35 @@ where CE.Client = {0}", Id))
 
 		public virtual void RegistreContacts(Partner registrator)
 		{
-			if (!string.IsNullOrEmpty(PhysicalClient.PhoneNumber)) {
+			if (!string.IsNullOrEmpty(PhysicalClient.PhoneNumber))
+			{
 				var phone = PhysicalClient.PhoneNumber.Replace("-", string.Empty);
-				var contact = new Contact(registrator, this, ContactType.MobilePhone, phone) {
+				var contact = new Contact(registrator, this, ContactType.MobilePhone, phone)
+				{
 					Comment = "Указан при регистрации",
 				};
 				Contacts.Add(contact);
-				contact = new Contact(registrator, this, ContactType.SmsSending, phone) {
+				contact = new Contact(registrator, this, ContactType.SmsSending, phone)
+				{
 					Comment = "Указан при регистрации",
 				};
 				Contacts.Add(contact);
 			}
 
-			if (!string.IsNullOrEmpty(PhysicalClient.HomePhoneNumber)) {
+			if (!string.IsNullOrEmpty(PhysicalClient.HomePhoneNumber))
+			{
 				var phone = PhysicalClient.HomePhoneNumber.Replace("-", string.Empty);
-				var contact = new Contact(registrator, this, ContactType.HousePhone, phone) {
+				var contact = new Contact(registrator, this, ContactType.HousePhone, phone)
+				{
 					Comment = "Указан при регистрации",
 				};
 				Contacts.Add(contact);
 			}
 
-			if (!string.IsNullOrEmpty(PhysicalClient.Email)) {
-				var contact = new Contact(registrator, this, ContactType.Email, PhysicalClient.Email) {
+			if (!string.IsNullOrEmpty(PhysicalClient.Email))
+			{
+				var contact = new Contact(registrator, this, ContactType.Email, PhysicalClient.Email)
+				{
 					Comment = "Указан при регистрации",
 				};
 				Contacts.Add(contact);
@@ -971,8 +995,10 @@ where CE.Client = {0}", Id))
 
 			RegistreContacts(registrator);
 
-			if (havePayment) {
-				var payment = new Payment(this, PhysicalClient.Balance) {
+			if (havePayment)
+			{
+				var payment = new Payment(this, PhysicalClient.Balance)
+				{
 					Agent = registrator,
 					BillingAccount = true,
 					RecievedOn = DateTime.Now,
@@ -1016,7 +1042,8 @@ where CE.Client = {0}", Id))
 
 		public virtual bool RemoveEndpoint(ClientEndpoint endpoint)
 		{
-			if (Endpoints.Count > 1 || LawyerPerson != null) {
+			if (Endpoints.Count > 1 || LawyerPerson != null)
+			{
 				ClientServices.RemoveEach(ClientServices.Where(s => s.Endpoint == endpoint));
 				return Endpoints.Remove(endpoint);
 			}
@@ -1040,11 +1067,14 @@ where CE.Client = {0}", Id))
 			if (service == null)
 				return;
 
-			foreach (var endpoint in Endpoints) {
-				if (endpoint.Ip != null) {
+			foreach (var endpoint in Endpoints)
+			{
+				if (endpoint.Ip != null)
+				{
 					TryActivate(service, endpoint);
 				}
-				else {
+				else
+				{
 					TryDeactivate(service, endpoint);
 				}
 			}
@@ -1053,7 +1083,8 @@ where CE.Client = {0}", Id))
 		public virtual void UpdateStatus()
 		{
 			var expectedDisabled = CanDisabled();
-			if (expectedDisabled != Disabled) {
+			if (expectedDisabled != Disabled)
+			{
 				SetStatus(expectedDisabled
 					? Status.Find((uint)StatusType.NoWorked)
 					: Status.Find((uint)StatusType.Worked));
@@ -1081,18 +1112,21 @@ where CE.Client = {0}", Id))
 
 		public virtual void SetStatus(Status status)
 		{
-			if (status.Type == StatusType.VoluntaryBlocking) {
+			if (status.Type == StatusType.VoluntaryBlocking)
+			{
 				Disabled = true;
 				DebtDays = 0;
 				AutoUnblocked = false;
 			}
-			else if (status.Type == StatusType.NoWorked) {
+			else if (status.Type == StatusType.NoWorked)
+			{
 				Disabled = true;
 				Sale = 0;
 				StartNoBlock = null;
 				AutoUnblocked = true;
 			}
-			else if (status.Type == StatusType.Worked) {
+			else if (status.Type == StatusType.Worked)
+			{
 				Disabled = false;
 				//если мы возобновили работу после поломки то дата начала периода тарификации не должна изменяться
 				//если ее сбросить списания начнутся только когда клиент получит аренду
@@ -1101,15 +1135,18 @@ where CE.Client = {0}", Id))
 				DebtDays = 0;
 				ShowBalanceWarningPage = false;
 			}
-			else if (status.Type == StatusType.BlockedForRepair) {
+			else if (status.Type == StatusType.BlockedForRepair)
+			{
 				Disabled = true;
 				AutoUnblocked = false;
 			}
-			else if (status.Type == StatusType.Dissolved) {
+			else if (status.Type == StatusType.Dissolved)
+			{
 				Sale = 0m;
 			}
 
-			if (Status.Type != status.Type) {
+			if (Status.Type != status.Type)
+			{
 				StatusChangedOn = DateTime.Now;
 			}
 			Status = status;
@@ -1117,11 +1154,13 @@ where CE.Client = {0}", Id))
 
 		public virtual void PostUpdate()
 		{
-			if (LawyerPerson != null) {
+			if (LawyerPerson != null)
+			{
 				Name = LawyerPerson.ShortName;
 				Address = LawyerPerson.ActualAdress;
 			}
-			if (PhysicalClient != null) {
+			if (PhysicalClient != null)
+			{
 				Name = string.Format("{0} {1} {2}", PhysicalClient.Surname, PhysicalClient.Name, PhysicalClient.Patronymic);
 				Address = PhysicalClient.GetFullAddress();
 			}
@@ -1164,7 +1203,8 @@ where CE.Client = {0}", Id))
 
 	public class ServiceActivationException : Exception
 	{
-		public ServiceActivationException(string message) : base(message)
+		public ServiceActivationException(string message)
+			: base(message)
 		{
 		}
 	}

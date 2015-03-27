@@ -24,8 +24,21 @@ namespace Inforoom2.Helpers
 	{
 	}
 	public static class ViewHelper
-	{
+	{ 
 		static HTMLGenerator html; 
+		/// <summary>
+		/// Вывести выподающий список
+		/// </summary>
+		/// <typeparam name="TModel"></typeparam>
+		/// <typeparam name="TProperty"></typeparam>
+		/// <param name="helper"></param>
+		/// <param name="expression">Цель</param>
+		/// <param name="modelCollection">Источник</param>
+		/// <param name="optionValue">Выводимое значение</param>
+		/// <param name="htmlAttributes">Описание html атрибутов</param>
+		/// <param name="selectTagAttributes">Свойства тэга</param>
+		/// <param name="selectedValueId">Выбранный элемент</param>
+		/// <returns>HTML выподающий список</returns>
 		public static HtmlString DropDownListExtendedFor<TModel, TProperty>(this HtmlHelper helper,
 			Expression<Func<TModel, TProperty>> expression, IList<TModel> modelCollection, Func<TModel, string> optionValue,
 			Func<TModel, object> htmlAttributes, object selectTagAttributes, int selectedValueId)
@@ -71,7 +84,18 @@ namespace Inforoom2.Helpers
 				options, selectAttributes, propertyInfo);
 			return new HtmlString(selectString);
 		}
-
+		/// <summary>
+		/// Вывести выподающий список
+		/// </summary>
+		/// <typeparam name="TModel"></typeparam>
+		/// <typeparam name="TProperty"></typeparam>
+		/// <param name="helper"></param>
+		/// <param name="expression">Цель</param>
+		/// <param name="modelCollection">Источник</param>
+		/// <param name="optionValue">Выводимое значение</param>
+		/// <param name="htmlAttributes">Описание html атрибутов</param>
+		/// <param name="selectTagAttributes">Свойства тэга</param>
+		/// <returns>HTML выподающий список</returns>
 		public static HtmlString DropDownListExtendedFor<TModel, TProperty>(this HtmlHelper helper,
 			Expression<Func<TModel, TProperty>> expression, IList<TModel> modelCollection, Func<TModel, string> optionValue,
 			Func<TModel, object> htmlAttributes, object selectTagAttributes)
