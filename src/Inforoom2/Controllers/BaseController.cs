@@ -45,7 +45,7 @@ namespace Inforoom2.Controllers
 
 			EntityBinderAttribute.SetSession(DbSession);
 			//Additional
-			ValidationRunner = new ValidationRunner(DbSession);
+			ValidationRunner = ViewBag.Validation ?? new ValidationRunner(DbSession);
 			ViewBag.Validation = ValidationRunner;
 
 			ViewBag.JavascriptParams = new Dictionary<string, string>();
@@ -216,38 +216,48 @@ namespace Inforoom2.Controllers
 			return RedirectToAction(action, controller);
 		}
 
-
+		/// <summary>
+		///  Получение текущим действием выходных данных запрашиваемого действия с заданными параметрами 
+		/// </summary>
+		/// <param name="controllerString">наименование контроллера</param>
+		/// <param name="actionString">наименование действие</param>
+		/// <param name="parameters">параметры действия</param>
 		public void ForwardToAction(string controllerString, string actionString, object[] parameters)
-		{
+		{  
 			var type = Assembly.GetExecutingAssembly().GetTypes().First(t => t.Name == controllerString + "Controller");
-			var module = new UrlRoutingModule();
+
+			// Получение сведений о контроллере, действиях и их параметрах
+			var module = new UrlRoutingModule(); 
 			var col = module.RouteCollection;
 			HttpContext.RewritePath("/" + controllerString + "/" + actionString);
 			var fakeRouteData = col.GetRouteData(HttpContext);
-				
-			var ctxt = new RequestContext(ControllerContext.HttpContext, fakeRouteData);
+
+			// Создание нового контроллера, соответствующего запросу 
+			var ctxt = new RequestContext(ControllerContext.HttpContext, fakeRouteData); 
 			var factory = ControllerBuilder.Current.GetControllerFactory();
 			var iController = factory.CreateController(ctxt, controllerString);
 
+			// Передача новому контроллеру данных, имеющихся в базовогом конроллере   
 			var controller = iController as BaseController;
 			controller.DbSession = DbSession;
 			controller.ControllerContext = new ControllerContext(ctxt, this);
-
 			var methodTypes = parameters.Select(parameter => parameter.GetType()).ToList();
 			var actionMethod = type.GetMethod(actionString, methodTypes.ToArray());
 			if (actionMethod == null) {
 				ForwardToAction("Home", "Index", new object[0]);
 				return;
 			}
+			// Формирование данных, передающихся запрашиваемуму действию 
 			var c = new ActionExecutingContext();
+			c.HttpContext = ctxt.HttpContext;
 			c.RouteData = ctxt.RouteData;
-			controller.OnActionExecuting(c);
-			var actionResult = (ActionResult)actionMethod.Invoke(controller, parameters);
+			controller.ViewData = ViewData;
+			controller.OnActionExecuting(c); 
 
-			controller.ViewBag.ActionName = actionString;
-			controller.ViewBag.ControllerName = controllerString;
-			controller.ViewBag.JavascriptParams = ViewBag.JavascriptParams;
+			// Получение результата действия   
+			var actionResult = (ActionResult)actionMethod.Invoke(controller, parameters); 
 
+			// Передача полученного результата текущему действию
 			actionResult.ExecuteResult(controller.ControllerContext);
 		}
 	}
