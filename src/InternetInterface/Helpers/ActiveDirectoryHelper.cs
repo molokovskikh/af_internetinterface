@@ -69,14 +69,17 @@ namespace InternetInterface.Helpers
 			entry.CommitChanges();
 		}
 
-		public static void CreateUserInAD(string login, string password)
+		public static void CreateUserInAD(string login, string password, bool allComputers = false)
 		{
 #if !DEBUG
 			var root = new DirectoryEntry("LDAP://acdcserv/OU=Пользователи,OU=Клиенты,DC=adc,DC=analit,DC=net");
 			var userGroup = new DirectoryEntry("LDAP://acdcserv/CN=Базовая группа клиентов - получателей данных,OU=Группы,OU=Клиенты,DC=adc,DC=analit,DC=net");
 			var user = root.Children.Add("CN=" + login, "user");
 			user.Properties["samAccountName"].Value = login;
-			user.Properties["userWorkstations"].Add("acdcserv,solo");
+			var workstations = "acdcserv,solo";
+			if (allComputers)
+				workstations = "";
+			user.Properties["userWorkstations"].Add(workstations);
 			//user.Properties["description"].Value = clientCode.ToString();
 			user.CommitChanges();
 			user.Invoke("SetPassword", password);

@@ -48,10 +48,10 @@ namespace InternetInterface.Controllers
 			if (IsPost && Form.Keys.Cast<string>().Any(k => k.StartsWith("Partner."))) {
 				BindObjectInstance(partner, ParamStore.Form, "Partner");
 				if (IsValid(partner)) {
-#if !DEBUG
+#if DEBUG
 					if (ActiveDirectoryHelper.FindDirectoryEntry(partner.Login) == null) {
 						var password = CryptoPass.GeneratePassword();
-						ActiveDirectoryHelper.CreateUserInAD(partner.Login, password);
+						ActiveDirectoryHelper.CreateUserInAD(partner.Login, password,true);
 						Flash["PartnerPass"] = password;
 					}
 #endif
