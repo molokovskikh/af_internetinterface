@@ -178,7 +178,7 @@ namespace Inforoom2.Controllers
 				return;
 			callMeBackTicket.Client = CurrentClient;
 
-			var errors = ValidationRunner.ValidateDeep(callMeBackTicket);
+			var errors = ValidationRunner.Validate(callMeBackTicket);
 			if (errors.Length == 0)
 			{
 				DbSession.Save(callMeBackTicket);

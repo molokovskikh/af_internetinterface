@@ -9,13 +9,16 @@ namespace Inforoom2.Models.Services
 	[Subclass(0, ExtendsType = typeof (Service), DiscriminatorValue = "DebtWork")]
 	public class DeferredPayment : Service
 	{
+		public override bool CanActivate(ClientService assignedService)
+		{
+			var client = assignedService.Client;
+			return !assignedService.IsActivated && !assignedService.IsDeactivated && IsAvailableInThisTime(client);
+		}
+
 		public override void Activate(ClientService assignedService, ISession session)
 		{
-			if (!assignedService.IsActivated && !assignedService.IsDeactivated && !assignedService.Client.ClientServices
-				.Except(new[] {assignedService})
-				.Any(s => s.IsService(assignedService.Service))) {
+			if (CanActivate(assignedService)) {
 				var client = assignedService.Client;
-				client.Disabled = false;
 				client.RatedPeriodDate = SystemTime.Now();
 				client.SetStatus(StatusType.Worked, session);
 				session.Update(client);
