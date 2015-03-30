@@ -38,6 +38,14 @@ namespace Inforoom2.Models.Services
 		}
 
 		/// <summary>
+		/// Возвращает суммарную цену услуги
+		/// </summary>
+		public virtual decimal GetPrice(ClientService assignedService)
+		{
+			return Price;
+		}
+
+		/// <summary>
 		/// Активирует клиентскую услугу assignedService
 		/// </summary>
 		public virtual void Activate(ClientService assignedService, ISession session)
