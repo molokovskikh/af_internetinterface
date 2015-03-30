@@ -26,8 +26,11 @@
 				<input id="ConnectBtn" class="button" type="submit" value="Подключить"/>
 			</p>
 		}
-		if (client.RatedPeriodDate != null) {
-			<p>Ваш расчетный период с @client.RatedPeriodDate по @client.RatedPeriodDate.Value.AddYears(1)</p>
+		if (client.YearCycleDate != null) {
+			<p>Ваш расчетный период с 
+				@client.YearCycleDate.Value.ToShortDateString() по 
+				@client.YearCycleDate.Value.AddYears(1).AddDays(-1).ToShortDateString()
+			</p>
 		}
 	}
 	else if (client.HasActiveService(service))
@@ -40,8 +43,11 @@
 		}
 		
 		<p>Доступно @client.FreeBlockDays бесплатных дней.</p>
-		if (client.RatedPeriodDate != null) {
-			<p>Ваш расчетный период с @client.RatedPeriodDate по @client.RatedPeriodDate.Value.AddYears(1)</p>
+		if (client.YearCycleDate != null) {
+			<p>Ваш расчетный период с 
+				@client.YearCycleDate.Value.ToShortDateString() по 
+				@client.YearCycleDate.Value.AddYears(1).AddDays(-1).ToShortDateString()
+			</p>
 		}
 	}
 	
