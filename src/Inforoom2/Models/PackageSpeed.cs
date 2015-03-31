@@ -19,7 +19,7 @@ namespace Inforoom2.Models
 
 		public virtual int GetSpeed()
 		{
-			return Speed == 0 ? 0 : Speed / 100000;
+			return Speed == 0 ? 0 : Speed / 1000000;
 		}
 	}
 }

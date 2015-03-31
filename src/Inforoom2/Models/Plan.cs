@@ -55,7 +55,7 @@ namespace Inforoom2.Models
 		[OneToMany(2, ClassType = typeof(RegionPlan))]
 		public virtual IList<RegionPlan> RegionPlans { get; set; }
 
-		[ManyToOne(Column = "PackageId")]
+		[ManyToOne(Column = "PackageId",PropertyRef = "PackageId")]
 		public virtual PackageSpeed PackageSpeed { get; set; }
 
 		[Property]
