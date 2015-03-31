@@ -107,7 +107,7 @@ namespace Inforoom2.Test.Functional
 		{
 			Phone.Clear();
 			SendRequest();
-			AssertText("Введите номер телефона");
+			AssertText("Введите номер в десятизначном");
 			AssertFail();
 		}
 

@@ -14,7 +14,7 @@ namespace Inforoom2.Test.Functional
 		/// <summary>
 		/// Корректное и успешное заполнение заявки
 		/// </summary>
-		[Test, Description("Успешное платеж без скидки")]
+		[Test, Description("Успешное платеж без скидки"),Ignore("Переделать, переписать комменты и перемстить в правильную папку")]
 		public void GeneratePaymentsAndWriteoffs()
 		{
 
