@@ -1,6 +1,4 @@
-﻿@using System.Globalization
-@using System.Threading
-@using Inforoom2.Models
+﻿@using Inforoom2.Models
 @using Inforoom2.Models.Services
 
 @model dynamic
@@ -19,7 +17,7 @@
 	@if (client.CanUseService(service)) {
 		<p class="parag">	Услуга "Обещанный платеж" открывает доступ в Интернет сроком на 3-e суток при отрицательном балансе.</p>
 		<p class="parag">	Услуга бесплатная.</p>
-		<p class="parag">	Услуга предоставляется однократно.</p>
+		<p class="parag">	Услуга предоставляется однократно на период в 30 дней.</p>
 		<p class="parag">	Повторное использование услуги возможно после внесения платежа, покрывающего задолженность и абонентскую плату за тариф.</p>
 		<br/>
 		using (@Html.BeginForm("ActivateDefferedPayment", "Service", null, FormMethod.Post)) {
