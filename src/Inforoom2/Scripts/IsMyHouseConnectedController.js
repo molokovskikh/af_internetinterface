@@ -78,6 +78,14 @@ function checkAddress(firstGeoObject, geoObjects) {
 				myMap.setCenter(firstGeoObject.geometry.getCoordinates(), 17, {
 					checkZoomRange: true
 				});
+				
+				//Если яндекс не находит дом, то он заменяет его первым попавшемся домом на улице
+				//Поэтому такую ситуацию лучше бы отсекать
+				var oldHouse = $("#houseId").val();
+				console.log(oldHouse, parseInt(yandexHouseDetails), parseInt(oldHouse))
+				if (parseInt(oldHouse) != parseInt(yandexHouseDetails)) {
+					yandexHouseDetails = oldHouse;
+				}
 
 				document.getElementById('yandexCityHidden').value = yandexCity;
 				document.getElementById('yandexStreetHidden').value = yandexStreet;

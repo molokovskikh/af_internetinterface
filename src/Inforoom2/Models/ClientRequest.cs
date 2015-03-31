@@ -126,7 +126,7 @@ namespace Inforoom2.Models
 																	&& sa.House.Street.Region.City != null
 																	&& sa.House.Street.Region.City.Name.Equals(YandexCity, StringComparison.InvariantCultureIgnoreCase)
 																	&& sa.House.Street.Name.Equals(YandexStreet, StringComparison.InvariantCultureIgnoreCase)
-																	&& sa.House.Number.Equals(YandexHouse, StringComparison.InvariantCultureIgnoreCase)));
+																	&& sa.House.Number.ToLower().Equals(YandexHouse.ToLower(), StringComparison.InvariantCultureIgnoreCase)));
 			return switchAddress != null;
 		}
 	}
