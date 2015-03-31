@@ -309,6 +309,7 @@
     <Compile Include="Models\ClientRequest.cs" />
     <Compile Include="Models\ClientService.cs" />
     <Compile Include="Models\CallMeBackTicket.cs" />
+    <Compile Include="Models\PackageSpeed.cs" />
     <Compile Include="Models\Contact.cs" />
     <Compile Include="Models\Appeal.cs" />
     <Compile Include="Models\ConnectionRequest.cs" />

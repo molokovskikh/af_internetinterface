@@ -69,7 +69,7 @@ namespace Inforoom2.Controllers
 					endpoint.Client = CurrentClient;
 					endpoint.Switch = lease.Switch;
 					endpoint.Port = lease.Port;
-					endpoint.PackageId = CurrentClient.PhysicalClient.Plan.PackageId;
+					endpoint.PackageId = CurrentClient.PhysicalClient.Plan.PackageSpeed.Id;
 					DbSession.Save(endpoint);
 					lease.Endpoint = endpoint;
 

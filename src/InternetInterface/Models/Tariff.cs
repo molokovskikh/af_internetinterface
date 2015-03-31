@@ -63,6 +63,9 @@ namespace InternetInterface.Models
 		[Property, Obsolete("Подготовка к удалению")]
 		public virtual bool CanUseForSelfRegistration { get; set; }
 
+		[Property]
+		public virtual bool IgnoreDiscount { get; set; }
+
 		public static IList<Tariff> All(ISession session)
 		{
 			return session.Query<Tariff>().OrderBy(t => t.Name).ToList();
