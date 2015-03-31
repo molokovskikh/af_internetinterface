@@ -51,7 +51,7 @@ namespace InternetInterface.Controllers
 #if DEBUG
 					if (ActiveDirectoryHelper.FindDirectoryEntry(partner.Login) == null) {
 						var password = CryptoPass.GeneratePassword();
-						ActiveDirectoryHelper.CreateUserInAD(partner.Login, password,true);
+						ActiveDirectoryHelper.CreateUserInAD(partner.Login, password, true);
 						Flash["PartnerPass"] = password;
 					}
 #endif
