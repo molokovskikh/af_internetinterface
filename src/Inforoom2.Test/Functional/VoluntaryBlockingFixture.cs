@@ -2,9 +2,11 @@
 using System.Linq;
 using Billing;
 using Common.Tools;
+using Inforoom2.Helpers;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
 using Inforoom2.Test.Functional.infrastructure;
+using NHibernate.Linq;
 using NUnit.Framework;
 
 namespace Inforoom2.Test.Functional
@@ -26,6 +28,8 @@ namespace Inforoom2.Test.Functional
 			var oldBalance = Client.Balance;								// Сохранить текущий баланс клиента
 
 			if (!isFree) {
+				SystemTime.Now = () => DateTime.Now.Date.AddHours(10);	// Чтобы избежать подключение услуги после 22:00
+				Client.PaidDay = false;												// Для списания абонентской платы
 				Client.FreeBlockDays = 0;
 				Client.YearCycleDate = SystemTime.Now();			// Чтобы не уставливалось FreeBlockDays = 28
 				DbSession.Update(Client);
@@ -49,11 +53,20 @@ namespace Inforoom2.Test.Functional
 			DbSession.Refresh(Client.PhysicalClient);
 			if (isFree)
 				Assert.AreEqual(0m, oldBalance - Client.Balance, "\nClient.Balance=" + Client.Balance);
-			else
-				Assert.AreEqual(50m, oldBalance - Client.Balance, "\nClient.Balance=" + Client.Balance);
+			else {
+				var userWriteoffs = Client.UserWriteOffs.OrderByDescending(uwo => uwo.Date).ToList();
+				var abonentPay = userWriteoffs.FirstOrDefault(uwo => uwo.Comment.Contains("из-за добровольной блокировки"));
+				var activatePay = userWriteoffs.FirstOrDefault(uwo => uwo.Comment.Contains("Платеж за активацию услуги"));
+
+				Assert.IsNotNull(abonentPay, "\nАбонентская плата не начислена!");
+				Assert.AreNotEqual(0m, abonentPay.Sum, "\nАбонентская плата равна 0.");
+				Assert.IsNotNull(activatePay, "\nПлатеж за активацию услуги не начислен!");
+				var paySum = abonentPay.Sum + activatePay.Sum;
+				Assert.AreEqual(paySum, oldBalance - Client.Balance, "\nClient.Balance=" + Client.Balance);
+			}
 		}
 
-		[Test(Description = "Проверка списания с клиента платежа за подключение услуги 'Добровольная блокировка'")]
+		[Test(Description = "Проверка списания с клиента платы за подключение услуги 'Добровольная блокировка'")]
 		public void WriteoffBlockingPayWithClient()
 		{
 			SetBlockAccountToClient(isFree: false);

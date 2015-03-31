@@ -28,6 +28,12 @@ namespace Inforoom2.Models
 		[Property(Column = "Price", NotNull = true), Min(1)]
 		public virtual decimal Price { get; set; }
 
+		[Property]
+		public virtual int FinalPriceInterval { get; set; }
+
+		[Property]
+		public virtual decimal FinalPrice { get; set; }
+
 		[Property(Column = "_IsServicePlan")]
 		public virtual bool IsServicePlan { get; set; }
 
