@@ -15,7 +15,7 @@ namespace Inforoom2.Models
 		[ManyToOne(Column = "Endpoint", Cascade = "save-update")]
 		public virtual ClientEndpoint Endpoint { get; set; }
 
-		[Property(Column = "Ip",TypeType = typeof(IPUserType))]
+		[Property(Column = "Ip", TypeType = typeof(IPUserType))]
 		public virtual IPAddress Ip { get; set; }
 
 		[ManyToOne(Column = "Switch")]
@@ -26,18 +26,15 @@ namespace Inforoom2.Models
 
 		public static Lease GetLeaseForIp(string ipstr, ISession session)
 		{
-			try
-			{
+			try {
 				var address = IPAddress.Parse(ipstr);
 				var lease = session.Query<Lease>().FirstOrDefault(l => l.Ip == address);
 				return lease;
 			}
-			catch(Exception e)
-			{
-				EmailSender.SendDebugInfo("Не удалось распарсить ip: "+ipstr,e.ToString());
+			catch (Exception e) {
+				EmailSender.SendDebugInfo("Не удалось распарсить ip: " + ipstr, e.ToString());
 				return null;
 			}
-
 		}
 	}
 }

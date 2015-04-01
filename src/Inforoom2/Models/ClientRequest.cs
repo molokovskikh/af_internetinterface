@@ -24,7 +24,7 @@ namespace Inforoom2.Models
 		[Property, NotNullNotEmpty(Message = "Введите ФИО")]
 		public virtual string ApplicantName { get; set; }
 
-		[Property, NotNullNotEmpty(Message = "Введите номер телефона"),  Pattern(@"^\d{10}$", Message = "Введите номер в десятизначном формате")]
+		[Property, NotNullNotEmpty(Message = "Введите номер телефона"), Pattern(@"^\d{10}$", Message = "Введите номер в десятизначном формате")]
 		public virtual string ApplicantPhoneNumber { get; set; }
 
 		[Property(Column = "ApplicantEmail")]
@@ -100,10 +100,11 @@ namespace Inforoom2.Models
 		public virtual string GetAddress()
 		{
 			var str = City + " " + Street + " " + HouseNumber + " " + Housing + " " + Apartment;
-			if(Floor != 0)
-				str+= " (" + Floor + " этаж)";
+			if (Floor != 0)
+				str += " (" + Floor + " этаж)";
 			return str;
 		}
+
 		public virtual bool IsYandexAddressValid()
 		{
 			if (string.IsNullOrEmpty(YandexCity)
@@ -122,11 +123,11 @@ namespace Inforoom2.Models
 			if (!IsYandexAddressValid())
 				return false;
 
-			var switchAddress = switchAddresses.FirstOrDefault(sa => (sa.House != null 
-																	&& sa.House.Street.Region.City != null
-																	&& sa.House.Street.Region.City.Name.Equals(YandexCity, StringComparison.InvariantCultureIgnoreCase)
-																	&& sa.House.Street.Name.Equals(YandexStreet, StringComparison.InvariantCultureIgnoreCase)
-																	&& sa.House.Number.Equals(YandexHouse, StringComparison.InvariantCultureIgnoreCase)));
+			var switchAddress = switchAddresses.FirstOrDefault(sa => (sa.House != null
+			                                                          && sa.House.Street.Region.City != null
+			                                                          && sa.House.Street.Region.City.Name.Equals(YandexCity, StringComparison.InvariantCultureIgnoreCase)
+			                                                          && sa.House.Street.Name.Equals(YandexStreet, StringComparison.InvariantCultureIgnoreCase)
+			                                                          && sa.House.Number.Equals(YandexHouse, StringComparison.InvariantCultureIgnoreCase)));
 			return switchAddress != null;
 		}
 	}

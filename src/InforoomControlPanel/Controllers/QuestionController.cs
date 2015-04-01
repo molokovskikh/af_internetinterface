@@ -34,13 +34,13 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.Question = question;
 			return View();
 		}
-		
+
 		public ActionResult Move(int? questionId, string direction)
 		{
 			return ChangeModelPriority<Question>(questionId, direction, "QuestionIndex", "Question");
 		}
 
-		[ValidateInput(false),HttpPost]
+		[ValidateInput(false), HttpPost]
 		public ActionResult UpdateQuestion(Question question)
 		{
 			//question.Answer = HttpUtility.HtmlEncode(question.Answer);

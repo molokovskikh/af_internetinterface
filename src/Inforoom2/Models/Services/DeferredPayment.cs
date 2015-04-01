@@ -6,13 +6,13 @@ using NHibernate.Mapping.Attributes;
 
 namespace Inforoom2.Models.Services
 {
-	[Subclass(0, ExtendsType = typeof (Service), DiscriminatorValue = "DebtWork")]
+	[Subclass(0, ExtendsType = typeof(Service), DiscriminatorValue = "DebtWork")]
 	public class DeferredPayment : Service
 	{
 		public override void Activate(ClientService assignedService, ISession session)
 		{
 			if (!assignedService.IsActivated && !assignedService.IsDeactivated && !assignedService.Client.ClientServices
-				.Except(new[] {assignedService})
+				.Except(new[] { assignedService })
 				.Any(s => s.IsService(assignedService.Service))) {
 				var client = assignedService.Client;
 				client.Disabled = false;
@@ -31,7 +31,7 @@ namespace Inforoom2.Models.Services
 		{
 			TimeToActivation = TimeSpan.Zero;
 			var lastService = client.ClientServices.OrderBy(cs => cs.BeginDate).LastOrDefault(s => s.Service.Id == Id);
-			if (lastService == null)							// Т.е. "Обещанный платеж" ещё ни разу не активировался
+			if (lastService == null) // Т.е. "Обещанный платеж" ещё ни разу не активировался
 				return true;
 			if (lastService.IsActivated)
 				return false;
@@ -40,7 +40,7 @@ namespace Inforoom2.Models.Services
 			// Проверка, запрещающая клиенту повторно подключить услугу без пополнения баланса на 80% от цены тарифа (СОГЛАСОВАНО)
 			if (serviceDate != DateTime.MinValue) {
 				var clientPayments = (client.Payments != null) ? client.Payments.Where(p => p.PaidOn > serviceDate).ToList() : null;
-					var paySum = (clientPayments != null) ? clientPayments.Sum(p => p.Sum) : 0;
+				var paySum = (clientPayments != null) ? clientPayments.Sum(p => p.Sum) : 0;
 				if (paySum < (0.8m * client.Plan.Price))
 					return false;
 			}

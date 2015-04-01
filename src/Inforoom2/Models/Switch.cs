@@ -17,7 +17,7 @@ namespace Inforoom2.Models
 
 		[Property]
 		public virtual string Mac { get; set; }
-		
+
 		[Property(Column = "TotalPorts")]
 		public virtual int PortCount { get; set; }
 

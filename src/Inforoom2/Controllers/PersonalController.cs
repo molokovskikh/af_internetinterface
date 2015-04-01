@@ -44,8 +44,7 @@ namespace Inforoom2.Controllers
 		public ActionResult FirstVisit([EntityBinder] PhysicalClient physicalClient)
 		{
 			var errors = ValidationRunner.Validate(physicalClient);
-			if(errors.Length == 0)
-			{
+			if (errors.Length == 0) {
 				DbSession.Save(physicalClient);
 				var ip = Request.UserHostAddress;
 				var address = IPAddress.Parse(ip);
@@ -54,15 +53,14 @@ namespace Inforoom2.Controllers
 #else
 				var lease = DbSession.Query<Lease>().FirstOrDefault(l => l.Ip == address);
 #endif
-				if(CurrentClient.Endpoints.Count == 0 && lease != null)
-				{
+				if (CurrentClient.Endpoints.Count == 0 && lease != null) {
 					//var settings = new Settings(session);
 					if (string.IsNullOrEmpty(lease.Switch.Name)) {
 						var addr = CurrentClient.PhysicalClient.Address;
 						if (addr != null)
 							lease.Switch.Name = addr.House.Street.Region.City.Name + ", " + addr.House.Street.Name + ", " + addr.House.Number;
 						else
-							lease.Switch.Name = CurrentClient.Id +": адрес неопределен";
+							lease.Switch.Name = CurrentClient.Id + ": адрес неопределен";
 					}
 
 					var endpoint = new ClientEndpoint();
@@ -102,10 +100,10 @@ namespace Inforoom2.Controllers
 
 		public new ActionResult Profile()
 		{
-			if(CurrentClient == null)
+			if (CurrentClient == null)
 				return RedirectToAction("Login", "Account");
 
-			if(!CurrentClient.Lunched)
+			if (!CurrentClient.Lunched)
 				return RedirectToAction("FirstVisit");
 
 			InitServices();
@@ -151,8 +149,8 @@ namespace Inforoom2.Controllers
 				obj.Sum = payment.Sum;
 				obj.Comment = payment.Comment;
 				obj.WhoRegistered = "Инфорум";
-				if(payment.Employee != null && payment.Employee.IsPaymentSystem())
-					obj.WhoRegistered =  payment.Employee.Name;
+				if (payment.Employee != null && payment.Employee.IsPaymentSystem())
+					obj.WhoRegistered = payment.Employee.Name;
 				if (payment.Virtual.HasValue && payment.Virtual.Value)
 					obj.WhoRegistered += " (бонус)";
 				obj.Description = new StringBuilder().AppendFormat("Пополнение счета").ToString();
@@ -275,8 +273,7 @@ namespace Inforoom2.Controllers
 			var warning = (client.GetWorkDays() <= 3) ? " Обратите внимание, что у вас низкий баланс!" : "";
 			SuccessMessage("Тариф успешно изменен." + warning);
 			var msg = string.Format("Изменение тарифа был изменен с '{0}'({1}) на '{2}'({3}). Стоимость перехода: {4} руб.", oldPlan.Name, oldPlan.Price, plan.Name, plan.Price, result.Sum);
-			var appeal = new Appeal(msg, client, AppealType.User)
-			{
+			var appeal = new Appeal(msg, client, AppealType.User) {
 				Employee = GetCurrentEmployee()
 			};
 			DbSession.Save(appeal);
@@ -307,10 +304,11 @@ namespace Inforoom2.Controllers
 			IList<Plan> plans;
 			//если адреса нет, показываем все тарифы
 			if (client.PhysicalClient.Address != null) {
-				plans = GetList<Plan>().Where(p => !p.IsArchived && !p.IsServicePlan && p.Regions.Any(r => r.Id == client.PhysicalClient.Address.House.Street.Region.Id)).ToList();
+				//Если у тарифа нет региона, то он доступен во всех регионах
+				plans = GetList<Plan>().Where(p => !p.IsArchived && !p.IsServicePlan && (!p.RegionPlans.Any() || p.RegionPlans.Any(r => r.Region.Id == client.PhysicalClient.Address.House.Street.Region.Id))).ToList();
 			}
 			else {
-				plans = GetList<Plan>().Where(p => !p.IsArchived && !p.IsServicePlan).ToList();
+				plans = GetList<Plan>().Where(p => !p.IsArchived && !p.IsServicePlan && !p.RegionPlans.Any()).ToList();
 			}
 
 			ViewBag.Plans = plans.ToList();

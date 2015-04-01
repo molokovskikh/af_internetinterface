@@ -9,7 +9,7 @@ using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models
 {
-	[Class(0, Table = "PhysicalClients", Schema = "internet", NameType = typeof (PhysicalClient))]
+	[Class(0, Table = "PhysicalClients", Schema = "internet", NameType = typeof(PhysicalClient))]
 	public class PhysicalClient : BaseModel
 	{
 		[Property]
@@ -51,7 +51,7 @@ namespace Inforoom2.Models
 		[Property, NotNullNotEmpty(Message = "Введите серию паспорта")]
 		public virtual string PassportSeries { get; set; }
 
-		[Property,DateTimeNotEmpty]
+		[Property, DateTimeNotEmpty]
 		public virtual DateTime PassportDate { get; set; }
 
 		[Property(Column = "RegistrationAdress"), NotNull(Message = "Введите адрес регистрации")]
@@ -89,8 +89,7 @@ namespace Inforoom2.Models
 		public virtual UserWriteOff RequestChangePlan(Plan planToSwitchOn)
 		{
 			var price = Plan.GetTransferPrice(planToSwitchOn);
-			if (!IsEnoughBalance(price))
-			{
+			if (!IsEnoughBalance(price)) {
 				return null;
 			}
 			return SwitchPlan(planToSwitchOn, price);
@@ -110,7 +109,7 @@ namespace Inforoom2.Models
 			};
 			LastTimePlanChanged = DateTime.Now;
 			if (Client.Internet.ActivatedByUser)
-				Client.Endpoints.ForEach(e=>e.PackageId = Plan.PackageId);
+				Client.Endpoints.ForEach(e => e.PackageId = Plan.PackageId);
 			return writeOff;
 		}
 

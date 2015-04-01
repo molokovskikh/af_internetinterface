@@ -22,8 +22,7 @@ namespace Inforoom2.Controllers
 		public ActionResult Index(CallMeBackTicket callMeBackTicket)
 		{
 			var errors = ValidationRunner.ValidateDeep(callMeBackTicket);
-			if (errors.Length == 0)
-			{
+			if (errors.Length == 0) {
 				DbSession.Save(callMeBackTicket);
 				SuccessMessage("Заявка отправлена. В течении для вам перезвонят.");
 				return new RedirectResult(Url.Action("Index") + "#notification");
@@ -31,7 +30,7 @@ namespace Inforoom2.Controllers
 
 			ViewBag.NewTicket = callMeBackTicket;
 			//если на странице бизнеса отправить заявку на звонок, то не должно появляться окно
-			if(Request.Params["bussiness"] != null)
+			if (Request.Params["bussiness"] != null)
 				AddJavascriptParam("CallMeBack", "0");
 			return View();
 		}

@@ -6,7 +6,7 @@ namespace Inforoom2.Models
 	/// <summary>
 	/// Модель сотрудника (администратора)
 	/// </summary>
-	[Class(0, Table = "Partners", NameType = typeof (Employee))]
+	[Class(0, Table = "Partners", NameType = typeof(Employee))]
 	public class Employee : BaseModel
 	{
 		[Property]
@@ -20,7 +20,7 @@ namespace Inforoom2.Models
 
 		[Property]
 		public virtual bool IsDisabled { get; set; }
-		
+
 		[Bag(0, Table = "user_role", Lazy = CollectionLazy.False)]
 		[Key(1, Column = "user", NotNull = false)]
 		[ManyToMany(2, Column = "role", ClassType = typeof(Role))]

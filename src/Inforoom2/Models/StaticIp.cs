@@ -2,7 +2,7 @@
 
 namespace Inforoom2.Models
 {
-	[Class(0, Table = "StaticIps", Schema = "internet", NameType = typeof (StaticIp))]
+	[Class(0, Table = "StaticIps", Schema = "internet", NameType = typeof(StaticIp))]
 	public class StaticIp : BaseModel
 	{
 		[ManyToOne(Column = "EndPoint", Cascade = "save-update")]

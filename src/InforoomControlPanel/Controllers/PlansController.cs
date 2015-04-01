@@ -18,7 +18,7 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		public ActionResult PlanIndex()
 		{
-			var plans = DbSession.Query<Plan>().OrderByDescending(i=> i.Id).ToList();
+			var plans = DbSession.Query<Plan>().OrderByDescending(i => i.Id).ToList();
 			var regions = DbSession.Query<Region>().ToList();
 			ViewBag.Plans = plans;
 			ViewBag.Regions = regions;
@@ -37,17 +37,12 @@ namespace InforoomControlPanel.Controllers
 			//назначение поля тарифа
 			PlanTransfer.PlanFrom = plan;
 			var plans = DbSession.Query<Plan>().OrderByDescending(i => i.Id).ToList();
-			foreach (var transfer in plan.PlanTransfers) {
-				plans.Remove(transfer.PlanTo);
-			}
+			foreach (var transfer in plan.PlanTransfers) plans.Remove(transfer.PlanTo);
 
 			var RegionPlan = new RegionPlan();
 			RegionPlan.Plan = plan;
 			var regions = DbSession.Query<Region>().ToList();
-			foreach (var rp in plan.RegionPlans)
-			{
-				regions.Remove(rp.Region);
-			}
+			foreach (var rp in plan.RegionPlans) regions.Remove(rp.Region);
 
 			ViewBag.Plans = plans;
 			ViewBag.Plan = plan;
@@ -80,8 +75,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult AddPlanTransfer([EntityBinder] PlanTransfer planTransfer)
 		{
 			var errors = ValidationRunner.ValidateDeep(planTransfer);
-			if (errors.Length == 0)
-			{
+			if (errors.Length == 0) {
 				DbSession.Save(planTransfer);
 				SuccessMessage("Стоимость перехода успешно отредактирован");
 				return RedirectToAction("EditPlan", new { id = planTransfer.PlanFrom.Id });
@@ -110,8 +104,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult AddRegionPlan([EntityBinder] RegionPlan regionPlan)
 		{
 			var errors = ValidationRunner.Validate(regionPlan);
-			if (errors.Length == 0)
-			{
+			if (errors.Length == 0) {
 				DbSession.Save(regionPlan);
 				SuccessMessage("Регион успешно добавлен");
 				return RedirectToAction("EditPlan", new { id = regionPlan.Plan.Id });
@@ -133,8 +126,5 @@ namespace InforoomControlPanel.Controllers
 			SuccessMessage("Регион успешно удален");
 			return RedirectToAction("EditPlan", new { id = rp.Plan.Id });
 		}
-
-
-
 	}
 }

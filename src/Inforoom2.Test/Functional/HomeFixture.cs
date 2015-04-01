@@ -18,6 +18,7 @@ namespace Inforoom2.Test.Functional
 	public class HomeIndexFixture : BaseFixture
 	{
 		protected Question Question;
+
 		[Test, Description("Проверка определения города")]
 		public void CitySelectTest()
 		{
@@ -30,8 +31,5 @@ namespace Inforoom2.Test.Functional
 			var userCity = GetCookie("userCity");
 			Assert.That(userCity, Is.EqualTo("Борисоглебск"));
 		}
-
-	
-
 	}
 }

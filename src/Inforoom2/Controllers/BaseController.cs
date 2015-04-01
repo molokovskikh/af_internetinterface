@@ -33,8 +33,7 @@ namespace Inforoom2.Controllers
 			//Hibernate
 			var controller = this;
 			var SessionFactory = MvcApplication.SessionFactory;
-			if (!CurrentSessionContext.HasBind(SessionFactory))
-			{
+			if (!CurrentSessionContext.HasBind(SessionFactory)) {
 				var session = SessionFactory.OpenSession();
 				CurrentSessionContext.Bind(session);
 				session.BeginTransaction();
@@ -49,8 +48,8 @@ namespace Inforoom2.Controllers
 			ViewBag.Validation = ValidationRunner;
 
 			ViewBag.JavascriptParams = new Dictionary<string, string>();
-			var currentDate  = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
-			AddJavascriptParam("Timestamp",currentDate.ToString());
+			var currentDate = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+			AddJavascriptParam("Timestamp", currentDate.ToString());
 		}
 
 		public void AddJavascriptParam(string name, string value)
@@ -72,7 +71,6 @@ namespace Inforoom2.Controllers
 			var employeeId = Convert.ToInt32(Session["employee"]);
 			return DbSession.Query<Employee>().FirstOrDefault(k => k.Id == employeeId);
 		}
-
 
 
 		public HttpSessionStateBase HttpSession
@@ -116,16 +114,15 @@ namespace Inforoom2.Controllers
 			}
 
 			log.ErrorFormat("{0} {1}", filterContext.Exception.Message, filterContext.Exception.StackTrace);
-			if(DbSession == null)
+			if (DbSession == null)
 				return;
 			// Иногда транзакции надо закрывать отдельно, так как метод OnResultExecuted не будет вызван
 			if (DbSession.Transaction.IsActive) {
 				EmailSender.SendDebugInfo("Rollback транзакции в OnException", "");
 				DbSession.Transaction.Rollback();
 			}
-			if(DbSession.IsOpen)
+			if (DbSession.IsOpen)
 				DbSession.Close();
-
 		}
 
 		protected virtual StringBuilder CollectDebugInfo()
@@ -145,8 +142,7 @@ namespace Inforoom2.Controllers
 			if (filterContext.Exception != null)
 				EmailSender.SendDebugInfo("Rollback транзакции в OnResultExecuted", "");
 
-			if (session.Transaction.IsActive)
-			{
+			if (session.Transaction.IsActive) {
 				//Мне кажется этот код никогда не исполнится, todo подумать и удалить
 				if (filterContext.Exception != null)
 					session.Transaction.Rollback();
@@ -179,13 +175,12 @@ namespace Inforoom2.Controllers
 			catch (Exception e) {
 				return null;
 			}
-			
 		}
 
 		public void SetCookie(string name, string value)
 		{
 			if (value == null) {
-				Response.Cookies.Add(new HttpCookie(name, "false") { Path = "/",Expires = DateTime.Now});
+				Response.Cookies.Add(new HttpCookie(name, "false") { Path = "/", Expires = DateTime.Now });
 				return;
 			}
 			var plainTextBytes = Encoding.UTF8.GetBytes(value);
@@ -224,7 +219,7 @@ namespace Inforoom2.Controllers
 			var col = module.RouteCollection;
 			HttpContext.RewritePath("/" + controllerString + "/" + actionString);
 			var fakeRouteData = col.GetRouteData(HttpContext);
-				
+
 			var ctxt = new RequestContext(ControllerContext.HttpContext, fakeRouteData);
 			var factory = ControllerBuilder.Current.GetControllerFactory();
 			var iController = factory.CreateController(ctxt, controllerString);

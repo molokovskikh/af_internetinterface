@@ -2,7 +2,7 @@
 
 namespace Inforoom2.Models
 {
-		[Class(0, Table = "AdditionalStatus", NameType = typeof(AdditionalStatus))]
+	[Class(0, Table = "AdditionalStatus", NameType = typeof(AdditionalStatus))]
 	public class AdditionalStatus : BaseModel
 	{
 		[Property]

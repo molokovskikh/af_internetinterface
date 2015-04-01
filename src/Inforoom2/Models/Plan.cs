@@ -21,7 +21,7 @@ namespace Inforoom2.Models
 		[Property(NotNull = true, Column = "_Speed")]
 		public virtual int Speed { get; set; }
 
-		[Property(Column = "Price",NotNull = true), Min(1)]
+		[Property(Column = "Price", NotNull = true), Min(1)]
 		public virtual decimal Price { get; set; }
 
 		[Property(Column = "_IsServicePlan")]
@@ -29,11 +29,6 @@ namespace Inforoom2.Models
 
 		[Property(Column = "_IsArchived")]
 		public virtual bool IsArchived { get; set; }
-
-		[Bag(0, Table = "region_plan")]
-		[Key(1, Column = "Plan", NotNull = false)]
-		[ManyToMany(2, Column = "Region", ClassType = typeof(Region))]
-		public virtual IList<Region> Regions { get; set; }
 
 		[Bag(0, Table = "PlanTransfer", Cascade = "save-update")]
 		[Key(1, Column = "PlanFrom")]

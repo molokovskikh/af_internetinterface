@@ -18,7 +18,7 @@ namespace Inforoom2.Models
 
 		public virtual List<int> GetAvailiblePairCounts()
 		{
-			var arr = new List<int> {16,20,25};
+			var arr = new List<int> { 16, 20, 25 };
 			return arr;
 		}
 	}

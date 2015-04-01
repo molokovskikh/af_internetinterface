@@ -40,7 +40,7 @@ namespace Inforoom2.Models
 			IsActivated = true;
 			currentClient.ClientServices.Add(this);
 			currentClient.IsNeedRecofiguration = Service.GetType() == typeof(DeferredPayment);
-			
+
 			var message = string.Format("Услуга \"{0}\" активирована на период с {1} по {2}", Service.Name,
 				BeginDate != null
 					? BeginDate.Value.ToShortDateString()
@@ -54,7 +54,7 @@ namespace Inforoom2.Models
 		public virtual string DeActivateFor(Client currentClient, ISession session)
 		{
 			Service.Deactivate(this, session);
-			currentClient.IsNeedRecofiguration =  Service.GetType() == typeof(BlockAccountService);
+			currentClient.IsNeedRecofiguration = Service.GetType() == typeof(BlockAccountService);
 			return String.Format("Услуга \"{0}\" деактивирована", Service.Name);
 		}
 

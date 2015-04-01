@@ -67,13 +67,14 @@ namespace Inforoom2.Controllers
 				//Если дом найден то ищем, имеется ли там коммутатор
 				var addr = DbSession.Query<SwitchAddress>().FirstOrDefault(i => i.House == dbHouse);
 				var availible = addr != null;
-				result = new {streetAlias = dbStreetAlias != null, city = dbCity.Name, street = dbStreet.Name, house = dbHouse.Number, geomark = dbHouse.Geomark, available = availible };
+				result = new { streetAlias = dbStreetAlias != null, city = dbCity.Name, street = dbStreet.Name, house = dbHouse.Number, geomark = dbHouse.Geomark, available = availible };
 			}
 			else
-				result = new {streetAlias = dbStreetAlias != null, city = dbCity.Name, street = dbStreet.Name, geomark = dbStreet.Geomark };
+				result = new { streetAlias = dbStreetAlias != null, city = dbCity.Name, street = dbStreet.Name, geomark = dbStreet.Geomark };
 
 			return Json(result);
 		}
+
 		private void InitClientRequest(Plan plan = null, string city = "", string street = "", string house = "")
 		{
 			ViewBag.IsRedirected = false;

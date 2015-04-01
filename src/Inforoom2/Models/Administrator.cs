@@ -3,7 +3,7 @@ using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models
 {
-	[Class(0, Table = "user_role", NameType = typeof (Administrator))]
+	[Class(0, Table = "user_role", NameType = typeof(Administrator))]
 	public class Administrator : BaseModel
 	{
 		public Administrator()
@@ -11,7 +11,7 @@ namespace Inforoom2.Models
 			Role = 1;
 		}
 
-		public Administrator(Employee employee):this()
+		public Administrator(Employee employee) : this()
 		{
 			Employee = employee;
 		}

@@ -23,7 +23,7 @@ namespace Inforoom2.Test.Integration
 			typeof(BuildManager).GetProperty("PreStartInitStage", BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, 2, null);
 			typeof(BuildManager).GetField("_topLevelFilesCompiledStarted", BindingFlags.NonPublic | BindingFlags.Instance).
 				SetValue(typeof(BuildManager).GetField("_theBuildManager", BindingFlags.NonPublic | BindingFlags.Static).
-				GetValue(null), true);
+					GetValue(null), true);
 
 			AreaRegistration.RegisterAllAreas();
 			session = MvcApplication.SessionFactory.OpenSession();
@@ -41,6 +41,4 @@ namespace Inforoom2.Test.Integration
 			session.Close();
 		}
 	}
-
-	
 }

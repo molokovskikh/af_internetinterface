@@ -21,22 +21,34 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.BreadCrumb = "Клиенты";
 		}
 
-		public ActionResult ClientList(int page=1)
+		public ActionResult ClientList(int page = 1)
 		{
 			var perpage = 100;
-			var clients = DbSession.Query<Client>().Where(i=>i.PhysicalClient != null).Skip((page-1)*perpage).Take(perpage).ToList();
+			var clients = DbSession.Query<Client>().Where(i => i.PhysicalClient != null).Skip((page - 1) * perpage).Take(perpage).ToList();
 			ViewBag.Clients = clients;
 			//Пагинация
 			ViewBag.Models = clients;
 			ViewBag.Page = page;
 			ViewBag.ModelsPerPage = perpage;
-			ViewBag.ModelsCount = DbSession.QueryOver<Client>().Where(i=>i.PhysicalClient != null).RowCount();
+			ViewBag.ModelsCount = DbSession.QueryOver<Client>().Where(i => i.PhysicalClient != null).RowCount();
 			return View("ClientList");
 		}
 
 		public ActionResult ClientInfo(int clientId)
 		{
-			ViewBag.Client = DbSession.Get<Client>(clientId);
+			// Find Client
+			var Client = DbSession.Query<Client>().FirstOrDefault(i => i.PhysicalClient != null && i.Id == clientId);
+			ViewBag.Client = Client;
+			if (Client.Status.Type == StatusType.BlockedAndConnected) {
+				// Find Switches
+				var networkNodeList = DbSession.QueryOver<SwitchAddress>().Where(s =>
+					s.House == Client.PhysicalClient.Address.House && s.Entrance == Client.PhysicalClient.Address.Entrance ||
+					s.House == Client.PhysicalClient.Address.House && s.Entrance == null).List();
+
+				if (networkNodeList.Count > 0) {
+					ViewBag.NetworkNodeList = networkNodeList; //.NetworkNode.Switches.ToList(); 
+				}
+			}
 			return View();
 		}
 
@@ -185,7 +197,7 @@ namespace InforoomControlPanel.Controllers
 		/// <returns></returns>
 		public ActionResult ClientRequestsList()
 		{
-			var clientRequests = DbSession.Query<ClientRequest>().OrderByDescending(i=>i.Id).ToList();
+			var clientRequests = DbSession.Query<ClientRequest>().OrderByDescending(i => i.Id).ToList();
 			ViewBag.ClientRequests = clientRequests;
 			return View();
 		}

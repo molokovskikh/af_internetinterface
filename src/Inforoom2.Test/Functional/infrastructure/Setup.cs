@@ -40,8 +40,8 @@ namespace Inforoom2.Test.Functional
 			//оставляют невысвобожденные ресурсы браузера и веб сервера
 			SeleniumFixture.GlobalSetup();
 			_webServer = SeleniumFixture.StartServer();
-			
 		}
+
 		[TearDown]
 		public void TeardownFixture()
 		{

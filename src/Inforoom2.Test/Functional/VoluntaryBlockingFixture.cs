@@ -23,11 +23,11 @@ namespace Inforoom2.Test.Functional
 			_billing.SafeProcessPayments();
 			_billing.ProcessWriteoffs();
 			DbSession.Refresh(Client.PhysicalClient);
-			var oldBalance = Client.Balance;								// Сохранить текущий баланс клиента
+			var oldBalance = Client.Balance; // Сохранить текущий баланс клиента
 
 			if (!isFree) {
 				Client.FreeBlockDays = 0;
-				Client.YearCycleDate = SystemTime.Now();			// Чтобы не уставливалось FreeBlockDays = 28
+				Client.YearCycleDate = SystemTime.Now(); // Чтобы не уставливалось FreeBlockDays = 28
 				DbSession.Update(Client);
 				DbSession.Flush();
 			}
@@ -44,7 +44,7 @@ namespace Inforoom2.Test.Functional
 			Assert.IsTrue(Client.Status.Type == StatusType.VoluntaryBlocking, "\nКлиент не был заблокирован");
 
 			// Обработать новые списания клиента
-			_billing.SafeProcessPayments();									// Для обработки UserWriteOffs
+			_billing.SafeProcessPayments(); // Для обработки UserWriteOffs
 			_billing.ProcessWriteoffs();
 			DbSession.Refresh(Client.PhysicalClient);
 			if (isFree)
@@ -65,8 +65,8 @@ namespace Inforoom2.Test.Functional
 			SetBlockAccountToClient(isFree: true);
 
 			Client.FreeBlockDays = 0;
-			Client.PaidDay = false;												// Чтобы формировались списания: 50 р.(разово) + 3 р.(ежедневно)
-			Client.YearCycleDate = SystemTime.Now();			// Чтобы не уставливалось FreeBlockDays = 28
+			Client.PaidDay = false; // Чтобы формировались списания: 50 р.(разово) + 3 р.(ежедневно)
+			Client.YearCycleDate = SystemTime.Now(); // Чтобы не уставливалось FreeBlockDays = 28
 			DbSession.Update(Client);
 			DbSession.Flush();
 
@@ -76,8 +76,8 @@ namespace Inforoom2.Test.Functional
 			Assert.AreEqual(53m, oldBalance - Client.Balance, "\nClient.Balance=" + Client.Balance);
 
 			SystemTime.Now = () => DateTime.Now.AddDays(1);
-			Client.PaidDay = false;												// Чтобы формировалось ежедневное списание = 3 р.
-			Client.YearCycleDate = SystemTime.Now();			// Чтобы не уставливалось FreeBlockDays = 28
+			Client.PaidDay = false; // Чтобы формировалось ежедневное списание = 3 р.
+			Client.YearCycleDate = SystemTime.Now(); // Чтобы не уставливалось FreeBlockDays = 28
 			DbSession.Update(Client);
 			DbSession.Flush();
 

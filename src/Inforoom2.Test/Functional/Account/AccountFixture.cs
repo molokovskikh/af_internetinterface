@@ -29,6 +29,5 @@ namespace Inforoom2.Test.Functional.Account
 			Login.SendKeys(Client.Id.ToString());
 			Password.SendKeys(DefaultClientPassword);
 		}
-
 	}
 }
