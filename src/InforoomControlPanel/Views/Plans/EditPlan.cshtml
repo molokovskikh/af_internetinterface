@@ -32,10 +32,7 @@
 				<div class="form-group">
 					<label class="col-sm-3 control-label" for="field-ta">Скорость</label>
 					<div class="col-sm-5">
-						@{
-							var list = new SelectList(speed.Select(i => new { PackageId = i.PackageId, Speed = i.GetSpeed().ToString("F") }).ToList(),"PackageId","Speed",currentSpeed.PackageId);
-						}
-						@Html.DropDownListFor(i=>plan.PackageSpeed.PackageId,list,new { @class = "form-control"})
+						@Html.DropDownListExtendedFor(i => plan.PackageSpeed, speed, obj => obj.GetSpeed().ToString(), null, new { @class = "form-control" }, currentSpeed.Id)
 						@ViewBag.Validation.GetError(plan, "PackageSpeed")
 					</div>
 				</div>

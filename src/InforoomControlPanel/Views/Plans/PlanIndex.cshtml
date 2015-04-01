@@ -29,7 +29,7 @@
 			{
 				<tr role="row" class="odd">
 					<td><a href="@Url.Action("EditPlan","Plans",new {id = item.Id})">@item.Name</a></td>
-					<td>@item.Speed</td>
+					<td>@item.Speed.ToString("F")</td>
 					<td>@item.PackageSpeed.Id</td>
 					<td>@item.Price</td>
 					<td>@(!item.IsArchived ? "Да" : "Нет")</td>

@@ -34,7 +34,7 @@
 
 			<tr class="menufee">
 				<td class="tariffscost">@Html.DisplayFor(modelItem => plan.Name)</td>
-				<td class="fee">@Html.DisplayFor(modelItem => plan.Speed.ToString("F")) мбит/с</td>
+				<td class="fee">@plan.Speed.ToString("F") мбит/с</td>
 				<td class="fee">@Html.DisplayFor(modelItem => plan.Price) р.</td>
 				<td class="fee">@client.Plan.GetTransferPrice(plan).ToString("f2") р.</td>
 				<td >
