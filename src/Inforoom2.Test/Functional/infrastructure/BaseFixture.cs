@@ -467,8 +467,8 @@ namespace Inforoom2.Test.Functional.infrastructure
 			DbSession.Save(plan);
 
 			plan = new Plan();
-			plan.Price = 599;
-			plan.Name = "23/8";
+			plan.Price = 300;
+			plan.Name = "Народный";
 			plan.IsArchived = false;
 			plan.Hidden = false;
 			plan.IsServicePlan = false;
@@ -479,7 +479,7 @@ namespace Inforoom2.Test.Functional.infrastructure
 			DbSession.Flush();
 
 			//todo подумать что с этим делать
-			plan.ChangeId(83, DbSession);
+			plan.ChangeId(85, DbSession);
 
 			//Переходы с тарифов
 			var plans = DbSession.Query<Plan>().ToList();
