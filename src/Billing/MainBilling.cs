@@ -33,7 +33,8 @@ namespace Billing
 		public uint[] FirstPaymentBonusTariffIds = {
 			45,		// "Популярный"
 			49,		// "Оптимальный"
-			81		// "Максимальный"
+			81,		// "Максимальный"
+			85		//Народный
 		};
 
 		public MainBilling()

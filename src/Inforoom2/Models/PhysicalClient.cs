@@ -111,7 +111,7 @@ namespace Inforoom2.Models
 			};
 			LastTimePlanChanged = DateTime.Now;
 			if (Client.Internet.ActivatedByUser)
-				Client.Endpoints.ForEach(e => e.PackageId = Plan.PackageSpeed.Id);
+				Client.Endpoints.ForEach(e => e.PackageId = Plan.PackageSpeed.PackageId);
 			return writeOff;
 		}
 

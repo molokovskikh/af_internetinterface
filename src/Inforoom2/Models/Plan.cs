@@ -19,10 +19,10 @@ namespace Inforoom2.Models
 		public virtual string Name { get; set; }
 
 
-		public virtual int Speed
+		public virtual float Speed
 		{
 			get { return PackageSpeed.GetSpeed(); }
-			set { PackageSpeed.Speed = value; }
+			protected set { }
 		}
 
 		[Property(Column = "Price", NotNull = true), Min(1)]

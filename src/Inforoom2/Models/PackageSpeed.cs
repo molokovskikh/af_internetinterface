@@ -17,9 +17,16 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual int Speed { get;  set; }
 
-		public virtual int GetSpeed()
+		/// <summary>
+		/// Получение скорости в пакета в Мегабитах
+		/// </summary>
+		public virtual float GetSpeed()
 		{
-			return Speed == 0 ? 0 : Speed / 1000000;
+			//Приводим к флоту, так как изначально скорость записывается в байтах
+			//После деления, у всех скоростей, что меньше 1 мегабита, будут 0 отображаться.
+			var sp = (float)Speed;
+			float val = sp == 0 ? 0 : sp / 1000000;
+			return val;
 		}
 	}
 }
