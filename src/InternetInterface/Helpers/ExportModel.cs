@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Web;
 using Common.Web.Ui.Excel;
-using Common.Web.Ui.Helpers;
 using ExcelLibrary.SpreadSheet;
 using InternetInterface.Controllers;
 using InternetInterface.Models;
@@ -77,18 +74,20 @@ namespace InternetInterface.Helpers
 						contacts += ", " + item.client.Contacts[i].HumanableNumber;
 				ExcelHelper.Write(ws, row, colShift + 7, contacts, true);
 				ExcelHelper.Write(ws, row, colShift + 8, item.client.RegDate, true);
-				ExcelHelper.Write(ws, row, colShift + 9, item.client.GetTariffName(), true);
-				ExcelHelper.Write(ws, row, colShift + 10, item.client.Balance, true);
-				ExcelHelper.Write(ws, row, colShift + 11, item.client.Status.Type.GetDescription(), true);
+				var dissolvedDate = (item.client.Status.Type == StatusType.Dissolved) ? item.client.StatusChangedOn : null;
+				ExcelHelper.Write(ws, row, colShift + 9, dissolvedDate, true);
+				ExcelHelper.Write(ws, row, colShift + 10, item.client.GetTariffName(), true);
+				ExcelHelper.Write(ws, row, colShift + 11, item.client.Balance, true);
+				ExcelHelper.Write(ws, row, colShift + 12, item.client.Status.Type.GetDescription(), true);
 				var textBlock = "";
 				if (item.client.Status.Type == StatusType.NoWorked)
 					textBlock = item.client.BlockDate.ToString();
-				ExcelHelper.Write(ws, row, colShift + 12, textBlock, true);
+				ExcelHelper.Write(ws, row, colShift + 13, textBlock, true);
 				var endpoint = item.client.Endpoints.FirstOrDefault();
 				var textEndpoint = "";
 				if (endpoint != null && endpoint.Switch != null && endpoint.Switch.IP != null)
 					textEndpoint = endpoint.Switch.Name + "(" + endpoint.Switch.IP + ")";
-				ExcelHelper.Write(ws, row, colShift + 13, textEndpoint, true);
+				ExcelHelper.Write(ws, row, colShift + 14, textEndpoint, true);
 				row++;
 			}
 			FormatClientsStatisticXls(ws);
@@ -113,22 +112,24 @@ namespace InternetInterface.Helpers
 			ExcelHelper.WriteHeader1(ws, headerRow, 6, "Квартира", true, true);
 			ExcelHelper.WriteHeader1(ws, headerRow, 7, "Контактная информация", true, true);
 			ExcelHelper.WriteHeader1(ws, headerRow, 8, "Дата регистрации", true, true);
-			ExcelHelper.WriteHeader1(ws, headerRow, 9, "Тариф", true, true);
-			ExcelHelper.WriteHeader1(ws, headerRow, 10, "Баланс", true, true);
-			ExcelHelper.WriteHeader1(ws, headerRow, 11, "Статус", true, true);
-			ExcelHelper.WriteHeader1(ws, headerRow, 12, "Дата блокировки", true, true);
-			ExcelHelper.WriteHeader1(ws, headerRow, 13, "Коммутатор", true, true);
+			ExcelHelper.WriteHeader1(ws, headerRow, 9, "Дата расторжения", true, true);
+			ExcelHelper.WriteHeader1(ws, headerRow, 10, "Тариф", true, true);
+			ExcelHelper.WriteHeader1(ws, headerRow, 11, "Баланс", true, true);
+			ExcelHelper.WriteHeader1(ws, headerRow, 12, "Статус", true, true);
+			ExcelHelper.WriteHeader1(ws, headerRow, 13, "Дата блокировки", true, true);
+			ExcelHelper.WriteHeader1(ws, headerRow, 14, "Коммутатор", true, true);
 
 			ws.Cells.ColumnWidth[0] = 4000;
 			ws.Cells.ColumnWidth[1] = 10000;
 			ws.Cells.ColumnWidth[2] = 15000;
 			ws.Cells.ColumnWidth[7] = 4000;
 			ws.Cells.ColumnWidth[8] = 5000;
-			ws.Cells.ColumnWidth[9] = 4000;
-			ws.Cells.ColumnWidth[10] = 3000;
-			ws.Cells.ColumnWidth[11] = 4000;
+			ws.Cells.ColumnWidth[9] = 5000;
+			ws.Cells.ColumnWidth[10] = 4000;
+			ws.Cells.ColumnWidth[11] = 3000;
 			ws.Cells.ColumnWidth[12] = 4000;
-			ws.Cells.ColumnWidth[13] = 8000;
+			ws.Cells.ColumnWidth[13] = 4000;
+			ws.Cells.ColumnWidth[14] = 8000;
 
 			ws.Cells.Rows[headerRow].Height = 514;
 		}
