@@ -64,6 +64,7 @@ namespace Inforoom2.Test.Functional.Personal
 			//Проверяем объекты
 			Assert.That(client.Lunched, Is.True);
 			Assert.That(client.Endpoints.Count, Is.EqualTo(1));
+			Assert.That(client.Endpoints.First().PackageId, Is.EqualTo(client.Plan.PackageSpeed.PackageId), "PackageId должен равняться PackageId тарифа.");
 			Assert.That(internet.IsActivated, Is.True);
 			Assert.That(iptv.IsActivated, Is.True);
 
