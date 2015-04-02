@@ -32,6 +32,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ExcludeGeneratedDebugSymbol>false</ExcludeGeneratedDebugSymbol>
     <Prefer32Bit>false</Prefer32Bit>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -175,6 +176,7 @@
     <Content Include="Css\style.css" />
     <Content Include="Global.asax" />
     <Content Include="Images\action238.png" />
+    <Content Include="Images\actionfolk.png" />
     <Content Include="Images\answererrorbg.png" />
     <Content Include="Images\answersuccessbg.png" />
     <Content Include="Images\arro.png" />
