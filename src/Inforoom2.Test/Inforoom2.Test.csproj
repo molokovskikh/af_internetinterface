@@ -180,7 +180,7 @@
     <Compile Include="Functional\Account\AccountFixture.cs" />
     <Compile Include="Functional\Account\LogoutFixture.cs" />
     <Compile Include="Functional\BaseControllerFixture.cs" />
-    <Compile Include="Functional\ClientWriteoffsFixture.cs" />
+    <Compile Include="Functional\infrastructure\BillingFixture.cs" />
     <Compile Include="Functional\ClientRequestFixture.cs" />
     <Compile Include="Functional\Account\LoginFixture.cs" />
     <Compile Include="Functional\infrastructure\BaseFixture.cs" />

@@ -63,8 +63,7 @@ namespace Inforoom2.Test.Functional.infrastructure
 		protected string GetCookie(string cookieName)
 		{
 			var cookie = browser.Manage().Cookies.GetCookieNamed(cookieName);
-			if (cookie == null)
-			{
+			if (cookie == null) {
 				return string.Empty;
 			}
 
@@ -87,19 +86,16 @@ namespace Inforoom2.Test.Functional.infrastructure
 			//Приоритет удаления данных
 			var order = "lawyerperson,regions,requests";
 			var parts = order.Split(',');
-			foreach (var part in parts)
-			{
+			foreach (var part in parts) {
 				var tablename = strategy.TableName(part);
 				tables.Add(tablename);
 			}
 
 			////Собираем остальные таблицы при помощи моделей проекта
 			var types = Assembly.GetAssembly(typeof(BaseModel)).GetTypes().ToList();
-			foreach (var t in types)
-			{
+			foreach (var t in types) {
 				var attribute = Attribute.GetCustomAttribute(t, typeof(ClassAttribute)) as ClassAttribute;
-				if (attribute != null)
-				{
+				if (attribute != null) {
 					var name = strategy.TableName(attribute.Table);
 					tables.Add(name.ToLower());
 				}
@@ -107,16 +103,15 @@ namespace Inforoom2.Test.Functional.infrastructure
 
 			//Удаляем из списка таблицы, которые не надо очищать
 			var exceptions = "partners,services,status,packagespeed,networkzones,accesscategories," +
-							 "categoriesaccessset,connectbrigads,statuscorrelation,usercategories,additionalstatus," +
-							 "salesettings,internetsettings";
+			                 "categoriesaccessset,connectbrigads,statuscorrelation,usercategories,additionalstatus," +
+			                 "salesettings,internetsettings";
 			parts = exceptions.Split(',');
 			foreach (var part in parts)
 				tables.RemoveAll(i => i == strategy.TableName(part));
 
 
 			//Чистим таблицы
-			foreach (var name in tables)
-			{
+			foreach (var name in tables) {
 				var query = "delete from internet." + name;
 				DbSession.CreateSQLQuery(query).ExecuteUpdate();
 				DbSession.Flush();
@@ -186,8 +181,7 @@ namespace Inforoom2.Test.Functional.infrastructure
 			IList<Role> roles = new List<Role>();
 			roles.Add(role);
 			var emp = DbSession.Query<Employee>().FirstOrDefault(e => e.Login == Environment.UserName);
-			if (emp == null)
-			{
+			if (emp == null) {
 				emp = new Employee();
 				emp.Name = Environment.UserName;
 				emp.Login = Environment.UserName;
@@ -235,8 +229,9 @@ namespace Inforoom2.Test.Functional.infrastructure
 
 			//без паспортных данных
 			var ClientWithDiscountIfNoDiscountValid = CloneClient(normalClient);
-			ClientWithDiscountIfNoDiscountValid.Patronymic = "без валидной скидки";
+			ClientWithDiscountIfNoDiscountValid.Patronymic = "c тарифом, игнорирующим скидку";
 			ClientWithDiscountIfNoDiscountValid.PhysicalClient.Plan = DbSession.Query<Plan>().First(p => p.Name == "Тариф-ИгнорДискаунт");
+			ClientWithDiscountIfNoDiscountValid.Discount = 10;
 			DbSession.Save(ClientWithDiscountIfNoDiscountValid);
 
 
@@ -347,8 +342,7 @@ namespace Inforoom2.Test.Functional.infrastructure
 
 		private ClientService CloneService(ClientService service)
 		{
-			var obj = new ClientService
-			{
+			var obj = new ClientService {
 				Service = service.Service,
 				Client = service.Client,
 				BeginDate = service.BeginDate,
@@ -360,10 +354,8 @@ namespace Inforoom2.Test.Functional.infrastructure
 
 		private Client CloneClient(Client client)
 		{
-			var obj = new Client
-			{
-				PhysicalClient = new PhysicalClient
-				{
+			var obj = new Client {
+				PhysicalClient = new PhysicalClient {
 					Password = HashedDefaultClientPasword,
 					PhoneNumber = client.PhoneNumber,
 					Email = client.Email,
@@ -390,14 +382,12 @@ namespace Inforoom2.Test.Functional.infrastructure
 				Lunched = client.Lunched,
 				Status = client.Status
 			};
-			foreach (var item in client.ClientServices)
-			{
+			foreach (var item in client.ClientServices) {
 				var service = CloneService(item);
 				service.Client = obj;
 				obj.ClientServices.Add(service);
 			}
-			foreach (var item in client.Endpoints)
-			{
+			foreach (var item in client.Endpoints) {
 				var endpoint = AttachEndpoint(obj);
 				endpoint.Switch = item.Switch;
 				endpoint.Client = obj;
@@ -413,8 +403,7 @@ namespace Inforoom2.Test.Functional.infrastructure
 			var parts = DefaultIpString.Split('.');
 			parts[2] = (EndpointIpCounter++).ToString();
 			IPAddress addr = IPAddress.Parse(string.Join(".", parts));
-			var endpoint = new ClientEndpoint
-			{
+			var endpoint = new ClientEndpoint {
 				PackageId = client.Plan.PackageSpeed.PackageId,
 				Client = client,
 				Ip = addr,
@@ -485,10 +474,8 @@ namespace Inforoom2.Test.Functional.infrastructure
 			var plans = DbSession.Query<Plan>().ToList();
 			//var popular = plans.First(i => i.Name.Contains("Популярный"));
 			//Переход со всех тарифов
-			foreach (var plan1 in plans)
-			{
-				foreach (var plan2 in plans)
-				{
+			foreach (var plan1 in plans) {
+				foreach (var plan2 in plans) {
 					var transfer = new PlanTransfer();
 					transfer.PlanFrom = plan1;
 					transfer.PlanTo = plan2;
@@ -502,8 +489,7 @@ namespace Inforoom2.Test.Functional.infrastructure
 		private void GeneratePaymentsAndWriteoffs()
 		{
 			var client = DbSession.Query<Client>().FirstOrDefault();
-			for (int i = 0; i < 10; i++)
-			{
+			for (int i = 0; i < 10; i++) {
 				var writeof = new WriteOff();
 				writeof.Client = client;
 				writeof.MoneySum = i;
@@ -535,7 +521,7 @@ namespace Inforoom2.Test.Functional.infrastructure
 			var newsBlock = new NewsBlock(0);
 			newsBlock.Title = "Новость";
 			newsBlock.Preview = "Превью новости.С 02.06.2014г. офис интернет провайдера «Инфорум» располагается по новому адресу:г." +
-								" Борисоглебск, ул. Третьяковская д.6,напротив магазина «Удачный» ";
+			                    " Борисоглебск, ул. Третьяковская д.6,напротив магазина «Удачный» ";
 			newsBlock.CreationDate = DateTime.Now;
 			newsBlock.IsPublished = true;
 			DbSession.Save(newsBlock);
@@ -543,13 +529,12 @@ namespace Inforoom2.Test.Functional.infrastructure
 			newsBlock = new NewsBlock(1);
 			newsBlock.Title = "Новость2";
 			newsBlock.Preview = "Превью новости.С 02.06.2014г. офис интернет провайдера «Инфорум» располагается по новому адресу:г." +
-								" Борисоглебск, ул. Третьяковская д.6,напротив магазина «Удачный» ";
+			                    " Борисоглебск, ул. Третьяковская д.6,напротив магазина «Удачный» ";
 			newsBlock.CreationDate = DateTime.Now;
 			newsBlock.IsPublished = true;
 			DbSession.Save(newsBlock);
 
-			for (int i = 0; i < 3; i++)
-			{
+			for (int i = 0; i < 3; i++) {
 				var question = new Question(i);
 				question.IsPublished = true;
 				question.Text = "Могу ли я одновременно пользоваться интернетом на нескольких компьютерах, если у меня один кабель?";
@@ -626,13 +611,11 @@ namespace Inforoom2.Test.Functional.infrastructure
 		private void CreateSwitchAddresses(YandexAddress yandexAddress)
 		{
 			SwitchAddress switchAddress = null;
-			if (yandexAddress.House != null)
-			{
+			if (yandexAddress.House != null) {
 				switchAddress = new SwitchAddress();
 				switchAddress.House = yandexAddress.House;
 			}
-			else
-			{
+			else {
 				switchAddress = new SwitchAddress();
 				switchAddress.Street = yandexAddress.Street;
 			}

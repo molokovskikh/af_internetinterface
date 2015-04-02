@@ -18,7 +18,7 @@ namespace Inforoom2.Controllers
 		{
 			int id = 0;
 			int.TryParse(username, out id);
-			var user = DbSession.Query<Client>().FirstOrDefault(k => k.Id == id);
+			var user = DbSession.Query<Client>().FirstOrDefault(k => k.Id == id && k.PhysicalClient != null);
 			if (user != null && CryptoPass.GetHashString(password) == user.PhysicalClient.Password) {
 				return Authenticate("Profile", "Personal", username, true);
 			}
