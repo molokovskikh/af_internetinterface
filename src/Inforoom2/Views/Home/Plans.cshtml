@@ -66,9 +66,6 @@
 		}
 		else {
 			<div class="type @divClass">
-				@if (plan.Name == "") {
-					<div class="typehitbg"></div>
-				}
 				<h1>Оптимальный</h1>
 				<h2>50 Мбит/с</h2>
 				<h4>+Ночной безлимит<sup>1</sup></h4>
@@ -105,6 +102,10 @@
   else
   {
 			<div class="type">
+				@if (plan.Name == "")
+				{
+					<div class="typehitbg"></div>
+				}
 				<h1>Народный</h1>
 				<h2>100 Мбит/с</h2>
 				<h4>+TV Free<sup>2</sup></h4>
@@ -115,9 +116,9 @@
 				<!--стиль у sup временный-->
 				<h3>300 <span>Р.</span>/мес.<sup style="font-size: 16px">3</sup></h3>
 				@using (Html.BeginForm(action, controller, new { id = 85 }, FormMethod.Post, null))
-		{
+				{
 					<input class="@inputClass plug" type="submit" value="Подключить">
-		}
+				}
 			</div>
 			}
 		</div>
