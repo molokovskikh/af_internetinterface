@@ -425,18 +425,14 @@ namespace InternetInterface.Models
 		public virtual string ForSearchContact(string query)
 		{
 			var result = string.Empty;
-			ForSearchContactAction(query, contact => {
-				result += TextHelper.SelectContact(query, contact.Text) + "<br/>";
-			});
+			ForSearchContactAction(query, contact => { result += TextHelper.SelectContact(query, contact.Text) + "<br/>"; });
 			return result;
 		}
 
 		public virtual string ForSearchContactNoLight(string query)
 		{
 			var result = string.Empty;
-			ForSearchContactAction(query, contact => {
-				result += (contact.Text + "/r/n");
-			});
+			ForSearchContactAction(query, contact => { result += (contact.Text + "/r/n"); });
 			return result;
 		}
 
@@ -448,6 +444,7 @@ namespace InternetInterface.Models
 				return string.Format("{0} руб.", LawyerPerson.Tariff.Value);
 			return "Тариф не задан";
 		}
+
 		public virtual bool StatusCanChange()
 		{
 			if (PhysicalClient != null)
@@ -651,7 +648,7 @@ from internet.UserWriteOffs uw
 where uw.client = :clientid
 {0}
 ;" :
-@"SELECT
+				@"SELECT
 Id,
 {1}(WriteOffSum) as WriteOffSum,
 {1}(VirtualSum) as VirtualSum,
@@ -691,7 +688,7 @@ where Client = :clientid and WriteOffSum > 0
 				var orderInfo = new ClientOrderInfo {
 					Order = order
 				};
-				if(order.EndPoint != null)
+				if (order.EndPoint != null)
 					orderInfo.ClientConnectInfo = endpointInfos.FirstOrDefault(i => i.endpointId == order.EndPoint.Id);
 				if (orderInfo.ClientConnectInfo == null)
 					orderInfo.ClientConnectInfo = new ClientConnectInfo();
@@ -755,7 +752,8 @@ where CE.Client = {0}", Id))
 			if (PhysicalClient.Tariff == null)
 				throw new Exception(String.Format("Для клиента {0} не задан тариф проверь настройки", Id));
 
-			var price = AccountDiscounts(PhysicalClient.Tariff.Price);
+			var price = PhysicalClient.Tariff.IgnoreDiscount ? PhysicalClient.Tariff.Price : AccountDiscounts(PhysicalClient.Tariff.Price);
+
 			var finalPrice = AccountDiscounts(PhysicalClient.Tariff.FinalPrice);
 
 			if ((PhysicalClient.Tariff.FinalPriceInterval == 0 || PhysicalClient.Tariff.FinalPrice == 0))
@@ -1165,7 +1163,8 @@ where CE.Client = {0}", Id))
 
 	public class ServiceActivationException : Exception
 	{
-		public ServiceActivationException(string message) : base(message)
+		public ServiceActivationException(string message)
+			: base(message)
 		{
 		}
 	}

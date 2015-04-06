@@ -52,7 +52,9 @@ namespace Inforoom2.Test.Functional.infrastructure.Helpers
 
 			[Description("клиент заблокированный по сервисной заявке")] servicedClient,
 
-			[Description("клиент с услугой добровольной блокировки")] frozenClient
+			[Description("клиент с услугой добровольной блокировки")] frozenClient,
+
+			[Description("клиент c тарифом, игнорирующим скидку")] ignoreDiscountClient,
 		}
 
 		public int Index

@@ -132,9 +132,8 @@ namespace InternetInterface.Models
 
 		public virtual decimal GetAgentPayment(Week interval)
 		{
-			return Payments.Where(p => p.RegistrationDate.Date >= interval.StartDate.Date && 
-														p.RegistrationDate.Date <= interval.EndDate.Date)
-														.Sum(p => p.Sum);
+			return Payments.Where(p => p.RegistrationDate.Date >= interval.StartDate.Date && p.RegistrationDate.Date <= interval.EndDate.Date)
+				.Sum(p => p.Sum);
 		}
 
 		public static List<Partner> GetHouseMapAgents(ISession session)
@@ -145,9 +144,9 @@ namespace InternetInterface.Models
 		public static List<Partner> GetServiceEngineers(ISession session)
 		{
 			return session.Query<Partner>()
-					.Where(p => p.Role.ReductionName == "Service" && !p.IsDisabled)
-					.OrderBy(p => p.Name)
-					.ToList();
+				.Where(p => p.Role.ReductionName == "Service" && !p.IsDisabled)
+				.OrderBy(p => p.Name)
+				.ToList();
 		}
 
 		public override string ToString()

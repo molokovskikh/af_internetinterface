@@ -20,9 +20,10 @@ namespace Inforoom2.Controllers
 		/// </summary>
 		[HttpPost]
 		public ActionResult Index(CallMeBackTicket callMeBackTicket)
-		{
-			var errors = ValidationRunner.ValidateDeep(callMeBackTicket);
-			if (errors.Length == 0) {
+		{ 
+			var errors = ValidationRunner.Validate(callMeBackTicket);
+			if (errors.Length == 0)
+			{ 
 				DbSession.Save(callMeBackTicket);
 				SuccessMessage("Заявка отправлена. В течении для вам перезвонят.");
 				return new RedirectResult(Url.Action("Index") + "#notification");

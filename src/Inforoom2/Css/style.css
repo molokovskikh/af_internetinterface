@@ -146,3 +146,5 @@ input.personal {padding: 5px; box-sizing: padding-box;}
 .IsMyHouseConnected .entry {
 	width: 270px;
 }
+
+.page.Personal.Profile .actions .actiontext { text-align: center;}

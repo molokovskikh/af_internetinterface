@@ -22,6 +22,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -181,6 +182,7 @@
     <Compile Include="Functional\Account\AccountFixture.cs" />
     <Compile Include="Functional\Account\LogoutFixture.cs" />
     <Compile Include="Functional\BaseControllerFixture.cs" />
+    <Compile Include="Functional\infrastructure\BillingFixture.cs" />
     <Compile Include="Functional\ClientRequestFixture.cs" />
     <Compile Include="Functional\Account\LoginFixture.cs" />
     <Compile Include="Functional\infrastructure\BaseFixture.cs" />

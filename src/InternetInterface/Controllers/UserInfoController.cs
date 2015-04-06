@@ -103,7 +103,7 @@ namespace InternetInterface.Controllers
 
 			PropertyBag["EConnect"] = filter.EditingConnect;
 
-			if(client.Orders.All(o => o.OrderServices.Count == 0))
+			if (client.Orders.All(o => o.OrderServices.Count == 0))
 				PropertyBag["Message"] = Message.Error("Не задана абонентская плата для клиента ! Клиент отключен !");
 
 			PropertyBag["CallLogs"] = UnresolvedCall.LastCalls;
@@ -249,7 +249,7 @@ namespace InternetInterface.Controllers
 			[DataBind("order")] Order Order, bool withoutEndPoint, uint currentEndPoint)
 		{
 			var errors = ValidateDeep(Order);
-			if(Order.Id != 0 && errors.ErrorsCount > 0) {
+			if (Order.Id != 0 && errors.ErrorsCount > 0) {
 				Error(errors.ErrorMessages.First());
 				RedirectToReferrer();
 				return;
@@ -298,7 +298,7 @@ namespace InternetInterface.Controllers
 				errorMessage = "Введена невалидная сумма";
 
 			var savedEndpoint = false;
-			if(!withoutEndPoint && currentEndPoint == 0) {
+			if (!withoutEndPoint && currentEndPoint == 0) {
 				if ((ConnectInfo.static_IP != string.Empty) || (nullFlag)) {
 					if (validateSum && string.IsNullOrEmpty(errorMessage) || validateSum &&
 						(oldSwitch != null && ConnectInfo.Switch == oldSwitch.Id && ConnectInfo.Port == olpPort.ToString())) {
@@ -350,7 +350,7 @@ namespace InternetInterface.Controllers
 						if (client.Status.Id == (uint)StatusType.BlockedAndNoConnected)
 							client.Status = DbSession.Load<Status>((uint)StatusType.BlockedAndConnected);
 						client.SyncServices(settings);
-						
+
 						//Если клиент не включался и ему сразу был дан статический IP
 						//То данные, которые проставляются DHCP сервисом, необходимо проставлять вручную, если их нет
 						if (staticAdress.Length > 0) {
@@ -409,7 +409,7 @@ namespace InternetInterface.Controllers
 
 				DbSession.SaveOrUpdate(existingOrder);
 				foreach (var orderService in existingOrder.OrderServices.ToList()) {
-					if(Order.OrderServices.All(s => s.Id != orderService.Id)) {
+					if (Order.OrderServices.All(s => s.Id != orderService.Id)) {
 						existingOrder.OrderServices.Remove(orderService);
 						DbSession.Delete(orderService);
 					}
@@ -426,7 +426,7 @@ namespace InternetInterface.Controllers
 				}
 
 				foreach (var orderService in Order.OrderServices) {
-					if(orderService.Id > 0) {
+					if (orderService.Id > 0) {
 						var service = existingOrder.OrderServices.First(s => s.Id == orderService.Id);
 						service.Description = orderService.Description;
 						service.IsPeriodic = orderService.IsPeriodic;
@@ -574,14 +574,12 @@ namespace InternetInterface.Controllers
 
 			if (oldStatus != client.Status) {
 				//BlockedAndConnected = "не подключен", а не то, что ты подумал
-				if (oldStatus.ManualSet || 
-						oldStatus.Type == StatusType.BlockedAndConnected ||
-						(oldStatus.Type == StatusType.VoluntaryBlocking && client.NoEndPoint())) {
-					if (client.Status.Type == StatusType.Dissolved && 
-							(client.HaveService<HardwareRent>() || client.HaveService<IpTvBoxRent>())) {
-						GetErrorSummary(updateClient)
-							.RegisterErrorMessage("Status", "Договор не может быть расторгнут тк у клиента имеется арендованное" +
-								" оборудование, перед расторжением договора нужно изъять оборудование");
+				if (oldStatus.ManualSet ||
+					oldStatus.Type == StatusType.BlockedAndConnected ||
+					(oldStatus.Type == StatusType.VoluntaryBlocking && client.NoEndPoint())) {
+					if (client.Status.Type == StatusType.Dissolved &&
+						(client.HaveService<HardwareRent>() || client.HaveService<IpTvBoxRent>())) {
+						GetErrorSummary(updateClient).RegisterErrorMessage("Status", "Договор не может быть расторгнут тк у клиента имеется арендованное" + " оборудование, перед расторжением договора нужно изъять оборудование");
 					}
 				}
 				else {
@@ -674,7 +672,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["Tariffs"] = Tariff.All(DbSession);
 			PropertyBag["channels"] = ChannelGroup.All(DbSession);
 			PropertyBag["ChStatus"] = client.Status != null ? client.Status.Id : DbSession.Query<Status>().First().Id;
-			PropertyBag["naznach_text"] = DbSession.Query<ConnectGraph>().Count(c => 
+			PropertyBag["naznach_text"] = DbSession.Query<ConnectGraph>().Count(c =>
 				c.Client.Id == filter.ClientCode && c.IsReserved == false) != 0 ? "Переназначить в график" : "Назначить в график";
 
 			PropertyBag["UserInfo"] = true;
@@ -727,14 +725,14 @@ namespace InternetInterface.Controllers
 				if (orderInfo.Count > 0) {
 					for (int i = 0, j = 0; i < orderInfo.Count; i++, j++) {
 						if (client.Orders[j].IsDeactivated) {
-							--i;									// Не учитывать заказ, который не выводится на экран
+							--i; // Не учитывать заказ, который не выводится на экран
 							continue;
 						}
 						var epoint = client.Orders[j].EndPoint;
 						if (epoint == null)
 							continue;
 						var poolReg = epoint.GetAvailablePoolRegionList(DbSession)
-								.FirstOrDefault(pr => pr.IpPool.Id == epoint.Pool);
+							.FirstOrDefault(pr => pr.IpPool.Id == epoint.Pool);
 						orderInfo[i].ClientConnectInfo.Pool = (poolReg != null) ? (uint?)poolReg.IpPool.Id : null;
 						orderInfo[i].ClientConnectInfo.PoolDescription = (poolReg != null) ? poolReg.Description : "";
 					}
@@ -756,14 +754,14 @@ namespace InternetInterface.Controllers
 						var epoint = client.Endpoints.First(ep => ep.Id == connectInfo[i].endpointId);
 
 						var poolReg = epoint.GetAvailablePoolRegionList(DbSession)
-								.FirstOrDefault(pr => pr.IpPool.Id == epoint.Pool);
+							.FirstOrDefault(pr => pr.IpPool.Id == epoint.Pool);
 						connectInfo[i].Pool = (poolReg != null) ? (uint?)poolReg.IpPool.Id : null;
 						connectInfo[i].PoolDescription = (poolReg != null) ? poolReg.Description : "";
 					}
 				}
 				else {
 					var connectSum = client.IsPhysical() ? client.PhysicalClient.ConnectSum : 0;
-					connectInfo.Add(new ClientConnectInfo {ConnectSum = connectSum});
+					connectInfo.Add(new ClientConnectInfo { ConnectSum = connectSum });
 				}
 				PropertyBag["ClientConnectInf"] = connectInfo;
 			}
@@ -774,7 +772,7 @@ namespace InternetInterface.Controllers
 			var client = DbSession.Load<Client>(clientId);
 			var brigads = Brigad.All(DbSession);
 			PropertyBag["_client"] = client;
-			PropertyBag["IsDissolved"] = StatusType.Dissolved;		// Для задания префикса "РАСТОРГНУТ" клиенту
+			PropertyBag["IsDissolved"] = StatusType.Dissolved; // Для задания префикса "РАСТОРГНУТ" клиенту
 			PropertyBag["ClientCode"] = clientId;
 			PropertyBag["uniqueClientEndpoints"] = client.Endpoints.Distinct().ToList();
 
@@ -782,7 +780,7 @@ namespace InternetInterface.Controllers
 			var clientRegion = client.GetRegion();
 			if (clientRegion != null) {
 				PropertyBag["RegPoolsList"] = DbSession.Query<IpPoolRegion>()
-						.Where(rp => rp.Region == clientRegion.Id).ToList();
+					.Where(rp => rp.Region == clientRegion.Id).ToList();
 			}
 			else
 				PropertyBag["RegPoolsList"] = null;
@@ -921,9 +919,7 @@ namespace InternetInterface.Controllers
 			DateTime noPhoneDate;
 			if (DateTime.TryParse(NoPhoneDate, out noPhoneDate)) {
 				DbSession.Save(new Appeals {
-					Appeal =
-						"Причина недозвона:  " + prichina + " \r\n Дата: " + noPhoneDate.ToShortDateString() +
-							" \r\n Комментарий: \r\n " + Appeal,
+					Appeal = "Причина недозвона: " + prichina + " \r\n Дата: " + noPhoneDate.ToShortDateString() + " \r\n Комментарий: \r\n " + Appeal,
 					Date = DateTime.Now,
 					Partner = InitializeContent.Partner,
 					Client = DbSession.Load<Client>(ClientID),
@@ -958,7 +954,7 @@ namespace InternetInterface.Controllers
 			var brigadsCollect = Brigad.All(DbSession, client.GetRegion());
 			var brigad = brigadsCollect.FirstOrDefault();
 			return new {
-				brigads = brigadsCollect.Select(b => new {b.Id, b.Name}).ToArray(),
+				brigads = brigadsCollect.Select(b => new { b.Id, b.Name }).ToArray(),
 				intervals = brigad != null ? brigad.GetIntervals(DbSession, graph_date) : null
 			};
 		}
@@ -966,7 +962,7 @@ namespace InternetInterface.Controllers
 		[return: JSONReturnBinder]
 		public bool SaveGraph(uint clientId, uint brigadId, int? graph_button, DateTime graph_date)
 		{
-			if (graph_button == null) 
+			if (graph_button == null)
 				return false;
 			var client = DbSession.Load<Client>(clientId);
 			if (client.BeginWork == null)
@@ -1026,7 +1022,7 @@ namespace InternetInterface.Controllers
 				intervalObj.DateAndTime.ToShortTimeString()),
 				AppealType.User);
 			DbSession.Delete(intervalObj);
-			
+
 			DbSession.Save(appeal);
 			return true;
 		}
@@ -1143,7 +1139,7 @@ namespace InternetInterface.Controllers
 
 		public void SaveOrderService(uint orderId, [DataBind("OrderService")] OrderService orderService)
 		{
-			if(orderService.Order == null) {
+			if (orderService.Order == null) {
 				orderService.Order = DbSession.Load<Order>(orderId);
 			}
 			DbSession.SaveOrUpdate(orderService);
@@ -1198,7 +1194,7 @@ namespace InternetInterface.Controllers
 			var mailer = this.Mailer<Mailer>();
 
 			var str = ConfigurationManager.AppSettings["WriteOffNotificationMail"];
-			if(str == null)
+			if (str == null)
 				throw new Exception("Параметр приложения WriteOffNotificationMail должен быть задан в config");
 			var emails = str.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 			mailer.SendText("internet@ivrn.net", emails, "Уведомление об удалении списания", string.Format(@"

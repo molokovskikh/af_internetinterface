@@ -4,6 +4,7 @@ using System.Web.UI.WebControls;
 using Inforoom2.Intefaces;
 using NHibernate;
 using NHibernate.Linq;
+using NHibernate.Mapping;
 using NHibernate.Mapping.Attributes;
 using NHibernate.Validator.Constraints;
 
@@ -18,17 +19,31 @@ namespace Inforoom2.Models
 		[Property(NotNull = true, Unique = true), NotEmpty]
 		public virtual string Name { get; set; }
 
-		[Property(NotNull = true, Column = "_Speed")]
-		public virtual int Speed { get; set; }
+		public virtual float Speed
+		{
+			get { return PackageSpeed.GetSpeed(); }
+			protected set { }
+		}
 
 		[Property(Column = "Price", NotNull = true), Min(1)]
 		public virtual decimal Price { get; set; }
+
+		[Property]
+		public virtual int FinalPriceInterval { get; set; }
+
+		[Property]
+		public virtual decimal FinalPrice { get; set; }
 
 		[Property(Column = "_IsServicePlan")]
 		public virtual bool IsServicePlan { get; set; }
 
 		[Property(Column = "_IsArchived")]
 		public virtual bool IsArchived { get; set; }
+
+		[Bag(0, Table = "region_plan")]
+		[Key(1, Column = "Plan", NotNull = false)]
+		[ManyToMany(2, Column = "Region", ClassType = typeof(Region))]
+		public virtual IList<Region> Regions { get; set; }
 
 		[Bag(0, Table = "PlanTransfer", Cascade = "save-update")]
 		[Key(1, Column = "PlanFrom")]
@@ -40,13 +55,24 @@ namespace Inforoom2.Models
 		[OneToMany(2, ClassType = typeof(RegionPlan))]
 		public virtual IList<RegionPlan> RegionPlans { get; set; }
 
+		[ManyToOne(Column = "PackageId", PropertyRef = "PackageId")]
+		public virtual PackageSpeed PackageSpeed { get; set; }
+
 		[Property]
-		public virtual int PackageId { get; set; }
+		public virtual bool IgnoreDiscount { get; set; }
 
 		[Property]
 		public virtual bool Hidden { get; set; }
 
 		public virtual decimal SwitchPrice { get; set; }
+
+		public Plan()
+		{
+			this.Regions = new List<Region>();
+			this.PlanTransfers = new List<PlanTransfer>();
+			this.RegionPlans = new List<RegionPlan>();
+		}
+
 
 		/// <summary>
 		/// Получение стоимости перехода на другой тариф

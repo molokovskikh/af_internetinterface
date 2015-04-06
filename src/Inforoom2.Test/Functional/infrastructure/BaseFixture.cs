@@ -26,6 +26,7 @@ using Cookie = OpenQA.Selenium.Cookie;
 using House = Inforoom2.Models.House;
 using InternetSettings = Inforoom2.Models.InternetSettings;
 using Lease = Inforoom2.Models.Lease;
+using PackageSpeed = Inforoom2.Models.PackageSpeed;
 using Payment = Inforoom2.Models.Payment;
 using PhysicalClient = Inforoom2.Models.PhysicalClient;
 using SaleSettings = Inforoom2.Models.SaleSettings;
@@ -316,11 +317,12 @@ namespace Inforoom2.Test.Functional.infrastructure
 					PassportSeries = "1234",
 					PassportResidention = "УФМС россии по гор. Воронежу, по райнону Северный",
 					RegistrationAddress = "г. Борисоглебск, ул Ленина, 20",
-					Plan = DbSession.Query<Plan>().First(p => p.Name == "Популярный"),
+					Plan = DbSession.Query<Plan>().First(p => p.Name == "Популярный"), 
 					Balance = 1000,
-					Address = GetUnusedAddress(),
+					Address = GetUnusedAddress(), 
 					LastTimePlanChanged = DateTime.Now.AddMonths(-2)
 				},
+				Discount = 10,
 				Disabled = false,
 				RatedPeriodDate = DateTime.Now,
 				FreeBlockDays = 28,
@@ -335,12 +337,19 @@ namespace Inforoom2.Test.Functional.infrastructure
 			AttachDefaultServices(normalClient);
 			AttachEndpoint(normalClient);
 			DbSession.Save(normalClient);
+
 			var lease = CreateLease(normalClient.Endpoints.First());
 			DbSession.Save(lease);
 
 
-			//без паспортных данных
-			var nopassportClient = CloneClient(normalClient, ClientCreateHelper.ClientMark.nopassportClient);
+			// c тарифом, игнорирующим скидку
+			var ignoreDiscountClient = CloneClient(normalClient, ClientCreateHelper.ClientMark.ignoreDiscountClient);
+			ignoreDiscountClient.PhysicalClient.Plan = DbSession.Query<Plan>().FirstOrDefault(s => s.IgnoreDiscount );
+			DbSession.Save(ignoreDiscountClient);
+
+
+			//без паспортных данных 
+			var nopassportClient = CloneClient(normalClient, ClientCreateHelper.ClientMark.nopassportClient); 
 			nopassportClient.PhysicalClient.PassportNumber = "";
 			DbSession.Save(nopassportClient);
 
@@ -548,7 +557,7 @@ namespace Inforoom2.Test.Functional.infrastructure
 
 			//ClientEndpoint adding based on client address
 			var endpoint = new ClientEndpoint {
-				PackageId = client.Plan.PackageId,
+				PackageId = client.Plan.PackageSpeed.PackageId,
 				Client = client,
 				Ip = addr,
 				Port = 22,
@@ -564,40 +573,55 @@ namespace Inforoom2.Test.Functional.infrastructure
 			//Тарифы
 			var plan = new Plan();
 			plan.Price = 300;
-			plan.Speed = 30;
 			plan.Name = "Популярный";
 			plan.IsArchived = false;
 			plan.Hidden = false;
 			plan.IsServicePlan = false;
+			plan.PackageSpeed = DbSession.Get<PackageSpeed>(19);
 			DbSession.Save(plan);
+
 			plan = new Plan();
 			plan.Price = 500;
-			plan.Speed = 50;
 			plan.Name = "Оптимальный";
 			plan.IsArchived = false;
 			plan.Hidden = false;
+			plan.PackageSpeed = DbSession.Get<PackageSpeed>(6);
 			plan.IsServicePlan = false;
 			DbSession.Save(plan);
+
 			plan = new Plan();
 			plan.Price = 900;
-			plan.Speed = 100;
 			plan.Name = "Максимальный";
 			plan.IsArchived = false;
 			plan.Hidden = false;
 			plan.IsServicePlan = false;
+			plan.PackageSpeed = DbSession.Get<PackageSpeed>(23);
 			DbSession.Save(plan);
+
 			plan = new Plan();
-			plan.Price = 599;
-			plan.Speed = 100;
-			plan.Name = "23/8";
+			plan.Price = 100m;
+			plan.Name = "Тариф-ИгнорДискаунт";
+			plan.IsArchived = false;
+			plan.IgnoreDiscount = true;
+			plan.Hidden = false;
+			plan.IsServicePlan = false;
+			plan.PackageSpeed = DbSession.Get<PackageSpeed>(19);
+			DbSession.Save(plan);
+
+			plan = new Plan();
+			plan.Price = 300;
+			plan.Name = "Народный";
 			plan.IsArchived = false;
 			plan.Hidden = false;
 			plan.IsServicePlan = false;
+			plan.PackageSpeed = DbSession.Get<PackageSpeed>(23);
 			DbSession.Save(plan);
+
+
 			DbSession.Flush();
 
-			//todo подумать что с этим делать
-			plan.ChangeId(83, DbSession);
+			//todo подумать что с этим делать 
+			plan.ChangeId(85, DbSession); 
 
 			//Переходы с тарифов
 			var plans = DbSession.Query<Plan>().ToList();

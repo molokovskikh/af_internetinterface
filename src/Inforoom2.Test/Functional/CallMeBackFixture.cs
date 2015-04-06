@@ -50,7 +50,7 @@ namespace Inforoom2.Test.Functional
 			browser.FindElementByCssSelector(".main-offer img").Click();
 			AssertText("Заявка на подключение");
 			var selectedValue = browser.FindElementByCssSelector(".rounded option[selected='selected']");
-			Assert.That(selectedValue.Text, Is.EqualTo("23/8"), "В поле тариф должен быть выбран акционный тариф");
+			Assert.That(selectedValue.Text, Is.EqualTo("Народный"), "В поле тариф должен быть выбран акционный тариф");
 			//Должна быть одна зеленая галочка,при поиске одного элемента вероятно выдаст ошибку,в данном случае вернет пустой массив.
 			var greenElements = browser.FindElementsByCssSelector(".success .icon");
 			Assert.That(greenElements.Count, Is.EqualTo(1), "Зеленая галочка должен появиться на странице");

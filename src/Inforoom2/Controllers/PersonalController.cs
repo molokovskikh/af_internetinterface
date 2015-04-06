@@ -67,7 +67,7 @@ namespace Inforoom2.Controllers
 					endpoint.Client = CurrentClient;
 					endpoint.Switch = lease.Switch;
 					endpoint.Port = lease.Port;
-					endpoint.PackageId = CurrentClient.PhysicalClient.Plan.PackageId;
+					endpoint.PackageId = CurrentClient.PhysicalClient.Plan.PackageSpeed.PackageId;
 					DbSession.Save(endpoint);
 					lease.Endpoint = endpoint;
 
@@ -201,7 +201,7 @@ namespace Inforoom2.Controllers
 		public ActionResult Notifications(Contact contact)
 		{
 			var client = CurrentClient;
-			var errors = ValidationRunner.ValidateDeep(contact);
+			var errors = ValidationRunner.Validate(contact);
 			if (errors.Length == 0) {
 				var smsContact = client.Contacts.FirstOrDefault(c => c.Type == ContactType.SmsSending);
 				if (smsContact == null) {

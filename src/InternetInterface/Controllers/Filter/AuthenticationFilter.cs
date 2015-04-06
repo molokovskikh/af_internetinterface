@@ -58,7 +58,8 @@ namespace InternetInterface.Controllers.Filter
 			var cookie = context.Request.ReadCookie(FormsAuthentication.FormsCookieName);
 			if (cookie != null) {
 				var userData = FormsAuthentication.Decrypt(cookie);
-				if (userData != null) return userData.Name;
+				if (userData != null)
+					return userData.Name;
 			}
 			return null;
 		}

@@ -39,7 +39,7 @@ namespace Inforoom2.Controllers
 			}
 			Index();
 			ViewBag.NewTicket = ticket;
-			var errors = ValidationRunner.ValidateDeep(ticket);
+			var errors = ValidationRunner.Validate(ticket);
 			if (errors.Length == 0) {
 				DbSession.Save(ticket);
 

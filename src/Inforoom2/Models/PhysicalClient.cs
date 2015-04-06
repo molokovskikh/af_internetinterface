@@ -100,7 +100,8 @@ namespace Inforoom2.Models
 			var comment = string.Format("Изменение тарифа, старый '{0}' новый '{1}'", Plan.Name, planTo.Name);
 			Plan = planTo;
 			WriteOff(price);
-			var writeOff = new UserWriteOff {
+			var writeOff = new UserWriteOff
+			{
 				Client = Client,
 				Date = DateTime.Now,
 				Sum = price,
@@ -108,14 +109,15 @@ namespace Inforoom2.Models
 				IsProcessedByBilling = true
 			};
 			LastTimePlanChanged = DateTime.Now;
-			if (Client.Internet.ActivatedByUser)
-				Client.Endpoints.ForEach(e => e.PackageId = Plan.PackageId);
+			if (Client.Internet.ActivatedByUser) 
+				Client.Endpoints.ForEach(e => e.PackageId = Plan.PackageSpeed.PackageId); 
 			return writeOff;
 		}
 
 		public virtual bool IsEnoughBalance(decimal sum)
 		{
-			if (sum < 0) {
+			if (sum < 0)
+			{
 				return false;
 			}
 			return Balance - sum > 0;
@@ -143,15 +145,18 @@ namespace Inforoom2.Models
 			decimal virtualWriteoff;
 			decimal moneyWriteoff;
 
-			if (writeoffVirtualFirst) {
+			if (writeoffVirtualFirst)
+			{
 				virtualWriteoff = Math.Min(sum, VirtualBalance);
 			}
-			else {
+			else
+			{
 				virtualWriteoff = Math.Min(Math.Abs(Math.Min(MoneyBalance - sum, 0)), VirtualBalance);
 			}
 			moneyWriteoff = sum - virtualWriteoff;
 
-			return new WriteOff {
+			return new WriteOff
+			{
 				Client = Client,
 				WriteOffDate = SystemTime.Now(),
 				WriteOffSum = Math.Round(sum, 2),
@@ -165,7 +170,9 @@ namespace Inforoom2.Models
 
 	public enum CertificateType
 	{
-		[Display(Name = "Паспорт РФ")] Passport = 0,
-		[Display(Name = "Иной документ")] Other = 1
+		[Display(Name = "Паспорт РФ")]
+		Passport = 0,
+		[Display(Name = "Иной документ")]
+		Other = 1
 	}
 }

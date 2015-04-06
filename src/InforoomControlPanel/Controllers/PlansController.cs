@@ -26,6 +26,39 @@ namespace InforoomControlPanel.Controllers
 		}
 
 		/// <summary>
+		/// Форма добавление тарифа
+		/// </summary>
+		public ActionResult CreatePlan()
+		{
+			//Создаентся тарифный план  
+			var plan = new Plan();
+			ViewBag.Plan = plan;
+			ViewBag.PackageSpeed = DbSession.Query<PackageSpeed>().OrderBy(s => s.Speed)
+				.GroupBy(s => s.Speed).Select(grp => grp.First()).ToList();
+
+			return View();
+		}
+		/// <summary>
+		/// Добавление тарифа в базу
+		/// </summary>
+		[HttpPost]
+		public ActionResult CreatePlan([EntityBinder] Plan plan)
+		{
+			var errors = ValidationRunner.ValidateDeep(plan);
+			if (errors.Length == 0)
+			{
+				DbSession.Save(plan);
+				SuccessMessage("Тарифный план успешно добавлен!");
+				return RedirectToAction("PlanIndex");
+			}
+			ViewBag.Plan = plan;
+			ViewBag.PackageSpeed = DbSession.Query<PackageSpeed>().OrderBy(s => s.Speed)
+				.GroupBy(s => s.Speed).Select(grp => grp.First()).ToList();
+
+			return View("CreatePlan");
+		}
+		
+		/// <summary>
 		/// Просмотр тарифа
 		/// </summary>
 		public ActionResult EditPlan(int id)
@@ -36,13 +69,21 @@ namespace InforoomControlPanel.Controllers
 			var PlanTransfer = new PlanTransfer();
 			//назначение поля тарифа
 			PlanTransfer.PlanFrom = plan;
-			var plans = DbSession.Query<Plan>().OrderByDescending(i => i.Id).ToList();
-			foreach (var transfer in plan.PlanTransfers) plans.Remove(transfer.PlanTo);
+			var plans = DbSession.Query<Plan>().OrderByDescending(i => i.Id).ToList(); 
+			foreach (var transfer in plan.PlanTransfers)
+			{
+				plans.Remove(transfer.PlanTo);
+			} 
 
 			var RegionPlan = new RegionPlan();
 			RegionPlan.Plan = plan;
-			var regions = DbSession.Query<Region>().ToList();
-			foreach (var rp in plan.RegionPlans) regions.Remove(rp.Region);
+			var regions = DbSession.Query<Region>().ToList(); 
+			foreach (var rp in plan.RegionPlans)
+			{
+				regions.Remove(rp.Region);
+			}
+			ViewBag.PackageSpeed = DbSession.Query<PackageSpeed>().OrderBy(s => s.Speed)
+				.GroupBy(s => s.Speed).Select(grp => grp.First()).ToList(); 
 
 			ViewBag.Plans = plans;
 			ViewBag.Plan = plan;
@@ -58,7 +99,8 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult UpdatePlan([EntityBinder] Plan plan)
 		{
 			var errors = ValidationRunner.ValidateDeep(plan);
-			if (errors.Length == 0) {
+			if (errors.Length == 0)
+			{
 				DbSession.Save(plan);
 				SuccessMessage("Тарифный план успешно отредактирован");
 				return RedirectToAction("EditPlan", new { id = plan.Id });

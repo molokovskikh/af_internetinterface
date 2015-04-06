@@ -115,6 +115,16 @@ namespace Inforoom2.Models
 		[Key(1, Column = "client")]
 		[OneToMany(2, ClassType = typeof(Contact))]
 		public virtual IList<Contact> Contacts { get; set; }
+		 
+		[Bag(0, Table = "UserWriteOffs", Cascade = "all-delete-orphan")]
+		[Key(1, Column = "Client")]
+		[OneToMany(2, ClassType = typeof (UserWriteOff))]
+		public virtual IList<UserWriteOff> UserWriteOffs { get; set; }
+
+		[Bag(0, Table = "WriteOff", Cascade = "all-delete-orphan")]
+		[Key(1, Column = "Client")]
+		[OneToMany(2, ClassType = typeof (WriteOff))]
+		public virtual IList<WriteOff> WriteOffs { get; set; } 
 
 		[Property(Column = "SendSmsNotifocation")]
 		public virtual bool SendSmsNotification { get; set; }
@@ -184,6 +194,34 @@ namespace Inforoom2.Models
 			return services.Sum(c => c.GetPrice());
 		}
 
+		/// <summary>
+		/// Формирует итоговую цену Интернета за месяц по данному тарифному плану
+		/// </summary>
+		public virtual decimal GetTariffPrice()
+		{
+			if (WorkingStartDate == null || Disabled || PhysicalClient.Plan == null)
+				return 0;
+
+			var prePrice = AccountDiscounts(PhysicalClient.Plan.Price);
+			var finalPrice = AccountDiscounts(PhysicalClient.Plan.FinalPrice);
+			if ((PhysicalClient.Plan.FinalPriceInterval == 0 || PhysicalClient.Plan.FinalPrice == 0))
+				return prePrice;
+
+			if (WorkingStartDate != null && WorkingStartDate.Value.AddMonths(PhysicalClient.Plan.FinalPriceInterval) <= SystemTime.Now())
+				return finalPrice;
+			return prePrice;
+		}
+
+		/// <summary>
+		/// Применяет скидку клиента к некоторой цене price
+		/// </summary>
+		private decimal AccountDiscounts(decimal price)
+		{
+			if (Discount > 0)
+				price *= 1 - Discount / 100;
+			return price;
+		}
+
 		public virtual void SetStatus(StatusType status, ISession session)
 		{
 			SetStatus(session.Load<Status>((Int32)status));
@@ -211,10 +249,14 @@ namespace Inforoom2.Models
 				DebtDays = 0;
 				ShowBalanceWarningPage = false;
 			}
-			if (status.Type == StatusType.BlockedForRepair) {
+			else if (status.Type == StatusType.BlockedForRepair) {
 				Disabled = true;
 				AutoUnblocked = false;
 			}
+			else if (status.Type == StatusType.Dissolved) {
+				Discount = 0;
+			}
+
 			if (Status.Type != status.Type) {
 				StatusChangedOn = DateTime.Now;
 			}

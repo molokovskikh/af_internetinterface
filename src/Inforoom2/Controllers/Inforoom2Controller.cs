@@ -59,11 +59,13 @@ namespace Inforoom2.Controllers
 			ViewBag.JavascriptParams["baseurl"] = String.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, UrlHelper.GenerateContentUrl("~/", HttpContext));
 			ViewBag.ActionName = filterContext.RouteData.Values["action"].ToString();
 			ViewBag.ControllerName = GetType().Name.Replace("Controller", "");
-			//todo куда это девать?
-			ViewBag.CallMeBackTicket = new CallMeBackTicket {
+			//todo куда это девать? 
+			var newCallMeBackTicket = new CallMeBackTicket() { 
 				Name = (CurrentClient == null) ? "" : CurrentClient.Name,
 				PhoneNumber = (CurrentClient == null) ? "" : CurrentClient.PhoneNumber
 			};
+
+			ViewBag.CallMeBackTicket = ViewBag.CallMeBackTicket ?? newCallMeBackTicket;
 
 			ProcessRegionPanel();
 			if (TryAuthorizeNetworkClient())
@@ -166,9 +168,10 @@ namespace Inforoom2.Controllers
 			if (Request.Params["callMeBackTicket.Name"] == null)
 				return;
 			callMeBackTicket.Client = CurrentClient;
-
-			var errors = ValidationRunner.ValidateDeep(callMeBackTicket);
-			if (errors.Length == 0) {
+			 
+			var errors = ValidationRunner.Validate(callMeBackTicket);
+			if (errors.Length == 0)
+			{ 
 				DbSession.Save(callMeBackTicket);
 				if (callMeBackTicket.Client != null) {
 					var appeal = new Appeal("Клиент создал запрос на обратный звонок № " + callMeBackTicket.Id,

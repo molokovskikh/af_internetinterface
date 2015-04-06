@@ -41,7 +41,7 @@ namespace Inforoom2.Models
 				return (int)result.First() + 1;
 			return 1;
 		}
-
+		///TODO (для тестов!)  Не использовать 
 		public virtual bool ChangeId(int newid, ISession session)
 		{
 			var attribute = Attribute.GetCustomAttribute(GetType(), typeof(ClassAttribute)) as ClassAttribute;
