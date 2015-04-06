@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Security.Cryptography.X509Certificates;
 using System.Web;
 using Castle.Components.Validator;
 using Inforoom2.Models;
@@ -14,6 +15,51 @@ using NHibernate.Validator.Engine;
 
 namespace Inforoom2.Components
 {
+	public class ValidationErrors : List<InvalidValue>
+	{
+		public int Length
+		{
+			get { return this.Count; }
+		}
+
+		public ValidationErrors(IEnumerable<InvalidValue> ListOfErrors)
+		{
+			this.AddRange(ListOfErrors);
+		}
+
+		/// <summary>
+		/// Удаление элемента из списка ошибок, появившихся в результате валидации 
+		/// Пример использования RemoveErrors("Inforoom2.Models", "BirthDate")
+		/// </summary>
+		/// <param name="ClassName">Название класса</param>
+		/// <param name="PropertyName">Название свойства</param>
+		/// <returns>Список ошибок, появившихся в результате валидации</returns>
+		public ValidationErrors RemoveErrors(string ClassName, string PropertyName)
+		{
+			var ElementToRemove = this.FirstOrDefault(s => s.EntityType.ToString() == ClassName + "." + PropertyName);
+			if (ElementToRemove != null) {
+				this.Remove(ElementToRemove);
+			}
+			return this;
+		}
+
+		/// <summary>
+		/// Удаление элементов из списка ошибок, появившихся в результате валидации 
+		/// </summary>
+		/// <param name="ErrorsToRemove">Строка в виде "RootEntity+"."+PropertyName"</param>
+		/// <returns>Список ошибок, появившихся в результате валидации</returns>
+		public ValidationErrors RemoveErrors(List<string> ErrorsToRemove)
+		{
+			foreach (var item in ErrorsToRemove) {
+				var ElementToRemove = this.FirstOrDefault(s => s.RootEntity + "." + s.PropertyName == item);
+				if (ElementToRemove != null) {
+					this.Remove(ElementToRemove);
+				}
+			}
+			return this;
+		}
+	}
+
 	public class ValidationRunner
 	{
 		protected ArrayList ValidatedObjectList = new ArrayList();
@@ -25,7 +71,8 @@ namespace Inforoom2.Components
 			Session = session;
 		}
 
-		private InvalidValue[] ValidateProperty(object obj, string name)
+
+		private ValidationErrors ValidateProperty(object obj, string name)
 		{
 			var summary = new List<InvalidValue>();
 			//Стандартная валидация
@@ -36,22 +83,21 @@ namespace Inforoom2.Components
 
 			//Кастомная валидация
 			var validators = Attribute.GetCustomAttributes(prop).OfType<CustomValidator>().ToList();
-			foreach (var validator in validators)
-			{
+			foreach (var validator in validators) {
 				errors = validator.Start((BaseModel)obj, prop);
 				summary.AddRange(errors);
 			}
-			return summary.ToArray();
+			return new ValidationErrors(summary.ToList());
 		}
 
-		public InvalidValue[] Validate(object obj)
+		public ValidationErrors Validate(object obj)
 		{
 			var summary = new List<InvalidValue>();
 			ValidatedObjectList.Add(obj);
 
 			var props = obj.GetType().GetProperties().Where(i => Attribute.GetCustomAttributes(i).OfType<CustomValidator>().Any()).ToList();
-			foreach (var prop in props) 
-				summary.AddRange(ValidateProperty(obj,prop.Name));
+			foreach (var prop in props)
+				summary.AddRange(ValidateProperty(obj, prop.Name));
 
 			var runner = new ValidatorEngine();
 			var runnerErrors = runner.Validate(obj);
@@ -59,10 +105,10 @@ namespace Inforoom2.Components
 			summary.AddRange(runnerErrors);
 			summary.AddRange(selfValidateErrors);
 
-			return summary.ToArray(); 
+			return new ValidationErrors(summary.ToList());
 		}
 
-		public InvalidValue[] ValidateDeep(object obj, IList validatedObjects = null)
+		public ValidationErrors ValidateDeep(object obj, IList validatedObjects = null)
 		{
 			ValidatedObjectList.Add(obj);
 
@@ -95,6 +141,9 @@ namespace Inforoom2.Components
 			props = allprops.Where(prop => Attribute.IsDefined(prop, typeof(OneToOneAttribute)));
 			foreach (var p in props) {
 				var value = p.GetValue(obj, null);
+				//Если поля нет, но оно необязательное, то и хрен с ним
+				if (value == null && !Attribute.IsDefined(p, typeof(NHibernate.Validator.Constraints.NotNullAttribute)))
+					continue;
 				if (!NHibernateUtil.IsInitialized(value) || validatedObjects.Contains(value))
 					continue;
 				var errors = ValidateDeep(value, validatedObjects);

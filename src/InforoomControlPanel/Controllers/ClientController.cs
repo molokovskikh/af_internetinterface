@@ -4,10 +4,14 @@ using System.Linq;
 using System.Web.Mvc;
 using Inforoom2.Components;
 using Inforoom2.Models;
+using InternetInterface.Models;
 using NHibernate.Linq;
 using NHibernate.Util;
 using Client = Inforoom2.Models.Client;
+using Contact = Inforoom2.Models.Contact;
 using House = Inforoom2.Models.House;
+using PhysicalClient = Inforoom2.Models.PhysicalClient;
+using RequestType = Inforoom2.Models.RequestType;
 using ServiceRequest = Inforoom2.Models.ServiceRequest;
 using Street = Inforoom2.Models.Street;
 
@@ -21,16 +25,16 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.BreadCrumb = "Клиенты";
 		}
 
-		public ActionResult ClientList(int page=1)
+		public ActionResult ClientList(int page = 1)
 		{
 			var perpage = 100;
-			var clients = DbSession.Query<Client>().Where(i=>i.PhysicalClient != null).Skip((page-1)*perpage).Take(perpage).ToList();
+			var clients = DbSession.Query<Client>().Where(i => i.PhysicalClient != null).Skip((page - 1) * perpage).Take(perpage).ToList();
 			ViewBag.Clients = clients;
 			//Пагинация
 			ViewBag.Models = clients;
 			ViewBag.Page = page;
 			ViewBag.ModelsPerPage = perpage;
-			ViewBag.ModelsCount = DbSession.QueryOver<Client>().Where(i=>i.PhysicalClient != null).RowCount();
+			ViewBag.ModelsCount = DbSession.QueryOver<Client>().Where(i => i.PhysicalClient != null).RowCount();
 			return View("ClientList");
 		}
 
@@ -185,7 +189,7 @@ namespace InforoomControlPanel.Controllers
 		/// <returns></returns>
 		public ActionResult ClientRequestsList()
 		{
-			var clientRequests = DbSession.Query<ClientRequest>().OrderByDescending(i=>i.Id).ToList();
+			var clientRequests = DbSession.Query<ClientRequest>().OrderByDescending(i => i.Id).ToList();
 			ViewBag.ClientRequests = clientRequests;
 			return View();
 		}
@@ -225,6 +229,51 @@ namespace InforoomControlPanel.Controllers
 				return this.ServiceRequest(client.Id);
 			}
 			ViewBag.ServiceRequest = ServiceRequest;
+			return View();
+		}
+
+		/// <summary>
+		/// Форма регистрации клиента 
+		/// </summary>
+		/// <param name="ClientRegistration"></param>
+		/// <returns></returns>
+		public ActionResult ClientRegistration()
+		{
+			var client = new Client();
+			client.PhysicalClient = new PhysicalClient();
+			client.PhysicalClient.Name = "";
+			client.PhysicalClient.Surname = "";
+			client.PhysicalClient.Patronymic = "";
+			client.PhysicalClient.BirthDate = DateTime.Now;
+			client.StatusChangedOn = DateTime.Now;
+			client.Contacts = new List<Contact>() {
+				new Contact() { ContactName = "", ContactString = "", Type = ContactType.HousePhone, Date = DateTime.Now },
+				new Contact() { ContactName = "", ContactString = "", Type = ContactType.ConnectedPhone, Date = DateTime.Now }
+			};
+			ViewBag.PlanList = DbSession.Query<Plan>().ToList();
+			ViewBag.CertificateType = DbSession.Query<CertificateType>().ToList();
+			ViewBag.Client = client;
+			return View();
+		}
+
+		/// <summary>
+		///  Форма регистрации клиента
+		/// </summary>
+		/// <param name="ClientRegistration"></param>
+		/// <returns></returns>
+		[HttpPost]
+		public ActionResult ClientRegistration([EntityBinder] Client client)
+		{
+			var errors = ValidationRunner.ValidateDeep(client);
+			if (errors.Length == 0)
+			{
+				DbSession.Save(client);
+				SuccessMessage("Клиент успешно зарегистрирован!");
+				return RedirectToAction("ClientList");
+			}
+			ViewBag.PlanList = DbSession.Query<Plan>().ToList();
+			ViewBag.Client = client;
+
 			return View();
 		}
 	}

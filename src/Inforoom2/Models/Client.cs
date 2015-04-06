@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Common.Tools;
 using Inforoom2.Models.Services;
@@ -21,11 +22,15 @@ namespace Inforoom2.Models
 			Endpoints = new List<ClientEndpoint>();
 			ClientServices = new List<ClientService>();
 			Payments = new List<Payment>();
+			ConnectionRequests = new List<ConnectionRequest>();
+			Contacts = new List<Contact>();
+			UserWriteOffs = new List<UserWriteOff>();
+			WriteOffs = new List<WriteOff>(); 
 		}
 
-		//todo исправить это почему-то не подцепляет маппинг
+		//todo исправить это почему-то не подцепляет маппинг когда будет решаться задача о графике подключенцев
 		[Bag(0, Table = "ConnectionRequests")]
-		[Key(1, Column = "Client")]
+		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
 		[OneToMany(2, ClassType = typeof(ConnectionRequest))]
 		public virtual IList<ConnectionRequest> ConnectionRequests { get; set; }
 
@@ -75,6 +80,7 @@ namespace Inforoom2.Models
 		public virtual DateTime? RatedPeriodDate { get; set; }
 
 		[Property]
+		[DataType(DataType.Date)]
 		public virtual DateTime? StatusChangedOn { get; set; }
 
 		[Property(Column = "BeginWork")]
@@ -93,32 +99,32 @@ namespace Inforoom2.Models
 		public virtual LegalClient LegalClient { get; set; }
 
 		[Bag(0, Table = "ClientServices", Cascade = "all-delete-orphan")]
-		[Key(1, Column = "Client")]
+		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
 		[OneToMany(2, ClassType = typeof (ClientService))]
 		public virtual IList<ClientService> ClientServices { get; set; }
 
 		[Bag(0, Table = "Payments", Cascade = "all-delete-orphan")]
-		[Key(1, Column = "Client")]
+		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
 		[OneToMany(2, ClassType = typeof(Payment))]
 		public virtual IList<Payment> Payments { get; set; }
 		
 		[Bag(0,Table = "ClientEndpoints", Cascade = "all-delete-orphan")]
-		[Key(1, Column = "client")]
+		[NHibernate.Mapping.Attributes.Key(1, Column = "client")]
 		[OneToMany(2, ClassType = typeof (ClientEndpoint))]
 		public virtual IList<ClientEndpoint> Endpoints { get; set; }
 
 		[Bag(0,Table = "Contacts", Cascade = "all-delete-orphan")]
-		[Key(1, Column = "client")]
+		[NHibernate.Mapping.Attributes.Key(1, Column = "client")]
 		[OneToMany(2, ClassType = typeof (Contact))]
 		public virtual IList<Contact> Contacts { get; set; }
 
 		[Bag(0, Table = "UserWriteOffs", Cascade = "all-delete-orphan")]
-		[Key(1, Column = "Client")]
+		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
 		[OneToMany(2, ClassType = typeof (UserWriteOff))]
 		public virtual IList<UserWriteOff> UserWriteOffs { get; set; }
 
 		[Bag(0, Table = "WriteOff", Cascade = "all-delete-orphan")]
-		[Key(1, Column = "Client")]
+		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
 		[OneToMany(2, ClassType = typeof (WriteOff))]
 		public virtual IList<WriteOff> WriteOffs { get; set; }
 		

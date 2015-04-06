@@ -1,0 +1,177 @@
+﻿@using Inforoom2.Helpers
+@using Inforoom2.Models 
+@using InternetInterface.Models
+@using Client = Inforoom2.Models.Client
+
+@{
+	Client client = ViewBag.Client;
+	ViewBag.Title = "Регистрация нового клиента " + client.PhysicalClient.FullName;
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	string action = ViewBag.ActionName;
+	string controller = ViewBag.ControllerName;
+	List<CertificateType> CertificateTypeList = ViewBag.CertificateType;
+	List<Plan> PlanList = ViewBag.PlanList;
+}
+
+<div class="panel panel-primary col-md-12">
+	<div class="panel-body">
+		@using (@Html.BeginForm(action, controller, null, FormMethod.Post, new { @id = "ClientRegistrationForm", @class = "form-horizontal form-groups-bordered" })) {
+			@Html.HiddenFor(o => client.Id)
+
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">Личная информация</h3>
+				</div>
+				<div class="panel-body">
+
+					<div class="row">
+						<div class="col-lg-8">
+
+							<div class="form-group">
+								<label class="col-sm-2 control-label">Фамилия:</label>
+								<div class="col-sm-4">
+									@Html.TextBoxFor(o => client.PhysicalClient.Surname, new { @class = "form-control" })
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">Имя:</label>
+								<div class="col-sm-4">
+									@Html.TextBoxFor(o => client.PhysicalClient.Name, new { @class = "form-control" })
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">Отчество:</label>
+								<div class="col-sm-4">
+									@Html.TextBoxFor(o => client.PhysicalClient.Patronymic, new { @class = "form-control" })
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">Дата рождения:</label>
+								<div class="col-sm-4 deta-picker-box">
+									@Html.EditorFor(o => client.PhysicalClient.BirthDate, new { @class = "form-control" })
+								</div>
+
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">Мобильный телефон:</label>
+								<div class="col-sm-4">
+									@Html.TextBoxFor(o => client.PhysicalClient.PhoneNumber, new { @class = "form-control" })
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">Домашний телефон:</label>
+								<div class="col-sm-4">
+									@Html.TextBoxFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.HousePhone).ContactString, new { @Name = "Inforoom2.Models.Contact[0].ContactString", @Id = "ContactString_1", @class = "form-control" })
+									@Html.HiddenFor(o => client.Id, new { @Name = "Inforoom2.Models.Contact[0].T" })
+									@Html.HiddenFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.HousePhone).Type, new { @Name = "Inforoom2.Models.Contact[0].Type" })
+									@Html.HiddenFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.HousePhone).Date, new { @Name = "Inforoom2.Models.Contact[0].Date" })
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">email:</label>
+								<div class="col-sm-4">
+									@Html.TextBoxFor(o => client.PhysicalClient.Email, new { @class = "form-control" })
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">Номер абонента Ситилайн:</label>
+								<div class="col-sm-4">
+									@Html.TextBoxFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.ConnectedPhone).ContactString, new { @Name = "Inforoom2.Models.Contact[1].ContactString", @Id = "ContactString_2", @class = "form-control" })
+									@Html.HiddenFor(o => client.Id, new { @Name = "Inforoom2.Models.Contact[1].Client" })
+									@Html.HiddenFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.ConnectedPhone).Type, new { @Name = "Inforoom2.Models.Contact[1].Type" })
+									@Html.HiddenFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.ConnectedPhone).Date, new { @Name = "Inforoom2.Models.Contact[1].Date" })
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">Проверен:</label>
+								<div class="col-sm-4">
+									@Html.TextBoxFor(o => client.PhysicalClient.Email, new { @class = "form-control" })
+								</div>
+							</div>
+						</div><!-- /.col-lg-6 -->
+					</div><!-- /.row -->
+
+
+				</div>
+			</div>
+
+
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">Паспортные данные</h3>
+				</div>
+				<div class="panel-body">
+
+					<div class="row">
+						<div class="col-lg-8">
+							<div class="form-group">
+								<label class="col-sm-2 control-label">Название документа удостоверяющего личность:</label>
+								<div class="col-sm-4">
+									@Html.TextBoxFor(o => client.PhysicalClient.CertificateName, new { @class = "form-control" })
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">Серия паспорта:</label>
+								<div class="col-sm-4">
+									@Html.TextBoxFor(o => client.PhysicalClient.PassportSeries, new { @class = "form-control" })
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">Номер паспорта:</label>
+								<div class="col-sm-4">
+									@Html.TextBoxFor(o => client.PhysicalClient.PassportNumber, new { @class = "form-control" })
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">Дата выдачи паспорта:</label>
+								<div class="col-sm-4 deta-picker-box">
+									@Html.EditorFor(o => client.PhysicalClient.PassportDate, new { @class = "form-control" })
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">Кем выдан:</label>
+								<div class="col-sm-4">
+									@Html.TextBoxFor(o => client.PhysicalClient.PassportResidention, new { @class = "form-control" })
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">Адрес регистрации:</label>
+								<div class="col-sm-4">
+									@Html.TextBoxFor(o => client.PhysicalClient.RegistrationAddress, new { @class = "form-control" })
+								</div>
+							</div>
+						</div><!-- /.col-lg-6 -->
+					</div><!-- /.row -->
+				</div>
+			</div>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">Паспортные данные</h3>
+				</div>
+				<div class="panel-body">
+
+					<div class="row">
+						<div class="col-lg-8">
+							
+							<div class="form-group">
+								<label class="col-sm-2 control-label">Тариф:</label>
+								<div class="col-sm-4">
+									@Html.DropDownListExtendedFor(i => client.PhysicalClient.Plan, PlanList, obj => obj.Name, null, new { @class = "form-control" })
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">Дата рождения:</label>
+								<div class="col-sm-4">
+									<input type="submit" class="btn btn-green" value="Зарегистрировать" />
+								</div>
+							</div>
+						</div><!-- /.col-lg-6 -->
+					</div><!-- /.row -->
+				</div>
+			</div>
+		}
+	</div>
+
+
+
+</div>

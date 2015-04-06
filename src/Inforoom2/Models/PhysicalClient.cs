@@ -51,6 +51,7 @@ namespace Inforoom2.Models
 		[Property, NotNullNotEmpty(Message = "Введите серию паспорта")]
 		public virtual string PassportSeries { get; set; }
 
+		[DataType(DataType.Date)]
 		[Property, DateTimeNotEmpty]
 		public virtual DateTime PassportDate { get; set; }
 
@@ -65,13 +66,14 @@ namespace Inforoom2.Models
 
 		[Property(NotNull = true), NotEmpty(Message = "Введите имя")]
 		public virtual string Name { get; set; }
-
+		 
 		[Property(NotNull = true), NotEmpty(Message = "Введите фамилию")]
 		public virtual string Surname { get; set; }
 
 		[Property(NotNull = true), NotEmpty(Message = "Введите отчество")]
 		public virtual string Patronymic { get; set; }
 
+		[DataType(DataType.Date)]
 		[Property(Column = "DateOfBirth"), DateTimeNotEmpty]
 		public virtual DateTime BirthDate { get; set; }
 
@@ -82,9 +84,6 @@ namespace Inforoom2.Models
 		{
 			get { return Surname + " " + Name + " " + Patronymic; }
 		}
-
-		[OneToMany]
-		public virtual ClientRequest ClientRequest { get; set; }
 
 		public virtual UserWriteOff RequestChangePlan(Plan planToSwitchOn)
 		{

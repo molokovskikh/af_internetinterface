@@ -1883,6 +1883,7 @@
   <ItemGroup>
     <Content Include="Views\Plans\CreatePlan.cshtml" />
     <Content Include="Views\ConnectionTeam\UnpluggedClientList.cshtml" />
+    <Content Include="Views\Client\ClientRegistration.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
   </ItemGroup>
