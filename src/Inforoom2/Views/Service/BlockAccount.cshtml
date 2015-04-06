@@ -27,10 +27,17 @@
 			</p>
 		}
 		if (client.YearCycleDate != null) {
-			<p>Ваш расчетный период с 
-				@client.YearCycleDate.Value.ToShortDateString() по 
-				@client.YearCycleDate.Value.AddYears(1).AddDays(-1).ToShortDateString()
-			</p>
+			if (client.FreeBlockDays > 0) {
+				<p>Ваши бесплатные дни доступны в период с 
+					@DateTime.Now.Date.ToShortDateString() по 
+					@client.YearCycleDate.Value.AddYears(1).AddDays(-1).ToShortDateString()
+				</p>
+			}
+			else {
+				<p>Ваши 28 бесплатных дней станут доступны с 
+					@client.YearCycleDate.Value.AddYears(1).ToShortDateString()
+				</p>
+			}
 		}
 	}
 	else if (client.HasActiveService(service))
@@ -44,10 +51,17 @@
 		
 		<p>Доступно @client.FreeBlockDays бесплатных дней.</p>
 		if (client.YearCycleDate != null) {
-			<p>Ваш расчетный период с 
-				@client.YearCycleDate.Value.ToShortDateString() по 
-				@client.YearCycleDate.Value.AddYears(1).AddDays(-1).ToShortDateString()
-			</p>
+			if (client.FreeBlockDays > 0) {
+				<p>Ваши бесплатные дни доступны в период с 
+					@DateTime.Now.Date.ToShortDateString() по 
+					@client.YearCycleDate.Value.AddYears(1).AddDays(-1).ToShortDateString()
+				</p>
+			}
+			else {
+				<p>Ваши 28 бесплатных дней станут доступны с 
+					@client.YearCycleDate.Value.AddYears(1).ToShortDateString()
+				</p>
+			}
 		}
 	}
 	
