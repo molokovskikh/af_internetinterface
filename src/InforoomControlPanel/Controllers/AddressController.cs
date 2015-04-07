@@ -13,7 +13,6 @@ namespace InforoomControlPanel.Controllers
 {
 	public class AddressController : AdminController
 	{
-
 		public ActionResult DeleteHouse(int? id)
 		{
 			var city = DbSession.Get<City>(id);
@@ -61,8 +60,7 @@ namespace InforoomControlPanel.Controllers
 		[HttpPost]
 		public ActionResult CreateSwitchAddress([EntityBinder] SwitchAddress SwitchAddress, bool? noEntrances)
 		{
-			if (noEntrances.HasValue)
-			{
+			if (noEntrances.HasValue) {
 				SwitchAddress.Entrance = null;
 			}
 			var errors = ValidationRunner.ValidateDeep(SwitchAddress);
@@ -72,13 +70,13 @@ namespace InforoomControlPanel.Controllers
 				return RedirectToAction("SwitchAddressList");
 			}
 
-			CreateSwitchAddress(SwitchAddress.House.Street.Region.Id,SwitchAddress.House.Street.Id);
+			CreateSwitchAddress(SwitchAddress.House.Street.Region.Id, SwitchAddress.House.Street.Id);
 			ViewBag.SwitchAddress = SwitchAddress;
 			ViewBag.House = SwitchAddress.House;
 			return View("CreateSwitchAddress");
 		}
 
-		
+
 		public ActionResult CreateSwitchAddress(int regionId = 0, int streetId = 0, int id = 0)
 		{
 			var SwitchAddress = new SwitchAddress();
@@ -93,7 +91,7 @@ namespace InforoomControlPanel.Controllers
 			var regions = DbSession.Query<Region>().ToList();
 			var streets = DbSession.Query<Street>().ToList();
 			var houses = DbSession.Query<House>().ToList();
-			var NetworkNodes = DbSession.Query<NetworkNode>().OrderBy(i=>i.Name).ToList();
+			var NetworkNodes = DbSession.Query<NetworkNode>().OrderBy(i => i.Name).ToList();
 			ViewBag.Streets = streets;
 			ViewBag.Houses = houses;
 			ViewBag.Regions = regions;
@@ -105,13 +103,11 @@ namespace InforoomControlPanel.Controllers
 		[HttpPost]
 		public ActionResult EditSwitchAddress([EntityBinder] SwitchAddress SwitchAddress, bool? noEntrances)
 		{
-			if (noEntrances.HasValue)
-			{
+			if (noEntrances.HasValue) {
 				SwitchAddress.Entrance = null;
 			}
 			var errors = ValidationRunner.Validate(SwitchAddress);
-			if (errors.Length == 0)
-			{
+			if (errors.Length == 0) {
 				DbSession.Save(SwitchAddress);
 				SuccessMessage("Адрес коммутатора успешно изменен");
 				return RedirectToAction("SwitchAddressList");
@@ -122,6 +118,7 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.House = SwitchAddress.House;
 			return View("CreateSwitchAddress");
 		}
+
 		public ActionResult EditSwitchAddress(int id)
 		{
 			var SwitchAddress = DbSession.Get<SwitchAddress>(id);
@@ -134,6 +131,7 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.SwitchAddress = SwitchAddress;
 			return View("CreateSwitchAddress");
 		}
+
 		public ActionResult CityList()
 		{
 			var cities = DbSession.Query<City>().ToList();
@@ -250,8 +248,7 @@ namespace InforoomControlPanel.Controllers
 			}
 
 			var errors = ValidationRunner.Validate(House);
-			if (errors.Length == 0)
-			{
+			if (errors.Length == 0) {
 				DbSession.Save(House);
 				SuccessMessage("Дом успешно добавлен");
 				return RedirectToAction("HouseList");
@@ -276,15 +273,13 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult EditHouse([EntityBinder] House House, string yandexHouse, string yandexPosition)
 		{
 			//По возможности используем формализацию яндекса
-			if (House.Confirmed)
-			{
+			if (House.Confirmed) {
 				House.Number = yandexHouse;
 				House.Geomark = yandexPosition;
 			}
 
 			var errors = ValidationRunner.Validate(House);
-			if (errors.Length == 0)
-			{
+			if (errors.Length == 0) {
 				DbSession.Save(House);
 				SuccessMessage("Дом успешно изменен");
 				return RedirectToAction("HouseList");
@@ -295,5 +290,4 @@ namespace InforoomControlPanel.Controllers
 			return View("CreateHouse");
 		}
 	}
-
 }

@@ -5,7 +5,7 @@ namespace Inforoom2.Test.Functional.Account
 	/// <summary>
 	/// Авторизация пользователя на сайте
 	/// </summary>
-	class AccountLoginFixture : AccountFixture
+	internal class AccountLoginFixture : AccountFixture
 	{
 		/// <summary>
 		/// Успешная авторизация пользователя и вывод логина авторизованного пользователя
@@ -27,7 +27,6 @@ namespace Inforoom2.Test.Functional.Account
 			Login.Clear();
 			browser.FindElementByCssSelector(".click").Click();
 			AssertText("Неправильный логин или пароль");
-
 		}
 
 		[Test, Description("Незаполненно поле пароль")]
@@ -53,7 +52,5 @@ namespace Inforoom2.Test.Functional.Account
 			browser.FindElementByCssSelector(".click").Click();
 			AssertText("Неправильный логин или пароль");
 		}
-
-
 	}
 }

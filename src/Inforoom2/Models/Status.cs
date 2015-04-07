@@ -6,7 +6,7 @@ using NHibernate.Mapping.Attributes;
 namespace Inforoom2.Models
 {
 	[Class(0, Table = "Status", NameType = typeof(Status))]
-	public class Status :BaseModel
+	public class Status : BaseModel
 	{
 		public Status()
 		{
@@ -41,7 +41,7 @@ namespace Inforoom2.Models
 			return session.QueryOver<Status>().List().FirstOrDefault(status => status.Type == type);
 		}
 
-		public virtual  StatusType Type
+		public virtual StatusType Type
 		{
 			get
 			{
@@ -63,7 +63,7 @@ namespace Inforoom2.Models
 			}
 		}
 
-		
+
 		[Bag(0, Table = "StatusCorrelation")]
 		[Key(1, Column = "StatusId", NotNull = false)]
 		[ManyToMany(2, Column = "AdditionalStatusId", ClassType = typeof(AdditionalStatus))]

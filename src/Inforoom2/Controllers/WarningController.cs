@@ -17,7 +17,6 @@ namespace Inforoom2.Controllers
 	/// </summary>
 	public class WarningController : Inforoom2Controller
 	{
-
 		public ActionResult RepairCompleted()
 		{
 			var client = CurrentClient;
@@ -29,18 +28,17 @@ namespace Inforoom2.Controllers
 			return RedirectToAction("Index", "Home");
 		}
 
-		public ActionResult Index(int disable = 0, string ip ="")
+		public ActionResult Index(int disable = 0, string ip = "")
 		{
 			var ipstring = Request.UserHostAddress;
 #if DEBUG
 			ipstring = ip;
 #endif
 			var endpoint = ClientEndpoint.GetEndpointForIp(ipstring, DbSession);
-			if (endpoint == null)
-			{
-				var lease = Lease.GetLeaseForIp(ipstring,DbSession);
-				if(!ipstring.Contains("172.25.0")) //Остановим спам от непонятных
-					EmailSender.SendDebugInfo("Редидеркт с варнинга на главную: "+ipstring+(lease != null ? ", есть аренда:"+lease.Id:""),CollectDebugInfo().ToString());
+			if (endpoint == null) {
+				var lease = Lease.GetLeaseForIp(ipstring, DbSession);
+				if (!ipstring.Contains("172.25.0")) //Остановим спам от непонятных
+					EmailSender.SendDebugInfo("Редидеркт с варнинга на главную: " + ipstring + (lease != null ? ", есть аренда:" + lease.Id : ""), CollectDebugInfo().ToString());
 				return RedirectToAction("Index", "Home");
 			}
 			var client = endpoint.Client;
@@ -50,7 +48,7 @@ namespace Inforoom2.Controllers
 					client.SetStatus(StatusType.Worked, DbSession);
 				}
 				else if (client.Disabled) {
-					return RedirectToAction("Index","Home");
+					return RedirectToAction("Index", "Home");
 				}
 				else if (client.ShowBalanceWarningPage) {
 					client.ShowBalanceWarningPage = false;
@@ -66,9 +64,9 @@ namespace Inforoom2.Controllers
 				DbSession.Save(client);
 
 				if (!client.HasPassportData())
-					return RedirectToAction("FirstVisit","Personal");
+					return RedirectToAction("FirstVisit", "Personal");
 
-				return RedirectToAction("Index","Home");
+				return RedirectToAction("Index", "Home");
 			}
 			var services = DbSession.Query<Service>().Where(s => s.IsActivableFromWeb);
 			var blockAccountService = services.OfType<BlockAccountService>().FirstOrDefault();

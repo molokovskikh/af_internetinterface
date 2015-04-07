@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using Common.Tools;
 using Inforoom2.Models.Services;
+using InternetInterface.Helpers;
 using InternetInterface.Models;
 using NHibernate;
 using NHibernate.Mapping.Attributes;
@@ -13,7 +14,7 @@ namespace Inforoom2.Models
 	/// <summary>
 	/// Модель пользователя
 	/// </summary>
-	[Class(0, Table = "Clients", Schema = "internet", NameType = typeof (Client))]
+	[Class(0, Table = "Clients", Schema = "internet", NameType = typeof(Client))]
 	public class Client : BaseModel
 	{
 		public Client()
@@ -64,10 +65,13 @@ namespace Inforoom2.Models
 
 		[Property(NotNull = true)]
 		public virtual int FreeBlockDays { get; set; }
-		
-		[Property(NotNull = true,Column = "FirstLunch")]
+
+		[Property(NotNull = true, Column = "FirstLunch")]
 		public virtual bool Lunched { get; set; }
-		
+
+		[Property(NotNull = false)]
+		public virtual string Comment { get; set; }
+
 		[Property]
 		public virtual DateTime? StartNoBlock { get; set; }
 
@@ -94,24 +98,24 @@ namespace Inforoom2.Models
 
 		[Bag(0, Table = "ClientServices", Cascade = "all-delete-orphan")]
 		[Key(1, Column = "Client")]
-		[OneToMany(2, ClassType = typeof (ClientService))]
+		[OneToMany(2, ClassType = typeof(ClientService))]
 		public virtual IList<ClientService> ClientServices { get; set; }
 
 		[Bag(0, Table = "Payments", Cascade = "all-delete-orphan")]
 		[Key(1, Column = "Client")]
 		[OneToMany(2, ClassType = typeof(Payment))]
 		public virtual IList<Payment> Payments { get; set; }
-		
-		[Bag(0,Table = "ClientEndpoints", Cascade = "all-delete-orphan")]
+
+		[Bag(0, Table = "ClientEndpoints", Cascade = "all-delete-orphan")]
 		[Key(1, Column = "client")]
-		[OneToMany(2, ClassType = typeof (ClientEndpoint))]
+		[OneToMany(2, ClassType = typeof(ClientEndpoint))]
 		public virtual IList<ClientEndpoint> Endpoints { get; set; }
 
-		[Bag(0,Table = "Contacts", Cascade = "all-delete-orphan")]
+		[Bag(0, Table = "Contacts", Cascade = "all-delete-orphan")]
 		[Key(1, Column = "client")]
-		[OneToMany(2, ClassType = typeof (Contact))]
+		[OneToMany(2, ClassType = typeof(Contact))]
 		public virtual IList<Contact> Contacts { get; set; }
-
+		 
 		[Bag(0, Table = "UserWriteOffs", Cascade = "all-delete-orphan")]
 		[Key(1, Column = "Client")]
 		[OneToMany(2, ClassType = typeof (UserWriteOff))]
@@ -120,11 +124,11 @@ namespace Inforoom2.Models
 		[Bag(0, Table = "WriteOff", Cascade = "all-delete-orphan")]
 		[Key(1, Column = "Client")]
 		[OneToMany(2, ClassType = typeof (WriteOff))]
-		public virtual IList<WriteOff> WriteOffs { get; set; }
-		
+		public virtual IList<WriteOff> WriteOffs { get; set; } 
+
 		[Property(Column = "SendSmsNotifocation")]
 		public virtual bool SendSmsNotification { get; set; }
-		
+
 		public virtual bool IsNeedRecofiguration { get; set; }
 
 		public virtual bool IsWorkStarted()
@@ -137,7 +141,7 @@ namespace Inforoom2.Models
 			get { return ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof(Internet)); }
 		}
 
-		
+
 		public virtual bool HasActiveService(Service service)
 		{
 			return ClientServices.FirstOrDefault(cs => cs.Service.Id == service.Id && cs.IsActivated) != null;
@@ -145,7 +149,7 @@ namespace Inforoom2.Models
 
 		public virtual ClientService FindActiveService<T>()
 		{
-			return ClientServices.FirstOrDefault(c => c.IsActivated && NHibernateUtil.GetClass(c.Service) == typeof (T));
+			return ClientServices.FirstOrDefault(c => c.IsActivated && NHibernateUtil.GetClass(c.Service) == typeof(T));
 		}
 
 		public virtual bool HasActiveService<T>()
@@ -160,7 +164,7 @@ namespace Inforoom2.Models
 
 		public virtual decimal GetInterval()
 		{
-			return (((DateTime) RatedPeriodDate).AddMonths(1) - (DateTime) RatedPeriodDate).Days + DebtDays;
+			return (((DateTime)RatedPeriodDate).AddMonths(1) - (DateTime)RatedPeriodDate).Days + DebtDays;
 		}
 
 		/// <summary>
@@ -169,15 +173,15 @@ namespace Inforoom2.Models
 		/// <returns>Расчётное кол-во дней работы без пополнения баланса</returns>
 		public virtual int GetWorkDays()
 		{
-			var priceInDay = Plan.Price/DateTime.Now.DaysInMonth();		// ToDo Улучшить алгоритм вычисления
-			return (int)Math.Floor(Balance/priceInDay);
+			var priceInDay = Plan.Price / DateTime.Now.DaysInMonth(); // ToDo Улучшить алгоритм вычисления
+			return (int)Math.Floor(Balance / priceInDay);
 		}
 
 		public virtual decimal GetSumForRegularWriteOff()
 		{
 			var daysInInterval = GetInterval();
 			var price = GetPrice();
-			return Math.Round(price/daysInInterval, 2);
+			return Math.Round(price / daysInInterval, 2);
 		}
 
 		public virtual decimal GetPrice()
@@ -220,7 +224,7 @@ namespace Inforoom2.Models
 
 		public virtual void SetStatus(StatusType status, ISession session)
 		{
-			SetStatus(session.Load<Status>((Int32) status));
+			SetStatus(session.Load<Status>((Int32)status));
 		}
 
 		public virtual void SetStatus(Status status)
@@ -265,9 +269,9 @@ namespace Inforoom2.Models
 			set { PhysicalClient.Balance = value; }
 		}
 
-		public virtual string PhoneNumber 
+		public virtual string PhoneNumber
 		{
-			get {return PhysicalClient != null ? PhysicalClient.PhoneNumber : null;}
+			get { return PhysicalClient != null ? PhysicalClient.PhoneNumber : null; }
 			set { PhysicalClient.PhoneNumber = value; }
 		}
 
@@ -285,24 +289,29 @@ namespace Inforoom2.Models
 			get { return PhysicalClient != null ? PhysicalClient.Name : _Name; }
 			set { PhysicalClient.Name = value; }
 		}
+
 		public virtual string Surname
 		{
 			get { return PhysicalClient != null ? PhysicalClient.Surname : null; }
 			set { PhysicalClient.Surname = value; }
 		}
+
 		public virtual string Patronymic
 		{
 			get { return PhysicalClient != null ? PhysicalClient.Patronymic : null; }
 			set { PhysicalClient.Patronymic = value; }
 		}
+
 		public virtual Address Address
 		{
 			get { return PhysicalClient != null ? PhysicalClient.Address : null; }
 		}
+
 		public virtual DateTime LastTimePlanChanged
 		{
 			get { return PhysicalClient != null ? PhysicalClient.LastTimePlanChanged : DateTime.MinValue; }
 		}
+
 		public virtual Plan Plan
 		{
 			get { return PhysicalClient != null ? PhysicalClient.Plan : null; }
@@ -313,20 +322,20 @@ namespace Inforoom2.Models
 			if (PhysicalClient != null)
 				PhysicalClient.WriteOff(sum, isVirtual);
 			//else
-				//LawyerPerson.Balance -= sum;
+			//LawyerPerson.Balance -= sum;
 		}
 
 
 		public virtual bool HasPassportData()
 		{
-			if(PhysicalClient == null)
+			if (PhysicalClient == null)
 				return true;
 			var hasPassportData = !string.IsNullOrEmpty(PhysicalClient.PassportNumber);
 			if (PhysicalClient.CertificateType == CertificateType.Passport) {
 				hasPassportData = hasPassportData && !string.IsNullOrEmpty(PhysicalClient.PassportSeries);
 				hasPassportData = hasPassportData && !string.IsNullOrEmpty(PhysicalClient.PassportResidention);
 			}
-			else 
+			else
 				hasPassportData = hasPassportData && !string.IsNullOrEmpty(PhysicalClient.CertificateName);
 
 			hasPassportData = hasPassportData && PhysicalClient.PassportDate != DateTime.MinValue;
@@ -346,7 +355,6 @@ namespace Inforoom2.Models
 		//todo исправить
 		[Property(Column = "Address")]
 		public virtual string _oldAdressStr { get; set; }
-
 
 
 		public virtual string Fullname

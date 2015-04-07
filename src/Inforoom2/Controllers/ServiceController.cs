@@ -14,7 +14,7 @@ namespace Inforoom2.Controllers
 		public ActionResult BlockAccount()
 		{
 			InitServices();
-			AddJavascriptParam("FreeBlockDays",CurrentClient.FreeBlockDays.ToString());
+			AddJavascriptParam("FreeBlockDays", CurrentClient.FreeBlockDays.ToString());
 			return View();
 		}
 
@@ -39,10 +39,10 @@ namespace Inforoom2.Controllers
 				ActivateService(clientService, client);
 				var appealText = "Услуга \"{0}\" активирована на период с {1} по {2}. Баланс {3}.";
 				var appeal = new Appeal(string.Format(appealText, service.Name, DateTime.Now.ToShortDateString(),
-						blockingEndDate.Value.ToShortDateString(), client.Balance),
-						client, AppealType.User) {
-					Employee = GetCurrentEmployee()
-				};
+					blockingEndDate.Value.ToShortDateString(), client.Balance),
+					client, AppealType.User) {
+						Employee = GetCurrentEmployee()
+					};
 				DbSession.Save(appeal);
 				return RedirectToAction("Service", "Personal");
 			}
@@ -84,9 +84,9 @@ namespace Inforoom2.Controllers
 				ActivateService(clientService, client);
 				var appealText = "Услуга \"{0}\" активирована на период с {1} по {2}. Баланс {3}.";
 				var appeal = new Appeal(string.Format(appealText, service.Name, DateTime.Now.ToShortDateString(),
-						DateTime.Now.AddDays(3).ToShortDateString(), client.Balance), client, AppealType.User) {
-					Employee = GetCurrentEmployee()
-				};
+					DateTime.Now.AddDays(3).ToShortDateString(), client.Balance), client, AppealType.User) {
+						Employee = GetCurrentEmployee()
+					};
 				DbSession.Save(appeal);
 				return RedirectToAction("Service", "Personal");
 			}

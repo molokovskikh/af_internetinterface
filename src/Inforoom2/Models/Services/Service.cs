@@ -9,15 +9,15 @@ namespace Inforoom2.Models.Services
 	[Discriminator(Column = "Name", TypeType = typeof(string))]
 	public class Service : BaseModel
 	{
-		[Property(Column = "HumanName",NotNull = true, Unique = true), NotEmpty]
+		[Property(Column = "HumanName", NotNull = true, Unique = true), NotEmpty]
 		public virtual string Name { get; set; }
 
 		[Property(Column = "_Description", NotNull = true), NotEmpty]
 		public virtual string Description { get; set; }
-		
+
 		[Property]
 		public virtual decimal Price { get; set; }
-		
+
 		[Property]
 		public virtual bool BlockingAll { get; set; }
 
@@ -28,11 +28,9 @@ namespace Inforoom2.Models.Services
 		[Key(1, Column = "service")]
 		[OneToMany(2, ClassType = typeof(ClientService))]
 		public virtual IList<ClientService> ServiceClients { get; set; }
-		
-		/// <summary>
+ 
 		/// Индикатор управления услугой даже для заблокированного клиента
-		/// </summary>
-		public virtual bool ProcessEvenInBlock
+	 	public virtual bool ProcessEvenInBlock
 		{
 			get { return false; }
 		}
@@ -50,7 +48,6 @@ namespace Inforoom2.Models.Services
 		/// </summary>
 		public virtual void Activate(ClientService assignedService, ISession session)
 		{
-		
 		}
 
 		/// <summary>
@@ -58,7 +55,6 @@ namespace Inforoom2.Models.Services
 		/// </summary>
 		public virtual void Deactivate(ClientService assignedService, ISession session)
 		{
-			
 		}
 
 		public virtual bool IsActiveFor(ClientService assignedService)

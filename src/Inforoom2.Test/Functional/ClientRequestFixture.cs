@@ -17,7 +17,7 @@ namespace Inforoom2.Test.Functional
 	/// Setup-функция заполнения формы заявки на подключение
 	/// ClientRequest- корректное и успешное заполнение заявки
 	/// </summary>
-	class ClientRequestFixture : BaseFixture
+	internal class ClientRequestFixture : BaseFixture
 	{
 		public IWebElement Name;
 		public IWebElement Phone;
@@ -32,7 +32,8 @@ namespace Inforoom2.Test.Functional
 		/// </summary>
 		public void SendRequest()
 		{
-			browser.FindElementByCssSelector(".resend").Click();;
+			browser.FindElementByCssSelector(".resend").Click();
+			;
 		}
 
 		/// <summary>
@@ -67,7 +68,6 @@ namespace Inforoom2.Test.Functional
 			House.SendKeys("23");
 			Housing.SendKeys("3");
 			browser.FindElementByCssSelector("input[id=clientRequest_IsContractAccepted]").Click();
-			
 		}
 
 		/// <summary>
@@ -81,7 +81,7 @@ namespace Inforoom2.Test.Functional
 
 			//забираем данные из базы данных,что бы в дальнейшем проверить его поля
 			var request = DbSession.Query<ClientRequest>().Where(i => i.ApplicantName == "Петров").FirstOrDefault();
-			Assert.That(request,Is.Not.Null,"В базе должна сохраниться модель");
+			Assert.That(request, Is.Not.Null, "В базе должна сохраниться модель");
 
 			//проверка что в базе данных все заполнено корректно
 
@@ -126,6 +126,5 @@ namespace Inforoom2.Test.Functional
 			SendRequest();
 			AssertText("Пожалуйста, подтвердите, что Вы согласны с договором-офертой");
 		}
-
 	}
 }

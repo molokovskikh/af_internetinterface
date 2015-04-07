@@ -19,6 +19,7 @@ namespace Inforoom2.Models
 			TwistedPairs = new List<TwistedPair>();
 			Addresses = new List<SwitchAddress>();
 		}
+
 		[Property]
 		public virtual string Name { get; set; }
 

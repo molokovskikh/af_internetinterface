@@ -44,7 +44,7 @@ namespace Inforoom2.Controllers
 		/// </summary>
 		public ActionResult ConnectedHousesLists()
 		{
-			var addresses = DbSession.Query<SwitchAddress>().Where(i=>i.House != null).OrderBy(i=>i.House.Street.Name).ToList();
+			var addresses = DbSession.Query<SwitchAddress>().Where(i => i.House != null).OrderBy(i => i.House.Street.Name).ToList();
 
 			ViewBag.Addresses = addresses;
 			return View();

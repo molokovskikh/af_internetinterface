@@ -26,7 +26,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult Index()
 		{
 			if (Request.IsAuthenticated)
-				RedirectToAction("Index","Admin");
+				RedirectToAction("Index", "Admin");
 			return View();
 		}
 

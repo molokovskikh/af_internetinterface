@@ -10,16 +10,15 @@ namespace Inforoom2.Models
 	/// <summary>
 	/// Класс для вопроса на странице "Вопросы и ответы"
 	/// </summary>
-	[Class(Table = "questions", NameType = typeof (Question))]
+	[Class(Table = "questions", NameType = typeof(Question))]
 	public class Question : BaseModel, IModelWithPriority
 	{
-	
 		[Property, NotNullNotEmpty]
 		public virtual string Text { get; set; }
-		
+
 		[Property, NotNullNotEmpty]
 		public virtual string Answer { get; set; }
-		
+
 		[Property]
 		public virtual DateTime CreationDate { get; set; }
 
@@ -39,5 +38,4 @@ namespace Inforoom2.Models
 		{
 		}
 	}
-
 }

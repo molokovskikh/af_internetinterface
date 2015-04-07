@@ -17,7 +17,7 @@ namespace Inforoom2.Test.Functional
 	{
 		protected void TrySetWarningForClient(Client client)
 		{
-			Assert.That(client.ShowBalanceWarningPage, Is.False,"Для чистоты данного теста, warning должен назначаться биллингом");
+			Assert.That(client.ShowBalanceWarningPage, Is.False, "Для чистоты данного теста, warning должен назначаться биллингом");
 			var billing = GetBilling();
 			billing.ProcessWriteoffs();
 			DbSession.Refresh(client);
@@ -39,7 +39,7 @@ namespace Inforoom2.Test.Functional
 		{
 			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("с низким балансом"));
 			TrySetWarningForClient(client);
-		
+
 			AssertText("При непоступлении оплаты");
 			Css(".warning").Click();
 			AssertText("Протестировать скорость");

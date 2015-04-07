@@ -12,12 +12,12 @@
 		<thead>
 			<tr role="row">
 				<th class="sorting_asc" rowspan="1" colspan="1" style="width: 50px;" aria-label="">
-						<div class="checkbox checkbox-replace neon-cb-replacement">
-							<label class="cb-wrapper"><input type="checkbox" id="chk-1">
-								<div class="checked"></div>
-							</label>
-						</div>
-					</th>
+					<div class="checkbox checkbox-replace neon-cb-replacement">
+						<label class="cb-wrapper"><input type="checkbox" id="chk-1">
+							<div class="checked"></div>
+						</label>
+					</div>
+				</th>
 				<th class="sorting" tabindex="0" aria-controls="table-2" >Номер</th>
 				<th class="sorting" tabindex="0" aria-controls="table-2" >Имя</th>
 				<th class="sorting" tabindex="0" aria-controls="table-2" >Действия</th>
@@ -32,18 +32,18 @@
 							<label class="cb-wrapper"><input type="checkbox" id="chk-1"><div class="checked"></div></label>
 						</div>
 					</td>
-					<td><a href="@Url.Action("ClientInfo","Client",new {clientId = client.Id})">@client.Id</a></td>
-					<td><a href="@Url.Action("ClientInfo","Client",new {clientId = client.Id})">@client.PhysicalClient.FullName</a></td>
+					<td><a href="@Url.Action("ClientInfo", "Client", new { clientId = client.Id })">@client.Id</a></td>
+					<td><a href="@Url.Action("ClientInfo", "Client", new { clientId = client.Id })">@client.PhysicalClient.FullName</a></td>
 					<td>
-						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("ServiceRequest","Client",new {clientId = client.Id})">
+						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("ServiceRequest", "Client", new { clientId = client.Id })">
 							<i class="entypo-plus-circled"></i>
 							Сервисная заявка
 						</a>
-						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("ConnectionRequest","Client",new {clientId = client.Id})">
+						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("ConnectionRequest", "Client", new { clientId = client.Id })">
 							<i class="entypo-plus-circled"></i>
 							Заявка на подключение
 						</a>
-						<form style="display:inline" action="@Url.Action("ApplyImpersonation","AdminAccount")" method="post" target="_blank">
+						<form style="display: inline" action="@Url.Action("ApplyImpersonation", "AdminAccount")" method="post" target="_blank">
 							<input  name="client.Id" type="hidden" value="@client.Id">
 							<button class="btn btn-success btn-sm btn-icon icon-left" type="submit" value="Войти">
 								<i class="entypo-key"></i>
@@ -56,6 +56,6 @@
 		</tbody>
 	</table>
 	<div class="row">
-		@{ Html.RenderPartial("Pagination");  }
+		@{ Html.RenderPartial("Pagination"); }
 	</div>
 </div>

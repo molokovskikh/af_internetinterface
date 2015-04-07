@@ -6,7 +6,7 @@ using NHibernate.Linq;
 
 namespace Inforoom2.Controllers
 {
-	public class IsMyHouseConnectedController : Inforoom2Controller	
+	public class IsMyHouseConnectedController : Inforoom2Controller
 	{
 		public ActionResult Index()
 		{
@@ -27,16 +27,15 @@ namespace Inforoom2.Controllers
 			if (clientRequest.IsAddressConnected(switchAddress.ToList())) {
 				ViewBag.IsConnected = true;
 			}
-			var regions =GetList<Region>();
+			var regions = GetList<Region>();
 			ViewBag.Regions = regions;
 			ViewBag.ClientRequest = clientRequest;
 			var selectedRegion = regions.FirstOrDefault(r => r.Name.Equals(clientRequest.YandexCity, StringComparison.InvariantCultureIgnoreCase));
-			if(selectedRegion != null)
+			if (selectedRegion != null)
 				ViewBag.SelectedRegionOfficePhoneNumber = selectedRegion.RegionOfficePhoneNumber;
 			else
 				ViewBag.SelectedRegionOfficePhoneNumber = regions.First().RegionOfficePhoneNumber;
 			return View();
 		}
-
 	}
 }

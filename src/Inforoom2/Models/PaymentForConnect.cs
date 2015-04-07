@@ -10,7 +10,6 @@ namespace Inforoom2.Models
 	[Class(0, Table = "PaymentForConnect", NameType = typeof(PaymentForConnect))]
 	public class PaymentForConnect : BaseModel
 	{
-
 		[Property]
 		public virtual DateTime? RegDate { get; set; }
 
@@ -25,6 +24,7 @@ namespace Inforoom2.Models
 
 		[Property]
 		public virtual bool Paid { get; set; }
+
 		public PaymentForConnect()
 		{
 		}

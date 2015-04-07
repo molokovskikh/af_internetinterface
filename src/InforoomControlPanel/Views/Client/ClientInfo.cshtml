@@ -6,36 +6,75 @@
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	string action = ViewBag.ActionName;
 	string controller = ViewBag.ControllerName;
+	List<SwitchAddress> networkNodeList = ViewBag.networkNodeList;
+	;
 }
 
 <div class="panel panel-primary col-md-12">
-	<div class="panel-body">
-		@using (@Html.BeginForm(action, controller, null, FormMethod.Post, new { @id = "ClientInfoForm", @class = "form-horizontal form-groups-bordered"}))
-		{
+	<div class="panel-body col-md-6">
+		@using (@Html.BeginForm(action, controller, null, FormMethod.Post, new { @id = "ClientInfoForm", @class = "form-horizontal form-groups-bordered" })) {
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Номер лицевого счета:</label>
-				<div class = "col-sm-4">
+				<div class="col-sm-4">
 					@Html.DisplayFor(o => client.Id, new { @class = "form-control" })
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Фактический адрес:</label>
-				<div class = "col-sm-4">
+				<div class="col-sm-4">
 					@Html.DisplayFor(o => client.PhysicalClient.Address, new { @class = "form-control" })
 				</div>
 			</div>
 			<div class="form-group">
 				<label for="BalanceField" class="col-sm-2 control-label">Баланс:</label>
-				<div class = "col-sm-4">
+				<div class="col-sm-4">
 					@Html.DisplayFor(o => client.Balance, new { @class = "form-control" })
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Статус:</label>
-				<div class = "col-sm-4">
+				<div class="col-sm-4">
 					@Html.DisplayFor(o => client.Status.Name, new { @class = "form-control" })
 				</div>
 			</div>
 		}
+	</div>
+
+	<div class="panel-body col-md-6">
+		@if (networkNodeList.Count > 0) {
+			foreach (var node in networkNodeList) {
+				<div class="form-group">
+					<div class="col-sm-10">
+						<h5><strong>@node.NetworkNode.Name</strong></h5>
+						@foreach (var iswitch in node.NetworkNode.Switches) {
+							<h5>@iswitch.Name</h5>
+							<p><span>Свободные порты: </span>@(iswitch.PortCount - @iswitch.Endpoints.Count)</p>
+							<p>
+								<span>Витые пары: </span>
+								@if (iswitch.NetworkNode.TwistedPairs.Count > 0) {
+									int countOfPairs = 0;
+									for (int i = 0; i < iswitch.NetworkNode.TwistedPairs.Count; i++) {
+										countOfPairs += iswitch.NetworkNode.TwistedPairs[i].PairCount;
+										if (i > 0) {
+											@Html.Raw(" + " + iswitch.NetworkNode.TwistedPairs[i].PairCount)
+										}
+										else {
+											@Html.Raw(iswitch.NetworkNode.TwistedPairs[i].PairCount)
+										}
+										if (i == iswitch.NetworkNode.TwistedPairs.Count - 1) {
+											@Html.Raw(" = " + countOfPairs)
+										}
+									}
+								}
+								else {
+									@Html.Raw(" нет ")
+								}
+							</p>
+						}
+					</div>
+				</div>
+			}
+		}
+
 	</div>
 </div>

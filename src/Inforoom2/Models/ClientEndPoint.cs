@@ -10,11 +10,12 @@ using NHibernate.Mapping.Attributes;
 
 namespace Inforoom2.Models
 {
-	[Class(0, Table = "ClientEndpoints", Schema = "internet", NameType = typeof (ClientEndpoint))]
+	[Class(0, Table = "ClientEndpoints", Schema = "internet", NameType = typeof(ClientEndpoint))]
 	public class ClientEndpoint : BaseModel
 	{
 		[Property]
 		public virtual bool Disabled { get; set; }
+
 		[Property]
 		public virtual int? PackageId { get; set; }
 
@@ -33,7 +34,7 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual int? ActualPackageId { get; set; }
 
-		[Property(Column = "Ip",TypeType = typeof(IPUserType))]
+		[Property(Column = "Ip", TypeType = typeof(IPUserType))]
 		public virtual IPAddress Ip { get; set; }
 
 		public virtual void UpdateActualPackageId(int? packageId)
@@ -63,7 +64,7 @@ namespace Inforoom2.Models
 				}).Select(s => s.EndPoint).FirstOrDefault();
 			}
 			catch (Exception e) {
-				EmailSender.SendDebugInfo("Не удалось распарсить ip: "+ipstr,e.ToString());
+				EmailSender.SendDebugInfo("Не удалось распарсить ip: " + ipstr, e.ToString());
 				endpoint = null;
 			}
 

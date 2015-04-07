@@ -2,10 +2,8 @@
 
 namespace Inforoom2.Test.Functional.Account
 {
-
-	class AccountLogoutFixture : AccountFixture
+	internal class AccountLogoutFixture : AccountFixture
 	{
-
 		[Test, Description("Выход пользователя из ЛК")]
 		public void Logout()
 		{
@@ -14,6 +12,5 @@ namespace Inforoom2.Test.Functional.Account
 			Css(".logon a").Click();
 			AssertNoText(Client.Surname);
 		}
-
 	}
 }

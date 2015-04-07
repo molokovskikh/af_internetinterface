@@ -6,8 +6,8 @@ namespace Inforoom2.Models
 	{
 		public decimal Sum;
 		public DateTime Date;
-		public string Comment;					// Комментарий того, кто регистрирует платеж
-		public string WhoRegistered;		// Имя того, кто регистрирует платеж
+		public string Comment; // Комментарий того, кто регистрирует платеж
+		public string WhoRegistered; // Имя того, кто регистрирует платеж
 		public string Description;
 	}
 }
