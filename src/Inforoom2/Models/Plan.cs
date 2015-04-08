@@ -18,6 +18,13 @@ namespace Inforoom2.Models
 		[Property(NotNull = true, Unique = true), NotEmpty]
 		public virtual string Name { get; set; }
 
+		public Plan()
+		{
+			this.Regions = new List<Region>();
+			this.PlanTransfers = new List<PlanTransfer>();
+			this.RegionPlans = new List<RegionPlan>();
+		}
+		 
 
 		public virtual float Speed
 		{
@@ -66,13 +73,6 @@ namespace Inforoom2.Models
 
 		public virtual decimal SwitchPrice { get; set; }
 
-		public Plan()
-		{
-			this.Regions = new List<Region>();
-			this.PlanTransfers = new List<PlanTransfer>();
-			this.RegionPlans = new List<RegionPlan>();
-		}
-		 
 
 		/// <summary>
 		/// Получение стоимости перехода на другой тариф

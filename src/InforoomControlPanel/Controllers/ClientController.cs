@@ -244,14 +244,27 @@ namespace InforoomControlPanel.Controllers
 			client.PhysicalClient.Name = "";
 			client.PhysicalClient.Surname = "";
 			client.PhysicalClient.Patronymic = "";
+			client.PhysicalClient.CertificateType = 0;
 			client.PhysicalClient.BirthDate = DateTime.Now;
+			client.PhysicalClient.CertificateType = CertificateType.Passport;
+
+			client.PhysicalClient.Address = new Address() {
+				House = new House(),
+				Floor = 0,
+				Entrance = 0,
+				Apartment = 0
+			};
 			client.StatusChangedOn = DateTime.Now;
 			client.Contacts = new List<Contact>() {
 				new Contact() { ContactName = "", ContactString = "", Type = ContactType.HousePhone, Date = DateTime.Now },
 				new Contact() { ContactName = "", ContactString = "", Type = ContactType.ConnectedPhone, Date = DateTime.Now }
 			};
+			var CertificateTypeDic = new Dictionary<int, CertificateType>();
+			CertificateTypeDic.Add(0, CertificateType.Passport);
+			CertificateTypeDic.Add(1, CertificateType.Other);
+			ViewBag.CertificateTypeDic = CertificateTypeDic;
 			ViewBag.PlanList = DbSession.Query<Plan>().ToList();
-			ViewBag.CertificateType = DbSession.Query<CertificateType>().ToList();
+			ViewBag.RegionList = DbSession.Query<Region>().ToList();
 			ViewBag.Client = client;
 			return View();
 		}
@@ -265,13 +278,21 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult ClientRegistration([EntityBinder] Client client)
 		{
 			var errors = ValidationRunner.ValidateDeep(client);
-			if (errors.Length == 0)
-			{
+			if (errors.Length == 0) {
 				DbSession.Save(client);
 				SuccessMessage("Клиент успешно зарегистрирован!");
 				return RedirectToAction("ClientList");
 			}
+			client.Contacts = new List<Contact>() {
+				new Contact() { ContactName = "", ContactString = "", Type = ContactType.HousePhone, Date = DateTime.Now },
+				new Contact() { ContactName = "", ContactString = "", Type = ContactType.ConnectedPhone, Date = DateTime.Now }
+			};
+			var CertificateTypeDic = new Dictionary<int, CertificateType>();
+			CertificateTypeDic.Add(0, CertificateType.Passport);
+			CertificateTypeDic.Add(1, CertificateType.Other);
+			ViewBag.CertificateTypeDic = CertificateTypeDic;
 			ViewBag.PlanList = DbSession.Query<Plan>().ToList();
+			ViewBag.RegionList = DbSession.Query<Region>().ToList();
 			ViewBag.Client = client;
 
 			return View();

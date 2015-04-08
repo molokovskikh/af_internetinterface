@@ -35,6 +35,8 @@ namespace Inforoom2.Models
 
 		[Property]
 		public virtual decimal VirtualBalance { get; set; }
+		[Property]
+		public virtual bool Checked { get; set; }
 
 		[Property]
 		public virtual decimal MoneyBalance { get; set; }
@@ -171,8 +173,10 @@ namespace Inforoom2.Models
 	public enum CertificateType
 	{
 		[Display(Name = "Паспорт РФ")]
+		[Description("Паспорт РФ")]
 		Passport = 0,
 		[Display(Name = "Иной документ")]
+		[Description("Иной документ")]
 		Other = 1
 	}
 }
