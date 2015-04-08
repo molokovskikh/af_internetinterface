@@ -927,7 +927,8 @@ where CE.Client = {0}", Id))
 		}
 
 		//флаг устанавливается в случае если нужно изменить настройки sce
-		//например если была активирована услуга обещанный платеж
+		//например если была активирована услуга 
+
 		public virtual bool IsNeedRecofiguration { get; set; }
 
 		public virtual void RegistreContacts(Partner registrator)

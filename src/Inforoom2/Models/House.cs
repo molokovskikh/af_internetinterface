@@ -21,12 +21,12 @@ namespace Inforoom2.Models
 			Street = street;
 		}
 
-		[ManyToOne(Column = "Street",  Cascade = "save-update"), NotNull]
+		[ManyToOne(Column = "Street", Cascade = "save-update"), NotNull]
 		public virtual Street Street { get; set; }
 
 		[Property, NotEmpty(Message = "Введите номер дома")]
 		public virtual string Number { get; set; }
-		
+
 		[Property]
 		public virtual int ApartmentAmount { get; set; }
 
@@ -38,5 +38,5 @@ namespace Inforoom2.Models
 
 		[Property]
 		public virtual int EntranceAmount { get; set; }
-		}
+	}
 }

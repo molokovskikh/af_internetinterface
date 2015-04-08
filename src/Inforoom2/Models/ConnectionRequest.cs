@@ -11,7 +11,6 @@ namespace Inforoom2.Models
 	[Class(0, Table = "ConnectionRequests", NameType = typeof(ConnectionRequest))]
 	public class ConnectionRequest : BaseModel
 	{
-
 		[Property]
 		public virtual string Comment { get; set; }
 

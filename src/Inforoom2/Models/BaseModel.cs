@@ -26,8 +26,8 @@ namespace Inforoom2.Models
 	/// </summary>
 	public class BaseModel
 	{
-		[Id(0,Name = "Id")]
-		[Generator(1,Class = "native")]
+		[Id(0, Name = "Id")]
+		[Generator(1, Class = "native")]
 		public virtual int Id { get; set; }
 
 		//todo Ну и что это за хрень? Может пора ее выпилить?
@@ -35,7 +35,7 @@ namespace Inforoom2.Models
 		{
 			var classAttr = GetType().GetCustomAttributes(typeof(ClassAttribute), false).First() as ClassAttribute;
 			var tablename = new TableNamingStrategy().TableName(classAttr.Table);
-			var query = session.CreateSQLQuery("SELECT MAX(priority) AS max FROM "+tablename);
+			var query = session.CreateSQLQuery("SELECT MAX(priority) AS max FROM " + tablename);
 			var result = query.List();
 			if (result.First() != null)
 				return (int)result.First() + 1;
@@ -59,13 +59,27 @@ namespace Inforoom2.Models
 				return this;
 
 			var session = proxy.HibernateLazyInitializer.Session;
-			var model = (BaseModel) session.PersistenceContext.Unproxy(proxy);
+			var model = (BaseModel)session.PersistenceContext.Unproxy(proxy);
 			return model;
 		}
 
 		public virtual InvalidValue[] Validate(ISession session)
 		{
 			return new InvalidValue[0];
+		}
+
+		/// <summary>
+		///  Получение имени таблицы
+		/// </summary>
+		/// <returns>имя таблицы</returns>
+		public virtual string GetTableName()
+		{
+			var strategy = new TableNamingStrategy();
+			var attribute = Attribute.GetCustomAttribute(this.GetType(), typeof(ClassAttribute)) as ClassAttribute;
+			if (attribute != null) {
+				return strategy.TableName(attribute.Table);
+			}
+			return "No name!";
 		}
 	}
 }

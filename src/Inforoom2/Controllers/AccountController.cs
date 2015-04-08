@@ -32,7 +32,7 @@ namespace Inforoom2.Controllers
 			return View();
 		}
 
-		public ActionResult AdminLogin(string username="",int clientId = 0)
+		public ActionResult AdminLogin(string username = "", int clientId = 0)
 		{
 			ViewBag.ClientId = clientId.ToString();
 			ViewBag.Username = username;
@@ -40,12 +40,12 @@ namespace Inforoom2.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult AdminLogin( string password,string username="",int clientId = 0)
+		public ActionResult AdminLogin(string password, string username = "", int clientId = 0)
 		{
 			var user = DbSession.Query<Client>().FirstOrDefault(k => k.Id == clientId);
 			var employee = DbSession.Query<Employee>().FirstOrDefault(p => p.Login == username && !p.IsDisabled);
 			if (ActiveDirectoryHelper.IsAuthenticated(username, password) && employee != null && user != null) {
-				Session.Add("employee",employee.Id);
+				Session.Add("employee", employee.Id);
 				return Authenticate("Profile", "Personal", Environment.UserName, false, user.Id.ToString());
 			}
 			ErrorMessage("Неправильный логин или пароль");
@@ -53,11 +53,11 @@ namespace Inforoom2.Controllers
 			ViewBag.Username = username;
 			return View();
 		}
+
 		public ActionResult Logout()
 		{
 			FormsAuthentication.SignOut();
 			return RedirectToAction("Index", "Home");
 		}
-		
 	}
 }

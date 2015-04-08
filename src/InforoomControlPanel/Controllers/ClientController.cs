@@ -13,6 +13,7 @@ using House = Inforoom2.Models.House;
 using PhysicalClient = Inforoom2.Models.PhysicalClient;
 using RequestType = Inforoom2.Models.RequestType;
 using ServiceRequest = Inforoom2.Models.ServiceRequest;
+using StatusType = Inforoom2.Models.StatusType;
 using Street = Inforoom2.Models.Street;
 
 namespace InforoomControlPanel.Controllers
@@ -40,7 +41,19 @@ namespace InforoomControlPanel.Controllers
 
 		public ActionResult ClientInfo(int clientId)
 		{
-			ViewBag.Client = DbSession.Get<Client>(clientId);
+			// Find Client
+			var Client = DbSession.Query<Client>().FirstOrDefault(i => i.PhysicalClient != null && i.Id == clientId);
+			ViewBag.Client = Client;
+			if (Client.Status.Type == StatusType.BlockedAndConnected) {
+				// Find Switches
+				var networkNodeList = DbSession.QueryOver<SwitchAddress>().Where(s =>
+					s.House == Client.PhysicalClient.Address.House && s.Entrance == Client.PhysicalClient.Address.Entrance ||
+					s.House == Client.PhysicalClient.Address.House && s.Entrance == null).List();
+
+				if (networkNodeList.Count > 0) {
+					ViewBag.NetworkNodeList = networkNodeList; //.NetworkNode.Switches.ToList(); 
+				}
+			}
 			return View();
 		}
 

@@ -4,6 +4,7 @@ using System.Web.UI.WebControls;
 using Inforoom2.Intefaces;
 using NHibernate;
 using NHibernate.Linq;
+using NHibernate.Mapping;
 using NHibernate.Mapping.Attributes;
 using NHibernate.Validator.Constraints;
 
@@ -17,15 +18,13 @@ namespace Inforoom2.Models
 	{
 		[Property(NotNull = true, Unique = true), NotEmpty]
 		public virtual string Name { get; set; }
-
+		 
 		public Plan()
 		{
 			this.Regions = new List<Region>();
 			this.PlanTransfers = new List<PlanTransfer>();
 			this.RegionPlans = new List<RegionPlan>();
-		}
-		 
-
+		} 
 		public virtual float Speed
 		{
 			get { return PackageSpeed.GetSpeed(); }
@@ -62,7 +61,7 @@ namespace Inforoom2.Models
 		[OneToMany(2, ClassType = typeof(RegionPlan))]
 		public virtual IList<RegionPlan> RegionPlans { get; set; }
 
-		[ManyToOne(Column = "PackageId",PropertyRef = "PackageId")]
+		[ManyToOne(Column = "PackageId", PropertyRef = "PackageId")]
 		public virtual PackageSpeed PackageSpeed { get; set; }
 
 		[Property]
@@ -72,7 +71,7 @@ namespace Inforoom2.Models
 		public virtual bool Hidden { get; set; }
 
 		public virtual decimal SwitchPrice { get; set; }
-
+ 
 
 		/// <summary>
 		/// Получение стоимости перехода на другой тариф

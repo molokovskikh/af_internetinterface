@@ -9,12 +9,12 @@ namespace Inforoom2.Models
 		[Property(Column = "Region")]
 		public virtual string Name { get; set; }
 
-		[ManyToOne(Column = "_City",  Cascade = "save-update")]
+		[ManyToOne(Column = "_City", Cascade = "save-update")]
 		public virtual City City { get; set; }
-		
+
 		[Bag(0, Table = "region_plan")]
 		[Key(1, Column = "region", NotNull = false)]
-		[ManyToMany(2, Column = "Plan",ClassType = typeof(Plan))]
+		[ManyToMany(2, Column = "Plan", ClassType = typeof(Plan))]
 		public virtual IList<Plan> Plans { get; set; }
 
 		[Property(Column = "_RegionOfficePhoneNumber")]
@@ -30,6 +30,5 @@ namespace Inforoom2.Models
 		[Key(1, Column = "Region")]
 		[OneToMany(2, ClassType = typeof(Street))]
 		public virtual IList<Street> Streets { get; set; }
-
 	}
 }

@@ -14,7 +14,7 @@ namespace Inforoom2.Test.Functional.infrastructure
 		[Test, Description("Проверка учета скидки по факту списания у клиента 'c тарифом, игнорирующим скидку' ")]
 		public void ClientIgnoreDiscount()
 		{
-			var client = DbSession.Query<Client>().FirstOrDefault(s => s.PhysicalClient.Patronymic == "c тарифом, игнорирующим скидку");
+			var client = DbSession.Query<Client>().FirstOrDefault(i => i.PhysicalClient.Plan.IgnoreDiscount); 
 			var PrevBalance = client.Balance;
 			client.PaidDay = false;
 			DbSession.Update(client);

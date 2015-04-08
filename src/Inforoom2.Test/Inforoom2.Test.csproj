@@ -90,6 +90,7 @@
       <HintPath>..\..\packages\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -185,6 +186,8 @@
     <Compile Include="Functional\ClientRequestFixture.cs" />
     <Compile Include="Functional\Account\LoginFixture.cs" />
     <Compile Include="Functional\infrastructure\BaseFixture.cs" />
+    <Compile Include="Functional\infrastructure\Helpers\ClientCreateHelper.cs" />
+    <Compile Include="Functional\infrastructure\Helpers\AddressCreateHelper.cs" />
     <Compile Include="Functional\Personal\PersonalFirstVisitFixture.cs" />
     <Compile Include="Functional\Personal\PersonalNotificationsFixture.cs" />
     <Compile Include="Functional\Personal\PersonalPlansFixture.cs" />

@@ -15,7 +15,7 @@ namespace InforoomControlPanel.Controllers
 			if (newsBlocks.Count == 0) {
 				newsBlocks = new List<NewsBlock>();
 			}
-			
+
 			ViewBag.NewsBlocks = newsBlocks;
 			return View();
 		}
@@ -53,7 +53,6 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.NewsBlock = newsBlock;
 			var errors = ValidationRunner.ValidateDeep(newsBlock);
 			if (errors.Length == 0) {
-				
 				DbSession.SaveOrUpdate(newsBlock);
 				SuccessMessage("Новость успешно отредактирована");
 			}

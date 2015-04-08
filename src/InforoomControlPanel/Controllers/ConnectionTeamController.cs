@@ -68,7 +68,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult ConnectionTable(DateTime date, int regionId = 0)
 		{
 			var team = DbSession.Query<ServiceMan>().ToList();
-			if(regionId != 0) {
+			if (regionId != 0) {
 				ViewBag.Region = DbSession.Get<Region>(regionId);
 				team = team.Where(i => i.Region.Id == regionId).ToList();
 			}
@@ -87,7 +87,7 @@ namespace InforoomControlPanel.Controllers
 		/// <returns></returns>
 		public ActionResult ServiceRequests()
 		{
-			var serviceRequests = DbSession.Query<ServiceRequest>().OrderByDescending(i=>i.Id).ToList();
+			var serviceRequests = DbSession.Query<ServiceRequest>().OrderByDescending(i => i.Id).ToList();
 			ViewBag.ServiceRequests = serviceRequests;
 			return View();
 		}
@@ -108,7 +108,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult AttachClient(int id)
 		{
 			var client = DbSession.Get<Client>(id);
-			var request = DbSession.Query<ConnectionRequest>().FirstOrDefault(i=>i.Client == client);
+			var request = DbSession.Query<ConnectionRequest>().FirstOrDefault(i => i.Client == client);
 			if (request == null) {
 				request = new ConnectionRequest();
 				request.Client = client;
@@ -148,8 +148,7 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.ServicemenDate = ServiceRequest.BeginTime.Date;
 			ServiceRequest.EndTime = ServiceRequest.BeginTime.AddHours(hours).AddMinutes(minutes);
 			var errors = ValidationRunner.Validate(ServiceRequest);
-			if (errors.Length == 0)
-			{
+			if (errors.Length == 0) {
 				DbSession.Save(ServiceRequest);
 				SuccessMessage("Сервисная заявка успешно добавлена в график");
 				DbSession.Flush();
@@ -192,8 +191,7 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.ServicemenDate = ConnectionRequest.BeginTime.Value.Date;
 			ConnectionRequest.EndTime = ConnectionRequest.BeginTime.Value.AddHours(hours).AddMinutes(minutes);
 			var errors = ValidationRunner.Validate(ConnectionRequest);
-			if (errors.Length == 0)
-			{
+			if (errors.Length == 0) {
 				DbSession.Save(ConnectionRequest);
 				SuccessMessage("Сервисная заявка успешно добавлена в график");
 				DbSession.Flush();
@@ -225,7 +223,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult Servicemen()
 		{
 			var team = DbSession.Query<ServiceMan>().ToList();
-			var employees = DbSession.Query<Employee>().ToList().Where( j=>team.All(i => i.Employee != j)).OrderBy(i=>i.Name).ToList();
+			var employees = DbSession.Query<Employee>().ToList().Where(j => team.All(i => i.Employee != j)).OrderBy(i => i.Name).ToList();
 			var regions = DbSession.Query<Region>().ToList();
 			ViewBag.Regions = regions;
 			ViewBag.ServiceMan = new ServiceMan();

@@ -23,7 +23,7 @@ namespace Inforoom2.Models
 			Employee = employee;
 		}
 
-		[ManyToOne(Column = "Employee"),NotNull]
+		[ManyToOne(Column = "Employee"), NotNull]
 		public virtual Employee Employee { get; set; }
 
 		[ManyToOne(Column = "Region"), NotNull]
@@ -60,7 +60,7 @@ namespace Inforoom2.Models
 		[Property(Column = "IsDisabled"), NotNullNotEmpty]
 		public virtual bool Disabled { get; set; }
 
-		[ManyToOne(Column = "Region"),NotNull]
+		[ManyToOne(Column = "Region"), NotNull]
 		public virtual Region Region { get; set; }
 	}
 
@@ -69,8 +69,8 @@ namespace Inforoom2.Models
 	{
 		public ServiceRequest()
 		{
-			
 		}
+
 		public ServiceRequest(Client client) : this()
 		{
 			Client = client;
@@ -82,9 +82,9 @@ namespace Inforoom2.Models
 		[ManyToOne(Column = "Client")]
 		public virtual Client Client { get; set; }
 
-		[Property(Column = "Description"),NotNullNotEmpty]
+		[Property(Column = "Description"), NotNullNotEmpty]
 		public virtual string Description { get; set; }
-	
+
 		[Property(Column = "BlockForRepair")]
 		public virtual bool BlockNetwork { get; set; }
 
