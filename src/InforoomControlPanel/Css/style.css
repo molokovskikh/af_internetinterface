@@ -31,3 +31,5 @@
 	.servicemen .description { font-weight: bold;margin-bottom: 20px;}
 	
 	.error .msg { color: red;}
+
+	.c-pointer {cursor: pointer;}

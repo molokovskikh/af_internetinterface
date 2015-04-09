@@ -25,7 +25,7 @@ namespace InternetInterface.Controllers
 		public void Sub(string login, string password)
 		{
 			if (ActiveDirectoryHelper.IsAuthenticated(login, password)
-			    && DbSession.Query<Partner>().Any(p => p.Login == login && !p.IsDisabled)) {
+				&& DbSession.Query<Partner>().Any(p => p.Login == login && !p.IsDisabled)) {
 				AuthenticationFilter.SetLoginCookie(Context, login);
 				RedirectToUrl(@"~/Map/SiteMap");
 			}

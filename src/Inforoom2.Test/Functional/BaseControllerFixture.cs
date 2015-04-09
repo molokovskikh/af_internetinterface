@@ -16,12 +16,12 @@ namespace Inforoom2.Test.Functional
 		[Test]
 		public void CheckNetworkLogin()
 		{
-			var client= DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("с низким балансом"));
+			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("с низким балансом"));
 			NetworkLoginForClient(client);
 			Open("/");
 			AssertText(client.Name);
 			var cookie = GetCookie("networkClient");
-			Assert.That(cookie,Is.EqualTo("true"),"У клиента нет куки залогиненого через сеть клиента");
+			Assert.That(cookie, Is.EqualTo("true"), "У клиента нет куки залогиненого через сеть клиента");
 		}
 	}
 }

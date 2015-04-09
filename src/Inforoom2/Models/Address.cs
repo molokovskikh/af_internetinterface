@@ -17,7 +17,7 @@ namespace Inforoom2.Models
 
 		[Property]
 		public virtual int Floor { get; set; }
-		
+
 		//true если яндекс api нашел адрес
 		[Property]
 		public virtual bool IsCorrectAddress { get; set; }
@@ -33,6 +33,5 @@ namespace Inforoom2.Models
 		}
 
 		public virtual string AddressAsString { get; set; }
-		
 	}
 }

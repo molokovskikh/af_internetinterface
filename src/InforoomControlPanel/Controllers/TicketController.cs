@@ -25,6 +25,7 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.Tickets = tickets;
 			return View();
 		}
+
 		public ActionResult EditCallMeBackTicket(int? ticketid)
 		{
 			var ticket = DbSession.Get<CallMeBackTicket>(ticketid);
@@ -32,7 +33,7 @@ namespace InforoomControlPanel.Controllers
 			return View();
 		}
 
-		public ActionResult UpdateCallMeBackTicket([EntityBinder]CallMeBackTicket ticket)
+		public ActionResult UpdateCallMeBackTicket([EntityBinder] CallMeBackTicket ticket)
 		{
 			ViewBag.Ticket = ticket;
 			var errors = ValidationRunner.ValidateDeep(ticket);
@@ -49,6 +50,7 @@ namespace InforoomControlPanel.Controllers
 
 			return RedirectToAction("CallMeBackTicketIndex");
 		}
+
 		public ActionResult EditTicket(int? ticketid)
 		{
 			Ticket ticket;
@@ -57,7 +59,7 @@ namespace InforoomControlPanel.Controllers
 			return View();
 		}
 
-		public ActionResult UpdateTicket([EntityBinder]Ticket ticket)
+		public ActionResult UpdateTicket([EntityBinder] Ticket ticket)
 		{
 			ViewBag.Ticket = ticket;
 			var errors = ValidationRunner.ValidateDeep(ticket);
@@ -66,7 +68,7 @@ namespace InforoomControlPanel.Controllers
 				ticket.Employee = GetCurrentEmployee();
 				ticket.IsNotified = true;
 				try {
-					EmailSender.SendEmail(new PhysicalClient {Email = ticket.Email},
+					EmailSender.SendEmail(new PhysicalClient { Email = ticket.Email },
 						"Ответ на ваш запрос в техподдержку компании Инфорум", ticket.Answer);
 				}
 				catch (System.Net.Mail.SmtpException) {

@@ -29,6 +29,5 @@ namespace Inforoom2.Models
 
 		[Property]
 		public virtual bool IsAvailableToSwitch { get; set; }
-	
 	}
 }

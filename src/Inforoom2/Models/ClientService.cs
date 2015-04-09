@@ -33,14 +33,13 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual bool IsFree { get; set; }
 
-
 		public virtual string ActivateFor(Client currentClient, ISession session)
 		{
 			Service.Activate(this, session);
-			IsActivated = true;
-			currentClient.ClientServices.Add(this);
+			IsActivated = true;												// IsActivated внутри Service.Activate() почему-то не срабатывает
+			currentClient.ClientServices.Add(this);		// Важно добавлять услугу после активации, чтобы она не влияла на списания
 			currentClient.IsNeedRecofiguration = Service.GetType() == typeof(DeferredPayment);
-			
+
 			var message = string.Format("Услуга \"{0}\" активирована на период с {1} по {2}", Service.Name,
 				BeginDate != null
 					? BeginDate.Value.ToShortDateString()
@@ -54,7 +53,7 @@ namespace Inforoom2.Models
 		public virtual string DeActivateFor(Client currentClient, ISession session)
 		{
 			Service.Deactivate(this, session);
-			currentClient.IsNeedRecofiguration =  Service.GetType() == typeof(BlockAccountService);
+			currentClient.IsNeedRecofiguration = Service.GetType() == typeof(BlockAccountService);
 			return String.Format("Услуга \"{0}\" деактивирована", Service.Name);
 		}
 
@@ -63,12 +62,12 @@ namespace Inforoom2.Models
 			return NHibernateUtil.GetClass(Service) == NHibernateUtil.GetClass(service);
 		}
 
-
 		public virtual decimal GetPrice()
 		{
 			if (IsFree)
 				return 0;
-			return Service.Price;
+			// GetPrice() возвращает цену, отличную от цены услуги, если у конкретной услуги эта ф-ция перегружена
+			return Service.GetPrice(this);
 		}
 	}
 }

@@ -5,46 +5,62 @@
 }
 <h2 class="heading">@ViewBag.Title</h2>
 @{ Html.RenderPartial("Menu"); }
-	<div class="profiles">
-		<div class="number">
-			<div class="column">Номер счета :</div>
-			<div class="shelf profilenomber">@client.Client.Id.ToString("D5")</div>
-		</div>
+<div class="profiles">
+	<div class="number">
+		<div class="column">Номер счета :</div>
+		<div class="shelf profilenomber">@client.Client.Id.ToString("D5")</div>
+	</div>
+	<div class="line">
+		<div class="column-fio">Ф.И.О:</div>
+		<div class="shelf-fio">@Html.DisplayFor(c => client.FullName)</div>
+		<div class="pen"></div>
+	</div>
+	<div class="line">
+		<div class="column">Тариф:</div>
+		<div class="shelf">@Html.DisplayFor(c => client.Plan.Name)</div>
+	</div>
+	<div class="line">
+		<div class="column">Скидка:</div>
+		<div class="shelf">@Html.DisplayFor(c => client.Client.Discount)%</div>
+	</div>
+	@if (client.PhoneNumber != string.Empty) {
 		<div class="line">
-			<div class="column-fio">Ф.И.О:</div>
-			<div class="shelf-fio">@Html.DisplayFor(c => client.FullName)</div>
+			<div class="column">Номер телефона:</div>
+			<div class="shelf">@Html.DisplayFor(c => client.PhoneNumber)</div>
 			<div class="pen"></div>
 		</div>
+	}
+	@if (client.Email != string.Empty) {
 		<div class="line">
-			<div class="column">Тариф:</div>
-			<div class="shelf">@Html.DisplayFor(c => client.Plan.Name)</div>
+			<div class="column">Электронная почта:</div>
+			<div class="shelf">@Html.DisplayFor(c => client.Email)</div>
+			<div class="pen"></div>
 		</div>
-		<div class="line">
-			<div class="column">Скидка:</div>
-			<div class="shelf">@Html.DisplayFor(c => client.Client.Discount)%</div>
-		</div>
-		@if (client.PhoneNumber != string.Empty) {
-			<div class="line">
-				<div class="column">Номер телефона:</div>
-				<div class="shelf">@Html.DisplayFor(c => client.PhoneNumber)</div>
-				<div class="pen"></div>
-			</div>
-		}
-		@if (client.Email != string.Empty) {
-			<div class="line">
-				<div class="column">Электронная почта:</div>
-				<div class="shelf">@Html.DisplayFor(c => client.Email)</div>
-				<div class="pen"></div>
-			</div>
-		}
-	</div>
-<div class="actions">
-	<div class="action"><img src="/images/profile_offer.png"></div>
-	<div class="actiontext">
-		<h3>Скоро тут будет акция</h3>
-		<p>В ближайшее время, мы собираемся радовать наших постоянных клиентов интересными акциями</p>
-	</div>
+	}
 </div>
- <div class="right-block">
+<div class="actions">
+	<a href="/Personal/Plans"><div class="action"><img src="/images/actionfolk.png?v2"></div></a>
+	<div class="actiontext">
+		<a href="/Personal/Plans">
+			<h3>Тарифный план "Народный" </h3>
+		</a>
+			<p>
+				А нам санкции нипочем, 100 Мбит/с в каждый дом!
+				Доступен для подключения с 01.04.15г. по 31.10.15г.
+			</p>
+
+</div>
+</div>
+@if (client.Client.Status.Type == StatusType.NoWorked) {
+	<div class="noworked_client">
+		@if (client.Client.Payments.Count == 0) {
+			<span>Для начала работы внесите первый платеж @client.Plan.Price руб.</span>
+		}
+		else {
+			<span>Ваш лицевой счет заблокирован за неуплату, для разблокировки необходимо внести @(client.Plan.Price - client.Balance) руб.</span>
+		}
+	</div>
+}
+<div class="right-block">
 	@{ Html.RenderPartial("ActiveServices"); }
- </div>
+</div>

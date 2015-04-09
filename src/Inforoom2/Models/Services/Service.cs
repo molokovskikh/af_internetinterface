@@ -9,15 +9,15 @@ namespace Inforoom2.Models.Services
 	[Discriminator(Column = "Name", TypeType = typeof(string))]
 	public class Service : BaseModel
 	{
-		[Property(Column = "HumanName",NotNull = true, Unique = true), NotEmpty]
+		[Property(Column = "HumanName", NotNull = true, Unique = true), NotEmpty]
 		public virtual string Name { get; set; }
 
 		[Property(Column = "_Description", NotNull = true), NotEmpty]
 		public virtual string Description { get; set; }
-		
+
 		[Property]
 		public virtual decimal Price { get; set; }
-		
+
 		[Property]
 		public virtual bool BlockingAll { get; set; }
 
@@ -28,20 +28,33 @@ namespace Inforoom2.Models.Services
 		[Key(1, Column = "service")]
 		[OneToMany(2, ClassType = typeof(ClientService))]
 		public virtual IList<ClientService> ServiceClients { get; set; }
-		
-		public virtual bool ProcessEvenInBlock
+ 
+		/// Индикатор управления услугой даже для заблокированного клиента
+	 	public virtual bool ProcessEvenInBlock
 		{
 			get { return false; }
 		}
 
-		public virtual void Activate(ClientService assignedService, ISession session)
+		/// <summary>
+		/// Возвращает суммарную цену услуги
+		/// </summary>
+		public virtual decimal GetPrice(ClientService assignedService)
 		{
-		
+			return Price;
 		}
 
+		/// <summary>
+		/// Активирует клиентскую услугу assignedService
+		/// </summary>
+		public virtual void Activate(ClientService assignedService, ISession session)
+		{
+		}
+
+		/// <summary>
+		/// Деактивирует клиентскую услугу assignedService
+		/// </summary>
 		public virtual void Deactivate(ClientService assignedService, ISession session)
 		{
-			
 		}
 
 		public virtual bool IsActiveFor(ClientService assignedService)
@@ -49,6 +62,17 @@ namespace Inforoom2.Models.Services
 			return assignedService.IsActivated;
 		}
 
+		/// <summary>
+		/// Проверяет, может ли быть запущен процесс активации клиентской услуги assignedService
+		/// </summary>
+		public virtual bool CanActivate(ClientService assignedService)
+		{
+			return true;
+		}
+
+		/// <summary>
+		/// Проверяет, доступна ли клиенту client услуга для активации 
+		/// </summary>
 		public virtual bool IsActivableFor(Client client)
 		{
 			return false;

@@ -14,16 +14,14 @@ namespace Inforoom2.Controllers
 	/// </summary>
 	public class FaqController : Inforoom2Controller
 	{
-
 		/// <summary>
 		/// Отображает список вопросов и ответов, а также форму нового вопроса
 		/// </summary>
 		public ActionResult Index()
 		{
-			
-			var questions = DbSession.Query<Question>().Where(k => k.IsPublished).OrderBy(k=>k.Priority).ToList();
+			var questions = DbSession.Query<Question>().Where(k => k.IsPublished).OrderBy(k => k.Priority).ToList();
 			var ticket = new Ticket();
-			
+
 			ViewBag.NewTicket = ticket;
 			ViewBag.Questions = questions;
 			return View();
@@ -36,18 +34,18 @@ namespace Inforoom2.Controllers
 		public ActionResult Index(Ticket ticket)
 		{
 			var client = CurrentClient;
-				if (client != null) {
-					ticket.Client = client;
-				}
+			if (client != null) {
+				ticket.Client = client;
+			}
 			Index();
 			ViewBag.NewTicket = ticket;
-			var errors = ValidationRunner.ValidateDeep(ticket);
+			var errors = ValidationRunner.Validate(ticket);
 			if (errors.Length == 0) {
 				DbSession.Save(ticket);
 
 				//Дублирование письма на почту
 				var builder = new StringBuilder(1000);
-				if(ticket.Client != null)
+				if (ticket.Client != null)
 					builder.Append("Клиент: " + ticket.Client.Id);
 				builder.AppendLine("<br />");
 				builder.Append("IP: " + Request.UserHostAddress);
@@ -67,7 +65,7 @@ namespace Inforoom2.Controllers
 					return View();
 				}
 
-				if(ticket.Client != null) {
+				if (ticket.Client != null) {
 					var appeal = new Appeal("Клиент написал тикет в техподдержку #" + ticket.Id, ticket.Client, AppealType.Statistic) {
 						Employee = GetCurrentEmployee()
 					};

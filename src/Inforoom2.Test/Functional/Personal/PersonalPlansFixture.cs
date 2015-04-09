@@ -25,7 +25,7 @@ namespace Inforoom2.Test.Functional.Personal
 			var targetPlan = browser.FindElementByXPath("//td[contains(.,'Популярный')]");
 			var row = targetPlan.FindElement(By.XPath(".."));
 			var status = row.FindElement(By.CssSelector(".paragraph")).Text;
-			Assert.That(status,Is.EqualTo("Текущий"));
+			Assert.That(status, Is.EqualTo("Текущий"));
 		}
 
 		[Test(Description = "Смена тарифа")]
@@ -33,7 +33,7 @@ namespace Inforoom2.Test.Functional.Personal
 		{
 			var planFrom = Client.Plan;
 			var planTo = DbSession.Query<Plan>().First(i => i.Name == "Оптимальный");
-			var targetPlan = browser.FindElementByXPath("//td[contains(.,'"+planTo.Name+"')]");
+			var targetPlan = browser.FindElementByXPath("//td[contains(.,'" + planTo.Name + "')]");
 			var row = targetPlan.FindElement(By.XPath(".."));
 			var button = row.FindElement(By.CssSelector("input.connectfee"));
 			button.Click();
@@ -43,20 +43,19 @@ namespace Inforoom2.Test.Functional.Personal
 			targetPlan = browser.FindElementByXPath("//td[contains(.,'" + planTo.Name + "')]");
 			row = targetPlan.FindElement(By.XPath(".."));
 			var status = row.FindElement(By.CssSelector(".paragraph")).Text;
-			Assert.That(status,Is.EqualTo("Текущий"));
+			Assert.That(status, Is.EqualTo("Текущий"));
 
 			var client = Client;
 			DbSession.Refresh(client);
 			var appeal = DbSession.Query<Appeal>().FirstOrDefault();
 			var writeoff = DbSession.Query<UserWriteOff>().FirstOrDefault();
-			Assert.That(writeoff,Is.Not.Null);
+			Assert.That(writeoff, Is.Not.Null);
 			Assert.That(appeal, Is.Not.Null);
 			Assert.That(appeal.Message, Is.StringContaining(planFrom.Name));
-			Assert.That(appeal.Message, Is.StringContaining("(" + planFrom.Price+")"));
+			Assert.That(appeal.Message, Is.StringContaining("(" + planFrom.Price + ")"));
 			Assert.That(appeal.Message, Is.StringContaining(planTo.Name));
-			Assert.That(appeal.Message, Is.StringContaining("("+planTo.Price+")"));
+			Assert.That(appeal.Message, Is.StringContaining("(" + planTo.Price + ")"));
 			Assert.That(appeal.Message, Is.StringContaining(writeoff.Sum.ToString()));
-
 		}
 	}
 }

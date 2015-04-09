@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
+using Inforoom2.Models;
 using NHibernate;
 using NHibernate.Context;
 
@@ -196,13 +197,15 @@ namespace Inforoom2.Components
 				propertyVal = Enum.Parse(targetType, propertyVal.ToString());
 			}
 
+
 			//Returns an System.Object with the specified System.Type and whose value is
 			//equivalent to the specified object.
 			try {
 				propertyVal = Convert.ChangeType(propertyVal, targetType);
 			}
 			catch (Exception e) {
-				if (!propertyInfo.PropertyType.IsInterface) {
+				if (!targetType.IsInterface && targetType.IsSubclassOf(typeof(BaseModel)))
+				{
 					var id = 0;
 					int.TryParse((string) propertyVal, out id);
 					var instance = session.Get(targetType, id) ?? Activator.CreateInstance(propertyInfo.PropertyType);

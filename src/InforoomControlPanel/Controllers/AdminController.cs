@@ -47,8 +47,8 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult Admins()
 		{
 			var newAdmin = new Administrator();
-			var admins =  DbSession.Query<Administrator>().ToList();
-			var employees = DbSession.Query<Employee>().OrderBy(i=>i.Name).ToList().Where(e =>admins.Where(a=>a.Employee == e).ToList().Count == 0).ToList();
+			var admins = DbSession.Query<Administrator>().ToList();
+			var employees = DbSession.Query<Employee>().OrderBy(i => i.Name).ToList().Where(e => admins.Where(a => a.Employee == e).ToList().Count == 0).ToList();
 			ViewBag.employees = employees;
 			ViewBag.admins = admins;
 			ViewBag.Administrator = newAdmin;
@@ -82,7 +82,7 @@ namespace InforoomControlPanel.Controllers
 			var model = DbSession.Get<TModel>(modelId);
 			IModelWithPriority maxIndexModel = DbSession.Query<TModel>().OrderByDescending(k => k.Priority).First();
 			var maxIndex = 0;
-			if(maxIndexModel != null)
+			if (maxIndexModel != null)
 				maxIndex = maxIndexModel.Priority + 1;
 
 			IList<TModel> models;

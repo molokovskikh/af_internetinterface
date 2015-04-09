@@ -8,7 +8,7 @@ namespace Inforoom2.Models
 	/// <summary>
 	/// Модель новостного блока.
 	/// </summary>
-	[Class(0, Table = "newsblock", NameType = typeof (NewsBlock))]
+	[Class(0, Table = "newsblock", NameType = typeof(NewsBlock))]
 	public class NewsBlock : BaseModel, IModelWithPriority
 	{
 		[Property, NotNullNotEmpty]

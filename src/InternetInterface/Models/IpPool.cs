@@ -30,13 +30,13 @@ namespace InternetInterface.Models
 		/// <returns>Строка в формате "NNN.NNN.NNN.NNN"</returns>
 		public static string GetIpAddressFromNumber(uint addrNum)
 		{
-			var fstBase = Math.Pow(2, 24);				// 16777216
-			var sndBase = Math.Pow(2, 16);				// 65536
-			var trdBase = Math.Pow(2, 8);					// 256
+			var fstBase = Math.Pow(2, 24); // 16777216
+			var sndBase = Math.Pow(2, 16); // 65536
+			var trdBase = Math.Pow(2, 8); // 256
 			return Math.Floor(addrNum / fstBase).ToString("0") + "."
-			       + Math.Floor(addrNum % fstBase / sndBase).ToString("0") + "."
-			       + Math.Floor(addrNum % sndBase / trdBase).ToString("0") + "."
-			       + Math.Floor(addrNum % trdBase).ToString("0");
+				+ Math.Floor(addrNum % fstBase / sndBase).ToString("0") + "."
+				+ Math.Floor(addrNum % sndBase / trdBase).ToString("0") + "."
+				+ Math.Floor(addrNum % trdBase).ToString("0");
 		}
 
 		/// <summary>
