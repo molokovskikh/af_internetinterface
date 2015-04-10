@@ -77,7 +77,7 @@
 				<% end %>
 				<tr>
 					<td>
-						<a href="${siteroot}/Register/RegisterClient?requestID=${request.Id}" class="button">Зарегистрировать</a>
+						<a href="http://test2.analit.net/Client/ClientRequestRegistration?requestId=${request.Id}" class="button">Зарегистрировать</a>
 					</td>
 					<td>
 						<% if not request.Archive: %>

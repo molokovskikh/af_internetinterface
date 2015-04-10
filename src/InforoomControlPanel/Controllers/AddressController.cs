@@ -290,20 +290,21 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.House = House;
 			return View("CreateHouse");
 		}
-	
+
 		[HttpPost]
 		public JsonResult GetStreetList(int regionId)
 		{
 			var streets = DbSession.Query<Street>().
 				Where(s => s.Region.Id == regionId).
-				Select(s => new 
-				{
+				Select(s => new {
 					Id = s.Id,
 					Name = s.Name,
 					Geomark = s.Geomark,
-					Confirmed = s.Confirmed, Region = s.Region.Id, Houses = s.Houses.Count }).ToList();
+					Confirmed = s.Confirmed, Region = s.Region.Id, Houses = s.Houses.Count
+				}).ToList();
 			return Json(streets, JsonRequestBehavior.AllowGet);
 		}
+
 		[HttpPost]
 		public JsonResult GetHouseList(int streetId)
 		{
@@ -316,9 +317,22 @@ namespace InforoomControlPanel.Controllers
 					Confirmed = s.Confirmed,
 					Street = s.Street.Id,
 					EntranceAmount = s.EntranceAmount,
-					ApartmentAmount = s.ApartmentAmount 
+					ApartmentAmount = s.ApartmentAmount
 				}).ToList();
 			return Json(houses, JsonRequestBehavior.AllowGet);
+		}
+
+		[HttpPost]
+		public JsonResult GetPlansListForRegion(int regionId)
+		{
+			var planList = DbSession.Query<Plan>()
+				.Where(s => s.RegionPlans.Any(d => d.Region.Id == regionId))
+				.Select(d => new {
+					Id = d.Id,
+					Name = d.Name,
+					Price = d.Price
+				}).ToList();
+			return Json(planList, JsonRequestBehavior.AllowGet);
 		}
 	}
 }

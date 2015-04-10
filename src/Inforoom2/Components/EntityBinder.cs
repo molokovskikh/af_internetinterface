@@ -146,8 +146,8 @@ namespace Inforoom2.Components
 						var propertyValue = request.Form.Get(entityType.Name.ToLower() + "." + propertyName);
 						var propertyValue2 = request.Form.Get(entityType.Name.ToLower() + "proxy." + propertyName);
 						if (propertyValue != null)
-						{
-							SetValue(instance, propertyName, propertyValue, propertyInfo, session);
+								{
+					SetValue(instance, propertyName, propertyValue, propertyInfo, session);
 						}
 						else if (propertyValue2 != null)
 						{
@@ -193,7 +193,7 @@ namespace Inforoom2.Components
 					if (checkForListType != null)
 					{
 						// ищем элементы списка на форме
-						var newList = (IList)propVal.GetValue(model, new object[] { }); 
+						var newList = (IList)propVal.GetValue(model, new object[] { });
 						PropertyInfo propForListObj = model.GetType().GetProperty(propVal.Name, BindingFlags.Public | BindingFlags.Instance);
 						for (int i = 0; i < form.AllKeys.Length; i++)
 						{
@@ -206,8 +206,8 @@ namespace Inforoom2.Components
 							{
 								if (i == 0)
 								{
-								// Если список есть на форме, чистим список из БД
-								   newList.Clear();
+									// Если список есть на форме, чистим список из БД
+									newList.Clear();
 								}
 							}
 
@@ -293,7 +293,7 @@ namespace Inforoom2.Components
 				: propertyInfo.PropertyType;
 
 			if (targetType == typeof(Boolean))
-				propertyVal = propertyVal.ToString().Contains("true");
+				propertyVal = propertyVal.ToString().ToLower().Contains("true");
 			else if (targetType == typeof(DateTime))
 			{
 				DateTime date;
@@ -317,10 +317,14 @@ namespace Inforoom2.Components
 			{
 				if (!targetType.IsInterface && targetType.IsSubclassOf(typeof(BaseModel)))
 				{
+					//TODO Что делать со свойствами типа Proxy?
+					if (!propertyVal.GetType().ToString().Contains("Proxy"))
+					{
 					var id = 0;
 					int.TryParse((string)propertyVal, out id);
-					var instance = session.Get(targetType, id) ?? Activator.CreateInstance(propertyInfo.PropertyType);
-					propertyInfo.SetValue(inputObject, instance, null);
+					var instance = id == 0 ? Activator.CreateInstance(propertyInfo.PropertyType) : session.Get(propertyInfo.PropertyType, id); 
+					propertyInfo.SetValue(inputObject, instance, null);	
+					}
 				}
 				return;
 			}

@@ -340,16 +340,22 @@ namespace Inforoom2.Test.Functional.infrastructure
 
 			var lease = CreateLease(normalClient.Endpoints.First());
 			DbSession.Save(lease);
-
-
+		 
 			// c тарифом, игнорирующим скидку
 			var ignoreDiscountClient = CloneClient(normalClient, ClientCreateHelper.ClientMark.ignoreDiscountClient);
 			ignoreDiscountClient.PhysicalClient.Plan = DbSession.Query<Plan>().FirstOrDefault(s => s.IgnoreDiscount );
 			DbSession.Save(ignoreDiscountClient);
 
 
-			//без паспортных данных 
-			var nopassportClient = CloneClient(normalClient, ClientCreateHelper.ClientMark.nopassportClient); 
+			//c тарифом, привязанным к региону
+			var clientWithPlanOfRegion = CloneClient(normalClient, ClientCreateHelper.ClientMark.planWithRegionClient); 
+			clientWithPlanOfRegion.PhysicalClient.Plan = DbSession.Query<Plan>().First(p => p.Name == "Тариф с указанным регионом");
+			clientWithPlanOfRegion.Discount = 10;
+			DbSession.Save(clientWithPlanOfRegion);
+
+
+			//без паспортных данных
+			var nopassportClient = CloneClient(normalClient, ClientCreateHelper.ClientMark.nopassportClient);
 			nopassportClient.PhysicalClient.PassportNumber = "";
 			DbSession.Save(nopassportClient);
 
@@ -607,6 +613,21 @@ namespace Inforoom2.Test.Functional.infrastructure
 			plan.IsServicePlan = false;
 			plan.PackageSpeed = DbSession.Get<PackageSpeed>(19);
 			DbSession.Save(plan);
+
+
+			plan = new Plan();
+			plan.Price = 300;
+			plan.Name = "Тариф с указанным регионом";
+			plan.IsArchived = false;
+			plan.Hidden = false;
+			plan.IsServicePlan = false;
+			plan.RegionPlans.Add(new RegionPlan() {
+				Plan = plan,
+				Region = DbSession.Query<Region>().FirstOrDefault()
+			}); 
+			plan.PackageSpeed = DbSession.Get<PackageSpeed>(23);
+			DbSession.Save(plan);
+
 
 			plan = new Plan();
 			plan.Price = 300;

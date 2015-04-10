@@ -44,7 +44,8 @@ namespace InforoomControlPanel.Controllers
 			// Find Client
 			var Client = DbSession.Query<Client>().FirstOrDefault(i => i.PhysicalClient != null && i.Id == clientId);
 			ViewBag.Client = Client;
-			if (Client.Status.Type == StatusType.BlockedAndConnected) {
+
+			if (Client.Status != null && Client.Status.Type == StatusType.BlockedAndConnected) {
 				// Find Switches
 				var networkNodeList = DbSession.QueryOver<SwitchAddress>().Where(s =>
 					s.House == Client.PhysicalClient.Address.House && s.Entrance == Client.PhysicalClient.Address.Entrance ||
@@ -74,7 +75,7 @@ namespace InforoomControlPanel.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult ClientRequest(ClientRequest clientRequest)
+		public ActionResult ClientRequest([EntityBinder] ClientRequest clientRequest)
 		{
 			var tariff = InitRequestPlans().FirstOrDefault(k => k.Id == clientRequest.Plan.Id);
 			clientRequest.Plan = tariff;
@@ -245,6 +246,153 @@ namespace InforoomControlPanel.Controllers
 			return View();
 		}
 
+
+		/// <summary>
+		///  Форма регистрации клиента по заявке
+		/// </summary>
+		/// <param name="requestId">Id заявки</param>
+		/// <returns></returns>
+		public ActionResult ClientRequestRegistration(int requestId)
+		{
+			// Создаем клиента
+			var client = new Client();
+			// запрос клиента
+			ClientRequest clientRequest = DbSession.Query<ClientRequest>().First(s => s.Id == requestId);
+			// Создаем физ.клиента
+			client.PhysicalClient = new PhysicalClient();
+			// ФИО по запросу
+			string[] fio = clientRequest.ApplicantName.Trim().Split(' ');
+			client.PhysicalClient.Name = fio.Length > 0 ? fio[0] : "";
+			client.PhysicalClient.Surname = fio.Length > 1 ? fio[1] : "";
+			client.PhysicalClient.Patronymic = fio.Length > 2 ? fio[2] : "";
+
+			// контакты по запросу
+			client.PhoneNumber = clientRequest.ApplicantPhoneNumber;
+			client.Email = clientRequest.Email;
+
+			// адресные данные по запросу
+			var currentRegion = DbSession.Query<Region>().FirstOrDefault(s => s.Name.ToLower() == clientRequest.City.ToLower()) ?? new Region();
+			var currentStreet = DbSession.Query<Street>().FirstOrDefault(s => s.Name.ToLower().Trim() == clientRequest.Street.ToLower().Trim() && s.Region == currentRegion);
+			var houseToFind = DbSession.Query<House>().FirstOrDefault(s => s.Number == (clientRequest.HouseNumber ?? 0).ToString() && s.Street == currentStreet) ?? new House();
+			client.PhysicalClient.Address = new Address() {
+				House = houseToFind,
+				Floor = clientRequest.Floor,
+				Entrance = clientRequest.Entrance,
+				Apartment = clientRequest.Apartment
+			};
+			// списки улиц и домов
+			ViewBag.currentStreet = currentStreet ?? new Street();
+			ViewBag.curStreetList = currentStreet == null ? new List<Street>() : DbSession.Query<Street>().Where(s => s.Region.Id == currentStreet.Region.Id).ToList();
+			ViewBag.curHouseList = currentStreet == null ? new List<House>() : DbSession.Query<House>().Where(s => s.Street.Id == currentStreet.Id).ToList();
+
+			// тариф по запросу
+			client.PhysicalClient.Plan = clientRequest.Plan;
+
+			// получаем списки регионов и тарифов по выбранному выбранному региону (городу)
+			var RegionList = DbSession.Query<Region>().ToList();
+			var PlanList = DbSession.Query<Plan>().ToList();
+			if (RegionList.Count > 0) {
+				PlanList = PlanList.Where(s => s.RegionPlans.Any(d => d.Region == currentRegion)).ToList();
+			}
+			ViewBag.currentRegion = currentRegion;
+			ViewBag.RegionList = RegionList;
+			ViewBag.PlanList = PlanList;
+
+			client.PhysicalClient.CertificateType = CertificateType.Passport;
+			client.StatusChangedOn = DateTime.Now;
+			client.Contacts = new List<Contact>() {
+				new Contact() { ContactName = "", ContactString = "", Type = ContactType.HousePhone, Date = DateTime.Now },
+				new Contact() { ContactName = "", ContactString = "", Type = ContactType.ConnectedPhone, Date = DateTime.Now }
+			};
+			// список типов документа
+			var CertificateTypeDic = new Dictionary<int, CertificateType>();
+			CertificateTypeDic.Add(0, CertificateType.Passport);
+			CertificateTypeDic.Add(1, CertificateType.Other);
+			ViewBag.CertificateTypeDic = CertificateTypeDic;
+
+
+			ViewBag.requestId = requestId;
+			ViewBag.Client = client;
+			return View();
+		}
+
+		/// <summary>
+		///  Форма регистрации клиента по заявке POST
+		/// </summary>
+		/// <param name="ClientRegistration"></param>y
+		/// <returns></returns>
+		[HttpPost]
+		public ActionResult ClientRequestRegistration([EntityBinder] Client client, int requestId)
+		{
+			// добавление клиента
+			var errors = ValidationRunner.ValidateDeep(client);
+			if (errors.Length == 0) {
+				DbSession.Save(client);
+				ClientRequest clientRequest = DbSession.Query<ClientRequest>().First(s => s.Id == requestId);
+				// отправление запроса на регистрацию в архив
+				if (clientRequest != null) {
+					clientRequest.Archived = true;
+					DbSession.Save(clientRequest);
+				}
+				SuccessMessage("Клиент успешно зарегистрирован!");
+				return RedirectToAction("ClientList");
+			}
+
+			// адресные данные по запросу 
+			if (client.Address.House != null) {
+				var currentCity = client.Address.House.Street.Region.City;
+				var currentStreet = client.Address.House.Street;
+				var houseToFind = client.Address.House;
+				client.PhysicalClient.Address = new Address() {
+					House = houseToFind,
+					Floor = client.Address.Floor,
+					Entrance = client.Address.Entrance,
+					Apartment = client.Address.Apartment
+				};
+				// списки улиц и домов
+				ViewBag.currentStreet = currentStreet;
+				ViewBag.curStreetList = DbSession.Query<Street>().
+					Where(s => s.Region.Id == currentStreet.Region.Id).ToList();
+				ViewBag.curHouseList = DbSession.Query<House>().Where(s => s.Street.Id == currentStreet.Id).ToList();
+			}
+			else {
+				client.PhysicalClient.Address = new Address() {
+					House = new House(),
+					Floor = 0,
+					Entrance = 0,
+					Apartment = 0
+				};
+				ViewBag.currentStreet = new Street();
+				ViewBag.curStreetList = new List<Street>();
+				ViewBag.curHouseList = new List<House>();
+			}
+
+			// дополнительные контакты
+			client.Contacts = new List<Contact>() {
+				new Contact() { ContactName = "", ContactString = "", Type = ContactType.HousePhone, Date = DateTime.Now },
+				new Contact() { ContactName = "", ContactString = "", Type = ContactType.ConnectedPhone, Date = DateTime.Now }
+			};
+
+			// список типов документа
+			var CertificateTypeDic = new Dictionary<int, CertificateType>();
+			CertificateTypeDic.Add(0, CertificateType.Passport);
+			CertificateTypeDic.Add(1, CertificateType.Other);
+			ViewBag.CertificateTypeDic = CertificateTypeDic;
+
+			// получаем списки регионов и тарифов по выбранному выбранному региону (городу)
+			var RegionList = DbSession.Query<Region>().ToList();
+			var PlanList = DbSession.Query<Plan>().ToList();
+			if (RegionList.Count > 0) {
+				PlanList = PlanList.Where(s => s.RegionPlans.Any(d => d.Region == RegionList[0])).ToList();
+			}
+			ViewBag.RegionList = RegionList;
+			ViewBag.PlanList = PlanList;
+
+			ViewBag.requestId = requestId;
+			ViewBag.Client = client;
+			return View();
+		}
+
 		/// <summary>
 		/// Форма регистрации клиента 
 		/// </summary>
@@ -252,15 +400,16 @@ namespace InforoomControlPanel.Controllers
 		/// <returns></returns>
 		public ActionResult ClientRegistration()
 		{
+			// Создание клиента
 			var client = new Client();
+			// Создание физ.клиента
 			client.PhysicalClient = new PhysicalClient();
+			// заполнение основнеых полей
 			client.PhysicalClient.Name = "";
 			client.PhysicalClient.Surname = "";
 			client.PhysicalClient.Patronymic = "";
 			client.PhysicalClient.CertificateType = 0;
-			client.PhysicalClient.BirthDate = DateTime.Now;
 			client.PhysicalClient.CertificateType = CertificateType.Passport;
-
 			client.PhysicalClient.Address = new Address() {
 				House = new House(),
 				Floor = 0,
@@ -272,18 +421,27 @@ namespace InforoomControlPanel.Controllers
 				new Contact() { ContactName = "", ContactString = "", Type = ContactType.HousePhone, Date = DateTime.Now },
 				new Contact() { ContactName = "", ContactString = "", Type = ContactType.ConnectedPhone, Date = DateTime.Now }
 			};
+			// список типов документа
 			var CertificateTypeDic = new Dictionary<int, CertificateType>();
 			CertificateTypeDic.Add(0, CertificateType.Passport);
 			CertificateTypeDic.Add(1, CertificateType.Other);
 			ViewBag.CertificateTypeDic = CertificateTypeDic;
-			ViewBag.PlanList = DbSession.Query<Plan>().ToList();
-			ViewBag.RegionList = DbSession.Query<Region>().ToList();
+
+			// получаем списки регионов и тарифов по выбранному выбранному региону (городу)
+			var RegionList = DbSession.Query<Region>().ToList();
+			var PlanList = DbSession.Query<Plan>().ToList();
+			if (RegionList.Count > 0) {
+				PlanList = PlanList.Where(s => s.RegionPlans.Any(d => d.Region == RegionList[0])).ToList();
+			}
+			ViewBag.RegionList = RegionList;
+			ViewBag.PlanList = PlanList;
+
 			ViewBag.Client = client;
 			return View();
 		}
 
 		/// <summary>
-		///  Форма регистрации клиента
+		///  Форма регистрации клиента POST
 		/// </summary>
 		/// <param name="ClientRegistration"></param>
 		/// <returns></returns>
@@ -300,14 +458,91 @@ namespace InforoomControlPanel.Controllers
 				new Contact() { ContactName = "", ContactString = "", Type = ContactType.HousePhone, Date = DateTime.Now },
 				new Contact() { ContactName = "", ContactString = "", Type = ContactType.ConnectedPhone, Date = DateTime.Now }
 			};
+
+			// список типов документа
 			var CertificateTypeDic = new Dictionary<int, CertificateType>();
 			CertificateTypeDic.Add(0, CertificateType.Passport);
 			CertificateTypeDic.Add(1, CertificateType.Other);
 			ViewBag.CertificateTypeDic = CertificateTypeDic;
-			ViewBag.PlanList = DbSession.Query<Plan>().ToList();
-			ViewBag.RegionList = DbSession.Query<Region>().ToList();
-			ViewBag.Client = client;
 
+			// получаем списки регионов и тарифов по выбранному выбранному региону (городу)
+			var RegionList = DbSession.Query<Region>().ToList();
+			var PlanList = DbSession.Query<Plan>().ToList();
+			if (RegionList.Count > 0) {
+				PlanList = PlanList.Where(s => s.RegionPlans.Any(d => d.Region == RegionList[0])).ToList();
+			}
+
+			ViewBag.RegionList = RegionList;
+			ViewBag.PlanList = PlanList;
+
+			ViewBag.Client = client;
+			return View();
+		}
+
+		/// <summary>
+		/// Форма редактирования клиента 
+		/// </summary>
+		/// <param name="ClientRegistration"></param>
+		/// <returns></returns>
+		public ActionResult ClientEditor(int clientId)
+		{
+			var client = DbSession.Query<Client>().First(s => s.Id == clientId);
+			var CertificateTypeDic = new Dictionary<int, CertificateType>();
+			CertificateTypeDic.Add(0, CertificateType.Passport);
+			CertificateTypeDic.Add(1, CertificateType.Other);
+			ViewBag.CertificateTypeDic = CertificateTypeDic;
+
+			// получаем списки регионов и тарифов по выбранному выбранному региону (городу)
+			var RegionList = DbSession.Query<Region>().ToList();
+			var PlanList = DbSession.Query<Plan>().ToList();
+			if (RegionList.Count > 0) {
+				PlanList = PlanList.Where(s => s.RegionPlans.Any(d => d.Region == RegionList[0])).ToList();
+			}
+			ViewBag.StreetList = DbSession.Query<Street>().
+				Where(s => s.Region.Id == client.Address.House.Street.Region.Id).ToList();
+			ViewBag.HouseList = DbSession.Query<House>().
+				Where(s => s.Street.Id == client.Address.House.Street.Id).ToList();
+			ViewBag.RegionList = RegionList;
+			ViewBag.PlanList = PlanList;
+
+			ViewBag.Client = client;
+			return View();
+		}
+
+		/// <summary>
+		///  Форма редактирования клиента POST
+		/// </summary>
+		/// <param name="ClientRegistration"></param>
+		/// <returns></returns>
+		[HttpPost]
+		public ActionResult ClientEditor([EntityBinder] Client client)
+		{
+			var errors = ValidationRunner.ValidateDeep(client);
+			if (errors.Length == 0) {
+				DbSession.Update(client);
+				SuccessMessage("Клиент успешно изменен!");
+				return RedirectToAction("ClientList");
+			}
+
+			// список типов документа
+			var CertificateTypeDic = new Dictionary<int, CertificateType>();
+			CertificateTypeDic.Add(0, CertificateType.Passport);
+			CertificateTypeDic.Add(1, CertificateType.Other);
+			ViewBag.CertificateTypeDic = CertificateTypeDic;
+			// получаем списки регионов и тарифов по выбранному выбранному региону (городу)
+			var RegionList = DbSession.Query<Region>().ToList();
+			var PlanList = DbSession.Query<Plan>().ToList();
+			if (RegionList.Count > 0) {
+				PlanList = PlanList.Where(s => s.RegionPlans.Any(d => d.Region == RegionList[0])).ToList();
+			}
+			ViewBag.StreetList = DbSession.Query<Street>().
+				Where(s => s.Region.Id == client.Address.House.Street.Region.Id).ToList();
+			ViewBag.HouseList = DbSession.Query<House>().
+				Where(s => s.Street.Id == client.Address.House.Street.Id).ToList();
+			ViewBag.RegionList = RegionList;
+			ViewBag.PlanList = PlanList;
+
+			ViewBag.Client = client;
 			return View();
 		}
 	}

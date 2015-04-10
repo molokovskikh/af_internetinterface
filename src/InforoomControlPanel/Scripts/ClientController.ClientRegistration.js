@@ -1,9 +1,62 @@
-﻿getStreetList = function (regionId, funcAfter) {
+﻿// В первую очередь
+$(function () {
+	//   
+
+	// при изменении значения региона
+	$("#RegionDropDown").change(function () {
+		if ($(this).val() != "") {
+
+			getPlansList($(this).val(), getPlansFuncAfter);
+			getStreetList($(this).val(), getStreetFuncAfter);
+		}
+	});
+	// при изменении значения улицы
+	$("#StreetDropDown").change(function () {
+		if ($(this).val() != "") {
+			getHouseList($(this).val(), getHouseFuncAfter);
+		}
+	});
+	if ($("#StreetDropDown option").length == 0 && ($("#streetError") == null || $("#streetError").val() != "0")) {
+		// получения значений для текущего региона
+		if ($("#RegionDropDown option").length > 0) {
+			$("#RegionDropDown select").val($("#RegionDropDown option:first"));
+			getStreetList($("#RegionDropDown").val(), getStreetFuncAfter);
+		}
+	}  
+
+	if ($("#HouseDropDown option").length == 0 && ($("#houseError") == null || $("#houseError").val() != "0")) {
+		// получения значений для текущей улицы
+		if ($("#StreetDropDown option").length > 0) {
+			$("#StreetDropDown select").val($("#StreetDropDown option:first"));
+			getHouseList($("#StreetDropDown").val(), getHouseFuncAfter);
+		}
+	}
+
+		$("#StreetDropDown").click(function () {
+			$("#RegionDropDown").unbind("click");
+			if ($("#StreetDropDown option").length == 0) {
+			$("#RegionDropDown select").val($("#RegionDropDown option:first"));
+			getStreetList($("#RegionDropDown").val(), getStreetFuncAfter);
+		}
+		});
+		$("#HouseDropDown").click(function () {
+			$("#HouseDropDown").unbind("click");
+			if ($("#HouseDropDown option").length == 0) {
+			$("#StreetDropDown select").val($("#StreetDropDown option:first"));
+			getHouseList($("#StreetDropDown").val(), getHouseFuncAfter);
+		}
+		});
+
+});
+
+// AJAX-Ззапросы
+getStreetList = function (regionId, funcAfter) {
 	$.ajax({
 		url: "/Address/GetStreetList?regionId=" + regionId,
 		type: 'POST',
 		dataType: "json",
 		success: function (data) {
+			//функция заполнения списка улиц
 			funcAfter(data);
 		},
 		error: function (request) { 
@@ -16,56 +69,60 @@ getHouseList = function (streetId, funcAfter) {
 		type: 'POST',
 		dataType: "json",
 		success: function (data) {
+			//функция заполнения списка домов
 			funcAfter(data);
 		},
 		error: function (request) { 
 		}
 	});
 }
-
-getStreetFuncAfter = function (data) {
-	$("#streetListBox").html("");
-	$(data).each(function () {
-		$("#streetListBox").append("<option value='" + this.Id + "'>" + this.Name + "</option>");
+getPlansList = function (regionId, funcAfter) {
+	$.ajax({
+		url: "/Address/GetPlansListForRegion?regionId=" + regionId,
+		type: 'POST',
+		dataType: "json",
+		success: function (data) {
+			//функция заполнения списка тарифов
+			funcAfter(data);
+		},
+		error: function (request) {
+		}
 	});
-	if ($("#streetListBox option").length > 0) {
-		$("#streetListBox select").val($("#streetListBox option:first"));
-		getHouseList($("#streetListBox").val(), getHouseFuncAfter);
+}
+// После AJAX-запросов
+getStreetFuncAfter = function (data) { 
+	$("#StreetDropDown").html("");
+	$(data).each(function () {
+		// заполнение списка улиц
+		$("#StreetDropDown").append("<option value='" + this.Id + "'>" + this.Name + "</option>");
+	});
+	// если список не пустой, выбор первого элемента и запрос домов по улице, иначе - очистка списка домов
+	if ($("#StreetDropDown option").length > 0) {
+		$("#StreetDropDown select").val($("#StreetDropDown option:first"));
+		getHouseList($("#StreetDropDown").val(), getHouseFuncAfter);
 	} else {
-		$("#houseListBox").html("");
+		$("#HouseDropDown").html("");
 	}
-
 }
 getHouseFuncAfter = function (data) {
-	$("#houseListBox").html("");
-	$(data).each(function() {
-		$("#houseListBox").append("<option value='" + this.Id + "'>" + this.Number + "</option>");
+	$("#HouseDropDown").html("");
+	$(data).each(function () {
+		// заполнение списка домов
+		$("#HouseDropDown").append("<option value='" + this.Id + "'>" + this.Number + "</option>");
 	});
-	if ($("#houseListBox option").length > 0) {
-		$("#houseListBox select").val($("#houseListBox option:first"));
+	// если список не пустой, выбор первого элемента
+	if ($("#HouseDropDown option").length > 0) {
+		$("#HouseDropDown select").val($("#HouseDropDown option:first"));
 	}
 }
-
-$(function () {
-	$("#regionListBox").change(function () {
-		if ($(this).val()!="") {
-			getStreetList($(this).val(),getStreetFuncAfter );
-		}
+getPlansFuncAfter = function (data) {
+	$("#PlanDropDown").html("");
+	$(data).each(function () {
+		// заполнение списка тарифов 
+		$("#PlanDropDown").append("<option value='" + this.Id + "'>" + this.Name + "</option>");
 	});
-	$("#streetListBox").change(function () {
-		if ($(this).val() != "") {
-			getHouseList($(this).val(), getHouseFuncAfter);
-		}
-	});
-	$("#houseListBox").change(function () { 
-	});
-
-	if ($("#regionListBox option").length > 0) {
-		$("#regionListBox select").val($("#regionListBox option:first"));
-		getStreetList($("#regionListBox").val(), getStreetFuncAfter);
+	// если список не пустой, выбор первого элемента
+	if ($("#PlanDropDown option").length > 0) {
+		$("#PlanDropDown select").val($("#PlanDropDown option:first"));
 	}
-	if ($("#streetListBox option").length > 0) {
-		$("#streetListBox select").val($("#streetListBox option:first"));
-		getHouseList($("#streetListBox").val(), getHouseFuncAfter);
-	} 
-});
+}

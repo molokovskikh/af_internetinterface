@@ -11,7 +11,7 @@ using NHibernate.Linq;
 
 namespace Inforoom2.Controllers
 {
-	public class Inforoom2Controller: BaseController
+	public class Inforoom2Controller : BaseController
 	{
 
 		protected new virtual CustomPrincipal User
@@ -59,11 +59,12 @@ namespace Inforoom2.Controllers
 			}
 			ViewBag.Title = "Инфорум";
 			ViewBag.Cities = new[] { "Борисоглебск", "Белгород" };
-			ViewBag.JavascriptParams["baseurl"] = String.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, UrlHelper.GenerateContentUrl("~/",HttpContext));
+			ViewBag.JavascriptParams["baseurl"] = String.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, UrlHelper.GenerateContentUrl("~/", HttpContext));
 			ViewBag.ActionName = filterContext.RouteData.Values["action"].ToString();
 			ViewBag.ControllerName = GetType().Name.Replace("Controller", "");
 			//todo куда это девать?
-			var newCallMeBackTicket = new CallMeBackTicket() {
+			var newCallMeBackTicket = new CallMeBackTicket()
+			{
 				Name = (CurrentClient == null) ? "" : CurrentClient.Name,
 				PhoneNumber = (CurrentClient == null) ? "" : CurrentClient.PhoneNumber
 			};
@@ -96,18 +97,23 @@ namespace Inforoom2.Controllers
 		private bool TryAuthorizeNetworkClient()
 		{
 			var ipstring = Request.UserHostAddress;
+	  
 #if DEBUG
 			//Можем авторизоваться по лизе за клиента
 			ipstring = Request.QueryString["ip"] ?? null;
 			if (GetCookie("debugIp") == null && ipstring != null)
 				SetCookie("debugIp", ipstring);
-#endif
+#endif  
 			if (CurrentClient != null || string.IsNullOrEmpty(ipstring))
 				return false;
 			var endpoint = ClientEndpoint.GetEndpointForIp(ipstring, DbSession);
 			if (endpoint != null && endpoint.Client.PhysicalClient != null) //Юриков авторизовывать не нужно
 			{
 				SetCookie("networkClient", "true");
+				if (endpoint.Client.PhysicalClient.Address!=null) {
+					SetCookie("userCity", endpoint.Client.PhysicalClient.Address.House.Street.Region.Name);
+				}
+				
 				this.Authenticate(ViewBag.ActionName, ViewBag.ControllerName, endpoint.Client.Id.ToString(), true);
 				return true;
 			}
@@ -187,9 +193,9 @@ namespace Inforoom2.Controllers
 				{
 					var appeal = new Appeal("Клиент создал запрос на обратный звонок № " + callMeBackTicket.Id,
 						callMeBackTicket.Client, AppealType.FeedBack)
-						{
-							Employee = GetCurrentEmployee()
-						};
+					{
+						Employee = GetCurrentEmployee()
+					};
 					DbSession.Save(appeal);
 				}
 
@@ -239,7 +245,8 @@ namespace Inforoom2.Controllers
 						userCity = GetVisitorCityByGeoBase();
 					}
 				}
-			}
+			} 
+
 			ViewBag.UserCityBelongsToUs = IsUserCityBelongsToUs(UserCity);
 			ViewBag.UserCity = UserCity;
 			ViewBag.UserRegion = DbSession.Query<Region>().FirstOrDefault(i => i.Name == UserCity);

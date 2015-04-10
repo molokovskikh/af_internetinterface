@@ -3,7 +3,7 @@
 		<thead>
 			<tr class="menuItem">
 				<% if MapPartner.AccesPartner("RC"): %>
-				<th>${App.LinkTo("Регистрация абонента", @Register, @RegisterClient)}</th>
+				<th><a href="http://test2.analit.net/Client/ClientRegistration">Регистрация абонента</a> </th>
 				<% end %>
 				<% if MapPartner.AccesPartner("RC"): %>
 				<th>${App.LinkTo("Регистрация ЮрЛица", @Register, @RegisterLegalPerson)}</th>

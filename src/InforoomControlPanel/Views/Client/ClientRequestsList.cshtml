@@ -27,7 +27,8 @@
 				<td>@request.ApplicantName</td>
 				<td>@request.GetAddress()</td>
 				<td>@request.RegDate</td>
-				<td></td>
+				<td>
+					<a href="@Url.Action("ClientRequestRegistration", new { @requestId = request.Id })" class="btn btn-green">зарегистрировать</a></td>
 			</tr>
 		}
 	</tbody>
