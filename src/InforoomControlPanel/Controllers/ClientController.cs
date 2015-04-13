@@ -48,7 +48,7 @@ namespace InforoomControlPanel.Controllers
 			if (Client.Status != null && Client.Status.Type == StatusType.BlockedAndConnected) {
 				// Find Switches
 				var networkNodeList = DbSession.QueryOver<SwitchAddress>().Where(s =>
-					s.House == Client.PhysicalClient.Address.House && s.Entrance == Client.PhysicalClient.Address.Entrance ||
+					s.House == Client.PhysicalClient.Address.House && s.Entrance.ToString() == Client.PhysicalClient.Address.Entrance ||
 					s.House == Client.PhysicalClient.Address.House && s.Entrance == null).List();
 
 				if (networkNodeList.Count > 0) {
@@ -179,9 +179,9 @@ namespace InforoomControlPanel.Controllers
 			                                                     && a.House.Equals(house)
 			                                                     && a.House.Street.Equals(street)
 			                                                     && a.House.Street.Region.Equals(region)
-			                                                     && a.Entrance == clientRequest.Entrance
+			                                                     && a.Entrance == clientRequest.Entrance.ToString()
 			                                                     && a.Floor == clientRequest.Floor
-			                                                     && a.Apartment == clientRequest.Apartment);
+			                                                     && a.Apartment == clientRequest.Apartment.ToString());
 
 			//if (address == null) {
 			//	address = new Address();

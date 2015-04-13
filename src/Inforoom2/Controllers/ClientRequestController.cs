@@ -144,9 +144,9 @@ namespace Inforoom2.Controllers
 			                                                     && a.House.Equals(house)
 			                                                     && a.House.Street.Equals(street)
 			                                                     && a.House.Street.Region.Equals(region)
-			                                                     && a.Entrance == clientRequest.Entrance
+			                                                     && a.Entrance == clientRequest.Entrance.ToString()
 			                                                     && a.Floor == clientRequest.Floor
-			                                                     && a.Apartment == clientRequest.Apartment);
+			                                                     && a.Apartment == clientRequest.Apartment.ToString());
 
 			return address;
 		}
