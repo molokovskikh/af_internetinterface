@@ -12,7 +12,7 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual string Entrance { get; set; }
 
-		[Property, Min(Value = 1, Message = "Введите номер квартиры")]
+		[Property]
 		public virtual string Apartment { get; set; }
 
 		[Property]

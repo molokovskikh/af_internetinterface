@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using System.Web.UI.WebControls;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
@@ -30,6 +31,20 @@ namespace Inforoom2.Test.Functional
 			link.Click();
 			var userCity = GetCookie("userCity");
 			Assert.That(userCity, Is.EqualTo("Борисоглебск"));
+		}
+
+		[Test]
+		public void CheckRegionDefinitionByIP()
+		{
+			var currentIP = IPAddress.Parse("1772617729");
+			var leasedIp = Lease.GetLeaseForIp(currentIP.ToString(), DbSession);
+			var current_client = leasedIp.Endpoint.Client;
+			SetCookie("userCity", "");
+			NetworkLoginForClient(current_client);
+			Open("/");
+			AssertNoText("ВЫБЕРИТЕ ГОРОД");
+			var cookie = GetCookie("userCity");
+			Assert.That(cookie, Is.EqualTo(current_client.Address.House.Street.Region.Name), "У клиента в куки регион такой же как в адресе");
 		}
 	}
 }

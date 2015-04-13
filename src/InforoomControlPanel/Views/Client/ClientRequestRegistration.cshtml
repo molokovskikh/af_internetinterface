@@ -25,7 +25,7 @@
 
 <div class="panel panel-primary col-md-12">
 	<div class="panel-body">
-		@using (@Html.BeginForm(action, controller, null, FormMethod.Post, new { @id = "ClientRegistrationForm", @class = "form-horizontal form-groups-bordered" })) {
+		@using (@Html.BeginForm(action, controller, null, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" })) {
 			<div class="panel-body">
 				<div class="row">
 					<div class="col-md-6">
@@ -73,10 +73,16 @@
 										<div class="form-group">
 											<label class="col-sm-4 control-label">Домашний телефон:</label>
 											<div class="col-sm-4">
-												@Html.TextBoxFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.HousePhone).ContactString, new { @Name = "Inforoom2.Models.Contact[0].ContactString", @Id = "ContactString_1", @class = "form-control" })
-						 
-												@Html.HiddenFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.HousePhone).Type, new { @Name = "Inforoom2.Models.Contact[0].Type" })
-												@Html.HiddenFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.HousePhone).Date, new { @Name = "Inforoom2.Models.Contact[0].Date" })
+												@if (client.Contacts != null && client.Contacts.Count > 0) {
+													@Html.TextBoxFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.HousePhone).ContactString, new { @Name = "Inforoom2.Models.Contact[0].ContactString", @Id = "ContactString_1", @class = "form-control" })
+													@Html.HiddenFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.HousePhone).Type, new { @Name = "Inforoom2.Models.Contact[0].Type" })
+													@Html.HiddenFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.HousePhone).Date, new { @Name = "Inforoom2.Models.Contact[0].Date" })
+												}
+												else {
+													<input id="ContactString_1" name="Inforoom2.Models.Contact[0].ContactString" class="form-control" type="text" value="">
+													<input name="Inforoom2.Models.Contact[0].Type" id="Type" type="hidden" value="HousePhone">
+													<input name="Inforoom2.Models.Contact[0].Date" id="Date" type="hidden" value="@DateTime.Now">
+												}
 											</div>
 										</div>
 										<div class="form-group">
@@ -88,10 +94,16 @@
 										<div class="form-group">
 											<label class="col-sm-4 control-label">Номер абонента Ситилайн:</label>
 											<div class="col-sm-4">
-												@Html.TextBoxFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.ConnectedPhone).ContactString, new { @Name = "Inforoom2.Models.Contact[1].ContactString", @Id = "ContactString_2", @class = "form-control" })
- 
-												@Html.HiddenFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.ConnectedPhone).Type, new { @Name = "Inforoom2.Models.Contact[1].Type" })
-												@Html.HiddenFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.ConnectedPhone).Date, new { @Name = "Inforoom2.Models.Contact[1].Date" })
+												@if (client.Contacts != null && client.Contacts.Count > 0) {
+													@Html.TextBoxFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.ConnectedPhone).ContactString, new { @Name = "Inforoom2.Models.Contact[1].ContactString", @Id = "ContactString_2", @class = "form-control" })
+													@Html.HiddenFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.ConnectedPhone).Type, new { @Name = "Inforoom2.Models.Contact[1].Type" })
+													@Html.HiddenFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.ConnectedPhone).Date, new { @Name = "Inforoom2.Models.Contact[1].Date" })
+												}
+												else {
+													<input id="ContactString_2" name="Inforoom2.Models.Contact[1].ContactString" class="form-control" type="text" value="">
+													<input name="Inforoom2.Models.Contact[1].Type" id="Type" type="hidden" value="ConnectedPhone">
+													<input name="Inforoom2.Models.Contact[1].Date" id="Date" type="hidden" value="@DateTime.Now">
+												}
 											</div>
 										</div>
 										<div class="form-group">
@@ -102,7 +114,6 @@
 										</div>
 									</div><!-- /.col-lg-6 -->
 								</div><!-- /.row -->
-
 
 							</div>
 						</div>
@@ -130,9 +141,7 @@
 								</div><!-- /.row -->
 							</div>
 						</div>
-
 					</div>
-
 					<div class="col-md-6">
 						
 						<div class="panel panel-default">
@@ -146,8 +155,7 @@
 											<label class="col-sm-2 control-label@(currentRegion.Id == 0 ? " bold msg" : "")">Регион:</label>
 											<div class="col-sm-6">
 												<select id="RegionDropDown" class="form-control">
-													@foreach (var region in regionList)
-													{
+													@foreach (var region in regionList) {
 														<option value="@region.Id" @(currentRegion.Id == region.Id ? "selected" : "")>@region.Name</option>
 													}
 												</select>
@@ -157,12 +165,10 @@
 										<div class="form-group error">
 											<label class="col-sm-2 control-label@(currentStreet.Id == 0 ? " bold msg" : "")">Улица:</label>
 											<div class="col-sm-6">
-												@if (currentStreet.Id != 0)
-												{
+												@if (currentStreet.Id != 0) {
 													@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House.Street, curStreetList, obj => obj.Name, null, new { @class = "form-control", @Id = "StreetDropDown" }, currentStreet.Id)
 												}
-												else
-												{
+												else {
 													<select id="StreetDropDown" name="client.PhysicalClient.Address.House.Street" class="form-control"></select>
 												}
 												@Html.HiddenFor(s => currentStreet.Id, new { Id = "streetError" })
@@ -171,12 +177,10 @@
 										<div class="form-group error">
 											<label class="col-sm-2 control-label@(client.PhysicalClient.Address.House.Id == 0 ? " bold msg" : "")">Дом:</label>
 											<div class="col-sm-6">
-												@if (client.PhysicalClient.Address.House.Id != 0 && curHouseList != null)
-												{
+												@if (client.PhysicalClient.Address.House.Id != 0 && curHouseList != null) {
 													@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House, curHouseList, obj => obj.Number, null, new { @class = "form-control", @Id = "HouseDropDown" }, client.PhysicalClient.Address.House.Id)
 												}
-												else
-												{
+												else {
 													<select id="HouseDropDown" name="client.PhysicalClient.Address.House" class="form-control"></select>
 												}
 												@Html.HiddenFor(s => houseExist, new { Id = "houseError" })

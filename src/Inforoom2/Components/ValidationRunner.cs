@@ -36,10 +36,8 @@ namespace Inforoom2.Components
 		/// <returns>Список ошибок, появившихся в результате валидации</returns>
 		public ValidationErrors RemoveErrors(string ClassName, string PropertyName)
 		{
-			var ElementToRemove = this.FirstOrDefault(s => s.EntityType.ToString() == ClassName + "." + PropertyName);
-			if (ElementToRemove != null) {
-				this.Remove(ElementToRemove);
-			}
+			this.RemoveAll(s => s.EntityType.Name.ToString() + "." + s.PropertyName == ClassName + "." + PropertyName);
+
 			return this;
 		}
 

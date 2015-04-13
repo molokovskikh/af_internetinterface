@@ -11,14 +11,13 @@
 	string action = ViewBag.ActionName;
 	string controller = ViewBag.ControllerName;
 	List<Region> regionList = ViewBag.RegionList;
-	List<Plan> planList = ViewBag.PlanList; 
+	List<Plan> planList = ViewBag.PlanList;
 	Dictionary<int, CertificateType> certificateTypeDic = ViewBag.CertificateTypeDic;
 }
 
 <div class="panel panel-primary col-md-12">
 	<div class="panel-body">
-		@using (@Html.BeginForm(action, controller, null, FormMethod.Post, new { @id = "ClientRegistrationForm", @class = "form-horizontal form-groups-bordered" })) { 
-
+		@using (@Html.BeginForm(action, controller, null, FormMethod.Post, new { @id = "ClientRegistrationForm", @class = "form-horizontal form-groups-bordered" })) {
 			<div class="panel-body">
 				<div class="row">
 					<div class="col-md-6">
@@ -66,10 +65,16 @@
 										<div class="form-group">
 											<label class="col-sm-4 control-label">Домашний телефон:</label>
 											<div class="col-sm-4">
-												@Html.TextBoxFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.HousePhone).ContactString, new { @Name = "Inforoom2.Models.Contact[0].ContactString", @Id = "ContactString_1", @class = "form-control" })
-						 
-												@Html.HiddenFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.HousePhone).Type, new { @Name = "Inforoom2.Models.Contact[0].Type" })
-												@Html.HiddenFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.HousePhone).Date, new { @Name = "Inforoom2.Models.Contact[0].Date" })
+												@if (client.Contacts != null && client.Contacts.Count > 0) {
+													@Html.TextBoxFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.HousePhone).ContactString, new { @Name = "Inforoom2.Models.Contact[0].ContactString", @Id = "ContactString_1", @class = "form-control" })
+													@Html.HiddenFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.HousePhone).Type, new { @Name = "Inforoom2.Models.Contact[0].Type" })
+													@Html.HiddenFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.HousePhone).Date, new { @Name = "Inforoom2.Models.Contact[0].Date" })
+												}
+												else {
+													<input id="ContactString_1" name="Inforoom2.Models.Contact[0].ContactString" class="form-control" type="text" value="">
+													<input name="Inforoom2.Models.Contact[0].Type" id="Type" type="hidden" value="HousePhone">
+													<input name="Inforoom2.Models.Contact[0].Date" id="Date" type="hidden" value="@DateTime.Now">
+												}
 											</div>
 										</div>
 										<div class="form-group">
@@ -81,21 +86,26 @@
 										<div class="form-group">
 											<label class="col-sm-4 control-label">Номер абонента Ситилайн:</label>
 											<div class="col-sm-4">
-												@Html.TextBoxFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.ConnectedPhone).ContactString, new { @Name = "Inforoom2.Models.Contact[1].ContactString", @Id = "ContactString_2", @class = "form-control" })
- 
-												@Html.HiddenFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.ConnectedPhone).Type, new { @Name = "Inforoom2.Models.Contact[1].Type" })
-												@Html.HiddenFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.ConnectedPhone).Date, new { @Name = "Inforoom2.Models.Contact[1].Date" })
+												@if (client.Contacts != null && client.Contacts.Count > 0) {
+													@Html.TextBoxFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.ConnectedPhone).ContactString, new { @Name = "Inforoom2.Models.Contact[1].ContactString", @Id = "ContactString_2", @class = "form-control" })
+													@Html.HiddenFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.ConnectedPhone).Type, new { @Name = "Inforoom2.Models.Contact[1].Type" })
+													@Html.HiddenFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.ConnectedPhone).Date, new { @Name = "Inforoom2.Models.Contact[1].Date" })
+												}
+												else {
+													<input id="ContactString_2" name="Inforoom2.Models.Contact[1].ContactString" class="form-control" type="text" value="">
+													<input name="Inforoom2.Models.Contact[1].Type" id="Type" type="hidden" value="ConnectedPhone">
+													<input name="Inforoom2.Models.Contact[1].Date" id="Date" type="hidden" value="@DateTime.Now">
+												}
 											</div>
 										</div>
 										<div class="form-group">
 											<label class="col-sm-4 control-label c-pointer" for="clientToBeChecked">Проверен:</label>
 											<div class="col-sm-4">
-												@Html.CheckBoxFor(o => client.PhysicalClient.Checked, new { @Id = "clientToBeChecked", @class="c-pointer" })
+												@Html.CheckBoxFor(o => client.PhysicalClient.Checked, new { @Id = "clientToBeChecked", @class = "c-pointer" })
 											</div>
 										</div>
 									</div><!-- /.col-lg-6 -->
 								</div><!-- /.row -->
-
 
 							</div>
 						</div>
@@ -123,11 +133,8 @@
 								</div><!-- /.row -->
 							</div>
 						</div>
-
 					</div>
-
 					<div class="col-md-6">
-						
 						<div class="panel panel-default">
 							<div class="panel-heading">
 								<h3 class="panel-title">Адрес</h3>
@@ -139,8 +146,7 @@
 											<label class="col-sm-2 control-label">Регион:</label>
 											<div class="col-sm-6">
 												<select id="RegionDropDown" class="form-control">
-													@foreach (var region in regionList)
-													{
+													@foreach (var region in regionList) {
 														<option value="@region.Id">@region.Name</option>
 													}
 												</select>
@@ -233,7 +239,7 @@
 										<div class="form-group">
 											<label class="col-sm-4 control-label">Дата выдачи паспорта:</label>
 											<div class="col-sm-4 date-picker-box">
-												@Html.TextBoxFor(o => client.PhysicalClient.PassportDate, new { @data_format="dd.mm.yyyy" ,@class="form-control datepicker"})
+												@Html.TextBoxFor(o => client.PhysicalClient.PassportDate, new { @data_format = "dd.mm.yyyy", @class = "form-control datepicker" })
 											</div>
 										</div>
 										<div class="form-group">
