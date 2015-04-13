@@ -1,10 +1,11 @@
-﻿@section JavaScript{<script type="text/javascript" src="@Url.Content("~/Scripts/AboutIndex.js")"></script>}
-
-@{
-	ViewBag.Title = "Мы - ООО \"Инфорум\"";
+﻿@section JavaScript{
+	<script src="http://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+	<script type="text/javascript" src="@Url.Content("~/Scripts/AboutIndex.js")"></script>
 }
 
-<script src="http://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+@{ViewBag.Title = "Мы - ООО \"Инфорум\"";}
+
+
 
 <h2 class="heading">@(ViewBag.Title.ToString().ToUpper())</h2>
 <div class="whiteblock">

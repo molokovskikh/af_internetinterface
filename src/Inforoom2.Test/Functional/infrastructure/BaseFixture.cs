@@ -221,7 +221,7 @@ namespace Inforoom2.Test.Functional.infrastructure
 					if (address == null) {
 						// Если дом в таб. Address отсусствует, создаем новую запись
 						address = new Address();
-						address.Entrance = 1;
+						address.Entrance = "1";
 						address.Floor = 1;
 						address.House = house;
 						DbSession.Save(address);

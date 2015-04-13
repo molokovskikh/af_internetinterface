@@ -10,10 +10,10 @@ namespace Inforoom2.Models
 		public virtual House House { get; set; }
 
 		[Property]
-		public virtual int Entrance { get; set; }
+		public virtual string Entrance { get; set; }
 
 		[Property, Min(Value = 1, Message = "Введите номер квартиры")]
-		public virtual int Apartment { get; set; }
+		public virtual string Apartment { get; set; }
 
 		[Property]
 		public virtual int Floor { get; set; }
