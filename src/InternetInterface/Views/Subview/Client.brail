@@ -168,7 +168,8 @@ ${app.Asset("client.css")}
 </table>
 <% end %>
 <% if not IsDefined("EditAddress") or EditAddress != true: %>
-<table class="table" id="AdressTable" style="margin-bottom: 15px;">
+<div style="margin-bottom: 15px;"><a href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}ClientEditor?clientId=${client.Id}" style="margin-left: 5px;border-bottom: 1px solid #474e99;">Изменить адрес</a></div>
+<table class="table" id="AdressTable" style="margin-bottom: 15px; display:none;">
 	<thead>
 		<tr>
 			<th colspan=14>Адрес</th>
