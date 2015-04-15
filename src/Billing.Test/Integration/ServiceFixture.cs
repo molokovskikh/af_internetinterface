@@ -166,7 +166,7 @@ namespace Billing.Test.Integration
 				Assert.That(WriteOff.Queryable.AsQueryable().Count(), Is.EqualTo(0));
 			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
-				Assert.That(WriteOff.Queryable.AsQueryable().Count(), Is.EqualTo(2), "\nНет разового списания за услугу");
+				Assert.That(WriteOff.Queryable.AsQueryable().Count(), Is.EqualTo(1));
 				Assert.That(UserWriteOff.Queryable.AsQueryable().Count(), Is.EqualTo(2), UserWriteOff.Queryable.Implode());
 
 				service = ActiveRecordMediator<ClientService>.FindByPrimaryKey(service.Id);
@@ -174,7 +174,7 @@ namespace Billing.Test.Integration
 			}
 			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
-				Assert.That(WriteOff.Queryable.AsQueryable().Count(), Is.EqualTo(2), "\nНет разового списания за услугу");
+				Assert.That(WriteOff.Queryable.AsQueryable().Count(), Is.EqualTo(1));
 			}
 		}
 
@@ -201,7 +201,7 @@ namespace Billing.Test.Integration
 				billing.ProcessWriteoffs();
 			}
 			using (new SessionScope()) {
-				Assert.That(WriteOff.Queryable.AsQueryable().Count(), Is.EqualTo(4), "\nНет разового списания за услугу");
+				Assert.That(WriteOff.Queryable.AsQueryable().Count(), Is.EqualTo(3));
 
 				var userWriteOffs = UserWriteOff.Queryable.ToList();
 				Assert.That(userWriteOffs.Count(), Is.EqualTo(3), userWriteOffs.Implode());
