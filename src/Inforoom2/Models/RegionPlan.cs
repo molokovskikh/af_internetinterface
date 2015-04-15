@@ -10,8 +10,5 @@ namespace Inforoom2.Models
 
 		[ManyToOne(Cascade = "save-update", NotNull = true)]
 		public virtual Region Region { get; set; }
-
 	}
-
-
 }

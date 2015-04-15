@@ -23,6 +23,7 @@ namespace Inforoom2.Models
 			Date = DateTime.Now;
 			inforoom2 = true;
 		}
+
 		public Appeal(string appeal, Client client, AppealType appealType) : this()
 		{
 			Message = appeal;
@@ -36,14 +37,15 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual DateTime Date { get; set; }
 
-		[ManyToOne(Column ="Partner")]
+		[ManyToOne(Column = "Partner")]
 		public virtual Employee Employee { get; set; }
 
-		[ManyToOne(Column ="Client")]
+		[ManyToOne(Column = "Client")]
 		public virtual Client Client { get; set; }
 
 		[Property]
 		public virtual AppealType AppealType { get; set; }
+
 		[Property(Column = "_Inforoom2")]
 		public virtual bool inforoom2 { get; set; }
 	}

@@ -15,13 +15,12 @@ namespace Inforoom2.Models
 	{
 		public StreetAlias()
 		{
-
 		}
 
 		[Property]
 		public virtual string Name { get; set; }
 
-		[ManyToOne(Column = "Street",  Cascade = "save-update"), NotNull]
+		[ManyToOne(Column = "Street", Cascade = "save-update"), NotNull]
 		public virtual Street Street { get; set; }
 
 		public static StreetAlias FindAlias(string address, ISession dbSession)

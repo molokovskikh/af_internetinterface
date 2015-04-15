@@ -68,13 +68,14 @@ namespace Inforoom2.Controllers
 				//Если дом найден то ищем, имеется ли там коммутатор
 				var addr = DbSession.Query<SwitchAddress>().FirstOrDefault(i => i.House == dbHouse);
 				var availible = addr != null;
-				result = new {streetAlias = dbStreetAlias != null, city = dbCity.Name, street = dbStreet.Name, house = dbHouse.Number, geomark = dbHouse.Geomark, available = availible };
+				result = new { streetAlias = dbStreetAlias != null, city = dbCity.Name, street = dbStreet.Name, house = dbHouse.Number, geomark = dbHouse.Geomark, available = availible };
 			}
 			else
-				result = new {streetAlias = dbStreetAlias != null, city = dbCity.Name, street = dbStreet.Name, geomark = dbStreet.Geomark };
+				result = new { streetAlias = dbStreetAlias != null, city = dbCity.Name, street = dbStreet.Name, geomark = dbStreet.Geomark };
 
 			return Json(result);
 		}
+
 		private void InitClientRequest(Plan plan = null, string city = "", string street = "", string house = "")
 		{
 			ViewBag.IsRedirected = false;
@@ -143,9 +144,9 @@ namespace Inforoom2.Controllers
 			                                                     && a.House.Equals(house)
 			                                                     && a.House.Street.Equals(street)
 			                                                     && a.House.Street.Region.Equals(region)
-			                                                     && a.Entrance == clientRequest.Entrance
+			                                                     && a.Entrance == clientRequest.Entrance.ToString()
 			                                                     && a.Floor == clientRequest.Floor
-			                                                     && a.Apartment == clientRequest.Apartment);
+			                                                     && a.Apartment == clientRequest.Apartment.ToString());
 
 			return address;
 		}

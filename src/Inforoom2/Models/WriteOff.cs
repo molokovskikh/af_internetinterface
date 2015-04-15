@@ -3,13 +3,15 @@ using NHibernate.Mapping.Attributes;
 
 namespace Inforoom2.Models
 {
-	[Class(Table = "WriteOff", NameType = typeof (WriteOff))]
+	[Class(Table = "WriteOff", NameType = typeof(WriteOff))]
 	public class WriteOff : BaseModel
 	{
 		[Property]
 		public virtual decimal WriteOffSum { get; set; }
+
 		[Property]
 		public virtual decimal VirtualSum { get; set; }
+
 		[Property]
 		public virtual decimal MoneySum { get; set; }
 

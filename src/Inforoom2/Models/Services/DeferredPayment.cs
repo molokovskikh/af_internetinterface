@@ -7,7 +7,7 @@ using NHibernate.Mapping.Attributes;
 
 namespace Inforoom2.Models.Services
 {
-	[Subclass(0, ExtendsType = typeof (Service), DiscriminatorValue = "DebtWork")]
+	[Subclass(0, ExtendsType = typeof(Service), DiscriminatorValue = "DebtWork")]
 	public class DeferredPayment : Service
 	{
 		public override bool CanActivate(ClientService assignedService)
@@ -35,7 +35,7 @@ namespace Inforoom2.Models.Services
 		{
 			NotActivateReason = "";
 			var lastService = client.ClientServices.OrderBy(cs => cs.BeginDate).LastOrDefault(s => s.Service.Id == Id);
-			if (lastService == null)                   // Т.е. "Обещанный платеж" ещё ни разу не активировался
+			if (lastService == null) // Т.е. "Обещанный платеж" ещё ни разу не активировался 
 				return true;
 			if (lastService.IsActivated) {
 				NotActivateReason = "Данная услуга у вас уже активирована.";
@@ -45,13 +45,13 @@ namespace Inforoom2.Models.Services
 			var serviceDate = lastService.BeginDate ?? new DateTime();
 			// Проверка, запрещающая клиенту повторно подключить услугу без пополнения баланса на 80% от цены тарифа (СОГЛАСОВАНО)
 			if (serviceDate != DateTime.MinValue) {
-				var clientPayments = 
-						(client.Payments != null) ? client.Payments.Where(p => p.PaidOn.Date >= serviceDate.Date).ToList() : null;
+				var clientPayments =
+					(client.Payments != null) ? client.Payments.Where(p => p.PaidOn.Date >= serviceDate.Date).ToList() : null;
 				var paySum = (clientPayments != null) ? clientPayments.Sum(p => p.Sum) : 0;
 				var minSum = 0.8m * client.Plan.Price;
 				if (paySum < minSum) {
 					NotActivateReason = string.Format("С последнего подключения услуги от {0} не пополнялся баланс на сумму абонентской платы тарифа.",
-							serviceDate.Date.ToShortDateString());
+						serviceDate.Date.ToShortDateString());
 					return false;
 				}
 			}

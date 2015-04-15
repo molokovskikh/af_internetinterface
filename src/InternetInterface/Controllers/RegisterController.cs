@@ -242,7 +242,9 @@ namespace InternetInterface.Controllers
 			SendRegisterParam(client);
 			PropertyBag["ChHouse"] = new House();
 			PropertyBag["Client"] = client;
-			PropertyBag["dealersList"] = DbSession.Query<Partner>().ToList().OrderBy(p => p.Name).ToList();
+			PropertyBag["dealersList"] = DbSession.Query<Partner>().ToList()
+					.Where(p => p.IsDiller()).ToList()
+					.OrderBy(p => p.Name).ToList();
 		}
 
 		[AccessibleThrough(Verb.Get)]

@@ -225,11 +225,11 @@ namespace Inforoom2.Controllers
 				else
 				{
 					//Куков нет, пытаемся достать город из базы, иначе определяем по геобазе
-					PhysicalClient user = null;
+					Client user = null;
 					int userId;
 					int.TryParse(User.Identity.Name, out userId);
 					if (userId != 0)
-						user = DbSession.Query<PhysicalClient>().FirstOrDefault(k => k.Id == userId);
+						user = DbSession.Query<Client>().FirstOrDefault(k => k.Id == userId);
 					if (user != null && user.Address != null)
 					{
 						userCity = user.Address.House.Street.Region.City.Name;

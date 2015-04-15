@@ -14,7 +14,7 @@ namespace Inforoom2.Models
 			Houses = new List<House>();
 		}
 
-		public Street(string name):this()
+		public Street(string name) : this()
 		{
 			Name = name;
 		}
@@ -29,7 +29,7 @@ namespace Inforoom2.Models
 		[Property, NotEmpty(Message = "Введите номер улицы")]
 		public virtual string Name { get; set; }
 
-		[Property,NotNullNotEmpty(Message = "Геопозиция должна быть задана")]
+		[Property, NotNullNotEmpty(Message = "Геопозиция должна быть задана")]
 		public virtual string Geomark { get; set; }
 
 		[ManyToOne(Column = "Region", Cascade = "save-update")]

@@ -20,7 +20,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult EditSwitch(int id)
 		{
 			ViewBag.Switch = DbSession.Get<Switch>(id);
-			ViewBag.NetworkNodes = DbSession.Query<NetworkNode>().OrderBy(i=>i.Name).ToList();
+			ViewBag.NetworkNodes = DbSession.Query<NetworkNode>().OrderBy(i => i.Name).ToList();
 			return View();
 		}
 
@@ -111,10 +111,10 @@ namespace InforoomControlPanel.Controllers
 
 		public ActionResult DeleteTwistedPair(int id)
 		{
-				var TwistedPair = DbSession.Get<TwistedPair>(id);
-				DbSession.Delete(TwistedPair);
-				SuccessMessage("Узел связи успешно изменен");
-				return RedirectToAction("EditNetworkNode",new {id = TwistedPair.NetworkNode.Id});
+			var TwistedPair = DbSession.Get<TwistedPair>(id);
+			DbSession.Delete(TwistedPair);
+			SuccessMessage("Узел связи успешно изменен");
+			return RedirectToAction("EditNetworkNode", new { id = TwistedPair.NetworkNode.Id });
 		}
 
 		public ActionResult DeleteNetworkNode(int id)

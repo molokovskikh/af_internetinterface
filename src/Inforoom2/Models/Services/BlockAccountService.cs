@@ -6,10 +6,9 @@ using NHibernate.Mapping.Attributes;
 
 namespace Inforoom2.Models.Services
 {
-	[Subclass(0, ExtendsType = typeof (Service), DiscriminatorValue = "VoluntaryBlockin")]
+	[Subclass(0, ExtendsType = typeof(Service), DiscriminatorValue = "VoluntaryBlockin")]
 	public class BlockAccountService : Service
 	{
-		
 		public override void Activate(ClientService assignedService, ISession session)
 		{
 			var client = assignedService.Client;
@@ -65,9 +64,7 @@ namespace Inforoom2.Models.Services
 				var clientServicesToReActivate = client.ClientServices.Where(s => s.Service.Id != Id);
 				foreach (
 					var clientService in
-						clientServicesToReActivate.Where(clientService => clientService.Service.IsActivableFor(client))) {
-					clientService.Service.Activate(clientService, session);
-				}
+						clientServicesToReActivate.Where(clientService => clientService.Service.IsActivableFor(client))) clientService.Service.Activate(clientService, session);
 
 				var sum = client.GetSumForRegularWriteOff();
 				if (sum > 0) {
@@ -78,7 +75,7 @@ namespace Inforoom2.Models.Services
 					session.Save(new UserWriteOff(client, sum, comment));
 				}
 			}
-			
+
 			client.ClientServices.Remove(assignedService);
 			assignedService.IsActivated = false;
 		}
@@ -88,11 +85,11 @@ namespace Inforoom2.Models.Services
 			return client != null
 			       && !client.Disabled
 			       && client.IsWorkStarted()
-			       && client.PhysicalClient.Balance >=0
+			       && client.PhysicalClient.Balance >= 0
 			       && !client.HasActiveService<DeferredPayment>()
 			       && !client.HasActiveService<BlockAccountService>();
 		}
-		
+
 		[DataType(DataType.Date)]
 		[DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
 		public virtual DateTime BlockingEndDate { get; set; }

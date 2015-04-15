@@ -1,4 +1,4 @@
-﻿ymaps.ready(init);
+﻿$(document).ready(function() {ymaps.ready(init);});
 
 function init() {
 		var officeRegion = cli.getParam("office_region");

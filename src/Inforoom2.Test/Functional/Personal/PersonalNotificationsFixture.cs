@@ -6,7 +6,7 @@ namespace Inforoom2.Test.Functional.Personal
 	/// <summary>
 	/// Подписка на уведомления
 	/// </summary>
-	class PersonalNotificationsFixture : PersonalFixture
+	internal class PersonalNotificationsFixture : PersonalFixture
 	{
 		/// <summary>
 		/// Успешная подписка на уведомления
@@ -59,6 +59,5 @@ namespace Inforoom2.Test.Functional.Personal
 			browser.FindElementByCssSelector(".button").Click();
 			AssertText("Номер телефона введен неправильно");
 		}
-
 	}
 }

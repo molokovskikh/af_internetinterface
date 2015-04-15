@@ -29,34 +29,34 @@ namespace Inforoom2.Test.Functional.Faq
 		[Test, Description("Проверка возможности просматривать вопросы и ответы")]
 		public void QuestionsTest()
 		{
-		/*	string js = @"cli.setCookie('userCity','Воронеж')";
+			/*	string js = @"cli.setCookie('userCity','Воронеж')";
 			browser.ExecuteScript(js);*/
 			Open("Faq");
-		
+
 			//Проверяем наличие вопросов
 			AssertText(Question.Text);
 
 			//Проверяем наличие ответов при клике
 			AssertNoText(Question.Answer);
-		/*	if (IsTextExists("ВЫБЕРИТЕ ГОРОД")) {
+			/*	if (IsTextExists("ВЫБЕРИТЕ ГОРОД")) {
 				var bt = browser.FindElement(By.XPath("//div[@class='buttons']//button"));
 				bt.Click();
 			}*/
 
 			var answerButtons = browser.FindElementsByCssSelector(".ShowAnswer");
-			foreach(var button in answerButtons)
+			foreach (var button in answerButtons)
 				button.Click();
 			AssertText(Question.Answer);
 
 			//Скрываем ответы
-			foreach(var button in answerButtons)
+			foreach (var button in answerButtons)
 				button.Click();
 			AssertNoText(Question.Answer);
 		}
 
 		[Test, Description("Проверка возможности отпрявлять свои вопросы")]
 		public void TicketTest()
-		{	
+		{
 			Open("Faq");
 			var testEmail = "test@analit.net";
 			var testQuestion = "Когда выйдут новые тарифы(тест)?";
@@ -78,13 +78,13 @@ namespace Inforoom2.Test.Functional.Faq
 			showButton.Click();
 			email.SendKeys(testEmail);
 			text.SendKeys(testQuestion);
-	
+
 			applyButton.Click();
 			browser.SwitchTo().Alert().Accept();
 
-			var ticket = DbSession.Query<Ticket>().OrderByDescending(i=>i.Id).First();
-			Assert.That(ticket.Text,Is.EqualTo(testQuestion));
-			Assert.That(ticket.Email,Is.EqualTo(testEmail));
+			var ticket = DbSession.Query<Ticket>().OrderByDescending(i => i.Id).First();
+			Assert.That(ticket.Text, Is.EqualTo(testQuestion));
+			Assert.That(ticket.Email, Is.EqualTo(testEmail));
 		}
 	}
 }
