@@ -1,0 +1,68 @@
+﻿@using System.Web.UI.WebControls
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@model dynamic
+
+@{
+	ViewBag.Title = ViewBag.Title ?? "Добавление группы для ТВ каналов";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	TvChannelGroup TvChannelGroup = ViewBag.TvChannelGroup;
+	List<TvChannel> TvChannels = ViewBag.TvChannels ?? new List<TvChannel>();
+	string controller = ViewBag.ControllerName;
+	string action = ViewBag.ActionName;
+}
+<div class="panel panel-primary">
+	<div class="panel-body">
+		<div class="col-md-6">
+		@using (@Html.BeginForm(action, controller, FormMethod.Post, new { @class = "form-horizontal" }))
+		{
+				<div class="form-group">
+					<label class="col-sm-1 control-label">Название</label>
+					<div class="col-sm-4">
+						@Html.HiddenFor(model => TvChannelGroup.Id)
+						@Html.TextBoxFor(model => TvChannelGroup.Name, new { @class = "form-control" })
+						@ViewBag.Validation.GetError(TvChannelGroup, "Name", "Название не может быть пустым")
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2">
+						<button class="btn btn-green" type="submit">Сохранить</button>
+					</div>
+				</div>
+		}
+		</div>	
+		<div class="col-md-6">
+			@if (TvChannelGroup.TvChannels.Count > 0) {
+				<h4>Включенные каналы:</h4>
+				<div class="row">
+				@foreach (var item in TvChannelGroup.TvChannels)
+				 {
+					<div class="col-sm-5">
+						@item.Name
+					</div>
+					<div class="col-sm-2"></div>
+					<div class="col-sm-2">
+						@using (@Html.BeginForm("EditTvChannelGroup", "Plans", new { id = TvChannelGroup.Id }, FormMethod.Post)) {
+							@Html.HiddenFor(i=>TvChannelGroup.Id)
+							@Html.HiddenForModelList(TvChannelGroup, i => TvChannelGroup.TvChannels, item.Id)
+							<button type="submit" class="btn-link entypo-cancel-circled" style="color: red"></button>
+						}	</div>
+				 }
+				</div>
+			}
+	
+			@if (TvChannels.Count > 0) {
+				<h4>Добавить канал:</h4>
+				using (@Html.BeginForm("AttachTvChannel", "Plans",new{id=TvChannelGroup.Id}, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" })){
+						@Html.HiddenFor(i => TvChannelGroup.Id)
+							<div class="col-sm-5">
+								@Html.DropDownListExtendedFor(i => TvChannelGroup.TvChannels, TvChannels, obj => obj.Name, null, new { @class = "form-control" })
+							</div>
+							<div class="col-sm-2">
+								<button class="btn btn-green" type="submit">Добавить</button>
+							</div>
+				}
+			}
+		</div>	
+	</div>
+</div>

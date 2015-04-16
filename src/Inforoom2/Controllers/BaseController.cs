@@ -42,7 +42,8 @@ namespace Inforoom2.Controllers
 			else if (controller.DbSession == null)
 				controller.DbSession = MvcApplication.SessionFactory.GetCurrentSession();
 
-			EntityBinderAttribute.SetSession(DbSession);
+			EntityBinder.SetSession(DbSession);
+
 			//Additional
 			ValidationRunner = ViewBag.Validation ?? new ValidationRunner(DbSession);
 			ViewBag.Validation = ValidationRunner;
@@ -208,7 +209,7 @@ namespace Inforoom2.Controllers
 			if (shouldRemember)
 				cookie.Expires = DateTime.Now.AddMinutes(FormsAuthentication.Timeout.TotalMinutes);
 			Response.Cookies.Set(cookie);
-			return RedirectToAction(action, controller);
+			return RedirectToAction(action, controller,RouteData);
 		}
 
 		/// <summary>

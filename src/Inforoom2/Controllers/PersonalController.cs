@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Runtime.Remoting.Channels;
 using System.Text;
 using System.Web.Mvc;
 using Inforoom2.Components;
@@ -10,6 +11,7 @@ using Inforoom2.Models;
 using Inforoom2.Models.Services;
 using InternetInterface.Models;
 using NHibernate.Linq;
+using NHibernate.Util;
 using AppealType = Inforoom2.Models.AppealType;
 using Client = Inforoom2.Models.Client;
 using ClientEndpoint = Inforoom2.Models.ClientEndpoint;
@@ -26,9 +28,24 @@ using WriteOff = Inforoom2.Models.WriteOff;
 
 namespace Inforoom2.Controllers
 {
-	[CustomAuthorize]
 	public class PersonalController : Inforoom2Controller
 	{
+		protected override void OnActionExecuting(ActionExecutingContext filterContext)
+		{
+			base.OnActionExecuting(filterContext);
+			if (filterContext == null)
+			{
+				throw new ArgumentNullException("filterContext");
+			}
+			//если клиент был залогинен по сети, то HTTPСontext не будет изменен
+			//в этом случае можно оттолкнуть от переменной CurrentClient
+			if (CurrentClient == null && !filterContext.HttpContext.User.Identity.IsAuthenticated)
+			{
+				string loginUrl = "/Account/Login"; // Default Login Url 
+				filterContext.Result = new RedirectResult(loginUrl);
+			}
+		}
+
 		public ActionResult FirstVisit()
 		{
 			if (CurrentClient.Lunched && CurrentClient.HasPassportData())
@@ -110,6 +127,31 @@ namespace Inforoom2.Controllers
 			ViewBag.Title = "Личный кабинет";
 			ViewBag.CurrentClient = CurrentClient;
 			return View();
+		}
+
+		/// <summary>
+		/// Отобажает содержимое файла-плейлиста на экране
+		/// </summary>
+		/// <returns>Файл плейлиста</returns>
+		public ActionResult Playlist()
+		{
+			var text = CurrentClient.Plan.GetPlaylist();
+			ViewBag.Content = text;
+			return View("~/Views/Shared/Empty.cshtml");
+		}
+
+		/// <summary>
+		/// Генерирует файл каналов для текущего пользователя
+		/// </summary>
+		/// <returns>Файл плейлиста</returns>
+		public FileResult PlaylistLink()
+		{
+			var text = CurrentClient.Plan.GetPlaylist();
+			var fileContent = Encoding.UTF8.GetBytes(text);
+			var contentType = "audio/mpegurl";
+			var file = new FileContentResult(fileContent, contentType);
+			file.FileDownloadName = "playlist.m3u";
+			return file;
 		}
 
 		public ActionResult Plans()
