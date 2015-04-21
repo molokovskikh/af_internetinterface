@@ -159,12 +159,12 @@ namespace InternetInterface.Services
 			}
 			if (assignedService.IsActivated && client.FreeBlockDays == 0) {
 				var userWriteOffs = client.UserWriteOffs.ToList()
-					.Where(uw => uw.Comment == "Платеж за активацию услуги добровольная блокировка").ToList();
+					.Where(uw => uw.Comment.Contains("Платеж за активацию услуги добровольная блокировка")).ToList();
 				var lastUserWriteOff = userWriteOffs.OrderByDescending(uw => uw.Date).ToList().FirstOrDefault();
 				if (lastUserWriteOff == null || lastUserWriteOff.Date < assignedService.BeginWorkDate) {
 					var writeOffComment = "Разовое списание за пользование услугой добровольная блокировка";
 					var writeOffs = client.WriteOffs.ToList()
-						.Where(uw => uw.Comment == writeOffComment).ToList();
+						.Where(uw => uw.Comment != null && uw.Comment.Contains(writeOffComment)).ToList();
 					var lastWriteOff = writeOffs.OrderByDescending(w => w.WriteOffDate).ToList().FirstOrDefault();
 					if (lastWriteOff == null || lastWriteOff.WriteOffDate < assignedService.BeginWorkDate) {
 						var newWriteOff = client.PhysicalClient.WriteOff(50m);
