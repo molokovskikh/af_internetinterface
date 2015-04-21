@@ -33,18 +33,31 @@ namespace Inforoom2.Test.Functional
 			Assert.That(userCity, Is.EqualTo("Борисоглебск"));
 		}
 
+		/// <summary>
+		/// Проверка на определения города клиента по ip адресу.
+		///  Сначала cookie по городу чистятся. Но после первой авторизации,
+		///  вывода вопроса о принадлежности к городу быть не должно (авторизация 
+		///  получает город по ip и сохраняет в cookie). 
+		/// </summary>
 		[Test]
-		public void CheckRegionDefinitionByIP()
+		public void CheckRegionDefinitionByIp()
 		{
-			var currentIP = IPAddress.Parse("1772617729");
-			var leasedIp = Lease.GetLeaseForIp(currentIP.ToString(), DbSession);
-			var current_client = leasedIp.Endpoint.Client;
+			// получение IP клиента
+			var currentIp = IPAddress.Parse("1772617729");
+			var leasedIp = Lease.GetLeaseForIp(currentIp.ToString(), DbSession);
+			var currentClient = leasedIp.Endpoint.Client;
+			// чистка cookie
 			SetCookie("userCity", "");
-			NetworkLoginForClient(current_client);
+			// авторизация клиента по IP
+			NetworkLoginForClient(currentClient);
+			// обновление страницы
 			Open("/");
+			// проверка отсуствия на форме панели с выводом вопроса о принадлежности к городу
 			AssertNoText("ВЫБЕРИТЕ ГОРОД");
+			// получение текущего города клиента из cookie
 			var cookie = GetCookie("userCity");
-			Assert.That(cookie, Is.EqualTo(current_client.Address.House.Street.Region.Name), "У клиента в куки регион такой же как в адресе");
+			// сравнение значения из cookie с привязанным к Ip адресом (городом)
+			Assert.That(cookie, Is.EqualTo(currentClient.Address.House.Street.Region.Name), "Город клиента определен и хранится в cookie.");
 		}
 	}
 }

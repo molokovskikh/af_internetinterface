@@ -291,6 +291,11 @@ namespace InforoomControlPanel.Controllers
 			return View("CreateHouse");
 		}
 
+		/// <summary>
+		/// Возвращение списка улиц по региону.
+		/// </summary>
+		/// <param name="regionId">Id региона</param>
+		/// <returns>Json* Список в форме: Id, Name, Geomark, Confirmed, Region (Id), Houses (кол-во)</returns>
 		[HttpPost]
 		public JsonResult GetStreetList(int regionId)
 		{
@@ -305,6 +310,11 @@ namespace InforoomControlPanel.Controllers
 			return Json(streets, JsonRequestBehavior.AllowGet);
 		}
 
+		/// <summary>
+		/// Возвращение списка домов по улице.
+		/// </summary>
+		/// <param name="streetId">Id улицы</param>
+		/// <returns>Json* Список в форме: Id, Number, Geomark, Confirmed, Street (Id), EntranceAmount ,ApartmentAmount</returns>
 		[HttpPost]
 		public JsonResult GetHouseList(int streetId)
 		{
@@ -322,6 +332,11 @@ namespace InforoomControlPanel.Controllers
 			return Json(houses, JsonRequestBehavior.AllowGet);
 		}
 
+		/// <summary>
+		/// Получение тарифов по региону
+		/// </summary>
+		/// <param name="regionId">Id региона</param>
+		/// <returns>Json* Список в форме: Id, Name, Price</returns>
 		[HttpPost]
 		public JsonResult GetPlansListForRegion(int regionId)
 		{

@@ -56,11 +56,7 @@ namespace Inforoom2.Test.Functional.infrastructure.Helpers
 
 			[Description("клиент c тарифом, игнорирующим скидку")] ignoreDiscountClient,
 
-			[Description("c тарифом, привязанным к региону")]planWithRegionClient,
-
-			[Description("вход с идентификацией региона по IP, без куки")]enterByIpWithRegion
-			
-			
+			[Description("c тарифом, привязанным к региону")] planWithRegionClient
 		}
 
 		public int Index
