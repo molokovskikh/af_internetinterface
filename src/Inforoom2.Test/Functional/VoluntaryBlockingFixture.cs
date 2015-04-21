@@ -5,6 +5,9 @@ using Common.Tools;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
 using Inforoom2.Test.Functional.infrastructure;
+using Inforoom2.Test.Functional.Personal;
+using NHibernate.Linq;
+
 using NUnit.Framework;
 
 namespace Inforoom2.Test.Functional

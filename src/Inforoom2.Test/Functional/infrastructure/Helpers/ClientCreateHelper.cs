@@ -55,6 +55,10 @@ namespace Inforoom2.Test.Functional.infrastructure.Helpers
 			[Description("клиент с услугой добровольной блокировки")] frozenClient,
 
 			[Description("клиент c тарифом, игнорирующим скидку")] ignoreDiscountClient,
+
+			[Description("клиент с тарифным планом, который закреплен за регионом")] clientWithRegionalPlan ,
+
+			[Description("новый подключенный клиент,с недавней датой регистрации")] recentClient ,
 		}
 
 		public int Index
@@ -92,6 +96,7 @@ namespace Inforoom2.Test.Functional.infrastructure.Helpers
 			clients.Add("Владимир,Тоцкий,Дмитриевич");
 			clients.Add("Петр,Свиблов,Львович");
 			clients.Add("Валентин,Гречкин,Константинович");
+			clients.Add("Дмитрий,Иванов,Алексеевич");
 		}
 
 		/// <summary>

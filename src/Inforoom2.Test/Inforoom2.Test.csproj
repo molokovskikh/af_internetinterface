@@ -191,7 +191,7 @@
     <Compile Include="Functional\Personal\PersonalFirstVisitFixture.cs" />
     <Compile Include="Functional\Personal\PersonalNotificationsFixture.cs" />
     <Compile Include="Functional\Personal\PersonalPlansFixture.cs" />
-    <Compile Include="Functional\infrastructure\PersonalFixture.cs" />
+    <Compile Include="Functional\Personal\PersonalFixture.cs" />
     <Compile Include="Functional\Faq\FaqFixture.cs" />
     <Compile Include="Functional\CallMeBackFixture.cs" />
     <Compile Include="Functional\HomeFixture.cs" />
