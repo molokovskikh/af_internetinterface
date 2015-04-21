@@ -22,6 +22,7 @@ namespace Inforoom2.Models
 			Endpoints = new List<ClientEndpoint>();
 			ClientServices = new List<ClientService>();
 			Payments = new List<Payment>();
+			Appeals = new List<Appeal>();
 		}
 
 		//todo исправить это почему-то не подцепляет маппинг
@@ -124,7 +125,12 @@ namespace Inforoom2.Models
 		[Bag(0, Table = "WriteOff", Cascade = "all-delete-orphan")]
 		[Key(1, Column = "Client")]
 		[OneToMany(2, ClassType = typeof (WriteOff))]
-		public virtual IList<WriteOff> WriteOffs { get; set; } 
+		public virtual IList<WriteOff> WriteOffs { get; set; }
+
+		[Bag(0, Table = "Appeals", Cascade = "all-delete-orphan")]
+		[Key(1, Column = "Client")]
+		[OneToMany(2, ClassType = typeof(Appeal))]
+		public virtual IList<Appeal> Appeals { get; set; }
 
 		[Property(Column = "SendSmsNotifocation")]
 		public virtual bool SendSmsNotification { get; set; }

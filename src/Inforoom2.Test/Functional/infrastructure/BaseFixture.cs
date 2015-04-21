@@ -474,6 +474,16 @@ namespace Inforoom2.Test.Functional.infrastructure
 				SceHelper.UpdatePackageId(DbSession, frozenClient);
 			DbSession.Save(frozenClient);
 
+			//Клиент с тарифным планом, который закреплен за регионом
+			var clientWithRegionalPlan = CloneClient(normalClient, ClientCreateHelper.ClientMark.clientWithRegionalPlan);
+			clientWithRegionalPlan.PhysicalClient.Plan = DbSession.Query<Plan>().First(p => p.Name == "50 на 50");
+			DbSession.Save(clientWithRegionalPlan);
+
+			//Новый подключенный клиент,с недавней датой регистрации
+			var recentClient = CloneClient(normalClient, ClientCreateHelper.ClientMark.recentClient);
+			recentClient.WorkingStartDate = DateTime.Now;
+			DbSession.Save(recentClient);
+
 			//Обновляем адреса клиентов, чтобы из БД видеть какой клиент какой
 			var clients = DbSession.Query<Client>().ToList();
 			foreach (var client in clients) {
@@ -670,6 +680,32 @@ namespace Inforoom2.Test.Functional.infrastructure
 			plan.IsServicePlan = false;
 			plan.PackageSpeed = DbSession.Get<PackageSpeed>(19);
 			DbSession.Save(plan);
+
+			plan = new Plan();
+			plan.Price = 245;
+			plan.Name = "Старт";
+			plan.IsArchived = false;
+			plan.Hidden = false;
+			plan.IsServicePlan = false;
+			plan.PackageSpeed = DbSession.Get<PackageSpeed>(17);
+			DbSession.Save(plan);
+			var RegionPlan = new RegionPlan();
+			RegionPlan.Plan = plan;
+			RegionPlan.Region = DbSession.Query<Region>().First(i => i.Name == "Белгород");
+			DbSession.Save(RegionPlan);
+
+			plan = new Plan();
+			plan.Price = 245;
+			plan.Name = "50 на 50";
+			plan.IsArchived = false;
+			plan.Hidden = false;
+			plan.IsServicePlan = false;
+			plan.PackageSpeed = DbSession.Get<PackageSpeed>(17);
+			DbSession.Save(plan);
+			RegionPlan = new RegionPlan();
+			RegionPlan.Plan = plan;
+			RegionPlan.Region = DbSession.Query<Region>().First(i => i.Name == "Борисоглебск");
+			DbSession.Save(RegionPlan);
 
 			plan = new Plan();
 			plan.Price = 300;
