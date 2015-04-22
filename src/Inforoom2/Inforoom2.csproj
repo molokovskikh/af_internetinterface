@@ -267,6 +267,7 @@
     <Compile Include="Components\CustomAuthorizeAttribute.cs" />
     <Compile Include="Components\EmailSender.cs" />
     <Compile Include="Components\EntityBinder.cs" />
+    <Compile Include="Components\ModelFilter.cs" />
     <Compile Include="Components\YandexParser.cs" />
     <Compile Include="Components\HtmlTag.cs" />
     <Compile Include="Components\ValidationRunner.cs" />

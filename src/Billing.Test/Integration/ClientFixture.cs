@@ -166,23 +166,20 @@ namespace Billing.Test.Integration
 		{
 			//Более мнее красивый тест для юр. лиц
 			//Можно будет потом переписать работу с юр. лицами
-			var region = new RegionHouse
-			{
+			var region = new RegionHouse {
 				Name = "Воронеж"
 			};
 			session.Save(region);
 			var status = session.Load<Status>((uint)StatusType.Worked);
 
 			//Клиент с отрицательным балансом
-			var BadPerson = new LawyerPerson
-			{
+			var BadPerson = new LawyerPerson {
 				Balance = -3000,
 				Region = region,
 			};
 
 			session.Save(BadPerson);
-			var BadClient = new Client()
-			{
+			var BadClient = new Client() {
 				Disabled = false,
 				Name = "TestLawyer",
 				ShowBalanceWarningPage = false,
@@ -286,7 +283,7 @@ namespace Billing.Test.Integration
 			client.PhysicalClient.MoneyBalance = 0;
 			client.PhysicalClient.VirtualBalance = 0;
 			session.Update(client.PhysicalClient);
-			client.PhysicalClient.Tariff.Name = "Популярный";		// Пример для теста
+			client.PhysicalClient.Tariff.Name = "Популярный"; // Пример для теста
 			client.PhysicalClient.Tariff.Price = 500;
 			session.Update(client.PhysicalClient.Tariff);
 
@@ -316,8 +313,7 @@ namespace Billing.Test.Integration
 			Assert.That(client.Balance, Is.EqualTo(1100));
 
 			//Создадим еще платеж
-			payment = new Payment(client, 600)
-			{
+			payment = new Payment(client, 600) {
 				Virtual = true
 			};
 			session.Save(payment);
@@ -343,7 +339,7 @@ namespace Billing.Test.Integration
 			client.PhysicalClient.MoneyBalance = 0;
 			client.PhysicalClient.VirtualBalance = 0;
 			session.Update(client.PhysicalClient);
-			client.PhysicalClient.Tariff.Name = "Оптимальный";	// Пример для теста
+			client.PhysicalClient.Tariff.Name = "Оптимальный"; // Пример для теста
 			client.PhysicalClient.Tariff.Price = 500;
 			session.Update(client.PhysicalClient.Tariff);
 
@@ -359,8 +355,8 @@ namespace Billing.Test.Integration
 			};
 			session.Save(payment1);
 			var payment2 = new Payment(client, 600) {
-				PaidOn = DateTime.Now.AddSeconds(30),							// Для формального соблюдения паузы при оплате
-				RecievedOn = DateTime.Now.AddSeconds(30),					// Для формального соблюдения паузы при оплате 
+				PaidOn = DateTime.Now.AddSeconds(30), // Для формального соблюдения паузы при оплате
+				RecievedOn = DateTime.Now.AddSeconds(30), // Для формального соблюдения паузы при оплате 
 				Comment = "payment2",
 				Virtual = true
 			};
@@ -370,13 +366,13 @@ namespace Billing.Test.Integration
 			// 1-я обработка платежей (бонус только внесен)
 			billing.ProcessPayments();
 			client.Refresh();
-			Assert.That(client.Payments.Count, Is.EqualTo(3));	// payment1, payment2, bonus
-			Assert.That(client.Balance, Is.EqualTo(1200));			// 600 (payment1) + 600 (payment2)
+			Assert.That(client.Payments.Count, Is.EqualTo(3)); // payment1, payment2, bonus
+			Assert.That(client.Balance, Is.EqualTo(1200)); // 600 (payment1) + 600 (payment2)
 
 			// 2-я обработка платежей (бонус обработан)
 			billing.ProcessPayments();
 			client.Refresh();
-			Assert.That(client.Balance, Is.EqualTo(1700));			// 600 (payment1) + 600 (payment2) + 500 (bonus)
+			Assert.That(client.Balance, Is.EqualTo(1700)); // 600 (payment1) + 600 (payment2) + 500 (bonus)
 
 			ConfigurationManager.AppSettings["ProcessFirstPaymentBonus"] = null;
 		}
@@ -391,7 +387,7 @@ namespace Billing.Test.Integration
 			client.PhysicalClient.MoneyBalance = 0;
 			client.PhysicalClient.VirtualBalance = 0;
 			session.Update(client.PhysicalClient);
-			client.PhysicalClient.Tariff.Name = "Оптимальный";	// Пример для теста
+			client.PhysicalClient.Tariff.Name = "Оптимальный"; // Пример для теста
 			client.PhysicalClient.Tariff.Price = 500;
 			session.Update(client.PhysicalClient.Tariff);
 
@@ -407,8 +403,8 @@ namespace Billing.Test.Integration
 			};
 			session.Save(payment1);
 			var payment2 = new Payment(client, 100m) {
-				PaidOn = DateTime.Now.AddHours(23),								// Чтобы соблюсти допустимый промежуток между платежами, равный 24 ч.
-				RecievedOn = DateTime.Now.AddSeconds(30),					// Для формального соблюдения паузы при оплате 
+				PaidOn = DateTime.Now.AddHours(23), // Чтобы соблюсти допустимый промежуток между платежами, равный 24 ч.
+				RecievedOn = DateTime.Now.AddSeconds(30), // Для формального соблюдения паузы при оплате 
 				Comment = "payment2",
 				Virtual = true
 			};
@@ -418,7 +414,7 @@ namespace Billing.Test.Integration
 			// 1-я обработка платежей (бонус должен быть внесен)
 			billing.ProcessPayments();
 			client.Refresh();
-			Assert.That(client.Payments.Count, Is.EqualTo(3));	// payment1, payment2, bonus
+			Assert.That(client.Payments.Count, Is.EqualTo(3)); // payment1, payment2, bonus
 			Assert.That(client.Payments.Where(p => p.Comment == "Месяц в подарок").ToList().Count, Is.EqualTo(1));
 
 			// Удаление бонусного платежа у клиента
@@ -427,14 +423,14 @@ namespace Billing.Test.Integration
 			payment1.BillingAccount = false;
 			session.Update(payment1);
 			payment2.BillingAccount = false;
-			payment2.PaidOn = payment2.PaidOn.AddHours(2);			// Чтобы допустимый промежуток в 24 ч. был превышен на 1 ч.
+			payment2.PaidOn = payment2.PaidOn.AddHours(2); // Чтобы допустимый промежуток в 24 ч. был превышен на 1 ч.
 			session.Save(payment2);
 			client.Refresh();
 
 			// 2-я обработка платежей (бонус не полагается)
 			billing.ProcessPayments();
 			client.Refresh();
-			Assert.That(client.Payments.Count, Is.EqualTo(2));	// payment1, payment2
+			Assert.That(client.Payments.Count, Is.EqualTo(2)); // payment1, payment2
 			Assert.That(client.Payments.Where(p => p.Comment == "Месяц в подарок").ToList().Count, Is.EqualTo(0));
 
 			ConfigurationManager.AppSettings["ProcessFirstPaymentBonus"] = "false";
@@ -450,7 +446,7 @@ namespace Billing.Test.Integration
 			client.PhysicalClient.MoneyBalance = 0;
 			client.PhysicalClient.VirtualBalance = 0;
 			session.Update(client.PhysicalClient);
-			client.PhysicalClient.Tariff.Name = "Лёгкий";				// Пример для теста
+			client.PhysicalClient.Tariff.Name = "Лёгкий"; // Пример для теста
 			client.PhysicalClient.Tariff.Price = 500;
 			session.Update(client.PhysicalClient.Tariff);
 
@@ -473,13 +469,13 @@ namespace Billing.Test.Integration
 			// 1-я обработка платежей (платеж внесен без бонуса)
 			billing.ProcessPayments();
 			client.Refresh();
-			Assert.That(client.Payments.Count, Is.EqualTo(1));	// payment
-			Assert.That(client.Balance, Is.EqualTo(600));				// 600 (payment)
+			Assert.That(client.Payments.Count, Is.EqualTo(1)); // payment
+			Assert.That(client.Balance, Is.EqualTo(600)); // 600 (payment)
 
 			// 2-я обработка платежей (бонус не начислен)
 			billing.ProcessPayments();
 			client.Refresh();
-			Assert.That(client.Balance, Is.EqualTo(600));				// 600 (payment) + 0 (bonus)
+			Assert.That(client.Balance, Is.EqualTo(600)); // 600 (payment) + 0 (bonus)
 
 			ConfigurationManager.AppSettings["ProcessFirstPaymentBonus"] = null;
 		}

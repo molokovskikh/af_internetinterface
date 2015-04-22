@@ -225,8 +225,8 @@ namespace Billing.Test.Integration
 			Assert.AreEqual(sum, writeOffs.Sum(w => w.WriteOffSum));
 			lawyerClient = session.Get<Client>(lawyerClient.Id);
 			var appealsList = lawyerClient.Appeals
-					.Where(ap => ap.Appeal.Contains("Деактивирован заказ"))
-					.ToList();
+				.Where(ap => ap.Appeal.Contains("Деактивирован заказ"))
+				.ToList();
 			Assert.AreEqual(1, appealsList.Count);
 			Assert.AreEqual(0, lawyerClient.Endpoints.Count);
 		}
