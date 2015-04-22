@@ -1,0 +1,31 @@
+﻿@using System.Web.UI.WebControls
+@using Inforoom2.Models
+@model dynamic
+
+@{
+	ViewBag.Title = ViewBag.Title ?? "Добавление протокола для ТВ";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	TvProtocol TvProtocol = ViewBag.TvProtocol;
+	string controller = ViewBag.ControllerName;
+	string action = ViewBag.ActionName;
+}
+<div class="panel panel-default">
+		<div class="panel-body">
+		@using (@Html.BeginForm(action, controller, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
+		{
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Название</label>
+				<div class="col-sm-2">
+					@Html.HiddenFor(model => TvProtocol.Id)
+					@Html.TextBoxFor(model => TvProtocol.Name, new { @class = "form-control" })
+					@ViewBag.Validation.GetError(TvProtocol, "Name", "Название не может быть пустым")
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2">
+					<button class="btn btn-green" type="submit">Сохранить</button>
+				</div>
+			</div>
+		}
+	</div>
+</div>

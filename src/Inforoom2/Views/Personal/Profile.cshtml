@@ -44,13 +44,16 @@
 		<a href="/Personal/Plans">
 			<h3>Тарифный план "Народный" </h3>
 		</a>
-			<p>
-				А нам санкции нипочем, 100 Мбит/с в каждый дом!
-				Доступен для подключения с 01.04.15г. по 31.10.15г.
-			</p>
+		<p>
+			А нам санкции нипочем, 100 Мбит/с в каждый дом!
+			Доступен для подключения с 01.04.15г. по 31.10.15г.
+		</p>
 
+	</div>
 </div>
-</div>
+
+
+
 @if (client.Client.Status.Type == StatusType.NoWorked) {
 	<div class="noworked_client">
 		@if (client.Client.Payments.Count == 0) {
@@ -62,5 +65,10 @@
 	</div>
 }
 <div class="right-block">
+	@if (false) {
+		<div class="paragraph">
+			<b>Получить плейлист для iptv каналов можно <a class="shelf" href="@Url.Action("TvLink")">тут</a></b>
+		</div>
+	}
 	@{ Html.RenderPartial("ActiveServices"); }
 </div>

@@ -58,7 +58,7 @@ namespace Inforoom2.Models.Services
 
 			var timeToActivation = serviceDate.AddDays(30) - DateTime.Now;
 			if (timeToActivation > TimeSpan.Zero) {
-				NotActivateReason = "Услуга станет доступна через " + StringHepler.ShowTimeLeft(timeToActivation);
+				NotActivateReason = "Услуга станет доступна через " + StringHelper.ShowTimeLeft(timeToActivation);
 				return false;
 			}
 			return true;

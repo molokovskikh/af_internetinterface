@@ -26,7 +26,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult Index()
 		{
 			if (Request.IsAuthenticated)
-				RedirectToAction("Index", "Admin");
+				return RedirectToAction("Statistic", "Admin");
 			return View();
 		}
 
@@ -36,7 +36,7 @@ namespace InforoomControlPanel.Controllers
 			var employee = DbSession.Query<Employee>().FirstOrDefault(p => p.Login == username && !p.IsDisabled);
 			if (ActiveDirectoryHelper.IsAuthenticated(username, password) && employee != null) {
 				Session.Add("employee", employee.Id);
-				return Authenticate("Index", "Admin", username, shouldRemember, impersonateClient);
+				return Authenticate("Statistic", "Admin", username, shouldRemember, impersonateClient);
 			}
 			ErrorMessage("Неправильный логин или пароль");
 			return Redirect(returnUrl);
@@ -52,7 +52,7 @@ namespace InforoomControlPanel.Controllers
 		[HttpPost]
 		public ActionResult ApplyImpersonation([EntityBinder] Client client)
 		{
-			return Authenticate("Index", "AdminAccount", Environment.UserName, false, client.Id.ToString());
+			return Authenticate("Statistic", "AdminAccount", Environment.UserName, false, client.Id.ToString());
 		}
 	}
 }

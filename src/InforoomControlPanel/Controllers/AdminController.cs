@@ -35,9 +35,9 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.CurrentEmployee = curEmployee ?? new Employee();
 		}
 
-		public ActionResult Index()
+		public ActionResult Statistic()
 		{
-			return View();
+			return View("Index");
 		}
 
 		/// <summary>

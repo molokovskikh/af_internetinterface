@@ -1537,8 +1537,6 @@
     <Content Include="Views\Address\EditStreet.cshtml" />
     <Content Include="Views\News\NewsIndex.cshtml" />
     <Content Include="Views\News\EditNewsBlock.cshtml" />
-    <Content Include="Views\Plan\Plan.cshtml" />
-    <Content Include="Views\Plan\EditPlan.cshtml" />
     <Content Include="Views\Question\QuestionIndex.cshtml" />
     <Content Include="Views\Question\EditQuestion.cshtml" />
     <Content Include="Views\Ticket\TicketIndex.cshtml" />
@@ -1882,6 +1880,12 @@
   <ItemGroup>
     <Content Include="Views\Plans\CreatePlan.cshtml" />
     <Content Include="Views\ConnectionTeam\UnpluggedClientList.cshtml" />
+    <Content Include="Views\Plans\CreateTvProtocol.cshtml" />
+    <Content Include="Views\Plans\TvProtocolList.cshtml" />
+    <Content Include="Views\Plans\TvChannelList.cshtml" />
+    <Content Include="Views\Plans\CreateTvChannel.cshtml" />
+    <Content Include="Views\Plans\TvChannelGroupList.cshtml" />
+    <Content Include="Views\Plans\CreateTvChannelGroup.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
   </ItemGroup>

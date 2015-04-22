@@ -19,18 +19,25 @@ namespace Inforoom2.Controllers
 			get { return HttpContext.User as CustomPrincipal; }
 		}
 
+		protected Client _CurrentClient;
 		protected Client CurrentClient
 		{
 			get
 			{
+				if (_CurrentClient != null)
+					return _CurrentClient;
+
 				if (User == null || DbSession == null || !DbSession.IsConnected)
 				{
 					return null;
 				}
 				int id;
 				int.TryParse(User.Identity.Name, out id);
-				return DbSession.Get<Client>(id);
+				var client =  DbSession.Get<Client>(id);
+				_CurrentClient = client;
+				return client;
 			}
+			set { _CurrentClient = value; }
 		}
 
 		private static string userCity;
@@ -93,7 +100,7 @@ namespace Inforoom2.Controllers
 		}
 
 		//Авторизация клиента из сети
-		private bool TryAuthorizeNetworkClient()
+		public bool TryAuthorizeNetworkClient()
 		{
 			var ipstring = Request.UserHostAddress;
 #if DEBUG
@@ -108,6 +115,8 @@ namespace Inforoom2.Controllers
 			if (endpoint != null && endpoint.Client.PhysicalClient != null) //Юриков авторизовывать не нужно
 			{
 				SetCookie("networkClient", "true");
+				//Это необходимо, чтобы авторизация срабатывала моментально. Так как метод authenticate требует перезагрузки страницы
+				CurrentClient = endpoint.Client;
 				this.Authenticate(ViewBag.ActionName, ViewBag.ControllerName, endpoint.Client.Id.ToString(), true);
 				return true;
 			}
@@ -172,8 +181,8 @@ namespace Inforoom2.Controllers
 
 		private void ProcessCallMeBackTicket()
 		{
-			var binder = new EntityBinderAttribute("callMeBackTicket.Id", typeof(CallMeBackTicket));
-			var callMeBackTicket = (CallMeBackTicket)binder.MapModel(Request);
+			var binder = new EntityBinder();
+			var callMeBackTicket = (CallMeBackTicket)binder.MapModel(Request,typeof(CallMeBackTicket));
 			ViewBag.CallMeBackTicket = callMeBackTicket;
 			if (Request.Params["callMeBackTicket.Name"] == null)
 				return;

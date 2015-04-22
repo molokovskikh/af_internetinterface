@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Text;
 
 namespace Inforoom2.Helpers
 {
-	public class StringHepler
+	public class StringHelper
 	{
 		/// <summary>
 		/// Показать промежуток времени, оставшийся до некоторого события
