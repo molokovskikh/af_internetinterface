@@ -283,6 +283,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\ActiveDirectoryHelper.cs" />
     <Compile Include="Helpers\AddressHelper.cs" />
     <Compile Include="Helpers\AuthorizeUserAttribute.cs">
       <SubType>Code</SubType>
