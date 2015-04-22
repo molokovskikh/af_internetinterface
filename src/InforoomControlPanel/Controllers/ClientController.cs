@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Inforoom2.Components;
+using Inforoom2.Helpers;
 using Inforoom2.Models;
 using NHibernate.Linq;
 using Client = Inforoom2.Models.Client;
@@ -14,21 +15,28 @@ namespace InforoomControlPanel.Controllers
 {
 	public class ClientController : AdminController
 	{
+		/// <summary>
+		///		Обработка события OnActionExecuting (для каждого Action текущего контроллера) 
+		/// </summary>
+		/// <param name="filterContext"></param>
 		protected override void OnActionExecuting(ActionExecutingContext filterContext)
 		{
 			base.OnActionExecuting(filterContext);
 			ViewBag.BreadCrumb = "Клиенты";
 		}
-
-		public ActionResult ClientList(int page = 1)
+		 
+		public ActionResult ClientList()
 		{
-			var perpage = 100;
-			var clients = DbSession.Query<Client>().Where(i => i.PhysicalClient != null).Skip((page - 1) * perpage).Take(perpage).ToList();
+			var pager = new ModelFilter<Client>(this);
+			var clients = pager.GetCriteria(i => i.PhysicalClient != null).List<Client>();
+
+			ViewBag.Pager = pager;
 			ViewBag.Clients = clients;
+
 			//Пагинация
 			ViewBag.Models = clients;
-			ViewBag.Page = page;
-			ViewBag.ModelsPerPage = perpage;
+			ViewBag.Page = pager;
+			ViewBag.ModelsPerPage = pager.ItemsPerPage;
 			ViewBag.ModelsCount = DbSession.QueryOver<Client>().Where(i => i.PhysicalClient != null).RowCount();
 			return View("ClientList");
 		}
