@@ -1886,6 +1886,11 @@
     <Content Include="Views\Plans\CreateTvChannel.cshtml" />
     <Content Include="Views\Plans\TvChannelGroupList.cshtml" />
     <Content Include="Views\Plans\CreateTvChannelGroup.cshtml" />
+    <Content Include="..\global.config">
+      <Link>global.config</Link>
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
   </ItemGroup>

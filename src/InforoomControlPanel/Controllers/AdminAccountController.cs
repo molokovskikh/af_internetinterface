@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -7,7 +8,6 @@ using Inforoom2.Components;
 using Inforoom2.Controllers;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
-using InternetInterface.Helpers;
 using NHibernate.Linq;
 
 namespace InforoomControlPanel.Controllers
@@ -34,6 +34,14 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult Login(string username, string password, string returnUrl, bool shouldRemember = false, string impersonateClient = "")
 		{
 			var employee = DbSession.Query<Employee>().FirstOrDefault(p => p.Login == username && !p.IsDisabled);
+#if DEBUG
+			//Авторизация для тестов, если пароль совпадает с паролем по умолчанию и логин есть в АД, то все ок
+			var defaultPassword = ConfigurationManager.AppSettings["DefaultEmployeePassword"];
+			if (ActiveDirectoryHelper.IsLoginExist(username) && password == defaultPassword) {
+				Session.Add("employee", employee.Id);
+				return Authenticate("Statistic", "Admin", username, shouldRemember, impersonateClient);
+			}
+#endif
 			if (ActiveDirectoryHelper.IsAuthenticated(username, password) && employee != null) {
 				Session.Add("employee", employee.Id);
 				return Authenticate("Statistic", "Admin", username, shouldRemember, impersonateClient);
