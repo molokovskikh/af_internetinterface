@@ -16,6 +16,7 @@ using InternetInterface.Models;
 using InternetInterface.Models.Services;
 using InternetInterface.Queries;
 using InternetInterface.Services;
+using NHibernate;
 using NHibernate.Linq;
 using Contact = InternetInterface.Models.Contact;
 using ContactType = InternetInterface.Models.ContactType;
@@ -573,13 +574,15 @@ namespace InternetInterface.Controllers
 			BindObjectInstance(client, ParamStore.Form, "_client");
 
 			if (oldStatus != client.Status) {
-				//BlockedAndConnected = "не подключен", а не то, что ты подумал
-				if (oldStatus.ManualSet ||
-					oldStatus.Type == StatusType.BlockedAndConnected ||
-					(oldStatus.Type == StatusType.VoluntaryBlocking && client.NoEndPoint())) {
-					if (client.Status.Type == StatusType.Dissolved &&
-						(client.HaveService<HardwareRent>() || client.HaveService<IpTvBoxRent>())) {
-						GetErrorSummary(updateClient).RegisterErrorMessage("Status", "Договор не может быть расторгнут тк у клиента имеется арендованное" + " оборудование, перед расторжением договора нужно изъять оборудование");
+				// BlockedAndNoConnected = "зарегистрирован", BlockedAndConnected = "не подключен"
+				var isDissolved = client.Status.Type == StatusType.Dissolved;
+				var setStatusToDissolved = isDissolved && 
+					(oldStatus.Type == StatusType.BlockedAndNoConnected || oldStatus.Type == StatusType.VoluntaryBlocking);
+				if (oldStatus.ManualSet || oldStatus.Type == StatusType.BlockedAndConnected || setStatusToDissolved) {
+					if (isDissolved && (client.HaveService<HardwareRent>() || client.HaveService<IpTvBoxRent>())) {
+						GetErrorSummary(updateClient).RegisterErrorMessage("Status", 
+								"Договор не может быть расторгнут тк у клиента имеется арендованное оборудование," + 
+								" перед расторжением договора нужно изъять оборудование");
 					}
 				}
 				else {
@@ -618,6 +621,15 @@ namespace InternetInterface.Controllers
 							client.CreareAppeal("Оператором отключена страница Warning", AppealType.Statistic);
 					}
 					if (client.Status.Type == StatusType.Dissolved) {
+						if (client.HaveService<VoluntaryBlockin>()) {
+							var thisService = client.ClientServices
+								.Where(cs => NHibernateUtil.GetClass(cs.Service) == typeof(VoluntaryBlockin) && cs.IsActivated)
+								.ToList().FirstOrDefault();
+							if (thisService != null) {
+								thisService.ForceDeactivate();
+								client.SetStatus(StatusType.Dissolved, DbSession);
+							}
+						}
 						var endpointLog = client.Endpoints
 							.Where(e => e.Switch != null)
 							.Implode(e => String.Format("Коммутатор {0} порт {1}", e.Switch.Name, e.Port), Environment.NewLine);
