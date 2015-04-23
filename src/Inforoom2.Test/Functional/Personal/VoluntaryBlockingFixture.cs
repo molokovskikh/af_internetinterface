@@ -19,7 +19,7 @@ namespace Inforoom2.Test.Functional.Personal
 		[TestCase(arg: true, Description = "Проверка подключения клиенту услуги 'Добровольная блокировка'")]
 		public void SetBlockAccountToClient(bool isFree)
 		{
-			Assert.IsNotNull(Client.PhysicalClient, "\nЭто неподключенный клиент");
+			Assert.IsNotNull(Client.PhysicalClient, "Клиент должен быть поключен");
 			SystemTime.Now = () => DateTime.Now;            // Для независимого выполнения каждого тест-кейса
 
 			// Обработать уже созданные платежи/списания клиента
@@ -81,8 +81,10 @@ namespace Inforoom2.Test.Functional.Personal
 			SetBlockAccountToClient(isFree: true);
 
 			Client.FreeBlockDays = 0;
-			Client.PaidDay = false;                         // Чтобы формировались списания: 50 р.(разово) + 3 р.(ежедневно)
-			Client.YearCycleDate = SystemTime.Now();        // Чтобы не уставливалось FreeBlockDays = 28
+			// Чтобы формировались списания: 50 р.(разово) + 3 р.(ежедневно)
+			Client.PaidDay = false;
+			// Чтобы не уставливалось FreeBlockDays = 28
+			Client.YearCycleDate = SystemTime.Now();
 			DbSession.Update(Client);
 			DbSession.Flush();
 
@@ -92,8 +94,10 @@ namespace Inforoom2.Test.Functional.Personal
 			Assert.AreEqual(53m, oldBalance - Client.Balance, "\nClient.Balance=" + Client.Balance);
 
 			SystemTime.Now = () => DateTime.Now.AddDays(1);
-			Client.PaidDay = false;                         // Чтобы формировалось ежедневное списание = 3 р.
-			Client.YearCycleDate = SystemTime.Now();        // Чтобы не уставливалось FreeBlockDays = 28
+			// Чтобы формировалось ежедневное списание = 3 р.
+			Client.PaidDay = false;
+			// Чтобы не уставливалось FreeBlockDays = 28
+			Client.YearCycleDate = SystemTime.Now();
 			DbSession.Update(Client);
 			DbSession.Flush();
 
@@ -107,7 +111,8 @@ namespace Inforoom2.Test.Functional.Personal
 		                    " услуги 'Добровольная блокировка' при отсутствии бесплатных дней; для задачи №33321")]
 		public void CheckNoStrongWriteoffsWithClient()
 		{
-			SetBlockAccountToClient(isFree: false);         // Чтобы был списан разовый платеж за услугу = 50 р.
+			// Чтобы был списан разовый платеж за услугу = 50 р.
+			SetBlockAccountToClient(isFree: false);
 			var myClient = DbSession.Get<Client>(Client.Id);
 
 			for (var i = 1; i < 31; i++) {
@@ -115,7 +120,8 @@ namespace Inforoom2.Test.Functional.Personal
 				DbSession.Refresh(myClient);
 
 				SystemTime.Now = () => DateTime.Now.AddDays(i);
-				myClient.PaidDay = false;                     // Чтобы формировалось ежедневное списание = 3 р.
+				// Чтобы формировалось ежедневное списание = 3 р.
+				myClient.PaidDay = false;
 				DbSession.Update(myClient);
 				DbSession.Flush();
 				_billing.ProcessWriteoffs();
