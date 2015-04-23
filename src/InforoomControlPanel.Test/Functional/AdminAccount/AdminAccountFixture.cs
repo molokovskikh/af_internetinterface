@@ -1,4 +1,4 @@
-﻿using Inforoom2.Test.Functional.infrastructure;
+﻿using Inforoom2.Test.Infrastructure;
 using InforoomControlPanel.Test.Functional.infrastructure;
 using NUnit.Framework;
 
