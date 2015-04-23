@@ -4,7 +4,6 @@ using Inforoom2.Models;
 using Inforoom2.Test.Infrastructure;
 using Inforoom2.Test.Infrastructure.Helpers;
 using Inforoom2.Test.Functional.Personal;
-using Inforoom2.Test.Infrastructure.Helpers;
 using NHibernate.Linq;
 using NUnit.Framework;
 
@@ -12,7 +11,7 @@ namespace Inforoom2.Test.Functional.Personal
 {
 	internal class DeferredPaymentFixture : PersonalFixture
 	{
-		[Test(Description = "Проверка корректной активации услуги 'Обещанный платеж'")]
+		[Test(Description = "Проверка корректной активации услуги 'Обещанный платеж'- клиенту предоставляется бесплатный доступ в интернет на 3дня.")]
 		public void ActivateDeferredPayment()
 		{
 			var clientMark = ClientCreateHelper.ClientMark.disabledClient.GetDescription();
@@ -42,7 +41,12 @@ namespace Inforoom2.Test.Functional.Personal
 			Assert.IsFalse(client.ShowBalanceWarningPage, "Страница 'Warning' по-прежнему подключена");
 		}
 
-		[Test(Description = "Проверка обработки повторной активации услуги 'Обещанный платеж', для задачи i31289")]
+		/// <summary>
+		/// Проверка отсутствия возможности повторной активации услуги 'Обещанный платеж',если не прошли 30 дней или если у клиента имеются 
+		/// задолженности и отсутсвие абонентской платы.Проверка,что подключить услугу повторно можно только после внесения платежа, покрывающего
+		/// задолженности и абонентскую плату.
+		/// </summary>
+		[Test(Description = "Проверка отсутствия возможности повторной активации услуги 'Обещанный платеж'")]
 		public void TryReactivateDeferredPayment()
 		{
 			ActivateDeferredPayment();
@@ -62,9 +66,12 @@ namespace Inforoom2.Test.Functional.Personal
 			lastService.IsDeactivated = true;
 			DbSession.SaveOrUpdate(lastService);
 
-			Open("Personal/Service"); // Перезагрузить страницу "Услуги" у клиента
-			AssertNoText("Подключить"); // Не должно быть возм-ти подключить "Обещанный платеж"
+			// Перезагрузить страницу "Услуги" у клиента
+			Open("Personal/Service");
+			// Не должно быть возм-ти подключить "Обещанный платеж"
+			AssertNoText("Подключить");
 
+			//проверка, что у клиента нет возможности подключить "Обещанный платеж",пока не оплачена вся задолженность
 			var tariffPrice = client.Plan.Price;
 			var payment1 = new Payment {
 				Sum = 0.7m * tariffPrice,
@@ -76,8 +83,10 @@ namespace Inforoom2.Test.Functional.Personal
 			DbSession.Flush();
 			DbSession.Refresh(client);
 
-			Open("Personal/Service"); // Перезагрузить страницу "Услуги" у клиента
-			AssertNoText("Подключить"); // Пока ещё не должно быть возм-ти подключить "Обещанный платеж"
+			// Перезагрузить страницу "Услуги" у клиента
+			Open("Personal/Service");
+			// Пока ещё не должно быть возм-ти подключить "Обещанный платеж"
+			AssertNoText("Подключить"); 
 
 			var payment2 = new Payment {
 				Sum = 0.1m * tariffPrice,
@@ -89,8 +98,10 @@ namespace Inforoom2.Test.Functional.Personal
 			DbSession.Flush();
 			DbSession.Refresh(client);
 
-			Open("Personal/Service"); // Перезагрузить страницу "Услуги" у клиента
-			AssertText("Подключить"); // Должна появиться возм-ть подключить "Обещанный платеж"
+			// Перезагрузить страницу "Услуги" у клиента
+			Open("Personal/Service");
+			// Должна появиться возм-ть подключить "Обещанный платеж"
+			AssertText("Подключить");
 		}
 	}
 }
