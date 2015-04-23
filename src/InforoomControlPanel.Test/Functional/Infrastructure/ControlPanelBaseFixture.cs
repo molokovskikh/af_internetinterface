@@ -4,7 +4,7 @@ using System.Configuration;
 using System.Linq;
 using System.Text;
 using Inforoom2.Models;
-using Inforoom2.Test.Functional.infrastructure;
+using Inforoom2.Test.Infrastructure;
 using InternetInterface.Models;
 using NHibernate.Linq;
 using NUnit.Framework;
