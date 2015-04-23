@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using System.Web.UI.WebControls;
 using Inforoom2.Models;
-using Inforoom2.Test.Functional.infrastructure;
-using Inforoom2.Test.Functional.infrastructure.Helpers;
+using Inforoom2.Test.Infrastructure;
+using Inforoom2.Test.Infrastructure.Helpers;
 using NHibernate.Linq;
 using NUnit.Framework;
 using OpenQA.Selenium;

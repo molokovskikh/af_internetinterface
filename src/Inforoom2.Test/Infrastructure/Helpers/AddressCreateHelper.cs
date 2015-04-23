@@ -6,7 +6,7 @@ using Inforoom2.Models;
 using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
 
-namespace Inforoom2.Test.Functional.infrastructure.Helpers
+namespace Inforoom2.Test.Infrastructure.Helpers
 {
 	/// <summary>
 	/// Разбивает список Адресов (строк) на количество частей указанных в addressPosition; 
