@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Linq;
 using Inforoom2.Models;
-using Inforoom2.Test.Functional.infrastructure;
-using Inforoom2.Test.Functional.infrastructure.Helpers;
+using Inforoom2.Test.Infrastructure;
+using Inforoom2.Test.Infrastructure.Helpers;
 using Inforoom2.Test.Functional.Personal;
+using Inforoom2.Test.Infrastructure.Helpers;
 using NHibernate.Linq;
 using NUnit.Framework;
 
-namespace Inforoom2.Test.Functional
+namespace Inforoom2.Test.Functional.Personal
 {
 	internal class DeferredPaymentFixture : PersonalFixture
 	{
