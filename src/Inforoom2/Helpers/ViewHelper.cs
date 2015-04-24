@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -14,6 +15,7 @@ using System.Web.Mvc.Html;
 using System.Web.UI.WebControls;
 using Inforoom2.Components;
 using Inforoom2.Models;
+using NHibernate.Criterion;
 using NHibernate.Linq;
 using NHibernate.Linq.Functions;
 using NHibernate.Validator.Cfg.Loquacious;
@@ -25,7 +27,38 @@ namespace Inforoom2.Helpers
 	}
 	public static class ViewHelper
 	{ 
-		static HTMLGenerator html; 
+		static HTMLGenerator html;
+
+
+		/// <summary>
+		/// Создает список скрытых полей для списочных моделей, кроме указанного элемента.
+		/// Используется для того, чтобы удалить 1 элемент из списка в модели.
+		/// В байндер подгрузятся все элементы, кроме одного. Соответственно Hibernate удалит эту связь из БД.
+		/// </summary>
+		/// <typeparam name="TModel">Модель</typeparam>
+		/// <typeparam name="TProperty">Свойство список поле-список.</typeparam>
+		/// <param name="helper">ViewHelper</param>
+		/// <param name="model">Модель</param>
+		/// <param name="expression">Экспрессия, возвращающая список в модели: i => tvChannelGroup.TvChannels</param>
+		/// <param name="skipId">Идентификатор модели, которую необходимо удалить.</param>
+		/// <returns>Верстка для полей</returns>
+		public static HtmlString HiddenForModelList<TModel, TProperty>(this HtmlHelper helper,TModel model, Expression<Func<TModel, TProperty>> expression, int skipId = 0)
+		where TProperty : IEnumerable
+		{
+			string expr = expression.ToString();
+			var func = expression.Compile();
+			var list = func(model) as IList;
+			var builder = new StringBuilder();
+			for(var i=0; i < list.Count; i++) {
+				var name = expr.After(").") + "["+i+"].Id";
+				var item = list[i] as BaseModel;
+				if (item.Id == skipId)
+					continue;
+				builder.Append(string.Format("<input type='hidden' name='{0}' value='{1}' />",name,item.Id));
+			}
+				
+			return new HtmlString(builder.ToString());
+		}
 		/// <summary>
 		/// Вывести выподающий список
 		/// </summary>
@@ -38,15 +71,17 @@ namespace Inforoom2.Helpers
 		/// <param name="htmlAttributes">Описание html атрибутов</param>
 		/// <param name="selectTagAttributes">Свойства тэга</param>
 		/// <param name="selectedValueId">Выбранный элемент</param>
+		/// <param name="firstEmptyElementAdd">Добавить первым элементом пустое значение</param>
 		/// <returns>HTML выподающий список</returns>
 		public static HtmlString DropDownListExtendedFor<TModel, TProperty>(this HtmlHelper helper,
 			Expression<Func<TModel, TProperty>> expression, IList<TModel> modelCollection, Func<TModel, string> optionValue,
-			Func<TModel, object> htmlAttributes, object selectTagAttributes, int selectedValueId)
+			Func<TModel, object> htmlAttributes, object selectTagAttributes, int selectedValueId,bool firstEmptyElementAdd = false)
 			where TModel : BaseModel
-			where TProperty : BaseModel
 		{
 			string expr = expression.ToString();
 			string propertyInfo = expr.After(").") + ".Id";
+			if (typeof(TProperty).GetInterfaces().Contains(typeof(IEnumerable)))
+				propertyInfo = expr.After(").") + "[].Id";
 
 			var selectAttributes = new StringBuilder();
 
@@ -55,6 +90,10 @@ namespace Inforoom2.Helpers
 			}
 			
 			var options = new StringBuilder();
+			if (firstEmptyElementAdd)
+			{
+				options.AppendFormat("<option selected = selected></option>" );
+			}
 			foreach (var model in modelCollection) {
 				string value = string.Empty;
 				if (optionValue != null) {
@@ -79,7 +118,13 @@ namespace Inforoom2.Helpers
 			if (modelCollection.Count > 0) {
 				selectId = modelCollection.FirstOrDefault().GetType().Name + "DropDown";
 			}
-
+			if (selectTagAttributes!=null) {
+				var hasOwnId = selectTagAttributes.GetType().GetProperty("Id");
+				if (hasOwnId!=null)
+				{
+					selectId = hasOwnId.GetValue(selectTagAttributes, null).ToString();	
+				}
+			}
 			var selectString = string.Format("<select id='{0}' name='{3}' {2}>{1}</select>", selectId.Replace("Proxy", ""),
 				options, selectAttributes, propertyInfo);
 			return new HtmlString(selectString);
@@ -95,36 +140,36 @@ namespace Inforoom2.Helpers
 		/// <param name="optionValue">Выводимое значение</param>
 		/// <param name="htmlAttributes">Описание html атрибутов</param>
 		/// <param name="selectTagAttributes">Свойства тэга</param>
+		/// <param name="firstEmptyElementAdd">Добавить первым элементом пустое значение</param>
 		/// <returns>HTML выподающий список</returns>
 		public static HtmlString DropDownListExtendedFor<TModel, TProperty>(this HtmlHelper helper,
 			Expression<Func<TModel, TProperty>> expression, IList<TModel> modelCollection, Func<TModel, string> optionValue,
-			Func<TModel, object> htmlAttributes, object selectTagAttributes)
+			Func<TModel, object> htmlAttributes, object selectTagAttributes, bool firstEmptyElementAdd = false)
 			where TModel : BaseModel
-			where TProperty : BaseModel
+
 		{
 			int selectedId = 0;
 			return DropDownListExtendedFor(helper, expression, modelCollection, optionValue, htmlAttributes, selectTagAttributes,
-				selectedId);
+				selectedId, firstEmptyElementAdd);
 		}
+
 
 		public static HtmlString DropDownListExtendedFor<TModel, TProperty>(this HtmlHelper helper,
 			Expression<Func<TModel, TProperty>> expression, IList<TModel> modelCollection, Func<TModel, string> optionValue,
-			Func<TModel, object> htmlAttributes)
+			Func<TModel, object> htmlAttributes, bool firstEmptyElementAdd = false)
 			where TModel : BaseModel
-			where TProperty : BaseModel
 		{
 			int selectedId = 0;
 			return DropDownListExtendedFor(helper, expression, modelCollection, optionValue, htmlAttributes, null,
-				selectedId);
+				selectedId, firstEmptyElementAdd);
 		}
 
 		public static HtmlString DropDownListExtendedFor<TModel, TProperty>(this HtmlHelper helper,
 			Expression<Func<TModel, TProperty>> expression, IList<TModel> modelCollection, Func<TModel, string> optionValue,
-			int selectedValueId)
+			int selectedValueId, bool firstEmptyElementAdd = false)
 			where TModel : BaseModel
-			where TProperty : BaseModel
 		{
-			return DropDownListExtendedFor(helper, expression, modelCollection, optionValue, null, null, selectedValueId);
+			return DropDownListExtendedFor(helper, expression, modelCollection, optionValue, null, null, selectedValueId, firstEmptyElementAdd);
 		}
 
 

@@ -22,11 +22,12 @@ namespace Inforoom2.Models
 		{
 			Endpoints = new List<ClientEndpoint>();
 			ClientServices = new List<ClientService>();
-			Payments = new List<Payment>();
+			Payments = new List<Payment>(); 
 			ConnectionRequests = new List<ConnectionRequest>();
 			Contacts = new List<Contact>();
 			UserWriteOffs = new List<UserWriteOff>();
-			WriteOffs = new List<WriteOff>(); 
+			WriteOffs = new List<WriteOff>();  
+			Appeals = new List<Appeal>(); 
 		}
 
 		//todo исправить это почему-то не подцепляет маппинг когда будет решаться задача о графике подключенцев
@@ -131,10 +132,21 @@ namespace Inforoom2.Models
 		[Bag(0, Table = "WriteOff", Cascade = "all-delete-orphan")]
 		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
 		[OneToMany(2, ClassType = typeof (WriteOff))]
-		public virtual IList<WriteOff> WriteOffs { get; set; } 
+		public virtual IList<WriteOff> WriteOffs { get; set; }
+
+		[Bag(0, Table = "Appeals", Cascade = "all-delete-orphan")]
+		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
+		[OneToMany(2, ClassType = typeof(Appeal))]
+		public virtual IList<Appeal> Appeals { get; set; }
 
 		[Property(Column = "SendSmsNotifocation")]
 		public virtual bool SendSmsNotification { get; set; }
+
+		[ManyToOne(Column = "WhoRegistered", Cascade = "save-update")]
+		public virtual Employee WhoRegistered { get; set; }
+
+		[ManyToOne(Column = "Dealer", Cascade = "save-update")]
+		public virtual Dealer Dealer { get; set; }
 
 		public virtual bool IsNeedRecofiguration { get; set; }
 

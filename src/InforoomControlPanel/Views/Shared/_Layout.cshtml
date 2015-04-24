@@ -203,6 +203,21 @@
 								<span class="title">Тарифы</span>
 							</a>
 						</li>
+						<li>
+							<a href="@Url.Action("TvChannelList","Plans")">
+								<span class="title">ТВ каналы</span>
+							</a>
+						</li>
+						<li>
+							<a href="@Url.Action("TvChannelGroupList","Plans")">
+								<span class="title">Группы ТВ каналов</span>
+							</a>
+						</li>
+						<li>
+							<a href="@Url.Action("TvProtocolList","Plans")">
+								<span class="title">Протоколы для ТВ</span>
+							</a>
+						</li>
 					</ul>
 				</li>
 				<li>
@@ -347,5 +362,14 @@
 		<script type="text/javascript" src="~/Scripts/Window.js"></script>
 		<link rel="stylesheet" href="~/Css/style.css"></link>
 		@RenderSection("JavaScript", required: false)
+	@{
+		var IeWaterline = "";
+#if DEBUG
+		IeWaterline = "<div class='IeWaterline'></div>";
+#endif
+		
+	}
+	@Html.Raw(IeWaterline)
+
 	</body>
 </html>

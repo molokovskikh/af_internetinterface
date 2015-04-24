@@ -1,10 +1,11 @@
 ﻿using System.Linq;
 using Inforoom2.Models;
+using Inforoom2.Test.Functional.infrastructure;
 using Inforoom2.Test.Functional.infrastructure.Helpers;
 using NHibernate.Linq;
 using NUnit.Framework;
 
-namespace Inforoom2.Test.Functional.infrastructure
+namespace Inforoom2.Test.Functional.Personal
 {
 	public class PersonalFixture : BaseFixture
 	{

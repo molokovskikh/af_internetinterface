@@ -63,16 +63,18 @@ namespace Inforoom2.Test.Functional.infrastructure.Helpers
 		/// </summary> 
 		public AddressCreateHelper()
 		{
-			addresses.Add("Белгород,Белгород,улица Ленина,8");
+			addresses.Add("Борисоглебск,Борисоглебск,улица Ленина,8");
 			addresses.Add("Борисоглебск,Борисоглебск,Третьяковская улица,6Б");
 			addresses.Add("Борисоглебск,Борисоглебск,ул. Ленина,20");
 			addresses.Add("Борисоглебск,Борисоглебск,ул. Ленина,22");
 			addresses.Add("Борисоглебск,Борисоглебск,ул. Ленина,24А");
 			addresses.Add("Борисоглебск,Борисоглебск,ул. Гагарина,1А");
 			addresses.Add("Борисоглебск,Борисоглебск,ул. Гагарина,1Б");
-			addresses.Add("Борисоглебск,Борисоглебск,ул. Гагарина,2А");
-			addresses.Add("Борисоглебск,Борисоглебск,ул. Гагарина,2Б");
 			addresses.Add("Борисоглебск,Борисоглебск,ул. Гагарина,2В");
+			addresses.Add("Борисоглебск,Борисоглебск,ул. Гагарина,2Г");
+			addresses.Add("Борисоглебск,Борисоглебск,ул. Гагарина,2Д");
+			addresses.Add("Борисоглебск,Борисоглебск,ул. Ленина,24Б");
+			addresses.Add("Борисоглебск,Борисоглебск,ул. Ленина,23");
 		}
 
 		/// <summary>
@@ -82,7 +84,8 @@ namespace Inforoom2.Test.Functional.infrastructure.Helpers
 		public bool GetNextAddress()
 		{
 			Index++;
-			if (addresses.Count > Index) {
+			if (addresses.Count > Index)
+			{
 				return true;
 			}
 			Index = 0;

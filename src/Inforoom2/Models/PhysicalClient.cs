@@ -15,19 +15,19 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual string Password { get; set; }
 
-		[ManyToOne(Column = "_Address", Cascade = "save-update")]
+		[ManyToOne(Column = "_Address", Cascade = "save-update"), NotNull(Message = "Адрес указан не полностью!")]
 		public virtual Address Address { get; set; }
 
-		[Property(Column = "_Email", NotNull = true)]
+		[Property(Column = "_Email", NotNull = true), Email(Message = "Неверная форма email")]
 		public virtual string Email { get; set; }
 
-		[ManyToOne(Column = "Tariff")]
+		[ManyToOne(Column = "Tariff"), NotNull(Message = "Выберите тариф")]
 		public virtual Plan Plan { get; set; }
 
 		[Property(Column = "_LastTimePlanChanged")]
 		public virtual DateTime LastTimePlanChanged { get; set; }
 
-		[Property]
+		[Property, NotNull(Message = "Введите сумму")]
 		public virtual decimal Balance { get; set; }
 
 		[Property]
@@ -64,7 +64,7 @@ namespace Inforoom2.Models
 		[Property(Column = "WhoGivePassport"), NotNullNotEmpty(Message = "Поле не может быть пустым")]
 		public virtual string PassportResidention { get; set; }
 
-		[Property(Column = "_PhoneNumber", NotNull = true)]
+		[Property(Column = "_PhoneNumber", NotNull = true), NHibernate.Validator.Constraints.NotEmpty(Message="Введите номер телефона")]
 		public virtual string PhoneNumber { get; set; }
 
 		[Property(NotNull = true), NotEmpty(Message = "Введите имя")]

@@ -107,7 +107,10 @@ namespace Inforoom2.Test.Functional
 		{
 			Phone.Clear();
 			SendRequest();
-			AssertText("Введите номер в десятизначном");
+			// в списке ошибок появилась еще одна, идущая раньше предыдущей
+			AssertText("Введите номер телефона"); 
+			// поэтому предыдущую не проверяем
+			//AssertText("Введите номер в десятизначном");
 			AssertFail();
 		}
 

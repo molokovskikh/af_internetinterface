@@ -1,0 +1,61 @@
+﻿@using System.Web.UI.WebControls
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@model dynamic
+
+@{
+	ViewBag.Title = ViewBag.Title ?? "Добавление ТВ канала";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	TvChannel TvChannel = ViewBag.TvChannel;
+	TvChannel.TvProtocol = TvChannel.TvProtocol ?? new TvProtocol();
+	List<TvProtocol> TvProtocols = ViewBag.TvProtocols;
+	string controller = ViewBag.ControllerName;
+	string action = ViewBag.ActionName;
+}
+<div class="panel panel-default">
+		<div class="panel-body">
+		@using (@Html.BeginForm(action, controller, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
+		{
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Название</label>
+				<div class="col-sm-2">
+					@Html.HiddenFor(model => TvChannel.Id)
+					@Html.TextBoxFor(model => TvChannel.Name, new { @class = "form-control" })
+					@ViewBag.Validation.GetError(TvChannel, "Name")
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Протокол</label>
+				<div class="col-sm-2">
+					@Html.DropDownListExtendedFor(i=>TvChannel.TvProtocol,TvProtocols, i=> i.Name,null, new {@class = "form-control"},TvChannel.TvProtocol.Id)
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Адрес</label>
+				<div class="col-sm-2">
+					@Html.TextBoxFor(model => TvChannel.Url, new { @class = "form-control" })
+					@ViewBag.Validation.GetError(TvChannel, "Url")
+				</div>
+			</div>
+	  	  	<div class="form-group">
+				<label class="col-sm-2 control-label">Порт</label>
+				<div class="col-sm-2">
+					@Html.TextBoxFor(model => TvChannel.Port, new { @class = "form-control" })
+					@ViewBag.Validation.GetError(TvChannel, "Port")
+				</div>
+			</div>	
+	    	<div class="form-group">
+				<label class="col-sm-2 control-label">Доступен</label>
+				<div class="col-sm-2">
+					@Html.CheckBoxFor(model => TvChannel.Enabled, new { @class = "form-control" })
+					@ViewBag.Validation.GetError(TvChannel, "Enabled")
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2">
+					<button class="btn btn-green" type="submit">Сохранить</button>
+				</div>
+			</div>
+		}
+	</div>
+</div>

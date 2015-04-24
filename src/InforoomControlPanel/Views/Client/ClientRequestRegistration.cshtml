@@ -15,10 +15,11 @@
 	List<Region> regionList = ViewBag.RegionList;
 	List<Plan> planList = ViewBag.PlanList;
 	Dictionary<int, CertificateType> certificateTypeDic = ViewBag.CertificateTypeDic;
-	Region currentRegion = ViewBag.currentRegion;
-	Street currentStreet = ViewBag.currentStreet;
-	List<Street> curStreetList = ViewBag.curStreetList;
-	List<House> curHouseList = ViewBag.curHouseList;
+	Region currentRegion = ViewBag.CurrentRegion;
+	Street currentStreet = ViewBag.CurrentStreet;
+	House currentHouse = ViewBag.CurrentHouse;
+	List<Street> currentStreetList = ViewBag.CurrentStreetList;
+	List<House> currentHouseList = ViewBag.CurrentHouseList;
 	int houseExist = client.PhysicalClient.Address.House == null ? 0 : client.PhysicalClient.Address.House.Id;
 	int requestId = ViewBag.requestId;
 }
@@ -117,7 +118,7 @@
 
 							</div>
 						</div>
-
+						
 						<div class="panel panel-default">
 							<div class="panel-heading">
 								<h3 class="panel-title">Тариф</h3>
@@ -127,9 +128,23 @@
 								<div class="row">
 									<div class="col-lg-8">
 										<div class="form-group">
-											<label class="col-sm-2 control-label">Тариф:</label>
+											<label class="col-sm-4 control-label">Тариф:</label>
 											<div class="col-sm-6">
-												@Html.DropDownListExtendedFor(i => client.PhysicalClient.Plan, planList, obj => obj.Name, null, new { @class = "form-control" })
+												@if (client.PhysicalClient.Plan != null) {
+													@Html.DropDownListExtendedFor(i => client.PhysicalClient.Plan, planList, obj => obj.Name, null, new { @class = "form-control", @Id = "PlanDropDown" }, client.PhysicalClient.Plan.Id, true)
+													@ViewBag.Validation.GetError(client.PhysicalClient, "Plan")
+												}
+												else {
+													@Html.DropDownListExtendedFor(i => client.PhysicalClient.Plan, planList, obj => obj.Name, null, new { @class = "form-control", @Id = "PlanDropDown" }, true)
+													@ViewBag.Validation.GetError(client.PhysicalClient, "Plan")
+												}
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-4 control-label">Сумма за подключение:</label>
+											<div class="col-sm-6">
+												@Html.TextBoxFor(o => client.PhysicalClient.ConnectSum, new { @class = "form-control" })
+												@ViewBag.Validation.GetError(client.PhysicalClient, "ConnectSum")
 											</div>
 										</div>
 										<div class="form-group"> 
@@ -152,36 +167,50 @@
 								<div class="row">
 									<div class="col-lg-8">
 										<div class="form-group error">
-											<label class="col-sm-2 control-label@(currentRegion.Id == 0 ? " bold msg" : "")">Регион:</label>
-											<div class="col-sm-6">
-												<select id="RegionDropDown" class="form-control">
-													@foreach (var region in regionList) {
-														<option value="@region.Id" @(currentRegion.Id == region.Id ? "selected" : "")>@region.Name</option>
-													}
-												</select>
+											<label class="col-sm-2 control-label@(currentRegion == null ? " bold msg" : "")">Регион:</label>
+											<div class="col-sm-6"> 
+												@if (currentRegion != null){
+													@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House.Street.Region, regionList, obj => obj.Name, null,
+														new { @class = "form-control", @Id = "RegionDropDown", @Name = "client.PhysicalClient.Address.House.Street.Region.Id" }, currentRegion.Id, true)
+												}
+												else {
+													@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House.Street.Region, regionList, obj => obj.Name, null,
+														new { @class = "form-control", @Id = "RegionDropDown", @Name = "client.PhysicalClient.Address.House.Street.Region.Id" }, true)
+												}  
 												@Html.HiddenFor(s => currentRegion.Id, new { Id = "regionError" })
 											</div>
 										</div>
 										<div class="form-group error">
-											<label class="col-sm-2 control-label@(currentStreet.Id == 0 ? " bold msg" : "")">Улица:</label>
+											<label class="col-sm-2 control-label@(currentStreet == null ? " bold msg" : "")">Улица:</label>
 											<div class="col-sm-6">
-												@if (currentStreet.Id != 0) {
-													@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House.Street, curStreetList, obj => obj.Name, null, new { @class = "form-control", @Id = "StreetDropDown" }, currentStreet.Id)
+												@if (currentStreet != null) {
+													@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House.Street, currentStreetList, obj => obj.Name, null,
+														new { @class = "form-control", @Id = "StreetDropDown", @Name = "client.PhysicalClient.Address.House.Street.Id" }, currentStreet.Id, true)
 												}
 												else {
-													<select id="StreetDropDown" name="client.PhysicalClient.Address.House.Street" class="form-control"></select>
+													@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House.Street, new List<Street>(), obj => obj.Name, null,
+														new { @class = "form-control", @Id = "StreetDropDown", @Name = "client.PhysicalClient.Address.House.Street.Id" }, true)
 												}
+											
 												@Html.HiddenFor(s => currentStreet.Id, new { Id = "streetError" })
 											</div>
 										</div>
 										<div class="form-group error">
-											<label class="col-sm-2 control-label@(client.PhysicalClient.Address.House.Id == 0 ? " bold msg" : "")">Дом:</label>
+											<label class="col-sm-2 control-label@(currentHouse == null ? " bold msg" : "")">Дом:</label>
 											<div class="col-sm-6">
-												@if (client.PhysicalClient.Address.House.Id != 0 && curHouseList != null) {
-													@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House, curHouseList, obj => obj.Number, null, new { @class = "form-control", @Id = "HouseDropDown" }, client.PhysicalClient.Address.House.Id)
+												@if (currentHouse != null) {
+													@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House, currentHouseList, obj => obj.Number, null, new {
+														@class = "form-control",
+														@Id = "HouseDropDown",
+														@Name = "client.PhysicalClient.Address.House.Id"
+													}, currentHouse.Id, true)
 												}
 												else {
-													<select id="HouseDropDown" name="client.PhysicalClient.Address.House" class="form-control"></select>
+													@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House, currentHouseList, obj => obj.Number, null, new {
+														@class = "form-control",
+														@Id = "HouseDropDown",
+														@Name = "client.PhysicalClient.Address.House.Id"
+													}, true)
 												}
 												@Html.HiddenFor(s => houseExist, new { Id = "houseError" })
 											</div>
