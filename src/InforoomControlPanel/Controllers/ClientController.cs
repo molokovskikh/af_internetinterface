@@ -13,8 +13,18 @@ using Street = Inforoom2.Models.Street;
 
 namespace InforoomControlPanel.Controllers
 {
-	public class ClientController : AdminController
+	public class ClientController : ControlPanelController
 	{
+		public ClientController()
+		{
+			ViewBag.BreadCrumb = "Клиенты";
+		}
+
+		public  ActionResult Index()
+		{
+			return ClientList();
+		}
+
 		/// <summary>
 		///		Обработка события OnActionExecuting (для каждого Action текущего контроллера) 
 		/// </summary>
