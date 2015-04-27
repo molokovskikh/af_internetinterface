@@ -1516,6 +1516,7 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\ConnectionTeamController.cs" />
     <Compile Include="Controllers\ClientController.cs" />
+    <Compile Include="Controllers\ControlPanelController.cs" />
     <Compile Include="Controllers\SwitchController.cs" />
     <Compile Include="Controllers\PlansController.cs" />
     <Compile Include="Controllers\NewsController.cs" />

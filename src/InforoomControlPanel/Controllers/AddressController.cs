@@ -11,8 +11,19 @@ using Switch = Inforoom2.Models.Switch;
 
 namespace InforoomControlPanel.Controllers
 {
-	public class AddressController : AdminController
+	public class AddressController : ControlPanelController
 	{
+		public AddressController()
+		{
+			ViewBag.BreadCrumb = "Адреса";
+		}
+
+		public  ActionResult Index()
+		{
+			return SwitchAddressList();
+		}
+
+
 		public ActionResult DeleteHouse(int? id)
 		{
 			var city = DbSession.Get<City>(id);
@@ -54,7 +65,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult SwitchAddressList()
 		{
 			ViewBag.Addresses = GetList<SwitchAddress>();
-			return View();
+			return View("SwitchAddressList");
 		}
 
 		[HttpPost]

@@ -15,7 +15,7 @@ namespace InforoomControlPanel.Controllers
 	/// <summary>
 	/// Страница управления вопросами от пользователя
 	/// </summary>
-	public class PlansController : AdminController
+	public class PlansController : ControlPanelController
 	{
 
 		public PlansController()
@@ -23,7 +23,7 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.BreadCrumb = "Тарифы";
 		}
 
-		public new ActionResult Index()
+		public  ActionResult Index()
 		{
 			return PlanIndex();
 		}
