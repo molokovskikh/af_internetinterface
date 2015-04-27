@@ -74,6 +74,7 @@ namespace Inforoom2.Test.Functional.Personal
 			var row = targetPlan.FindElement(By.XPath(".."));
 			var planRegion = row.FindElement(By.CssSelector(".tariffscost")).Text;
 			Assert.That(planRegion, Is.EqualTo(plan.Name), "Клиенту должен отображаться региональный план 50 на 50");
+			AssertNoText("Старт");
 		}
 
 
