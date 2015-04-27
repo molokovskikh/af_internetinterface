@@ -17,6 +17,7 @@
 		<div class="panel-body">
 			@using (Html.BeginForm(ViewBag.ActionName as string, "Address", FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
    {
+	   @Html.HiddenFor(i=>Street.Id)
 				<div class="col-sm-6">
 					<div class="form-group">
 						<label class="col-sm-4 control-label">Регион</label>

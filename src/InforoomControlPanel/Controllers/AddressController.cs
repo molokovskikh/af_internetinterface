@@ -244,8 +244,10 @@ namespace InforoomControlPanel.Controllers
 				ViewBag.Street = DbSession.Get<Street>(streetId);
 
 			var streets = DbSession.Query<Street>().ToList();
+			var regions = DbSession.Query<Region>().ToList();
 			ViewBag.Streets = streets;
 			ViewBag.House = House;
+			ViewBag.Regions = regions;
 			return View("CreateHouse");
 		}
 
@@ -270,16 +272,22 @@ namespace InforoomControlPanel.Controllers
 			return View("CreateHouse");
 		}
 
+		/// <summary>
+		/// Редактирование дома
+		/// </summary>
+		/// <param name="id">Идектификатор дома</param>
 		public ActionResult EditHouse(int id = 0)
 		{
-			var House = DbSession.Get<House>(id);
-			var streets = DbSession.Query<Street>().ToList();
-			ViewBag.Street = House.Street;
-			ViewBag.Streets = streets;
-			ViewBag.House = House;
+			var house = DbSession.Get<House>(id);
+			CreateHouse(house.Street.Id);
+			ViewBag.House = house;
 			return View("CreateHouse");
 		}
 
+		/// <summary>
+		/// Редактирование дома
+		/// </summary>
+		/// <param name="id">Идектификатор дома</param>
 		[HttpPost]
 		public ActionResult EditHouse([EntityBinder] House House, string yandexHouse, string yandexPosition)
 		{
