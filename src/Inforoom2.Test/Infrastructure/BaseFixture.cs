@@ -480,6 +480,12 @@ namespace Inforoom2.Test.Infrastructure
 			clientWithRegionalPlan.PhysicalClient.Plan = DbSession.Query<Plan>().First(p => p.Name == "50 на 50");
 			DbSession.Save(clientWithRegionalPlan);
 
+			//Клиент с домом, регион которого отличается от региона улицы
+			var clientWithDifferentRegionHouse = CloneClient(normalClient, ClientCreateHelper.ClientMark.clientWithDifferentRegionHouse);
+			clientWithDifferentRegionHouse.PhysicalClient.Address.House.Region = DbSession.Query<Region>().First(p => p.Name == "Белгород");
+			clientWithDifferentRegionHouse.PhysicalClient.Address.House.Street.Region = DbSession.Query<Region>().First(p => p.Name == "Борисоглебск");
+			DbSession.Save(clientWithDifferentRegionHouse);
+
 			//Новый подключенный клиент,с недавней датой регистрации
 			var recentClient = CloneClient(normalClient, ClientCreateHelper.ClientMark.recentClient);
 			recentClient.WorkingStartDate = DateTime.Now;
