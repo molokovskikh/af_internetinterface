@@ -18,8 +18,18 @@ using Street = Inforoom2.Models.Street;
 
 namespace InforoomControlPanel.Controllers
 {
-	public class ClientController : AdminController
+	public class ClientController : ControlPanelController
 	{
+		public ClientController()
+		{
+			ViewBag.BreadCrumb = "Клиенты";
+		}
+
+		public  ActionResult Index()
+		{
+			return List();
+		}
+
 		/// <summary>
 		///		Обработка события OnActionExecuting (для каждого Action текущего контроллера) 
 		/// </summary>
@@ -623,6 +633,11 @@ namespace InforoomControlPanel.Controllers
 			if (errors.Length == 0) {
 				DbSession.Update(client);
 				SuccessMessage("Клиент успешно изменен!");
+				
+				return Redirect(System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
+				                "Clients/UpdateAddressByClient?clientId=" + client.Id +
+				                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
+				                "UserInfo/ShowPhysicalClient?filter.ClientCode=" + client.Id);
 			}
 			else {
 				DbSession.Clear();

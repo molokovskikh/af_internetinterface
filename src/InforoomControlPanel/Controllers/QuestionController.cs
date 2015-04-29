@@ -9,15 +9,25 @@ namespace InforoomControlPanel.Controllers
 	/// <summary>
 	/// Страница управления вопросами и ответами
 	/// </summary>
-	public class QuestionController : InforoomControlPanel.Controllers.AdminController
+	public class QuestionController : AdminController
 	{
+		public QuestionController()
+		{
+			ViewBag.BreadCrumb = "Вопросы";
+		}
+
+		public  ActionResult Index()
+		{
+			return QuestionIndex();
+		}
+
 		public ActionResult QuestionIndex()
 		{
 			var questions = DbSession.Query<Question>().OrderBy(k => k.Priority).ToList();
 			if (questions.Count != 0) {
 				ViewBag.Questions = questions;
 			}
-			return View();
+			return View("QuestionIndex");
 		}
 
 		public ActionResult EditQuestion(int? questionId)

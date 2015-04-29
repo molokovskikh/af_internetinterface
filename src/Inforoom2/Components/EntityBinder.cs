@@ -114,6 +114,7 @@ namespace Inforoom2.Components
 				return Session.Get(entityType, int.Parse(values["id"]));
 			}
 		}
+		 
 
 		/// <summary>
 		/// Рекурсивно Натягивает данные из списка на модель. Каждый элемент в списке считается частью модели.

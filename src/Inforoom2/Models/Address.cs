@@ -23,6 +23,10 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual bool IsCorrectAddress { get; set; }
 
+		public virtual Region Region {
+			get { return House.Region ?? House.Street.Region; }
+		}
+
 		public virtual string FullAddress
 		{
 			get

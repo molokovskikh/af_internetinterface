@@ -9,7 +9,8 @@ using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
-using Inforoom2.Test.Functional.infrastructure.Helpers;
+using Inforoom2.Test.Infrastructure.Helpers;
+using Inforoom2.Test.Infrastructure.Helpers;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 using NHibernate;
@@ -38,7 +39,7 @@ using Street = Inforoom2.Models.Street;
 using UserWriteOff = Inforoom2.Models.UserWriteOff;
 using WriteOff = Inforoom2.Models.WriteOff;
 
-namespace Inforoom2.Test.Functional.infrastructure
+namespace Inforoom2.Test.Infrastructure
 {
 	[TestFixture]
 	public class BaseFixture : SeleniumFixture
@@ -382,6 +383,7 @@ namespace Inforoom2.Test.Functional.infrastructure
 					Address = GetUnusedAddress(), 
 					LastTimePlanChanged = DateTime.Now.AddMonths(-2)
 				},
+				SendSmsNotification = false,
 				Discount = 10,
 				Disabled = false,
 				RatedPeriodDate = DateTime.Now,

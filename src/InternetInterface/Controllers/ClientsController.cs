@@ -64,7 +64,7 @@ namespace InternetInterface.Controllers
 						strToInt += Convert.ToInt32(justStr[i].ToString()).ToString();
 					}
 					catch (Exception) {
-						 break;
+						break;
 					}
 				}
 
@@ -74,10 +74,19 @@ namespace InternetInterface.Controllers
 				DbSession.Save(newHouse);
 
 				DbSession.CreateSQLQuery(string.Format(" UPDATE physicalclients SET City='{0}',Street='{1}',House='{2}',Floor='{3}',Apartment='{4}', " +
-				                                       "Entrance='{5}',HouseObj={6}  WHERE Id={7}", aList[0], aList[1], aList[2],
-					aList[3], aList[4], aList[5], newHouse.Id, aList[6]) + "; " +
+													   "Entrance='{5}',HouseObj={6}  WHERE Id={7}", 
+													    aList[0], aList[1], newHouse.Number,
+														aList[3] == "" ? "0" : aList[3],
+														aList[4] == "" ? "0" : aList[4],
+														aList[5] == "" ? "0" : aList[5],
+														newHouse.Id, aList[6]) + "; " +
 				                         string.Format(" UPDATE clients SET Address='улица {1} дом {2} квартира {4} подъезд {5} этаж {3}' " +
-				                                       " WHERE Id={6}", aList[0], aList[1], aList[2], aList[3], aList[4], aList[5], clientId)).UniqueResult();
+													   " WHERE Id={6}", aList[0], 
+													   aList[1], newHouse.Number,
+													   aList[3] == "" ? "0" : aList[3],
+													   aList[4] == "" ? "0" : aList[4],
+													   aList[5] == "" ? "0" : aList[5],
+													   clientId)).UniqueResult();
 			}
 
 			RedirectToUrl(path);

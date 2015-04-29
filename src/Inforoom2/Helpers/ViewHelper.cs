@@ -30,7 +30,6 @@ namespace Inforoom2.Helpers
 	{
 		private static HTMLGenerator html;
 
-
 		/// <summary>
 		/// Создает список скрытых полей для списочных моделей, кроме указанного элемента.
 		/// Используется для того, чтобы удалить 1 элемент из списка в модели.
@@ -50,6 +49,7 @@ namespace Inforoom2.Helpers
 			var func = expression.Compile();
 			var list = func(model) as IList;
 			var builder = new StringBuilder();
+
 			for (var i = 0; i < list.Count; i++) {
 				var name = expr.After(").") + "[" + i + "].Id";
 				var item = list[i] as BaseModel;
@@ -146,7 +146,6 @@ namespace Inforoom2.Helpers
 			Expression<Func<TModel, TProperty>> expression, IList<TModel> modelCollection, Func<TModel, string> optionValue,
 			Func<TModel, object> htmlAttributes, object selectTagAttributes, bool firstEmptyElementAdd = false)
 			where TModel : BaseModel
-
 		{
 			int selectedId = 0;
 			return DropDownListExtendedFor(helper, expression, modelCollection, optionValue, htmlAttributes, selectTagAttributes,

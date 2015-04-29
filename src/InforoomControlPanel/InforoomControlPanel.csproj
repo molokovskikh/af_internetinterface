@@ -1517,6 +1517,7 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\ConnectionTeamController.cs" />
     <Compile Include="Controllers\ClientController.cs" />
+    <Compile Include="Controllers\ControlPanelController.cs" />
     <Compile Include="Controllers\SwitchController.cs" />
     <Compile Include="Controllers\PlansController.cs" />
     <Compile Include="Controllers\NewsController.cs" />
@@ -1531,11 +1532,6 @@
     <Content Include="packages.config" />
     <Content Include="Views\Admin\Index.cshtml" />
     <Content Include="Views\Address\SwitchAddressList.cshtml" />
-    <Content Include="Views\Address\EditAddress.cshtml" />
-    <Content Include="Views\Address\EditCity.cshtml" />
-    <Content Include="Views\Address\EditHouse.cshtml" />
-    <Content Include="Views\Address\EditRegion.cshtml" />
-    <Content Include="Views\Address\EditStreet.cshtml" />
     <Content Include="Views\News\NewsIndex.cshtml" />
     <Content Include="Views\News\EditNewsBlock.cshtml" />
     <Content Include="Views\Question\QuestionIndex.cshtml" />

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Inforoom2.Models;
-using Inforoom2.Test.Functional.infrastructure;
+using Inforoom2.Test.Infrastructure;
 using NHibernate.Linq;
 using NPOI.SS.Formula.Functions;
 using NUnit.Framework;
 using OpenQA.Selenium;
 
-namespace Inforoom2.Test.Functional
+namespace Inforoom2.Test.Functional.ClientRequest
 {
 	/// <summary>
 	/// SendRequest-отправляет заявку на подключение
@@ -43,7 +43,7 @@ namespace Inforoom2.Test.Functional
 		public void AssertFail()
 		{
 			AssertNoText("заявка принята");
-			var request = DbSession.Query<ClientRequest>().FirstOrDefault(i => i.ApplicantName == "Петров");
+			var request = DbSession.Query<Models.ClientRequest>().FirstOrDefault(i => i.ApplicantName == "Петров");
 			Assert.That(request, Is.Null, "В базе должна не должно быть заявки");
 		}
 
@@ -80,7 +80,7 @@ namespace Inforoom2.Test.Functional
 			AssertText("заявка принята");
 
 			//забираем данные из базы данных,что бы в дальнейшем проверить его поля
-			var request = DbSession.Query<ClientRequest>().Where(i => i.ApplicantName == "Петров").FirstOrDefault();
+			var request = DbSession.Query<Models.ClientRequest>().Where(i => i.ApplicantName == "Петров").FirstOrDefault();
 			Assert.That(request, Is.Not.Null, "В базе должна сохраниться модель");
 
 			//проверка что в базе данных все заполнено корректно
@@ -106,11 +106,8 @@ namespace Inforoom2.Test.Functional
 		public void ClientRequestWrongPhone()
 		{
 			Phone.Clear();
-			SendRequest();
-			// в списке ошибок появилась еще одна, идущая раньше предыдущей
-			AssertText("Введите номер телефона"); 
-			// поэтому предыдущую не проверяем
-			//AssertText("Введите номер в десятизначном");
+			SendRequest(); 
+			AssertText("Введите номер в десятизначном");
 			AssertFail();
 		}
 

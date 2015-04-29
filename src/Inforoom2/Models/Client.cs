@@ -29,12 +29,13 @@ namespace Inforoom2.Models
 			WriteOffs = new List<WriteOff>();
 			Appeals = new List<Appeal>();
 
+			/// из старой админки. 
 			Disabled = true;
 			SendSmsNotification = true; 
 			PercentBalance = 0.8m;
 			FreeBlockDays = 28;
 			CreationDate = DateTime.Now;
-			/// из старой админки. Задано по результатам анализа изменений в БД "регистрацией клиента" старой админки.
+			/// задано по результатам анализа изменений в БД "регистрацией клиента" старой админки.
 			BlockDate = DateTime.Now;	 
 			YearCycleDate = DateTime.Now;
 		}

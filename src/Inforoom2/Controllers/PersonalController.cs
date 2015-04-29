@@ -347,7 +347,7 @@ namespace Inforoom2.Controllers
 			//если адреса нет, показываем все тарифы
 			if (client.PhysicalClient.Address != null) {
 				//Если у тарифа нет региона, то он доступен во всех регионах
-				plans = GetList<Plan>().Where(p => !p.IsArchived && !p.IsServicePlan && (!p.RegionPlans.Any() || p.RegionPlans.Any(r => r.Region.Id == client.PhysicalClient.Address.House.Street.Region.Id))).ToList();
+				plans = GetList<Plan>().Where(p => !p.IsArchived && !p.IsServicePlan && (!p.RegionPlans.Any() || p.RegionPlans.Any(r =>r.Region == client.PhysicalClient.Address.Region))).ToList();
 			}
 			else {
 				plans = GetList<Plan>().Where(p => !p.IsArchived && !p.IsServicePlan && !p.RegionPlans.Any()).ToList();

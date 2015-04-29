@@ -374,7 +374,4 @@ var Base64 = {
 	}
 }
 
-
-window.onload = function() {
 	cli = new Inforoom();
-}

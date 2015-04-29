@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Inforoom2.Models;
-using Inforoom2.Test.Functional.infrastructure;
-using Inforoom2.Test.Functional.infrastructure.Helpers;
+using Inforoom2.Test.Infrastructure;
+using Inforoom2.Test.Infrastructure.Helpers;
 using NHibernate.Linq;
 using NUnit.Framework;
 using OpenQA.Selenium;
@@ -74,6 +74,7 @@ namespace Inforoom2.Test.Functional.Personal
 			var row = targetPlan.FindElement(By.XPath(".."));
 			var planRegion = row.FindElement(By.CssSelector(".tariffscost")).Text;
 			Assert.That(planRegion, Is.EqualTo(plan.Name), "Клиенту должен отображаться региональный план 50 на 50");
+			AssertNoText("Старт");
 		}
 
 

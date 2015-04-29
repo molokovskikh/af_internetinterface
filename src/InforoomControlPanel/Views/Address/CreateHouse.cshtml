@@ -23,7 +23,8 @@
 					<div class="form-group">
 						<label class="col-sm-4 control-label">Город</label>
 						<div class="col-sm-6">
-							<input type="text" readonly="readonly" class="form-control" id="cityName" value="@(street.Region != null ? street.Region.Name : Streets.First().Region.City.Name)"/>
+							<!-- todo исправить i.city.name -->
+							<input type="text" readonly="readonly" class="form-control" id="cityName" value="@(street.Region != null ? (street.Region.City != null ? street.Region.City.Name : street.Region.Name) : Streets.First().Region.City.Name)"/>
 						</div>
 					</div>	
 					<div class="form-group">

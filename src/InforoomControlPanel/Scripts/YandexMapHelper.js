@@ -116,7 +116,7 @@
 		if (streetInput)
 			str += " "+ this.getInputVal(streetInput);
 		if (houseInput)
-			str += "д. " + this.getInputVal(houseInput);
+			str += " д. " + this.getInputVal(houseInput);
 		if (additionalInput)
 			str += this.getInputVal(additionalInput);
 

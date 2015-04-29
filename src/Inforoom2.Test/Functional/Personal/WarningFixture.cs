@@ -1,14 +1,14 @@
 ﻿using System.Linq;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
-using Inforoom2.Test.Functional.infrastructure;
+using Inforoom2.Test.Infrastructure;
 using Inforoom2.Test.Functional.Personal;
 using NHibernate.Linq;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using Billing;
 
-namespace Inforoom2.Test.Functional
+namespace Inforoom2.Test.Functional.Personal
 {
 	/// <summary>
 	/// В контроллере прописан код, что на странице варнинг берется текущий клиент, если проект запущен в дебаге.
