@@ -25,9 +25,10 @@ namespace Inforoom2.Helpers
 	public abstract class HTMLGenerator
 	{
 	}
+
 	public static class ViewHelper
-	{ 
-		static HTMLGenerator html;
+	{
+		private static HTMLGenerator html;
 
 
 		/// <summary>
@@ -42,23 +43,24 @@ namespace Inforoom2.Helpers
 		/// <param name="expression">Экспрессия, возвращающая список в модели: i => tvChannelGroup.TvChannels</param>
 		/// <param name="skipId">Идентификатор модели, которую необходимо удалить.</param>
 		/// <returns>Верстка для полей</returns>
-		public static HtmlString HiddenForModelList<TModel, TProperty>(this HtmlHelper helper,TModel model, Expression<Func<TModel, TProperty>> expression, int skipId = 0)
-		where TProperty : IEnumerable
+		public static HtmlString HiddenForModelList<TModel, TProperty>(this HtmlHelper helper, TModel model, Expression<Func<TModel, TProperty>> expression, int skipId = 0)
+			where TProperty : IEnumerable
 		{
 			string expr = expression.ToString();
 			var func = expression.Compile();
 			var list = func(model) as IList;
 			var builder = new StringBuilder();
-			for(var i=0; i < list.Count; i++) {
-				var name = expr.After(").") + "["+i+"].Id";
+			for (var i = 0; i < list.Count; i++) {
+				var name = expr.After(").") + "[" + i + "].Id";
 				var item = list[i] as BaseModel;
 				if (item.Id == skipId)
 					continue;
-				builder.Append(string.Format("<input type='hidden' name='{0}' value='{1}' />",name,item.Id));
+				builder.Append(string.Format("<input type='hidden' name='{0}' value='{1}' />", name, item.Id));
 			}
-				
+
 			return new HtmlString(builder.ToString());
 		}
+
 		/// <summary>
 		/// Вывести выподающий список
 		/// </summary>
@@ -75,7 +77,7 @@ namespace Inforoom2.Helpers
 		/// <returns>HTML выподающий список</returns>
 		public static HtmlString DropDownListExtendedFor<TModel, TProperty>(this HtmlHelper helper,
 			Expression<Func<TModel, TProperty>> expression, IList<TModel> modelCollection, Func<TModel, string> optionValue,
-			Func<TModel, object> htmlAttributes, object selectTagAttributes, int selectedValueId,bool firstEmptyElementAdd = false)
+			Func<TModel, object> htmlAttributes, object selectTagAttributes, int selectedValueId, bool firstEmptyElementAdd = false)
 			where TModel : BaseModel
 		{
 			string expr = expression.ToString();
@@ -88,11 +90,10 @@ namespace Inforoom2.Helpers
 			if (selectTagAttributes != null) {
 				selectAttributes = GetPropsValues(selectTagAttributes);
 			}
-			
+
 			var options = new StringBuilder();
-			if (firstEmptyElementAdd)
-			{
-				options.AppendFormat("<option selected = selected></option>" );
+			if (firstEmptyElementAdd) {
+				options.AppendFormat("<option selected = selected></option>");
 			}
 			foreach (var model in modelCollection) {
 				string value = string.Empty;
@@ -104,8 +105,7 @@ namespace Inforoom2.Helpers
 				if (htmlAttributes != null) {
 					optionAttributes = GetPropsValues(htmlAttributes(model));
 				}
-				if (model.Id == selectedValueId)
-				{
+				if (model.Id == selectedValueId) {
 					options.AppendFormat("<option value={0} selected = selected {1}>{2}</option>", model.Id,
 						optionAttributes.Replace("{", "").Replace("}", ""), value);
 				}
@@ -118,17 +118,17 @@ namespace Inforoom2.Helpers
 			if (modelCollection.Count > 0) {
 				selectId = modelCollection.FirstOrDefault().GetType().Name + "DropDown";
 			}
-			if (selectTagAttributes!=null) {
+			if (selectTagAttributes != null) {
 				var hasOwnId = selectTagAttributes.GetType().GetProperty("Id");
-				if (hasOwnId!=null)
-				{
-					selectId = hasOwnId.GetValue(selectTagAttributes, null).ToString();	
+				if (hasOwnId != null) {
+					selectId = hasOwnId.GetValue(selectTagAttributes, null).ToString();
 				}
 			}
 			var selectString = string.Format("<select id='{0}' name='{3}' {2}>{1}</select>", selectId.Replace("Proxy", ""),
 				options, selectAttributes, propertyInfo);
 			return new HtmlString(selectString);
 		}
+
 		/// <summary>
 		/// Вывести выподающий список
 		/// </summary>
@@ -193,7 +193,7 @@ namespace Inforoom2.Helpers
 				attributes = GetPropsValues(htmlAttributes);
 			}
 
-			
+
 			string html = string.Empty;
 			switch (htmlTag) {
 				case HtmlTag.input:
@@ -233,13 +233,13 @@ namespace Inforoom2.Helpers
 			if (string.IsNullOrEmpty(error.ToString())) {
 				return new HtmlString(html);
 			}
-		
+
 			return error;
 		}
 
 		public static HtmlString ValidationEditor(this HtmlHelper helper, ValidationRunner validation, object obj, string propertyName, object htmlAttributes, HtmlTag htmlTag, HtmlType htmlType)
 		{
-		 	return ValidationEditor(helper, validation, obj, propertyName, htmlAttributes, htmlTag, htmlType, false);
+			return ValidationEditor(helper, validation, obj, propertyName, htmlAttributes, htmlTag, htmlType, false);
 		}
 
 		private static StringBuilder GetPropsValues(object obj)
@@ -298,6 +298,4 @@ namespace Inforoom2.Helpers
 			return new HtmlString("dsds");
 		}
 	}
-
-
 }
